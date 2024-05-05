@@ -110,14 +110,14 @@ void mafSplitPath(const mafString& fullname, mafString* path, mafString* nameext
 void mafRemoveDirectory(const mafString& directory)
 //----------------------------------------------------------------------------
 {
-  if(directory.IsEmpty())
+  if(directory.empty())
     return;
   wxSetWorkingDirectory(mafGetApplicationDirectory().toWx());
   if(!mafDirExists(directory))
     return;
   mafString file_match = directory + _R("/*.*");
   mafString f = mafFindFirstFile(file_match);
-  while (!f.IsEmpty())
+  while (!f.empty())
   {
     mafFileRemove(f);
     f = mafFindNextFile();
@@ -140,7 +140,7 @@ mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafSt
   mafString path, name, ext;
 
   mafString zip_cache = mafPathOnly(filename); // get the directory
-  if (zip_cache.IsEmpty())
+  if (zip_cache.empty())
     zip_cache = stor_tmp;
 
   zip_cache += _R("/");
@@ -168,13 +168,13 @@ mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafSt
   fileSystem->ChangePathTo(filename.toWx());
   // extract filename from the zip archive
   zfile = mafWxToString(fileSystem->FindFirst((complete_name+pkg+name+_R("\\*.*")).toWx()));
-  if (zfile.IsEmpty())
+  if (zfile.empty())
   {
     enable_mid = true;
     // no files found: try to search inside the archive without filename
     zfile = mafWxToString(fileSystem->FindFirst((complete_name+pkg+_R("\\*.*")).toWx()));
   }
-  if (zfile.IsEmpty())
+  if (zfile.empty())
   {
     fileSystem->RemoveHandler(zipHandler);
     cppDEL(zipHandler);
@@ -187,7 +187,7 @@ mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafSt
   int s_size;
   std::ofstream out_file_stream;
 
-  for (;!zfile.IsEmpty(); zfile = mafWxToString(fileSystem->FindNext()))
+  for (;!zfile.empty(); zfile = mafWxToString(fileSystem->FindNext()))
   {
     zfileStream = fileSystem->OpenFile(zfile.toWx());
     if (zfileStream == NULL) // unable to open the file
@@ -223,7 +223,7 @@ mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafSt
 
   fileSystem->ChangePathTo(tmpDir.toWx(), TRUE);
 
-  if (MSFFile.IsEmpty()) // msf file not extracted
+  if (MSFFile.empty()) // msf file not extracted
   {
     mafErrorMessage(_M(mafString(_L("compressed archive is not a valid msf file!"))));
     return mafString();
@@ -270,7 +270,7 @@ void mafOpenZIP(const mafString& filename, const mafString& temp_directory)
   fileSystem->ChangePathTo(zipFile.toWx());
   // extract filename from the zip archive
   zfile = mafWxToString(fileSystem->FindFirst((complete_name+pkg+name+_R("\\*.*")).toWx()));
-  if (zfile.IsEmpty())
+  if (zfile.empty())
   {
     enable_mid = true;
     // no files found: try to search inside the archive without filename
@@ -278,7 +278,7 @@ void mafOpenZIP(const mafString& filename, const mafString& temp_directory)
   }
   /*if (zfile == "")
     return;*/
-  for(; !zfile.IsEmpty(); zfile = mafWxToString(fileSystem->FindNext()))
+  for(; !zfile.empty(); zfile = mafWxToString(fileSystem->FindNext()))
   {
     zfileStream = fileSystem->OpenFile(zfile.toWx());
     if (zfileStream == NULL) // unable to open the file
@@ -434,7 +434,7 @@ bool mafMakeZip(const mafString &zipname, const std::vector<mafString>& files)
 void mafZIPSave(const mafString& filename, const mafString& dir)
 //----------------------------------------------------------------------------
 {
-  if(filename.IsEmpty())
+  if(filename.empty())
     return;
 
   wxArrayString files;

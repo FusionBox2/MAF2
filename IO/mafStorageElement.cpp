@@ -65,7 +65,7 @@ size_t mafStorageElement::ParseData(double *vector,size_t size)
 {
   mafString text_data;
   RestoreText(text_data);
-  if (text_data.IsEmpty())
+  if (text_data.empty())
     return 0;
   return InternalParseData(text_data,vector,size);
 }
@@ -75,7 +75,7 @@ size_t mafStorageElement::ParseData(int *vector,size_t size)
 {
   mafString text_data;
   RestoreText(text_data);
-  if (text_data.IsEmpty())
+  if (text_data.empty())
     return 0;
   return InternalParseData(text_data,vector,size);
 }
@@ -444,7 +444,7 @@ mafObject *mafStorageElement::RestoreObject()
 {
   mafString type_name;
 
-  if (GetAttribute(_R("Type"),type_name)&&!type_name.IsEmpty())
+  if (GetAttribute(_R("Type"),type_name)&&!type_name.empty())
   {
     if (m_Storage->NeedsUpgrade())
     {

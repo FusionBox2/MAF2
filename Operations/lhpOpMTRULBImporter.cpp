@@ -399,7 +399,7 @@ void  lhpOpMTRULBImporter::ImportData()
 
   for(unsigned i = 0; i < m_Files.size(); i++)
   {
-    if(m_Files[i].IsEmpty())
+    if(m_Files[i].empty())
       continue;
 
 

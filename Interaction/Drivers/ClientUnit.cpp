@@ -117,12 +117,12 @@ void ClientUnit::OnSocketEvent(wxSocketEvent& event)
   switch(event.GetSocketEvent())
   {
     case wxSOCKET_INPUT: 
-      s.Append(_L("wxSOCKET_INPUT\n")); 
+      s.append(_L("wxSOCKET_INPUT\n")); 
       ReadMessageFromServer(sock);
     break;
-    case wxSOCKET_LOST       : s.Append(_L("wxSOCKET_LOST\n")); break;
-    case wxSOCKET_CONNECTION : s.Append(_L("wxSOCKET_CONNECTION\n")); break;
-    default                  : s.Append(_L("Unexpected event !\n")); break;
+    case wxSOCKET_LOST       : s.append(_L("wxSOCKET_LOST\n")); break;
+    case wxSOCKET_CONNECTION : s.append(_L("wxSOCKET_CONNECTION\n")); break;
+    default                  : s.append(_L("Unexpected event !\n")); break;
   }
 
   //mafLogMessage(s.c_str());

@@ -111,8 +111,8 @@ void medOpImporterLandmark::CreateGui()
   m_Gui->FileOpen(ID_LOAD_DICT, _R("Segment"),  &m_DictionaryFileName, _R("*.txt"));
   m_Gui->Button(ID_CLEAR_DICT, _R("Clean"), _R(""), _R("Press to cancel using dictionary") );
 
-  m_Gui->Enable(ID_CLEAR_DICT, (!m_DictionaryFileName.IsEmpty()));
-  m_Gui->Enable(ID_CLEAR_LMREN, (!m_LMRenameFileName.IsEmpty()));
+  m_Gui->Enable(ID_CLEAR_DICT, (!m_DictionaryFileName.empty()));
+  m_Gui->Enable(ID_CLEAR_LMREN, (!m_LMRenameFileName.empty()));
 
   m_Gui->OkCancel();
   m_Gui->Enable(ID_ENABLE_STRING,!m_TagFileFlag);
@@ -276,7 +276,7 @@ bool medOpImporterLandmark::Read()
 
   for(unsigned i = 0; i < m_Files.size(); i++)
   {
-    if(m_Files[i].IsEmpty())
+    if(m_Files[i].empty())
       continue;
     mafString path, name, ext;
     mafSplitPath(m_Files[i],&path,&name,&ext);
@@ -332,7 +332,7 @@ mafVME *medOpImporterLandmark::ReadFile(mafString& fname)
   }
 
   mafVME *result = NULL;
-  bool usingDictionary = (!m_DictionaryFileName.IsEmpty());
+  bool usingDictionary = (!m_DictionaryFileName.empty());
   mafVMEGroup         *group     = NULL;
   mafVMELandmarkCloud *specCloud = NULL;//the only cloud if read without dictionary and NOT_IN_DICTIONARY with
   mafString specCloudName;//name of specCloud
@@ -351,7 +351,7 @@ mafVME *medOpImporterLandmark::ReadFile(mafString& fname)
     if(group == NULL)
       return NULL;
     result = group;
-    specCloudName.Append(_R("NOT_IN_DICTIONARY"));
+    specCloudName.append(_R("NOT_IN_DICTIONARY"));
   }
 
 
@@ -389,7 +389,7 @@ mafVME *medOpImporterLandmark::ReadFile(mafString& fname)
 	mafString nameStr;
 	nameStr = mafString(_R(nameBuf));
 #pragma message ("Use StartsWith")
-    if(nameBuf[0] == '#' || nameStr.IsEmpty())
+    if(nameBuf[0] == '#' || nameStr.empty())
     {
       //jump the comment or the blank line
       landmarkFileStream.getline(nameBuf,20);
@@ -441,7 +441,7 @@ mafVME *medOpImporterLandmark::ReadFile(mafString& fname)
               //if created successfully use it
               if(cld != NULL)
               {
-                cldName.Append(nmIt->second);
+                cldName.append(nmIt->second);
                 cld->SetName(cldName);
 				cld->SetRadius(m_DefaultRadius);
                 clouds[nmIt->second] = cld;
@@ -587,7 +587,7 @@ mafVME *medOpImporterLandmark::ReadFileWithoutTag(mafString& fname)
   {
     landmarkFileStream.getline(tmp,200);
 #pragma message ("needs check")
-    if(mafString(_R(tmp)).IsEmpty()) 
+    if(mafString(_R(tmp)).empty()) 
     {
       // jump the blank line
       landmarkFileStream.getline(tmp,200);
@@ -657,7 +657,7 @@ void medOpImporterLandmark::DestroyDictionary()
 void medOpImporterLandmark::DictionaryUpdate() 
 //----------------------------------------------------------------------------
 {
-  bool emptyName = m_DictionaryFileName.IsEmpty();
+  bool emptyName = m_DictionaryFileName.empty();
   DestroyDictionary();
   if(!emptyName)
   {
@@ -706,7 +706,7 @@ void medOpImporterLandmark::DestroyLMRename()
 void medOpImporterLandmark::LMRenameUpdate() 
 //----------------------------------------------------------------------------
 {
-  bool emptyName = m_LMRenameFileName.IsEmpty();
+  bool emptyName = m_LMRenameFileName.empty();
   DestroyLMRename();
   if(!emptyName)
   {

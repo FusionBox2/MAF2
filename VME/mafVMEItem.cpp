@@ -242,7 +242,7 @@ int mafVMEItem::InternalStore(mafStorageElement *parent)
 void mafVMEItem::SetURL(const char *name)
 //-------------------------------------------------------------------------
 {
-  if (!m_URL.IsEmpty()&&m_URL!=_R(name))
+  if (!m_URL.empty()&&m_URL!=_R(name))
   {
     mafEventIO e(this,NODE_GET_STORAGE);
     mafEventMacro(e);
@@ -296,7 +296,7 @@ int mafVMEItem::RestoreData()
   // into the archive, so we have to switch into the DEFAULT mode to read correctly
   // the item and then restore the IO Mode.
   int old_mode = m_IOMode;
-  if (m_ArchiveFileName.IsEmpty())
+  if (m_ArchiveFileName.empty())
   {
     SetIOMode(DEFAULT);
   }

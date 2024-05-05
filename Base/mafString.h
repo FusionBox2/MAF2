@@ -108,13 +108,13 @@ public:
     This method compare the given c-string with the one stored inside this object.
     It is similar to strcmp, but it can handle null pointers. Return 0 if str equal this,
     -1 if str > this, 1 if str < this*/
-  int Compare(mafStrBuf str) const;
+  int compare(mafStrBuf str) const;
 
   /**
     This method compare the given c-string with the one stored inside this object.
     It is similar to strcmp, but it can handle null pointers. Return 0 if str equal this,
     -1 if str > this, 1 if str < this*/
-  int Compare(const mafString& str) const;
+  int compare(const mafString& str) const;
 
   /** Check if this string starts with the given one.*/
   bool StartsWith(mafStrBuf str) const;
@@ -129,10 +129,10 @@ public:
   bool EndsWith(const mafString& str) const;
 
   /** Append a new string to this string. */
-  mafString &Append(mafStrBuf str);
+  mafString &append(mafStrBuf str);
 
   /** Append a new string to this string. */
-  mafString& Append(const mafString& str);
+  mafString& append(const mafString& str);
 
   /** Scan the string for the first occurrence of the character */
   int FindChr(const int c) const;
@@ -164,7 +164,7 @@ public:
 
   mafString& MakeUpper();
   mafString& MakeLower();
-  mafString& Clear();
+  void clear();
 
   /**
     parse the given string to substitute each (back)slash
@@ -175,7 +175,7 @@ public:
   mafStrBuf GetCStr() const;
   
   /**  return true if empty*/
-  bool IsEmpty() const;
+  bool empty() const;
 
   /** Format given arguments according to format string. Format string format is
       that of vsprintf function */

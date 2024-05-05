@@ -510,7 +510,7 @@ int mafSceneGraph::GetNodeStatus(mafNode *node)
     return NODE_NON_VISIBLE;
   }
   mafVME *vme = (mafVME *)node;
-  bool creatable = n->m_PipeCreatable && vme && !vme->GetVisualPipe().IsEmpty();
+  bool creatable = n->m_PipeCreatable && vme && !vme->GetVisualPipe().empty();
 	//landmark are not creatable
 	//if(vme->IsA("mafNodeLandmark")) creatable = false;
   

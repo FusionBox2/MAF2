@@ -157,7 +157,7 @@ mafString mafGetApplicationDirectory()
 //----------------------------------------------------------------------------
 {
 	static mafString app_dir;
-	if (app_dir.IsEmpty())
+	if (app_dir.empty())
 	{
 		wxString cd = wxGetCwd();
 		wxSetWorkingDirectory(wxT(".."));
@@ -179,7 +179,7 @@ bool IsRemote(const mafString& filename, mafString &protocol_used)
   else
     is_remote = false; //try to treat it as a local file!!
 
-  if (!protocol_used.IsEmpty())
+  if (!protocol_used.empty())
   {
     is_remote = protocol_used == _R("http")  ||
                 protocol_used == _R("ftp")   ||
@@ -212,7 +212,7 @@ void mafFormatDataSize( long long size, mafString& szOut )
 
   int idx = 0;
   double nsize = (double)size;
-  while (!SZUN[idx].IsEmpty())
+  while (!SZUN[idx].empty())
   {
     if (nsize < LIMITS[idx])
       break;

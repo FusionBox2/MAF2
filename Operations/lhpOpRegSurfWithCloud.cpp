@@ -124,7 +124,7 @@ void lhpOpRegSurfWithCloud::OnEvent(mafEventBase *maf_event)
     {
     case ID_LOAD_SCRIPT:
       {
-        if(!m_ScriptFName.IsEmpty())
+        if(!m_ScriptFName.empty())
           ReadDictionary(&m_ScriptFName, m_LMDict);
         break;
       }

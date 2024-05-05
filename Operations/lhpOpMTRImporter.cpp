@@ -91,7 +91,7 @@ void  lhpOpMTRImporter::ImportData()
 
   for(unsigned fi = 0; fi < m_Files.size(); fi++)
   {
-    if(m_Files[fi].IsEmpty())
+    if(m_Files[fi].empty())
       continue;
  
     

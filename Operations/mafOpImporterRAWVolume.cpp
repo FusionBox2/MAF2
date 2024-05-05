@@ -297,7 +297,7 @@ void mafOpImporterRAWVolume::	OnEvent(mafEventBase *maf_event)
 				dir += _L("/Data/External");
 				mafString wildc =_L("Z_coordinates (*.txt)|*.txt");
 				mafString file = mafGetOpenFile(dir,wildc,_L("Open Z coordinates file"));
-				if(!file.IsEmpty())
+				if(!file.empty())
 				{
 					m_CoordFile = file;
 					m_BuildRectilinearGrid = true;

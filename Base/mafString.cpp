@@ -98,14 +98,14 @@ void mafString::Erase(int start, int end)
 }
 
 //----------------------------------------------------------------------------
-int mafString::Compare(mafStrBuf str) const
+int mafString::compare(mafStrBuf str) const
 //----------------------------------------------------------------------------
 {
     return m_str.compare(str);
 }
 
 //----------------------------------------------------------------------------
-int mafString::Compare(const mafString& str) const
+int mafString::compare(const mafString& str) const
 //----------------------------------------------------------------------------
 {
     return m_str.compare(str.m_str);
@@ -168,7 +168,7 @@ bool mafString::EndsWith(const mafString& str) const
 }
 
 //----------------------------------------------------------------------------
-mafString& mafString::Append(mafStrBuf str)
+mafString& mafString::append(mafStrBuf str)
 //----------------------------------------------------------------------------
 {
     m_str.append(str);
@@ -176,7 +176,7 @@ mafString& mafString::Append(mafStrBuf str)
 }
 
 //----------------------------------------------------------------------------
-mafString& mafString::Append(const mafString& str)
+mafString& mafString::append(const mafString& str)
 //----------------------------------------------------------------------------
 {
     m_str.append(str.m_str);
@@ -314,18 +314,17 @@ mafString& mafString::MakeLower()
 }
 
 //----------------------------------------------------------------------------
-mafString& mafString::Clear()
+void mafString::clear()
 //----------------------------------------------------------------------------
 {
     m_str.clear();
-    return *this;
 }
 
 //----------------------------------------------------------------------------
 void mafString::ParsePathName()
 //----------------------------------------------------------------------------
 {
-    if (IsEmpty())
+    if (empty())
         return;
     // for Windows platforms parse the string to substitute "/" and "\\" with the right one.
 #ifdef _WIN32
@@ -355,7 +354,7 @@ mafStrBuf mafString::GetCStr() const
 #endif
 }
 
-bool mafString::IsEmpty() const
+bool mafString::empty() const
 {
     return m_str.empty();
 }
@@ -414,81 +413,81 @@ const char mafString::operator [] (const int i) const
 const bool mafString::operator==(mafStrBuf str) const
 //----------------------------------------------------------------------------
 {
-    return Compare(str) == 0;
+    return compare(str) == 0;
 }
 
 //----------------------------------------------------------------------------
 const bool mafString::operator!=(mafStrBuf str) const
 //----------------------------------------------------------------------------
 {
-    return Compare(str) != 0;
+    return compare(str) != 0;
 }
 
 //----------------------------------------------------------------------------
 const bool mafString::operator<(mafStrBuf str) const
 //----------------------------------------------------------------------------
 {
-    return Compare(str) < 0;
+    return compare(str) < 0;
 }
 //----------------------------------------------------------------------------
 const bool mafString::operator>(mafStrBuf str) const
 //----------------------------------------------------------------------------
 {
-    return Compare(str) > 0;
+    return compare(str) > 0;
 }
 //----------------------------------------------------------------------------
 const bool mafString::operator<=(mafStrBuf str) const
 //----------------------------------------------------------------------------
 {
-    return Compare(str) <= 0;
+    return compare(str) <= 0;
 }
 //----------------------------------------------------------------------------
 const bool mafString::operator>=(mafStrBuf str) const
 //----------------------------------------------------------------------------
 {
-    return Compare(str) >= 0;
+    return compare(str) >= 0;
 }
 
 //----------------------------------------------------------------------------
 const bool mafString::operator!=(const mafString& str) const
 //----------------------------------------------------------------------------
 {
-  return Compare(str) != 0;
+  return compare(str) != 0;
 }
 
 //----------------------------------------------------------------------------
 const bool mafString::operator==(const mafString& str) const
 //----------------------------------------------------------------------------
 {
-  return Compare(str) == 0;
+  return compare(str) == 0;
 }
 
 //----------------------------------------------------------------------------
 const bool mafString::operator<(const mafString& str) const
 //----------------------------------------------------------------------------
 {
-  return Compare(str) < 0;
+  return compare(str) < 0;
 }
 
 //----------------------------------------------------------------------------
 const bool mafString::operator>(const mafString& str) const
 //----------------------------------------------------------------------------
 {
-  return Compare(str) > 0;
+  return compare(str) > 0;
 }
 
 //----------------------------------------------------------------------------
 const bool mafString::operator<=(const mafString& str) const
 //----------------------------------------------------------------------------
 {
-  return Compare(str) <= 0;
+  return compare(str) <= 0;
 }
 
 //----------------------------------------------------------------------------
 const bool mafString::operator>=(const mafString& str) const
 //----------------------------------------------------------------------------
 {
-  return Compare(str) >= 0;
+  return compare(str) >= 0;
 }
 
 //----------------------------------------------------------------------------

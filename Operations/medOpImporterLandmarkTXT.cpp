@@ -101,7 +101,7 @@ void medOpImporterLandmarkTXT::OpRun()
     f = mafGetOpenFile(m_FileDir,pgd_wildc); 
   }
 	
-	if(!f.IsEmpty() && mafFileExists(f))
+	if(!f.empty() && mafFileExists(f))
 	{
 	  m_File = f;
     
@@ -219,7 +219,7 @@ void medOpImporterLandmarkTXT::Read()
       zval = atof(z.GetCStr());
       tval = atof(time.GetCStr());
 
-      if(x.IsEmpty() && y.IsEmpty() && z.IsEmpty() )
+      if(x.empty() && y.empty() && z.empty() )
       {
         m_VmeCloud->SetLandmark(lm_idx[counter],0,0,0,tval);
         m_VmeCloud->SetLandmarkVisibility(lm_idx[counter], 0,tval);

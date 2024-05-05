@@ -1105,7 +1105,7 @@ void mafRWI::OnEvent(mafEventBase *maf_event)
 			CameraUpdate();
 			break;
 		case ID_STERO_MOVIE_DIR:
-			m_Gui->Enable(ID_STERO_MOVIE,!m_StereoMovieDir.IsEmpty());
+			m_Gui->Enable(ID_STERO_MOVIE,!m_StereoMovieDir.empty());
 			m_RwiBase->SetStereoMovieDirectory(m_StereoMovieDir.GetCStr());
 			break;
 		case ID_STERO_MOVIE:

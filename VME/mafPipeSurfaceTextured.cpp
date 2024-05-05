@@ -177,7 +177,7 @@ void mafPipeSurfaceTextured::Create(mafNode *node, mafView *view/*, bool use_axe
 	  m_Texture->SetInputConnection(m_SurfaceMaterial->GetMaterialTexturePort());
 	  image1->GetScalarRange(sr);
     }
-	else if (!m_SurfaceMaterial->GetMaterialTextureName().IsEmpty())
+	else if (!m_SurfaceMaterial->GetMaterialTextureName().empty())
 	{
 		mafVME *texture_vme = mafVME::SafeDownCast(m_Vme->GetRoot()->FindInTreeByName(m_SurfaceMaterial->GetMaterialTextureName()));
 		texture_vme->GetOutput()->Update();
@@ -525,7 +525,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 	  {
 								 mafString imageNameTemp = m_File;
 								 imageNameTemp.Erase(imageNameTemp.Length() - 4, imageNameTemp.Length() - 1);
-								 imageNameTemp.Append(_R("temp.wrl"));
+								 imageNameTemp.append(_R("temp.wrl"));
 								 
 								 
 								 vtkNew<vtkVRMLExporter> writer;
@@ -561,7 +561,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 
 
 
-										 exporter->SetFileName(imageName.Append(_R("jpg")).GetCStr());
+										 exporter->SetFileName(imageName.append(_R("jpg")).GetCStr());
 										 wxBusyInfo wait2("Writing texture file: ...");
 										 exporter->Write();
 										 string search1 = "            texture PixelTexture {";
@@ -705,7 +705,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 
 								  mafString mtlName = m_File;
 								  mtlName.Erase(mtlName.Length() - 3, mtlName.Length() - 1);
-								  mtlName.Append(_R("obj.mtl"));
+								  mtlName.append(_R("obj.mtl"));
 
 								  wxBusyInfo wait523(m_File.toWx());
 								  
@@ -736,7 +736,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 									  mafString imageName = m_File;
 									  imageName.Erase(imageName.Length() - 3, imageName.Length() - 1);
 
-									  exporter->SetFileName(imageName.Append(_R("jpg")).GetCStr());
+									  exporter->SetFileName(imageName.append(_R("jpg")).GetCStr());
 									  exporter->Write();
 									  std::ofstream mtlfile;
 

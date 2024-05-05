@@ -249,7 +249,7 @@ void lhpOpAFSys::OpStop(int result)
   }
   else if (result == OP_RUN_OK)
   {
-    if(m_Radio == m_predefinedScripts.size() && m_ScriptFName.IsEmpty())
+    if(m_Radio == m_predefinedScripts.size() && m_ScriptFName.empty())
     {
       wxMessageBox("Method is not specified","Alert", wxOK , NULL);
       return;
@@ -298,7 +298,7 @@ void lhpOpAFSys::OnEvent(mafEventBase *maf_event)
     case ID_LOAD_SCRIPT:
       {
         std::vector<mafString> tmp;
-        if(!m_ScriptFName.IsEmpty() && ReadScript(m_ScriptFName, tmp))
+        if(!m_ScriptFName.empty() && ReadScript(m_ScriptFName, tmp))
         {
           m_RefSys->SetScriptText(tmp);
           m_RefSys->SetBoneID(mafVMEAFRefSys::ID_AFS_NOTDEFINED);
@@ -316,7 +316,7 @@ void lhpOpAFSys::OnEvent(mafEventBase *maf_event)
         else
         {
           std::vector<mafString> tmp;
-          if(!m_ScriptFName.IsEmpty() && ReadScript(m_ScriptFName, tmp))
+          if(!m_ScriptFName.empty() && ReadScript(m_ScriptFName, tmp))
           {
             m_RefSys->SetScriptText(tmp);
             m_RefSys->SetBoneID(mafVMEAFRefSys::ID_AFS_NOTDEFINED);

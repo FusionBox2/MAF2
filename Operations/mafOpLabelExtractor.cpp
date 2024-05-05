@@ -166,7 +166,7 @@ void mafOpLabelExtractor::OpRun()
         for ( unsigned int i = 0; i < noc; i++ )
         {
           mafString label = tagLabel->GetValue( i );
-          if ( !label.IsEmpty() )
+          if ( !label.empty() )
           {
             myList.push_back( label );
           }
@@ -178,7 +178,7 @@ void mafOpLabelExtractor::OpRun()
           for ( unsigned int j = 0; j < noc; j++ )
           {
             mafString component = tagLabel->GetValue( j );
-            if ( !component.IsEmpty() )
+            if ( !component.empty() )
             {
               mafString labelName = *myListIter;
               if ( component == labelName )

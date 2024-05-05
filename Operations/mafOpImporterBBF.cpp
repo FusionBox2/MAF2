@@ -68,14 +68,14 @@ void mafOpImporterBBF::OpRun()
 {
 	mafString wildc = _R("bbf Data (*.bbf)|*.bbf");
   mafString f;
-  if (m_File.IsEmpty())
+  if (m_File.empty())
   {
     f = mafGetOpenFile(m_FileDir, wildc, _L("Choose .bbf file"));
     m_File = f;
   }
 
   int result = OP_RUN_CANCEL;
-  if(!m_File.IsEmpty())
+  if(!m_File.empty())
 	{
     if (ImportBBF() == MAF_OK)
     {

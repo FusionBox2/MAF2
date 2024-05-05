@@ -79,11 +79,11 @@ void medOpImporterC3D::OpRun()
 	mafString dict_wildc = _R("Dictionary (*.txt)|*.txt");
 
 	mafString f = mafGetOpenFile(m_FileDir,c3d_wildc); 
-	if(!f.IsEmpty())
+	if(!f.empty())
 	{
 		m_File = f;
 		f = mafGetOpenFile(m_DictDir,dict_wildc,_R("Open Dictionary")); 
-		if(!f.IsEmpty())
+		if(!f.empty())
 		{
 			m_Dict = f;
 			this->m_DictionaryAvailable = 1;

@@ -64,7 +64,7 @@ mafGUIDictionaryWidget::mafGUIDictionaryWidget(wxWindow *parent, int id)
   m_List->SetListener(this);
   m_List->SetSize(wxSize(450,400));
 
-  if(!m_File.IsEmpty()) LoadDictionary(m_File);
+  if(!m_File.empty()) LoadDictionary(m_File);
 }
 //----------------------------------------------------------------------------
 mafGUIDictionaryWidget::~mafGUIDictionaryWidget()
@@ -96,7 +96,7 @@ void mafGUIDictionaryWidget::LoadDictionary()
   mafString m_dict		  = mafGetApplicationDirectory();
   m_dict = m_dict + _R("\\Config\\Dictionary\\");
 	mafString file       = mafGetOpenFile(m_dict,wild_dict,_R("Choose Dictionary File"),m_List); 
-	if(!file.IsEmpty()) LoadDictionary(file);
+	if(!file.empty()) LoadDictionary(file);
 }
 //----------------------------------------------------------------------------
 void mafGUIDictionaryWidget::LoadDictionary(const mafString& file)

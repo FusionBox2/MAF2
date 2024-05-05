@@ -106,7 +106,7 @@ void lhpOpINPExporter::OnEvent(mafEventBase *maf_event)
           FileDir += _R(".inp");
           mafString wildc = _R("INP (*.inp)|*.inp");
           m_File = mafGetSaveFile(FileDir, wildc);
-          if(!m_File.IsEmpty())
+          if(!m_File.empty())
           {
             ExportSurface();
             OpStop(OP_RUN_OK);
@@ -118,7 +118,7 @@ void lhpOpINPExporter::OnEvent(mafEventBase *maf_event)
         {
           mafString f = mafGetDirName(mafGetApplicationDirectory());
 
-          if(!f.IsEmpty()) 
+          if(!f.empty()) 
           {
             m_FileDir = f;
             ExportSurface();
@@ -130,7 +130,7 @@ void lhpOpINPExporter::OnEvent(mafEventBase *maf_event)
       }
       break;
     case ID_CHOOSE_FILENAME:
-      m_Gui->Enable(wxOK,!m_File.IsEmpty());
+      m_Gui->Enable(wxOK,!m_File.empty());
       break;
     case wxCANCEL:
       OpStop(OP_RUN_CANCEL);

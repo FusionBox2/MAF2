@@ -146,7 +146,7 @@ void mafViewPlot::GetVisualPipeName(mafNode *node, mafString &pipe_name)
     // pick up the visual pipe from the view's visual pipe map
     pipe_name = m_PipeMap[vme_type].m_PipeName;
   }
-  if(pipe_name.IsEmpty())
+  if(pipe_name.empty())
   {
     // pick up the default visual pipe from the vme
     pipe_name = v->GetVisualPipe();
@@ -159,7 +159,7 @@ void mafViewPlot::VmeCreatePipe(mafNode *vme)
   mafString pipe_name;
   GetVisualPipeName(vme, pipe_name);
 
-  if (!pipe_name.IsEmpty())
+  if (!pipe_name.empty())
   {
     mafPipeFactory *pipe_factory  = mafPipeFactory::GetInstance();
     assert(pipe_factory!=NULL);

@@ -274,7 +274,7 @@ void mafGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
       mafString file_dir  = mafGetApplicationDirectory();
       mafString wildc     = _R("VRML (*.wrl)|*.wrl");
       mafString file      = mafGetSaveFile(file_dir,wildc);
-      if (!file.IsEmpty())
+      if (!file.empty())
       {
         vtkRenderWindow *renwin = m_ViewActive->GetRWI()->GetRenderWindow();
         vtkNew<vtkVRMLExporter> vrml_exporter;
@@ -293,7 +293,7 @@ void mafGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
 			cppDEL(dlg);
 			if(result != wxID_OK) return;
 			m_ViewActive->SetName(name);
-			if(name.IsEmpty())
+			if(name.empty())
         m_ChildViewActive->SetTitle(wxStripMenuCodes(m_ViewActive->GetLabel().toWx()));
 			else
 				m_ChildViewActive->SetTitle(name.toWx());

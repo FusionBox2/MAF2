@@ -199,7 +199,7 @@ void mafViewHTML::OnEvent(mafEventBase *maf_event)
        OnForward();
 		break;
     case ID_URL:
-      if(!m_Url.IsEmpty())
+      if(!m_Url.empty())
 	      m_Html->LoadPage(m_Url.toWx());
     break;
     default:

@@ -791,7 +791,7 @@ void mafVMEPlane::InternalUpdate()
 				double* v2=((mafVMEPlane*)plan1)->getNormalVector();
 				angPlanes = 180 * std::acos((v1[0] * v2[0] + v1[1] * v2[1] + v1[2] * v2[2]) / ((v1[0] * v1[0] + v1[1] * v1[1] + v1[2] * v1[2]) + (v2[0] * v2[0] + v2[1] * v2[1] + v2[2] * v2[2]))) / 3.14159;
 				mafString ss = _R(" ");
-				angleBPlanes = ss.Append(mafToString(angPlanes)); 
+				angleBPlanes = ss.append(mafToString(angPlanes)); 
 
 
 			

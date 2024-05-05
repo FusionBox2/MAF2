@@ -1258,9 +1258,9 @@ void lhpOpSolidify::OpStop(int result)
   mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(m_Input);
   mafVMELandmarkCloud *newcloud;// = mafVMELandmarkCloud::New();
   mafString           ncname;
-  ncname.Append(cloud->GetName());
-  ncname.Append(_R("_solidified_with_"));
-  ncname.Append(m_SourceName);
+  ncname.append(cloud->GetName());
+  ncname.append(_R("_solidified_with_"));
+  ncname.append(m_SourceName);
   mafNEW(newcloud);
   newcloud->SetName(ncname);
   //newcloud->DeepCopy(cloud);

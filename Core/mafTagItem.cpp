@@ -367,7 +367,7 @@ void mafTagItem::GetValueAsSingleString(mafString &str) const
   else
   {
     // no components
-    str.Clear();
+    str.clear();
   }
 
 }
@@ -409,7 +409,7 @@ bool mafTagItem::Equals(const mafTagItem *item) const
   // compare single components 
   for (int i=0;i<this->GetNumberOfComponents();i++)
   {
-    if (m_Components[i].IsEmpty()&&item->m_Components[i].IsEmpty())
+    if (m_Components[i].empty()&&item->m_Components[i].empty())
       continue;
 
     if (m_Components[i]!=item->m_Components[i])

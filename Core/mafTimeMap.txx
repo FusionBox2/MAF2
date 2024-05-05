@@ -63,7 +63,7 @@ void mafTimeMap<T>::AppendItem(T *m)
 //-----------------------------------------------------------------------
 {
 	assert(m);
-  if (!m_ItemTypeName.IsEmpty())
+  if (!m_ItemTypeName.empty())
   {
     assert(m->IsA(m_ItemTypeName.GetCStr()));
     if (!m->IsA(m_ItemTypeName.GetCStr()))
@@ -82,7 +82,7 @@ void mafTimeMap<T>::PrependItem(T *m)
 //-----------------------------------------------------------------------
 {
   assert(m);
-  if (!m_ItemTypeName.IsEmpty())
+  if (!m_ItemTypeName.empty())
   {
     assert(m->IsA(m_ItemTypeName.GetCStr()));
     if (!m->IsA(m_ItemTypeName.GetCStr()))
@@ -100,7 +100,7 @@ void mafTimeMap<T>::InsertItem(T *m)
 //-------------------------------------------------------------------------
 {
   assert(m);
-  if (!m_ItemTypeName.IsEmpty())
+  if (!m_ItemTypeName.empty())
   {
     assert(m->IsA(m_ItemTypeName.GetCStr()));
     if (!m->IsA(m_ItemTypeName.GetCStr()))

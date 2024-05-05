@@ -87,7 +87,7 @@ void medOpMergeDicomSeries::OpRun()
   bool result = true;
 	do 
 	{
-		if (m_DicomDirectoryABSFileName.IsEmpty())
+		if (m_DicomDirectoryABSFileName.empty())
 		{	
       // Get the selected dicom directory
 			mafString lastDicomDir = ((medGUIDicomSettings*)GetSetting())->GetLastDicomDir();
@@ -203,9 +203,9 @@ bool medOpMergeDicomSeries::RenameSeriesAndManufacturer(const mafString& dicomDi
       mafString currentSliceABSFileName = _R("");
       mafString currentSliceLocalFileName = _R(m_DICOMDirectoryReader->GetFile(i));
 
-      currentSliceABSFileName.Append(dicomDirABSPath);
-      currentSliceABSFileName.Append(_R("\\"));
-      currentSliceABSFileName.Append(currentSliceLocalFileName);
+      currentSliceABSFileName.append(dicomDirABSPath);
+      currentSliceABSFileName.append(_R("\\"));
+      currentSliceABSFileName.append(currentSliceLocalFileName);
 
       DJDecoderRegistration::registerCodecs(); // register JPEG codecs
       DcmRLEDecoderRegistration ::registerCodecs(OFFalse, OFFalse); // register RLE codecs

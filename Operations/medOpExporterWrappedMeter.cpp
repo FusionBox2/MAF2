@@ -113,12 +113,12 @@ void medOpExporterWrappedMeter::OnEvent(mafEventBase *maf_event)
 				{
 				  mafString initialFileName;
 				  initialFileName = mafGetApplicationDirectory();
-				  initialFileName.Append(_R("\\ActionLine.txt"));
+				  initialFileName.append(_R("\\ActionLine.txt"));
 
 				  mafString wildc = _R("configuration file (*.txt)|*.txt");
 				  m_File = mafGetSaveFile(initialFileName, wildc);
 
-				  if (m_File.IsEmpty()) return;
+				  if (m_File.empty()) return;
 
 				  //Test();		  //using this method to try test case
 				  Export();
@@ -127,7 +127,7 @@ void medOpExporterWrappedMeter::OnEvent(mafEventBase *maf_event)
 				}
       break;
       case ID_CHOOSE_FILENAME:
-        m_Gui->Enable(wxOK,!m_File.IsEmpty());
+        m_Gui->Enable(wxOK,!m_File.empty());
       break;
       case wxCANCEL:
         OpStop(OP_RUN_CANCEL);

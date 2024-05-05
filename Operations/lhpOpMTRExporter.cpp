@@ -117,7 +117,7 @@ void lhpOpMTRExporter::OnEvent(mafEventBase *maf_event)
 
           mafString f = mafGetSaveFile(proposed,wildc); 
 
-          if(!f.IsEmpty()) 
+          if(!f.empty()) 
           {
             m_File = f;
             ExportLandmark();
@@ -136,7 +136,7 @@ void lhpOpMTRExporter::OnEvent(mafEventBase *maf_event)
             mafString wildc = _R("FARO MTR file (*.mtr)|*.mtr");
             mafString f = mafGetSaveFile(proposed,wildc); 
 
-            if(!f.IsEmpty()) 
+            if(!f.empty()) 
             {
               m_File = f;
               ExportLandmark();
@@ -147,7 +147,7 @@ void lhpOpMTRExporter::OnEvent(mafEventBase *maf_event)
           {
             mafString f = mafGetDirName(proposed);
 
-            if(!f.IsEmpty()) 
+            if(!f.empty()) 
             {
               m_FileDir = f;
               ExportLandmark();
@@ -312,7 +312,7 @@ void lhpOpMTRExporter::ExportLandmark()
   }
   else
   {
-    if(m_FileDir.IsEmpty())
+    if(m_FileDir.empty())
     {
       f_Out.open(m_File.GetCStr());
       f_Out<<"Index     Xmm        Ymm        Zmm     A(deg)     B(deg)     C(deg)\n";

@@ -151,15 +151,15 @@ void medWizardBlockOperation::ExcutionBegin()
 	}
 	if(m_windowhastobetiled)
 	{
-		if(!m_tile_windows.Compare(_R("Tile_window_horizontally"))) 
+		if(!m_tile_windows.compare(_R("Tile_window_horizontally"))) 
 		{
 	        mafEventMacro(mafEvent(this,TILE_WINDOW_HORIZONTALLY));
 		}
-		else if (!m_tile_windows.Compare(_R("Tile_window_vertically"))) 
+		else if (!m_tile_windows.compare(_R("Tile_window_vertically"))) 
 		{
 			mafEventMacro(mafEvent(this,TILE_WINDOW_VERTICALLY));
 		}
-		else if (!m_tile_windows.Compare(_R("Tile_window_cascade")))
+		else if (!m_tile_windows.compare(_R("Tile_window_cascade")))
 		{
 			mafEventMacro(mafEvent(this,TILE_WINDOW_CASCADE));
 		}

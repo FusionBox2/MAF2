@@ -159,7 +159,7 @@ void mafOpApplyTrajectory::OpDo()
   if (m_VME==NULL)
   {
     mafString f = m_File;
-    if(!f.IsEmpty() && mafFileExists(f))
+    if(!f.empty() && mafFileExists(f))
 	  {
       if (Read() != MAF_OK)
       {
@@ -225,7 +225,7 @@ void mafOpApplyTrajectory::OnEvent(mafEventBase *maf_event)
     
 	case wxOK:
       {
-        if (!m_VME && m_File.IsEmpty())
+        if (!m_VME && m_File.empty())
         {
           mafErrorMessage(_M(mafString(_L("No input has been selected."))));
           OpStop(OP_RUN_CANCEL);
@@ -243,7 +243,7 @@ void mafOpApplyTrajectory::OnEvent(mafEventBase *maf_event)
       {
         if (!m_TestMode)
         {
-          if (!m_File.IsEmpty())
+          if (!m_File.empty())
           {
             m_Gui->Enable(ID_SELECT_VME,false);  
           }

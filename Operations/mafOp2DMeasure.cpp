@@ -474,7 +474,7 @@ void mafOp2DMeasure::OnEvent(mafEventBase *maf_event)
         case ID_STORE_MEASURE:
         {         
           m_MeasureText = mafWxToString(wxGetTextFromUser("",_("Insert measure description"), _(m_MeasureText.toWx())));
-          if(m_MeasureText.IsEmpty()) break;
+          if(m_MeasureText.empty()) break;
           mafString t;
           if(m_MeasureType == 0 || m_MeasureType == 1)
           {

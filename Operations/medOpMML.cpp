@@ -2831,7 +2831,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
   m_P4Name      = "none";
 
   // select strings
-  if (m_SurfaceName.Compare(_R("obturator externus")) == 0)
+  if (m_SurfaceName.compare(_R("obturator externus")) == 0)
   {
     // landmarks
     Landmark1VMEName = "Superior edge of lateral surface of the Right ischial ramus at juncture with inferior pubic ramus ";
@@ -2843,7 +2843,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
     m_MuscleType = 1;
   }
   else
-    if (m_SurfaceName.Compare(_R("gamellus inferior")) == 0)
+    if (m_SurfaceName.compare(_R("gamellus inferior")) == 0)
     {
       // landmarks
       Landmark1VMEName = "Most superior point on posterior surface of Right ischial tuberosity at height of lesser sciatic notch ";
@@ -2855,7 +2855,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
       m_MuscleType = 1;
     }
     else
-      if (m_SurfaceName.Compare(_R("gamellus superior")) == 0)
+      if (m_SurfaceName.compare(_R("gamellus superior")) == 0)
       {
         // landmarks
         Landmark1VMEName = "Most superior point on posterior surface of Right ischial tuberosity at height of lesser sciatic notch ";
@@ -2867,7 +2867,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
         m_MuscleType = 1;
       }
       else
-        if (m_SurfaceName.Compare(_R("piriformis")) == 0)
+        if (m_SurfaceName.compare(_R("piriformis")) == 0)
         {
           // landmarks
           Landmark1VMEName = "Anterior surface of the Right sacrum between second and third foramen midway between line of foramen and lateral border (first sacral foramen is most superior)";
@@ -2879,7 +2879,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
           m_MuscleType = 1;
         }
         else
-          if (m_SurfaceName.Compare(_R("gluteus minimus")) == 0)
+          if (m_SurfaceName.compare(_R("gluteus minimus")) == 0)
           {
             // landmarks
             Landmark1VMEName = "Top of ridge on lateral surface of the Right ilium between superior tubercle of iliac crest (pt. 39) and acetabulum (pt. 5) along a line from anterior superior iliac spine ASIS (pt. 1) to posterior superior iliac spine PSIS (pt. 3) ";
@@ -2891,7 +2891,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
             m_MuscleType = 1;
           }
           else
-            if (m_SurfaceName.Compare(_R("tensor fasciae latae")) == 0)
+            if (m_SurfaceName.compare(_R("tensor fasciae latae")) == 0)
             {
               // landmarks
               Landmark1VMEName = "Midpoint along Right lateral superior ridge of iliac crest between the anterior superior iliac spine ASIS and most lateral point on superior tubercle of the iliac crest ";
@@ -2903,7 +2903,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
               m_MuscleType = 1;
             }
             else
-              if (m_SurfaceName.Compare(_R("adductor longus")) == 0)
+              if (m_SurfaceName.compare(_R("adductor longus")) == 0)
               {
                 // landmarks
                 Landmark1VMEName = "Anterior corner of inferior surface of the Right pubic tubercle ";
@@ -2915,7 +2915,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
                 m_MuscleType = 1;
               }
               else
-                if (m_SurfaceName.Compare(_R("adductor brevis")) == 0)
+                if (m_SurfaceName.compare(_R("adductor brevis")) == 0)
                 {
                   // landmarks
                   Landmark1VMEName = "Midpoint of lateral surface of the Right inferior pubic ramus ";
@@ -2927,7 +2927,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
                   m_MuscleType = 1;
                 }
                 else
-                  if (m_SurfaceName.Compare(_R("rectus femoris")) == 0)
+                  if (m_SurfaceName.compare(_R("rectus femoris")) == 0)
                   {
                     // landmarks
                     Landmark1VMEName = "Right Anterior Inferior Iliac Spine ";
@@ -2939,7 +2939,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
                     m_MuscleType = 1;
                   }
                   else
-                    if (m_SurfaceName.Compare(_R("semitendinous")) == 0)
+                    if (m_SurfaceName.compare(_R("semitendinous")) == 0)
                     {
                       // landmarks
                       Landmark1VMEName = "Posterior most point on medial border of posterior surface of the Right ischial tuberosity";
@@ -2951,7 +2951,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
                       m_MuscleType = 1;
                     }
                     else
-                      if (m_SurfaceName.Compare(_R("gluteus maximus")) == 0)
+                      if (m_SurfaceName.compare(_R("gluteus maximus")) == 0)
                       {
                         // landmarks
                         Landmark1VMEName = "Lateral corner of Right sacral-coccygeal facet  ";
@@ -2963,7 +2963,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
                         m_MuscleType = 1;
                       }
                       else
-                        if (m_SurfaceName.Compare(_R("gluteus medius")) == 0)
+                        if (m_SurfaceName.compare(_R("gluteus medius")) == 0)
                         {
                           // landmarks
                           Landmark1VMEName = "Lateral surface of the Right ilium at midpoint between most lateral point on superior tubercle of iliac crest (pt. 39) and origin of Gluteus Medius posterior fibers (pt. 41).   ";
@@ -2975,7 +2975,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
                           m_MuscleType = 1;
                         }
                         else
-                          if (m_SurfaceName.Compare(_R("pectineus")) == 0)
+                          if (m_SurfaceName.compare(_R("pectineus")) == 0)
                           {
                             // landmarks
                             Landmark1VMEName = "Base of the Right superior pubic ramus on superior surface lateral to pectineal line ";
@@ -2987,7 +2987,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
                             m_MuscleType = 1;
                           }
                           else
-                            if (m_SurfaceName.Compare(_R("adductor magnus")) == 0)
+                            if (m_SurfaceName.compare(_R("adductor magnus")) == 0)
                             {
                               // landmarks
                               Landmark1VMEName = "Most lateral aspect at posterior corner of lateral surface of Right ischial tuberosity ";
@@ -2999,7 +2999,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
                               m_MuscleType = 1;
                             }
                             else
-                              if (m_SurfaceName.Compare(_R("quadratus femoris")) == 0)
+                              if (m_SurfaceName.compare(_R("quadratus femoris")) == 0)
                               {
                                 // landmarks
                                 Landmark1VMEName = "On lateral surface of Right ischial tuberosity at midpoint between obturator foramen and lateral posterior corner ";
@@ -3011,7 +3011,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
                                 m_MuscleType = 1;
                               }
                               else
-                                if (m_SurfaceName.Compare(_R("sartorius")) == 0)
+                                if (m_SurfaceName.compare(_R("sartorius")) == 0)
                                 {
                                   // landmarks
                                   Landmark1VMEName = "Right Anterior Superior Iliac Spine (repeat of pt. 1) ";
@@ -3023,7 +3023,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
                                   m_MuscleType = 1;
                                 }
                                 else
-                                  if (m_SurfaceName.Compare(_R("vastus medialis")) == 0)
+                                  if (m_SurfaceName.compare(_R("vastus medialis")) == 0)
                                   {
                                     // landmarks
                                     Landmark1VMEName = "most medial corner of femoral shaft cross-section at height of midpoint between juncture of pectineal/gluteal lines and juncture of medial/lateral supracondylar lines";
@@ -3035,7 +3035,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
                                     m_MuscleType = 1;
                                   }
                                   else
-                                    if (m_SurfaceName.Compare(_R("semimembranous")) == 0)
+                                    if (m_SurfaceName.compare(_R("semimembranous")) == 0)
                                     {
                                       // landmarks
                                       Landmark1VMEName = "Bottom of superior depression on posterior surface of Right ischial tuberosity ";
@@ -3047,7 +3047,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
                                       m_MuscleType = 1;
                                     }
                                     else
-                                      if (m_SurfaceName.Compare(_R("obturator internal")) == 0)
+                                      if (m_SurfaceName.compare(_R("obturator internal")) == 0)
                                       {
                                         // DAVID P. 19-01-2005: This is not the permanent solution.
                                         // landmarks
@@ -3069,7 +3069,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
                                         m_MuscleType = 2;
                                       }
                                       else
-                                        if (m_SurfaceName.Compare(_R("long head of the biceps")) == 0)
+                                        if (m_SurfaceName.compare(_R("long head of the biceps")) == 0)
                                         {
                                           // landmarks
                                           Landmark1VMEName = "Posterior most point on medial border of posterior surface of the Right ischial tuberosity";
@@ -3081,7 +3081,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
                                           m_MuscleType = 1;
                                         }
                                         else
-                                          if (m_SurfaceName.Compare(_R("short head of the biceps")) == 0)
+                                          if (m_SurfaceName.compare(_R("short head of the biceps")) == 0)
                                           {
                                             // landmarks
                                             Landmark1VMEName = "on linea aspera at midpoint between juncture of pectineal/gluteal lines and juncture of medial/lateral supracondylar lines";
@@ -3093,7 +3093,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
                                             m_MuscleType = 1;
                                           }
                                           else
-                                            if (m_SurfaceName.Compare(_R("gracilis")) == 0)
+                                            if (m_SurfaceName.compare(_R("gracilis")) == 0)
                                             {
                                               // landmarks
                                               Landmark1VMEName = "Inferior margin of lateral surface of right inferior pubic ramus ";
@@ -3105,7 +3105,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
                                               m_MuscleType = 1;
                                             }
                                             else
-                                              if (m_SurfaceName.Compare(_R("vastus lateralis and intermedius")) == 0)
+                                              if (m_SurfaceName.compare(_R("vastus lateralis and intermedius")) == 0)
                                               {
                                                 // landmarks
                                                 Landmark1VMEName = "most anterior point on anterior surface of femoral shaft at height of juncture of pectineal/gluteal lines";

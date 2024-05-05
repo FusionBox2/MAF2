@@ -110,7 +110,7 @@ void lhpOpLMMirror::OpDo()
   {
 	  mafString synthetic_name = _R("Copied ");
 	  mafAutoPointer<mafNode> node = m_Input->MakeCopy();
-	  synthetic_name.Append(m_Input->GetName());
+	  synthetic_name.append(m_Input->GetName());
 	  node->SetName(synthetic_name);
 	  node->ReparentTo(m_Input->GetParent());
 

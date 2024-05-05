@@ -385,7 +385,7 @@ void lhpOpStickPalpation::OpStop(int result)
   }
   else if (result == OP_RUN_OK)
   {
-    if(m_ScriptFName.IsEmpty())
+    if(m_ScriptFName.empty())
     {
       if(m_StickCalibration == NULL || m_StickDefinition == NULL || m_LimbCalibration == NULL || m_LimbCloud == NULL)
       {
@@ -444,7 +444,7 @@ void lhpOpStickPalpation::OnEvent(mafEventBase *e)
     }
     case ID_LOAD_SCRIPT:
     {
-      if(!m_ScriptFName.IsEmpty())
+      if(!m_ScriptFName.empty())
       {
         ReadDictionary(&m_ScriptFName, m_LMDict);
       }
@@ -586,13 +586,13 @@ void lhpOpStickPalpation::OpDo()
   //modified by Stefano. 18-9-2003
   wxBusyInfo wait("Please wait, working...");
 
-  if(m_ScriptFName.IsEmpty())
+  if(m_ScriptFName.empty())
   {
     ProcessSingleLM();
     return;
   }
 
-  if(m_DictionaryFName.IsEmpty())
+  if(m_DictionaryFName.empty())
     wxMessageBox("Dictionary for c3d import is not specified. Trying to use C3D_dictionary.txt","Alert", wxOK , NULL);
 
 
@@ -608,7 +608,7 @@ void lhpOpStickPalpation::OpDo()
     file += mafWxToString(m_LMDict[nL].first); 
     file += _R(".c3d");
 
-    if(dict.IsEmpty())
+    if(dict.empty())
     {
       dict  = spath;
       dict += _R("\\C3D_dictionnary.txt");

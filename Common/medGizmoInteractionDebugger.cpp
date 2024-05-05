@@ -263,16 +263,16 @@ void medGizmoInteractionDebugger::LogTransformEvent( mafEvent *e )
   switch(mouseAction)
   {
   case mafInteractorGenericMouse::MOUSE_DOWN:
-    mouseActionString.Append(_R("MOUSE DOWN"));
+    mouseActionString.append(_R("MOUSE DOWN"));
     break;
   case mafInteractorGenericMouse::MOUSE_MOVE:
-    mouseActionString.Append(_R("MOUSE MOVE"));
+    mouseActionString.append(_R("MOUSE MOVE"));
     break;
   case mafInteractorGenericMouse::MOUSE_UP:
-    mouseActionString.Append(_R("MOUSE UP"));
+    mouseActionString.append(_R("MOUSE UP"));
     break;
   default:
-    mouseActionString.Append(_R("Unknown mouse action: mouseActionID = "));
+    mouseActionString.append(_R("Unknown mouse action: mouseActionID = "));
     mouseActionString += mafToString((long)mouseAction);
     break;
   }

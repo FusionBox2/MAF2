@@ -233,7 +233,7 @@ int mafDataVector::InternalStore(mafStorageElement *parent)
   // The case when data has just been loaded is avoided, since in that case
   // there is not yet an old filename to which the file was saved.
   bool base_name_changed = m_LastBaseURL != base_url && !m_JustRestored;
-  bool release_old_files = !base_name_changed && !m_LastBaseURL.IsEmpty();
+  bool release_old_files = !base_name_changed && !m_LastBaseURL.empty();
   
   // now check if the filename is (really) changed or if something has changed.
   // Notice that in mafVMEAbstractGaneric, when the storage URL is changed the 

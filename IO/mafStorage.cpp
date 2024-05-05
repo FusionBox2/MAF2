@@ -49,7 +49,7 @@ int mafStorage::Store()
   }
   else
   {
-    dir_path.Clear();
+    dir_path.clear();
   }
 
   //open the directory index
@@ -125,17 +125,17 @@ mafStorable *mafStorage::GetDocument()
 const mafString& mafStorage::GetTmpFolder()
 //------------------------------------------------------------------------------
 {
-  if (m_TmpFolder.IsEmpty())
+  if (m_TmpFolder.empty())
   {
     mafString path=mafPathOnly(m_URL);
-    if (!path.IsEmpty())
+    if (!path.empty())
     {
       m_DefaultTmpFolder=path;
       m_DefaultTmpFolder+=_R("/");
     }
     else
     {
-      m_DefaultTmpFolder.Clear();
+      m_DefaultTmpFolder.clear();
     }
 
     return m_DefaultTmpFolder;
@@ -151,7 +151,7 @@ int mafStorage::OpenDirectory(const mafString& pathname)
 //----------------------------------------------------------------------------
 {
   mafDirectory dir;
-  if (pathname.IsEmpty())
+  if (pathname.empty())
   {
     if (!dir.Load(_R(".")))
       return MAF_ERROR;
@@ -221,14 +221,14 @@ int mafStorage::ResolveInputURL(const mafString& url, mafString &filename, mafBa
   // currently no real URL support
   mafString path;
   path=mafPathOnly(url);
-  if (path.IsEmpty())
+  if (path.empty())
   {
     mafString base_path;
     base_path=mafPathOnly(m_ParserURL);
 
     filename=base_path;
 
-    if (!base_path.IsEmpty())
+    if (!base_path.empty())
       filename+=_R("/");
 
     filename+=url;
@@ -245,7 +245,7 @@ int mafStorage::ResolveInputURL(const mafString& url, mafString &filename, mafBa
 int mafStorage::StoreToURL(const mafString& filename, const mafString& url)
 //------------------------------------------------------------------------------
 {
-  if(url.IsEmpty())
+  if(url.empty())
   {
     assert(false);
     return MAF_ERROR;
@@ -254,12 +254,12 @@ int mafStorage::StoreToURL(const mafString& filename, const mafString& url)
   mafString path;
   path=mafPathOnly(url);
 
-  if (path.IsEmpty())
+  if (path.empty())
   {
     // if local file prepend base_path
     mafString base_path,fullpathname;
     base_path=mafPathOnly(m_URL);
-    if (!base_path.IsEmpty())
+    if (!base_path.empty())
     {
       fullpathname=base_path+_R("/")+url;
     }
@@ -304,7 +304,7 @@ int mafStorage::DeleteURL(const mafString& url)
   mafString path;
   path=mafPathOnly(url);
 
-  if (path.IsEmpty())
+  if (path.empty())
   {
     // if local file prepend base_path
     mafString base_path,fullpathname;

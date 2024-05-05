@@ -206,7 +206,7 @@
     return 0;
 
   szOutDir = GetBrickedLayoutDir(caller, listener);
-  if (szOutDir.IsEmpty())
+  if (szOutDir.empty())
     return 0;	//cancel
 
   return 2;

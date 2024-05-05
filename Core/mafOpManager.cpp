@@ -278,7 +278,7 @@ void mafOpManager::OpRun(mafOp *op, void *op_param)
     tag_nature = ti->GetValue();
   }
   
-	if(!tag_nature.IsEmpty() && tag_nature == _R("NATURAL") && !op->IsInputPreserving())
+	if(!tag_nature.empty() && tag_nature == _R("NATURAL") && !op->IsInputPreserving())
 	{
 		wxString warning_msg = _("The operation do not preserve input VME integrity, a copy is required! \nThis should require a lot of memory and time depending on data dimension. \nDo you want to continue?");
 		wxMessageDialog dialog(mafGetFrame(),warning_msg, _("Warning"), wxYES_NO | wxYES_DEFAULT);
@@ -287,7 +287,7 @@ void mafOpManager::OpRun(mafOp *op, void *op_param)
       mafString synthetic_name = _R("Copied ");
       mafAutoPointer<mafNode> synthetic_vme = m_Selected->MakeCopy();
       synthetic_vme->ReparentTo(m_Selected->GetParent());
-      synthetic_name.Append(m_Selected->GetName());
+      synthetic_name.append(m_Selected->GetName());
       synthetic_vme->SetName(synthetic_name);
       if(mafTagItem *ti = synthetic_vme->GetTagArray()->GetTag(_R("VME_NATURE")))
       	ti->SetValue(_R("SYNTHETIC"));
@@ -454,7 +454,7 @@ void mafOpManager::FillTraceabilityAttribute(mafOp *op, mafNode *in_node, mafNod
 
 #ifdef _WIN32
     mafString regKeyPath = _R("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\");
-    regKeyPath.Append(appStamp);
+    regKeyPath.append(appStamp);
 
     wxRegKey RegKey(regKeyPath.toWx());
     if(RegKey.Exists())
@@ -464,14 +464,14 @@ void mafOpManager::FillTraceabilityAttribute(mafOp *op, mafNode *in_node, mafNod
       RegKey.QueryValue(wxT("DisplayVersion"), revisionWx);
       revision = mafWxToString(revisionWx);
     }
-    appStamp.Append(_R(" "));
-    appStamp.Append(revision);
+    appStamp.append(_R(" "));
+    appStamp.append(revision);
 #endif
    
     if(mafTagItem *ti = in_node->GetTagArray()->GetTag(_R("VME_NATURE")))
     {
       isNatural = ti->GetValue();
-      if (isNatural.Compare(_R("NATURAL")) == 0)
+      if (isNatural.compare(_R("NATURAL")) == 0)
         isNatural = _R("true");
       else
         isNatural = _R("false");
@@ -500,7 +500,7 @@ void mafOpManager::FillTraceabilityAttribute(mafOp *op, mafNode *in_node, mafNod
         else
         {
           mafString trial = traceability->GetLastTrialEvent();
-          if (trial.IsEmpty())
+          if (trial.empty())
             trialEvent = _R("Create");
         }
 
@@ -510,7 +510,7 @@ void mafOpManager::FillTraceabilityAttribute(mafOp *op, mafNode *in_node, mafNod
         if(mafTagItem *ti = in_node->GetTagArray()->GetTag(_R("VME_NATURE")))
         {
           isNatural = ti->GetValue();
-          if (isNatural.Compare(_R("NATURAL")) == 0 )
+          if (isNatural.compare(_R("NATURAL")) == 0 )
             isNatural = _R("true");
           else
             isNatural = _R("false");
@@ -557,7 +557,7 @@ void mafOpManager::OpUndo()
     {
       traceability->RemoveTraceabilityEvent();
       mafString trial = traceability->GetLastTrialEvent();
-      if (trial.IsEmpty())
+      if (trial.empty())
         in_node->RemoveAttribute(_R("TrialAttribute"));
     }
   }

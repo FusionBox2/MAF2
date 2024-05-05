@@ -141,7 +141,7 @@ void mafGUIDialogRemoteFile::OnEvent(mafEventBase *maf_event)
         mafString local_file;
         mafString wildc = _L("MAF Storage Format file (*.msf)|*.msf|Compressed file (*.zmsf)|*.zmsf");
         local_file = mafGetOpenFile(_R(""),wildc,_L("Open local file"),this);
-        if (!local_file.IsEmpty())
+        if (!local_file.empty())
         {
           m_RemoteFilename = local_file;
           e->SetId(wxOK);
@@ -157,7 +157,7 @@ void mafGUIDialogRemoteFile::OnEvent(mafEventBase *maf_event)
       }
       break;
       case wxOK:
-        if (m_RemoteFilename.IsEmpty())
+        if (m_RemoteFilename.empty())
         {
           e->SetId(wxCANCEL);
         }
@@ -166,7 +166,7 @@ void mafGUIDialogRemoteFile::OnEvent(mafEventBase *maf_event)
         mafGUIDialog::OnEvent(e);
       break;
       case wxCANCEL:
-        m_RemoteFilename.Clear();
+        m_RemoteFilename.clear();
         mafGUIDialog::OnEvent(e);
       break;
       default:

@@ -257,7 +257,7 @@ bool lhpOpKinectModel::Import()
   bool result = false;
   Clear();
 
-  if(m_ExtAppPath.IsEmpty())
+  if(m_ExtAppPath.empty())
     return false;
 
   std::vector<mafTimeStamp> timeStamps;

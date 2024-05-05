@@ -164,7 +164,7 @@ void lhpOpBuildHierarchy::OnEvent(mafEventBase *maf_event)
     }
     case ID_LOAD_DICTIONARY:
     {
-      if(!m_DictionaryFName.IsEmpty())
+      if(!m_DictionaryFName.empty())
       {
         ReadDictionary(&m_DictionaryFName, m_dictionary);
       }
@@ -172,7 +172,7 @@ void lhpOpBuildHierarchy::OnEvent(mafEventBase *maf_event)
     }
     case ID_LOAD_HIERARCHY:
     {
-      if(!m_HierarchyFName.IsEmpty())
+      if(!m_HierarchyFName.empty())
       {
         ReadFromFile(m_HierarchyFName);
       }

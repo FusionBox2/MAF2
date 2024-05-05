@@ -95,7 +95,7 @@ void lhpOpCreateMetersScripted::OpRun()
   m_Output = m_Group;
 
   mafString filename = mafGetOpenFile(mafGetApplicationDirectory(), _R("dic files (*.dic)|*.dic"), _R("Choose dictionary"));
-  if (filename.IsEmpty())
+  if (filename.empty())
   {
 	  mafEventMacro(mafEvent(this, OP_RUN_CANCEL));
 	  return;

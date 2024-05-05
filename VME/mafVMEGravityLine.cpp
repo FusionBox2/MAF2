@@ -340,7 +340,7 @@ mafGUI* mafVMEGravityLine::CreateGui()
 	//CreateGuiResult();
 	//m_Gui->Divider(2);
 	mafString ss = _R(" ");
-	gLength = ss.Append(mafToString(distToPlan));
+	gLength = ss.append(mafToString(distToPlan));
 	m_Gui->Label(_L("distance: "), &gLength, true);
     //m_Gui->Divider(2);
    // CreateGuiSphere();
@@ -690,7 +690,7 @@ void mafVMEGravityLine::InternalUpdate()
 
 		//m_Cloud2->Update();
 		mafString ss = _R(" ");
-		gLength = ss.Append(mafToString(std::abs(distToPlan)));
+		gLength = ss.append(mafToString(std::abs(distToPlan)));
 			
 		if(m_Gui)
 			m_Gui->Update();
@@ -866,7 +866,7 @@ void mafVMEGravityLine::InternalUpdate()
 			//	m_Cloud2->SetLandmark(_R("projectedPt"), pPointLocal[0], pPointLocal[01], pPointLocal[02], currTs);
 			//	m_Cloud2->Update();
 				mafString ss = _R(" ");
-				gLength = ss.Append(mafToString(std::abs(distToPlan)));
+				gLength = ss.append(mafToString(std::abs(distToPlan)));
 				if(m_Gui)
 					m_Gui->Update();
 

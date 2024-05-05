@@ -127,7 +127,7 @@ mafOp* mafOpExporterBmp::Copy()
 void mafOpExporterBmp::SaveBmp()
 //----------------------------------------------------------------------------
 {
-  assert(!m_DirName.IsEmpty());
+  assert(!m_DirName.empty());
  
   mafString path,name,ext;
   mafSplitPath(m_DirName,&path,&name,&ext);
@@ -299,7 +299,7 @@ void mafOpExporterBmp::OnEvent(mafEventBase *maf_event)
         m_Gui->Enable(ID_INT, m_Bit8 != 0);
         break;
       case ID_DIROPEN:
-        m_Gui->Enable(wxOK, !m_DirName.IsEmpty());
+        m_Gui->Enable(wxOK, !m_DirName.empty());
         break;
       case wxOK:          
         { 
@@ -325,7 +325,7 @@ bool mafOpExporterBmp::WriteImageDataAsMonocromeBitmap(vtkImageData *img, mafStr
 {
 #ifdef WIN32
   // check filename
-  if( filename.IsEmpty() ) return false;
+  if( filename.empty() ) return false;
   FILE *f = fopen( filename.GetCStr(), "wb");
   if(!f) return false;
   fclose(f); // to be reopended later

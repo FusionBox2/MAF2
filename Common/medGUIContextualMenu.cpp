@@ -274,7 +274,7 @@ void medGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
       mafString file_dir  = mafGetApplicationDirectory();
       mafString wildc     = _R("VRML (*.wrl)|*.wrl");
       mafString file      = mafGetSaveFile(file_dir,wildc);
-      if (!file.IsEmpty())
+      if (!file.empty())
       {
         vtkRenderWindow *renwin = m_ViewActive->GetRWI()->GetRenderWindow();
         vtkNew<vtkVRMLExporter> vrml_exporter;

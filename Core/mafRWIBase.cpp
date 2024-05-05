@@ -701,7 +701,7 @@ void mafRWIBase::SaveImage(const mafString& filename_, int magnification , int f
   mafString filename = filename_;//argument is modified below, so we need to copy it, refactor
   mafString path, name, ext;
   mafSplitPath(filename,&path,&name,&ext);
-  if (filename.IsEmpty() || ext.IsEmpty())
+  if (filename.empty() || ext.empty())
   {
     mafString wildc = _R("Image (*.bmp)|*.bmp|Image (*.jpg)|*.jpg|Image (*.png)|*.png|Image (*.ps)|*.ps|Image (*.tiff)|*.tiff");
 //    wxString file = wxString::Format("%s\\%sSnapshot", m_SaveDir.GetCStr(),filename.GetCStr());
@@ -726,9 +726,9 @@ void mafRWIBase::SaveImage(const mafString& filename_, int magnification , int f
       filename = name;
     }
 */    
-    file.Append(filename);
+    file.append(filename);
     file = mafGetSaveFile(file,wildc); 
-    if(file.IsEmpty()) 
+    if(file.empty()) 
       return;
     filename = file;
   }
@@ -752,7 +752,7 @@ void mafRWIBase::SaveImage(const mafString& filename_, int magnification , int f
   }
 
   mafString basename = filename.BaseName();
-  if (basename.IsEmpty())
+  if (basename.empty())
   {
     filename = m_SaveDir + _R("\\") + filename;
   }
@@ -870,7 +870,7 @@ void mafRWIBase::SaveImageRecursive(const mafString& filename_, mafViewCompound 
 
   mafString path, name, ext;
   mafSplitPath(filename,&path,&name,&ext);
-  if (filename.IsEmpty() || ext.IsEmpty())
+  if (filename.empty() || ext.empty())
   {
     //wxString wildc = "Image (*.bmp)|*.bmp|Image (*.jpg)|*.jpg";
     mafString wildc = _R("Image (*.bmp)|*.bmp|Image (*.jpg)|*.jpg|Image (*.png)|*.png|Image (*.ps)|*.ps|Image (*.tiff)|*.tiff");
@@ -895,9 +895,9 @@ void mafRWIBase::SaveImageRecursive(const mafString& filename_, mafViewCompound 
       filename = name;
     }
 
-    file.Append(filename);
+    file.append(filename);
     file = mafGetSaveFile(file,wildc); 
-    if(file.IsEmpty()) 
+    if(file.empty()) 
       return;
     filename = file;
   }
@@ -921,7 +921,7 @@ void mafRWIBase::SaveImageRecursive(const mafString& filename_, mafViewCompound 
   }
 
   mafString basename = filename.BaseName();
-  if (basename.IsEmpty())
+  if (basename.empty())
   {
     filename = m_SaveDir + _R("\\") + filename;
   }
@@ -940,18 +940,18 @@ void mafRWIBase::RecursiveSaving(const mafString& filename, mafViewCompound *v,i
     if(mafViewCompound::SafeDownCast(currentView) != NULL)
     {
       mafString subViewString;
-      subViewString.Append(filename);
+      subViewString.append(filename);
       mafString pathName, fileName, extension;
       mafSplitPath(subViewString,&pathName,&fileName,&extension);
 
-      subViewString.Clear();
-      subViewString.Append(pathName);
-      subViewString.Append(_R("\\"));
-      subViewString.Append(fileName);
-      subViewString.Append(_R("_"));
-      subViewString.Append(currentView->GetLabel());
-      subViewString.Append(_R("."));
-      subViewString.Append(extension);
+      subViewString.clear();
+      subViewString.append(pathName);
+      subViewString.append(_R("\\"));
+      subViewString.append(fileName);
+      subViewString.append(_R("_"));
+      subViewString.append(currentView->GetLabel());
+      subViewString.append(_R("."));
+      subViewString.append(extension);
 
       RecursiveSaving(subViewString, mafViewCompound::SafeDownCast(currentView), magnification);
     }
@@ -959,15 +959,15 @@ void mafRWIBase::RecursiveSaving(const mafString& filename, mafViewCompound *v,i
     {
       ///////////////////////////////////
       mafString temp, pathName, fileName, extension;
-      temp.Append(filename);
+      temp.append(filename);
       mafSplitPath(temp,&pathName,&fileName,&extension);
-      fileName.Append(mafString::Format(_R("_%d"), i));
-      temp.Clear();
-      temp.Append(pathName);
-      temp.Append(_R("\\"));
-      temp.Append(fileName);
-      temp.Append(_R("."));
-      temp.Append(extension);
+      fileName.append(mafString::Format(_R("_%d"), i));
+      temp.clear();
+      temp.append(pathName);
+      temp.append(_R("\\"));
+      temp.append(fileName);
+      temp.append(_R("."));
+      temp.append(extension);
 
       ::wxBeginBusyCursor();
 
@@ -1085,7 +1085,7 @@ void mafRWIBase::SaveAllImages(const mafString& filename_, mafViewCompound *v, i
   mafString filename = filename_;//argument is modified below, so we need to copy it, refactor
   mafString path, name, ext;
   mafSplitPath(filename,&path,&name,&ext);
-  if (filename.IsEmpty() || ext.IsEmpty())
+  if (filename.empty() || ext.empty())
   {
     mafString wildc = _R("Image (*.jpg)|*.jpg|Image (*.bmp)|*.bmp|Image (*.png)|*.png");
     switch(forceExtension)
@@ -1107,9 +1107,9 @@ void mafRWIBase::SaveAllImages(const mafString& filename_, mafViewCompound *v, i
       file +=  _R("\\");
       filename = name;
     }
-    file.Append(filename);
+    file.append(filename);
     file = mafGetSaveFile(file,wildc); 
-    if(file.IsEmpty())
+    if(file.empty())
       return;
     filename = file;
   }
@@ -1133,7 +1133,7 @@ void mafRWIBase::SaveAllImages(const mafString& filename_, mafViewCompound *v, i
   }
 
   mafString basename = filename.BaseName();
-  if (basename.IsEmpty())
+  if (basename.empty())
   {
     filename = m_SaveDir + _R("\\") + filename;
   }

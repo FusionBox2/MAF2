@@ -996,9 +996,9 @@ mafString mafOpExtractIsosurface::GetParameters()
   mafString parameter;
   for (int contour = 0; contour < m_NumberOfContours; contour++)
   {
-    parameter.Append(_R("Contour value = "));
-    parameter.Append(mafString::Format(_R("%f"), m_IsoValueVector[contour]));
-    parameter.Append(_R(", "));
+    parameter.append(_R("Contour value = "));
+    parameter.append(mafString::Format(_R("%f"), m_IsoValueVector[contour]));
+    parameter.append(_R(", "));
   }
   parameter = mafWxToString(parameter.toWx().RemoveLast(2));
 

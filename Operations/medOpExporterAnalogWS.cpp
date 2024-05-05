@@ -83,7 +83,7 @@ void medOpExporterAnalogWS::OpRun()
 	mafString f = mafGetSaveFile(proposed,wildc); 
 
 	int result = OP_RUN_CANCEL;
-	if(!f.IsEmpty())
+	if(!f.empty())
 	{
 		m_File = f;
 		Write();

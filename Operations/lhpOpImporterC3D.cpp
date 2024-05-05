@@ -474,8 +474,8 @@ mafVMEGroup *lhpOpImporterC3D::ImportSingleFile(const mafString &fullFileName, l
       {
         mafNEW(intData.m_VmeGroup);
         mafString resultName;
-        resultName.Append(intData.m_FileName);
-        resultName.Append(_R("_C3D"));
+        resultName.append(intData.m_FileName);
+        resultName.append(_R("_C3D"));
         intData.m_VmeGroup->SetName(resultName);
       }
 
@@ -544,7 +544,7 @@ void lhpOpImporterC3D::ImportTrajectories(lhpOpImporterC3D::_InternalC3DData &in
 
   intData.m_Clouds.clear();
 
-  bool usingDictionary = (!m_DictionaryFileName.IsEmpty());
+  bool usingDictionary = (!m_DictionaryFileName.empty());
   mafVMELandmarkCloud *specCloud = NULL;//the only cloud if read without dictionary and NOT_IN_DICTIONARY with
   mafString specCloudName;//name of specCloud
 
@@ -554,11 +554,11 @@ void lhpOpImporterC3D::ImportTrajectories(lhpOpImporterC3D::_InternalC3DData &in
     mafNEW(specCloud);
     if(specCloud == NULL)
       return;
-    specCloudName.Append(_R("TRAJECTORIES"));
+    specCloudName.append(_R("TRAJECTORIES"));
     specCloud->SetName(specCloudName);
   }
   else//with dictionary just prepare name, creation only if needed
-    specCloudName.Append(_R("NOT_IN_DICTIONARY"));
+    specCloudName.append(_R("NOT_IN_DICTIONARY"));
 
 
   mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
@@ -602,9 +602,9 @@ void lhpOpImporterC3D::ImportTrajectories(lhpOpImporterC3D::_InternalC3DData &in
                   //if created successfully use it
                   if(cld != NULL)
                   {
-                    cldName.Append(intData.m_FileName);
-                    cldName.Append(_R("_"));
-                    cldName.Append(nmIt->second);
+                    cldName.append(intData.m_FileName);
+                    cldName.append(_R("_"));
+                    cldName.append(nmIt->second);
                     cld->SetName(cldName);
                     intData.m_Clouds[nmIt->second] = cld;
                     addTo = cld;
@@ -747,8 +747,8 @@ void lhpOpImporterC3D::ImportAnalog(lhpOpImporterC3D::_InternalC3DData &intData)
   //name analog vme
   mafNEW(intData.m_VmeAnalog);
   mafString analogVmeName;
-  analogVmeName.Append(intData.m_FileName);
-  analogVmeName.Append(_R("_ANALOG"));
+  analogVmeName.append(intData.m_FileName);
+  analogVmeName.append(_R("_ANALOG"));
   intData.m_VmeAnalog->SetName(analogVmeName);
 
   vnl_matrix<double> analogMatrix;
@@ -853,9 +853,9 @@ void lhpOpImporterC3D::ImportPlatform(lhpOpImporterC3D::_InternalC3DData &intDat
     mafString platformNumber;
     platformNumber += mafToString(currentPlatform + 1) ;
     mafString platformName;
-    platformName.Append(intData.m_FileName);
-    platformName.Append(_R("_FORCE_PLATFORM_"));
-    platformName.Append(platformNumber);
+    platformName.append(intData.m_FileName);
+    platformName.append(_R("_FORCE_PLATFORM_"));
+    platformName.append(platformNumber);
     intData.m_PlatformList[currentPlatform]->SetName(platformName);
 
     double z = 0;
@@ -871,9 +871,9 @@ void lhpOpImporterC3D::ImportPlatform(lhpOpImporterC3D::_InternalC3DData &intDat
     mafNEW(force);
     intData.m_ForceList.push_back(force);
     mafString forceName;
-    forceName.Append(intData.m_FileName);
-    forceName.Append(_R("_GRF_"));
-    forceName.Append(platformNumber);
+    forceName.append(intData.m_FileName);
+    forceName.append(_R("_GRF_"));
+    forceName.append(platformNumber);
     intData.m_ForceList[currentPlatform]->SetName(forceName);
 
     //moment vector
@@ -881,9 +881,9 @@ void lhpOpImporterC3D::ImportPlatform(lhpOpImporterC3D::_InternalC3DData &intDat
     mafNEW(moment);
     intData.m_MomentList.push_back(moment);
     mafString momentName;
-    momentName.Append(intData.m_FileName);
-    momentName.Append(_R("_MOMENT_"));
-    momentName.Append(platformNumber);
+    momentName.append(intData.m_FileName);
+    momentName.append(_R("_MOMENT_"));
+    momentName.append(platformNumber);
     intData.m_MomentList[currentPlatform]->SetName(momentName);
 
     vtkNew<vtkPolyData> vectorForce;
@@ -1016,7 +1016,7 @@ void lhpOpImporterC3D::CreateGui()
   m_Gui->FileOpen(ID_LOAD_DICT, _R("Dictionary"),  &m_DictionaryFileName, _R("*.txt"));
   m_Gui->Button(ID_CLEAR_DICT, _R("Clean"), _R(""), _R("Press to cancel using dictionary") );
 
-  m_Gui->Enable(ID_CLEAR_DICT, (!m_DictionaryFileName.IsEmpty()));
+  m_Gui->Enable(ID_CLEAR_DICT, (!m_DictionaryFileName.empty()));
 
   m_Gui->OkCancel();
 }
@@ -1024,7 +1024,7 @@ void lhpOpImporterC3D::CreateGui()
 void lhpOpImporterC3D::DictionaryUpdate() 
 //----------------------------------------------------------------------------
 {
-  bool emptyName = (m_DictionaryFileName.IsEmpty());
+  bool emptyName = (m_DictionaryFileName.empty());
   DestroyDictionary();
   if(!emptyName)
   {
@@ -1080,7 +1080,7 @@ void lhpOpImporterC3D::OnEvent(mafEventBase *maf_event)
           if(m_Gui)
           {
             m_Gui->Enable(ID_LOAD_DICT, m_ImportTrajectoriesFlag != 0);
-            m_Gui->Enable(ID_CLEAR_DICT, m_ImportTrajectoriesFlag != 0 && !m_DictionaryFileName.IsEmpty());
+            m_Gui->Enable(ID_CLEAR_DICT, m_ImportTrajectoriesFlag != 0 && !m_DictionaryFileName.empty());
           }
           break;
         }

@@ -36,7 +36,7 @@ mafGUISettings(Listener, label)
 {
   m_BuildHelpGui = false;
   m_HelpFileName = mafGetApplicationDirectory();
-  m_HelpFileName.Append(_R("\\Help\\Help.txt"));   
+  m_HelpFileName.append(_R("\\Help\\Help.txt"));   
   InitializeSettings();
 }
 

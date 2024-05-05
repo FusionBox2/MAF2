@@ -97,7 +97,7 @@ void  lhpOpINPImporter::ImportData()
   m_Surfaces.clear();
   for(unsigned i = 0; i < m_Files.size(); i++)
   {
-    if(m_Files[i].IsEmpty())
+    if(m_Files[i].empty())
       continue;
     mafINPReader  *reader = mafINPReader::New();
     mafVMESurface *surface;

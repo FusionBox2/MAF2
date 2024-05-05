@@ -74,7 +74,7 @@ mafGizmoTranslateAxis::mafGizmoTranslateAxis(mafVME *input, mafBaseEventHandler 
   //-----------------
   // cylinder gizmo
   m_CylGizmo = mafVMEGizmo::New();
-  if(name.IsEmpty()) {
+  if(name.empty()) {
       m_CylGizmo->SetName(_R("CylGizmo"));
   } else {
 	  m_CylGizmo->SetName(name);
@@ -84,7 +84,7 @@ mafGizmoTranslateAxis::mafGizmoTranslateAxis(mafVME *input, mafBaseEventHandler 
 
   // cone gizmo
   m_ConeGizmo = mafVMEGizmo::New();
-  if(name.IsEmpty()) {
+  if(name.empty()) {
       m_ConeGizmo->SetName(_R("ConeGizmo"));
   } else {
      m_ConeGizmo->SetName(name);

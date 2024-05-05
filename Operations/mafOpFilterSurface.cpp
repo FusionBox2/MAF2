@@ -588,36 +588,36 @@ mafString mafOpFilterSurface::GetParameters()
 {
   mafString parameter;
 
-  parameter.Append(_R("n.iteraction = "));
-  parameter.Append(mafString::Format(_R("%i"), m_Iterations));
-  parameter.Append(_R(", "));
-  parameter.Append(_R("preserve topology = "));
-  parameter.Append(mafString::Format(_R("%i"), m_TopologyFlag));
+  parameter.append(_R("n.iteraction = "));
+  parameter.append(mafString::Format(_R("%i"), m_Iterations));
+  parameter.append(_R(", "));
+  parameter.append(_R("preserve topology = "));
+  parameter.append(mafString::Format(_R("%i"), m_TopologyFlag));
 
-  parameter.Append(_R(", "));
-  parameter.Append(_R("reduc. to % = "));
-  parameter.Append(mafString::Format(_R("%i"), m_Reduction));
-  parameter.Append(_R(", "));
-  parameter.Append(_R("angle = "));
-  parameter.Append(mafString::Format(_R("%i"), m_Angle));
-  parameter.Append(_R(", "));
-  parameter.Append(_R("edge splitting = "));
-  parameter.Append(mafString::Format(_R("%i"), m_EdgeSplit));
-  parameter.Append(_R(", "));
-  parameter.Append(_R("flip normals = "));
-  parameter.Append(mafString::Format(_R("%i"), m_FlipNormals));
-  parameter.Append(_R(", "));
-  parameter.Append(_R("strip = "));
-  parameter.Append(mafString::Format(_R("%i"), m_StripFlag));
-  parameter.Append(_R(", "));
-  parameter.Append(_R("triangulate = "));
-  parameter.Append(mafString::Format(_R("%i"), m_TriangulateFlag));
-  parameter.Append(_R(", "));
-  parameter.Append(_R("clean = "));
-  parameter.Append(mafString::Format(_R("%i"), m_CleanFlag));
-  parameter.Append(_R(", "));
-  parameter.Append(_R("connectivity = "));
-  parameter.Append(mafString::Format(_R("%i"), m_ConnectivityFlag));
+  parameter.append(_R(", "));
+  parameter.append(_R("reduc. to % = "));
+  parameter.append(mafString::Format(_R("%i"), m_Reduction));
+  parameter.append(_R(", "));
+  parameter.append(_R("angle = "));
+  parameter.append(mafString::Format(_R("%i"), m_Angle));
+  parameter.append(_R(", "));
+  parameter.append(_R("edge splitting = "));
+  parameter.append(mafString::Format(_R("%i"), m_EdgeSplit));
+  parameter.append(_R(", "));
+  parameter.append(_R("flip normals = "));
+  parameter.append(mafString::Format(_R("%i"), m_FlipNormals));
+  parameter.append(_R(", "));
+  parameter.append(_R("strip = "));
+  parameter.append(mafString::Format(_R("%i"), m_StripFlag));
+  parameter.append(_R(", "));
+  parameter.append(_R("triangulate = "));
+  parameter.append(mafString::Format(_R("%i"), m_TriangulateFlag));
+  parameter.append(_R(", "));
+  parameter.append(_R("clean = "));
+  parameter.append(mafString::Format(_R("%i"), m_CleanFlag));
+  parameter.append(_R(", "));
+  parameter.append(_R("connectivity = "));
+  parameter.append(mafString::Format(_R("%i"), m_ConnectivityFlag));
 
   return parameter;
 }

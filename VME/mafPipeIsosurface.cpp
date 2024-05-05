@@ -248,7 +248,7 @@ void mafPipeIsosurface::ExctractIsosurface(mafVMESurface *isoSurface /* = NULL *
 	m_ContourMapper->GetOutput(0, surface);
 	m_ContourMapper->Update();
 
-  if(m_ExtractIsosurfaceName.IsEmpty())
+  if(m_ExtractIsosurfaceName.empty())
   {
     m_ExtractIsosurfaceName = mafString::Format(_L("Isosurface %g"), m_ContourValue);
   }

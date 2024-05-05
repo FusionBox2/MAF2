@@ -203,7 +203,7 @@ void medOpExporterGRFWS::OpDo()
     mafString wildc = _R("ASCII CSV file (*.csv)|*.csv");
     mafString f = mafGetSaveFile(proposed,wildc); 
 
-    if(!f.IsEmpty())
+    if(!f.empty())
     {
       SetFileName(f.GetCStr());
       if (!m_FastMethod)
@@ -229,7 +229,7 @@ void medOpExporterGRFWS::OpDo()
     mafString wildc = _R("ASCII CSV file (*.csv)|*.csv");
     mafString f = mafGetSaveFile(proposed,wildc); 
 
-    if(!f.IsEmpty())
+    if(!f.empty())
     {
       SetFileName(f.GetCStr());
       if (!m_FastMethod)

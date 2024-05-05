@@ -468,12 +468,12 @@ int lhpOpBonemat::SaveConfigurationFileAs()
 {
   mafString initialFileName;
   initialFileName = mafGetApplicationDirectory();
-  initialFileName.Append(_R("\\newConfigurationFile.conf"));
+  initialFileName.append(_R("\\newConfigurationFile.conf"));
 
   mafString wildc = _R("configuration file (*.conf)|*.conf");
   mafString newFileName = mafGetSaveFile(initialFileName, wildc);
  
-  if (newFileName.IsEmpty()) return MAF_ERROR;
+  if (newFileName.empty()) return MAF_ERROR;
 
   return SaveConfigurationFile(newFileName.GetCStr());
 }
@@ -673,7 +673,7 @@ int lhpOpBonemat::OpenConfigurationFile()
 
   mafString returnString = mafGetOpenFile(_R(""), wildcconf);
 
-  if (returnString.IsEmpty())
+  if (returnString.empty())
   {
     return 1;
   }
@@ -2292,7 +2292,7 @@ int lhpOpBonemat::LoadConfigurationFile( const char *configurationFileName )
   }
 
   mafString LoadConfigurationFileCacheFileName = _R(configurationFileName);
-  LoadConfigurationFileCacheFileName.Append(_R(".Load.cache"));
+  LoadConfigurationFileCacheFileName.append(_R(".Load.cache"));
 
   std::ofstream LoadConfigurationFileCache(LoadConfigurationFileCacheFileName.GetCStr(), std::ios::out);
 

@@ -342,8 +342,8 @@ mafVMEGroup *lhpOpImporterPressionCenter::ImportSingleFile(const mafString &full
 		mafNEW(intData.m_VmeGroup);
 		Initialize(fullFileName, intData);
 		mafString resultName;
-		resultName.Append(fullFileName);
-		resultName.Append(_R("_PC"));
+		resultName.append(fullFileName);
+		resultName.append(_R("_PC"));
 		intData.m_VmeGroup->SetName(resultName);
 
 

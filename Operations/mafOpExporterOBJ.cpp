@@ -99,7 +99,7 @@ void mafOpExporterOBJ::OnEvent(mafEventBase *maf_event)
           FileDir += _R(".obj");
           mafString wildc = _R("OBJ (*.obj)|*.obj");
           m_File = mafGetSaveFile(FileDir, wildc);
-          if(!m_File.IsEmpty())
+          if(!m_File.empty())
           {
             ExportSurface();
             OpStop(OP_RUN_OK);
@@ -111,7 +111,7 @@ void mafOpExporterOBJ::OnEvent(mafEventBase *maf_event)
         {
           mafString f = mafGetDirName(mafGetApplicationDirectory());
 
-          if(!f.IsEmpty()) 
+          if(!f.empty()) 
           {
             m_FileDir = f;
             ExportSurface();
@@ -123,7 +123,7 @@ void mafOpExporterOBJ::OnEvent(mafEventBase *maf_event)
       }
       break;
     case ID_CHOOSE_FILENAME:
-      m_Gui->Enable(wxOK,!m_File.IsEmpty());
+      m_Gui->Enable(wxOK,!m_File.empty());
       break;
     case wxCANCEL:
       OpStop(OP_RUN_CANCEL);

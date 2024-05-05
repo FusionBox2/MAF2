@@ -88,14 +88,14 @@ int mafRemoteStorage::ResolveInputURL(const mafString& url, mafString &filename,
   int res = MAF_OK;
   mafString path;
   path = mafPathOnly(url);
-  if (path.IsEmpty())
+  if (path.empty())
   {
     mafString base_path;
     base_path = mafPathOnly(m_ParserURL);
 
     filename = base_path;
 
-    if (!base_path.IsEmpty())
+    if (!base_path.empty())
       filename += _R("/");
 
     filename += url;
@@ -148,7 +148,7 @@ int mafRemoteStorage::ResolveInputURL(const mafString& url, mafString &filename,
   }
   else
   {
-    m_RemoteRepository.Clear();
+    m_RemoteRepository.clear();
   }
 
   return res;
@@ -160,7 +160,7 @@ int mafRemoteStorage::StoreToURL(const mafString& filename, const mafString& url
   if (!m_IsRemoteMSF)
     return Superclass::StoreToURL(filename, url);
   int save_res = MAF_ERROR;
-  if(url.IsEmpty())
+  if(url.empty())
   {
     assert(false);
     return MAF_ERROR;
@@ -170,11 +170,11 @@ int mafRemoteStorage::StoreToURL(const mafString& filename, const mafString& url
   mafString path, base_path, fullpathname;
   path = mafPathOnly(url);
 
-  if (path.IsEmpty())
+  if (path.empty())
   {
     // if local file prepends base_path
     base_path = m_LocalMSFFolder;
-    if (!base_path.IsEmpty())
+    if (!base_path.empty())
     {
       fullpathname = base_path + _R("/") + url;
     }
@@ -207,7 +207,7 @@ int mafRemoteStorage::StoreToURL(const mafString& filename, const mafString& url
     // currently only local files are supported
     save_res = mafFileRename(filename, fullpathname) ? MAF_OK : MAF_ERROR;
   }
-  if (save_res == MAF_OK && !m_RemoteRepository.IsEmpty())
+  if (save_res == MAF_OK && !m_RemoteRepository.empty())
   {
     mafString remote_file = m_RemoteRepository + _R("/") + mafFileNameFromPath(url);
     save_res = m_RemoteFileManager->UploadLocalFile(fullpathname, remote_file);
@@ -277,7 +277,7 @@ const mafString& mafRemoteStorage::GetTmpFolder()
 {
   if(!m_IsRemoteMSF)
     return Superclass::GetTmpFolder();
-  if(!m_TmpFolder.IsEmpty())
+  if(!m_TmpFolder.empty())
     return Superclass::GetTmpFolder();
   m_DefaultTmpFolder = m_LocalMSFFolder;
   m_DefaultTmpFolder += _R("/");

@@ -62,14 +62,14 @@ void mafOpExporterMSF::OpRun()
 {
 	mafString wildc = _R("MAF Storage Format (*.msf)|*.msf");
 	mafString f;
-  if (m_MSFFile.IsEmpty())
+  if (m_MSFFile.empty())
   {
     f = mafGetSaveFile(m_MSFFileDir,wildc); 
     m_MSFFile = f;
   }
 
   int result = OP_RUN_CANCEL;
-  if(!m_MSFFile.IsEmpty()) 
+  if(!m_MSFFile.empty()) 
 	{
     if (ExportMSF() == MAF_OK)
     {
@@ -92,7 +92,7 @@ int mafOpExporterMSF::ExportMSF()
   {
   	wxBusyInfo wait("Saving MSF: Please wait");
   }
-  assert(!m_MSFFile.IsEmpty());
+  assert(!m_MSFFile.empty());
 
 	if(!mafFileExists(m_MSFFile))
 	{

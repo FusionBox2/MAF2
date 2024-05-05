@@ -244,7 +244,7 @@ void mafGUIApplicationSettings::SetUseDefaultPassPhrase(int use_default, const m
     }
     else
     {
-      if (passphrase.IsEmpty())
+      if (passphrase.empty())
       {
         m_PassPhrase = mafWxToString(wxGetPasswordFromUser(_("Insert passphrase"),_("Passphrase"),wxEmptyString));
       }

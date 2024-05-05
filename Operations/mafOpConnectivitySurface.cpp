@@ -119,15 +119,15 @@ void mafOpConnectivitySurface::CreateGui()
   m_Gui->Label(_R("Input bounds dimensions:"),true);
 
   mafString labelX;
-  labelX.Append(mafString::Format(_L("DimX:  %.2f"),(bounds[1]-bounds[0])));
+  labelX.append(mafString::Format(_L("DimX:  %.2f"),(bounds[1]-bounds[0])));
   m_Gui->Label(labelX);
 
   mafString labelY;
-  labelY.Append(mafString::Format(_L("DimY:  %.2f"),(bounds[3]-bounds[2])));
+  labelY.append(mafString::Format(_L("DimY:  %.2f"),(bounds[3]-bounds[2])));
   m_Gui->Label(labelY);
 
   mafString labelZ;
-  labelZ.Append(mafString::Format(_L("DimZ:  %.2f"),(bounds[5]-bounds[4])));
+  labelZ.append(mafString::Format(_L("DimZ:  %.2f"),(bounds[5]-bounds[4])));
   m_Gui->Label(labelZ);
 
 

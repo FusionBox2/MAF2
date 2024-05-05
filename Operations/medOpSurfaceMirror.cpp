@@ -195,7 +195,7 @@ void medOpSurfaceMirror::OpDo()
 			{
 				mafString synthetic_name = _R("Copied ");
 				mafAutoPointer<mafNode> node = (((mafVMEGroup*)m_Input)->GetChild(i))->MakeCopy();
-				synthetic_name.Append(((mafVMEGroup*)m_Input)->GetChild(i)->GetName());
+				synthetic_name.append(((mafVMEGroup*)m_Input)->GetChild(i)->GetName());
 				node->SetName(synthetic_name);
 				
 				((mafVMEGroup*)m_Input)->AddChild(node);
@@ -246,7 +246,7 @@ void medOpSurfaceMirror::OpDo()
 
 					mafString synthetic_name = _R("Copied ");
 					mafAutoPointer<mafNode> node = (((mafVMEGroup*)m_Input)->GetChild(i))->MakeCopy();
-					synthetic_name.Append(((mafVMEGroup*)m_Input)->GetChild(i)->GetName());
+					synthetic_name.append(((mafVMEGroup*)m_Input)->GetChild(i)->GetName());
 					node->SetName(synthetic_name);
 
 					((mafVMEGroup*)m_Input)->AddChild(node);

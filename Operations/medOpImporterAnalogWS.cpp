@@ -71,7 +71,7 @@ void medOpImporterAnalogWS::OpRun()
 	mafString pgd_wildc	= _R("EMG File (*.*)|*.*");
   mafString f;
   f = mafGetOpenFile(m_FileDir,pgd_wildc); 
-	if(!f.IsEmpty() && mafFileExists(f))
+	if(!f.empty() && mafFileExists(f))
 	{
 	  m_File = f;
     Read();

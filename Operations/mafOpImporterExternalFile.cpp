@@ -64,7 +64,7 @@ void mafOpImporterExternalFile::OpRun()
 {
   mafString wildc = _L("All Files (*.*) |*.*");
   mafString f;
-  if (m_File.IsEmpty())
+  if (m_File.empty())
   {
     f = mafGetOpenFile(m_FileDir,wildc);
     m_File = f;
@@ -72,7 +72,7 @@ void mafOpImporterExternalFile::OpRun()
   
   int result = OP_RUN_CANCEL;
 
-  if(!m_File.IsEmpty()) 
+  if(!m_File.empty()) 
   {
     ImportExternalFile();
     result = OP_RUN_OK;

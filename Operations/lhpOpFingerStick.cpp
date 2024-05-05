@@ -328,7 +328,7 @@ void lhpOpFingerStick::OpStop(int result)
   }
   else if (result == OP_RUN_OK)
   {
-    if(m_DictionaryFName.IsEmpty() || m_PlateCalibration == NULL || m_PalpatorCalibration == NULL)
+    if(m_DictionaryFName.empty() || m_PlateCalibration == NULL || m_PalpatorCalibration == NULL)
     {
       //wxMessageBox("Wand is not defined. Possibly wand data are not imported.","Alert", wxOK , NULL);
       wxMessageBox("Not all data defined for operation.","Alert", wxOK , NULL);
@@ -373,7 +373,7 @@ void lhpOpFingerStick::OnEvent(mafEventBase *e)
     }
     case ID_LOAD_LIST:
     {
-      if(!m_ListFName.IsEmpty())
+      if(!m_ListFName.empty())
       {
         m_LMDict.clear();
         ReadLMDictionary(&m_ListFName);
@@ -573,15 +573,15 @@ void lhpOpFingerStick::OpDo()
   group->ReparentTo(m_Input);
   mafEventMacro(mafEvent(this,VME_ADD,group));
 
-  for(nI = 0; nI < ((!m_ListFName.IsEmpty()) ? m_LMDict.size() : m_BallsCalibration->GetNumberOfLandmarks()); nI++)
+  for(nI = 0; nI < ((!m_ListFName.empty()) ? m_LMDict.size() : m_BallsCalibration->GetNumberOfLandmarks()); nI++)
   {
-    int LMIndex = (!m_ListFName.IsEmpty()) ? m_BallsCalibration->FindLandmarkIndex(mafWxToString(m_LMDict[nI].first)) : nI;
+    int LMIndex = (!m_ListFName.empty()) ? m_BallsCalibration->FindLandmarkIndex(mafWxToString(m_LMDict[nI].first)) : nI;
     if(LMIndex == -1)
       continue;
     mafString file(spath);
     mafString name;
     file += _R("\\");
-    name  = (!m_ListFName.IsEmpty()) ? mafWxToString(m_LMDict[nI].second) : m_BallsCalibration->GetLandmarkName(nI);
+    name  = (!m_ListFName.empty()) ? mafWxToString(m_LMDict[nI].second) : m_BallsCalibration->GetLandmarkName(nI);
     file += name; 
     file += _R(".c3d");
 

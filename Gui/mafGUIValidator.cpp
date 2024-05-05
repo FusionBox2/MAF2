@@ -717,7 +717,7 @@ bool mafGUIValidator::TransferToWindow(void)
 			path = *m_MafStringVar;
 			if( ! mafDirExists(path) ) mafSplitPath(*m_MafStringVar, &path, &name, &ext); // it is a filename
 			m_TextCtrl->SetValue(path.toWx());
-			if(!path.IsEmpty())
+			if(!path.empty())
 			{ 
 				m_TextCtrl->SetToolTip(path.toWx());
 			}
@@ -725,14 +725,14 @@ bool mafGUIValidator::TransferToWindow(void)
     case VAL_FILEOPEN:
     case VAL_FILESAVE:
 			mafSplitPath(*m_MafStringVar, &path, &name, &ext);
-			if (!ext.IsEmpty())
+			if (!ext.empty())
 			{
 				name += _R(".");
 				name += ext;
 			}
 			m_TextCtrl->SetValue(name.toWx());
 			path = *m_MafStringVar;
-			if(!path.IsEmpty())
+			if(!path.empty())
 			{ 
 				m_TextCtrl->SetToolTip(path.toWx());
 			}
@@ -1043,7 +1043,7 @@ void mafGUIValidator::OnButton(wxCommandEvent& event)
       case VAL_FILEOPEN:
       {
         mafSplitPath(*m_MafStringVar, &path, &name, &ext);
-				if (!ext.IsEmpty() )
+				if (!ext.empty() )
 				{
 					name += _R(".");
 					name += ext;
@@ -1067,7 +1067,7 @@ void mafGUIValidator::OnButton(wxCommandEvent& event)
       case VAL_FILESAVE:
       {
         mafSplitPath(*m_MafStringVar, &path, &name, &ext);
-				if (!ext.IsEmpty() )
+				if (!ext.empty() )
 				{
 					name += _R(".");
 					name += ext;

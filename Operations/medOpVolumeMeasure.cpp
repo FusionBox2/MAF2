@@ -163,7 +163,7 @@ void medOpVolumeMeasure::OnEvent(mafEventBase *maf_event)
     case ID_STORE_MEASURE:
     {
       m_MeasureText = mafWxToString(wxGetTextFromUser("",_("Insert measure description"), _(m_MeasureText.toWx())));
-      if(m_MeasureText.IsEmpty()) break;
+      if(m_MeasureText.empty()) break;
       mafString t = m_VolumeMeasure + _L(" ") + m_SurfaceArea + _R(" ") + m_NormalizedShapeIndex + _R(" ") + m_MeasureText;
       m_MeasureList->Append(_(t.toWx()));
       m_MeasureText = _R("");

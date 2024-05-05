@@ -101,11 +101,11 @@ public:
     m_Dict = _R("");
 
     mafString f = mafGetOpenFile(m_FileDir,m_PgdWildc); 
-    if(!f.IsEmpty())
+    if(!f.empty())
     {
       m_File = f;
       f = mafGetOpenFile(m_DictDir,m_DicWildc,_R("Open Dictionary")); 
-      if(!f.IsEmpty())
+      if(!f.empty())
       {
         m_Dict = f;
         SetDictionaryFlagOn();

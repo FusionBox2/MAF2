@@ -1156,10 +1156,10 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 		ds_info->RestoreText(_L("ClassName"), clsname);
 #ifdef VME_VOLUME_VER1
 		assert(m_LargeData == NULL);
-		if (clsname.Compare(_("vtkMAFLargeImageData")) != 0) 
+		if (clsname.compare(_("vtkMAFLargeImageData")) != 0) 
 #else
 		assert(m_LargeDataReader == NULL);
-		if (clsname.Compare(_L("mafVolumeLargeReader")) != 0) 		
+		if (clsname.compare(_L("mafVolumeLargeReader")) != 0) 		
 #endif
 		{
 			wxMessageBox(wxString::Format(_("Class '%s' is unsupported in the current release."),

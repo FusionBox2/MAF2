@@ -83,7 +83,7 @@ void medOpImporterLandmarkWS::OpRun()
     {
       f = mafGetOpenFile(m_FileDir,pgd_wildc); 
     }
-	if(!f.IsEmpty() && mafFileExists(f))
+	if(!f.empty() && mafFileExists(f))
 	 {
 	   m_File = f;
      Read();
@@ -207,7 +207,7 @@ void medOpImporterLandmarkWS::Read()
       {
         if ( counter == indexSplitCopy[indexCounter]) //If TRUE this AL already exists
         {
-          if(!x.IsEmpty() && !y.IsEmpty() && !z.IsEmpty() )
+          if(!x.empty() && !y.empty() && !z.empty() )
           {
             //Insert the values in the AL with the same name (idx)
             m_VmeCloud->SetLandmark(lm_idx[indexSPlitOriginal[indexCounter]],xval,yval,zval,tval);
@@ -217,7 +217,7 @@ void medOpImporterLandmarkWS::Read()
         }
         else
         {
-          if(x.IsEmpty() && y.IsEmpty() && z.IsEmpty() )
+          if(x.empty() && y.empty() && z.empty() )
           {
             m_VmeCloud->SetLandmark(lm_idx[counterAL],0,0,0,tval);
             m_VmeCloud->SetLandmarkVisibility(lm_idx[counterAL], 0,tval);
@@ -232,7 +232,7 @@ void medOpImporterLandmarkWS::Read()
       }
       else //AL is not spit in columns
       {
-        if(x.IsEmpty() && y.IsEmpty() && z.IsEmpty() )
+        if(x.empty() && y.empty() && z.empty() )
         {
           m_VmeCloud->SetLandmark(lm_idx[counterAL],0,0,0,tval);
           m_VmeCloud->SetLandmarkVisibility(lm_idx[counterAL], 0,tval);

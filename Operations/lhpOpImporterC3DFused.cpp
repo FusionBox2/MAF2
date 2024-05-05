@@ -336,7 +336,7 @@ void lhpOpImporterC3DFused::OnEvent(mafEventBase *maf_event)
         break;
       }
       case ID_LOAD_SCRIPT:
-        if(!m_ListFName.IsEmpty())
+        if(!m_ListFName.empty())
         {
           m_LMDict.clear();
           ReadLMDictionary(&m_ListFName);
@@ -679,7 +679,7 @@ void lhpOpImporterC3DFused::OpDo()
     p->ReparentTo(m_Input->GetRoot());
   for (auto p : m_Registered)
     p->ReparentTo(m_Input->GetRoot());
-  if (!m_CSVExported && !m_PscScriptFileName.IsEmpty())
+  if (!m_CSVExported && !m_PscScriptFileName.empty())
   {
     m_CSVExported = true;
     mafString path = m_C3DInputFileNameFullPaths[0];

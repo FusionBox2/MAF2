@@ -360,7 +360,7 @@ void mafViewGlobalSlice::VmeCreatePipe(mafNode *node)
   transform->TransformNormal(m_SliceXVector, applied_xVector);
   transform->TransformNormal(m_SliceYVector, applied_yVector);
 
-  if (!pipe_name.IsEmpty())
+  if (!pipe_name.empty())
   {
     if((vme->IsMAFType(mafVMELandmarkCloud) && ((mafVMELandmarkCloud*)vme)->IsOpen()) || vme->IsMAFType(mafVMELandmark) && m_NumberOfVisibleVme == 1)
     {

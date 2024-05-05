@@ -229,9 +229,9 @@ int mafVMEDataSetAttributesImporter::Read()
       
     // build the full name
     mafString ithAttributesFileName = m_ResultsDir;
-    ithAttributesFileName.Append(_R(vclFilePrefix.c_str()));
-    if (m_TimeVarying) ithAttributesFileName.Append(_R(number.str().c_str())) ;
-    ithAttributesFileName.Append(m_FileExtension);
+    ithAttributesFileName.append(_R(vclFilePrefix.c_str()));
+    if (m_TimeVarying) ithAttributesFileName.append(_R(number.str().c_str())) ;
+    ithAttributesFileName.append(m_FileExtension);
      
     // DEBUG
     std::ostringstream stringStream;
@@ -554,7 +554,7 @@ void mafVMEDataSetAttributesImporter::SetFileName( const char *filename )
 
 int mafVMEDataSetAttributesImporter::SplitFileName()
 {
-  if (m_FileName.IsEmpty())
+  if (m_FileName.empty())
   {
       mafWarningMessage(_M("filename not specified!!!"));
     return MAF_ERROR;

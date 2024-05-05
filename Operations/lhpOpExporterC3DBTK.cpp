@@ -152,7 +152,7 @@ void lhpOpExporterC3DBTK::OnEvent(mafEventBase *maf_event)
 
           mafString f = mafGetSaveFile(proposed,wildc); 
 
-          if(!f.IsEmpty()) 
+          if(!f.empty()) 
           {
             m_File = f;
             ExportLandmark();
@@ -182,7 +182,7 @@ void lhpOpExporterC3DBTK::OnEvent(mafEventBase *maf_event)
           {
             mafString f = mafGetDirName(proposed);
 
-            if(!f.IsEmpty()) 
+            if(!f.empty()) 
             {
               m_FileDir = f;
               ExportLandmark();

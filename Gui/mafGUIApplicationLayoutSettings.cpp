@@ -360,7 +360,7 @@ void mafGUIApplicationLayoutSettings::LoadLayout(bool fileDefault)
   else
     file = mafGetOpenFile(_R(""), _L("All Files (*.*)|*.*"), _L("Open Layout File"), GetGui());
 
-  if(file.IsEmpty())
+  if(file.empty())
     return;
 
   if(m_Storage && mafFileExists(file))

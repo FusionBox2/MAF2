@@ -241,7 +241,7 @@ int mafVMEItemScalarMatrix::InternalRestoreData()
 {
   if (!IsDataPresent())
   {
-    if (m_URL.IsEmpty())
+    if (m_URL.empty())
     {
       return MAF_NO_IO;
     }
@@ -543,7 +543,7 @@ void mafVMEItemScalarMatrix::ReleaseData()
 void mafVMEItemScalarMatrix::GetOutputMemory(const char *&out_str, int &size)
 //-------------------------------------------------------------------------
 {
-  if (!m_DataString.IsEmpty())
+  if (!m_DataString.empty())
   {
     out_str = m_DataString.GetCStr();
     size = m_Data.size();

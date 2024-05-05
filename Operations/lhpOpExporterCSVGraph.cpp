@@ -141,7 +141,7 @@ void lhpOpExporterCSVGraph::OnEvent(mafEventBase *maf_event)
     case ID_LOAD_PSC_SCRIPT:
     {
       LoadScript();
-      m_Gui->Enable(wxOK, !m_PscScriptFileName.IsEmpty());
+      m_Gui->Enable(wxOK, !m_PscScriptFileName.empty());
       break;
     }
     case wxOK:
@@ -157,7 +157,7 @@ void lhpOpExporterCSVGraph::OnEvent(mafEventBase *maf_event)
         mafString wildc = _R("csv file (*.csv)|*.csv");
 
         mafString f = mafGetSaveFile(proposed, wildc);
-        if (!f.IsEmpty())
+        if (!f.empty())
         {
           m_File = f;
           ExportGraphs();

@@ -189,7 +189,7 @@ mafGUI* mafVMEInfoText::CreateGui()
     if(m_PosShow[i])
       m_PositionText[i] = m_PosLabels[i] + mafString::Format(_R("%f"), xyz[i]);
     else
-      m_PositionText[i].Clear();
+      m_PositionText[i].clear();
     m_Gui->Label(_R(""), &m_PositionText[i]);
   }
 
@@ -221,7 +221,7 @@ void mafVMEInfoText::SetTimeStamp(mafTimeStamp t)
     if(m_PosShow[i])
       m_PositionText[i] = m_PosLabels[i] + mafString::Format(_R("%f"), xyz[i]);
     else
-      m_PositionText[i].Clear();
+      m_PositionText[i].clear();
   }
   if(m_Gui)
     m_Gui->Update();
@@ -254,7 +254,7 @@ void mafVMEInfoText::SetPosShow(bool show, int index)
   if(m_PosShow[index])
     m_PositionText[index] = m_PosLabels[index] + mafString::Format(_R("%f"), xyz[index]);
   else
-    m_PositionText[index].Clear();
+    m_PositionText[index].clear();
 
   if(m_Gui) 
     m_Gui->Update();
@@ -284,7 +284,7 @@ void mafVMEInfoText::SetPosLabel(const mafString& label, int index)
   if(m_PosShow[index])
     m_PositionText[index] = m_PosLabels[index] + mafString::Format(_R("%f"), xyz[index]);
   else
-    m_PositionText[index].Clear();
+    m_PositionText[index].clear();
 
   if(m_Gui) 
     m_Gui->Update();

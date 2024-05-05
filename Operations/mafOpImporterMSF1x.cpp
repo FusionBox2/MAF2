@@ -71,14 +71,14 @@ void mafOpImporterMSF1x::OpRun()
 {
 	mafString wildc = _R("MSF file (*.msf)|*.msf");
 	mafString f;
-  if(m_File.IsEmpty())
+  if(m_File.empty())
 	{
 		f = mafGetOpenFile(m_FileDir, wildc, _R("Choose MSF file"));
 		m_File = f;
 	}
 
   int result = OP_RUN_CANCEL;
-  if(!m_File.IsEmpty())
+  if(!m_File.empty())
 	{
     wxSetWorkingDirectory(m_File.toWx());
     ImportMSF();

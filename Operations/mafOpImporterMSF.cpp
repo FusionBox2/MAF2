@@ -81,7 +81,7 @@ void mafOpImporterMSF::OpRun()
   }
 
   int result = OP_RUN_CANCEL;
-  if(!m_File.IsEmpty()) 
+  if(!m_File.empty()) 
   {
     if (ImportMSF() == MAF_OK)
     {
@@ -101,7 +101,7 @@ int mafOpImporterMSF::ImportMSF()
   if(ext == _R("zmsf"))
   {
     unixname = mafOpenZIP(m_File, mafWxToString(::wxGetCwd()), m_TmpDir);
-    if(unixname.IsEmpty())
+    if(unixname.empty())
     {
       if (!m_TestMode)
         mafMessage(_M(mafString(_L("Bad or corrupted zmsf file!"))));

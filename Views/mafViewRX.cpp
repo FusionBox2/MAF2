@@ -107,7 +107,7 @@ void mafViewRX::VmeCreatePipe(mafNode *vme)
   mafSceneNode *n = m_Sg->Vme2Node(vme);
   assert(n && !n->m_Pipe);
 
-  if (!pipe_name.IsEmpty())
+  if (!pipe_name.empty())
   {
     if((vme->IsMAFType(mafVMELandmarkCloud) && ((mafVMELandmarkCloud*)vme)->IsOpen()) || vme->IsMAFType(mafVMELandmark) && m_NumberOfVisibleVme == 1)
     {

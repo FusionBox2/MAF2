@@ -100,7 +100,7 @@ mafInteractionManager::mafInteractionManager()
   m_ActionsList       = NULL;
   m_Bindings          = NULL;
   m_SettingFileName = mafGetApplicationDirectory();
-  m_SettingFileName.Append(_R("Config/Presets"));
+  m_SettingFileName.append(_R("Config/Presets"));
   if(!mafDirExists(m_SettingFileName)) m_SettingFileName = mafGetApplicationDirectory();
   
   mafNEW(m_DeviceManager);
@@ -649,7 +649,7 @@ void mafInteractionManager::OnEvent(mafEventBase *event)
           //SIL. 4-7-2005: begin
           mafString result = 
           mafGetSaveFile(m_SettingFileName, _R("Interaction Settings (*.xml)| *.xml"), _R("Save Interaction Settings"));
-          if( result.IsEmpty()) return;
+          if( result.empty()) return;
           m_SettingFileName = result;
           //SIL. 4-7-2005: end
 
@@ -663,7 +663,7 @@ void mafInteractionManager::OnEvent(mafEventBase *event)
           //SIL. 4-7-2005: begin
           mafString result = 
           mafGetOpenFile(m_SettingFileName, _R("Interaction Settings (*.xml)| *.xml"), _R("Load Interaction Settings"));
-          if( result.IsEmpty()) return;
+          if( result.empty()) return;
           m_SettingFileName = result;
           //SIL. 4-7-2005: end
 

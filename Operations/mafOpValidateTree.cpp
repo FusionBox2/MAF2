@@ -160,7 +160,7 @@ int mafOpValidateTree::ValidateTree()
         mafString fileName = _R(ed->GetFileName());
         mafString extension = _R(ed->GetExtension());
 
-        if (m_MSFPath.IsEmpty())
+        if (m_MSFPath.empty())
         {
           mafEventIO e(this,NODE_GET_STORAGE);
           vme->ForwardUpEvent(e);
@@ -193,7 +193,7 @@ int mafOpValidateTree::ValidateTree()
         {
           for (int t = 0; t < dv->GetNumberOfItems(); t++)
           {
-            if (m_MSFPath.IsEmpty())
+            if (m_MSFPath.empty())
             {
               mafEventIO e(this,NODE_GET_STORAGE);
               vme->ForwardUpEvent(e);
@@ -225,14 +225,14 @@ int mafOpValidateTree::ValidateTree()
               }
 
               urlString = _R(item->GetURL());
-              if (urlString.IsEmpty())
+              if (urlString.empty())
               {
                 ErrorLog(mafOpValidateTree::URL_EMPTY, vme->GetName().GetCStr());
                 result = mafOpValidateTree::VALIDATE_ERROR;
               }
               //archiveFilename = item->GetArchiveFileName();
               singleFileMode = dv->GetSingleFileMode();
-              if (singleFileMode && archiveFilename.IsEmpty())
+              if (singleFileMode && archiveFilename.empty())
               {
                 ErrorLog(mafOpValidateTree::ARCHIVE_FILE_NOT_PRESENT, vme->GetName().GetCStr());
                 result = mafOpValidateTree::VALIDATE_ERROR;

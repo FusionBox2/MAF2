@@ -195,7 +195,7 @@ namespace
     if(ext == _R("zmsf"))
     {
       unixname = mafOpenZIP(m_File, mafWxToString(::wxGetCwd()), m_TmpDir);
-      if(unixname.IsEmpty())
+      if(unixname.empty())
       {
         return NULL;
       }
@@ -1381,7 +1381,7 @@ void lhpOpKinectUtil::CreateGui()
   m_Gui->Bool(ID_MODEL, _L("Model"), &m_Model);
   m_Gui->FileOpen(ID_LOAD_DICT, _R("LM list"),  &m_DictionaryFileName, _R("*.txt"));
   m_Gui->Button(ID_CLEAR_DICT, _R("Clean"), _R(""), _R("Press to cancel using list") );
-  m_Gui->Enable(ID_CLEAR_DICT, (!m_DictionaryFileName.IsEmpty()));
+  m_Gui->Enable(ID_CLEAR_DICT, (!m_DictionaryFileName.empty()));
   m_Gui->Enable(ID_TYPEOFREFS, (m_AFs != 0));
 
   m_Gui->OkCancel();
@@ -2278,7 +2278,7 @@ void lhpOpKinectUtil::Clear()
 }
 void lhpOpKinectUtil::DictionaryUpdate()
 {
-  bool emptyName = m_DictionaryFileName.IsEmpty();
+  bool emptyName = m_DictionaryFileName.empty();
   DestroyDictionary();
   if(!emptyName)
   {

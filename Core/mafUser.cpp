@@ -84,13 +84,13 @@ bool mafUser::CheckUserCredentials()
     InitializeUserInformations();
   }
   bool res = true;
-  if (m_Username.IsEmpty() && m_Password.IsEmpty())
+  if (m_Username.empty() && m_Password.empty())
   {
     res = ShowLoginDialog() != wxID_CANCEL;
   }
   // Check only username and not password.
   // This can be valid for anonymous (or guest) user without password
-  res = !m_Username.IsEmpty() && res;
+  res = !m_Username.empty() && res;
   return res;
 }
 //----------------------------------------------------------------------------
@@ -166,7 +166,7 @@ void mafUser::InitializeUserInformations()
   else
   {
     m_Username = mafWxToString(wxGetUserName());
-    m_Password.Clear();
+    m_Password.clear();
     m_RememberCredentials = 0;
   }
 
@@ -184,10 +184,10 @@ bool mafUser::SetCredentials(const mafString& name, const mafString& pwd, int pr
   m_ProxyPort = atoi(proxyPort.GetCStr());
   
   // empty username is not accepted!!
-  m_Initialized = !m_Username.IsEmpty();
+  m_Initialized = !m_Username.empty();
   if (m_Initialized) 
   {
-    if (m_UserHome.IsEmpty())
+    if (m_UserHome.empty())
     {
       InitUserInfoHome();
     }

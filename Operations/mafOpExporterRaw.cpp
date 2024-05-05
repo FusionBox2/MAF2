@@ -121,7 +121,7 @@ void mafOpExporterRAW::OpDo()
 //----------------------------------------------------------------------------
 {					
 	assert(m_Input);
-	assert(!m_FileName.IsEmpty());
+	assert(!m_FileName.empty());
 	this->SaveVolume();
 }
 

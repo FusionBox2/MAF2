@@ -332,7 +332,7 @@ mafGUI* mafVMEMuscleWrapping::CreateGui()
 	m_Gui->Integer(ID_DRate, _R("Discretization rate"), &rate);
 //	m_Gui->Double(CHANGE_VALUE_tempdist, _("tempdist"), &tempdist);
 	
-	gLength = ss.Append( mafToString(globalLength));
+	gLength = ss.append( mafToString(globalLength));
 	gError = mafToString(globalError);
 	m_Gui->Label(_R("distance: "), &gLength, true);
 	m_Gui->Label(_R("error: "), &gError, true);
@@ -779,7 +779,7 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					globalLength = sqrt((local_end[0] - local_start[0])*(local_end[0] - local_start[0]) + (local_end[1] - local_start[1])*(local_end[1] - local_start[1]) + (local_end[2] - local_start[2])*(local_end[2] - local_start[2]));
 					//gLength = globalLength;
 					mafString ss = _R(" ");
-					gLength = ss.Append(mafToString(globalLength));
+					gLength = ss.append(mafToString(globalLength));
 					gError = mafToString(globalError);
 					//m_Gui->Update();
 
@@ -955,7 +955,7 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					globalLength = globalLength + wrappingDistance;
 					//gLength = globalLength;
 					mafString ss = _R(" ");
-					gLength = ss.Append(mafToString(globalLength));
+					gLength = ss.append(mafToString(globalLength));
 					gError = mafToString(globalError);
 
 					m_Goniometer->RemoveAllInputs();
@@ -1142,7 +1142,7 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					//gLength = globalLength;
 
 					mafString ss = _R(" ");
-					gLength = ss.Append(mafToString(globalLength));
+					gLength = ss.append(mafToString(globalLength));
 					gError = mafToString(globalError);
 
 					m_Goniometer->RemoveAllInputs();
@@ -1444,7 +1444,7 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					globalLength = globalLength + wrappingDistance;
 					//gLength = globalLength;
 					mafString ss = _R(" ");
-					gLength = ss.Append(mafToString(globalLength));
+					gLength = ss.append(mafToString(globalLength));
 					gError = mafToString(globalError);
 
 
@@ -1518,7 +1518,7 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					globalLength = 0;
 
 					mafString ss = _R(" ");
-					gLength = ss.Append(mafToString(globalLength));
+					gLength = ss.append(mafToString(globalLength));
 					gError = mafToString(1000);
 
 					//mafEvent ev(this, CAMERA_UPDATE);
@@ -1551,7 +1551,7 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					globalLength = sqrt((m_EndPoint[0] - m_StartPoint[0])*(m_EndPoint[0] - m_StartPoint[0]) + (m_EndPoint[1] - m_StartPoint[1])*(m_EndPoint[1] - m_StartPoint[1]) + (m_EndPoint[2] - m_StartPoint[2])*(m_EndPoint[2] - m_StartPoint[2]));
 					//gLength = globalLength;
 					mafString ss = _R(" ");
-					gLength = ss.Append(mafToString(globalLength));
+					gLength = ss.append(mafToString(globalLength));
 					gError = mafToString(globalError);
 
 					m_Goniometer->RemoveAllInputs();
@@ -1591,7 +1591,7 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					//wxBusyInfo wait04fkkkfqq22tt0(a.c_str());
 					//Sleep(1500);
 			
-					if (m_insert1LandmarkName.IsEmpty() || m_insert1LandmarkName == _R("none"))
+					if (m_insert1LandmarkName.empty() || m_insert1LandmarkName == _R("none"))
 					{
 					//	m_Cloud2->SetLandmark(_R("insert1"), intersectionpts[0][0], intersectionpts[0][1], intersectionpts[0][2], currTs);
 					//	m_Cloud2->Update();
@@ -1773,7 +1773,7 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					globalLength = globalLength + wrappingDistance;
 					//gLength = globalLength;
 					mafString ss = _R(" ");
-					gLength = ss.Append(mafToString(globalLength));
+					gLength = ss.append(mafToString(globalLength));
 					gError = mafToString(globalError);
 
 
@@ -1826,7 +1826,7 @@ void mafVMEMuscleWrapping::InternalUpdate()
 				globalLength = sqrt((m_EndPoint[0] - m_StartPoint[0])*(m_EndPoint[0] - m_StartPoint[0]) + (m_EndPoint[1] - m_StartPoint[1])*(m_EndPoint[1] - m_StartPoint[1]) + (m_EndPoint[2] - m_StartPoint[2])*(m_EndPoint[2] - m_StartPoint[2]));
 				//gLength = globalLength;
 				mafString ss = _R(" ");
-				gLength = ss.Append(mafToString(globalLength));
+				gLength = ss.append(mafToString(globalLength));
 				globalError = 0;
 				gError = mafToString(globalError);
 

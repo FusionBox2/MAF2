@@ -389,7 +389,7 @@ void mafLogicWithGUI::EnableItem(int item, bool enable)
 void mafLogicWithGUI::AddToMenu(const mafString& name, long id, wxMenu* path_menu, const mafString& menuPath)
 //----------------------------------------------------------------------------
 {
-  if (!menuPath.IsEmpty())
+  if (!menuPath.empty())
   {
     wxString op_path = "";
     wxStringTokenizer path_tkz(menuPath.toWx(), "/");

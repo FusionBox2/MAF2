@@ -367,7 +367,7 @@ Select the vme parent
         if (dv->GetSingleFileMode())
         {
           mafString archive_filename = dv->GetArchiveName();
-          if (!archive_filename.IsEmpty())
+          if (!archive_filename.empty())
           {
             storage->ReleaseURL(archive_filename);
           }

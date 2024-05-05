@@ -82,7 +82,7 @@ void mafRemoteLogic::OnEvent(mafEventBase *event)
 //  if(m_ClientUnit && !m_ClientUnit->IsConnected() && m_ClientUnit->IsBusy())
 //    return;
 
-  m_RemoteMsg.Clear();
+  m_RemoteMsg.clear();
 
   mafID id = event->GetId();
   if (mafEvent *e = mafEvent::SafeDownCast(event)) 
@@ -203,7 +203,7 @@ void mafRemoteLogic::OnEvent(mafEventBase *event)
     {
     }
   }
-  if(!m_RemoteMsg.IsEmpty()) // Send the message to the server
+  if(!m_RemoteMsg.empty()) // Send the message to the server
     RemoteMessage(m_RemoteMsg);
 }
 //----------------------------------------------------------------------------

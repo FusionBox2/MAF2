@@ -279,7 +279,7 @@ void mafViewVTK::GetVisualPipeName(mafNode *node, mafString &pipe_name)
     }
   }
 
-  if(pipe_name.IsEmpty())
+  if(pipe_name.empty())
   {
     // pick up the default visual pipe from the vme
     pipe_name = v->GetVisualPipe();
@@ -292,7 +292,7 @@ void mafViewVTK::VmeCreatePipe(mafNode *vme)
   mafString pipe_name;
   GetVisualPipeName(vme, pipe_name);
 
-  if (!pipe_name.IsEmpty())
+  if (!pipe_name.empty())
   {
     m_NumberOfVisibleVme++;
     mafPipeFactory *pipe_factory  = mafPipeFactory::GetInstance();

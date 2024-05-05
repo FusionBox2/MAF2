@@ -272,7 +272,7 @@ void lhpOpRegisterLMScripted::OnEvent(mafEventBase *maf_event)
       case ID_REGTYPE:
       break;
       case ID_LOAD_SCRIPT:
-        if(!m_ListFName.IsEmpty())
+        if(!m_ListFName.empty())
         {
           m_LMDict.clear();
           ReadLMDictionary(&m_ListFName);

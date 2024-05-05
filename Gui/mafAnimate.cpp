@@ -210,7 +210,7 @@ void mafAnimate::OnEvent(mafEventBase *maf_event)
         break;
       case ID_IMPORT:
         fileName = mafGetOpenFile(_R(""), wildcard);
-        if (!fileName.IsEmpty())
+        if (!fileName.empty())
         {
           LoadPoseFromFile(fileName);
           EnableWidgets();
@@ -218,7 +218,7 @@ void mafAnimate::OnEvent(mafEventBase *maf_event)
       break;
       case ID_EXPORT:
         fileName = mafGetSaveFile(_R(""), wildcard);
-        if (!fileName.IsEmpty())
+        if (!fileName.empty())
           StorePoseToFile(fileName);
       break;
       case TIME_SET:
@@ -235,8 +235,8 @@ void mafAnimate::EnableWidgets()
   m_StorePositionButton->Enable( m_Tags != NULL ); 
   m_PositionList->Enable( m_Tags != NULL && m_PositionList->GetCount()>0 );
   m_PositionList->Enable( m_Tags != NULL && m_PositionList->GetCount()>0 );
-  m_DeletePositionButton->Enable( m_Tags != NULL && m_PositionList->GetCount()>0 && !m_SelectedPosition.IsEmpty() );
-  m_RenamePositionButton->Enable( m_Tags != NULL && m_PositionList->GetCount()>0 && !m_SelectedPosition.IsEmpty());
+  m_DeletePositionButton->Enable( m_Tags != NULL && m_PositionList->GetCount()>0 && !m_SelectedPosition.empty() );
+  m_RenamePositionButton->Enable( m_Tags != NULL && m_PositionList->GetCount()>0 && !m_SelectedPosition.empty());
   m_Gui->Enable( ID_INTERPOLATE, m_Tags != NULL && m_PositionList->GetCount()>0 );
   m_AnimatePlayer->Enable(m_PositionList->GetCount()>1);
   m_AnimatePlayer->SetFrameBounds(0,m_PositionList->GetCount()-1);
@@ -559,7 +559,7 @@ void mafAnimate::StoreViewPoint()
 void mafAnimate::RenameViewPoint()
 //----------------------------------------------------------------------------
 {
-	assert(!m_SelectedPosition.IsEmpty());
+	assert(!m_SelectedPosition.empty());
 
 	// prompt user for the new name -----------------------
 	wxTextEntryDialog *dlg = new wxTextEntryDialog(NULL,"please enter a name", "Rename Camera Position",m_SelectedPosition.toWx());
@@ -605,7 +605,7 @@ void mafAnimate::DeleteViewPoint(int pos /*= 0*/)
 //----------------------------------------------------------------------------
 {
   m_SelectedPosition = mafWxToString(m_PositionList->GetStringSelection());
-	if (m_SelectedPosition.IsEmpty() && m_PositionList->GetCount()>0)
+	if (m_SelectedPosition.empty() && m_PositionList->GetCount()>0)
   {
     m_SelectedPosition = mafWxToString(m_PositionList->GetString(0));
     pos = 0;
@@ -617,7 +617,7 @@ void mafAnimate::DeleteViewPoint(int pos /*= 0*/)
   if(m_Tags->GetTag(flyto_tagName))
 	  m_Tags->DeleteTag(flyto_tagName);
 
-	m_SelectedPosition.Clear();
+	m_SelectedPosition.clear();
   if(m_PositionList->GetCount()) 
 	{
 		SetCurrentSelection(0);

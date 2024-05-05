@@ -132,7 +132,7 @@ int mafGUIDialogLogin::GetProxyPort()
 void mafGUIDialogLogin::SetUserCredentials(mafString &usename, mafString &pwd, int &proxyFlag, mafString &proxyHost, int &proxyPort, int &remember_me)
 //----------------------------------------------------------------------------
 {
-  if (!usename.IsEmpty())
+  if (!usename.empty())
   {
     if (m_Username != usename)
     {
@@ -142,7 +142,7 @@ void mafGUIDialogLogin::SetUserCredentials(mafString &usename, mafString &pwd, i
     {
       m_Pwd = pwd;
     }
-    if (!proxyHost.IsEmpty() && m_ProxyHost != proxyHost)
+    if (!proxyHost.empty() && m_ProxyHost != proxyHost)
     {
       m_ProxyHost = proxyHost; 
     }

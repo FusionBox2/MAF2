@@ -252,15 +252,15 @@ void lhpTagHandler_L0000_resource_data_Size_FileSize::HandleAutoTag(lhpTagHandle
 
 	// get manual tags
 	mafString command2execute;
-	command2execute.Clear();
+	command2execute.clear();
 	command2execute = m_PythonwExe;
 
-	command2execute.Append(_R(" lhpVMEBinaryDataChecker.py "));
-  command2execute.Append(_R("\""));
-	command2execute.Append(inputMSF);
-  command2execute.Append(_R("\""));
-	command2execute.Append(_R(" "));
-	command2execute.Append(id);
+	command2execute.append(_R(" lhpVMEBinaryDataChecker.py "));
+  command2execute.append(_R("\""));
+	command2execute.append(inputMSF);
+  command2execute.append(_R("\""));
+	command2execute.append(_R(" "));
+	command2execute.append(id);
 
 	//mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 

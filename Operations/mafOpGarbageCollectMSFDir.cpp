@@ -138,7 +138,7 @@ int mafOpGarbageCollectMSFDir::GetFilesToRemove(std::set<std::string> &filesToRe
 
     // add the backup file if present:
 #pragma message("actually no replacement needed, go straight with mafString")
-    wxString msfXMLBackupFile = msfXMLFileABSFileName.Append(_R(".bak")).toWx();
+    wxString msfXMLBackupFile = msfXMLFileABSFileName.append(_R(".bak")).toWx();
     msfXMLBackupFile.Replace("/","\\");
 
     if (mafFileExists(mafWxToString(msfXMLBackupFile)))
@@ -181,7 +181,7 @@ std::set<std::string> mafOpGarbageCollectMSFDir::GetMSFDirABSFileNamesSet()
   assert(m_Input);
   mafString msfABSPath = GetMSFDirAbsPath(m_Input);
   
-  assert(msfABSPath.IsEmpty() == false);
+  assert(msfABSPath.empty() == false);
   assert(mafDirExists(msfABSPath));
 
   m_MSFDirABSFileNamesSet.clear();

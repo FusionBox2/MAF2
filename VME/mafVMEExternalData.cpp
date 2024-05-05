@@ -118,16 +118,16 @@ mafString mafVMEExternalData::GetAbsoluteFileName()
 {
   mafString filename = m_MSFPath;
 
-  if (m_MSFPath.IsEmpty())
+  if (m_MSFPath.empty())
   {
     InitializeCurrentPath();
     filename = m_MSFPath;
   }
   
-  filename.Append(_R("\\"));
-  filename.Append(_R(this->GetFileName()));
-  filename.Append(_R("."));
-  filename.Append(_R(this->GetExtension()));
+  filename.append(_R("\\"));
+  filename.append(_R(this->GetFileName()));
+  filename.append(_R("."));
+  filename.append(_R(this->GetExtension()));
 
   if (mafFileExists(filename))
   {
@@ -138,10 +138,10 @@ mafString mafVMEExternalData::GetAbsoluteFileName()
     // if file not exists, than the file is not stored yet and I must use TmpPath
     GetTmpPath();
     filename = m_TmpPath;
-    filename.Append(_R("\\"));
-    filename.Append(_R(this->GetFileName()));
-    filename.Append(_R("."));
-    filename.Append(_R(this->GetExtension()));
+    filename.append(_R("\\"));
+    filename.append(_R(this->GetFileName()));
+    filename.append(_R("."));
+    filename.append(_R(this->GetExtension()));
     return filename;
   }
 }
@@ -212,7 +212,7 @@ int mafVMEExternalData::InternalRestore(mafStorageElement *parent)
   m_TmpPath = parent->GetStorage()->GetURL();
   m_TmpPath.ExtractPathName();
   
-  m_MSFPath.Clear();
+  m_MSFPath.clear();
 
   return MAF_OK;
 }
@@ -235,7 +235,7 @@ void mafVMEExternalData::InitializeCurrentPath()
 void mafVMEExternalData::PrintSelf(std::ostream& os,const int indent)
 //-------------------------------------------------------------------------
 {
-  if (m_MSFPath.IsEmpty())
+  if (m_MSFPath.empty())
   {
     InitializeCurrentPath();
   }

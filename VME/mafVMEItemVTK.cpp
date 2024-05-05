@@ -350,7 +350,7 @@ int mafVMEItemVTK::InternalRestoreData()
 {
   if (!IsDataPresent())
   {
-    if (m_URL.IsEmpty())
+    if (m_URL.empty())
     {
       return MAF_NO_IO;
     }

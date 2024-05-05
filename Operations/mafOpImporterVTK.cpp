@@ -100,14 +100,14 @@ void mafOpImporterVTK::OpRun()
 {
 	mafString wildc = _R("vtk Data (*.vtk)|*.vtk");
   mafString f;
-  if (m_File.IsEmpty())
+  if (m_File.empty())
   {
     f = mafGetOpenFile(m_FileDir, wildc, _L("Choose VTK file"));
     m_File = f;
   }
 
   int result = OP_RUN_CANCEL;
-  if(!m_File.IsEmpty())
+  if(!m_File.empty())
 	{
     if (ImportVTK() == MAF_OK)
     {

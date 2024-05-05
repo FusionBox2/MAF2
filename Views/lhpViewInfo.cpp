@@ -231,7 +231,7 @@ void lhpViewInfo::GetVisualPipeName(mafNode *node, mafString &pipe_name)
     pipe_name = m_PipeMap[vme_type].m_PipeName;
   }
 
-  if(pipe_name.IsEmpty())
+  if(pipe_name.empty())
   {
     // pick up the default visual pipe from the vme
     pipe_name = _R("lhpPipeIntGraph");
@@ -244,7 +244,7 @@ void lhpViewInfo::VmeCreatePipe(mafNode *vme)
 {
   mafString pipe_name = _R("");
   GetVisualPipeName(vme, pipe_name);
-  if (!pipe_name.IsEmpty())
+  if (!pipe_name.empty())
   {
     m_NumberOfVisibleVme++;
     mafPipeFactory *pipe_factory  = mafPipeFactory::GetInstance();

@@ -637,12 +637,12 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::FittingLM()
   wxSetWorkingDirectory(newDir.toWx());
 
   mafString command = _R("python.exe lm.py");
-  command.Append(_R(" "));
-  command.Append(mafString::Format(_R("%.3f"),boneParameters[0]));
-  command.Append(_R(" "));
-  command.Append(mafString::Format(_R("%.3f"),boneParameters[1]));
-  command.Append(_R(" "));
-  command.Append(mafString::Format(_R("%.3f"),boneParameters[2]));
+  command.append(_R(" "));
+  command.append(mafString::Format(_R("%.3f"),boneParameters[0]));
+  command.append(_R(" "));
+  command.append(mafString::Format(_R("%.3f"),boneParameters[1]));
+  command.append(_R(" "));
+  command.append(mafString::Format(_R("%.3f"),boneParameters[2]));
   
   WriteHistogramFiles();
 
@@ -650,12 +650,12 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::FittingLM()
   wxExecute(command.toWx(),wxEXEC_SYNC);
 
   command = _R("python.exe lm.py");
-  command.Append(_R(" "));
-  command.Append(mafString::Format(_R("%.3f"),softIssueParameters[0]));
-  command.Append(_R(" "));
-  command.Append(mafString::Format(_R("%.3f"),softIssueParameters[1]));
-  command.Append(_R(" "));
-  command.Append(mafString::Format(_R("%.3f"),softIssueParameters[2]));
+  command.append(_R(" "));
+  command.append(mafString::Format(_R("%.3f"),softIssueParameters[0]));
+  command.append(_R(" "));
+  command.append(mafString::Format(_R("%.3f"),softIssueParameters[1]));
+  command.append(_R(" "));
+  command.append(mafString::Format(_R("%.3f"),softIssueParameters[2]));
 
   mafLogMessage(_M(command));
   //wxExecute(command,wxEXEC_SYNC);

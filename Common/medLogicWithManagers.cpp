@@ -104,7 +104,7 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
 		 case MENU_FILE_SNAPSHOT:
 			  {
 				  mafString msfFilename = m_MSFFile;
-				  if (msfFilename.IsEmpty())
+				  if (msfFilename.empty())
 				  {
 					  mafString dirName = mafGetApplicationDirectory();
 					  dirName += _R("\\data\\msf\\");
@@ -134,14 +134,14 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
 					  cont = imagesDirectory.GetNext(&filename);
 				  }
 
-				  if (e->GetString() && !(e->GetString()->IsEmpty()))
+				  if (e->GetString() && !(e->GetString()->empty()))
 				  {
 					  mafString *imageFileName = new mafString();
-					  imageFileName->Append(imagesDirectoryName);
-					  imageFileName->Append(_R("/"));
-					  imageFileName->Append(*e->GetString());
-					  imageFileName->Append(mafString::Format(_R("_%d"),i));
-					  imageFileName->Append(_R(".png"));
+					  imageFileName->append(imagesDirectoryName);
+					  imageFileName->append(_R("/"));
+					  imageFileName->append(*e->GetString());
+					  imageFileName->append(mafString::Format(_R("_%d"),i));
+					  imageFileName->append(_R(".png"));
 
 					  /*mafRWIBase::SafeDownCast(e->GetVtkObj())->SaveImage(imageFileName);*/
 					  e->SetString(imageFileName);
@@ -325,7 +325,7 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
         UpdateFrameTitle();
         mafString file;
         file=m_MSFFile;
-        if(file.IsEmpty())
+        if(file.empty())
         {
           mafLogMessage (_M("Reload requested whitout opened MSF"));
           //continue wizard with error

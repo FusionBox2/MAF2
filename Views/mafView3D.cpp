@@ -299,7 +299,7 @@ void mafView3D::VmeCreatePipe(mafNode *vme)
   mafString pipe_name = _R("");
   GetVisualPipeName(vme, pipe_name);
 
-  if (!pipe_name.IsEmpty())
+  if (!pipe_name.empty())
   {
     m_NumberOfVisibleVme++;
     mafPipeFactory *pipe_factory  = mafPipeFactory::GetInstance();

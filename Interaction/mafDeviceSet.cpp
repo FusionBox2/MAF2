@@ -179,7 +179,7 @@ void mafDeviceSet::AddDevice(mafDevice *device)
 //------------------------------------------------------------------------------
 {
   assert (device);
-  assert (!device->GetName().IsEmpty()); // all devices must have a name
+  assert (!device->GetName().empty()); // all devices must have a name
   m_DevicesMutex->lock();
   m_Devices.push_back(device);
   device->Register(this);

@@ -240,9 +240,9 @@ void lhpOpLMProj::OpDo()
     return;
   }
 
-  ncname.Append(cloud->GetName());
-  ncname.Append(_R("_projected_on_"));
-  ncname.Append(m_SourceName);
+  ncname.append(cloud->GetName());
+  ncname.append(_R("_projected_on_"));
+  ncname.append(m_SourceName);
   mafNEW(newcloud);
   m_Output = newcloud;
   newcloud->SetName(ncname);

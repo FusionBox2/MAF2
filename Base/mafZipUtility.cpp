@@ -32,7 +32,7 @@ std::vector<mafString> ZIPOpen(const mafString& file)
   mafString ZipFile,tmpDir,MSFFile;
   ZipFile = file;
   mafString zip_cache = mafPathOnly(file);
-  if (zip_cache.IsEmpty())
+  if (zip_cache.empty())
   {
     return filesCreated;
   }

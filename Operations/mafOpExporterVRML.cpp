@@ -108,7 +108,7 @@ void mafOpExporterVRML::OpRun()
 	//m_Gui->Label("absolute matrix",true);
 	//m_Gui->Bool(ID_ABS_MATRIX_TO_STL,"apply",&m_ABSMatrixFlag,0);
 	m_Gui->OkCancel();
-  m_Gui->Enable(wxOK,!m_File.IsEmpty());
+  m_Gui->Enable(wxOK,!m_File.empty());
 	
 	m_Gui->Divider();
 
@@ -169,7 +169,7 @@ void mafOpExporterVRML::OnEvent(mafEventBase *maf_event)
         OpStop(OP_RUN_OK);
       break;
       case ID_CHOOSE_FILENAME:
-        m_Gui->Enable(wxOK,!m_File.IsEmpty());
+        m_Gui->Enable(wxOK,!m_File.empty());
       break;
       case wxCANCEL:
         OpStop(OP_RUN_CANCEL);
