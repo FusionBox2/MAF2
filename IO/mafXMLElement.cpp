@@ -56,18 +56,17 @@ mafStorageElement::ChildrenVector &mafXMLElement::GetChildrenList()
   {
     // create and fill in new children list with element nodes
     m_Children = new ChildrenVector;
-    XERCES_CPP_NAMESPACE_QUALIFIER DOMNodeList *children=m_DOMElement->m_XMLElement->getChildNodes();
-    
-	int length = children->getLength();
-	for (unsigned int i = 0; i<length;i++)
+
+    auto child_element = m_DOMElement->m_XMLElement->getFirstChild();
+    while (child_element)
     {
-      XERCES_CPP_NAMESPACE_QUALIFIER DOMNode *child_element=children->item(i);
-      if (child_element->getNodeType()==XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
-      {
-        mafXMLElement *child=new mafXMLElement(
-			new mmuXMLDOMElement((XERCES_CPP_NAMESPACE_QUALIFIER DOMElement *)child_element),GetStorage());
-        m_Children->push_back(child);
-      }
+		if (child_element->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
+		{
+			mafXMLElement* child = new mafXMLElement(
+				new mmuXMLDOMElement((XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*)child_element), GetStorage());
+			m_Children->push_back(child);
+		}
+        child_element = child_element->getNextSibling();
     }
   }
   return *m_Children;
