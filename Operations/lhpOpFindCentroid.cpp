@@ -86,9 +86,9 @@ void lhpOpFindCentroid::OpRun()
 
   mafVMELandmarkCloud *cloud = NULL;
 
-  for(mafDataVector::Iterator it = dvect->Begin(); it != dvect->End(); ++it)
+  for(auto& elem : *dvect)
   {
-    mafVMEItemVTK *ivtk = mafVMEItemVTK::SafeDownCast(it->second);
+    mafVMEItemVTK *ivtk = mafVMEItemVTK::SafeDownCast(elem.second);
     if(!ivtk)
       continue;
     vtkPoints    *pts;
@@ -117,7 +117,7 @@ void lhpOpFindCentroid::OpRun()
       cloud->GetTagArray()->SetTag(tag_Nature);
       cloud->AppendLandmark(_R("Centroid"));
     }
-    cloud->SetLandmark(0, centroid.x, centroid.y, centroid.z, it->first);
+    cloud->SetLandmark(0, centroid.x, centroid.y, centroid.z, elem.first);
   }
   if(!cloud)
     mafEventMacro(mafEvent(this,OP_RUN_CANCEL));

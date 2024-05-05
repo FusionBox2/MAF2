@@ -71,10 +71,9 @@ mafDataVector::mafDataVector()
 mafDataVector::~mafDataVector()
 //-----------------------------------------------------------------------
 {
-  Iterator it;
-  for (it=Begin();it!=End();it++)
+  for (auto& elem : *this)
   {
-    it->second->SetListener(NULL); // detach items before destroying
+    elem.second->SetListener(NULL); // detach items before destroying
   }
 }
 //-------------------------------------------------------------------------
@@ -136,9 +135,9 @@ void mafDataVector::ShallowCopy(mafDataVector *array)
 //-----------------------------------------------------------------------
 {
   RemoveAllItems();
-  for (Iterator it=array->Begin();it!=array->End();it++)
+  for (auto& elem : *array)
   {
-    mafVMEItem *item=it->second;
+    mafVMEItem *item=elem.second;
 	  mafVMEItem *copy = item->NewInstance();
     assert(copy);
 	  copy->ShallowCopy(item);
@@ -154,10 +153,9 @@ void mafDataVector::DeepCopyVmeLarge(mafDataVector *o)
 //-------------------------------------------------------------------------
 {
   RemoveAllItems();
-  Iterator it;
-  for (it=o->Begin();it!=o->End();it++)
+  for (auto& elem : *o)
   {
-    mafVMEItem *m=it->second;
+    mafVMEItem *m=elem.second;
     mafVMEItem *new_item=m->NewInstance();
     new_item->DeepCopyVmeLarge(m);
     AppendItem(new_item);
@@ -234,7 +232,6 @@ int mafDataVector::InternalStore(mafStorageElement *parent)
   // this test force data to be written when the MSF filename has changed.
   // The case when data has just been loaded is avoided, since in that case
   // there is not yet an old filename to which the file was saved.
-  DataMap::iterator it;
   bool base_name_changed = m_LastBaseURL != base_url && !m_JustRestored;
   bool release_old_files = !base_name_changed && !m_LastBaseURL.IsEmpty();
   
@@ -264,15 +261,13 @@ int mafDataVector::InternalStore(mafStorageElement *parent)
     std::vector<mafString> data_files;
     data_files.resize(GetNumberOfItems());
     
-    int i, ret;
-    mafVMEItem *item = NULL;
+    int ret;
 
     // store single data elements into its own files or into a single file if m_SingleFileMode is true
     if (m_SingleFileMode)
     {
-      it = Begin();
       // check if there is at least one item
-      if (it != End())
+      if (begin() != end())
       {
         //////////////////////////////////////////////////////////////////////////
         int resolvedURL = MAF_OK;
@@ -286,19 +281,16 @@ int mafDataVector::InternalStore(mafStorageElement *parent)
 
           std::vector<mafString> filesExtracted = ZIPOpen(filename);
 
-          DataMap::iterator itTmp;
-          mafVMEItem *itemTmp = NULL;
-          itTmp = Begin();
           int dataIndex = 0;
           int step = round(this->GetNumberOfItems() / 100) + 1;
-          for (itTmp = Begin(); itTmp != End(); itTmp++)
+          for (auto& elem : *this)
           {
             if ((dataIndex % step == 0))
             {
               progress++;
               mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
             }
-            itemTmp = itTmp->second;
+			mafVMEItem* itemTmp = elem.second;
             int IOmode = itemTmp->GetIOMode();
             itemTmp->SetIOModeToDefault();
             itemTmp->UpdateData();
@@ -323,10 +315,8 @@ int mafDataVector::InternalStore(mafStorageElement *parent)
         m_ArchiveName += mafToString(m_VectorID);
         m_ArchiveName += _R(".z");
 
-        it = Begin();
-        item = it->second;
-        item->UpdateData();
-        m_ArchiveName += _R(item->GetDataFileExtension());
+        begin()->second->UpdateData();
+        m_ArchiveName += _R(begin()->second->GetDataFileExtension());
         mafString tmp_archive;
         storage->GetTmpFile(tmp_archive);
         wxFileOutputStream out(tmp_archive.toWx());
@@ -334,9 +324,9 @@ int mafDataVector::InternalStore(mafStorageElement *parent)
         if (!out || !zip)
           return MAF_ERROR;
 
-        for (it = Begin(), i = 0; it != End(); it++, i++)
+        for (auto& elem : *this)
         {
-          item = it->second;
+          auto item = elem.second;
 
           // set item ID if not yet set
           if (item->GetId() < 0)
@@ -397,9 +387,9 @@ int mafDataVector::InternalStore(mafStorageElement *parent)
     }
     else
     {
-      for (it = Begin(), i = 0; it != End(); it++, i++)
+      for (auto& elem : *this)
       {
-        item = it->second;
+        auto item = elem.second;
         item->UpdateData();
 
         // set item ID if not yet set
@@ -448,9 +438,9 @@ int mafDataVector::InternalStore(mafStorageElement *parent)
   }
 
   // Store meta-data (meta-data is stored later to be able set some info about stored data files)
-  for (it = Begin(); it != End(); it++)
+  for (auto& elem : *this)
   {
-    parent->StoreObject(_R("VItem"),it->second.GetPointer());
+    parent->StoreObject(_R("VItem"),elem.second.GetPointer());
   }
 
   m_DataModified = false;

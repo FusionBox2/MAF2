@@ -247,9 +247,9 @@ int mafVMELandmarkCloud::SetNumberOfLandmarks(int num)
     else
     {
       // add a new point and a new vertex to all items
-      for (mafDataVector::Iterator it = m_DataVector->Begin(); it != m_DataVector->End(); it++)
+      for (auto& elem : *m_DataVector)
       {
-        mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(it->second);
+        mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(elem.second);
         assert(item);
         vtkPolyData *polydata = vtkPolyData::SafeDownCast(item->GetData());
 
@@ -305,9 +305,9 @@ int mafVMELandmarkCloud::SetNumberOfLandmarks(int num)
     else
     {
       // remove point from all items
-      for (mafDataVector::Iterator it = m_DataVector->Begin(); it != m_DataVector->End(); it++)
+      for (auto& elem : *m_DataVector)
       {
-        mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(it->second);
+        mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(elem.second);
         assert(item);
         vtkPolyData *polydata=vtkPolyData::SafeDownCast(item->GetData());
         
@@ -503,9 +503,9 @@ int mafVMELandmarkCloud::RemoveLandmark(int idx)
       return MAF_ERROR;
     }
     // remove the point to all items
-    for (mafDataVector::Iterator it = m_DataVector->Begin(); it != m_DataVector->End(); it++)
+    for (auto& elem : *m_DataVector)
     {
-      mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(it->second);
+      mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(elem.second);
       assert(item);
       vtkPolyData *polydata = vtkPolyData::SafeDownCast(item->GetData());
       if (RemovePoint(polydata,idx) != MAF_OK)
@@ -779,8 +779,8 @@ void mafVMELandmarkCloud::Close()
     {
       SetLandmarkName(idx,lm->GetName());
 
-      mafDataVector::Iterator item_id = m_DataVector->Begin();
-      for (mafMatrixVector::Iterator it = lm->GetMatrixVector()->Begin(); it != lm->GetMatrixVector()->End();)
+      auto item_id = m_DataVector->begin();
+      for (auto it = lm->GetMatrixVector()->begin(); it != lm->GetMatrixVector()->end();)
       {
         double xyz[3];
         bool vis;
@@ -796,7 +796,7 @@ void mafVMELandmarkCloud::Close()
         vis = mat->GetElements()[0][0] != 0;
         
         mafVMEItemVTK *item = NULL;
-        if(item_id != m_DataVector->End())
+        if(item_id != m_DataVector->end())
           item = mafVMEItemVTK::SafeDownCast(item_id->second);
         vtkPolyData *polydata;
 
@@ -834,7 +834,7 @@ void mafVMELandmarkCloud::Close()
           // Here I have to add code for setting position of landmarks by default to 
           // the one in the previous timestamp
           mafVMEItemVTK *previous_item = NULL;
-          if (item_id != m_DataVector->Begin())
+          if (item_id != m_DataVector->begin())
           {
             item_id--;
             previous_item = mafVMEItemVTK::SafeDownCast(item_id->second);
@@ -938,10 +938,10 @@ void mafVMELandmarkCloud::Open()
     mafTimeStamp ct = GetTimeStamp();
     lm->SetTimeStamp(ct);
     
-		for (mafDataVector::Iterator it = m_DataVector->Begin(); it != m_DataVector->End() ; it++)
+		for (auto& elem : *m_DataVector)
 		{
       double xyz[3];
-      mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(it->second);
+      mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(elem.second);
       assert(item);
       if (vtkPolyData *polydata = (vtkPolyData *)item->GetData())
       {

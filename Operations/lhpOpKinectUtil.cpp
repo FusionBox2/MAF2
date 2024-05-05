@@ -233,9 +233,9 @@ namespace
         mafDataVector *dataVector = vmeWithDataVector->GetDataVector();
         if(dataVector)
         {
-          for(mafDataVector::Iterator it = dataVector->Begin(); it != dataVector->End(); ++it)
+          for(auto& elem : *dataVector)
           {
-            if(mafVMEItemVTK *vitem = mafVMEItemVTK::SafeDownCast(it->second))
+            if(mafVMEItemVTK *vitem = mafVMEItemVTK::SafeDownCast(elem.second))
               vitem->GetData();
           }
         }

@@ -183,15 +183,15 @@ void lhpOpTimeShift::OpDo()
   mafMatrixVector *mv = vme->GetMatrixVector();
   mafDataVector   *dv = vme->GetDataVector();
 
-  for(mafMatrixVector::Iterator it = mv->Begin(); it != mv->End(); ++it)
+  for(auto& elem : *mv)
   {
-    //it->first += m_Shift;
-    //it->second->SetTimeStamp(it->second->GetTimeStamp() + m_Shift);
+    //elem.first += m_Shift;
+    //elem.second->SetTimeStamp(elem.second->GetTimeStamp() + m_Shift);
   }
-  for(mafDataVector::Iterator it = dv->Begin(); it != dv->End(); ++it)
+  for(auto& elem : *dv)
   {
-    //it->first += m_Shift;
-    //it->second->SetTimeStamp(it->second->GetTimeStamp() + m_Shift);
+    //elem.first += m_Shift;
+    //elem.second->SetTimeStamp(elem.second->GetTimeStamp() + m_Shift);
   }
 
   return;

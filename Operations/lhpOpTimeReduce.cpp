@@ -211,9 +211,9 @@ void lhpOpTimeReduce::OpDo()
       {
         mafMatrixVector::TimeMap::iterator itm = mv->FindItem(kframes[i]);
         mafDataVector::TimeMap::iterator   itd = dv->FindItem(kframes[i]);
-        if(itm != mv->End())
+        if(itm != mv->end())
           mv->RemoveItem(itm);
-        if(itd != dv->End())
+        if(itd != dv->end())
           dv->RemoveItem(itd);
       }
     }
@@ -228,9 +228,9 @@ void lhpOpTimeReduce::OpDo()
       {
         mafMatrixVector::TimeMap::iterator itm = mv->FindItem(kframes[i]);
         mafDataVector::TimeMap::iterator   itd = dv->FindItem(kframes[i]);
-        if(itm != mv->End())
+        if(itm != mv->end())
           mv->RemoveItem(itm);
-        if(itd != dv->End())
+        if(itd != dv->end())
           dv->RemoveItem(itd);
       }
     }

@@ -1582,9 +1582,9 @@ bool lhpOpRegistration::RegistrationProcedure()
         {
           mafMatrixVector::Iterator itm = mv->FindItem(kframes[i]);
           mafDataVector::Iterator   itd = dv->FindItem(kframes[i]);
-          if(itm != mv->End())
+          if(itm != mv->end())
             mv->RemoveItem(itm);
-          if(itd != dv->End())
+          if(itd != dv->end())
             dv->RemoveItem(itd);
         }
       }

@@ -152,10 +152,9 @@ void mafTimeMap<T>::DeepCopy(mafTimeMap *o)
 {
   RemoveAllItems();
   //m_TimeMap=o->m_TimeMap;
-  typename mafTimeMap<T>::TimeMap::iterator it;
-  for (it=o->Begin();it!=o->End();it++)
+  for (auto& elem : *o)
   {
-    T *m=it->second;
+    T *m=elem.second;
     T *new_item=m->NewInstance();
     new_item->DeepCopy(m);
     AppendItem(new_item);

@@ -47,11 +47,10 @@ void mafMatrixVector::GetKeyMatrixVector(std::vector<mafMatrix *> &mvector)
 //-----------------------------------------------------------------------
 {
   mvector.clear();
-  mvector.resize(GetNumberOfMatrices());
-  int i=0;
-  for (Iterator it=Begin();it!=End();it++,i++)
+  mvector.reserve(GetNumberOfMatrices());
+  for (auto& elem : *this)
   {
-    mvector[i]=it->second;
+    mvector.push_back(elem.second);
   }
 }
 //-----------------------------------------------------------------------
@@ -76,10 +75,9 @@ int mafMatrixVector::InternalStore(mafStorageElement *parent)
 //-----------------------------------------------------------------------
 {
   parent->SetAttribute(_R("NumberOfItems"),mafToString(GetNumberOfItems()));
-  for (Iterator it=Begin();it!=End();it++)
+  for (auto& elem : *this)
   {
-    mafMatrix *mat=it->second;
-    if (parent->StoreMatrix(_R("Matrix"),mat)!=MAF_OK)
+    if (parent->StoreMatrix(_R("Matrix"),elem.second)!=MAF_OK)
       return MAF_ERROR;
   }
   return MAF_OK;

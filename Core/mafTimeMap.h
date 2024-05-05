@@ -148,9 +148,12 @@ public:
 
   virtual void Print(std::ostream& os, const int tabs=0) const;
 
-  typename mafTimeMap<T>::TimeMap::iterator Begin() {return m_TimeMap.begin();}
-  typename mafTimeMap<T>::TimeMap::iterator End() {return m_TimeMap.end();}
-  typename mafTimeMap<T>::TimeMap::iterator Last() {return --(m_TimeMap.end());}
+  auto begin() {return m_TimeMap.begin();}
+  auto end() {return m_TimeMap.end();}
+  auto begin() const { return m_TimeMap.begin(); }
+  auto end() const { return m_TimeMap.end(); }
+  auto cbegin() const { return m_TimeMap.cbegin(); }
+  auto cend() const { return m_TimeMap.cend(); }
 
 protected:
   TimeMap         m_TimeMap;        ///< the set storing the datasets

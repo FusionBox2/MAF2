@@ -694,9 +694,9 @@ void medVisualPipePolylineGraph::UpdateScalars()
   m_Vme->Update();
 
 
-  for (mafDataVector::Iterator it = ((medVMEPolylineGraph *)m_Vme)->GetDataVector()->Begin(); it != ((medVMEPolylineGraph *)m_Vme)->GetDataVector()->End(); it++)
+  for (auto& elem : *((medVMEPolylineGraph *)m_Vme)->GetDataVector())
   {
-    mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(it->second);
+    mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(elem.second);
     assert(item);
 
     vtkPolyData *outputVTK = vtkPolyData::SafeDownCast(item->GetData());

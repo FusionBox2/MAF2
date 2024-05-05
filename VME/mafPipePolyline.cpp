@@ -512,9 +512,9 @@ void mafPipePolyline::UpdateScalars()
     return;
   }
 
-	for (mafDataVector::Iterator it = genAbst->GetDataVector()->Begin(); it != genAbst->GetDataVector()->End(); it++)
+	for (auto& elem : *genAbst->GetDataVector())
 	{
-		mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(it->second);
+		mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(elem.second);
 		assert(item);
 
 		vtkPolyData *outputVTK = vtkPolyData::SafeDownCast(item->GetData());
