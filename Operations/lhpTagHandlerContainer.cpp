@@ -102,15 +102,15 @@ void lhpTagHandler_L0000_resource_DictionaryVersion::HandleAutoTag(lhpTagHandler
   {
     assert(files.size() == 1);
     dictionaryFileName = mafWxToString(files[0]);
-    int pos = dictionaryFileName.FindLast(_R("\\"));
+    auto pos = dictionaryFileName.rfind(_R("\\"));
     dictionaryFileName.Erase(0, pos);
   }
 
   wxSetWorkingDirectory(oldDir);
 
-  int pos = dictionaryFileName.FindLast(_R("_"));
+  auto pos = dictionaryFileName.rfind(_R("_"));
   dictionaryFileName.Erase(0, pos);
-  pos = dictionaryFileName.FindLast(_R("."));
+  pos = dictionaryFileName.rfind(_R("."));
   dictionaryFileName.Erase(pos);
   cargo->SetTagHandlerGeneratedString(dictionaryFileName);
 }
@@ -1086,15 +1086,15 @@ void lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Descrip
   {
     assert(files.size() == 1);
     dictionaryFileName = mafWxToString(files[0]);
-    int pos = dictionaryFileName.FindLast(_R("\\"));
+    auto pos = dictionaryFileName.rfind(_R("\\"));
     dictionaryFileName.Erase(0, pos);
   }
 
   wxSetWorkingDirectory(oldDir);
 
-  int pos = dictionaryFileName.FindLast(_R("_"));
+  auto pos = dictionaryFileName.rfind(_R("_"));
   dictionaryFileName.Erase(0, pos);
-  pos = dictionaryFileName.FindLast(_R("."));
+  pos = dictionaryFileName.rfind(_R("."));
   dictionaryFileName.Erase(pos);
   cargo->SetTagHandlerGeneratedString(dictionaryFileName);
 }
@@ -1167,15 +1167,15 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Dictionary
   {
     assert(files.size() == 1);
     dictionaryFileName = mafWxToString(files[0]);
-    int pos = dictionaryFileName.FindLast(_R("\\"));
+    auto pos = dictionaryFileName.rfind(_R("\\"));
     dictionaryFileName.Erase(0, pos);
   }
 
   wxSetWorkingDirectory(oldDir);
 
-  int pos = dictionaryFileName.FindLast(_R("_"));
+  auto pos = dictionaryFileName.rfind(_R("_"));
   dictionaryFileName.Erase(0, pos);
-  pos = dictionaryFileName.FindLast(_R("."));
+  pos = dictionaryFileName.rfind(_R("."));
   dictionaryFileName.Erase(pos);
   cargo->SetTagHandlerGeneratedString(dictionaryFileName);
 }
@@ -1248,15 +1248,15 @@ void lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DictionaryVersio
   {
     assert(files.size() == 1);
     dictionaryFileName = mafWxToString(files[0]);
-    int pos = dictionaryFileName.FindLast(_R("\\"));
+    auto pos = dictionaryFileName.rfind(_R("\\"));
     dictionaryFileName.Erase(0, pos);
   }
 
   wxSetWorkingDirectory(oldDir);
 
-  int pos = dictionaryFileName.FindLast(_R("_"));
+  auto pos = dictionaryFileName.rfind(_R("_"));
   dictionaryFileName.Erase(0, pos);
-  pos = dictionaryFileName.FindLast(_R("."));
+  pos = dictionaryFileName.rfind(_R("."));
   dictionaryFileName.Erase(pos);
   cargo->SetTagHandlerGeneratedString(dictionaryFileName);
 }
@@ -1384,15 +1384,15 @@ void lhpTagHandler_L0000_resource_data_Source_MicroCTSource_MicroCTSource_Dictio
   {
     assert(files.size() == 1);
     dictionaryFileName = mafWxToString(files[0]);
-    int pos = dictionaryFileName.FindLast(_R("\\"));
+    auto pos = dictionaryFileName.rfind(_R("\\"));
     dictionaryFileName.Erase(0, pos);
   }
 
   wxSetWorkingDirectory(oldDir);
 
-  int pos = dictionaryFileName.FindLast(_R("_"));
+  auto pos = dictionaryFileName.rfind(_R("_"));
   dictionaryFileName.Erase(0, pos);
-  pos = dictionaryFileName.FindLast(_R("."));
+  pos = dictionaryFileName.rfind(_R("."));
   dictionaryFileName.Erase(pos);
   cargo->SetTagHandlerGeneratedString(dictionaryFileName);
 }

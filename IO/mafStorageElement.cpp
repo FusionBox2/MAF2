@@ -413,7 +413,7 @@ mafString mafStorageElement::UpgradeAttribute(const mafString& attribute)
     SetAttribute(attribute, new_att_name);
     return new_att_name;
   }
-  if (att_name.FindFirst(_R("mafVME")) != -1)
+  if (att_name.find(_R("mafVME")) != mafString::npos)
   {
     if (att_name == _R("mafVMEScalar"))
     {

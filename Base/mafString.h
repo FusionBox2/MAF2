@@ -76,6 +76,9 @@ private:
 class MAF_EXPORT mafString
 {
 public:
+    using size_type = std::size_t;
+	static constexpr auto npos{ static_cast<size_type>(-1) };
+
     mafString();
 
     mafString(mafStrBuf str);
@@ -92,9 +95,9 @@ public:
 #endif
     
   /** This method returns the size of this string. */
-  size_t length() const;
+  size_type length() const;
 
-  size_t size() const;
+  size_type size() const;
 
   /** Copy N characters of another string to this string.*/
   void NCopy(mafStrBuf src, int n);
@@ -143,16 +146,16 @@ public:
   int FindLastChr(const int c) const;
 
   /** Find first occurrence of a substring */
-  int FindFirst(const mafString& str) const;
+  size_type find(const mafString& str) const;
 
   /** Find first occurrence of a substring */
-  int FindFirst(mafStrBuf str) const;
+  size_type find(mafStrBuf str) const;
 
   /** Find last occurrence of a substring */
-  int FindLast(const mafString& str) const;
+  size_type rfind(const mafString& str) const;
 
   /** Find last occurrence of a substring */
-  int FindLast(mafStrBuf str) const;
+  size_type rfind(mafStrBuf str) const;
 
   mafString BaseName() const;
 

@@ -65,14 +65,14 @@ int mafString::Replace(const mafString& s1, const mafString& s2, bool replaceAll
 #endif
 
 //----------------------------------------------------------------------------
-size_t mafString::length() const
+mafString::size_type mafString::length() const
 //----------------------------------------------------------------------------
 {
     return m_str.length();
 }
 
 //----------------------------------------------------------------------------
-size_t mafString::size() const
+mafString::size_type mafString::size() const
 //----------------------------------------------------------------------------
 {
 	return m_str.size();
@@ -207,7 +207,7 @@ int mafString::FindLastChr(const int c) const
 }
 
 //----------------------------------------------------------------------------
-int mafString::FindFirst(mafStrBuf str) const
+mafString::size_type mafString::find(mafStrBuf str) const
 //----------------------------------------------------------------------------
 {
     auto pos = m_str.find(str);
@@ -215,7 +215,7 @@ int mafString::FindFirst(mafStrBuf str) const
 }
 
 //----------------------------------------------------------------------------
-int mafString::FindFirst(const mafString& str) const
+mafString::size_type mafString::find(const mafString& str) const
 //----------------------------------------------------------------------------
 {
   auto pos = m_str.find(str.m_str);
@@ -223,7 +223,7 @@ int mafString::FindFirst(const mafString& str) const
 }
 
 //----------------------------------------------------------------------------
-int mafString::FindLast(mafStrBuf str) const
+mafString::size_type mafString::rfind(mafStrBuf str) const
 //----------------------------------------------------------------------------
 {
   auto pos = m_str.rfind(str);
@@ -231,7 +231,7 @@ int mafString::FindLast(mafStrBuf str) const
 }
 
 //----------------------------------------------------------------------------
-int mafString::FindLast(const mafString& str) const
+mafString::size_type mafString::rfind(const mafString& str) const
 //----------------------------------------------------------------------------
 {
   auto pos = m_str.find(str.m_str);

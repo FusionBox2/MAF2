@@ -54,7 +54,7 @@ void lhpPipeInfo::FillPage()
   {
     for(int i = 0; i < 54; i++)
       values[i] = kmi->GetValue(i);
-    if(kmi->GetName().FindFirst(_R("Hand-To-Head")) != -1 || kmi->GetName().FindFirst(_R("Hand-To-Mouth")) != -1 || kmi->GetName().FindFirst(_R("Hand-To-Back")) != -1)
+    if(kmi->GetName().find(_R("Hand-To-Head")) != mafString::npos || kmi->GetName().find(_R("Hand-To-Mouth")) != mafString::npos || kmi->GetName().find(_R("Hand-To-Back")) != mafString::npos)
     {
         htmlbuf = _R("<table border=\"1\">\
         <tr><th colspan=\"2\">") + m_Node->GetName() +

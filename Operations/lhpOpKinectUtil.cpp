@@ -1054,7 +1054,7 @@ namespace
         }
 
       }
-      if(kmi->GetName().FindFirst(_R("Hand-To-Head")) != -1 || kmi->GetName().FindFirst(_R("Hand-To-Mouth")) != -1 || kmi->GetName().FindFirst(_R("Hand-To-Back")) != -1)
+      if(kmi->GetName().find(_R("Hand-To-Head")) != mafString::npos || kmi->GetName().find(_R("Hand-To-Mouth")) != mafString::npos || kmi->GetName().find(_R("Hand-To-Back")) != mafString::npos)
       {
         for(int currentSample = 0; currentSample < analogMatrix.columns(); currentSample++)
         {
@@ -1988,7 +1988,7 @@ bool lhpOpKinectUtil::Import()
         nmext = name;
         nmext += _R(".");
         nmext += ext;
-        if(importName.FindFirst(_R("_Scaled")) != -1)
+        if(importName.find(_R("_Scaled")) != mafString::npos)
           staticName = _R("Static_Scaled.txt");
         else
           staticName = _R("Static.txt");

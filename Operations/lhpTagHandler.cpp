@@ -51,6 +51,6 @@ void lhpTagHandler::ExtractTagName()
 {
   // tag name from type
   m_TagName = _R(this->GetTypeName());
-  int endPos = m_TagName.FindFirst(_R("_"));
+  auto endPos = m_TagName.find(_R("_"));
   m_TagName.Erase(0, endPos);
 }

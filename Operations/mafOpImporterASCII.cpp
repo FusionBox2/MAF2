@@ -87,7 +87,7 @@ void mafOpImporterASCII::SetParameters(void *param)
   else
   {
     t = mafWxToString(order);
-    if (t.FindFirst(_R("*.")) != -1)
+    if (t.find(_R("*.")) != mafString::npos)
     {
       FillFileList(t.GetCStr());
     }
@@ -100,7 +100,7 @@ void mafOpImporterASCII::SetParameters(void *param)
   while (tkz.HasMoreTokens())
   {
     t = mafWxToString(tkz.GetNextToken());
-    if (t.FindFirst(_R("*.")) != -1)
+    if (t.find(_R("*.")) != mafString::npos)
     {
       FillFileList(t.GetCStr());
       break;

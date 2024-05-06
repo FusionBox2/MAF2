@@ -401,7 +401,7 @@ mafNode *mafNode::FindInTreeByName(const mafString& name, bool match_case, bool 
   {
     if(whole_word && GetName() == name)
       return this;
-    if(!whole_word && GetName().FindFirst(name) != -1)
+    if(!whole_word && GetName().find(name) != mafString::npos)
       return this;
   }
   else
@@ -421,7 +421,7 @@ mafNode *mafNode::FindInTreeByName(const mafString& name, bool match_case, bool 
 
     if(whole_word && myName == word_to_search)
       return this;
-    if(!whole_word && myName.FindFirst(word_to_search) != -1)
+    if(!whole_word && myName.find(word_to_search) != mafString::npos)
       return this;
 
   }

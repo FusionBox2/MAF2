@@ -405,7 +405,7 @@ void mafOpAddLandmark::OnEvent(mafEventBase *maf_event)
         m_LandmarkName = _R("");
         m_Gui->Update();
       }
-      else if(m_LandmarkName.FindFirst(_R(" ")) != -1)
+      else if(m_LandmarkName.find(_R(" ")) != mafString::npos)
       {
         mafString msg = _L("Landmark has character space in his name, substitute those space!");
 		mafWarningMessage(_M(msg));
