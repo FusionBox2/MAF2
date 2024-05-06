@@ -116,20 +116,6 @@ public:
     -1 if str > this, 1 if str < this*/
   int Compare(const mafString& str) const;
 
-  /**
-    This method compare the given c-string with the one stored inside this object.
-    It is similar to strcmp, but it can handle null pointers. Also it only
-    returns C style true or false versus compare which returns also which
-    one is greater.*/
-  bool Equals(mafStrBuf str) const;
-
-  /**
-    This method compare the given c-string with the one stored inside this object.
-    It is similar to strcmp, but it can handle null pointers. Also it only
-    returns C style true or false versus compare which returns also which
-    one is greater.*/
-  bool Equals(const mafString& str) const;
-
   /** Check if this string starts with the given one.*/
   bool StartsWith(mafStrBuf str) const;
 

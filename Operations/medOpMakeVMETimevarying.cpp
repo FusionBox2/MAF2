@@ -463,7 +463,7 @@ bool medOpMakeVMETimevarying::AcceptVME(mafVME * vme)
   if(NULL == vme)
     return false;
 
-  if(m_VMEsType.Equals(_L("mafVME")) && m_VMEsVTKDataType == VTK_DATA_SET && m_VMEsOutputType.Equals(_L("mafVMEOutput")))
+  if(m_VMEsType == _L("mafVME") && m_VMEsVTKDataType == VTK_DATA_SET && m_VMEsOutputType == _L("mafVMEOutput"))
   {
     m_VMEsType = _R(vme->GetTypeName());
     m_VMEsOutputType = _R(vme->GetOutput()->GetTypeName());
@@ -473,8 +473,8 @@ bool medOpMakeVMETimevarying::AcceptVME(mafVME * vme)
   else
   {
     if(m_VMEsVTKDataType == vme->GetOutput()->GetVTKData()->GetDataObjectType() &&  //Check vtk data type
-            m_VMEsOutputType.Equals(_R(vme->GetOutput()->GetTypeName())) &&  //Check output type
-            (m_VMEsType.Equals(_R(vme->GetTypeName()))))                     //Check VME type      
+            m_VMEsOutputType == _R(vme->GetOutput()->GetTypeName()) &&  //Check output type
+            (m_VMEsType == _R(vme->GetTypeName())))                     //Check VME type      
     {
       return true;
     }
@@ -560,62 +560,62 @@ void medOpMakeVMETimevarying::Execute()
   assert(m_AddedVMEs.size() != 0);
 
   //Assign the correct type to the resulting timevarying VME
-  if(m_VMEsType.Equals(_L("mafVMEImage")))
+  if(m_VMEsType == _L("mafVMEImage"))
   {
     mafVMEImage * tmpVME;
     mafNEW(tmpVME);
     m_VMETimevarying = tmpVME;
   }
-  else if(m_VMEsType.Equals(_L("mafVMEMesh")))//OK
+  else if(m_VMEsType == _L("mafVMEMesh"))//OK
   {
     mafVMEMesh * tmpVME;
     mafNEW(tmpVME);
     m_VMETimevarying = tmpVME;
   }
-  else if(m_VMEsType.Equals(_L("mafVMEPointSet")))
+  else if(m_VMEsType == _L("mafVMEPointSet"))
   {
     mafVMEPointSet * tmpVME;
     mafNEW(tmpVME);
     m_VMETimevarying = tmpVME;
   }
-  else if(m_VMEsType.Equals(_L("mafVMELandmarkCloud")))//OK
+  else if(m_VMEsType == _L("mafVMELandmarkCloud"))//OK
   {
     mafVMELandmarkCloud * tmpVME;
     mafNEW(tmpVME);
     m_VMETimevarying = tmpVME;
   }
-  else if(m_VMEsType.Equals(_L("mafVMEVector")))
+  else if(m_VMEsType == _L("mafVMEVector"))
   {
     mafVMEVector * tmpVME;
     mafNEW(tmpVME);
     m_VMETimevarying = tmpVME;
   }
-  else if(m_VMEsType.Equals(_L("mafVMESurface")))//OK
+  else if(m_VMEsType == _L("mafVMESurface"))//OK
   {
     mafVMESurface * tmpVME;
     mafNEW(tmpVME);
     m_VMETimevarying = tmpVME;
   }
-  else if(m_VMEsType.Equals(_L("mafVMESurfaceParametric")))//OK
+  else if(m_VMEsType == _L("mafVMESurfaceParametric"))//OK
   {
     //A timevarying VME created from a set of parametric surface (mafVMESurfaceParametric) is treated as a surface (mafVMESurface)
     mafVMESurface * tmpVME;
     mafNEW(tmpVME);
     m_VMETimevarying = tmpVME;
   }
-  else if(m_VMEsType.Equals(_L("mafVMEVolumeGray")))
+  else if(m_VMEsType == _L("mafVMEVolumeGray"))
   {
     mafVMEVolumeGray * tmpVME;
     mafNEW(tmpVME);
     m_VMETimevarying = tmpVME;
   }
-  else if(m_VMEsType.Equals(_L("mafVMEVolumeRGB")))
+  else if(m_VMEsType == _L("mafVMEVolumeRGB"))
   {
     mafVMEVolumeRGB * tmpVME;
     mafNEW(tmpVME);
     m_VMETimevarying = tmpVME;
   }
-  else if(m_VMEsType.Equals(_L("mafVMEPolyline")))//OK
+  else if(m_VMEsType == _L("mafVMEPolyline"))//OK
   {
     mafVMEPolyline * tmpVME;
     mafNEW(tmpVME);

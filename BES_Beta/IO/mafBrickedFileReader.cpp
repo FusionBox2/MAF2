@@ -583,7 +583,7 @@ void mafBrickedFileReader::GetBricksExtent(int VOI[6], int inBExt[6], int bndBEx
 	try
 	{
 		//check if we still work with the same file
-		if (!m_LUBrickFileName.Equals(m_BrickFileName)) {
+		if (m_LUBrickFileName != m_BrickFileName) {
 			OpenBrickFile();	//if not open new one
 
 			m_LUBrickFileName = m_BrickFileName;

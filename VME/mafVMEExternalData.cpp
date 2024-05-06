@@ -191,7 +191,7 @@ int mafVMEExternalData::InternalStore(mafStorageElement *parent)
   mafString fileNameOrigin =  GetAbsoluteFileName(); 
   mafString fileNameTarget = m_MSFPath + _R("\\") + _R(GetFileName()) + _R(".") + _R(GetExtension());
 
-  if (!fileNameOrigin.Equals(fileNameTarget))
+  if (fileNameOrigin != fileNameTarget)
   {
     bool copySuccess = mafFileCopy(fileNameOrigin, fileNameTarget);
     if (!copySuccess)

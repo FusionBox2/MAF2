@@ -181,9 +181,9 @@ bool IsRemote(const mafString& filename, mafString &protocol_used)
 
   if (!protocol_used.IsEmpty())
   {
-    is_remote = protocol_used.Equals(_R("http"))  ||
-                protocol_used.Equals(_R("ftp"))   ||
-                protocol_used.Equals(_R("https"));
+    is_remote = protocol_used == _R("http")  ||
+                protocol_used == _R("ftp")   ||
+                protocol_used == _R("https");
   }
   return is_remote;
 }

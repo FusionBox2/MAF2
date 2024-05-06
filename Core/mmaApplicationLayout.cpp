@@ -136,15 +136,15 @@ void mmaApplicationLayout::SetApplicationInfo(int maximized, int pos[2], int siz
 void mmaApplicationLayout::SetInterfaceElementVisibility(const mafString& panel_name, int visibility)
 //-----------------------------------------------------------------------
 {
-  if (panel_name.Equals(_R("toolbar")))
+  if (panel_name == _R("toolbar"))
   {
     m_ToolBarVisibility = visibility;
   }
-  else if (panel_name.Equals(_R("sidebar")))
+  else if (panel_name == _R("sidebar"))
   {
     m_SideBarVisibility = visibility;
   }
-  else if (panel_name.Equals(_R("logbar")))
+  else if (panel_name == _R("logbar"))
   {
     m_LogBarVisibility = visibility;
   }

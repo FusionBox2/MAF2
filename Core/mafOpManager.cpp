@@ -246,7 +246,7 @@ void mafOpManager::OpRun(mafString &op_type, void *op_param)
   int i;
   for (i=0; i< m_OpList.size(); i++)
   {
-    if (op_type.Equals(_R(m_OpList[i]->GetTypeName())))
+    if (op_type == _R(m_OpList[i]->GetTypeName()))
     {
       OpRun(m_OpList[i], op_param);
       break;
@@ -278,7 +278,7 @@ void mafOpManager::OpRun(mafOp *op, void *op_param)
     tag_nature = ti->GetValue();
   }
   
-	if(!tag_nature.IsEmpty() && tag_nature.Equals(_R("NATURAL")) && !op->IsInputPreserving())
+	if(!tag_nature.IsEmpty() && tag_nature == _R("NATURAL") && !op->IsInputPreserving())
 	{
 		wxString warning_msg = _("The operation do not preserve input VME integrity, a copy is required! \nThis should require a lot of memory and time depending on data dimension. \nDo you want to continue?");
 		wxMessageDialog dialog(mafGetFrame(),warning_msg, _("Warning"), wxYES_NO | wxYES_DEFAULT);

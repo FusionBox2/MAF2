@@ -170,7 +170,7 @@ void medViewSliceBlend::VmeCreatePipe(mafNode *vme)
     {
       pipe->SetListener(this);
       // Initialize medPipeVolumeSliceBlend
-      if (pipe_name.Equals(_R("medPipeVolumeSliceBlend")))
+      if (pipe_name == _R("medPipeVolumeSliceBlend"))
       {
         m_CurrentVolume = n;
         if (m_AttachCamera)
@@ -338,7 +338,7 @@ void medViewSliceBlend::SetLutRange(double low_val, double high_val)
   if(!m_CurrentVolume) 
     return;
   mafString pipe_name = _R(m_CurrentVolume->m_Pipe->GetTypeName());
-  if (pipe_name.Equals(_R("medPipeVolumeSliceBlend")))
+  if (pipe_name == _R("medPipeVolumeSliceBlend"))
   {
     medPipeVolumeSliceBlend *pipe = (medPipeVolumeSliceBlend *)m_CurrentVolume->m_Pipe;
     pipe->SetLutRange(low_val, high_val); 
@@ -354,7 +354,7 @@ void medViewSliceBlend::SetSliceLocalOrigin(double origin0[3],double origin1[3])
     memcpy(m_Slice1,origin0,sizeof(origin0));
     memcpy(m_Slice2,origin1,sizeof(origin1));
     mafString pipe_name = _R(m_CurrentVolume->m_Pipe->GetTypeName());
-    if (pipe_name.Equals(_R("medPipeVolumeSliceBlend")))
+    if (pipe_name == _R("medPipeVolumeSliceBlend"))
     {
       medPipeVolumeSliceBlend *pipe = (medPipeVolumeSliceBlend *)m_CurrentVolume->m_Pipe;
       //Set origin0 for slice 0
@@ -379,7 +379,7 @@ void medViewSliceBlend::SetSlice(int nSlice,double pos[3])
     else if(nSlice==1)
       memcpy(m_Slice2,pos,sizeof(m_Slice2));
     mafString pipe_name = _R(m_CurrentVolume->m_Pipe->GetTypeName());
-    if (pipe_name.Equals(_R("medPipeVolumeSliceBlend")))
+    if (pipe_name == _R("medPipeVolumeSliceBlend"))
     {
       medPipeVolumeSliceBlend *pipe = (medPipeVolumeSliceBlend *)m_CurrentVolume->m_Pipe;
       pipe->SetSlice(nSlice,pos);
@@ -549,7 +549,7 @@ void medViewSliceBlend::SetNormal(double normal[3])
       if(m_CurrentSurface.at(i) && m_CurrentSurface.at(i)->m_Pipe)
       {
         mafString pipe_name = _R(m_CurrentSurface.at(i)->m_Pipe->GetTypeName());
-        if (pipe_name.Equals(_R("mafPipeSurfaceSlice")))
+        if (pipe_name == _R("mafPipeSurfaceSlice"))
         {
           mafPipeSurfaceSlice *pipe = (mafPipeSurfaceSlice *)m_CurrentSurface[i]->m_Pipe;
           pipe->SetNormal(normal); 

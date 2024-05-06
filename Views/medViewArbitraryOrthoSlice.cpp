@@ -2729,7 +2729,7 @@ bool medViewArbitraryOrthoSlice::BelongsToZNormalGizmo( mafVME * vme )
 	std::ostringstream stringStream;
 	stringStream << "Gizmo name: " << vme->GetName().GetCStr() << std::endl;
 
-	if (translate && translate->GetName().Equals(_R("m_GizmoZView")))
+	if (translate && translate->GetName() == _R("m_GizmoZView"))
 	{
 		stringStream << "Gizmo master: " << translate->GetName().GetCStr() << std::endl;
         mafLogMessage(_M(stringStream.str().c_str()));
@@ -2739,7 +2739,7 @@ bool medViewArbitraryOrthoSlice::BelongsToZNormalGizmo( mafVME * vme )
 	medGizmoCrossRotate *rotate = NULL;
 	rotate = dynamic_cast<medGizmoCrossRotate *>(mediator);
 
-	if (rotate && rotate->GetName().Equals(_R("m_GizmoZView")))
+	if (rotate && rotate->GetName() == _R("m_GizmoZView"))
 	{
 		stringStream << "Gizmo master: " << rotate->GetName().GetCStr() << std::endl;
         mafLogMessage(_M(stringStream.str().c_str()));
@@ -2765,7 +2765,7 @@ bool medViewArbitraryOrthoSlice::BelongsToXNormalGizmo( mafVME * vme )
 	std::ostringstream stringStream;
 	stringStream << "Gizmo name: " << vme->GetName().GetCStr() << std::endl;
 
-	if (translate && translate->GetName().Equals(_R("m_GizmoXView")))
+	if (translate && translate->GetName() == _R("m_GizmoXView"))
 	{
 		stringStream << "Gizmo master: " << translate->GetName().GetCStr() << std::endl;
         mafLogMessage(_M(stringStream.str().c_str()));
@@ -2775,7 +2775,7 @@ bool medViewArbitraryOrthoSlice::BelongsToXNormalGizmo( mafVME * vme )
 	medGizmoCrossRotate *rotate = NULL;
 	rotate = dynamic_cast<medGizmoCrossRotate *>(mediator);
 
-	if (rotate && rotate->GetName().Equals(_R("m_GizmoXView")))
+	if (rotate && rotate->GetName() == _R("m_GizmoXView"))
 	{
 		stringStream << "Gizmo master: " << rotate->GetName().GetCStr() << std::endl;
         mafLogMessage(_M(stringStream.str().c_str()));
@@ -2798,7 +2798,7 @@ bool medViewArbitraryOrthoSlice::BelongsToYNormalGizmo( mafVME * vme )
 	std::ostringstream stringStream;
 	stringStream << "Gizmo name: " << vme->GetName().GetCStr() << std::endl;
 
-	if (translate && translate->GetName().Equals(_R("m_GizmoYView")))
+	if (translate && translate->GetName() == _R("m_GizmoYView"))
 	{
 		stringStream << "Gizmo master: " << translate->GetName().GetCStr() << std::endl;
         mafLogMessage(_M(stringStream.str().c_str()));
@@ -2808,7 +2808,7 @@ bool medViewArbitraryOrthoSlice::BelongsToYNormalGizmo( mafVME * vme )
 	medGizmoCrossRotate *rotate = NULL;
 	rotate = dynamic_cast<medGizmoCrossRotate *>(mediator);
 
-	if (rotate && rotate->GetName().Equals(_R("m_GizmoYView")))
+	if (rotate && rotate->GetName() == _R("m_GizmoYView"))
 	{
 		stringStream << "Gizmo master: " << rotate->GetName().GetCStr() << std::endl;
         mafLogMessage(_M(stringStream.str().c_str()));

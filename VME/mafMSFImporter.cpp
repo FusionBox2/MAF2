@@ -478,55 +478,55 @@ void mafMSFImporter::RestoreMeterAttribute(mafVME *vme)
     for (int t=0; t<num_tags; t++)
     {
       const mafString& tag_name = tag_list[t];
-      if (tag_list[t].Equals(_R("MFL_METER_END_VME_1_ID")) || 
-          tag_list[t].Equals(_R("MFL_METER_START_VME_ID")) ||
-          tag_list[t].Equals(_R("MFL_METER_END_VME_2_ID")))
+      if (tag_list[t] == _R("MFL_METER_END_VME_1_ID") || 
+          tag_list[t] == _R("MFL_METER_START_VME_ID") ||
+          tag_list[t] == _R("MFL_METER_END_VME_2_ID"))
       {
         continue;
       }
       ti = meter_ta->GetTag(tag_name);
       component = ti->GetComponentAsDouble(0);
-      if (tag_name.Equals(_R("MFL_METER_TYPE")))
+      if (tag_name == _R("MFL_METER_TYPE"))
       {
         meter_attrib->m_MeterMode = (int)component;
       }
-      else if (tag_name.Equals(_R("MFL_METER_COLOR_MODE")))
+      else if (tag_name == _R("MFL_METER_COLOR_MODE"))
       {
         meter_attrib->m_ColorMode = (int)component;
       }
-      else if (tag_name.Equals(_R("MFL_METER_MEASURE_TYPE")))
+      else if (tag_name == _R("MFL_METER_MEASURE_TYPE"))
       {
         meter_attrib->m_MeasureType = (int)component;
       }
-      else if (tag_name.Equals(_R("MFL_METER_REPRESENTATION")))
+      else if (tag_name == _R("MFL_METER_REPRESENTATION"))
       {
         meter_attrib->m_Representation = (int)component;
       }
-      else if (tag_name.Equals(_R("MFL_METER_TUBE_CAPPING")))
+      else if (tag_name == _R("MFL_METER_TUBE_CAPPING"))
       {
         meter_attrib->m_Capping = (int)component;
       }
-      else if (tag_name.Equals(_R("MFL_METER_EVENT_THRESHOLD")))
+      else if (tag_name == _R("MFL_METER_EVENT_THRESHOLD"))
       {
         meter_attrib->m_GenerateEvent = (int)component;
       }
-      else if (tag_name.Equals(_R("MFL_METER_INIT_MEASURE")))
+      else if (tag_name == _R("MFL_METER_INIT_MEASURE"))
       {
         meter_attrib->m_InitMeasure = component;
       }
-      else if (tag_name.Equals(_R("MFL_METER_DELTA_PERCENT")))
+      else if (tag_name == _R("MFL_METER_DELTA_PERCENT"))
       {
         meter_attrib->m_DeltaPercent = (int)component;
       }
-      else if (tag_name.Equals(_R("MFL_METER_LABEL_VISIBILITY")))
+      else if (tag_name == _R("MFL_METER_LABEL_VISIBILITY"))
       {
         meter_attrib->m_LabelVisibility = (int)component;
       }
-      else if (tag_name.Equals(_R("MFL_METER_RADIUS")))
+      else if (tag_name == _R("MFL_METER_RADIUS"))
       {
         meter_attrib->m_TubeRadius = component;
       }
-      else if (tag_name.Equals(_R("MFL_METER_DISTANCE_RANGE")))
+      else if (tag_name == _R("MFL_METER_DISTANCE_RANGE"))
       {
         meter_attrib->m_DistanceRange[0] = component;
         meter_attrib->m_DistanceRange[1] = ti->GetComponentAsDouble(1);

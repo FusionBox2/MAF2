@@ -125,7 +125,7 @@ void mafViewRX::VmeCreatePipe(mafNode *vme)
     if (pipe)
     {
       pipe->SetListener(this);
-      if (pipe_name.Equals(_R("mafPipeVolumeProjected")))
+      if (pipe_name == _R("mafPipeVolumeProjected"))
       {
         ((mafPipeVolumeProjected *)pipe)->InitializeProjectParameters(m_CameraPositionId);
         m_CurrentVolume = n;
@@ -135,7 +135,7 @@ void mafViewRX::VmeCreatePipe(mafNode *vme)
           CameraUpdate();
         }
       }
-      else if(pipe_name.Equals(_R("mafPipeSurfaceSlice")))
+      else if(pipe_name == _R("mafPipeSurfaceSlice"))
       {
         double normal[3];
         switch(m_CameraPositionId)
@@ -173,7 +173,7 @@ void mafViewRX::VmeCreatePipe(mafNode *vme)
         ((mafPipeSurfaceSlice *)pipe)->SetNormal(normal);
 
       }
-      else if(pipe_name.Equals(_R("medVisualPipeSlicerSlice")))
+      else if(pipe_name == _R("medVisualPipeSlicerSlice"))
       {
         double normal[3];
         switch(m_CameraPositionId)
@@ -340,7 +340,7 @@ void mafViewRX::SetLutRange(double low_val, double high_val)
   if(!m_CurrentVolume) 
     return;
   mafString pipe_name = _R(m_CurrentVolume->m_Pipe->GetTypeName());
-  if (pipe_name.Equals(_R("mafPipeVolumeProjected")))
+  if (pipe_name == _R("mafPipeVolumeProjected"))
   {
     mafPipeVolumeProjected *pipe = (mafPipeVolumeProjected *)m_CurrentVolume->m_Pipe;
     pipe->SetLutRange(low_val, high_val); 
@@ -353,7 +353,7 @@ void mafViewRX::GetLutRange(double minMax[2])
   if(!m_CurrentVolume) 
     return;
   mafString pipe_name = _R(m_CurrentVolume->m_Pipe->GetTypeName());
-  if (pipe_name.Equals(_R("mafPipeVolumeProjected")))
+  if (pipe_name == _R("mafPipeVolumeProjected"))
   {
     mafPipeVolumeProjected *pipe = (mafPipeVolumeProjected *)m_CurrentVolume->m_Pipe;
     pipe->GetLutRange(minMax); 

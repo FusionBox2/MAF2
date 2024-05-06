@@ -378,11 +378,11 @@ void mafViewGlobalSlice::VmeCreatePipe(mafNode *node)
     if (pipe)
     {
       pipe->SetListener(this);
-      if (pipe_name.Equals(_R("mafPipeVolumeSlice")))
+      if (pipe_name == _R("mafPipeVolumeSlice"))
       {
         ((mafPipeVolumeSlice *)pipe)->InitializeSliceParameters(m_SliceMode,applied_origin,applied_xVector,applied_yVector,true,false);
 			}
-      else if(pipe_name.Equals(_R("mafPipeSurfaceSlice")))
+      else if(pipe_name == _R("mafPipeSurfaceSlice"))
       {
 				((mafPipeSurfaceSlice *)pipe)->ShowBoxSelectionOn();
         ((mafPipeSurfaceSlice *)pipe)->SetSlice(m_SliceOrigin);
@@ -392,7 +392,7 @@ void mafViewGlobalSlice::VmeCreatePipe(mafNode *node)
 				DoubleNormal[2]=(double)m_SliceNormal[2];
 				((mafPipeSurfaceSlice *)pipe)->SetNormal(DoubleNormal);
 			}
-      else if(pipe_name.Equals(_R("mafPipeMeshSlice")))
+      else if(pipe_name == _R("mafPipeMeshSlice"))
       {
         double DoubleNormal[3];
         DoubleNormal[0]=(double)m_SliceNormal[0];
@@ -408,7 +408,7 @@ void mafViewGlobalSlice::VmeCreatePipe(mafNode *node)
       pipe->Create(node, this);
 			n->m_Pipe = (mafPipe*)pipe;
 
-			if (pipe_name.Equals(_R("mafPipeVolumeSlice")))
+			if (pipe_name == _R("mafPipeVolumeSlice"))
 			{
 				((mafPipeVolumeSlice *)pipe)->HideSlider();
 			}

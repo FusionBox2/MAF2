@@ -318,9 +318,9 @@ void medVMEMuscleWrapper::StoreMeterLinks()
     for (mafLinksMap::iterator i = pLinks->begin(); i != pLinks->end(); i++)
     {
       if (
-        i->first.Equals(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_MUSCLE])) ||
-        i->first.Equals(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_FIBERS_ORIGIN])) ||
-        i->first.Equals(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_FIBERS_INSERTION])) ||        
+        i->first == _R(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_MUSCLE]) ||
+        i->first == _R(MUSCLEWRAPPER_LINK_NAMES[LNK_FIBERS_ORIGIN]) ||
+        i->first == _R(MUSCLEWRAPPER_LINK_NAMES[LNK_FIBERS_INSERTION]) ||        
         i->first.StartsWith(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_WRAPPERx])) ||
         i->first.StartsWith(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_DYNPOSE_WRAPPERx])) ||
         i->first.StartsWith(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_REFSYSx])) ||

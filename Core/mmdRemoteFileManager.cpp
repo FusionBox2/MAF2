@@ -220,9 +220,9 @@ int mmdRemoteFileManager::UploadLocalFile(const mafString& local_filename, const
     {
       curl_easy_setopt(m_Curl, CURLOPT_PORT, m_Port);
       curl_easy_setopt(m_Curl, CURLOPT_USERPWD, auth.GetCStr());
-      if (protocol.Equals(_R("http")) || protocol.Equals(_R("https")))
+      if (protocol == _R("http") || protocol == _R("https"))
       {
-        m_EnableCertificateAuthentication = protocol.Equals(_R("https"));
+        m_EnableCertificateAuthentication = protocol == _R("https");
         if (m_EnableCertificateAuthentication)
         {
           curl_easy_setopt(m_Curl, CURLOPT_SSL_VERIFYHOST, 0);

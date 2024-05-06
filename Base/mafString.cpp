@@ -112,20 +112,6 @@ int mafString::Compare(const mafString& str) const
 }
 
 //----------------------------------------------------------------------------
-bool mafString::Equals(mafStrBuf str) const
-//----------------------------------------------------------------------------
-{
-    return Compare(str) == 0;
-}
-
-//----------------------------------------------------------------------------
-bool mafString::Equals(const mafString& str) const
-//----------------------------------------------------------------------------
-{
-    return Compare(str) == 0;
-}
-
-//----------------------------------------------------------------------------
 bool mafString::StartsWith(mafStrBuf str) const
 //----------------------------------------------------------------------------
 {
@@ -428,14 +414,14 @@ const char mafString::operator [] (const int i) const
 const bool mafString::operator==(mafStrBuf str) const
 //----------------------------------------------------------------------------
 {
-    return Equals(str);
+    return Compare(str) == 0;
 }
 
 //----------------------------------------------------------------------------
 const bool mafString::operator!=(mafStrBuf str) const
 //----------------------------------------------------------------------------
 {
-    return Equals(str);
+    return Compare(str) != 0;
 }
 
 //----------------------------------------------------------------------------
@@ -467,14 +453,14 @@ const bool mafString::operator>=(mafStrBuf str) const
 const bool mafString::operator!=(const mafString& str) const
 //----------------------------------------------------------------------------
 {
-  return !Equals(str);
+  return Compare(str) != 0;
 }
 
 //----------------------------------------------------------------------------
 const bool mafString::operator==(const mafString& str) const
 //----------------------------------------------------------------------------
 {
-  return Equals(str);
+  return Compare(str) == 0;
 }
 
 //----------------------------------------------------------------------------

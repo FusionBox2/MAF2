@@ -493,7 +493,7 @@ void mafOpDecomposeTimeVarVME::CreateStaticVME(mafTimeStamp timeSt)
 
   //If VME is a landmark, a landmark cloud must be created
 #pragma message ("IsATypeOf to be used")
-  if (typeVme.Equals(_R("mafVMELandmark")))
+  if (typeVme == _R("mafVMELandmark"))
   {
     mafNEW(m_Cloud);
 	if (m_TestMode == true)

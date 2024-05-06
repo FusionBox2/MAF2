@@ -380,7 +380,7 @@ void mafViewSlice::VmeCreatePipe(mafNode *vme)
           //mafPipeSurfaceSlice_BES, mafPipePolylineSlice_BES and mafPipeMeshSlice_BES
           //are committed down and instead of it, the code above should work (after _BES suffices are stripped)
 
-          if(pipe_name.Equals(_R("mafPipeSurfaceSlice")))
+          if(pipe_name == _R("mafPipeSurfaceSlice"))
           {
             double normal[3];
             switch(m_CameraPositionId)
@@ -422,7 +422,7 @@ void mafViewSlice::VmeCreatePipe(mafNode *vme)
             ((mafPipeSurfaceSlice *)pipe)->SetNormal(normal);
 
           }
-          else if(pipe_name.Equals(_R("mafPipePolylineSlice")))
+          else if(pipe_name == _R("mafPipePolylineSlice"))
           {
             double normal[3];
             switch(m_CameraPositionId)
@@ -464,7 +464,7 @@ void mafViewSlice::VmeCreatePipe(mafNode *vme)
             ((mafPipePolylineSlice *)pipe)->SetSlice(positionSlice);
             ((mafPipePolylineSlice *)pipe)->SetNormal(normal);
           }          
-          else if(pipe_name.Equals(_R("mafPipeMeshSlice")))
+          else if(pipe_name == _R("mafPipeMeshSlice"))
           {
             double normal[3];
             switch(m_CameraPositionId)

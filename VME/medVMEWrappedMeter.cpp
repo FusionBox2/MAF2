@@ -1868,7 +1868,7 @@ int medVMEWrappedMeter::InternalStore(mafStorageElement *parent)
           mafString name = _R("");
           name  = lc->GetLandmarkName(j);
           
-          if(name.Equals(m_OrderMiddlePointsNameVMEList[i])) index = j;
+          if(name == m_OrderMiddlePointsNameVMEList[i]) index = j;
           
 				}
 				
@@ -2142,10 +2142,10 @@ mafGUI* medVMEWrappedMeter::CreateGui()
 	{
 		for (mafLinksMap::iterator i = GetLinks()->begin(); i != GetLinks()->end(); ++i)
 		{	
-			if(i->first.Equals(_R("StartVME"))) continue;
-			else if(i->first.Equals(_R("EndVME1"))) continue;
-			else if(i->first.Equals(_R("EndVME2"))) continue;
-      else if(i->first.Equals(_R("WrappedVME"))) continue;
+			if(i->first == _R("StartVME")) continue;
+			else if(i->first == _R("EndVME1")) continue;
+			else if(i->first == _R("EndVME2")) continue;
+      else if(i->first == _R("WrappedVME")) continue;
 			else if(i->second.m_Node->GetId() == m_OrderMiddlePointsVMEList[j])
 			{
 				if(mafVMELandmarkCloud *lc = mafVMELandmarkCloud::SafeDownCast(i->second.m_Node))
@@ -2594,10 +2594,10 @@ bool medVMEWrappedMeter::MiddlePointsControl()
   for (mafLinksMap::iterator i = GetLinks()->begin(); i != GetLinks()->end(); i++)
   {
     mafString name = i->first;
-    if(i->first.Equals(_R("StartVME"))) continue;
-    else if(i->first.Equals(_R("EndVME1"))) continue;
-		else if(i->first.Equals(_R("EndVME2"))) continue;
-    else if(i->first.Equals(_R("WrappedVME"))) continue;
+    if(i->first == _R("StartVME")) continue;
+    else if(i->first == _R("EndVME1")) continue;
+		else if(i->first ==_R("EndVME2")) continue;
+    else if(i->first == _R("WrappedVME")) continue;
     else if(i->second.m_Node == NULL)
     {
       mafString message;
@@ -2620,10 +2620,10 @@ bool medVMEWrappedMeter::MiddlePointsControl()
     for (mafLinksMap::iterator i = GetLinks()->begin(); i != GetLinks()->end(); i++)
     {
       mafString name = i->first;
-      if(i->first.Equals(_R("StartVME"))) continue;
-      else if(i->first.Equals(_R("EndVME1"))) continue;
-			else if(i->first.Equals(_R("EndVME2"))) continue;
-      else if(i->first.Equals(_R("WrappedVME"))) continue;
+      if(i->first == _R("StartVME")) continue;
+      else if(i->first == _R("EndVME1")) continue;
+			else if(i->first == _R("EndVME2")) continue;
+      else if(i->first == _R("WrappedVME")) continue;
       else
       {
 				bool result = false;
@@ -2651,7 +2651,7 @@ mafNode* medVMEWrappedMeter::IndexToMiddlePointVME(int index)
 	mafNode *returnNode = NULL;
   for (mafLinksMap::iterator i = GetLinks()->begin(); i != GetLinks()->end(); i++)
   {
-    if(i->first.Equals(name)) returnNode =  i->second.m_Node;
+    if(i->first == name) returnNode =  i->second.m_Node;
   }
 
   return returnNode;
@@ -2665,10 +2665,10 @@ void medVMEWrappedMeter::SyncronizeList()
 	{
 		for (mafLinksMap::iterator i = GetLinks()->begin(); i != GetLinks()->end(); ++i)
 		{	
-			if(i->first.Equals(_R("StartVME"))) continue;
-			else if(i->first.Equals(_R("EndVME1"))) continue;
-			else if(i->first.Equals(_R("EndVME2"))) continue;
-      else if(i->first.Equals(_R("WrappedVME"))) continue;
+			if(i->first == _R("StartVME")) continue;
+			else if(i->first == _R("EndVME1")) continue;
+			else if(i->first == _R("EndVME2")) continue;
+      else if(i->first == _R("WrappedVME")) continue;
 			else if(i->second.m_Node->GetId() == m_OrderMiddlePointsVMEList[j])
 			{
 				if(mafVMELandmarkCloud *lc = mafVMELandmarkCloud::SafeDownCast(i->second.m_Node))

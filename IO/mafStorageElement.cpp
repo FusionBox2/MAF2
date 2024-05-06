@@ -407,7 +407,7 @@ mafString mafStorageElement::UpgradeAttribute(const mafString& attribute)
   mafString att_name;
   mafString new_att_name;
   GetAttribute(attribute,att_name);
-  if (att_name.Equals(_R("mafVMEItemScalar")))
+  if (att_name == _R("mafVMEItemScalar"))
   {
     new_att_name = _R("mafVMEItemScalarMatrix");
     SetAttribute(attribute, new_att_name);
@@ -415,7 +415,7 @@ mafString mafStorageElement::UpgradeAttribute(const mafString& attribute)
   }
   if (att_name.FindFirst(_R("mafVME")) != -1)
   {
-    if (att_name.Equals(_R("mafVMEScalar")))
+    if (att_name == _R("mafVMEScalar"))
     {
       new_att_name = _R("mafVMEScalarMatrix");
       SetAttribute(attribute, new_att_name);
@@ -428,7 +428,7 @@ mafString mafStorageElement::UpgradeAttribute(const mafString& attribute)
     mafString item_type;
     if (data_vector && data_vector->GetAttribute(_R("ItemTypeName"), item_type))
     {
-      if (item_type.Equals(_R("mafVMEItemScalar")))
+      if (item_type == _R("mafVMEItemScalar"))
       {
         data_vector->SetAttribute(_R("ItemTypeName"), _R("mafVMEItemScalarMatrix"));
       }

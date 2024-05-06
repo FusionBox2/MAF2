@@ -129,7 +129,7 @@ public:
 
 	//Sets a new  associated brick file
 	inline void SetFileName(const char* filename) {
-		if (!m_BrickFileName.Equals(_R(filename))) {
+		if (m_BrickFileName != _R(filename)) {
 			m_BrickFileName = _R(filename);		
 			this->Modified();
 		}

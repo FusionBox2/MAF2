@@ -107,7 +107,7 @@ int mafRemoteStorage::ResolveInputURL(const mafString& url, mafString &filename,
 
   mafString protocol;
   m_IsRemoteMSF = IsRemote(filename,protocol);
-  m_RemoteFileManager->EnableAuthentication(protocol.Equals(_R("https")));
+  m_RemoteFileManager->EnableAuthentication(protocol == _R("https"));
 
   if (m_IsRemoteMSF)
   {

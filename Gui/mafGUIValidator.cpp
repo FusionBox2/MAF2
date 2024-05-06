@@ -844,7 +844,7 @@ bool mafGUIValidator::TransferFromWindow(void)
       if (m_MafStringVar)
       {
         s = m_TextCtrl->GetValue();
-        res = !m_MafStringVar->Equals(mafWxToString(s));
+        res = mafWxToString(s) != *m_MafStringVar;
         if (res)
         {
           *m_MafStringVar = mafWxToString(s);

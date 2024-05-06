@@ -259,12 +259,12 @@ bool mafLogicWithManagers::CheckAppTag(mafNode *vme)
       stamp_found = true;
     }
     // Check with the "Data Manager" tag
-    if (m_AppStamp.at(k).Equals(_R("DataManager")))
+    if (m_AppStamp.at(k) == _R("DataManager"))
     {
       stamp_data_manager_found = true;
     }
     // Check with the "OPEN_ALL_DATA" tag
-    if (m_AppStamp.at(k).Equals(_R("OPEN_ALL_DATA")))
+    if (m_AppStamp.at(k) == _R("OPEN_ALL_DATA"))
     {
       stamp_open_all_found = true;
     }
