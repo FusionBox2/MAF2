@@ -184,19 +184,45 @@ mafString& mafString::append(const mafString& str)
 }
 
 //----------------------------------------------------------------------------
-int mafString::FindChr(const int c) const
+mafString::size_type mafString::find_first_of(mafStringChar c) const
 //----------------------------------------------------------------------------
 {
-  auto pos = m_str.find_first_of(c);
-  return (pos != std::basic_string<mafStringChar>::npos) ? pos : -1;
+  return m_str.find_first_of(c);
 }
 
 //----------------------------------------------------------------------------
-int mafString::FindLastChr(const int c) const
+mafString::size_type mafString::find_first_of(const mafString& str) const
 //----------------------------------------------------------------------------
 {
-  auto pos = m_str.find_last_of(c);
-  return (pos != std::basic_string<mafStringChar>::npos) ? pos : -1;
+	return m_str.find_first_of(str.m_str);
+}
+
+//----------------------------------------------------------------------------
+mafString::size_type mafString::find_first_of(mafStrBuf str) const
+//----------------------------------------------------------------------------
+{
+	return m_str.find_first_of(str);
+}
+
+//----------------------------------------------------------------------------
+mafString::size_type mafString::find_last_of(mafStringChar c) const
+//----------------------------------------------------------------------------
+{
+  return m_str.find_last_of(c);
+}
+
+//----------------------------------------------------------------------------
+mafString::size_type mafString::find_last_of(const mafString& str) const
+//----------------------------------------------------------------------------
+{
+	return m_str.find_last_of(str.m_str);
+}
+
+//----------------------------------------------------------------------------
+mafString::size_type mafString::find_last_of(mafStrBuf str) const
+//----------------------------------------------------------------------------
+{
+	return m_str.find_last_of(str);
 }
 
 //----------------------------------------------------------------------------

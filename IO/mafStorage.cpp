@@ -42,8 +42,8 @@ int mafStorage::Store()
   SetErrorCode(0);
   // extract the path substring
   mafString dir_path=m_URL;
-  int last_slash=dir_path.FindLastChr('/');
-  if (last_slash>=0)
+  auto last_slash=dir_path.find_last_of('/');
+  if (last_slash != mafString::npos)
   { 
     dir_path.Erase(last_slash);
   }

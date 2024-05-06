@@ -2722,8 +2722,8 @@ void medOpImporterDicomOffis::ReadDicom()
 		m_Identifier = mafToString(p_id);
 	}
 
-	int tmp = m_PatientName.FindChr('^');
-	if(tmp != -1 && tmp >= 0 && tmp < m_PatientName.length())
+	auto tmp = m_PatientName.find_first_of('^');
+	if(tmp != mafString::npos && tmp >= 0 && tmp < m_PatientName.length())
 		m_PatientName[tmp] = ' ';
 }
 

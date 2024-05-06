@@ -137,10 +137,22 @@ public:
   mafString& append(const mafString& str);
 
   /** Scan the string for the first occurrence of the character */
-  int FindChr(const int c) const;
+  size_type find_first_of(mafStringChar c) const;
 
   /** Scan the string for the first occurrence of the character */
-  int FindLastChr(const int c) const;
+  size_type find_first_of(const mafString& str) const;
+
+  /** Scan the string for the first occurrence of the character */
+  size_type find_first_of(mafStrBuf str) const;
+
+  /** Scan the string for the first occurrence of the character */
+  size_type find_last_of(mafStringChar c) const;
+
+  /** Scan the string for the first occurrence of the character */
+  size_type find_last_of(const mafString& str) const;
+
+  /** Scan the string for the first occurrence of the character */
+  size_type find_last_of(mafStrBuf str) const;
 
   /** Find first occurrence of a substring */
   size_type find(const mafString& str) const;

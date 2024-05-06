@@ -79,9 +79,7 @@ void mafOpExporterMesh::OpRun()
   mafString wildc = _R("lis files (*.lis)|*.lis|All Files (*.*)|*.*");
 
   mafString name = m_Input->GetName();
-  if (name.FindChr('\\') != -1 || name.FindChr('/') != -1 || name.FindChr(':') != -1 || 
-      name.FindChr('?')  != -1 || name.FindChr('"') != -1 || name.FindChr('<') != -1 || 
-      name.FindChr('>')  != -1 || name.FindChr('|') != -1 )
+  if (name.find_first_of(_R("\\/:?\"<>|")) != mafString::npos)
   {
     mafMessage(_M("Node name contains invalid chars.\nA node name can not contain chars like \\ / : * ? \" < > |"));
     m_File = _R("");

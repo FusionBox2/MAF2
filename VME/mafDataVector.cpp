@@ -218,12 +218,12 @@ int mafDataVector::InternalStore(mafStorageElement *parent)
 
   // define base file name for data files
   mafString base_url = storage->GetURL();
-  int last_dot = base_url.FindLastChr('.');
+  auto last_dot = base_url.find_last_of('.');
 
   base_url.Erase(last_dot);
   mafString base_name = base_url;
 
-  int last_slash = base_name.FindLastChr('/');
+  auto last_slash = base_name.find_last_of('/');
   if (last_slash >= 0)
   {
     base_name.Erase(0,last_slash);
