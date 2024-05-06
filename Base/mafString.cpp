@@ -79,13 +79,6 @@ mafString::size_type mafString::size() const
 }
 
 //----------------------------------------------------------------------------
-void mafString::NCopy(mafStrBuf str, int n)
-//----------------------------------------------------------------------------
-{
-    m_str.append(str, n);
-}
-
-//----------------------------------------------------------------------------
 void mafString::Erase(int start, int end)
 //----------------------------------------------------------------------------
 {
@@ -95,6 +88,13 @@ void mafString::Erase(int start, int end)
     if (start > end || end < 0)
         return;
     m_str.erase(start, end - start + 1);
+}
+
+mafString mafString::substr(mafString::size_type pos, mafString::size_type count)
+{
+    mafString result;
+    result.m_str = m_str.substr(pos, count);
+    return result;
 }
 
 //----------------------------------------------------------------------------

@@ -99,14 +99,13 @@ public:
 
   size_type size() const;
 
-  /** Copy N characters of another string to this string.*/
-  void NCopy(mafStrBuf src, int n);
-
   /**  Erase characters from start position to end position. If end
     is not specified erase to the end of the string.*/
   void Erase(int start,int end=-1);
 
-  /** 
+  mafString substr(size_type pos = 0, size_type count = npos);
+
+  /**
     This method compare the given c-string with the one stored inside this object.
     It is similar to strcmp, but it can handle null pointers. Return 0 if str equal this,
     -1 if str > this, 1 if str < this*/
