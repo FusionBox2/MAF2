@@ -102,9 +102,6 @@ public:
   /** Copy N characters of another string to this string.*/
   void NCopy(mafStrBuf src, int n);
 
-  /** Copy N characters of another string to this string.*/
-  void NCopy(const mafString& str, int n);
-
   /**  Erase characters from start position to end position. If end
     is not specified erase to the end of the string.*/
   void Erase(int start,int end=-1);

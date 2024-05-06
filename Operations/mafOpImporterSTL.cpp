@@ -201,7 +201,7 @@ void mafOpImporterSTL::ImportSTL()
       mafString swapped;				
 		  f_in.open (m_Files[kk].GetCStr(), std::ifstream::in| std::ifstream::binary);
 		  int dot_pos = m_Files[kk].FindLastChr('.');
-      swapped.NCopy(m_Files[kk],dot_pos);
+      swapped.NCopy(m_Files[kk].GetCStr(),dot_pos);
 		  swapped += _R("_swapped");
 		  swapped += _R(".stl");
 		  std::ofstream f_out;
