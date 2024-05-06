@@ -197,10 +197,10 @@ public:
   /** 
     Direct access to single string elements for writing. This operator
     forces memory copy in case of internal const char reference. */
-  mafStringChar& operator [] (const int i);
+  mafStringChar& operator [] (size_type i);
 
   /** direct access to string single elements for reading */
-  const mafStringChar operator [] (const int i) const;
+  const mafStringChar operator [] (size_type i) const;
 
   const bool operator==(mafStrBuf str) const;
   const bool operator!=(mafStrBuf str) const;

@@ -417,14 +417,14 @@ mafString mafString::Format(mafStrBuf format, ...)
 }
 
 //----------------------------------------------------------------------------
-mafStringChar& mafString::operator [] (const int i)
+mafStringChar& mafString::operator [] (mafString::size_type i)
 //----------------------------------------------------------------------------
 {
     return m_str[i];
 }
 
 //----------------------------------------------------------------------------
-const mafStringChar mafString::operator [] (const int i) const
+const mafStringChar mafString::operator [] (mafString::size_type i) const
 //----------------------------------------------------------------------------
 {
     return m_str[i];
