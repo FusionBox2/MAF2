@@ -195,7 +195,7 @@ int mafVMELandmarkCloud::GetNumberOfLandmarks()
         tarray->GetTagList(tag_list);
         for (int i = 0; i < tag_list.size(); i++)
         {
-          if (tag_list[i].StartsWith(_R("LM_NAME_")))
+          if (tag_list[i].starts_with(_R("LM_NAME_")))
           {
             m_NumberOfLandmarks++;
           }

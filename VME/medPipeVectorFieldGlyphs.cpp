@@ -502,7 +502,7 @@ void medPipeVectorFieldGlyphs::InitFilterList(int nScalars)
 	for (mafNode::mafLinksMap::iterator i = pLinks->begin(); i != pLinks->end(); i++)
 	{
 		mafString linkName = i->first;
-		if (linkName.StartsWith(_R(FILTER_LINK_NAME)))
+		if (linkName.starts_with(_R(FILTER_LINK_NAME)))
 		{
 			//------insert item----
       //format--"filter-link0:aa:0.100:1.214"
@@ -539,7 +539,7 @@ void medPipeVectorFieldGlyphs::InitFilterList(int nScalars)
 			m_RangeCtrl->SetItemPtrData(idx1 , (wxUIntPtr)pItem);
 			idx1++;
 
-		}else if (linkName.StartsWith(_R(FILTER_LINK_NAME2)) &&  nScalars>0)
+		}else if (linkName.starts_with(_R(FILTER_LINK_NAME2)) &&  nScalars>0)
 		{
 			//------insert item----
       //format--"filter-link0:aa:0.100:1.214"
@@ -729,7 +729,7 @@ void medPipeVectorFieldGlyphs::StoreFilterLinks()
 		bNeedRestart = false;
 		for (mafNode::mafLinksMap::iterator i = pLinks->begin(); i != pLinks->end(); i++)
 		{
-			if (i->first.StartsWith(_R(FILTER_LINK_NAME)))
+			if (i->first.starts_with(_R(FILTER_LINK_NAME)))
 			{
 				m_Vme->RemoveLink(i->first);
 				bNeedRestart = true;
@@ -775,7 +775,7 @@ void medPipeVectorFieldGlyphs::StoreFilterLinks2()
 		bNeedRestart = false;
 		for (auto i = pLinks->begin(); i != pLinks->end(); i++)
 		{
-			if (i->first.StartsWith(_R(FILTER_LINK_NAME2)))
+			if (i->first.starts_with(_R(FILTER_LINK_NAME2)))
 			{
 				m_Vme->RemoveLink(i->first);
 				bNeedRestart = true;

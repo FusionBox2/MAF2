@@ -321,10 +321,10 @@ void medVMEMuscleWrapper::StoreMeterLinks()
         i->first == _R(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_MUSCLE]) ||
         i->first == _R(MUSCLEWRAPPER_LINK_NAMES[LNK_FIBERS_ORIGIN]) ||
         i->first == _R(MUSCLEWRAPPER_LINK_NAMES[LNK_FIBERS_INSERTION]) ||        
-        i->first.StartsWith(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_WRAPPERx])) ||
-        i->first.StartsWith(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_DYNPOSE_WRAPPERx])) ||
-        i->first.StartsWith(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_REFSYSx])) ||
-        i->first.StartsWith(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_DYNPOSE_REFSYSx]))
+        i->first.starts_with(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_WRAPPERx])) ||
+        i->first.starts_with(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_DYNPOSE_WRAPPERx])) ||
+        i->first.starts_with(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_REFSYSx])) ||
+        i->first.starts_with(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_DYNPOSE_REFSYSx]))
         )
       {
         RemoveLink(i->first);

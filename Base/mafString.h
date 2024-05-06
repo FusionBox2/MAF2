@@ -119,16 +119,16 @@ public:
   int compare(const mafString& str) const;
 
   /** Check if this string starts with the given one.*/
-  bool StartsWith(mafStrBuf str) const;
+  bool starts_with(mafStrBuf str) const;
 
   /** Check if this string starts with the given one.*/
-  bool StartsWith(const mafString& str) const;
+  bool starts_with(const mafString& str) const;
 
   /** Check if this string ends with the given one.*/
-  bool EndsWith(mafStrBuf str) const;
+  bool ends_with(mafStrBuf str) const;
 
   /** Check if this string ends with the given one.*/
-  bool EndsWith(const mafString& str) const;
+  bool ends_with(const mafString& str) const;
 
   /** Append a new string to this string. */
   mafString &append(mafStrBuf str);

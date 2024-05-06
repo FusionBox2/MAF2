@@ -119,7 +119,7 @@ int mafString::compare(const mafString& str) const
 }
 
 //----------------------------------------------------------------------------
-bool mafString::StartsWith(mafStrBuf str) const
+bool mafString::starts_with(mafStrBuf str) const
 //----------------------------------------------------------------------------
 {
 #ifndef FUNCTIONAL_STRBUF
@@ -135,7 +135,7 @@ bool mafString::StartsWith(mafStrBuf str) const
 }
 
 //----------------------------------------------------------------------------
-bool mafString::StartsWith(const mafString& str) const
+bool mafString::starts_with(const mafString& str) const
 //----------------------------------------------------------------------------
 {
     size_t len = str.m_str.length();
@@ -147,7 +147,7 @@ bool mafString::StartsWith(const mafString& str) const
 }
 
 //----------------------------------------------------------------------------
-bool mafString::EndsWith(mafStrBuf str) const
+bool mafString::ends_with(mafStrBuf str) const
 //----------------------------------------------------------------------------
 {
 #ifndef FUNCTIONAL_STRBUF
@@ -163,7 +163,7 @@ bool mafString::EndsWith(mafStrBuf str) const
 }
 
 //----------------------------------------------------------------------------
-bool mafString::EndsWith(const mafString& str) const
+bool mafString::ends_with(const mafString& str) const
 //----------------------------------------------------------------------------
 {
     size_t len = str.m_str.length();
