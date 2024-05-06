@@ -79,15 +79,10 @@ mafString::size_type mafString::size() const
 }
 
 //----------------------------------------------------------------------------
-void mafString::Erase(int start, int end)
+void mafString::erase(mafString::size_type pos, mafString::size_type count)
 //----------------------------------------------------------------------------
 {
-    int len = length();
-    if (end == -1 || end >= len)
-        end = len - 1;
-    if (start > end || end < 0)
-        return;
-    m_str.erase(start, end - start + 1);
+    m_str.erase(pos, count);
 }
 
 mafString mafString::substr(mafString::size_type pos, mafString::size_type count)

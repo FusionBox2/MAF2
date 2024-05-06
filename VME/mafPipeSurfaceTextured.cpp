@@ -524,7 +524,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 	  case ID_CHOOSE_FILENAME1:
 	  {
 								 mafString imageNameTemp = m_File;
-								 imageNameTemp.Erase(imageNameTemp.length() - 4, imageNameTemp.length() - 1);
+								 imageNameTemp.erase(imageNameTemp.length() - 4);
 								 imageNameTemp.append(_R("temp.wrl"));
 								 
 								 
@@ -557,7 +557,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 										 exporter->SetInputConnection(m_Actor->GetTexture()->GetInputConnection(0, 0));
 
 										 mafString imageName = m_File;
-										 imageName.Erase(imageName.length() - 3, imageName.length() - 1);
+										 imageName.erase(imageName.length() - 3);
 
 
 
@@ -644,7 +644,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 			  vtkOBJExporter* writer = vtkOBJExporter::New();
 			  writer->SetRenderWindow(renderWindow);
 			  mafString mtlName = m_File;
-			  mtlName.Erase(mtlName.length() - 4);
+			  mtlName.erase(mtlName.length() - 4);
 			  writer->SetFilePrefix(mtlName.GetCStr());
 			  writer->Update();
 			  writer->Delete();
@@ -704,7 +704,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 								  renderWindow->AddRenderer(renderer);
 
 								  mafString mtlName = m_File;
-								  mtlName.Erase(mtlName.length() - 3, mtlName.length() - 1);
+								  mtlName.erase(mtlName.length() - 3);
 								  mtlName.append(_R("obj.mtl"));
 
 								  wxBusyInfo wait523(m_File.toWx());
@@ -734,7 +734,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 									  vtkNew<vtkJPEGWriter> exporter;
 									  exporter->SetInputConnection(m_Actor->GetTexture()->GetInputConnection(0, 0));
 									  mafString imageName = m_File;
-									  imageName.Erase(imageName.length() - 3, imageName.length() - 1);
+									  imageName.erase(imageName.length() - 3);
 
 									  exporter->SetFileName(imageName.append(_R("jpg")).GetCStr());
 									  exporter->Write();

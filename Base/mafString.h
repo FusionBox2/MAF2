@@ -101,7 +101,7 @@ public:
 
   /**  Erase characters from start position to end position. If end
     is not specified erase to the end of the string.*/
-  void Erase(int start,int end=-1);
+  void erase(size_type pos = 0, size_type count = npos);
 
   mafString substr(size_type pos = 0, size_type count = npos);
 

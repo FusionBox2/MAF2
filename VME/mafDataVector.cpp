@@ -220,13 +220,16 @@ int mafDataVector::InternalStore(mafStorageElement *parent)
   mafString base_url = storage->GetURL();
   auto last_dot = base_url.find_last_of('.');
 
-  base_url.Erase(last_dot);
+  if (last_dot != mafString::npos)
+  {
+	  base_url.erase(last_dot);
+  }
   mafString base_name = base_url;
 
   auto last_slash = base_name.find_last_of('/');
-  if (last_slash >= 0)
+  if (last_slash != mafString::npos)
   {
-    base_name.Erase(0,last_slash);
+    base_name.erase(0,last_slash + 1);
   }
   
   // this test force data to be written when the MSF filename has changed.

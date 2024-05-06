@@ -52,5 +52,12 @@ void lhpTagHandler::ExtractTagName()
   // tag name from type
   m_TagName = _R(this->GetTypeName());
   auto endPos = m_TagName.find(_R("_"));
-  m_TagName.Erase(0, endPos);
+  if(endPos != mafString::npos)
+  {
+	  m_TagName.erase(0, endPos + 1);
+  }
+  else
+  {
+	  m_TagName.clear();
+  }
 }

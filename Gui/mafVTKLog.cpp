@@ -63,7 +63,7 @@ void mafVTKLog::DisplayText(const char* text)
     // Strip CR
     for (;message.ends_with(_R("\n"));)
     {
-      message.Erase(message.length() - 1);
+      message.erase(message.length() - 1);
     }
 
     mafLogMessage(_M(message));

@@ -110,7 +110,7 @@ mafGUI* mafVMEOutputVolume::CreateGui()
   vtkDataSet *data = this->GetVTKData();
   if (data != NULL)
   {
-    m_VtkDataType.Erase(0);
+    m_VtkDataType.clear();
     m_VtkDataType += _R(this->GetVTKData()->GetClassName());
   }
 

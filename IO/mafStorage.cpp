@@ -45,7 +45,7 @@ int mafStorage::Store()
   auto last_slash=dir_path.find_last_of('/');
   if (last_slash != mafString::npos)
   { 
-    dir_path.Erase(last_slash);
+    dir_path.erase(last_slash);
   }
   else
   {

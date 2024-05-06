@@ -103,15 +103,32 @@ void lhpTagHandler_L0000_resource_DictionaryVersion::HandleAutoTag(lhpTagHandler
     assert(files.size() == 1);
     dictionaryFileName = mafWxToString(files[0]);
     auto pos = dictionaryFileName.rfind(_R("\\"));
-    dictionaryFileName.Erase(0, pos);
+    if(pos != mafString::npos)
+	{
+		dictionaryFileName.erase(0, pos + 1);
+	}
+    else
+    {
+        dictionaryFileName.clear();
+    }
   }
 
   wxSetWorkingDirectory(oldDir);
 
   auto pos = dictionaryFileName.rfind(_R("_"));
-  dictionaryFileName.Erase(0, pos);
+  if (pos != mafString::npos)
+  {
+	  dictionaryFileName.erase(0, pos + 1);
+  }
+  else
+  {
+      dictionaryFileName.clear();
+  }
   pos = dictionaryFileName.rfind(_R("."));
-  dictionaryFileName.Erase(pos);
+  if (pos != mafString::npos)
+  {
+	  dictionaryFileName.erase(pos);
+  }
   cargo->SetTagHandlerGeneratedString(dictionaryFileName);
 }
 
@@ -1087,15 +1104,32 @@ void lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Descrip
     assert(files.size() == 1);
     dictionaryFileName = mafWxToString(files[0]);
     auto pos = dictionaryFileName.rfind(_R("\\"));
-    dictionaryFileName.Erase(0, pos);
+	if (pos != mafString::npos)
+	{
+		dictionaryFileName.erase(0, pos + 1);
+	}
+    else
+    {
+        dictionaryFileName.clear();
+    }
   }
 
   wxSetWorkingDirectory(oldDir);
 
   auto pos = dictionaryFileName.rfind(_R("_"));
-  dictionaryFileName.Erase(0, pos);
+  if (pos != mafString::npos)
+  {
+	  dictionaryFileName.erase(0, pos + 1);
+  }
+  else
+  {
+      dictionaryFileName.clear();
+  }
   pos = dictionaryFileName.rfind(_R("."));
-  dictionaryFileName.Erase(pos);
+  if (pos != mafString::npos)
+  {
+	  dictionaryFileName.erase(pos);
+  }
   cargo->SetTagHandlerGeneratedString(dictionaryFileName);
 }
 
@@ -1168,15 +1202,28 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Dictionary
     assert(files.size() == 1);
     dictionaryFileName = mafWxToString(files[0]);
     auto pos = dictionaryFileName.rfind(_R("\\"));
-    dictionaryFileName.Erase(0, pos);
+	if (pos != mafString::npos)
+	{
+		dictionaryFileName.erase(0, pos + 1);
+	}
+    else
+    {
+        dictionaryFileName.clear();
+    }
   }
 
   wxSetWorkingDirectory(oldDir);
 
   auto pos = dictionaryFileName.rfind(_R("_"));
-  dictionaryFileName.Erase(0, pos);
+  if (pos != mafString::npos)
+  {
+	  dictionaryFileName.erase(0, pos + 1);
+  }
   pos = dictionaryFileName.rfind(_R("."));
-  dictionaryFileName.Erase(pos);
+  if (pos != mafString::npos)
+  {
+	  dictionaryFileName.erase(pos);
+  }
   cargo->SetTagHandlerGeneratedString(dictionaryFileName);
 }
 
@@ -1249,15 +1296,32 @@ void lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DictionaryVersio
     assert(files.size() == 1);
     dictionaryFileName = mafWxToString(files[0]);
     auto pos = dictionaryFileName.rfind(_R("\\"));
-    dictionaryFileName.Erase(0, pos);
+	if (pos != mafString::npos)
+	{
+		dictionaryFileName.erase(0, pos + 1);
+	}
+    else
+    {
+        dictionaryFileName.clear();
+    }
   }
 
   wxSetWorkingDirectory(oldDir);
 
   auto pos = dictionaryFileName.rfind(_R("_"));
-  dictionaryFileName.Erase(0, pos);
+  if (pos != mafString::npos)
+  {
+	  dictionaryFileName.erase(0, pos + 1);
+  }
+  else
+  {
+      dictionaryFileName.clear();
+  }
   pos = dictionaryFileName.rfind(_R("."));
-  dictionaryFileName.Erase(pos);
+  if (pos != mafString::npos)
+  {
+	  dictionaryFileName.erase(pos);
+  }
   cargo->SetTagHandlerGeneratedString(dictionaryFileName);
 }
 
@@ -1385,15 +1449,32 @@ void lhpTagHandler_L0000_resource_data_Source_MicroCTSource_MicroCTSource_Dictio
     assert(files.size() == 1);
     dictionaryFileName = mafWxToString(files[0]);
     auto pos = dictionaryFileName.rfind(_R("\\"));
-    dictionaryFileName.Erase(0, pos);
+	if (pos != mafString::npos)
+	{
+		dictionaryFileName.erase(0, pos + 1);
+	}
+    else
+    {
+        dictionaryFileName.clear();
+    }
   }
 
   wxSetWorkingDirectory(oldDir);
 
   auto pos = dictionaryFileName.rfind(_R("_"));
-  dictionaryFileName.Erase(0, pos);
+  if (pos != mafString::npos)
+  {
+	  dictionaryFileName.erase(0, pos + 1);
+  }
+  else
+  {
+      dictionaryFileName.clear();
+  }
   pos = dictionaryFileName.rfind(_R("."));
-  dictionaryFileName.Erase(pos);
+  if (pos != mafString::npos)
+  {
+	  dictionaryFileName.erase(pos);
+  }
   cargo->SetTagHandlerGeneratedString(dictionaryFileName);
 }
 
