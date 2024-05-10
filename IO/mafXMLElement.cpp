@@ -15,7 +15,6 @@
 =========================================================================*/
 
 #include "mmuXMLDOMElement.h"
-#include "mmuXMLDOM.h"
 #include "mafXMLElement.h"
 
 #include "mafXMLParser.h"

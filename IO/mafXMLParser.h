@@ -18,13 +18,6 @@
 
 #include "mafParser.h"
 
-//----------------------------------------------------------------------------
-// forward declarations :
-//----------------------------------------------------------------------------
-class mafXMLElement;
-class mmuXMLDOM;
-
-
 /** Concrete implementation of Storage object using Xerces-C for storing in XML.
   This is a concrete implementation of storage object for storing XML documents
   by means of Xerces-C library (http://xml.apache.org/xerces-c/).
@@ -49,7 +42,5 @@ protected:
 
   /** This is called by Restore() and must be reimplemented by subclasses */
   virtual int InternalRestore();
-
-  mmuXMLDOM *m_DOM;      ///< PIMPL object storing XML objects' pointers
 };
 #endif // _mafXMLStorage_h_

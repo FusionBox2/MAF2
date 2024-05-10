@@ -48,7 +48,6 @@ IF (MAF_USE_XercesC)
     mafXMLParser.h
     mafXMLString.cpp
     mafXMLString.h
-    mmuXMLDOM.h
     mmuXMLDOMElement.h
   )
   SET(PROJECT_LIBS ${PROJECT_LIBS} XercesC::XercesC)
