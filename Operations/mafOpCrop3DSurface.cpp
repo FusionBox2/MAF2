@@ -80,6 +80,7 @@ mafOpCrop3DSurface::~mafOpCrop3DSurface()
 	vtkDEL(m_OutputRG);
 	vtkDEL(m_OutputSP);
 	vtkDEL(m_OutputPolyData);
+	mafDEL(m_Cloud);
 }
 
 //----------------------------------------------------------------------------
