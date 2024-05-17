@@ -374,7 +374,7 @@ int mafVMEBSplineLine::InternalStore(mafStorageElement *parent)
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent->StoreMatrix(_R("Transform"),&m_Transform->GetMatrix());
+    parent->StoreMatrix(_R("Transform"),m_Transform->GetMatrix());
     parent->StoreInteger(_R("Order"), m_Order);
     parent->StoreInteger(_R("Mode"), m_Mode);
     parent->StoreInteger(_R("Submode"), m_SubMode);
@@ -394,7 +394,7 @@ int mafVMEBSplineLine::InternalRestore(mafStorageElement *node)
   if (Superclass::InternalRestore(node)==MAF_OK)
   {
     mafMatrix matrix;
-    if (node->RestoreMatrix(_R("Transform"),&matrix)==MAF_OK)
+    if (node->RestoreMatrix(_R("Transform"),matrix)==MAF_OK)
     {
       m_Transform->SetMatrix(matrix);
       node->RestoreInteger(_R("Order"), m_Order);

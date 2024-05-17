@@ -77,7 +77,7 @@ int mafMatrixVector::InternalStore(mafStorageElement *parent)
   parent->SetAttribute(_R("NumberOfItems"),mafToString(GetNumberOfItems()));
   for (auto& elem : *this)
   {
-    if (parent->StoreMatrix(_R("Matrix"),elem.second)!=MAF_OK)
+    if (parent->StoreMatrix(_R("Matrix"),*(elem.second))!=MAF_OK)
       return MAF_ERROR;
   }
   return MAF_OK;
@@ -100,7 +100,7 @@ int mafMatrixVector::InternalRestore(mafStorageElement *node)
     for (int i=0;i<vector_elements.size();i++)
     {
       mafSmartPointer<mafMatrix> mat;
-      if (vector_elements[i]->RestoreMatrix(mat)!=MAF_OK)
+      if (vector_elements[i]->RestoreMatrix(*mat)!=MAF_OK)
         return MAF_ERROR;
       AppendItem(mat);
     }

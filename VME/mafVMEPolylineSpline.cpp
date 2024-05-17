@@ -214,7 +214,7 @@ int mafVMEPolylineSpline::InternalStore(mafStorageElement *parent)
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    if(parent->StoreMatrix(_R("Transform"),&m_Transform->GetMatrix())==MAF_OK && 
+    if(parent->StoreMatrix(_R("Transform"),m_Transform->GetMatrix())==MAF_OK && 
        parent->StoreInteger(_R("AxisReorder"), m_OrderByAxisMode) == MAF_OK
       )    
       return MAF_OK;
@@ -229,7 +229,7 @@ int mafVMEPolylineSpline::InternalRestore(mafStorageElement *node)
   if (Superclass::InternalRestore(node)==MAF_OK)
   {
     mafMatrix matrix;
-    if (node->RestoreMatrix(_R("Transform"),&matrix)==MAF_OK)
+    if (node->RestoreMatrix(_R("Transform"),matrix)==MAF_OK)
     {
       node->RestoreInteger(_R("AxisReorder"),m_OrderByAxisMode);
       m_Transform->SetMatrix(matrix);

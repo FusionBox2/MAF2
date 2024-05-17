@@ -482,9 +482,11 @@ int mafDataVector::InternalRestore(mafStorageElement *node)
 
   assert(num_items == elements.size()); // check the number of elements
 
-  for (int i = 0; i < num_items; i++)
+  for (auto& elem : elements)
   {
-    mafVMEItem *item = mafVMEItem::SafeDownCast(elements[i]->RestoreObject());
+    mafObject *obj = nullptr;
+    elem->RestoreObject(obj);
+    mafVMEItem *item = mafVMEItem::SafeDownCast(obj);
     assert(item);
     if (!item)
     {

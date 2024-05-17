@@ -863,7 +863,7 @@ int mafVMEPlane::InternalStore(mafStorageElement *parent)
 			parent->StoreDouble("m_PlanePoint2_1", m_PlanePoint2[1]) == MAF_OK &&
 			parent->StoreDouble("m_PlanePoint2_2", m_PlanePoint2[2]) == MAF_OK &&
 			*/
-			parent->StoreMatrix(_R("Transform"), &m_Transform->GetMatrix()) == MAF_OK 
+			parent->StoreMatrix(_R("Transform"), m_Transform->GetMatrix()) == MAF_OK 
 			
 
 			)
@@ -897,7 +897,7 @@ int mafVMEPlane::InternalRestore(mafStorageElement *node)
 		node->RestoreDouble("m_PlanePoint2_1", m_PlanePoint2[1]) == MAF_OK &&
 		node->RestoreDouble("m_PlanePoint2_2", m_PlanePoint2[2]) == MAF_OK &&
 */
-		node->RestoreMatrix(_R("Transform"), &matrix) == MAF_OK)
+		node->RestoreMatrix(_R("Transform"), matrix) == MAF_OK)
 		{
 			m_Transform->SetMatrix(matrix);
 		}

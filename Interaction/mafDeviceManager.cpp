@@ -196,7 +196,7 @@ int mafDeviceManager::InternalStore(mafStorageElement *node)
   assert(node);
   node->SetAttribute(_R("DeviceIdCounter"),m_DeviceIdCounter);
   
-  if (node->StoreObject(_R("DeviceSet"),m_DeviceSet)==NULL)
+  if (node->StoreObject(_R("DeviceSet"),m_DeviceSet) != MAF_OK)
     return MAF_ERROR;
 
   return MAF_OK;
@@ -216,7 +216,7 @@ int mafDeviceManager::InternalRestore(mafStorageElement *node)
     m_DeviceIdCounter = mafDevice::MIN_DEVICE_ID;
   }
   
-  int fail = node->RestoreObject(_R("DeviceSet"),m_DeviceSet);
+  int fail = node->RestoreStorable(_R("DeviceSet"),m_DeviceSet);
   
   m_RestoringFlag=false;
 

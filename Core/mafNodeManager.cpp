@@ -151,8 +151,7 @@ int mafNodeManager::InternalStore(mafStorageElement *node)
   // here should write elements specific for the document
   if(!m_Root)
     return MAF_ERROR;
-  mafStorageElement *root_elem=node->StoreObject(_R("Root"),m_Root);
-  return root_elem?MAF_OK:MAF_ERROR;
+  return node->StoreObject(_R("Root"),m_Root) != MAF_OK ? MAF_ERROR : MAF_OK;
 }
 
 //------------------------------------------------------------------------------
@@ -161,8 +160,8 @@ int mafNodeManager::InternalRestore(mafStorageElement *node)
 {
   // here should restore elements specific for the document
   SetRoot(NULL);
-  mafObject *obj = node->RestoreObject(_R("Root"));
-  if(!obj)
+  mafObject* obj = nullptr;
+  if(node->RestoreObject(_R("Root"), obj) != MAF_OK)
     return MAF_ERROR; 
   mafReferenceCounted *rc = mafReferenceCounted::SafeDownCast(obj);
   if(!rc)

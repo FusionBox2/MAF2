@@ -570,7 +570,7 @@ int mafVMESurfaceRegParam::InternalStore(mafStorageElement *parent)
 	if (Superclass::InternalStore(parent)==MAF_OK)
 	{
     if (
-		parent->StoreMatrix(_R("Transform"),&m_Transform->GetMatrix()) == MAF_OK && 
+		parent->StoreMatrix(_R("Transform"),m_Transform->GetMatrix()) == MAF_OK && 
 		parent->StoreInteger(_R("Geometry"), 	m_GeometryType) == MAF_OK &&
     parent->StoreDouble(_R("ShereRadius"), m_SphereRadius) == MAF_OK &&
     parent->StoreDouble(_R("SpherePhiRes"),m_SpherePhiRes) == MAF_OK &&
@@ -612,7 +612,7 @@ int mafVMESurfaceRegParam::InternalRestore(mafStorageElement *node)
 	if (Superclass::InternalRestore(node)==MAF_OK)
 	{
     mafMatrix matrix;
-    if (node->RestoreMatrix(_R("Transform"),&matrix)==MAF_OK)
+    if (node->RestoreMatrix(_R("Transform"),matrix)==MAF_OK)
     {
       m_Transform->SetMatrix(matrix); 
       node->RestoreInteger(_R("Geometry"),m_GeometryType);

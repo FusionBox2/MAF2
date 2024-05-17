@@ -833,7 +833,7 @@ int mafVMEOsteometricBoard::InternalStore(mafStorageElement *parent)
 	if (Superclass::InternalStore(parent) == MAF_OK)
 	{
 		if (
-			parent->StoreMatrix(_R("Transform"), &m_Transform->GetMatrix()) == MAF_OK &&
+			parent->StoreMatrix(_R("Transform"), m_Transform->GetMatrix()) == MAF_OK &&
 		//	parent->StoreInteger("Geometry", m_GeometryType) == MAF_OK &&
 	
 			parent->StoreDouble(_R("PlaneUx"), m_PlaneXRes) == MAF_OK &&
@@ -862,7 +862,7 @@ int mafVMEOsteometricBoard::InternalRestore(mafStorageElement *node)
 	if (Superclass::InternalRestore(node) == MAF_OK)
 	{
 		mafMatrix matrix;
-		if (node->RestoreMatrix(_R("Transform"), &matrix) == MAF_OK)
+		if (node->RestoreMatrix(_R("Transform"), matrix) == MAF_OK)
 		{
 			m_Transform->SetMatrix(matrix);
 		

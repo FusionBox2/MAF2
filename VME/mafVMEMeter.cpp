@@ -801,7 +801,7 @@ int mafVMEMeter::InternalStore(mafStorageElement *parent)
   {
     parent->StoreInteger(_R("Infinite"), m_InfiniteLine);
     parent->StoreInteger(_R("LineAngle2"), m_LineAngle2);
-    parent->StoreMatrix(_R("Transform"),&m_Transform->GetMatrix());
+    parent->StoreMatrix(_R("Transform"),m_Transform->GetMatrix());
     return MAF_OK;
   }
   return MAF_ERROR;
@@ -815,7 +815,7 @@ int mafVMEMeter::InternalRestore(mafStorageElement *node)
     mafMatrix matrix;
     node->RestoreInteger(_R("Infinite"), m_InfiniteLine);
     node->RestoreInteger(_R("LineAngle2"), m_LineAngle2);
-    if (node->RestoreMatrix(_R("Transform"),&matrix)==MAF_OK)
+    if (node->RestoreMatrix(_R("Transform"),matrix)==MAF_OK)
     {
       m_Transform->SetMatrix(matrix);
       return MAF_OK;

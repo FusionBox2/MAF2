@@ -253,7 +253,7 @@ int lhpVMELMCLines::InternalStore(mafStorageElement *parent)
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
     parent->StoreInteger(_R("Looped"), m_Looped);
-    if(parent->StoreMatrix(_R("Transform"),&m_Transform->GetMatrix())==MAF_OK)
+    if(parent->StoreMatrix(_R("Transform"),m_Transform->GetMatrix())==MAF_OK)
       return MAF_OK;
   }
   return MAF_ERROR;
@@ -267,7 +267,7 @@ int lhpVMELMCLines::InternalRestore(mafStorageElement *node)
   {
     mafMatrix matrix;
     node->RestoreInteger(_R("Looped"), m_Looped);
-    if (node->RestoreMatrix(_R("Transform"),&matrix)==MAF_OK)
+    if (node->RestoreMatrix(_R("Transform"),matrix)==MAF_OK)
     {
       m_Transform->SetMatrix(matrix);
       return MAF_OK;

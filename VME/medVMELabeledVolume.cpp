@@ -444,7 +444,7 @@ int medVMELabeledVolume::InternalStore(mafStorageElement *parent)
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent->StoreMatrix(_R("Transform"),&m_Transform->GetMatrix());
+    parent->StoreMatrix(_R("Transform"),m_Transform->GetMatrix());
     return MAF_OK;
   }
   return MAF_ERROR;
@@ -456,7 +456,7 @@ int medVMELabeledVolume::InternalRestore(mafStorageElement *node)
   if (Superclass::InternalRestore(node)==MAF_OK)
   {
     mafMatrix matrix;
-    if (node->RestoreMatrix(_R("Transform"),&matrix)==MAF_OK)
+    if (node->RestoreMatrix(_R("Transform"),matrix)==MAF_OK)
     {
       m_Transform->SetMatrix(matrix);
       return MAF_OK;

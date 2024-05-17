@@ -862,11 +862,11 @@ int mafInteractionManager::InternalStore(mafStorageElement *node)
 //------------------------------------------------------------------------------
 {
   // store device settings
-  if (node->StoreObject(_R("DeviceManager"),m_DeviceManager)==NULL)
+  if (node->StoreObject(_R("DeviceManager"),m_DeviceManager) != MAF_OK)
     return MAF_ERROR;
   
   // store bindings
-  if (node->StoreObject(_R("DeviceBindings"),m_StaticEventRouter)==NULL)
+  if (node->StoreObject(_R("DeviceBindings"),m_StaticEventRouter) != MAF_OK)
     return MAF_ERROR;
   
   return MAF_OK;
@@ -876,10 +876,10 @@ int mafInteractionManager::InternalStore(mafStorageElement *node)
 int mafInteractionManager::InternalRestore(mafStorageElement *node)
 //------------------------------------------------------------------------------
 {
-  if (node->RestoreObject(_R("DeviceManager"),m_DeviceManager)!=MAF_OK)
+  if (node->RestoreStorable(_R("DeviceManager"),m_DeviceManager)!=MAF_OK)
     return MAF_ERROR;
   
-  if (node->RestoreObject(_R("DeviceBindings"),m_StaticEventRouter)!=MAF_OK)
+  if (node->RestoreStorable(_R("DeviceBindings"),m_StaticEventRouter)!=MAF_OK)
     return MAF_ERROR;
   
   return MAF_OK;

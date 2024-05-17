@@ -347,7 +347,7 @@ int mafVMELineSeg::InternalStore(mafStorageElement *parent)
 	
 	if (Superclass::InternalStore(parent)==MAF_OK)
 	{
-		if (	parent->StoreMatrix(_R("Transform"), &m_Transform->GetMatrix()) == MAF_OK	)
+		if (	parent->StoreMatrix(_R("Transform"), m_Transform->GetMatrix()) == MAF_OK	)
 		{
 			/*parent->StoreInteger("NbrPts", pts->GetNumberOfPoints());
 			if (pts->GetNumberOfPoints() > 1)
@@ -394,7 +394,7 @@ int mafVMELineSeg::InternalRestore(mafStorageElement *node)
 	{
     mafMatrix matrix;
 	
-    if (node->RestoreMatrix(_R("Transform"),&matrix)==MAF_OK)
+    if (node->RestoreMatrix(_R("Transform"),matrix)==MAF_OK)
     {
       m_Transform->SetMatrix(matrix); 
 	  node->RestoreVectorN(_R("PosPt1"), PosPt1, 3);

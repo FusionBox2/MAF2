@@ -279,14 +279,12 @@ int mafVMEGenericAbstract::InternalStore(mafStorageElement *parent)
   if (m_DataVector)
   {
     m_DataVector->SetCrypting(this->m_Crypting != 0);
-    mafStorageElement *data_vector = parent->AppendChild(_R("DataVector"));
-    if(m_DataVector->Store(data_vector) == MAF_ERROR)
+    if(parent->StoreStorable(_R("DataVector"), m_DataVector) == MAF_ERROR)
       return MAF_ERROR;
   }
 
   // sub-element for storing the matrix vector
-  mafStorageElement *matrix_vector = parent->AppendChild(_R("MatrixVector"));
-  if(m_MatrixVector->Store(matrix_vector) == MAF_ERROR)
+  if(parent->StoreStorable(_R("MatrixVector"), m_MatrixVector) == MAF_ERROR)
     return MAF_ERROR;
 
   return MAF_OK;
@@ -302,20 +300,12 @@ int mafVMEGenericAbstract::InternalRestore(mafStorageElement *node)
   // restore Data Vector
   if (m_DataVector)
   {
-    mafStorageElement *data_vector=node->FindNestedElement(_R("DataVector"));
-    if (data_vector)
-    {
-      ret_val = m_DataVector->Restore(data_vector);
-    }
+    ret_val = node->RestoreStorable(_R("DataVector"), m_DataVector);
   }
   // restore Matrix Vector  
   if (m_MatrixVector && ret_val == MAF_OK)
   {
-    mafStorageElement *matrix_vector=node->FindNestedElement(_R("MatrixVector"));
-    if (matrix_vector)
-    {
-      ret_val = m_MatrixVector->Restore(matrix_vector);
-    }
+    ret_val = node->RestoreStorable(_R("MatrixVector"), m_MatrixVector);
   }
   return ret_val;
 }

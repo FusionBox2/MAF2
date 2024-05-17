@@ -194,10 +194,11 @@ int mafTagArray::InternalStore(mafStorageElement *parent)
   {  
     parent->SetAttribute(_R("NumberOfTags"),mafToString(GetNumberOfTags()));
   
-    for (mmuTagsMap::iterator it=m_Tags.begin();it!=m_Tags.end()&&ret==MAF_OK;it++)
+    for (auto& item : m_Tags)
     {
-      mafStorageElement *item_element=parent->AppendChild(_R("TItem"));
-      ret=it->second.Store(item_element)!=MAF_OK;
+      ret = parent->StoreStorable(_R("TItem"), &item.second);
+      if (ret != MAF_OK)
+          break;
     }
   }
   return ret;

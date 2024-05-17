@@ -646,7 +646,7 @@ int mafMSFImporter::RestoreVMatrix(mafStorageElement *node, mafMatrixVector *vma
     assert(children[i]->GetName() == _R("Matrix"));
 
     mafSmartPointer<mafMatrix> matrix;
-    int restored_matrix = children[i]->RestoreMatrix(matrix);
+    int restored_matrix = children[i]->RestoreMatrix(*matrix);
     if (restored_matrix != MAF_ERROR)
     {
       vmatrix->AppendKeyMatrix(matrix);

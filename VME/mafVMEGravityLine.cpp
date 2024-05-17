@@ -954,7 +954,7 @@ int mafVMEGravityLine::InternalStore(mafStorageElement *parent)
 		if (
 					
  
-			parent->StoreMatrix(_R("Transform"), &m_Transform->GetMatrix()) == MAF_OK 
+			parent->StoreMatrix(_R("Transform"), m_Transform->GetMatrix()) == MAF_OK 
 				)
 			{
 			return MAF_OK;
@@ -974,7 +974,7 @@ int mafVMEGravityLine::InternalRestore(mafStorageElement *node)
 	if (Superclass::InternalRestore(node)==MAF_OK)
 	{
     mafMatrix matrix;
-    if (node->RestoreMatrix(_R("Transform"), &matrix) == MAF_OK
+    if (node->RestoreMatrix(_R("Transform"), matrix) == MAF_OK
 		)
 	  {
 		  m_Transform->SetMatrix(matrix);

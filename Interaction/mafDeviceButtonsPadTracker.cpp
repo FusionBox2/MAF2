@@ -105,7 +105,7 @@ int mafDeviceButtonsPadTracker::InternalStore(mafStorageElement *node)
   // store default avatar if present
   if (m_DefaultAvatar)
   {
-    return (node->StoreObject(_R("Avatar"),m_DefaultAvatar)?MAF_OK:MAF_ERROR);
+    return (node->StoreObject(_R("Avatar"),m_DefaultAvatar) != MAF_OK ?MAF_ERROR: MAF_OK);
   }
 
   return MAF_OK;
@@ -125,9 +125,9 @@ int mafDeviceButtonsPadTracker::InternalRestore(mafStorageElement *node)
     m_TrackedBounds.Modified();
     if (node->RestoreVectorN(_R("TrackedBoxOrientation"),m_TrackedBoxOrientation,3)==MAF_OK)
     {
-      if (mafStorageElement *sub_node=node->FindNestedElement(_R("Avatar")))
+      mafObject* obj = nullptr;
+      if (node->RestoreObject(_R("Avatar"), obj) == MAF_OK)
       {
-        mafObject *obj=sub_node->RestoreObject();
         if (mafAvatar3D *avatar=mafAvatar3D::SafeDownCast(obj))
         {
           SetDefaultAvatar(mafAvatar3D::SafeDownCast(avatar));

@@ -126,7 +126,7 @@ int mafVMEEllipsoid::InternalStore(mafStorageElement *parent)
 			parent->StoreDouble(_R("c"), c) == MAF_OK &&
 			parent->StoreDouble(_R("Theta"), resTheta) == MAF_OK &&
 			parent->StoreDouble(_R("Phi"), resPhi) == MAF_OK &&
-			parent->StoreMatrix(_R("Transform"), &m_Transform->GetMatrix()) == MAF_OK
+			parent->StoreMatrix(_R("Transform"), m_Transform->GetMatrix()) == MAF_OK
 			
 		)
 		return MAF_OK;
@@ -156,7 +156,7 @@ int mafVMEEllipsoid::InternalRestore(mafStorageElement *node)
 		{ 
 			if(node->RestoreDouble(_R("Theta"), resTheta) == MAF_OK &&
 				node->RestoreDouble(_R("Phi"), resPhi) == MAF_OK &&
-				node->RestoreMatrix(_R("Transform"), &matrix) == MAF_OK 
+				node->RestoreMatrix(_R("Transform"), matrix) == MAF_OK 
      		 )
 			{
 			m_Transform->SetMatrix(matrix);

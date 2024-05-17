@@ -230,7 +230,7 @@ int mafVMEItem::InternalStore(mafStorageElement *parent)
     &&parent->StoreDouble(_R("TimeStamp"),m_TimeStamp)==MAF_OK \
     &&parent->StoreText(_R("Crypting"),m_Crypting?_R("true"):_R("false"))==MAF_OK \
     &&parent->StoreVectorN(_R("Bounds"),m_Bounds.m_Bounds,6)==MAF_OK \
-    &&parent->StoreObject(_R("TagArray"),m_TagArray)!=NULL)
+    &&parent->StoreObject(_R("TagArray"),m_TagArray) == MAF_OK)
   {
     return MAF_OK;
   }
@@ -268,7 +268,7 @@ int mafVMEItem::InternalRestore(mafStorageElement *node)
     &&node->RestoreDouble(_R("TimeStamp"),m_TimeStamp)==MAF_OK \
     &&node->RestoreText(_R("Crypting"),crypting)==MAF_OK \
     &&node->RestoreVectorN(_R("Bounds"),m_Bounds.m_Bounds,6)==MAF_OK \
-    &&node->RestoreObject(_R("TagArray"),m_TagArray)==MAF_OK)
+    &&node->RestoreStorable(_R("TagArray"),m_TagArray)==MAF_OK)
   {
     m_Crypting = (crypting==_R("true")||crypting==_R("True")||crypting==_R("TRUE"))?true:false;
 

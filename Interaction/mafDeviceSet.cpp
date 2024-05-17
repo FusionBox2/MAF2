@@ -105,7 +105,7 @@ int mafDeviceSet::InternalStore(mafStorageElement *node)
     if (device->IsPersistent()) // do not store persistent devices
       continue;
 
-    if (node->StoreObject(_R("Device"),device)==NULL)
+    if (node->StoreObject(_R("Device"),device) != MAF_OK)
     {
       mafErrorMacro("Error Writing "<<device->GetName().GetCStr() <<" device");
       m_DevicesMutex->unlock();
@@ -129,16 +129,16 @@ int mafDeviceSet::InternalRestore(mafStorageElement *node)
 
   Superclass::InternalRestore(node);
 
-  std::vector<mafStorageElement *> devices=node->GetChildren();
-  for (int i=0;i<devices.size();i++)
+  std::vector<mafStorageElement*> devices;
+  node->GetNestedElementsByName(_R("Device"), devices);
+  for (auto& device_node : devices)
   {
     // Must create the object before restoring since
     // the device must be already connected to the
     // device manager
-    mafStorageElement *device_node=devices[i];  
-    if (device_node->GetName()==_R("Device"))
     {
-      if (mafObject *obj=device_node->RestoreObject())
+      mafObject* obj = nullptr;
+      if (device_node->RestoreObject(obj) == MAF_OK)
       {
         if (mafDevice *device=mafDevice::SafeDownCast(obj)) // check the restored object is really a mafDevice
         {

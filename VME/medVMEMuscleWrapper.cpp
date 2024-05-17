@@ -425,7 +425,7 @@ void medVMEMuscleWrapper::RestoreMeterLinks()
     parent->StoreInteger(_R("Smooth_Steps"), m_FbSmoothSteps);    
     parent->StoreDouble(_R("Smooth_Weight"), m_FbSmoothWeight); 
 
-    parent->StoreMatrix(_R("Transform"),&m_Transform->GetMatrix());
+    parent->StoreMatrix(_R("Transform"),m_Transform->GetMatrix());
     return MAF_OK;
   }
   return MAF_ERROR;
@@ -471,7 +471,7 @@ void medVMEMuscleWrapper::RestoreMeterLinks()
       m_FbSmoothWeight = DEFAULT_FIBERS_SMOOTHWEIGHT;
     
     mafMatrix matrix;
-    if (node->RestoreMatrix(_R("Transform"),&matrix)==MAF_OK) {    
+    if (node->RestoreMatrix(_R("Transform"),matrix)==MAF_OK) {    
       m_Transform->SetMatrix(matrix);
     }
 

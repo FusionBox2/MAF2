@@ -1196,7 +1196,7 @@ int mafNode::InternalStore(mafStorageElement *parent)
   {
     attrs.push_back(it->second);
   }
-  parent->StoreObjectVector(_R("Attributes"),attrs);
+  parent->StoreVectorN(_R("Attributes"),attrs);
 
   // store Links
   unsigned numberOfLinks = 0;
@@ -1231,7 +1231,7 @@ int mafNode::InternalStore(mafStorageElement *parent)
       nodes_to_store.push_back(node);
     }
   }
-  parent->StoreObjectVector(_R("Children"),nodes_to_store,_R("Node"));
+  parent->StoreVectorN(_R("Children"),nodes_to_store,_R("Node"));
 
   return MAF_OK;
 }
@@ -1257,7 +1257,7 @@ int mafNode::InternalRestore(mafStorageElement *node)
   // restore attributes
   RemoveAllAttributes();
   std::vector<mafObject *> attrs;
-  if (node->RestoreObjectVector(_R("Attributes"),attrs) != MAF_OK)
+  if (node->RestoreVectorN(_R("Attributes"),attrs) != MAF_OK)
   {
     mafErrorMacro("Problems restoring attributes for node ");// << GetName());
     // do not return MAF_ERROR when cannot restore an attribute due to missing object type
@@ -1304,7 +1304,7 @@ int mafNode::InternalRestore(mafStorageElement *node)
   // restore children
   RemoveAllChildren();
   std::vector<mafObject *> children;
-  if (node->RestoreObjectVector(_R("Children"),children,_R("Node")) != MAF_OK)
+  if (node->RestoreVectorN(_R("Children"),children,_R("Node")) != MAF_OK)
   {
     if (node->GetStorage()->GetErrorCode()!=mafStorage::IO_WRONG_OBJECT_TYPE)
       return MAF_ERROR;

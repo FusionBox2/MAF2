@@ -123,7 +123,7 @@ int mafVMECylinder::InternalStore(mafStorageElement *parent)
 			parent->StoreDouble(_R("h"), h) == MAF_OK &&
 			parent->StoreInteger(_R("CylinderOrientationAxis"), m_CylinderOrientationAxis) == MAF_OK &&
 			parent->StoreDouble(_R("res"), res) == MAF_OK &&
-			parent->StoreMatrix(_R("Transform"), &m_Transform->GetMatrix()) == MAF_OK
+			parent->StoreMatrix(_R("Transform"), m_Transform->GetMatrix()) == MAF_OK
 
 			)
 		{
@@ -159,7 +159,7 @@ int mafVMECylinder::InternalRestore(mafStorageElement *node)
 		
 		if(
 			node->RestoreDouble(_R("res"), res) == MAF_OK &&
-			node->RestoreMatrix(_R("Transform"), &matrix) == MAF_OK 
+			node->RestoreMatrix(_R("Transform"), matrix) == MAF_OK 
      	  )
 		{
 			m_Transform->SetMatrix(matrix);

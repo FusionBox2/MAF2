@@ -1862,7 +1862,7 @@ int mafVMEMuscleWrapping::InternalStore(mafStorageElement *parent)
 	if (Superclass::InternalStore(parent) == MAF_OK)
 	{
 		parent->StoreInteger(_R("computeState"), m_ComputeStateCheckbox);
-		parent->StoreMatrix(_R("Transform"), &m_Transform->GetMatrix());
+		parent->StoreMatrix(_R("Transform"), m_Transform->GetMatrix());
 		return MAF_OK;
 	}
 	return MAF_ERROR;
@@ -1878,7 +1878,7 @@ int mafVMEMuscleWrapping::InternalRestore(mafStorageElement *node)
 	if (Superclass::InternalRestore(node) == MAF_OK)
 	{
 		mafMatrix matrix;
-		if (node->RestoreMatrix(_R("Transform"), &matrix) == MAF_OK
+		if (node->RestoreMatrix(_R("Transform"), matrix) == MAF_OK
 			&&
 			node->RestoreInteger(_R("computeState"), m_ComputeStateCheckbox) == MAF_OK 
 			)
