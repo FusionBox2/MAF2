@@ -637,6 +637,8 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 	  {
 		  {
 			  vtkRenderer* renderer = vtkRenderer::New();
+			  m_Vme->GetOutput()->Update();
+			  m_Actor->PokeMatrix(m_Vme->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
 			  renderer->AddActor(m_Actor);
 
 			  vtkRenderWindow* renderWindow = vtkRenderWindow::New();
@@ -650,6 +652,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 			  writer->Delete();
 			  renderWindow->Delete();
 			  renderer->Delete();
+			  m_Actor->PokeMatrix(nullptr);
 			  break;
 		  }
 
