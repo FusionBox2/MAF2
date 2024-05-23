@@ -42,13 +42,10 @@ ENDIF (BUILD_SHARED_LIBS)
 IF (MAF_USE_XercesC)
   SET(PROJECT_SRCS
     ${PROJECT_SRCS}
-    mafXMLElement.cpp
-    mafXMLElement.h
     mafXMLParser.cpp
     mafXMLParser.h
     mafXMLString.cpp
     mafXMLString.h
-    mmuXMLDOMElement.h
   )
   SET(PROJECT_LIBS ${PROJECT_LIBS} XercesC::XercesC)
 ENDIF (MAF_USE_XercesC)

@@ -45,19 +45,26 @@ class mafObject;
 class MAF_EXPORT mafStorageElement
 {
 public:
+  /** elements can be created only by means of AppendChild() or FindNestedElement() */
+  mafStorageElement(void* element, mafParser* storage);
+
   virtual ~mafStorageElement();
 
   /** get the name of this element. The element name is set at creation time (@sa AppendChild()) */
-  const mafString& GetName(){return m_Name;}
+  const mafString& GetName() const {return m_Name;}
+
+  mafStorageElement operator[](const mafString& name);
+
+  mafStorageElement operator[](const mafString& name) const;
 
   void SetAttribute(const mafString& name,const mafID value);
   void SetAttribute(const mafString& name,const double value);
 
-  bool GetAttributeAsDouble(const mafString& name,double &value);
-  bool GetAttributeAsInteger(const mafString& name,mafID &value);
+  bool GetAttributeAsDouble(const mafString& name,double &value) const;
+  bool GetAttributeAsInteger(const mafString& name,mafID &value) const;
 
   /** Used to upgrade attribute value from previous MSF file version.*/
-  mafString UpgradeAttribute(const mafString& attribute);
+  mafString UpgradeAttribute(const mafString& attribute) const;
 
   int StoreText    (const mafString& name, const mafString& text);
   int StoreInteger (const mafString& name, const int& value);
@@ -72,57 +79,56 @@ public:
   int StoreVectorN (const mafString& name, const std::vector<mafString> &comps,const mafString& tag);
   int StoreVectorN (const mafString& name, const std::vector<mafObject*>& vector, const mafString& items_name = _R("Item"));
 
-  int RestoreText    (const mafString& name, mafString &buffer);
-  int RestoreInteger (const mafString& name, int& value);
-  int RestoreDouble  (const mafString& name, double& value);
-  int RestoreMatrix  (const mafString& name, mafMatrix& matrix);
-  int RestoreObject  (const mafString& name, mafObject*& object);
-  int RestoreStorable(const mafString& name, mafStorable* object);
-  int RestoreVectorN (const mafString& name, double *comps,unsigned int num);
-  int RestoreVectorN (const mafString& name, int *comps,unsigned int num);
-  int RestoreVectorN (const mafString& name, std::vector<double> &comps);
-  int RestoreVectorN (const mafString& name, std::vector<int> &comps);
-  int RestoreVectorN (const mafString& name, std::vector<mafString> &comps,const mafString& tag);
-  int RestoreVectorN (const mafString& name, std::vector<mafObject*>& vector, const mafString& items_name = _R("Item"));
+  int RestoreText    (const mafString& name, mafString &buffer) const;
+  int RestoreInteger (const mafString& name, int& value) const;
+  int RestoreDouble  (const mafString& name, double& value) const;
+  int RestoreMatrix  (const mafString& name, mafMatrix& matrix) const;
+  int RestoreObject  (const mafString& name, mafObject*& object) const;
+  int RestoreStorable(const mafString& name, mafStorable* object) const;
+  int RestoreVectorN (const mafString& name, double *comps,unsigned int num) const;
+  int RestoreVectorN (const mafString& name, int *comps,unsigned int num) const;
+  int RestoreVectorN (const mafString& name, std::vector<double> &comps) const;
+  int RestoreVectorN (const mafString& name, std::vector<int> &comps) const;
+  int RestoreVectorN (const mafString& name, std::vector<mafString> &comps,const mafString& tag) const;
+  int RestoreVectorN (const mafString& name, std::vector<mafObject*>& vector, const mafString& items_name = _R("Item")) const;
 
-  int RestoreMatrix(mafMatrix& matrix);
-  int RestoreVectorN(double *comps,unsigned int num);
-  int RestoreVectorN(std::vector<mafString> &comps,const mafString& tag);
+  int RestoreMatrix(mafMatrix& matrix) const;
+  int RestoreVectorN(double *comps,unsigned int num) const;
+  int RestoreVectorN(std::vector<mafString> &comps,const mafString& tag) const;
 
-  virtual bool GetAttribute(const mafString& name,mafString &value)=0;
-  virtual void SetAttribute(const mafString& name,const mafString& value)=0;
+  virtual bool GetAttribute(const mafString& name, mafString& value) const;// = 0;
+  virtual void SetAttribute(const mafString& name, const mafString& value);// = 0;
 
-  int RestoreObject(mafObject*& object);
+  int RestoreObject(mafObject*& object) const;
 protected:
-  int RestoreVectorN(int *comps,unsigned int num);
-  virtual int StoreText(const mafString &buffer)=0;
-  virtual int RestoreText(mafString& buffer) = 0;
+  int RestoreVectorN(int *comps,unsigned int num) const;
+  virtual int StoreText(const mafString& buffer);// = 0;
+  virtual int RestoreText(mafString& buffer) const;// = 0;
   int StoreObject(mafObject* object);
 
 public:
-  virtual mafStorageElement* FindNestedElement(const mafString& name);
-  virtual mafStorageElement* AppendChild(const mafString& name) = 0;
+  virtual mafStorageElement* FindNestedElement(const mafString& name) const;
+  virtual mafStorageElement* AppendChild(const mafString& name);// = 0;
   /** return a pointer to the storage who created this element */
-  mafParser *GetStorage() {return m_Storage;}
+  mafParser *GetStorage()  const {return m_Storage;}
 
-  bool GetNestedElementsByName(const mafString& name,std::vector<mafStorageElement *> &list);
+  bool GetNestedElementsByName(const mafString& name,std::vector<mafStorageElement *> &list) const;
 
 
   typedef std::vector<mafStorageElement *> ChildrenVector;
 
-  const ChildrenVector &GetChildren(){return GetChildrenList();}
+  const ChildrenVector &GetChildren() const {return GetChildrenList();}
 
 protected:
-  virtual ChildrenVector &GetChildrenList()=0;
+	virtual ChildrenVector& GetChildrenList() const;// = 0;
 
-  /** elements can be created only by means of AppendChild() or FindNestedElement() */
-  mafStorageElement(mafParser *storage);
 
 
   void SetStorage(mafParser *storage) {m_Storage = storage;}
 
   mafParser                        *m_Storage;                        ///< storage who created this element
-  std::vector<mafStorageElement *> *m_Children;  ///< children elements
+  mutable std::vector<mafStorageElement *> *m_Children;  ///< children elements
   mafString                        m_Name; ///< Convenient copy of etagName
+  void* m_DOMElement; ///< XML element wrapped by this object (USING PIMPL due to Internal Compile errors of VS7)
 };
 #endif // _mafStorageElement_h_

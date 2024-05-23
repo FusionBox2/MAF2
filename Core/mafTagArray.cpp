@@ -205,10 +205,12 @@ int mafTagArray::InternalStore(mafStorageElement *parent)
 }
 
 //-------------------------------------------------------------------------
-int mafTagArray::InternalRestore(mafStorageElement *node)
+int mafTagArray::InternalRestore(const mafStorageElement& node_)
 //-------------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node)==MAF_OK)
+	auto node = &node_;
+
+  if (Superclass::InternalRestore(node_)==MAF_OK)
   {
     mafID numAttrs=-1;
     node->GetAttributeAsInteger(_R("NumberOfTags"),numAttrs);
@@ -221,7 +223,7 @@ int mafTagArray::InternalRestore(mafStorageElement *node)
       if (children[i]->GetName() == _R("TItem"))
       {
         mafTagItem new_titem;
-        ret=new_titem.Restore(children[i]);
+        ret=new_titem.Restore(*children[i]);
         SetTag(new_titem);
         idx++;
       }

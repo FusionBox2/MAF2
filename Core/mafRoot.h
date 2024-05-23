@@ -64,7 +64,7 @@ protected:
   virtual ~mafRoot();
 
   virtual int StoreRoot(mafStorageElement *parent);
-  virtual int RestoreRoot(mafStorageElement *element);
+  virtual int RestoreRoot(const mafStorageElement& node);
 
   mafID       m_MaxNodeId; ///< Counter for node Ids
 

@@ -25,8 +25,15 @@ int mafStorable::Store(mafStorageElement *parent)
 }
 
 //------------------------------------------------------------------------------
-int mafStorable::Restore(mafStorageElement *element)
+int mafStorable::Restore(const mafStorageElement& element)
 //------------------------------------------------------------------------------
 {
   return InternalRestore(element);
+}
+
+//------------------------------------------------------------------------------
+int mafStorable::InternalStore(mafStorageElement& parent)
+//------------------------------------------------------------------------------
+{
+	return InternalStore(&parent);
 }

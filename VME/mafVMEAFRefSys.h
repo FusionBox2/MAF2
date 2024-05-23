@@ -127,7 +127,7 @@ protected:
   virtual ~mafVMEAFRefSys();
 
   virtual int InternalStore(mafStorageElement *parent);
-  virtual int InternalRestore(mafStorageElement *node);
+  virtual int InternalRestore(const mafStorageElement& node);
 
   void     SetTransf(double x, double y, double z, double xr, double yr, double zr);
   void     GetTransf(double &x, double &y, double &z, double &xr, double &yr, double &zr);

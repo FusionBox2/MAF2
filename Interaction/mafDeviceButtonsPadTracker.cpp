@@ -111,12 +111,13 @@ int mafDeviceButtonsPadTracker::InternalStore(mafStorageElement *node)
   return MAF_OK;
 }
 //------------------------------------------------------------------------------
-int mafDeviceButtonsPadTracker::InternalRestore(mafStorageElement *node)
+int mafDeviceButtonsPadTracker::InternalRestore(const mafStorageElement& node_)
 //------------------------------------------------------------------------------
 {
-  assert(node);
+	auto node = &node_;
+	assert(node);
   
-  if (Superclass::InternalRestore(node))
+  if (Superclass::InternalRestore(node_))
     return MAF_ERROR;
 
 

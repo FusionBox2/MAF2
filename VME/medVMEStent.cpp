@@ -436,9 +436,10 @@ int medVMEStent::InternalStore(mafStorageElement *node)
 //-----------------------------------------------------------------------
 // Internal restore - called when restoring from msf
 //-----------------------------------------------------------------------
-int medVMEStent::InternalRestore(mafStorageElement *node)
+int medVMEStent::InternalRestore(const mafStorageElement& node_)
 {
-  if (Superclass::InternalRestore(node)==MAF_OK)
+	auto node = &node_;
+	if (Superclass::InternalRestore(node_) == MAF_OK)
   {	    
     // parameters
     mafString material;

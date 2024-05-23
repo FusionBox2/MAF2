@@ -310,7 +310,7 @@ private:
   mafGUI *CreateGui();
 
   virtual int InternalStore(mafStorageElement *parent);
-  virtual int InternalRestore(mafStorageElement *node);
+  virtual int InternalRestore(const mafStorageElement& node);
 
   /// Find or select the associated center line vme. \n
   /// Adds tag if not already present. \n

@@ -134,11 +134,12 @@ int mafVMEEllipsoid::InternalStore(mafStorageElement *parent)
 	return MAF_ERROR;
 }
 
-int mafVMEEllipsoid::InternalRestore(mafStorageElement *node)
+int mafVMEEllipsoid::InternalRestore(const mafStorageElement& node_)
 //-----------------------------------------------------------------------
 {
+	auto node = &node_;
 
-	if (Superclass::InternalRestore(node) == MAF_OK)
+	if (Superclass::InternalRestore(node_) == MAF_OK)
 	{
 		
 		mafMatrix matrix;

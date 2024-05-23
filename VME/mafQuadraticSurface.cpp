@@ -53,10 +53,12 @@ int mafQuadraticSurface::InternalStore(mafStorageElement *parent)
 	return MAF_ERROR;
 }
 
-int mafQuadraticSurface::InternalRestore(mafStorageElement *node)
+int mafQuadraticSurface::InternalRestore(const mafStorageElement& node_)
 //-----------------------------------------------------------------------
 {
-	if (Superclass::InternalRestore(node) == MAF_OK)
+	auto node = &node_;
+
+	if (Superclass::InternalRestore(node_) == MAF_OK)
 	{
 		
 		if (

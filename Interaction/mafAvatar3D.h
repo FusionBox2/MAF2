@@ -201,7 +201,7 @@ protected:
   void SetLastPoseMatrix(mafMatrix &matrix);
 
   virtual int InternalStore(mafStorageElement *node);
-  virtual int InternalRestore(mafStorageElement *node);
+  virtual int InternalRestore(const mafStorageElement& node);
 
   /** redefined to add the Cursor actor into the selected renderer */
   virtual int InternalInitialize();

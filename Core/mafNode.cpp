@@ -1237,9 +1237,11 @@ int mafNode::InternalStore(mafStorageElement *parent)
 }
 
 //-------------------------------------------------------------------------
-int mafNode::InternalRestore(mafStorageElement *node)
+int mafNode::InternalRestore(const mafStorageElement& node_)
 //-------------------------------------------------------------------------
 {
+	auto node = &node_;
+
   if (!node->GetAttribute(_R("Name"), m_Name))
   {
     mafErrorMacro("I/O error restoring node of type "<<GetTypeName()<<" : cannot found Name attribute.");

@@ -196,7 +196,7 @@ protected:
   virtual ~mafDeviceButtonsPadTracker();
 
   virtual int InternalStore(mafStorageElement *node);
-  virtual int InternalRestore(mafStorageElement *node);
+  virtual int InternalRestore(const mafStorageElement& node);
 
   virtual int InternalInitialize();
   virtual void InternalShutdown();

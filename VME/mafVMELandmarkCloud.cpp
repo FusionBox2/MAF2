@@ -1401,10 +1401,12 @@ int mafVMELandmarkCloud::InternalStore(mafStorageElement *parent)
   return MAF_ERROR;
 }
 //-----------------------------------------------------------------------
-int mafVMELandmarkCloud::InternalRestore(mafStorageElement *node)
+int mafVMELandmarkCloud::InternalRestore(const mafStorageElement& node_)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node) == MAF_OK)
+	auto node = &node_;
+
+  if (Superclass::InternalRestore(node_) == MAF_OK)
   {
     if (node->RestoreInteger(_R("LM_SPHERE_RESOLUTION"), m_SphereResolution) == MAF_OK &&
         node->RestoreDouble(_R("LM_RADIUS"), m_Radius) == MAF_OK)

@@ -90,10 +90,10 @@ int mafVMERefSys::InternalStore(mafStorageElement *parent)
 }
 
 //-----------------------------------------------------------------------
-int mafVMERefSys::InternalRestore(mafStorageElement *node)
+int mafVMERefSys::InternalRestore(const mafStorageElement& node_)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node)==MAF_OK)
+  if (Superclass::InternalRestore(node_)==MAF_OK)
   {
 //      node->RestoreInteger("Fixed", m_Fixed);
       return MAF_OK;

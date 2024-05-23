@@ -123,10 +123,12 @@ int mmaMeter::InternalStore(mafStorageElement *parent)
   return MAF_ERROR;
 }
 //-----------------------------------------------------------------------
-int mmaMeter::InternalRestore(mafStorageElement *node)
+int mmaMeter::InternalRestore(const mafStorageElement& node_)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node)==MAF_OK)
+	auto node = &node_;
+
+  if (Superclass::InternalRestore(node_)==MAF_OK)
   {
     //mafMatrix matrix;  //modified by Marco. 29-9-2005 It seems this field is not stored...
     ///if (node->RestoreMatrix("Transform",&matrix)==MAF_OK)

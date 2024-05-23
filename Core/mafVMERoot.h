@@ -105,7 +105,7 @@ protected:
   virtual mafGUI  *CreateGui();
 
   virtual int InternalStore(mafStorageElement *parent);
-  virtual int InternalRestore(mafStorageElement *node);
+  virtual int InternalRestore(const mafStorageElement& node);
 
   mafID         m_MaxItemId; ///< id counter for VME items
   mafTransform* m_Transform; ///< pose matrix for the root

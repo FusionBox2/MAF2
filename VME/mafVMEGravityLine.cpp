@@ -965,13 +965,14 @@ int mafVMEGravityLine::InternalStore(mafStorageElement *parent)
 }
 
 //-----------------------------------------------------------------------
-int mafVMEGravityLine::InternalRestore(mafStorageElement *node)
+int mafVMEGravityLine::InternalRestore(const mafStorageElement& node_)
 //-----------------------------------------------------------------------
 {
+	auto node = &node_;
 
 	//wxBusyInfo wait001("internal restore");
 	//Sleep(1500);
-	if (Superclass::InternalRestore(node)==MAF_OK)
+	if (Superclass::InternalRestore(node_)==MAF_OK)
 	{
     mafMatrix matrix;
     if (node->RestoreMatrix(_R("Transform"), matrix) == MAF_OK

@@ -117,17 +117,18 @@ int mafDeviceSet::InternalStore(mafStorageElement *node)
 }
 
 //------------------------------------------------------------------------------
-int mafDeviceSet::InternalRestore(mafStorageElement *node)
+int mafDeviceSet::InternalRestore(const mafStorageElement& node_)
 //------------------------------------------------------------------------------
 {
-  assert(node);
+	auto node = &node_;
+	assert(node);
   
   int fail=MAF_OK;
   int old_state=IsInitialized();
   Stop();
   RemoveAllDevices();
 
-  Superclass::InternalRestore(node);
+  Superclass::InternalRestore(node_);
 
   std::vector<mafStorageElement*> devices;
   node->GetNestedElementsByName(_R("Device"), devices);

@@ -83,7 +83,7 @@ public:
 	mafVMEHyperboloid();
 	virtual ~mafVMEHyperboloid();
 	virtual int InternalStore(mafStorageElement *parent);
-	virtual int InternalRestore(mafStorageElement *node);
+	virtual int InternalRestore(const mafStorageElement& node);
 	//mafVMEEllipsoid(double x0, double y0, double z0, double a, double b, double c);
 //	vtkSmartPointer<vtkContentActor> makeRenderer();
 	void describe();

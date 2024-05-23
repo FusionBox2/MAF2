@@ -121,6 +121,6 @@ protected:
   int           m_TextureID;
   mafString m_VmeImageName;
   virtual int InternalStore(mafStorageElement *parent);
-  virtual int InternalRestore(mafStorageElement *node);
+  virtual int InternalRestore(const mafStorageElement& node);
 };
 #endif

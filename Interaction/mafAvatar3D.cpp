@@ -511,12 +511,13 @@ int mafAvatar3D::InternalStore(mafStorageElement *node)
 }
 
 //------------------------------------------------------------------------------
-int mafAvatar3D::InternalRestore(mafStorageElement *node)
+int mafAvatar3D::InternalRestore(const mafStorageElement& node_)
 //------------------------------------------------------------------------------
 {
-  if(Superclass::InternalRestore(node))
+  if(Superclass::InternalRestore(node_))
     return MAF_ERROR;
-  
+  auto node = &node_;
+
   int display_working_box = 0;
   node->RestoreInteger(_R("DisplayWorkingBox"),display_working_box);
   SetDisplayWorkingBox(display_working_box);

@@ -25,42 +25,67 @@
 #include <vector>
 #include <assert.h>
 
-//------------------------------------------------------------------------------
-template <class T>
-void InternalStoreVectorN(mafStorageElement *element,T *comps,size_t num,const char *name)
-//------------------------------------------------------------------------------
-{
-  assert(name);
 
-  // Write all the elements into as a single 3-tupla  
-  mafString elements;
-  for (size_t i=0;i<num;i++)
-  { 
-    elements += mafToString(comps[i]) + _R(" ");
-  }
-  element->StoreText(_R(name), elements);
-}
-//------------------------------------------------------------------------------
-template <class T>
-size_t InternalParseData(const mafString& text,T *vector,size_t size)
-//------------------------------------------------------------------------------
+#include <xercesc/dom/DOM.hpp>
+#include <xercesc/util/PlatformUtils.hpp>
+#include <xercesc/util/XMLString.hpp>
+#include <xercesc/framework/LocalFileFormatTarget.hpp>
+#include <xercesc/parsers/XercesDOMParser.hpp>
+
+#include "mafXMLParser.h"
+#include "mafXMLString.h"
+
+#include "mafMatrix.h"
+#include "mafStorable.h"
+#include "mafObjectFactory.h"
+
+#include <vector>
+#include <assert.h>
+#include "stdio.h"
+
+namespace
 {
+    XERCES_CPP_NAMESPACE_QUALIFIER DOMNode* getDOMNode(void* element)
+    {
+        return reinterpret_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMNode*>(element);
+    }
+
+    //------------------------------------------------------------------------------
+    template <class T>
+    void InternalStoreVectorN(mafStorageElement* element, T* comps, size_t num, const char* name)
+        //------------------------------------------------------------------------------
+    {
+        assert(name);
+
+        // Write all the elements into as a single 3-tupla  
+        mafString elements;
+        for (size_t i = 0; i < num; i++)
+        {
+            elements += mafToString(comps[i]) + _R(" ");
+        }
+        element->StoreText(_R(name), elements);
+    }
+    //------------------------------------------------------------------------------
+    template <class T>
+    size_t InternalParseData(const mafString& text, T* vector, size_t size)
+        //------------------------------------------------------------------------------
+    {
 #pragma message ("potentially hacky")
-  std::istringstream instr(text.toStd());
+        std::istringstream instr(text.toStd());
 
-  for (size_t i=0;i<size;i++)
-  {
-    if (instr.eof())
-      return i;
+        for (size_t i = 0; i < size; i++)
+        {
+            if (instr.eof())
+                return i;
 
-    instr>>vector[i];
-  }
+            instr >> vector[i];
+        }
 
-  return size;
+        return size;
+    }
 }
-
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreMatrix(mafMatrix& matrix)
+int mafStorageElement::RestoreMatrix(mafMatrix& matrix) const
 //------------------------------------------------------------------------------
 {
   matrix.Zero();
@@ -85,7 +110,7 @@ int mafStorageElement::RestoreMatrix(mafMatrix& matrix)
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(double *comps,unsigned int num)
+int mafStorageElement::RestoreVectorN(double *comps,unsigned int num) const
 //------------------------------------------------------------------------------
 {
   mafString text_data;
@@ -102,7 +127,7 @@ int mafStorageElement::RestoreVectorN(double *comps,unsigned int num)
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(int *comps,unsigned int num)
+int mafStorageElement::RestoreVectorN(int *comps,unsigned int num) const
 //------------------------------------------------------------------------------
 {
   mafString text_data;
@@ -162,12 +187,16 @@ int mafStorageElement::StoreVectorN(const mafString& name,const std::vector<mafS
   return MAF_OK;
 }
 //------------------------------------------------------------------------------
-mafStorageElement::mafStorageElement(mafParser *storage)
+mafStorageElement::mafStorageElement(void* element, mafParser *storage)
 //------------------------------------------------------------------------------
 {
   assert(storage); // no NULL storage is allowed
   m_Storage = storage;
-  m_Children = NULL;
+  m_Children = nullptr;
+  assert(element);
+  m_DOMElement = element;
+  if (getDOMNode(element)->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
+	  m_Name = _R(mafXMLString(static_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*>(getDOMNode(element))->getTagName()));
 }
 //------------------------------------------------------------------------------
 mafStorageElement::~mafStorageElement()
@@ -188,8 +217,29 @@ mafStorageElement::~mafStorageElement()
   }  
 }
 
+mafStorageElement mafStorageElement::operator[](const mafString& name)
+{
+	mafStorageElement* elem = FindNestedElement(name);
+    return *elem;
+}
+
+mafStorageElement mafStorageElement::operator[](const mafString& name) const
+{
+	auto child_element = getDOMNode(m_DOMElement)->getFirstChild();
+	while (child_element)
+	{
+		if (child_element->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
+		{
+            if(name == _R(mafXMLString(static_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*>(child_element)->getTagName())))
+			    return mafStorageElement(child_element, m_Storage);
+		}
+		child_element = child_element->getNextSibling();
+	}
+    throw 0;
+}
+
 //------------------------------------------------------------------------------
-mafStorageElement *mafStorageElement::FindNestedElement(const mafString& name)
+mafStorageElement *mafStorageElement::FindNestedElement(const mafString& name) const
 //------------------------------------------------------------------------------
 {
   // force children list creation
@@ -207,7 +257,7 @@ mafStorageElement *mafStorageElement::FindNestedElement(const mafString& name)
 }
 
 //------------------------------------------------------------------------------
-bool mafStorageElement::GetNestedElementsByName(const mafString& name,std::vector<mafStorageElement *> &list)
+bool mafStorageElement::GetNestedElementsByName(const mafString& name,std::vector<mafStorageElement *> &list) const
 //------------------------------------------------------------------------------
 {
   // force children list creation
@@ -247,7 +297,7 @@ int mafStorageElement::StoreVectorN(const mafString& name,const std::vector<mafO
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(const mafString& name,std::vector<mafObject *> &vector,const mafString& items_name)
+int mafStorageElement::RestoreVectorN(const mafString& name,std::vector<mafObject *> &vector,const mafString& items_name) const
 //------------------------------------------------------------------------------
 {
   mafStorageElement *subnode=FindNestedElement(name);
@@ -344,7 +394,7 @@ int mafStorageElement::StoreStorable(const mafString& name, mafStorable* storabl
 }
 
 //------------------------------------------------------------------------------
-mafString mafStorageElement::UpgradeAttribute(const mafString& attribute)
+mafString mafStorageElement::UpgradeAttribute(const mafString& attribute) const
 //------------------------------------------------------------------------------
 {
   mafString att_name;
@@ -353,7 +403,7 @@ mafString mafStorageElement::UpgradeAttribute(const mafString& attribute)
   if (att_name == _R("mafVMEItemScalar"))
   {
     new_att_name = _R("mafVMEItemScalarMatrix");
-    SetAttribute(attribute, new_att_name);
+    //SetAttribute(attribute, new_att_name);
     return new_att_name;
   }
   if (att_name.find(_R("mafVME")) != mafString::npos)
@@ -361,7 +411,7 @@ mafString mafStorageElement::UpgradeAttribute(const mafString& attribute)
     if (att_name == _R("mafVMEScalar"))
     {
       new_att_name = _R("mafVMEScalarMatrix");
-      SetAttribute(attribute, new_att_name);
+      //SetAttribute(attribute, new_att_name);
     }
     else
     {
@@ -382,7 +432,7 @@ mafString mafStorageElement::UpgradeAttribute(const mafString& attribute)
   return att_name;
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreObject(mafObject*& object)
+int mafStorageElement::RestoreObject(mafObject*& object) const
 //------------------------------------------------------------------------------
 {
   mafString type_name;
@@ -404,7 +454,7 @@ int mafStorageElement::RestoreObject(mafObject*& object)
         
         if (restorable)
         {
-          if (restorable->Restore(this)==MAF_OK)
+          if (restorable->Restore(*this)==MAF_OK)
           {
             // if restored correctly 
             return MAF_OK;
@@ -441,7 +491,7 @@ int mafStorageElement::RestoreObject(mafObject*& object)
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreObject(const mafString& name, mafObject*& object)
+int mafStorageElement::RestoreObject(const mafString& name, mafObject*& object) const
 //------------------------------------------------------------------------------
 {
   mafStorageElement *elem=FindNestedElement(name);
@@ -461,13 +511,13 @@ int mafStorageElement::RestoreObject(const mafString& name, mafObject*& object)
 
 
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreStorable(const mafString& name, mafStorable *storable)
+int mafStorageElement::RestoreStorable(const mafString& name, mafStorable *storable) const
 //------------------------------------------------------------------------------
 {
   mafStorageElement *element=FindNestedElement(name);
   if (element)
   {
-    return storable->Restore(element);
+    return storable->Restore(*element);
   }
 
   mafWarningMacro("Parse Error while parsing <"<<GetName().GetCStr() <<"> element: cannot find nested Storage element <"<<name.GetCStr() <<">" );
@@ -518,7 +568,7 @@ int mafStorageElement::StoreInteger(const mafString& name,const int &value)
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreDouble(const mafString& name,double &value)
+int mafStorageElement::RestoreDouble(const mafString& name,double &value) const
 //------------------------------------------------------------------------------
 {
   mafString tmp;
@@ -531,7 +581,7 @@ int mafStorageElement::RestoreDouble(const mafString& name,double &value)
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreInteger(const mafString& name,int &value)
+int mafStorageElement::RestoreInteger(const mafString& name,int &value) const
 //------------------------------------------------------------------------------
 {
   mafString tmp;
@@ -543,7 +593,7 @@ int mafStorageElement::RestoreInteger(const mafString& name,int &value)
   return MAF_ERROR;
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreMatrix(const mafString& name,mafMatrix& matrix)
+int mafStorageElement::RestoreMatrix(const mafString& name,mafMatrix& matrix) const
 //------------------------------------------------------------------------------
 {
   mafStorageElement *elem=FindNestedElement(name);
@@ -558,7 +608,7 @@ int mafStorageElement::RestoreMatrix(const mafString& name,mafMatrix& matrix)
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(const mafString& name,double *comps,unsigned int num)
+int mafStorageElement::RestoreVectorN(const mafString& name,double *comps,unsigned int num) const
 //------------------------------------------------------------------------------
 {
   mafStorageElement *elem=FindNestedElement(name);
@@ -572,7 +622,7 @@ int mafStorageElement::RestoreVectorN(const mafString& name,double *comps,unsign
   return MAF_ERROR;
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(const mafString& name,int *comps,unsigned int num)
+int mafStorageElement::RestoreVectorN(const mafString& name,int *comps,unsigned int num) const
 //------------------------------------------------------------------------------
 {
   mafStorageElement *elem=FindNestedElement(name);
@@ -586,7 +636,7 @@ int mafStorageElement::RestoreVectorN(const mafString& name,int *comps,unsigned 
   return MAF_ERROR;
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(const mafString& name,std::vector<double> &comps)
+int mafStorageElement::RestoreVectorN(const mafString& name,std::vector<double> &comps) const
 //------------------------------------------------------------------------------
 {
   mafStorageElement *elem=FindNestedElement(name);
@@ -600,7 +650,7 @@ int mafStorageElement::RestoreVectorN(const mafString& name,std::vector<double> 
   return MAF_ERROR;
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(const mafString& name,std::vector<int> &comps)
+int mafStorageElement::RestoreVectorN(const mafString& name,std::vector<int> &comps) const
 //------------------------------------------------------------------------------
 {
   mafStorageElement *elem=FindNestedElement(name);
@@ -614,7 +664,7 @@ int mafStorageElement::RestoreVectorN(const mafString& name,std::vector<int> &co
   return MAF_ERROR;
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(const mafString& name,std::vector<mafString> &comps,const mafString& tag)
+int mafStorageElement::RestoreVectorN(const mafString& name,std::vector<mafString> &comps,const mafString& tag) const
 //------------------------------------------------------------------------------
 {
   mafStorageElement *elem=FindNestedElement(name);
@@ -628,7 +678,7 @@ int mafStorageElement::RestoreVectorN(const mafString& name,std::vector<mafStrin
   return MAF_ERROR;
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(std::vector<mafString> &comps,const mafString& tag)
+int mafStorageElement::RestoreVectorN(std::vector<mafString> &comps,const mafString& tag) const
 //------------------------------------------------------------------------------
 {
   ChildrenVector children;
@@ -643,7 +693,7 @@ int mafStorageElement::RestoreVectorN(std::vector<mafString> &comps,const mafStr
   return MAF_OK;
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreText(const mafString& name,mafString &buffer)
+int mafStorageElement::RestoreText(const mafString& name,mafString &buffer) const
 //------------------------------------------------------------------------------
 {
   mafStorageElement *elem=FindNestedElement(name);
@@ -657,7 +707,7 @@ int mafStorageElement::RestoreText(const mafString& name,mafString &buffer)
   return MAF_ERROR;
 }
 //------------------------------------------------------------------------------
-bool mafStorageElement::GetAttributeAsDouble(const mafString& name,double &value)
+bool mafStorageElement::GetAttributeAsDouble(const mafString& name,double &value) const
 //------------------------------------------------------------------------------
 {
   mafString tmp;
@@ -670,7 +720,7 @@ bool mafStorageElement::GetAttributeAsDouble(const mafString& name,double &value
 }
 
 //------------------------------------------------------------------------------
-bool mafStorageElement::GetAttributeAsInteger(const mafString& name,mafID &value)
+bool mafStorageElement::GetAttributeAsInteger(const mafString& name,mafID &value) const
 //------------------------------------------------------------------------------
 {
   mafString tmp;
@@ -693,4 +743,89 @@ void mafStorageElement::SetAttribute(const mafString& name,const double value)
 //------------------------------------------------------------------------------
 {
   SetAttribute(name,mafToString(value));
+}
+
+
+
+
+
+mafStorageElement::ChildrenVector& mafStorageElement::GetChildrenList() const
+//------------------------------------------------------------------------------
+{
+	if (!m_Children)
+	{
+		// create and fill in new children list with element nodes
+		m_Children = new ChildrenVector;
+
+		auto child_element = getDOMNode(m_DOMElement)->getFirstChild();
+		while (child_element)
+		{
+			if (child_element->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
+			{
+                mafStorageElement* child = new mafStorageElement((XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*)child_element, GetStorage());
+				m_Children->push_back(child);
+			}
+			child_element = child_element->getNextSibling();
+		}
+	}
+	return *m_Children;
+}
+//------------------------------------------------------------------------------
+mafStorageElement* mafStorageElement::AppendChild(const mafString& name)
+//------------------------------------------------------------------------------
+{
+	XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* child_element = getDOMNode(m_DOMElement)->getOwnerDocument()->createElement(mafXMLString(name.GetCStr()));
+	getDOMNode(m_DOMElement)->appendChild(child_element);
+    mafStorageElement* child = new mafStorageElement(child_element, GetStorage());
+	GetChildrenList().push_back(child);
+	return child;
+}
+//------------------------------------------------------------------------------
+void mafStorageElement::SetAttribute(const mafString& name, const mafString& value)
+//------------------------------------------------------------------------------
+{
+	if (getDOMNode(m_DOMElement)->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
+		static_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*>(getDOMNode(m_DOMElement))->setAttribute(mafXMLString(name.GetCStr()), mafXMLString(value.GetCStr()));
+}
+//------------------------------------------------------------------------------
+bool mafStorageElement::GetAttribute(const mafString& name, mafString& value) const
+//------------------------------------------------------------------------------
+{
+	if (getDOMNode(m_DOMElement)->getNodeType() != XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
+		return false;
+	//   auto attr = static_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*>(m_DOMElement->m_XMLElement)->getAttributeNode(mafXMLString(name.GetCStr()));
+	//   auto pp = attr->getValue();
+	//   auto qq = attr->getTextContent();
+	//   auto tt = attr->getNodeValue();
+	const XMLCh* xml_value = static_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*>(getDOMNode(m_DOMElement))->getAttribute(mafXMLString(name.GetCStr()));
+	if (xml_value)
+	{
+		value = _R(mafXMLString(xml_value));
+		return true;
+	}
+	return false;
+}
+//------------------------------------------------------------------------------
+int mafStorageElement::StoreText(const mafString& text)
+//------------------------------------------------------------------------------
+{
+	XERCES_CPP_NAMESPACE_QUALIFIER DOMText* text_node = getDOMNode(m_DOMElement)->getOwnerDocument()->createTextNode(mafXMLString(text.GetCStr()));
+	getDOMNode(m_DOMElement)->appendChild(text_node);
+	return MAF_OK;
+}
+//------------------------------------------------------------------------------
+int mafStorageElement::RestoreText(mafString& buffer) const
+//------------------------------------------------------------------------------
+{
+	auto child_element = getDOMNode(m_DOMElement)->getFirstChild();
+	while (child_element)
+	{
+		if (child_element->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::TEXT_NODE)
+		{
+			buffer = _R(mafXMLString(child_element->getNodeValue()));
+			return MAF_OK;
+		}
+		child_element = child_element->getNextSibling();
+	}
+	return MAF_OK;
 }

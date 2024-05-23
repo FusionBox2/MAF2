@@ -1141,9 +1141,11 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 	return ret_val;
 }
 
-/*virtual*/ int mafVMEVolumeLarge::InternalRestore(mafStorageElement *node)
+/*virtual*/ int mafVMEVolumeLarge::InternalRestore(const mafStorageElement& node_)
 {
-	int ret_val = Superclass::InternalRestore(node);	//restores filename
+	auto node = &node_;
+
+	int ret_val = Superclass::InternalRestore(node_);	//restores filename
 	if (ret_val != MAF_OK)
 		return ret_val;	
 

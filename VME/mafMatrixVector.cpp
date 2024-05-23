@@ -83,9 +83,11 @@ int mafMatrixVector::InternalStore(mafStorageElement *parent)
   return MAF_OK;
 }
 //-----------------------------------------------------------------------
-int mafMatrixVector::InternalRestore(mafStorageElement *node)
+int mafMatrixVector::InternalRestore(const mafStorageElement& node_)
 //-----------------------------------------------------------------------
 {
+	auto node = &node_;
+
   mafID num_items;
   if (node->GetAttributeAsInteger(_R("NumberOfItems"),num_items))
   {

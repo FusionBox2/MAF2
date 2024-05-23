@@ -208,10 +208,12 @@ int mafVMEScalarMatrix::InternalStore(mafStorageElement *parent)
   return MAF_ERROR;
 }
 //-----------------------------------------------------------------------
-int mafVMEScalarMatrix::InternalRestore(mafStorageElement *node)
+int mafVMEScalarMatrix::InternalRestore(const mafStorageElement& node_)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node)==MAF_OK)
+	auto node = &node_;
+
+  if (Superclass::InternalRestore(node_)==MAF_OK)
   {
     if (node->RestoreInteger(_R("XID"),m_XID) == MAF_OK &&
         node->RestoreInteger(_R("YID"),m_YID) == MAF_OK &&

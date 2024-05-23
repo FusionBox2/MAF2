@@ -123,7 +123,7 @@ protected:
   virtual mafGUI *CreateGui();
 
   virtual int InternalStore(mafStorageElement *parent);
-  virtual int InternalRestore(mafStorageElement *node);
+  virtual int InternalRestore(const mafStorageElement& node);
 
   /** called to prepare the update of the output */
   virtual void InternalPreUpdate();

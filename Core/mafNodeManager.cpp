@@ -155,9 +155,11 @@ int mafNodeManager::InternalStore(mafStorageElement *node)
 }
 
 //------------------------------------------------------------------------------
-int mafNodeManager::InternalRestore(mafStorageElement *node)
+int mafNodeManager::InternalRestore(const mafStorageElement& node_)
 //-------------------------------------------------------
 {
+	auto node = &node_;
+
   // here should restore elements specific for the document
   SetRoot(NULL);
   mafObject* obj = nullptr;

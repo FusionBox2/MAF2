@@ -191,12 +191,13 @@ mafStorableDictionary::~mafStorableDictionary()
 }
 //------------------------------------------------------------------------------
 // example of de-serialization code
-int mafStorableDictionary::InternalRestore(mafStorageElement *element)
+int mafStorableDictionary::InternalRestore(const mafStorageElement& node_)
 //------------------------------------------------------------------------------
 {
-  m_StrVector.resize(element->GetChildren()[0]->GetChildren().size());
+  auto node = &node_;
+  m_StrVector.resize(node->GetChildren()[0]->GetChildren().size());
   
-  if(element->RestoreVectorN(_R("Dictionary"),m_StrVector,_R("DItem")))
+  if(node->RestoreVectorN(_R("Dictionary"),m_StrVector,_R("DItem")))
     return MAF_ERROR;
   return MAF_OK;
 }

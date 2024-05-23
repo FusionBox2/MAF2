@@ -873,10 +873,11 @@ int mafInteractionManager::InternalStore(mafStorageElement *node)
 }
 
 //------------------------------------------------------------------------------
-int mafInteractionManager::InternalRestore(mafStorageElement *node)
+int mafInteractionManager::InternalRestore(const mafStorageElement& node_)
 //------------------------------------------------------------------------------
 {
-  if (node->RestoreStorable(_R("DeviceManager"),m_DeviceManager)!=MAF_OK)
+	auto node = &node_;
+	if (node->RestoreStorable(_R("DeviceManager"), m_DeviceManager) != MAF_OK)
     return MAF_ERROR;
   
   if (node->RestoreStorable(_R("DeviceBindings"),m_StaticEventRouter)!=MAF_OK)

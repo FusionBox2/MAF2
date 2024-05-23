@@ -77,7 +77,7 @@ protected:
   This function fills in the device with settings restored from the node.
   Subclasses should reimplement it to restore custom settings. Reimplemented
   functions should first call Superclass implementation. */
-  int InternalRestore(mafStorageElement *parent);
+  int InternalRestore(const mafStorageElement& node);
 
   /** Get path of the msf file from storage */
   void InitializeCurrentPath();

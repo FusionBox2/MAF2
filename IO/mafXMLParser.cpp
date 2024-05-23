@@ -17,7 +17,7 @@
 //#include "mafIncludeWX.h" // to be removed
 
 #include "mafXMLParser.h"
-#include "mafXMLElement.h"
+#include "mafStorageElement.h"
 #include "mafXMLString.h"
 #include "mafStorable.h"
 #include "mmuDOMTreeErrorReporter.h"
@@ -25,7 +25,11 @@
 #include <stdio.h>
 #include <string.h>
 // Xerces-C specific
-#include "mmuXMLDOMElement.h"
+#include <xercesc/dom/DOM.hpp>
+#include <xercesc/util/PlatformUtils.hpp>
+#include <xercesc/util/XMLString.hpp>
+#include <xercesc/framework/LocalFileFormatTarget.hpp>
+#include <xercesc/parsers/XercesDOMParser.hpp>
 #include <xercesc/framework/LocalFileInputSource.hpp>
 // required by error handlers
 //#include <xercesc/dom/DOMErrorHandler.hpp>
@@ -108,7 +112,7 @@ int mafXMLParser::InternalStore()
                   // extract root element and wrap it with an mafXMLElement object
                   XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* root = XMLDoc->getDocumentElement();
                   assert(root);
-                  auto documentElement = std::make_unique<mafXMLElement>(new mmuXMLDOMElement(root), this);
+                  auto documentElement = std::make_unique<mafStorageElement>(root, this);
 
                   // attach version attribute to the root node
                   documentElement->SetAttribute(_R("Version"), m_Version);
@@ -210,7 +214,7 @@ int mafXMLParser::InternalRestore()
                       XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* XMLDoc = XMLParser->getDocument();
                       XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* root = XMLDoc->getDocumentElement();
                       assert(root);
-                      std::unique_ptr<mafStorageElement> documentElement(new mafXMLElement(new mmuXMLDOMElement(root), this));
+                      std::unique_ptr<mafStorageElement> documentElement = std::make_unique<mafStorageElement>(root, this);
 
                       if (m_FileType == documentElement->GetName())
                       {
@@ -223,7 +227,7 @@ int mafXMLParser::InternalRestore()
                               if (my_version_f <= doc_version_f)
                               {
                                   // Start tree restoring from root node
-                                  if (m_Document->Restore(documentElement.get()) != MAF_OK)
+                                  if (m_Document->Restore(*documentElement) != MAF_OK)
                                       errorCode = IO_RESTORE_ERROR;
                               }
                               else
@@ -239,7 +243,7 @@ int mafXMLParser::InternalRestore()
                                       // Upgrade document to the actual version
                                       documentElement->SetAttribute(_R("Version"), my_version_f);
                                       m_NeedsUpgrade = true;
-                                      if (m_Document->Restore(documentElement.get()) != MAF_OK)
+                                      if (m_Document->Restore(*documentElement) != MAF_OK)
                                           errorCode = IO_RESTORE_ERROR;
                                   }
                               }

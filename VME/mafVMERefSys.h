@@ -65,7 +65,7 @@ protected:
 
   virtual void CalculateMatrix(mafMatrix& mat, mafTimeStamp ts = -1);
   virtual int InternalStore(mafStorageElement *parent);
-  virtual int InternalRestore(mafStorageElement *node);
+  virtual int InternalRestore(const mafStorageElement& node);
 
   /** Internally used to create a new instance of the GUI.*/
   virtual mafGUI *CreateGui();

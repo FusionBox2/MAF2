@@ -89,9 +89,11 @@ int mafMSFImporter::InternalStore(mafStorageElement *node)
 }
 
 //------------------------------------------------------------------------------
-int mafMSFImporter::InternalRestore(mafStorageElement *node)
+int mafMSFImporter::InternalRestore(const mafStorageElement& node_)
 //------------------------------------------------------------------------------
 {
+	auto node = &node_;
+
   ///////////////////////////////////////////////
   // code to import the file from old MSF file //
   ///////////////////////////////////////////////

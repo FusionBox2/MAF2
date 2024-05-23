@@ -53,11 +53,13 @@ int mafRoot::StoreRoot(mafStorageElement *parent)
   return MAF_OK;
 }
 //-------------------------------------------------------------------------
-int mafRoot::RestoreRoot(mafStorageElement *element)
+int mafRoot::RestoreRoot(const mafStorageElement& node_)
 //-------------------------------------------------------------------------
 {
+	auto node = &node_;
+
   mafID max_id;
-  if (!element->GetAttributeAsInteger(_R("MaxNodeId"),max_id))
+  if (!node->GetAttributeAsInteger(_R("MaxNodeId"),max_id))
     return MAF_ERROR;
 
   SetMaxNodeId(max_id);

@@ -49,10 +49,11 @@ int mafInteractorSER::InternalStore(mafStorageElement *node)
 }
 
 //------------------------------------------------------------------------------
-int mafInteractorSER::InternalRestore(mafStorageElement *node)
+int mafInteractorSER::InternalRestore(const mafStorageElement& node_)
 //------------------------------------------------------------------------------
 {
-  mafStorageElement::ChildrenVector children=node->GetChildren();
+	auto node = &node_;
+	mafStorageElement::ChildrenVector children = node->GetChildren();
   for (int i=0;i<children.size();i++)
   {
     mafStorageElement *subnode=children[i];
@@ -67,7 +68,7 @@ int mafInteractorSER::InternalRestore(mafStorageElement *node)
     subnode->GetAttribute(_R("Name"),action_name);
     mafAction *action = GetAction(action_name.GetCStr());
 
-    if (action && action->Restore(subnode))
+    if (action && action->Restore(*subnode))
     {
       mafErrorMacro("I/O Error restoring action");
     }

@@ -258,9 +258,11 @@ void mafVMEItem::SetURL(const char *name)
 }
 
 //-------------------------------------------------------------------------
-int mafVMEItem::InternalRestore(mafStorageElement *node)
+int mafVMEItem::InternalRestore(const mafStorageElement& node_)
 //-------------------------------------------------------------------------
 {
+	auto node = &node_;
+
   mafString crypting;
   if (node->RestoreText(_R("URL"),m_URL)==MAF_OK \
     &&node->RestoreInteger(_R("Id"),m_Id)==MAF_OK \

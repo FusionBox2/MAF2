@@ -383,14 +383,15 @@ int mafVMELineSeg::InternalStore(mafStorageElement *parent)
 }
 
 //-----------------------------------------------------------------------
-int mafVMELineSeg::InternalRestore(mafStorageElement *node)
+int mafVMELineSeg::InternalRestore(const mafStorageElement& node_)
 //-----------------------------------------------------------------------
 {
+	auto node = &node_;
 
 	double pt0[3];
 	double ptEnd[3]; 
 	int nbrPts;
-	if (Superclass::InternalRestore(node)==MAF_OK)
+	if (Superclass::InternalRestore(node_)==MAF_OK)
 	{
     mafMatrix matrix;
 	

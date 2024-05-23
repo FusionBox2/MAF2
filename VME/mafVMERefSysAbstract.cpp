@@ -289,10 +289,12 @@ int mafVMERefSysAbstract::InternalStore(mafStorageElement *parent)
 }
 
 //-----------------------------------------------------------------------
-int mafVMERefSysAbstract::InternalRestore(mafStorageElement *node)
+int mafVMERefSysAbstract::InternalRestore(const mafStorageElement& node_)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node)==MAF_OK)
+	auto node = &node_;
+
+  if (Superclass::InternalRestore(node_)==MAF_OK)
   {
     node->RestoreDouble(_R("ScaleFactor"), m_ScaleFactor);
     SetScaleFactor(m_ScaleFactor);

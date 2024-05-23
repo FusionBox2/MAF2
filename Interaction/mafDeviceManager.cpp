@@ -203,9 +203,11 @@ int mafDeviceManager::InternalStore(mafStorageElement *node)
 }
 
 //----------------------------------------------------------------------------
-int mafDeviceManager::InternalRestore(mafStorageElement *node)
+int mafDeviceManager::InternalRestore(const mafStorageElement& node_)
 //----------------------------------------------------------------------------
 {
+	auto node = &node_;
+
   assert(node);
   m_RestoringFlag=true; // used to avoid DeviceManager set device ID when restoring
   

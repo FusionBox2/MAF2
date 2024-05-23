@@ -205,11 +205,13 @@ int mafVMEExternalData::InternalStore(mafStorageElement *parent)
 }
 
 //-----------------------------------------------------------------------
-int mafVMEExternalData::InternalRestore(mafStorageElement *parent)
+int mafVMEExternalData::InternalRestore(const mafStorageElement& node_)
 //-----------------------------------------------------------------------
 {
-  Superclass::InternalRestore(parent);
-  m_TmpPath = parent->GetStorage()->GetURL();
+	auto node = &node_;
+
+  Superclass::InternalRestore(node_);
+  m_TmpPath = node->GetStorage()->GetURL();
   m_TmpPath.ExtractPathName();
   
   m_MSFPath.clear();

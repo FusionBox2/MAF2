@@ -134,11 +134,12 @@ int mafVMECylinder::InternalStore(mafStorageElement *parent)
 	return MAF_ERROR;
 }
 
-int mafVMECylinder::InternalRestore(mafStorageElement *node)
+int mafVMECylinder::InternalRestore(const mafStorageElement& node_)
 //-----------------------------------------------------------------------
 {
-	
-	if (Superclass::InternalRestore(node) == MAF_OK)
+	auto node = &node_;
+
+	if (Superclass::InternalRestore(node_) == MAF_OK)
 	{
 	
 		mafMatrix matrix;

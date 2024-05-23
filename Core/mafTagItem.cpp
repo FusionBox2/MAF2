@@ -478,9 +478,11 @@ int mafTagItem::InternalStore(mafStorageElement *parent)
 }
 
 //-------------------------------------------------------------------------
-int mafTagItem::InternalRestore(mafStorageElement *node)
+int mafTagItem::InternalRestore(const mafStorageElement& node_)
 //-------------------------------------------------------------------------
 {
+	auto node = &node_;
+
   if (!node->GetAttribute(_R("Name"),m_Name))
     return MAF_ERROR;
 

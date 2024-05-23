@@ -98,7 +98,7 @@ protected:
   virtual ~mafDeviceSet();
 
   virtual int InternalStore(mafStorageElement *node);
-  virtual int InternalRestore(mafStorageElement *node);
+  virtual int InternalRestore(const mafStorageElement& node);
 
   /** Initialization automatically initialize subdevices */
   virtual int InternalInitialize();

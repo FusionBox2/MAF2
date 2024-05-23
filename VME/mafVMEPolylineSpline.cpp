@@ -223,10 +223,12 @@ int mafVMEPolylineSpline::InternalStore(mafStorageElement *parent)
 }
 
 //-----------------------------------------------------------------------
-int mafVMEPolylineSpline::InternalRestore(mafStorageElement *node)
+int mafVMEPolylineSpline::InternalRestore(const mafStorageElement& node_)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node)==MAF_OK)
+	auto node = &node_;
+
+  if (Superclass::InternalRestore(node_)==MAF_OK)
   {
     mafMatrix matrix;
     if (node->RestoreMatrix(_R("Transform"),matrix)==MAF_OK)

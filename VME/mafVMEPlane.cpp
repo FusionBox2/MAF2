@@ -873,10 +873,12 @@ int mafVMEPlane::InternalStore(mafStorageElement *parent)
 }
 
 //-----------------------------------------------------------------------
-int mafVMEPlane::InternalRestore(mafStorageElement *node)
+int mafVMEPlane::InternalRestore(const mafStorageElement& node_)
 //-----------------------------------------------------------------------
 {
-	if (Superclass::InternalRestore(node) == MAF_OK)
+	auto node = &node_;
+
+	if (Superclass::InternalRestore(node_) == MAF_OK)
 	{
 		mafMatrix matrix;
 		if (

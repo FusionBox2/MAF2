@@ -867,10 +867,12 @@ int mafVME::InternalStore(mafStorageElement *parent)
 }
 
 //-------------------------------------------------------------------------
-int mafVME::InternalRestore(mafStorageElement *node)
+int mafVME::InternalRestore(const mafStorageElement& node_)
 //-------------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node)==MAF_OK)
+	auto node = &node_;
+
+  if (Superclass::InternalRestore(node_)==MAF_OK)
   {
     mafID crypt;
     node->GetAttributeAsInteger(_R("Crypting"),crypt);

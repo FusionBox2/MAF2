@@ -853,13 +853,14 @@ int mafVMEOsteometricBoard::InternalStore(mafStorageElement *parent)
 }
 
 //-----------------------------------------------------------------------
-int mafVMEOsteometricBoard::InternalRestore(mafStorageElement *node)
+int mafVMEOsteometricBoard::InternalRestore(const mafStorageElement& node_)
 //-----------------------------------------------------------------------
 {
 
+	auto node = &node_;
 
 	
-	if (Superclass::InternalRestore(node) == MAF_OK)
+	if (Superclass::InternalRestore(node_) == MAF_OK)
 	{
 		mafMatrix matrix;
 		if (node->RestoreMatrix(_R("Transform"), matrix) == MAF_OK)

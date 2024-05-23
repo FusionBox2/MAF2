@@ -161,7 +161,7 @@ public:
 
 protected:
   virtual int InternalStore(mafStorageElement *parent);
-  virtual int InternalRestore(mafStorageElement *node);
+  virtual int InternalRestore(const mafStorageElement& node);
 
   void Initialize();
   

@@ -270,10 +270,12 @@ int mafVMEProber::InternalStore(mafStorageElement *parent)
   return MAF_ERROR;
 }
 //-----------------------------------------------------------------------
-int mafVMEProber::InternalRestore(mafStorageElement *node)
+int mafVMEProber::InternalRestore(const mafStorageElement& node_)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node)==MAF_OK)
+	auto node = &node_;
+
+  if (Superclass::InternalRestore(node_)==MAF_OK)
   {
     mafMatrix matrix;
     if (node->RestoreMatrix(_R("Transform"),matrix)==MAF_OK)

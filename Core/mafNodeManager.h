@@ -76,7 +76,7 @@ public:
 
   virtual int InternalStore(mafStorageElement *node);
 
-  virtual int InternalRestore(mafStorageElement *node);
+  virtual int InternalRestore(const mafStorageElement& node);
 
 protected:
   bool                m_Modified;         ///< Used to known when the tree has been modified...

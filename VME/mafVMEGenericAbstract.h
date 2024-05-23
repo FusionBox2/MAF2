@@ -125,7 +125,7 @@ protected:
   virtual ~mafVMEGenericAbstract();
 
   virtual int InternalStore(mafStorageElement *parent);
-  virtual int InternalRestore(mafStorageElement *node);
+  virtual int InternalRestore(const mafStorageElement& node);
 
   /** Create GUI for the VME */
   virtual mafGUI *CreateGui();

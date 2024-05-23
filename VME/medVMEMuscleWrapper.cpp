@@ -432,10 +432,12 @@ void medVMEMuscleWrapper::RestoreMeterLinks()
 }
 
 //------------------------------------------------------------------------
-/*virtual*/ int medVMEMuscleWrapper::InternalRestore(mafStorageElement *node)
+/*virtual*/ int medVMEMuscleWrapper::InternalRestore(const mafStorageElement& node_)
 //------------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node)==MAF_OK)
+	auto node = &node_;
+
+  if (Superclass::InternalRestore(node_)==MAF_OK)
   {     
     if (node->RestoreInteger(_R("Wrappers_Num"), m_nWrappers) != MAF_OK)
       m_nWrappers = 0;  //no wrapper available

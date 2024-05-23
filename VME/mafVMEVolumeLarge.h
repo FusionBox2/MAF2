@@ -195,7 +195,7 @@ protected:
 
 	//two methods for restoring/storing the content of large data set from MSF  
 	/*virtual*/ int InternalStore(mafStorageElement *parent);
-	/*virtual*/ int InternalRestore(mafStorageElement *node);
+	/*virtual*/ int InternalRestore(const mafStorageElement& node);
 
   /** used to initialize and create the material attribute if not yet present */
   /*virtual*/ int InternalInitialize();

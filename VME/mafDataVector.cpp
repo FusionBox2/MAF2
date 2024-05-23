@@ -450,13 +450,14 @@ int mafDataVector::InternalStore(mafStorageElement *parent)
   return MAF_OK;
 }
 //-----------------------------------------------------------------------
-int mafDataVector::InternalRestore(mafStorageElement *node)
+int mafDataVector::InternalRestore(const mafStorageElement& node_)
 //-----------------------------------------------------------------------
 {
   mafString item_type,single_file;
   mafID num_items;
 
   m_JustRestored = true;
+  auto node = &node_;
 
   if (node->GetAttributeAsInteger(_R("NumberOfItems"), num_items) && \
       node->GetAttribute(_R("ItemTypeName"), item_type) && \

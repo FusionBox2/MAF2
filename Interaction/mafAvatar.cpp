@@ -309,10 +309,11 @@ int mafAvatar::InternalStore(mafStorageElement *node)
 }
 
 //------------------------------------------------------------------------------
-int mafAvatar::InternalRestore(mafStorageElement *node)
+int mafAvatar::InternalRestore(const mafStorageElement& node_)
 //------------------------------------------------------------------------------
 {
-  assert(node);
+	auto node = &node_;
+	assert(node);
   return node->RestoreText(_R("Name"),m_Name);
 }
 

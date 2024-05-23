@@ -200,10 +200,11 @@ int mafDevice::InternalStore(mafStorageElement *node)
 }
 
 //------------------------------------------------------------------------------
-int mafDevice::InternalRestore(mafStorageElement *node)
+int mafDevice::InternalRestore(const mafStorageElement& node_)
 //------------------------------------------------------------------------------
 {  
-  // Device Name
+	auto node = &node_;
+	// Device Name
   if (node->RestoreText(_R("Name"),m_Name)==MAF_OK)
   {
     int dev_id;

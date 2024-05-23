@@ -106,7 +106,7 @@ protected:
   virtual ~mafVMEHelAxis();
 
   virtual int InternalStore(mafStorageElement *parent);
-  virtual int InternalRestore(mafStorageElement *node);
+  virtual int InternalRestore(const mafStorageElement& node);
 
   mafGUI *CreateGui();
   /** called to prepare the update of the output */

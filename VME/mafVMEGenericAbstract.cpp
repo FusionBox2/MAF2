@@ -291,11 +291,13 @@ int mafVMEGenericAbstract::InternalStore(mafStorageElement *parent)
 }
 
 //-----------------------------------------------------------------------
-int mafVMEGenericAbstract::InternalRestore(mafStorageElement *node)
+int mafVMEGenericAbstract::InternalRestore(const mafStorageElement& node_)
 //-----------------------------------------------------------------------
 {
+	auto node = &node_;
+
   int ret_val = MAF_OK;
-  Superclass::InternalRestore(node);
+  Superclass::InternalRestore(node_);
   
   // restore Data Vector
   if (m_DataVector)

@@ -899,11 +899,13 @@ mafStorableMaterialLibrary::mafStorableMaterialLibrary(std::vector<mmaMaterial *
 }
 //------------------------------------------------------------------------------
 // example of de-serialization code
-int mafStorableMaterialLibrary::InternalRestore(mafStorageElement *element)
+int mafStorableMaterialLibrary::InternalRestore(const mafStorageElement& node_)
 //------------------------------------------------------------------------------
 {
+	auto node = &node_;
+
   std::vector<mafObject *> attrs;
-  element->RestoreVectorN(_R("MaterialLib"), attrs);
+  node->RestoreVectorN(_R("MaterialLib"), attrs);
   for (unsigned int i = 0; i < attrs.size(); i++)
   {
     mmaMaterial *item = mmaMaterial::SafeDownCast(attrs[i]);

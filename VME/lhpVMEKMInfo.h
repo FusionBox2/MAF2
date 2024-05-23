@@ -71,7 +71,7 @@ protected:
 
   int InternalStore(mafStorageElement *parent);
 
-  int InternalRestore(mafStorageElement *node);
+  int InternalRestore(const mafStorageElement& node);
 
   double m_values[200];
 private:

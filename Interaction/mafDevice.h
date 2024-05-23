@@ -156,7 +156,7 @@ protected:
     This function fills in the device with settings restored from the node.
     Subclasses should reimplement it to restore custom settings. Reimplemented
     functions should first call Superclass implementation. */
-  virtual int InternalRestore(mafStorageElement *node);
+  virtual int InternalRestore(const mafStorageElement& node);
   
 
   mafGUI*             m_Gui;

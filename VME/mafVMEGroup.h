@@ -72,7 +72,7 @@ protected:
 
   int InternalStore(mafStorageElement *parent);
 
-  int InternalRestore(mafStorageElement *node);
+  int InternalRestore(const mafStorageElement& node);
 
 
 private:

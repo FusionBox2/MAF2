@@ -216,10 +216,12 @@ int mmaApplicationLayout::InternalStore(mafStorageElement *parent)
   return MAF_ERROR;
 }
 //----------------------------------------------------------------------------
-int mmaApplicationLayout::InternalRestore(mafStorageElement *node)
+int mmaApplicationLayout::InternalRestore(const mafStorageElement& node_)
 //----------------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node) == MAF_OK)
+	auto node = &node_;
+
+  if (Superclass::InternalRestore(node_) == MAF_OK)
   {
     node->RestoreInteger(_R("APPLICATION_MAXIMIZED"), m_AppMaximized);
     node->RestoreVectorN(_R("APPLICATION_SIZE"),m_AppSize,2);

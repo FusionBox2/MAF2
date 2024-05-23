@@ -180,10 +180,12 @@ int mafVMEScalar::InternalStore(mafStorageElement *parent)
   return MAF_ERROR;
 }
 //-----------------------------------------------------------------------
-int mafVMEScalar::InternalRestore(mafStorageElement *node)
+int mafVMEScalar::InternalRestore(const mafStorageElement& node_)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node) == MAF_OK)
+	auto node = &node_;
+
+  if (Superclass::InternalRestore(node_) == MAF_OK)
   {
     // restore Data Vector
     if (m_ScalarVector)

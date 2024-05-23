@@ -115,10 +115,12 @@ int mafVMEInfoText::InternalStore(mafStorageElement *parent)
 }
 
 //-----------------------------------------------------------------------
-int mafVMEInfoText::InternalRestore(mafStorageElement *node)
+int mafVMEInfoText::InternalRestore(const mafStorageElement& node_)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node)==MAF_OK)
+	auto node = &node_;
+
+  if (Superclass::InternalRestore(node_)==MAF_OK)
   {
     mafString txtname;
     for(int j = 0; j < 3; j++)

@@ -138,7 +138,7 @@ public:
   mafStorableMaterialLibrary(std::vector<mmaMaterial *> *mat_list);
   ~mafStorableMaterialLibrary(){};
   int InternalStore(mafStorageElement *parent);
-  int InternalRestore(mafStorageElement *node);
+  int InternalRestore(const mafStorageElement& node);
   std::vector<mmaMaterial *> *m_MaterialList;
 };
 #endif // _mafGUIMaterialChooser_H_

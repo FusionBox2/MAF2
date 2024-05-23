@@ -95,9 +95,11 @@ int mafAttribute::InternalStore(mafStorageElement *parent)
 }
 
 //-------------------------------------------------------------------------
-int mafAttribute::InternalRestore(mafStorageElement *node)
+int mafAttribute::InternalRestore(const mafStorageElement& node_)
 //-------------------------------------------------------------------------
 {
+	auto node = &node_;
+
   return node->RestoreText(_R("Name"),m_Name);
 }
 //-------------------------------------------------------------------------

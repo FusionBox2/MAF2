@@ -148,11 +148,12 @@ int mafVMEHyperboloid2S::InternalStore(mafStorageElement *parent)
 	return MAF_ERROR;
 }
 
-int mafVMEHyperboloid2S::InternalRestore(mafStorageElement *node)
+int mafVMEHyperboloid2S::InternalRestore(const mafStorageElement& node_)
 //-----------------------------------------------------------------------
 {
+	auto node = &node_;
 
-	if (Superclass::InternalRestore(node) == MAF_OK)
+	if (Superclass::InternalRestore(node_) == MAF_OK)
 	{
 		
 		mafMatrix matrix;

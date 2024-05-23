@@ -135,10 +135,11 @@ int mafAction::InternalStore(mafStorageElement *node)
 }
 
 //------------------------------------------------------------------------------
-int mafAction::InternalRestore(mafStorageElement *node)
+int mafAction::InternalRestore(const mafStorageElement& node_)
 //------------------------------------------------------------------------------
 {
-  mafString name;
+	auto node = &node_;
+	mafString name;
   node->GetAttribute(_R("Name"),name);
  
   SetName(name);

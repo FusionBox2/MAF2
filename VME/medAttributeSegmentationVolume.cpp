@@ -207,10 +207,12 @@ int medAttributeSegmentationVolume::InternalStore(mafStorageElement *parent)
   return MAF_ERROR;
 }
 //----------------------------------------------------------------------------
-int medAttributeSegmentationVolume::InternalRestore(mafStorageElement *node)
+int medAttributeSegmentationVolume::InternalRestore(const mafStorageElement& node_)
 //----------------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node) == MAF_OK)
+	auto node = &node_;
+
+  if (Superclass::InternalRestore(node_) == MAF_OK)
   {
     //////////////////////////////////////////////////////////////////////////
     mafString value = _R("AUTOMATIC_SEGMENTATION_THRESHOLD_MODALITY");

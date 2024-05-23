@@ -52,16 +52,15 @@ public:
     of object must be passed: restore is not going to search for a subnode of the right type. This
     means the calling restore loop should have identified the node passed as argument as of type
     to be restored by this object.*/
-  int Restore(mafStorageElement *element);
+  int Restore(const mafStorageElement& element);
 protected:
   /**
     This is called by Store() and must be reimplemented by subclasses. 
     The node element where the object should store itself is passed as argument. */
   virtual int InternalStore(mafStorageElement *node)=0;
 
-  /** 
-    This is called by Restore() and must be reimplemented by subclasses 
-    The element from which the object should restore itself is passed as argument*/
-  virtual int InternalRestore(mafStorageElement *node)=0;
+  virtual int InternalStore(mafStorageElement& node);
+
+  virtual int InternalRestore(const mafStorageElement& node) = 0;
 };
 #endif // __mafStorable_h__

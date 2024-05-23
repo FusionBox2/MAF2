@@ -115,7 +115,7 @@ public:
 protected:
  
   virtual int InternalStore(mafStorageElement *parent);
-  virtual int InternalRestore(mafStorageElement *node);
+  virtual int InternalRestore(const mafStorageElement& node);
 
   mafString m_ArchiveName;///< Name of the archive if the items are stored in single file mode
   bool  m_SingleFileMode; ///< flag for storing Items as a single file

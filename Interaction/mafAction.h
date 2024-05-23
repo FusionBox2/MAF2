@@ -72,7 +72,7 @@ public:
   virtual int InternalStore(mafStorageElement *node);
 
   /** Restore of action's bindings from an XML file.*/
-  virtual int InternalRestore(mafStorageElement *node);
+  virtual int InternalRestore(const mafStorageElement& node);
 
   /** Redefined to answer incoming queries about connected devices. */
   virtual void OnEvent(mafEventBase *event);

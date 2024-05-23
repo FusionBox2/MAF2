@@ -234,7 +234,7 @@ protected:
   virtual int InternalStore(mafStorageElement *node);
 
   /** This is called by Restore() to restore information of this object. */
-  virtual int InternalRestore(mafStorageElement *node);
+  virtual int InternalRestore(const mafStorageElement& node);
   
   virtual void OnStartDispatching();
   virtual void OnEndDispatching();
@@ -285,6 +285,6 @@ private:
   int Store(mafStorageElement *element) {return mafStorable::Store(element);}
   
   /** hidden to not be called directly */
-  int Restore(mafStorageElement *element) {return mafStorable::Restore(element);}
+  int Restore(const mafStorageElement& element) {return mafStorable::Restore(element);}
 };
 #endif 

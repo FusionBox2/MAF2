@@ -360,10 +360,12 @@ int mmaMaterial::InternalStore(mafStorageElement *parent)
   return MAF_ERROR;
 }
 //----------------------------------------------------------------------------
-int mmaMaterial::InternalRestore(mafStorageElement *node)
+int mmaMaterial::InternalRestore(const mafStorageElement& node_)
 //----------------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node) == MAF_OK)
+	auto node = &node_;
+
+  if (Superclass::InternalRestore(node_) == MAF_OK)
   {
     // property
     node->RestoreText(_R("MaterialName"),m_MaterialName);

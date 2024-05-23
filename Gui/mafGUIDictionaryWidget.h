@@ -97,7 +97,7 @@ public:
   /** serialize  object attributes */
   virtual int InternalStore(mafStorageElement *parent){return MAF_OK;}
   /** restore  object attributes */
-  virtual int InternalRestore(mafStorageElement *node);
+  virtual int InternalRestore(const mafStorageElement& node);
   std::vector<mafString> m_StrVector;
 };
 #endif

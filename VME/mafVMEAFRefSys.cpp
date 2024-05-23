@@ -207,10 +207,12 @@ void mafVMEAFRefSys::SetActive(int active)
 
 
 //-----------------------------------------------------------------------
-int mafVMEAFRefSys::InternalRestore(mafStorageElement *node)
+int mafVMEAFRefSys::InternalRestore(const mafStorageElement& node_)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node)==MAF_OK)
+	auto node = &node_;
+
+  if (Superclass::InternalRestore(node_)==MAF_OK)
   {
     mafMatrix matrix;
     //if (node->RestoreMatrix("Transform",&matrix)==MAF_OK)

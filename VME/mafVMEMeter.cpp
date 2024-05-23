@@ -807,10 +807,12 @@ int mafVMEMeter::InternalStore(mafStorageElement *parent)
   return MAF_ERROR;
 }
 //-----------------------------------------------------------------------
-int mafVMEMeter::InternalRestore(mafStorageElement *node)
+int mafVMEMeter::InternalRestore(const mafStorageElement& node_)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node)==MAF_OK)
+	auto node = &node_;
+
+  if (Superclass::InternalRestore(node_)==MAF_OK)
   {
     mafMatrix matrix;
     node->RestoreInteger(_R("Infinite"), m_InfiniteLine);

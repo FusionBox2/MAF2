@@ -126,7 +126,7 @@ protected:
   //** Auto storing function */  
   /*virtual*/ int InternalStore(mafStorageElement *parent);
   //** Auto restoring function */  
-  /*virtual*/ int InternalRestore(mafStorageElement *node);
+  /*virtual*/ int InternalRestore(const mafStorageElement& node);
 
   //Stuff for automatic threshold
   int m_UseDoubleThreshold;

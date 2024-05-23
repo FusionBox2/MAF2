@@ -143,10 +143,12 @@ int mafAttributeTraceability::InternalStore(mafStorageElement *parent)
 }
 
 //-------------------------------------------------------------------------
-int mafAttributeTraceability::InternalRestore(mafStorageElement *node)
+int mafAttributeTraceability::InternalRestore(const mafStorageElement& node_)
 //-------------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node) == MAF_OK)
+	auto node = &node_;
+
+  if (Superclass::InternalRestore(node_) == MAF_OK)
   {
     m_Traceability traceability;
 
