@@ -55,6 +55,7 @@ public:
   const mafString& GetName() const {return m_Name;}
 
   mafStorageElement operator[](const mafString& name) const;
+  mafStorageElement operator()(const mafString& name) const;
 
   void SetAttribute(const mafString& name,const mafID value);
   void SetAttribute(const mafString& name,const double value);

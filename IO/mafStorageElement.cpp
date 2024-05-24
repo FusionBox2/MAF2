@@ -229,6 +229,13 @@ mafStorageElement mafStorageElement::operator[](const mafString& name) const
 	return *it->second.front();
 }
 
+mafStorageElement mafStorageElement::operator()(const mafString& name) const
+{
+    if (getDOMNode(m_DOMElement)->getNodeType() != XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
+        throw 0;
+    return mafStorageElement(static_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*>(getDOMNode(m_DOMElement))->getAttributeNode(mafXMLString(name.GetCStr())), GetStorage());
+}
+
 //------------------------------------------------------------------------------
 std::vector<mafStorageElement*> mafStorageElement::GetElementsByName(const mafString& name) const
 //------------------------------------------------------------------------------
@@ -669,15 +676,24 @@ int mafStorageElement::StoreText(const mafString& text)
 int mafStorageElement::RestoreText(mafString& buffer) const
 //------------------------------------------------------------------------------
 {
-	auto child_element = getDOMNode(m_DOMElement)->getFirstChild();
-	while (child_element)
+    if (getDOMNode(m_DOMElement)->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ATTRIBUTE_NODE)
+    {
+        buffer = _R(mafXMLString(getDOMNode(m_DOMElement)->getNodeValue()));
+        return MAF_OK;
+    }
+	if (getDOMNode(m_DOMElement)->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
 	{
-		if (child_element->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::TEXT_NODE)
+		auto child_element = getDOMNode(m_DOMElement)->getFirstChild();
+		while (child_element)
 		{
-			buffer = _R(mafXMLString(child_element->getNodeValue()));
-			return MAF_OK;
+			if (child_element->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::TEXT_NODE)
+			{
+				buffer = _R(mafXMLString(child_element->getNodeValue()));
+				return MAF_OK;
+			}
+			child_element = child_element->getNextSibling();
 		}
-		child_element = child_element->getNextSibling();
+		return MAF_OK;
 	}
-	return MAF_OK;
+	return MAF_ERROR;
 }
