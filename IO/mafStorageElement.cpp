@@ -260,7 +260,7 @@ int mafStorageElementBuilder::StoreVectorN(const std::vector<mafObject *> &vecto
     mafObject *object=vector[i];
     if (object)
     {
-      if (StoreObject(items_name,object) != MAF_OK)
+      if ((*this)[items_name].StoreObject(object) != MAF_OK)
       {
         mafErrorMacro("Failed to store object of type \""<<object->GetTypeName()<<"\" in vector of objects");
         return MAF_ERROR;
@@ -344,28 +344,13 @@ int mafStorageElementBuilder::StoreObject(mafObject *object)
   mafErrorMacro("Failed to store object of type \"" << type_name.GetCStr() << "\"");
   return MAF_ERROR;
 }
-//------------------------------------------------------------------------------
-int mafStorageElementBuilder::StoreObject(const mafString& name,mafObject *object)
-//------------------------------------------------------------------------------
-{
-  auto element = AppendChild(name);
-  return element->StoreObject(object);
-}
 
 //------------------------------------------------------------------------------
-int mafStorageElementBuilder::StoreStorable(const mafString& name, mafStorable* storable)
+int mafStorageElementBuilder::StoreStorable(mafStorable* storable)
 //------------------------------------------------------------------------------
 {
   assert(storable);
-  auto element=AppendChild(name);
-  if (element)
-  {
-    if (storable->Store(*element)!=MAF_OK)
-    {
-      return MAF_ERROR;
-    }
-  }
-  return MAF_ERROR;
+  return storable->Store(*this);
 }
 
 //------------------------------------------------------------------------------

@@ -172,7 +172,7 @@ int mafVMEScalar::InternalStore(mafStorageElementBuilder& parent)
   {
     if (m_ScalarVector)
     {
-      if(parent.StoreStorable(_R("ScalarVector"), m_ScalarVector) == MAF_ERROR)
+      if(parent[_R("ScalarVector")].StoreStorable(m_ScalarVector) == MAF_ERROR)
         return MAF_ERROR;
     }
     return MAF_OK;

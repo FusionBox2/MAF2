@@ -105,7 +105,7 @@ int mafDeviceButtonsPadTracker::InternalStore(mafStorageElementBuilder& node)
   // store default avatar if present
   if (m_DefaultAvatar)
   {
-    return (node.StoreObject(_R("Avatar"),m_DefaultAvatar) != MAF_OK ?MAF_ERROR: MAF_OK);
+    return (node[_R("Avatar")].StoreObject(m_DefaultAvatar) != MAF_OK ? MAF_ERROR : MAF_OK);
   }
 
   return MAF_OK;

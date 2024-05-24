@@ -196,7 +196,7 @@ int mafTagArray::InternalStore(mafStorageElementBuilder& parent)
   
     for (auto& item : m_Tags)
     {
-      ret = parent.StoreStorable(_R("TItem"), &item.second);
+      ret = parent[_R("TItem")].StoreStorable(&item.second);
       if (ret != MAF_OK)
           break;
     }

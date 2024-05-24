@@ -116,8 +116,7 @@ public:
 	int StoreMatrix(const mafMatrix& matrix);
 
 	int StoreObject(mafObject* object);
-	int StoreObject(const mafString& name, mafObject* object);
-	int StoreStorable(const mafString& name, mafStorable* object);
+	int StoreStorable(mafStorable* object);
 	int StoreVectorN(double* comps, int num);
 	int StoreVectorN(int* comps, int num);
 	int StoreVectorN(const std::vector<double>& comps);

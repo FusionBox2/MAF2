@@ -279,12 +279,12 @@ int mafVMEGenericAbstract::InternalStore(mafStorageElementBuilder& parent)
   if (m_DataVector)
   {
     m_DataVector->SetCrypting(this->m_Crypting != 0);
-    if(parent.StoreStorable(_R("DataVector"), m_DataVector) == MAF_ERROR)
+    if(parent[_R("DataVector")].StoreStorable(m_DataVector) == MAF_ERROR)
       return MAF_ERROR;
   }
 
   // sub-element for storing the matrix vector
-  if(parent.StoreStorable(_R("MatrixVector"), m_MatrixVector) == MAF_ERROR)
+  if(parent[_R("MatrixVector")].StoreStorable(m_MatrixVector) == MAF_ERROR)
     return MAF_ERROR;
 
   return MAF_OK;

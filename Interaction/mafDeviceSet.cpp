@@ -105,7 +105,7 @@ int mafDeviceSet::InternalStore(mafStorageElementBuilder& node)
     if (device->IsPersistent()) // do not store persistent devices
       continue;
 
-    if (node.StoreObject(_R("Device"),device) != MAF_OK)
+    if (node[_R("Device")].StoreObject(device) != MAF_OK)
     {
       mafErrorMacro("Error Writing "<<device->GetName().GetCStr() <<" device");
       m_DevicesMutex->unlock();

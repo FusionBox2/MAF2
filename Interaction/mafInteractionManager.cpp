@@ -862,11 +862,11 @@ int mafInteractionManager::InternalStore(mafStorageElementBuilder& node)
 //------------------------------------------------------------------------------
 {
   // store device settings
-  if (node.StoreObject(_R("DeviceManager"),m_DeviceManager) != MAF_OK)
+  if (node[_R("DeviceManager")].StoreObject(m_DeviceManager) != MAF_OK)
     return MAF_ERROR;
   
   // store bindings
-  if (node.StoreObject(_R("DeviceBindings"),m_StaticEventRouter) != MAF_OK)
+  if (node[_R("DeviceBindings")].StoreObject(m_StaticEventRouter) != MAF_OK)
     return MAF_ERROR;
   
   return MAF_OK;

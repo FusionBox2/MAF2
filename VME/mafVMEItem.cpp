@@ -230,7 +230,7 @@ int mafVMEItem::InternalStore(mafStorageElementBuilder& parent)
     &&parent[_R("TimeStamp")].StoreDouble(m_TimeStamp)==MAF_OK \
     &&parent[_R("Crypting")].StoreText(m_Crypting?_R("true"):_R("false"))==MAF_OK \
     &&parent[_R("Bounds")].StoreVectorN(m_Bounds.m_Bounds,6)==MAF_OK \
-    &&parent.StoreObject(_R("TagArray"),m_TagArray) == MAF_OK)
+    &&parent[_R("TagArray")].StoreObject(m_TagArray) == MAF_OK)
   {
     return MAF_OK;
   }

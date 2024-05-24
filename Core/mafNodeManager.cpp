@@ -151,7 +151,7 @@ int mafNodeManager::InternalStore(mafStorageElementBuilder& node)
   // here should write elements specific for the document
   if(!m_Root)
     return MAF_ERROR;
-  return node.StoreObject(_R("Root"),m_Root) != MAF_OK ? MAF_ERROR : MAF_OK;
+  return node[_R("Root")].StoreObject(m_Root) != MAF_OK ? MAF_ERROR : MAF_OK;
 }
 
 //------------------------------------------------------------------------------

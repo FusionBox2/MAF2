@@ -42,7 +42,7 @@ int mafInteractorSER::InternalStore(mafStorageElementBuilder& node)
   for (mmuActionsMap::iterator it=m_Actions.begin();it!=m_Actions.end();it++)
   {
     mafAction *action=it->second;
-    node.StoreObject(_R("Action"),action);   
+    node[_R("Action")].StoreObject(action);
   }
 
   return 0;

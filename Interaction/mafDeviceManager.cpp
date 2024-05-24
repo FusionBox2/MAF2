@@ -195,7 +195,7 @@ int mafDeviceManager::InternalStore(mafStorageElementBuilder& node)
 {
   node.SetAttribute(_R("DeviceIdCounter"),m_DeviceIdCounter);
   
-  if (node.StoreObject(_R("DeviceSet"),m_DeviceSet) != MAF_OK)
+  if (node[_R("DeviceSet")].StoreObject(m_DeviceSet) != MAF_OK)
     return MAF_ERROR;
 
   return MAF_OK;

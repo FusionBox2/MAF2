@@ -443,7 +443,7 @@ int mafDataVector::InternalStore(mafStorageElementBuilder& parent)
   // Store meta-data (meta-data is stored later to be able set some info about stored data files)
   for (auto& elem : *this)
   {
-    parent.StoreObject(_R("VItem"),elem.second.GetPointer());
+    parent[_R("VItem")].StoreObject(elem.second.GetPointer());
   }
 
   m_DataModified = false;
