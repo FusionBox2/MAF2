@@ -1148,7 +1148,7 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 		return ret_val;	
 
 	//Restore m_LargeData
-	auto ds_info = node[_R("LargeDataSetInfo")];
+	const auto ds_info = node[_R("LargeDataSetInfo")];
 	{
 		//Oops. It was not stored.
 		mafString clsname;
