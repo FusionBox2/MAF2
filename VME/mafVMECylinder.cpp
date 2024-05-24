@@ -106,24 +106,24 @@ mafVMECylinder::~mafVMECylinder()
 
 }
 
-int mafVMECylinder::InternalStore(mafStorageElement *parent)
+int mafVMECylinder::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {	
 	if (Superclass::InternalStore(parent) == MAF_OK)
 	{
 		if (
-		//	parent->StoreObject("centervme", center_vme)&&
-			parent->StoreText(_R("name"), name) == MAF_OK &&
-			parent->StoreText(_R("landmarkName"), m_LandmarkName) == MAF_OK &&
-			parent->StoreDouble(_R("Centerx"), center(0)) == MAF_OK &&
-			parent->StoreDouble(_R("Centery"), center(1)) == MAF_OK &&
-			parent->StoreDouble(_R("Centerz"), center(2)) == MAF_OK &&
-			parent->StoreDouble(_R("a"), a) == MAF_OK &&
-			parent->StoreDouble(_R("b"), b) == MAF_OK &&
-			parent->StoreDouble(_R("h"), h) == MAF_OK &&
-			parent->StoreInteger(_R("CylinderOrientationAxis"), m_CylinderOrientationAxis) == MAF_OK &&
-			parent->StoreDouble(_R("res"), res) == MAF_OK &&
-			parent->StoreMatrix(_R("Transform"), m_Transform->GetMatrix()) == MAF_OK
+		//	parent.StoreObject("centervme", center_vme)&&
+			parent.StoreText(_R("name"), name) == MAF_OK &&
+			parent.StoreText(_R("landmarkName"), m_LandmarkName) == MAF_OK &&
+			parent.StoreDouble(_R("Centerx"), center(0)) == MAF_OK &&
+			parent.StoreDouble(_R("Centery"), center(1)) == MAF_OK &&
+			parent.StoreDouble(_R("Centerz"), center(2)) == MAF_OK &&
+			parent.StoreDouble(_R("a"), a) == MAF_OK &&
+			parent.StoreDouble(_R("b"), b) == MAF_OK &&
+			parent.StoreDouble(_R("h"), h) == MAF_OK &&
+			parent.StoreInteger(_R("CylinderOrientationAxis"), m_CylinderOrientationAxis) == MAF_OK &&
+			parent.StoreDouble(_R("res"), res) == MAF_OK &&
+			parent.StoreMatrix(_R("Transform"), m_Transform->GetMatrix()) == MAF_OK
 
 			)
 		{

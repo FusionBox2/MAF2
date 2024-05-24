@@ -341,26 +341,26 @@ void mafVMELineSeg::Update()
 
 }
 //-----------------------------------------------------------------------
-int mafVMELineSeg::InternalStore(mafStorageElement *parent)
+int mafVMELineSeg::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
 	
 	if (Superclass::InternalStore(parent)==MAF_OK)
 	{
-		if (	parent->StoreMatrix(_R("Transform"), m_Transform->GetMatrix()) == MAF_OK	)
+		if (	parent.StoreMatrix(_R("Transform"), m_Transform->GetMatrix()) == MAF_OK	)
 		{
-			/*parent->StoreInteger("NbrPts", pts->GetNumberOfPoints());
+			/*parent.StoreInteger("NbrPts", pts->GetNumberOfPoints());
 			if (pts->GetNumberOfPoints() > 1)
 			{
 				if (
 					
-					parent->StoreDouble("pt1_0", pts->GetPoint(0)[0]) == MAF_OK &&
-					parent->StoreDouble("pt1_1", pts->GetPoint(0)[1]) == MAF_OK &&
-					parent->StoreDouble("pt1_2", pts->GetPoint(0)[2]) == MAF_OK
+					parent.StoreDouble("pt1_0", pts->GetPoint(0)[0]) == MAF_OK &&
+					parent.StoreDouble("pt1_1", pts->GetPoint(0)[1]) == MAF_OK &&
+					parent.StoreDouble("pt1_2", pts->GetPoint(0)[2]) == MAF_OK
 					 &&
-					parent->StoreDouble("pt2_0", pts->GetPoint(pts->GetNumberOfPoints() - 1)[0]) == MAF_OK &&
-					parent->StoreDouble("pt2_1", pts->GetPoint(pts->GetNumberOfPoints() - 1)[1]) == MAF_OK &&
-					parent->StoreDouble("pt2_2", pts->GetPoint(pts->GetNumberOfPoints() - 1)[2]) == MAF_OK
+					parent.StoreDouble("pt2_0", pts->GetPoint(pts->GetNumberOfPoints() - 1)[0]) == MAF_OK &&
+					parent.StoreDouble("pt2_1", pts->GetPoint(pts->GetNumberOfPoints() - 1)[1]) == MAF_OK &&
+					parent.StoreDouble("pt2_2", pts->GetPoint(pts->GetNumberOfPoints() - 1)[2]) == MAF_OK
 				)
 				{
 					return MAF_OK;
@@ -372,8 +372,8 @@ int mafVMELineSeg::InternalStore(mafStorageElement *parent)
 				return MAF_OK;
 			}*/
 
-			parent->StoreVectorN(_R("PosPt1"), PosPt1, 3);
-			parent->StoreVectorN(_R("PosPt2"), PosPt2, 3);
+			parent.StoreVectorN(_R("PosPt1"), PosPt1, 3);
+			parent.StoreVectorN(_R("PosPt2"), PosPt2, 3);
 
 		}
 		return MAF_OK;

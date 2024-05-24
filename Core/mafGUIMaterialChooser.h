@@ -137,7 +137,7 @@ public:
   mafStorableMaterialLibrary(){};
   mafStorableMaterialLibrary(std::vector<mmaMaterial *> *mat_list);
   ~mafStorableMaterialLibrary(){};
-  int InternalStore(mafStorageElement *parent);
+  int InternalStore(mafStorageElementBuilder& parent);
   int InternalRestore(const mafStorageElement& node);
   std::vector<mmaMaterial *> *m_MaterialList;
 };

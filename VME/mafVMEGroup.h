@@ -70,7 +70,7 @@ protected:
 
   mafTransform *m_Transform;
 
-  int InternalStore(mafStorageElement *parent);
+  int InternalStore(mafStorageElementBuilder& parent);
 
   int InternalRestore(const mafStorageElement& node);
 

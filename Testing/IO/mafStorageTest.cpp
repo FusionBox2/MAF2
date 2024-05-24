@@ -64,7 +64,7 @@ public:
   ~mafStorableDummy(){};
 
 protected:
-  int InternalStore(mafStorageElement *node){return MAF_OK;};
+  int InternalStore(mafStorageElementBuilder& node){return MAF_OK;};
   int InternalRestore(mafStorageElement *node){return MAF_OK;};
 };
 

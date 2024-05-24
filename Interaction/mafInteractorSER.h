@@ -80,7 +80,7 @@ public:
   const mmuActionsMap *GetActions() {return &m_Actions;}
 
 protected:
-  virtual int InternalStore(mafStorageElement *node);
+  virtual int InternalStore(mafStorageElementBuilder& node);
   virtual int InternalRestore(const mafStorageElement& node);
 
   mafInteractorSER();

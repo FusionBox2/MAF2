@@ -116,7 +116,7 @@ protected:
   mafVMEBSplineLine();
   virtual ~mafVMEBSplineLine();
 
-  virtual int InternalStore(mafStorageElement *parent);
+  virtual int InternalStore(mafStorageElementBuilder& parent);
   virtual int InternalRestore(const mafStorageElement& node);
 
   void BuildCurve();

@@ -78,7 +78,7 @@ bool mafVMERefSys::Equals(mafVME *vme)
 }
 
 //-----------------------------------------------------------------------
-int mafVMERefSys::InternalStore(mafStorageElement *parent)
+int mafVMERefSys::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)

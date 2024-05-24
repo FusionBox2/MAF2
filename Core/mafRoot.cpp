@@ -46,10 +46,10 @@ mafRoot* mafRoot::SafeDownCast(mafObject *o)
 }
 
 //-------------------------------------------------------------------------
-int mafRoot::StoreRoot(mafStorageElement *parent)
+int mafRoot::StoreRoot(mafStorageElementBuilder& parent)
 //-------------------------------------------------------------------------
 {
-  parent->SetAttribute(_R("MaxNodeId"),mafToString(m_MaxNodeId));
+  parent.SetAttribute(_R("MaxNodeId"),mafToString(m_MaxNodeId));
   return MAF_OK;
 }
 //-------------------------------------------------------------------------

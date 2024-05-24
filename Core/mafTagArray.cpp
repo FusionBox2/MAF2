@@ -186,17 +186,17 @@ int mafTagArray::GetNumberOfTags() const
 }
 
 //-------------------------------------------------------------------------
-int mafTagArray::InternalStore(mafStorageElement *parent)
+int mafTagArray::InternalStore(mafStorageElementBuilder& parent)
 //-------------------------------------------------------------------------
 {
   int ret=Superclass::InternalStore(parent);
   if (ret==MAF_OK)
   {  
-    parent->SetAttribute(_R("NumberOfTags"),mafToString(GetNumberOfTags()));
+    parent.SetAttribute(_R("NumberOfTags"),mafToString(GetNumberOfTags()));
   
     for (auto& item : m_Tags)
     {
-      ret = parent->StoreStorable(_R("TItem"), &item.second);
+      ret = parent.StoreStorable(_R("TItem"), &item.second);
       if (ret != MAF_OK)
           break;
     }

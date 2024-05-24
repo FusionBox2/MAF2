@@ -492,19 +492,19 @@ void mafAvatar3D::TrackerToDisplay(mafMatrix &tracker_pose,double xy[2])
 }
 
 //------------------------------------------------------------------------------
-int mafAvatar3D::InternalStore(mafStorageElement *node)
+int mafAvatar3D::InternalStore(mafStorageElementBuilder& node)
 //------------------------------------------------------------------------------
 {
   if(Superclass::InternalStore(node))
     return MAF_ERROR;
 
-  node->StoreInteger(_R("DisplayWorkingBox"),GetDisplayWorkingBox());
-  node->StoreInteger(_R("DisplayDebugText"),GetDisplayDebugText());
+  node.StoreInteger(_R("DisplayWorkingBox"),GetDisplayWorkingBox());
+  node.StoreInteger(_R("DisplayDebugText"),GetDisplayDebugText());
   double coords[2];
   coords[0]=GetDebugTextPosition()[0];
   coords[1]=GetDebugTextPosition()[1];
-  node->StoreVectorN(_R("DebugTextPosition"),coords,2);
-  node->StoreInteger(_R("CoordsFrame"),GetCoordsFrame());
+  node.StoreVectorN(_R("DebugTextPosition"),coords,2);
+  node.StoreInteger(_R("CoordsFrame"),GetCoordsFrame());
 
   // write prop3D properties?
   return MAF_OK;

@@ -825,7 +825,7 @@ void mafVMEOsteometricBoard::SetUVector(double aa, int a)
 
 }
 //-----------------------------------------------------------------------
-int mafVMEOsteometricBoard::InternalStore(mafStorageElement *parent)
+int mafVMEOsteometricBoard::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {
 
@@ -833,11 +833,11 @@ int mafVMEOsteometricBoard::InternalStore(mafStorageElement *parent)
 	if (Superclass::InternalStore(parent) == MAF_OK)
 	{
 		if (
-			parent->StoreMatrix(_R("Transform"), m_Transform->GetMatrix()) == MAF_OK &&
-		//	parent->StoreInteger("Geometry", m_GeometryType) == MAF_OK &&
+			parent.StoreMatrix(_R("Transform"), m_Transform->GetMatrix()) == MAF_OK &&
+		//	parent.StoreInteger("Geometry", m_GeometryType) == MAF_OK &&
 	
-			parent->StoreDouble(_R("PlaneUx"), m_PlaneXRes) == MAF_OK &&
-			parent->StoreDouble(_R("PlaneUy"), m_PlaneYRes) == MAF_OK //&&
+			parent.StoreDouble(_R("PlaneUx"), m_PlaneXRes) == MAF_OK &&
+			parent.StoreDouble(_R("PlaneUy"), m_PlaneYRes) == MAF_OK //&&
 			
 	
 			

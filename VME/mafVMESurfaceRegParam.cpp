@@ -564,41 +564,41 @@ void mafVMESurfaceRegParam::InternalUpdate()
   this->ForwardUpEvent(&ev);*/
 }
 //-----------------------------------------------------------------------
-int mafVMESurfaceRegParam::InternalStore(mafStorageElement *parent)
+int mafVMESurfaceRegParam::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
 	if (Superclass::InternalStore(parent)==MAF_OK)
 	{
     if (
-		parent->StoreMatrix(_R("Transform"),m_Transform->GetMatrix()) == MAF_OK && 
-		parent->StoreInteger(_R("Geometry"), 	m_GeometryType) == MAF_OK &&
-    parent->StoreDouble(_R("ShereRadius"), m_SphereRadius) == MAF_OK &&
-    parent->StoreDouble(_R("SpherePhiRes"),m_SpherePhiRes) == MAF_OK &&
-    parent->StoreDouble(_R("SphereThetaRes"),m_SphereTheRes) == MAF_OK &&
-    parent->StoreVectorN(_R("SphereCenter"),m_SphereCenter,3) == MAF_OK &&
-    parent->StoreDouble(_R("ConeHieght"),m_ConeHeight) == MAF_OK &&
-    parent->StoreDouble(_R("ConeRadius"),m_ConeRadius) == MAF_OK &&
-    parent->StoreInteger(_R("ConeCapping"),m_ConeCapping) == MAF_OK &&
-    parent->StoreDouble(_R("ConeRes"),m_ConeRes) == MAF_OK &&
-    parent->StoreInteger(_R("ConeOrientationAxis"),m_ConeOrientationAxis) == MAF_OK &&
-    parent->StoreDouble(_R("CylinderHeight"),m_CylinderHeight) == MAF_OK &&
-    parent->StoreDouble(_R("CylinderRadius"),m_CylinderRadius) == MAF_OK &&
-    parent->StoreDouble(_R("CylinderRes"),m_CylinderRes) == MAF_OK &&
-    parent->StoreInteger(_R("CylinderOrientationAxis"),m_CylinderOrientationAxis) == MAF_OK &&
-    parent->StoreDouble(_R("CubeXLength"),m_CubeXLength) == MAF_OK &&
-    parent->StoreDouble(_R("CubeYLength"),m_CubeYLength) == MAF_OK &&
-    parent->StoreDouble(_R("CubeZLength"),m_CubeZLength) == MAF_OK &&
-    parent->StoreDouble(_R("PlaneXRes"),m_PlaneXRes) == MAF_OK &&
-    parent->StoreDouble(_R("PlaneYRes"),m_PlaneYRes) == MAF_OK &&
-    //parent->StoreVectorN(_R("PlaneOrigin"),m_PlaneOrigin,3) == MAF_OK &&
-    parent->StoreVectorN(_R("PlaneCenter"),m_PlaneCenter,3) == MAF_OK &&
-    parent->StoreVectorN(_R("PlaneNormal"),m_PlaneNormal,3) == MAF_OK &&
-    parent->StoreDouble(_R("EllipsoidXLenght"),m_EllipsoidXLenght) == MAF_OK &&
-    parent->StoreDouble(_R("EllipsoidYLenght"),m_EllipsoidYLenght) == MAF_OK &&
-    parent->StoreDouble(_R("EllipsoidZLenght"),m_EllipsoidZLenght) == MAF_OK &&
-    parent->StoreDouble(_R("EllipsoidTheRes"),m_EllipsoidTheRes) == MAF_OK &&
-    parent->StoreDouble(_R("EllipsoidPhiRes"),m_EllipsoidPhiRes) == MAF_OK &&
-    parent->StoreInteger(_R("EllipsoidOrientationAxis"),m_CylinderOrientationAxis) == MAF_OK
+		parent.StoreMatrix(_R("Transform"),m_Transform->GetMatrix()) == MAF_OK && 
+		parent.StoreInteger(_R("Geometry"), 	m_GeometryType) == MAF_OK &&
+    parent.StoreDouble(_R("ShereRadius"), m_SphereRadius) == MAF_OK &&
+    parent.StoreDouble(_R("SpherePhiRes"),m_SpherePhiRes) == MAF_OK &&
+    parent.StoreDouble(_R("SphereThetaRes"),m_SphereTheRes) == MAF_OK &&
+    parent.StoreVectorN(_R("SphereCenter"),m_SphereCenter,3) == MAF_OK &&
+    parent.StoreDouble(_R("ConeHieght"),m_ConeHeight) == MAF_OK &&
+    parent.StoreDouble(_R("ConeRadius"),m_ConeRadius) == MAF_OK &&
+    parent.StoreInteger(_R("ConeCapping"),m_ConeCapping) == MAF_OK &&
+    parent.StoreDouble(_R("ConeRes"),m_ConeRes) == MAF_OK &&
+    parent.StoreInteger(_R("ConeOrientationAxis"),m_ConeOrientationAxis) == MAF_OK &&
+    parent.StoreDouble(_R("CylinderHeight"),m_CylinderHeight) == MAF_OK &&
+    parent.StoreDouble(_R("CylinderRadius"),m_CylinderRadius) == MAF_OK &&
+    parent.StoreDouble(_R("CylinderRes"),m_CylinderRes) == MAF_OK &&
+    parent.StoreInteger(_R("CylinderOrientationAxis"),m_CylinderOrientationAxis) == MAF_OK &&
+    parent.StoreDouble(_R("CubeXLength"),m_CubeXLength) == MAF_OK &&
+    parent.StoreDouble(_R("CubeYLength"),m_CubeYLength) == MAF_OK &&
+    parent.StoreDouble(_R("CubeZLength"),m_CubeZLength) == MAF_OK &&
+    parent.StoreDouble(_R("PlaneXRes"),m_PlaneXRes) == MAF_OK &&
+    parent.StoreDouble(_R("PlaneYRes"),m_PlaneYRes) == MAF_OK &&
+    //parent.StoreVectorN(_R("PlaneOrigin"),m_PlaneOrigin,3) == MAF_OK &&
+    parent.StoreVectorN(_R("PlaneCenter"),m_PlaneCenter,3) == MAF_OK &&
+    parent.StoreVectorN(_R("PlaneNormal"),m_PlaneNormal,3) == MAF_OK &&
+    parent.StoreDouble(_R("EllipsoidXLenght"),m_EllipsoidXLenght) == MAF_OK &&
+    parent.StoreDouble(_R("EllipsoidYLenght"),m_EllipsoidYLenght) == MAF_OK &&
+    parent.StoreDouble(_R("EllipsoidZLenght"),m_EllipsoidZLenght) == MAF_OK &&
+    parent.StoreDouble(_R("EllipsoidTheRes"),m_EllipsoidTheRes) == MAF_OK &&
+    parent.StoreDouble(_R("EllipsoidPhiRes"),m_EllipsoidPhiRes) == MAF_OK &&
+    parent.StoreInteger(_R("EllipsoidOrientationAxis"),m_CylinderOrientationAxis) == MAF_OK
     )
 		return MAF_OK;
 	}

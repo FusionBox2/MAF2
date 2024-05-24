@@ -22,6 +22,7 @@
 // forward declarations :
 //----------------------------------------------------------------------------
 class mafStorageElement;
+class mafStorageElementBuilder;
 
 /** mafStorable is an interface for serializable objects.
   The idea behind this class is to act as in interface to be inherited to
@@ -45,7 +46,7 @@ public:
     Storing this object as part of an XML document. The element node must be passed as argument,
     which can eventually be the XML document root. The store function will append all the necessary 
     data and attributes and new XML nodes as children of this node. */
-  int Store(mafStorageElement *element);
+  int Store(mafStorageElementBuilder& element);
   /** 
     Restore this object from an XML document. The XML element from where starting the restoring
     must be passed as argument. Notice when restoring an element corresponding to this kind
@@ -57,9 +58,9 @@ protected:
   /**
     This is called by Store() and must be reimplemented by subclasses. 
     The node element where the object should store itself is passed as argument. */
-  virtual int InternalStore(mafStorageElement *node)=0;
+  virtual void InternalStore(mafStorageElement* node) {}
 
-  virtual int InternalStore(mafStorageElement& node);
+  virtual int InternalStore(mafStorageElementBuilder& node);
 
   virtual int InternalRestore(const mafStorageElement& node) = 0;
 };

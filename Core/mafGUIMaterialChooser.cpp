@@ -912,7 +912,7 @@ int mafStorableMaterialLibrary::InternalRestore(const mafStorageElement& node)
   return MAF_OK;
 }
 //------------------------------------------------------------------------------
-int mafStorableMaterialLibrary::InternalStore( mafStorageElement *parent )
+int mafStorableMaterialLibrary::InternalStore( mafStorageElementBuilder& parent )
 //------------------------------------------------------------------------------
 {
   std::vector<mafObject *> attrs;
@@ -921,5 +921,5 @@ int mafStorableMaterialLibrary::InternalStore( mafStorageElement *parent )
     attrs.push_back((*m_MaterialList)[m]);
   }
 
-  return parent->StoreVectorN(_R("MaterialLib"), attrs);
+  return parent.StoreVectorN(_R("MaterialLib"), attrs);
 }

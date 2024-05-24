@@ -183,7 +183,7 @@ const char* mafVMEExternalData::GetMimeType()
 }
 
 //-----------------------------------------------------------------------
-int mafVMEExternalData::InternalStore(mafStorageElement *parent)
+int mafVMEExternalData::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {
   InitializeCurrentPath();

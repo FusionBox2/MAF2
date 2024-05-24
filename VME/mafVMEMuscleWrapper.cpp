@@ -827,16 +827,16 @@ void mafVMEMuscleWrapperAQ::InternalUpdate()
 
 }
 //-----------------------------------------------------------------------
-int mafVMEMuscleWrapperAQ::InternalStore(mafStorageElement *parent)
+int mafVMEMuscleWrapperAQ::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {
 	wxBusyInfo wait2("muscle wrapperAQ internal store");
 	Sleep(3000);
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent->StoreInteger(_R("Infinite"), m_InfiniteLine);
-    parent->StoreInteger(_R("LineAngle2"), m_LineAngle2);
-    parent->StoreMatrix(_R("Transform"),m_Transform->GetMatrix());
+    parent.StoreInteger(_R("Infinite"), m_InfiniteLine);
+    parent.StoreInteger(_R("LineAngle2"), m_LineAngle2);
+    parent.StoreMatrix(_R("Transform"),m_Transform->GetMatrix());
     return MAF_OK;
   }
   return MAF_ERROR;

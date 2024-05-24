@@ -102,7 +102,7 @@ bool mmaMuscleWrapperAQ::Equals(const mafAttribute *a)
   return false;
 }
 //-----------------------------------------------------------------------
-int mmaMuscleWrapperAQ::InternalStore(mafStorageElement *parent)
+int mmaMuscleWrapperAQ::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)

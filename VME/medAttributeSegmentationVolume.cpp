@@ -146,7 +146,7 @@ bool medAttributeSegmentationVolume::Equals(const mafAttribute *a)
 }
 
 //-----------------------------------------------------------------------
-int medAttributeSegmentationVolume::InternalStore(mafStorageElement *parent)
+int medAttributeSegmentationVolume::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
@@ -154,51 +154,51 @@ int medAttributeSegmentationVolume::InternalStore(mafStorageElement *parent)
     //////////////////////////////////////////////////////////////////////////
     mafString value = _R("AUTOMATIC_SEGMENTATION_THRESHOLD_MODALITY");
     int valueInt = m_AutomaticSegmentationThresholdModality;
-    parent->StoreInteger(value,valueInt);
+    parent.StoreInteger(value,valueInt);
     //////////////////////////////////////////////////////////////////////////
     value = _R("USE_DOUBLE_THRESHOLD");
     valueInt = m_UseDoubleThreshold;
-    parent->StoreInteger(value,valueInt);
+    parent.StoreInteger(value,valueInt);
     //////////////////////////////////////////////////////////////////////////
     value = _R("AUTOMATIC_SEGMENTATION_GLOBAL_THRESHOLD");
     double valueDouble = m_AutomaticSegmentationGlobalThreshold;
-    parent->StoreDouble(value,valueDouble);
+    parent.StoreDouble(value,valueDouble);
     //////////////////////////////////////////////////////////////////////////
     value = _R("AUTOMATIC_SEGMENTATION_GLOBAL_UPPER_THRESHOLD");
     valueDouble = m_AutomaticSegmentationGlobalUpperThreshold;
-    parent->StoreDouble(value,valueDouble);
+    parent.StoreDouble(value,valueDouble);
     //////////////////////////////////////////////////////////////////////////
     value = _R("NUM_OF_RANGES");
-    parent->StoreInteger(value,m_AutomaticSegmentationRanges.size());
+    parent.StoreInteger(value,m_AutomaticSegmentationRanges.size());
     for (int i=0;i<m_AutomaticSegmentationRanges.size();i++)
     {
       value = _R("RANGE_");
       value += mafToString(i);
-      parent->StoreVectorN(value,m_AutomaticSegmentationRanges[i],2);
+      parent.StoreVectorN(value,m_AutomaticSegmentationRanges[i],2);
       value = _R("THRESHOLD_");
       value += mafToString(i);
-      parent->StoreDouble(value,m_AutomaticSegmentationThresholds[i]);
+      parent.StoreDouble(value,m_AutomaticSegmentationThresholds[i]);
       value = _R("UPPER_THRESHOLD_");
       value += mafToString(i);
-      parent->StoreDouble(value,m_AutomaticSegmentationUpperThresholds[i]);
+      parent.StoreDouble(value,m_AutomaticSegmentationUpperThresholds[i]);
 
     }
     //////////////////////////////////////////////////////////////////////////
     value = _R("REGION_GROWING_UPPER_THRESHOLD");
     valueDouble = m_RegionGrowingUpperThreshold;
-    parent->StoreDouble(value,valueDouble);
+    parent.StoreDouble(value,valueDouble);
     //////////////////////////////////////////////////////////////////////////
     value = _R("REGION_GROWING_LOWER_THRESHOLD");
     valueDouble = m_RegionGrowingLowerThreshold;
-    parent->StoreDouble(value,valueDouble);
+    parent.StoreDouble(value,valueDouble);
     //////////////////////////////////////////////////////////////////////////
     value = _R("NUM_OF_SEEDS");
-    parent->StoreInteger(value,m_RegionGrowingSeeds.size());
+    parent.StoreInteger(value,m_RegionGrowingSeeds.size());
     for (int i=0;i<m_RegionGrowingSeeds.size();i++)
     {
       value = _R("SEED_");
       value += mafToString(i);
-      parent->StoreVectorN(value,m_RegionGrowingSeeds[i],3);
+      parent.StoreVectorN(value,m_RegionGrowingSeeds[i],3);
     }
     //////////////////////////////////////////////////////////////////////////
 

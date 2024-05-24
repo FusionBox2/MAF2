@@ -37,15 +37,15 @@ mafQuadraticSurface::~mafQuadraticSurface()
 	;
 
 }
-int mafQuadraticSurface::InternalStore(mafStorageElement *parent)
+int mafQuadraticSurface::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {
 	if (Superclass::InternalStore(parent) == MAF_OK)
 	{
 		if (
-			parent->StoreDouble(_R("Centerx"), center[0]) == MAF_OK &&
-			parent->StoreDouble(_R("Centery"), center[1]) == MAF_OK &&
-			parent->StoreDouble(_R("Centerz"), center[2]) == MAF_OK 
+			parent.StoreDouble(_R("Centerx"), center[0]) == MAF_OK &&
+			parent.StoreDouble(_R("Centery"), center[1]) == MAF_OK &&
+			parent.StoreDouble(_R("Centerz"), center[2]) == MAF_OK 
 			
 			)
 			return MAF_OK;

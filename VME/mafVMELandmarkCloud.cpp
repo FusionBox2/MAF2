@@ -1340,13 +1340,13 @@ void mafVMELandmarkCloud::OnEvent(mafEventBase *maf_event)
   }
 }
 //-----------------------------------------------------------------------
-int mafVMELandmarkCloud::InternalStore(mafStorageElement *parent)
+int mafVMELandmarkCloud::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {
   if (Superclass::InternalStore(parent) == MAF_OK)
   {
-    if (parent->StoreInteger(_R("LM_SPHERE_RESOLUTION"), m_SphereResolution) == MAF_OK &&
-        parent->StoreDouble(_R("LM_RADIUS"), m_Radius) == MAF_OK)
+    if (parent.StoreInteger(_R("LM_SPHERE_RESOLUTION"), m_SphereResolution) == MAF_OK &&
+        parent.StoreDouble(_R("LM_RADIUS"), m_Radius) == MAF_OK)
     {
       return MAF_OK;
     }
@@ -1356,8 +1356,8 @@ int mafVMELandmarkCloud::InternalStore(mafStorageElement *parent)
   {
     if (Superclass::InternalStore(parent) == MAF_OK)
     {
-      if (parent->StoreInteger("LM_SPHERE_RESOLUTION", m_SphereResolution) == MAF_OK &&
-        parent->StoreDouble("LM_RADIUS", m_Radius) == MAF_OK)
+      if (parent.StoreInteger("LM_SPHERE_RESOLUTION", m_SphereResolution) == MAF_OK &&
+        parent.StoreDouble("LM_RADIUS", m_Radius) == MAF_OK)
       {
         return MAF_OK;
       }
@@ -1369,8 +1369,8 @@ int mafVMELandmarkCloud::InternalStore(mafStorageElement *parent)
     mafString lm_data;
     mafString itemName;
     int i=0;
-    if (parent->StoreInteger("LM_SPHERE_RESOLUTION", m_SphereResolution) == MAF_OK &&
-      parent->StoreDouble("LM_RADIUS", m_Radius) == MAF_OK)
+    if (parent.StoreInteger("LM_SPHERE_RESOLUTION", m_SphereResolution) == MAF_OK &&
+      parent.StoreDouble("LM_RADIUS", m_Radius) == MAF_OK)
     {
       res = MAF_OK;
     }
@@ -1387,7 +1387,7 @@ int mafVMELandmarkCloud::InternalStore(mafStorageElement *parent)
         lm_data = w->GetOutputString();
         itemName = "Frame_";
         itemName << i;
-        if (parent->StoreData(itemName.GetCStr(), lm_data.GetCStr(), lm_data.Length()) == MAF_ERROR)
+        if (parent.StoreData(itemName.GetCStr(), lm_data.GetCStr(), lm_data.Length()) == MAF_ERROR)
         {
           return MAF_ERROR;
         }

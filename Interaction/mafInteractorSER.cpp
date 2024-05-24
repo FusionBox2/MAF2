@@ -36,13 +36,13 @@ mafInteractorSER::~mafInteractorSER()
 {
 }
 //------------------------------------------------------------------------------
-int mafInteractorSER::InternalStore(mafStorageElement *node)
+int mafInteractorSER::InternalStore(mafStorageElementBuilder& node)
 //------------------------------------------------------------------------------
 {
   for (mmuActionsMap::iterator it=m_Actions.begin();it!=m_Actions.end();it++)
   {
     mafAction *action=it->second;
-    node->StoreObject(_R("Action"),action);   
+    node.StoreObject(_R("Action"),action);   
   }
 
   return 0;

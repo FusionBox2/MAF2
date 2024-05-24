@@ -101,23 +101,23 @@ bool mmaMeter::Equals(const mafAttribute *a)
   return false;
 }
 //-----------------------------------------------------------------------
-int mmaMeter::InternalStore(mafStorageElement *parent)
+int mmaMeter::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent->StoreInteger(_R("MeterMode"), m_MeterMode);
-    parent->StoreInteger(_R("ColorMode"), m_ColorMode);
-    parent->StoreInteger(_R("Representation"), m_Representation);
-    parent->StoreInteger(_R("Capping"), m_Capping);
-    parent->StoreInteger(_R("MeasureType"), m_MeasureType);
-    parent->StoreInteger(_R("GenerateEvent"), m_GenerateEvent);
-    parent->StoreDouble(_R("DeltaPercent"), m_DeltaPercent);
-    parent->StoreInteger(_R("ThresholdEvent"), m_ThresholdEvent);
-    parent->StoreInteger(_R("LabelVisibility"), m_LabelVisibility);
-    parent->StoreDouble(_R("InitMeasure"),m_InitMeasure);
-    parent->StoreDouble(_R("TubeRadius"),m_TubeRadius);
-    parent->StoreVectorN(_R("DistanceRange"),m_DistanceRange,2);
+    parent.StoreInteger(_R("MeterMode"), m_MeterMode);
+    parent.StoreInteger(_R("ColorMode"), m_ColorMode);
+    parent.StoreInteger(_R("Representation"), m_Representation);
+    parent.StoreInteger(_R("Capping"), m_Capping);
+    parent.StoreInteger(_R("MeasureType"), m_MeasureType);
+    parent.StoreInteger(_R("GenerateEvent"), m_GenerateEvent);
+    parent.StoreDouble(_R("DeltaPercent"), m_DeltaPercent);
+    parent.StoreInteger(_R("ThresholdEvent"), m_ThresholdEvent);
+    parent.StoreInteger(_R("LabelVisibility"), m_LabelVisibility);
+    parent.StoreDouble(_R("InitMeasure"),m_InitMeasure);
+    parent.StoreDouble(_R("TubeRadius"),m_TubeRadius);
+    parent.StoreVectorN(_R("DistanceRange"),m_DistanceRange,2);
     return MAF_OK;
   }
   return MAF_ERROR;

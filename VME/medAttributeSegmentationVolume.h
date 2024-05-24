@@ -124,7 +124,7 @@ public:
 
 protected:
   //** Auto storing function */  
-  /*virtual*/ int InternalStore(mafStorageElement *parent);
+  /*virtual*/ int InternalStore(mafStorageElementBuilder& parent);
   //** Auto restoring function */  
   /*virtual*/ int InternalRestore(const mafStorageElement& node);
 

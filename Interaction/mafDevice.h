@@ -150,7 +150,7 @@ protected:
     Each subclass can store its own subelements which are
     closed inside the "Device" element. Reimplemented functions
     should first call Superclass implementation. */
-  virtual int InternalStore(mafStorageElement *node);
+  virtual int InternalStore(mafStorageElementBuilder& node);
   
   /** 
     This function fills in the device with settings restored from the node.

@@ -52,7 +52,7 @@ namespace
 
     //------------------------------------------------------------------------------
     template <class T>
-    void InternalStoreVectorN(mafStorageElement* element, T* comps, size_t num, const char* name)
+    void InternalStoreVectorN(mafStorageElementBuilder* element, T* comps, size_t num, const char* name)
         //------------------------------------------------------------------------------
     {
         assert(name);
@@ -144,7 +144,7 @@ int mafStorageElement::RestoreVectorN(int *comps,unsigned int num) const
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::StoreVectorN(const mafString& name,double *comps,int num)
+int mafStorageElementBuilder::StoreVectorN(const mafString& name,double *comps,int num)
 //------------------------------------------------------------------------------
 {
   assert(comps);
@@ -153,7 +153,7 @@ int mafStorageElement::StoreVectorN(const mafString& name,double *comps,int num)
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::StoreVectorN(const mafString& name,int *comps,int num)
+int mafStorageElementBuilder::StoreVectorN(const mafString& name,int *comps,int num)
 //------------------------------------------------------------------------------
 {
   assert(comps);
@@ -161,7 +161,7 @@ int mafStorageElement::StoreVectorN(const mafString& name,int *comps,int num)
   return MAF_OK;
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::StoreVectorN(const mafString& name,const std::vector<double> &comps)
+int mafStorageElementBuilder::StoreVectorN(const mafString& name,const std::vector<double> &comps)
 //------------------------------------------------------------------------------
 {
   InternalStoreVectorN(this,comps.data(),comps.size(), name.GetCStr());
@@ -169,17 +169,17 @@ int mafStorageElement::StoreVectorN(const mafString& name,const std::vector<doub
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::StoreVectorN(const mafString& name,const std::vector<int> &comps)
+int mafStorageElementBuilder::StoreVectorN(const mafString& name,const std::vector<int> &comps)
 //------------------------------------------------------------------------------
 {
   InternalStoreVectorN(this,comps.data(),comps.size(),name.GetCStr());
   return MAF_OK;
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::StoreVectorN(const mafString& name,const std::vector<mafString> &comps,const mafString& tag)
+int mafStorageElementBuilder::StoreVectorN(const mafString& name,const std::vector<mafString> &comps,const mafString& tag)
 //------------------------------------------------------------------------------
 {
-  mafStorageElement *subelement = AppendChild(name);
+  auto subelement = AppendChild(name);
   for (auto& elem : comps)
   {
     subelement->StoreText(tag,elem);
@@ -248,11 +248,11 @@ std::vector<mafStorageElement*> mafStorageElement::GetElementsByName(const mafSt
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::StoreVectorN(const mafString& name,const std::vector<mafObject *> &vector,const mafString& items_name)
+int mafStorageElementBuilder::StoreVectorN(const mafString& name,const std::vector<mafObject *> &vector,const mafString& items_name)
 //------------------------------------------------------------------------------
 {
   // create sub node for storing the vector
-  mafStorageElement *vector_node = AppendChild(name);
+  auto vector_node = AppendChild(name);
   vector_node->SetAttribute(_R("NumberOfItems"),mafToString((long)vector.size()));
   
   for (unsigned int i=0;i<vector.size();i++)
@@ -329,7 +329,7 @@ int mafStorageElement::RestoreVectorN(std::vector<mafObject *> &vector,const maf
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::StoreObject(mafObject *object)
+int mafStorageElementBuilder::StoreObject(mafObject *object)
 //------------------------------------------------------------------------------
 {
   mafString type_name = _R(object->GetTypeName());
@@ -338,29 +338,29 @@ int mafStorageElement::StoreObject(mafObject *object)
   mafStorable* storable = dynamic_cast<mafStorable*>(object);
   if (storable)
   {
-      storable->Store(this);
+      storable->Store(*this);
 	  return MAF_OK;
   }
   mafErrorMacro("Failed to store object of type \"" << type_name.GetCStr() << "\"");
   return MAF_ERROR;
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::StoreObject(const mafString& name,mafObject *object)
+int mafStorageElementBuilder::StoreObject(const mafString& name,mafObject *object)
 //------------------------------------------------------------------------------
 {
-  mafStorageElement* element = AppendChild(name);
+  auto element = AppendChild(name);
   return element->StoreObject(object);
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::StoreStorable(const mafString& name, mafStorable* storable)
+int mafStorageElementBuilder::StoreStorable(const mafString& name, mafStorable* storable)
 //------------------------------------------------------------------------------
 {
   assert(storable);
-  mafStorageElement *element=AppendChild(name);
+  auto element=AppendChild(name);
   if (element)
   {
-    if (storable->Store(element)!=MAF_OK)
+    if (storable->Store(*element)!=MAF_OK)
     {
       return MAF_ERROR;
     }
@@ -472,15 +472,15 @@ int mafStorageElement::RestoreStorable(mafStorable *storable) const
   return storable->Restore(*this);
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::StoreText(const mafString& name, const mafString& text)
+int mafStorageElementBuilder::StoreText(const mafString& name, const mafString& text)
 //------------------------------------------------------------------------------
 {
-  mafStorageElement *text_node=AppendChild(name);
+  auto text_node=AppendChild(name);
   text_node->StoreText(text);
   return MAF_OK;
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::StoreMatrix(const mafString& name,const mafMatrix& matrix)
+int mafStorageElementBuilder::StoreMatrix(const mafString& name,const mafMatrix& matrix)
 //------------------------------------------------------------------------------
 {
   // Write all the 16 elements into as a single 16-tupla
@@ -494,7 +494,7 @@ int mafStorageElement::StoreMatrix(const mafString& name,const mafMatrix& matrix
     elements += _R("\n"); // cr for read-ability
   }
 
-  mafStorageElement *matrix_node=AppendChild(name);
+  auto matrix_node=AppendChild(name);
   matrix_node->StoreText(elements);
 
   // add also the timestamp as an attribute
@@ -502,13 +502,13 @@ int mafStorageElement::StoreMatrix(const mafString& name,const mafMatrix& matrix
   return MAF_OK;
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::StoreDouble(const mafString& name,const double &value)
+int mafStorageElementBuilder::StoreDouble(const mafString& name,const double &value)
 //------------------------------------------------------------------------------
 {
   return StoreText(name,mafToString(value));
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::StoreInteger(const mafString& name,const int &value)
+int mafStorageElementBuilder::StoreInteger(const mafString& name,const int &value)
 //------------------------------------------------------------------------------
 {
   return StoreText(name,mafToString(value));
@@ -629,13 +629,13 @@ void mafStorageElement::BuildChildrenMap() const
 	}
 }
 //------------------------------------------------------------------------------
-mafStorageElement* mafStorageElement::AppendChild(const mafString& name)
+mafStorageElementBuilder* mafStorageElementBuilder::AppendChild(const mafString& name)
 //------------------------------------------------------------------------------
 {
     BuildChildrenMap();
 	XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* child_element = getDOMNode(m_DOMElement)->getOwnerDocument()->createElement(mafXMLString(name.GetCStr()));
 	getDOMNode(m_DOMElement)->appendChild(child_element);
-    mafStorageElement* child = new mafStorageElement(child_element, GetStorage());
+    auto child = new mafStorageElementBuilder(child_element, GetStorage());
 	(*m_Children)[child->GetName()].push_back(child);
 	return child;
 }
@@ -665,7 +665,7 @@ bool mafStorageElement::GetAttribute(const mafString& name, mafString& value) co
 	return false;
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::StoreText(const mafString& text)
+int mafStorageElementBuilder::StoreText(const mafString& text)
 //------------------------------------------------------------------------------
 {
 	XERCES_CPP_NAMESPACE_QUALIFIER DOMText* text_node = getDOMNode(m_DOMElement)->getOwnerDocument()->createTextNode(mafXMLString(text.GetCStr()));

@@ -190,13 +190,12 @@ void mafDeviceManager::RemoveAllDevices(bool force)
 }
 
 //----------------------------------------------------------------------------
-int mafDeviceManager::InternalStore(mafStorageElement *node)
+int mafDeviceManager::InternalStore(mafStorageElementBuilder& node)
 //----------------------------------------------------------------------------
 {
-  assert(node);
-  node->SetAttribute(_R("DeviceIdCounter"),m_DeviceIdCounter);
+  node.SetAttribute(_R("DeviceIdCounter"),m_DeviceIdCounter);
   
-  if (node->StoreObject(_R("DeviceSet"),m_DeviceSet) != MAF_OK)
+  if (node.StoreObject(_R("DeviceSet"),m_DeviceSet) != MAF_OK)
     return MAF_ERROR;
 
   return MAF_OK;

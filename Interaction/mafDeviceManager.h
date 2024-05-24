@@ -115,7 +115,7 @@ protected:
   Implement storing and restoring of this object. To store
   an XML Writer must be passed as argument, while to restore the node
   of the XML structure from where starting the restoring must must be passed.  */
-  virtual int InternalStore(mafStorageElement *node);
+  virtual int InternalStore(mafStorageElementBuilder& node);
   virtual int InternalRestore(const mafStorageElement& node);
 
   virtual int InternalInitialize();

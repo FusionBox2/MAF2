@@ -836,34 +836,34 @@ void mafVMEPlane::SetUVector(double aa, int a)
 
 }
 //-----------------------------------------------------------------------
-int mafVMEPlane::InternalStore(mafStorageElement *parent)
+int mafVMEPlane::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {
 	if (Superclass::InternalStore(parent) == MAF_OK)
 	{
 		if (
 
-		//	parent->StoreText("name", m_Name) == MAF_OK &&
+		//	parent.StoreText("name", m_Name) == MAF_OK &&
 			
-		//	parent->StoreInteger("Geometry", m_GeometryType) == MAF_OK &&
+		//	parent.StoreInteger("Geometry", m_GeometryType) == MAF_OK &&
 	
-			parent->StoreDouble(_R("PlaneUx"), m_PlaneXRes) == MAF_OK &&
-			parent->StoreDouble(_R("PlaneUy"), m_PlaneYRes) == MAF_OK &&
+			parent.StoreDouble(_R("PlaneUx"), m_PlaneXRes) == MAF_OK &&
+			parent.StoreDouble(_R("PlaneUy"), m_PlaneYRes) == MAF_OK &&
 
-			/*parent->StoreDouble("m_PlaneOrigin0", m_PlaneOrigin[0]) == MAF_OK &&
-			parent->StoreDouble("m_PlaneOrigin1", m_PlaneOrigin[1]) == MAF_OK &&
-			parent->StoreDouble("m_PlaneOrigin2", m_PlaneOrigin[2]) == MAF_OK &&
+			/*parent.StoreDouble("m_PlaneOrigin0", m_PlaneOrigin[0]) == MAF_OK &&
+			parent.StoreDouble("m_PlaneOrigin1", m_PlaneOrigin[1]) == MAF_OK &&
+			parent.StoreDouble("m_PlaneOrigin2", m_PlaneOrigin[2]) == MAF_OK &&
 
-			parent->StoreDouble("m_PlanePoint1_0", m_PlanePoint1[0]) == MAF_OK &&
-			parent->StoreDouble("m_PlanePoint1_1", m_PlanePoint1[1]) == MAF_OK &&
-			parent->StoreDouble("m_PlanePoint1_2", m_PlanePoint1[2]) == MAF_OK &&
+			parent.StoreDouble("m_PlanePoint1_0", m_PlanePoint1[0]) == MAF_OK &&
+			parent.StoreDouble("m_PlanePoint1_1", m_PlanePoint1[1]) == MAF_OK &&
+			parent.StoreDouble("m_PlanePoint1_2", m_PlanePoint1[2]) == MAF_OK &&
 
 
-			parent->StoreDouble("m_PlanePoint2_0", m_PlanePoint2[0]) == MAF_OK &&
-			parent->StoreDouble("m_PlanePoint2_1", m_PlanePoint2[1]) == MAF_OK &&
-			parent->StoreDouble("m_PlanePoint2_2", m_PlanePoint2[2]) == MAF_OK &&
+			parent.StoreDouble("m_PlanePoint2_0", m_PlanePoint2[0]) == MAF_OK &&
+			parent.StoreDouble("m_PlanePoint2_1", m_PlanePoint2[1]) == MAF_OK &&
+			parent.StoreDouble("m_PlanePoint2_2", m_PlanePoint2[2]) == MAF_OK &&
 			*/
-			parent->StoreMatrix(_R("Transform"), m_Transform->GetMatrix()) == MAF_OK 
+			parent.StoreMatrix(_R("Transform"), m_Transform->GetMatrix()) == MAF_OK 
 			
 
 			)

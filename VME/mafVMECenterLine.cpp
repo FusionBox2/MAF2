@@ -3756,15 +3756,15 @@ Eigen::RowVectorXd mafVMECenterLine::deg2rad(Eigen::RowVectorXd a)
 	
 }*/
 //-----------------------------------------------------------------------
-int mafVMECenterLine::InternalStore(mafStorageElement *parent)
+int mafVMECenterLine::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {
 //	Superclass::InternalStore(parent);
 	if (Superclass::InternalStore(parent)==MAF_OK)
 	{
 		if (
-			parent->StoreMatrix(_R("Transform"), m_Transform->GetMatrix()) == MAF_OK 
-			//&& parent->StoreInteger("surface",&m_SurfaceName) == MAF_OK
+			parent.StoreMatrix(_R("Transform"), m_Transform->GetMatrix()) == MAF_OK 
+			//&& parent.StoreInteger("surface",&m_SurfaceName) == MAF_OK
 			)
 			
 		{

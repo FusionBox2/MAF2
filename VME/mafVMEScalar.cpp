@@ -165,14 +165,14 @@ void mafVMEScalar::GetLocalTimeBounds(mafTimeStamp tbounds[2])
 }
 
 //-----------------------------------------------------------------------
-int mafVMEScalar::InternalStore(mafStorageElement *parent)
+int mafVMEScalar::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
   if (Superclass::InternalStore(parent) == MAF_OK)
   {
     if (m_ScalarVector)
     {
-      if(parent->StoreStorable(_R("ScalarVector"), m_ScalarVector) == MAF_ERROR)
+      if(parent.StoreStorable(_R("ScalarVector"), m_ScalarVector) == MAF_ERROR)
         return MAF_ERROR;
     }
     return MAF_OK;

@@ -38,13 +38,13 @@ public:
   mafString GetLog(){return m_Log;};
 
 protected:
-  int InternalStore(mafStorageElement *node);
+  int InternalStore(mafStorageElementBuilder& node);
   int InternalRestore(mafStorageElement *node);
 
   mafString m_Log;
 };
 
-int mafDummyStorable::InternalStore(mafStorageElement *node)
+int mafDummyStorable::InternalStore(mafStorageElementBuilder& node)
 {
   m_Log = "Stored";
   return m_Log.Length();

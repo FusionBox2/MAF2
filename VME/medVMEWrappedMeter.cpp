@@ -1836,7 +1836,7 @@ void medVMEWrappedMeter::InternalUpdateManual()
   }*/
 }
 //-----------------------------------------------------------------------
-int medVMEWrappedMeter::InternalStore(mafStorageElement *parent)
+int medVMEWrappedMeter::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
   if(m_Gui == NULL) //this for update wrapped vme lists
@@ -1847,7 +1847,7 @@ int medVMEWrappedMeter::InternalStore(mafStorageElement *parent)
 
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent->StoreMatrix(_R("Transform"),m_Transform->GetMatrix());
+    parent.StoreMatrix(_R("Transform"),m_Transform->GetMatrix());
 		m_OrderMiddlePointsVMEList.clear();
 
 		for(int i=0; i<m_MiddlePointList.size(); i++)
@@ -1875,12 +1875,12 @@ int medVMEWrappedMeter::InternalStore(mafStorageElement *parent)
         PushIdVector(index);
 			}
 		}
-		parent->StoreInteger(_R("OrderMiddlePointVmeNumberOfElements"), m_OrderMiddlePointsVMEList.size());
-		parent->StoreVectorN(_R("OrderMiddlePointVme"),m_OrderMiddlePointsVMEList);
+		parent.StoreInteger(_R("OrderMiddlePointVmeNumberOfElements"), m_OrderMiddlePointsVMEList.size());
+		parent.StoreVectorN(_R("OrderMiddlePointVme"),m_OrderMiddlePointsVMEList);
 
-    parent->StoreInteger(_R("WrapMode"), m_WrappedMode);
-    parent->StoreInteger(_R("WrapSide"), m_WrapSide);
-    parent->StoreInteger(_R("WrapReverse"), m_WrapReverse);
+    parent.StoreInteger(_R("WrapMode"), m_WrappedMode);
+    parent.StoreInteger(_R("WrapSide"), m_WrapSide);
+    parent.StoreInteger(_R("WrapReverse"), m_WrapReverse);
 
     return MAF_OK;
   }

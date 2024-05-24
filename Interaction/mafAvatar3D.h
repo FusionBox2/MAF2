@@ -200,7 +200,7 @@ protected:
    @todo: Why should we use this instead of using the tracker's one? I'd like to remove this Marco. 28-10-2004: */
   void SetLastPoseMatrix(mafMatrix &matrix);
 
-  virtual int InternalStore(mafStorageElement *node);
+  virtual int InternalStore(mafStorageElementBuilder& node);
   virtual int InternalRestore(const mafStorageElement& node);
 
   /** redefined to add the Cursor actor into the selected renderer */

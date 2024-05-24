@@ -416,14 +416,14 @@ void lhpVMESurfaceScalarVarying::UpdateTimeIndex(mafTimeStamp t)
   }
 }
 //-----------------------------------------------------------------------
-int lhpVMESurfaceScalarVarying::InternalStore(mafStorageElement *parent)
+int lhpVMESurfaceScalarVarying::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
   if (Superclass::InternalStore(parent) == MAF_OK)
   {
-    if (parent->StoreMatrix(_R("Transform"),m_Transform->GetMatrix()) == MAF_OK &&
-        parent->StoreInteger(_R("Radius"), m_Radius) == MAF_OK &&
-        parent->StoreInteger(_R("NumOfScalarVMEIndexes"), m_ScalarRegionMap.size()) == MAF_OK)
+    if (parent.StoreMatrix(_R("Transform"),m_Transform->GetMatrix()) == MAF_OK &&
+        parent.StoreInteger(_R("Radius"), m_Radius) == MAF_OK &&
+        parent.StoreInteger(_R("NumOfScalarVMEIndexes"), m_ScalarRegionMap.size()) == MAF_OK)
     {
       auto it = m_ScalarRegionMap.begin();
       int *indexIds, num_indexes;
@@ -441,8 +441,8 @@ int lhpVMESurfaceScalarVarying::InternalStore(mafStorageElement *parent)
         {
           indexIds[i] = it->second->GetId(i-1);
         }
-        if (parent->StoreInteger(numIndexesName, num_indexes)      == MAF_ERROR ||
-            parent->StoreVectorN(indexesName,indexIds,num_indexes) == MAF_ERROR)
+        if (parent.StoreInteger(numIndexesName, num_indexes)      == MAF_ERROR ||
+            parent.StoreVectorN(indexesName,indexIds,num_indexes) == MAF_ERROR)
         {
           delete indexIds;
           return MAF_ERROR;

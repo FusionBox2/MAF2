@@ -55,16 +55,16 @@ void mafScalarVector::GetScalarVector(std::vector<double> &svector)
   }
 }
 //-----------------------------------------------------------------------
-int mafScalarVector::InternalStore(mafStorageElement *parent)
+int mafScalarVector::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {
-  parent->SetAttribute(_R("NumberOfItems"),mafToString(GetNumberOfItems()));
+  parent.SetAttribute(_R("NumberOfItems"),mafToString(GetNumberOfItems()));
   for (Iterator it = BeginScalarVector(); it != EndScalarVector(); it++)
   {
     double sca[2];
     sca[0] = it->first;
     sca[1] = it->second;
-    if (parent->StoreVectorN(_R("Scalar"), sca , 2) != MAF_OK)
+    if (parent.StoreVectorN(_R("Scalar"), sca , 2) != MAF_OK)
       return MAF_ERROR;
   }
   return MAF_OK;

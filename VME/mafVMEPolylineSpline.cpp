@@ -209,13 +209,13 @@ void mafVMEPolylineSpline::InternalPreUpdate()
   
 }
 //-----------------------------------------------------------------------
-int mafVMEPolylineSpline::InternalStore(mafStorageElement *parent)
+int mafVMEPolylineSpline::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    if(parent->StoreMatrix(_R("Transform"),m_Transform->GetMatrix())==MAF_OK && 
-       parent->StoreInteger(_R("AxisReorder"), m_OrderByAxisMode) == MAF_OK
+    if(parent.StoreMatrix(_R("Transform"),m_Transform->GetMatrix())==MAF_OK && 
+       parent.StoreInteger(_R("AxisReorder"), m_OrderByAxisMode) == MAF_OK
       )    
       return MAF_OK;
   }

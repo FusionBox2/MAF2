@@ -81,7 +81,7 @@ public:
   void SetScalar(mafTimeStamp t, double sca) {InsertItem(t, sca);}
 
 protected:
-  virtual int InternalStore(mafStorageElement *parent);
+  virtual int InternalStore(mafStorageElementBuilder& parent);
   virtual int InternalRestore(const mafStorageElement& node);
 };
 #endif

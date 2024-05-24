@@ -120,22 +120,22 @@ bool mafAttributeTraceability::Equals(const mafAttribute *a) const
 }
 
 //-------------------------------------------------------------------------
-int mafAttributeTraceability::InternalStore(mafStorageElement *parent)
+int mafAttributeTraceability::InternalStore(mafStorageElementBuilder& parent)
 //-------------------------------------------------------------------------
 {
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
     for (int i = 0; i < m_TraceabilityVector.size(); i++)
     {
-      parent->StoreText(_R("TrialEvent"), m_TraceabilityVector[i].m_TrialEvent);
-      parent->StoreText(_R("Operation"), m_TraceabilityVector[i].m_OperationName);
-      parent->StoreText(_R("Parameters"), m_TraceabilityVector[i].m_Parameters);
-      parent->StoreText(_R("Date"), m_TraceabilityVector[i].m_Date);
-      parent->StoreText(_R("Application"), m_TraceabilityVector[i].m_AppStamp);
-      parent->StoreText(_R("OperatorID"),  m_TraceabilityVector[i].m_OperatorID);
+      parent.StoreText(_R("TrialEvent"), m_TraceabilityVector[i].m_TrialEvent);
+      parent.StoreText(_R("Operation"), m_TraceabilityVector[i].m_OperationName);
+      parent.StoreText(_R("Parameters"), m_TraceabilityVector[i].m_Parameters);
+      parent.StoreText(_R("Date"), m_TraceabilityVector[i].m_Date);
+      parent.StoreText(_R("Application"), m_TraceabilityVector[i].m_AppStamp);
+      parent.StoreText(_R("OperatorID"),  m_TraceabilityVector[i].m_OperatorID);
       if (m_TraceabilityVector[i].m_TrialEvent == _R("Create"))
       {
-        parent->StoreText(_R("IsNatural"), m_TraceabilityVector[i].m_IsNatural);
+        parent.StoreText(_R("IsNatural"), m_TraceabilityVector[i].m_IsNatural);
       }
     }  
   }

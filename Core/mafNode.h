@@ -439,7 +439,7 @@ protected:
   /** internally used to set the node ID */
   void SetId(mafID id);
 
-  virtual int InternalStore(mafStorageElement *parent);
+  virtual int InternalStore(mafStorageElementBuilder& parent);
   virtual int InternalRestore(const mafStorageElement& node);
 
   //This function is overridden by subclasses to perform custom initialization */

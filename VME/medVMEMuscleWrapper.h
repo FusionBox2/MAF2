@@ -224,7 +224,7 @@ protected:
   medVMEMuscleWrapper();
   virtual ~medVMEMuscleWrapper();
  
-  virtual int InternalStore(mafStorageElement *parent);
+  virtual int InternalStore(mafStorageElementBuilder& parent);
   virtual int InternalRestore(const mafStorageElement& node);
   
   /** this creates the Material attribute at the right time... */

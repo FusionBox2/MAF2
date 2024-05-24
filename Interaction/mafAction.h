@@ -69,7 +69,7 @@ public:
   const mmuDeviceList *GetDevices() {return &m_Devices;}
 
   /** Store of action's bindings to an XML file. */
-  virtual int InternalStore(mafStorageElement *node);
+  virtual int InternalStore(mafStorageElementBuilder& node);
 
   /** Restore of action's bindings from an XML file.*/
   virtual int InternalRestore(const mafStorageElement& node);

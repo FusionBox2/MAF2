@@ -369,19 +369,19 @@ void mafVMEBSplineLine::InternalPreUpdate()
 {
 }
 //-----------------------------------------------------------------------
-int mafVMEBSplineLine::InternalStore(mafStorageElement *parent)
+int mafVMEBSplineLine::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent->StoreMatrix(_R("Transform"),m_Transform->GetMatrix());
-    parent->StoreInteger(_R("Order"), m_Order);
-    parent->StoreInteger(_R("Mode"), m_Mode);
-    parent->StoreInteger(_R("Submode"), m_SubMode);
-    parent->StoreDouble(_R("Smooth"), m_Smooth);
-    parent->StoreInteger(_R("Num_parts"), m_TesselSize);
-    parent->StoreInteger(_R("Filter_ident"), m_FilterIdent);
-    parent->StoreInteger(_R("Extract_fibre"), m_ExtractFibre);
+    parent.StoreMatrix(_R("Transform"),m_Transform->GetMatrix());
+    parent.StoreInteger(_R("Order"), m_Order);
+    parent.StoreInteger(_R("Mode"), m_Mode);
+    parent.StoreInteger(_R("Submode"), m_SubMode);
+    parent.StoreDouble(_R("Smooth"), m_Smooth);
+    parent.StoreInteger(_R("Num_parts"), m_TesselSize);
+    parent.StoreInteger(_R("Filter_ident"), m_FilterIdent);
+    parent.StoreInteger(_R("Extract_fibre"), m_ExtractFibre);
     return MAF_OK;
   }
   return MAF_ERROR;

@@ -942,7 +942,7 @@ void mafVMEGravityLine::InternalUpdate()
 
 }
 //-----------------------------------------------------------------------
-int mafVMEGravityLine::InternalStore(mafStorageElement *parent)
+int mafVMEGravityLine::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {
 
@@ -954,7 +954,7 @@ int mafVMEGravityLine::InternalStore(mafStorageElement *parent)
 		if (
 					
  
-			parent->StoreMatrix(_R("Transform"), m_Transform->GetMatrix()) == MAF_OK 
+			parent.StoreMatrix(_R("Transform"), m_Transform->GetMatrix()) == MAF_OK 
 				)
 			{
 			return MAF_OK;

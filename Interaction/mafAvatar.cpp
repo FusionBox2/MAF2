@@ -301,11 +301,10 @@ void mafAvatar::ShowCursor2D()
 }
 
 //------------------------------------------------------------------------------
-int mafAvatar::InternalStore(mafStorageElement *node)
+int mafAvatar::InternalStore(mafStorageElementBuilder& node)
 //------------------------------------------------------------------------------
 {
-  assert(node);
-  return node->StoreText(_R("Name"),m_Name);
+  return node.StoreText(_R("Name"),m_Name);
 }
 
 //------------------------------------------------------------------------------

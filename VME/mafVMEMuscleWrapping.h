@@ -284,7 +284,7 @@ protected:
   /** this function uses PARAMETRIC_SURFACE_TYPE_ID as argument*/
   //void EnableQuadricSurfaceGui(int surfaceTypeID);
 
-	virtual int InternalStore(mafStorageElement *parent);
+	virtual int InternalStore(mafStorageElementBuilder& parent);
 	virtual int InternalRestore(const mafStorageElement& node);
 
 	/** called to prepare the update of the output */

@@ -71,13 +71,13 @@ void mafMatrixVector::AppendKeyMatrix(const mafMatrix &m)
 }
 
 //-----------------------------------------------------------------------
-int mafMatrixVector::InternalStore(mafStorageElement *parent)
+int mafMatrixVector::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {
-  parent->SetAttribute(_R("NumberOfItems"),mafToString(GetNumberOfItems()));
+  parent.SetAttribute(_R("NumberOfItems"),mafToString(GetNumberOfItems()));
   for (auto& elem : *this)
   {
-    if (parent->StoreMatrix(_R("Matrix"),*(elem.second))!=MAF_OK)
+    if (parent.StoreMatrix(_R("Matrix"),*(elem.second))!=MAF_OK)
       return MAF_ERROR;
   }
   return MAF_OK;

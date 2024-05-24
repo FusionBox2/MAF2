@@ -137,7 +137,7 @@ void mafVMEGroup::SetMatrix(const mafMatrix &mat)
 }
 
 //-----------------------------------------------------------------------
-int mafVMEGroup::InternalStore(mafStorageElement *parent)
+int mafVMEGroup::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 { 
   if (DEBUG_MODE)
@@ -150,7 +150,7 @@ int mafVMEGroup::InternalStore(mafStorageElement *parent)
 
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent->StoreMatrix(_R("Transform"),m_Transform->GetMatrix());
+    parent.StoreMatrix(_R("Transform"),m_Transform->GetMatrix());
     return MAF_OK;
   }
   return MAF_ERROR;

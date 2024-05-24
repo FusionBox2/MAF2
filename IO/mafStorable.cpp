@@ -18,7 +18,7 @@
 #include "mafStorageElement.h"
 
 //------------------------------------------------------------------------------
-int mafStorable::Store(mafStorageElement *parent)
+int mafStorable::Store(mafStorageElementBuilder& parent)
 //------------------------------------------------------------------------------
 {
   return InternalStore(parent);
@@ -32,8 +32,9 @@ int mafStorable::Restore(const mafStorageElement& element)
 }
 
 //------------------------------------------------------------------------------
-int mafStorable::InternalStore(mafStorageElement& parent)
+int mafStorable::InternalStore(mafStorageElementBuilder& parent)
 //------------------------------------------------------------------------------
 {
-	return InternalStore(&parent);
+	return MAF_ERROR;
+	//return InternalStore(&parent);
 }

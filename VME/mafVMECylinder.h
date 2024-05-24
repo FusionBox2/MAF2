@@ -92,7 +92,7 @@ public:
 	mmaMaterial *GetMaterial();
 	mafVMECylinder();
 	virtual ~mafVMECylinder();
-	virtual int InternalStore(mafStorageElement *parent);
+	virtual int InternalStore(mafStorageElementBuilder& parent);
 	virtual int InternalRestore(const mafStorageElement& node);
 	//mafVMECylinder(double x0, double y0, double z0, double a, double b, double c);
 //	vtkSmartPointer<vtkContentActor> makeRenderer();

@@ -245,7 +245,7 @@ protected:
   mafVMEItem(); // to be allocated with New()
   ~mafVMEItem(); // to be deleted with Delete()
 
-  virtual int InternalStore(mafStorageElement *parent);
+  virtual int InternalStore(mafStorageElementBuilder& parent);
   virtual int InternalRestore(const mafStorageElement& node);
 
   /** Check that stored file is valid.*/

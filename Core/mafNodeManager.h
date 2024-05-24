@@ -74,7 +74,7 @@ public:
    /** Set the tree's root. */
   bool SetRoot(mafNode *root);
 
-  virtual int InternalStore(mafStorageElement *node);
+  virtual int InternalStore(mafStorageElementBuilder& node);
 
   virtual int InternalRestore(const mafStorageElement& node);
 

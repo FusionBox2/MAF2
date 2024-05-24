@@ -138,25 +138,25 @@ void mafVMEAFRefSys::Print(std::ostream& os, const int tabs)// const
 
 
 //-----------------------------------------------------------------------
-int mafVMEAFRefSys::InternalStore(mafStorageElement *parent)
+int mafVMEAFRefSys::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent->StoreInteger(_R("Active"), m_Active);
-    parent->StoreInteger(_R("BoneID"), m_BoneID);
-    parent->StoreDouble(_R("XOffset"), m_XOffset);
-    parent->StoreDouble(_R("YOffset"), m_YOffset);
-    parent->StoreDouble(_R("ZOffset"), m_ZOffset);
-    parent->StoreDouble(_R("XRotate"), m_XRotate);
-    parent->StoreDouble(_R("YRotate"), m_YRotate);
-    parent->StoreDouble(_R("ZRotate"), m_ZRotate);
+    parent.StoreInteger(_R("Active"), m_Active);
+    parent.StoreInteger(_R("BoneID"), m_BoneID);
+    parent.StoreDouble(_R("XOffset"), m_XOffset);
+    parent.StoreDouble(_R("YOffset"), m_YOffset);
+    parent.StoreDouble(_R("ZOffset"), m_ZOffset);
+    parent.StoreDouble(_R("XRotate"), m_XRotate);
+    parent.StoreDouble(_R("YRotate"), m_YRotate);
+    parent.StoreDouble(_R("ZRotate"), m_ZRotate);
     m_textSize = m_scriptText.size();
-    parent->StoreInteger(_R("ScriptStrings"), m_textSize);
+    parent.StoreInteger(_R("ScriptStrings"), m_textSize);
     for(int i = 0; i < m_textSize; i++)
     {
       mafString nm = mafString::Format(_R("ln%d"), i);
-      parent->StoreText(nm, m_scriptText[i]);
+      parent.StoreText(nm, m_scriptText[i]);
     }
 
     for(unsigned i = 0; i < m_vm->getInputs().size(); i++)
@@ -166,16 +166,16 @@ int mafVMEAFRefSys::InternalStore(mafStorageElement *parent)
         auto it = m_lmMapping.find(_R(m_vm->getInputs()[i].first.c_str()));
         if(it == m_lmMapping.end())
         {
-          parent->StoreText(_R(m_vm->getInputs()[i].first.c_str()), _R(m_vm->getInputs()[i].first.c_str()));
+          parent.StoreText(_R(m_vm->getInputs()[i].first.c_str()), _R(m_vm->getInputs()[i].first.c_str()));
         }
         else
         {
-          parent->StoreText(it->first, it->second);
+          parent.StoreText(it->first, it->second);
         }
       }
       else
       {
-        parent->StoreDouble(_R(m_vm->getInputs()[i].first.c_str()), m_vm->getInputs()[i].second->GetScalar());
+        parent.StoreDouble(_R(m_vm->getInputs()[i].first.c_str()), m_vm->getInputs()[i].second->GetScalar());
       }
     }
     return MAF_OK;

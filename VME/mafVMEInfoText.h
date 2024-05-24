@@ -68,7 +68,7 @@ protected:
   /** Internally used to create a new instance of the GUI.*/
   virtual mafGUI *CreateGui();
 
-  virtual int InternalStore(mafStorageElement *parent);
+  virtual int InternalStore(mafStorageElementBuilder& parent);
   virtual int InternalRestore(const mafStorageElement& node);
   
   mafString              m_PositionText[3];

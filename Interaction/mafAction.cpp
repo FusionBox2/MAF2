@@ -115,17 +115,17 @@ void mafAction::UnBindInteractor(mafInteractor *inter)
 }
 
 //------------------------------------------------------------------------------
-int mafAction::InternalStore(mafStorageElement *node)
+int mafAction::InternalStore(mafStorageElementBuilder& node)
 //------------------------------------------------------------------------------
 {
   // Store bindings to devices, not bindings to interactors, 
   // since the last ones are created at runtime.
   
-  node->SetAttribute(_R("Name"),GetName());
+  node.SetAttribute(_R("Name"),GetName());
 
   for (auto it = m_Devices.begin(); it!=m_Devices.end(); it++)
   {
-    mafStorageElement *subnode = node->AppendChild(_R("Device"));
+    auto subnode = node.AppendChild(_R("Device"));
     mafDevice *device=it->GetPointer();
     subnode->SetAttribute(_R("Name"),device->GetName());
     subnode->SetAttribute(_R("ID"),(mafID)(device->GetID()));

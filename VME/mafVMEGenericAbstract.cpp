@@ -270,7 +270,7 @@ void mafVMEGenericAbstract::GetLocalTimeBounds(mafTimeStamp tbounds[2])
 }
 
 //-----------------------------------------------------------------------
-int mafVMEGenericAbstract::InternalStore(mafStorageElement *parent)
+int mafVMEGenericAbstract::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
   Superclass::InternalStore(parent);
@@ -279,12 +279,12 @@ int mafVMEGenericAbstract::InternalStore(mafStorageElement *parent)
   if (m_DataVector)
   {
     m_DataVector->SetCrypting(this->m_Crypting != 0);
-    if(parent->StoreStorable(_R("DataVector"), m_DataVector) == MAF_ERROR)
+    if(parent.StoreStorable(_R("DataVector"), m_DataVector) == MAF_ERROR)
       return MAF_ERROR;
   }
 
   // sub-element for storing the matrix vector
-  if(parent->StoreStorable(_R("MatrixVector"), m_MatrixVector) == MAF_ERROR)
+  if(parent.StoreStorable(_R("MatrixVector"), m_MatrixVector) == MAF_ERROR)
     return MAF_ERROR;
 
   return MAF_OK;

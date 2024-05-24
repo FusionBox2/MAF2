@@ -92,20 +92,20 @@ mafID mafDeviceButtonsPadTracker::GetTrackerBoundsUpdatedId()
   return trackerBoundsUpdatedId;
 }
 //------------------------------------------------------------------------------
-int mafDeviceButtonsPadTracker::InternalStore(mafStorageElement *node)
+int mafDeviceButtonsPadTracker::InternalStore(mafStorageElementBuilder& node)
 //------------------------------------------------------------------------------
 {
   if (Superclass::InternalStore(node))
     return MAF_ERROR;
 
   //StoreMatrix(writer,m_TrackerToCanonicalTransform->GetMatrix(),"TrackerToCanonicalMatrix");
-  node->StoreVectorN(_R("TrackedBoxBounds"),m_TrackedBounds.m_Bounds,6);
-  node->StoreVectorN(_R("TrackedBoxOrientation"),m_TrackedBoxOrientation,3);
+  node.StoreVectorN(_R("TrackedBoxBounds"),m_TrackedBounds.m_Bounds,6);
+  node.StoreVectorN(_R("TrackedBoxOrientation"),m_TrackedBoxOrientation,3);
 
   // store default avatar if present
   if (m_DefaultAvatar)
   {
-    return (node->StoreObject(_R("Avatar"),m_DefaultAvatar) != MAF_OK ?MAF_ERROR: MAF_OK);
+    return (node.StoreObject(_R("Avatar"),m_DefaultAvatar) != MAF_OK ?MAF_ERROR: MAF_OK);
   }
 
   return MAF_OK;

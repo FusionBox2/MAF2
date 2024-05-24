@@ -81,7 +81,7 @@ namespace {
 }
 
 //------------------------------------------------------------------------------
-int mafMSFImporter::InternalStore(mafStorageElement *node)
+int mafMSFImporter::InternalStore(mafStorageElementBuilder& node)
 //------------------------------------------------------------------------------
 {
   mafErrorMessage(_M("Writing MSF 1.x files is not supported!"));

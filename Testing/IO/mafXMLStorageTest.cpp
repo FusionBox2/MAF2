@@ -32,7 +32,7 @@ public:
   void Print(std::ostream &os,const int tabs=0);
   mafStorableTestObject();
   ~mafStorableTestObject() {cppDEL(m_Dummy);}
-  virtual int InternalStore(mafStorageElement *parent);
+  virtual int InternalStore(mafStorageElementBuilder& parent);
   virtual int InternalRestore(mafStorageElement *node);
   double m_FValue;
   int m_IValue;

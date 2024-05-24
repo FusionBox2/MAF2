@@ -59,7 +59,7 @@ public:
   virtual void Print(std::ostream& os, const int tabs=0) const;
 protected:
   
-  virtual int InternalStore(mafStorageElement *parent);
+  virtual int InternalStore(mafStorageElementBuilder& parent);
   virtual int InternalRestore(const mafStorageElement& node);
 
   mafString m_Name;

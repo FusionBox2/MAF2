@@ -405,7 +405,7 @@ void medVMEMuscleWrapper::RestoreMeterLinks()
 }
 
 //------------------------------------------------------------------------
-/*virtual*/ int medVMEMuscleWrapper::InternalStore(mafStorageElement *parent)
+/*virtual*/ int medVMEMuscleWrapper::InternalStore(mafStorageElementBuilder& parent)
 //------------------------------------------------------------------------
 { 
   //store Links, so they can be saved by base clase  
@@ -413,19 +413,19 @@ void medVMEMuscleWrapper::RestoreMeterLinks()
     
   if (Superclass::InternalStore(parent) == MAF_OK)  //stores material + links to muscle and OI areas VMEs
   {
-    parent->StoreInteger(_R("Wrappers_Num"), m_nWrappers);
-    parent->StoreInteger(_R("InputMode"), m_InputMode);
-    parent->StoreInteger(_R("VisualMode"), m_VisMode);   
-    parent->StoreInteger(_R("UseRefSys"), m_UseRefSys);
-    parent->StoreInteger(_R("Fibers_Type"), m_FbTemplate);
-    parent->StoreInteger(_R("Fibers_Num"), m_FbNumFib);
-    parent->StoreInteger(_R("Fibers_Res"), m_FbResolution);
-    parent->StoreDouble(_R("Fibers_Thickness"), m_FbThickness);
-    parent->StoreInteger(_R("Fibers_Smooth"), m_FbSmooth);
-    parent->StoreInteger(_R("Smooth_Steps"), m_FbSmoothSteps);    
-    parent->StoreDouble(_R("Smooth_Weight"), m_FbSmoothWeight); 
+    parent.StoreInteger(_R("Wrappers_Num"), m_nWrappers);
+    parent.StoreInteger(_R("InputMode"), m_InputMode);
+    parent.StoreInteger(_R("VisualMode"), m_VisMode);   
+    parent.StoreInteger(_R("UseRefSys"), m_UseRefSys);
+    parent.StoreInteger(_R("Fibers_Type"), m_FbTemplate);
+    parent.StoreInteger(_R("Fibers_Num"), m_FbNumFib);
+    parent.StoreInteger(_R("Fibers_Res"), m_FbResolution);
+    parent.StoreDouble(_R("Fibers_Thickness"), m_FbThickness);
+    parent.StoreInteger(_R("Fibers_Smooth"), m_FbSmooth);
+    parent.StoreInteger(_R("Smooth_Steps"), m_FbSmoothSteps);    
+    parent.StoreDouble(_R("Smooth_Weight"), m_FbSmoothWeight); 
 
-    parent->StoreMatrix(_R("Transform"),m_Transform->GetMatrix());
+    parent.StoreMatrix(_R("Transform"),m_Transform->GetMatrix());
     return MAF_OK;
   }
   return MAF_ERROR;

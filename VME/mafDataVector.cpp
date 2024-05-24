@@ -193,11 +193,11 @@ void mafDataVector::InsertItem(mafVMEItem *m)
   Superclass::InsertItem(m);
 }
 //-----------------------------------------------------------------------
-int mafDataVector::InternalStore(mafStorageElement *parent)
+int mafDataVector::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {
-  parent->SetAttribute(_R("NumberOfItems"),mafToString(GetNumberOfItems()));
-  parent->SetAttribute(_R("ItemTypeName"),_R(GetItemTypeName()));
+  parent.SetAttribute(_R("NumberOfItems"),mafToString(GetNumberOfItems()));
+  parent.SetAttribute(_R("ItemTypeName"),_R(GetItemTypeName()));
 
   // retrieve the tree root
   mafEventIO e(this,NODE_GET_ROOT);
@@ -209,7 +209,7 @@ int mafDataVector::InternalStore(mafStorageElement *parent)
   m_VectorID = GetVectorID();
 
   // the DataVector ID
-  parent->SetAttribute(_R("VectorID"),mafToString(m_VectorID));
+  parent.SetAttribute(_R("VectorID"),mafToString(m_VectorID));
 
   mafEventIO es(this,NODE_GET_STORAGE);
   InvokeEvent(es);
@@ -434,16 +434,16 @@ int mafDataVector::InternalStore(mafStorageElement *parent)
     m_JustRestored = false;
   }
 
-  parent->SetAttribute(_R("SingleFileMode"),m_SingleFileMode ? _R("true") : _R("false"));
+  parent.SetAttribute(_R("SingleFileMode"),m_SingleFileMode ? _R("true") : _R("false"));
   if (m_SingleFileMode)
   {
-    parent->SetAttribute(_R("ArchiveFileName"), m_ArchiveName);
+    parent.SetAttribute(_R("ArchiveFileName"), m_ArchiveName);
   }
 
   // Store meta-data (meta-data is stored later to be able set some info about stored data files)
   for (auto& elem : *this)
   {
-    parent->StoreObject(_R("VItem"),elem.second.GetPointer());
+    parent.StoreObject(_R("VItem"),elem.second.GetPointer());
   }
 
   m_DataModified = false;

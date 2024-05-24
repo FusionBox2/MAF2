@@ -462,16 +462,16 @@ void mafTagItem::Print(std::ostream& os, const int tabs) const
 }
 
 //-------------------------------------------------------------------------
-int mafTagItem::InternalStore(mafStorageElement *parent)
+int mafTagItem::InternalStore(mafStorageElementBuilder& parent)
 //-------------------------------------------------------------------------
 {
-  parent->SetAttribute(_R("Name"), GetName());
-  parent->SetAttribute(_R("Mult"),mafToString(GetNumberOfComponents()));
+  parent.SetAttribute(_R("Name"), GetName());
+  parent.SetAttribute(_R("Mult"),mafToString(GetNumberOfComponents()));
   mafString type;
   GetTypeAsString(type);
-  parent->SetAttribute(_R("Type"),type);
+  parent.SetAttribute(_R("Type"),type);
 
-  if (parent->StoreVectorN(_R("TItem"),m_Components,_R("TC"))==MAF_ERROR)
+  if (parent.StoreVectorN(_R("TItem"),m_Components,_R("TC"))==MAF_ERROR)
     return MAF_ERROR;
 
   return MAF_OK;

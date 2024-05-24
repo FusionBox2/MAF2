@@ -309,7 +309,7 @@ private:
   /// Create the VME GUI.
   mafGUI *CreateGui();
 
-  virtual int InternalStore(mafStorageElement *parent);
+  virtual int InternalStore(mafStorageElementBuilder& parent);
   virtual int InternalRestore(const mafStorageElement& node);
 
   /// Find or select the associated center line vme. \n

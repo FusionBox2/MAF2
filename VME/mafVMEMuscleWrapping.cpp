@@ -1856,13 +1856,13 @@ void mafVMEMuscleWrapping::InternalUpdate()
  // Sleep(1500);
 }
 //-----------------------------------------------------------------------
-int mafVMEMuscleWrapping::InternalStore(mafStorageElement *parent)
+int mafVMEMuscleWrapping::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {
 	if (Superclass::InternalStore(parent) == MAF_OK)
 	{
-		parent->StoreInteger(_R("computeState"), m_ComputeStateCheckbox);
-		parent->StoreMatrix(_R("Transform"), m_Transform->GetMatrix());
+		parent.StoreInteger(_R("computeState"), m_ComputeStateCheckbox);
+		parent.StoreMatrix(_R("Transform"), m_Transform->GetMatrix());
 		return MAF_OK;
 	}
 	return MAF_ERROR;

@@ -104,7 +104,7 @@ protected:
   /** Create GUI for the VME */
   virtual mafGUI  *CreateGui();
 
-  virtual int InternalStore(mafStorageElement *parent);
+  virtual int InternalStore(mafStorageElementBuilder& parent);
   virtual int InternalRestore(const mafStorageElement& node);
 
   mafID         m_MaxItemId; ///< id counter for VME items

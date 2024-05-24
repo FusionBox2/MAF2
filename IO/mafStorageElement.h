@@ -66,19 +66,6 @@ public:
   /** Used to upgrade attribute value from previous MSF file version.*/
   mafString UpgradeAttribute(const mafString& attribute) const;
 
-  int StoreText    (const mafString& name, const mafString& text);
-  int StoreInteger (const mafString& name, const int& value);
-  int StoreDouble  (const mafString& name, const double& value);
-  int StoreMatrix  (const mafString& name, const mafMatrix& matrix);
-  int StoreObject  (const mafString& name, mafObject* object);
-  int StoreStorable(const mafString& name, mafStorable* object);
-  int StoreVectorN (const mafString& name, double *comps,int num);
-  int StoreVectorN (const mafString& name, int *comps,int num);
-  int StoreVectorN (const mafString& name, const std::vector<double> &comps);
-  int StoreVectorN (const mafString& name, const std::vector<int> &comps);
-  int StoreVectorN (const mafString& name, const std::vector<mafString> &comps,const mafString& tag);
-  int StoreVectorN (const mafString& name, const std::vector<mafObject*>& vector, const mafString& items_name = _R("Item"));
-
   int RestoreText    (mafString &buffer) const;
   int RestoreInteger (int& value) const;
   int RestoreDouble  (double& value) const;
@@ -96,11 +83,8 @@ public:
   virtual void SetAttribute(const mafString& name, const mafString& value);// = 0;
 
 protected:
-  virtual int StoreText(const mafString& buffer);// = 0;
-  int StoreObject(mafObject* object);
 
 public:
-  virtual mafStorageElement* AppendChild(const mafString& name);// = 0;
   /** return a pointer to the storage who created this element */
   mafParser *GetStorage()  const {return m_Storage;}
 
@@ -119,5 +103,29 @@ protected:
   mutable std::map<mafString, ChildrenVector >*m_Children;  ///< children elements
   mafString                        m_Name; ///< Convenient copy of etagName
   void* m_DOMElement; ///< XML element wrapped by this object (USING PIMPL due to Internal Compile errors of VS7)
+};
+
+class MAF_EXPORT mafStorageElementBuilder : public mafStorageElement
+{
+public:
+	using mafStorageElement::mafStorageElement;
+	int StoreText(const mafString& name, const mafString& text);
+	int StoreInteger(const mafString& name, const int& value);
+	int StoreDouble(const mafString& name, const double& value);
+	int StoreMatrix(const mafString& name, const mafMatrix& matrix);
+
+	int StoreObject(const mafString& name, mafObject* object);
+	int StoreStorable(const mafString& name, mafStorable* object);
+	int StoreVectorN(const mafString& name, double* comps, int num);
+	int StoreVectorN(const mafString& name, int* comps, int num);
+	int StoreVectorN(const mafString& name, const std::vector<double>& comps);
+	int StoreVectorN(const mafString& name, const std::vector<int>& comps);
+	int StoreVectorN(const mafString& name, const std::vector<mafString>& comps, const mafString& tag);
+	int StoreVectorN(const mafString& name, const std::vector<mafObject*>& vector, const mafString& items_name = _R("Item"));
+
+	mafStorageElementBuilder* AppendChild(const mafString& name);
+protected:
+	virtual int StoreText(const mafString& buffer);// = 0;
+	int StoreObject(mafObject* object);
 };
 #endif // _mafStorageElement_h_

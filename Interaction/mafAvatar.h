@@ -181,7 +181,7 @@ protected:
     This function is called by Store and is reimplemented in subclasses.
     Each subclass can Open/Close its own subelements which are
     closed inside the "Device" XML element. */
-  virtual int InternalStore(mafStorageElement *node);
+  virtual int InternalStore(mafStorageElementBuilder& node);
 
   virtual int InternalRestore(const mafStorageElement& node);
 

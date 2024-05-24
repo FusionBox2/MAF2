@@ -190,19 +190,19 @@ void mafVMEScalarMatrix::OnEvent(mafEventBase *maf_event)
   }
 }
 //-----------------------------------------------------------------------
-int mafVMEScalarMatrix::InternalStore(mafStorageElement *parent)
+int mafVMEScalarMatrix::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    if (parent->StoreInteger(_R("XID"),m_XID)==MAF_OK &&
-        parent->StoreInteger(_R("YID"),m_YID)==MAF_OK &&
-        parent->StoreInteger(_R("ZID"),m_ZID)==MAF_OK &&
-        parent->StoreInteger(_R("Xtype"),m_Xtype)==MAF_OK &&
-        parent->StoreInteger(_R("Ytype"),m_Ytype)==MAF_OK &&
-        parent->StoreInteger(_R("Ztype"),m_Ztype)==MAF_OK &&
-        parent->StoreInteger(_R("ActiveScalar"),m_ActiveScalar)==MAF_OK &&
-        parent->StoreInteger(_R("ScalarArrayOrientationInMatrix"),m_ScalarArrayOrientationInMatrix)==MAF_OK)
+    if (parent.StoreInteger(_R("XID"),m_XID)==MAF_OK &&
+        parent.StoreInteger(_R("YID"),m_YID)==MAF_OK &&
+        parent.StoreInteger(_R("ZID"),m_ZID)==MAF_OK &&
+        parent.StoreInteger(_R("Xtype"),m_Xtype)==MAF_OK &&
+        parent.StoreInteger(_R("Ytype"),m_Ytype)==MAF_OK &&
+        parent.StoreInteger(_R("Ztype"),m_Ztype)==MAF_OK &&
+        parent.StoreInteger(_R("ActiveScalar"),m_ActiveScalar)==MAF_OK &&
+        parent.StoreInteger(_R("ScalarArrayOrientationInMatrix"),m_ScalarArrayOrientationInMatrix)==MAF_OK)
       return MAF_OK;
   }
   return MAF_ERROR;

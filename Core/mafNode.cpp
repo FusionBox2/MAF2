@@ -1184,11 +1184,11 @@ void mafNode::OnEvent(mafEventBase *e)
   }
 }
 //-------------------------------------------------------------------------
-int mafNode::InternalStore(mafStorageElement *parent)
+int mafNode::InternalStore(mafStorageElementBuilder& parent)
 //-------------------------------------------------------------------------
 {
-  parent->SetAttribute(_R("Name"),m_Name);
-  parent->SetAttribute(_R("Id"),mafToString(m_Id));
+  parent.SetAttribute(_R("Name"),m_Name);
+  parent.SetAttribute(_R("Id"),mafToString(m_Id));
 
   // store Attributes into a tmp array
   std::vector<mafObject *> attrs;
@@ -1196,7 +1196,7 @@ int mafNode::InternalStore(mafStorageElement *parent)
   {
     attrs.push_back(it->second);
   }
-  parent->StoreVectorN(_R("Attributes"),attrs);
+  parent.StoreVectorN(_R("Attributes"),attrs);
 
   // store Links
   unsigned numberOfLinks = 0;
@@ -1207,14 +1207,14 @@ int mafNode::InternalStore(mafStorageElement *parent)
       numberOfLinks++;
   }
 
-  mafStorageElement *links_element=parent->AppendChild(_R("Links"));
+  auto links_element=parent.AppendChild(_R("Links"));
   links_element->SetAttribute(_R("NumberOfLinks"),mafToString((long)numberOfLinks));
   for (auto links_it=m_Links.begin();links_it!=m_Links.end();++links_it)
   {
     mmuNodeLink &link=links_it->second;
     if (links_it->second.m_Node != NULL && links_it->second.m_Node->IsValid() && links_it->second.m_Node->GetRoot() == GetRoot())
     {
-      mafStorageElement *link_item_element=links_element->AppendChild(_R("Link"));
+      auto link_item_element=links_element->AppendChild(_R("Link"));
       link_item_element->SetAttribute(_R("Name"),links_it->first);
       link_item_element->SetAttribute(_R("NodeId"),link.m_Node->GetId());
       link_item_element->SetAttribute(_R("NodeSubId"),link.m_NodeSubId);
@@ -1231,7 +1231,7 @@ int mafNode::InternalStore(mafStorageElement *parent)
       nodes_to_store.push_back(node);
     }
   }
-  parent->StoreVectorN(_R("Children"),nodes_to_store,_R("Node"));
+  parent.StoreVectorN(_R("Children"),nodes_to_store,_R("Node"));
 
   return MAF_OK;
 }

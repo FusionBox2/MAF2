@@ -27,6 +27,7 @@
 //----------------------------------------------------------------------------
 class mafObject;
 class mafStorageElement;
+class mafStorageElementBuilder;
 
 /** mafRoot - this class represent an interface for the root nodes of a MAF tree
   mafRoot is an interface class to specialize node to become a root node. It forces
@@ -63,7 +64,7 @@ protected:
   mafRoot();
   virtual ~mafRoot();
 
-  virtual int StoreRoot(mafStorageElement *parent);
+  virtual int StoreRoot(mafStorageElementBuilder& parent);
   virtual int RestoreRoot(const mafStorageElement& node);
 
   mafID       m_MaxNodeId; ///< Counter for node Ids

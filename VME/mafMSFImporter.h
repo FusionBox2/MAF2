@@ -36,7 +36,7 @@ class MAF_EXPORT mafMSFImporter : public mafNodeManager
 public:
   mafMSFImporter(){}
   virtual ~mafMSFImporter() {}
-  virtual int InternalStore(mafStorageElement *node);
+  virtual int InternalStore(mafStorageElementBuilder& node);
   virtual int InternalRestore(const mafStorageElement& node);
   
   enum MATERIAL_TAG_ID

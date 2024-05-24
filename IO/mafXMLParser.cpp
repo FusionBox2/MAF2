@@ -112,7 +112,7 @@ int mafXMLParser::InternalStore()
                   // extract root element and wrap it with an mafXMLElement object
                   XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* root = XMLDoc->getDocumentElement();
                   assert(root);
-                  auto documentElement = std::make_unique<mafStorageElement>(root, this);
+                  auto documentElement = std::make_unique<mafStorageElementBuilder>(root, this);
 
                   // attach version attribute to the root node
                   documentElement->SetAttribute(_R("Version"), m_Version);
@@ -122,7 +122,7 @@ int mafXMLParser::InternalStore()
                   // kind of object and can decide to store itself in the root
                   // object itself, or below it as it happens for other nodes.
                   assert(m_Document);
-                  m_Document->Store(documentElement.get());
+                  m_Document->Store(*documentElement);
 
                   // write the tree to disk
                   XMLSerializer->write(XMLDoc.get(), theOutputDesc);

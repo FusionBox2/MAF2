@@ -980,7 +980,7 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 
 #pragma region LOADING / STORING
 //two methods for restoring/storing the content of large data set from MSF  
-/*virtual*/ int mafVMEVolumeLarge::InternalStore(mafStorageElement *parent)
+/*virtual*/ int mafVMEVolumeLarge::InternalStore(mafStorageElementBuilder& parent)
 {	
 #ifdef VME_VOLUME_VER1
 	vtkMAFLargeImageData* ds = vtkMAFLargeImageData::SafeDownCast(m_LargeData);	
@@ -1002,7 +1002,7 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 		return ret_val;
 
 
-	mafStorageElement* ds_info = parent->AppendChild(_R("LargeDataSetInfo"));
+	auto ds_info = parent.AppendChild(_R("LargeDataSetInfo"));
 
 #ifdef VME_VOLUME_VER1
 	int AutoSampleRate = (int)ds->GetAutoSampleRate();

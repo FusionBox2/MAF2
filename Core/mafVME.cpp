@@ -855,12 +855,12 @@ void mafVME::OnEvent(mafEventBase *maf_event)
 }
 
 //-------------------------------------------------------------------------
-int mafVME::InternalStore(mafStorageElement *parent)
+int mafVME::InternalStore(mafStorageElementBuilder& parent)
 //-------------------------------------------------------------------------
 {
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent->SetAttribute(_R("Crypting"),mafToString(m_Crypting));
+    parent.SetAttribute(_R("Crypting"),mafToString(m_Crypting));
     return MAF_OK;
   }
   return MAF_ERROR;

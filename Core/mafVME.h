@@ -244,7 +244,7 @@ protected:
   mafVME(); // to be allocated with New()
   virtual ~mafVME(); // to be deleted with Delete()
 
-  virtual int InternalStore(mafStorageElement *parent);
+  virtual int InternalStore(mafStorageElementBuilder& parent);
   virtual int InternalRestore(const mafStorageElement& node);
 
   /** used to initialize the AbsMatrixPipe */

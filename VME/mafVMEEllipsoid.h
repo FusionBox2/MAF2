@@ -83,7 +83,7 @@ public:
 	mmaMaterial *GetMaterial();
 	mafVMEEllipsoid();
 	virtual ~mafVMEEllipsoid();
-	virtual int InternalStore(mafStorageElement *parent);
+	virtual int InternalStore(mafStorageElementBuilder& parent);
 	virtual int InternalRestore(const mafStorageElement& node);
 	//mafVMEEllipsoid(double x0, double y0, double z0, double a, double b, double c);
 //	vtkSmartPointer<vtkContentActor> makeRenderer();

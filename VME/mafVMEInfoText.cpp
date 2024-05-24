@@ -84,7 +84,7 @@ bool mafVMEInfoText::Equals(mafVME *vme)
 }
 
 //-----------------------------------------------------------------------
-int mafVMEInfoText::InternalStore(mafStorageElement *parent)
+int mafVMEInfoText::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
@@ -92,21 +92,21 @@ int mafVMEInfoText::InternalStore(mafStorageElement *parent)
     for(int i = 0; i < 3; i++)
     {
       mafString txtname = _R("Label") + mafToString(i);
-      if(parent->StoreText(txtname, m_PosLabels[i]) != MAF_OK)
+      if(parent.StoreText(txtname, m_PosLabels[i]) != MAF_OK)
         return MAF_ERROR;
     }
     for(int i = 0; i < 3; i++)
     {
         mafString txtname = _R("ShowLabel") + mafToString(i);
-        if (parent->StoreInteger(txtname, m_PosShow[i] ? 1 : 0) != MAF_OK)
+        if (parent.StoreInteger(txtname, m_PosShow[i] ? 1 : 0) != MAF_OK)
         return MAF_ERROR;
     }
     int strSz = m_Strings.size();
-    parent->StoreInteger(_R("NumberOfStrings"), strSz);
+    parent.StoreInteger(_R("NumberOfStrings"), strSz);
     for(int i = 0; i < m_Strings.size(); i++)
     {
       mafString txtname = _R("String") + mafToString(i);
-      if(parent->StoreText(txtname, m_Strings[i]) != MAF_OK)
+      if(parent.StoreText(txtname, m_Strings[i]) != MAF_OK)
         return MAF_ERROR;
     }
     return MAF_OK;

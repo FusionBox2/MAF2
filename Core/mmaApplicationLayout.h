@@ -114,7 +114,7 @@ public:
   int GetVisibilityVme(){return m_VisibilityVme;};
 
 protected:
-  virtual int InternalStore(mafStorageElement *parent);
+  virtual int InternalStore(mafStorageElementBuilder& parent);
   virtual int InternalRestore(const mafStorageElement& node);
 
   mafString m_LayoutName;
