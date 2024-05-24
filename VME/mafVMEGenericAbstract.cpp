@@ -291,23 +291,21 @@ int mafVMEGenericAbstract::InternalStore(mafStorageElement *parent)
 }
 
 //-----------------------------------------------------------------------
-int mafVMEGenericAbstract::InternalRestore(const mafStorageElement& node_)
+int mafVMEGenericAbstract::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-	auto node = &node_;
-
   int ret_val = MAF_OK;
-  Superclass::InternalRestore(node_);
+  Superclass::InternalRestore(node);
   
   // restore Data Vector
   if (m_DataVector)
   {
-    ret_val = node->RestoreStorable(_R("DataVector"), m_DataVector);
+    ret_val = node[_R("DataVector")].RestoreStorable(m_DataVector);
   }
   // restore Matrix Vector  
   if (m_MatrixVector && ret_val == MAF_OK)
   {
-    ret_val = node->RestoreStorable(_R("MatrixVector"), m_MatrixVector);
+    ret_val = node[_R("MatrixVector")].RestoreStorable(m_MatrixVector);
   }
   return ret_val;
 }

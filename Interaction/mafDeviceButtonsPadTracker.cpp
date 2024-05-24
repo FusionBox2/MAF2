@@ -124,7 +124,7 @@ int mafDeviceButtonsPadTracker::InternalRestore(const mafStorageElement& node)
     if (node[_R("TrackedBoxOrientation")].RestoreVectorN(m_TrackedBoxOrientation, 3) == MAF_OK)
     {
       mafObject* obj = nullptr;
-      if (node.RestoreObject(_R("Avatar"), obj) == MAF_OK)
+      if (node[_R("Avatar")].RestoreObject(obj) == MAF_OK)
       {
         if (mafAvatar3D *avatar=mafAvatar3D::SafeDownCast(obj))
         {

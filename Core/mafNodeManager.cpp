@@ -155,15 +155,13 @@ int mafNodeManager::InternalStore(mafStorageElement *node)
 }
 
 //------------------------------------------------------------------------------
-int mafNodeManager::InternalRestore(const mafStorageElement& node_)
+int mafNodeManager::InternalRestore(const mafStorageElement& node)
 //-------------------------------------------------------
 {
-	auto node = &node_;
-
   // here should restore elements specific for the document
   SetRoot(NULL);
   mafObject* obj = nullptr;
-  if(node->RestoreObject(_R("Root"), obj) != MAF_OK)
+  if(node[_R("Root")].RestoreObject(obj) != MAF_OK)
     return MAF_ERROR; 
   mafReferenceCounted *rc = mafReferenceCounted::SafeDownCast(obj);
   if(!rc)

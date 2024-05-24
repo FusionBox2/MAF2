@@ -490,38 +490,10 @@ int mafStorageElement::RestoreObject(mafObject*& object) const
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreObject(const mafString& name, mafObject*& object) const
+int mafStorageElement::RestoreStorable(mafStorable *storable) const
 //------------------------------------------------------------------------------
 {
-  mafStorageElement *elem=FindNestedElement(name);
-  if (elem)
-  {
-    if (elem->RestoreObject(object) != MAF_OK)
-    {
-        return MAF_ERROR;
-    }
-    return MAF_OK;
-  }
-
-  mafWarningMacro("Parse Error while parsing <"<<GetName().GetCStr() <<"> element: cannot find nested Storage element <"<<name.GetCStr() <<">" );
-
-  return MAF_ERROR;
-}
-
-
-//------------------------------------------------------------------------------
-int mafStorageElement::RestoreStorable(const mafString& name, mafStorable *storable) const
-//------------------------------------------------------------------------------
-{
-  mafStorageElement *element=FindNestedElement(name);
-  if (element)
-  {
-    return storable->Restore(*element);
-  }
-
-  mafWarningMacro("Parse Error while parsing <"<<GetName().GetCStr() <<"> element: cannot find nested Storage element <"<<name.GetCStr() <<">" );
-
-  return MAF_ERROR;
+  return storable->Restore(*this);
 }
 //------------------------------------------------------------------------------
 int mafStorageElement::StoreText(const mafString& name, const mafString& text)

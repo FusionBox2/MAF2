@@ -83,8 +83,8 @@ public:
   int RestoreInteger (const mafString& name, int& value) const;
   int RestoreDouble  (const mafString& name, double& value) const;
   int RestoreMatrix  (mafMatrix& matrix) const;
-  int RestoreObject  (const mafString& name, mafObject*& object) const;
-  int RestoreStorable(const mafString& name, mafStorable* object) const;
+  int RestoreObject  (mafObject*& object) const;
+  int RestoreStorable(mafStorable* object) const;
   int RestoreVectorN (double *comps,unsigned int num) const;
   int RestoreVectorN (int *comps,unsigned int num) const;
   int RestoreVectorN (std::vector<double> &comps) const;
@@ -95,7 +95,6 @@ public:
   virtual bool GetAttribute(const mafString& name, mafString& value) const;// = 0;
   virtual void SetAttribute(const mafString& name, const mafString& value);// = 0;
 
-  int RestoreObject(mafObject*& object) const;
 protected:
   virtual int StoreText(const mafString& buffer);// = 0;
   virtual int RestoreText(mafString& buffer) const;// = 0;
