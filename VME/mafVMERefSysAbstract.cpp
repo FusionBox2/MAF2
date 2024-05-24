@@ -282,7 +282,7 @@ int mafVMERefSysAbstract::InternalStore(mafStorageElementBuilder& parent)
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent.StoreDouble(_R("ScaleFactor"), m_ScaleFactor);
+    parent[_R("ScaleFactor")].StoreDouble( m_ScaleFactor);
     return MAF_OK;
   }
   return MAF_ERROR;

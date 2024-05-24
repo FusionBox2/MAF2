@@ -413,17 +413,17 @@ void medVMEMuscleWrapper::RestoreMeterLinks()
     
   if (Superclass::InternalStore(parent) == MAF_OK)  //stores material + links to muscle and OI areas VMEs
   {
-    parent.StoreInteger(_R("Wrappers_Num"), m_nWrappers);
-    parent.StoreInteger(_R("InputMode"), m_InputMode);
-    parent.StoreInteger(_R("VisualMode"), m_VisMode);   
-    parent.StoreInteger(_R("UseRefSys"), m_UseRefSys);
-    parent.StoreInteger(_R("Fibers_Type"), m_FbTemplate);
-    parent.StoreInteger(_R("Fibers_Num"), m_FbNumFib);
-    parent.StoreInteger(_R("Fibers_Res"), m_FbResolution);
-    parent.StoreDouble(_R("Fibers_Thickness"), m_FbThickness);
-    parent.StoreInteger(_R("Fibers_Smooth"), m_FbSmooth);
-    parent.StoreInteger(_R("Smooth_Steps"), m_FbSmoothSteps);    
-    parent.StoreDouble(_R("Smooth_Weight"), m_FbSmoothWeight); 
+    parent[_R("Wrappers_Num")].StoreInteger( m_nWrappers);
+    parent[_R("InputMode")].StoreInteger( m_InputMode);
+    parent[_R("VisualMode")].StoreInteger( m_VisMode);   
+    parent[_R("UseRefSys")].StoreInteger( m_UseRefSys);
+    parent[_R("Fibers_Type")].StoreInteger( m_FbTemplate);
+    parent[_R("Fibers_Num")].StoreInteger( m_FbNumFib);
+    parent[_R("Fibers_Res")].StoreInteger( m_FbResolution);
+    parent[_R("Fibers_Thickness")].StoreDouble( m_FbThickness);
+    parent[_R("Fibers_Smooth")].StoreInteger( m_FbSmooth);
+    parent[_R("Smooth_Steps")].StoreInteger( m_FbSmoothSteps);    
+    parent[_R("Smooth_Weight")].StoreDouble( m_FbSmoothWeight); 
 
     parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix());
     return MAF_OK;

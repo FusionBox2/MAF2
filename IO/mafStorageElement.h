@@ -112,8 +112,8 @@ public:
 	mafStorageElementBuilder operator[](const mafString& name);
 	int StoreText(const mafString& buffer);
 	int StoreText(const mafString& name, const mafString& text);
-	int StoreInteger(const mafString& name, const int& value);
-	int StoreDouble(const mafString& name, const double& value);
+	int StoreInteger(const int& value);
+	int StoreDouble(const double& value);
 	int StoreMatrix(const mafMatrix& matrix);
 
 	int StoreObject(mafObject* object);

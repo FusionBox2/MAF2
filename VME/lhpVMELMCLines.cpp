@@ -252,7 +252,7 @@ int lhpVMELMCLines::InternalStore(mafStorageElementBuilder& parent)
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent.StoreInteger(_R("Looped"), m_Looped);
+    parent[_R("Looped")].StoreInteger( m_Looped);
     if(parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix())==MAF_OK)
       return MAF_OK;
   }

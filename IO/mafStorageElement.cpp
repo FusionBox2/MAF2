@@ -501,16 +501,16 @@ int mafStorageElementBuilder::StoreMatrix(const mafMatrix& matrix)
   return MAF_OK;
 }
 //------------------------------------------------------------------------------
-int mafStorageElementBuilder::StoreDouble(const mafString& name,const double &value)
+int mafStorageElementBuilder::StoreDouble(const double &value)
 //------------------------------------------------------------------------------
 {
-  return StoreText(name,mafToString(value));
+  return StoreText(mafToString(value));
 }
 //------------------------------------------------------------------------------
-int mafStorageElementBuilder::StoreInteger(const mafString& name,const int &value)
+int mafStorageElementBuilder::StoreInteger(const int &value)
 //------------------------------------------------------------------------------
 {
-  return StoreText(name,mafToString(value));
+  return StoreText(mafToString(value));
 }
 
 //------------------------------------------------------------------------------

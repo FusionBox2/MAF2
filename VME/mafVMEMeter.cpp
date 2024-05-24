@@ -799,8 +799,8 @@ int mafVMEMeter::InternalStore(mafStorageElementBuilder& parent)
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent.StoreInteger(_R("Infinite"), m_InfiniteLine);
-    parent.StoreInteger(_R("LineAngle2"), m_LineAngle2);
+    parent[_R("Infinite")].StoreInteger( m_InfiniteLine);
+    parent[_R("LineAngle2")].StoreInteger( m_LineAngle2);
     parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix());
     return MAF_OK;
   }

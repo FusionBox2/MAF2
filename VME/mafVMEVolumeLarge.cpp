@@ -1002,7 +1002,7 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 		return ret_val;
 
 
-	auto ds_info = parent.AppendChild(_R("LargeDataSetInfo"));
+	auto ds_info = parent[_R("LargeDataSetInfo")];
 
 #ifdef VME_VOLUME_VER1
 	int AutoSampleRate = (int)ds->GetAutoSampleRate();
@@ -1020,75 +1020,75 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 	ds->GetOrigin(origin);
 	ds->GetSpacing(sp);
 
-	ds_info->StoreText(_("ClassName"), ds->GetClassName());
-	ds_info->StoreInteger(_("AutoSampleRate"), AutoSampleRate);
-	ds_info->StoreInteger(_("DataLowerLeft"), DataLowerLeft);
-	ds_info->StoreInteger(_("DataMask"), DataMask);
-	ds_info->StoreInteger(_("MemoryLimit"), MemoryLimit);
-	ds_info->StoreInteger(_("ScalarType"), ScalarType);
-	ds_info->StoreInteger(_("DimX"), dims[0]);
-	ds_info->StoreInteger(_("DimY"), dims[1]);
-	ds_info->StoreInteger(_("DimZ"), dims[2]);
-	ds_info->StoreInteger(_("SampX"), samp[0]);
-	ds_info->StoreInteger(_("SampY"), samp[1]);
-	ds_info->StoreInteger(_("SampZ"), samp[2]);	
-	ds_info->StoreInteger(_("WExtXMin"), wext[0]);
-	ds_info->StoreInteger(_("WExtXMax"), wext[1]);
-	ds_info->StoreInteger(_("WExtYMin"), wext[2]);	
-	ds_info->StoreInteger(_("WExtYMax"), wext[3]);
-	ds_info->StoreInteger(_("WExtZMin"), wext[4]);
-	ds_info->StoreInteger(_("WExtZMax"), wext[5]);	
+	ds_info.StoreText(_("ClassName"), ds->GetClassName());
+	ds_info[_("AutoSampleRate")].StoreInteger( AutoSampleRate);
+	ds_info[_("DataLowerLeft")].StoreInteger( DataLowerLeft);
+	ds_info[_("DataMask")].StoreInteger( DataMask);
+	ds_info[_("MemoryLimit")].StoreInteger( MemoryLimit);
+	ds_info[_("ScalarType")].StoreInteger( ScalarType);
+	ds_info[_("DimX")].StoreInteger( dims[0]);
+	ds_info[_("DimY")].StoreInteger( dims[1]);
+	ds_info[_("DimZ")].StoreInteger( dims[2]);
+	ds_info[_("SampX")].StoreInteger( samp[0]);
+	ds_info[_("SampY")].StoreInteger( samp[1]);
+	ds_info[_("SampZ")].StoreInteger( samp[2]);	
+	ds_info[_("WExtXMin")].StoreInteger( wext[0]);
+	ds_info[_("WExtXMax")].StoreInteger( wext[1]);
+	ds_info[_("WExtYMin")].StoreInteger( wext[2]);	
+	ds_info[_("WExtYMax")].StoreInteger( wext[3]);
+	ds_info[_("WExtZMin")].StoreInteger( wext[4]);
+	ds_info[_("WExtZMax")].StoreInteger( wext[5]);	
 
-	ds_info->StoreDouble(_("OrigX"), origin[0]);
-	ds_info->StoreDouble(_("OrigX"), origin[1]);
-	ds_info->StoreDouble(_("OrigX"), origin[2]);
-	ds_info->StoreDouble(_("SpX"), sp[0]);
-	ds_info->StoreDouble(_("SpY"), sp[1]);
-	ds_info->StoreDouble(_("SpZ"), sp[2]);
+	ds_info.StoreDouble(_("OrigX"), origin[0]);
+	ds_info.StoreDouble(_("OrigX"), origin[1]);
+	ds_info.StoreDouble(_("OrigX"), origin[2]);
+	ds_info.StoreDouble(_("SpX"), sp[0]);
+	ds_info.StoreDouble(_("SpY"), sp[1]);
+	ds_info.StoreDouble(_("SpZ"), sp[2]);
 #else
 	int MemoryLimit = m_SampleMemLimit*1024;
-	ds_info->StoreText(_L("ClassName"), _R(m_LargeDataReader->GetStaticTypeName()));
-	ds_info->StoreInteger(_L("MemoryLimit"), MemoryLimit);
+	ds_info.StoreText(_L("ClassName"), _R(m_LargeDataReader->GetStaticTypeName()));
+	ds_info[_L("MemoryLimit")].StoreInteger( MemoryLimit);
 #endif
 
-	ds_info->StoreInteger(_L("FE0"), m_FullExtent[0]);
-	ds_info->StoreInteger(_L("FE1"), m_FullExtent[1]);
-	ds_info->StoreInteger(_L("FE2"), m_FullExtent[2]);
-	ds_info->StoreInteger(_L("FE3"), m_FullExtent[3]);
-	ds_info->StoreInteger(_L("FE4"), m_FullExtent[4]);
-	ds_info->StoreInteger(_L("FE5"), m_FullExtent[5]);
+	ds_info[_L("FE0")].StoreInteger( m_FullExtent[0]);
+	ds_info[_L("FE1")].StoreInteger( m_FullExtent[1]);
+	ds_info[_L("FE2")].StoreInteger( m_FullExtent[2]);
+	ds_info[_L("FE3")].StoreInteger( m_FullExtent[3]);
+	ds_info[_L("FE4")].StoreInteger( m_FullExtent[4]);
+	ds_info[_L("FE5")].StoreInteger( m_FullExtent[5]);
 
 #ifndef VME_VOLUME_VER1
-	ds_info->StoreInteger(_L("V0"), m_VOI[0]);
-	ds_info->StoreInteger(_L("V1"), m_VOI[1]);
-	ds_info->StoreInteger(_L("V2"), m_VOI[2]);
-	ds_info->StoreInteger(_L("V3"), m_VOI[3]);
-	ds_info->StoreInteger(_L("V4"), m_VOI[4]);
-	ds_info->StoreInteger(_L("V5"), m_VOI[5]);	
+	ds_info[_L("V0")].StoreInteger( m_VOI[0]);
+	ds_info[_L("V1")].StoreInteger( m_VOI[1]);
+	ds_info[_L("V2")].StoreInteger( m_VOI[2]);
+	ds_info[_L("V3")].StoreInteger( m_VOI[3]);
+	ds_info[_L("V4")].StoreInteger( m_VOI[4]);
+	ds_info[_L("V5")].StoreInteger( m_VOI[5]);	
 
-	ds_info->StoreText(_L("FileName"), m_LargeDataReader->GetFileName());
+	ds_info.StoreText(_L("FileName"), m_LargeDataReader->GetFileName());
 #else
 	int VOI[6];
 	ds->GetVOI(VOI);
-	ds_info->StoreInteger(_("V0"), VOI[0]);
-	ds_info->StoreInteger(_("V1"), VOI[1]);
-	ds_info->StoreInteger(_("V2"), VOI[2]);
-	ds_info->StoreInteger(_("V3"), VOI[3]);
-	ds_info->StoreInteger(_("V4"), VOI[4]);
-	ds_info->StoreInteger(_("V5"), VOI[5]);		
+	ds_info[_("V0")].StoreInteger( VOI[0]);
+	ds_info[_("V1")].StoreInteger( VOI[1]);
+	ds_info[_("V2")].StoreInteger( VOI[2]);
+	ds_info[_("V3")].StoreInteger( VOI[3]);
+	ds_info[_("V4")].StoreInteger( VOI[4]);
+	ds_info[_("V5")].StoreInteger( VOI[5]);		
 
 	vtkMAFLargeDataProvider* pp = ds->GetPointDataProvider();
 	assert(pp != NULL);
 
 	if (pp != NULL)
 	{
-		ds_info = ds_info->AppendChild("PointProviderInfo");
-		ds_info->StoreText(_("ClassName"), pp->GetClassName());
+		ds_info = ds_info.AppendChild("PointProviderInfo");
+		ds_info.StoreText(_("ClassName"), pp->GetClassName());
 
 		vtkMAFFileDataProvider* filepp = vtkMAFFileDataProvider::SafeDownCast(pp);
 		if (filepp != NULL)
 		{
-			ds_info->StoreText(_("FileName"), filepp->GetFileName());
+			ds_info.StoreText(_("FileName"), filepp->GetFileName());
 		}
 
 		vtkIdType64 hs = pp->GetHeaderSize();
@@ -1096,18 +1096,18 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 		int swap = (int)pp->GetSwapBytes();
 
 		int hs_part = (int)(hs & 0xFFFFFFFF);
-		ds_info->StoreInteger(_("HdrSz_Lo"), hs_part);
+		ds_info[_("HdrSz_Lo")].StoreInteger( hs_part);
 		hs_part = (int)(hs >> 32);
-		ds_info->StoreInteger(_("HdrSz_Hi"), hs_part);
+		ds_info[_("HdrSz_Hi")].StoreInteger( hs_part);
 
-		ds_info->StoreInteger(_("SwapBytes"), swap);
-		ds_info->StoreInteger(_("NumOfDescs"), num_desc);
+		ds_info[_("SwapBytes")].StoreInteger( swap);
+		ds_info[_("NumOfDescs")].StoreInteger( num_desc);
 
 		for (int i = 0; i < num_desc; i++)
 		{
 			vtkMAFDataArrayDescriptor* desc = pp->GetDescriptor(i);
 
-			mafStorageElement* ds_di  = ds_info->AppendChild(
+			mafStorageElement* ds_di  = ds_info.AppendChild(
 				wxString::Format(_("DSC_%d"), i));
 
 			int DataType = desc->GetDataType();
@@ -1116,26 +1116,26 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 			vtkIdType64 NumberOfTuples = desc->GetNumberOfTuples();
 
 			ds_di->StoreText(_("Name"), Name == NULL ? _("(NULL)"): Name);
-			ds_di->StoreInteger(_("DType"), DataType);
-			ds_di->StoreInteger(_("NumOfComps"), NumberOfComponents);
+			ds_di-[_("DType")].StoreInteger( DataType);
+			ds_di-[_("NumOfComps")].StoreInteger( NumberOfComponents);
 
 			int tup = (int)(NumberOfTuples & 0xFFFFFFFF);
-			ds_di->StoreInteger(_("NumOfTuples_Lo"), tup);
+			ds_di-[_("NumOfTuples_Lo")].StoreInteger( tup);
 			tup = (int)(NumberOfTuples >> 32);
-			ds_di->StoreInteger(_("NumOfTuples_Hi"), tup);
+			ds_di-[_("NumOfTuples_Hi")].StoreInteger( tup);
 		}
 
 		//store indices of special descriptors
 		int idx = pp->GetIndexOfScalarsDescriptor();
-		ds_info->StoreInteger("IdxScalars", idx);
+		ds_info.StoreInteger("IdxScalars", idx);
 		pp->GetIndexOfVectorsDescriptor();
-		ds_info->StoreInteger("IdxVectors", idx);
+		ds_info.StoreInteger("IdxVectors", idx);
 		pp->GetIndexOfNormalsDescriptor();
-		ds_info->StoreInteger("IdxNormals", idx);
+		ds_info.StoreInteger("IdxNormals", idx);
 		pp->GetIndexOfTCoordsDescriptor();
-		ds_info->StoreInteger("IdxTCoords", idx);
+		ds_info.StoreInteger("IdxTCoords", idx);
 		pp->GetIndexOfTensorsDescriptor();
-		ds_info->StoreInteger("IdxTensors", idx);
+		ds_info.StoreInteger("IdxTensors", idx);
 	}
 #endif
 	return ret_val;
@@ -1309,10 +1309,10 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 
 					int DataType, NumberOfComponents, NumTup_lo, NumTup_hi;
 					ds_di->RestoreText(_("Name"), szStr); 
-					ds_di->RestoreInteger(_("DType"), DataType);
-					ds_di->RestoreInteger(_("NumOfComps"), NumberOfComponents);
-					ds_di->RestoreInteger(_("NumOfTuples_Lo"), NumTup_lo);
-					ds_di->RestoreInteger(_("NumOfTuples_Hi"), NumTup_hi);
+					ds_di->R[_("DType")].StoreInteger( DataType);
+					ds_di->R[_("NumOfComps")].StoreInteger( NumberOfComponents);
+					ds_di->R[_("NumOfTuples_Lo")].StoreInteger( NumTup_lo);
+					ds_di->R[_("NumOfTuples_Hi")].StoreInteger( NumTup_hi);
 
 					if (szStr.Compare( _("(NULL)")) != 0)
 						desc->SetName(szStr);

@@ -498,14 +498,14 @@ int mafVMEHelAxis::InternalStore(mafStorageElementBuilder& parent)
   {
     parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix());
     //code for backward compatibility
-    parent.StoreDouble(_R("ScaleFactor"), m_LengthFactor);
-    parent.StoreDouble(_R("RadiusFactor"), m_RadiusFactor);
-    parent.StoreDouble(_R("LengthFactor"), m_LengthFactor);
-    parent.StoreDouble(_R("MinAngle"), m_MinAngle);
-    parent.StoreDouble(_R("MinTime"), m_MinTime);
-    parent.StoreDouble(_R("MaxTime"), m_MaxTime);
-    parent.StoreInteger(_R("Mode"), m_Mode);
-    parent.StoreInteger(_R("AligningMode"), m_AligningMode);
+    parent[_R("ScaleFactor")].StoreDouble( m_LengthFactor);
+    parent[_R("RadiusFactor")].StoreDouble( m_RadiusFactor);
+    parent[_R("LengthFactor")].StoreDouble( m_LengthFactor);
+    parent[_R("MinAngle")].StoreDouble( m_MinAngle);
+    parent[_R("MinTime")].StoreDouble( m_MinTime);
+    parent[_R("MaxTime")].StoreDouble( m_MaxTime);
+    parent[_R("Mode")].StoreInteger( m_Mode);
+    parent[_R("AligningMode")].StoreInteger( m_AligningMode);
     return MAF_OK;
   }
   return MAF_ERROR;

@@ -1345,8 +1345,8 @@ int mafVMELandmarkCloud::InternalStore(mafStorageElementBuilder& parent)
 {
   if (Superclass::InternalStore(parent) == MAF_OK)
   {
-    if (parent.StoreInteger(_R("LM_SPHERE_RESOLUTION"), m_SphereResolution) == MAF_OK &&
-        parent.StoreDouble(_R("LM_RADIUS"), m_Radius) == MAF_OK)
+    if (parent[_R("LM_SPHERE_RESOLUTION")].StoreInteger( m_SphereResolution) == MAF_OK &&
+        parent[_R("LM_RADIUS")].StoreDouble( m_Radius) == MAF_OK)
     {
       return MAF_OK;
     }

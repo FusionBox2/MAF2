@@ -188,7 +188,7 @@ int mafVMERoot::InternalStore(mafStorageElementBuilder& parent)
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
     StoreRoot(parent);
-    parent.StoreInteger(_R("MaxItemId"),m_MaxItemId);
+    parent[_R("MaxItemId")].StoreInteger(m_MaxItemId);
     parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix());
     return MAF_OK;
   }

@@ -155,13 +155,13 @@ int mmaApplicationLayout::InternalStore(mafStorageElementBuilder& parent)
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent.StoreInteger(_R("APPLICATION_MAXIMIZED"), m_AppMaximized);
+    parent[_R("APPLICATION_MAXIMIZED")].StoreInteger( m_AppMaximized);
     parent[_R("APPLICATION_SIZE")].StoreVectorN(m_AppSize,2);
     parent[_R("APPLICATION_POSITION")].StoreVectorN(m_AppPosition,2);
 
-    parent.StoreInteger(_R("TOOLBAR_VISIBILITY"), m_ToolBarVisibility);
-    parent.StoreInteger(_R("SIDEBAR_VISIBILITY"), m_SideBarVisibility);
-    parent.StoreInteger(_R("LOGBAR_VISIBILITY"), m_LogBarVisibility);
+    parent[_R("TOOLBAR_VISIBILITY")].StoreInteger( m_ToolBarVisibility);
+    parent[_R("SIDEBAR_VISIBILITY")].StoreInteger( m_SideBarVisibility);
+    parent[_R("LOGBAR_VISIBILITY")].StoreInteger( m_LogBarVisibility);
 
     parent.StoreText(_R("LAYOUT_NAME"),m_LayoutName);
     mafString view_id;
@@ -175,22 +175,22 @@ int mmaApplicationLayout::InternalStore(mafStorageElementBuilder& parent)
     mafString view_camera_parameters;
     ViewLayoutInfo info;
     int n = m_LayoutViewList.size();
-    parent.StoreInteger(_R("NUMBER_OF_VIEW"), n);
+    parent[_R("NUMBER_OF_VIEW")].StoreInteger( n);
     for (int i = 0; i < n; i++)
     {
       info = m_LayoutViewList[i];
       view_id = _R("VIEW_ID_");
       view_id += mafToString(i);
-      parent.StoreInteger(view_id, info.m_Id);
+      parent[view_id].StoreInteger(info.m_Id);
       view_mult = _R("VIEW_MULT_");
       view_mult += mafToString(i);
-      parent.StoreInteger(view_mult, info.m_Mult);
+      parent[view_mult].StoreInteger(info.m_Mult);
       view_label = _R("VIEW_LABEL_");
       view_label += mafToString(i);
       parent.StoreText(view_label, info.m_Label);
       view_max = _R("VIEW_MAXIMIZED_");
       view_max += mafToString(i);
-      parent.StoreInteger(view_max,info.m_Maximized);
+      parent[view_max].StoreInteger(info.m_Maximized);
       view_size = _R("VIEW_SIZE_");
       view_size += mafToString(i);
       view_pos = _R("VIEW_POS_");
@@ -199,7 +199,7 @@ int mmaApplicationLayout::InternalStore(mafStorageElementBuilder& parent)
       parent[view_pos].StoreVectorN(info.m_Position, 2);
       vme_in_view = _R("VME_IN_VIEW_");
       vme_in_view += mafToString(i);
-      parent.StoreInteger(vme_in_view,info.m_VisibleVmes.size());
+      parent[vme_in_view].StoreInteger(info.m_VisibleVmes.size());
       if (info.m_VisibleVmes.size() > 0)
       {
         vme_ids_in_view = _R("VME_IDS_IN_VIEW_");

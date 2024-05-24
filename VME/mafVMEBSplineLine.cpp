@@ -375,13 +375,13 @@ int mafVMEBSplineLine::InternalStore(mafStorageElementBuilder& parent)
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
     parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix());
-    parent.StoreInteger(_R("Order"), m_Order);
-    parent.StoreInteger(_R("Mode"), m_Mode);
-    parent.StoreInteger(_R("Submode"), m_SubMode);
-    parent.StoreDouble(_R("Smooth"), m_Smooth);
-    parent.StoreInteger(_R("Num_parts"), m_TesselSize);
-    parent.StoreInteger(_R("Filter_ident"), m_FilterIdent);
-    parent.StoreInteger(_R("Extract_fibre"), m_ExtractFibre);
+    parent[_R("Order")].StoreInteger( m_Order);
+    parent[_R("Mode")].StoreInteger( m_Mode);
+    parent[_R("Submode")].StoreInteger( m_SubMode);
+    parent[_R("Smooth")].StoreDouble( m_Smooth);
+    parent[_R("Num_parts")].StoreInteger( m_TesselSize);
+    parent[_R("Filter_ident")].StoreInteger( m_FilterIdent);
+    parent[_R("Extract_fibre")].StoreInteger( m_ExtractFibre);
     return MAF_OK;
   }
   return MAF_ERROR;

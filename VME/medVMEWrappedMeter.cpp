@@ -1875,12 +1875,12 @@ int medVMEWrappedMeter::InternalStore(mafStorageElementBuilder& parent)
         PushIdVector(index);
 			}
 		}
-		parent.StoreInteger(_R("OrderMiddlePointVmeNumberOfElements"), m_OrderMiddlePointsVMEList.size());
+		parent[_R("OrderMiddlePointVmeNumberOfElements")].StoreInteger( m_OrderMiddlePointsVMEList.size());
 		parent[_R("OrderMiddlePointVme")].StoreVectorN(m_OrderMiddlePointsVMEList);
 
-    parent.StoreInteger(_R("WrapMode"), m_WrappedMode);
-    parent.StoreInteger(_R("WrapSide"), m_WrapSide);
-    parent.StoreInteger(_R("WrapReverse"), m_WrapReverse);
+    parent[_R("WrapMode")].StoreInteger( m_WrappedMode);
+    parent[_R("WrapSide")].StoreInteger( m_WrapSide);
+    parent[_R("WrapReverse")].StoreInteger( m_WrapReverse);
 
     return MAF_OK;
   }

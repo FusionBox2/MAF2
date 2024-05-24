@@ -144,16 +144,16 @@ int mmaVolumeMaterial::InternalStore(mafStorageElementBuilder& parent)
     // property
     parent.StoreText(_R("MaterialName"),m_MaterialName);
     // lut
-    parent.StoreDouble(_R("Level_LUT"), m_Level_LUT);
-    parent.StoreDouble(_R("Window_LUT"), m_Window_LUT);
-    parent.StoreDouble(_R("HueRange0"), m_HueRange[0]);
-    parent.StoreDouble(_R("HueRange1"), m_HueRange[1]);
-    parent.StoreDouble(_R("SaturationRange0"), m_SaturationRange[0]);
-    parent.StoreDouble(_R("SaturationRange1"), m_SaturationRange[1]);
-    parent.StoreDouble(_R("TableRange0"), m_TableRange[0]);
-    parent.StoreDouble(_R("TableRange1"), m_TableRange[1]);
-    parent.StoreDouble(_R("GammaCorrection"), m_GammaCorrection);
-    parent.StoreInteger(_R("NumValues"), m_NumValues);
+    parent[_R("Level_LUT")].StoreDouble( m_Level_LUT);
+    parent[_R("Window_LUT")].StoreDouble( m_Window_LUT);
+    parent[_R("HueRange0")].StoreDouble( m_HueRange[0]);
+    parent[_R("HueRange1")].StoreDouble( m_HueRange[1]);
+    parent[_R("SaturationRange0")].StoreDouble( m_SaturationRange[0]);
+    parent[_R("SaturationRange1")].StoreDouble( m_SaturationRange[1]);
+    parent[_R("TableRange0")].StoreDouble( m_TableRange[0]);
+    parent[_R("TableRange1")].StoreDouble( m_TableRange[1]);
+    parent[_R("GammaCorrection")].StoreDouble( m_GammaCorrection);
+    parent[_R("NumValues")].StoreInteger( m_NumValues);
     mafString lutvalues;
     double *rgba;
     for (int v = 0; v < m_NumValues; v++)
@@ -163,10 +163,10 @@ int mmaVolumeMaterial::InternalStore(mafStorageElementBuilder& parent)
       rgba = m_ColorLut->GetTableValue(v);
       parent[lutvalues].StoreVectorN(rgba, 4);
     }
-    parent.StoreInteger(_R("InterpolationType"), m_InterpolationType);
-    parent.StoreInteger(_R("Shade"), m_Shade);
+    parent[_R("InterpolationType")].StoreInteger( m_InterpolationType);
+    parent[_R("Shade")].StoreInteger( m_Shade);
     m_NumOpacityValues = m_OpacityTransferFunction->GetSize();
-    parent.StoreInteger(_R("NumOpacityValues"), m_NumOpacityValues);
+    parent[_R("NumOpacityValues")].StoreInteger( m_NumOpacityValues);
     double *data_values = m_OpacityTransferFunction->GetDataPointer();
     double point[2];
     int p;
@@ -178,7 +178,7 @@ int mmaVolumeMaterial::InternalStore(mafStorageElementBuilder& parent)
       parent[lutvalues].StoreVectorN(point, 2);
     }
     m_NumGradientValues = m_GradientTransferFunction->GetSize();
-    parent.StoreInteger(_R("NumGradientValues"), m_NumGradientValues);
+    parent[_R("NumGradientValues")].StoreInteger( m_NumGradientValues);
     data_values = m_GradientTransferFunction->GetDataPointer();
     for (p = 0; p < m_NumGradientValues; p++)
     {

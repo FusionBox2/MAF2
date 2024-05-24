@@ -1861,7 +1861,7 @@ int mafVMEMuscleWrapping::InternalStore(mafStorageElementBuilder& parent)
 {
 	if (Superclass::InternalStore(parent) == MAF_OK)
 	{
-		parent.StoreInteger(_R("computeState"), m_ComputeStateCheckbox);
+		parent[_R("computeState")].StoreInteger( m_ComputeStateCheckbox);
 		parent[_R("Transform")].StoreMatrix( m_Transform->GetMatrix());
 		return MAF_OK;
 	}

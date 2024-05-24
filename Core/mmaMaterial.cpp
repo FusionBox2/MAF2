@@ -306,32 +306,32 @@ int mmaMaterial::InternalStore(mafStorageElementBuilder& parent)
   {
     // property
     parent.StoreText(_R("MaterialName"),m_MaterialName);
-    parent.StoreDouble(_R("Value"), m_Value);
-    parent.StoreDouble(_R("Ambient0"), m_Ambient[0]);
-    parent.StoreDouble(_R("Ambient1"), m_Ambient[1]);
-    parent.StoreDouble(_R("Ambient2"), m_Ambient[2]);
-    parent.StoreDouble(_R("AmbientIntensity"), m_AmbientIntensity);
-    parent.StoreDouble(_R("Diffuse0"), m_Diffuse[0]);
-    parent.StoreDouble(_R("Diffuse1"), m_Diffuse[1]);
-    parent.StoreDouble(_R("Diffuse2"), m_Diffuse[2]);
-    parent.StoreDouble(_R("DiffuseIntensity"), m_DiffuseIntensity);
-    parent.StoreDouble(_R("Specular0"), m_Specular[0]);
-    parent.StoreDouble(_R("Specular1"), m_Specular[1]);
-    parent.StoreDouble(_R("Specular2"), m_Specular[2]);
-    parent.StoreDouble(_R("SpecularIntensity"), m_SpecularIntensity);
-    parent.StoreDouble(_R("SpecularPower"), m_SpecularPower);
-    parent.StoreDouble(_R("Opacity"), m_Opacity);
-    parent.StoreDouble(_R("Representation"), m_Representation);
+    parent[_R("Value")].StoreDouble( m_Value);
+    parent[_R("Ambient0")].StoreDouble( m_Ambient[0]);
+    parent[_R("Ambient1")].StoreDouble( m_Ambient[1]);
+    parent[_R("Ambient2")].StoreDouble( m_Ambient[2]);
+    parent[_R("AmbientIntensity")].StoreDouble( m_AmbientIntensity);
+    parent[_R("Diffuse0")].StoreDouble( m_Diffuse[0]);
+    parent[_R("Diffuse1")].StoreDouble( m_Diffuse[1]);
+    parent[_R("Diffuse2")].StoreDouble( m_Diffuse[2]);
+    parent[_R("DiffuseIntensity")].StoreDouble( m_DiffuseIntensity);
+    parent[_R("Specular0")].StoreDouble( m_Specular[0]);
+    parent[_R("Specular1")].StoreDouble( m_Specular[1]);
+    parent[_R("Specular2")].StoreDouble( m_Specular[2]);
+    parent[_R("SpecularIntensity")].StoreDouble( m_SpecularIntensity);
+    parent[_R("SpecularPower")].StoreDouble( m_SpecularPower);
+    parent[_R("Opacity")].StoreDouble( m_Opacity);
+    parent[_R("Representation")].StoreDouble( m_Representation);
     if (m_MaterialType == USE_LOOKUPTABLE)
     {
       // lut
-      parent.StoreDouble(_R("HueRange0"), m_HueRange[0]);
-      parent.StoreDouble(_R("HueRange1"), m_HueRange[1]);
-      parent.StoreDouble(_R("SaturationRange0"), m_SaturationRange[0]);
-      parent.StoreDouble(_R("SaturationRange1"), m_SaturationRange[1]);
-      parent.StoreDouble(_R("TableRange0"), m_TableRange[0]);
-      parent.StoreDouble(_R("TableRange1"), m_TableRange[1]);
-      parent.StoreInteger(_R("NumValues"), m_NumValues);
+      parent[_R("HueRange0")].StoreDouble( m_HueRange[0]);
+      parent[_R("HueRange1")].StoreDouble( m_HueRange[1]);
+      parent[_R("SaturationRange0")].StoreDouble( m_SaturationRange[0]);
+      parent[_R("SaturationRange1")].StoreDouble( m_SaturationRange[1]);
+      parent[_R("TableRange0")].StoreDouble( m_TableRange[0]);
+      parent[_R("TableRange1")].StoreDouble( m_TableRange[1]);
+      parent[_R("NumValues")].StoreInteger( m_NumValues);
       mafString lutvalues;
       for (int v = 0; v < m_NumValues; v++)
       {
@@ -344,17 +344,17 @@ int mmaMaterial::InternalStore(mafStorageElementBuilder& parent)
 	if (m_MaterialType == USE_TEXTURE)
 	{
 		// texture
-		parent.StoreInteger(_R("TextureMappingMode"), m_TextureMappingMode);
+		parent[_R("TextureMappingMode")].StoreInteger( m_TextureMappingMode);
 		parent.StoreText(_R("TextureImageName"), m_VmeImageName);
 
 		m_TextureID = this->GetMaterialTextureID();
 		
 		if (m_TextureID != -1)
 		{
-			parent.StoreInteger(_R("TextureID"), m_TextureID);
+			parent[_R("TextureID")].StoreInteger( m_TextureID);
 		}
     }
-    parent.StoreInteger(_R("MaterialType"), m_MaterialType);
+    parent[_R("MaterialType")].StoreInteger( m_MaterialType);
     return MAF_OK;
   }
   return MAF_ERROR;

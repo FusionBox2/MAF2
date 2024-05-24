@@ -143,16 +143,16 @@ int mafVMEAFRefSys::InternalStore(mafStorageElementBuilder& parent)
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent.StoreInteger(_R("Active"), m_Active);
-    parent.StoreInteger(_R("BoneID"), m_BoneID);
-    parent.StoreDouble(_R("XOffset"), m_XOffset);
-    parent.StoreDouble(_R("YOffset"), m_YOffset);
-    parent.StoreDouble(_R("ZOffset"), m_ZOffset);
-    parent.StoreDouble(_R("XRotate"), m_XRotate);
-    parent.StoreDouble(_R("YRotate"), m_YRotate);
-    parent.StoreDouble(_R("ZRotate"), m_ZRotate);
+    parent[_R("Active")].StoreInteger( m_Active);
+    parent[_R("BoneID")].StoreInteger( m_BoneID);
+    parent[_R("XOffset")].StoreDouble( m_XOffset);
+    parent[_R("YOffset")].StoreDouble( m_YOffset);
+    parent[_R("ZOffset")].StoreDouble( m_ZOffset);
+    parent[_R("XRotate")].StoreDouble( m_XRotate);
+    parent[_R("YRotate")].StoreDouble( m_YRotate);
+    parent[_R("ZRotate")].StoreDouble( m_ZRotate);
     m_textSize = m_scriptText.size();
-    parent.StoreInteger(_R("ScriptStrings"), m_textSize);
+    parent[_R("ScriptStrings")].StoreInteger( m_textSize);
     for(int i = 0; i < m_textSize; i++)
     {
       mafString nm = mafString::Format(_R("ln%d"), i);
@@ -175,7 +175,7 @@ int mafVMEAFRefSys::InternalStore(mafStorageElementBuilder& parent)
       }
       else
       {
-        parent.StoreDouble(_R(m_vm->getInputs()[i].first.c_str()), m_vm->getInputs()[i].second->GetScalar());
+        parent[_R(m_vm->getInputs()[i].first.c_str())].StoreDouble(m_vm->getInputs()[i].second->GetScalar());
       }
     }
     return MAF_OK;

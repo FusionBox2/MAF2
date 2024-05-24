@@ -847,8 +847,8 @@ int mafVMEPlane::InternalStore(mafStorageElementBuilder& parent)
 			
 		//	parent.StoreInteger("Geometry", m_GeometryType) == MAF_OK &&
 	
-			parent.StoreDouble(_R("PlaneUx"), m_PlaneXRes) == MAF_OK &&
-			parent.StoreDouble(_R("PlaneUy"), m_PlaneYRes) == MAF_OK &&
+			parent[_R("PlaneUx")].StoreDouble( m_PlaneXRes) == MAF_OK &&
+			parent[_R("PlaneUy")].StoreDouble( m_PlaneYRes) == MAF_OK &&
 
 			/*parent.StoreDouble("m_PlaneOrigin0", m_PlaneOrigin[0]) == MAF_OK &&
 			parent.StoreDouble("m_PlaneOrigin1", m_PlaneOrigin[1]) == MAF_OK &&

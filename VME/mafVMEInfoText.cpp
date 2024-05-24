@@ -98,11 +98,11 @@ int mafVMEInfoText::InternalStore(mafStorageElementBuilder& parent)
     for(int i = 0; i < 3; i++)
     {
         mafString txtname = _R("ShowLabel") + mafToString(i);
-        if (parent.StoreInteger(txtname, m_PosShow[i] ? 1 : 0) != MAF_OK)
+        if (parent[txtname].StoreInteger(m_PosShow[i] ? 1 : 0) != MAF_OK)
         return MAF_ERROR;
     }
     int strSz = m_Strings.size();
-    parent.StoreInteger(_R("NumberOfStrings"), strSz);
+    parent[_R("NumberOfStrings")].StoreInteger( strSz);
     for(int i = 0; i < m_Strings.size(); i++)
     {
       mafString txtname = _R("String") + mafToString(i);

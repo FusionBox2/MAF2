@@ -571,34 +571,34 @@ int mafVMESurfaceRegParam::InternalStore(mafStorageElementBuilder& parent)
 	{
     if (
 		parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix()) == MAF_OK && 
-		parent.StoreInteger(_R("Geometry"), 	m_GeometryType) == MAF_OK &&
-    parent.StoreDouble(_R("ShereRadius"), m_SphereRadius) == MAF_OK &&
-    parent.StoreDouble(_R("SpherePhiRes"),m_SpherePhiRes) == MAF_OK &&
-    parent.StoreDouble(_R("SphereThetaRes"),m_SphereTheRes) == MAF_OK &&
+		parent[_R("Geometry")].StoreInteger( 	m_GeometryType) == MAF_OK &&
+    parent[_R("ShereRadius")].StoreDouble( m_SphereRadius) == MAF_OK &&
+    parent[_R("SpherePhiRes")].StoreDouble(m_SpherePhiRes) == MAF_OK &&
+    parent[_R("SphereThetaRes")].StoreDouble(m_SphereTheRes) == MAF_OK &&
     parent[_R("SphereCenter")].StoreVectorN(m_SphereCenter,3) == MAF_OK &&
-    parent.StoreDouble(_R("ConeHieght"),m_ConeHeight) == MAF_OK &&
-    parent.StoreDouble(_R("ConeRadius"),m_ConeRadius) == MAF_OK &&
-    parent.StoreInteger(_R("ConeCapping"),m_ConeCapping) == MAF_OK &&
-    parent.StoreDouble(_R("ConeRes"),m_ConeRes) == MAF_OK &&
-    parent.StoreInteger(_R("ConeOrientationAxis"),m_ConeOrientationAxis) == MAF_OK &&
-    parent.StoreDouble(_R("CylinderHeight"),m_CylinderHeight) == MAF_OK &&
-    parent.StoreDouble(_R("CylinderRadius"),m_CylinderRadius) == MAF_OK &&
-    parent.StoreDouble(_R("CylinderRes"),m_CylinderRes) == MAF_OK &&
-    parent.StoreInteger(_R("CylinderOrientationAxis"),m_CylinderOrientationAxis) == MAF_OK &&
-    parent.StoreDouble(_R("CubeXLength"),m_CubeXLength) == MAF_OK &&
-    parent.StoreDouble(_R("CubeYLength"),m_CubeYLength) == MAF_OK &&
-    parent.StoreDouble(_R("CubeZLength"),m_CubeZLength) == MAF_OK &&
-    parent.StoreDouble(_R("PlaneXRes"),m_PlaneXRes) == MAF_OK &&
-    parent.StoreDouble(_R("PlaneYRes"),m_PlaneYRes) == MAF_OK &&
+    parent[_R("ConeHieght")].StoreDouble(m_ConeHeight) == MAF_OK &&
+    parent[_R("ConeRadius")].StoreDouble(m_ConeRadius) == MAF_OK &&
+    parent[_R("ConeCapping")].StoreInteger(m_ConeCapping) == MAF_OK &&
+    parent[_R("ConeRes")].StoreDouble(m_ConeRes) == MAF_OK &&
+    parent[_R("ConeOrientationAxis")].StoreInteger(m_ConeOrientationAxis) == MAF_OK &&
+    parent[_R("CylinderHeight")].StoreDouble(m_CylinderHeight) == MAF_OK &&
+    parent[_R("CylinderRadius")].StoreDouble(m_CylinderRadius) == MAF_OK &&
+    parent[_R("CylinderRes")].StoreDouble(m_CylinderRes) == MAF_OK &&
+    parent[_R("CylinderOrientationAxis")].StoreInteger(m_CylinderOrientationAxis) == MAF_OK &&
+    parent[_R("CubeXLength")].StoreDouble(m_CubeXLength) == MAF_OK &&
+    parent[_R("CubeYLength")].StoreDouble(m_CubeYLength) == MAF_OK &&
+    parent[_R("CubeZLength")].StoreDouble(m_CubeZLength) == MAF_OK &&
+    parent[_R("PlaneXRes")].StoreDouble(m_PlaneXRes) == MAF_OK &&
+    parent[_R("PlaneYRes")].StoreDouble(m_PlaneYRes) == MAF_OK &&
     //parent[_R("PlaneOrigin")].StoreVectorN(m_PlaneOrigin,3) == MAF_OK &&
     parent[_R("PlaneCenter")].StoreVectorN(m_PlaneCenter,3) == MAF_OK &&
     parent[_R("PlaneNormal")].StoreVectorN(m_PlaneNormal,3) == MAF_OK &&
-    parent.StoreDouble(_R("EllipsoidXLenght"),m_EllipsoidXLenght) == MAF_OK &&
-    parent.StoreDouble(_R("EllipsoidYLenght"),m_EllipsoidYLenght) == MAF_OK &&
-    parent.StoreDouble(_R("EllipsoidZLenght"),m_EllipsoidZLenght) == MAF_OK &&
-    parent.StoreDouble(_R("EllipsoidTheRes"),m_EllipsoidTheRes) == MAF_OK &&
-    parent.StoreDouble(_R("EllipsoidPhiRes"),m_EllipsoidPhiRes) == MAF_OK &&
-    parent.StoreInteger(_R("EllipsoidOrientationAxis"),m_CylinderOrientationAxis) == MAF_OK
+    parent[_R("EllipsoidXLenght")].StoreDouble(m_EllipsoidXLenght) == MAF_OK &&
+    parent[_R("EllipsoidYLenght")].StoreDouble(m_EllipsoidYLenght) == MAF_OK &&
+    parent[_R("EllipsoidZLenght")].StoreDouble(m_EllipsoidZLenght) == MAF_OK &&
+    parent[_R("EllipsoidTheRes")].StoreDouble(m_EllipsoidTheRes) == MAF_OK &&
+    parent[_R("EllipsoidPhiRes")].StoreDouble(m_EllipsoidPhiRes) == MAF_OK &&
+    parent[_R("EllipsoidOrientationAxis")].StoreInteger(m_CylinderOrientationAxis) == MAF_OK
     )
 		return MAF_OK;
 	}

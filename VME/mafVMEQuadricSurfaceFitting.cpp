@@ -913,41 +913,41 @@ int mafVMEQuadricSurfaceFitting::InternalStore(mafStorageElementBuilder& parent)
 	{
     if (
 		parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix()) == MAF_OK  
-	/* &&	parent.StoreInteger(_R("Geometry"), m_GeometryType) == MAF_OK &&
-    parent.StoreDouble(_R("ShereRadius"), m_SphereRadius) == MAF_OK &&
-    parent.StoreDouble(_R("SpherePhiRes"),m_SpherePhiRes) == MAF_OK &&
-    parent.StoreDouble(_R("SphereThetaRes"),m_SphereTheRes) == MAF_OK &&
-    parent.StoreDouble(_R("ConeHieght"),m_ConeHeight) == MAF_OK &&
-    parent.StoreDouble(_R("ConeRadius"),m_ConeRadius) == MAF_OK &&
-    parent.StoreInteger(_R("ConeCapping"),m_ConeCapping) == MAF_OK &&
-    parent.StoreDouble(_R("ConeRes"),m_ConeRes) == MAF_OK &&
-    parent.StoreInteger(_R("ConeOrientationAxis"),m_ConeOrientationAxis) == MAF_OK &&
-    parent.StoreDouble(_R("CylinderHeight"),m_CylinderHeight) == MAF_OK &&
-    parent.StoreDouble(_R("CylinderRadius"),m_CylinderRadius) == MAF_OK &&
-    parent.StoreDouble(_R("CylinderRes"),m_CylinderRes) == MAF_OK &&
-    parent.StoreInteger(_R("CylinderOrientationAxis"),m_CylinderOrientationAxis) == MAF_OK &&
-    parent.StoreDouble(_R("CubeXLength"),m_CubeXLength) == MAF_OK &&
-    parent.StoreDouble(_R("CubeYLength"),m_CubeYLength) == MAF_OK &&
-    parent.StoreDouble(_R("CubeZLength"),m_CubeZLength) == MAF_OK &&
-    parent.StoreDouble(_R("PlaneXRes"),m_PlaneXRes) == MAF_OK &&
-    parent.StoreDouble(_R("PlaneYRes"),m_PlaneYRes) == MAF_OK &&
+	/* &&	parent[_R("Geometry")].StoreInteger( m_GeometryType) == MAF_OK &&
+    parent[_R("ShereRadius")].StoreDouble( m_SphereRadius) == MAF_OK &&
+    parent[_R("SpherePhiRes")].StoreDouble(m_SpherePhiRes) == MAF_OK &&
+    parent[_R("SphereThetaRes")].StoreDouble(m_SphereTheRes) == MAF_OK &&
+    parent[_R("ConeHieght")].StoreDouble(m_ConeHeight) == MAF_OK &&
+    parent[_R("ConeRadius")].StoreDouble(m_ConeRadius) == MAF_OK &&
+    parent[_R("ConeCapping")].StoreInteger(m_ConeCapping) == MAF_OK &&
+    parent[_R("ConeRes")].StoreDouble(m_ConeRes) == MAF_OK &&
+    parent[_R("ConeOrientationAxis")].StoreInteger(m_ConeOrientationAxis) == MAF_OK &&
+    parent[_R("CylinderHeight")].StoreDouble(m_CylinderHeight) == MAF_OK &&
+    parent[_R("CylinderRadius")].StoreDouble(m_CylinderRadius) == MAF_OK &&
+    parent[_R("CylinderRes")].StoreDouble(m_CylinderRes) == MAF_OK &&
+    parent[_R("CylinderOrientationAxis")].StoreInteger(m_CylinderOrientationAxis) == MAF_OK &&
+    parent[_R("CubeXLength")].StoreDouble(m_CubeXLength) == MAF_OK &&
+    parent[_R("CubeYLength")].StoreDouble(m_CubeYLength) == MAF_OK &&
+    parent[_R("CubeZLength")].StoreDouble(m_CubeZLength) == MAF_OK &&
+    parent[_R("PlaneXRes")].StoreDouble(m_PlaneXRes) == MAF_OK &&
+    parent[_R("PlaneYRes")].StoreDouble(m_PlaneYRes) == MAF_OK &&
     parent[_R("PlaneOrigin")].StoreVectorN(m_PlaneOrigin,3) == MAF_OK &&
     parent[_R("PlanePoint1")].StoreVectorN(m_PlanePoint1,3) == MAF_OK &&
     parent[_R("PlanePoint2")].StoreVectorN(m_PlanePoint2,3) == MAF_OK &&
-    parent.StoreDouble(_R("EllipsoidXLenght"),m_EllipsoidXLenght) == MAF_OK &&
-    parent.StoreDouble(_R("EllipsoidYLenght"),m_EllipsoidYLenght) == MAF_OK &&
-    parent.StoreDouble(_R("EllipsoidZLenght"),m_EllipsoidZLenght) == MAF_OK &&
-    parent.StoreDouble(_R("EllipsoidTheRes"),m_EllipsoidTheRes) == MAF_OK &&
-    parent.StoreDouble(_R("EllipsoidPhiRes"),m_EllipsoidPhiRes) == MAF_OK &&
-    parent.StoreInteger(_R("EllipsoidOrientationAxis"),m_CylinderOrientationAxis) == MAF_OK &&
-	parent.StoreDouble(_R("PointsXLenght"), m_PointsR1) == MAF_OK &&
-	parent.StoreDouble(_R("PointsYLenght"), m_PointsR2) == MAF_OK &&
-	parent.StoreDouble(_R("PointsZLenght"), m_PointsR3) == MAF_OK &&
-	parent.StoreDouble(_R("PointsXCenter"), m_PointsXRes) == MAF_OK &&
-	parent.StoreDouble(_R("PointsYCenter"), m_PointsYRes) == MAF_OK &&
-	parent.StoreDouble(_R("PointsZCenter"), m_PointsZRes) == MAF_OK &&
-	parent.StoreDouble(_R("PointsTheRes"), m_PointsThetaRes) == MAF_OK &&
-	parent.StoreDouble(_R("PointsPhiRes"), m_PointsPhiRes) == MAF_OK
+    parent[_R("EllipsoidXLenght")].StoreDouble(m_EllipsoidXLenght) == MAF_OK &&
+    parent[_R("EllipsoidYLenght")].StoreDouble(m_EllipsoidYLenght) == MAF_OK &&
+    parent[_R("EllipsoidZLenght")].StoreDouble(m_EllipsoidZLenght) == MAF_OK &&
+    parent[_R("EllipsoidTheRes")].StoreDouble(m_EllipsoidTheRes) == MAF_OK &&
+    parent[_R("EllipsoidPhiRes")].StoreDouble(m_EllipsoidPhiRes) == MAF_OK &&
+    parent[_R("EllipsoidOrientationAxis")].StoreInteger(m_CylinderOrientationAxis) == MAF_OK &&
+	parent[_R("PointsXLenght")].StoreDouble( m_PointsR1) == MAF_OK &&
+	parent[_R("PointsYLenght")].StoreDouble( m_PointsR2) == MAF_OK &&
+	parent[_R("PointsZLenght")].StoreDouble( m_PointsR3) == MAF_OK &&
+	parent[_R("PointsXCenter")].StoreDouble( m_PointsXRes) == MAF_OK &&
+	parent[_R("PointsYCenter")].StoreDouble( m_PointsYRes) == MAF_OK &&
+	parent[_R("PointsZCenter")].StoreDouble( m_PointsZRes) == MAF_OK &&
+	parent[_R("PointsTheRes")].StoreDouble( m_PointsThetaRes) == MAF_OK &&
+	parent[_R("PointsPhiRes")].StoreDouble( m_PointsPhiRes) == MAF_OK
 	*/
 	//&& parent[_R("PointsRotMat")].StoreMatrix( rotationMat) == MAF_OK
     )

@@ -498,13 +498,13 @@ int mafAvatar3D::InternalStore(mafStorageElementBuilder& node)
   if(Superclass::InternalStore(node))
     return MAF_ERROR;
 
-  node.StoreInteger(_R("DisplayWorkingBox"),GetDisplayWorkingBox());
-  node.StoreInteger(_R("DisplayDebugText"),GetDisplayDebugText());
+  node[_R("DisplayWorkingBox")].StoreInteger(GetDisplayWorkingBox());
+  node[_R("DisplayDebugText")].StoreInteger(GetDisplayDebugText());
   double coords[2];
   coords[0]=GetDebugTextPosition()[0];
   coords[1]=GetDebugTextPosition()[1];
   node[_R("DebugTextPosition")].StoreVectorN(coords,2);
-  node.StoreInteger(_R("CoordsFrame"),GetCoordsFrame());
+  node[_R("CoordsFrame")].StoreInteger(GetCoordsFrame());
 
   // write prop3D properties?
   return MAF_OK;
