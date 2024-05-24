@@ -192,26 +192,24 @@ int mmaVolumeMaterial::InternalStore(mafStorageElement *parent)
   return MAF_ERROR;
 }
 //----------------------------------------------------------------------------
-int mmaVolumeMaterial::InternalRestore(const mafStorageElement& node_)
+int mmaVolumeMaterial::InternalRestore(const mafStorageElement& node)
 //----------------------------------------------------------------------------
 {
-	auto node = &node_;
-
-  if (Superclass::InternalRestore(node_) == MAF_OK)
+  if (Superclass::InternalRestore(node) == MAF_OK)
   {
     // property
-    node->RestoreText(_R("MaterialName"),m_MaterialName);
+    node.RestoreText(_R("MaterialName"),m_MaterialName);
     // lut
-    node->RestoreDouble(_R("Level_LUT"), m_Level_LUT);
-    node->RestoreDouble(_R("Window_LUT"), m_Window_LUT);
-    node->RestoreDouble(_R("HueRange0"), m_HueRange[0]);
-    node->RestoreDouble(_R("HueRange1"), m_HueRange[1]);
-    node->RestoreDouble(_R("SaturationRange0"), m_SaturationRange[0]);
-    node->RestoreDouble(_R("SaturationRange1"), m_SaturationRange[1]);
-    node->RestoreDouble(_R("TableRange0"), m_TableRange[0]);
-    node->RestoreDouble(_R("TableRange1"), m_TableRange[1]);
-    node->RestoreDouble(_R("GammaCorrection"), m_GammaCorrection);
-    node->RestoreInteger(_R("NumValues"), m_NumValues);
+    node.RestoreDouble(_R("Level_LUT"), m_Level_LUT);
+    node.RestoreDouble(_R("Window_LUT"), m_Window_LUT);
+    node.RestoreDouble(_R("HueRange0"), m_HueRange[0]);
+    node.RestoreDouble(_R("HueRange1"), m_HueRange[1]);
+    node.RestoreDouble(_R("SaturationRange0"), m_SaturationRange[0]);
+    node.RestoreDouble(_R("SaturationRange1"), m_SaturationRange[1]);
+    node.RestoreDouble(_R("TableRange0"), m_TableRange[0]);
+    node.RestoreDouble(_R("TableRange1"), m_TableRange[1]);
+    node.RestoreDouble(_R("GammaCorrection"), m_GammaCorrection);
+    node.RestoreInteger(_R("NumValues"), m_NumValues);
     m_ColorLut->SetNumberOfTableValues(m_NumValues);
     mafString lutvalues;
     double rgba[4];
@@ -219,15 +217,15 @@ int mmaVolumeMaterial::InternalRestore(const mafStorageElement& node_)
     {
       lutvalues = _R("LUT_VALUE_");
       lutvalues += mafToString(v);
-      node->RestoreVectorN(lutvalues,rgba,4);
+      node[lutvalues].RestoreVectorN(rgba, 4);
       m_ColorLut->SetTableValue(v,rgba);
     }
     m_ColorLut->SetTableRange(m_TableRange);
     m_ColorLut->SetRange(m_TableRange);
     m_ColorLut->Build();
-    node->RestoreInteger(_R("InterpolationType"), m_InterpolationType);
-    node->RestoreInteger(_R("Shade"), m_Shade);
-    node->RestoreInteger(_R("NumOpacityValues"), m_NumOpacityValues);
+    node.RestoreInteger(_R("InterpolationType"), m_InterpolationType);
+    node.RestoreInteger(_R("Shade"), m_Shade);
+    node.RestoreInteger(_R("NumOpacityValues"), m_NumOpacityValues);
 
     double point[2];
     int p;
@@ -235,15 +233,15 @@ int mmaVolumeMaterial::InternalRestore(const mafStorageElement& node_)
     {
       lutvalues = _R("OPACITY_VALUE_");
       lutvalues += mafToString(p);
-      node->RestoreVectorN(lutvalues,point,2);
+      node[lutvalues].RestoreVectorN(point, 2);
       m_OpacityTransferFunction->AddPoint(point[0],point[1]);
     }
-    node->RestoreInteger(_R("NumGradientValues"), m_NumGradientValues);
+    node.RestoreInteger(_R("NumGradientValues"), m_NumGradientValues);
     for (p = 0; p < m_NumGradientValues; p++)
     {
       lutvalues = _R("GRADIENT_VALUE_");
       lutvalues += mafToString(p);
-      node->RestoreVectorN(lutvalues,point,2);
+      node[lutvalues].RestoreVectorN(point, 2);
       m_GradientTransferFunction->AddPoint(point[0],point[1]);
     }
     return MAF_OK;

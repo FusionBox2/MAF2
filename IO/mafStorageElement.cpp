@@ -595,60 +595,16 @@ int mafStorageElement::RestoreInteger(const mafString& name,int &value) const
   return MAF_ERROR;
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(const mafString& name,double *comps,unsigned int num) const
+int mafStorageElement::RestoreVectorN(std::vector<double> &comps) const
 //------------------------------------------------------------------------------
 {
-  mafStorageElement *elem=FindNestedElement(name);
-  if (elem)
-  {
-    return elem->RestoreVectorN(comps,num);
-  }
-
-  mafWarningMacro("Parse Error while parsing <"<<GetName().GetCStr() <<"> element: cannot find nested Storage element <"<<name.GetCStr() <<">" );
-
-  return MAF_ERROR;
+  return RestoreVectorN(comps.data(), comps.size());
 }
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(const mafString& name,int *comps,unsigned int num) const
+int mafStorageElement::RestoreVectorN(std::vector<int> &comps) const
 //------------------------------------------------------------------------------
 {
-  mafStorageElement *elem=FindNestedElement(name);
-  if (elem)
-  {
-    return elem->RestoreVectorN(comps,num);
-  }
-
-  mafWarningMacro("Parse Error while parsing <"<<GetName().GetCStr() <<"> element: cannot find nested Storage element <"<<name.GetCStr() <<">" );
-
-  return MAF_ERROR;
-}
-//------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(const mafString& name,std::vector<double> &comps) const
-//------------------------------------------------------------------------------
-{
-  mafStorageElement *elem=FindNestedElement(name);
-  if (elem)
-  {
-    return elem->RestoreVectorN(comps.data(), comps.size());
-  }
-
-  mafWarningMacro("Parse Error while parsing <"<<GetName().GetCStr() <<"> element: cannot find nested Storage element <"<<name.GetCStr() <<">" );
-
-  return MAF_ERROR;
-}
-//------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(const mafString& name,std::vector<int> &comps) const
-//------------------------------------------------------------------------------
-{
-  mafStorageElement *elem=FindNestedElement(name);
-  if (elem)
-  {
-    return elem->RestoreVectorN(comps.data(), comps.size());
-  }
-
-  mafWarningMacro("Parse Error while parsing <"<<GetName().GetCStr() <<"> element: cannot find nested Storage element <"<<name.GetCStr() <<">" );
-
-  return MAF_ERROR;
+  return RestoreVectorN(comps.data(), comps.size());
 }
 //------------------------------------------------------------------------------
 int mafStorageElement::RestoreVectorN(const mafString& name,std::vector<mafString> &comps,const mafString& tag) const

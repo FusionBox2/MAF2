@@ -5036,7 +5036,7 @@ int medVMEComputeWrapping::InternalRestore(const mafStorageElement& node)
 			int              orderMiddlePointsVMEListNumberOfElements;
 			node.RestoreInteger(_R("OrderMiddlePointVmeNumberOfElements"), orderMiddlePointsVMEListNumberOfElements);
 			m_OrderMiddlePointsVMEList.resize(orderMiddlePointsVMEListNumberOfElements);
-			node.RestoreVectorN(_R("OrderMiddlePointVme"),m_OrderMiddlePointsVMEList);
+			node[_R("OrderMiddlePointVme")].RestoreVectorN(m_OrderMiddlePointsVMEList);
 
 			node.RestoreInteger(_R("WrapMode"), m_WrappedMode1);
 			node.RestoreInteger(_R("WrapMode2"), m_WrappedMode2);

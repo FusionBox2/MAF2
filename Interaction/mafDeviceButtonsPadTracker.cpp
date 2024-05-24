@@ -111,23 +111,20 @@ int mafDeviceButtonsPadTracker::InternalStore(mafStorageElement *node)
   return MAF_OK;
 }
 //------------------------------------------------------------------------------
-int mafDeviceButtonsPadTracker::InternalRestore(const mafStorageElement& node_)
+int mafDeviceButtonsPadTracker::InternalRestore(const mafStorageElement& node)
 //------------------------------------------------------------------------------
 {
-	auto node = &node_;
-	assert(node);
-  
-  if (Superclass::InternalRestore(node_))
+  if (Superclass::InternalRestore(node))
     return MAF_ERROR;
 
 
-  if (node->RestoreVectorN(_R("TrackedBoxBounds"),m_TrackedBounds.m_Bounds,6)==MAF_OK)
+  if (node[_R("TrackedBoxBounds")].RestoreVectorN(m_TrackedBounds.m_Bounds, 6) == MAF_OK)
   {
     m_TrackedBounds.Modified();
-    if (node->RestoreVectorN(_R("TrackedBoxOrientation"),m_TrackedBoxOrientation,3)==MAF_OK)
+    if (node[_R("TrackedBoxOrientation")].RestoreVectorN(m_TrackedBoxOrientation, 3) == MAF_OK)
     {
       mafObject* obj = nullptr;
-      if (node->RestoreObject(_R("Avatar"), obj) == MAF_OK)
+      if (node.RestoreObject(_R("Avatar"), obj) == MAF_OK)
       {
         if (mafAvatar3D *avatar=mafAvatar3D::SafeDownCast(obj))
         {

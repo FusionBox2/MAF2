@@ -634,8 +634,8 @@ int mafVMESurfaceRegParam::InternalRestore(const mafStorageElement& node)
       node.RestoreDouble(_R("PlaneXRes"),m_PlaneXRes);
       node.RestoreDouble(_R("PlaneYRes"),m_PlaneYRes);
       //node.RestoreVectorN(_R("PlaneOrigin"),m_PlaneOrigin,3) == MAF_OK && 
-      node.RestoreVectorN(_R("PlaneCenter"),m_PlaneCenter,3);
-      node.RestoreVectorN(_R("PlaneNormal"),m_PlaneNormal,3);
+      node[_R("PlaneCenter")].RestoreVectorN(m_PlaneCenter, 3);
+      node[_R("PlaneNormal")].RestoreVectorN(m_PlaneNormal, 3);
       node.RestoreDouble(_R("EllipsoidXLenght"),m_EllipsoidXLenght);
       node.RestoreDouble(_R("EllipsoidYLenght"),m_EllipsoidYLenght);
       node.RestoreDouble(_R("EllipsoidZLenght"),m_EllipsoidZLenght);

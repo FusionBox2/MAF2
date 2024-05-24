@@ -258,19 +258,17 @@ void mafVMEItem::SetURL(const char *name)
 }
 
 //-------------------------------------------------------------------------
-int mafVMEItem::InternalRestore(const mafStorageElement& node_)
+int mafVMEItem::InternalRestore(const mafStorageElement& node)
 //-------------------------------------------------------------------------
 {
-	auto node = &node_;
-
   mafString crypting;
-  if (node->RestoreText(_R("URL"),m_URL)==MAF_OK \
-    &&node->RestoreInteger(_R("Id"),m_Id)==MAF_OK \
-    &&node->RestoreText(_R("DataType"),m_DataType)==MAF_OK \
-    &&node->RestoreDouble(_R("TimeStamp"),m_TimeStamp)==MAF_OK \
-    &&node->RestoreText(_R("Crypting"),crypting)==MAF_OK \
-    &&node->RestoreVectorN(_R("Bounds"),m_Bounds.m_Bounds,6)==MAF_OK \
-    &&node->RestoreStorable(_R("TagArray"),m_TagArray)==MAF_OK)
+  if (node.RestoreText(_R("URL"),m_URL)==MAF_OK \
+    &&node.RestoreInteger(_R("Id"),m_Id)==MAF_OK \
+    &&node.RestoreText(_R("DataType"),m_DataType)==MAF_OK \
+    &&node.RestoreDouble(_R("TimeStamp"),m_TimeStamp)==MAF_OK \
+    &&node.RestoreText(_R("Crypting"),crypting)==MAF_OK \
+    &&node[_R("Bounds")].RestoreVectorN(m_Bounds.m_Bounds, 6) == MAF_OK \
+    &&node.RestoreStorable(_R("TagArray"),m_TagArray)==MAF_OK)
   {
     m_Crypting = (crypting==_R("true")||crypting==_R("True")||crypting==_R("TRUE"))?true:false;
 

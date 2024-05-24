@@ -480,7 +480,7 @@ int lhpVMESurfaceScalarVarying::InternalRestore(const mafStorageElement& node)
             if(node.RestoreInteger(numIndexesName, num_indexes) == MAF_OK)
             {
               indexIds = new int[num_indexes];
-              if (node.RestoreVectorN(indexesName,indexIds,num_indexes) == MAF_OK)
+              if (node[indexesName].RestoreVectorN(indexIds, num_indexes) == MAF_OK)
               {
                 m_ScalarRegionMap[indexIds[0]] = vtkIdList::New();
                 for (int i = 1; i < num_indexes; i++)

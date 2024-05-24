@@ -396,8 +396,8 @@ int mafVMELineSeg::InternalRestore(const mafStorageElement& node)
     if (node[_R("Transform")].RestoreMatrix(matrix) ==MAF_OK)
     {
       m_Transform->SetMatrix(matrix); 
-	  node.RestoreVectorN(_R("PosPt1"), PosPt1, 3);
-	  node.RestoreVectorN(_R("PosPt2"), PosPt2, 3);
+	  node[_R("PosPt1")].RestoreVectorN(PosPt1, 3);
+	  node[_R("PosPt2")].RestoreVectorN(PosPt2, 3);
 	 /* node.RestoreInteger("NbrPts",nbrPts);
 	  if (nbrPts > 1)
 	  {

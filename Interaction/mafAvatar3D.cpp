@@ -511,25 +511,24 @@ int mafAvatar3D::InternalStore(mafStorageElement *node)
 }
 
 //------------------------------------------------------------------------------
-int mafAvatar3D::InternalRestore(const mafStorageElement& node_)
+int mafAvatar3D::InternalRestore(const mafStorageElement& node)
 //------------------------------------------------------------------------------
 {
-  if(Superclass::InternalRestore(node_))
+  if(Superclass::InternalRestore(node))
     return MAF_ERROR;
-  auto node = &node_;
 
   int display_working_box = 0;
-  node->RestoreInteger(_R("DisplayWorkingBox"),display_working_box);
+  node.RestoreInteger(_R("DisplayWorkingBox"),display_working_box);
   SetDisplayWorkingBox(display_working_box);
   
   int display_debug_text = 0;
-  node->RestoreInteger(_R("DisplayDebugText"),display_debug_text);
+  node.RestoreInteger(_R("DisplayDebugText"),display_debug_text);
   SetDisplayDebugText(display_debug_text);
   
   double coords[2]={0,0};
-  node->RestoreVectorN(_R("DebugTextPosition"),coords,2);
+  node[_R("DebugTextPosition")].RestoreVectorN(coords, 2);
   SetDebugTextPosition(coords[0],coords[1]);
-  node->RestoreInteger(_R("CoordsFrame"),m_CoordsFrame);
+  node.RestoreInteger(_R("CoordsFrame"),m_CoordsFrame);
   return MAF_OK;
   
 }

@@ -436,51 +436,50 @@ int medVMEStent::InternalStore(mafStorageElement *node)
 //-----------------------------------------------------------------------
 // Internal restore - called when restoring from msf
 //-----------------------------------------------------------------------
-int medVMEStent::InternalRestore(const mafStorageElement& node_)
+int medVMEStent::InternalRestore(const mafStorageElement& node)
 {
-	auto node = &node_;
-	if (Superclass::InternalRestore(node_) == MAF_OK)
+  if (Superclass::InternalRestore(node) == MAF_OK)
   {	    
     // parameters
     mafString material;
     mafString modelname;
     mafString companyname;
-    if (node->RestoreText(_R("ModelName"),modelname) != MAF_OK) return MAF_ERROR;
+    if (node.RestoreText(_R("ModelName"),modelname) != MAF_OK) return MAF_ERROR;
     m_ModelName = modelname;
-    if (node->RestoreText(_R("CompanyName"),companyname) != MAF_OK) return MAF_ERROR;
+    if (node.RestoreText(_R("CompanyName"),companyname) != MAF_OK) return MAF_ERROR;
     m_CompanyName = companyname;
-    if (node->RestoreText(_R("Material"),material) != MAF_OK) return MAF_ERROR;
+    if (node.RestoreText(_R("Material"),material) != MAF_OK) return MAF_ERROR;
     m_Material = material;
-    if (node->RestoreDouble(_R("DeliverySystem"),m_DeliverySystem) != MAF_OK) return MAF_ERROR; 
-    if (node->RestoreInteger(_R("StentType"),m_Stent_Type) != MAF_OK) return MAF_ERROR; 
-    if (node->RestoreDouble(_R("Diameter"),m_Stent_Diameter) != MAF_OK) return MAF_ERROR; 
-    if (node->RestoreDouble(_R("DBDiameter"),m_Stent_DBDiameter) != MAF_OK) return MAF_ERROR;
-    if (node->RestoreDouble(_R("CrownLength"),m_Crown_Length) != MAF_OK) return MAF_ERROR; 
-    if (node->RestoreDouble(_R("StrutLength"),m_Strut_Length) != MAF_OK) return MAF_ERROR; 
-    if (node->RestoreDouble(_R("StrutAngle"),m_Strut_Angle) != MAF_OK) return MAF_ERROR; 
-    if (node->RestoreDouble(_R("LinkLength"),m_Link_Length) != MAF_OK) return MAF_ERROR; 
-    if (node->RestoreInteger(_R("NumberOfStruts"),m_StrutPairsPerCrown) != MAF_OK) return MAF_ERROR; 
-    if (node->RestoreInteger(_R("NumberOfCrowns"),m_NumberOfCrowns) != MAF_OK) return MAF_ERROR; 
-    if (node->RestoreInteger(_R("NumberOfLinks"),m_Link_Number) != MAF_OK) return MAF_ERROR; 
-    if (node->RestoreInteger(_R("IdLinkConnection"),m_Id_Link_Connection) != MAF_OK) return MAF_ERROR; 
-    if (node->RestoreInteger(_R("IdStentConfig"),m_Id_Stent_Configuration) != MAF_OK) return MAF_ERROR; 
-    if (node->RestoreInteger(_R("LinkOrientation"),m_Link_Orientation) != MAF_OK) return MAF_ERROR; 
-    if (node->RestoreInteger(_R("LinkAlignment"),m_Link_Alignment) != MAF_OK) return MAF_ERROR; 
-    if (node->RestoreDouble(_R("StrutThickness"),m_Strut_Thickness) != MAF_OK) return MAF_ERROR;  
-    if (node->RestoreDouble(_R("DLength"),m_Stent_DBLength) != MAF_OK) return MAF_ERROR; 
-    if (node->RestoreInteger(_R("ComputedNumberOfCrowns"),m_ComputedCrownNumber) != MAF_OK) return MAF_ERROR; 
+    if (node.RestoreDouble(_R("DeliverySystem"),m_DeliverySystem) != MAF_OK) return MAF_ERROR; 
+    if (node.RestoreInteger(_R("StentType"),m_Stent_Type) != MAF_OK) return MAF_ERROR; 
+    if (node.RestoreDouble(_R("Diameter"),m_Stent_Diameter) != MAF_OK) return MAF_ERROR; 
+    if (node.RestoreDouble(_R("DBDiameter"),m_Stent_DBDiameter) != MAF_OK) return MAF_ERROR;
+    if (node.RestoreDouble(_R("CrownLength"),m_Crown_Length) != MAF_OK) return MAF_ERROR; 
+    if (node.RestoreDouble(_R("StrutLength"),m_Strut_Length) != MAF_OK) return MAF_ERROR; 
+    if (node.RestoreDouble(_R("StrutAngle"),m_Strut_Angle) != MAF_OK) return MAF_ERROR; 
+    if (node.RestoreDouble(_R("LinkLength"),m_Link_Length) != MAF_OK) return MAF_ERROR; 
+    if (node.RestoreInteger(_R("NumberOfStruts"),m_StrutPairsPerCrown) != MAF_OK) return MAF_ERROR; 
+    if (node.RestoreInteger(_R("NumberOfCrowns"),m_NumberOfCrowns) != MAF_OK) return MAF_ERROR; 
+    if (node.RestoreInteger(_R("NumberOfLinks"),m_Link_Number) != MAF_OK) return MAF_ERROR; 
+    if (node.RestoreInteger(_R("IdLinkConnection"),m_Id_Link_Connection) != MAF_OK) return MAF_ERROR; 
+    if (node.RestoreInteger(_R("IdStentConfig"),m_Id_Stent_Configuration) != MAF_OK) return MAF_ERROR; 
+    if (node.RestoreInteger(_R("LinkOrientation"),m_Link_Orientation) != MAF_OK) return MAF_ERROR; 
+    if (node.RestoreInteger(_R("LinkAlignment"),m_Link_Alignment) != MAF_OK) return MAF_ERROR; 
+    if (node.RestoreDouble(_R("StrutThickness"),m_Strut_Thickness) != MAF_OK) return MAF_ERROR;  
+    if (node.RestoreDouble(_R("DLength"),m_Stent_DBLength) != MAF_OK) return MAF_ERROR; 
+    if (node.RestoreInteger(_R("ComputedNumberOfCrowns"),m_ComputedCrownNumber) != MAF_OK) return MAF_ERROR; 
     m_StentParamsModified = true ;
 
 
     // vessel
-    if (node->RestoreInteger(_R("VesselNodeId"), m_VesselNodeID) != MAF_OK) return MAF_ERROR; 
+    if (node.RestoreInteger(_R("VesselNodeId"), m_VesselNodeID) != MAF_OK) return MAF_ERROR; 
 
     // vessel centerline
-    if (node->RestoreInteger(_R("StartPos"), m_StentStartPosId) != MAF_OK) return MAF_ERROR; 
-    if (node->RestoreInteger(_R("CenterLineNodeId"), m_CenterLineNodeID) != MAF_OK) return MAF_ERROR; 
+    if (node.RestoreInteger(_R("StartPos"), m_StentStartPosId) != MAF_OK) return MAF_ERROR; 
+    if (node.RestoreInteger(_R("CenterLineNodeId"), m_CenterLineNodeID) != MAF_OK) return MAF_ERROR; 
 
     // stent
-    if (node->RestoreInteger(_R("StentLength"), m_StentLength) != MAF_OK) return MAF_ERROR; 
+    if (node.RestoreInteger(_R("StentLength"), m_StentLength) != MAF_OK) return MAF_ERROR; 
     m_StentCenterLineModified = true ;
     m_StentLengthModified = true ;
 
@@ -488,8 +487,8 @@ int medVMEStent::InternalRestore(const mafStorageElement& node_)
     m_SimplexMeshModified = true ;
 
     // deployed stent polydata
-    if (node->RestoreInteger(_R("DeployedPDStatus"), m_DeployedPolydataStatus) != MAF_OK) return MAF_ERROR; 
-    if (node->RestoreInteger(_R("DeployedPDNodeId"), m_DeployedPolydataNodeID) != MAF_OK) return MAF_ERROR; 
+    if (node.RestoreInteger(_R("DeployedPDStatus"), m_DeployedPolydataStatus) != MAF_OK) return MAF_ERROR; 
+    if (node.RestoreInteger(_R("DeployedPDNodeId"), m_DeployedPolydataNodeID) != MAF_OK) return MAF_ERROR; 
     if (m_DeployedPolydataStatus == DEPLOYED_PD_OK)
       m_DeployedPolydataStatus = DEPLOYED_PD_NOT_LOADED ;
 
@@ -500,12 +499,12 @@ int medVMEStent::InternalRestore(const mafStorageElement& node_)
 		m_TubeFinalStretching.resize(GetNumberOfUnits());
 		m_TubeYoungModulus.resize(GetNumberOfUnits());
 		m_TubeDiameter.resize(GetNumberOfUnits());
-		if (node->RestoreInteger(_R("MaxRisk"),m_MaxRisk) != MAF_OK) return MAF_ERROR;
-		if (node->RestoreDouble(_R("FatigueBending"),m_FatigueBending) != MAF_OK) return MAF_ERROR;
-		if (node->RestoreVectorN(_R("TubeInitialStretching"),m_TubeInitialStretching) != MAF_OK) return MAF_ERROR;
-		if (node->RestoreVectorN(_R("TubeFinalStretching"),m_TubeFinalStretching) != MAF_OK) return MAF_ERROR;
-		if (node->RestoreVectorN(_R("TubeYoungModulus"),m_TubeYoungModulus) != MAF_OK) return MAF_ERROR;
-		if (node->RestoreVectorN(_R("TubeDiameter"),m_TubeDiameter) != MAF_OK) return MAF_ERROR;
+		if (node.RestoreInteger(_R("MaxRisk"),m_MaxRisk) != MAF_OK) return MAF_ERROR;
+		if (node.RestoreDouble(_R("FatigueBending"),m_FatigueBending) != MAF_OK) return MAF_ERROR;
+		if (node[_R("TubeInitialStretching")].RestoreVectorN(m_TubeInitialStretching) != MAF_OK) return MAF_ERROR;
+		if (node[_R("TubeFinalStretching")].RestoreVectorN(m_TubeFinalStretching) != MAF_OK) return MAF_ERROR;
+		if (node[_R("TubeYoungModulus")].RestoreVectorN(m_TubeYoungModulus) != MAF_OK) return MAF_ERROR;
+		if (node[_R("TubeDiameter")].RestoreVectorN(m_TubeDiameter) != MAF_OK) return MAF_ERROR;
 	}
 
 

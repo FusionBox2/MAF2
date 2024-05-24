@@ -360,43 +360,41 @@ int mmaMaterial::InternalStore(mafStorageElement *parent)
   return MAF_ERROR;
 }
 //----------------------------------------------------------------------------
-int mmaMaterial::InternalRestore(const mafStorageElement& node_)
+int mmaMaterial::InternalRestore(const mafStorageElement& node)
 //----------------------------------------------------------------------------
 {
-	auto node = &node_;
-
-  if (Superclass::InternalRestore(node_) == MAF_OK)
+  if (Superclass::InternalRestore(node) == MAF_OK)
   {
     // property
-    node->RestoreText(_R("MaterialName"),m_MaterialName);
-    node->RestoreDouble(_R("Value"),m_Value);
-    node->RestoreDouble(_R("Ambient0"), m_Ambient[0]);
-    node->RestoreDouble(_R("Ambient1"), m_Ambient[1]);
-    node->RestoreDouble(_R("Ambient2"), m_Ambient[2]);
-    node->RestoreDouble(_R("AmbientIntensity"), m_AmbientIntensity);
-    node->RestoreDouble(_R("Diffuse0"), m_Diffuse[0]);
-    node->RestoreDouble(_R("Diffuse1"), m_Diffuse[1]);
-    node->RestoreDouble(_R("Diffuse2"), m_Diffuse[2]);
-    node->RestoreDouble(_R("DiffuseIntensity"), m_DiffuseIntensity);
-    node->RestoreDouble(_R("Specular0"), m_Specular[0]);
-    node->RestoreDouble(_R("Specular1"), m_Specular[1]);
-    node->RestoreDouble(_R("Specular2"), m_Specular[2]);
-    node->RestoreDouble(_R("SpecularIntensity"), m_SpecularIntensity);
-    node->RestoreDouble(_R("SpecularPower"), m_SpecularPower);
+    node.RestoreText(_R("MaterialName"),m_MaterialName);
+    node.RestoreDouble(_R("Value"),m_Value);
+    node.RestoreDouble(_R("Ambient0"), m_Ambient[0]);
+    node.RestoreDouble(_R("Ambient1"), m_Ambient[1]);
+    node.RestoreDouble(_R("Ambient2"), m_Ambient[2]);
+    node.RestoreDouble(_R("AmbientIntensity"), m_AmbientIntensity);
+    node.RestoreDouble(_R("Diffuse0"), m_Diffuse[0]);
+    node.RestoreDouble(_R("Diffuse1"), m_Diffuse[1]);
+    node.RestoreDouble(_R("Diffuse2"), m_Diffuse[2]);
+    node.RestoreDouble(_R("DiffuseIntensity"), m_DiffuseIntensity);
+    node.RestoreDouble(_R("Specular0"), m_Specular[0]);
+    node.RestoreDouble(_R("Specular1"), m_Specular[1]);
+    node.RestoreDouble(_R("Specular2"), m_Specular[2]);
+    node.RestoreDouble(_R("SpecularIntensity"), m_SpecularIntensity);
+    node.RestoreDouble(_R("SpecularPower"), m_SpecularPower);
     m_SpecularPower = (std::max)(1.0, m_SpecularPower);
-    node->RestoreDouble(_R("Opacity"), m_Opacity);
-    node->RestoreDouble(_R("Representation"), m_Representation);
-    node->RestoreInteger(_R("MaterialType"), m_MaterialType);
+    node.RestoreDouble(_R("Opacity"), m_Opacity);
+    node.RestoreDouble(_R("Representation"), m_Representation);
+    node.RestoreInteger(_R("MaterialType"), m_MaterialType);
     if (m_MaterialType == USE_LOOKUPTABLE)
     {
       // lut
-      node->RestoreDouble(_R("HueRange0"), m_HueRange[0]);
-      node->RestoreDouble(_R("HueRange1"), m_HueRange[1]);
-      node->RestoreDouble(_R("SaturationRange0"), m_SaturationRange[0]);
-      node->RestoreDouble(_R("SaturationRange1"), m_SaturationRange[1]);
-      node->RestoreDouble(_R("TableRange0"), m_TableRange[0]);
-      node->RestoreDouble(_R("TableRange1"), m_TableRange[1]);
-      node->RestoreInteger(_R("NumValues"), m_NumValues);
+      node.RestoreDouble(_R("HueRange0"), m_HueRange[0]);
+      node.RestoreDouble(_R("HueRange1"), m_HueRange[1]);
+      node.RestoreDouble(_R("SaturationRange0"), m_SaturationRange[0]);
+      node.RestoreDouble(_R("SaturationRange1"), m_SaturationRange[1]);
+      node.RestoreDouble(_R("TableRange0"), m_TableRange[0]);
+      node.RestoreDouble(_R("TableRange1"), m_TableRange[1]);
+      node.RestoreInteger(_R("NumValues"), m_NumValues);
       m_ColorLut->SetNumberOfTableValues(m_NumValues);
       mafString lutvalues;
       double rgba[4];
@@ -404,16 +402,16 @@ int mmaMaterial::InternalRestore(const mafStorageElement& node_)
       {
 				lutvalues = _R("LUT_VALUE_");
 				lutvalues += mafToString(v);
-				node->RestoreVectorN(lutvalues,rgba,4);
+				node[lutvalues].RestoreVectorN(rgba, 4);
 				m_ColorLut->SetTableValue(v,rgba);
       }
     }
     else if (m_MaterialType == USE_TEXTURE)
     {
       // texture
-      node->RestoreInteger(_R("TextureID"), m_TextureID);
-      node->RestoreInteger(_R("TextureMappingMode"), m_TextureMappingMode);
-	  node->RestoreText(_R("TextureImageName"), m_VmeImageName);
+      node.RestoreInteger(_R("TextureID"), m_TextureID);
+      node.RestoreInteger(_R("TextureMappingMode"), m_TextureMappingMode);
+	  node.RestoreText(_R("TextureImageName"), m_VmeImageName);
     }
     UpdateProp();
     return MAF_OK;

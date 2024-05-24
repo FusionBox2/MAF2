@@ -580,9 +580,9 @@ int mafVMESurfaceParametric::InternalRestore(const mafStorageElement& node)
       node.RestoreDouble(_R("CubeZLength"),m_CubeZLength);
       node.RestoreDouble(_R("PlaneXRes"),m_PlaneXRes);
       node.RestoreDouble(_R("PlaneYRes"),m_PlaneYRes);
-      node.RestoreVectorN(_R("PlaneOrigin"),m_PlaneOrigin,3);
-      node.RestoreVectorN(_R("PlanePoint1"),m_PlanePoint1,3);
-      node.RestoreVectorN(_R("PlanePoint2"),m_PlanePoint2,3);
+      node[_R("PlaneOrigin")].RestoreVectorN(m_PlaneOrigin, 3);
+      node[_R("PlanePoint1")].RestoreVectorN(m_PlanePoint1, 3);
+      node[_R("PlanePoint2")].RestoreVectorN(m_PlanePoint2,3);
       node.RestoreDouble(_R("EllipsoidXLenght"),m_EllipsoidXLenght);
       node.RestoreDouble(_R("EllipsoidYLenght"),m_EllipsoidYLenght);
       node.RestoreDouble(_R("EllipsoidZLenght"),m_EllipsoidZLenght);

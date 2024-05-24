@@ -82,17 +82,16 @@ public:
   int RestoreText    (const mafString& name, mafString &buffer) const;
   int RestoreInteger (const mafString& name, int& value) const;
   int RestoreDouble  (const mafString& name, double& value) const;
+  int RestoreMatrix  (mafMatrix& matrix) const;
   int RestoreObject  (const mafString& name, mafObject*& object) const;
   int RestoreStorable(const mafString& name, mafStorable* object) const;
-  int RestoreVectorN (const mafString& name, double *comps,unsigned int num) const;
-  int RestoreVectorN (const mafString& name, int *comps,unsigned int num) const;
-  int RestoreVectorN (const mafString& name, std::vector<double> &comps) const;
-  int RestoreVectorN (const mafString& name, std::vector<int> &comps) const;
+  int RestoreVectorN (double *comps,unsigned int num) const;
+  int RestoreVectorN (int *comps,unsigned int num) const;
+  int RestoreVectorN (std::vector<double> &comps) const;
+  int RestoreVectorN (std::vector<int> &comps) const;
   int RestoreVectorN (const mafString& name, std::vector<mafString> &comps,const mafString& tag) const;
   int RestoreVectorN (const mafString& name, std::vector<mafObject*>& vector, const mafString& items_name = _R("Item")) const;
 
-  int RestoreMatrix(mafMatrix& matrix) const;
-  int RestoreVectorN(double *comps,unsigned int num) const;
   int RestoreVectorN(std::vector<mafString> &comps,const mafString& tag) const;
 
   virtual bool GetAttribute(const mafString& name, mafString& value) const;// = 0;
@@ -100,7 +99,6 @@ public:
 
   int RestoreObject(mafObject*& object) const;
 protected:
-  int RestoreVectorN(int *comps,unsigned int num) const;
   virtual int StoreText(const mafString& buffer);// = 0;
   virtual int RestoreText(mafString& buffer) const;// = 0;
   int StoreObject(mafObject* object);
