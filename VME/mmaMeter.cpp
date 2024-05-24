@@ -117,7 +117,7 @@ int mmaMeter::InternalStore(mafStorageElementBuilder& parent)
     parent.StoreInteger(_R("LabelVisibility"), m_LabelVisibility);
     parent.StoreDouble(_R("InitMeasure"),m_InitMeasure);
     parent.StoreDouble(_R("TubeRadius"),m_TubeRadius);
-    parent.StoreVectorN(_R("DistanceRange"),m_DistanceRange,2);
+    parent[_R("DistanceRange")].StoreVectorN(m_DistanceRange,2);
     return MAF_OK;
   }
   return MAF_ERROR;

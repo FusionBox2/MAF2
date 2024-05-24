@@ -575,7 +575,7 @@ int mafVMESurfaceRegParam::InternalStore(mafStorageElementBuilder& parent)
     parent.StoreDouble(_R("ShereRadius"), m_SphereRadius) == MAF_OK &&
     parent.StoreDouble(_R("SpherePhiRes"),m_SpherePhiRes) == MAF_OK &&
     parent.StoreDouble(_R("SphereThetaRes"),m_SphereTheRes) == MAF_OK &&
-    parent.StoreVectorN(_R("SphereCenter"),m_SphereCenter,3) == MAF_OK &&
+    parent[_R("SphereCenter")].StoreVectorN(m_SphereCenter,3) == MAF_OK &&
     parent.StoreDouble(_R("ConeHieght"),m_ConeHeight) == MAF_OK &&
     parent.StoreDouble(_R("ConeRadius"),m_ConeRadius) == MAF_OK &&
     parent.StoreInteger(_R("ConeCapping"),m_ConeCapping) == MAF_OK &&
@@ -590,9 +590,9 @@ int mafVMESurfaceRegParam::InternalStore(mafStorageElementBuilder& parent)
     parent.StoreDouble(_R("CubeZLength"),m_CubeZLength) == MAF_OK &&
     parent.StoreDouble(_R("PlaneXRes"),m_PlaneXRes) == MAF_OK &&
     parent.StoreDouble(_R("PlaneYRes"),m_PlaneYRes) == MAF_OK &&
-    //parent.StoreVectorN(_R("PlaneOrigin"),m_PlaneOrigin,3) == MAF_OK &&
-    parent.StoreVectorN(_R("PlaneCenter"),m_PlaneCenter,3) == MAF_OK &&
-    parent.StoreVectorN(_R("PlaneNormal"),m_PlaneNormal,3) == MAF_OK &&
+    //parent[_R("PlaneOrigin")].StoreVectorN(m_PlaneOrigin,3) == MAF_OK &&
+    parent[_R("PlaneCenter")].StoreVectorN(m_PlaneCenter,3) == MAF_OK &&
+    parent[_R("PlaneNormal")].StoreVectorN(m_PlaneNormal,3) == MAF_OK &&
     parent.StoreDouble(_R("EllipsoidXLenght"),m_EllipsoidXLenght) == MAF_OK &&
     parent.StoreDouble(_R("EllipsoidYLenght"),m_EllipsoidYLenght) == MAF_OK &&
     parent.StoreDouble(_R("EllipsoidZLenght"),m_EllipsoidZLenght) == MAF_OK &&
@@ -633,7 +633,7 @@ int mafVMESurfaceRegParam::InternalRestore(const mafStorageElement& node)
       node[_R("CubeZLength")].RestoreDouble(m_CubeZLength);
       node[_R("PlaneXRes")].RestoreDouble(m_PlaneXRes);
       node[_R("PlaneYRes")].RestoreDouble(m_PlaneYRes);
-      //node.RestoreVectorN(_R("PlaneOrigin"),m_PlaneOrigin,3) == MAF_OK && 
+      //node.R[_R("PlaneOrigin")].StoreVectorN(m_PlaneOrigin,3) == MAF_OK && 
       node[_R("PlaneCenter")].RestoreVectorN(m_PlaneCenter, 3);
       node[_R("PlaneNormal")].RestoreVectorN(m_PlaneNormal, 3);
       node[_R("EllipsoidXLenght")].RestoreDouble(m_EllipsoidXLenght);

@@ -156,8 +156,8 @@ int mmaApplicationLayout::InternalStore(mafStorageElementBuilder& parent)
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
     parent.StoreInteger(_R("APPLICATION_MAXIMIZED"), m_AppMaximized);
-    parent.StoreVectorN(_R("APPLICATION_SIZE"),m_AppSize,2);
-    parent.StoreVectorN(_R("APPLICATION_POSITION"),m_AppPosition,2);
+    parent[_R("APPLICATION_SIZE")].StoreVectorN(m_AppSize,2);
+    parent[_R("APPLICATION_POSITION")].StoreVectorN(m_AppPosition,2);
 
     parent.StoreInteger(_R("TOOLBAR_VISIBILITY"), m_ToolBarVisibility);
     parent.StoreInteger(_R("SIDEBAR_VISIBILITY"), m_SideBarVisibility);
@@ -195,8 +195,8 @@ int mmaApplicationLayout::InternalStore(mafStorageElementBuilder& parent)
       view_size += mafToString(i);
       view_pos = _R("VIEW_POS_");
       view_pos += mafToString(i);
-      parent.StoreVectorN(view_size,info.m_Size,2);
-      parent.StoreVectorN(view_pos,info.m_Position,2);
+      parent[view_size].StoreVectorN(info.m_Size, 2);
+      parent[view_pos].StoreVectorN(info.m_Position, 2);
       vme_in_view = _R("VME_IN_VIEW_");
       vme_in_view += mafToString(i);
       parent.StoreInteger(vme_in_view,info.m_VisibleVmes.size());
@@ -204,11 +204,11 @@ int mmaApplicationLayout::InternalStore(mafStorageElementBuilder& parent)
       {
         vme_ids_in_view = _R("VME_IDS_IN_VIEW_");
         vme_ids_in_view += mafToString(i);
-        parent.StoreVectorN(vme_ids_in_view,info.m_VisibleVmes);
+        parent[vme_ids_in_view].StoreVectorN(info.m_VisibleVmes);
 
         view_camera_parameters = _R("VIEW_CAMERA_PARAMETERS_");
         view_camera_parameters += mafToString(i);
-        parent.StoreVectorN(view_camera_parameters,info.m_CameraParameters, 9);
+        parent[view_camera_parameters].StoreVectorN(info.m_CameraParameters, 9);
       }
     }
     return MAF_OK;

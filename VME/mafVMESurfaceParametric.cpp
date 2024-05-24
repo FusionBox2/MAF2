@@ -537,9 +537,9 @@ int mafVMESurfaceParametric::InternalStore(mafStorageElementBuilder& parent)
     parent.StoreDouble(_R("CubeZLength"),m_CubeZLength) == MAF_OK &&
     parent.StoreDouble(_R("PlaneXRes"),m_PlaneXRes) == MAF_OK &&
     parent.StoreDouble(_R("PlaneYRes"),m_PlaneYRes) == MAF_OK &&
-    parent.StoreVectorN(_R("PlaneOrigin"),m_PlaneOrigin,3) == MAF_OK &&
-    parent.StoreVectorN(_R("PlanePoint1"),m_PlanePoint1,3) == MAF_OK &&
-    parent.StoreVectorN(_R("PlanePoint2"),m_PlanePoint2,3) == MAF_OK &&
+    parent[_R("PlaneOrigin")].StoreVectorN(m_PlaneOrigin,3) == MAF_OK &&
+    parent[_R("PlanePoint1")].StoreVectorN(m_PlanePoint1,3) == MAF_OK &&
+    parent[_R("PlanePoint2")].StoreVectorN(m_PlanePoint2,3) == MAF_OK &&
     parent.StoreDouble(_R("EllipsoidXLenght"),m_EllipsoidXLenght) == MAF_OK &&
     parent.StoreDouble(_R("EllipsoidYLenght"),m_EllipsoidYLenght) == MAF_OK &&
     parent.StoreDouble(_R("EllipsoidZLenght"),m_EllipsoidZLenght) == MAF_OK &&

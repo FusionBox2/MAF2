@@ -921,5 +921,5 @@ int mafStorableMaterialLibrary::InternalStore( mafStorageElementBuilder& parent 
     attrs.push_back((*m_MaterialList)[m]);
   }
 
-  return parent.StoreVectorN(_R("MaterialLib"), attrs);
+  return parent[_R("MaterialLib")].StoreVectorN( attrs);
 }

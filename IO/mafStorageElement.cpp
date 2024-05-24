@@ -142,45 +142,44 @@ int mafStorageElement::RestoreVectorN(int *comps,unsigned int num) const
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElementBuilder::StoreVectorN(const mafString& name,double *comps,int num)
+int mafStorageElementBuilder::StoreVectorN(double *comps,int num)
 //------------------------------------------------------------------------------
 {
   assert(comps);
-  InternalStoreVectorN((*this)[name], comps, num);
+  InternalStoreVectorN(*this, comps, num);
   return MAF_OK;
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElementBuilder::StoreVectorN(const mafString& name,int *comps,int num)
+int mafStorageElementBuilder::StoreVectorN(int *comps,int num)
 //------------------------------------------------------------------------------
 {
   assert(comps);
-  InternalStoreVectorN((*this)[name],comps,num);
+  InternalStoreVectorN(*this,comps,num);
   return MAF_OK;
 }
 //------------------------------------------------------------------------------
-int mafStorageElementBuilder::StoreVectorN(const mafString& name,const std::vector<double> &comps)
+int mafStorageElementBuilder::StoreVectorN(const std::vector<double> &comps)
 //------------------------------------------------------------------------------
 {
-  InternalStoreVectorN((*this)[name],comps.data(),comps.size());
+  InternalStoreVectorN(*this,comps.data(),comps.size());
   return MAF_OK;
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElementBuilder::StoreVectorN(const mafString& name,const std::vector<int> &comps)
+int mafStorageElementBuilder::StoreVectorN(const std::vector<int> &comps)
 //------------------------------------------------------------------------------
 {
-  InternalStoreVectorN((*this)[name],comps.data(),comps.size());
+  InternalStoreVectorN(*this,comps.data(),comps.size());
   return MAF_OK;
 }
 //------------------------------------------------------------------------------
-int mafStorageElementBuilder::StoreVectorN(const mafString& name,const std::vector<mafString> &comps,const mafString& tag)
+int mafStorageElementBuilder::StoreVectorN(const std::vector<mafString> &comps,const mafString& tag)
 //------------------------------------------------------------------------------
 {
-  auto subelement = AppendChild(name);
   for (auto& elem : comps)
   {
-    subelement->StoreText(tag,elem);
+    StoreText(tag,elem);
   }
   return MAF_OK;
 }
@@ -251,19 +250,17 @@ std::vector<mafStorageElement*> mafStorageElement::GetElementsByName(const mafSt
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElementBuilder::StoreVectorN(const mafString& name,const std::vector<mafObject *> &vector,const mafString& items_name)
+int mafStorageElementBuilder::StoreVectorN(const std::vector<mafObject *> &vector,const mafString& items_name)
 //------------------------------------------------------------------------------
 {
-  // create sub node for storing the vector
-  auto vector_node = AppendChild(name);
-  vector_node->SetAttribute(_R("NumberOfItems"),mafToString((long)vector.size()));
+  SetAttribute(_R("NumberOfItems"),mafToString((long)vector.size()));
   
   for (unsigned int i=0;i<vector.size();i++)
   {
     mafObject *object=vector[i];
     if (object)
     {
-      if (vector_node->StoreObject(items_name,object) != MAF_OK)
+      if (StoreObject(items_name,object) != MAF_OK)
       {
         mafErrorMacro("Failed to store object of type \""<<object->GetTypeName()<<"\" in vector of objects");
         return MAF_ERROR;

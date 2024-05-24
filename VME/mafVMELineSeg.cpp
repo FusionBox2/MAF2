@@ -372,8 +372,8 @@ int mafVMELineSeg::InternalStore(mafStorageElementBuilder& parent)
 				return MAF_OK;
 			}*/
 
-			parent.StoreVectorN(_R("PosPt1"), PosPt1, 3);
-			parent.StoreVectorN(_R("PosPt2"), PosPt2, 3);
+			parent[_R("PosPt1")].StoreVectorN( PosPt1, 3);
+			parent[_R("PosPt2")].StoreVectorN( PosPt2, 3);
 
 		}
 		return MAF_OK;

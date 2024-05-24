@@ -471,7 +471,7 @@ int mafTagItem::InternalStore(mafStorageElementBuilder& parent)
   GetTypeAsString(type);
   parent.SetAttribute(_R("Type"),type);
 
-  if (parent.StoreVectorN(_R("TItem"),m_Components,_R("TC"))==MAF_ERROR)
+  if (parent[_R("TItem")].StoreVectorN(m_Components,_R("TC"))==MAF_ERROR)
     return MAF_ERROR;
 
   return MAF_OK;

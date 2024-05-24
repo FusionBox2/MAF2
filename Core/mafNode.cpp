@@ -1196,7 +1196,7 @@ int mafNode::InternalStore(mafStorageElementBuilder& parent)
   {
     attrs.push_back(it->second);
   }
-  parent.StoreVectorN(_R("Attributes"),attrs);
+  parent[_R("Attributes")].StoreVectorN(attrs);
 
   // store Links
   unsigned numberOfLinks = 0;
@@ -1231,7 +1231,7 @@ int mafNode::InternalStore(mafStorageElementBuilder& parent)
       nodes_to_store.push_back(node);
     }
   }
-  parent.StoreVectorN(_R("Children"),nodes_to_store,_R("Node"));
+  parent[_R("Children")].StoreVectorN(nodes_to_store,_R("Node"));
 
   return MAF_OK;
 }

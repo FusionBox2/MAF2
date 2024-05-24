@@ -442,7 +442,7 @@ int lhpVMESurfaceScalarVarying::InternalStore(mafStorageElementBuilder& parent)
           indexIds[i] = it->second->GetId(i-1);
         }
         if (parent.StoreInteger(numIndexesName, num_indexes)      == MAF_ERROR ||
-            parent.StoreVectorN(indexesName,indexIds,num_indexes) == MAF_ERROR)
+            parent[indexesName].StoreVectorN(indexIds, num_indexes) == MAF_ERROR)
         {
           delete indexIds;
           return MAF_ERROR;

@@ -99,8 +99,8 @@ int mafDeviceButtonsPadTracker::InternalStore(mafStorageElementBuilder& node)
     return MAF_ERROR;
 
   //StoreMatrix(writer,m_TrackerToCanonicalTransform->GetMatrix(),"TrackerToCanonicalMatrix");
-  node.StoreVectorN(_R("TrackedBoxBounds"),m_TrackedBounds.m_Bounds,6);
-  node.StoreVectorN(_R("TrackedBoxOrientation"),m_TrackedBoxOrientation,3);
+  node[_R("TrackedBoxBounds")].StoreVectorN(m_TrackedBounds.m_Bounds,6);
+  node[_R("TrackedBoxOrientation")].StoreVectorN(m_TrackedBoxOrientation,3);
 
   // store default avatar if present
   if (m_DefaultAvatar)

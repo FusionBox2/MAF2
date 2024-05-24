@@ -119,12 +119,12 @@ public:
 	int StoreObject(mafObject* object);
 	int StoreObject(const mafString& name, mafObject* object);
 	int StoreStorable(const mafString& name, mafStorable* object);
-	int StoreVectorN(const mafString& name, double* comps, int num);
-	int StoreVectorN(const mafString& name, int* comps, int num);
-	int StoreVectorN(const mafString& name, const std::vector<double>& comps);
-	int StoreVectorN(const mafString& name, const std::vector<int>& comps);
-	int StoreVectorN(const mafString& name, const std::vector<mafString>& comps, const mafString& tag);
-	int StoreVectorN(const mafString& name, const std::vector<mafObject*>& vector, const mafString& items_name = _R("Item"));
+	int StoreVectorN(double* comps, int num);
+	int StoreVectorN(int* comps, int num);
+	int StoreVectorN(const std::vector<double>& comps);
+	int StoreVectorN(const std::vector<int>& comps);
+	int StoreVectorN(const std::vector<mafString>& comps, const mafString& tag);
+	int StoreVectorN(const std::vector<mafObject*>& vector, const mafString& items_name = _R("Item"));
 
 	mafStorageElementBuilder* AppendChild(const mafString& name);
 protected:

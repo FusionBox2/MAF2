@@ -407,10 +407,10 @@ int medVMEStent::InternalStore(mafStorageElementBuilder& node)
 	//
 	if (node.StoreInteger(_R("MaxRisk"),m_MaxRisk) != MAF_OK) return MAF_ERROR;
 	if (node.StoreDouble(_R("FatigueBending"),m_FatigueBending) != MAF_OK) return MAF_ERROR;
-	if (node.StoreVectorN(_R("TubeInitialStretching"),m_TubeInitialStretching) != MAF_OK) return MAF_ERROR;
-	if (node.StoreVectorN(_R("TubeFinalStretching"),m_TubeFinalStretching) != MAF_OK) return MAF_ERROR;
-	if (node.StoreVectorN(_R("TubeYoungModulus"),m_TubeYoungModulus) != MAF_OK) return MAF_ERROR;
-	if (node.StoreVectorN(_R("TubeDiameter"),m_TubeDiameter) != MAF_OK) return MAF_ERROR;
+	if (node[_R("TubeInitialStretching")].StoreVectorN(m_TubeInitialStretching) != MAF_OK) return MAF_ERROR;
+	if (node[_R("TubeFinalStretching")].StoreVectorN(m_TubeFinalStretching) != MAF_OK) return MAF_ERROR;
+	if (node[_R("TubeYoungModulus")].StoreVectorN(m_TubeYoungModulus) != MAF_OK) return MAF_ERROR;
+	if (node[_R("TubeDiameter")].StoreVectorN(m_TubeDiameter) != MAF_OK) return MAF_ERROR;
 
     // vessel
     if (node.StoreInteger(_R("VesselNodeId"), m_VesselNodeID) != MAF_OK) return MAF_ERROR; 

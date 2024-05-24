@@ -503,7 +503,7 @@ int mafAvatar3D::InternalStore(mafStorageElementBuilder& node)
   double coords[2];
   coords[0]=GetDebugTextPosition()[0];
   coords[1]=GetDebugTextPosition()[1];
-  node.StoreVectorN(_R("DebugTextPosition"),coords,2);
+  node[_R("DebugTextPosition")].StoreVectorN(coords,2);
   node.StoreInteger(_R("CoordsFrame"),GetCoordsFrame());
 
   // write prop3D properties?

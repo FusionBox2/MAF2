@@ -5010,7 +5010,7 @@ int medVMEComputeWrapping::InternalStore(mafStorageElementBuilder& parent)
 			}
 		}
 		parent.StoreInteger(_R("OrderMiddlePointVmeNumberOfElements"), m_OrderMiddlePointsVMEList.size());
-		parent.StoreVectorN(_R("OrderMiddlePointVme"),m_OrderMiddlePointsVMEList);
+		parent[_R("OrderMiddlePointVme")].StoreVectorN(m_OrderMiddlePointsVMEList);
 
 		parent.StoreInteger(_R("WrapMode"), m_WrappedMode1);
 		parent.StoreInteger(_R("WrapMode2"), m_WrappedMode2);

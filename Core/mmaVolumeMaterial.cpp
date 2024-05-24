@@ -161,7 +161,7 @@ int mmaVolumeMaterial::InternalStore(mafStorageElementBuilder& parent)
       lutvalues = _R("LUT_VALUE_");
       lutvalues += mafToString(v);
       rgba = m_ColorLut->GetTableValue(v);
-      parent.StoreVectorN(lutvalues,rgba,4);
+      parent[lutvalues].StoreVectorN(rgba, 4);
     }
     parent.StoreInteger(_R("InterpolationType"), m_InterpolationType);
     parent.StoreInteger(_R("Shade"), m_Shade);
@@ -175,7 +175,7 @@ int mmaVolumeMaterial::InternalStore(mafStorageElementBuilder& parent)
       lutvalues = _R("OPACITY_VALUE_") + mafToString(p);
       point[0] = data_values[2*p];
       point[1] = data_values[2*p + 1];
-      parent.StoreVectorN(lutvalues,point,2);
+      parent[lutvalues].StoreVectorN(point, 2);
     }
     m_NumGradientValues = m_GradientTransferFunction->GetSize();
     parent.StoreInteger(_R("NumGradientValues"), m_NumGradientValues);
@@ -185,7 +185,7 @@ int mmaVolumeMaterial::InternalStore(mafStorageElementBuilder& parent)
       lutvalues = _R("GRADIENT_VALUE_") + mafToString(p);
       point[0] = data_values[2*p];
       point[1] = data_values[2*p + 1];
-      parent.StoreVectorN(lutvalues,point,2);
+      parent[lutvalues].StoreVectorN(point, 2);
     }
     return MAF_OK;
   }

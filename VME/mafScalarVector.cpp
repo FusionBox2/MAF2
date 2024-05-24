@@ -64,7 +64,7 @@ int mafScalarVector::InternalStore(mafStorageElementBuilder& parent)
     double sca[2];
     sca[0] = it->first;
     sca[1] = it->second;
-    if (parent.StoreVectorN(_R("Scalar"), sca , 2) != MAF_OK)
+    if (parent[_R("Scalar")].StoreVectorN( sca , 2) != MAF_OK)
       return MAF_ERROR;
   }
   return MAF_OK;

@@ -931,9 +931,9 @@ int mafVMEQuadricSurfaceFitting::InternalStore(mafStorageElementBuilder& parent)
     parent.StoreDouble(_R("CubeZLength"),m_CubeZLength) == MAF_OK &&
     parent.StoreDouble(_R("PlaneXRes"),m_PlaneXRes) == MAF_OK &&
     parent.StoreDouble(_R("PlaneYRes"),m_PlaneYRes) == MAF_OK &&
-    parent.StoreVectorN(_R("PlaneOrigin"),m_PlaneOrigin,3) == MAF_OK &&
-    parent.StoreVectorN(_R("PlanePoint1"),m_PlanePoint1,3) == MAF_OK &&
-    parent.StoreVectorN(_R("PlanePoint2"),m_PlanePoint2,3) == MAF_OK &&
+    parent[_R("PlaneOrigin")].StoreVectorN(m_PlaneOrigin,3) == MAF_OK &&
+    parent[_R("PlanePoint1")].StoreVectorN(m_PlanePoint1,3) == MAF_OK &&
+    parent[_R("PlanePoint2")].StoreVectorN(m_PlanePoint2,3) == MAF_OK &&
     parent.StoreDouble(_R("EllipsoidXLenght"),m_EllipsoidXLenght) == MAF_OK &&
     parent.StoreDouble(_R("EllipsoidYLenght"),m_EllipsoidYLenght) == MAF_OK &&
     parent.StoreDouble(_R("EllipsoidZLenght"),m_EllipsoidZLenght) == MAF_OK &&
@@ -984,9 +984,9 @@ int mafVMEQuadricSurfaceFitting::InternalRestore(const mafStorageElement& node)
       node[_R("CubeZLength")].RestoreDouble(m_CubeZLength);
       node[_R("PlaneXRes")].RestoreDouble(m_PlaneXRes);
       node[_R("PlaneYRes")].RestoreDouble(m_PlaneYRes);
-      node.RestoreVectorN(_R("PlaneOrigin"),m_PlaneOrigin,3);
-      node.RestoreVectorN(_R("PlanePoint1"),m_PlanePoint1,3);
-      node.RestoreVectorN(_R("PlanePoint2"),m_PlanePoint2,3);
+      node.R[_R("PlaneOrigin")].StoreVectorN(m_PlaneOrigin,3);
+      node.R[_R("PlanePoint1")].StoreVectorN(m_PlanePoint1,3);
+      node.R[_R("PlanePoint2")].StoreVectorN(m_PlanePoint2,3);
       node[_R("EllipsoidXLenght")].RestoreDouble(m_EllipsoidXLenght);
       node[_R("EllipsoidYLenght")].RestoreDouble(m_EllipsoidYLenght);
       node[_R("EllipsoidZLenght")].RestoreDouble(m_EllipsoidZLenght);

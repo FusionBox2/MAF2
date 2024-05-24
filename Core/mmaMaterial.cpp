@@ -338,7 +338,7 @@ int mmaMaterial::InternalStore(mafStorageElementBuilder& parent)
 				lutvalues = _R("LUT_VALUE_");
         lutvalues += mafToString(v);
         double *rgba = m_ColorLut->GetTableValue(v);
-        parent.StoreVectorN(lutvalues,rgba,4);
+        parent[lutvalues].StoreVectorN(rgba, 4);
       }
     }
 	if (m_MaterialType == USE_TEXTURE)

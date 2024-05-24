@@ -174,7 +174,7 @@ int medAttributeSegmentationVolume::InternalStore(mafStorageElementBuilder& pare
     {
       value = _R("RANGE_");
       value += mafToString(i);
-      parent.StoreVectorN(value,m_AutomaticSegmentationRanges[i],2);
+      parent[value].StoreVectorN(m_AutomaticSegmentationRanges[i], 2);
       value = _R("THRESHOLD_");
       value += mafToString(i);
       parent.StoreDouble(value,m_AutomaticSegmentationThresholds[i]);
@@ -198,7 +198,7 @@ int medAttributeSegmentationVolume::InternalStore(mafStorageElementBuilder& pare
     {
       value = _R("SEED_");
       value += mafToString(i);
-      parent.StoreVectorN(value,m_RegionGrowingSeeds[i],3);
+      parent[value].StoreVectorN(m_RegionGrowingSeeds[i], 3);
     }
     //////////////////////////////////////////////////////////////////////////
 
