@@ -109,6 +109,7 @@ class MAF_EXPORT mafStorageElementBuilder : public mafStorageElement
 {
 public:
 	using mafStorageElement::mafStorageElement;
+	mafStorageElementBuilder operator[](const mafString& name);
 	int StoreText(const mafString& name, const mafString& text);
 	int StoreInteger(const mafString& name, const int& value);
 	int StoreDouble(const mafString& name, const double& value);

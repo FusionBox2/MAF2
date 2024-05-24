@@ -220,6 +220,11 @@ mafStorageElement::~mafStorageElement()
   }  
 }
 
+mafStorageElementBuilder mafStorageElementBuilder::operator[](const mafString& name)
+{
+    return *AppendChild(name);
+}
+
 mafStorageElement mafStorageElement::operator[](const mafString& name) const
 {
 	BuildChildrenMap();
