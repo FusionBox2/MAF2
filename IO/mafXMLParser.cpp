@@ -77,11 +77,11 @@ int mafXMLParser::InternalStore()
   }
   {
       // get a serializer, an instance of DOMWriter (the "LS" stands for load-save).
-      std::unique_ptr<XERCES_CPP_NAMESPACE_QUALIFIER DOMImplementation> XMLImplement(XERCES_CPP_NAMESPACE_QUALIFIER DOMImplementationRegistry::getDOMImplementation(mafXMLString("LS")));
+      auto XMLImplement = XERCES_CPP_NAMESPACE_QUALIFIER DOMImplementationRegistry::getDOMImplementation(mafXMLString("LS"));
 
       if (XMLImplement)
       {
-          std::unique_ptr<XERCES_CPP_NAMESPACE_QUALIFIER DOMLSSerializer> XMLSerializer(((XERCES_CPP_NAMESPACE_QUALIFIER DOMImplementationLS*)XMLImplement.get())->createLSSerializer());
+          std::unique_ptr<XERCES_CPP_NAMESPACE_QUALIFIER DOMLSSerializer> XMLSerializer(((XERCES_CPP_NAMESPACE_QUALIFIER DOMImplementationLS*)XMLImplement)->createLSSerializer());
 
           std::unique_ptr<XERCES_CPP_NAMESPACE_QUALIFIER XMLFormatTarget> XMLTarget(new XERCES_CPP_NAMESPACE_QUALIFIER LocalFileFormatTarget(m_URL.GetCStr()));
 
