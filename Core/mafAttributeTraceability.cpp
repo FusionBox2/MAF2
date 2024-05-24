@@ -127,15 +127,15 @@ int mafAttributeTraceability::InternalStore(mafStorageElementBuilder& parent)
   {
     for (int i = 0; i < m_TraceabilityVector.size(); i++)
     {
-      parent.StoreText(_R("TrialEvent"), m_TraceabilityVector[i].m_TrialEvent);
-      parent.StoreText(_R("Operation"), m_TraceabilityVector[i].m_OperationName);
-      parent.StoreText(_R("Parameters"), m_TraceabilityVector[i].m_Parameters);
-      parent.StoreText(_R("Date"), m_TraceabilityVector[i].m_Date);
-      parent.StoreText(_R("Application"), m_TraceabilityVector[i].m_AppStamp);
-      parent.StoreText(_R("OperatorID"),  m_TraceabilityVector[i].m_OperatorID);
+      parent[_R("TrialEvent")].StoreText( m_TraceabilityVector[i].m_TrialEvent);
+      parent[_R("Operation")].StoreText( m_TraceabilityVector[i].m_OperationName);
+      parent[_R("Parameters")].StoreText( m_TraceabilityVector[i].m_Parameters);
+      parent[_R("Date")].StoreText( m_TraceabilityVector[i].m_Date);
+      parent[_R("Application")].StoreText( m_TraceabilityVector[i].m_AppStamp);
+      parent[_R("OperatorID")].StoreText(  m_TraceabilityVector[i].m_OperatorID);
       if (m_TraceabilityVector[i].m_TrialEvent == _R("Create"))
       {
-        parent.StoreText(_R("IsNatural"), m_TraceabilityVector[i].m_IsNatural);
+        parent[_R("IsNatural")].StoreText( m_TraceabilityVector[i].m_IsNatural);
       }
     }  
   }

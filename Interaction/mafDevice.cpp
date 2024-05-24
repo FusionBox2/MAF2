@@ -191,7 +191,7 @@ void mafDevice::OnEvent(mafEventBase *e)
 int mafDevice::InternalStore(mafStorageElementBuilder& node)
 //------------------------------------------------------------------------------
 {
-  if (node.StoreText(_R("Name"),m_Name)==MAF_OK && \
+  if (node[_R("Name")].StoreText(m_Name)==MAF_OK && \
       node[_R("ID")].StoreInteger((m_ID-MIN_DEVICE_ID))==MAF_OK && \
       node[_R("AutoStart")].StoreInteger(m_AutoStart)==MAF_OK)  
   return MAF_OK;

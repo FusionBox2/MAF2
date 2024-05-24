@@ -179,7 +179,7 @@ int mafStorageElementBuilder::StoreVectorN(const std::vector<mafString> &comps,c
 {
   for (auto& elem : comps)
   {
-    StoreText(tag,elem);
+    (*this)[tag].StoreText(elem);
   }
   return MAF_OK;
 }
@@ -470,14 +470,6 @@ int mafStorageElement::RestoreStorable(mafStorable *storable) const
 //------------------------------------------------------------------------------
 {
   return storable->Restore(*this);
-}
-//------------------------------------------------------------------------------
-int mafStorageElementBuilder::StoreText(const mafString& name, const mafString& text)
-//------------------------------------------------------------------------------
-{
-  auto text_node=AppendChild(name);
-  text_node->StoreText(text);
-  return MAF_OK;
 }
 //------------------------------------------------------------------------------
 int mafStorageElementBuilder::StoreMatrix(const mafMatrix& matrix)

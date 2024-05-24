@@ -91,7 +91,7 @@ const mafString& mafAttribute::GetName() const
 int mafAttribute::InternalStore(mafStorageElementBuilder& parent)
 //-------------------------------------------------------------------------
 {
-  return parent.StoreText(_R("Name"),m_Name);
+  return parent[_R("Name")].StoreText(m_Name);
 }
 
 //-------------------------------------------------------------------------

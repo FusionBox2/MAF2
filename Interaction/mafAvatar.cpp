@@ -304,7 +304,7 @@ void mafAvatar::ShowCursor2D()
 int mafAvatar::InternalStore(mafStorageElementBuilder& node)
 //------------------------------------------------------------------------------
 {
-  return node.StoreText(_R("Name"),m_Name);
+  return node[_R("Name")].StoreText(m_Name);
 }
 
 //------------------------------------------------------------------------------

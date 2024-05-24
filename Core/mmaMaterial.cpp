@@ -305,7 +305,7 @@ int mmaMaterial::InternalStore(mafStorageElementBuilder& parent)
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
     // property
-    parent.StoreText(_R("MaterialName"),m_MaterialName);
+    parent[_R("MaterialName")].StoreText(m_MaterialName);
     parent[_R("Value")].StoreDouble( m_Value);
     parent[_R("Ambient0")].StoreDouble( m_Ambient[0]);
     parent[_R("Ambient1")].StoreDouble( m_Ambient[1]);
@@ -345,7 +345,7 @@ int mmaMaterial::InternalStore(mafStorageElementBuilder& parent)
 	{
 		// texture
 		parent[_R("TextureMappingMode")].StoreInteger( m_TextureMappingMode);
-		parent.StoreText(_R("TextureImageName"), m_VmeImageName);
+		parent[_R("TextureImageName")].StoreText( m_VmeImageName);
 
 		m_TextureID = this->GetMaterialTextureID();
 		

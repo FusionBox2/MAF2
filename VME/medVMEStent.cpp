@@ -383,9 +383,9 @@ int medVMEStent::InternalStore(mafStorageElementBuilder& node)
   if (Superclass::InternalStore(node)==MAF_OK)
   {
     // parameters
-    if (node.StoreText(_R("ModelName"),m_ModelName) != MAF_OK) return MAF_ERROR;
-    if (node.StoreText(_R("CompanyName"),m_CompanyName) != MAF_OK) return MAF_ERROR;
-    if (node.StoreText(_R("Material"),m_Material) != MAF_OK) return MAF_ERROR;
+    if (node[_R("ModelName")].StoreText(m_ModelName) != MAF_OK) return MAF_ERROR;
+    if (node[_R("CompanyName")].StoreText(m_CompanyName) != MAF_OK) return MAF_ERROR;
+    if (node[_R("Material")].StoreText(m_Material) != MAF_OK) return MAF_ERROR;
     if (node[_R("DeliverySystem")].StoreDouble(m_DeliverySystem) != MAF_OK) return MAF_ERROR; 
     if (node[_R("StentType")].StoreInteger(m_Stent_Type) != MAF_OK) return MAF_ERROR; 
     if (node[_R("Diameter")].StoreDouble(m_Stent_Diameter) != MAF_OK) return MAF_ERROR; 

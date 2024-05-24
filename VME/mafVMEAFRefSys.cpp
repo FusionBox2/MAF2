@@ -156,7 +156,7 @@ int mafVMEAFRefSys::InternalStore(mafStorageElementBuilder& parent)
     for(int i = 0; i < m_textSize; i++)
     {
       mafString nm = mafString::Format(_R("ln%d"), i);
-      parent.StoreText(nm, m_scriptText[i]);
+      parent[nm].StoreText(m_scriptText[i]);
     }
 
     for(unsigned i = 0; i < m_vm->getInputs().size(); i++)
@@ -166,11 +166,11 @@ int mafVMEAFRefSys::InternalStore(mafStorageElementBuilder& parent)
         auto it = m_lmMapping.find(_R(m_vm->getInputs()[i].first.c_str()));
         if(it == m_lmMapping.end())
         {
-          parent.StoreText(_R(m_vm->getInputs()[i].first.c_str()), _R(m_vm->getInputs()[i].first.c_str()));
+          parent[_R(m_vm->getInputs()[i].first.c_str())].StoreText(_R(m_vm->getInputs()[i].first.c_str()));
         }
         else
         {
-          parent.StoreText(it->first, it->second);
+          parent[it->first].StoreText(it->second);
         }
       }
       else

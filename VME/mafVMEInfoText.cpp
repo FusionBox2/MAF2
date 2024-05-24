@@ -92,7 +92,7 @@ int mafVMEInfoText::InternalStore(mafStorageElementBuilder& parent)
     for(int i = 0; i < 3; i++)
     {
       mafString txtname = _R("Label") + mafToString(i);
-      if(parent.StoreText(txtname, m_PosLabels[i]) != MAF_OK)
+      if(parent[txtname].StoreText(m_PosLabels[i]) != MAF_OK)
         return MAF_ERROR;
     }
     for(int i = 0; i < 3; i++)
@@ -106,7 +106,7 @@ int mafVMEInfoText::InternalStore(mafStorageElementBuilder& parent)
     for(int i = 0; i < m_Strings.size(); i++)
     {
       mafString txtname = _R("String") + mafToString(i);
-      if(parent.StoreText(txtname, m_Strings[i]) != MAF_OK)
+      if(parent[txtname].StoreText(m_Strings[i]) != MAF_OK)
         return MAF_ERROR;
     }
     return MAF_OK;

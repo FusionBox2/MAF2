@@ -142,7 +142,7 @@ int mmaVolumeMaterial::InternalStore(mafStorageElementBuilder& parent)
   {
     UpdateFromTables();
     // property
-    parent.StoreText(_R("MaterialName"),m_MaterialName);
+    parent[_R("MaterialName")].StoreText(m_MaterialName);
     // lut
     parent[_R("Level_LUT")].StoreDouble( m_Level_LUT);
     parent[_R("Window_LUT")].StoreDouble( m_Window_LUT);

@@ -1047,7 +1047,7 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 	ds_info.StoreDouble(_("SpZ"), sp[2]);
 #else
 	int MemoryLimit = m_SampleMemLimit*1024;
-	ds_info.StoreText(_L("ClassName"), _R(m_LargeDataReader->GetStaticTypeName()));
+	ds_info[_L("ClassName")].StoreText(_R(m_LargeDataReader->GetStaticTypeName()));
 	ds_info[_L("MemoryLimit")].StoreInteger( MemoryLimit);
 #endif
 
@@ -1066,7 +1066,7 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 	ds_info[_L("V4")].StoreInteger( m_VOI[4]);
 	ds_info[_L("V5")].StoreInteger( m_VOI[5]);	
 
-	ds_info.StoreText(_L("FileName"), m_LargeDataReader->GetFileName());
+	ds_info[_L("FileName")].StoreText(m_LargeDataReader->GetFileName());
 #else
 	int VOI[6];
 	ds->GetVOI(VOI);

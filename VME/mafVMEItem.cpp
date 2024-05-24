@@ -224,11 +224,11 @@ void mafVMEItem::Print(std::ostream& os, const int tabs) const
 int mafVMEItem::InternalStore(mafStorageElementBuilder& parent)
 //-------------------------------------------------------------------------
 {
-  if (parent.StoreText(_R("URL"),m_URL)==MAF_OK \
+  if (parent[_R("URL")].StoreText(m_URL)==MAF_OK \
     &&parent[_R("Id")].StoreInteger(m_Id)==MAF_OK \
-    &&parent.StoreText(_R("DataType"),m_DataType)==MAF_OK \
+    &&parent[_R("DataType")].StoreText(m_DataType)==MAF_OK \
     &&parent[_R("TimeStamp")].StoreDouble(m_TimeStamp)==MAF_OK \
-    &&parent.StoreText(_R("Crypting"),m_Crypting?_R("true"):_R("false"))==MAF_OK \
+    &&parent[_R("Crypting")].StoreText(m_Crypting?_R("true"):_R("false"))==MAF_OK \
     &&parent[_R("Bounds")].StoreVectorN(m_Bounds.m_Bounds,6)==MAF_OK \
     &&parent.StoreObject(_R("TagArray"),m_TagArray) == MAF_OK)
   {

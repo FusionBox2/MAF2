@@ -163,7 +163,7 @@ int mmaApplicationLayout::InternalStore(mafStorageElementBuilder& parent)
     parent[_R("SIDEBAR_VISIBILITY")].StoreInteger( m_SideBarVisibility);
     parent[_R("LOGBAR_VISIBILITY")].StoreInteger( m_LogBarVisibility);
 
-    parent.StoreText(_R("LAYOUT_NAME"),m_LayoutName);
+    parent[_R("LAYOUT_NAME")].StoreText(m_LayoutName);
     mafString view_id;
     mafString view_mult;
     mafString view_label;
@@ -187,7 +187,7 @@ int mmaApplicationLayout::InternalStore(mafStorageElementBuilder& parent)
       parent[view_mult].StoreInteger(info.m_Mult);
       view_label = _R("VIEW_LABEL_");
       view_label += mafToString(i);
-      parent.StoreText(view_label, info.m_Label);
+      parent[view_label].StoreText(info.m_Label);
       view_max = _R("VIEW_MAXIMIZED_");
       view_max += mafToString(i);
       parent[view_max].StoreInteger(info.m_Maximized);

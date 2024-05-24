@@ -116,8 +116,8 @@ int mafVMEEllipsoid::InternalStore(mafStorageElementBuilder& parent)
 	{
 			if(
 			//parent.StoreObject("centervme", center_vme)&&
-			parent.StoreText(_R("name"), name) == MAF_OK &&
-			parent.StoreText(_R("landmarkName"),m_LandmarkName) == MAF_OK &&
+			parent[_R("name")].StoreText( name) == MAF_OK &&
+			parent[_R("landmarkName")].StoreText(m_LandmarkName) == MAF_OK &&
 			parent[_R("Centerx")].StoreDouble( center(0)) == MAF_OK &&
 			parent[_R("Centery")].StoreDouble( center(1)) == MAF_OK &&
 			parent[_R("Centerz")].StoreDouble( center(2)) == MAF_OK &&
