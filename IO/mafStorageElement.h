@@ -52,11 +52,10 @@ public:
   virtual ~mafStorageElement();
 
   /** get the name of this element. The element name is set at creation time (@sa AppendChild()) */
-  const mafString& GetName() const {return m_Name;}
+  mafString GetName() const;
 
   mafStorageElement operator[](const mafString& name) const;
   mafStorageElement operator()(const mafString& name) const;
-
 
   /** Used to upgrade attribute value from previous MSF file version.*/
   mafString UpgradeAttribute(const mafString& attribute) const;
@@ -77,9 +76,6 @@ public:
   bool GetAttributeAsDouble(const mafString& name, double& value) const;
   bool GetAttribute(const mafString& name, mafString& value) const;
 
-protected:
-
-public:
   /** return a pointer to the storage who created this element */
   mafParser *GetStorage()  const {return m_Storage;}
 
@@ -94,7 +90,6 @@ protected:
 
   void SetStorage(mafParser *storage) {m_Storage = storage;}
 
-  mafString                        m_Name; ///< Convenient copy of etagName
   mafParser                        *m_Storage;                        ///< storage who created this element
   void                             *m_DOMElement; ///< XML element wrapped by this object (USING PIMPL due to Internal Compile errors of VS7)
   mutable std::map<mafString, ChildrenVector >* m_Children;  ///< children elements
@@ -108,8 +103,6 @@ public:
 
 	virtual ~mafStorageElementBuilder();
 
-	/** get the name of this element. The element name is set at creation time (@sa AppendChild()) */
-	const mafString& GetName() const { return m_Name; }
 	mafStorageElementBuilder operator[](const mafString& name);
 	mafStorageElementBuilder operator()(const mafString& name);
 	
@@ -133,11 +126,8 @@ public:
 	mafParser* GetStorage()  const { return m_Storage; }
 
 protected:
-	mafStorageElementBuilder* AppendChild(const mafString& name);
-
 	void SetStorage(mafParser* storage) { m_Storage = storage; }
 
-	mafString                        m_Name; ///< Convenient copy of etagName
 	mafParser* m_Storage;                        ///< storage who created this element
 	void* m_DOMElement; ///< XML element wrapped by this object (USING PIMPL due to Internal Compile errors of VS7)
 };
