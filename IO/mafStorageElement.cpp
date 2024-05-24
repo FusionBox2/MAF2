@@ -52,18 +52,16 @@ namespace
 
     //------------------------------------------------------------------------------
     template <class T>
-    void InternalStoreVectorN(mafStorageElementBuilder* element, T* comps, size_t num, const char* name)
+    void InternalStoreVectorN(mafStorageElementBuilder& element, T* comps, size_t num)
         //------------------------------------------------------------------------------
     {
-        assert(name);
-
         // Write all the elements into as a single 3-tupla  
         mafString elements;
         for (size_t i = 0; i < num; i++)
         {
             elements += mafToString(comps[i]) + _R(" ");
         }
-        element->StoreText(_R(name), elements);
+        element.StoreText(elements);
     }
     //------------------------------------------------------------------------------
     template <class T>
@@ -148,7 +146,7 @@ int mafStorageElementBuilder::StoreVectorN(const mafString& name,double *comps,i
 //------------------------------------------------------------------------------
 {
   assert(comps);
-  InternalStoreVectorN(this,comps,num,name.GetCStr());
+  InternalStoreVectorN((*this)[name], comps, num);
   return MAF_OK;
 }
 
@@ -157,14 +155,14 @@ int mafStorageElementBuilder::StoreVectorN(const mafString& name,int *comps,int 
 //------------------------------------------------------------------------------
 {
   assert(comps);
-  InternalStoreVectorN(this,comps,num,name.GetCStr());
+  InternalStoreVectorN((*this)[name],comps,num);
   return MAF_OK;
 }
 //------------------------------------------------------------------------------
 int mafStorageElementBuilder::StoreVectorN(const mafString& name,const std::vector<double> &comps)
 //------------------------------------------------------------------------------
 {
-  InternalStoreVectorN(this,comps.data(),comps.size(), name.GetCStr());
+  InternalStoreVectorN((*this)[name],comps.data(),comps.size());
   return MAF_OK;
 }
 
@@ -172,7 +170,7 @@ int mafStorageElementBuilder::StoreVectorN(const mafString& name,const std::vect
 int mafStorageElementBuilder::StoreVectorN(const mafString& name,const std::vector<int> &comps)
 //------------------------------------------------------------------------------
 {
-  InternalStoreVectorN(this,comps.data(),comps.size(),name.GetCStr());
+  InternalStoreVectorN((*this)[name],comps.data(),comps.size());
   return MAF_OK;
 }
 //------------------------------------------------------------------------------

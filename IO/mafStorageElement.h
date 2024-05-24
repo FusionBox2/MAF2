@@ -110,11 +110,13 @@ class MAF_EXPORT mafStorageElementBuilder : public mafStorageElement
 public:
 	using mafStorageElement::mafStorageElement;
 	mafStorageElementBuilder operator[](const mafString& name);
+	int StoreText(const mafString& buffer);
 	int StoreText(const mafString& name, const mafString& text);
 	int StoreInteger(const mafString& name, const int& value);
 	int StoreDouble(const mafString& name, const double& value);
 	int StoreMatrix(const mafString& name, const mafMatrix& matrix);
 
+	int StoreObject(mafObject* object);
 	int StoreObject(const mafString& name, mafObject* object);
 	int StoreStorable(const mafString& name, mafStorable* object);
 	int StoreVectorN(const mafString& name, double* comps, int num);
@@ -126,7 +128,5 @@ public:
 
 	mafStorageElementBuilder* AppendChild(const mafString& name);
 protected:
-	virtual int StoreText(const mafString& buffer);// = 0;
-	int StoreObject(mafObject* object);
 };
 #endif // _mafStorageElement_h_
