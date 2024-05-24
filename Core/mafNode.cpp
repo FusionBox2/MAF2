@@ -1207,17 +1207,17 @@ int mafNode::InternalStore(mafStorageElementBuilder& parent)
       numberOfLinks++;
   }
 
-  auto links_element=parent.AppendChild(_R("Links"));
-  links_element->SetAttribute(_R("NumberOfLinks"),mafToString((long)numberOfLinks));
+  auto links_element=parent[_R("Links")];
+  links_element.SetAttribute(_R("NumberOfLinks"),mafToString((long)numberOfLinks));
   for (auto links_it=m_Links.begin();links_it!=m_Links.end();++links_it)
   {
     mmuNodeLink &link=links_it->second;
     if (links_it->second.m_Node != NULL && links_it->second.m_Node->IsValid() && links_it->second.m_Node->GetRoot() == GetRoot())
     {
-      auto link_item_element=links_element->AppendChild(_R("Link"));
-      link_item_element->SetAttribute(_R("Name"),links_it->first);
-      link_item_element->SetAttribute(_R("NodeId"),link.m_Node->GetId());
-      link_item_element->SetAttribute(_R("NodeSubId"),link.m_NodeSubId);
+      auto link_item_element=links_element[_R("Link")];
+      link_item_element.SetAttribute(_R("Name"),links_it->first);
+      link_item_element.SetAttribute(_R("NodeId"),link.m_Node->GetId());
+      link_item_element.SetAttribute(_R("NodeSubId"),link.m_NodeSubId);
     }
   }
 

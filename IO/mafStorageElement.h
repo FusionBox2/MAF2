@@ -125,7 +125,7 @@ public:
 	int StoreVectorN(const std::vector<mafString>& comps, const mafString& tag);
 	int StoreVectorN(const std::vector<mafObject*>& vector, const mafString& items_name = _R("Item"));
 
-	mafStorageElementBuilder* AppendChild(const mafString& name);
 protected:
+	mafStorageElementBuilder* AppendChild(const mafString& name);
 };
 #endif // _mafStorageElement_h_

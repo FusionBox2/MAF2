@@ -125,10 +125,10 @@ int mafAction::InternalStore(mafStorageElementBuilder& node)
 
   for (auto it = m_Devices.begin(); it!=m_Devices.end(); it++)
   {
-    auto subnode = node.AppendChild(_R("Device"));
+    auto subnode = node[_R("Device")];
     mafDevice *device=it->GetPointer();
-    subnode->SetAttribute(_R("Name"),device->GetName());
-    subnode->SetAttribute(_R("ID"),(mafID)(device->GetID()));
+    subnode.SetAttribute(_R("Name"),device->GetName());
+    subnode.SetAttribute(_R("ID"),(mafID)(device->GetID()));
   }
 
   return MAF_OK;
