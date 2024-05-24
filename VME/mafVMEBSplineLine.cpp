@@ -374,7 +374,7 @@ int mafVMEBSplineLine::InternalStore(mafStorageElementBuilder& parent)
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent.StoreMatrix(_R("Transform"),m_Transform->GetMatrix());
+    parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix());
     parent.StoreInteger(_R("Order"), m_Order);
     parent.StoreInteger(_R("Mode"), m_Mode);
     parent.StoreInteger(_R("Submode"), m_SubMode);

@@ -518,7 +518,7 @@ int mafVMESurfaceParametric::InternalStore(mafStorageElementBuilder& parent)
 	if (Superclass::InternalStore(parent)==MAF_OK)
 	{
     if (
-		parent.StoreMatrix(_R("Transform"),m_Transform->GetMatrix()) == MAF_OK && 
+		parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix()) == MAF_OK && 
 		parent.StoreInteger(_R("Geometry"), 	m_GeometryType) == MAF_OK &&
     parent.StoreDouble(_R("ShereRadius"), m_SphereRadius) == MAF_OK &&
     parent.StoreDouble(_R("SpherePhiRes"),m_SpherePhiRes) == MAF_OK &&

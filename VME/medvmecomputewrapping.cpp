@@ -4985,7 +4985,7 @@ int medVMEComputeWrapping::InternalStore(mafStorageElementBuilder& parent)
 
 	if (Superclass::InternalStore(parent)==MAF_OK)
 	{
-		parent.StoreMatrix(_R("Transform"),m_Transform->GetMatrix());
+		parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix());
 		m_OrderMiddlePointsVMEList.clear();
 
 		for(int i=0; i<m_MiddlePointList.size(); i++)

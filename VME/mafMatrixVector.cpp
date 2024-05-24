@@ -77,7 +77,7 @@ int mafMatrixVector::InternalStore(mafStorageElementBuilder& parent)
   parent.SetAttribute(_R("NumberOfItems"),mafToString(GetNumberOfItems()));
   for (auto& elem : *this)
   {
-    if (parent.StoreMatrix(_R("Matrix"),*(elem.second))!=MAF_OK)
+    if (parent[_R("Matrix")].StoreMatrix(*(elem.second))!=MAF_OK)
       return MAF_ERROR;
   }
   return MAF_OK;

@@ -425,7 +425,7 @@ void medVMEMuscleWrapper::RestoreMeterLinks()
     parent.StoreInteger(_R("Smooth_Steps"), m_FbSmoothSteps);    
     parent.StoreDouble(_R("Smooth_Weight"), m_FbSmoothWeight); 
 
-    parent.StoreMatrix(_R("Transform"),m_Transform->GetMatrix());
+    parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix());
     return MAF_OK;
   }
   return MAF_ERROR;

@@ -480,7 +480,7 @@ int mafStorageElementBuilder::StoreText(const mafString& name, const mafString& 
   return MAF_OK;
 }
 //------------------------------------------------------------------------------
-int mafStorageElementBuilder::StoreMatrix(const mafString& name,const mafMatrix& matrix)
+int mafStorageElementBuilder::StoreMatrix(const mafMatrix& matrix)
 //------------------------------------------------------------------------------
 {
   // Write all the 16 elements into as a single 16-tupla
@@ -494,11 +494,10 @@ int mafStorageElementBuilder::StoreMatrix(const mafString& name,const mafMatrix&
     elements += _R("\n"); // cr for read-ability
   }
 
-  auto matrix_node=AppendChild(name);
-  matrix_node->StoreText(elements);
+  StoreText(elements);
 
   // add also the timestamp as an attribute
-  matrix_node->SetAttribute(_R("TimeStamp"),mafToString(matrix.GetTimeStamp()));
+  SetAttribute(_R("TimeStamp"),mafToString(matrix.GetTimeStamp()));
   return MAF_OK;
 }
 //------------------------------------------------------------------------------

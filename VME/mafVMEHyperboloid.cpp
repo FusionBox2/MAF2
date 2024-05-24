@@ -140,7 +140,7 @@ int mafVMEHyperboloid::InternalStore(mafStorageElementBuilder& parent)
 			parent.StoreDouble(_R("c"), c) == MAF_OK &&
 			parent.StoreDouble(_R("Theta"), resTheta) == MAF_OK &&
 			parent.StoreDouble(_R("Phi"), resPhi) == MAF_OK &&
-			parent.StoreMatrix(_R("Transform"), m_Transform->GetMatrix()) == MAF_OK
+			parent[_R("Transform")].StoreMatrix( m_Transform->GetMatrix()) == MAF_OK
 			
 		)
 		return MAF_OK;

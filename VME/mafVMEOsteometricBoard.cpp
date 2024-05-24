@@ -833,7 +833,7 @@ int mafVMEOsteometricBoard::InternalStore(mafStorageElementBuilder& parent)
 	if (Superclass::InternalStore(parent) == MAF_OK)
 	{
 		if (
-			parent.StoreMatrix(_R("Transform"), m_Transform->GetMatrix()) == MAF_OK &&
+			parent[_R("Transform")].StoreMatrix( m_Transform->GetMatrix()) == MAF_OK &&
 		//	parent.StoreInteger("Geometry", m_GeometryType) == MAF_OK &&
 	
 			parent.StoreDouble(_R("PlaneUx"), m_PlaneXRes) == MAF_OK &&

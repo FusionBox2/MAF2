@@ -421,7 +421,7 @@ int lhpVMESurfaceScalarVarying::InternalStore(mafStorageElementBuilder& parent)
 {  
   if (Superclass::InternalStore(parent) == MAF_OK)
   {
-    if (parent.StoreMatrix(_R("Transform"),m_Transform->GetMatrix()) == MAF_OK &&
+    if (parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix()) == MAF_OK &&
         parent.StoreInteger(_R("Radius"), m_Radius) == MAF_OK &&
         parent.StoreInteger(_R("NumOfScalarVMEIndexes"), m_ScalarRegionMap.size()) == MAF_OK)
     {

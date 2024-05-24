@@ -496,7 +496,7 @@ int mafVMEHelAxis::InternalStore(mafStorageElementBuilder& parent)
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent.StoreMatrix(_R("Transform"),m_Transform->GetMatrix());
+    parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix());
     //code for backward compatibility
     parent.StoreDouble(_R("ScaleFactor"), m_LengthFactor);
     parent.StoreDouble(_R("RadiusFactor"), m_RadiusFactor);

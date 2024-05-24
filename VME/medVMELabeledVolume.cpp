@@ -444,7 +444,7 @@ int medVMELabeledVolume::InternalStore(mafStorageElementBuilder& parent)
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent.StoreMatrix(_R("Transform"),m_Transform->GetMatrix());
+    parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix());
     return MAF_OK;
   }
   return MAF_ERROR;

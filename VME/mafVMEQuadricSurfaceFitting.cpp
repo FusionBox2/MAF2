@@ -912,7 +912,7 @@ int mafVMEQuadricSurfaceFitting::InternalStore(mafStorageElementBuilder& parent)
 	if (Superclass::InternalStore(parent)==MAF_OK)
 	{
     if (
-		parent.StoreMatrix(_R("Transform"),m_Transform->GetMatrix()) == MAF_OK  
+		parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix()) == MAF_OK  
 	/* &&	parent.StoreInteger(_R("Geometry"), m_GeometryType) == MAF_OK &&
     parent.StoreDouble(_R("ShereRadius"), m_SphereRadius) == MAF_OK &&
     parent.StoreDouble(_R("SpherePhiRes"),m_SpherePhiRes) == MAF_OK &&
@@ -949,7 +949,7 @@ int mafVMEQuadricSurfaceFitting::InternalStore(mafStorageElementBuilder& parent)
 	parent.StoreDouble(_R("PointsTheRes"), m_PointsThetaRes) == MAF_OK &&
 	parent.StoreDouble(_R("PointsPhiRes"), m_PointsPhiRes) == MAF_OK
 	*/
-	//&& parent.StoreMatrix(_R("PointsRotMat"), rotationMat) == MAF_OK
+	//&& parent[_R("PointsRotMat")].StoreMatrix( rotationMat) == MAF_OK
     )
 		return MAF_OK;
 	}

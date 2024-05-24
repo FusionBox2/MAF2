@@ -114,7 +114,7 @@ public:
 	int StoreText(const mafString& name, const mafString& text);
 	int StoreInteger(const mafString& name, const int& value);
 	int StoreDouble(const mafString& name, const double& value);
-	int StoreMatrix(const mafString& name, const mafMatrix& matrix);
+	int StoreMatrix(const mafMatrix& matrix);
 
 	int StoreObject(mafObject* object);
 	int StoreObject(const mafString& name, mafObject* object);

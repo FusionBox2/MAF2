@@ -447,7 +447,7 @@ int mafVMEBSplineSurface::InternalStore(mafStorageElementBuilder& parent)
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    if(parent.StoreMatrix(_R("Transform"),m_Transform->GetMatrix())==MAF_OK)
+    if(parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix())==MAF_OK)
       return MAF_OK;
   }
   return MAF_ERROR;

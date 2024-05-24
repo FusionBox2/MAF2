@@ -234,7 +234,7 @@ int mafVMEArrow::InternalStore(mafStorageElementBuilder& parent)
 {  
   if (Superclass::InternalStore(parent)==MAF_OK)
   {
-    parent.StoreMatrix(_R("Transform"),m_Transform->GetMatrix());
+    parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix());
     parent.StoreDouble(_R("ScaleFactor"), m_ScaleFactor);
     return MAF_OK;
   }
