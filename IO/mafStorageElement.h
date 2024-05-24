@@ -79,9 +79,9 @@ public:
   int StoreVectorN (const mafString& name, const std::vector<mafString> &comps,const mafString& tag);
   int StoreVectorN (const mafString& name, const std::vector<mafObject*>& vector, const mafString& items_name = _R("Item"));
 
-  int RestoreText    (const mafString& name, mafString &buffer) const;
-  int RestoreInteger (const mafString& name, int& value) const;
-  int RestoreDouble  (const mafString& name, double& value) const;
+  int RestoreText    (mafString &buffer) const;
+  int RestoreInteger (int& value) const;
+  int RestoreDouble  (double& value) const;
   int RestoreMatrix  (mafMatrix& matrix) const;
   int RestoreObject  (mafObject*& object) const;
   int RestoreStorable(mafStorable* object) const;
@@ -97,7 +97,6 @@ public:
 
 protected:
   virtual int StoreText(const mafString& buffer);// = 0;
-  virtual int RestoreText(mafString& buffer) const;// = 0;
   int StoreObject(mafObject* object);
 
 public:

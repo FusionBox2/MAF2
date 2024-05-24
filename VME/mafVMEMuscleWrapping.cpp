@@ -1880,7 +1880,7 @@ int mafVMEMuscleWrapping::InternalRestore(const mafStorageElement& node)
 		mafMatrix matrix;
 		if (node[_R("Transform")].RestoreMatrix(matrix) == MAF_OK
 			&&
-			node.RestoreInteger(_R("computeState"), m_ComputeStateCheckbox) == MAF_OK 
+			node[_R("computeState")].RestoreInteger( m_ComputeStateCheckbox) == MAF_OK 
 			)
 		{
 			m_Transform->SetMatrix(matrix);

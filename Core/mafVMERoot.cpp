@@ -201,7 +201,7 @@ int mafVMERoot::InternalRestore(const mafStorageElement& node)
 {
   RestoreRoot(node);
   int max_item_id;
-  node.RestoreInteger(_R("MaxItemId"),max_item_id);
+  node[_R("MaxItemId")].RestoreInteger(max_item_id);
   m_MaxItemId = max_item_id;
 
   if (Superclass::InternalRestore(node)==MAF_OK)

@@ -539,28 +539,28 @@ int mafStorageElement::StoreInteger(const mafString& name,const int &value)
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreDouble(const mafString& name,double &value) const
+int mafStorageElement::RestoreDouble(double &value) const
 //------------------------------------------------------------------------------
 {
-  mafString tmp;
-  if (RestoreText(name, tmp)==MAF_OK)
-  {
-    value=atof(tmp.GetCStr());
-    return MAF_OK;
-  }
+   mafString tmp;
+   if (RestoreText(tmp)==MAF_OK)
+   {
+     value=atof(tmp.GetCStr());
+     return MAF_OK;
+   }
   return MAF_ERROR;
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreInteger(const mafString& name,int &value) const
+int mafStorageElement::RestoreInteger(int &value) const
 //------------------------------------------------------------------------------
 {
-  mafString tmp;
-  if (RestoreText(name, tmp)==MAF_OK)
-  {
-    value=atof(tmp.GetCStr());
-    return MAF_OK;
-  }
+   mafString tmp;
+   if (RestoreText(tmp)==MAF_OK)
+   {
+     value=atof(tmp.GetCStr());
+     return MAF_OK;
+   }
   return MAF_ERROR;
 }
 //------------------------------------------------------------------------------
@@ -589,20 +589,6 @@ int mafStorageElement::RestoreVectorN(std::vector<mafString> &comps,const mafStr
     item_node->RestoreText(comps[i]);
   }
   return MAF_OK;
-}
-//------------------------------------------------------------------------------
-int mafStorageElement::RestoreText(const mafString& name,mafString &buffer) const
-//------------------------------------------------------------------------------
-{
-  mafStorageElement *elem=FindNestedElement(name);
-  if (elem)
-  {
-    return elem->RestoreText(buffer);
-  }
-
-  mafWarningMacro("Parse Error while parsing <"<<GetName().GetCStr() <<"> element: cannot find nested Storage element <"<<name.GetCStr() <<">" );
-
-  return MAF_ERROR;
 }
 //------------------------------------------------------------------------------
 bool mafStorageElement::GetAttributeAsDouble(const mafString& name,double &value) const

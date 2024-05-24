@@ -522,15 +522,15 @@ int mafVMEHelAxis::InternalRestore(const mafStorageElement& node)
     {
       m_Transform->SetMatrix(matrix);
       //code for backward compatibility
-      node.RestoreDouble(_R("ScaleFactor"), m_LengthFactor);
+      node[_R("ScaleFactor")].RestoreDouble( m_LengthFactor);
       m_RadiusFactor = m_LengthFactor;
-      node.RestoreDouble(_R("RadiusFactor"), m_RadiusFactor);
-      node.RestoreDouble(_R("LengthFactor"), m_LengthFactor);
-      node.RestoreDouble(_R("MinAngle"), m_MinAngle);
-      node.RestoreDouble(_R("MinTime"), m_MinTime);
-      node.RestoreDouble(_R("MaxTime"), m_MaxTime);
-      node.RestoreInteger(_R("Mode"), m_Mode);
-      node.RestoreInteger(_R("AligningMode"), m_AligningMode);
+      node[_R("RadiusFactor")].RestoreDouble( m_RadiusFactor);
+      node[_R("LengthFactor")].RestoreDouble( m_LengthFactor);
+      node[_R("MinAngle")].RestoreDouble( m_MinAngle);
+      node[_R("MinTime")].RestoreDouble( m_MinTime);
+      node[_R("MaxTime")].RestoreDouble( m_MaxTime);
+      node[_R("Mode")].RestoreInteger( m_Mode);
+      node[_R("AligningMode")].RestoreInteger( m_AligningMode);
       m_MeanChanges = 1;
       SetRadiusFactor(m_RadiusFactor);
       SetLengthFactor(m_LengthFactor);

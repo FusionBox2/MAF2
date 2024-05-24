@@ -397,13 +397,13 @@ int mafVMEBSplineLine::InternalRestore(const mafStorageElement& node)
     if (node[_R("Transform")].RestoreMatrix(matrix) ==MAF_OK)
     {
       m_Transform->SetMatrix(matrix);
-      node.RestoreInteger(_R("Order"), m_Order);
-      node.RestoreInteger(_R("Mode"), m_Mode);
-      node.RestoreInteger(_R("Submode"), m_SubMode);
-      node.RestoreDouble(_R("Smooth"), m_Smooth);
-      node.RestoreInteger(_R("Num_parts"), m_TesselSize);
-      node.RestoreInteger(_R("Filter_ident"), m_FilterIdent);
-      node.RestoreInteger(_R("Extract_fibre"), m_ExtractFibre);
+      node[_R("Order")].RestoreInteger( m_Order);
+      node[_R("Mode")].RestoreInteger( m_Mode);
+      node[_R("Submode")].RestoreInteger( m_SubMode);
+      node[_R("Smooth")].RestoreDouble( m_Smooth);
+      node[_R("Num_parts")].RestoreInteger( m_TesselSize);
+      node[_R("Filter_ident")].RestoreInteger( m_FilterIdent);
+      node[_R("Extract_fibre")].RestoreInteger( m_ExtractFibre);
       m_Loaded = true;
       return MAF_OK;
     }

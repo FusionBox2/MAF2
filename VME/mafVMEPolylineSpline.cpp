@@ -231,7 +231,7 @@ int mafVMEPolylineSpline::InternalRestore(const mafStorageElement& node)
     mafMatrix matrix;
     if (node[_R("Transform")].RestoreMatrix(matrix) ==MAF_OK)
     {
-      node.RestoreInteger(_R("AxisReorder"),m_OrderByAxisMode);
+      node[_R("AxisReorder")].RestoreInteger(m_OrderByAxisMode);
       m_Transform->SetMatrix(matrix);
       return MAF_OK;
     }

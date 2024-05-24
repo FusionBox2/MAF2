@@ -53,18 +53,16 @@ int mafQuadraticSurface::InternalStore(mafStorageElement *parent)
 	return MAF_ERROR;
 }
 
-int mafQuadraticSurface::InternalRestore(const mafStorageElement& node_)
+int mafQuadraticSurface::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-	auto node = &node_;
-
-	if (Superclass::InternalRestore(node_) == MAF_OK)
+	if (Superclass::InternalRestore(node) == MAF_OK)
 	{
 		
 		if (
-			node->RestoreDouble(_R("Centerx"), center[0]) == MAF_OK &&
-			node->RestoreDouble(_R("Centery"), center[1]) == MAF_OK &&
-			node->RestoreDouble(_R("Centerz"), center[2]) == MAF_OK 
+			node[_R("Centerx")].RestoreDouble( center[0]) == MAF_OK &&
+			node[_R("Centery")].RestoreDouble( center[1]) == MAF_OK &&
+			node[_R("Centerz")].RestoreDouble( center[2]) == MAF_OK 
 			)
 		{
 		

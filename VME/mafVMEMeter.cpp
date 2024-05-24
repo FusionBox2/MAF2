@@ -813,8 +813,8 @@ int mafVMEMeter::InternalRestore(const mafStorageElement& node)
   if (Superclass::InternalRestore(node)==MAF_OK)
   {
     mafMatrix matrix;
-    node.RestoreInteger(_R("Infinite"), m_InfiniteLine);
-    node.RestoreInteger(_R("LineAngle2"), m_LineAngle2);
+    node[_R("Infinite")].RestoreInteger( m_InfiniteLine);
+    node[_R("LineAngle2")].RestoreInteger( m_LineAngle2);
     if (node[_R("Transform")].RestoreMatrix(matrix) ==MAF_OK)
     {
       m_Transform->SetMatrix(matrix);

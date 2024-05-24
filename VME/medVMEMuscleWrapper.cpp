@@ -437,37 +437,37 @@ void medVMEMuscleWrapper::RestoreMeterLinks()
 {
   if (Superclass::InternalRestore(node)==MAF_OK)
   {     
-    if (node.RestoreInteger(_R("Wrappers_Num"), m_nWrappers) != MAF_OK)
+    if (node[_R("Wrappers_Num")].RestoreInteger( m_nWrappers) != MAF_OK)
       m_nWrappers = 0;  //no wrapper available
 
-    if (node.RestoreInteger(_R("InputMode"), m_InputMode) != MAF_OK)
+    if (node[_R("InputMode")].RestoreInteger( m_InputMode) != MAF_OK)
       m_InputMode = DEFAULT_INPUT_MODE;
 
-    if (node.RestoreInteger(_R("VisualMode"), m_VisMode) != MAF_OK)
+    if (node[_R("VisualMode")].RestoreInteger( m_VisMode) != MAF_OK)
       m_VisMode = DEFAULT_VISUAL_MODE; 
 
-    if (node.RestoreInteger(_R("UseRefSys"), m_UseRefSys) != MAF_OK)
+    if (node[_R("UseRefSys")].RestoreInteger( m_UseRefSys) != MAF_OK)
       m_UseRefSys = DEFAULT_USEREFSYSVAL;
 
-    if (node.RestoreInteger(_R("Fibers_Type"), m_FbTemplate) != MAF_OK)
+    if (node[_R("Fibers_Type")].RestoreInteger( m_FbTemplate) != MAF_OK)
       m_FbTemplate = DEFAULT_FIBERS_TYPE;
 
-    if (node.RestoreInteger(_R("Fibers_Num"), m_FbNumFib) != MAF_OK)
+    if (node[_R("Fibers_Num")].RestoreInteger( m_FbNumFib) != MAF_OK)
       m_FbNumFib = DEFAULT_FIBERS_NUM;
 
-    if (node.RestoreInteger(_R("Fibers_Res"), m_FbResolution) != MAF_OK)
+    if (node[_R("Fibers_Res")].RestoreInteger( m_FbResolution) != MAF_OK)
       m_FbResolution = DEFAULT_FIBERS_RES;
 
-    if (node.RestoreDouble(_R("Fibers_Thickness"), m_FbThickness) != MAF_OK)
+    if (node[_R("Fibers_Thickness")].RestoreDouble( m_FbThickness) != MAF_OK)
       m_FbThickness = DEFAULT_FIBERS_THICKNESS;
 
-    if (node.RestoreInteger(_R("Fibers_Smooth"), m_FbSmooth) != MAF_OK)
+    if (node[_R("Fibers_Smooth")].RestoreInteger( m_FbSmooth) != MAF_OK)
       m_FbSmooth = DEFAULT_FIBERS_SMOOTH;
 
-    if (node.RestoreInteger(_R("Smooth_Steps"), m_FbSmoothSteps) != MAF_OK)
+    if (node[_R("Smooth_Steps")].RestoreInteger( m_FbSmoothSteps) != MAF_OK)
       m_FbSmoothSteps = DEFAULT_FIBERS_SMOOTHSTEPS;
 
-    if (node.RestoreDouble(_R("Smooth_Weight"), m_FbSmoothWeight) != MAF_OK)
+    if (node[_R("Smooth_Weight")].RestoreDouble( m_FbSmoothWeight) != MAF_OK)
       m_FbSmoothWeight = DEFAULT_FIBERS_SMOOTHWEIGHT;
     
     mafMatrix matrix;

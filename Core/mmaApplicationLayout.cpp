@@ -221,15 +221,15 @@ int mmaApplicationLayout::InternalRestore(const mafStorageElement& node)
 {
   if (Superclass::InternalRestore(node) == MAF_OK)
   {
-    node.RestoreInteger(_R("APPLICATION_MAXIMIZED"), m_AppMaximized);
+    node[_R("APPLICATION_MAXIMIZED")].RestoreInteger( m_AppMaximized);
     node[_R("APPLICATION_SIZE")].RestoreVectorN(m_AppSize, 2);
     node[_R("APPLICATION_POSITION")].RestoreVectorN(m_AppPosition,2);
 
-    node.RestoreInteger(_R("TOOLBAR_VISIBILITY"), m_ToolBarVisibility);
-    node.RestoreInteger(_R("SIDEBAR_VISIBILITY"), m_SideBarVisibility);
-    node.RestoreInteger(_R("LOGBAR_VISIBILITY"), m_LogBarVisibility);
+    node[_R("TOOLBAR_VISIBILITY")].RestoreInteger( m_ToolBarVisibility);
+    node[_R("SIDEBAR_VISIBILITY")].RestoreInteger( m_SideBarVisibility);
+    node[_R("LOGBAR_VISIBILITY")].RestoreInteger( m_LogBarVisibility);
 
-    node.RestoreText(_R("LAYOUT_NAME"),m_LayoutName);
+    node[_R("LAYOUT_NAME")].RestoreText(m_LayoutName);
     mafString view_id;
     mafString view_mult;
     mafString view_label;
@@ -241,21 +241,21 @@ int mmaApplicationLayout::InternalRestore(const mafStorageElement& node)
     mafString view_camera_parameters;
     ViewLayoutInfo info;
     int n;
-    node.RestoreInteger(_R("NUMBER_OF_VIEW"), n);
+    node[_R("NUMBER_OF_VIEW")].RestoreInteger( n);
     for (int i = 0; i < n; i++)
     {
       view_id = _R("VIEW_ID_");
       view_id += mafToString(i);
-      node.RestoreInteger(view_id, info.m_Id);
+      node[view_id].RestoreInteger(info.m_Id);
       view_mult = _R("VIEW_MULT_");
       view_mult += mafToString(i);
-      node.RestoreInteger(view_mult, info.m_Mult);
+      node[view_mult].RestoreInteger(info.m_Mult);
       view_label = _R("VIEW_LABEL_");
       view_label += mafToString(i);
-      node.RestoreText(view_label, info.m_Label);
+      node[view_label].RestoreText(info.m_Label);
       view_max = _R("VIEW_MAXIMIZED_");
       view_max += mafToString(i);
-      node.RestoreInteger(view_max, info.m_Maximized);
+      node[view_max].RestoreInteger(info.m_Maximized);
       view_size = _R("VIEW_SIZE_");
       view_size += mafToString(i);
       view_pos = _R("VIEW_POS_");
@@ -265,7 +265,7 @@ int mmaApplicationLayout::InternalRestore(const mafStorageElement& node)
       vme_in_view = _R("VME_IN_VIEW_");
       vme_in_view += mafToString(i);
       int num_vme = 0;
-      node.RestoreInteger(vme_in_view,num_vme);
+      node[vme_in_view].RestoreInteger(num_vme);
       if (num_vme > 0)
       {
         vme_ids_in_view = _R("VME_IDS_IN_VIEW_");

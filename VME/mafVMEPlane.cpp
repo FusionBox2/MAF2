@@ -881,8 +881,8 @@ int mafVMEPlane::InternalRestore(const mafStorageElement& node)
 		mafMatrix matrix;
 		if (
 	//	node.RestoreText("name", m_Name) &&
-		node.RestoreDouble(_R("PlaneUx"), m_PlaneXRes) &&
-		node.RestoreDouble(_R("PlaneUy"), m_PlaneYRes) &&
+		node[_R("PlaneUx")].RestoreDouble( m_PlaneXRes) &&
+		node[_R("PlaneUy")].RestoreDouble( m_PlaneYRes) &&
 		
 		/*node.RestoreDouble("m_PlaneOrigin0", m_PlaneOrigin[0]) == MAF_OK &&
 		node.RestoreDouble("m_PlaneOrigin1", m_PlaneOrigin[1]) == MAF_OK &&

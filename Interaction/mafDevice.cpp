@@ -200,19 +200,18 @@ int mafDevice::InternalStore(mafStorageElement *node)
 }
 
 //------------------------------------------------------------------------------
-int mafDevice::InternalRestore(const mafStorageElement& node_)
+int mafDevice::InternalRestore(const mafStorageElement& node)
 //------------------------------------------------------------------------------
 {  
-	auto node = &node_;
 	// Device Name
-  if (node->RestoreText(_R("Name"),m_Name)==MAF_OK)
+  if (node[_R("Name")].RestoreText(m_Name) == MAF_OK)
   {
     int dev_id;
-    node->RestoreInteger(_R("ID"),dev_id);
+    node[_R("ID")].RestoreInteger(dev_id);
     SetID(dev_id+MIN_DEVICE_ID);
     int flag;
     // AutoStart flag (optional)
-    if (node->RestoreInteger(_R("AutoStart"),flag)==MAF_OK)
+    if (node[_R("AutoStart")].RestoreInteger(flag)==MAF_OK)
     {
       SetAutoStart(flag!=0);      
     }

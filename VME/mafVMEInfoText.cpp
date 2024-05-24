@@ -115,25 +115,23 @@ int mafVMEInfoText::InternalStore(mafStorageElement *parent)
 }
 
 //-----------------------------------------------------------------------
-int mafVMEInfoText::InternalRestore(const mafStorageElement& node_)
+int mafVMEInfoText::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-	auto node = &node_;
-
-  if (Superclass::InternalRestore(node_)==MAF_OK)
+  if (Superclass::InternalRestore(node)==MAF_OK)
   {
     mafString txtname;
     for(int j = 0; j < 3; j++)
     {
       txtname = _R("Label") + mafToString(j);
-      if(node->RestoreText(txtname, m_PosLabels[j]) != MAF_OK)
+      if(node[txtname].RestoreText(m_PosLabels[j]) != MAF_OK)
         return MAF_ERROR;
     }
     for(int j = 0; j < 3; j++)
     {
       txtname = _R("ShowLabel") + mafToString(j);
       int val;
-      if(node->RestoreInteger(txtname, val) != MAF_OK)
+      if(node[txtname].RestoreInteger(val) != MAF_OK)
         return MAF_ERROR;
       m_PosShow[j] = (val != 0);
     }
@@ -144,11 +142,11 @@ int mafVMEInfoText::InternalRestore(const mafStorageElement& node_)
     m_Strings.clear();
 
     int strSz = m_Strings.size();
-    if(node->RestoreInteger(_R("NumberOfStrings"), strSz) == MAF_OK)
+    if(node[_R("NumberOfStrings")].RestoreInteger( strSz) == MAF_OK)
     {
       for(int k = 0; k < strSz; k++) 
       {
-        if(node->RestoreText(txtname,ReadStr) == MAF_OK)
+        if(node[txtname].RestoreText(ReadStr) == MAF_OK)
           m_Strings.push_back(ReadStr);
         i++;
         txtname = _R("String") + mafToString(i);
@@ -156,7 +154,7 @@ int mafVMEInfoText::InternalRestore(const mafStorageElement& node_)
     }
     else
     {
-      while (node->RestoreText(txtname,ReadStr) == MAF_OK)
+      while (node[txtname].RestoreText(ReadStr) == MAF_OK)
       {
         m_Strings.push_back(ReadStr);
         i++;

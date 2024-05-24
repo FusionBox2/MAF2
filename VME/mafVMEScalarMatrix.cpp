@@ -208,21 +208,19 @@ int mafVMEScalarMatrix::InternalStore(mafStorageElement *parent)
   return MAF_ERROR;
 }
 //-----------------------------------------------------------------------
-int mafVMEScalarMatrix::InternalRestore(const mafStorageElement& node_)
+int mafVMEScalarMatrix::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-	auto node = &node_;
-
-  if (Superclass::InternalRestore(node_)==MAF_OK)
+  if (Superclass::InternalRestore(node)==MAF_OK)
   {
-    if (node->RestoreInteger(_R("XID"),m_XID) == MAF_OK &&
-        node->RestoreInteger(_R("YID"),m_YID) == MAF_OK &&
-        node->RestoreInteger(_R("ZID"),m_ZID) == MAF_OK &&
-        node->RestoreInteger(_R("Xtype"),m_Xtype) == MAF_OK &&
-        node->RestoreInteger(_R("Ytype"),m_Ytype) == MAF_OK &&
-        node->RestoreInteger(_R("Ztype"),m_Ztype) == MAF_OK &&
-        node->RestoreInteger(_R("ActiveScalar"),m_ActiveScalar)==MAF_OK &&
-        node->RestoreInteger(_R("ScalarArrayOrientationInMatrix"),m_ScalarArrayOrientationInMatrix) == MAF_OK)
+    if (node[_R("XID")].RestoreInteger(m_XID) == MAF_OK &&
+        node[_R("YID")].RestoreInteger(m_YID) == MAF_OK &&
+        node[_R("ZID")].RestoreInteger(m_ZID) == MAF_OK &&
+        node[_R("Xtype")].RestoreInteger(m_Xtype) == MAF_OK &&
+        node[_R("Ytype")].RestoreInteger(m_Ytype) == MAF_OK &&
+        node[_R("Ztype")].RestoreInteger(m_Ztype) == MAF_OK &&
+        node[_R("ActiveScalar")].RestoreInteger(m_ActiveScalar)==MAF_OK &&
+        node[_R("ScalarArrayOrientationInMatrix")].RestoreInteger(m_ScalarArrayOrientationInMatrix) == MAF_OK)
     {
       return MAF_OK;
     }

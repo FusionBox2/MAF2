@@ -1897,13 +1897,13 @@ int medVMEWrappedMeter::InternalRestore(const mafStorageElement& node)
     {
       m_Transform->SetMatrix(matrix);
 	  int              orderMiddlePointsVMEListNumberOfElements;
-			node.RestoreInteger(_R("OrderMiddlePointVmeNumberOfElements"), orderMiddlePointsVMEListNumberOfElements);
+			node[_R("OrderMiddlePointVmeNumberOfElements")].RestoreInteger( orderMiddlePointsVMEListNumberOfElements);
 			m_OrderMiddlePointsVMEList.resize(orderMiddlePointsVMEListNumberOfElements);
 			node[_R("OrderMiddlePointVme")].RestoreVectorN(m_OrderMiddlePointsVMEList);
 			
-      node.RestoreInteger(_R("WrapMode"), m_WrappedMode);
-      node.RestoreInteger(_R("WrapSide"), m_WrapSide);
-      node.RestoreInteger(_R("WrapReverse"), m_WrapReverse);
+      node[_R("WrapMode")].RestoreInteger( m_WrappedMode);
+      node[_R("WrapSide")].RestoreInteger( m_WrapSide);
+      node[_R("WrapReverse")].RestoreInteger( m_WrapReverse);
       return MAF_OK;
     }
   }

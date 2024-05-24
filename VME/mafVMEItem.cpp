@@ -262,11 +262,11 @@ int mafVMEItem::InternalRestore(const mafStorageElement& node)
 //-------------------------------------------------------------------------
 {
   mafString crypting;
-  if (node.RestoreText(_R("URL"),m_URL)==MAF_OK \
-    &&node.RestoreInteger(_R("Id"),m_Id)==MAF_OK \
-    &&node.RestoreText(_R("DataType"),m_DataType)==MAF_OK \
-    &&node.RestoreDouble(_R("TimeStamp"),m_TimeStamp)==MAF_OK \
-    &&node.RestoreText(_R("Crypting"),crypting)==MAF_OK \
+  if (node[_R("URL")].RestoreText(m_URL) == MAF_OK \
+    &&node[_R("Id")].RestoreInteger(m_Id)==MAF_OK \
+    &&node[_R("DataType")].RestoreText(m_DataType) == MAF_OK \
+    &&node[_R("TimeStamp")].RestoreDouble(m_TimeStamp)==MAF_OK \
+    &&node[_R("Crypting")].RestoreText(crypting) == MAF_OK \
     &&node[_R("Bounds")].RestoreVectorN(m_Bounds.m_Bounds, 6) == MAF_OK \
     &&node[_R("TagArray")].RestoreStorable(m_TagArray) == MAF_OK)
   {

@@ -131,17 +131,17 @@ int mmaMeter::InternalRestore(const mafStorageElement& node)
     //mafMatrix matrix;  //modified by Marco. 29-9-2005 It seems this field is not stored...
     ///if (node->RestoreMatrix("Transform",&matrix)==MAF_OK)
     //{
-      node.RestoreInteger(_R("MeterMode"), m_MeterMode);
-      node.RestoreInteger(_R("ColorMode"), m_ColorMode);
-      node.RestoreInteger(_R("Representation"), m_Representation);
-      node.RestoreInteger(_R("Capping"), m_Capping);
-      node.RestoreInteger(_R("MeasureType"), m_MeasureType);
-      node.RestoreInteger(_R("GenerateEvent"), m_GenerateEvent);
-      node.RestoreDouble(_R("DeltaPercent"), m_DeltaPercent);
-      node.RestoreInteger(_R("ThresholdEvent"), m_ThresholdEvent);
-      node.RestoreInteger(_R("LabelVisibility"), m_LabelVisibility);
-      node.RestoreDouble(_R("InitMeasure"),m_InitMeasure);
-      node.RestoreDouble(_R("TubeRadius"),m_TubeRadius);
+      node[_R("MeterMode")].RestoreInteger( m_MeterMode);
+      node[_R("ColorMode")].RestoreInteger( m_ColorMode);
+      node[_R("Representation")].RestoreInteger( m_Representation);
+      node[_R("Capping")].RestoreInteger( m_Capping);
+      node[_R("MeasureType")].RestoreInteger( m_MeasureType);
+      node[_R("GenerateEvent")].RestoreInteger( m_GenerateEvent);
+      node[_R("DeltaPercent")].RestoreDouble( m_DeltaPercent);
+      node[_R("ThresholdEvent")].RestoreInteger( m_ThresholdEvent);
+      node[_R("LabelVisibility")].RestoreInteger( m_LabelVisibility);
+      node[_R("InitMeasure")].RestoreDouble(m_InitMeasure);
+      node[_R("TubeRadius")].RestoreDouble(m_TubeRadius);
       node[_R("DistanceRange")].RestoreVectorN(m_DistanceRange, 2);
       return MAF_OK;
     //}

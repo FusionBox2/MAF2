@@ -464,10 +464,10 @@ int lhpVMESurfaceScalarVarying::InternalRestore(const mafStorageElement& node)
     if (node[_R("Transform")].RestoreMatrix(matrix) == MAF_OK)
     {
       m_Transform->SetMatrix(matrix);
-      if (node.RestoreInteger(_R("Radius"), m_Radius) == MAF_OK)
+      if (node[_R("Radius")].RestoreInteger( m_Radius) == MAF_OK)
       {
         int num = 0;
-        if (node.RestoreInteger(_R("NumOfScalarVMEIndexes"), num) == MAF_OK)
+        if (node[_R("NumOfScalarVMEIndexes")].RestoreInteger( num) == MAF_OK)
         {
           int *indexIds, num_indexes;
           mafString indexesName, numIndexesName;
@@ -477,7 +477,7 @@ int lhpVMESurfaceScalarVarying::InternalRestore(const mafStorageElement& node)
             indexesName = _R("ScalarVMEIndexes");
             indexesName += mafToString(n);
             numIndexesName += mafToString(n);
-            if(node.RestoreInteger(numIndexesName, num_indexes) == MAF_OK)
+            if(node[numIndexesName].RestoreInteger(num_indexes) == MAF_OK)
             {
               indexIds = new int[num_indexes];
               if (node[indexesName].RestoreVectorN(indexIds, num_indexes) == MAF_OK)

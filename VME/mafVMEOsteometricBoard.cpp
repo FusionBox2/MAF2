@@ -864,8 +864,8 @@ int mafVMEOsteometricBoard::InternalRestore(const mafStorageElement& node)
 			m_Transform->SetMatrix(matrix);
 		
 			
-			node.RestoreDouble(_R("PlaneUx"), m_PlaneXRes);
-			node.RestoreDouble(_R("PlaneUy"), m_PlaneYRes);
+			node[_R("PlaneUx")].RestoreDouble( m_PlaneXRes);
+			node[_R("PlaneUy")].RestoreDouble( m_PlaneYRes);
 			/*node.RestoreText("m_p1LandmarkName", m_p1LandmarkName);
 			node.RestoreText("m_p2LandmarkName", m_p2LandmarkName);
 			node.RestoreText("m_p3LandmarkName", m_p3LandmarkName);

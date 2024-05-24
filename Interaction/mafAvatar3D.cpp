@@ -518,17 +518,17 @@ int mafAvatar3D::InternalRestore(const mafStorageElement& node)
     return MAF_ERROR;
 
   int display_working_box = 0;
-  node.RestoreInteger(_R("DisplayWorkingBox"),display_working_box);
+  node[_R("DisplayWorkingBox")].RestoreInteger(display_working_box);
   SetDisplayWorkingBox(display_working_box);
   
   int display_debug_text = 0;
-  node.RestoreInteger(_R("DisplayDebugText"),display_debug_text);
+  node[_R("DisplayDebugText")].RestoreInteger(display_debug_text);
   SetDisplayDebugText(display_debug_text);
   
   double coords[2]={0,0};
   node[_R("DebugTextPosition")].RestoreVectorN(coords, 2);
   SetDebugTextPosition(coords[0],coords[1]);
-  node.RestoreInteger(_R("CoordsFrame"),m_CoordsFrame);
+  node[_R("CoordsFrame")].RestoreInteger(m_CoordsFrame);
   return MAF_OK;
   
 }

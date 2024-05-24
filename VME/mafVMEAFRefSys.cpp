@@ -207,30 +207,28 @@ void mafVMEAFRefSys::SetActive(int active)
 
 
 //-----------------------------------------------------------------------
-int mafVMEAFRefSys::InternalRestore(const mafStorageElement& node_)
+int mafVMEAFRefSys::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-	auto node = &node_;
-
-  if (Superclass::InternalRestore(node_)==MAF_OK)
+  if (Superclass::InternalRestore(node)==MAF_OK)
   {
     mafMatrix matrix;
-    //if (node->RestoreMatrix("Transform",&matrix)==MAF_OK)
+    //if (node.RestoreMatrix("Transform",&matrix)==MAF_OK)
     {
-      node->RestoreInteger(_R("Active"), m_Active);
-      node->RestoreInteger(_R("BoneID"), m_BoneID);
-      node->RestoreDouble(_R("XOffset"), m_XOffset);
-      node->RestoreDouble(_R("YOffset"), m_YOffset);
-      node->RestoreDouble(_R("ZOffset"), m_ZOffset);
-      node->RestoreDouble(_R("XRotate"), m_XRotate);
-      node->RestoreDouble(_R("YRotate"), m_YRotate);
-      node->RestoreDouble(_R("ZRotate"), m_ZRotate);
-      node->RestoreInteger(_R("ScriptStrings"), m_textSize);
+      node[_R("Active")].RestoreInteger( m_Active);
+      node[_R("BoneID")].RestoreInteger( m_BoneID);
+      node[_R("XOffset")].RestoreDouble( m_XOffset);
+      node[_R("YOffset")].RestoreDouble( m_YOffset);
+      node[_R("ZOffset")].RestoreDouble( m_ZOffset);
+      node[_R("XRotate")].RestoreDouble( m_XRotate);
+      node[_R("YRotate")].RestoreDouble( m_YRotate);
+      node[_R("ZRotate")].RestoreDouble( m_ZRotate);
+      node[_R("ScriptStrings")].RestoreInteger( m_textSize);
       m_scriptText.resize(m_textSize);
       for(int i = 0; i < m_textSize; i++)
       {
         mafString nm = mafString::Format(_R("ln%d"), i);
-        node->RestoreText(nm, m_scriptText[i]);
+        node[nm].RestoreText(m_scriptText[i]);
       }
       ConvertTextToVM(false);
       for(unsigned i = 0; i < m_vm->getInputs().size(); i++)
@@ -238,12 +236,12 @@ int mafVMEAFRefSys::InternalRestore(const mafStorageElement& node_)
         if(m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
         {
           mafString tmp;
-          node->RestoreText(_R(m_vm->getInputs()[i].first.c_str()), tmp);
+          node[_R(m_vm->getInputs()[i].first.c_str())].RestoreText(tmp);
           m_lmMapping[_R(m_vm->getInputs()[i].first.c_str())] = tmp;
         }
         else
         {
-          node->RestoreDouble(_R(m_vm->getInputs()[i].first.c_str()), m_vm->getInputs()[i].second->GetScalar());
+          node[_R(m_vm->getInputs()[i].first.c_str())].RestoreDouble(m_vm->getInputs()[i].second->GetScalar());
         }
       }
       SetScaleFactor(m_ScaleFactor);

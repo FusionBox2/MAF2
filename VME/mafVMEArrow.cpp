@@ -251,7 +251,7 @@ int mafVMEArrow::InternalRestore(const mafStorageElement& node)
     if (node[_R("Transform")].RestoreMatrix(matrix) ==MAF_OK)
     {
       m_Transform->SetMatrix(matrix);
-      node.RestoreDouble(_R("ScaleFactor"), m_ScaleFactor);
+      node[_R("ScaleFactor")].RestoreDouble( m_ScaleFactor);
       SetScaleFactor(m_ScaleFactor);
       return MAF_OK;
     }

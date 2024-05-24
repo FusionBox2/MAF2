@@ -214,10 +214,10 @@ int medAttributeSegmentationVolume::InternalRestore(const mafStorageElement& nod
   {
     //////////////////////////////////////////////////////////////////////////
     mafString value = _R("AUTOMATIC_SEGMENTATION_THRESHOLD_MODALITY");
-    node.RestoreInteger(value,m_AutomaticSegmentationThresholdModality);
+    node[value].RestoreInteger(m_AutomaticSegmentationThresholdModality);
     
     value = _R("USE_DOUBLE_THRESHOLD");
-    if(node.RestoreInteger(value,m_UseDoubleThreshold) == MAF_ERROR)
+    if(node[value].RestoreInteger(m_UseDoubleThreshold) == MAF_ERROR)
     {
       mafLogMessage(_M("Old file version loaded  for retro-compatility please save it again"));
       m_UseDoubleThreshold=0;
@@ -225,17 +225,17 @@ int medAttributeSegmentationVolume::InternalRestore(const mafStorageElement& nod
     
     //////////////////////////////////////////////////////////////////////////
     value = _R("AUTOMATIC_SEGMENTATION_GLOBAL_THRESHOLD");
-    node.RestoreDouble(value,m_AutomaticSegmentationGlobalThreshold);
+    node[value].RestoreDouble(m_AutomaticSegmentationGlobalThreshold);
     //////////////////////////////////////////////////////////////////////////
     if (m_UseDoubleThreshold)
     {
       value = _R("AUTOMATIC_SEGMENTATION_GLOBAL_UPPER_THRESHOLD");
-      node.RestoreDouble(value,m_AutomaticSegmentationGlobalUpperThreshold);
+      node[value].RestoreDouble(m_AutomaticSegmentationGlobalUpperThreshold);
     }
     //////////////////////////////////////////////////////////////////////////
     int numOfRanges;
     value = _R("NUM_OF_RANGES");
-    node.RestoreInteger(value,numOfRanges);
+    node[value].RestoreInteger(numOfRanges);
     for (int i=0;i<numOfRanges;i++)
     {
       int *range = new int[2];
@@ -246,14 +246,14 @@ int medAttributeSegmentationVolume::InternalRestore(const mafStorageElement& nod
       m_AutomaticSegmentationRanges.push_back(range);
       value = _R("THRESHOLD_");
       value += mafToString(i);
-      node.RestoreDouble(value,threshold);
+      node[value].RestoreDouble(threshold);
       //do not load upper threshold m_UseDoubleThreshold is false 
       //in this mode retro-compatibility is guaranteed
       if (m_UseDoubleThreshold)
       {
         value = _R("UPPER_THRESHOLD_");
         value += mafToString(i);
-        node.RestoreDouble(value,upperThreshold);
+        node[value].RestoreDouble(upperThreshold);
       }
       else upperThreshold=0;
 
@@ -261,14 +261,14 @@ int medAttributeSegmentationVolume::InternalRestore(const mafStorageElement& nod
     }
     //////////////////////////////////////////////////////////////////////////
     value = _R("REGION_GROWING_UPPER_THRESHOLD");
-    node.RestoreDouble(value,m_RegionGrowingUpperThreshold);
+    node[value].RestoreDouble(m_RegionGrowingUpperThreshold);
     //////////////////////////////////////////////////////////////////////////
     value = _R("REGION_GROWING_LOWER_THRESHOLD");
-    node.RestoreDouble(value,m_RegionGrowingLowerThreshold);
+    node[value].RestoreDouble(m_RegionGrowingLowerThreshold);
     //////////////////////////////////////////////////////////////////////////
     int numOfSeeds;
     value = _R("NUM_OF_SEEDS");
-    node.RestoreInteger(value,numOfSeeds);
+    node[value].RestoreInteger(numOfSeeds);
     for (int i=0;i<numOfSeeds;i++)
     {
       int *seed = new int[3];

@@ -157,18 +157,18 @@ int mafVMEHyperboloid::InternalRestore(const mafStorageElement& node)
 		mafMatrix matrix;
 		if (
 			//node.RestoreObject(_R("centervme"), center_vme)&&
-			node.RestoreText(_R("name"), name) == MAF_OK &&
-			node.RestoreText(_R("landmarkName"), m_LandmarkName) == MAF_OK &&
-			node.RestoreDouble(_R("Centerx"), center[0]) == MAF_OK &&
-			node.RestoreDouble(_R("Centery"), center[1]) == MAF_OK &&
-			node.RestoreDouble(_R("Centerz"), center[2]) == MAF_OK &&
-			node.RestoreDouble(_R("a"), a) == MAF_OK &&
-			node.RestoreDouble(_R("b"), b) == MAF_OK &&
-			node.RestoreDouble(_R("c"), c) == MAF_OK) //&&
+			node[_R("name")].RestoreText(name) == MAF_OK &&
+			node[_R("landmarkName")].RestoreText(m_LandmarkName) == MAF_OK &&
+			node[_R("Centerx")].RestoreDouble( center[0]) == MAF_OK &&
+			node[_R("Centery")].RestoreDouble( center[1]) == MAF_OK &&
+			node[_R("Centerz")].RestoreDouble( center[2]) == MAF_OK &&
+			node[_R("a")].RestoreDouble( a) == MAF_OK &&
+			node[_R("b")].RestoreDouble( b) == MAF_OK &&
+			node[_R("c")].RestoreDouble( c) == MAF_OK) //&&
 
 		{ 
-		if( node.RestoreDouble(_R("Theta"), resTheta) == MAF_OK &&
-			node.RestoreDouble(_R("Phi"), resPhi) == MAF_OK &&
+		if( node[_R("Theta")].RestoreDouble( resTheta) == MAF_OK &&
+			node[_R("Phi")].RestoreDouble( resPhi) == MAF_OK &&
 			node[_R("Transform")].RestoreMatrix(matrix) == MAF_OK
      	  )
 		{
