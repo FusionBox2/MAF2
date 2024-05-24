@@ -89,10 +89,8 @@ public:
   int RestoreVectorN (int *comps,unsigned int num) const;
   int RestoreVectorN (std::vector<double> &comps) const;
   int RestoreVectorN (std::vector<int> &comps) const;
-  int RestoreVectorN (const mafString& name, std::vector<mafString> &comps,const mafString& tag) const;
-  int RestoreVectorN (const mafString& name, std::vector<mafObject*>& vector, const mafString& items_name = _R("Item")) const;
-
-  int RestoreVectorN(std::vector<mafString> &comps,const mafString& tag) const;
+  int RestoreVectorN (std::vector<mafString> &comps,const mafString& tag) const;
+  int RestoreVectorN (std::vector<mafObject*>& vector, const mafString& items_name = _R("Item")) const;
 
   virtual bool GetAttribute(const mafString& name, mafString& value) const;// = 0;
   virtual void SetAttribute(const mafString& name, const mafString& value);// = 0;

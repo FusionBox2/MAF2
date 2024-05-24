@@ -1237,19 +1237,17 @@ int mafNode::InternalStore(mafStorageElement *parent)
 }
 
 //-------------------------------------------------------------------------
-int mafNode::InternalRestore(const mafStorageElement& node_)
+int mafNode::InternalRestore(const mafStorageElement& node)
 //-------------------------------------------------------------------------
 {
-	auto node = &node_;
-
-  if (!node->GetAttribute(_R("Name"), m_Name))
+  if (!node.GetAttribute(_R("Name"), m_Name))
   {
     mafErrorMacro("I/O error restoring node of type "<<GetTypeName()<<" : cannot found Name attribute.");
     return MAF_ERROR;
   }
   // restore Id
   mafString id;
-  if (!node->GetAttribute(_R("Id"), id))
+  if (!node.GetAttribute(_R("Id"), id))
   {
     mafErrorMacro("I/O error restoring node "<<GetName().GetCStr() <<" of type "<<GetTypeName()<<" : cannot found Id attribute.");
     return MAF_ERROR;
@@ -1259,11 +1257,11 @@ int mafNode::InternalRestore(const mafStorageElement& node_)
   // restore attributes
   RemoveAllAttributes();
   std::vector<mafObject *> attrs;
-  if (node->RestoreVectorN(_R("Attributes"),attrs) != MAF_OK)
+  if (node[_R("Attributes")].RestoreVectorN(attrs) != MAF_OK)
   {
     mafErrorMacro("Problems restoring attributes for node ");// << GetName());
     // do not return MAF_ERROR when cannot restore an attribute due to missing object type
-    if (node->GetStorage()->GetErrorCode()!=mafStorage::IO_WRONG_OBJECT_TYPE)
+    if (node.GetStorage()->GetErrorCode()!=mafStorage::IO_WRONG_OBJECT_TYPE)
       return MAF_ERROR;
   }
 
@@ -1279,7 +1277,7 @@ int mafNode::InternalRestore(const mafStorageElement& node_)
 
   // restore Links
   RemoveAllLinks();
-  mafStorageElement *links_element = node->FindNestedElement(_R("Links"));
+  mafStorageElement *links_element = node.FindNestedElement(_R("Links"));
   if (!links_element)
   {
     mafErrorMacro("I/O error restoring node "<<GetName().GetCStr() <<" of type "<<GetTypeName()<<" : problems restoring links.");
@@ -1306,9 +1304,9 @@ int mafNode::InternalRestore(const mafStorageElement& node_)
   // restore children
   RemoveAllChildren();
   std::vector<mafObject *> children;
-  if (node->RestoreVectorN(_R("Children"),children,_R("Node")) != MAF_OK)
+  if (node[_R("Children")].RestoreVectorN(children, _R("Node")) != MAF_OK)
   {
-    if (node->GetStorage()->GetErrorCode()!=mafStorage::IO_WRONG_OBJECT_TYPE)
+    if (node.GetStorage()->GetErrorCode()!=mafStorage::IO_WRONG_OBJECT_TYPE)
       return MAF_ERROR;
     // error messaged issued by failing node
   }
