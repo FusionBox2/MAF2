@@ -110,20 +110,24 @@ int mafMSFImporter::InternalRestore(const mafStorageElement& node_)
     root->SetMaxItemId(max_item_id);
   
 
-  const mafStorageElement::ChildrenVector& children = node->GetChildren();
+  const mafStorageElement::ChildrenVector& children_tags = node->GetElementsByName(_R("TArray"));
+  const mafStorageElement::ChildrenVector& children_vmes = node->GetElementsByName(_R("VME"));
 
-  for (int i=0;i<children.size();i++)
+  for (int i=0;i<children_tags.size();i++)
   {
-    if (children[i]->GetName() == _R("TArray"))
+    //if (children[i]->GetName() == _R("TArray"))
     {
-      if (RestoreTagArray(children[i],root->GetTagArray()) != MAF_OK)
+      if (RestoreTagArray(children_tags[i],root->GetTagArray()) != MAF_OK)
       {
         mafErrorMacro("MSFImporter: error restoring Tag Array of node: \""<<root->GetName().GetCStr() <<"\"");
       }
     }
-    else if (children[i]->GetName() == _R("VME"))
+  }
+  for (int i=0;i<children_vmes.size();i++)
+  {
+    //if (children[i]->GetName() == _R("VME"))
     {
-      mafVME *child_vme=RestoreVME(children[i],root);
+      mafVME *child_vme=RestoreVME(children_vmes[i],root);
       if (child_vme==NULL)
       {
         mafErrorMacro("Error while restoring a VME (parent is the root)");
@@ -245,8 +249,15 @@ mafVME *mafMSFImporter::RestoreVME(mafStorageElement *node, mafVME *parent)
     {
       vme->SetName(vme_name);
       // traverse children and restore TagArray, MatrixVector and VMEItems 
+      mafStorageElement::ChildrenVector children_tags = node->GetElementsByName(_R("TArray"));
+	  mafStorageElement::ChildrenVector children_items = node->GetElementsByName(_R("VItem"));
+	  mafStorageElement::ChildrenVector children_matrix = node->GetElementsByName(_R("VMatrix"));
+	  mafStorageElement::ChildrenVector children_vmes = node->GetElementsByName(_R("VME"));
       mafStorageElement::ChildrenVector children;
-      children = node->GetChildren();
+      children.insert(end(children), begin(children_tags), end(children_tags));
+	  children.insert(end(children), begin(children_items), end(children_items));
+	  children.insert(end(children), begin(children_matrix), end(children_matrix));
+	  children.insert(end(children), begin(children_vmes), end(children_vmes));
       for (int i=0;i<children.size();i++)
       {
         // Restore a TagArray element
@@ -589,7 +600,10 @@ int mafMSFImporter::RestoreVItem(mafStorageElement *node, mafVME *vme)
         if (node->GetAttribute(_R("DataFile"),data_file))
         {
           mafSmartPointer<mafVMEItemVTK> vitem;
-          mafStorageElement *tarray=node->FindNestedElement(_R("TArray"));
+          mafStorageElement* tarray = nullptr;
+          auto tarray_nodes = node->GetElementsByName(_R("TArray"));
+          if (!tarray_nodes.empty())
+              tarray = tarray_nodes.front();
           mafVMEGeneric *vme_generic=mafVMEGeneric::SafeDownCast(vme);
           assert(vme_generic);
           if (tarray)
@@ -638,14 +652,13 @@ int mafMSFImporter::RestoreVMatrix(mafStorageElement *node, mafMatrixVector *vma
 //------------------------------------------------------------------------------
 {
   // restore single matrices
-  mafStorageElement::ChildrenVector children;
-  children = node->GetChildren();
+  mafStorageElement::ChildrenVector children = node->GetElementsByName(_R("Matrix"));
 
   vmatrix->RemoveAllItems();
 
   for (int i = 0;i<children.size();i++)
   {
-    assert(children[i]->GetName() == _R("Matrix"));
+    //assert(children[i]->GetName() == _R("Matrix"));
 
     mafSmartPointer<mafMatrix> matrix;
     int restored_matrix = children[i]->RestoreMatrix(*matrix);
@@ -665,12 +678,11 @@ int mafMSFImporter::RestoreVMatrix(mafStorageElement *node, mafMatrixVector *vma
 int mafMSFImporter::RestoreTagArray(mafStorageElement *node, mafTagArray *tarray)
 //------------------------------------------------------------------------------
 {
-  mafStorageElement::ChildrenVector children;
-  children = node->GetChildren();
+  mafStorageElement::ChildrenVector children = node->GetElementsByName(_R("TItem"));
 
   for (int i = 0;i<children.size();i++)
   {
-    if (children[i]->GetName()== _R("TItem"))
+    //if (children[i]->GetName()== _R("TItem"))
     {
       mafID num_of_comps;
       if (children[i]->GetAttributeAsInteger(_R("Mult"),num_of_comps))

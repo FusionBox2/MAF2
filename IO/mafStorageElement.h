@@ -19,6 +19,7 @@
 #include "mafDefines.h"
 #include "mafString.h"
 #include <vector>
+#include <map>
 //----------------------------------------------------------------------------
 // forward declarations :
 //----------------------------------------------------------------------------
@@ -52,8 +53,6 @@ public:
 
   /** get the name of this element. The element name is set at creation time (@sa AppendChild()) */
   const mafString& GetName() const {return m_Name;}
-
-  mafStorageElement operator[](const mafString& name);
 
   mafStorageElement operator[](const mafString& name) const;
 
@@ -100,27 +99,23 @@ protected:
   int StoreObject(mafObject* object);
 
 public:
-  virtual mafStorageElement* FindNestedElement(const mafString& name) const;
   virtual mafStorageElement* AppendChild(const mafString& name);// = 0;
   /** return a pointer to the storage who created this element */
   mafParser *GetStorage()  const {return m_Storage;}
 
-  bool GetNestedElementsByName(const mafString& name,std::vector<mafStorageElement *> &list) const;
+  std::vector<mafStorageElement*> GetElementsByName(const mafString& name) const;
 
 
   typedef std::vector<mafStorageElement *> ChildrenVector;
 
-  const ChildrenVector &GetChildren() const {return GetChildrenList();}
-
 protected:
-	virtual ChildrenVector& GetChildrenList() const;// = 0;
-
+	virtual void BuildChildrenMap() const;// = 0;
 
 
   void SetStorage(mafParser *storage) {m_Storage = storage;}
 
   mafParser                        *m_Storage;                        ///< storage who created this element
-  mutable std::vector<mafStorageElement *> *m_Children;  ///< children elements
+  mutable std::map<mafString, ChildrenVector >*m_Children;  ///< children elements
   mafString                        m_Name; ///< Convenient copy of etagName
   void* m_DOMElement; ///< XML element wrapped by this object (USING PIMPL due to Internal Compile errors of VS7)
 };

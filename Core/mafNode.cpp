@@ -1277,7 +1277,10 @@ int mafNode::InternalRestore(const mafStorageElement& node)
 
   // restore Links
   RemoveAllLinks();
-  mafStorageElement *links_element = node.FindNestedElement(_R("Links"));
+  mafStorageElement* links_element = nullptr;
+  auto links_nodes = node.GetElementsByName(_R("Links"));
+  if (!links_nodes.empty())
+      links_element = links_nodes.front();
   if (!links_element)
   {
     mafErrorMacro("I/O error restoring node "<<GetName().GetCStr() <<" of type "<<GetTypeName()<<" : problems restoring links.");
@@ -1286,7 +1289,7 @@ int mafNode::InternalRestore(const mafStorageElement& node)
   mafString num_links;
   links_element->GetAttribute(_R("NumberOfLinks"), num_links);
   int n=(int)atof(num_links.GetCStr());
-  mafStorageElement::ChildrenVector links_vector = links_element->GetChildren();
+  mafStorageElement::ChildrenVector links_vector = links_element->GetElementsByName(_R("Link"));
   assert(links_vector.size() == n);
   for (unsigned int i = 0; i < n; i++)
   {

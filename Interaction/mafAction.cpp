@@ -135,21 +135,20 @@ int mafAction::InternalStore(mafStorageElement *node)
 }
 
 //------------------------------------------------------------------------------
-int mafAction::InternalRestore(const mafStorageElement& node_)
+int mafAction::InternalRestore(const mafStorageElement& node)
 //------------------------------------------------------------------------------
 {
-	auto node = &node_;
 	mafString name;
-  node->GetAttribute(_R("Name"),name);
+  node.GetAttribute(_R("Name"),name);
  
   SetName(name);
 
-  const mafStorageElement::ChildrenVector &children=node->GetChildren();
+  const mafStorageElement::ChildrenVector &children=node.GetElementsByName(_R("Device"));
   for (int i=0;i<children.size();i++)
   {
     mafStorageElement *subnode = children[i];
     assert(subnode);
-    if (subnode->GetName() == _R("Device"))
+    //if (subnode->GetName() == _R("Device"))
     {
       mafID id;
       mafString name;

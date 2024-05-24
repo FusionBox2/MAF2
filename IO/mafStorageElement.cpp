@@ -208,66 +208,36 @@ mafStorageElement::~mafStorageElement()
   if (m_Children)
   {
     // remove all child nodes
-    for (unsigned int i=0;i<m_Children->size();i++)
+    for (auto& entry : *m_Children)
     {
-      delete (*m_Children)[i];
+        for(auto& child : entry.second)
+		{
+			delete child;
+		}
     }
   
     cppDEL(m_Children);
   }  
 }
 
-mafStorageElement mafStorageElement::operator[](const mafString& name)
-{
-	mafStorageElement* elem = FindNestedElement(name);
-    return *elem;
-}
-
 mafStorageElement mafStorageElement::operator[](const mafString& name) const
 {
-	mafStorageElement* elem = FindNestedElement(name);
-	return *elem;
-	/*auto child_element = getDOMNode(m_DOMElement)->getFirstChild();
-	while (child_element)
-	{
-		if (child_element->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
-		{
-            if(name == _R(mafXMLString(static_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*>(child_element)->getTagName())))
-			    return mafStorageElement(child_element, m_Storage);
-		}
-		child_element = child_element->getNextSibling();
-	}
-    throw 0;*/
+	BuildChildrenMap();
+	auto it = m_Children->find(name);
+    if (it == m_Children->end())
+        throw 0;
+	return *it->second.front();
 }
 
 //------------------------------------------------------------------------------
-mafStorageElement *mafStorageElement::FindNestedElement(const mafString& name) const
+std::vector<mafStorageElement*> mafStorageElement::GetElementsByName(const mafString& name) const
 //------------------------------------------------------------------------------
 {
-  // force children list creation
-  const ChildrenVector &children=GetChildren();
-  
-  // to be rewritten as a map access
-  for (unsigned int i=0;i<children.size();i++)
-  {
-    mafStorageElement *node=children[i];
-    if (name==node->GetName())
-      return node;
-  }
-
-  return NULL;
-}
-
-//------------------------------------------------------------------------------
-bool mafStorageElement::GetNestedElementsByName(const mafString& name,std::vector<mafStorageElement *> &list) const
-//------------------------------------------------------------------------------
-{
-  // force children list creation
-  const ChildrenVector &children=GetChildren();
-  list.clear();
- 
-  std::copy_if(begin(children), end(children), std::back_inserter(list), [&](mafStorageElement* node) {return name == node->GetName(); });
-  return list.size()>0;
+  BuildChildrenMap();
+  auto it = m_Children->find(name);
+  if (it != m_Children->end())
+      return it->second;
+  return {};
 }
 
 //------------------------------------------------------------------------------
@@ -305,8 +275,7 @@ int mafStorageElement::RestoreVectorN(std::vector<mafObject *> &vector,const maf
     auto subnode = this;
   if (subnode)
   {
-      ChildrenVector items;
-      subnode->GetNestedElementsByName(items_name, items);
+      ChildrenVector items = subnode->GetElementsByName(items_name);
 
       mafID numItems=-1;
       if (!subnode->GetAttributeAsInteger(_R("NumberOfItems"),numItems))
@@ -397,12 +366,12 @@ mafString mafStorageElement::UpgradeAttribute(const mafString& attribute) const
 //------------------------------------------------------------------------------
 {
   mafString att_name;
-  mafString new_att_name;
-  GetAttribute(attribute,att_name);
+  /*mafString new_att_name;
+  GetAttribute(attribute, att_name);
   if (att_name == _R("mafVMEItemScalar"))
   {
     new_att_name = _R("mafVMEItemScalarMatrix");
-    //SetAttribute(attribute, new_att_name);
+    SetAttribute(attribute, new_att_name);
     return new_att_name;
   }
   if (att_name.find(_R("mafVME")) != mafString::npos)
@@ -410,13 +379,13 @@ mafString mafStorageElement::UpgradeAttribute(const mafString& attribute) const
     if (att_name == _R("mafVMEScalar"))
     {
       new_att_name = _R("mafVMEScalarMatrix");
-      //SetAttribute(attribute, new_att_name);
+      SetAttribute(attribute, new_att_name);
     }
     else
     {
       new_att_name = att_name;
     }
-    mafStorageElement *data_vector = FindNestedElement(_R("DataVector"));
+    mafStorageElement data_vector = FindNestedElement(_R("DataVector"));
     mafString item_type;
     if (data_vector && data_vector->GetAttribute(_R("ItemTypeName"), item_type))
     {
@@ -426,7 +395,7 @@ mafString mafStorageElement::UpgradeAttribute(const mafString& attribute) const
       }
     }
     return new_att_name;
-  }
+  }*/
   
   return att_name;
 }
@@ -579,8 +548,7 @@ int mafStorageElement::RestoreVectorN(std::vector<int> &comps) const
 int mafStorageElement::RestoreVectorN(std::vector<mafString> &comps,const mafString& tag) const
 //------------------------------------------------------------------------------
 {
-  ChildrenVector children;
-  GetNestedElementsByName(tag, children);
+  ChildrenVector children = GetElementsByName(tag);
 
   // to be rewritten as a map access
   for (size_t i=0;i<children.size();i++)
@@ -633,13 +601,13 @@ void mafStorageElement::SetAttribute(const mafString& name,const double value)
 
 
 
-mafStorageElement::ChildrenVector& mafStorageElement::GetChildrenList() const
+void mafStorageElement::BuildChildrenMap() const
 //------------------------------------------------------------------------------
 {
 	if (!m_Children)
 	{
 		// create and fill in new children list with element nodes
-		m_Children = new ChildrenVector;
+		m_Children = new std::map<mafString, ChildrenVector >;
 
 		auto child_element = getDOMNode(m_DOMElement)->getFirstChild();
 		while (child_element)
@@ -647,21 +615,21 @@ mafStorageElement::ChildrenVector& mafStorageElement::GetChildrenList() const
 			if (child_element->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
 			{
                 mafStorageElement* child = new mafStorageElement((XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*)child_element, GetStorage());
-				m_Children->push_back(child);
+				(*m_Children)[child->GetName()].push_back(child);
 			}
 			child_element = child_element->getNextSibling();
 		}
 	}
-	return *m_Children;
 }
 //------------------------------------------------------------------------------
 mafStorageElement* mafStorageElement::AppendChild(const mafString& name)
 //------------------------------------------------------------------------------
 {
+    BuildChildrenMap();
 	XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* child_element = getDOMNode(m_DOMElement)->getOwnerDocument()->createElement(mafXMLString(name.GetCStr()));
 	getDOMNode(m_DOMElement)->appendChild(child_element);
     mafStorageElement* child = new mafStorageElement(child_element, GetStorage());
-	GetChildrenList().push_back(child);
+	(*m_Children)[child->GetName()].push_back(child);
 	return child;
 }
 //------------------------------------------------------------------------------

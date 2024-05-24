@@ -215,12 +215,12 @@ int mafTagArray::InternalRestore(const mafStorageElement& node_)
     mafID numAttrs=-1;
     node->GetAttributeAsInteger(_R("NumberOfTags"),numAttrs);
   
-    const mafStorageElement::ChildrenVector &children=node->GetChildren();
+    const mafStorageElement::ChildrenVector &children=node->GetElementsByName(_R("TItem"));
     int ret=MAF_OK;
     int idx=0;
     for (int i=0;(idx < numAttrs) && (i < children.size()) && (ret == MAF_OK);i++)
     {
-      if (children[i]->GetName() == _R("TItem"))
+      //if (children[i]->GetName() == _R("TItem"))
       {
         mafTagItem new_titem;
         ret=new_titem.Restore(*children[i]);

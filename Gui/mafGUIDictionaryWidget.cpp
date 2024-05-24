@@ -194,7 +194,7 @@ mafStorableDictionary::~mafStorableDictionary()
 int mafStorableDictionary::InternalRestore(const mafStorageElement& node)
 //------------------------------------------------------------------------------
 {
-  m_StrVector.resize(node.GetChildren()[0]->GetChildren().size());
+  m_StrVector.resize(node[_R("Dictionary")].GetElementsByName(_R("DItem")).size());
   
   if(node[_R("Dictionary")].RestoreVectorN(m_StrVector, _R("DItem")))
     return MAF_ERROR;

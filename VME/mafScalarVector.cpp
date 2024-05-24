@@ -70,16 +70,13 @@ int mafScalarVector::InternalStore(mafStorageElement *parent)
   return MAF_OK;
 }
 //-----------------------------------------------------------------------
-int mafScalarVector::InternalRestore(const mafStorageElement& node_)
+int mafScalarVector::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-	auto node = &node_;
-
   mafID num_items;
-  if (node->GetAttributeAsInteger(_R("NumberOfItems"),num_items))
+  if (node.GetAttributeAsInteger(_R("NumberOfItems"),num_items))
   {
-    mafStorageElement::ChildrenVector vector_elements;
-    node->GetNestedElementsByName(_R("Scalar"), vector_elements);
+    mafStorageElement::ChildrenVector vector_elements = node.GetElementsByName(_R("Scalar"));
 
     assert(vector_elements.size() == num_items);
 

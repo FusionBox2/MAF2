@@ -450,26 +450,25 @@ int mafDataVector::InternalStore(mafStorageElement *parent)
   return MAF_OK;
 }
 //-----------------------------------------------------------------------
-int mafDataVector::InternalRestore(const mafStorageElement& node_)
+int mafDataVector::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
   mafString item_type,single_file;
   mafID num_items;
 
   m_JustRestored = true;
-  auto node = &node_;
 
-  if (node->GetAttributeAsInteger(_R("NumberOfItems"), num_items) && \
-      node->GetAttribute(_R("ItemTypeName"), item_type) && \
-      node->GetAttribute(_R("SingleFileMode"), single_file) && \
-      node->GetAttributeAsInteger(_R("VectorID"), m_VectorID) \
+  if (node.GetAttributeAsInteger(_R("NumberOfItems"), num_items) && \
+      node.GetAttribute(_R("ItemTypeName"), item_type) && \
+      node.GetAttribute(_R("SingleFileMode"), single_file) && \
+      node.GetAttributeAsInteger(_R("VectorID"), m_VectorID) \
     )
   {
     SetItemTypeName(item_type.GetCStr());
     SetSingleFileMode(single_file == _R("true") || single_file == _R("True") || single_file == _R("TRUE"));
     if (m_SingleFileMode)
     {
-      node->GetAttribute(_R("ArchiveFileName"), m_ArchiveName);
+      node.GetAttribute(_R("ArchiveFileName"), m_ArchiveName);
     }
   }
   else
@@ -478,8 +477,7 @@ int mafDataVector::InternalRestore(const mafStorageElement& node_)
   }
 
   // restore items meta-data
-  mafStorageElement::ChildrenVector elements;
-  node->GetNestedElementsByName(_R("VItem"),elements);
+  mafStorageElement::ChildrenVector elements = node.GetElementsByName(_R("VItem"));
 
   assert(num_items == elements.size()); // check the number of elements
 

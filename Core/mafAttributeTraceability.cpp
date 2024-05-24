@@ -143,17 +143,14 @@ int mafAttributeTraceability::InternalStore(mafStorageElement *parent)
 }
 
 //-------------------------------------------------------------------------
-int mafAttributeTraceability::InternalRestore(const mafStorageElement& node_)
+int mafAttributeTraceability::InternalRestore(const mafStorageElement& node)
 //-------------------------------------------------------------------------
 {
-	auto node = &node_;
-
-  if (Superclass::InternalRestore(node_) == MAF_OK)
+  if (Superclass::InternalRestore(node) == MAF_OK)
   {
     m_Traceability traceability;
 
-    std::vector<mafStorageElement*> listTrialEventElems;
-    node->GetNestedElementsByName(_R("TrialEvent"), listTrialEventElems);
+    std::vector<mafStorageElement*> listTrialEventElems = node.GetElementsByName(_R("TrialEvent"));
 
 	std::vector<mafString> listTrialEvent(listTrialEventElems.size());
     std::vector<mafString> listOperation(listTrialEventElems.size());
@@ -162,13 +159,13 @@ int mafAttributeTraceability::InternalRestore(const mafStorageElement& node_)
 	std::vector<mafString> listApplication(listTrialEventElems.size());
 	std::vector<mafString> listOperatorID(listTrialEventElems.size());
 	std::vector<mafString> listIsNatural(listTrialEventElems.size());
-	node->RestoreVectorN(listTrialEvent, _R("TrialEvent"));
-    node->RestoreVectorN(listOperation, _R("Operation"));
-    node->RestoreVectorN(listParameters, _R("Parameters"));
-    node->RestoreVectorN(listDate, _R("Date"));
-    node->RestoreVectorN(listApplication, _R("Application"));
-    node->RestoreVectorN(listOperatorID, _R("OperatorID"));
-    node->RestoreVectorN(listIsNatural, _R("IsNatural"));
+	node.RestoreVectorN(listTrialEvent, _R("TrialEvent"));
+    node.RestoreVectorN(listOperation, _R("Operation"));
+    node.RestoreVectorN(listParameters, _R("Parameters"));
+    node.RestoreVectorN(listDate, _R("Date"));
+    node.RestoreVectorN(listApplication, _R("Application"));
+    node.RestoreVectorN(listOperatorID, _R("OperatorID"));
+    node.RestoreVectorN(listIsNatural, _R("IsNatural"));
 
     try
     {

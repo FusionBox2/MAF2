@@ -49,20 +49,13 @@ int mafInteractorSER::InternalStore(mafStorageElement *node)
 }
 
 //------------------------------------------------------------------------------
-int mafInteractorSER::InternalRestore(const mafStorageElement& node_)
+int mafInteractorSER::InternalRestore(const mafStorageElement& node)
 //------------------------------------------------------------------------------
 {
-	auto node = &node_;
-	mafStorageElement::ChildrenVector children = node->GetChildren();
+	mafStorageElement::ChildrenVector children = node.GetElementsByName(_R("Action"));
   for (int i=0;i<children.size();i++)
   {
-    mafStorageElement *subnode=children[i];
-    if (subnode->GetName()!=_R("Action"))
-    {
-      mafErrorMacro("Unexpected element <"<<subnode->GetName().GetCStr() <<">");
-      return MAF_ERROR;
-    }
-   
+    mafStorageElement *subnode=children[i];   
     // create the object to be restored mannualy since mafAction is not in the factory
     mafString action_name;
     subnode->GetAttribute(_R("Name"),action_name);
