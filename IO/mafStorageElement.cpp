@@ -217,9 +217,42 @@ mafStorageElement::~mafStorageElement()
   }  
 }
 
+//------------------------------------------------------------------------------
+mafStorageElementBuilder::mafStorageElementBuilder(void* element, mafParser* storage)
+//------------------------------------------------------------------------------
+{
+	assert(storage); // no NULL storage is allowed
+	m_Storage = storage;
+	assert(element);
+	m_DOMElement = element;
+	if (getDOMNode(element)->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
+		m_Name = _R(mafXMLString(static_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*>(getDOMNode(element))->getTagName()));
+}
+//------------------------------------------------------------------------------
+mafStorageElementBuilder::~mafStorageElementBuilder()
+//------------------------------------------------------------------------------
+{
+	// remove pointers...
+	m_Storage = NULL;
+}
+
 mafStorageElementBuilder mafStorageElementBuilder::operator[](const mafString& name)
 {
-    return *AppendChild(name);
+	//BuildChildrenMap();
+	XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* child_element = getDOMNode(m_DOMElement)->getOwnerDocument()->createElement(mafXMLString(name.GetCStr()));
+	getDOMNode(m_DOMElement)->appendChild(child_element);
+	auto child = new mafStorageElementBuilder(child_element, GetStorage());
+	//(*m_Children)[child->GetName()].push_back(child);
+	return *child;
+}
+
+mafStorageElementBuilder mafStorageElementBuilder::operator()(const mafString& name)
+{
+    if (getDOMNode(m_DOMElement)->getNodeType() != XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
+        throw 0;
+	auto newAttr = getDOMNode(m_DOMElement)->getOwnerDocument()->createAttribute(mafXMLString(name.GetCStr()));
+    static_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*>(getDOMNode(m_DOMElement))->setAttributeNode(newAttr);
+    return mafStorageElementBuilder(newAttr, GetStorage());
 }
 
 mafStorageElement mafStorageElement::operator[](const mafString& name) const
@@ -568,13 +601,13 @@ bool mafStorageElement::GetAttributeAsInteger(const mafString& name,mafID &value
 }
 
 //------------------------------------------------------------------------------
-void mafStorageElement::SetAttribute(const mafString& name,const mafID value)
+void mafStorageElementBuilder::SetAttribute(const mafString& name,const mafID value)
 //------------------------------------------------------------------------------
 {
   SetAttribute(name,mafToString(value));
 }
 //------------------------------------------------------------------------------
-void mafStorageElement::SetAttribute(const mafString& name,const double value)
+void mafStorageElementBuilder::SetAttribute(const mafString& name,const double value)
 //------------------------------------------------------------------------------
 {
   SetAttribute(name,mafToString(value));
@@ -608,15 +641,15 @@ void mafStorageElement::BuildChildrenMap() const
 mafStorageElementBuilder* mafStorageElementBuilder::AppendChild(const mafString& name)
 //------------------------------------------------------------------------------
 {
-    BuildChildrenMap();
+    //BuildChildrenMap();
 	XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* child_element = getDOMNode(m_DOMElement)->getOwnerDocument()->createElement(mafXMLString(name.GetCStr()));
 	getDOMNode(m_DOMElement)->appendChild(child_element);
     auto child = new mafStorageElementBuilder(child_element, GetStorage());
-	(*m_Children)[child->GetName()].push_back(child);
+//	(*m_Children)[child->GetName()].push_back(child);
 	return child;
 }
 //------------------------------------------------------------------------------
-void mafStorageElement::SetAttribute(const mafString& name, const mafString& value)
+void mafStorageElementBuilder::SetAttribute(const mafString& name, const mafString& value)
 //------------------------------------------------------------------------------
 {
 	if (getDOMNode(m_DOMElement)->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)

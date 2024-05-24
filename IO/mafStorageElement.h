@@ -57,11 +57,6 @@ public:
   mafStorageElement operator[](const mafString& name) const;
   mafStorageElement operator()(const mafString& name) const;
 
-  void SetAttribute(const mafString& name,const mafID value);
-  void SetAttribute(const mafString& name,const double value);
-
-  bool GetAttributeAsDouble(const mafString& name,double &value) const;
-  bool GetAttributeAsInteger(const mafString& name,mafID &value) const;
 
   /** Used to upgrade attribute value from previous MSF file version.*/
   mafString UpgradeAttribute(const mafString& attribute) const;
@@ -77,10 +72,10 @@ public:
   int RestoreVectorN (std::vector<double> &comps) const;
   int RestoreVectorN (std::vector<int> &comps) const;
   int RestoreVectorN (std::vector<mafString> &comps,const mafString& tag) const;
-  int RestoreVectorN (std::vector<mafObject*>& vector, const mafString& items_name = _R("Item")) const;
-
-  virtual bool GetAttribute(const mafString& name, mafString& value) const;// = 0;
-  virtual void SetAttribute(const mafString& name, const mafString& value);// = 0;
+  int RestoreVectorN (std::vector<mafObject*>& vector, const mafString& items_name) const;
+  bool GetAttributeAsInteger(const mafString& name, mafID& value) const;
+  bool GetAttributeAsDouble(const mafString& name, double& value) const;
+  bool GetAttribute(const mafString& name, mafString& value) const;
 
 protected:
 
@@ -99,22 +94,29 @@ protected:
 
   void SetStorage(mafParser *storage) {m_Storage = storage;}
 
-  mafParser                        *m_Storage;                        ///< storage who created this element
-  mutable std::map<mafString, ChildrenVector >*m_Children;  ///< children elements
   mafString                        m_Name; ///< Convenient copy of etagName
-  void* m_DOMElement; ///< XML element wrapped by this object (USING PIMPL due to Internal Compile errors of VS7)
+  mafParser                        *m_Storage;                        ///< storage who created this element
+  void                             *m_DOMElement; ///< XML element wrapped by this object (USING PIMPL due to Internal Compile errors of VS7)
+  mutable std::map<mafString, ChildrenVector >* m_Children;  ///< children elements
 };
 
-class MAF_EXPORT mafStorageElementBuilder : public mafStorageElement
+class MAF_EXPORT mafStorageElementBuilder
 {
 public:
-	using mafStorageElement::mafStorageElement;
+	/** elements can be created only by means of AppendChild() or FindNestedElement() */
+	mafStorageElementBuilder(void* element, mafParser* storage);
+
+	virtual ~mafStorageElementBuilder();
+
+	/** get the name of this element. The element name is set at creation time (@sa AppendChild()) */
+	const mafString& GetName() const { return m_Name; }
 	mafStorageElementBuilder operator[](const mafString& name);
+	mafStorageElementBuilder operator()(const mafString& name);
+	
 	int StoreText(const mafString& text);
 	int StoreInteger(const int& value);
 	int StoreDouble(const double& value);
 	int StoreMatrix(const mafMatrix& matrix);
-
 	int StoreObject(mafObject* object);
 	int StoreStorable(mafStorable* object);
 	int StoreVectorN(double* comps, int num);
@@ -122,9 +124,21 @@ public:
 	int StoreVectorN(const std::vector<double>& comps);
 	int StoreVectorN(const std::vector<int>& comps);
 	int StoreVectorN(const std::vector<mafString>& comps, const mafString& tag);
-	int StoreVectorN(const std::vector<mafObject*>& vector, const mafString& items_name = _R("Item"));
+	int StoreVectorN(const std::vector<mafObject*>& vector, const mafString& items_name);
+	void SetAttribute(const mafString& name, const mafID value);
+	void SetAttribute(const mafString& name, const double value);
+	void SetAttribute(const mafString& name, const mafString& value);// = 0;
+
+	/** return a pointer to the storage who created this element */
+	mafParser* GetStorage()  const { return m_Storage; }
 
 protected:
 	mafStorageElementBuilder* AppendChild(const mafString& name);
+
+	void SetStorage(mafParser* storage) { m_Storage = storage; }
+
+	mafString                        m_Name; ///< Convenient copy of etagName
+	mafParser* m_Storage;                        ///< storage who created this element
+	void* m_DOMElement; ///< XML element wrapped by this object (USING PIMPL due to Internal Compile errors of VS7)
 };
 #endif // _mafStorageElement_h_

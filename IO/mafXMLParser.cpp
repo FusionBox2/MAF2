@@ -241,7 +241,7 @@ int mafXMLParser::InternalRestore()
                                   else
                                   {
                                       // Upgrade document to the actual version
-                                      documentElement->SetAttribute(_R("Version"), my_version_f);
+                                      //documentElement->SetAttribute(_R("Version"), my_version_f);
                                       m_NeedsUpgrade = true;
                                       if (m_Document->Restore(*documentElement) != MAF_OK)
                                           errorCode = IO_RESTORE_ERROR;
