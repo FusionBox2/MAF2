@@ -82,7 +82,6 @@ public:
   int RestoreText    (const mafString& name, mafString &buffer) const;
   int RestoreInteger (const mafString& name, int& value) const;
   int RestoreDouble  (const mafString& name, double& value) const;
-  int RestoreMatrix  (const mafString& name, mafMatrix& matrix) const;
   int RestoreObject  (const mafString& name, mafObject*& object) const;
   int RestoreStorable(const mafString& name, mafStorable* object) const;
   int RestoreVectorN (const mafString& name, double *comps,unsigned int num) const;

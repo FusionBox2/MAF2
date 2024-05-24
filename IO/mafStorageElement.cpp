@@ -225,7 +225,9 @@ mafStorageElement mafStorageElement::operator[](const mafString& name)
 
 mafStorageElement mafStorageElement::operator[](const mafString& name) const
 {
-	auto child_element = getDOMNode(m_DOMElement)->getFirstChild();
+	mafStorageElement* elem = FindNestedElement(name);
+	return *elem;
+	/*auto child_element = getDOMNode(m_DOMElement)->getFirstChild();
 	while (child_element)
 	{
 		if (child_element->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
@@ -235,7 +237,7 @@ mafStorageElement mafStorageElement::operator[](const mafString& name) const
 		}
 		child_element = child_element->getNextSibling();
 	}
-    throw 0;
+    throw 0;*/
 }
 
 //------------------------------------------------------------------------------
@@ -592,21 +594,6 @@ int mafStorageElement::RestoreInteger(const mafString& name,int &value) const
   }
   return MAF_ERROR;
 }
-//------------------------------------------------------------------------------
-int mafStorageElement::RestoreMatrix(const mafString& name,mafMatrix& matrix) const
-//------------------------------------------------------------------------------
-{
-  mafStorageElement *elem=FindNestedElement(name);
-  if (elem)
-  {
-    return elem->RestoreMatrix(matrix);
-  }
-
-  mafWarningMacro("Parse Error while parsing <"<<GetName().GetCStr() <<"> element: cannot find nested Storage element <"<<name.GetCStr() <<">" );
-
-  return MAF_ERROR;
-}
-
 //------------------------------------------------------------------------------
 int mafStorageElement::RestoreVectorN(const mafString& name,double *comps,unsigned int num) const
 //------------------------------------------------------------------------------
