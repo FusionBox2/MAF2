@@ -52,7 +52,7 @@ int mafInteractorSER::InternalStore(mafStorageElementBuilder& node)
 int mafInteractorSER::InternalRestore(const mafStorageElement& node)
 //------------------------------------------------------------------------------
 {
-	mafStorageElement::ChildrenVector children = node.GetElementsByName(_R("Action"));
+  auto children = node.GetElementsByName(_R("Action"));
   for (int i=0;i<children.size();i++)
   {
     mafStorageElement *subnode=children[i];   

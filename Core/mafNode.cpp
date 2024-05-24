@@ -1289,7 +1289,7 @@ int mafNode::InternalRestore(const mafStorageElement& node)
   mafString num_links;
   links_element->GetAttribute(_R("NumberOfLinks"), num_links);
   int n=(int)atof(num_links.GetCStr());
-  mafStorageElement::ChildrenVector links_vector = links_element->GetElementsByName(_R("Link"));
+  auto links_vector = links_element->GetElementsByName(_R("Link"));
   assert(links_vector.size() == n);
   for (unsigned int i = 0; i < n; i++)
   {

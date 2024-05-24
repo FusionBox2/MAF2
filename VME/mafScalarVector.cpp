@@ -76,7 +76,7 @@ int mafScalarVector::InternalRestore(const mafStorageElement& node)
   mafID num_items;
   if (node.GetAttributeAsInteger(_R("NumberOfItems"),num_items))
   {
-    mafStorageElement::ChildrenVector vector_elements = node.GetElementsByName(_R("Scalar"));
+    auto vector_elements = node.GetElementsByName(_R("Scalar"));
 
     assert(vector_elements.size() == num_items);
 

@@ -319,7 +319,7 @@ int mafStorageElement::RestoreVectorN(std::vector<mafObject *> &vector,const maf
     auto subnode = this;
   if (subnode)
   {
-      ChildrenVector items = subnode->GetElementsByName(items_name);
+      auto items = subnode->GetElementsByName(items_name);
 
       mafID numItems=-1;
       if (!subnode->GetAttributeAsInteger(_R("NumberOfItems"),numItems))
@@ -568,7 +568,7 @@ int mafStorageElement::RestoreVectorN(std::vector<int> &comps) const
 int mafStorageElement::RestoreVectorN(std::vector<mafString> &comps,const mafString& tag) const
 //------------------------------------------------------------------------------
 {
-  ChildrenVector children = GetElementsByName(tag);
+ auto children = GetElementsByName(tag);
 
   // to be rewritten as a map access
   for (size_t i=0;i<children.size();i++)
@@ -627,7 +627,7 @@ void mafStorageElement::BuildChildrenMap() const
 	if (!m_Children)
 	{
 		// create and fill in new children list with element nodes
-		m_Children = new std::map<mafString, ChildrenVector >;
+		m_Children = new std::map<mafString, std::vector<mafStorageElement*>>;
 
 		auto child_element = getDOMNode(m_DOMElement)->getFirstChild();
 		while (child_element)

@@ -81,18 +81,14 @@ public:
 
   std::vector<mafStorageElement*> GetElementsByName(const mafString& name) const;
 
-
-  typedef std::vector<mafStorageElement *> ChildrenVector;
-
 protected:
-	virtual void BuildChildrenMap() const;// = 0;
-
+  virtual void BuildChildrenMap() const;// = 0;
 
   void SetStorage(mafParser *storage) {m_Storage = storage;}
 
   mafParser                        *m_Storage;                        ///< storage who created this element
   void                             *m_DOMElement; ///< XML element wrapped by this object (USING PIMPL due to Internal Compile errors of VS7)
-  mutable std::map<mafString, ChildrenVector >* m_Children;  ///< children elements
+  mutable std::map<mafString, std::vector<mafStorageElement*> > *m_Children;  ///< children elements
 };
 
 class MAF_EXPORT mafStorageElementBuilder

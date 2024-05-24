@@ -477,7 +477,7 @@ int mafDataVector::InternalRestore(const mafStorageElement& node)
   }
 
   // restore items meta-data
-  mafStorageElement::ChildrenVector elements = node.GetElementsByName(_R("VItem"));
+  auto elements = node.GetElementsByName(_R("VItem"));
 
   assert(num_items == elements.size()); // check the number of elements
 

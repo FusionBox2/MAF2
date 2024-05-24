@@ -110,8 +110,8 @@ int mafMSFImporter::InternalRestore(const mafStorageElement& node_)
     root->SetMaxItemId(max_item_id);
   
 
-  const mafStorageElement::ChildrenVector& children_tags = node->GetElementsByName(_R("TArray"));
-  const mafStorageElement::ChildrenVector& children_vmes = node->GetElementsByName(_R("VME"));
+  auto children_tags = node->GetElementsByName(_R("TArray"));
+  auto children_vmes = node->GetElementsByName(_R("VME"));
 
   for (int i=0;i<children_tags.size();i++)
   {
@@ -249,11 +249,11 @@ mafVME *mafMSFImporter::RestoreVME(mafStorageElement *node, mafVME *parent)
     {
       vme->SetName(vme_name);
       // traverse children and restore TagArray, MatrixVector and VMEItems 
-      mafStorageElement::ChildrenVector children_tags = node->GetElementsByName(_R("TArray"));
-	  mafStorageElement::ChildrenVector children_items = node->GetElementsByName(_R("VItem"));
-	  mafStorageElement::ChildrenVector children_matrix = node->GetElementsByName(_R("VMatrix"));
-	  mafStorageElement::ChildrenVector children_vmes = node->GetElementsByName(_R("VME"));
-      mafStorageElement::ChildrenVector children;
+      auto children_tags = node->GetElementsByName(_R("TArray"));
+	  auto children_items = node->GetElementsByName(_R("VItem"));
+	  auto children_matrix = node->GetElementsByName(_R("VMatrix"));
+	  auto children_vmes = node->GetElementsByName(_R("VME"));
+      std::vector<mafStorageElement*> children;
       children.insert(end(children), begin(children_tags), end(children_tags));
 	  children.insert(end(children), begin(children_items), end(children_items));
 	  children.insert(end(children), begin(children_matrix), end(children_matrix));
@@ -652,7 +652,7 @@ int mafMSFImporter::RestoreVMatrix(mafStorageElement *node, mafMatrixVector *vma
 //------------------------------------------------------------------------------
 {
   // restore single matrices
-  mafStorageElement::ChildrenVector children = node->GetElementsByName(_R("Matrix"));
+  auto children = node->GetElementsByName(_R("Matrix"));
 
   vmatrix->RemoveAllItems();
 
@@ -678,7 +678,7 @@ int mafMSFImporter::RestoreVMatrix(mafStorageElement *node, mafMatrixVector *vma
 int mafMSFImporter::RestoreTagArray(mafStorageElement *node, mafTagArray *tarray)
 //------------------------------------------------------------------------------
 {
-  mafStorageElement::ChildrenVector children = node->GetElementsByName(_R("TItem"));
+  auto children = node->GetElementsByName(_R("TItem"));
 
   for (int i = 0;i<children.size();i++)
   {
