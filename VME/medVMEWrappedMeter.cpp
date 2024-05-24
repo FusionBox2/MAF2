@@ -1887,25 +1887,23 @@ int medVMEWrappedMeter::InternalStore(mafStorageElement *parent)
   return MAF_ERROR;
 }
 //-----------------------------------------------------------------------
-int medVMEWrappedMeter::InternalRestore(const mafStorageElement& node_)
+int medVMEWrappedMeter::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-	auto node = &node_;
-
-  if (Superclass::InternalRestore(node_)==MAF_OK)
+  if (Superclass::InternalRestore(node)==MAF_OK)
   {
     mafMatrix matrix;
-    if (node->RestoreMatrix(_R("Transform"),matrix)==MAF_OK)
+    if (node[_R("Transform")].RestoreMatrix(matrix) ==MAF_OK)
     {
       m_Transform->SetMatrix(matrix);
 	  int              orderMiddlePointsVMEListNumberOfElements;
-			node->RestoreInteger(_R("OrderMiddlePointVmeNumberOfElements"), orderMiddlePointsVMEListNumberOfElements);
+			node.RestoreInteger(_R("OrderMiddlePointVmeNumberOfElements"), orderMiddlePointsVMEListNumberOfElements);
 			m_OrderMiddlePointsVMEList.resize(orderMiddlePointsVMEListNumberOfElements);
-			node->RestoreVectorN(_R("OrderMiddlePointVme"),m_OrderMiddlePointsVMEList);
+			node.RestoreVectorN(_R("OrderMiddlePointVme"),m_OrderMiddlePointsVMEList);
 			
-      node->RestoreInteger(_R("WrapMode"), m_WrappedMode);
-      node->RestoreInteger(_R("WrapSide"), m_WrapSide);
-      node->RestoreInteger(_R("WrapReverse"), m_WrapReverse);
+      node.RestoreInteger(_R("WrapMode"), m_WrappedMode);
+      node.RestoreInteger(_R("WrapSide"), m_WrapSide);
+      node.RestoreInteger(_R("WrapReverse"), m_WrapReverse);
       return MAF_OK;
     }
   }

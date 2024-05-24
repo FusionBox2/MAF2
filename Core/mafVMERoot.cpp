@@ -196,20 +196,18 @@ int mafVMERoot::InternalStore(mafStorageElement *parent)
 }
 
 //-------------------------------------------------------------------------
-int mafVMERoot::InternalRestore(const mafStorageElement& node_)
+int mafVMERoot::InternalRestore(const mafStorageElement& node)
 //-------------------------------------------------------------------------
 {
-	auto node = &node_;
-
-  RestoreRoot(node_);
+  RestoreRoot(node);
   int max_item_id;
-  node->RestoreInteger(_R("MaxItemId"),max_item_id);
+  node.RestoreInteger(_R("MaxItemId"),max_item_id);
   m_MaxItemId = max_item_id;
 
-  if (Superclass::InternalRestore(node_)==MAF_OK)
+  if (Superclass::InternalRestore(node)==MAF_OK)
   {  
     mafMatrix matrix;
-    if (node->RestoreMatrix(_R("Transform"),matrix)==MAF_OK)
+    if (node[_R("Transform")].RestoreMatrix(matrix) == MAF_OK)
     {
       m_Transform->SetMatrix(matrix);
       return MAF_OK;

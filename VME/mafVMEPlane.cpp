@@ -873,33 +873,31 @@ int mafVMEPlane::InternalStore(mafStorageElement *parent)
 }
 
 //-----------------------------------------------------------------------
-int mafVMEPlane::InternalRestore(const mafStorageElement& node_)
+int mafVMEPlane::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-	auto node = &node_;
-
-	if (Superclass::InternalRestore(node_) == MAF_OK)
+	if (Superclass::InternalRestore(node) == MAF_OK)
 	{
 		mafMatrix matrix;
 		if (
-	//	node->RestoreText("name", m_Name) &&
-		node->RestoreDouble(_R("PlaneUx"), m_PlaneXRes) &&
-		node->RestoreDouble(_R("PlaneUy"), m_PlaneYRes) &&
+	//	node.RestoreText("name", m_Name) &&
+		node.RestoreDouble(_R("PlaneUx"), m_PlaneXRes) &&
+		node.RestoreDouble(_R("PlaneUy"), m_PlaneYRes) &&
 		
-		/*node->RestoreDouble("m_PlaneOrigin0", m_PlaneOrigin[0]) == MAF_OK &&
-		node->RestoreDouble("m_PlaneOrigin1", m_PlaneOrigin[1]) == MAF_OK &&
-		node->RestoreDouble("m_PlaneOrigin2", m_PlaneOrigin[2]) == MAF_OK &&
+		/*node.RestoreDouble("m_PlaneOrigin0", m_PlaneOrigin[0]) == MAF_OK &&
+		node.RestoreDouble("m_PlaneOrigin1", m_PlaneOrigin[1]) == MAF_OK &&
+		node.RestoreDouble("m_PlaneOrigin2", m_PlaneOrigin[2]) == MAF_OK &&
 
-		node->RestoreDouble("m_PlanePoint1_0", m_PlanePoint1[0]) == MAF_OK &&
-		node->RestoreDouble("m_PlanePoint1_1", m_PlanePoint1[1]) == MAF_OK &&
-		node->RestoreDouble("m_PlanePoint1_2", m_PlanePoint1[2]) == MAF_OK &&
+		node.RestoreDouble("m_PlanePoint1_0", m_PlanePoint1[0]) == MAF_OK &&
+		node.RestoreDouble("m_PlanePoint1_1", m_PlanePoint1[1]) == MAF_OK &&
+		node.RestoreDouble("m_PlanePoint1_2", m_PlanePoint1[2]) == MAF_OK &&
 
 
-		node->RestoreDouble("m_PlanePoint2_0", m_PlanePoint2[0]) == MAF_OK &&
-		node->RestoreDouble("m_PlanePoint2_1", m_PlanePoint2[1]) == MAF_OK &&
-		node->RestoreDouble("m_PlanePoint2_2", m_PlanePoint2[2]) == MAF_OK &&
+		node.RestoreDouble("m_PlanePoint2_0", m_PlanePoint2[0]) == MAF_OK &&
+		node.RestoreDouble("m_PlanePoint2_1", m_PlanePoint2[1]) == MAF_OK &&
+		node.RestoreDouble("m_PlanePoint2_2", m_PlanePoint2[2]) == MAF_OK &&
 */
-		node->RestoreMatrix(_R("Transform"), matrix) == MAF_OK)
+		node[_R("Transform")].RestoreMatrix(matrix) == MAF_OK)
 		{
 			m_Transform->SetMatrix(matrix);
 		}

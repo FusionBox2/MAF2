@@ -553,44 +553,42 @@ int mafVMESurfaceParametric::InternalStore(mafStorageElement *parent)
 }
 
 //-----------------------------------------------------------------------
-int mafVMESurfaceParametric::InternalRestore(const mafStorageElement& node_)
+int mafVMESurfaceParametric::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-	auto node = &node_;
-
-	if (Superclass::InternalRestore(node_)==MAF_OK)
+	if (Superclass::InternalRestore(node)==MAF_OK)
 	{
     mafMatrix matrix;
-    if (node->RestoreMatrix(_R("Transform"),matrix)==MAF_OK)
+    if (node[_R("Transform")].RestoreMatrix(matrix) ==MAF_OK)
     {
       m_Transform->SetMatrix(matrix); 
-      node->RestoreInteger(_R("Geometry"),m_GeometryType);
-      node->RestoreDouble(_R("ShereRadius"),m_SphereRadius);
-      node->RestoreDouble(_R("SpherePhiRes"),m_SpherePhiRes);
-      node->RestoreDouble(_R("SphereThetaRes"),m_SphereTheRes);
-      node->RestoreDouble(_R("ConeHieght"),m_ConeHeight);
-      node->RestoreDouble(_R("ConeRadius"),m_ConeRadius);
-      node->RestoreInteger(_R("ConeCapping"),m_ConeCapping);
-      node->RestoreDouble(_R("ConeRes"),m_ConeRes);
-      node->RestoreInteger(_R("ConeOrientationAxis"),m_ConeOrientationAxis);
-      node->RestoreDouble(_R("CylinderHeight"),m_CylinderHeight);
-      node->RestoreDouble(_R("CylinderRadius"),m_CylinderRadius);
-      node->RestoreDouble(_R("CylinderRes"),m_CylinderRes);
-      node->RestoreInteger(_R("CylinderOrientationAxis"),m_CylinderOrientationAxis);
-      node->RestoreDouble(_R("CubeXLength"),m_CubeXLength);
-      node->RestoreDouble(_R("CubeYLength"),m_CubeYLength);
-      node->RestoreDouble(_R("CubeZLength"),m_CubeZLength);
-      node->RestoreDouble(_R("PlaneXRes"),m_PlaneXRes);
-      node->RestoreDouble(_R("PlaneYRes"),m_PlaneYRes);
-      node->RestoreVectorN(_R("PlaneOrigin"),m_PlaneOrigin,3);
-      node->RestoreVectorN(_R("PlanePoint1"),m_PlanePoint1,3);
-      node->RestoreVectorN(_R("PlanePoint2"),m_PlanePoint2,3);
-      node->RestoreDouble(_R("EllipsoidXLenght"),m_EllipsoidXLenght);
-      node->RestoreDouble(_R("EllipsoidYLenght"),m_EllipsoidYLenght);
-      node->RestoreDouble(_R("EllipsoidZLenght"),m_EllipsoidZLenght);
-      node->RestoreDouble(_R("EllipsoidTheRes"),m_EllipsoidTheRes);
-      node->RestoreDouble(_R("EllipsoidPhiRes"),m_EllipsoidPhiRes);
-      node->RestoreInteger(_R("EllipsoidOrientationAxis"),m_CylinderOrientationAxis);
+      node.RestoreInteger(_R("Geometry"),m_GeometryType);
+      node.RestoreDouble(_R("ShereRadius"),m_SphereRadius);
+      node.RestoreDouble(_R("SpherePhiRes"),m_SpherePhiRes);
+      node.RestoreDouble(_R("SphereThetaRes"),m_SphereTheRes);
+      node.RestoreDouble(_R("ConeHieght"),m_ConeHeight);
+      node.RestoreDouble(_R("ConeRadius"),m_ConeRadius);
+      node.RestoreInteger(_R("ConeCapping"),m_ConeCapping);
+      node.RestoreDouble(_R("ConeRes"),m_ConeRes);
+      node.RestoreInteger(_R("ConeOrientationAxis"),m_ConeOrientationAxis);
+      node.RestoreDouble(_R("CylinderHeight"),m_CylinderHeight);
+      node.RestoreDouble(_R("CylinderRadius"),m_CylinderRadius);
+      node.RestoreDouble(_R("CylinderRes"),m_CylinderRes);
+      node.RestoreInteger(_R("CylinderOrientationAxis"),m_CylinderOrientationAxis);
+      node.RestoreDouble(_R("CubeXLength"),m_CubeXLength);
+      node.RestoreDouble(_R("CubeYLength"),m_CubeYLength);
+      node.RestoreDouble(_R("CubeZLength"),m_CubeZLength);
+      node.RestoreDouble(_R("PlaneXRes"),m_PlaneXRes);
+      node.RestoreDouble(_R("PlaneYRes"),m_PlaneYRes);
+      node.RestoreVectorN(_R("PlaneOrigin"),m_PlaneOrigin,3);
+      node.RestoreVectorN(_R("PlanePoint1"),m_PlanePoint1,3);
+      node.RestoreVectorN(_R("PlanePoint2"),m_PlanePoint2,3);
+      node.RestoreDouble(_R("EllipsoidXLenght"),m_EllipsoidXLenght);
+      node.RestoreDouble(_R("EllipsoidYLenght"),m_EllipsoidYLenght);
+      node.RestoreDouble(_R("EllipsoidZLenght"),m_EllipsoidZLenght);
+      node.RestoreDouble(_R("EllipsoidTheRes"),m_EllipsoidTheRes);
+      node.RestoreDouble(_R("EllipsoidPhiRes"),m_EllipsoidPhiRes);
+      node.RestoreInteger(_R("EllipsoidOrientationAxis"),m_CylinderOrientationAxis);
       return MAF_OK;
     }
 	}

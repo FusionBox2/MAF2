@@ -807,17 +807,15 @@ int mafVMEMeter::InternalStore(mafStorageElement *parent)
   return MAF_ERROR;
 }
 //-----------------------------------------------------------------------
-int mafVMEMeter::InternalRestore(const mafStorageElement& node_)
+int mafVMEMeter::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-	auto node = &node_;
-
-  if (Superclass::InternalRestore(node_)==MAF_OK)
+  if (Superclass::InternalRestore(node)==MAF_OK)
   {
     mafMatrix matrix;
-    node->RestoreInteger(_R("Infinite"), m_InfiniteLine);
-    node->RestoreInteger(_R("LineAngle2"), m_LineAngle2);
-    if (node->RestoreMatrix(_R("Transform"),matrix)==MAF_OK)
+    node.RestoreInteger(_R("Infinite"), m_InfiniteLine);
+    node.RestoreInteger(_R("LineAngle2"), m_LineAngle2);
+    if (node[_R("Transform")].RestoreMatrix(matrix) ==MAF_OK)
     {
       m_Transform->SetMatrix(matrix);
       return MAF_OK;

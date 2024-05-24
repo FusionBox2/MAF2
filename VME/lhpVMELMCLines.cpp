@@ -260,16 +260,14 @@ int lhpVMELMCLines::InternalStore(mafStorageElement *parent)
 }
 
 //-----------------------------------------------------------------------
-int lhpVMELMCLines::InternalRestore(const mafStorageElement& node_)
+int lhpVMELMCLines::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-	auto node = &node_;
-
-  if (Superclass::InternalRestore(node_)==MAF_OK)
+  if (Superclass::InternalRestore(node)==MAF_OK)
   {
     mafMatrix matrix;
-    node->RestoreInteger(_R("Looped"), m_Looped);
-    if (node->RestoreMatrix(_R("Transform"),matrix)==MAF_OK)
+    node.RestoreInteger(_R("Looped"), m_Looped);
+    if (node[_R("Transform")].RestoreMatrix(matrix) ==MAF_OK)
     {
       m_Transform->SetMatrix(matrix);
       return MAF_OK;

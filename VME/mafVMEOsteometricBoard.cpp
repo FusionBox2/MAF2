@@ -853,37 +853,33 @@ int mafVMEOsteometricBoard::InternalStore(mafStorageElement *parent)
 }
 
 //-----------------------------------------------------------------------
-int mafVMEOsteometricBoard::InternalRestore(const mafStorageElement& node_)
+int mafVMEOsteometricBoard::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-
-	auto node = &node_;
-
-	
-	if (Superclass::InternalRestore(node_) == MAF_OK)
+	if (Superclass::InternalRestore(node) == MAF_OK)
 	{
 		mafMatrix matrix;
-		if (node->RestoreMatrix(_R("Transform"), matrix) == MAF_OK)
+		if (node[_R("Transform")].RestoreMatrix(matrix) == MAF_OK)
 		{
 			m_Transform->SetMatrix(matrix);
 		
 			
-			node->RestoreDouble(_R("PlaneUx"), m_PlaneXRes);
-			node->RestoreDouble(_R("PlaneUy"), m_PlaneYRes);
-			/*node->RestoreText("m_p1LandmarkName", m_p1LandmarkName);
-			node->RestoreText("m_p2LandmarkName", m_p2LandmarkName);
-			node->RestoreText("m_p3LandmarkName", m_p3LandmarkName);
-			node->RestoreText("m_p4LandmarkName", m_p4LandmarkName);
-			node->RestoreText("m_p5LandmarkName", m_p5LandmarkName);
-			node->RestoreText("m_p6LandmarkName", m_p6LandmarkName);
-			node->RestoreText("m_SurfaceName", m_SurfaceName);*/
+			node.RestoreDouble(_R("PlaneUx"), m_PlaneXRes);
+			node.RestoreDouble(_R("PlaneUy"), m_PlaneYRes);
+			/*node.RestoreText("m_p1LandmarkName", m_p1LandmarkName);
+			node.RestoreText("m_p2LandmarkName", m_p2LandmarkName);
+			node.RestoreText("m_p3LandmarkName", m_p3LandmarkName);
+			node.RestoreText("m_p4LandmarkName", m_p4LandmarkName);
+			node.RestoreText("m_p5LandmarkName", m_p5LandmarkName);
+			node.RestoreText("m_p6LandmarkName", m_p6LandmarkName);
+			node.RestoreText("m_SurfaceName", m_SurfaceName);*/
 
-			//node->RestoreVectorN("PlaneOrigin", m_PlaneOrigin, 3);
-			//node->RestoreVectorN("PlanePoint1", m_PlanePoint1, 3);
-			//node->RestoreVectorN("PlanePoint2", m_PlanePoint2, 3);
-			//node->RestoreVectorN("PlanePoint3", m_PlanePoint3, 3);
-			//node->RestoreVectorN("PlanePoint4", m_PlanePoint4, 3);
-			//node->RestoreVectorN("PlanePoint5", m_PlanePoint5, 3);
+			//node.RestoreVectorN("PlaneOrigin", m_PlaneOrigin, 3);
+			//node.RestoreVectorN("PlanePoint1", m_PlanePoint1, 3);
+			//node.RestoreVectorN("PlanePoint2", m_PlanePoint2, 3);
+			//node.RestoreVectorN("PlanePoint3", m_PlanePoint3, 3);
+			//node.RestoreVectorN("PlanePoint4", m_PlanePoint4, 3);
+			//node.RestoreVectorN("PlanePoint5", m_PlanePoint5, 3);
 			
 			return MAF_OK;
 		}

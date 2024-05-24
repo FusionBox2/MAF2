@@ -842,19 +842,17 @@ int mafVMEMuscleWrapperAQ::InternalStore(mafStorageElement *parent)
   return MAF_ERROR;
 }
 //-----------------------------------------------------------------------
-int mafVMEMuscleWrapperAQ::InternalRestore(const mafStorageElement& node_)
+int mafVMEMuscleWrapperAQ::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-	auto node = &node_;
-
 	wxBusyInfo wait2("muscle wrapperAQ internal restore");
 	Sleep(3000);
-  if (Superclass::InternalRestore(node_)==MAF_OK)
+  if (Superclass::InternalRestore(node)==MAF_OK)
   {
     mafMatrix matrix;
-    node->RestoreInteger(_R("Infinite"), m_InfiniteLine);
-    node->RestoreInteger(_R("LineAngle2"), m_LineAngle2);
-    if (node->RestoreMatrix(_R("Transform"),matrix)==MAF_OK)
+    node.RestoreInteger(_R("Infinite"), m_InfiniteLine);
+    node.RestoreInteger(_R("LineAngle2"), m_LineAngle2);
+    if (node[_R("Transform")].RestoreMatrix(matrix) ==MAF_OK)
     {
       m_Transform->SetMatrix(matrix);
       return MAF_OK;
