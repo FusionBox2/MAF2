@@ -594,24 +594,28 @@ int mafStorageElement::GetAttributeAsInteger(const mafString& name,mafID &value)
 }
 
 //------------------------------------------------------------------------------
-void mafStorageElementBuilder::SetAttribute(const mafString& name,const mafID value)
+int mafStorageElementBuilder::SetAttribute(const mafString& name,const mafID value)
 //------------------------------------------------------------------------------
 {
-  SetAttribute(name,mafToString(value));
+  return SetAttribute(name,mafToString(value));
 }
 //------------------------------------------------------------------------------
-void mafStorageElementBuilder::SetAttribute(const mafString& name,const double value)
+int mafStorageElementBuilder::SetAttribute(const mafString& name,const double value)
 //------------------------------------------------------------------------------
 {
-  SetAttribute(name,mafToString(value));
+  return SetAttribute(name,mafToString(value));
 }
 
 //------------------------------------------------------------------------------
-void mafStorageElementBuilder::SetAttribute(const mafString& name, const mafString& value)
+int mafStorageElementBuilder::SetAttribute(const mafString& name, const mafString& value)
 //------------------------------------------------------------------------------
 {
-	if (getDOMNode(m_DOMElement)->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
-		static_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*>(getDOMNode(m_DOMElement))->setAttribute(mafXMLString(name.GetCStr()), mafXMLString(value.GetCStr()));
+    if (getDOMNode(m_DOMElement)->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
+    {
+        static_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*>(getDOMNode(m_DOMElement))->setAttribute(mafXMLString(name.GetCStr()), mafXMLString(value.GetCStr()));
+        return MAF_OK;
+    }
+	return MAF_ERROR;
 }
 //------------------------------------------------------------------------------
 int mafStorageElement::GetAttribute(const mafString& name, mafString& value) const

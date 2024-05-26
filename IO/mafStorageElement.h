@@ -110,9 +110,9 @@ public:
 	int StoreVectorN(const std::vector<int>& comps);
 	int StoreVectorN(const std::vector<mafString>& comps, const mafString& tag);
 	int StoreVectorN(const std::vector<mafObject*>& vector, const mafString& items_name);
-	void SetAttribute(const mafString& name, const mafID value);
-	void SetAttribute(const mafString& name, const double value);
-	void SetAttribute(const mafString& name, const mafString& value);// = 0;
+	int SetAttribute(const mafString& name, const mafID value);
+	int SetAttribute(const mafString& name, const double value);
+	int SetAttribute(const mafString& name, const mafString& value);// = 0;
 
 	/** return a pointer to the storage who created this element */
 	mafParser* GetStorage()  const { return m_Storage; }
