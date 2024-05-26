@@ -146,14 +146,12 @@ int mafAction::InternalRestore(const mafStorageElement& node)
   auto children=node.GetElementsByName(_R("Device"));
   for (int i=0;i<children.size();i++)
   {
-    mafStorageElement *subnode = children[i];
-    assert(subnode);
     //if (subnode->GetName() == _R("Device"))
     {
       mafID id;
       mafString name;
 
-      if (subnode->GetAttributeAsInteger(_R("ID"),id) && subnode->GetAttribute(_R("Name"),name))
+      if (children[i].GetAttributeAsInteger(_R("ID"),id) && children[i].GetAttribute(_R("Name"),name))
       {
         // forward an event to device manager to perform binding...
         mafEventMacro(mafEvent(this,DEVICE_BIND,(intptr_t)id));

@@ -127,7 +127,7 @@ int mafDeviceSet::InternalRestore(const mafStorageElement& node)
 
   Superclass::InternalRestore(node);
 
-  std::vector<mafStorageElement*> devices = node.GetElementsByName(_R("Device"));
+  auto devices = node.GetElementsByName(_R("Device"));
   for (auto& device_node : devices)
   {
     // Must create the object before restoring since
@@ -135,7 +135,7 @@ int mafDeviceSet::InternalRestore(const mafStorageElement& node)
     // device manager
     {
       mafObject* obj = nullptr;
-      if (device_node->RestoreObject(obj) == MAF_OK)
+      if (device_node.RestoreObject(obj) == MAF_OK)
       {
         if (mafDevice *device=mafDevice::SafeDownCast(obj)) // check the restored object is really a mafDevice
         {

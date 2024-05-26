@@ -150,7 +150,7 @@ int mafAttributeTraceability::InternalRestore(const mafStorageElement& node)
   {
     m_Traceability traceability;
 
-    std::vector<mafStorageElement*> listTrialEventElems = node.GetElementsByName(_R("TrialEvent"));
+    std::vector<mafStorageElement> listTrialEventElems = node.GetElementsByName(_R("TrialEvent"));
 
 	std::vector<mafString> listTrialEvent(listTrialEventElems.size());
     std::vector<mafString> listOperation(listTrialEventElems.size());

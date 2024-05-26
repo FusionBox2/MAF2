@@ -117,7 +117,7 @@ int mafMSFImporter::InternalRestore(const mafStorageElement& node_)
   {
     //if (children[i]->GetName() == _R("TArray"))
     {
-      if (RestoreTagArray(children_tags[i],root->GetTagArray()) != MAF_OK)
+      if (RestoreTagArray(&children_tags[i],root->GetTagArray()) != MAF_OK)
       {
         mafErrorMacro("MSFImporter: error restoring Tag Array of node: \""<<root->GetName().GetCStr() <<"\"");
       }
@@ -127,7 +127,7 @@ int mafMSFImporter::InternalRestore(const mafStorageElement& node_)
   {
     //if (children[i]->GetName() == _R("VME"))
     {
-      mafVME *child_vme=RestoreVME(children_vmes[i],root);
+      mafVME *child_vme=RestoreVME(&children_vmes[i],root);
       if (child_vme==NULL)
       {
         mafErrorMacro("Error while restoring a VME (parent is the root)");
@@ -253,7 +253,7 @@ mafVME *mafMSFImporter::RestoreVME(mafStorageElement *node, mafVME *parent)
 	  auto children_items = node->GetElementsByName(_R("VItem"));
 	  auto children_matrix = node->GetElementsByName(_R("VMatrix"));
 	  auto children_vmes = node->GetElementsByName(_R("VME"));
-      std::vector<mafStorageElement*> children;
+      std::vector<mafStorageElement> children;
       children.insert(end(children), begin(children_tags), end(children_tags));
 	  children.insert(end(children), begin(children_items), end(children_items));
 	  children.insert(end(children), begin(children_matrix), end(children_matrix));
@@ -262,9 +262,9 @@ mafVME *mafMSFImporter::RestoreVME(mafStorageElement *node, mafVME *parent)
       {
         // Restore a TagArray element
         //if (mafCString("TArray") == children[i]->GetName())
-        if (children[i]->GetName() == _R("TArray"))
+        if (children[i].GetName() == _R("TArray"))
         {
-          if (RestoreTagArray(children[i],vme->GetTagArray()) != MAF_OK)
+          if (RestoreTagArray(&children[i],vme->GetTagArray()) != MAF_OK)
           {
             mafErrorMacro("MSFImporter: error restoring Tag Array of node: \""<<vme->GetName().GetCStr() <<"\"");
             return NULL;
@@ -293,9 +293,9 @@ mafVME *mafMSFImporter::RestoreVME(mafStorageElement *node, mafVME *parent)
           }
         }
         // restore VME-Item element
-        else if (children[i]->GetName() == _R("VItem"))
+        else if (children[i].GetName() == _R("VItem"))
         {
-          if (RestoreVItem(children[i],vme) != MAF_OK)
+          if (RestoreVItem(&children[i],vme) != MAF_OK)
           {
             mafErrorMacro("MSFImporter: error restoring VME-Item of node: \""<<vme->GetName().GetCStr() <<"\"");
             return NULL;
@@ -303,10 +303,10 @@ mafVME *mafMSFImporter::RestoreVME(mafStorageElement *node, mafVME *parent)
         }
 
         // restore MatrixVector element
-        else if (children[i]->GetName()== _R("VMatrix"))
+        else if (children[i].GetName()== _R("VMatrix"))
         {
           mafVMEGenericAbstract *vme_generic = mafVMEGenericAbstract::SafeDownCast(vme);
-          if (vme_generic && RestoreVMatrix(children[i],vme_generic->GetMatrixVector()) != MAF_OK)
+          if (vme_generic && RestoreVMatrix(&children[i],vme_generic->GetMatrixVector()) != MAF_OK)
           {
             mafErrorMacro("MSFImporter: error restoring VME-Item of node: \""<<vme->GetName().GetCStr() <<"\"");
             return NULL;
@@ -321,9 +321,9 @@ mafVME *mafMSFImporter::RestoreVME(mafStorageElement *node, mafVME *parent)
         }
         
         // restore children VMEs
-        else if (children[i]->GetName() == _R("VME"))
+        else if (children[i].GetName() == _R("VME"))
         {
-          mafVME *child_vme=RestoreVME(children[i],vme);
+          mafVME *child_vme=RestoreVME(&children[i],vme);
           if (child_vme==NULL)
           {
             mafErrorMacro("MSFImporter: error restoring child VME (parent=\""<<vme->GetName().GetCStr() <<"\")");
@@ -603,7 +603,7 @@ int mafMSFImporter::RestoreVItem(mafStorageElement *node, mafVME *vme)
           mafStorageElement* tarray = nullptr;
           auto tarray_nodes = node->GetElementsByName(_R("TArray"));
           if (!tarray_nodes.empty())
-              tarray = tarray_nodes.front();
+              tarray = &tarray_nodes.front();
           mafVMEGeneric *vme_generic=mafVMEGeneric::SafeDownCast(vme);
           assert(vme_generic);
           if (tarray)
@@ -661,7 +661,7 @@ int mafMSFImporter::RestoreVMatrix(mafStorageElement *node, mafMatrixVector *vma
     //assert(children[i]->GetName() == _R("Matrix"));
 
     mafSmartPointer<mafMatrix> matrix;
-    int restored_matrix = children[i]->RestoreMatrix(*matrix);
+    int restored_matrix = children[i].RestoreMatrix(*matrix);
     if (restored_matrix != MAF_ERROR)
     {
       vmatrix->AppendKeyMatrix(matrix);
@@ -685,13 +685,13 @@ int mafMSFImporter::RestoreTagArray(mafStorageElement *node, mafTagArray *tarray
     //if (children[i]->GetName()== _R("TItem"))
     {
       mafID num_of_comps;
-      if (children[i]->GetAttributeAsInteger(_R("Mult"),num_of_comps))
+      if (children[i].GetAttributeAsInteger(_R("Mult"),num_of_comps))
       {
         mafString tag_name;
-        if (children[i]->GetAttribute(_R("Tag"),tag_name))
+        if (children[i].GetAttribute(_R("Tag"),tag_name))
         {
           mafString tag_type;
-          if (children[i]->GetAttribute(_R("Type"),tag_type))
+          if (children[i].GetAttribute(_R("Type"),tag_type))
           {
             mafTagItem titem;
             titem.SetNumberOfComponents(num_of_comps);
@@ -715,7 +715,7 @@ int mafMSFImporter::RestoreTagArray(mafStorageElement *node, mafTagArray *tarray
             }
 
             std::vector<mafString> tags;
-            children[i]->RestoreVectorN(tags, _R("TC"));
+            children[i].RestoreVectorN(tags, _R("TC"));
             for (int n = 0;n<tags.size();n++)
             {
               titem.SetComponent(tags[n], n);

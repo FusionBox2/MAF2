@@ -1280,7 +1280,7 @@ int mafNode::InternalRestore(const mafStorageElement& node)
   mafStorageElement* links_element = nullptr;
   auto links_nodes = node.GetElementsByName(_R("Links"));
   if (!links_nodes.empty())
-      links_element = links_nodes.front();
+      links_element = &links_nodes.front();
   if (!links_element)
   {
     mafErrorMacro("I/O error restoring node "<<GetName().GetCStr() <<" of type "<<GetTypeName()<<" : problems restoring links.");
@@ -1294,10 +1294,10 @@ int mafNode::InternalRestore(const mafStorageElement& node)
   for (unsigned int i = 0; i < n; i++)
   {
     mafString link_name;
-    links_vector[i]->GetAttribute(_R("Name"),link_name);
+    links_vector[i].GetAttribute(_R("Name"),link_name);
     mafID link_node_id, link_node_subid;
-    links_vector[i]->GetAttributeAsInteger(_R("NodeId"),link_node_id);
-    links_vector[i]->GetAttributeAsInteger(_R("NodeSubId"),link_node_subid);
+    links_vector[i].GetAttributeAsInteger(_R("NodeId"),link_node_id);
+    links_vector[i].GetAttributeAsInteger(_R("NodeSubId"),link_node_subid);
     if(!(link_node_id == -1 && link_node_subid == -1))
     {
       m_Links[link_name] = mmuNodeLink(NULL,link_node_subid).SetId(link_node_id);

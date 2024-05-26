@@ -223,7 +223,7 @@ int mafTagArray::InternalRestore(const mafStorageElement& node_)
       //if (children[i]->GetName() == _R("TItem"))
       {
         mafTagItem new_titem;
-        ret=new_titem.Restore(*children[i]);
+        ret=new_titem.Restore(children[i]);
         SetTag(new_titem);
         idx++;
       }

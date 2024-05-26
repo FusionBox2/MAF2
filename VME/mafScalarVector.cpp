@@ -86,7 +86,7 @@ int mafScalarVector::InternalRestore(const mafStorageElement& node)
     for (int i = 0; i < vector_elements.size(); i++)
     {
       double sca[2];
-      if (vector_elements[i]->RestoreVectorN(sca, 2) != MAF_OK)
+      if (vector_elements[i].RestoreVectorN(sca, 2) != MAF_OK)
         return MAF_ERROR;
       AppendItem(sca[0], sca[1]);
     }

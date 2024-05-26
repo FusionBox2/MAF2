@@ -55,13 +55,12 @@ int mafInteractorSER::InternalRestore(const mafStorageElement& node)
   auto children = node.GetElementsByName(_R("Action"));
   for (int i=0;i<children.size();i++)
   {
-    mafStorageElement *subnode=children[i];   
     // create the object to be restored mannualy since mafAction is not in the factory
     mafString action_name;
-    subnode->GetAttribute(_R("Name"),action_name);
+    children[i].GetAttribute(_R("Name"),action_name);
     mafAction *action = GetAction(action_name.GetCStr());
 
-    if (action && action->Restore(*subnode))
+    if (action && action->Restore(children[i]))
     {
       mafErrorMacro("I/O Error restoring action");
     }

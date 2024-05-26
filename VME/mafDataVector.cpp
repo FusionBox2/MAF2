@@ -484,7 +484,7 @@ int mafDataVector::InternalRestore(const mafStorageElement& node)
   for (auto& elem : elements)
   {
     mafObject *obj = nullptr;
-    elem->RestoreObject(obj);
+    elem.RestoreObject(obj);
     mafVMEItem *item = mafVMEItem::SafeDownCast(obj);
     assert(item);
     if (!item)

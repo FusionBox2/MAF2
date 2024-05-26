@@ -49,7 +49,7 @@ public:
   /** elements can be created only by means of AppendChild() or FindNestedElement() */
   mafStorageElement(void* element, mafParser* storage);
 
-  virtual ~mafStorageElement();
+  ~mafStorageElement();
 
   /** get the name of this element. The element name is set at creation time (@sa AppendChild()) */
   mafString GetName() const;
@@ -79,16 +79,14 @@ public:
   /** return a pointer to the storage who created this element */
   mafParser *GetStorage()  const {return m_Storage;}
 
-  std::vector<mafStorageElement*> GetElementsByName(const mafString& name) const;
+  std::vector<mafStorageElement> GetElementsByName(const mafString& name) const;
 
 protected:
-  virtual void BuildChildrenMap() const;// = 0;
-
   void SetStorage(mafParser *storage) {m_Storage = storage;}
 
   mafParser                        *m_Storage;                        ///< storage who created this element
   void                             *m_DOMElement; ///< XML element wrapped by this object (USING PIMPL due to Internal Compile errors of VS7)
-  mutable std::map<mafString, std::vector<mafStorageElement*> > *m_Children;  ///< children elements
+  std::map<mafString, std::vector<mafStorageElement> > m_Children;  ///< children elements
 };
 
 class MAF_EXPORT mafStorageElementBuilder
@@ -97,7 +95,7 @@ public:
 	/** elements can be created only by means of AppendChild() or FindNestedElement() */
 	mafStorageElementBuilder(void* element, mafParser* storage);
 
-	virtual ~mafStorageElementBuilder();
+	~mafStorageElementBuilder();
 
 	mafStorageElementBuilder operator[](const mafString& name);
 	mafStorageElementBuilder operator()(const mafString& name);
