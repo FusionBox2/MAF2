@@ -219,7 +219,7 @@ int mafXMLParser::InternalRestore()
                       if (m_FileType == documentElement->GetName())
                       {
                           mafString docVersion;
-                          if (documentElement->GetAttribute(_R("Version"), docVersion))
+                          if (documentElement->GetAttribute(_R("Version"), docVersion) == MAF_OK)
                           {
                               double doc_version_f = atof(docVersion.GetCStr());
                               double my_version_f = atof(m_Version.GetCStr());

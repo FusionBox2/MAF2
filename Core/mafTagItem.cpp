@@ -481,11 +481,11 @@ int mafTagItem::InternalStore(mafStorageElementBuilder& parent)
 int mafTagItem::InternalRestore(const mafStorageElement& node)
 //-------------------------------------------------------------------------
 {
-  if (!node.GetAttribute(_R("Name"),m_Name))
+  if (node.GetAttribute(_R("Name"),m_Name) != MAF_OK)
     return MAF_ERROR;
 
   mafString type;
-  if (!node.GetAttribute(_R("Type"),type))
+  if (node.GetAttribute(_R("Type"),type) != MAF_OK)
     return MAF_ERROR;
   
   if (type==_R("NUM"))
@@ -506,7 +506,7 @@ int mafTagItem::InternalRestore(const mafStorageElement& node)
   }
 
   mafID num;
-  if (!node.GetAttributeAsInteger(_R("Mult"),num))
+  if (node.GetAttributeAsInteger(_R("Mult"),num) != MAF_OK)
     return MAF_ERROR;
   
   SetNumberOfComponents(num);

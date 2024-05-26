@@ -207,7 +207,7 @@ int mafDeviceManager::InternalRestore(const mafStorageElement& node)
 {
   m_RestoringFlag=true; // used to avoid DeviceManager set device ID when restoring
   
-  if (!node.GetAttributeAsInteger(_R("DeviceIdCounter"),m_DeviceIdCounter))
+  if (node.GetAttributeAsInteger(_R("DeviceIdCounter"),m_DeviceIdCounter) != MAF_OK)
   {
     assert(true);
     mafErrorMacro("Cannot find \"DeviceIdCounter\" attribute, possible subsequent restoring problems!");

@@ -97,7 +97,7 @@ int mafStorageElement::RestoreMatrix(mafMatrix& matrix) const
   if (parsedElems == 16)
   {
     mafTimeStamp time_stamp;
-    this->GetAttributeAsDouble(_R("TimeStamp"),time_stamp);
+    GetAttributeAsDouble(_R("TimeStamp"),time_stamp);
     matrix.SetTimeStamp(time_stamp);
     return MAF_OK; 
   }
@@ -314,7 +314,7 @@ int mafStorageElement::RestoreVectorN(std::vector<mafObject *> &vector,const maf
       auto items = GetElementsByName(items_name);
 
       mafID numItems=-1;
-      if (!GetAttributeAsInteger(_R("NumberOfItems"),numItems))
+      if (GetAttributeAsInteger(_R("NumberOfItems"),numItems) != MAF_OK)
       {
         mafWarningMacro("Warning while restoring vector of objects from element <"<<GetName().GetCStr() <<">: cannot find \"NumberOfItems\" attribute..." );
       }
@@ -424,7 +424,7 @@ int mafStorageElement::RestoreObject(mafObject*& object) const
 {
   mafString type_name;
 
-  if (GetAttribute(_R("Type"),type_name)&&!type_name.empty())
+  if (GetAttribute(_R("Type"),type_name)==MAF_OK&&!type_name.empty())
   {
     if (m_Storage->NeedsUpgrade())
     {
@@ -568,29 +568,29 @@ int mafStorageElement::RestoreVectorN(std::vector<mafString> &comps,const mafStr
   return MAF_OK;
 }
 //------------------------------------------------------------------------------
-bool mafStorageElement::GetAttributeAsDouble(const mafString& name,double &value) const
+int mafStorageElement::GetAttributeAsDouble(const mafString& name,double &value) const
 //------------------------------------------------------------------------------
 {
   mafString tmp;
-  if (GetAttribute(name,tmp))
+  if (GetAttribute(name,tmp) == MAF_OK)
   {
     value=atof(tmp.GetCStr());
-    return true;
+    return MAF_OK;
   }
-  return false;
+  return MAF_ERROR;
 }
 
 //------------------------------------------------------------------------------
-bool mafStorageElement::GetAttributeAsInteger(const mafString& name,mafID &value) const
+int mafStorageElement::GetAttributeAsInteger(const mafString& name,mafID &value) const
 //------------------------------------------------------------------------------
 {
   mafString tmp;
-  if (GetAttribute(name,tmp))
+  if (GetAttribute(name,tmp) == MAF_OK)
   {
     value=atof(tmp.GetCStr());
-    return true;
+    return MAF_OK;
   }
-  return false;
+  return MAF_ERROR;
 }
 
 //------------------------------------------------------------------------------
@@ -614,7 +614,7 @@ void mafStorageElementBuilder::SetAttribute(const mafString& name, const mafStri
 		static_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*>(getDOMNode(m_DOMElement))->setAttribute(mafXMLString(name.GetCStr()), mafXMLString(value.GetCStr()));
 }
 //------------------------------------------------------------------------------
-bool mafStorageElement::GetAttribute(const mafString& name, mafString& value) const
+int mafStorageElement::GetAttribute(const mafString& name, mafString& value) const
 //------------------------------------------------------------------------------
 {
 	if (getDOMNode(m_DOMElement)->getNodeType() != XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
@@ -623,9 +623,9 @@ bool mafStorageElement::GetAttribute(const mafString& name, mafString& value) co
 	if (xml_value)
 	{
 		value = _R(mafXMLString(xml_value));
-		return true;
+		return MAF_OK;
 	}
-	return false;
+	return MAF_ERROR;
 }
 //------------------------------------------------------------------------------
 int mafStorageElementBuilder::StoreText(const mafString& text)

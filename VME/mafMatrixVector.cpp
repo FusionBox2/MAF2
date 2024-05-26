@@ -87,7 +87,7 @@ int mafMatrixVector::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
   mafID num_items;
-  if (node.GetAttributeAsInteger(_R("NumberOfItems"),num_items))
+  if (node.GetAttributeAsInteger(_R("NumberOfItems"),num_items) == MAF_OK)
   {
     auto vector_elements = node.GetElementsByName(_R("Matrix"));
 

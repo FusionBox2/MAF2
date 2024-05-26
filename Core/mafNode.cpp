@@ -1240,14 +1240,14 @@ int mafNode::InternalStore(mafStorageElementBuilder& parent)
 int mafNode::InternalRestore(const mafStorageElement& node)
 //-------------------------------------------------------------------------
 {
-  if (!node.GetAttribute(_R("Name"), m_Name))
+  if (node.GetAttribute(_R("Name"), m_Name) != MAF_OK)
   {
     mafErrorMacro("I/O error restoring node of type "<<GetTypeName()<<" : cannot found Name attribute.");
     return MAF_ERROR;
   }
   // restore Id
   mafString id;
-  if (!node.GetAttribute(_R("Id"), id))
+  if (node.GetAttribute(_R("Id"), id) != MAF_OK)
   {
     mafErrorMacro("I/O error restoring node "<<GetName().GetCStr() <<" of type "<<GetTypeName()<<" : cannot found Id attribute.");
     return MAF_ERROR;

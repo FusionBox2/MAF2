@@ -102,11 +102,11 @@ int mafMSFImporter::InternalRestore(const mafStorageElement& node_)
     return MAF_ERROR;
   mafAutoPointer<mafVMERoot> root_ap = root;
   mafString root_name;
-  if (node->GetAttribute(_R("Name"),root_name))
+  if (node->GetAttribute(_R("Name"),root_name) == MAF_OK)
     root->SetName(root_name);
 
   mafID max_item_id;
-  if (node->GetAttributeAsInteger(_R("MaxItemId"),max_item_id))
+  if (node->GetAttributeAsInteger(_R("MaxItemId"),max_item_id) == MAF_OK)
     root->SetMaxItemId(max_item_id);
   
 
@@ -237,7 +237,7 @@ mafVME *mafMSFImporter::RestoreVME(mafStorageElement *node, mafVME *parent)
   mafVME *vme = NULL;
   // restore due attributes
   mafString vme_type;
-  if (node->GetAttribute(_R("Type"),vme_type))
+  if (node->GetAttribute(_R("Type"),vme_type) == MAF_OK)
   {
     vme = CreateVMEInstance(vme_type);
     if (!vme)
@@ -245,7 +245,7 @@ mafVME *mafMSFImporter::RestoreVME(mafStorageElement *node, mafVME *parent)
 
     mafString vme_name;
 
-    if (node->GetAttribute(_R("Name"),vme_name))
+    if (node->GetAttribute(_R("Name"),vme_name) == MAF_OK)
     {
       vme->SetName(vme_name);
       // traverse children and restore TagArray, MatrixVector and VMEItems 
@@ -588,16 +588,16 @@ int mafMSFImporter::RestoreVItem(mafStorageElement *node, mafVME *vme)
 //------------------------------------------------------------------------------
 {
   mafTimeStamp item_time;
-  if (node->GetAttributeAsDouble(_R("TimeStamp"),item_time))
+  if (node->GetAttributeAsDouble(_R("TimeStamp"),item_time) == MAF_OK)
   {
     mafString data_type;
-    if (node->GetAttribute(_R("DataType"),data_type))
+    if (node->GetAttribute(_R("DataType"),data_type) == MAF_OK)
     {
       mafID item_id;
-      if (node->GetAttributeAsInteger(_R("Id"),item_id))
+      if (node->GetAttributeAsInteger(_R("Id"),item_id) == MAF_OK)
       {
         mafString data_file;
-        if (node->GetAttribute(_R("DataFile"),data_file))
+        if (node->GetAttribute(_R("DataFile"),data_file) == MAF_OK)
         {
           mafSmartPointer<mafVMEItemVTK> vitem;
           mafStorageElement* tarray = nullptr;
@@ -685,13 +685,13 @@ int mafMSFImporter::RestoreTagArray(mafStorageElement *node, mafTagArray *tarray
     //if (children[i]->GetName()== _R("TItem"))
     {
       mafID num_of_comps;
-      if (children[i].GetAttributeAsInteger(_R("Mult"),num_of_comps))
+      if (children[i].GetAttributeAsInteger(_R("Mult"),num_of_comps) == MAF_OK)
       {
         mafString tag_name;
-        if (children[i].GetAttribute(_R("Tag"),tag_name))
+        if (children[i].GetAttribute(_R("Tag"),tag_name) == MAF_OK)
         {
           mafString tag_type;
-          if (children[i].GetAttribute(_R("Type"),tag_type))
+          if (children[i].GetAttribute(_R("Type"),tag_type) == MAF_OK)
           {
             mafTagItem titem;
             titem.SetNumberOfComponents(num_of_comps);

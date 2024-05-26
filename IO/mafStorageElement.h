@@ -72,9 +72,9 @@ public:
   int RestoreVectorN (std::vector<int> &comps) const;
   int RestoreVectorN (std::vector<mafString> &comps,const mafString& tag) const;
   int RestoreVectorN (std::vector<mafObject*>& vector, const mafString& items_name) const;
-  bool GetAttributeAsInteger(const mafString& name, mafID& value) const;
-  bool GetAttributeAsDouble(const mafString& name, double& value) const;
-  bool GetAttribute(const mafString& name, mafString& value) const;
+  int GetAttributeAsInteger(const mafString& name, mafID& value) const;
+  int GetAttributeAsDouble(const mafString& name, double& value) const;
+  int GetAttribute(const mafString& name, mafString& value) const;
 
   /** return a pointer to the storage who created this element */
   mafParser *GetStorage()  const {return m_Storage;}
@@ -82,8 +82,6 @@ public:
   std::vector<mafStorageElement> GetElementsByName(const mafString& name) const;
 
 protected:
-  void SetStorage(mafParser *storage) {m_Storage = storage;}
-
   mafParser                        *m_Storage;                        ///< storage who created this element
   void                             *m_DOMElement; ///< XML element wrapped by this object (USING PIMPL due to Internal Compile errors of VS7)
   std::map<mafString, std::vector<mafStorageElement> > m_Children;  ///< children elements
@@ -120,8 +118,6 @@ public:
 	mafParser* GetStorage()  const { return m_Storage; }
 
 protected:
-	void SetStorage(mafParser* storage) { m_Storage = storage; }
-
 	mafParser* m_Storage;                        ///< storage who created this element
 	void* m_DOMElement; ///< XML element wrapped by this object (USING PIMPL due to Internal Compile errors of VS7)
 };

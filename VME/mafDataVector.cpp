@@ -458,10 +458,10 @@ int mafDataVector::InternalRestore(const mafStorageElement& node)
 
   m_JustRestored = true;
 
-  if (node.GetAttributeAsInteger(_R("NumberOfItems"), num_items) && \
-      node.GetAttribute(_R("ItemTypeName"), item_type) && \
-      node.GetAttribute(_R("SingleFileMode"), single_file) && \
-      node.GetAttributeAsInteger(_R("VectorID"), m_VectorID) \
+  if (node.GetAttributeAsInteger(_R("NumberOfItems"), num_items) == MAF_OK && \
+      node.GetAttribute(_R("ItemTypeName"), item_type) == MAF_OK && \
+      node.GetAttribute(_R("SingleFileMode"), single_file) == MAF_OK && \
+      node.GetAttributeAsInteger(_R("VectorID"), m_VectorID) == MAF_OK \
     )
   {
     SetItemTypeName(item_type.GetCStr());
