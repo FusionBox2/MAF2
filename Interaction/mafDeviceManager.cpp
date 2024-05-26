@@ -214,7 +214,7 @@ int mafDeviceManager::InternalRestore(const mafStorageElement& node)
     m_DeviceIdCounter = mafDevice::MIN_DEVICE_ID;
   }
   
-  int fail = node[_R("DeviceSet")].RestoreStorable(m_DeviceSet);
+  int fail = m_DeviceSet->Restore(node[_R("DeviceSet")]);
   
   m_RestoringFlag=false;
 

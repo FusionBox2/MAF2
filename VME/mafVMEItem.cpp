@@ -268,7 +268,7 @@ int mafVMEItem::InternalRestore(const mafStorageElement& node)
     &&node[_R("TimeStamp")].RestoreDouble(m_TimeStamp)==MAF_OK \
     &&node[_R("Crypting")].RestoreText(crypting) == MAF_OK \
     &&node[_R("Bounds")].RestoreVectorN(m_Bounds.m_Bounds, 6) == MAF_OK \
-    &&node[_R("TagArray")].RestoreStorable(m_TagArray) == MAF_OK)
+    && m_TagArray->Restore(node[_R("TagArray")]) == MAF_OK)
   {
     m_Crypting = (crypting==_R("true")||crypting==_R("True")||crypting==_R("TRUE"))?true:false;
 

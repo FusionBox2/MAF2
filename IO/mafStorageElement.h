@@ -65,7 +65,6 @@ public:
   int RestoreDouble  (double& value) const;
   int RestoreMatrix  (mafMatrix& matrix) const;
   int RestoreObject  (mafObject*& object) const;
-  int RestoreStorable(mafStorable* object) const;
   int RestoreVectorN (double *comps,unsigned int num) const;
   int RestoreVectorN (int *comps,unsigned int num) const;
   int RestoreVectorN (std::vector<double> &comps) const;
@@ -103,7 +102,6 @@ public:
 	int StoreDouble(const double& value);
 	int StoreMatrix(const mafMatrix& matrix);
 	int StoreObject(mafObject* object);
-	int StoreStorable(mafStorable* object);
 	int StoreVectorN(double* comps, int num);
 	int StoreVectorN(int* comps, int num);
 	int StoreVectorN(const std::vector<double>& comps);

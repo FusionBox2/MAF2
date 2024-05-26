@@ -373,14 +373,6 @@ int mafStorageElementBuilder::StoreObject(mafObject *object)
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElementBuilder::StoreStorable(mafStorable* storable)
-//------------------------------------------------------------------------------
-{
-  assert(storable);
-  return storable->Store(*this);
-}
-
-//------------------------------------------------------------------------------
 mafString mafStorageElement::UpgradeAttribute(const mafString& attribute) const
 //------------------------------------------------------------------------------
 {
@@ -477,12 +469,6 @@ int mafStorageElement::RestoreObject(mafObject*& object) const
   return MAF_ERROR;
 }
 
-//------------------------------------------------------------------------------
-int mafStorageElement::RestoreStorable(mafStorable *storable) const
-//------------------------------------------------------------------------------
-{
-  return storable->Restore(*this);
-}
 //------------------------------------------------------------------------------
 int mafStorageElementBuilder::StoreMatrix(const mafMatrix& matrix)
 //------------------------------------------------------------------------------

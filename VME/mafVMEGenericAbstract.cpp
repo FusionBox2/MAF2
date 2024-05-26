@@ -279,12 +279,12 @@ int mafVMEGenericAbstract::InternalStore(mafStorageElementBuilder& parent)
   if (m_DataVector)
   {
     m_DataVector->SetCrypting(this->m_Crypting != 0);
-    if(parent[_R("DataVector")].StoreStorable(m_DataVector) == MAF_ERROR)
+    if(m_DataVector->Store(parent[_R("DataVector")]) == MAF_ERROR)
       return MAF_ERROR;
   }
 
   // sub-element for storing the matrix vector
-  if(parent[_R("MatrixVector")].StoreStorable(m_MatrixVector) == MAF_ERROR)
+  if(m_MatrixVector->Store(parent[_R("MatrixVector")]) == MAF_ERROR)
     return MAF_ERROR;
 
   return MAF_OK;
@@ -300,12 +300,12 @@ int mafVMEGenericAbstract::InternalRestore(const mafStorageElement& node)
   // restore Data Vector
   if (m_DataVector)
   {
-    ret_val = node[_R("DataVector")].RestoreStorable(m_DataVector);
+    ret_val = m_DataVector->Restore(node[_R("DataVector")]);
   }
   // restore Matrix Vector  
   if (m_MatrixVector && ret_val == MAF_OK)
   {
-    ret_val = node[_R("MatrixVector")].RestoreStorable(m_MatrixVector);
+    ret_val = m_MatrixVector->Restore(node[_R("MatrixVector")]);
   }
   return ret_val;
 }
