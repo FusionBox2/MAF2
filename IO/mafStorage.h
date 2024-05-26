@@ -147,6 +147,7 @@ protected:
   mafString           m_ParserURL;    ///< name of the last parsed file (used for SaveAs)
   mafID               m_TmpFileId;    ///< counter for unique tmp file naming
   mafString           m_TmpFolder;    ///< folder where to store tmp files
+  mafStorable         *m_Document;        ///< document object to be stored, or being restored
   std::unique_ptr<mafParser> m_Parser;
   
   std::set<mafString> m_TmpFileNames; ///< name of tmp files in the MSF dir

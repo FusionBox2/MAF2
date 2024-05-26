@@ -600,8 +600,7 @@ void mafGUIMaterialChooser::LoadLibraryFromFile()
   restore.SetURL(m_Filename);
 
   mafStorableMaterialLibrary *mat_lib = new mafStorableMaterialLibrary(&m_List);
-  restore.SetDocument(mat_lib);
-  restore.Restore();
+  restore.Restore(mat_lib);
 
   mmaMaterial *mat = NULL;
   for (int m = 0; m < m_List.size(); m++)
@@ -624,8 +623,7 @@ void mafGUIMaterialChooser::StoreLibraryToFile()
   restore.SetURL(m_Filename);
 
   mafStorableMaterialLibrary *mat_lib = new mafStorableMaterialLibrary(&m_List);
-  restore.SetDocument(mat_lib);
-  restore.Store();
+  restore.Store(mat_lib);
 
   mat_lib->Delete();
 }

@@ -18,21 +18,20 @@ mafParser::mafParser(const mafString& filetype, const mafString& version)
 	, m_Version(version)
 //------------------------------------------------------------------------------
 {
-  m_Document        = NULL;
   m_NeedsUpgrade    = false;
   m_ErrorCode       = 0;
 }
 //------------------------------------------------------------------------------
-int mafParser::Store()
+int mafParser::Store(mafStorable* doc)
 //------------------------------------------------------------------------------
 {
   SetErrorCode(0);
-  return InternalStore();
+  return InternalStore(doc);
 }
 //------------------------------------------------------------------------------
-int mafParser::Restore()
+int mafParser::Restore(mafStorable* doc)
 //------------------------------------------------------------------------------
 {
   SetErrorCode(0);
-  return InternalRestore();
+  return InternalRestore(doc);
 }

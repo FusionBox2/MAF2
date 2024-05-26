@@ -39,16 +39,10 @@ public:
   const mafString& GetURL(){return m_URL;}
 
   /** perform storing. the argument is the tag of the document node */
-  int Store();
+  int Store(mafStorable* doc);
 
   /** perform restoring. the argument is the tag of the document node  */
-  int Restore();
-
-  /** set the document element to be stored */
-  void SetDocument (mafStorable *doc){m_Document = doc;}
-
-  /** return the document object restored */
-  mafStorable *GetDocument(){return m_Document;}
+  int Restore(mafStorable* doc);
 
   void SetErrorCode(int err) {m_ErrorCode=err;}
   int  GetErrorCode() {return m_ErrorCode;}
@@ -56,14 +50,13 @@ public:
 
 protected:
   /** This is called by Store() and must be reimplemented by subclasses */
-  virtual int InternalStore()=0;
+  virtual int InternalStore(mafStorable* doc)=0;
 
   /** This is called by Restore() and must be reimplemented by subclasses */
-  virtual int InternalRestore()=0;
+  virtual int InternalRestore(mafStorable* doc)=0;
 
   mafString           m_FileType;  ///< The type of file to be opened
   mafString           m_Version;   ///< Current MSF version
-  mafStorable         *m_Document;        ///< document object to be stored, or being restored
   mafString           m_URL;          ///< name of the file being accessed
   int                 m_ErrorCode;    ///< the error code 0==OK
   bool                m_NeedsUpgrade; ///< Flag used to enable or not the upgrade mechanism.

@@ -38,9 +38,9 @@ public:
 
 protected:
   /** This is called by Store() and must be reimplemented by subclasses */
-  virtual int InternalStore();
+  virtual int InternalStore(mafStorable* doc);
 
   /** This is called by Restore() and must be reimplemented by subclasses */
-  virtual int InternalRestore();
+  virtual int InternalRestore(mafStorable* doc);
 };
 #endif // _mafXMLStorage_h_

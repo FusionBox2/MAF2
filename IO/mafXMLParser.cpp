@@ -42,6 +42,22 @@
 #error "XML Storage cannot be compiled without wxWidgets"
 #endif
 
+namespace
+{
+    class XMLPlatformUtilsInitializer
+    {
+    public:
+        XMLPlatformUtilsInitializer()
+        {
+            XERCES_CPP_NAMESPACE_QUALIFIER XMLPlatformUtils::Initialize();
+        }
+        ~XMLPlatformUtilsInitializer()
+        {
+			XERCES_CPP_NAMESPACE_QUALIFIER XMLPlatformUtils::Terminate();
+        }
+    };
+}
+
 //------------------------------------------------------------------------------
 // mafXMLStorage
 //------------------------------------------------------------------------------
@@ -60,22 +76,14 @@ mafXMLParser::~mafXMLParser()
 }
 
 //------------------------------------------------------------------------------
-int mafXMLParser::InternalStore()
+int mafXMLParser::InternalStore(mafStorable* doc)
 //------------------------------------------------------------------------------
 {
   int errorCode=0;
   // initialize the XML library
   try
   {
-      XERCES_CPP_NAMESPACE_QUALIFIER XMLPlatformUtils::Initialize();
-  }
-
-  catch(const XERCES_CPP_NAMESPACE_QUALIFIER XMLException& toCatch)
-  {
-      mafErrorMessageMacro("Error during Xerces-C Initialization.\nException message:" << mafXMLString(toCatch.getMessage()));      
-      return MAF_ERROR;
-  }
-  {
+	  XMLPlatformUtilsInitializer xmlInit;
       // get a serializer, an instance of DOMWriter (the "LS" stands for load-save).
       auto XMLImplement = XERCES_CPP_NAMESPACE_QUALIFIER DOMImplementationRegistry::getDOMImplementation(mafXMLString("LS"));
 
@@ -112,17 +120,17 @@ int mafXMLParser::InternalStore()
                   // extract root element and wrap it with an mafXMLElement object
                   XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* root = XMLDoc->getDocumentElement();
                   assert(root);
-                  auto documentElement = std::make_unique<mafStorageElementBuilder>(root, this);
+                  mafStorageElementBuilder documentElement(root, this);
 
                   // attach version attribute to the root node
-                  documentElement->SetAttribute(_R("Version"), m_Version);
+                  documentElement.SetAttribute(_R("Version"), m_Version);
 
                   // call Store function of the m_Document object. The root is passed
                   // as parent the DOM root element. A tree root is usually a special
                   // kind of object and can decide to store itself in the root
                   // object itself, or below it as it happens for other nodes.
-                  assert(m_Document);
-                  m_Document->Store(*documentElement);
+                  assert(doc);
+                  doc->Store(documentElement);
 
                   // write the tree to disk
                   XMLSerializer->write(XMLDoc.get(), theOutputDesc);
@@ -150,19 +158,21 @@ int mafXMLParser::InternalStore()
           errorCode = 1;
       }
   }
-  // terminate the XML library
-  XERCES_CPP_NAMESPACE_QUALIFIER XMLPlatformUtils::Terminate();
-
+  catch (const XERCES_CPP_NAMESPACE_QUALIFIER XMLException& toCatch)
+  {
+	  mafErrorMessageMacro("Error during Xerces-C Initialization.\nException message:" << mafXMLString(toCatch.getMessage()));
+	  return MAF_ERROR;
+  }
   return errorCode;
 }
 
 //------------------------------------------------------------------------------
-int mafXMLParser::InternalRestore()
+int mafXMLParser::InternalRestore(mafStorable* doc)
 //------------------------------------------------------------------------------
 {
-  assert (m_Document);
+  assert (doc);
 
-  if (!m_Document)
+  if (!doc)
     return MAF_ERROR;
   
   int errorCode=0;
@@ -170,21 +180,13 @@ int mafXMLParser::InternalRestore()
   // initialize the XML library
   try
   {
-      XERCES_CPP_NAMESPACE_QUALIFIER XMLPlatformUtils::Initialize();
-  }
-
-  catch(const XERCES_CPP_NAMESPACE_QUALIFIER XMLException& toCatch)
-  {
-    mafErrorMessageMacro( "Error during Xerces-C Initialization.\nException message:" <<mafXMLString(toCatch.getMessage()));
-    return MAF_ERROR;
-  }
-  {
+	  XMLPlatformUtilsInitializer xmlInit;
       //
       //  Create our parser, then attach an error handler to the parser.
       //  The parser will call back to methods of the ErrorHandler if it
       //  discovers errors during the course of parsing the XML document.
       //
-      std::unique_ptr<XERCES_CPP_NAMESPACE_QUALIFIER XercesDOMParser> XMLParser(new XERCES_CPP_NAMESPACE_QUALIFIER XercesDOMParser);
+      auto XMLParser = std::make_unique<XERCES_CPP_NAMESPACE_QUALIFIER XercesDOMParser>();
 
       if (XMLParser)
       {
@@ -214,12 +216,12 @@ int mafXMLParser::InternalRestore()
                       XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* XMLDoc = XMLParser->getDocument();
                       XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* root = XMLDoc->getDocumentElement();
                       assert(root);
-                      std::unique_ptr<mafStorageElement> documentElement = std::make_unique<mafStorageElement>(root, this);
+                      mafStorageElement documentElement(root, this);
 
-                      if (m_FileType == documentElement->GetName())
+                      if (m_FileType == documentElement.GetName())
                       {
                           mafString docVersion;
-                          if (documentElement->GetAttribute(_R("Version"), docVersion) == MAF_OK)
+                          if (documentElement.GetAttribute(_R("Version"), docVersion) == MAF_OK)
                           {
                               double doc_version_f = atof(docVersion.GetCStr());
                               double my_version_f = atof(m_Version.GetCStr());
@@ -227,7 +229,7 @@ int mafXMLParser::InternalRestore()
                               if (my_version_f <= doc_version_f)
                               {
                                   // Start tree restoring from root node
-                                  if (m_Document->Restore(*documentElement) != MAF_OK)
+                                  if (doc->Restore(documentElement) != MAF_OK)
                                       errorCode = IO_RESTORE_ERROR;
                               }
                               else
@@ -243,7 +245,7 @@ int mafXMLParser::InternalRestore()
                                       // Upgrade document to the actual version
                                       //documentElement->SetAttribute(_R("Version"), my_version_f);
                                       m_NeedsUpgrade = true;
-                                      if (m_Document->Restore(*documentElement) != MAF_OK)
+                                      if (doc->Restore(documentElement) != MAF_OK)
                                           errorCode = IO_RESTORE_ERROR;
                                   }
                               }
@@ -251,7 +253,7 @@ int mafXMLParser::InternalRestore()
                       }
                       else
                       {
-                          mafErrorMacro("XML parsing error: wrong file type, expected \"" << m_FileType.GetCStr() << "\", found " << documentElement->GetName().GetCStr());
+                          mafErrorMacro("XML parsing error: wrong file type, expected \"" << m_FileType.GetCStr() << "\", found " << documentElement.GetName().GetCStr());
                           errorCode = IO_WRONG_FILE_TYPE;
                       }
                   }
@@ -304,8 +306,11 @@ int mafXMLParser::InternalRestore()
           errorCode = IO_XML_PARSER_INTERNAL_ERROR;
       }
   }
-  // terminate the XML library
-  XERCES_CPP_NAMESPACE_QUALIFIER XMLPlatformUtils::Terminate();
+  catch (const XERCES_CPP_NAMESPACE_QUALIFIER XMLException& toCatch)
+  {
+	  mafErrorMessageMacro("Error during Xerces-C Initialization.\nException message:" << mafXMLString(toCatch.getMessage()));
+	  return MAF_ERROR;
+  }
   
   if (GetErrorCode()==0)
     SetErrorCode(errorCode);

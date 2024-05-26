@@ -839,9 +839,7 @@ int mafInteractionManager::Store(const char *filename)
   mafXMLParser writer(_R("MIS"), MIS_VERSION);
 
   writer.SetURL(_R(filename));
-  writer.SetDocument(this);
-
-  return writer.Store();
+  return writer.Store(this);
 }
 
 //------------------------------------------------------------------------------
@@ -852,9 +850,7 @@ int mafInteractionManager::Restore(const char *filename)
   mafXMLParser reader(_R("MIS"), MIS_VERSION);
 
   reader.SetURL(_R(filename));
-  reader.SetDocument(this);
-
-  return reader.Restore();
+  return reader.Restore(this);
 }
 
 //------------------------------------------------------------------------------

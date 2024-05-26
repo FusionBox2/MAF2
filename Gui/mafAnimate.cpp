@@ -250,8 +250,7 @@ void mafAnimate::LoadPoseFromFile(const mafString &fileName)
   // XML storage to restore
   mafXMLParser restore(_R("CAM"), _R("1.0"));
   restore.SetURL(fileName);
-  restore.SetDocument(newCam);
-  restore.Restore();
+  restore.Restore(newCam);
 
   SetStoredPositions(newCam);
  
@@ -267,8 +266,7 @@ void mafAnimate::StorePoseToFile(const mafString &fileName)
   // XML storage to restore
   mafXMLParser restore(_R("CAM"), _R("1.0"));
   restore.SetURL(fileName);
-  restore.SetDocument(m_StoredPositions);
-  restore.Store();
+  restore.Store(m_StoredPositions);
 }
 //----------------------------------------------------------------------------
 void mafAnimate::FlyTo(const char *fly_position)

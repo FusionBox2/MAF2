@@ -220,7 +220,6 @@ void mafGUIApplicationLayoutSettings::InitializeSettings()
   mafNEW(m_XMLRoot);
   m_XMLRoot->SetName(_R("ApplicationLayout"));
   m_XMLRoot->Initialize();
-  m_Storage->SetDocument(m_XMLRoot);
 
   //reg key for application layout
   wxString layout_filename;
@@ -260,9 +259,8 @@ void mafGUIApplicationLayoutSettings::AddLayout()
 
     // delete old child which will be substituted
     m_List->Delete(idx);
-    mafNode *root = ((mafNode *)m_Storage->GetDocument());
     mafSmartPointer<mafNodeLayout> child;
-    root->RemoveChild(root->FindInTreeByName(name));
+    m_XMLRoot->RemoveChild(m_XMLRoot->FindInTreeByName(name));
   }
 
   // storage
@@ -277,9 +275,8 @@ void mafGUIApplicationLayoutSettings::AddLayout()
     size[0] = rect.GetSize().GetWidth();
     size[1] = rect.GetSize().GetHeight();
 
-    mafNode *root = ((mafNode *)m_Storage->GetDocument());
     mafSmartPointer<mafNodeLayout> child;
-    root->AddChild(child);
+    m_XMLRoot->AddChild(child);
     
     if(m_Layout = mmaApplicationLayout::SafeDownCast(child->GetLayout()));
     else
@@ -326,12 +323,11 @@ void mafGUIApplicationLayoutSettings::RemoveLayout()
   {   
     // delete old child which will be substituted
     mafString name = mafWxToString(m_List->GetString(m_SelectedItem));
-    mafNode *root = ((mafNode *)m_Storage->GetDocument());
-    if(((mafNodeLayout *)root->FindInTreeByName(name))->GetLayout()->GetLayoutName() == _R("Default"))
+    if(((mafNodeLayout *)m_XMLRoot->FindInTreeByName(name))->GetLayout()->GetLayoutName() == _R("Default"))
       m_DefaultLayoutName = _R(" - ");
 
     m_Gui->Update();
-    root->RemoveChild(root->FindInTreeByName(name));
+    m_XMLRoot->RemoveChild(m_XMLRoot->FindInTreeByName(name));
 
     m_List->Delete(m_SelectedItem);
     m_SelectedItem = -1;
@@ -345,7 +341,7 @@ void mafGUIApplicationLayoutSettings::SaveApplicationLayout()
   if(m_Storage)
   {
     m_Storage->SetURL(m_LayoutFileSave);
-    m_Storage->Store();
+    m_Storage->Store(m_XMLRoot);
     m_ModifiedLayouts = false;
   }
 }
@@ -366,14 +362,14 @@ void mafGUIApplicationLayoutSettings::LoadLayout(bool fileDefault)
   if(m_Storage && mafFileExists(file))
   {
     //clear tree
-    ((mafNode *)m_Storage->GetDocument())->CleanTree();
+    m_XMLRoot->CleanTree();
     m_List->Clear();
 
     m_Storage->SetURL(file);
-    m_Storage->Restore();
+    m_Storage->Restore(m_XMLRoot);
 
     //fill listbox
-    mafNodeIterator *iter = ((mafNode *)m_Storage->GetDocument())->NewIterator();
+    mafNodeIterator *iter = m_XMLRoot->NewIterator();
     for(mafNode *vme = iter->GetFirstNode(); vme; vme = iter->GetNextNode())
     {
       if(!vme->IsMAFType(mafVMERoot))
@@ -424,8 +420,7 @@ void mafGUIApplicationLayoutSettings::ApplyLayout()
   mafString name = mafWxToString(m_List->GetString(m_SelectedItem));
 
   // Retrieve the saved layout.
-  mafNode *root = ((mafNode *)m_Storage->GetDocument());
-  mafNodeLayout *vme = mafNodeLayout::SafeDownCast(root->FindInTreeByName(name));
+  mafNodeLayout *vme = mafNodeLayout::SafeDownCast(m_XMLRoot->FindInTreeByName(name));
   mmaApplicationLayout *app_layout = mmaApplicationLayout::SafeDownCast(vme->GetLayout()); //application layout
   m_ActiveLayoutName = vme->GetName();
   m_LayoutType       = _L("Application Layout");
@@ -581,7 +576,7 @@ void mafGUIApplicationLayoutSettings::SetLayoutAsDefault()
   if(m_SelectedItem != -1)
   {   
     m_ModifiedLayouts = true;
-    mafNodeIterator *iter = ((mafNode *)m_Storage->GetDocument())->NewIterator();
+    mafNodeIterator *iter = m_XMLRoot->NewIterator();
     for(mafNode *vme = iter->GetFirstNode(); vme; vme = iter->GetNextNode())
     {
       if(!vme->IsMAFType(mafVMERoot))
@@ -598,8 +593,7 @@ void mafGUIApplicationLayoutSettings::SetLayoutAsDefault()
       return;
     }
 
-    mafNode *root = ((mafNode *)m_Storage->GetDocument());    
-    ((mafNodeLayout *)root->FindInTreeByName(m_DefaultLayoutName))->GetLayout()->SetLayoutName(_R("Default")); //m_DefaultLayout.GetCStr()
+    ((mafNodeLayout *)m_XMLRoot->FindInTreeByName(m_DefaultLayoutName))->GetLayout()->SetLayoutName(_R("Default")); //m_DefaultLayout.GetCStr()
     
     m_ModifiedLayouts = true;
     m_Gui->Update();

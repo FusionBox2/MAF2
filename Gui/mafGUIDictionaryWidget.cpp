@@ -110,8 +110,7 @@ void mafGUIDictionaryWidget::LoadDictionary(const mafString& file)
 
   // create a new object to restore into
   mafStorableDictionary *storeDict = new mafStorableDictionary;
-  restore.SetDocument(storeDict);
-  restore.Restore();
+  restore.Restore(storeDict);
   
 	if(m_NumItem) delete [] m_Items;
 

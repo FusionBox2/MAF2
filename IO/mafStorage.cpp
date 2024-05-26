@@ -26,6 +26,7 @@ mafStorage::mafStorage(const mafString& filetype, const mafString& version)
   m_TmpFileId       = 0;
   m_ErrorCode       = 0;
   m_TmpFolder       = mafWxToString(wxGetCwd());
+  m_Document        = nullptr;
   m_Parser          = std::make_unique<mafXMLParser>(filetype, version);
 }
 
@@ -110,16 +111,13 @@ bool mafStorage::IsFileInDirectory(const mafString& filename)
 void mafStorage::SetDocument(mafStorable *doc)
 //------------------------------------------------------------------------------
 {
-  if(m_Parser)
-    m_Parser->SetDocument(doc);
+  m_Document = doc;
 }
 //------------------------------------------------------------------------------
 mafStorable *mafStorage::GetDocument()
 //------------------------------------------------------------------------------
 {
-  if(!m_Parser)
-    return NULL;
-  return m_Parser->GetDocument();
+  return m_Document;
 }
 //------------------------------------------------------------------------------
 const mafString& mafStorage::GetTmpFolder()
@@ -347,7 +345,7 @@ int mafStorage::InternalStore()
   GetTmpFile(filename);
 
   m_Parser->SetURL(filename);
-  int errorCode = m_Parser->Store();
+  int errorCode = m_Parser->Store(m_Document);
 
   // move to destination URL
   if (errorCode==0)
@@ -383,5 +381,5 @@ int mafStorage::InternalRestore()
   }
 
   m_Parser->SetURL(filename);
-  return m_Parser->Restore();
+  return m_Parser->Restore(m_Document);
 }
