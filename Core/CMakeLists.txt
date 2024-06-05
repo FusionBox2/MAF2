@@ -9,6 +9,8 @@ DBG_MESSAGE("Configuring project mafCore")
 
 # Set your list of sources here.
 SET(PROJECT_SRCS
+  mafCurlUtility.cpp
+  mafCurlUtility.h
   mafAbsMatrixPipe.cpp
   mafAbsMatrixPipe.h
   mafAttribute.cpp

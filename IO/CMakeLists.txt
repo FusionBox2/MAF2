@@ -9,8 +9,6 @@ DBG_MESSAGE("Configuring project mafIO")
 
 # Set your list of sources here.
 SET(PROJECT_SRCS
-  mafCurlUtility.cpp
-  mafCurlUtility.h
   mafParser.cpp
   mafParser.h
   mafStorable.cpp
