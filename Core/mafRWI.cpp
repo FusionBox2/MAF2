@@ -201,9 +201,9 @@ void mafRWI::CreateRenderingScene(wxWindow *parent, RWI_LAYERS layers, bool use_
 		m_AlwaysVisibleRenderer->SetLayer(2);
 
     m_RenderWindow->SetNumberOfLayers(3);
-    m_RenderWindow->AddRenderer(m_RenBack);
-    m_RenderWindow->AddRenderer(m_RenFront);
     m_RenderWindow->AddRenderer(m_AlwaysVisibleRenderer);
+    m_RenderWindow->AddRenderer(m_RenFront);
+    m_RenderWindow->AddRenderer(m_RenBack);
 
 	}
 	else
@@ -213,8 +213,8 @@ void mafRWI::CreateRenderingScene(wxWindow *parent, RWI_LAYERS layers, bool use_
 		m_AlwaysVisibleRenderer->SetLayer(1);
 
 		m_RenderWindow->SetNumberOfLayers(2);
-        m_RenderWindow->AddRenderer(m_RenFront);
-        m_RenderWindow->AddRenderer(m_AlwaysVisibleRenderer);
+    m_RenderWindow->AddRenderer(m_AlwaysVisibleRenderer);
+    m_RenderWindow->AddRenderer(m_RenFront);
 
 	}
 
