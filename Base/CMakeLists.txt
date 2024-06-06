@@ -60,9 +60,6 @@ mafVectors.h
 mafVersion.h
 mmuIdFactory.cpp
 mmuIdFactory.h
-mafZipUtility.cpp
-mafZipUtility.h
-
 )
 
 IF (MAF_USE_VTK)

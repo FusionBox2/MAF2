@@ -11,11 +11,8 @@
 =========================================================================*/
 #include "mafDefines.h"
 #include "mafDecl.h"
+#include "mafDirectory.h"
 #include "mafFilesDirs.h"
-#include <list>
-
-#include <fstream>
-
 
 #include <wx/zipstrm.h>
 #include <wx/zstream.h>
@@ -24,7 +21,9 @@
 #include <wx/fs_zip.h>
 #include <wx/filename.h>
 #include "wx/dir.h"
-#include "mafDirectory.h"
+
+#include <list>
+#include <fstream>
 
 mafString mafStripMenuCodes(const mafString& com)
 {
@@ -513,4 +512,57 @@ void ParsePathName(mafString& str)
 			str[i] = '/';
 	}
 #endif
+}
+
+//----------------------------------------------------------------------------
+std::vector<mafString> ZIPOpen(const mafString& file)
+//----------------------------------------------------------------------------
+{
+  std::vector<mafString> filesCreated;
+
+  mafString ZipFile, tmpDir, MSFFile;
+  ZipFile = file;
+  mafString zip_cache = mafPathOnly(file);
+  if (zip_cache.empty())
+  {
+    return filesCreated;
+  }
+
+  if (!mafDirExists(zip_cache))
+    mafDirMake(zip_cache);
+  tmpDir = zip_cache;
+
+  mafString path, name, ext, complete_name, zfile, out_file;
+  mafSplitPath(ZipFile, &path, &name, &ext);
+  complete_name = name + _R(".") + ext;
+
+  mafString pkg = _R("#zip:");
+  mafString header_name = complete_name + pkg;
+  int length_header_name = header_name.length();
+  bool enable_mid = false;
+
+  std::unique_ptr<wxZipEntry> entry;
+
+  wxFFileInputStream in(file.toWx());
+  wxZipInputStream zip(in);
+
+  while (entry.reset(zip.GetNextEntry()), entry.get() != NULL)
+  {
+    mafString name = path;
+    name += _R("\\");
+    name += mafWxToString(entry->GetName());
+    zip.OpenEntry(*(entry.get()));
+    std::ofstream out_file_stream;
+    out_file_stream.open(name.GetCStr(), std::ios_base::binary);
+    int s_size = entry->GetSize();
+    char* buf = new char[s_size];
+    zip.Read(buf, s_size);
+    out_file_stream.write(buf, s_size);
+
+    filesCreated.push_back(name);
+
+    delete[]buf;
+  }
+
+  return filesCreated;
 }
