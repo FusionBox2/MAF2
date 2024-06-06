@@ -21,20 +21,16 @@
 #include "mmuIdFactory.h"
 #include "mafTimeMap.h"
 #include "mafTimeMap.txx"
-#include "mafStorable.h"
 #include "mafTimeStamped.h"
 #include "mafEventSender.h"
 #include "mafVMEItem.h"
-
-#ifdef MAF_EXPORTS
-#include "mafDllMacros.h"
-EXPORT_STL_MAP(MAF_EXPORT,mafTimeStamp, mafAutoPointer<mafVMEItem>);
-#endif
+#include "mafTo.h"
 
 //------------------------------------------------------------------------------
 // Forward declarations
 //------------------------------------------------------------------------------
-
+class mafStorageElement;
+class mafStorageElementBuilder;
 
 /** a dynamic associative sorted array of datasets indexed by their "timestamp".
   This class is though to store generic VMEItems (i.e. generic data), and to 
@@ -44,7 +40,7 @@ EXPORT_STL_MAP(MAF_EXPORT,mafTimeStamp, mafAutoPointer<mafVMEItem>);
   - implement deletion of single files in "SingleFileMode"
   - reimplement IsDataModified() mechanism
 */
-class MAF_EXPORT mafDataVector : public mafTimeMap<mafVMEItem>, public mafBaseEventHandler, public mafStorable, public mafEventSender
+class MAF_EXPORT mafDataVector : public mafTimeMap<mafVMEItem>, public mafBaseEventHandler, public mafEventSender
 {
 public:
 
@@ -112,10 +108,13 @@ public:
 
   static mafID GetSingleFileDataId();
 
+  void Store(mafStorageElementBuilder& element) { InternalStore(element); }
+  void Restore(const mafStorageElement& element) { InternalRestore(element); }
+
 protected:
  
-  virtual int InternalStore(mafStorageElementBuilder& parent);
-  virtual int InternalRestore(const mafStorageElement& node);
+  virtual void InternalStore(mafStorageElementBuilder& node);
+  virtual void InternalRestore(const mafStorageElement& node);
 
   mafString m_ArchiveName;///< Name of the archive if the items are stored in single file mode
   bool  m_SingleFileMode; ///< flag for storing Items as a single file

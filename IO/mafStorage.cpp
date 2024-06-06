@@ -15,19 +15,18 @@
 =========================================================================*/
 
 #include "mafStorage.h"
-#include "mafStorable.h"
 #include "mafDirectory.h"
-#include "mafXMLParser.h"
+#include "mafStorageElement.h"
 
 //------------------------------------------------------------------------------
 mafStorage::mafStorage(const mafString& filetype, const mafString& version)
 //------------------------------------------------------------------------------
+    : m_FileType(filetype)
+    , m_Version(version)
 {
   m_TmpFileId       = 0;
   m_ErrorCode       = 0;
   m_TmpFolder       = mafWxToString(wxGetCwd());
-  m_Document        = nullptr;
-  m_Parser          = std::make_unique<mafXMLParser>(filetype, version);
 }
 
 //------------------------------------------------------------------------------
@@ -60,15 +59,37 @@ int mafStorage::Store()
     return MAF_ERROR;
   }
 
-  // store the content
-  int ret=InternalStore();
-  
   // set the new filename as current
   m_ParserURL=m_URL; 
 
   // here I should add a call for packing/sending files
-  
-  return ret;
+    mafString filename;
+
+  // initially store to a tmp file
+  GetTmpFile(filename);
+
+  int errorCode = InternalStore(filename);
+
+  // move to destination URL
+  if (errorCode==0)
+  {
+    if (StoreToURL(filename,m_URL)!=MAF_OK)
+    {
+      mafErrorMessage(_M(_R("Unable to resolve URL for output XML file, a copy of the file can be found in: ") + filename));
+      errorCode = 4;
+    }
+    else
+    {
+      //
+      // clean the storage file directory
+      //
+
+      ReleaseTmpFile(filename); // remove the storage tmp file
+
+      EmptyGarbageCollector();
+    }
+  }    
+  return errorCode;
 }
 //------------------------------------------------------------------------------
 int mafStorage::Restore()
@@ -76,7 +97,14 @@ int mafStorage::Restore()
 {
   SetErrorCode(0);
   m_ParserURL = m_URL; // set the new filename as current
-  return InternalRestore();
+  mafString filename;
+  // here I should resolve the XML file name
+  if (ResolveInputURL(m_ParserURL, filename) == MAF_ERROR)
+  {
+	  mafErrorMessage(_M("Unable to resolve URL for input XML file"));
+	  return IO_WRONG_URL;
+  }
+  return InternalRestore(filename);
 }
 
 //------------------------------------------------------------------------------
@@ -107,18 +135,6 @@ bool mafStorage::IsFileInDirectory(const mafString& filename)
   return m_FilesDictionary.find(filename)!=m_FilesDictionary.end();
 }
 
-//------------------------------------------------------------------------------
-void mafStorage::SetDocument(mafStorable *doc)
-//------------------------------------------------------------------------------
-{
-  m_Document = doc;
-}
-//------------------------------------------------------------------------------
-mafStorable *mafStorage::GetDocument()
-//------------------------------------------------------------------------------
-{
-  return m_Document;
-}
 //------------------------------------------------------------------------------
 const mafString& mafStorage::GetTmpFolder()
 //------------------------------------------------------------------------------
@@ -335,51 +351,45 @@ void mafStorage::EmptyGarbageCollector()
   }
   m_GarbageCollector.clear();
 }
-//------------------------------------------------------------------------------
-int mafStorage::InternalStore()
-//------------------------------------------------------------------------------
-{
-  mafString filename;
-
-  // initially store to a tmp file
-  GetTmpFile(filename);
-
-  m_Parser->SetURL(filename);
-  int errorCode = m_Parser->Store(m_Document);
-
-  // move to destination URL
-  if (errorCode==0)
-  {
-    if (StoreToURL(filename,m_URL)!=MAF_OK)
-    {
-      mafErrorMessage(_M(_R("Unable to resolve URL for output XML file, a copy of the file can be found in: ") + filename));
-      errorCode = 4;
-    }
-    else
-    {
-      //
-      // clean the storage file directory
-      //
-
-      ReleaseTmpFile(filename); // remove the storage tmp file
-
-      EmptyGarbageCollector();
-    }
-  }    
-  return errorCode;
-}
-//------------------------------------------------------------------------------
-int mafStorage::InternalRestore()
-//------------------------------------------------------------------------------
-{
-  mafString filename;
-  // here I should resolve the XML file name
-  if (ResolveInputURL(m_ParserURL,filename) == MAF_ERROR)
-  {
-    mafErrorMessage(_M("Unable to resolve URL for input XML file"));
-    return IO_WRONG_URL;
-  }
-
-  m_Parser->SetURL(filename);
-  return m_Parser->Restore(m_Document);
-}
+// ------------------------------------------------------------------------------
+// int mafStorage::InternalStore(const mafString& filename)
+// ------------------------------------------------------------------------------
+// {
+//   mafString filename;
+// 
+//   // initially store to a tmp file
+//   GetTmpFile(filename);
+// 
+//   mafXMLWriter writer(m_FileType, m_Version, filename);
+//   int errorCode = 0;// writer.GetRoot().SetValue(m_Document);
+// 
+//   // move to destination URL
+//   if (errorCode==0)
+//   {
+//     if (StoreToURL(filename,m_URL)!=MAF_OK)
+//     {
+//       mafErrorMessage(_M(_R("Unable to resolve URL for output XML file, a copy of the file can be found in: ") + filename));
+//       errorCode = 4;
+//     }
+//     else
+//     {
+//       //
+//       // clean the storage file directory
+//       //
+// 
+//       ReleaseTmpFile(filename); // remove the storage tmp file
+// 
+//       EmptyGarbageCollector();
+//     }
+//   }    
+//   return errorCode;
+// }
+// ------------------------------------------------------------------------------
+// int mafStorage::InternalRestore(const mafString& filename)
+// ------------------------------------------------------------------------------
+// {
+//   mafXMLReader reader(m_FileType, m_Version, filename);
+//   //*m_Document = reader.GetRoot().As<>();
+// 
+//   return MAF_OK;
+// }

@@ -150,138 +150,72 @@ void mmaApplicationLayout::SetInterfaceElementVisibility(const mafString& panel_
   }
 }
 //-----------------------------------------------------------------------
-int mmaApplicationLayout::InternalStore(mafStorageElementBuilder& parent)
+void mmaApplicationLayout::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
-  if (Superclass::InternalStore(parent)==MAF_OK)
+  Superclass::InternalStore(parent);// == MAF_OK)
+  parent[_R("APPLICATION_MAXIMIZED")].SetValue(m_AppMaximized);
+  parent[_R("APPLICATION_SIZE")].SetValue(mafToString(m_AppSize, 2));
+  parent[_R("APPLICATION_POSITION")].SetValue(mafToString(m_AppPosition, 2));
+
+  parent[_R("TOOLBAR_VISIBILITY")].SetValue(m_ToolBarVisibility);
+  parent[_R("SIDEBAR_VISIBILITY")].SetValue(m_SideBarVisibility);
+  parent[_R("LOGBAR_VISIBILITY")].SetValue(m_LogBarVisibility);
+
+  parent[_R("LAYOUT_NAME")].SetValue(m_LayoutName);
+  ViewLayoutInfo info;
+  int n = m_LayoutViewList.size();
+  parent[_R("NUMBER_OF_VIEW")].SetValue(n);
+  for (int i = 0; i < n; i++)
   {
-    parent[_R("APPLICATION_MAXIMIZED")].StoreInteger( m_AppMaximized);
-    parent[_R("APPLICATION_SIZE")].StoreVectorN(m_AppSize,2);
-    parent[_R("APPLICATION_POSITION")].StoreVectorN(m_AppPosition,2);
-
-    parent[_R("TOOLBAR_VISIBILITY")].StoreInteger( m_ToolBarVisibility);
-    parent[_R("SIDEBAR_VISIBILITY")].StoreInteger( m_SideBarVisibility);
-    parent[_R("LOGBAR_VISIBILITY")].StoreInteger( m_LogBarVisibility);
-
-    parent[_R("LAYOUT_NAME")].StoreText(m_LayoutName);
-    mafString view_id;
-    mafString view_mult;
-    mafString view_label;
-    mafString view_max;
-    mafString view_size;
-    mafString view_pos;
-    mafString vme_in_view;
-    mafString vme_ids_in_view;
-    mafString view_camera_parameters;
-    ViewLayoutInfo info;
-    int n = m_LayoutViewList.size();
-    parent[_R("NUMBER_OF_VIEW")].StoreInteger( n);
-    for (int i = 0; i < n; i++)
+    info = m_LayoutViewList[i];
+    parent[_R("VIEW_ID_") + mafToString(i)].SetValue(info.m_Id);
+    parent[_R("VIEW_MULT_") + mafToString(i)].SetValue(info.m_Mult);
+    parent[_R("VIEW_LABEL_") + mafToString(i)].SetValue(info.m_Label);
+    parent[_R("VIEW_MAXIMIZED_") + mafToString(i)].SetValue(info.m_Maximized);
+    parent[_R("VIEW_SIZE_") + mafToString(i)].SetValue(mafToString(info.m_Size, 2));
+    parent[_R("VIEW_POS_") + mafToString(i)].SetValue(mafToString(info.m_Position, 2));
+    parent[_R("VME_IN_VIEW_") + mafToString(i)].SetValue(info.m_VisibleVmes.size());
+    if (info.m_VisibleVmes.size() > 0)
     {
-      info = m_LayoutViewList[i];
-      view_id = _R("VIEW_ID_");
-      view_id += mafToString(i);
-      parent[view_id].StoreInteger(info.m_Id);
-      view_mult = _R("VIEW_MULT_");
-      view_mult += mafToString(i);
-      parent[view_mult].StoreInteger(info.m_Mult);
-      view_label = _R("VIEW_LABEL_");
-      view_label += mafToString(i);
-      parent[view_label].StoreText(info.m_Label);
-      view_max = _R("VIEW_MAXIMIZED_");
-      view_max += mafToString(i);
-      parent[view_max].StoreInteger(info.m_Maximized);
-      view_size = _R("VIEW_SIZE_");
-      view_size += mafToString(i);
-      view_pos = _R("VIEW_POS_");
-      view_pos += mafToString(i);
-      parent[view_size].StoreVectorN(info.m_Size, 2);
-      parent[view_pos].StoreVectorN(info.m_Position, 2);
-      vme_in_view = _R("VME_IN_VIEW_");
-      vme_in_view += mafToString(i);
-      parent[vme_in_view].StoreInteger(info.m_VisibleVmes.size());
-      if (info.m_VisibleVmes.size() > 0)
-      {
-        vme_ids_in_view = _R("VME_IDS_IN_VIEW_");
-        vme_ids_in_view += mafToString(i);
-        parent[vme_ids_in_view].StoreVectorN(info.m_VisibleVmes);
-
-        view_camera_parameters = _R("VIEW_CAMERA_PARAMETERS_");
-        view_camera_parameters += mafToString(i);
-        parent[view_camera_parameters].StoreVectorN(info.m_CameraParameters, 9);
-      }
+      parent[_R("VME_IDS_IN_VIEW_") + mafToString(i)].SetValue(mafToString(info.m_VisibleVmes));
+      parent[_R("VIEW_CAMERA_PARAMETERS_") + mafToString(i)].SetValue(mafToString(info.m_CameraParameters, 9));
     }
-    return MAF_OK;
   }
-  return MAF_ERROR;
 }
 //----------------------------------------------------------------------------
-int mmaApplicationLayout::InternalRestore(const mafStorageElement& node)
+void mmaApplicationLayout::InternalRestore(const mafStorageElement& node)
 //----------------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node) == MAF_OK)
+  Superclass::InternalRestore(node);
+  m_AppMaximized = node[_R("APPLICATION_MAXIMIZED")].As<int>();
+  mafParseVector(node[_R("APPLICATION_SIZE")].As<mafString>(), m_AppSize, 2);
+  mafParseVector(node[_R("APPLICATION_POSITION")].As<mafString>(), m_AppPosition, 2);
+
+  m_ToolBarVisibility = node[_R("TOOLBAR_VISIBILITY")].As<int>();
+  m_SideBarVisibility = node[_R("SIDEBAR_VISIBILITY")].As<int>();
+  m_LogBarVisibility = node[_R("LOGBAR_VISIBILITY")].As<int>();
+
+  m_LayoutName = node[_R("LAYOUT_NAME")].As<mafString>();
+  ViewLayoutInfo info;
+  int n = node[_R("NUMBER_OF_VIEW")].As<int>();
+  for (int i = 0; i < n; i++)
   {
-    node[_R("APPLICATION_MAXIMIZED")].RestoreInteger( m_AppMaximized);
-    node[_R("APPLICATION_SIZE")].RestoreVectorN(m_AppSize, 2);
-    node[_R("APPLICATION_POSITION")].RestoreVectorN(m_AppPosition,2);
-
-    node[_R("TOOLBAR_VISIBILITY")].RestoreInteger( m_ToolBarVisibility);
-    node[_R("SIDEBAR_VISIBILITY")].RestoreInteger( m_SideBarVisibility);
-    node[_R("LOGBAR_VISIBILITY")].RestoreInteger( m_LogBarVisibility);
-
-    node[_R("LAYOUT_NAME")].RestoreText(m_LayoutName);
-    mafString view_id;
-    mafString view_mult;
-    mafString view_label;
-    mafString view_max;
-    mafString view_size;
-    mafString view_pos;
-    mafString vme_in_view;
-    mafString vme_ids_in_view;
-    mafString view_camera_parameters;
-    ViewLayoutInfo info;
-    int n;
-    node[_R("NUMBER_OF_VIEW")].RestoreInteger( n);
-    for (int i = 0; i < n; i++)
+    info.m_Id = node[_R("VIEW_ID_") + mafToString(i)].As<int>();
+    info.m_Mult = node[_R("VIEW_MULT_") + mafToString(i)].As<int>();
+    info.m_Label = node[_R("VIEW_LABEL_") + mafToString(i)].As<mafString>();
+    info.m_Maximized = node[_R("VIEW_MAXIMIZED_") + mafToString(i)].As<int>();
+    mafParseVector(node[_R("VIEW_SIZE_") + mafToString(i)].As<mafString>(), info.m_Size, 2);
+    mafParseVector(node[_R("VIEW_POS_") + mafToString(i)].As<mafString>(), info.m_Position, 2);
+    int num_vme = node[_R("VME_IN_VIEW_") + mafToString(i)].As<int>();
+    if (num_vme > 0)
     {
-      view_id = _R("VIEW_ID_");
-      view_id += mafToString(i);
-      node[view_id].RestoreInteger(info.m_Id);
-      view_mult = _R("VIEW_MULT_");
-      view_mult += mafToString(i);
-      node[view_mult].RestoreInteger(info.m_Mult);
-      view_label = _R("VIEW_LABEL_");
-      view_label += mafToString(i);
-      node[view_label].RestoreText(info.m_Label);
-      view_max = _R("VIEW_MAXIMIZED_");
-      view_max += mafToString(i);
-      node[view_max].RestoreInteger(info.m_Maximized);
-      view_size = _R("VIEW_SIZE_");
-      view_size += mafToString(i);
-      view_pos = _R("VIEW_POS_");
-      view_pos += mafToString(i);
-      node[view_size].RestoreVectorN(info.m_Size, 2);
-      node[view_pos].RestoreVectorN(info.m_Position, 2);
-      vme_in_view = _R("VME_IN_VIEW_");
-      vme_in_view += mafToString(i);
-      int num_vme = 0;
-      node[vme_in_view].RestoreInteger(num_vme);
-      if (num_vme > 0)
-      {
-        vme_ids_in_view = _R("VME_IDS_IN_VIEW_");
-        vme_ids_in_view += mafToString(i);
-        info.m_VisibleVmes.resize(num_vme);
-        node[vme_ids_in_view].RestoreVectorN(info.m_VisibleVmes);
-
-        view_camera_parameters = _R("VIEW_CAMERA_PARAMETERS_");
-        view_camera_parameters += mafToString(i);
-        node[view_camera_parameters].RestoreVectorN(info.m_CameraParameters, 9);
-      }
-      m_LayoutViewList.push_back(info);
+      info.m_VisibleVmes.resize(num_vme);
+      mafParseVector(node[_R("VME_IDS_IN_VIEW_") + mafToString(i)].As<mafString>(), info.m_VisibleVmes);
+      mafParseVector(node[_R("VIEW_CAMERA_PARAMETERS_") + mafToString(i)].As<mafString>(), info.m_CameraParameters, 9);
     }
-    return MAF_OK;
+    m_LayoutViewList.push_back(info);
   }
-  return MAF_ERROR;
 }
 //-----------------------------------------------------------------------
 void mmaApplicationLayout::AddView(mafView *v, bool vme_visibility)

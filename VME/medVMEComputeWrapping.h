@@ -388,8 +388,8 @@ protected:
 	
 
 	virtual ~medVMEComputeWrapping();
-	virtual int InternalStore(mafStorageElementBuilder& parent);
-	virtual int InternalRestore(const mafStorageElement& node);
+  void InternalStore(mafStorageElementBuilder& parent) override;
+  void InternalRestore(const mafStorageElement& node) override;
 
 	/** this creates the Material attribute at the right time... */
 	virtual int InternalInitialize();

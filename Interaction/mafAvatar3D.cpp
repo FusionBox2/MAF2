@@ -492,45 +492,27 @@ void mafAvatar3D::TrackerToDisplay(mafMatrix &tracker_pose,double xy[2])
 }
 
 //------------------------------------------------------------------------------
-int mafAvatar3D::InternalStore(mafStorageElementBuilder& node)
+void mafAvatar3D::InternalStore(mafStorageElementBuilder& node)
 //------------------------------------------------------------------------------
 {
-  if(Superclass::InternalStore(node))
-    return MAF_ERROR;
-
-  node[_R("DisplayWorkingBox")].StoreInteger(GetDisplayWorkingBox());
-  node[_R("DisplayDebugText")].StoreInteger(GetDisplayDebugText());
-  double coords[2];
-  coords[0]=GetDebugTextPosition()[0];
-  coords[1]=GetDebugTextPosition()[1];
-  node[_R("DebugTextPosition")].StoreVectorN(coords,2);
-  node[_R("CoordsFrame")].StoreInteger(GetCoordsFrame());
-
-  // write prop3D properties?
-  return MAF_OK;
+  Superclass::InternalStore(node);
+  node[_R("DisplayWorkingBox")].SetValue(GetDisplayWorkingBox());
+  node[_R("DisplayDebugText")].SetValue(GetDisplayDebugText());
+  node[_R("DebugTextPosition")].SetValue(mafToString(GetDebugTextPosition(),2));
+  node[_R("CoordsFrame")].SetValue(GetCoordsFrame());
 }
 
 //------------------------------------------------------------------------------
-int mafAvatar3D::InternalRestore(const mafStorageElement& node)
+void mafAvatar3D::InternalRestore(const mafStorageElement& node)
 //------------------------------------------------------------------------------
 {
-  if(Superclass::InternalRestore(node))
-    return MAF_ERROR;
-
-  int display_working_box = 0;
-  node[_R("DisplayWorkingBox")].RestoreInteger(display_working_box);
-  SetDisplayWorkingBox(display_working_box);
-  
-  int display_debug_text = 0;
-  node[_R("DisplayDebugText")].RestoreInteger(display_debug_text);
-  SetDisplayDebugText(display_debug_text);
-  
+  Superclass::InternalRestore(node);
+  SetDisplayWorkingBox(node[_R("DisplayWorkingBox")].As<int>());
+  SetDisplayDebugText(node[_R("DisplayDebugText")].As<int>());
   double coords[2]={0,0};
-  node[_R("DebugTextPosition")].RestoreVectorN(coords, 2);
+  mafParseVector(node[_R("DebugTextPosition")].As<mafString>(), coords, 2);
   SetDebugTextPosition(coords[0],coords[1]);
-  node[_R("CoordsFrame")].RestoreInteger(m_CoordsFrame);
-  return MAF_OK;
-  
+  m_CoordsFrame = node[_R("CoordsFrame")].As<int>();
 }
 
 //------------------------------------------------------------------------------

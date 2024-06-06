@@ -22,22 +22,16 @@
 //----------------------------------------------------------------------------
 #include "mafTimeMapScalar.h"
 #include "mafTimeMapScalar.txx"
-#include "mafStorable.h"
 #include "mafStorageElement.h"
 
 //------------------------------------------------------------------------------
 // Forward declarations
 //------------------------------------------------------------------------------
-
-
-#ifdef MAF_EXPORTS
-#include "mafDllMacros.h"
-EXPORT_STL_MAP(MAF_EXPORT,mafTimeStamp, double);
-#endif
-
+class mafStorageElement;
+class mafStorageElementBuilder;
 
 /** a dynamic associative sorted vector of scalar values indexed by their "timestamp".*/
-class MAF_EXPORT mafScalarVector : public mafTimeMapScalar<double>, public mafStorable
+class MAF_EXPORT mafScalarVector : public mafTimeMapScalar<double>
 {
 public:
   typedef mafTimeMapScalar<double>::TimeMapScalars::iterator Iterator;
@@ -80,8 +74,11 @@ public:
     not copied.*/
   void SetScalar(mafTimeStamp t, double sca) {InsertItem(t, sca);}
 
+  void Store(mafStorageElementBuilder& element) { InternalStore(element); }
+  void Restore(const mafStorageElement& element) { InternalRestore(element); }
+
 protected:
-  virtual int InternalStore(mafStorageElementBuilder& parent);
-  virtual int InternalRestore(const mafStorageElement& node);
+  virtual void InternalStore(mafStorageElementBuilder& node);
+  virtual void InternalRestore(const mafStorageElement& node);
 };
 #endif

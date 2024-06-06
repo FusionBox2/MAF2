@@ -17,12 +17,15 @@
 #define __mafDevice_h
 
 #include "mafAgentThreaded.h"
-#include "mafStorable.h"
+#include "mafObjectFactory.h"
+#include "mafTo.h"
 
 //----------------------------------------------------------------------------
 // forward declarations :
 //----------------------------------------------------------------------------
 class mafGUI;
+class mafStorageElement;
+class mafStorageElementBuilder;
 
 /** 
   This abstract class manages function calls coming from devices and 
@@ -36,7 +39,7 @@ class mafGUI;
   @todo
    - check about ID restoring
  */
-class MAF_EXPORT mafDevice : public mafAgentThreaded, public mafStorable
+class MAF_EXPORT mafDevice : public mafAgentThreaded
 {
 public:
   /** non persistent device IDs start from MAF_MIN_DEVICE_ID. This means I cannot have more then 
@@ -135,6 +138,9 @@ public:
   /** process events sent to the device */
   virtual void OnEvent(mafEventBase *event);
 
+  void Store(mafStorageElementBuilder& element) { InternalStore(element); }
+  void Restore(const mafStorageElement& element) { InternalRestore(element); }
+
 protected:
   mafDevice();
   virtual ~mafDevice();
@@ -145,19 +151,8 @@ protected:
   /** Create the dialog that show the interface for settings. */
   virtual void CreateGui();
 
-  /** This is used to allow nested serialization of subclasses.
-    This function is called by Store and is reimplemented in subclasses.
-    Each subclass can store its own subelements which are
-    closed inside the "Device" element. Reimplemented functions
-    should first call Superclass implementation. */
-  virtual int InternalStore(mafStorageElementBuilder& node);
-  
-  /** 
-    This function fills in the device with settings restored from the node.
-    Subclasses should reimplement it to restore custom settings. Reimplemented
-    functions should first call Superclass implementation. */
-  virtual int InternalRestore(const mafStorageElement& node);
-  
+  virtual void InternalStore(mafStorageElementBuilder& node);
+  virtual void InternalRestore(const mafStorageElement& node);
 
   mafGUI*             m_Gui;
   mafID               m_ID;
@@ -176,5 +171,33 @@ private:
   /** hidden to avoid usage: use Stop() instead */
   void Shutdown() {Superclass::Shutdown();} 
 };
+
+namespace parser
+{
+  template<class Value>
+  mafDevice* Parse(const Value& value, parser::To<mafDevice>)
+  {
+    mafString type_name = value(_R("Type")).As<mafString>();
+    auto object = mafObjectFactory::CreateInstance(type_name.GetCStr());
+    if (auto device = mafDevice::SafeDownCast(object))
+    {
+      device->Restore(value);
+      return device;
+    }
+    return nullptr;
+  }
+}
+
+namespace serializer
+{
+  template<class Value>
+  void Serialize(Value& value, mafDevice* const& device)
+  {
+    assert(device);
+    mafString type_name = _R(device->GetTypeName());
+    value(_R("Type")).SetValue(type_name);
+    device->Store(value);
+  }
+}
 
 #endif 

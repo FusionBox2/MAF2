@@ -19,7 +19,6 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafVMEItem.h"
-#include "mafStorable.h"
 #include "mafString.h"
 #include "mafMTime.h"
 #include "vtkSmartPointer.h"

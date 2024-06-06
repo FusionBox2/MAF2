@@ -19,7 +19,6 @@
 #include "mafObject.h"
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"
-#include "mafStorable.h"
 #include "mafString.h"
 #include "mafSmartPointer.h"
 
@@ -61,13 +60,8 @@ class mafGUICheckListBox;
 class mafGUIHolder;
 class mafGUINamedPanel;
 class mafDeviceClientMAF;
-
-#ifdef MAF_EXPORTS
-#include "mafDllMacros.h"
-EXPORT_STL_MAP(MAF_EXPORT,mafString,mafAutoPointer<mafAvatar>);
-EXPORT_STL_LIST(MAF_EXPORT,mafAutoPointer<mafInteractorPER>);
-#endif
-
+class mafStorageElement;
+class mafStorageElementBuilder;
 
 /** This class takes care of mastering the interaction inside views.
   This class is responsible to coordinate interaction, i.e. 
@@ -82,7 +76,7 @@ EXPORT_STL_LIST(MAF_EXPORT,mafAutoPointer<mafInteractorPER>);
   @todo
   - check the renderer to be RenFront
 */
-class MAF_EXPORT mafInteractionManager : public mafObject, public mafBaseEventHandler, public mafEventSender, public mafStorable
+class MAF_EXPORT mafInteractionManager : public mafObject, public mafBaseEventHandler, public mafEventSender
 {
 public:
   mafInteractionManager();
@@ -168,10 +162,10 @@ public:
   void  VmeSelected(mafNode *node);
 
   /** store all interaction settings to an XML file (Multimod Interaction Settings - MIS - format) */
-  int Store(const char *filename);
+  void Store(const mafString& filename);
 
   /** restore interaction settings from an XML file (Multimod Interaction Settings - MIS - format) */
-  int Restore(const char *filename);
+  void Restore(const mafString& filename);
 
   /** propagate a request for rendering the specified window or 
       all the windows (rw==NULL). Requests arriving within a single
@@ -230,12 +224,9 @@ public:
   mafInteractorSER *GetStaticEventRouter() {return m_StaticEventRouter;}
 
 protected:
-  /** This is called by Store() to store information of this object.  */
-  virtual int InternalStore(mafStorageElementBuilder& node);
+  virtual void InternalStore(mafStorageElementBuilder& node);
+  virtual void InternalRestore(const mafStorageElement& node);
 
-  /** This is called by Restore() to restore information of this object. */
-  virtual int InternalRestore(const mafStorageElement& node);
-  
   virtual void OnStartDispatching();
   virtual void OnEndDispatching();
   virtual void OnCameraUpdate(mafEventBase *e);
@@ -279,12 +270,5 @@ protected:
   int                                 m_LockRenderingFlag;///< 
   mafTimeStamp                        m_LastRenderTime;   ///< used to avoid overloading of the GUI process due to rendering
   mafTimeStamp                        m_IntraFrameTime;   ///< the minimum time to elapse between two subsequent renderings
-
-private:
-  /** hidden to not be called directly */
-  int Store(mafStorageElementBuilder& element) {return mafStorable::Store(element);}
-  
-  /** hidden to not be called directly */
-  int Restore(const mafStorageElement& element) {return mafStorable::Restore(element);}
 };
 #endif 

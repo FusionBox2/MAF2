@@ -17,7 +17,8 @@
 #define __mafDeviceManager_h
 
 #include "mafAgentEventHandler.h"
-#include "mafStorable.h"
+#include "mafObjectFactory.h"
+#include "mafTo.h"
 
 #include <list>
 
@@ -26,6 +27,8 @@
 //----------------------------------------------------------------------------
 class mafDevice;
 class mafDeviceSet;
+class mafStorageElement;
+class mafStorageElementBuilder;
 
 /**
   Class managing the devices inside a MAF application and the synchronization with wxWindows message pump.
@@ -49,7 +52,7 @@ class mafDeviceSet;
   @todo 
   - implement AddDevice()
  */
-class MAF_EXPORT mafDeviceManager : public mafAgentEventHandler, public mafStorable
+class MAF_EXPORT mafDeviceManager : public mafAgentEventHandler
 {
 public:
   //------------------------------------------------------------------------------
@@ -110,13 +113,13 @@ public:
     start a StartDispatchingEvent is (synchronously) sent on the default channel, and
     StopDispatchingEvent is sent when dispatching is finished */
   virtual bool DispatchEvents();
+
+  void Store(mafStorageElementBuilder& element) { InternalStore(element); }
+  void Restore(const mafStorageElement& element) { InternalRestore(element); }
+
 protected:
-  /**
-  Implement storing and restoring of this object. To store
-  an XML Writer must be passed as argument, while to restore the node
-  of the XML structure from where starting the restoring must must be passed.  */
-  virtual int InternalStore(mafStorageElementBuilder& node);
-  virtual int InternalRestore(const mafStorageElement& node);
+  virtual void InternalStore(mafStorageElementBuilder& node);
+  virtual void InternalRestore(const mafStorageElement& node);
 
   virtual int InternalInitialize();
   virtual void InternalShutdown();
@@ -130,5 +133,33 @@ private:
   mafDeviceManager(const mafDeviceManager&);  // Not implemented.
   void operator=(const mafDeviceManager&);  // Not implemented.
 };
+
+namespace parser
+{
+  template<class Value>
+  mafDeviceManager* Parse(const Value& value, parser::To<mafDeviceManager>)
+  {
+    mafString type_name = value(_R("Type")).As<mafString>();
+    auto object = mafObjectFactory::CreateInstance(type_name.GetCStr());
+    if (auto deviceManager = mafDeviceManager::SafeDownCast(object))
+    {
+      deviceManager->Restore(value);
+      return deviceManager;
+    }
+    return nullptr;
+  }
+}
+
+namespace serializer
+{
+  template<class Value>
+  void Serialize(Value& value, mafDeviceManager* const& deviceManager)
+  {
+    mafString type_name = _R(deviceManager->GetTypeName());
+    assert(deviceManager);
+    value(_R("Type")).SetValue(type_name);
+    deviceManager->Store(value);
+  }
+}
 
 #endif 

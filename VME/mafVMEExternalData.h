@@ -66,18 +66,8 @@ void PrintSelf(std::ostream& os,const int indent);
 
 protected:
 
-  /** This is used to allow nested serialization of subclasses.
-  This function is called by Store and is reimplemented in subclasses.
-  Each subclass can store its own subelements which are
-  closed inside the "Device" element. Reimplemented functions
-  should first call Superclass implementation. */
-  int InternalStore(mafStorageElementBuilder& parent);
-
-  /** 
-  This function fills in the device with settings restored from the node.
-  Subclasses should reimplement it to restore custom settings. Reimplemented
-  functions should first call Superclass implementation. */
-  int InternalRestore(const mafStorageElement& node);
+  void InternalStore(mafStorageElementBuilder& parent) override;
+  void InternalRestore(const mafStorageElement& node) override;
 
   /** Get path of the msf file from storage */
   void InitializeCurrentPath();

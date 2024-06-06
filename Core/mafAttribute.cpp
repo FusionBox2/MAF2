@@ -88,17 +88,17 @@ const mafString& mafAttribute::GetName() const
 }
 
 //-------------------------------------------------------------------------
-int mafAttribute::InternalStore(mafStorageElementBuilder& parent)
+void mafAttribute::InternalStore(mafStorageElementBuilder& parent)
 //-------------------------------------------------------------------------
 {
-  return parent[_R("Name")].StoreText(m_Name);
+  parent[_R("Name")].SetValue(m_Name);
 }
 
 //-------------------------------------------------------------------------
-int mafAttribute::InternalRestore(const mafStorageElement& node)
+void mafAttribute::InternalRestore(const mafStorageElement& node)
 //-------------------------------------------------------------------------
 {
-  return node[_R("Name")].RestoreText(m_Name);
+  m_Name = node[_R("Name")].As<mafString>();
 }
 //-------------------------------------------------------------------------
 void mafAttribute::Print(std::ostream& os, const int tabs) const

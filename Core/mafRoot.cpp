@@ -46,25 +46,16 @@ mafRoot* mafRoot::SafeDownCast(mafObject *o)
 }
 
 //-------------------------------------------------------------------------
-int mafRoot::StoreRoot(mafStorageElementBuilder& parent)
+void mafRoot::StoreRoot(mafStorageElementBuilder& parent)
 //-------------------------------------------------------------------------
 {
-  parent.SetAttribute(_R("MaxNodeId"),mafToString(m_MaxNodeId));
-  return MAF_OK;
+  parent(_R("MaxNodeId")).SetValue(mafToString(m_MaxNodeId));
 }
 //-------------------------------------------------------------------------
-int mafRoot::RestoreRoot(const mafStorageElement& node_)
+void mafRoot::RestoreRoot(const mafStorageElement& node)
 //-------------------------------------------------------------------------
 {
-	auto node = &node_;
-
-  mafID max_id;
-  if (node->GetAttributeAsInteger(_R("MaxNodeId"),max_id) != MAF_OK)
-    return MAF_ERROR;
-
-  SetMaxNodeId(max_id);
-
-  return MAF_OK;
+  SetMaxNodeId(node(_R("MaxNodeId")).As<mafID>());
 }
 
 //-------------------------------------------------------------------------

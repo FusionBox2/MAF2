@@ -190,43 +190,32 @@ void mafVMEScalarMatrix::OnEvent(mafEventBase *maf_event)
   }
 }
 //-----------------------------------------------------------------------
-int mafVMEScalarMatrix::InternalStore(mafStorageElementBuilder& parent)
+void mafVMEScalarMatrix::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
-  if (Superclass::InternalStore(parent)==MAF_OK)
-  {
-    if (parent[_R("XID")].StoreInteger(m_XID)==MAF_OK &&
-        parent[_R("YID")].StoreInteger(m_YID)==MAF_OK &&
-        parent[_R("ZID")].StoreInteger(m_ZID)==MAF_OK &&
-        parent[_R("Xtype")].StoreInteger(m_Xtype)==MAF_OK &&
-        parent[_R("Ytype")].StoreInteger(m_Ytype)==MAF_OK &&
-        parent[_R("Ztype")].StoreInteger(m_Ztype)==MAF_OK &&
-        parent[_R("ActiveScalar")].StoreInteger(m_ActiveScalar)==MAF_OK &&
-        parent[_R("ScalarArrayOrientationInMatrix")].StoreInteger(m_ScalarArrayOrientationInMatrix)==MAF_OK)
-      return MAF_OK;
-  }
-  return MAF_ERROR;
+  Superclass::InternalStore(parent);
+  parent[_R("XID")].SetValue(m_XID);
+  parent[_R("YID")].SetValue(m_YID);
+  parent[_R("ZID")].SetValue(m_ZID);
+  parent[_R("Xtype")].SetValue(m_Xtype);
+  parent[_R("Ytype")].SetValue(m_Ytype);
+  parent[_R("Ztype")].SetValue(m_Ztype);
+  parent[_R("ActiveScalar")].SetValue(m_ActiveScalar);
+  parent[_R("ScalarArrayOrientationInMatrix")].SetValue(m_ScalarArrayOrientationInMatrix);
 }
 //-----------------------------------------------------------------------
-int mafVMEScalarMatrix::InternalRestore(const mafStorageElement& node)
+void mafVMEScalarMatrix::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node)==MAF_OK)
-  {
-    if (node[_R("XID")].RestoreInteger(m_XID) == MAF_OK &&
-        node[_R("YID")].RestoreInteger(m_YID) == MAF_OK &&
-        node[_R("ZID")].RestoreInteger(m_ZID) == MAF_OK &&
-        node[_R("Xtype")].RestoreInteger(m_Xtype) == MAF_OK &&
-        node[_R("Ytype")].RestoreInteger(m_Ytype) == MAF_OK &&
-        node[_R("Ztype")].RestoreInteger(m_Ztype) == MAF_OK &&
-        node[_R("ActiveScalar")].RestoreInteger(m_ActiveScalar)==MAF_OK &&
-        node[_R("ScalarArrayOrientationInMatrix")].RestoreInteger(m_ScalarArrayOrientationInMatrix) == MAF_OK)
-    {
-      return MAF_OK;
-    }
-  }
-
-  return MAF_ERROR;
+  Superclass::InternalRestore(node);
+  m_XID = node[_R("XID")].As<int>();
+  m_YID = node[_R("YID")].As<int>();
+  m_ZID = node[_R("ZID")].As<int>();
+  m_Xtype = node[_R("Xtype")].As<int>();
+  m_Ytype = node[_R("Ytype")].As<int>();
+  m_Ztype = node[_R("Ztype")].As<int>();
+  m_ActiveScalar = node[_R("ActiveScalar")].As<int>();
+  m_ScalarArrayOrientationInMatrix = node[_R("ScalarArrayOrientationInMatrix")].As<int>();
 }
 //-------------------------------------------------------------------------
 void mafVMEScalarMatrix::SetScalarArrayOrientation(int o)

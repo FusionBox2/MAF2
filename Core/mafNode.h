@@ -19,7 +19,7 @@
 // includes :
 //----------------------------------------------------------------------------
 #include "mafReferenceCounted.h"
-#include "mafStorable.h"
+#include "mafObjectFactory.h"
 #include "mafSmartPointer.h"
 #include "mafBaseEventHandler.h"
 #include "mafTagItem.h"
@@ -30,6 +30,7 @@
 #include "mafTagArray.h"
 #include "mafObjectWithGUI.h"
 #include "mafEventSender.h"
+#include "mafTo.h"
 #include <vector>
 #include <map>
 #include <string>
@@ -37,14 +38,10 @@
 //----------------------------------------------------------------------------
 // forward declarations
 //----------------------------------------------------------------------------
+class mafStorageElement;
+class mafStorageElementBuilder;
 class mafNodeIterator;
 class mafNode;
-
-#ifdef MAF_EXPORTS
-#include "mafDllMacros.h"
-EXPORT_STL_VECTOR(MAF_EXPORT,mafAutoPointer<mafNode>);
-EXPORT_STL_MAP(MAF_EXPORT,mafString,mafAutoPointer<mafAttribute>);
-#endif
 
 /** data structure used to store a link VME and its Id */
 class MAF_EXPORT mmuNodeLink
@@ -58,9 +55,6 @@ public:
   private:
     mafID   m_NodeId;
 };
-#ifdef MAF_EXPORTS
-EXPORT_STL_MAP(MAF_EXPORT,mafString,mmuNodeLink);
-#endif
 
 //----------------------------------------------------------------------------
 // mafNode
@@ -99,7 +93,7 @@ EXPORT_STL_MAP(MAF_EXPORT,mafString,mmuNodeLink);
 
   @sa mafNodeRoot
 */
-class MAF_EXPORT mafNode : public mafReferenceCounted, public mafStorable, public mafEventSource, public mafBaseEventHandler, public mafTimeStamped, public mafObjectWithGUI
+class MAF_EXPORT mafNode : public mafReferenceCounted, public mafEventSource, public mafBaseEventHandler, public mafTimeStamped, public mafObjectWithGUI
 {
 public:
   mafTypeMacro(mafNode, mafReferenceCounted);
@@ -431,6 +425,9 @@ public:
   Turn off the flag to calculate the timestamp considering also the linked nodes*/
   void DependsOnLinkedNodeOff() {m_DependsOnLinkedNode = false;};
 
+  void Store(mafStorageElementBuilder& element) { InternalStore(element); }
+  void Restore(const mafStorageElement& element) { InternalRestore(element); }
+
 protected:
 
   mafNode();
@@ -439,8 +436,8 @@ protected:
   /** internally used to set the node ID */
   void SetId(mafID id);
 
-  virtual int InternalStore(mafStorageElementBuilder& parent);
-  virtual int InternalRestore(const mafStorageElement& node);
+  virtual void InternalStore(mafStorageElementBuilder& parent);
+  virtual void InternalRestore(const mafStorageElement& node);
 
   //This function is overridden by subclasses to perform custom initialization */
   virtual int InternalInitialize();
@@ -485,5 +482,33 @@ protected:
   bool m_Initialized;               ///< set true by Initialize()
   bool m_DependsOnLinkedNode;       ///< enable/disable calculation of MTime considering links
 };
+
+namespace parser
+{
+	template<class Value>
+	mafNode* Parse(const Value& value, parser::To<mafNode>)
+  {
+    mafString type_name = value(_R("Type")).As<mafString>();
+    auto object = mafObjectFactory::CreateInstance(type_name.GetCStr());
+    if (auto node = mafNode::SafeDownCast(object))
+    {
+      node->Restore(value);
+      return node;
+    }
+    return nullptr;
+  }
+}
+
+namespace serializer
+{
+	template<class Value>
+	void Serialize(Value& value, mafNode* const& node)
+  {
+    assert(node);
+    mafString type_name = _R(node->GetTypeName());
+    value(_R("Type")).SetValue(type_name);
+    node->Store(value);
+  }
+}
 
 #endif

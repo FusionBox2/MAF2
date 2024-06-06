@@ -383,31 +383,18 @@ void lhpVMELeverArm::InternalUpdate()
 
 }
 //-----------------------------------------------------------------------
-int lhpVMELeverArm::InternalStore(mafStorageElementBuilder& parent)
+void lhpVMELeverArm::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
-  if (Superclass::InternalStore(parent)==MAF_OK)
-  {
-    parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix());
-    return MAF_OK;
-  }
-  return MAF_ERROR;
+  Superclass::InternalStore(parent);
+  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
 }
 //-----------------------------------------------------------------------
-int lhpVMELeverArm::InternalRestore(const mafStorageElement& node)
+void lhpVMELeverArm::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node)==MAF_OK)
-  {
-    mafMatrix matrix;
-    if (node[_R("Transform")].RestoreMatrix(matrix) ==MAF_OK)
-    {
-      m_Transform->SetMatrix(matrix);
-      return MAF_OK;
-    }
-  }
-
-  return MAF_ERROR;
+  Superclass::InternalRestore(node);
+  m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
 }
 //-----------------------------------------------------------------------
 void lhpVMELeverArm::Print(std::ostream& os, const int tabs)

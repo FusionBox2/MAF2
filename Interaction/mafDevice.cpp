@@ -25,6 +25,7 @@
 
 // serialization
 #include "mafStorageElement.h"
+#include <optional>
 
 //------------------------------------------------------------------------------
 // Events
@@ -188,37 +189,22 @@ void mafDevice::OnEvent(mafEventBase *e)
   
 }
 //------------------------------------------------------------------------------
-int mafDevice::InternalStore(mafStorageElementBuilder& node)
+void mafDevice::InternalStore(mafStorageElementBuilder& node)
 //------------------------------------------------------------------------------
 {
-  if (node[_R("Name")].StoreText(m_Name)==MAF_OK && \
-      node[_R("ID")].StoreInteger((m_ID-MIN_DEVICE_ID))==MAF_OK && \
-      node[_R("AutoStart")].StoreInteger(m_AutoStart)==MAF_OK)  
-  return MAF_OK;
-
-  return MAF_ERROR;
+  node[_R("Name")].SetValue(m_Name);
+  node[_R("ID")].SetValue((m_ID - MIN_DEVICE_ID));
+  node[_R("AutoStart")].SetValue(m_AutoStart);
 }
 
 //------------------------------------------------------------------------------
-int mafDevice::InternalRestore(const mafStorageElement& node)
+void mafDevice::InternalRestore(const mafStorageElement& node)
 //------------------------------------------------------------------------------
 {  
-	// Device Name
-  if (node[_R("Name")].RestoreText(m_Name) == MAF_OK)
+  m_Name = node[_R("Name")].As<mafString>();
+  SetID(node[_R("ID")].As<int>() + MIN_DEVICE_ID);
+  if (auto flag = node[_R("AutoStart")].As<std::optional<int> >())
   {
-    int dev_id;
-    node[_R("ID")].RestoreInteger(dev_id);
-    SetID(dev_id+MIN_DEVICE_ID);
-    int flag;
-    // AutoStart flag (optional)
-    if (node[_R("AutoStart")].RestoreInteger(flag)==MAF_OK)
-    {
-      SetAutoStart(flag!=0);      
-    }
-
-    // the ID???
-    return MAF_OK;
+    SetAutoStart(*flag != 0);
   }
-
-  return MAF_ERROR;
 }

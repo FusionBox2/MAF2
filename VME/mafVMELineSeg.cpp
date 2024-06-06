@@ -341,84 +341,23 @@ void mafVMELineSeg::Update()
 
 }
 //-----------------------------------------------------------------------
-int mafVMELineSeg::InternalStore(mafStorageElementBuilder& parent)
+void mafVMELineSeg::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
-	
-	if (Superclass::InternalStore(parent)==MAF_OK)
-	{
-		if (	parent[_R("Transform")].StoreMatrix( m_Transform->GetMatrix()) == MAF_OK	)
-		{
-			/*parent.StoreInteger("NbrPts", pts->GetNumberOfPoints());
-			if (pts->GetNumberOfPoints() > 1)
-			{
-				if (
-					
-					parent.StoreDouble("pt1_0", pts->GetPoint(0)[0]) == MAF_OK &&
-					parent.StoreDouble("pt1_1", pts->GetPoint(0)[1]) == MAF_OK &&
-					parent.StoreDouble("pt1_2", pts->GetPoint(0)[2]) == MAF_OK
-					 &&
-					parent.StoreDouble("pt2_0", pts->GetPoint(pts->GetNumberOfPoints() - 1)[0]) == MAF_OK &&
-					parent.StoreDouble("pt2_1", pts->GetPoint(pts->GetNumberOfPoints() - 1)[1]) == MAF_OK &&
-					parent.StoreDouble("pt2_2", pts->GetPoint(pts->GetNumberOfPoints() - 1)[2]) == MAF_OK
-				)
-				{
-					return MAF_OK;
-				}
-				
-			}
-			else
-			{
-				return MAF_OK;
-			}*/
-
-			parent[_R("PosPt1")].StoreVectorN( PosPt1, 3);
-			parent[_R("PosPt2")].StoreVectorN( PosPt2, 3);
-
-		}
-		return MAF_OK;
-    		
-	}
-	return MAF_ERROR;
+  Superclass::InternalStore(parent);
+  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
+  parent[_R("PosPt1")].SetValue(mafToString(PosPt1, 3));
+  parent[_R("PosPt2")].SetValue(mafToString(PosPt2, 3));
 }
 
 //-----------------------------------------------------------------------
-int mafVMELineSeg::InternalRestore(const mafStorageElement& node)
+void mafVMELineSeg::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-	double pt0[3];
-	double ptEnd[3]; 
-	int nbrPts;
-	if (Superclass::InternalRestore(node)==MAF_OK)
-	{
-    mafMatrix matrix;
-	
-    if (node[_R("Transform")].RestoreMatrix(matrix) ==MAF_OK)
-    {
-      m_Transform->SetMatrix(matrix); 
-	  node[_R("PosPt1")].RestoreVectorN(PosPt1, 3);
-	  node[_R("PosPt2")].RestoreVectorN(PosPt2, 3);
-	 /* node.RestoreInteger("NbrPts",nbrPts);
-	  if (nbrPts > 1)
-	  {
-		  node.RestoreDouble("pt1_0", pt0[0]);
-		  node.RestoreDouble("pt1_1", pt0[1]);
-		  node.RestoreDouble("pt1_2", pt0[2]);
-		  node.RestoreDouble("pt2_0", ptEnd[0]);
-		  node.RestoreDouble("pt2_1", ptEnd[1]);
-		  node.RestoreDouble("pt2_2", ptEnd[2]);
-		  vtkPoints* pp = vtkPoints::New();
-		  pp->InsertNextPoint(pt0);
-		  pp->InsertNextPoint(ptEnd);
-		  this->addPoints(pp);
-	  }*/
-	  /*Just the 1st and final points are stored and restored
-	  Storing and retoring all points will be added*/
-
-      return MAF_OK;
-    }
-	}
-  return MAF_ERROR;
+	Superclass::InternalRestore(node);
+  m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
+  mafParseVector(node[_R("PosPt1")].As<mafString>(), PosPt1, 3);
+  mafParseVector(node[_R("PosPt2")].As<mafString>(), PosPt2, 3);
 }
 //-------------------------------------------------------------------------
 /*void mafVMELineSeg::SetGeometryType(int parametricSurfaceTypeID)

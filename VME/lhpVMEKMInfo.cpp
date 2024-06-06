@@ -135,66 +135,19 @@ void lhpVMEKMInfo::SetMatrix(const mafMatrix &mat)
 }
 
 //-----------------------------------------------------------------------
-int lhpVMEKMInfo::InternalStore(mafStorageElementBuilder& parent)
+void lhpVMEKMInfo::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 { 
-  if (DEBUG_MODE)
-  {
-    std::ostringstream stringStream;
-    stringStream << "Storing matrix:"  << std::endl;
-    m_Transform->Print(stringStream);
-    mafLogMessage(_M(stringStream.str().c_str()));
-  }
-
-  if (Superclass::InternalStore(parent)==MAF_OK)
-  {
-    parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix());
-    return MAF_OK;
-  }
-  return MAF_ERROR;
-  
-  
+  Superclass::InternalStore(parent);
+  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
 }
 
 //-----------------------------------------------------------------------
-int lhpVMEKMInfo::InternalRestore(const mafStorageElement& node)
+void lhpVMEKMInfo::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node)==MAF_OK)
-  {
-    mafMatrix matrix;
-    if (node[_R("Transform")].RestoreMatrix(matrix) ==MAF_OK)
-    {
-
-      if (DEBUG_MODE)
-      {
-        std::ostringstream stringStream;
-        stringStream << "Restoring group matrix:"  << std::endl;
-        matrix.Print(stringStream);
-        mafLogMessage(_M(stringStream.str().c_str()));
-      }
-
-      this->SetMatrix(matrix);
-      return MAF_OK;
-    }
-    else
-    {
-      // code handling for old msf without group pose matrix serialization
-      this->SetMatrix(matrix);
-      if (DEBUG_MODE)
-        {
-          std::ostringstream stringStream;
-          stringStream << "BEWARE!!! Opening an old MSF without group matrix serialized:\
-restoring group matrix as:"  << std::endl;
-          matrix.Print(stringStream);
-          stringStream << "Please report any problem with old MSF containing groups!!!"  << std::endl;
-          mafLogMessage(_M(stringStream.str().c_str()));
-      }
-      return MAF_OK;
-    }
-  }
-
-  return MAF_ERROR;
+  Superclass::InternalRestore(node);
+  SetMatrix(node[_R("Transform")].As<mafMatrix>());
 }
 
 //-----------------------------------------------------------------------

@@ -37,39 +37,22 @@ mafQuadraticSurface::~mafQuadraticSurface()
 	;
 
 }
-int mafQuadraticSurface::InternalStore(mafStorageElementBuilder& parent)
+void mafQuadraticSurface::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {
-	if (Superclass::InternalStore(parent) == MAF_OK)
-	{
-		if (
-			parent[_R("Centerx")].StoreDouble( center[0]) == MAF_OK &&
-			parent[_R("Centery")].StoreDouble( center[1]) == MAF_OK &&
-			parent[_R("Centerz")].StoreDouble( center[2]) == MAF_OK 
-			
-			)
-			return MAF_OK;
-	}
-	return MAF_ERROR;
+  Superclass::InternalStore(parent);
+  parent[_R("Centerx")].SetValue(center[0]);
+  parent[_R("Centery")].SetValue(center[1]);
+  parent[_R("Centerz")].SetValue(center[2]);
 }
 
-int mafQuadraticSurface::InternalRestore(const mafStorageElement& node)
+void mafQuadraticSurface::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-	if (Superclass::InternalRestore(node) == MAF_OK)
-	{
-		
-		if (
-			node[_R("Centerx")].RestoreDouble( center[0]) == MAF_OK &&
-			node[_R("Centery")].RestoreDouble( center[1]) == MAF_OK &&
-			node[_R("Centerz")].RestoreDouble( center[2]) == MAF_OK 
-			)
-		{
-		
-			return MAF_OK;
-		}
-	}
-	return MAF_ERROR;
+  Superclass::InternalRestore(node);
+  center[0] = node[_R("Centerx")].As<double>();
+  center[1] = node[_R("Centery")].As<double>();
+  center[2] = node[_R("Centerz")].As<double>();
 }
 
 // a mass rolling on a quadratic surface will move according to this eq

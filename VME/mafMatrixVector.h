@@ -19,24 +19,22 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafTimeMap.txx"
-#include "mafStorable.h"
 #include "mafStorageElement.h"
 #include "mafMatrix.h"
 
-#ifdef MAF_EXPORTS
-#include "mafDllMacros.h"
-EXPORT_STL_MAP(MAF_EXPORT,mafTimeStamp, mafAutoPointer<mafMatrix>);
-#endif
 //------------------------------------------------------------------------------
 // Forward declarations
 //------------------------------------------------------------------------------
+class mafStorageElement;
+class mafStorageElementBuilder;
 
 /** a dynamic associative sorted vector of 4x4 matrices indexed by their "timestamp".
   
   @todo
   -
 */
-class MAF_EXPORT mafMatrixVector : public mafTimeMap<mafMatrix>, public mafStorable
+
+class MAF_EXPORT mafMatrixVector : public mafTimeMap<mafMatrix>
 {
 public:
   typedef mafTimeMap<mafMatrix>::TimeMap::iterator Iterator;
@@ -88,9 +86,12 @@ public:
     not copied.*/
   void SetMatrix(mafMatrix *mat) {InsertItem(mat);}
 
+  void Store(mafStorageElementBuilder& element) { InternalStore(element); }
+  void Restore(const mafStorageElement& element) { InternalRestore(element); }
+
 protected:
-  virtual int InternalStore(mafStorageElementBuilder& parent);
-  virtual int InternalRestore(const mafStorageElement& node);
+  virtual void InternalStore(mafStorageElementBuilder& node);
+  virtual void InternalRestore(const mafStorageElement& node);
 };
 
 #endif

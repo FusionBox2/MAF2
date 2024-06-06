@@ -78,27 +78,17 @@ bool mafVMERefSys::Equals(mafVME *vme)
 }
 
 //-----------------------------------------------------------------------
-int mafVMERefSys::InternalStore(mafStorageElementBuilder& parent)
+void mafVMERefSys::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
-  if (Superclass::InternalStore(parent)==MAF_OK)
-  {
-//    parent->StoreInteger("Fixed", m_Fixed);
-    return MAF_OK;
-  }
-  return MAF_ERROR;
+  Superclass::InternalStore(parent);
 }
 
 //-----------------------------------------------------------------------
-int mafVMERefSys::InternalRestore(const mafStorageElement& node_)
+void mafVMERefSys::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node_)==MAF_OK)
-  {
-//      node->RestoreInteger("Fixed", m_Fixed);
-      return MAF_OK;
-  }
-  return MAF_ERROR;
+  Superclass::InternalRestore(node);
 }
 //-------------------------------------------------------------------------
 mafGUI* mafVMERefSys::CreateGui()

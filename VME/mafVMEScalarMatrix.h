@@ -148,8 +148,8 @@ protected:
 
   void InternalPreUpdate();
 
-  virtual int InternalStore(mafStorageElementBuilder& parent);
-  virtual int InternalRestore(const mafStorageElement& node);
+  void InternalStore(mafStorageElementBuilder& parent) override;
+  void InternalRestore(const mafStorageElement& node) override;
 
   /** Enable/Disable widgets according to the corresponding selected type.*/
   void EnableWidgets();

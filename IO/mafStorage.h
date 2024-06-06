@@ -26,7 +26,7 @@
 // forward declarations :
 //----------------------------------------------------------------------------
 class mafParser;
-class mafStorable;
+class mafNodeManager;
 
 
 /** Abstract class for an abject mastering the storing/restoring of objects
@@ -75,11 +75,6 @@ public:
   /** perform restoring. the argument is the tag of the document node  */
   int Restore();
   
-  /** set the document element to be stored */
-  void SetDocument (mafStorable *doc);
-
-  /** return the document object restored */
-  mafStorable *GetDocument();
 
   /** resolve an URL and provide local filename to be used as input */
   virtual int ResolveInputURL(const mafString& url, mafString &filename, mafBaseEventHandler *observer = NULL);
@@ -132,10 +127,10 @@ public:
 
 protected:
   /** This is called by Store() and must be reimplemented by subclasses */
-  virtual int InternalStore();
+  virtual int InternalStore(const mafString& filename) = 0;
 
   /** This is called by Restore() and must be reimplemented by subclasses */
-  virtual int InternalRestore();
+  virtual int InternalRestore(const mafString& filename) = 0;
 
   /** populate the list of files in the storage folder */
   virtual int OpenDirectory(const mafString& dir_name);
@@ -143,12 +138,12 @@ protected:
   std::set<mafString> m_GarbageCollector; ///< collect URL to be released
   mafString  m_DefaultTmpFolder; ///< used to store the current default tmp folder
 
+  mafString           m_FileType;  ///< The type of file to be opened
+  mafString           m_Version;   ///< Current MSF version
   mafString           m_URL;          ///< name of the file being accessed
   mafString           m_ParserURL;    ///< name of the last parsed file (used for SaveAs)
   mafID               m_TmpFileId;    ///< counter for unique tmp file naming
   mafString           m_TmpFolder;    ///< folder where to store tmp files
-  mafStorable         *m_Document;        ///< document object to be stored, or being restored
-  std::unique_ptr<mafParser> m_Parser;
   
   std::set<mafString> m_TmpFileNames; ///< name of tmp files in the MSF dir
   std::set<mafString> m_FilesDictionary; ///< list of files in the storage folder: to be populated by OpenDirectory()

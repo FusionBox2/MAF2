@@ -101,52 +101,40 @@ bool mmaMeter::Equals(const mafAttribute *a)
   return false;
 }
 //-----------------------------------------------------------------------
-int mmaMeter::InternalStore(mafStorageElementBuilder& parent)
+void mmaMeter::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
-  if (Superclass::InternalStore(parent)==MAF_OK)
-  {
-    parent[_R("MeterMode")].StoreInteger( m_MeterMode);
-    parent[_R("ColorMode")].StoreInteger( m_ColorMode);
-    parent[_R("Representation")].StoreInteger( m_Representation);
-    parent[_R("Capping")].StoreInteger( m_Capping);
-    parent[_R("MeasureType")].StoreInteger( m_MeasureType);
-    parent[_R("GenerateEvent")].StoreInteger( m_GenerateEvent);
-    parent[_R("DeltaPercent")].StoreDouble( m_DeltaPercent);
-    parent[_R("ThresholdEvent")].StoreInteger( m_ThresholdEvent);
-    parent[_R("LabelVisibility")].StoreInteger( m_LabelVisibility);
-    parent[_R("InitMeasure")].StoreDouble(m_InitMeasure);
-    parent[_R("TubeRadius")].StoreDouble(m_TubeRadius);
-    parent[_R("DistanceRange")].StoreVectorN(m_DistanceRange,2);
-    return MAF_OK;
-  }
-  return MAF_ERROR;
+  Superclass::InternalStore(parent);
+  parent[_R("MeterMode")].SetValue(m_MeterMode);
+  parent[_R("ColorMode")].SetValue(m_ColorMode);
+  parent[_R("Representation")].SetValue(m_Representation);
+  parent[_R("Capping")].SetValue(m_Capping);
+  parent[_R("MeasureType")].SetValue(m_MeasureType);
+  parent[_R("GenerateEvent")].SetValue(m_GenerateEvent);
+  parent[_R("DeltaPercent")].SetValue(m_DeltaPercent);
+  parent[_R("ThresholdEvent")].SetValue(m_ThresholdEvent);
+  parent[_R("LabelVisibility")].SetValue(m_LabelVisibility);
+  parent[_R("InitMeasure")].SetValue(m_InitMeasure);
+  parent[_R("TubeRadius")].SetValue(m_TubeRadius);
+  parent[_R("DistanceRange")].SetValue(mafToString(m_DistanceRange, 2));
 }
 //-----------------------------------------------------------------------
-int mmaMeter::InternalRestore(const mafStorageElement& node)
+void mmaMeter::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node)==MAF_OK)
-  {
-    //mafMatrix matrix;  //modified by Marco. 29-9-2005 It seems this field is not stored...
-    ///if (node->RestoreMatrix("Transform",&matrix)==MAF_OK)
-    //{
-      node[_R("MeterMode")].RestoreInteger( m_MeterMode);
-      node[_R("ColorMode")].RestoreInteger( m_ColorMode);
-      node[_R("Representation")].RestoreInteger( m_Representation);
-      node[_R("Capping")].RestoreInteger( m_Capping);
-      node[_R("MeasureType")].RestoreInteger( m_MeasureType);
-      node[_R("GenerateEvent")].RestoreInteger( m_GenerateEvent);
-      node[_R("DeltaPercent")].RestoreDouble( m_DeltaPercent);
-      node[_R("ThresholdEvent")].RestoreInteger( m_ThresholdEvent);
-      node[_R("LabelVisibility")].RestoreInteger( m_LabelVisibility);
-      node[_R("InitMeasure")].RestoreDouble(m_InitMeasure);
-      node[_R("TubeRadius")].RestoreDouble(m_TubeRadius);
-      node[_R("DistanceRange")].RestoreVectorN(m_DistanceRange, 2);
-      return MAF_OK;
-    //}
-  }
-  return MAF_ERROR;
+  Superclass::InternalRestore(node);
+  m_MeterMode = node[_R("MeterMode")].As<int>();
+  m_ColorMode = node[_R("ColorMode")].As<int>();
+  m_Representation = node[_R("Representation")].As<int>();
+  m_Capping = node[_R("Capping")].As<int>();
+  m_MeasureType = node[_R("MeasureType")].As<int>();
+  m_GenerateEvent = node[_R("GenerateEvent")].As<int>();
+  m_DeltaPercent = node[_R("DeltaPercent")].As<double>();
+  m_ThresholdEvent = node[_R("ThresholdEvent")].As<int>();
+  m_LabelVisibility = node[_R("LabelVisibility")].As<int>();
+  m_InitMeasure = node[_R("InitMeasure")].As<double>();
+  m_TubeRadius = node[_R("TubeRadius")].As<double>();
+  mafParseVector(node[_R("DistanceRange")].As<mafString>(), m_DistanceRange, 2);
 }
 //-----------------------------------------------------------------------
 void mmaMeter::Print(std::ostream& os, const int tabs) const

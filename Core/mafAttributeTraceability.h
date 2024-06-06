@@ -21,22 +21,6 @@
 #include "mafAttribute.h"
 #include <vector>
 
-struct m_Traceability
-{
-  mafString m_TrialEvent;
-  mafString m_OperationName;
-  mafString m_Parameters;
-  mafString m_Date;
-  mafString m_AppStamp;
-  mafString m_OperatorID;
-  mafString m_IsNatural;
-};
-
-#ifdef MAF_EXPORTS
-#include "mafDllMacros.h"
-EXPORT_STL_VECTOR(MAF_EXPORT,m_Traceability);
-#endif
-
 //----------------------------------------------------------------------------
 // mafAttributeTraceability:
 //----------------------------------------------------------------------------
@@ -67,12 +51,21 @@ public:
   /** return trial type form vetor of traceability event*/
   mafString GetLastTrialEvent();
 
-  std::vector<m_Traceability> m_TraceabilityVector;
+  struct Traceability
+  {
+    mafString m_TrialEvent;
+    mafString m_OperationName;
+    mafString m_Parameters;
+    mafString m_Date;
+    mafString m_AppStamp;
+    mafString m_OperatorID;
+    mafString m_IsNatural;
+  };
+  std::vector<Traceability> m_TraceabilityVector;
 
 protected:
-  
-  virtual int InternalStore(mafStorageElementBuilder& parent);
-  virtual int InternalRestore(const mafStorageElement& node);
+  void InternalStore(mafStorageElementBuilder& parent) override;
+  void InternalRestore(const mafStorageElement& node) override;
 };
 
 #endif 

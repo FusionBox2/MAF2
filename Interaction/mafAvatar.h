@@ -18,7 +18,8 @@
 #define __mafAvatar_h
 
 #include "mafInteractor.h"
-#include "mafStorable.h"
+#include "mafObjectFactory.h"
+#include "mafTo.h"
 #include "vtkProp3D.h"
 #include "vtkActor2D.h"
 
@@ -26,6 +27,7 @@
 // forward declarations :
 //----------------------------------------------------------------------------
 class mafStorageElement;
+class mafStorageElementBuilder;
 class mafGUI;
 class mafEvent;
 class mafEventBase;
@@ -44,7 +46,7 @@ class vtkAbstractPropPicker;
   hiding and showing it at the right time. The Avatar moves according to an
   interactor, which must also be set by subclasses.
  */
-class MAF_EXPORT mafAvatar : public mafInteractor, public mafStorable
+class MAF_EXPORT mafAvatar : public mafInteractor
 {
 public:
   /** @ingroup Events
@@ -172,18 +174,16 @@ public:
   /** force GUI update */
   virtual void UpdateGui();
 
+  void Store(mafStorageElementBuilder& element) { InternalStore(element); }
+  void Restore(const mafStorageElement& element) { InternalRestore(element); }
+
 protected:
 
   mafAvatar();
   virtual ~mafAvatar();
  
-  /** This is used to allow nested serialization of subclasses.
-    This function is called by Store and is reimplemented in subclasses.
-    Each subclass can Open/Close its own subelements which are
-    closed inside the "Device" XML element. */
-  virtual int InternalStore(mafStorageElementBuilder& node);
-
-  virtual int InternalRestore(const mafStorageElement& node);
+  virtual void InternalStore(mafStorageElementBuilder& node);
+  virtual void InternalRestore(const mafStorageElement& node);
 
   /** redefined to add the Cursor actor into the selected renderer */
   virtual int InternalInitialize();
@@ -215,4 +215,32 @@ private:
   void operator=(const mafAvatar&);  // Not implemented.
 };
 
-#endif 
+namespace parser
+{
+  template<class Value>
+  mafAvatar* Parse(const Value& value, parser::To<mafAvatar>)
+  {
+    mafString type_name = value(_R("Type")).As<mafString>();
+    auto object = mafObjectFactory::CreateInstance(type_name.GetCStr());
+    if (auto avatar = mafAvatar::SafeDownCast(object))
+    {
+      avatar->Restore(value);
+      return avatar;
+    }
+    return nullptr;
+  }
+}
+
+namespace serializer
+{
+  template<class Value>
+  void Serialize(Value& value, mafAvatar* const& avatar)
+  {
+    assert(avatar);
+    mafString type_name = _R(avatar->GetTypeName());
+    value(_R("Type")).SetValue(type_name);
+    avatar->Store(value);
+  }
+}
+
+#endif

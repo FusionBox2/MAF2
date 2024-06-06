@@ -45,8 +45,8 @@ class mafQuadraticSurface : public mafVME//public mafDataElement
     
     mafQuadraticSurface();
 	virtual ~mafQuadraticSurface();
-	virtual int InternalStore(mafStorageElementBuilder& parent);
-	virtual int InternalRestore(const mafStorageElement& node);
+	void InternalStore(mafStorageElementBuilder& parent) override;
+	void InternalRestore(const mafStorageElement& node) override;
 	static bool VMEAccept(mafNode *node) { return(node != NULL ); };
     std::vector< Vector3d > computeGeodesicPath(mafVMELandmark* p0, mafVMELandmark* q0, mafVMELandmark* p, mafVMELandmark* q, double length, int rate, double *error) ; //const;
     

@@ -70,19 +70,12 @@ protected:
 
   mafTransform *m_Transform;
 
-  int InternalStore(mafStorageElementBuilder& parent);
-
-  int InternalRestore(const mafStorageElement& node);
-
+  void InternalStore(mafStorageElementBuilder& parent) override;
+  void InternalRestore(const mafStorageElement& node) override;
 
 private:
   mafVMEGroup(const mafVMEGroup&); // Not implemented
   void operator=(const mafVMEGroup&); // Not implemented
-  
-
-  
-  
-  
 };
 
 #endif

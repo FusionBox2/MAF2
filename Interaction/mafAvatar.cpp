@@ -301,17 +301,17 @@ void mafAvatar::ShowCursor2D()
 }
 
 //------------------------------------------------------------------------------
-int mafAvatar::InternalStore(mafStorageElementBuilder& node)
+void mafAvatar::InternalStore(mafStorageElementBuilder& node)
 //------------------------------------------------------------------------------
 {
-  return node[_R("Name")].StoreText(m_Name);
+  node[_R("Name")].SetValue(m_Name);
 }
 
 //------------------------------------------------------------------------------
-int mafAvatar::InternalRestore(const mafStorageElement& node)
+void mafAvatar::InternalRestore(const mafStorageElement& node)
 //------------------------------------------------------------------------------
 {
-  return node[_R("Name")].RestoreText(m_Name);
+  m_Name = node[_R("Name")].As<mafString>();
 }
 
 //------------------------------------------------------------------------------

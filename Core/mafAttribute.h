@@ -19,8 +19,12 @@
 // includes :
 //----------------------------------------------------------------------------
 #include "mafReferenceCounted.h" 
-#include "mafStorable.h"
+#include "mafObjectFactory.h"
 #include "mafString.h"
+#include "mafTo.h"
+
+class mafStorageElement;
+class mafStorageElementBuilder;
 
 /** An abstract class for objects representing an attribute for mafNodes.
   This abstract class represent the interface of an attribute for mafNodes. An attribute
@@ -30,7 +34,7 @@
   then recreated from the factory and unserialized.
   @sa mafNode mafStorable mafObject
 */
-class MAF_EXPORT mafAttribute : public mafReferenceCounted, public mafStorable
+class MAF_EXPORT mafAttribute : public mafReferenceCounted
 {
 public:
   mafAbstractTypeMacro(mafAttribute,mafReferenceCounted);
@@ -57,13 +61,44 @@ public:
 
   /** dump the object to output stream */
   virtual void Print(std::ostream& os, const int tabs=0) const;
+
+  void Store(mafStorageElementBuilder& element) { InternalStore(element); }
+  void Restore(const mafStorageElement& element) { InternalRestore(element); }
+
 protected:
-  
-  virtual int InternalStore(mafStorageElementBuilder& parent);
-  virtual int InternalRestore(const mafStorageElement& node);
+  virtual void InternalStore(mafStorageElementBuilder& parent);
+  virtual void InternalRestore(const mafStorageElement& node);
 
   mafString m_Name;
 };
 
-#endif 
+namespace parser
+{
+  template<class Value>
+  mafAttribute* Parse(const Value& value, parser::To<mafAttribute>)
+  {
+    mafString type_name = value(_R("Type")).As<mafString>();
+    auto object = mafObjectFactory::CreateInstance(type_name.GetCStr());
+    if (auto attr = mafAttribute::SafeDownCast(object))
+    {
+      attr->Restore(value);
+      return attr;
+    }
+    return nullptr;
+  }
+}
+
+namespace serializer
+{
+  template<class Value>
+  void Serialize(Value& value, mafAttribute* const& attr)
+  {
+    mafString type_name = _R(attr->GetTypeName());
+    assert(attr);
+    value(_R("Type")).SetValue(type_name);
+    attr->Store(value);
+  }
+}
+
+#endif
 

@@ -23,15 +23,15 @@
 */
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"
-#include "mafStorable.h"
 #include "mafDefines.h"
+#include "mafTo.h"
 //----------------------------------------------------------------------------
 // Forward Refs:
 //----------------------------------------------------------------------------
 class mafVME;
 class mafGUIListCtrl;
 class mafEvent;
-
+class mafStorageElement;
 
 /**
   class name : mafGUIDictionaryWidget
@@ -77,15 +77,11 @@ protected:
   mafVME      *m_Vme;
 };
 
-#ifdef MAF_EXPORTS
-#include "mafDllMacros.h"
-EXPORT_STL_VECTOR(MAF_EXPORT,mafString);
-#endif
 /**
  class name: mafStorableDictionary
   Utility object that supply the  InternalStore  and InternalRestore method for serialization.
 */
-class MAF_EXPORT mafStorableDictionary: public mafObject, public mafStorable
+class MAF_EXPORT mafStorableDictionary: public mafObject
 {
 public:
   /** RTTI macro*/
@@ -94,10 +90,8 @@ public:
   mafStorableDictionary();
   /** destructor */
   ~mafStorableDictionary();
-  /** serialize  object attributes */
-  virtual int InternalStore(mafStorageElementBuilder& parent){return MAF_OK;}
-  /** restore  object attributes */
-  virtual int InternalRestore(const mafStorageElement& node);
+  void Restore(const mafStorageElement& element) { InternalRestore(element); }
+  virtual void InternalRestore(const mafStorageElement& node);
   std::vector<mafString> m_StrVector;
 };
 #endif
