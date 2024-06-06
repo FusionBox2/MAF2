@@ -855,32 +855,19 @@ void mafVME::OnEvent(mafEventBase *maf_event)
 }
 
 //-------------------------------------------------------------------------
-int mafVME::InternalStore(mafStorageElementBuilder& parent)
+void mafVME::InternalStore(mafStorageElementBuilder& parent)
 //-------------------------------------------------------------------------
 {
-  if (Superclass::InternalStore(parent)==MAF_OK)
-  {
-    parent.SetAttribute(_R("Crypting"),mafToString(m_Crypting));
-    return MAF_OK;
-  }
-  return MAF_ERROR;
+  Superclass::InternalStore(parent);
+  parent(_R("Crypting")).SetValue(m_Crypting);
 }
 
 //-------------------------------------------------------------------------
-int mafVME::InternalRestore(const mafStorageElement& node_)
+void mafVME::InternalRestore(const mafStorageElement& node)
 //-------------------------------------------------------------------------
 {
-	auto node = &node_;
-
-  if (Superclass::InternalRestore(node_)==MAF_OK)
-  {
-    mafID crypt;
-    node->GetAttributeAsInteger(_R("Crypting"),crypt);
-    SetCrypting(crypt);
-
-    return MAF_OK;
-  }
-  return MAF_ERROR;
+  Superclass::InternalRestore(node);
+  SetCrypting(node(_R("Crypting")).As<int>());
 }
 
 //-------------------------------------------------------------------------

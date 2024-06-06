@@ -19,6 +19,7 @@
 
 #include "mafReferenceCounted.h"
 #include "mafMTime.h"
+#include "mafTo.h"
 
 typedef double (*mafMatrixElements)[4];
 
@@ -195,5 +196,39 @@ protected:
 #endif
   
 };
+namespace parser
+{
+    template<class Value>
+    mafMatrix Parse(const Value& value, parser::To<mafMatrix>)
+	{
+		mafMatrix matrix;
+		matrix.Zero();
+		mafParseVector(value.As<mafString>(), *matrix.GetElements(), 16);
+		matrix.SetTimeStamp(value(_R("TimeStamp")).As<double>());
+		return matrix;
+	}
+}
+namespace serializer
+{
+	template<class Value>
+	void Serialize(Value& value, const mafMatrix& matrix)
+	{
+		// Write all the 16 elements into as a single 16-tupla
+		mafString elements;
+		for (int i = 0; i < 4; i++)
+		{
+			for (int j = 0; j < 4; j++)
+			{
+				elements += mafToString(matrix.GetElements()[i][j]) + _R(" ");
+			}
+			elements += _R("\n"); // cr for read-ability
+		}
+
+		value.SetValue(elements);
+
+		// add also the timestamp as an attribute
+		value(_R("TimeStamp")).SetValue(mafToString(matrix.GetTimeStamp()));
+	}
+}
 
 #endif 

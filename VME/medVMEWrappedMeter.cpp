@@ -1836,7 +1836,7 @@ void medVMEWrappedMeter::InternalUpdateManual()
   }*/
 }
 //-----------------------------------------------------------------------
-int medVMEWrappedMeter::InternalStore(mafStorageElementBuilder& parent)
+void medVMEWrappedMeter::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
   if(m_Gui == NULL) //this for update wrapped vme lists
@@ -1845,70 +1845,56 @@ int medVMEWrappedMeter::InternalStore(mafStorageElementBuilder& parent)
     CreateGui();
   }
 
-  if (Superclass::InternalStore(parent)==MAF_OK)
+  Superclass::InternalStore(parent);
+  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
+  m_OrderMiddlePointsVMEList.clear();
+
+  for (int i = 0; i < m_MiddlePointList.size(); i++)
   {
-    parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix());
-		m_OrderMiddlePointsVMEList.clear();
+    mafNode* node;
+    node = IndexToMiddlePointVME(i);
+    if (node == NULL) continue;
+    int vmeId = node->GetId();
 
-		for(int i=0; i<m_MiddlePointList.size(); i++)
-		{
-			mafNode *node;
-			node = IndexToMiddlePointVME(i);
-			if(node == NULL) continue;
-			int vmeId = node->GetId();
+    PushIdVector(vmeId);
 
-			PushIdVector(vmeId);
-
-			if(mafVMELandmarkCloud *lc = mafVMELandmarkCloud::SafeDownCast(node))
-			{
-				int index = -1;
-				for(int j=0; j< lc->GetNumberOfLandmarks(); j++)
-				{
-
-          mafString name = _R("");
-          name  = lc->GetLandmarkName(j);
-          
-          if(name == m_OrderMiddlePointsNameVMEList[i]) index = j;
-          
-				}
-				
-        PushIdVector(index);
-			}
-		}
-		parent[_R("OrderMiddlePointVmeNumberOfElements")].StoreInteger( m_OrderMiddlePointsVMEList.size());
-		parent[_R("OrderMiddlePointVme")].StoreVectorN(m_OrderMiddlePointsVMEList);
-
-    parent[_R("WrapMode")].StoreInteger( m_WrappedMode);
-    parent[_R("WrapSide")].StoreInteger( m_WrapSide);
-    parent[_R("WrapReverse")].StoreInteger( m_WrapReverse);
-
-    return MAF_OK;
-  }
-  return MAF_ERROR;
-}
-//-----------------------------------------------------------------------
-int medVMEWrappedMeter::InternalRestore(const mafStorageElement& node)
-//-----------------------------------------------------------------------
-{
-  if (Superclass::InternalRestore(node)==MAF_OK)
-  {
-    mafMatrix matrix;
-    if (node[_R("Transform")].RestoreMatrix(matrix) ==MAF_OK)
+    if (mafVMELandmarkCloud* lc = mafVMELandmarkCloud::SafeDownCast(node))
     {
-      m_Transform->SetMatrix(matrix);
-	  int              orderMiddlePointsVMEListNumberOfElements;
-			node[_R("OrderMiddlePointVmeNumberOfElements")].RestoreInteger( orderMiddlePointsVMEListNumberOfElements);
-			m_OrderMiddlePointsVMEList.resize(orderMiddlePointsVMEListNumberOfElements);
-			node[_R("OrderMiddlePointVme")].RestoreVectorN(m_OrderMiddlePointsVMEList);
-			
-      node[_R("WrapMode")].RestoreInteger( m_WrappedMode);
-      node[_R("WrapSide")].RestoreInteger( m_WrapSide);
-      node[_R("WrapReverse")].RestoreInteger( m_WrapReverse);
-      return MAF_OK;
+      int index = -1;
+      for (int j = 0; j < lc->GetNumberOfLandmarks(); j++)
+      {
+
+        mafString name = _R("");
+        name = lc->GetLandmarkName(j);
+
+        if (name == m_OrderMiddlePointsNameVMEList[i]) index = j;
+
+      }
+
+      PushIdVector(index);
     }
   }
+  parent[_R("OrderMiddlePointVmeNumberOfElements")].SetValue(m_OrderMiddlePointsVMEList.size());
+  parent[_R("OrderMiddlePointVme")].SetValue(mafToString(m_OrderMiddlePointsVMEList));
 
-  return MAF_ERROR;
+  parent[_R("WrapMode")].SetValue(m_WrappedMode);
+  parent[_R("WrapSide")].SetValue(m_WrapSide);
+  parent[_R("WrapReverse")].SetValue(m_WrapReverse);
+}
+//-----------------------------------------------------------------------
+void medVMEWrappedMeter::InternalRestore(const mafStorageElement& node)
+//-----------------------------------------------------------------------
+{
+  Superclass::InternalRestore(node);
+  mafMatrix matrix = node[_R("Transform")].As<mafMatrix>();
+  m_Transform->SetMatrix(matrix);
+  int orderMiddlePointsVMEListNumberOfElements = node[_R("OrderMiddlePointVmeNumberOfElements")].As<int>();
+  m_OrderMiddlePointsVMEList.resize(orderMiddlePointsVMEListNumberOfElements);
+  mafParseVector(node[_R("OrderMiddlePointVme")].As<mafString>(), m_OrderMiddlePointsVMEList);
+
+  m_WrappedMode = node[_R("WrapMode")].As<int>();
+  m_WrapSide = node[_R("WrapSide")].As<int>();
+  m_WrapReverse = node[_R("WrapReverse")].As<int>();
 }
 //-----------------------------------------------------------------------
 void medVMEWrappedMeter::Print(std::ostream& os, const int tabs)

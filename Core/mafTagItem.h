@@ -19,15 +19,9 @@
 // includes :
 //----------------------------------------------------------------------------
 #include "mafConfigure.h"
-#include "mafStorable.h"
 #include "mafString.h"
 #include <vector>
 #include <iosfwd>
-
-#ifdef MAF_EXPORTS
-#include "mafDllMacros.h"
-EXPORT_STL_VECTOR(MAF_EXPORT,mafString);
-#endif
 
 //----------------------------------------------------------------------------
 // constants
@@ -36,12 +30,14 @@ EXPORT_STL_VECTOR(MAF_EXPORT,mafString);
 //----------------------------------------------------------------------------
 // forward declarations
 //----------------------------------------------------------------------------
+class mafStorageElement;
+class mafStorageElementBuilder;
 
 /** an utility class for storing <key-type-array of values> information.
   an utility class for storing <key-type-array of values> information.
   @sa mafTagArray
 */
-class MAF_EXPORT mafTagItem : public mafStorable
+class MAF_EXPORT mafTagItem
 {
 public:
   mafTagItem();
@@ -159,9 +155,12 @@ public:
   /** copy contents of the given tag item */
   void DeepCopy(const mafTagItem *item);
 
+  void Store(mafStorageElementBuilder& element) { InternalStore(element); }
+  void Restore(const mafStorageElement& element) { InternalRestore(element); }
+
 protected:
-  virtual int InternalStore(mafStorageElementBuilder& parent);
-  virtual int InternalRestore(const mafStorageElement& node);
+  virtual void InternalStore(mafStorageElementBuilder& parent);
+  virtual void InternalRestore(const mafStorageElement& node);
 
   void Initialize();
   

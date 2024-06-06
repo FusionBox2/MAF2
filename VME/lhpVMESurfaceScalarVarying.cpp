@@ -416,87 +416,60 @@ void lhpVMESurfaceScalarVarying::UpdateTimeIndex(mafTimeStamp t)
   }
 }
 //-----------------------------------------------------------------------
-int lhpVMESurfaceScalarVarying::InternalStore(mafStorageElementBuilder& parent)
+void lhpVMESurfaceScalarVarying::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
-  if (Superclass::InternalStore(parent) == MAF_OK)
+  Superclass::InternalStore(parent);
+  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
+  parent[_R("Radius")].SetValue(m_Radius);
+  parent[_R("NumOfScalarVMEIndexes")].SetValue(m_ScalarRegionMap.size());
+  auto it = m_ScalarRegionMap.begin();
+  int* indexIds, num_indexes;
+  mafString indexesName, numIndexesName;
+  for (int n = 0; it != m_ScalarRegionMap.end(); it++, n++)
   {
-    if (parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix()) == MAF_OK &&
-        parent[_R("Radius")].StoreInteger( m_Radius) == MAF_OK &&
-        parent[_R("NumOfScalarVMEIndexes")].StoreInteger( m_ScalarRegionMap.size()) == MAF_OK)
+    numIndexesName = _R("NumOfScalarVMEIndexes");
+    indexesName = _R("ScalarVMEIndexes");
+    indexesName += mafToString(n);
+    numIndexesName += mafToString(n);
+    num_indexes = it->second->GetNumberOfIds() + 1;
+    indexIds = new int[num_indexes];
+    indexIds[0] = it->first;
+    for (int i = 1; i < num_indexes; i++)
     {
-      auto it = m_ScalarRegionMap.begin();
-      int *indexIds, num_indexes;
-      mafString indexesName, numIndexesName;
-      for (int n = 0; it != m_ScalarRegionMap.end(); it++, n++)
-      {
-        numIndexesName = _R("NumOfScalarVMEIndexes");
-        indexesName = _R("ScalarVMEIndexes");
-        indexesName += mafToString(n);
-        numIndexesName += mafToString(n);
-        num_indexes = it->second->GetNumberOfIds() + 1;
-        indexIds = new int[num_indexes];
-        indexIds[0] = it->first;
-        for (int i = 1; i < num_indexes; i++)
-        {
-          indexIds[i] = it->second->GetId(i-1);
-        }
-        if (parent[numIndexesName].StoreInteger(num_indexes) == MAF_ERROR ||
-            parent[indexesName].StoreVectorN(indexIds, num_indexes) == MAF_ERROR)
-        {
-          delete indexIds;
-          return MAF_ERROR;
-        }
-        delete indexIds;
-      }
-      return MAF_OK;
+      indexIds[i] = it->second->GetId(i - 1);
     }
+    parent[numIndexesName].SetValue(num_indexes);
+    parent[indexesName].SetValue(mafToString(indexIds, num_indexes));
+    delete indexIds;
   }
-  return MAF_ERROR;
 }
 //-----------------------------------------------------------------------
-int lhpVMESurfaceScalarVarying::InternalRestore(const mafStorageElement& node)
+void lhpVMESurfaceScalarVarying::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node)==MAF_OK)
+  Superclass::InternalRestore(node);
+  m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
+  m_Radius = node[_R("Radius")].As<int>();
+  int num = node[_R("NumOfScalarVMEIndexes")].As<int>();
+  int* indexIds, num_indexes;
+  mafString indexesName, numIndexesName;
+  for (int n = 0; n < num; n++)
   {
-    mafMatrix matrix;
-    if (node[_R("Transform")].RestoreMatrix(matrix) == MAF_OK)
+    numIndexesName = _R("NumOfScalarVMEIndexes");
+    indexesName = _R("ScalarVMEIndexes");
+    indexesName += mafToString(n);
+    numIndexesName += mafToString(n);
+    num_indexes = node[numIndexesName].As<int>();
+    indexIds = new int[num_indexes];
+    mafParseVector(node[indexesName].As<mafString>(), indexIds, num_indexes);
+    m_ScalarRegionMap[indexIds[0]] = vtkIdList::New();
+    for (int i = 1; i < num_indexes; i++)
     {
-      m_Transform->SetMatrix(matrix);
-      if (node[_R("Radius")].RestoreInteger( m_Radius) == MAF_OK)
-      {
-        int num = 0;
-        if (node[_R("NumOfScalarVMEIndexes")].RestoreInteger( num) == MAF_OK)
-        {
-          int *indexIds, num_indexes;
-          mafString indexesName, numIndexesName;
-          for (int n = 0; n < num; n++)
-          {
-            numIndexesName = _R("NumOfScalarVMEIndexes");
-            indexesName = _R("ScalarVMEIndexes");
-            indexesName += mafToString(n);
-            numIndexesName += mafToString(n);
-            if(node[numIndexesName].RestoreInteger(num_indexes) == MAF_OK)
-            {
-              indexIds = new int[num_indexes];
-              if (node[indexesName].RestoreVectorN(indexIds, num_indexes) == MAF_OK)
-              {
-                m_ScalarRegionMap[indexIds[0]] = vtkIdList::New();
-                for (int i = 1; i < num_indexes; i++)
-                {
-                  m_ScalarRegionMap[indexIds[0]]->InsertNextId(indexIds[i]);
-                }
-              }
-              delete indexIds;
-            }
-          }
-          return MAF_OK;
-        }
-      }
+      m_ScalarRegionMap[indexIds[0]]->InsertNextId(indexIds[i]);
     }
+    delete indexIds;
   }
-  return MAF_ERROR;
 }
 //-------------------------------------------------------------------------
 int lhpVMESurfaceScalarVarying::GetScalarVMEIndex(int idx)

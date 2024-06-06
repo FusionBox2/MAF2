@@ -1340,24 +1340,19 @@ void mafVMELandmarkCloud::OnEvent(mafEventBase *maf_event)
   }
 }
 //-----------------------------------------------------------------------
-int mafVMELandmarkCloud::InternalStore(mafStorageElementBuilder& parent)
+void mafVMELandmarkCloud::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalStore(parent) == MAF_OK)
-  {
-    if (parent[_R("LM_SPHERE_RESOLUTION")].StoreInteger( m_SphereResolution) == MAF_OK &&
-        parent[_R("LM_RADIUS")].StoreDouble( m_Radius) == MAF_OK)
-    {
-      return MAF_OK;
-    }
-  }
+  Superclass::InternalStore(parent);
+  parent[_R("LM_SPHERE_RESOLUTION")].SetValue(m_SphereResolution);
+  parent[_R("LM_RADIUS")].SetValue(m_Radius);
   /*
   if (IsOpen())
   {
     if (Superclass::InternalStore(parent) == MAF_OK)
     {
-      if (parent.StoreInteger("LM_SPHERE_RESOLUTION", m_SphereResolution) == MAF_OK &&
-        parent.StoreDouble("LM_RADIUS", m_Radius) == MAF_OK)
+      if (parent.SetValue("LM_SPHERE_RESOLUTION", m_SphereResolution) == MAF_OK &&
+        parent.SetValue("LM_RADIUS", m_Radius) == MAF_OK)
       {
         return MAF_OK;
       }
@@ -1369,8 +1364,8 @@ int mafVMELandmarkCloud::InternalStore(mafStorageElementBuilder& parent)
     mafString lm_data;
     mafString itemName;
     int i=0;
-    if (parent.StoreInteger("LM_SPHERE_RESOLUTION", m_SphereResolution) == MAF_OK &&
-      parent.StoreDouble("LM_RADIUS", m_Radius) == MAF_OK)
+    if (parent.SetValue("LM_SPHERE_RESOLUTION", m_SphereResolution) == MAF_OK &&
+      parent.SetValue("LM_RADIUS", m_Radius) == MAF_OK)
     {
       res = MAF_OK;
     }
@@ -1397,22 +1392,14 @@ int mafVMELandmarkCloud::InternalStore(mafStorageElementBuilder& parent)
     return res;
   }
   */
-
-  return MAF_ERROR;
 }
 //-----------------------------------------------------------------------
-int mafVMELandmarkCloud::InternalRestore(const mafStorageElement& node)
+void mafVMELandmarkCloud::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node) == MAF_OK)
-  {
-    if (node[_R("LM_SPHERE_RESOLUTION")].RestoreInteger( m_SphereResolution) == MAF_OK &&
-        node[_R("LM_RADIUS")].RestoreDouble( m_Radius) == MAF_OK)
-    {
-      return MAF_OK;
-    }
-  }
-  return MAF_ERROR;
+  Superclass::InternalRestore(node);
+  m_SphereResolution = node[_R("LM_SPHERE_RESOLUTION")].As<int>();
+  m_Radius = node[_R("LM_RADIUS")].As<double>();
 }
 //-------------------------------------------------------------------------
 mmaMaterial *mafVMELandmarkCloud::GetMaterial()

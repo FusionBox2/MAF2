@@ -229,34 +229,22 @@ void mafVMEArrow::InternalPreUpdate()
 }
 
 //-----------------------------------------------------------------------
-int mafVMEArrow::InternalStore(mafStorageElementBuilder& parent)
+void mafVMEArrow::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
-  if (Superclass::InternalStore(parent)==MAF_OK)
-  {
-    parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix());
-    parent[_R("ScaleFactor")].StoreDouble( m_ScaleFactor);
-    return MAF_OK;
-  }
-  return MAF_ERROR;
+  Superclass::InternalStore(parent);
+  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
+  parent[_R("ScaleFactor")].SetValue(m_ScaleFactor);
 }
 
 //-----------------------------------------------------------------------
-int mafVMEArrow::InternalRestore(const mafStorageElement& node)
+void mafVMEArrow::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node)==MAF_OK)
-  {
-    mafMatrix matrix;
-    if (node[_R("Transform")].RestoreMatrix(matrix) ==MAF_OK)
-    {
-      m_Transform->SetMatrix(matrix);
-      node[_R("ScaleFactor")].RestoreDouble( m_ScaleFactor);
-      SetScaleFactor(m_ScaleFactor);
-      return MAF_OK;
-    }
-  }
-  return MAF_ERROR;
+  Superclass::InternalRestore(node);
+  m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
+  m_ScaleFactor = node[_R("ScaleFactor")].As<double>();
+  SetScaleFactor(m_ScaleFactor);
 }
 
 

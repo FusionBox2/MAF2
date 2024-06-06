@@ -84,86 +84,83 @@ bool mafVMEInfoText::Equals(mafVME *vme)
 }
 
 //-----------------------------------------------------------------------
-int mafVMEInfoText::InternalStore(mafStorageElementBuilder& parent)
+void mafVMEInfoText::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
-  if (Superclass::InternalStore(parent)==MAF_OK)
+  Superclass::InternalStore(parent);
+  for (int i = 0; i < 3; i++)
   {
-    for(int i = 0; i < 3; i++)
-    {
-      mafString txtname = _R("Label") + mafToString(i);
-      if(parent[txtname].StoreText(m_PosLabels[i]) != MAF_OK)
-        return MAF_ERROR;
-    }
-    for(int i = 0; i < 3; i++)
-    {
-        mafString txtname = _R("ShowLabel") + mafToString(i);
-        if (parent[txtname].StoreInteger(m_PosShow[i] ? 1 : 0) != MAF_OK)
-        return MAF_ERROR;
-    }
-    int strSz = m_Strings.size();
-    parent[_R("NumberOfStrings")].StoreInteger( strSz);
-    for(int i = 0; i < m_Strings.size(); i++)
-    {
-      mafString txtname = _R("String") + mafToString(i);
-      if(parent[txtname].StoreText(m_Strings[i]) != MAF_OK)
-        return MAF_ERROR;
-    }
-    return MAF_OK;
+    mafString txtname = _R("Label") + mafToString(i);
+    parent[txtname].SetValue(m_PosLabels[i]);
   }
-  return MAF_ERROR;
+  for (int i = 0; i < 3; i++)
+  {
+    mafString txtname = _R("ShowLabel") + mafToString(i);
+    parent[txtname].SetValue(m_PosShow[i] ? 1 : 0);
+  }
+  int strSz = m_Strings.size();
+  parent[_R("NumberOfStrings")].SetValue(strSz);
+  for (int i = 0; i < m_Strings.size(); i++)
+  {
+    mafString txtname = _R("String") + mafToString(i);
+    parent[txtname].SetValue(m_Strings[i]);
+  }
 }
 
 //-----------------------------------------------------------------------
-int mafVMEInfoText::InternalRestore(const mafStorageElement& node)
+void mafVMEInfoText::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node)==MAF_OK)
+  Superclass::InternalRestore(node);
+  mafString txtname;
+  for (int j = 0; j < 3; j++)
   {
-    mafString txtname;
-    for(int j = 0; j < 3; j++)
-    {
-      txtname = _R("Label") + mafToString(j);
-      if(node[txtname].RestoreText(m_PosLabels[j]) != MAF_OK)
-        return MAF_ERROR;
-    }
-    for(int j = 0; j < 3; j++)
-    {
-      txtname = _R("ShowLabel") + mafToString(j);
-      int val;
-      if(node[txtname].RestoreInteger(val) != MAF_OK)
-        return MAF_ERROR;
-      m_PosShow[j] = (val != 0);
-    }
+    txtname = _R("Label") + mafToString(j);
+    m_PosLabels[j] = node[txtname].As<mafString>();
+    //if(node[txtname].ReSetValue(m_PosLabels[j]) != MAF_OK)
+      //return MAF_ERROR;
+  }
+  for (int j = 0; j < 3; j++)
+  {
+    txtname = _R("ShowLabel") + mafToString(j);
+    int val = node[txtname].As<int>();
+    m_PosShow[j] = (val != 0);
+  }
 
-    mafString ReadStr;
-    int       i = 0;
-    txtname = _R("String") + mafToString(i);
-    m_Strings.clear();
+  mafString ReadStr;
+  int       i = 0;
+  txtname = _R("String") + mafToString(i);
+  m_Strings.clear();
 
-    int strSz = m_Strings.size();
-    if(node[_R("NumberOfStrings")].RestoreInteger( strSz) == MAF_OK)
+  auto strSz = node[_R("NumberOfStrings")].As<std::optional<int> >();
+  if (strSz)
+  {
+    for (int k = 0; k < *strSz; k++)
     {
-      for(int k = 0; k < strSz; k++) 
-      {
-        if(node[txtname].RestoreText(ReadStr) == MAF_OK)
-          m_Strings.push_back(ReadStr);
-        i++;
-        txtname = _R("String") + mafToString(i);
-      }
+      ReadStr = node[txtname].As<mafString>();
+      //if(node[txtname].ReSetValue(ReadStr) == MAF_OK)
+      m_Strings.push_back(ReadStr);
+      i++;
+      txtname = _R("String") + mafToString(i);
     }
-    else
+  }
+  else
+  {
+    try
     {
-      while (node[txtname].RestoreText(ReadStr) == MAF_OK)
+      for (;;)
       {
+        ReadStr = node[txtname].As<mafString>();
         m_Strings.push_back(ReadStr);
         i++;
         txtname = _R("String") + mafToString(i);
       }
     }
-    return MAF_OK;
+    catch (...)
+    {
+
+    }
   }
-  return MAF_ERROR;
 }
 
 //-------------------------------------------------------------------------

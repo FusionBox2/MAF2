@@ -183,7 +183,7 @@ const char* mafVMEExternalData::GetMimeType()
 }
 
 //-----------------------------------------------------------------------
-int mafVMEExternalData::InternalStore(mafStorageElementBuilder& parent)
+void mafVMEExternalData::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {
   InitializeCurrentPath();
@@ -197,26 +197,22 @@ int mafVMEExternalData::InternalStore(mafStorageElementBuilder& parent)
     if (!copySuccess)
     {
       mafErrorMessage( _M("Error copying external file!") );
-      return MAF_ERROR;
+      return;
     }
   }
   this->SetCurrentPath(m_MSFPath);
-  return Superclass::InternalStore(parent);
+  Superclass::InternalStore(parent);
 }
 
 //-----------------------------------------------------------------------
-int mafVMEExternalData::InternalRestore(const mafStorageElement& node_)
+void mafVMEExternalData::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-	auto node = &node_;
-
-  Superclass::InternalRestore(node_);
-  m_TmpPath = node->GetStorage()->GetURL();
+  Superclass::InternalRestore(node);
+  m_TmpPath = node.GetStorage()->GetURL();
   ExtractPathName(m_TmpPath);
   
   m_MSFPath.clear();
-
-  return MAF_OK;
 }
 
 //-----------------------------------------------------------------------

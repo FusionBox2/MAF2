@@ -92,32 +92,21 @@ void mafDeviceSet::InternalShutdown()
 }
 
 //------------------------------------------------------------------------------
-int mafDeviceSet::InternalStore(mafStorageElementBuilder& node)
+void mafDeviceSet::InternalStore(mafStorageElementBuilder& node)
 //------------------------------------------------------------------------------
 {
-  if (Superclass::InternalStore(node))
-    return -1;
-
-  m_DevicesMutex->lock();
-  for (std::list<mafDevice*>::iterator it=m_Devices.begin();it!=m_Devices.end();it++)
+  Superclass::InternalStore(node);
+  std::lock_guard lock(*m_DevicesMutex);
+  for (auto& device : m_Devices)
   {
-    mafDevice *device=*it;
     if (device->IsPersistent()) // do not store persistent devices
       continue;
-
-    if (node[_R("Device")].StoreObject(device) != MAF_OK)
-    {
-      mafErrorMacro("Error Writing "<<device->GetName().GetCStr() <<" device");
-      m_DevicesMutex->unlock();
-		  return MAF_ERROR;;
-    }
+    node[_R("Device")].SetValue(device);
   }
-  m_DevicesMutex->unlock();
-  return MAF_OK;
 }
 
 //------------------------------------------------------------------------------
-int mafDeviceSet::InternalRestore(const mafStorageElement& node)
+void mafDeviceSet::InternalRestore(const mafStorageElement& node)
 //------------------------------------------------------------------------------
 {
   int fail=MAF_OK;
@@ -127,40 +116,22 @@ int mafDeviceSet::InternalRestore(const mafStorageElement& node)
 
   Superclass::InternalRestore(node);
 
-  auto devices = node.GetElementsByName(_R("Device"));
-  for (auto& device_node : devices)
+  auto devices = node[_R("Device")];
+  for (size_t i = 0; i < devices.GetNumItems(); i++)
   {
-    // Must create the object before restoring since
-    // the device must be already connected to the
-    // device manager
+    if (mafDevice* device = devices[i].As<mafDevice>())
     {
-      mafObject* obj = nullptr;
-      if (device_node.RestoreObject(obj) == MAF_OK)
-      {
-        if (mafDevice *device=mafDevice::SafeDownCast(obj)) // check the restored object is really a mafDevice
-        {
-          AddDevice(device);
-        } 
-        else
-        {
-          mafErrorMacro("Wrong object type, expect \"mafDevice\" found \""<<obj->GetTypeName()<<"\".");
-          fail=MAF_ERROR;
-          obj->Delete(); // release memory
-        }
-      }
-      else
-      {
-        mafErrorMacro("Unknown Device type, I/O parse error.");
-        fail=MAF_ERROR;
-      }
-      
+      AddDevice(device);
+    }
+    else
+    {
+      mafErrorMacro("Unknown Device type, I/O parse error.");
+      fail = MAF_ERROR;
     }
   }
 
   if (old_state)
-    return Start();
-
-  return fail;
+    Start();
 }
 
 //------------------------------------------------------------------------------

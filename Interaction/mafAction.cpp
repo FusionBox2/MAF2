@@ -115,56 +115,51 @@ void mafAction::UnBindInteractor(mafInteractor *inter)
 }
 
 //------------------------------------------------------------------------------
-int mafAction::InternalStore(mafStorageElementBuilder& node)
+void mafAction::InternalStore(mafStorageElementBuilder& node)
 //------------------------------------------------------------------------------
 {
   // Store bindings to devices, not bindings to interactors, 
   // since the last ones are created at runtime.
   
-  node.SetAttribute(_R("Name"),GetName());
+  node(_R("Name")).SetValue(GetName());
 
   for (auto it = m_Devices.begin(); it!=m_Devices.end(); it++)
   {
     auto subnode = node[_R("Device")];
     mafDevice *device=it->GetPointer();
-    subnode.SetAttribute(_R("Name"),device->GetName());
-    subnode.SetAttribute(_R("ID"),(mafID)(device->GetID()));
+    subnode(_R("Name")).SetValue(device->GetName());
+    subnode(_R("ID")).SetValue((mafID)(device->GetID()));
   }
-
-  return MAF_OK;
 }
 
 //------------------------------------------------------------------------------
-int mafAction::InternalRestore(const mafStorageElement& node)
+void mafAction::InternalRestore(const mafStorageElement& node)
 //------------------------------------------------------------------------------
 {
-	mafString name;
-  node.GetAttribute(_R("Name"),name);
+  mafString name = node(_R("Name")).As<mafString>();
  
   SetName(name);
 
-  auto children=node.GetElementsByName(_R("Device"));
-  for (int i=0;i<children.size();i++)
+  auto children=node[_R("Device")];
+  for (int i=0;i<children.GetNumItems();i++)
   {
     //if (subnode->GetName() == _R("Device"))
     {
-      mafID id;
-      mafString name;
+      mafID id = children[i](_R("ID")).As<mafID>();
+      mafString name = children[i](_R("Name")).As<mafString>();
 
-      if (children[i].GetAttributeAsInteger(_R("ID"),id) == MAF_OK && children[i].GetAttribute(_R("Name"),name) == MAF_OK)
+      //if (children[i].GetAttribute(_R("Name"),name) == MAF_OK)
       {
         // forward an event to device manager to perform binding...
         mafEventMacro(mafEvent(this,DEVICE_BIND,(intptr_t)id));
       }
-      else
-      {
-        mafErrorMacro("Wrong MIS file, cannot found device ID or name parsing <Action>");
-        return MAF_ERROR;
-      }
+//       else
+//       {
+//         mafErrorMacro("Wrong MIS file, cannot found device ID or name parsing <Action>");
+//         return MAF_ERROR;
+//       }
     }
   }
-
-  return MAF_OK;
 }
 
 

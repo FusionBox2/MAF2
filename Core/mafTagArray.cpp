@@ -186,59 +186,37 @@ int mafTagArray::GetNumberOfTags() const
 }
 
 //-------------------------------------------------------------------------
-int mafTagArray::InternalStore(mafStorageElementBuilder& parent)
+void mafTagArray::InternalStore(mafStorageElementBuilder& parent)
 //-------------------------------------------------------------------------
 {
-  int ret=Superclass::InternalStore(parent);
-  if (ret==MAF_OK)
-  {  
-    parent.SetAttribute(_R("NumberOfTags"),mafToString(GetNumberOfTags()));
-  
-    for (auto& item : m_Tags)
-    {
-      ret = item.second.Store(parent[_R("TItem")]);
-      if (ret != MAF_OK)
-          break;
-    }
+  Superclass::InternalStore(parent);
+  parent(_R("NumberOfTags")).SetValue(GetNumberOfTags());
+  for (auto& item : m_Tags)
+  {
+    item.second.Store(parent[_R("TItem")]);
   }
-  return ret;
 }
 
 //-------------------------------------------------------------------------
-int mafTagArray::InternalRestore(const mafStorageElement& node_)
+void mafTagArray::InternalRestore(const mafStorageElement& node)
 //-------------------------------------------------------------------------
 {
-	auto node = &node_;
+  Superclass::InternalRestore(node);// == MAF_OK)
+  mafID numAttrs = node(_R("NumberOfTags")).As<mafID>();
 
-  if (Superclass::InternalRestore(node_)==MAF_OK)
+  auto children = node[_R("TItem")];
+  int idx = 0;
+  for (int i = 0; (idx < numAttrs) && (i < children.GetNumItems()); i++)
   {
-    mafID numAttrs=-1;
-    node->GetAttributeAsInteger(_R("NumberOfTags"),numAttrs);
-  
-    auto children=node->GetElementsByName(_R("TItem"));
-    int ret=MAF_OK;
-    int idx=0;
-    for (int i=0;(idx < numAttrs) && (i < children.size()) && (ret == MAF_OK);i++)
-    {
-      //if (children[i]->GetName() == _R("TItem"))
-      {
-        mafTagItem new_titem;
-        ret=new_titem.Restore(children[i]);
-        SetTag(new_titem);
-        idx++;
-      }
-    }
-
-    if (idx<numAttrs)
-    {
-      mafErrorMacro("Error Restoring TagArray: wrong number of restored items, should be "<<numAttrs<<", found "<<children.size());
-      return MAF_ERROR;
-    }
-
-    return ret;
+    mafTagItem new_titem;
+    new_titem.Restore(children[i]);
+    SetTag(new_titem);
+    idx++;
   }
-
-  return MAF_ERROR;
+  if (idx < numAttrs)
+  {
+    mafErrorMacro("Error Restoring TagArray: wrong number of restored items, should be " << numAttrs << ", found " << children.GetNumItems());
+  }
 }
 
 //-------------------------------------------------------------------------

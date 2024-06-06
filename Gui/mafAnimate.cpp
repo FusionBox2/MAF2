@@ -35,7 +35,7 @@
 #include "mafVME.h"
 #include "mafTagArray.h"
 #include "mafTagItem.h"
-#include "mafXMLParser.h"
+#include "mafStorageElement.h"
 
 #include "vtkMath.h"
 #include "vtkCamera.h"
@@ -248,9 +248,9 @@ void mafAnimate::LoadPoseFromFile(const mafString &fileName)
   mafTagArray *newCam = new mafTagArray();
 
   // XML storage to restore
-  mafXMLParser restore(_R("CAM"), _R("1.0"));
-  restore.SetURL(fileName);
-  restore.Restore(newCam);
+  mafXMLReader restore(_R("CAM"), _R("1.0"));
+  restore.Load(fileName);
+  newCam->Restore(restore.GetRoot());
 
   SetStoredPositions(newCam);
  
@@ -264,9 +264,9 @@ void mafAnimate::StorePoseToFile(const mafString &fileName)
   if(m_StoredPositions->GetNumberOfTags() == 0) return;
 
   // XML storage to restore
-  mafXMLParser restore(_R("CAM"), _R("1.0"));
-  restore.SetURL(fileName);
-  restore.Store(m_StoredPositions);
+  mafXMLWriter store(_R("CAM"), _R("1.0"));
+  m_StoredPositions->Store(store.GetRoot());
+  store.Save(fileName);
 }
 //----------------------------------------------------------------------------
 void mafAnimate::FlyTo(const char *fly_position)

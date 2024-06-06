@@ -17,10 +17,8 @@
 #define __mafVMEStorage_h__
 
 #include "mafStorage.h"
-#include "mafParser.h"
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"
-#include "mafStorable.h"
 
 //----------------------------------------------------------------------------
 // forward declarations :
@@ -43,5 +41,11 @@ public:
 
   /** process events coming from tree */
   virtual void OnEvent(mafEventBase *e);
+ protected:
+  virtual int InternalStore(const mafString& filename);
+  virtual int InternalRestore(const mafString& filename);
+private:
+  mafNodeManager* m_Document;        ///< document object to be stored, or being restored
+
 };
 #endif // _mafVMEStorage_h_

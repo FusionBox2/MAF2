@@ -34,7 +34,7 @@
 #include "mafSmartPointer.h"
 #include "mmaApplicationLayout.h"
 #include "mafVMEStorage.h"
-#include "mafXMLParser.h"
+#include "mafStorageElement.h"
 #include "mafVMERoot.h"
 #include "mafNodeLayout.h"
 #include "mafNodeIterator.h"
@@ -216,7 +216,6 @@ void mafGUIApplicationLayoutSettings::SaveTreeLayout()
 void mafGUIApplicationLayoutSettings::InitializeSettings()
 //----------------------------------------------------------------------------
 {
-  m_Storage = std::make_unique<mafXMLParser>(_R("MLY"), _R("2.0"));
   mafNEW(m_XMLRoot);
   m_XMLRoot->SetName(_R("ApplicationLayout"));
   m_XMLRoot->Initialize();
@@ -263,8 +262,6 @@ void mafGUIApplicationLayoutSettings::AddLayout()
     m_XMLRoot->RemoveChild(m_XMLRoot->FindInTreeByName(name));
   }
 
-  // storage
-  if (m_Storage)
   {
     wxFrame *frame = (wxFrame *)mafGetFrame();
     int pos[2], size[2];
@@ -338,12 +335,10 @@ void mafGUIApplicationLayoutSettings::RemoveLayout()
 void mafGUIApplicationLayoutSettings::SaveApplicationLayout()
 //----------------------------------------------------------------------------
 {
-  if(m_Storage)
-  {
-    m_Storage->SetURL(m_LayoutFileSave);
-    m_Storage->Store(m_XMLRoot);
-    m_ModifiedLayouts = false;
-  }
+	mafXMLWriter writer(_R("MLY"), _R("2.0"));
+	m_XMLRoot->Store(writer.GetRoot());
+    writer.Save(m_LayoutFileSave);
+	m_ModifiedLayouts = false;
 }
 //----------------------------------------------------------------------------
 void mafGUIApplicationLayoutSettings::LoadLayout(bool fileDefault)
@@ -359,14 +354,15 @@ void mafGUIApplicationLayoutSettings::LoadLayout(bool fileDefault)
   if(file.empty())
     return;
 
-  if(m_Storage && mafFileExists(file))
+  if(mafFileExists(file))
   {
     //clear tree
     m_XMLRoot->CleanTree();
     m_List->Clear();
 
-    m_Storage->SetURL(file);
-    m_Storage->Restore(m_XMLRoot);
+	mafXMLReader reader(_R("MLY"), _R("2.0"));
+    reader.Load(m_LayoutFileSave);
+    m_XMLRoot->Restore(reader.GetRoot());
 
     //fill listbox
     mafNodeIterator *iter = m_XMLRoot->NewIterator();

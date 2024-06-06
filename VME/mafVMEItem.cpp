@@ -36,6 +36,9 @@
 #include "mafStorage.h"
 #include <math.h>
 #include <assert.h>
+#include "mafZipUtility.h"
+#include "mafFilesDirs.h"
+
 
 // bool mafVMEItem::m_GlobalCompareDataFlag=0;
 
@@ -221,21 +224,16 @@ void mafVMEItem::Print(std::ostream& os, const int tabs) const
 }
 
 //-------------------------------------------------------------------------
-int mafVMEItem::InternalStore(mafStorageElementBuilder& parent)
+void mafVMEItem::InternalStore(mafStorageElementBuilder& parent)
 //-------------------------------------------------------------------------
 {
-  if (parent[_R("URL")].StoreText(m_URL)==MAF_OK \
-    &&parent[_R("Id")].StoreInteger(m_Id)==MAF_OK \
-    &&parent[_R("DataType")].StoreText(m_DataType)==MAF_OK \
-    &&parent[_R("TimeStamp")].StoreDouble(m_TimeStamp)==MAF_OK \
-    &&parent[_R("Crypting")].StoreText(m_Crypting?_R("true"):_R("false"))==MAF_OK \
-    &&parent[_R("Bounds")].StoreVectorN(m_Bounds.m_Bounds,6)==MAF_OK \
-    &&parent[_R("TagArray")].StoreObject(m_TagArray) == MAF_OK)
-  {
-    return MAF_OK;
-  }
-  
-  return MAF_ERROR;
+  parent[_R("URL")].SetValue(m_URL);
+  parent[_R("Id")].SetValue(m_Id);
+  parent[_R("DataType")].SetValue(m_DataType);
+  parent[_R("TimeStamp")].SetValue(m_TimeStamp);
+  parent[_R("Crypting")].SetValue(m_Crypting ? _R("true") : _R("false"));
+  parent[_R("Bounds")].SetValue(mafToString(m_Bounds.m_Bounds, 6));
+  parent[_R("TagArray")].SetValue(m_TagArray);
 }
 
 //-------------------------------------------------------------------------
@@ -258,25 +256,17 @@ void mafVMEItem::SetURL(const char *name)
 }
 
 //-------------------------------------------------------------------------
-int mafVMEItem::InternalRestore(const mafStorageElement& node)
+void mafVMEItem::InternalRestore(const mafStorageElement& node)
 //-------------------------------------------------------------------------
 {
-  mafString crypting;
-  if (node[_R("URL")].RestoreText(m_URL) == MAF_OK \
-    &&node[_R("Id")].RestoreInteger(m_Id)==MAF_OK \
-    &&node[_R("DataType")].RestoreText(m_DataType) == MAF_OK \
-    &&node[_R("TimeStamp")].RestoreDouble(m_TimeStamp)==MAF_OK \
-    &&node[_R("Crypting")].RestoreText(crypting) == MAF_OK \
-    &&node[_R("Bounds")].RestoreVectorN(m_Bounds.m_Bounds, 6) == MAF_OK \
-    && m_TagArray->Restore(node[_R("TagArray")]) == MAF_OK)
-  {
-    m_Crypting = (crypting==_R("true")||crypting==_R("True")||crypting==_R("TRUE"))?true:false;
-
-    // DATA is restored only on demand when is on Default mode
-    return MAF_OK;
-  }
-
-  return MAF_ERROR;
+  m_URL = node[_R("URL")].As<mafString>();
+  m_Id = node[_R("Id")].As<int>();
+  m_DataType = node[_R("DataType")].As<mafString>();
+  m_TimeStamp = node[_R("TimeStamp")].As<double>();
+  mafString crypting = node[_R("Crypting")].As<mafString>();
+  mafParseVector(node[_R("Bounds")].As<mafString>(), m_Bounds.m_Bounds, 6);
+  m_TagArray->Restore(node[_R("TagArray")]);
+  m_Crypting = (crypting==_R("true")||crypting==_R("True")||crypting==_R("TRUE"))?true:false;
 }
 
 //-------------------------------------------------------------------------
@@ -311,7 +301,47 @@ int mafVMEItem::RestoreData()
 int mafVMEItem::ExtractFileFromArchive(mafString &archive_fullname, mafString &item_file)
 //-------------------------------------------------------------------------
 {
-  void* buffer = nullptr;
+	mafString path, name_;
+	mafSplitPath(archive_fullname, &path, &name_);
+	mafString itempath = path + _R("/") + item_file;
+	if (!mafFileExists(itempath))
+	{
+		wxZipFSHandler* zipHandler = NULL;      ///< Handler for zip archive (used to open zmsf files)
+		wxFileSystem* fileSystem = NULL;      ///< File system manager
+
+		wxFSFile* zfileStream;
+		wxZlibInputStream* zip_is;
+		mafString pkg = _R("#zip:");
+		mafString zipFile = archive_fullname + pkg + item_file;
+		if (fileSystem == NULL)
+			fileSystem = new wxFileSystem();
+
+		if (zipHandler == NULL)
+		{
+			zipHandler = new wxZipFSHandler();
+			fileSystem->AddHandler(zipHandler); // add the handler that manage zip protocol
+			// (the handler to manage the local files protocol is already added to wxFileSystem)
+		}
+
+		//fileSystem->ChangePathTo(zipFile.toWx());
+
+		auto yyy = fileSystem->OpenFile(zipFile.toWx());
+		delete yyy;
+
+
+
+
+
+
+		ZIPOpen(archive_fullname);
+	}
+	wxFileInputStream iiin(itempath.toWx());
+	m_InputMemorySize = iiin.GetSize();
+	m_InputMemory = new char[m_InputMemorySize];
+	iiin.Read((void*)m_InputMemory, (size_t)m_InputMemorySize);
+	return MAF_OK;
+
+	void* buffer = nullptr;
   size_t size = 0;
   if (!mafExtractZIP(archive_fullname, item_file, buffer, size))
   {

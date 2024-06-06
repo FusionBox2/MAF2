@@ -91,7 +91,6 @@ private:
     mafString& operator+=(const wxString& str);
 public:
     wxString toWx() const;
-    int Replace(const mafString& s1, const mafString& s2, bool replaceAll = true);
 #endif
     
   /** This method returns the size of this string. */
@@ -232,6 +231,15 @@ example:
   -> "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
   */
 MAF_EXPORT mafString mafToString(const mafMatrix& mat);
+MAF_EXPORT mafString mafToString(double* comps, int num);
+MAF_EXPORT mafString mafToString(int* comps, int num);
+MAF_EXPORT mafString mafToString(const std::vector<double>& comps);
+MAF_EXPORT mafString mafToString(const std::vector<int>& comps);
+
+void mafParseVector(const mafString& str, double* comps, unsigned int num);
+void mafParseVector(const mafString& str, int* comps, unsigned int num);
+void mafParseVector(const mafString& str, std::vector<double>& comps);
+void mafParseVector(const mafString& str, std::vector<int>& comps);
 
 MAF_EXPORT mafMessageBuf _M(const char* s);
 MAF_EXPORT mafMessageBuf _M(const mafString& s);

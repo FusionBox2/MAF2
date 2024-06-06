@@ -190,35 +190,21 @@ void mafDeviceManager::RemoveAllDevices(bool force)
 }
 
 //----------------------------------------------------------------------------
-int mafDeviceManager::InternalStore(mafStorageElementBuilder& node)
+void mafDeviceManager::InternalStore(mafStorageElementBuilder& node)
 //----------------------------------------------------------------------------
 {
-  node.SetAttribute(_R("DeviceIdCounter"),m_DeviceIdCounter);
-  
-  if (node[_R("DeviceSet")].StoreObject(m_DeviceSet) != MAF_OK)
-    return MAF_ERROR;
-
-  return MAF_OK;
+  node(_R("DeviceIdCounter")).SetValue(m_DeviceIdCounter);
+  node[_R("DeviceSet")].SetValue(m_DeviceSet);
 }
 
 //----------------------------------------------------------------------------
-int mafDeviceManager::InternalRestore(const mafStorageElement& node)
+void mafDeviceManager::InternalRestore(const mafStorageElement& node)
 //----------------------------------------------------------------------------
 {
   m_RestoringFlag=true; // used to avoid DeviceManager set device ID when restoring
-  
-  if (node.GetAttributeAsInteger(_R("DeviceIdCounter"),m_DeviceIdCounter) != MAF_OK)
-  {
-    assert(true);
-    mafErrorMacro("Cannot find \"DeviceIdCounter\" attribute, possible subsequent restoring problems!");
-    m_DeviceIdCounter = mafDevice::MIN_DEVICE_ID;
-  }
-  
-  int fail = m_DeviceSet->Restore(node[_R("DeviceSet")]);
-  
+  m_DeviceIdCounter = node(_R("DeviceIdCounter")).As<mafID>();
+  m_DeviceSet->Restore(node[_R("DeviceSet")]);
   m_RestoringFlag=false;
-
-  return fail;
 }
 
 //------------------------------------------------------------------------------

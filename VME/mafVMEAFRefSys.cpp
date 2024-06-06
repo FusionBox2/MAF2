@@ -138,49 +138,45 @@ void mafVMEAFRefSys::Print(std::ostream& os, const int tabs)// const
 
 
 //-----------------------------------------------------------------------
-int mafVMEAFRefSys::InternalStore(mafStorageElementBuilder& parent)
+void mafVMEAFRefSys::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
-  if (Superclass::InternalStore(parent)==MAF_OK)
+  Superclass::InternalStore(parent);
+  parent[_R("Active")].SetValue(m_Active);
+  parent[_R("BoneID")].SetValue(m_BoneID);
+  parent[_R("XOffset")].SetValue(m_XOffset);
+  parent[_R("YOffset")].SetValue(m_YOffset);
+  parent[_R("ZOffset")].SetValue(m_ZOffset);
+  parent[_R("XRotate")].SetValue(m_XRotate);
+  parent[_R("YRotate")].SetValue(m_YRotate);
+  parent[_R("ZRotate")].SetValue(m_ZRotate);
+  m_textSize = m_scriptText.size();
+  parent[_R("ScriptStrings")].SetValue(m_textSize);
+  for (int i = 0; i < m_textSize; i++)
   {
-    parent[_R("Active")].StoreInteger( m_Active);
-    parent[_R("BoneID")].StoreInteger( m_BoneID);
-    parent[_R("XOffset")].StoreDouble( m_XOffset);
-    parent[_R("YOffset")].StoreDouble( m_YOffset);
-    parent[_R("ZOffset")].StoreDouble( m_ZOffset);
-    parent[_R("XRotate")].StoreDouble( m_XRotate);
-    parent[_R("YRotate")].StoreDouble( m_YRotate);
-    parent[_R("ZRotate")].StoreDouble( m_ZRotate);
-    m_textSize = m_scriptText.size();
-    parent[_R("ScriptStrings")].StoreInteger( m_textSize);
-    for(int i = 0; i < m_textSize; i++)
-    {
-      mafString nm = mafString::Format(_R("ln%d"), i);
-      parent[nm].StoreText(m_scriptText[i]);
-    }
+    mafString nm = mafString::Format(_R("ln%d"), i);
+    parent[nm].SetValue(m_scriptText[i]);
+  }
 
-    for(unsigned i = 0; i < m_vm->getInputs().size(); i++)
+  for (unsigned i = 0; i < m_vm->getInputs().size(); i++)
+  {
+    if (m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
     {
-      if(m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
+      auto it = m_lmMapping.find(_R(m_vm->getInputs()[i].first.c_str()));
+      if (it == m_lmMapping.end())
       {
-        auto it = m_lmMapping.find(_R(m_vm->getInputs()[i].first.c_str()));
-        if(it == m_lmMapping.end())
-        {
-          parent[_R(m_vm->getInputs()[i].first.c_str())].StoreText(_R(m_vm->getInputs()[i].first.c_str()));
-        }
-        else
-        {
-          parent[it->first].StoreText(it->second);
-        }
+        parent[_R(m_vm->getInputs()[i].first.c_str())].SetValue(_R(m_vm->getInputs()[i].first.c_str()));
       }
       else
       {
-        parent[_R(m_vm->getInputs()[i].first.c_str())].StoreDouble(m_vm->getInputs()[i].second->GetScalar());
+        parent[it->first].SetValue(it->second);
       }
     }
-    return MAF_OK;
+    else
+    {
+      parent[_R(m_vm->getInputs()[i].first.c_str())].SetValue(m_vm->getInputs()[i].second->GetScalar());
+    }
   }
-  return MAF_ERROR;
 }
 
 
@@ -207,48 +203,39 @@ void mafVMEAFRefSys::SetActive(int active)
 
 
 //-----------------------------------------------------------------------
-int mafVMEAFRefSys::InternalRestore(const mafStorageElement& node)
+void mafVMEAFRefSys::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node)==MAF_OK)
+  Superclass::InternalRestore(node);
+  m_Active = node[_R("Active")].As<int>();
+  m_BoneID = node[_R("BoneID")].As<int>();
+  m_XOffset = node[_R("XOffset")].As<double>();
+  m_YOffset = node[_R("YOffset")].As<double>();
+  m_ZOffset = node[_R("ZOffset")].As<double>();
+  m_XRotate = node[_R("XRotate")].As<double>();
+  m_YRotate = node[_R("YRotate")].As<double>();
+  m_ZRotate = node[_R("ZRotate")].As<double>();
+  m_textSize = node[_R("ScriptStrings")].As<int>();
+  m_scriptText.resize(m_textSize);
+  for (int i = 0; i < m_textSize; i++)
   {
-    mafMatrix matrix;
-    //if (node.RestoreMatrix("Transform",&matrix)==MAF_OK)
+    mafString nm = mafString::Format(_R("ln%d"), i);
+    m_scriptText[i] = node[nm].As<mafString>();
+  }
+  ConvertTextToVM(false);
+  for (unsigned i = 0; i < m_vm->getInputs().size(); i++)
+  {
+    if (m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
     {
-      node[_R("Active")].RestoreInteger( m_Active);
-      node[_R("BoneID")].RestoreInteger( m_BoneID);
-      node[_R("XOffset")].RestoreDouble( m_XOffset);
-      node[_R("YOffset")].RestoreDouble( m_YOffset);
-      node[_R("ZOffset")].RestoreDouble( m_ZOffset);
-      node[_R("XRotate")].RestoreDouble( m_XRotate);
-      node[_R("YRotate")].RestoreDouble( m_YRotate);
-      node[_R("ZRotate")].RestoreDouble( m_ZRotate);
-      node[_R("ScriptStrings")].RestoreInteger( m_textSize);
-      m_scriptText.resize(m_textSize);
-      for(int i = 0; i < m_textSize; i++)
-      {
-        mafString nm = mafString::Format(_R("ln%d"), i);
-        node[nm].RestoreText(m_scriptText[i]);
-      }
-      ConvertTextToVM(false);
-      for(unsigned i = 0; i < m_vm->getInputs().size(); i++)
-      {
-        if(m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
-        {
-          mafString tmp;
-          node[_R(m_vm->getInputs()[i].first.c_str())].RestoreText(tmp);
-          m_lmMapping[_R(m_vm->getInputs()[i].first.c_str())] = tmp;
-        }
-        else
-        {
-          node[_R(m_vm->getInputs()[i].first.c_str())].RestoreDouble(m_vm->getInputs()[i].second->GetScalar());
-        }
-      }
-      SetScaleFactor(m_ScaleFactor);
-      return MAF_OK;
+      mafString tmp = node[_R(m_vm->getInputs()[i].first.c_str())].As<mafString>();
+      m_lmMapping[_R(m_vm->getInputs()[i].first.c_str())] = tmp;
+    }
+    else
+    {
+      m_vm->getInputs()[i].second->GetScalar() = node[_R(m_vm->getInputs()[i].first.c_str())].As<double>();
     }
   }
-  return MAF_ERROR;
+  SetScaleFactor(m_ScaleFactor);
 }
 
 //-------------------------------------------------------------------------

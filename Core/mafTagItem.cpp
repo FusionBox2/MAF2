@@ -462,41 +462,42 @@ void mafTagItem::Print(std::ostream& os, const int tabs) const
 }
 
 //-------------------------------------------------------------------------
-int mafTagItem::InternalStore(mafStorageElementBuilder& parent)
+void mafTagItem::InternalStore(mafStorageElementBuilder& parent)
 //-------------------------------------------------------------------------
 {
-  parent.SetAttribute(_R("Name"), GetName());
-  parent.SetAttribute(_R("Mult"),mafToString(GetNumberOfComponents()));
+  parent(_R("Name")).SetValue(GetName());
+  parent(_R("Mult")).SetValue(GetNumberOfComponents());
   mafString type;
   GetTypeAsString(type);
-  parent.SetAttribute(_R("Type"),type);
+  parent(_R("Type")).SetValue(type);
 
-  if (parent[_R("TItem")].StoreVectorN(m_Components,_R("TC"))==MAF_ERROR)
-    return MAF_ERROR;
-
-  return MAF_OK;
+  auto TItem = parent[_R("TItem")];
+  if (!m_Components.empty())
+  {
+    auto entry = TItem[_R("TC")];
+    for (auto& comp : m_Components)
+    {
+      entry[mafStorageElementBuilder::npos].SetValue(comp);
+    }
+  }
 }
 
 //-------------------------------------------------------------------------
-int mafTagItem::InternalRestore(const mafStorageElement& node)
+void mafTagItem::InternalRestore(const mafStorageElement& node)
 //-------------------------------------------------------------------------
 {
-  if (node.GetAttribute(_R("Name"),m_Name) != MAF_OK)
-    return MAF_ERROR;
+  m_Name = node(_R("Name")).As<mafString>();
+  mafString type = node(_R("Type")).As<mafString>();
 
-  mafString type;
-  if (node.GetAttribute(_R("Type"),type) != MAF_OK)
-    return MAF_ERROR;
-  
-  if (type==_R("NUM"))
+  if (type == _R("NUM"))
   {
     SetType(MAF_NUMERIC_TAG);
   }
-  else if (type==_R("STR"))
+  else if (type == _R("STR"))
   {
     SetType(MAF_STRING_TAG);
   }
-  else if (type==_R("MIS"))
+  else if (type == _R("MIS"))
   {
     SetType(MAF_MISSING_TAG);
   }
@@ -505,12 +506,17 @@ int mafTagItem::InternalRestore(const mafStorageElement& node)
     SetType(atof(type.GetCStr()));
   }
 
-  mafID num;
-  if (node.GetAttributeAsInteger(_R("Mult"),num) != MAF_OK)
-    return MAF_ERROR;
-  
+  mafID num = node(_R("Mult")).As<mafID>();
   SetNumberOfComponents(num);
-  
-  return node[_R("TItem")].RestoreVectorN(m_Components, _R("TC"));
+  m_Components.clear();
+  auto items = node[_R("TItem")][_R("TC")];
+  if (items.GetNumItems() != num)
+  {
+    return;
+  }
+  for (size_t i = 0; i < items.GetNumItems(); i++)
+  {
+    m_Components.push_back(items[i].As<mafString>());
+  }
 }
 

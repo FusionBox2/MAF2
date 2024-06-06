@@ -186,7 +186,7 @@ int mafStorage::OpenDirectory(const mafString& pathname)
 
   return MAF_OK;
 }
-
+ 
 //------------------------------------------------------------------------------
 void mafStorage::SetURL(const mafString& name)
 //------------------------------------------------------------------------------

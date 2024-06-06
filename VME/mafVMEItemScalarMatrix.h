@@ -32,7 +32,7 @@ class mafOBB;
 class mafStorageElement;
 class mafTagArray;
 
-template class MAF_EXPORT vnl_matrix<double>;
+//template class MAF_EXPORT vnl_matrix<double>;
 
 /** mafVMEItemScalarMatrix - store time-varying scalar information into a vnl_vector
   mafVMEItemScalarMatrix is an object that stores the single time stamped scalar array of a
