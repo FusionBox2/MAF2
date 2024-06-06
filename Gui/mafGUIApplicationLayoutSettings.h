@@ -120,7 +120,6 @@ protected:
   mafString              m_LayoutFileSave;
   mafViewManager        *m_ViewManager;
   mmaApplicationLayout  *m_Layout;
-	std::unique_ptr<mafParser> m_Storage;
 	mafVMERoot            *m_XMLRoot;
   int                    m_VisibilityVme;
   wxListBox				      *m_List;

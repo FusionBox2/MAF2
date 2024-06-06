@@ -193,11 +193,11 @@ void mafDataVector::InsertItem(mafVMEItem *m)
   Superclass::InsertItem(m);
 }
 //-----------------------------------------------------------------------
-int mafDataVector::InternalStore(mafStorageElementBuilder& parent)
+void mafDataVector::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {
-  parent.SetAttribute(_R("NumberOfItems"),mafToString(GetNumberOfItems()));
-  parent.SetAttribute(_R("ItemTypeName"),_R(GetItemTypeName()));
+  parent(_R("NumberOfItems")).SetValue(mafToString(GetNumberOfItems()));
+  parent(_R("ItemTypeName")).SetValue(_R(GetItemTypeName()));
 
   // retrieve the tree root
   mafEventIO e(this,NODE_GET_ROOT);
@@ -209,7 +209,7 @@ int mafDataVector::InternalStore(mafStorageElementBuilder& parent)
   m_VectorID = GetVectorID();
 
   // the DataVector ID
-  parent.SetAttribute(_R("VectorID"),mafToString(m_VectorID));
+  parent(_R("VectorID")).SetValue(mafToString(m_VectorID));
 
   mafEventIO es(this,NODE_GET_STORAGE);
   InvokeEvent(es);
@@ -325,7 +325,7 @@ int mafDataVector::InternalStore(mafStorageElementBuilder& parent)
         wxFileOutputStream out(tmp_archive.toWx());
         wxZipOutputStream zip(out);
         if (!out || !zip)
-          return MAF_ERROR;
+          return;
 
         for (auto& elem : *this)
         {
@@ -355,7 +355,7 @@ int mafDataVector::InternalStore(mafStorageElementBuilder& parent)
           ret = item->StoreData(NULL); //Storing in memory not require to create a file.
           if (ret == MAF_ERROR)
           {
-            return ret;
+            return;
           }
           item->SetURL(data_file_url.GetCStr());
           item->ReleaseOldFileOn(); // restore to default
@@ -376,13 +376,13 @@ int mafDataVector::InternalStore(mafStorageElementBuilder& parent)
               new_data = true;
             break;  // new data written on disk
             case MAF_ERROR:
-              return MAF_ERROR;   // I/O error while writing
+              return;   // I/O error while writing
           }
         }
 
         if (!zip.Close() || !out.Close())
         {
-          return MAF_ERROR;
+          return;
         }
 
         storage->StoreToURL(tmp_archive, m_ArchiveName);
@@ -425,7 +425,7 @@ int mafDataVector::InternalStore(mafStorageElementBuilder& parent)
             new_data = true;
           break;  // new data written on disk
           case MAF_ERROR:
-            return MAF_ERROR;   // I/O error while writing
+            return;   // I/O error while writing
         }
       }
     }
@@ -434,63 +434,63 @@ int mafDataVector::InternalStore(mafStorageElementBuilder& parent)
     m_JustRestored = false;
   }
 
-  parent.SetAttribute(_R("SingleFileMode"),m_SingleFileMode ? _R("true") : _R("false"));
+  parent(_R("SingleFileMode")).SetValue(m_SingleFileMode ? _R("true") : _R("false"));
   if (m_SingleFileMode)
   {
-    parent.SetAttribute(_R("ArchiveFileName"), m_ArchiveName);
+    parent(_R("ArchiveFileName")).SetValue(m_ArchiveName);
   }
 
   // Store meta-data (meta-data is stored later to be able set some info about stored data files)
   for (auto& elem : *this)
   {
-    parent[_R("VItem")].StoreObject(elem.second.GetPointer());
+    parent[_R("VItem")].SetValue(elem.second.GetPointer());
   }
 
   m_DataModified = false;
-  return MAF_OK;
 }
 //-----------------------------------------------------------------------
-int mafDataVector::InternalRestore(const mafStorageElement& node)
+void mafDataVector::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  mafString item_type,single_file;
-  mafID num_items;
+  mafID num_items = node(_R("NumberOfItems")).As<mafID>();
+  mafString item_type = node(_R("ItemTypeName")).As<mafString>();
+  mafString single_file = node(_R("SingleFileMode")).As<mafString>();
+  m_VectorID = node(_R("VectorID")).As<mafID>();
 
   m_JustRestored = true;
 
-  if (node.GetAttributeAsInteger(_R("NumberOfItems"), num_items) == MAF_OK && \
-      node.GetAttribute(_R("ItemTypeName"), item_type) == MAF_OK && \
-      node.GetAttribute(_R("SingleFileMode"), single_file) == MAF_OK && \
-      node.GetAttributeAsInteger(_R("VectorID"), m_VectorID) == MAF_OK \
-    )
+  //if (//node.GetAttributeAsInteger(_R("NumberOfItems"), num_items) == MAF_OK &&
+      //node.GetAttribute(_R("ItemTypeName"), item_type) == MAF_OK &&
+      //node.GetAttribute(_R("SingleFileMode"), single_file) == MAF_OK
+      //&& node.GetAttributeAsInteger(_R("VectorID"), m_VectorID) == MAF_OK
+  //  )
   {
     SetItemTypeName(item_type.GetCStr());
     SetSingleFileMode(single_file == _R("true") || single_file == _R("True") || single_file == _R("TRUE"));
     if (m_SingleFileMode)
     {
-      node.GetAttribute(_R("ArchiveFileName"), m_ArchiveName);
+      m_ArchiveName = node(_R("ArchiveFileName")).As<mafString>();
     }
   }
-  else
+  //else
   {
-    return MAF_ERROR;
+    //return MAF_ERROR;
   }
 
   // restore items meta-data
-  auto elements = node.GetElementsByName(_R("VItem"));
+  auto elements = node[_R("VItem")];
 
-  assert(num_items == elements.size()); // check the number of elements
+  assert(num_items == elements.GetNumItems()); // check the number of elements
 
-  for (auto& elem : elements)
+  for (size_t i = 0; i < elements.GetNumItems(); i++)
   {
-    mafObject *obj = nullptr;
-    elem.RestoreObject(obj);
+    mafVMEItem *obj = elements[i].As<mafVMEItem>();
     mafVMEItem *item = mafVMEItem::SafeDownCast(obj);
     assert(item);
     if (!item)
     {
       mafErrorMacro("Cannot restore VME-Item: Wrong object type or I/O problems");
-      return MAF_ERROR;
+      return;
     }
     if (m_SingleFileMode)
     {
@@ -503,8 +503,6 @@ int mafDataVector::InternalRestore(const mafStorageElement& node)
 
   // force the flag to false to avoid data rewriting while storing
   m_DataModified = false;
-
-  return MAF_OK;
 }
 
 //-----------------------------------------------------------------------

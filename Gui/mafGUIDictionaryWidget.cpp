@@ -41,7 +41,6 @@
 #include "mafVMERoot.h"
 #include "mafVMELandmarkCloud.h"
 
-#include "mafXMLParser.h"
 #include "mafStorageElement.h"
 
 
@@ -105,12 +104,12 @@ void mafGUIDictionaryWidget::LoadDictionary(const mafString& file)
   m_File = file;
   
   // XML storage to restore
-  mafXMLParser restore(_R("DIC"), _R("2.0"));
-  restore.SetURL(m_File);
+  mafXMLReader restore(_R("DIC"), _R("2.0"));
+  restore.Load(m_File);
 
   // create a new object to restore into
   mafStorableDictionary *storeDict = new mafStorableDictionary;
-  restore.Restore(storeDict);
+  storeDict->Restore(restore.GetRoot());
   
 	if(m_NumItem) delete [] m_Items;
 
@@ -190,12 +189,13 @@ mafStorableDictionary::~mafStorableDictionary()
 }
 //------------------------------------------------------------------------------
 // example of de-serialization code
-int mafStorableDictionary::InternalRestore(const mafStorageElement& node)
+void mafStorableDictionary::InternalRestore(const mafStorageElement& node)
 //------------------------------------------------------------------------------
 {
-  m_StrVector.resize(node[_R("Dictionary")].GetElementsByName(_R("DItem")).size());
-  
-  if(node[_R("Dictionary")].RestoreVectorN(m_StrVector, _R("DItem")))
-    return MAF_ERROR;
-  return MAF_OK;
+  auto items = node[_R("Dictionary")][_R("DItem")];
+  m_StrVector.clear();
+  for (size_t i = 0; i < items.GetNumItems(); i++)
+  {
+	  m_StrVector.push_back(items[i].As<mafString>());
+  }
 }

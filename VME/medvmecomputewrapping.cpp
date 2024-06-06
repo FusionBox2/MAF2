@@ -4974,7 +4974,7 @@ void medVMEComputeWrapping::GetTwoTangentPoint(mafVME * wrapped_vme,double *loca
 
 
 //-----------------------------------------------------------------------
-int medVMEComputeWrapping::InternalStore(mafStorageElementBuilder& parent)
+void medVMEComputeWrapping::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
 	if(m_Gui == NULL) //this for update wrapped vme lists
@@ -4983,72 +4983,59 @@ int medVMEComputeWrapping::InternalStore(mafStorageElementBuilder& parent)
 		CreateGui();
 	}
 
-	if (Superclass::InternalStore(parent)==MAF_OK)
-	{
-		parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix());
-		m_OrderMiddlePointsVMEList.clear();
+  Superclass::InternalStore(parent);
+  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
 
-		for(int i=0; i<m_MiddlePointList.size(); i++)
-		{
-			mafNode *node;
-			node = IndexToMiddlePointVME(i);
-			if(node == NULL) continue;
-			int vmeId = node->GetId();
+	m_OrderMiddlePointsVMEList.clear();
+  for (int i = 0; i < m_MiddlePointList.size(); i++)
+  {
+    mafNode* node = IndexToMiddlePointVME(i);
+    if (node == NULL)
+			continue;
+    int vmeId = node->GetId();
 
-			PushIdVector(vmeId);
+    PushIdVector(vmeId);
 
-			if(mafVMELandmarkCloud *lc = mafVMELandmarkCloud::SafeDownCast(node))
-			{
-				//mafVMELandmark *landmark= lc->GetLandmark(m_ListBox->GetString(i));
-				int index = -1;
-				for(int j=0; j< lc->GetNumberOfLandmarks(); j++)
-				{
-					if(mafString(lc->GetLandmarkName(j)) == m_OrderMiddlePointsNameVMEList[i]) index = j;
-				}
+    if (mafVMELandmarkCloud* lc = mafVMELandmarkCloud::SafeDownCast(node))
+    {
+      //mafVMELandmark *landmark= lc->GetLandmark(m_ListBox->GetString(i));
+      int index = -1;
+      for (int j = 0; j < lc->GetNumberOfLandmarks(); j++)
+      {
+        if (mafString(lc->GetLandmarkName(j)) == m_OrderMiddlePointsNameVMEList[i])
+					index = j;
+      }
 
-				PushIdVector(index);
-			}
-		}
-		parent[_R("OrderMiddlePointVmeNumberOfElements")].StoreInteger( m_OrderMiddlePointsVMEList.size());
-		parent[_R("OrderMiddlePointVme")].StoreVectorN(m_OrderMiddlePointsVMEList);
+      PushIdVector(index);
+    }
+  }
+  parent[_R("OrderMiddlePointVmeNumberOfElements")].SetValue(m_OrderMiddlePointsVMEList.size());
+  parent[_R("OrderMiddlePointVme")].SetValue(mafToString(m_OrderMiddlePointsVMEList));
 
-		parent[_R("WrapMode")].StoreInteger( m_WrappedMode1);
-		parent[_R("WrapMode2")].StoreInteger( m_WrappedMode2);
-		parent[_R("WrapSide")].StoreInteger( m_WrapSide);
-		parent[_R("WrapReverse")].StoreInteger( m_WrapReverse);
-		parent[_R("WrapReverseNew")].StoreInteger( m_WrapReverseNew);
-		parent[_R("WrapClass")].StoreInteger(m_WrappedClass);
-
-		return MAF_OK;
-	}
-	return MAF_ERROR;
+  parent[_R("WrapMode")].SetValue(m_WrappedMode1);
+  parent[_R("WrapMode2")].SetValue(m_WrappedMode2);
+  parent[_R("WrapSide")].SetValue(m_WrapSide);
+  parent[_R("WrapReverse")].SetValue(m_WrapReverse);
+  parent[_R("WrapReverseNew")].SetValue(m_WrapReverseNew);
+  parent[_R("WrapClass")].SetValue(m_WrappedClass);
 }
 //-----------------------------------------------------------------------
-int medVMEComputeWrapping::InternalRestore(const mafStorageElement& node)
+void medVMEComputeWrapping::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-	if (Superclass::InternalRestore(node)==MAF_OK)
-	{
-		mafMatrix matrix;
-		if (node[_R("Transform")].RestoreMatrix(matrix) ==MAF_OK)
-		{
-			m_Transform->SetMatrix(matrix);
-			int              orderMiddlePointsVMEListNumberOfElements;
-			node[_R("OrderMiddlePointVmeNumberOfElements")].RestoreInteger( orderMiddlePointsVMEListNumberOfElements);
-			m_OrderMiddlePointsVMEList.resize(orderMiddlePointsVMEListNumberOfElements);
-			node[_R("OrderMiddlePointVme")].RestoreVectorN(m_OrderMiddlePointsVMEList);
+  Superclass::InternalRestore(node);
+  m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
 
-			node[_R("WrapMode")].RestoreInteger( m_WrappedMode1);
-			node[_R("WrapMode2")].RestoreInteger( m_WrappedMode2);
-			node[_R("WrapSide")].RestoreInteger( m_WrapSide);
-			node[_R("WrapReverse")].RestoreInteger( m_WrapReverse);
-			node[_R("WrapReverseNew")].RestoreInteger( m_WrapReverseNew);
-			node[_R("WrapClass")].RestoreInteger(m_WrappedClass);
-			return MAF_OK;
-		}
-	}
+	int orderMiddlePointsVMEListNumberOfElements = node[_R("OrderMiddlePointVmeNumberOfElements")].As<int>();
+  m_OrderMiddlePointsVMEList.resize(orderMiddlePointsVMEListNumberOfElements);
+  mafParseVector(node[_R("OrderMiddlePointVme")].As<mafString>(), m_OrderMiddlePointsVMEList);
 
-	return MAF_ERROR;
+  m_WrappedMode1 = node[_R("WrapMode")].As<int>();
+  m_WrappedMode2 = node[_R("WrapMode2")].As<int>();
+  m_WrapSide = node[_R("WrapSide")].As<int>();
+  m_WrapReverse = node[_R("WrapReverse")].As<int>();
+  m_WrapReverseNew = node[_R("WrapReverseNew")].As<int>();
+  m_WrappedClass = node[_R("WrapClass")].As<int>();
 }
 //-----------------------------------------------------------------------
 void medVMEComputeWrapping::Print(std::ostream& os, const int tabs)

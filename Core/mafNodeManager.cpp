@@ -145,38 +145,38 @@ void mafNodeManager::NotifyAdd(mafNode *n)
 }
 
 //------------------------------------------------------------------------------
-int mafNodeManager::InternalStore(mafStorageElementBuilder& node)
+void mafNodeManager::InternalStore(mafStorageElementBuilder& node)
 //------------------------------------------------------------------------------
 {
   // here should write elements specific for the document
   if(!m_Root)
-    return MAF_ERROR;
-  return node[_R("Root")].StoreObject(m_Root) != MAF_OK ? MAF_ERROR : MAF_OK;
+    return;
+  //return 
+  node[_R("Root")].SetValue(m_Root);// != MAF_OK ? MAF_ERROR : MAF_OK;
 }
 
 //------------------------------------------------------------------------------
-int mafNodeManager::InternalRestore(const mafStorageElement& node)
+void mafNodeManager::InternalRestore(const mafStorageElement& node)
 //-------------------------------------------------------
 {
   // here should restore elements specific for the document
   SetRoot(NULL);
-  mafObject* obj = nullptr;
-  if(node[_R("Root")].RestoreObject(obj) != MAF_OK)
-    return MAF_ERROR; 
+  mafNode* obj = node[_R("Root")].As<mafNode>();
+  if(obj == nullptr)//(node[_R("Root")].RestoreObject(obj) != MAF_OK)
+    return; 
   mafReferenceCounted *rc = mafReferenceCounted::SafeDownCast(obj);
   if(!rc)
   {
     obj->Delete();
-    return MAF_ERROR;
+    return;
   }
   mafAutoPointer<mafReferenceCounted> arc = rc;
   mafNode *root = mafNode::SafeDownCast(obj);
   if(root)
   {
     if(root->Initialize() == MAF_ERROR)
-      return MAF_ERROR;
+      return;
   }
   SetRoot(root);
-  return MAF_OK; 
 }
 

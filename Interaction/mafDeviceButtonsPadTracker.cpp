@@ -92,56 +92,33 @@ mafID mafDeviceButtonsPadTracker::GetTrackerBoundsUpdatedId()
   return trackerBoundsUpdatedId;
 }
 //------------------------------------------------------------------------------
-int mafDeviceButtonsPadTracker::InternalStore(mafStorageElementBuilder& node)
+void mafDeviceButtonsPadTracker::InternalStore(mafStorageElementBuilder& node)
 //------------------------------------------------------------------------------
 {
-  if (Superclass::InternalStore(node))
-    return MAF_ERROR;
-
-  //StoreMatrix(writer,m_TrackerToCanonicalTransform->GetMatrix(),"TrackerToCanonicalMatrix");
-  node[_R("TrackedBoxBounds")].StoreVectorN(m_TrackedBounds.m_Bounds,6);
-  node[_R("TrackedBoxOrientation")].StoreVectorN(m_TrackedBoxOrientation,3);
-
-  // store default avatar if present
+  Superclass::InternalStore(node);
+  node[_R("TrackedBoxBounds")].SetValue(mafToString(m_TrackedBounds.m_Bounds,6));
+  node[_R("TrackedBoxOrientation")].SetValue(mafToString(m_TrackedBoxOrientation,3));
   if (m_DefaultAvatar)
   {
-    return (node[_R("Avatar")].StoreObject(m_DefaultAvatar) != MAF_OK ? MAF_ERROR : MAF_OK);
+    node[_R("Avatar")].SetValue(m_DefaultAvatar);
   }
-
-  return MAF_OK;
 }
 //------------------------------------------------------------------------------
-int mafDeviceButtonsPadTracker::InternalRestore(const mafStorageElement& node)
+void mafDeviceButtonsPadTracker::InternalRestore(const mafStorageElement& node)
 //------------------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node))
-    return MAF_ERROR;
-
-
-  if (node[_R("TrackedBoxBounds")].RestoreVectorN(m_TrackedBounds.m_Bounds, 6) == MAF_OK)
+  Superclass::InternalRestore(node);
+  mafParseVector(node[_R("TrackedBoxBounds")].As<mafString>(), m_TrackedBounds.m_Bounds, 6);
+  m_TrackedBounds.Modified();
+  mafParseVector(node[_R("TrackedBoxOrientation")].As<mafString>(), m_TrackedBoxOrientation, 3);
+  auto avatarNode = node[_R("Avatar")];
+  if(avatarNode.IsValid())
   {
-    m_TrackedBounds.Modified();
-    if (node[_R("TrackedBoxOrientation")].RestoreVectorN(m_TrackedBoxOrientation, 3) == MAF_OK)
+    if (auto avatar = avatarNode.As<mafAvatar>())
     {
-      mafObject* obj = nullptr;
-      if (node[_R("Avatar")].RestoreObject(obj) == MAF_OK)
-      {
-        if (mafAvatar3D *avatar=mafAvatar3D::SafeDownCast(obj))
-        {
-          SetDefaultAvatar(mafAvatar3D::SafeDownCast(avatar));
-        }
-        else
-        {
-          mafErrorMessage(_M(mafString(_R("find wrong type of Avatar (")) + _R(obj->GetTypeName()) + _R(") while restoring mafDeviceButtonsPadTracker.")));
-          obj->Delete();
-        }
-      }
-      
-      return MAF_OK;
+      SetDefaultAvatar(avatar);
     }
   }
-
-  return MAF_ERROR;
 }
 
 //------------------------------------------------------------------------------

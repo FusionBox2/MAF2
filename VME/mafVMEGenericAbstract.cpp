@@ -270,7 +270,7 @@ void mafVMEGenericAbstract::GetLocalTimeBounds(mafTimeStamp tbounds[2])
 }
 
 //-----------------------------------------------------------------------
-int mafVMEGenericAbstract::InternalStore(mafStorageElementBuilder& parent)
+void mafVMEGenericAbstract::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
   Superclass::InternalStore(parent);
@@ -279,35 +279,29 @@ int mafVMEGenericAbstract::InternalStore(mafStorageElementBuilder& parent)
   if (m_DataVector)
   {
     m_DataVector->SetCrypting(this->m_Crypting != 0);
-    if(m_DataVector->Store(parent[_R("DataVector")]) == MAF_ERROR)
-      return MAF_ERROR;
+    m_DataVector->Store(parent[_R("DataVector")]);
   }
 
   // sub-element for storing the matrix vector
-  if(m_MatrixVector->Store(parent[_R("MatrixVector")]) == MAF_ERROR)
-    return MAF_ERROR;
-
-  return MAF_OK;
+  m_MatrixVector->Store(parent[_R("MatrixVector")]);
 }
 
 //-----------------------------------------------------------------------
-int mafVMEGenericAbstract::InternalRestore(const mafStorageElement& node)
+void mafVMEGenericAbstract::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  int ret_val = MAF_OK;
   Superclass::InternalRestore(node);
   
   // restore Data Vector
   if (m_DataVector)
   {
-    ret_val = m_DataVector->Restore(node[_R("DataVector")]);
+    m_DataVector->Restore(node[_R("DataVector")]);
   }
   // restore Matrix Vector  
-  if (m_MatrixVector && ret_val == MAF_OK)
+  if (m_MatrixVector)
   {
-    ret_val = m_MatrixVector->Restore(node[_R("MatrixVector")]);
+    m_MatrixVector->Restore(node[_R("MatrixVector")]);
   }
-  return ret_val;
 }
 //-------------------------------------------------------------------------
 mafGUI *mafVMEGenericAbstract::CreateGui()

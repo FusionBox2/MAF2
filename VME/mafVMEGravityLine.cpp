@@ -942,50 +942,19 @@ void mafVMEGravityLine::InternalUpdate()
 
 }
 //-----------------------------------------------------------------------
-int mafVMEGravityLine::InternalStore(mafStorageElementBuilder& parent)
+void mafVMEGravityLine::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {
-
-	//wxBusyInfo wait001("internal store");
-	//Sleep(1500);
-//	Superclass::InternalStore(parent);
-	if (Superclass::InternalStore(parent)==MAF_OK)
-	{
-		if (
-					
- 
-			parent[_R("Transform")].StoreMatrix( m_Transform->GetMatrix()) == MAF_OK 
-				)
-			{
-			return MAF_OK;
-		}
-		return MAF_OK;
-	}
-	return MAF_ERROR;
+	Superclass::InternalStore(parent);
+	parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
 }
 
 //-----------------------------------------------------------------------
-int mafVMEGravityLine::InternalRestore(const mafStorageElement& node)
+void mafVMEGravityLine::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-	//wxBusyInfo wait001("internal restore");
-	//Sleep(1500);
-	if (Superclass::InternalRestore(node)==MAF_OK)
-	{
-    mafMatrix matrix;
-    if (node[_R("Transform")].RestoreMatrix(matrix) == MAF_OK
-		)
-	  {
-		  m_Transform->SetMatrix(matrix);
-		 return MAF_OK;
-	  }
-	else{
-		;
-		//	wxBusyInfo wait400("pb restoring ...");
-			//Sleep(2500);
-	}
-	}
-  return MAF_ERROR;
+	Superclass::InternalRestore(node);
+  m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
 }
 //-------------------------------------------------------------------------
 

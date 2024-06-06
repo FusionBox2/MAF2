@@ -369,47 +369,34 @@ void mafVMEBSplineLine::InternalPreUpdate()
 {
 }
 //-----------------------------------------------------------------------
-int mafVMEBSplineLine::InternalStore(mafStorageElementBuilder& parent)
+void mafVMEBSplineLine::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
-  if (Superclass::InternalStore(parent)==MAF_OK)
-  {
-    parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix());
-    parent[_R("Order")].StoreInteger( m_Order);
-    parent[_R("Mode")].StoreInteger( m_Mode);
-    parent[_R("Submode")].StoreInteger( m_SubMode);
-    parent[_R("Smooth")].StoreDouble( m_Smooth);
-    parent[_R("Num_parts")].StoreInteger( m_TesselSize);
-    parent[_R("Filter_ident")].StoreInteger( m_FilterIdent);
-    parent[_R("Extract_fibre")].StoreInteger( m_ExtractFibre);
-    return MAF_OK;
-  }
-  return MAF_ERROR;
+  Superclass::InternalStore(parent);
+  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
+  parent[_R("Order")].SetValue(m_Order);
+  parent[_R("Mode")].SetValue(m_Mode);
+  parent[_R("Submode")].SetValue(m_SubMode);
+  parent[_R("Smooth")].SetValue(m_Smooth);
+  parent[_R("Num_parts")].SetValue(m_TesselSize);
+  parent[_R("Filter_ident")].SetValue(m_FilterIdent);
+  parent[_R("Extract_fibre")].SetValue(m_ExtractFibre);
 }
 
 //-----------------------------------------------------------------------
-int mafVMEBSplineLine::InternalRestore(const mafStorageElement& node)
+void mafVMEBSplineLine::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-    if (Superclass::InternalRestore(node)==MAF_OK)
-  {
-    mafMatrix matrix;
-    if (node[_R("Transform")].RestoreMatrix(matrix) ==MAF_OK)
-    {
-      m_Transform->SetMatrix(matrix);
-      node[_R("Order")].RestoreInteger( m_Order);
-      node[_R("Mode")].RestoreInteger( m_Mode);
-      node[_R("Submode")].RestoreInteger( m_SubMode);
-      node[_R("Smooth")].RestoreDouble( m_Smooth);
-      node[_R("Num_parts")].RestoreInteger( m_TesselSize);
-      node[_R("Filter_ident")].RestoreInteger( m_FilterIdent);
-      node[_R("Extract_fibre")].RestoreInteger( m_ExtractFibre);
-      m_Loaded = true;
-      return MAF_OK;
-    }
-  }
-
-  return MAF_ERROR;
+  Superclass::InternalRestore(node);
+  m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
+  m_Order = node[_R("Order")].As<int>();
+  m_Mode = node[_R("Mode")].As<int>();
+  m_SubMode = node[_R("Submode")].As<int>();
+  m_Smooth = node[_R("Smooth")].As<double>();
+  m_TesselSize = node[_R("Num_parts")].As<int>();
+  m_FilterIdent = node[_R("Filter_ident")].As<int>();
+  m_ExtractFibre = node[_R("Extract_fibre")].As<int>();
+  m_Loaded = true;
 }
 
 //-----------------------------------------------------------------------

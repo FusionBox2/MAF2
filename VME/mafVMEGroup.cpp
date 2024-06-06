@@ -137,7 +137,7 @@ void mafVMEGroup::SetMatrix(const mafMatrix &mat)
 }
 
 //-----------------------------------------------------------------------
-int mafVMEGroup::InternalStore(mafStorageElementBuilder& parent)
+void mafVMEGroup::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 { 
   if (DEBUG_MODE)
@@ -148,39 +148,34 @@ int mafVMEGroup::InternalStore(mafStorageElementBuilder& parent)
     mafLogMessage(_M(stringStream.str().c_str()));
   }
 
-  if (Superclass::InternalStore(parent)==MAF_OK)
-  {
-    parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix());
-    return MAF_OK;
-  }
-  return MAF_ERROR;
-  
-  
+  Superclass::InternalStore(parent);
+  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
 }
 
 //-----------------------------------------------------------------------
-int mafVMEGroup::InternalRestore(const mafStorageElement& node)
+void mafVMEGroup::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node)==MAF_OK)
+  Superclass::InternalRestore(node);
   {
-    mafMatrix matrix;
-    if (node[_R("Transform")].RestoreMatrix(matrix) ==MAF_OK)
+	 if(auto optMatrix  = node[_R("Transform")].As<std::optional<mafMatrix> >())
+	  //if (node[_R("Transform")].ReSetValue(matrix) == MAF_OK)
     {
 
       if (DEBUG_MODE)
       {
         std::ostringstream stringStream;
         stringStream << "Restoring group matrix:"  << std::endl;
-        matrix.Print(stringStream);
+        optMatrix->Print(stringStream);
         mafLogMessage(_M(stringStream.str().c_str()));
       }
 
-      this->SetMatrix(matrix);
-      return MAF_OK;
+      this->SetMatrix(*optMatrix);
     }
     else
     {
+         mafMatrix matrix;
+         matrix.Identity();
       // code handling for old msf without group pose matrix serialization
       this->SetMatrix(matrix);
       if (DEBUG_MODE)
@@ -192,11 +187,8 @@ restoring group matrix as:"  << std::endl;
           stringStream << "Please report any problem with old MSF containing groups!!!"  << std::endl;
           mafLogMessage(_M(stringStream.str().c_str()));
         }
-      return MAF_OK;
     }
   }
-
-  return MAF_ERROR;
 }
 
 //-----------------------------------------------------------------------

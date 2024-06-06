@@ -61,7 +61,6 @@
   
 #include "mafVME.h"
 #include "mafVMEGizmo.h"
-#include "mafXMLParser.h"
 #include "mafStorageElement.h"
 
 #include "vtkRenderer.h"
@@ -653,7 +652,7 @@ void mafInteractionManager::OnEvent(mafEventBase *event)
           m_SettingFileName = result;
           //SIL. 4-7-2005: end
 
-          Store(m_SettingFileName.GetCStr());
+          Store(m_SettingFileName);
         
           return;
         }
@@ -667,7 +666,7 @@ void mafInteractionManager::OnEvent(mafEventBase *event)
           m_SettingFileName = result;
           //SIL. 4-7-2005: end
 
-          Restore(m_SettingFileName.GetCStr());
+          Restore(m_SettingFileName);
           //camera reset here?
         
           return;
@@ -832,53 +831,37 @@ void mafInteractionManager::OnEvent(mafEventBase *event)
 }
 
 //------------------------------------------------------------------------------
-int mafInteractionManager::Store(const char *filename)
+void mafInteractionManager::Store(const mafString& filename)
 //------------------------------------------------------------------------------
 {
-  assert(filename);
-  mafXMLParser writer(_R("MIS"), MIS_VERSION);
-
-  writer.SetURL(_R(filename));
-  return writer.Store(this);
+  mafXMLWriter writer(_R("MIS"), MIS_VERSION);
+  InternalStore(writer.GetRoot());
+  writer.Save(filename);
 }
 
 //------------------------------------------------------------------------------
-int mafInteractionManager::Restore(const char *filename)
+void mafInteractionManager::Restore(const mafString& filename)
 //------------------------------------------------------------------------------
 {
-  assert(filename);
-  mafXMLParser reader(_R("MIS"), MIS_VERSION);
-
-  reader.SetURL(_R(filename));
-  return reader.Restore(this);
+  mafXMLReader reader(_R("MIS"), MIS_VERSION);
+  reader.Load(filename);
+  InternalRestore(reader.GetRoot());
 }
 
 //------------------------------------------------------------------------------
-int mafInteractionManager::InternalStore(mafStorageElementBuilder& node)
+void mafInteractionManager::InternalStore(mafStorageElementBuilder& node)
 //------------------------------------------------------------------------------
 {
-  // store device settings
-  if (node[_R("DeviceManager")].StoreObject(m_DeviceManager) != MAF_OK)
-    return MAF_ERROR;
-  
-  // store bindings
-  if (node[_R("DeviceBindings")].StoreObject(m_StaticEventRouter) != MAF_OK)
-    return MAF_ERROR;
-  
-  return MAF_OK;
+  node[_R("DeviceManager")].SetValue(m_DeviceManager);
+  node[_R("DeviceBindings")].SetValue(m_StaticEventRouter);
 }
 
 //------------------------------------------------------------------------------
-int mafInteractionManager::InternalRestore(const mafStorageElement& node)
+void mafInteractionManager::InternalRestore(const mafStorageElement& node)
 //------------------------------------------------------------------------------
 {
-	if (m_DeviceManager->Restore(node[_R("DeviceManager")]) != MAF_OK)
-    return MAF_ERROR;
-  
-  if (m_StaticEventRouter->Restore(node[_R("DeviceBindings")]) != MAF_OK)
-    return MAF_ERROR;
-  
-  return MAF_OK;
+  m_DeviceManager->Restore(node[_R("DeviceManager")]);
+  m_StaticEventRouter->Restore(node[_R("DeviceBindings")]);
 }
 
 /* removed  //SIL. 07-jun-2006 : 

@@ -48,7 +48,7 @@ mafAttributeTraceability::~mafAttributeTraceability()
 void mafAttributeTraceability::AddTraceabilityEvent(const mafString& trialEvent, const mafString& operationName, const mafString& parmaters, const mafString& date, const mafString& appStamp, const mafString& operatorID, const mafString& isNatural)
 //----------------------------------------------------------------------------
 {  
-  m_Traceability traceability;
+  Traceability traceability;
   traceability.m_TrialEvent = trialEvent;
   traceability.m_OperationName = operationName;
   traceability.m_Parameters = parmaters;
@@ -77,7 +77,7 @@ void mafAttributeTraceability::DeepCopy(const mafAttribute *a)
   int vecSize = ((mafAttributeTraceability *)a)->m_TraceabilityVector.size();
   for (int i = 0; i < vecSize; i++)
   {
-    m_Traceability traceability;
+    Traceability traceability;
     traceability.m_TrialEvent = ((mafAttributeTraceability *)a)->m_TraceabilityVector[i].m_TrialEvent;
     traceability.m_OperationName = ((mafAttributeTraceability *)a)->m_TraceabilityVector[i].m_OperationName;
     traceability.m_Parameters = ((mafAttributeTraceability *)a)->m_TraceabilityVector[i].m_Parameters;
@@ -120,84 +120,63 @@ bool mafAttributeTraceability::Equals(const mafAttribute *a) const
 }
 
 //-------------------------------------------------------------------------
-int mafAttributeTraceability::InternalStore(mafStorageElementBuilder& parent)
+void mafAttributeTraceability::InternalStore(mafStorageElementBuilder& parent)
 //-------------------------------------------------------------------------
 {
-  if (Superclass::InternalStore(parent)==MAF_OK)
+  Superclass::InternalStore(parent);
+  for (auto& trace : m_TraceabilityVector)
   {
-    for (int i = 0; i < m_TraceabilityVector.size(); i++)
+    parent[_R("TrialEvent")].SetValue(trace.m_TrialEvent);
+    parent[_R("Operation")].SetValue(trace.m_OperationName);
+    parent[_R("Parameters")].SetValue(trace.m_Parameters);
+    parent[_R("Date")].SetValue(trace.m_Date);
+    parent[_R("Application")].SetValue(trace.m_AppStamp);
+    parent[_R("OperatorID")].SetValue(trace.m_OperatorID);
+    if (trace.m_TrialEvent == _R("Create"))
     {
-      parent[_R("TrialEvent")].StoreText( m_TraceabilityVector[i].m_TrialEvent);
-      parent[_R("Operation")].StoreText( m_TraceabilityVector[i].m_OperationName);
-      parent[_R("Parameters")].StoreText( m_TraceabilityVector[i].m_Parameters);
-      parent[_R("Date")].StoreText( m_TraceabilityVector[i].m_Date);
-      parent[_R("Application")].StoreText( m_TraceabilityVector[i].m_AppStamp);
-      parent[_R("OperatorID")].StoreText(  m_TraceabilityVector[i].m_OperatorID);
-      if (m_TraceabilityVector[i].m_TrialEvent == _R("Create"))
-      {
-        parent[_R("IsNatural")].StoreText( m_TraceabilityVector[i].m_IsNatural);
-      }
-    }  
+      parent[_R("IsNatural")].SetValue(trace.m_IsNatural);
+    }
   }
-  return MAF_OK;
 }
 
 //-------------------------------------------------------------------------
-int mafAttributeTraceability::InternalRestore(const mafStorageElement& node)
+void mafAttributeTraceability::InternalRestore(const mafStorageElement& node)
 //-------------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node) == MAF_OK)
+  Superclass::InternalRestore(node);
+  Traceability traceability;
+  auto listTrialEvent = node[_R("TrialEvent")].As<std::vector<mafString> >();
+  auto listOperation = node[_R("Operation")].As<std::vector<mafString> >();
+  auto listParameters = node[_R("Parameters")].As<std::vector<mafString> >();
+  auto listDate = node[_R("Date")].As<std::vector<mafString> >();
+  auto listApplication = node[_R("Application")].As<std::vector<mafString> >();
+  auto listOperatorID = node[_R("OperatorID")].As<std::vector<mafString> >();
+  auto listIsNatural = node[_R("IsNatural")].As<std::vector<mafString> >();
+  try
   {
-    m_Traceability traceability;
-
-    std::vector<mafStorageElement> listTrialEventElems = node.GetElementsByName(_R("TrialEvent"));
-
-	std::vector<mafString> listTrialEvent(listTrialEventElems.size());
-    std::vector<mafString> listOperation(listTrialEventElems.size());
-	std::vector<mafString> listParameters(listTrialEventElems.size());
-	std::vector<mafString> listDate(listTrialEventElems.size());
-	std::vector<mafString> listApplication(listTrialEventElems.size());
-	std::vector<mafString> listOperatorID(listTrialEventElems.size());
-	std::vector<mafString> listIsNatural(listTrialEventElems.size());
-	node.RestoreVectorN(listTrialEvent, _R("TrialEvent"));
-    node.RestoreVectorN(listOperation, _R("Operation"));
-    node.RestoreVectorN(listParameters, _R("Parameters"));
-    node.RestoreVectorN(listDate, _R("Date"));
-    node.RestoreVectorN(listApplication, _R("Application"));
-    node.RestoreVectorN(listOperatorID, _R("OperatorID"));
-    node.RestoreVectorN(listIsNatural, _R("IsNatural"));
-
-    try
+    size_t iCreateIdx = 0;   //BES: 27.11.2008 - BUG FIX
+    for (size_t i = 0; i < listTrialEvent.size(); i++)
     {
-      int iCreateIdx = 0;   //BES: 27.11.2008 - BUG FIX
-      for (int i  = 0; i < listTrialEvent.size(); i++)
+      Traceability traceability;
+      traceability.m_TrialEvent = listTrialEvent[i];
+      traceability.m_OperationName = listOperation[i];
+      if (listParameters.size() > i)
+        traceability.m_Parameters = listParameters[i];
+      traceability.m_Date = listDate[i];
+      traceability.m_AppStamp = listApplication[i];
+      traceability.m_OperatorID = listOperatorID[i];
+      if (traceability.m_TrialEvent == _R("Create"))
       {
-        m_Traceability traceability;
-
-        traceability.m_TrialEvent = listTrialEvent[i];
-        traceability.m_OperationName = listOperation[i];
-        if (listParameters.size() > i)
-            traceability.m_Parameters = listParameters[i];
-        traceability.m_Date = listDate[i];
-        traceability.m_AppStamp = listApplication[i];
-        traceability.m_OperatorID = listOperatorID[i];
-        if (traceability.m_TrialEvent == _R("Create"))
-        {
-          //BES: 27.11.2008 - BUG FIX - listIsNatural can contain less items than listTrialEvent
-            traceability.m_IsNatural = listIsNatural[iCreateIdx++];
-        }
-        m_TraceabilityVector.push_back(traceability);
+        //BES: 27.11.2008 - BUG FIX - listIsNatural can contain less items than listTrialEvent
+        traceability.m_IsNatural = listIsNatural[iCreateIdx++];
       }
+      m_TraceabilityVector.push_back(traceability);
     }
-    catch (...)
-    {
-      mafLogMessage(_M("Problems restoring audit trials attribute"));
-    }
-    
-   
-    return MAF_OK;
   }
-  return MAF_ERROR;
+  catch (...)
+  {
+    mafLogMessage(_M("Problems restoring audit trials attribute"));
+  }
 }
 
 //-------------------------------------------------------------------------

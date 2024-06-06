@@ -71,41 +71,33 @@ void mafMatrixVector::AppendKeyMatrix(const mafMatrix &m)
 }
 
 //-----------------------------------------------------------------------
-int mafMatrixVector::InternalStore(mafStorageElementBuilder& parent)
+void mafMatrixVector::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {
-  parent.SetAttribute(_R("NumberOfItems"),mafToString(GetNumberOfItems()));
+  parent(_R("NumberOfItems")).SetValue(mafToString(GetNumberOfItems()));
   for (auto& elem : *this)
   {
-    if (parent[_R("Matrix")].StoreMatrix(*(elem.second))!=MAF_OK)
-      return MAF_ERROR;
+    parent[_R("Matrix")].SetValue(*(elem.second));
   }
-  return MAF_OK;
 }
 //-----------------------------------------------------------------------
-int mafMatrixVector::InternalRestore(const mafStorageElement& node)
+void mafMatrixVector::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  mafID num_items;
-  if (node.GetAttributeAsInteger(_R("NumberOfItems"),num_items) == MAF_OK)
+  mafID num_items = node(_R("NumberOfItems")).As<mafID>();
+  auto vector_elements = node[_R("Matrix")];
+
+  assert(vector_elements.GetNumItems() == num_items);
+
+  if (vector_elements.GetNumItems() != num_items)
+    mafWarningMacro("Restore I/O error: found wrong number of matrices in restored MatrixVector.");
+
+  for (int i = 0; i < vector_elements.GetNumItems(); i++)
   {
-    auto vector_elements = node.GetElementsByName(_R("Matrix"));
-
-    assert(vector_elements.size()==num_items);
-
-    if (vector_elements.size()!=num_items)
-      mafWarningMacro("Restore I/O error: found wrong number of matrices in restored MatrixVector.");
-
-    for (int i=0;i<vector_elements.size();i++)
-    {
-      mafAutoPointer<mafMatrix> mat = mafMatrix::New();
-      if (vector_elements[i].RestoreMatrix(*mat)!=MAF_OK)
-        return MAF_ERROR;
-      AppendItem(mat);
-    }
-    
-    return MAF_OK;
+    mafAutoPointer<mafMatrix> mat = mafMatrix::New();
+    *mat = vector_elements[i].As<mafMatrix>();
+    //if (vector_elements[i].ReSetValue(*mat)!=MAF_OK)
+    //  return MAF_ERROR;
+    AppendItem(mat);
   }
-
-  return MAF_ERROR;
 }

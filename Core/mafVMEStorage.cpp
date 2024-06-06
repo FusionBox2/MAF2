@@ -18,7 +18,6 @@
 
 #include "mafVMEStorage.h"
 #include "mafNodeManager.h"
-#include "mafStorable.h"
 #include "mafStorageElement.h"
 #include "mmuIdFactory.h"
 #include "mafEventIO.h"
@@ -26,6 +25,7 @@
 //------------------------------------------------------------------------------
 mafVMEStorage::mafVMEStorage()
 	: mafStorage(_R("MSF"), _R("2.2"))
+    , m_Document(nullptr)
 //------------------------------------------------------------------------------
 {
 }
@@ -41,11 +41,11 @@ mafVMEStorage::~mafVMEStorage()
 void mafVMEStorage::SetManager(mafNodeManager *manager)
 //------------------------------------------------------------------------------
 {
-  if(auto currentManager = static_cast<mafNodeManager*>(GetDocument()))
-    currentManager->SetListener(NULL);
-  if(manager)
+  if(m_Document)
+    m_Document->SetListener(NULL);
+  m_Document = manager;
+  if(m_Document)
     manager->SetListener(this);
-  SetDocument(manager);
 }
 
 //------------------------------------------------------------------------------
@@ -66,3 +66,21 @@ void mafVMEStorage::OnEvent(mafEventBase *e)
     InvokeEvent(e);
   }
 }
+//------------------------------------------------------------------------------
+int mafVMEStorage::InternalStore(const mafString& filename)
+//------------------------------------------------------------------------------
+{
+    mafXMLWriter writer(m_FileType, m_Version);
+    m_Document->Store(writer.GetRoot());
+    return writer.Save(filename);
+}
+//------------------------------------------------------------------------------
+int mafVMEStorage::InternalRestore(const mafString& filename)
+//------------------------------------------------------------------------------
+{
+    mafXMLReader reader(m_FileType, m_Version);
+    reader.Load(filename);
+    m_Document->Restore(reader.GetRoot());
+    return MAF_OK;
+}
+

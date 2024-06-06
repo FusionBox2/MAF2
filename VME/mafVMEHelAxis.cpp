@@ -491,53 +491,41 @@ void mafVMEHelAxis::InternalPreUpdate()
 }
 
 //-----------------------------------------------------------------------
-int mafVMEHelAxis::InternalStore(mafStorageElementBuilder& parent)
+void mafVMEHelAxis::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
-  if (Superclass::InternalStore(parent)==MAF_OK)
-  {
-    parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix());
-    //code for backward compatibility
-    parent[_R("ScaleFactor")].StoreDouble( m_LengthFactor);
-    parent[_R("RadiusFactor")].StoreDouble( m_RadiusFactor);
-    parent[_R("LengthFactor")].StoreDouble( m_LengthFactor);
-    parent[_R("MinAngle")].StoreDouble( m_MinAngle);
-    parent[_R("MinTime")].StoreDouble( m_MinTime);
-    parent[_R("MaxTime")].StoreDouble( m_MaxTime);
-    parent[_R("Mode")].StoreInteger( m_Mode);
-    parent[_R("AligningMode")].StoreInteger( m_AligningMode);
-    return MAF_OK;
-  }
-  return MAF_ERROR;
+  Superclass::InternalStore(parent);
+  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
+  //code for backward compatibility
+  parent[_R("ScaleFactor")].SetValue(m_LengthFactor);
+  parent[_R("RadiusFactor")].SetValue(m_RadiusFactor);
+  parent[_R("LengthFactor")].SetValue(m_LengthFactor);
+  parent[_R("MinAngle")].SetValue(m_MinAngle);
+  parent[_R("MinTime")].SetValue(m_MinTime);
+  parent[_R("MaxTime")].SetValue(m_MaxTime);
+  parent[_R("Mode")].SetValue(m_Mode);
+  parent[_R("AligningMode")].SetValue(m_AligningMode);
 }
 
 //-----------------------------------------------------------------------
-int mafVMEHelAxis::InternalRestore(const mafStorageElement& node)
+void mafVMEHelAxis::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node)==MAF_OK)
-  {
-    mafMatrix matrix;
-    if (node[_R("Transform")].RestoreMatrix(matrix) ==MAF_OK)
-    {
-      m_Transform->SetMatrix(matrix);
-      //code for backward compatibility
-      node[_R("ScaleFactor")].RestoreDouble( m_LengthFactor);
-      m_RadiusFactor = m_LengthFactor;
-      node[_R("RadiusFactor")].RestoreDouble( m_RadiusFactor);
-      node[_R("LengthFactor")].RestoreDouble( m_LengthFactor);
-      node[_R("MinAngle")].RestoreDouble( m_MinAngle);
-      node[_R("MinTime")].RestoreDouble( m_MinTime);
-      node[_R("MaxTime")].RestoreDouble( m_MaxTime);
-      node[_R("Mode")].RestoreInteger( m_Mode);
-      node[_R("AligningMode")].RestoreInteger( m_AligningMode);
-      m_MeanChanges = 1;
-      SetRadiusFactor(m_RadiusFactor);
-      SetLengthFactor(m_LengthFactor);
-      return MAF_OK;
-    }
-  }
-  return MAF_ERROR;
+  Superclass::InternalRestore(node);
+  m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
+  //code for backward compatibility
+  m_LengthFactor = node[_R("ScaleFactor")].As<double>();
+  m_RadiusFactor = m_LengthFactor;
+  m_RadiusFactor = node[_R("RadiusFactor")].As<double>();
+  m_LengthFactor = node[_R("LengthFactor")].As<double>();
+  m_MinAngle = node[_R("MinAngle")].As<double>();
+  m_MinTime = node[_R("MinTime")].As<double>();
+  m_MaxTime = node[_R("MaxTime")].As<double>();
+  m_Mode = node[_R("Mode")].As<int>();
+  m_AligningMode = node[_R("AligningMode")].As<int>();
+  m_MeanChanges = 1;
+  SetRadiusFactor(m_RadiusFactor);
+  SetLengthFactor(m_LengthFactor);
 }
 
 void mafVMEHelAxis::SetProximal(mafVME *vme)

@@ -55,44 +55,36 @@ void mafScalarVector::GetScalarVector(std::vector<double> &svector)
   }
 }
 //-----------------------------------------------------------------------
-int mafScalarVector::InternalStore(mafStorageElementBuilder& parent)
+void mafScalarVector::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {
-  parent.SetAttribute(_R("NumberOfItems"),mafToString(GetNumberOfItems()));
+  parent(_R("NumberOfItems")).SetValue(mafToString(GetNumberOfItems()));
   for (Iterator it = BeginScalarVector(); it != EndScalarVector(); it++)
   {
     double sca[2];
     sca[0] = it->first;
     sca[1] = it->second;
-    if (parent[_R("Scalar")].StoreVectorN( sca , 2) != MAF_OK)
-      return MAF_ERROR;
+    parent[_R("Scalar")].SetValue(mafToString(sca, 2));
   }
-  return MAF_OK;
 }
 //-----------------------------------------------------------------------
-int mafScalarVector::InternalRestore(const mafStorageElement& node)
+void mafScalarVector::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  mafID num_items;
-  if (node.GetAttributeAsInteger(_R("NumberOfItems"),num_items) == MAF_OK)
+  mafID num_items = node(_R("NumberOfItems")).As<mafID>();
+  auto vector_elements = node[_R("Scalar")];
+
+  assert(vector_elements.GetNumItems() == num_items);
+
+  if (vector_elements.GetNumItems() != num_items)
+    mafWarningMacro("Restore I/O error: found wrong number of scalar value in restored ScalarVector.");
+
+  for (int i = 0; i < vector_elements.GetNumItems(); i++)
   {
-    auto vector_elements = node.GetElementsByName(_R("Scalar"));
-
-    assert(vector_elements.size() == num_items);
-
-    if (vector_elements.size() != num_items)
-      mafWarningMacro("Restore I/O error: found wrong number of scalar value in restored ScalarVector.");
-
-    for (int i = 0; i < vector_elements.size(); i++)
-    {
-      double sca[2];
-      if (vector_elements[i].RestoreVectorN(sca, 2) != MAF_OK)
-        return MAF_ERROR;
-      AppendItem(sca[0], sca[1]);
-    }
-    
-    return MAF_OK;
+    double sca[2];
+    //if (
+    mafParseVector(vector_elements[i].As<mafString>(), sca, 2);// != MAF_OK)
+    //return MAF_ERROR;
+    AppendItem(sca[0], sca[1]);
   }
-
-  return MAF_ERROR;
 }

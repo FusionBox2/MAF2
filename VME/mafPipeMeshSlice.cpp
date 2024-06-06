@@ -518,7 +518,7 @@ void mafPipeMeshSlice::OnEvent(mafEventBase *maf_event)
 					if(material && material->m_Prop )
 					{
 						bool newWireframe=(material->m_Prop->GetRepresentation() == VTK_WIREFRAME);
-						if (newWireframe!=m_Wireframe)
+						if (newWireframe!=(bool)m_Wireframe)
 						{
 							m_Wireframe=newWireframe;
 							if(m_Wireframe == 0) 

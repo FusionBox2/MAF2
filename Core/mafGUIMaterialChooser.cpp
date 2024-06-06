@@ -44,7 +44,6 @@
 #include "mafRWI.h"
 #include "mafGUIPicButton.h"
 
-#include "mafXMLParser.h"
 #include "mafStorageElement.h"
 #include "mafVME.h"
 
@@ -596,11 +595,11 @@ void mafGUIMaterialChooser::LoadLibraryFromFile()
   ClearList();
 
   // XML storage to restore
-  mafXMLParser restore(_R("MAP"), _R("1.0"));
-  restore.SetURL(m_Filename);
+  mafXMLReader reader(_R("MAP"), _R("1.0"));
+  reader.Load(m_Filename);
 
   mafStorableMaterialLibrary *mat_lib = new mafStorableMaterialLibrary(&m_List);
-  restore.Restore(mat_lib);
+  mat_lib->Restore(reader.GetRoot());
 
   mmaMaterial *mat = NULL;
   for (int m = 0; m < m_List.size(); m++)
@@ -619,11 +618,11 @@ void mafGUIMaterialChooser::StoreLibraryToFile()
 	if(m_List.empty()) return;
 
   // XML storage to restore
-  mafXMLParser restore(_R("MAP"), _R("1.0"));
-  restore.SetURL(m_Filename);
+  mafXMLWriter writer(_R("MAP"), _R("1.0"));
 
   mafStorableMaterialLibrary *mat_lib = new mafStorableMaterialLibrary(&m_List);
-  restore.Store(mat_lib);
+  mat_lib->Store(writer.GetRoot());
+  writer.Save(m_Filename);
 
   mat_lib->Delete();
 }
@@ -897,27 +896,37 @@ mafStorableMaterialLibrary::mafStorableMaterialLibrary(std::vector<mmaMaterial *
 }
 //------------------------------------------------------------------------------
 // example of de-serialization code
-int mafStorableMaterialLibrary::InternalRestore(const mafStorageElement& node)
+void mafStorableMaterialLibrary::InternalRestore(const mafStorageElement& node)
 //------------------------------------------------------------------------------
 {
-  std::vector<mafObject *> attrs;
-  node[_R("MaterialLib")].RestoreVectorN(attrs, _R("Item"));
-  for (unsigned int i = 0; i < attrs.size(); i++)
-  {
-    mmaMaterial *item = mmaMaterial::SafeDownCast(attrs[i]);
-    m_MaterialList->push_back(item);
-  }
-  return MAF_OK;
+	auto mat_items = node[_R("MaterialLib")][_R("Node")];
+	mafID numItemsMat = node[_R("MaterialLib")](_R("NumberOfItems")).As<mafID>();
+	if (numItemsMat != mat_items.GetNumItems())
+	{
+		mafErrorMacro("Number of children differs from number of entries");
+		return;
+	}
+
+	for (size_t i = 0; i < mat_items.GetNumItems(); i++)
+	{
+		auto obj = mat_items[i].As<mafAttribute>();
+		mmaMaterial* item = mmaMaterial::SafeDownCast(obj);
+		m_MaterialList->push_back(item);
+	}
 }
 //------------------------------------------------------------------------------
-int mafStorableMaterialLibrary::InternalStore( mafStorageElementBuilder& parent )
+void mafStorableMaterialLibrary::InternalStore( mafStorageElementBuilder& parent )
 //------------------------------------------------------------------------------
 {
-  std::vector<mafObject *> attrs;
-  for (unsigned int m = 0; m < m_MaterialList->size(); m++)
-  {
-    attrs.push_back((*m_MaterialList)[m]);
-  }
-
-  return parent[_R("MaterialLib")].StoreVectorN( attrs, _R("Item"));
+	auto materialLib = parent[_R("MaterialLib")];
+	materialLib(_R("NumberOfItems")).SetValue(m_MaterialList->size());
+	if (!m_MaterialList->empty())
+	{
+		auto entry = materialLib[_R("Item")];
+		
+		for (size_t idx = 0; idx < m_MaterialList->size(); idx++)
+		{
+			entry[idx].SetValue((*m_MaterialList)[idx]);
+		}
+	}
 }

@@ -36,36 +36,33 @@ mafInteractorSER::~mafInteractorSER()
 {
 }
 //------------------------------------------------------------------------------
-int mafInteractorSER::InternalStore(mafStorageElementBuilder& node)
+void mafInteractorSER::InternalStore(mafStorageElementBuilder& node)
 //------------------------------------------------------------------------------
 {
   for (mmuActionsMap::iterator it=m_Actions.begin();it!=m_Actions.end();it++)
   {
     mafAction *action=it->second;
-    node[_R("Action")].StoreObject(action);
+    node[_R("Action")].SetValue(action);
   }
-
-  return 0;
 }
 
 //------------------------------------------------------------------------------
-int mafInteractorSER::InternalRestore(const mafStorageElement& node)
+void mafInteractorSER::InternalRestore(const mafStorageElement& node)
 //------------------------------------------------------------------------------
 {
-  auto children = node.GetElementsByName(_R("Action"));
-  for (int i=0;i<children.size();i++)
+  auto children = node[_R("Action")];
+  for (int i=0;i<children.GetNumItems();i++)
   {
     // create the object to be restored mannualy since mafAction is not in the factory
-    mafString action_name;
-    children[i].GetAttribute(_R("Name"),action_name);
+    mafString action_name = children[i](_R("Name")).As<mafString>();
     mafAction *action = GetAction(action_name.GetCStr());
 
-    if (action && action->Restore(children[i]))
+    if (action)
     {
-      mafErrorMacro("I/O Error restoring action");
+      action->Restore(children[i]);
+      //mafErrorMacro("I/O Error restoring action");
     }
   }
-  return MAF_OK;
 }
 
 //------------------------------------------------------------------------------

@@ -17,7 +17,6 @@
 #define __mafMSFImporter_h__
 
 #include "mafStorage.h"
-#include "mafParser.h"
 #include "mafNodeManager.h"
 
 //----------------------------------------------------------------------------
@@ -36,8 +35,6 @@ class MAF_EXPORT mafMSFImporter : public mafNodeManager
 public:
   mafMSFImporter(){}
   virtual ~mafMSFImporter() {}
-  virtual int InternalStore(mafStorageElementBuilder& node);
-  virtual int InternalRestore(const mafStorageElement& node);
   
   enum MATERIAL_TAG_ID
   {
@@ -61,11 +58,13 @@ public:
   };
 
 protected:
+  void InternalStore(mafStorageElementBuilder& parent) override;
+  void InternalRestore(const mafStorageElement& node) override;
   mafVME *CreateVMEInstance(const mafString &name);
-  mafVME *RestoreVME(mafStorageElement *node, mafVME *parent);
-  int RestoreTagArray(mafStorageElement *node, mafTagArray *tarray);
-  int RestoreVItem(mafStorageElement *node, mafVME *vme);
-  int RestoreVMatrix(mafStorageElement *node, mafMatrixVector *vmatrix);
+  mafVME *RestoreVME(const mafStorageElement& node, mafVME *parent);
+  int RestoreTagArray(const mafStorageElement& node, mafTagArray *tarray);
+  int RestoreVItem(const mafStorageElement& node, mafVME *vme);
+  int RestoreVMatrix(const mafStorageElement& node, mafMatrixVector *vmatrix);
 
   /** 
   Parse the path string to rebuild links*/
