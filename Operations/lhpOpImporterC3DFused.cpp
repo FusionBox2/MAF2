@@ -683,7 +683,7 @@ void lhpOpImporterC3DFused::OpDo()
   {
     m_CSVExported = true;
     mafString path = m_C3DInputFileNameFullPaths[0];
-    path.ExtractPathName();
+    ExtractPathName(path);
     for (auto iIt = m_Imported.begin(), rIt = m_Registered.begin(), iItE = m_Imported.end(); iIt != iItE; ++iIt, ++ rIt)
     {
       lhpOpExporterCSVGraph *csvexporter = new lhpOpExporterCSVGraph();

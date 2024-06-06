@@ -168,7 +168,7 @@ int mafOpValidateTree::ValidateTree()
           if (storage != NULL)
           {
             m_MSFPath = storage->GetURL();
-            m_MSFPath.ExtractPathName();
+            ExtractPathName(m_MSFPath);
           }
         }
 
@@ -201,7 +201,7 @@ int mafOpValidateTree::ValidateTree()
               if (storage != NULL)
               {
                 m_MSFPath = storage->GetURL();
-                m_MSFPath.ExtractPathName();
+                ExtractPathName(m_MSFPath);
               }
             }
             // binary files exists => VME is animated on data

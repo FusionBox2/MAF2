@@ -198,7 +198,7 @@ mafLogicWithManagers::mafLogicWithManagers(mafGUIMDIFrame *mdiFrame/*=NULL*/)
   m_MakeBakFile = true;
   m_Storage     = NULL;
   mafString msfDir = mafGetApplicationDirectory();
-  msfDir.ParsePathName();
+  ParsePathName(msfDir);
   m_MSFDir   = msfDir;
   m_MSFFile  = _R("");
   m_ZipFile  = _R("");
@@ -1541,7 +1541,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
     wxSetWorkingDirectory(m_TmpDir.toWx());
   }
 
-  unixname.ParsePathName();
+  ParsePathName(unixname);
 
   m_MSFFile = unixname; 
   m_Storage->SetURL(m_MSFFile);
@@ -1638,7 +1638,7 @@ void mafLogicWithManagers::Save()
   if(!m_NodeManager)
     return;
 	mafString save_default_folder = m_StorageSettings->GetDefaultSaveFolder();
-	save_default_folder.ParsePathName();
+	ParsePathName(save_default_folder);
 	m_MSFDir = save_default_folder;
   mafVMERoot *root = mafVMERoot::SafeDownCast(m_NodeManager->GetRoot());
   if(!root)
@@ -1688,7 +1688,7 @@ bool mafLogicWithManagers::OnFileSave()
   if(!m_NodeManager)
     return true;
 	mafString save_default_folder = m_StorageSettings->GetDefaultSaveFolder();
-	save_default_folder.ParsePathName();
+	ParsePathName(save_default_folder);
 	m_MSFDir = save_default_folder;
   mafVMERoot *root = mafVMERoot::SafeDownCast(m_NodeManager->GetRoot());
   if(!root)
@@ -1748,7 +1748,7 @@ bool mafLogicWithManagers::OnFileSaveAs()
     file = file_dir + _R("/") + name + _R(".") + ext;
   }
 
-  file.ParsePathName();
+  ParsePathName(file);
 
   m_MSFFile = file;
 

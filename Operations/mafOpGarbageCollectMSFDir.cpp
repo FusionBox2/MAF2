@@ -236,7 +236,7 @@ mafString mafOpGarbageCollectMSFDir::GetMSFDirAbsPath(mafNode *anyTreeNode)
   if (storage != NULL)
   {  
     msfABSPath = storage->GetURL();
-    msfABSPath.ExtractPathName();
+    ExtractPathName(msfABSPath);
   }
 
   wxString tmp = msfABSPath.toWx();

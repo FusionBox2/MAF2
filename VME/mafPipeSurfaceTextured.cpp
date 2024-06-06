@@ -732,7 +732,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 									  wxBusyInfo wait("texture file: ...");
 									  Sleep(100);
 									  pathName = m_File;
-									  pathName.ExtractPathName();
+									  ExtractPathName(pathName);
 
 									  vtkNew<vtkJPEGWriter> exporter;
 									  exporter->SetInputConnection(m_Actor->GetTexture()->GetInputConnection(0, 0));

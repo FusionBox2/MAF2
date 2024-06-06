@@ -751,7 +751,7 @@ void mafRWIBase::SaveImage(const mafString& filename_, int magnification , int f
     break;
   }
 
-  mafString basename = filename.BaseName();
+  mafString basename = BaseName(filename);
   if (basename.empty())
   {
     filename = m_SaveDir + _R("\\") + filename;
@@ -920,7 +920,7 @@ void mafRWIBase::SaveImageRecursive(const mafString& filename_, mafViewCompound 
     break;
   }
 
-  mafString basename = filename.BaseName();
+  mafString basename = BaseName(filename);
   if (basename.empty())
   {
     filename = m_SaveDir + _R("\\") + filename;
@@ -1132,7 +1132,7 @@ void mafRWIBase::SaveAllImages(const mafString& filename_, mafViewCompound *v, i
     break;
   }
 
-  mafString basename = filename.BaseName();
+  mafString basename = BaseName(filename);
   if (basename.empty())
   {
     filename = m_SaveDir + _R("\\") + filename;

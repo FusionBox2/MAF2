@@ -83,7 +83,7 @@ mafString mafCreateTempFileName(const mafString& base)
   mafString name;
   name = mafWxToString(wxFileName::CreateTempFileName(base.toWx())); // used to get a valid temporary name for cache directory
   mafFileRemove(name);
-  name.ParsePathName();
+  ParsePathName(name);
   return name;
 }
 void mafSplitPath(const mafString& fullname, mafString* path, mafString* name, mafString* ext)
@@ -148,7 +148,7 @@ mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafSt
   mafFileRemove(zip_cache);
   mafSplitPath(zip_cache,&path,&name,&ext);
   zip_cache = path + _R("/") + name + ext;
-  zip_cache.ParsePathName();
+  ParsePathName(zip_cache);
 
   if (!mafDirExists(zip_cache))
     mafDirMake(zip_cache); // create a temporary directory in which extract the archive
@@ -446,4 +446,71 @@ void mafZIPSave(const mafString& filename, const mafString& dir)
 
   if(!mafMakeZip(filename, directory))
     mafErrorMessage(_M(mafString(_L("Failed to create compressed archive!"))));
+}
+
+
+//----------------------------------------------------------------------------
+mafString BaseName(const mafString& str)
+//----------------------------------------------------------------------------
+{
+    mafString res(str);
+    MakeBaseName(res);
+    return res;
+}
+
+//----------------------------------------------------------------------------
+void MakeBaseName(mafString& str)
+//----------------------------------------------------------------------------
+{
+#ifdef _WIN32
+    auto pos = str.find_last_of(_R("/\\"));
+#else
+    auto pos = str.find_last_of(_R("/"));
+#endif
+    if (pos != mafString::npos)
+    {
+        str.erase(0, pos + 1);
+    }
+}
+
+//----------------------------------------------------------------------------
+void ExtractPathName(mafString& str)
+//----------------------------------------------------------------------------
+{
+    //wxString path, s;
+    str = mafWxToString(wxPathOnly(str.toWx()));
+    //Set(path.c_str());
+
+  /*  int idx=FindLastChr('/');
+
+    if (idx>=0)
+    {
+      Erase(idx+1,-1);
+    }
+    else
+    {
+      Set("");
+    }*/
+}
+//----------------------------------------------------------------------------
+void ParsePathName(mafString& str)
+//----------------------------------------------------------------------------
+{
+	if (str.empty())
+		return;
+	// for Windows platforms parse the string to substitute "/" and "\\" with the right one.
+#ifdef _WIN32
+	size_t len = str.length();
+	size_t start = 0;
+	if (len >= 2)
+	{
+		if (str[0] == '\\' && str[1] == '\\')
+			start = 2;
+	}
+	for (size_t i = start; i < len; i++)
+	{
+		if (str[i] == '\\')
+			str[i] = '/';
+	}
+#endif
 }

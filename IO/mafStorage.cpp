@@ -164,7 +164,7 @@ int mafStorage::OpenDirectory(const mafString& pathname)
 
   for (int i=0;i<dir.GetNumberOfFiles();i++)
   {
-    mafString filename = dir.GetFile(i).BaseName();
+    mafString filename = BaseName(dir.GetFile(i));
     m_FilesDictionary.insert(filename);
   }
 

@@ -212,7 +212,7 @@ int mafVMEExternalData::InternalRestore(const mafStorageElement& node_)
 
   Superclass::InternalRestore(node_);
   m_TmpPath = node->GetStorage()->GetURL();
-  m_TmpPath.ExtractPathName();
+  ExtractPathName(m_TmpPath);
   
   m_MSFPath.clear();
 
@@ -229,7 +229,7 @@ void mafVMEExternalData::InitializeCurrentPath()
   if (storage != NULL)
   {
     m_MSFPath = storage->GetURL();
-    m_MSFPath.ExtractPathName();
+    ExtractPathName(m_MSFPath);
   }
 }
 

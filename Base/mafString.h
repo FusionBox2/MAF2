@@ -165,24 +165,12 @@ public:
   /** Find last occurrence of a substring */
   size_type rfind(mafStrBuf str) const;
 
-  mafString BaseName() const;
-
-  mafString& MakeBaseName();
-
-  /** Extract the pathname from a filename string. Result is written inplace. */
-  void ExtractPathName();
-
   mafString Upper()const;
   mafString Lower()const;
 
   mafString& MakeUpper();
   mafString& MakeLower();
   void clear();
-
-  /**
-    parse the given string to substitute each (back)slash
-    character with the right pathname separator.*/
-  void ParsePathName();
 
   /** Return the pointer to the internal c-string */
   mafStrBuf GetCStr() const;

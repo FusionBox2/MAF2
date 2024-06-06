@@ -85,7 +85,7 @@
   else
   {
     szStr = storage->GetURL();
-    szStr.ExtractPathName();
+    ExtractPathName(szStr);
 
     wxString szSep = wxFILE_SEP_PATH;
     if (!wxEndsWithPathSeparator(szStr.toWx()))

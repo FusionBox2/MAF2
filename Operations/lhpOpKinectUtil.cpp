@@ -202,7 +202,7 @@ namespace
       wxSetWorkingDirectory(m_TmpDir.toWx());
     }
 
-    unixname.ParsePathName(); // convert to unix format
+    ParsePathName(unixname); // convert to unix format
 
     m_MSFFile = unixname; 
     mafNodeManager manager;

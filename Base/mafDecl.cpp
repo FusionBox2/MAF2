@@ -79,7 +79,7 @@ mafString  mafGetDirName(const mafString& initial, const mafString& title, wxWin
   if(result != wxID_OK)
     return mafString();
   mafString res = mafWxToString(dialog.GetPath());
-  res.ParsePathName();
+  ParsePathName(res);
   return res;
 }
 
@@ -103,7 +103,7 @@ mafString mafGetOpenFile(const mafString& initial, const mafString& wild, const 
   if(result != wxID_OK)
     return mafString();
   mafString res = mafWxToString(dialog.GetPath());
-  res.ParsePathName();
+  ParsePathName(res);
   return res;
 }
 
@@ -127,7 +127,7 @@ void mafGetOpenMultiFiles(const mafString& initial, const mafString& wild, std::
 	for (int i=0;i<wxfiles.GetCount();i++)
   {
     mafString f = mafWxToString(wxfiles[i]);
-    f.ParsePathName();
+    ParsePathName(f);
     files.push_back(f);
   }
 }
@@ -149,7 +149,7 @@ mafString mafGetSaveFile(const mafString& initial, const mafString& wild, const 
   if(result != wxID_OK)
     return mafString();
   mafString res = mafWxToString(dialog.GetPath());
-  res.ParsePathName();
+  ParsePathName(res);
   return res;
 }
 //----------------------------------------------------------------------------
@@ -165,7 +165,7 @@ mafString mafGetApplicationDirectory()
 		wxSetWorkingDirectory(cd);
 	}
   mafString dir = app_dir;
-  dir.ParsePathName();
+  ParsePathName(dir);
 	return dir;
 }
 //----------------------------------------------------------------------------

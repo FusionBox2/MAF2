@@ -252,49 +252,6 @@ mafString::size_type mafString::rfind(const mafString& str) const
   return (pos != std::basic_string<mafStringChar>::npos) ? pos : -1;
 }
 
-//----------------------------------------------------------------------------
-mafString mafString::BaseName() const
-//----------------------------------------------------------------------------
-{
-  mafString res(*this);
-  return res.MakeBaseName();
-}
-
-//----------------------------------------------------------------------------
-mafString& mafString::MakeBaseName()
-//----------------------------------------------------------------------------
-{
-#ifdef _WIN32
-    auto pos = m_str.find_last_of("/\\");
-#else
-    auto pos = m_str.find_last_of("/");
-#endif
-    if (pos != std::basic_string<mafStringChar>::npos)
-    {
-        m_str.erase(0, pos + 1);
-    }
-    return *this;
-}
-
-//----------------------------------------------------------------------------
-void mafString::ExtractPathName()
-//----------------------------------------------------------------------------
-{
-    //wxString path, s;
-    *this = mafWxToString(wxPathOnly(toWx()));
-    //Set(path.c_str());
-
-  /*  int idx=FindLastChr('/');
-
-    if (idx>=0)
-    {
-      Erase(idx+1,-1);
-    }
-    else
-    {
-      Set("");
-    }*/
-}
 
 //----------------------------------------------------------------------------
 mafString mafString::Upper()const
@@ -339,29 +296,6 @@ void mafString::clear()
 //----------------------------------------------------------------------------
 {
     m_str.clear();
-}
-
-//----------------------------------------------------------------------------
-void mafString::ParsePathName()
-//----------------------------------------------------------------------------
-{
-    if (empty())
-        return;
-    // for Windows platforms parse the string to substitute "/" and "\\" with the right one.
-#ifdef _WIN32
-    size_t len = length();
-    unsigned start = 0;
-    if (len >= 2)
-    {
-        if (m_str[0] == '\\' && m_str[1] == '\\')
-            start = 2;
-    }
-    for (size_t i = start; i < len; i++)
-    {
-        if (m_str[i] == '\\')
-            m_str[i] = '/';
-    }
-#endif
 }
 
 //----------------------------------------------------------------------------

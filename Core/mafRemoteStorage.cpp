@@ -266,7 +266,7 @@ int mafRemoteStorage::OpenLocalMSFDirectory()
 
   for (int i=0;i<dir.GetNumberOfFiles();i++)
   {
-    mafString filename = dir.GetFile(i).BaseName();
+    mafString filename = BaseName(dir.GetFile(i));
     m_LocalFilesDictionary.insert(filename);
   }
   return MAF_OK;

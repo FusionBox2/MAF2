@@ -39,4 +39,14 @@ MAF_EXPORT void mafExtractZIP(const mafString& filename, const mafString& temp_d
 MAF_EXPORT bool mafExtractZIP(const mafString& filename, const mafString& entry_name, void *& buffer, size_t& size);
 MAF_EXPORT void mafZIPSave(const mafString& filename, const mafString& dir);
 
+mafString BaseName(const mafString& str);
+void MakeBaseName(mafString& str);
+/** Extract the pathname from a filename string. Result is written inplace. */
+void ExtractPathName(mafString& str);
+/**
+  parse the given string to substitute each (back)slash
+  character with the right pathname separator.*/
+void ParsePathName(mafString& str);
+
+
 #endif
