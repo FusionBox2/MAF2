@@ -506,7 +506,7 @@ void mafOpVolumeUnion::CreateGui()
 	buildHelpGui.SetId(GET_BUILD_HELP_GUI);
 	mafEventMacro(buildHelpGui);
 
-	if (buildHelpGui.GetArg() == true)
+	if (buildHelpGui.GetArg())
 	{
 		m_Gui->Button(ID_HELP, _R("Help"), _R(""));
 	}

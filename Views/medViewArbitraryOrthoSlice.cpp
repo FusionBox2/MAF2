@@ -4137,7 +4137,7 @@ void medViewArbitraryOrthoSlice::SaveSlicesTextureToFile(int choosedExportAxis)
 
 			mafEventMacro(mafEvent(this,CAMERA_UPDATE));				
 		}
-		else if (m_EnableThickness[choosedExportAxis] == true) // use rx projection
+		else if (m_EnableThickness[choosedExportAxis]) // use rx projection
 		{
 			textureToWriteOnDisk = vtkImageData::New();
 			AccumulateTextures(currentSlicer, m_ThicknessValue[choosedExportAxis], textureToWriteOnDisk, false );
@@ -4176,7 +4176,7 @@ void medViewArbitraryOrthoSlice::SaveSlicesTextureToFile(int choosedExportAxis)
 
 	currentSlicer->SetAbsMatrix(mafMatrix(originalMatrix));
 
-	if (m_EnableThickness[choosedExportAxis] == true)
+	if (m_EnableThickness[choosedExportAxis])
 	{
 		AccumulateTextures(currentSlicer, m_ThicknessValue[choosedExportAxis], NULL, true);
 	}
@@ -4206,7 +4206,7 @@ void medViewArbitraryOrthoSlice::OnEventID_ENABLE_THICKNESS( int color )
 
 		wxMessageBox(wxString::Format(
 			_("The RX accumulation works for structured points only, \n" 
-			"in current release.\n", )));    
+			"in current release.\n")));    
 
 		return;
 	}
@@ -4221,17 +4221,17 @@ void medViewArbitraryOrthoSlice::UpdateAllViewsThickness()
 {
 	wxBusyInfo wait_info("please wait");
 
-	if (m_EnableThickness[RED] == true) // prevent cpu waste
+	if (m_EnableThickness[RED]) // prevent cpu waste
 	{
 		AccumulateTextures(m_SlicerX, m_ThicknessValue[RED], NULL, true);
 	}
 
-	if (m_EnableThickness[GREEN] == true) // prevent cpu waste
+	if (m_EnableThickness[GREEN]) // prevent cpu waste
 	{
 		AccumulateTextures(m_SlicerY, m_ThicknessValue[GREEN], NULL, true);
 	}
 
-	if (m_EnableThickness[BLUE] == true) // prevent cpu waste
+	if (m_EnableThickness[BLUE]) // prevent cpu waste
 	{
 		AccumulateTextures(m_SlicerZ, m_ThicknessValue[BLUE], NULL, true);
 	}
@@ -4750,7 +4750,7 @@ void medViewArbitraryOrthoSlice::SaveSlicesFromRenderWindowToFile(int chooseExpo
 
 		vtkImageData *textureToWriteOnDisk = NULL;
 
-		if (m_EnableThickness[chooseExportAxis] == false)
+		if (!m_EnableThickness[chooseExportAxis])
 		{
 			// update the slicer
 			currentSlicer->GetSurfaceOutput()->GetVTKData()->Modified();
@@ -4766,7 +4766,7 @@ void medViewArbitraryOrthoSlice::SaveSlicesFromRenderWindowToFile(int chooseExpo
 
 			mafEventMacro(mafEvent(this,CAMERA_UPDATE));				
 		}
-		else if (m_EnableThickness[chooseExportAxis] == true)
+		else if (m_EnableThickness[chooseExportAxis])
 		{
 			textureToWriteOnDisk = vtkImageData::New();
 			AccumulateTextures(currentSlicer, m_ThicknessValue[chooseExportAxis], textureToWriteOnDisk, false );
@@ -4864,7 +4864,7 @@ void medViewArbitraryOrthoSlice::SaveSlicesFromRenderWindowToFile(int chooseExpo
 
 	currentSlicer->SetAbsMatrix(mafMatrix(originalMatrix));
 
-	if (m_EnableThickness[chooseExportAxis] == true)
+	if (m_EnableThickness[chooseExportAxis])
 	{
 		AccumulateTextures(currentSlicer, m_ThicknessValue[chooseExportAxis], NULL, true);
 	}

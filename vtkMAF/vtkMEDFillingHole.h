@@ -134,7 +134,7 @@ public:
 #pragma endregion Nested classes
 
 public:
-  typedef enum FillingTypes
+  enum FillingTypes
   {
     Flat,               //no fairing is applied
     SmoothMembrane,     //fairing is applied based on the minimization of membrane energy (prefers smaller surface area)

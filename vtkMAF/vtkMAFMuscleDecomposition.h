@@ -73,7 +73,7 @@ protected:
   int DebugMode;	//<masked debug mode - see below
 
 public:
-  typedef enum DebugModeFlags
+  enum DebugModeFlags
   {
     dbgNone = 0,                  //no extra things
     dbgVisualizeFitting = 1,      //visualizes in an external renderer the cube fitting process

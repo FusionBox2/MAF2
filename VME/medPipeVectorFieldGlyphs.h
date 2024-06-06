@@ -168,7 +168,7 @@ public:
 
 protected:
 
-	typedef struct FILTER_ITEM 
+	struct FILTER_ITEM 
 	{    
 		double value[2];
 

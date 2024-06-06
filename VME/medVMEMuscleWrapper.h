@@ -96,7 +96,7 @@ public:
 
   const static char* MUSCLEWRAPPER_LINK_NAMES[];    
 protected:
-  typedef struct WRAPPER_ITEM 
+  struct WRAPPER_ITEM 
   {    
     mafVME* pVmeRP_CP[2];           //<VME with poly-line representing action lines of the muscle in the rest/current pose
     mafVME* pVmeRefSys_RP_CP[2];    //<VME with reference system

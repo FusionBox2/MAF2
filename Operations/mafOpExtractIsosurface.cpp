@@ -273,7 +273,7 @@ void mafOpExtractIsosurface::CreateOpDialog()
 
   mafGUIButton *b_help = NULL;
 
-  if (buildHelpGui.GetArg() == true)
+  if (buildHelpGui.GetArg())
   {
 	  b_help = new mafGUIButton(m_Dialog, ID_HELP_BUTTON, _R("Help"), p, wxSize(80, 20));
 	  // help validator

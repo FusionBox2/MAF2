@@ -1386,7 +1386,7 @@ mafGUI* mafNode::CreateGui()
   m_Gui = new mafGUI(this);
   
   mafString type_name = _R(GetTypeName());
-  if((*GetMAFExpertMode()) == TRUE) 
+  if((*GetMAFExpertMode())) 
     m_Gui->Button(ID_PRINT_INFO, type_name, _R(""), _R("Print node debug information"));
   
   m_Gui->String(ID_NAME,_R("name :"), &m_Name);
@@ -1396,7 +1396,7 @@ mafGUI* mafNode::CreateGui()
   buildHelpGui.SetId(GET_BUILD_HELP_GUI);
   ForwardUpEvent(buildHelpGui);
 
-  if (buildHelpGui.GetArg() == true)
+  if (buildHelpGui.GetArg())
   {
 	  m_Gui->Button(ID_HELP, _R("Help"),_R(""));	
   }

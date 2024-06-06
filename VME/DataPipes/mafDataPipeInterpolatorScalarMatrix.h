@@ -26,8 +26,6 @@
 //----------------------------------------------------------------------------
 class mafVMEItemScalarMatrix;
 
-template class MAF_EXPORT vnl_matrix<double>;
-
 /**
   Class Name: mafScalarMatrixInterpolator.
   Data interpolator specialized for mafVMEScalarMatrix (for VNL matrix data).

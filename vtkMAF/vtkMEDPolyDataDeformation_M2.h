@@ -451,7 +451,7 @@ protected:
   }
 
   //this structure is used in MatchCurves
-  typedef struct CURVE_VERTEX;
+  struct CURVE_VERTEX;
 
   /** Compute the best match for skeleton vertices.
   Only junctions and terminal nodes are matched. The caller can optionally 
@@ -586,7 +586,7 @@ protected:
     vtkCellLocator* cellLocator, double dblMaxDist);
 
   //this structure is used in GetPathLength
-  typedef struct DIJKSTRA_ITEM;
+  struct DIJKSTRA_ITEM;
 
   /** Computes the length of the path between nPtFrom to nPtTo vertices.
   The computation is not precise (because of speed). If there is no path, or the

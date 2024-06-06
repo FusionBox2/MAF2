@@ -436,7 +436,7 @@ protected:
   }
 
   //this structure is used in MatchCurves
-  typedef struct CURVE_VERTEX;
+  struct CURVE_VERTEX;
 
   /** Compute the best match for skeleton vertices.
   Only junctions and terminal nodes are matched. The caller can optionally 
@@ -566,7 +566,7 @@ protected:
   void BuildGeneralRotationMatrix(double r[3], double cos_theta, double M[3][3]);
 
   //this struct is used in ComputeMeshParametrization
-  typedef struct JOIN_VERTEX;
+  struct JOIN_VERTEX;
 
   /** Parametrize the input mesh using the super-skeleton.
   N.B. edges ROI must be build and refined before this routine may be called. */

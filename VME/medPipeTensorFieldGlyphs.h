@@ -166,7 +166,7 @@ public:
   /*virtual*/ void OnEvent(mafEventBase *maf_event);
 
 protected:
-	typedef struct FILTER_ITEM 
+	struct FILTER_ITEM 
 	{    
 		double value[2];
 

@@ -323,7 +323,7 @@ void medOpMeshDeformation::CreateOpDialog()
 
   wxButton* helpButton = NULL;
 
-  if (buildHelpGui.GetArg() == true)
+  if (buildHelpGui.GetArg())
   {
 	  helpButton = new wxButton( m_Dialog, ID_HELP_BUTTON, wxT("Help"), wxDefaultPosition, wxDefaultSize, 0 );
   }
