@@ -393,14 +393,14 @@ void medOpVolumeResample::OpDo()
 void medOpVolumeResample::Resample()
 //----------------------------------------------------------------------------
 {
-  mafSmartPointer<mafTransform> resamplingBoxPose;
+  mafAutoPointer<mafTransform> resamplingBoxPose = mafTransform::New();
   resamplingBoxPose->SetOrientation(m_ROIOrientation);
   resamplingBoxPose->SetPosition(m_NewVolumePosition);
 
-  mafSmartPointer<mafTransformFrame> localPoseTransformFrame;
+  mafAutoPointer<mafTransformFrame> localPoseTransformFrame = mafTransformFrame::New();
   localPoseTransformFrame->SetInput(resamplingBoxPose);
   
-  mafSmartPointer<mafTransformFrame> outputToInputTransformFrame;
+  mafAutoPointer<mafTransformFrame> outputToInputTransformFrame = mafTransformFrame::New();
   
   mafString outputVmeName = _R("resampled_");
 	outputVmeName += m_Input->GetName();
@@ -450,20 +450,20 @@ void medOpVolumeResample::Resample()
         // Set the target be vme's parent frame. And Input frame to the root. I've to 
         // set at each iteration since I'm using the SetMatrix, which doesn't support
         // transform pipelines.
-        mafSmartPointer<mafMatrix> outputParentAbsPose;
+        mafAutoPointer<mafMatrix> outputParentAbsPose = mafMatrix::New();
         m_ResampledVme->GetParent()->GetOutput()->GetAbsMatrix(*outputParentAbsPose.GetPointer(),input_item->GetTimeStamp());
         localPoseTransformFrame->SetInputFrame(outputParentAbsPose);
 
-        mafSmartPointer<mafMatrix> inputParentAbsPose;
+        mafAutoPointer<mafMatrix> inputParentAbsPose = mafMatrix::New();
         ((mafVME *)m_Input->GetParent())->GetOutput()->GetAbsMatrix(*inputParentAbsPose.GetPointer(),input_item->GetTimeStamp());
         localPoseTransformFrame->SetTargetFrame(inputParentAbsPose);
         localPoseTransformFrame->Update();
 
-        mafSmartPointer<mafMatrix> outputAbsPose;
+        mafAutoPointer<mafMatrix> outputAbsPose = mafMatrix::New();
         m_ResampledVme->GetOutput()->GetAbsMatrix(*outputAbsPose.GetPointer(),input_item->GetTimeStamp());
         outputToInputTransformFrame->SetInputFrame(resamplingBoxPose->GetMatrixPointer());
 
-        mafSmartPointer<mafMatrix> inputAbsPose;
+        mafAutoPointer<mafMatrix> inputAbsPose = mafMatrix::New();
 				inputAbsPose->Identity();
         outputToInputTransformFrame->SetTargetFrame(inputAbsPose);
         outputToInputTransformFrame->Update();
@@ -575,19 +575,19 @@ void medOpVolumeResample::UpdateGizmoData(mafEvent *e)
 	{
 	case ID_VOLUME_ORIENTATION:
 		{
-			mafSmartPointer<mafMatrix> LocMatr;
-			mafSmartPointer<mafMatrix> NewAbsMatr;
+			mafAutoPointer<mafMatrix> LocMatr = mafMatrix::New();
+			mafAutoPointer<mafMatrix> NewAbsMatr = mafMatrix::New();
 			mafTransform::SetOrientation(*(LocMatr.GetPointer()),m_ROIOrientation[0],m_ROIOrientation[1],m_ROIOrientation[2]);
-			mafSmartPointer<mafTransformFrame> mflTr;
+			mafAutoPointer<mafTransformFrame> mflTr = mafTransformFrame::New();
 			mflTr->SetInput(LocMatr);
 			mflTr->SetInputFrame(m_CenterVolumeRefSysMatrix);
 			mflTr->Update();
 			NewAbsMatr->DeepCopy(&(mflTr->GetMatrix()));
 
 			// build objects
-			mafSmartPointer<mafMatrix> M;
+			mafAutoPointer<mafMatrix> M = mafMatrix::New();
 			mafMatrix invOldAbsPose;
-			mafSmartPointer<mafMatrix> newAbsPose;
+			mafAutoPointer<mafMatrix> newAbsPose = mafMatrix::New();
 
 			// incoming matrix is a translation matrix
 			newAbsPose->DeepCopy(m_GizmoRotate->GetAbsPose());
@@ -605,7 +605,7 @@ void medOpVolumeResample::UpdateGizmoData(mafEvent *e)
 			tranVMEDummy->Concatenate(M->GetVTKMatrix());
 			tranVMEDummy->Update();
 
-			mafSmartPointer<mafMatrix> newAbsMatrVMEDummy;
+			mafAutoPointer<mafMatrix> newAbsMatrVMEDummy = mafMatrix::New();
 			newAbsMatrVMEDummy->DeepCopy(tranVMEDummy->GetMatrix());
 			newAbsMatrVMEDummy->SetTimeStamp(0.0);
 
@@ -614,19 +614,19 @@ void medOpVolumeResample::UpdateGizmoData(mafEvent *e)
 		break;
 	case ID_VOLUME_ORIGIN:
 		{
-			mafSmartPointer<mafMatrix> LocMatr;
-			mafSmartPointer<mafMatrix> NewAbsMatr;
+			mafAutoPointer<mafMatrix> LocMatr = mafMatrix::New();
+			mafAutoPointer<mafMatrix> NewAbsMatr = mafMatrix::New();
 			mafTransform::SetPosition(*(LocMatr.GetPointer()),m_ROIPosition[0],m_ROIPosition[1],m_ROIPosition[2]);
-			mafSmartPointer<mafTransformFrame> mflTr;
+			mafAutoPointer<mafTransformFrame> mflTr = mafTransformFrame::New();
 			mflTr->SetInput(LocMatr);
 			mflTr->SetInputFrame(m_CenterVolumeRefSysMatrix);
 			mflTr->Update();
 			NewAbsMatr->DeepCopy(&(mflTr->GetMatrix()));
 
 			// build objects
-			mafSmartPointer<mafMatrix> M;
+			mafAutoPointer<mafMatrix> M = mafMatrix::New();
 			mafMatrix invOldAbsPose;
-			mafSmartPointer<mafMatrix> newAbsPose;
+			mafAutoPointer<mafMatrix> newAbsPose = mafMatrix::New();
 
 			// incoming matrix is a translation matrix
 			newAbsPose->DeepCopy(NewAbsMatr);
@@ -644,7 +644,7 @@ void medOpVolumeResample::UpdateGizmoData(mafEvent *e)
 			tranVMEDummy->Concatenate(M->GetVTKMatrix());
 			tranVMEDummy->Update();
 
-			mafSmartPointer<mafMatrix> newAbsMatrVMEDummy;
+			mafAutoPointer<mafMatrix> newAbsMatrVMEDummy = mafMatrix::New();
 			newAbsMatrVMEDummy->DeepCopy(tranVMEDummy->GetMatrix());
 			newAbsMatrVMEDummy->SetTimeStamp(0.0);
 
@@ -1026,7 +1026,7 @@ void medOpVolumeResample::PostMultiplyEventMatrix(mafEventBase *maf_event)
 	if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
 	{
 		// handle incoming transform events
-		mafSmartPointer<mafMatrix> newAbsMatr;
+		mafAutoPointer<mafMatrix> newAbsMatr = mafMatrix::New();
 		if(e->GetSender()==m_GizmoTranslate)
 			newAbsMatr->DeepCopy(m_GizmoTranslate->GetAbsPose()->GetVTKMatrix());
 		else if(e->GetSender()==m_GizmoRotate)
@@ -1037,7 +1037,7 @@ void medOpVolumeResample::PostMultiplyEventMatrix(mafEventBase *maf_event)
 		if(e->GetSender()==m_GizmoTranslate)//translate
 		{
 
-			mafSmartPointer<mafTransformFrame> mflTr;
+			mafAutoPointer<mafTransformFrame> mflTr = mafTransformFrame::New();
 			mflTr->SetInput(newAbsMatr);
 			mflTr->SetTargetFrame(m_CenterVolumeRefSysMatrix);
 			mflTr->Update();
@@ -1057,7 +1057,7 @@ void medOpVolumeResample::PostMultiplyEventMatrix(mafEventBase *maf_event)
 		}
 		else if(e->GetSender()==m_GizmoRotate)//rotate
 		{
-			mafSmartPointer<mafTransformFrame> mflTr;
+			mafAutoPointer<mafTransformFrame> mflTr = mafTransformFrame::New();
 			mflTr->SetInput(newAbsMatr);
 			mflTr->SetTargetFrame(m_CenterVolumeRefSysMatrix);
 			mflTr->Update();
@@ -1072,7 +1072,7 @@ void medOpVolumeResample::PostMultiplyEventMatrix(mafEventBase *maf_event)
 		tran_bound_box->Concatenate(e->GetMatrix()->GetVTKMatrix());
 		tran_bound_box->Update();
 
-		mafSmartPointer<mafMatrix> newAbsMatrBox;
+		mafAutoPointer<mafMatrix> newAbsMatrBox = mafMatrix::New();
 		newAbsMatrBox->DeepCopy(tran_bound_box->GetMatrix());
 		newAbsMatrBox->SetTimeStamp(0.0);
 

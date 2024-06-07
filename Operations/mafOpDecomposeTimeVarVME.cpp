@@ -476,7 +476,7 @@ void mafOpDecomposeTimeVarVME::CreateStaticVME(mafTimeStamp timeSt)
   mafString typeVme;
   typeVme = _R(m_Input->GetTypeName());
 
-  mafSmartPointer<mafVMEFactory> factory;
+  mafAutoPointer<mafVMEFactory> factory = mafVMEFactory::New();
   mafObject *objVme = factory->CreateInstance(typeVme.GetCStr());
   mafVME *newVme = mafVME::SafeDownCast(objVme);
   if (!newVme)

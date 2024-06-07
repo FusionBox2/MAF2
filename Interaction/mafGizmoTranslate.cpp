@@ -186,7 +186,7 @@ void mafGizmoTranslate::OnEventGizmoComponents(mafEventBase *maf_event)
         else if (arg == mafInteractorGenericMouse::MOUSE_MOVE)
         {     
           // matrix holding abs pose after mouse move event
-          mafSmartPointer<mafMatrix> newAbsMatr;
+          mafAutoPointer<mafMatrix> newAbsMatr = mafMatrix::New();
           if (this->m_Modality == G_LOCAL) // gizmo working in local mode; all its components are moving
                                          // in a single mouse move event
           {
@@ -422,9 +422,9 @@ void mafGizmoTranslate::SendTransformMatrixFromGui(mafEventBase *maf_event)
     // [NewAbsPose] = [M]*[OldAbsPose] => [M] = [NewAbsPose][OldAbsPose]
 
     // build objects
-    mafSmartPointer<mafMatrix> M;
+    mafAutoPointer<mafMatrix> M = mafMatrix::New();
     mafMatrix invOldAbsPose;
-    mafSmartPointer<mafMatrix> newAbsPose;
+    mafAutoPointer<mafMatrix> newAbsPose = mafMatrix::New();
 
     // incoming matrix is a translation matrix
     newAbsPose->DeepCopy(e->GetMatrix()); // abs position from gui
@@ -443,7 +443,7 @@ void mafGizmoTranslate::SendTransformMatrixFromGui(mafEventBase *maf_event)
 void mafGizmoTranslate::SetAbsPose(mafMatrix *absPose, mafTimeStamp ts)
 //----------------------------------------------------------------------------
 {
-  mafSmartPointer<mafMatrix> tmpMatr;
+  mafAutoPointer<mafMatrix> tmpMatr = mafMatrix::New();
   tmpMatr->DeepCopy(absPose);
   tmpMatr->SetTimeStamp(ts);
   // remove scaling part from gizmo abs pose; gizmo not scale

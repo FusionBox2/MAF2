@@ -373,7 +373,7 @@ void medOpLabelizeSurface::ShowClipPlane(bool show)
 			m_ImplicitPlaneGizmo->ReparentTo(mafVME::SafeDownCast(m_Input->GetRoot()));
 
 			// position the plane
-			mafSmartPointer<mafTransform> currTr;
+			mafAutoPointer<mafTransform> currTr = mafTransform::New();
 			currTr->Translate((b[0] + b[1]) / 2, (b[2] + b[3]) / 2,(b[4] + b[5]) / 2 , POST_MULTIPLY);
 			currTr->Update();
 
@@ -637,7 +637,7 @@ void medOpLabelizeSurface::OpDo()
 	if(m_VmeEditor)
 	{
 		mafVMESurface::SafeDownCast(m_Input)->SetData(vtkPolyData::SafeDownCast(m_VmeEditor->GetOutput()->GetVTKData()),((mafVMESurface*)m_Input)->GetTimeStamp());
-		mafSmartPointer<mmaMaterial> mat;
+		mafAutoPointer<mmaMaterial> mat = mmaMaterial::New();
 		mat->DeepCopy(m_VmeEditor->GetMaterial());
 		mafVMESurface::SafeDownCast(m_Input)->GetSurfaceOutput()->SetMaterial(mat);
 		mafVMESurface::SafeDownCast(m_Input)->GetSurfaceOutput()->Update();

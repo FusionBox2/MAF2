@@ -748,7 +748,7 @@ int medOpImporterDicomOffis::BuildOutputVMEImagesFromDicom()
 			//im->Update();
 		}
 
-		mafSmartPointer<mafVMEImage> image;
+		mafAutoPointer<mafVMEImage> image = mafVMEImage::New();
 		mafString name = m_VolumeName;
 		name.append(mafString::Format(_R("_%d"), count));
 		image->SetName(name);
@@ -840,7 +840,7 @@ int medOpImporterDicomOffis::BuildOutputVMEImagesFromDicomCineMRI()
 	//create all the animated images
 	for (int i = m_ZCropBounds[0]; i < m_ZCropBounds[1]+1;i += step)
 	{
-		mafSmartPointer<mafVMEImage> image;
+		mafAutoPointer<mafVMEImage> image = mafVMEImage::New();
 		mafString name = m_VolumeName;
 		name.append(mafString::Format(_R("_%d_%d"), i, m_NumberOfTimeFrames));
 		image->SetName(name);
@@ -946,8 +946,8 @@ int medOpImporterDicomOffis::BuildOutputVMEImagesFromDicomCineMRI()
 				tr->PostMultiply();
 				tr->Translate(-sliceVtkDataCenter[0], -sliceVtkDataCenter[1],-sliceVtkDataCenter[2]);
 				tr->Concatenate(sliceOrientationMatrix);
-				\
-					mafSmartPointer<mafTransform> boxPose;
+
+				mafAutoPointer<mafTransform> boxPose = mafTransform::New();
 				boxPose->SetMatrix(tr->GetMatrix());
 				boxPose->Update();
 
@@ -1358,7 +1358,7 @@ int medOpImporterDicomOffis::BuildOutputVMEGrayVolumeFromDicom()
 		mat->SetElement(3,2,0);
 		mat->SetElement(3,3,1);
 
-		mafSmartPointer<mafTransform> boxPose;
+		mafAutoPointer<mafTransform> boxPose = mafTransform::New();
 		boxPose->SetMatrix(mat);     
 		boxPose->Update();
 		m_Volume->SetAbsMatrix(boxPose->GetMatrix());
@@ -1765,7 +1765,7 @@ int medOpImporterDicomOffis::BuildOutputVMEGrayVolumeFromDicomCineMRI()
 
 			slice->GetOrientation(mat);
 
-			mafSmartPointer<mafTransform> boxPose;
+			mafAutoPointer<mafTransform> boxPose = mafTransform::New();
 			boxPose->SetMatrix(mat);
 
 			double pos[3];
@@ -5123,14 +5123,14 @@ void medOpImporterDicomOffis::ResampleVolume()
 	mafVMEVolumeGray *tmpVmeVolumeGray;
 	mafNEW(tmpVmeVolumeGray);
 
-	mafSmartPointer<mafTransform> box_pose;
+	mafAutoPointer<mafTransform> box_pose = mafTransform::New();
 	box_pose->SetOrientation(m_VolumeOrientation);
 	box_pose->SetPosition(m_VolumePosition);
 
-	mafSmartPointer<mafTransformFrame> local_pose;
+	mafAutoPointer<mafTransformFrame> local_pose = mafTransformFrame::New();
 	local_pose->SetInput(box_pose);
 
-	mafSmartPointer<mafTransformFrame> output_to_input;
+	mafAutoPointer<mafTransformFrame> output_to_input = mafTransformFrame::New();
 
 	// In a future version if not a "Natural" data the filter should operate in place.
 	mafString new_vme_name = _R("resampled_");
@@ -5188,20 +5188,20 @@ void medOpImporterDicomOffis::ResampleVolume()
 				// Set the target be vme's parent frame. And Input frame to the root. I've to 
 				// set at each iteration since I'm using the SetMatrix, which doesn't support
 				// transform pipelines.
-				mafSmartPointer<mafMatrix> output_parent_abs_pose;
+				mafAutoPointer<mafMatrix> output_parent_abs_pose = mafMatrix::New();
 				mafVME::SafeDownCast(m_Input)->GetOutput()->GetAbsMatrix(*output_parent_abs_pose.GetPointer(),input_item->GetTimeStamp());
 				local_pose->SetInputFrame(output_parent_abs_pose);
 
-				mafSmartPointer<mafMatrix> input_parent_abs_pose;
+				mafAutoPointer<mafMatrix> input_parent_abs_pose = mafMatrix::New();
 				mafVME::SafeDownCast(m_Input)->GetOutput()->GetAbsMatrix(*input_parent_abs_pose.GetPointer(),input_item->GetTimeStamp());
 				local_pose->SetTargetFrame(input_parent_abs_pose);
 				local_pose->Update();
 
-				mafSmartPointer<mafMatrix> output_abs_pose;
+				mafAutoPointer<mafMatrix> output_abs_pose = mafMatrix::New();
 				m_Volume->GetOutput()->GetAbsMatrix(*output_abs_pose.GetPointer(),input_item->GetTimeStamp());
 				output_to_input->SetInputFrame(box_pose->GetMatrixPointer());
 
-				mafSmartPointer<mafMatrix> input_abs_pose;
+				mafAutoPointer<mafMatrix> input_abs_pose = mafMatrix::New();
 				mafVME::SafeDownCast(m_Input)->GetOutput()->GetAbsMatrix(*input_abs_pose.GetPointer(),input_item->GetTimeStamp());
 				output_to_input->SetTargetFrame(input_abs_pose);
 				output_to_input->Update();
@@ -6332,7 +6332,7 @@ void medOpImporterDicomOffis::ApplyReferenceSystem()
 			dummyTransform->Concatenate(image->GetMatrixPipe()->GetMatrix().GetVTKMatrix());
 			dummyTransform->Update();
 
-			mafSmartPointer<mafTransform> boxPose;
+			mafAutoPointer<mafTransform> boxPose = mafTransform::New();
 			boxPose->SetMatrix(dummyTransform->GetMatrix());
 			boxPose->Update();
 

@@ -293,13 +293,13 @@ void mafVMESlicer::InternalPreUpdate()
 			m_CopyTransform->SetMatrix(m_Transform->GetMatrix());
 			m_CopyTransform->Update();
 
-			mafSmartPointer<mafTransform> slicedVMETransform;
+			mafAutoPointer<mafTransform> slicedVMETransform = mafTransform::New();
 			slicedVMETransform->SetMatrix(vol->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
 			slicedVMETransform->Update();
 			slicedVMETransform->Invert();
 			slicedVMETransform->Update();
 
-			mafSmartPointer<mafTransform> parentTransform;
+			mafAutoPointer<mafTransform> parentTransform = mafTransform::New();
 			parentTransform->SetMatrix(((mafVME *)GetParent())->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
 			parentTransform->Update();
 

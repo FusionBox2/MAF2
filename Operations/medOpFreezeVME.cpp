@@ -114,7 +114,7 @@ void medOpFreezeVME::OpRun()
 		{
 			mmaMaterial *material = (mmaMaterial *)labeledVolume->GetAttribute(_R("MaterialAttributes"));
 
-			mafSmartPointer<mafVMEVolumeGray> newVolume;
+			mafAutoPointer<mafVMEVolumeGray> newVolume = mafVMEVolumeGray::New();
 			newVolume->SetName(labeledVolume->GetName());
 			newVolume->SetData(imageData,labeledVolume->GetTimeStamp());
 			newVolume->Update();
@@ -142,7 +142,7 @@ void medOpFreezeVME::OpRun()
 			{
 				mmaMaterial *material = (mmaMaterial *)labeledVolume->GetAttribute(_R("MaterialAttributes"));
 
-				mafSmartPointer<mafVMEVolumeGray> newVolume;
+				mafAutoPointer<mafVMEVolumeGray> newVolume = mafVMEVolumeGray::New();
 				newVolume->SetName(labeledVolume->GetName());
 				newVolume->SetData(rectilinearGrid,labeledVolume->GetTimeStamp());
 				newVolume->Update();
@@ -170,7 +170,7 @@ void medOpFreezeVME::OpRun()
 				{
 					mmaMaterial *material = vmeSpline->GetMaterial();
 
-					mafSmartPointer<mafVMEPolyline> newPolyline;
+					mafAutoPointer<mafVMEPolyline> newPolyline = mafVMEPolyline::New();
 					newPolyline->SetName(vmeSpline->GetName());
 					newPolyline->SetData(polyData,vmeSpline->GetTimeStamp());
 					newPolyline->Update();
@@ -193,7 +193,7 @@ void medOpFreezeVME::OpRun()
 				{
 					mmaMaterial *material = vmeSurface->GetMaterial();
 
-					mafSmartPointer<mafVMESurface> newSurface;
+					mafAutoPointer<mafVMESurface> newSurface = mafVMESurface::New();
 					newSurface->SetName(vmeSurface->GetName());
 					newSurface->SetData(polyData,vmeSurface->GetTimeStamp());
 					newSurface->Update();
@@ -217,7 +217,7 @@ void medOpFreezeVME::OpRun()
 				{
 					mmaMaterial *material = meter->GetMaterial();
 
-					mafSmartPointer<mafVMEPolyline> newPolyline;
+					mafAutoPointer<mafVMEPolyline> newPolyline = mafVMEPolyline::New();
 					newPolyline->SetName(meter->GetName());
 					newPolyline->SetData(polyData,meter->GetTimeStamp());
 					newPolyline->Update();
@@ -241,7 +241,7 @@ void medOpFreezeVME::OpRun()
 				{
 					mmaMaterial *material = refsys->GetMaterial();
 
-					mafSmartPointer<mafVMESurface> surface;
+					mafAutoPointer<mafVMESurface> surface = mafVMESurface::New();
 					surface->SetName(refsys->GetName());
 					surface->SetData(polyData,refsys->GetTimeStamp());
 					surface->Update();
@@ -265,7 +265,7 @@ void medOpFreezeVME::OpRun()
 				{
 					mmaMaterial *material = slicer->GetMaterial();
 
-					mafSmartPointer<mafVMESurface> newSurface;
+					mafAutoPointer<mafVMESurface> newSurface = mafVMESurface::New();
 					newSurface->SetName(slicer->GetName());
 					newSurface->SetData(polyData,slicer->GetTimeStamp());
 					vtkNew<vtkImageData> text;
@@ -294,7 +294,7 @@ void medOpFreezeVME::OpRun()
 				{
 					mmaMaterial *material = prober->GetMaterial();
 
-					mafSmartPointer<mafVMESurface> newSurface;
+					mafAutoPointer<mafVMESurface> newSurface = mafVMESurface::New();
 					newSurface->SetName(prober->GetName());
 					newSurface->SetData(polyData,prober->GetTimeStamp());
 					newSurface->Update();
@@ -318,7 +318,7 @@ void medOpFreezeVME::OpRun()
 				{
 					mmaMaterial *material = wrappedMeter->GetMaterial();
 
-					mafSmartPointer<mafVMEPolyline> newPolyline;
+					mafAutoPointer<mafVMEPolyline> newPolyline = mafVMEPolyline::New();
 					newPolyline->SetName(wrappedMeter->GetName());
 					newPolyline->SetData(polyData,wrappedMeter->GetTimeStamp());
 					newPolyline->Update();
@@ -342,7 +342,7 @@ void medOpFreezeVME::OpRun()
 				{
 					mmaMaterial *material = wrappedMeter->GetMaterial();
 
-					mafSmartPointer<mafVMEPolyline> newPolyline;
+					mafAutoPointer<mafVMEPolyline> newPolyline = mafVMEPolyline::New();
 					newPolyline->SetName(wrappedMeter->GetName());
 					newPolyline->SetData(polyData,wrappedMeter->GetTimeStamp());
 					newPolyline->Update();

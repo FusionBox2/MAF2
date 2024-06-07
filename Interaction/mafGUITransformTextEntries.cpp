@@ -183,7 +183,7 @@ void mafGUITransformTextEntries::TextEntriesChanged()
   - translate 
   */
 
-  mafSmartPointer<mafTransform> tran;
+  mafAutoPointer<mafTransform> tran = mafTransform::New();
   tran->Scale(m_Scaling[0], m_Scaling[1], m_Scaling[2],POST_MULTIPLY);
   tran->RotateY(m_Orientation[1], POST_MULTIPLY);
   tran->RotateX(m_Orientation[0], POST_MULTIPLY);

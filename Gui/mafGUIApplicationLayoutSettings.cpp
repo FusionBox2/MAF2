@@ -259,7 +259,7 @@ void mafGUIApplicationLayoutSettings::AddLayout()
 
     // delete old child which will be substituted
     m_List->Delete(idx);
-    mafSmartPointer<mafNodeLayout> child;
+    mafAutoPointer<mafNodeLayout> child = mafNodeLayout::New();
     m_XMLRoot->RemoveChild(m_XMLRoot->FindInTreeByName(name));
   }
 
@@ -275,7 +275,7 @@ void mafGUIApplicationLayoutSettings::AddLayout()
     size[0] = rect.GetSize().GetWidth();
     size[1] = rect.GetSize().GetHeight();
 
-    mafSmartPointer<mafNodeLayout> child;
+    mafAutoPointer<mafNodeLayout> child = mafNodeLayout::New();
     m_XMLRoot->AddChild(child);
     
     if(m_Layout = mmaApplicationLayout::SafeDownCast(child->GetLayout()));

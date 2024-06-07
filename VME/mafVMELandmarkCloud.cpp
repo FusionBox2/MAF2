@@ -235,7 +235,7 @@ int mafVMELandmarkCloud::SetNumberOfLandmarks(int num)
       // add default names to new landmarks
       for (int n = oldnum; n < num; n++)
       {
-        mafSmartPointer<mafVMELandmark> lm;
+        mafAutoPointer<mafVMELandmark> lm = mafVMELandmark::New();
         Superclass::AddChild(lm);
 
         mafString name;
@@ -928,7 +928,7 @@ void mafVMELandmarkCloud::Open()
   for (i = 0; i < numlm; i++)
 	{
     // add a new LM child with the same name of the corresponding LM
-    mafSmartPointer<mafVMELandmark> lm;
+    mafAutoPointer<mafVMELandmark> lm = mafVMELandmark::New();
     lm->SetName(GetLandmarkName(i));
     
     // force node adding

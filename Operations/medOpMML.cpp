@@ -394,7 +394,7 @@ void medOpMML::OnRegistrationOK()
   deformedpd->Update();
 
   // vme
-  mafSmartPointer<mafVMESurface> vme ;
+  mafAutoPointer<mafVMESurface> vme = mafVMESurface::New();
 
   // vme item
   vme->SetData(deformedpd->GetOutput(), ((mafVME *)m_Input)->GetTimeStamp()) ;

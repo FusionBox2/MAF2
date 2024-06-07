@@ -71,7 +71,7 @@ int mafVMEGeneric::SetData(vtkDataSet *data, mafTimeStamp t, int mode)
 //-------------------------------------------------------------------------
 {
   assert(data);
-  mafSmartPointer<mafVMEItemVTK> item;
+  mafAutoPointer<mafVMEItemVTK> item = mafVMEItemVTK::New();
   
   switch (mode)
   {

@@ -252,7 +252,7 @@ void mafGizmoPath::FindGizmoAbsPose( double s )
   mafMatrix constrainAbsPose;
   constrainAbsPose = m_ConstraintPolyline->GetAbsMatrixPipe()->GetMatrix();
   
-  mafSmartPointer<mafTransform> trans;
+  mafAutoPointer<mafTransform> trans = mafTransform::New();
   trans->SetMatrix(constrainAbsPose);
   trans->Concatenate(localGizmoPose, PRE_MULTIPLY);
   trans->Update();
@@ -260,7 +260,7 @@ void mafGizmoPath::FindGizmoAbsPose( double s )
   // set the new pose to the Gizmo
   m_VmeGizmoPath->SetPose(trans->GetMatrix(), -1);
  
-  mafSmartPointer<mafMatrix> mat2Send;
+  mafAutoPointer<mafMatrix> mat2Send = mafMatrix::New();
   mat2Send->DeepCopy(&(trans->GetMatrix()));
 
   SendTransformMatrix(mat2Send, ID_TRANSFORM, mafGizmoPath::ABS_POSE );

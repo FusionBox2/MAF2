@@ -203,7 +203,7 @@ void mafPipeMuscleWrapperAQ::Create(mafNode *node, mafView *view/*, bool use_axe
   {
     double pos[3], rot[3];
 	mafVME *linked_vme = m_MuscleWrapperVME->GetStartVME();
-    mafSmartPointer<mafTransform> TmpTransform;
+    mafAutoPointer<mafTransform> TmpTransform = mafTransform::New();
 	if (linked_vme && linked_vme->IsMAFType(mafVMELandmarkCloud) && m_MuscleWrapperVME->GetLinkSubId(_R("StartVME")) != -1)
     {
 		((mafVMELandmarkCloud *)linked_vme)->GetLandmark(m_MuscleWrapperVME->GetLinkSubId(_R("StartVME")), pos, -1);
@@ -466,7 +466,7 @@ void mafPipeMuscleWrapperAQ::UpdateProperty(bool fromTag)
   double pos[3] = {0,0,0};
   double rot[3] = {0,0,0};
   mafVME *linked_vme = m_MuscleWrapperVME->GetStartVME();
-  mafSmartPointer<mafTransform> TmpTransform;
+  mafAutoPointer<mafTransform> TmpTransform = mafTransform::New();
   if (linked_vme && linked_vme->IsMAFType(mafVMELandmarkCloud) && m_MuscleWrapperVME->GetLinkSubId(_R("StartVME")) != -1)
   {
 	  ((mafVMELandmarkCloud *)linked_vme)->GetLandmark(m_MuscleWrapperVME->GetLinkSubId(_R("StartVME")), pos, -1);

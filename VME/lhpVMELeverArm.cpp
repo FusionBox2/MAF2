@@ -251,7 +251,7 @@ void lhpVMELeverArm::InternalUpdate()
       line->GetAbsMatrix(tmLine, currTs);
       line->GetPolylineData();
 
-      mafSmartPointer<mafTransform> matr;
+      mafAutoPointer<mafTransform> matr = mafTransform::New();;
       vtkNew<vtkTransformPolyDataFilter> transf;
       matr->SetMatrix(tmLine);
       transf->SetInputConnection(line->GetVTKOutputPort());

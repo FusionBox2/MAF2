@@ -819,14 +819,14 @@ void mafInteractorGenericMouse::SendTransformMatrix(const mafMatrix &matrix, int
 //----------------------------------------------------------------------------
 { 
   // matrix registering the pick position in world coordinates at MOUSE_DOWN
-  mafSmartPointer<mafMatrix> pickPosMatrix;
+  mafAutoPointer<mafMatrix> pickPosMatrix = mafMatrix::New();
 
   if (GetResultMatrixConcatenation())
   {
     ConcatenateToResultMatrix(matrix);
   }
 
-  mafSmartPointer<mafMatrix> matrix_copy;
+  mafAutoPointer<mafMatrix> matrix_copy = mafMatrix::New();
   *matrix_copy=matrix;
   
   mafEvent e;
@@ -858,7 +858,7 @@ void mafInteractorGenericMouse::SendTransformMatrix(const mafMatrix &matrix, int
   event.SetSender(this);
   
   // have to recreate the time stamp :-(
-  mafSmartPointer<mafMatrix> tmatrix;
+  mafAutoPointer<mafMatrix> tmatrix = mafMatrix::New();
   tmatrix->DeepCopy(&matrix);
   tmatrix->SetTimeStamp(vtkTimerLog::GetUniversalTime());
 

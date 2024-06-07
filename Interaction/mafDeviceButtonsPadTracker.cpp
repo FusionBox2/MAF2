@@ -309,7 +309,7 @@ void mafDeviceButtonsPadTracker::SendButtonEvent(mafEventInteraction *event)
     event->SetXYFlag(true); // signal we were in 2D mode...
   }
   
-  mafSmartPointer<mafMatrix> last_pose;
+  mafAutoPointer<mafMatrix> last_pose = mafMatrix::New();
   last_pose->DeepCopy(m_LastPoseMatrix); // make a copy of current pose to ovoid overwriting
   event->SetMatrix(last_pose);  
   

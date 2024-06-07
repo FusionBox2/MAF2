@@ -383,7 +383,7 @@ void lhpPipeLeverArm::UpdateProperty(bool fromTag)
 
   double pos[3] = {0,0,0};
   mafVME *linked_vme = m_MeterVME->GetHAxisVME();
-  mafSmartPointer<mafTransform> TmpTransform;
+  mafAutoPointer<mafTransform> TmpTransform = mafTransform::New();
   if(linked_vme)
   {
     m_MeterVME->GetStartGlobal(pos);

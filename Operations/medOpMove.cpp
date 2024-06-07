@@ -307,7 +307,7 @@ void medOpMove::OnEventThis(mafEventBase *maf_event)
     case ID_SCALE_Y:
     case ID_SCALE_Z:
     {
-      mafSmartPointer<mafTransform> tran;
+      mafAutoPointer<mafTransform> tran = mafTransform::New();
       tran->Scale(m_TransfScaling[0], m_TransfScaling[1], m_TransfScaling[2],POST_MULTIPLY);
       tran->RotateY(m_TransfRotation[1], POST_MULTIPLY);
       tran->RotateX(m_TransfRotation[0], POST_MULTIPLY);

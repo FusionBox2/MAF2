@@ -85,7 +85,7 @@ void mafInteractorGenericInterface::SetResultTransform(mafTransform *result)
 void mafInteractorGenericInterface::SetResultMatrix(mafMatrix *result)
 //------------------------------------------------------------------------------
 {
-  mafSmartPointer<mafTransform> trans; // create a transform on the fly
+  mafAutoPointer<mafTransform> trans = mafTransform::New(); // create a transform on the fly
   trans->SetMatrixPointer(result); // make it reference the result matrix
   SetResultTransform(trans);
 }

@@ -294,7 +294,7 @@ void mafVMERefSys::CalculateMatrix(mafMatrix &m, mafTimeStamp ts)
   if(point1VME && point2VME && originVME)
   {
     double point1ABSPosition[3],point2ABSPosition[3],originABSPosition[3],useless[3];
-    mafSmartPointer<mafTransform> TmpTransform;
+    mafAutoPointer<mafTransform> TmpTransform = mafTransform::New();
 
     //Get the position of the originABSPosition
     if(originVME->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId(_R("OriginVME")) != -1)

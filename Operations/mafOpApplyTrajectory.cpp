@@ -323,7 +323,7 @@ int mafOpApplyTrajectory::Read()
       return MAF_ERROR;
     }
 
-    mafSmartPointer<mafTransform> boxPose;
+    mafAutoPointer<mafTransform> boxPose = mafTransform::New();
     boxPose->RotateY(newOrientation[1], POST_MULTIPLY);
     boxPose->RotateX(newOrientation[0], POST_MULTIPLY);
     boxPose->RotateZ(newOrientation[2], POST_MULTIPLY);

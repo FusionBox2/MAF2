@@ -313,7 +313,7 @@ mafVME *mafMSFImporter::RestoreVME(mafStorageElement *node, mafVME *parent)
           }
           if (mafVMEGroup::SafeDownCast(vme))
           {
-            mafSmartPointer<mafMatrix> m;
+            mafAutoPointer<mafMatrix> m = mafMatrix::New();
             m->DeepCopy(mafVMEGroup::SafeDownCast(vme)->GetMatrixVector()->GetMatrix(0));
             mafVMEGroup::SafeDownCast(vme)->SetMatrix(*m);
           }
@@ -599,7 +599,7 @@ int mafMSFImporter::RestoreVItem(mafStorageElement *node, mafVME *vme)
         mafString data_file;
         if (node->GetAttribute(_R("DataFile"),data_file) == MAF_OK)
         {
-          mafSmartPointer<mafVMEItemVTK> vitem;
+          mafAutoPointer<mafVMEItemVTK> vitem = mafVMEItemVTK::New();
           mafStorageElement* tarray = nullptr;
           auto tarray_nodes = node->GetElementsByName(_R("TArray"));
           if (!tarray_nodes.empty())
@@ -660,7 +660,7 @@ int mafMSFImporter::RestoreVMatrix(mafStorageElement *node, mafMatrixVector *vma
   {
     //assert(children[i]->GetName() == _R("Matrix"));
 
-    mafSmartPointer<mafMatrix> matrix;
+    mafAutoPointer<mafMatrix> matrix = mafMatrix::New();
     int restored_matrix = children[i].RestoreMatrix(*matrix);
     if (restored_matrix != MAF_ERROR)
     {

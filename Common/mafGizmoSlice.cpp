@@ -277,7 +277,7 @@ void mafGizmoSlice::CreateGizmoSliceInLocalPositionOnAxis(int gizmoSliceId, int 
     m_VmeGizmo->SetInputConnection(apd->GetOutputPort());
 
     // position the gizmo 
-	  mafSmartPointer<mafTransform> t;
+	  mafAutoPointer<mafTransform> t = mafTransform::New();
     t->Translate(cubeHandleLocalPosition, PRE_MULTIPLY);
 	  m_VmeGizmo->SetMatrix(t->GetMatrix());   
   
@@ -424,7 +424,7 @@ void mafGizmoSlice::OnEvent(mafEventBase *maf_event)
     {
       case ID_TRANSFORM:
       {
-				mafSmartPointer<mafTransform> tr;
+				mafAutoPointer<mafTransform> tr = mafTransform::New();
 				tr->SetMatrix(*m_VmeGizmo->GetOutput()->GetMatrix());
 				tr->Concatenate(*e->GetMatrix(), PRE_MULTIPLY);
 
@@ -471,7 +471,7 @@ void mafGizmoSlice::OnEvent(mafEventBase *maf_event)
 	{
 		if(e->GetId()==mafInteractor::BUTTON_UP)
 		{
-			mafSmartPointer<mafTransform> tr;
+			mafAutoPointer<mafTransform> tr = mafTransform::New();
 			tr->SetMatrix(*m_VmeGizmo->GetOutput()->GetMatrix());
 			tr->Concatenate(*e->GetMatrix(), PRE_MULTIPLY);
 

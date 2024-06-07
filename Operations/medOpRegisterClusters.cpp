@@ -391,7 +391,7 @@ void medOpRegisterClusters::OpDo()
 			int num = time.size();
 			
 			vtkNew<vtkPolyData> data;
-			mafSmartPointer<mafMatrix> matrix; //modified by Marco. 2-2-2004
+			mafAutoPointer<mafMatrix> matrix = mafMatrix::New(); //modified by Marco. 2-2-2004
 			vtkNew<vtkTransform> transform;
 			vtkNew<vtkTransformPolyDataFilter> transformData;
 			transformData->SetTransform(transform);

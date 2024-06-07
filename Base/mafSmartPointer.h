@@ -18,11 +18,6 @@
 
 #include "mafConfigure.h"
 
-//----------------------------------------------------------------------------
-// forward declarations
-//----------------------------------------------------------------------------
-class mafReferenceCounted;
-
 /** Hold a reference to a T instance.
   mafAutoPointer stores a pointer to a mafSmartObjct, and keeps it registered. When 
   allocated on the stack this object allows to automatically unregister an object 
@@ -102,28 +97,6 @@ protected:
 
   T* m_Object; ///<  Pointer to the actual object.
 };
-
-/** AutoPointer which self allocates the internal object.
-  mafSmartPointer is a specialization of mafAutoPointer which automatically
-  instantiate an object in the default constructor. */
-template <class T>
-class mafSmartPointer: public mafAutoPointer<T>
-{
-public:
-  /**
-  Initialize smart pointer to a new instance of class T.*/
-  mafSmartPointer() {this->m_Object=T::New();this->Register(NULL);}
-
-  /**
-  Initialize smart pointer to given object pointer and reference the given object.*/
-  mafSmartPointer(T* r): mafAutoPointer<T>(r) {;}
-  
-  /**
-  Initialize smart pointer with a new reference to the same object
-  referenced by given smart pointer.*/
-  mafSmartPointer(const mafAutoPointer<T>& r): mafAutoPointer<T>(r) {;}
-};
-
 
 #endif
 

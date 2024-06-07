@@ -192,7 +192,7 @@ void mafPipeMeter::Create(mafNode *node, mafView *view/*, bool use_axes*/)
   {
     double pos[3], rot[3];
     mafVME *linked_vme = m_MeterVME->GetStartVME();
-    mafSmartPointer<mafTransform> TmpTransform;
+    mafAutoPointer<mafTransform> TmpTransform = mafTransform::New();
     if(linked_vme && linked_vme->IsMAFType(mafVMELandmarkCloud) && m_MeterVME->GetLinkSubId(_R("StartVME")) != -1)
     {
       ((mafVMELandmarkCloud *)linked_vme)->GetLandmark(m_MeterVME->GetLinkSubId(_R("StartVME")),pos,-1);
@@ -427,7 +427,7 @@ void mafPipeMeter::UpdateProperty(bool fromTag)
   double pos[3] = {0,0,0};
   double rot[3] = {0,0,0};
   mafVME *linked_vme = m_MeterVME->GetStartVME();
-  mafSmartPointer<mafTransform> TmpTransform;
+  mafAutoPointer<mafTransform> TmpTransform = mafTransform::New();
   if(linked_vme && linked_vme->IsMAFType(mafVMELandmarkCloud) && m_MeterVME->GetLinkSubId(_R("StartVME")) != -1)
   {
     ((mafVMELandmarkCloud *)linked_vme)->GetLandmark(m_MeterVME->GetLinkSubId(_R("StartVME")),pos,-1);

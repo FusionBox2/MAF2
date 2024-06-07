@@ -1375,7 +1375,7 @@ void medOpMML3::OnRegistrationOK()
 
 
   // create vme and set data
-  mafSmartPointer<mafVMESurface> vme ;
+  mafAutoPointer<mafVMESurface> vme = mafVMESurface::New();
   vme->SetData(m_MuscleOutput, m_OutputTimeStamp) ;
 
 

@@ -166,7 +166,7 @@ void mafRefSys::SetMatrix(vtkMatrix4x4 *matrix)
 {
   if (matrix)
   {
-    mafSmartPointer<mafMatrix> mat;
+    mafAutoPointer<mafMatrix> mat = mafMatrix::New();
     mat->SetVTKMatrix(matrix);
     SetMatrix(mat);
   }
@@ -182,7 +182,7 @@ void mafRefSys::SetMatrix(mafMatrix *matrix)
 {
   if (matrix)
   {
-    mafSmartPointer<mafTransform> trans; 
+    mafAutoPointer<mafTransform> trans = mafTransform::New(); 
     trans->SetMatrixPointer(matrix);
     SetTransform(trans);
   }

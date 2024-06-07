@@ -171,7 +171,7 @@ void mafOpVolumeResample::AutoSpacing()
 
   // project spacing on new axes.
   // Note: TransformVector ignores the translation column!
-  mafSmartPointer<mafTransformFrame> input_to_output;
+  mafAutoPointer<mafTransformFrame> input_to_output = mafTransformFrame::New();
   input_to_output->SetInputFrame(m_ResampleBoxVme->GetOutput()->GetAbsMatrix());
   input_to_output->SetTargetFrame(((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
   input_to_output->Update();
@@ -297,15 +297,15 @@ void mafOpVolumeResample::OpDo()
 void mafOpVolumeResample::Resample()
 //----------------------------------------------------------------------------
 {
-  mafSmartPointer<mafTransform> box_pose;
+  mafAutoPointer<mafTransform> box_pose = mafTransform::New();
   box_pose->SetOrientation(m_VolumeOrientation);
   box_pose->SetPosition(m_NewVolumePosition);
 	//box_pose->SetPosition(m_VolumePosition);
 
-  mafSmartPointer<mafTransformFrame> local_pose;
+  mafAutoPointer<mafTransformFrame> local_pose = mafTransformFrame::New();
   local_pose->SetInput(box_pose);
   
-  mafSmartPointer<mafTransformFrame> output_to_input;
+  mafAutoPointer<mafTransformFrame> output_to_input = mafTransformFrame::New();
   
   // In a future version if not a "Natural" data the filter should operate in place.
 	mafString new_vme_name = _R("resampled_");
@@ -346,20 +346,20 @@ void mafOpVolumeResample::Resample()
         // Set the target be vme's parent frame. And Input frame to the root. I've to 
         // set at each iteration since I'm using the SetMatrix, which doesn't support
         // transform pipelines.
-        mafSmartPointer<mafMatrix> output_parent_abs_pose;
+        mafAutoPointer<mafMatrix> output_parent_abs_pose = mafMatrix::New();
         m_ResampledVme->GetParent()->GetOutput()->GetAbsMatrix(*output_parent_abs_pose.GetPointer(),input_item->GetTimeStamp());
         local_pose->SetInputFrame(output_parent_abs_pose);
 
-        mafSmartPointer<mafMatrix> input_parent_abs_pose;
+        mafAutoPointer<mafMatrix> input_parent_abs_pose = mafMatrix::New();
         ((mafVME *)m_Input->GetParent())->GetOutput()->GetAbsMatrix(*input_parent_abs_pose.GetPointer(),input_item->GetTimeStamp());
         local_pose->SetTargetFrame(input_parent_abs_pose);
         local_pose->Update();
 
-        mafSmartPointer<mafMatrix> output_abs_pose;
+        mafAutoPointer<mafMatrix> output_abs_pose = mafMatrix::New();
         m_ResampledVme->GetOutput()->GetAbsMatrix(*output_abs_pose.GetPointer(),input_item->GetTimeStamp());
         output_to_input->SetInputFrame(output_abs_pose);
 
-        mafSmartPointer<mafMatrix> input_abs_pose;
+        mafAutoPointer<mafMatrix> input_abs_pose = mafMatrix::New();
         ((mafVME *)m_Input)->GetOutput()->GetAbsMatrix(*input_abs_pose.GetPointer(),input_item->GetTimeStamp());
         output_to_input->SetTargetFrame(input_abs_pose);
         output_to_input->Update();

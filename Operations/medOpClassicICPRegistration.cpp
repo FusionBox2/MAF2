@@ -197,9 +197,9 @@ void medOpClassicICPRegistration::OpDo()
 	((mafVME*)m_Input)->GetOutput()->Update();
   
 
-	mafSmartPointer<mafMatrix> icp_matrix;  
-	mafSmartPointer<mafMatrix> final_matrix;
-  mafSmartPointer<mafMatrix> target_matrix;
+	mafAutoPointer<mafMatrix> icp_matrix = mafMatrix::New();  
+	mafAutoPointer<mafMatrix> final_matrix = mafMatrix::New();
+  mafAutoPointer<mafMatrix> target_matrix = mafMatrix::New();
   m_Target->GetOutput()->GetAbsMatrix(*target_matrix,m_Target->GetTimeStamp());
 	
 
@@ -250,7 +250,7 @@ void medOpClassicICPRegistration::OpDo()
   sourceABSPoseInverseTr->PreMultiply();
   sourceABSPoseInverseTr->Concatenate((m_Registered->GetAbsMatrixPipe()->GetMatrix()).GetVTKMatrix());
   
-  mafSmartPointer<mafMatrix> mat;
+  mafAutoPointer<mafMatrix> mat = mafMatrix::New();
   mat->SetVTKMatrix(sourceABSPoseInverseTr->GetMatrix());
 
   m_Registered->SetAbsMatrix(*mat);

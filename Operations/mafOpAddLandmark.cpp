@@ -459,7 +459,7 @@ void mafOpAddLandmark::AddLandmark(double pos[3])
     m_Cloud->Open();
   }
   
-  mafSmartPointer<mafVMELandmark> landmark;
+  mafAutoPointer<mafVMELandmark> landmark = mafVMELandmark::New();
   landmark->SetName(m_LandmarkName);
   landmark->ReparentTo(m_Cloud);
   if(NULL != m_PickedVme)

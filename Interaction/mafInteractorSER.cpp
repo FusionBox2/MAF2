@@ -123,7 +123,7 @@ mafAction *mafInteractorSER::AddAction(const char *name, float priority, int typ
   if (mafAction *old_action=GetAction(name))
     return old_action;
 
-  mafSmartPointer<mafAction> action;
+  mafAutoPointer<mafAction> action = mafAction::New();
   action->SetName(_R(name));
   action->SetType(type);
   AddAction(action,priority);

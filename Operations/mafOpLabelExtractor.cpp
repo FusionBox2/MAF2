@@ -282,7 +282,7 @@ void mafOpLabelExtractor::UpdateDataLabel()
 //----------------------------------------------------------------------------
 {
   mafNode *linkedNode = m_Input->GetLink(_R("VolumeLink"));
-  mafSmartPointer<mafVME> linkedVolume = mafVME::SafeDownCast(linkedNode);
+  mafAutoPointer<mafVME> linkedVolume = mafVME::SafeDownCast(linkedNode);
 
   //Get dataset from volume linked to
   vtkDataSet *data = linkedVolume->GetOutput()->GetVTKData();
@@ -371,7 +371,7 @@ void mafOpLabelExtractor::ExtractLabel()
   }
   else
   {
-    mafSmartPointer<mafVME> vmeLabeled = (mafVME *)m_Input;
+    mafAutoPointer<mafVME> vmeLabeled = (mafVME *)m_Input;
     m_Ds = vmeLabeled->GetOutput()->GetVTKData();
     vmeLabeled->GetOutput()->Update();
   }

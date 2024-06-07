@@ -195,7 +195,7 @@ void mafGizmoROI_BES::OnEventGizmoComponents(mafEventBase *maf_event)
 				}
 				else if (arg == mafInteractorGenericMouse::MOUSE_MOVE)
 				{     
-					 mafSmartPointer<mafMatrix> tr;
+					 mafAutoPointer<mafMatrix> tr = mafMatrix::New();
 					if (this->m_Modality == G_LOCAL)
 					{
 						// local mode
@@ -494,7 +494,7 @@ void mafGizmoROI_BES::UpdateHandlePositions()
 			mafTransform::SetPosition(*m_GHandle[i]->GetPose(), oldPos);
 			mafTransform::SetPosition(m_GHandle[i]->GetPivotMatrix(), oldPos);
 			//Matteo 23-08-06
-			mafSmartPointer<mafTransform> tr;
+			mafAutoPointer<mafTransform> tr = mafTransform::New();
 			tr->SetMatrix(*m_GHandle[i]->GetPose());
 
 			mafMatrix mat;
@@ -522,7 +522,7 @@ void mafGizmoROI_BES::UpdateHandlePositions()
 				mafTransform::SetPosition(*m_GHandle[i]->GetPose(), oldPos);
 				mafTransform::SetPosition(m_GHandle[i]->GetPivotMatrix(), oldPos);
 				//Matteo 23-08-06
-				mafSmartPointer<mafTransform> tr;
+				mafAutoPointer<mafTransform> tr = mafTransform::New();
 				tr->SetMatrix(*m_GHandle[i]->GetPose());
 
 				mafMatrix mat;
@@ -549,7 +549,7 @@ void mafGizmoROI_BES::UpdateHandlePositions()
 			mafTransform::SetPosition(*m_GHandle[i]->GetPose(), oldPos);
 			mafTransform::SetPosition(m_GHandle[i]->GetPivotMatrix(), oldPos);
 			//Matteo 23-08-06
-			mafSmartPointer<mafTransform> tr;
+			mafAutoPointer<mafTransform> tr = mafTransform::New();
 			tr->SetMatrix(*m_GHandle[i]->GetPose());
 
 			mafMatrix mat;

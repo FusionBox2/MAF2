@@ -309,7 +309,7 @@ void mafGizmoRotate::SetAbsPose(mafMatrix *absPose, bool applyPoseToFans)
   mafTransform::GetPosition(*absPose, pos);
   mafTransform::GetOrientation(*absPose, orient);
 
-  mafSmartPointer<mafMatrix> tmpMatr;
+  mafAutoPointer<mafMatrix> tmpMatr = mafMatrix::New();
   tmpMatr->SetTimeStamp(absPose->GetTimeStamp());
   mafTransform::SetPosition(*tmpMatr.GetPointer(), pos);
   mafTransform::SetOrientation(*tmpMatr.GetPointer(), orient);
@@ -362,9 +362,9 @@ void mafGizmoRotate::SendTransformMatrixFromGui(mafEventBase *maf_event)
     // [NewAbsPose] = [M]*[OldAbsPose] => [M] = [NewAbsPose][OldAbsPose]
 
     // build objects
-    mafSmartPointer<mafMatrix> M;
+    mafAutoPointer<mafMatrix> M = mafMatrix::New();
     mafMatrix invOldAbsPose;
-    mafSmartPointer<mafMatrix> newAbsPose;
+    mafAutoPointer<mafMatrix> newAbsPose = mafMatrix::New();
 
     // incoming matrix is a rotation matrix
     newAbsPose->DeepCopy(GetAbsPose());

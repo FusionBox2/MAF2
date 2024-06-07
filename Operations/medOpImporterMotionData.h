@@ -132,7 +132,7 @@ public:
       wxBusyInfo wait("Please wait, working...");
     }
 
-    mafSmartPointer<MotionReader> reader; 
+    mafAutoPointer<MotionReader> reader = MotionReader::New(); 
     reader->SetFileName(m_File.GetCStr());
     reader->SetDictionaryFileName(m_Dict.GetCStr());
 

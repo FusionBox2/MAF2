@@ -216,7 +216,7 @@ static void makeReparent(mafVME *child, mafVME *newParent)
   }
 
   //change reference system
-  mafSmartPointer<mafTransformFrame> transform;
+  mafAutoPointer<mafTransformFrame> transform = mafTransformFrame::New();
   for (t = 0; t < num; t++)
   {
     cTime = time[t];
