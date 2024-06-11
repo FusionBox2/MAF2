@@ -28,6 +28,7 @@
 #include "mafNodeManager.h"
 #include "mafGUIFileHistory.h"
 #include "mafVMEStorage.h"
+#include <memory>
 
 
 //----------------------------------------------------------------------------
@@ -290,7 +291,7 @@ protected:
   mafRemoteLogic         *m_RemoteLogic;
   
   mafGUIMaterialChooser  *m_MaterialChooser;
-  mafPrintSupport     *m_PrintSupport;
+  std::unique_ptr<mafPrintSupport> m_PrintSupport;
 
   wxMenu *m_ImportMenu; 
   wxMenu *m_ExportMenu; 
@@ -309,14 +310,14 @@ protected:
   bool m_UseViewManager;
   bool m_UseOpManager;
   bool m_UseInteractionManager;
-  mafGUISettingsDialog *m_SettingsDialog;
-  mafGUIApplicationLayoutSettings *m_ApplicationLayoutSettings;
-  mafGUISettingsHelp *m_HelpSettings;
+  std::unique_ptr<mafGUISettingsDialog> m_SettingsDialog;
+  std::unique_ptr<mafGUIApplicationLayoutSettings> m_ApplicationLayoutSettings;
+  std::unique_ptr<mafGUISettingsHelp> m_HelpSettings;
 
   mafString m_Revision;
   mafString m_Extension;
 
-  mafUser *m_User; ///< Applications' user
+  std::unique_ptr<mafUser> m_User; ///< Applications' user
   bool     m_TestMode;
 
   bool                    m_MakeBakFile;      ///< Flag used to create or not the backup file of the saved msf.

@@ -416,7 +416,7 @@ void medLogicWithManagers::Init(int argc, char **argv)
 //----------------------------------------------------------------------------
 {
   if (m_WizardManager)
-    m_WizardManager->FillSettingDialog(m_SettingsDialog);
+    m_WizardManager->FillSettingDialog(m_SettingsDialog.get());
   
   mafLogicWithManagers::Init(argc,argv);
 }
