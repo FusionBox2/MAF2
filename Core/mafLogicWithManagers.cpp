@@ -179,9 +179,9 @@ mafLogicWithManagers::mafLogicWithManagers(mafGUIMDIFrame *mdiFrame/*=NULL*/)
   // when the user change the unit settings.
   m_MeasureUnitSettings->SetListener(this);
 
-  m_PrintSupport = new mafPrintSupport();
+  m_PrintSupport = std::make_unique<mafPrintSupport>();
   
-  m_SettingsDialog = new mafGUISettingsDialog();
+  m_SettingsDialog = std::make_unique<mafGUISettingsDialog>();
 
   m_ApplicationLayoutSettings = NULL;
 
@@ -191,7 +191,7 @@ mafLogicWithManagers::mafLogicWithManagers(mafGUIMDIFrame *mdiFrame/*=NULL*/)
 
   m_Extension = _R("msf");
 
-  m_User = new mafUser();
+  m_User = std::make_unique<mafUser>();
 
   m_Config = wxConfigBase::Get();
 
@@ -285,13 +285,6 @@ void mafLogicWithManagers::SetSingleBinaryFile(bool singleFile)
 mafLogicWithManagers::~mafLogicWithManagers()
 //----------------------------------------------------------------------------
 {
-  // Managers are destruct in the OnClose
-  m_AppStamp.clear();
-  cppDEL(m_User);
-  cppDEL(m_ApplicationLayoutSettings);
-  cppDEL(m_HelpSettings);
-  cppDEL(m_PrintSupport);
-  cppDEL(m_SettingsDialog); 
 }
 //----------------------------------------------------------------------------
 void mafLogicWithManagers::Configure()
@@ -372,7 +365,7 @@ void mafLogicWithManagers::Configure()
 
   if (m_ViewManager)
   {
-    m_ApplicationLayoutSettings = new mafGUIApplicationLayoutSettings(this);
+    m_ApplicationLayoutSettings = std::make_unique<mafGUIApplicationLayoutSettings>(this);
     m_ApplicationLayoutSettings->SetViewManager(m_ViewManager);
     m_ApplicationLayoutSettings->SetApplicationFrame(m_Win);
     m_SettingsDialog->AddPage( m_ApplicationLayoutSettings->GetGui(), m_ApplicationLayoutSettings->GetLabel());
@@ -380,7 +373,7 @@ void mafLogicWithManagers::Configure()
 
   m_SettingsDialog->AddPage( m_Win->GetDockSettingGui(), _("User Interface Preferences"));
 
-  m_HelpSettings = new mafGUISettingsHelp(this);
+  m_HelpSettings = std::make_unique<mafGUISettingsHelp>(this);
   m_SettingsDialog->AddPage(m_HelpSettings->GetGui(), m_HelpSettings->GetLabel());
 
 // currently mafInteraction is strictly dependent on VTK (marco)
@@ -491,7 +484,7 @@ void mafLogicWithManagers::SetApplicationStamp(const std::vector<mafString>& app
 mafUser *mafLogicWithManagers::GetUser()
 //----------------------------------------------------------------------------
 {
-  return m_User;
+  return m_User.get();
 }
 //----------------------------------------------------------------------------
 void mafLogicWithManagers::Init(int argc, char **argv)
@@ -519,7 +512,7 @@ void mafLogicWithManagers::Init(int argc, char **argv)
   }
   if (m_OpManager)
   {
-    m_OpManager->FillSettingDialog(m_SettingsDialog);
+    m_OpManager->FillSettingDialog(m_SettingsDialog.get());
 
     if(argc > 1 )
     {
@@ -2231,27 +2224,25 @@ void mafLogicWithManagers::FindVME()
 void mafLogicWithManagers::ViewContextualMenu(bool vme_menu)
 //----------------------------------------------------------------------------
 {
-  mafGUIContextualMenu *contextMenu = new mafGUIContextualMenu();
+  auto contextMenu = std::make_unique<mafGUIContextualMenu>();
   contextMenu->SetListener(this);
   mafView *v = m_ViewManager->GetSelectedView();
   mafGUIMDIChild *c = (mafGUIMDIChild *)m_Win->GetActiveChild();
   if(c != NULL)
     contextMenu->ShowContextualMenu(c,v,vme_menu);
-  cppDEL(contextMenu);
 }
 //----------------------------------------------------------------------------
 void mafLogicWithManagers::TreeContextualMenu(mafEvent &e)
 //----------------------------------------------------------------------------
 {
-  mafGUITreeContextualMenu *contextMenu = new mafGUITreeContextualMenu();
-  contextMenu->SetListener(m_ApplicationLayoutSettings);
+  auto contextMenu = std::make_unique<mafGUITreeContextualMenu>();
+  contextMenu->SetListener(m_ApplicationLayoutSettings.get());
   mafView *v = m_ViewManager->GetSelectedView();
   mafVME  *vme = (mafVME *)e.GetVme();
   bool vme_menu = e.GetBool();
   bool autosort = e.GetArg() != 0;
   contextMenu->CreateContextualMenu((mafGUICheckTree *)e.GetSender(),v,vme,vme_menu);
   contextMenu->ShowContextualMenu();
-  cppDEL(contextMenu);
 }
 //----------------------------------------------------------------------------
 void mafLogicWithManagers::HandleException()

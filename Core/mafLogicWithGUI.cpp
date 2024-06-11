@@ -63,11 +63,11 @@ mafLogicWithGUI::mafLogicWithGUI(mafGUIMDIFrame *mdiFrame /*=NULL*/)
   m_Win->SetListener(this);
 
   m_ChildFrameStyle = wxCAPTION | wxMAXIMIZE_BOX | wxMINIMIZE_BOX | wxRESIZE_BORDER; //wxTHICK_FRAME; // Default style
-  m_LocaleSettings = new mafGUILocaleSettings(this);
-  m_MeasureUnitSettings = new mafGUIMeasureUnitSettings(this);
-  m_ApplicationSettings = new mafGUIApplicationSettings(this);
-  m_StorageSettings = new mafGUISettingsStorage(this);
-  m_TimeBarSettings = new mafGUISettingsTimeBar(this);
+  m_LocaleSettings = std::make_unique<mafGUILocaleSettings>(this);
+  m_MeasureUnitSettings = std::make_unique<mafGUIMeasureUnitSettings>(this);
+  m_ApplicationSettings = std::make_unique<mafGUIApplicationSettings>(this);
+  m_StorageSettings = std::make_unique<mafGUISettingsStorage>(this);
+  m_TimeBarSettings = std::make_unique<mafGUISettingsTimeBar>(this);
 
   m_ToolBar       = NULL;
   m_MenuBar       = NULL;
@@ -90,11 +90,6 @@ mafLogicWithGUI::mafLogicWithGUI(mafGUIMDIFrame *mdiFrame /*=NULL*/)
 mafLogicWithGUI::~mafLogicWithGUI()
 //----------------------------------------------------------------------------
 {
-  cppDEL(m_LocaleSettings);
-  cppDEL(m_MeasureUnitSettings);
-  cppDEL(m_ApplicationSettings);
-  cppDEL(m_StorageSettings);
-  cppDEL(m_TimeBarSettings);
 }
 //----------------------------------------------------------------------------
 void mafLogicWithGUI::SetParentFrameStyle(long style)
@@ -369,7 +364,7 @@ void mafLogicWithGUI::CreateTimebar()
   m_TimePanel->SetListener(this);
 
   // Events coming from settings are forwarded to the time bar.
-  m_TimePanel->SetTimeSettings(m_TimeBarSettings);
+  m_TimePanel->SetTimeSettings(m_TimeBarSettings.get());
   m_TimeBarSettings->SetListener(m_TimePanel);
 }
 //----------------------------------------------------------------------------

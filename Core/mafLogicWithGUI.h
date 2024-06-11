@@ -24,6 +24,7 @@
 #include "mafSideBar.h"
 #include <wx/notebook.h>
 #include <wx/icon.h>
+#include <memory>
 //----------------------------------------------------------------------------
 // forward reference
 //----------------------------------------------------------------------------
@@ -171,11 +172,11 @@ protected:
   bool                      m_LogAllEvents;
   mafWXLog                  *m_Logger;
   mafVTKLog                 *m_VtkLog;
-  mafGUILocaleSettings      *m_LocaleSettings;
-  mafGUIMeasureUnitSettings *m_MeasureUnitSettings;
-  mafGUIApplicationSettings *m_ApplicationSettings;
-  mafGUISettingsStorage     *m_StorageSettings;
-  mafGUISettingsTimeBar     *m_TimeBarSettings;
+  std::unique_ptr<mafGUILocaleSettings> m_LocaleSettings;
+  std::unique_ptr<mafGUIMeasureUnitSettings> m_MeasureUnitSettings;
+  std::unique_ptr<mafGUIApplicationSettings> m_ApplicationSettings;
+  std::unique_ptr<mafGUISettingsStorage>     m_StorageSettings;
+  std::unique_ptr<mafGUISettingsTimeBar>     m_TimeBarSettings;
   std::vector<wxAcceleratorEntry> m_AccelTable; ///< List of Accelerators for menu items.
 
   bool m_PlugMenu;    ///< Flag to plug or not the Menu into the application. Default is true.
