@@ -301,7 +301,7 @@ void mafLogicWithManagers::Configure()
 
   if(this->m_PlugSidebar)
   {
-    m_SideBar = new mafSideBar(m_Win,MENU_VIEW_SIDEBAR,this,m_SidebarStyle);
+    m_SideBar = std::make_unique<mafSideBar>(m_Win,MENU_VIEW_SIDEBAR,this,m_SidebarStyle);
     m_Win->AddDockPane(m_SideBar->m_Notebook, wxAuiPaneInfo()
       .Name("sidebar")
       .Caption(wxT("ControlBar"))
@@ -315,7 +315,7 @@ void mafLogicWithManagers::Configure()
 
   if(m_UseVMEManager)
   {
-    m_NodeManager = new mafNodeManager();
+    m_NodeManager = std::make_unique<mafNodeManager>();
     m_NodeManager->SetListener(this); 
   }
 
@@ -323,7 +323,7 @@ void mafLogicWithManagers::Configure()
 #ifdef MAF_USE_VTK
   if (m_UseInteractionManager)
   {
-    m_InteractionManager = new mafInteractionManager();
+    m_InteractionManager = std::make_unique<mafInteractionManager>();
     m_InteractionManager->SetListener(this);
     mafPlugDevice<mmdRemoteFileManager>("mmdRemoteFileManager");
 
@@ -334,13 +334,13 @@ void mafLogicWithManagers::Configure()
 
   if(m_UseViewManager)
   {
-    m_ViewManager = new mafViewManager();
+    m_ViewManager = std::make_unique<mafViewManager>();
     m_ViewManager->SetListener(this);
   }
 
   if(m_UseOpManager)
   {
-    m_OpManager = new mafOpManager();
+    m_OpManager = std::make_unique<mafOpManager>();
     m_OpManager->SetListener(this);
     m_OpManager->WarningIfCantUndo(m_ApplicationSettings->GetWarnUserFlag());
   }
@@ -350,7 +350,7 @@ void mafLogicWithManagers::Configure()
   if (m_UseInteractionManager && m_UseViewManager && m_UseOpManager)
   {
 #ifdef __WIN32__
-    m_RemoteLogic = new mafRemoteLogic(this, m_ViewManager, m_OpManager);
+    m_RemoteLogic = std::make_unique<mafRemoteLogic>(this, m_ViewManager.get(), m_OpManager.get());
 
     m_RemoteLogic->SetClientUnit(m_InteractionManager->GetClientDevice());
 #endif
@@ -365,7 +365,7 @@ void mafLogicWithManagers::Configure()
   if (m_ViewManager)
   {
     m_ApplicationLayoutSettings = std::make_unique<mafGUIApplicationLayoutSettings>(this);
-    m_ApplicationLayoutSettings->SetViewManager(m_ViewManager);
+    m_ApplicationLayoutSettings->SetViewManager(m_ViewManager.get());
     m_ApplicationLayoutSettings->SetApplicationFrame(m_Win);
     m_SettingsDialog->AddPage( m_ApplicationLayoutSettings->GetGui(), m_ApplicationLayoutSettings->GetLabel());
   }
@@ -806,7 +806,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   if(VME_SHOW == eventId)
   {
     VmeShow(e->GetVme(), e->GetBool());
-    if(m_RemoteLogic && (e->GetSender() != m_RemoteLogic) && m_RemoteLogic->IsSocketConnected())
+    if(m_RemoteLogic && (e->GetSender() != m_RemoteLogic.get()) && m_RemoteLogic->IsSocketConnected())
     {
       m_RemoteLogic->VmeShow(e->GetVme(), e->GetBool());
     }
@@ -1295,7 +1295,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
     if (collaborate)
     {
       m_RemoteLogic->SetRemoteMouse(m_InteractionManager->GetRemoteMouseDevice());
-      GetGlobalMouse()->AddObserver(m_RemoteLogic, REMOTE_COMMAND_CHANNEL);
+      GetGlobalMouse()->AddObserver(m_RemoteLogic.get(), REMOTE_COMMAND_CHANNEL);
       if(m_RemoteLogic->IsSocketConnected())  //check again, because if no server is present
       {                                       //no synchronization is necessary
         m_RemoteLogic->SynchronizeApplication();
@@ -1307,7 +1307,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
       {
         m_RemoteLogic->SetRemoteMouse(NULL);
         m_RemoteLogic->Disconnect();
-        GetGlobalMouse()->RemoveObserver(m_RemoteLogic);
+        GetGlobalMouse()->RemoveObserver(m_RemoteLogic.get());
       }
     }
     m_ViewManager->Collaborate(collaborate);
@@ -1489,7 +1489,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
   if(!m_Storage)
     return false;
   m_Storage->SetListener(this);
-  m_Storage->SetManager(m_NodeManager);
+  m_Storage->SetManager(m_NodeManager.get());
 
   wxWindowDisabler *disableAll;
   wxBusyCursor *wait_cursor;
@@ -1764,7 +1764,7 @@ bool mafLogicWithManagers::OnFileSaveAs()
   {
     m_Storage = std::make_unique<mafStorage>();
     m_Storage->SetListener(this);
-    m_Storage->SetManager(m_NodeManager);
+    m_Storage->SetManager(m_NodeManager.get());
   }
   m_Storage->SetURL(m_MSFFile);
   Save();
@@ -1804,19 +1804,19 @@ void mafLogicWithManagers::OnQuit()
   if(answer != wxYES) 
   return;*/
 
-  cppDEL(m_RemoteLogic);
-  cppDEL(m_NodeManager);
+  m_RemoteLogic.reset();
+  m_NodeManager.reset();
   cppDEL(m_MaterialChooser);
 // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
   SetGlobalMouse(NULL);
-  cppDEL(m_InteractionManager);
+  m_InteractionManager.reset();
 #endif
-  cppDEL(m_ViewManager);
-  cppDEL(m_OpManager);
+  m_ViewManager.reset();
+  m_OpManager.reset();
 
   // must be deleted after m_NodeManager
-  cppDEL(m_SideBar);
+  m_SideBar.reset();
 
   mafLogicWithGUI::OnQuit();
 }
@@ -1866,7 +1866,7 @@ void mafLogicWithManagers::VmeSelect(mafEvent& e)	//modified by Paolo 10-9-2003
     mafLogMessage(_M(_R("node selected: ") + node->GetName()));
   }
 
-  if(m_RemoteLogic && (e.GetSender() != m_RemoteLogic) && m_RemoteLogic->IsSocketConnected())
+  if(m_RemoteLogic && (e.GetSender() != m_RemoteLogic.get()) && m_RemoteLogic->IsSocketConnected())
   {
     m_RemoteLogic->VmeSelected(node);
   }
@@ -2129,7 +2129,7 @@ void mafLogicWithManagers::ViewCreated(mafView *v)
       // external views
       mafGUIViewFrame *extern_view = new mafGUIViewFrame(m_Win, -1, v->GetLabel(), wxPoint(10,10),wxSize(800,600)/*, wxSIMPLE_BORDER|wxMAXIMIZE*/);
       extern_view->SetView(v);
-      extern_view->SetListener(m_ViewManager);
+      extern_view->SetListener(m_ViewManager.get());
       v->GetFrame()->SetWindowStyleFlag(m_ChildFrameStyle);
       v->SetListener(extern_view);
       v->SetFrame(extern_view);
@@ -2140,7 +2140,7 @@ void mafLogicWithManagers::ViewCreated(mafView *v)
       // child views
       mafGUIMDIChild *c = new mafGUIMDIChild(m_Win,v);
       c->SetWindowStyleFlag(m_ChildFrameStyle);
-      c->SetListener(m_ViewManager);
+      c->SetListener(m_ViewManager.get());
       v->SetFrame(c);
     }
   }
@@ -2290,7 +2290,7 @@ void mafLogicWithManagers::ImportExternalFile(mafString &filename)
   {
     mafOpImporterVTK *vtkImporter = new mafOpImporterVTK(_R("importer"));
     vtkImporter->SetInput(m_NodeManager->GetRoot());
-    vtkImporter->SetListener(m_OpManager);
+    vtkImporter->SetListener(m_OpManager.get());
     vtkImporter->SetFileName(filename);
     vtkImporter->ImportVTK();
     vtkImporter->OpDo();
@@ -2300,7 +2300,7 @@ void mafLogicWithManagers::ImportExternalFile(mafString &filename)
   {
     mafOpImporterSTL *stlImporter = new mafOpImporterSTL(_R("importer"));
     stlImporter->SetInput(m_NodeManager->GetRoot());
-    stlImporter->SetListener(m_OpManager);
+    stlImporter->SetListener(m_OpManager.get());
     stlImporter->SetFileName(filename.GetCStr());
     stlImporter->ImportSTL();
     stlImporter->OpDo();

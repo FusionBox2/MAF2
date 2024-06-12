@@ -563,7 +563,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
 
   mafPlugPipe<lhpPipeInfo>("Visual pipe for lever arm");
 
-  m_Logic = new medLogicWithManagers();
+  m_Logic = std::make_unique<medLogicWithManagers>();
   if(fullVersion)
   {
     m_Logic->GetTopWin()->SetTitle("LHPFusionBox");
@@ -870,7 +870,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
 int lhpFusionBoxApp::OnExit()
 //--------------------------------------------------------------------------------
 {
-  cppDEL(m_Logic);
+  m_Logic.reset();
 
   //this hack is fixing VTK internal memory leak
   vtkTimerLog::CleanupLog();

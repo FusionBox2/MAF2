@@ -283,12 +283,12 @@ protected:
   /** Called after FileOpen or Save operation */
   virtual void UpdateFrameTitle();
 
-  mafSideBar             *m_SideBar;
-  mafNodeManager         *m_NodeManager;
-  mafViewManager         *m_ViewManager;
-  mafOpManager           *m_OpManager;
-  mafInteractionManager  *m_InteractionManager;
-  mafRemoteLogic         *m_RemoteLogic;
+  std::unique_ptr<mafSideBar>             m_SideBar;
+  std::unique_ptr<mafNodeManager>         m_NodeManager;
+  std::unique_ptr<mafViewManager>         m_ViewManager;
+  std::unique_ptr<mafOpManager>           m_OpManager;
+  std::unique_ptr<mafInteractionManager>  m_InteractionManager;
+  std::unique_ptr<mafRemoteLogic>         m_RemoteLogic;
   
   mafGUIMaterialChooser  *m_MaterialChooser;
   std::unique_ptr<mafPrintSupport> m_PrintSupport;

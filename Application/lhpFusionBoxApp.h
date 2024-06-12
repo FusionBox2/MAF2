@@ -18,6 +18,7 @@
 #include "mafEvent.h"
 #include "mafBaseEventHandler.h"
 #include "mafDynamicLoader.h"
+#include <memory>
 
 //----------------------------------------------------------------------------
 // forward references :
@@ -35,7 +36,7 @@ public:
   //DECLARE_EVENT_TABLE()
 
 protected:
-  medLogicWithManagers *m_Logic;
+  std::unique_ptr<medLogicWithManagers> m_Logic;
   std::vector<std::pair<LibHandle, void(*)() > > m_Plugins;
 
 };
