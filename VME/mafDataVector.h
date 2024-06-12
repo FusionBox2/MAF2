@@ -106,8 +106,6 @@ public:
   Release memory of the input mafNode. */
   void DeepCopyVmeLarge(mafDataVector *o);
 
-  static mafID GetSingleFileDataId();
-
   void Store(mafStorageElementBuilder& element) { InternalStore(element); }
   void Restore(const mafStorageElement& element) { InternalRestore(element); }
 

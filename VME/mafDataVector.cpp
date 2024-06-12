@@ -77,13 +77,6 @@ mafDataVector::~mafDataVector()
   }
 }
 //-------------------------------------------------------------------------
-mafID mafDataVector::GetSingleFileDataId()
-//-------------------------------------------------------------------------
-{
-  static const mafID singleFileDataId = mmuIdFactory::GetNextId("SINGLE_FILE_DATA");
-  return singleFileDataId;
-}
-//-------------------------------------------------------------------------
 bool mafDataVector::GetCrypting()
 //-------------------------------------------------------------------------
 {
