@@ -97,6 +97,7 @@
 #include "mafNodeIterator.h"
 #include "mafVMEGenericAbstract.h"
 #include "mafVMERoot.h"
+#include <wx/aboutdlg.h>
 
 //----------------------------------------------------------------------------
 bool mafLogicWithManagers::AskConfirmAndSave()
@@ -186,8 +187,6 @@ mafLogicWithManagers::mafLogicWithManagers(mafGUIMDIFrame *mdiFrame/*=NULL*/)
   m_ApplicationLayoutSettings = NULL;
 
   m_HelpSettings = NULL;
-
-  m_Revision = _L("0.1");
 
   m_Extension = _R("msf");
 
@@ -462,7 +461,7 @@ void mafLogicWithManagers::Show()
   EnableOperations(true);
 
   // must be after the mafLogicWithGUI::Show(); because in that method is set the m_AppTitle var
-  SetApplicationStamp(m_AppTitle);
+  SetApplicationStamp(mafWxToString(wxTheApp->GetAppDisplayName()));
 }
 //----------------------------------------------------------------------------
 void mafLogicWithManagers::SetApplicationStamp(const mafString &app_stamp)
@@ -629,7 +628,7 @@ void mafLogicWithManagers::CreateToolbar()
 void mafLogicWithManagers::UpdateFrameTitle()
 //----------------------------------------------------------------------------
 {
-  mafString title(m_AppTitle);
+  mafString title = mafWxToString(wxTheApp->GetAppDisplayName());
   if(!m_MSFFile.empty())
     title += _R("   ") + m_MSFFile;
   m_Win->SetTitle(title.toWx());
@@ -1317,10 +1316,9 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   }
   if(ABOUT_APPLICATION == eventId)
   {
-    mafString message = m_AppTitle;
-    message += _L(" Application ");
-    message += m_Revision;
-    wxMessageBox(message.toWx(), "About Application");
+    wxAboutDialogInfo info;
+    info.SetVersion("0.1");
+    wxAboutBox(info);
     return;
   }
   if(HELP_HOME == eventId)
@@ -2308,10 +2306,4 @@ void mafLogicWithManagers::ImportExternalFile(mafString &filename)
   }
   else
     mafWarningMessage(_M("Can not import this type of file!"));
-}
-//----------------------------------------------------------------------------
-void mafLogicWithManagers::SetRevision(mafString revision)
-//----------------------------------------------------------------------------
-{
-	m_Revision=revision;
 }

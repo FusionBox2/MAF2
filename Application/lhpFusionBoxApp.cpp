@@ -566,33 +566,19 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   m_Logic = std::make_unique<medLogicWithManagers>();
   if(fullVersion)
   {
+    SetAppName("lhpFusionBox");
+    SetAppDisplayName("LHPFusionBox");
     m_Logic->GetTopWin()->SetTitle("LHPFusionBox");
   }
   else
   {
+    SetAppName("ULBViewer");
+    SetAppDisplayName("ULBViewer");
     m_Logic->GetTopWin()->SetTitle("ULBViewer");
   }
   m_Logic->Configure();
   SetTopWindow(mafGetFrame());  
 
-  wxString regKeyName;
-  if(fullVersion)
-    regKeyName = "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\lhpFusionBox";
-  else
-    regKeyName = "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\ULBViewer";
-  wxRegKey RegKey(regKeyName);
-	if(RegKey.Exists())
-	{
-		RegKey.Create();
-		wxString revision;
-		RegKey.QueryValue(wxString("DisplayVersion"), revision);
-		m_Logic->SetRevision(mafWxToString(revision));
-	}
-	else
-	{
-		mafString revision=_R("0.1");
-		m_Logic->SetRevision(revision);
-	}
   //------------------------- Editors -------------------------
   m_Logic->Plug(new mafOpDelete(_L("Delete   \tCtrl+Shift+D")), _R(""));
   m_Logic->Plug(new mafOpCut(_L("Cut   \tCtrl+Shift+X")), _R(""));
