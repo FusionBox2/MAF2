@@ -86,16 +86,6 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
 	{
 		switch(e->GetId())
 		{
-		  case ABOUT_APPLICATION:
-			{
-        // trap the ABOUT_APPLICATION event and shows the about window with the application infos
-				mafString message = m_AppTitle;
-				message += _L(" Application ");
-				message += m_Revision;
-				wxMessageBox(message.toWx(), "About Application");
-				mafLogMessage(_M(m_Revision));
-			}
-		 break;
 		 case ID_GET_FILENAME:
 			  {
 				  e->SetString(&m_MSFFile);
