@@ -26,8 +26,8 @@
 #include "mafLogicWithGUI.h"
 #include "mafGUIVMEChooser.h"
 #include "mafNodeManager.h"
-#include "mafGUIFileHistory.h"
 #include "mafStorage.h"
+#include "wx/filehistory.h"
 #include <memory>
 
 
@@ -302,8 +302,8 @@ protected:
   wxMenu *m_RecentFileMenu;
   wxMenu *m_OpMenu;
   wxMenu *m_ViewMenu; 
-  mafGUIFileHistory	  m_FileHistory;      ///< Used to hold recently opened files
-  wxConfigBase*       m_Config;           ///< Application configuration for file history management
+  wxFileHistory	m_FileHistory;      ///< Used to hold recently opened files
+  wxConfigBase* m_Config;           ///< Application configuration for file history management
   wxMenu *m_EditMenu; 
   wxMenu *m_ViewListMenu; 
 
