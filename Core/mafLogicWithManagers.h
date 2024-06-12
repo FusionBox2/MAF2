@@ -114,18 +114,6 @@ public:
   /** Program Initialization */
 	virtual void Init(int argc, char **argv);
 
-  /** Must be called before Configure */
-  void PlugVMEManager(bool b) {m_UseVMEManager =b;};
-
-  /** Must be called before Configure */
-  void PlugViewManager(bool b){m_UseViewManager=b;};
-
-  /** Must be called before Configure */
-  void PlugOpManager(bool b){m_UseOpManager=b;};
-
-  /** Must be called before Configure */
-  void PlugInteractionManger(bool b){m_UseInteractionManager=b;}
-
   /** Fill the View and operation menu's and set the application stamp to the VMEManager.*/
   virtual void Show();
 
@@ -303,10 +291,6 @@ protected:
   bool m_CameraLinkingObserverFlag;
   bool m_ExternalViewFlag;
 
-  bool m_UseVMEManager;
-  bool m_UseViewManager;
-  bool m_UseOpManager;
-  bool m_UseInteractionManager;
   std::unique_ptr<mafGUISettingsDialog> m_SettingsDialog;
   std::unique_ptr<mafGUIApplicationLayoutSettings> m_ApplicationLayoutSettings;
   std::unique_ptr<mafGUISettingsHelp> m_HelpSettings;

@@ -148,11 +148,6 @@ mafLogicWithManagers::mafLogicWithManagers(mafGUIMDIFrame *mdiFrame/*=NULL*/)
 : mafLogicWithGUI(mdiFrame)
 //----------------------------------------------------------------------------
 {
-  m_UseVMEManager  = true;
-  m_UseViewManager = true;
-  m_UseOpManager   = true;
-  m_UseInteractionManager = true;
-  
   m_ExternalViewFlag  = false;
 
   m_CameraLinkingObserverFlag = false;
@@ -302,7 +297,6 @@ void mafLogicWithManagers::Configure()
       );
   }
 
-  if(m_UseVMEManager)
   {
     m_NodeManager = std::make_unique<mafNodeManager>();
     m_NodeManager->SetListener(this); 
@@ -310,7 +304,6 @@ void mafLogicWithManagers::Configure()
 
 // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
-  if (m_UseInteractionManager)
   {
     m_InteractionManager = std::make_unique<mafInteractionManager>();
     m_InteractionManager->SetListener(this);
@@ -321,13 +314,11 @@ void mafLogicWithManagers::Configure()
   }
 #endif
 
-  if(m_UseViewManager)
   {
     m_ViewManager = std::make_unique<mafViewManager>();
     m_ViewManager->SetListener(this);
   }
 
-  if(m_UseOpManager)
   {
     m_OpManager = std::make_unique<mafOpManager>();
     m_OpManager->SetListener(this);
@@ -336,7 +327,6 @@ void mafLogicWithManagers::Configure()
   
 // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
-  if (m_UseInteractionManager && m_UseViewManager && m_UseOpManager)
   {
 #ifdef __WIN32__
     m_RemoteLogic = std::make_unique<mafRemoteLogic>(this, m_ViewManager.get(), m_OpManager.get());
