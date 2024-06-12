@@ -173,22 +173,14 @@ mafLogicWithManagers::mafLogicWithManagers(mafGUIMDIFrame *mdiFrame/*=NULL*/)
 
   m_HelpSettings = NULL;
 
-  m_Extension = _R("msf");
 
   m_User = std::make_unique<mafUser>();
 
   m_Config = wxConfigBase::Get();
 
-  m_MakeBakFile = true;
   mafString msfDir = mafGetApplicationDirectory();
   ParsePathName(msfDir);
-  m_MSFDir   = msfDir;
-  m_MSFFile  = _R("");
-  m_ZipFile  = _R("");
-  m_TmpDir   = _R("");
-
-  m_SingleBinaryFile = false;
-
+  m_StorageData = std::make_unique<mafStorageData>(_R("msf"), true, msfDir, _R(""), _R(""), _R(""), false);
   m_FileHistoryIdx = -1;
 }
 
@@ -261,7 +253,7 @@ bool mafLogicWithManagers::CheckAppTag(mafNode *vme)
 void mafLogicWithManagers::SetSingleBinaryFile(bool singleFile)
 //----------------------------------------------------------------------------
 {
-  m_SingleBinaryFile = singleFile;
+  m_StorageData->m_SingleBinaryFile = singleFile;
 }
 
 //----------------------------------------------------------------------------
@@ -581,9 +573,9 @@ void mafLogicWithManagers::CreateToolbar()
   m_ToolBar->SetMargins(0,0);
   m_ToolBar->SetToolSeparation(2);
   m_ToolBar->SetToolBitmapSize(wxSize(20,20));
-  m_ToolBar->AddTool(MENU_FILE_NEW, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_NEW")),    (_L("new ") + m_Extension + _L(" storage file")).toWx());
-  m_ToolBar->AddTool(MENU_FILE_OPEN, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_OPEN")),  (_L("open ") + m_Extension + _L(" storage file")).toWx());
-  m_ToolBar->AddTool(MENU_FILE_SAVE, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_SAVE")),  (_L("save current ") + m_Extension + _L(" storage file")).toWx());
+  m_ToolBar->AddTool(MENU_FILE_NEW, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_NEW")),    (_L("new ") + m_StorageData->m_Extension + _L(" storage file")).toWx());
+  m_ToolBar->AddTool(MENU_FILE_OPEN, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_OPEN")),  (_L("open ") + m_StorageData->m_Extension + _L(" storage file")).toWx());
+  m_ToolBar->AddTool(MENU_FILE_SAVE, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_SAVE")),  (_L("save current ") + m_StorageData->m_Extension + _L(" storage file")).toWx());
   m_ToolBar->AddSeparator();
 
   m_ToolBar->AddTool(MENU_FILE_PRINT, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("PRINT")),  _("print the selected view"));
@@ -609,8 +601,8 @@ void mafLogicWithManagers::UpdateFrameTitle()
 //----------------------------------------------------------------------------
 {
   mafString title = mafWxToString(wxTheApp->GetAppDisplayName());
-  if(!m_MSFFile.empty())
-    title += _R("   ") + m_MSFFile;
+  if(!m_StorageData->m_MSFFile.empty())
+    title += _R("   ") + m_StorageData->m_MSFFile;
   m_Win->SetTitle(title.toWx());
 }
 //----------------------------------------------------------------------------
@@ -626,7 +618,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   mafID eventId = e->GetId();
   if (mafDataVector::GetSingleFileDataId() == eventId)
   {
-    e->SetBool(m_SingleBinaryFile);
+    e->SetBool(m_StorageData->m_SingleBinaryFile);
     return;
   }
   for(int i = 0; i < m_MenuElems.size(); i++)
@@ -1338,18 +1330,18 @@ bool mafLogicWithManagers::OnFileClose(bool force)
   if(!force && !AskConfirmAndSave())
     return false;
   OnEvent(&mafEvent(this,CLEAR_UNDO_STACK)); // ask logic to clear the undo stack
-  if(m_Storage && !m_TmpDir.empty())
+  if(m_Storage && !m_StorageData->m_TmpDir.empty())
   {
-    mafRemoveDirectory(m_TmpDir); // remove the temporary directory
-    m_TmpDir.clear();
+    mafRemoveDirectory(m_StorageData->m_TmpDir); // remove the temporary directory
+    m_StorageData->m_TmpDir.clear();
   }
   m_NodeManager->SetRoot(NULL);
   m_NodeManager->MSFModified(false);
   m_Storage.reset();
   m_NodeManager->SetListener(this);
   VmeSelected(NULL);
-  m_MSFFile.clear();
-  m_ZipFile.clear(); 
+  m_StorageData->m_MSFFile.clear();
+  m_StorageData->m_ZipFile.clear();
   UpdateFrameTitle();
   return true;
 }
@@ -1410,10 +1402,10 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
     else
     {
 		  mafString wildc = _R("MAF Storage Format file (*.");
-		  wildc += m_Extension;
+		  wildc += m_StorageData->m_Extension;
 		  wildc += _R(")|*.");
-		  wildc += m_Extension;
-			wildc += _R("|Compressed file (*.z") + m_Extension + _R(")|*.z") + m_Extension;
+		  wildc += m_StorageData->m_Extension;
+			wildc += _R("|Compressed file (*.z") + m_StorageData->m_Extension + _R(")|*.z") + m_StorageData->m_Extension;
 		  //mafString wildc    = _("MAF Storage Format file (*.msf)|*.msf|Compressed file (*.zmsf)|*.zmsf");
       file = mafGetOpenFile(_R(""), wildc);
     }
@@ -1490,8 +1482,8 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
       ((mafRemoteStorage *)m_Storage.get())->GetRemoteFileManager()->DownloadRemoteFile(remote_filename, local_filename); // download the remote file in the download cache
       file = local_filename;
     }
-    m_ZipFile = file;
-    unixname = mafOpenZIP(file, m_Storage->GetTmpFolder(), m_TmpDir); // open the zmsf archive and extract it to the temporary directory
+    m_StorageData->m_ZipFile = file;
+    unixname = mafOpenZIP(file, m_Storage->GetTmpFolder(), m_StorageData->m_TmpDir); // open the zmsf archive and extract it to the temporary directory
     if(unixname.empty())
     {
       mafMessage(_M(mafString(_L("Bad or corrupted zmsf file!"))));
@@ -1499,13 +1491,13 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
       m_Storage.reset();
       return false;
     }
-    wxSetWorkingDirectory(m_TmpDir.toWx());
+    wxSetWorkingDirectory(m_StorageData->m_TmpDir.toWx());
   }
 
   ParsePathName(unixname);
 
-  m_MSFFile = unixname; 
-  m_Storage->SetURL(m_MSFFile);
+  m_StorageData->m_MSFFile = unixname;
+  m_Storage->SetURL(m_StorageData->m_MSFFile);
 
 
   int res = m_Storage->Restore();
@@ -1554,13 +1546,13 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
 
   RestoreLayout();
 
-  if (!m_TmpDir.empty())
+  if (!m_StorageData->m_TmpDir.empty())
   {
-    m_FileHistory.AddFileToHistory(m_ZipFile.toWx()); // add the zmsf file to the history
+    m_FileHistory.AddFileToHistory(m_StorageData->m_ZipFile.toWx()); // add the zmsf file to the history
   }
   else if(/*!remote_file && */res == MAF_OK)
   {
-    m_FileHistory.AddFileToHistory(m_MSFFile.toWx()); // add the msf file to the history
+    m_FileHistory.AddFileToHistory(m_StorageData->m_MSFFile.toWx()); // add the msf file to the history
   }
   else if(res != MAF_OK && m_FileHistoryIdx != -1)
   {
@@ -1585,21 +1577,21 @@ void mafLogicWithManagers::Save()
     return;
 	mafString save_default_folder = m_StorageSettings->GetDefaultSaveFolder();
 	ParsePathName(save_default_folder);
-	m_MSFDir = save_default_folder;
+  m_StorageData->m_MSFDir = save_default_folder;
   mafVMERoot *root = mafVMERoot::SafeDownCast(m_NodeManager->GetRoot());
   if(!root)
     return;
-  if(m_MSFFile.empty())
+  if(m_StorageData->m_MSFFile.empty())
   {
     assert(false);
     return;
   }
   if(!m_Storage)
     return;
-  if(mafFileExists(m_MSFFile) && m_MakeBakFile) // an msf with the same name exists
+  if(mafFileExists(m_StorageData->m_MSFFile) && m_StorageData->m_MakeBakFile) // an msf with the same name exists
   {
-    mafString bak_filename = m_MSFFile + _R(".bak");                // create the backup for the saved msf
-    mafFileRename(m_MSFFile, bak_filename);  // renaming the founded one
+    mafString bak_filename = m_StorageData->m_MSFFile + _R(".bak");                // create the backup for the saved msf
+    mafFileRename(m_StorageData->m_MSFFile, bak_filename);  // renaming the founded one
   }
   auto bi = std::make_unique<wxBusyInfo>(_("Saving MSF: Please wait"));
   if (m_Storage->Store() != MAF_OK) // store the tree
@@ -1609,7 +1601,7 @@ void mafLogicWithManagers::Save()
   }
   // add the msf (or zmsf) to the history
 
-  m_MakeBakFile = true;
+  m_StorageData->m_MakeBakFile = true;
   UpdateFrameTitle();
   m_NodeManager->MSFModified(false);
   m_FileHistory.Save(*m_Config);
@@ -1622,16 +1614,16 @@ bool mafLogicWithManagers::OnFileSave()
     return true;
 	mafString save_default_folder = m_StorageSettings->GetDefaultSaveFolder();
 	ParsePathName(save_default_folder);
-	m_MSFDir = save_default_folder;
+  m_StorageData->m_MSFDir = save_default_folder;
   mafVMERoot *root = mafVMERoot::SafeDownCast(m_NodeManager->GetRoot());
   if(!root)
     return true;;
 
-  if(m_Storage && m_Storage->GetURL() != m_MSFFile)
+  if(m_Storage && m_Storage->GetURL() != m_StorageData->m_MSFFile)
   {
     assert(false);
   }
-  if(m_MSFFile.empty()) 
+  if(m_StorageData->m_MSFFile.empty())
     return OnFileSaveAs();
   Save();
   return true;
@@ -1646,9 +1638,9 @@ bool mafLogicWithManagers::OnFileSaveAs()
   if(!root)
     return true;
 
-  m_MSFFile.clear(); // set filenames to empty so the MSFSave method will ask for them
-  m_ZipFile.clear();
-  m_MakeBakFile = false;
+  m_StorageData->m_MSFFile.clear(); // set filenames to empty so the MSFSave method will ask for them
+  m_StorageData->m_ZipFile.clear();
+  m_StorageData->m_MakeBakFile = false;
 
   // new file to save: ask to the application which is the default
   // modality to save binary files.
@@ -1658,7 +1650,7 @@ bool mafLogicWithManagers::OnFileSaveAs()
 
   // ask for the new file name.
   mafString wildc = _L("MAF Storage Format file (*.msf)|*.msf|Compressed file (*.zmsf)|*.zmsf");
-  mafString file = mafGetSaveFile(m_MSFDir, wildc);
+  mafString file = mafGetSaveFile(m_StorageData->m_MSFDir, wildc);
   if(file.empty())
     return false;
 
@@ -1674,8 +1666,8 @@ bool mafLogicWithManagers::OnFileSaveAs()
       mafDirMake(file_dir);
     if (ext == _R("zmsf"))
     {
-      m_ZipFile = file;
-      m_TmpDir = file_dir;
+      m_StorageData->m_ZipFile = file;
+      m_StorageData->m_TmpDir = file_dir;
       ext = _R("msf");
     }
     file = file_dir + _R("/") + name + _R(".") + ext;
@@ -1683,9 +1675,9 @@ bool mafLogicWithManagers::OnFileSaveAs()
 
   ParsePathName(file);
 
-  m_MSFFile = file;
+  m_StorageData->m_MSFFile = file;
 
-  if(m_Storage && m_MSFFile != m_Storage->GetURL())
+  if(m_Storage && m_StorageData->m_MSFFile != m_Storage->GetURL())
   {
     mafNodeIterator *iter = root->NewIterator();
     for(mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
@@ -1707,17 +1699,17 @@ bool mafLogicWithManagers::OnFileSaveAs()
     m_Storage->SetListener(this);
     m_Storage->SetManager(m_NodeManager.get());
   }
-  m_Storage->SetURL(m_MSFFile);
+  m_Storage->SetURL(m_StorageData->m_MSFFile);
   Save();
   // add the msf (or zmsf) to the history
-  if (!m_ZipFile.empty())
+  if (!m_StorageData->m_ZipFile.empty())
   {
-    mafZIPSave(m_ZipFile, m_TmpDir);
-    m_FileHistory.AddFileToHistory(m_ZipFile.toWx()); // add the zmsf to the file history
+    mafZIPSave(m_StorageData->m_ZipFile, m_StorageData->m_TmpDir);
+    m_FileHistory.AddFileToHistory(m_StorageData->m_ZipFile.toWx()); // add the zmsf to the file history
   }
   else
   {
-    m_FileHistory.AddFileToHistory(m_MSFFile.toWx()); // add the msf to the file history
+    m_FileHistory.AddFileToHistory(m_StorageData->m_MSFFile.toWx()); // add the msf to the file history
   }
   return true;
 }

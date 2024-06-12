@@ -79,6 +79,27 @@ USAGE - member function MUST be called in this order:
   -- call Init(argc,argv)   will call MSFNew or MSFLoad
 
 */
+
+class MAF_EXPORT mafStorageData
+{
+public:
+  mafStorageData(const mafString& extention, bool makeBakFile, const mafString& msfDir, const mafString& msfFile, const mafString& zipFile, const mafString& tmpDir, bool singleBinary)
+    : m_Extension(extention)
+    , m_MakeBakFile(makeBakFile)
+    , m_MSFDir(msfDir)
+    , m_MSFFile(msfFile)
+    , m_ZipFile(zipFile)
+    , m_TmpDir(tmpDir)
+    , m_SingleBinaryFile(singleBinary)
+  {}
+  mafString m_Extension;
+  bool      m_MakeBakFile;      ///< Flag used to create or not the backup file of the saved msf.
+  bool      m_SingleBinaryFile; ///< used to store binary files associated to time varying VMEs as multiple files or not.
+  mafString m_MSFDir;           ///< Directory name in which is present the msf file.
+  mafString m_MSFFile;          ///< File name of the data associated to the tree.
+  mafString m_ZipFile;          ///< File name of compressed archive in which save the data associated to the tree.
+  mafString m_TmpDir;           ///< Temporary directory for zmsf extraction
+};
 class MAF_EXPORT mafLogicWithManagers: public mafLogicWithGUI
 {
 public:
@@ -144,7 +165,7 @@ public:
   void SetMAFExpertMode(int value){(*GetMAFExpertMode()) = value;};
 
   /* Set the file extension */
-  void SetFileExtension(mafString &extension) {m_Extension = extension;};
+  void SetFileExtension(mafString &extension) {m_StorageData->m_Extension = extension;};
 
 protected:
   bool AskConfirmAndSave();
@@ -295,23 +316,17 @@ protected:
   std::unique_ptr<mafGUIApplicationLayoutSettings> m_ApplicationLayoutSettings;
   std::unique_ptr<mafGUISettingsHelp> m_HelpSettings;
 
-  mafString m_Extension;
 
   std::unique_ptr<mafUser> m_User; ///< Applications' user
 
-  bool                    m_MakeBakFile;      ///< Flag used to create or not the backup file of the saved msf.
-  mafString               m_MSFDir;           ///< Directory name in which is present the msf file.
-  std::vector<mafString> m_AppStamp;      ///< Application stamps for our application.
-  bool                    m_SingleBinaryFile; ///< used to store binary files associated to time varying VMEs as multiple files or not.
   std::unique_ptr<mafStorage> m_Storage;          ///< Associated storage
+  std::unique_ptr<mafStorageData> m_StorageData;
 
+  std::vector<mafString> m_AppStamp;      ///< Application stamps for our application.
   int                     m_FileHistoryIdx;   ///< Identifier of the file to open
-  mafString               m_MSFFile;          ///< File name of the data associated to the tree.
-  mafString               m_ZipFile;          ///< File name of compressed archive in which save the data associated to the tree.
-  mafString               m_TmpDir;           ///< Temporary directory for zmsf extraction
 
   /** Set the filename for the current tree. */
-  void SetDirName (const mafString& dirname) {m_MSFDir = dirname;};
+  void SetDirName (const mafString& dirname) { m_StorageData->m_MSFDir = dirname;};
 
   /** Set the flag for saving binary files associated to time varying VMEs.*/
   void SetSingleBinaryFile(bool singleFile);
