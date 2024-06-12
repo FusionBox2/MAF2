@@ -30,7 +30,7 @@
 
 #include "mafEvent.h"
 #include "mafNodeIterator.h"
-#include "mafVMEStorage.h"
+#include "mafStorage.h"
 #include "mafVMERoot.h"
 #include "mafVMEGroup.h"
 #include "mafVMEGeneric.h"

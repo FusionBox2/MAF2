@@ -28,7 +28,7 @@
 #include "mafEvent.h"
 #include "mafGUI.h"
 
-#include "mafVMEStorage.h"
+#include "mafStorage.h"
 #include "mafEventIO.h"
 #include "mafDataVector.h"
 #include "mafVMEItem.h"

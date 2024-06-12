@@ -33,7 +33,7 @@
 
 #include "mafSmartPointer.h"
 #include "mmaApplicationLayout.h"
-#include "mafVMEStorage.h"
+#include "mafStorage.h"
 #include "mafStorageElement.h"
 #include "mafVMERoot.h"
 #include "mafNodeLayout.h"

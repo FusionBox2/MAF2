@@ -13,8 +13,8 @@
  PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-#ifndef __mafVMEStorage_h__
-#define __mafVMEStorage_h__
+#ifndef __mafStorage_h__
+#define __mafStorage_h__
 
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"
@@ -111,10 +111,10 @@ public:
 
 protected:
   /** This is called by Store() and must be reimplemented by subclasses */
-  virtual int InternalStore(const mafString& filename) = 0;
+  virtual int InternalStore(const mafString& filename);
 
   /** This is called by Restore() and must be reimplemented by subclasses */
-  virtual int InternalRestore(const mafString& filename) = 0;
+  virtual int InternalRestore(const mafString& filename);
 
   /** populate the list of files in the storage folder */
   virtual int OpenDirectory(const mafString& dir_name);
@@ -134,5 +134,4 @@ protected:
   int                 m_ErrorCode;    ///< the error code 0==OK
   mafNodeManager* m_Document;        ///< document object to be stored, or being restored
 };
-using mafVMEStorage = mafStorage;
-#endif // _mafVMEStorage_h_
+#endif // _mafStorage_h_
