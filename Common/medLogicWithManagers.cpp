@@ -88,21 +88,21 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
 		{
 		 case ID_GET_FILENAME:
 			  {
-				  e->SetString(&m_MSFFile);
+				  e->SetString(&m_StorageData->m_MSFFile);
 			  }
 			  break;
 		 case MENU_FILE_SNAPSHOT:
 			  {
-				  mafString msfFilename = m_MSFFile;
+				  mafString msfFilename = m_StorageData->m_MSFFile;
 				  if (msfFilename.empty())
 				  {
 					  mafString dirName = mafGetApplicationDirectory();
 					  dirName += _R("\\data\\msf\\");
 
-					  m_MSFDir = dirName;
+            m_StorageData->m_MSFDir = dirName;
 					  this->OnFileSaveAs();
 					  this->OnEvent((mafEventBase*)&mafEvent(this,CAMERA_UPDATE));
-					  msfFilename = m_MSFFile;
+					  msfFilename = m_StorageData->m_MSFFile;
 				  }
 
 				  mafString path, name, ext;
@@ -314,7 +314,7 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
       {
         UpdateFrameTitle();
         mafString file;
-        file=m_MSFFile;
+        file= m_StorageData->m_MSFFile;
         if(file.empty())
         {
           mafLogMessage (_M("Reload requested whitout opened MSF"));
