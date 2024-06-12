@@ -1,7 +1,7 @@
 /*=========================================================================
 
  Program: MAF2
- Module: mafVMEStorage
+ Module: mafStorage
  Authors: Marco Petrone
  
  Copyright (c) B3C
