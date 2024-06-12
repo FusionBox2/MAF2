@@ -78,8 +78,8 @@ SET(PROJECT_SRCS
   mafVMEOutputNULL.h
   mafVMERoot.cpp
   mafVMERoot.h
-  mafVMEStorage.cpp
-  mafVMEStorage.h
+  mafStorage.cpp
+  mafStorage.h
   mmaApplicationLayout.cpp
   mmaApplicationLayout.h
   mafGUIListCtrlBitmap.cpp

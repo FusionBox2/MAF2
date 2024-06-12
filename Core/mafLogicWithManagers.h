@@ -324,7 +324,7 @@ protected:
   mafString               m_MSFDir;           ///< Directory name in which is present the msf file.
   std::vector<mafString> m_AppStamp;      ///< Application stamps for our application.
   bool                    m_SingleBinaryFile; ///< used to store binary files associated to time varying VMEs as multiple files or not.
-  mafVMEStorage*          m_Storage;          ///< Associated storage
+  std::unique_ptr<mafStorage> m_Storage;          ///< Associated storage
 
   int                     m_FileHistoryIdx;   ///< Identifier of the file to open
   mafString               m_MSFFile;          ///< File name of the data associated to the tree.

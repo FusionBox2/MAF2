@@ -228,7 +228,7 @@ mafString mafOpGarbageCollectMSFDir::GetMSFDirAbsPath(mafNode *anyTreeNode)
 
   mafEventIO es(this,NODE_GET_STORAGE);
   root->OnEvent(&es);
-  mafVMEStorage *storage = dynamic_cast<mafVMEStorage*>(es.GetStorage());
+  mafStorage *storage = es.GetStorage();
   assert(storage);
 
   mafString msfABSPath = _R(""); // empty by default
@@ -252,7 +252,7 @@ mafString mafOpGarbageCollectMSFDir::GetMSFXMLFileAbsFileName(mafNode *anyTreeNo
 
   mafEventIO es(this,NODE_GET_STORAGE);
   root->OnEvent(&es);
-  mafVMEStorage *storage = dynamic_cast<mafVMEStorage*>(es.GetStorage());
+  mafStorage *storage = es.GetStorage();
   assert(storage);
 
   wxString msfXMLFileAbsFileName = ""; // empty by default

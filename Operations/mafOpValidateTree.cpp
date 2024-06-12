@@ -164,7 +164,7 @@ int mafOpValidateTree::ValidateTree()
         {
           mafEventIO e(this,NODE_GET_STORAGE);
           vme->ForwardUpEvent(e);
-          mafVMEStorage *storage = dynamic_cast<mafVMEStorage*>(e.GetStorage());
+          mafStorage *storage = e.GetStorage();
           if (storage != NULL)
           {
             m_MSFPath = storage->GetURL();
@@ -197,7 +197,7 @@ int mafOpValidateTree::ValidateTree()
             {
               mafEventIO e(this,NODE_GET_STORAGE);
               vme->ForwardUpEvent(e);
-              mafVMEStorage *storage = dynamic_cast<mafVMEStorage*>(e.GetStorage());
+              mafStorage *storage = e.GetStorage();
               if (storage != NULL)
               {
                 m_MSFPath = storage->GetURL();

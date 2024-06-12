@@ -10,8 +10,6 @@ DBG_MESSAGE("Configuring project mafIO")
 # Set your list of sources here.
 SET(PROJECT_SRCS
   mafTo.h
-  mafStorage.cpp
-  mafStorage.h
   mafStorageElement.cpp
   mafStorageElement.h
 )

@@ -114,7 +114,7 @@ int mafOpImporterMSF::ImportMSF()
 
   m_MSFFile = unixname; 
   mafNodeManager manager;
-  auto storage = std::make_unique<mafVMEStorage>();
+  auto storage = std::make_unique<mafStorage>();
   storage->SetManager(&manager);
   storage->SetURL(m_File);
 

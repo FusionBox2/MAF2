@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // includes :
 //----------------------------------------------------------------------------
-#include "mafVMEStorage.h"
+#include "mafStorage.h"
 
 //----------------------------------------------------------------------------
 // forward declarations :
@@ -34,7 +34,7 @@ class mmdRemoteFileManager;
   @sa mafVMEStorage
     - 
 */  
-class MAF_EXPORT mafRemoteStorage: public mafVMEStorage
+class MAF_EXPORT mafRemoteStorage: public mafStorage
 {
 public:
   using Superclass = mafVMEStorage;

@@ -105,7 +105,7 @@ int mafOpExporterMSF::ExportMSF()
 	}
 
   mafNodeManager manager;
-  mafVMEStorage storage;
+  mafStorage storage;
   storage.SetManager(&manager);
   storage.SetURL(m_MSFFile);
   mafVMERoot *root;
