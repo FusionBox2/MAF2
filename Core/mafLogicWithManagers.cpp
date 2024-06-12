@@ -89,7 +89,7 @@
 
 #include "mafEventSender.h"
 #include "mafDataVector.h"
-#include "mafVMEStorage.h"
+#include "mafStorage.h"
 #include "mafRemoteStorage.h"
 #include "mafOpSelect.h"
 

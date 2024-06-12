@@ -26,7 +26,7 @@
 #include "mafStorage.h"
 #include "mafEventIO.h"
 #include "mafVMEVolumeGray.h"
-#include "mafVMEStorage.h"
+#include "mafStorage.h"
 
 #include "../BES_Beta/vtkMAF/vtkMAFDataArrayDescriptor.h"
 #include "../BES_Beta/vtkMAF/vtkMAFLargeImageData.h"
@@ -78,7 +78,7 @@
   }
 
   mafString szStr;
-  mafVMEStorage* storage = dynamic_cast<mafVMEStorage*>(e.GetStorage());
+  mafStorage* storage = e.GetStorage();
   if (storage == NULL)
     szStr = mafGetDirName(mafGetApplicationDirectory(), 
     _L("Select a folder for optimized volume files"));

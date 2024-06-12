@@ -25,7 +25,7 @@
 class mafViewManager;
 class mmaApplicationLayout;
 class mafGUIMDIFrame;
-class mafVMEStorage;
+class mafStorage;
 class mafParser;
 class mafVMERoot;
 

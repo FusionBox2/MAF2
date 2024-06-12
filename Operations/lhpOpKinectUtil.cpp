@@ -63,7 +63,7 @@
 #include "mafVMEInfoText.h"
 
 
-#include "mafVMEStorage.h"
+#include "mafStorage.h"
 #include "mafNodeManager.h"
 
 #include "vtkPolyData.h"

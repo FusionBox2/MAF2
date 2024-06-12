@@ -31,7 +31,7 @@
 #include "mafDataVector.h"
 #include "mafVMERoot.h"
 #include "mafTagArray.h"
-#include "mafVMEStorage.h"
+#include "mafStorage.h"
 #include "mafMSFImporter.h"
 #include "mafVMEGroup.h"
 

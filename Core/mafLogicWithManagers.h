@@ -27,7 +27,7 @@
 #include "mafGUIVMEChooser.h"
 #include "mafNodeManager.h"
 #include "mafGUIFileHistory.h"
-#include "mafVMEStorage.h"
+#include "mafStorage.h"
 #include <memory>
 
 
