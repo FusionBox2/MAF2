@@ -148,7 +148,6 @@ mafLogicWithManagers::mafLogicWithManagers(mafGUIMDIFrame *mdiFrame/*=NULL*/)
 : mafLogicWithGUI(mdiFrame)
 //----------------------------------------------------------------------------
 {
-  m_SideBar     = NULL;
   m_UseVMEManager  = true;
   m_UseViewManager = true;
   m_UseOpManager   = true;
@@ -157,12 +156,6 @@ mafLogicWithManagers::mafLogicWithManagers(mafGUIMDIFrame *mdiFrame/*=NULL*/)
   m_ExternalViewFlag  = false;
 
   m_CameraLinkingObserverFlag = false;
-  
-  m_NodeManager  = NULL;
-  m_ViewManager = NULL;
-  m_OpManager   = NULL;
-  m_InteractionManager = NULL;
-  m_RemoteLogic = NULL;
 
   m_ImportMenu  = NULL; 
   m_ExportMenu  = NULL; 
@@ -172,8 +165,6 @@ mafLogicWithManagers::mafLogicWithManagers(mafGUIMDIFrame *mdiFrame/*=NULL*/)
   m_EditMenu    = NULL;
   m_UserCommandIndex = 0;
   m_RecentFileMenu = NULL;
-
-  m_MaterialChooser = NULL;
 
   // this is needed to manage events coming from the widget
   // when the user change the unit settings.
