@@ -180,7 +180,7 @@ mafLogicWithManagers::mafLogicWithManagers(mafGUIMDIFrame *mdiFrame/*=NULL*/)
 
   mafString msfDir = mafGetApplicationDirectory();
   ParsePathName(msfDir);
-  m_StorageData = std::make_unique<mafStorageData>(_R("msf"), true, msfDir, _R(""), _R(""), _R(""), false);
+  m_StorageData = std::make_unique<mafStorageData>(_R("msf"), true, msfDir, _R(""), _R(""), _R(""));
   m_FileHistoryIdx = -1;
 }
 
@@ -247,13 +247,6 @@ bool mafLogicWithManagers::CheckAppTag(mafNode *vme)
   /*if(app_stamp.Equals("INVALID") || ((!stamp_found) && (!stamp_data_manager_found) && (!stamp_open_all_found)))
     return false;*/
   return true;
-}
-
-//----------------------------------------------------------------------------
-void mafLogicWithManagers::SetSingleBinaryFile(bool singleFile)
-//----------------------------------------------------------------------------
-{
-  m_StorageData->m_SingleBinaryFile = singleFile;
 }
 
 //----------------------------------------------------------------------------
@@ -616,11 +609,6 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
     return;
   }
   mafID eventId = e->GetId();
-  if (mafDataVector::GetSingleFileDataId() == eventId)
-  {
-    e->SetBool(m_StorageData->m_SingleBinaryFile);
-    return;
-  }
   for(int i = 0; i < m_MenuElems.size(); i++)
   {
     if(eventId != m_MenuElems[i].m_command)
@@ -1528,22 +1516,6 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
   mafTimeStamp b[2] = {0.0, 0.0};
   root->GetOutput()->GetTimeBounds(b);
   root->SetTreeTime(b[0]); // Set tree time to the starting time
-  mafNodeIterator *iter = root->NewIterator();
-  for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
-  {
-    mafVMEGenericAbstract *vmeWithDataVector = mafVMEGenericAbstract::SafeDownCast(node);
-    if (vmeWithDataVector)
-    {
-      mafDataVector *dv = vmeWithDataVector->GetDataVector();
-      if (dv != NULL)
-      {
-        SetSingleBinaryFile(dv->GetSingleFileMode());
-        break;
-      }
-    }
-  }
-  iter->Delete();
-
   RestoreLayout();
 
   if (!m_StorageData->m_TmpDir.empty())

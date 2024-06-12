@@ -83,18 +83,16 @@ USAGE - member function MUST be called in this order:
 class MAF_EXPORT mafStorageData
 {
 public:
-  mafStorageData(const mafString& extention, bool makeBakFile, const mafString& msfDir, const mafString& msfFile, const mafString& zipFile, const mafString& tmpDir, bool singleBinary)
+  mafStorageData(const mafString& extention, bool makeBakFile, const mafString& msfDir, const mafString& msfFile, const mafString& zipFile, const mafString& tmpDir)
     : m_Extension(extention)
     , m_MakeBakFile(makeBakFile)
     , m_MSFDir(msfDir)
     , m_MSFFile(msfFile)
     , m_ZipFile(zipFile)
     , m_TmpDir(tmpDir)
-    , m_SingleBinaryFile(singleBinary)
   {}
   mafString m_Extension;
   bool      m_MakeBakFile;      ///< Flag used to create or not the backup file of the saved msf.
-  bool      m_SingleBinaryFile; ///< used to store binary files associated to time varying VMEs as multiple files or not.
   mafString m_MSFDir;           ///< Directory name in which is present the msf file.
   mafString m_MSFFile;          ///< File name of the data associated to the tree.
   mafString m_ZipFile;          ///< File name of compressed archive in which save the data associated to the tree.
@@ -327,9 +325,6 @@ protected:
 
   /** Set the filename for the current tree. */
   void SetDirName (const mafString& dirname) { m_StorageData->m_MSFDir = dirname;};
-
-  /** Set the flag for saving binary files associated to time varying VMEs.*/
-  void SetSingleBinaryFile(bool singleFile);
 
   struct mafMenuElems
   {
