@@ -571,7 +571,8 @@ void medLogicWithManagers::UpdateFrameTitle()
   //Special Window title management during wizards
   if (m_WizardRunning)
   {
-    wxString title = m_AppTitle.toWx();
+    wxString title = wxTheApp->GetAppDisplayName();
+
     title += "   " + m_WizardManager->GetDescription().toWx();
     m_Win->SetTitle(title);
   }

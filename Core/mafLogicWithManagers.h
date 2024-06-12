@@ -147,9 +147,6 @@ public:
   /** Manage application exception and allow to save at least the tree. */
   virtual void HandleException();
 
-	/** Set the revision string */
-	void SetRevision(mafString revision);
-
   /** Open a Find VME dialog.*/
   void FindVME();
 
@@ -314,7 +311,6 @@ protected:
   std::unique_ptr<mafGUIApplicationLayoutSettings> m_ApplicationLayoutSettings;
   std::unique_ptr<mafGUISettingsHelp> m_HelpSettings;
 
-  mafString m_Revision;
   mafString m_Extension;
 
   std::unique_ptr<mafUser> m_User; ///< Applications' user

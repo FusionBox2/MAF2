@@ -77,8 +77,6 @@ mafLogicWithGUI::mafLogicWithGUI(mafGUIMDIFrame *mdiFrame /*=NULL*/)
 	m_Logger				= NULL;
   m_VtkLog        = NULL;
 
-	m_AppTitle      = _R("");
-
 	m_PlugMenu		  = true;
 	m_PlugToolbar	  = true;
 	m_PlugSidebar	  = true;
@@ -120,7 +118,6 @@ void mafLogicWithGUI::Show()
   if (atable.Ok())
     mafGetFrame()->SetAcceleratorTable(atable);
   delete[] entries;
-  m_AppTitle = mafWxToString(m_Win->GetTitle());
 	m_Win->Show(TRUE);
 }
 //----------------------------------------------------------------------------
