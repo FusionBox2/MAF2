@@ -22,23 +22,30 @@
 #include "mmuIdFactory.h"
 #include "mafEventIO.h"
 
+#include "mafDirectory.h"
+#include "mafStorageElement.h"
+
 //------------------------------------------------------------------------------
-mafVMEStorage::mafVMEStorage()
-	: mafStorage(_R("MSF"), _R("2.2"))
-    , m_Document(nullptr)
+mafStorage::mafStorage()
+  : m_FileType(_R("MSF"))
+  , m_Version(_R("2.2"))
+  , m_Document(nullptr)
 //------------------------------------------------------------------------------
 {
+  m_TmpFileId = 0;
+  m_ErrorCode = 0;
+  m_TmpFolder = mafWxToString(wxGetCwd());
 }
 
 //------------------------------------------------------------------------------
-mafVMEStorage::~mafVMEStorage()
+mafStorage::~mafStorage()
 //------------------------------------------------------------------------------
 {
   SetManager(NULL);
 }
 
 //------------------------------------------------------------------------------
-void mafVMEStorage::SetManager(mafNodeManager *manager)
+void mafStorage::SetManager(mafNodeManager *manager)
 //------------------------------------------------------------------------------
 {
   if(m_Document)
@@ -49,7 +56,7 @@ void mafVMEStorage::SetManager(mafNodeManager *manager)
 }
 
 //------------------------------------------------------------------------------
-void mafVMEStorage::OnEvent(mafEventBase *e)
+void mafStorage::OnEvent(mafEventBase *e)
 //------------------------------------------------------------------------------
 {
   // default forward events to 
@@ -67,7 +74,7 @@ void mafVMEStorage::OnEvent(mafEventBase *e)
   }
 }
 //------------------------------------------------------------------------------
-int mafVMEStorage::InternalStore(const mafString& filename)
+int mafStorage::InternalStore(const mafString& filename)
 //------------------------------------------------------------------------------
 {
     mafXMLWriter writer(m_FileType, m_Version);
@@ -75,7 +82,7 @@ int mafVMEStorage::InternalStore(const mafString& filename)
     return writer.Save(filename);
 }
 //------------------------------------------------------------------------------
-int mafVMEStorage::InternalRestore(const mafString& filename)
+int mafStorage::InternalRestore(const mafString& filename)
 //------------------------------------------------------------------------------
 {
     mafXMLReader reader(m_FileType, m_Version);
@@ -84,3 +91,361 @@ int mafVMEStorage::InternalRestore(const mafString& filename)
     return MAF_OK;
 }
 
+//------------------------------------------------------------------------------
+int mafStorage::Store()
+//------------------------------------------------------------------------------
+{
+  SetErrorCode(0);
+  // extract the path substring
+  mafString dir_path = m_URL;
+  auto last_slash = dir_path.find_last_of('/');
+  if (last_slash != mafString::npos)
+  {
+    dir_path.erase(last_slash);
+  }
+  else
+  {
+    dir_path.clear();
+  }
+
+  //open the directory index
+  if (OpenDirectory(dir_path) == MAF_ERROR)
+  {
+    mafErrorMessage(_M("I/O Error: stored failed because path not found!"));
+    return MAF_ERROR;
+  }
+
+  // set the new filename as current
+  m_ParserURL = m_URL;
+
+  // here I should add a call for packing/sending files
+  mafString filename;
+
+  // initially store to a tmp file
+  GetTmpFile(filename);
+
+  int errorCode = InternalStore(filename);
+
+  // move to destination URL
+  if (errorCode == 0)
+  {
+    if (StoreToURL(filename, m_URL) != MAF_OK)
+    {
+      mafErrorMessage(_M(_R("Unable to resolve URL for output XML file, a copy of the file can be found in: ") + filename));
+      errorCode = 4;
+    }
+    else
+    {
+      //
+      // clean the storage file directory
+      //
+
+      ReleaseTmpFile(filename); // remove the storage tmp file
+
+      EmptyGarbageCollector();
+    }
+  }
+  return errorCode;
+}
+//------------------------------------------------------------------------------
+int mafStorage::Restore()
+//------------------------------------------------------------------------------
+{
+  SetErrorCode(0);
+  m_ParserURL = m_URL; // set the new filename as current
+  mafString filename;
+  // here I should resolve the XML file name
+  if (ResolveInputURL(m_ParserURL, filename) == MAF_ERROR)
+  {
+    mafErrorMessage(_M("Unable to resolve URL for input XML file"));
+    return IO_WRONG_URL;
+  }
+  return InternalRestore(filename);
+}
+
+//------------------------------------------------------------------------------
+void mafStorage::ForceParserURL()
+//------------------------------------------------------------------------------
+{
+  m_ParserURL = m_URL; // set the new filename as current
+}
+
+//------------------------------------------------------------------------------
+const mafString& mafStorage::GetURL()
+//------------------------------------------------------------------------------
+{
+  return m_URL;
+}
+
+//------------------------------------------------------------------------------
+const mafString& mafStorage::GetParserURL()
+//------------------------------------------------------------------------------
+{
+  return m_ParserURL;
+}
+
+//----------------------------------------------------------------------------
+bool mafStorage::IsFileInDirectory(const mafString& filename)
+//----------------------------------------------------------------------------
+{
+  return m_FilesDictionary.find(filename) != m_FilesDictionary.end();
+}
+
+//------------------------------------------------------------------------------
+const mafString& mafStorage::GetTmpFolder()
+//------------------------------------------------------------------------------
+{
+  if (m_TmpFolder.empty())
+  {
+    mafString path = mafPathOnly(m_URL);
+    if (!path.empty())
+    {
+      m_DefaultTmpFolder = path;
+      m_DefaultTmpFolder += _R("/");
+    }
+    else
+    {
+      m_DefaultTmpFolder.clear();
+    }
+
+    return m_DefaultTmpFolder;
+  }
+  else
+  {
+    return m_TmpFolder;
+  }
+}
+
+//----------------------------------------------------------------------------
+int mafStorage::OpenDirectory(const mafString& pathname)
+//----------------------------------------------------------------------------
+{
+  mafDirectory dir;
+  if (pathname.empty())
+  {
+    if (!dir.Load(_R(".")))
+      return MAF_ERROR;
+  }
+  else
+  {
+    if (!dir.Load(pathname))
+      return MAF_ERROR;
+  }
+
+  m_FilesDictionary.clear();
+
+  for (int i = 0; i < dir.GetNumberOfFiles(); i++)
+  {
+    mafString filename = BaseName(dir.GetFile(i));
+    m_FilesDictionary.insert(filename);
+  }
+
+  return MAF_OK;
+}
+
+//------------------------------------------------------------------------------
+void mafStorage::SetURL(const mafString& name)
+//------------------------------------------------------------------------------
+{
+  if (m_URL != name)
+  {
+    // when saving to a new file or loading a different file
+    // simply clear the list of URLs to be released.
+    m_GarbageCollector.clear();
+    m_URL = name; // force copying the const char reference
+  }
+}
+
+
+//------------------------------------------------------------------------------
+void mafStorage::GetTmpFile(mafString& filename)
+//------------------------------------------------------------------------------
+{
+  mafString tmpfname = GetTmpFolder();
+  tmpfname += _R("#tmp.");
+  do
+  {
+    tmpfname += mafToString(m_TmpFileId++);
+  } while (m_TmpFileNames.find(tmpfname) != m_TmpFileNames.end());
+
+  filename = tmpfname;
+  m_TmpFileNames.insert(filename);
+}
+//------------------------------------------------------------------------------
+void mafStorage::ReleaseTmpFile(const mafString& filename)
+//------------------------------------------------------------------------------
+{
+  std::set<mafString>::iterator it = m_TmpFileNames.find(filename);
+  if (it != m_TmpFileNames.end())
+  {
+    m_TmpFileNames.erase(it);
+  }
+
+  // remove file from disk if present
+  mafFileRemove(filename);
+}
+//------------------------------------------------------------------------------
+int mafStorage::ResolveInputURL(const mafString& url, mafString& filename, mafBaseEventHandler* observer)
+//------------------------------------------------------------------------------
+{
+  // currently no real URL support
+  mafString path;
+  path = mafPathOnly(url);
+  if (path.empty())
+  {
+    mafString base_path;
+    base_path = mafPathOnly(m_ParserURL);
+
+    filename = base_path;
+
+    if (!base_path.empty())
+      filename += _R("/");
+
+    filename += url;
+  }
+  else
+  {
+    filename = url;
+  }
+
+  bool file_exist = mafFileExists(filename);
+  return file_exist ? MAF_OK : MAF_WAIT;
+}
+//------------------------------------------------------------------------------
+int mafStorage::StoreToURL(const mafString& filename, const mafString& url)
+//------------------------------------------------------------------------------
+{
+  if (url.empty())
+  {
+    assert(false);
+    return MAF_ERROR;
+  }
+  // currently no real URL support
+  mafString path;
+  path = mafPathOnly(url);
+
+  if (path.empty())
+  {
+    // if local file prepend base_path
+    mafString base_path, fullpathname;
+    base_path = mafPathOnly(m_URL);
+    if (!base_path.empty())
+    {
+      fullpathname = base_path + _R("/") + url;
+    }
+    else
+    {
+      fullpathname = url;
+    }
+
+    if (IsFileInDirectory(url)) // IsFileInDirectory accepts URL specifications
+    {
+      // remove old file if present
+      DeleteURL(url);
+    }
+
+    // currently only local files are supported
+    return mafFileRename(filename, fullpathname) ? MAF_OK : MAF_ERROR;
+  }
+  else
+  {
+    // remove old file if present
+    mafFileRemove(url);
+    // currently only local files are supported
+    return mafFileRename(filename, url) ? MAF_OK : MAF_ERROR;
+  }
+}
+
+//------------------------------------------------------------------------------
+int mafStorage::ReleaseURL(const mafString& url)
+//------------------------------------------------------------------------------
+{
+  // add to list of files to be deleted
+  m_GarbageCollector.insert(url);
+  return MAF_OK;
+}
+
+
+//------------------------------------------------------------------------------
+int mafStorage::DeleteURL(const mafString& url)
+//------------------------------------------------------------------------------
+{
+  // currently no real URL support
+  mafString path;
+  path = mafPathOnly(url);
+
+  if (path.empty())
+  {
+    // if local file prepend base_path
+    mafString base_path, fullpathname;
+    base_path = mafPathOnly(m_URL);
+    fullpathname = base_path + _R("/") + url;
+
+    if (IsFileInDirectory(url))
+    {
+      // remove old file if present
+      mafFileRemove(fullpathname);
+      return MAF_OK;
+    }
+
+    return MAF_ERROR;
+  }
+  else
+  {
+    return (mafFileRemove(url) ? MAF_OK : MAF_ERROR);
+  }
+
+}
+
+//------------------------------------------------------------------------------
+void mafStorage::EmptyGarbageCollector()
+//------------------------------------------------------------------------------
+{
+  for (auto& url : m_GarbageCollector)
+  {
+    DeleteURL(url);
+  }
+  m_GarbageCollector.clear();
+}
+// ------------------------------------------------------------------------------
+// int mafStorage::InternalStore(const mafString& filename)
+// ------------------------------------------------------------------------------
+// {
+//   mafString filename;
+// 
+//   // initially store to a tmp file
+//   GetTmpFile(filename);
+// 
+//   mafXMLWriter writer(m_FileType, m_Version, filename);
+//   int errorCode = 0;// writer.GetRoot().SetValue(m_Document);
+// 
+//   // move to destination URL
+//   if (errorCode==0)
+//   {
+//     if (StoreToURL(filename,m_URL)!=MAF_OK)
+//     {
+//       mafErrorMessage(_M(_R("Unable to resolve URL for output XML file, a copy of the file can be found in: ") + filename));
+//       errorCode = 4;
+//     }
+//     else
+//     {
+//       //
+//       // clean the storage file directory
+//       //
+// 
+//       ReleaseTmpFile(filename); // remove the storage tmp file
+// 
+//       EmptyGarbageCollector();
+//     }
+//   }    
+//   return errorCode;
+// }
+// ------------------------------------------------------------------------------
+// int mafStorage::InternalRestore(const mafString& filename)
+// ------------------------------------------------------------------------------
+// {
+//   mafXMLReader reader(m_FileType, m_Version, filename);
+//   //*m_Document = reader.GetRoot().As<>();
+// 
+//   return MAF_OK;
+// }
