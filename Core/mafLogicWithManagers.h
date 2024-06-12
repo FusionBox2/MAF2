@@ -287,7 +287,7 @@ protected:
   std::unique_ptr<mafInteractionManager>  m_InteractionManager;
   std::unique_ptr<mafRemoteLogic>         m_RemoteLogic;
   
-  mafGUIMaterialChooser  *m_MaterialChooser;
+  std::unique_ptr<mafGUIMaterialChooser>  m_MaterialChooser;
   std::unique_ptr<mafPrintSupport> m_PrintSupport;
 
   wxMenu *m_ImportMenu; 

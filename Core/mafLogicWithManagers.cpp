@@ -1766,7 +1766,7 @@ void mafLogicWithManagers::OnQuit()
 
   m_RemoteLogic.reset();
   m_NodeManager.reset();
-  cppDEL(m_MaterialChooser);
+  m_MaterialChooser.reset();
 // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
   SetGlobalMouse(NULL);
@@ -2149,9 +2149,9 @@ std::vector<mafNode*> mafLogicWithManagers::VmeChoose(intptr_t vme_accept_functi
 void mafLogicWithManagers::VmeChooseMaterial(mafVME *vme, bool updateProperty)
 //----------------------------------------------------------------------------
 {
-  if (m_MaterialChooser == NULL)
+  if (!m_MaterialChooser)
   {
-    m_MaterialChooser = new mafGUIMaterialChooser();
+    m_MaterialChooser = std::make_unique<mafGUIMaterialChooser>();
   }
   if(m_MaterialChooser->ShowChooserDialog(vme))
   {
