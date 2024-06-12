@@ -31,7 +31,7 @@ class mmdRemoteFileManager;
   This is an implementation of remote storage object for storing MSF remote files.
   File download is non blocking action. While the data is downloading how use the item 
   should shows its bounding box at least.
-  @sa mafVMEStorage
+  @sa mafStorage
     - 
 */  
 class MAF_EXPORT mafRemoteStorage: public mafStorage
