@@ -27,7 +27,7 @@
 #include <wx/filefn.h>
 
 #include "mafTagArray.h"
-#include "mafVMEStorage.h"
+#include "mafStorage.h"
 #include "mafEventIO.h"
 #include "mafStorageElement.h"
 
@@ -221,7 +221,7 @@ void mafVMEExternalData::InitializeCurrentPath()
 {
   mafEventIO e(this,NODE_GET_STORAGE);
   ForwardUpEvent(e);
-  mafVMEStorage *storage=dynamic_cast<mafVMEStorage*>(e.GetStorage());
+  mafStorage *storage=e.GetStorage();
   if (storage != NULL)
   {
     m_MSFPath = storage->GetURL();

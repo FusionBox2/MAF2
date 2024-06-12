@@ -196,7 +196,6 @@ mafLogicWithManagers::mafLogicWithManagers(mafGUIMDIFrame *mdiFrame/*=NULL*/)
   m_Config = wxConfigBase::Get();
 
   m_MakeBakFile = true;
-  m_Storage     = NULL;
   mafString msfDir = mafGetApplicationDirectory();
   ParsePathName(msfDir);
   m_MSFDir   = msfDir;
@@ -1368,7 +1367,7 @@ bool mafLogicWithManagers::OnFileClose(bool force)
   }
   m_NodeManager->SetRoot(NULL);
   m_NodeManager->MSFModified(false);
-  cppDEL(m_Storage);
+  m_Storage.reset();
   m_NodeManager->SetListener(this);
   VmeSelected(NULL);
   m_MSFFile.clear();
@@ -1455,7 +1454,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
     const mafString& cache_folder = m_StorageSettings->GetCacheFolder();
     if (!mafDirExists(cache_folder))
       mafDirMake(cache_folder);
-    mafRemoteStorage *rs = new mafRemoteStorage;
+    auto rs = std::make_unique<mafRemoteStorage>();
     if(!rs)
       return false;
     rs->SetTmpFolder(cache_folder);
@@ -1464,7 +1463,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
     rs->SetUsername(m_StorageSettings->GetUserName());
     rs->SetPassword(m_StorageSettings->GetPassword());
     rs->Initialize();
-    m_Storage = rs;
+    m_Storage = std::move(rs);
   }
   else
   {
@@ -1484,7 +1483,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
       }
       return false;
     }
-    m_Storage = new mafVMEStorage;
+    m_Storage = std::make_unique<mafStorage>();
   }
 
   if(!m_Storage)
@@ -1514,7 +1513,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
       local_filename += _R("/");
       local_filename += name;
       local_filename += _R(".zmsf");
-      ((mafRemoteStorage *)m_Storage)->GetRemoteFileManager()->DownloadRemoteFile(remote_filename, local_filename); // download the remote file in the download cache
+      ((mafRemoteStorage *)m_Storage.get())->GetRemoteFileManager()->DownloadRemoteFile(remote_filename, local_filename); // download the remote file in the download cache
       file = local_filename;
     }
     m_ZipFile = file;
@@ -1523,7 +1522,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
     {
       mafMessage(_M(mafString(_L("Bad or corrupted zmsf file!"))));
       m_NodeManager->SetListener(this);
-      cppDEL(m_Storage);
+      m_Storage.reset();
       if(!m_TestMode) // Losi 02/16/2010 for test class
       {
         cppDEL(disableAll);
@@ -1543,7 +1542,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
   int res = m_Storage->Restore();
   if(res != mafStorage::IO_OK && res != mafStorage::IO_WRONG_OBJECT_TYPE)
   {
-    cppDEL(m_Storage);
+    m_Storage.reset();
     m_NodeManager->SetListener(this);
     if(!m_TestMode) // Losi 02/16/2010 for test class
     {
@@ -1562,7 +1561,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
   {
     //Application stamp not valid
     mafMessage(_M(mafString(_L("File not valid for this application!"))));
-    cppDEL(m_Storage);
+    m_Storage.reset();
     m_NodeManager->SetListener(this);
     m_NodeManager->SetRoot(NULL);
     if(!m_TestMode) // Losi 02/16/2010 for test class
@@ -1763,9 +1762,7 @@ bool mafLogicWithManagers::OnFileSaveAs()
 
   if(!m_Storage)
   {
-    m_Storage = new mafVMEStorage;
-    if(!m_Storage)
-      return false;
+    m_Storage = std::make_unique<mafStorage>();
     m_Storage->SetListener(this);
     m_Storage->SetManager(m_NodeManager);
   }

@@ -93,7 +93,7 @@ void mafOpImporterMSF1x::ImportMSF()
   bool success = false;
 //	wxBusyInfo wait("Loading file: ...");
   
-  auto storage = std::make_unique<mafVMEStorage>();
+  auto storage = std::make_unique<mafStorage>();
   mafMSFImporter manager;
   storage->SetManager(&manager);
   storage->SetURL(m_File);
