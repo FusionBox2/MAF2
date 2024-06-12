@@ -314,7 +314,6 @@ protected:
   mafString m_Extension;
 
   std::unique_ptr<mafUser> m_User; ///< Applications' user
-  bool     m_TestMode;
 
   bool                    m_MakeBakFile;      ///< Flag used to create or not the backup file of the saved msf.
   mafString               m_MSFDir;           ///< Directory name in which is present the msf file.

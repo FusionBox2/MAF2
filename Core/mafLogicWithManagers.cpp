@@ -163,7 +163,6 @@ mafLogicWithManagers::mafLogicWithManagers(mafGUIMDIFrame *mdiFrame/*=NULL*/)
   m_OpManager   = NULL;
   m_InteractionManager = NULL;
   m_RemoteLogic = NULL;
-  m_TestMode    = false;
 
   m_ImportMenu  = NULL; 
   m_ExportMenu  = NULL; 
@@ -1489,13 +1488,9 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
   m_Storage->SetListener(this);
   m_Storage->SetManager(m_NodeManager.get());
 
-  wxWindowDisabler *disableAll;
-  wxBusyCursor *wait_cursor;
-  if(!m_TestMode) // Losi 02/16/2010 for test class
-  {
-    disableAll = new wxWindowDisabler();
-    wait_cursor = new wxBusyCursor();
-  }
+  auto disableAll = std::make_unique<wxWindowDisabler>();
+  auto wait_cursor = std::make_unique<wxBusyCursor>();
+
   mafString unixname = file;
   mafString path, name, ext;
   mafSplitPath(file,&path,&name,&ext);
@@ -1521,11 +1516,6 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
       mafMessage(_M(mafString(_L("Bad or corrupted zmsf file!"))));
       m_NodeManager->SetListener(this);
       m_Storage.reset();
-      if(!m_TestMode) // Losi 02/16/2010 for test class
-      {
-        cppDEL(disableAll);
-        cppDEL(wait_cursor);
-      }
       return false;
     }
     wxSetWorkingDirectory(m_TmpDir.toWx());
@@ -1542,11 +1532,6 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
   {
     m_Storage.reset();
     m_NodeManager->SetListener(this);
-    if(!m_TestMode) // Losi 02/16/2010 for test class
-    {
-      cppDEL(disableAll);
-      cppDEL(wait_cursor);
-    }
     return false;
   }
   if(res == mafStorage::IO_WRONG_OBJECT_TYPE)
@@ -1562,11 +1547,6 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
     m_Storage.reset();
     m_NodeManager->SetListener(this);
     m_NodeManager->SetRoot(NULL);
-    if(!m_TestMode) // Losi 02/16/2010 for test class
-    {
-      cppDEL(disableAll);
-      cppDEL(wait_cursor);
-    }
     return false;
   }
   //root->Initialize();
@@ -1592,11 +1572,6 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
   iter->Delete();
 
   RestoreLayout();
-  if(!m_TestMode) // Losi 02/16/2010 for test class
-  {
-    cppDEL(disableAll);
-    cppDEL(wait_cursor);
-  }
 
   if (!m_TmpDir.empty())
   {
@@ -1645,19 +1620,10 @@ void mafLogicWithManagers::Save()
     mafString bak_filename = m_MSFFile + _R(".bak");                // create the backup for the saved msf
     mafFileRename(m_MSFFile, bak_filename);  // renaming the founded one
   }
-  wxBusyInfo *bi = NULL;
-  if(!m_TestMode) // Losi 02/16/2010 for test class 
-  {
-    bi = new wxBusyInfo(_("Saving MSF: Please wait"));
-	Sleep(1500);
-  }
+  auto bi = std::make_unique<wxBusyInfo>(_("Saving MSF: Please wait"));
   if (m_Storage->Store() != MAF_OK) // store the tree
   {
     mafLogMessage(_M(mafString(_L("Error during MSF saving"))));
-    if(!m_TestMode) // Losi 02/16/2010 for test class 
-    {
-      cppDEL(bi);
-    }
     return;
   }
   // add the msf (or zmsf) to the history
@@ -1666,10 +1632,6 @@ void mafLogicWithManagers::Save()
   UpdateFrameTitle();
   m_NodeManager->MSFModified(false);
   m_FileHistory.Save(*m_Config);
-  if(!m_TestMode) // Losi 02/16/2010 for test class 
-  {
-    cppDEL(bi);
-  }
 }
 //----------------------------------------------------------------------------
 bool mafLogicWithManagers::OnFileSave()
