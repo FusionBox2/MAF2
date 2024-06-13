@@ -535,14 +535,11 @@ std::vector<mafString> ZIPOpen(const mafString& file)
     zip.OpenEntry(*(entry.get()));
     std::ofstream out_file_stream;
     out_file_stream.open(name.GetCStr(), std::ios_base::binary);
-    int s_size = entry->GetSize();
-    char* buf = new char[s_size];
-    zip.Read(buf, s_size);
-    out_file_stream.write(buf, s_size);
+    std::vector<char> buf(entry->GetSize());
+    zip.Read(buf.data(), buf.size());
+    out_file_stream.write(buf.data(), buf.size());
 
     filesCreated.push_back(name);
-
-    delete[]buf;
   }
 
   return filesCreated;
