@@ -128,13 +128,11 @@ void mafRemoveDirectory(const mafString& directory)
 mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafString& tmpDir)
 //----------------------------------------------------------------------------
 {
-  wxZipFSHandler      *zipHandler;      ///< Handler for zip archive (used to open zmsf files)
-  wxFileSystem        *fileSystem;      ///< File system manager
   mafString           MSFFile;
 
-  fileSystem = new wxFileSystem();
-  zipHandler = new wxZipFSHandler();
-  fileSystem->AddHandler(zipHandler);
+  auto fileSystem = std::make_unique<wxFileSystem>();///< File system manager
+  auto zipHandler = std::make_unique<wxZipFSHandler>();///< Handler for zip archive (used to open zmsf files)
+  fileSystem->AddHandler(zipHandler.get());
 
   mafString path, name, ext;
 
@@ -175,9 +173,7 @@ mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafSt
   }
   if (zfile.empty())
   {
-    fileSystem->RemoveHandler(zipHandler);
-    cppDEL(zipHandler);
-    cppDEL(fileSystem);
+    fileSystem->RemoveHandler(zipHandler.get());
     mafRemoveDirectory(tmpDir); // remove the temporary directory
     return mafString();
   }
@@ -191,9 +187,7 @@ mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafSt
     zfileStream = fileSystem->OpenFile(zfile.toWx());
     if (zfileStream == NULL) // unable to open the file
     {
-      fileSystem->RemoveHandler(zipHandler);
-      cppDEL(zipHandler);
-      cppDEL(fileSystem);
+      fileSystem->RemoveHandler(zipHandler.get());
       mafRemoveDirectory(tmpDir); // remove the temporary directory
       return mafString();
     }
@@ -227,9 +221,7 @@ mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafSt
     mafErrorMessage(_M(mafString(_L("compressed archive is not a valid msf file!"))));
     return mafString();
   }
-  fileSystem->RemoveHandler(zipHandler);
-  cppDEL(zipHandler);
-  cppDEL(fileSystem);
+  fileSystem->RemoveHandler(zipHandler.get());
 
   // return the extracted msf filename
   return MSFFile;
@@ -238,9 +230,6 @@ mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafSt
 void mafOpenZIP(const mafString& filename, const mafString& temp_directory)
 //----------------------------------------------------------------------------
 {
-  wxZipFSHandler      *zipHandler = NULL;      ///< Handler for zip archive (used to open zmsf files)
-  wxFileSystem        *fileSystem = NULL;      ///< File system manager
-
   mafString path, name, ext;
 
   mafString zipFile = filename;
@@ -256,15 +245,10 @@ void mafOpenZIP(const mafString& filename, const mafString& temp_directory)
   mafString header_name = complete_name + pkg;
   int length_header_name = header_name.length();
   bool enable_mid = false;
-  if(fileSystem == NULL)
-    fileSystem = new wxFileSystem();
 
-  if(zipHandler == NULL)
-  {
-    zipHandler = new wxZipFSHandler();
-    fileSystem->AddHandler(zipHandler); // add the handler that manage zip protocol
-    // (the handler to manage the local files protocol is already added to wxFileSystem)
-  }
+  auto fileSystem = std::make_unique<wxFileSystem>();///< File system manager
+  auto zipHandler = std::make_unique<wxZipFSHandler>();///< Handler for zip archive (used to open zmsf files)
+  fileSystem->AddHandler(zipHandler.get()); // add the handler that manage zip protocol
 
   fileSystem->ChangePathTo(zipFile.toWx());
   // extract filename from the zip archive
@@ -309,9 +293,7 @@ void mafOpenZIP(const mafString& filename, const mafString& temp_directory)
     extractedFiles.push_back(out_file);
   }
   fileSystem->ChangePathTo(temp_directory.toWx(), TRUE);
-  fileSystem->RemoveHandler(zipHandler);
-  cppDEL(zipHandler);
-  cppDEL(fileSystem);
+  fileSystem->RemoveHandler(zipHandler.get());
 }
 bool mafExtractZIP(const mafString& filename, const mafString& entry_name, void *& buffer, size_t& size)
 {
