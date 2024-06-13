@@ -108,6 +108,7 @@ public:
   /** empty the garbage collector list deleting old files */
   virtual void EmptyGarbageCollector();
 
+  mafString m_TmpDir;           ///< Temporary directory for zmsf extraction
 
 protected:
   /** This is called by Store() and must be reimplemented by subclasses */

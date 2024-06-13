@@ -180,7 +180,7 @@ mafLogicWithManagers::mafLogicWithManagers(mafGUIMDIFrame *mdiFrame/*=NULL*/)
 
   mafString msfDir = mafGetApplicationDirectory();
   ParsePathName(msfDir);
-  m_StorageData = std::make_unique<mafStorageData>(_R("msf"), true, msfDir, _R(""), _R(""), _R(""));
+  m_StorageData = std::make_unique<mafStorageData>(_R("msf"), true, msfDir);
   m_FileHistoryIdx = -1;
 }
 
@@ -1318,10 +1318,10 @@ bool mafLogicWithManagers::OnFileClose(bool force)
   if(!force && !AskConfirmAndSave())
     return false;
   OnEvent(&mafEvent(this,CLEAR_UNDO_STACK)); // ask logic to clear the undo stack
-  if(m_Storage && !m_StorageData->m_TmpDir.empty())
+  if(m_Storage && !m_Storage->m_TmpDir.empty())
   {
-    mafRemoveDirectory(m_StorageData->m_TmpDir); // remove the temporary directory
-    m_StorageData->m_TmpDir.clear();
+    mafRemoveDirectory(m_Storage->m_TmpDir); // remove the temporary directory
+    m_Storage->m_TmpDir.clear();
   }
   m_NodeManager->SetRoot(NULL);
   m_NodeManager->MSFModified(false);
@@ -1466,7 +1466,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
       file = local_filename;
     }
     m_StorageData->m_ZipFile = file;
-    unixname = mafOpenZIP(file, m_Storage->GetTmpFolder(), m_StorageData->m_TmpDir); // open the zmsf archive and extract it to the temporary directory
+    unixname = mafOpenZIP(file, m_Storage->GetTmpFolder(), m_Storage->m_TmpDir); // open the zmsf archive and extract it to the temporary directory
     if(unixname.empty())
     {
       mafMessage(_M(mafString(_L("Bad or corrupted zmsf file!"))));
@@ -1474,7 +1474,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
       m_Storage.reset();
       return false;
     }
-    wxSetWorkingDirectory(m_StorageData->m_TmpDir.toWx());
+    wxSetWorkingDirectory(m_Storage->m_TmpDir.toWx());
   }
 
   ParsePathName(unixname);
@@ -1513,7 +1513,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
   root->SetTreeTime(b[0]); // Set tree time to the starting time
   RestoreLayout();
 
-  if (!m_StorageData->m_TmpDir.empty())
+  if (!m_Storage->m_TmpDir.empty())
   {
     m_FileHistory.AddFileToHistory(m_StorageData->m_ZipFile.toWx()); // add the zmsf file to the history
   }
@@ -1620,7 +1620,7 @@ bool mafLogicWithManagers::OnFileSaveAs()
   mafString file = mafGetSaveFile(m_StorageData->m_MSFDir, wildc);
   if(file.empty())
     return false;
-
+  mafString tmpDir;
   if(!mafFileExists(file))
   {
     mafString path, name, ext, file_dir;
@@ -1634,7 +1634,7 @@ bool mafLogicWithManagers::OnFileSaveAs()
     if (ext == _R("zmsf"))
     {
       m_StorageData->m_ZipFile = file;
-      m_StorageData->m_TmpDir = file_dir;
+      tmpDir = file_dir;
       ext = _R("msf");
     }
     file = file_dir + _R("/") + name + _R(".") + ext;
@@ -1667,11 +1667,12 @@ bool mafLogicWithManagers::OnFileSaveAs()
     m_Storage->SetManager(m_NodeManager.get());
   }
   m_Storage->SetURL(m_StorageData->m_MSFFile);
+  m_Storage->m_TmpDir = tmpDir;
   Save();
   // add the msf (or zmsf) to the history
   if (!m_StorageData->m_ZipFile.empty())
   {
-    mafZIPSave(m_StorageData->m_ZipFile, m_StorageData->m_TmpDir);
+    mafZIPSave(m_StorageData->m_ZipFile, m_Storage->m_TmpDir);
     m_FileHistory.AddFileToHistory(m_StorageData->m_ZipFile.toWx()); // add the zmsf to the file history
   }
   else
