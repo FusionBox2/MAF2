@@ -1413,8 +1413,6 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
     if (!mafDirExists(cache_folder))
       mafDirMake(cache_folder);
     auto rs = std::make_unique<mafRemoteStorage>();
-    if(!rs)
-      return false;
     rs->SetTmpFolder(cache_folder);
     rs->SetHostName(m_StorageSettings->GetRemoteHostName());
     rs->SetRemotePort(m_StorageSettings->GetRemotePort());
@@ -1443,9 +1441,6 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
     }
     m_Storage = std::make_unique<mafStorage>();
   }
-
-  if(!m_Storage)
-    return false;
   m_Storage->SetListener(this);
   m_Storage->SetManager(m_NodeManager.get());
 
