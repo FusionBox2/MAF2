@@ -502,8 +502,7 @@ std::vector<mafString> ZIPOpen(const mafString& file)
 {
   std::vector<mafString> filesCreated;
 
-  mafString ZipFile, tmpDir, MSFFile;
-  ZipFile = file;
+  mafString tmpDir, MSFFile;
   mafString zip_cache = mafPathOnly(file);
   if (zip_cache.empty())
   {
@@ -515,7 +514,7 @@ std::vector<mafString> ZIPOpen(const mafString& file)
   tmpDir = zip_cache;
 
   mafString path, name, ext, complete_name, zfile, out_file;
-  mafSplitPath(ZipFile, &path, &name, &ext);
+  mafSplitPath(file, &path, &name, &ext);
   complete_name = name + _R(".") + ext;
 
   mafString pkg = _R("#zip:");
