@@ -275,7 +275,7 @@ void mafDataVector::InternalStore(mafStorageElementBuilder& parent)
           mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
           long progress = 0;
 
-          std::vector<mafString> filesExtracted = ZIPOpen(filename);
+          std::vector<mafString> filesExtracted = mafZIPOpen(filename);
 
           int dataIndex = 0;
           int step = round(this->GetNumberOfItems() / 100) + 1;
