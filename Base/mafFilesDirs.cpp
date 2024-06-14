@@ -478,7 +478,7 @@ void ParsePathName(mafString& str)
 }
 
 //----------------------------------------------------------------------------
-std::vector<mafString> ZIPOpen(const mafString& file)
+std::vector<mafString> mafZIPOpen(const mafString& file)
 //----------------------------------------------------------------------------
 {
   std::vector<mafString> filesCreated;

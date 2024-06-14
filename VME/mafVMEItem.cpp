@@ -333,7 +333,7 @@ int mafVMEItem::ExtractFileFromArchive(mafString &archive_fullname, mafString &i
 
 
 
-		ZIPOpen(archive_fullname);
+		mafZIPOpen(archive_fullname);
 	}
 	wxFileInputStream iiin(itempath.toWx());
 	m_InputMemorySize = iiin.GetSize();

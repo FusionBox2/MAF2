@@ -41,7 +41,7 @@ MAF_EXPORT void mafZIPSave(const mafString& filename, const mafString& dir);
 
 /** extract the file archived in the zipFile in the directory where is placed the zip file.
 Return the list of the files extracted. */
-MAF_EXPORT std::vector<mafString> ZIPOpen(const mafString& zipFile);
+MAF_EXPORT std::vector<mafString> mafZIPOpen(const mafString& zipFile);
 
 mafString BaseName(const mafString& str);
 void MakeBaseName(mafString& str);
