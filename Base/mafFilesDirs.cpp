@@ -130,10 +130,6 @@ mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafSt
 {
   mafString           MSFFile;
 
-  auto fileSystem = std::make_unique<wxFileSystem>();///< File system manager
-  auto zipHandler = std::make_unique<wxZipFSHandler>();///< Handler for zip archive (used to open zmsf files)
-  fileSystem->AddHandler(zipHandler.get());
-
   mafString path, name, ext;
 
   mafString zip_cache = mafPathOnly(filename); // get the directory
@@ -162,6 +158,9 @@ mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafSt
   int length_header_name = header_name.length();
   bool enable_mid = false;
 
+  auto fileSystem = std::make_unique<wxFileSystem>();///< File system manager
+  auto zipHandler = std::make_unique<wxZipFSHandler>();///< Handler for zip archive (used to open zmsf files)
+  fileSystem->AddHandler(zipHandler.get());
   fileSystem->ChangePathTo(filename.toWx());
   // extract filename from the zip archive
   zfile = mafWxToString(fileSystem->FindFirst((complete_name+pkg+name+_R("\\*.*")).toWx()));
@@ -178,7 +177,6 @@ mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafSt
     return mafString();
   }
 
-  std::ofstream out_file_stream;
 
   for (;!zfile.empty(); zfile = mafWxToString(fileSystem->FindNext()))
   {
@@ -198,10 +196,8 @@ mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafSt
     if(ext == _R("msf"))
     {
       MSFFile = out_file; // The file to extract is an msf
-      out_file_stream.open(out_file.GetCStr(), std::ios_base::out);
     }
-    else
-      out_file_stream.open(out_file.GetCStr(), std::ios_base::binary); // The file to extract is a binary
+    std::ofstream out_file_stream(out_file.GetCStr(), std::ios_base::binary); // The file to extract is a binary
     std::vector<char> buf(zip_is->GetSize());
     zip_is->Read(buf.data(), buf.size());
     out_file_stream.write(buf.data(), buf.size());
@@ -274,8 +270,7 @@ void mafOpenZIP(const mafString& filename, const mafString& temp_directory)
       complete_name = mafWxToString(complete_name.toWx().Mid(length_header_name));
     zip_is = (wxZlibInputStream *)zfileStream->GetStream();
     out_file = temp_directory + _R("\\") + complete_name;
-    std::ofstream out_file_stream;
-    out_file_stream.open(out_file.GetCStr(), std::ios_base::binary); // the file to extract is a binary
+    std::ofstream out_file_stream(out_file.GetCStr(), std::ios_base::binary); // the file to extract is a binary
     std::vector<char> buf(zip_is->GetSize());
     zip_is->Read(buf.data(),buf.size());
     out_file_stream.write(buf.data(), buf.size());
@@ -347,10 +342,8 @@ void mafExtractZIP(const mafString& filename, const mafString& temp_directory, c
   if (entry != NULL) 
   {
     // read the entry's data...
-    mafString out_file;
-    std::ofstream out_file_stream;
-    out_file = temp_directory + _R("/") + entry_name;
-    out_file_stream.open(out_file.GetCStr(), std::ios_base::binary); // the file to extract is a binary
+    mafString out_file = temp_directory + _R("/") + entry_name;
+    std::ofstream out_file_stream(out_file.GetCStr(), std::ios_base::binary); // the file to extract is a binary
     std::vector<char> buf(entry->GetSize());
     zip.Read(buf.data(), buf.size());
     out_file_stream.write(buf.data(), buf.size());
@@ -517,9 +510,7 @@ std::vector<mafString> ZIPOpen(const mafString& file)
 
   while (entry.reset(zip.GetNextEntry()), entry.get() != NULL)
   {
-    mafString name = path;
-    name += _R("\\");
-    name += mafWxToString(entry->GetName());
+    mafString name = path + _R("\\") + mafWxToString(entry->GetName());
     zip.OpenEntry(*(entry.get()));
     std::ofstream out_file_stream;
     out_file_stream.open(name.GetCStr(), std::ios_base::binary);
