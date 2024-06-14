@@ -34,7 +34,6 @@ MAF_EXPORT mafString mafFileNameFromPath(const mafString& fullname);
 
 MAF_EXPORT void mafRemoveDirectory(const mafString& directory);
 MAF_EXPORT mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafString& tmpDir);
-MAF_EXPORT void mafOpenZIP(const mafString& filename, const mafString& temp_directory);
 MAF_EXPORT void mafExtractZIP(const mafString& filename, const mafString& temp_directory, const mafString& entry_name);
 MAF_EXPORT bool mafExtractZIP(const mafString& filename, const mafString& entry_name, void *& buffer, size_t& size);
 MAF_EXPORT void mafZIPSave(const mafString& filename, const mafString& dir);
