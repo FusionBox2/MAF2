@@ -178,8 +178,6 @@ mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafSt
     return mafString();
   }
 
-  char *buf;
-  int s_size;
   std::ofstream out_file_stream;
 
   for (;!zfile.empty(); zfile = mafWxToString(fileSystem->FindNext()))
@@ -204,12 +202,10 @@ mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafSt
     }
     else
       out_file_stream.open(out_file.GetCStr(), std::ios_base::binary); // The file to extract is a binary
-    s_size = zip_is->GetSize();
-    buf = new char[s_size];
-    zip_is->Read(buf,s_size);
-    out_file_stream.write(buf, s_size);
+    std::vector<char> buf(zip_is->GetSize());
+    zip_is->Read(buf.data(), buf.size());
+    out_file_stream.write(buf.data(), buf.size());
     out_file_stream.close();
-    delete[] buf;
     zfileStream->UnRef();
     delete zfileStream;
   }
@@ -278,16 +274,12 @@ void mafOpenZIP(const mafString& filename, const mafString& temp_directory)
       complete_name = mafWxToString(complete_name.toWx().Mid(length_header_name));
     zip_is = (wxZlibInputStream *)zfileStream->GetStream();
     out_file = temp_directory + _R("\\") + complete_name;
-    char *buf;
-    int s_size;
     std::ofstream out_file_stream;
     out_file_stream.open(out_file.GetCStr(), std::ios_base::binary); // the file to extract is a binary
-    s_size = zip_is->GetSize();
-    buf = new char[s_size];
-    zip_is->Read(buf,s_size);
-    out_file_stream.write(buf, s_size);
+    std::vector<char> buf(zip_is->GetSize());
+    zip_is->Read(buf.data(),buf.size());
+    out_file_stream.write(buf.data(), buf.size());
     out_file_stream.close();
-    delete[] buf;
     zfileStream->UnRef();
     delete zfileStream;
     extractedFiles.push_back(out_file);
@@ -356,17 +348,13 @@ void mafExtractZIP(const mafString& filename, const mafString& temp_directory, c
   {
     // read the entry's data...
     mafString out_file;
-    char *buf;
-    int s_size;
     std::ofstream out_file_stream;
     out_file = temp_directory + _R("/") + entry_name;
     out_file_stream.open(out_file.GetCStr(), std::ios_base::binary); // the file to extract is a binary
-    s_size = entry->GetSize();
-    buf = new char[s_size];
-    zip.Read(buf, s_size);
-    out_file_stream.write(buf, s_size);
+    std::vector<char> buf(entry->GetSize());
+    zip.Read(buf.data(), buf.size());
+    out_file_stream.write(buf.data(), buf.size());
     out_file_stream.close();
-    delete[] buf;
     delete entry;
     entry = NULL;
   }
