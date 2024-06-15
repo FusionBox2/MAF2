@@ -111,14 +111,11 @@ public:
     TSet::end() if none found.*/
   Iterator FindTimeStampBefore(mafTimeStamp t);
 
-  /** Merge two different time-stamps sets*/
-  static void Merge(const mmuTimeSet &v1,const mmuTimeSet &v2,mmuTimeSet &outv);
-
   /** Merge a time-stamps set into this set*/
   void Merge(const mmuTimeSet &v);
 
   /** Merge two different time-stamps vectors*/
-  static void Merge(const std::vector<mafTimeStamp> &v1,const std::vector<mafTimeStamp> &v2,std::vector<mafTimeStamp> &outv);
+  static std::vector<mafTimeStamp> Merge(const std::vector<mafTimeStamp> &v1,const std::vector<mafTimeStamp> &v2);
 
   /** Merge a time-stamps vector into this set*/
   void Merge(const std::vector<mafTimeStamp> &v);

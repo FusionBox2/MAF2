@@ -131,8 +131,6 @@ void mafVMEScalar::GetDataTimeStamps(std::vector<mafTimeStamp> &kframes)
 void mafVMEScalar::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)
 //-------------------------------------------------------------------------
 {
-  kframes.clear();
-
   std::vector<mafTimeStamp> datatimestamps;
   std::vector<mafTimeStamp> matrixtimestamps;
 
@@ -142,7 +140,7 @@ void mafVMEScalar::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)
   }
   Superclass::GetLocalTimeStamps(matrixtimestamps);
 
-  mmuTimeSet::Merge(datatimestamps,matrixtimestamps,kframes);
+  kframes = mmuTimeSet::Merge(datatimestamps,matrixtimestamps);
 }
 
 //-------------------------------------------------------------------------

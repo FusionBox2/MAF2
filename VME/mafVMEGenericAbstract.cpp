@@ -231,8 +231,6 @@ void mafVMEGenericAbstract::GetMatrixTimeStamps(std::vector<mafTimeStamp> &kfram
 void mafVMEGenericAbstract::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)
 //-------------------------------------------------------------------------
 {
-  kframes.clear();
-
   std::vector<mafTimeStamp> datatimestamps;
   std::vector<mafTimeStamp> matrixtimestamps;
   
@@ -242,7 +240,7 @@ void mafVMEGenericAbstract::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframe
   }
   m_MatrixVector->GetTimeStamps(matrixtimestamps);
 
-  mmuTimeSet::Merge(datatimestamps,matrixtimestamps,kframes);
+  kframes = mmuTimeSet::Merge(datatimestamps,matrixtimestamps);
 }
 
 //-------------------------------------------------------------------------

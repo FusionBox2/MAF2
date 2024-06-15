@@ -118,10 +118,9 @@ void mafOpReparentTo::OpDo()
   {
     mmuTimeVector input_time;
     mmuTimeVector target_time;
-    mmuTimeVector time;
     ((mafVME *)m_Input)->GetAbsTimeStamps(input_time);
     m_TargetVme->GetAbsTimeStamps(target_time);
-    mmuTimeSet::Merge(input_time,target_time,time);
+    mmuTimeVector time = mmuTimeSet::Merge(input_time,target_time);
     num = time.size();
 
     std::vector< mafAutoPointer<mafMatrix> > new_input_pose;
