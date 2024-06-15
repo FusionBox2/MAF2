@@ -475,9 +475,9 @@ void mafTagItem::InternalStore(mafStorageElementBuilder& parent)
   if (!m_Components.empty())
   {
     auto entry = TItem[_R("TC")];
-    for (auto& comp : m_Components)
+    for (size_t i = 0; i < m_Components.size(); i++)
     {
-      entry[mafStorageElementBuilder::npos].SetValue(comp);
+      entry[mafStorageElementBuilder::npos].SetValue(m_Components[i]);
     }
   }
 }
