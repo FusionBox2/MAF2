@@ -1066,7 +1066,7 @@ namespace
       prox->GetAbsTimeStamps(pt);
     if(dist)
       dist->GetAbsTimeStamps(dt);
-    mmuTimeSet::Merge(dt, pt, stamps);
+    stamps = mmuTimeSet::Merge(dt, pt);
   }
 
 }

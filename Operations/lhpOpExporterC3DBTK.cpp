@@ -387,7 +387,7 @@ bool lhpOpExporterC3DBTK::ExportClouds(btk::Acquisition::Pointer target, std::ve
     else
       cloud->GetLocalTimeStamps(lmcTimeStamps);
 
-    mmuTimeSet::Merge(timeStamps, lmcTimeStamps, timeStamps);
+    timeStamps = mmuTimeSet::Merge(timeStamps, lmcTimeStamps);
   }
 
   int numberAnalog = 0;
@@ -405,7 +405,7 @@ bool lhpOpExporterC3DBTK::ExportClouds(btk::Acquisition::Pointer target, std::ve
         aTimeStamps.push_back(matr(0, i));
       }
     }
-    mmuTimeSet::Merge(timeStamps, aTimeStamps, timeStamps);
+    timeStamps = mmuTimeSet::Merge(timeStamps, aTimeStamps);
   }
 
   if(numberLandmark == 0 && numberAnalog == 0)

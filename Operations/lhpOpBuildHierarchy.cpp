@@ -194,7 +194,6 @@ static void makeReparent(mafVME *child, mafVME *newParent)
   int num, t;
   mmuTimeVector input_time;
   mmuTimeVector target_time;
-  mmuTimeVector time;
   mafTimeStamp  cTime, startTime;
   mafVME        *oldParent;
 
@@ -202,7 +201,7 @@ static void makeReparent(mafVME *child, mafVME *newParent)
 
   child->GetAbsTimeStamps(input_time);
   newParent->GetAbsTimeStamps(target_time);
-  mmuTimeSet::Merge(input_time,target_time,time);
+  mmuTimeVector time = mmuTimeSet::Merge(input_time,target_time);
   num = time.size();
 
   startTime = newParent->GetTimeStamp();

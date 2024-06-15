@@ -169,47 +169,10 @@ mmuTimeSet::Iterator mmuTimeSet::FindTimeStampBefore(mafTimeStamp t)
 }
 
 //-------------------------------------------------------------------------
-void mmuTimeSet::Merge(const mmuTimeSet &v1,const mmuTimeSet &v2,mmuTimeSet &outv)
-//-------------------------------------------------------------------------
-{
-  if (&outv!=&v1 && &outv!=&v2)
-  {
-    outv.Clear();
-  }
-
-  if (&outv!=&v1)   
-  {
-    if (&outv!=&v2)
-    {
-      outv=v1;
-
-      for (TSet::const_iterator it=v2.GetConstTSet().begin();it!=v2.GetConstTSet().end();it++)
-      {
-        outv.Insert(*it);
-      }
-    }
-    else
-    {
-      for (TSet::const_iterator it=v1.GetConstTSet().begin();it!=v1.GetConstTSet().end();it++)
-      {
-        outv.Insert(*it);
-      }
-    }
-  }
-  else
-  {
-    for (TSet::const_iterator it=v2.GetConstTSet().begin();it!=v2.GetConstTSet().end();it++)
-    {
-      outv.Insert(*it);
-    }
-  }
-}
-
-//-------------------------------------------------------------------------
 void mmuTimeSet::Merge(const mmuTimeSet &v)
 //-------------------------------------------------------------------------
 {
-  Merge(*this,v,*this);
+  m_TSet.insert(v.m_TSet.begin(), v.m_TSet.end());
 }
 
 //-------------------------------------------------------------------------
@@ -220,31 +183,17 @@ int mmuTimeSet::GetNumberOfTimeStamps() const
 }
 
 //-------------------------------------------------------------------------
-void mmuTimeSet::Merge(const std::vector<mafTimeStamp> &v1,const std::vector<mafTimeStamp> &v2,std::vector<mafTimeStamp> &outv)
+std::vector<mafTimeStamp> mmuTimeSet::Merge(const std::vector<mafTimeStamp> &v1,const std::vector<mafTimeStamp> &v2)
 //-------------------------------------------------------------------------
 {
-  std::set<mafTimeStamp> outset;
-  for (unsigned int idx=0;idx<v1.size();idx++)
-  {
-    outset.insert(v1[idx]);
-  }
-
-  for (unsigned int idx2=0;idx2<v2.size();idx2++)
-  {
-    outset.insert(v2[idx2]);
-  }
-
-  outv.clear();
-  for (std::set<mafTimeStamp>::iterator it=outset.begin();it!=outset.end();it++)
-  {
-    outv.push_back(*it);
-  }
+  std::vector<mafTimeStamp> outv;
+  std::set_union(v1.begin(), v1.end(), v2.begin(), v2.end(), std::back_inserter(outv));
+  return outv;
 }
 
 //-------------------------------------------------------------------------
 void mmuTimeSet::Merge(const std::vector<mafTimeStamp> &v)
 //-------------------------------------------------------------------------
 {
-  for (unsigned int i=0;i<v.size();i++)
-    Insert(v[i]);
+  m_TSet.insert(v.begin(), v.end());
 }

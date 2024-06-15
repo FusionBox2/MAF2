@@ -299,7 +299,7 @@ void mafVME::GetTimeStamps(std::vector<mafTimeStamp> &kframes)
       vme->GetTimeStamps(subKFrames);
     }
 
-    mmuTimeSet::Merge(kframes,subKFrames,kframes);
+    kframes = mmuTimeSet::Merge(kframes,subKFrames);
   }
 }
 
@@ -315,7 +315,7 @@ void mafVME::GetAbsTimeStamps(std::vector<mafTimeStamp> &kframes)
   {
     parent->GetLocalTimeStamps(parentKFrames);
 
-    mmuTimeSet::Merge(kframes,parentKFrames,kframes);
+    kframes = mmuTimeSet::Merge(kframes,parentKFrames);
   }
 }
 
