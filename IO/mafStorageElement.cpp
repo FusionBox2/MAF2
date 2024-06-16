@@ -787,7 +787,7 @@ int mafXMLReader::Load(const mafString& url)
 		// extract the root element and wrap inside a mafXMLElement
 		XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* XMLDoc = m_impl->XMLParser->getDocument();
 		XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* root = XMLDoc->getDocumentElement();
-		m_impl->m_root = mafStorageElement(root, nullptr);
+		m_impl->m_root = mafStorageElement(root, this);
 
 		if (m_impl->fileType != m_impl->m_root->GetName())
 		{
