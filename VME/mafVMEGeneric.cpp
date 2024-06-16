@@ -96,7 +96,10 @@ int mafVMEGeneric::SetData(vtkDataSet *data, mafTimeStamp t, int mode)
   GetDataVector()->InsertItem(item);
 
   Modified();
-  ForwardUpEvent(&mafEvent(this, VME_MODIFIED, this));
+  if(m_EnableModifiedEvent)
+  {
+    ForwardUpEvent(&mafEvent(this, VME_MODIFIED, this));
+  }
 
   return MAF_OK;
 }

@@ -132,6 +132,7 @@ protected:
 
   mafMatrixVector *m_MatrixVector;
   mafDataVector   *m_DataVector;
+  bool            m_EnableModifiedEvent = true;
 private:
   mafVMEGenericAbstract(const mafVMEGenericAbstract&); // Not implemented
   void operator=(const mafVMEGenericAbstract&); // Not implemented
