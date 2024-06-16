@@ -773,6 +773,7 @@ void mafVMELandmarkCloud::Close()
   ForwardUpEvent(&mafEvent(this,PROGRESSBAR_SHOW));
   ForwardUpEvent(&mafEvent(this,PROGRESSBAR_SET_TEXT, &mafString(_R("Collapsing cloud"))));
 
+  m_EnableModifiedEvent = false;
   for (int c = 0; c < numberOfChildren;c++)
   {
     if (mafVMELandmark *lm = mafVMELandmark::SafeDownCast(GetChild(c)))
@@ -874,7 +875,9 @@ void mafVMELandmarkCloud::Close()
     ForwardUpEvent(&mafEvent(this,PROGRESSBAR_SET_VALUE, (intptr_t)progress));
 
   }
-  
+  m_EnableModifiedEvent = true;
+  ForwardUpEvent(&mafEvent(this, VME_MODIFIED, this));
+
   // remove all child landmarks
   for (int i=0;i<landmarks.size();i++)
   {
@@ -973,6 +976,8 @@ void mafVMELandmarkCloud::Open()
 	}
   // remove all items and tags...
   m_DataVector->RemoveAllItems();
+  ForwardUpEvent(&mafEvent(this, VME_MODIFIED, this));
+
   for (i = 0; i < numlm; i++)
     RemoveLandmarkName(i);
 
