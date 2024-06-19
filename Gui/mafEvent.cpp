@@ -66,11 +66,7 @@ enum HIGHEST_EVENT_ID
   mafEvent::mafEvent(void *sender, int id, WidgetDataType   &widget_data,  intptr_t arg)
   {
     Init(sender, id, arg);
-    m_WidgetData.dType = widget_data.dType;
-    m_WidgetData.dValue= widget_data.dValue;
-    m_WidgetData.fValue= widget_data.fValue;
-    m_WidgetData.iValue= widget_data.iValue;
-    m_WidgetData.sValue= widget_data.sValue;
+    m_WidgetData = widget_data;
     Initialized();
   }
 #ifdef MAF_USE_WX
@@ -132,11 +128,7 @@ mafEvent* mafEvent::Copy()
   e->m_y = m_y;
   e->m_width = m_width;
   e->m_height = m_height;
-  e->m_WidgetData.dType = m_WidgetData.dType;
-  e->m_WidgetData.dValue= m_WidgetData.dValue;
-  e->m_WidgetData.fValue= m_WidgetData.fValue;
-  e->m_WidgetData.iValue= m_WidgetData.iValue;
-  e->m_WidgetData.sValue= m_WidgetData.sValue;
+  e->m_WidgetData = m_WidgetData;
 #ifdef MAF_USE_WX
   e->m_Win			= m_Win;
   e->m_UpdateUIEvent     = m_UpdateUIEvent;
@@ -247,21 +239,13 @@ void mafEvent::SetLogMode(int logmode)
 void mafEvent::GetWidgetData(WidgetDataType &widget_data)
 //----------------------------------------------------------------------------
 {
-  widget_data.dType = m_WidgetData.dType;
-  widget_data.dValue= m_WidgetData.dValue;
-  widget_data.fValue= m_WidgetData.fValue;
-  widget_data.iValue= m_WidgetData.iValue;
-  widget_data.sValue= m_WidgetData.sValue;
+  widget_data = m_WidgetData;
 }
 //----------------------------------------------------------------------------
 void mafEvent::SetWidgetData(WidgetDataType &widget_data)
 //----------------------------------------------------------------------------
 {
-  m_WidgetData.dType = widget_data.dType;
-  m_WidgetData.dValue= widget_data.dValue;
-  m_WidgetData.fValue= widget_data.fValue;
-  m_WidgetData.iValue= widget_data.iValue;
-  m_WidgetData.sValue= widget_data.sValue;
+  m_WidgetData = widget_data;
 }
 //------------------------------------------------------------------------------
 void mafEvent::SetVmeVector(std::vector<mafNode*> vmeVector)

@@ -158,7 +158,7 @@ void mafOpManager::OnEvent(mafEventBase *maf_event)
           w_data.dValue  = 0.0;
           w_data.fValue  = 0.0;
           w_data.iValue  = 0;
-          w_data.sValue  = "";
+          w_data.sValue  = _R("");
           w_data.dType = NULL_DATA;
           m_RunningOp->GetGui()->GetWidgetValue(w_id, w_data);
           mafEvent ev(this,OPERATION_INTERFACE_EVENT,w_data,w_id);
