@@ -209,7 +209,7 @@ void mafOpExporterRAW::SaveVolume()
 						name_file.Replace(numeration, new_numeration);	
 						new_name = path.toWx() + name_file;
 
-						rename(old_name,new_name);										
+						mafFileRename(mafWxToString(old_name),mafWxToString(new_name));										
 					}
 				}
 			}		
@@ -456,7 +456,7 @@ void mafOpExporterRAW::SaveVolume()
 							name_file.Replace(numeration, new_numeration);	
 							new_name = path.toWx() + name_file;
 
-							rename(old_name,new_name);										
+							mafFileRename(mafWxToString(old_name), mafWxToString(new_name));
 						}
 					}
 				}
