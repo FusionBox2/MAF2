@@ -132,7 +132,7 @@ void medWizardBlockVMEFindOrSelection::VmeParentSelect( const char *path )
 int medWizardBlockVMEFindOrSelection::VMEAccept(mafNode *node)
 //----------------------------------------------------------------------------
 {
-  return (node && node->IsA(globalVMEAccept));
+  return (node && node->IsA(mafWxToString(globalVMEAccept).GetCStr()));
 }
 
 //----------------------------------------------------------------------------

@@ -84,7 +84,7 @@ void medWizardBlockVMESelection::ExcutionBegin()
 int medWizardBlockVMESelection::VMEAccept(mafNode *node)
 //----------------------------------------------------------------------------
 {
-  return (node && node->IsA(globalAccept));
+  return (node && node->IsA(mafWxToString(globalAccept).GetCStr()));
 }
 
 //----------------------------------------------------------------------------
