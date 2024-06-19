@@ -105,7 +105,7 @@ int mafOpImporterBBF::ImportBBF()
   size_t idx4 = nFileName.find_last_of(".");
   wxString showName = wxfilestring.Mid(idx3+1,idx4-idx3-1);
   mafVolumeLargeReader *reader = mafVolumeLargeReader::New();
-  reader->SetFileName(nFileName);
+  reader->SetFileName(mafWxToString(nFileName).GetCStr());
   reader->Update();
 	
 	mafNEW(m_VmeLarge); 
