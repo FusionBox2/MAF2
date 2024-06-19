@@ -168,7 +168,7 @@ void medOpImporterAnalogWS::Read()
     i = 0;
     space = line.Find(' ');
     frame = line.SubString(0,space - 1);
-    emg_time = atof(frame)/freq_val; 
+    emg_time = atof(mafWxToString(frame).GetCStr())/freq_val; 
     emgMatrix.put(n,i, emg_time); //Add scalar value to the vnl_matrix
 
     wxStringTokenizer tkz(line,wxT(' '),wxTOKEN_RET_EMPTY_ALL);
