@@ -16,6 +16,7 @@
 
 #include "mafExpirationDate.h"
 #include "mafCrypt.h"
+#include "mafString.h"
 
 #include <sstream>
 #include <fstream>
@@ -161,7 +162,7 @@ void mafExpirationDate::InitializePathFileName()
 		} 
 		m_ControlFileName = dir.c_str();
 		m_ControlFileName.append("/../");
-		std::string dirAppname = wxApp::GetInstance()->GetAppName();
+		std::string dirAppname = mafWxToString(wxApp::GetInstance()->GetAppName()).toStd();
 		Obfuscate(dirAppname);
 		m_ControlFileName.append(dirAppname);
 		m_ControlFileName.append("/");
@@ -169,7 +170,7 @@ void mafExpirationDate::InitializePathFileName()
 		{
 			wxMkdir(m_ControlFileName.c_str());
 		} 
-		std::string fileAppname = wxApp::GetInstance()->GetAppName();
+		std::string fileAppname = mafWxToString(wxApp::GetInstance()->GetAppName()).toStd();
 		Obfuscate(fileAppname);
 		m_ControlFileName.append(fileAppname);
 		m_PermanentExpirationFileName = m_ControlFileName;
@@ -179,7 +180,7 @@ void mafExpirationDate::InitializePathFileName()
 	}
 	else
 	{
-		m_ControlFileName = wxGetCwd();
+		m_ControlFileName = mafWxToString(wxGetCwd()).toStd();
 		m_ControlFileName.append("/../");
 		std::string dirConsole = "console";
 		Obfuscate(dirConsole);
