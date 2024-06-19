@@ -481,8 +481,8 @@ void medOpExporterWrappedMeter::Test()
 	//mafNode *n = mafNode::SafeDownCast(cloud);
 //wrappedMeter->SetMeterLink(wrappedMeter,);
 
-	wrappedMeter->SetMeterLink("StartVME",cloud->GetLandmark(0));
-	wrappedMeter->SetMeterLink("EndVME1",cloud->GetLandmark(1));
+	wrappedMeter->SetMeterLink(_R("StartVME"),cloud->GetLandmark(0));
+	wrappedMeter->SetMeterLink(_R("EndVME1"),cloud->GetLandmark(1));
 
 	wrappedMeter->SetMeterLink(cloud->GetLandmark(2)->GetName().GetCStr(),cloud->GetLandmark(2));
 	wrappedMeter->SetMeterLink(cloud->GetLandmark(3)->GetName().GetCStr(),cloud->GetLandmark(3));

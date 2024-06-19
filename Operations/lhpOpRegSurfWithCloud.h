@@ -65,7 +65,7 @@ protected:
   mafVME                                       *m_Resultat;
   mafString                                    m_SourceName;
   int                                          m_MultiTime;
-  std::vector<std::pair<wxString, wxString> >  m_LMDict;
+  std::vector<std::pair<mafString, mafString> >  m_LMDict;
   mafString                                    m_ScriptFName;
 
  };

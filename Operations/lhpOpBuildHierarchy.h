@@ -43,7 +43,7 @@ public:
     mafVME   *m_vme;
     mafVME   *m_parentVME;
     /// name of frame in hierarchy file
-    wxString *m_name; 
+    mafString m_name; 
     //identification mark
     //mafBonesList m_IDname; 
     /// relations
@@ -65,8 +65,8 @@ public:
     void SetChild(mafFrame *child) {m_child = child;}
     mafFrame *GetNext() {return m_next;}
     void SetNext(mafFrame *next) {m_next = next;}
-    wxString *GetName(void) {return m_name;}
-    void      SetName(wxString const *str) {delete m_name; m_name = new wxString(*str);}
+    const mafString& GetName() {return m_name;}
+    void      SetName(const mafString& str) {m_name = str;}
   };
 
   lhpOpBuildHierarchy(const mafString& label = _R("BuildHierarchy"));
@@ -94,7 +94,7 @@ protected:
   mafString            m_HierarchyFName;
 
   mafFrame             *m_root;
-  std::vector<std::pair<wxString, wxString> > m_dictionary;
+  std::vector<std::pair<mafString, mafString> > m_dictionary;
 
 private:
   /** Destroy entire tree */
@@ -104,8 +104,8 @@ private:
   /** just see name */
   //static void  ExtractTwoWordsFromString(wxString &str, wxString &one, wxString &two); 
   /** Find frame with given name */
-  mafFrame *FindFrame(wxString const &str, bool bCreateIfNotFound = FALSE);
-  mafFrame *FindFrame(mafFrame *pRoot, wxString const &str);
-  mafFrame *FindFrameUsingDictionary(wxString const &str, bool bCreateIfNotFound = FALSE);
+  mafFrame *FindFrame(const mafString& str, bool bCreateIfNotFound = FALSE);
+  mafFrame *FindFrame(mafFrame *pRoot, const mafString& str);
+  mafFrame *FindFrameUsingDictionary(const mafString& str, bool bCreateIfNotFound = FALSE);
 };
 #endif

@@ -404,7 +404,7 @@ bool lhpOpBuildHierarchy::ReadFromFile(const mafString& fileName)
   mafFrame                                     *pParentFrame;
   mafFrame                                     *pChildFrame;
   mafString                                    fname(fileName);
-  std::vector<std::pair<wxString, wxString> >  hierContent;
+  std::vector<std::pair<mafString, mafString> >  hierContent;
 
   if(m_dictionary.size() == 0)
   {
@@ -426,7 +426,7 @@ bool lhpOpBuildHierarchy::ReadFromFile(const mafString& fileName)
 
   for(nI = 0; nI < hierContent.size(); )
   {
-    if(hierContent[nI].second == "" || hierContent[nI].first == "")
+    if(hierContent[nI].second.empty() || hierContent[nI].first.empty())
     {
       //consider string in valid
       nI++;
@@ -443,7 +443,7 @@ bool lhpOpBuildHierarchy::ReadFromFile(const mafString& fileName)
     pChildFrame  = FindFrame(hierContent[nI].second, TRUE);
     if(pChildFrame->GetNext() != NULL  || pChildFrame->GetChild() != NULL)
     {
-      wxMessageBox(wxString::Format("Error in line %d: Bone %s already in hierarchy", nI + 1, hierContent[nI].second.GetData()), "Error.", wxOK | wxCENTRE | wxICON_ERROR);
+      mafErrorMessage(_M(mafString::Format(_R("Error in line %d: Bone "), nI + 1) + hierContent[nI].second + _R(" is already in hierarchy")));
       cppDEL(pChildFrame);
       cppDEL(pParentFrame);
       Destroy(&m_root);
@@ -451,7 +451,7 @@ bool lhpOpBuildHierarchy::ReadFromFile(const mafString& fileName)
     }
     if(pChildFrame->GetParent() != NULL)
     {
-      wxMessageBox(wxString::Format("Error in line %d: Bone %s already have a parent", nI + 1, hierContent[nI].second.GetData()), "Error.", wxOK | wxCENTRE | wxICON_ERROR);
+      mafErrorMessage(_M(mafString::Format(_R("Error in line %d: Bone "), nI + 1) + hierContent[nI].second + _R(" already has a parent")));
       cppDEL(pChildFrame);
       cppDEL(pParentFrame);
       Destroy(&m_root);
@@ -538,22 +538,22 @@ void lhpOpBuildHierarchy::BindToVME(mafVME *pvme, lhpOpBuildHierarchy::mafFrame 
   }
 
   pFoundVME = NULL;
-  wxString const * pVMENameStr = LookupUserName(pStart->GetName(), m_dictionary);
+  auto pVMENameStr = LookupUserName(pStart->GetName(), m_dictionary);
   if(pVMENameStr != NULL)
   {
-    pFoundVME = (mafVME*)pVMERoot->FindInTreeByName(mafWxToString(*pVMENameStr));
+    pFoundVME = (mafVME*)pVMERoot->FindInTreeByName(*pVMENameStr);
   }
   //and again ^_^
   if(pFoundVME == NULL)
   {
     pVMENameStr = LookupStdName(pStart->GetName(), m_dictionary);
     if(pVMENameStr != NULL)
-      pFoundVME = (mafVME*)pVMERoot->FindInTreeByName(mafWxToString(*pVMENameStr));
+      pFoundVME = (mafVME*)pVMERoot->FindInTreeByName(*pVMENameStr);
   }
   //try again in case of failure
   if(pFoundVME == NULL)
   {
-    pFoundVME = (mafVME*)pVMERoot->FindInTreeByName(mafWxToString(*pStart->GetName()));
+    pFoundVME = (mafVME*)pVMERoot->FindInTreeByName(pStart->GetName());
   }
 
   pStart->SetVME(pFoundVME);
@@ -585,7 +585,7 @@ lhpOpBuildHierarchy::mafFrame::mafFrame()
 
   m_next   = NULL;
   m_vme    = NULL;
-  m_name   = NULL; 
+  m_name   = _R("");
   m_parent = NULL;
   m_child  = NULL;
 }
@@ -595,7 +595,6 @@ lhpOpBuildHierarchy::mafFrame::~mafFrame()
 //----------------------------------------------------------------------------
 {
   cppDEL(m_next);
-  cppDEL(m_name); 
   cppDEL(m_child);
   m_parent = NULL;
   m_vme    = NULL;  
@@ -603,22 +602,22 @@ lhpOpBuildHierarchy::mafFrame::~mafFrame()
 
 
 //----------------------------------------------------------------------------
-lhpOpBuildHierarchy::mafFrame *lhpOpBuildHierarchy::FindFrameUsingDictionary(wxString const &str, bool bCreateIfNotFound)    
+lhpOpBuildHierarchy::mafFrame *lhpOpBuildHierarchy::FindFrameUsingDictionary(const mafString& str, bool bCreateIfNotFound)    
 //----------------------------------------------------------------------------
 {
   mafFrame *pRet = NULL;
-  wxString const *pStr;
+  mafString const *pStr;
 
   pRet = FindFrame(str, bCreateIfNotFound);
 
   if(pRet == NULL)
   {
-    pStr = LookupUserName(&str, m_dictionary);
+    pStr = LookupUserName(str, m_dictionary);
     if(pStr != NULL)
       pRet = FindFrame(*pStr, bCreateIfNotFound);
     if(pRet == NULL)
     {
-      pStr = LookupStdName(&str, m_dictionary);
+      pStr = LookupStdName(str, m_dictionary);
       if(pStr != NULL)
         pRet = FindFrame(*pStr, bCreateIfNotFound);
     }
@@ -627,7 +626,7 @@ lhpOpBuildHierarchy::mafFrame *lhpOpBuildHierarchy::FindFrameUsingDictionary(wxS
   return (pRet);
 }
 //----------------------------------------------------------------------------
-lhpOpBuildHierarchy::mafFrame *lhpOpBuildHierarchy::FindFrame(wxString const &str, bool bCreateIfNotFound)
+lhpOpBuildHierarchy::mafFrame *lhpOpBuildHierarchy::FindFrame(const mafString& str, bool bCreateIfNotFound)
 //----------------------------------------------------------------------------
 {
   mafFrame *pRet = NULL;
@@ -640,13 +639,13 @@ lhpOpBuildHierarchy::mafFrame *lhpOpBuildHierarchy::FindFrame(wxString const &st
   if(bCreateIfNotFound && pRet == NULL)
   {
     pRet = new mafFrame();
-    pRet->SetName(&str);
+    pRet->SetName(str);
   }
 
   return (pRet);
 }
 //----------------------------------------------------------------------------
-lhpOpBuildHierarchy::mafFrame *lhpOpBuildHierarchy::FindFrame(lhpOpBuildHierarchy::mafFrame *pRoot, wxString const &str)    
+lhpOpBuildHierarchy::mafFrame *lhpOpBuildHierarchy::FindFrame(lhpOpBuildHierarchy::mafFrame *pRoot, const mafString& str)    
 //----------------------------------------------------------------------------
 {
   mafFrame *pRet;
@@ -657,7 +656,7 @@ lhpOpBuildHierarchy::mafFrame *lhpOpBuildHierarchy::FindFrame(lhpOpBuildHierarch
     return (NULL);
   }
   //check this
-  if(*pRoot->GetName() == str)
+  if(pRoot->GetName() == str)
   {
     return (pRoot);
   }
