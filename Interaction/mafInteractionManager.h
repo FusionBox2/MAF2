@@ -202,7 +202,7 @@ public:
   void SetIntraFrameTime(mafTimeStamp iftime) {m_IntraFrameTime=iftime;}
 
   /** Open a dialog to choose among available devices */
-  int DeviceChooser(wxString &dev_name,wxString &dev_type);
+  int DeviceChooser(mafString &dev_name,mafString &dev_type);
 
   /** This is used to allow also external objects to add devices */
   void AddDeviceToTree(mafDevice *device,mafDeviceSet *parent=NULL);

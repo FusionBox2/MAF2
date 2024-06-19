@@ -692,13 +692,13 @@ void mafInteractionManager::OnEvent(mafEventBase *event)
         break;
         case ID_ADD_DEVICE:
         {
-          wxString device_name,device_type;
+          mafString device_name,device_type;
           int sel=DeviceChooser(device_name,device_type);
       
           if (sel>=0)
           {
             // add the new device to the devices manager's pool
-            mafDevice *device = GetDeviceManager()->AddDevice(device_type);
+            mafDevice *device = GetDeviceManager()->AddDevice(device_type.GetCStr());
             // the device is added to the list by an 
             // event returned by DeviceManager which is
             // served by InteractionManager by calling
@@ -875,7 +875,7 @@ bool mafInteractionManager::ShowModal()
 }
 */
 //----------------------------------------------------------------------------
-int mafInteractionManager::DeviceChooser(wxString &dev_name,wxString &dev_type)
+int mafInteractionManager::DeviceChooser(mafString &dev_name,mafString &dev_type)
 //----------------------------------------------------------------------------
 {
   mafInteractionFactory *iFactory=mafInteractionFactory::GetInstance();
@@ -883,7 +883,7 @@ int mafInteractionManager::DeviceChooser(wxString &dev_name,wxString &dev_type)
   assert(iFactory);
   if (iFactory->GetNumberOfDevices()>0)
   {
-    wxString *devices = new wxString[iFactory->GetNumberOfDevices()];
+    std::vector<wxString> devices(iFactory->GetNumberOfDevices());
 
 
     for (int id=0;id<iFactory->GetNumberOfDevices();id++)
@@ -892,7 +892,7 @@ int mafInteractionManager::DeviceChooser(wxString &dev_name,wxString &dev_type)
     }
 
     //wxSingleChoiceDialog chooser(m_Dialog,"select a device","Device Chooser",iFactory->GetNumberOfDevices(),devices);
-    wxSingleChoiceDialog chooser(mafGetFrame(),"select a device","Device Chooser",iFactory->GetNumberOfDevices(),devices);
+    wxSingleChoiceDialog chooser(mafGetFrame(),"select a device","Device Chooser",iFactory->GetNumberOfDevices(),devices.data());
 
     int index=-1;
     if (chooser.ShowModal()==wxID_OK)
@@ -901,13 +901,11 @@ int mafInteractionManager::DeviceChooser(wxString &dev_name,wxString &dev_type)
     
       if (index>=0)
       {
-        dev_type = iFactory->GetDeviceName(index);
-        dev_name = iFactory->GetDeviceDescription(dev_type);
+        dev_type = _R(iFactory->GetDeviceName(index));
+        dev_name = _R(iFactory->GetDeviceDescription(iFactory->GetDeviceName(index)));
       }
     }
-  
-    delete [] devices;
-    return index;
+      return index;
   }
   else
   {
