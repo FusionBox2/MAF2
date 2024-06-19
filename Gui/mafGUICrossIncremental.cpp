@@ -502,7 +502,7 @@ void mafGUICrossIncremental::ConvertStepComboIntoStepVariable()
 {
   if(m_StepComboBox)
   {
-    *m_StepVariable = atof(m_StepComboBox->GetValue());
+    *m_StepVariable = atof(mafWxToString(m_StepComboBox->GetValue()).GetCStr());
   }
 }
 //----------------------------------------------------------------------------
