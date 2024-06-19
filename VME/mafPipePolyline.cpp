@@ -1266,7 +1266,7 @@ void mafPipePolyline::SetCaptionActorBorder(int index, double position[3])
     }
     
     caption->SetVisibility(m_TextIdentifierBorderVisibility);
-    caption->SetCaption(wxString::Format("%d", index));
+    caption->SetCaption(mafString::Format(_R("%d"), index).GetCStr());
     caption->SetAttachmentPoint(position[0],position[1],position[2]);
   }
   

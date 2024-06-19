@@ -146,7 +146,7 @@ void mafBrickedFileWriter::SetInputZCoordinates(vtkDoubleArray* pCoords)
 /*virtual*/ void mafBrickedFileWriter::ExecuteInformation() 
 {
 	if (m_InputDataSet == NULL)	//error
-		throw std::invalid_argument(_("Invalid argument. Input Data Set cannot be NULL"));
+		throw std::invalid_argument("Invalid argument. Input Data Set cannot be NULL");
 
 	int VOI[6],wext[6];	
 	m_InputDataSet->GetVOI(VOI);		//find out the volume to be processed	
@@ -460,7 +460,7 @@ void mafBrickedFileWriter::SetInputZCoordinates(vtkDoubleArray* pCoords)
 	case VTK_UNSIGNED_INT: CreateBricksLowResolution< unsigned int, double >(nCurBrickPlane); break;
 
 	default:
-		throw std::invalid_argument(_("Unknown data type.\n"));	
+		throw std::invalid_argument("Unknown data type.\n");	
 	}	
 
 	//store every non uniform brick

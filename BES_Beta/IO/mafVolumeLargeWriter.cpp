@@ -156,7 +156,7 @@ int mafVolumeLargeWriter::ComputeSampleRate(vtkIdType64 nSize, vtkIdType64 nMemL
 	try
 	{
 		if (m_InputDataSet == NULL) {
-			throw std::invalid_argument(_("Invalid argument. Input Data Set cannot be NULL"));
+			throw std::invalid_argument("Invalid argument. Input Data Set cannot be NULL");
 		}
 
 #ifdef _PROFILE_LARGEDATA_

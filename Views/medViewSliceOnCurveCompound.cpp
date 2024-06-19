@@ -939,8 +939,8 @@ void medViewSliceOnCurveCompound::Print(std::ostream& os, const int tabs)// cons
     mafTransform::GetPosition(*gmat, pos);    //get the position
 
     //update text
-    wxString szText = wxString::Format("X = %.2f, Y = %.2f, Z = %.2f", pos[0], pos[1], pos[2]);
-    UpdateGizmoStatusText(szText);
+    mafString szText = mafString::Format(_R("X = %.2f, Y = %.2f, Z = %.2f"), pos[0], pos[1], pos[2]);
+    UpdateGizmoStatusText(szText.GetCStr());
   }
 }
 

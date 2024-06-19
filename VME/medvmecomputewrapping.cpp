@@ -5458,36 +5458,36 @@ void medVMEComputeWrapping::EventWraped(mafEvent *e){
 	{
 		if (button_id == ID_START_METER_LINK)
 		{
-			SetMeterLink("StartVME", n);
+			SetMeterLink(_R("StartVME"), n);
 			m_StartVmeName = n->GetName();
 		}
 		else if (button_id == ID_END1_METER_LINK)
 		{
-			SetMeterLink("EndVME1", n);
+			SetMeterLink(_R("EndVME1"), n);
 			m_EndVme1Name = n->GetName();
 		}
 		else if (button_id == ID_WRAPPED_METER_LINK1)
 		{
-			SetMeterLink("WrappedVME1", n);
+			SetMeterLink(_R("WrappedVME1"), n);
 			//n->SetName("wrapped1");
 			m_WrappedVmeName1 = n->GetName();
 		}
 		else if (button_id == ID_WRAPPED_METER_LINK2)
 		{
-			SetMeterLink("WrappedVME2", n);
+			SetMeterLink(_R("WrappedVME2"), n);
 			//n->SetName("wrapped2");
 			m_WrappedVmeName2 = n->GetName();
 		}
 		else if (button_id == ID_WRAPPED_METER_LINK)
 		{
-			SetMeterLink("WrappedVME",n);
+			SetMeterLink(_R("WrappedVME"),n);
 			m_WrappedVmeName = n->GetName();
 
 
 		}
 		else if (button_id == ID_VIA_POINT)
 		{
-			SetMeterLink("viaPoint", n);
+			SetMeterLink(_R("viaPoint"), n);
 			//n->SetName("wrapped2");
 			m_ViaPointName = n->GetName();
 		}
@@ -5718,7 +5718,7 @@ void medVMEComputeWrapping::OnEvent(mafEventBase *maf_event)
 					wxString name = m_ListBox->GetStringSelection();
 					int number = m_ListBox->GetSelection();
 
-					RemoveLink(name);
+					RemoveLink(mafWxToString(name));
 					m_ListBox->Delete(m_ListBox->FindString(m_ListBox->GetStringSelection()));          
 					//m_OrderedMidPoints.erase(m_OrderedMidPoints.begin()+number);
 					m_OrderMiddlePointsNameVMEList.clear();
@@ -5801,7 +5801,7 @@ void medVMEComputeWrapping::OnEvent(mafEventBase *maf_event)
 	}
 }
 //-------------------------------------------------------------------------
-void medVMEComputeWrapping::SetMeterLink(const char *link_name, mafNode *n)
+void medVMEComputeWrapping::SetMeterLink(const mafString& link_name, mafNode *n)
 //-------------------------------------------------------------------------
 {
   int idx = 0;
@@ -5812,19 +5812,19 @@ void medVMEComputeWrapping::SetMeterLink(const char *link_name, mafNode *n)
     nid = n->GetParent()->GetId();
     idx = ((mafVMELandmarkCloud *)n->GetParent())->FindLandmarkIndex(n->GetName());
     lm = true;
-		SetLink(_R(link_name),n->GetParent(),idx);
+		SetLink(link_name,n->GetParent(),idx);
 	}
   else
   {
-    SetLink(_R(link_name), n);
+    SetLink(link_name, n);
   }
 
-	if( mafString(_R(link_name)) != mafString(_R("StartVME")) &&
-		mafString(_R(link_name)) != mafString(_R("EndVME1"))  &&
-		mafString(_R(link_name)) != mafString(_R("EndVME2")) &&
-		mafString(_R(link_name)) != mafString(_R("WrappedVME")) &&
-		mafString(_R(link_name)) != mafString(_R("WrappedVME1")) &&
-		mafString(_R(link_name)) != mafString(_R("WrappedVME2")))
+	if( link_name != _R("StartVME") &&
+		  link_name != _R("EndVME1")  &&
+		link_name != _R("EndVME2") &&
+		link_name != _R("WrappedVME") &&
+		link_name != _R("WrappedVME1") &&
+		link_name != _R("WrappedVME2"))
 	{
 		m_OrderMiddlePointsNameVMEList.push_back(n->GetName());
     m_OrderMiddlePointsVMEList.push_back(nid);
@@ -5847,21 +5847,21 @@ void medVMEComputeWrapping::AddMidPoint(mafNode *node)
 }
 
 //-------------------------------------------------------------------------
-void medVMEComputeWrapping::RemoveLink(const char *link_name)
+void medVMEComputeWrapping::RemoveLink(const mafString& link_name)
 //-------------------------------------------------------------------------
 {
-	Superclass::RemoveLink(_R(link_name));
+	Superclass::RemoveLink(link_name);
 
-	if( mafString(_R(link_name)) != mafString(_R("StartVME")) &&
-		mafString(_R(link_name)) != mafString(_R("EndVME1"))  &&
-		mafString(_R(link_name)) != mafString(_R("EndVME2")) &&
-		mafString(_R(link_name)) != mafString(_R("WrappedVME")) &&
-		mafString(_R(link_name)) != mafString(_R("WrappedVME1")) &&
-		mafString(_R(link_name)) != mafString(_R("WrappedVME2")))
+	if( link_name != _R("StartVME") &&
+		link_name != _R("EndVME1")  &&
+		link_name != _R("EndVME2") &&
+		link_name != _R("WrappedVME") &&
+		link_name != _R("WrappedVME1") &&
+		link_name != _R("WrappedVME2"))
 	{
 		for(auto it = m_OrderMiddlePointsNameVMEList.begin(); it != m_OrderMiddlePointsNameVMEList.end(); it++ )
 		{
-			if(*it == _R(link_name))
+			if(*it == link_name)
 			{
 				m_OrderMiddlePointsNameVMEList.erase(it);
 				break;

@@ -215,123 +215,97 @@ void mafViewIntGraphWindow::GetOptimalSplits(double rMin, double rMax, double rC
 }
 
 //----------------------------------------------------------------------------
-mafStringSet *mafViewIntGraphWindow::SaveSettings(void) const
+std::vector<mafString> mafViewIntGraphWindow::SaveSettings(void) const
 //----------------------------------------------------------------------------
 {
-  wxString sParam("");
-  wxInt32  nSize = 1 + 3 * m_ColorTableNumber + 4 + 4 + 3 + 2;
-  mafStringSet *pSave = new mafStringSet(nSize);
-  wxInt32  nI;
-  wxInt32  nCount = 0;
-
+  std::vector<mafString> result;
   // 1, save plot colors number
-  sParam.Printf("%d", m_ColorTableNumber);
-  pSave->GetData()[nCount++] = _strdup(sParam.GetData());
+  result.push_back(mafToString(m_ColorTableNumber));
 
   // 3 * m_ColorTableNumber; save table itself
-  for(nI = 0; nI < m_ColorTableNumber; nI++)
+  for(int nI = 0; nI < m_ColorTableNumber; nI++)
   {
-    sParam.Printf("%d", (wxInt32)m_ColorTable[nI].Red());
-    pSave->GetData()[nCount++] = _strdup(sParam.GetData());
-    sParam.Printf("%d", (wxInt32)m_ColorTable[nI].Green());
-    pSave->GetData()[nCount++] = _strdup(sParam.GetData());
-    sParam.Printf("%d", (wxInt32)m_ColorTable[nI].Blue());
-    pSave->GetData()[nCount++] = _strdup(sParam.GetData());
+    result.push_back(mafToString((wxInt32)m_ColorTable[nI].Red()));
+    result.push_back(mafToString((wxInt32)m_ColorTable[nI].Green()));
+    result.push_back(mafToString((wxInt32)m_ColorTable[nI].Blue()));
   }
   // 4, title font settings
-  sParam.Printf("%d", GetTitleFontSize());
-  pSave->GetData()[nCount++] = _strdup(sParam.GetData());
-  sParam.Printf("%d", GetTitleFontFamily());
-  pSave->GetData()[nCount++] = _strdup(sParam.GetData());
-  sParam.Printf("%d", GetTitleFontStyle());
-  pSave->GetData()[nCount++] = _strdup(sParam.GetData());
-  sParam.Printf("%d", GetTitleFontWeight());
-  pSave->GetData()[nCount++] = _strdup(sParam.GetData());
+  result.push_back(mafToString(GetTitleFontSize()));
+  result.push_back(mafToString(GetTitleFontFamily()));
+  result.push_back(mafToString(GetTitleFontStyle()));
+  result.push_back(mafToString(GetTitleFontWeight()));
 
   // 4, tick font settings
-  sParam.Printf("%d", GetTickFontSize());
-  pSave->GetData()[nCount++] = _strdup(sParam.GetData());
-  sParam.Printf("%d", GetTickFontFamily());
-  pSave->GetData()[nCount++] = _strdup(sParam.GetData());
-  sParam.Printf("%d", GetTickFontStyle());
-  pSave->GetData()[nCount++] = _strdup(sParam.GetData());
-  sParam.Printf("%d", GetTickFontWeight());
-  pSave->GetData()[nCount++] = _strdup(sParam.GetData());
+  result.push_back(mafToString(GetTickFontSize()));
+  result.push_back(mafToString(GetTickFontFamily()));
+  result.push_back(mafToString(GetTickFontStyle()));
+  result.push_back(mafToString(GetTickFontWeight()));
 
   // 3, lines settings
-  sParam.Printf("%d", GetCurveThickness());
-  pSave->GetData()[nCount++] = _strdup(sParam.GetData());
-  sParam.Printf("%d", GetAxisThickness());
-  pSave->GetData()[nCount++] = _strdup(sParam.GetData());
-  sParam.Printf("%d", GetGridThickness());
-  pSave->GetData()[nCount++] = _strdup(sParam.GetData());
+  result.push_back(mafToString(GetCurveThickness()));
+  result.push_back(mafToString(GetAxisThickness()));
+  result.push_back(mafToString(GetGridThickness()));
 
   // 2, grids
-  sParam.Printf("%d", m_RoughGrid);
-  pSave->GetData()[nCount++] = _strdup(sParam.GetData());
-  sParam.Printf("%d", m_PreciseGrid);
-  pSave->GetData()[nCount++] = _strdup(sParam.GetData());
-
-  wxASSERT(nSize == nCount);
-  return (pSave);
+  result.push_back(mafToString(m_RoughGrid));
+  result.push_back(mafToString(m_PreciseGrid));
+  return result;
 }          
 //----------------------------------------------------------------------------
-void mafViewIntGraphWindow::LoadSettings(mafStringSet const *pSettings)
+void mafViewIntGraphWindow::LoadSettings(const std::vector<mafString>& pSettings)
 //----------------------------------------------------------------------------
 {
-  wxString sParam("");
-  wxInt32  nI;
-  wxInt32  nCount = 0;
+  size_t  nCount = 0;
   wxInt32  nRed, nGreen, nBlue;
 
   // 1, load plot colors number
-  if(pSettings->GetStringNumber() > nCount)
-    m_ColorTableNumber = atoi(pSettings->GetData()[nCount++]);
+  if(pSettings.size() > nCount)
+    m_ColorTableNumber = std::stoi(pSettings[nCount++].toStd());
  
   // 3 * m_ColorTableNumber; load table itself
-  for(nI = 0; nI < m_ColorTableNumber; nI++)
+  for(int nI = 0; nI < m_ColorTableNumber; nI++)
   {
-    if(pSettings->GetStringNumber() > nCount)
-      nRed   = atoi(pSettings->GetData()[nCount++]);
-    if(pSettings->GetStringNumber() > nCount)
-      nGreen = atoi(pSettings->GetData()[nCount++]);
-    if(pSettings->GetStringNumber() > nCount)
-      nBlue  = atoi(pSettings->GetData()[nCount++]);
+    if(pSettings.size() > nCount)
+      nRed   = std::stoi(pSettings[nCount++].toStd());
+    if(pSettings.size() > nCount)
+      nGreen = std::stoi(pSettings[nCount++].toStd());
+    if(pSettings.size() > nCount)
+      nBlue  = std::stoi(pSettings[nCount++].toStd());
     m_ColorTable[nI].Set(nRed, nGreen, nBlue);
   }
   // 4, title font settings
-  if(pSettings->GetStringNumber() > nCount)
-    SetTitleFontSize(atoi(pSettings->GetData()[nCount++]));
-  if(pSettings->GetStringNumber() > nCount)
-    SetTitleFontFamily(mafViewIntGraphFontFamily(atoi(pSettings->GetData()[nCount++])));
-  if(pSettings->GetStringNumber() > nCount)
-    SetTitleFontStyle(atoi(pSettings->GetData()[nCount++]));
-  if(pSettings->GetStringNumber() > nCount)
-    SetTitleFontWeight(atoi(pSettings->GetData()[nCount++]));
+  if(pSettings.size() > nCount)
+    SetTitleFontSize(std::stoi(pSettings[nCount++].toStd()));
+  if(pSettings.size() > nCount)
+    SetTitleFontFamily(mafViewIntGraphFontFamily(std::stoi(pSettings[nCount++].toStd())));
+  if(pSettings.size() > nCount)
+    SetTitleFontStyle(std::stoi(pSettings[nCount++].toStd()));
+  if(pSettings.size() > nCount)
+    SetTitleFontWeight(std::stoi(pSettings[nCount++].toStd()));
 
   // 4, tick font settings
-  if(pSettings->GetStringNumber() > nCount)
-    SetTickFontSize(atoi(pSettings->GetData()[nCount++]));
-  if(pSettings->GetStringNumber() > nCount)
-    SetTickFontFamily(mafViewIntGraphFontFamily(atoi(pSettings->GetData()[nCount++])));
-  if(pSettings->GetStringNumber() > nCount)
-    SetTickFontStyle(atoi(pSettings->GetData()[nCount++]));
-  if(pSettings->GetStringNumber() > nCount)
-    SetTickFontWeight(atoi(pSettings->GetData()[nCount++]));
+  if(pSettings.size() > nCount)
+    SetTickFontSize(std::stoi(pSettings[nCount++].toStd()));
+  if(pSettings.size() > nCount)
+    SetTickFontFamily(mafViewIntGraphFontFamily(std::stoi(pSettings[nCount++].toStd())));
+  if(pSettings.size() > nCount)
+    SetTickFontStyle(std::stoi(pSettings[nCount++].toStd()));
+  if(pSettings.size() > nCount)
+    SetTickFontWeight(std::stoi(pSettings[nCount++].toStd()));
 
   // 3, lines settings
-  if(pSettings->GetStringNumber() > nCount)
-    SetCurveThickness(atoi(pSettings->GetData()[nCount++]));
-  if(pSettings->GetStringNumber() > nCount)
-    SetAxisThickness(atoi(pSettings->GetData()[nCount++]));
-  if(pSettings->GetStringNumber() > nCount)
-    SetGridThickness(atoi(pSettings->GetData()[nCount++]));
+  if(pSettings.size() > nCount)
+    SetCurveThickness(std::stoi(pSettings[nCount++].toStd()));
+  if(pSettings.size() > nCount)
+    SetAxisThickness(std::stoi(pSettings[nCount++].toStd()));
+  if(pSettings.size() > nCount)
+    SetGridThickness(std::stoi(pSettings[nCount++].toStd()));
 
   // 2, grids
-  if(pSettings->GetStringNumber() > nCount)
-    m_RoughGrid  =  (atoi(pSettings->GetData()[nCount++]) != 0);
-  if(pSettings->GetStringNumber() > nCount)
-    m_PreciseGrid = (atoi(pSettings->GetData()[nCount++]) != 0);
+  if(pSettings.size() > nCount)
+    m_RoughGrid  =  (std::stoi(pSettings[nCount++].toStd()) != 0);
+  if(pSettings.size() > nCount)
+    m_PreciseGrid = (std::stoi(pSettings[nCount++].toStd()) != 0);
 }
 //----------------------------------------------------------------------------
 void mafViewIntGraphWindow::DrawXAxis(wxDC *pDC, wxRect *prc, double rXMin, double rXMax, double rXCoef, bool bGrid, bool bPreciseGrid)

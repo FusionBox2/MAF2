@@ -202,7 +202,7 @@ void mafGizmoPath::SetCurvilinearAbscissa( double s )
 
   m_VmeGizmoPath->SetTextPosition(pos);
   
-  m_VmeGizmoPath->SetTextValue(wxString::Format("%.1f", m_CurvilinearAbscissa>0?mafRoundToPrecision(m_CurvilinearAbscissa,1):0.0));
+  m_VmeGizmoPath->SetTextValue(mafString::Format(_R("%.1f"), m_CurvilinearAbscissa>0?mafRoundToPrecision(m_CurvilinearAbscissa,1):0.0));
   
 }
 

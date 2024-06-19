@@ -280,27 +280,24 @@ void mafAvatar3D::Show()
 void mafAvatar3D::UpdateDebugText(const char *title, mafMatrix &pose)
 //------------------------------------------------------------------------------
 {
-  wxString text;
   double pos[3],rot[3];
   mafTransform::GetPosition(pose,pos);
   mafTransform::GetOrientation(pose,rot);
-  text.Printf("%s: Pos=(%.3f,%.3f,%.3f) Rot=(%.3f,%.3f,%.3f)",title,pos[0],pos[1],pos[2],\
-    rot[0],rot[1],rot[2]);
+  mafString text = mafString::Format(_R("%s: Pos=(%.3f,%.3f,%.3f) Rot=(%.3f,%.3f,%.3f)"),
+    title,pos[0],pos[1],pos[2],rot[0],rot[1],rot[2]);
   
   // currently I have to retrieve button state directly from the
   // tracker
   if (GetTracker())
   {
-    wxString button_state;
     for (int i=0;i<GetTracker()->GetNumberOfButtons();i++)
     {
       
-      button_state.Printf(" B%d=%d",i,GetTracker()->GetButtonState(i));
-      text<<button_state;
+      text += mafString::Format(_R(" B%d=%d"),i,GetTracker()->GetButtonState(i));
     }
   }
 
-  m_DebugTextMapper->SetInput(text);
+  m_DebugTextMapper->SetInput(text.GetCStr());
 
 }
 

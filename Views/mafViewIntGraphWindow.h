@@ -18,7 +18,6 @@
 //----------------------------------------------------------------------------
 #include "mafString.h"
 #include "mafMemGraph.h"
-#include "mafStringSet.h"
 #include "mafEventSender.h"
 #include "mafGUI.h"
 
@@ -97,9 +96,9 @@ public:
   /** Tune curve parameters */
   void           AdjustCurveAppearance(unsigned int nCurve);
   /** Save window settings in text form*/
-  mafStringSet   *SaveSettings(void) const;
+  std::vector<mafString> SaveSettings(void) const;
   /** Restore window settings from text form*/
-  void           LoadSettings(mafStringSet const *pSettings);
+  void           LoadSettings(const std::vector<mafString>& pSettings);
 
 protected:
 

@@ -95,7 +95,7 @@ protected:
   mafVME                                       *m_TrgMotion;
   mafString                                    m_TrgMotionName;
 
-  std::vector<std::pair<wxString, wxString> >  m_LMDict;
+  std::vector<std::pair<mafString, mafString> >  m_LMDict;
   mafString                                    m_ScriptFName;
 
   mafVMELandmarkCloud*                         m_Registered;

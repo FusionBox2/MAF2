@@ -176,17 +176,17 @@ void mafVMEGizmo::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)
   kframes.clear(); // no timestamps
 }
 //-------------------------------------------------------------------------
-void mafVMEGizmo::SetTextValue(const char* text)
+void mafVMEGizmo::SetTextValue(const mafString& text)
 //-------------------------------------------------------------------------
 {
-  m_TextValue = mafString(_R(text));
+  m_TextValue = text;
   InvokeEvent(this, VME_OUTPUT_DATA_UPDATE);
 }
 //-------------------------------------------------------------------------
-const char * mafVMEGizmo::GetTextValue()
+const mafString& mafVMEGizmo::GetTextValue() const
 //-------------------------------------------------------------------------
 {
-  return m_TextValue.GetCStr();
+  return m_TextValue;
 }
 //-------------------------------------------------------------------------
 void mafVMEGizmo::SetTextPosition(double *position3D)
