@@ -1385,8 +1385,8 @@ bool medOpImporterRAWImages::ControlFilenameList()
 //----------------------------------------------------------------------------
 {
   //control how many files are present in directory
-  wxString prefix = m_RawDirectory.toWx() + "\\" + m_Prefix.toWx();
-  wxString pattern = m_Pattern.toWx() + m_Extension.toWx();
+  mafString prefix = m_RawDirectory + _R("\\") + m_Prefix;
+  mafString pattern = m_Pattern + m_Extension;
 
   wxDir dir(m_RawDirectory.toWx());
   bool result = true;
@@ -1446,8 +1446,8 @@ bool medOpImporterRAWImages::ControlFilenameList()
   }
 #else
   vtkMAFLargeImageReader* r = vtkMAFLargeImageReader::New();
-  r->SetFilePrefix(prefix);
-  r->SetFilePattern(pattern.c_str());
+  r->SetFilePrefix(prefix.GetCStr());
+  r->SetFilePattern(pattern.GetCStr());
   r->SetFileNameSliceOffset(m_Offset);
   r->SetFileNameSliceSpacing(m_FileSpacing); 
 

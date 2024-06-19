@@ -656,7 +656,7 @@ void medOpSegmentation::CreateOpDialog()
   //Label to indicate the threshold of the slice
   //////////////////////////////////////////////////////////////////////////
   vtkNEW(m_AutomaticThresholdTextMapper);
-  m_AutomaticThresholdTextMapper->SetInput(_("Threshold  = "));
+  m_AutomaticThresholdTextMapper->SetInput(_L("Threshold  = "));
   m_AutomaticThresholdTextMapper->GetTextProperty()->SetColor(1.0,0.0,0.0);
   //m_AutomaticThresholdTextMapper->GetTextProperty()->AntiAliasingOff();
 
@@ -672,7 +672,7 @@ void medOpSegmentation::CreateOpDialog()
   //Label to indicate the scalar value
   //////////////////////////////////////////////////////////////////////////
   vtkNEW(m_AutomaticScalarTextMapper);
-  m_AutomaticScalarTextMapper->SetInput(_("Scalar  = "));
+  m_AutomaticScalarTextMapper->SetInput(_L("Scalar  = "));
   m_AutomaticScalarTextMapper->GetTextProperty()->SetColor(0.0,1.0,0.0);
   //m_AutomaticScalarTextMapper->GetTextProperty()->AntiAliasingOff();
 
