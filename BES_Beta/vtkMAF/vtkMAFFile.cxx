@@ -105,8 +105,7 @@ void vtkMAFFile2::Create(const char* fname)
 {
   if (!vtkMAFFile::Create(fname))
   {
-    throw std::ios::failure(
-      (const char*)wxString::Format(_("Cannot create '%s'. Error: %d"), fname, errno));
+    throw std::ios::failure("Cannot create the specified file");
   }
 }
 
@@ -116,8 +115,7 @@ void vtkMAFFile2::Open(const char* fname, bool bRO)
 {
   if (!vtkMAFFile::Open(fname))
   {
-    throw std::ios::failure(
-      (const char*)wxString::Format(_("Cannot open '%s'. Error: %d"), fname, errno));
+    throw std::ios::failure("Cannot open the specified file");
   }
 }
 
@@ -127,7 +125,7 @@ long long vtkMAFFile2::GetFileSize()
 #ifdef _WIN32
   LARGE_INTEGER liSize;
   if (!GetFileSizeEx(m_HFile, &liSize))
-    throw std::ios::failure(("Unable to seek in the specified file."));
+    throw std::ios::failure("Unable to seek in the specified file.");
 
   return (long long)liSize.QuadPart;
 #else

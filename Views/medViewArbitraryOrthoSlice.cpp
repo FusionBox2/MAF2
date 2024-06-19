@@ -154,7 +154,7 @@ medViewArbitraryOrthoSlice::medViewArbitraryOrthoSlice(const mafString& label, b
 	m_EnableThickness[GREEN] = 0;
 	m_EnableThickness[BLUE] = 0;
 
-	m_PathFromDialog = "";
+	m_PathFromDialog = _R("");
 
 	m_EnableExportImages[RED] = 0;
 	m_EnableExportImages[GREEN] = 0;
@@ -3991,7 +3991,7 @@ void medViewArbitraryOrthoSlice::OnID_CHOOSE_DIR()
 	wxDirDialog dialog(NULL);
 	dialog.SetReturnCode(wxID_OK);
 	int ret_code = dialog.ShowModal();
-	m_PathFromDialog = dialog.GetPath();
+	m_PathFromDialog = mafWxToString(dialog.GetPath());
 
 }
 
@@ -4149,26 +4149,26 @@ void medViewArbitraryOrthoSlice::SaveSlicesTextureToFile(int choosedExportAxis)
 
 		// write it
 
-		wxString fileName = m_PathFromDialog.c_str();
+		mafString fileName = m_PathFromDialog;
 
 		if (currentSlicer == m_SlicerX)
 		{
-			fileName.append("/SlicerX_");
+			fileName += _R("/SlicerX_");
 		}
 		else if (currentSlicer == m_SlicerY)
 		{
-			fileName.append("/SlicerY_");
+			fileName += _R("/SlicerY_");
 		}
 		else if (currentSlicer == m_SlicerZ)
 		{
-			fileName.append("/SlicerZ_");
+			fileName += _R("/SlicerZ_");
 		}
 
-		fileName << i;
-		fileName << ".png";
+		fileName += mafToString(i);
+		fileName += _R(".png");
 		//fileName.append("vtk");
 
-		writer->SetFileName(fileName);
+		writer->SetFileName(fileName.GetCStr());
 		writer->Write();
 
 		height = height + step;
@@ -4777,62 +4777,62 @@ void medViewArbitraryOrthoSlice::SaveSlicesFromRenderWindowToFile(int chooseExpo
 		}
 
 		// write it
-		wxString fileName = m_PathFromDialog.c_str();
+		mafString fileName = m_PathFromDialog;
 
 		if (i == 0)
 		{
 			// save guide images
 
-			wxString guide0FileName = fileName;
-			wxString guide1FileName = fileName;
+			mafString guide0FileName = fileName;
+			mafString guide1FileName = fileName;
 
 			if (chooseExportAxis == RED)
 			{
 				// 	guideView0 = Y_VIEW;
-				guide0FileName.append("/SlicerX_Reference_Y_View.png");	
+				guide0FileName += _R("/SlicerX_Reference_Y_View.png");	
 
 				// 	guideView1 = Z_VIEW;
-				guide1FileName.append("/SlicerX_Reference_Z_View.png");	
+				guide1FileName += _R("/SlicerX_Reference_Z_View.png");
 
 			}
 			else if (chooseExportAxis == GREEN)
 			{
 				// 	guideView0 = X_VIEW;				
-				guide0FileName.append("/SlicerY_Reference_X_View.png");
+				guide0FileName += _R("/SlicerY_Reference_X_View.png");
 				
 				// 	guideView1 = Z_VIEW;
-				guide1FileName.append("/SlicerY_Reference_Z_View.png");
+				guide1FileName += _R("/SlicerY_Reference_Z_View.png");
 			}
 			else if (chooseExportAxis == BLUE)
 			{
 				// 	guideView0 = X_VIEW;
-				guide0FileName.append("/SlicerZ_Reference_X_View.png");
+				guide0FileName += _R("/SlicerZ_Reference_X_View.png");
 
 				// 	guideView1 = Y_VIEW;
-				guide1FileName.append("/SlicerZ_Reference_Y_View.png");
+				guide1FileName += _R("/SlicerZ_Reference_Y_View.png");
 			}
 
-			((mafViewSlice*)m_ChildViewList[guideView0])->GetRWI()->SaveImage(mafWxToString(guide0FileName));			
-			((mafViewSlice*)m_ChildViewList[guideView1])->GetRWI()->SaveImage(mafWxToString(guide1FileName));
+			((mafViewSlice*)m_ChildViewList[guideView0])->GetRWI()->SaveImage(guide0FileName);			
+			((mafViewSlice*)m_ChildViewList[guideView1])->GetRWI()->SaveImage(guide1FileName);
 		}
 
 		if (currentSlicer == m_SlicerX)
 		{
-			fileName.append("/SlicerX_");
+			fileName += _R("/SlicerX_");
 
-			wxString heightText = "H:";
-			heightText << m_FeedbackLineHeight[RED] + height;
-			m_XnSliceHeightTextMapper->SetInput(heightText);
+			mafString heightText = _R("H:");
+			heightText += mafToString(m_FeedbackLineHeight[RED] + height);
+			m_XnSliceHeightTextMapper->SetInput(heightText.GetCStr());
 			ShowSliceHeight2DTextActors(true, RED);
 		}
 		else if (currentSlicer == m_SlicerY)
 		{
-			fileName.append("/SlicerY_");
+			fileName += _R("/SlicerY_");
 
 			// show slice heigth
-			wxString heightText = "H:";
-			heightText << m_FeedbackLineHeight[GREEN] + height;
-			m_YnSliceHeightTextMapper->SetInput(heightText);
+			mafString heightText = _R("H:");
+			heightText += mafToString(m_FeedbackLineHeight[GREEN] + height);
+			m_YnSliceHeightTextMapper->SetInput(heightText.GetCStr());
 			ShowSliceHeight2DTextActors(true, GREEN);
 		}
 		else if (currentSlicer == m_SlicerZ)
@@ -4840,19 +4840,19 @@ void medViewArbitraryOrthoSlice::SaveSlicesFromRenderWindowToFile(int chooseExpo
 			
 			ShowSliceHeight2DTextActors(true, BLUE);
 
-			wxString heightText = "H:";
-			heightText << m_FeedbackLineHeight[BLUE] + height;
-			m_ZnSliceHeightTextMapper->SetInput(heightText);
+			mafString heightText = _R("H:");
+			heightText += mafToString(m_FeedbackLineHeight[BLUE] + height);
+			m_ZnSliceHeightTextMapper->SetInput(heightText.GetCStr());
 			ShowSliceHeight2DTextActors(true, BLUE);
 
-			fileName.append("/SlicerZ_");
+			fileName += _R("/SlicerZ_");
 		}
 
-		fileName << i;
-		fileName << ".png";
+		fileName += mafToString(i);
+		fileName += _R(".png");
 
 
-		((mafViewSlice*)m_ChildViewList[viewToExport])->GetRWI()->SaveImage(mafWxToString(fileName));
+		((mafViewSlice*)m_ChildViewList[viewToExport])->GetRWI()->SaveImage(fileName);
 
 		
 		height = height + step;

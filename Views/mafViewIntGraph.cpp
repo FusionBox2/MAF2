@@ -33,7 +33,6 @@
 #include "mafPipe.h"
 #include "mafPipeFactory.h"
 
-#include "mafStringSet.h"
 #include "mafTagArray.h"
 #include "mafVME.h"
 //#include "mafVMERoot.h"
@@ -531,7 +530,7 @@ void mafViewIntGraph::savePlot(void)
 void mafViewIntGraph::savePlotGen(void)
 //----------------------------------------------------------------------------
 {
-  mafStringSet *pSave = m_RenderWindow->SaveSettings();
+  auto strv = m_RenderWindow->SaveSettings();
 
   //save general settings
 
@@ -540,16 +539,10 @@ void mafViewIntGraph::savePlotGen(void)
     mafVME *vme = mafVME::SafeDownCast(n->m_Vme);
     if(vme)
     {
-      std::vector<mafString> strv;
-      wxString *sttr = pSave->GetData();
-      int nm = pSave->GetStringNumber();
-      for(int i = 0; i < nm; i++)
-        strv.push_back(mafWxToString(sttr[i]));
       vme->GetTagArray()->SetTag(mafTagItem(_R(mafINTGG_SAVEINFO_TAG), strv));
       mafEventMacro(mafEvent(this,VME_MODIFIED, vme));
     }
   }
-  cppDEL(pSave);
 }
 //----------------------------------------------------------------------------
 void mafViewIntGraph::loadPlotGen(void)
@@ -563,7 +556,7 @@ void mafViewIntGraph::loadPlotGen(void)
     {
       if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R(mafINTGG_SAVEINFO_TAG)))
       {
-        m_RenderWindow->LoadSettings(&mafStringSet(ti->GetNumberOfComponents(), &ti->GetComponents()));
+        m_RenderWindow->LoadSettings(ti->GetComponents());
         UpdateGui();
         break;
       }

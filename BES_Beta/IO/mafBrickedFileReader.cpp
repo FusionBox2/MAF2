@@ -98,7 +98,7 @@ void mafBrickedFileReader::SetOutputRLGDataSet(vtkRectilinearGrid* ds)
 	m_BrickFile->Read(&m_FileHeader, sizeof(m_FileHeader));
 	if (m_FileHeader.signature != mafBrickedFile::m_Signature) {
 		m_BrickFile->Close();
-		throw std::ios::failure(_("Not BBF file or corrupted one."));
+		throw std::ios::failure("Not BBF file or corrupted one.");
 	}
 
 	//recompute global information

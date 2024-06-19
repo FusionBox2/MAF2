@@ -2198,12 +2198,12 @@ void medVMEWrappedMeter::OnEvent(mafEventBase *maf_event)
         {
           if (button_id == ID_START_METER_LINK)
           {
-            SetMeterLink("StartVME", n);
+            SetMeterLink(_R("StartVME"), n);
             m_StartVmeName = n->GetName();
           }
           else if (button_id == ID_END1_METER_LINK)
           {
-            SetMeterLink("EndVME1", n);
+            SetMeterLink(_R("EndVME1"), n);
             m_EndVme1Name = n->GetName();
           }
     /*      else if (button_id == ID_END2_METER_LINK)
@@ -2213,7 +2213,7 @@ void medVMEWrappedMeter::OnEvent(mafEventBase *maf_event)
           }*/
           else if (button_id == ID_WRAPPED_METER_LINK)
           {
-            SetMeterLink("WrappedVME", n);
+            SetMeterLink(_R("WrappedVME"), n);
             m_WrappedVmeName = n->GetName();
           }
           m_Gui->Update();
@@ -2369,7 +2369,7 @@ void medVMEWrappedMeter::OnEvent(mafEventBase *maf_event)
           wxString name = m_ListBox->GetStringSelection();
           int number = m_ListBox->GetSelection();
 
-          RemoveLink(name);
+          RemoveLink(mafWxToString(name));
           m_ListBox->Delete(m_ListBox->FindString(m_ListBox->GetStringSelection()));          
           //m_OrderedMidPoints.erase(m_OrderedMidPoints.begin()+number);
 					m_OrderMiddlePointsNameVMEList.clear();
@@ -2475,22 +2475,22 @@ void medVMEWrappedMeter::OnEvent(mafEventBase *maf_event)
   }
 }
 //-------------------------------------------------------------------------
-void medVMEWrappedMeter::SetMeterLink(const char *link_name, mafNode *n)
+void medVMEWrappedMeter::SetMeterLink(const mafString& link_name, mafNode *n)
 //-------------------------------------------------------------------------
 {
   if (n->IsMAFType(mafVMELandmark))
   {
-    SetLink(_R(link_name),n->GetParent(),((mafVMELandmarkCloud *)n->GetParent())->FindLandmarkIndex(n->GetName()));
+    SetLink(link_name,n->GetParent(),((mafVMELandmarkCloud *)n->GetParent())->FindLandmarkIndex(n->GetName()));
   }
   else
 	{
-    SetLink(_R(link_name), n);
+    SetLink(link_name, n);
 	}
 
-	if( mafString(_R(link_name)) != mafString(_R("StartVME")) &&
-		mafString(_R(link_name)) != mafString(_R("EndVME1"))  &&
-		mafString(_R(link_name)) != mafString(_R("EndVME2"))  &&
-    mafString(_R(link_name)) != mafString(_R("WrappedVME")))
+	if( link_name != _R("StartVME") &&
+		link_name != _R("EndVME1")  &&
+		link_name != _R("EndVME2")  &&
+    link_name != _R("WrappedVME"))
 	{
 		m_OrderMiddlePointsNameVMEList.push_back(n->GetName());
 	}
@@ -2509,19 +2509,19 @@ void medVMEWrappedMeter::AddMidPoint(mafNode *node)
 }
 
 //-------------------------------------------------------------------------
-void medVMEWrappedMeter::RemoveLink(const char *link_name)
+void medVMEWrappedMeter::RemoveLink(const mafString& link_name)
 //-------------------------------------------------------------------------
 {
-	Superclass::RemoveLink(_R(link_name));
+	Superclass::RemoveLink(link_name);
 
-	if( mafString(_R(link_name)) != mafString(_R("StartVME")) &&
-		mafString(_R(link_name)) != mafString(_R("EndVME1"))  &&
-		mafString(_R(link_name)) != mafString(_R("EndVME2"))  &&
-    mafString(_R(link_name)) != mafString(_R("WrappedVME")))
+	if( link_name != _R("StartVME") &&
+		link_name != _R("EndVME1")  &&
+		link_name != _R("EndVME2")  &&
+    link_name != _R("WrappedVME"))
 	{
 		for(auto it = m_OrderMiddlePointsNameVMEList.begin(); it != m_OrderMiddlePointsNameVMEList.end(); it++ )
 		{
-			if(*it == mafString(_R(link_name)))
+			if(*it == link_name)
 			{
 		    m_OrderMiddlePointsNameVMEList.erase(it);
 				break;

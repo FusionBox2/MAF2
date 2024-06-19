@@ -19,13 +19,11 @@
 #endif
 
 #include <vector>
-#include "wx/string.h"
 #include "mafString.h"
 
-void ParseString(wxString &pFirstLine, wxString &sOne, wxString &sTwo);
-bool ReadDictionary(mafString *fileName, std::vector<std::pair<wxString, wxString> >&  dictionary);
-wxString const *LookupUserName(wxString const *name, std::vector<std::pair<wxString, wxString> >&  dictionary);
-wxString const *LookupStdName(wxString const *name, std::vector<std::pair<wxString, wxString> >&  dictionary);
+bool ReadDictionary(mafString *fileName, std::vector<std::pair<mafString, mafString> >&  dictionary);
+mafString const *LookupUserName(const mafString& name, std::vector<std::pair<mafString, mafString> >&  dictionary);
+mafString const *LookupStdName(const mafString& name, std::vector<std::pair<mafString, mafString> >&  dictionary);
 
 
 #endif

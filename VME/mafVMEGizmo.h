@@ -101,8 +101,8 @@ public:
   virtual mafString GetVisualPipe() {return mafString(_R("mafPipeGizmo"));};
 
   /**Set/Get Text Value , that is an information that can be renderized in a custom position*/
-  void SetTextValue(const char* text);
-  const char *GetTextValue();
+  void SetTextValue(const mafString& text);
+  const mafString& GetTextValue() const;
 
   /**Set/Get Text Position , that is the position of Text Value in 3d position*/
   void SetTextPosition(double *position3D);

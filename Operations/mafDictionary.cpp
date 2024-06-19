@@ -28,93 +28,95 @@
 
 #include "mafDictionary.h"
 
-//----------------------------------------------------------------------------
-void  ParseString(wxString &pFirstLine, wxString &sOne, wxString &sTwo)
-//----------------------------------------------------------------------------
+namespace
 {
-  wxInt32 nJ, nK; 
-  wxInt32 length = pFirstLine.Length();
-
-  sOne = "";
-  sTwo = "";
-
-  //skip to first word
-  for(nJ = 0; nJ < length; nJ++)
+  //----------------------------------------------------------------------------
+  void  ParseString(wxString& pFirstLine, wxString& sOne, wxString& sTwo)
+    //----------------------------------------------------------------------------
   {
-    if(pFirstLine[nJ] != ' ' && pFirstLine[nJ] != '\t')//if(pFirstLine[nJ] == '\"')
+    wxInt32 nJ, nK;
+    wxInt32 length = pFirstLine.Length();
+
+    sOne = "";
+    sTwo = "";
+
+    //skip to first word
+    for (nJ = 0; nJ < length; nJ++)
     {
-      break;
-    }
-  }
-  if(nJ == length)
-    return;
-  if(pFirstLine[nJ] != '\"')
-  {
-    //skip first word
-    for(nK = nJ; nK < length; nK++)
-    {
-      if(pFirstLine[nK] == ' ' || pFirstLine[nK] == '\t')
+      if (pFirstLine[nJ] != ' ' && pFirstLine[nJ] != '\t')//if(pFirstLine[nJ] == '\"')
       {
         break;
       }
     }
-  }
-  else
-  {
-    nJ++;
-    //skip first word
-    for(nK = nJ; nK < length; nK++)
+    if (nJ == length)
+      return;
+    if (pFirstLine[nJ] != '\"')
     {
-      if(pFirstLine[nK] == '\"')
-        break;
+      //skip first word
+      for (nK = nJ; nK < length; nK++)
+      {
+        if (pFirstLine[nK] == ' ' || pFirstLine[nK] == '\t')
+        {
+          break;
+        }
+      }
     }
-  }
-  sOne = pFirstLine.Mid(nJ, nK - nJ);
-  if(nK == length)
-    return;
-  if(pFirstLine[nK] == '\"')
-    nK++;
-
-
-  //skip to second word
-  for(nJ = nK; nJ < length; nJ++)
-  {
-    if(pFirstLine[nJ] != ' ' && pFirstLine[nJ] != '\t')//if(pFirstLine[nJ] == '\"')
+    else
     {
-      break;
+      nJ++;
+      //skip first word
+      for (nK = nJ; nK < length; nK++)
+      {
+        if (pFirstLine[nK] == '\"')
+          break;
+      }
     }
-  }
+    sOne = pFirstLine.Mid(nJ, nK - nJ);
+    if (nK == length)
+      return;
+    if (pFirstLine[nK] == '\"')
+      nK++;
 
 
-  if(nJ == length)
-    return;
-  if(pFirstLine[nJ] != '\"')
-  {
-    //skip first word
-    for(nK = nJ; nK < length; nK++)
+    //skip to second word
+    for (nJ = nK; nJ < length; nJ++)
     {
-      if(pFirstLine[nK] == ' ' || pFirstLine[nK] == '\t')
+      if (pFirstLine[nJ] != ' ' && pFirstLine[nJ] != '\t')//if(pFirstLine[nJ] == '\"')
       {
         break;
       }
     }
-  }
-  else
-  {
-    nJ++;
-    //skip first word
-    for(nK = nJ; nK < length; nK++)
+
+
+    if (nJ == length)
+      return;
+    if (pFirstLine[nJ] != '\"')
     {
-      if(pFirstLine[nK] == '\"')
-        break;
+      //skip first word
+      for (nK = nJ; nK < length; nK++)
+      {
+        if (pFirstLine[nK] == ' ' || pFirstLine[nK] == '\t')
+        {
+          break;
+        }
+      }
     }
+    else
+    {
+      nJ++;
+      //skip first word
+      for (nK = nJ; nK < length; nK++)
+      {
+        if (pFirstLine[nK] == '\"')
+          break;
+      }
+    }
+    sTwo = pFirstLine.Mid(nJ, nK - nJ);
   }
-  sTwo = pFirstLine.Mid(nJ, nK - nJ);
 }
 
-
 //----------------------------------------------------------------------------
-bool ReadDictionary(mafString *fileName, std::vector<std::pair<wxString, wxString> >&  dictionary)
+bool ReadDictionary(mafString *fileName, std::vector<std::pair<mafString, mafString> >&  dictionary)
 //----------------------------------------------------------------------------
 {
   wxTextFile   *pFile;
@@ -158,7 +160,7 @@ bool ReadDictionary(mafString *fileName, std::vector<std::pair<wxString, wxStrin
       continue;
     }
     //just add to dictionary
-    dictionary.push_back(std::make_pair(sFirstName, sSecondName));// Add(pEntry);
+    dictionary.push_back(std::make_pair(mafWxToString(sFirstName), mafWxToString(sSecondName)));// Add(pEntry);
     // to next
     nI++;
   }
@@ -168,19 +170,19 @@ bool ReadDictionary(mafString *fileName, std::vector<std::pair<wxString, wxStrin
 }
 
 //----------------------------------------------------------------------------
-wxString const *LookupStdName(wxString const *name, std::vector<std::pair<wxString, wxString> >&  dictionary)
+mafString const *LookupStdName(const mafString& name, std::vector<std::pair<mafString, mafString> >&  dictionary)
 //----------------------------------------------------------------------------
 {
   wxInt32      nI; 
 
   for(nI = 0; nI < dictionary.size(); nI++)
   {
-    if(dictionary[nI].second == (*name))
+    if(dictionary[nI].second == name)
     {
       return &dictionary[nI].first;
     }
     //already a ref one
-    if(dictionary[nI].first == (*name))
+    if(dictionary[nI].first == name)
     {
       return &dictionary[nI].first;
     }
@@ -190,19 +192,19 @@ wxString const *LookupStdName(wxString const *name, std::vector<std::pair<wxStri
 }
 
 //----------------------------------------------------------------------------
-wxString const *LookupUserName(wxString const *name, std::vector<std::pair<wxString, wxString> >&  dictionary)
+mafString const* LookupUserName(const mafString& name, std::vector<std::pair<mafString, mafString> >& dictionary)
 //----------------------------------------------------------------------------
 {
   wxInt32      nI; 
 
   for(nI = 0; nI < dictionary.size(); nI++)
   {
-    if(dictionary[nI].first == (*name))
+    if(dictionary[nI].first == name)
     {
       return &dictionary[nI].second;
     }
     //already a ref one
-    if(dictionary[nI].second == (*name))
+    if(dictionary[nI].second == name)
     {
       return &dictionary[nI].second;
     }

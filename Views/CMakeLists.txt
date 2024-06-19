@@ -72,8 +72,6 @@ mafGraphIDDesc.cpp
 mafGraphIDDesc.h
 mafMemGraph.cpp
 mafMemGraph.h
-mafStringSet.cpp
-mafStringSet.h
 mafViewIntGraph.cpp
 mafViewIntGraph.h
 mafViewIntGraphWindow.cpp

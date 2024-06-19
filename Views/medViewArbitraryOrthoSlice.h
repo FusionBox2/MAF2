@@ -535,7 +535,7 @@ protected:
 	double m_ThicknessValue[3];
 	int m_ThicknessComboAssignment[3];
 
-	wxString m_PathFromDialog;
+	mafString m_PathFromDialog;
 
 	/** Enable debug facilities */
 	bool m_DebugMode;

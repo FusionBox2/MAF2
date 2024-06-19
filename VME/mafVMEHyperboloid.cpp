@@ -301,9 +301,9 @@ void mafVMEHyperboloid::SetTimeStamp(mafTimeStamp t)
 	this->GetOutput()->Update();
 	double xyz[3], rxyz[3];
 	this->GetOutput()->GetAbsPose(xyz, rxyz);
-	centerTemp[0] = std::atof(wxString::Format("x: %f", xyz[0]));
-	centerTemp[1] = std::atof(wxString::Format("y: %f", xyz[1]));
-	centerTemp[2] = std::atof(wxString::Format("z: %f", xyz[2]));
+	centerTemp[0] = xyz[0];
+	centerTemp[1] = xyz[1];
+	centerTemp[2] = xyz[2];
 	
 
 	this->InternalUpdate();

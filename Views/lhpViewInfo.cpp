@@ -29,7 +29,6 @@
 #include "mafPipe.h"
 #include "mafPipeFactory.h"
 
-#include "mafStringSet.h"
 #include "mafTagArray.h"
 #include "mafVME.h"
 

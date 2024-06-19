@@ -172,7 +172,7 @@ void mafPipeGizmo::Create(mafNode *node, mafView *view)
 	double *colour;
 	colour = inputVMEGizmo->GetTextColour();
 	m_CaptionActor->GetCaptionTextProperty()->SetColor(colour);
-	m_CaptionActor->SetCaption(inputVMEGizmo->GetTextValue());
+	m_CaptionActor->SetCaption(inputVMEGizmo->GetTextValue().GetCStr());
 	m_CaptionActor->SetAttachmentPoint(inputVMEGizmo->GetTextPosition());
 
 
@@ -278,7 +278,7 @@ void mafPipeGizmo::UpdatePipe()
 		colour = gizmo->GetTextColour();
 		m_CaptionActor->GetCaptionTextProperty()->SetColor(colour);
 		m_CaptionActor->SetVisibility(gizmo->GetTextVisibility());
-		m_CaptionActor->SetCaption(gizmo->GetTextValue());
+		m_CaptionActor->SetCaption(gizmo->GetTextValue().GetCStr());
 		m_CaptionActor->SetAttachmentPoint(gizmo->GetTextPosition());
 
 

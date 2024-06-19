@@ -588,13 +588,13 @@ void mafPipeMesh::UpdateActiveScalarsInVMEDataVectorItems()
     {
       if(m_ActiveScalarType == POINT_TYPE)
       {
-        wxString scalarsToActivate = m_ScalarsVTKName[m_ScalarIndex].GetCStr();
-        vtkDataArray *scalarsArray = outputVTK->GetPointData()->GetArray(scalarsToActivate);
+        mafString scalarsToActivate = m_ScalarsVTKName[m_ScalarIndex];
+        vtkDataArray *scalarsArray = outputVTK->GetPointData()->GetArray(scalarsToActivate.GetCStr());
 
         if (scalarsArray == NULL)
         {
           std::ostringstream stringStream;
-          stringStream << scalarsToActivate.c_str() << " POINT_DATA array does not exist for timestamp " \
+          stringStream << scalarsToActivate.toStd() << " POINT_DATA array does not exist for timestamp " \
             << item->GetTimeStamp() << " . Skipping SetActiveScalars for this timestamp" << std::endl;
           mafLogMessage(_M(stringStream.str().c_str()));
           continue;
@@ -605,20 +605,20 @@ void mafPipeMesh::UpdateActiveScalarsInVMEDataVectorItems()
       }
       else if(m_ActiveScalarType == CELL_TYPE)
       {
-        wxString scalarsToActivate = m_ScalarsVTKName[m_ScalarIndex].GetCStr();
-        vtkDataArray *scalarsArray = outputVTK->GetCellData()->GetArray(scalarsToActivate);
+        mafString scalarsToActivate = m_ScalarsVTKName[m_ScalarIndex];
+        vtkDataArray *scalarsArray = outputVTK->GetCellData()->GetArray(scalarsToActivate.GetCStr());
         
         if (scalarsArray == NULL)
         {
           std::ostringstream stringStream;
-          stringStream << scalarsToActivate.c_str() << "  CELL_DATA array does not exist for timestamp " \
+          stringStream << scalarsToActivate.toStd() << "  CELL_DATA array does not exist for timestamp " \
           << item->GetTimeStamp() << " . Skipping SetActiveScalars for this timestamp" << std::endl;
           mafLogMessage(_M(stringStream.str().c_str()));
           continue;
         }
         
 
-        outputVTK->GetCellData()->SetActiveScalars(scalarsToActivate.c_str());
+        outputVTK->GetCellData()->SetActiveScalars(scalarsToActivate.GetCStr());
         outputVTK->GetCellData()->GetScalars()->Modified();
       }
       outputVTK->Modified();

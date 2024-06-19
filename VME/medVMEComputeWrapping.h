@@ -331,9 +331,9 @@ public:
 
 	/** 
 	Set links for the meter*/
-	void SetMeterLink(const char *link_name, mafNode *n);
+	void SetMeterLink(const mafString& link_name, mafNode *n);
 
-	void RemoveLink(const char *link_name);
+	void RemoveLink(const mafString& link_name);
 
 	/** Return pointer to material attribute. */
 	mmaMaterial *GetMaterial();

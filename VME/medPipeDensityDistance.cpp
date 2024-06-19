@@ -613,7 +613,7 @@ void medPipeDensityDistance::UpdatePipeline()
 
     if(m_DensityDistance==0)
     {
-      m_ScalarBar->SetTitle(_("Distance"));
+      m_ScalarBar->SetTitle(mafString::Format(_L("Distance")).GetCStr());
 		  m_ScalarBar->SetMaximumNumberOfColors(m_NumSections);
       m_ScalarBar->Modified();
 
@@ -755,7 +755,7 @@ void medPipeDensityDistance::UpdatePipeline()
     }
     else if(m_DensityDistance==1)
     {
-      m_ScalarBar->SetTitle(_("Density"));
+      m_ScalarBar->SetTitle(mafString::Format(_L("Density")).GetCStr());
       m_ScalarBar->Modified();
 
       mafVMEOutputSurface *surface_output = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
