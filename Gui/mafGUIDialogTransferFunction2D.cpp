@@ -834,9 +834,9 @@ void mafGUIDialogTransferFunction2D::OnEvent(mafEventBase *maf_event)
     break;
     case ID_TF_NAME:
       if (this->m_CurrentWidget >= 0 && this->m_CurrentWidget < this->m_TransferFunction->GetNumberOfWidgets())
-        this->m_TransferFunction->SetWidgetName(this->m_CurrentWidget, this->m_WidgetName);
+        this->m_TransferFunction->SetWidgetName(this->m_CurrentWidget, mafWxToString(this->m_WidgetName).GetCStr());
       this->CreateWidgetList();
-      strncpy(this->m_Widget.Name, this->m_WidgetName, sizeof(this->m_Widget.Name) - 1);
+      strncpy(this->m_Widget.Name, mafWxToString(this->m_WidgetName).GetCStr(), sizeof(this->m_Widget.Name) - 1);
     break;
     case ID_TF_COLOR:
       if (this->m_CurrentWidget >= 0 && this->m_CurrentWidget < this->m_TransferFunction->GetNumberOfWidgets()) 
