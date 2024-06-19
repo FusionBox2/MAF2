@@ -346,7 +346,7 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
 
     inpName.Truncate(inpName.length() - 1);
     inpName = path.toWx() + "\\" + inpName;
-    reader->SetFileName(inpName);
+    reader->SetFileName(mafWxToString(inpName).GetCStr());
     mafString name, ext, inpPath;
     mafSplitPath(mafWxToString(inpName), &inpPath,&name,&ext);
 
