@@ -305,9 +305,9 @@ void mafOpImporterImage::BuildImageSequence()
 void mafOpImporterImage::BuildVolume()
 //----------------------------------------------------------------------------
 {
-  wxString prefix  = (m_FileDirectory + _R("\\") + m_FilePrefix).toWx();
-  prefix.Replace("/", "\\");
-  wxString pattern = (m_FilePattern  + _R(".")  + m_FileExtension).toWx();
+  mafString prefix  = m_FileDirectory + _R("\\") + m_FilePrefix;
+  ParsePathName(prefix);
+  mafString pattern = m_FilePattern  + _R(".")  + m_FileExtension;
   int extent[6];
 
   mafNEW(m_ImportedImageAsVolume);
@@ -323,8 +323,8 @@ void mafOpImporterImage::BuildVolume()
     r = vtkBMPReader::New();
     mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR,r));
     r->SetFileDimensionality(2);
-    r->SetFilePrefix(prefix);
-    r->SetFilePattern(pattern);
+    r->SetFilePrefix(prefix.GetCStr());
+    r->SetFilePattern(pattern.GetCStr());
     r->SetFileNameSliceSpacing(m_FileSpacing);
     r->SetFileNameSliceOffset(m_FileOffset);
     r->SetDataExtent(extent[0], extent[1], extent[2], extent[3], extent[4], m_NumFiles - 1);
@@ -347,8 +347,8 @@ void mafOpImporterImage::BuildVolume()
 		r = vtkJPEGReader::New();
     mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR,r));
     r->SetFileDimensionality(2);
-    r->SetFilePrefix(prefix);
-    r->SetFilePattern(pattern);
+    r->SetFilePrefix(prefix.GetCStr());
+    r->SetFilePattern(pattern.GetCStr());
     r->SetFileNameSliceSpacing(m_FileSpacing);
     r->SetFileNameSliceOffset(m_FileOffset);
     r->SetDataExtent(extent[0], extent[1], extent[2], extent[3], extent[4], m_NumFiles - 1);
@@ -370,8 +370,8 @@ void mafOpImporterImage::BuildVolume()
 		r = vtkPNGReader::New();
     mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR,r));
     r->SetFileDimensionality(2);
-    r->SetFilePrefix(prefix);
-    r->SetFilePattern(pattern);
+    r->SetFilePrefix(prefix.GetCStr());
+    r->SetFilePattern(pattern.GetCStr());
     r->SetFileNameSliceSpacing(m_FileSpacing);
     r->SetFileNameSliceOffset(m_FileOffset);
     r->SetDataExtent(extent[0], extent[1], extent[2], extent[3], extent[4], m_NumFiles - 1);
@@ -393,8 +393,8 @@ void mafOpImporterImage::BuildVolume()
 		r = vtkTIFFReader::New();
     mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR,r));
     r->SetFileDimensionality(2);
-    r->SetFilePrefix(prefix);
-    r->SetFilePattern(pattern);
+    r->SetFilePrefix(prefix.GetCStr());
+    r->SetFilePattern(pattern.GetCStr());
     r->SetFileNameSliceSpacing(m_FileSpacing);
     r->SetFileNameSliceOffset(m_FileOffset);
     r->SetDataExtent(extent[0], extent[1], extent[2], extent[3], extent[4], m_NumFiles - 1);

@@ -160,7 +160,7 @@ void mafRemoteLogic::OnEvent(mafEventBase *event)
             m_RemoteMsg += m_CommandSeparator;
             m_RemoteMsg += widget_id;
             m_RemoteMsg += m_CommandSeparator;
-            m_RemoteMsg += _R(widget_data.sValue);
+            m_RemoteMsg += widget_data.sValue;
           }
           break;
           default:
@@ -433,7 +433,7 @@ void mafRemoteLogic::RemoteMessage(mafString &cmd, bool to_server)
       w_data.dValue  = 0.0;
       w_data.fValue  = 0.0;
       w_data.iValue  = 0;
-      w_data.sValue  = "";
+      w_data.sValue  = _R("");
       w_data.dType = NULL_DATA;
       m_OperationManager->GetRunningOperation()->GetGui()->SetWidgetValue(widget_id, w_data);
     }
@@ -488,7 +488,7 @@ void mafRemoteLogic::RemoteMessage(mafString &cmd, bool to_server)
         widget_string_value = tkz.GetNextToken();
       WidgetDataType w_data;
       w_data.dType  = STRING_DATA;
-      w_data.sValue = widget_string_value;
+      w_data.sValue = mafWxToString(widget_string_value);
       m_OperationManager->GetRunningOperation()->GetGui()->SetWidgetValue(widget_id, w_data);
     }
     else if (command == "MouseDevice" && m_RemoteMouse)

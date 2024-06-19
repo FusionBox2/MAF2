@@ -459,10 +459,9 @@ void mafOpImporterRAWVolume_BES::	OnEvent(mafEventBase *maf_event)
 					char title[256];
 					f_in.getline(title,256);
 
-					if(strcmp(title,_("Z coordinates:"))!=0)
+					if(mafString(_R(title)) != _L("Z coordinates:"))
 					{
-						wxMessageDialog dialog(NULL,_("This is not a Z coordinates file!"),"",wxOK|wxICON_ERROR);
-						dialog.ShowModal();
+						mafErrorMessage(_M(mafString(_L("This is not a Z coordinates file!"))));
 						f_in.close();
 						return;
 					}

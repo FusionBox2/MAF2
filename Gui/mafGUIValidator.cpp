@@ -85,7 +85,7 @@ void mafGUIValidator::Init(mafBaseEventHandler* listener, int mid, wxControl *wi
   m_WidgetData.dValue = 0.0;
   m_WidgetData.fValue = 0.0;
   m_WidgetData.iValue = 0;
-  m_WidgetData.sValue = "";
+  m_WidgetData.sValue = _R("");
 }
 //----------------------------------------------------------------------------
 bool mafGUIValidator::IsValid()
@@ -223,11 +223,7 @@ bool mafGUIValidator::Copy(const mafGUIValidator& val)
 
   m_Wildcard		    = val.m_Wildcard;
 
-  m_WidgetData.dType  = val.m_WidgetData.dType;
-  m_WidgetData.dValue = val.m_WidgetData.dValue;
-  m_WidgetData.fValue = val.m_WidgetData.fValue;
-  m_WidgetData.iValue = val.m_WidgetData.iValue;
-  m_WidgetData.sValue = val.m_WidgetData.sValue;
+  m_WidgetData  = val.m_WidgetData;
 
   return TRUE;
 }
@@ -240,7 +236,7 @@ mafGUIValidator::mafGUIValidator(mafBaseEventHandler* listener, int mid, wxStati
   m_StaticText  = win; 
   m_MafStringVar= var;     
   m_WidgetData.dType  = STRING_DATA;
-  m_WidgetData.sValue = var->GetCStr();
+  m_WidgetData.sValue = *var;
   assert(IsValid());
 }
 //----------------------------------------------------------------------------
@@ -252,7 +248,7 @@ mafGUIValidator::mafGUIValidator(mafBaseEventHandler* listener, int mid, wxStati
   m_StaticText  = win; 
   m_StringVar= var;     
   m_WidgetData.dType  = STRING_DATA;
-  m_WidgetData.sValue = var->c_str();
+  m_WidgetData.sValue = mafWxToString(*var);
   assert(IsValid());
 }
 //----------------------------------------------------------------------------
@@ -264,7 +260,7 @@ mafGUIValidator::mafGUIValidator(mafBaseEventHandler* listener, int mid, wxTextC
   m_TextCtrl  = win; 
   m_StringVar = var;
   m_WidgetData.dType  = STRING_DATA;
-  m_WidgetData.sValue = var->c_str();
+  m_WidgetData.sValue = mafWxToString(*var);
   assert(IsValid());
 }
 //----------------------------------------------------------------------------
@@ -276,7 +272,7 @@ mafGUIValidator::mafGUIValidator(mafBaseEventHandler* listener, int mid, wxTextC
   m_TextCtrl    = win; 
   m_MafStringVar= var;     
   m_WidgetData.dType  = STRING_DATA;
-  m_WidgetData.sValue = var->GetCStr();
+  m_WidgetData.sValue = *var;
   assert(IsValid());
 }
 //----------------------------------------------------------------------------
@@ -460,7 +456,7 @@ mafGUIValidator::mafGUIValidator(mafBaseEventHandler* listener, int mid, wxButto
   m_MafStringVar  = var;
   m_Wildcard      = wildcard;
   m_WidgetData.dType  = STRING_DATA;
-  m_WidgetData.sValue = var->GetCStr();
+  m_WidgetData.sValue = *var;
   assert(IsValid());
 }
 //----------------------------------------------------------------------------
@@ -473,7 +469,7 @@ mafGUIValidator::mafGUIValidator(mafBaseEventHandler* listener, int mid, wxButto
   m_TextCtrl      = lab;
   m_MafStringVar  = var;
   m_WidgetData.dType  = STRING_DATA;
-  m_WidgetData.sValue = var->GetCStr();
+  m_WidgetData.sValue = *var;
   assert(IsValid());
 }
 //----------------------------------------------------------------------------
@@ -835,7 +831,7 @@ bool mafGUIValidator::TransferFromWindow(void)
         if (res)
         {
           *m_StringVar = s;
-          m_WidgetData.sValue = *m_StringVar;
+          m_WidgetData.sValue = mafWxToString(*m_StringVar);
         }
         return res;
       }
@@ -848,7 +844,7 @@ bool mafGUIValidator::TransferFromWindow(void)
         if (res)
         {
           *m_MafStringVar = mafWxToString(s);
-          m_WidgetData.sValue = m_MafStringVar->GetCStr();
+          m_WidgetData.sValue = *m_MafStringVar;
         }
         return res;
       }
@@ -1133,11 +1129,7 @@ void mafGUIValidator::OnButton(wxCommandEvent& event)
 void mafGUIValidator::GetWidgetData(WidgetDataType &widget_data)
 //----------------------------------------------------------------------------
 {
-  widget_data.dType  = m_WidgetData.dType;
-  widget_data.dValue = m_WidgetData.dValue;
-  widget_data.fValue = m_WidgetData.fValue;
-  widget_data.iValue = m_WidgetData.iValue;
-  widget_data.sValue = m_WidgetData.sValue;
+  widget_data  = m_WidgetData;
 }
 //----------------------------------------------------------------------------
 void mafGUIValidator::SetWidgetData(WidgetDataType &widget_data)
@@ -1164,11 +1156,11 @@ void mafGUIValidator::SetWidgetData(WidgetDataType &widget_data)
     case STRING_DATA:
       if (m_StringVar)
       {
-        *m_StringVar = widget_data.sValue;
+        *m_StringVar = widget_data.sValue.toWx();
       }
       if (m_MafStringVar)
       {
-        *m_MafStringVar = _R(widget_data.sValue);
+        *m_MafStringVar = widget_data.sValue;
       }
     break;
   }

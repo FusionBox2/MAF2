@@ -62,7 +62,7 @@ struct MAF_EXPORT WidgetDataType
   int    iValue;
   float  fValue;
   double dValue;
-  const char *sValue;
+  mafString sValue;
   int    dType;
 };
 
