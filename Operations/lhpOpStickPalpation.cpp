@@ -605,7 +605,7 @@ void lhpOpStickPalpation::OpDo()
     mafString dict(m_DictionaryFName);
 
     file += _R("\\");
-    file += mafWxToString(m_LMDict[nL].first); 
+    file += m_LMDict[nL].first; 
     file += _R(".c3d");
 
     if(dict.empty())
@@ -618,7 +618,7 @@ void lhpOpStickPalpation::OpDo()
     m_LimbCalibration  = NULL;
     m_StickCalibration = NULL;
 
-    mafLogMessage(_M(_R("Importing landmark ") + mafWxToString(m_LMDict[nL].first) + _R(" to segment ") + mafWxToString(m_LMDict[nL].second)));
+    mafLogMessage(_M(_R("Importing landmark ") + m_LMDict[nL].first + _R(" to segment ") + m_LMDict[nL].second));
 #ifndef OLD_IMPORTER
     lhpOpImporterC3D *importer=new lhpOpImporterC3D(_R("importer"));
     //importer->TestModeOn();
@@ -651,8 +651,8 @@ void lhpOpStickPalpation::OpDo()
     vme->SetName(name);
     mafEventMacro(mafEvent(this,VME_ADD,vme));
 
-    m_LimbCloud        = mafVMELandmarkCloud::SafeDownCast(MatchCriterion(m_TrgMotion, MatchWithName, m_LMDict[nL].second));
-    m_LimbCalibration  = mafVMELandmarkCloud::SafeDownCast(MatchCriterion(vme, MatchWithName, m_LMDict[nL].second));
+    m_LimbCloud        = mafVMELandmarkCloud::SafeDownCast(MatchCriterion(m_TrgMotion, MatchWithName, m_LMDict[nL].second.GetCStr()));
+    m_LimbCalibration  = mafVMELandmarkCloud::SafeDownCast(MatchCriterion(vme, MatchWithName, m_LMDict[nL].second.GetCStr()));
     m_StickCalibration = mafVMELandmarkCloud::SafeDownCast(MatchCriterion(vme, MatchStick, NULL));
 
     if(m_LimbCloud == NULL)

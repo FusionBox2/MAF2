@@ -188,7 +188,7 @@ void lhpOpRegSurfWithCloud::OpStop(int result)
     for(unsigned i = 0; i < m_Input->GetNumberOfChildren(); i++)
     {
       mafVMESurface *surfChild = mafVMESurface::SafeDownCast(m_Input->GetChild(i));
-      if(surfChild == NULL || strcmp(surfChild->GetName().GetCStr(), m_LMDict[s].first.c_str()) != 0)
+      if(surfChild == NULL || surfChild->GetName() != m_LMDict[s].first)
         continue;
       mafNEW(surf);
       if(surf->CanCopy(surfChild))
@@ -205,7 +205,7 @@ void lhpOpRegSurfWithCloud::OpStop(int result)
     for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
     {
       mafVMELandmarkCloud *cloudChild = mafVMELandmarkCloud::SafeDownCast(node);
-      if(cloudChild != NULL && strcmp(cloudChild->GetName().GetCStr(), m_LMDict[s].second.c_str()) == 0)
+      if(cloudChild != NULL && cloudChild->GetName() == m_LMDict[s].second)
       {
         cloud = cloudChild;
         break;
