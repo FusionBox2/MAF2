@@ -194,7 +194,7 @@ int vtkMAFVolumeResample::RequestInformation(
         
         // find spacing now
         double maxSpacing = max(maxS - minS, maxT - minT);
-        spacing[0] = spacing[1] = spacing[3] = max(maxSpacing, 1.e-8f);
+        spacing[0] = spacing[1] = spacing[2] = max(maxSpacing, 1.e-8f);
         outInfo->Set(vtkDataObject::SPACING(),spacing,3);
         if (fabs(minT) > 1.e-3 || fabs(minS) > 1.e-3) {
           this->VolumeOrigin[0] += minT * this->VolumeAxisX[0] * dims[0] + minS * this->VolumeAxisY[0] * dims[1];
