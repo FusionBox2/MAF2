@@ -436,7 +436,7 @@ mafStorageElementBuilder mafStorageElementBuilder::operator[](size_t idx)
 	auto node = getDOMNode(m_DOMElement, m_NumItems);
 	if (node->getNodeType() != XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
 		throw 0;
-	if (idx == size_t(-1))
+	if (idx == npos)
 		idx = m_NumItems;
 	if(idx < m_NumItems)
 	{
