@@ -466,6 +466,8 @@ IF (MAF_USE_VTK)
 	mafMtrReader.cpp
 	mafMtrReader.h
 	lhpOpCreateObject.h	
+	lhpOpCreateRefSysLM.cpp	
+	lhpOpCreateRefSysLM.h	
 	lhpOpCutSurface.cpp
 	lhpOpCutSurface.h
 	lhpOpFingerStick.cpp

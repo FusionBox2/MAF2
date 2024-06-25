@@ -175,6 +175,7 @@
 #include "mafViewSingleSliceCompound.h"
 
 #include "lhpOpFindCentroid.h"
+#include "lhpOpCreateRefSysLM.h"
 
 #ifdef MAF_USE_ITK
 #include "lhpOpCreateSurfaceScalar.h"
@@ -756,6 +757,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
     m_Logic->Plug(new lhpOpComputeTensor(_R("Compute Tensors")), _R("Modify"));
 
     m_Logic->Plug(new lhpOpTextureOrientation(_R("Texture Orientation")),_R("Create/Derive"));
+    m_Logic->Plug(new lhpOpCreateRefSysLM(_R("Create RefSys Landmarks")), _R("Create/Derive"));
 
   }
   
