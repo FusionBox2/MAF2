@@ -437,9 +437,9 @@ void medOpVolumeResample::Resample()
   outputSPExtent[5] = round((m_VolumeBounds[5] - m_VolumeBounds[4]) / m_VolumeSpacing[2]);
 
   double w,l,sr[2];
-  for (int i = 0; i < ((mafVMEGenericAbstract *)m_Input)->GetDataVector()->GetNumberOfItems(); i++)
+  for (auto& entry : *((mafVMEGenericAbstract *)m_Input)->GetDataVector())
   {
-    if (mafVMEItemVTK *input_item = mafVMEItemVTK::SafeDownCast(((mafVMEGenericAbstract *)m_Input)->GetDataVector()->GetItemByIndex(i)))
+    if (mafVMEItemVTK *input_item = mafVMEItemVTK::SafeDownCast(entry.second))
     {
       if (vtkDataSet *inputData = input_item->GetData())
       {

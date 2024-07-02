@@ -285,7 +285,7 @@ void medPipeTrajectories::UpdateProperty(bool fromTag)
     int maxValue = (i + m_Interval) >= m_TimeVector.size() ? m_TimeVector.size() - 1 : (i + m_Interval);
     
     //Get landmark position form the current transformation matrix
-    mafMatrix *m = m_MatrixVector->GetKeyMatrix(i);
+    mafMatrix *m = m_MatrixVector->GetMatrix(m_TimeVector[i]);
     mafTransform::GetPosition(*m,xyzTransform);
 
     //Landmark center position. Set to zero, because position is applied by the current transformation matrix
@@ -293,16 +293,16 @@ void medPipeTrajectories::UpdateProperty(bool fromTag)
     sphere_visibility = m_Landmark->GetLandmarkVisibility(m_TimeVector[i]);
 
     //start construct the landmark trajectory
-    m = m_MatrixVector->GetKeyMatrix(minValue);
+    m = m_MatrixVector->GetMatrix(m_TimeVector[minValue]);
     mafTransform::GetPosition(*m,xyz);
 
     //Subtract the position of the current transformation matrix, from the position of the "minValue" transformation.
     //It is necessary because current transformation matrix is applied in visualization.
     points->InsertNextPoint(xyz[0] - xyzTransform[0], xyz[1] - xyzTransform[1], xyz[2] - xyzTransform[2]);
    
-    for (mafTimeStamp n = (minValue + 1); n <= maxValue; n++)
+    for (int n = (minValue + 1); n <= maxValue; n++)
     {
-      m = m_MatrixVector->GetKeyMatrix(n);
+      m = m_MatrixVector->GetMatrix(m_TimeVector[n]);
       mafTransform::GetPosition(*m,xyz);
 
       //Subtract the position of the current transformation matrix, from the position of the "n" transformation: 

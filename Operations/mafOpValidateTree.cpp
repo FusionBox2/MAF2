@@ -191,7 +191,7 @@ int mafOpValidateTree::ValidateTree()
         mafDataVector *dv = vme->GetDataVector();
         if (dv)
         {
-          for (int t = 0; t < dv->GetNumberOfItems(); t++)
+          for (auto& entry : *dv)
           {
             if (m_MSFPath.empty())
             {
@@ -205,7 +205,7 @@ int mafOpValidateTree::ValidateTree()
               }
             }
             // binary files exists => VME is animated on data
-            item = dv->GetItemByIndex(t);
+            item = entry.second;
             if (item == NULL)
             {
               ErrorLog(mafOpValidateTree::ITEM_NOT_PRESENT, vme->GetName().GetCStr());

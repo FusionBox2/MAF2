@@ -54,11 +54,6 @@ public:
     The matrix object is <U>referenced</U> and <B>NOT</B> <U>copied</U>. same effect of AppendItem(). */
   void AppendKeyMatrix(mafMatrix *m) {AppendItem(m);}
 
-  /** 
-    Return a matrix in the vector, given its order index. Return NULL
-    if idx out of range. Beware this function take o(n) n=idx to return the matrix */
-  mafMatrix *GetKeyMatrix(int idx) {return GetItemByIndex(idx);}
-
   /** return a vector of key matrices. */
   void GetKeyMatrixVector(std::vector<mafMatrix *> &mvector);
 
