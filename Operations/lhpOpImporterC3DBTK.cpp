@@ -705,10 +705,10 @@ void lhpOpImporterC3DBTK::ImportAnalog(lhpOpImporterC3DBTK::_InternalC3DData &in
 void lhpOpImporterC3DBTK::ImportPlatform(lhpOpImporterC3DBTK::_InternalC3DData &intData)
 //----------------------------------------------------------------------------
 {
-  wxBusyInfo *wait;
+  std::unique_ptr<wxBusyInfo> wait;
   if(!m_TestMode)
   {
-    wait = new wxBusyInfo("Please wait, import Force Plate Data");
+    wait = std::make_unique<wxBusyInfo>("Please wait, import Force Plate Data");
   }
 
   long progress = 0;
@@ -781,6 +781,7 @@ void lhpOpImporterC3DBTK::ImportPlatform(lhpOpImporterC3DBTK::_InternalC3DData &
     double thickness = z - PLATFORM_THICKNESS;
 
     cube->SetBounds(minX,maxX,minY,maxY,thickness,z);
+    cube->Update();
     
     //Create the mafVMESurface for the platforms
     intData.m_PlatformList[currentPlatform]->SetData(cube->GetOutput(), 0);
@@ -804,20 +805,6 @@ void lhpOpImporterC3DBTK::ImportPlatform(lhpOpImporterC3DBTK::_InternalC3DData &
     momentName.append(_R("MOMENT_"));
     momentName.append(platformNumber);
     intData.m_MomentList[currentPlatform]->SetName(momentName);
-
-    vtkNew<vtkPolyData> vectorForce;
-    vtkNew<vtkPoints> pointsForce;
-    vtkNew<vtkCellArray> cellArrayForce;
-    vtkIdType pointIdForce[2] = {0,1};
-    vectorForce->SetPoints(pointsForce);
-    vectorForce->SetLines(cellArrayForce);
-
-    vtkNew<vtkPolyData> vectorMoment;
-    vtkNew<vtkPoints> pointsMoment;
-    vtkNew<vtkCellArray> cellArrayMoment;
-    vtkIdType pointIdMoment[2] = {0,1};
-    vectorMoment->SetPoints(pointsMoment);
-    vectorMoment->SetLines(cellArrayMoment);
 
     //For every sample
     mafTimeStamp currentTime = 0;
@@ -859,62 +846,32 @@ void lhpOpImporterC3DBTK::ImportPlatform(lhpOpImporterC3DBTK::_InternalC3DData &
       currentTime = intData.m_StartFrame * intData.m_TrajectorySamplePeriod + currentSample * intData.m_VectogramSamplePeriod;
 
       //force      
-      pointsForce->Reset();
-      pointsForce->InsertPoint(0, 0, 0, 0);
-      pointsForce->InsertPoint(1, intData.m_ForceX, intData.m_ForceY, intData.m_ForceZ);
-      cellArrayForce->Reset();
-      cellArrayForce->InsertNextCell(2, pointIdForce);
-
-      vtkNew<vtkTransformPolyDataFilter> transfVecForce;
-      vtkNew<vtkTransform> transfForce;
-
-      transfForce->Translate(intData.m_CopX, intData.m_CopY, z); //z = 0
-      transfVecForce->SetTransform(transfForce);
-      transfVecForce->SetInputData(vectorForce);
-      transfVecForce->Update();
-
-      
-      intData.m_ForceList[currentPlatform]->SetData(transfVecForce->GetOutput(), currentTime); //look here times
-
-      intData.m_ForceList[currentPlatform]->Modified();
-      intData.m_ForceList[currentPlatform]->Update();
-      intData.m_ForceList[currentPlatform]->GetOutput()->Update();
+      vtkNew<vtkPolyData> vectorForce;
+      vtkNew<vtkPoints> pointsForce;
+      pointsForce->InsertPoint(0, intData.m_CopX, intData.m_CopY, z);
+      pointsForce->InsertPoint(1, intData.m_CopX + intData.m_ForceX, intData.m_CopY + intData.m_ForceY, z + intData.m_ForceZ);
+      vtkNew<vtkCellArray> cellArrayForce;
+      vtkIdType pointIdForce[2] = { 0,1 };
+      vectorForce->SetPoints(pointsForce);
+      vectorForce->SetLines(cellArrayForce);
+      intData.m_ForceList[currentPlatform]->SetData(vectorForce, currentTime, mafVMEGeneric::MAF_VME_REFERENCE_DATA); //look here times
 
       //moment
-      
-      
-      pointsMoment->Reset();
-      pointsMoment->InsertPoint(0, 0, 0, 0);
-      pointsMoment->InsertPoint(1, intData.m_MomentX, intData.m_MomentY, intData.m_MomentZ);
+      vtkNew<vtkPolyData> vectorMoment;
+      vtkNew<vtkPoints> pointsMoment;
+      pointsMoment->InsertPoint(0, intData.m_CopX, intData.m_CopY, z);
+      pointsMoment->InsertPoint(1, intData.m_CopX + intData.m_MomentX, intData.m_CopY + intData.m_MomentY, z + intData.m_MomentZ);
+      vtkNew<vtkCellArray> cellArrayMoment;
+      vtkIdType pointIdMoment[2] = { 0,1 };
+      vectorMoment->SetPoints(pointsMoment);
+      vectorMoment->SetLines(cellArrayMoment);
+      intData.m_MomentList[currentPlatform]->SetData(vectorMoment, currentTime, mafVMEGeneric::MAF_VME_REFERENCE_DATA); //look here times
 
-      cellArrayMoment->Reset();
-      cellArrayMoment->InsertNextCell(2, pointIdMoment);  
-
-      vtkNew<vtkTransformPolyDataFilter> transfVecMoment;
-      vtkNew<vtkTransform> transfMoment;
-
-      transfMoment->Translate(intData.m_CopX, intData.m_CopY, z); //z = 0
-      transfVecMoment->SetTransform(transfMoment);
-      transfVecMoment->SetInputData(vectorMoment);
-      transfVecMoment->Update();
-
-
-      intData.m_MomentList[currentPlatform]->SetData(transfVecMoment->GetOutput(), currentTime); //look here times
-
-      intData.m_MomentList[currentPlatform]->Modified();
-      intData.m_MomentList[currentPlatform]->Update();
-      intData.m_MomentList[currentPlatform]->GetOutput()->Update();
-
-      progress = (currentSample + 1 + (currentPlatform * intData.m_NumSamples )) * 100 / (intData.m_NumSamples * intData.m_NumPlatforms);
-      mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
+      progress = (currentSample + 1 + (currentPlatform * intData.m_NumSamples)) * 100 / (intData.m_NumSamples * intData.m_NumPlatforms);
+      mafEventMacro(mafEvent(this, PROGRESSBAR_SET_VALUE, (intptr_t)progress));
     }
   }
   mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
-
-  if(!m_TestMode)
-  {
-    delete wait;
-  }
 }
 //----------------------------------------------------------------------------
 void lhpOpImporterC3DBTK::ImportEvent(lhpOpImporterC3DBTK::_InternalC3DData &intData)

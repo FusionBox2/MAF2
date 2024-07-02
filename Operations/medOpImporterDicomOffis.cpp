@@ -5174,9 +5174,9 @@ void medOpImporterDicomOffis::ResampleVolume()
 	output_extent[5] = (volumeBounds[5] - volumeBounds[4]) / m_VolumeSpacing[2];
 
 	double w,l,sr[2];
-	for (int i = 0; i < m_Volume->GetDataVector()->GetNumberOfItems(); i++)
+	for (auto& entry : *m_Volume->GetDataVector())
 	{
-		if (mafVMEItemVTK *input_item = mafVMEItemVTK::SafeDownCast(m_Volume->GetDataVector()->GetItemByIndex(i)))
+		if (mafVMEItemVTK *input_item = mafVMEItemVTK::SafeDownCast(entry.second))
 		{
 			if (vtkDataSet *input_data = input_item->GetData())
 			{

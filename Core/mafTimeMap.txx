@@ -198,21 +198,6 @@ void mafTimeMap<T>::RemoveItem(typename mafTimeMap<T>::TimeMap::iterator it)
 
 //-------------------------------------------------------------------------
 template <class T>
-int mafTimeMap<T>::RemoveItem(int idx)
-//-------------------------------------------------------------------------
-{
-  typename mafTimeMap<T>::TimeMap::iterator it=FindItemByIndex(idx);
-  if (it!=m_TimeMap.end())
-  {
-    RemoveItem(it);
-    return MAF_OK;
-  }
-
-  return MAF_ERROR;
-}
-
-//-------------------------------------------------------------------------
-template <class T>
 void mafTimeMap<T>::RemoveAllItems()
 //-------------------------------------------------------------------------
 {
@@ -300,49 +285,6 @@ void mafTimeMap<T>::Print(std::ostream& os, const int tabs) const
   }
 
   os << "}\n";
-}
-
-//----------------------------------------------------------------------------
-template <class T>
-mafTimeStamp mafTimeMap<T>::GetItemTime(int idx)
-//----------------------------------------------------------------------------
-{
-  T *m=GetItemByIndex(idx);
-  if (m) return m->GetTimeStamp();
-  return -1;
-}
-
-//----------------------------------------------------------------------------
-template <class T>
-typename mafTimeMap<T>::TimeMap::iterator mafTimeMap<T>::FindItemByIndex(int idx)
-//----------------------------------------------------------------------------
-{
-  if ((unsigned int)idx<m_TimeMap.size() && idx>=0)
-  {
-     typename mafTimeMap<T>::TimeMap::iterator it=m_TimeMap.begin();
-     std::advance(it,idx);
-     return it;
-  }
-  
-  return m_TimeMap.end();
-}
-
-//----------------------------------------------------------------------------
-template <class T>
-mafID mafTimeMap<T>::FindItemIndex(mafTimeStamp t)
-//----------------------------------------------------------------------------
-{
-  typename mafTimeMap<T>::TimeMap::iterator it=FindItem(t);
-  return it!=m_TimeMap.end()?std::distance(m_TimeMap.begin(),it):-1;
-}
-
-//----------------------------------------------------------------------------
-template <class T>
-T *mafTimeMap<T>::GetItemByIndex(int idx)
-//----------------------------------------------------------------------------
-{
-  typename mafTimeMap<T>::TimeMap::iterator it=FindItemByIndex(idx);
-  return (it!=m_TimeMap.end())?it->second:NULL;
 }
 
 //----------------------------------------------------------------------------

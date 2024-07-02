@@ -1453,11 +1453,12 @@ bool mafVMELandmarkCloud::IsDataAvailable()
       m_DataVector->GetTimeBounds(tbounds);
       if (t < tbounds[0])
       {
-        item = m_DataVector->GetItemByIndex(0);
+        item = m_DataVector->begin()->second;
       }
       else
       {
-        item = m_DataVector->GetItemByIndex(m_DataVector->GetNumberOfItems()-1);
+        auto it = --m_DataVector->end();
+        item = it->second;
       }
     }
 

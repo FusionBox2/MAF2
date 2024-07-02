@@ -82,14 +82,8 @@ public:
   /** Remove an item given its iterator */
   virtual void RemoveItem(typename mafTimeMap<T>::TimeMap::iterator it);
 
-  /** Remove an item given its index*/
-  int RemoveItem(int idx);
-
   /** Remove all the items*/
   virtual void RemoveAllItems();
-
-  /** Return the timestamp of the i-th item*/
-  mafTimeStamp GetItemTime(int idx);
 
   /** Return the list of timestamp of the key matrixes in the given vector*/
   void GetTimeStamps(mmuTimeVector &kframes) const;
@@ -124,12 +118,6 @@ public:
     not*/
   typename mafTimeMap<T>::TimeMap::iterator FindItem(mafTimeStamp t);
 
-  /** return iterator of item with given index */
-  typename mafTimeMap<T>::TimeMap::iterator FindItemByIndex(int idx);
-
-  /** return index of the given item. return -1 if not found. */
-  mafID FindItemIndex(mafTimeStamp t);
-
   /** find and return item corresponding to timestamp t. return NULL if not found. */
   T *GetItem(mafTimeStamp t);
 
@@ -142,9 +130,6 @@ public:
     Return the pointer to the item with timestamp nearest the given one. NULL 
     is returned if not found.*/
   T *GetItemBefore(mafTimeStamp t);
-
-  /** return  the item with given its order index. NULL is returned if not found. */
-  T *GetItemByIndex(int idx);
 
   virtual void Print(std::ostream& os, const int tabs=0) const;
 

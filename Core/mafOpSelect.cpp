@@ -375,10 +375,9 @@ Select the vme parent
         else
         {
           mafVMEItem *item;
-          int i;
-          for (i = 0; i < dv->GetNumberOfItems(); i++)
+          for (auto& entry : *dv)
           {
-            item = dv->GetItemByIndex(i);
+            item = entry.second;
             data_filename = _R(item->GetURL());
             storage->ReleaseURL(data_filename);
           }
