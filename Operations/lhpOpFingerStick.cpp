@@ -34,7 +34,7 @@
 
 #include "lhpOpFingerStick.h"
 #include "mafOpExplodeCollapse.H"
-#include "lhpOpImporterC3D.h"
+#include "lhpOpImporterC3DBTK.h"
 
 #include "mafVMELandmarkCloud.h"
 
@@ -585,7 +585,7 @@ void lhpOpFingerStick::OpDo()
     file += name; 
     file += _R(".c3d");
 
-    lhpOpImporterC3D *importer=new lhpOpImporterC3D(_R("importer"));
+    lhpOpImporterC3DBTK *importer=new lhpOpImporterC3DBTK(_R("importer"));
     //importer->TestModeOn();
     importer->SetC3DFileName(file.GetCStr());
     importer->SetDictionaryFileName(m_DictionaryFName.GetCStr());
