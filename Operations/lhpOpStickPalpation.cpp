@@ -32,7 +32,7 @@
 
 #include "mafDictionary.h"
 #include "mafOpExplodeCollapse.h"
-#include "lhpOpImporterC3D.h"
+#include "lhpOpImporterC3DBTK.h"
 
 #include "mafSmartPointer.h"
 
@@ -620,7 +620,7 @@ void lhpOpStickPalpation::OpDo()
 
     mafLogMessage(_M(_R("Importing landmark ") + m_LMDict[nL].first + _R(" to segment ") + m_LMDict[nL].second));
 #ifndef OLD_IMPORTER
-    lhpOpImporterC3D *importer=new lhpOpImporterC3D(_R("importer"));
+    lhpOpImporterC3DBTK *importer=new lhpOpImporterC3DBTK(_R("importer"));
     //importer->TestModeOn();
     importer->SetC3DFileName(file.GetCStr());
     importer->SetDictionaryFileName(dict.GetCStr());
