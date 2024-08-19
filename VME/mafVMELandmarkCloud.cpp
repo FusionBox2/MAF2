@@ -1447,7 +1447,7 @@ bool mafVMELandmarkCloud::IsDataAvailable()
     }
     // END WORKAROUND CODE
 
-    if (IsAnimated() && item == NULL)
+    if (IsAnimated() && item == NULL && m_DataVector->GetNumberOfItems() > 0)
     {
       mafTimeStamp tbounds[2];
       m_DataVector->GetTimeBounds(tbounds);
