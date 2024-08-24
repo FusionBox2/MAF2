@@ -76,6 +76,9 @@ OPTION(MAF_USE_Offis     "Find and Link the Offis library."     ON)
 OPTION(MAF_USE_BTK       "Find and Link the BTK library."       ON)
 
 mark_as_advanced(BUILD_SHARED_LIBS)
+if(MSVC)
+add_compile_options(/Zc:__cplusplus)
+endif(MSVC)
 
 if(MAF_USE_WX)
   set(wxWidgets_DIR ${WXW_DIR})

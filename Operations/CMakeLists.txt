@@ -585,7 +585,10 @@ SET(PROJECT_LIBS ${PROJECT_LIBS} vtkMAF mafCommon mafGui)
 
 IF (MAF_USE_Offis)
   INCLUDE_DIRECTORIES(${DCMTK_INCLUDE_DIRS})
-  SET(PROJECT_LIBS ${PROJECT_LIBS} ${DCMTK_LIBRARIES})
+  SET(PROJECT_LIBS ${PROJECT_LIBS} 
+DCMTK::ofstd DCMTK::oflog DCMTK::oficonv DCMTK::dcmdata DCMTK::i2d DCMTK::dcmxml DCMTK::dcmimgle DCMTK::dcmimage DCMTK::dcmjpeg DCMTK::ijg8 DCMTK::ijg12 DCMTK::ijg16 DCMTK::dcmjpls DCMTK::dcmtkcharls DCMTK::dcmtls DCMTK::dcmnet DCMTK::dcmsr DCMTK::cmr DCMTK::dcmdsig DCMTK::dcmwlm DCMTK::dcmqrdb DCMTK::dcmpstat DCMTK::dcmrt DCMTK::dcmiod DCMTK::dcmfg DCMTK::dcmseg DCMTK::dcmtract DCMTK::dcmpmap DCMTK::dcmect
+#${DCMTK_LIBRARIES}
+)
 ENDIF (MAF_USE_Offis)
 
 IF (MAF_USE_VTK)
