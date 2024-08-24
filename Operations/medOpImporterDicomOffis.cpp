@@ -111,7 +111,7 @@ PURPOSE.  See the above copyright notice for more information.
 #if _MSC_VER >= 1500
 #define ssize_t VS2008_ssize_t_HACK 
 #endif
-
+	
 #include "dcmtk/config/osconfig.h"    /* make sure OS specific configuration is included first */
 
 #if _MSC_VER >= 1500
@@ -129,8 +129,6 @@ PURPOSE.  See the above copyright notice for more information.
 #include "dcmtk/dcmjpeg/djdecode.h."
 #include "dcmtk/dcmdata/dcrledrg.h"
 
-#define INCLUDE_CSTDLIB
-#define INCLUDE_CSTRING
 #include "dcmtk/ofstd/ofstdinc.h"
 #include "medDicomCardiacMRIHelper.h"
 #include "vnl/vnl_vector.h"

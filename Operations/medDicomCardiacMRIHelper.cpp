@@ -52,9 +52,6 @@ const bool DEBUG_MODE = true;
 #include "dcmtk/dcmdata/dcrledrg.h"
 #include "dcmtk/ofstd/ofstdinc.h"
 
-#define INCLUDE_CSTDLIB
-#define INCLUDE_CSTRING
-
 #include "vnl/vnl_matrix.h"
 #include "vnl/vnl_vector.h"
 #include "vnl/vnl_math.h"
