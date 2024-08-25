@@ -73,8 +73,6 @@ lhpOpImporterC3DBTK::_InternalC3DData::_InternalC3DData()
   //c3d filename
   m_FileName = _R("");
 
-  //Aurion
-  //m_Errcode = 0;
   m_AnalogRate = 0;
   m_VideoRate = 0;
   m_LengthMs = 0;

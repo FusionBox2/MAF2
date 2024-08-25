@@ -39,10 +39,6 @@ class mafVMEGroup;
 //----------------------------------------------------------------------------
 // lhpOpExporterCSVGraph :
 //----------------------------------------------------------------------------
-/** 
-  This operation is a wrapper of C3D Reader SDK of Aurion. Need C3D_Reader.lib, C3D_Reader.dll,
-  LicenseAurion.dll. The license can be obtained by Aurion following messagebox created by dll.
-*/
 class lhpOpExporterCSVGraph : public mafOp
 {
 public:

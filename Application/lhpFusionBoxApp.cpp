@@ -130,7 +130,6 @@
 #include "medOpImporterGRFWS.h"
 #include "medPipeGraph.h"
 #include "mafVMERawMotionData.h" 
-#include "lhpOpImporterC3D.h" 
 #include "medOpImporterMotionData.h"
 #include "medOpExporterLandmark.h"
 #include "medOpExporterMeters.h"
@@ -500,23 +499,6 @@ bool lhpFusionBoxApp::OnInit()
     }
   }
 
-  if(fullVersion)
-  {
-    C3DLib = mafDynamicLoader::OpenLibrary("C3D_Reader");
-    if(C3DLib)
-    {
-      if(lhpOpImporterC3D::Config(C3DLib))
-      {
-        m_Plugins.push_back(std::make_pair(C3DLib, (void(*)())NULL));
-      }
-      else
-      {
-        mafDynamicLoader::CloseLibrary(C3DLib);
-        C3DLib = NULL;
-      }
-    }
-  }
-
   int result;
  
   result = mafVMEFactory::Initialize();
@@ -616,8 +598,6 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
     //m_Logic->Plug(new medOpImporterRAWImages(_R("Raw Images Legacy")),_R("Images"));
     m_Logic->Plug(new mafOpImporterImage(_R("Images")),_R("Images"));
     m_Logic->Plug(new medOpImporterLandmarkWS(_R("ASCII trajectories (VWs)")),_R("Motion Analysis"));
-    if(C3DLib)
-      m_Logic->Plug(new lhpOpImporterC3D(_R("C3D")),_R("Motion Analysis"));  
     // m_Logic->Plug(new lhpOpLandmarkImporter(_R("Landmark"))); //Old Importer
     m_Logic->Plug(new medOpImporterGRFWS(_R("ASCII Force Plates (VWs)")), _R("Motion Analysis"));
     m_Logic->Plug(new mafOpImporterMesh(_R("Generic Mesh")), _R("Finite Element"));
