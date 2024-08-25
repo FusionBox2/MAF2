@@ -425,9 +425,6 @@ IF (MAF_USE_VTK)
 	lhpOpLnSurf.cpp
 	lhpOpLnSurf.h
 	
-	lhpOpImporterC3D.cpp
-	lhpOpImporterC3D.h
-
 	lhpOpImporterC3DBTK.cpp
 	lhpOpImporterC3DBTK.h
 	lhpOpExporterC3DBTK.cpp

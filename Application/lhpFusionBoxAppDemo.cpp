@@ -106,7 +106,6 @@
 #include "medOpImporterGRFWS.h"
 #include "medPipeGraph.h"
 #include "mafVMERawMotionData.h" 
-#include "lhpOpImporterC3D.h" 
 #include "medOpImporterMotionData.h"
 #include "medOpExporterLandmark.h"
 #include "medOpExporterMeters.h"
