@@ -191,12 +191,12 @@ void medOpIterativeRegistration::OpStop(int result)
    
   // HideGui seems not to work  with plugged guis :(; using it generate a SetFocusToChild
   // error when operation tab is selected after the operation has ended
-  /*mafEventMacro(mafEvent(this,OP_HIDE_GUI,(wxWindow *)m_Gui->GetParent()));
+  /*{mafEvent evUnq(this,OP_HIDE_GUI,(wxWindow *)m_Gui->GetParent()); mafEventMacro(evUnq);}
   cppDEL(m_Gui);*/
   HideGui();
 
 
-  mafEventMacro(mafEvent(this,result));   
+  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}   
 }
 
 
@@ -261,7 +261,7 @@ void medOpIterativeRegistration::OnRegister(mafEventBase *maf_event)
   m_GuiLandmark[SOURCE]->SetGUIStatusToPick();
   m_GuiLandmark[TARGET]->SpawnLMOn();
   m_GuiLandmark[TARGET]->SetGUIStatusToPick();    
-  mafEventMacro(mafEvent(this, CAMERA_UPDATE)); 
+  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);} 
 }
 
 void medOpIterativeRegistration::OnEventThis(mafEventBase *maf_event)

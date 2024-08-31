@@ -347,7 +347,7 @@ void lhpOpCutSurface::OpStop(int result)
 
   vtkDEL(output);
 
-  mafEventMacro(mafEvent(this,result));
+  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -381,7 +381,7 @@ void lhpOpCutSurface::OpDo()
   {
     m_OutSurface->ReparentTo(m_Input->GetRoot());
   }
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -392,5 +392,5 @@ void lhpOpCutSurface::OpUndo()
   {
     m_OutSurface->ReparentTo(NULL);
   }
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }

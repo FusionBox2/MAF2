@@ -324,7 +324,7 @@ void lhpOpFingerStick::OpStop(int result)
   if (result == OP_RUN_CANCEL)
   {
     HideGui();
-    mafEventMacro(mafEvent(this,result));
+    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
   }
   else if (result == OP_RUN_OK)
   {
@@ -336,7 +336,7 @@ void lhpOpFingerStick::OpStop(int result)
     }
    
     HideGui();
-    mafEventMacro(mafEvent(this,result));
+    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
   }
 }
 //----------------------------------------------------------------------------
@@ -571,7 +571,7 @@ void lhpOpFingerStick::OpDo()
   mafNEW(group); //We got a Reference on it
   group->SetName(_R("Finger palpator"));
   group->ReparentTo(m_Input);
-  mafEventMacro(mafEvent(this,VME_ADD,group));
+  {mafEvent evUnq(this,VME_ADD,group); mafEventMacro(evUnq);}
 
   for(nI = 0; nI < ((!m_ListFName.empty()) ? m_LMDict.size() : m_BallsCalibration->GetNumberOfLandmarks()); nI++)
   {
@@ -600,7 +600,7 @@ void lhpOpFingerStick::OpDo()
     vme = c3dImported;
     delete importer;
 
-    mafEventMacro(mafEvent(this,VME_ADD,vme));
+    {mafEvent evUnq(this,VME_ADD,vme); mafEventMacro(evUnq);}
 
     if(vme != NULL)
     {
@@ -650,16 +650,16 @@ void lhpOpFingerStick::OpDo()
 
         locCalibr->AppendLandmark(res[0], res[1], res[2], _R("TIP"));
         locCalibr->ReparentTo(group);
-        mafEventMacro(mafEvent(this,VME_ADD,locCalibr));
+        {mafEvent evUnq(this,VME_ADD,locCalibr); mafEventMacro(evUnq);}
         mafDEL(locCalibr);
       }
-      mafEventMacro(mafEvent(this,VME_REMOVE,vme));
+      {mafEvent evUnq(this,VME_REMOVE,vme); mafEventMacro(evUnq);}
       mafDEL(vme);
     }
   }
   if(calculated == 0)
   {
-    mafEventMacro(mafEvent(this,VME_REMOVE,group));
+    {mafEvent evUnq(this,VME_REMOVE,group); mafEventMacro(evUnq);}
     mafDEL(group);
     return;
   }
@@ -683,7 +683,7 @@ void lhpOpFingerStick::OpDo()
 
   averagedCalibr->AppendLandmark(tipPoint[0], tipPoint[1], tipPoint[2], _R("TIP"));
   averagedCalibr->ReparentTo(group);
-  mafEventMacro(mafEvent(this,VME_ADD,averagedCalibr));
+  {mafEvent evUnq(this,VME_ADD,averagedCalibr); mafEventMacro(evUnq);}
   mafDEL(averagedCalibr);
   m_Output = group;
 }

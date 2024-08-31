@@ -70,7 +70,7 @@ void medOpCreateWrappedMeter::OpRun()
   mafNEW(m_Meter);
   m_Meter->SetName(_R("Wrapped Meter"));
   m_Output = m_Meter;
-  mafEventMacro(mafEvent(this,OP_RUN_OK));
+  {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpCreateWrappedMeter::OpDo()

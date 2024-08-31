@@ -272,7 +272,7 @@ void mafDataVector::InternalStore(mafStorageElementBuilder& parent)
 
         if (resolvedURL == MAF_OK && mafFileExists(filename))//Only if exist an archive where it is possible read the vtk data
         {
-          mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+          {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
           long progress = 0;
 
           std::vector<mafString> filesExtracted = mafZIPOpen(filename);
@@ -284,7 +284,7 @@ void mafDataVector::InternalStore(mafStorageElementBuilder& parent)
             if ((dataIndex % step == 0))
             {
               progress++;
-              mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
+              {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
             }
 			mafVMEItem* itemTmp = elem.second;
             int IOmode = itemTmp->GetIOMode();
@@ -295,8 +295,8 @@ void mafDataVector::InternalStore(mafStorageElementBuilder& parent)
             dataIndex++;
           }
           
-          mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)100));
-          mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+          {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)100); mafEventMacro(evUnq);}
+          {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
 
           for (int i=0;i<filesExtracted.size();i++)
           {

@@ -267,7 +267,7 @@ void mafPipeBox::OnEvent(mafEventBase *maf_event)
     }
     //mafEvent cam_event(this,CAMERA_UPDATE);
     //m_Vme->ForwardUpEvent(cam_event);
-    mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+    {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
   }
 	if(maf_event->GetId() == VME_OUTPUT_DATA_UPDATE)
 	{

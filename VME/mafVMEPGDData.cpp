@@ -223,7 +223,7 @@ int mafVMEPGDData::Read()
           //TmpVME->Open();
           TmpVME->SetName(_R(tmpstring));
           TmpVME->SetRadius(m_DefaultRadius);
-          //mafEventMacro(mafEvent(this,VME_CREATE_CLIENT_DATA,m_cloud));
+          //{mafEvent evUnq(this,VME_CREATE_CLIENT_DATA,m_cloud); mafEventMacro(evUnq);}
           AddChild(TmpVME);		
 
           // reimplemented by MARCO
@@ -251,7 +251,7 @@ int mafVMEPGDData::Read()
             Landmark->ReparentTo(TmpVME);
             //Landmark->UpdateCurrentData();
             Landmark->SetAbsPose(X,Y,Z,0,0,0);*/
-            //mafEventMacro(mafEvent(this,VME_ADD,m_landmark));
+            //{mafEvent evUnq(this,VME_ADD,m_landmark); mafEventMacro(evUnq);}
           }
           else
           {

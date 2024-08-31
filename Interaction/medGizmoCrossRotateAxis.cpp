@@ -391,7 +391,7 @@ void medGizmoCrossRotateAxis::SetColor(double colR, double colG, double colB)
 void medGizmoCrossRotateAxis::Show(bool show)
 //----------------------------------------------------------------------------
 {
-	mafEventMacro(mafEvent(this,VME_SHOW,m_GizmoCross,show));
+	{mafEvent evUnq(this,VME_SHOW,m_GizmoCross,show); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medGizmoCrossRotateAxis::SetAbsPose(mafMatrix *absPose)
@@ -570,7 +570,7 @@ void medGizmoCrossRotateAxis::CreateFeedbackGizmoPipeline()
 
 void medGizmoCrossRotateAxis::ShowTranslationFeedbackArrows(bool show)
 {
-	mafEventMacro(mafEvent(this,VME_SHOW,m_RotationFeedbackGizmo,show));
+	{mafEvent evUnq(this,VME_SHOW,m_RotationFeedbackGizmo,show); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------

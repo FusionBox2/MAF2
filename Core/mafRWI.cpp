@@ -781,12 +781,12 @@ void mafRWI::CameraReset(mafNode *vme, double zoom)
 	if(m_Grid && m_ShowGrid) 
 		m_Grid->VisibilityOff();
 
-	mafEventMacro(mafEvent(this,CAMERA_PRE_RESET,m_RenFront)); //- Attention - I'm sending m_RenFront, I suppose that m_RenBack is never required 
+	{mafEvent evUnq(this,CAMERA_PRE_RESET,m_RenFront); mafEventMacro(evUnq);} //- Attention - I'm sending m_RenFront, I suppose that m_RenBack is never required 
 	CameraReset(ComputeVisibleBounds(vme), zoom);
 	if(m_Grid && m_ShowGrid) 
 		m_Grid->VisibilityOn();
 
-	mafEventMacro(mafEvent(this,CAMERA_POST_RESET,m_RenFront));
+	{mafEvent evUnq(this,CAMERA_POST_RESET,m_RenFront); mafEventMacro(evUnq);}
 	m_RenFront->ResetCameraClippingRange();
 	m_RenderWindow->Render();
 	UpdateCameraParameters();

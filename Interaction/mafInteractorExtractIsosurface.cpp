@@ -133,7 +133,7 @@ void mafInteractorExtractIsosurface::PickIsoValue(mafDevice *device)
       vtkPoints *p = vtkPoints::New();
       p->SetNumberOfPoints(1);
       p->SetPoint(0,pos_picked);
-      mafEventMacro(mafEvent(this,VME_PICKED,(vtkObject *)p));
+      {mafEvent evUnq(this,VME_PICKED,(vtkObject *)p); mafEventMacro(evUnq);}
       p->Delete();
     }
   }

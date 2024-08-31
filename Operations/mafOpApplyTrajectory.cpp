@@ -119,7 +119,7 @@ void mafOpApplyTrajectory::OpStop(int result)
 //----------------------------------------------------------------------------
 {
   HideGui();
-  mafEventMacro(mafEvent(this,result));
+  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpApplyTrajectory::CreateGui()
@@ -200,8 +200,8 @@ void mafOpApplyTrajectory::OpUndo()
   }
 
   oldVme->Modified();
-  mafEventMacro(mafEvent(this, VME_MODIFIED, m_Input));
-  mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+  {mafEvent evUnq(this, VME_MODIFIED, m_Input); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpApplyTrajectory::OnEvent(mafEventBase *maf_event) 
@@ -333,8 +333,8 @@ int mafOpApplyTrajectory::Read()
 
   } while (!inputFile.Eof());
 
-  mafEventMacro(mafEvent(this, VME_MODIFIED, m_Input));
-  mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+  {mafEvent evUnq(this, VME_MODIFIED, m_Input); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 
   return MAF_OK;
 }
@@ -366,7 +366,7 @@ int mafOpApplyTrajectory::ApplyTrajectoriesFromVME()
     ((mafVME *)m_Input)->SetAbsMatrix(boxPose, time);
   }
 
-  mafEventMacro(mafEvent(this, VME_MODIFIED, m_Input));
-  mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+  {mafEvent evUnq(this, VME_MODIFIED, m_Input); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
   return MAF_OK;
 }

@@ -237,7 +237,7 @@ void medWizardBlockInformation::OnEvent( mafEventBase *maf_event )
     case WIZARD_INFO_SHOW_ID:
       {
         //Forward up event to update persistent settings
-        mafEventMacro(mafEvent(this,WIZARD_INFORMATION_BOX_SHOW_SET,(bool)m_ShowBoxes));
+        {mafEvent evUnq(this,WIZARD_INFORMATION_BOX_SHOW_SET,(bool)m_ShowBoxes); mafEventMacro(evUnq);}
       }
       break;
     default:

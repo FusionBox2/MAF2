@@ -220,7 +220,7 @@ void medOpMML::OpDo()  {}
 void medOpMML::OpUndo() {}
 
 //----------------------------------------------------------------------------
-void medOpMML::OpStop(int result) {	mafEventMacro(mafEvent(this,result));}
+void medOpMML::OpStop(int result) {	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}}
 
 //----------------------------------------------------------------------------
 void medOpMML::OpRun()   
@@ -484,7 +484,7 @@ void medOpMML::OnRegistrationOK()
   RegisteredMusclesVME = mafVMEGroup::New();
   RegisteredMusclesVME->SetName("registered muscles");
   PatientSectionVME->AddChild(RegisteredMusclesVME);
-  mafEventMacro(mafEvent(this, VME_ADD, RegisteredMusclesVME));
+  {mafEvent evUnq(this, VME_ADD, RegisteredMusclesVME); mafEventMacro(evUnq);}
   }
 
   // is there a groupVME under the "registered muscles" groupVME with name identical to
@@ -495,7 +495,7 @@ void medOpMML::OnRegistrationOK()
   OurMuscleVME = mafVMEGroup::New();
   OurMuscleVME->SetName(m_surface_name);
   RegisteredMusclesVME->AddChild(OurMuscleVME);
-  mafEventMacro(mafEvent(this, VME_ADD, OurMuscleVME));
+  {mafEvent evUnq(this, VME_ADD, OurMuscleVME); mafEventMacro(evUnq);}
   }
 
   // no children?
@@ -525,7 +525,7 @@ void medOpMML::OnRegistrationOK()
 
   // add to tree (save now)
   //OurMuscleVME->AddChild(vme);
-  mafEventMacro(mafEvent(this, VME_ADD, vme));
+  {mafEvent evUnq(this, VME_ADD, vme); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -2361,7 +2361,7 @@ void medOpMML::CreateRegistrationDlg()
   SetUpModelView();
   SetUpParameterViews();
   //
-  mafEventMacro(mafEvent(this, ID_T_OPERATION));
+  {mafEvent evUnq(this, ID_T_OPERATION); mafEventMacro(evUnq);}
   //
 
   m_OpDlg->ShowModal();	

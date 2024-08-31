@@ -245,8 +245,8 @@ void mafBrickedFileWriter::SetInputZCoordinates(vtkDoubleArray* pCoords)
 	mafString szMsg = mafString::Format(_L("Sampling and bricking data (sr: %d, bs: %d) ..."),
 		nSampleRate, m_NBrickSize[0]);
 
-	mafEventMacro(mafEvent(this, PROGRESSBAR_SET_TEXT, &szMsg));
-	mafEventMacro(mafEvent(this, PROGRESSBAR_SET_VALUE, (intptr_t)0));
+	{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT, &szMsg); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this, PROGRESSBAR_SET_VALUE, (intptr_t)0); mafEventMacro(evUnq);}
 
 	vtkMAFLargeDataProvider* dp = m_InputDataSet->GetPointDataProvider();	
 	int nScalarsDscIndex = dp->GetIndexOfScalarsDescriptor();
@@ -289,7 +289,7 @@ void mafBrickedFileWriter::SetInputZCoordinates(vtkDoubleArray* pCoords)
 	vtkIdType64 nStartIndex = VOI[0]*dataIncr[0] + VOI[2]*dataIncr[1] + VOI[4]*dataIncr[2];		
 	for (int zb = 0; zb < nDims[2]; zb++, nStartIndex += dataIncrSkip[2])
 	{
-		mafEventMacro(mafEvent(this, PROGRESSBAR_SET_VALUE, (intptr_t)(100*zb / nDims[2])));
+		{mafEvent evUnq(this, PROGRESSBAR_SET_VALUE, (intptr_t)(100*zb / nDims[2])); mafEventMacro(evUnq);}
 
 		//processing one plane
 		//process sampled lines at this plane
@@ -619,11 +619,11 @@ void mafBrickedFileWriter::CreateBricksIndexTable(int nCurBrickPlane)
 		return true; //no change
 	}
 
-	mafEventMacro(mafEvent(this, PROGRESSBAR_SHOW, this));
+	{mafEvent evUnq(this, PROGRESSBAR_SHOW, this); mafEventMacro(evUnq);}
 
 	mafString szMsg = _L("Initialization ...");
-	mafEventMacro(mafEvent(this, PROGRESSBAR_SET_TEXT, &szMsg));
-	mafEventMacro(mafEvent(this, PROGRESSBAR_SET_VALUE, (intptr_t)0));
+	{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT, &szMsg); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this, PROGRESSBAR_SET_VALUE, (intptr_t)0); mafEventMacro(evUnq);}
 
 	try
 	{
@@ -640,7 +640,7 @@ void mafBrickedFileWriter::CreateBricksIndexTable(int nCurBrickPlane)
 
 		//time to store low resolution
 		szMsg = _L("Writing LOW Resolution map ...");
-		mafEventMacro(mafEvent(this, PROGRESSBAR_SET_TEXT, &szMsg));    
+		{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT, &szMsg); mafEventMacro(evUnq);}    
 		
 		m_BrickFile->Write( m_PLowResLevel, m_NBricksDimSize[2]*m_NVoxelSizeInB);
 
@@ -651,7 +651,7 @@ void mafBrickedFileWriter::CreateBricksIndexTable(int nCurBrickPlane)
 
 		//and our index table
 		szMsg = _L("Writing index table ...");
-		mafEventMacro(mafEvent(this, PROGRESSBAR_SET_TEXT, &szMsg));
+		{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT, &szMsg); mafEventMacro(evUnq);}
 				
 		int nPrevSum = 0;		
 		int nCount = m_NBricksDim[1]*m_NBricksDim[2];
@@ -693,14 +693,14 @@ void mafBrickedFileWriter::CreateBricksIndexTable(int nCurBrickPlane)
 
 
 	szMsg = _L("Finalization ...");
-	mafEventMacro(mafEvent(this, PROGRESSBAR_SET_TEXT, &szMsg));
+	{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT, &szMsg); mafEventMacro(evUnq);}
 
 	DeallocateBuffers();	
 	m_BrickFile->Close();	
   m_BrickFile->Delete();
   m_BrickFile = NULL;
 
-	mafEventMacro(mafEvent(this, PROGRESSBAR_HIDE, this));
+	{mafEvent evUnq(this, PROGRESSBAR_HIDE, this); mafEventMacro(evUnq);}
 
 	m_LastUpdateTime.Modified();
 	return true;

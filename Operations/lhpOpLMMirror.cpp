@@ -99,7 +99,7 @@ void lhpOpLMMirror::OpRun()
 		ShowGui();
 	}
 
-	mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void lhpOpLMMirror::OpDo()
@@ -132,7 +132,7 @@ void lhpOpLMMirror::OpDo()
       }
     }
   }
-	mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void lhpOpLMMirror::OpUndo()
@@ -159,7 +159,7 @@ void lhpOpLMMirror::OpUndo()
       }
     }
   }
-	mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void lhpOpLMMirror::OnEvent(mafEventBase *maf_event)
@@ -196,5 +196,5 @@ void lhpOpLMMirror::OpStop(int result)
 	  HideGui();
 	  delete m_Gui;
 	}
-	mafEventMacro(mafEvent(this,result));        
+	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}        
 }

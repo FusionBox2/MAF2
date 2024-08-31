@@ -77,7 +77,7 @@ void medOpImporterAnalogWS::OpRun()
     Read();
     result = OP_RUN_OK;
   }
-  mafEventMacro(mafEvent(this,result));
+  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -87,7 +87,7 @@ void medOpImporterAnalogWS::Read()
   if (!m_TestMode)
   {
     wxSetCursor(wxCursor(wxCURSOR_WAIT));
-	  mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+	  {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
   }
   
   mafNEW(m_EmgScalar);
@@ -186,7 +186,7 @@ void medOpImporterAnalogWS::Read()
     line.Replace(","," ");
     if (!m_TestMode)
     {
-      mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)(((double) n)/((double) rowNumber-1)*100.)));
+      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)(((double) n)/((double) rowNumber-1)*100.)); mafEventMacro(evUnq);}
     }
   } 
 
@@ -207,7 +207,7 @@ void medOpImporterAnalogWS::Read()
   
   if (!m_TestMode)
   {
-    mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+    {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
     wxSetCursor(wxCursor(wxCURSOR_DEFAULT));
   }
 

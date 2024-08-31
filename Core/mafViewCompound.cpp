@@ -257,7 +257,7 @@ void mafViewCompound::OnEvent(mafEventBase *maf_event)
         mafNode *vme = sg->GetSelectedVme();
         if (vme)
         {
-          mafEventMacro(mafEvent(this,VME_MODIFIED,vme));
+          {mafEvent evUnq(this,VME_MODIFIED,vme); mafEventMacro(evUnq);}
         }
       }
     }

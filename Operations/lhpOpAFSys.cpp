@@ -245,7 +245,7 @@ void lhpOpAFSys::OpStop(int result)
     {
       m_RefSys->ReparentTo(NULL);
     }
-    mafEventMacro(mafEvent(this,result));
+    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
   }
   else if (result == OP_RUN_OK)
   {
@@ -255,7 +255,7 @@ void lhpOpAFSys::OpStop(int result)
       return;
     }
     HideGui();
-    mafEventMacro(mafEvent(this,result));
+    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
   }
 }
 

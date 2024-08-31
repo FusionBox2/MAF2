@@ -59,7 +59,7 @@ void mmiVTKPicker::OnLeftButtonDown(mafEventInteraction *e)
   //we will fix it here
   if (m_Picker != NULL)
   {
-    mafEventMacro(mafEvent(this, VME_PICKED, m_Picker));
+    {mafEvent evUnq(this, VME_PICKED, m_Picker); mafEventMacro(evUnq);}
     vtkDEL(m_Picker);
   }
 
@@ -101,7 +101,7 @@ void mmiVTKPicker::OnLeftButtonUp()
 {
   if (m_Picker != NULL)
   {
-    mafEventMacro(mafEvent(this, VME_PICKED, m_Picker));
+    {mafEvent evUnq(this, VME_PICKED, m_Picker); mafEventMacro(evUnq);}
     vtkDEL(m_Picker);
   }
 

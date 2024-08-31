@@ -150,7 +150,7 @@ void medOpImporterVTKXML::OpRun()
           mafErrorMessage(_M(mafString(_L("Unsupported file format"))));
     }
   }
-  mafEventMacro(mafEvent(this,result));
+  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpImporterVTKXML::SetFileName(mafString filename)

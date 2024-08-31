@@ -136,7 +136,7 @@ void medOpInteractionDebugger::OnEvent(mafEventBase *maf_event)
       {
         m_ActiveBranchId = 0;
         m_GizmoDebugger->SetCurvilinearAbscissa(m_ActiveBranchId, 0.0);
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       }
       break;
       case ID_CHOOSE:
@@ -400,8 +400,8 @@ void medOpInteractionDebugger::AddMEDGizmoDebuggerToTree()
   assert(constraint != NULL);
   
   // Create the output vtk data...
-  mafEventMacro(mafEvent(this,VME_SHOW,constraint,true));
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,VME_SHOW,constraint,true); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 
   // build constrained gizmo
   m_GizmoDebugger = new medGizmoInteractionDebugger(vmeRoot, this, "test gizmo path");
@@ -421,7 +421,7 @@ void medOpInteractionDebugger::AddMEDGizmoDebuggerToTree()
   m_GizmoDebugger->SetCurvilinearAbscissa(m_ActiveBranchId, 0.0);
   m_GizmoDebugger->Show(true);
   
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 
 }
 
@@ -430,14 +430,14 @@ void medOpInteractionDebugger::OnChooseConstrainVme( mafNode *vme )
   m_Constrain = mafVME::SafeDownCast(vme);
   assert(m_Constrain);
 
-  mafEventMacro(mafEvent(this,VME_SHOW, m_Constrain, true));
+  {mafEvent evUnq(this,VME_SHOW, m_Constrain, true); mafEventMacro(evUnq);}
 
   m_GizmoDebugger->SetGizmoLength(2);
   m_GizmoDebugger->SetConstraintPolylineGraph(medVMEPolylineGraph::SafeDownCast(m_Constrain));
   m_GizmoDebugger->SetCurvilinearAbscissa(m_ActiveBranchId, 0.0);
   m_GizmoDebugger->Show(true);
   
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 
 void medOpInteractionDebugger::BuildGraph1( vtkPolyData *inputPolyData )

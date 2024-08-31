@@ -84,9 +84,9 @@ void medOpImporterGRFWS::OpUndo()
 //----------------------------------------------------------------------------
 {   
   if(m_PlatformLeft != NULL)
-    mafEventMacro(mafEvent(this,VME_REMOVE,m_PlatformLeft));
+    {mafEvent evUnq(this,VME_REMOVE,m_PlatformLeft); mafEventMacro(evUnq);}
   if(m_PlatformRight != NULL)
-    mafEventMacro(mafEvent(this,VME_REMOVE,m_PlatformRight));
+    {mafEvent evUnq(this,VME_REMOVE,m_PlatformRight); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 mafOp* medOpImporterGRFWS::Copy()   
@@ -114,7 +114,7 @@ void medOpImporterGRFWS::OpRun()
     Read();
     result = OP_RUN_OK;
   }
-  mafEventMacro(mafEvent(this,result));
+  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpImporterGRFWS::Read()   
@@ -147,7 +147,7 @@ void medOpImporterGRFWS::ReadForcePlates()
   if (!m_TestMode)
   {
     wxSetCursor(wxCursor(wxCURSOR_WAIT));
-	  mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+	  {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
   }
 
   mafString path, name, ext;
@@ -452,7 +452,7 @@ void medOpImporterGRFWS::ReadForcePlates()
     count++;
     if (!m_TestMode)
     {
-      mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)(((double) count)/((double) totlines)*100.)));
+      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)(((double) count)/((double) totlines)*100.)); mafEventMacro(evUnq);}
     }
 
   }while (!inputFile.Eof());
@@ -477,7 +477,7 @@ void medOpImporterGRFWS::ReadForcePlates()
 
   if (!m_TestMode)
   {
-    mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+    {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
     wxSetCursor(wxCursor(wxCURSOR_DEFAULT));
   }
 
@@ -491,7 +491,7 @@ void medOpImporterGRFWS::ReadSingleVector()
   if (!m_TestMode)
   {
     wxSetCursor(wxCursor(wxCURSOR_WAIT));
-	  mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+	  {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
   }
 
   mafString path, name, ext;
@@ -607,14 +607,14 @@ void medOpImporterGRFWS::ReadSingleVector()
     count++;
     if (!m_TestMode)
     {
-      mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)(((double) count)/((double) totlines)*100.)));
+      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)(((double) count)/((double) totlines)*100.)); mafEventMacro(evUnq);}
     }
 
   }while (!inputFile.Eof());
 
   if (!m_TestMode)
   {
-    mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+    {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
     wxSetCursor(wxCursor(wxCURSOR_DEFAULT));
   }
 

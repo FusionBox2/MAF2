@@ -456,8 +456,8 @@ void mafGizmoTranslateAxis::SetColor(double cylR, double cylG, double cylB, doub
 void mafGizmoTranslateAxis::Show(bool show)
 //----------------------------------------------------------------------------
 {
-  mafEventMacro(mafEvent(this,VME_SHOW,m_CylGizmo,show));
-	mafEventMacro(mafEvent(this,VME_SHOW,m_ConeGizmo,show));
+  {mafEvent evUnq(this,VME_SHOW,m_CylGizmo,show); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW,m_ConeGizmo,show); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGizmoTranslateAxis::SetAbsPose(mafMatrix *absPose)

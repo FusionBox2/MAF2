@@ -76,7 +76,7 @@ void lhpOpCreateRefSysLM::OpRun()
   m_Cloud->AppendLandmark(_R("Z"));
   m_Cloud->SetLandmark(_R("Z"), 0.5, 0.0, 20.0);
   m_Output = m_Cloud;
-  mafEventMacro(mafEvent(this,OP_RUN_OK));
+  {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void lhpOpCreateRefSysLM::OpDo()

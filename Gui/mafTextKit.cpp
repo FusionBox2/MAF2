@@ -152,7 +152,7 @@ void mafTextKit::OnEvent(mafEventBase *maf_event)
       
 
     }
-    mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+    {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 	}
 }
 //----------------------------------------------------------------------------

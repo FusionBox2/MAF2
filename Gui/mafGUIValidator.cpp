@@ -918,7 +918,7 @@ void mafGUIValidator::OnChar(wxKeyEvent& event)
     // Return is received only from widget with the wxTE_PROCESS_ENTER style flag enabled
     // i.e. console widget
     TransferFromWindow();
-    mafEventMacro(mafEvent(m_TextCtrl, m_ModuleId));
+    {mafEvent evUnq(m_TextCtrl, m_ModuleId); mafEventMacro(evUnq);}
     return; // eat message
   }
 
@@ -951,7 +951,7 @@ void mafGUIValidator::OnKillFocus(wxFocusEvent& event)
       Validate(NULL);
       bool send_message = TransferFromWindow();
       if(send_message)
-        mafEventMacro(mafEvent(m_TextCtrl, m_ModuleId));
+        {mafEvent evUnq(m_TextCtrl, m_ModuleId); mafEventMacro(evUnq);}
     }
   event.Skip();
 }
@@ -968,13 +968,13 @@ void mafGUIValidator::OnScrollEvent(wxScrollEvent& event)
 				TransferFromWindow();
 				s.Printf("%d",*m_IntVar);
 				m_TextCtrl->SetValue(s);
-				mafEventMacro(mafEvent(m_Slider, m_ModuleId));
+				{mafEvent evUnq(m_Slider, m_ModuleId); mafEventMacro(evUnq);}
       break;
       case VAL_FLOAT_SLIDER:
 				TransferFromWindow();
 				s.Printf("%g",*m_DoubleVar);
 				m_TextCtrl->SetValue(s);
-				mafEventMacro(mafEvent(m_FloatSlider, m_ModuleId, m_FloatSlider,event.GetEventType()));
+				{mafEvent evUnq(m_FloatSlider, m_ModuleId, m_FloatSlider,event.GetEventType()); mafEventMacro(evUnq);}
       break;
 		}
   }
@@ -990,13 +990,13 @@ void mafGUIValidator::OnCommandEvent(wxCommandEvent& event)
     switch (m_Mode) 
 		{
       case VAL_CHECKBOX:
-           mafEventMacro(mafEvent(m_CheckBox, m_ModuleId));
+           {mafEvent evUnq(m_CheckBox, m_ModuleId); mafEventMacro(evUnq);}
       break;
       case VAL_RADIOBOX:
-           mafEventMacro(mafEvent(m_RadioBox, m_ModuleId));
+           {mafEvent evUnq(m_RadioBox, m_ModuleId); mafEventMacro(evUnq);}
       break;
       case VAL_COMBOBOX:
-           mafEventMacro(mafEvent(m_ComboBox, m_ModuleId));
+           {mafEvent evUnq(m_ComboBox, m_ModuleId); mafEventMacro(evUnq);}
       break;
     }
   }
@@ -1122,7 +1122,7 @@ void mafGUIValidator::OnButton(wxCommandEvent& event)
     }
 
 		if (!cancel) 
-      mafEventMacro(mafEvent(m_Button, m_ModuleId));
+      {mafEvent evUnq(m_Button, m_ModuleId); mafEventMacro(evUnq);}
 	}
 }
 //----------------------------------------------------------------------------

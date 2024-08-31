@@ -220,11 +220,11 @@ void medPipeTrajectories::OnEvent(mafEventBase *maf_event)
     {
       case ID_INTERVAL:
         UpdateProperty();
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
         break;
       case ID_LABELS:
         UpdateProperty();
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
         break;
       default:
         mafEventMacro(*e);

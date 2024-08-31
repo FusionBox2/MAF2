@@ -170,7 +170,7 @@ void mafOpInteractionOp::OpStop(int result)
   mafEventMacro( mafEvent( this, VME_REMOVE, m_Gizmo ) );
   mafDEL(m_Gizmo);
 
-  mafEventMacro(mafEvent(this,result));
+  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -191,7 +191,7 @@ void mafOpInteractionOp::OnEvent(mafEventBase *e)
       mafEvent *event = mafEvent::SafeDownCast(e);
       assert(event);
       m_Gizmo->ApplyMatrix(*(event->GetMatrix()),POST_MULTIPLY);
-      mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+      {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
     }    
     break;
     default:

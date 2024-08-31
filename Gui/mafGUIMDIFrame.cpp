@@ -177,19 +177,19 @@ void mafGUIMDIFrame::OnMenu(wxCommandEvent& e)
 	//if(e.GetId() > SASH_START && e.GetId() < SASH_END )
 	//  ShowDockPane(e.GetId(), !DockPaneIsShown( (wxWindow*)(e.GetEventObject())) );
 	// else
-  mafEventMacro(mafEvent(this,e.GetId()));
+  {mafEvent evUnq(this,e.GetId()); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGUIMDIFrame::OnUpdateUI(wxUpdateUIEvent& e)
 //----------------------------------------------------------------------------
 { 
-	mafEventMacro(mafEvent(this,UPDATE_UI,&e));
+	{mafEvent evUnq(this,UPDATE_UI,&e); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGUIMDIFrame::OnCloseWindow(wxCloseEvent& event)
 //----------------------------------------------------------------------------
 { 
-  mafEventMacro(mafEvent(this,MENU_FILE_QUIT));
+  {mafEvent evUnq(this,MENU_FILE_QUIT); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGUIMDIFrame::OnSize(wxSizeEvent& event)
@@ -219,12 +219,12 @@ void mafGUIMDIFrame::OnDropFile(wxDropFilesEvent &event)
     mafSplitPath(file_to_open,&path, &name, &ext);
     if (ext == _R("msf") || ext == _R("zmsf"))
     {
-      mafEventMacro(mafEvent(this,MENU_FILE_OPEN,&file_to_open));
+      {mafEvent evUnq(this,MENU_FILE_OPEN,&file_to_open); mafEventMacro(evUnq);}
       return;
     }
     else
     {
-      mafEventMacro(mafEvent(this,IMPORT_FILE,&file_to_open));
+      {mafEvent evUnq(this,IMPORT_FILE,&file_to_open); mafEventMacro(evUnq);}
     }
   }
 }
@@ -314,7 +314,7 @@ void mafGUIMDIFrame::OnIdle(wxIdleEvent& event)
     if (answere == wxYES)
     {
       // Clear UnDo stack to gain memory.
-      mafEventMacro(mafEvent(this, CLEAR_UNDO_STACK));
+      {mafEvent evUnq(this, CLEAR_UNDO_STACK); mafEventMacro(evUnq);}
     }
   }
 #endif
@@ -376,7 +376,7 @@ void mafGUIMDIFrame::FreeMemorySizeOnIdle(wxIdleEvent& event)
     if (answere == wxYES)
     {
       // Clear UnDo stack to gain memory.
-      mafEventMacro(mafEvent(this, CLEAR_UNDO_STACK));
+      {mafEvent evUnq(this, CLEAR_UNDO_STACK); mafEventMacro(evUnq);}
     }
   }
 #endif

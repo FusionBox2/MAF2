@@ -176,7 +176,7 @@ void medOpSmoothSurfaceCells::OpRun()
 
 		DeleteOpDialog();
 
-		mafEventMacro(mafEvent(this,result));
+		{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 	}
 }
 //----------------------------------------------------------------------------
@@ -184,14 +184,14 @@ void medOpSmoothSurfaceCells::OpDo()
 //----------------------------------------------------------------------------
 {
 	((mafVMESurface *)m_Input)->SetData(m_ResultPolydata,((mafVME *)m_Input)->GetTimeStamp());
-	mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpSmoothSurfaceCells::OpUndo()
 //----------------------------------------------------------------------------
 {
 	((mafVMESurface *)m_Input)->SetData(m_OriginalPolydata,((mafVME *)m_Input)->GetTimeStamp());
-	mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 // widget ID's

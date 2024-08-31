@@ -139,7 +139,7 @@ void mafOpExporterOBJ::OnEvent(mafEventBase *maf_event)
 //----------------------------------------------------------------------------
 {
   HideGui();
-  mafEventMacro(mafEvent(this,result));        
+  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}        
 }*/
 
 
@@ -159,7 +159,7 @@ void mafOpExporterOBJ::ExportOneSurface(const char *filename, mafVMEOutputSurfac
   v_tpdf->Update();
 
   vtkNew<vtkOBJWriter> writer;
-  mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR,writer));
+  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,writer); mafEventMacro(evUnq);}
   writer->SetFileName(filename);
   if(this->m_ABSMatrixFlag)
     writer->SetInputConnection(v_tpdf->GetOutputPort());

@@ -82,7 +82,7 @@ int medOpImporterVTK::ImportVTK()
     return mafOpImporterVTK::ImportVTK();
   }
     
-  mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR,preader));
+  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,preader); mafEventMacro(evUnq);}
   preader->SetFileName(m_File.GetCStr());
   preader->Update();
 

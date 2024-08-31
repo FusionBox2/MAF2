@@ -83,7 +83,7 @@ void mafGUIMDIChild::OnSelect(wxCommandEvent &event)
 {
   Activate(); // allow activation with the RMouse too
 	wxWindow *rwi = (wxWindow*)event.GetEventObject();
-  mafEventMacro(mafEvent(this,VIEW_SELECT,m_View,rwi));
+  {mafEvent evUnq(this,VIEW_SELECT,m_View,rwi); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGUIMDIChild::OnSize(wxSizeEvent &event)
@@ -127,7 +127,7 @@ void mafGUIMDIChild::OnCloseWindow(wxCloseEvent& event)
 	// otherwise VIEW_DELETE is sent also on the closing of the application
 	// when the listener (the ViewManager) has been already destroyed
 
-	mafEventMacro(mafEvent(this,VIEW_DELETE,m_View));
+	{mafEvent evUnq(this,VIEW_DELETE,m_View); mafEventMacro(evUnq);}
 	Destroy();
   m_View = NULL;
 }
@@ -137,7 +137,7 @@ void mafGUIMDIChild::OnActivate(wxActivateEvent& event)
 { 
   if( event.GetActive() && m_View)
   {
-    mafEventMacro(mafEvent(this,VIEW_SELECT,m_View,(wxWindow*)NULL));
+    {mafEvent evUnq(this,VIEW_SELECT,m_View,(wxWindow*)NULL); mafEventMacro(evUnq);}
     Layout();
   }
 }
@@ -148,6 +148,6 @@ void mafGUIMDIChild::OnMaximize(wxMaximizeEvent &event)
   if (m_View)
   {
     mafString msg = _R("MaximizeSelectedView");
-    mafEventMacro(mafEvent(this,VIEW_MAXIMIZE,&msg));
+    {mafEvent evUnq(this,VIEW_MAXIMIZE,&msg); mafEventMacro(evUnq);}
   }
 }

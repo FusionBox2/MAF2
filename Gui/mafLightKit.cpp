@@ -212,7 +212,7 @@ void mafLightKit::OnEvent(mafEventBase *maf_event)
         }
       break;
     }
-    mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+    {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 	}
 }
 //----------------------------------------------------------------------------

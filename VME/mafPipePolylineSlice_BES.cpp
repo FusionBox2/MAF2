@@ -312,7 +312,7 @@ void mafPipePolylineSlice_BES::OnEvent(mafEventBase *maf_event)
       {
         m_Actor->GetProperty()->SetLineWidth(m_Border);
         m_Actor->Modified();
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       }
       break;
     case ID_RADIUS_CHANGE:
@@ -323,7 +323,7 @@ void mafPipePolylineSlice_BES::OnEvent(mafEventBase *maf_event)
     case ID_SPLINE:
       {
         UpdateProperty();
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       }
       break;
     case ID_FILL:
@@ -332,7 +332,7 @@ void mafPipePolylineSlice_BES::OnEvent(mafEventBase *maf_event)
           m_Mapper->SetInputData(RegionsCapping(m_Cutter->GetOutput()));
         else
           m_Mapper->SetInputConnection(m_Cutter->GetOutputPort());
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       }
       break;
     default:
@@ -396,7 +396,7 @@ void mafPipePolylineSlice_BES::SetThickness(double thickness)
   m_Actor->GetProperty()->SetColor(((mafVMEOutputPolyline *)((mafVME *)m_Vme)->GetOutput())->GetMaterial()->m_Diffuse);
 
   m_Actor->Modified();
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 double mafPipePolylineSlice_BES::GetRadius()
@@ -416,7 +416,7 @@ void mafPipePolylineSlice_BES::SetRadius(double radius)
     m_Actor->GetProperty()->SetColor(((mafVMEOutputPolyline *)((mafVME *)m_Vme)->GetOutput())->GetMaterial()->m_Diffuse);
     m_Actor->Modified();
   }
-  //mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  //{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafPipePolylineSlice_BES::UpdateProperty()

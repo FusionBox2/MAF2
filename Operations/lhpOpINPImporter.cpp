@@ -86,7 +86,7 @@ void  lhpOpINPImporter::OpRun()
     ImportData();
   }
 
-  mafEventMacro(mafEvent(this,result));
+  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void  lhpOpINPImporter::ImportData()
@@ -136,10 +136,10 @@ void lhpOpINPImporter::OpDo()
     if (m_Surfaces[i])
     {
       m_Surfaces[i]->ReparentTo(m_Input);
-      mafEventMacro(mafEvent(this, VME_ADD, m_Surfaces[i]));
+      {mafEvent evUnq(this, VME_ADD, m_Surfaces[i]); mafEventMacro(evUnq);}
     }
   }
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -150,8 +150,8 @@ void lhpOpINPImporter::OpUndo()
   {
     if (m_Surfaces[i])
     {
-      mafEventMacro(mafEvent(this, VME_REMOVE, m_Surfaces[i]));
+      {mafEvent evUnq(this, VME_REMOVE, m_Surfaces[i]); mafEventMacro(evUnq);}
     }
   }
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }

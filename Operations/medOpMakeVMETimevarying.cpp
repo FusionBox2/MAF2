@@ -149,7 +149,7 @@ void medOpMakeVMETimevarying::OpDo()
 void medOpMakeVMETimevarying::OpUndo()
 //----------------------------------------------------------------------------
 {
-  mafEventMacro(mafEvent(this,VME_REMOVE,m_Output));
+  {mafEvent evUnq(this,VME_REMOVE,m_Output); mafEventMacro(evUnq);}
   mafDEL(m_Output);
 }
 //----------------------------------------------------------------------------
@@ -212,7 +212,7 @@ void medOpMakeVMETimevarying::CreateGui()
   //--------------------------//
 
 	ShowGui();
-	mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpMakeVMETimevarying::OnEvent(mafEventBase *maf_event)
@@ -449,7 +449,7 @@ void medOpMakeVMETimevarying::OpStop(int result)
 //----------------------------------------------------------------------------
 {
   HideGui();
-	mafEventMacro(mafEvent(this,result));
+	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 bool medOpMakeVMETimevarying::AcceptVME(mafVME * vme)
@@ -691,7 +691,7 @@ void medOpMakeVMETimevarying::Execute()
   m_VMETimevarying->GetMatrixPipe()->Update();
   m_VMETimevarying->GetDataPipe()->Update();
 
-  mafEventMacro(mafEvent(this,VME_ADD,m_VMETimevarying));
+  {mafEvent evUnq(this,VME_ADD,m_VMETimevarying); mafEventMacro(evUnq);}
 
   m_Output = m_VMETimevarying;
 

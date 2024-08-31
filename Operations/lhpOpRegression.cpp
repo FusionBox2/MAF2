@@ -675,7 +675,7 @@ void lhpOpRegression::OpRun()
 {
   m_Cloud     = (mafVMELandmarkCloud *)m_Input;
   CreateGui();
-  //mafEventMacro(mafEvent(this,OP_RUN_OK)); 
+  //{mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);} 
 }
 
 //----------------------------------------------------------------------------
@@ -815,12 +815,12 @@ void lhpOpRegression::OpStop(int result)
   if (result == OP_RUN_CANCEL)
   {
     //HideGui();
-    mafEventMacro(mafEvent(this,result));
+    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
   }
   else if (result == OP_RUN_OK)
   {
     //HideGui();
-    mafEventMacro(mafEvent(this,result));
+    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
   }
 }
 //----------------------------------------------------------------------------
@@ -2846,7 +2846,7 @@ void lhpOpRegression::OpDo()
 //----------------------------------------------------------------------------
 {
   for(unsigned i = 0; i < m_Added.size(); i++)
-    mafEventMacro(mafEvent(this, VME_ADD, m_Added[i]));
+    {mafEvent evUnq(this, VME_ADD, m_Added[i]); mafEventMacro(evUnq);}
   for(unsigned i = 0; i < m_LMAdd.size(); i++)
   {
     if(!m_LMAdd[i].m_Pelvic)
@@ -2868,7 +2868,7 @@ void lhpOpRegression::OpUndo()
 //----------------------------------------------------------------------------
 {
   for(unsigned i = 0; i < m_Added.size(); i++)
-    mafEventMacro(mafEvent(this, VME_REMOVE, m_Added[i]));
+    {mafEvent evUnq(this, VME_REMOVE, m_Added[i]); mafEventMacro(evUnq);}
   for(unsigned i = m_LMAdd.size(); i > 0; i--)
   {
     if(m_LMAdd[i - 1].m_Index != -1)

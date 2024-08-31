@@ -375,7 +375,7 @@ void mafPipeMuscleWrapperAQ::OnEvent(mafEventBase *maf_event)
 		  m_MuscleWrapperVME->ForwardUpEvent(*e);
       break;
     }
-    mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+    {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
   }
   else if (maf_event->GetSender() == m_MuscleWrapperVME)
   {

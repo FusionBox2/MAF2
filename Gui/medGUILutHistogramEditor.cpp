@@ -166,7 +166,7 @@ void medGUILutHistogramEditor::OnEvent(mafEventBase *maf_event)
           UpdateVolumeLut();
           m_LutSwatch->Modified();
           //Generating Event to update other views
-          mafEventMacro(mafEvent(this,GetId()));
+          {mafEvent evUnq(this,GetId()); mafEventMacro(evUnq);}
         }
         break;
       case ID_GAMMA_CORRETION:
@@ -174,7 +174,7 @@ void medGUILutHistogramEditor::OnEvent(mafEventBase *maf_event)
           UpdateVolumeLut();
           m_LutSwatch->Modified();
           //Generating Event to update other views
-          mafEventMacro(mafEvent(this,GetId()));
+          {mafEvent evUnq(this,GetId()); mafEventMacro(evUnq);}
         }
         break;
       case ID_RESET_LUT:
@@ -185,7 +185,7 @@ void medGUILutHistogramEditor::OnEvent(mafEventBase *maf_event)
           UpdateVolumeLut();
           m_LutSwatch->Modified();
           //Generating Event to update other views
-          mafEventMacro(mafEvent(this,GetId()));
+          {mafEvent evUnq(this,GetId()); mafEventMacro(evUnq);}
         }
         break;
       case ID_FULL_SAMPLING:
@@ -371,7 +371,7 @@ void medGUILutHistogramEditor::UpdateVolumeLut(bool reset)
     m_LutSwatch->Modified();
 
   //Forward event to update other views
-  mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -379,5 +379,5 @@ void medGUILutHistogramEditor::OnSize(wxSizeEvent &event)
 //----------------------------------------------------------------------------
 {
   mafGUIDialog::OnSize(event);
-  mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 }

@@ -183,7 +183,7 @@ void mafOpExtractIsosurface::OpRun()
   }
   DeleteOpDialog();
 
-  mafEventMacro(mafEvent(this,result));
+  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------

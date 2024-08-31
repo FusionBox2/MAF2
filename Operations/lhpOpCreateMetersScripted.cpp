@@ -97,7 +97,7 @@ void lhpOpCreateMetersScripted::OpRun()
   mafString filename = mafGetOpenFile(mafGetApplicationDirectory(), _R("dic files (*.dic)|*.dic"), _R("Choose dictionary"));
   if (filename.empty())
   {
-	  mafEventMacro(mafEvent(this, OP_RUN_CANCEL));
+	  {mafEvent evUnq(this, OP_RUN_CANCEL); mafEventMacro(evUnq);}
 	  return;
   }
   std::vector<std::vector<std::string> > dictionary = ReadDictionary(filename);
@@ -149,7 +149,7 @@ void lhpOpCreateMetersScripted::OpRun()
 
   //inputLMC->GetLandmarkName()
 	  //inputLMC->GetNumberOfLandmarks()
-  mafEventMacro(mafEvent(this,OP_RUN_OK));
+  {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void lhpOpCreateMetersScripted::OpDo()

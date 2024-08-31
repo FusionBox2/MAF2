@@ -190,14 +190,14 @@ void mafOpFilterSurface::OpDo()
 //----------------------------------------------------------------------------
 {
 	((mafVMESurface *)m_Input)->SetData(m_ResultPolydata,((mafVME *)m_Input)->GetTimeStamp());
-	mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpFilterSurface::OpUndo()
 //----------------------------------------------------------------------------
 {
   ((mafVMESurface *)m_Input)->SetData(m_OriginalPolydata,((mafVME *)m_Input)->GetTimeStamp());
-	mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpFilterSurface::OnEvent(mafEventBase *maf_event)
@@ -266,7 +266,7 @@ void mafOpFilterSurface::OpStop(int result)
 //----------------------------------------------------------------------------
 {
 	HideGui();
-	mafEventMacro(mafEvent(this,result));        
+	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}        
 }
 //----------------------------------------------------------------------------
 void mafOpFilterSurface::OnClean()
@@ -531,7 +531,7 @@ void mafOpFilterSurface::OnPreview()
 	m_PreviewResultFlag   = false;
 	m_ClearInterfaceFlag	= true;
 
-	mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpFilterSurface::OnClear()  
@@ -579,7 +579,7 @@ void mafOpFilterSurface::OnClear()
 	m_PreviewResultFlag  = false;
 	m_ClearInterfaceFlag = false;
 
-	mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------

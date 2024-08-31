@@ -52,7 +52,7 @@ mafOp* mafOpTest::Copy()
   return new mafOpTest(m_Label);
 }
 //----------------------------------------------------------------------------
-void mafOpTest::OpStop(int result) {	HideGui();mafEventMacro(mafEvent(this,result));}
+void mafOpTest::OpStop(int result) {	HideGui();{mafEvent evUnq(this,result); mafEventMacro(evUnq);}}
 //----------------------------------------------------------------------------
 void mafOpTest::OnEvent(mafEvent& e)
 //----------------------------------------------------------------------------

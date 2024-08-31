@@ -444,20 +444,20 @@ void mafPipeSurface::OnEvent(mafEventBase *maf_event)
 				  m_Gui->Update();
         }
         UpdateScalarsArrayVisualization(dataAttribute);
-				mafEventMacro(mafEvent(this,CAMERA_UPDATE)); //BES 12.9.2012
+				{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);} //BES 12.9.2012
       }
     	break;
       case ID_LUT:
       {
         m_SurfaceMaterial->UpdateFromLut();
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       }
       break;
       case ID_ENABLE_LOD:
       {
         //m_Actor->SetEnableHighThreshold(m_EnableActorLOD);
         m_OutlineActor->SetEnableHighThreshold(m_EnableActorLOD);
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       }
       break;
       case ID_USE_VTK_PROPERTY:
@@ -475,13 +475,13 @@ void mafPipeSurface::OnEvent(mafEventBase *maf_event)
         {
           m_MaterialButton->Enable(m_UseVTKProperty != 0);
         }
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       };
       break;
       case ID_RENDERING_DISPLAY_LIST:
       {
         //m_Mapper->SetImmediateModeRendering(m_RenderingDisplayListFlag);
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       }
       break;
 			case ID_NORMAL_VISIBILITY:
@@ -494,7 +494,7 @@ void mafPipeSurface::OnEvent(mafEventBase *maf_event)
         {
           CreateNormalsPipe();
         }
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       }
 			break;
 			case ID_EDGE_VISIBILITY:
@@ -508,7 +508,7 @@ void mafPipeSurface::OnEvent(mafEventBase *maf_event)
         {
           CreateEdgesPipe();
         }
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       }
       break;
       case ID_USE_LOOKUP_TABLE:
@@ -536,13 +536,13 @@ void mafPipeSurface::OnEvent(mafEventBase *maf_event)
         m_Gui->Update();
 
         UpdateScalarsArrayVisualization(dataAttribute);
-				mafEventMacro(mafEvent(this,CAMERA_UPDATE)); //BES 12.9.2012
+				{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);} //BES 12.9.2012
       }
       case ID_SCALARS_ARRAY_SELECTION:
       {
         vtkDataSetAttributes *dataAttribute = GetSelectedDataAttribute(); 
         UpdateScalarsArrayVisualization(dataAttribute);
-				mafEventMacro(mafEvent(this,CAMERA_UPDATE)); //BES 12.9.2012
+				{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);} //BES 12.9.2012
       }
       break;
       ////
@@ -575,7 +575,7 @@ void mafPipeSurface::SetActorPicking(int enable)
 {
 	m_Actor->SetPickable(enable);
   m_Actor->Modified();
-	mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafPipeSurface::UpdateScalarsArrayVisualization(vtkDataSetAttributes *dataAttribute) // (added by Losi 2011/04/08 to allow scalars array selection)
@@ -592,7 +592,7 @@ void mafPipeSurface::UpdateScalarsArrayVisualization(vtkDataSetAttributes *dataA
     m_Mapper->SetScalarRange(range);
   }
 
-  //mafEventMacro(mafEvent(this,CAMERA_UPDATE)); //BES 12.9.2012 - do not call it here since this method is called on VME_TIME_SET  and, thus, this would cause repetitive rendering
+  //{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);} //BES 12.9.2012 - do not call it here since this method is called on VME_TIME_SET  and, thus, this would cause repetitive rendering
 }
 //----------------------------------------------------------------------------
 vtkDataSetAttributes *mafPipeSurface::GetSelectedDataAttribute() // (added by Losi 2011/04/08 to allow scalars array selection)

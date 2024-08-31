@@ -76,7 +76,7 @@ void mafOpCreateHyperboloid2S::OpRun()
 	
 	m_Hyperboloid->SetName(_R("Hyperboloid2S"));
 	m_Output = m_Hyperboloid;
-  mafEventMacro(mafEvent(this,OP_RUN_OK));
+  {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);}
   
 }
 //----------------------------------------------------------------------------

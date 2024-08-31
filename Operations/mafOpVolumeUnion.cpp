@@ -120,7 +120,7 @@ void mafOpVolumeUnion::OpRun()
 	if(!m_TestMode)
 	{
 		CreateGui();
-		mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+		{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 	}
 }
 //----------------------------------------------------------------------------
@@ -132,8 +132,8 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 	if(!this->m_TestMode)
 	{
 		wait = new wxBusyInfo("Build Volume Union: please wait...");
-		mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
-		mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE, (intptr_t)progress));
+		{mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE, (intptr_t)progress); mafEventMacro(evUnq);}
 	}
 
 	//Input data(first volume)
@@ -233,7 +233,7 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 		{
 			progress++;
 			Sleep(150); // Workaround: I need this sleep function to update slowly the progress bar 
-			mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
+			{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
 		}	
 	}
 	 
@@ -292,7 +292,7 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 		{
 			progress++;
 			Sleep(150);
-		    mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
+		    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
 		}
 	}
 	
@@ -351,7 +351,7 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 		{
 			progress++;
 			Sleep(150);
-			mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
+			{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
 		}
 	}
 	
@@ -407,13 +407,13 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 		{
 			progress++;
 			Sleep(150);
-			mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
+			{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
 		}
 	}
 
 	if(!this->m_TestMode)
 	{
-	    mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+	    {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
 	}
 	if(wait) delete wait;
 

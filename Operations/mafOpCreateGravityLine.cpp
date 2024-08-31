@@ -71,7 +71,7 @@ void mafOpCreateGravityLine::OpRun()
   mafNEW(m_Meter);
   m_Meter->SetName(_R("gravity_line"));
   m_Output = m_Meter;
-  mafEventMacro(mafEvent(this,OP_RUN_OK));
+  {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpCreateGravityLine::OpDo()

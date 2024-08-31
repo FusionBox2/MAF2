@@ -89,7 +89,7 @@ void mafOpReparentTo::OpRun()
   else
     mafErrorMessage(_M(mafString(_L("Cannot re-parent to specified node"))));
 
-	mafEventMacro(mafEvent(this,result));
+	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpReparentTo::SetTargetVme(mafVME *target)
@@ -100,7 +100,7 @@ void mafOpReparentTo::SetTargetVme(mafVME *target)
   if((m_TargetVme == NULL) || !m_Input->CanReparentTo(m_TargetVme))
   {
     mafErrorMessage(_M(mafString(_L("Cannot re-parent to specified node"))));
-    mafEventMacro(mafEvent(this,OP_RUN_CANCEL));
+    {mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);}
   }
 }
 //----------------------------------------------------------------------------
@@ -193,7 +193,7 @@ void mafOpReparentTo::OpDo()
 
   if (m_Input->ReparentTo(m_TargetVme) == MAF_OK)
   {
-    mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+    {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
   }
   else
   {

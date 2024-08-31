@@ -222,7 +222,7 @@ void medViewSlicer::VmeShow(mafNode *node, bool show)
                     GetSceneGraph()->GetSelectedVme()
     );
 
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 
 	//EnableWidgets(m_CurrentVolume != NULL);
 }
@@ -239,7 +239,7 @@ void medViewSlicer::OnEvent(mafEventBase *maf_event)
     // if no one can handle this event send it to the operation listener
     mafEventMacro(*maf_event); 
   }	
-	//mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+	//{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medViewSlicer::OnEventThis(mafEventBase *maf_event)
@@ -256,7 +256,7 @@ void medViewSlicer::OnEventThis(mafEventBase *maf_event)
           double low, hi;
           m_LutSlider->GetSubRange(&low,&hi);
           m_ColorLUT->SetTableRange(low,hi);
-          mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+          {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
         }
       }
       break;

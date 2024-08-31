@@ -394,7 +394,7 @@ void medPipeVectorFieldMapWithArrows::OnEvent(mafEventBase *maf_event)
           
           m_Gui->Update();
           UpdateVTKPipe(); 
-          mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+          {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
           return;
         }
       break;
@@ -426,7 +426,7 @@ void medPipeVectorFieldMapWithArrows::OnEvent(mafEventBase *maf_event)
 
           m_Gui->Update();
           UpdateVTKPipe(); 
-          mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+          {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
           return;
         }
       break;
@@ -446,14 +446,14 @@ void medPipeVectorFieldMapWithArrows::OnEvent(mafEventBase *maf_event)
             m_EdLength->Enable(true);
           }
           UpdateVTKPipe(); 
-          mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+          {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
           return;
         }
       break;
       default:
         {
           UpdateVTKPipe(); 
-          mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+          {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
           return;
         }
       }

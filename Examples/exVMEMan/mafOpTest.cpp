@@ -102,7 +102,7 @@ enum
 };
 
 //----------------------------------------------------------------------------
-void mafOpTest::OpStop(int result) {	HideGui();mafEventMacro(mafEvent(this,result));}
+void mafOpTest::OpStop(int result) {	HideGui();{mafEvent evUnq(this,result); mafEventMacro(evUnq);}}
 //----------------------------------------------------------------------------
 void mafOpTest::OnEvent(mafEventBase *event)
 //----------------------------------------------------------------------------

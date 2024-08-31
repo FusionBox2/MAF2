@@ -72,7 +72,7 @@ void mafOpCreateOsteometricBoard::OpRun()
 
 	m_osteometricBoard->SetName(_R("OsteometricBoard"));
 	m_Output = m_osteometricBoard;
-	mafEventMacro(mafEvent(this, OP_RUN_OK));
+	{mafEvent evUnq(this, OP_RUN_OK); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 

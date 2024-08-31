@@ -448,7 +448,7 @@ void mafGUILutEditor::OnEvent(mafEventBase *maf_event)
       break; 
       case ID_APPLY:
         CopyLut(m_Lut, m_ExternalLut);
-        mafEventMacro(mafEvent(this,GetId()));
+        {mafEvent evUnq(this,GetId()); mafEventMacro(evUnq);}
       break; 
       default:
 			  e->Log();

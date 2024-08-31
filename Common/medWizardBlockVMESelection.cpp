@@ -73,7 +73,7 @@ void medWizardBlockVMESelection::ExcutionBegin()
   {
     //Select vme 
     m_SelectedVME=selVME;
-    mafEventMacro(mafEvent(this,VME_SELECT,m_SelectedVME));
+    {mafEvent evUnq(this,VME_SELECT,m_SelectedVME); mafEventMacro(evUnq);}
   }
   else
     //Abort on user cancel

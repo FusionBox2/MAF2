@@ -239,9 +239,9 @@ void mafOpExporterBmp::SaveBmp()
       //imageFlip->SetInput(imageData);
     }  
 
-    mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+    {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
     vtkNew<vtkBMPWriter> exporter;
-    //mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR, exporter));
+    //{mafEvent evUnq(this,BIND_TO_PROGRESSBAR, exporter); mafEventMacro(evUnq);}
     exporter->SetInputConnection(imageFlip->GetOutputPort());
     exporter->SetFileDimensionality(2); // the writer will create a number of 2D images
     exporter->SetFilePattern("%s_%04d.bmp");
@@ -258,14 +258,14 @@ void mafOpExporterBmp::SaveBmp()
     mafString fileName;
     long progress = 0;
 
-    mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+    {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
     
     for ( int z = 0 ; z < zdim; z++)
     {
       if (mafFloatEquals(fmod(z,10.0f),0.0f))
       {
         progress = (z*100)/zdim;
-        mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
+        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
       }
       for (int i = counter, n = 0; i < (counter + size); i++,n++)
       {
@@ -283,7 +283,7 @@ void mafOpExporterBmp::SaveBmp()
       WriteImageDataAsMonocromeBitmap(imageSlice, fileName);
       scalarSliceIn->Reset();
     }
-    mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+    {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
   }
 }
 

@@ -158,7 +158,7 @@ void lhpOpRegSurfWithCloud::OpStop(int result)
   if (result == OP_RUN_CANCEL)
   {
     HideGui();
-    mafEventMacro(mafEvent(this,result));
+    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
     return;
   }
 
@@ -263,7 +263,7 @@ void lhpOpRegSurfWithCloud::OpStop(int result)
   m_Resultat->ReparentTo(m_Input->GetParent());
 
   HideGui();
-  mafEventMacro(mafEvent(this,result));
+  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 
 }
 
@@ -271,13 +271,13 @@ void lhpOpRegSurfWithCloud::OpStop(int result)
 void lhpOpRegSurfWithCloud::OpDo()
 //----------------------------------------------------------------------------
 {
-  mafEventMacro(mafEvent(this, VME_ADD, m_Resultat));
+  {mafEvent evUnq(this, VME_ADD, m_Resultat); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void lhpOpRegSurfWithCloud::OpUndo()
 //----------------------------------------------------------------------------
 {
-  mafEventMacro(mafEvent(this, VME_REMOVE, m_Resultat));
+  {mafEvent evUnq(this, VME_REMOVE, m_Resultat); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------

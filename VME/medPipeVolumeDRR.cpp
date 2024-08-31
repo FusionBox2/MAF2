@@ -280,20 +280,20 @@ void medPipeVolumeDRR::OnEvent(mafEventBase *maf_event)
 
 			case ID_VOLUME_COLOR:
 				vtkXRayVolumeMapper::SetColor(this->m_VolumeColor.Red() / 255.f, this->m_VolumeColor.Green() / 255.f, this->m_VolumeColor.Blue() / 255.f);
-				mafEventMacro(mafEvent(this, CAMERA_UPDATE));
-				mafEventMacro(mafEvent(this,MOUSE_MOVE));
+				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this,MOUSE_MOVE); mafEventMacro(evUnq);}
 				break;
 			case ID_EXPOSURE_CORRECTION_L:
 			case ID_EXPOSURE_CORRECTION_H:
 				if (!vtkXRayVolumeMapper::SetExposureCorrection(this->m_ExposureCorrection))
 					vtkXRayVolumeMapper::GetExposureCorrection(this->m_ExposureCorrection);
-				mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+				{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 				break;
 
 			case ID_GAMMA:
 				if (!vtkXRayVolumeMapper::SetGamma(this->m_Gamma))
 					this->m_Gamma = vtkXRayVolumeMapper::GetGamma();
-				mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+				{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 				break;
 
 			case ID_RESAMPLE_FACTOR:
@@ -302,7 +302,7 @@ void medPipeVolumeDRR::OnEvent(mafEventBase *maf_event)
 						m_ResampleFilter->SetAxisMagnificationFactor(i,m_ResampleFactor);
 
 					m_ResampleFilter->Update();
-					mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+					{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 				}
 				break;
 			case ID_IMAGE_COLOR:
@@ -336,19 +336,19 @@ void medPipeVolumeDRR::OnEvent(mafEventBase *maf_event)
 				break;
 			case ID_CAMERA_ANGLE:
 				camera->SetViewAngle(this->m_CameraAngle);
-				mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 				break;
 			case ID_CAMERA_POSITION:
 				camera->SetPosition(this->m_CameraPosition);
-				mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 				break;
 			case ID_CAMERA_FOCUS:
 				camera->SetFocalPoint(this->m_CameraFocus);
-				mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 				break;
 			case ID_CAMERA_ROLL:
 				camera->SetRoll(this->m_CameraRoll);
-				mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 				break;
 			default:
 				mafEventMacro(*e);

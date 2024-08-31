@@ -114,7 +114,7 @@ void mafViewCT::VmeShow(mafNode *node, bool show)
 	for(int i=0; i<this->GetNumberOfSubView(); i++)
 		m_ChildViewList[i]->VmeShow(node, show);
 
-	mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafViewCT::VmeRemove(mafNode *node)
@@ -123,7 +123,7 @@ void mafViewCT::VmeRemove(mafNode *node)
 	for(int i=0; i<this->GetNumberOfSubView(); i++)
 		m_ChildViewList[i]->VmeRemove(node);
 
-	mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafViewCT::OnEvent(mafEventBase *maf_event)

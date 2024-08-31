@@ -141,7 +141,7 @@ void mafOpEditNormals::OpDo()
 {
 	((mafVMESurface *)m_Input)->SetData(m_ResultPolydata,((mafVME *)m_Input)->GetTimeStamp());
 	if(!m_TestMode)
-		mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+		{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpEditNormals::OpUndo()
@@ -149,7 +149,7 @@ void mafOpEditNormals::OpUndo()
 {
 	((mafVMESurface *)m_Input)->SetData(m_OriginalPolydata,((mafVME *)m_Input)->GetTimeStamp());
 	if(!m_TestMode)
-		mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+		{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpEditNormals::OnEvent(mafEventBase *maf_event)
@@ -189,7 +189,7 @@ void mafOpEditNormals::OpStop(int result)
 //----------------------------------------------------------------------------
 {
 	HideGui();
-	mafEventMacro(mafEvent(this,result));        
+	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}        
 }
 //----------------------------------------------------------------------------
 void mafOpEditNormals::OnGenerateNormals()
@@ -276,7 +276,7 @@ void mafOpEditNormals::OnPreview()
 	m_PreviewResultFlag   = false;
 	m_ClearInterfaceFlag	= true;
 
-	mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpEditNormals::OnClear()  
@@ -305,5 +305,5 @@ void mafOpEditNormals::OnClear()
 	m_PreviewResultFlag = false;
 	m_ClearInterfaceFlag= false;
 
-	mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 }

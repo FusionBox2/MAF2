@@ -323,7 +323,7 @@ void medOpRegisterClusters::OpDo()
   m_Info->SetName(name);
   m_Info->SetPosLabel(_R("Registration residual: "), 0);
   m_Info->SetPosShow(true, 0);
-  mafEventMacro(mafEvent(this, VME_ADD, m_Info));
+  {mafEvent evUnq(this, VME_ADD, m_Info); mafEventMacro(evUnq);}
 
   //check for the multi-time registration
 	if(m_MultiTime)
@@ -334,7 +334,7 @@ void medOpRegisterClusters::OpDo()
 
 		//mafProgressBarShowMacro();
     if(!m_TestMode)
-      mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+      {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
     
 		//mafProgressBarSetTextMacro("Multi time registration...");
 		
@@ -344,7 +344,7 @@ void medOpRegisterClusters::OpDo()
 			long p = t * 100 / numTimeStamps;
 		//	mafProgressBarSetValueMacro(p);
       if(!m_TestMode)
-        mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)p));
+        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)p); mafEventMacro(evUnq);}
 			//Set the new time for the vme used to register the one frame source 
       m_Target->SetTimeStamp(currTime); //set current time
       m_Target->Update(); //>UpdateAllData();
@@ -357,7 +357,7 @@ void medOpRegisterClusters::OpDo()
     timeStamps.clear();
 
     if(!m_TestMode)
-      mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+      {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
 	}
 	else
 	{
@@ -370,12 +370,12 @@ void medOpRegisterClusters::OpDo()
     mafNEW(m_Result);
     mafString name = m_Source->GetName() + _R(" registered into ") + m_Target->GetName();
     m_Result->SetName(name);
-    mafEventMacro(mafEvent(this, VME_ADD, m_Result));
+    {mafEvent evUnq(this, VME_ADD, m_Result); mafEventMacro(evUnq);}
     m_Info->ReparentTo(m_Result);
   }
   else
   {
-    mafEventMacro(mafEvent(this, VME_REMOVE, m_Info));
+    {mafEvent evUnq(this, VME_REMOVE, m_Info); mafEventMacro(evUnq);}
     mafDEL(m_Info);
   }
 
@@ -493,7 +493,7 @@ void medOpRegisterClusters::OpDo()
 
       mafVMELandmarkCloud *landmarkCloudWithTimeVariantLandmarks;
       mafNEW(landmarkCloudWithTimeVariantLandmarks);
-      mafEventMacro(mafEvent(this, VME_ADD, landmarkCloudWithTimeVariantLandmarks));
+      {mafEvent evUnq(this, VME_ADD, landmarkCloudWithTimeVariantLandmarks); mafEventMacro(evUnq);}
       landmarkCloudWithTimeVariantLandmarks->ReparentTo(m_Result);
 
       landmarkCloudWithTimeVariantLandmarks->SetName(m_Registered->GetName());
@@ -513,7 +513,7 @@ void medOpRegisterClusters::OpDo()
           if(landmark == NULL)
           {
             mafNEW(landmark);
-            mafEventMacro(mafEvent(this, VME_ADD,landmark));
+            {mafEvent evUnq(this, VME_ADD,landmark); mafEventMacro(evUnq);}
             landmark->SetName(m_Registered->GetLandmark(i)->GetName());
             landmark->ReparentTo(landmarkCloudWithTimeVariantLandmarks);
           }
@@ -552,7 +552,7 @@ void medOpRegisterClusters::OpDo()
     else
     {
       //m_Registered->SetAbsMatrix(((mafVMELandmarkCloud *)m_Target)->GetAbsMatrixPipe()->GetMatrix());
-      mafEventMacro(mafEvent(this, VME_ADD, m_Registered));
+      {mafEvent evUnq(this, VME_ADD, m_Registered); mafEventMacro(evUnq);}
       /*std::vector<mafTimeStamp> timeStamps;
       m_Registered->GetTimeStamps(timeStamps);
       for(int i=0; i<timeStamps.size();i++)
@@ -577,18 +577,18 @@ void medOpRegisterClusters::OpDo()
 	{
 		mafString name = m_Follower->GetName() + _R(" registered on ") + m_Target->GetName();
 		m_Follower->SetName(name);
-		mafEventMacro(mafEvent(this, VME_ADD, m_Follower));
+		{mafEvent evUnq(this, VME_ADD, m_Follower); mafEventMacro(evUnq);}
     m_Follower->ReparentTo(m_Result);
 	}
 
-  mafEventMacro(mafEvent(this,TIME_SET,-1.0));
+  {mafEvent evUnq(this,TIME_SET,-1.0); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpRegisterClusters::OpUndo()
 //----------------------------------------------------------------------------
 {
   assert(m_Result);
-  mafEventMacro(mafEvent(this, VME_REMOVE, m_Result));
+  {mafEvent evUnq(this, VME_REMOVE, m_Result); mafEventMacro(evUnq);}
 	mafDEL(m_Result);
   mafDEL(m_Registered);
   mafDEL(m_Follower);

@@ -90,5 +90,5 @@ void medInteractorDICOMImporter::SendCropPosition(int event_id)
   position_point->SetNumberOfPoints(1);
   position_point->SetPoint(0,wp[0],wp[1],wp[2]);
 
-  mafEventMacro(mafEvent(this, event_id, position_point.GetPointer()));
+  {mafEvent evUnq(this, event_id, position_point.GetPointer()); mafEventMacro(evUnq);}
 }

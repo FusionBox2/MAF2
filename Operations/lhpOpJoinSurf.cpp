@@ -221,7 +221,7 @@ void lhpOpJoinSurf::OpStop(int result)
   HideGui();
   if (result == OP_RUN_CANCEL)
   {
-    mafEventMacro(mafEvent(this,result));
+    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
     return;
   }
 
@@ -363,7 +363,7 @@ void lhpOpJoinSurf::OpStop(int result)
 
   vtkDEL(output);
 
-  mafEventMacro(mafEvent(this,result));
+  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -396,9 +396,9 @@ void lhpOpJoinSurf::OpDo()
   if(m_OutSurface)
   {
     m_OutSurface->ReparentTo(m_Input->GetRoot());
-    mafEventMacro(mafEvent(this, VME_ADD, m_OutSurface));
+    {mafEvent evUnq(this, VME_ADD, m_OutSurface); mafEventMacro(evUnq);}
   }
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -407,7 +407,7 @@ void lhpOpJoinSurf::OpUndo()
 {
   if(m_OutSurface)
   {
-    mafEventMacro(mafEvent(this, VME_REMOVE, m_OutSurface));
+    {mafEvent evUnq(this, VME_REMOVE, m_OutSurface); mafEventMacro(evUnq);}
   }
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }

@@ -540,7 +540,7 @@ void mafViewIntGraph::savePlotGen(void)
     if(vme)
     {
       vme->GetTagArray()->SetTag(mafTagItem(_R(mafINTGG_SAVEINFO_TAG), strv));
-      mafEventMacro(mafEvent(this,VME_MODIFIED, vme));
+      {mafEvent evUnq(this,VME_MODIFIED, vme); mafEventMacro(evUnq);}
     }
   }
 }
@@ -626,7 +626,7 @@ void mafViewIntGraph::loadPlot(bool readfile)
     if (it != m_shown_flags.cend())
       show = *it++;
     if (readfile)
-      mafEventMacro(mafEvent(this, VME_SHOW, curr, show));
+      {mafEvent evUnq(this, VME_SHOW, curr, show); mafEventMacro(evUnq);}
     else
     {
       if (show)
@@ -658,7 +658,7 @@ void mafViewIntGraph::loadPlot(bool readfile)
     mafNode *vme = n->m_Vme;
     if(vme)
     {
-      mafEventMacro(mafEvent(this, VME_SHOW, vme, false));
+      {mafEvent evUnq(this, VME_SHOW, vme, false); mafEventMacro(evUnq);}
     }
   }
   for(mafSceneNode *n = m_Sg->GetNodeList(); n != NULL; n = n->m_Next)

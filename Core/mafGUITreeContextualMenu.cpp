@@ -231,11 +231,11 @@ void mafGUITreeContextualMenu::OnContextualMenu(wxCommandEvent &event)
       bool show = true;
       if(n)
         show = !n->IsVisible();
-			mafEventMacro(mafEvent(this, VME_SHOW, m_VmeActive, show));
+			{mafEvent evUnq(this, VME_SHOW, m_VmeActive, show); mafEventMacro(evUnq);}
     }
 		break;
     case RMENU_ADD_TREE_LAYOUT:
-      mafEventMacro(mafEvent(this, mafGUIApplicationLayoutSettings::SAVE_TREE_LAYOUT_ID));
+      {mafEvent evUnq(this, mafGUIApplicationLayoutSettings::SAVE_TREE_LAYOUT_ID); mafEventMacro(evUnq);}
     break;
 		case RMENU_SHOW_SUBTREE:
 			m_SceneGraph->VmeShowSubTree(m_VmeActive, true);
@@ -272,7 +272,7 @@ void mafGUITreeContextualMenu::OnContextualMenu(wxCommandEvent &event)
 	}
 
   if(m_ViewActive != NULL)
-		mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+		{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGUITreeContextualMenu::CryptSubTree(bool crypt)

@@ -61,7 +61,7 @@ mafOp* mafOpExplodeCollapse::Copy()
 void mafOpExplodeCollapse::OpRun()   
 //----------------------------------------------------------------------------
 {
-  mafEventMacro(mafEvent(this,OP_RUN_OK)); 
+  {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);} 
 }
 
 //----------------------------------------------------------------------------
@@ -78,8 +78,8 @@ void mafOpExplodeCollapse::OpDo()
   {
     cloud->Open();  
   }
-	mafEventMacro(mafEvent(this,VME_MODIFIED,cloud)); //update the icon in the tree
-	mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+	{mafEvent evUnq(this,VME_MODIFIED,cloud); mafEventMacro(evUnq);} //update the icon in the tree
+	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpExplodeCollapse::OpUndo()

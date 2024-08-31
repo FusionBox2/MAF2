@@ -148,7 +148,7 @@ void medOpFillHoles::OpRun()
 	  DeleteOpDialog();
   }
 
-	mafEventMacro(mafEvent(this,result));
+	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpFillHoles::OpDo()
@@ -160,7 +160,7 @@ void medOpFillHoles::OpDo()
   ((mafVMESurface*)m_Input)->SetData(m_VTKResult[m_VTKResult.size()-1],((mafVME*)m_Input)->GetTimeStamp());
   ((mafVMESurface*)m_Input)->Modified();
 
-	mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpFillHoles::OpUndo()
@@ -169,7 +169,7 @@ void medOpFillHoles::OpUndo()
 	((mafVMESurface*)m_Input)->SetData(m_OriginalPolydata,((mafVME*)m_Input)->GetTimeStamp());
 	((mafVMESurface*)m_Input)->Modified();
 
-	mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpFillHoles::OnEvent(mafEventBase *maf_event)
@@ -244,7 +244,7 @@ void medOpFillHoles::OnEvent(mafEventBase *maf_event)
 void medOpFillHoles::OpStop(int result)
 //----------------------------------------------------------------------------
 {
-	mafEventMacro(mafEvent(this,result));        
+	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}        
 }
 //----------------------------------------------------------------------------
 void medOpFillHoles::DeleteOpDialog()

@@ -47,13 +47,13 @@ mafRemoteStorage::mafRemoteStorage()
 void mafRemoteStorage::Initialize()
 //------------------------------------------------------------------------------
 {
-  mafEventMacro(mafEvent(this,DEVICE_ADD,m_RemoteFileManager));
+  {mafEvent evUnq(this,DEVICE_ADD,m_RemoteFileManager); mafEventMacro(evUnq);}
 }
 //------------------------------------------------------------------------------
 mafRemoteStorage::~mafRemoteStorage()
 //------------------------------------------------------------------------------
 {
-  mafEventMacro(mafEvent(this,DEVICE_REMOVE,m_RemoteFileManager));
+  {mafEvent evUnq(this,DEVICE_REMOVE,m_RemoteFileManager); mafEventMacro(evUnq);}
   mafSleep(100);
   mafDEL(m_RemoteFileManager);
 }

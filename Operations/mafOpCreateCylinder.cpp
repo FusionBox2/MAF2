@@ -76,7 +76,7 @@ void mafOpCreateCylinder::OpRun()
 	
 	m_Cylinder->SetName(_R("Cylinder"));
 	m_Output = m_Cylinder;
-  mafEventMacro(mafEvent(this,OP_RUN_OK));
+  {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);}
   
 }
 //----------------------------------------------------------------------------

@@ -300,7 +300,7 @@ public:
     mafNEW(m_Created);
     m_Created->SetName(_R("Cloud lines"));
     m_Output = m_Created;
-    mafEventMacro(mafEvent(this,OP_RUN_OK));
+    {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);}
   }
   void OpDo();
   void OpUndo();
@@ -346,7 +346,7 @@ void lhpOpMoveSeq::TransfMatr(mafMatrix& convMatrix, mafTimeStamp tsSkip)
     ((mafVME *)m_Input)->SetAbsMatrix(newMatr, stamps[i]);
   }
   ((mafVME *)m_Input)->GetOutput()->Update();
-  mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 void lhpOpMoveSeq::OpDo()
 //----------------------------------------------------------------------------

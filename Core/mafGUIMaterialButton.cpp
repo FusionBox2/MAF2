@@ -114,10 +114,10 @@ void mafGUIMaterialButton::OnEvent(mafEventBase *maf_event)
     switch(e->GetId())
     {
       case ID_MATERIAL:
-        mafEventMacro(mafEvent(this,VME_CHOOSE_MATERIAL,m_Vme));
+        {mafEvent evUnq(this,VME_CHOOSE_MATERIAL,m_Vme); mafEventMacro(evUnq);}
         m_MaterialLabel->SetLabel(m_Material->m_MaterialName.toWx());
         UpdateMaterialIcon();
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       break;
       default:
         e->Log();

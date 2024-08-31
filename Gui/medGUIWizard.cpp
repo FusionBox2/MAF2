@@ -60,7 +60,7 @@ medGUIWizard::~medGUIWizard()
 void medGUIWizard::OnWizardPageChanging(wxWizardEvent& event)
   //----------------------------------------------------------------------------
 {
-  mafEventMacro(mafEvent(this,MED_WIZARD_CHANGE_PAGE,event.GetDirection()));
+  {mafEvent evUnq(this,MED_WIZARD_CHANGE_PAGE,event.GetDirection()); mafEventMacro(evUnq);}
 
   if(!m_EnableChangePage)
   {
@@ -71,7 +71,7 @@ void medGUIWizard::OnWizardPageChanging(wxWizardEvent& event)
 void medGUIWizard::OnWizardPageChange(wxWizardEvent& event)
   //----------------------------------------------------------------------------
 {
-  mafEventMacro(mafEvent(this,MED_WIZARD_CHANGED_PAGE,event.GetDirection()));
+  {mafEvent evUnq(this,MED_WIZARD_CHANGED_PAGE,event.GetDirection()); mafEventMacro(evUnq);}
 
   if(!m_EnableChangePage)
   {

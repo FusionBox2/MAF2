@@ -494,7 +494,7 @@ int medOpImporterDicomOffis::RunWizard()
 					if(!this->m_TestMode)
 					{
 						wait = new wxBusyInfo("Conversion to Unsigned Short: please wait...");
-						mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+						{mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
 					}
 
 					long progress = 0;
@@ -505,10 +505,10 @@ int medOpImporterDicomOffis::RunWizard()
 						if(!this->m_TestMode)
 						{
 							progress = slice_num * 100 / (double)size;
-							mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
+							{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
 						}
 					}
-					mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+					{mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
 					if(wait) delete wait;
 				}
 
@@ -579,7 +579,7 @@ void medOpImporterDicomOffis::OpStop(int result)
 	//----------------------------------------------------------------------------
 {
 	Destroy();
-	mafEventMacro(mafEvent(this,result));
+	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpImporterDicomOffis::Destroy()
@@ -706,7 +706,7 @@ int medOpImporterDicomOffis::BuildOutputVMEImagesFromDicom()
 	if(!this->m_TestMode)
 	{
 		wxBusyInfo wait_info("Building images: please wait");
-		mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+		{mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
 	}
 
 	ImportDicomTags();
@@ -786,12 +786,12 @@ int medOpImporterDicomOffis::BuildOutputVMEImagesFromDicom()
 		if(!this->m_TestMode)
 		{
 			progress = count * 100 / m_DICOMDirectoryReader->GetNumberOfFiles();
-			mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
+			{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
 		}
 	}
 	if(!this->m_TestMode)
 	{
-		mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+		{mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
 	}
 
 	if(m_ImagesGroup != NULL)
@@ -826,7 +826,7 @@ int medOpImporterDicomOffis::BuildOutputVMEImagesFromDicomCineMRI()
 	if(!this->m_TestMode)
 	{
 		wxBusyInfo wait_info("Building images: please wait");
-		mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+		{mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
 	}
 	ImportDicomTags();
 
@@ -855,7 +855,7 @@ int medOpImporterDicomOffis::BuildOutputVMEImagesFromDicomCineMRI()
 		if(!this->m_TestMode)
 		{
 			progress = ts * 100 / m_NumberOfTimeFrames;
-			mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
+			{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
 		}
 
 		// get the time stamp from the dicom tag;
@@ -877,7 +877,7 @@ int medOpImporterDicomOffis::BuildOutputVMEImagesFromDicomCineMRI()
 			if(!this->m_TestMode)
 			{
 				progress = progressCounter * 100 / totalNumberOfImages;
-				mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
+				{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
 			}
 
 			if (targetVolumeSliceId == n_slices) {break;}
@@ -990,7 +990,7 @@ int medOpImporterDicomOffis::BuildOutputVMEImagesFromDicomCineMRI()
 
 	if(!this->m_TestMode)
 	{
-		mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+		{mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
 	}
 
 	if(m_ImagesGroup != NULL)
@@ -1179,7 +1179,7 @@ int medOpImporterDicomOffis::BuildOutputVMEGrayVolumeFromDicom()
 	if(!this->m_TestMode)
 	{
 		wxBusyInfo wait_info("Building volume: please wait");
-		mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+		{mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
 	}
 
 	n_slices -= numSliceToSkip;
@@ -1268,7 +1268,7 @@ int medOpImporterDicomOffis::BuildOutputVMEGrayVolumeFromDicom()
 		if(!this->m_TestMode)
 		{
 			progress = count * 100 / (m_ZCropBounds[1]+1); //m_DICOMDirectoryReader->GetNumberOfFiles();
-			mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
+			{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
 		}
 	}
 
@@ -1276,7 +1276,7 @@ int medOpImporterDicomOffis::BuildOutputVMEGrayVolumeFromDicom()
 
 	if(!this->m_TestMode)
 	{
-		mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+		{mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
 	}
 
 	mafNEW(m_Volume);
@@ -1428,7 +1428,7 @@ int medOpImporterDicomOffis::BuildOutputVMEGrayVolumeFromDicomCineMRI()
 	if(!this->m_TestMode)
 	{
 		wxBusyInfo wait_info("Building volume: please wait");
-		mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+		{mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
 	}
 
 	// create the time varying vme
@@ -1568,7 +1568,7 @@ int medOpImporterDicomOffis::BuildOutputVMEGrayVolumeFromDicomCineMRI()
 			if(!this->m_TestMode)
 			{
 				progress = progressCounter * 100 / totalNumberOfImages;
-				mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
+				{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
 			}
 			if (targetVolumeSliceId == n_slices) {break;}
 
@@ -1791,7 +1791,7 @@ int medOpImporterDicomOffis::BuildOutputVMEGrayVolumeFromDicomCineMRI()
 
 	if(!this->m_TestMode)
 	{
-		mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+		{mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
 	}
 
 	// update m_tag_array ivar
@@ -1855,7 +1855,7 @@ int medOpImporterDicomOffis::BuildOutputVMEMeshFromDicom()
 	if(!this->m_TestMode)
 	{
 		wxBusyInfo wait_info("Building mesh: please wait");
-		mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+		{mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
 	}
 
 	mafNEW(m_Mesh);
@@ -1898,7 +1898,7 @@ int medOpImporterDicomOffis::BuildOutputVMEMeshFromDicom()
 		if(!this->m_TestMode)
 		{
 			progress = sourceVolumeSliceId * 100 / m_NumberOfSlices;
-			mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
+			{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
 		}
 
 		if (sourceVolumeSliceId+1>=m_NumberOfSlices)// compilation error: vs2005: sourceVolumeSliceId defined in the for loop
@@ -1934,7 +1934,7 @@ int medOpImporterDicomOffis::BuildOutputVMEMeshFromDicom()
 
 	if(!this->m_TestMode)
 	{
-		mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+		{mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
 	}
 
 	grid->SetCells(VTK_HEXAHEDRON,Cells);  
@@ -1975,7 +1975,7 @@ int medOpImporterDicomOffis::BuildOutputVMEMeshFromDicomCineMRI()
 	if(!this->m_TestMode)
 	{
 		wxBusyInfo wait_info("Building mesh: please wait");
-		mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+		{mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
 	}
 	mafNEW(m_Mesh);
 
@@ -2022,7 +2022,7 @@ int medOpImporterDicomOffis::BuildOutputVMEMeshFromDicomCineMRI()
 			if(!this->m_TestMode)
 			{
 				progress = progressCounter * 100 / totalNumberOfImages;
-				mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
+				{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
 			}
 
 			if (sourceVolumeSliceId+1>=m_NumberOfSlices)// ac: compilation error (vs2005): sourceVolumeSliceId defined in the for loop
@@ -2069,7 +2069,7 @@ int medOpImporterDicomOffis::BuildOutputVMEMeshFromDicomCineMRI()
 	}
 	if(!this->m_TestMode)
 	{
-		mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+		{mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
 	}
 
 	m_Mesh->SetName(m_VolumeName);
@@ -3429,7 +3429,7 @@ bool medOpImporterDicomOffis::BuildDicomFileList(const char *dicomDirABSPath)
 
 	if (!this->m_TestMode)
 	{
-		mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+		{mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
 		progress = START_PROGRESS_BAR;
 	}
 
@@ -3450,7 +3450,7 @@ bool medOpImporterDicomOffis::BuildDicomFileList(const char *dicomDirABSPath)
 
 	if (!this->m_TestMode)
 	{
-		mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+		{mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
 		cppDEL(busyInfo);
 	}
 
@@ -3589,7 +3589,7 @@ bool medOpImporterDicomOffis::BuildDicomFileList(const char *dicomDirABSPath)
 					if(!this->m_TestMode)
 					{
 						wait = new wxBusyInfo("Applying Cardiac MRI correction, please wait...");
-						mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+						{mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
 					}
 
 					for (int timeID = 0; timeID < cardiacTimeFrames; timeID++)
@@ -3599,7 +3599,7 @@ bool medOpImporterDicomOffis::BuildDicomFileList(const char *dicomDirABSPath)
 							if(!this->m_TestMode)
 							{
 								progress = (timeID) * 100 / ((double)(cardiacTimeFrames ));
-								mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
+								{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
 							}
 
 							int itemID = fileNumberForPlaneIFrameJIdPlaneMatrix(planeID, timeID); 
@@ -3710,7 +3710,7 @@ bool medOpImporterDicomOffis::BuildDicomFileList(const char *dicomDirABSPath)
 						}			
 					}
 
-					mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+					{mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
 					cppDEL(wait);
 					cppDEL(busyInfo);
 
@@ -4426,7 +4426,7 @@ bool medOpImporterDicomOffis::ReadDicomFileList(mafString& currentSliceABSDirNam
 								if (!this->m_TestMode)
 								{
 									//							cppDEL(busyInfo);
-									mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+									{mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
 								}
 								return false;
 							}
@@ -4669,7 +4669,7 @@ bool medOpImporterDicomOffis::ReadDicomFileList(mafString& currentSliceABSDirNam
 			if (!this->m_TestMode)
 			{
 				progress = i * 100 / m_DICOMDirectoryReader->GetNumberOfFiles();
-				mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
+				{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
 			}
 
 			dicomImg.clear();

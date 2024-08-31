@@ -365,7 +365,7 @@ void medGizmoCrossRotateFan::SetColor(double colR, double colG, double colB)
 void medGizmoCrossRotateFan::Show(bool show)
 //----------------------------------------------------------------------------
 {
-  mafEventMacro(mafEvent(this,VME_SHOW,m_Gizmo,show));
+  {mafEvent evUnq(this,VME_SHOW,m_Gizmo,show); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 double medGizmoCrossRotateFan::PointPickedToStartTheta(double xp, double yp, double zp)

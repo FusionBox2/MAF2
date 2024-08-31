@@ -471,7 +471,7 @@ void mafGizmoScale::Show(bool show)
 	}
 	*/
 	// update the camera
-	//  mafEventMacro(mafEvent(this, CAMERA_UPDATE));   // Paolo 20-07-2005
+	//  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}   // Paolo 20-07-2005
 }
 //----------------------------------------------------------------------------  
 void mafGizmoScale::Show(bool showX, bool showY, bool showZ, bool showIso)

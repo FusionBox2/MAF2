@@ -459,14 +459,14 @@ void lhpOpSoftReg::OpDo()
     if(outSurface)
     {
       outSurface->ReparentTo(m_Input->GetRoot());
-      mafEventMacro(mafEvent(this, VME_ADD, outSurface));
+      {mafEvent evUnq(this, VME_ADD, outSurface); mafEventMacro(evUnq);}
     }
     mafDEL(outSurface);
 
   }
 
 
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 
 
 }

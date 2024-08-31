@@ -672,22 +672,22 @@ void mafPipeVolumeSlice::OnEvent(mafEventBase *maf_event)
       {
         mmaVolumeMaterial *material = m_VolumeOutput->GetMaterial();
         material->UpdateFromTables();
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       }
       break;
       case ID_SLICE_SLIDER_X:
       case ID_SLICE_SLIDER_Y:
       case ID_SLICE_SLIDER_Z:
         SetSlice(m_Origin);
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       break;
 			case ID_OPACITY_SLIDER:
 				SetSliceOpacity(m_SliceOpacity);
-				mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+				{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 			break;
       case ID_ENABLE_TRILINEAR_INTERPOLATION:
         UpdateSlice();
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       break;
       default:
       break;
@@ -718,7 +718,7 @@ void mafPipeVolumeSlice::SetColorLookupTable(vtkLookupTable *lut)
     if(m_Texture[i])
       m_Texture[i]->SetLookupTable(m_CustomColorLUT);
   }
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafPipeVolumeSlice::Select(bool sel)

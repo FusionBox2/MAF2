@@ -105,7 +105,7 @@ void mafGUIApplicationSettings::OnEvent(mafEventBase *maf_event)
     break;
     case ID_WARN_UNDO:
       m_Config->Write("WarnUser",m_WarnUserFlag);
-      mafEventMacro(mafEvent(this,MENU_OPTION_APPLICATION_SETTINGS));
+      {mafEvent evUnq(this,MENU_OPTION_APPLICATION_SETTINGS); mafEventMacro(evUnq);}
     break;
     case ID_PASSPHRASE:
     break;

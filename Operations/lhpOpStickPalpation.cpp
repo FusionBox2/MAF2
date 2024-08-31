@@ -381,7 +381,7 @@ void lhpOpStickPalpation::OpStop(int result)
   if (result == OP_RUN_CANCEL)
   {
     HideGui();
-    mafEventMacro(mafEvent(this,result));
+    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
   }
   else if (result == OP_RUN_OK)
   {
@@ -402,7 +402,7 @@ void lhpOpStickPalpation::OpStop(int result)
       }
     }
     HideGui();
-    mafEventMacro(mafEvent(this,result));
+    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
   }
 }
 //----------------------------------------------------------------------------
@@ -649,7 +649,7 @@ void lhpOpStickPalpation::OpDo()
     mafString path, name, ext;
     mafSplitPath(file,&path,&name,&ext);
     vme->SetName(name);
-    mafEventMacro(mafEvent(this,VME_ADD,vme));
+    {mafEvent evUnq(this,VME_ADD,vme); mafEventMacro(evUnq);}
 
     m_LimbCloud        = mafVMELandmarkCloud::SafeDownCast(MatchCriterion(m_TrgMotion, MatchWithName, m_LMDict[nL].second.GetCStr()));
     m_LimbCalibration  = mafVMELandmarkCloud::SafeDownCast(MatchCriterion(vme, MatchWithName, m_LMDict[nL].second.GetCStr()));
@@ -663,7 +663,7 @@ void lhpOpStickPalpation::OpDo()
       wxLogMessage("Wand calibration cloud is not found");
     if(m_LimbCloud != NULL && m_LimbCalibration != NULL && m_StickCalibration != NULL)
       ProcessSingleLM();
-    mafEventMacro(mafEvent(this,VME_REMOVE,vme));
+    {mafEvent evUnq(this,VME_REMOVE,vme); mafEventMacro(evUnq);}
     mafDEL(vme);
   }
 }

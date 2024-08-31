@@ -138,12 +138,12 @@ void lhpOpBuildHierarchy::CreateGui()
   if (result == OP_RUN_CANCEL)
   {
     HideGui();
-    mafEventMacro(mafEvent(this,result));
+    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
   }
   else if (result == OP_RUN_OK)
   {
     HideGui();
-    mafEventMacro(mafEvent(this,result));
+    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
   }
 }*/
 //----------------------------------------------------------------------------
@@ -250,7 +250,7 @@ static void makeReparent(mafVME *child, mafVME *newParent)
 #endif
   if (child->ReparentTo(newParent) == MAF_OK)
   {
-    //mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+    //{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
   }
   else
   {
@@ -386,7 +386,7 @@ void lhpOpBuildHierarchy::OpDo()
   reparentAll(m_root, pVMERoot);
   hierarchyReparent(m_root, NULL);
   restoreRootPlaces(m_root, (mafVME*)m_Input);
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
   return;
 }
 

@@ -142,7 +142,7 @@ void mafOpImporterVMEDataSetAttributes::OpStop(int result)
   
   HideGui();
 
-	mafEventMacro(mafEvent(this,result));  	   
+	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}  	   
 }
 
 enum Mesh_Importer_ID
@@ -272,8 +272,8 @@ void mafOpImporterVMEDataSetAttributes::OnEvent(mafEventBase *maf_event)
       //referred to bug 933
       if (m_Output != NULL)
       {
-        mafEventMacro(mafEvent(this,VME_SHOW, m_Output, false));
-        mafEventMacro(mafEvent(this,VME_SHOW, m_Output, true));
+        {mafEvent evUnq(this,VME_SHOW, m_Output, false); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,VME_SHOW, m_Output, true); mafEventMacro(evUnq);}
       }
       //END WORKAROUND CODE 
 

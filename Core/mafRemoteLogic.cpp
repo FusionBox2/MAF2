@@ -233,7 +233,7 @@ void mafRemoteLogic::RemoteMessage(mafString &cmd, bool to_server)
       long v_id;
       data_cmd.ToLong(&v_id);
       m_ViewManager->m_FromRemote = true;
-      mafEventMacro(mafEvent(this,VIEW_CREATE,(intptr_t)(v_id + VIEW_START)));
+      {mafEvent evUnq(this,VIEW_CREATE,(intptr_t)(v_id + VIEW_START)); mafEventMacro(evUnq);}
       if (m_RemoteMouse)
       {
         mafEvent eb(this,VIEW_SELECT, m_ViewManager->GetSelectedView());
@@ -251,7 +251,7 @@ void mafRemoteLogic::RemoteMessage(mafString &cmd, bool to_server)
       if(m_ViewManager->GetView(v_id-VIEW_START,v_mult) == NULL)
       {
         m_ViewManager->m_FromRemote = true;
-        mafEventMacro(mafEvent(this,VIEW_CREATE,(intptr_t)v_id));
+        {mafEvent evUnq(this,VIEW_CREATE,(intptr_t)v_id); mafEventMacro(evUnq);}
         m_ViewManager->m_FromRemote = false;
       }
       while(tkz.HasMoreTokens())
@@ -263,7 +263,7 @@ void mafRemoteLogic::RemoteMessage(mafString &cmd, bool to_server)
         if(m_ViewManager->GetView(v_id-VIEW_START,v_mult) == NULL)
         {
           m_ViewManager->m_FromRemote = true;
-          mafEventMacro(mafEvent(this,VIEW_CREATE,(intptr_t)v_id));
+          {mafEvent evUnq(this,VIEW_CREATE,(intptr_t)v_id); mafEventMacro(evUnq);}
           m_ViewManager->m_FromRemote = false;
         }
       }
@@ -389,7 +389,7 @@ void mafRemoteLogic::RemoteMessage(mafString &cmd, bool to_server)
     {
       long vme_id;
       data_cmd.ToLong(&vme_id);
-      mafEventMacro(mafEvent(this,VME_SELECT,(intptr_t)vme_id));
+      {mafEvent evUnq(this,VME_SELECT,(intptr_t)vme_id); mafEventMacro(evUnq);}
     }
     else if(command == "VME_SHOW")
     {
@@ -400,8 +400,8 @@ void mafRemoteLogic::RemoteMessage(mafString &cmd, bool to_server)
       mafNode *root = m_ViewManager->GetCurrentRoot();
       mafNode *vme_to_show = root->FindInTreeById(vme_id);
       mafView *v = m_ViewManager->GetSelectedView();
-      mafEventMacro(mafEvent(this,VME_SHOW, vme_to_show, show_flag != 0));
-      mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+      {mafEvent evUnq(this,VME_SHOW, vme_to_show, show_flag != 0); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
     }
     else if(command == "CameraReset")
     {
@@ -518,7 +518,7 @@ void mafRemoteLogic::RemoteMessage(mafString &cmd, bool to_server)
       fileToOpen += m_CommandSeparator;
       if(tkz.HasMoreTokens())
         fileToOpen += mafWxToString(tkz.GetNextToken());
-      mafEventMacro(mafEvent(this, MENU_FILE_OPEN, &fileToOpen));
+      {mafEvent evUnq(this, MENU_FILE_OPEN, &fileToOpen); mafEventMacro(evUnq);}
     }
   }
 }

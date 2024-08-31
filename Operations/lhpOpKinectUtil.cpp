@@ -1262,7 +1262,7 @@ void lhpOpKinectUtil::OpRun()
     mafGetOpenMultiFiles(m_FileDir,wildcard, m_C3DInputFileNameFullPaths);
     if(m_C3DInputFileNameFullPaths.size() == 0) 
     {
-      mafEventMacro(mafEvent(this,OP_RUN_CANCEL));
+      {mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);}
       return;
     }
   }
@@ -1275,11 +1275,11 @@ void lhpOpKinectUtil::OpRun()
   {
     if(Import())
     {
-      mafEventMacro(mafEvent(this,OP_RUN_OK));
+      {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);}
     }
     else
     {
-      mafEventMacro(mafEvent(this,OP_RUN_CANCEL));
+      {mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);}
     }
   }
 }
@@ -1349,8 +1349,8 @@ void lhpOpKinectUtil::OpDo()
   for(unsigned i = 0; i < m_Imported.size(); i++)
   {
     m_Imported[i]->ReparentTo(m_Input);
-    mafEventMacro(mafEvent(this, VME_COLLAPSESUBTREE, m_Imported[i]));
-    mafEventMacro(mafEvent(this, VME_EXPAND, m_Imported[i]));
+    {mafEvent evUnq(this, VME_COLLAPSESUBTREE, m_Imported[i]); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this, VME_EXPAND, m_Imported[i]); mafEventMacro(evUnq);}
   }
 }
 
@@ -2068,8 +2068,8 @@ bool lhpOpKinectUtil::Import()
     mafRemoveDirectory(mtlbTmp);
   }
   mafDEL(skeletalGroup);
-  //mafEventMacro(mafEvent(this,VIEW_CREATE, (long)12399));
-  //mafEventMacro(mafEvent(this,VIEW_CREATE, (long)12400));
+  //{mafEvent evUnq(this,VIEW_CREATE, (long)12399); mafEventMacro(evUnq);}
+  //{mafEvent evUnq(this,VIEW_CREATE, (long)12400); mafEventMacro(evUnq);}
   return result;
 }
 
