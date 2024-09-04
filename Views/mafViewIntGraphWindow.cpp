@@ -1787,7 +1787,7 @@ const wxString& GetListSeparator()
 {
   static wxString _caListSparator = wxT(",");
 
-#if !defined UNIX 
+#ifdef _WIN32
   wxString regKeyName = wxT("HKEY_CURRENT_USER\\Control Panel\\International");
   wxRegKey RegKey(regKeyName);
   if (RegKey.Exists())
@@ -1809,7 +1809,7 @@ const wxString& GetDecimalSeparator()
 {
   static wxString _caDecSparator = wxT(".");
 
-#if !defined UNIX 
+#ifdef _WIN32 
   wxString regKeyName = wxT("HKEY_CURRENT_USER\\Control Panel\\International");
   wxRegKey RegKey(regKeyName);
   if (RegKey.Exists())

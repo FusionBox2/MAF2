@@ -709,7 +709,7 @@ void medViewSliceGlobal::UpdateBounds()
     {
       double b[6];
       ((mafVME *)n->m_Vme)->GetOutput()->GetVTKData()->GetBounds(b);
-      globalBounds.MergeBounds(mafOBB(b));
+      {mafOBB obb(b); globalBounds.MergeBounds(obb);}
     }
   }
   if (globalBounds.IsValid())
