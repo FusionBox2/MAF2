@@ -620,7 +620,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 										 input.clear();
 										 input.close();
 										 output.close();
-										 Sleep(1);
+										 mafSleep(1);
 
 										 remove(imageNameTemp.GetCStr());
 										 //clock_t time1 = end1 - begin1;
@@ -712,7 +712,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 
 								  wxBusyInfo wait523(m_File.toWx());
 								  
-								  Sleep(1500);
+								  mafSleep(1500);
 								  
 
 								  vtkNew<vtkOBJExporter> writer;
@@ -724,13 +724,13 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 								  
 								  wxBusyInfo wait("writing obj file ...");
 								  writer->Write();
-								  Sleep(100);
+								  mafSleep(100);
 								  //open MTLfile and add the texture
 								  
 								  if (m_Actor->GetTexture() != NULL)
 								  {
 									  wxBusyInfo wait("texture file: ...");
-									  Sleep(100);
+									  mafSleep(100);
 									  pathName = m_File;
 									  ExtractPathName(pathName);
 
@@ -750,7 +750,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 								  {
 
 									  wxBusyInfo wait("texture not found ");
-									  Sleep(100);
+									  mafSleep(100);
 								  }
 
 

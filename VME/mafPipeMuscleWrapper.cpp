@@ -65,7 +65,7 @@ mafPipeMuscleWrapperAQ::mafPipeMuscleWrapperAQ()
 //----------------------------------------------------------------------------
 {
 	wxBusyInfo wait("pipe muscle wrapperAQ construction...");
-	Sleep(5000);
+	mafSleep(5000);
   m_DataMapper        = NULL;
   m_DataActor         = NULL;
   m_SelectionBox      = NULL;
@@ -78,7 +78,7 @@ mafPipeMuscleWrapperAQ::mafPipeMuscleWrapperAQ()
   m_Caption           = NULL;
   m_MaterialButton    = NULL;
   wxBusyInfo wait2("pipe muscle wrapperAQ construction done");
-  Sleep(3000);
+  mafSleep(3000);
 }
 //----------------------------------------------------------------------------
 void mafPipeMuscleWrapperAQ::Create(mafNode *node, mafView *view/*, bool use_axes*/)
@@ -86,7 +86,7 @@ void mafPipeMuscleWrapperAQ::Create(mafNode *node, mafView *view/*, bool use_axe
 {
 
 	wxBusyInfo wait("Pipecreate...");
-	Sleep(1000);
+	mafSleep(1000);
   Superclass::Create(node, view);
   
   m_Selected          = false;
@@ -218,7 +218,7 @@ void mafPipeMuscleWrapperAQ::Create(mafNode *node, mafView *view/*, bool use_axe
   m_RenFront->AddActor2D(m_Caption);
 
   wxBusyInfo wait2("Pipe  create ok");
-  Sleep(1000);
+  mafSleep(1000);
 
   /*
   m_axes = NULL;
@@ -254,7 +254,7 @@ mafGUI *mafPipeMuscleWrapperAQ::CreateGui()
 //----------------------------------------------------------------------------
 {
 	wxBusyInfo wait("Pipe create gui ...");
-	Sleep(1000);
+	mafSleep(1000);
   const mafString type_measure_string[] = {_R("absolute"), _R("relative")};
   const mafString representation_string[] = {_R("line"), _R("tube")};
   const mafString color_string[] = {_R("one"), _R("range")};
@@ -289,7 +289,7 @@ mafGUI *mafPipeMuscleWrapperAQ::CreateGui()
   m_Gui->Enable(ID_TUBE_CAPPING, meter_attrib->m_Representation == mafVMEMuscleWrapperAQ::TUBE_REPRESENTATION);
 	m_Gui->Divider();
 	wxBusyInfo wait2("Pipe create gui ok");
-	Sleep(1000);
+	mafSleep(1000);
   return m_Gui;
 }
 //----------------------------------------------------------------------------
@@ -297,7 +297,7 @@ void mafPipeMuscleWrapperAQ::OnEvent(mafEventBase *maf_event)
 //----------------------------------------------------------------------------
 {
 	wxBusyInfo wait("Pipe onevent ...");
-	Sleep(1000);
+	mafSleep(1000);
   if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
   {
 	  mmaMuscleWrapperAQ *meter_attrib = m_MuscleWrapperVME->GetMeterAttributes();
@@ -389,7 +389,7 @@ void mafPipeMuscleWrapperAQ::OnEvent(mafEventBase *maf_event)
   }
 
   wxBusyInfo wait2("Pipe onevent ok");
-  Sleep(1000);
+  mafSleep(1000);
 }
 //----------------------------------------------------------------------------
 void mafPipeMuscleWrapperAQ::Select(bool sel)
@@ -397,7 +397,7 @@ void mafPipeMuscleWrapperAQ::Select(bool sel)
 {
 
 	wxBusyInfo wait("Pipe select...");
-	Sleep(1000);
+	mafSleep(1000);
 	m_Selected = sel;
 	if(m_DataActor->GetVisibility()) 
 	{
@@ -405,18 +405,18 @@ void mafPipeMuscleWrapperAQ::Select(bool sel)
 			//@@@ if(m_use_axes) m_axes->SetVisibility(sel);
 	}
 	wxBusyInfo wait2("Pipe select ok");
-	Sleep(1000);
+	mafSleep(1000);
 }
 //----------------------------------------------------------------------------
 void mafPipeMuscleWrapperAQ::UpdateProperty(bool fromTag)
 //----------------------------------------------------------------------------
 {
 	wxBusyInfo wait("Pipe update property ...");
-	Sleep(1000);
+	mafSleep(1000);
 	if (NULL == m_DataMapper || NULL == m_DataActor || NULL == m_Caption)
 	{
 		wxBusyInfo wait("Pipe NULL ...");
-		Sleep(1000);
+		mafSleep(1000);
 		return;
 	}
   
@@ -507,5 +507,5 @@ void mafPipeMuscleWrapperAQ::UpdateProperty(bool fromTag)
 	*/
 
   wxBusyInfo wait2("Pipe update property ok");
-  Sleep(1000);
+  mafSleep(1000);
 }

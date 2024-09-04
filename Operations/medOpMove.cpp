@@ -325,7 +325,7 @@ void medOpMove::OnEventThis(mafEventBase *maf_event)
 	  {
 		  mafString m=m_RefSysVME->GetName();
 		  wxBusyInfo wait(m.toWx());
-		  Sleep(2000);
+		  mafSleep(2000);
 		  m_GizmoTranslate->SetAbsPose(m_RefSysVME->GetOutput()->GetMatrix());		 
 	  }
 	  if (m_GizmoRotate)

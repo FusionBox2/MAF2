@@ -170,7 +170,7 @@ void medOpSurfaceMirror::OpDo()
 //----------------------------------------------------------------------------
 {
 	wxBusyInfo wait("operation do ..");
-	Sleep(2500);
+	mafSleep(2500);
  
 	if (m_Input->IsMAFType(mafVMESurface))
 	{
@@ -185,7 +185,7 @@ void medOpSurfaceMirror::OpDo()
 		std::string str = "nbr children" + std::to_string(nbr);
 		wxString mafs = str.c_str();
 		wxBusyInfo wait(mafs);
-		Sleep(2500);
+		mafSleep(2500);
 
 
 		for (int i = 0; i < nbr; i++)
@@ -217,14 +217,14 @@ void medOpSurfaceMirror::OpDo()
 				std::string str = "num child" + std::to_string(i) + " " + std::to_string(m_MirrorX) + " " + std::to_string(m_MirrorY) + " " + std::to_string(m_MirrorZ);
 				wxString mafs = str.c_str();
 				wxBusyInfo wait3(mafs);
-				Sleep(1500);
+				mafSleep(1500);
 
 
 
 				m_OutputPolydata->DeepCopy(m_MirrorFilter->GetOutput());
 				
 				wxBusyInfo wait4("mirror output ok");
-				Sleep(2500);
+				mafSleep(2500);
 
 				((mafVMESurface*)((mafVMEGroup*)m_Input)->GetChild(i))->SetData(m_OutputPolydata, ((mafVME*)((mafVMEGroup*)m_Input)->GetChild(i))->GetTimeStamp());
 				assert(m_OutputPolydata);

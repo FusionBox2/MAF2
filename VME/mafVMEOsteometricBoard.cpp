@@ -754,7 +754,7 @@ void mafVMEOsteometricBoard::InternalUpdate()
 			
 			std::string s24 = "plane displaying2 " + std::to_string(m_PlanePoint2[0]) + " " + std::to_string(m_PlanePoint2[1]) + " " + std::to_string(m_PlanePoint2[2]);
 			wxBusyInfo wait52(s24.c_str());
-			Sleep(1500);
+			mafSleep(1500);
 			
 			
 			pos2[0] = m_PlanePoint2[0] + m_PlaneYRes*normal1[0];

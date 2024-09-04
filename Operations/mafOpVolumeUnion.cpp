@@ -2,7 +2,7 @@
 
  Program: MAF2
  Module: mafOpVolumeUnion
- Author: Simone Bnà
+ Author: Simone Bnï¿½
  
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
@@ -232,7 +232,7 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 		for(int i=1; i<21; i++) 
 		{
 			progress++;
-			Sleep(150); // Workaround: I need this sleep function to update slowly the progress bar 
+			mafSleep(150); // Workaround: I need this sleep function to update slowly the progress bar
 			{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
 		}	
 	}
@@ -291,7 +291,7 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 		for(int i=21; i<61; i++) 
 		{
 			progress++;
-			Sleep(150);
+			mafSleep(150);
 		    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
 		}
 	}
@@ -350,7 +350,7 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 		for(int i=61; i<99; i++) 
 		{
 			progress++;
-			Sleep(150);
+			mafSleep(150);
 			{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
 		}
 	}
@@ -406,7 +406,7 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 		for(int i=99; i<101; i++) 
 		{
 			progress++;
-			Sleep(150);
+			mafSleep(150);
 			{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
 		}
 	}

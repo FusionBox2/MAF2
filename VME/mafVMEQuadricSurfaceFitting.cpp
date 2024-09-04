@@ -670,7 +670,7 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 									  else
 									  {
 										  wxBusyInfo wait1("pts pb ");
-										  Sleep(2500);
+										  mafSleep(2500);
 									  }
 								  }
 
@@ -681,7 +681,7 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 							  else
 							  {
 								  wxBusyInfo wait("input error ");
-								  Sleep(2500);
+								  mafSleep(2500);
 							  }
 							 
 							 	  

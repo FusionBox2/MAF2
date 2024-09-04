@@ -179,7 +179,7 @@ void lhpMultiscaleCameraUtility::SetDirectionOfProjectionSlow(vtkRenderer *rende
     for (int i = 0 ;  i < nsteps ;  i++){
       RotateDirectionOfProjection(camera, rotaxis, dtheta) ;
       renderer->GetRenderWindow()->Render() ;               // nb this line causes a small once-only memory leak - why ?
-      Sleep(timestep) ;
+      mafSleep(timestep) ;
     }
   }
 }
@@ -263,7 +263,7 @@ void lhpMultiscaleCameraUtility::ZoomCameraOnBounds(double *bounds, vtkRenderer 
     double angle = viewAngleCurrent + (double)i*angleInc ;
     camera->SetViewAngle(angle) ;
     renderer->GetRenderWindow()->Render() ;
-    Sleep(timestep) ;
+    mafSleep(timestep) ;
   }
 
   // make sure view up is ok

@@ -81,7 +81,7 @@ mafVMEMuscleWrapperAQ::mafVMEMuscleWrapperAQ()
 {
 
   wxBusyInfo wait("muscle wrapperAQ construction...");
-  Sleep(3000);
+  mafSleep(3000);
   m_Distance      = -1.0;
   m_Angle         = 0.0;
 
@@ -159,7 +159,7 @@ mafVMEMuscleWrapperAQ::mafVMEMuscleWrapperAQ()
   m_GenerateHistogram = 0;
 
   wxBusyInfo wait2("muscle wrapperAQ construction done");
-  Sleep(3000);
+  mafSleep(3000);
 }
 //-------------------------------------------------------------------------
 mafVMEMuscleWrapperAQ::~mafVMEMuscleWrapperAQ()
@@ -232,7 +232,7 @@ mmaMaterial *mafVMEMuscleWrapperAQ::GetMaterial()
 //-------------------------------------------------------------------------
 {
 	wxBusyInfo wait("muscle wrapperAQ getting material...");
-	Sleep(3000);
+	mafSleep(3000);
   mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
   if (material == NULL)
   {
@@ -241,7 +241,7 @@ mmaMaterial *mafVMEMuscleWrapperAQ::GetMaterial()
   }
 
   wxBusyInfo wait2("muscle wrapperAQ getting material done");
-  Sleep(3000);
+  mafSleep(3000);
   return material;
 }
 //-------------------------------------------------------------------------
@@ -249,7 +249,7 @@ mafVMEOutputPolyline *mafVMEMuscleWrapperAQ::GetPolylineOutput()
 //-------------------------------------------------------------------------
 {
 	wxBusyInfo wait("muscle wrapperAQ getting output");
-	Sleep(3000);
+	mafSleep(3000);
   return (mafVMEOutputPolyline *)GetOutput();
 }
 //-------------------------------------------------------------------------
@@ -257,7 +257,7 @@ void mafVMEMuscleWrapperAQ::SetMatrix(const mafMatrix &mat)
 //-------------------------------------------------------------------------
 {
 	wxBusyInfo wait("muscle wrapperAQ SetMatrix...");
-	Sleep(3000);
+	mafSleep(3000);
   m_Transform->SetMatrix(mat);
   Modified();
 }
@@ -272,7 +272,7 @@ void mafVMEMuscleWrapperAQ::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframe
 //-------------------------------------------------------------------------
 {
 	wxBusyInfo wait("muscle wrapperAQ getting GetLocalTimeStamps...");
-	Sleep(3000);
+	mafSleep(3000);
   kframes.clear(); // no timestamps
 }
 //-----------------------------------------------------------------------
@@ -281,10 +281,10 @@ void mafVMEMuscleWrapperAQ::InternalPreUpdate()
 {
 
   wxBusyInfo wait("muscle wrapperAQ getting preupdate...");
-  Sleep(3000);
+  mafSleep(3000);
   GetMeterAttributes();
   wxBusyInfo wait2("muscle wrapperAQ getting preupdate done");
-  Sleep(3000);
+  mafSleep(3000);
 }
 //-----------------------------------------------------------------------
 void mafVMEMuscleWrapperAQ::InternalUpdate()
@@ -292,7 +292,7 @@ void mafVMEMuscleWrapperAQ::InternalUpdate()
 {
 
 	wxBusyInfo wait("muscle wrapperAQ getting update...");
-	Sleep(3000);
+	mafSleep(3000);
   GetMeterAttributes()->m_ThresholdEvent = GetGenerateEvent();
   GetMeterAttributes()->m_DeltaPercent   = GetDeltaPercent();
   GetMeterAttributes()->m_InitMeasure    = GetInitMeasure();
@@ -823,7 +823,7 @@ void mafVMEMuscleWrapperAQ::InternalUpdate()
   //m_PolyData->Update();
 
   wxBusyInfo wait2("muscle wrapperAQ getting update done");
-  Sleep(3000);
+  mafSleep(3000);
 
 }
 //-----------------------------------------------------------------------
@@ -849,7 +849,7 @@ void mafVMEMuscleWrapperAQ::Print(std::ostream& os, const int tabs)
 //-----------------------------------------------------------------------
 {
 	wxBusyInfo wait2("muscle wrapperAQ internal print");
-	Sleep(3000);
+	mafSleep(3000);
   Superclass::Print(os,tabs);
   mafIndent indent(tabs);
 
@@ -868,7 +868,7 @@ mmaMuscleWrapperAQ *mafVMEMuscleWrapperAQ::GetMeterAttributes()
 //-------------------------------------------------------------------------
 {
 	wxBusyInfo wait("muscle wrapperAQ getting attributes...");
-	Sleep(3000);
+	mafSleep(3000);
 	mmaMuscleWrapperAQ *meter_attributes = (mmaMuscleWrapperAQ *)GetAttribute(_R("MeterAttributes"));
   if (meter_attributes == NULL)
   {
@@ -877,7 +877,7 @@ mmaMuscleWrapperAQ *mafVMEMuscleWrapperAQ::GetMeterAttributes()
   }
 
   wxBusyInfo wait2("muscle wrapperAQ getting attributes done");
-  Sleep(3000);
+  mafSleep(3000);
   return meter_attributes;
 }
 //-------------------------------------------------------------------------
@@ -885,7 +885,7 @@ void mafVMEMuscleWrapperAQ::SetMeterMode(int mode)
 //-------------------------------------------------------------------------
 {
 	wxBusyInfo wait2("muscle wrapperAQ setting mode");
-	Sleep(3000);
+	mafSleep(3000);
   GetMeterAttributes()->m_MeterMode = mode;
 }
 //-------------------------------------------------------------------------
@@ -894,7 +894,7 @@ int mafVMEMuscleWrapperAQ::GetMeterMode()
 {
 
 	wxBusyInfo wait2("muscle wrapperAQ getting metermode");
-	Sleep(3000);
+	mafSleep(3000);
   return GetMeterAttributes()->m_MeterMode;
 }
 //-------------------------------------------------------------------------
@@ -1024,7 +1024,7 @@ mafGUI* mafVMEMuscleWrapperAQ::CreateGui()
 {
 
 	wxBusyInfo wait2("muscle wrapperAQ creating gui...");
-	Sleep(3000);
+	mafSleep(3000);
   int num_mode = 3;
   const mafString mode_choices_string[] = {_L("point distance"), _L("line distance"), _L("line angle")};
   /*
@@ -1099,7 +1099,7 @@ mafGUI* mafVMEMuscleWrapperAQ::CreateGui()
 
 	m_Gui->Divider();
 	wxBusyInfo wait("muscle wrapperAQ creating gui done");
-	Sleep(3000);
+	mafSleep(3000);
   return m_Gui;
 }
 //-------------------------------------------------------------------------
@@ -1153,7 +1153,7 @@ void mafVMEMuscleWrapperAQ::OnEvent(mafEventBase *maf_event)
 //-------------------------------------------------------------------------
 {
 	wxBusyInfo wait2("muscle wrapperAQ on event..");
-	Sleep(3000);
+	mafSleep(3000);
   // events to be sent up or down in the tree are simply forwarded
   if (mafEvent *ev = mafEvent::SafeDownCast(maf_event))
   {
@@ -1294,7 +1294,7 @@ void mafVMEMuscleWrapperAQ::OnEvent(mafEventBase *maf_event)
 
 
   wxBusyInfo wait("muscle wrapperAQ on event done");
-  Sleep(3000);
+  mafSleep(3000);
 }
 //-------------------------------------------------------------------------
 void mafVMEMuscleWrapperAQ::SetMeterLink(const mafString& link_name, mafNode *n)

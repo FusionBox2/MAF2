@@ -367,7 +367,7 @@ mafVMEGroup *lhpOpImporterPressionCenter::ImportSingleFile(const mafString &full
 			}
 			std::string ss = std::to_string(tokens.at(0)) + " " + std::to_string(nbrline)+ " " + std::to_string(idx);
 				wxBusyInfo wait(ss.c_str());
-				Sleep(500);
+				mafSleep(500);
 			if (tokens.at(0) > time)
 			{
 				idx++;				

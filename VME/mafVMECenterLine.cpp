@@ -1996,7 +1996,7 @@ void mafVMECenterLine::InternalUpdate()
 			else
 			{
 				wxBusyInfo wai5tsds1ueefqqcu20("error2 size==0");
-				Sleep(1500);
+				mafSleep(1500);
 			}
 
 
@@ -2401,7 +2401,7 @@ void mafVMECenterLine::InternalUpdate()
 						{
 
 							wxBusyInfo wai5tsds1ueefqqcu20("error0 size==0");
-							Sleep(1500);
+							mafSleep(1500);
 						}
 					}//if (I_lft > 0)
 
@@ -2561,7 +2561,7 @@ void mafVMECenterLine::InternalUpdate()
 						else
 						{
 							wxBusyInfo wai5tsds1ueefqqcu20("error1 size==0");
-							Sleep(1500);
+							mafSleep(1500);
 
 						}
 

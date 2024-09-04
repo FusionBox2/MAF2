@@ -196,7 +196,7 @@ void mafOpCrop3DSurface::Crop()
 	mafVMEOutput *output = volume->GetOutput();
 
 	wxBusyInfo wait0(_("please wait, cropping..."));
-	Sleep(1500);
+	mafSleep(1500);
 	if (output->GetVTKData()->IsA("vtkRectilinearGrid"))
 	{
 		vtkRectilinearGrid *rgData = vtkRectilinearGrid::SafeDownCast(output->GetVTKData());
@@ -408,7 +408,7 @@ void mafOpCrop3DSurface::OpDo()
 //----------------------------------------------------------------------------
 {
 	wxBusyInfo wait0(_("please wait, do..."));
-	Sleep(1500);
+	mafSleep(1500);
 	if (m_OutputSP)
 	{
 
@@ -446,7 +446,7 @@ void mafOpCrop3DSurface::OpDo()
 
 	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 	wxBusyInfo wait(_("please wait, do end"));
-	Sleep(1500);
+	mafSleep(1500);
 }
 //----------------------------------------------------------------------------
 void mafOpCrop3DSurface::OpUndo()

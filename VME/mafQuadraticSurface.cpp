@@ -226,7 +226,7 @@ vector< Vector3d > mafQuadraticSurface::computeGeodesicPath(mafVMELandmark* mp0,
 		{
 			string s20 = "mstates out of bounds " + std::to_string(mstates1.at(i)[0]) + " " + std::to_string(mstates1.at(i)[1]) + " " + std::to_string(mstates1.at(i)[2]);
 			wxBusyInfo wait5(s20.c_str());
-			Sleep(250);
+			mafSleep(250);
 		}
 	}
 
@@ -249,7 +249,7 @@ vector< Vector3d > mafQuadraticSurface::computeGeodesicPath(mafVMELandmark* mp0,
             {
                 string s120 = "mstates10 size " + std::to_string(mstates10.at(i)[0]) + " " + std::to_string(mstates10.at(i)[1]) + " " + std::to_string(mstates10.at(i)[2]);
                 wxBusyInfo wait5(s120.c_str());
-                Sleep(1250);
+                mafSleep(1250);
 
             }
 
@@ -263,7 +263,7 @@ vector< Vector3d > mafQuadraticSurface::computeGeodesicPath(mafVMELandmark* mp0,
     {
         string s20 = "mstates out of bounds " + std::to_string(mstates10.at(i)[0]) + " " + std::to_string(mstates10.at(i)[1]) + " " + std::to_string(mstates10.at(i)[2]);
         wxBusyInfo wait5(s20.c_str());
-        Sleep(250);
+        mafSleep(250);
     }
 
 

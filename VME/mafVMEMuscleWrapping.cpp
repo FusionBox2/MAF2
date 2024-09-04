@@ -1514,7 +1514,7 @@ void mafVMEMuscleWrapping::InternalUpdate()
 				{
 
 					wxBusyInfo wait040("Error: At least one point is inside the quadric");
-					Sleep(1500);
+					mafSleep(1500);
 					globalLength = 0;
 
 					mafString ss = _R(" ");

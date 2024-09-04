@@ -798,7 +798,7 @@ void mafVMEGravityLine::InternalUpdate()
 				;
 				
 				wxBusyInfo wait12("vertices extraction problem");
-				Sleep(2500);
+				mafSleep(2500);
 				test = false;
 			}
 		
