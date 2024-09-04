@@ -83,7 +83,7 @@ vtkMTimeType vtkMAFDataPipe::GetMTime()
 void vtkMAFDataPipe::UpdateInformation()
 {
     if (m_DataPipe)
-        m_DataPipe->OnEvent(&mafEventBase(this, VME_OUTPUT_DATA_PREUPDATE));
+        {mafEventBase evUnq(this, VME_OUTPUT_DATA_PREUPDATE); m_DataPipe->OnEvent(&evUnq);}
     Superclass::UpdateInformation();
 }
 
@@ -102,7 +102,7 @@ int vtkMAFDataPipe::RequestDataObject(
 {
     // forward event to MAF data pipe
     if (m_DataPipe)
-        m_DataPipe->OnEvent(&mafEventBase(this, VME_OUTPUT_DATA_PREUPDATE));
+        {mafEventBase evUnq(this, VME_OUTPUT_DATA_PREUPDATE); m_DataPipe->OnEvent(&evUnq);}
     return Superclass::RequestDataObject(request, inputVector, outputVector);
 }
 
@@ -115,7 +115,7 @@ int vtkMAFDataPipe::RequestInformation(
 {
   // forward event to MAF data pipe
   if (m_DataPipe)
-    m_DataPipe->OnEvent(&mafEventBase(this,VME_OUTPUT_DATA_PREUPDATE));
+        {mafEventBase evUnq(this, VME_OUTPUT_DATA_PREUPDATE); m_DataPipe->OnEvent(&evUnq);}
   return this->Superclass::RequestInformation(request, inputVector, outputVector);
 }
 
@@ -136,12 +136,12 @@ int vtkMAFDataPipe::RequestData(
     }
         //get the info objects
     if (input && m_DataPipe->IsA("mafDataPipeCustom"))
-        m_DataPipe->OnEvent(&mafEventBase(this, VME_OUTPUT_DATA_UPDATE));
+        {mafEventBase evUnq(this, VME_OUTPUT_DATA_UPDATE); m_DataPipe->OnEvent(&evUnq);}
     //vtkDataObject* input = inInfo->Get(vtkDataObject::DATA_OBJECT());
     vtkDataObject* output = outInfo->Get(vtkDataObject::DATA_OBJECT());
     output->ShallowCopy(input);
     int res = Superclass::RequestData(request, inputVector, outputVector);
     if (input && !m_DataPipe->IsA("mafDataPipeCustom"))
-        m_DataPipe->OnEvent(&mafEventBase(this, VME_OUTPUT_DATA_UPDATE));
+        {mafEventBase evUnq(this, VME_OUTPUT_DATA_UPDATE); m_DataPipe->OnEvent(&evUnq);}
     return 1;
 }

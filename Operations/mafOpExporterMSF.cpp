@@ -76,7 +76,7 @@ void mafOpExporterMSF::OpRun()
       result = OP_RUN_OK;
     }
 	}
-	mafEventMacro(mafEvent(this,result));
+	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 bool mafOpExporterMSF::Accept(mafNode *vme)

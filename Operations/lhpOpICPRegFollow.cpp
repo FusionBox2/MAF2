@@ -162,7 +162,7 @@ void lhpOpICPRegFollow::OpStop(int result)
 //----------------------------------------------------------------------------
 {
 	HideGui();
-	mafEventMacro(mafEvent(this,result));       
+	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}       
 }
 //----------------------------------------------------------------------------
 void lhpOpICPRegFollow::OpDo()
@@ -234,7 +234,7 @@ void lhpOpICPRegFollow::OpDo()
 
   m_Registered->SetAbsMatrix(*mat);
   
-  mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 
   // modified by Stefano 7-11-2004 (beg)
   // registration error feedback to user

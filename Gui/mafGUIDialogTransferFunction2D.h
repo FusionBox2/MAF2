@@ -88,7 +88,7 @@ protected:
 
   void OnIdle(wxIdleEvent& event);
   void OnSize(wxSizeEvent& event) { this->ResizePreviewWindow(); event.Skip(); }
-  void OnCommand(wxCommandEvent &event) { this->OnEvent(&mafEvent(this, event.GetId())); }
+  void OnCommand(wxCommandEvent &event) { {mafEvent evUnq(this, event.GetId()); this->OnEvent(&evUnq);} }
   void OnMotion(wxMouseEvent &event) { m_StatusBar->SetStatusText("", 0); m_StatusBar->SetStatusText("", 1); }
   void SetWidget(const tfWidget &widget);
 

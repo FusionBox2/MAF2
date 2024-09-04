@@ -209,7 +209,7 @@ void lhpOpLMProj::OpRun()
     ShowGui();
   }
 
-  mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void lhpOpLMProj::OpDo()
@@ -236,7 +236,7 @@ void lhpOpLMProj::OpDo()
   }
   if(stmps.size() == 0)
   {
-    mafEventMacro(mafEvent(this, OP_RUN_CANCEL));
+    {mafEvent evUnq(this, OP_RUN_CANCEL); mafEventMacro(evUnq);}
     return;
   }
 
@@ -350,7 +350,7 @@ void lhpOpLMProj::OpDo()
   newcloud->Modified();
   newcloud->Update();
   //newcloud->Register(this);
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void lhpOpLMProj::OpUndo()
@@ -358,8 +358,8 @@ void lhpOpLMProj::OpUndo()
 {
   if (m_Output)
   {
-    mafEventMacro(mafEvent(this, VME_REMOVE, m_Output));
-    mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+    {mafEvent evUnq(this, VME_REMOVE, m_Output); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
   }
 }
 
@@ -368,7 +368,7 @@ void lhpOpLMProj::OpStop(int result)
 //----------------------------------------------------------------------------
 {
   HideGui();
-  mafEventMacro(mafEvent(this,result));
+  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 
 

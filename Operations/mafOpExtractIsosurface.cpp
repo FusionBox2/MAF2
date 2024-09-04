@@ -183,7 +183,7 @@ void mafOpExtractIsosurface::OpRun()
   }
   DeleteOpDialog();
 
-  mafEventMacro(mafEvent(this,result));
+  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -775,7 +775,7 @@ void mafOpExtractIsosurface::OnEvent(mafEventBase *maf_event)
         if (scalars && pid != -1)
         {
           scalars->GetTuple(pid,&m_IsoValue);
-          OnEvent(&mafEvent(this,ID_ISO));
+          {mafEvent evUnq(this,ID_ISO); OnEvent(&evUnq);}
         }
         else
         {

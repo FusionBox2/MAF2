@@ -103,7 +103,7 @@ void medOpImporterRawMotionData::OpRun()
 				result = OP_RUN_OK;
 				}
 	}
-	mafEventMacro(mafEvent(this,result));
+	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpImporterRawMotionData::OpDo()   
@@ -137,7 +137,7 @@ void medOpImporterRawMotionData::OpDo()
 
 	m_Vme->GetTagArray()->SetTag(tag_Nature); //m_Vme->GetTagArray()->AddTag(tag_Nature);
 
-	mafEventMacro(mafEvent(this,VME_ADD,m_Vme));
+	{mafEvent evUnq(this,VME_ADD,m_Vme); mafEventMacro(evUnq);}
 }
 /*
 //----------------------------------------------------------------------------
@@ -146,7 +146,7 @@ void medOpImporterRawMotionData::OpUndo()
 //----------------------------------------------------------------------------
 {
 	assert(m_Vme);
-	mafEventMacro(mafEvent(this,VME_REMOVE,m_Vme));
+	{mafEvent evUnq(this,VME_REMOVE,m_Vme); mafEventMacro(evUnq);}
 	//m_Vme->Delete(); remove vme from the tree will kill it - we have not referenced it
 	m_Vme = NULL;
 }

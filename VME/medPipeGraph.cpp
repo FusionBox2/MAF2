@@ -612,7 +612,7 @@ void medPipeGraph::OnEvent(mafEventBase *maf_event)
         m_PlotActor->RemoveAllDataSetInputConnections();
         UpdateGraph();
         CreateLegend();
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       }
       break;
     case ID_FIT_PLOT:
@@ -622,7 +622,7 @@ void medPipeGraph::OnEvent(mafEventBase *maf_event)
         m_PlotActor->RemoveAllDataSetInputConnections();
         UpdateGraph();
         CreateLegend();
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       }
       break;
     case ID_SIGNALS_COLOR:
@@ -634,7 +634,7 @@ void medPipeGraph::OnEvent(mafEventBase *maf_event)
         m_PlotActor->RemoveAllDataSetInputConnections();
         UpdateGraph();
         CreateLegend();
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       }
       break;
     case ID_DRAW:
@@ -642,7 +642,7 @@ void medPipeGraph::OnEvent(mafEventBase *maf_event)
         m_PlotActor->RemoveAllDataSetInputConnections();
         UpdateGraph();
         CreateLegend();
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       }
       break;
     case ID_LEGEND:
@@ -660,27 +660,27 @@ void medPipeGraph::OnEvent(mafEventBase *maf_event)
           } 
           break;
         }
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       }
       break;
     case ID_ITEM_NAME:
       {
         ChangeItemName();
         CreateLegend();
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       }
       break;
     case ID_AXIS_NAME_X:
         m_PlotActor->SetXTitle(m_TitileX.GetCStr());
         m_PlotTimeLineActor->SetXTitle(m_TitileX.GetCStr());
         ChangeAxisTitle();
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       break;
     case ID_AXIS_NAME_Y:
         m_PlotActor->SetYTitle(m_TitileY.GetCStr());
         m_PlotTimeLineActor->SetYTitle(m_TitileY.GetCStr());
         ChangeAxisTitle();
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       break;
     case ID_CHECK_BOX:
       {

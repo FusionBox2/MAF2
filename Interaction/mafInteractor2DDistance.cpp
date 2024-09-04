@@ -222,7 +222,7 @@ void mafInteractor2DDistance::OnLeftButtonDown(mafEventInteraction *e)
   double pos_2d[2];
   e->Get2DPosition(pos_2d);
   
-  mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
   if(m_EndMeasure)
   { 
     RemoveMeter();
@@ -748,7 +748,7 @@ void mafInteractor2DDistance::CalculateMeasure()
   if(m_MeasureType == DISTANCE_BETWEEN_POINTS)
   {
     m_Distance = sqrt(vtkMath::Distance2BetweenPoints(p1_1,p2_1));
-    mafEventMacro(mafEvent(this,ID_RESULT_MEASURE,m_Distance));
+    {mafEvent evUnq(this,ID_RESULT_MEASURE,m_Distance); mafEventMacro(evUnq);}
     return;
   }
 
@@ -757,7 +757,7 @@ void mafInteractor2DDistance::CalculateMeasure()
   if(m_MeasureType == DISTANCE_BETWEEN_LINES)
   {
     m_Distance = sqrt(vtkLine::DistanceToLine(p1_2,p1_1,p2_1));
-    mafEventMacro(mafEvent(this,ID_RESULT_MEASURE,m_Distance));
+    {mafEvent evUnq(this,ID_RESULT_MEASURE,m_Distance); mafEventMacro(evUnq);}
     return;
   }
 }
@@ -899,13 +899,13 @@ void mafInteractor2DDistance::UndoMeasure()
       GenerateHistogram(m_GenerateHistogram);
     if(m_Measure.size() == 0)
     {
-      mafEventMacro(mafEvent(this,ID_RESULT_MEASURE,0.0));
+      {mafEvent evUnq(this,ID_RESULT_MEASURE,0.0); mafEventMacro(evUnq);}
     }
     else
     {
-      mafEventMacro(mafEvent(this,m_FlagMeasureType[m_FlagMeasureType.size()-1],m_Measure[m_Measure.size()-1]));
+      {mafEvent evUnq(this,m_FlagMeasureType[m_FlagMeasureType.size()-1],m_Measure[m_Measure.size()-1]); mafEventMacro(evUnq);}
     }
-    mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+    {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
   }
 }
 //----------------------------------------------------------------------------

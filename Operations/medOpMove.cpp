@@ -213,7 +213,7 @@ void medOpMove::OnEvent(mafEventBase *maf_event)
   else if (maf_event->GetSender() == this->m_GuiSaveRestorePose) // from save/restore gui
   {
     OnEventGuiSaveRestorePose(maf_event); 
-		mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+		{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
     mafMatrix delta;
     GetDelta(delta);
     DecomposeMatrix(delta, m_TransfTranslation, m_TransfRotation, m_TransfScaling);
@@ -222,7 +222,7 @@ void medOpMove::OnEvent(mafEventBase *maf_event)
   else if (maf_event->GetSender() == this->m_GuiTransformTextEntries)
   {
     OnEventGuiTransformTextEntries(maf_event);
-		mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+		{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
     mafMatrix delta;
     GetDelta(delta);
     DecomposeMatrix(delta, m_TransfTranslation, m_TransfRotation, m_TransfScaling);
@@ -252,7 +252,7 @@ void medOpMove::OpUndo()
 //----------------------------------------------------------------------------
 {  
 	((mafVME *)m_Input)->SetAbsMatrix(m_OldAbsMatrix);
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE)); 
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);} 
 }
 //----------------------------------------------------------------------------
 void medOpMove::OpStop(int result)
@@ -271,13 +271,13 @@ void medOpMove::OpStop(int result)
 
     m_GuiTransformMouse->DetachInteractorFromVme();
 
-	  mafEventMacro(mafEvent(this,CAMERA_UPDATE)); 
+	  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);} 
 
     // HideGui seems not to work  with plugged guis :(; using it generate a SetFocusToChild
     // error when operation tab is selected after the operation has ended
-    mafEventMacro(mafEvent(this,OP_HIDE_GUI,(wxWindow *)m_Gui->GetParent()));
+    {mafEvent evUnq(this,OP_HIDE_GUI,(wxWindow *)m_Gui->GetParent()); mafEventMacro(evUnq);}
   }
-  mafEventMacro(mafEvent(this,result));  
+  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}  
 }
 
 //----------------------------------------------------------------------------
@@ -343,7 +343,7 @@ void medOpMove::OnEventThis(mafEventBase *maf_event)
       m_GuiTransformTextEntries->SetAbsPose(((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
 
       m_Gui->Update();
-      mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+      {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       break;
     }
 
@@ -382,7 +382,7 @@ void medOpMove::OnEventThis(mafEventBase *maf_event)
           m_GizmoRotate->Show(true && e.GetBool());
         }
       }
-      mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+      {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
     }
     break;
     
@@ -408,7 +408,7 @@ void medOpMove::OnEventThis(mafEventBase *maf_event)
         m_GizmoTranslate->Show(false);
         m_GizmoRotate->Show(false);
       }
-      mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+      {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
     }
     break;
 
@@ -762,7 +762,7 @@ void medOpMove::Reset()
   {
     m_GuiTransformTextEntries->Reset();
     SetRefSysVME(mafVME::SafeDownCast(m_Input)); 
-    mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+    {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
   }
 }
 

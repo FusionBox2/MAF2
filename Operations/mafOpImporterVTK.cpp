@@ -119,7 +119,7 @@ void mafOpImporterVTK::OpRun()
           mafErrorMessage(_M(mafString(_L("Unsupported file format"))));
     }
 	}
-	mafEventMacro(mafEvent(this,result));
+	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 int mafOpImporterVTK::ImportVTK()
@@ -154,7 +154,7 @@ int mafOpImporterVTK::ImportVTK()
     default:
       return MAF_ERROR;
   }
-  mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR,preader));
+  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,preader); mafEventMacro(evUnq);}
   preader->SetFileName(m_File.GetCStr());
   preader->Update();
   

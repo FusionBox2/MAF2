@@ -98,7 +98,7 @@ int mafVMEGeneric::SetData(vtkDataSet *data, mafTimeStamp t, int mode)
   Modified();
   if(m_EnableModifiedEvent)
   {
-    ForwardUpEvent(&mafEvent(this, VME_MODIFIED, this));
+    {mafEvent evUnq(this, VME_MODIFIED, this); ForwardUpEvent(&evUnq);}
   }
 
   return MAF_OK;

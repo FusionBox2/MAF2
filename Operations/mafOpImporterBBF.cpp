@@ -87,7 +87,7 @@ void mafOpImporterBBF::OpRun()
         mafErrorMessage(_M(mafString(_L("Unsupported file format"))));
     }
 	}
-	mafEventMacro(mafEvent(this,result));
+	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 int mafOpImporterBBF::ImportBBF()

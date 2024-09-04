@@ -245,7 +245,7 @@ void mafOpClipSurface::OnEventThis(mafEventBase *maf_event)
 			if(m_Arrow) 
 			{
 				m_Arrow->SetScaleFactor(-1 * m_Arrow->GetScaleFactor());
-				mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 			}
 			break;
 		case ID_CLIP_BY:
@@ -268,7 +268,7 @@ void mafOpClipSurface::OnEventThis(mafEventBase *maf_event)
 					m_PlaneSource->SetPoint2(-m_PlaneWidth/2, m_PlaneHeight/2, 0);
 					m_PlaneSource->SetOrigin(-m_PlaneWidth/2,-m_PlaneHeight/2, 0);
 					m_PlaneSource->Update();
-					mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+					{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 				}
 			}
 			break;
@@ -299,7 +299,7 @@ void mafOpClipSurface::OnEventThis(mafEventBase *maf_event)
 				else
 					OpStop(OP_RUN_OK);
 
-				mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+				{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 			}
 			break;
 		case wxCANCEL:
@@ -396,7 +396,7 @@ void mafOpClipSurface::OnEventGizmoScale(mafEventBase *maf_event)
 	{
 	case ID_TRANSFORM:
 		{ 
-			mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+			{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 		}
 		break;
 
@@ -430,7 +430,7 @@ void mafOpClipSurface::OnEventGizmoPlane(mafEventBase *maf_event)
 				m_ImplicitPlaneGizmo->SetAbsMatrix(newAbsMatr);
 				UpdateISARefSys();
 
-				mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 				currTr->Delete();
 			}
 			break;
@@ -498,7 +498,7 @@ void mafOpClipSurface::ChangeGizmo()
 		m_GizmoRotate->Show(false);
 		m_GizmoScale->Show(false);
 	}
-	mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpClipSurface::OpStop(int result)
@@ -522,7 +522,7 @@ void mafOpClipSurface::OpStop(int result)
 	cppDEL(m_GizmoScale);
 
   HideGui();
-  mafEventMacro(mafEvent(this,result));
+  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpClipSurface::OpDo()
@@ -549,7 +549,7 @@ void mafOpClipSurface::OpDo()
 
 		m_ClippedVME->ReparentTo(m_Input->GetParent());
 	}
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpClipSurface::OpUndo()
@@ -561,7 +561,7 @@ void mafOpClipSurface::OpUndo()
 		m_ClippedVME->ReparentTo(NULL);
 		mafDEL(m_ClippedVME);
 	}
-	mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 int mafOpClipSurface::Clip()
@@ -684,7 +684,7 @@ void mafOpClipSurface::PostMultiplyEventMatrix(mafEventBase *maf_event)
 			// update matrix for OpDo()
 			//m_NewAbsMatrix = absPose;
 		} 
-		mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+		{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 
 		// clean up
 		tr->Delete();
@@ -751,7 +751,7 @@ void mafOpClipSurface::ShowClipPlane(bool show)
 
       m_ImplicitPlaneGizmo->SetAbsMatrix(mat);
 
-      mafEventMacro(mafEvent(this,VME_SHOW,m_ImplicitPlaneGizmo,true));
+      {mafEvent evUnq(this,VME_SHOW,m_ImplicitPlaneGizmo,true); mafEventMacro(evUnq);}
     }
     mmaMaterial *material = m_ImplicitPlaneGizmo->GetMaterial();
     material->m_Prop->SetOpacity(0.5);
@@ -775,7 +775,7 @@ void mafOpClipSurface::ShowClipPlane(bool show)
     }
   }
 
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpClipSurface::AttachInteraction()

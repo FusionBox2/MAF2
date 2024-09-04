@@ -135,12 +135,12 @@ void lhpOpTimeShift::CreateGui()
   if (result == OP_RUN_CANCEL)
   {
     HideGui();
-    mafEventMacro(mafEvent(this,result));
+    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
   }
   else if (result == OP_RUN_OK)
   {
     HideGui();
-    mafEventMacro(mafEvent(this,result));
+    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
   }
 }*/
 //----------------------------------------------------------------------------

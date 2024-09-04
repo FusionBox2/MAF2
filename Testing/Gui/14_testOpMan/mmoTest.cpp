@@ -52,7 +52,7 @@ mafOp* mmoTest::Copy()
   return new mmoTest(m_Label);
 }
 //----------------------------------------------------------------------------
-void mmoTest::OpStop(int result) {	HideGui();mafEventMacro(mafEvent(this,result));}
+void mmoTest::OpStop(int result) {	HideGui();{mafEvent evUnq(this,result); mafEventMacro(evUnq);}}
 //----------------------------------------------------------------------------
 void mmoTest::OnEvent(mafEvent& e)
 //----------------------------------------------------------------------------

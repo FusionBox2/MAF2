@@ -162,7 +162,7 @@ void medOpExporterMeters::OpStop(int result)
 //----------------------------------------------------------------------------
 {
 	HideGui();
-	mafEventMacro(mafEvent(this,result));        
+	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}        
 }
 //----------------------------------------------------------------------------
 void medOpExporterMeters::OpDo()   
@@ -275,7 +275,7 @@ void medOpExporterMeters::ExportMeter()
   for(int j=0; j< m_Times.size(); j++)
   {
     m_CurrentTime = m_Times[j];
-    mafEventMacro(mafEvent(this, TIME_SET, m_CurrentTime, 0));
+    {mafEvent evUnq(this, TIME_SET, m_CurrentTime, 0); mafEventMacro(evUnq);}
 
     for(int i=0;i< m_Meters.size();i++)
     {

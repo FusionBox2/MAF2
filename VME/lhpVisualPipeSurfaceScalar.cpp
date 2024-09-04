@@ -204,5 +204,5 @@ void lhpVisualPipeSurfaceScalar::UpdateProperty(bool fromTag)
   m_Mapper->SetScalarRange(sr);*/
   m_Mapper->Update();
 
-  //mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  //{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }

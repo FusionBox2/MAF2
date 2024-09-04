@@ -139,7 +139,7 @@ unsigned long mafMatrixPipe::GetMTime()
 void mafMatrixPipe::InternalUpdate()
 //----------------------------------------------------------------------------
 {
-  if (m_VME) m_VME->OnEvent(&mafEventBase(this,VME_MATRIX_UPDATE));
+  if (m_VME) {mafEventBase evUnq(this,VME_MATRIX_UPDATE); m_VME->OnEvent(&evUnq);}
 }
 
 //----------------------------------------------------------------------------

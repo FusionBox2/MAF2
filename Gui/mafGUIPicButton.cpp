@@ -78,7 +78,7 @@ void mafGUIPicButton::SetEventId(long EventId)
 void mafGUIPicButton::Command(wxCommandEvent& event)
 //----------------------------------------------------------------------------
 {
-  mafEventMacro(mafEvent(this, m_Id));
+  {mafEvent evUnq(this, m_Id); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGUIPicButton::SetBitmap(const mafString& BitmapId, wxWindowID id )

@@ -234,7 +234,7 @@ void medVMEStent::OnEvent(mafEventBase *maf_event)
         //SetFixedParameterForSpecialStent();
         InternalUpdate();
         InvokeEvent(this, VME_OUTPUT_DATA_UPDATE);
-        ForwardUpEvent(&mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); ForwardUpEvent(&evUnq);}
         m_Gui->Update();
       }
       break;
@@ -246,7 +246,7 @@ void medVMEStent::OnEvent(mafEventBase *maf_event)
 
         InternalUpdate();
         InvokeEvent(this, VME_OUTPUT_DATA_UPDATE);
-        ForwardUpEvent(&mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); ForwardUpEvent(&evUnq);}
         m_Gui->Update();
       }
       break ;
@@ -258,7 +258,7 @@ void medVMEStent::OnEvent(mafEventBase *maf_event)
 
         InternalUpdate();
         InvokeEvent(this, VME_OUTPUT_DATA_UPDATE);
-        ForwardUpEvent(&mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); ForwardUpEvent(&evUnq);}
         m_Gui->Update();
       }	
       break;
@@ -295,7 +295,7 @@ void medVMEStent::Initialize()
 
   InternalUpdate();
   InvokeEvent(this, VME_OUTPUT_DATA_UPDATE);
-  ForwardUpEvent(&mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); ForwardUpEvent(&evUnq);}
   m_Gui->Update();
 }
 

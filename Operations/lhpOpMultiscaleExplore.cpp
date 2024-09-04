@@ -190,7 +190,7 @@ void lhpOpMultiscaleExplore::OpRun()
 
     DeleteOpDialog();
 
-    mafEventMacro(mafEvent(this,result));
+    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
   }
 }
 
@@ -202,7 +202,7 @@ void lhpOpMultiscaleExplore::OpRun()
 void lhpOpMultiscaleExplore::OpDo()
 //----------------------------------------------------------------------------
 {
-  mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 
 

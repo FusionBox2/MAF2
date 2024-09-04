@@ -234,7 +234,7 @@ void mafPipeLandmarkCloud::OnEvent(mafEventBase *maf_event)
           data->GetScalarRange(range);
           m_CloudMapper->SetScalarRange(range);
         }
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       }
       break;
       case ID_LABELS:
@@ -246,13 +246,13 @@ void mafPipeLandmarkCloud::OnEvent(mafEventBase *maf_event)
             else
               m_Caption->SetVisibility(0);
           }
-          mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+          {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
         }
       case ID_RENDERING_DISPLAY_LIST:
 #if VTK_MAJOR_VERSION <= 7
         m_CloudMapper->SetImmediateModeRendering(m_RenderingDisplayListFlag);
 #endif
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       break;
       default:
         mafEventMacro(*e);
@@ -284,14 +284,14 @@ void mafPipeLandmarkCloud::OnEvent(mafEventBase *maf_event)
       }*/
       CreateClosedCloudPipe(m_Cloud->GetOutput()->GetVTKOutputPort(), m_Cloud->GetRadius(), m_Cloud->GetSphereResolution());
     }
-    mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+    {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
   }
   else if (maf_event->GetId() == mafVMELandmarkCloud::CLOUD_RADIUS_MODIFIED)
   {
     if (m_SphereSource)
     {
       m_SphereSource->SetRadius(m_Cloud->GetRadius());
-      mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+      {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
     }
   }
   else if (maf_event->GetId() == mafVMELandmarkCloud::CLOUD_SPHERE_RES)
@@ -300,7 +300,7 @@ void mafPipeLandmarkCloud::OnEvent(mafEventBase *maf_event)
     {
       m_SphereSource->SetThetaResolution(m_Cloud->GetSphereResolution());
       m_SphereSource->SetPhiResolution(m_Cloud->GetSphereResolution());
-      mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+      {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
     }
   }
   

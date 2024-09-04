@@ -277,7 +277,7 @@ void medOpMML3::OpDo()  {}
 void medOpMML3::OpUndo() {}
 
 //----------------------------------------------------------------------------
-void medOpMML3::OpStop(int result) {	mafEventMacro(mafEvent(this,result));}
+void medOpMML3::OpStop(int result) {	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}}
 
 
 
@@ -807,7 +807,7 @@ void medOpMML3::CreateRegistrationDlg()
   m_Model->Update() ; // update because SetUpParameterViews intializes the transform splines
   SetUpContourWidget();
  
-  mafEventMacro(mafEvent(this, ID_REG_T_OPERATION));
+  {mafEvent evUnq(this, ID_REG_T_OPERATION); mafEventMacro(evUnq);}
   
   m_OpDlg->ShowModal();	
 }
@@ -1453,7 +1453,7 @@ void medOpMML3::OnRegistrationOK()
   RegisteredMusclesVME = mafVMEGroup::New();
   RegisteredMusclesVME->SetName("registered muscles");
   PatientSectionVME->AddChild(RegisteredMusclesVME);
-  mafEventMacro(mafEvent(this, VME_ADD, RegisteredMusclesVME));
+  {mafEvent evUnq(this, VME_ADD, RegisteredMusclesVME); mafEventMacro(evUnq);}
   }
 
   // is there a groupVME under the "registered muscles" groupVME with name identical to
@@ -1464,7 +1464,7 @@ void medOpMML3::OnRegistrationOK()
   OurMuscleVME = mafVMEGroup::New();
   OurMuscleVME->SetName(m_Surface_name);
   RegisteredMusclesVME->AddChild(OurMuscleVME);
-  mafEventMacro(mafEvent(this, VME_ADD, OurMuscleVME));
+  {mafEvent evUnq(this, VME_ADD, OurMuscleVME); mafEventMacro(evUnq);}
   }
 
   // no children?
@@ -1494,7 +1494,7 @@ void medOpMML3::OnRegistrationOK()
 
   // add to tree (save now)
   //OurMuscleVME->AddChild(vme);
-  mafEventMacro(mafEvent(this, VME_ADD, vme));
+  {mafEvent evUnq(this, VME_ADD, vme); mafEventMacro(evUnq);}
 }
 
 

@@ -1219,7 +1219,7 @@ void lhpOpSolidify::OpRun()
     ShowGui();
   }
 
-  mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void lhpOpSolidify::OpDo()
@@ -1228,8 +1228,8 @@ void lhpOpSolidify::OpDo()
   if (m_Output)
   {
     m_Output->ReparentTo(m_Input->GetParent());
-    //mafEventMacro(mafEvent(this, VME_ADD, m_Output));
-    mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+    //{mafEvent evUnq(this, VME_ADD, m_Output); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
   }
 }
 //----------------------------------------------------------------------------
@@ -1238,8 +1238,8 @@ void lhpOpSolidify::OpUndo()
 {
   if (m_Output)
   {
-    mafEventMacro(mafEvent(this, VME_REMOVE, m_Output));
-    mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+    {mafEvent evUnq(this, VME_REMOVE, m_Output); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
   }
 }
 
@@ -1250,7 +1250,7 @@ void lhpOpSolidify::OpStop(int result)
   HideGui();
   if (result == OP_RUN_CANCEL)
   {
-    mafEventMacro(mafEvent(this,result));
+    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
     return;
   }
 
@@ -1311,7 +1311,7 @@ void lhpOpSolidify::OpStop(int result)
   //newcloud->Register(this);
   m_Output = newcloud;
 
-  mafEventMacro(mafEvent(this,result));
+  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 
 

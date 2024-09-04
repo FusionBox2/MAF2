@@ -445,7 +445,7 @@ void medVisualPipeCollisionDetection::UpdatePipeline(bool force /* = false */)
     //output0->Update();
     m_Mapper->SetInputData(output0);
     m_Mapper->Update();
-    mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+    {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
   }
 }
 //----------------------------------------------------------------------------

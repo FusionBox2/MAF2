@@ -198,7 +198,7 @@ void mafPipeIsosurface::OnEvent(mafEventBase *maf_event)
 		  case ID_CONTOUR_VALUE:
 			{
 				SetContourValue((float)m_ContourValue);
-				m_Vme->ForwardUpEvent(&mafEvent(this,CAMERA_UPDATE));
+				{mafEvent evUnq(this,CAMERA_UPDATE); m_Vme->ForwardUpEvent(&evUnq);}
 				m_Gui->Update();
 			}
 			break;
@@ -211,7 +211,7 @@ void mafPipeIsosurface::OnEvent(mafEventBase *maf_event)
 			{
 				m_ContourMapper->SetAlpha(m_AlphaValue);
 				m_ContourMapper->Modified();
-				m_Vme->ForwardUpEvent(&mafEvent(this,CAMERA_UPDATE));
+				{mafEvent evUnq(this,CAMERA_UPDATE); m_Vme->ForwardUpEvent(&evUnq);}
 			}
 			break;
 		  default:
@@ -278,7 +278,7 @@ void mafPipeIsosurface::SetAlphaValue(double value)
 	m_AlphaValue=value;
 	m_ContourMapper->SetAlpha(m_AlphaValue);
 	m_ContourMapper->Modified();
-	m_Vme->ForwardUpEvent(&mafEvent(this,CAMERA_UPDATE));
+	{mafEvent evUnq(this,CAMERA_UPDATE); m_Vme->ForwardUpEvent(&evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafPipeIsosurface::SetActorVisibility(int visibility)

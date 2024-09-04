@@ -1468,7 +1468,7 @@ bool lhpOpRegistration::RegistrationProcedure()
 {
   mafNode *inputCopy = m_Input->CopyTree();
   inputCopy->Register(this);
-  //mafEventMacro(mafEvent(this, VME_ADD, inputCopy));
+  //{mafEvent evUnq(this, VME_ADD, inputCopy); mafEventMacro(evUnq);}
   mafVMELandmarkCloud *src = mafVMELandmarkCloud::SafeDownCast(inputCopy);
   mafVMELandmarkCloud *trg = mafVMELandmarkCloud::SafeDownCast(m_RegTarget);
   if(!src || !trg)
@@ -1653,7 +1653,7 @@ void lhpOpRegistration::OpStop(int result)
   if (result == OP_RUN_CANCEL)
   {
     HideGui();
-    mafEventMacro(mafEvent(this,result));
+    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
     return;
   }
   if(m_RegTarget == NULL)
@@ -1665,11 +1665,11 @@ void lhpOpRegistration::OpStop(int result)
   wxBusyInfo wait(_("Please wait, working..."));
   if(RegistrationProcedure())
   {
-    mafEventMacro(mafEvent(this,result));
+    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
   }
   else
   {
-    mafEventMacro(mafEvent(this,OP_RUN_CANCEL));
+    {mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);}
   }
 }
 
@@ -1758,11 +1758,11 @@ void lhpOpRegistration::OnEvent(mafEventBase *maf_event)
 void lhpOpRegistration::OpDo()
 //----------------------------------------------------------------------------
 {
-  mafEventMacro(mafEvent(this, VME_ADD, m_Result));
+  {mafEvent evUnq(this, VME_ADD, m_Result); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void lhpOpRegistration::OpUndo()
 //----------------------------------------------------------------------------
 {
-  mafEventMacro(mafEvent(this, VME_REMOVE, m_Result));
+  {mafEvent evUnq(this, VME_REMOVE, m_Result); mafEventMacro(evUnq);}
 }

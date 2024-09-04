@@ -227,7 +227,7 @@ void mafGUICheckListBox::OnCheck(wxCommandEvent &event)
   bool checked = m_CheckListBox->IsChecked(index);
 
   m_CheckEvent = true;
-  mafEventMacro(mafEvent(this, widget_id, checked, item_id ) );
+  {mafEvent evUnq(this, widget_id, checked, item_id); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGUICheckListBox::OnSize(wxSizeEvent& event)
@@ -247,7 +247,7 @@ void mafGUICheckListBox::OnSelect(wxCommandEvent &event)
 	m_SelectedItem = item_id;
 
   m_CheckEvent = false;
-  mafEventMacro(mafEvent(this, widget_id, (intptr_t)item_id ));
+  {mafEvent evUnq(this, widget_id, (intptr_t)item_id ); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGUICheckListBox::HighlightItem(int index, int rgbText[3], int rgbBack[3])

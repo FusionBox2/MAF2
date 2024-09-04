@@ -180,7 +180,7 @@ void mafOpCrop3DSurface::OpRun()
 	if(!m_TestMode)
 	{
 		CreateGui();
-		mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+		{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 	}
 }
 //----------------------------------------------------------------------------
@@ -440,11 +440,11 @@ void mafOpCrop3DSurface::OpDo()
 	
 	
     // bug# 2628: gizmos do not update after cropping (workaround code)
-//	mafEventMacro(mafEvent(this,VME_SHOW,m_Input,false));
-//	mafEventMacro(mafEvent(this,VME_SHOW,m_Input,true));
+//	{mafEvent evUnq(this,VME_SHOW,m_Input,false); mafEventMacro(evUnq);}
+//	{mafEvent evUnq(this,VME_SHOW,m_Input,true); mafEventMacro(evUnq);}
 	///////
 
-	mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 	wxBusyInfo wait(_("please wait, do end"));
 	Sleep(1500);
 }
@@ -474,11 +474,11 @@ void mafOpCrop3DSurface::OpUndo()
 	
 
 	// bug# 2628: gizmos do not update after cropping (workaround code)
-	mafEventMacro(mafEvent(this,VME_SHOW,m_Input,false));
-	mafEventMacro(mafEvent(this,VME_SHOW,m_Input,true));
+	{mafEvent evUnq(this,VME_SHOW,m_Input,false); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW,m_Input,true); mafEventMacro(evUnq);}
 	///////
 
-	mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpCrop3DSurface::UpdateGui()
@@ -576,13 +576,13 @@ void mafOpCrop3DSurface::OnEvent(mafEventBase *maf_event)
 			case ID_SHOW_HANDLES:
 			{
 				m_GizmoROI->ShowHandles(m_ShowHandles != 0);
-				mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 			}
 			break;
 			case ID_SHOW_ROI:      
 			{
 				m_GizmoROI->ShowROI(m_ShowROI != 0);
-				mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 			}
 			break;
 			case ID_CROP_DIR_X:
@@ -591,7 +591,7 @@ void mafOpCrop3DSurface::OnEvent(mafEventBase *maf_event)
 				bb[1] = m_XminXmax[1];
 				m_Gui->Update();
 				m_GizmoROI->SetBounds(bb);
-				mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 			break;
 			case ID_CROP_DIR_Y:
 				m_GizmoROI->GetBounds(bb);
@@ -599,7 +599,7 @@ void mafOpCrop3DSurface::OnEvent(mafEventBase *maf_event)
 				bb[3] = m_YminYmax[1];
 				m_Gui->Update();
 				m_GizmoROI->SetBounds(bb);
-				mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 			break;
 			case ID_CROP_DIR_Z:
 				m_GizmoROI->GetBounds(bb);
@@ -607,12 +607,12 @@ void mafOpCrop3DSurface::OnEvent(mafEventBase *maf_event)
 				bb[5] = m_ZminZmax[1];
 				m_Gui->Update();
 				m_GizmoROI->SetBounds(bb);
-				mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 			break;
 			case ID_RESET_CROPPING_AREA:
 				m_GizmoROI->Reset();
 				UpdateGui();
-				mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 			break;    
 			case wxOK:
 				Crop();
@@ -640,7 +640,7 @@ void mafOpCrop3DSurface::OpStop(int result)
 
 	cppDEL(m_GizmoROI);
 	m_GizmoROI = NULL;
-  mafEventMacro(mafEvent(this,result));  
+  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}  
 }
 //----------------------------------------------------------------------------
 void mafOpCrop3DSurface::SetCroppingBoxBounds(double bounds[])

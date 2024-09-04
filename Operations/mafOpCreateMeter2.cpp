@@ -70,7 +70,7 @@ void mafOpCreateMeter2::OpRun()
   mafNEW(m_Meter);
   m_Meter->SetName(_R("meter"));
   m_Output = m_Meter;
-  mafEventMacro(mafEvent(this,OP_RUN_OK));
+  {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpCreateMeter2::OpDo()

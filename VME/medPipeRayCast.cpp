@@ -256,7 +256,7 @@ void medPipeRayCast::OnEvent(mafEventBase *maf_event)
 			{
         //Update functions
 				SetRayCastFunctions();
-        m_Vme->ForwardUpEvent(&mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); m_Vme->ForwardUpEvent(&evUnq);}
 				m_Gui->Update();
 			}
 		break;
@@ -268,13 +268,13 @@ void medPipeRayCast::OnEvent(mafEventBase *maf_event)
 
         //Update functions
         SetRayCastFunctions();
-        m_Vme->ForwardUpEvent(&mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); m_Vme->ForwardUpEvent(&evUnq);}
       }
     break;
     case ID_CHANGE_MODALITY:
       {
         OnChangeModality();
-        m_Vme->ForwardUpEvent(&mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); m_Vme->ForwardUpEvent(&evUnq);}
       }
     break;
   	default:

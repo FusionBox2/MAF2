@@ -235,7 +235,7 @@ void medOpEqualizeHistogramTest::TestOpExecute()
   m_OpEqualizeHistogram->TestModeOn();
   m_OpEqualizeHistogram->SetInput(inputVolume);
   m_OpEqualizeHistogram->ExecuteOpRun();
-  //mafEventMacro(mafEvent(this, wxOK));
+  //{mafEvent evUnq(this, wxOK); mafEventMacro(evUnq);}
   m_OpEqualizeHistogram->ExecuteAlgorithm();
   m_OpEqualizeHistogram->OpDo();
   mafVMEVolumeGray *volumeOperationOutput = NULL;

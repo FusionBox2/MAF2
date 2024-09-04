@@ -182,7 +182,7 @@ void mafGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
         } 
         if(pipe_created && mutex) 
           m_ViewActive->VmeDeletePipe(vme);
-        mafEventMacro(mafEvent(this, VME_SHOW, vme, false));
+        {mafEvent evUnq(this, VME_SHOW, vme, false); mafEventMacro(evUnq);}
 			}
 		}
 		break;
@@ -223,7 +223,7 @@ void mafGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
 		case CONTEXTUAL_MENU_TRANSFORM:
 		{
 			mafString s = _R("Transform  \tCtrl+T");
-			mafEventMacro(mafEvent(this, PARSE_STRING, &s));
+			{mafEvent evUnq(this, PARSE_STRING, &s); mafEventMacro(evUnq);}
 		}
 		break;
 		case CONTEXTUAL_MENU_MAXIMIZE_CHILD_VIEW:
@@ -256,7 +256,7 @@ void mafGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
       bool ext = !this->FindItem(CONTEXTUAL_MENU_EXTERNAL_INTERNAL_VIEW)->IsChecked();
       m_ViewActive->ViewExternal(ext);
       //m_ViewActive->HideGui();
-      mafEventMacro(mafEvent(this,VIEW_CREATED,m_ViewActive));
+      {mafEvent evUnq(this,VIEW_CREATED,m_ViewActive); mafEventMacro(evUnq);}
       m_ChildViewActive->Destroy();
       m_ViewActive->m_frame->Show(TRUE);
       //m_ViewActive->ShowGui();
@@ -264,10 +264,10 @@ void mafGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
     }
     break;*/
 		case CONTEXTUAL_MENU_SAVE_AS_IMAGE:
-			mafEventMacro(mafEvent(this, VIEW_SAVE_IMAGE,false));
+			{mafEvent evUnq(this, VIEW_SAVE_IMAGE,false); mafEventMacro(evUnq);}
 		break;
     case CONTEXTUAL_MENU_SAVE_ALL_AS_IMAGE:
-			mafEventMacro(mafEvent(this, VIEW_SAVE_IMAGE,true));
+			{mafEvent evUnq(this, VIEW_SAVE_IMAGE,true); mafEventMacro(evUnq);}
 		break;
     case CONTEXTUAL_MENU_EXPORT_AS_VRML:
     {
@@ -300,5 +300,5 @@ void mafGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
 		}
 		break;
 	}
-	mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 }

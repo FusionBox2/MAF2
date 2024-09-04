@@ -440,8 +440,8 @@ void mafBrickedFileReader::GetBricksExtent(int VOI[6], int inBExt[6], int bndBEx
 	for (xyzb[2] = bndBExt[4]; xyzb[2] <= bndBExt[5]; xyzb[2]++, nBrickLineZ += m_NBricksDim[1], 
 		nLRIdxZ += m_NBricksDimSize[1]*m_NVoxelSizeInB)
 	{
-		mafEventMacro(mafEvent(this, PROGRESSBAR_SET_VALUE, (intptr_t)(
-			100*(xyzb[2] - bndBExt[4]) / (bndBExt[5] - bndBExt[4] + 1))));
+		{mafEvent evUnq(this, PROGRESSBAR_SET_VALUE, (intptr_t)(
+			100*(xyzb[2] - bndBExt[4]) / (bndBExt[5] - bndBExt[4] + 1))); mafEventMacro(evUnq);}
 
 		//planes from bndBExt[4] to inBExt[4] (exclusively)
 		//and planes from inBExt[5] (exclusively) to bndExt[5]
@@ -574,11 +574,11 @@ void mafBrickedFileReader::GetBricksExtent(int VOI[6], int inBExt[6], int bndBEx
 		return true; //no change
 	}
 
-	mafEventMacro(mafEvent(this, PROGRESSBAR_SHOW, this));
+	{mafEvent evUnq(this, PROGRESSBAR_SHOW, this); mafEventMacro(evUnq);}
 
 	mafString szMsg = _L("Retrieving data ...");
-	mafEventMacro(mafEvent(this, PROGRESSBAR_SET_TEXT, &szMsg));
-	mafEventMacro(mafEvent(this, PROGRESSBAR_SET_VALUE, (intptr_t)0));
+	{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT, &szMsg); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this, PROGRESSBAR_SET_VALUE, (intptr_t)0); mafEventMacro(evUnq);}
 
 	try
 	{
@@ -609,7 +609,7 @@ void mafBrickedFileReader::GetBricksExtent(int VOI[6], int inBExt[6], int bndBEx
 		return false;
 	}
 
-	mafEventMacro(mafEvent(this, PROGRESSBAR_HIDE, this));
+	{mafEvent evUnq(this, PROGRESSBAR_HIDE, this); mafEventMacro(evUnq);}
 
 	m_LastUpdateTime.Modified();
 	return true;

@@ -77,7 +77,7 @@ void  lhpOpMTRImporter::OpRun()
     ImportData();
   }
 
-  mafEventMacro(mafEvent(this,result));
+  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -145,8 +145,8 @@ void  lhpOpMTRImporter::ImportData()
       break;
     }
 
-    mafEventMacro(mafEvent(this, VME_ADD, grp));
-    mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+    {mafEvent evUnq(this, VME_ADD, grp); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
   }
 }
 
@@ -159,10 +159,10 @@ void lhpOpMTRImporter::OpDo()
     if (m_Groups[i])
     {
       m_Groups[i]->ReparentTo(m_Input);
-      mafEventMacro(mafEvent(this, VME_ADD, m_Groups[i]));
+      {mafEvent evUnq(this, VME_ADD, m_Groups[i]); mafEventMacro(evUnq);}
     }
   }
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -173,8 +173,8 @@ void lhpOpMTRImporter::OpUndo()
   {
     if (m_Groups[i])
     {
-      mafEventMacro(mafEvent(this, VME_REMOVE, m_Groups[i]));
+      {mafEvent evUnq(this, VME_REMOVE, m_Groups[i]); mafEventMacro(evUnq);}
     }
   }
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }

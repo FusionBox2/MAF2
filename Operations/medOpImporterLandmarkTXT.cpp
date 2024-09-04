@@ -116,7 +116,7 @@ void medOpImporterLandmarkTXT::OpRun()
 	}
   else
   {
-    mafEventMacro(mafEvent(this,result));
+    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
   }
 }
 //----------------------------------------------------------------------------

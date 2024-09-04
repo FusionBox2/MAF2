@@ -236,7 +236,7 @@ void mafOpExporterVRML::ExportVRML()
 	/**/
 	/**/
 	vtkNew<vtkVRMLExporter> writer;
-	//mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR,writer));
+	//{mafEvent evUnq(this,BIND_TO_PROGRESSBAR,writer); mafEventMacro(evUnq);}
 	writer->SetFileName(m_File.GetCStr());
 	/*if(this->m_ABSMatrixFlag)
 		writer->SetInput(v_tpdf->GetOutput());
@@ -312,5 +312,5 @@ void mafOpExporterVRML::OpStop(int result)
 //----------------------------------------------------------------------------
 {
 	HideGui();
-	mafEventMacro(mafEvent(this, result));
+	{mafEvent evUnq(this, result); mafEventMacro(evUnq);}
 }

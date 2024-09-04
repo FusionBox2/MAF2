@@ -199,8 +199,8 @@ void mafGUICheckTree::OnIconClick(wxTreeItemId item)
     {
       return;
     }
-    mafEventMacro(mafEvent(this, VME_SHOW, vme, show));
-    mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+    {mafEvent evUnq(this, VME_SHOW, vme, show); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
   }
 }
 //----------------------------------------------------------------------------
@@ -462,6 +462,6 @@ void mafGUICheckTree::OnSelectionChanged(wxTreeEvent& event)
 
   i = event.GetItem();
   if(i.IsOk())
-    mafEventMacro(mafEvent(this, VME_SELECT, NodeFromItem(i)));
+    {mafEvent evUnq(this, VME_SELECT, NodeFromItem(i)); mafEventMacro(evUnq);}
   event.Skip();
 }

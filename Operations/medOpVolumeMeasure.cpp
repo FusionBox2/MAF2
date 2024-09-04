@@ -195,7 +195,7 @@ void medOpVolumeMeasure::OnEvent(mafEventBase *maf_event)
       if(root->GetTagArray()->FindTag("VOLUME_MEASURE") != -1)
         root->GetTagArray()->DeleteTag("VOLUME_MEASURE");
       root->GetTagArray()->AddTag(measure_item);
-      mafEventMacro(mafEvent(this,VME_MODIFIED,root));
+      {mafEvent evUnq(this,VME_MODIFIED,root); mafEventMacro(evUnq);}
     }
     break;*/
     case ID_CLOSE_OP:
@@ -224,7 +224,7 @@ void medOpVolumeMeasure::OpStop(int result)
     if(root->GetTagArray()->GetTag(_R("VOLUME_MEASURE")))
       root->GetTagArray()->DeleteTag(_R("VOLUME_MEASURE"));
     root->GetTagArray()->SetTag(measure_item);
-    mafEventMacro(mafEvent(this,VME_MODIFIED,root));
+    {mafEvent evUnq(this,VME_MODIFIED,root); mafEventMacro(evUnq);}
   }
 
     vtkDEL(m_TriangleFilter);
@@ -233,7 +233,7 @@ void medOpVolumeMeasure::OpStop(int result)
     {
       HideGui();
     }
-	  mafEventMacro(mafEvent(this,result));
+	  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------

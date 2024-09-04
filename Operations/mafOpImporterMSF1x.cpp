@@ -84,7 +84,7 @@ void mafOpImporterMSF1x::OpRun()
     ImportMSF();
 	  result = OP_RUN_OK;
 	}
-	mafEventMacro(mafEvent(this,result));
+	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpImporterMSF1x::ImportMSF()
@@ -98,7 +98,7 @@ void mafOpImporterMSF1x::ImportMSF()
   storage->SetManager(&manager);
   storage->SetURL(m_File);
   
-  //mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR,preader));
+  //{mafEvent evUnq(this,BIND_TO_PROGRESSBAR,preader); mafEventMacro(evUnq);}
 
   success = (storage->Restore() == MAF_OK);
 

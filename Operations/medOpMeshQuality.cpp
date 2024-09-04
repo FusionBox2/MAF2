@@ -116,7 +116,7 @@ void medOpMeshQuality::OpRun()
 	}
 	DeleteOpDialog();
 
-	mafEventMacro(mafEvent(this,result));
+	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpMeshQuality::OnEvent(mafEventBase *maf_event)
@@ -144,7 +144,7 @@ void medOpMeshQuality::OnEvent(mafEventBase *maf_event)
 void medOpMeshQuality::OpStop(int result)
 //----------------------------------------------------------------------------
 {
-	mafEventMacro(mafEvent(this,result));        
+	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}        
 }
 //----------------------------------------------------------------------------
 void medOpMeshQuality::DeleteOpDialog()

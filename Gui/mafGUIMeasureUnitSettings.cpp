@@ -110,7 +110,7 @@ void mafGUIMeasureUnitSettings::OnEvent(mafEventBase *maf_event)
   m_Config->Write("DataUnitName",m_DataUnitName.toWx());
   m_Config->Write("ScaleFactor",m_ScaleFactor);
   m_Config->Flush();
-  mafEventMacro(mafEvent(this,MEASURE_UNIT_UPDATED));
+  {mafEvent evUnq(this,MEASURE_UNIT_UPDATED); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGUIMeasureUnitSettings::InitializeSettings()

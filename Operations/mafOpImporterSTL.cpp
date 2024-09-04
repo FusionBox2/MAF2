@@ -98,7 +98,7 @@ void mafOpImporterSTL::OpRun()
     ImportSTL();
 	}
 
-	mafEventMacro(mafEvent(this,result));
+	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpImporterSTL::CheckSwap(const char *file_name, int &swapFlag)
@@ -160,7 +160,7 @@ void mafOpImporterSTL::OpDo()
       m_ImportedSTLs[i]->ReparentTo(m_Input);
     }
   }
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -174,7 +174,7 @@ void mafOpImporterSTL::OpUndo()
       m_ImportedSTLs[i]->ReparentTo(NULL);
     }
   }
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -249,7 +249,7 @@ void mafOpImporterSTL::ImportSTL()
 	  }
 
     vtkNew<vtkSTLReader> reader;
-	  mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR,reader));
+	  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,reader); mafEventMacro(evUnq);}
     reader->SetFileName(fn.GetCStr());
 	  reader->Update();
 

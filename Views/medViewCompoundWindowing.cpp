@@ -99,7 +99,7 @@ void medViewCompoundWindowing::OnEvent(mafEventBase *maf_event)
 					double low, hi;
 					m_LutSlider->GetSubRange(&low,&hi);
 					m_ColorLUT->SetTableRange(low,hi);
-					mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+					{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 				}
 			}
 			break;
@@ -127,7 +127,7 @@ void medViewCompoundWindowing::VmeShow(mafNode *node, bool show)
     UpdateWindowing( show && this->ActivateWindowing(node), node);
   }
 
-	mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medViewCompoundWindowing::EnableWidgets(bool enable)

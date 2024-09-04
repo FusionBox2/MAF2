@@ -101,7 +101,7 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
 
             m_StorageData->m_MSFDir = dirName;
 					  this->OnFileSaveAs();
-					  this->OnEvent((mafEventBase*)&mafEvent(this,CAMERA_UPDATE));
+					  {mafEvent evUnq(this,CAMERA_UPDATE); this->OnEvent((mafEventBase*)&evUnq);}
 					  msfFilename = m_StorageData->m_MSFFile;
 				  }
 
@@ -200,7 +200,7 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
 					  wxSetWorkingDirectory(oldWD);
 				  }
 
-				  OnEvent(&mafEvent(this,WIZARD_RUN_CONTINUE,true));
+				  {mafEvent evUnq(this,WIZARD_RUN_CONTINUE,true); OnEvent(&evUnq);}
 			  }
 		break;
      case MENU_WIZARD:

@@ -93,7 +93,7 @@ void lhpPipeIntGraphAbstract::OnEvent(mafEventBase *maf_event)
         if(m_WholeRange)
         {
           GrabData();
-          mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+          {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
         }
       }
       break;
@@ -118,14 +118,14 @@ void lhpPipeIntGraphAbstract::SetForcedWholeRange(int forced)
   if(m_ForcedWholeRange)
   {
     GrabData();
-    mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+    {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
   }
 }
 
 void lhpPipeIntGraphAbstract::SetSmoothParam(double param)
 {
   m_Graph->SetSmoothParam(param);
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -158,8 +158,8 @@ std::istream& lhpPipeIntGraphAbstract::operator>>(std::istream& is)
     setID[1] = mafGraphDescType(nValue % GDT_LAST);
     {
       m_LoadMode = true;
-      mafEventMacro(mafEvent(this, VME_SHOW, vme, true));
-      mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+      {mafEvent evUnq(this, VME_SHOW, vme, true); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 
       if(nValue >  GDT_LAST)
       {
@@ -246,7 +246,7 @@ std::ostream& lhpPipeIntGraphAbstract::operator<<(std::ostream& os) const
   pTag = new mafTagItem(mafINTG_SAVEINFO_TAG, pEntries, nNumComp);
   m_ModifyMode = true;
   vme->GetTagArray()->SetTag(*pTag);
-  mafEventMacro(mafEvent(this,VME_MODIFIED,vme));
+  {mafEvent evUnq(this,VME_MODIFIED,vme); mafEventMacro(evUnq);}
   m_ModifyMode = false;
   cppDEL(pTag);
   for(nI = nNumComp - 1; nI >= 0; nI--)

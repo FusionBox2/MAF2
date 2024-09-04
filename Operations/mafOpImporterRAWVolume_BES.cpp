@@ -313,13 +313,13 @@ void mafOpImporterRAWVolume_BES::OpRun()
 	cppDEL(m_Dialog);
 
 	//finish the Run +++++++++++++++++++++++++++++++++
-	mafEventMacro(mafEvent(this,res));
+	{mafEvent evUnq(this,res); mafEventMacro(evUnq);}
 
 #ifdef VME_VOLUME_LARGE
 if (res == OP_RUN_OK && (IsVolumeLarge()/* || IsFileLarge()*/))
 	{
 		//save the VME data, it should not prompt for saving
-		mafEventMacro( mafEvent(this, MENU_FILE_SAVE));
+		{mafEvent evUnq(this, MENU_FILE_SAVE); mafEventMacro(evUnq);}
 	}
 #endif // VME_VOLUME_LARGE
 }
@@ -633,11 +633,11 @@ bool mafOpImporterRAWVolume_BES::Import()
 //----------------------------------------------------------------------------
 {
 	if(!this->m_TestMode) {
-		mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));			
-		mafEventMacro(mafEvent(this, PROGRESSBAR_SET_VALUE, (intptr_t)0));
+		{mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}			
+		{mafEvent evUnq(this, PROGRESSBAR_SET_VALUE, (intptr_t)0); mafEventMacro(evUnq);}
 
 		mafString szText = _L("Importing RAW data ...");
-		mafEventMacro(mafEvent(this, PROGRESSBAR_SET_TEXT, &szText));
+		{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT, &szText); mafEventMacro(evUnq);}
 	}
 
   vtkNew<vtkDoubleArray> ZDoubleArray;	//Ref(ZDoubleArray) = 1
@@ -776,7 +776,7 @@ bool mafOpImporterRAWVolume_BES::Import()
 		  vtkNew< vtkImageReader > reader;
 		
 		  if (!m_TestMode) {
-			  mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR, reader));
+			  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR, reader); mafEventMacro(evUnq);}
 		  }
 
 		  img = (vtkImageData*)ImportT< vtkImageReader >(reader);
@@ -873,7 +873,7 @@ bool mafOpImporterRAWVolume_BES::Import()
 	m_Output->GetTagArray()->SetTag(tag_Nature);
 
 	if(!m_TestMode) {
-		mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+		{mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
 	}
 
 	return true;

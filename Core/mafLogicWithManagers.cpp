@@ -1317,7 +1317,7 @@ bool mafLogicWithManagers::OnFileClose(bool force)
     return true;
   if(!force && !AskConfirmAndSave())
     return false;
-  OnEvent(&mafEvent(this,CLEAR_UNDO_STACK)); // ask logic to clear the undo stack
+  {mafEvent evUnq(this,CLEAR_UNDO_STACK); OnEvent(&evUnq);} // ask logic to clear the undo stack
   if(m_Storage && !m_Storage->m_TmpDir.empty())
   {
     mafRemoveDirectory(m_Storage->m_TmpDir); // remove the temporary directory

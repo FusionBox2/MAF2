@@ -319,8 +319,8 @@ void lhpOpLnSurf::OpDo()
 
     m_Muscles->ReparentTo(m_Input);
     m_Tendons->ReparentTo(m_Input);
-    //mafEventMacro(mafEvent(this,VME_ADD,m_Muscles));
-    //mafEventMacro(mafEvent(this,VME_ADD,m_Tendons));
+    //{mafEvent evUnq(this,VME_ADD,m_Muscles); mafEventMacro(evUnq);}
+    //{mafEvent evUnq(this,VME_ADD,m_Tendons); mafEventMacro(evUnq);}
   }
   if((3 - m_generateLinesSurfaces) & 2)
   {
@@ -339,7 +339,7 @@ void lhpOpLnSurf::OpDo()
     m_Surface->GetTagArray()->SetTag(tag_Nature);
 
     m_Surface->ReparentTo(m_Input);
-    //mafEventMacro(mafEvent(this,VME_ADD,m_Surface));
+    //{mafEvent evUnq(this,VME_ADD,m_Surface); mafEventMacro(evUnq);}
   }
   musc->Delete();
   tend->Delete();
@@ -353,7 +353,7 @@ void lhpOpLnSurf::OpDo()
 void lhpOpLnSurf::OpUndo()
 //----------------------------------------------------------------------------
 {
-  mafEventMacro(mafEvent(this,VME_REMOVE,m_Surface));
-  mafEventMacro(mafEvent(this,VME_REMOVE,m_Muscles));
-  mafEventMacro(mafEvent(this,VME_REMOVE,m_Tendons));
+  {mafEvent evUnq(this,VME_REMOVE,m_Surface); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_REMOVE,m_Muscles); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_REMOVE,m_Tendons); mafEventMacro(evUnq);}
 }

@@ -266,14 +266,14 @@ void mafAgent::InternalProcessVTKEvents(vtkObject* sender, unsigned long eventid
 //------------------------------------------------------------------------------
 {
   mafAgent* self = reinterpret_cast<mafAgent *>( clientdata );
-  self->OnEvent(&mafEventBase(sender,eventid,clientdata,MCH_VTK));
+  {mafEventBase evUnq(sender,eventid,clientdata,MCH_VTK); self->OnEvent(&evUnq);}
 }
 
 //------------------------------------------------------------------------------
 void mafAgent::InvokeEvent(int id, mafID channel,void *data)
 //------------------------------------------------------------------------------
 {
-  this->InvokeEvent(&mafEventBase(this,id,data,channel),channel);
+  {mafEventBase evUnq(this,id,data,channel); this->InvokeEvent(&evUnq,channel);}
 }
 
 //------------------------------------------------------------------------------

@@ -293,10 +293,10 @@ void mafOpManager::OpRun(mafOp *op, void *op_param)
       	ti->SetValue(_R("SYNTHETIC"));
       else
         synthetic_vme->GetTagArray()->SetTag(mafTagItem(_R("VME_NATURE"), _R("SYNTHETIC")));
-      mafEventMacro(mafEvent(this,VME_SHOW,m_Selected,false));
+      {mafEvent evUnq(this,VME_SHOW,m_Selected,false); mafEventMacro(evUnq);}
       m_NaturalNode = m_Selected;
-      mafEventMacro(mafEvent(this,VME_SELECT,synthetic_vme,true));
-      mafEventMacro(mafEvent(this,VME_SHOW,synthetic_vme,true));
+      {mafEvent evUnq(this,VME_SELECT,synthetic_vme,true); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,VME_SHOW,synthetic_vme,true); mafEventMacro(evUnq);}
     }
     else
     {
@@ -351,8 +351,8 @@ void mafOpManager::OpRunCancel(mafOp *op)
   if (m_NaturalNode != NULL)
   {
     m_Selected->ReparentTo(NULL);
-    mafEventMacro(mafEvent(this,VME_SELECT,m_NaturalNode));
-    mafEventMacro(mafEvent(this,VME_SHOW,m_NaturalNode,true));
+    {mafEvent evUnq(this,VME_SELECT,m_NaturalNode); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,VME_SHOW,m_NaturalNode,true); mafEventMacro(evUnq);}
     m_NaturalNode = NULL;
   }
 
@@ -622,7 +622,7 @@ void mafOpManager::Notify(int msg, long arg)
 {
 	if(m_Context.Caller() == NULL)
 	// not a nested operation - notify logic
-		mafEventMacro(mafEvent(this,msg,m_RunningOp,arg));   //SIL. 17-9-2004: added the m_RunningOp at the event (may be NULL)
+		{mafEvent evUnq(this,msg,m_RunningOp,arg); mafEventMacro(evUnq);}   //SIL. 17-9-2004: added the m_RunningOp at the event (may be NULL)
 	//else
 	// nested operation - notify caller
 		    // m_Context.Caller()->OnEvent(mafEvent(this,msg));   

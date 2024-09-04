@@ -72,10 +72,10 @@ void medWizard::Execute()
   {
     if (m_ShowProgressBar)
     {
-      mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+      {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
     }
     else 
-      mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+      {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
 
     //setting current block and start execution
     m_CurrentBlock=start;
@@ -170,7 +170,7 @@ void medWizard::BlockExecutionBegin()
 {
   wxString requiredOperation;
 
-  mafEventMacro(mafEvent(this,WIZARD_UPDATE_WINDOW_TITLE));
+  {mafEvent evUnq(this,WIZARD_UPDATE_WINDOW_TITLE); mafEventMacro(evUnq);}
 
   //Setting selected vme to the block and execute it
   m_CurrentBlock->SetSelectedVME(m_SelectedVME);
@@ -195,9 +195,9 @@ void medWizard::AbortWizard()
 //----------------------------------------------------------------------------
 {
   if (m_ShowProgressBar)
-    mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+    {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
 
-  mafEventMacro(mafEvent(this,WIZARD_RUN_TERMINATED,false));
+  {mafEvent evUnq(this,WIZARD_RUN_TERMINATED,false); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -217,9 +217,9 @@ void medWizard::BlockExecutionEnd()
     m_CurrentBlock=NULL;
 
     if (m_ShowProgressBar)
-      mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+      {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
 
-    mafEventMacro(mafEvent(this,WIZARD_RUN_TERMINATED,true));
+    {mafEvent evUnq(this,WIZARD_RUN_TERMINATED,true); mafEventMacro(evUnq);}
   }
   //If the next block is in the form WIZARD{<name>} We switch to the wizard <name> and execute it
   else if (nextBlock.StartsWith("WIZARD{"))
@@ -231,15 +231,15 @@ void medWizard::BlockExecutionEnd()
       mafLogMessage(_M("WIZARD special keyword error: WIZARD{<name>} wrong format"));
 
       if (m_ShowProgressBar)
-        mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+        {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
 
-      mafEventMacro(mafEvent(this,WIZARD_RUN_TERMINATED,true));
+      {mafEvent evUnq(this,WIZARD_RUN_TERMINATED,true); mafEventMacro(evUnq);}
     }
     else 
     {
       //getting the wizard substring
       mafString wizardName = mafWxToString(nextBlock.SubString(7,nextBlock.size()-2));
-      mafEventMacro(mafEvent(this,WIZARD_SWITCH,&wizardName));
+      {mafEvent evUnq(this,WIZARD_SWITCH,&wizardName); mafEventMacro(evUnq);}
     }
   }
   else
@@ -290,11 +290,11 @@ void medWizard::ContinueExecution(int opSuccess)
     if(answare == wxYES)
     {
       if (m_ShowProgressBar)
-        mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+        {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
 
       //if the operation has aborted by the user we abort the entire wizard
       //this behavior can be updated for error management
-      mafEventMacro(mafEvent(this,WIZARD_RUN_TERMINATED,false));
+      {mafEvent evUnq(this,WIZARD_RUN_TERMINATED,false); mafEventMacro(evUnq);}
       m_CurrentBlock=NULL;
     }
     else

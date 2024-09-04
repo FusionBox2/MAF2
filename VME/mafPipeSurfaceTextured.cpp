@@ -433,17 +433,17 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
           data->GetScalarRange(range);
           m_Mapper->SetScalarRange(range);
         }
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       }
     	break;
       case ID_LUT:
         m_SurfaceMaterial->UpdateFromLut();
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       break;
       case ID_ENABLE_LOD:
         m_Actor->SetEnableHighThreshold(m_EnableActorLOD);
         m_OutlineActor->SetEnableHighThreshold(m_EnableActorLOD);
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       break;
       case ID_USE_VTK_PROPERTY:
         if (m_UseVTKProperty != 0)
@@ -458,7 +458,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 		{
 		  m_MaterialButton->Enable(m_UseVTKProperty != 0);
 		}
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       break;
       case ID_USE_LOOKUP_TABLE:
         m_Gui->Enable(ID_LUT,m_UseLookupTable != 0);
@@ -475,7 +475,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
         m_Gui->Enable(ID_CHOOSE_TEXTURE,m_UseTexture != 0);
         m_Gui->Enable(ID_TEXTURE_MAPPING_MODE,m_UseTexture != 0);
         m_Gui->Enable(ID_TEXTURE_MAPPING_MODE,m_SurfaceMaterial->m_MaterialType == mmaMaterial::USE_TEXTURE && m_UseTexture != 0);
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       break;
       case ID_CHOOSE_TEXTURE:
       {
@@ -507,18 +507,18 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
             m_Gui->Enable(ID_TEXTURE_MAPPING_MODE,true);
 			m_UseTexture = 1;
 			m_Gui->Update();
-			mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+			{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
           }
         }
       }
       break;
       case ID_TEXTURE_MAPPING_MODE:
         GenerateTextureMapCoordinate();
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       break;
       case ID_RENDERING_DISPLAY_LIST:
         //m_Mapper->SetImmediateModeRendering(m_RenderingDisplayListFlag);
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       break;
 	 
 	  case ID_CHOOSE_FILENAME1:
@@ -537,20 +537,20 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 
 								 wxBusyInfo wait("Writing temp file: ...");
 								 
-								 //mafEventMacro(mafEvent(m_Gui, BIND_TO_PROGRESSBAR, writer));
+								 //{mafEvent evUnq(m_Gui, BIND_TO_PROGRESSBAR, writer); mafEventMacro(evUnq);}
 								 writer->SetRenderWindow(renderWindow);
 								 writer->Write();
 								 
 								
-								 // mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+								 // {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
 								 //long dummyProgressValue = 50;
-								 //mafEventMacro(mafEvent(this, PROGRESSBAR_SET_VALUE, dummyProgressValue));
+								 //{mafEvent evUnq(this, PROGRESSBAR_SET_VALUE, dummyProgressValue); mafEventMacro(evUnq);}
 								 //writer->SetFileName(m_File.GetCStr());
 								 //writer->Write();
-								 //mafEventMacro(mafEvent(this, PROGRESSBAR_HIDE));
+								 //{mafEvent evUnq(this, PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
 									
 									 vtkNew<vtkJPEGWriter> exporter;
-									 //mafEventMacro(mafEvent(m_Actor->GetTexture()->GetInput(), BIND_TO_PROGRESSBAR, exporter));
+									 //{mafEvent evUnq(m_Actor->GetTexture()->GetInput(), BIND_TO_PROGRESSBAR, exporter); mafEventMacro(evUnq);}
 									 
 									 if (m_Actor->GetTexture()!= NULL)
 									 {
@@ -863,5 +863,5 @@ void mafPipeSurfaceTextured::SetActorPicking(int enable)
 {
 	m_Actor->SetPickable(enable);
   m_Actor->Modified();
-	mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }

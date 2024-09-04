@@ -560,7 +560,7 @@ void medOpSegmentation::OpUndo()
 //     m_SegmentatedVolume->ReparentTo(NULL);
 //     mafDEL(m_SegmentatedVolume);
 //   }
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpSegmentation::RemoveVMEs()
@@ -625,7 +625,7 @@ void medOpSegmentation::OpStop(int result)
   ResetRefinementUndoList();
   ResetRefinementRedoList();
 
-  mafEventMacro(mafEvent(this,result));
+  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpSegmentation::CreateOpDialog()
@@ -2768,7 +2768,7 @@ void medOpSegmentation::OnEvent(mafEventBase *maf_event)
           m_ColorLUT->SetTableRange(low,hi);
           m_View->SetLut(m_Input,m_ColorLUT);
           m_View->CameraUpdate();
-          //mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+          //{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
         }
         else if(e->GetSender() == m_AutomaticRangeSlider)
         {

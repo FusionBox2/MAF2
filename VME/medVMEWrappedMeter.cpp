@@ -2263,7 +2263,7 @@ void medVMEWrappedMeter::OnEvent(mafEventBase *maf_event)
     case ID_WRAPPED_SIDE:
     case ID_WRAPPED_REVERSE:
       InternalUpdate();
-      ForwardUpEvent(&mafEvent(this,CAMERA_UPDATE));
+      {mafEvent evUnq(this,CAMERA_UPDATE); ForwardUpEvent(&evUnq);}
       break;
     case ID_ADD_POINT:
       {
@@ -2356,8 +2356,8 @@ void medVMEWrappedMeter::OnEvent(mafEventBase *maf_event)
         //InternalUpdate();
 
         InternalUpdate();
-        ForwardUpEvent(&mafEvent(this,CAMERA_RESET));
-        ForwardUpEvent(&mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_RESET); ForwardUpEvent(&evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); ForwardUpEvent(&evUnq);}
 
         m_Gui->Update();
       }
@@ -2380,7 +2380,7 @@ void medVMEWrappedMeter::OnEvent(mafEventBase *maf_event)
 
           Modified();
           InternalUpdate();
-          ForwardUpEvent(&mafEvent(this,CAMERA_UPDATE));
+          {mafEvent evUnq(this,CAMERA_UPDATE); ForwardUpEvent(&evUnq);}
         }
       }
       break;
@@ -2419,7 +2419,7 @@ void medVMEWrappedMeter::OnEvent(mafEventBase *maf_event)
           Modified();
           m_Gui->Update();
           InternalUpdate();
-          ForwardUpEvent(&mafEvent(this,CAMERA_UPDATE));
+          {mafEvent evUnq(this,CAMERA_UPDATE); ForwardUpEvent(&evUnq);}
         }
       }
       break;
@@ -2456,7 +2456,7 @@ void medVMEWrappedMeter::OnEvent(mafEventBase *maf_event)
           
           Modified();
           InternalUpdate();
-          ForwardUpEvent(&mafEvent(this,CAMERA_UPDATE));
+          {mafEvent evUnq(this,CAMERA_UPDATE); ForwardUpEvent(&evUnq);}
         }
       }
       break;

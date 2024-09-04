@@ -235,7 +235,7 @@ void mafGUITimeBar::OnEvent(mafEventBase *maf_event)
       }
 
       if(e->GetId() != TIME_STOP )
-        mafEventMacro(mafEvent(this,TIME_SET,m_Time));
+        {mafEvent evUnq(this,TIME_SET,m_Time); mafEventMacro(evUnq);}
       Update();
     }
   }
@@ -272,11 +272,11 @@ void mafGUITimeBar::OnTimer(wxTimerEvent &event)
     else
     {
       m_Time = time_max;
-      OnEvent(&mafEvent(this, TIME_STOP));
+      {mafEvent evUnq(this, TIME_STOP); OnEvent(&evUnq);}
     }
   }
 
-  mafEventMacro(mafEvent(this, TIME_SET, m_Time, 0));
+  {mafEvent evUnq(this, TIME_SET, m_Time, 0); mafEventMacro(evUnq);}
   Update();
 }
 //----------------------------------------------------------------------------
@@ -307,12 +307,12 @@ void mafGUITimeBar::SetBounds(double min, double max)
   if(m_Time < min) 
   {
     m_Time = min;
-    mafEventMacro(mafEvent(this,TIME_SET,m_Time,0));
+    {mafEvent evUnq(this,TIME_SET,m_Time,0); mafEventMacro(evUnq);}
   }
   if(m_Time > max) 
   {
     m_Time = max;
-    mafEventMacro(mafEvent(this,TIME_SET,m_Time,0));
+    {mafEvent evUnq(this,TIME_SET,m_Time,0); mafEventMacro(evUnq);}
   }
 
   m_TimeBarSlider->SetRange(min,max,m_Time);

@@ -137,7 +137,7 @@ void medOpImporterLandmark::OpRun()
 
   if(m_Files.size() == 0) 
   {
-    mafEventMacro(mafEvent(this,OP_RUN_CANCEL));
+    {mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);}
   }
   else if (!m_TestMode)
   {
@@ -148,11 +148,11 @@ void medOpImporterLandmark::OpRun()
   {
     if(Read())
     {
-      mafEventMacro(mafEvent(this,OP_RUN_OK));
+      {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);}
     }
     else
     {
-      mafEventMacro(mafEvent(this,OP_RUN_CANCEL));
+      {mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);}
     }
   }
 }
@@ -243,10 +243,10 @@ void medOpImporterLandmark::OpDo()
     if (m_Results[i])
     {
       m_Results[i]->ReparentTo(m_Input);
-      //mafEventMacro(mafEvent(this, VME_ADD, m_Clouds[i]));
+      //{mafEvent evUnq(this, VME_ADD, m_Clouds[i]); mafEventMacro(evUnq);}
     }
   }
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -257,10 +257,10 @@ void medOpImporterLandmark::OpUndo()
   {
     if (m_Results[i])
     {
-      mafEventMacro(mafEvent(this, VME_REMOVE, m_Results[i]));
+      {mafEvent evUnq(this, VME_REMOVE, m_Results[i]); mafEventMacro(evUnq);}
     }
   }
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -307,7 +307,7 @@ void medOpImporterLandmark::OpStop(int result)
 //----------------------------------------------------------------------------
 {
 	HideGui();
-	mafEventMacro(mafEvent(this,result));
+	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 mafVME *medOpImporterLandmark::ReadFile(mafString& fname)   
@@ -378,7 +378,7 @@ mafVME *medOpImporterLandmark::ReadFile(mafString& fname)
     wxBusyInfo wait("Reading landmark cloud");
   }
 
-  mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+  {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
 
   long counter = 0;
   long progress = 0;
@@ -505,7 +505,7 @@ mafVME *medOpImporterLandmark::ReadFile(mafString& fname)
       counter++;
 
       progress = counter * 100 / numberOfLines;
-      mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE, (intptr_t)progress));
+      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE, (intptr_t)progress); mafEventMacro(evUnq);}
 
     }
   }
@@ -514,7 +514,7 @@ mafVME *medOpImporterLandmark::ReadFile(mafString& fname)
 
   landmarkFileStream.close();
 
-  mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+  {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
   return result;
 }
 //----------------------------------------------------------------------------
@@ -581,7 +581,7 @@ mafVME *medOpImporterLandmark::ReadFileWithoutTag(mafString& fname)
     wxBusyInfo wait("Reading landmark cloud");
   }
 
-  mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+  {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
 
   while(!landmarkFileStream.fail())
   {
@@ -613,7 +613,7 @@ mafVME *medOpImporterLandmark::ReadFileWithoutTag(mafString& fname)
     counter++;
 
     progress = counter * 100 / numberOfLines;
-    mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE, (intptr_t)progress));
+    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE, (intptr_t)progress); mafEventMacro(evUnq);}
 
   }
 
@@ -622,7 +622,7 @@ mafVME *medOpImporterLandmark::ReadFileWithoutTag(mafString& fname)
 
   landmarkFileStream.close();
 
-  mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+  {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
   return cloud;
 }
 //----------------------------------------------------------------------------

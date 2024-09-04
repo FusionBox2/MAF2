@@ -368,7 +368,7 @@ void mafInteractionManager::PreResetCamera(vtkRenderer *ren)
   // propagate event to all avatars...
   for (mmuAvatarsMap::iterator it=m_Avatars.begin();it!=m_Avatars.end();it++)
   {
-    it->second->OnEvent(&mafEventBase(this,CAMERA_PRE_RESET,ren));
+    {mafEventBase evUnq(this,CAMERA_PRE_RESET,ren); it->second->OnEvent(&evUnq);}
   }
 }
 
@@ -379,7 +379,7 @@ void mafInteractionManager::PostResetCamera(vtkRenderer *ren)
   // propagate event to all avatars...
   for (mmuAvatarsMap::iterator it=m_Avatars.begin();it!=m_Avatars.end();it++)
   {
-    it->second->OnEvent(&mafEventBase(this,CAMERA_POST_RESET,ren));
+    {mafEventBase evUnq(this,CAMERA_POST_RESET,ren); it->second->OnEvent(&evUnq);}
   }
 }
 
@@ -416,7 +416,7 @@ void mafInteractionManager::CameraUpdate(mafView *view)
     else
     {
       // ask logic->view_mgr to perform a global update
-      mafEventMacro(mafEvent(this,CAMERA_SYNCHRONOUS_UPDATE));
+      {mafEvent evUnq(this,CAMERA_SYNCHRONOUS_UPDATE); mafEventMacro(evUnq);}
       m_LastRenderTime=vtkTimerLog::GetUniversalTime(); // store time at end of rendering
     }
   }
@@ -560,7 +560,7 @@ void mafInteractionManager::OnEndDispatching()
     if((vtkTimerLog::GetUniversalTime()-m_LastRenderTime)>m_IntraFrameTime)
     {
       // ask logic->view_mgr to perform a global update
-      mafEventMacro(mafEvent(this,CAMERA_SYNCHRONOUS_UPDATE));
+      {mafEvent evUnq(this,CAMERA_SYNCHRONOUS_UPDATE); mafEventMacro(evUnq);}
       m_LastRenderTime=vtkTimerLog::GetUniversalTime(); // store time at end of rendering
     }
     
@@ -778,7 +778,7 @@ void mafInteractionManager::OnEvent(mafEventBase *event)
   if (id == VME_SELECT || id == VME_DCLICKED)
   {
     // event raised by PER to advise of VME selection or double click on a VME
-    mafEventMacro(mafEvent(event->GetSender(), id, (mafVME *)event->GetData()));
+    {mafEvent evUnq(event->GetSender(), id, (mafVME *)event->GetData()); mafEventMacro(evUnq);}
   }
   else if (id == VIEW_SELECT)
   {
@@ -802,7 +802,7 @@ void mafInteractionManager::OnEvent(mafEventBase *event)
   {
     mafVME *vme = (mafVME *)event->GetData();
     bool vme_context_menu = (vme != NULL) && !vme->IsA("mafVMEGizmo");
-    mafEventMacro(mafEvent(event->GetSender(),SHOW_CONTEXTUAL_MENU, vme_context_menu));
+    {mafEvent evUnq(event->GetSender(),SHOW_CONTEXTUAL_MENU, vme_context_menu); mafEventMacro(evUnq);}
   }
   else if (id == mafDevice::DEVICE_NAME_CHANGED) 
   {

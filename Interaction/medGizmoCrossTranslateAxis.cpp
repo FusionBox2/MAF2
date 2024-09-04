@@ -442,14 +442,14 @@ void medGizmoCrossTranslateAxis::SetColor(double cylR, double cylG, double cylB)
 void medGizmoCrossTranslateAxis::Show(bool show)
 //----------------------------------------------------------------------------
 {
-	mafEventMacro(mafEvent(this,VME_SHOW,m_TranslationCylinderGizmo,show));
+	{mafEvent evUnq(this,VME_SHOW,m_TranslationCylinderGizmo,show); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------
 void medGizmoCrossTranslateAxis::ShowTranslationFeedbackArrows(bool show)
 //----------------------------------------------------------------------------
 {
-	mafEventMacro(mafEvent(this,VME_SHOW,m_TranslationFeedbackGizmo,show));
+	{mafEvent evUnq(this,VME_SHOW,m_TranslationFeedbackGizmo,show); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------

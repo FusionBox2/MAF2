@@ -322,7 +322,7 @@ void mafOpEditMetadata::RemoveTag()
       m_MetadataList->SetSelection(sel,true);
     }
     
-    OnEvent(&mafEvent(m_Gui,ID_METADATA_LIST));
+    {mafEvent evUnq(this,ID_METADATA_LIST); OnEvent(&evUnq);}
   }
 }
 //----------------------------------------------------------------------------

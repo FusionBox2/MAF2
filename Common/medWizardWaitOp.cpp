@@ -100,14 +100,14 @@ void medWizardWaitOp::OnEvent(mafEventBase *maf_event)
       {
         //exit operation
         HideGui();
-        mafEventMacro(mafEvent(this,OP_RUN_OK));
+        {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);}
       }
     break;
     case wxCANCEL:
       {
         //exit operation
         HideGui();
-        mafEventMacro(mafEvent(this,OP_RUN_CANCEL));
+        {mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);}
       }
     break;
     default:

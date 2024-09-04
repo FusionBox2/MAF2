@@ -151,7 +151,7 @@ void mafAction::InternalRestore(const mafStorageElement& node)
       //if (children[i].GetAttribute(_R("Name"),name) == MAF_OK)
       {
         // forward an event to device manager to perform binding...
-        mafEventMacro(mafEvent(this,DEVICE_BIND,(intptr_t)id));
+        {mafEvent evUnq(this,DEVICE_BIND,(intptr_t)id); mafEventMacro(evUnq);}
       }
 //       else
 //       {
@@ -185,7 +185,7 @@ void mafAction::OnEvent(mafEventBase *event)
       if (dev->IsInitialized())
       {
         // send an event only to the inquiring object about all plugged devices
-        sender->OnEvent(&mafEventBase(this,DEVICE_PLUGGED,dev,MCH_INPUT));
+        {mafEventBase evUnq(this,DEVICE_PLUGGED,dev,MCH_INPUT); sender->OnEvent(&evUnq);}
       }      
     }
   }

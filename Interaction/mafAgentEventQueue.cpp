@@ -173,7 +173,7 @@ bool mafAgentEventQueue::DispatchEvents()
 bool mafAgentEventQueue::PushEvent(mafID event, void *sender,void *data)
 //------------------------------------------------------------------------------
 {
-  return this->PushEvent(&mafEventBase(sender,event,data));
+  {mafEventBase evUnq(sender,event,data); return this->PushEvent(&evUnq);}
 }
 
 //------------------------------------------------------------------------------

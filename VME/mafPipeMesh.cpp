@@ -389,7 +389,7 @@ void mafPipeMesh::OnEvent(mafEventBase *maf_event)
             m_ActiveScalarType = CELL_TYPE;
           }
           UpdateActiveScalarsInVMEDataVectorItems();
-          mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+          {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
         }
         break;
       case ID_LUT:
@@ -397,7 +397,7 @@ void mafPipeMesh::OnEvent(mafEventBase *maf_event)
           double sr[2];
           m_Table->GetTableRange(sr);
           m_Mapper->SetScalarRange(sr);
-					mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+					{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
         }
         break;
       case ID_SCALAR_MAP_ACTIVE:
@@ -418,7 +418,7 @@ void mafPipeMesh::OnEvent(mafEventBase *maf_event)
 					else
 						SetWireframeOn();
 
-          mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+          {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
         }
         break;
       case ID_USE_VTK_PROPERTY:
@@ -445,14 +445,14 @@ void mafPipeMesh::OnEvent(mafEventBase *maf_event)
 						m_MaterialButton->UpdateMaterialIcon();
 						m_Gui->Update();
 					}
-					mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+					{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 				}
 				break;
 			case ID_BORDER_CHANGE:
 				{
 					m_Actor->GetProperty()->SetLineWidth(m_Border);
 					m_Actor->Modified();
-					mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+					{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 
 					m_MaterialButton->UpdateMaterialIcon();
 					m_MaterialButton->GetGui()->Update();
@@ -494,7 +494,7 @@ void mafPipeMesh::SetActorPicking(int enable)
 {
 	m_Actor->SetPickable(enable);
 	m_Actor->Modified();
-	mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafPipeMesh::SetWireframeOn()
@@ -512,7 +512,7 @@ void mafPipeMesh::SetWireframeOn()
 		m_Gui->Enable(ID_WIRED_ACTOR_VISIBILITY,false);
 		m_Gui->Update();
 	}
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafPipeMesh::SetWireframeOff()
@@ -530,7 +530,7 @@ void mafPipeMesh::SetWireframeOff()
 		m_Gui->Enable(ID_WIRED_ACTOR_VISIBILITY,true);
 		m_Gui->Update();
 	}
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafPipeMesh::SetWiredActorVisibilityOn()
@@ -539,7 +539,7 @@ void mafPipeMesh::SetWiredActorVisibilityOn()
 	m_BorderElementsWiredActor=1;
   m_ActorWired->SetVisibility(1);
   m_ActorWired->Modified();
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafPipeMesh::SetWiredActorVisibilityOff()
@@ -548,7 +548,7 @@ void mafPipeMesh::SetWiredActorVisibilityOff()
 	m_BorderElementsWiredActor=0;
   m_ActorWired->SetVisibility(0);
   m_ActorWired->Modified();
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafPipeMesh::UpdateActiveScalarsInVMEDataVectorItems()
@@ -667,7 +667,7 @@ void mafPipeMesh::UpdateVisualizationWithNewSelectedScalars()
   m_Actor->Modified();
 
   UpdateProperty();
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 
 }
 
@@ -749,6 +749,6 @@ void mafPipeMesh::SetThickness(double thickness)
 	m_Border=thickness;
 	m_Actor->GetProperty()->SetLineWidth(m_Border);
 	m_Actor->Modified();
-	mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 

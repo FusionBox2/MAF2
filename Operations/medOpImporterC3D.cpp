@@ -95,7 +95,7 @@ void medOpImporterC3D::OpRun()
 			result = OP_RUN_OK;
 		}
 	}
-	mafEventMacro(mafEvent(this,result));
+	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpImporterC3D::OpDo()   
@@ -125,7 +125,7 @@ void medOpImporterC3D::OpDo()
 	//m_Vme = reader->GetOutput();
   m_Vme->SetName(name);
 
-	//mafEventMacro(mafEvent(this,VME_ADD,m_Vme));
+	//{mafEvent evUnq(this,VME_ADD,m_Vme); mafEventMacro(evUnq);}
 	//reader->Delete();
 }
 //----------------------------------------------------------------------------
@@ -134,7 +134,7 @@ void medOpImporterC3D::OpUndo()
 //----------------------------------------------------------------------------
 {
 	assert(m_Vme);
-	mafEventMacro(mafEvent(this,VME_REMOVE,m_Vme));
+	{mafEvent evUnq(this,VME_REMOVE,m_Vme); mafEventMacro(evUnq);}
 	m_Vme->Delete();
 	m_Vme = NULL;
 }

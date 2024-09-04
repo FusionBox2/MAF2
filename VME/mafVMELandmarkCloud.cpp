@@ -770,8 +770,8 @@ void mafVMELandmarkCloud::Close()
 
   long progress = 0;
 
-  ForwardUpEvent(&mafEvent(this,PROGRESSBAR_SHOW));
-  ForwardUpEvent(&mafEvent(this,PROGRESSBAR_SET_TEXT, &mafString(_R("Collapsing cloud"))));
+  {mafEvent evUnq(this,PROGRESSBAR_SHOW); ForwardUpEvent(&evUnq);}
+  {mafString srtr(_R("Collapsing cloud")); mafEvent evUnq(this,PROGRESSBAR_SET_TEXT, &srtr); ForwardUpEvent(&evUnq);}
 
   m_EnableModifiedEvent = false;
   for (int c = 0; c < numberOfChildren;c++)
@@ -872,11 +872,11 @@ void mafVMELandmarkCloud::Close()
       landmarks.push_back(lm); 
     }
     progress = c * 100 / numberOfChildren;
-    ForwardUpEvent(&mafEvent(this,PROGRESSBAR_SET_VALUE, (intptr_t)progress));
+  {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE, (intptr_t)progress); ForwardUpEvent(&evUnq);}
 
   }
   m_EnableModifiedEvent = true;
-  ForwardUpEvent(&mafEvent(this, VME_MODIFIED, this));
+  {mafEvent evUnq(this, VME_MODIFIED, this); ForwardUpEvent(&evUnq);}
 
   // remove all child landmarks
   for (int i=0;i<landmarks.size();i++)
@@ -892,7 +892,7 @@ void mafVMELandmarkCloud::Close()
     
   Modified();
   InvokeEvent(this, mafVMELandmarkCloud::CLOUD_OPEN_CLOSE);
-  ForwardUpEvent(&mafEvent(this,PROGRESSBAR_HIDE));
+  {mafEvent evUnq(this,PROGRESSBAR_HIDE); ForwardUpEvent(&evUnq);}
 
   if (busyCursor)
   {
@@ -923,8 +923,8 @@ void mafVMELandmarkCloud::Open()
     mafLogMessage(_M(stringStream.str().c_str()));
   }
 
-  ForwardUpEvent(&mafEvent(this,PROGRESSBAR_SHOW));
-  ForwardUpEvent(&mafEvent(this,PROGRESSBAR_SET_TEXT, &mafString(_R("Exploding cloud"))));
+  {mafEvent evUnq(this,PROGRESSBAR_SHOW); ForwardUpEvent(&evUnq);}
+  {mafString sgtr(_R("Exploding cloud")); mafEvent evUnq(this,PROGRESSBAR_SET_TEXT, &sgtr); ForwardUpEvent(&evUnq);}
   long progress  = 0;
 
   int i,numlm = GetNumberOfLandmarks();
@@ -971,12 +971,12 @@ void mafVMELandmarkCloud::Open()
       }
 		}
     progress = i * 100 / numlm;
-    ForwardUpEvent(&mafEvent(this,PROGRESSBAR_SET_VALUE, (intptr_t)progress));
+    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE, (intptr_t)progress); ForwardUpEvent(&evUnq);}
 
 	}
   // remove all items and tags...
   m_DataVector->RemoveAllItems();
-  ForwardUpEvent(&mafEvent(this, VME_MODIFIED, this));
+  {mafEvent evUnq(this, VME_MODIFIED, this); ForwardUpEvent(&evUnq);}
 
   for (i = 0; i < numlm; i++)
     RemoveLandmarkName(i);
@@ -987,7 +987,7 @@ void mafVMELandmarkCloud::Open()
   InvokeEvent(this, mafVMELandmarkCloud::CLOUD_OPEN_CLOSE);
 
   
-  ForwardUpEvent(&mafEvent(this,PROGRESSBAR_HIDE));
+  {mafEvent evUnq(this,PROGRESSBAR_HIDE); ForwardUpEvent(&evUnq);}
 
   if (busyCursor)
   {

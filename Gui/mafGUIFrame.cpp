@@ -75,19 +75,19 @@ mafGUIFrame::~mafGUIFrame( )
 void mafGUIFrame::OnMenu(wxCommandEvent& e)
 //----------------------------------------------------------------------------
 { 
-  mafEventMacro(mafEvent(this,e.GetId()));
+  {mafEvent evUnq(this,e.GetId()); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGUIFrame::OnUpdateUI(wxUpdateUIEvent& e)
 //----------------------------------------------------------------------------
 { 
-  mafEventMacro(mafEvent(this,UPDATE_UI,&e));
+  {mafEvent evUnq(this,UPDATE_UI,&e); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGUIFrame::OnCloseWindow(wxCloseEvent& event)
 //----------------------------------------------------------------------------
 { 
-  mafEventMacro(mafEvent(this,MENU_FILE_QUIT));
+  {mafEvent evUnq(this,MENU_FILE_QUIT); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGUIFrame::OnSashDrag(wxSashEvent& event)

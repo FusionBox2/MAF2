@@ -352,7 +352,7 @@ void mafPipeSurfaceSlice_BES::OnEvent(mafEventBase *maf_event)
 		  {
 			  m_Actor->GetProperty()->SetLineWidth(m_Border);
 			  m_Actor->Modified();
-			  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+			  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 		  }
 	  break;
       default:
@@ -385,7 +385,7 @@ void mafPipeSurfaceSlice_BES::OnEvent(mafEventBase *maf_event)
       }*/
       CreateClosedCloudPipe();
     }
-    mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+    {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
   }
   else if (maf_event->GetId() == mafVMELandmarkCloud::CLOUD_RADIUS_MODIFIED)
   {
@@ -483,7 +483,7 @@ void mafPipeSurfaceSlice_BES::SetThickness(double thickness)
 	m_Border=thickness;
 	m_Actor->GetProperty()->SetLineWidth(m_Border);
   m_Actor->Modified();
-	mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafPipeSurfaceSlice_BES::CreateClosedCloudPipe()

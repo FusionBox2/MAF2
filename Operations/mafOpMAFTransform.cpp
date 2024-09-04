@@ -170,12 +170,12 @@ void mafOpMAFTransform::OnEvent(mafEventBase *maf_event)
   else if (maf_event->GetSender() == this->m_GuiSaveRestorePose) // from save/restore gui
   {
     OnEventGuiSaveRestorePose(maf_event); 
-		mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+		{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
   }
   else if (maf_event->GetSender() == this->m_GuiTransformTextEntries)
   {
     OnEventGuiTransformTextEntries(maf_event);
-		mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+		{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
   }
   else
   {
@@ -197,7 +197,7 @@ void mafOpMAFTransform::OpUndo()
 	((mafVME *)m_Input)->SetAbsMatrix(m_OldAbsMatrix);
   ((mafVME *)m_Input)->GetOutput()->Update();
 
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE)); 
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);} 
 }
 //----------------------------------------------------------------------------
 void mafOpMAFTransform::OpStop(int result)
@@ -219,8 +219,8 @@ void mafOpMAFTransform::OpStop(int result)
 
   // HideGui seems not to work  with plugged guis :(; using it generate a SetFocusToChild
   // error when operation tab is selected after the operation has ended
-  mafEventMacro(mafEvent(this,OP_HIDE_GUI,(wxWindow *)m_Gui->GetParent()));
-  mafEventMacro(mafEvent(this,result));  
+  {mafEvent evUnq(this,OP_HIDE_GUI,(wxWindow *)m_Gui->GetParent()); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}  
 }
 
 //----------------------------------------------------------------------------
@@ -274,7 +274,7 @@ void mafOpMAFTransform::OnEventThis(mafEventBase *maf_event)
           m_GizmoScale->Show(true && e.GetBool());
         }
       }
-      mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+      {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
     }
     break;
     
@@ -301,7 +301,7 @@ void mafOpMAFTransform::OnEventThis(mafEventBase *maf_event)
         m_GizmoScale->SetRefSys(m_RefSysVME);
         m_GizmoScale->Show(true && e.GetBool());
       }
-      mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+      {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
     }
     break;
 
@@ -448,7 +448,7 @@ void mafOpMAFTransform::OnEventGizmoScale(mafEventBase *maf_event)
       {
 	      // update gui 
 	      m_GuiTransformTextEntries->SetAbsPose(&m_NewAbsMatrix);
-	      mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+	      {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
       }
 	  }
     break;
@@ -680,7 +680,7 @@ void mafOpMAFTransform::Reset()
     SetRefSysVME(mafVME::SafeDownCast(m_Input)); 
   }
   m_NewAbsMatrix = m_OldAbsMatrix;
-  mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------

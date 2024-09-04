@@ -527,7 +527,7 @@ void mafGUIApplicationLayoutSettings::ApplyTreeLayout()
           mafNode *node_restored = m_ViewManager->GetCurrentRoot()->FindInTreeById((*iter).m_VisibleVmes[i]);
           if (node_restored)
           {
-            mafEventMacro(mafEvent(this, VME_SHOW, node_restored, true));
+            {mafEvent evUnq(this, VME_SHOW, node_restored, true); mafEventMacro(evUnq);}
           }
         }
 

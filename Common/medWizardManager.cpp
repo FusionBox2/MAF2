@@ -298,7 +298,7 @@ void medWizardManager::Notify( int msg )
 //----------------------------------------------------------------------------
 {
   //notify operation to logic
-  mafEventMacro(mafEvent(this,msg));  
+  {mafEvent evUnq(this,msg); mafEventMacro(evUnq);}  
 }
 
 //----------------------------------------------------------------------------
@@ -331,39 +331,39 @@ void medWizardManager::OnRunOp(mafEvent *e)
   if (opString==_R("PAUSE"))
   {
     //pause op
-    mafEventMacro(mafEvent(this,WIZARD_PAUSE,m_WaitOp));
+    {mafEvent evUnq(this,WIZARD_PAUSE,m_WaitOp); mafEventMacro(evUnq);}
   }
   else if (opString==_R("SAVE"))
   {
     //Save msf
-    mafEventMacro(mafEvent(this,MENU_FILE_SAVE));
+    {mafEvent evUnq(this,MENU_FILE_SAVE); mafEventMacro(evUnq);}
   }
   else if (opString==_R("SAVE_AS"))
   {
     //save msf with name
-    mafEventMacro(mafEvent(this,MENU_FILE_SAVEAS));
+    {mafEvent evUnq(this,MENU_FILE_SAVEAS); mafEventMacro(evUnq);}
   }
   else if (opString==_R("OPEN"))
   {
     //Open MSF
-    mafEventMacro(mafEvent(this,MENU_FILE_OPEN));
+    {mafEvent evUnq(this,MENU_FILE_OPEN); mafEventMacro(evUnq);}
   }
   else if (opString==_R("DELETE"))
   {
     //Delete current VME
-    mafEventMacro(mafEvent(this,WIZARD_OP_DELETE));
+    {mafEvent evUnq(this,WIZARD_OP_DELETE); mafEventMacro(evUnq);}
   }
   else if (opString==_R("NEW"))
   {
-    mafEventMacro(mafEvent(this,WIZARD_OP_NEW));
+    {mafEvent evUnq(this,WIZARD_OP_NEW); mafEventMacro(evUnq);}
   }
   else if (opString==_R("RELOAD"))
   {
-    mafEventMacro(mafEvent(this,WIZARD_RELOAD_MSF));
+    {mafEvent evUnq(this,WIZARD_RELOAD_MSF); mafEventMacro(evUnq);}
   }
   else if (opString==_R("SNAPSHOT"))
   {
-    mafEventMacro(mafEvent(this,MENU_FILE_SNAPSHOT,true));
+    {mafEvent evUnq(this,MENU_FILE_SNAPSHOT,true); mafEventMacro(evUnq);}
   }
   else
   {

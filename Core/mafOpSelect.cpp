@@ -101,13 +101,13 @@ void mafOpSelect::SetNewSel(mafNode* vme)
 void mafOpSelect::OpDo()
 //----------------------------------------------------------------------------
 {
-  mafEventMacro(mafEvent(this,VME_SELECTED,m_NewNodeSelected));
+  {mafEvent evUnq(this,VME_SELECTED,m_NewNodeSelected); mafEventMacro(evUnq);}
 };
 //----------------------------------------------------------------------------
 void mafOpSelect::OpUndo()
 //----------------------------------------------------------------------------
 {
-  mafEventMacro(mafEvent(this,VME_SELECTED,m_OldNodeSelected));
+  {mafEvent evUnq(this,VME_SELECTED,m_OldNodeSelected); mafEventMacro(evUnq);}
 };
 
 
@@ -232,8 +232,8 @@ Select the vme parent
     LoadChild(m_SelectionVme);
   //////////////////////////////////////////////////////////////////////////
 
-  mafEventMacro(mafEvent(this,VME_REMOVE,m_Selection));
-  mafEventMacro(mafEvent(this,VME_SELECTED,m_SelectionParent));
+  {mafEvent evUnq(this,VME_REMOVE,m_Selection); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_SELECTED,m_SelectionParent); mafEventMacro(evUnq);}
   if (mafVME::SafeDownCast(m_SelectionParent.GetPointer()))
   {
     ((mafVME *)m_SelectionParent.GetPointer())->GetOutput()->Update();
@@ -307,7 +307,7 @@ Restore the Selection
   {
     ((mafVME *)m_SelectionParent.GetPointer())->GetOutput()->Update();
   }
-  mafEventMacro(mafEvent(this,VME_SELECTED,m_Selection));
+  {mafEvent evUnq(this,VME_SELECTED,m_Selection); mafEventMacro(evUnq);}
   ClipboardRestore();
 }
 
@@ -387,8 +387,8 @@ Select the vme parent
   }
   iter->Delete();
   m_SelectionParent = m_Selection->GetParent(); 
-  mafEventMacro(mafEvent(this,VME_REMOVE,m_Selection));
-  mafEventMacro(mafEvent(this,VME_SELECTED,m_SelectionParent));
+  {mafEvent evUnq(this,VME_REMOVE,m_Selection); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_SELECTED,m_SelectionParent); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpDelete::OpUndo()
@@ -510,7 +510,7 @@ The copy in the clipboard will be automatically deleted
 */
 {
   SetClipboard(m_PastedVme);
-  mafEventMacro(mafEvent(this,VME_REMOVE,m_PastedVme));
+  {mafEvent evUnq(this,VME_REMOVE,m_PastedVme); mafEventMacro(evUnq);}
 }
 
 /*
@@ -567,12 +567,12 @@ void mafOpTransform::SetNewMatrix(vtkMatrix4x4* matrix)
 void mafOpTransform::OpDo()                    
 {
   assert(false); //temporary commented out - m_vme->SetPose(m_new_matrix,-1);
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpTransform::OpUndo()                  
 {
   assert(false); //temporary commented out -m_vme->SetPose(m_old_matrix,-1);
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 */

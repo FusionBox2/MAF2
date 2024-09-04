@@ -173,7 +173,7 @@ void medOpMeshDeformation::OpRun()
   //create internal structures for the visualization
   if (!CreateInternalStructures())
   {
-    mafEventMacro(mafEvent(this, OP_RUN_CANCEL)); 
+    {mafEvent evUnq(this, OP_RUN_CANCEL); mafEventMacro(evUnq);} 
     return;
   }
  
@@ -187,7 +187,7 @@ void medOpMeshDeformation::OpRun()
   DeleteOpDialog();
 
   DeleteInternalStructures();
-  mafEventMacro(mafEvent(this,result));
+  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -210,7 +210,7 @@ void medOpMeshDeformation::OpDo()
     }
   }
   
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -239,14 +239,14 @@ void medOpMeshDeformation::OpUndo()
     }
   }
 
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------
 void medOpMeshDeformation::OpStop(int result)
 //----------------------------------------------------------------------------
 {
-  mafEventMacro(mafEvent(this,result));        
+  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}        
 }
 
 //----------------------------------------------------------------------------

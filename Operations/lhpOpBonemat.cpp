@@ -490,8 +490,8 @@ void lhpOpBonemat::OnEvent(mafEventBase *maf_event)
         {
           //WORKAROUND CODE 
           //referred to bug 933
-          mafEventMacro(mafEvent(this,VME_SHOW, m_Input, false));
-          mafEventMacro(mafEvent(this,VME_SHOW, m_Input, true));
+          {mafEvent evUnq(this,VME_SHOW, m_Input, false); mafEventMacro(evUnq);}
+          {mafEvent evUnq(this,VME_SHOW, m_Input, true); mafEventMacro(evUnq);}
           //END WORKAROUND CODE
           OpStop(OP_RUN_OK);
         }
@@ -609,7 +609,7 @@ void lhpOpBonemat::OnEvent(mafEventBase *maf_event)
           //trap the VME_ADD of the mmoCollapse and mmoExplode to update the
           //m_Input, then forward the message to mafDMLlogicMDI
           this->m_Input = e->GetVme();
-          mafEventMacro(mafEvent(this,VME_ADD,this->m_Input));
+          {mafEvent evUnq(this,VME_ADD,this->m_Input); mafEventMacro(evUnq);}
         }
         break;
       case ID_PRINT_DEBUG_INFO:
@@ -631,7 +631,7 @@ void lhpOpBonemat::OpStop(int result)
 {
   mafDEL(m_OriginalVMEMesh);
 	HideGui();
-	mafEventMacro(mafEvent(this,result));        
+	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}        
 }
 
 //----------------------------------------------------------------------------
@@ -684,7 +684,7 @@ int lhpOpBonemat::OpenConfigurationFile()
 
 
    m_Gui->Enable(ID_SAVE_CONFIGURATION_FILE,true);
-   OnEvent(&mafEvent(this,ID_FLAG_RO_CORRECTION));
+   {mafEvent evUnq(this, ID_FLAG_RO_CORRECTION); OnEvent(&evUnq);}
    
    m_Gui->Update();
 
@@ -968,10 +968,10 @@ int lhpOpBonemat::HUIntegration()
   if (GetTestMode() == false)
   {
     wxBusyInfo wait_info("Computing elements data...");
-    mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+    {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
   }
   
-  //mafEventMacro(mafEvent(this,PROGRESSBAR_SET_TEXT, ""));
+  //{mafEvent evUnq(this,PROGRESSBAR_SET_TEXT, ""); mafEventMacro(evUnq);}
   long progress = 0;
 
   for (elementNumber=0; elementNumber < numElements; elementNumber++) 
@@ -1106,11 +1106,11 @@ int lhpOpBonemat::HUIntegration()
     arrayMaterial->InsertNextTuple1(0);
 
     progress = (elementNumber + 1) * 100 / numElements;
-    mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
+    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
 
   }
   
-  mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+  {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
 
   vtkNew<vtkPoints> pts;
   vtkNew<vtkCellArray> cells;
@@ -1582,7 +1582,7 @@ int lhpOpBonemat::YoungModuleIntegration()
   if (GetTestMode() == false)
   {
     wxBusyInfo wait_info("Computing elements density...");
-    mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+    {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
   }
   
   long progress = 0;
@@ -1678,10 +1678,10 @@ int lhpOpBonemat::YoungModuleIntegration()
     arrayMaterial->InsertNextTuple1(0);
 
     progress = (id + 1) * 100 / numElements;
-    mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
+    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
   }
 
-  mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+  {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
 
   //  COMPUTE ELEMENTS YOUNG MODULE
 
@@ -1769,7 +1769,7 @@ int lhpOpBonemat::YoungModuleIntegration()
   if (GetTestMode() == false)
   {
     wxBusyInfo wait_info_young_module("Computing elements Young's modulus...");
-    mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+    {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
   }
   progress = 0;
 
@@ -1824,13 +1824,13 @@ int lhpOpBonemat::YoungModuleIntegration()
     eModuleSource[id].rho = 0;
 
     progress = (id + 1) * 100 / numElements;
-    mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress));
+    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
     float valueE = arrayE->GetValue(id);
     float valueRo = arrayRo->GetValue(id);
     arrayE->SetValue(id, eModuleSource[id].E);
   }
 
-  mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+  {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
 
   vtkNew<vtkPoints> pts;
   vtkNew<vtkCellArray> cells;

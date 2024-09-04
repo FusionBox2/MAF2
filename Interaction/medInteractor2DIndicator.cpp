@@ -170,7 +170,7 @@ void medInteractor2DIndicator::OnLeftButtonDown(mafEventInteraction *e)
   double pos_2d[2];
   e->Get2DPosition(pos_2d);
   
-  mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 
   if(m_EndMeasure)
   { 
@@ -242,7 +242,7 @@ void medInteractor2DIndicator::OnRightButtonUp(mafEventInteraction *e)
   if(m_ShowContextMenu && mouse)
   {
     mafVME *vme = GetPickedVME(mouse);
-    mafEventMacro(mafEvent(this,SHOW_CONTEXTUAL_MENU, vme,true));
+    {mafEvent evUnq(this,SHOW_CONTEXTUAL_MENU, vme,true); mafEventMacro(evUnq);}
   }
 
   OnButtonUp(e);
@@ -476,7 +476,7 @@ void medInteractor2DIndicator::DrawMeasureTool(double x, double y)
 
     m_RegisterMeasure = true;
 
-    mafEventMacro(mafEvent(this,ID_RESULT_INDICATOR,true));
+    {mafEvent evUnq(this,ID_RESULT_INDICATOR,true); mafEventMacro(evUnq);}
     //delete temporary measure
     m_CurrentRenderer->RemoveActor2D(m_LineActor);
     m_CurrentRenderer->RemoveActor2D(m_LineActor2);
@@ -534,7 +534,7 @@ void medInteractor2DIndicator::UndoMeasure()
     m_RendererVector[m_RendererVector.size()-1]->GetRenderWindow()->Render();
     m_RendererVector.pop_back();
       
-    mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+    {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
   }
 }
 //----------------------------------------------------------------------------

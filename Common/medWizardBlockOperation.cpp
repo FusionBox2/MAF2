@@ -138,7 +138,7 @@ void medWizardBlockOperation::ExcutionBegin()
   {
     //send up the event in order to open/select the required view
     tmpStr=mafWxToString(m_RequiredView);
-    mafEventMacro(mafEvent(this,WIZARD_REQUIRED_VIEW,&tmpStr));
+    {mafEvent evUnq(this,WIZARD_REQUIRED_VIEW,&tmpStr); mafEventMacro(evUnq);}
 	if(m_windowhastoberesized) 
 	{
 		wxSize mafframesize = mafGetFrame()->GetSize();
@@ -147,21 +147,21 @@ void medWizardBlockOperation::ExcutionBegin()
 		int width = m_width*mafframesize.GetWidth();
 		int height = m_height*mafframesize.GetHeight();
 
-	    mafEventMacro(mafEvent(this,VIEW_RESIZE,&tmpStr,x,y,width,height));	
+	    {mafEvent evUnq(this,VIEW_RESIZE,&tmpStr,x,y,width,height); mafEventMacro(evUnq);}	
 	}
 	if(m_windowhastobetiled)
 	{
 		if(!m_tile_windows.compare(_R("Tile_window_horizontally"))) 
 		{
-	        mafEventMacro(mafEvent(this,TILE_WINDOW_HORIZONTALLY));
+	        {mafEvent evUnq(this,TILE_WINDOW_HORIZONTALLY); mafEventMacro(evUnq);}
 		}
 		else if (!m_tile_windows.compare(_R("Tile_window_vertically"))) 
 		{
-			mafEventMacro(mafEvent(this,TILE_WINDOW_VERTICALLY));
+			{mafEvent evUnq(this,TILE_WINDOW_VERTICALLY); mafEventMacro(evUnq);}
 		}
 		else if (!m_tile_windows.compare(_R("Tile_window_cascade")))
 		{
-			mafEventMacro(mafEvent(this,TILE_WINDOW_CASCADE));
+			{mafEvent evUnq(this,TILE_WINDOW_CASCADE); mafEventMacro(evUnq);}
 		}
 		else 
 		{
@@ -179,7 +179,7 @@ void medWizardBlockOperation::ExcutionBegin()
   {
     //forward up vme selection event 
     //for view/logic/operation update
-    mafEventMacro(mafEvent(this,VME_SELECT,m_SelectedVME));
+    {mafEvent evUnq(this,VME_SELECT,m_SelectedVME); mafEventMacro(evUnq);}
   }
   else 
   {
@@ -198,14 +198,14 @@ void medWizardBlockOperation::ExcutionBegin()
   {
     //Showing input vme to ensure visualization in the operation
     if (m_AutoShowSelectedVME)
-      mafEventMacro(mafEvent(this,VME_SHOW,m_SelectedVME,true));
+      {mafEvent evUnq(this,VME_SHOW,m_SelectedVME,true); mafEventMacro(evUnq);}
 
     for(int i=0;i<m_VmeShow.size();i++)
     {
       //detecting all other vme starting on selected vme and show it
       mafNode *toShow=m_SelectedVME->GetByPath(mafWxToString(m_VmeShow[i]));
       if (toShow != NULL)
-        mafEventMacro(mafEvent(this,VME_SHOW,toShow,true));
+        {mafEvent evUnq(this,VME_SHOW,toShow,true); mafEventMacro(evUnq);}
     }
   }
   
@@ -215,7 +215,7 @@ void medWizardBlockOperation::ExcutionBegin()
   {
     tmpStr=mafWxToString(m_Operation);
     //ask logic for operation run the flow will continue after operation stop
-    mafEventMacro(mafEvent(this,WIZARD_RUN_OP,&tmpStr));
+    {mafEvent evUnq(this,WIZARD_RUN_OP,&tmpStr); mafEventMacro(evUnq);}
   }
 }
 
@@ -229,12 +229,12 @@ void medWizardBlockOperation::ExcutionEnd()
   for(int i=0;i<m_VmeHide.size();i++)
   {
     mafNode *toHide=m_SelectedVME->GetByPath(mafWxToString(m_VmeHide[i]));
-    mafEventMacro(mafEvent(this,VME_SHOW,toHide,false));
+    {mafEvent evUnq(this,VME_SHOW,toHide,false); mafEventMacro(evUnq);}
   }
 
   if(m_viewhastobedeleted) 
   {
-      mafEventMacro(mafEvent(this,WIZARD_DELETE_VIEW,&m_viewtodelete));
+      {mafEvent evUnq(this,WIZARD_DELETE_VIEW,&m_viewtodelete); mafEventMacro(evUnq);}
   }
  
 }

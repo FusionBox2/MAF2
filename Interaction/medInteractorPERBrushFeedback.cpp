@@ -158,7 +158,7 @@ void medInteractorPERBrushFeedback::OnEvent(mafEventBase *event)
           mafEventInteraction *e = mafEventInteraction::SafeDownCast(event);
           e->Get2DPosition(pos_2d);
 
-          mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+          {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 
           if(m_EnableDrawing)
           {

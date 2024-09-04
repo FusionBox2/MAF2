@@ -106,23 +106,23 @@ void mafGUIMovieCtrl::OnEvent(mafEventBase *maf_event)
       case TIME_PREV:
         m_Frame -= m_FrameStep;
         m_Frame = (m_Frame <= m_FrameMin) ? m_FrameMin : m_Frame;
-        mafEventMacro(mafEvent(this,TIME_SET, m_Frame));
+        {mafEvent evUnq(this,TIME_SET, m_Frame); mafEventMacro(evUnq);}
       break;
       case TIME_NEXT:
         m_Frame += m_FrameStep;
         m_Frame = (m_Frame >= m_FrameMax) ? m_FrameMax : m_Frame;
-        mafEventMacro(mafEvent(this,TIME_SET, m_Frame));
+        {mafEvent evUnq(this,TIME_SET, m_Frame); mafEventMacro(evUnq);}
       break;
       case TIME_BEGIN:
         m_Frame = m_FrameMin;
-        mafEventMacro(mafEvent(this,TIME_SET, m_Frame));
+        {mafEvent evUnq(this,TIME_SET, m_Frame); mafEventMacro(evUnq);}
       break;
       case TIME_END:
         m_Frame = m_FrameMax;
-        mafEventMacro(mafEvent(this,TIME_SET, m_Frame));
+        {mafEvent evUnq(this,TIME_SET, m_Frame); mafEventMacro(evUnq);}
       break;
       case MOVIE_RECORD:
-        mafEventMacro(mafEvent(this,MOVIE_RECORD));
+        {mafEvent evUnq(this,MOVIE_RECORD); mafEventMacro(evUnq);}
       break;
       default:
         e->Log();
@@ -176,7 +176,7 @@ void mafGUIMovieCtrl::OnTimer(wxTimerEvent &event)
       OnEvent(&ev_stop);
     }
   }
-  mafEventMacro(mafEvent(this,TIME_SET,m_Frame,0));
+  {mafEvent evUnq(this,TIME_SET,m_Frame,0); mafEventMacro(evUnq);}
   Update();
 }
 //----------------------------------------------------------------------------
@@ -193,12 +193,12 @@ void mafGUIMovieCtrl::SetFrameBounds(double min, double max, double step)
   if(m_Frame < min) 
   {
     m_Frame = min;
-    mafEventMacro(mafEvent(this,TIME_SET,m_Frame,0));
+    {mafEvent evUnq(this,TIME_SET,m_Frame,0); mafEventMacro(evUnq);}
   }
   if(m_Frame > max) 
   {
     m_Frame = max;
-    mafEventMacro(mafEvent(this,TIME_SET,m_Frame,0));
+    {mafEvent evUnq(this,TIME_SET,m_Frame,0); mafEventMacro(evUnq);}
   }
 }
 //----------------------------------------------------------------------------

@@ -136,7 +136,7 @@ void mafLightKit::CreateGui()
 	else
 	{
 		m_LightList->SetSelection(0,true);
-		OnEvent(&mafEvent(m_Gui,ID_LIGHT_LIST));
+		{mafEvent evUnq(m_Gui,ID_LIGHT_LIST); OnEvent(&evUnq);}
 	}
 }
 //----------------------------------------------------------------------------
@@ -177,7 +177,7 @@ void mafLightKit::OnEvent(mafEventBase *maf_event)
         if(m_LightList->GetCount() > 0)
         {
           m_LightList->SetSelection(0,true);
-          OnEvent(&mafEvent(m_Gui,ID_LIGHT_LIST));
+          {mafEvent evUnq(m_Gui,ID_LIGHT_LIST); OnEvent(&evUnq);}
         }
       }
       break;
@@ -212,7 +212,7 @@ void mafLightKit::OnEvent(mafEventBase *maf_event)
         }
       break;
     }
-    mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+    {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 	}
 }
 //----------------------------------------------------------------------------

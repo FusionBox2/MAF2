@@ -151,7 +151,7 @@ void mafOpExporterSTL::OpStop(int result)
 //----------------------------------------------------------------------------
 {
 	HideGui();
-	mafEventMacro(mafEvent(this,result));        
+	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}        
 }
 //----------------------------------------------------------------------------
 void mafOpExporterSTL::ExportSurface()
@@ -170,7 +170,7 @@ void mafOpExporterSTL::ExportSurface()
 	v_tpdf->Update();
 
 	vtkNew<vtkSTLWriter> writer;
-  mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR,writer));
+  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,writer); mafEventMacro(evUnq);}
 	writer->SetFileName(m_File.GetCStr());
 	if(this->m_ABSMatrixFlag)
 		writer->SetInputConnection(v_tpdf->GetOutputPort());

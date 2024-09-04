@@ -117,7 +117,7 @@ void medWizardBlock::ExcutionBegin()
   m_InputVME=m_SelectedVME;
 
   if (m_BlockProgress>=0)
-    mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)m_BlockProgress));
+    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)m_BlockProgress); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -126,7 +126,7 @@ void medWizardBlock::ExcutionEnd()
 {
   //Setting back the select vme to the input on user abort
   if (!m_Success)
-     mafEventMacro(mafEvent(this,VME_SELECT,m_InputVME));
+     {mafEvent evUnq(this,VME_SELECT,m_InputVME); mafEventMacro(evUnq);}
   //Stopping execution
   m_Running=false;
 }

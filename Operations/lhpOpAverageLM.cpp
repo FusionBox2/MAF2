@@ -94,7 +94,7 @@ void lhpOpAverageLM::OpRun()
 {
   m_LimbCloud     = (mafVMELandmarkCloud *)m_Input;
   //CreateGui();
-  mafEventMacro(mafEvent(this,OP_RUN_OK)); 
+  {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);} 
 }
 
 //----------------------------------------------------------------------------
@@ -118,12 +118,12 @@ void lhpOpAverageLM::OpStop(int result)
   if (result == OP_RUN_CANCEL)
   {
     HideGui();
-    mafEventMacro(mafEvent(this,result));
+    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
   }
   else if (result == OP_RUN_OK)
   {
     HideGui();
-    mafEventMacro(mafEvent(this,result));
+    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
   }
 }
 //----------------------------------------------------------------------------

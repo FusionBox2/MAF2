@@ -552,7 +552,7 @@ void mafViewArbitrarySlice::OnEventGizmoRotate(mafEventBase *maf_event)
 			// gizmo does not set vme pose  since they cannot scale
 			PostMultiplyEventMatrix(maf_event);
 
-			mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+			{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 
 			//update the normal of the cutter plane of the surface
 			mafNode *root=m_CurrentVolume->GetRoot();
@@ -677,7 +677,7 @@ void mafViewArbitrarySlice::OnEventThis(mafEventBase *maf_event)
 					double low, hi;
 					m_LutSlider->GetSubRange(&low,&hi);
 					m_ColorLUT->SetTableRange(low,hi);
-					mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+					{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 				}
 			}
 			break;
@@ -697,7 +697,7 @@ void mafViewArbitrarySlice::OnEventThis(mafEventBase *maf_event)
 				m_GizmoTranslate->SetAbsPose(m_MatrixReset);
 				m_Slicer->SetAbsMatrix(*m_MatrixReset);
 				//update because I need to refresh the normal of the camera
-				mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+				{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 				//update the normal of the cutter plane of the surface
 				mafNode *root=m_CurrentVolume->GetRoot();
 				mafNodeIterator *iter = root->NewIterator();
@@ -767,7 +767,7 @@ void mafViewArbitrarySlice::OnEventThis(mafEventBase *maf_event)
 		case ID_TRILINEAR_INTERPOLATION_ON:
 			{
 				m_Slicer->SetTrilinearInterpolation(m_TrilinearInterpolationOn == TRUE);
-				mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 
 			}
 			break;

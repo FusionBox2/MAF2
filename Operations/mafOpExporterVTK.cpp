@@ -153,7 +153,7 @@ void mafOpExporterVTK::OnEvent(mafEventBase *maf_event)
         //trap the VME_ADD of the mafOpCollapse and mafOpExplode to update the
         //m_Input, then forward the message to mafDMLlogicMDI
         this->m_Input = e->GetVme();
-        mafEventMacro(mafEvent(this,VME_ADD,this->m_Input));
+        {mafEvent evUnq(this,VME_ADD,this->m_Input); mafEventMacro(evUnq);}
       }
       break;
       default:
@@ -250,18 +250,18 @@ void mafOpExporterVTK::SaveVTKData()
     writer->SetFileTypeToBinary();
   else
     writer->SetFileTypeToASCII();
-  mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+  {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
 
   // workaround code:  this is not working so I'm setting a dummy 50/100 progress value 
-  // mafEventMacro(mafEvent(this,BIND_TO_PROGRESSBAR, writer));
+  // {mafEvent evUnq(this,BIND_TO_PROGRESSBAR, writer); mafEventMacro(evUnq);}
   long dummyProgressValue = 50;
   
-  mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)dummyProgressValue));
+  {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)dummyProgressValue); mafEventMacro(evUnq);}
 
   writer->SetFileName(m_File.GetCStr());
   writer->Write();
   
-  mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+  {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
 
   if (busyCursor)
   {

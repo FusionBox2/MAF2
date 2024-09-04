@@ -246,10 +246,10 @@ void mafVME::SetTreeTime(mafTimeStamp t)
 {
 	//BES: 26.11.2012 - avoid calling SetTimeStamp because it notifies our listeners
 	//before all VMEs are correctly set, which would cause time inconsistency between VMEs
-  this->OnEvent(&mafEventBase(this,VME_TIME_SET,&t, MCH_DOWN));
+  {mafEventBase evUnq(this,VME_TIME_SET,&t, MCH_DOWN); this->OnEvent(&evUnq);}
 
 	//now all VMEs have consistent times, so notify our listeners
-	this->OnEvent(&mafEventBase(this,VME_TIME_SET, NULL, MCH_DOWN));
+	{mafEventBase evUnq(this,VME_TIME_SET, NULL, MCH_DOWN); this->OnEvent(&evUnq);}
 }
 
 //-------------------------------------------------------------------------

@@ -373,7 +373,7 @@ void medPipeVolumeVR::OnEvent(mafEventBase *maf_event)
           m_ResampleFilter->SetAxisMagnificationFactor(i,m_ResampleFactor);
 
         m_ResampleFilter->Update();
-        mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       }
       break;
     }

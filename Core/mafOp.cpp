@@ -98,8 +98,8 @@ void mafOp::OpDo()
   if (m_Output)
   {
     m_Output->ReparentTo(m_Input);
-    //mafEventMacro(mafEvent(this, VME_ADD, m_Output));
-    mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+    //{mafEvent evUnq(this, VME_ADD, m_Output); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
   }
 }
 //----------------------------------------------------------------------------
@@ -108,8 +108,8 @@ void mafOp::OpUndo()
 {
   if (m_Output)
   {
-    mafEventMacro(mafEvent(this, VME_REMOVE, m_Output));
-    mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+    {mafEvent evUnq(this, VME_REMOVE, m_Output); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
   }
 }
 //----------------------------------------------------------------------------
@@ -170,7 +170,7 @@ void mafOp::ShowGui()
   mafString menu_codes=mafStripMenuCodes(m_Label);
   mafString title = _R(" ") + menu_codes + _R(" parameters:");
   m_Guih->SetTitle(title);
-  mafEventMacro(mafEvent(this,OP_SHOW_GUI,(wxWindow *)m_Guih));
+  {mafEvent evUnq(this,OP_SHOW_GUI,(wxWindow *)m_Guih); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOp::HideGui()
@@ -178,7 +178,7 @@ void mafOp::HideGui()
 {
   if(!m_Gui)
     return;
-  mafEventMacro(mafEvent(this,OP_HIDE_GUI,(wxWindow *)m_Guih));
+  {mafEvent evUnq(this,OP_HIDE_GUI,(wxWindow *)m_Guih); mafEventMacro(evUnq);}
   delete m_Guih;
   m_Guih = NULL;
   m_Gui = NULL;
@@ -211,7 +211,7 @@ void mafOp::OpStop(int result)
 //----------------------------------------------------------------------------
 {
   HideGui();
-  mafEventMacro(mafEvent(this,result));        
+  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}        
 }
 //----------------------------------------------------------------------------
 void mafOp::Collaborate(bool status)

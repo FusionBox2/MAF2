@@ -153,7 +153,7 @@ void mafOpFilterVolume::OpDo()
   if (m_ResultImageData)
   {
     ((mafVMEVolumeGray *)m_Input)->SetData(m_ResultImageData,((mafVME *)m_Input)->GetTimeStamp());
-    mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+    {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
   }
 }
 //----------------------------------------------------------------------------
@@ -163,7 +163,7 @@ void mafOpFilterVolume::OpUndo()
   if (m_OriginalImageData)
   {
     ((mafVMEVolumeGray *)m_Input)->SetData(m_OriginalImageData,((mafVME *)m_Input)->GetTimeStamp());
-    mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+    {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
   }
 }
 //----------------------------------------------------------------------------
@@ -221,7 +221,7 @@ void mafOpFilterVolume::OpStop(int result)
 //----------------------------------------------------------------------------
 {
 	HideGui();
-	mafEventMacro(mafEvent(this,result));
+	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpFilterVolume::OnSmooth()
@@ -249,7 +249,7 @@ void mafOpFilterVolume::OnSmooth()
   if (m_ApplyDirectlyOnInput)
   {
     ((mafVMEVolumeGray *)m_Input)->SetData(smoothFilter->GetOutput(),((mafVME *)m_Input)->GetTimeStamp());
-    mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+    {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
   }
   else
     m_ResultImageData->DeepCopy(smoothFilter->GetOutput());
@@ -291,7 +291,7 @@ void mafOpFilterVolume::OnMedian()
   if (m_ApplyDirectlyOnInput)
   {
     ((mafVMEVolumeGray *)m_Input)->SetData(medianFilter->GetOutput(),((mafVME *)m_Input)->GetTimeStamp());
-    mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+    {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
   }
   else
     m_ResultImageData->DeepCopy(medianFilter->GetOutput());
@@ -324,7 +324,7 @@ void mafOpFilterVolume::OnPreview()
 	m_PreviewResultFlag   = false;
 	m_ClearInterfaceFlag	= true;
 
-	mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpFilterVolume::OnClear()
@@ -357,5 +357,5 @@ void mafOpFilterVolume::OnClear()
 	m_PreviewResultFlag = false;
 	m_ClearInterfaceFlag= false;
 
-	mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 }

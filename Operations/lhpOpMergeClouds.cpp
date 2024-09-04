@@ -222,12 +222,12 @@ void lhpOpMergeClouds::OpStop(int result)
   HideGui();
   if (result == OP_RUN_CANCEL)
   {
-    mafEventMacro(mafEvent(this,result));
+    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
     return;
   }
 
 
-  mafEventMacro(mafEvent(this,result));
+  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -324,10 +324,10 @@ void lhpOpMergeClouds::OpDo()
   //if(m_OutSurface)
   {
     //m_OutSurface->ReparentTo(m_Input->GetRoot());
-    //mafEventMacro(mafEvent(this, VME_ADD, m_OutSurface));
+    //{mafEvent evUnq(this, VME_ADD, m_OutSurface); mafEventMacro(evUnq);}
   }
-  mafEventMacro(mafEvent(this, VME_MODIFIED, m_Input));
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this, VME_MODIFIED, m_Input); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 
 //----------------------------------------------------------------------------

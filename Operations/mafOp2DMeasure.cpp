@@ -88,11 +88,11 @@ void mafOp2DMeasure::OpRun()
 //----------------------------------------------------------------------------
 {
   m_DistanceInteractor2D = mafInteractor2DDistance::New();
-  mafEventMacro(mafEvent(this,PER_PUSH,(mafObject *)m_DistanceInteractor2D));
+  {mafEvent evUnq(this,PER_PUSH,(mafObject *)m_DistanceInteractor2D); mafEventMacro(evUnq);}
   m_DistanceInteractor2D->SetListener(this);
 
 	m_AngleInteractor2D = mafInteractor2DAngle::New();
-	//mafEventMacro(mafEvent(this,PER_PUSH,(mafObject *)m_2DAngleInteractor));
+	//{mafEvent evUnq(this,PER_PUSH,(mafObject *)m_2DAngleInteractor); mafEventMacro(evUnq);}
 	//m_2DAngleInteractor->SetListener(this);
   m_IndicatorInteractor2D = mafInteractor2DIndicator::New();
   
@@ -198,8 +198,8 @@ void mafOp2DMeasure::OnEvent(mafEventBase *maf_event)
         case ID_MEASURE_TYPE:
 					if(m_MeasureType == 0 || m_MeasureType == 1)
 					{
-						mafEventMacro(mafEvent(this,PER_POP));	
-						mafEventMacro(mafEvent(this,PER_PUSH,(mafObject *)m_DistanceInteractor2D));
+						{mafEvent evUnq(this,PER_POP); mafEventMacro(evUnq);}	
+						{mafEvent evUnq(this,PER_PUSH,(mafObject *)m_DistanceInteractor2D); mafEventMacro(evUnq);}
 						m_DistanceInteractor2D->SetListener(this);
 
 						if(m_DistanceInteractor2D->SizeMeasureVector() != 0)
@@ -225,8 +225,8 @@ void mafOp2DMeasure::OnEvent(mafEventBase *maf_event)
 					}
 					else if(m_MeasureType == 2 || m_MeasureType == 3)
 					{
-						mafEventMacro(mafEvent(this,PER_POP));	
-						mafEventMacro(mafEvent(this,PER_PUSH,(mafObject *)m_AngleInteractor2D));
+						{mafEvent evUnq(this,PER_POP); mafEventMacro(evUnq);}	
+						{mafEvent evUnq(this,PER_PUSH,(mafObject *)m_AngleInteractor2D); mafEventMacro(evUnq);}
 						m_AngleInteractor2D->SetListener(this);
 
 						if(m_AngleInteractor2D->SizeMeasureVector() != 0)
@@ -252,8 +252,8 @@ void mafOp2DMeasure::OnEvent(mafEventBase *maf_event)
 					}
           else if(m_MeasureType == 4)
           {
-            mafEventMacro(mafEvent(this,PER_POP));	
-						mafEventMacro(mafEvent(this,PER_PUSH,(mafObject *)m_IndicatorInteractor2D));
+            {mafEvent evUnq(this,PER_POP); mafEventMacro(evUnq);}	
+						{mafEvent evUnq(this,PER_PUSH,(mafObject *)m_IndicatorInteractor2D); mafEventMacro(evUnq);}
 						m_IndicatorInteractor2D->SetListener(this);
             m_Gui->Enable(ID_PLOT_PROFILE, false);
             m_Gui->Update();
@@ -591,17 +591,17 @@ void mafOp2DMeasure::OpStop(int result)
   if(root->GetTagArray()->GetTag(_R("2D_MEASURE")))
     root->GetTagArray()->DeleteTag(_R("2D_MEASURE"));
   root->GetTagArray()->SetTag(measure_item);
-  mafEventMacro(mafEvent(this,VME_MODIFIED,root));
+  {mafEvent evUnq(this,VME_MODIFIED,root); mafEventMacro(evUnq);}
 
 	m_DistanceInteractor2D->RemoveMeter();  
 	m_AngleInteractor2D->RemoveMeter();
   m_IndicatorInteractor2D->RemoveMeter();
  
 	HideGui();
-  mafEventMacro(mafEvent(this,PER_POP));	
+  {mafEvent evUnq(this,PER_POP); mafEventMacro(evUnq);}	
   mafDEL(m_DistanceInteractor2D);
 	mafDEL(m_AngleInteractor2D);
   mafDEL(m_IndicatorInteractor2D);
 
-	mafEventMacro(mafEvent(this,result));
+	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
 }

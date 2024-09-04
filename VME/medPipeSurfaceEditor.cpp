@@ -159,7 +159,7 @@ void medPipeSurfaceEditor::OnEvent(mafEventBase *maf_event)
 			//m_Mapper->SetLookupTable(m_LUT);
 			m_Mapper->SetScalarRange(range);
 			m_Mapper->Update();
-			mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+			{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 		}
 	}
 }

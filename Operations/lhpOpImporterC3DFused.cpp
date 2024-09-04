@@ -137,7 +137,7 @@ void lhpOpImporterC3DFused::OpRun()
 
   if (m_C3DInputFileNameFullPaths.size() == 0)
   {
-    mafEventMacro(mafEvent(this, OP_RUN_CANCEL));
+    {mafEvent evUnq(this, OP_RUN_CANCEL); mafEventMacro(evUnq);}
   }
   else if (!m_TestMode)
   {
@@ -179,11 +179,11 @@ void lhpOpImporterC3DFused::OpRun()
   {
     /*if (Import())
     {
-      mafEventMacro(mafEvent(this, OP_RUN_OK));
+      {mafEvent evUnq(this, OP_RUN_OK); mafEventMacro(evUnq);}
     }
     else
     {
-      mafEventMacro(mafEvent(this, OP_RUN_CANCEL));
+      {mafEvent evUnq(this, OP_RUN_CANCEL); mafEventMacro(evUnq);}
     }*/
   }
   assert(!m_PointsSource && !m_PointsTarget);
@@ -625,14 +625,14 @@ bool lhpOpImporterC3DFused::ProcessNode(mafVMELandmarkCloud *src, mafVMELandmark
     trg->GetLocalTimeStamps(timeStamps);
     int numTimeStamps = timeStamps.size();
 
-    mafEventMacro(mafEvent(this,PROGRESSBAR_SHOW));
+    {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
 
     for (int t = 0; t < numTimeStamps; t++)
     {
       double currTime = timeStamps[t];
       long p = t * 100 / numTimeStamps;
       //  mafProgressBarSetValueMacro(p);
-      mafEventMacro(mafEvent(this,PROGRESSBAR_SET_VALUE,(intptr_t)p));
+      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)p); mafEventMacro(evUnq);}
       //Set the new time for the vme used to register the one frame source 
       trg->SetTimeStamp(currTime); //set current time
       trg->Update(); //>UpdateAllData();
@@ -647,7 +647,7 @@ bool lhpOpImporterC3DFused::ProcessNode(mafVMELandmarkCloud *src, mafVMELandmark
     }
     timeStamps.clear();
 
-    mafEventMacro(mafEvent(this,PROGRESSBAR_HIDE));
+    {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
   }
   else
   {

@@ -48,5 +48,5 @@ mafGUIButton::mafGUIButton(wxWindow* parent, wxWindowID id, const mafString& lab
 void mafGUIButton::Command(wxCommandEvent& event)
 //----------------------------------------------------------------------------
 {
-  mafEventMacro(mafEvent(this, m_Id));
+  {mafEvent evUnq(this, m_Id); mafEventMacro(evUnq);}
 }

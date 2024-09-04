@@ -428,7 +428,7 @@ void mafGizmoTranslatePlane::Show(bool show)
 //----------------------------------------------------------------------------
 {
   for (int i = 0; i < 3; i++)
-		mafEventMacro(mafEvent(this,VME_SHOW,m_Gizmo[i],show));
+		{mafEvent evUnq(this,VME_SHOW,m_Gizmo[i],show); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGizmoTranslatePlane::ShowSquare(bool show)

@@ -48,7 +48,7 @@ public:
 
   void InvokeEvent(mafID id, void *data=NULL) {InvokeEvent(this,id,data);}
   /** invoke an event of this subject */
-  void InvokeEvent(void *sender,mafID id, void *data=NULL){InvokeEvent(mafEventBase(sender,id,data));}
+  void InvokeEvent(void *sender,mafID id, void *data=NULL){{mafEventBase evUnq(sender,id,data); InvokeEvent(evUnq);}}
   /** invoke an event of this subject */
   void InvokeEvent(mafEventBase &e) {InvokeEvent(&e);}
 

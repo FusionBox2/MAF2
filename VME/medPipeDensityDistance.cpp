@@ -834,7 +834,7 @@ void medPipeDensityDistance::UpdatePipeline()
 
     m_Actor->Modified();
 
-    mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+    {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
   }
 }
 //----------------------------------------------------------------------------
@@ -855,7 +855,7 @@ void medPipeDensityDistance::EnableMAPSFilterOff()
   m_Mapper->SetInputConnection(m_Normals->GetOutputPort());
   m_Mapper->Update();
   m_EnableMAPSFilter=false;
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medPipeDensityDistance::EnableMAPSFilterOn()
@@ -864,7 +864,7 @@ void medPipeDensityDistance::EnableMAPSFilterOn()
   m_Mapper->SetInputConnection(m_DistanceFilter->GetOutputPort());
   m_Mapper->Update();
   m_EnableMAPSFilter=true;
-  mafEventMacro(mafEvent(this,CAMERA_UPDATE));
+  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medPipeDensityDistance::EnableMAPSFilter(bool enable)

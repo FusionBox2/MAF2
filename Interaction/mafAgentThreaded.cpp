@@ -198,12 +198,12 @@ void mafAgentThreaded::AsyncSendEvent(mafBaseEventHandler *target,mafEventBase *
 void mafAgentThreaded::AsyncInvokeEvent(mafID id, mafID channel,void *data)
 //----------------------------------------------------------------------------
 {
-  AsyncInvokeEvent(&mafEventBase(this,id,data,channel),channel);
+  {mafEventBase evUnq(this,id,data,channel); AsyncInvokeEvent(&evUnq,channel);}
 }
 
 //----------------------------------------------------------------------------
 void mafAgentThreaded::AsyncSendEvent(mafBaseEventHandler *target, void *sender, mafID id, mafID channel,void *data)
 //----------------------------------------------------------------------------
 {
-  AsyncSendEvent(target,&mafEventBase(sender,id,data,channel),channel);
+  {mafEventBase evUnq(sender,id,data,channel); AsyncSendEvent(target,&evUnq,channel);}
 }

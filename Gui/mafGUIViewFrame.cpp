@@ -66,7 +66,7 @@ mafGUIViewFrame::~mafGUIViewFrame( )
 void mafGUIViewFrame::OnCloseWindow(wxCloseEvent &event)
 //----------------------------------------------------------------------------
 { 
-	mafEventMacro(mafEvent(this,VIEW_DELETE,m_View));
+	{mafEvent evUnq(this,VIEW_DELETE,m_View); mafEventMacro(evUnq);}
 	Destroy();
 }
 //----------------------------------------------------------------------------
@@ -97,7 +97,7 @@ void mafGUIViewFrame::OnSelect(wxCommandEvent &event)
 //----------------------------------------------------------------------------
 {
   wxWindow *rwi = (wxWindow*)event.GetEventObject();
-  mafEventMacro(mafEvent(this,VIEW_SELECT,m_View,rwi));
+  {mafEvent evUnq(this,VIEW_SELECT,m_View,rwi); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGUIViewFrame::OnActivate(wxActivateEvent& event)
@@ -105,7 +105,7 @@ void mafGUIViewFrame::OnActivate(wxActivateEvent& event)
 { 
 	if( event.GetActive())
   {
-		mafEventMacro(mafEvent(this,VIEW_SELECT,m_View,(wxWindow*)NULL));
+		{mafEvent evUnq(this,VIEW_SELECT,m_View,(wxWindow*)NULL); mafEventMacro(evUnq);}
 	  Layout();
 	}
 }
@@ -129,7 +129,7 @@ void mafGUIViewFrame::OnEvent(mafEventBase *maf_event)
     switch(e->GetId())
     {
     case VIEW_QUIT:
-      mafEventMacro(mafEvent(this,VIEW_DELETE,m_View));
+      {mafEvent evUnq(this,VIEW_DELETE,m_View); mafEventMacro(evUnq);}
       Destroy();
       break;
     default:

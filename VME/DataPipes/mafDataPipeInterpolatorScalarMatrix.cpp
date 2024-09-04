@@ -60,7 +60,7 @@ bool mafDataPipeInterpolatorScalarMatrix::Accept(mafVME *vme)
 vnl_matrix<double> &mafDataPipeInterpolatorScalarMatrix::GetScalarData()
 //------------------------------------------------------------------------------
 {
-  OnEvent(&mafEventBase(this,VME_OUTPUT_DATA_PREUPDATE));
+  {mafEventBase evUnq(this,VME_OUTPUT_DATA_PREUPDATE); OnEvent(&evUnq);}
   return m_ScalarData;
 }
 

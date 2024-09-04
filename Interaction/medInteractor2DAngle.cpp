@@ -169,7 +169,7 @@ void medInteractor2DAngle::OnLeftButtonDown(mafEventInteraction *e)
   double pos_2d[2];
   e->Get2DPosition(pos_2d);
   
-  mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
 
   if(m_EndMeasure)
   { 
@@ -242,7 +242,7 @@ void medInteractor2DAngle::OnRightButtonUp(mafEventInteraction *e)
   if(m_ShowContextMenu && mouse)
   {
     mafVME *vme = GetPickedVME(mouse);
-    mafEventMacro(mafEvent(this,SHOW_CONTEXTUAL_MENU, vme,true));
+    {mafEvent evUnq(this,SHOW_CONTEXTUAL_MENU, vme,true); mafEventMacro(evUnq);}
   }
 
   OnButtonUp(e);
@@ -545,7 +545,7 @@ void medInteractor2DAngle::CalculateMeasure()
     //  angle = 180.0 - angle; 
 
     m_Angle = angle;
-    mafEventMacro(mafEvent(this,ID_RESULT_ANGLE,angle));
+    {mafEvent evUnq(this,ID_RESULT_ANGLE,angle); mafEventMacro(evUnq);}
     return;
   } 
 }
@@ -600,13 +600,13 @@ void medInteractor2DAngle::UndoMeasure()
     }
     if(m_Measure.size() == 0)
     {
-      mafEventMacro(mafEvent(this,ID_RESULT_ANGLE,0.0));
+      {mafEvent evUnq(this,ID_RESULT_ANGLE,0.0); mafEventMacro(evUnq);}
     }
     else
     {
-      mafEventMacro(mafEvent(this,m_FlagMeasureType[m_FlagMeasureType.size()-1],m_Measure[m_Measure.size()-1]));
+      {mafEvent evUnq(this,m_FlagMeasureType[m_FlagMeasureType.size()-1],m_Measure[m_Measure.size()-1]); mafEventMacro(evUnq);}
     }
-    mafEventMacro(mafEvent(this, CAMERA_UPDATE));
+    {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
   }
 }
 //----------------------------------------------------------------------------

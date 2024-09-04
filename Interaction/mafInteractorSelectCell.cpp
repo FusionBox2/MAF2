@@ -117,7 +117,7 @@ void mafInteractorSelectCell::PickCell( mafDevice *device )
       vtkPoints *pickedPoint = vtkPoints::New();
       pickedPoint->SetNumberOfPoints(1);
       pickedPoint->SetPoint(0,pos_picked);
-      mafEventMacro(mafEvent(this,VME_PICKED,(vtkObject *)pickedPoint,cellPicker->GetCellId()));
+      {mafEvent evUnq(this,VME_PICKED,(vtkObject *)pickedPoint,cellPicker->GetCellId()); mafEventMacro(evUnq);}
       pickedPoint->Delete();
       
     }

@@ -65,7 +65,7 @@ void mafInteractorGeneric6DOF::OnMove(mafEventInteraction *e)
     }
 
     // forward the event with the pose matrix through default channel
-    mafEventMacro(mafEventInteraction(this,ID_TRANSFORM,m_OutputTransform->GetMatrixPointer()));
+    {mafEventInteraction evUnq(this,ID_TRANSFORM,m_OutputTransform->GetMatrixPointer()); mafEventMacro(evUnq);}
   }
 }
 
