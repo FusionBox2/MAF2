@@ -36,7 +36,7 @@ public:
   medGUILutHistogramSwatch(wxWindow* parent, wxWindowID id = -1, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(184,18), long style = wxTAB_TRAVERSAL );
 
   /** constructor. */
-  medGUILutHistogramSwatch::medGUILutHistogramSwatch(mafGUI *parent, wxWindowID id, wxString name, vtkDataSet *dataSet, mmaVolumeMaterial *material, wxSize size = wxSize(184,18), bool showText=true);
+  medGUILutHistogramSwatch(mafGUI *parent, wxWindowID id, wxString name, vtkDataSet *dataSet, mmaVolumeMaterial *material, wxSize size = wxSize(184,18), bool showText=true);
 
   /** Set the Lock Up Table */
   void SetMaterial(mmaVolumeMaterial *material);

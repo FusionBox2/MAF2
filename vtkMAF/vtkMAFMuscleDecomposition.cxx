@@ -600,6 +600,7 @@ void vtkMAFMuscleDecomposition::MapPoints(VCoord* pPoints, int nPoints,
     //compute mean value coordinates of the current point (v) within the source polygon 
     //see: K. Hormann, MS. Floater: Mean Value Coordinates for Arbitrary Planar Polygons.
     //http://folk.uio.no/michaelf/papers/barycentric.pdf
+    double dblWTotal = 0.0;
 
     //first, compute s_i, r_i
     for (int i = 0; i < nPolyPoints; i++)
@@ -651,7 +652,6 @@ void vtkMAFMuscleDecomposition::MapPoints(VCoord* pPoints, int nPoints,
     //point is in a general position, we will blend it
     pPoints[j][0] = pPoints[j][1] = pPoints[j][2] = 0.0;
 
-    double dblWTotal = 0.0;    
     for (int i = 0; i < nPolyPoints; i++)
     {
       int i_plus = (i + 1) % nPolyPoints;
@@ -1171,7 +1171,7 @@ void vtkMAFMuscleDecomposition::ComputeDirectionVectors(
 {   
   //the matrix for the rotation can be computed by procedure given in
   //Bloomenthal J. Calculation of reference frames along a
-  //space curve. Graphics Gems I, 1990, 567–571.
+  //space curve. Graphics Gems I, 1990, 567ï¿½571.
   //http://www.unchainedgeometry.com/jbloom/pdf/ref-frames.pdf
   //or also by Schneider: Geometric Tools for Computer Games  
   double cos_delta = cos(M_PI_2 / (nFrames + 1));
@@ -1808,7 +1808,7 @@ void vtkMAFMuscleDecomposition::DebugVisualizeFitting(
 
 
 #pragma region Text
-  char szText[_MAX_PATH];
+  char szText[1024];
   sprintf(szText, "#%d (out of %d) - score = %.2f", nIndex, nCount, dblScore);
   if (bBestOne)
     strcat(szText, " (BEST ONE)");

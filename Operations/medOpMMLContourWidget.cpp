@@ -1804,25 +1804,25 @@ void medOpMMLContourWidget::SetHandle3(double x, double y, double z)
   this->m_HandleGeometry[3]->Modified();
 }
 //----------------------------------------------------------------------------
-BOOL medOpMMLContourWidget::GetCenterMode()
+bool medOpMMLContourWidget::GetCenterMode()
 //----------------------------------------------------------------------------
 {
 	return m_BCenterMode;
 }
 //----------------------------------------------------------------------------
-BOOL medOpMMLContourWidget::GetTranslationMode()
+bool medOpMMLContourWidget::GetTranslationMode()
 //----------------------------------------------------------------------------
 {
 	return m_BTranslatingMode;
 }
 //----------------------------------------------------------------------------
-BOOL medOpMMLContourWidget::GetRotationMode()
+bool medOpMMLContourWidget::GetRotationMode()
 //----------------------------------------------------------------------------
 {
 	return m_BRotatingMode;
 }
 //----------------------------------------------------------------------------
-BOOL medOpMMLContourWidget::GetScalingMode()
+bool medOpMMLContourWidget::GetScalingMode()
 //----------------------------------------------------------------------------
 {
 	return m_BScalingMode;

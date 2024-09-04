@@ -504,7 +504,7 @@ void medOpMakeVMETimevarying::AddVME(mafVME * vme, double timestamp)
   assert(vme);
   std::vector<VmeTimevaryingItem *>::iterator AddedVMEsIter;
   VmeTimevaryingItem * newVmeTimevaryingItem;
-  newVmeTimevaryingItem = (VmeTimevaryingItem *)malloc(sizeof VmeTimevaryingItem);
+  newVmeTimevaryingItem = (VmeTimevaryingItem *)malloc(sizeof(VmeTimevaryingItem));
   newVmeTimevaryingItem->m_VME = vme;
   newVmeTimevaryingItem->m_TimeStamp = timestamp;
   for(AddedVMEsIter = m_AddedVMEs.begin();AddedVMEsIter != m_AddedVMEs.end();AddedVMEsIter++)

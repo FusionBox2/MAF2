@@ -93,7 +93,7 @@ public:
   For a long thin actor, this returns the screen size of the long axis,
   regardless of the current view direction.
   cf GetMaxSizeDisplay() which returns the actual screen size. */
-  double lhpMultiscaleActorCoordsUtility::GetMaxSizeDisplayAnyView(vtkActor *actor, vtkRenderer *ren) ;
+  double GetMaxSizeDisplayAnyView(vtkActor *actor, vtkRenderer *ren) ;
 
   /** Rescale actor to desired display size in pixels */
   void SetActorDisplaySize(vtkActor *actor, vtkRenderer *ren, double newSize) ;

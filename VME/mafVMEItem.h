@@ -343,7 +343,7 @@ namespace parser
   template<class Value>
   mafVMEItem* Parse(const Value& value, parser::To<mafVMEItem>)
   {
-    mafString type_name = value(_R("Type")).As<mafString>();
+    mafString type_name = value(_R("Type")).template As<mafString>();
     auto object = mafObjectFactory::CreateInstance(type_name.GetCStr());
     if (auto item = mafVMEItem::SafeDownCast(object))
     {

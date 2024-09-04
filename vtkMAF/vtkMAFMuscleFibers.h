@@ -50,14 +50,15 @@ protected:
     //if polygons A and B have different number of vertices,
     //the first/last vertex of the polygon with larger number of points (P1) is mapped 
     //always to the first/last vertex of the other polygon (P2), and for the rest is here Match struct
-    union {
-      unsigned char Correspondence;
-      struct CORRESPONDENCE
-      {        
+    struct CORRESPONDENCE_
+    {
         unsigned char Second     : 2;  //As MAX_BCURVE_POINTS = 4, the second vertex (index 1) of P1 can be mapped either to vertex of P2 with index 0-3 => 2 bits
         unsigned char Third      : 2;  //RELEASE NOTE: WHEN UPDATED ComputeControlPolygons must be updated as well
-        unsigned char Reserved   : 4;  
-      } Match;
+        unsigned char Reserved   : 4;
+    };
+    union {
+      unsigned char Correspondence;
+      CORRESPONDENCE_ Match;
     };
   } BCURVE_BLENDING;    
 

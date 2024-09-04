@@ -104,7 +104,7 @@ namespace parser
   template<class Value>
   mafInteractorSER* Parse(const Value& value, parser::To<mafInteractorSER>)
   {
-    mafString type_name = value(_R("Type")).As<mafString>();
+    mafString type_name = value(_R("Type")).template As<mafString>();
     auto object = mafObjectFactory::CreateInstance(type_name.GetCStr());
     if (auto interactor = mafInteractorSER::SafeDownCast(object))
     {

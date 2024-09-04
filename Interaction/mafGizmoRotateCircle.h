@@ -39,8 +39,6 @@ class vtkTubeFilter;
 class vtkTransformPolyDataFilter;
 class vtkTransform;
 
-template class MAF_EXPORT mafAutoPointer<mafMatrix>;
-
 //----------------------------------------------------------------------------
 /** Basic gizmo component used to perform constrained rotation around an axis.
   

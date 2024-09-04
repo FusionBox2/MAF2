@@ -47,8 +47,8 @@ const bool DEBUG_MODE = true;
 #include "dcmtk/ofstd/ofconapp.h"
 #include "dcmtk/dcmdata/dcuid.h"       /* for dcmtk version name */
 #include "dcmtk/dcmdata/dcistrmz.h"    /* for dcmZlibExpectRFC1950Encoding */
-#include "dcmtk/dcmimgle/dcmimage.h."
-#include "dcmtk/dcmjpeg/djdecode.h."
+#include "dcmtk/dcmimgle/dcmimage.h"
+#include "dcmtk/dcmjpeg/djdecode.h"
 #include "dcmtk/dcmdata/dcrledrg.h"
 #include "dcmtk/ofstd/ofstdinc.h"
 

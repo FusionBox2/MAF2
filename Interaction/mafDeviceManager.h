@@ -139,7 +139,7 @@ namespace parser
   template<class Value>
   mafDeviceManager* Parse(const Value& value, parser::To<mafDeviceManager>)
   {
-    mafString type_name = value(_R("Type")).As<mafString>();
+    mafString type_name = value(_R("Type")).template As<mafString>();
     auto object = mafObjectFactory::CreateInstance(type_name.GetCStr());
     if (auto deviceManager = mafDeviceManager::SafeDownCast(object))
     {

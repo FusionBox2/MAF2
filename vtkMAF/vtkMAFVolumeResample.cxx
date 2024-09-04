@@ -665,7 +665,7 @@ template<typename InputDataType, typename OutputDataType> void vtkMAFVolumeResam
       {
         // find index
         //const u_int pi[3] = { u_int(p[0]), u_int(p[1]), u_int(p[2])};
-        const u_int pi[3] = { mafVolumeResliceFloor(p[0]), mafVolumeResliceFloor(p[1]), mafVolumeResliceFloor(p[2])};
+        const u_int pi[3] = { (u_int)(mafVolumeResliceFloor(p[0])), (u_int)(mafVolumeResliceFloor(p[1])), (u_int)(mafVolumeResliceFloor(p[2]))};
         //const u_int pi[3] = { mafVolumeResliceRound(p[0]), mafVolumeResliceRound(p[1]), mafVolumeResliceRound(p[2])};
 
         if (pi[0] > SamplingTableSize || pi[1] > SamplingTableSize || pi[2] > SamplingTableSize)

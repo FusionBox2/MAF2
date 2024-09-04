@@ -57,7 +57,7 @@
 #include <sstream>
 #include <stack>
 #include <string>
-#include <vnl\vnl_matrix.h>
+#include <vnl/vnl_matrix.h>
 
 #include "mafNodeIterator.h"
 #include "mafVMEInfoText.h"

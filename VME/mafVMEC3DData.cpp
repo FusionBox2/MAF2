@@ -32,7 +32,7 @@
 #include "itkRawMotionImporterUtility.h"
 
 #include <fstream>
-#include <vnl\vnl_matrix.h>
+#include <vnl/vnl_matrix.h>
 
 #include <iostream>
 #include <string>

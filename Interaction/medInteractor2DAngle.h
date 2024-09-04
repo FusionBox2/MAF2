@@ -123,7 +123,7 @@ public:
   int SizeMeasureVector(){ return m_Measure.size(); }
 protected:
   /** Implemented a New() function for testing mode. */
-  static medInteractor2DAngle *medInteractor2DAngle::NewTest();
+  static medInteractor2DAngle *NewTest();
 
 	medInteractor2DAngle(bool testMode = false);
 	virtual ~medInteractor2DAngle();

@@ -818,7 +818,7 @@ class CoredVectorMeshData : public CoredMeshData{
 	int oocPointIndex,triangleIndex;
 public:
   /** constructor */
-	CoredVectorMeshData::CoredVectorMeshData(void);
+	CoredVectorMeshData(void);
 
   /** reset point and triangle index. */
 	void ResetIterator(void);

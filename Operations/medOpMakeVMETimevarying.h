@@ -90,7 +90,7 @@ protected:
   void DeleteVME(int index);
 
   /** Create the resulting timevariyng VME */
-  void medOpMakeVMETimevarying::Execute();
+  void Execute();
 
   mafVMEGeneric * m_VMETimevarying;               //< Resulting timevariyng VME
   mafVME * m_CurrentVME;                          //< Current VME

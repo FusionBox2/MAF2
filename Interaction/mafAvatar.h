@@ -220,7 +220,7 @@ namespace parser
   template<class Value>
   mafAvatar* Parse(const Value& value, parser::To<mafAvatar>)
   {
-    mafString type_name = value(_R("Type")).As<mafString>();
+    mafString type_name = value(_R("Type")).template As<mafString>();
     auto object = mafObjectFactory::CreateInstance(type_name.GetCStr());
     if (auto avatar = mafAvatar::SafeDownCast(object))
     {

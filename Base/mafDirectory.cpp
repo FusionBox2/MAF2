@@ -79,7 +79,7 @@ bool mafDirectory::Load(const mafString& namestr)
     m_Files.push_back(_R(data.name));
   } 
   while ( _findnext(srchHandle, &data) != -1 );
-  m_Path = _R(name);
+  m_Path = namestr;
   return _findclose(srchHandle) != -1;
 }
 
@@ -104,9 +104,9 @@ bool mafDirectory::Load(const mafString& namestr)
   }
   for (dirent* d = readdir(dir); d; d = readdir(dir) )
   {
-    m_Files.push_back(d->d_name);
+    m_Files.push_back(_R(d->d_name));
   }
-  m_Path = name;
+  m_Path = namestr;
   closedir(dir);
   return 1;
 }

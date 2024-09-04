@@ -800,8 +800,8 @@ Eigen::Matrix3d mafVMECenterLine::principalAxesLCSRib(int nbr, vector<vector<dou
 	//	fdPrj_Loc.open(sdh);
 
 		int rtr = Loc_XYZ_Vertx_prjj.rows();
-		//string ereùeùe = "Prj_Loc ...fff " + std::to_string(rtr);
-		//wxBusyInfo wait75fd(ereùeùe.c_str());
+		//string ereï¿½eï¿½e = "Prj_Loc ...fff " + std::to_string(rtr);
+		//wxBusyInfo wait75fd(ereï¿½eï¿½e.c_str());
 		//Sleep(1000);
 		
 		//Eigen::RowVectorXd
@@ -949,17 +949,17 @@ Eigen::Matrix3d mafVMECenterLine::principalAxesLCSRib(int nbr, vector<vector<dou
 
 
 
-	Eigen::MatrixX3d or;
-	or.resize(Test_Pnt.rows(),3);
+	Eigen::MatrixX3d oro;
+	oro.resize(Test_Pnt.rows(),3);
 	for (int u = 0; u < Test_Pnt.rows();u++)
 	{
-		or(u, 0) = mean(0);
-		or(u, 1) = mean(1);
-		or(u, 2) = mean(2);
+		oro(u, 0) = mean(0);
+		oro(u, 1) = mean(1);
+		oro(u, 2) = mean(2);
 	}
 
 	Eigen::Matrix3Xd Test_Pnt2;
-	Test_Pnt2 = V_N*Test_Pnt.transpose() +or.transpose();
+	Test_Pnt2 = V_N*Test_Pnt.transpose() +oro.transpose();
 
 
 	if (S_trg > 0) // NEW LCS 
@@ -3322,7 +3322,7 @@ if (Lst_Path_Yes)
 		//Out_Plots_Cell = [Out_Plots_Cell; 'num2str([Dst_AngTwist_X_ax; Sum_AngBand_' ax_XYZ '_ax])'];
 
 		//Out_Plots_Cell = [Out_Plots_Cell; num2str([Dst_AngTwist_X_ax(i_Plot_strt:end) - Dst_AngTwist_X_ax(i_Plot_strt); Sum_AngBand_Y_ax(i_Plot_strt:end) - Sum_AngBand_Y_ax(i_Plot_strt)])];
-		//Out_Plots_Cell = [Out_Plots_Cell; [' ** ' ax_XYZ ' Band Ang total = ' num2str([Sum_AngBand_Y_ax(end) - Sum_AngBand_Y_ax(i_Plot_strt)]) '°']];
+		//Out_Plots_Cell = [Out_Plots_Cell; [' ** ' ax_XYZ ' Band Ang total = ' num2str([Sum_AngBand_Y_ax(end) - Sum_AngBand_Y_ax(i_Plot_strt)]) 'ï¿½']];
 
 
 	}

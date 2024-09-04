@@ -32,8 +32,6 @@ public:
     SCALAR
   };
   Param(VarType type, bool dn = false, bool up = false):m_type(type), m_dn(dn), m_up(up), m_valid(true){}
-  //Param(const char *name, VarType type, bool dn = false, bool up = false):m_type(type), m_dn(dn), m_up(up),m_name(name){}
-  const std::string& GetName(){return m_name;}
   VarType            GetType(){return m_type;}
   Type&              GetScalar(){return m_value[0];}
   const Type&        GetScalar()const{return m_value[0];}
@@ -57,7 +55,6 @@ private:
   V3d<Type>         m_value;
   bool              m_valid;
   const VarType     m_type;
-  //const std::string m_name;
 };
 
 template <class Type>
@@ -101,14 +98,14 @@ return fields;                             \
 
 
 
-#define DEFINE_FIELD(name,vector,input) do{m_ops.push_back(oneParam<Type>(vector, input, false, false, &m_##name));m_##name = NULL;}while(0)
-#define DEFINE_VFIELDI(name)   do{m_ops.push_back(oneParam<Type>(true,  true,  false, false, &m_##name));m_##name = NULL;}while(0)
-#define DEFINE_VFIELDO(name)   do{m_ops.push_back(oneParam<Type>(true,  false, false, false, &m_##name));m_##name = NULL;}while(0)
-#define DEFINE_SFIELDI(name)   do{m_ops.push_back(oneParam<Type>(false, true,  false, false, &m_##name));m_##name = NULL;}while(0)
-#define DEFINE_SFIELDI(name)   do{m_ops.push_back(oneParam<Type>(false, true,  false, false, &m_##name));m_##name = NULL;}while(0)
-#define DEFINE_SFIELDO(name)   do{m_ops.push_back(oneParam<Type>(false, false, false, false, &m_##name));m_##name = NULL;}while(0)
-#define DEFINE_SFIELDIC(name)  do{m_ops.push_back(oneParam<Type>(false, true,  true,  false, &m_##name));m_##name = NULL;}while(0)
-#define DEFINE_SFIELDICO(name) do{m_ops.push_back(oneParam<Type>(false, true,  true,  true,  &m_##name));m_##name = NULL;}while(0)
+#define DEFINE_FIELD(name,vector,input) do{Oper<Type>::m_ops.push_back(oneParam<Type>(vector, input, false, false, &m_##name));m_##name = NULL;}while(0)
+#define DEFINE_VFIELDI(name)   do{Oper<Type>::m_ops.push_back(oneParam<Type>(true,  true,  false, false, &m_##name));m_##name = NULL;}while(0)
+#define DEFINE_VFIELDO(name)   do{Oper<Type>::m_ops.push_back(oneParam<Type>(true,  false, false, false, &m_##name));m_##name = NULL;}while(0)
+#define DEFINE_SFIELDI(name)   do{Oper<Type>::m_ops.push_back(oneParam<Type>(false, true,  false, false, &m_##name));m_##name = NULL;}while(0)
+#define DEFINE_SFIELDI(name)   do{Oper<Type>::m_ops.push_back(oneParam<Type>(false, true,  false, false, &m_##name));m_##name = NULL;}while(0)
+#define DEFINE_SFIELDO(name)   do{Oper<Type>::m_ops.push_back(oneParam<Type>(false, false, false, false, &m_##name));m_##name = NULL;}while(0)
+#define DEFINE_SFIELDIC(name)  do{Oper<Type>::m_ops.push_back(oneParam<Type>(false, true,  true,  false, &m_##name));m_##name = NULL;}while(0)
+#define DEFINE_SFIELDICO(name) do{Oper<Type>::m_ops.push_back(oneParam<Type>(false, true,  true,  true,  &m_##name));m_##name = NULL;}while(0)
 
 template <class Type>
 class Oper
@@ -134,7 +131,7 @@ public:
     DEFINE_FIELD(in1, true, true);
   }
   bool postRead(){return true;}
-  bool process(){if(!checkInputFields())return false;m_out->GetVector() = m_in1->GetVector();validateOutputFields();return true;}
+  bool process(){if(!Oper<Type>::checkInputFields())return false;m_out->GetVector() = m_in1->GetVector();Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -150,7 +147,7 @@ public:
     DEFINE_FIELD(in1, false, true);
   }
   bool postRead(){return true;}
-  bool process(){if(!checkInputFields())return false;m_out->GetScalar() = m_in1->GetScalar();validateOutputFields();return true;}
+  bool process(){if(!Oper<Type>::checkInputFields())return false;m_out->GetScalar() = m_in1->GetScalar();Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -168,7 +165,7 @@ public:
     DEFINE_FIELD(in2, true, true);
   }
   bool postRead(){return true;}
-  bool process(){if(!checkInputFields())return false;m_out->GetVector() = m_in1->GetVector() ^ m_in2->GetVector();validateOutputFields();return true;}
+  bool process(){if(!Oper<Type>::checkInputFields())return false;m_out->GetVector() = m_in1->GetVector() ^ m_in2->GetVector();Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -186,7 +183,7 @@ public:
     DEFINE_FIELD(in2, true, true);
   }
   bool postRead(){return true;}
-  bool process(){if(!checkInputFields())return false;m_out->GetScalar() = m_in1->GetVector() * m_in2->GetVector();validateOutputFields();return true;}
+  bool process(){if(!Oper<Type>::checkInputFields())return false;m_out->GetScalar() = m_in1->GetVector() * m_in2->GetVector();Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -203,7 +200,7 @@ public:
     DEFINE_FIELD(in2, false, true);
   }
   bool postRead(){return true;}
-  bool process(){if(!checkInputFields())return false;m_out->GetScalar() = m_in1->GetScalar() + m_in2->GetScalar();validateOutputFields();return true;}
+  bool process(){if(!Oper<Type>::checkInputFields())return false;m_out->GetScalar() = m_in1->GetScalar() + m_in2->GetScalar();Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -220,7 +217,7 @@ public:
     DEFINE_FIELD(in2, false, true);
   }
   bool postRead(){return true;}
-  bool process(){if(!checkInputFields())return false;m_out->GetScalar() = m_in1->GetScalar() - m_in2->GetScalar();validateOutputFields();return true;}
+  bool process(){if(!Oper<Type>::checkInputFields())return false;m_out->GetScalar() = m_in1->GetScalar() - m_in2->GetScalar();Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -237,7 +234,7 @@ public:
     DEFINE_FIELD(in2, false, true);
   }
   bool postRead(){return true;}
-  bool process(){if(!checkInputFields())return false;m_out->GetScalar() = m_in1->GetScalar() * m_in2->GetScalar();validateOutputFields();return true;}
+  bool process(){if(!Oper<Type>::checkInputFields())return false;m_out->GetScalar() = m_in1->GetScalar() * m_in2->GetScalar();Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -254,7 +251,7 @@ public:
     DEFINE_FIELD(in2, false, true);
   }
   bool postRead(){return true;}
-  bool process(){if(!checkInputFields())return false;m_out->GetScalar() = m_in1->GetScalar() / m_in2->GetScalar();validateOutputFields();return true;}
+  bool process(){if(!Oper<Type>::checkInputFields())return false;m_out->GetScalar() = m_in1->GetScalar() / m_in2->GetScalar();Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -271,7 +268,7 @@ public:
     DEFINE_FIELD(in2, true, true);
   }
   bool postRead(){return true;}
-  bool process(){if(!checkInputFields())return false;m_out->GetVector() = m_in1->GetVector() + m_in2->GetVector();validateOutputFields();return true;}
+  bool process(){if(!Oper<Type>::checkInputFields())return false;m_out->GetVector() = m_in1->GetVector() + m_in2->GetVector();Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -288,7 +285,7 @@ public:
     DEFINE_FIELD(in2, true, true);
   }
   bool postRead(){return true;}
-  bool process(){if(!checkInputFields())return false;m_out->GetVector() = m_in1->GetVector() - m_in2->GetVector();validateOutputFields();return true;}
+  bool process(){if(!Oper<Type>::checkInputFields())return false;m_out->GetVector() = m_in1->GetVector() - m_in2->GetVector();Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -310,12 +307,12 @@ public:
   bool postRead(){return true;}
   bool process()
   {
-    if(!checkInputFields())
+    if(!Oper<Type>::checkInputFields())
       return false;
     V3d<Type> p1 = m_in1s->GetScalar() * m_in1v->GetVector();
     V3d<Type> p2 = m_in2s->GetScalar() * m_in2v->GetVector();
     m_out->GetVector() = p1 + p2;
-    validateOutputFields();
+	  Oper<Type>::validateOutputFields();
     return true;
   }
 private:
@@ -349,7 +346,7 @@ public:
     DEFINE_FIELD(in, true, true);
   }
   bool postRead(){return true;}
-  bool process(){if(!checkInputFields())return false;validateOutputFields();return true;}
+  bool process(){if(!Oper<Type>::checkInputFields())return false;Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_in;
 };
@@ -364,7 +361,7 @@ public:
     DEFINE_FIELD(out, true, false);
   }
   bool postRead(){return true;}
-  bool process(){if(!checkInputFields())return false;validateOutputFields();return true;}
+  bool process(){if(!Oper<Type>::checkInputFields())return false;Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
 };
@@ -398,7 +395,7 @@ public:
     DEFINE_SFIELDICO(up);
   }
   bool postRead();
-  bool process(){if(!checkInputFields())return false;validateOutputFields();return true;}
+  bool process(){if(!Oper<Type>::checkInputFields())return false;Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_dn;
   Param<Type>       *m_in;
@@ -476,7 +473,7 @@ public:
     DEFINE_FIELD(out, false, false);
   }
   bool postRead(){return true;}
-  bool process(){if(!checkInputFields())return false;validateOutputFields();return true;}
+  bool process(){if(!Oper<Type>::checkInputFields())return false;Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
 };
@@ -491,7 +488,7 @@ public:
     DEFINE_FIELD(out, true, true);
   }
   bool postRead(){return true;}
-  bool process(){if(!checkInputFields())return false;Type ln = m_out->GetVector().length2(); if(ln != Type(0)) m_out->GetVector() /= sqrt(ln);validateOutputFields();return true;}
+  bool process(){if(!Oper<Type>::checkInputFields())return false;Type ln = m_out->GetVector().length2(); if(ln != Type(0)) m_out->GetVector() /= sqrt(ln);Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
 };
@@ -526,8 +523,8 @@ private:
 template <class Type>
 void VecManVM<Type>::Preexecute()
 {
-  for(std::map<std::string, Param<Type>*>::iterator it = m_operands.begin(); it != m_operands.end(); ++it)
-    it->second->GetValid() = false;
+  for(auto& oper : m_operands)
+    oper.second->GetValid() = false;
 }
 
 template <class Type>
@@ -545,7 +542,7 @@ bool VecManVM<Type>::Execute()
 template <class Type>
 Param<Type> *VecManVM<Type>::GetParam(const char *name)
 {  
-  std::map<std::string, Param<Type>*>::iterator it = m_operands.find(name);
+  auto it = m_operands.find(name);
   if(it == m_operands.end())
     return NULL;
   return it->second;
@@ -555,13 +552,13 @@ Param<Type> *VecManVM<Type>::GetParam(const char *name)
 template <class Type>
 void VecManVM<Type>::Clean()
 {
-  for(std::vector<Oper<Type>*>::iterator it = m_operators.begin(); it != m_operators.end(); ++it)
+  for(auto it = m_operators.begin(); it != m_operators.end(); ++it)
     delete *it;
   m_operators.clear();
-  for(std::map<std::string, Param<Type>*>::iterator it = m_operands.begin(); it != m_operands.end(); ++it)
+  for(auto it = m_operands.begin(); it != m_operands.end(); ++it)
     delete it->second;
   m_operands.clear();
-  for(std::vector<Param<Type>*>::iterator it = m_constants.begin(); it != m_constants.end(); ++it)
+  for(auto it = m_constants.begin(); it != m_constants.end(); ++it)
     delete *it;
   m_constants.clear();
 }
@@ -664,7 +661,7 @@ template <class Type>
 Param<Type> *VecManVM<Type>::ParseVector(const char *name, bool input)
 {
   Param<Type> *o = NULL;
-  std::map<std::string, Param<Type>*>::iterator  it = m_operands.find(name);
+  auto it = m_operands.find(name);
   if(it == m_operands.end())
   {
     o = new Param<Type>(Param<Type>::VECTOR);
@@ -699,7 +696,7 @@ Param<Type> *VecManVM<Type>::ParseScalar(const char *name, bool input, bool cons
   }
   else if(!constant)
   {
-    std::map<std::string, Param<Type>*>::iterator it = m_operands.find(name);
+    auto it = m_operands.find(name);
     if(it == m_operands.end())
     {
       o = new Param<Type>(Param<Type>::SCALAR);

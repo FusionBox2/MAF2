@@ -135,7 +135,7 @@ public:
   int SizeMeasureVector(){ return m_Measure.size(); }
 protected:
 	/** Implemented a New() function for testing mode. */
-  static medInteractor2DDistance *medInteractor2DDistance::NewTest();
+  static medInteractor2DDistance *NewTest();
 
 	medInteractor2DDistance(bool testMode = false);
 	virtual ~medInteractor2DDistance();

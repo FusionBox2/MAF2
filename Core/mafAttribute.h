@@ -77,7 +77,7 @@ namespace parser
   template<class Value>
   mafAttribute* Parse(const Value& value, parser::To<mafAttribute>)
   {
-    mafString type_name = value(_R("Type")).As<mafString>();
+    mafString type_name = value(_R("Type")).template As<mafString>();
     auto object = mafObjectFactory::CreateInstance(type_name.GetCStr());
     if (auto attr = mafAttribute::SafeDownCast(object))
     {
@@ -95,7 +95,7 @@ namespace serializer
   {
     mafString type_name = _R(attr->GetTypeName());
     assert(attr);
-    value(_R("Type")).SetValue(type_name);
+    value(_R("Type")).template SetValue(type_name);
     attr->Store(value);
   }
 }

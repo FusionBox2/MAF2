@@ -528,7 +528,7 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::WriteHistogramFiles(
   accumulate->SetComponentSpacing(1,0,0); // bins maps all the Scalars Range
   accumulate->Update();
 
-  wxString newDir = (mafGetApplicationDirectory()).GetCStr();
+  wxString newDir = (mafGetApplicationDirectory()).toWx();
   wxString oldDir = wxGetCwd();
   wxSetWorkingDirectory(newDir);
 

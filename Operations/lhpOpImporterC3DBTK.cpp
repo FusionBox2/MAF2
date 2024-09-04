@@ -45,10 +45,8 @@
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
 
-//#include "C3D_Reader.h"
-
 #include <string>
-#include <vnl\vnl_matrix.h>
+#include <vnl/vnl_matrix.h>
 
 #include <iostream>
 #include <fstream>

@@ -38,8 +38,8 @@
 #include "itkRawMotionImporterUtility.h"
 
 #include <fstream>
-#include <vnl\vnl_matrix.h>
-#include <vnl\vnl_vector.h>
+#include <vnl/vnl_matrix.h>
+#include <vnl/vnl_vector.h>
 
 #include <iostream>
 #include <string>
@@ -339,10 +339,10 @@ int mafVMEPGDData::Read()
         tmpMatrix->DeepCopy(tmpTransform->GetMatrix());
 
         // modified by Marco. 24-10-2003
-        // Il time stamp cosü calcolato ø sempre 0!!! passando una mflMatrix a AppendKeyMatrix il
-        // suo time stamp ø conservato, anche per questo i PGD non si muovevano!!!
-        // Passandolgi una matrice vtkMatrix4x4 il time stamp ø calcolato automaticamente in modo 
-        // progresivo, per cui il PGD si muove ma il tempo non ø quello estratto dal file PGD
+        // Il time stamp cosï¿½ calcolato ï¿½ sempre 0!!! passando una mflMatrix a AppendKeyMatrix il
+        // suo time stamp ï¿½ conservato, anche per questo i PGD non si muovevano!!!
+        // Passandolgi una matrice vtkMatrix4x4 il time stamp ï¿½ calcolato automaticamente in modo 
+        // progresivo, per cui il PGD si muove ma il tempo non ï¿½ quello estratto dal file PGD
         //tmpMatrix->SetTimeStamp(tos + counter*si);
         mafMatrix ttmp;
         ttmp.SetVTKMatrix(tmpMatrix);

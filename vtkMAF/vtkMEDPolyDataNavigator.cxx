@@ -611,7 +611,7 @@ void vtkMEDPolyDataNavigator::AddUniqueEdge(const Edge& edge, EdgeMultiMap& edge
   bool found = false ;
 
   Mit pos ;
-  MitRange& range = edgeMap.equal_range(key) ;
+  MitRange range = edgeMap.equal_range(key) ;
   for (pos = range.first ;  pos != range.second && !found ;  pos++){
     found = (pos->second == edge) ;
   }

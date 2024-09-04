@@ -15,7 +15,7 @@ University of Bedfordshire, UK
 #include "vtkPolyData.h"
 #include "vtkMath.h"
 #include "vtkCellArray.h"
-#include "vtkMedMatrixVectorMath.h"
+#include "vtkMEDMatrixVectorMath.h"
 #include "vtkMEDPolyDataNavigator.h"
 
 #include <fstream>

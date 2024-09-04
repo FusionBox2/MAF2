@@ -26,11 +26,11 @@ public:
 
   T& operator()(int i)
   {
-    return at(i);
+    return std::vector<T>::at(i);
   }
   const T& operator()(int i)const
   {
-    return at(i);
+    return std::vector<T>::at(i);
   }
   void resize(size_t _XSize)
   {
@@ -38,11 +38,11 @@ public:
   }
   void   GetDimension(size_t& dimX)const
   {
-    dimX = size();
+    dimX = std::vector<T>::size();
   }
   size_t GetDimension()const
   {
-    return size();
+    return std::vector<T>::size();
   }
   void   SetDimension(size_t sz)
   {
@@ -50,7 +50,7 @@ public:
   }
   size_t GetNumElems()const
   {
-    return size();
+    return std::vector<T>::size();
   }
   Array1D& operator=(const Array1D& _array)
   {
@@ -85,7 +85,7 @@ public:
   Array2D(const NRVec<double>& vec, const Dimension& dim):std::vector<Array1D<T> >(dim.x)
   {
     for(size_t i = 0; i < dim.x; i++)
-      at(i).resize(dim.y);
+		std::vector<Array1D<T> >::at(i).resize(dim.y);
     assert(vec.size() == GetNumElems() * T::DIMENSION);
     for(unsigned i = 0; i < GetNumElems(); i++)
     {
@@ -96,7 +96,7 @@ public:
   Array2D(const Dimension& dim):std::vector<Array1D<T> >(dim.x)
   {
     for(size_t i = 0; i < dim.x; i++)
-      at(i).resize(dim.y);
+		std::vector<Array1D<T> >::at(i).resize(dim.y);
   }
 
   Array2D():std::vector<Array1D<T> >(){}
@@ -104,7 +104,7 @@ public:
   Array2D(size_t _XSize, size_t _YSize):std::vector<Array1D<T> >(_XSize)
   {
     for(size_t i = 0; i < _XSize; i++)
-      at(i).resize(_YSize);
+		std::vector<Array1D<T> >::at(i).resize(_YSize);
   }
   Array2D(const Array2D& _array):std::vector<Array1D<T> >(_array){}
 
@@ -113,44 +113,44 @@ public:
   T& operator()(int i)
   {
     assert(GetNumElems() > 0);
-    return at(i / at(0).GetNumElems())(i % at(0).GetNumElems());
+    return std::vector<Array1D<T> >::at(i / std::vector<Array1D<T> >::at(0).GetNumElems())(i % std::vector<Array1D<T> >::at(0).GetNumElems());
   }
   const T& operator()(int i)const
   {
     assert(GetNumElems() > 0);
-    return at(i / at(0).GetNumElems())(i % at(0).GetNumElems());
+    return std::vector<Array1D<T> >::at(i / std::vector<Array1D<T> >::at(0).GetNumElems())(i % std::vector<Array1D<T> >::at(0).GetNumElems());
   }
   T& operator()(int i, int j)
   {
     assert(GetNumElems() > 0);
-    return at(i)(j);
+    return std::vector<Array1D<T> >::at(i)(j);
   }
   const T& operator()(int i, int j)const
   {
     assert(GetNumElems() > 0);
-    return at(i)(j);
+    return std::vector<Array1D<T> >::at(i)(j);
   }
   void resize(size_t _XSize, size_t _YSize)
   {
     std::vector<Array1D<T> >::resize(_XSize);
     for(size_t i = 0; i < _XSize; i++)
-      at(i).resize(_YSize);
+		std::vector<Array1D<T> >::at(i).resize(_YSize);
   }
   void GetDimension(size_t& dimX, size_t& dimY)const
   {
-    dimX = size();
+    dimX = std::vector<Array1D<T> >::size();
     if(dimX == 0)
     {
       dimY = 0;
       return;
     }
-    dimY = at(0).GetDimension();
+    dimY = std::vector<Array1D<T> >::at(0).GetDimension();
   }
   Dimension GetDimension()const
   {
-    if(size() == 0)
+    if(std::vector<Array1D<T> >::size() == 0)
       return Dimension(0, 0);
-    return Dimension(size(), at(0).GetDimension());
+    return Dimension(std::vector<Array1D<T> >::size(), std::vector<Array1D<T> >::at(0).GetDimension());
   }
   void SetDimension(size_t _XSize, size_t _YSize)
   {
@@ -162,9 +162,9 @@ public:
   }
   size_t GetNumElems()const
   {
-    if(size() == 0)
+    if(std::vector<Array1D<T> >::size() == 0)
       return 0;
-    return size() * at(0).GetNumElems();
+    return std::vector<Array1D<T> >::size() * std::vector<Array1D<T> >::at(0).GetNumElems();
   }
   Array2D& operator=(const Array2D& _array)
   {
@@ -191,58 +191,58 @@ public:
   Array3D(size_t _XSize, size_t _YSize, size_t _ZSize):std::vector<Array2D<T> >(_XSize)
   {
     for(size_t i = 0; i < _XSize; i++)
-      at(i).resize(_YSize, _ZSize);
+		std::vector<Array2D<T> >::at(i).resize(_YSize, _ZSize);
   }
   Array3D(const Dimension& dim):std::vector<Array2D<T> >(dim.x)
   {
     for(size_t i = 0; i < dim.x; i++)
-      at(i).resize(dim.y, dim.z);
+		std::vector<Array2D<T> >::at(i).resize(dim.y, dim.z);
   }
 
   Array3D(const Array3D& _array):std::vector<Array2D<T> >(_array){}
-  ArrayND<T>* CreateDimCopy() const {return new Array3D<T>(GetDimension());}
+  ArrayND<T>* CreateDimCopy() const {return nullptr;}
   T& operator()(int i)
   {
     assert(GetNumElems() > 0);
-    return at(i / at(0).GetNumElems())(i % at(0).GetNumElems());
+    return std::vector<Array2D<T> >::at(i / std::vector<Array2D<T> >::at(0).GetNumElems())(i % std::vector<Array2D<T> >::at(0).GetNumElems());
   }
   const T& operator()(int i)const
   {
     assert(GetNumElems() > 0);
-    return at(i / at(0).GetNumElems())(i % at(0).GetNumElems());
+    return std::vector<Array2D<T> >::at(i / std::vector<Array2D<T> >::at(0).GetNumElems())(i % std::vector<Array2D<T> >::at(0).GetNumElems());
   }
   T& operator()(int i, int j, int k)
   {
     assert(GetNumElems() > 0);
-    return at(i)(j, k);
+    return std::vector<Array2D<T> >::at(i)(j, k);
   }
   const T& operator()(int i, int j, int k)const
   {
     assert(GetNumElems() > 0);
-    return at(i)(j, k);
+    return std::vector<Array2D<T> >::at(i)(j, k);
   }
   void resize(size_t _XSize, size_t _YSize, size_t _ZSize)
   {
     std::vector<Array2D<T> >::resize(_XSize);
     for(size_t i = 0; i < _XSize; i++)
-      at(i).resize(_YSize, _ZSize);
+		std::vector<Array2D<T> >::at(i).resize(_YSize, _ZSize);
   }
   void GetDimension(size_t& dimX, size_t& dimY, size_t& dimZ)const
   {
-    dimX = size();
+    dimX = std::vector<Array2D<T> >::size();
     if(dimX == 0)
     {
       dimY = 0;
       dimZ = 0;
       return;
     }
-    at(0).GetDimension(dimY, dimZ);
+	  std::vector<Array2D<T> >::at(0).GetDimension(dimY, dimZ);
   }
   Dimension GetDimension()const
   {
-    if(size() == 0)
+    //if(std::vector<Array2D<T> >::size() == 0)
       return Dimension(0, 0, 0);
-    return Dimension(size(), at(0).GetDimension());
+    //return Dimension(std::vector<Array2D<T> >::size(), std::vector<Array2D<T> >::at(0).GetDimension());
   }
   void SetDimension(size_t _XSize, size_t _YSize, size_t _ZSize)
   {
@@ -254,9 +254,9 @@ public:
   }
   size_t GetNumElems()const
   {
-    if(size() == 0)
+    if(std::vector<Array2D<T> >::size() == 0)
       return 0;
-    return size() * at(0).GetNumElems();
+    return std::vector<Array2D<T> >::size() * std::vector<Array2D<T> >::at(0).GetNumElems();
   }
   Array3D& operator=(const Array3D& _array)
   {

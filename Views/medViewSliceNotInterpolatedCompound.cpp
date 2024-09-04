@@ -27,7 +27,7 @@
 #include "vtkDataSet.h"
 #include "vtkLookupTable.h"
 #include "mafGUILutSwatch.h"
-#include "wx\sizer.h"
+#include "wx/sizer.h"
 
 mafCxxTypeMacro(medViewSliceNotInterpolatedCompound);
 

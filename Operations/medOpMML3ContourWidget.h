@@ -128,10 +128,10 @@ public:
   void TranslationModeOff(); ///< switch translation mode on//off
   void TranslationModeOn(); ///< switch translation mode on//off
 
-  BOOL GetCenterMode() const {return m_PlaceMode;} ///< is place mode on
-  BOOL GetScalingMode() const {return m_ScalingMode;} ///< is scaling mode on
-  BOOL GetRotationMode() const {return m_RotatingMode;} ///< is rotation mode on
-  BOOL GetTranslationMode() const {return m_TranslationMode;} ///< is translation mode on
+  bool GetCenterMode() const {return m_PlaceMode;} ///< is place mode on
+  bool GetScalingMode() const {return m_ScalingMode;} ///< is scaling mode on
+  bool GetRotationMode() const {return m_RotatingMode;} ///< is rotation mode on
+  bool GetTranslationMode() const {return m_TranslationMode;} ///< is translation mode on
 
 
   void SetNextOperationId(int n) {m_OperationID = n ;}
@@ -364,10 +364,10 @@ protected:
 
   float m_HandleRadius;
 
-  BOOL m_RotatingMode;
-  BOOL m_ScalingMode;
-  BOOL m_TranslationMode;
-  BOOL m_PlaceMode;
+  bool m_RotatingMode;
+  bool m_ScalingMode;
+  bool m_TranslationMode;
+  bool m_PlaceMode;
   float m_Bounds[6];
 
   int m_Operation;

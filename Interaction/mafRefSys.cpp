@@ -131,7 +131,7 @@ mafTransformBase *mafRefSys::GetTransform()
   switch (m_Type)
   {
   case CUSTOM:
-    return m_Transform?m_Transform:(mafTransformBase*)m_Identity;
+    return m_Transform?(mafTransformBase*)m_Transform:(mafTransformBase*)m_Identity;
   case GLOBAL: 
     return m_Identity;
   case PARENT: 
@@ -155,7 +155,7 @@ mafTransformBase *mafRefSys::GetTransform()
     // 
 
     */
-    return m_Transform?m_Transform:(mafTransformBase*)m_Identity;
+    return m_Transform?(mafTransformBase*)m_Transform:(mafTransformBase*)m_Identity;
   }
   return m_Identity;
 }

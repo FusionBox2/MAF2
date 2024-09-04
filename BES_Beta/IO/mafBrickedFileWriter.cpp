@@ -686,7 +686,7 @@ void mafBrickedFileWriter::CreateBricksIndexTable(int nCurBrickPlane)
     m_BrickFile->Delete();
     m_BrickFile = NULL;
 #pragma warning(suppress: 6031) // warning C6031: Return value ignored: '_unlink'
-		_unlink(m_BrickFileName.GetCStr());
+		unlink(m_BrickFileName.GetCStr());
 
 		return false;
 	}

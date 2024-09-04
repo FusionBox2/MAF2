@@ -139,7 +139,7 @@ public:
 	void SetTestModeOff(){m_TestMode=false;};
 
   /** set radius dimension */
-  void SetRadius(double radius){m_SphereRadius = radius; OnEvent(&mafEvent(this,ID_SPHERE_RADIUS));}
+  void SetRadius(double radius){m_SphereRadius = radius; mafEvent ev(this,ID_SPHERE_RADIUS);OnEvent(&ev);}
 
 protected:
   /** create gui */

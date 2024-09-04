@@ -125,8 +125,8 @@ PURPOSE.  See the above copyright notice for more information.
 #include "dcmtk/ofstd/ofconapp.h"
 #include "dcmtk/dcmdata/dcuid.h"       /* for dcmtk version name */
 #include "dcmtk/dcmdata/dcistrmz.h"    /* for dcmZlibExpectRFC1950Encoding */
-#include "dcmtk/dcmimgle/dcmimage.h."
-#include "dcmtk/dcmjpeg/djdecode.h."
+#include "dcmtk/dcmimgle/dcmimage.h"
+#include "dcmtk/dcmjpeg/djdecode.h"
 #include "dcmtk/dcmdata/dcrledrg.h"
 
 #include "dcmtk/ofstd/ofstdinc.h"
@@ -4937,7 +4937,7 @@ void medOpImporterDicomOffis::GenerateSliceTexture(int imageID)
 		clip->SetOrigin(origin[0], origin[1], origin[2]);// Origin[m_SortAxes]);	
 		clip->SetSpacing(spacing);
 
-		int dimension[3] = {dim_x_clip, dim_y_clip, 1};
+		int dimension[3] = {(int)dim_x_clip, (int)dim_y_clip, 1};
 		clip->SetDimensions(dimension);
 
 		std::ostringstream stringStream;

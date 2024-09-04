@@ -236,7 +236,7 @@ public:
   void GetSPoints(Array1D<VecType>& cpoints, Array1D<VecType>& spatial)
   {
     std::vector<Array1D<T> >  tesselationMaxima;
-    SPATIALPOINTS;
+    SPATIALPOINTS();
   }
 protected:
 private:

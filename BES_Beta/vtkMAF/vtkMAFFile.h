@@ -29,6 +29,13 @@ under _WIN32 (although they are supported for _WIN64)
 
 #pragma once
 
+#ifdef __APPLE__
+#define off64_t off_t
+#define fpos64_t fpos_t
+#define fopen64 fopen
+#define fseeko64 fseeko
+#define fgetpos64 fgetpos
+#endif
 //This is nothrow version
 class VTK_vtkMAF_EXPORT vtkMAFFile : public vtkObject
 {

@@ -70,7 +70,7 @@ namespace parser
     std::vector<decltype(Parse(std::declval<Value>(), To<T>{})) > result;
     for (size_t i = 0; i < value.GetNumItems(); i++)
     {
-      result.push_back(value[i].As<T>());
+      result.push_back(value[i].template As<T>());
     }
     return result;
   }

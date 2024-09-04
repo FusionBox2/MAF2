@@ -503,7 +503,7 @@ bool vtkMAFTransferFunction2D::GetTable(int vsize, const double *vTable, int gsi
 
     const double opacity = useOpacity ? this->Widgets[wi].Opacity : 1.f;
     const double rgbd[4] = {255.f * this->Widgets[wi].Color[0], 255.f * this->Widgets[wi].Color[1], 255.f * this->Widgets[wi].Color[2], 255.f * this->Widgets[wi].Diffuse };
-    const unsigned char rgbdByte[4] = {clip(int(255.f * this->Widgets[wi].Color[0]), 0, 255), clip(int(255.f * this->Widgets[wi].Color[1]), 0, 255), clip(int(255.f * this->Widgets[wi].Color[2]), 0, 255), clip(int(255.f * this->Widgets[wi].Diffuse), 0, 255)};
+    const unsigned char rgbdByte[4] = {(unsigned char)(clip(int(255.f * this->Widgets[wi].Color[0]), 0, 255)), (unsigned char)(clip(int(255.f * this->Widgets[wi].Color[1]), 0, 255)), (unsigned char)(clip(int(255.f * this->Widgets[wi].Color[2]), 0, 255)), (unsigned char)(clip(int(255.f * this->Widgets[wi].Diffuse), 0, 255))};
     const double *pVAttenuation = widgetAttenuation[wi][0] - indexRange[0][L];
     const double *pGAttenuation = widgetAttenuation[wi][1] - indexRange[1][L];
     const double *pRAttenuation = widgetAttenuation[wi][2] - indexRange[1][L];

@@ -767,9 +767,9 @@ void vtkMAFContourVolumeMapper::InitializeRender(bool setup, vtkRenderer *render
     float ambientColor  = volume->GetProperty()->GetAmbient();
     float diffuseColor  = volume->GetProperty()->GetDiffuse();
     float specularColor = volume->GetProperty()->GetSpecular();
-    float ambientColor3[4] = { ambientColor, ambientColor, ambientColor, Alpha};
-    float diffuseColor3[4] = { diffuseColor, diffuseColor, diffuseColor, Alpha};
-    float specularColor3[4] = { specularColor, specularColor, specularColor, Alpha};
+    float ambientColor3[4] = { ambientColor, ambientColor, ambientColor, (float)Alpha};
+    float diffuseColor3[4] = { diffuseColor, diffuseColor, diffuseColor, (float)Alpha};
+    float specularColor3[4] = { specularColor, specularColor, specularColor, (float)Alpha};
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT,  ambientColor3);
     glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE,  diffuseColor3);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specularColor3);
@@ -1858,7 +1858,7 @@ template<typename DataType> void vtkMAFContourVolumeMapper::CreateMCubes_old(int
             //Check if the scalar value is greater or equal then the threshold
             int caseIndex;
             //Modified by Matteo 27/06/06
-            if(m_MAXScalar==ContourValue)
+            if(MAXScalar==ContourValue)
             {
               caseIndex = voxelVals[0] != ContourValue; 
               caseIndex |= (voxelVals[1] != ContourValue) << 1;
@@ -1880,7 +1880,7 @@ template<typename DataType> void vtkMAFContourVolumeMapper::CreateMCubes_old(int
               caseIndex |= (voxelVals[6] > ContourValue) << 6;
               caseIndex |= (voxelVals[7] > ContourValue) << 7;
             }
-            const EDGE_LIST *edge = marchingCubesCases[caseIndex].edges;
+            const int *edge = marchingCubesCases[caseIndex].edges;
             if (*edge < 0)
               continue;
             if (EnableContourAnalysis) {

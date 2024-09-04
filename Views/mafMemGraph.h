@@ -94,9 +94,6 @@ public:
   bool                RemXVar(unsigned int coord){return RemVar(coord, m_XParams, m_YParams);}
   bool                SetXVar(unsigned int index, int ID, unsigned int deriv = 0){return SetVar(index, ID, deriv, m_XParams, m_YParams);}
 
-  void                SetSmooth(bool smooth){m_Smooth = smooth;}
-  bool                GetSmooth() const{return m_Smooth;}
-
   void                SetSmoothParam(const T& param){m_SmoothParam = param;  for(unsigned i = 0; i < m_Dim; i++){m_Smoothed[i] = false;}}
   T                   GetSmoothParam() const{return m_SmoothParam;}
 protected:

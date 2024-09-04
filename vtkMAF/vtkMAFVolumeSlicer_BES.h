@@ -266,9 +266,9 @@ protected:
   int m_TextureId;           //<Texture representing the input data
 
   float m_GPUDataDimensions[3]; //<area covered by input data (in mm)
+#endif
 
   bool m_TriLinearInterpolationOn; //<define if tri-linear interpolation is performed or not on slice's texture
-#endif  
 
 private:
   vtkMAFVolumeSlicer_BES(const vtkMAFVolumeSlicer_BES&);  // Not implemented.

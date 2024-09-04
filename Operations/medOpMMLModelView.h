@@ -109,7 +109,7 @@ public:
   void Print(vtkObject *obj, wxString msg = ""); //SIL. 24-12-2004: 
   
   
-  BOOL m_ScalingOccured;
+  bool m_ScalingOccured;
 	int m_ScalingOccuredOperationId;
 	vtkIntArray* m_ScalingFlagStack;
 	vtkDoubleArray* m_OperationsStack;

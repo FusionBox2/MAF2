@@ -269,7 +269,7 @@ void vtkXRayVolumeMapper::StartRendering(vtkRenderer *renderer, vtkVolume *volum
   AccumBufferCacheCheckSum += PerspectiveCorrection * 7 + 1719 * renderer->GetActiveCamera()->GetMTime();
   GLint viewport[4];
   glGetIntegerv(GL_VIEWPORT, viewport);
-  AccumBufferCacheCheckSum += unsigned long(viewport[0] * 17 + viewport[1] * 131 + viewport[2] * 37 +  viewport[3] * 1711);
+  AccumBufferCacheCheckSum += (unsigned long)(viewport[0] * 17 + viewport[1] * 131 + viewport[2] * 37 +  viewport[3] * 1711);
 
   AccumBufferCacheCheckSum += this->CalculateChecksum(volume);
 
@@ -375,9 +375,9 @@ void vtkXRayVolumeMapper::FinishRendering(vtkRenderer *renderer) {
     for ( ; pAccumBuffer < pAccumBufferEnd; pAccumBuffer++) {
       int index = int((*pAccumBuffer - ColorMapMin) * colorMappingMultiplier);
       unsigned char val = (index >= (int)ColorMapLength) ? 255 : ((index > 0) ? ColorMap[index] : 0);
-      *(dst++) = unsigned char(val * Color[0]);
-      *(dst++) = unsigned char(val * Color[1]);
-      *(dst++) = unsigned char(val * Color[2]);
+      *(dst++) = (unsigned char)(val * Color[0]);
+      *(dst++) = (unsigned char)(val * Color[1]);
+      *(dst++) = (unsigned char)(val * Color[2]);
       }
     }
   else {
@@ -472,8 +472,8 @@ unsigned long vtkXRayVolumeMapper::CalculateChecksum(vtkVolume *volume) {
   // calculate check sum
   if (this->GetInput() == NULL)
     return 0;
-  unsigned long checksum = unsigned long(this->GetInput());
-  checksum += unsigned long(this->GetInput()->GetMTime());
+  unsigned long checksum = (unsigned long)(this->GetInput());
+  checksum += (unsigned long)(this->GetInput()->GetMTime());
 
   unsigned char *mPtr = (unsigned char *)volume->GetMatrix()->Element[0];
   for (int ii = 0; ii < (16 * sizeof(double)); ii++)
@@ -668,11 +668,11 @@ void vtkXRayVolumeMapper::Render(vtkRenderer *renderer, vtkVolume *volume) {
 
     if (iAccumBufferInitialized) {
       for ( ; src < srcEnd; src += 3, dst++)
-        *dst += (unsigned int(src[0]) + (unsigned int(src[1]) << shiftG) + (unsigned int(src[2]) << shiftB));
+        *dst += ((unsigned int)(src[0]) + ((unsigned int)(src[1]) << shiftG) + ((unsigned int)(src[2]) << shiftB));
       }
     else {
       for ( ; src < srcEnd; src += 3, dst++)
-        *dst = (unsigned int(src[0]) + (unsigned int(src[1]) << shiftG) + (unsigned int(src[2]) << shiftB));
+        *dst = ((unsigned int)(src[0]) + ((unsigned int)(src[1]) << shiftG) + ((unsigned int)(src[2]) << shiftB));
       iAccumBufferInitialized = true;
       }
     } // for (slice)
@@ -1028,7 +1028,7 @@ bool vtkXRayVolumeMapper::PrepareTextures(bool force) {
     bool xyScaleNeeded = width != origWidth || height != origHeight || !regularSpacing;
     bool zScaleNeeded  = numOfSlices != origNumOfSlices || !regularSpacing;
     const unsigned int colorShiftBits = this->RealColorDepth - this->OutputColorDepth;
-    const unsigned int packingShift[3] = {8 - this->ColorBitsPerTextureByte[0], 8 - this->ColorBitsPerTextureByte[1], 8 - this->ColorBitsPerTextureByte[2]};
+    const unsigned int packingShift[3] = {(unsigned int)(8 - this->ColorBitsPerTextureByte[0]), (unsigned int)(8 - this->ColorBitsPerTextureByte[1]), (unsigned int)(8 - this->ColorBitsPerTextureByte[2])};
     
     const int  dataType = this->GetDataType();
     const void *dataPointer = this->GetInput()->GetPointData()->GetScalars()->GetVoidPointer(0);
@@ -1050,13 +1050,13 @@ bool vtkXRayVolumeMapper::PrepareTextures(bool force) {
             const Type *pOrigData = origData + z * origWidth * origHeight;\
             for ( ; pTexture < pTextureEnd; pTexture += 3, pOrigData++) {\
               int svalue = ((int)*pOrigData - this->ScalarRange[0]);\
-              unsigned int value = svalue > 0 ? (unsigned int(svalue) >> colorShiftBits) : 0;\
+              unsigned int value = svalue > 0 ? ((unsigned int)(svalue) >> colorShiftBits) : 0;\
               notZeroMask |= value; /* test for zero texture*/ \
-              pTexture[0] = unsigned char(value << packingShift[0]);\
+              pTexture[0] = (unsigned char)(value << packingShift[0]);\
               value >>= this->ColorBitsPerTextureByte[0];\
-              pTexture[1] = unsigned char(value << packingShift[1]);\
+              pTexture[1] = (unsigned char)(value << packingShift[1]);\
               value >>= this->ColorBitsPerTextureByte[1];\
-              pTexture[2] = unsigned char(value << packingShift[2]);\
+              pTexture[2] = (unsigned char)(value << packingShift[2]);\
               }\
             }\
           else {\
@@ -1081,14 +1081,14 @@ bool vtkXRayVolumeMapper::PrepareTextures(bool force) {
                   origRow12[xi] * k1x * k12yz + origRow12[xi1] * k2x * k12yz +\
                   origRow21[xi] * k1x * k21yz + origRow21[xi1] * k2x * k21yz +\
                   origRow22[xi] * k1x * k22yz + origRow22[xi1] * k2x * k22yz);\
-                unsigned int value = svalue > 0 ? (unsigned int(svalue) >> colorShiftBits) : 0;\
+                unsigned int value = svalue > 0 ? ((unsigned int)(svalue) >> colorShiftBits) : 0;\
                 \
                 notZeroMask |= value; /* test for zero texture */\
-                pTexture[0] = unsigned char(value << packingShift[0]);\
+                pTexture[0] = (unsigned char)(value << packingShift[0]);\
                 value >>= this->ColorBitsPerTextureByte[0];\
-                pTexture[1] = unsigned char(value << packingShift[1]);\
+                pTexture[1] = (unsigned char)(value << packingShift[1]);\
                 value >>= this->ColorBitsPerTextureByte[1];\
-                pTexture[2] = unsigned char(value << packingShift[2]);\
+                pTexture[2] = (unsigned char)(value << packingShift[2]);\
                 pTexture += 3;\
                 } /* for (x) */\
               } /* for (y) */\
@@ -1114,14 +1114,14 @@ bool vtkXRayVolumeMapper::PrepareTextures(bool force) {
                 origData[x1 + yz21] * k1x * k21yz + origData[x2 + yz21] * k2x * k21yz +\
                 origData[x1 + yz12] * k1x * k12yz + origData[x2 + yz12] * k2x * k12yz +\
                 origData[x1 + yz22] * k1x * k22yz + origData[x2 + yz22] * k2x * k22yz);\
-              unsigned int value = svalue > 0 ? (unsigned int(svalue) >> colorShiftBits) : 0;\
+              unsigned int value = svalue > 0 ? ((unsigned int)(svalue) >> colorShiftBits) : 0;\
               notZeroMask |= value;\
               \
-              pTexture[0] = unsigned char(value << packingShift[0]);\
+              pTexture[0] = (unsigned char)(value << packingShift[0]);\
               value >>= this->ColorBitsPerTextureByte[0];\
-              pTexture[1] = unsigned char(value << packingShift[1]);\
+              pTexture[1] = (unsigned char)(value << packingShift[1]);\
               value >>= this->ColorBitsPerTextureByte[1];\
-              pTexture[2] = unsigned char(value << packingShift[2]);\
+              pTexture[2] = (unsigned char)(value << packingShift[2]);\
               pTexture += 3;\
               } /* for (x) */\
             } /* for (y) */\
@@ -1293,7 +1293,7 @@ bool vtkXRayVolumeMapper::RegisterTexture(int axis, int textureIndex, unsigned c
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
   const int size = this->TextureSize[axis][0] * this->TextureSize[axis][1]; // 2 = 1 + 0.5 + 0.25 + ...
-  const unsigned int packingShift[3]   = {8 - this->ColorBitsPerTextureByte[0], 8 - this->ColorBitsPerTextureByte[1], 8 - this->ColorBitsPerTextureByte[2]};
+  const unsigned int packingShift[3]   = {(unsigned int)(8 - this->ColorBitsPerTextureByte[0]), (unsigned int)(8 - this->ColorBitsPerTextureByte[1]), (unsigned int)(8 - this->ColorBitsPerTextureByte[2])};
 
   // create pseudo-mipmaps
   int level = 1;
@@ -1307,17 +1307,17 @@ bool vtkXRayVolumeMapper::RegisterTexture(int axis, int textureIndex, unsigned c
       unsigned char *row0 = data + 3 * width * y;
       unsigned char *row1 = row0 + 3 * width;
       for (unsigned int x = 0; x < width; x += 2, row0 += 6, row1 += 6) {
-        unsigned int value = ((unsigned int(row0[0]) + row0[3] + row1[0] + row1[3]) >> packingShift[0]) +
-          (((unsigned int(row0[1]) + row0[4] + row1[1] + row1[4]) >> packingShift[1]) << this->ColorBitsPerTextureByte[0]) +
-          (((unsigned int(row0[2]) + row0[5] + row1[2] + row1[5]) >> packingShift[2]) << (this->ColorBitsPerTextureByte[0] + this->ColorBitsPerTextureByte[1]));
+        unsigned int value = (((unsigned int)(row0[0]) + row0[3] + row1[0] + row1[3]) >> packingShift[0]) +
+          ((((unsigned int)(row0[1]) + row0[4] + row1[1] + row1[4]) >> packingShift[1]) << this->ColorBitsPerTextureByte[0]) +
+          ((((unsigned int)(row0[2]) + row0[5] + row1[2] + row1[5]) >> packingShift[2]) << (this->ColorBitsPerTextureByte[0] + this->ColorBitsPerTextureByte[1]));
         value >>= 2; // averaging
         
         // pack back
-        dst[0] = unsigned char(value << packingShift[0]);
+        dst[0] = (unsigned char)(value << packingShift[0]);
         value >>= this->ColorBitsPerTextureByte[0];
-        dst[1] = unsigned char(value << packingShift[1]);
+        dst[1] = (unsigned char)(value << packingShift[1]);
         value >>= this->ColorBitsPerTextureByte[1];
-        dst[2] = unsigned char(value << packingShift[2]);
+        dst[2] = (unsigned char)(value << packingShift[2]);
         dst += 3;
         }
       }

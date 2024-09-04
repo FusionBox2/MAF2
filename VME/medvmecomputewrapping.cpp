@@ -789,7 +789,7 @@ void medVMEComputeWrapping::WrapCylinderCylinderObstacleSet(){
 	vtkPolyData *hCurve1,*hCurve2;
 	double curveLength1=0,curveLength2=0;
 	vtkLineSource *Line1,*Line2,*Line3;
-	boolean reverseFlag = false;
+	bool reverseFlag = false;
 	if (m_WrapReverseNew)
 	{
 		reverseFlag = true;
@@ -965,7 +965,7 @@ void medVMEComputeWrapping::WrapCylinderCylinderObstacleSet(){
 	InvokeEvent(this, VME_OUTPUT_DATA_UPDATE);
 	GetWrappedMeterOutput()->Update(); 
 }
-void medVMEComputeWrapping::WrapCylinderOnlyObstacleSetBasic2(double *Sg,double *Pg,int idx,boolean reverseFlag,double &segLength,double *Tout,double *Qout){
+void medVMEComputeWrapping::WrapCylinderOnlyObstacleSetBasic2(double *Sg,double *Pg,int idx,bool reverseFlag,double &segLength,double *Tout,double *Qout){
 	double P[3],S[3],Q[3],T[3];
 	//express P and S in cylinder frame
 	GetWrapLocalTransform(Pg,P,idx);
@@ -1032,7 +1032,7 @@ void medVMEComputeWrapping::WrapCylinderOnlyObstacleSet(int idx){
 	vtkNEW(Line2);
 	CopyPointValue(m_StartPoint,S);
 	CopyPointValue(m_EndPoint,P);
-	boolean reverseFlag = false;
+	bool reverseFlag = false;
 	if (m_WrapReverseNew)
 	{
 		reverseFlag = true;
@@ -1106,7 +1106,7 @@ double medVMEComputeWrapping::GetQTsegment(double R,double *Q,double *T){
 /* so det = Qx*Ty-Qy*Tx
 /************************************************************************/
 
-bool medVMEComputeWrapping::WrapCondition(double *Q,double *T,boolean reverseFlag){
+bool medVMEComputeWrapping::WrapCondition(double *Q,double *T,bool reverseFlag){
 	bool rtn = true;
 	double det = Q[0]*T[1]- Q[1]*T[0];
 	int flag = 1;
@@ -2759,11 +2759,11 @@ double medVMEComputeWrapping::GetPointOnPlane(double zL ,double zH,double *point
 //distance between point and line
 //use area formula
 double medVMEComputeWrapping::GetPointLineDistance(double *point,double *Lpoint1,double *Lpoint2){
-	/*a=sqrt£¨(x1-x2)^2+(y1-y2)^2+(z1-z2)^2£©
-	b=sqrt£¨(x2-x3)^2+(y2-y3)^2+(z2-z3)^2£©
-	c=sqrt£¨(x3-x1)^2+(y3-y1)^2+(z3-z1)^2)
-	Áîs=£¨a+b+c)/2,  area formula S=sqrt£¨s*(s-a)(s-b)(s-c));
-	distance between point (x1,y1,z1) to line is: d=2*S/b¡£	 
+	/*a=sqrtï¿½ï¿½(x1-x2)^2+(y1-y2)^2+(z1-z2)^2ï¿½ï¿½
+	b=sqrtï¿½ï¿½(x2-x3)^2+(y2-y3)^2+(z2-z3)^2ï¿½ï¿½
+	c=sqrtï¿½ï¿½(x3-x1)^2+(y3-y1)^2+(z3-z1)^2)
+	ï¿½ï¿½s=ï¿½ï¿½a+b+c)/2,  area formula S=sqrtï¿½ï¿½s*(s-a)(s-b)(s-c));
+	distance between point (x1,y1,z1) to line is: d=2*S/bï¿½ï¿½	 
 	*/
 	double rtn ;
 	double a,b,c,s,S,test;

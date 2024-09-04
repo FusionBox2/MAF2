@@ -260,7 +260,7 @@ void vtkMAFLargeImageReader::ComputeInternalFileName(int slice)
   else if (this->InternalFilePattern != NULL)
   {
     int slicenum = slice * this->FileNameSliceSpacing + this->FileNameSliceOffset;       
-    int len = _scprintf(this->InternalFilePattern, slicenum) + 1;        
+    int len = snprintf(nullptr, 0 ,this->InternalFilePattern, slicenum) + 1;        
     this->InternalFileName = new char [len];  
 
 #if defined(_MSC_VER) && _MSC_VER >= 1400
@@ -496,7 +496,7 @@ void vtkMAFLargeImageReader::SetFilePattern(const char *pattern)
     char chOld2 = *pSChrEnd;
     *pSChrEnd = '\0';
 
-    int nLen2 = _scprintf(pSChrStart, 
+    int nLen2 = snprintf(nullptr, 0, pSChrStart, 
       (this->FilePrefix != NULL ? this->FilePrefix : "")) + 1;
 
     char* tmp = new char[nLen2];

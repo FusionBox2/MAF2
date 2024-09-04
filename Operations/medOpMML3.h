@@ -144,7 +144,7 @@ protected:
   void DeleteRegistrationDlg() ;  ///< Delete registration dialog
   void DeleteNonUniformSlicesDlg();   ///< Delete slice spacing dialog
 
-  void medOpMML3::Set2DButtonsEnable(bool enable) ; ///< Enable/Disable buttons which only work in 2d display mode
+  void Set2DButtonsEnable(bool enable) ; ///< Enable/Disable buttons which only work in 2d display mode
 
 
   //----------------------------------------------------------------------------

@@ -39,7 +39,7 @@
 #include "vtkStructuredPoints.h"
 #include "vtkTransform.h"
 #include "vtkTransformFilter.h"
-#include "wx\busyinfo.h"
+#include "wx/busyinfo.h"
 
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(medOpCropDeformableROI);

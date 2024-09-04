@@ -95,7 +95,7 @@ const int BOUND_1=1;
 #include "vtkBMPWriter.h"
 #include "mafRWIBase.h"
 #include "vtkPNGWriter.h"
-#include "wx\busyinfo.h"
+#include "wx/busyinfo.h"
 #include "vtkPlaneSource.h"
 #include "vtkPolyDataMapper2D.h"
 #include "vtkProperty2D.h"
@@ -3737,7 +3737,7 @@ void medViewArbitraryOrthoSlice::AddVMEToMSFTree(mafVMESurface *vme)
 void medViewArbitraryOrthoSlice::UpdateYnViewZPlanes()
 {
 
-	assert(m_FeedbackLineHeight > 0);
+	assert(m_FeedbackLineHeight[BLUE] > 0);
 
 	assert(m_ViewYnSliceZBoundsVMEVector[BOUND_0]);
 	BuildSlicingPlane(m_ViewYnSliceZBoundsVMEVector[BOUND_0], 
@@ -3792,7 +3792,7 @@ void medViewArbitraryOrthoSlice::UpdateYnViewXPlanes()
 	BuildSlicingPlane(m_ViewYnSliceXBoundsVMEVector[BOUND_0], 
 		FROM_X, Y_VIEW,  m_FeedbackLineHeight[RED]);
 
-	assert(m_FeedbackLineHeight > 0);
+	assert(m_FeedbackLineHeight [RED]> 0);
 
 	BuildSlicingPlane(m_ViewYnSliceXBoundsVMEVector[BOUND_1], 
 		FROM_X, Y_VIEW,  -m_FeedbackLineHeight[RED]);
@@ -3803,7 +3803,7 @@ void medViewArbitraryOrthoSlice::UpdateZnViewXPlanes()
 	BuildSlicingPlane(m_ViewZnSliceXBoundsVMEVector[BOUND_0], 
 		FROM_X, Z_VIEW,  m_FeedbackLineHeight[RED]);
 
-	assert(m_FeedbackLineHeight > 0);
+	assert(m_FeedbackLineHeight[RED] > 0);
 
 	BuildSlicingPlane(m_ViewZnSliceXBoundsVMEVector[BOUND_1], 
 		FROM_X, Z_VIEW,  -m_FeedbackLineHeight[RED]);

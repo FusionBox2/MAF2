@@ -43,7 +43,7 @@ class vtkWindowLevelLookupTable;
 class MED_VIEWS_EXPORT medViewCompoundWindowing: public mafViewCompound
 {
 public:
-  mafAbstractTypeMacro(medViewCompoundWindowing, public mafViewCompound);
+  mafAbstractTypeMacro(medViewCompoundWindowing, mafViewCompound);
   /** constructor */
   medViewCompoundWindowing(const mafString& label = _R("View Compound with Windowing"), int num_row = 1, int num_col = 1);
   /** destructor. */

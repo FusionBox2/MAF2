@@ -1510,7 +1510,7 @@ OctNode<NodeData,Real>& OctNode<NodeData,Real>::operator = (const OctNode<NodeDa
 	if(children){delete[] children;}
 	children=NULL;
 
-	depth=node.depth;
+	d=node.d;
 	for(i=0;i<DIMENSION;i++){this->offset[i] = node.offset[i];}
 	if(node.children){
 		initChildren();
@@ -2251,7 +2251,7 @@ Polynomial<Degree> Polynomial<Degree>::operator * (const double& s) const{
 }
 template<int Degree>
 Polynomial<Degree> Polynomial<Degree>::operator / (const double& s) const{
-	Polynomial q(degree());
+	Polynomial<Degree> q;
 	for(int i=0;i<=Degree;i++){q.coefficients[i]=coefficients[i]/s;}
 	return q;
 }
@@ -2849,7 +2849,7 @@ SparseMatrix<T> SparseMatrix<T>::Multiply( const SparseMatrix<T>& M ) const
 {
 	SparseMatrix<T> R( this->Rows(), M.Columns() );
 	for(int i=0; i<R.Rows(); i++){
-		for(int ii=0;ii<m_ppElements[i].size();ii++){
+		for(int ii=0;ii<rowSizes[i];ii++){
 			int N=m_ppElements[i][ii].N;
 			T Value=m_ppElements[i][ii].Value;
 			for(int jj=0;jj<M.m_ppElements[N].size();jj++){
@@ -2903,11 +2903,11 @@ Vector<T2> SparseMatrix<T>::operator * (const Vector<T2>& V) const
 template<class T>
 SparseMatrix<T> SparseMatrix<T>::Transpose() const
 {
-	SparseMatrix<T> M( Columns(), Rows() );
+	SparseMatrix<T> M( this->Columns(), this->Rows() );
 
-	for (int i=0; i<Rows(); i++)
+	for (int i=0; i<this->Rows(); i++)
 	{
-		for(int ii=0;ii<m_ppElements[i].size();ii++){
+		for(int ii=0;ii<rowSizes[i];ii++){
 			M(m_ppElements[i][ii].N,i) = m_ppElements[i][ii].Value;
 		}
 	}

@@ -59,7 +59,7 @@
 #include "mafOpCreateMuscleWrapping2.h"
 #include "mafOpCreateMeter2.h"
 #include "mafOpCreateGravityLine.h"
-#include "mafOpCreateCenterLine.h"
+#include "mafOpCreateCenterline.h"
 #include "medOpCreateWrappedMeter.h"
 #include "mafOpCreateSlicer.h"
 #include "mafOpCreateRefSys.h"

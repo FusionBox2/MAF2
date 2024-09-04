@@ -110,7 +110,7 @@ vtkMAFFileDataProvider::~vtkMAFFileDataProvider()
 
 			if (this->DeleteOnClose)
 #pragma warning(suppress: 6031) // warning C6031: Return value ignored: '_unlink'
-				_unlink(FileName);
+				unlink(FileName);
 		}
 
     this->File->UnRegister(this);

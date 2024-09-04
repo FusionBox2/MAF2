@@ -453,11 +453,11 @@ void mafGUIMaterialChooser::LoadMaterials_old()
 	char inputline[21];
   for(i = 0; i < 20; i++) 
     f_in >> inputline[i];
-	inputline[21] = '\0';
+	inputline[20] = '\0';
 	std::string str(inputline);
 	if (str.find("MATERIALSPROPERTIES:") != 0)
 	{
-		wxString msg = m_Filename.GetCStr();
+		wxString msg = m_Filename.toWx();
 		msg += "\n";
 		msg += "is not a Material Library file";
  	::wxMessageBox(msg,"Error",wxICON_ERROR,mafGetFrame() );

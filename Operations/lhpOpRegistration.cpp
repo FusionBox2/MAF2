@@ -1516,10 +1516,10 @@ bool lhpOpRegistration::RegistrationProcedure()
       GetOriPosR(mpSrc, tsList[i], rpos[i], rori[i]);
       GetOriPosL(mpSrc, tsList[i], lpos[i], lori[i]);
     }
-    V3d<double> ps, or;
-    GetOriPosL(mpSrc, m_RefStampSrc, ps, or);
+    V3d<double> ps, orv;
+    GetOriPosL(mpSrc, m_RefStampSrc, ps, orv);
     lsize = sqrt(ps.length2());
-    GetOriPosR(mpSrc, m_RefStampSrc, ps, or);
+    GetOriPosR(mpSrc, m_RefStampSrc, ps, orv);
     rsize = sqrt(ps.length2());
   }
   RegData *regData;

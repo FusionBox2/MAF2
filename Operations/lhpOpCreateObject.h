@@ -55,7 +55,7 @@ public:
   MAF_EXPORT lhpOpCreateObject *New(){ return (lhpOpCreateObject *)NewObject(); }
   MAF_EXPORT lhpOpCreateObject *NewInstance() const {return (lhpOpCreateObject *)NewObjectInstance();}
 */
-  lhpOpCreateObject(const mafString& name, const mafString& label = "CreateObject"):mafOp(label),m_CreatedName(name)
+  lhpOpCreateObject(const mafString& name, const mafString& label = _R("CreateObject")):mafOp(label),m_CreatedName(name)
   {
     m_OpType  = OPTYPE_OP;
     m_Canundo = true;

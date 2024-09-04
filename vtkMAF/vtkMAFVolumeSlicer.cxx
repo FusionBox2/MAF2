@@ -695,11 +695,11 @@ template<typename InputDataType, typename OutputDataType> void vtkMAFVolumeSlice
   const int numComp = outputObject->GetNumberOfScalarComponents();
   assert(numComp == this->NumComponents);
   const float dx = outputObject->GetSpacing()[0], dy = outputObject->GetSpacing()[1];
-  const float xaxis[3] = { this->GlobalPlaneAxisX[0] * dx * this->SamplingTableMultiplier[0], this->GlobalPlaneAxisX[1] * dx * this->SamplingTableMultiplier[1], this->GlobalPlaneAxisX[2] * dx * this->SamplingTableMultiplier[2]};
-  const float yaxis[3] = { this->GlobalPlaneAxisY[0] * dy * this->SamplingTableMultiplier[0], this->GlobalPlaneAxisY[1] * dy * this->SamplingTableMultiplier[1], this->GlobalPlaneAxisY[2] * dy * this->SamplingTableMultiplier[2]};
-  const float offset[3] = {(this->GlobalPlaneOrigin[0] - this->DataOrigin[0]) * this->SamplingTableMultiplier[0],
-			   (this->GlobalPlaneOrigin[1] - this->DataOrigin[1]) * this->SamplingTableMultiplier[1],
-			   (this->GlobalPlaneOrigin[2] - this->DataOrigin[2]) * this->SamplingTableMultiplier[2]};
+  const float xaxis[3] = { (float)(this->GlobalPlaneAxisX[0] * dx * this->SamplingTableMultiplier[0]), (float)(this->GlobalPlaneAxisX[1] * dx * this->SamplingTableMultiplier[1]), (float)(this->GlobalPlaneAxisX[2] * dx * this->SamplingTableMultiplier[2])};
+  const float yaxis[3] = { (float)(this->GlobalPlaneAxisY[0] * dy * this->SamplingTableMultiplier[0]), (float)(this->GlobalPlaneAxisY[1] * dy * this->SamplingTableMultiplier[1]), (float)(this->GlobalPlaneAxisY[2] * dy * this->SamplingTableMultiplier[2])};
+  const float offset[3] = {(float)((this->GlobalPlaneOrigin[0] - this->DataOrigin[0]) * this->SamplingTableMultiplier[0]),
+	  (float)((this->GlobalPlaneOrigin[1] - this->DataOrigin[1]) * this->SamplingTableMultiplier[1]),
+	  (float)((this->GlobalPlaneOrigin[2] - this->DataOrigin[2]) * this->SamplingTableMultiplier[2])};
   
   // prepare sampling table
   int   *stIndices[3];
@@ -784,7 +784,7 @@ template<typename InputDataType, typename OutputDataType> void vtkMAFVolumeSlice
 void vtkMAFVolumeSlicer::CalculateTextureCoordinates(const float point[3], const int size[2], const double spacing[2], float ts[2]) 
 //----------------------------------------------------------------------------
 {
-  const float c[3]  = { point[0] - this->GlobalPlaneOrigin[0], point[1] - this->GlobalPlaneOrigin[1], point[2] - this->GlobalPlaneOrigin[2] };
+  const float c[3]  = { (float)(point[0] - this->GlobalPlaneOrigin[0]), (float)(point[1] - this->GlobalPlaneOrigin[1]), (float)(point[2] - this->GlobalPlaneOrigin[2]) };
 		
 	float tx = (c[0] * GlobalPlaneAxisY[1] - c[1] * GlobalPlaneAxisY[0]) / (GlobalPlaneAxisX[0] * GlobalPlaneAxisY[1] - GlobalPlaneAxisX[1] * GlobalPlaneAxisY[0]);
 	float ty = (c[0] * GlobalPlaneAxisX[1] - c[1] * GlobalPlaneAxisX[0]) / (GlobalPlaneAxisX[0] * GlobalPlaneAxisY[1] - GlobalPlaneAxisX[1] * GlobalPlaneAxisY[0]);

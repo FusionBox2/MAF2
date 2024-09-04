@@ -96,7 +96,7 @@ int mafOpImporterBBF::ImportBBF()
 	if(!this->m_TestMode)
 		wxBusyInfo wait(_("Loading file: ..."));
   
-  wxString wxfilestring = m_File.GetCStr();
+  wxString wxfilestring = m_File.toWx();
   size_t idx1 = wxfilestring.find_last_of("_");
   size_t idx2 = wxfilestring.find_last_of(".");
   size_t idx3 = wxfilestring.find_last_of("\\");

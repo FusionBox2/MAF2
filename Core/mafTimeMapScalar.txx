@@ -178,11 +178,8 @@ After creating the test class mafScalarVectorTest I saw that the GetNearestScala
 minimum timestamp greater or equal to the specified one instead of the scalar with the timestamp nearest to the specified one.
 GetNearestScalar method of mafScalarVectorTest class only call this method of mafTimeMapScalar. */
 
-  mafTimeMapScalar<T>::TimeMapScalars::iterator lowIt;
-  mafTimeMapScalar<T>::TimeMapScalars::iterator upIt;
-	
-  lowIt = FindItemBefore(t); // find first item < t
-  upIt = m_TimeMap.lower_bound(t); // find first item >= t
+  auto lowIt = FindItemBefore(t); // find first item < t
+  auto upIt = m_TimeMap.lower_bound(t); // find first item >= t
 
   if(lowIt != m_TimeMap.end())
   {

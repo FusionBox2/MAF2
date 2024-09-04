@@ -561,7 +561,7 @@ int mafVMEDataSetAttributesImporter::SplitFileName()
   }
 
   // find the last point
-  std::string fileName = m_FileName.GetCStr();
+  std::string fileName = m_FileName.toStd();
   int pointPos = fileName.find_last_of('.');
   
   // find the last / on linux

@@ -232,7 +232,7 @@ inline vnl_matrix_fixed<double,4,4> mafICPUtility::R_t_2_Tr(const vnl_matrix_fix
 inline void mafICPUtility::FindPointLocator(vtkPoints *MS_vtkpoints, vtkPointLocator *pointLocator, double* DS_data, int DScols, vnl_matrix<double> &closest_pts)
 //----------------------------------------------------------------------------
 {
-	//NB: DS è una 3 x n
+	//NB: DS ï¿½ una 3 x n
 	vtkIdType ptId;
 	double query_DS[3]; 
 	double cl_pt[3];
@@ -368,7 +368,7 @@ inline mafICPUtility::RegResult mafICPUtility::ICP_vtkPointLocator(vnl_matrix<do
 	//vcl_cout << "th vale: \n" << th << '\n';
 	//vcl_cout << "t vale: \n" << t << '\n';
 	vnl_matrix_inverse<double> inv_St_S(St*S);
-	vnl_matrix_fixed<double,6,6> covariance_mat_temp=inv_St_S;
+	vnl_matrix_fixed<double,6,6> covariance_mat_temp=inv_St_S.as_matrix();
 	res.cov_matrix=var_err*covariance_mat_temp;
 	//vcl_cout << res.cov_matrix <<'\n';
 	
@@ -433,7 +433,7 @@ inline vnl_matrix_fixed<double,3,3> mafICPUtility::Rpy2R(const double* row)
 inline vnl_matrix<double> mafICPUtility::RpyOnShape(const vnl_matrix<double>& Shape, const double* row)
 //----------------------------------------------------------------------------
 {
-//NB Shape DEVE essere già 3xn!!!
+//NB Shape DEVE essere giï¿½ 3xn!!!
 		
 	double pi=3.14159265358979323846;
 	double xrad=(row[0]*pi)/180;
@@ -535,7 +535,7 @@ inline mafICPUtility::RegResult mafICPUtility::ICP_vtkPointLocator(vnl_matrix<do
 	vnl_vector_fixed<double,6> dv;
 //-----------------------------------------------------------------
 
-	int ind=0; //Necessario se, fuori dal for, voglio capire qual'è stata l'ultima RAR applicata
+	int ind=0; //Necessario se, fuori dal for, voglio capire qual'ï¿½ stata l'ultima RAR applicata
 
 	for(ind=0; ind<Min.rows() && var_err >var_threshold; ind++){
 		DS_R=RpyOnShape(DS, Min[ind]);//3xn
@@ -634,7 +634,7 @@ inline mafICPUtility::RegResult mafICPUtility::ICP_vtkPointLocator(vnl_matrix<do
 	//vcl_cout << "th vale: \n" << th << '\n';
 	//vcl_cout << "t vale: \n" << t << '\n';
 	vnl_matrix_inverse<double> inv_St_S(St*S);
-	vnl_matrix_fixed<double,6,6> covariance_mat_temp=inv_St_S;
+	vnl_matrix_fixed<double,6,6> covariance_mat_temp=inv_St_S.as_matrix();
 	res.cov_matrix=var_err*covariance_mat_temp;
 //	vcl_cout << res.cov_matrix <<'\n';
 	MS_vtkpoints->Delete();
@@ -716,7 +716,7 @@ inline void mafICPUtility::Rotation_classif(std::multimap<double,int>& mm,const 
 	//-----------------------------------------------------------
 	
 	vnl_matrix<double> DS_temp(DS); //PER COPIA
-	DS_temp.inplace_transpose(); //adesso DS_temp è 3xn
+	DS_temp.inplace_transpose(); //adesso DS_temp ï¿½ 3xn
 	const int DS_temp_rows=DS_temp.rows();
 	const int DS_temp_cols=DS_temp.columns();
 
@@ -973,7 +973,7 @@ inline mafICPUtility::RegResult mafICPUtility::ICP_vtkPointLocator(vnl_matrix<do
 	//vcl_cout << "th vale: \n" << th << '\n';
 	//vcl_cout << "t vale: \n" << t << '\n';
 	vnl_matrix_inverse<double> inv_St_S(St*S);
-	vnl_matrix_fixed<double,6,6> covariance_mat_temp=inv_St_S;
+	vnl_matrix_fixed<double,6,6> covariance_mat_temp=inv_St_S.as_matrix();
 	res.cov_matrix=var_err*covariance_mat_temp;
 	//vcl_cout << res.cov_matrix <<'\n';
 	

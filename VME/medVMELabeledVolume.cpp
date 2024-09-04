@@ -309,8 +309,8 @@ void medVMELabeledVolume::UpdateScalars()
       originalScalars = rg->GetPointData()->GetScalars();  
     }
 
-    int not = originalScalars->GetNumberOfTuples();
-    for ( int i = 0; i < not; i++ )
+    int notc = originalScalars->GetNumberOfTuples();
+    for ( int i = 0; i < notc; i++ )
     {
       originalScalars->SetTuple1( i, OUTRANGE_SCALAR ); 
     }
@@ -376,8 +376,8 @@ void medVMELabeledVolume::GenerateLabeledVolume()
     int labelVlaue;
     if (counter != 0)
     {
-      int not = volumeScalars->GetNumberOfTuples();
-      for ( int i = 0; i < not; i++ )
+      int notc = volumeScalars->GetNumberOfTuples();
+      for ( int i = 0; i < notc; i++ )
       {
         bool modified = false;
         double scalarValue = volumeScalars->GetComponent( i, 0 );
@@ -402,8 +402,8 @@ void medVMELabeledVolume::GenerateLabeledVolume()
     }
     else
     {
-      int not = volumeScalars->GetNumberOfTuples();
-      for ( int i = 0; i < not; i++ )
+      int notc = volumeScalars->GetNumberOfTuples();
+      for ( int i = 0; i < notc; i++ )
       {
         labelScalars->SetTuple1( i, OUTRANGE_SCALAR); 
       }

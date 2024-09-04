@@ -51,7 +51,7 @@ public:
   virtual     ~medPipeGraph ();
 
   /** process events that comes from  other objects*/
-  void medPipeGraph::OnEvent(mafEventBase *maf_event); 
+  void OnEvent(mafEventBase *maf_event); 
 
   /** visual pipe creation */
   /*virtual*/ void Create(mafNode *node, mafView *view);

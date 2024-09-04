@@ -219,8 +219,8 @@ void mafRemoteLogic::RemoteMessage(mafString &cmd, bool to_server)
     wxBusyCursor wait;
 
     // unpack the message and send the command to MAF
-    wxString delimiter = m_CommandSeparator.GetCStr();
-    wxString cmd_string = cmd.GetCStr();
+    wxString delimiter = m_CommandSeparator.toWx();
+    wxString cmd_string = cmd.toWx();
     wxStringTokenizer tkz(cmd_string, delimiter);
     int token = tkz.CountTokens();
     wxString command  = tkz.GetNextToken();

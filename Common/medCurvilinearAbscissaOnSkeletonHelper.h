@@ -73,7 +73,7 @@ public:
   */
   void MoveOnSkeleton( mafEvent *mouseEvent);
 
-  medCurvilinearAbscissaOnSkeletonHelper::~medCurvilinearAbscissaOnSkeletonHelper();
+  ~medCurvilinearAbscissaOnSkeletonHelper();
 
   /** GUI Stuff */
 

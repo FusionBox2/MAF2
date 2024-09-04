@@ -88,7 +88,7 @@ void mafBrickedFileReader::SetOutputRLGDataSet(vtkRectilinearGrid* ds)
 }
 
 //opens the brick file, loading index table, etc. 
-/*virtual*/ void mafBrickedFileReader::OpenBrickFile() throw(...)
+/*virtual*/ void mafBrickedFileReader::OpenBrickFile()
 {
 	//close previously opened file
 	CloseBrickFile();
@@ -143,7 +143,7 @@ void mafBrickedFileReader::SetOutputRLGDataSet(vtkRectilinearGrid* ds)
 }
 
 //allocates the required buffers
-/*virtual*/ void mafBrickedFileReader::AllocateBuffers()  throw(...)
+/*virtual*/ void mafBrickedFileReader::AllocateBuffers()
 {
 	int nLRSize = m_NBricksDimSize[2]*m_NVoxelSizeInB;
 	m_BrickFile->Seek( m_FileHeader.idxtblofs - nLRSize);
@@ -185,7 +185,7 @@ void mafBrickedFileReader::SetOutputRLGDataSet(vtkRectilinearGrid* ds)
 }
 
 //deallocates the buffers created in AllocateBuffers
-/*virtual*/ void mafBrickedFileReader::DeallocateBuffers()  throw(...)
+/*virtual*/ void mafBrickedFileReader::DeallocateBuffers()
 {
 	cppDEL(m_PBrickDataCache);
 	cppDEL(m_PLowResLevel);
@@ -198,7 +198,7 @@ void mafBrickedFileReader::SetOutputRLGDataSet(vtkRectilinearGrid* ds)
 }
 
 //Called by Update to fill some internal structures
-/*virtual*/ void mafBrickedFileReader::ExecuteInformation() throw(...)
+/*virtual*/ void mafBrickedFileReader::ExecuteInformation()
 {
 	vtkImageData* output = GetOutputDataSet();
 
@@ -384,7 +384,7 @@ void mafBrickedFileReader::GetBricksExtent(int VOI[6], int inBExt[6], int bndBEx
 }
 
 //processes data
-/*virtual*/ void mafBrickedFileReader::ExecuteData() throw(...)
+/*virtual*/ void mafBrickedFileReader::ExecuteData()
 {	
 	//fill the output data set (except for already filled valid region)
 	//first, we need to detect the area to be processed	

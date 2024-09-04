@@ -157,17 +157,17 @@ vtkStructuredPoints *vtkMEDBinaryImageFloodFill::FloodFill(vtkStructuredPoints *
   caster->Update();
 
   // Convert vtk image to itk
-  Vtk2Itk::Pointer vtk2Itk = Vtk2Itk::New();
+  auto vtk2Itk = Vtk2Itk::New();
   vtk2Itk->SetInput(caster->GetOutput());
   vtk2Itk->Update();
 
   // flood fill filter
-  ConnectedThreshold::Pointer connectedThreshold = ConnectedThreshold::New();
+  auto connectedThreshold = ConnectedThreshold::New();
   connectedThreshold->SetLower(Threshold[0]);
   connectedThreshold->SetUpper(Threshold[1]);
   connectedThreshold->SetReplaceValue(ReplaceValue);
   
-  UChar::IndexType seed;
+  typename UChar::IndexType seed;
   for(int i = 0; i < ImageDimension; i++)
   {
     seed[i] = ItkSeed[i];
@@ -177,21 +177,21 @@ vtkStructuredPoints *vtkMEDBinaryImageFloodFill::FloodFill(vtkStructuredPoints *
   connectedThreshold->Update();
 
   // convert itk to vtk
-  Itk2Vtk::Pointer itk2Vtk = Itk2Vtk::New();
+  auto itk2Vtk = Itk2Vtk::New();
 
   if(!Erase)
   {
     // or filter to sum original image with flood filled one
-    Or::Pointer or = Or::New();
-    or->SetInput1(vtk2Itk->GetOutput());
-    or->SetInput2(connectedThreshold->GetOutput());
-    or->Update();
-    itk2Vtk->SetInput(or->GetOutput());
+    auto orptr = Or::New();
+    orptr->SetInput1(vtk2Itk->GetOutput());
+    orptr->SetInput2(connectedThreshold->GetOutput());
+    orptr->Update();
+    itk2Vtk->SetInput(orptr->GetOutput());
   }
   else
   {
     // differEnce filter to subtract original image with flood filled one
-    Difference::Pointer difference = Difference::New();
+    auto difference = Difference::New();
     difference->SetInput1(vtk2Itk->GetOutput());
     difference->SetInput2(connectedThreshold->GetOutput());
     difference->Update();

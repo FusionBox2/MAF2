@@ -356,7 +356,7 @@ bool vtkMAFAdaptiveVolumeMapper::Pick(int x, int y, vtkRenderer *renderer, vtkVo
   this->NumOfLights = 0;
   this->PrepareTransformationData(renderer, volume);
   
-  double vxyz[3] = {x, y, 1};
+  double vxyz[3] = {(double)x, (double)y, 1.0};
   unsigned char rgba[4];
   switch (this->GetDataType()) 
   {

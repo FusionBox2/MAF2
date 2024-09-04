@@ -38,14 +38,14 @@ Importer for ground reactions force, used in motion analysis
 class MED_OPERATION_EXPORT medOpImporterGRFWS : public mafOp
 {
 public:
-  mafTypeMacro(medOpImporterGRFWS, public mafOp)
+  mafTypeMacro(medOpImporterGRFWS, mafOp)
   /** constructor */
 	medOpImporterGRFWS(const mafString& label = _R("GRF Importer"));
   /** destructor */
 	~medOpImporterGRFWS(); 
 
   /** apply the undo pattern to the operation, retrieving the previous state*/
-  void medOpImporterGRFWS::OpUndo();
+  void OpUndo();
 
   /** Copy the operation. */
 	mafOp* Copy();

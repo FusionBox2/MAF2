@@ -19,7 +19,7 @@
 
 #include "mafOp.h"
 #include <set>
-#include <xstring>
+#include <string>
 
 //----------------------------------------------------------------------------
 // forward references :

@@ -3859,7 +3859,7 @@ void medOpSegmentation::SelectBrushImage(double x, double y, double z, bool sele
   int ordinate = 1;
   int unused = 2;
 
-  double factors[2] = {1,m_VolumeDimensions[0]};
+  double factors[2] = {1,(double)(m_VolumeDimensions[0])};
   switch (m_CurrentSlicePlane)
   {
 // 
@@ -4323,7 +4323,7 @@ bool medOpSegmentation::CheckNumberOfThresholds()
     for (int j=0;j<m_AutomaticRanges.size();j++)
       if (i>=(m_AutomaticRanges[j].m_StartSlice) && i<=(m_AutomaticRanges[j].m_EndSlice))
       {
-        mafLogMessage(_M(_R("Slice ") + mafToString(i+1) + _R("° hasn't a threshold")));
+        mafLogMessage(_M(_R("Slice ") + mafToString(i+1) + _R("ï¿½ hasn't a threshold")));
 #pragma message ("degree symbol")
         return false;
       }

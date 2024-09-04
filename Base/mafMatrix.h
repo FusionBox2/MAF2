@@ -203,8 +203,8 @@ namespace parser
 	{
 		mafMatrix matrix;
 		matrix.Zero();
-		mafParseVector(value.As<mafString>(), *matrix.GetElements(), 16);
-		matrix.SetTimeStamp(value(_R("TimeStamp")).As<double>());
+		mafParseVector(value.template As<mafString>(), *matrix.GetElements(), 16);
+		matrix.SetTimeStamp(value(_R("TimeStamp")).template As<double>());
 		return matrix;
 	}
 }

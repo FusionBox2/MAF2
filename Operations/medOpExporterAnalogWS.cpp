@@ -32,7 +32,7 @@
 #include <fstream>
 #include <iostream>
 
-#include <vnl\vnl_matrix.h>
+#include <vnl/vnl_matrix.h>
 
 using namespace std;
 

@@ -123,7 +123,7 @@ vtkMAFMultiFileDataProvider::~vtkMAFMultiFileDataProvider(void)
       PFDLastUsed->pFile->Delete();       //this will close the file as well
       if (DeleteOnClose) {                  //temporary file, remove it
 #pragma warning(suppress: 6031) // warning C6031: Return value ignored: '_unlink'
-        _unlink(PFDLastUsed->szFileName);
+        unlink(PFDLastUsed->szFileName);
       }
     }
 
@@ -163,7 +163,7 @@ vtkMAFMultiFileDataProvider::~vtkMAFMultiFileDataProvider(void)
   }
   
   int slicenum = nFile * this->FileNameSliceSpacing + this->FileNameSliceOffset;       
-  int len = _scprintf(this->FilePattern, slicenum) + 1;        
+  int len = snprintf(nullptr, 0, this->FilePattern, slicenum) + 1;        
   this->InternalFileName = new char [len];  
 
 #if defined(_MSC_VER) && _MSC_VER >= 1400
@@ -268,7 +268,7 @@ vtkMAFMultiFileDataProvider::~vtkMAFMultiFileDataProvider(void)
 //------------------------------------------------------------------------
 {
   //RELEASE NOTE: startOffset is already shifted by HeaderSize
-  BYTE* pBuf = (BYTE*)buffer;
+  unsigned char* pBuf = (unsigned char*)buffer;
   int nTotalRead = 0;
 
   while (count != 0)
@@ -300,7 +300,7 @@ vtkMAFMultiFileDataProvider::~vtkMAFMultiFileDataProvider(void)
                                                              void* buffer, int count)
 //------------------------------------------------------------------------
 {
-  BYTE* pBuf = (BYTE*)buffer;
+  unsigned char* pBuf = (unsigned char*)buffer;
   int nTotalWritten = 0;
 
   while (count != 0)

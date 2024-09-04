@@ -258,7 +258,7 @@ void medWizardManager::OnEvent( mafEventBase *maf_event )
     case WIZARD_SWITCH:
       {
         int i;
-        wxString wizardName=e->GetString()->GetCStr();
+        wxString wizardName=e->GetString()->toWx();
         for(i=0;i<m_NumWizard;i++)
           if (wizardName==m_WizardList[i]->GetName())
           {

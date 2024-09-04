@@ -92,10 +92,10 @@ public:
 	virtual int GetNodeStatus(mafNode *vme);
 
   double GetContourValue(){return m_ContourValueIso;};
-  void SetContourValue(double value){m_ContourValueIso = value; OnEvent(&mafEvent(this,ID_CONTOUR_VALUE_ISO));};
+  void SetContourValue(double value){m_ContourValueIso = value; mafEvent ev(this,ID_CONTOUR_VALUE_ISO);OnEvent(&ev);};
 
   double GetAlphaValue(){return m_AlphaValueIso;};
-  void SetAlphaValue(double value){m_AlphaValueIso = value;OnEvent(&mafEvent(this,ID_ALPHA_VALUE_ISO));};
+  void SetAlphaValue(double value){m_AlphaValueIso = value;mafEvent ev(this,ID_ALPHA_VALUE_ISO);OnEvent(&ev);};
 
 protected:
 

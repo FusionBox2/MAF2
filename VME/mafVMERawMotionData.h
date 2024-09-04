@@ -41,7 +41,7 @@ public:
   const char *GetDictionaryName() {return this->m_DictionaryFileName.GetCStr();}
 
   /** Set RAW motion data file name*/
-  void mafVMERawMotionData::SetFileName(const char *name);
+  void SetFileName(const char *name);
   
   /** Get RAW motion data file name*/
   const char *GetFileName() {return this->m_FileName.GetCStr(); }	
