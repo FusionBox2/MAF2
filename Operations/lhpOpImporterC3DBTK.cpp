@@ -337,7 +337,7 @@ void lhpOpImporterC3DBTK::Initialize(const mafString &fullFileName, lhpOpImporte
 mafVMEGroup *lhpOpImporterC3DBTK::ImportSingleFile(const mafString &fullFileName, lhpOpImporterC3DBTK::_InternalC3DData &intData)
 //----------------------------------------------------------------------------
 {
-	if(OpenC3D(fullFileName)==NOERROR)
+	if(OpenC3D(fullFileName)==0)
 	{
 		//c3d read data
     Initialize(fullFileName, intData);

@@ -332,7 +332,7 @@ mafVMEGroup *lhpOpImporterPressionCenter::ImportSingleFile(const mafString &full
 	int idx = -1;
 
 	_InternalPCData intData;
-	if (OpenPC(fullFileName) == NOERROR)
+	if (OpenPC(fullFileName) == 0)
 	{
 
 		mafNEW(intData.m_VmeGroup);
