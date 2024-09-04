@@ -299,124 +299,108 @@ bool mmaMaterial::Equals(const mafAttribute *a)
   return false;
 }
 //-----------------------------------------------------------------------
-int mmaMaterial::InternalStore(mafStorageElementBuilder& parent)
+void mmaMaterial::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
-  if (Superclass::InternalStore(parent)==MAF_OK)
+  Superclass::InternalStore(parent);
+  parent[_R("MaterialName")].SetValue(m_MaterialName);
+  parent[_R("Value")].SetValue(m_Value);
+  parent[_R("Ambient0")].SetValue(m_Ambient[0]);
+  parent[_R("Ambient1")].SetValue(m_Ambient[1]);
+  parent[_R("Ambient2")].SetValue(m_Ambient[2]);
+  parent[_R("AmbientIntensity")].SetValue(m_AmbientIntensity);
+  parent[_R("Diffuse0")].SetValue(m_Diffuse[0]);
+  parent[_R("Diffuse1")].SetValue(m_Diffuse[1]);
+  parent[_R("Diffuse2")].SetValue(m_Diffuse[2]);
+  parent[_R("DiffuseIntensity")].SetValue(m_DiffuseIntensity);
+  parent[_R("Specular0")].SetValue(m_Specular[0]);
+  parent[_R("Specular1")].SetValue(m_Specular[1]);
+  parent[_R("Specular2")].SetValue(m_Specular[2]);
+  parent[_R("SpecularIntensity")].SetValue(m_SpecularIntensity);
+  parent[_R("SpecularPower")].SetValue(m_SpecularPower);
+  parent[_R("Opacity")].SetValue(m_Opacity);
+  parent[_R("Representation")].SetValue(m_Representation);
+  parent[_R("MaterialType")].SetValue(m_MaterialType);
+  if (m_MaterialType == USE_LOOKUPTABLE)
   {
-    // property
-    parent[_R("MaterialName")].StoreText(m_MaterialName);
-    parent[_R("Value")].StoreDouble( m_Value);
-    parent[_R("Ambient0")].StoreDouble( m_Ambient[0]);
-    parent[_R("Ambient1")].StoreDouble( m_Ambient[1]);
-    parent[_R("Ambient2")].StoreDouble( m_Ambient[2]);
-    parent[_R("AmbientIntensity")].StoreDouble( m_AmbientIntensity);
-    parent[_R("Diffuse0")].StoreDouble( m_Diffuse[0]);
-    parent[_R("Diffuse1")].StoreDouble( m_Diffuse[1]);
-    parent[_R("Diffuse2")].StoreDouble( m_Diffuse[2]);
-    parent[_R("DiffuseIntensity")].StoreDouble( m_DiffuseIntensity);
-    parent[_R("Specular0")].StoreDouble( m_Specular[0]);
-    parent[_R("Specular1")].StoreDouble( m_Specular[1]);
-    parent[_R("Specular2")].StoreDouble( m_Specular[2]);
-    parent[_R("SpecularIntensity")].StoreDouble( m_SpecularIntensity);
-    parent[_R("SpecularPower")].StoreDouble( m_SpecularPower);
-    parent[_R("Opacity")].StoreDouble( m_Opacity);
-    parent[_R("Representation")].StoreDouble( m_Representation);
-    if (m_MaterialType == USE_LOOKUPTABLE)
+    parent[_R("HueRange0")].SetValue(m_HueRange[0]);
+    parent[_R("HueRange1")].SetValue(m_HueRange[1]);
+    parent[_R("SaturationRange0")].SetValue(m_SaturationRange[0]);
+    parent[_R("SaturationRange1")].SetValue(m_SaturationRange[1]);
+    parent[_R("TableRange0")].SetValue(m_TableRange[0]);
+    parent[_R("TableRange1")].SetValue(m_TableRange[1]);
+    parent[_R("NumValues")].SetValue(m_NumValues);
+    mafString lutvalues;
+    for (int v = 0; v < m_NumValues; v++)
     {
-      // lut
-      parent[_R("HueRange0")].StoreDouble( m_HueRange[0]);
-      parent[_R("HueRange1")].StoreDouble( m_HueRange[1]);
-      parent[_R("SaturationRange0")].StoreDouble( m_SaturationRange[0]);
-      parent[_R("SaturationRange1")].StoreDouble( m_SaturationRange[1]);
-      parent[_R("TableRange0")].StoreDouble( m_TableRange[0]);
-      parent[_R("TableRange1")].StoreDouble( m_TableRange[1]);
-      parent[_R("NumValues")].StoreInteger( m_NumValues);
-      mafString lutvalues;
-      for (int v = 0; v < m_NumValues; v++)
-      {
-				lutvalues = _R("LUT_VALUE_");
-        lutvalues += mafToString(v);
-        double *rgba = m_ColorLut->GetTableValue(v);
-        parent[lutvalues].StoreVectorN(rgba, 4);
-      }
+      lutvalues = _R("LUT_VALUE_");
+      lutvalues += mafToString(v);
+      double* rgba = m_ColorLut->GetTableValue(v);
+      parent[lutvalues].SetValue(mafToString(rgba, 4));
     }
-	if (m_MaterialType == USE_TEXTURE)
-	{
-		// texture
-		parent[_R("TextureMappingMode")].StoreInteger( m_TextureMappingMode);
-		parent[_R("TextureImageName")].StoreText( m_VmeImageName);
-
-		m_TextureID = this->GetMaterialTextureID();
-		
-		if (m_TextureID != -1)
-		{
-			parent[_R("TextureID")].StoreInteger( m_TextureID);
-		}
-    }
-    parent[_R("MaterialType")].StoreInteger( m_MaterialType);
-    return MAF_OK;
   }
-  return MAF_ERROR;
+  else if (m_MaterialType == USE_TEXTURE)
+  {
+    parent[_R("TextureMappingMode")].SetValue(m_TextureMappingMode);
+    parent[_R("TextureImageName")].SetValue(m_VmeImageName);
+    m_TextureID = GetMaterialTextureID();
+    if (m_TextureID != -1)
+    {
+      parent[_R("TextureID")].SetValue(m_TextureID);
+    }
+  }
 }
 //----------------------------------------------------------------------------
-int mmaMaterial::InternalRestore(const mafStorageElement& node)
+void mmaMaterial::InternalRestore(const mafStorageElement& node)
 //----------------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node) == MAF_OK)
+  Superclass::InternalRestore(node);
+  m_MaterialName = node[_R("MaterialName")].As<mafString>();
+  m_Value = node[_R("Value")].As<double>();
+  m_Ambient[0] = node[_R("Ambient0")].As<double>();
+  m_Ambient[1] = node[_R("Ambient1")].As<double>();
+  m_Ambient[2] = node[_R("Ambient2")].As<double>();
+  m_AmbientIntensity = node[_R("AmbientIntensity")].As<double>();
+  m_Diffuse[0] = node[_R("Diffuse0")].As<double>();
+  m_Diffuse[1] = node[_R("Diffuse1")].As<double>();
+  m_Diffuse[2] = node[_R("Diffuse2")].As<double>();
+  m_DiffuseIntensity = node[_R("DiffuseIntensity")].As<double>();
+  m_Specular[0] = node[_R("Specular0")].As<double>();
+  m_Specular[1] = node[_R("Specular1")].As<double>();
+  m_Specular[2] = node[_R("Specular2")].As<double>();
+  m_SpecularIntensity = node[_R("SpecularIntensity")].As<double>();
+  m_SpecularPower = node[_R("SpecularPower")].As<double>();
+  m_SpecularPower = (std::max)(1.0, m_SpecularPower);
+  m_Opacity = node[_R("Opacity")].As<double>();
+  m_Representation = node[_R("Representation")].As<double>();
+  m_MaterialType = node[_R("MaterialType")].As<int>();
+  if (m_MaterialType == USE_LOOKUPTABLE)
   {
-    // property
-    node[_R("MaterialName")].RestoreText(m_MaterialName);
-    node[_R("Value")].RestoreDouble(m_Value);
-    node[_R("Ambient0")].RestoreDouble( m_Ambient[0]);
-    node[_R("Ambient1")].RestoreDouble( m_Ambient[1]);
-    node[_R("Ambient2")].RestoreDouble( m_Ambient[2]);
-    node[_R("AmbientIntensity")].RestoreDouble( m_AmbientIntensity);
-    node[_R("Diffuse0")].RestoreDouble( m_Diffuse[0]);
-    node[_R("Diffuse1")].RestoreDouble( m_Diffuse[1]);
-    node[_R("Diffuse2")].RestoreDouble( m_Diffuse[2]);
-    node[_R("DiffuseIntensity")].RestoreDouble( m_DiffuseIntensity);
-    node[_R("Specular0")].RestoreDouble( m_Specular[0]);
-    node[_R("Specular1")].RestoreDouble( m_Specular[1]);
-    node[_R("Specular2")].RestoreDouble( m_Specular[2]);
-    node[_R("SpecularIntensity")].RestoreDouble( m_SpecularIntensity);
-    node[_R("SpecularPower")].RestoreDouble( m_SpecularPower);
-    m_SpecularPower = (std::max)(1.0, m_SpecularPower);
-    node[_R("Opacity")].RestoreDouble( m_Opacity);
-    node[_R("Representation")].RestoreDouble( m_Representation);
-    node[_R("MaterialType")].RestoreInteger( m_MaterialType);
-    if (m_MaterialType == USE_LOOKUPTABLE)
+    m_HueRange[0] = node[_R("HueRange0")].As<double>();
+    m_HueRange[1] = node[_R("HueRange1")].As<double>();
+    m_SaturationRange[0] = node[_R("SaturationRange0")].As<double>();
+    m_SaturationRange[1] = node[_R("SaturationRange1")].As<double>();
+    m_TableRange[0] = node[_R("TableRange0")].As<double>();
+    m_TableRange[1] = node[_R("TableRange1")].As<double>();
+    m_NumValues = node[_R("NumValues")].As<int>();
+    m_ColorLut->SetNumberOfTableValues(m_NumValues);
+    mafString lutvalues;
+    double rgba[4];
+    for (int v = 0; v < m_NumValues; v++)
     {
-      // lut
-      node[_R("HueRange0")].RestoreDouble( m_HueRange[0]);
-      node[_R("HueRange1")].RestoreDouble( m_HueRange[1]);
-      node[_R("SaturationRange0")].RestoreDouble( m_SaturationRange[0]);
-      node[_R("SaturationRange1")].RestoreDouble( m_SaturationRange[1]);
-      node[_R("TableRange0")].RestoreDouble( m_TableRange[0]);
-      node[_R("TableRange1")].RestoreDouble( m_TableRange[1]);
-      node[_R("NumValues")].RestoreInteger( m_NumValues);
-      m_ColorLut->SetNumberOfTableValues(m_NumValues);
-      mafString lutvalues;
-      double rgba[4];
-      for (int v = 0; v < m_NumValues; v++)
-      {
-				lutvalues = _R("LUT_VALUE_");
-				lutvalues += mafToString(v);
-				node[lutvalues].RestoreVectorN(rgba, 4);
-				m_ColorLut->SetTableValue(v,rgba);
-      }
+      lutvalues = _R("LUT_VALUE_");
+      lutvalues += mafToString(v);
+      mafParseVector(node[lutvalues].As<mafString>(), rgba, 4);
+      m_ColorLut->SetTableValue(v, rgba);
     }
-    else if (m_MaterialType == USE_TEXTURE)
-    {
-      // texture
-      node[_R("TextureID")].RestoreInteger( m_TextureID);
-      node[_R("TextureMappingMode")].RestoreInteger( m_TextureMappingMode);
-	  node[_R("TextureImageName")].RestoreText(m_VmeImageName);
-    }
-    UpdateProp();
-    return MAF_OK;
   }
-  return MAF_ERROR;
+  else if (m_MaterialType == USE_TEXTURE)
+  {
+    m_TextureID = node[_R("TextureID")].As<std::optional<int> >().value_or(-1);
+    m_TextureMappingMode = node[_R("TextureMappingMode")].As<int>();
+    m_VmeImageName = node[_R("TextureImageName")].As<mafString>();
+  }
+  UpdateProp();
 }
 //-----------------------------------------------------------------------
 void mmaMaterial::UpdateProp()

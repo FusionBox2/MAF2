@@ -165,35 +165,24 @@ void mafVMEScalar::GetLocalTimeBounds(mafTimeStamp tbounds[2])
 }
 
 //-----------------------------------------------------------------------
-int mafVMEScalar::InternalStore(mafStorageElementBuilder& parent)
+void mafVMEScalar::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
-  if (Superclass::InternalStore(parent) == MAF_OK)
+  Superclass::InternalStore(parent);
+  if (m_ScalarVector)
   {
-    if (m_ScalarVector)
-    {
-      if(m_ScalarVector->Store(parent[_R("ScalarVector")]) == MAF_ERROR)
-        return MAF_ERROR;
-    }
-    return MAF_OK;
+    m_ScalarVector->Store(parent[_R("ScalarVector")]);
   }
-  return MAF_ERROR;
 }
 //-----------------------------------------------------------------------
-int mafVMEScalar::InternalRestore(const mafStorageElement& node)
+void mafVMEScalar::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node) == MAF_OK)
+  Superclass::InternalRestore(node);
+  if (m_ScalarVector)
   {
-    // restore Data Vector
-    if (m_ScalarVector)
-    {
-      return m_ScalarVector->Restore(node[_R("ScalarVector")]);
-    }
-    return MAF_OK;
+    m_ScalarVector->Restore(node[_R("ScalarVector")]);
   }
-
-  return MAF_ERROR;
 }
 //-----------------------------------------------------------------------
 void mafVMEScalar::InternalPreUpdate()

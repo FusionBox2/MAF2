@@ -120,7 +120,7 @@ protected:
   vtkAlgorithmOutput* m_TexturePort;
   int           m_TextureID;
   mafString m_VmeImageName;
-  virtual int InternalStore(mafStorageElementBuilder& parent);
-  virtual int InternalRestore(const mafStorageElement& node);
+  virtual void InternalStore(mafStorageElementBuilder& parent);
+  virtual void InternalRestore(const mafStorageElement& node);
 };
 #endif

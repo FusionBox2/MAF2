@@ -42,6 +42,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 
 #include <assert.h>
 #include "mafMemDbg.h"
+#include <optional>
 
 //-------------------------------------------------------------------------
 mafCxxTypeMacro(medVMEMuscleWrapper)
@@ -405,81 +406,44 @@ void medVMEMuscleWrapper::RestoreMeterLinks()
 }
 
 //------------------------------------------------------------------------
-/*virtual*/ int medVMEMuscleWrapper::InternalStore(mafStorageElementBuilder& parent)
+void medVMEMuscleWrapper::InternalStore(mafStorageElementBuilder& parent)
 //------------------------------------------------------------------------
 { 
   //store Links, so they can be saved by base clase  
   StoreMeterLinks();
-    
-  if (Superclass::InternalStore(parent) == MAF_OK)  //stores material + links to muscle and OI areas VMEs
-  {
-    parent[_R("Wrappers_Num")].StoreInteger( m_nWrappers);
-    parent[_R("InputMode")].StoreInteger( m_InputMode);
-    parent[_R("VisualMode")].StoreInteger( m_VisMode);   
-    parent[_R("UseRefSys")].StoreInteger( m_UseRefSys);
-    parent[_R("Fibers_Type")].StoreInteger( m_FbTemplate);
-    parent[_R("Fibers_Num")].StoreInteger( m_FbNumFib);
-    parent[_R("Fibers_Res")].StoreInteger( m_FbResolution);
-    parent[_R("Fibers_Thickness")].StoreDouble( m_FbThickness);
-    parent[_R("Fibers_Smooth")].StoreInteger( m_FbSmooth);
-    parent[_R("Smooth_Steps")].StoreInteger( m_FbSmoothSteps);    
-    parent[_R("Smooth_Weight")].StoreDouble( m_FbSmoothWeight); 
-
-    parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix());
-    return MAF_OK;
-  }
-  return MAF_ERROR;
+  Superclass::InternalStore(parent);
+  parent[_R("Wrappers_Num")].SetValue(m_nWrappers);
+  parent[_R("InputMode")].SetValue(m_InputMode);
+  parent[_R("VisualMode")].SetValue(m_VisMode);
+  parent[_R("UseRefSys")].SetValue(m_UseRefSys);
+  parent[_R("Fibers_Type")].SetValue(m_FbTemplate);
+  parent[_R("Fibers_Num")].SetValue(m_FbNumFib);
+  parent[_R("Fibers_Res")].SetValue(m_FbResolution);
+  parent[_R("Fibers_Thickness")].SetValue(m_FbThickness);
+  parent[_R("Fibers_Smooth")].SetValue(m_FbSmooth);
+  parent[_R("Smooth_Steps")].SetValue(m_FbSmoothSteps);
+  parent[_R("Smooth_Weight")].SetValue(m_FbSmoothWeight);
+  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
 }
 
 //------------------------------------------------------------------------
-/*virtual*/ int medVMEMuscleWrapper::InternalRestore(const mafStorageElement& node)
+void medVMEMuscleWrapper::InternalRestore(const mafStorageElement& node)
 //------------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node)==MAF_OK)
-  {     
-    if (node[_R("Wrappers_Num")].RestoreInteger( m_nWrappers) != MAF_OK)
-      m_nWrappers = 0;  //no wrapper available
-
-    if (node[_R("InputMode")].RestoreInteger( m_InputMode) != MAF_OK)
-      m_InputMode = DEFAULT_INPUT_MODE;
-
-    if (node[_R("VisualMode")].RestoreInteger( m_VisMode) != MAF_OK)
-      m_VisMode = DEFAULT_VISUAL_MODE; 
-
-    if (node[_R("UseRefSys")].RestoreInteger( m_UseRefSys) != MAF_OK)
-      m_UseRefSys = DEFAULT_USEREFSYSVAL;
-
-    if (node[_R("Fibers_Type")].RestoreInteger( m_FbTemplate) != MAF_OK)
-      m_FbTemplate = DEFAULT_FIBERS_TYPE;
-
-    if (node[_R("Fibers_Num")].RestoreInteger( m_FbNumFib) != MAF_OK)
-      m_FbNumFib = DEFAULT_FIBERS_NUM;
-
-    if (node[_R("Fibers_Res")].RestoreInteger( m_FbResolution) != MAF_OK)
-      m_FbResolution = DEFAULT_FIBERS_RES;
-
-    if (node[_R("Fibers_Thickness")].RestoreDouble( m_FbThickness) != MAF_OK)
-      m_FbThickness = DEFAULT_FIBERS_THICKNESS;
-
-    if (node[_R("Fibers_Smooth")].RestoreInteger( m_FbSmooth) != MAF_OK)
-      m_FbSmooth = DEFAULT_FIBERS_SMOOTH;
-
-    if (node[_R("Smooth_Steps")].RestoreInteger( m_FbSmoothSteps) != MAF_OK)
-      m_FbSmoothSteps = DEFAULT_FIBERS_SMOOTHSTEPS;
-
-    if (node[_R("Smooth_Weight")].RestoreDouble( m_FbSmoothWeight) != MAF_OK)
-      m_FbSmoothWeight = DEFAULT_FIBERS_SMOOTHWEIGHT;
-    
-    mafMatrix matrix;
-    if (node[_R("Transform")].RestoreMatrix(matrix) ==MAF_OK) {
-      m_Transform->SetMatrix(matrix);
-    }
-
-    m_bNeedUpdate = true;
-    return MAF_OK;
-  }
-
-  return MAF_ERROR;  
+  Superclass::InternalRestore(node);
+  m_nWrappers = node[_R("Wrappers_Num")].As<std::optional<int> >().value_or(0);
+  m_InputMode = node[_R("InputMode")].As<std::optional<int> >().value_or(DEFAULT_INPUT_MODE);
+  m_VisMode = node[_R("VisualMode")].As<std::optional<int> >().value_or(DEFAULT_VISUAL_MODE);
+  m_UseRefSys = node[_R("UseRefSys")].As<std::optional<int> >().value_or(DEFAULT_USEREFSYSVAL);
+  m_FbTemplate = node[_R("Fibers_Type")].As<std::optional<int> >().value_or(DEFAULT_FIBERS_TYPE);
+  m_FbNumFib = node[_R("Fibers_Num")].As<std::optional<int> >().value_or(DEFAULT_FIBERS_NUM);
+  m_FbResolution = node[_R("Fibers_Res")].As<std::optional<int> >().value_or(DEFAULT_FIBERS_RES);
+  m_FbThickness = node[_R("Fibers_Thickness")].As<std::optional<double> >().value_or(DEFAULT_FIBERS_THICKNESS);
+  m_FbSmooth = node[_R("Fibers_Smooth")].As<std::optional<int> >().value_or(DEFAULT_FIBERS_SMOOTH);
+  m_FbSmoothSteps = node[_R("Smooth_Steps")].As<std::optional<int> >().value_or(DEFAULT_FIBERS_SMOOTHSTEPS);
+  m_FbSmoothWeight = node[_R("Smooth_Weight")].As<std::optional<double> >().value_or(DEFAULT_FIBERS_SMOOTHWEIGHT);
+  m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
+  m_bNeedUpdate = true;
 }
 
 #pragma region GetVMEs

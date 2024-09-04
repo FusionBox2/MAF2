@@ -18,8 +18,8 @@
 #define __mafAction_h
 
 #include "mafAgent.h"
-#include "mafStorable.h"
 #include "mafSmartPointer.h"
+#include "mafTo.h"
 #include <list>
 
 //----------------------------------------------------------------------------
@@ -29,9 +29,11 @@ template <class T> class vtkTemplatedList;
 class mafDevice;
 class mafInteractor;
 class vtkRenderer;
+class mafStorageElement;
+class mafStorageElementBuilder;
 
 /** Class used to route events from devices to interactors */
-class MAF_EXPORT mafAction : public mafAgent, public mafStorable
+class MAF_EXPORT mafAction : public mafAgent
 {
 public:
   /** @ingroup Events */
@@ -68,18 +70,19 @@ public:
   /** Get list of devices assigned to this action */
   const mmuDeviceList *GetDevices() {return &m_Devices;}
 
-  /** Store of action's bindings to an XML file. */
-  virtual int InternalStore(mafStorageElementBuilder& node);
-
-  /** Restore of action's bindings from an XML file.*/
-  virtual int InternalRestore(const mafStorageElement& node);
 
   /** Redefined to answer incoming queries about connected devices. */
   virtual void OnEvent(mafEventBase *event);
 
+  void Store(mafStorageElementBuilder& element) { InternalStore(element); }
+  void Restore(const mafStorageElement& element) { InternalRestore(element); }
+
 protected:
   mafAction();
   virtual ~mafAction();
+
+  virtual void InternalStore(mafStorageElementBuilder& node);
+  virtual void InternalRestore(const mafStorageElement& node);
 
   int   m_Type;
   std::list<mafAutoPointer<mafDevice> > m_Devices;
@@ -88,5 +91,33 @@ private:
   mafAction(const mafAction&);  // Not implemented.
   void operator=(const mafAction&);  // Not implemented.
 };
+
+namespace parser
+{
+  template<class Value>
+  mafAction* Parse(const Value& value, parser::To<mafAction>)
+  {
+    mafString type_name = value(_R("Type")).As<mafString>();
+    auto object = mafObjectFactory::CreateInstance(type_name.GetCStr());
+    if (auto action = mafAction::SafeDownCast(object))
+    {
+      action->Restore(value);
+      return action;
+    }
+    return nullptr;
+  }
+}
+
+namespace serializer
+{
+  template<class Value>
+  void Serialize(Value& value, mafAction* const& action)
+  {
+    assert(action);
+    mafString type_name = _R(action->GetTypeName());
+    value(_R("Type")).SetValue(type_name);
+    action->Store(value);
+  }
+}
 
 #endif 

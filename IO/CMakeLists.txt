@@ -9,16 +9,11 @@ DBG_MESSAGE("Configuring project mafIO")
 
 # Set your list of sources here.
 SET(PROJECT_SRCS
-  mafParser.cpp
-  mafParser.h
-  mafStorable.cpp
-  mafStorable.h
+  mafTo.h
   mafStorage.cpp
   mafStorage.h
   mafStorageElement.cpp
   mafStorageElement.h
-  mmuDOMTreeErrorReporter.h
-  mmuDOMTreeErrorReporter.cpp
 )
 
 # IO classes for VTK related objects
@@ -40,10 +35,6 @@ ENDIF (BUILD_SHARED_LIBS)
 IF (MAF_USE_XercesC)
   SET(PROJECT_SRCS
     ${PROJECT_SRCS}
-    mafXMLParser.cpp
-    mafXMLParser.h
-    mafXMLString.cpp
-    mafXMLString.h
   )
   SET(PROJECT_LIBS ${PROJECT_LIBS} XercesC::XercesC)
 ENDIF (MAF_USE_XercesC)

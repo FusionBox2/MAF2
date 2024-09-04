@@ -277,28 +277,19 @@ double mafVMERefSysAbstract::GetScaleFactor()
   return m_ScaleFactor;
 }
 //-----------------------------------------------------------------------
-int mafVMERefSysAbstract::InternalStore(mafStorageElementBuilder& parent)
+void mafVMERefSysAbstract::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
-  if (Superclass::InternalStore(parent)==MAF_OK)
-  {
-    parent[_R("ScaleFactor")].StoreDouble( m_ScaleFactor);
-    return MAF_OK;
-  }
-  return MAF_ERROR;
+  Superclass::InternalStore(parent);
+  parent[_R("ScaleFactor")].SetValue(m_ScaleFactor);
 }
 
 //-----------------------------------------------------------------------
-int mafVMERefSysAbstract::InternalRestore(const mafStorageElement& node)
+void mafVMERefSysAbstract::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node)==MAF_OK)
-  {
-    node[_R("ScaleFactor")].RestoreDouble(m_ScaleFactor);
-    SetScaleFactor(m_ScaleFactor);
-    return MAF_OK;
-  }
-  return MAF_ERROR;
+  Superclass::InternalRestore(node);
+  SetScaleFactor(node[_R("ScaleFactor")].As<double>());
 }
 //-------------------------------------------------------------------------
 mmaMaterial *mafVMERefSysAbstract::GetMaterial()

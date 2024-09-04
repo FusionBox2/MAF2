@@ -27,12 +27,13 @@
 #include "mafReferenceCounted.h"
 #include "mafTimeStamped.h"
 #include "mafEventSender.h"
-#include "mafStorable.h"
+#include "mafObjectFactory.h"
 #include "mafString.h"
 #include "mafMTime.h"
 #include "mafOBB.h"
 #include "mafBaseEventHandler.h"
 #include "mafEventBase.h"
+#include "mafTo.h"
 
 //----------------------------------------------------------------------------
 // forward declarations :
@@ -40,6 +41,7 @@
 class mafVME;
 class mafOBB;
 class mafStorageElement;
+class mafStorageElementBuilder;
 class mafTagArray;
 class vtkDataSet;
 class mafVMEItemAsynchObserver;
@@ -63,7 +65,7 @@ class mafVMEItemAsynchObserver;
   - Implement DeepCopy and SmartCopy functions
   - build a test
 */
-class MAF_EXPORT mafVMEItem : public mafReferenceCounted, public mafStorable, public mafEventSender, public mafTimeStamped
+class MAF_EXPORT mafVMEItem : public mafReferenceCounted, public mafEventSender, public mafTimeStamped
 {
 public:
   MAF_ID_DEC(VME_ITEM_DATA_MODIFIED) ///< event raised by mafVMEItem to advice DataVector a dataset has been modified
@@ -241,12 +243,15 @@ public:
   /** Update Item Id  */
   void UpdateItemId();
 
+  void Store(mafStorageElementBuilder& element) { InternalStore(element); }
+  void Restore(const mafStorageElement& element) { InternalRestore(element); }
+
 protected:
   mafVMEItem(); // to be allocated with New()
   ~mafVMEItem(); // to be deleted with Delete()
 
-  virtual int InternalStore(mafStorageElementBuilder& parent);
-  virtual int InternalRestore(const mafStorageElement& node);
+  virtual void InternalStore(mafStorageElementBuilder& node);
+  virtual void InternalRestore(const mafStorageElement& node);
 
   /** Check that stored file is valid.*/
   virtual int CheckFile(const char *filename) = 0;
@@ -332,4 +337,33 @@ protected:
   mafVMEItem *m_Item; ///< Item to update when the loading of the binary data finish
   mafString   m_Filename; ///< Filename downloaded and to be read.
 };
+
+namespace parser
+{
+  template<class Value>
+  mafVMEItem* Parse(const Value& value, parser::To<mafVMEItem>)
+  {
+    mafString type_name = value(_R("Type")).As<mafString>();
+    auto object = mafObjectFactory::CreateInstance(type_name.GetCStr());
+    if (auto item = mafVMEItem::SafeDownCast(object))
+    {
+      item->Restore(value);
+      return item;
+    }
+    return nullptr;
+  }
+}
+
+namespace serializer
+{
+  template<class Value>
+  void Serialize(Value& value, mafVMEItem* const& item)
+  {
+    mafString type_name = _R(item->GetTypeName());
+    assert(item);
+    value(_R("Type")).SetValue(type_name);
+    item->Store(value);
+  }
+}
+
 #endif

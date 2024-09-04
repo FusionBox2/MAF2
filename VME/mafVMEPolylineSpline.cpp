@@ -209,35 +209,21 @@ void mafVMEPolylineSpline::InternalPreUpdate()
   
 }
 //-----------------------------------------------------------------------
-int mafVMEPolylineSpline::InternalStore(mafStorageElementBuilder& parent)
+void mafVMEPolylineSpline::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
-  if (Superclass::InternalStore(parent)==MAF_OK)
-  {
-    if(parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix())==MAF_OK && 
-       parent[_R("AxisReorder")].StoreInteger( m_OrderByAxisMode) == MAF_OK
-      )    
-      return MAF_OK;
-  }
-  return MAF_ERROR;
+  Superclass::InternalStore(parent);
+  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
+  parent[_R("AxisReorder")].SetValue(m_OrderByAxisMode);
 }
 
 //-----------------------------------------------------------------------
-int mafVMEPolylineSpline::InternalRestore(const mafStorageElement& node)
+void mafVMEPolylineSpline::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node)==MAF_OK)
-  {
-    mafMatrix matrix;
-    if (node[_R("Transform")].RestoreMatrix(matrix) ==MAF_OK)
-    {
-      node[_R("AxisReorder")].RestoreInteger(m_OrderByAxisMode);
-      m_Transform->SetMatrix(matrix);
-      return MAF_OK;
-    }
-  }
-
-  return MAF_ERROR;
+  Superclass::InternalRestore(node);
+  m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
+  m_OrderByAxisMode = node[_R("AxisReorder")].As<int>();
 }
 
 //-----------------------------------------------------------------------

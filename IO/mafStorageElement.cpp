@@ -1,30 +1,9 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafStorageElement
- Authors: Marco Petrone m.petrone@cineca.it
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#include "mafObject.h"
-#include "mafObjectFactory.h"
-#include "mafStorable.h"
 #include "mafStorageElement.h"
-#include "mafParser.h"
-#include "mafStorage.h"
 #include "mafString.h"
-#include "mafMatrix.h"
+
 #include <vector>
 #include <assert.h>
-
+#include <stdio.h>
 
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
@@ -32,344 +11,479 @@
 #include <xercesc/framework/LocalFileFormatTarget.hpp>
 #include <xercesc/parsers/XercesDOMParser.hpp>
 
-#include "mafXMLParser.h"
-#include "mafXMLString.h"
-
-#include "mafMatrix.h"
-#include "mafStorable.h"
-#include "mafObjectFactory.h"
-
-#include <vector>
-#include <assert.h>
-#include "stdio.h"
-
 namespace
 {
-    XERCES_CPP_NAMESPACE_QUALIFIER DOMNode* getDOMNode(void* element)
+    XERCES_CPP_NAMESPACE_QUALIFIER DOMNode* getDOMNode(void* element, size_t numElems, size_t idx = 0)
     {
-        return reinterpret_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMNode*>(element);
+        if (numElems <= idx)
+            throw 0;
+        if(numElems == 1)
+            return reinterpret_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMNode*>(element);
+		return reinterpret_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMNode**>(element)[idx];
     }
 
-    //------------------------------------------------------------------------------
-    template <class T>
-    void InternalStoreVectorN(mafStorageElementBuilder& element, T* comps, size_t num)
-        //------------------------------------------------------------------------------
+	class MAF_EXPORT mafXMLString
+	{
+	public:
+		mafXMLString() : m_WStr(0L), m_CStr(NULL) { };
+		mafXMLString(const char* str);
+		mafXMLString(XMLCh* wstr);
+		mafXMLString(const XMLCh* wstr);
+		mafXMLString(const mafXMLString& copy);
+		~mafXMLString();
+		bool Append(const XMLCh* tail);
+		bool Erase(const XMLCh* head, const XMLCh* tail);
+		const XMLCh* Begin() const;
+		const XMLCh* End() const;
+		int Size() const;
+		const char* GetCStr()const;
+		XMLCh& operator [] (const int i);
+		const XMLCh operator [] (const int i) const;
+		operator const XMLCh* () const { return m_WStr; };
+		operator const char* () { return GetCStr(); }
+	protected:
+		XMLCh* m_WStr;
+		mutable char* m_CStr;
+	};
+	//------------------------------------------------------------------------------
+	mafXMLString::mafXMLString(const char* str) : m_WStr(NULL), m_CStr(NULL)
+		//------------------------------------------------------------------------------
+	{
+		m_WStr = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(str);
+	}
+
+	//------------------------------------------------------------------------------
+	mafXMLString::mafXMLString(XMLCh* wstr) : m_WStr(wstr), m_CStr(NULL) { };
+	//------------------------------------------------------------------------------
+
+	//------------------------------------------------------------------------------
+	mafXMLString::mafXMLString(const XMLCh* wstr) : m_WStr(NULL), m_CStr(NULL)
+		//------------------------------------------------------------------------------
+	{
+		m_WStr = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::replicate(wstr);
+	}
+
+	//------------------------------------------------------------------------------
+	mafXMLString::mafXMLString(const mafXMLString& right) : m_WStr(NULL), m_CStr(NULL)
+		//------------------------------------------------------------------------------
+	{
+		m_WStr = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::replicate(right.m_WStr);
+	}
+
+	//------------------------------------------------------------------------------
+	mafXMLString::~mafXMLString()
+		//------------------------------------------------------------------------------
+	{
+		// thanks tinny!!
+		if (m_WStr) XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&m_WStr);
+		if (m_CStr) XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&m_CStr);
+	}
+
+	//------------------------------------------------------------------------------
+	bool mafXMLString::Append(const XMLCh* tail)
+		//------------------------------------------------------------------------------
+	{
+		int iTailLen = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::stringLen(tail);
+		int iWorkLen = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::stringLen(m_WStr);
+		XMLCh* result = new XMLCh[iWorkLen + iTailLen + 1];
+		bool bOK = result != NULL;
+		if (bOK)
+		{
+			XMLCh* target = result;
+			XERCES_CPP_NAMESPACE_QUALIFIER XMLString::moveChars(target, m_WStr, iWorkLen);
+			target += iWorkLen;
+			XERCES_CPP_NAMESPACE_QUALIFIER XMLString::moveChars(target, tail, iTailLen);
+			target += iTailLen;
+			*target++ = 0;
+			XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&m_WStr);
+			m_WStr = result;
+		}
+		return bOK;
+	}
+
+	//------------------------------------------------------------------------------
+	bool mafXMLString::Erase(const XMLCh* head, const XMLCh* tail)
+		//------------------------------------------------------------------------------
+	{
+		bool bOK = head <= tail && head >= Begin() && tail <= End();
+		if (bOK)
+		{
+			XMLCh* result = new XMLCh[Size() - (tail - head) + 1];
+			XMLCh* target = result;
+			bOK = target != NULL;
+			if (bOK)
+			{
+				const XMLCh* cursor = Begin();
+
+				while (cursor != head) *target++ = *cursor++;
+				cursor = tail;
+				while (cursor != End()) *target++ = *cursor++;
+				*target++ = 0;
+				XERCES_CPP_NAMESPACE_QUALIFIER XMLString::release(&m_WStr);
+				m_WStr = result;
+			}
+		}
+		return bOK;
+	}
+
+	//------------------------------------------------------------------------------
+	const XMLCh* mafXMLString::Begin() const
+		//------------------------------------------------------------------------------
+	{
+		return m_WStr;
+	}
+
+	//------------------------------------------------------------------------------
+	const XMLCh* mafXMLString::End() const
+		//------------------------------------------------------------------------------
+	{
+		return m_WStr + Size();
+	}
+
+	//------------------------------------------------------------------------------
+	int mafXMLString::Size() const
+		//------------------------------------------------------------------------------
+	{
+		return XERCES_CPP_NAMESPACE_QUALIFIER XMLString::stringLen(m_WStr);
+	}
+
+	//------------------------------------------------------------------------------
+	XMLCh& mafXMLString::operator [] (const int i)
+		//------------------------------------------------------------------------------
+	{
+		return m_WStr[i];
+	}
+
+	//------------------------------------------------------------------------------
+	const XMLCh mafXMLString::operator [] (const int i) const
+		//------------------------------------------------------------------------------
+	{
+		return m_WStr[i];
+	}
+
+	//------------------------------------------------------------------------------
+	const char* mafXMLString::GetCStr()const
+		//------------------------------------------------------------------------------
+	{
+		if (m_WStr)
+		{
+			if (m_CStr == NULL)
+			{
+				m_CStr = XERCES_CPP_NAMESPACE_QUALIFIER XMLString::transcode(m_WStr);
+			}
+
+			return m_CStr;
+		}
+
+		return NULL;
+	}
+}
+
+namespace parser
+{
+	mafString Parse(const mafStorageElement& value, To<mafString>)
+	{
+		auto node = getDOMNode(value.GetImpl(), value.GetNumItems());
+		if (node->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ATTRIBUTE_NODE)
+		{
+			return _R(mafXMLString(node->getNodeValue()));
+		}
+		if (node->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
+		{
+			auto child_element = node->getFirstChild();
+			while (child_element)
+			{
+				if (child_element->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::TEXT_NODE)
+				{
+					return _R(mafXMLString(child_element->getNodeValue()));
+				}
+				child_element = child_element->getNextSibling();
+			}
+			return {};
+		};
+		return {};
+	}
+
+	int Parse(const mafStorageElement& value, To<int>)
     {
-        // Write all the elements into as a single 3-tupla  
-        mafString elements;
-        for (size_t i = 0; i < num; i++)
-        {
-            elements += mafToString(comps[i]) + _R(" ");
-        }
-        element.StoreText(elements);
+		return std::stoi(value.As<mafString>().toStd());
     }
-    //------------------------------------------------------------------------------
-    template <class T>
-    size_t InternalParseData(const mafString& text, T* vector, size_t size)
-        //------------------------------------------------------------------------------
-    {
-#pragma message ("potentially hacky")
-        std::istringstream instr(text.toStd());
-
-        for (size_t i = 0; i < size; i++)
-        {
-            if (instr.eof())
-                return i;
-
-            instr >> vector[i];
-        }
-
-        return size;
-    }
+	mafID Parse(const mafStorageElement& value, To<mafID>)
+	{
+		return std::stoll(value.As<mafString>().toStd());
+	}
+	double Parse(const mafStorageElement& value, To<double>)
+	{
+		return std::stod(value.As<mafString>().toStd());
+	}
 }
+
+namespace serializer
+{
+	void Serialize(mafStorageElementBuilder& value, const mafString& val)
+	{
+		auto node = getDOMNode(value.GetImpl(), value.GetNumItems());
+		if (node->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ATTRIBUTE_NODE)
+		{
+			node->setNodeValue(mafXMLString(val.GetCStr()));
+		}
+		if (node->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
+		{
+			XERCES_CPP_NAMESPACE_QUALIFIER DOMText* text_node = node->getOwnerDocument()->createTextNode(mafXMLString(val.GetCStr()));
+			node->appendChild(text_node);
+		}
+	}
+ 	void Serialize(mafStorageElementBuilder& value, const int& val)
+	{
+		value.SetValue(mafToString(val));
+	}
+	void Serialize(mafStorageElementBuilder& value, const int64_t& val)
+	{
+		value.SetValue(mafToString(val));
+	}
+	void Serialize(mafStorageElementBuilder& value, const uint64_t& val)
+	{
+		value.SetValue(mafToString((long long)val));
+	}
+	void Serialize(mafStorageElementBuilder& value, const double& val)
+	{
+		value.SetValue(mafToString(val));
+	}
+}
+
+/*namespace serializer::json
+{
+	void Serialize(mafStorageElementBuilder& value, const mafString& val)
+	{
+		auto node = getJson(value.GetImpl());
+		(*node) = val.toStd();
+	}
+	void Serialize(mafStorageElementBuilder& value, const int& val)
+	{
+		auto node = getJson(value.GetImpl());
+		(*node) = val;
+	}
+	void Serialize(mafStorageElementBuilder& value, const int64_t& val)
+	{
+		auto node = getJson(value.GetImpl());
+		(*node) = val;
+	}
+	void Serialize(mafStorageElementBuilder& value, const uint64_t& val)
+	{
+		auto node = getJson(value.GetImpl());
+		(*node) = val;
+	}
+	void Serialize(mafStorageElementBuilder& value, const double& val)
+	{
+		auto node = getJson(value.GetImpl());
+		(*node) = val;
+	}
+}*/
+
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreMatrix(mafMatrix& matrix) const
+mafStorageElement::mafStorageElement(void* element, mafXMLReader* storage)
 //------------------------------------------------------------------------------
 {
-  matrix.Zero();
-
-  double *elem=*matrix.GetElements();
-  mafString text_data;
-  RestoreText(text_data);
-  size_t parsedElems = 0;
-  if (!text_data.empty())
-	  parsedElems = InternalParseData(text_data, elem, 16);
-  if (parsedElems == 16)
-  {
-    mafTimeStamp time_stamp;
-    GetAttributeAsDouble(_R("TimeStamp"),time_stamp);
-    matrix.SetTimeStamp(time_stamp);
-    return MAF_OK; 
-  }
-
-  mafWarningMacro("Storage Parse Error while parsing <"<<GetName().GetCStr()<<"> element: wrong number of fields inside Storage element" );
-
-  return MAF_ERROR;
+	m_Storage = storage;
+	m_DOMElement = element;
+	if (element == nullptr)
+	{
+		m_NumItems = 0;
+		return;
+	}
+	m_NumItems = 1;
+	auto child_element = getDOMNode(m_DOMElement, m_NumItems)->getFirstChild();
+	while (child_element)
+	{
+		if (child_element->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
+		{
+			mafString name(_R(mafXMLString(static_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*>(child_element)->getTagName())));
+			m_Children[name].push_back(child_element);
+		}
+		child_element = child_element->getNextSibling();
+	}
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(double *comps,unsigned int num) const
+mafStorageElement::mafStorageElement(void* const* elements, size_t numElems, mafXMLReader* storage)
 //------------------------------------------------------------------------------
 {
-  mafString text_data;
-  RestoreText(text_data);
-  size_t parsedElems = 0;
-  if (!text_data.empty())
-	  parsedElems = InternalParseData(text_data, comps, num);
-  if (parsedElems==num)
-    return MAF_OK;
-
-  mafWarningMacro("Storage Parse Error while parsing <"<<GetName().GetCStr()<<"> element: wrong number of fields inside Storage element." );
-
-  return MAF_ERROR;
+	m_Storage = storage;
+	m_NumItems = numElems;
+	if (numElems == 1)
+	{
+		m_DOMElement = elements[0];
+		auto child_element = getDOMNode(m_DOMElement, m_NumItems)->getFirstChild();
+		while (child_element)
+		{
+			if (child_element->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
+			{
+				mafString name(_R(mafXMLString(static_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*>(child_element)->getTagName())));
+				m_Children[name].push_back(child_element);
+			}
+			child_element = child_element->getNextSibling();
+		}
+	}
+	else
+	{
+		auto src = reinterpret_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMNode* const*>(elements);
+		XERCES_CPP_NAMESPACE_QUALIFIER DOMNode** buf = new XERCES_CPP_NAMESPACE_QUALIFIER DOMNode * [numElems];
+		std::copy(src, src + numElems, buf);
+		m_DOMElement = buf;
+	}
 }
 
-//------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(int *comps,unsigned int num) const
-//------------------------------------------------------------------------------
-{
-  mafString text_data;
-  RestoreText(text_data);
-  size_t parsedElems = 0;
-  if (!text_data.empty())
-	  parsedElems = InternalParseData(text_data, comps, num);
-  if (parsedElems==num)
-    return MAF_OK;
-
-  mafWarningMacro("Storage Parse Error while parsing <"<<GetName().GetCStr()<<"> element: wrong number of fields inside Storage element." );
-
-  return MAF_ERROR;
-}
-
-//------------------------------------------------------------------------------
-int mafStorageElementBuilder::StoreVectorN(double *comps,int num)
-//------------------------------------------------------------------------------
-{
-  assert(comps);
-  InternalStoreVectorN(*this, comps, num);
-  return MAF_OK;
-}
-
-//------------------------------------------------------------------------------
-int mafStorageElementBuilder::StoreVectorN(int *comps,int num)
-//------------------------------------------------------------------------------
-{
-  assert(comps);
-  InternalStoreVectorN(*this,comps,num);
-  return MAF_OK;
-}
-//------------------------------------------------------------------------------
-int mafStorageElementBuilder::StoreVectorN(const std::vector<double> &comps)
-//------------------------------------------------------------------------------
-{
-  InternalStoreVectorN(*this,comps.data(),comps.size());
-  return MAF_OK;
-}
-
-//------------------------------------------------------------------------------
-int mafStorageElementBuilder::StoreVectorN(const std::vector<int> &comps)
-//------------------------------------------------------------------------------
-{
-  InternalStoreVectorN(*this,comps.data(),comps.size());
-  return MAF_OK;
-}
-//------------------------------------------------------------------------------
-int mafStorageElementBuilder::StoreVectorN(const std::vector<mafString> &comps,const mafString& tag)
-//------------------------------------------------------------------------------
-{
-  for (auto& elem : comps)
-  {
-    (*this)[tag].StoreText(elem);
-  }
-  return MAF_OK;
-}
-//------------------------------------------------------------------------------
-mafStorageElement::mafStorageElement(void* element, mafParser *storage)
-//------------------------------------------------------------------------------
-{
-  assert(storage); // no NULL storage is allowed
-  m_Storage = storage;
-  assert(element);
-  m_DOMElement = element;
-  auto child_element = getDOMNode(m_DOMElement)->getFirstChild();
-  while (child_element)
-  {
-	  if (child_element->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
-	  {
-		  mafStorageElement child((XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*)child_element, GetStorage());
-		  m_Children[child.GetName()].push_back(child);
-	  }
-	  child_element = child_element->getNextSibling();
-  }
-}
-//------------------------------------------------------------------------------
-mafString mafStorageElement::GetName() const
-//------------------------------------------------------------------------------
-{
-	if (getDOMNode(m_DOMElement)->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
-		return _R(mafXMLString(static_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*>(getDOMNode(m_DOMElement))->getTagName()));
-    return _R("");
-}
 //------------------------------------------------------------------------------
 mafStorageElement::~mafStorageElement()
 //------------------------------------------------------------------------------
 {
-  // remove pointers...
-  m_Storage = NULL;
+	if (m_NumItems > 1)
+		delete[] reinterpret_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMNode**>(m_DOMElement);
 }
 
 //------------------------------------------------------------------------------
-mafStorageElementBuilder::mafStorageElementBuilder(void* element, mafParser* storage)
+mafString mafStorageElement::GetName() const
 //------------------------------------------------------------------------------
 {
-	assert(storage); // no NULL storage is allowed
-	m_Storage = storage;
+	if (getDOMNode(m_DOMElement, m_NumItems)->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
+		return _R(mafXMLString(static_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*>(getDOMNode(m_DOMElement, m_NumItems))->getTagName()));
+	return _R("");
+}
+
+//------------------------------------------------------------------------------
+mafStorageElement mafStorageElement::operator[](const mafString& name) const
+//------------------------------------------------------------------------------
+{
+	auto it = m_Children.find(name);
+	if (it == m_Children.end())
+		return mafStorageElement(nullptr, GetStorage());
+	return mafStorageElement(it->second.data(), it->second.size(), GetStorage());
+}
+
+//------------------------------------------------------------------------------
+mafStorageElement mafStorageElement::operator()(const mafString& name) const
+//------------------------------------------------------------------------------
+{
+	if (getDOMNode(m_DOMElement, m_NumItems)->getNodeType() != XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
+		throw 0;
+	return mafStorageElement(static_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*>(getDOMNode(m_DOMElement, m_NumItems))->getAttributeNode(mafXMLString(name.GetCStr())), GetStorage());
+}
+
+//------------------------------------------------------------------------------
+mafStorageElement mafStorageElement::operator[](size_t idx) const
+//------------------------------------------------------------------------------
+{
+	return mafStorageElement(getDOMNode(m_DOMElement, m_NumItems, idx), GetStorage());
+}
+
+//------------------------------------------------------------------------------
+size_t mafStorageElement::GetNumItems() const
+//------------------------------------------------------------------------------
+{
+	return m_NumItems;
+}
+
+//------------------------------------------------------------------------------
+bool mafStorageElement::IsValid() const
+//------------------------------------------------------------------------------
+{
+	return m_DOMElement != nullptr;
+}
+
+void *mafStorageElement::GetImpl() const
+{
+    return m_DOMElement;
+}
+
+#ifndef JSON_Builder
+//------------------------------------------------------------------------------
+mafStorageElementBuilder::mafStorageElementBuilder(void* element)
+//------------------------------------------------------------------------------
+{
 	assert(element);
 	m_DOMElement = element;
+    m_NumItems = 1;
 }
 //------------------------------------------------------------------------------
 mafStorageElementBuilder::~mafStorageElementBuilder()
 //------------------------------------------------------------------------------
 {
-	// remove pointers...
-	m_Storage = NULL;
+	if (m_NumItems > 1)
+		delete[] reinterpret_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMNode**>(m_DOMElement);
 }
 
 mafStorageElementBuilder mafStorageElementBuilder::operator[](const mafString& name)
 {
-	//BuildChildrenMap();
-	XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* child_element = getDOMNode(m_DOMElement)->getOwnerDocument()->createElement(mafXMLString(name.GetCStr()));
-	getDOMNode(m_DOMElement)->appendChild(child_element);
-	auto child = new mafStorageElementBuilder(child_element, GetStorage());
-	//(*m_Children)[child->GetName()].push_back(child);
-	return *child;
+  XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* child_element = getDOMNode(m_DOMElement, m_NumItems)->getOwnerDocument()->createElement(mafXMLString(name.GetCStr()));
+  getDOMNode(m_DOMElement, m_NumItems)->appendChild(child_element);
+  return mafStorageElementBuilder(child_element);
 }
 
 mafStorageElementBuilder mafStorageElementBuilder::operator()(const mafString& name)
 {
-    if (getDOMNode(m_DOMElement)->getNodeType() != XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
-        throw 0;
-	auto newAttr = getDOMNode(m_DOMElement)->getOwnerDocument()->createAttribute(mafXMLString(name.GetCStr()));
-    static_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*>(getDOMNode(m_DOMElement))->setAttributeNode(newAttr);
-    return mafStorageElementBuilder(newAttr, GetStorage());
+  auto node = getDOMNode(m_DOMElement, m_NumItems);
+  if (node->getNodeType() != XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
+    throw 0;
+  auto newAttr = getDOMNode(m_DOMElement, m_NumItems)->getOwnerDocument()->createAttribute(mafXMLString(name.GetCStr()));
+  static_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*>(node)->setAttributeNode(newAttr);
+  return mafStorageElementBuilder(newAttr);
 }
 
-mafStorageElement mafStorageElement::operator[](const mafString& name) const
+mafStorageElementBuilder mafStorageElementBuilder::operator[](size_t idx)
 {
-	auto it = m_Children.find(name);
-    if (it == m_Children.end())
-        throw 0;
-	return it->second.front();
-}
+	auto node = getDOMNode(m_DOMElement, m_NumItems);
+	if (node->getNodeType() != XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
+		throw 0;
+	if (idx == size_t(-1))
+		idx = m_NumItems;
+	if(idx < m_NumItems)
+	{
+		return mafStorageElementBuilder(getDOMNode(m_DOMElement, m_NumItems, idx));
+	}
+	else
+	{
+		XERCES_CPP_NAMESPACE_QUALIFIER DOMNode** src = nullptr;
+		if (m_NumItems == 1)
+		{
+			src = reinterpret_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMNode**>(&m_DOMElement);
+		}
+		else
+		{
+			src = reinterpret_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMNode**>(m_DOMElement);
+		}
 
-mafStorageElement mafStorageElement::operator()(const mafString& name) const
-{
-    if (getDOMNode(m_DOMElement)->getNodeType() != XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
-        throw 0;
-    return mafStorageElement(static_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*>(getDOMNode(m_DOMElement))->getAttributeNode(mafXMLString(name.GetCStr())), GetStorage());
-}
-
-//------------------------------------------------------------------------------
-std::vector<mafStorageElement> mafStorageElement::GetElementsByName(const mafString& name) const
-//------------------------------------------------------------------------------
-{
-  auto it = m_Children.find(name);
-  if (it != m_Children.end())
-  {
-      return it->second;
-  }
-  return {};
-}
-
-//------------------------------------------------------------------------------
-int mafStorageElementBuilder::StoreVectorN(const std::vector<mafObject *> &vector,const mafString& items_name)
-//------------------------------------------------------------------------------
-{
-  SetAttribute(_R("NumberOfItems"),mafToString((long)vector.size()));
-  
-  for (unsigned int i=0;i<vector.size();i++)
-  {
-    mafObject *object=vector[i];
-    if (object)
-    {
-      if ((*this)[items_name].StoreObject(object) != MAF_OK)
-      {
-        mafErrorMacro("Failed to store object of type \""<<object->GetTypeName()<<"\" in vector of objects");
-        return MAF_ERROR;
-      }
-    }
-    else
-    {
-      mafWarningMacro("NULL object in a vector being stored");
-    }
-  }
-
-  return MAF_OK;  
+		XERCES_CPP_NAMESPACE_QUALIFIER DOMNode** buf = new XERCES_CPP_NAMESPACE_QUALIFIER DOMNode*[idx + 1];
+		std::copy(src, src + m_NumItems, buf);
+		if (m_NumItems > 1)
+			delete[] reinterpret_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMNode**>(m_DOMElement);
+		m_DOMElement = buf;
+		for (size_t i = m_NumItems; i < idx + 1; i++)
+		{
+			buf[i] = node->getOwnerDocument()->createElement(static_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*>(node)->getTagName());
+			node->getParentNode()->appendChild(buf[i]);
+		}
+		m_NumItems = idx + 1;
+		return mafStorageElementBuilder(getDOMNode(m_DOMElement, m_NumItems, idx));
+	}
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(std::vector<mafObject *> &vector,const mafString& items_name) const
+size_t mafStorageElementBuilder::GetNumItems() const
 //------------------------------------------------------------------------------
 {
-      auto items = GetElementsByName(items_name);
-
-      mafID numItems=-1;
-      if (GetAttributeAsInteger(_R("NumberOfItems"),numItems) != MAF_OK)
-      {
-        mafWarningMacro("Warning while restoring vector of objects from element <"<<GetName().GetCStr() <<">: cannot find \"NumberOfItems\" attribute..." );
-      }
-
-      int num=0;
-      bool fail=false;
-      for (auto& item : items)
-      {
-        {
-          mafObject* object = nullptr;
-          if (item.RestoreObject(object) != MAF_OK)
-          {
-            fail=true;
-            mafString type_name;
-            item.GetAttribute(_R("Type"),type_name);
-            mafWarningMacro("Error while restoring vector of objects from element <"<< GetName().GetCStr() <<">: cannot restore object from element <"<<item.GetName().GetCStr() <<">, object's Type=\""<<type_name.GetCStr()<<"\".");
-            // try continue restoring other objects
-            GetStorage()->SetErrorCode(mafStorage::IO_WRONG_OBJECT_TYPE);
-          }
-	      else
-          {
-            vector.push_back(object);
-          }
-          num++;
-        }    
-      }
-
-      if (fail)
-        return MAF_ERROR;
-
-      // check if restored num of items is correct
-      if (numItems>=0&&num!=numItems)
-      {
-        mafWarningMacro("Error while restoring <"<< GetName().GetCStr() <<"> element: wrong number of items in Objects vector");
-        return MAF_ERROR;
-      }
-
-      return MAF_OK;
+	return m_NumItems;
 }
 
 //------------------------------------------------------------------------------
-int mafStorageElementBuilder::StoreObject(mafObject *object)
+bool mafStorageElementBuilder::IsValid() const
 //------------------------------------------------------------------------------
 {
-  mafString type_name = _R(object->GetTypeName());
-  assert(object);
-  SetAttribute(_R("Type"), type_name);
-  mafStorable* storable = dynamic_cast<mafStorable*>(object);
-  if (storable)
-  {
-      storable->Store(*this);
-	  return MAF_OK;
-  }
-  mafErrorMacro("Failed to store object of type \"" << type_name.GetCStr() << "\"");
-  return MAF_ERROR;
+	return m_DOMElement != nullptr;
+}
+
+void* mafStorageElementBuilder::GetImpl() const
+{
+	return m_DOMElement;
 }
 
 //------------------------------------------------------------------------------
@@ -410,243 +524,459 @@ mafString mafStorageElement::UpgradeAttribute(const mafString& attribute) const
   
   return att_name;
 }
-//------------------------------------------------------------------------------
-int mafStorageElement::RestoreObject(mafObject*& object) const
-//------------------------------------------------------------------------------
-{
-  mafString type_name;
 
-  if (GetAttribute(_R("Type"),type_name)==MAF_OK&&!type_name.empty())
-  {
-    if (m_Storage->NeedsUpgrade())
-    {
-      type_name = UpgradeAttribute(_R("Type"));
-    }
-    
-    object=mafObjectFactory::CreateInstance(type_name.GetCStr());
-    if (object)
-    {
-      try 
-      {
-        // items must be both a mafObject and mafStorable 
-        mafStorable *restorable=dynamic_cast<mafStorable *>(object);
-        
-        if (restorable)
-        {
-          if (restorable->Restore(*this)==MAF_OK)
-          {
-            // if restored correctly 
-            return MAF_OK;
-          }
-          else
-          {
-            mafErrorMacro("Problems restoring object of type "<<object->GetTypeName()<<" from element <"<<GetName().GetCStr() <<">");
-          }
-        }
-        else
-        {
-          mafErrorMacro("Cannot restore object of type "<<object->GetTypeName()<<" from element <"<<GetName().GetCStr() <<"> since it's a not a restorable object");
-        }
-      }
-      catch (std::bad_cast) 
-      {
-        mafErrorMacro("Cannot restore object of type "<<object->GetTypeName()<<" from element <"<<GetName().GetCStr() <<"> since it's a not a restorable object");
-      }
-      // release object memory
-      object->Delete();     
-    }    
-    else
-    {
-      mafErrorMacro("Cannot restore object of type \""<<type_name.GetCStr()<<"\" from element <"<<GetName().GetCStr() <<"> since this object type is unknown.");
-    }
-  }
-  else
-  {
-
-    mafErrorMacro("Cannot restore object from element <"<<GetName().GetCStr() <<"> since no 'Type' attribute is present");
-  }
-
-  return MAF_ERROR;
-}
-
-//------------------------------------------------------------------------------
-int mafStorageElementBuilder::StoreMatrix(const mafMatrix& matrix)
-//------------------------------------------------------------------------------
+#else
+#include "libjson/json.h"
+namespace
 {
-  // Write all the 16 elements into as a single 16-tupla
-  mafString elements;
-  for (int i=0;i<4;i++)
-  {
-    for (int j=0;j<4;j++)
-    { 
-      elements += mafToString(matrix.GetElements()[i][j]) + _R(" ");
-    }
-    elements += _R("\n"); // cr for read-ability
-  }
-
-  StoreText(elements);
-
-  // add also the timestamp as an attribute
-  SetAttribute(_R("TimeStamp"),mafToString(matrix.GetTimeStamp()));
-  return MAF_OK;
-}
-//------------------------------------------------------------------------------
-int mafStorageElementBuilder::StoreDouble(const double &value)
-//------------------------------------------------------------------------------
-{
-  return StoreText(mafToString(value));
-}
-//------------------------------------------------------------------------------
-int mafStorageElementBuilder::StoreInteger(const int &value)
-//------------------------------------------------------------------------------
-{
-  return StoreText(mafToString(value));
-}
-
-//------------------------------------------------------------------------------
-int mafStorageElement::RestoreDouble(double &value) const
-//------------------------------------------------------------------------------
-{
-   mafString tmp;
-   if (RestoreText(tmp)==MAF_OK)
-   {
-     value=atof(tmp.GetCStr());
-     return MAF_OK;
-   }
-  return MAF_ERROR;
-}
-
-//------------------------------------------------------------------------------
-int mafStorageElement::RestoreInteger(int &value) const
-//------------------------------------------------------------------------------
-{
-   mafString tmp;
-   if (RestoreText(tmp)==MAF_OK)
-   {
-     value=atof(tmp.GetCStr());
-     return MAF_OK;
-   }
-  return MAF_ERROR;
-}
-//------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(std::vector<double> &comps) const
-//------------------------------------------------------------------------------
-{
-  return RestoreVectorN(comps.data(), comps.size());
-}
-//------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(std::vector<int> &comps) const
-//------------------------------------------------------------------------------
-{
-  return RestoreVectorN(comps.data(), comps.size());
-}
-//------------------------------------------------------------------------------
-int mafStorageElement::RestoreVectorN(std::vector<mafString> &comps,const mafString& tag) const
-//------------------------------------------------------------------------------
-{
- auto children = GetElementsByName(tag);
-
-  // to be rewritten as a map access
-  for (size_t i=0;i<children.size();i++)
-  {
-    children[i].RestoreText(comps[i]);
-  }
-  return MAF_OK;
-}
-//------------------------------------------------------------------------------
-int mafStorageElement::GetAttributeAsDouble(const mafString& name,double &value) const
-//------------------------------------------------------------------------------
-{
-  mafString tmp;
-  if (GetAttribute(name,tmp) == MAF_OK)
-  {
-    value=atof(tmp.GetCStr());
-    return MAF_OK;
-  }
-  return MAF_ERROR;
-}
-
-//------------------------------------------------------------------------------
-int mafStorageElement::GetAttributeAsInteger(const mafString& name,mafID &value) const
-//------------------------------------------------------------------------------
-{
-  mafString tmp;
-  if (GetAttribute(name,tmp) == MAF_OK)
-  {
-    value=atof(tmp.GetCStr());
-    return MAF_OK;
-  }
-  return MAF_ERROR;
-}
-
-//------------------------------------------------------------------------------
-int mafStorageElementBuilder::SetAttribute(const mafString& name,const mafID value)
-//------------------------------------------------------------------------------
-{
-  return SetAttribute(name,mafToString(value));
-}
-//------------------------------------------------------------------------------
-int mafStorageElementBuilder::SetAttribute(const mafString& name,const double value)
-//------------------------------------------------------------------------------
-{
-  return SetAttribute(name,mafToString(value));
-}
-
-//------------------------------------------------------------------------------
-int mafStorageElementBuilder::SetAttribute(const mafString& name, const mafString& value)
-//------------------------------------------------------------------------------
-{
-    if (getDOMNode(m_DOMElement)->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
-    {
-        static_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*>(getDOMNode(m_DOMElement))->setAttribute(mafXMLString(name.GetCStr()), mafXMLString(value.GetCStr()));
-        return MAF_OK;
-    }
-	return MAF_ERROR;
-}
-//------------------------------------------------------------------------------
-int mafStorageElement::GetAttribute(const mafString& name, mafString& value) const
-//------------------------------------------------------------------------------
-{
-	if (getDOMNode(m_DOMElement)->getNodeType() != XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
-		return false;
-	const XMLCh* xml_value = static_cast<XERCES_CPP_NAMESPACE_QUALIFIER DOMElement*>(getDOMNode(m_DOMElement))->getAttribute(mafXMLString(name.GetCStr()));
-	if (xml_value)
+	Json::Value* getJson(void* element)
 	{
-		value = _R(mafXMLString(xml_value));
-		return MAF_OK;
+		return reinterpret_cast<Json::Value*>(element);
 	}
-	return MAF_ERROR;
 }
+
 //------------------------------------------------------------------------------
-int mafStorageElementBuilder::StoreText(const mafString& text)
+mafStorageElementBuilder::mafStorageElementBuilder(void* element)
 //------------------------------------------------------------------------------
 {
-	XERCES_CPP_NAMESPACE_QUALIFIER DOMText* text_node = getDOMNode(m_DOMElement)->getOwnerDocument()->createTextNode(mafXMLString(text.GetCStr()));
-	getDOMNode(m_DOMElement)->appendChild(text_node);
+	m_DOMElement = element;
+}
+//------------------------------------------------------------------------------
+mafStorageElementBuilder::~mafStorageElementBuilder()
+//------------------------------------------------------------------------------
+{
+}
+
+mafStorageElementBuilder mafStorageElementBuilder::operator[](const mafString& name)
+{
+	auto child_element = getJson(m_DOMElement);
+	return mafStorageElementBuilder(&(*child_element)[name.toStd()]);
+}
+
+mafStorageElementBuilder mafStorageElementBuilder::operator()(const mafString& name)
+{
+	auto child_element = getJson(m_DOMElement);
+	return mafStorageElementBuilder(&(*child_element)["attr"][name.toStd()]);
+}
+
+mafStorageElementBuilder mafStorageElementBuilder::operator[](size_t idx)
+{
+	auto child_element = getJson(m_DOMElement);
+	if(idx == npos)
+		idx = GetNumItems();
+	return mafStorageElementBuilder(&(*child_element)[(int)idx]);
+}
+
+//------------------------------------------------------------------------------
+size_t mafStorageElementBuilder::GetNumItems() const
+//------------------------------------------------------------------------------
+{
+	auto child_element = getJson(m_DOMElement);
+	return child_element->size();
+}
+
+//------------------------------------------------------------------------------
+bool mafStorageElementBuilder::IsValid() const
+//------------------------------------------------------------------------------
+{
+	return m_DOMElement != nullptr;
+}
+
+void* mafStorageElementBuilder::GetImpl() const
+{
+	return m_DOMElement;
+}
+
+//------------------------------------------------------------------------------
+mafString mafStorageElement::UpgradeAttribute(const mafString& attribute) const
+//------------------------------------------------------------------------------
+{
+	mafString att_name;
+	/*mafString new_att_name;
+	GetAttribute(attribute, att_name);
+	if (att_name == _R("mafVMEItemScalar"))
+	{
+	  new_att_name = _R("mafVMEItemScalarMatrix");
+	  SetAttribute(attribute, new_att_name);
+	  return new_att_name;
+	}
+	if (att_name.find(_R("mafVME")) != mafString::npos)
+	{
+	  if (att_name == _R("mafVMEScalar"))
+	  {
+		new_att_name = _R("mafVMEScalarMatrix");
+		SetAttribute(attribute, new_att_name);
+	  }
+	  else
+	  {
+		new_att_name = att_name;
+	  }
+	  mafStorageElement data_vector = FindNestedElement(_R("DataVector"));
+	  mafString item_type;
+	  if (data_vector && data_vector->GetAttribute(_R("ItemTypeName"), item_type))
+	  {
+		if (item_type == _R("mafVMEItemScalar"))
+		{
+		  data_vector->SetAttribute(_R("ItemTypeName"), _R("mafVMEItemScalarMatrix"));
+		}
+	  }
+	  return new_att_name;
+	}*/
+
+	return att_name;
+}
+
+//------------------------------------------------------------------------------
+int mafStorageElementBuilder::Store_Text(const mafString& text)
+//------------------------------------------------------------------------------
+{
+	auto child_element = getJson(m_DOMElement);
+	(*child_element) = text.toStd();
 	return MAF_OK;
 }
-//------------------------------------------------------------------------------
-int mafStorageElement::RestoreText(mafString& buffer) const
-//------------------------------------------------------------------------------
+
+#endif
+
+
+#include <xercesc/util/XercesDefs.hpp>
+
+#include <xercesc/sax/ErrorHandler.hpp>
+#include <xercesc/sax/SAXParseException.hpp>
+
+
+namespace
 {
-    if (getDOMNode(m_DOMElement)->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ATTRIBUTE_NODE)
-    {
-        buffer = _R(mafXMLString(getDOMNode(m_DOMElement)->getNodeValue()));
-        return MAF_OK;
-    }
-	if (getDOMNode(m_DOMElement)->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::ELEMENT_NODE)
+	class XMLPlatformUtilsInitializer
 	{
-		auto child_element = getDOMNode(m_DOMElement)->getFirstChild();
-		while (child_element)
+	public:
+		XMLPlatformUtilsInitializer()
 		{
-			if (child_element->getNodeType() == XERCES_CPP_NAMESPACE_QUALIFIER DOMNode::TEXT_NODE)
-			{
-				buffer = _R(mafXMLString(child_element->getNodeValue()));
-				return MAF_OK;
-			}
-			child_element = child_element->getNextSibling();
+			// initialize the XML library
+			XERCES_CPP_NAMESPACE_QUALIFIER XMLPlatformUtils::Initialize();
 		}
-		return MAF_OK;
+		~XMLPlatformUtilsInitializer()
+		{
+			XERCES_CPP_NAMESPACE_QUALIFIER XMLPlatformUtils::Terminate();
+		}
+	};
+
+	class mmuDOMTreeErrorReporter : public XERCES_CPP_NAMESPACE_QUALIFIER ErrorHandler
+	{
+	public:
+		/** constructor */
+		mmuDOMTreeErrorReporter() : m_SawErrors(false), m_TestFlag(false) {}
+		/** destructor */
+		~mmuDOMTreeErrorReporter() {}
+
+		/** Implementation of the warning handler interface */
+		void warning(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& toCatch);
+		/** Implementation of the error handler interface */
+		void error(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& toCatch);
+		/** Implementation of the fatal error handler interface */
+		void fatalError(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& toCatch);
+		/** reset error flag */
+		void resetErrors();
+
+		/** retrieve error flag */
+		bool GetSawErrors() const { return m_SawErrors; }
+		/** set test modality in order to skip, problematic log messages*/
+		void SetTestMode(bool enable) { m_TestFlag = enable; }
+
+	private:
+		bool    m_SawErrors; ///< Set if we get any errors, used by the main code to suppress output if there are errors.
+		bool m_TestFlag;
+	};
+	//------------------------------------------------------------------------------
+	void mmuDOMTreeErrorReporter::warning(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException&)
+		//------------------------------------------------------------------------------
+	{
+		// Ignore all warnings.
 	}
-	return MAF_ERROR;
+	//------------------------------------------------------------------------------
+	void mmuDOMTreeErrorReporter::error(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& toCatch)
+		//------------------------------------------------------------------------------
+	{
+		m_SawErrors = true;
+		if (m_TestFlag == false)
+		{
+			mafErrorMessageMacro("Error at file \"" << toCatch.getSystemId() \
+				<< "\", line " << toCatch.getLineNumber() \
+				<< ", column " << toCatch.getColumnNumber() \
+				<< "\n   Message: " << mafXMLString(toCatch.getMessage()) \
+			);
+		}
+	}
+	//------------------------------------------------------------------------------
+	void mmuDOMTreeErrorReporter::fatalError(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& toCatch)
+		//------------------------------------------------------------------------------
+	{
+		m_SawErrors = true;
+		if (m_TestFlag == false)
+		{
+			mafErrorMessageMacro("Fatal Error at file \"" << mafXMLString(toCatch.getSystemId()) \
+				<< "\", line " << toCatch.getLineNumber() \
+				<< ", column " << toCatch.getColumnNumber() \
+				<< "\n   Message: " << mafXMLString(toCatch.getMessage()) \
+			);
+		}
+
+	}
+	//------------------------------------------------------------------------------
+	void mmuDOMTreeErrorReporter::resetErrors()
+		//------------------------------------------------------------------------------
+	{
+		m_SawErrors = false;
+	}
 }
+
+class mafXMLReaderImpl : XMLPlatformUtilsInitializer
+{
+public:
+	mafXMLReaderImpl() {}
+	std::unique_ptr<mmuDOMTreeErrorReporter> errReporter;
+	std::unique_ptr<XERCES_CPP_NAMESPACE_QUALIFIER XercesDOMParser> XMLParser;
+	std::optional<mafStorageElement> m_root;
+	mafString fileType;
+	mafString version;
+	mafString URL;
+};
+
+mafXMLReader::mafXMLReader(const mafString& fileType, const mafString& version)
+{
+	m_impl = std::make_unique<mafXMLReaderImpl>();
+	m_impl->fileType = fileType;
+	m_impl->version = version;
+	//
+	//  Create our parser, then attach an error handler to the parser.
+	//  The parser will call back to methods of the ErrorHandler if it
+	//  discovers errors during the course of parsing the XML document.
+	//
+	m_impl->errReporter = std::make_unique<mmuDOMTreeErrorReporter>();
+	m_impl->XMLParser = std::make_unique<XERCES_CPP_NAMESPACE_QUALIFIER XercesDOMParser>();
+	m_impl->XMLParser->setValidationScheme(XERCES_CPP_NAMESPACE_QUALIFIER XercesDOMParser::Val_Auto);
+	m_impl->XMLParser->setDoNamespaces(false);
+	m_impl->XMLParser->setDoNamespaces(false);
+	m_impl->XMLParser->setDoSchema(false);
+	m_impl->XMLParser->setCreateEntityReferenceNodes(false);
+
+	m_impl->XMLParser->setErrorHandler(m_impl->errReporter.get());
+}
+
+mafXMLReader::~mafXMLReader()
+{
+}
+
+int mafXMLReader::Load(const mafString& url)
+{
+	int errorCode = MAF_OK;
+	m_impl->URL = url;
+	try
+	{
+		m_impl->XMLParser->parse(url.GetCStr());
+		int errorCount = m_impl->XMLParser->getErrorCount();
+
+		if (errorCount != 0)
+		{
+			// errors while parsing...
+			mafErrorMessage(_M("Errors while parsing XML file"));
+			errorCode = IO_XML_PARSE_ERROR;
+			return errorCode;
+		}
+		// extract the root element and wrap inside a mafXMLElement
+		XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* XMLDoc = m_impl->XMLParser->getDocument();
+		XERCES_CPP_NAMESPACE_QUALIFIER DOMElement* root = XMLDoc->getDocumentElement();
+		m_impl->m_root = mafStorageElement(root, nullptr);
+
+		if (m_impl->fileType != m_impl->m_root->GetName())
+		{
+			mafErrorMacro("XML parsing error: wrong file type, expected \"" << m_impl->fileType.GetCStr() << "\", found " << m_impl->m_root->GetName().GetCStr());
+			errorCode = IO_WRONG_FILE_TYPE;
+			return errorCode;
+		}
+		auto docVersion = (*m_impl->m_root)(_R("Version")).As<std::optional<mafString> >();
+		if (!docVersion)
+		{
+			errorCode = IO_WRONG_FILE_VERSION;
+			return errorCode;
+		}
+		double doc_version_f = atof(docVersion->GetCStr());
+		double my_version_f = atof(m_impl->version.GetCStr());
+
+		// 			if (my_version_f > doc_version_f)
+		// 			{
+		// 				// Paolo 30-11-2007: due to changes on name for mafVMEScalar (to mafVMEScalarMatrix)
+		// 				if (doc_version_f < 2.0)
+		// 				{
+		// 					mafErrorMacro("XML parsing error: wrong file version v" << docVersion->GetCStr() << ", should be > v" << version.GetCStr());
+		// 					errorCode = IO_WRONG_FILE_VERSION;
+		//                     return;
+		// 				}
+		// 				else
+		// 				{
+		// 					// Upgrade document to the actual version
+		// 					//documentElement->SetAttribute(_R("Version"), my_version_f);
+		// 					m_NeedsUpgrade = true;
+		// 					if (doc->Restore(documentElement) != MAF_OK)
+		// 						errorCode = IO_RESTORE_ERROR;
+		// 				}
+		// 			}
+	}
+	catch (const XERCES_CPP_NAMESPACE_QUALIFIER XMLException& e)
+	{
+		mafString err;
+		err += _R("An error occurred during XML parsing.\n Message: ");
+		err += _R(mafXMLString(e.getMessage()));
+		mafErrorMessage(_M(err));
+		errorCode = IO_XML_PARSE_ERROR;
+	}
+
+	catch (const XERCES_CPP_NAMESPACE_QUALIFIER DOMException& e)
+	{
+		mafString err;
+		err += _R("DOM-XML Error while parsing file '") + url + _R("'\n");
+		err += _R("DOMException code is: ") + mafToString(e.code);
+
+		if (e.getMessage())
+		{
+			err += _R("DOMException msg is: ");
+			err += _R(mafXMLString(e.getMessage()));
+		}
+
+		mafErrorMessage(_M(err));
+		errorCode = IO_DOM_XML_ERROR;
+	}
+
+	/*catch (const SAXException& e)
+	{
+		mafString err;
+		err << "SAX-XML Error while parsing file: '" << m_ParserURL << "'\n";
+		err << "SAXException msg is: " << mafXMLString(e.getMessage());
+		mafErrorMessage(err);
+	}*/
+
+	catch (...)
+	{
+		mafErrorMessage(_M("An error occurred during XML parsing"));
+		errorCode = IO_XML_PARSE_ERROR;
+	}
+	return errorCode;
+}
+
+const mafStorageElement& mafXMLReader::GetRoot() const
+{
+	return *m_impl->m_root;
+}
+
+const mafString& mafXMLReader::GetURL() const
+{
+	return m_impl->URL;
+}
+
+#ifndef JSON_Builder
+class mafXMLWriterImpl : XMLPlatformUtilsInitializer
+{
+public:
+	mafXMLWriterImpl() {}
+
+	XERCES_CPP_NAMESPACE_QUALIFIER DOMImplementation* XMLImplement = nullptr;
+	std::unique_ptr<XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument> XMLDoc;
+	std::optional<mafStorageElementBuilder> m_root;
+};
+
+mafXMLWriter::mafXMLWriter(const mafString& fileType, const mafString& version)
+{
+	m_impl = std::make_unique<mafXMLWriterImpl>();
+	// get a serializer, an instance of DOMWriter (the "LS" stands for load-save).
+	m_impl->XMLImplement = XERCES_CPP_NAMESPACE_QUALIFIER DOMImplementationRegistry::getDOMImplementation(mafXMLString("LS"));
+	// create a document
+	m_impl->XMLDoc.reset(m_impl->XMLImplement->createDocument(NULL, mafXMLString(fileType.GetCStr()), NULL)); // NO URI and NO DTD
+	m_impl->XMLDoc->setXmlStandalone(true);
+	m_impl->XMLDoc->setXmlVersion(mafXMLString("1.0"));
+	m_impl->m_root = mafStorageElementBuilder(m_impl->XMLDoc->getDocumentElement());
+	// attach version attribute to the root node
+	(*m_impl->m_root)(_R("Version")).SetValue(version);
+}
+mafXMLWriter::~mafXMLWriter()
+{
+}
+
+mafStorageElementBuilder& mafXMLWriter::GetRoot()
+{
+	return *m_impl->m_root;
+}
+
+int mafXMLWriter::Save(const mafString& url)
+{
+	int errorCode = MAF_OK;
+
+	std::unique_ptr<XERCES_CPP_NAMESPACE_QUALIFIER XMLFormatTarget> XMLTarget = std::make_unique<XERCES_CPP_NAMESPACE_QUALIFIER LocalFileFormatTarget>(url.GetCStr());
+	std::unique_ptr<XERCES_CPP_NAMESPACE_QUALIFIER DOMLSSerializer> XMLSerializer(((XERCES_CPP_NAMESPACE_QUALIFIER DOMImplementationLS*)m_impl->XMLImplement)->createLSSerializer());
+	// set user specified end of line sequence and output encoding
+	XMLSerializer->setNewLine(mafXMLString("\r"));
+
+	// set serializer features 
+	XERCES_CPP_NAMESPACE_QUALIFIER DOMConfiguration* config = XMLSerializer->getDomConfig();
+	config->setParameter(XERCES_CPP_NAMESPACE_QUALIFIER XMLUni::fgDOMWRTSplitCdataSections, false);
+	config->setParameter(XERCES_CPP_NAMESPACE_QUALIFIER XMLUni::fgDOMWRTDiscardDefaultContent, false);
+	config->setParameter(XERCES_CPP_NAMESPACE_QUALIFIER XMLUni::fgDOMWRTFormatPrettyPrint, true);
+	config->setParameter(XERCES_CPP_NAMESPACE_QUALIFIER XMLUni::fgDOMWRTBOM, false);
+
+	try
+	{
+		XERCES_CPP_NAMESPACE_QUALIFIER DOMLSOutput* theOutputDesc = m_impl->XMLImplement->createLSOutput();
+		// output related nodes are prefixed with "svg"
+		// to distinguish them from input nodes.
+		theOutputDesc->setEncoding(mafXMLString("UTF-8"));
+		theOutputDesc->setByteStream(XMLTarget.get());
+		XMLSerializer->write(m_impl->XMLDoc.get(), theOutputDesc);
+		// destroy all intermediate objects
+		theOutputDesc->release();
+	}
+	catch (const XERCES_CPP_NAMESPACE_QUALIFIER DOMException& e)
+	{
+		mafErrorMessageMacro("XML error, DOMException code is:  " << e.code);
+		errorCode = 2;
+	}
+	catch (...)
+	{
+		mafErrorMessage(_M("XML error, an error occurred creating the XML document!"));
+		errorCode = 3;
+	}
+	return errorCode;
+}
+#else
+#include "json.h"
+#include <fstream>
+class mafXMLWriterImpl : XMLPlatformUtilsInitializer
+{
+public:
+	mafXMLWriterImpl() {}
+	std::optional<mafStorageElementBuilder> m_root;
+	Json::Value m_rootValue;
+};
+
+mafXMLWriter::mafXMLWriter(const mafString& fileType, const mafString& version)
+{
+	m_impl = std::make_unique<mafXMLWriterImpl>();
+	m_impl->m_root = mafStorageElementBuilder(&m_impl->m_rootValue);
+	// attach version attribute to the root node
+	(*m_impl->m_root)(_R("Version")).SetValue(version);
+}
+mafXMLWriter::~mafXMLWriter()
+{
+}
+
+mafStorageElementBuilder& mafXMLWriter::GetRoot()
+{
+	return *m_impl->m_root;
+}
+
+int mafXMLWriter::Save(const mafString& url)
+{
+	int errorCode = MAF_OK;
+	std::ofstream ofs(url.toStd());
+	Json::FastWriter writer;
+	ofs << writer.write(m_impl->m_rootValue);
+	return errorCode;
+}
+#endif

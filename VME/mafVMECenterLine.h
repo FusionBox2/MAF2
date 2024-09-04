@@ -172,8 +172,8 @@ protected:
   double	D_50mm = 25;
   double	Fi_stp_5 =  3;
 
-	virtual int InternalStore(mafStorageElementBuilder& parent);
-	virtual int InternalRestore(const mafStorageElement& node);
+  void InternalStore(mafStorageElementBuilder& parent) override;
+  void InternalRestore(const mafStorageElement& node) override;
 
 	/** called to prepare the update of the output */
 	virtual void InternalPreUpdate();

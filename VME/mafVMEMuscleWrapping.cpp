@@ -1856,42 +1856,21 @@ void mafVMEMuscleWrapping::InternalUpdate()
  // Sleep(1500);
 }
 //-----------------------------------------------------------------------
-int mafVMEMuscleWrapping::InternalStore(mafStorageElementBuilder& parent)
+void mafVMEMuscleWrapping::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {
-	if (Superclass::InternalStore(parent) == MAF_OK)
-	{
-		parent[_R("computeState")].StoreInteger( m_ComputeStateCheckbox);
-		parent[_R("Transform")].StoreMatrix( m_Transform->GetMatrix());
-		return MAF_OK;
-	}
-	return MAF_ERROR;
-
-	//wxBusyInfo wait040("internal store");
-	//Sleep(1500);
+  Superclass::InternalStore(parent);
+  parent[_R("computeState")].SetValue(m_ComputeStateCheckbox);
+  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
 }
 
 //-----------------------------------------------------------------------
-int mafVMEMuscleWrapping::InternalRestore(const mafStorageElement& node)
+void mafVMEMuscleWrapping::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-	if (Superclass::InternalRestore(node) == MAF_OK)
-	{
-		mafMatrix matrix;
-		if (node[_R("Transform")].RestoreMatrix(matrix) == MAF_OK
-			&&
-			node[_R("computeState")].RestoreInteger( m_ComputeStateCheckbox) == MAF_OK 
-			)
-		{
-			m_Transform->SetMatrix(matrix);
-			
-			
-			return MAF_OK;
-		}
-	}
-
-	return MAF_ERROR;
-	
+  Superclass::InternalRestore(node);
+  m_ComputeStateCheckbox = node[_R("computeState")].As<int>();
+  m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
 }
 //-------------------------------------------------------------------------
 

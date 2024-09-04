@@ -109,8 +109,8 @@ protected:
   mafVMEBSplineVolume();
   virtual ~mafVMEBSplineVolume();
 
-  virtual int InternalStore(mafStorageElementBuilder& parent);
-  virtual int InternalRestore(const mafStorageElement& node);
+  void InternalStore(mafStorageElementBuilder& parent) override;
+  void InternalRestore(const mafStorageElement& node) override;
 
   /** used to initialize and create the material attribute if not yet present */
   virtual int InternalInitialize();

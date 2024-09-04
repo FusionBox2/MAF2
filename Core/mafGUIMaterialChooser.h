@@ -22,7 +22,6 @@
 //----------------------------------------------------------------------------
 #include "mafEvent.h"
 #include "mafBaseEventHandler.h"
-#include "mafStorable.h"
 #include <vector>
 
 //----------------------------------------------------------------------------
@@ -43,6 +42,8 @@ class vtkImageData;
 class mmaMaterial;
 class vtkActor;
 class mafVME;
+class mafStorageElement;
+class mafStorageElementBuilder;
 
 //----------------------------------------------------------------------------
 // mafGUIMaterialChooser :
@@ -129,7 +130,7 @@ protected:
 	mafString m_Filename;
 };
 //------------------------------------------------------------------------------
-class MAF_EXPORT mafStorableMaterialLibrary: public mafObject, public mafStorable
+class MAF_EXPORT mafStorableMaterialLibrary: public mafObject
 //------------------------------------------------------------------------------
 {
 public:
@@ -137,8 +138,10 @@ public:
   mafStorableMaterialLibrary(){};
   mafStorableMaterialLibrary(std::vector<mmaMaterial *> *mat_list);
   ~mafStorableMaterialLibrary(){};
-  int InternalStore(mafStorageElementBuilder& parent);
-  int InternalRestore(const mafStorageElement& node);
+  void Store(mafStorageElementBuilder& element) { InternalStore(element); }
+  void Restore(const mafStorageElement& element) { InternalRestore(element); }
+  virtual void InternalStore(mafStorageElementBuilder& node);
+  virtual void InternalRestore(const mafStorageElement& node);
   std::vector<mmaMaterial *> *m_MaterialList;
 };
 #endif // _mafGUIMaterialChooser_H_

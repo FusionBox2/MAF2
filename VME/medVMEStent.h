@@ -309,8 +309,8 @@ private:
   /// Create the VME GUI.
   mafGUI *CreateGui();
 
-  virtual int InternalStore(mafStorageElementBuilder& parent);
-  virtual int InternalRestore(const mafStorageElement& node);
+  void InternalStore(mafStorageElementBuilder& parent) override;
+  void InternalRestore(const mafStorageElement& node) override;
 
   /// Find or select the associated center line vme. \n
   /// Adds tag if not already present. \n

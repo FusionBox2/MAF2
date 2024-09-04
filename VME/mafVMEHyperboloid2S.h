@@ -82,8 +82,8 @@ public:
 	mmaMaterial *GetMaterial();
 	mafVMEHyperboloid2S();
 	virtual ~mafVMEHyperboloid2S();
-	virtual int InternalStore(mafStorageElementBuilder& parent);
-	virtual int InternalRestore(const mafStorageElement& node);
+	void InternalStore(mafStorageElementBuilder& parent) override;
+	void InternalRestore(const mafStorageElement& node) override;
 	//mafVMEEllipsoid(double x0, double y0, double z0, double a, double b, double c);
 //	vtkSmartPointer<vtkContentActor> makeRenderer();
 	void describe();

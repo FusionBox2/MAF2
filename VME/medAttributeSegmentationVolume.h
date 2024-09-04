@@ -123,10 +123,8 @@ public:
   int RemoveAllSeeds();
 
 protected:
-  //** Auto storing function */  
-  /*virtual*/ int InternalStore(mafStorageElementBuilder& parent);
-  //** Auto restoring function */  
-  /*virtual*/ int InternalRestore(const mafStorageElement& node);
+  void InternalStore(mafStorageElementBuilder& parent) override;
+  void InternalRestore(const mafStorageElement& node) override;
 
   //Stuff for automatic threshold
   int m_UseDoubleThreshold;

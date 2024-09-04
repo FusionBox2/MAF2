@@ -121,63 +121,38 @@ mafVMEHyperboloid::~mafVMEHyperboloid()
 
 }
 
-int mafVMEHyperboloid::InternalStore(mafStorageElementBuilder& parent)
+void mafVMEHyperboloid::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {
-
-	
-	if (Superclass::InternalStore(parent) == MAF_OK)
-	{
-			if(
-			//parent.StoreObject("centervme", center_vme)&&
-			parent[_R("name")].StoreText( name) == MAF_OK &&
-			parent[_R("landmarkName")].StoreText(m_LandmarkName) == MAF_OK &&
-			parent[_R("Centerx")].StoreDouble( center[0]) == MAF_OK &&
-			parent[_R("Centery")].StoreDouble( center[1]) == MAF_OK &&
-			parent[_R("Centerz")].StoreDouble( center[2]) == MAF_OK &&
-			parent[_R("a")].StoreDouble( a) == MAF_OK &&
-			parent[_R("b")].StoreDouble( b) == MAF_OK &&
-			parent[_R("c")].StoreDouble( c) == MAF_OK &&
-			parent[_R("Theta")].StoreDouble( resTheta) == MAF_OK &&
-			parent[_R("Phi")].StoreDouble( resPhi) == MAF_OK &&
-			parent[_R("Transform")].StoreMatrix( m_Transform->GetMatrix()) == MAF_OK
-			
-		)
-		return MAF_OK;
-	}
-	return MAF_ERROR;
+  Superclass::InternalStore(parent);
+  parent[_R("name")].SetValue(name);
+  parent[_R("landmarkName")].SetValue(m_LandmarkName);
+  parent[_R("Centerx")].SetValue(center[0]);
+  parent[_R("Centery")].SetValue(center[1]);
+  parent[_R("Centerz")].SetValue(center[2]);
+  parent[_R("a")].SetValue(a);
+  parent[_R("b")].SetValue(b);
+  parent[_R("c")].SetValue(c);
+  parent[_R("Theta")].SetValue(resTheta);
+  parent[_R("Phi")].SetValue(resPhi);
+  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
 }
 
-int mafVMEHyperboloid::InternalRestore(const mafStorageElement& node)
+void mafVMEHyperboloid::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-	if (Superclass::InternalRestore(node) == MAF_OK)
-	{
-		
-		mafMatrix matrix;
-		if (
-			//node.RestoreObject(_R("centervme"), center_vme)&&
-			node[_R("name")].RestoreText(name) == MAF_OK &&
-			node[_R("landmarkName")].RestoreText(m_LandmarkName) == MAF_OK &&
-			node[_R("Centerx")].RestoreDouble( center[0]) == MAF_OK &&
-			node[_R("Centery")].RestoreDouble( center[1]) == MAF_OK &&
-			node[_R("Centerz")].RestoreDouble( center[2]) == MAF_OK &&
-			node[_R("a")].RestoreDouble( a) == MAF_OK &&
-			node[_R("b")].RestoreDouble( b) == MAF_OK &&
-			node[_R("c")].RestoreDouble( c) == MAF_OK) //&&
-
-		{ 
-		if( node[_R("Theta")].RestoreDouble( resTheta) == MAF_OK &&
-			node[_R("Phi")].RestoreDouble( resPhi) == MAF_OK &&
-			node[_R("Transform")].RestoreMatrix(matrix) == MAF_OK
-     	  )
-		{
-			m_Transform->SetMatrix(matrix);
-			return MAF_OK;
-		}
-		}
-	}
-	return MAF_ERROR;
+  Superclass::InternalRestore(node);
+  name = node[_R("name")].As<mafString>();
+  m_LandmarkName = node[_R("landmarkName")].As<mafString>();
+  center[0] = node[_R("Centerx")].As<double>();
+  center[1] = node[_R("Centery")].As<double>();
+  center[2] = node[_R("Centerz")].As<double>();
+  a = node[_R("a")].As<double>();
+  b = node[_R("b")].As<double>();
+  c = node[_R("c")].As<double>();
+  resTheta = node[_R("Theta")].As<double>();
+  resPhi = node[_R("Phi")].As<double>();
+  m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
 }
 void mafVMEHyperboloid::OnEvent(mafEventBase *maf_event)
 //-------------------------------------------------------------------------

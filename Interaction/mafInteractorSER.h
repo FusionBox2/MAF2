@@ -17,8 +17,9 @@
 #define __mafInteractorSER_h
 
 #include "mafInteractor.h"
+#include "mafObjectFactory.h"
 #include "mafAction.h"
-#include "mafStorable.h"
+#include "mafTo.h"
 #include <map>
 
 //----------------------------------------------------------------------------
@@ -26,6 +27,8 @@
 //----------------------------------------------------------------------------
 class mafDevice;
 class mafString;
+class mafStorageElement;
+class mafStorageElementBuilder;
 
 /** Class implementing static routing from devices to interactors passing through actions.
   This class routes events from input devices to interactors according to a static binding
@@ -39,7 +42,7 @@ class mafString;
   @todo
   - to implement a type safe static binding mechanims
    */
-class MAF_EXPORT mafInteractorSER : public mafInteractor, public mafStorable
+class MAF_EXPORT mafInteractorSER : public mafInteractor
 {
 public: 
   mafTypeMacro(mafInteractorSER,mafInteractor);
@@ -79,9 +82,12 @@ public:
   void GetActions(std::vector<mafAction *> &actions);
   const mmuActionsMap *GetActions() {return &m_Actions;}
 
+  void Store(mafStorageElementBuilder& element) { InternalStore(element); }
+  void Restore(const mafStorageElement& element) { InternalRestore(element); }
+
 protected:
-  virtual int InternalStore(mafStorageElementBuilder& node);
-  virtual int InternalRestore(const mafStorageElement& node);
+  virtual void InternalStore(mafStorageElementBuilder& node);
+  virtual void InternalRestore(const mafStorageElement& node);
 
   mafInteractorSER();
   virtual ~mafInteractorSER();
@@ -92,5 +98,33 @@ private:
   mafInteractorSER(const mafInteractorSER&);  // Not implemented.
   void operator=(const mafInteractorSER&);  // Not implemented.
 };
+
+namespace parser
+{
+  template<class Value>
+  mafInteractorSER* Parse(const Value& value, parser::To<mafInteractorSER>)
+  {
+    mafString type_name = value(_R("Type")).As<mafString>();
+    auto object = mafObjectFactory::CreateInstance(type_name.GetCStr());
+    if (auto interactor = mafInteractorSER::SafeDownCast(object))
+    {
+      interactor->Restore(value);
+      return interactor;
+    }
+    return nullptr;
+  }
+}
+
+namespace serializer
+{
+  template<class Value>
+  void Serialize(Value& value, mafInteractorSER* const& interactor)
+  {
+    assert(interactor);
+    mafString type_name = _R(interactor->GetTypeName());
+    value(_R("Type")).SetValue(type_name);
+    interactor->Store(value);
+  }
+}
 
 #endif 

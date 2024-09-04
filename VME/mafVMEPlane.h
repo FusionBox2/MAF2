@@ -142,8 +142,8 @@ protected:
 	/** this function uses PARAMETRIC_SURFACE_TYPE_ID as argument*/
 	
 	mafVME *GetLandmarkVME(mafString str);
-	virtual int InternalStore(mafStorageElementBuilder& parent);
-	virtual int InternalRestore(const mafStorageElement& node);
+  void InternalStore(mafStorageElementBuilder& parent) override;
+  void InternalRestore(const mafStorageElement& node) override;
 
 	/** called to prepare the update of the output */
 	virtual void InternalPreUpdate();

@@ -3756,49 +3756,19 @@ Eigen::RowVectorXd mafVMECenterLine::deg2rad(Eigen::RowVectorXd a)
 	
 }*/
 //-----------------------------------------------------------------------
-int mafVMECenterLine::InternalStore(mafStorageElementBuilder& parent)
+void mafVMECenterLine::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {
-//	Superclass::InternalStore(parent);
-	if (Superclass::InternalStore(parent)==MAF_OK)
-	{
-		if (
-			parent[_R("Transform")].StoreMatrix( m_Transform->GetMatrix()) == MAF_OK 
-			//&& parent.StoreInteger("surface",&m_SurfaceName) == MAF_OK
-			)
-			
-		{
- 
-			
-			return MAF_OK;
-		}
-		return MAF_OK;
-	}
-	return MAF_ERROR;
+  Superclass::InternalStore(parent);
+  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
 }
 
 //-----------------------------------------------------------------------
-int mafVMECenterLine::InternalRestore(const mafStorageElement& node)
+void mafVMECenterLine::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-	if (Superclass::InternalRestore(node)==MAF_OK)
-	{
-    mafMatrix matrix;
-	if (node[_R("Transform")].RestoreMatrix(matrix) == MAF_OK
-		//&& node->RestoreInteger("surface", &m_SurfaceName) == MAF_OK
-			
-		)
-	  {
-		  m_Transform->SetMatrix(matrix);
-		 return MAF_OK;
-	  }
-	else{
-	
-			wxBusyInfo wait400("pb restoring ...");
-			Sleep(2500);
-	}
-	}
-  return MAF_ERROR;
+  Superclass::InternalRestore(node);
+  m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
 }
 //-------------------------------------------------------------------------
 

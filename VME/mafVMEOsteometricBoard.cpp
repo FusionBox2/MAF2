@@ -825,66 +825,23 @@ void mafVMEOsteometricBoard::SetUVector(double aa, int a)
 
 }
 //-----------------------------------------------------------------------
-int mafVMEOsteometricBoard::InternalStore(mafStorageElementBuilder& parent)
+void mafVMEOsteometricBoard::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {
-
-	
-	if (Superclass::InternalStore(parent) == MAF_OK)
-	{
-		if (
-			parent[_R("Transform")].StoreMatrix( m_Transform->GetMatrix()) == MAF_OK &&
-		//	parent.StoreInteger("Geometry", m_GeometryType) == MAF_OK &&
-	
-			parent[_R("PlaneUx")].StoreDouble( m_PlaneXRes) == MAF_OK &&
-			parent[_R("PlaneUy")].StoreDouble( m_PlaneYRes) == MAF_OK //&&
-			
-	
-			
-			)
-			return MAF_OK;
-		else
-		{
-			wxBusyInfo wait52("storing osteometricboard pb");
-			Sleep(1500);
-		}
-	}
-	return MAF_ERROR;
+  Superclass::InternalStore(parent);
+  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
+  parent[_R("PlaneUx")].SetValue(m_PlaneXRes);
+  parent[_R("PlaneUy")].SetValue(m_PlaneYRes);
 }
 
 //-----------------------------------------------------------------------
-int mafVMEOsteometricBoard::InternalRestore(const mafStorageElement& node)
+void mafVMEOsteometricBoard::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-	if (Superclass::InternalRestore(node) == MAF_OK)
-	{
-		mafMatrix matrix;
-		if (node[_R("Transform")].RestoreMatrix(matrix) == MAF_OK)
-		{
-			m_Transform->SetMatrix(matrix);
-		
-			
-			node[_R("PlaneUx")].RestoreDouble( m_PlaneXRes);
-			node[_R("PlaneUy")].RestoreDouble( m_PlaneYRes);
-			/*node.RestoreText("m_p1LandmarkName", m_p1LandmarkName);
-			node.RestoreText("m_p2LandmarkName", m_p2LandmarkName);
-			node.RestoreText("m_p3LandmarkName", m_p3LandmarkName);
-			node.RestoreText("m_p4LandmarkName", m_p4LandmarkName);
-			node.RestoreText("m_p5LandmarkName", m_p5LandmarkName);
-			node.RestoreText("m_p6LandmarkName", m_p6LandmarkName);
-			node.RestoreText("m_SurfaceName", m_SurfaceName);*/
-
-			//node.RestoreVectorN("PlaneOrigin", m_PlaneOrigin, 3);
-			//node.RestoreVectorN("PlanePoint1", m_PlanePoint1, 3);
-			//node.RestoreVectorN("PlanePoint2", m_PlanePoint2, 3);
-			//node.RestoreVectorN("PlanePoint3", m_PlanePoint3, 3);
-			//node.RestoreVectorN("PlanePoint4", m_PlanePoint4, 3);
-			//node.RestoreVectorN("PlanePoint5", m_PlanePoint5, 3);
-			
-			return MAF_OK;
-		}
-	}
-	return MAF_ERROR;
+  Superclass::InternalRestore(node);
+  m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
+  m_PlaneXRes = node[_R("PlaneUx")].As<double>();
+  m_PlaneYRes = node[_R("PlaneUy")].As<double>();
 }
 //-------------------------------------------------------------------------
 

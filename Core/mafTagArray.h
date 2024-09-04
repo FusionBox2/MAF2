@@ -103,10 +103,8 @@ public:
   virtual void Print(std::ostream& os, const int tabs=0) const;
 
 protected:
-  
-  virtual int InternalStore(mafStorageElementBuilder& parent);
-  virtual int InternalRestore(const mafStorageElement& node);
-
+  void InternalStore(mafStorageElementBuilder& parent) override;
+  void InternalRestore(const mafStorageElement& node) override;
 
   mmuTagsMap m_Tags;
 };

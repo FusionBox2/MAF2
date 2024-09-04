@@ -146,8 +146,8 @@ protected:
   medVMELabeledVolume();
   virtual ~medVMELabeledVolume(); 
 
-  virtual int InternalStore(mafStorageElementBuilder& parent);
-  virtual int InternalRestore(const mafStorageElement& node);
+  void InternalStore(mafStorageElementBuilder& parent) override;
+  void InternalRestore(const mafStorageElement& node) override;
 
   /** Internally used to create a new instance of the GUI.*/
   virtual mafGUI *CreateGui();

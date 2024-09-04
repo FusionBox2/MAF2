@@ -81,11 +81,7 @@ public:
   int    m_Shade; ///< Store the shade parameter for volume rendering (can be 0 pr 1)
 
 protected:
-  virtual int InternalStore(mafStorageElementBuilder& parent);
-  virtual int InternalRestore(const mafStorageElement& node);
-
-  int    m_NumOpacityValues;
-  int    m_NumGradientValues;
-  int    m_NumColorValues;
+  void InternalStore(mafStorageElementBuilder& parent) override;
+  void InternalRestore(const mafStorageElement& node) override;
 };
 #endif

@@ -247,34 +247,21 @@ void lhpVMELMCLines::InternalPreUpdate()
 {
 }
 //-----------------------------------------------------------------------
-int lhpVMELMCLines::InternalStore(mafStorageElementBuilder& parent)
+void lhpVMELMCLines::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
-  if (Superclass::InternalStore(parent)==MAF_OK)
-  {
-    parent[_R("Looped")].StoreInteger( m_Looped);
-    if(parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix())==MAF_OK)
-      return MAF_OK;
-  }
-  return MAF_ERROR;
+  Superclass::InternalStore(parent);
+  parent[_R("Looped")].SetValue(m_Looped);
+  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
 }
 
 //-----------------------------------------------------------------------
-int lhpVMELMCLines::InternalRestore(const mafStorageElement& node)
+void lhpVMELMCLines::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node)==MAF_OK)
-  {
-    mafMatrix matrix;
-    node[_R("Looped")].RestoreInteger( m_Looped);
-    if (node[_R("Transform")].RestoreMatrix(matrix) ==MAF_OK)
-    {
-      m_Transform->SetMatrix(matrix);
-      return MAF_OK;
-    }
-  }
-
-  return MAF_ERROR;
+  Superclass::InternalRestore(node);
+  m_Looped = node[_R("Looped")].As<int>();
+  m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
 }
 
 //-----------------------------------------------------------------------

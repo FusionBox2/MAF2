@@ -794,35 +794,22 @@ void mafVMEMeter::InternalUpdate()
 
 }
 //-----------------------------------------------------------------------
-int mafVMEMeter::InternalStore(mafStorageElementBuilder& parent)
+void mafVMEMeter::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
-  if (Superclass::InternalStore(parent)==MAF_OK)
-  {
-    parent[_R("Infinite")].StoreInteger( m_InfiniteLine);
-    parent[_R("LineAngle2")].StoreInteger( m_LineAngle2);
-    parent[_R("Transform")].StoreMatrix(m_Transform->GetMatrix());
-    return MAF_OK;
-  }
-  return MAF_ERROR;
+  Superclass::InternalStore(parent);
+  parent[_R("Infinite")].SetValue(m_InfiniteLine);
+  parent[_R("LineAngle2")].SetValue(m_LineAngle2);
+  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
 }
 //-----------------------------------------------------------------------
-int mafVMEMeter::InternalRestore(const mafStorageElement& node)
+void mafVMEMeter::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node)==MAF_OK)
-  {
-    mafMatrix matrix;
-    node[_R("Infinite")].RestoreInteger( m_InfiniteLine);
-    node[_R("LineAngle2")].RestoreInteger( m_LineAngle2);
-    if (node[_R("Transform")].RestoreMatrix(matrix) ==MAF_OK)
-    {
-      m_Transform->SetMatrix(matrix);
-      return MAF_OK;
-    }
-  }
-
-  return MAF_ERROR;
+  Superclass::InternalRestore(node);
+  m_InfiniteLine = node[_R("Infinite")].As<int>();
+  m_LineAngle2 = node[_R("LineAngle2")].As<int>();
+  m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
 }
 //-----------------------------------------------------------------------
 void mafVMEMeter::Print(std::ostream& os, const int tabs)

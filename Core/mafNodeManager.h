@@ -22,16 +22,12 @@
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"
 #include "mafNode.h"
-#include "mafStorable.h"
-
-#ifdef MAF_EXPORTS
-#include "mafDllMacros.h"
-EXPORT_STL_VECTOR(MAF_EXPORT,wxString);
-#endif
 
 //----------------------------------------------------------------------------
 // Forward References :
 //----------------------------------------------------------------------------
+class mafStorageElement;
+class mafStorageElementBuilder;
 
 /** mafNodeManager : Class managing nodes inside a MAF application.
 
@@ -40,7 +36,7 @@ It can add or remove VME to the current tree, add a new tree.
 
 */
 //----------------------------------------------------------------------------
-class MAF_EXPORT mafNodeManager: public mafBaseEventHandler, public mafEventSender, public mafStorable
+class MAF_EXPORT mafNodeManager: public mafBaseEventHandler, public mafEventSender
 //----------------------------------------------------------------------------
 {
 public:
@@ -74,11 +70,13 @@ public:
    /** Set the tree's root. */
   bool SetRoot(mafNode *root);
 
-  virtual int InternalStore(mafStorageElementBuilder& node);
-
-  virtual int InternalRestore(const mafStorageElement& node);
+  void Store(mafStorageElementBuilder& element) { InternalStore(element); }
+  void Restore(const mafStorageElement& element) { InternalRestore(element); }
 
 protected:
+  virtual void InternalStore(mafStorageElementBuilder& node);
+  virtual void InternalRestore(const mafStorageElement& node);
+
   bool                m_Modified;         ///< Used to known when the tree has been modified...
   mafAutoPointer<mafNode> m_Root;
 

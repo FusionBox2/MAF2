@@ -146,142 +146,62 @@ bool medAttributeSegmentationVolume::Equals(const mafAttribute *a)
 }
 
 //-----------------------------------------------------------------------
-int medAttributeSegmentationVolume::InternalStore(mafStorageElementBuilder& parent)
+void medAttributeSegmentationVolume::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {  
-  if (Superclass::InternalStore(parent)==MAF_OK)
+  Superclass::InternalStore(parent);
+  parent[_R("AUTOMATIC_SEGMENTATION_THRESHOLD_MODALITY")].SetValue(m_AutomaticSegmentationThresholdModality);
+  parent[_R("USE_DOUBLE_THRESHOLD")].SetValue(m_UseDoubleThreshold);
+  parent[_R("AUTOMATIC_SEGMENTATION_GLOBAL_THRESHOLD")].SetValue(m_AutomaticSegmentationGlobalThreshold);
+  parent[_R("AUTOMATIC_SEGMENTATION_GLOBAL_UPPER_THRESHOLD")].SetValue(m_AutomaticSegmentationGlobalUpperThreshold);
+  parent[_R("NUM_OF_RANGES")].SetValue(m_AutomaticSegmentationRanges.size());
+  for (int i = 0; i < m_AutomaticSegmentationRanges.size(); i++)
   {
-    //////////////////////////////////////////////////////////////////////////
-    mafString value = _R("AUTOMATIC_SEGMENTATION_THRESHOLD_MODALITY");
-    int valueInt = m_AutomaticSegmentationThresholdModality;
-    parent[value].StoreInteger(valueInt);
-    //////////////////////////////////////////////////////////////////////////
-    value = _R("USE_DOUBLE_THRESHOLD");
-    valueInt = m_UseDoubleThreshold;
-    parent[value].StoreInteger(valueInt);
-    //////////////////////////////////////////////////////////////////////////
-    value = _R("AUTOMATIC_SEGMENTATION_GLOBAL_THRESHOLD");
-    double valueDouble = m_AutomaticSegmentationGlobalThreshold;
-    parent[value].StoreDouble(valueDouble);
-    //////////////////////////////////////////////////////////////////////////
-    value = _R("AUTOMATIC_SEGMENTATION_GLOBAL_UPPER_THRESHOLD");
-    valueDouble = m_AutomaticSegmentationGlobalUpperThreshold;
-    parent[value].StoreDouble(valueDouble);
-    //////////////////////////////////////////////////////////////////////////
-    value = _R("NUM_OF_RANGES");
-    parent[value].StoreInteger(m_AutomaticSegmentationRanges.size());
-    for (int i=0;i<m_AutomaticSegmentationRanges.size();i++)
-    {
-      value = _R("RANGE_");
-      value += mafToString(i);
-      parent[value].StoreVectorN(m_AutomaticSegmentationRanges[i], 2);
-      value = _R("THRESHOLD_");
-      value += mafToString(i);
-      parent[value].StoreDouble(m_AutomaticSegmentationThresholds[i]);
-      value = _R("UPPER_THRESHOLD_");
-      value += mafToString(i);
-      parent[value].StoreDouble(m_AutomaticSegmentationUpperThresholds[i]);
-
-    }
-    //////////////////////////////////////////////////////////////////////////
-    value = _R("REGION_GROWING_UPPER_THRESHOLD");
-    valueDouble = m_RegionGrowingUpperThreshold;
-    parent[value].StoreDouble(valueDouble);
-    //////////////////////////////////////////////////////////////////////////
-    value = _R("REGION_GROWING_LOWER_THRESHOLD");
-    valueDouble = m_RegionGrowingLowerThreshold;
-    parent[value].StoreDouble(valueDouble);
-    //////////////////////////////////////////////////////////////////////////
-    value = _R("NUM_OF_SEEDS");
-    parent[value].StoreInteger(m_RegionGrowingSeeds.size());
-    for (int i=0;i<m_RegionGrowingSeeds.size();i++)
-    {
-      value = _R("SEED_");
-      value += mafToString(i);
-      parent[value].StoreVectorN(m_RegionGrowingSeeds[i], 3);
-    }
-    //////////////////////////////////////////////////////////////////////////
-
-    return MAF_OK;
+    parent[_R("RANGE_") + mafToString(i)].SetValue(mafToString(m_AutomaticSegmentationRanges[i], 2));
+    parent[_R("THRESHOLD_") + mafToString(i)].SetValue(m_AutomaticSegmentationThresholds[i]);
+    parent[_R("UPPER_THRESHOLD_") + mafToString(i)].SetValue(m_AutomaticSegmentationUpperThresholds[i]);
   }
-  return MAF_ERROR;
+  parent[_R("REGION_GROWING_UPPER_THRESHOLD")].SetValue(m_RegionGrowingUpperThreshold);
+  parent[_R("REGION_GROWING_LOWER_THRESHOLD")].SetValue(m_RegionGrowingLowerThreshold);
+  parent[_R("NUM_OF_SEEDS")].SetValue(m_RegionGrowingSeeds.size());
+  for (int i = 0; i < m_RegionGrowingSeeds.size(); i++)
+  {
+    parent[_R("SEED_") + mafToString(i)].SetValue(mafToString(m_RegionGrowingSeeds[i], 3));
+  }
 }
 //----------------------------------------------------------------------------
-int medAttributeSegmentationVolume::InternalRestore(const mafStorageElement& node)
+void medAttributeSegmentationVolume::InternalRestore(const mafStorageElement& node)
 //----------------------------------------------------------------------------
 {
-  if (Superclass::InternalRestore(node) == MAF_OK)
+  Superclass::InternalRestore(node);
+  m_AutomaticSegmentationThresholdModality = node[_R("AUTOMATIC_SEGMENTATION_THRESHOLD_MODALITY")].As<int>();
+  m_UseDoubleThreshold = node[_R("USE_DOUBLE_THRESHOLD")].As<std::optional<int> >().value_or(0);
+  m_AutomaticSegmentationGlobalThreshold = node[_R("AUTOMATIC_SEGMENTATION_GLOBAL_THRESHOLD")].As<double>();
+  if (m_UseDoubleThreshold)
   {
-    //////////////////////////////////////////////////////////////////////////
-    mafString value = _R("AUTOMATIC_SEGMENTATION_THRESHOLD_MODALITY");
-    node[value].RestoreInteger(m_AutomaticSegmentationThresholdModality);
-    
-    value = _R("USE_DOUBLE_THRESHOLD");
-    if(node[value].RestoreInteger(m_UseDoubleThreshold) == MAF_ERROR)
-    {
-      mafLogMessage(_M("Old file version loaded  for retro-compatility please save it again"));
-      m_UseDoubleThreshold=0;
-    }
-    
-    //////////////////////////////////////////////////////////////////////////
-    value = _R("AUTOMATIC_SEGMENTATION_GLOBAL_THRESHOLD");
-    node[value].RestoreDouble(m_AutomaticSegmentationGlobalThreshold);
-    //////////////////////////////////////////////////////////////////////////
-    if (m_UseDoubleThreshold)
-    {
-      value = _R("AUTOMATIC_SEGMENTATION_GLOBAL_UPPER_THRESHOLD");
-      node[value].RestoreDouble(m_AutomaticSegmentationGlobalUpperThreshold);
-    }
-    //////////////////////////////////////////////////////////////////////////
-    int numOfRanges;
-    value = _R("NUM_OF_RANGES");
-    node[value].RestoreInteger(numOfRanges);
-    for (int i=0;i<numOfRanges;i++)
-    {
-      int *range = new int[2];
-      double threshold,upperThreshold;
-      value = _R("RANGE_");
-      value += mafToString(i);
-      node[value].RestoreVectorN(range, 2);
-      m_AutomaticSegmentationRanges.push_back(range);
-      value = _R("THRESHOLD_");
-      value += mafToString(i);
-      node[value].RestoreDouble(threshold);
-      //do not load upper threshold m_UseDoubleThreshold is false 
-      //in this mode retro-compatibility is guaranteed
-      if (m_UseDoubleThreshold)
-      {
-        value = _R("UPPER_THRESHOLD_");
-        value += mafToString(i);
-        node[value].RestoreDouble(upperThreshold);
-      }
-      else upperThreshold=0;
-
-      m_AutomaticSegmentationThresholds.push_back(threshold);
-    }
-    //////////////////////////////////////////////////////////////////////////
-    value = _R("REGION_GROWING_UPPER_THRESHOLD");
-    node[value].RestoreDouble(m_RegionGrowingUpperThreshold);
-    //////////////////////////////////////////////////////////////////////////
-    value = _R("REGION_GROWING_LOWER_THRESHOLD");
-    node[value].RestoreDouble(m_RegionGrowingLowerThreshold);
-    //////////////////////////////////////////////////////////////////////////
-    int numOfSeeds;
-    value = _R("NUM_OF_SEEDS");
-    node[value].RestoreInteger(numOfSeeds);
-    for (int i=0;i<numOfSeeds;i++)
-    {
-      int *seed = new int[3];
-      value = _R("SEED_");
-      value += mafToString(i);
-      node[value].RestoreVectorN(seed, 3);
-      m_RegionGrowingSeeds.push_back(seed);
-    }
-    //////////////////////////////////////////////////////////////////////////
-
-    return MAF_OK;
+    m_AutomaticSegmentationGlobalUpperThreshold = node[_R("AUTOMATIC_SEGMENTATION_GLOBAL_UPPER_THRESHOLD")].As<double>();
   }
-  return MAF_ERROR;
+  int numOfRanges = node[_R("NUM_OF_RANGES")].As<int>();
+  for (int i = 0; i < numOfRanges; i++)
+  {
+    int* range = new int[2];
+    mafParseVector(node[_R("RANGE_") + mafToString(i)].As<mafString>(), range, 2);
+    m_AutomaticSegmentationRanges.push_back(range);
+    double threshold = node[_R("THRESHOLD_") + mafToString(i)].As<double>();
+    //do not load upper threshold m_UseDoubleThreshold is false 
+    //in this mode retro-compatibility is guaranteed
+    double upperThreshold = node[_R("UPPER_THRESHOLD_") + mafToString(i)].As <std::optional< double > >().value_or(0.0);
+    m_AutomaticSegmentationThresholds.push_back(threshold);
+  }
+  m_RegionGrowingUpperThreshold = node[_R("REGION_GROWING_UPPER_THRESHOLD")].As<double>();
+  m_RegionGrowingLowerThreshold = node[_R("REGION_GROWING_LOWER_THRESHOLD")].As<double>();
+  int numOfSeeds = node[_R("NUM_OF_SEEDS")].As<int>();
+  for (int i = 0; i < numOfSeeds; i++)
+  {
+    int* seed = new int[3];
+    mafParseVector(node[_R("SEED_") + mafToString(i)].As<mafString>(), seed, 3);
+    m_RegionGrowingSeeds.push_back(seed);
+  }
 }
 //----------------------------------------------------------------------------
 int medAttributeSegmentationVolume::AddRange(int startSlice,int endSlice,double threshold, double upperThreshold)
