@@ -69,7 +69,7 @@ class mafGUIMDIFrameCallback : public vtkCommand
           m_Frame->ProgressBarShow();
           m_Frame->ProgressBarSetVal(0);
           //m_Frame->ProgressBarSetText(&wxString(po->GetClassName()));
-          m_Frame->ProgressBarSetText(&wxString(po->GetProgressText()));
+          {wxString s = po->GetProgressText(); m_Frame->ProgressBarSetText(&s);}
         }
         else if(m_mode==2) // EndEvent-Callback
         {

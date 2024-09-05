@@ -720,7 +720,7 @@ namespace itk
     }
 
     // create polyline cell
-    int *ids = new int[m] ;
+    vtkIdType *ids = new vtkIdType[m] ;
     for (int i = 0 ;  i < m ;  i++)
       ids[i] = i ;
     lines->InsertNextCell(m, ids) ;

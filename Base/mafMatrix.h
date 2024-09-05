@@ -19,6 +19,7 @@
 
 #include "mafReferenceCounted.h"
 #include "mafMTime.h"
+#include "mafString.h"
 #include "mafTo.h"
 
 typedef double (*mafMatrixElements)[4];

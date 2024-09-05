@@ -1573,7 +1573,7 @@ void medOpMMLModelView::SetText(int m, double n, int d, int s)
 		{
 			if (n > 9.0) n = 9.0;
 				strcpy(text, "X");
-				buffer = _ecvt(n, 1, &decimal, &sign);
+				buffer = ecvt(n, 1, &decimal, &sign);
 			strcat(text, buffer);
 			strcat(text, ".0");
 		}
@@ -1582,7 +1582,7 @@ void medOpMMLModelView::SetText(int m, double n, int d, int s)
 			n = 10*n;
 			if (n > 9.0) n = 9.0;
 				strcpy(text, "X0.");
-				buffer = _ecvt(n, 1, &decimal, &sign);
+				buffer = ecvt(n, 1, &decimal, &sign);
 			strcat(text, buffer);
 			//strcat(text, ".0");
 		}
@@ -1603,7 +1603,7 @@ void medOpMMLModelView::SetText(int m, double n, int d, int s)
 		{
 			if (fabs(n) < 10.0)
 			{
-				buffer = _ecvt(n, 1, &decimal, &sign);
+				buffer = ecvt(n, 1, &decimal, &sign);
 
 				// sign
 				if (sign == 0)
@@ -1617,7 +1617,7 @@ void medOpMMLModelView::SetText(int m, double n, int d, int s)
 			else
 			if (fabs(n) < 100.0)
 			{
-				buffer = _ecvt(n, 2, &decimal, &sign);
+				buffer = ecvt(n, 2, &decimal, &sign);
 
 				// sign
 				if (sign == 0)
@@ -1636,7 +1636,7 @@ void medOpMMLModelView::SetText(int m, double n, int d, int s)
 	{
 		if (fabs(n) < 10)
 		{
-			buffer = _ecvt(n, 1, &decimal, &sign);
+			buffer = ecvt(n, 1, &decimal, &sign);
 
 			// sign
 			if (sign == 0)
@@ -1650,7 +1650,7 @@ void medOpMMLModelView::SetText(int m, double n, int d, int s)
 		else
 		if (fabs(n) < 100)
 		{
-			buffer = _ecvt(n, 2, &decimal, &sign);
+			buffer = ecvt(n, 2, &decimal, &sign);
 
 			// sign
 			if (sign == 0)
@@ -1663,7 +1663,7 @@ void medOpMMLModelView::SetText(int m, double n, int d, int s)
 		}
 		else
 		{
-			buffer = _ecvt(n, 3, &decimal, &sign);
+			buffer = ecvt(n, 3, &decimal, &sign);
 
 			// sign
 			if (sign == 0)

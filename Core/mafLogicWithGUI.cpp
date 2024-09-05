@@ -208,7 +208,7 @@ void mafLogicWithGUI::OnEvent(mafEventBase *maf_event)
       m_Win->ProgressBarSetVal(e->GetArg());
       break;
     case PROGRESSBAR_SET_TEXT:
-      m_Win->ProgressBarSetText(&wxString(e->GetString()->GetCStr()));
+      {wxString s = e->GetString()->toWx(); m_Win->ProgressBarSetText(&s);}
       break;
       // ###############################################################
     case UPDATE_UI:

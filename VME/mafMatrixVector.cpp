@@ -77,7 +77,7 @@ void mafMatrixVector::InternalStore(mafStorageElementBuilder& parent)
   parent(_R("NumberOfItems")).SetValue(mafToString(GetNumberOfItems()));
   for (auto& elem : *this)
   {
-    parent[_R("Matrix")].SetValue(*(elem.second));
+    {auto vv = parent[_R("Matrix")]; serializer::Serialize(vv, *(elem.second));}
   }
 }
 //-----------------------------------------------------------------------

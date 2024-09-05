@@ -3081,8 +3081,8 @@ void medVMEComputeWrapping::GetSphereCylinderWrap(const int step,double *viaPoin
 
 		char lmBuffer[50];   
 		char timeBuffer[50];
-		_gcvt( LmFinal, 20, lmBuffer ); 
-		_gcvt(totalTime,20,timeBuffer);
+		gcvt( LmFinal, 20, lmBuffer );
+		gcvt(totalTime,20,timeBuffer);
 
 
 		outputFile2<< "   step:"<<step<<"                angle:"<<angleFinal<<"               length:"<<lmBuffer<<"                            needs:"<<timeBuffer<<"seconds "<<std::endl;

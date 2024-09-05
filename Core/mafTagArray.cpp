@@ -193,7 +193,7 @@ void mafTagArray::InternalStore(mafStorageElementBuilder& parent)
   parent(_R("NumberOfTags")).SetValue(GetNumberOfTags());
   for (auto& item : m_Tags)
   {
-    item.second.Store(parent[_R("TItem")]);
+	{auto titem = parent[_R("TItem")]; item.second.Store(titem);}
   }
 }
 

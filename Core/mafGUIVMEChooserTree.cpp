@@ -67,7 +67,7 @@ mafGUIVMEChooserTree::mafGUIVMEChooserTree( wxWindow *parent, mafGUICheckTree *t
     InitializeImageListMulti();
   
 
-  CloneSubTree(tree, &tree->GetTree()->GetRootItem(), (wxTreeItemId *)NULL);
+  {auto rootItem = tree->GetTree()->GetRootItem(); CloneSubTree(tree, &rootItem, (wxTreeItemId *)NULL);}
 }
 //----------------------------------------------------------------------------
 mafGUIVMEChooserTree::~mafGUIVMEChooserTree()

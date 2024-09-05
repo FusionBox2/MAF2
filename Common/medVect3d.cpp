@@ -323,7 +323,7 @@ double medVect3d::AngleBetweenVectors( medVect3d &vect )
 
 
   // Here we make sure that the angle is not a -1.#IND0000000 number, which means indefinite
-  if(_isnan(angle))
+  if(isnan(angle))
     return 0;
 
   // Return the angle in radians

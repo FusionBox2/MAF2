@@ -169,7 +169,7 @@ void mafVMEScalar::InternalStore(mafStorageElementBuilder& parent)
   Superclass::InternalStore(parent);
   if (m_ScalarVector)
   {
-    m_ScalarVector->Store(parent[_R("ScalarVector")]);
+    {auto scalVec = parent[_R("ScalarVector")]; m_ScalarVector->Store(scalVec);}
   }
 }
 //-----------------------------------------------------------------------

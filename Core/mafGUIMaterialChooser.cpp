@@ -531,7 +531,7 @@ void mafGUIMaterialChooser::LoadMaterials_old()
     m_List.push_back(mat);
 
 		// insert mat in the tree
-		this->m_ListCtrlMaterial->AddItem((intptr_t)mat,mat->m_MaterialName.toWx(),&wxBitmap(50,50));
+		{wxBitmap bmp(50,50); this->m_ListCtrlMaterial->AddItem((intptr_t)mat,mat->m_MaterialName.toWx(),&bmp);}
 
 		//blank line
 		f_in.getline(line,128);

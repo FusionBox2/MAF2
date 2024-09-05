@@ -278,11 +278,11 @@ void mafVMEGenericAbstract::InternalStore(mafStorageElementBuilder& parent)
   if (m_DataVector)
   {
     m_DataVector->SetCrypting(this->m_Crypting != 0);
-    m_DataVector->Store(parent[_R("DataVector")]);
+    {auto dataVector = parent[_R("DataVector")]; m_DataVector->Store(dataVector);}
   }
 
   // sub-element for storing the matrix vector
-  m_MatrixVector->Store(parent[_R("MatrixVector")]);
+  {auto matrixVector = parent[_R("MatrixVector")]; m_MatrixVector->Store(matrixVector);}
 }
 
 //-----------------------------------------------------------------------
