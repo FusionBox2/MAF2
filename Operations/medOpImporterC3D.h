@@ -45,21 +45,21 @@ public:
   /** constructor */
   medOpImporterC3D(const mafString& label=_R(""));
   /** destructor */
- ~medOpImporterC3D();
+ ~medOpImporterC3D() override;
   /** retrieve the copy of the object */
-  mafOp* Copy();
+  mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-  bool Accept(mafNode* vme) {return true;};
+  bool Accept(mafNode* vme) override {return true;};
 
 	/** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
 	/** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
 
 	/** Makes the undo for the operation. */
-  void OpUndo();
+  void OpUndo() override;
 
 protected:
   mafVME  *m_Vme; 

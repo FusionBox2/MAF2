@@ -142,7 +142,7 @@ protected:
   virtual void DoneExecute();  
 
   mafNodeIterator(mafNode *root=NULL);
-  virtual ~mafNodeIterator();
+  ~mafNodeIterator() override;
 
   mafNode         *m_RootNode;
   mafNode         *m_CurrentNode;

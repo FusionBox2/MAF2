@@ -47,20 +47,20 @@ public:
   /** constructor */
 	medOpClassicICPRegistration(const mafString& label = _R(""));
   /** destructor */
-	~medOpClassicICPRegistration();
+	~medOpClassicICPRegistration() override;
   /** method allows to handle events from other objects*/
-	void   OnEvent(mafEventBase *maf_event);
+	void   OnEvent(mafEventBase *maf_event) override;
   /** clone the object and retrieve a copy*/
-	mafOp* Copy();
+	mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode* vme);
+	bool Accept(mafNode* vme) override;
 
 	/** Builds operation's interface. */
-	void OpRun();
+	void OpRun() override;
 
 	/** Execute the operation. */
-	void OpDo();
+	void OpDo() override;
 
 	/** Set target. */
 	void SetTarget(mafNode* node);
@@ -73,7 +73,7 @@ protected:
 	void OnChooseTarget();
 
 	/** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
-	void OpStop(int result);
+	void OpStop(int result) override;
 
 	mafVME*					m_Target;				// m_input, inherited from mafOp, is used as source
 	mafVMESurface*					m_Registered;   // the output: a copy of m_input registered on m_target

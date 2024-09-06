@@ -38,10 +38,10 @@ class MAF_EXPORT mafExpirationDate : public mafExpiration
 {
 public:
 	/** Control trial period is over */
-	/*virtual*/ bool HasExpired();
+	/*virtual*/ bool HasExpired() override;
 
 	/** Retrieve expiration information */
-	/*virtual*/ const char* GetInformation(){return m_Information.c_str();};
+	/*virtual*/ const char* GetInformation() override {return m_Information.c_str();};
 
 	/** constructor, with numerOfDays after the first access of free trial period */
 	mafExpirationDate(int trialNumberOfDays);
@@ -61,7 +61,7 @@ public:
 	void SetDemoVersion(bool enable){m_DemoVersionFlag = enable;}
 
 	/** destructor. */
-	virtual ~mafExpirationDate();
+	~mafExpirationDate() override;
 
 private:
 

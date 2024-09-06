@@ -27,7 +27,7 @@ class MAF_EXPORT mafWXLog : public wxLog
 {
 public:
   mafWXLog(wxTextCtrl *pTextCtrl);
- ~mafWXLog();
+ ~mafWXLog() override;
   
   /** Set the filename for the log file. */ 
   int SetFileName(wxString filename);
@@ -37,7 +37,7 @@ public:
 
 private:
   /** Implement sink function. */
-  virtual void DoLogText(const wxString& msg);
+  void DoLogText(const wxString& msg) override;
 
   // the control we use
   wxTextCtrl *m_PTextCtrl;

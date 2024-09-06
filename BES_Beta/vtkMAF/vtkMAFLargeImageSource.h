@@ -26,7 +26,7 @@ public:
   static vtkMAFLargeImageSource* New();
 
   vtkTypeMacro(vtkMAFLargeImageSource,vtkDataSetAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Get the output of this source.
@@ -36,9 +36,9 @@ public:
   
 protected:
   vtkMAFLargeImageSource();
-  ~vtkMAFLargeImageSource() {};
+  ~vtkMAFLargeImageSource() override {};
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
   virtual void Execute(vtkMAFLargeImageData* data) {}
 
   // a helper method that sets the extent and allocates the output 

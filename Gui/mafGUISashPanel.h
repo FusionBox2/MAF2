@@ -62,13 +62,13 @@ public:
                 int defaultsize = 100,
                 wxString menu_string = "",
                 bool sizable = true);
-  virtual ~mafGUISashPanel();
+  ~mafGUISashPanel() override;
 
   /** Put the panel on the panel stack removing the previous panel. */
 	bool Put(wxWindow* win);
 
 	/** Show/Hide the Sash panel. */
-	virtual bool Show(bool show);
+  bool Show(bool show) override;
   wxWindow *GetCurrGui() {return m_CurrentGui;};
 
 protected:

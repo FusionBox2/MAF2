@@ -44,14 +44,14 @@ public:
   mafTypeMacro(medInteractorPicker,mafInteractorCameraMove);
 
   /** Redefined to send picking events if continuous picking is enabled */
-  virtual void OnEvent(mafEventBase *event);
+  void OnEvent(mafEventBase *event) override;
 
    /** Enable/disable continuous picking in OnEvent. */
   void EnableContinuousPicking(bool enable);
 
 protected:
-  virtual void OnButtonDown   (mafEventInteraction *e);
-  virtual void OnButtonUp     (mafEventInteraction *e);
+  void OnButtonDown   (mafEventInteraction *e) override;
+  void OnButtonUp     (mafEventInteraction *e) override;
 
   /** 
   Send to the listener picked point coordinate through vtkPoint and the corresponding scalar value found in that position. */
@@ -60,7 +60,7 @@ protected:
   bool m_ContinuousPickingFlag;
 
   medInteractorPicker();
-  virtual ~medInteractorPicker();
+  ~medInteractorPicker() override;
 
 private:
   medInteractorPicker(const medInteractorPicker&);  // Not implemented.

@@ -33,15 +33,15 @@ class MAF_EXPORT mafOpCreateGravityLine : public mafOp
 {
 public:
 	mafOpCreateGravityLine(const mafString& label = _R("CreateGravityLine"));
-	~mafOpCreateGravityLine();
+	~mafOpCreateGravityLine() override;
 
 	mafTypeMacro(mafOpCreateGravityLine, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
-  bool Accept(mafNode *node);
-  void OpRun();
-  void OpDo();
+  bool Accept(mafNode *node) override;
+  void OpRun() override;
+  void OpDo() override;
 
 protected: 
 	mafVMEGravityLine *m_Meter;

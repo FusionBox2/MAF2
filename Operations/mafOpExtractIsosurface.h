@@ -65,21 +65,21 @@ class MAF_EXPORT mafOpExtractIsosurface: public mafOp
 public:
 
   mafOpExtractIsosurface(const mafString& label = _R("Extract Isosurface"));
- ~mafOpExtractIsosurface(); 
+ ~mafOpExtractIsosurface() override; 
 	
   mafTypeMacro(mafOpExtractIsosurface, mafOp);
 
-  mafOp* Copy();
-  void OnEvent(mafEventBase *maf_event);
+  mafOp* Copy() override;
+  void OnEvent(mafEventBase *maf_event) override;
 
 	/** Return true for the acceptable vme type. */
-  bool Accept(mafNode* vme);
+  bool Accept(mafNode* vme) override;
 
 	/** Builds operation's interface by calling CreateOpDialog() method. */
-  void OpRun();
+  void OpRun() override;
 
   /** Return parameters used by operation. */
-  mafString GetParameters();
+  mafString GetParameters() override;
 
   /** Set iso value used by operation. */
   void SetIsoValue(double isoValue);

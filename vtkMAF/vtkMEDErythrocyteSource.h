@@ -57,7 +57,8 @@ public:
 
 protected:
   vtkMEDErythrocyteSource();
-  ~vtkMEDErythrocyteSource() {
+  ~vtkMEDErythrocyteSource() override
+  {
   }
 
   /**

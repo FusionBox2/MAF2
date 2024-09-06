@@ -75,7 +75,7 @@ protected:
     m_nFrontBlendings = m_nBackBlendings = 0;    
   }
 
-  virtual ~vtkMAFMuscleFibers()
+  ~vtkMAFMuscleFibers() override
   {
     delete[] m_pCoords;
     delete[] m_pCurves;

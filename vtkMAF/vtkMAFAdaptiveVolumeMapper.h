@@ -100,7 +100,7 @@ public:
 
   /** The main method. It will perform all initializations and then 
   call RenderServer that distributes render portions between rendering threads.*/
-  void Render(vtkRenderer *ren, vtkVolume *vol);
+  void Render(vtkRenderer *ren, vtkVolume *vol) override;
   
   /** Get optimizations that can affect picture quality*/
   vtkGetMacro(EnableAutoLOD, int);
@@ -115,7 +115,7 @@ public:
   static void SetInterpolation(bool val) { vtkMAFAdaptiveVolumeMapper::Interpolation = val; }
 
   /** Update the mapper */
-  void Update();
+  void Update() override;
 
   /** Check weather the input data can be rendered. The renderer supports regular and rectilinear 
   grids with unsigned/signed char or short values.*/
@@ -132,7 +132,7 @@ protected:
   /** constructor */
   vtkMAFAdaptiveVolumeMapper();
   /** destructor */
-  ~vtkMAFAdaptiveVolumeMapper();
+  ~vtkMAFAdaptiveVolumeMapper() override;
 
   /**
   RenderServer is responsible for distributing render tasks between threads. 

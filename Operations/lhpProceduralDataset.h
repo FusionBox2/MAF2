@@ -13,21 +13,26 @@ public:
 template <class T> class TScalars: public Scalars {
 public:
   static TScalars *New() { return new TScalars;};
-  void SetNumberOfScalars(ID_TYPE numScalars) {
+  void SetNumberOfScalars(ID_TYPE numScalars) override
+  {
     scalars = new T[numScalars];
   }; 
-  void SetScalar(ID_TYPE id, float scalar) {
+  void SetScalar(ID_TYPE id, float scalar) override
+  {
     this->scalars[id] = (T) scalar;
   };
 
-  float  GetScalar(ID_TYPE id) {
+  float  GetScalar(ID_TYPE id) override
+  {
     return this->scalars[id];
   };
 
-  int ReadBinaryScalar(ID_TYPE id, FILE *fp) {
+  int ReadBinaryScalar(ID_TYPE id, FILE *fp) override
+  {
     return fread(&this->scalars[id], sizeof(T), 1, fp);
   };
-  void Delete(){
+  void Delete() override
+  {
     delete [] scalars;
   }
   	 
@@ -70,9 +75,9 @@ protected:
 class SP: public DataSet {
 public:
   static SP *New() { return new SP; };
-  void SetDimensions(unsigned int xdim, unsigned int ydim, unsigned int zdim);    
-  int ReadStructure(FILE *fp, int type);  
-  float ComputeScalar(float *x);
+  void SetDimensions(unsigned int xdim, unsigned int ydim, unsigned int zdim) override;    
+  int ReadStructure(FILE *fp, int type) override;  
+  float ComputeScalar(float *x) override;
   void SetSpacing (float xspc, float yspc, float zspc) {    
     spc[0] = xspc;
     spc[1] = yspc;
@@ -92,9 +97,9 @@ private:
 class CT: public DataSet {
 public:
   static CT *New() { return new CT; };    
-  void SetDimensions(unsigned int xdim, unsigned int ydim, unsigned int zdim);
-  int ReadStructure(FILE *fp, int type);
-  float ComputeScalar(float *x);
+  void SetDimensions(unsigned int xdim, unsigned int ydim, unsigned int zdim) override;
+  int ReadStructure(FILE *fp, int type) override;
+  float ComputeScalar(float *x) override;
   void SetSpacing (float xspc, float yspc);
   void SetLocations(float *locs);
   void SetLoc(unsigned int id, float *loc);
@@ -108,16 +113,16 @@ private:
 class RG: public DataSet {
 public:
   static RG *New() { return new RG; };
-  void SetDimensions(unsigned int xdim, unsigned int ydim, unsigned int zdim);
-  int ReadStructure(FILE *fp, int type);
-  float ComputeScalar(float *x);
+  void SetDimensions(unsigned int xdim, unsigned int ydim, unsigned int zdim) override;
+  int ReadStructure(FILE *fp, int type) override;
+  float ComputeScalar(float *x) override;
   void SetCoords(float *xcoords, float *ycoords, float *zcoords) {
     this->coords[0] = xcoords;
     this->coords[1] = ycoords;
     this->coords[2] = zcoords;
   }
 
-  void Delete();
+  void Delete() override;
  
 private:
   float *coords[3];  

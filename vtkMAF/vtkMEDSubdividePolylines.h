@@ -51,9 +51,9 @@ public:
 
 protected:
   vtkMEDSubdividePolylines();
-  ~vtkMEDSubdividePolylines();
+  ~vtkMEDSubdividePolylines() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   vtkMEDPolyDataNavigator* m_Nav ;
 

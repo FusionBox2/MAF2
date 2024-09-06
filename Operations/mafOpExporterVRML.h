@@ -40,17 +40,17 @@ class MAF_EXPORT mafOpExporterVRML : public mafOp
 {
 public:
            mafOpExporterVRML(const mafString& label = _R("VRMLExporter"));
-	virtual ~mafOpExporterVRML();
+           ~mafOpExporterVRML() override;
 	
   mafTypeMacro(mafOpExporterVRML, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode* node) {return true;};
-	void OnEvent(mafEventBase *maf_event);
+	bool Accept(mafNode* node) override {return true;};
+	void OnEvent(mafEventBase *maf_event) override;
 	/** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
   /** Set the filename for the .vrl to import */
   void SetFileName(const mafString& file_name);
@@ -59,7 +59,7 @@ public:
   void ExportVRML();
 
 protected:
-	void OpStop(int result);
+	void OpStop(int result) override;
 	mafString m_File;
 	mafString m_FileDir;
   

@@ -51,24 +51,24 @@ public:
     /** return the right type of output */  
     mafVMEOutputImage *GetImageOutput() {return (mafVMEOutputImage *)GetOutput();}
 
-    /** return the right type of output */  
-    virtual mafVMEOutput *GetOutput();
+    /** return the right type of output */
+  mafVMEOutput *GetOutput() override;
 
     /** Return the suggested pipe-typename for the visualization of this vme */
-    virtual mafString GetVisualPipe() {return mafString(_R("mafPipeImage3D"));}
+  mafString GetVisualPipe() override {return mafString(_R("mafPipeImage3D"));}
 
     /** return icon */
     static char** GetIcon();
 protected:
   mafVMEImage();
-  virtual ~mafVMEImage();
+  ~mafVMEImage() override;
 
 private:
   mafVMEImage(const mafVMEImage&); // Not implemented
   void operator=(const mafVMEImage&); // Not implemented
   
   /** private to avoid calling by external classes */
-  virtual int SetData(vtkDataSet *data, mafTimeStamp t, int mode=MAF_VME_COPY_DATA);
+  int SetData(vtkDataSet *data, mafTimeStamp t, int mode=MAF_VME_COPY_DATA) override;
 };
 
 #endif

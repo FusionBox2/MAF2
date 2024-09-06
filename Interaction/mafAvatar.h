@@ -72,7 +72,7 @@ public:
     Set the renderer this avatar is attached to. When the rederer is
     changed, all props created by this avatar are moved to the new renderer
     and the interaction is changed accordingly */
-  virtual void SetRenderer(vtkRenderer *ren);
+  void SetRenderer(vtkRenderer *ren) override;
 
   /** set the current view */
   void SetView(mafView *view);
@@ -132,7 +132,7 @@ public:
   virtual int Pick(double X, double Y) {return false;}  
 
   /**  Process events coming from tracker */
-  virtual void OnEvent(mafEventBase *event);
+  void OnEvent(mafEventBase *event) override;
 
   /** 
     Return settings object for this Avatar, and if not yet allocated 
@@ -180,16 +180,16 @@ public:
 protected:
 
   mafAvatar();
-  virtual ~mafAvatar();
+  ~mafAvatar() override;
  
   virtual void InternalStore(mafStorageElementBuilder& node);
   virtual void InternalRestore(const mafStorageElement& node);
 
   /** redefined to add the Cursor actor into the selected renderer */
-  virtual int InternalInitialize();
+  int InternalInitialize() override;
 
   /** redefined to remove Cursor from renderer */
-  virtual void InternalShutdown();
+  void InternalShutdown() override;
 
   /** process event sent before a camera reset */
   virtual void OnPreResetCamera(mafEventBase *event);

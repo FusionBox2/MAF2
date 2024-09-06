@@ -77,7 +77,7 @@ public:
   unsigned long GetModifiers() {return m_Modifiers;}
 
   /** Deep Copy of the object*/
-  virtual void DeepCopy(const mafEventBase *event);
+  void DeepCopy(const mafEventBase *event) override;
   
   /** overloaded constructor */
   mafEventInteraction(void *sender=NULL,mafID id=-1,int button=0,unsigned long modifiers=0):
@@ -90,7 +90,8 @@ public:
   /** overloaded constructor */
   mafEventInteraction(void *sender,mafID id,double x,double y,int button=0,unsigned long modifiers=0):
   mafEventBase(sender,id),m_X(x),m_Y(y),m_XYFlag(true),m_Button(button),m_Modifiers(modifiers),m_Key(0) {}
-  virtual ~mafEventInteraction() {}
+
+  ~mafEventInteraction() override {}
  
 protected:
 

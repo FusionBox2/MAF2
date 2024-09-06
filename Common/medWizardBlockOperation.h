@@ -46,7 +46,7 @@ public:
   medWizardBlockOperation(const char *name);
 
   /** Default destructor */
-  ~medWizardBlockOperation();
+  ~medWizardBlockOperation() override;
 
   /** Set The name of the operation required view */
   void SetRequiredView(const char *View);
@@ -99,7 +99,7 @@ public:
 
    /** Returns the name of the operation required by this block 
        Return an empty string if no operation is required */
-   wxString GetRequiredOperation();
+   wxString GetRequiredOperation() override;
 
 
    /** If Set  Auto Show Selected VME to false the selected vme will not 
@@ -112,10 +112,10 @@ protected:
 
     
   /** Starts the execution of the block */
-  void ExcutionBegin();
+  void ExcutionBegin() override;
 
   /** Ends the execution of the block */
-  void ExcutionEnd();
+  void ExcutionEnd() override;
   
 private:
 

@@ -32,15 +32,15 @@ class MAF_EXPORT mafOpCreateSlicer: public mafOp
 {
 public:
   mafOpCreateSlicer(const mafString& label = _R("CreateSlicer"));
- ~mafOpCreateSlicer(); 
+ ~mafOpCreateSlicer() override; 
 
   mafTypeMacro(mafOpCreateSlicer, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
-  bool Accept(mafNode *node);
-  void OpRun();
-  void OpDo();
+  bool Accept(mafNode *node) override;
+  void OpRun() override;
+  void OpDo() override;
 
   static bool VolumeAccept(mafNode* node) {return(node != NULL  && node->IsMAFType(mafVMEVolume));};
 

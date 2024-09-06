@@ -55,11 +55,11 @@ class mafPrintout: public wxPrintout
 {
 public:
   mafPrintout( mafView *v, wxRect margins);
-  virtual ~mafPrintout();
-  bool OnPrintPage(int page);
-  bool HasPage(int page);
+  ~mafPrintout() override;
+  bool OnPrintPage(int page) override;
+  bool HasPage(int page) override;
   //bool OnBeginDocument(int startPage, int endPage);
-  void GetPageInfo(int *minPage, int *maxPage, int *selPageFrom, int *selPageTo);
+  void GetPageInfo(int *minPage, int *maxPage, int *selPageFrom, int *selPageTo) override;
 
 protected:
   mafView *m_View;

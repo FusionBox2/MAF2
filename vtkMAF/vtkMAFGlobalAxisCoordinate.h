@@ -37,12 +37,12 @@ class VTK_vtkMAF_EXPORT  vtkMAFGlobalAxisCoordinate : public vtkCoordinate
 public:
   //vtkTypeRevisionMacro(vtkMAFGlobalAxisCoordinate,vtkCoordinate);
   /** destructor */
-  virtual ~vtkMAFGlobalAxisCoordinate();
+  ~vtkMAFGlobalAxisCoordinate() override;
   /** create an instance of the object */
   static vtkMAFGlobalAxisCoordinate* New();
 
   /** used only when the coordinate system is VTK_USERDEFINED  */
-  virtual double *GetComputedUserDefinedValue(vtkViewport *viewport);
+  double *GetComputedUserDefinedValue(vtkViewport *viewport) override;
 
 protected:
   /** constructor */

@@ -177,30 +177,30 @@ public:
 	virtual const char* GetFileName();
 #pragma endregion
 
-	virtual void UnRegister(void *obj);
+	void UnRegister(void *obj) override;
 
 protected:
 	mafVMEVolumeLarge();
-	virtual ~mafVMEVolumeLarge();
+	~mafVMEVolumeLarge() override;
 
 
 	/** Internally used to create a new instance of the GUI.*/
-	/*virtual*/ mafGUI* CreateGui();
+	/*virtual*/ mafGUI* CreateGui() override;
 
   /** called to prepare the update of output */
-  /*virtual*/ void InternalPreUpdate();
+  /*virtual*/ void InternalPreUpdate() override;
 
 	/** Internally called to update the output */
-	/*virtual*/ void InternalUpdate();
+	/*virtual*/ void InternalUpdate() override;
 
   void InternalStore(mafStorageElementBuilder& parent) override;
   void InternalRestore(const mafStorageElement& node) override;
 
   /** used to initialize and create the material attribute if not yet present */
-  /*virtual*/ int InternalInitialize();
+  /*virtual*/ int InternalInitialize() override;
 
 	/** Process events coming from other objects */ 
-	/*virtual*/ void OnEvent(mafEventBase *e);
+	/*virtual*/ void OnEvent(mafEventBase *e) override;
 
 #ifdef VME_VOLUME_VER1
 	/** Overridden to take into consideration the internal m_LargeData time. */

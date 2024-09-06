@@ -33,7 +33,7 @@ class MAF_EXPORT mafVMEScalarMatrix : public mafVMEGenericAbstract
 public:
   mafTypeMacro(mafVMEScalarMatrix,mafVMEGenericAbstract);
 
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   enum SCALAR_ARRAY_ORIENTATION
   {
@@ -68,16 +68,16 @@ public:
 
   /** Set the time for this VME.
   It updates also the vtk representation for the scalar data.*/
-  void SetTimeStamp(mafTimeStamp t);
+  void SetTimeStamp(mafTimeStamp t) override;
 
   /** print a dump of this object */
-  virtual void Print(std::ostream& os, const int tabs=0);
+  void Print(std::ostream& os, const int tabs=0) override;
 
   /** Copy the contents of another mafVMEScalarMatrix into this one. */
-  virtual int DeepCopy(mafNode *a);
+  int DeepCopy(mafNode *a) override;
 
   /** Compare with another mafVMEScalarMatrix. */
-  virtual bool Equals(mafVME *vme);
+  bool Equals(mafVME *vme) override;
 
   /** Assign an active scalar to the geometry; by default (-1) no scalar is associated to the geometry.*/
   void SetActiveScalarOnGeometry(int scalar = -1);
@@ -130,23 +130,23 @@ public:
   /** return the right type of output.*/  
   mafVMEOutputScalarMatrix *GetScalarOutput() {return (mafVMEOutputScalarMatrix *)GetOutput();}
 
-  /** return the right type of output */  
-  virtual mafVMEOutput *GetOutput();
+  /** return the right type of output */
+  mafVMEOutput *GetOutput() override;
 
   /** return icon */
   static char** GetIcon();
 
   /** Return the suggested pipe-typename for the visualization of this vme */
-  virtual mafString GetVisualPipe() {return mafString(_R("mafPipeScalarMatrix"));};
+  mafString GetVisualPipe() override {return mafString(_R("mafPipeScalarMatrix"));};
 
 protected:
   mafVMEScalarMatrix();
-  virtual ~mafVMEScalarMatrix();
+  ~mafVMEScalarMatrix() override;
 
   /** Internally used to create a new instance of the GUI.*/
-  virtual mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
-  void InternalPreUpdate();
+  void InternalPreUpdate() override;
 
   void InternalStore(mafStorageElementBuilder& parent) override;
   void InternalRestore(const mafStorageElement& node) override;

@@ -70,7 +70,7 @@ public:
                   mafString *buttonUpDown_text = NULL,
                   mafString *buttonLeftRight_text = NULL);
 
-  virtual ~mafGUICrossIncremental();
+  ~mafGUICrossIncremental() override;
 
   
   enum MODALITY_CROSS_INCREMENTAL_ID
@@ -100,7 +100,7 @@ public:
 	
 	void EnableStep(bool value);
 
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   int IsIncrement(){return m_Increment;};
   double GetTopBottomVariation(){return m_TopBottomVariation;};

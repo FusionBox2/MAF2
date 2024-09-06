@@ -40,7 +40,7 @@ public:
   medWizardBlockSelection(const char *name);
 
   /** Default destructor */
-  ~medWizardBlockSelection();
+  ~medWizardBlockSelection() override;
     
   /** Set The title of the selection window */
   void SetWindowTitle(const char *Title);
@@ -67,14 +67,14 @@ public:
 
   
   /** This method has no sense in this class, use AddChoice() instead*/
-  virtual void SetNextBlock(const char *block){};
+  void SetNextBlock(const char *block) override {};
 
 protected:
   /** Starts the execution of the block */
-  virtual void ExcutionBegin();
+  void ExcutionBegin() override;
 
   /** Return the name of the Block witch will be executed after this */
-  virtual wxString GetNextBlock();
+  wxString GetNextBlock() override;
 private:
 
   //Choices struct definition

@@ -71,22 +71,22 @@ public:
 	mafTypeMacro(medOpImporterDicomOffis, mafOp);
 
 	/** Copy. */
-	mafOp* Copy();
+	mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode *node) {return true;};
+	bool Accept(mafNode *node) override {return true;};
 
 	/** Builds operation's interface calling CreateGui() method. */
-	virtual void OpRun();
+	void OpRun() override;
 
 	/** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
-	virtual void OpStop	(int result);
+	void OpStop	(int result) override;
 
 	/** Execute the operation. */
-	virtual  void OpDo();
+	void OpDo() override;
 
 	/** Makes the undo for the operation. */
-	void OpUndo(){};
+	void OpUndo() override {};
 
 	/** Create the dialog interface for the importer. */
 	virtual void CreateGui();
@@ -134,7 +134,7 @@ public:
 	bool OpenDir();
 
 	/** method allows to handle events from other objects*/
-	virtual void OnEvent(mafEventBase *maf_event);
+	void OnEvent(mafEventBase *maf_event) override;
 
 	/** Print the dicom list to the log area */
 	void PrintDicomList(medDicomSeriesSliceList *dicomList);
@@ -415,7 +415,7 @@ protected:
 	double m_TotalDicomSubRange[2]; ///< contains the scalar range og the full dicom
 
 	/** destructor */
-	~medOpImporterDicomOffis();
+	~medOpImporterDicomOffis() override;
 
 };
 

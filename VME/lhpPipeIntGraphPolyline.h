@@ -33,7 +33,7 @@ public:
   mafTypeMacro(lhpPipeIntGraphPolyline, lhpPipeIntGraphTime);
   
   lhpPipeIntGraphPolyline();
-  virtual     ~lhpPipeIntGraphPolyline();
+  ~lhpPipeIntGraphPolyline() override;
 
   enum GRAPH_IDS
   {
@@ -43,11 +43,11 @@ public:
     GDT_LAST
   };
 
-  virtual const mafString& GetVarTitle(int i) const;
-  virtual const mafString& GetVarUnit(int i) const;
-  virtual double       GetVarDerivativeCoef(int i) const;
+  const mafString& GetVarTitle(int i) const override;
+  const mafString& GetVarUnit(int i) const override;
+  double       GetVarDerivativeCoef(int i) const override;
 
 protected:
-  virtual bool StoreValueByIdx(int nVarID, mafTimeStamp ts, mafTimeStamp prevts);
+  bool StoreValueByIdx(int nVarID, mafTimeStamp ts, mafTimeStamp prevts) override;
 };  
 #endif // _lhpPipeIntGraphPolyline_H_

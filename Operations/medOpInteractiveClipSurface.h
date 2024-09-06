@@ -60,20 +60,20 @@ class MED_OPERATION_EXPORT medOpInteractiveClipSurface: public mafOp
 {
 public:
   medOpInteractiveClipSurface(const mafString& label = _R("medOpInteractiveClipSurface"));
-  ~medOpInteractiveClipSurface(); 
-	virtual void OnEvent(mafEventBase *maf_event);
+  ~medOpInteractiveClipSurface() override;
+  void OnEvent(mafEventBase *maf_event) override;
 
   mafTypeMacro(medOpInteractiveClipSurface, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
-  bool Accept(mafNode *node);   
-  void OpRun();
+  bool Accept(mafNode *node) override;   
+  void OpRun() override;
 
   /** Execute the operation. */
-  /*virtual*/ void OpDo();
+  /*virtual*/ void OpDo() override;
 
-  void OpUndo();
+  void OpUndo() override;
 
   enum CLIP_SURFACE_MODALITY
   {
@@ -109,8 +109,8 @@ public:
   static bool ConstrainAccept(mafNode* node) {return (node != NULL && \
     (node->IsMAFType(medVMEPolylineGraph))) ;};
 
-protected: 
-	virtual void OpStop(int result);
+protected:
+  void OpStop(int result) override;
 	
   /** Show/hide the gizmo representing the clipping implicit plane. */
   void ShowClipPlane(bool show);

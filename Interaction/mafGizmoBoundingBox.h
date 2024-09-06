@@ -53,7 +53,7 @@ class MAF_EXPORT mafGizmoBoundingBox: public mafBaseEventHandler, public mafEven
 {
 public:
            mafGizmoBoundingBox(mafVME *input, mafBaseEventHandler *listener = NULL,mafVME* parent=NULL);
-  virtual ~mafGizmoBoundingBox(); 
+           ~mafGizmoBoundingBox() override; 
   
   /** Set the gizmo generating vme; the gizmo will be centered on this vme*/
   void SetInput(mafVME *vme); 
@@ -63,8 +63,8 @@ public:
   // events handling 
   //----------------------------------------------------------------------------
   
-  /** Events handling*/        
-  virtual void OnEvent(mafEventBase *maf_event);
+  /** Events handling*/
+           void OnEvent(mafEventBase *maf_event) override;
     
   //----------------------------------------------------------------------------
   // highlight and show 

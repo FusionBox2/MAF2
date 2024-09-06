@@ -55,13 +55,13 @@ public:
   medPipeVolumeSliceNotInterpolated();
 
   /** dtor */
-  ~medPipeVolumeSliceNotInterpolated();
+  ~medPipeVolumeSliceNotInterpolated() override;
 
   /** Process events coming from gui */
-  virtual void OnEvent(mafEventBase * event);
+  void OnEvent(mafEventBase * event) override;
 
   /** The real setup must be performed here - not in the ctor */
-  virtual void Create(mafNode *node, mafView *view);
+  void Create(mafNode *node, mafView *view) override;
 
   /** Set slice with the specified parameters */
   void SetSlice(double origin[3], int sliceAxis);
@@ -81,7 +81,7 @@ protected:
   void CreateSlice();
 
   /** Create the GUI for the visual pipe that allow the user to change the pipe's parameters.*/
-  virtual mafGUI * CreateGui();
+  mafGUI * CreateGui() override;
   
   int m_SliceAxis;                                        //> Slicer direction
   double m_Bounds[6];                                     //> Input volume bounds

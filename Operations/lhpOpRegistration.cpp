@@ -101,14 +101,16 @@ class RegDataRef : public RegData
 {
 public:
   RegDataRef();
-  virtual ~RegDataRef();
-  virtual bool IsIDValid(int ID){return (mafVMEAFRefSys::ID_AFS_NOTDEFINED != ID && mafVMEAFRefSys::ID_AFS_PELVIS !=  ID);}
-  virtual bool IsDimValid(int ID, unsigned dim){if(mafVMEAFRefSys::ID_AFS_RTHIGH == ID || mafVMEAFRefSys::ID_AFS_LTHIGH == ID)return dim >= 0; return dim >=6;}
-  virtual bool GetValues(int ID, double &px, double &py, double &pz, double &rx, double &ry, double &rz);
-  virtual bool ExtractFreeValues(int ID, double &px, double &py, double &pz, double &rx, double &ry, double &rz, std::vector<double> &values, std::vector<double>& deltas);
-  virtual bool GetValues(int ID, std::vector<double>::iterator &values, double &px, double &py, double &pz, double &rx, double &ry, double &rz);
+  ~RegDataRef() override;
+  bool IsIDValid(int ID) override {return (mafVMEAFRefSys::ID_AFS_NOTDEFINED != ID && mafVMEAFRefSys::ID_AFS_PELVIS !=  ID);}
+  bool IsDimValid(int ID, unsigned dim) override
+  {if(mafVMEAFRefSys::ID_AFS_RTHIGH == ID || mafVMEAFRefSys::ID_AFS_LTHIGH == ID)return dim >= 0; return dim >=6;}
+
+  bool GetValues(int ID, double &px, double &py, double &pz, double &rx, double &ry, double &rz) override;
+  bool ExtractFreeValues(int ID, double &px, double &py, double &pz, double &rx, double &ry, double &rz, std::vector<double> &values, std::vector<double>& deltas) override;
+  bool GetValues(int ID, std::vector<double>::iterator &values, double &px, double &py, double &pz, double &rx, double &ry, double &rz) override;
 protected:
-  virtual bool OnSetVectors(int ID);
+  bool OnSetVectors(int ID) override;
 private:
   struct _regression
   {
@@ -128,14 +130,16 @@ class RegDataSph : public RegData
 {
 public:
   RegDataSph();
-  virtual ~RegDataSph();
-  virtual bool IsIDValid(int ID){return (mafVMEAFRefSys::ID_AFS_NOTDEFINED != ID && mafVMEAFRefSys::ID_AFS_PELVIS !=  ID);}
-  virtual bool IsDimValid(int ID, unsigned dim){if(mafVMEAFRefSys::ID_AFS_RTHIGH == ID || mafVMEAFRefSys::ID_AFS_LTHIGH == ID)return dim >= 0; return dim >=6;}
-  virtual bool GetValues(int ID, double &px, double &py, double &pz, double &rx, double &ry, double &rz);
-  virtual bool ExtractFreeValues(int ID, double &px, double &py, double &pz, double &rx, double &ry, double &rz, std::vector<double> &values, std::vector<double>& deltas);
-  virtual bool GetValues(int ID, std::vector<double>::iterator &values, double &px, double &py, double &pz, double &rx, double &ry, double &rz);
+  ~RegDataSph() override;
+  bool IsIDValid(int ID) override {return (mafVMEAFRefSys::ID_AFS_NOTDEFINED != ID && mafVMEAFRefSys::ID_AFS_PELVIS !=  ID);}
+  bool IsDimValid(int ID, unsigned dim) override
+  {if(mafVMEAFRefSys::ID_AFS_RTHIGH == ID || mafVMEAFRefSys::ID_AFS_LTHIGH == ID)return dim >= 0; return dim >=6;}
+
+  bool GetValues(int ID, double &px, double &py, double &pz, double &rx, double &ry, double &rz) override;
+  bool ExtractFreeValues(int ID, double &px, double &py, double &pz, double &rx, double &ry, double &rz, std::vector<double> &values, std::vector<double>& deltas) override;
+  bool GetValues(int ID, std::vector<double>::iterator &values, double &px, double &py, double &pz, double &rx, double &ry, double &rz) override;
 protected:
-  virtual bool OnSetVectors(int ID);
+  bool OnSetVectors(int ID) override;
 private:
 
   RegDataSph(const RegDataSph&); // Not implemented

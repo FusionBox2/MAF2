@@ -32,15 +32,15 @@ class MAF_EXPORT lhpOpCreateRefSysLM: public mafOp
 {
 public:
   lhpOpCreateRefSysLM(const mafString& label = _R("Create RefSys Landmarks"));
-  ~lhpOpCreateRefSysLM(); 
+  ~lhpOpCreateRefSysLM() override; 
 
   mafTypeMacro(lhpOpCreateRefSysLM, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
-  bool Accept(mafNode *node);
-  void OpRun();
-  void OpDo();
+  bool Accept(mafNode *node) override;
+  void OpRun() override;
+  void OpDo() override;
 
 protected: 
   mafVMELandmarkCloud *m_Cloud;

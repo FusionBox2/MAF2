@@ -128,11 +128,11 @@ public:
 
 protected:
   vtkMEDLandmarkCloudPolydataFilter();
-  ~vtkMEDLandmarkCloudPolydataFilter();
+  ~vtkMEDLandmarkCloudPolydataFilter() override;
 
   char m_ScalarName[256] ;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   // visual pipes
   std::vector<vtkSphereSource*> m_SphereList ;          // sphere sources

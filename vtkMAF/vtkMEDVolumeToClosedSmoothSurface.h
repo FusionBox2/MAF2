@@ -50,7 +50,7 @@ public:
   vtkPolyData *GetOutput(int level = 0, vtkPolyData *data = NULL);
 
   /** Update Mapper */
-  void Update();
+  void Update() override;
 
   /** create an instance of the object */
   static vtkMEDVolumeToClosedSmoothSurface *New();
@@ -82,7 +82,7 @@ private:
   vtkMEDVolumeToClosedSmoothSurface();
 
   /** Default destructor */
-  ~vtkMEDVolumeToClosedSmoothSurface();
+  ~vtkMEDVolumeToClosedSmoothSurface() override;
 
   /** Caluclates the scale/traslation to obtain a cube in [-1,1], 
      If toUnity is set to false returns the inverse factors*/

@@ -133,40 +133,40 @@ protected:
 
 public:	
   medPipeVectorFieldMapWithArrows();
-  virtual ~medPipeVectorFieldMapWithArrows();
+  ~medPipeVectorFieldMapWithArrows() override;
 
 public:  
   /** Processes events coming from GUI */
-  /*virtual*/ void OnEvent(mafEventBase *maf_event);
+  /*virtual*/ void OnEvent(mafEventBase *maf_event) override;
 
   /** Updates VTK pipeline (setting radius, etc.). 
   NB: This function needs to be declared public in order to update correctly views during timebar shifts. */
-  virtual void UpdateVTKPipe();  
+  void UpdateVTKPipe() override;  
 
 protected:
-  /*virtual*/ mafGUI  *CreateGui();
+  /*virtual*/ mafGUI  *CreateGui() override;
 
   /** Constructs VTK pipeline. */
-  virtual void CreateVTKPipe();
+  void CreateVTKPipe() override;
 
   /** Populates the combo box by names of scalar/vector fields */
-  virtual void PopulateCombo(wxComboBox* combo, bool bVectors);
+  void PopulateCombo(wxComboBox* combo, bool bVectors) override;
 
   /** Returns the number of available scalars/vectors. */
-  virtual int GetNumberOfFields(bool bVectors = true); 
+  int GetNumberOfFields(bool bVectors = true) override; 
 
   /** 
   Returns the name of field (scalar or vectors depending on
   bVectors parameter) at the specified index. 
   The routine returns NULL, if it cannot find appropriate field. */
-  virtual const char* GetFieldName(int nIndex, bool bVectors = true);
+  const char* GetFieldName(int nIndex, bool bVectors = true) override;
 
   /** 
   Returns the index of specified field (scalar or vectors depending on
   bVectors parameter). If it cannot be found, the index of currently active
   (scalar or vector) field is returned.
   The routine returns -1, if it cannot find appropriate field. */
-  virtual int GetFieldIndex(const char* szName = NULL, bool bVectors = true);
+  int GetFieldIndex(const char* szName = NULL, bool bVectors = true) override;
 
 };
 #endif // medPipeVectorFieldSurface_h__

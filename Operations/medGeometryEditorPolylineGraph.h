@@ -56,7 +56,7 @@ class MED_OPERATION_EXPORT medGeometryEditorPolylineGraph: public mafBaseEventHa
 public:
   /** contructor*/
 	medGeometryEditorPolylineGraph(mafVME *input=NULL, mafBaseEventHandler *listener = NULL, medVMEPolylineGraph *polyline=NULL,bool testMode=false);
-	virtual ~medGeometryEditorPolylineGraph(); 
+  ~medGeometryEditorPolylineGraph() override; 
 
   enum EDITOR_GRAPH_ID
   {
@@ -86,8 +86,8 @@ public:
 	ID_BRANCH_ACTION,
   };
 
-	/** Events handling*/        
-	virtual void OnEvent(mafEventBase *maf_event);
+	/** Events handling*/
+  void OnEvent(mafEventBase *maf_event) override;
 
 	/** Show On/Off VME Editor */
 	void Show(bool show);

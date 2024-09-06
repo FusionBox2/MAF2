@@ -42,8 +42,8 @@ public:
     ID_LAST
   };
 
-  /** Precess events coming from other objects */ 
-  virtual void OnEvent(mafEventBase *maf_event);
+  /** Precess events coming from other objects */
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Set Volume data. */
   virtual int SetData(vtkImageData *data, mafTimeStamp t, int mode=MAF_VME_COPY_DATA);
@@ -53,22 +53,22 @@ public:
   /** return the right type of output */  
   mafVMEOutputVolume *GetVolumeOutput() {return (mafVMEOutputVolume *)GetOutput();}
 
-  /** return the right type of output */  
-  virtual mafVMEOutput *GetOutput();
+  /** return the right type of output */
+  mafVMEOutput *GetOutput() override;
 
 protected:
   mafVMEVolumeGray();
-  virtual ~mafVMEVolumeGray();
+  ~mafVMEVolumeGray() override;
 
   /** Internally used to create a new instance of the GUI.*/
-  virtual mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
 private:
   mafVMEVolumeGray(const mafVMEVolumeGray&); // Not implemented
   void operator=(const mafVMEVolumeGray&); // Not implemented
   
   /** private to avoid calling by external classes */
-  virtual int SetData(vtkDataSet *data, mafTimeStamp t, int mode=MAF_VME_COPY_DATA);
+  int SetData(vtkDataSet *data, mafTimeStamp t, int mode=MAF_VME_COPY_DATA) override;
 };
 
 #endif

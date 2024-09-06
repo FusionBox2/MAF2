@@ -41,12 +41,12 @@ class MAF_EXPORT mafGUIGizmoTranslate : public mafGUIGizmoInterface
 public:
 
   mafGUIGizmoTranslate(mafBaseEventHandler *listener = NULL, bool testMode = false);
-	~mafGUIGizmoTranslate(); 
+	~mafGUIGizmoTranslate() override; 
 
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Enable-Disable the GUI's widgets */
-	void EnableWidgets(bool enable);
+	void EnableWidgets(bool enable) override;
 
 //----------------------------------------------------------------------------
 //gui constants: 
@@ -70,7 +70,7 @@ protected:
   void SendAbsPosition(mafEventBase *sourceEvent);
 
 	/** Create the GUI*/
-	void CreateGui();
+	void CreateGui() override;
 
   /**
   Gizmo abs pose*/

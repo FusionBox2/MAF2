@@ -61,7 +61,7 @@ class VTK_vtkMAF_EXPORT vtkMAFTextActorMeter : public vtkTextActor
   static	vtkMAFTextActorMeter *New();
   
   /** Method is intended for rendering. */
-  int	 RenderOverlay(vtkViewport *viewport);
+  int	 RenderOverlay(vtkViewport *viewport) override;
 
   /** Retrieve text actor input. */
   char*   GetText(){return GetInput();}
@@ -79,7 +79,7 @@ protected:
   /** constructor. */
 	vtkMAFTextActorMeter();
   /** destructor. */
-	~vtkMAFTextActorMeter();
+	~vtkMAFTextActorMeter() override;
 	
   //variables
   double TextPosition[4];

@@ -44,8 +44,8 @@ class MAF_EXPORT mafPipeFactory : public mafObjectFactory
 {
 public: 
   mafTypeMacro(mafPipeFactory,mafObjectFactory);
-  virtual const char* GetMAFSourceVersion() const;
-  virtual const char* GetDescription() const;
+  const char* GetMAFSourceVersion() const override;
+  const char* GetDescription() const override;
 
   /* Initialize the factory creating and registering a new instance */
   static int Initialize();
@@ -64,7 +64,7 @@ public:
 
 protected:
   mafPipeFactory();
-  ~mafPipeFactory() { }
+  ~mafPipeFactory() override { }
 
   // static mafPipeFactory *m_Instance;
   static bool m_Initialized;

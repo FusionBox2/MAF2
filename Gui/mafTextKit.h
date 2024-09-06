@@ -43,9 +43,9 @@ class MAF_EXPORT mafTextKit : public mafBaseEventHandler, public mafEventSender
 {
 public:
 	mafTextKit(wxWindow* parent, vtkRenderer *renderer, mafBaseEventHandler *Listener = NULL);
-	~mafTextKit(); 
+	~mafTextKit() override; 
 	
-	void OnEvent(mafEventBase *maf_event);
+	void OnEvent(mafEventBase *maf_event) override;
 
   enum TEXT_KIT_ALIGN_MODALITY
   {

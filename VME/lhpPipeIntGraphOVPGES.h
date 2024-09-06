@@ -41,7 +41,7 @@ public:
   mafTypeMacro(lhpPipeIntGraphOVPGES, lhpPipeIntGraphLocal);
 
   lhpPipeIntGraphOVPGES();
-  virtual     ~lhpPipeIntGraphOVPGES();
+  ~lhpPipeIntGraphOVPGES() override;
 
   /** IDs for the GUI */
   enum PIPE_INT_GRAPH_OVPGES
@@ -72,16 +72,16 @@ public:
   GDT_LAST
   };
   /** Answer events coming from the Gui and from cloud */
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
-  virtual const mafString& GetVarTitle(int i) const;
-  virtual const mafString& GetVarUnit(int i) const;
-  virtual double       GetVarDerivativeCoef(int i) const;
+  const mafString& GetVarTitle(int i) const override;
+  const mafString& GetVarUnit(int i) const override;
+  double       GetVarDerivativeCoef(int i) const override;
 
 protected:
   /** Create the Gui for the visual pipe that allow the user to change the pipe's parameters.*/
-  virtual mafGUI *CreateGui();
-  virtual bool StoreValueByIdx(int nVarID, mafTimeStamp ts, mafTimeStamp prevts);
+  mafGUI *CreateGui() override;
+  bool StoreValueByIdx(int nVarID, mafTimeStamp ts, mafTimeStamp prevts) override;
   mafTimeStamp m_RefStamp;
 };
 #endif // _lhpPipeIntGraphOVPGES_H_

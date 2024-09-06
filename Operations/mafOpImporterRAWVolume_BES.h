@@ -58,12 +58,12 @@ class MED_OPERATION_EXPORT mafOpImporterRAWVolume_BES: public mafOp
 public:
 
   mafOpImporterRAWVolume_BES(const mafString& label = _R("RAWImporterLargeVolume"));
-  virtual     ~mafOpImporterRAWVolume_BES();
-  virtual void OnEvent(mafEventBase *maf_event);
+  ~mafOpImporterRAWVolume_BES() override;
+  void OnEvent(mafEventBase *maf_event) override;
 
   mafTypeMacro(mafOpImporterRAWVolume_BES, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
   enum RAW_SCALAR_TYPE
   {
@@ -75,9 +75,9 @@ public:
     //N.B. when modified, GetVTKDataType must be updated
   };
 
-  bool Accept(mafNode *node) {return true;};
+  bool Accept(mafNode *node) override {return true;};
 
-  void OpRun();
+  void OpRun() override;
 
   /** Set the RAW volume filename to import.*/
   void SetFileName(const char *raw_file);

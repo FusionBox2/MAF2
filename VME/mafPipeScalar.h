@@ -34,16 +34,16 @@ public:
   mafTypeMacro(mafPipeScalar,mafPipeVTK);
 
                mafPipeScalar();
-  virtual     ~mafPipeScalar ();
+  ~mafPipeScalar () override;
 
   /** process events coming from Gui */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Create the VTK rendering pipeline*/
-  virtual void Create(mafNode *node, mafView *view);
+  void Create(mafNode *node, mafView *view) override;
 
   /** Manage the actor selection by showing the corner box around the actor when the corresponding VME is selected.*/
-  virtual void Select(bool select); 
+  void Select(bool select) override; 
 
   /** IDs for the GUI */
   enum PIPE_SCALAR_WIDGET_ID
@@ -57,7 +57,7 @@ protected:
   vtkActor *m_Actor;
 
   /** Update visual properties*/
-  void UpdateProperty(bool fromTag = false);
-  virtual mafGUI  *CreateGui();
+  void UpdateProperty(bool fromTag = false) override;
+  mafGUI  *CreateGui() override;
 };  
 #endif // __mafPipeScalar_H__

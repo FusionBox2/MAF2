@@ -54,7 +54,7 @@ public:
   mafPipeSurfaceSlice_BES();
 
   /** Destructor. */
-  virtual     ~mafPipeSurfaceSlice_BES ();
+  ~mafPipeSurfaceSlice_BES () override;
 
   /**Return the thickness of the border*/	
   double GetThickness();
@@ -63,17 +63,17 @@ public:
   void SetThickness(double thickness); 
 
   /** process events coming from Gui */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Create the VTK rendering pipeline*/
-  virtual void Create(mafNode *node, mafView *view);
+  void Create(mafNode *node, mafView *view) override;
 
   /** Manage the actor selection by showing the corner box around the actor when the corresponding VME is selected.*/
-  virtual void Select(bool select); 
+  void Select(bool select) override; 
 
   /** Set the origin and normal of the slice.
   Both, Origin and Normal may be NULL, if the current value is to be preserved. */
-  /*virtual*/ void SetSlice(double* Origin, double* Normal);  
+  /*virtual*/ void SetSlice(double* Origin, double* Normal) override;  
 
   /** Create visual-pipe for closed cloud or single landmark */
   void CreateClosedCloudPipe();
@@ -100,7 +100,7 @@ public:
 
   //bool ImageAccept(mafNode *node) {return(node != NULL && node->IsMAFType(mafVMEImage));};
   /** creation of gui */
-  virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 
 protected:
   vtkTexture              *m_Texture;

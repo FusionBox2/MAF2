@@ -38,23 +38,23 @@ class MAF_EXPORT mafOpReparentTo: public mafOp
 {
 public:
   mafOpReparentTo(const mafString& label = _R("ReparentTo"), bool keepGlobal = true);
- ~mafOpReparentTo(); 
+ ~mafOpReparentTo() override; 
   
   mafTypeMacro(mafOpReparentTo, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-  bool Accept(mafNode *node);
+  bool Accept(mafNode *node) override;
 
 	/** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
 	/** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
 
 	/** Makes the undo for the operation. */
-  void OpUndo();
+  void OpUndo() override;
 
   /** Set the target vme (used to be called without using interface)*/
   void SetTargetVme(mafVME *target);

@@ -36,7 +36,7 @@ class MAF_EXPORT mafTagArray : public mafAttribute
 {
 public:
   mafTagArray();
-  ~mafTagArray();
+  ~mafTagArray() override;
 
   mafTypeMacro(mafTagArray,mafAttribute)
 
@@ -84,7 +84,7 @@ public:
   /** copy the content of another array */
   void DeepCopy(const mafTagArray *a);
 
-  void DeepCopy(const mafAttribute *a);
+  void DeepCopy(const mafAttribute *a) override;
 	
 	/**
 	Search the tag array for tags of a given type and 
@@ -100,7 +100,7 @@ public:
   mmuTagsMap *GetTagsContainer() {return &m_Tags;}
 
   /** dump tags stored into this array */
-  virtual void Print(std::ostream& os, const int tabs=0) const;
+  void Print(std::ostream& os, const int tabs=0) const override;
 
 protected:
   void InternalStore(mafStorageElementBuilder& parent) override;

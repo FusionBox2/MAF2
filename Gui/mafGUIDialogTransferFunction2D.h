@@ -65,9 +65,9 @@ class MAF_EXPORT mafGUIDialogTransferFunction2D : public mafGUIDialog
 
 public:
 								mafGUIDialogTransferFunction2D();  // reads materials from file
-               ~mafGUIDialogTransferFunction2D();  // store materials to file
+               ~mafGUIDialogTransferFunction2D() override;  // store materials to file
 	void ShowModal(mafVME *vme);
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 	
 protected:
   void CreateGUI();
@@ -87,7 +87,8 @@ protected:
   void UpdateWidgets();
 
   void OnIdle(wxIdleEvent& event);
-  void OnSize(wxSizeEvent& event) { this->ResizePreviewWindow(); event.Skip(); }
+  void OnSize(wxSizeEvent& event) override
+  { this->ResizePreviewWindow(); event.Skip(); }
   void OnCommand(wxCommandEvent &event) { {mafEvent evUnq(this, event.GetId()); this->OnEvent(&evUnq);} }
   void OnMotion(wxMouseEvent &event) { m_StatusBar->SetStatusText("", 0); m_StatusBar->SetStatusText("", 1); }
   void SetWidget(const tfWidget &widget);
@@ -164,7 +165,7 @@ public:
   static vtkWidgetActor *New() { return new vtkWidgetActor(); }
   vtkTypeMacro(vtkWidgetActor, vtkProp);
 
-  int RenderOverlay (vtkViewport *);
+  int RenderOverlay (vtkViewport *) override;
 
   void SetTransferFunction(vtkMAFTransferFunction2D *tf);
   void SetViewportRange(double xmin, double xmax, double ymin, double ymax) { ViewportRange[0] = xmin; ViewportRange[1] = xmax; ViewportRange[2] = ymin; ViewportRange[3] = ymax; }
@@ -179,7 +180,7 @@ public:
 
 protected:
   vtkWidgetActor();
- ~vtkWidgetActor();
+ ~vtkWidgetActor() override;
 
   vtkWidgetActor(const vtkWidgetActor&); // no implementation
   void operator=(const vtkWidgetActor&); // no implementation
@@ -210,14 +211,14 @@ public:
 
   void SetDialog(mafGUIDialogTransferFunction2D *dialog) { this->m_Dialog = dialog;  }
 
-  void OnMouseMove();
-  void OnLeftButtonUp() { this->m_ActiveButton[0] = false; }
-  void OnMiddleButtonUp() { this->m_ActiveButton[1] = false; }
-  void OnRightButtonUp() { this->m_ActiveButton[2] = false; }
+  void OnMouseMove() override;
+  void OnLeftButtonUp() override { this->m_ActiveButton[0] = false; }
+  void OnMiddleButtonUp() override { this->m_ActiveButton[1] = false; }
+  void OnRightButtonUp() override { this->m_ActiveButton[2] = false; }
 
-  void OnLeftButtonDown();
-  void OnMiddleButtonDown();
-  void OnRightButtonDown();
+  void OnLeftButtonDown() override;
+  void OnMiddleButtonDown() override;
+  void OnRightButtonDown() override;
 
 protected:
   vtkInteractorStylePreviewImage(const vtkInteractorStylePreviewImage&);
@@ -243,10 +244,10 @@ public:
   vtkTypeMacro(vtkInteractorStyleWidget, vtkInteractorStylePreviewImage);
 
   vtkInteractorStyleWidget() { ; }
- ~vtkInteractorStyleWidget() { ; }
+ ~vtkInteractorStyleWidget() override { ; }
 
-  void OnMouseMove();
-  void OnLeftButtonDown();
+  void OnMouseMove() override;
+  void OnLeftButtonDown() override;
 
 protected:
   int m_SelectedPoint;

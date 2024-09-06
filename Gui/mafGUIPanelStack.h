@@ -32,7 +32,7 @@ public:
   mafGUIPanelStack(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition, 
            const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL, const mafString& name = _R("panel"));
   /** destructor */
-  virtual ~mafGUIPanelStack(); 
+  ~mafGUIPanelStack() override; 
 
   /** Put the panel on the panel stack removing the previous panel. */
 	bool Put(mafGUIPanel* p);

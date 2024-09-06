@@ -48,8 +48,8 @@ public:
   vtkTypeMacro(vtkMAFMuscleDecomposition, vtkPolyDataAlgorithm);  
 
 protected:
-  vtkMAFMuscleDecomposition();           
-  virtual ~vtkMAFMuscleDecomposition();
+  vtkMAFMuscleDecomposition();
+  ~vtkMAFMuscleDecomposition() override;
 
 protected:
   //structures used by routines

@@ -33,19 +33,19 @@ public:
   medOpMergeDicomSeries(const mafString& label = _R("Merge DICOM Series"));
 
   /** destructor */
-  ~medOpMergeDicomSeries();
+  ~medOpMergeDicomSeries() override;
 
 	/** RTTI macro */
 	mafTypeMacro(medOpMergeDicomSeries, mafOp);
 	
 	/** Copy. */
-	mafOp* Copy();
+	mafOp* Copy() override;
 
 	/** Builds operation's interface calling CreateGui() method. */
-	virtual void OpRun();
+	void OpRun() override;
 
   /** turn true for the acceptable vme type. */
-  virtual bool Accept(mafNode *node){return true;};
+	bool Accept(mafNode *node) override {return true;};
 
 protected:
 

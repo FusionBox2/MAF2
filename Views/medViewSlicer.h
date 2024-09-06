@@ -48,7 +48,7 @@ class MED_VIEWS_EXPORT medViewSlicer: public medViewCompoundWindowing
 {
 public:
   medViewSlicer(const mafString& label = _R("View Arbitrary Slice"), bool show_ruler = false);
-  virtual ~medViewSlicer(); 
+  ~medViewSlicer() override; 
 
   mafTypeMacro(medViewSlicer, medViewCompoundWindowing);
 
@@ -63,28 +63,28 @@ public:
   /** 
   Set the visualization status for the node (visible, not visible, mutex, ...) 
   \sa mafSceneGraph mafView*/
-  int GetNodeStatus(mafNode *vme);
+  int GetNodeStatus(mafNode *vme) override;
 
 	/** Create visual pipe and initialize them to build an OrthoSlice visualization */
-  virtual void PackageView();
+  void PackageView() override;
 
 	/** Show/Hide VMEs into plugged sub-views*/
-  virtual void VmeShow(mafNode *node, bool show);
+  void VmeShow(mafNode *node, bool show) override;
 
 	/** Remove VME into plugged sub-views*/
-  virtual void VmeRemove(mafNode *node);
+  void VmeRemove(mafNode *node) override;
 
 	/** Create the GUI on the bottom of the compounded view. */
-  virtual void CreateGuiView();
+  void CreateGuiView() override;
 
   /** Function that handles events sent from other objects. */
-	virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
    /** Function that clones instance of the object. */
-	virtual mafView* Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
+  mafView* Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override;
 
   /** Force the updating of the camera. */
-	virtual void CameraUpdate();
+  void CameraUpdate() override;
 
   //virtual void VmeSelect(mafNode *node, bool select);
 
@@ -97,20 +97,20 @@ protected:
   an extension of the superclass enum. The last id value must be defined as "LAST_ID" to allow the 
   subclass to continue the ID enumeration from it. For appending the widgets in the
   same panel GUI, each CreateGUI() function should first call the superclass' one.*/
-	virtual mafGUI* CreateGui();
+  mafGUI* CreateGui() override;
 
 	/** Enable/disable view widgets.*/
-  void EnableWidgets(bool enable = true);
+  void EnableWidgets(bool enable = true) override;
 
   /** Handling events sent from other objects. Called by public method OnEvent().*/
 	void OnEventThis(mafEventBase *maf_event);  
 
   /**Protected method returning true if windowing can be enabled.
   It overrides superclass method.*/
-  bool ActivateWindowing(mafNode *node);
+  bool ActivateWindowing(mafNode *node) override;
 
   /**Update lutslider with correct values in case of bool variable is true, otherwise disable the widget. */
-  void UpdateWindowing(bool enable, mafNode *node);
+  void UpdateWindowing(bool enable, mafNode *node) override;
 
   /** Update windowing on slicer visualization. */
   void SlicerWindowing(mafVMESlicer *slicer);

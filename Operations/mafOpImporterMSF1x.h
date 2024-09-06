@@ -37,17 +37,17 @@ class MAF_EXPORT mafOpImporterMSF1x: public mafOp
 {
 public:
   mafOpImporterMSF1x(const mafString& label = _R("MSF1xImporter"));
- ~mafOpImporterMSF1x(); 
+ ~mafOpImporterMSF1x() override; 
   
   mafTypeMacro(mafOpImporterMSF1x, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
 	/** this operation does not depend on the selected node */
-  bool Accept(mafNode* node) {return true;};
+  bool Accept(mafNode* node) override {return true;};
 
 	/** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
 	/** Import MSF file. */
   void ImportMSF();

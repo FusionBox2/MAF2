@@ -58,7 +58,7 @@ public:
   /** Redefined to support multiple input devices */
   virtual int StopInteraction(mafDevice *device, int button);
 
-  virtual void OnEvent(mafEventBase *event);
+  void OnEvent(mafEventBase *event) override;
 
   void OnVmeSelected(mafVME *vme){ SetPickedVME(GetDevice(),vme); }
 
@@ -84,21 +84,21 @@ public:
 
 protected:
   mafInteractorPER();
-  virtual ~mafInteractorPER();
+  ~mafInteractorPER() override;
   
-  /** redefined to support the three buttons */  
-  virtual int OnStartInteraction(mafEventInteraction *e);
   /** redefined to support the three buttons */
-  virtual int OnStopInteraction(mafEventInteraction *e);
+  int OnStartInteraction(mafEventInteraction *e) override;
+  /** redefined to support the three buttons */
+  int OnStopInteraction(mafEventInteraction *e) override;
 
   /** 
     Perform a pick on start of interaction to find if the user pointed
     an object in the scene, and in case forward all the following 
     events to its behavior. if the user pointed to the background
     forward events to the camera interactor.*/
-  virtual void OnButtonDown       (mafEventInteraction *e);
-  
-  virtual void OnButtonUp         (mafEventInteraction *e);
+  void OnButtonDown       (mafEventInteraction *e) override;
+
+  void OnButtonUp         (mafEventInteraction *e) override;
   virtual void OnLeftButtonDown   (mafEventInteraction *e);
   virtual void OnLeftButtonUp     (mafEventInteraction *e);
   virtual void OnMiddleButtonDown (mafEventInteraction *e);

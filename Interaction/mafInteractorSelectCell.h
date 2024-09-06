@@ -51,17 +51,17 @@ public:
   mafTypeMacro(mafInteractorSelectCell,mafInteractorCameraMove);
 
   /** redefined not to move the camera if something has been picked */
-  virtual void OnMouseMove();
+  void OnMouseMove() override;
 
   /** redefined to pick cell if CTRL modifier is pressed */
-  virtual void OnLeftButtonDown(mafEventInteraction *e);
+  void OnLeftButtonDown(mafEventInteraction *e) override;
 	
   /** redefined to end pick modality */
-  virtual void OnButtonUp(mafEventInteraction *e);
+  void OnButtonUp(mafEventInteraction *e) override;
 
 protected:
   mafInteractorSelectCell();
-  virtual ~mafInteractorSelectCell();
+  ~mafInteractorSelectCell() override;
   
   /** send the picking informations to the listener */
   void PickCell(mafDevice *device);
@@ -71,7 +71,7 @@ protected:
 private:
   mafInteractorSelectCell(const mafInteractorSelectCell&);  // Not implemented.
   void operator=(const mafInteractorSelectCell&);  // Not implemented.
-	void OnEvent(mafEventBase *event);
+	void OnEvent(mafEventBase *event) override;
   
 };
 #endif 

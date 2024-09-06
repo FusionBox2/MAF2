@@ -63,9 +63,9 @@ public:
   /** construct. */
 	medGUIWizardPageNew (medGUIWizard *wizardParent,long style = medUSEGUI | medUSERWI, bool ZCrop = false, wxString label="");
   /** destructor. */
-	virtual ~medGUIWizardPageNew ();
+  ~medGUIWizardPageNew () override;
   /** Precess events coming from other objects. */
-	void OnEvent(mafEventBase *maf_event);
+	void OnEvent(mafEventBase *maf_event) override;
 
   /** Add in wizard gui, another gui in lower left position. */
 	void AddGuiLowerLeft(mafGUI *gui);

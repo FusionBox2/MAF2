@@ -59,8 +59,8 @@ public:
     m_DictionaryAvailable = 0;
   }
       //----------------------------------------------------------------------------
-  ~medOpImporterMotionData( ) 
-    //----------------------------------------------------------------------------
+  ~medOpImporterMotionData( ) override
+  //----------------------------------------------------------------------------
   {
     // Must unregister in order to avoid leaks or data loss
     if (m_Output)
@@ -71,8 +71,8 @@ public:
     m_Vme = NULL;    
   }
   //----------------------------------------------------------------------------
-  mafOp* Copy()   
-    /** restituisce una copia di se stesso, serve per metterlo nell'undo stack */
+  mafOp* Copy() override
+  /** restituisce una copia di se stesso, serve per metterlo nell'undo stack */
     //----------------------------------------------------------------------------
   {
     //non devo incrementare l'id counter --- vfc le operazioni sono gia inserite nei menu;
@@ -89,12 +89,12 @@ public:
   }
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode* node) {return true;};
+	bool Accept(mafNode* node) override {return true;};
 
   //----------------------------------------------------------------------------
   /** Builds operation's interface. */
-  void OpRun()   
-    //----------------------------------------------------------------------------
+  void OpRun() override
+  //----------------------------------------------------------------------------
   {
     int result = OP_RUN_CANCEL;
     m_File = _R("");
@@ -121,8 +121,8 @@ public:
   }
   //----------------------------------------------------------------------------
   /** Execute the operation. */
-  void OpDo()   
-    //----------------------------------------------------------------------------
+  void OpDo() override
+  //----------------------------------------------------------------------------
   {
     // Modified by Simone Brazzale, 03/12/2010
     assert(!m_Vme);
@@ -197,14 +197,14 @@ public:
   }
   //----------------------------------------------------------------------------
   /** Get output. */
-  mafNode* GetOutput()   
-    //----------------------------------------------------------------------------
+  mafNode* GetOutput() override
+  //----------------------------------------------------------------------------
   {
     return this->m_Vme;
   }
   //----------------------------------------------------------------------------
   //** Makes the undo for the operation.
-  void OpUndo()   
+  void OpUndo() override
   //----------------------------------------------------------------------------
   {
     assert(m_Vme);

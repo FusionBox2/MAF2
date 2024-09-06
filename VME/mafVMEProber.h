@@ -49,20 +49,20 @@ public:
 
   static bool OutputSurfaceAccept(mafNode *node) {return(node != NULL && ((mafVME *)node)->GetOutput()->IsMAFType(mafVMEOutputSurface));};
 
-  /** Precess events coming from other objects */ 
-  virtual void OnEvent(mafEventBase *maf_event);
+  /** Precess events coming from other objects */
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Return the suggested pipe-typename for the visualization of this vme */
-  virtual mafString GetVisualPipe() {return mafString(_R("mafPipeSurface"));};
+  mafString GetVisualPipe() override {return mafString(_R("mafPipeSurface"));};
 
   /** Return pointer to material attribute. */
   mmaMaterial *GetMaterial();
 
   /** Copy the contents of another mafVMEProber into this one. */
-  virtual int DeepCopy(mafNode *a);
+  int DeepCopy(mafNode *a) override;
 
   /** Compare with another mafVMEProber. */
-  virtual bool Equals(mafVME *vme);
+  bool Equals(mafVME *vme) override;
 
   /** Get the link to the volume.*/
   mafNode *GetVolumeLink();
@@ -125,36 +125,36 @@ public:
 	void SetLowDensity(float low_dens);
 
   /** Set the pose matrix for the Prober. */
-  void SetMatrix(const mafMatrix &mat);
+  void SetMatrix(const mafMatrix &mat) override;
 
   /** Clear the parameter 'kframes' because mafVMEProber has no timestamp. */
-  void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes);
+  void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes) override;
 
   /** return always false since (currently) the slicer is not an animated VME (position 
   is the same for all timestamps). */
-  virtual bool IsAnimated();
+  bool IsAnimated() override;
 
   /** Return true if the data associated with the VME is present and updated at the current time.*/
-  virtual bool IsDataAvailable();
+  bool IsDataAvailable() override;
 
   /** return icon */
   static char** GetIcon();
 
 protected:
   mafVMEProber();
-  virtual ~mafVMEProber(); 
+  ~mafVMEProber() override; 
 
   /** Internally used to create a new instance of the GUI.*/
-  virtual mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
   /** used to initialize and create the material attribute if not yet present */
-  virtual int InternalInitialize();
+  int InternalInitialize() override;
 
   void InternalStore(mafStorageElementBuilder& parent) override;
   void InternalRestore(const mafStorageElement& node) override;
 
   /** called to prepare the update of the output */
-  virtual void InternalPreUpdate();
+  void InternalPreUpdate() override;
 
 	float  m_DistThreshold;
 	float  m_MaxDistance;

@@ -41,19 +41,19 @@ class MAF_EXPORT mafOp2DMeasure: public mafOp
 {
 public:
 	mafOp2DMeasure(const mafString& label = _R("2DMeasure"));
-	~mafOp2DMeasure(); 
-	virtual void OnEvent(mafEventBase *maf_event);
+	~mafOp2DMeasure() override;
+	void OnEvent(mafEventBase *maf_event) override;
   
   mafTypeMacro(mafOp2DMeasure, mafOp);
 
   /** Return a copy of itself, this needs to put the operation into the undo stack. */
-	mafOp* Copy();
+	mafOp* Copy() override;
 	
 	/** Return true for the acceptable vme type. */
-  bool Accept(mafNode *node);
+  bool Accept(mafNode *node) override;
 
 	/** Set the input vme for the operation. */
-	virtual void OpRun();
+	void OpRun() override;
 
 protected:
 
@@ -81,7 +81,7 @@ protected:
   };
 
   /** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
-  void OpStop(int result);
+  void OpStop(int result) override;
 
 	mafInteractor2DDistance *m_DistanceInteractor2D;
   mafInteractor2DAngle *m_AngleInteractor2D;

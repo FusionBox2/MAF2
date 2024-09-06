@@ -98,7 +98,7 @@ public:
 
   /**
   Make another transform of the same type.*/
-  vtkAbstractTransform *MakeTransform();
+  vtkAbstractTransform *MakeTransform() override;
 
   //modified by Stefano 7-11-2004
   /**
@@ -122,16 +122,16 @@ protected:
 
   /**
   Get the MTime of this object also considering the locator.*/
-  vtkMTimeType GetMTime();
+  vtkMTimeType GetMTime() override;
 
   mafClassicICPRegistration();
-  ~mafClassicICPRegistration();
+  ~mafClassicICPRegistration() override;
 
-  void InternalUpdate();
+  void InternalUpdate() override;
 
   /**
   This method does no type checking, use DeepCopy instead.*/
-  void InternalDeepCopy(vtkAbstractTransform *transform);
+  void InternalDeepCopy(vtkAbstractTransform *transform) override;
 
   vtkDataSet* Source;
   vtkDataSet* Target;

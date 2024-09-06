@@ -51,23 +51,23 @@ public:
   /** constructor. */
   medViewVTKCompound(const mafString& label = _R("View Compound with Windowing"), int num_row = 1, int num_col = 1);
   /** destructor. */
-  virtual ~medViewVTKCompound(); 
+  ~medViewVTKCompound() override; 
 
   /** RTTI macro.*/
   mafTypeMacro(medViewVTKCompound, medViewCompoundWindowing);
 
 
   /**  Redefine this method to package the compounded view */
-  virtual void PackageView();
+  void PackageView() override;
 
   /** Function to set customized mafViewVTK as child view. To be called before PackageView. */
   virtual void SetExternalView(mafViewVTK *childView);
 
   /** Function that clones instance of the object. */
-  virtual mafView *Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
+  mafView *Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override;
 
   /** Update camera */
-  virtual void CameraUpdate();
+  void CameraUpdate() override;
 
 protected:
   /**
@@ -77,10 +77,10 @@ protected:
   the superclass enum. The last id value must be defined as "LAST_ID" to allow the 
   subclass to continue the ID enumeration from it. For appending the widgets in the
   same pannel GUI, each CreateGUI() function should first call the superclass' one.*/
-  virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 
    /** A function with windowing activate/deactivate conditions*/
-  virtual bool ActivateWindowing(mafNode *node);
+  bool ActivateWindowing(mafNode *node) override;
 
 	mafViewVTK *m_ViewVTK;
 

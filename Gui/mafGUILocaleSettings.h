@@ -33,7 +33,7 @@ public:
   /** constructor */
 	mafGUILocaleSettings(mafBaseEventHandler *Listener, const mafString &label = _L("Interface language"));
   /** destructor */
-	~mafGUILocaleSettings(); 
+	~mafGUILocaleSettings() override; 
 
   enum LOCALE_WIDGET_ID
   {
@@ -41,7 +41,7 @@ public:
   };
 
   /** Answer to the messages coming from interface. */
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Setter for Language Flag  */
   void SetEnableLanguage(bool flag){m_EnableLanguage = flag;};
@@ -60,10 +60,10 @@ public:
 
 protected:
   /** Create the GUI for the setting panel.*/
-  void CreateGui();
+  void CreateGui() override;
 
   /** Initialize language used into the application.*/
-  void InitializeSettings();
+  void InitializeSettings() override;
 
   bool         m_EnableLanguage;
   int          m_LanguageId;

@@ -33,7 +33,7 @@ class MAF_EXPORT mafVMEOutputPolyline : public mafVMEOutputVTK
 {
 public:
   mafVMEOutputPolyline();
-  virtual ~mafVMEOutputPolyline();
+  ~mafVMEOutputPolyline() override;
 
   mafTypeMacro(mafVMEOutputPolyline,mafVMEOutputVTK);
 
@@ -54,7 +54,7 @@ public:
   void SetMaterial(mmaMaterial *material);
 
   /** Update all the output data structures (data, bounds, matrix and abs matrix).*/
-  virtual void Update();
+  void Update() override;
 
 	/** Calculate Length of polyline*/
 	double CalculateLength();
@@ -68,7 +68,7 @@ public:
 protected:
   mmaMaterial *m_Material; ///< material object used to store shading propertied to render the polyline
 
-  mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
   mafString m_Length;
   mafString m_NumberOfPoints;

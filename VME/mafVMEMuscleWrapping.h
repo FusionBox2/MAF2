@@ -209,10 +209,10 @@ public:
 
 
   /** Copy the contents of another mafVMESurfaceParametric into this one. */
-  virtual int DeepCopy(mafNode *a);
+	int DeepCopy(mafNode *a) override;
 
   /** Compare with another mafVMESurfaceParametric. */
-  virtual bool Equals(mafVME *vme);
+	bool Equals(mafVME *vme) override;
 
  
   /** return the right type of output */  
@@ -222,19 +222,19 @@ public:
 
   /** return always false since (currently) the slicer is not an animated VME (position 
   is the same for all timestamps). */
-  virtual bool IsAnimated();
+	bool IsAnimated() override;
 
   /** Return the suggested pipe-typename for the visualization of this vme */
 
-  virtual mafString GetVisualPipe() { return mafString(_R("mafPipePolyline")); };
+	mafString GetVisualPipe() override { return mafString(_R("mafPipePolyline")); };
   /** Return pointer to material attribute. */
   mmaMaterial *GetMaterial();
 
   /** return an xpm-icon that can be used to represent this node */
  // static char ** GetIcon();
 	
-  /** Precess events coming from other objects */ 
-  virtual void OnEvent(mafEventBase *maf_event);
+  /** Precess events coming from other objects */
+	void OnEvent(mafEventBase *maf_event) override;
 
   void SetEllipsoidLink(const mafString& link_name, mafNode *n);
   double GetDistance();
@@ -247,15 +247,15 @@ public:
   . When setting, if the time does not exist
   the MatrixVector creates a new KeyMatrix on the fly. When getting, the matrix vector
   interpolates on the fly according to the matrix interpolator.*/
-  virtual void SetMatrix(const mafMatrix &mat);
-  virtual void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes);
+	void SetMatrix(const mafMatrix &mat) override;
+	void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes) override;
   /*
   Fit an ellipsoid to a set of points
   */
   //void fitEllipsoid(vtkNew<vtkPoints> points, double* xres, double* yres, double* zres, double*r1, double* r2, double* r3, Matrix3d* rotationMatrix);
 
   mafVMEMuscleWrapping();
-	virtual ~mafVMEMuscleWrapping();
+	~mafVMEMuscleWrapping() override;
 protected:
 
 
@@ -288,13 +288,13 @@ protected:
   void InternalRestore(const mafStorageElement& node) override;
 
 	/** called to prepare the update of the output */
-	virtual void InternalPreUpdate();
+	void InternalPreUpdate() override;
 
 	/** update the output data structure */
- void InternalUpdate();
+ void InternalUpdate() override;
  void UpdateLinks();
   /** Internally used to create a new instance of the GUI.*/
-  virtual mafGUI *CreateGui();
+	mafGUI *CreateGui() override;
 
 
 

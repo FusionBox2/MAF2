@@ -34,9 +34,9 @@ class mafGUIDialogFindVme : public mafGUIDialog
 {
 public:
 	mafGUIDialogFindVme(const mafString& title, long style = mafCLOSEWINDOW);
-	virtual ~mafGUIDialogFindVme();
+	~mafGUIDialogFindVme() override;
 
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Set the tree on which find the VME.*/
   void SetTree(mafGUICheckTree *tree);

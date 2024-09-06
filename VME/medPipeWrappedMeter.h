@@ -48,14 +48,14 @@ public:
   /** constructor */
                medPipeWrappedMeter();
   /** destructor */
-  virtual     ~medPipeWrappedMeter ();
+  ~medPipeWrappedMeter () override;
 
   /** process events coming from gui */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
   /** create the pipe */
-  virtual void Create(mafNode *node, mafView *view /*,bool use_axes = true*/ ); //Can't add parameters - is Virtual
+  void Create(mafNode *node, mafView *view /*,bool use_axes = true*/ ) override; //Can't add parameters - is Virtual
   /** called when the associated vme has been selected */
-  virtual void Select(bool select); 
+  void Select(bool select) override; 
 
   /** IDs for the GUI */
   enum PIPE_METER_WIDGET_ID
@@ -88,8 +88,8 @@ protected:
   mafGUIMaterialButton *m_MaterialButton;
 
   /** Update visual properties*/
-  void UpdateProperty(bool fromTag = false);
+  void UpdateProperty(bool fromTag = false) override;
   /** create the gui widget associated to the pipe */
-  virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 };
 #endif // __medPipeWrappedMeter_H__

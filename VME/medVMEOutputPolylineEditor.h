@@ -31,7 +31,7 @@ class MED_VME_EXPORT medVMEOutputPolylineEditor : public mafVMEOutputVTK
 {
 public:
 	medVMEOutputPolylineEditor();
-	virtual ~medVMEOutputPolylineEditor();
+	~medVMEOutputPolylineEditor() override;
 
 	mafTypeMacro(medVMEOutputPolylineEditor,mafVMEOutputVTK);
 
@@ -46,10 +46,10 @@ public:
 	virtual vtkPolyData *GetPolylineData();
 
 	/** Update all the output data structures (data, bounds, matrix and abs matrix).*/
-	virtual void Update();
+	void Update() override;
 
 protected:
-	mafGUI *CreateGui();
+	mafGUI *CreateGui() override;
 
 private:
 	medVMEOutputPolylineEditor(const medVMEOutputPolylineEditor&); // Not implemented

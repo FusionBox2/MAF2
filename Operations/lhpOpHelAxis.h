@@ -31,15 +31,15 @@ class lhpOpHelAxis: public mafOp
 {
 public:
   lhpOpHelAxis(const mafString& label = _R("HelAxis"));
- ~lhpOpHelAxis(); 
+ ~lhpOpHelAxis() override; 
 
   mafTypeMacro(lhpOpHelAxis, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
-  bool Accept(mafNode* vme);
-  void OpRun();
-  void OpDo();
+  bool Accept(mafNode* vme) override;
+  void OpRun() override;
+  void OpDo() override;
 
 protected: 
   mafVMEHelAxis   *m_HelicalSys;

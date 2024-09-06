@@ -55,7 +55,7 @@ public:
                   const wxSize& size = wxDefaultSize, 
                   long style = wxTAB_TRAVERSAL | wxCLIP_CHILDREN);
 
-  virtual ~mafGUICheckListBox();
+  ~mafGUICheckListBox() override;
 
   /** Clear the checked listbox. */
   void Clear();

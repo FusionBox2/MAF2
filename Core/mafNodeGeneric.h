@@ -42,7 +42,7 @@ public:
   static char ** GetIcon();   //SIL. 11-4-2005:  
 protected:
   mafNodeGeneric() {}
-  virtual ~mafNodeGeneric() {}
+  ~mafNodeGeneric() override {}
 
 private:
   mafNodeGeneric(const mafNodeGeneric&); // Not implemented

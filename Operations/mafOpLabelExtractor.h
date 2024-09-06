@@ -48,16 +48,16 @@ class MAF_EXPORT mafOpLabelExtractor: public mafOp
 {
 public:
   mafOpLabelExtractor(const mafString& label = _R("LabelExtractor"));
- ~mafOpLabelExtractor(); 
+ ~mafOpLabelExtractor() override; 
 
   mafTypeMacro(mafOpLabelExtractor, mafOp);
 
 
-	virtual void OnEvent(mafEventBase *maf_event);
-  mafOp* Copy();
+  void OnEvent(mafEventBase *maf_event) override;
+  mafOp* Copy() override;
 
-  bool Accept(mafNode *vme);
-  void OpRun();
+  bool Accept(mafNode *vme) override;
+  void OpRun() override;
 
   /** Fill the vector of label. */
   void FillLabelVector(wxString name, bool checked = TRUE);

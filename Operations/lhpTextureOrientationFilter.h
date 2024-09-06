@@ -41,7 +41,7 @@ class lhpTextureOrientationFilter : public vtkPolyDataAlgorithm
 public:
   static lhpTextureOrientationFilter *New();
   vtkTypeMacro(lhpTextureOrientationFilter, vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // print results
   void PrintResults(ostream& os);
@@ -87,7 +87,7 @@ protected:
 
   // constructor and destructor
   lhpTextureOrientationFilter();
-  ~lhpTextureOrientationFilter();
+  ~lhpTextureOrientationFilter() override;
 
   // refresh the filter
   void Initialize() ;

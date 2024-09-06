@@ -37,11 +37,11 @@ public:
   mafTypeMacro(mafAvatar3DCone,mafAvatar3D);
  
   /** pick in the scene with this avatar, give the avatar pose */
-  virtual int Pick(mafMatrix &tracker_pose);
+  int Pick(mafMatrix &tracker_pose) override;
 
 protected:
   mafAvatar3DCone();
-  virtual ~mafAvatar3DCone();
+  ~mafAvatar3DCone() override;
 
   vtkConeSource     *m_ConeCursor; 
   vtkAxes           *m_CursorAxes; 

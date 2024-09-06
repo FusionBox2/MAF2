@@ -39,22 +39,22 @@ class MAF_EXPORT mafOpExporterRAW: public mafOp
 public:
   mafTypeMacro(mafOpExporterRAW, mafOp)
   mafOpExporterRAW(const mafString& label = _R(""));
- ~mafOpExporterRAW(); 
-  mafOp* Copy();
+ ~mafOpExporterRAW() override; 
+  mafOp* Copy() override;
 
-  void   OnEvent(mafEventBase *maf_event);
+  void   OnEvent(mafEventBase *maf_event) override;
 
 	/** Return true for the acceptable vme type. */
-  bool Accept(mafNode *node);
+  bool Accept(mafNode *node) override;
 
 	/** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
 	/** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
 
 	/** Makes the undo for the operation. */
-  void OpUndo();
+  void OpUndo() override;
 	
 	/** Export the volume as a stack of images. */
   void SaveVolume();
@@ -69,7 +69,7 @@ public:
 	void SetSingleFile(int enable);
 
 protected:
-  void OpStop(int result);
+  void OpStop(int result) override;
 
   mafString		m_ProposedDirectory;///<Default directory where to save file .raw
   mafString		m_FileName;///<Name of the file/files where the exporter will save raw data

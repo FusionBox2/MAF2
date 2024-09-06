@@ -34,15 +34,15 @@ class MAF_EXPORT mafOpCreateMeter2: public mafOp
 {
 public:
   mafOpCreateMeter2(const mafString& label = _R("CreateMeter"));
-  ~mafOpCreateMeter2(); 
+  ~mafOpCreateMeter2() override; 
 
   mafTypeMacro(mafOpCreateMeter2, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
-  bool Accept(mafNode *node);
-  void OpRun();
-  void OpDo();
+  bool Accept(mafNode *node) override;
+  void OpRun() override;
+  void OpDo() override;
 
 protected: 
   mafVMEMeter *m_Meter;

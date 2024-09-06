@@ -60,23 +60,23 @@ public:
   /** Callback used to add time varying scalar VME to color surface.*/
   static bool VmeScalarAccept(mafNode *node) {return(node != NULL && node->IsMAFType(medVMEAnalog));};
 
-  /** Precess events coming from other objects */ 
-  virtual void OnEvent(mafEventBase *maf_event);
+  /** Precess events coming from other objects */
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Update the scalar values on the polydata.*/
-  void SetTimeStamp(mafTimeStamp t);
+  void SetTimeStamp(mafTimeStamp t) override;
 
   /** Return the suggested pipe-typename for the visualization of this vme */
-  virtual mafString GetVisualPipe() {return mafString(_R("lhpVisualPipeSurfaceScalar"));};
+  mafString GetVisualPipe() override {return mafString(_R("lhpVisualPipeSurfaceScalar"));};
 
   /** Return pointer to material attribute. */
   mmaMaterial *GetMaterial();
 
   /** Copy the contents of another lhpVMESurfaceScalarVarying into this one. */
-  virtual int DeepCopy(mafNode *a);
+  int DeepCopy(mafNode *a) override;
 
   /** Compare with another lhpVMESurfaceScalarVarying. */
-  virtual bool Equals(mafVME *vme);
+  bool Equals(mafVME *vme) override;
 
   /** Get the link to the scalar signals.*/
   mafNode *GetScalarLink();
@@ -91,13 +91,13 @@ public:
   void SetSurfaceLink(mafNode *surface);
 
   /** Set the pose matrix for the Prober. */
-  void SetMatrix(const mafMatrix &mat);
+  void SetMatrix(const mafMatrix &mat) override;
 
   /** Clear the parameter 'kframes' because lhpVMESurfaceScalarVarying has no timestamp. */
-  void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes);
+  void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes) override;
 
   /** Return true if the data associated with the VME is present and updated at the current time.*/
-  virtual bool IsDataAvailable();
+  bool IsDataAvailable() override;
 
   /** return icon */
   static char** GetIcon();
@@ -115,26 +115,26 @@ public:
   void SetScalarIDs(int analog_scalar_index, vtkIdList *surface_scalar_idx);
 
   /** print a dump of this object */
-  virtual void Print(std::ostream& os, const int tabs=0);
+  void Print(std::ostream& os, const int tabs=0) override;
 
 protected:
   lhpVMESurfaceScalarVarying();
-  virtual ~lhpVMESurfaceScalarVarying(); 
+  ~lhpVMESurfaceScalarVarying() override; 
 
   /** Internally used to create a new instance of the GUI.*/
-  virtual mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
   /** used to initialize and create the material attribute if not yet present */
-  virtual int InternalInitialize();
+  int InternalInitialize() override;
 
   void InternalStore(mafStorageElementBuilder& parent) override;
   void InternalRestore(const mafStorageElement& node) override;
 
   /** called to prepare the update of the output */
-  virtual void InternalPreUpdate();
+  void InternalPreUpdate() override;
 
   /** update the output data structure */
-  virtual void InternalUpdate();
+  void InternalUpdate() override;
 
   /** Used to fill the listbox with the name of the scalars*/
   void FillScalarsName(bool new_scalars = true);

@@ -40,11 +40,11 @@ public:
   /** return the right type of output */  
   mafVMEOutputVolume *GetVolumeOutput() {return (mafVMEOutputVolume *)GetOutput();}
 
-  /** return the right type of output */  
-  virtual mafVMEOutput *GetOutput();
+  /** return the right type of output */
+  mafVMEOutput *GetOutput() override;
 
   /** private to avoid calling by external classes */
-  virtual int SetData(vtkDataSet *data, mafTimeStamp t, int mode=MAF_VME_COPY_DATA);
+  int SetData(vtkDataSet *data, mafTimeStamp t, int mode=MAF_VME_COPY_DATA) override;
 
   /** return icon */
   static char** GetIcon();
@@ -53,14 +53,14 @@ public:
   mmaVolumeMaterial *GetMaterial();
 
   /** Return the suggested pipe-typename for the visualization of this vme */
-  virtual mafString GetVisualPipe() {return mafString(_R("mafPipeBox"));}
+  mafString GetVisualPipe() override {return mafString(_R("mafPipeBox"));}
 
 protected:
   mafVMEVolume();
-  virtual ~mafVMEVolume();
+  ~mafVMEVolume() override;
 
   /** used to initialize and create the material attribute if not yet present */
-  virtual int InternalInitialize();
+  int InternalInitialize() override;
 
 private:
   mafVMEVolume(const mafVMEVolume&); // Not implemented

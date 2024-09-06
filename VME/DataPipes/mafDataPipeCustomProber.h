@@ -47,7 +47,7 @@ public:
   };
 
   /** Make a copy of itself.*/
-  int DeepCopy(mafDataPipe *pipe);
+  int DeepCopy(mafDataPipe *pipe) override;
 
   /** Set the surface to probe volume data*/
   void SetSurface(mafNode *surface);
@@ -111,13 +111,13 @@ public:
 
 protected:
   mafDataPipeCustomProber();
-  virtual ~mafDataPipeCustomProber();
+  ~mafDataPipeCustomProber() override;
 
   /** function called before of data pipe execution */
-  virtual void PreExecute();
+  void PreExecute() override;
 
   /** function called to updated the data pipe output */
-  virtual void Execute();
+  void Execute() override;
 
   mafNode *m_Surface;
   mafNode *m_Volume;

@@ -51,7 +51,7 @@ public:
   virtual int StartInteraction(mafDeviceButtonsPadMouse *mouse);
 
   /**  Process events coming from tracker */
-  virtual void OnEvent(mafEventBase *event);
+  void OnEvent(mafEventBase *event) override;
 
   virtual void OnMouseMove();
   virtual void OnLeftButtonDown(mafEventInteraction *e);
@@ -100,11 +100,11 @@ public:
 
 protected:
   mafInteractorCameraMove();
-  virtual ~mafInteractorCameraMove();
+  ~mafInteractorCameraMove() override;
 
-  virtual void OnButtonDown(mafEventInteraction *e);
-  
-  virtual void OnButtonUp(mafEventInteraction *e);
+  void OnButtonDown(mafEventInteraction *e) override;
+
+  void OnButtonUp(mafEventInteraction *e) override;
 
   /** Test if m_CurrentCamera is present into the linked vector cameras.*/
   bool CameraIsPresent();

@@ -150,19 +150,19 @@ public:
 
 protected:
 	mafInteractor2DDistance();
-	virtual ~mafInteractor2DDistance();
+	~mafInteractor2DDistance() override;
 
   /**  Process events coming from tracker */
-  virtual void OnEvent(mafEventBase *event);
+	void OnEvent(mafEventBase *event) override;
 
-	virtual void OnLeftButtonDown   (mafEventInteraction *e);
-	virtual void OnLeftButtonUp     (mafEventInteraction *e);
-	virtual void OnMiddleButtonDown (mafEventInteraction *e);
-	virtual void OnMiddleButtonUp   (mafEventInteraction *e);
+	void OnLeftButtonDown   (mafEventInteraction *e) override;
+	void OnLeftButtonUp     (mafEventInteraction *e) override;
+	void OnMiddleButtonDown (mafEventInteraction *e) override;
+	void OnMiddleButtonUp   (mafEventInteraction *e) override;
 	virtual void OnButtonDown2D     (mafEventInteraction *e);
-	virtual void OnMove             (mafEventInteraction *e);
-	virtual void OnButtonUp         (mafEventInteraction *e); 
-	virtual void OnChar             (mafEventInteraction *e) {};
+	void OnMove             (mafEventInteraction *e) override;
+	void OnButtonUp         (mafEventInteraction *e) override;
+	void OnChar             (mafEventInteraction *e) override {};
 
 	/** 
 	Draw the measure tool according to the measure type selected.*/

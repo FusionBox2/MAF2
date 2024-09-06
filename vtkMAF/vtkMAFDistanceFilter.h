@@ -111,10 +111,10 @@ class VTK_vtkMAF_EXPORT vtkMAFDistanceFilter : public vtkDataSetAlgorithm
     /** constructor */
     vtkMAFDistanceFilter();
     /** destructor */
-    ~vtkMAFDistanceFilter();
+    ~vtkMAFDistanceFilter() override;
 
     /** get modified time*/
-    vtkMTimeType GetMTime();
+    vtkMTimeType GetMTime() override;
 
     int FillInputPortInformation(int port, vtkInformation* info) override;
 

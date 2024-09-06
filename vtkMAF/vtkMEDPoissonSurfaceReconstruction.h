@@ -53,7 +53,7 @@ public:
   /** RTTI macro */
   vtkTypeMacro(vtkMEDPoissonSurfaceReconstruction,vtkDataSetAlgorithm);
   /** print object information */
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // This error function allows our ported code to report error messages neatly.
@@ -64,16 +64,16 @@ protected:
   /** constructor */
   vtkMEDPoissonSurfaceReconstruction();
   /** destructor */
-  ~vtkMEDPoissonSurfaceReconstruction();
+  ~vtkMEDPoissonSurfaceReconstruction() override;
 
   // Description:
   // the main function that does the work
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   /** computation of extents and update values*/
-  int RequestUpdateExtent(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestUpdateExtent(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
   /** only check if input is not null */
-  int RequestInformation (vtkInformation *, vtkInformationVector **, vtkInformationVector *); 
+  int RequestInformation (vtkInformation *, vtkInformationVector **, vtkInformationVector *) override; 
   
 private:
   /** copy constructor not implemented */
@@ -821,22 +821,22 @@ public:
 	CoredVectorMeshData(void);
 
   /** reset point and triangle index. */
-	void ResetIterator(void);
+	void ResetIterator(void) override;
 
   /** Add a 3d point which is out of core*/
-	int AddOutOfCorePoint(const Point3D<float>& p);
+	int AddOutOfCorePoint(const Point3D<float>& p) override;
   /** add a triangle*/
-	int AddTriangle(const TriangleIndex& t,const int& inCoreFlag=(CoredMeshData::IN_CORE_FLAG[0] | CoredMeshData::IN_CORE_FLAG[1] | CoredMeshData::IN_CORE_FLAG[2]));
+	int AddTriangle(const TriangleIndex& t,const int& inCoreFlag=(CoredMeshData::IN_CORE_FLAG[0] | CoredMeshData::IN_CORE_FLAG[1] | CoredMeshData::IN_CORE_FLAG[2])) override;
 
   /** retrieve next point, return 0 if current is the last point. */
-	int NextOutOfCorePoint(Point3D<float>& p);
+	int NextOutOfCorePoint(Point3D<float>& p) override;
   /** retrieve next triangle, return 0 if current is the last triangle. */
-	int NextTriangle(TriangleIndex& t,int& inCoreFlag);
+	int NextTriangle(TriangleIndex& t,int& inCoreFlag) override;
 
   /** return size of oocPoints vector. */
-	int OutOfCorePointCount(void);
+	int OutOfCorePointCount(void) override;
   /** return size of triangles vector. */
-	int TriangleCount(void);
+	int TriangleCount(void) override;
 };
 /**
 class name: CoredVectorMeshData
@@ -852,22 +852,22 @@ public:
 	~CoredFileMeshData(void);
 
   /** reset iterator */
-	void ResetIterator(void);
+	void ResetIterator(void) override;
 
   /** Add a 3d point which is out of core*/
-	int AddOutOfCorePoint(const Point3D<float>& p);
+	int AddOutOfCorePoint(const Point3D<float>& p) override;
   /** add a triangle*/
-	int AddTriangle(const TriangleIndex& t,const int& inCoreFlag=(CoredMeshData::IN_CORE_FLAG[0] | CoredMeshData::IN_CORE_FLAG[1] | CoredMeshData::IN_CORE_FLAG[2]));
+	int AddTriangle(const TriangleIndex& t,const int& inCoreFlag=(CoredMeshData::IN_CORE_FLAG[0] | CoredMeshData::IN_CORE_FLAG[1] | CoredMeshData::IN_CORE_FLAG[2])) override;
 
   /** retrieve next point, return 0 if current is the last point. */
-	int NextOutOfCorePoint(Point3D<float>& p);
+	int NextOutOfCorePoint(Point3D<float>& p) override;
   /** retrieve next triangle, return 0 if current is the last triangle. */
-	int NextTriangle(TriangleIndex& t,int& inCoreFlag);
+	int NextTriangle(TriangleIndex& t,int& inCoreFlag) override;
 
   /** return size of oocPoints vector. */
-	int OutOfCorePointCount(void);
+	int OutOfCorePointCount(void) override;
   /** return size of triangles vector. */
-	int TriangleCount(void);
+	int TriangleCount(void) override;
 };
 
 

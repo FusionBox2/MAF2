@@ -58,11 +58,11 @@ class VTK_vtkMAF_EXPORT vtkMAFMeshCutter : public vtkPolyDataAlgorithm
 public:
   vtkTypeMacro(vtkMAFMeshCutter, vtkPolyDataAlgorithm);
   static vtkMAFMeshCutter *New() ;
-  void PrintSelf(ostream& os, vtkIndent indent);                                ///< print self
+  void PrintSelf(ostream& os, vtkIndent indent) override;                                ///< print self
 
    /** Overload standard modified time function. If cut function is modified,
   then this object is modified as well. */
-  vtkMTimeType GetMTime();
+  vtkMTimeType GetMTime() override;
 
   void SetCutFunction(vtkPlane *P) ;                                            ///< Set the cutting plane (but does not register the object)
   vtkPlane* GetCutFunction() ;                                                  ///< Get the cutting plane
@@ -97,9 +97,9 @@ public:
 
 protected:
   vtkMAFMeshCutter() ;                                                              ///< constructor
-  ~vtkMAFMeshCutter() ;                                                             ///< destructor
+  ~vtkMAFMeshCutter() override;                                                             ///< destructor
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);                                                               ///< execute method
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;                                                               ///< execute method
 
 
   // edge described by id's of endpoints

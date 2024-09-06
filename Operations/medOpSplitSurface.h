@@ -55,17 +55,17 @@ class MED_OPERATION_EXPORT medOpSplitSurface: public mafOp
 {
 public:
   medOpSplitSurface(const mafString& label = _R("ClipSurface"));
-  ~medOpSplitSurface(); 
-	virtual void OnEvent(mafEventBase *maf_event);
+  ~medOpSplitSurface() override;
+  void OnEvent(mafEventBase *maf_event) override;
 
   mafTypeMacro(medOpSplitSurface, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
-  bool Accept(mafNode *node);   
-  void OpRun();
-  void OpDo();
-  void OpUndo();
+  bool Accept(mafNode *node) override;   
+  void OpRun() override;
+  void OpDo() override;
+  void OpUndo() override;
 
   enum CLIP_SURFACE_MODALITY
   {
@@ -99,8 +99,8 @@ public:
 	vtkPolyData *GetResultPolyData(){return m_ResultPolyData;};
 	vtkPolyData *GetClippedPolyData(){return m_ClippedPolyData;};
 
-protected: 
-	virtual void OpStop(int result);
+protected:
+  void OpStop(int result) override;
 	
   /** Show/hide the gizmo representing the clipping implicit plane. */
   void ShowClipPlane(bool show);

@@ -35,7 +35,7 @@ public:
   mafTypeMacro(mafVMEAFRefSys,mafVMERefSysAbstract);
 
   /** print a dump of this object */
-  virtual void Print(std::ostream& os, const int tabs=0);
+  void Print(std::ostream& os, const int tabs=0) override;
 
   enum AFREFSYS_WIDGET_ID
   {
@@ -66,11 +66,11 @@ public:
     ID_AFS_LAST
   };
 
-  /** Precess events coming from other objects */ 
-  virtual void OnEvent(mafEventBase *maf_event);
+  /** Precess events coming from other objects */
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Copy the contents of another VME-RefSys into this one. */
-  virtual int DeepCopy(mafNode *a);
+  int DeepCopy(mafNode *a) override;
 
   /** 
   Set Vector virtual machine*/
@@ -110,10 +110,10 @@ public:
   bool GetScalar(const char *name, mafTimeStamp ts,     double&  output);
   /** 
   Calculate global matrix for given timestamp*/
-  virtual void CalculateMatrix(mafMatrix& mat, mafTimeStamp ts = -1);
+  void CalculateMatrix(mafMatrix& mat, mafTimeStamp ts = -1) override;
 
 protected:
-  virtual int SetParent(mafNode *parent);
+  int SetParent(mafNode *parent) override;
 
   /** 
   Update vector virtual machine with given timestamp*/
@@ -124,7 +124,7 @@ protected:
   bool ConvertTextToVM(bool buildMapping);
 
   mafVMEAFRefSys();
-  virtual ~mafVMEAFRefSys();
+  ~mafVMEAFRefSys() override;
 
   void InternalStore(mafStorageElementBuilder& parent) override;
   void InternalRestore(const mafStorageElement& node) override;
@@ -133,7 +133,7 @@ protected:
   void     GetTransf(double &x, double &y, double &z, double &xr, double &yr, double &zr);
 
   /** Internally used to create a new instance of the GUI.*/
-  virtual mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
   double                                              m_XOffset, m_YOffset, m_ZOffset;
   double                                              m_XRotate, m_YRotate, m_ZRotate;

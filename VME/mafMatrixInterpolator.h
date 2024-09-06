@@ -41,7 +41,7 @@ public:
   mafTypeMacro(mafMatrixInterpolator,mafMatrixPipe);
 
   /** This matrix pipe accepts only VME's with internal matrix Array. */
-  virtual bool Accept(mafVME *vme);
+  bool Accept(mafVME *vme) override;
 
   /**  Get the output of the interpolator item. */
   mafMatrix *GetCurrentItem() {return m_CurrentItem;}
@@ -50,20 +50,20 @@ public:
   Set the current time. Overidden to allow the output not to change when 
   not necessary, e.g. constant pose (in time) being interpolated should not
   produce a change in the output data when time is changed.*/
-  virtual void SetTimeStamp(mafTimeStamp time);
+  void SetTimeStamp(mafTimeStamp time) override;
 
   /**
   Get the MTime: this is the bit of magic that makes everything work.*/
-  virtual unsigned long GetMTime();
+  unsigned long GetMTime() override;
 
   /** Force update of the pipe.*/
-  virtual void Update();
+  void Update() override;
 
 protected:
   /** constructor.*/
   mafMatrixInterpolator();
   /** destructor.*/
-  virtual ~mafMatrixInterpolator();
+  ~mafMatrixInterpolator() override;
 
   //virtual void PreExecute(){};
   //virtual void Execute(){};
@@ -74,7 +74,7 @@ protected:
   virtual void InternalItemUpdate();
 
   /** update the output matrix. */
-  virtual void InternalUpdate();
+  void InternalUpdate() override;
 
   /** Set the current matrix of the pipe. */
   void SetCurrentItem(mafMatrix *data);

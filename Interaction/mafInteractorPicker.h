@@ -30,7 +30,7 @@ public:
   mafTypeMacro(mafInteractorPicker,mafInteractor);
 
   /** Redefined to send picking events if continuous picking is enabled */
-  virtual void OnEvent(mafEventBase *event);
+  void OnEvent(mafEventBase *event) override;
 
   /** Enable/disable continuous picking in OnEvent. */
   void EnableContinuousPicking(bool enable) {m_ContinuousPickingFlag = enable;};
@@ -39,10 +39,10 @@ public:
 
 protected:
   mafInteractorPicker();
-  virtual ~mafInteractorPicker();
-  
-  virtual void OnButtonDown   (mafEventInteraction *e);
-  virtual void OnButtonUp     (mafEventInteraction *e);
+  ~mafInteractorPicker() override;
+
+  void OnButtonDown   (mafEventInteraction *e) override;
+  void OnButtonUp     (mafEventInteraction *e) override;
 
   bool m_ContinuousPickingFlag;
 

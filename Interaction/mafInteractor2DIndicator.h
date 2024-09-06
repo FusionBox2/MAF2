@@ -111,18 +111,18 @@ public:
 
 protected:
 	mafInteractor2DIndicator();
-	virtual ~mafInteractor2DIndicator();
+	~mafInteractor2DIndicator() override;
 
-	virtual void OnLeftButtonDown   (mafEventInteraction *e);
-	virtual void OnLeftButtonUp     (mafEventInteraction *e);
-	virtual void OnMiddleButtonDown (mafEventInteraction *e);
-	virtual void OnMiddleButtonUp   (mafEventInteraction *e);
-	virtual void OnRightButtonDown  (mafEventInteraction *e);
-	virtual void OnRightButtonUp    (mafEventInteraction *e);
-	virtual void OnButtonDown       (mafEventInteraction *e);
-	virtual void OnMove             (mafEventInteraction *e);
-	virtual void OnButtonUp         (mafEventInteraction *e); 
-	virtual void OnChar             (mafEventInteraction *e) {};
+	void OnLeftButtonDown   (mafEventInteraction *e) override;
+	void OnLeftButtonUp     (mafEventInteraction *e) override;
+	void OnMiddleButtonDown (mafEventInteraction *e) override;
+	void OnMiddleButtonUp   (mafEventInteraction *e) override;
+	void OnRightButtonDown  (mafEventInteraction *e) override;
+	void OnRightButtonUp    (mafEventInteraction *e) override;
+	void OnButtonDown       (mafEventInteraction *e) override;
+	void OnMove             (mafEventInteraction *e) override;
+	void OnButtonUp         (mafEventInteraction *e) override;
+	void OnChar             (mafEventInteraction *e) override {};
 
 	/** 
 	Draw the measure tool according to the measure type selected.*/

@@ -48,13 +48,13 @@ public:
   /** Constructor. */
   medPipeGraph();
   /** Destructor. */
-  virtual     ~medPipeGraph ();
+  ~medPipeGraph () override;
 
   /** process events that comes from  other objects*/
-  void OnEvent(mafEventBase *maf_event); 
+  void OnEvent(mafEventBase *maf_event) override; 
 
   /** visual pipe creation */
-  /*virtual*/ void Create(mafNode *node, mafView *view);
+  /*virtual*/ void Create(mafNode *node, mafView *view) override;
 
   /** Create plots of scalar data*/
   void UpdateGraph();
@@ -80,7 +80,7 @@ public:
   
 protected:
   /** creation of the gui */
-  mafGUI* CreateGui();
+  mafGUI* CreateGui() override;
 
   enum PIPE_GRAPH_GUI_WIDGETS
   {

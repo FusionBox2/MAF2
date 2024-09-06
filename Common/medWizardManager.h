@@ -50,10 +50,10 @@ public:
   medWizardManager();
 
   /** Default destructor */
-  ~medWizardManager();
+  ~medWizardManager() override;
 
   /** Event Management */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
 
 private:

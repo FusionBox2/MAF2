@@ -41,7 +41,7 @@ public:
   mafTypeMacro(lhpPipeIntGraph, lhpPipeIntGraphEuler);
 
   lhpPipeIntGraph();
-  virtual     ~lhpPipeIntGraph();
+  ~lhpPipeIntGraph() override;
 protected:
 };
 #endif // _lhpPipeIntGraph_H_

@@ -44,7 +44,7 @@ class mafQuadraticSurface : public mafVME//public mafDataElement
     public:
     
     mafQuadraticSurface();
-	virtual ~mafQuadraticSurface();
+    ~mafQuadraticSurface() override;
 	void InternalStore(mafStorageElementBuilder& parent) override;
 	void InternalRestore(const mafStorageElement& node) override;
 	static bool VMEAccept(mafNode *node) { return(node != NULL ); };
@@ -52,8 +52,8 @@ class mafQuadraticSurface : public mafVME//public mafDataElement
     
     void wrapfunF(const Vector3d &p,const Vector3d &q,const Vector3d &p0,const Vector3d &q0,VectorXd* F); //const;
     void wrapfunJ(const Vector3d &p,const Vector3d &q,const Vector3d &p0,const Vector3d &q0,MatrixXd* J); //const;
-	void SetMatrix(const mafMatrix &mat){};
-	void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes){};
+	void SetMatrix(const mafMatrix &mat) override {};
+	void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes) override {};
 
 	Vector3d center;
 	mafString name;

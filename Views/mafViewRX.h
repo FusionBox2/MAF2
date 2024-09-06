@@ -44,24 +44,24 @@ public:
   /** constructor */
   mafViewRX(const mafString& label = _R("RX"), int camera_position = CAMERA_RX_FRONT, bool show_axes = false, bool show_grid = false, bool show_ruler = false, int stereo = 0);
   /** destructor*/
-  virtual ~mafViewRX(); 
+  ~mafViewRX() override; 
 
   /** RTTI macro*/
   mafTypeMacro(mafViewRX, mafViewVTK);
 
   /** clone an instance of the object*/
-  virtual mafView*  Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
+  mafView*  Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override;
 
   /** Precess events coming from other objects */
-  virtual void			OnEvent(mafEventBase *maf_event);
+  void			OnEvent(mafEventBase *maf_event) override;
 
   /** create render window interactor, picker and scenegraph */
-  void Create();
+  void Create() override;
 
   /** 
   Set the visualization status for the node (visible, not visible, mutex, ...) 
   \sa mafSceneGraph mafView*/
-  virtual int GetNodeStatus(mafNode *vme);
+  int GetNodeStatus(mafNode *vme) override;
 
   //void VmeShow(mafNode *vme, bool show);
 
@@ -76,11 +76,11 @@ public:
   Create the visual pipe for the node passed as argument. 
   To create visual pipe first check in m_PipeMap if custom visual pipe is defined, 
   otherwise ask to vme which is its visual pipe. */
-  virtual void VmeCreatePipe(mafNode *vme);
+  void VmeCreatePipe(mafNode *vme) override;
 
   /** 
   Delete vme's visual pipe. It is called when vme is removed from visualization.*/
-  virtual void VmeDeletePipe(mafNode *vme);
+  void VmeDeletePipe(mafNode *vme) override;
 
   /** 
   Set the WindowLevel Lookup table values.*/
@@ -94,7 +94,7 @@ public:
   bool VolumeIsVisible() {return m_CurrentVolume != NULL;};
 
   /** Update camera view*/
-  void CameraUpdate();
+  void CameraUpdate() override;
 
 protected:
 
@@ -105,7 +105,7 @@ protected:
   void SetCameraParallelToDataSetLocalAxis( int axis );
 
   /** create gui widgets */
-  virtual mafGUI *CreateGui();  
+  mafGUI *CreateGui() override;  
   mafSceneNode *m_CurrentVolume; ///< Current visualized volume
   
   mafMatrix m_OldABSPose;

@@ -50,10 +50,10 @@ public:
   /** constructor */
            medPipeVolumeVR();
   /** destructor */
-  virtual ~medPipeVolumeVR();
+  ~medPipeVolumeVR() override;
 
   /** process events coming from gui */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** IDs for the GUI */
   enum PIPE_VOLUME_MIP_WIDGET_ID
@@ -64,13 +64,13 @@ public:
   };
 
   /** Create. */
-  virtual void Create(mafNode *node, mafView *view);
+  void Create(mafNode *node, mafView *view) override;
 
   /** Show. */
   void Show(bool show); 
 
   /** Select. */
-  virtual void Select(bool select);  
+  void Select(bool select) override;  
   
   /** Get color transfer function of the volume. */
 	vtkColorTransferFunction *GetColorTransferFunction() {return m_ColorTransferFunction;};
@@ -115,7 +115,7 @@ public:
 
 protected:
   /** create the gui widget for the pipe*/
-  virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 
   vtkColorTransferFunction		*m_ColorTransferFunction;
   vtkPiecewiseFunction				*m_PiecewiseFunction;

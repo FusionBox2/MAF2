@@ -42,19 +42,19 @@ public:
   /** constructor */
 	medOpImporterGRFWS(const mafString& label = _R("GRF Importer"));
   /** destructor */
-	~medOpImporterGRFWS(); 
+	~medOpImporterGRFWS() override; 
 
   /** apply the undo pattern to the operation, retrieving the previous state*/
-  void OpUndo();
+  void OpUndo() override;
 
   /** Copy the operation. */
-	mafOp* Copy();
+	mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode* node) {return true;};
+	bool Accept(mafNode* node) override {return true;};
 
 	/** Builds operation's interface. */
-	void OpRun();
+	void OpRun() override;
 
   /** Read the file.  
   the format of the file admits some specifics.

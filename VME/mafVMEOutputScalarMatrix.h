@@ -56,14 +56,14 @@ public:
   of stored Items is 0. Also special VME could not support VTK dataset output.
   An event rise when the output data changes to allow attached classes to 
   update their input.*/
-  virtual vtkAlgorithmOutput *GetVTKOutputPort();
+  vtkAlgorithmOutput *GetVTKOutputPort() override;
 
   /** Function to update VTK representation of vnl matrix representing the scalar data.*/
   void UpdateVTKRepresentation();
 #endif
 
   /** Update all the output data structures (data, bounds, matrix and abs matrix).*/
-  virtual void Update();
+  void Update() override;
 
   /** Retrieve Number Of Rows  written in a string*/
   const char *GetNumberOfRows(){return m_NumberOfRows.GetCStr();}
@@ -73,7 +73,7 @@ public:
     
 protected:
   mafVMEOutputScalarMatrix(); // to be allocated with New()
-  virtual ~mafVMEOutputScalarMatrix(); // to be deleted with Delete()
+  ~mafVMEOutputScalarMatrix() override; // to be deleted with Delete()
 
   mafString m_NumberOfRows;
   mafString m_NumberOfColumns;
@@ -83,7 +83,7 @@ protected:
   vtkTrivialProducer* m_Producer;
 #endif
 
-  mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
 private:
   mafVMEOutputScalarMatrix(const mafVMEOutputScalarMatrix&); // Not implemented

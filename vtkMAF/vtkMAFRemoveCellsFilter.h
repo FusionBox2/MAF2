@@ -48,7 +48,7 @@ public:
   static vtkMAFRemoveCellsFilter *New();
 
   vtkTypeMacro(vtkMAFRemoveCellsFilter, vtkMAFCellsFilter);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
   
   // Description:
   // Remove a cell from the input polydata.  cellid is a cell id from the input to the filter
@@ -77,7 +77,7 @@ public:
 protected:
 
   vtkMAFRemoveCellsFilter();
-  ~vtkMAFRemoveCellsFilter(){};
+  ~vtkMAFRemoveCellsFilter() override {};
 
   int ReverseRemove; //< if On remove all the cells that are  that are not marked
   

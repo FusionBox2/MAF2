@@ -37,25 +37,25 @@ class lhpOpImporterPressionCenter : public mafOp
 {
 public:
 	lhpOpImporterPressionCenter(const mafString& label = _R("PressionCenter Importer"));
-	~lhpOpImporterPressionCenter();
+	~lhpOpImporterPressionCenter() override;
 	
 	mafTypeMacro(lhpOpImporterPressionCenter, mafOp);
 
 //  virtual void OnEvent(mafEventBase *maf_event);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode *node);
+	bool Accept(mafNode *node) override;
 
   /** Builds operation's interface. */
-	void OpRun();
+	void OpRun() override;
 
   /** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
 
   /** Makes the undo for the operation. */
-  void OpUndo();
+  void OpUndo() override;
 
   /** Import the c3d*/
   bool Import();

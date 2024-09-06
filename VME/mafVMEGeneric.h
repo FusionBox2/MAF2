@@ -59,18 +59,18 @@ public:
   mafVMEOutputVTK *GetVTKOutput() {return (mafVMEOutputVTK *)GetOutput();}
 
   /** 
-    Return the output. This create the output object on demand. */  
-  virtual mafVMEOutput *GetOutput();
+    Return the output. This create the output object on demand. */
+  mafVMEOutput *GetOutput() override;
 
   /** return icon */
   static char** GetIcon();
   
   /** Return the suggested pipe-typename for the visualization of this vme */
-  virtual mafString GetVisualPipe() {return mafString(_R("mafPipeBox"));};
+  mafString GetVisualPipe() override {return mafString(_R("mafPipeBox"));};
 
 protected:
   mafVMEGeneric();
-  virtual ~mafVMEGeneric();
+  ~mafVMEGeneric() override;
 
 private:
   mafVMEGeneric(const mafVMEGeneric&); // Not implemented

@@ -99,29 +99,29 @@ class lhpOpMultiscaleExplore : public mafOp
 
 public:
   lhpOpMultiscaleExplore(const mafString& label = _R("Explore Multiscale"));
-  ~lhpOpMultiscaleExplore(); 
+  ~lhpOpMultiscaleExplore() override; 
 
   mafTypeMacro(lhpOpMultiscaleExplore, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode* vme);
+  bool Accept(mafNode* vme) override;
 
   /** Static copy of Accept(), required so that we can pass the function
   pointer to the VME_CHOOSE event */
   static bool AcceptStatic(mafNode* vme);
 
   /** Builds operation's interface by calling CreateOpDialog() method. */
-  void OpRun();
+  void OpRun() override;
 
   /** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
 
   /** Makes the undo for the operation. */
-  void OpUndo();
+  void OpUndo() override;
 
 protected:
   //----------------------------------------------------------------------------

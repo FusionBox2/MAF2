@@ -45,7 +45,7 @@ class MAF_EXPORT mafSideBar : public mafEventSender
 {
 public:
 	mafSideBar(wxWindow* parent, int id, mafBaseEventHandler *Listener, long style = DOUBLE_NOTEBOOK);
-	~mafSideBar(); 
+	~mafSideBar() override; 
 
   enum SIDEBAR_STYLE
   {

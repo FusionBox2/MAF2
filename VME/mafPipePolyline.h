@@ -60,15 +60,15 @@ public:
   /** constructor.*/
 	mafPipePolyline();
   /** destructor. */
-	virtual     ~mafPipePolyline ();
+  ~mafPipePolyline () override;
 
 	/** process events coming from gui */
-	virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** create the pipeline. */
-	virtual void Create(mafNode *node, mafView *view);
+  void Create(mafNode *node, mafView *view) override;
   /** when vme is selected, it can be catch the event in select funztion. */
-	virtual void Select(bool select); 
+  void Select(bool select) override; 
 
 	/** Set the visual representation of the polyline.
 	Acceptable values are 0 (POLYLINE), 1 (TUBE) or 2 (SPHERE GLYPHED).*/
@@ -159,7 +159,7 @@ public:
   void SetTextIdentifierBorderVisibility(int visibility){m_TextIdentifierBorderVisibility = visibility;};
 
   /** Update visual properties*/
-  void UpdateProperty(bool fromTag = false);
+  void UpdateProperty(bool fromTag = false) override;
 
 	/** IDs for the GUI */
 	enum PIPE_POLYLINE_WIDGET_ID
@@ -242,6 +242,6 @@ protected:
   void DeleteCaptionActorList();
 
 	/** create gui */
-	virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 };  
 #endif // __mafPipePolyline_H__

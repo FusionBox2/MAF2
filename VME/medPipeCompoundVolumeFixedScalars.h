@@ -34,7 +34,8 @@ public:
   }
 
   /** destructor */
-  virtual ~medPipeCompoundVolumeFixedScalars () {
+  ~medPipeCompoundVolumeFixedScalars () override
+  {
   }
 
 public:
@@ -43,13 +44,13 @@ public:
 
 protected:  
   /** Called from CreatePageGroups to create groups for scalars. */
-  /*virtual*/ bool CreateScalarPageGroups();
+  /*virtual*/ bool CreateScalarPageGroups() override;
 
   /** Called from CreatePageGroups to create groups for vectors. */
-  /*virtual*/ bool CreateVectorPageGroups();
+  /*virtual*/ bool CreateVectorPageGroups() override;
 
   /** Called from CreatePageGroups to create groups for tensors. */
-  /*virtual*/ bool CreateTensorPageGroups();  
+  /*virtual*/ bool CreateTensorPageGroups() override;  
 
   /** Gets the default scalar visual pipe */
   virtual const char* GetDefaultScalarVisualPipe() {
@@ -76,7 +77,8 @@ public:
 
 protected:  
   /** Gets the default scalar visual pipe */
-  /*virtual*/ const char* GetDefaultScalarVisualPipe() {
+  /*virtual*/ const char* GetDefaultScalarVisualPipe() override
+  {
     return "mafPipeIsosurface";  //no visual pipe available
   }
 };
@@ -90,7 +92,8 @@ public:
 
 protected:  
   /** Gets the default scalar visual pipe */
-  /*virtual*/ const char* GetDefaultScalarVisualPipe() {
+  /*virtual*/ const char* GetDefaultScalarVisualPipe() override
+  {
     return "medPipeVolumeDRR";  //no visual pipe available
   }
 };
@@ -104,7 +107,8 @@ public:
 
 protected:  
   /** Gets the default scalar visual pipe */
-  /*virtual*/ const char* GetDefaultScalarVisualPipe() {
+  /*virtual*/ const char* GetDefaultScalarVisualPipe() override
+  {
     return "medPipeVolumeMIP";  //no visual pipe available
   }
 };
@@ -118,7 +122,8 @@ public:
 
 protected:  
   /** Gets the default scalar visual pipe */
-  /*virtual*/ const char* GetDefaultScalarVisualPipe() {
+  /*virtual*/ const char* GetDefaultScalarVisualPipe() override
+  {
     return "medPipeVolumeVR";  //no visual pipe available
   }
 };

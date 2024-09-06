@@ -42,12 +42,12 @@ class MAF_EXPORT mafOpImporterRAWVolume: public mafOp
 public:
              
             	 mafOpImporterRAWVolume(const mafString& label = _R("RAWImporterVolume"));
-	virtual     ~mafOpImporterRAWVolume();
-	virtual void OnEvent(mafEventBase *maf_event);
+	             ~mafOpImporterRAWVolume() override;
+	             void OnEvent(mafEventBase *maf_event) override;
 	
   mafTypeMacro(mafOpImporterRAWVolume, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
   enum RAW_SCALAR_TYPE
   {
@@ -58,9 +58,9 @@ public:
     DOUBLE_SCALAR
   };
 
-	bool Accept(mafNode *node) {return true;};
+	bool Accept(mafNode *node) override {return true;};
 
-	void OpRun();
+	void OpRun() override;
 
   /** Set the RAW volume filename to import.*/
   void SetFileName(const char *raw_file);

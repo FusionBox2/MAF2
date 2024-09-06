@@ -44,8 +44,8 @@ class MAF_EXPORT mafInteractionFactory : public mafObjectFactory
 {
 public: 
   mafTypeMacro(mafInteractionFactory,mafObjectFactory);
-  virtual const char* GetMAFSourceVersion() const;
-  virtual const char* GetDescription() const;
+  const char* GetMAFSourceVersion() const override;
+  const char* GetDescription() const override;
 
   /* Initialize the factory creating and registering a new instance */
   static int Initialize();
@@ -93,7 +93,7 @@ public:
 
 protected:
   mafInteractionFactory();
-  ~mafInteractionFactory() { }
+  ~mafInteractionFactory() override { }
 
   static bool m_Initialized;
   //static mafInteractionFactory *m_Instance;

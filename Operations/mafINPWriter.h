@@ -26,13 +26,13 @@ class MAF_EXPORT mafINPWriter : public vtkPolyDataWriter
 public:
   static mafINPWriter *New();
   vtkTypeMacro(mafINPWriter,vtkPolyDataWriter);
-  virtual void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
   mafINPWriter();
-  ~mafINPWriter() {};
+  ~mafINPWriter() override {};
 
-  void WriteData();
+  void WriteData() override;
 
   void WriteBinaryINP(vtkPoints *pts, vtkCellArray *polys);
   void WriteAsciiINP(vtkPoints *pts, vtkCellArray *polys);

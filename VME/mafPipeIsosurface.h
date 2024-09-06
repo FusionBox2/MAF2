@@ -48,16 +48,16 @@ public:
   /** constructor */
 	mafPipeIsosurface();
   /** destructor */
-	virtual  ~mafPipeIsosurface();
+  ~mafPipeIsosurface() override;
 
 	/** process events coming from Gui */
-	virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Create the VTK rendering pipeline*/
-	virtual void Create(mafNode *node, mafView *view);
+  void Create(mafNode *node, mafView *view) override;
 
   /** Manage the actor selection by showing the corner box around the actor when the corresponding VME is selected.*/
-	virtual void Select(bool select);
+  void Select(bool select) override;
 
 	/** Set the contour value for contour mapper, return false if contour mapper is NULL, otherwise return true. */
 	bool   SetContourValue(float value);
@@ -98,7 +98,7 @@ public:
 
 protected:
   /** Create the Gui for the visual pipe that allow the user to change the pipe's parameters.*/
-	virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 
 	vtkMAFContourVolumeMapper   *m_ContourMapper; 
 	vtkVolume                *m_Volume;

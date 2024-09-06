@@ -68,33 +68,33 @@ public:
   medOpExtractGeometry(const mafString &label = _R("Extract Geometry from binary volume"));
   
   /** destructor. */
-  ~medOpExtractGeometry(); 
+  ~medOpExtractGeometry() override; 
 
   /** Precess events coming from other objects */
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** RTTI macro */
   mafTypeMacro(medOpExtractGeometry, mafOp);
 
   /** return the copy of the operation object */
-  mafOp* Copy();
+  mafOp* Copy() override;
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode *node);
+  bool Accept(mafNode *node) override;
 
   /** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
   /** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
 
   /** Makes the undo for the operation. */
-  void OpUndo();
+  void OpUndo() override;
 
 protected:
 
   /** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
-   void OpStop(int result);
+   void OpStop(int result) override;
 
   /** Compute derived surface. */
   int GenerateIsosurface();

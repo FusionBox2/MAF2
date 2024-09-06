@@ -52,7 +52,7 @@ public:
   mafVMEOutputSurface *GetSurfaceOutput() {return (mafVMEOutputSurface *)GetOutput();}
 
   /** return the right type of output */
-  virtual mafVMEOutput *GetOutput();
+  mafVMEOutput *GetOutput() override;
 
   /** return icon */
   static char** GetIcon();
@@ -61,20 +61,20 @@ public:
   mmaMaterial *GetMaterial();
 
   /** Return the suggested pipe-typename for the visualization of this vme */
-  virtual mafString GetVisualPipe() {return mafString(_R("mafPipeSurface"));}
+  mafString GetVisualPipe() override {return mafString(_R("mafPipeSurface"));}
 
 protected:
   mafVMESurface();
-  virtual ~mafVMESurface();
+  ~mafVMESurface() override;
 
   /** used to initialize and create the material attribute if not yet present */
-  virtual int InternalInitialize();
+  int InternalInitialize() override;
 
 private:
   mafVMESurface(const mafVMESurface&); // Not implemented
   void operator=(const mafVMESurface&); // Not implemented
   
   /** private to avoid calling by external classes */
-  virtual int SetData(vtkDataSet *data, mafTimeStamp t, int mode=MAF_VME_COPY_DATA);
+  int SetData(vtkDataSet *data, mafTimeStamp t, int mode=MAF_VME_COPY_DATA) override;
 };
 #endif

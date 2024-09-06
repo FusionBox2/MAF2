@@ -36,14 +36,14 @@ public:
  /** constructor */
  mafGUIDockSettings(wxAuiManager& mgr, const mafString &label = _L("User Interface Preferences"));
  /** destructor */
- virtual ~mafGUIDockSettings();
+ ~mafGUIDockSettings() override;
 
   /** Answer to the messages coming from interface. */
- void OnEvent(mafEventBase *evt);
+ void OnEvent(mafEventBase *evt) override;
 
 protected:
   /** Create the GUI for the setting panel.*/
-  void CreateGui();
+  void CreateGui() override;
 
   wxAuiManager& m_Mgr;
 

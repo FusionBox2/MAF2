@@ -14,7 +14,7 @@ class lhpHistogramEqualizationFilter : public vtkImageAlgorithm
 public:
   static lhpHistogramEqualizationFilter *New();
   vtkTypeMacro(lhpHistogramEqualizationFilter,vtkImageAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // set/get which scalar component to use (0, 1 or 2)
   void SetTargetComponent(int) ;
@@ -32,7 +32,7 @@ protected:
 
 
   lhpHistogramEqualizationFilter();
-  ~lhpHistogramEqualizationFilter();
+  ~lhpHistogramEqualizationFilter() override;
 
   // This gives the subclass a chance to configure the output
   // see VTK user's guide p 246

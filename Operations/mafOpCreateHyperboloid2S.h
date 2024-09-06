@@ -34,15 +34,15 @@ class MAF_EXPORT mafOpCreateHyperboloid2S : public mafOp
 {
 public:
 	mafOpCreateHyperboloid2S(const mafString& label = _R("Create Hyperboloid"));
-	~mafOpCreateHyperboloid2S();
+	~mafOpCreateHyperboloid2S() override;
 
 	mafTypeMacro(mafOpCreateHyperboloid2S, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
-  bool Accept(mafNode *node);
-  void OpRun();
-  void OpDo();
+  bool Accept(mafNode *node) override;
+  void OpRun() override;
+  void OpDo() override;
 
 protected: 
 	mafVMEHyperboloid2S *m_Hyperboloid;

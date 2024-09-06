@@ -39,15 +39,15 @@ class lhpOpKinectAFs: public mafOp
 public:
   mafTypeMacro(lhpOpKinectAFs, mafOp)
   lhpOpKinectAFs(const mafString& label = _R("KinectAFSys"));
- ~lhpOpKinectAFs(); 
+ ~lhpOpKinectAFs() override;
 
-  virtual void OnEvent(mafEventBase *maf_event);
-  mafOp* Copy();
+  void OnEvent(mafEventBase *maf_event) override;
+  mafOp* Copy() override;
 
-  bool Accept(mafNode* vme);
-  void OpRun();
-  void OpDo();
-  void OpUndo();
+  bool Accept(mafNode* vme) override;
+  void OpRun() override;
+  void OpDo() override;
+  void OpUndo() override;
   void CreateGui();
   void SetTypeOfRefs(int i);
 

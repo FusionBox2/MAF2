@@ -34,15 +34,15 @@ class MAF_EXPORT mafOpCreateEllipsoid: public mafOp
 {
 public:
   mafOpCreateEllipsoid(const mafString& label = _R("Create Ellipsoid"));
-  ~mafOpCreateEllipsoid(); 
+  ~mafOpCreateEllipsoid() override; 
 
   mafTypeMacro(mafOpCreateEllipsoid, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
-  bool Accept(mafNode *node);
-  void OpRun();
-  void OpDo();
+  bool Accept(mafNode *node) override;
+  void OpRun() override;
+  void OpDo() override;
 
 protected: 
   mafVMEEllipsoid *m_Ellipsoid;

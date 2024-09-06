@@ -37,19 +37,19 @@ class MED_OPERATION_EXPORT medOpFreezeVME: public mafOp
 {
 public:
 	medOpFreezeVME(const mafString& label = _R("Freeze VME"));
-	~medOpFreezeVME(); 
+	~medOpFreezeVME() override; 
 	
   mafTypeMacro(medOpFreezeVME, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode *node);
+	bool Accept(mafNode *node) override;
 
 	
   /** Builds operation's interface. */
-	void OpRun();
-	void OpDo();
+	void OpRun() override;
+	void OpDo() override;
 
 protected:
 

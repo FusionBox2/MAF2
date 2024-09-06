@@ -41,7 +41,7 @@ public:
   mafTypeMacro(lhpPipeIntGraphLocal, lhpPipeIntGraphGlobal);
 
   lhpPipeIntGraphLocal();
-  virtual     ~lhpPipeIntGraphLocal();
+  ~lhpPipeIntGraphLocal() override;
 
   /** IDs for the GUI */
   enum PIPE_INT_GRAPH_OVPGES
@@ -51,7 +51,7 @@ public:
     ID_LAST
   };
 
-  virtual void Create(mafNode *node, mafView *view);
+  void Create(mafNode *node, mafView *view) override;
 
   enum GRAPH_IDS
   {
@@ -68,22 +68,22 @@ public:
   GDT_LAST*/
   };
 
-  virtual const mafString& GetVarTitle(int i) const;
-  virtual const mafString& GetVarUnit(int i) const;
-  virtual double       GetVarDerivativeCoef(int i) const;
-  virtual std::istream& operator>>(std::istream& is);
-  virtual std::ostream& operator<<(std::ostream& os) const;
+  const mafString& GetVarTitle(int i) const override;
+  const mafString& GetVarUnit(int i) const override;
+  double       GetVarDerivativeCoef(int i) const override;
+  std::istream& operator>>(std::istream& is) override;
+  std::ostream& operator<<(std::ostream& os) const override;
 
   /** Answer events coming from the Gui and from cloud */
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   mafVME *GetProximal()const{ return m_Proximal; }
   void SetProximal(mafVME *proximal);
 
 protected:
   /** Create the Gui for the visual pipe that allow the user to change the pipe's parameters.*/
-  virtual mafGUI *CreateGui();
-  virtual bool StoreValueByIdx(int nVarID, mafTimeStamp ts, mafTimeStamp prevts);
+  mafGUI *CreateGui() override;
+  bool StoreValueByIdx(int nVarID, mafTimeStamp ts, mafTimeStamp prevts) override;
   mafVME *m_Proximal;
   mafString m_ProximalName;
 };

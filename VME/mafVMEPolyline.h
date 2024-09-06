@@ -52,31 +52,31 @@ public:
     /** return the right type of output */  
     mafVMEOutputPolyline *GetPolylineOutput() {return (mafVMEOutputPolyline *)GetOutput();}
 
-    /** return the right type of output */  
-    virtual mafVMEOutput *GetOutput();
+    /** return the right type of output */
+  mafVMEOutput *GetOutput() override;
 
     /** Return pointer to material attribute. */
     mmaMaterial *GetMaterial();
 
     /** Return the suggested pipe-typename for the visualization of this vme */
-    virtual mafString GetVisualPipe() {return mafString(_R("mafPipePolyline"));};
+  mafString GetVisualPipe() override {return mafString(_R("mafPipePolyline"));};
 
 		/** return an xpm-icon that can be used to represent this node */
 		static char ** GetIcon();
 
 protected:
   mafVMEPolyline();
-  virtual ~mafVMEPolyline();
+  ~mafVMEPolyline() override;
 
   /** used to initialize and create the material attribute if not yet present */
-  virtual int InternalInitialize();
+  int InternalInitialize() override;
 
 private:
   mafVMEPolyline(const mafVMEPolyline&); // Not implemented
   void operator=(const mafVMEPolyline&); // Not implemented
   
   /** private to avoid calling by external classes */
-  virtual int SetData(vtkDataSet *data, mafTimeStamp t, int mode=MAF_VME_COPY_DATA);
+  int SetData(vtkDataSet *data, mafTimeStamp t, int mode=MAF_VME_COPY_DATA) override;
 };
 
 #endif

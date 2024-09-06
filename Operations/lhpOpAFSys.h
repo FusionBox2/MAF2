@@ -39,15 +39,15 @@ class lhpOpAFSys: public mafOp
 public:
   mafTypeMacro(lhpOpAFSys, mafOp)
   lhpOpAFSys(const mafString& label = _R("AFSys"));
- ~lhpOpAFSys(); 
+ ~lhpOpAFSys() override;
 
-  virtual void OnEvent(mafEventBase *maf_event);
-  mafOp* Copy();
+  void OnEvent(mafEventBase *maf_event) override;
+  mafOp* Copy() override;
 
-  bool Accept(mafNode* vme);
-  void OpRun();
-  void OpDo();
-  void OpUndo();
+  bool Accept(mafNode* vme) override;
+  void OpRun() override;
+  void OpDo() override;
+  void OpUndo() override;
   void CreateGui();
 
 protected: 
@@ -60,7 +60,7 @@ protected:
   };
   bool ReadScript(const mafString& filename, std::vector<mafString>& output);
   void InitPredefined();
-  void OpStop(int result);
+  void OpStop(int result) override;
 
   int                            m_Radio;
   mafVMEAFRefSys                 *m_RefSys;

@@ -91,7 +91,7 @@ public:
 
 public:
 	vtkTypeMacro(vtkDicomUnPacker,vtkImageUnPacker);
-	void PrintSelf(ostream& os, vtkIndent indent);
+	void PrintSelf(ostream& os, vtkIndent indent) override;
 
 	/**	Constructor.*/
   static vtkDicomUnPacker *New();
@@ -166,7 +166,7 @@ public:
 
 protected:
 	vtkDicomUnPacker();
-	~vtkDicomUnPacker();
+	~vtkDicomUnPacker() override;
 
   vtkDicomUnPacker(const vtkDicomUnPacker&);
   void operator=(const vtkDicomUnPacker&);
@@ -218,11 +218,11 @@ protected:
 	/**
 	Read image information contained in the header and neccessary for 
 	allocating the output image cache.*/
-	int ReadImageInformation(vtkPackedImage *packed);
+	int ReadImageInformation(vtkPackedImage *packed) override;
 
 	/**
 	UnPacks the image into the output buffer. */
-	int VtkImageUnPackerUpdate(vtkPackedImage *packed, vtkImageData *data);
+	int VtkImageUnPackerUpdate(vtkPackedImage *packed, vtkImageData *data) override;
 //	int read_dicom_string_image(uint16 *IMAGE, double slope_value, double intercept_value);
 	int ReadDicomHeader(DICOM RESULT[], VALUE VALUES[], uint32 *size_image, uint32 *result_line);
 

@@ -66,7 +66,7 @@ public:
 protected:
 
   /** Execute this filter */
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   unsigned char ReplaceValue; //> ON_PIXEL
   unsigned char Threshold[2]; //> Threshold for connectivity threshold filter
@@ -81,7 +81,7 @@ private:
   vtkMEDBinaryImageFloodFill();
 
   /** Default dtor */
-  ~vtkMEDBinaryImageFloodFill();
+  ~vtkMEDBinaryImageFloodFill() override;
 
   /** Itk pipeline for flood fill */
   template <unsigned int ImageDimension>

@@ -42,7 +42,7 @@ class MAF_EXPORT mafGUIDialogPreview : public mafGUIDialog
 {
 public:
 	mafGUIDialogPreview (const mafString& title,	long style = mafCLOSEWINDOW | mafRESIZABLE | mafCLOSE | mafUSEGUI | mafUSERWI );
-	virtual ~mafGUIDialogPreview (); 
+	~mafGUIDialogPreview () override; 
    
   /** Return the dialog's render window.*/
   mafRWI *GetRWI() {return m_Rwi;};

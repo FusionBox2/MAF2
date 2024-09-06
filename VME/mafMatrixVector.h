@@ -39,8 +39,8 @@ class MAF_EXPORT mafMatrixVector : public mafTimeMap<mafMatrix>
 public:
   typedef mafTimeMap<mafMatrix>::TimeMap::iterator Iterator;
 
-  mafMatrixVector();  
-  virtual ~mafMatrixVector();
+  mafMatrixVector();
+  ~mafMatrixVector() override;
 
   // set as parent mafObject since type macro does not work for template classes
   mafTypeMacro(mafMatrixVector,mafObject); 

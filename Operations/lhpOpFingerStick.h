@@ -40,14 +40,14 @@ class lhpOpFingerStick: public mafOp
 public:
   mafTypeMacro(lhpOpFingerStick, mafOp)
   lhpOpFingerStick(const mafString& label = _R(""));
- ~lhpOpFingerStick(); 
+ ~lhpOpFingerStick() override;
 
- virtual void OnEvent(mafEventBase *maf_event);
-  mafOp* Copy();
+  void OnEvent(mafEventBase *maf_event) override;
+  mafOp* Copy() override;
 
-  bool Accept(mafNode* vme);   
-  void OpRun();
-  void OpDo();
+  bool Accept(mafNode* vme) override;   
+  void OpRun() override;
+  void OpDo() override;
   void CreateGui();
 
 protected: 
@@ -59,7 +59,7 @@ protected:
   void RegisterPoints(vtkMatrix4x4 *res_matrix, std::vector<double>& devs);
 
 
-  void OpStop(int result);
+  void OpStop(int result) override;
 
   ///
   mafVMELandmarkCloud  *m_PlateCalibration;

@@ -98,7 +98,7 @@ public:
 protected:
 
   mafVMEC3DData();
-  virtual ~mafVMEC3DData();
+  ~mafVMEC3DData() override;
 
   // By default, UpdateInformation calls this method. Subclasses should fill
   // the output structure information.

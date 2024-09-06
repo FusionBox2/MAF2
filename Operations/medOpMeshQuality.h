@@ -48,23 +48,23 @@ class MED_OPERATION_EXPORT medOpMeshQuality: public mafOp
 {
 public:
 	medOpMeshQuality(const mafString& label = _R("Check Mesh Quality"));
-	~medOpMeshQuality(); 
+	~medOpMeshQuality() override;
 
-	virtual void OnEvent(mafEventBase *maf_event);
+	void OnEvent(mafEventBase *maf_event) override;
 
 	mafTypeMacro(medOpMeshQuality, mafOp);
 
-	mafOp* Copy();
+	mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode *node);
+	bool Accept(mafNode *node) override;
 
 	/** Builds operation's interface. */
-	void OpRun();
+	void OpRun() override;
 
 protected:
 	/** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
-	void OpStop(int result);
+	void OpStop(int result) override;
 
 	void CreateOpDialog();
 	void DeleteOpDialog();

@@ -39,7 +39,7 @@ public:
   mafVMEOutputImage();
   
    /** destructor. */
-  virtual ~mafVMEOutputImage();
+   ~mafVMEOutputImage() override;
 
   /** RTTI macro.*/
   mafTypeMacro(mafVMEOutputImage,mafVMEOutputVTK);
@@ -63,7 +63,7 @@ public:
 protected:
   mmaMaterial *m_Material;
 
-  mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
 
 private:

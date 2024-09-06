@@ -99,7 +99,7 @@ public:
 
 protected:
   mafICPUtility():KnownMinLocalFlag(false),RotationFixedFlag(false){};
-  ~mafICPUtility() {};
+  ~mafICPUtility() override {};
 };
 
   vtkStandardNewMacro(mafICPUtility);

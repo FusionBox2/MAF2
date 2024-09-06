@@ -92,13 +92,13 @@ public:
 		int constraintModality = mafGizmoROI_BES::VTK_OUTPUT_BOUNDS,
 		mafVME* parent = NULL, double* usrBounds = NULL);
 
-	virtual ~mafGizmoROI_BES(); 
+  ~mafGizmoROI_BES() override; 
 
 	/** Set input vme for the gizmo*/
-	virtual void SetInput(mafVME *vme); 
+  void SetInput(mafVME *vme) override; 
 
-	/** Events handling*/        
-	virtual void OnEvent(mafEventBase *maf_event);
+	/** Events handling*/
+  void OnEvent(mafEventBase *maf_event) override;
 
 	/** Highlight the given component and set highlight to false for the others */
 	void Highlight(int component);
@@ -111,7 +111,7 @@ public:
 	//----------------------------------------------------------------------------
 
 	/** Show the gizmo*/
-	void Show(bool show);
+	void Show(bool show) override;
 
 	/** Show gizmo handles */
 	void ShowHandles(bool show);
@@ -185,7 +185,7 @@ protected:
 	virtual void UpdateGizmosLength();
 
 	/** Process events from gizmo components*/
-	virtual void OnEventGizmoComponents(mafEventBase *maf_event);
+  void OnEventGizmoComponents(mafEventBase *maf_event) override;
 
 protected:
 	enum ACTIVE_COMPONENT {

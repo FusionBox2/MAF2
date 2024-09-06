@@ -33,25 +33,25 @@ class lhpOpSolidify: public mafOp
 {
 public:
   lhpOpSolidify(const mafString& label = _R("Solidify landmarks cloud"));
-  ~lhpOpSolidify(); 
-  virtual void OnEvent(mafEventBase *maf_event);
-  mafOp* Copy();
+  ~lhpOpSolidify() override;
+  void OnEvent(mafEventBase *maf_event) override;
+  mafOp* Copy() override;
 
   mafTypeMacro(lhpOpSolidify, mafOp);
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode* node);   
+  bool Accept(mafNode* node) override;   
 
-  void OpStop(int result);
+  void OpStop(int result) override;
 
   /** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
   /** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
 
   /** Makes the undo for the operation. */
-  void OpUndo();
+  void OpUndo() override;
 
   static bool RigidBodyAccept(mafNode* node) {if(node != NULL && node->IsA("mafVMELandmarkCloud") && !((mafVMELandmarkCloud*)node)->IsOpen() && !((mafVMELandmarkCloud*)node)->IsAnimated())return true; return false;}
 

@@ -50,7 +50,7 @@ public:
   /** constructor */
   mafOpValidateTree(const mafString& label = _R("Validate Tree"));
   /** destructor */
-  ~mafOpValidateTree(); 
+  ~mafOpValidateTree() override; 
   
   /** Iterate on all tree nodes and check the consistency for each one: 
   return a VALIDATE_RETURN_VALUES id*/
@@ -74,13 +74,13 @@ public:
   mafTypeMacro(mafOpValidateTree, mafOp);
 
   /** Return a copy of the operation.*/
-  mafOp* Copy();
+  mafOp* Copy() override;
 
   /** This operation accept everything as input.*/
-  bool Accept(mafNode *node) {return true;};
+  bool Accept(mafNode *node) override {return true;};
 
   /** Create the user interface and initialize variables.*/
-  void OpRun();
+  void OpRun() override;
 
 protected: 
 

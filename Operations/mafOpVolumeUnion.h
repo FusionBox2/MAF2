@@ -49,22 +49,22 @@ class MAF_EXPORT mafOpVolumeUnion: public mafOp
 public:
              
             	 mafOpVolumeUnion(const mafString &label=_L("Volume Union"));
-	virtual     ~mafOpVolumeUnion();
-	/*virtual*/ void OnEvent(mafEventBase *maf_event);
+	             ~mafOpVolumeUnion() override;
+	/*virtual*/ void OnEvent(mafEventBase *maf_event) override;
 
   mafTypeMacro(mafOpVolumeUnion, mafOp);
 
   static bool VmeUnionAccept(mafNode *node) {return(node != NULL && (node->IsMAFType(mafVMEVolume)));};
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
-  /*virtual*/ bool Accept(mafNode* node);
-  /*virtual*/ void OpRun();	
+  /*virtual*/ bool Accept(mafNode* node) override;
+  /*virtual*/ void OpRun() override;	
 	
   /** Makes the undo for the operation. */
-  /*virtual*/ void OpUndo();
+  /*virtual*/ void OpUndo() override;
 
-  /*virtual*/ void OpDo();
+  /*virtual*/ void OpDo() override;
 
   /*virtual*/ void CreateGui(); 
 

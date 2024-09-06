@@ -35,19 +35,19 @@ public:
   mafTypeMacro(mafDataPipeCustom,mafDataPipe);
 
   /** process events coming from vtkMAFDataPipe bridge component */
-  void OnEvent(mafEventBase *e);
+  void OnEvent(mafEventBase *e) override;
 
   /** return the VTK dataset generated as output to this data pipe */
-  virtual vtkAlgorithmOutput *GetVTKOutputPort();
+  vtkAlgorithmOutput *GetVTKOutputPort() override;
 
   /** return the bridge object between VTK datapipe and MAF update mechanism */
   vtkMAFDataPipe *GetVTKDataPipe();
 
   /** update the data pipe output */
-  virtual void Update();
+  void Update() override;
 
   /** update bounds of the data pipe copying from VTK filter output bounds */
-  virtual void UpdateBounds();
+  void UpdateBounds() override;
 
   /** sets the first input of the datapipe */
   void SetInputConnection(vtkAlgorithmOutput *input_dataset);
@@ -57,7 +57,7 @@ public:
 
 protected:
   mafDataPipeCustom();
-  virtual ~mafDataPipeCustom();
+  ~mafDataPipeCustom() override;
 
   vtkMAFDataPipe *m_VTKDataPipe; ///< VTK pipeline bridge component
 

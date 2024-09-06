@@ -33,7 +33,7 @@ class VTK_vtkMAF_EXPORT vtkMAFLargeDataSet : public vtkDataObject
 {
 public:
 	vtkTypeMacro(vtkMAFLargeDataSet,vtkDataObject);
-	void PrintSelf(ostream& os, vtkIndent indent);
+	void PrintSelf(ostream& os, vtkIndent indent) override;
 
 	// Description:
 	// Copy the geometric and topological structure of an object. Note that
@@ -163,7 +163,7 @@ public:
 	// Description:
 	// Datasets are composite objects and need to check each part for MTime
 	// THIS METHOD IS THREAD SAFE
-	vtkMTimeType GetMTime();
+	vtkMTimeType GetMTime() override;
 
 	// Description:
 	// Compute the data bounding box from data points.
@@ -237,16 +237,16 @@ public:
 	// memory required to represent the data (e.g., extra space in
 	// arrays, etc. are not included in the return value). THIS METHOD
 	// IS THREAD SAFE.
-	unsigned long GetActualMemorySize();
+	unsigned long GetActualMemorySize() override;
 
 	// Description:
 	// Return the type of data object.
-	virtual int GetDataObjectType();
+	int GetDataObjectType() override;
 
 	// Description:
 	// Shallow and Deep copy.
-	void ShallowCopy(vtkDataObject *src);  
-	void DeepCopy(vtkDataObject *src);	
+	void ShallowCopy(vtkDataObject *src) override;  
+	void DeepCopy(vtkDataObject *src) override;	
 
 public:
 	//////////////////////////////////////////////////////////////////////////
@@ -321,7 +321,7 @@ public:
 protected:
 	// Constructor with default bounds (0,1, 0,1, 0,1).
 	vtkMAFLargeDataSet();
-	~vtkMAFLargeDataSet();  
+	~vtkMAFLargeDataSet() override;  
 
 protected:
 	//It provides access to whole data set 

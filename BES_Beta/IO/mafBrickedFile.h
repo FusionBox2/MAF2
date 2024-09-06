@@ -119,7 +119,7 @@ protected:
 
 protected:
 	mafBrickedFile();
-	virtual ~mafBrickedFile();
+	~mafBrickedFile() override;
 
 public:	
 	//Gets the associated brick file

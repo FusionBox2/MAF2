@@ -44,9 +44,9 @@ public:
   /** constructor*/
             mafGUIDictionaryWidget(wxWindow *parent, int id);
   /** destructor */
-           ~mafGUIDictionaryWidget();
+           ~mafGUIDictionaryWidget() override;
   /** Answer to the messages coming from interface. */
-  void      OnEvent(mafEventBase *event);
+  void      OnEvent(mafEventBase *event) override;
 
   /** Set the reference cloud. */
   void SetCloud(mafVME *vme);
@@ -89,7 +89,7 @@ public:
   /** constructor */
   mafStorableDictionary();
   /** destructor */
-  ~mafStorableDictionary();
+  ~mafStorableDictionary() override;
   void Restore(const mafStorageElement& element) { InternalRestore(element); }
   virtual void InternalRestore(const mafStorageElement& node);
   std::vector<mafString> m_StrVector;

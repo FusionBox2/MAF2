@@ -33,7 +33,7 @@ public:
   /** constructor */
 	mafGUISettingsTimeBar(mafBaseEventHandler *Listener, const mafString &label = _L("Time Bar"));
   /** destructor */
-	~mafGUISettingsTimeBar(); 
+	~mafGUISettingsTimeBar() override; 
 
   enum STORAGE_SETTINGS_WIDGET_ID
   {
@@ -49,7 +49,7 @@ public:
   };
 
   /** Answer to the messages coming from interface. */
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Return true if real time mode is active.*/
   int GetRealTimeMode() {return m_RealTimeMode;};
@@ -115,10 +115,10 @@ public:
 
 protected:
   /** Create the GUI for the setting panel.*/
-  void CreateGui();
+  void CreateGui() override;
 
   /** Initialize the application settings.*/
-  void InitializeSettings();
+  void InitializeSettings() override;
 
   /** Enable/Disable widgets.*/
   void EnableWidgets();

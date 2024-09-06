@@ -23,13 +23,13 @@ class lhpOpFindCentroid: public mafOp
 {
 public:
   lhpOpFindCentroid(const mafString& label = _R("Find centroid"));
-  ~lhpOpFindCentroid(); 
+  ~lhpOpFindCentroid() override; 
 
   mafTypeMacro(lhpOpFindCentroid, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
-  bool Accept(mafNode *node);
-  void OpRun();
+  bool Accept(mafNode *node) override;
+  void OpRun() override;
 };
 #endif

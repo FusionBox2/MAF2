@@ -81,18 +81,18 @@ public:
   /** constructor */
 	medPipeCompound();
   /** destructor */
-	virtual ~medPipeCompound ();
+  ~medPipeCompound () override;
 
 public:
   /** Creates the VTK rendering pipeline */
-  /*virtual*/ void Create(mafNode *node, mafView *view);
+  /*virtual*/ void Create(mafNode *node, mafView *view) override;
 
 	/** Processes events coming from GUI */
-	/*virtual*/ void OnEvent(mafEventBase *maf_event);
+	/*virtual*/ void OnEvent(mafEventBase *maf_event) override;
 
 protected:
   /** creation of the gui */
-  /*virtual*/ mafGUI  *CreateGui();
+  /*virtual*/ mafGUI  *CreateGui() override;
   
   /** Creates page groups. The inherited classes must override this method.
   This method is called from Create method prior to CreatePages.

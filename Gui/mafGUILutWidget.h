@@ -33,7 +33,7 @@ public:
   mafGUILutWidget(wxWindow* parent, wxWindowID id = -1, const wxPoint& pos = wxDefaultPosition, 
            const wxSize& size = wxSize(300,290), long style = wxTAB_TRAVERSAL /*| wxSUNKEN_BORDER */);
 
-  void OnEvent( mafEventBase *event );
+  void OnEvent( mafEventBase *event ) override;
 
   void     SetSelectionColor(mafColor col);
   mafColor GetSelectionColor(); // return the color of the first selected entry

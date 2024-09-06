@@ -34,7 +34,7 @@ public:
   mafTypeMacro(lhpPipeIntGraphTime, lhpPipeIntGraphFixed);
   
   lhpPipeIntGraphTime();
-  virtual     ~lhpPipeIntGraphTime();
+  ~lhpPipeIntGraphTime() override;
 
   enum GRAPH_IDS
   {
@@ -45,11 +45,11 @@ public:
   };
 
 
-  virtual const mafString& GetVarTitle(int i) const;
-  virtual const mafString& GetVarUnit(int i) const;
-  virtual double       GetVarDerivativeCoef(int i) const;
+  const mafString& GetVarTitle(int i) const override;
+  const mafString& GetVarUnit(int i) const override;
+  double       GetVarDerivativeCoef(int i) const override;
 
 protected:
-  virtual bool StoreValueByIdx(int nVarID, mafTimeStamp ts, mafTimeStamp prevts);
+  bool StoreValueByIdx(int nVarID, mafTimeStamp ts, mafTimeStamp prevts) override;
 };  
 #endif // _lhpPipeIntGraphTime_H_

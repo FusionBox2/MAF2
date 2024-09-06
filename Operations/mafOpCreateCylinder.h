@@ -34,15 +34,15 @@ class MAF_EXPORT mafOpCreateCylinder : public mafOp
 {
 public:
 	mafOpCreateCylinder(const mafString& label = _R("Create Cylinder"));
-	~mafOpCreateCylinder();
+	~mafOpCreateCylinder() override;
 
 	mafTypeMacro(mafOpCreateCylinder, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
-  bool Accept(mafNode *node);
-  void OpRun();
-  void OpDo();
+  bool Accept(mafNode *node) override;
+  void OpRun() override;
+  void OpDo() override;
 
 protected: 
 	mafVMECylinder *m_Cylinder;

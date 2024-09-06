@@ -246,14 +246,14 @@ public:
 
   lhpOpMove(const mafString& label = _R("Move\tCtrl+T")):Superclass(label){}
   //----------------------------------------------------------------------------
-  mafOp* Copy()   
-    //----------------------------------------------------------------------------
+  mafOp* Copy() override
+  //----------------------------------------------------------------------------
   {
     return new lhpOpMove(GetLabel());
   }
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode* vme)
+  bool Accept(mafNode* vme) override
   {
     bool accepted = false;
     
@@ -279,13 +279,13 @@ class lhpOpMoveSeq : public lhpOpMove
 public:
   mafTypeMacro(lhpOpMoveSeq, lhpOpMove)
   lhpOpMoveSeq(const mafString& label = _R("Move Sequence")):Superclass(label){m_EnableScaling = 0;}
-  mafOp* Copy()   
-    //----------------------------------------------------------------------------
+  mafOp* Copy() override
+  //----------------------------------------------------------------------------
   {
     return new lhpOpMoveSeq(GetLabel());
   }
-  void OpDo();
-  void OpUndo();
+  void OpDo() override;
+  void OpUndo() override;
 private:
   void TransfMatr(mafMatrix& convMatrix, mafTimeStamp tsSkip = -1);
   mafMatrix m_ConvMatrix;
@@ -303,23 +303,23 @@ public:
     m_Canundo = true;
     m_Created = NULL;
   }
-  ~lhpOpCreateLMCLines() 
+  ~lhpOpCreateLMCLines() override
   {
     mafDEL(m_Created);
   }
 
-  mafOp* Copy(){return new lhpOpCreateLMCLines(GetLabel());}
+  mafOp* Copy() override {return new lhpOpCreateLMCLines(GetLabel());}
 
-  bool Accept(mafNode *node){return (node != NULL);}
-  void OpRun()
+  bool Accept(mafNode *node) override {return (node != NULL);}
+  void OpRun() override
   {
     mafNEW(m_Created);
     m_Created->SetName(_R("Cloud lines"));
     m_Output = m_Created;
     {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);}
   }
-  void OpDo();
-  void OpUndo();
+  void OpDo() override;
+  void OpUndo() override;
 
 protected: 
   lhpVMELMCLines *m_Created;
@@ -392,7 +392,7 @@ class lhpOpScaleDataset : public medOpScaleDataset
 public:
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode* vme)
+  bool Accept(mafNode* vme) override
   {
     bool accepted = false;
 

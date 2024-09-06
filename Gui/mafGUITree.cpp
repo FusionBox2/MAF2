@@ -554,7 +554,8 @@ public:
   {
     DoTraverse(root, recursively);
   }
-  virtual bool OnVisit(const wxTreeItemId& item)
+
+  bool OnVisit(const wxTreeItemId& item) override
   {
     GetTree()->SortChildren(item);
     return true;

@@ -41,8 +41,8 @@ class lhpViewInfoGraph  : public mafSceneGraph
 {
 public:
   lhpViewInfoGraph(mafView *view):mafSceneGraph(view, NULL, NULL){}
-  virtual ~lhpViewInfoGraph(){}
-  virtual int  GetNodeStatus (mafNode *node);
+  ~lhpViewInfoGraph() override {}
+  int  GetNodeStatus (mafNode *node) override;
 };
 
 //----------------------------------------------------------------------------

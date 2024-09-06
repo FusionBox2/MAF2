@@ -36,7 +36,7 @@ public:
   void      SetColor   (mafColor c);
   mafColor  GetColor   (); 
 
-  void OnEvent( mafEventBase *event );
+  void OnEvent( mafEventBase *event ) override;
 
 protected:
   wxBitmap m_HsvBmp; //the bitmap with the hsv chooser

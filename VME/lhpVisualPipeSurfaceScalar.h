@@ -34,10 +34,10 @@ public:
   mafTypeMacro(lhpVisualPipeSurfaceScalar,mafPipeVTK);
 
                lhpVisualPipeSurfaceScalar();
-  virtual     ~lhpVisualPipeSurfaceScalar ();
+  ~lhpVisualPipeSurfaceScalar () override;
 
   /** process events coming from Gui */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** IDs for the GUI */
   enum PIPE_SURFACESCALAR_WIDGET_ID
@@ -47,16 +47,16 @@ public:
   };
 
   /** Create the VTK rendering pipeline*/
-  virtual void Create(mafNode *node, mafView *view);
+  void Create(mafNode *node, mafView *view) override;
 
   /** Manage the actor selection by showing the corner box around the actor when the corresponding VME is selected.*/
-  virtual void Select(bool select); 
+  void Select(bool select) override; 
 
-  void UpdateProperty(bool fromTag = false);
+  void UpdateProperty(bool fromTag = false) override;
 
 protected:
   /** Internally used to create a new instance of the GUI.*/
-  virtual mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
   vtkPolyDataMapper *m_Mapper;
   vtkActor *m_Actor;

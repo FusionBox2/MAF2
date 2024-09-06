@@ -80,11 +80,11 @@ class MAF_EXPORT mafView: public mafObject, public mafBaseEventHandler, public m
 {
 public:
   mafView(const mafString& label = _R("View"));
-  virtual ~mafView(); 
+  ~mafView() override; 
 
   mafTypeMacro(mafView, mafObject);
 
-  virtual void			OnEvent(mafEventBase *maf_event);
+  void			OnEvent(mafEventBase *maf_event) override;
   virtual mafView*  Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) {m_LightCopyEnabled = lightCopyEnabled; return NULL;};
   virtual void      Create() {};
 
@@ -212,7 +212,7 @@ protected:
   the superclass enum. The last id value must be defined as "LAST_ID" to allow the 
   subclass to continue the ID enumeration from it. For appending the widgets in the
   same panel GUI, each CreateGUI() function should first call the superclass' one.*/
-  virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 
   double m_Slice[3];
   double m_Normal[3];

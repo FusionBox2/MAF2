@@ -22,13 +22,13 @@ public:
   Array1D(size_t _XSize):std::vector<T>(_XSize){}
   Array1D(const Array1D& _array):std::vector<T>(_array){}
 
-  ArrayND<T>* CreateDimCopy() const {return new Array1D<T>(GetDimension());}
+  ArrayND<T>* CreateDimCopy() const override {return new Array1D<T>(GetDimension());}
 
-  T& operator()(int i)
+  T& operator()(int i) override
   {
     return std::vector<T>::at(i);
   }
-  const T& operator()(int i)const
+  const T& operator()(int i)const override
   {
     return std::vector<T>::at(i);
   }
@@ -48,7 +48,7 @@ public:
   {
     resize(sz);
   }
-  size_t GetNumElems()const
+  size_t GetNumElems()const override
   {
     return std::vector<T>::size();
   }
@@ -108,14 +108,14 @@ public:
   }
   Array2D(const Array2D& _array):std::vector<Array1D<T> >(_array){}
 
-  ArrayND<T>* CreateDimCopy() const {return new Array2D<T>(GetDimension());}
+  ArrayND<T>* CreateDimCopy() const override {return new Array2D<T>(GetDimension());}
 
-  T& operator()(int i)
+  T& operator()(int i) override
   {
     assert(GetNumElems() > 0);
     return std::vector<Array1D<T> >::at(i / std::vector<Array1D<T> >::at(0).GetNumElems())(i % std::vector<Array1D<T> >::at(0).GetNumElems());
   }
-  const T& operator()(int i)const
+  const T& operator()(int i)const override
   {
     assert(GetNumElems() > 0);
     return std::vector<Array1D<T> >::at(i / std::vector<Array1D<T> >::at(0).GetNumElems())(i % std::vector<Array1D<T> >::at(0).GetNumElems());
@@ -160,7 +160,7 @@ public:
   {
     resize(sz.x, sz.y);
   }
-  size_t GetNumElems()const
+  size_t GetNumElems()const override
   {
     if(std::vector<Array1D<T> >::size() == 0)
       return 0;
@@ -200,13 +200,13 @@ public:
   }
 
   Array3D(const Array3D& _array):std::vector<Array2D<T> >(_array){}
-  ArrayND<T>* CreateDimCopy() const {return nullptr;}
-  T& operator()(int i)
+  ArrayND<T>* CreateDimCopy() const override {return nullptr;}
+  T& operator()(int i) override
   {
     assert(GetNumElems() > 0);
     return std::vector<Array2D<T> >::at(i / std::vector<Array2D<T> >::at(0).GetNumElems())(i % std::vector<Array2D<T> >::at(0).GetNumElems());
   }
-  const T& operator()(int i)const
+  const T& operator()(int i)const override
   {
     assert(GetNumElems() > 0);
     return std::vector<Array2D<T> >::at(i / std::vector<Array2D<T> >::at(0).GetNumElems())(i % std::vector<Array2D<T> >::at(0).GetNumElems());
@@ -252,7 +252,7 @@ public:
   {
     resize(sz.x, sz.y, sz.y);
   }
-  size_t GetNumElems()const
+  size_t GetNumElems()const override
   {
     if(std::vector<Array2D<T> >::size() == 0)
       return 0;

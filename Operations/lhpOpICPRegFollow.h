@@ -33,18 +33,18 @@ class lhpOpICPRegFollow: public mafOp
 public:
   mafTypeMacro(lhpOpICPRegFollow, mafOp)
 	lhpOpICPRegFollow(const mafString& label = _R(""));
-	~lhpOpICPRegFollow(); 
-	void   OnEvent(mafEventBase *maf_event);
-	mafOp* Copy();
+	~lhpOpICPRegFollow() override; 
+	void   OnEvent(mafEventBase *maf_event) override;
+	mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode* vme);
+	bool Accept(mafNode* vme) override;
 
 	/** Builds operation's interface. */
-	void OpRun();
+	void OpRun() override;
 
 	/** Execute the operation. */
-	void OpDo();
+	void OpDo() override;
 
 protected:
 	/** Create the gui */
@@ -57,7 +57,7 @@ protected:
   void OnChooseSource();
 
 	/** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
-	void OpStop(int result);
+	void OpStop(int result) override;
 
 	mafVME*					m_Target;				// m_input, inherited from mafOp, is used as source
 	mafVME*					m_Source;				// m_input, inherited from mafOp, is used as source

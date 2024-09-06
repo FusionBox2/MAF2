@@ -34,11 +34,11 @@ public:
   static vtkImageUnPacker *New();
   vtkTypeMacro(vtkImageUnPacker, vtkImageAlgorithm);
 
-  void PrintSelf(ostream& os, vtkIndent indent);   
+  void PrintSelf(ostream& os, vtkIndent indent) override;   
 
   /**
   This method returns the largest data that can be generated.*/
-  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
   
   /**
   Set/Get the input object containing the packed image.*/
@@ -65,7 +65,7 @@ public:
   
 protected:
   vtkImageUnPacker();
-  ~vtkImageUnPacker();
+  ~vtkImageUnPacker() override;
 
   vtkPackedImage *Input;
 

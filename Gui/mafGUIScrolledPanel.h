@@ -31,7 +31,7 @@ class MAF_EXPORT mafGUIScrolledPanel: public wxScrolledWindow
 {
 public:
   mafGUIScrolledPanel(wxWindow* parent,wxWindowID id = -1);
-  virtual ~mafGUIScrolledPanel();
+  ~mafGUIScrolledPanel() override;
     
 	/** Add a window into the scrolled panel. */
   void Add(wxWindow* window,int option = 0, int flag = wxEXPAND, int border = 0);  
@@ -48,10 +48,10 @@ public:
   /** Adjust the ScrollBar Settings.
       Must be called explicitly if the size of the contents change at runtime.      
   */
-  void FitInside();
+  void FitInside() override;
 
   /** Redraw the scrolled window. */
-  virtual bool Layout();
+  bool Layout() override;
 
 
 protected:

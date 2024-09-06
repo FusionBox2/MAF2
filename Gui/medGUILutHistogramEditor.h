@@ -59,13 +59,13 @@ public:
   medGUILutHistogramEditor(vtkDataSet *dataSet,mmaVolumeMaterial *material, char *name="Histogram & Windowing", mafBaseEventHandler *Listener=NULL, int id=MINID);
   
   /** Destructor. */
-  virtual ~medGUILutHistogramEditor(); 
+  ~medGUILutHistogramEditor() override; 
   
   /* Main event handler */
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Handle resize event */
-  void OnSize(wxSizeEvent &event);
+  void OnSize(wxSizeEvent &event) override;
 
   /** Show the dialog.*/
   static void ShowLutHistogramDialog(vtkDataSet *dataSet,mmaVolumeMaterial *material, char *name="Histogram & Windowing", mafBaseEventHandler *Listener=NULL, int id=MINID);

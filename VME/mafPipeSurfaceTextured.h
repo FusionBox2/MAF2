@@ -46,16 +46,16 @@ public:
   mafTypeMacro(mafPipeSurfaceTextured,mafPipeVTK);
 
                mafPipeSurfaceTextured();
-  virtual     ~mafPipeSurfaceTextured();
+  ~mafPipeSurfaceTextured() override;
 
   /** process events coming from Gui */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Create the VTK rendering pipeline*/
-  virtual void Create(mafNode *node, mafView *view);
+  void Create(mafNode *node, mafView *view) override;
 
   /** Manage the actor selection by showing the corner box around the actor when the corresponding VME is selected.*/
-  virtual void Select(bool select); 
+  void Select(bool select) override; 
 
   /** Let to enable/disable the Level Of Detail behavior.*/
   void SetEnableActorLOD(bool value);
@@ -97,8 +97,8 @@ public:
   void SelectionActorOn(){m_SelectionVisibility = TRUE;};
 
 	/** Get assembly front/back */
-	virtual vtkMAFAssembly *GetAssemblyFront(){return m_AssemblyFront;};
-	virtual vtkMAFAssembly *GetAssemblyBack(){return m_AssemblyBack;};
+  vtkMAFAssembly *GetAssemblyFront() override {return m_AssemblyFront;};
+  vtkMAFAssembly *GetAssemblyBack() override {return m_AssemblyBack;};
 
 	void SetScalarVisibilityOn(){m_ScalarVisibility = TRUE;};
 	void SetScalarVisibilityOff(){m_ScalarVisibility = FALSE;};
@@ -135,11 +135,11 @@ protected:
   mmaMaterial *m_SurfaceMaterial;
   mafGUIMaterialButton *m_MaterialButton;
 
-  void UpdateProperty(bool fromTag = false);
+  void UpdateProperty(bool fromTag = false) override;
   /** Generate texture coordinate for polydata according to the mapping mode*/
   void GenerateTextureMapCoordinate();
 
   /** Create the Gui of the visual pipe used to change visual parameters.*/
-  virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 };  
 #endif // __mafPipeSurfaceTextured_H__

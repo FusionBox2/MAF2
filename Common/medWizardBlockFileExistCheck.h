@@ -40,7 +40,7 @@ public:
   medWizardBlockFileExistCheck(const char *name);
 
   /** Default destructor */
-  ~medWizardBlockFileExistCheck();
+  ~medWizardBlockFileExistCheck() override;
     
   /** Set The title of the window showed when the type check was not  */
   void SetWindowTitle(const char *Title);
@@ -76,7 +76,7 @@ public:
   wxString GetWrongTypeNextBlock(){return m_WrongTypeNextBlock;};
 
   /** Return the name of the Block witch will be executed after this */
-  wxString GetNextBlock();
+  wxString GetNextBlock() override;
 
   /** Enable/disable the visualization of error message box*/
   void EnableErrorMessage(bool enabled) {m_ErrorMessageEnabled=enabled;};
@@ -86,7 +86,7 @@ public:
 
 protected:
   /** Starts the execution of the block */
-  virtual void ExcutionBegin();
+  void ExcutionBegin() override;
 
 private:
 

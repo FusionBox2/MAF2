@@ -33,21 +33,21 @@ class mafGraphDataImpl: public mafGraphData, public mafMemoryGraph
 {
 public:
   mafGraphDataImpl(lhpPipeIntGraphAbstract *pipe, double garbage,unsigned int size = 50000);
-  virtual double   GetValue(unsigned int point,unsigned int coord, unsigned int deriv = 0) const {return (*this)(point, coord, deriv);}
-  virtual bool     GetValueByParam(double& res, double param,unsigned int coord, unsigned int deriv = 0) const {return mafMemoryGraph::GetValueByParam(res, param, coord, deriv);}
-  virtual unsigned GetVarNum() const{return GetDim();}
-  virtual unsigned GetXVarNum() const {return GetXDim();}
-  virtual unsigned GetYVarNum() const {return GetYDim();}
-  virtual unsigned GetXDer(unsigned index) const {return GetXDeriv(index);}
-  virtual unsigned GetYDer(unsigned index) const {return GetYDeriv(index);}
-  virtual unsigned GetIndexX(unsigned index) const {return GetXIndex(index);}
-  virtual unsigned GetIndexY(unsigned index) const {return GetYIndex(index);}
-  virtual unsigned GetSize() const {return GetUsedMemSpace();}
-  virtual unsigned GetBreakBegin() const {return BreakBegin();}
-  virtual unsigned GetBreakEnd()  const {return BreakEnd();}
-  virtual double   GetDerivCoef(unsigned index) const;
-  virtual mafString GetIDDesc(unsigned index, unsigned int deriv) const;
-  virtual double   GetTime() const;
+  double   GetValue(unsigned int point,unsigned int coord, unsigned int deriv = 0) const override {return (*this)(point, coord, deriv);}
+  bool     GetValueByParam(double& res, double param,unsigned int coord, unsigned int deriv = 0) const override {return mafMemoryGraph::GetValueByParam(res, param, coord, deriv);}
+  unsigned GetVarNum() const override {return GetDim();}
+  unsigned GetXVarNum() const override {return GetXDim();}
+  unsigned GetYVarNum() const override {return GetYDim();}
+  unsigned GetXDer(unsigned index) const override {return GetXDeriv(index);}
+  unsigned GetYDer(unsigned index) const override {return GetYDeriv(index);}
+  unsigned GetIndexX(unsigned index) const override {return GetXIndex(index);}
+  unsigned GetIndexY(unsigned index) const override {return GetYIndex(index);}
+  unsigned GetSize() const override {return GetUsedMemSpace();}
+  unsigned GetBreakBegin() const override {return BreakBegin();}
+  unsigned GetBreakEnd()  const override {return BreakEnd();}
+  double   GetDerivCoef(unsigned index) const override;
+  mafString GetIDDesc(unsigned index, unsigned int deriv) const override;
+  double   GetTime() const override;
 private:
   lhpPipeIntGraphAbstract *m_Pipe;
 };

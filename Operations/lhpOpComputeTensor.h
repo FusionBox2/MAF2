@@ -55,17 +55,17 @@ class lhpOpComputeTensor: public mafOp
 {
 public:
  lhpOpComputeTensor(const mafString& label = _R("lhpOpComputeTensor"));
-  ~lhpOpComputeTensor(); 
+  ~lhpOpComputeTensor() override; 
 
   mafTypeMacro(lhpOpComputeTensor, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode* node);
+  bool Accept(mafNode* node) override;
 
   /** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
     
 
@@ -130,7 +130,7 @@ public:
 
 
   /** Handling events sent from the GUI */
-  virtual void OnEvent(mafEventBase *maf_event); 
+ void OnEvent(mafEventBase *maf_event) override; 
   void SetRenderVolumeVisibilityAndUpdateContent();
   void SetDataView();
   void SetDisplacementVectorsView();

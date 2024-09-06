@@ -53,7 +53,7 @@ public:
   vtkTypeMacro(vtkMAFAnnotatedCubeActor,vtkAnnotatedCubeActor);
 protected:
   vtkMAFAnnotatedCubeActor();
-  ~vtkMAFAnnotatedCubeActor();
+  ~vtkMAFAnnotatedCubeActor() override;
 private:
   vtkMAFAnnotatedCubeActor(const vtkMAFAnnotatedCubeActor&);  // Not implemented.
   void operator=(const vtkMAFAnnotatedCubeActor&);  // Not implemented.

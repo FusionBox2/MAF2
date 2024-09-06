@@ -34,16 +34,16 @@ class lhpOpImporterRSScan: public mafOp
 {
 public:
 	lhpOpImporterRSScan(const mafString& label = _R("RSScanImporter"));
-	~lhpOpImporterRSScan(); 
+	~lhpOpImporterRSScan() override; 
 	
   mafTypeMacro(lhpOpImporterRSScan, mafOp);
 
-  virtual void OnEvent(mafEventBase *maf_event);
+	void OnEvent(mafEventBase *maf_event) override;
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode *node);
+	bool Accept(mafNode *node) override;
 
 	/** Set the filename for the mesh to import */
   void SetFileName(const char *file_name);
@@ -57,7 +57,7 @@ public:
   const char *GetElementsFileName() {return m_DataFileName.GetCStr();}
 
   /** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
   /** Import the mesh*/
   int Read();

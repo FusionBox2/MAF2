@@ -101,7 +101,7 @@ public:
 	vtkTypeMacro(vtkMAFLargeDataProvider,vtkObject);    
 
 	// Return this object's modified time.
-	/*virtual*/ vtkMTimeType GetMTime();
+	/*virtual*/ vtkMTimeType GetMTime() override;
 
 #pragma region DESCRIPTOR OPERATIONS
 	// Release all descriptors but do not delete this object.
@@ -552,7 +552,7 @@ private:
 
 protected:
 	vtkMAFLargeDataProvider();
-	~vtkMAFLargeDataProvider();
+	~vtkMAFLargeDataProvider() override;
 
 protected:
 	//replaces the name used in the lookup table, if old_name is NULL, then new entry

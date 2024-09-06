@@ -30,7 +30,7 @@ class vtkStartRenderCallback: public vtkCommand, public mafEventSender
 public:
   vtkTypeMacro(vtkStartRenderCallback, vtkCommand);
   static vtkStartRenderCallback *New() { return new vtkStartRenderCallback; }
-  void Execute(vtkObject *caller, unsigned long, void*) ;
+  void Execute(vtkObject *caller, unsigned long, void*) override;
 
   /** This sets the id of the maf event to be sent to the listener. */
   // NB since there is only one listener, we let the listener set the id.
@@ -53,7 +53,7 @@ class vtkMouseClickCallback: public vtkCommand, public mafEventSender
 public:
   vtkTypeMacro(vtkMouseClickCallback, vtkCommand);
   static vtkMouseClickCallback *New() { return new vtkMouseClickCallback; }
-  void Execute(vtkObject *caller, unsigned long, void*) ;
+  void Execute(vtkObject *caller, unsigned long, void*) override;
 
   /** This sets the id of the maf event to be sent to the listener. */
   // NB since there is only one listener, we let the listener set the id.
@@ -78,7 +78,7 @@ public:
   //mafTypeMacro(lhpMultiscaleDoubleClickCallback, mafObserver);
 
   /** Override the OnEvent() method */
-  void OnEvent(mafEventBase *event) ;
+  void OnEvent(mafEventBase *event) override;
 
   /** This sets the id of the maf event to be sent to the listener. */
   //NB since there is only one listener, we let the listener set the id.

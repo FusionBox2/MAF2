@@ -44,17 +44,17 @@ class MED_OPERATION_EXPORT medOpVolumeResample: public mafOp
 public:
              
             	 medOpVolumeResample(const mafString& label = _R("VolumeResample"),bool showShadingPlane = false);
-	virtual     ~medOpVolumeResample();
-	virtual void OnEvent(mafEventBase *maf_event);
+	             ~medOpVolumeResample() override;
+	             void OnEvent(mafEventBase *maf_event) override;
 	
   mafTypeMacro(medOpVolumeResample, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
-  bool Accept(mafNode* vme);
-  void OpRun();	
-  void OpDo();
-  void OpUndo();  
+  bool Accept(mafNode* vme) override;
+  void OpRun() override;	
+  void OpDo() override;
+  void OpUndo() override;  
   
   void PrintSelf(ostream& os);
   
@@ -108,7 +108,7 @@ protected:
 
   void ShiftCenterResampled();
 
-	virtual void OpStop(int result);
+	             void OpStop(int result) override;
 
 	void OnEventThis(mafEventBase *maf_event);
 	void OnEventGizmoTranslate(mafEventBase *maf_event);

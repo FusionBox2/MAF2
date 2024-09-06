@@ -36,7 +36,7 @@ class MAF_EXPORT mafVMEOutputSurface : public mafVMEOutputVTK
 {
 public:
   mafVMEOutputSurface();
-  virtual ~mafVMEOutputSurface();
+  ~mafVMEOutputSurface() override;
 
   mafTypeMacro(mafVMEOutputSurface,mafVMEOutputVTK);
 
@@ -74,14 +74,14 @@ public:
   const char *GetNumberOfTriangles(){return m_NumTriangles.GetCStr();}
 
   /** Update all the output data structures (data, bounds, matrix and abs matrix).*/
-  virtual void Update();
+  void Update() override;
 
 protected: 
   vtkImageData *m_Texture; ///< the optional texture to be applied to the surface
   mafString     m_NumTriangles;
   mmaMaterial  *m_Material; ///< material object used to store shading propertied to render the surface
 
-  mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
 private:
   mafVMEOutputSurface(const mafVMEOutputSurface&); // Not implemented

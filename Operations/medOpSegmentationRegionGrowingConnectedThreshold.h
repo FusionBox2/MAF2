@@ -42,22 +42,22 @@ class MED_OPERATION_EXPORT medOpSegmentationRegionGrowingConnectedThreshold: pub
 {
 public:
   medOpSegmentationRegionGrowingConnectedThreshold(const mafString& label = _R("Connected Threshold"));
-  ~medOpSegmentationRegionGrowingConnectedThreshold();
+  ~medOpSegmentationRegionGrowingConnectedThreshold() override;
 
   mafTypeMacro(medOpSegmentationRegionGrowingConnectedThreshold, mafOp);
 
   /** Return true for the acceptable vme type. */
-  /*virtual*/ bool Accept(mafNode *node);
+  /*virtual*/ bool Accept(mafNode *node) override;
 
-  /*virtual*/ mafOp* Copy();
+  /*virtual*/ mafOp* Copy() override;
 
   /** Builds operation's interface. */
-  /*virtual*/ void OpRun();
+  /*virtual*/ void OpRun() override;
 
-  /*virtual*/ void OnEvent(mafEventBase *maf_event);
+  /*virtual*/ void OnEvent(mafEventBase *maf_event) override;
 
   /** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
 
   enum CONNECTED_THRESHOLD_WIDGET_IDs
   {
@@ -99,7 +99,7 @@ public:
     
 protected:
   /** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
-  /*virtual*/ void OpStop(int result);
+  /*virtual*/ void OpStop(int result) override;
   
   /** Create the operation GUI. */
   void CreateGui();

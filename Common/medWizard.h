@@ -52,7 +52,7 @@ public:
   medWizard(const wxString &label, const wxString &name="");
 
   /** Default destructor */
-  ~medWizard();
+  ~medWizard() override;
 
 
   /** Sets the menu path */
@@ -97,7 +97,7 @@ protected:
   void AddBlock(medWizardBlock *block);
 
   /** Event management */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Used to continue wizard execution after operation termination */
   void ContinueExecution(int opSuccess);

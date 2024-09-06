@@ -25,7 +25,7 @@ class mafWXEventHandler:public wxEvtHandler
 //----------------------------------------------------------------------------
 {
 protected:
-  virtual bool ProcessEvent(wxEvent& event);
+	bool ProcessEvent(wxEvent& event) override;
 public:
   mafAgentEventHandler *m_Dispatcher;
 };

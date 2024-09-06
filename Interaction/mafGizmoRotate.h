@@ -75,11 +75,11 @@ class MAF_EXPORT mafGizmoRotate : public mafGizmoInterface
 {
 public:
            mafGizmoRotate(mafVME *input, mafBaseEventHandler* listener = NULL, bool buildGUI = true);
-  virtual ~mafGizmoRotate(); 
+           ~mafGizmoRotate() override; 
 
   /** 
   Set input vme for the gizmo*/
-  void SetInput(mafVME *vme);
+  void SetInput(mafVME *vme) override;
 
   /** Superclass override */
   void SetRenderWindowHeightPercentage(double percentage);
@@ -96,7 +96,7 @@ public:
   
   /**
   Events handling*/        
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
  
   //----------------------------------------------------------------------------
   // show 
@@ -104,7 +104,7 @@ public:
   
   /**
   Show the gizmo*/
-  void Show(bool show);
+  void Show(bool show) override;
   void Show(bool showX, bool showY, bool showZ);
 
   //----------------------------------------------------------------------------
@@ -112,7 +112,7 @@ public:
   /**
   Set the gizmo pose*/
   void SetAbsPose(mafMatrix *absPose, bool applyPoseToFans = true);
-  mafMatrix *GetAbsPose();
+  mafMatrix *GetAbsPose() override;
 
   /**
   Get the Interactor asscociated to each axis*/
@@ -126,7 +126,7 @@ public:
   void SetRefSys(mafVME *refSys);
   mafVME* GetRefSys();;
 
-  mafGUI *GetGui() {return m_GuiGizmoRotate->GetGui();};
+  mafGUI *GetGui() override {return m_GuiGizmoRotate->GetGui();};
 
   /** Modify radius of circles*/
   void SetCircleFanRadius(double radius);
@@ -139,10 +139,10 @@ protected:
   void SendTransformMatrixFromGui(mafEventBase *maf_event);
 
   /** Gizmo components events handling */
-  void OnEventGizmoGui(mafEventBase *maf_event);
+  void OnEventGizmoGui(mafEventBase *maf_event) override;
 
   /** Gizmo components events handling */
-  void OnEventGizmoComponents(mafEventBase *maf_event);
+  void OnEventGizmoComponents(mafEventBase *maf_event) override;
 
   /** 
   gizmo components enum*/

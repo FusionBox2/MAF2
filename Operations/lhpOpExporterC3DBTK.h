@@ -42,19 +42,19 @@ class lhpOpExporterC3DBTK : public mafOp
 {
 public:
   lhpOpExporterC3DBTK(const mafString& label = _R("C3D Exporter"));
-  ~lhpOpExporterC3DBTK(); 
+  ~lhpOpExporterC3DBTK() override; 
 
   mafTypeMacro(lhpOpExporterC3DBTK, mafOp);
 
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode *node);
+  bool Accept(mafNode *node) override;
 
   /** Build the interface of the operation, i.e the dialog that let choose the name of the output file. */
-  void OpRun();
+  void OpRun() override;
 
   /** Export landmarks contained into a mafVMELandmarkCloud.*/
   void ExportLandmark();

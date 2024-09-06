@@ -41,32 +41,32 @@ public:
   /** constructor */
 	medOpCreateEditSkeleton(const mafString& label = _R("Create/Edit Skeleton"));
   /** destructor */
-	~medOpCreateEditSkeleton(); 
+	~medOpCreateEditSkeleton() override; 
 
   /** RTTI macro */
 	mafTypeMacro(medOpCreateEditSkeleton, mafOp);
 
   /** Return a copy of itself, this needs to put the operation into the undo stack. */
-	mafOp* Copy();
+	mafOp* Copy() override;
 
   /** Precess events coming from other objects */
-	virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
 	/** Return true for the acceptable vme type. */
-	virtual bool Accept(mafNode* vme);
+  bool Accept(mafNode* vme) override;
 
 	/** Builds operation's interface by calling CreateOpDialog() method. */
-	virtual void OpRun();
+  void OpRun() override;
 
 	/** Execute the operation. */
-	virtual void OpDo();
+  void OpDo() override;
 
 	/** Makes the undo for the operation. */
-	virtual void OpUndo();
+  void OpUndo() override;
 
 protected:
 	/** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
-	virtual void OpStop(int result);
+  void OpStop(int result) override;
 
   /** Internally used to create a new instance of the GUI.*/
 	void CreateGui();

@@ -45,24 +45,24 @@ public:
   /** constructor */
   mafViewSingleSliceCompound(const mafString& label = _R("View Single Slice Compound with Windowing"), int num_row = 1, int num_col = 1);
   /** destructor. */
-  virtual ~mafViewSingleSliceCompound(); 
+  ~mafViewSingleSliceCompound() override; 
 
   /** RTTI macro*/
   mafTypeMacro(mafViewSingleSliceCompound, medViewCompoundWindowing);
 
 
   /** Redefine this method to package the compounded view */
-  virtual void PackageView();
+  void PackageView() override;
 
   /** Function that clones instance of the object. */
-  virtual mafView *Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
+  mafView *Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override;
  
 
   /** Function called when select a vme different from selected one.*/
 	//virtual void VmeSelect(mafNode *node, bool select);
 
   /** Calculate areas for child views in order to create a layout of the compound view.*/
-  virtual void OnLayout();
+  void OnLayout() override;
 
 protected:
   /**
@@ -72,7 +72,7 @@ protected:
   the superclass enum. The last id value must be defined as "LAST_ID" to allow the 
   subclass to continue the ID enumeration from it. For appending the widgets in the
   same pannel GUI, each CreateGUI() function should first call the superclass' one.*/
-  virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 
 	mafViewSingleSlice	*m_ViewSingleSlice;
 

@@ -46,7 +46,7 @@ class MAF_EXPORT mafOpImporterVMEDataSetAttributes: public mafOp
 public:
 
 	mafOpImporterVMEDataSetAttributes(const mafString& label = _R("mafOpImporterVMEDataSetAttributes"));
-	~mafOpImporterVMEDataSetAttributes(); 
+	~mafOpImporterVMEDataSetAttributes() override; 
 	
   mafTypeMacro(mafOpImporterVMEDataSetAttributes, mafOp);
 
@@ -90,16 +90,16 @@ public:
   int Read();
 
   /** copy the operation */
-  mafOp* Copy();
+  mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode *node);
+	bool Accept(mafNode *node) override;
 
   /** Builds operation's interface. */
-	void OpRun();
+	void OpRun() override;
   
   /** Events handling */
-  virtual void OnEvent(mafEventBase *maf_event);
+	void OnEvent(mafEventBase *maf_event) override;
  
 protected:
 
@@ -123,7 +123,7 @@ protected:
   virtual void CreateGui();  
 
   /** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
-  void OpStop(int result);
+  void OpStop(int result) override;
 	void EnableTimeVaryingGui( bool enable );
 
   /** use data array for cell id */

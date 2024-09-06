@@ -42,7 +42,7 @@ public:
   medWizardBlock(const char *name);
 
   /** Default destructor */
-  virtual ~medWizardBlock();
+  ~medWizardBlock() override;
 
   
   /** Get the name of the block */

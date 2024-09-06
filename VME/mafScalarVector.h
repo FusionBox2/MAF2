@@ -37,7 +37,7 @@ public:
   typedef mafTimeMapScalar<double>::TimeMapScalars::iterator Iterator;
 
   mafScalarVector();
-  virtual ~mafScalarVector();
+  ~mafScalarVector() override;
 
   // set as parent mafObject since type macro does not work for template classes
   mafTypeMacro(mafScalarVector, mafObject); 

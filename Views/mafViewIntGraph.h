@@ -49,45 +49,45 @@ class mafViewIntGraph: public mafView
 {
 public:
   mafViewIntGraph(const mafString& label = _R("Biomechanical graph"));
-  virtual ~mafViewIntGraph(); 
+  ~mafViewIntGraph() override; 
 
   mafTypeMacro(mafViewIntGraph, mafView);
 
-  virtual void      OnEvent(mafEventBase *maf_event);
-  virtual mafView*  Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
-  virtual void      Create();
+  void      OnEvent(mafEventBase *maf_event) override;
+  mafView*  Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override;
+  void      Create() override;
   /** Add the vme to the view's scene-graph*/
-  virtual void VmeAdd(mafNode *vme);
+  void VmeAdd(mafNode *vme) override;
   /** Remove the vme from the view's scene-graph*/
-  virtual void VmeRemove(mafNode *vme);
-  virtual void VmeSelect(mafNode *vme, bool select);
+  void VmeRemove(mafNode *vme) override;
+  void VmeSelect(mafNode *vme, bool select) override;
   /** Called to show/hide vme*/
-  virtual void VmeShow(mafNode *vme, bool show);
+  void VmeShow(mafNode *vme, bool show) override;
   /** 
   Called to update visual pipe properties of the vme passed as argument. If the 'fromTag' flag is true,
   the update is done by reading the visual parameters from tags.*/
-  virtual void VmeUpdateProperty(mafNode *vme, bool fromTag = false);
+  void VmeUpdateProperty(mafNode *vme, bool fromTag = false) override;
   /** 
   Create the visual pipe for the node passed as argument. 
   To create visual pipe first check in m_PipeMap if custom visual pipe is defined, 
   otherwise ask to vme which is its visual pipe. */
-  virtual void VmeCreatePipe(mafNode *vme);
+  void VmeCreatePipe(mafNode *vme) override;
   /** Delete vme's visual pipe. It is called when vme is removed from visualization.*/
-  virtual void VmeDeletePipe(mafNode *vme);
+  void VmeDeletePipe(mafNode *vme) override;
 
-  virtual void CameraUpdate();
-  virtual mafSceneGraph *GetSceneGraph()    {return m_Sg;}; 
+  void CameraUpdate() override;
+  mafSceneGraph *GetSceneGraph() override {return m_Sg;}; 
   /** Return a pointer to the image of the renderwindow.*/
-  void GetImage(wxBitmap &bmp, int magnification = 1);
+  void GetImage(wxBitmap &bmp, int magnification = 1) override;
   /** Called to update all components that depends on Application Options.*/
-  virtual void OptionsUpdate();
+  void OptionsUpdate() override;
   /** 
   Set the visualization status for the node (visible, not visible, mutex, ...) \sa mafSceneGraph*/
-  virtual int GetNodeStatus(mafNode *vme);
+  int GetNodeStatus(mafNode *vme) override;
   /** 
   Return a pointer to the visual pipe of the node passed as argument. 
   It is used in mafSideBar to plug the visual pipe's GUI in the tabbed vme panel. \sa mafSideBar*/
-  virtual mafPipe* GetNodePipe(mafNode *vme);
+  mafPipe* GetNodePipe(mafNode *vme) override;
   /** Access function. See name. */
   mafViewIntGraphWindow *GetRenderWindow()    {return m_RenderWindow;}
   /** save information about current plot into VME*/
@@ -104,7 +104,7 @@ public:
   /** Update all gui widgets*/
   void      UpdateGui();
   /** Set the vtk RenderWindow size. Used only for Linux (not necessary for Windows) */
-  void SetWindowSize(int w, int h);
+  void SetWindowSize(int w, int h) override;
 
   /** Struct containing information regarding visual pipe plugged into the view. */
   struct mafVisualPipeInfo
@@ -120,9 +120,9 @@ public:
   mafPipeMap m_PipeMap; ///< Map used to store visual pipeline associated with vme types
 
   /** Print this view.*/
-  virtual void Print(wxDC *dc, wxRect margins);
+  void Print(wxDC *dc, wxRect margins) override;
   /** print a dump of this object */
-  virtual void Print(std::ostream& os, const int tabs=0);// const;
+  void Print(std::ostream& os, const int tabs=0) override;// const;
 
   enum VIEWINTGRAPH_WIDGET_ID
   {
@@ -149,7 +149,7 @@ protected:
   double                  m_Smoothing;
   mafSceneGraph           *m_Sg;
 
-  virtual mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
   /** Return the visual pipe's name.*/
   void GetVisualPipeName(mafNode *node, mafString &pipe_name);
 };

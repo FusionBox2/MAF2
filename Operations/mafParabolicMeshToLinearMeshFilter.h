@@ -32,14 +32,14 @@ class MAF_EXPORT mafParabolicMeshToLinearMeshFilter : public vtkUnstructuredGrid
 public:
   
   vtkTypeMacro(mafParabolicMeshToLinearMeshFilter,vtkUnstructuredGridAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   static mafParabolicMeshToLinearMeshFilter *New();
   
 protected:
 
   mafParabolicMeshToLinearMeshFilter();
-  ~mafParabolicMeshToLinearMeshFilter();
+  ~mafParabolicMeshToLinearMeshFilter() override;
 
   /** reimplement execute fixing the algorithm when the number of points of the cutter output is zero.*/
   int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;

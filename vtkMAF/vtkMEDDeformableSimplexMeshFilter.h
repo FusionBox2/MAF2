@@ -154,11 +154,11 @@ namespace itk
 
   protected:
     vtkMEDDeformableSimplexMeshFilter();
-    ~vtkMEDDeformableSimplexMeshFilter();
+    ~vtkMEDDeformableSimplexMeshFilter() override;
     vtkMEDDeformableSimplexMeshFilter(const Self &) {}
     void operator=(const Self &){}
 
-    virtual void ComputeDisplacement();
+    void ComputeDisplacement() override;
     virtual void ComputeExternalForce(SimplexMeshGeometry *data);
 
     double m_StrutLength;

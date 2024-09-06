@@ -49,23 +49,23 @@ class MAF_EXPORT mafOpCrop3DSurface: public mafOp
 public:
              
             	 mafOpCrop3DSurface(const mafString& label=_L("Crop") , bool showShadingPlane = false);
-				 virtual     ~mafOpCrop3DSurface();
-	/*virtual*/ void OnEvent(mafEventBase *maf_event);
+	             ~mafOpCrop3DSurface() override;
+	/*virtual*/ void OnEvent(mafEventBase *maf_event) override;
 
 	mafTypeMacro(mafOpCrop3DSurface, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
-	/*virtual*/ bool Accept(mafNode* node);
-	/*virtual*/ void OpRun();	
+	/*virtual*/ bool Accept(mafNode* node) override;
+	/*virtual*/ void OpRun() override;	
 	
   /**	Extract the volume cropped*/
 	void Crop();
 
 	/** Makes the undo for the operation. */
-	/*virtual*/ void OpUndo();
+	/*virtual*/ void OpUndo() override;
 
-  /*virtual*/ void OpDo();
+  /*virtual*/ void OpDo() override;
 
   /*virtual*/ void CreateGui(); 
 
@@ -74,7 +74,7 @@ public:
 
 protected:
   void UpdateGui();
-  /*virtual*/ void OpStop(int result);	
+  /*virtual*/ void OpStop(int result) override;	
   
   mafGizmoROI *m_GizmoROI; ///< Gizmo used to define sub-volume region to crop
   

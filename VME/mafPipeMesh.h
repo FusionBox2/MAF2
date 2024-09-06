@@ -44,16 +44,16 @@ public:
 	mafTypeMacro(mafPipeMesh,mafPipeVTK);
 
 	mafPipeMesh();
-	virtual     ~mafPipeMesh();
+	~mafPipeMesh() override;
 
 	/** process events coming from Gui */
-	virtual void OnEvent(mafEventBase *maf_event);
+	void OnEvent(mafEventBase *maf_event) override;
 
   /** Create the VTK rendering pipeline*/
-	virtual void Create(mafNode *node, mafView *view);
+	void Create(mafNode *node, mafView *view) override;
 
   /** Manage the actor selection by showing the corner box around the actor when the corresponding VME is selected.*/
-	virtual void Select(bool select); 
+	void Select(bool select) override; 
 
 	/** IDs for the GUI */
 	enum PIPE_MESH_WIDGET_ID
@@ -75,8 +75,8 @@ public:
   };
 
   /** Get assembly front/back */
-  virtual vtkMAFAssembly *GetAssemblyFront(){return m_AssemblyFront;};
-  virtual vtkMAFAssembly *GetAssemblyBack(){return m_AssemblyBack;};
+	vtkMAFAssembly *GetAssemblyFront() override {return m_AssemblyFront;};
+	vtkMAFAssembly *GetAssemblyBack() override {return m_AssemblyBack;};
 	
   /** Core of the pipe */
   virtual void ExecutePipe();
@@ -138,7 +138,7 @@ protected:
 
   void CreateFieldDataControlArrays();
 	
-  void UpdateProperty(bool fromTag = false);
+  void UpdateProperty(bool fromTag = false) override;
 	
   /** Update data value to selected scalar */
   void UpdateActiveScalarsInVMEDataVectorItems();
@@ -162,6 +162,6 @@ protected:
 	double				           m_Border;
 
   /** Create the Gui for the visual pipe that allow the user to change the pipe's parameters.*/
-	virtual mafGUI  *CreateGui();
+	mafGUI  *CreateGui() override;
 };  
 #endif // __mafPipeMesh_H__

@@ -68,7 +68,7 @@ public:
   /**
     This function enques events to be processed by agent. Events are processed by agent's
     thread by means of the ProcessDispatchedEvent() function.*/
-  virtual void OnEvent(mafEventBase *event);
+  void OnEvent(mafEventBase *event) override;
   
   /**
     Send an event to the specified object (i.e. Post to that listener) asynchronously. 
@@ -89,12 +89,12 @@ public:
 
 protected:
   mafAgentThreaded();
-  virtual ~mafAgentThreaded();
+  ~mafAgentThreaded() override;
 
   /** Internal function used to request the dispatching*/
-  virtual void RequestForDispatching();
-  virtual int InternalInitialize();
-  virtual void InternalShutdown();
+  void RequestForDispatching() override;
+  int InternalInitialize() override;
+  void InternalShutdown() override;
 
   /**
     This function must be overridden by subclasses to perform custom polling of dispatcher when

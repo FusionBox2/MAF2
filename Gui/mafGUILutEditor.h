@@ -50,9 +50,9 @@ class mafGUILutEditor: public wxPanel, public mafBaseEventHandler, public mafEve
 public:
   mafGUILutEditor(wxWindow* parent, wxWindowID id = -1, const wxPoint& pos = wxDefaultPosition, 
                const wxSize& size = wxSize(300,800), long style = wxTAB_TRAVERSAL);
-  virtual ~mafGUILutEditor(); 
+  ~mafGUILutEditor() override; 
 
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Assign the external lookup table to the widget.*/
   void SetLut(vtkLookupTable *lut);

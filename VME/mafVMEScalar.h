@@ -41,51 +41,51 @@ public:
 
   /** Set the time for this VME.
   It updates also the VTK representation for the scalar data.*/
-  void SetTimeStamp(mafTimeStamp t);
+  void SetTimeStamp(mafTimeStamp t) override;
 
   /** Return true is this VME has more than one time stamp, either  for data or matrices */
-  virtual bool IsAnimated();
+  bool IsAnimated() override;
 
   /** Get the pointer to the array of Scalar's*/
   mafScalarVector *GetScalarVector() {return m_ScalarVector;}
 
   /** Return the list of time stamps of the data scalar array stored in this VME. */
-  virtual void GetDataTimeStamps(std::vector<mafTimeStamp> &kframes);
+  void GetDataTimeStamps(std::vector<mafTimeStamp> &kframes) override;
 
   /**
   Return the list of timestamps for this VME. Timestamps list is 
   obtained merging timestamps for matrices and VME scalar data*/
-  virtual void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes);
+  void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes) override;
 
   /** Set the time bounds for the time varying VME based on scalar data and matrix vector.*/
-  void GetLocalTimeBounds(mafTimeStamp tbounds[2]);
+  void GetLocalTimeBounds(mafTimeStamp tbounds[2]) override;
 
   /** print a dump of this object */
-  virtual void Print(std::ostream& os, const int tabs=0);
+  void Print(std::ostream& os, const int tabs=0) override;
 
   /** Copy the contents of another mafVMEScalar into this one. */
-  virtual int DeepCopy(mafNode *a);
+  int DeepCopy(mafNode *a) override;
 
   /** Compare with another mafVMEScalar. */
-  virtual bool Equals(mafVME *vme);
+  bool Equals(mafVME *vme) override;
 
   /** return the right type of output.*/  
   mafVMEOutputScalar *GetScalarOutput() {return (mafVMEOutputScalar *)GetOutput();}
 
-  /** return the right type of output */  
-  virtual mafVMEOutput *GetOutput();
+  /** return the right type of output */
+  mafVMEOutput *GetOutput() override;
 
   /** return icon */
   static char** GetIcon();
 
   /** Return the suggested pipe-typename for the visualization of this vme */
-  virtual mafString GetVisualPipe() {return mafString(_R("mafPipeScalar"));};
+  mafString GetVisualPipe() override {return mafString(_R("mafPipeScalar"));};
 
 protected:
   mafVMEScalar();
-  virtual ~mafVMEScalar();
+  ~mafVMEScalar() override;
 
-  void InternalPreUpdate();
+  void InternalPreUpdate() override;
 
   void InternalStore(mafStorageElementBuilder& parent) override;
   void InternalRestore(const mafStorageElement& node) override;

@@ -44,18 +44,18 @@ class MAF_EXPORT mafOpImporterImage: public mafOp
 {
 public:
   mafOpImporterImage(const mafString& label = _R("ImageImporter"));
- ~mafOpImporterImage(); 
-	virtual void OnEvent(mafEventBase *maf_event);
+ ~mafOpImporterImage() override;
+  void OnEvent(mafEventBase *maf_event) override;
   
   mafTypeMacro(mafOpImporterImage, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-  bool Accept(mafNode *node) {return true;};
+  bool Accept(mafNode *node) override {return true;};
 
 	/** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
   /** Set the filename for the .stl to import */
   void SetFileName(const char *file_name);
@@ -72,7 +72,7 @@ public:
   void ImportImage();
 protected:
   /** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
-  void OpStop(int result);
+  void OpStop(int result) override;
 
   
   void BuildImageSequence();

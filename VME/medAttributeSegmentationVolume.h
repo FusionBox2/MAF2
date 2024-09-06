@@ -38,15 +38,15 @@ public:
   /** constructor. */
   medAttributeSegmentationVolume();
   /** destructor. */
-  virtual ~medAttributeSegmentationVolume();
+  ~medAttributeSegmentationVolume() override;
 
   mafTypeMacro(medAttributeSegmentationVolume, mafAttribute);
 
   /** Print a dump of this object */
-  /*virtual*/ void Print(std::ostream& os, const int tabs=0) const;
+  /*virtual*/ void Print(std::ostream& os, const int tabs=0) const override;
 
   /** Copy the contents of another Meter attribute into this one. */
-  /*virtual*/ void DeepCopy(const mafAttribute *a);
+  /*virtual*/ void DeepCopy(const mafAttribute *a) override;
 
   /** Compare with another Meter attribute. */
   /*virtual*/ bool Equals(const mafAttribute *a);

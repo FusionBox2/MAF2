@@ -28,11 +28,11 @@ public:
   /** Return the right type of output.*/  
   mafVMEOutputNULL *GetVTKOutput() {return (mafVMEOutputNULL *)GetOutput();}
 
-  /** Return the output. This create the output object on demand. */  
-  virtual mafVMEOutput *GetOutput();
+  /** Return the output. This create the output object on demand. */
+  mafVMEOutput *GetOutput() override;
 
   /** print a dump of this object */
-  virtual void Print(std::ostream& os, const int tabs=0);
+  void Print(std::ostream& os, const int tabs=0) override;
 
   enum INFOTEX_WIDGET_ID
   {
@@ -41,10 +41,10 @@ public:
   };
 
   /** Copy the contents of another VME-RefSys into this one. */
-  virtual int DeepCopy(mafNode *a);
+  int DeepCopy(mafNode *a) override;
 
   /** Compare with another VME-RefSys. */
-  virtual bool Equals(mafVME *vme);
+  bool Equals(mafVME *vme) override;
 
   void SetPosShow(bool show, int index);
   bool GetPosShow(int index);
@@ -56,17 +56,17 @@ public:
   int GetNumberOfStrings() {return m_Strings.size();}
   //void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes){kframes.clear();}
 
-  void SetTimeStamp(mafTimeStamp t);
+  void SetTimeStamp(mafTimeStamp t) override;
 
   /** return icon */
   static char** GetIcon();
 
 protected:
   mafVMEInfoText();
-  virtual ~mafVMEInfoText();
+  ~mafVMEInfoText() override;
 
   /** Internally used to create a new instance of the GUI.*/
-  virtual mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
   void InternalStore(mafStorageElementBuilder& parent) override;
   void InternalRestore(const mafStorageElement& node) override;

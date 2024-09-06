@@ -42,12 +42,12 @@ class MAF_EXPORT mafGUIGizmoRotate : public mafGUIGizmoInterface
 public:
 
   mafGUIGizmoRotate(mafBaseEventHandler *listener, bool testMode = false);
-  ~mafGUIGizmoRotate(); 
+  ~mafGUIGizmoRotate() override; 
 
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Enable-Disable the GUI's widgets */
-  void EnableWidgets(bool enable);
+  void EnableWidgets(bool enable) override;
 
 //----------------------------------------------------------------------------
 //gui constants: 
@@ -68,7 +68,7 @@ enum GIZMO_ROTATE_ID
 protected:
 
   /** Create the GUI*/
-  void CreateGui();
+  void CreateGui() override;
 
   /**
   Gui rot angles*/

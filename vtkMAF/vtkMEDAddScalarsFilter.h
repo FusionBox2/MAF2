@@ -86,9 +86,9 @@ public:
 
 protected :
   vtkMEDAddScalarsFilter();
-  ~vtkMEDAddScalarsFilter() {};
+  ~vtkMEDAddScalarsFilter() override {};
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   float m_Color[4] ;
   char m_ScalarName[256] ;

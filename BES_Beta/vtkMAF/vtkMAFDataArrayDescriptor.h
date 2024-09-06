@@ -23,7 +23,7 @@ class VTK_vtkMAF_EXPORT vtkMAFDataArrayDescriptor : public vtkObject
 {
 public:
 	vtkTypeMacro(vtkMAFDataArrayDescriptor,vtkObject);
-	void PrintSelf(ostream& os, vtkIndent indent);
+	void PrintSelf(ostream& os, vtkIndent indent) override;
 	static vtkMAFDataArrayDescriptor* New();
 
 	// Description:
@@ -99,7 +99,7 @@ public:
 protected:
 	// Construct object with default tuple dimension (number of components) of 1.
 	vtkMAFDataArrayDescriptor();
-	~vtkMAFDataArrayDescriptor();
+	~vtkMAFDataArrayDescriptor() override;
 
 	int NumberOfComponents; // the number of components per tuple
 	vtkIdType64 NumberOfTuples;		// the number of tuples

@@ -41,7 +41,7 @@ public:
   /** constructor. */
   mafGUIMDIChild(wxMDIParentFrame* parent, mafView *view); 
   /** destructor. */
-  virtual ~mafGUIMDIChild();
+  ~mafGUIMDIChild() override;
   
   /** 
   Allow to set the flag to avoid closing the view. 

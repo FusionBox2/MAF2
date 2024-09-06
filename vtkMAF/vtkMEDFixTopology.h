@@ -45,16 +45,16 @@ class VTK_vtkMAF_EXPORT vtkMEDFixTopology : public vtkPolyDataAlgorithm
     /** RTTI macro*/
     vtkTypeMacro(vtkMEDFixTopology,vtkPolyDataAlgorithm);
     /** print information*/
-    void PrintSelf(ostream& os, vtkIndent indent);
+    void PrintSelf(ostream& os, vtkIndent indent) override;
   
   protected:
     /** constructor */
     vtkMEDFixTopology();
     /** destructor */
-    ~vtkMEDFixTopology();
+    ~vtkMEDFixTopology() override;
 
     /** execute the filter*/
-    int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+    int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   private:
     /** copy constructor not implemented*/

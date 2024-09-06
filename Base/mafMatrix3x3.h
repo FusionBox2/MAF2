@@ -33,10 +33,10 @@ class MAF_EXPORT mafMatrix3x3: public mafObject, public mafTimeStamped
 {
 public:
   mafTypeMacro(mafMatrix3x3,mafObject);
-  virtual void Print (std::ostream& os, const int indent=0) const;
+  void Print (std::ostream& os, const int indent=0) const override;
 
   mafMatrix3x3();
-  virtual ~mafMatrix3x3();
+  ~mafMatrix3x3() override;
 
   mafMatrix3x3 &operator=(const mafMatrix3x3 &mat);
   mafMatrix3x3(mafMatrix3x3 &mat);

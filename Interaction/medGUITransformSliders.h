@@ -49,13 +49,13 @@ public:
   medGUITransformSliders(mafVME *input, double translationRange[6], mafBaseEventHandler *listener = NULL, bool enableScaling = true,bool testMode = false);
 
   /** Destructor */
-  ~medGUITransformSliders(); 
+  ~medGUITransformSliders() override; 
 
   /** Override superclass */
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Enable-Disable the GUI's widgets */
-  void EnableWidgets(bool enable);
+  void EnableWidgets(bool enable) override;
 
   //----------------------------------------------------------------------------
   //gui constants: 
@@ -77,7 +77,7 @@ public:
   };
 
   /** Override superclass */
-  void Reset();
+  void Reset() override;
 
   /** Set abs pose and update position, orientation and scale text entries according to current reference system. */
   void SetAbsPose(mafMatrix *absPose, mafTimeStamp timeStamp = -1);
@@ -104,13 +104,13 @@ public:
 protected:
 
   /** override superclass */
-  void RefSysVmeChanged();  
+  void RefSysVmeChanged() override;  
 
   /** action to be performed when a slider has changed its position. */
   void SlidersValuesChanged();
 
   /** override superclass */ 
-  void CreateGui();
+  void CreateGui() override;
 
   double m_Position[3];
   double m_Orientation[3];

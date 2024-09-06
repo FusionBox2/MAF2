@@ -38,7 +38,7 @@ class MAF_EXPORT mafEventIO: public mafEventBase
 {
 public:
   mafEventIO(void *sender=NULL,mafID id=ID_NO_EVENT,mafID item_id=-1,void *data=NULL, mafID channel=MCH_UP);
-  virtual ~mafEventIO();
+  ~mafEventIO() override;
 
   mafTypeMacro(mafEventIO,mafEventBase);
  

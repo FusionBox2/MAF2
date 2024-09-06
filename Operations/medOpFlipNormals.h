@@ -57,27 +57,27 @@ public:
 	medOpFlipNormals(const mafString& label = _R("Flip Normals"));
 
   /** destructor. */
-	~medOpFlipNormals(); 
+	~medOpFlipNormals() override; 
 
   /** RTTI macro */
 	mafTypeMacro(medOpFlipNormals, mafOp);
 
-	/*virtual*/ mafOp* Copy();
+	/*virtual*/ mafOp* Copy() override;
 
   /** Precess events coming from other objects */
-	/*virtual*/ void OnEvent(mafEventBase *maf_event);
+	/*virtual*/ void OnEvent(mafEventBase *maf_event) override;
 
 	/** Return true for the acceptable vme type. */
-	/*virtual*/ bool Accept(mafNode* vme);
+	/*virtual*/ bool Accept(mafNode* vme) override;
 
 	/** Builds operation's interface by calling CreateOpDialog() method. */
-	/*virtual*/ void OpRun();
+	/*virtual*/ void OpRun() override;
 
 	/** Execute the operation. */
-	/*virtual*/ void OpDo();
+	/*virtual*/ void OpDo() override;
 
 	/** Makes the undo for the operation. */
-	/*virtual*/ void OpUndo();
+	/*virtual*/ void OpUndo() override;
 
 	/** set the seed ie the cell originating the selection area */
 	void SetSeed(vtkIdType cellSeed);

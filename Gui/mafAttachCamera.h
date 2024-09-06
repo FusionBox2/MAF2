@@ -51,7 +51,7 @@ public:
 
   /** Attach camera is disabled by default: use EnableAttachCamera() to enable attaching */
 	mafAttachCamera(wxWindow* parent, mafRWI *rwi, mafBaseEventHandler *Listener = NULL);
-	~mafAttachCamera(); 
+	~mafAttachCamera() override; 
   
   /** Enable/Disable attach camera to vme */
   void EnableAttachCamera();
@@ -74,7 +74,7 @@ public:
   void SetStartingMatrix(mafMatrix *matrix);
   mafMatrix GetStartingMatrix();
 
-	void OnEvent(mafEventBase *maf_event);
+	void OnEvent(mafEventBase *maf_event) override;
   
 	/** 
   Returns the mafAttachCamera's GUI */

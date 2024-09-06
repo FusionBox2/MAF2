@@ -45,20 +45,20 @@ Another feature of the widget is to show also a checkbox near the VME's icon to 
 class mafGUIVMEChooserTree: public mafGUICheckTree
 {
 public:
-                 mafGUIVMEChooserTree (wxWindow *parent, mafGUICheckTree *tree, ValidateCallBackType vme_accept_function = 0, wxWindowID id=-1, bool CloseButton = false, bool HideTitle = false, long style = REPRESENTATION_AS_TREE, bool multiSelect = false); 
-  virtual       ~mafGUIVMEChooserTree();
+                 mafGUIVMEChooserTree (wxWindow *parent, mafGUICheckTree *tree, ValidateCallBackType vme_accept_function = 0, wxWindowID id=-1, bool CloseButton = false, bool HideTitle = false, long style = REPRESENTATION_AS_TREE, bool multiSelect = false);
+                 ~mafGUIVMEChooserTree() override;
 
   /** Return the choosed node*/
   std::vector<mafNode*> GetChoosedNode();
 
   /** Called by the Custom-Tree-Event-Handler - via OnMouseDown*/
-  virtual void OnIconClick(wxTreeItemId item);
+                 void OnIconClick(wxTreeItemId item) override;
 
 protected:
   /** Return the status of the node according to the vme visibility. */
-  int GetVmeStatus(mafNode *node);
+  int GetVmeStatus(mafNode *node) override;
 
-  void InitializeImageList();
+  void InitializeImageList() override;
 
   /** Initialize images for multi selection dialog. */
   void InitializeImageListMulti();
@@ -70,10 +70,10 @@ protected:
   void CloneSubTree(mafGUICheckTree *tree, wxTreeItemId *source_item, wxTreeItemId *dest_parent_item);
 
   /** Called by the Custom-Tree-Event-Handler */
-  void ShowContextualMenu(wxMouseEvent& event);
+  void ShowContextualMenu(wxMouseEvent& event) override;
 
   /** respond to Selection Changed */
-  virtual void OnSelectionChanged(wxTreeEvent& event);
+                 void OnSelectionChanged(wxTreeEvent& event) override;
 
   ValidateCallBackType m_ValidateFunction;
 

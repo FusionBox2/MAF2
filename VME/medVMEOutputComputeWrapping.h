@@ -38,17 +38,17 @@ public:
   /** constructor */
   medVMEOutputComputeWrapping();
   /** destructor */
-  virtual ~medVMEOutputComputeWrapping();
+  ~medVMEOutputComputeWrapping() override;
 
   /** RTTI macro*/
   mafTypeMacro(medVMEOutputComputeWrapping,mafVMEOutputPolyline);
 
   /** Update all the output data structures (data, bounds, matrix and abs matrix).*/
-  virtual void Update();
+  void Update() override;
 
 protected:
   /** create the gui of the output panel for this vme output type*/
-  mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
   mafString m_Distance;
   mafString m_Angle;

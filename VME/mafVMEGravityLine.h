@@ -70,24 +70,24 @@ public:
     
 	void SetSurfaceName(mafVMESurface* ,mafString);
 	//void SetPlane(mafVMEPlane*, mafString a);
-  virtual void Update();
- 
-  virtual int DeepCopy(mafNode *a);
+	void Update() override;
+
+	int DeepCopy(mafNode *a) override;
 
   /** Compare with another mafVMESurfaceParametric. */
-  virtual bool Equals(mafVME *vme);
+	bool Equals(mafVME *vme) override;
 
  
   /** return the right type of output */  
  // mafVMEOutputSurface *GetSurfaceOutput();
   mafVMEOutputPolyline *GetPolylineOutput();
- 
 
-  virtual bool IsAnimated();
+
+	bool IsAnimated() override;
 
   /** Return the suggested pipe-typename for the visualization of this vme */
   //virtual mafString GetVisualPipe() {return mafString("mafPipeSurface");};
-  virtual mafString GetVisualPipe() { return mafString(_R("mafPipePolyline")); };
+	mafString GetVisualPipe() override { return mafString(_R("mafPipePolyline")); };
   //virtual mafString GetVisualPipe() { return mafString("mafPipeMeter"); };
   /** Return pointer to material attribute. */
   mmaMaterial *GetMaterial();
@@ -95,13 +95,13 @@ public:
   /** return an xpm-icon that can be used to represent this node */
   //static char ** GetIcon();
 	
-  /** Precess events coming from other objects */ 
-  virtual void OnEvent(mafEventBase *maf_event);
+  /** Precess events coming from other objects */
+	void OnEvent(mafEventBase *maf_event) override;
 
   void SetPlaneLink(const mafString& link_name, mafNode *n);
   void SetSurfaceLink(const mafString& link_name, mafNode *n);
   
-  void SetTimeStamp(mafTimeStamp t);
+  void SetTimeStamp(mafTimeStamp t) override;
   /**
   Set the Pose matrix of the VME. This function modifies the MatrixVector. You can
   set or get the Pose for a specified 
@@ -111,13 +111,13 @@ public:
   interpolates on the fly according to the matrix interpolator.*/
 
   mafVMEPlane* parallelPlane;
-  virtual void SetMatrix(const mafMatrix &mat);
-  virtual void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes);
+	void SetMatrix(const mafMatrix &mat) override;
+	void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes) override;
   /*
   Fit an ellipsoid to a set of points
   */
   mafVMEGravityLine();
-  virtual ~mafVMEGravityLine();
+	~mafVMEGravityLine() override;
 protected:
 
 
@@ -147,13 +147,13 @@ protected:
   void InternalRestore(const mafStorageElement& node) override;
 
 	/** called to prepare the update of the output */
-	virtual void InternalPreUpdate();
+	void InternalPreUpdate() override;
 
 	/** update the output data structure */
- void InternalUpdate();
+ void InternalUpdate() override;
 
   /** Internally used to create a new instance of the GUI.*/
-  virtual mafGUI *CreateGui();
+	mafGUI *CreateGui() override;
 
 
   //void CreateGuiSelectPoints();

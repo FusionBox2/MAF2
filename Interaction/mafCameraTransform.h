@@ -65,7 +65,7 @@ class MAF_EXPORT mafCameraTransform:public mafTransformBase
 {
 public:
   mafCameraTransform();
-  virtual ~mafCameraTransform();
+  ~mafCameraTransform() override;
 
   mafTypeMacro(mafCameraTransform,mafTransformBase);
   
@@ -155,7 +155,7 @@ public:
   /** 
     Get the MTime: this is the bit of magic that makes everything work.
     This MTime takes in consideration also the camera's MTime */
-  virtual unsigned long GetMTime();
+  unsigned long GetMTime() override;
 
   virtual int DeepCopy(mafCameraTransform *trans);
   
@@ -203,7 +203,7 @@ public:
 protected:
 
   /**  Updates the internal matrix */
-  virtual void InternalUpdate();
+  void InternalUpdate() override;
 
   static void InternalProcessEvents(vtkObject* sender, unsigned long channel, void* clientdata, void* calldata);
 

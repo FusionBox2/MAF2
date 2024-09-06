@@ -34,7 +34,7 @@ class MAF_EXPORT mafMSFImporter : public mafNodeManager
 {
 public:
   mafMSFImporter(){}
-  virtual ~mafMSFImporter() {}
+  ~mafMSFImporter() override {}
   
   enum MATERIAL_TAG_ID
   {

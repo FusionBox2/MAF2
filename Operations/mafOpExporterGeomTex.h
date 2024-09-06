@@ -31,18 +31,18 @@ class MAF_EXPORT mafOpExporterGeomTex : public mafOp
 {
 public:
 	mafOpExporterGeomTex(const mafString& label = _R("GeomTexExporter"));
-	~mafOpExporterGeomTex();
+	~mafOpExporterGeomTex() override;
 
 	mafTypeMacro(mafOpExporterGeomTex, mafOp);
 
-	mafOp* Copy();
-	void OnEvent(mafEventBase *maf_event);
+	mafOp* Copy() override;
+	void OnEvent(mafEventBase *maf_event) override;
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode *node);
+	bool Accept(mafNode *node) override;
 
 	/** Builds operation's interface. */
-	void OpRun();
+	void OpRun() override;
 
 	/** Set the filename for the .stl to export */
 	void SetFileName(const mafString& file_name) { m_File = file_name; };
@@ -62,7 +62,7 @@ public:
 
 protected:
 	/** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
-	void OpStop(int result);
+	void OpStop(int result) override;
 
 	mafString  m_File;
 	mafString  m_FileDir;

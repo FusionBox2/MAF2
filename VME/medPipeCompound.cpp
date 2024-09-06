@@ -156,7 +156,7 @@ protected:
   //Ensures that the size is at least equaled to the size of
   //the parent of the GUI (this is to hack FitGui method)
   /*virtual*/ void DoSetSize(int x, int y, 
-    int width, int height, int sizeFlags = wxSIZE_AUTO)
+    int width, int height, int sizeFlags = wxSIZE_AUTO) override
   {
     wxSize size = this->GetParent()->GetClientSize();
     int w = size.GetWidth();

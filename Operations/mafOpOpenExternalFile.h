@@ -33,17 +33,17 @@ class MAF_EXPORT mafOpOpenExternalFile: public mafOp
 {
 public:
   mafOpOpenExternalFile(const mafString& label = _R("OpenExternalFile"));
- ~mafOpOpenExternalFile();
+ ~mafOpOpenExternalFile() override;
 
  mafTypeMacro(mafOpOpenExternalFile, mafOp);
 
- mafOp* Copy();
+ mafOp* Copy() override;
 
  /** Return true for the acceptable vme type. */
- bool Accept(mafNode* node);
+ bool Accept(mafNode* node) override;
 
  /** Builds operation's interface. */
- void OpRun();
+ void OpRun() override;
 
  /** Return the "pid" of the wxExecute() */
  long GetPid();

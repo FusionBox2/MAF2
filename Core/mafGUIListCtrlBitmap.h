@@ -52,8 +52,8 @@ enum ITEM_ICONS
 class mafGUIListCtrlBitmap: public mafGUINamedPanel, public mafEventSender
 {
 public:
-                 mafGUIListCtrlBitmap (wxWindow* parent, wxWindowID id=-1, bool CloseButton = false, bool HideTitle = false); 
-  virtual       ~mafGUIListCtrlBitmap();
+                 mafGUIListCtrlBitmap (wxWindow* parent, wxWindowID id=-1, bool CloseButton = false, bool HideTitle = false);
+                 ~mafGUIListCtrlBitmap() override;
   
 
   /** Clear the control list. */

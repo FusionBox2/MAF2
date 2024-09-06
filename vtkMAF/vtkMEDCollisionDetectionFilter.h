@@ -54,7 +54,7 @@ class VTK_vtkMAF_EXPORT vtkMEDCollisionDetectionFilter : public vtkPolyDataAlgor
 {
 public:
   vtkTypeMacro(vtkMEDCollisionDetectionFilter, vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
 //BTX
   enum CollisionModes
@@ -160,14 +160,14 @@ public:
 
   // Description:
   // Return the MTime also considering the transform.
-  vtkMTimeType GetMTime();
+  vtkMTimeType GetMTime() override;
 
 protected:
   vtkMEDCollisionDetectionFilter();
-  ~vtkMEDCollisionDetectionFilter();
+  ~vtkMEDCollisionDetectionFilter() override;
 
   // Usual data generation method
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   vtkLinearTransform *Transform[2];
   vtkMatrix4x4 *Matrix[2];

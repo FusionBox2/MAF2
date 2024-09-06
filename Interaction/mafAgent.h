@@ -99,7 +99,7 @@ public:
   the function doesn't return until the event is processed by someone. If the class
   cannot manage the event it is passed to its listeners on the same channel and so on,
   until it's processed.*/
-  virtual void OnEvent(mafEventBase *event);
+  void OnEvent(mafEventBase *event) override;
   
   /**  return true if there's an observer on the specified channel. (noarg == MCH_UP) */
   bool HasObservers(mafID channel);
@@ -127,7 +127,7 @@ public:
 
 protected:
   mafAgent();
-  virtual ~mafAgent();
+  ~mafAgent() override;
 
   /**
   This function is overridden by subclasses to perform custom initialization*/

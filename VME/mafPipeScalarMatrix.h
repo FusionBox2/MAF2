@@ -33,13 +33,13 @@ public:
   mafTypeMacro(mafPipeScalarMatrix,mafPipeVTK);
 
                mafPipeScalarMatrix();
-  virtual     ~mafPipeScalarMatrix ();
+  ~mafPipeScalarMatrix () override;
 
   /** process events coming from gui */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
-  virtual void Create(mafNode *node, mafView *view);
-  virtual void Select(bool select); 
+  void Create(mafNode *node, mafView *view) override;
+  void Select(bool select) override; 
 
   /** IDs for the GUI */
   enum PIPE_SCALAR_WIDGET_ID
@@ -53,7 +53,7 @@ protected:
   vtkActor *m_Actor;
 
   /** Update visual properties*/
-  void UpdateProperty(bool fromTag = false);
-  virtual mafGUI  *CreateGui();
+  void UpdateProperty(bool fromTag = false) override;
+  mafGUI  *CreateGui() override;
 };  
 #endif // __mafPipeScalar_H__

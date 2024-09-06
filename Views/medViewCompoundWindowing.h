@@ -47,7 +47,7 @@ public:
   /** constructor */
   medViewCompoundWindowing(const mafString& label = _R("View Compound with Windowing"), int num_row = 1, int num_col = 1);
   /** destructor. */
-  virtual ~medViewCompoundWindowing(); 
+  ~medViewCompoundWindowing() override; 
 
 	/** IDs for the view GUI */
 	enum VIEW_SLICE_WIDGET_ID
@@ -57,24 +57,24 @@ public:
 	};
 
   /** Redefine this method to package the compounded view */
-  virtual void PackageView()=0;
+  void PackageView() override =0;
 
   /** Function that clones instance of the object. */
-  virtual mafView *Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false)=0;
+  mafView *Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override =0;
   
   /** 
   Create the GUI on the bottom of the compounded view. */
-  virtual void     CreateGuiView();
+  void     CreateGuiView() override;
   
   /** Function that handles events sent from other objects. */
-  virtual void     OnEvent(mafEventBase *maf_event);
+  void     OnEvent(mafEventBase *maf_event) override;
 
 	/** 
   Show/Hide VMEs into plugged sub-views*/
-  virtual void VmeShow(mafNode *node, bool show);
+  void VmeShow(mafNode *node, bool show) override;
 
   /** Function called when select a vme different from selected one.*/
-	virtual void VmeSelect(mafNode *node, bool select);
+  void VmeSelect(mafNode *node, bool select) override;
 
   /** Calculate areas for child views in order to create a layout of the compound view.*/
   //virtual void OnLayout()=0;
@@ -87,7 +87,7 @@ protected:
   the superclass enum. The last id value must be defined as "LAST_ID" to allow the 
   subclass to continue the ID enumeration from it. For appending the widgets in the
   same pannel GUI, each CreateGUI() function should first call the superclass' one.*/
-  virtual mafGUI  *CreateGui()=0;
+  mafGUI  *CreateGui() override =0;
 
   /** Function for enable/disable all gui widgets. */
   virtual void EnableWidgets(bool enable);
@@ -109,7 +109,7 @@ protected:
 	vtkLookupTable	        *m_ColorLUT;
 	
 	/** Function that get node pipe of first child     */
-	virtual mafPipe* GetNodePipe(mafNode *vme);
+  mafPipe* GetNodePipe(mafNode *vme) override;
 
 };
 #endif

@@ -35,18 +35,18 @@ class mafOpExporterOBJ: public mafOp
 {
 public:
   mafOpExporterOBJ(const mafString& label = _R("ExporterOBJ"));
-  ~mafOpExporterOBJ(); 
+  ~mafOpExporterOBJ() override; 
 
   mafTypeMacro(mafOpExporterOBJ, mafOp);
 
-  mafOp* Copy();
-  void OnEvent(mafEventBase *maf_event);
+  mafOp* Copy() override;
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode *node);
+  bool Accept(mafNode *node) override;
 
   /** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
   /** Set the filename for the .stl to export */
   void SetFileName(const char *file_name) {m_File = _R(file_name);}

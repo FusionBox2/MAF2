@@ -41,33 +41,33 @@ public:
   mafTypeMacro(mafDataPipeInterpolatorVTK,mafDataPipeInterpolator);
 
   /** This DataPipe accepts only VME's with internal DataArray. */
-  virtual bool Accept(mafVME *vme);
+  bool Accept(mafVME *vme) override;
 
   /**
     Get the MTime: this is the bit of magic that makes everything work.*/
   //virtual unsigned long GetMTime();
 
   /** process events coming from vtkMAFDataPipe bridge component */
-  void OnEvent(mafEventBase *e);
+  void OnEvent(mafEventBase *e) override;
 
    /**  Get the output of the interpolator item*/
   mafVMEItemVTK *GetCurrentItem() {return (mafVMEItemVTK *)m_CurrentItem;}
 
   /** return the VTK dataset generated as output to this data pipe */
-  virtual vtkAlgorithmOutput *GetVTKOutputPort();
+  vtkAlgorithmOutput *GetVTKOutputPort() override;
 
   /** update the data pipe output */
-  virtual void Update();
+  void Update() override;
 
   /** retrieve vtk data pipe*/
   vtkMAFDataPipe *GetVTKDataPipe(){return m_VTKDataPipe;};
 
 protected:
   mafDataPipeInterpolatorVTK();
-  virtual ~mafDataPipeInterpolatorVTK();
+  ~mafDataPipeInterpolatorVTK() override;
 
-  virtual void PreExecute();
-  virtual void Execute() {}
+  void PreExecute() override;
+  void Execute() override {}
 
   vtkMAFDataPipe *m_VTKDataPipe; ///< VTK pipeline bridge component
 

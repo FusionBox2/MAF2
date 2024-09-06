@@ -37,36 +37,36 @@ class MAF_EXPORT mafVMEGroup : public mafVMEGenericAbstract
 public:
   mafTypeMacro(mafVMEGroup,mafVMEGenericAbstract);
 
-  /** Precess events coming from other objects */ 
-  virtual void OnEvent(mafEventBase *maf_event);
+  /** Precess events coming from other objects */
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Return the right type of output.*/  
   mafVMEOutputNULL *GetVTKOutput() {return (mafVMEOutputNULL *)GetOutput();}
 
-  /** Return the output. This create the output object on demand. */  
-  virtual mafVMEOutput *GetOutput();
+  /** Return the output. This create the output object on demand. */
+  mafVMEOutput *GetOutput() override;
 
   /** return icon */
   static char** GetIcon();
   
   /** override superclass */
-  void SetMatrix(const mafMatrix &mat);
+  void SetMatrix(const mafMatrix &mat) override;
 
   /** override superclass */
-  void Print(std::ostream& os, const int tabs);
+  void Print(std::ostream& os, const int tabs) override;
 
   /** return icon */
-  bool Equals(mafVME *vme);
+  bool Equals(mafVME *vme) override;
 
   /** return icon */
-  int DeepCopy(mafNode *a);
+  int DeepCopy(mafNode *a) override;
 
 protected:
   mafVMEGroup();
-  virtual ~mafVMEGroup();
+  ~mafVMEGroup() override;
 
   /** Internally used to create a new instance of the GUI.*/
-  virtual mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
   mafTransform *m_Transform;
 

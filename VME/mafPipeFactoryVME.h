@@ -33,8 +33,8 @@ class MAF_EXPORT mafPipeFactoryVME : public mafPipeFactory
 {
 public: 
   mafTypeMacro(mafPipeFactoryVME,mafPipeFactory);
-  virtual const char* GetMAFSourceVersion() const;
-  virtual const char* GetDescription() const;
+  const char* GetMAFSourceVersion() const override;
+  const char* GetDescription() const override;
   
   static mafPipeFactoryVME *GetInstance(); //{if (!m_Instance) Initialize(); return m_Instance;}
 
@@ -43,7 +43,7 @@ public:
   
 protected:
   mafPipeFactoryVME();
-  ~mafPipeFactoryVME() { }
+  ~mafPipeFactoryVME() override { }
 
   static bool m_Initialized;
   

@@ -46,7 +46,7 @@ public:
   /** constructor. */
   mafViewImageCompound(const mafString& label = _R("View Single Slice Compound"), int num_row = 1, int num_col = 1);
   /** destructor. */
-  virtual ~mafViewImageCompound(); 
+  ~mafViewImageCompound() override; 
 
   /** RTTI macro.*/
   mafTypeMacro(mafViewImageCompound, mafViewCompound);
@@ -59,22 +59,22 @@ public:
 	};
 
   /**  Redefine this method to package the compounded view */
-  virtual void PackageView();
+  void PackageView() override;
 
   /** Function that clones instance of the object. */
-  virtual mafView *Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
+  mafView *Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override;
   
   /**  Create the GUI on the bottom of the compounded view. */
-  virtual void     CreateGuiView();
+  void     CreateGuiView() override;
   
   /** Function that handles events sent from other objects. */
-  virtual void     OnEvent(mafEventBase *maf_event);
+  void     OnEvent(mafEventBase *maf_event) override;
 
 	/** Show/Hide VMEs into plugged sub-views*/
-  virtual void VmeShow(mafNode *node, bool show);
+  void VmeShow(mafNode *node, bool show) override;
   
   /** Function called when select a vme different from selected one.*/
-	virtual void VmeSelect(mafNode *node, bool select);
+  void VmeSelect(mafNode *node, bool select) override;
 
 protected:
   /**
@@ -84,7 +84,7 @@ protected:
   the superclass enum. The last id value must be defined as "LAST_ID" to allow the 
   subclass to continue the ID enumeration from it. For appending the widgets in the
   same pannel GUI, each CreateGUI() function should first call the superclass' one.*/
-  virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 
   /** Function for enable/disable all gui widgets. */
 	void EnableWidgets(bool enable);

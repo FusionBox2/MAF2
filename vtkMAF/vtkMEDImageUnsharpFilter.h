@@ -32,7 +32,7 @@ public:
   /** RTTI macro*/
   vtkTypeMacro(vtkMEDImageUnsharpFilter,vtkThreadedImageAlgorithm);
   /** print information */
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   /**Creates an instance of vtkMEDImageUnsharpFilter with the following*/
@@ -42,10 +42,10 @@ protected:
   /** constructor */
   vtkMEDImageUnsharpFilter();
   /** destructor */
-  ~vtkMEDImageUnsharpFilter();
+  ~vtkMEDImageUnsharpFilter() override;
 
   /** execute filter on threads*/
-  void ThreadedExecute(vtkImageData *inData, vtkImageData *outData, int extent[6], int id);
+  void ThreadedExecute(vtkImageData *inData, vtkImageData *outData, int extent[6], int id) override;
   
 private:
   /** copy constructor not implemented */

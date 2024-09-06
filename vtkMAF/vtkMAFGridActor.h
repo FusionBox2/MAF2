@@ -60,7 +60,7 @@ class VTK_vtkMAF_EXPORT vtkMAFGridActor : public vtkActor
   /** RTTI macro. */
   vtkTypeMacro(vtkMAFGridActor,vtkActor);
   /** Print information regarding the status of the object. */
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
   /** Create an instance of the object. */
   static	vtkMAFGridActor *New();
   
@@ -76,17 +76,17 @@ class VTK_vtkMAF_EXPORT vtkMAFGridActor : public vtkActor
   /** Adjust the clipping range (this method is empty).*/
   virtual  void 		AdjustClippingRange(vtkViewport *viewport);
   /** Method is intended for rendering Opaque Geometry.*/
-  virtual  int			RenderOpaqueGeometry(vtkViewport *viewport);
+  int			RenderOpaqueGeometry(vtkViewport *viewport) override;
   /** Method is intended for rendering Translucent Geometry. */
-  virtual  int			RenderTranslucentPolygonalGeometry(vtkViewport *viewport);
+  int			RenderTranslucentPolygonalGeometry(vtkViewport *viewport) override;
   /** Does this prop have some translucent polygonal geometry? */
-  virtual  int			HasTranslucentPolygonalGeometry();
+  int			HasTranslucentPolygonalGeometry() override;
 
 protected:
   /** constructor. */
   vtkMAFGridActor();
   /** destructor. */
-  ~vtkMAFGridActor();
+  ~vtkMAFGridActor() override;
 
   /** Create an instance of the grid that is a polydata.*/
 	void			GridCreate ();

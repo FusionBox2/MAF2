@@ -42,22 +42,22 @@ public:
   /** constructor */
   medOpCreateLabeledVolume(const mafString& label = _R("Create labeled volume"));
   /** destructor */
-  ~medOpCreateLabeledVolume(); 
+  ~medOpCreateLabeledVolume() override; 
 
   /** RTTI macro */
   mafTypeMacro(medOpCreateLabeledVolume, mafOp);
 
   /** Return a copy of itself, this needs to put the operation into the undo stack. */
-  /*virtual*/  mafOp* Copy();
+  /*virtual*/  mafOp* Copy() override;
 
   /** Return true for the acceptable vme type. */
-  /*virtual*/ bool Accept(mafNode *node);
+  /*virtual*/ bool Accept(mafNode *node) override;
 
   /** Builds operation's interface. */
-  /*virtual*/ void OpRun();
+  /*virtual*/ void OpRun() override;
   
   /** Execute the operation. */
-  /*virtual*/ void OpDo();
+  /*virtual*/ void OpDo() override;
 
 protected: 
   medVMELabeledVolume *m_LabeledVolume;

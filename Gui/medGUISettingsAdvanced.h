@@ -41,7 +41,7 @@ public:
   /** constructor.  */
   medGUISettingsAdvanced(mafBaseEventHandler *Listener, const mafString &label = _L("Advanced"));
   /** destructor.  */
-  ~medGUISettingsAdvanced(); 
+  ~medGUISettingsAdvanced() override; 
 
   /** GUI IDs*/
   enum MEASURE_UNIT_WIDGET_ID
@@ -57,7 +57,7 @@ public:
   };
 
   /** Answer to the messages coming from interface. */
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Retrieve conversion unit parameter */
   int GetConversionType(){return m_ConversionUnits;};
@@ -67,10 +67,10 @@ public:
 
 protected:
   /** Create the GUI for the setting panel.*/
-  void CreateGui();
+  void CreateGui() override;
 
   /** Initialize measure unit used into the application.*/
-  void InitializeSettings();
+  void InitializeSettings() override;
 
   int m_ConversionUnits;
 

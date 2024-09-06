@@ -74,11 +74,11 @@ public:
   static medOpMML3ContourWidget *New();
 
   vtkTypeMacro(medOpMML3ContourWidget,vtkPolyDataSourceWidget);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Methods that satisfy the superclass' API.
-  virtual void SetEnabled(int);
-  virtual void PlaceWidget(double bounds[6]);
+  void SetEnabled(int) override;
+  void PlaceWidget(double bounds[6]) override;
 
 
   //----------------------------------------------------------------------------
@@ -178,7 +178,7 @@ protected:
   medOpMML3ContourWidget();
 
   /// destructor
-  ~medOpMML3ContourWidget();
+  ~medOpMML3ContourWidget() override;
 
   /// handles the events
   static void ProcessEvents(vtkObject* object, unsigned long event, void* clientdata, void* calldata);
@@ -317,11 +317,11 @@ protected:
   /// PolyData.  Make changes to this before calling the initial PlaceWidget() \n
   /// to have the initial placement follow suit.  Or, make changes after the \n
   /// widget has been initialised and call UpdatePlacement() to realise.
-  virtual vtkPolyDataAlgorithm* GetPolyDataAlgorithm() {return m_PlaneSource ;}
+  vtkPolyDataAlgorithm* GetPolyDataAlgorithm() override {return m_PlaneSource ;}
 
   /// Satisfies superclass API.  This will change the state of the widget to \n
   /// match changes that have been made to the underlying PolyDataSource
-  void UpdatePlacement(void);
+  void UpdatePlacement(void) override;
 
 
   /// Create and set default properties. \n
@@ -341,7 +341,7 @@ protected:
   void HandlesOn(double length);
   void HandlesOff();
   int HighlightHandle(vtkProp *prop); //returns cell id
-  virtual void SizeHandles();
+  void SizeHandles() override;
 
   void HighlightNormal(int highlight);
 

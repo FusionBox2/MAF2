@@ -48,7 +48,7 @@ public:
   /** object constructor */
   medOpExporterMeters(const mafString& label = _R("WrappedMeter"));
   /** object destructor */
-  ~medOpExporterMeters(); 
+  ~medOpExporterMeters() override; 
   /** RTTI Macro */
   mafTypeMacro(medOpExporterMeters, mafOp);
   
@@ -60,18 +60,18 @@ public:
     VME_ALL_METERS,
   };
   /** method for clone object */
-  mafOp* Copy();
+  mafOp* Copy() override;
   /** method for catch the dispatched events */
-	void OnEvent(mafEventBase *maf_event);
+	void OnEvent(mafEventBase *maf_event) override;
 
  	/** Return true for the acceptable vme type. */
-  bool Accept(mafNode *node);
+  bool Accept(mafNode *node) override;
 
 	/** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
   /** execute operation */
-  void OpDo();
+  void OpDo() override;
 
   /** Set the filename for the .stl to export */
   void SetFileName(const char *file_name) {m_File = _R(file_name);};
@@ -96,7 +96,7 @@ protected:
   void ExportWrappedMeterCoordinates(int index, int indexTime);
 
 	/** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
-	void OpStop(int result);
+	void OpStop(int result) override;
 
   /** Create Gui for Operation*/
   void CreateGui();

@@ -37,7 +37,7 @@ public:
   /** constructor. */
   medGUIContextualMenu();
   /** destructor. */
-  virtual ~medGUIContextualMenu();
+  ~medGUIContextualMenu() override;
 
 	/** 
   Visualize contextual menu for the MDI child and selected view. */

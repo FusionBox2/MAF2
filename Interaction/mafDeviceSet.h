@@ -88,23 +88,23 @@ public:
   void RemoveAllDevices(bool force=false);
 
   /** Reimplemented to manage AddDevice event */
-  virtual void OnEvent(mafEventBase *event);
+  void OnEvent(mafEventBase *event) override;
 
   /** Return the list of devices pluged into this device set */
   std::list<mafDevice*> *GetDevices() {return &m_Devices;}
 
 protected:
   mafDeviceSet();
-  virtual ~mafDeviceSet();
+  ~mafDeviceSet() override;
 
   void InternalStore(mafStorageElementBuilder& parent) override;
   void InternalRestore(const mafStorageElement& node) override;
 
   /** Initialization automatically initialize subdevices */
-  virtual int InternalInitialize();
+  int InternalInitialize() override;
 
   /** shutdown also subdevices */
-  virtual void InternalShutdown();
+  void InternalShutdown() override;
 
   std::list<mafDevice *> m_Devices;
 

@@ -27,11 +27,11 @@ public:
   //vtkTypeRevisionMacro(vtkMAFFixedCutter,vtkCutter);
 
            vtkMAFPolyDataToSinglePolyLine();
-  virtual ~vtkMAFPolyDataToSinglePolyLine();
+  ~vtkMAFPolyDataToSinglePolyLine() override;
   static vtkMAFPolyDataToSinglePolyLine* New();
 
 protected:
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
 private:
 	vtkMAFPolyDataToSinglePolyLine(const vtkMAFPolyDataToSinglePolyLine&);  // Not implemented.

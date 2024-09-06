@@ -40,8 +40,8 @@ class mafAnimate : public mafBaseEventHandler, public mafEventSender
 public:
 
 	mafAnimate(vtkRenderer *renderer, mafNode *vme, mafBaseEventHandler *listener = NULL);
-	~mafAnimate(); 
-	void OnEvent(mafEventBase *maf_event);
+	~mafAnimate() override; 
+	void OnEvent(mafEventBase *maf_event) override;
 
 	/** Return mafAnimate User Interface */
 	mafGUI *GetGui();

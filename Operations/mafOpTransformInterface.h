@@ -58,18 +58,18 @@ class MAF_EXPORT mafOpTransformInterface : public mafOp
 {
 public:
   mafOpTransformInterface(const mafString& label = _R("TransformInterface"));
-  virtual ~mafOpTransformInterface(); 
+  ~mafOpTransformInterface() override; 
  
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode* vme) {return true;};
+  bool Accept(mafNode* vme) override {return true;};
 
   mafTypeMacro(mafOpTransformInterface, mafOp);
 
   /** Override superclass */
-  mafOp* Copy();
+  mafOp* Copy() override;
 
   /** Override superclass */
-  void OpDo();
+  void OpDo() override;
   
   /** Set/Get the vme used as refsys, the vme is referenced*/
   void SetRefSysVME(mafVME *refSysVme);

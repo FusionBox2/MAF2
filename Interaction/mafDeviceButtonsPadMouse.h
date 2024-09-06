@@ -61,7 +61,7 @@ public:
   static mafID GetMouseDClickId();
     
   /** Reimplemented to manage fusion of move events. */
-  virtual void OnEvent(mafEventBase *event);
+  void OnEvent(mafEventBase *event) override;
 
   /** Set the last mouse position and send a 2D MoveEvent. */
   void SetLastPosition(double x,double y,unsigned long modifiers = 0);
@@ -103,10 +103,10 @@ public:
 
 protected:
   mafDeviceButtonsPadMouse();
-  virtual ~mafDeviceButtonsPadMouse();
+  ~mafDeviceButtonsPadMouse() override;
 
-  /** add position to the event */ 
-  virtual void SendButtonEvent(mafEventInteraction *event);
+  /** add position to the event */
+  void SendButtonEvent(mafEventInteraction *event) override;
 
   double      m_LastPosition[2];///< stores the last position
   bool        m_UpdateRwiInOnMoveFlag; ///< If this flag true the m_SelectedRWI is updated in when the mouse move inside the view (used in compounded views)

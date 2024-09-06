@@ -71,7 +71,7 @@ public:
   /**  Get  the input data or filter.*/
   vtkRectilinearGrid *GetInput();
 
-  virtual int FillInputPortInformation(int port, vtkInformation* info) override;
+  int FillInputPortInformation(int port, vtkInformation* info) override;
 
 protected:
   /** constructor */
@@ -81,7 +81,7 @@ protected:
 	//  this->NumberOfRequiredInputs = 1;
   };
   /** destructor */
-  ~vtkMAFRectilinearGridToRectilinearGridFilter() {this->SetInput(NULL);};
+  ~vtkMAFRectilinearGridToRectilinearGridFilter() override {this->SetInput(NULL);};
   /** operator =, not implemented */
   void operator=(const vtkMAFRectilinearGridToRectilinearGridFilter&) {};
   /** Copy Constructor , not implemented */

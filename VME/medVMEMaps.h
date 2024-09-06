@@ -55,19 +55,19 @@ public:
   mafTypeMacro(medVMEMaps,mafVME);
 
   medVMEMaps();
-  virtual ~medVMEMaps();
+  ~medVMEMaps() override;
 
   /** print a dump of this object */
-  virtual void Print(std::ostream& os, const int tabs=0);
+  void Print(std::ostream& os, const int tabs=0) override;
 
   /** Copy the contents of another VME-Maps into this one. */
-  virtual int DeepCopy(mafNode *a);
+  int DeepCopy(mafNode *a) override;
 
   /** Compare with another VME-Maps. */
-  virtual bool Equals(mafVME *vme);
+  bool Equals(mafVME *vme) override;
 
-  /** Precess events coming from other objects */ 
-  virtual void OnEvent(mafEventBase *maf_event);
+  /** Precess events coming from other objects */
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** return the right type of output */  
   mafVMEOutputSurface *GetSurfaceOutput();
@@ -77,12 +77,12 @@ public:
   set or get the Pose for a specified time. When setting, if the time does not exist
   the MatrixVector creates a new KeyMatrix on the fly. When getting, the matrix vector
   interpolates on the fly according to the matrix interpolator.*/
-  virtual void SetMatrix(const mafMatrix &mat);
+  void SetMatrix(const mafMatrix &mat) override;
 
   /**
   Return the list of timestamps for this VME. Timestamps list is 
   obtained merging timestamps for matrixes and VME items*/
-  virtual void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes);
+  void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes) override;
 
   /** return always false since (currently) the slicer is not an animated VME (position 
   is the same for all timestamps). */
@@ -92,7 +92,7 @@ public:
   //virtual bool IsDataAvailable();
 
   /** Return the suggested pipe-typename for the visualization of this vme */
-  virtual mafString GetVisualPipe() {return mafString(_R("mafPipeSurface"));}
+  mafString GetVisualPipe() override {return mafString(_R("mafPipeSurface"));}
 
   /** Return pointer to material attribute. */
   mmaMaterial *GetMaterial();
@@ -157,16 +157,16 @@ private:
   //virtual ~medVMEMaps();
 
   /** Internally used to create a new instance of the GUI.*/
-  virtual mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
   void InternalStore(mafStorageElementBuilder& parent) override;
   void InternalRestore(const mafStorageElement& node) override;
 
   /** called to prepare the update of the output */
-  virtual void InternalPreUpdate();
+  void InternalPreUpdate() override;
 
   /** update the output data structure */
-  virtual void InternalUpdate();
+  void InternalUpdate() override;
 
   vtkLookupTable *CreateTable();
 

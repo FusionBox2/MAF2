@@ -40,21 +40,21 @@ class MED_OPERATION_EXPORT medOpImporterLandmark : public mafOp
 public:
   mafTypeMacro(medOpImporterLandmark, mafOp)
   medOpImporterLandmark(const mafString& label = _R(""));
-  ~medOpImporterLandmark(); 
-  mafOp* Copy();
-  virtual void OnEvent(mafEventBase *maf_event);
+  ~medOpImporterLandmark() override; 
+  mafOp* Copy() override;
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode* node) {return true;};
+  bool Accept(mafNode* node) override {return true;};
 
   /** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
   /** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
 
   /** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
-	void OpStop	(int result);
+	void OpStop	(int result) override;
 
 
   /** Set the filename for the file to import */
@@ -65,7 +65,7 @@ public:
 
 
   /** Makes the undo for the operation. */
-  void OpUndo();                       // gia' implementata in mafOp
+  void OpUndo() override;                       // gia' implementata in mafOp
 
 protected:
   /** Read the file.

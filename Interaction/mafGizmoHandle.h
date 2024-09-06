@@ -94,7 +94,7 @@ public:
   is XMIN */
   mafGizmoHandle(mafVME *input, mafBaseEventHandler *listener = NULL,\
     int constraintModality=BOUNDS,mafVME *parent=NULL, bool showShadingPlane = false);
-  virtual ~mafGizmoHandle(); 
+  ~mafGizmoHandle() override; 
   
   /** Set the gizmo generating vme; the gizmo will be centered on this vme*/
   void SetInput(mafVME *vme); 
@@ -104,8 +104,8 @@ public:
   // events handling 
   //----------------------------------------------------------------------------
   
-  /** Events handling*/        
-  virtual void OnEvent(mafEventBase *maf_event);
+  /** Events handling*/
+  void OnEvent(mafEventBase *maf_event) override;
     
   //----------------------------------------------------------------------------
   // highlight and show 

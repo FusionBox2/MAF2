@@ -62,7 +62,7 @@ public:
 
 protected:
   mafRoot();
-  virtual ~mafRoot();
+  ~mafRoot() override;
 
   virtual void StoreRoot(mafStorageElementBuilder& parent);
   virtual void RestoreRoot(const mafStorageElement& node);

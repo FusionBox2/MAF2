@@ -59,7 +59,7 @@ public:
   virtual void Reset() {};
 
   /** Events handling */  
-  void OnEvent(mafEventBase *maf_event) {};
+  void OnEvent(mafEventBase *maf_event) override {};
   
   /** Turn On m_TestMode flag. 
   The m_TestMode flag is used to exclude the execution of splash screen or wxBusyInfo that conflicts with test machine.*/
@@ -74,7 +74,7 @@ public:
 protected:
   
   mafGUITransformInterface();
-  ~mafGUITransformInterface(); 
+  ~mafGUITransformInterface() override; 
    
   /** Create the GUI */
   virtual void CreateGui() {};

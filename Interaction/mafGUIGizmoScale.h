@@ -42,12 +42,12 @@ class MAF_EXPORT mafGUIGizmoScale : public mafGUIGizmoInterface
 public:
 
   mafGUIGizmoScale(mafBaseEventHandler *listener = NULL, bool testMode = false);
-	~mafGUIGizmoScale(); 
+	~mafGUIGizmoScale() override; 
 
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Enable-Disable the GUI's widgets */
-	void EnableWidgets(bool enable);
+	void EnableWidgets(bool enable) override;
 
   //----------------------------------------------------------------------------
   //gui constants: 
@@ -71,7 +71,7 @@ protected:
   void SendAbsScaling(mafEventBase *sourceEvent);
 
 	/** Create the GUI*/
-	void CreateGui();
+	void CreateGui() override;
 
   /**
   Gizmo abs pose*/

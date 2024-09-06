@@ -45,7 +45,7 @@ public:
   medWizardBlockInformation(const char *name);
 
   /** Default destructor */
-  ~medWizardBlockInformation();
+  ~medWizardBlockInformation() override;
     
   /** Set The title of the information window */
   void SetWindowTitle(const char *Title);
@@ -94,10 +94,10 @@ public:
 protected:
 
   /** Starts the execution of the block */
-  virtual void ExcutionBegin();
+  void ExcutionBegin() override;
 
   /** Event management */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
   
 private:
 

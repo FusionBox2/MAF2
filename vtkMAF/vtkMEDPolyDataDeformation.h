@@ -81,8 +81,8 @@ public:
   friend class CSkeletonVertexTest;
 
 protected:
-  vtkMEDPolyDataDeformation();           
-  virtual ~vtkMEDPolyDataDeformation();
+  vtkMEDPolyDataDeformation();
+  ~vtkMEDPolyDataDeformation() override;
 
 protected:
 #pragma region //Nested Classes
@@ -417,12 +417,12 @@ public:
     double* original_rso = NULL, double* modified_rso = NULL);
 
   /** Return this object's modified time. */  
-  /*virtual*/ vtkMTimeType GetMTime();
+  /*virtual*/ vtkMTimeType GetMTime() override;
 protected:
   /** 
   By default, UpdateInformation calls this method to copy information
   unmodified from the input to the output.*/
-  /*virtual*/int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  /*virtual*/int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   /**
   This method is the one that should be used by subclasses, right now the 

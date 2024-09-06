@@ -39,25 +39,25 @@ class MED_OPERATION_EXPORT medOpInteractionDebugger: public mafOp
 {
 public:
 	medOpInteractionDebugger(const mafString& label = _R("medOpInteractionDebugger"));
-	~medOpInteractionDebugger(); 
+	~medOpInteractionDebugger() override; 
 	
   mafTypeMacro(medOpInteractionDebugger, mafOp);
 
-  virtual void OnEvent(mafEventBase *maf_event);
+	void OnEvent(mafEventBase *maf_event) override;
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode *node);
+	bool Accept(mafNode *node) override;
 
   /** Builds operation's interface. */
-	void OpRun();
+	void OpRun() override;
 
 	
   static bool ConstrainAccept(mafNode* node) {return (node != NULL && \
     (node->IsMAFType(medVMEPolylineGraph))) ;};
 
-  void OpDo();
+  void OpDo() override;
 
 protected:
   /** Create the dialog interface for the importer. */

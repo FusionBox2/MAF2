@@ -37,15 +37,15 @@ class lhpOpStickPalpation: public mafOp
 public:
   mafTypeMacro(lhpOpStickPalpation, mafOp)
   lhpOpStickPalpation(const mafString& label = _R("StickPalpation"));
- ~lhpOpStickPalpation(); 
+ ~lhpOpStickPalpation() override;
 
-  virtual void OnEvent(mafEventBase *maf_event);
-  mafOp* Copy();
+  void OnEvent(mafEventBase *maf_event) override;
+  mafOp* Copy() override;
 
-  bool Accept(mafNode* vme);   
-  void OpRun();
-  void OpDo();
-  void OpUndo();
+  bool Accept(mafNode* vme) override;   
+  void OpRun() override;
+  void OpDo() override;
+  void OpUndo() override;
   void CreateGui();
 
 protected: 
@@ -53,7 +53,7 @@ protected:
 
   int    ExtractMatchingPoints(mafVMELandmarkCloud *src, mafVMELandmarkCloud *trg, const std::vector<std::pair<int, int> >& lmpairs, mafTimeStamp srctime, mafTimeStamp trgtime);
   double RegisterPoints(vtkMatrix4x4 *res_matrix);
-  void   OpStop(int result);
+  void   OpStop(int result) override;
 
   //----------------------------------------------------------------------------
   // widget id's

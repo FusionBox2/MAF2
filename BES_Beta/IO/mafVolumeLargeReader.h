@@ -54,7 +54,7 @@ protected:
 	int m_NCurrentLevel;	//level currently used to process
 public:	
 	mafVolumeLargeReader();
-	virtual ~mafVolumeLargeReader();
+	~mafVolumeLargeReader() override;
 
 public:
 	//returns number of levels

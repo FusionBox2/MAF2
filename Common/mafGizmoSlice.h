@@ -44,14 +44,14 @@ public:
 
 	mafGizmoSlice(mafNode* inputVme, mafBaseEventHandler *Listener = NULL, const char *name = "GizmoSlice", bool inverseHandle = false, double centralClipfactor = 0);
 
-  virtual	~mafGizmoSlice();
+	~mafGizmoSlice() override;
 
   /** Show/Hide the gizmos using actor visibility instead of pipe creation/destruction: this is used for faster 
   rendering*/
-  void Show(bool show);
+  void Show(bool show) override;
 
   /** This method is used to change the input vme */
-  void SetInput(mafVME *vme);
+  void SetInput(mafVME *vme) override;
 
   /** Set the gizmo color */
   void SetColor(double col[3]);
@@ -80,7 +80,7 @@ public:
   void SetGizmoEnableMoving(bool enable);
 
   /** Events handling method */
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
  
   /** Gizmo is reparented under the vme tree root, this modality is currently not supported */
   void SetModalityToGlobal() {mafLogMessage(_M("Global modality is currently not supported for this item"));}

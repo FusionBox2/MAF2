@@ -35,12 +35,12 @@ public:
   mafTypeMacro(mafPipePointSet,mafPipeVTK);
 
                mafPipePointSet();
-  virtual     ~mafPipePointSet ();
+  ~mafPipePointSet () override;
 
-  virtual void Create(mafNode *node, mafView *view);
+  void Create(mafNode *node, mafView *view) override;
 
 	/** Change the visibility of the bounding box actor representing the selection for the vme. */
-  virtual void Select     (bool select); 
+  void Select     (bool select) override; 
 
   vtkPolyDataMapper			 *m_PointSetMapper;
   vtkActor               *m_PointSetActor;
@@ -52,6 +52,6 @@ public:
 
 protected:
 	/** Update the properties according to the vme's tags. */
-	void										UpdateProperty(bool fromTag = false);
+	void										UpdateProperty(bool fromTag = false) override;
 };
 #endif // __mafPipePointSet_H__

@@ -34,7 +34,7 @@ class MAF_EXPORT mafVMEOutputVolume : public mafVMEOutputVTK
 {
 public:
   mafVMEOutputVolume();
-  virtual ~mafVMEOutputVolume();
+  ~mafVMEOutputVolume() override;
 
   mafTypeMacro(mafVMEOutputVolume,mafVMEOutputVTK);
 
@@ -54,7 +54,7 @@ public:
   void SetMaterial(mmaVolumeMaterial *material);
 
   /** Update all the output data structures (data, bounds, matrix and abs matrix).*/
-  virtual void Update();
+  void Update() override;
 
   /** Retrieve as string the dataset type*/
   const char* GetVTKDataTypeAsString(){return m_VtkDataType.GetCStr();}
@@ -65,7 +65,7 @@ protected:
   mafString m_ScaralRangeString;
   mmaVolumeMaterial *m_Material;
 
-  mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
 private:
   mafVMEOutputVolume(const mafVMEOutputVolume&); // Not implemented

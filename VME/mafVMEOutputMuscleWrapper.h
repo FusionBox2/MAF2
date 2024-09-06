@@ -32,12 +32,12 @@ class MAF_EXPORT mafVMEOutputMuscleWrapperAQ : public mafVMEOutputPolyline
 {
 public:
 	mafVMEOutputMuscleWrapperAQ();
-	virtual ~mafVMEOutputMuscleWrapperAQ();
+	~mafVMEOutputMuscleWrapperAQ() override;
 
 	mafTypeMacro(mafVMEOutputMuscleWrapperAQ, mafVMEOutputPolyline);
 
   /** Update all the output data structures (data, bounds, matrix and abs matrix).*/
-  virtual void Update();
+	void Update() override;
 
 	/* Get Distance String*/
 	const char *GetDistance(){return m_Distance.GetCStr();}
@@ -46,7 +46,7 @@ public:
 	const char *GetAngle(){return m_Angle.GetCStr();}
 
 protected:
-  mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
   mafString m_Distance;
   mafString m_Angle;

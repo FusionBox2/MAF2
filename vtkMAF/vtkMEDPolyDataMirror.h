@@ -29,7 +29,7 @@ class VTK_vtkMAF_EXPORT vtkMEDPolyDataMirror : public vtkPolyDataAlgorithm
 {
 public:
   vtkTypeMacro(vtkMEDPolyDataMirror,vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   static vtkMEDPolyDataMirror *New();
   
@@ -55,10 +55,10 @@ public:
 
 protected:
   vtkMEDPolyDataMirror();
-  ~vtkMEDPolyDataMirror() {};
+  ~vtkMEDPolyDataMirror() override {};
 
   // Usual data generation method
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   int FlipNormals;
   int MirrorXCoordinate;

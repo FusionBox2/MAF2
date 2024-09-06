@@ -44,14 +44,14 @@ class MED_VIEWS_EXPORT mafView3D: public mafViewVTK
 {
 public:
   mafView3D(const mafString& label = _R("3D"), int camera_position = CAMERA_PERSPECTIVE, bool show_axes = false, bool show_grid = false, bool show_ruler = false, int stereo = 0);
-  virtual ~mafView3D(); 
+  ~mafView3D() override; 
 
   mafTypeMacro(mafView3D, mafViewVTK);
 
-  virtual mafView*  Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
-	virtual void			OnEvent(mafEventBase *maf_event);
+  mafView*  Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override;
+  void			OnEvent(mafEventBase *maf_event) override;
 
-	void Create();
+	void Create() override;
 
 
   /** IDs for the GUI */
@@ -82,14 +82,14 @@ public:
   Create the visual pipe for the node passed as argument. 
   To create visual pipe first check in m_PipeMap if custom visual pipe is defined, 
   otherwise ask to vme which is its visual pipe. */
-  virtual void VmeCreatePipe(mafNode *vme);
+  void VmeCreatePipe(mafNode *vme) override;
 
 	/** Show/Hide VMEs into plugged sub-views */
-	virtual void VmeShow(mafNode *node, bool show);
+  void VmeShow(mafNode *node, bool show) override;
 
 	/** 
 	Set the visualization status for the node (visible, not visible, mutex, ...) \sa mafSceneGraph mafView*/
-	virtual int GetNodeStatus(mafNode *vme);
+  int GetNodeStatus(mafNode *vme) override;
 
   double GetContourValue(){return m_ContourValueIso;};
   void SetContourValue(double value){m_ContourValueIso = value; mafEvent ev(this,ID_CONTOUR_VALUE_ISO);OnEvent(&ev);};
@@ -98,8 +98,7 @@ public:
   void SetAlphaValue(double value){m_AlphaValueIso = value;mafEvent ev(this,ID_ALPHA_VALUE_ISO);OnEvent(&ev);};
 
 protected:
-
-	virtual mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
 	void EnableSubGui(int idSubPipe,bool enable=true);
 

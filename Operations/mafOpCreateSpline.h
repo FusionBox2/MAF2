@@ -33,15 +33,15 @@ class MAF_EXPORT mafOpCreateSpline: public mafOp
 {
 public:
   mafOpCreateSpline(const mafString& label = _R("Create Parametric Surface"));
-  ~mafOpCreateSpline(); 
+  ~mafOpCreateSpline() override; 
 
   mafTypeMacro(mafOpCreateSpline, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
-  bool Accept(mafNode *node);
-  void OpRun();
-  void OpDo();
+  bool Accept(mafNode *node) override;
+  void OpRun() override;
+  void OpDo() override;
 
 protected: 
   mafVMEPolylineSpline *m_PolylineSpline;

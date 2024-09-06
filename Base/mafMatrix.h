@@ -45,10 +45,10 @@ class MAF_EXPORT mafMatrix : public mafReferenceCounted
 {
 public:
   mafTypeMacro(mafMatrix,mafReferenceCounted);
-  virtual void Print(std::ostream& os, const int indent=0) const;
+  void Print(std::ostream& os, const int indent=0) const override;
 
   mafMatrix();
-  virtual ~mafMatrix();
+  ~mafMatrix() override;
 
   mafMatrix(const mafMatrix &mat);
 

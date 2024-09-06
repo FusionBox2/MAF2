@@ -42,25 +42,25 @@ class lhpOpImporterC3DBTK : public mafOp
 {
 public:
 	lhpOpImporterC3DBTK(const mafString& label = _R("C3D Importer"));
-	~lhpOpImporterC3DBTK(); 
+	~lhpOpImporterC3DBTK() override; 
 	
   mafTypeMacro(lhpOpImporterC3DBTK, mafOp);
 
-  virtual void OnEvent(mafEventBase *maf_event);
+	void OnEvent(mafEventBase *maf_event) override;
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode *node);
+	bool Accept(mafNode *node) override;
 
   /** Builds operation's interface. */
-	void OpRun();
+	void OpRun() override;
 
   /** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
 
   /** Makes the undo for the operation. */
-  void OpUndo();
+  void OpUndo() override;
 
   /** Import the c3d*/
   bool Import();

@@ -64,19 +64,19 @@ class medGizmoCrossRotateAxis: public mafGizmoInterface
 {
 public:
            medGizmoCrossRotateAxis(mafVME *input, mafBaseEventHandler *listener = NULL);
-  virtual ~medGizmoCrossRotateAxis(); 
+           ~medGizmoCrossRotateAxis() override; 
   
   /** 
   Set the gizmo generating vme; the gizmo will be centered on this vme*/
-  void SetInput(mafVME *vme); 
+  void SetInput(mafVME *vme) override; 
   mafVME *GetInput();
 
   //----------------------------------------------------------------------------
   // events handling 
   //----------------------------------------------------------------------------
   
-  /** Events handling*/        
-  virtual void OnEvent(mafEventBase *maf_event);
+  /** Events handling*/
+           void OnEvent(mafEventBase *maf_event) override;
   
   //----------------------------------------------------------------------------
   // axis setting 
@@ -116,7 +116,7 @@ public:
   void Highlight(bool highlight);
     
   /** Show the translation gizmo */
-  void Show(bool show);
+  void Show(bool show) override;
 
   /** Show the translation feedback arrows  */
   void ShowTranslationFeedbackArrows(bool show);
@@ -139,8 +139,8 @@ public:
  
   /** 
   Set the abs pose */
-  void SetAbsPose(mafMatrix *absPose);
-  mafMatrix *GetAbsPose();
+  void SetAbsPose(mafMatrix *absPose) override;
+  mafMatrix *GetAbsPose() override;
 
   /**
   Get the gizmo interactor*/

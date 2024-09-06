@@ -50,17 +50,17 @@ class MED_OPERATION_EXPORT medOpMakeVMETimevarying: public mafOp
 public:
 
   medOpMakeVMETimevarying(const mafString& label = _R("Make Timevariyng VME"),bool showShadingPlane = false);
-	virtual ~medOpMakeVMETimevarying();
-	virtual void OnEvent(mafEventBase *maf_event);
+  ~medOpMakeVMETimevarying() override;
+  void OnEvent(mafEventBase *maf_event) override;
 	
   mafTypeMacro(medOpMakeVMETimevarying, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
-  bool Accept(mafNode* vme);
-  void OpRun();
-  void OpDo();
-  void OpUndo();
+  bool Accept(mafNode* vme) override;
+  void OpRun() override;
+  void OpDo() override;
+  void OpUndo() override;
 
 protected:
 
@@ -70,7 +70,7 @@ protected:
     double m_TimeStamp;
   } VmeTimevaryingItem;
 
-  virtual void OpStop(int result);
+  void OpStop(int result) override;
 
   /** GUI */
   void CreateGui();

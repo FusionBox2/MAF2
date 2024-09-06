@@ -52,7 +52,7 @@ class MAF_EXPORT mafDataPipe:public mafReferenceCounted, public mafTimeStamped, 
 {
 public:
   mafDataPipe();
-  virtual ~mafDataPipe();
+  ~mafDataPipe() override;
 
   mafTypeMacro(mafDataPipe,mafReferenceCounted);
 
@@ -85,7 +85,7 @@ public:
   mafTimeStamp GetTimeStamp() {return m_CurrentTime;}
 
   /** return modification time */
-  virtual unsigned long GetMTime();
+  unsigned long GetMTime() override;
 
   /** This function returns true if the VME is accepted by this Pipe. */
   virtual bool Accept(mafVME *vme) {return vme!=NULL;}
@@ -120,9 +120,9 @@ public:
   int GetDependOnAbsPose() {return m_DependOnAbsPose;}
 
   /** print a dump of this object */
-  virtual void Print(std::ostream& os, const int tabs=0) const;
+  void Print(std::ostream& os, const int tabs=0) const override;
 
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
   
 protected:
   /** function called before of data pipe execution */

@@ -76,14 +76,14 @@ public:
 
   static vtkMEDPolyDataDeformation_M2 *New();
 
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   friend class CMatrixTestM2;
   friend class CSkeletonVertexM2Test;
 
 protected:
-  vtkMEDPolyDataDeformation_M2();           
-  virtual ~vtkMEDPolyDataDeformation_M2();
+  vtkMEDPolyDataDeformation_M2();
+  ~vtkMEDPolyDataDeformation_M2() override;
 
 protected:
 #pragma region //Nested Classes
@@ -412,12 +412,12 @@ public:
     vtkPolyData* modified, vtkIdList* correspondence);
 
   /** Return this object's modified time. */  
-  /*virtual*/ vtkMTimeType GetMTime();
+  /*virtual*/ vtkMTimeType GetMTime() override;
 protected:
   /** 
   By default, UpdateInformation calls this method to copy information
   unmodified from the input to the output.*/
-  /*virtual*/int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  /*virtual*/int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   /**
   This method is the one that should be used by subclasses, right now the 

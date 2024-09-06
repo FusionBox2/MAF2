@@ -44,7 +44,7 @@ public:
   static vtkMAFVolumeResample*New();
   vtkTypeMacro(vtkMAFVolumeResample, vtkDataSetAlgorithm);
   
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /**
   Specify a point defining the origin of the plane.*/
@@ -90,14 +90,14 @@ public:
 
 protected:
   vtkMAFVolumeResample();
-  ~vtkMAFVolumeResample();
+  ~vtkMAFVolumeResample() override;
 
-  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
   void ExecuteData(vtkDataObject *output, vtkInformation* outInfo);
   
   void ExecuteData(vtkImageData *output, vtkInformation* outInfo);
   //int RequestData(vtkInformation*,vtkInformationVector** , vtkInformationVector*);
-  int RequestUpdateExtent(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestUpdateExtent(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   void PrepareVolume();
   void CalculateTextureCoordinates(const double point[3], const int size[2], const double spacing[2], double ts[2]);

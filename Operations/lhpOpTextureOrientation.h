@@ -27,25 +27,25 @@ class lhpOpTextureOrientation : public mafOp
 {
 public:
   lhpOpTextureOrientation(const mafString& label = _R("Texture Orientation"));
-  ~lhpOpTextureOrientation(); 
+  ~lhpOpTextureOrientation() override; 
 
   mafTypeMacro(lhpOpTextureOrientation, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode* vme);
+  bool Accept(mafNode* vme) override;
 
   /** Builds operation's interface by calling CreateOpDialog() method. */
-  void OpRun();
+  void OpRun() override;
 
   /** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
 
   /** Makes the undo for the operation. */
-  void OpUndo();
+  void OpUndo() override;
 
 protected:
   //----------------------------------------------------------------------------

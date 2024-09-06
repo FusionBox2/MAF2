@@ -34,15 +34,15 @@ class MED_VME_EXPORT medVMEOutputWrappedMeter : public mafVMEOutputPolyline
 {
 public:
   medVMEOutputWrappedMeter();
-  virtual ~medVMEOutputWrappedMeter();
+  ~medVMEOutputWrappedMeter() override;
 
   mafTypeMacro(medVMEOutputWrappedMeter,mafVMEOutputPolyline);
 
   /** Update all the output data structures (data, bounds, matrix and abs matrix).*/
-  virtual void Update();
+  void Update() override;
 
 protected:
-  mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
   mafString m_Distance;
   mafString m_Angle;

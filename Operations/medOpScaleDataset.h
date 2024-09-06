@@ -45,39 +45,39 @@ class MED_OPERATION_EXPORT medOpScaleDataset : public mafOpTransformInterface
 {
 public:
   medOpScaleDataset(const mafString& label = _R("Scale Dataset"));
- ~medOpScaleDataset(); 
-  virtual void OnEvent(mafEventBase *maf_event);
+ ~medOpScaleDataset() override;
+  void OnEvent(mafEventBase *maf_event) override;
   
   mafTypeMacro(medOpScaleDataset, mafOpTransformInterface);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode* vme);
+  bool Accept(mafNode* vme) override;
 
   /** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
   
   /** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
   
   /** Makes the undo for the operation. */
-  void OpUndo();
+  void OpUndo() override;
 	
   void Reset();
 
-  void SetNewAbsMatrix(mafMatrix matrix){m_NewAbsMatrix = matrix;};
-  void SetOldAbsMatrix(mafMatrix matrix){m_OldAbsMatrix = matrix;};
+  void SetNewAbsMatrix(mafMatrix matrix) override {m_NewAbsMatrix = matrix;};
+  void SetOldAbsMatrix(mafMatrix matrix) override {m_OldAbsMatrix = matrix;};
 
 protected:
 
   /** Create the gui */
-  virtual void CreateGui();
+  void CreateGui() override;
   
-  void OnEventThis(mafEventBase *maf_event);  
+  void OnEventThis(mafEventBase *maf_event) override;  
   void OnEventGizmoScale(mafEventBase *maf_event);
   void OnEventGuiSaveRestorePose(mafEventBase *maf_event);
-  void OpStop(int result);
+  void OpStop(int result) override;
 
   /** 
   plugged objects */
@@ -86,7 +86,7 @@ protected:
 
   /** 
   Override superclass*/
-  void RefSysVmeChanged();
+  void RefSysVmeChanged() override;
 };
 #endif
   

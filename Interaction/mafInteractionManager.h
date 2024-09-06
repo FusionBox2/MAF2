@@ -80,7 +80,7 @@ class MAF_EXPORT mafInteractionManager : public mafObject, public mafBaseEventHa
 {
 public:
   mafInteractionManager();
-  virtual ~mafInteractionManager();
+  ~mafInteractionManager() override;
 
   mafTypeMacro(mafInteractionManager,mafObject);
 
@@ -88,7 +88,7 @@ public:
   void EnableSelect(bool enable);
 
   /**  Process incoming events. */
-  virtual void OnEvent(mafEventBase *event);
+  void OnEvent(mafEventBase *event) override;
 
   /** Get the device manager object */
   mafDeviceManager *GetDeviceManager() {return m_DeviceManager;}

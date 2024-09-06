@@ -46,7 +46,7 @@ public:
   /** RTTI Macro */
   vtkTypeMacro(vtkMAFCellsFilter, vtkPolyDataAlgorithm);
   /** Print Object Information */
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
    
  /** Mark a cell */ 
  void MarkCell(vtkIdType cellid);
@@ -95,7 +95,7 @@ protected:
   /** constructor */
   vtkMAFCellsFilter();
   /** destructor */
-  ~vtkMAFCellsFilter();
+  ~vtkMAFCellsFilter() override;
   
   vtkIdList *CellIdList;
   vtkIdList *MarkedCellIdList;
@@ -113,7 +113,7 @@ protected:
   double UnmarkedColor[3];
   double MarkedOpacity;
   
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
 private:
   /** Copy Constructor , not implemented.*/

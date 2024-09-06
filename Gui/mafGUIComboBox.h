@@ -43,12 +43,12 @@ public:
                     const wxSize& size = wxDefaultSize, 
                     long style = wxTAB_TRAVERSAL | wxCLIP_CHILDREN);
 
-    virtual  ~mafGUIComboBox();
+    ~mafGUIComboBox() override;
 
 #ifdef WIN32
-    /*virtual*/ bool MSWCommand(WXUINT param, WXWORD id);
+    /*virtual*/ bool MSWCommand(WXUINT param, WXWORD id) override;
 #endif
-    /*virtual*/ void SetSelection(int n);
+    /*virtual*/ void SetSelection(int n) override;
 
 protected:
   int m_OldValue;

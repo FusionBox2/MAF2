@@ -138,7 +138,7 @@ public:
     const wxPoint& pos = wxDefaultPosition, 
     const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL);
   /** destructor */
-  virtual ~medGUIDynamicVP();    
+  ~medGUIDynamicVP() override;    
 
   /** Gets the currently associated name with the GUI. */
   inline const char* GetName() {
@@ -187,7 +187,7 @@ public:
   }
 
   /** process the events sent by subjects */
-  /*virtual*/ void OnEvent(mafEventBase *e);
+  /*virtual*/ void OnEvent(mafEventBase *e) override;
 
 protected:  
   /** Constructs geometry visual pipe. */

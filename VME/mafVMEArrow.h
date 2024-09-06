@@ -50,11 +50,11 @@ public:
   };
 
   /** print a dump of this object */
-  virtual void Print(std::ostream& os, const int tabs=0);// const;
+  void Print(std::ostream& os, const int tabs=0) override;// const;
 
-  void     OnEvent(mafEventBase *maf_event);
+  void     OnEvent(mafEventBase *maf_event) override;
   /** Return the suggested pipe-typename for the visualization of this vme */
-  virtual mafString GetVisualPipe() {return mafString(_R("mafPipeSurface"));};
+  mafString GetVisualPipe() override {return mafString(_R("mafPipeSurface"));};
   /** Return pointer to material attribute. */
   mmaMaterial *GetMaterial();
 
@@ -77,20 +77,20 @@ public:
   /**
   Return the list of timestamps for this VME. Timestamps list is 
   obtained merging timestamps for matrixes and VME items*/
-  virtual void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes){kframes.clear();}
+  void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes) override {kframes.clear();}
 
 protected:
   mafVMEArrow();
-  virtual ~mafVMEArrow();
+  ~mafVMEArrow() override;
 
   void InternalStore(mafStorageElementBuilder& parent) override;
   void InternalRestore(const mafStorageElement& node) override;
 
-  mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
   /** called to prepare the update of the output */
-  virtual void InternalPreUpdate();
+  void InternalPreUpdate() override;
   /** used to initialize and create the material attribute if not yet present */
-  virtual int InternalInitialize();
+  int InternalInitialize() override;
 
   /** update the output data structure */
   //virtual void InternalUpdate();

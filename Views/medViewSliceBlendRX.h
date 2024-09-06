@@ -47,24 +47,24 @@ public:
   /** constructor */
   medViewSliceBlendRX(const mafString&  label = _R("View Blend RX"));
   /** destructor */
-  virtual ~medViewSliceBlendRX(); 
+  ~medViewSliceBlendRX() override; 
   /** RTTI macro */
   mafTypeMacro(medViewSliceBlendRX, mafViewCompound);
 
   /** clone the object*/
-  /*virtual*/ mafView *Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
+  /*virtual*/ mafView *Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override;
   
   /** listen to other object events*/
-  /*virtual*/ void OnEvent(mafEventBase *maf_event);
+  /*virtual*/ void OnEvent(mafEventBase *maf_event) override;
   
   /** Show/Hide VMEs into plugged sub-views*/
-  /*virtual*/ void VmeShow(mafNode *node, bool show);
+  /*virtual*/ void VmeShow(mafNode *node, bool show) override;
 
   /** Remove VME into plugged sub-views*/
-  /*virtual*/ void VmeRemove(mafNode *node);
+  /*virtual*/ void VmeRemove(mafNode *node) override;
 
   /** Create visual pipe and initialize them to build an RXCT visualization */
-  /*virtual*/ void PackageView();
+  /*virtual*/ void PackageView() override;
   
   /** IDs for the GUI */
   enum VIEW_RXCT_WIDGET_ID
@@ -75,7 +75,7 @@ public:
 
   /** 
   Create the GUI on the bottom of the compounded view. */
-  virtual void CreateGuiView();
+  void CreateGuiView() override;
 
 protected:
   /**
@@ -85,11 +85,11 @@ protected:
   the superclass enum. The last id value must be defined as "LAST_ID" to allow the 
   subclass to continue the ID enumeration from it. For appending the widgets in the
   same panel GUI, each CreateGUI() function should first call the superclass' one.*/
-  /*virtual*/ mafGUI  *CreateGui();
+  /*virtual*/ mafGUI  *CreateGui() override;
 
   /** 
   Redefine to arrange views to generate RXCT visualization.*/
-  /*virtual*/ void LayoutSubViewCustom(int width, int height);
+  /*virtual*/ void LayoutSubViewCustom(int width, int height) override;
 
   /** 
   Enable/disable view widgets.*/

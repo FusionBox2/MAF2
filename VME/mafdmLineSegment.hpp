@@ -19,9 +19,9 @@ private:
 public:
 	mafdmLineSegment(mafdmLandmark* m1, mafdmLandmark* m2);
 	vtkSmartPointer<vtkActor> makeRenderer();
-	wxXmlNode* getNode();
-	void describe();
-	void SetMatrix(const mafMatrix &mat){};
-	void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes){};
+	wxXmlNode* getNode() override;
+	void describe() override;
+	void SetMatrix(const mafMatrix &mat) override {};
+	void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes) override {};
 };
 #endif /* LineSegment_hpp */

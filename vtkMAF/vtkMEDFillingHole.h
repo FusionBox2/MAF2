@@ -148,7 +148,7 @@ public:
   /** RTTI macro */
   vtkTypeMacro(vtkMEDFillingHole,vtkPolyDataAlgorithm);
   /** print information of the class */
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /** Set filling all holes on the mesh. */
   void SetFillAllHole();      
@@ -187,7 +187,7 @@ protected:
   /** constructor */
   vtkMEDFillingHole();           
   /** destructor */
-  ~vtkMEDFillingHole();
+  ~vtkMEDFillingHole() override;
 
   int		**Lambda;
   
@@ -309,7 +309,7 @@ protected:
   /** Build internal mesh. It suppose that the input mesh is manifold */
   void InitMesh();
   /** filter execution */
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
   /** mesh allocation */
   void DoneMesh();
 

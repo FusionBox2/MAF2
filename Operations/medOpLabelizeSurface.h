@@ -51,17 +51,17 @@ class MED_OPERATION_EXPORT medOpLabelizeSurface: public mafOp
 {
 public:
 	medOpLabelizeSurface(const mafString& label = _R("ClipSurface"));
-	~medOpLabelizeSurface(); 
-	virtual void OnEvent(mafEventBase *maf_event);
+	~medOpLabelizeSurface() override;
+	void OnEvent(mafEventBase *maf_event) override;
 
 	mafTypeMacro(medOpLabelizeSurface, mafOp);
 
-	mafOp* Copy();
+	mafOp* Copy() override;
 
-	bool Accept(mafNode *node);   
-	void OpRun();
-	void OpDo();
-	void OpUndo();
+	bool Accept(mafNode *node) override;   
+	void OpRun() override;
+	void OpDo() override;
+	void OpUndo() override;
 
 	enum GIZMO_TYPE
 	{
@@ -75,7 +75,7 @@ public:
 	void SetPlaneDimension(double w,double h);
 	void Labelize();
 
-	virtual void OpStop(int result);
+	void OpStop(int result) override;
 protected: 
 
 	/** Create the GUI */

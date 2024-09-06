@@ -47,10 +47,10 @@ public:
   mafTypeMacro(mafPipe,mafObject);
   
   mafPipe();
-	virtual			~mafPipe();
+  ~mafPipe() override;
 
   /** process events coming from gui */
-  virtual void OnEvent(mafEventBase *maf_event)           {};
+  void OnEvent(mafEventBase *maf_event) override {};
 
   /** The real setup must be performed here - not in the ctor */
   virtual void Create(mafNode *node, mafView *view);
@@ -80,6 +80,6 @@ protected:
   the superclass enum. The last id value must be defined as "LAST_ID" to allow the 
   subclass to continue the ID enumeration from it. For appending the widgets in the
   same panel GUI, each CreateGUI() function should first call the superclass' one.*/
-  virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 };
 #endif

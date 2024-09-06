@@ -41,7 +41,7 @@ class MAF_EXPORT mafGUIRollOut: public wxPanel, public mafEventSender
 {
 public:
            mafGUIRollOut(mafGUI *parent, const mafString& title, mafGUI *roll_gui, int id = -1, bool rollOutOpen = true);
-  virtual ~mafGUIRollOut();
+           ~mafGUIRollOut() override;
 
   /** Open/Close the Roll-out.*/
   void RollOut(bool open = true);

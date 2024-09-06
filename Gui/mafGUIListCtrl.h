@@ -49,8 +49,8 @@ enum ITEM_ICONS
 class mafGUIListCtrl: public mafGUINamedPanel, public mafEventSender
 {
 public:
-                 mafGUIListCtrl (wxWindow* parent, wxWindowID id=-1, bool CloseButton = false, bool HideTitle = false); 
-  virtual       ~mafGUIListCtrl();
+                 mafGUIListCtrl (wxWindow* parent, wxWindowID id=-1, bool CloseButton = false, bool HideTitle = false);
+                 ~mafGUIListCtrl() override;
 
   /** Clear the control list. */
 	void Reset();

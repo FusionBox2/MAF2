@@ -69,13 +69,13 @@ public:
   }
 
   /** redefined not to move the camera if something has been picked */
-  virtual void OnMouseMove();
+  void OnMouseMove() override;
 
   /** redefined to pick cell if CTRL modifier is pressed */
-  virtual void OnLeftButtonDown(mafEventInteraction *e);
+  void OnLeftButtonDown(mafEventInteraction *e) override;
 
   /** redefined to end pick modality */
-  virtual void OnLeftButtonUp();
+  void OnLeftButtonUp() override;
 
 protected:
   /** constructor */
@@ -84,7 +84,7 @@ protected:
     m_Picker = NULL;
   }
   /** destructor */
-  virtual ~mmiVTKPicker();          
+  ~mmiVTKPicker() override;          
 
 protected:
   vtkCellPicker* m_Picker;      //<picker to be used for the picking

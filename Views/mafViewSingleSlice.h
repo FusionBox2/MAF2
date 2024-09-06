@@ -44,18 +44,18 @@ class MED_VIEWS_EXPORT mafViewSingleSlice: public mafViewVTK
 {
 public:
   mafViewSingleSlice(const mafString& label = _R("Slice"), int camera_position = CAMERA_CT, bool show_axes = false, bool show_grid = false, bool show_ruler = false, int stereo = 0, bool show_orientation = false);
-  virtual ~mafViewSingleSlice(); 
+  ~mafViewSingleSlice() override; 
 
   mafTypeMacro(mafViewSingleSlice, mafViewVTK);
 
-  virtual mafView*  Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
-  virtual void			OnEvent(mafEventBase *maf_event);
+  mafView*  Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override;
+  void			OnEvent(mafEventBase *maf_event) override;
 
-  void Create();
+  void Create() override;
 
   /** 
   Set the visualization status for the node (visible, not visible, mutex, ...) \sa mafSceneGraph mafView*/
-  virtual int GetNodeStatus(mafNode *vme);
+  int GetNodeStatus(mafNode *vme) override;
 
   /** 
   Set tolerance of the Picker*/
@@ -82,11 +82,11 @@ public:
   Create the visual pipe for the node passed as argument. 
   To create visual pipe first check in m_PipeMap if custom visual pipe is defined, 
   otherwise ask to vme which is its visual pipe. */
-  virtual void VmeCreatePipe(mafNode *vme);
+  void VmeCreatePipe(mafNode *vme) override;
 
   /** 
   Delete vme's visual pipe. It is called when vme is removed from visualization.*/
-  virtual void VmeDeletePipe(mafNode *vme);
+  void VmeDeletePipe(mafNode *vme) override;
 
   /** 
   Change the range of the WindowLevel Lookup table.*/
@@ -94,13 +94,13 @@ public:
 
   /** 
   Set the slice coordinates.*/
-  virtual void SetSlice(double origin[3]);
+  void SetSlice(double origin[3]) override;
 
   /** Get the Slice coordinates.*/
   void GetSlice(double slice[3]);
 
   /** Get the Slice coordinates.*/
-  double *GetSlice();
+  double *GetSlice() override;
 
   /** 
   Return true if a there is a volume inside the view.*/
@@ -128,10 +128,10 @@ public:
   /** Update list of surfaces vme */
   void UpdateSurfacesList(mafNode *node);
 
-  void VmeShow(mafNode *node, bool show);
+  void VmeShow(mafNode *node, bool show) override;
 
 protected:
-  virtual mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
   
   //mafGUIFloatSlider  *m_Slider;
   mafSceneNode    *m_CurrentVolume; ///< Current visualized volume

@@ -89,10 +89,10 @@ class lhpMultiscaleSurfacePipeline : public lhpMultiscalePipeline
 public:
   lhpMultiscaleSurfacePipeline(mafVME* vme, vtkRenderer *renderer) ;
   ~lhpMultiscaleSurfacePipeline() ;
-  vtkActor* GetActor() {return m_actor ;}
-  int GetVisibility() {return m_actor->GetVisibility() ;}
-  void SetVisibility(int visibility) {m_actor->SetVisibility(visibility);}
-  void PrintSelf(std::ostream& os, vtkIndent indent) ;
+  vtkActor* GetActor() override {return m_actor ;}
+  int GetVisibility() override {return m_actor->GetVisibility() ;}
+  void SetVisibility(int visibility) override {m_actor->SetVisibility(visibility);}
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 private:
   vtkActor *m_actor ;
   vtkPolyDataMapper *m_mapper ;
@@ -111,10 +111,10 @@ class lhpMultiscaleTokenPipeline : public lhpMultiscalePipeline
 public:
   lhpMultiscaleTokenPipeline(vtkRenderer *renderer, int colorId) ;
   ~lhpMultiscaleTokenPipeline() ;
-  vtkActor* GetActor() {return m_actor ;}
-  int GetVisibility() {return m_actor->GetVisibility() ;}
-  void SetVisibility(int visibility) {m_actor->SetVisibility(visibility);}
-  void PrintSelf(std::ostream& os, vtkIndent indent) ;
+  vtkActor* GetActor() override {return m_actor ;}
+  int GetVisibility() override {return m_actor->GetVisibility() ;}
+  void SetVisibility(int visibility) override {m_actor->SetVisibility(visibility);}
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 private:
   virtual void CalculateColor(double *a) ;
   int m_colorId ;
@@ -134,12 +134,12 @@ class lhpMultiscaleVolumeSlicePipeline : public lhpMultiscalePipeline
 public:
   lhpMultiscaleVolumeSlicePipeline(mafVME* vme, int viewId, double *pos, vtkRenderer *renderer) ;
   ~lhpMultiscaleVolumeSlicePipeline() ;
-  vtkActor* GetActor() {return m_boxActor ;}
-  int GetVisibility() {return m_boxActor->GetVisibility() ;}  ///< get visibility of pipeline  
-  void SetVisibility(int visibility) ;                        ///< set visibility of all actors in pipeline
+  vtkActor* GetActor() override {return m_boxActor ;}
+  int GetVisibility() override {return m_boxActor->GetVisibility() ;}  ///< get visibility of pipeline  
+  void SetVisibility(int visibility) override;                        ///< set visibility of all actors in pipeline
   void SetSliceDirection(int viewId) ;                        ///< set view direction
   void SetSlicePosition(double *pos) ;                        ///< set position of slice
-  void PrintSelf(std::ostream& os, vtkIndent indent) ;
+  void PrintSelf(std::ostream& os, vtkIndent indent) override;
 private:
   int m_viewId ;
   vtkActor *m_boxActor ;

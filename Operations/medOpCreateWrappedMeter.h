@@ -40,20 +40,20 @@ public:
   /** constructor */
   medOpCreateWrappedMeter(const mafString& label = _R("CreateWrappedMeter"));
   /** destructor */
-  ~medOpCreateWrappedMeter(); 
+  ~medOpCreateWrappedMeter() override; 
 
   /** RTTI macro*/
   mafTypeMacro(medOpCreateWrappedMeter, mafOp);
 
   /** clone the object and retrieve a copy*/
-  mafOp* Copy();
+  mafOp* Copy() override;
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode *node);
+  bool Accept(mafNode *node) override;
   /** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
   /** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
 
 protected: 
   medVMEWrappedMeter *m_Meter;

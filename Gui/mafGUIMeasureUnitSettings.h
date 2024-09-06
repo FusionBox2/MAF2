@@ -37,7 +37,7 @@ public:
   /** constructor. */
 	mafGUIMeasureUnitSettings(mafBaseEventHandler *Listener, const mafString &label = _L("Measure Unit"));
   /** destructor. */
-	~mafGUIMeasureUnitSettings(); 
+	~mafGUIMeasureUnitSettings() override; 
 
   /** Measure Ids */
   enum MEASURE_UNIT_WIDGET_ID
@@ -51,7 +51,7 @@ public:
   };
 
   /** Answer to the messages coming from interface. */
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Return the Scale factor to map mm into new unit.*/
   double GetScaleFactor();
@@ -61,10 +61,10 @@ public:
 
 protected:
   /** Create the GUI for the setting panel.*/
-  void CreateGui();
+  void CreateGui() override;
 
   /** Initialize measure unit used into the application.*/
-  void InitializeSettings();
+  void InitializeSettings() override;
 
   double       m_ScaleFactor;
   mafString    m_DataUnitName;

@@ -51,8 +51,8 @@ public:
   typedef std::map<mafTimeStamp, T > TimeMapScalars;
   typedef std::pair<mafTimeStamp, T > mmuTimePairScalars;
 
-  mafTimeMapScalar();  
-  virtual ~mafTimeMapScalar();
+  mafTimeMapScalar();
+  ~mafTimeMapScalar() override;
 
   /** set the TypeName of the kind of item accepted by this container */
   void SetItemTypeName(const char *tname) {m_ItemTypeName = tname;}
@@ -140,7 +140,7 @@ public:
   /** return  the item with given its order index. NULL is returned if not found. */
   T GetItemByIndex(int idx);
 
-  virtual void Print(std::ostream& os, const int tabs=0) const;
+  void Print(std::ostream& os, const int tabs=0) const override;
 
   typename mafTimeMapScalar<T>::TimeMapScalars::iterator BeginScalarVector() {return m_TimeMap.begin();}
   typename mafTimeMapScalar<T>::TimeMapScalars::iterator EndScalarVector() {return m_TimeMap.end();}

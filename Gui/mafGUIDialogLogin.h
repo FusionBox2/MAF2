@@ -32,9 +32,9 @@ class mafGUIDialogLogin : public mafGUIDialog
 {
 public:
 	mafGUIDialogLogin(const mafString& title, long style = mafCLOSEWINDOW | mafOK | mafCANCEL);
-	virtual ~mafGUIDialogLogin();
+	~mafGUIDialogLogin() override;
 
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Set the user credentials.*/
   void SetUserCredentials(mafString &usename, mafString &pwd, int &proxyFlag, mafString &proxyHost, int &proxyPort, int &remember_me);

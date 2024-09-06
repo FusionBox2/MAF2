@@ -31,13 +31,13 @@ public:
   mafTypeMacro(medInteractorPERScalarInformation,mafInteractorPER);
 
    /** Function that handles events sent from other objects. */
-  virtual void OnEvent(mafEventBase *event);
+  void OnEvent(mafEventBase *event) override;
 
 protected:
   /** constructor. */
   medInteractorPERScalarInformation();
   /** destructor. */
-  virtual ~medInteractorPERScalarInformation();
+  ~medInteractorPERScalarInformation() override;
 
 };
 #endif 

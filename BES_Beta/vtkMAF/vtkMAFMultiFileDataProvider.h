@@ -111,17 +111,17 @@ public:
   //Copies the binary data from the underlaying source into the given buffer. 
   //Copying starts at startOffset position and at most count bytes are copied.
   //The routine returns number of bytes successfully transfered.  
-  virtual int ReadBinaryData(vtkIdType64 startOffset, void* buffer, int count);
+  int ReadBinaryData(vtkIdType64 startOffset, void* buffer, int count) override;
 
   //Copies the binary data from the given buffer into the underlaying data set at
   //startOffset position. If the underlaying data set is not capable to hold the
   //specified amount of bytes to be copied (count), it is automatically enlarge.	
   //The routine returns number of bytes successfully transfered.	
-  virtual int WriteBinaryData(vtkIdType64 startOffset, void* buffer, int count); 	
+  int WriteBinaryData(vtkIdType64 startOffset, void* buffer, int count) override; 	
 
 protected:
   vtkMAFMultiFileDataProvider(void);
-  virtual ~vtkMAFMultiFileDataProvider(void);
+  ~vtkMAFMultiFileDataProvider(void) override;
 
   /** Seeks the underlaying multi-file
   It searches for the file with the given startOffset and set it to m_pFDLastUsed

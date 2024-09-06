@@ -81,7 +81,7 @@ protected:
   /** constructor */
   vtkMAFContourVolumeMapperAdv();
   /** destructor */
-  ~vtkMAFContourVolumeMapperAdv();
+  ~vtkMAFContourVolumeMapperAdv() override;
 
   /** prepare contours */
   template <typename DataType> void PrepareContoursTemplate(const int slice, const DataType *imageData);

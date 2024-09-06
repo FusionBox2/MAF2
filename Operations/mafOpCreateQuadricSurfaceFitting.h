@@ -33,15 +33,15 @@ class MAF_EXPORT mafOpCreateQuadricSurfaceFitting : public mafOp
 {
 public:
 	mafOpCreateQuadricSurfaceFitting(const mafString& label = _R("Create Quadric Surface Fitting"));
-	~mafOpCreateQuadricSurfaceFitting();
+	~mafOpCreateQuadricSurfaceFitting() override;
 
 	mafTypeMacro(mafOpCreateQuadricSurfaceFitting, mafOp);
 
-	mafOp* Copy();
+	mafOp* Copy() override;
 
-	bool Accept(mafNode *node);
-	void OpRun();
-	void OpDo();
+	bool Accept(mafNode *node) override;
+	void OpRun() override;
+	void OpDo() override;
 
 protected:
 	mafVMEQuadricSurfaceFitting *m_QuadricSurfaceFitting;

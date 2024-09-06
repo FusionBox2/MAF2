@@ -31,7 +31,7 @@ class MED_VME_EXPORT medVMEOutputSurfaceEditor : public mafVMEOutputSurface
 {
 public:
 	medVMEOutputSurfaceEditor();
-	virtual ~medVMEOutputSurfaceEditor();
+	~medVMEOutputSurfaceEditor() override;
 
 	mafTypeMacro(medVMEOutputSurfaceEditor,mafVMEOutputSurface);
 
@@ -43,13 +43,13 @@ public:
 	of stored Items is 0. Also special VME could not support VTK dataset output.
 	An event is rised when the output data changes to allow attached classes to 
 	update their input.*/
-	virtual vtkPolyData *GetSurfaceData();
+	vtkPolyData *GetSurfaceData() override;
 
 	/** Update all the output data structures (data, bounds, matrix and abs matrix).*/
-	virtual void Update();
+	void Update() override;
 
 protected:
-	mafGUI *CreateGui();
+	mafGUI *CreateGui() override;
 
 private:
 	medVMEOutputSurfaceEditor(const medVMEOutputSurfaceEditor&); // Not implemented

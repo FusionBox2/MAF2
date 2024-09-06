@@ -104,14 +104,14 @@ class MED_OPERATION_EXPORT medOpMML3: public mafOp
 public:
   mafTypeMacro(medOpMML3, mafOp)
   medOpMML3(const mafString& label= _R("")); ///< constructor
-  ~medOpMML3(); ///< destructor
+  ~medOpMML3() override; ///< destructor
 
-  mafOp* Copy();
-  bool Accept(mafNode* vme);
-  void OpRun();
-  void OpStop(int result);
-  void OpDo();
-  void OpUndo();
+  mafOp* Copy() override;
+  bool Accept(mafNode* vme) override;
+  void OpRun() override;
+  void OpStop(int result) override;
+  void OpDo() override;
+  void OpUndo() override;
 
 
   /// static callback which allows vme selector to select only this type
@@ -224,7 +224,7 @@ protected:
   //----------------------------------------------------------------------------
   // Event handlers
   //----------------------------------------------------------------------------
-  void OnEvent(mafEventBase *e); ///< Event handler
+  void OnEvent(mafEventBase *e) override; ///< Event handler
 
   // inputs dialog
   void OnNumberOfSlices() ;       ///< number of slices changed

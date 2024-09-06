@@ -61,25 +61,25 @@ class MAF_EXPORT mafOpRemoveCells: public mafOp
 public:
 	
   mafOpRemoveCells(const mafString& label = _R("RemoveCells"));
- ~mafOpRemoveCells(); 
+ ~mafOpRemoveCells() override; 
 	
   mafTypeMacro(mafOpRemoveCells, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
 	/** Return true for the acceptable vme type. */
-  bool Accept(mafNode* vme);
+  bool Accept(mafNode* vme) override;
 
 	/** Builds operation's interface by calling CreateOpDialog() method. */
-  void OpRun();
+  void OpRun() override;
 
 	/** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
 
 	/** Makes the undo for the operation. */
-  void OpUndo();
+  void OpUndo() override;
 
   /** testing functions:this could be used from the commandline */
 

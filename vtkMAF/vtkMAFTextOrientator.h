@@ -123,7 +123,7 @@ protected:
     /** constructor */
 					vtkMAFTextOrientator();
 	/** destructor */
-					~vtkMAFTextOrientator();
+					~vtkMAFTextOrientator() override;
 	/** create orientator actor */
 	void			OrientatorCreate();	
     /** update orientator actor */

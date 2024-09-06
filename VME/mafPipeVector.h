@@ -48,16 +48,16 @@ public:
   mafTypeMacro(mafPipeVector,mafPipeVTK);
 
                mafPipeVector();
-  virtual     ~mafPipeVector();
+  ~mafPipeVector() override;
 
   /** process events coming from Gui */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Create the VTK rendering pipeline*/
-  virtual void Create(mafNode *node, mafView *view);
+  void Create(mafNode *node, mafView *view) override;
 
   /** Manage the actor selection by showing the corner box around the actor when the corresponding VME is selected.*/
-  virtual void Select(bool select); 
+  void Select(bool select) override; 
 
   /** IDs for the GUI */
   enum PIPE_SURFACE_WIDGET_ID
@@ -103,13 +103,13 @@ protected:
   mafGUIMaterialButton        *m_MaterialButton;
 
   /** Update the position of the sphere and the position/orientation of the arrow */
-  void UpdateProperty(bool fromTag = false);
+  void UpdateProperty(bool fromTag = false) override;
 
   /** Draw a bunch of vectors in a frame interval */
   void AllVector(bool fromTag = false);
   
   /** Create the Gui for the visual pipe that allow the user to change the pipe's parameters.*/
-  virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 
   /** Enable widgets */
   void EnableWidget();

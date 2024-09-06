@@ -39,10 +39,10 @@ public:
   /** constructor */
 	medWizardSettings(mafBaseEventHandler *Listener, const mafString &label = _L("Wizard Settings"));
   /** destructor */
-	~medWizardSettings(); 
+	~medWizardSettings() override; 
 
   /** Answer to the messages coming from interface. */
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Enable/disable show of information boxes */
   void SetShowInformationBoxes(int value);
@@ -52,10 +52,10 @@ public:
 
 protected:
   /** Create the GUI for the setting panel.*/
-  void CreateGui();
+  void CreateGui() override;
 
   /** Initialize language used into the application.*/
-  void InitializeSettings();
+  void InitializeSettings() override;
 
   int  m_ShowInformationBoxes;
 };

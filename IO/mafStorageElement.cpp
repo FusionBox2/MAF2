@@ -668,16 +668,16 @@ namespace
 		/** constructor */
 		mmuDOMTreeErrorReporter() : m_SawErrors(false), m_TestFlag(false) {}
 		/** destructor */
-		~mmuDOMTreeErrorReporter() {}
+		~mmuDOMTreeErrorReporter() override {}
 
 		/** Implementation of the warning handler interface */
-		void warning(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& toCatch);
+		void warning(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& toCatch) override;
 		/** Implementation of the error handler interface */
-		void error(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& toCatch);
+		void error(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& toCatch) override;
 		/** Implementation of the fatal error handler interface */
-		void fatalError(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& toCatch);
+		void fatalError(const XERCES_CPP_NAMESPACE_QUALIFIER SAXParseException& toCatch) override;
 		/** reset error flag */
-		void resetErrors();
+		void resetErrors() override;
 
 		/** retrieve error flag */
 		bool GetSawErrors() const { return m_SawErrors; }

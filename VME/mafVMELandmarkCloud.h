@@ -61,18 +61,18 @@ public:
 
   mafTypeMacro(mafVMELandmarkCloud, mafVMEPointSet);
   
-  /** Precess events coming from other objects */ 
-  virtual void OnEvent(mafEventBase *maf_event);
+  /** Precess events coming from other objects */
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Copy the contents of another landmarkcloud into this one. */
-  virtual int DeepCopy(mafNode *a);
+  int DeepCopy(mafNode *a) override;
 
   /** Compare with another landmarkcloud. */
-  virtual bool Equals(mafVME *vme);
+  bool Equals(mafVME *vme) override;
 
   /**
   Return the modification time.*/
-  virtual unsigned long GetMTime();
+  unsigned long GetMTime() override;
 
   /**
   Add a new landmark an returns its index. BEWARE: landmark is added to all the
@@ -209,32 +209,32 @@ public:
   mmaMaterial *GetMaterial();
 
   /** Return the suggested pipe-typename for the visualization of this vme */
-  virtual mafString GetVisualPipe() {return mafString(_R("mafPipeLandmarkCloud"));};
+  mafString GetVisualPipe() override {return mafString(_R("mafPipeLandmarkCloud"));};
 
-  void Print(std::ostream &os, const int tabs=0);
+  void Print(std::ostream &os, const int tabs=0) override;
 
 
   /** Return true if the data associated with the VME is present and updated at the current time.*/
-  virtual bool IsDataAvailable();
+  bool IsDataAvailable() override;
 
 protected:
   mafVMELandmarkCloud();
-  virtual ~mafVMELandmarkCloud();
+  ~mafVMELandmarkCloud() override;
 
   void InternalStore(mafStorageElementBuilder& parent) override;
   void InternalRestore(const mafStorageElement& node) override;
 
   /** used to initialize and create the material attribute if not yet present */
-  virtual int InternalInitialize();
+  int InternalInitialize() override;
 
   /** Remove a landmark name from the TagArray*/
   void RemoveLandmarkName(int idx);
 
   /** Internal function to instantiate a VMEItem with for timestamp t containing a new polydata*/
-  virtual vtkPolyData *NewPolyData(mafTimeStamp t);
+  vtkPolyData *NewPolyData(mafTimeStamp t) override;
 
   /** Internal functions redefined to support cells*/
-  virtual int AppendPoint(vtkPolyData *polydata,double x,double y,double z,int num=1);
+  int AppendPoint(vtkPolyData *polydata,double x,double y,double z,int num=1) override;
 
   /** Internal functions used to set/get visibility for point idx of the given polydata*/
   virtual int SetLandmarkVisibility(vtkPolyData *polydata,int idx,bool a);
@@ -245,7 +245,7 @@ protected:
   void SetState(int state);
 
   /** Internally used to create a new instance of the GUI.*/
-  virtual mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
   int m_SingleFile;
   int m_NumberOfLandmarks;
@@ -260,15 +260,19 @@ private:
   void operator=(const mafVMELandmarkCloud&); // Not implemented
 
   /** private to avoid calling by external classes */
-  virtual int SetData(vtkDataSet *data, mafTimeStamp t, int mode=MAF_VME_COPY_DATA);
+  int SetData(vtkDataSet *data, mafTimeStamp t, int mode=MAF_VME_COPY_DATA) override;
 
   /**
   Hidden parents' functions: the root node does not have items,
   its a simple grouping node, and does not have a parent...*/
-  virtual int AppendPoint(double x,double y,double z,mafTimeStamp t) {mafErrorMacro("Unsupported function, use AppendLandmark instead!"); return -1;}
-  int SetPoint(int idx,double x,double y,double z,mafTimeStamp t) {mafErrorMacro("Unsupported function, use SetLandmark instead!"); return MAF_ERROR;}
-  virtual int RemovePoint(int idx,mafTimeStamp t=-1) {mafErrorMacro("Unsupported function, use RemoveLandmark instead!"); return MAF_ERROR;};
-  virtual void SetNumberOfPoints(int num,mafTimeStamp t=-1) {mafErrorMacro("Unsupported function, use SetNumberOfLandmarks instead!");};
-  virtual int RemovePoint(vtkPolyData *polydata,int idx) {return this->Superclass::RemovePoint(polydata,idx);}
+  int AppendPoint(double x,double y,double z,mafTimeStamp t) override
+  {mafErrorMacro("Unsupported function, use AppendLandmark instead!"); return -1;}
+  int SetPoint(int idx,double x,double y,double z,mafTimeStamp t) override
+  {mafErrorMacro("Unsupported function, use SetLandmark instead!"); return MAF_ERROR;}
+
+  int RemovePoint(int idx,mafTimeStamp t=-1) override
+  {mafErrorMacro("Unsupported function, use RemoveLandmark instead!"); return MAF_ERROR;};
+  void SetNumberOfPoints(int num,mafTimeStamp t=-1) override {mafErrorMacro("Unsupported function, use SetNumberOfLandmarks instead!");};
+  int RemovePoint(vtkPolyData *polydata,int idx) override {return this->Superclass::RemovePoint(polydata,idx);}
 };
 #endif

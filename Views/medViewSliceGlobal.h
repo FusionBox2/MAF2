@@ -42,18 +42,18 @@ class MED_VIEWS_EXPORT medViewSliceGlobal: public mafViewSlice
 {
 public:
   medViewSliceGlobal(const mafString& label = _R("Slice"), int camera_position = CAMERA_CT, bool show_axes = false, bool show_grid = false, bool show_ruler = false, int stereo = 0,bool showTICKs=false,bool textureInterpolate=true);
-  virtual ~medViewSliceGlobal(); 
+  ~medViewSliceGlobal() override; 
 
   mafTypeMacro(medViewSliceGlobal, mafViewSlice);
 
-  virtual mafView*  Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
-  virtual void			OnEvent(mafEventBase *maf_event);
+  mafView*  Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override;
+  void			OnEvent(mafEventBase *maf_event) override;
 
   //void Create();
 
   /** 
   Set the visualization status for the node (visible, not visible, mutex, ...) \sa mafSceneGraph mafView*/
-  virtual int GetNodeStatus(mafNode *vme);
+  int GetNodeStatus(mafNode *vme) override;
 
   /** IDs for the view GUI */
   enum VIEW_NEW_GLOBAL_SLICE_WIDGET_ID
@@ -70,18 +70,18 @@ public:
   Create the visual pipe for the node passed as argument. 
   To create visual pipe first check in m_PipeMap if custom visual pipe is defined, 
   otherwise ask to vme which is its visual pipe. */
-  virtual void VmeCreatePipe(mafNode *vme);
+  void VmeCreatePipe(mafNode *vme) override;
 
   /** 
   Delete vme's visual pipe. It is called when vme is removed from visualization.*/
-  virtual void VmeDeletePipe(mafNode *vme);
+  void VmeDeletePipe(mafNode *vme) override;
 
   /** Set slicer parameter to generate the slice. */
   virtual void SetSlice(double origin[3], float xVect[3], float yVect[3]);
 
   /** Set the origin and normal of the slice 
   Both, Origin and Normal may be NULL, if the current value is to be preserved */
-  virtual void SetSlice(double* Origin, double* Normal = NULL);
+  void SetSlice(double* Origin, double* Normal = NULL) override;
 
   /** Calculate for every actor the correct slice. */
   virtual void UpdateSlice();
@@ -90,7 +90,7 @@ public:
   double UpdateSlicePos(double pos = -1);
 
   /** Refresh text in CT View**/
-  virtual void UpdateText(int ID = 1);
+  void UpdateText(int ID = 1) override;
 
   /** Public method to be called to change slice axis. */
   void ChangeView(int viewIndex);
@@ -102,21 +102,21 @@ public:
   virtual void SetTextMode(int textMode);
 
   /** Function called when select a vme different from selected one.*/
-  virtual void VmeSelect(mafNode *node, bool select);
+  void VmeSelect(mafNode *node, bool select) override;
 
   /** Override superclass. */
-  virtual void VmeShow(mafNode *node, bool show);
+  void VmeShow(mafNode *node, bool show) override;
 
   /** pPrint a dump of this object */
-  virtual void Print(std::ostream& os, const int tabs=0);// const;
+  void Print(std::ostream& os, const int tabs=0) override;// const;
 
   /** Override superclass. */
-  virtual void CameraUpdate();
+  void CameraUpdate() override;
 
 protected:
 
   /** Override superclass. */
-  virtual mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
   /** Internally called to update information about current slice number.*/
   void UpdateSliceIndex();

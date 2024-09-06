@@ -83,10 +83,10 @@ class VTK_vtkMAF_EXPORT vtkXRayVolumeMapper : public vtkVolumeMapper {
     
     // standard vtkVolumeMapper only accept vtkImageData. Overwrite input functions
     void  SetInput(vtkDataSet *input);
-    vtkDataSet*  GetInput() { return vtkVolumeMapper::GetInput(); }
+    vtkDataSet*  GetInput() override { return vtkVolumeMapper::GetInput(); }
 
     // Render the volume
-    virtual void Render(vtkRenderer *ren, vtkVolume *vol);
+    void Render(vtkRenderer *ren, vtkVolume *vol) override;
 
     // reduce resolution to 9 bit
     static bool GetReduceColorResolution();// { return ReduceColorResolution; } 
@@ -120,11 +120,11 @@ class VTK_vtkMAF_EXPORT vtkXRayVolumeMapper : public vtkVolumeMapper {
     vtkGetMacro( PercentageOfResidentTextures, int );
 
     bool IsDataValid(bool warnings = false); // Update should be called prior to this function
-    void Update();
+    void Update() override;
 
   protected:
     vtkXRayVolumeMapper();
-    ~vtkXRayVolumeMapper();
+    ~vtkXRayVolumeMapper() override;
 
     // rendering methods
     void StartRendering(vtkRenderer *renderer, vtkVolume *volume);

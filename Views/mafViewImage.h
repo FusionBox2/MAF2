@@ -43,18 +43,18 @@ class MED_VIEWS_EXPORT mafViewImage: public mafViewVTK
 {
 public:
   mafViewImage(const mafString& label = _R("Image"), int camera_position = CAMERA_FRONT, bool show_axes = false, bool show_grid = false, bool show_ruler = false, int stereo = 0);
-  virtual ~mafViewImage(); 
+  ~mafViewImage() override; 
 
   mafTypeMacro(mafViewImage, mafViewVTK);
 
-  virtual mafView*  Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
-  virtual void			OnEvent(mafEventBase *maf_event);
+  mafView*  Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override;
+  void			OnEvent(mafEventBase *maf_event) override;
 
-  void Create();
+  void Create() override;
 
   /** 
   Set the visualization status for the node (visible, not visible, mutex, ...) \sa mafSceneGraph mafView*/
-  virtual int GetNodeStatus(mafNode *vme);
+  int GetNodeStatus(mafNode *vme) override;
 
   /** IDs for the view GUI */
   enum VIEW_SLICE_WIDGET_ID
@@ -79,12 +79,12 @@ public:
   /** Delete the background of the slice. */
   void BorderDelete();
 
-  void VmeShow(mafNode *node, bool show);
+  void VmeShow(mafNode *node, bool show) override;
 
-  void VmeDeletePipe(mafNode *vme);
+  void VmeDeletePipe(mafNode *vme) override;
 
 protected:
-  virtual mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
   mafSceneNode    *m_CurrentImage; ///< Current visualized volume
 

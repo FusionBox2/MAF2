@@ -55,12 +55,12 @@ public:
 
 					mafOp();
 					mafOp(const mafString &label);
-	virtual	~mafOp(); 
+  ~mafOp() override; 
           
 					/** Return the type of the operation: OPTYPE_OP, OPTYPE_IMPORTER, OPTYPE_EXPORTER, OPTYPE_EDIT or OPTYPE_STATECHANGER*/
 					int GetType();
 
-	virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 	virtual mafOp* Copy();
 
 	/** Builds operation's interface. */

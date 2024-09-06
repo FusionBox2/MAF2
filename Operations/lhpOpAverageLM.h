@@ -37,20 +37,20 @@ class lhpOpAverageLM: public mafOp
 public:
   mafTypeMacro(lhpOpAverageLM, mafOp)
   lhpOpAverageLM(const mafString& label = _R(""));
- ~lhpOpAverageLM(); 
+ ~lhpOpAverageLM() override;
 
-  virtual void OnEvent(mafEventBase *maf_event);
-  mafOp* Copy();
+  void OnEvent(mafEventBase *maf_event) override;
+  mafOp* Copy() override;
 
-  bool Accept(mafNode* vme);   
-  void OpRun();
-  void OpDo();
-  void OpUndo();
+  bool Accept(mafNode* vme) override;   
+  void OpRun() override;
+  void OpDo() override;
+  void OpUndo() override;
   void CreateGui();
 
 protected: 
 
-  void OpStop(int result);
+  void OpStop(int result) override;
 
   /// limb cloud from motion: animated, we will insert stick tip here
   mafVMELandmarkCloud  *m_LimbCloud;

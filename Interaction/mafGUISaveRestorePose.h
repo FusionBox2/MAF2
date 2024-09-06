@@ -52,14 +52,14 @@ public:
   };
 
   mafGUISaveRestorePose(mafVME *input, mafBaseEventHandler *listener = NULL , int typeGui = ID_POSE_GUI, bool testMode = false);
-	~mafGUISaveRestorePose(); 
+	~mafGUISaveRestorePose() override; 
 
   /** Events handling */
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** 
   Enable-Disable the GUI's widgets */
-	void EnableWidgets(bool enable);
+	void EnableWidgets(bool enable) override;
 
   // this constants must be visible from the owner object  
   enum GUI_SAVE_RESTORE_ID
@@ -73,7 +73,7 @@ protected:
  
   /** 
   Create the GUI*/
-  void CreateGui();
+  void CreateGui() override;
 
   /**
   Find in input vme if there are stored abs poses and fill the listbox with their names*/

@@ -41,7 +41,7 @@ class MAF_EXPORT mafGizmoAutoscaleHelper:public mafTransformBase
 {
 public:
   mafGizmoAutoscaleHelper();
-  virtual ~mafGizmoAutoscaleHelper();
+  ~mafGizmoAutoscaleHelper() override;
 
   mafTypeMacro(mafGizmoAutoscaleHelper,mafTransformBase);
 
@@ -75,7 +75,7 @@ public:
   /** 
     Get the MTime: this is the bit of magic that makes everything work.
     This MTime takes in consideration also the camera's MTime */
-  virtual unsigned long GetMTime();
+  unsigned long GetMTime() override;
 
 protected:
 
@@ -104,7 +104,7 @@ protected:
   double m_RenderWindowHeightPercentage;
 
   /**  Updates the internal matrix */
-  virtual void InternalUpdate();
+  void InternalUpdate() override;
 
   static void InternalProcessEvents(vtkObject* sender, unsigned long channel, void* clientdata, void* calldata);
 

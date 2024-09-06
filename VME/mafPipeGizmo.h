@@ -39,20 +39,20 @@ public:
   mafTypeMacro(mafPipeGizmo,mafPipeVTK);
 
                mafPipeGizmo();
-  virtual     ~mafPipeGizmo ();
+  ~mafPipeGizmo () override;
 
   /** Create the VTK rendering pipeline*/
-  virtual void Create(mafNode *node, mafView *view);
+  void Create(mafNode *node, mafView *view) override;
 
   /** Manage the actor selection by showing the corner box around the actor when the corresponding VME is selected.*/
-  virtual void Select(bool select);
+  void Select(bool select) override;
 
   /** process events coming from gui */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Get assembly front/back */
-  virtual vtkMAFAssembly *GetAssemblyFront(){return m_AssemblyFront;};
-  virtual vtkMAFAssembly *GetAssemblyBack(){return m_AssemblyBack;};
+  vtkMAFAssembly *GetAssemblyFront() override {return m_AssemblyFront;};
+  vtkMAFAssembly *GetAssemblyBack() override {return m_AssemblyBack;};
 
 
 protected:

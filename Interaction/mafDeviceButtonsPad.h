@@ -68,7 +68,7 @@ public:
 
 protected:
   mafDeviceButtonsPad();
-  virtual ~mafDeviceButtonsPad();
+  ~mafDeviceButtonsPad() override;
 
   /** 
     Internally used to issue the event rised by a button pressure,

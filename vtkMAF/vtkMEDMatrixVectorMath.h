@@ -57,7 +57,7 @@ class VTK_vtkMAF_EXPORT vtkMEDMatrixVectorMath : public vtkObject
 public:
   static vtkMEDMatrixVectorMath *New();
   vtkTypeMacro(vtkMEDMatrixVectorMath, vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent) {} ;
+  void PrintSelf(ostream& os, vtkIndent indent) override {} ;
 
 
   /// Set to false for non-homogeneous 3x3 (default), \n
@@ -429,7 +429,7 @@ public:
 
 protected:
   vtkMEDMatrixVectorMath() ;  ///< constructor
-  ~vtkMEDMatrixVectorMath() ; ///< deconstructor
+  ~vtkMEDMatrixVectorMath() override; ///< deconstructor
 
   bool m_homogeneous ;  ///< flag which switches homogeneous mode on or off
 

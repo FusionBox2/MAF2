@@ -44,8 +44,8 @@ class MAF_EXPORT mafDataVector : public mafTimeMap<mafVMEItem>, public mafBaseEv
 {
 public:
 
-  mafDataVector();  
-  virtual ~mafDataVector();
+  mafDataVector();
+  ~mafDataVector() override;
 
   mafTypeMacro(mafDataVector,mafTimeMap<mafVMEItem>);
 
@@ -67,21 +67,21 @@ public:
    /**
     Insert an item to the vector trying to append it, anyway the array
     is kept sorted. */
-  virtual void AppendItem(mafVMEItem *m);
+  void AppendItem(mafVMEItem *m) override;
 
    /**
     Insert an item to the vector trying to prepend it, anyway the array is kept sorted.
     Item's timestamp must be >=0 */
-  virtual void PrependItem(mafVMEItem *m);
+  void PrependItem(mafVMEItem *m) override;
 
   /**
     Set the item for a specified time. If no item with the same time exist
     the item is inserted in the vector. If an item with the same time exist, it's simply
     substituted with the new one. The item is always references and not copied.
     This function also automatically call the UpdateData() member function.*/
-  virtual void InsertItem(mafVMEItem *m);
+  void InsertItem(mafVMEItem *m) override;
 
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** return ID used to store this vector into a file when in SingleFileMode */
   mafID GetVectorID();
@@ -90,7 +90,8 @@ public:
   void UpdateVectorId();
   
   /** redefined to set the DataModified flag */
-  virtual void Modified() {m_DataModified = true; Superclass::Modified();}
+  void Modified() override
+  {m_DataModified = true; Superclass::Modified();}
 
   /** return true if any data has been inserted or removed */
   bool IsDataModified() {return m_DataModified;}

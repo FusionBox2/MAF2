@@ -46,7 +46,7 @@ public:
 
 protected:
   vtkMAFAssembly();
-  ~vtkMAFAssembly();
+  ~vtkMAFAssembly() override;
 
   // pointer to the VME that is represented by this Assembly
   mafNode      *m_Vme;

@@ -47,7 +47,7 @@ public:
   /** constructor */
   medResultQueryAbstractHandler();
   /** destructor */
-	virtual ~medResultQueryAbstractHandler(); 
+  ~medResultQueryAbstractHandler() override; 
   
   /** RTTI macro */
   mafAbstractTypeMacro(medResultQueryAbstractHandler, mafObject);

@@ -49,7 +49,7 @@ class MED_VIEWS_EXPORT medViewSliceOnCurveCompound: public medViewCompoundWindow
 public:
 
   medViewSliceOnCurveCompound(const mafString& label = _R("View Slice on Curve"));
-  virtual ~medViewSliceOnCurveCompound(); 
+  ~medViewSliceOnCurveCompound() override; 
 
   mafTypeMacro(medViewSliceOnCurveCompound, medViewCompoundWindowing);
 
@@ -136,24 +136,24 @@ protected:
   int m_EnableGPU; ///<Non-zero, if the GPU support for slicing is used (default)
 
 public:
-  /*virtual*/ mafView *Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
-  /*virtual*/ void OnEvent(mafEventBase *maf_event);	
+  /*virtual*/ mafView *Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override;
+  /*virtual*/ void OnEvent(mafEventBase *maf_event) override;	
 
   /** 
   Show/Hide VMEs into plugged sub-views*/
-  /*virtual*/ void VmeShow(mafNode *node, bool show);
+  /*virtual*/ void VmeShow(mafNode *node, bool show) override;
 
   /** return the current pipe for the specified vme (if any exist at this moment) */
-  /*virtual*/ mafPipe* GetNodePipe(mafNode *vme);
+  /*virtual*/ mafPipe* GetNodePipe(mafNode *vme) override;
 
   /** 
   return the status of the node within this view. es: NON_VISIBLE,VISIBLE_ON, ... 
   having mafViewCompound::GetNodeStatus allow mafGUICheckTree to not know about mafSceneGraph */
-  /*virtual*/ int  GetNodeStatus(mafNode *vme);
+  /*virtual*/ int  GetNodeStatus(mafNode *vme) override;
 
   /** 
   Create visual pipe and initialize them to build an SliceOnCurve visualization */
-  /*virtual*/ void PackageView();
+  /*virtual*/ void PackageView() override;
 
   /** Returns number of layouts available for the user */
   inline virtual int GetNumberOfLayouts() {
@@ -197,7 +197,7 @@ public:
   };
 
   /** print a dump of this object */
-  virtual void Print(std::ostream& os, const int tabs=0);// const;
+  void Print(std::ostream& os, const int tabs=0) override;// const;
 
 protected:
   /** Hides VMEs of the same type as pNode that are currently displayed in pView
@@ -206,7 +206,7 @@ protected:
 
 protected:
   /** Creates views and text mappers */
-  /*virtual*/ void Create();
+  /*virtual*/ void Create() override;
 
   /**
   Internally used to create a new instance of the GUI. This function should be
@@ -215,10 +215,10 @@ protected:
   the superclass enum. The last id value must be defined as "LAST_ID" to allow the 
   subclass to continue the ID enumeration from it. For appending the widgets in the
   same panel GUI, each CreateGUI() function should first call the superclass' one.*/
-  /*virtual*/ mafGUI  *CreateGui();
+  /*virtual*/ mafGUI  *CreateGui() override;
 
   /** Redefine this method to define a custom layout.*/
-  /*virtual*/ void LayoutSubViewCustom(int width, int height);
+  /*virtual*/ void LayoutSubViewCustom(int width, int height) override;
 
   /** plugs a new volume visualization pipe */
   virtual void PlugVolumePipe();

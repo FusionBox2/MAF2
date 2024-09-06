@@ -35,16 +35,16 @@ public:
   mafTypeMacro(medInteractorSegmentationPicker,mafInteractorCameraMove);
 
   /** Redefined to send picking events if continuous picking is enabled */
-  virtual void OnEvent(mafEventBase *event);
+  void OnEvent(mafEventBase *event) override;
 
   /** Determine if picking modality is enabled with click and CTRL + click or with CTRL + click and ALT + click */
   void SetFullModifiersMode(bool enable){m_FullModifiersMode = enable;};
 
 protected:
-  /**	This function is called when on mouse button down */ 
-  virtual void OnLeftButtonDown(mafEventInteraction *e);
-  /**	This function is called when on mouse button release */ 
-  virtual void OnLeftButtonUp();
+  /**	This function is called when on mouse button down */
+  void OnLeftButtonDown(mafEventInteraction *e) override;
+  /**	This function is called when on mouse button release */
+  void OnLeftButtonUp() override;
 
   /** Send to the listener picked point coordinate through vtkPoint and the corresponding scalar value found in that position. */
   void SendPickingInformation(mafView *v, double *mouse_pos = NULL, int msg_id = VME_PICKED, mafMatrix *tracker_pos = NULL, bool mouse_flag = true);
@@ -56,7 +56,7 @@ protected:
   medInteractorSegmentationPicker();
 
   /** destructor. */
-  virtual ~medInteractorSegmentationPicker();
+  ~medInteractorSegmentationPicker() override;
 
 };
 #endif 

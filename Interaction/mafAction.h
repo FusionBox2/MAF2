@@ -72,14 +72,14 @@ public:
 
 
   /** Redefined to answer incoming queries about connected devices. */
-  virtual void OnEvent(mafEventBase *event);
+  void OnEvent(mafEventBase *event) override;
 
   void Store(mafStorageElementBuilder& element) { InternalStore(element); }
   void Restore(const mafStorageElement& element) { InternalRestore(element); }
 
 protected:
   mafAction();
-  virtual ~mafAction();
+  ~mafAction() override;
 
   virtual void InternalStore(mafStorageElementBuilder& node);
   virtual void InternalRestore(const mafStorageElement& node);

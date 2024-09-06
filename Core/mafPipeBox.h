@@ -37,13 +37,13 @@ public:
   mafTypeMacro(mafPipeBox,mafPipeVTK);
 
                mafPipeBox();
-  virtual     ~mafPipeBox ();
+  ~mafPipeBox () override;
 
   /** process events coming from gui */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
-  virtual void Create(mafNode *node, mafView *view /*,bool use_axes = true*/ ); //Can't add parameters - is Virtual
-  virtual void Select(bool select);
+  void Create(mafNode *node, mafView *view /*,bool use_axes = true*/ ) override; //Can't add parameters - is Virtual
+  void Select(bool select) override;
 
   void SetBoundsMode(int mode){if(mode>=BOUNDS_3D && mode<=BOUNDS_4D_SUBTREE)m_BoundsMode=mode;};
   int  GetBoundsMode(){return m_BoundsMode;};
@@ -77,7 +77,7 @@ protected:
 
   int m_BoundsMode;
 
-  void UpdateProperty(bool fromTag = false);
-  virtual mafGUI *CreateGui();
+  void UpdateProperty(bool fromTag = false) override;
+  mafGUI *CreateGui() override;
 };  
 #endif // __mafPipeBox_H__

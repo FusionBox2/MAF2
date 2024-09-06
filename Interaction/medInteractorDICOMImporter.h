@@ -59,20 +59,20 @@ public:
   mafTypeMacro(medInteractorDICOMImporter,mafInteractorCameraMove);
 
   /** Start the interaction with the given device*/
-  virtual int StartInteraction(mafDeviceButtonsPadMouse *mouse);
+  int StartInteraction(mafDeviceButtonsPadMouse *mouse) override;
 
   /** redefined to send the picking world coordinates also */
-  virtual void OnMouseMove();
+  void OnMouseMove() override;
 
   /** redefined to send the picking world coordinates also */
-  virtual void OnLeftButtonDown(mafEventInteraction *e);
+  void OnLeftButtonDown(mafEventInteraction *e) override;
 
   /** redefined to send the picking world coordinates also */
-  virtual void OnLeftButtonUp();
+  void OnLeftButtonUp() override;
 
 protected:
   medInteractorDICOMImporter();
-  virtual ~medInteractorDICOMImporter();
+  ~medInteractorDICOMImporter() override;
 
   /** Compute the world point corresponding to the mouse position and send it to the listener */
   void SendCropPosition(int event_id);

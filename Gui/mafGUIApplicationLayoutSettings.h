@@ -46,7 +46,7 @@ public:
   /** constructor .*/
 	mafGUIApplicationLayoutSettings(mafBaseEventHandler *listener, const mafString &label = _L("Application Layout"));
   /** destructor .*/
-	~mafGUIApplicationLayoutSettings(); 
+	~mafGUIApplicationLayoutSettings() override; 
 
   /** GUI IDs*/
   enum APPLICATION_LAYOUT_WIDGET_ID
@@ -65,7 +65,7 @@ public:
   };
 
   /** Answer to the messages coming from interface. */
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Assign ViewManager pointer to member variable. */
   void SetViewManager(mafViewManager *view_manager) {m_ViewManager = view_manager;};
@@ -97,10 +97,10 @@ public:
 
 protected:
   /** Create the GUI for the setting panel.*/
-  void CreateGui();
+  void CreateGui() override;
 
   /** Initialize Application layout used into the application.*/
-  void InitializeSettings();
+  void InitializeSettings() override;
 
   /** Remove Selected Layout from the list*/
   void RemoveLayout();

@@ -60,7 +60,7 @@ public:
   const mafString& GetName() const;
 
   /** dump the object to output stream */
-  virtual void Print(std::ostream& os, const int tabs=0) const;
+  void Print(std::ostream& os, const int tabs=0) const override;
 
   void Store(mafStorageElementBuilder& element) { InternalStore(element); }
   void Restore(const mafStorageElement& element) { InternalRestore(element); }

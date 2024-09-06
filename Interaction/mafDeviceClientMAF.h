@@ -33,9 +33,9 @@
 class MAF_EXPORT mafDeviceClientMAF : public mafDevice
 {
 public:
-  mafTypeMacro(mafDeviceClientMAF, mafDevice); 
+  mafTypeMacro(mafDeviceClientMAF, mafDevice);
 
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   //----------------------------------------------------------------------------
   //    GUI Constants
@@ -48,7 +48,7 @@ public:
   };
 
   /** internal function to create device GUI for settings */
-  virtual void CreateGui();
+  void CreateGui() override;
 
   /** Connect the client to the specified address and return MAF_OK on success, otherwise MAF_ERROR is returned.*/
   int ConnectClient(wxIPV4address &addr);
@@ -67,10 +67,10 @@ public:
 
 protected:
   mafDeviceClientMAF();
-  virtual ~mafDeviceClientMAF();
+  ~mafDeviceClientMAF() override;
 
-  virtual int InternalInitialize();
-  virtual void InternalShutdown();
+  int InternalInitialize() override;
+  void InternalShutdown() override;
 
   ClientUnit *m_Client;
   mafString   m_ServerHost;

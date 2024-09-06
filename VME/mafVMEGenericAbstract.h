@@ -48,14 +48,14 @@ public:
   };
 
   /** print a dump of this object */
-  virtual void Print(std::ostream& os, const int tabs=0);// const;
+  void Print(std::ostream& os, const int tabs=0) override;// const;
 
   /**
     Copy the contents of another VME into this one. Notice that subtrees
     are not copied, i.e. copy is not recursive!
     Concrete class should reimplement this function to verify admitted
     conversion. */
-  virtual int DeepCopy(mafNode *a);
+  int DeepCopy(mafNode *a) override;
 
   /**
     Allow to perform a DeepCopy with data very large.
@@ -66,13 +66,13 @@ public:
     perform a copy by simply referencing the copied VME's data array. 
     Beware: This can allow to save memory when doing special tasks, but
     can be very dangerous making one of the VME inconsistent. Some VMEs
-    do not support such a function! */  
-  virtual int ShallowCopy(mafVME *a);
+    do not support such a function! */
+  int ShallowCopy(mafVME *a) override;
 
   /**
     Compare two VME. Two VME are considered equivalent if they have equivalent 
     items, TagArrays, MatrixVectors, Name and Type. */
-  virtual bool Equals(mafVME *vme);
+  bool Equals(mafVME *vme) override;
 
   /**
     Return the matrix vector associated with this VME. Matrix vector is an array of
@@ -88,7 +88,7 @@ public:
     set or get the Pose for a specified time. When setting, if the time does not exist
     the MatrixVector creates a new KeyMatrix on the fly. When getting, the matrix vector
     interpolates on the fly according to the matrix interpolator.*/
-  void SetMatrix(const mafMatrix &mat);
+  void SetMatrix(const mafMatrix &mat) override;
 
   /** Get the pointer to the array of VMEItem's*/
   mafDataVector *GetDataVector() {return m_DataVector;}
@@ -102,34 +102,34 @@ public:
   /**
     Return the list of timestamps for this VME. Timestamps list is 
     obtained merging timestamps for matrices and VME items*/
-  virtual void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes);
+  void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes) override;
 
   /** Set the time bounds for the time varying VME based on data and matrix vector.*/
-  void GetLocalTimeBounds(mafTimeStamp tbounds[2]);
+  void GetLocalTimeBounds(mafTimeStamp tbounds[2]) override;
 
   /** 
     return true is this VME has more than one time stamp, either  for
     data or matrices */
-  virtual bool IsAnimated();
+  bool IsAnimated() override;
 
   /** Return true if the data associated with the VME is present and updated at the current time.*/
-  virtual bool IsDataAvailable();
+  bool IsDataAvailable() override;
 
   /** return an xpm-icon that can be used to represent this node */
   static char ** GetIcon();   //SIL. 11-4-2005:
 
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   bool            m_EnableModifiedEvent = true;
 protected:
   mafVMEGenericAbstract();
-  virtual ~mafVMEGenericAbstract();
+  ~mafVMEGenericAbstract() override;
 
   void InternalStore(mafStorageElementBuilder& parent) override;
   void InternalRestore(const mafStorageElement& node) override;
 
   /** Create GUI for the VME */
-  virtual mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
   mafMatrixVector *m_MatrixVector;
   mafDataVector   *m_DataVector;

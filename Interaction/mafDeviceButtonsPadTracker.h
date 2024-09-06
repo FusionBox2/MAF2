@@ -101,7 +101,7 @@ public:
   static mafID GetTrackerBoundsUpdatedId();
   /**
     Reimplemented to manage fusion of move events. */
-  virtual void OnEvent(mafEventBase *event);
+  void OnEvent(mafEventBase *event) override;
 
   /**
    Internally used to set the last pose matrix. This function make a copy of the matrix, and
@@ -186,23 +186,23 @@ public:
   inline double GetMax3(double x,double y,double z);
 
   /** internal function to create device GUI for settings */
-  virtual void CreateGui();
+  void CreateGui() override;
 
   /** force GUI update */
-  virtual void UpdateGui();
+  void UpdateGui() override;
   
 protected:
   mafDeviceButtonsPadTracker();
-  virtual ~mafDeviceButtonsPadTracker();
+  ~mafDeviceButtonsPadTracker() override;
 
   void InternalStore(mafStorageElementBuilder& parent) override;
   void InternalRestore(const mafStorageElement& node) override;
 
-  virtual int InternalInitialize();
-  virtual void InternalShutdown();
+  int InternalInitialize() override;
+  void InternalShutdown() override;
 
-  /** add pose matrix to the event */ 
-  virtual void SendButtonEvent(mafEventInteraction *event);
+  /** add pose matrix to the event */
+  void SendButtonEvent(mafEventInteraction *event) override;
 
   int AvatarChooser(mafString& avatar_name,mafString& avatar_type);
 

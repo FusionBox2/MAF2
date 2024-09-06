@@ -63,7 +63,7 @@ class MAF_EXPORT mafMTRReader: public vtkPolyDataAlgorithm
 public:
   static const int SetNotDefined = -1;
   vtkTypeMacro(mafMTRReader, vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Construct object with merging set to true.
@@ -81,7 +81,7 @@ public:
 
 protected:
   mafMTRReader();
-  ~mafMTRReader();
+  ~mafMTRReader() override;
 
   char   *m_FileName;
   int    m_Set;
@@ -90,7 +90,7 @@ protected:
   bool   m_linesetMode;
   bool   m_tendonMode;
 
-  virtual int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
   int ReadASCIIMTR(FILE *fp, vtkPoints *vpPoints, vtkCellArray* tpTriangles);
 private:

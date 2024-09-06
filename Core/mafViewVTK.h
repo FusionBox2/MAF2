@@ -51,16 +51,16 @@ public:
   /** constructor */
   mafViewVTK(const mafString& label = _R("vtkView"), int camera_position = CAMERA_PERSPECTIVE, bool show_axes = true, bool show_grid = false, bool show_ruler = false, int stereo = 0, bool show_orientator = false, int axesType = mafAxes::TRIAD);
   /** constructor */
-  virtual ~mafViewVTK(); 
+  ~mafViewVTK() override; 
   /** RTTI macro */
   mafTypeMacro(mafViewVTK, mafView);
 
   /** clone the object*/
-  virtual mafView*  Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
+  mafView*  Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override;
   /** create rwi */
-  virtual void Create();
+  void Create() override;
   /** listen to other object events*/
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** IDs for the GUI */
   enum VIEW_VTK_WIDGET_ID
@@ -73,52 +73,52 @@ public:
   };
 
   /** Add the vme to the view's scene-graph*/
-  virtual void VmeAdd(mafNode *vme);
+  void VmeAdd(mafNode *vme) override;
   
   /** Remove the vme from the view's scene-graph*/
-  virtual void VmeRemove(mafNode *vme);
+  void VmeRemove(mafNode *vme) override;
 
-  virtual void VmeSelect(mafNode *vme, bool select);
+  void VmeSelect(mafNode *vme, bool select) override;
 
   /** Called to show/hide vme*/
-  virtual void VmeShow(mafNode *vme, bool show);
+  void VmeShow(mafNode *vme, bool show) override;
 
   /** 
   Called to update visual pipe properties of the vme passed as argument. If the 'fromTag' flag is true,
   the update is done by reading the visual parameters from tags.*/
-  virtual void VmeUpdateProperty(mafNode *vme, bool fromTag = false);
+  void VmeUpdateProperty(mafNode *vme, bool fromTag = false) override;
 
   /** 
   Set the visualization status for the node (visible, not visible, mutex, ...) \sa mafSceneGraph*/
-  virtual int GetNodeStatus(mafNode *vme);
+  int GetNodeStatus(mafNode *vme) override;
   
   /** 
   Return a pointer to the visual pipe of the node passed as argument. 
   It is used in mafSideBar to plug the visual pipe's GUI in the tabbed vme panel. \sa mafSideBar*/
-  virtual mafPipe* GetNodePipe(mafNode *vme);
+  mafPipe* GetNodePipe(mafNode *vme) override;
   
   /** 
   Create the visual pipe for the node passed as argument. 
   To create visual pipe first check in m_PipeMap if custom visual pipe is defined, 
   otherwise ask to vme which is its visual pipe. */
-  virtual void VmeCreatePipe(mafNode *vme);
+  void VmeCreatePipe(mafNode *vme) override;
   
   /** Delete vme's visual pipe. It is called when vme is removed from visualization.*/
-  virtual void VmeDeletePipe(mafNode *vme);
+  void VmeDeletePipe(mafNode *vme) override;
 
   /** Called to update all components that depends on Application Options.*/
-  virtual void OptionsUpdate();
+  void OptionsUpdate() override;
 
-	virtual void CameraReset(mafNode *node = NULL);
+  void CameraReset(mafNode *node = NULL) override;
   virtual void CameraSet(int camera_position);
-  virtual void CameraUpdate();
+  void CameraUpdate() override;
   virtual int GetCameraPosition();
 
-  virtual mafSceneGraph *GetSceneGraph()	  {return m_Sg;}; 
-  virtual mafRWIBase    *GetRWI()           {return m_Rwi->m_RwiBase;};
+  mafSceneGraph *GetSceneGraph() override {return m_Sg;};
+  mafRWIBase    *GetRWI() override {return m_Rwi->m_RwiBase;};
 
   /** Return a pointer to the image of the renderwindow.*/
-  void GetImage(wxBitmap &bmp, int magnification = 1);
+  void GetImage(wxBitmap &bmp, int magnification = 1) override;
 
   virtual vtkRenderer     *GetFrontRenderer();
   virtual vtkRenderer     *GetBackRenderer();
@@ -129,16 +129,16 @@ public:
   Find the pocked VME at button down. As argument the function needs
   the device which performed the action, and provides as result pointers
   to piked prop, vme and its behavior if it exists. */
-  virtual bool FindPokedVme(mafDevice *device,mafMatrix &point_pose,vtkProp3D *&picked_prop,mafVME *&picked_vme,mafInteractor *&picked_behavior);
+  bool FindPokedVme(mafDevice *device,mafMatrix &point_pose,vtkProp3D *&picked_prop,mafVME *&picked_vme,mafInteractor *&picked_behavior) override;
 
   /** Perform a picking according to the screen position (x,y) and return true on success*/
-  virtual bool Pick(int x, int y);
+  bool Pick(int x, int y) override;
 
   /** Perform a picking according to the absolute matrix given and return true on success*/
-  virtual bool Pick(mafMatrix &m);
+  bool Pick(mafMatrix &m) override;
 
 	/** Set the vtk RenderWindow size. Used only for Linux (not necessary for Windows) */
-  void SetWindowSize(int w, int h);
+  void SetWindowSize(int w, int h) override;
 
   /** Class containing information regarding visual pipe plugged into the view. */
   class mafVisualPipeInfo
@@ -159,7 +159,7 @@ public:
   mafPipeMap m_PipeMap; ///< Map used to store visual pipeline associated with vme types
 
   /** Print this view.*/
-  virtual void Print(wxDC *dc, wxRect margins);
+  void Print(wxDC *dc, wxRect margins) override;
 
   /** Allow to link the camera of the view to other cameras.*/
   virtual void LinkView(bool link_camera = true);
@@ -167,7 +167,7 @@ public:
   mafRWI *m_Rwi;
 
   /** print a dump of this object */
-  virtual void Print(std::ostream& os, const int tabs=0);// const;
+  void Print(std::ostream& os, const int tabs=0) override;// const;
 
 protected:
 
@@ -185,7 +185,7 @@ protected:
   bool m_ShowOrientator;
   int  m_AxesType;
 
-  virtual mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
   virtual void OnPreResetCamera();
   virtual void OnPostResetCamera();

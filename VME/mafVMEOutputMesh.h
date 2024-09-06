@@ -33,7 +33,7 @@ class MAF_EXPORT mafVMEOutputMesh : public mafVMEOutputVTK
 {
 public:
   mafVMEOutputMesh();
-  virtual ~mafVMEOutputMesh();
+  ~mafVMEOutputMesh() override;
 
   mafTypeMacro(mafVMEOutputMesh,mafVMEOutputVTK);
 
@@ -48,7 +48,7 @@ public:
   virtual vtkUnstructuredGrid *GetUnstructuredGridData();
 
   /** Update all the output data structures (data, bounds, matrix and abs matrix).*/
-  virtual void Update();
+  void Update() override;
 
 	/** return material attribute of this mesh if present */
 	mmaMaterial *GetMaterial();
@@ -59,7 +59,7 @@ public:
 protected: 
 
   mafString  m_NumCells;
-  mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
 	mmaMaterial  *m_Material; ///< material object used to store shading propertied to render the surface
 

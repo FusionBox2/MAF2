@@ -56,12 +56,12 @@ protected:
   /** constructor*/
 	vtkMAFClipSurfaceBoundingBox();
   /** destructor */
-	~vtkMAFClipSurfaceBoundingBox();
+	~vtkMAFClipSurfaceBoundingBox() override;
 
     int FillInputPortInformation(int port, vtkInformation* info) override;
 
     /** Execute the filter. */
-	int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+	int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
 	int ClipInside;
 };

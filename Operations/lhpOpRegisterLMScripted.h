@@ -38,24 +38,24 @@ class lhpOpRegisterLMScripted: public mafOp
 {
 public:
   lhpOpRegisterLMScripted(const mafString& label = _L("Register Landmark Cloud"));
- ~lhpOpRegisterLMScripted(); 
-  virtual void OnEvent(mafEventBase *maf_event);
+ ~lhpOpRegisterLMScripted() override;
+  void OnEvent(mafEventBase *maf_event) override;
   
   mafTypeMacro(lhpOpRegisterLMScripted, mafOp);
   
-  mafOp* Copy();
+  mafOp* Copy() override;
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode* node);   
+  bool Accept(mafNode* node) override;   
 
   /** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
   /** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
 
   /** Makes the undo for the operation. */
-  void OpUndo();
+  void OpUndo() override;
 
   static bool ClosedCloudAccept(mafNode* node) {if(node != NULL && node->IsA("mafVMELandmarkCloud") && !((mafVMELandmarkCloud*)node)->IsOpen())return true;return false;}
 

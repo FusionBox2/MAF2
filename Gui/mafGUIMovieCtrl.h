@@ -45,9 +45,9 @@ class mafGUIMovieCtrl: public mafGUIPanel , public mafBaseEventHandler, public m
 {
 public:
   mafGUIMovieCtrl(wxWindow* parent,wxWindowID id = -1);
-  virtual ~mafGUIMovieCtrl();
+  ~mafGUIMovieCtrl() override;
 
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
   
   /** Set the frames bounds for the movie.*/
   void SetFrameBounds(double min, double max, double step = 1);
@@ -81,7 +81,7 @@ protected:
   wxTimer          m_Timer;
 
   /** Update the movie ctrl interface. */
-  void Update();
+  void Update() override;
 
   /** Update the time and send the TIME_SET event to synchronize all the application. */
 	void OnTimer(wxTimerEvent &event);

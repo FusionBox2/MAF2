@@ -53,15 +53,15 @@ class MED_OPERATION_EXPORT medOpVolumeMeasure: public mafOp
 public:
              
             	 medOpVolumeMeasure(const mafString& label = _R("Volume Measure"));
-	virtual     ~medOpVolumeMeasure();
-	virtual void OnEvent(mafEventBase *maf_event);
+	             ~medOpVolumeMeasure() override;
+	             void OnEvent(mafEventBase *maf_event) override;
 
   mafTypeMacro(medOpVolumeMeasure, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
-	bool Accept(mafNode* Node);
-	void OpRun();	
+	bool Accept(mafNode* Node) override;
+	void OpRun() override;	
 	
   /**
   Compute the Volume */
@@ -69,8 +69,8 @@ public:
 
 	mafString GetVolume(){return m_VolumeMeasure;};
 
-  void OpDo();
-  void OpStop(int result);	
+  void OpDo() override;
+  void OpStop(int result) override;	
 
   static bool SurfaceAccept(mafNode* node) {return(node != NULL && (node->IsMAFType(mafVMESurface) || node->IsMAFType(mafVMESurfaceParametric) ));};
 

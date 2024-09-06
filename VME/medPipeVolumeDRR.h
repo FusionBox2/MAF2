@@ -47,10 +47,10 @@ public:
   /** constructor*/
            medPipeVolumeDRR();
   /** destructor */
-  virtual ~medPipeVolumeDRR();
+  ~medPipeVolumeDRR() override;
 
   /** process events coming from gui */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** IDs for the GUI */
   enum PIPE_VOLUME_DRR_WIDGET_ID
@@ -73,9 +73,9 @@ public:
 		ID_LAST
   };
   /** create pipe*/
-  virtual void Create(mafNode *node, mafView *view);
+  void Create(mafNode *node, mafView *view) override;
   /** called when the vme has been selected*/
-  virtual void Select(bool select); 
+  void Select(bool select) override; 
         /** set color used by the mapper*/
 	void SetColor(wxColor color);
         /** set exposure correction which is a parameter for simulate RX*/
@@ -97,7 +97,7 @@ public:
 
 protected:
   /** create the gui widget for the pipe*/
-  virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 
   vtkLookupTable              *m_ColorLUT;
   vtkPiecewiseFunction        *m_OpacityTransferFunction;

@@ -39,22 +39,22 @@ class MAF_EXPORT mafOpExporterBmp: public mafOp
 public:
   mafTypeMacro(mafOpExporterBmp, mafOp)
   mafOpExporterBmp(const mafString& label = _R(""));
- ~mafOpExporterBmp(); 
-  mafOp* Copy();
+ ~mafOpExporterBmp() override; 
+  mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-  bool Accept(mafNode *node);
+  bool Accept(mafNode *node) override;
 
 	/** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
 	/** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
 
 	/** Makes the undo for the operation. */
-  void OpUndo();
+  void OpUndo() override;
 
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 	
 	//Set the directory where export the .bmp files
   void SetDirName(const char *dir_name){m_DirName = _R(dir_name);};

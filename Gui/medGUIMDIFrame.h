@@ -36,7 +36,7 @@ class MED_GUI_EXPORT medGUIMDIFrame : public mafGUIMDIFrame
   /** constructor. */
   medGUIMDIFrame(const wxString& title, const wxPoint& pos, const wxSize& size);
   /** destructor. */
- ~medGUIMDIFrame(); 
+ ~medGUIMDIFrame() override; 
   
 protected:
  

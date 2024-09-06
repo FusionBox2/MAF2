@@ -41,7 +41,7 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent) const {}
 
   /// Overload standard modified time function. 
-  vtkMTimeType GetMTime();
+  vtkMTimeType GetMTime() override;
 
   /// Set the center line which defines the boundary between front and back
   void SetCenterLine(vtkPolyData* centerline) ;
@@ -64,9 +64,9 @@ public:
 
 protected:
   vtkMEDHalfTubeRemoval();
-  ~vtkMEDHalfTubeRemoval();
+  ~vtkMEDHalfTubeRemoval() override;
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   vtkPolyData *m_Input ;
   vtkPolyData *m_Output ;

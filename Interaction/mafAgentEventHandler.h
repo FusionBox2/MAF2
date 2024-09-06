@@ -35,10 +35,10 @@ public:
   
 protected:
   mafAgentEventHandler();
-  virtual ~mafAgentEventHandler();
+  ~mafAgentEventHandler() override;
 
   /** Internal function used to request the dispatching */
-  virtual void RequestForDispatching();
+  void RequestForDispatching() override;
   
   mafWXEventHandler *m_EventHandler;
 private:

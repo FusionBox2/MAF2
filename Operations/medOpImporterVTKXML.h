@@ -46,19 +46,19 @@ public:
   /** constructor */
   medOpImporterVTKXML(const mafString &label = _R("medImporter VTK XML"));
   /** destructor */
-  ~medOpImporterVTKXML(); 
+  ~medOpImporterVTKXML() override; 
 
   /** RTTI macro*/
   mafTypeMacro(medOpImporterVTKXML, mafOp);
 
   /** clone the current object */
-  /*virtual*/ mafOp* Copy();
+  /*virtual*/ mafOp* Copy() override;
 
   /** Builds operation's interface. */
-  /*virtual*/ void OpRun();
+  /*virtual*/ void OpRun() override;
 
   /** Return true for the acceptable vme type. */
-  /*virtual*/ bool Accept(mafNode* node);
+  /*virtual*/ bool Accept(mafNode* node) override;
 
   /** Import VTK XML data. */
   virtual int ImportVTKXML();

@@ -32,11 +32,11 @@ public:
   vtkTypeMacro(vtkMEDInteractorStyleEnableRotation, vtkInteractorStyleTrackballCamera);
 
   void EnableRotation(bool enable) {m_RotationEnabled = enable ;  this->Modified() ;}
-  virtual void Rotate();
+  void Rotate() override;
 
 protected:
   vtkMEDInteractorStyleEnableRotation();
-  ~vtkMEDInteractorStyleEnableRotation();
+  ~vtkMEDInteractorStyleEnableRotation() override;
 
 private:
   bool m_RotationEnabled ;

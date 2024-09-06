@@ -35,7 +35,8 @@ public:
   medPipeCompoundVolume() {
   }
 
-  virtual ~medPipeCompoundVolume () {
+  ~medPipeCompoundVolume () override
+  {
   }
 
 protected:
@@ -45,7 +46,7 @@ protected:
   N.B. Groups MAY NOT change after this function is called. 
   In this overriden version it calls CreateScalarPageGroups,
   CreateVectorPageGroups and CreateTensorPageGroups*/
-  /*virtual*/ void CreatePageGroups();
+  /*virtual*/ void CreatePageGroups() override;
 
   /** Creates page groups for the given pipes with default new page name szPageName.
   If pPipes is NULL the operation does nothing and returns false. */

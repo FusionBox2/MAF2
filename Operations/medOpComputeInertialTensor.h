@@ -59,28 +59,28 @@ public:
   /** constructor */
   medOpComputeInertialTensor(const mafString &label = _R("ComputeInertialTensor"));
   /** destructor */
-  ~medOpComputeInertialTensor();
+  ~medOpComputeInertialTensor() override;
 
   /** RTTI macro*/
   mafTypeMacro(medOpComputeInertialTensor, mafOp);
 
   /** clone the object and retrieve a copy*/
-  mafOp* Copy();
+  mafOp* Copy() override;
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode *node);
+  bool Accept(mafNode *node) override;
 
   /** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
   /** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
 
   /** Makes the undo for the operation. */
-  void OpUndo();
+  void OpUndo() override;
 
   /** Precess events coming from other objects */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Set the default density value used for computation */
   void SetDefaultDensity(double val);
@@ -121,7 +121,7 @@ protected:
 	double GetDensity( mafNode* node);
 	
 	/** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
-	void OpStop(int result);
+	void OpStop(int result) override;
 
   /** Create the dialog interface for the importer. */
   virtual void CreateGui();

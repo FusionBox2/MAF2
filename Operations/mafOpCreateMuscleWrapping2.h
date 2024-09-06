@@ -33,15 +33,15 @@ class MAF_EXPORT mafOpCreateMuscleWrapping2 : public mafOp
 {
 public:
 	mafOpCreateMuscleWrapping2(const mafString& label = _R("Create Quadric Surface Fitting"));
-	~mafOpCreateMuscleWrapping2();
+	~mafOpCreateMuscleWrapping2() override;
 
 	mafTypeMacro(mafOpCreateMuscleWrapping2, mafOp);
 
-	mafOp* Copy();
+	mafOp* Copy() override;
 
-	bool Accept(mafNode *node);
-	void OpRun();
-	void OpDo();
+	bool Accept(mafNode *node) override;
+	void OpRun() override;
+	void OpDo() override;
 
 protected:
 	mafVMEMuscleWrapping *m_QuadricSurfaceFitting;

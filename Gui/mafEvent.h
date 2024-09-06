@@ -68,7 +68,7 @@ public:
   mafEvent(void *sender, int id, WidgetDataType  &widget_data, intptr_t arg=0);
   mafEvent(void *sender, int id, mafMatrix    *m1,mafMatrix  *m2=NULL);
 
-  virtual void DeepCopy(const mafEventBase *maf_event);
+  void DeepCopy(const mafEventBase *maf_event) override;
 
   intptr_t          GetArg()     {return m_Arg;};
   bool              GetBool()    {return m_Bool;};

@@ -49,7 +49,7 @@ public:
   mafTypeMacro(medVisualPipeSlicerSlice,mafPipeVTK);
 
                medVisualPipeSlicerSlice();
-  virtual     ~medVisualPipeSlicerSlice ();
+  ~medVisualPipeSlicerSlice () override;
 
   /**Return the thickness of the border*/	
   double GetThickness();
@@ -58,10 +58,10 @@ public:
   void SetThickness(double thickness); 
 
   /** process events coming from gui */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
-  virtual void Create(mafNode *node, mafView *view /*,bool use_axes = true*/ ); //Can't add parameters - is Virtual
-  virtual void Select(bool select); 
+  void Create(mafNode *node, mafView *view /*,bool use_axes = true*/ ) override; //Can't add parameters - is Virtual
+  void Select(bool select) override; 
 
   /** Set the origin of the slice*/
   void SetSlice1(double *Origin1);
@@ -86,7 +86,7 @@ public:
 
   //bool ImageAccept(mafNode *node) {return(node != NULL && node->IsMAFType(mafVMEImage));};
 
-  virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 protected:
   
   vtkPolyDataMapper	      *m_Mapper1;

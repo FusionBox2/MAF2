@@ -38,7 +38,7 @@ public:
   vtkTypeMacro(vtkPackedImage, vtkUnsignedCharArray);
 
   /** print object information */
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /** Set the type of packaging used for this image.*/
   vtkSetMacro(PackType,int);
@@ -63,7 +63,7 @@ protected:
   /** constructor */
   vtkPackedImage();
   /** destructor */
-  ~vtkPackedImage();
+  ~vtkPackedImage() override;
 
   int PackType;
 };

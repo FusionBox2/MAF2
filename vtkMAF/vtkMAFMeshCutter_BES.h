@@ -65,11 +65,11 @@ public:
   /** return object instance */
   static vtkMAFMeshCutter_BES *New() ;
   /** print object information */
-  void PrintSelf(ostream& os, vtkIndent indent);                                ///< print self
+  void PrintSelf(ostream& os, vtkIndent indent) override;                                ///< print self
 
    /** Overload standard modified time function. If cut function is modified,
   then this object is modified as well. */
-  vtkMTimeType GetMTime();
+  vtkMTimeType GetMTime() override;
 
   /** Set the cutting plane (but does not register the object) */
   void SetCutFunction(vtkPlane *P) ;
@@ -102,13 +102,13 @@ public:
 
 
   /** initialize the cutter */
-  void Initialize() ;
+  void Initialize() override;
 
 protected:
   /** constructor */
   vtkMAFMeshCutter_BES() ;   
   /** destructor */                                                           
-  ~vtkMAFMeshCutter_BES() ;                                                             
+  ~vtkMAFMeshCutter_BES() override;                                                             
 
   /** execute method */
   int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);

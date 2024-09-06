@@ -39,15 +39,15 @@ class MAF_EXPORT mmaVolumeMaterial : public mafAttribute
 {
 public:
 	         mmaVolumeMaterial();
-  virtual ~mmaVolumeMaterial();
+	         ~mmaVolumeMaterial() override;
 
   mafTypeMacro(mmaVolumeMaterial, mafAttribute);
   
   /** Print a dump of this object */
-  virtual void Print(std::ostream& os, const int tabs=0) const;
+	         void Print(std::ostream& os, const int tabs=0) const override;
 
   /** Copy the contents of another Meter attribute into this one. */
-  virtual void DeepCopy(const mafAttribute *a);
+	         void DeepCopy(const mafAttribute *a) override;
 
   /** Compare with another Meter attribute. */
   virtual bool Equals(const mafAttribute *a);

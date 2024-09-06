@@ -37,10 +37,10 @@ public:
   /** constructor */
 	mafGUISettings(mafBaseEventHandler *Listener, const mafString &label = _L("Settings"));
   /** destructor */
-	~mafGUISettings(); 
+	~mafGUISettings() override; 
 
   /** Answer to the messages coming from interface. */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Return the GUI of the setting panel.*/
   mafGUI* GetGui();

@@ -48,7 +48,7 @@ public:
 
 	mafGizmoPath(mafNode* inputVme, mafBaseEventHandler *Listener = NULL, const char *name = "GizmoPath", int textVisibility = 0);
 
-  virtual	~mafGizmoPath();
+	~mafGizmoPath() override;
   
   enum ID_TEXT_SIDE
   {
@@ -71,16 +71,16 @@ public:
 
   /** Show/Hide the gizmos using actor visibility instead of pipe creation/destruction: this is used for faster 
   rendering*/
-  void Show(bool show) ;
+  void Show(bool show) override;
   
   /** This method is used to change the input: this VME is used only to reparent the gizmo
   to the root*/
-  void SetInput(mafVME *vme);
+  void SetInput(mafVME *vme) override;
 
   /** return the gizmo object*/
   mafVMEGizmo *GetOutput() {return m_VmeGizmoPath;}; 
 
-  mafMatrix *GetAbsPose();
+  mafMatrix *GetAbsPose() override;
   
   /** Set the gizmo color */
   void SetColor(double col[3]);
@@ -97,7 +97,7 @@ public:
   int  GetConstraintModality() {return this->m_ConstraintModality;};
   
   /** Events handling method */
-  void OnEvent(mafEventBase *maf_event); 
+  void OnEvent(mafEventBase *maf_event) override; 
 
   void SetSideTextPosition(bool leftRight = ID_LEFT_TEXT_SIDE){m_TextSidePosition = leftRight;};
   bool GetSideTextPosition(){return m_TextSidePosition;};

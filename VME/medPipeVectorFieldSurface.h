@@ -68,19 +68,19 @@ protected:
 
 public:	
   medPipeVectorFieldSurface();
-  virtual ~medPipeVectorFieldSurface();
+  ~medPipeVectorFieldSurface() override;
 
 public:  
   /** Processes events coming from GUI */
-  /*virtual*/ void OnEvent(mafEventBase *maf_event);
+  /*virtual*/ void OnEvent(mafEventBase *maf_event) override;
 
 protected:
-  /*virtual*/ mafGUI  *CreateGui();
+  /*virtual*/ mafGUI  *CreateGui() override;
 
   /** Constructs VTK pipeline. */
-  virtual void CreateVTKPipe();
+  void CreateVTKPipe() override;
 
   /** Updates VTK pipeline (setting radius, etc.). */
-  virtual void UpdateVTKPipe();  
+  void UpdateVTKPipe() override;  
 };
 #endif // medPipeVectorFieldSurface_h__

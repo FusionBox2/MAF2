@@ -37,20 +37,20 @@ public:
   };
 
   /** print a dump of this object */
-  virtual void Print(std::ostream& os, const int tabs=0);// const;
+  void Print(std::ostream& os, const int tabs=0) override;// const;
 
   /** allow only a NULL parent */
-  virtual bool CanReparentTo(mafNode *parent) {return parent==NULL;}
+  bool CanReparentTo(mafNode *parent) override {return parent==NULL;}
 
-  void OnEvent(mafEventBase *e);
+  void OnEvent(mafEventBase *e) override;
 
-  virtual mafID GetNewNodeId(){return GetNextNodeId();}
+  mafID GetNewNodeId() override {return GetNextNodeId();}
 
   /** return an xpm-icon that can be used to represent this node */
   static char ** GetIcon();   //SIL. 11-4-2005:  
 protected:
   mafNodeRoot() {}
-  virtual ~mafNodeRoot() {}
+  ~mafNodeRoot() override {}
 
 private:
   mafNodeRoot(const mafNodeRoot&); // Not implemented

@@ -32,25 +32,25 @@ class lhpOpLMProj: public mafOp
 {
 public:
   lhpOpLMProj(bool internalproj = true, const mafString& label = _R("Landmarks projection"));
-  ~lhpOpLMProj(); 
-  virtual void OnEvent(mafEventBase *maf_event);
-  mafOp* Copy();
+  ~lhpOpLMProj() override;
+  void OnEvent(mafEventBase *maf_event) override;
+  mafOp* Copy() override;
 
   mafTypeMacro(lhpOpLMProj, mafOp);
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode* node);   
+  bool Accept(mafNode* node) override;   
 
-  void OpStop(int result);
+  void OpStop(int result) override;
 
   /** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
   /** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
 
   /** Makes the undo for the operation. */
-  void OpUndo();
+  void OpUndo() override;
 
 protected:
   void SetNodeName(mafVME *pVME, mafString *pName);

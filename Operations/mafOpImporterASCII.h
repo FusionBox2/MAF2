@@ -43,22 +43,22 @@ class MAF_EXPORT mafOpImporterASCII: public mafOp
 {
 public:
   mafOpImporterASCII(const mafString& label = _R("ASCIIImporter"));
-  ~mafOpImporterASCII(); 
- 
-  virtual void OnEvent(mafEventBase *maf_event);
+  ~mafOpImporterASCII() override;
+
+  void OnEvent(mafEventBase *maf_event) override;
 
   mafTypeMacro(mafOpImporterASCII, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-  bool Accept(mafNode* node) {return true;};
+  bool Accept(mafNode* node) override {return true;};
 
 	/** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
   /** Initialize operation's variables according to the parameter's list. */
-  virtual void SetParameters(void *param);
+  void SetParameters(void *param) override;
 
 	/** Import ASCII data. */
   int ImportASCII();

@@ -33,7 +33,7 @@ class lhpOpMergeClouds: public mafOp
 {
 public:
            lhpOpMergeClouds(const mafString& label = _R("Merge clouds"));
-  virtual ~lhpOpMergeClouds();
+           ~lhpOpMergeClouds() override;
   
   mafTypeMacro(lhpOpMergeClouds, mafOp);
 
@@ -48,27 +48,27 @@ public:
   };
 
 
-  virtual void OnEvent(mafEventBase *maf_event);
-  mafOp* Copy();
+           void OnEvent(mafEventBase *maf_event) override;
+  mafOp* Copy() override;
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode* node);
+  bool Accept(mafNode* node) override;
 
   /** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
   /** Makes the undo for the operation. */
-  void OpUndo();
+  void OpUndo() override;
 
   void CreateGui();
 
   /** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
 
 protected:
   void MergeNodes(mafVME *vme1, mafVME *vme2, const mafMatrix &transf);
   void SetNodeName(mafVME *pVME, mafString *pName);
-  void OpStop(int result);
+  void OpStop(int result) override;
 
   wxListBox            *m_ListBox;
   std::vector<mafVME*>  m_MergeClouds;

@@ -44,7 +44,7 @@ public:
 	
 	static vtkMAFPolyDataSingleSourceShortestPath *New();
 	
-	void PrintSelf(ostream& os, vtkIndent indent);
+	void PrintSelf(ostream& os, vtkIndent indent) override;
 	
 	// Description:
 	// The vertex ids (of the input polydata) on the shortest path
@@ -78,7 +78,7 @@ public:
 	vtkBooleanMacro(UseScalarWeights, int);
 	
 	// Description:
-	vtkMTimeType GetMTime();
+	vtkMTimeType GetMTime() override;
 
   // Description:
   // Get Path Lenght
@@ -86,12 +86,12 @@ public:
 	
 protected:
 	vtkMAFPolyDataSingleSourceShortestPath();
-	~vtkMAFPolyDataSingleSourceShortestPath();
+	~vtkMAFPolyDataSingleSourceShortestPath() override;
 	vtkMAFPolyDataSingleSourceShortestPath(const vtkMAFPolyDataSingleSourceShortestPath&);
 	void operator=(const vtkMAFPolyDataSingleSourceShortestPath&);
 	
 	// Usual data generation method
-	int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+	int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 	vtkPolyData* input;
 	vtkPolyData* output;
 	// Build a graph description of the mesh

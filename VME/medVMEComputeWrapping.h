@@ -170,20 +170,20 @@ public:
 	static bool VMEAccept(mafNode *node) {return(node != NULL && node->IsMAFType(mafVME));};
 	static bool VMESurfaceParametricAccept(mafNode *node) {return(node != NULL && (node->IsMAFType(mafVMESurfaceParametric)));};
 
-	/** Precess events coming from other objects */ 
-	virtual void OnEvent(mafEventBase *maf_event);
+	/** Precess events coming from other objects */
+	void OnEvent(mafEventBase *maf_event) override;
 
 	/** print a dump of this object */
-	virtual void Print(std::ostream& os, const int tabs=0);
+	void Print(std::ostream& os, const int tabs=0) override;
 
 	/** Copy the contents of another VME-Meter into this one. */
-	virtual int DeepCopy(mafNode *a);
+	int DeepCopy(mafNode *a) override;
 
 	/** Compare with another VME-Meter. */
-	virtual bool Equals(mafVME *vme);
+	bool Equals(mafVME *vme) override;
 
 	/** Return the suggested pipe-typename for the visualization of this vme */
-	virtual mafString GetVisualPipe() {return mafString(_R("medPipeComputeWrapping"));}
+	mafString GetVisualPipe() override {return mafString(_R("medPipeComputeWrapping"));}
 
 	/** return the right type of output */  
 	medVMEOutputComputeWrapping *GetWrappedMeterOutput();
@@ -193,16 +193,16 @@ public:
 	set or get the Pose for a specified time. When setting, if the time does not exist
 	the MatrixVector creates a new KeyMatrix on the fly. When getting, the matrix vector
 	interpolates on the fly according to the matrix interpolator.*/
-	virtual void SetMatrix(const mafMatrix &mat);
+	void SetMatrix(const mafMatrix &mat) override;
 
 	/**
 	Return the list of timestamps for this VME. Timestamps list is 
 	obtained merging timestamps for matrixes and VME items*/
-	virtual void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes);
+	void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes) override;
 
 	/** return always false since (currently) the slicer is not an animated VME (position 
 	is the same for all timestamps). */
-	virtual bool IsAnimated();
+	bool IsAnimated() override;
 
 	/** return an xpm-icon that can be used to represent this node */
 	//static char ** GetIcon();
@@ -383,21 +383,20 @@ protected:
 
 //-------------------old functions begin------------------
 	/** update the output data structure */
-	virtual void InternalUpdate();
-	
-	
+	void InternalUpdate() override;
 
-	virtual ~medVMEComputeWrapping();
+
+	~medVMEComputeWrapping() override;
   void InternalStore(mafStorageElementBuilder& parent) override;
   void InternalRestore(const mafStorageElement& node) override;
 
 	/** this creates the Material attribute at the right time... */
-	virtual int InternalInitialize();
+	int InternalInitialize() override;
 
 	/** called to prepare the update of the output */
-	virtual void InternalPreUpdate();
+	void InternalPreUpdate() override;
 
-  virtual void UpdateLinks(std::vector<std::pair<mafNode*, mafNode*> >& nodes);
+	void UpdateLinks(std::vector<std::pair<mafNode*, mafNode*> >& nodes) override;
 
 
 	/** update the output data structure for manual wrapped mode */
@@ -411,7 +410,7 @@ protected:
 
 
 	/** Internally used to create a new instance of the GUI.*/
-	virtual mafGUI *CreateGui();
+	mafGUI *CreateGui() override;
 
 	/*Control if the vme linked to wrapped meter are correctly represented in its gui*/
 	bool MiddlePointsControl();

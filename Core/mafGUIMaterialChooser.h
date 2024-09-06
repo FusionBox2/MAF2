@@ -55,12 +55,12 @@ class MAF_EXPORT mafGUIMaterialChooser : public mafBaseEventHandler
 
 public:
 	mafGUIMaterialChooser(const mafString& dialog_title = _R("Material Chooser"));  // reads materials from file
- ~mafGUIMaterialChooser();  // store materials to file
+ ~mafGUIMaterialChooser() override;  // store materials to file
 
   /** Show in modal configuration the material editor. */
 	bool ShowChooserDialog(mafVME *vme, bool remember_last_material = false);
 
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 	
   /** Get the material tag from vme and if it is not present, create it. */
   void LoadLibraryFromVme(mafVME *vme);
@@ -137,7 +137,7 @@ public:
   mafTypeMacro(mafStorableMaterialLibrary,mafObject);
   mafStorableMaterialLibrary(){};
   mafStorableMaterialLibrary(std::vector<mmaMaterial *> *mat_list);
-  ~mafStorableMaterialLibrary(){};
+  ~mafStorableMaterialLibrary() override {};
   void Store(mafStorageElementBuilder& element) { InternalStore(element); }
   void Restore(const mafStorageElement& element) { InternalRestore(element); }
   virtual void InternalStore(mafStorageElementBuilder& node);

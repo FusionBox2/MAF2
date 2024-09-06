@@ -42,8 +42,8 @@ class MAF_EXPORT mafGUIMaterialButton : public mafBaseEventHandler, public mafEv
 {
 public:
 	mafGUIMaterialButton(mafVME *vme, mafBaseEventHandler *listener = NULL);
-	~mafGUIMaterialButton(); 
-	void OnEvent(mafEventBase *maf_event);
+	~mafGUIMaterialButton() override; 
+	void OnEvent(mafEventBase *maf_event) override;
 
 	/** Return mafGUIMaterialButton User Interface */
 	mafGUI *GetGui() {return m_Gui;};

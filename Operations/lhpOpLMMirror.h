@@ -34,28 +34,28 @@ class lhpOpLMMirror: public mafOp
 {
 public:
 	lhpOpLMMirror(const mafString& label = _R("Surface Mirror"));
-	~lhpOpLMMirror(); 
-	virtual void OnEvent(mafEventBase *maf_event);
-	mafOp* Copy();
+	~lhpOpLMMirror() override;
+	void OnEvent(mafEventBase *maf_event) override;
+	mafOp* Copy() override;
 
 	mafTypeMacro(lhpOpLMMirror, mafOp);
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode* node);   
+	bool Accept(mafNode* node) override;   
 
 
 	/** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
 	/** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
 
 	/** Makes the undo for the operation. */
-  void OpUndo();
+  void OpUndo() override;
 
 protected:
 	/** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
-  void OpStop(int result);
+  void OpStop(int result) override;
 
 	int		m_MirrorX;
 	int		m_MirrorY;

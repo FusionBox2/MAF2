@@ -32,25 +32,25 @@ class MAF_EXPORT mafOpVOIDensity: public mafOp
 {
 public:
 	mafOpVOIDensity(const mafString& label = _R("VOIDensity"));
-	~mafOpVOIDensity(); 
-	virtual void OnEvent(mafEventBase *maf_event);
+	~mafOpVOIDensity() override;
+	void OnEvent(mafEventBase *maf_event) override;
   
   mafTypeMacro(mafOpVOIDensity, mafOp);
 
   /** return a copy of itself, this needs to put the operation into the undo stack. */
-	mafOp* Copy();
+	mafOp* Copy() override;
 	
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode* Node);
+	bool Accept(mafNode* Node) override;
 
 	/** Set the input vme for the operation. */
-	void OpRun();
+	void OpRun() override;
 
 	/** Builds operation's interface. */
-	void OpDo();
+	void OpDo() override;
 
 	/** Execute the operation. */
-	void OpUndo();
+	void OpUndo() override;
 
 	/**	Set surface of input in test mode*/
 	void SetSurface(mafNode *Surface){m_Surface=Surface;};

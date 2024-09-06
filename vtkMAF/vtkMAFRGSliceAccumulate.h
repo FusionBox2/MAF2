@@ -61,7 +61,7 @@ class VTK_vtkMAF_EXPORT vtkMAFRGSliceAccumulate : public vtkRectilinearGridAlgor
 {
 public:
   vtkTypeMacro(vtkMAFRGSliceAccumulate,vtkRectilinearGridAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
 	static vtkMAFRGSliceAccumulate *New();
 
@@ -124,7 +124,7 @@ protected:
 	int BuildingAxes;
 
 	vtkMAFRGSliceAccumulate();
-  ~vtkMAFRGSliceAccumulate();
+  ~vtkMAFRGSliceAccumulate() override;
 
   int FillInputPortInformation(int port, vtkInformation* info) override;
 

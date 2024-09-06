@@ -45,20 +45,20 @@ public:
 	virtual int SetData(vtkPolyData *data, mafTimeStamp t, int mode=MAF_VME_COPY_DATA);
 
 	/** Return the suggested pipe-typename for the visualization of this vme */
-	virtual mafString GetVisualPipe() {return mafString(_R("medVisualPipePolylineGraph"));}
+	mafString GetVisualPipe() override {return mafString(_R("medVisualPipePolylineGraph"));}
 
-	/** return the right type of output */  
-	virtual mafVMEOutput *GetOutput();
+	/** return the right type of output */
+	mafVMEOutput *GetOutput() override;
 
 protected:
 	medVMEPolylineGraph();
-	virtual ~medVMEPolylineGraph(); 
+	~medVMEPolylineGraph() override; 
 
 private:
 	medVMEPolylineGraph(const medVMEPolylineGraph&); // Not implemented
 	void operator=(const medVMEPolylineGraph&); // Not implemented
 
   /** private to avoid calling by external classes */
-  virtual int SetData(vtkDataSet *data, mafTimeStamp t, int mode=MAF_VME_COPY_DATA);
+	int SetData(vtkDataSet *data, mafTimeStamp t, int mode=MAF_VME_COPY_DATA) override;
 };
 #endif

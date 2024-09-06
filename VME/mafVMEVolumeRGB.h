@@ -44,19 +44,19 @@ public:
   /** return the right type of output */  
   mafVMEOutputVolume *GetVolumeOutput() {return (mafVMEOutputVolume *)GetOutput();}
 
-  /** return the right type of output */  
-  virtual mafVMEOutput *GetOutput();
+  /** return the right type of output */
+  mafVMEOutput *GetOutput() override;
 
 protected:
   mafVMEVolumeRGB();
-  virtual ~mafVMEVolumeRGB();
+  ~mafVMEVolumeRGB() override;
 
 private:
   mafVMEVolumeRGB(const mafVMEVolumeRGB&); // Not implemented
   void operator=(const mafVMEVolumeRGB&); // Not implemented
   
   /** private to avoid calling by external classes */
-  virtual int SetData(vtkDataSet *data, mafTimeStamp t, int mode=MAF_VME_COPY_DATA);
+  int SetData(vtkDataSet *data, mafTimeStamp t, int mode=MAF_VME_COPY_DATA) override;
 };
 
 #endif

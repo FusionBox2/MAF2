@@ -35,7 +35,7 @@ class MAF_EXPORT mafOpCreateOsteometricBoard : public mafOp
 {
 public:
 	mafOpCreateOsteometricBoard(const mafString& label = _R("Create OsteometricBoard"));
-	~mafOpCreateOsteometricBoard();
+	~mafOpCreateOsteometricBoard() override;
 
 	mafTypeMacro(mafOpCreateOsteometricBoard, mafOp);
 
@@ -43,14 +43,14 @@ public:
   //void OnEvent(mafEventBase *maf_event);
 
   /** Return a copy of the operation.*/
-  mafOp* Copy();
+  mafOp* Copy() override;
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode *node);
+  bool Accept(mafNode *node) override;
 
   /** Builds operation's interface. */
-  void OpRun();
-  void OpDo();
+  void OpRun() override;
+  void OpDo() override;
 
 
 

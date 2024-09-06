@@ -57,16 +57,16 @@ public:
   mafTypeMacro(mafPipeSurface,mafPipeVTK);
 
                mafPipeSurface();
-  virtual     ~mafPipeSurface();
+  ~mafPipeSurface() override;
 
   /** process events coming from Gui */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Create the VTK rendering pipeline*/
-  virtual void Create(mafNode *node, mafView *view);
+  void Create(mafNode *node, mafView *view) override;
   
   /** Manage the actor selection by showing the corner box around the actor when the corresponding VME is selected.*/
-  virtual void Select(bool select); 
+  void Select(bool select) override; 
 
   /** Let to enable/disable the Level Of Detail behavior.*/
   void SetEnableActorLOD(bool value);
@@ -91,8 +91,8 @@ public:
   void SetActorPicking(int enable = true);
 
   /** Get assembly front/back */
-  virtual vtkMAFAssembly *GetAssemblyFront(){return m_AssemblyFront;};
-  virtual vtkMAFAssembly *GetAssemblyBack(){return m_AssemblyBack;};
+  vtkMAFAssembly *GetAssemblyFront() override {return m_AssemblyFront;};
+  vtkMAFAssembly *GetAssemblyBack() override {return m_AssemblyBack;};
 
   void SetEdgeVisibilityOn(){m_EdgeVisibility = TRUE;};
   void SetEdgeVisibilityOff(){m_EdgeVisibility = FALSE;};
@@ -147,7 +147,7 @@ protected:
 	void CreateNormalsPipe();
 
   /** Create the Gui for the visual pipe that allow the user to change the pipe's parameters.*/
-  virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 
   /** Update the scalars array visualization (added by Losi 2011/04/08 to allow scalars array selection) */
   void UpdateScalarsArrayVisualization(vtkDataSetAttributes *dataAttribute);

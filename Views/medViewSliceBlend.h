@@ -43,18 +43,18 @@ class medViewSliceBlend: public mafViewVTK
 {
 public:
 	medViewSliceBlend(const mafString&  label = _R("Slice Blend"), int camera_position = CAMERA_OS_Z	, bool show_axes = false, bool show_grid = false, bool show_ruler = false, int stereo = 0);
-	virtual ~medViewSliceBlend(); 
+	~medViewSliceBlend() override; 
 
 	mafTypeMacro(medViewSliceBlend, mafViewVTK);
 
-	/*virtual*/ mafView*  Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
-	virtual void			OnEvent(mafEventBase *maf_event);
+	/*virtual*/ mafView*  Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override;
+	void			OnEvent(mafEventBase *maf_event) override;
 
-	void Create();
+	void Create() override;
 
 	/** 
 	Set the visualization status for the node (visible, not visible, mutex, ...) \sa mafSceneGraph mafView*/
-	virtual int GetNodeStatus(mafNode *vme);
+	int GetNodeStatus(mafNode *vme) override;
 
 	/** IDs for the view GUI */
 	enum VIEW_SLICE_WIDGET_ID
@@ -68,11 +68,11 @@ public:
 	Create the visual pipe for the node passed as argument. 
 	To create visual pipe first check in m_PipeMap if custom visual pipe is defined, 
 	otherwise ask to vme which is its visual pipe. */
-	virtual void VmeCreatePipe(mafNode *vme);
+	void VmeCreatePipe(mafNode *vme) override;
 
 	/** 
 	Delete vme's visual pipe. It is called when vme is removed from visualization.*/
-	virtual void VmeDeletePipe(mafNode *vme);
+	void VmeDeletePipe(mafNode *vme) override;
 
 	/** Change the range of the WindowLevel Lookup table.*/
 	void SetLutRange(double low_val, double high_val);
@@ -92,14 +92,14 @@ public:
 	/** Give an initial origin for the slice.*/
 	void InitializeSlice(double slice1[3],double slice2[3]);
 
-	virtual void VmeShow(mafNode *node, bool show);
+	void VmeShow(mafNode *node, bool show) override;
 
-	void VmeRemove(mafNode *vme);
+	void VmeRemove(mafNode *vme) override;
 
 	/** print a dump of this object */
-	virtual void Print(std::ostream& os, const int tabs=0);// const;
+	void Print(std::ostream& os, const int tabs=0) override;// const;
 
-	void SetNormal(double normal[3]);
+	void SetNormal(double normal[3]) override;
 
 	/** Function for the correction of slice pose in case of current volume pose matrix is different from identity */
 	void MultiplyPointByInputVolumeABSMatrix(double *point);
@@ -110,7 +110,7 @@ protected:
 
 	void UpdateSurfacesList(mafNode *node);
 
-	virtual mafGUI *CreateGui();
+	mafGUI *CreateGui() override;
 
 	mafSceneNode    *m_CurrentVolume; ///< Current visualized volume
 	vtkActor2D      *m_Border;

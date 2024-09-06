@@ -32,24 +32,24 @@ class lhpOpRepresentInAF: public mafOp
 {
 public:
   lhpOpRepresentInAF(const mafString& label = _L("Represent in RefSys"));
- ~lhpOpRepresentInAF(); 
-  virtual void OnEvent(mafEventBase *maf_event);
+ ~lhpOpRepresentInAF() override;
+  void OnEvent(mafEventBase *maf_event) override;
   
   mafTypeMacro(lhpOpRepresentInAF, mafOp);
   
-  mafOp* Copy();
+  mafOp* Copy() override;
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode* node);   
+  bool Accept(mafNode* node) override;   
 
   /** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
   /** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
 
   /** Makes the undo for the operation. */
-  void OpUndo();
+  void OpUndo() override;
 
   static bool RefSysAccept(mafNode* node) {mafVMERefSysAbstract *afsys = mafVMERefSysAbstract::SafeDownCast(node); return (afsys != NULL);}
 

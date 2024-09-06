@@ -45,7 +45,7 @@ protected:
   wxBitmap m_Bmp;      
   void OnEraseBackground(wxEraseEvent& event) {};  // overrided to prevent flickering
   void OnPaint(wxPaintEvent &event);                
-  void Update();                
+  void Update() override;                
 
   void OnLeftMouseButtonDown(wxMouseEvent &event);
   void OnLeftMouseButtonUp(wxMouseEvent &event);

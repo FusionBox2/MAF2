@@ -46,10 +46,10 @@ public:
   /** constructor */
 	mafGUISettingsDialog(const mafString& dialog_title = _L("Application Settings"));
   /** destructor */
- ~mafGUISettingsDialog();  
+ ~mafGUISettingsDialog() override;  
 
   /** Answer to the messages coming from interface. */
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
   
   /** AddPage  to the dialog*/	
   void AddPage(mafGUI *ui, wxString label, wxString parent_label= "");

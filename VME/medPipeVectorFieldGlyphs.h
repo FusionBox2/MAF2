@@ -159,12 +159,12 @@ protected:
 
 public:	
   medPipeVectorFieldGlyphs();
-  virtual ~medPipeVectorFieldGlyphs();
+  ~medPipeVectorFieldGlyphs() override;
 
 public:  
 
   /** Processes events coming from GUI */
-  /*virtual*/ void OnEvent(mafEventBase *maf_event);
+  /*virtual*/ void OnEvent(mafEventBase *maf_event) override;
 
 protected:
 
@@ -179,15 +179,15 @@ protected:
   /** Default radius, etc. should be calculated in this method, 
   i.e., inherited classes should always override this method. 
   The default implementation is to update VME*/
-  /*virtual*/ void ComputeDefaultParameters();
+  /*virtual*/ void ComputeDefaultParameters() override;
 
-  /*virtual*/ mafGUI  *CreateGui();
+  /*virtual*/ mafGUI  *CreateGui() override;
 
   /** Constructs VTK pipeline. */
-  /*virtual*/ void CreateVTKPipe();
+  /*virtual*/ void CreateVTKPipe() override;
 
   /** Updates VTK pipeline (setting radius, etc.). */
-  /*virtual*/ void UpdateVTKPipe();
+  /*virtual*/ void UpdateVTKPipe() override;
   /** Add an item in the list */
   void OnAddItem(int idx);
   /** create a dialog*/

@@ -46,13 +46,13 @@ class MAF_EXPORT mafVMELandmark : public mafVMEGenericAbstract
 public:
   mafTypeMacro(mafVMELandmark, mafVMEGenericAbstract);
 
-  void Print(std::ostream &os, const int tabs=0);
+  void Print(std::ostream &os, const int tabs=0) override;
 
   /** Copy the contents of another landmark into this one. */
-  virtual int DeepCopy(mafNode *a);
+  int DeepCopy(mafNode *a) override;
 
   /** Compare with another landmark. */
-  virtual bool Equals(mafVME *vme);
+  bool Equals(mafVME *vme) override;
 
   /**
   Set/Get the Radius of this landmark. Notice that Radius is
@@ -107,29 +107,29 @@ public:
   mmaMaterial *GetMaterial();
 
   /** Return the suggested pipe-typename for the visualization of this vme */
-  virtual mafString GetVisualPipe() {return mafString(_R("mafPipeLandmarkCloud"));}
+  mafString GetVisualPipe() override {return mafString(_R("mafPipeLandmarkCloud"));}
 
   /** Set the current TimeStamp */
-  virtual void SetTimeStamp(mafTimeStamp t);
+  void SetTimeStamp(mafTimeStamp t) override;
 
   /** called to check if the vme can be re-parented under the new parent */
-  virtual bool CanReparentTo(mafNode *parent);
+  bool CanReparentTo(mafNode *parent) override;
 
 protected:
   mafVMELandmark();
-  virtual ~mafVMELandmark();
+  ~mafVMELandmark() override;
 
   /** used to initialize and create the material attribute if not yet present */
-  virtual int InternalInitialize();
+  int InternalInitialize() override;
 
   /** called to prepare the update of the output */
-  virtual void InternalPreUpdate();
+  void InternalPreUpdate() override;
 
   /** called to update of the output */
-  virtual void InternalUpdate();
+  void InternalUpdate() override;
 
   /** Internally used to create a new instance of the GUI.*/
-  virtual mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
   vtkPolyData *m_Polydata; ///< Polydata storing the landmark point
   mafString m_Position[3];

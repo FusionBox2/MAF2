@@ -40,14 +40,14 @@ class MED_OPERATION_EXPORT medOpImporterLandmarkWS : public mafOp
 public:
   mafTypeMacro(medOpImporterLandmarkWS, mafOp)
 	medOpImporterLandmarkWS(const mafString& label = _R(""));
-	~medOpImporterLandmarkWS(); 
-	mafOp* Copy();
+	~medOpImporterLandmarkWS() override; 
+	mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode* node) {return true;};
+	bool Accept(mafNode* node) override {return true;};
 
 	/** Builds operation's interface. */
-	void OpRun();
+	void OpRun() override;
 
   /** Read the file.
   the format of the file requires some spec

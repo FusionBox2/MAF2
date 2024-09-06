@@ -33,7 +33,7 @@ public:
   /** constructor. */
   mafGUIMutexPanel(wxWindow* parent,wxWindowID id );
   /** destructor. */
-  virtual ~mafGUIMutexPanel();
+  ~mafGUIMutexPanel() override;
   
 	/** Put the gui onto the panel removing the previous GUI. */
   bool Put(wxWindow *win);

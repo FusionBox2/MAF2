@@ -39,7 +39,7 @@ class MAF_EXPORT mafSceneGraph :public mafEventSender /*: public mafObserver*/
 {
 public:
 								mafSceneGraph(mafView	*view, vtkRenderer *ren1, vtkRenderer *ren2=NULL, vtkRenderer *ren3 = NULL);
-	virtual			 ~mafSceneGraph();
+								~mafSceneGraph() override;
 	//virtual void	OnEvent(mafEvent& e);
 
 	/** Add a vme to the scene graph. */

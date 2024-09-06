@@ -50,24 +50,24 @@ public:
   mafViewOrthoSlice(const mafString& label = _R("View OrthoSlice"));
 
   /** destructor */
-  virtual ~mafViewOrthoSlice(); 
+  ~mafViewOrthoSlice() override; 
 
   /** RTTI macro*/
   mafTypeMacro(mafViewOrthoSlice, mafViewCompound);
 
   /** clone an instance of the object*/
-  virtual mafView *Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
+  mafView *Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override;
 
   /** Precess events coming from other objects */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
   
   /** 
   Create the GUI on the bottom of the compounded view. */
-  virtual void CreateGuiView();
+  void CreateGuiView() override;
 
   /** 
   Show/Hide VMEs into plugged sub-views*/
-  virtual void VmeShow(mafNode *node, bool show);
+  void VmeShow(mafNode *node, bool show) override;
 
   /** Remove Gizmos, Observers from the volume */
   void DestroyOrthoSlicesAndGizmos();
@@ -76,11 +76,11 @@ public:
   void CreateOrthoslicesAndGizmos( mafNode * node );
 
   /** Remove VME into plugged sub-views*/
-  virtual void VmeRemove(mafNode *node);
+  void VmeRemove(mafNode *node) override;
 
   /** 
   Create visual pipe and initialize them to build an OrthoSlice visualization */
-  void PackageView();
+  void PackageView() override;
   
   /** IDs for the GUI */
   enum VIEW_ORTHO_SLICE_WIDGET_ID
@@ -124,7 +124,7 @@ public:
   };
 
   /** print a dump of this object */
-  virtual void Print(std::ostream& os, const int tabs=0);// const;
+  void Print(std::ostream& os, const int tabs=0) override;// const;
 
   /** Method for determine if the pick is over a Slice view or not*/
   bool IsPickedSliceView();
@@ -145,7 +145,7 @@ protected:
   the superclass enum. The last id value must be defined as "LAST_ID" to allow the 
   subclass to continue the ID enumeration from it. For appending the widgets in the
   same panel GUI, each CreateGUI() function should first call the superclass' one.*/
-  virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 
   /** Enable/disable view widgets.*/
   void EnableWidgets(bool enable = true);

@@ -41,10 +41,10 @@ class MAF_EXPORT mafRemoteLogic : public mafBaseEventHandler, public mafEventSen
 {
 public:
 	mafRemoteLogic(mafBaseEventHandler *Listener, mafViewManager *view_manager, mafOpManager *operation_manager);
-	~mafRemoteLogic(); 
+	~mafRemoteLogic() override; 
 
   /** Used to receive events from the Client Unit.*/
-  void OnEvent(mafEventBase *event);
+  void OnEvent(mafEventBase *event) override;
 
   /** Pack/unpack the message to be sent/received to/from the server. */
   void RemoteMessage(mafString &cmd, bool to_server = true);

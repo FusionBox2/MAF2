@@ -32,13 +32,14 @@ public:
 	static vtkMAFLargeImageData *New();
 
 	vtkTypeMacro(vtkMAFLargeImageData,vtkMAFLargeDataSet);
-	virtual void PrintSelf(ostream& os, vtkIndent indent);
+	void PrintSelf(ostream& os, vtkIndent indent) override;
 
 #pragma region vtkLargeDataAPI
 	// Description:
 	// Determine the number of points composing the dataset.
 	// THIS METHOD IS THREAD SAFE
-	inline virtual vtkIdType64 GetNumberOfPoints() {
+	inline vtkIdType64 GetNumberOfPoints() override
+	{
 		int* dims = this->GetDimensions();
 		return ((vtkIdType64)dims[0])*dims[1]*dims[2];
 	}
@@ -46,38 +47,39 @@ public:
 	// Description:
 	// Determine the number of cells composing the dataset.
 	// THIS METHOD IS THREAD SAFE
-	virtual vtkIdType64 GetNumberOfCells();
+	vtkIdType64 GetNumberOfCells() override;
 
 	// Description:
 	// Get point coordinates with ptId such that: 0 <= ptId < NumberOfPoints.
 	// THIS METHOD IS NOT THREAD SAFE.
-	virtual void GetPoint(vtkIdType64 ptId, double x[3]) ;			
+	void GetPoint(vtkIdType64 ptId, double x[3]) override;			
 
 	// Description:
 	// Get cell with cellId such that: 0 <= cellId < NumberOfCells. 	
 	// THIS METHOD IS THREAD SAFE IF FIRST CALLED FROM A SINGLE THREAD AND
 	// THE DATASET IS NOT MODIFIED
-	virtual void GetCell(vtkIdType64 cellId, vtkGenericCell *cell) ;
+	void GetCell(vtkIdType64 cellId, vtkGenericCell *cell) override;
 
 	// Description:
 	// Get the bounds of the cell with cellId such that:
 	//		 0 <= cellId < NumberOfCells.
 	// THIS METHOD IS THREAD SAFE IF FIRST CALLED FROM A SINGLE THREAD AND
 	// THE DATASET IS NOT MODIFIED
-	virtual void GetCellBounds(vtkIdType64 cellId, double bounds[6]);
+	void GetCellBounds(vtkIdType64 cellId, double bounds[6]) override;
 
 	// Description:
 	// Get type of cell with cellId such that: 0 <= cellId < NumberOfCells.
 	// THIS METHOD IS THREAD SAFE IF FIRST CALLED FROM A SINGLE THREAD AND
 	// THE DATASET IS NOT MODIFIED
-	virtual int GetCellType(vtkIdType64 cellId) ;
+	int GetCellType(vtkIdType64 cellId) override;
 
 	// Description:
 	// Topological inquiry to get points defining cell.
 	// THIS METHOD IS THREAD SAFE IF FIRST CALLED FROM A SINGLE THREAD AND
 	// THE DATASET IS NOT MODIFIED
 	// NB: THIS OPERATION MAY BE VERY SLOW
-	virtual void GetCellPoints(vtkIdType64 cellId, vtkIdList *ptIds) {
+	void GetCellPoints(vtkIdType64 cellId, vtkIdList *ptIds) override
+	{
 		vtkStructuredData::GetCellPoints(cellId, ptIds,
 			this->DataDescription, this->GetDimensions());
 	}
@@ -87,7 +89,8 @@ public:
 	// THIS METHOD IS THREAD SAFE IF FIRST CALLED FROM A SINGLE THREAD AND
 	// THE DATASET IS NOT MODIFIED
 	// NB: THIS OPERATION MAY BE VERY SLOW
-	virtual void GetPointCells(vtkIdType64 ptId, vtkIdList *cellIds) {
+	void GetPointCells(vtkIdType64 ptId, vtkIdList *cellIds) override
+	{
 		vtkStructuredData::GetPointCells(ptId,cellIds,this->GetDimensions());
 	}
 
@@ -98,7 +101,7 @@ public:
 	// THIS METHOD IS THREAD SAFE IF FIRST CALLED FROM A SINGLE THREAD AND
 	// THE DATASET IS NOT MODIFIED
 	// NB: THIS OPERATION MAY BE VERY SLOW
-	virtual vtkIdType64 FindPoint(double x[3]);
+	vtkIdType64 FindPoint(double x[3]) override;
 
 	// Description:
 	// Locate cell based on global coordinate x. Parameters cell, cellId
@@ -108,27 +111,29 @@ public:
 	// weights[]. (The number of weights is equal to the number of
 	// points in the found cell). 
 	// THIS METHOD IS NOT THREAD SAFE.
-	virtual vtkIdType64 FindCell(double x[3], vtkCell *cell, vtkIdType64 cellId,
-		double tol2, int& subId, double pcoords[3], double *weights);
+	vtkIdType64 FindCell(double x[3], vtkCell *cell, vtkIdType64 cellId,
+	                     double tol2, int& subId, double pcoords[3], double *weights) override;
 
 	// Description:
 	// This is a version of the above method that can be used with 
 	// multithreaded applications. Parameters cell, gencell, cellId, tol2,
 	// and subId are ignored in the default implementation.
-	virtual vtkIdType64 FindCell(double x[3], vtkCell *cell,
-		vtkGenericCell *gencell, vtkIdType64 cellId,
-		double tol2, int& subId, double pcoords[3], double *weights) {
+	vtkIdType64 FindCell(double x[3], vtkCell *cell,
+	                     vtkGenericCell *gencell, vtkIdType64 cellId,
+	                     double tol2, int& subId, double pcoords[3], double *weights) override
+	{
 		return FindCell( x, (vtkCell *)NULL, 0, 0.0, subId, pcoords, weights );
 	}
 
 	// Description:
 	// Compute the data bounding box from data points.
 	// THIS METHOD IS NOT THREAD SAFE.
-	virtual void ComputeBounds();
+	void ComputeBounds() override;
 
 	// Convenience method returns largest cell size in dataset. This is generally
 	// used to allocate memory for supporting data structures.
-	virtual int GetMaxCellSize() {
+	int GetMaxCellSize() override
+	{
 		return 8; //voxel is the largest
 	}; 
 
@@ -136,11 +141,12 @@ public:
 	// the invoking object and the object pointed to by the parameter ds must
 	// be of the same type.
 	// THIS METHOD IS NOT THREAD SAFE.
-	virtual void CopyStructure(vtkMAFLargeDataSet *ds);
+	void CopyStructure(vtkMAFLargeDataSet *ds) override;
 
 		// Description:
 	// Return what type of dataset this is.
-	virtual int GetDataObjectType() {
+	int GetDataObjectType() override
+	{
 		return VTK_IMAGE_DATA;
 	};
 #pragma endregion
@@ -298,7 +304,8 @@ public:
 
 	// Description:
 	// The extent type is a 3D extent
-	inline int GetExtentType() { 
+	inline int GetExtentType() override
+	{ 
 		return VTK_3D_EXTENT; 
 	};
 
@@ -338,7 +345,7 @@ protected:
 
 protected:
 	vtkMAFLargeImageData();
-	~vtkMAFLargeImageData();	
+	~vtkMAFLargeImageData() override;	
 
 	// The extent of what is currently in the structured grid.
 	// Dimensions is just an array to return a value.

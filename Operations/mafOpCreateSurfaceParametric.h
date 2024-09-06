@@ -33,15 +33,15 @@ class MAF_EXPORT mafOpCreateSurfaceParametric: public mafOp
 {
 public:
   mafOpCreateSurfaceParametric(const mafString& label = _R("Create Parametric Surface"));
-  ~mafOpCreateSurfaceParametric(); 
+  ~mafOpCreateSurfaceParametric() override; 
 
   mafTypeMacro(mafOpCreateSurfaceParametric, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
-  bool Accept(mafNode *node);
-  void OpRun();
-  void OpDo();
+  bool Accept(mafNode *node) override;
+  void OpRun() override;
+  void OpDo() override;
 
 protected: 
   mafVMESurfaceParametric *m_SurfaceParametric;

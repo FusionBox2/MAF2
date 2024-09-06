@@ -66,7 +66,7 @@ protected:
   /** object constructor */
 	vtkTriangleQualityRatio();
   /** object destructor */
-	~vtkTriangleQualityRatio();
+	~vtkTriangleQualityRatio() override;
 
 	double MeanRatio;
 	double MaxRatio;

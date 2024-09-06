@@ -71,7 +71,7 @@ public:
   mafRWIBase();
   mafRWIBase(wxWindow *parent, wxWindowID id, const wxPoint &pos = wxDefaultPosition,
 	      const wxSize &size = wxDefaultSize, long style = wxWANTS_CHARS , const wxString &name = wxPanelNameStr);
-  ~mafRWIBase();
+  ~mafRWIBase() override;
   static mafRWIBase * New();
 
 	/** Notify mouse click on a view. */
@@ -90,22 +90,22 @@ public:
 
 	/** 
   Initialize the render window interactor. */
-  void Initialize();
+  void Initialize() override;
 	/** 
   Enable the render window interactor. */
-  void Enable();
+  void Enable() override;
 	/** 
   Disable the render window interactor. */
-  void Disable();
+  void Disable() override;
 	/** 
   Redefined method to take the control on event loop. */
-  void Start();
+  void Start() override;
 	/** 
   Update the size of the render window. */
-  void UpdateSize(int x, int y);
+  void UpdateSize(int x, int y) override;
 	/** 
   Redefined method to terminate the application. */
-  void TerminateApp();
+  void TerminateApp() override;
 	/** 
   Return an image of the render window. */
   void GetImage(wxBitmap& bitmap, int magnification = 1);
@@ -124,8 +124,8 @@ public:
   Return the current used camera */
 	vtkCamera* GetCamera();
 
-  int CreateTimer(int timertype);
-  int DestroyTimer();
+  int CreateTimer(int timertype) override;
+  int DestroyTimer() override;
 
   //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   // event handlers 
@@ -168,7 +168,7 @@ public:
 
 
   /** Redefined to set the m_CustomInteractorStyle flag. */
-  void SetInteractorStyle(vtkInteractorObserver *o);
+  void SetInteractorStyle(vtkInteractorObserver *o) override;
 
   bool m_Hidden;
   int  m_Width;

@@ -41,11 +41,11 @@ public:
   mafTypeMacro(lhpPipeInfo, mafPipe);
 
   lhpPipeInfo();
-  virtual     ~lhpPipeInfo();
+  ~lhpPipeInfo() override;
 
-  virtual void Create(mafNode *node, mafView *view);
+  void Create(mafNode *node, mafView *view) override;
 
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   const mafString& GetPageText(){return m_PageText;}
 

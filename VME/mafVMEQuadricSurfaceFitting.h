@@ -94,10 +94,10 @@ public:
   int GetCylinderAxis() {return m_CylinderOrientationAxis;};
 
   /** Copy the contents of another mafVMESurfaceParametric into this one. */
-  virtual int DeepCopy(mafNode *a);
+	int DeepCopy(mafNode *a) override;
 
   /** Compare with another mafVMESurfaceParametric. */
-  virtual bool Equals(mafVME *vme);
+	bool Equals(mafVME *vme) override;
 
   /** return the right type of output */  
   mafVMEOutputSurface *GetSurfaceOutput();
@@ -105,14 +105,14 @@ public:
   /**
   Return the list of timestamps for this VME. Timestamps list is 
   obtained merging timestamps for matrixes and VME items*/
-  virtual void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes);
+	void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes) override;
 
   /** return always false since (currently) the slicer is not an animated VME (position 
   is the same for all timestamps). */
-  virtual bool IsAnimated();
+	bool IsAnimated() override;
 
   /** Return the suggested pipe-typename for the visualization of this vme */
-  virtual mafString GetVisualPipe() {return mafString(_R("mafPipeSurface"));};
+	mafString GetVisualPipe() override {return mafString(_R("mafPipeSurface"));};
 
   /** Return pointer to material attribute. */
   mmaMaterial *GetMaterial();
@@ -120,8 +120,8 @@ public:
   /** return an xpm-icon that can be used to represent this node */
   static char ** GetIcon();
 	
-  /** Precess events coming from other objects */ 
-  virtual void OnEvent(mafEventBase *maf_event);
+  /** Precess events coming from other objects */
+	void OnEvent(mafEventBase *maf_event) override;
 
   
 
@@ -130,14 +130,14 @@ public:
   set or get the Pose for a specified time. When setting, if the time does not exist
   the MatrixVector creates a new KeyMatrix on the fly. When getting, the matrix vector
   interpolates on the fly according to the matrix interpolator.*/
-  virtual void SetMatrix(const mafMatrix &mat);
+	void SetMatrix(const mafMatrix &mat) override;
   /*
   Fit an ellipsoid to a set of points
   */
   void fitEllipsoid(vtkSmartPointer<vtkPoints> points, double* xres, double* yres, double* zres, double*r1, double* r2, double* r3, Matrix3d* rotationMatrix);
 
 	mafVMEQuadricSurfaceFitting();
-	virtual ~mafVMEQuadricSurfaceFitting();
+	~mafVMEQuadricSurfaceFitting() override;
 protected:
   enum PARAMETRIC_SURFACE_WIDGET_ID
   {
@@ -176,13 +176,13 @@ protected:
   void InternalRestore(const mafStorageElement& node) override;
 
 	/** called to prepare the update of the output */
-	virtual void InternalPreUpdate();
+	void InternalPreUpdate() override;
 
 	/** update the output data structure */
-	virtual void InternalUpdate();
+	void InternalUpdate() override;
 
   /** Internally used to create a new instance of the GUI.*/
-  virtual mafGUI *CreateGui();
+	mafGUI *CreateGui() override;
 
   void CreateGuiPlane();
   void EnableGuiPlane();

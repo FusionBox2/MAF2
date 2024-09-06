@@ -32,7 +32,7 @@ class MAF_EXPORT mafGUISettingsStorage : public mafGUISettings
 {
 public:
 	mafGUISettingsStorage(mafBaseEventHandler *Listener, const mafString &label = _L("Storage"));
-	~mafGUISettingsStorage(); 
+	~mafGUISettingsStorage() override; 
 
   enum STORAGE_SETTINGS_WIDGET_ID
   {
@@ -63,7 +63,7 @@ public:
   };
 
   /** Answer to the messages coming from interface. */
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Return the status for the single file storing animated VMEs.*/
   //int GetSingleFileStatus() {return m_SingleFileFlag;};
@@ -173,10 +173,10 @@ public:
 
 protected:
   /** Create the GUI for the setting panel.*/
-  void CreateGui();
+  void CreateGui() override;
 
   /** Initialize the application settings.*/
-  void InitializeSettings();
+  void InitializeSettings() override;
 
   /** Used to enable/disable items according to the current widgets state.*/
   void EnableItems();

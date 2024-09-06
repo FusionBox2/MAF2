@@ -35,40 +35,40 @@ class Tetra : public Element {
 public:
   Tetra();
   static Tetra *New() { return new Tetra; };
-  ID_TYPE GetNumberOfNodes() { return 4; };
-  float ComputeScalar(DataSet *dataset, int numSteps);
+  ID_TYPE GetNumberOfNodes() override { return 4; };
+  float ComputeScalar(DataSet *dataset, int numSteps) override;
   //float ComputeJacobian(point x);
-  int GetType() { return 5;};
+  int GetType() override { return 5;};
 };
 
 class Tetra10: public Element {
 public:
   Tetra10();
   static Tetra10 *New() { return new Tetra10; };
-  ID_TYPE GetNumberOfNodes() { return 10; };
-  float ComputeScalar(DataSet *dataset, int numSteps);
+  ID_TYPE GetNumberOfNodes() override { return 10; };
+  float ComputeScalar(DataSet *dataset, int numSteps) override;
   //float ComputeJacobian(point x);
-  int GetType() { return 5;};
+  int GetType() override { return 5;};
 };
 
 class Wedge: public Element {
 public:
   Wedge();
   static Wedge *New() { return new Wedge; };
-  ID_TYPE GetNumberOfNodes() { return 6; };
-  float ComputeScalar(DataSet *dataset, int numSteps);
+  ID_TYPE GetNumberOfNodes() override { return 6; };
+  float ComputeScalar(DataSet *dataset, int numSteps) override;
   //float ComputeJacobian(point x);
-  int GetType() { return 7;};
+  int GetType() override { return 7;};
 };
 
 class Hexa: public Element {
 public:
   Hexa();
   static Hexa *New() { return new Hexa; };
-  ID_TYPE GetNumberOfNodes() { return 8; };
-  float ComputeScalar(DataSet *dataset, int numSteps);
+  ID_TYPE GetNumberOfNodes() override { return 8; };
+  float ComputeScalar(DataSet *dataset, int numSteps) override;
   //float ComputeJacobian(point x);
-  int GetType() { return 8;};
+  int GetType() override { return 8;};
 };
 
 

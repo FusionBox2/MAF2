@@ -42,23 +42,23 @@ public:
     /** Constructor. */
     mafOpSelect(const mafString& label=_L("Select"));
     /** Destructor. */
-   ~mafOpSelect(); 
+   ~mafOpSelect() override; 
     /** check if node can be input of the operation. */
-    bool Accept(mafNode* vme);
+    bool Accept(mafNode* vme) override;
     /** set input node to the operation. */
-    void SetInput(mafNode* vme);
+    void SetInput(mafNode* vme) override;
     /** retrieve the input node. */
-    mafNode* GetInput(){return m_OldNodeSelected;};
+    mafNode* GetInput() override {return m_OldNodeSelected;};
     /** selection of another node. */
     void SetNewSel(mafNode* vme);
     /** retrieve new selected node. */
     mafNode* GetNewSel(){return m_NewNodeSelected;};
     /** execute the operation.  */
-    void OpDo();
+    void OpDo() override;
     /** undo the operation. */
-    void OpUndo();
+    void OpUndo() override;
     /** return a instance of current object. */
-    mafOp* Copy();
+    mafOp* Copy() override;
 protected:
     mafAutoPointer<mafNode> m_OldNodeSelected;
     mafAutoPointer<mafNode> m_NewNodeSelected;
@@ -74,11 +74,11 @@ public:
     /** Constructor. */
     mafOpEdit(const mafString& label=_R(""));
     /** Destructor. */
-    ~mafOpEdit(); 
+    ~mafOpEdit() override; 
     /** Builds operation's interface. */
-    void OpRun();
+    void OpRun() override;
     /** set input node to the operation. */
-    void     SetInput(mafNode* vme) {m_Selection = vme;};
+    void     SetInput(mafNode* vme) override {m_Selection = vme;};
     /** check if the clipboard is empty.*/
     bool     ClipboardIsEmpty();
     /** clear the clipboard. */
@@ -108,15 +108,15 @@ public:
     /** Constructor. */
     mafOpCut(const mafString& label=_L("Cut"));
     /** Destructor. */
-    ~mafOpCut();
+    ~mafOpCut() override;
     /** check if node can be input of the operation. */
-    bool Accept(mafNode* vme);
+    bool Accept(mafNode* vme) override;
     /** execute the operation.  */
-    void OpDo();
+    void OpDo() override;
     /** undo the operation. */
-    void OpUndo();
+    void OpUndo() override;
     /** return a instance of current object. */
-    mafOp* Copy(); 
+    mafOp* Copy() override; 
     /** Load VTK data for the specified VME (Added by Losi on 03.06.2010) */
     void LoadVTKData(mafNode *vme);
 
@@ -136,15 +136,15 @@ public:
   /** Constructor. */
   mafOpDelete(const mafString& label=_L("Delete"));
   /** Destructor. */
-  ~mafOpDelete();
+  ~mafOpDelete() override;
   /** check if node can be input of the operation. */
-  bool Accept(mafNode* vme);
+  bool Accept(mafNode* vme) override;
   /** execute the operation.  */
-  void OpDo();
+  void OpDo() override;
   /** undo the operation. */
-  void OpUndo();
+  void OpUndo() override;
   /** return a instance of current object. */
-  mafOp* Copy(); 
+  mafOp* Copy() override; 
 protected:
     mafAutoPointer<mafNode> m_SelectionParent;
 };
@@ -159,15 +159,15 @@ public:
     /** Constructor. */
     mafOpCopy(const mafString& label=_L("Copy"));
     /** Destructor. */
-    ~mafOpCopy();
+    ~mafOpCopy() override;
     /** check if node can be input of the operation. */
-    bool Accept(mafNode* vme);
+    bool Accept(mafNode* vme) override;
     /** execute the operation.  */
-    void OpDo();
+    void OpDo() override;
     /** undo the operation. */
-    void OpUndo();
+    void OpUndo() override;
     /** return a instance of current object. */
-    mafOp* Copy();
+    mafOp* Copy() override;
 };
 /**
     class name: mafOpPaste
@@ -180,13 +180,13 @@ public:
     /** Constructor. */
     mafOpPaste(const mafString& label=_L("Paste"));
     /** check if node can be input of the operation. */
-    bool Accept(mafNode* vme);
+    bool Accept(mafNode* vme) override;
     /** execute the operation.  */    
-    void OpDo();
+    void OpDo() override;
     /** undo the operation. */
-    void OpUndo();
+    void OpUndo() override;
     /** return a instance of current object. */
-    mafOp* Copy(); 
+    mafOp* Copy() override; 
 protected:
     mafAutoPointer<mafNode> m_PastedVme;
 };

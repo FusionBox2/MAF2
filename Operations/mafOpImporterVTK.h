@@ -46,17 +46,17 @@ class MAF_EXPORT mafOpImporterVTK: public mafOp
 {
 public:
   mafOpImporterVTK(const mafString& label = _R("VTKImporter"));
- ~mafOpImporterVTK(); 
+ ~mafOpImporterVTK() override; 
   
   mafTypeMacro(mafOpImporterVTK, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-  bool Accept(mafNode* node) {return true;};
+  bool Accept(mafNode* node) override {return true;};
 
 	/** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
 	/** Import vtk data, return MAF_OK on success. */
   virtual int ImportVTK();

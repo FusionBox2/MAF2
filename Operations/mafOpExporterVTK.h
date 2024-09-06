@@ -35,18 +35,18 @@ class MAF_EXPORT mafOpExporterVTK: public mafOp
 {
 public:
   mafOpExporterVTK(const mafString& label = _R("VTKExporter"));
- ~mafOpExporterVTK(); 
+ ~mafOpExporterVTK() override; 
   
   mafTypeMacro(mafOpExporterVTK, mafOp);
 
-  mafOp* Copy();
-	void OnEvent(mafEventBase *maf_event);
+  mafOp* Copy() override;
+	void OnEvent(mafEventBase *maf_event) override;
 
 	/** Return true for the acceptable vme type. */
-  bool Accept(mafNode *node);
+  bool Accept(mafNode *node) override;
 
 	/** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
   void ApplyABSMatrixOn() {m_ABSMatrixFlag = 1;};
   void ApplyABSMatrixOff() {m_ABSMatrixFlag = 0;};

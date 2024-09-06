@@ -50,31 +50,31 @@ class MED_OPERATION_EXPORT medOpIterativeRegistration : public mafOp
 {
   public:
     medOpIterativeRegistration(const mafString& label = _R("Iterative Registration"));
-    ~medOpIterativeRegistration(); 
+    ~medOpIterativeRegistration() override;
 
-    virtual void OnEvent(mafEventBase *maf_event);
+    void OnEvent(mafEventBase *maf_event) override;
 
     mafTypeMacro(medOpIterativeRegistration, mafOp);
     
     /** 
     Return a copy of itself, this needs to put the operation into the undo stack. */
-    mafOp* Copy();
+    mafOp* Copy() override;
   	
     /** 
     Return true for the acceptable vme type. */
-    bool Accept(mafNode* node);
+    bool Accept(mafNode* node) override;
   
     /** 
     Builds operation's interface. */
-    void OpRun();
+    void OpRun() override;
   
     /** 
     Execute the operation. */
-    void OpDo();
+    void OpDo() override;
   
     /** 
     Undo the operation. */
-    void OpUndo();
+    void OpUndo() override;
 
     static bool VmeAccept(mafNode* node) {return(node != NULL);};
   
@@ -84,7 +84,7 @@ class MED_OPERATION_EXPORT medOpIterativeRegistration : public mafOp
 
     /** 
     This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
-    void OpStop(int result);
+    void OpStop(int result) override;
 
     /** Create GUI binding Guilandmark */
     void CreateGui();

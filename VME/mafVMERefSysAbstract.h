@@ -40,7 +40,7 @@ public:
   mafAbstractTypeMacro(mafVMERefSysAbstract,mafVME);
 
   /** print a dump of this object */
-  virtual void Print(std::ostream& os, const int tabs=0);
+  void Print(std::ostream& os, const int tabs=0) override;
 
   enum REFSYS_WIDGET_ID
   {
@@ -50,14 +50,14 @@ public:
 
   static bool LandmarkAccept(mafNode *node) {return(node != NULL && node->IsMAFType(mafVMELandmark));};
 
-  /** Precess events coming from other objects */ 
-  virtual void OnEvent(mafEventBase *maf_event);
+  /** Precess events coming from other objects */
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Copy the contents of another VME-RefSys into this one. */
-  virtual int DeepCopy(mafNode *a);
+  int DeepCopy(mafNode *a) override;
 
   /** Compare with another VME-RefSys. */
-  virtual bool Equals(mafVME *vme);
+  bool Equals(mafVME *vme) override;
 
   /** Used to change the axes size */
   void SetScaleFactor(double scale);
@@ -73,16 +73,16 @@ public:
     set or get the Pose for a specified time. When setting, if the time does not exist
     the MatrixVector creates a new KeyMatrix on the fly. When getting, the matrix vector
     interpolates on the fly according to the matrix interpolator.*/
-  virtual void SetMatrix(const mafMatrix &mat);
+  void SetMatrix(const mafMatrix &mat) override;
 
   /**
     Return the list of timestamps for this VME. Timestamps list is 
     obtained merging timestamps for matrices and VME items*/
-  virtual void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes);
+  void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes) override;
 
   /** return always false since (currently) the slicer is not an animated VME (position 
       is the same for all timestamps). */
-  virtual bool IsAnimated();
+  bool IsAnimated() override;
   
   /** Return pointer to material attribute. */
   mmaMaterial *GetMaterial();
@@ -91,7 +91,7 @@ public:
   static char ** GetIcon();
 
   /** Return the suggested pipe-typename for the visualization of this vme */
-  virtual mafString GetVisualPipe() {return mafString(_R("mafPipeSurface"));}
+  mafString GetVisualPipe() override {return mafString(_R("mafPipeSurface"));}
 
   /** 
   Set links for the ref-sys*/
@@ -100,25 +100,25 @@ public:
 
 protected:
   mafVMERefSysAbstract();
-  virtual ~mafVMERefSysAbstract();
+  ~mafVMERefSysAbstract() override;
   
   void InternalStore(mafStorageElementBuilder& parent) override;
   void InternalRestore(const mafStorageElement& node) override;
 
   /** called to prepare the update of the output */
-  virtual void InternalPreUpdate();
+  void InternalPreUpdate() override;
 
   /** update the output data structure */
-  virtual void InternalUpdate();
+  void InternalUpdate() override;
   /** update the output matrix */
-  virtual void InternalUpdateMatrix();
+  void InternalUpdateMatrix() override;
 
 
   /** used to initialize and create the material attribute if not yet present */
-  virtual int InternalInitialize();
+  int InternalInitialize() override;
 
   /** Internally used to create a new instance of the GUI.*/
-  virtual mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
 
   vtkArrowSource             *m_XArrow;

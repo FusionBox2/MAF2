@@ -46,16 +46,16 @@ public:
   mafTypeMacro(mafPipeLandmarkCloud,mafPipeVTK);
 
                mafPipeLandmarkCloud();
-  virtual     ~mafPipeLandmarkCloud ();
+  ~mafPipeLandmarkCloud () override;
 
   /** Create the VTK rendering pipeline*/
-  virtual void Create(mafNode *node, mafView *view);
+  void Create(mafNode *node, mafView *view) override;
 
   /** Answer events coming from the Gui and from cloud */
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
 	/** Change the visibility of the bounding box actor representing the selection for the vme. */
-  virtual void Select(bool select); 
+  void Select(bool select) override; 
 
   /** Set the scalar visibility. */
   void SetScalarVisibility(int visibility){m_ScalarVisibility = visibility;};
@@ -95,9 +95,9 @@ protected:
   virtual void RemoveClosedCloudPipe();
 
   /** Create the Gui for the visual pipe that allow the user to change the pipe's parameters.*/
-  virtual mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
   /** Update the properties according to the vme's tags. */
-	void UpdateProperty(bool fromTag = false);
+	void UpdateProperty(bool fromTag = false) override;
 };
 #endif // __mafPipeLandmarkCloud_H__

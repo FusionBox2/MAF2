@@ -59,19 +59,19 @@ class MAF_EXPORT mafGizmoRotateFan : public mafGizmoInterface
 {
 public:
            mafGizmoRotateFan(mafVME *input, mafBaseEventHandler *listener = NULL);
-  virtual ~mafGizmoRotateFan(); 
+           ~mafGizmoRotateFan() override; 
   
   /** 
   Set the gizmo generating vme; the gizmo will be centered on this vme*/
-  void SetInput(mafVME *vme);
+  void SetInput(mafVME *vme) override;
   mafVME *GetInput() {return this->m_InputVme;};
 
   //----------------------------------------------------------------------------
   // events handling 
   //----------------------------------------------------------------------------
   
-  /** Events handling*/        
-  virtual void OnEvent(mafEventBase *maf_event);
+  /** Events handling*/
+           void OnEvent(mafEventBase *maf_event) override;
   
   //----------------------------------------------------------------------------
   // axis setting 
@@ -91,7 +91,7 @@ public:
   //----------------------------------------------------------------------------
  
   /** Show gizmo */
-  void Show(bool show);
+  void Show(bool show) override;
   
   //----------------------------------------------------------------------------
   // radius setting 
@@ -103,7 +103,7 @@ public:
  
   /** 
   Set the abs pose */
-  void SetAbsPose(mafMatrix *absPose);
+  void SetAbsPose(mafMatrix *absPose) override;
   
   /** Superclass override */
   void SetMediator(mafBaseEventHandler *mediator);

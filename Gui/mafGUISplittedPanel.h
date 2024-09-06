@@ -34,7 +34,7 @@ class MAF_EXPORT mafGUISplittedPanel: public mafGUIPanel
 {
 public:
   mafGUISplittedPanel(wxWindow* parent,wxWindowID id = -1,int size = 100);
-  virtual ~mafGUISplittedPanel();
+  ~mafGUISplittedPanel() override;
 
   /** Put on top the window. */
 	void PutOnTop(wxWindow *w);

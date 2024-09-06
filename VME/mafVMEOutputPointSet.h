@@ -33,7 +33,7 @@ class MAF_EXPORT mafVMEOutputPointSet : public mafVMEOutputVTK
 {
 public:
   mafVMEOutputPointSet();
-  virtual ~mafVMEOutputPointSet();
+  ~mafVMEOutputPointSet() override;
 
   mafTypeMacro(mafVMEOutputPointSet,mafVMEOutputVTK);
 
@@ -54,10 +54,10 @@ public:
   void SetMaterial(mmaMaterial *material);
 
   /** Update all the output data structures (data, bounds, matrix and abs matrix).*/
-  virtual void Update();
+  void Update() override;
 
 protected:
-  mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
   mafString     m_NumPoints;
   mmaMaterial  *m_Material; ///< material object used to store shading propertied to render the pointset
 

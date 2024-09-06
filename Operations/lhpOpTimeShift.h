@@ -35,15 +35,15 @@ class lhpOpTimeShift: public mafOp
 public:
   mafTypeMacro(lhpOpTimeShift, mafOp)
   lhpOpTimeShift(const mafString& label = _R("TimeReduce"));
- ~lhpOpTimeShift(); 
+ ~lhpOpTimeShift() override;
 
-  virtual void OnEvent(mafEventBase *maf_event);
-  mafOp* Copy();
+  void OnEvent(mafEventBase *maf_event) override;
+  mafOp* Copy() override;
 
-  bool Accept(mafNode* vme);   
-  void OpRun();
-  void OpDo();
-  void OpUndo();
+  bool Accept(mafNode* vme) override;   
+  void OpRun() override;
+  void OpDo() override;
+  void OpUndo() override;
   void CreateGui();
 
 protected: 

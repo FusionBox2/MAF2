@@ -47,7 +47,7 @@ public:
         long style = 0,
         const mafString& middleButtonTitle = _R("windowing")
         );
- ~mafGUILutSlider();
+ ~mafGUILutSlider() override;
  
  enum ID_ARG_MOUSE_MOVE
  {

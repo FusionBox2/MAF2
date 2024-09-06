@@ -303,10 +303,10 @@ public:
   virtual bool CanReparentTo(mafNode *parent) {return parent==NULL||!IsInTree(parent);}
 
   /** redefined to cope with tree registering */
-  virtual void UnRegister(void *o);
+  void UnRegister(void *o) override;
 
-  /** Precess events coming from other objects */ 
-  virtual void OnEvent(mafEventBase *e);
+  /** Precess events coming from other objects */
+  void OnEvent(mafEventBase *e) override;
 
   typedef std::vector<mafAutoPointer<mafNode> > mafChildrenVector;
 
@@ -409,7 +409,7 @@ public:
 
   /**
   Return the modification time.*/
-  virtual unsigned long GetMTime();
+  unsigned long GetMTime() override;
 
   /** Find new unique id */
   virtual mafID GetNewNodeId();
@@ -431,7 +431,7 @@ public:
 protected:
 
   mafNode();
-  virtual ~mafNode();
+  ~mafNode() override;
 
   /** internally used to set the node ID */
   void SetId(mafID id);
@@ -460,7 +460,7 @@ protected:
     the superclass enum. The last id value must be defined as "LAST_ID" to allow the 
     subclass to continue the ID enumeration from it. For appending the widgets in the
     same pannel GUI, each CreateGUI() function should first call the superclass' one.*/
-  virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 
   void OnNodeDetachedFromTree(mafNode *node);
   void OnNodeAttachedToTree(mafNode *node);

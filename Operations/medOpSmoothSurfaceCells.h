@@ -56,25 +56,25 @@ class MED_OPERATION_EXPORT medOpSmoothSurfaceCells: public mafOp
 public:
 
 	medOpSmoothSurfaceCells(const mafString& label = _R("Smooth Cells"));
-	~medOpSmoothSurfaceCells(); 
+	~medOpSmoothSurfaceCells() override; 
 
 	mafTypeMacro(medOpSmoothSurfaceCells, mafOp);
 
-	mafOp* Copy();
+	mafOp* Copy() override;
 
-	void OnEvent(mafEventBase *maf_event);
+	void OnEvent(mafEventBase *maf_event) override;
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode* vme);
+	bool Accept(mafNode* vme) override;
 
 	/** Builds operation's interface by calling CreateOpDialog() method. */
-	void OpRun();
+	void OpRun() override;
 
 	/** Execute the operation. */
-	void OpDo();
+	void OpDo() override;
 
 	/** Makes the undo for the operation. */
-	void OpUndo();
+	void OpUndo() override;
 
 	/** set the seed ie the cell originating the selection area */
 	void SetSeed(vtkIdType cellSeed);

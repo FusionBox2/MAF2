@@ -151,10 +151,10 @@ public:
   };
   
   /** dump the object */
-  virtual void Print(std::ostream& os, const int indent=0) const;
+  void Print(std::ostream& os, const int indent=0) const override;
 
   mafObjectFactory();
-  virtual ~mafObjectFactory();
+  ~mafObjectFactory() override;
 
 
 protected:

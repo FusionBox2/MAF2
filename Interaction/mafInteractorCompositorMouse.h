@@ -88,7 +88,7 @@ public:
   virtual int StartInteraction(mafDeviceButtonsPadMouse *mouse);
 
   /**  Process events coming from the mouse */
-  virtual void OnEvent(mafEventBase *event);
+  void OnEvent(mafEventBase *event) override;
 
   /**
   Create a behavior given the activator*/
@@ -101,11 +101,11 @@ public:
 protected:
 
   mafInteractorCompositorMouse();
-  ~mafInteractorCompositorMouse();
+  ~mafInteractorCompositorMouse() override;
 
-  virtual void OnButtonDown(mafEventInteraction *e);
-  
-  virtual void OnButtonUp(mafEventInteraction *e);
+  void OnButtonDown(mafEventInteraction *e) override;
+
+  void OnButtonUp(mafEventInteraction *e) override;
 
   /** mouse driven events*/
   void OnLeftButtonDown   (mafEventInteraction *e);

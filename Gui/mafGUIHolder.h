@@ -34,7 +34,7 @@ public:
   /** constructor */
            mafGUIHolder(wxWindow* parent,wxWindowID id, bool CloseButton=false, bool HideTitle = false );
   /** destructor */
-  virtual ~mafGUIHolder();
+  ~mafGUIHolder() override;
   
 	/** Return the panel that held the gui. */
 	wxPanel* GetPanel() {return (wxPanel*)m_Panel;};

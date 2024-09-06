@@ -52,7 +52,7 @@ public:
   mafOpGarbageCollectMSFDir(const mafString& label = _R("Garbage Collect MSF Tree"));
   
   /** destructor */
-  ~mafOpGarbageCollectMSFDir(); 
+  ~mafOpGarbageCollectMSFDir() override; 
   
   /**
   Remove useless garbage files in MSF dir and clear the Undo stack: return MAF_OK or MAF_ERROR*/
@@ -62,13 +62,13 @@ public:
   mafTypeMacro(mafOpGarbageCollectMSFDir, mafOp);
 
   /** Return a copy of the operation.*/
-  mafOp* Copy();
+  mafOp* Copy() override;
 
   /** This operation accept everything as input.*/
-  bool Accept(mafNode *node) {return true;};
+  bool Accept(mafNode *node) override {return true;};
 
   /** Create the user interface and initialize variables.*/
-  void OpRun();
+  void OpRun() override;
 
 protected: 
   

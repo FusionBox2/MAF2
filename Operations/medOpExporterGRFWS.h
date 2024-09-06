@@ -57,28 +57,28 @@ class MED_OPERATION_EXPORT medOpExporterGRFWS : public mafOp
 public:
   mafTypeMacro(medOpExporterGRFWS,mafOp)
 	medOpExporterGRFWS(const mafString& label = _R("GRF Exporter"));
-	~medOpExporterGRFWS(); 
+	~medOpExporterGRFWS() override; 
 	
   /** Copy the operation. */
-  mafOp* Copy();
+  mafOp* Copy() override;
 
   /** Clear */
   void Clear();
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode* node);
+	bool Accept(mafNode* node) override;
 
 	/** Builds operation's interface. */
-	void OpRun();
+	void OpRun() override;
 
   /** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
 
   /** Stop the operation. */
-  void OpStop(int result);
+  void OpStop(int result) override;
 
   /** Wait for events */
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Create GUI. */
   void CreateGui();

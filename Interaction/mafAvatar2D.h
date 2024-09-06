@@ -35,7 +35,7 @@ public:
   mafTypeMacro(mafAvatar2D,mafInteractor);
 
   /**  Process events coming from tracker */
-  virtual void OnEvent(mafEventBase *event);
+  void OnEvent(mafEventBase *event) override;
 
   /** return the Mouse device associated to this avatar */
   mafDeviceButtonsPadMouse *GetMouse();
@@ -45,7 +45,7 @@ public:
 
 protected:
   mafAvatar2D();
-  virtual ~mafAvatar2D();
+  ~mafAvatar2D() override;
 
 private:
   mafAvatar2D(const mafAvatar2D&) {}  // Not implemented.

@@ -40,7 +40,7 @@ public:
   mafTypeMacro(mafVMERoot,mafVME);
 
   /** compare two VME-Root. */
-  virtual bool Equals(mafVME *vme);
+  bool Equals(mafVME *vme) override;
 
   enum ROOT_GUI_ID
   {
@@ -48,7 +48,7 @@ public:
     ID_LAST
   };
 
-  virtual int DeepCopy(mafNode *a);
+  int DeepCopy(mafNode *a) override;
 
     /** 
     Return highest ItemId assigned for this tree. Return -1 if no one has
@@ -71,38 +71,38 @@ public:
   };
 
   /** set the tree reference system */
-  virtual void SetMatrix(const mafMatrix &mat);
+  void SetMatrix(const mafMatrix &mat) override;
 
   /** print a dump of this object */
-  virtual void Print(std::ostream& os, const int tabs=0);// const;
+  void Print(std::ostream& os, const int tabs=0) override;// const;
 
   /** return no timestamps */
-  virtual void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes);
+  void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes) override;
 
   /** allow only a NULL parent */
-  virtual bool CanReparentTo(mafNode *parent) {return parent==NULL;}
+  bool CanReparentTo(mafNode *parent) override {return parent==NULL;}
 
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
-  virtual mafID GetNewNodeId(){return GetNextNodeId();}
+  mafID GetNewNodeId() override {return GetNextNodeId();}
 
   /** Redefined to update the gui. */
-  virtual void Update();
+  void Update() override;
 
   /** return an xpm-icon that can be used to represent this node */
   static char ** GetIcon();   //SIL. 11-4-2005:  
 
   /** Return the suggested pipe-typename for the visualization of this vme */
-  virtual mafString GetVisualPipe() {return mafString(_R("mafPipeBox"));};
+  mafString GetVisualPipe() override {return mafString(_R("mafPipeBox"));};
 
 
 protected:
   /** allowed only dynamic allocation via New() */
-  mafVMERoot();           
-  virtual ~mafVMERoot();  
+  mafVMERoot();
+  ~mafVMERoot() override;  
 
   /** Create GUI for the VME */
-  virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 
   void InternalStore(mafStorageElementBuilder& parent) override;
   void InternalRestore(const mafStorageElement& node) override;

@@ -68,7 +68,7 @@ public:
   vtkSetMacro( Level, double );
   vtkGetMacro( Level, double );
   
-  vtkMTimeType GetMTime();
+  vtkMTimeType GetMTime() override;
 
 protected:
   vtkMAFImageMapToWidgetColors();

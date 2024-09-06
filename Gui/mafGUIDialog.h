@@ -74,8 +74,8 @@ class MAF_EXPORT mafGUIDialog : public wxDialog, public mafBaseEventHandler, pub
 {
 public:
 	mafGUIDialog (const mafString& title,	long style = mafCLOSEWINDOW | mafRESIZABLE | mafCLOSE);
-	virtual ~mafGUIDialog (); 
-  void OnEvent(mafEventBase *maf_event);
+	~mafGUIDialog () override; 
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Add a widget to the dialog. */
   void Add(wxWindow* window,int option = 0, int flag = wxEXPAND, int border = 0)  {window->Reparent(this); m_GuiSizer->Add(window,option,flag,border);};
@@ -92,7 +92,7 @@ public:
   /** Remove a sizer from the dialog. */
   bool Remove(wxSizer*  sizer ) {return m_GuiSizer->Detach(sizer);};
 
-  int ShowModal();
+  int ShowModal() override;
 
   /** Enable/Disable the default buttons -- doesn't apply to user created buttons */
   void EnableOk(bool enable)     {if(m_OkButton)     m_OkButton->Enable(enable);};

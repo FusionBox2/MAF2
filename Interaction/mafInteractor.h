@@ -60,7 +60,7 @@ class MAF_EXPORT mafInteractor : public mafAgent
 {
 public:
   mafInteractor();
-  virtual ~mafInteractor();
+  ~mafInteractor() override;
 
   //------------------------------------------------------------------------------
   // Events
@@ -154,7 +154,7 @@ public:
   bool GetLockDevice() {return m_LockDevice;}
   
   /**  Process events coming from input device */
-  virtual void OnEvent(mafEventBase *event);
+  void OnEvent(mafEventBase *event) override;
 
   /** Turn On m_TestMode flag.*/
   void TestModeOn() {m_TestMode = true;};

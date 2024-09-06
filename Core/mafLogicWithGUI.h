@@ -72,10 +72,10 @@ class MAF_EXPORT mafLogicWithGUI: public mafBaseEventHandler
 {
 public:
                mafLogicWithGUI(mafGUIMDIFrame *mdiFrame=NULL);
-	virtual     ~mafLogicWithGUI(); 
+               ~mafLogicWithGUI() override; 
 
   /** Method that answer at all MAF events. */
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
   /** Visualize all the interface elements of the application.*/
   virtual void Show();
   /** Virtual function for plug views into the application.*/

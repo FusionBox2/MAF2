@@ -42,7 +42,7 @@ class MAF_EXPORT mafAbsMatrixPipe: public mafMatrixPipe
 {
 public:
   mafAbsMatrixPipe();
-  virtual ~mafAbsMatrixPipe();
+  ~mafAbsMatrixPipe() override;
   
   mafTypeMacro(mafAbsMatrixPipe,mafMatrixPipe);
 
@@ -52,11 +52,10 @@ public:
   /** 
     Overridden to take into consideration the internal transform
     object MTime. */
-  virtual unsigned long GetMTime();
+  unsigned long GetMTime() override;
   
 protected:
-  
-  virtual void InternalUpdate();
+  void InternalUpdate() override;
 
   mafTransformFrame *m_Transform; ///< internal transform used to compute the local to ABS frame transformation
 

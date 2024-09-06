@@ -33,11 +33,11 @@ class MED_COMMON_EXPORT mmiInfoImage : public mafInteractorPER
 public: 
   mafTypeMacro(mmiInfoImage,mafInteractorPER);
 
-  virtual void OnEvent(mafEventBase *event);
+  void OnEvent(mafEventBase *event) override;
 
 protected:
   mmiInfoImage();
-  virtual ~mmiInfoImage();
+  ~mmiInfoImage() override;
 
 private:
   mmiInfoImage(const mmiInfoImage&);  // Not implemented.

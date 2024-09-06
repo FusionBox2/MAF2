@@ -36,7 +36,7 @@ class MAF_EXPORT mafVMEOutputLandmarkCloud : public mafVMEOutputPointSet
 {
 public:
   mafVMEOutputLandmarkCloud();
-  virtual ~mafVMEOutputLandmarkCloud();
+  ~mafVMEOutputLandmarkCloud() override;
 
   mafTypeMacro(mafVMEOutputLandmarkCloud,mafVMEOutputPointSet);
 
@@ -48,15 +48,15 @@ public:
   of stored Items is 0. Also special VME could not support VTK dataset output.
   An event is rised when the output data changes to allow attached classes to 
   update their input.*/
-  virtual vtkAlgorithmOutput *GetVTKOutputPort();
+  vtkAlgorithmOutput *GetVTKOutputPort() override;
 
   /** Redefined to update gui.*/
-  virtual void Update();
+  void Update() override;
 
   mafString GetNumberOfLandmarksSTR(){return m_NumLandmarks;};
 
 protected:
-  mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
   mafString m_NumLandmarks;
 
 private:

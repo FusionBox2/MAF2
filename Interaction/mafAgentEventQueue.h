@@ -131,7 +131,7 @@ public:
  
 protected:
   mafAgentEventQueue();
-  virtual ~mafAgentEventQueue();
+  ~mafAgentEventQueue() override;
 
   //------------------------------------------------------------------------------
   // Forward declarations

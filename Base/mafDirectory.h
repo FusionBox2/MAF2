@@ -35,7 +35,7 @@ class MAF_EXPORT mafDirectory : public mafObject
 {
 public:  
   mafDirectory();
-  ~mafDirectory();
+  ~mafDirectory() override;
   
   mafTypeMacro(mafDirectory,mafObject);
 

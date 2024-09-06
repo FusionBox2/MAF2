@@ -44,19 +44,19 @@ class MAF_EXPORT mafGizmoTranslateAxis: public mafGizmoInterface
 {
 public:
            mafGizmoTranslateAxis(mafVME *input, mafBaseEventHandler *listener = NULL, mafString name = _R(""));
-  virtual ~mafGizmoTranslateAxis(); 
+           ~mafGizmoTranslateAxis() override; 
   
   /** 
   Set the gizmo generating vme; the gizmo will be centered on this vme*/
-  void SetInput(mafVME *vme); 
+  void SetInput(mafVME *vme) override; 
   mafVME *GetInput() {return this->m_InputVme;};
 
   //----------------------------------------------------------------------------
   // events handling 
   //----------------------------------------------------------------------------
   
-  /** Events handling*/        
-  virtual void OnEvent(mafEventBase *maf_event);
+  /** Events handling*/
+           void OnEvent(mafEventBase *maf_event) override;
   
   //----------------------------------------------------------------------------
   // axis setting 
@@ -77,7 +77,7 @@ public:
   void Highlight(bool highlight);
     
   /** Show the gizmo */
-  void Show(bool show);
+  void Show(bool show) override;
 
   //----------------------------------------------------------------------------
   // cone stuff
@@ -97,8 +97,8 @@ public:
   
   /** 
   Set the abs pose */
-  void SetAbsPose(mafMatrix *absPose);
-  mafMatrix *GetAbsPose();
+  void SetAbsPose(mafMatrix *absPose) override;
+  mafMatrix *GetAbsPose() override;
 
   /**
   Set the constraint modality for the given axis; allowed constraint modality are:

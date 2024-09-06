@@ -37,25 +37,25 @@ class MED_OPERATION_EXPORT medOpCreateSurface: public mafOp
 public:
 
 	medOpCreateSurface(const mafString& label = _R("Create Surface"));
-	~medOpCreateSurface(); 
+	~medOpCreateSurface() override; 
 
 	mafTypeMacro(medOpCreateSurface, mafOp);
 
-	mafOp* Copy();
+	mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode* vme);
+	bool Accept(mafNode* vme) override;
 
 	/** Builds operation's interface by calling CreateOpDialog() method. */
-	void OpRun();
+	void OpRun() override;
 
 	/** Execute the operation. */
-	virtual void OpDo();
+	void OpDo() override;
 
 protected:
 
 	/** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
-	virtual void OpStop(int result);
+	void OpStop(int result) override;
 
 	mafVMESurface *m_Surface;
 

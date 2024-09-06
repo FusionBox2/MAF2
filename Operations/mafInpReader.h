@@ -61,7 +61,7 @@ class MAF_EXPORT mafINPReader: public vtkPolyDataAlgorithm
 {
 public:
   vtkTypeMacro(mafINPReader, vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Construct object with merging set to true.
@@ -74,11 +74,11 @@ public:
 
 protected:
   mafINPReader();
-  ~mafINPReader();
+  ~mafINPReader() override;
 
   char *m_FileName;
 
-  virtual int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+  int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
   int ReadASCIIINP(FILE *fp, std::vector<double> &pointsRead, std::vector<int> &pointsIndRead, std::vector<vtkIdType> &indRead);
 private:

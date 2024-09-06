@@ -32,7 +32,7 @@ public:
   vtkTypeMacro(mafLODActor,vtkOpenGLActor);
 
   // Description:
-  void Render(vtkRenderer *ren, vtkMapper *mapper);
+  void Render(vtkRenderer *ren, vtkMapper *mapper) override;
 
   /** Set the dimension in pixels of the FlagActor representing the actor when its dimensions are too small to be rendered.*/
   void SetFlagDimension(int flagDimension);
@@ -96,7 +96,7 @@ public:
 
 protected:
   mafLODActor();
-  ~mafLODActor();
+  ~mafLODActor() override;
 
 private:
   mafLODActor(const mafLODActor&);  // Not implemented.

@@ -35,17 +35,17 @@ class MAF_EXPORT mafOpImporterMSF: public mafOp
 {
 public:
   mafOpImporterMSF(const mafString& label = _R("MSFImporter"));
-  ~mafOpImporterMSF(); 
+  ~mafOpImporterMSF() override; 
 
   mafTypeMacro(mafOpImporterMSF, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode* node) {return true;};
+  bool Accept(mafNode* node) override {return true;};
 
   /** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
   /** Import MSF data. */
   int ImportMSF();

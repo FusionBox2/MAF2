@@ -70,7 +70,7 @@ public:
   void IgnoreTriggerEventsOff() {SetIgnoreTriggerEvents(false);}
 
   /** redefined to accomplish specific tasks*/
-  virtual void SetRenderer(vtkRenderer *ren);
+  void SetRenderer(vtkRenderer *ren) override;
 
     /** Used to hide default tracker's avatar */
   void HideAvatar();
@@ -81,12 +81,12 @@ public:
 protected:
   
   mafInteractor6DOF();
-  virtual ~mafInteractor6DOF();
+  ~mafInteractor6DOF() override;
 
   /** reimplemented to manage interaction events from trackers */
-  virtual int OnStartInteraction(mafEventInteraction *event);
+  int OnStartInteraction(mafEventInteraction *event) override;
   /** reimplemented to manage interaction events from trackers */
-  virtual int OnStopInteraction(mafEventInteraction *event);
+  int OnStopInteraction(mafEventInteraction *event) override;
   
   mafMatrix           *m_TrackerPoseMatrix;  
   mafMatrix           *m_StartTrackerPoseMatrix;

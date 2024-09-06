@@ -34,7 +34,7 @@ public:
   mafTypeMacro(mafVMERefSys,mafVMERefSysAbstract);
 
   /** print a dump of this object */
-  virtual void Print(std::ostream& os, const int tabs=0);
+  void Print(std::ostream& os, const int tabs=0) override;
 
   enum REFSYS_WIDGET_ID
   {
@@ -46,14 +46,14 @@ public:
     ID_LAST
   };
 
-  /** Precess events coming from other objects */ 
-  virtual void OnEvent(mafEventBase *maf_event);
+  /** Precess events coming from other objects */
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Copy the contents of another VME-RefSys into this one. */
-  virtual int DeepCopy(mafNode *a);
+  int DeepCopy(mafNode *a) override;
 
   /** Compare with another VME-RefSys. */
-  virtual bool Equals(mafVME *vme);
+  bool Equals(mafVME *vme) override;
 
   mafVME *GetOriginVME();
   mafVME *GetPoint1VME();
@@ -61,14 +61,14 @@ public:
 
 protected:
   mafVMERefSys();
-  virtual ~mafVMERefSys();
+  ~mafVMERefSys() override;
 
-  virtual void CalculateMatrix(mafMatrix& mat, mafTimeStamp ts = -1);
+  void CalculateMatrix(mafMatrix& mat, mafTimeStamp ts = -1) override;
   void InternalStore(mafStorageElementBuilder& parent) override;
   void InternalRestore(const mafStorageElement& node) override;
 
   /** Internally used to create a new instance of the GUI.*/
-  virtual mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
   mafString m_Point1VmeName;
   mafString m_Point2VmeName;

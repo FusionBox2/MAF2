@@ -229,15 +229,15 @@ public:
 	//construction and RTTI information
 	static vtkMAFLargeImageReader *New();
 	vtkTypeMacro(vtkMAFLargeImageReader,vtkMAFLargeImageSource);
-	void PrintSelf(ostream& os, vtkIndent indent);
+	void PrintSelf(ostream& os, vtkIndent indent) override;
 
 protected:
 	vtkMAFLargeImageReader();
-	~vtkMAFLargeImageReader();
+	~vtkMAFLargeImageReader() override;
 
 	// By default, UpdateInformation calls this method to copy information
 	// unmodified from the input to the output.
-	virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+	int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
 	// Description:
 	// This method is the one that should be used by subclasses, right now the 

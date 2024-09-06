@@ -45,14 +45,14 @@ public:
   mafTypeMacro(mafDataPipeInterpolatorScalarMatrix,mafDataPipeInterpolator);
 
   /** This DataPipe accepts only VME's with internal DataArray. */
-  virtual bool Accept(mafVME *vme);
+  bool Accept(mafVME *vme) override;
 
   /**
     Get the MTime: this is the bit of magic that makes everything work.*/
   //virtual unsigned long GetMTime();
 
   /** process events coming from vtkMAFDataPipe bridge component */
-  void OnEvent(mafEventBase *e);
+  void OnEvent(mafEventBase *e) override;
 
    /**  Get the output of the interpolator item*/
   mafVMEItemScalarMatrix *GetCurrentItem() {return (mafVMEItemScalarMatrix *)m_CurrentItem;}
@@ -64,13 +64,13 @@ protected:
   /** constructor */
   mafDataPipeInterpolatorScalarMatrix();
   /** destructor */
-  virtual ~mafDataPipeInterpolatorScalarMatrix();
+  ~mafDataPipeInterpolatorScalarMatrix() override;
 
   /** Set m_ScalarData to current item data*/
-  virtual void PreExecute();
+  void PreExecute() override;
 
   /** Execute possible procedural code: Empty function */
-  virtual void Execute() {}
+  void Execute() override {}
 
   vnl_matrix<double> m_ScalarData;
 

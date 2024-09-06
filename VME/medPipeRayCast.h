@@ -52,16 +52,16 @@ public:
   /** constructor */
 	medPipeRayCast(double skinOpacity=0.2,double fatMassOpacity=0.2,double muscleOpacity=0.2,double bloodOpacity=0.8,double boneOpacity=0.2);
   /** destructor */
-	virtual  ~medPipeRayCast();
+  ~medPipeRayCast() override;
 
 	/** process events coming from Gui */
-	virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Create the VTK rendering pipeline*/
-	virtual void Create(mafNode *n, mafView *v);
+  void Create(mafNode *n, mafView *v) override;
 
   /** Manage the actor selection by showing the corner box around the actor when the corresponding VME is selected.*/
-	virtual void Select(bool select);
+  void Select(bool select) override;
 
   /** return the contour value. */
   void  EnableBoundingBoxVisibility(bool enable = true);
@@ -104,7 +104,7 @@ public:
 
 protected:
   /** Create the Gui for the visual pipe that allow the user to change the pipe's parameters.*/
-	virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 
   /** Set The levels of opacity and the colors for the Ray Cast Mapper*/
   void SetRayCastFunctions();

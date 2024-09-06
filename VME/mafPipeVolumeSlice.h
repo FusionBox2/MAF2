@@ -64,10 +64,10 @@ public:
   mafTypeMacro(mafPipeVolumeSlice,mafPipeVTK);
 
 	mafPipeVolumeSlice();
-  virtual ~mafPipeVolumeSlice();
+  ~mafPipeVolumeSlice() override;
 	
   /** process events coming from Gui */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** IDs for the GUI */
   enum PIPE_VOLUME_SLICE_WIDGET_ID
@@ -91,7 +91,7 @@ public:
   void InitializeSliceParameters(int direction, double slice_origin[3], float slice_xVect[3], float slice_yVect[3], bool show_vol_bbox,bool show_bounds=false);
   
   /** Create the VTK rendering pipeline*/
-  virtual void Create(mafNode *node, mafView *view);
+  void Create(mafNode *node, mafView *view) override;
 
 	/** Set the range to the lookup table for the slice. */
 	void SetLutRange(double low, double high);
@@ -124,7 +124,7 @@ public:
   float GetSliceOpacity();
 
 	/** Manage the actor selection by showing the corner box around the actor when the corresponding VME is selected.*/
-  virtual void Select(bool select); 
+  void Select(bool select) override; 
 
 	void ShowTICKsOn();
 	void ShowTICKsOff();
@@ -151,7 +151,7 @@ protected:
 	void CreateTICKs();
 
   /** Create the Gui for the visual pipe that allow the user to change the pipe's parameters.*/
-  virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 
 	double	m_Origin[3];    ///< Origin position of the cutting plane
 	float		m_Normal[3][3]; ///< Normal vectors defining the cutting plane orientation

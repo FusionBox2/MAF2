@@ -81,11 +81,11 @@ class MAF_EXPORT mafGizmoTranslate : public mafGizmoInterface
 {
 public:
            mafGizmoTranslate(mafVME *input, mafBaseEventHandler* listener = NULL, bool BuildGUI = true);
-  virtual ~mafGizmoTranslate(); 
+           ~mafGizmoTranslate() override; 
 
   /** 
   Set input vme for the gizmo*/
-  void SetInput(mafVME *vme); 
+  void SetInput(mafVME *vme) override; 
 
   /** Superclass override */
   void SetRenderWindowHeightPercentage(double percentage);
@@ -102,7 +102,7 @@ public:
 
   /**
   Events handling*/        
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
  
   //----------------------------------------------------------------------------
   // show 
@@ -110,7 +110,7 @@ public:
   
   /**
   Show the gizmo*/
-  void Show(bool show);
+  void Show(bool show) override;
 
   /**
   Show the gizmo*/
@@ -119,7 +119,7 @@ public:
   /**
   Set/Get the gizmo pose*/
   void SetAbsPose(mafMatrix *absPose, mafTimeStamp ts = -1);
-  mafMatrix *GetAbsPose();
+  mafMatrix *GetAbsPose() override;
   
   //----------------------------------------------------------------------------
   // RefSys
@@ -129,7 +129,7 @@ public:
   void SetRefSys(mafVME *refSys);
   mafVME* GetRefSys();
 
-  mafGUI *GetGui() {return (m_GuiGizmoTranslate->GetGui());};
+  mafGUI *GetGui() override {return (m_GuiGizmoTranslate->GetGui());};
 
   /**
   Set the constraint modality for the given axis; allowed constraint modality are:
@@ -146,10 +146,10 @@ protected:
   mafGUIGizmoTranslate *m_GuiGizmoTranslate;
 
   /** Gizmo components events handling */
-  void OnEventGizmoGui(mafEventBase *maf_event);
+  void OnEventGizmoGui(mafEventBase *maf_event) override;
 
   /** Gizmo components events handling */
-  void OnEventGizmoComponents(mafEventBase *maf_event);
+  void OnEventGizmoComponents(mafEventBase *maf_event) override;
 
   /** 
   gizmo components enum*/

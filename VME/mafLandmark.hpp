@@ -21,12 +21,12 @@ public:
     mafdmLandmark(double x,double y, double z, string name);
     mafdmLandmark(double x,double y, double z);
     mafdmLandmark() : mafdmLandmark(0,0,0){};
-    void describe();
+    void describe() override;
 
     //vtkSmartPointer<vtkContentActor> makeRenderer();
-    wxXmlNode* getNode();
-	void SetMatrix(const mafMatrix &mat){};
-	void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes){};
+    wxXmlNode* getNode() override;
+	void SetMatrix(const mafMatrix &mat) override {};
+	void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes) override {};
     static int landmarkID;
 };
 

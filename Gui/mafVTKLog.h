@@ -45,11 +45,11 @@ public:
   void EnabledOff(){this->SetEnabled(FALSE);};
 
   /** Put the text into the log file. New lines are converted to carriage return new lines. */
-  virtual void DisplayText(const char*);
+  void DisplayText(const char*) override;
   
 protected:
   mafVTKLog();
-  ~mafVTKLog();
+  ~mafVTKLog() override;
   
   int m_Enabled;
   

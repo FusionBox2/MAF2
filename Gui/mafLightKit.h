@@ -43,9 +43,9 @@ class MAF_EXPORT mafLightKit : public mafBaseEventHandler, public mafEventSender
 {
 public:
 	mafLightKit(wxWindow* parent, vtkRenderer *r, mafBaseEventHandler *Listener = NULL);
-	~mafLightKit(); 
+	~mafLightKit() override; 
 	
-	void OnEvent(mafEventBase *maf_event);
+	void OnEvent(mafEventBase *maf_event) override;
 	void CreateGui();
 
 	/** Returns the mafLightKit's GUI */

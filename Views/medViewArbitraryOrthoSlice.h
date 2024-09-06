@@ -127,7 +127,7 @@ public:
 	medViewArbitraryOrthoSlice(const mafString& label = _R("View Arbitrary Slice with Windowing"), bool show_ruler = false);
 
 	/** destructor*/
-	virtual ~medViewArbitraryOrthoSlice(); 
+	~medViewArbitraryOrthoSlice() override; 
 
 	/** RTTI macro.*/
 	mafTypeMacro(medViewArbitraryOrthoSlice, medViewCompoundWindowing);
@@ -169,39 +169,39 @@ public:
 	};
 
 	/** Create visual pipe and initialize them to build an OrthoSlice visualization */
-	virtual void PackageView();
+	void PackageView() override;
 
 	/** Show/Hide VMEs into plugged sub-views*/
-	virtual void VmeShow(mafNode *node, bool show);
+	void VmeShow(mafNode *node, bool show) override;
 
 
 	/** Remove VME into plugged sub-views*/
-	virtual void VmeRemove(mafNode *node);
+	void VmeRemove(mafNode *node) override;
 
 	/** Create the GUI at the bottom of the compounded view. */
-	virtual void CreateGuiView();
+	void CreateGuiView() override;
 
 	/** Camera update */
-	void CameraUpdate();
+	void CameraUpdate() override;
 
 	/** Function that handles events sent from other objects. */
-	virtual void OnEvent(mafEventBase *maf_event);
+	void OnEvent(mafEventBase *maf_event) override;
 
 	void MyMethod( medInteractorPicker * picker, double * pickedPointCoordinates );
 	void OnEventGizmoCrossRTZNormalView( mafEventBase * maf_event );
 	void OnEventGizmoCrossRTYNormalView( mafEventBase * maf_event );
 
 	/** Function that clones instance of the object. */
-	virtual mafView* Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
+	mafView* Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override;
 
 	/** Force the updating of the camera. */
 	virtual void UpdateSubviewsCamerasToFaceSlices();
 
-	virtual void OnLayout();
+	void OnLayout() override;
 
 	void OnLayoutInternal( wxSize &windowSize );
 
-	void VmeSelect(mafNode *node, bool select);
+	void VmeSelect(mafNode *node, bool select) override;
 
 protected:
 
@@ -302,10 +302,10 @@ protected:
 	an extension of the superclass enum. The last id value must be defined as "LAST_ID" to allow the 
 	subclass to continue the ID enumeration from it. For appending the widgets in the
 	same panel GUI, each CreateGUI() function should first call the superclass' one.*/
-	virtual mafGUI* CreateGui();
+	mafGUI* CreateGui() override;
 
 	/** Enable/disable view widgets.*/
-	void EnableWidgets(bool enable = true);
+	void EnableWidgets(bool enable = true) override;
 
 	void EnableExportImages( bool enable , int color);
 	void OnEventThis(mafEventBase *maf_event);  
@@ -377,7 +377,7 @@ protected:
 	void PostMultiplyEventMatrixToSlicers(mafEventBase *maf_event);
 
 	/** Windowing for volumes data. This function overrides superclass method.*/
-	void VolumeWindowing(mafVME *volume);
+	void VolumeWindowing(mafVME *volume) override;
 	void OnEventGizmoCrossRotateYNormalView(mafEventBase *maf_event);
 
 	void GetLeftRightLettersFromCamera( double viewUp[3], double viewPlaneNormal[3], wxString &leftLetter, wxString &rightLetter);
@@ -437,7 +437,7 @@ protected:
 	void CreateViewCameraNormalFeedbackActor(double col[3], int view);
 	void DestroyViewCameraNormalFeedbackActor(int view);
 	void ThicknessComboAssignment(int axis);
-	void UpdateWindowing(bool enable,mafNode *node);
+	void UpdateWindowing(bool enable,mafNode *node) override;
 	void UpdateThickness( int axis);
 	void ShowSliceHeight2DTextActors( bool show , int color);
   

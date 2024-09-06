@@ -29,7 +29,7 @@ class MAF_EXPORT mafAttributeTraceability : public mafAttribute
 {
 public:
            mafAttributeTraceability();
-  virtual ~mafAttributeTraceability();
+           ~mafAttributeTraceability() override;
   
   mafTypeMacro(mafAttributeTraceability,mafAttribute);
 
@@ -40,7 +40,7 @@ public:
   void RemoveTraceabilityEvent(); 
 
   /** copy the content of the given attribute. Attributes must be type compatible */
-  virtual void DeepCopy(const mafAttribute *a);
+           void DeepCopy(const mafAttribute *a) override;
 
   /** create a copy of this attribute */
   mafAttributeTraceability *MakeCopy();

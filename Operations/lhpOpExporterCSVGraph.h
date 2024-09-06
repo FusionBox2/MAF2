@@ -43,19 +43,19 @@ class lhpOpExporterCSVGraph : public mafOp
 {
 public:
   lhpOpExporterCSVGraph(const mafString& label = _R("CSV Graph Exporter"));
-  ~lhpOpExporterCSVGraph(); 
+  ~lhpOpExporterCSVGraph() override; 
 
   mafTypeMacro(lhpOpExporterCSVGraph, mafOp);
 
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode *node);
+  bool Accept(mafNode *node) override;
 
   /** Build the interface of the operation, i.e the dialog that let choose the name of the output file. */
-  void OpRun();
+  void OpRun() override;
 
   /** Export landmarks contained into a mafVMELandmarkCloud.*/
   void ExportGraphs();

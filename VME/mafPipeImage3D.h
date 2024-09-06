@@ -52,13 +52,13 @@ public:
            mafPipeImage3D();
 
   /** destructor. */
-  virtual ~mafPipeImage3D ();
+  ~mafPipeImage3D () override;
 
   /** Create the VTK rendering pipeline*/
-  virtual void Create(mafNode *node, mafView *view);
+  void Create(mafNode *node, mafView *view) override;
 
   /** Manage the actor selection by showing the corner box around the actor when the corresponding VME is selected.*/
-  virtual void Select(bool select); 
+  void Select(bool select) override; 
 
   /** Return if the image is gray scale*/
   bool IsGrayImage();

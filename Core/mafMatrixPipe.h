@@ -39,7 +39,7 @@ class MAF_EXPORT mafMatrixPipe: public mafTransformBase
 {
 public:
   mafMatrixPipe();
-  virtual ~mafMatrixPipe();
+  ~mafMatrixPipe() override;
 
   mafTypeMacro(mafMatrixPipe,mafTransformBase);
   
@@ -60,13 +60,13 @@ public:
   mafTimeStamp GetTimeStamp();
   
   /** Get the MTime: this is the bit of magic that makes everything work. */
-  virtual unsigned long GetMTime();
+  unsigned long GetMTime() override;
   
   /** This function returns true if given VME is accepted by this Pipe. */
   virtual bool Accept(mafVME *vme) {return true;}
   
   /** Redefined to avoid loops while updating */
-  virtual const mafMatrix &GetMatrix();
+  const mafMatrix &GetMatrix() override;
   
   /**
     Make a copy of this pipe, also copying all parameters. This is equivalent to
@@ -83,11 +83,11 @@ public:
   /** 
     Redefined to send pre update event to the VME. In the pre update event
     the VME can change pipe parameters */
-  virtual void Update();
+  void Update() override;
   
 protected:
   /** To be redefined by subclasses to override Pipe behavior */
-  virtual void InternalUpdate();
+  void InternalUpdate() override;
 
   bool          m_UpdateMatrixObserverFlag;
   bool          m_Updating;

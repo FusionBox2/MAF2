@@ -40,7 +40,7 @@ public:
   medWizardBlockVMEFindOrSelection(const char *name);
 
   /** Default destructor */
-  ~medWizardBlockVMEFindOrSelection();
+  ~medWizardBlockVMEFindOrSelection() override;
   
   /** Set The title of the selection window */
   void SetWindowTitle(const char *Title);
@@ -62,7 +62,7 @@ public:
 protected:
 
   /** Starts the execution of the block */
-  virtual void ExcutionBegin();
+  void ExcutionBegin() override;
 
   //** VME Accept function */
   static int VMEAccept(mafNode *node);

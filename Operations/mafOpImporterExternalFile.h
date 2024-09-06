@@ -34,27 +34,27 @@ class MAF_EXPORT mafOpImporterExternalFile: public mafOp
 {
 public:
   mafOpImporterExternalFile(const mafString &label = _R("ExternalFileImporter"));
- ~mafOpImporterExternalFile(); 
+ ~mafOpImporterExternalFile() override; 
 
   mafTypeMacro(mafOpImporterExternalFile, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-  bool Accept(mafNode* node) {return true;};
+  bool Accept(mafNode* node) override {return true;};
 
   /** Set the External filename to be imported. 
   This is used when the operation is executed not using user interface. */
   void SetFileName(const char *name) {m_File = _R(name);};
 
 	/** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
 	/** Execute the operation. */
   void ImportExternalFile();
 
 	/** Makes the undo for the operation. */
-  void OpUndo();
+  void OpUndo() override;
 
 
 protected:

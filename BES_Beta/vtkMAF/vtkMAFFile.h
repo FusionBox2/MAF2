@@ -59,7 +59,8 @@ protected:
 #endif // _WIN32
   }
 
-  ~vtkMAFFile() {
+  ~vtkMAFFile() override
+  {
     Close();
   }
 
@@ -203,7 +204,8 @@ protected:
 #endif // _WIN32
   }
 
-  ~vtkMAFFile2() {
+  ~vtkMAFFile2() override
+  {
     Close();
   }
 

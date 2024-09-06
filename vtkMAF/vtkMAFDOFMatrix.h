@@ -117,7 +117,7 @@ public:
   /** RTTI Macro */
   vtkTypeMacro(vtkMAFDOFMatrix,vtkObject);
   /** Print Object Information */
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
   
   /** DeepCopy the source matrix into the target. The target is the object
   invoking the DeepCopy method*/
@@ -188,7 +188,7 @@ protected:
   /** constructor */
   vtkMAFDOFMatrix();
   /** destructor */
-  ~vtkMAFDOFMatrix();
+  ~vtkMAFDOFMatrix() override;
   
   /**
        struct name :  element

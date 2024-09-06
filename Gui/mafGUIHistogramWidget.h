@@ -49,9 +49,9 @@ public:
   mafGUIHistogramWidget(wxWindow* parent, wxWindowID id = -1, const wxPoint& pos = wxDefaultPosition, 
            const wxSize& size = wxSize(400,300), long style = wxTAB_TRAVERSAL /*| wxSUNKEN_BORDER */, bool showThresholds = false);
   /** Destructor. */
-  virtual ~mafGUIHistogramWidget();
+  ~mafGUIHistogramWidget() override;
 
-  void OnEvent(mafEventBase *event);
+  void OnEvent(mafEventBase *event) override;
 
   MAF_ID_DEC(RANGE_MODIFIED);
 

@@ -55,21 +55,21 @@ public:
   of stored Items is 0. Also special VME could not support VTK dataset output.
   An event rise when the output data changes to allow attached classes to 
   update their input.*/
-  virtual vtkAlgorithmOutput *GetVTKOutputPort();
+  vtkAlgorithmOutput *GetVTKOutputPort() override;
 
   /** Function to update VTK representation of double value representing the scalar data.*/
   void UpdateVTKRepresentation();
 #endif
 
   /** Update all the output data structures (data, bounds, matrix and abs matrix).*/
-  virtual void Update();
+  void Update() override;
 
 	/** Retrieve scalar data written in a string*/
 	const char* GetScalarDataString(){return m_ScalarDataString.GetCStr();};
     
 protected:
   mafVMEOutputScalar(); // to be allocated with New()
-  virtual ~mafVMEOutputScalar(); // to be deleted with Delete()
+  ~mafVMEOutputScalar() override; // to be deleted with Delete()
 
 #ifdef MAF_USE_VTK
   vtkPolyData *m_Polydata;
@@ -77,7 +77,7 @@ protected:
 #endif
 
   mafString m_ScalarDataString;
-  mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
 private:
   mafVMEOutputScalar(const mafVMEOutputScalar&); // Not implemented

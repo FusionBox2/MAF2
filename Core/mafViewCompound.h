@@ -50,7 +50,7 @@ class MAF_EXPORT mafViewCompound: public mafView
 {
 public:
   mafViewCompound(const mafString& label = _R("View Compound"), int num_row = 1, int num_col = 2);
-  virtual ~mafViewCompound(); 
+  ~mafViewCompound() override; 
 
   mafTypeMacro(mafViewCompound, mafView);
 
@@ -72,40 +72,40 @@ public:
   Redefine this method to package the compounded view */
   virtual void PackageView() {};
 
-  virtual mafView *Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
+  mafView *Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override;
   
   /** 
   Create the plugged sub-view and call virtual method CreateGuiView() */
-  virtual void Create();
+  void Create() override;
   
   /** 
   Create the GUI on the bottom of the compounded view. */
   virtual void CreateGuiView();
-  
-  virtual void OnEvent(mafEventBase *maf_event);
+
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** 
   Add VME into plugged sub-views*/
-  virtual void VmeAdd(mafNode *node);
+  void VmeAdd(mafNode *node) override;
 
   /** 
   Remove VME into plugged sub-views*/
-  virtual void VmeRemove(mafNode *node);
-  virtual void VmeSelect(mafNode *node, bool select);
+  void VmeRemove(mafNode *node) override;
+  void VmeSelect(mafNode *node, bool select) override;
   /** 
   Show/Hide VMEs into plugged sub-views*/
-  virtual void VmeShow(mafNode *node, bool show);
-	virtual void VmeUpdateProperty(mafNode *node, bool fromTag = false)		{};
+  void VmeShow(mafNode *node, bool show) override;
+  void VmeUpdateProperty(mafNode *node, bool fromTag = false) override {};
 
-  virtual void CameraReset(mafNode *node = NULL);
-  virtual void CameraUpdate();
+  void CameraReset(mafNode *node = NULL) override;
+  void CameraUpdate() override;
 
   /** 
   return the status of the node within this view. es: NON_VISIBLE,VISIBLE_ON, ... 
   having mafViewCompound::GetNodeStatus allow mafGUICheckTree to not know about mafSceneGraph */
-  virtual int  GetNodeStatus(mafNode *vme);
+  int  GetNodeStatus(mafNode *vme) override;
 
-  virtual void OnSize(wxSizeEvent &event);
+  void OnSize(wxSizeEvent &event) override;
 
   /** IDs for the GUI */
   enum VIEWCOMPOUND_WIDGET_ID
@@ -120,34 +120,34 @@ public:
   Set the size of the windowing double slider according to the size of the view. */
   virtual void OnLayout();
 
-  virtual mafSceneGraph *GetSceneGraph();
-  virtual mafRWIBase    *GetRWI();
+  mafSceneGraph *GetSceneGraph() override;
+  mafRWIBase    *GetRWI() override;
 
   /** 
   Return a pointer to the image of all sub-views.*/
-  void GetImage(wxBitmap &bmp, int magnification = 1);
+  void GetImage(wxBitmap &bmp, int magnification = 1) override;
 
   /** 
   Find the pocked VME at button down. As argument the function needs
   the device which performed the action, and provides as result pointers
   to piked prop, vme and its behavior if it exists. */
-  virtual bool FindPokedVme(mafDevice *device,mafMatrix &point_pose,vtkProp3D *&picked_prop,mafVME *&picked_vme,mafInteractor *&picked_behavior);
+  bool FindPokedVme(mafDevice *device,mafMatrix &point_pose,vtkProp3D *&picked_prop,mafVME *&picked_vme,mafInteractor *&picked_behavior) override;
 
   /** 
   Perform a picking according to the screen position (x,y) and return true on success*/
-  virtual bool Pick(int x, int y);
+  bool Pick(int x, int y) override;
 
   /** 
   Perform a picking according to the absolute matrix given and return true on success*/
-  virtual bool Pick(mafMatrix &m);
+  bool Pick(mafMatrix &m) override;
 
   /** 
   Write into the double array the position picked during Pick method.*/
-  virtual void GetPickedPosition(double pos[3]);
+  void GetPickedPosition(double pos[3]) override;
 
   /** 
   Return the picked VME during the Pick method. Return NULL if VME is not found*/
-  virtual mafVME *GetPickedVme();
+  mafVME *GetPickedVme() override;
 
   /** 
   Return the current pipe for the specified vme (if any exist at this moment) */
@@ -187,13 +187,13 @@ public:
 
   /** 
   Print the sub-view.*/
-  virtual void Print(wxDC *dc, wxRect margins);
+  void Print(wxDC *dc, wxRect margins) override;
 
   /** Allow to link the camera of the sub-views.*/
   virtual void LinkView(bool link_camera = true);
 
   /** Called to update all components that depends on Application Options.*/
-  virtual void OptionsUpdate();
+  void OptionsUpdate() override;
 
 protected:
   /**
@@ -203,7 +203,7 @@ protected:
   the superclass enum. The last id value must be defined as "LAST_ID" to allow the 
   subclass to continue the ID enumeration from it. For appending the widgets in the
   same panel GUI, each CreateGUI() function should first call the superclass' one.*/
-  virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 
   /** Arrange sub-view into the defined layout configuration.*/
   void LayoutSubView(int width, int height);

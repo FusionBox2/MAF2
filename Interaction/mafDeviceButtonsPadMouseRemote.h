@@ -42,11 +42,11 @@ public:
   mafTypeMacro(mafDeviceButtonsPadMouseRemote, mafDeviceButtonsPadMouse); 
 
   /**  Reimplemented to manage fusion of move events. */
-  virtual void OnEvent(mafEventBase *event);
+  void OnEvent(mafEventBase *event) override;
 
 protected:
   mafDeviceButtonsPadMouseRemote();
-  virtual ~mafDeviceButtonsPadMouseRemote();
+  ~mafDeviceButtonsPadMouseRemote() override;
 
 private:
   mafDeviceButtonsPadMouseRemote(const mafDeviceButtonsPadMouseRemote&);  // Not implemented.

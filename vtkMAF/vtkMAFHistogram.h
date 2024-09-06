@@ -60,7 +60,7 @@ class VTK_vtkMAF_EXPORT vtkMAFHistogram : public vtkActor2D
   /** RTTI macro */
   vtkTypeMacro(vtkMAFHistogram, vtkActor2D);
   /** Print Object Information*/
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
   /** Function that create an instance of the object*/
   static	vtkMAFHistogram *New();
 
@@ -151,7 +151,7 @@ protected:
   /** constructor */
 	vtkMAFHistogram();
   /** destructor */
-	~vtkMAFHistogram();
+	~vtkMAFHistogram() override;
 
   /** Create the Histogram pipeline.*/
   void HistogramCreate();

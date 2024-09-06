@@ -52,34 +52,34 @@ public:
 	mafOpApplyTrajectory(const mafString& label = _R("Apply trajectory"));
 
   /** Desctructor. */
-	~mafOpApplyTrajectory(); 
+	~mafOpApplyTrajectory() override; 
 
   /** type macro for RTTI and instance creation*/
   mafTypeMacro(mafOpApplyTrajectory, mafOp);
 
   /** Copy the operation. */
-	mafOp* Copy();
+	mafOp* Copy() override;
 
   /** Return true for the vme to which the trajectories should be applied. */
-  bool Accept(mafNode* vme);
+  bool Accept(mafNode* vme) override;
 
   /** Returns true for the vme from which the trajectories should be red. (Callback function) */
   static bool AcceptInputVME(mafNode* node);
 
 	/** Builds operation's interface. */
-	void OpRun();
+	void OpRun() override;
 
   /** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
 
   /** Undo operation. */
-  void OpUndo(); 
+  void OpUndo() override; 
 
   /** Stop the operation. */
-  void OpStop(int result);
+  void OpStop(int result) override;
 
   /** Wait for events */
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Create GUI. */
   void CreateGui();

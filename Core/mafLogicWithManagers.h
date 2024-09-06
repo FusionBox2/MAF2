@@ -98,7 +98,7 @@ class MAF_EXPORT mafLogicWithManagers: public mafLogicWithGUI
 {
 public:
                mafLogicWithManagers(mafGUIMDIFrame *mdiFrame=NULL);
-	virtual     ~mafLogicWithManagers(); 
+               ~mafLogicWithManagers() override; 
 
   enum UPLOAD_FLAGS
   {
@@ -111,7 +111,7 @@ public:
   };
 
   /** */
-  virtual void OnEvent(mafEventBase *maf_event);
+               void OnEvent(mafEventBase *maf_event) override;
 
   /**  Plug a new view */
 	virtual void Plug(mafView* view, bool visibleInMenu = true);
@@ -124,13 +124,13 @@ public:
   /** Configure the application.
   At this point are plugged all the managers, the side-bar docking panel. 
   Are plugged also all the setting to the dialogs interface. */
-  virtual void Configure();
+               void Configure() override;
 
   /** Program Initialization */
-	virtual void Init(int argc, char **argv);
+               void Init(int argc, char **argv) override;
 
   /** Fill the View and operation menu's and set the application stamp to the VMEManager.*/
-  virtual void Show();
+               void Show() override;
 
   /** Return the applications' user.*/
   mafUser *GetUser();
@@ -168,7 +168,7 @@ protected:
   // Description:
   // Method to update the time bounds when 
   // the tree representation change by adding or deleting a vme.
-  virtual void UpdateTimeBounds();
+               void UpdateTimeBounds() override;
 
   // Description:
   // Set the time to update the time bar.
@@ -176,10 +176,10 @@ protected:
 //---------------------------------------------------------
   
   /** Redefined to add View,Op,Import,Export menu */
-  virtual void CreateMenu();
+               void CreateMenu() override;
 
   /** Redefined to add Print buttons */
-  virtual void CreateToolbar();
+               void CreateToolbar() override;
 
   // EVENT HANDLERS
 
@@ -206,7 +206,7 @@ protected:
   /** FILE CLOSE evt. handler */
   virtual bool OnFileClose(bool force = false);
   /** Called on Quit event. */
-  virtual void OnQuit();
+               void OnQuit() override;
 
   /** Called when a user drag a non msf or zmsf file over the application.
   Example: dragging a VTK file over the application cause the application to inport it through the importer.*/

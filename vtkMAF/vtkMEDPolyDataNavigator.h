@@ -62,7 +62,7 @@ class VTK_vtkMAF_EXPORT vtkMEDPolyDataNavigator : public vtkObject
 public:
   static vtkMEDPolyDataNavigator *New();
   vtkTypeMacro(vtkMEDPolyDataNavigator, vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent) {} ;
+  void PrintSelf(ostream& os, vtkIndent indent) override {} ;
 
 
 
@@ -573,7 +573,7 @@ public:
 
 protected:
   vtkMEDPolyDataNavigator() ; ///< constructor
-  ~vtkMEDPolyDataNavigator() ; ///< deconstructor
+  ~vtkMEDPolyDataNavigator() override; ///< deconstructor
 
   /// Find the subcells of a cell which is transected by a list of point pairs. \n
   /// Subcells returned as a vector of vtkIdList pointers. (Must be pre-allocated). \n

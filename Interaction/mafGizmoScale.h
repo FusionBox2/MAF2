@@ -68,11 +68,11 @@ class MAF_EXPORT mafGizmoScale: public mafGizmoInterface
 {
 public:
   mafGizmoScale(mafVME *input, mafBaseEventHandler* listener = NULL , bool buildGUI = true);
-  virtual ~mafGizmoScale(); 
+  ~mafGizmoScale() override; 
 
   /** 
   Set input vme for the gizmo*/
-  void SetInput(mafVME *vme); 
+  void SetInput(mafVME *vme) override; 
 
   /** Superclass override */
   void SetRenderWindowHeightPercentage(double percentage);
@@ -89,7 +89,7 @@ public:
 
   /**
   Events handling*/        
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
  
   //----------------------------------------------------------------------------
   // show 
@@ -97,14 +97,14 @@ public:
   
   /**
   Show the gizmo*/
-  void Show(bool show);  
+  void Show(bool show) override;  
 	void Show(bool showX, bool showY, bool showZ, bool showIso);
 
   /**
   Set the gizmo pose*/
   void SetAbsPose(mafMatrix *absPose, mafTimeStamp ts = -1);
 
-  mafMatrix *GetAbsPose();
+  mafMatrix *GetAbsPose() override;
   
   //----------------------------------------------------------------------------
   // RefSys
@@ -117,17 +117,17 @@ public:
   //----------------------------------------------------------------------------
   // Gizmo Gui
   //----------------------------------------------------------------------------
-  mafGUI *GetGui() {return (m_GuiGizmoScale->GetGui());};
+  mafGUI *GetGui() override {return (m_GuiGizmoScale->GetGui());};
 
 protected:
 
   mafGUIGizmoScale *m_GuiGizmoScale;
 
   /** Gizmo components events handling */
-  void OnEventGizmoGui(mafEventBase *maf_event);
+  void OnEventGizmoGui(mafEventBase *maf_event) override;
 
   /** Gizmo components events handling */
-  void OnEventGizmoComponents(mafEventBase *maf_event);
+  void OnEventGizmoComponents(mafEventBase *maf_event) override;
 
   /** 
   gizmo components enum*/

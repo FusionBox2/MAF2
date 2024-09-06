@@ -76,7 +76,7 @@ public:
 protected:
 
   /** Execute this filter */
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   int Algorithm;                            //> fill holes or remove islands
   unsigned int EdgeSize;                    //> maximum holes/islands size
@@ -89,7 +89,7 @@ private:
   vtkMEDImageFillHolesRemoveIslands();
 
   /** Default dtor */
-  ~vtkMEDImageFillHolesRemoveIslands();
+  ~vtkMEDImageFillHolesRemoveIslands() override;
 };
 
 #endif

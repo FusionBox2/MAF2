@@ -50,24 +50,24 @@ public:
   medViewSliceNotInterpolatedCompound(const mafString& label = _R("View Slice not interpolated"), bool show_ruler = false);
 
   /** dtor */
-  ~medViewSliceNotInterpolatedCompound(); 
+  ~medViewSliceNotInterpolatedCompound() override; 
 
   /** Create visual pipe and initialize them */
-  virtual void PackageView();
+  void PackageView() override;
 
   /** Create the GUI on the bottom of the compounded view. */
-  virtual void CreateGuiView(){Superclass::CreateGuiView();};
+  void CreateGuiView() override {Superclass::CreateGuiView();};
 
   /** Function that clones instance of the object. */
-  virtual mafView* Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
+  mafView* Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override;
 
   /** Create VME visual pipe */
-  virtual void VmeShow(mafNode *vme, bool show);
+  void VmeShow(mafNode *vme, bool show) override;
 
 protected:
 
   /** Create view Gui */
-  mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
   /** Set the axis along slice */
   void SetSliceAxis();

@@ -63,20 +63,20 @@ protected:
 
 public:	
   medPipeVectorFieldSlice();
-  virtual ~medPipeVectorFieldSlice();
+  ~medPipeVectorFieldSlice() override;
 
 public:  
   /** Processes events coming from GUI */
-  /*virtual*/ void OnEvent(mafEventBase *maf_event);
+  /*virtual*/ void OnEvent(mafEventBase *maf_event) override;
 
 protected:
-  /*virtual*/ mafGUI  *CreateGui();
+  /*virtual*/ mafGUI  *CreateGui() override;
 
   /** Constructs VTK pipeline. */
-  virtual void CreateVTKPipe();
+  void CreateVTKPipe() override;
 
   /** Updates VTK pipeline (setting radius, etc.). */
-  virtual void UpdateVTKPipe();  
+  void UpdateVTKPipe() override;  
 
   /** Updates the range of slice position.
   If the current slice position is outside the range, it is changed. 

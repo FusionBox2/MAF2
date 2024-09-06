@@ -25,7 +25,7 @@ class VTK_vtkMAF_EXPORT vtkMEDRegionGrowingLocalGlobalThreshold : public vtkAlgo
 {
 public:
   vtkTypeMacro(vtkMEDRegionGrowingLocalGlobalThreshold, vtkAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Creates an instance of vtkMEDRegionGrowingLocalGlobalThreshold with the following
@@ -50,7 +50,7 @@ public:
   void SetInput(vtkImageData *UserSetInput) {this->Input = UserSetInput;};  
 
   /** Process the algorithm */
-  void Update();
+  void Update() override;
 
   /** Get the output data */
   vtkImageData* GetOutput(){return Output;};
@@ -60,7 +60,7 @@ protected:
   vtkMEDRegionGrowingLocalGlobalThreshold();
 
   /** Destructor */
-  ~vtkMEDRegionGrowingLocalGlobalThreshold();
+  ~vtkMEDRegionGrowingLocalGlobalThreshold() override;
 
   double LowerLabel;
   double UpperLabel;

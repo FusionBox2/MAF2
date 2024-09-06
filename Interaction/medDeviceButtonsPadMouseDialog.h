@@ -57,6 +57,6 @@ protected:
   /** constructor. */
   medDeviceButtonsPadMouseDialog();
   /** destructor. */
-  virtual ~medDeviceButtonsPadMouseDialog();
+  ~medDeviceButtonsPadMouseDialog() override;
 };
 #endif

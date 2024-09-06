@@ -36,14 +36,14 @@ public:
   mafTypeMacro(mafInteractor6DOFCameraMove,mafInteractor6DOF);
 
   /** Start the interaction with the selected object */
-  virtual int StartInteraction(mafDeviceButtonsPadTracker *tracker,mafMatrix *pose=NULL);
+  int StartInteraction(mafDeviceButtonsPadTracker *tracker,mafMatrix *pose=NULL) override;
 
   /**  Process events coming from tracker */
-  virtual void OnEvent(mafEventBase *event);
+  void OnEvent(mafEventBase *event) override;
 
 protected:
   mafInteractor6DOFCameraMove();
-  virtual ~mafInteractor6DOFCameraMove();
+  ~mafInteractor6DOFCameraMove() override;
 
   virtual void Update();
 

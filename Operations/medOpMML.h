@@ -69,14 +69,14 @@ public:
   void Update();
   bool SetUpWidget();
   medOpMML(const mafString& label = _R(""));
-  virtual ~medOpMML(); 
-  void   OnEvent(mafEventBase *e);
-  mafOp* Copy();
+  ~medOpMML() override; 
+  void   OnEvent(mafEventBase *e) override;
+  mafOp* Copy() override;
 
-  bool Accept(mafNode* vme);
-  void OpRun();
-  void OpDo();
-  void OpUndo();
+  bool Accept(mafNode* vme) override;
+  void OpRun() override;
+  void OpDo() override;
+  void OpUndo() override;
 
 protected:
 
@@ -124,7 +124,7 @@ protected:
   //
   medOpMMLContourWidget *m_Widget;  // interactive contour widget
 
-  void    OpStop(int result);
+  void    OpStop(int result) override;
 
   void	ResetOperation();
   void	OnRegistrationOK();

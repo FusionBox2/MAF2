@@ -38,7 +38,7 @@ public:
   /** constructor.  set CloseButton to show the close button */
   mafGUINamedPanel (wxWindow* parent,wxWindowID id = -1,bool CloseButton = false,bool HideTitle = false); 
   /** destructor. */
-  virtual ~mafGUINamedPanel();
+  ~mafGUINamedPanel() override;
   
   /** Add a widget to the panel. */
   void Add(wxWindow* window,int option = 0, int flag = wxEXPAND, int border = 0)  {window->Reparent(this); m_Sizer->Add(window,option,flag,border);};

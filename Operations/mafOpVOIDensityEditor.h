@@ -43,25 +43,25 @@ class MAF_EXPORT mafOpVOIDensityEditor: public mafOp
 {
 public:
 	mafOpVOIDensityEditor(const mafString& label = _R("VOIDensityEditor"));
-	~mafOpVOIDensityEditor(); 
-	virtual void OnEvent(mafEventBase *maf_event);
+	~mafOpVOIDensityEditor() override;
+	void OnEvent(mafEventBase *maf_event) override;
   
   mafTypeMacro(mafOpVOIDensityEditor, mafOp);
 
   /** return a copy of itself, this needs to put the operation into the undo stack. */
-	mafOp* Copy();
+	mafOp* Copy() override;
 	
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode* Node);
+	bool Accept(mafNode* Node) override;
 
 	/** Set the input vme for the operation. */
-	void OpRun();
+	void OpRun() override;
 
   /** Execute the editing of the input voulme density region.*/
-  void OpDo();
+  void OpDo() override;
 
 	/** Retrieve the previous state of the input VME. */
-	void OpUndo();
+	void OpUndo() override;
 
 	/**	Set surface of input in test mode*/
 	void SetSurface(mafNode *Surface){m_Surface=Surface;};

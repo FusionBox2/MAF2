@@ -68,32 +68,32 @@ public:
   };
 
   /** Return the suggested pipe-typename for the visualization of this vme */
-  /*virtual*/ mafString GetVisualPipe() {return mafString(_R("mafPipeBox"));}
+  /*virtual*/ mafString GetVisualPipe() override {return mafString(_R("mafPipeBox"));}
 
   /** Precess events coming from other objects */ 
-  /*virtual*/ void OnEvent(mafEventBase *maf_event);
+  /*virtual*/ void OnEvent(mafEventBase *maf_event) override;
 
   /** Return pointer to material attribute. */
   mmaVolumeMaterial *GetMaterial();
 
   /** Copy the contents of another medVMESegmentationVolume into this one. */
-  /*virtual*/ int DeepCopy(mafNode *a);
+  /*virtual*/ int DeepCopy(mafNode *a) override;
 
   /** Compare with another medVMESegmentationVolume. */
-  /*virtual*/ bool Equals(mafVME *vme);
+  /*virtual*/ bool Equals(mafVME *vme) override;
 
   /** Set the pose matrix for the Prober. */
-  void SetMatrix(const mafMatrix &mat);
+  void SetMatrix(const mafMatrix &mat) override;
 
   /** Clear the parameter 'kframes' because medVMESegmentationVolume has no timestamp. */
-  void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes);
+  void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes) override;
 
   /** return always false since (currently) the slicer is not an animated VME (position 
   is the same for all timestamps). */
-  /*virtual*/ bool IsAnimated();
+  /*virtual*/ bool IsAnimated() override;
 
   /** Return true if the data associated with the VME is present and updated at the current time.*/
-  /*virtual*/ bool IsDataAvailable();
+  /*virtual*/ bool IsDataAvailable() override;
 
   /** return icon */
   static char** GetIcon();
@@ -207,7 +207,7 @@ public:
   int GetRegionGrowingSliceRange(int &startSlice, int &endSlice);
 
   /** return the right type of output */  
-  /*virtual*/ mafVMEOutput *GetOutput();
+  /*virtual*/ mafVMEOutput *GetOutput() override;
 
   /** Return true if node is of type mafVMEVolume. */
   static bool VolumeAccept(mafNode *node) {return(node != NULL && node->IsA("mafVMEVolume"));}
@@ -216,19 +216,19 @@ protected:
   /** constructor. */
   medVMESegmentationVolume();
   /** destructor. */
-  virtual ~medVMESegmentationVolume(); 
+  ~medVMESegmentationVolume() override; 
 
   /** Internally used to create a new instance of the GUI.*/
-  virtual mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
   /** used to initialize and create the material attribute if not yet present */
-  /*virtual*/ int InternalInitialize();
+  /*virtual*/ int InternalInitialize() override;
 
   void InternalStore(mafStorageElementBuilder& parent) override;
   void InternalRestore(const mafStorageElement& node) override;
 
   /** called to prepare the update of the output */
-  /*virtual*/ void InternalPreUpdate();
+  /*virtual*/ void InternalPreUpdate() override;
 
   /** Return the segmentation volume attribute */
   medAttributeSegmentationVolume *GetVolumeAttribute();

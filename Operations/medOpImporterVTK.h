@@ -38,17 +38,17 @@ public:
   /** constructor */
   medOpImporterVTK(const mafString& label = _R("medVTKImporter"));
   /** destructor */
-  ~medOpImporterVTK(); 
+  ~medOpImporterVTK() override; 
 
   /** RTTI macro*/
   mafTypeMacro(medOpImporterVTK, mafOpImporterVTK);
 
   /** clone the current object */
-  mafOp* Copy();
+  mafOp* Copy() override;
 
 
   /** Import vtk data. */
-  virtual int ImportVTK();
+  int ImportVTK() override;
 
 protected:
 

@@ -59,7 +59,7 @@ class VTK_vtkMAF_EXPORT vtkMAFRulerActor2D : public vtkActor2D
 {
  public:
   vtkTypeMacro(vtkMAFRulerActor2D,vtkActor2D);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
   static	vtkMAFRulerActor2D *New();
 
 	void SetColor(double r,double g,double b);
@@ -71,10 +71,10 @@ class VTK_vtkMAF_EXPORT vtkMAFRulerActor2D : public vtkActor2D
   void SetScaleFactor(double factor);
   double  GetScaleFactor() {return ScaleFactor;};
 
-  int	 RenderOverlay(vtkViewport *viewport);
-  int	 RenderOpaqueGeometry(vtkViewport *viewport);      
-  int	 RenderTranslucentPolygonalGeometry(vtkViewport*) { return 0; }
-  int	 HasTranslucentPolygonalGeometry() { return 0; }
+  int	 RenderOverlay(vtkViewport *viewport) override;
+  int	 RenderOpaqueGeometry(vtkViewport *viewport) override;      
+  int	 RenderTranslucentPolygonalGeometry(vtkViewport*) override { return 0; }
+  int	 HasTranslucentPolygonalGeometry() override { return 0; }
   void AdjustClippingRange(vtkViewport *viewport)        {};
 
   void UseGlobalAxes(bool globalAxes) {GlobalAxes = globalAxes; Modified();};
@@ -96,7 +96,7 @@ class VTK_vtkMAF_EXPORT vtkMAFRulerActor2D : public vtkActor2D
 	}
 protected:
 										vtkMAFRulerActor2D();
-									 ~vtkMAFRulerActor2D();
+									 ~vtkMAFRulerActor2D() override;
 
 					 void			RulerCreate();
            void			RulerUpdate(vtkCamera *camera, vtkRenderer *ren);

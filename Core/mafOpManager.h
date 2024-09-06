@@ -47,9 +47,9 @@ class MAF_EXPORT mafOpManager: public mafBaseEventHandler, public mafEventSender
 {
 public:
 	         mafOpManager();
-	virtual ~mafOpManager(); 
+	         ~mafOpManager() override; 
   virtual void SetRemoteListener(mafBaseEventHandler *Listener) {m_RemoteListener = Listener;};
-	virtual void OnEvent(mafEventBase *maf_event);
+	         void OnEvent(mafEventBase *maf_event) override;
 
   /** Event IDs used in collaborative modality.*/
   MAF_ID_DEC(OPERATION_INTERFACE_EVENT)

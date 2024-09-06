@@ -62,7 +62,7 @@ public:
   
   mafGizmoPathRuler(mafVME *input, mafBaseEventHandler* listener = NULL, int ticksNumber = 1, \
       int originTickId = 0, double ticksHeigth = 50, double ticksDistance = 20, bool enableShorterTicks = true);
-  virtual ~mafGizmoPathRuler(); 
+  ~mafGizmoPathRuler() override; 
 
   /** Set position of the origin tick along constraint polyline; other ticks will follow*/
   void SetCurvilinearAbscissa(double s);
@@ -100,28 +100,28 @@ public:
 
   /** This method is used to change the input: this VME is used only to reparent the gizmo
   to the root*/
-  void SetInput(mafVME *vme);
+  void SetInput(mafVME *vme) override;
 
   /**
   Events handling*/        
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /**
   Show the gizmo*/
-  void Show(bool show);
+  void Show(bool show) override;
 
   /** return the gizmo object*/
   mafVMEGizmo *GetOutput(int tickId) {return m_GizmoPathVector[tickId]->GetOutput();}; 
 
   /**
   Set the gizmo pose; not yet implemented!!!*/
-  void SetAbsPose(mafMatrix *absPose);
+  void SetAbsPose(mafMatrix *absPose) override;
 
   /** get the abs pose for each tick */
   mafMatrix *GetAbsPose(int tickId);
 
   /** not yet available... */
-  mafGUI *GetGui() {return NULL;};
+  mafGUI *GetGui() override {return NULL;};
 
   void SetGizmoLabelsVisibility(bool value);
 
@@ -142,10 +142,10 @@ protected:
   bool m_EnableShorterTicks;
 
   /** Gizmo gui events handling; not yet implemented... */
-  void OnEventGizmoGui(mafEventBase *maf_event);
+  void OnEventGizmoGui(mafEventBase *maf_event) override;
 
   /** Gizmo components events handling */
-  void OnEventGizmoComponents(mafEventBase *maf_event);
+  void OnEventGizmoComponents(mafEventBase *maf_event) override;
 	
   std::vector<mafGizmoPath *> m_GizmoPathVector;
 

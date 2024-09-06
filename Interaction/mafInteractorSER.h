@@ -90,7 +90,7 @@ protected:
   virtual void InternalRestore(const mafStorageElement& node);
 
   mafInteractorSER();
-  virtual ~mafInteractorSER();
+  ~mafInteractorSER() override;
 
   mmuActionsMap  m_Actions; ///< takes a list of the active actions
 

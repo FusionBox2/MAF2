@@ -72,7 +72,7 @@ protected:
     /** constructor */
     vtkMAFContourVolumeMapperGPU();
     /** destructor */
-    ~vtkMAFContourVolumeMapperGPU();
+    ~vtkMAFContourVolumeMapperGPU() override;
 
 private:
     vtkMAFContourVolumeMapperGPU(const vtkMAFContourVolumeMapperGPU&) = delete;

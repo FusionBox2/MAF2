@@ -36,20 +36,20 @@ public:
   mafTypeMacro(mafInteractorExtractIsosurface,mafInteractorCameraMove);
 
   /** Start the interaction with the selected object */
-  virtual int StartInteraction(mafDeviceButtonsPadMouse *mouse);
+  int StartInteraction(mafDeviceButtonsPadMouse *mouse) override;
 
   /** redefined to set the picking iso-value flag */
-  virtual void OnMouseMove();
+  void OnMouseMove() override;
 
   /** redefined to set the picking iso-value flag */
-  virtual void OnLeftButtonDown(mafEventInteraction *e);
+  void OnLeftButtonDown(mafEventInteraction *e) override;
 
   /** redefined to set the picking iso-value flag and if it is true, call PickIsoValue() */
-  virtual void OnButtonUp(mafEventInteraction *e);
+  void OnButtonUp(mafEventInteraction *e) override;
 
 protected:
   mafInteractorExtractIsosurface();
-  virtual ~mafInteractorExtractIsosurface();
+  ~mafInteractorExtractIsosurface() override;
   
   /** send the picked point to the listener */
   void PickIsoValue(mafDevice *device);

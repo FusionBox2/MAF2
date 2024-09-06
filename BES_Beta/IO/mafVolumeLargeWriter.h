@@ -40,7 +40,7 @@ protected:
 
 public:
 	mafVolumeLargeWriter();
-	virtual ~mafVolumeLargeWriter();
+	~mafVolumeLargeWriter() override;
 
 public:
 	//Gets the associated brick file

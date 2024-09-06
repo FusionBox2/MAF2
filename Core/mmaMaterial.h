@@ -40,7 +40,7 @@ class MAF_EXPORT mmaMaterial : public mafAttribute
 {
 public:
 	         mmaMaterial();
-  virtual ~mmaMaterial();
+	         ~mmaMaterial() override;
 
   mafTypeMacro(mmaMaterial, mafAttribute);
   
@@ -62,10 +62,10 @@ public:
   wxBitmap *MakeIcon();
   
   /** print a dump of this object */
-  virtual void Print(std::ostream& os, const int tabs=0) const;
+	         void Print(std::ostream& os, const int tabs=0) const override;
 
   /** Copy the contents of another Meter attribute into this one. */
-  virtual void DeepCopy(const mafAttribute *a);
+	         void DeepCopy(const mafAttribute *a) override;
 
   /** Compare with another Meter attribute. */
   virtual bool Equals(const mafAttribute *a);
@@ -120,7 +120,7 @@ protected:
   vtkAlgorithmOutput* m_TexturePort;
   int           m_TextureID;
   mafString m_VmeImageName;
-  virtual void InternalStore(mafStorageElementBuilder& parent);
-  virtual void InternalRestore(const mafStorageElement& node);
+	         void InternalStore(mafStorageElementBuilder& parent) override;
+	         void InternalRestore(const mafStorageElement& node) override;
 };
 #endif

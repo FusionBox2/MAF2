@@ -49,7 +49,7 @@ public:
   /** constructor.*/
 	medGUIDicomSettings(mafBaseEventHandler *Listener, const mafString &label = _L("Dicom"));
   /** destructor.*/
-	~medGUIDicomSettings(); 
+	~medGUIDicomSettings() override; 
 
   /** GUI IDs*/
 	enum DICOM_SETTINGS_WIDGET_ID
@@ -138,7 +138,7 @@ public:
   };
 
 	/** Answer to the messages coming from interface. */
-	void OnEvent(mafEventBase *maf_event);
+	void OnEvent(mafEventBase *maf_event) override;
 
   /** Retrieve Dictionary path name. */
 	mafString GetDictionary(){return _R("");} // Left for backward compatibility. Always return the empty string
@@ -207,10 +207,10 @@ public:
 
 protected:
 	/** Create the GUI for the setting panel.*/
-	void CreateGui();
+	void CreateGui() override;
 
 	/** Initialize the application settings.*/
-	void InitializeSettings();
+	void InitializeSettings() override;
 
 	/** Used to enable/disable items according to the current widgets state.*/
 	void EnableItems();

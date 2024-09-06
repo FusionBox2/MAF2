@@ -38,15 +38,15 @@ class MED_OPERATION_EXPORT medOpExporterAnalogWS : public mafOp
 public:
   mafTypeMacro(medOpExporterAnalogWS, mafOp)
 	medOpExporterAnalogWS(const mafString& label = _R("Analog Exporter"));
-	~medOpExporterAnalogWS(); 
-	mafOp* Copy();
+	~medOpExporterAnalogWS() override; 
+	mafOp* Copy() override;
 
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode* node);
+	bool Accept(mafNode* node) override;
 
 	/** Builds operation's interface. */
-	void OpRun();
+	void OpRun() override;
 
   /** Read the file.
   File format:

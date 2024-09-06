@@ -67,7 +67,7 @@ public:
   void RemoveLabelTag(int component);
 
   /** Return true if the data associated with the VME is present and updated at the current time.*/
-  /*virtual*/ bool IsDataAvailable();
+  /*virtual*/ bool IsDataAvailable() override;
 
   /** Fill the vector of label. */
   void FillLabelVector(wxString name, bool checked = TRUE);
@@ -78,26 +78,26 @@ public:
    /** Remove an item of the vector of label. */
   void RemoveItemLabelVector(int n);
 
-  /** Precess events coming from other objects */ 
-  virtual void OnEvent(mafEventBase *maf_event);
+  /** Precess events coming from other objects */
+	void OnEvent(mafEventBase *maf_event) override;
 
   /** Copy the contents of another VMELabeled into this one. */
-  int DeepCopy(mafNode *a);
+  int DeepCopy(mafNode *a) override;
 
   /** Compare with another VMELabeled. */
-  bool Equals(mafVME *vme);
+  bool Equals(mafVME *vme) override;
 
   /**
   Set the Pose matrix of the VME. This function modifies the MatrixVector. You can
   set or get the Pose for a specified time. When setting, if the time does not exist
   the MatrixVector creates a new KeyMatrix on the fly. When getting, the matrix vector
   interpolates on the fly according to the matrix interpolator.*/
-  virtual void SetMatrix(const mafMatrix &mat);
+	void SetMatrix(const mafMatrix &mat) override;
 
   /**
   Return the list of timestamps for this VME. Timestamps list is 
   obtained merging timestamps for matrixes and VME items*/
-  virtual void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes);
+	void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes) override;
 
   /** Update the VME with the scalar values of the labels. */
   virtual void GenerateLabeledVolume();
@@ -115,7 +115,7 @@ public:
   static char** GetIcon();
 
   /** Return the suggested pipe-typename for the visualization of this vme */
-  virtual mafString GetVisualPipe() {return mafString(_R("mafPipeBox"));}
+	mafString GetVisualPipe() override {return mafString(_R("mafPipeBox"));}
 
 protected:
   //----------------------------------------------------------------------------
@@ -144,13 +144,13 @@ protected:
   };
 
   medVMELabeledVolume();
-  virtual ~medVMELabeledVolume(); 
+	~medVMELabeledVolume() override; 
 
   void InternalStore(mafStorageElementBuilder& parent) override;
   void InternalRestore(const mafStorageElement& node) override;
 
   /** Internally used to create a new instance of the GUI.*/
-  virtual mafGUI *CreateGui();
+	mafGUI *CreateGui() override;
   
   wxSlider        *m_MinSlider;
   wxSlider        *m_MaxSlider;
@@ -224,7 +224,7 @@ protected:
   void UpdateLabel();
 
   /** update the output data structure */
-  void InternalPreUpdate();
+  void InternalPreUpdate() override;
 
 
   /** Copy the scalars of the VME linked. */

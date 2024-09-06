@@ -57,7 +57,7 @@ class VTK_vtkMAF_EXPORT vtkMAFSimpleRulerActor2D : public vtkActor2D
 {
  public:
   vtkTypeMacro(vtkMAFSimpleRulerActor2D,vtkActor2D);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
   static	vtkMAFSimpleRulerActor2D *New();
 
 	void SetColor(double r,double g,double b);
@@ -91,7 +91,7 @@ class VTK_vtkMAF_EXPORT vtkMAFSimpleRulerActor2D : public vtkActor2D
 
 protected:
 										vtkMAFSimpleRulerActor2D();
-									 ~vtkMAFSimpleRulerActor2D();
+									 ~vtkMAFSimpleRulerActor2D() override;
 
 					 void			RulerCreate();
            void			RulerUpdate(vtkCamera *camera, vtkRenderer *ren);

@@ -36,14 +36,14 @@ class MED_OPERATION_EXPORT medOpExporterLandmarkWS : public mafOp
 {
 public:
 	medOpExporterLandmarkWS(const mafString &label = _R("Trajectories Exporter"));
-	~medOpExporterLandmarkWS(); 
-	mafOp* Copy();
+	~medOpExporterLandmarkWS() override; 
+	mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode* node);
+	bool Accept(mafNode* node) override;
 
 	/** Builds operation's interface. */
-	void OpRun();
+	void OpRun() override;
 
   /** Write the file.
   File format:

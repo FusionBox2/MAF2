@@ -37,7 +37,7 @@ public:
 	}
 
 	//callback routine called by VTK, translate events into MAF events
-	virtual void Execute(vtkObject* caller, unsigned long eventId, void* callData);
+  void Execute(vtkObject* caller, unsigned long eventId, void* callData) override;
   
   virtual const char *GetClassName() const {return "vtkMAFLargeDataSetCallback";};
 
@@ -46,7 +46,8 @@ protected:
 	vtkMAFLargeDataSetCallback() {
 	}
 
-	~vtkMAFLargeDataSetCallback() {
+	~vtkMAFLargeDataSetCallback() override
+	{
 		
 	}
 };

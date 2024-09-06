@@ -36,24 +36,24 @@ class MAF_EXPORT mafViewHTML: public mafView
 {
 public:
 	          mafViewHTML(const mafString& label = _R("vtkViewHTML"), int camera_position = CAMERA_PERSPECTIVE, bool show_axes = true, bool show_grid = false, int stereo = 0);
-	virtual	 ~mafViewHTML();
+	          ~mafViewHTML() override;
 
   mafTypeMacro(mafViewHTML, mafView);
 
-	mafView				*Copy(mafBaseEventHandler *Listener = NULL, bool lightCopyEnabled = false);
-  void           Create();
-	mafSceneGraph *GetSceneGraph();
+	mafView				*Copy(mafBaseEventHandler *Listener = NULL, bool lightCopyEnabled = false) override;
+  void           Create() override;
+	mafSceneGraph *GetSceneGraph() override;
   mafRWIBase    *GetDefaultRWI();
 
-  void VmeAdd   (mafNode *vme);
-	void VmeRemove(mafNode *vme);
-	void VmeSelect(mafNode *vme, bool select);
-	void VmeShow  (mafNode *vme, bool show);
-	void VmeUpdateProperty(mafNode*n, bool fromTag = false) 	{};
-  void VmeCreatePipe(mafNode *vme);
-  void VmeDeletePipe(mafNode *vme)                           {};
+  void VmeAdd   (mafNode *vme) override;
+	void VmeRemove(mafNode *vme) override;
+	void VmeSelect(mafNode *vme, bool select) override;
+	void VmeShow  (mafNode *vme, bool show) override;
+	void VmeUpdateProperty(mafNode*n, bool fromTag = false) override {};
+  void VmeCreatePipe(mafNode *vme) override;
+  void VmeDeletePipe(mafNode *vme) override {};
 
-	void OnEvent(mafEventBase *maf_event);
+	void OnEvent(mafEventBase *maf_event) override;
 
     /** IDs for the GUI */
   enum VIEW_HTML_WIDGET_ID
@@ -73,7 +73,7 @@ protected:
   void  OnForward();
   void  OnBack();
   
-	mafGUI *CreateGui();
+	mafGUI *CreateGui() override;
 
   wxHtmlWindow *m_Html;
   mafString m_Url;

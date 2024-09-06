@@ -78,7 +78,7 @@ public:
 protected:
 
   /** Execute this filter */
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
 private:
 
@@ -86,7 +86,7 @@ private:
   vtkMEDRayCastCleaner();
 
   /** Default destructor */
-  ~vtkMEDRayCastCleaner();
+  ~vtkMEDRayCastCleaner() override;
 
   /** Return 0 if no bone voxel is present on point neighbors
   If bones are present in voxel neighbors return a value determining 

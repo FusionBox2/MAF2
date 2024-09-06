@@ -48,10 +48,10 @@ class mafGUISettingsTimeBar;
 class mafGUITimeBar: public mafGUIPanel , public mafBaseEventHandler, public mafEventSender
 {
 public:
-  mafGUITimeBar(wxWindow* parent,wxWindowID id = -1,bool CloseButton = false); 
-  virtual ~mafGUITimeBar();
+  mafGUITimeBar(wxWindow* parent,wxWindowID id = -1,bool CloseButton = false);
+  ~mafGUITimeBar() override;
 
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
   
 	/** Set the time bounds for the time bar.
   Time bar manage time expressed in milliseconds.*/
@@ -92,7 +92,7 @@ protected:
 	void OnTimer(wxTimerEvent &event);
   
 	/** Update the time bar interface. */
-	void Update();
+	void Update() override;
 
   /** Calculate the Time step according to the number of intervals.*/
   void UpdateTimeStep();

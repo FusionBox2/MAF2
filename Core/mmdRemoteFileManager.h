@@ -70,20 +70,20 @@ public:
   void EnableAuthentication(bool enable);
 
   /** process events sent to the device */
-  virtual void OnEvent(mafEventBase *event);
+  void OnEvent(mafEventBase *event) override;
 
 protected:
   mmdRemoteFileManager();
-  virtual ~mmdRemoteFileManager();
+  ~mmdRemoteFileManager() override;
 
   /** Show messages when errors comes up.*/
   void ErrorManager(int err_num);
 
   /** start the remote file manager thread. */
-  virtual int InternalInitialize();
+  int InternalInitialize() override;
   
   /** stop the remote file manager thread. */
-  virtual void InternalShutdown();
+  void InternalShutdown() override;
 
   bool m_EnableCertificateAuthentication;
 

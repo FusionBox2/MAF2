@@ -35,10 +35,10 @@ protected:
   /** object constructor */
   vtkWeightedLandmarkTransform();
   /** object destructor */
-  ~vtkWeightedLandmarkTransform();
+  ~vtkWeightedLandmarkTransform() override;
 
   /** Update the matrix from the quaternion using the vector of weights.*/  
-  void InternalUpdate();  
+  void InternalUpdate() override;  
 
   /** vector of weights.*/
   double *Weight;

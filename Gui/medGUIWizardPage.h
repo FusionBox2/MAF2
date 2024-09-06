@@ -54,9 +54,9 @@ public:
   /** constructor. */
 	medGUIWizardPage (medGUIWizard *wizardParent,long style = medUSEGUI | medUSERWI,wxString label="",bool plugCentralGui = true,bool plugLeftGui = true,bool plugRightGui = true);
   /** destructor. */
-	virtual ~medGUIWizardPage ();
+  ~medGUIWizardPage () override;
   /** Precess events coming from other objects. */
-	void OnEvent(mafEventBase *maf_event);
+	void OnEvent(mafEventBase *maf_event) override;
 
   /** Add in wizard gui, another gui in lower left position. */
 	void AddGuiLowerLeft(mafGUI *gui);

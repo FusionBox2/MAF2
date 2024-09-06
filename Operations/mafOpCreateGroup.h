@@ -32,15 +32,15 @@ class MAF_EXPORT mafOpCreateGroup: public mafOp
 {
 public:
   mafOpCreateGroup(const mafString& label = _R("CreateGroup"));
-  ~mafOpCreateGroup(); 
+  ~mafOpCreateGroup() override; 
 
   mafTypeMacro(mafOpCreateGroup, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
-  bool Accept(mafNode *node);
-  void OpRun();
-  void OpDo();
+  bool Accept(mafNode *node) override;
+  void OpRun() override;
+  void OpDo() override;
 
 protected: 
   mafVMEGroup *m_Group;

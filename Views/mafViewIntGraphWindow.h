@@ -76,7 +76,7 @@ class mafViewIntGraphWindow: public wxWindow, public mafBaseEventHandler, public
   DECLARE_DYNAMIC_CLASS(mafViewIntGraphWindow)
 public:
   mafViewIntGraphWindow(const wxString& label = "", mafBaseEventHandler *listener = NULL);
-  ~mafViewIntGraphWindow(void);
+  ~mafViewIntGraphWindow(void) override;
 
   int            &GetRoughGrid(void)   {return m_RoughGrid;}
   int            &GetPreciseGrid(void) {return m_PreciseGrid;}
@@ -86,12 +86,12 @@ public:
   void           RemGraphData(const mafGraphData *pGraphData);
   const mafGraphData *GetXParam(){return m_XGraph;}
   void           SetXParam(const mafGraphData *pXGraph){m_XGraph = pXGraph;m_RangeInit = false;}
-  void           Update(void);
+  void           Update(void) override;
   bool           SaveGraphAsCSV(wxString const &sFileName);
   /** Return User Interface */
   mafGUI         *GetGui() {return m_Gui;};
   void           CreateGui();
-  void           OnEvent(mafEventBase *maf_event);
+  void           OnEvent(mafEventBase *maf_event) override;
   static wxInt32 GetFontFamily(mafViewIntGraphFontFamily fFamily);
   /** Tune curve parameters */
   void           AdjustCurveAppearance(unsigned int nCurve);
@@ -300,7 +300,7 @@ class WXDLLIMPEXP_MATHPLOT mpLayer : public wxObject
 public:
     mpLayer();
 
-    virtual ~mpLayer() {};
+    ~mpLayer() override {};
 
     /** Check whether this layer has a bounding box.
         The default implementation returns \a TRUE. Override and return
@@ -493,7 +493,7 @@ public:
     mpInfoLayer(wxRect rect, const wxBrush* brush = wxTRANSPARENT_BRUSH);
 
     /** Destructor */
-    virtual ~mpInfoLayer();
+    ~mpInfoLayer() override;
 
     /** Updates the content of the info box. Should be overidden by derived classes.
         Update may behave in different ways according to the type of event which called it.
@@ -503,18 +503,18 @@ public:
 
     /** mpInfoLayer has not bounding box. @sa mpLayer::HasBBox
         @return always \a FALSE */
-    virtual bool HasBBox() { return false; };
+    bool HasBBox() override { return false; };
 
     /** Plot method. Can be overidden by derived classes.
         @param dc the device content where to plot
         @param w the window to plot
         @sa mpLayer::Plot */
-    virtual void   Plot(wxDC & dc, mpWindow & w);
+    void   Plot(wxDC & dc, mpWindow & w) override;
 
     /** Specifies that this is an Info box layer.
         @return always \a TRUE
         @sa mpLayer::IsInfo */
-    virtual bool IsInfo() { return true; };
+    bool IsInfo() override { return true; };
 
     /** Checks whether a point is inside the info box rectangle.
         @param point The point to be checked
@@ -563,18 +563,18 @@ public:
     mpInfoCoords(wxRect rect, const wxBrush* brush = wxTRANSPARENT_BRUSH);
 
     /** Default destructor */
-    ~mpInfoCoords();
+    ~mpInfoCoords() override;
 
     /** Updates the content of the info box. It is used to update coordinates.
         @param w parent mpWindow from which to obtain information
         @param event The event which called the update. */
-    virtual void UpdateInfo(mpWindow& w, wxEvent& event);
+    void UpdateInfo(mpWindow& w, wxEvent& event) override;
 
     /** Plot method.
         @param dc the device content where to plot
         @param w the window to plot
         @sa mpLayer::Plot */
-    virtual void   Plot(wxDC & dc, mpWindow & w);
+    void   Plot(wxDC & dc, mpWindow & w) override;
 
 protected:
     wxString m_content; //!< string holding the coordinates to be drawn.
@@ -596,18 +596,18 @@ public:
     mpInfoLegend(wxRect rect, const wxBrush* brush = wxTRANSPARENT_BRUSH);
 
     /**  Default destructor */
-    ~mpInfoLegend();
+    ~mpInfoLegend() override;
 
     /** Updates the content of the info box. Unused in this class.
         @param w parent mpWindow from which to obtain information
         @param event The event which called the update. */
-    virtual void UpdateInfo(mpWindow& w, wxEvent& event);
+    void UpdateInfo(mpWindow& w, wxEvent& event) override;
 
     /** Plot method.
         @param dc the device content where to plot
         @param w the window to plot
         @sa mpLayer::Plot */
-    virtual void   Plot(wxDC & dc, mpWindow & w);
+    void   Plot(wxDC & dc, mpWindow & w) override;
 
 protected:
     
@@ -689,7 +689,7 @@ public:
         This implementation will plot the function in the visible area and
         put a label according to the aligment specified.
     */
-    virtual void Plot(wxDC & dc, mpWindow & w);
+    void Plot(wxDC & dc, mpWindow & w) override;
 
 protected:
     int m_flags; //!< Holds label alignment
@@ -721,7 +721,7 @@ public:
         This implementation will plot the function in the visible area and
         put a label according to the aligment specified.
     */
-    virtual void Plot(wxDC & dc, mpWindow & w);
+    void Plot(wxDC & dc, mpWindow & w) override;
 
 protected:
     int m_flags; //!< Holds label alignment
@@ -759,7 +759,7 @@ public:
         This implementation will plot the locus in the visible area and
         put a label according to the alignment specified.
     */
-    virtual void Plot(wxDC & dc, mpWindow & w);
+    void Plot(wxDC & dc, mpWindow & w) override;
 
 
 protected:
@@ -803,7 +803,7 @@ public:
         This implementation will plot the function in the visible area and
         put a label according to the aligment specified.
     */
-    virtual void Plot(wxDC & dc, mpWindow & w);
+    void Plot(wxDC & dc, mpWindow & w) override;
 
 protected:
     int m_flags; //!< Holds label alignment
@@ -837,12 +837,12 @@ public:
 
     /** Layer plot handler.
         This implementation will plot the ruler adjusted to the visible area. */
-    virtual void Plot(wxDC & dc, mpWindow & w);
+    void Plot(wxDC & dc, mpWindow & w) override;
 
     /** Check whether this layer has a bounding box.
         This implementation returns \a FALSE thus making the ruler invisible
         to the plot layer bounding box calculation by mpWindow. */
-    virtual bool HasBBox() { return FALSE; }
+    bool HasBBox() override { return FALSE; }
 
     /** Set X axis alignment.
         @param align alignment (choose between mpALIGN_BORDER_BOTTOM, mpALIGN_BOTTOM, mpALIGN_CENTER, mpALIGN_TOP, mpALIGN_BORDER_TOP */
@@ -897,13 +897,13 @@ public:
     /** Layer plot handler.
         This implementation will plot the ruler adjusted to the visible area.
     */
-    virtual void Plot(wxDC & dc, mpWindow & w);
+    void Plot(wxDC & dc, mpWindow & w) override;
 
     /** Check whether this layer has a bounding box.
         This implementation returns \a FALSE thus making the ruler invisible
         to the plot layer bounding box calculation by mpWindow.
     */
-    virtual bool HasBBox() { return FALSE; }
+    bool HasBBox() override { return FALSE; }
 
     /** Set Y axis alignment.
         @param align alignment (choose between mpALIGN_BORDER_LEFT, mpALIGN_LEFT, mpALIGN_CENTER, mpALIGN_RIGHT, mpALIGN_BORDER_RIGHT) */
@@ -980,7 +980,7 @@ public:
                      const wxPoint &pos = wxDefaultPosition,
                      const wxSize &size = wxDefaultSize,
                      long flags = 0);
-    ~mpWindow();
+    ~mpWindow() override;
 
     /** Get reference to context menu of the plot canvas.
         @return Pointer to menu. The menu can be modified.
@@ -1151,7 +1151,7 @@ public:
         Scale and position will be set to show all attached mpLayers.
         The X/Y scale aspect lock is taken into account.
     */
-    void Fit();
+    void Fit() override;
 
     /** Set view to fit a given bounding box and refresh display.
         The X/Y scale aspect lock is taken into account.
@@ -1448,30 +1448,30 @@ protected:
     /** Rewind value enumeration with mpFXY::GetNextXY.
         Overridden in this implementation.
     */
-    void Rewind();
+    void Rewind() override;
 
     /** Get locus value for next N.
         Overridden in this implementation.
         @param x Returns X value
         @param y Returns Y value
     */
-    bool GetNextXY(double & x, double & y);
+    bool GetNextXY(double & x, double & y) override;
 
     /** Returns the actual minimum X data (loaded in SetData).
       */
-    double GetMinX() { return m_minX; }
+    double GetMinX() override { return m_minX; }
 
     /** Returns the actual minimum Y data (loaded in SetData).
       */
-    double GetMinY() { return m_minY; }
+    double GetMinY() override { return m_minY; }
 
     /** Returns the actual maximum X data (loaded in SetData).
       */
-    double GetMaxX() { return m_maxX; }
+    double GetMaxX() override { return m_maxX; }
 
     /** Returns the actual maximum Y data (loaded in SetData).
       */
-    double GetMaxY() { return m_maxY; }
+    double GetMaxY() override { return m_maxY; }
 
     int     m_flags; //!< Holds label alignment
 
@@ -1498,10 +1498,10 @@ public:
 
     /** Text Layer plot handler.
         This implementation will plot text adjusted to the visible area. */
-    virtual void Plot(wxDC & dc, mpWindow & w);
+    void Plot(wxDC & dc, mpWindow & w) override;
 
     /** mpText should not be used for scaling decisions. */
-    virtual bool HasBBox() { return FALSE; }
+    bool HasBBox() override { return FALSE; }
 
 protected:
     int m_offsetx; //!< Holds offset for X in percentage
@@ -1523,11 +1523,11 @@ class WXDLLIMPEXP_MATHPLOT mpPrintout : public wxPrintout
 {
 public:
     mpPrintout(mpWindow* drawWindow, const wxChar *title = _T("wxMathPlot print output"));
-    virtual ~mpPrintout() {};
+    ~mpPrintout() override {};
 
     void SetDrawState(bool drawState) {drawn = drawState;};
-    bool OnPrintPage(int page);
-    bool HasPage(int page);
+    bool OnPrintPage(int page) override;
+    bool HasPage(int page) override;
 
 private:
     bool drawn;
@@ -1559,7 +1559,7 @@ public:
         m_type = mpLAYER_PLOT;
     }
 
-    virtual ~mpMovableObject() {};
+    ~mpMovableObject() override {};
 
     /** Get the current coordinate transformation.
       */
@@ -1581,25 +1581,25 @@ public:
         ShapeUpdated();
     }
 
-    virtual bool HasBBox() { return m_trans_shape_xs.size()!=0; }
+    bool HasBBox() override { return m_trans_shape_xs.size()!=0; }
 
     /** Get inclusive left border of bounding box.
     */
-    virtual double GetMinX() { return m_bbox_min_x; }
+    double GetMinX() override { return m_bbox_min_x; }
 
     /** Get inclusive right border of bounding box.
     */
-    virtual double GetMaxX() { return  m_bbox_max_x; }
+    double GetMaxX() override { return  m_bbox_max_x; }
 
     /** Get inclusive bottom border of bounding box.
     */
-    virtual double GetMinY() { return m_bbox_min_y; }
+    double GetMinY() override { return m_bbox_min_y; }
 
     /** Get inclusive top border of bounding box.
     */
-    virtual double GetMaxY() { return m_bbox_max_y; }
+    double GetMaxY() override { return m_bbox_max_y; }
 
-    virtual void   Plot(wxDC & dc, mpWindow & w);
+    void   Plot(wxDC & dc, mpWindow & w) override;
 
     /** Set label axis alignment.
       *  @param align alignment (choose between mpALIGN_NE, mpALIGN_NW, mpALIGN_SW, mpALIGN_SE
@@ -1677,7 +1677,7 @@ public:
         m_type = mpLAYER_PLOT;
     }
 
-    virtual ~mpCovarianceEllipse() {}
+    ~mpCovarianceEllipse() override {}
 
     double GetQuantiles() const { return m_quantiles; }
 
@@ -1744,7 +1744,7 @@ public:
         m_name = layerName;
     }
 
-    virtual ~mpPolygon() {}
+    ~mpPolygon() override {}
 
     /** Set the points in the polygon.
       * @param points_xs  The X coordinates of the points.
@@ -1782,7 +1782,7 @@ public:
         m_type = mpLAYER_BITMAP;
     }
 
-    virtual ~mpBitmapLayer() {};
+    ~mpBitmapLayer() override {};
 
     /** Returns a copy of the current bitmap assigned to the layer.
       */
@@ -1797,25 +1797,25 @@ public:
       */
     void SetBitmap( const wxImage &inBmp, double x, double y, double lx, double ly );
 
-    virtual bool HasBBox() { return true; }
+    bool HasBBox() override { return true; }
 
     /** Get inclusive left border of bounding box.
     */
-    virtual double GetMinX() { return m_min_x; }
+    double GetMinX() override { return m_min_x; }
 
     /** Get inclusive right border of bounding box.
     */
-    virtual double GetMaxX() { return  m_max_x; }
+    double GetMaxX() override { return  m_max_x; }
 
     /** Get inclusive bottom border of bounding box.
     */
-    virtual double GetMinY() { return m_min_y; }
+    double GetMinY() override { return m_min_y; }
 
     /** Get inclusive top border of bounding box.
     */
-    virtual double GetMaxY() { return m_max_y; }
+    double GetMaxY() override { return m_max_y; }
 
-    virtual void   Plot(wxDC & dc, mpWindow & w);
+    void   Plot(wxDC & dc, mpWindow & w) override;
 
     /** Set label axis alignment.
       *  @param align alignment (choose between mpALIGN_NE, mpALIGN_NW, mpALIGN_SW, mpALIGN_SE

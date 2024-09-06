@@ -95,8 +95,8 @@ item subtree, then Delete the item and remove the corresponding m_NodeTable entr
 class MAF_EXPORT mafGUITree: public mafGUINamedPanel, public mafEventSender
 {
 public:
-                 mafGUITree (wxWindow* parent, wxWindowID id=-1, bool CloseButton = false, bool HideTitle = false); 
-  virtual       ~mafGUITree();
+                 mafGUITree (wxWindow* parent, wxWindowID id=-1, bool CloseButton = false, bool HideTitle = false);
+                 ~mafGUITree() override;
 
   /** Clears all items in the tree. */
 	void Reset();
@@ -233,7 +233,8 @@ protected:
       long style = wxTR_HAS_BUTTONS | wxTR_LINES_AT_ROOT,
       const wxValidator& validator = wxDefaultValidator,
       const wxString& name = wxTreeCtrlNameStr):wxTreeCtrl(parent,id,pos,size,style,validator,name),m_Alphabetical(alphabetical){}
-    virtual int OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2);
+
+    int OnCompareItems(const wxTreeItemId& item1, const wxTreeItemId& item2) override;
     bool GetAlphabetical(){return m_Alphabetical;}
     void SetAlphabetical(bool alphabetical){m_Alphabetical = alphabetical;}
   private:

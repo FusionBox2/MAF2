@@ -37,16 +37,16 @@ public:
   mafAbstractTypeMacro(mafDataPipeInterpolator,mafDataPipe);
 
   /** This DataPipe accepts only VME's with internal DataArray. */
-  virtual bool Accept(mafVME *vme);
+  bool Accept(mafVME *vme) override;
 
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /**
     This function makes the current bounds to be updated. It's optimized
     to not require data updating, so that data bounds can be evaluated 
     without loading all the data (dataset bounds are replicated in the
     VME item data structure)*/
-  virtual void UpdateBounds();
+  void UpdateBounds() override;
 
   /**
   Get the output of the interpolator item*/
@@ -60,14 +60,14 @@ public:
 
   /**
   Get the MTime: this is the bit of magic that makes everything work.*/
-  virtual unsigned long GetMTime();
+  unsigned long GetMTime() override;
 
 protected:
   mafDataPipeInterpolator();
-  virtual ~mafDataPipeInterpolator();
+  ~mafDataPipeInterpolator() override;
 
-  virtual void PreExecute()=0;
-  virtual void Execute()=0;
+  void PreExecute() override =0;
+  void Execute() override =0;
 
   /** This function is called internally to updated the output data according
   interpolator rules. It should be reimplemented in sub-classes.*/

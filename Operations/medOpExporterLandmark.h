@@ -38,15 +38,15 @@ class MED_OPERATION_EXPORT medOpExporterLandmark: public mafOp
 public:
   mafTypeMacro(medOpExporterLandmark, mafOp);
 	medOpExporterLandmark(const mafString& label = _R("Landmark Exporter"));
-	~medOpExporterLandmark(); 
-	mafOp* Copy();
-  void OnEvent(mafEventBase *maf_event);
+	~medOpExporterLandmark() override; 
+	mafOp* Copy() override;
+  void OnEvent(mafEventBase *maf_event) override;
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode *node);
+	bool Accept(mafNode *node) override;
 
 	/** Build the interface of the operation, i.e the dialog that let choose the name of the output file. */
-	void OpRun();
+	void OpRun() override;
 
   /** Export landmarks contained into a mafVMELandmarkCloud.*/
   void ExportLandmark();

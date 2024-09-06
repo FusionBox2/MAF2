@@ -68,26 +68,26 @@ class MED_OPERATION_EXPORT medOpImporterRAWImages: public mafOp
 {
 public:
   medOpImporterRAWImages(const mafString& label=_R("RAWImporterImage"));
-  virtual     ~medOpImporterRAWImages();
+  ~medOpImporterRAWImages() override;
 
   mafTypeMacro(medOpImporterRAWImages, mafOp);
-  virtual void OnEvent(mafEventBase *maf_event);
-  mafOp* Copy();
+  void OnEvent(mafEventBase *maf_event) override;
+  mafOp* Copy() override;
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode *node) {return true;};
+  bool Accept(mafNode *node) override {return true;};
 
   /** Build the interface of the operation and the preview pipeline. */
-  void OpRun();
+  void OpRun() override;
 
   /** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
-  void OpStop	(int result);
+  void OpStop	(int result) override;
 
   /** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
 
   /** Undo the operation. */
-  void OpUndo();
+  void OpUndo() override;
 
   void OnStringPrefix();
   void OnOpenDir();

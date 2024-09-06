@@ -46,29 +46,29 @@ public:
   Return MAF_OK if succeeded, MAF_ERROR if they kind of data is not accepted by
   this type of VME. Accepted data is vtkUnstructuredGrid */
   virtual int SetData(vtkUnstructuredGrid *data, mafTimeStamp t, int mode=MAF_VME_COPY_DATA);
-  virtual int SetData(vtkDataSet *data, mafTimeStamp t, int mode=MAF_VME_COPY_DATA);
+  int SetData(vtkDataSet *data, mafTimeStamp t, int mode=MAF_VME_COPY_DATA) override;
 
   /** return the output casted to mafVMEOutputMesh*/
   mafVMEOutputMesh *GetUnstructuredGridOutput() {return mafVMEOutputMesh::SafeDownCast(GetOutput());}
 
   /** return the output */
-  virtual mafVMEOutput *GetOutput();
+  mafVMEOutput *GetOutput() override;
 
   /** return icon */
   static char** GetIcon();
 
   /** Return the suggested pipe-typename for the visualization of this vme */
-  virtual mafString GetVisualPipe() {return mafString(_R("mafPipeMesh"));}
+  mafString GetVisualPipe() override {return mafString(_R("mafPipeMesh"));}
 
 	/** used to initialize and create the material attribute if not yet present */
-	virtual int InternalInitialize();
+  int InternalInitialize() override;
 
   /** Return pointer to material attribute. */
   mmaMaterial *GetMaterial();
 
 protected:
   mafVMEMesh();
-  virtual ~mafVMEMesh();
+  ~mafVMEMesh() override;
 
 private:
   mafVMEMesh(const mafVMEMesh&); // Not implemented

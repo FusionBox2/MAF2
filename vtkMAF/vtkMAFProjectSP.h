@@ -91,7 +91,7 @@ public:
   /** RTTI Macro */
   vtkTypeMacro(vtkMAFProjectSP, vtkStructuredGridAlgorithm);
   /** Print object information */
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /** Static Function for object instantiation */
   static vtkMAFProjectSP *New();
@@ -127,16 +127,16 @@ protected:
   /** constructor */
   vtkMAFProjectSP() ;
   /** destructor */
-  ~vtkMAFProjectSP() {};
+  ~vtkMAFProjectSP() override {};
   /** copy constructor not implemented*/
   vtkMAFProjectSP(const vtkMAFProjectSP&) {}
   /** assign operator not implemented*/
   void operator=(const vtkMAFProjectSP&) {}
 
   /** Update dimensions and whole extents */
-  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
   /** Execute the projection and fill output scalars */
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   int ProjectionMode;  
 };

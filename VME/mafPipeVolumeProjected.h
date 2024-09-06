@@ -42,15 +42,15 @@ public:
   mafTypeMacro(mafPipeVolumeProjected,mafPipeVTK);
 
            mafPipeVolumeProjected();
-  virtual ~mafPipeVolumeProjected();
+  ~mafPipeVolumeProjected() override;
 
   /** Parameter to initialize a non default projection (X axes) */
   void InitializeProjectParameters(int cam_position);
-  
-  virtual void Create(mafNode *node, mafView *view);
+
+  void Create(mafNode *node, mafView *view) override;
 
 	/** Show-Hide the RX bounding box actor. */
-  void Select     (bool select);
+  void Select     (bool select) override;
 
 	/** Set the range to the lookup table for the RX texture. */
 	void SetLutRange(double low, double hi);

@@ -38,13 +38,13 @@ public:
   /** constructor. */
   mafGUIFrame (const wxString& title, const wxPoint& pos, const wxSize& size);
   /** destructor. */
-  ~mafGUIFrame (); 
+  ~mafGUIFrame () override; 
   
   /** Set the window shown on the Client Area, (hide the previous contents). */
 	void Put (wxWindow* w);
   
   /** Redraw the frame. */
-	void Update () {LayoutWindow();};
+	void Update () override {LayoutWindow();};
 
 protected:
   /** Send an event with the men item's id. */

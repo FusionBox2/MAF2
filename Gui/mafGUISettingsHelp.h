@@ -30,7 +30,7 @@ class MAF_EXPORT mafGUISettingsHelp : public mafGUISettings
 {
 public:
 	mafGUISettingsHelp(mafBaseEventHandler *Listener, const mafString &label = _L("Help Settings"));
-	~mafGUISettingsHelp(); 
+	~mafGUISettingsHelp() override; 
 
   enum HELP_SETTINGS_WIDGET_ID
   {
@@ -39,7 +39,7 @@ public:
   };
 
   /** Answer to the messages coming from interface. */
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Set python.exe interpreter used at runtime*/
   void SetBuildHelpGui(bool buildHelpGui){m_BuildHelpGui = buildHelpGui;};
@@ -51,10 +51,10 @@ public:
 
 protected:
   /** Create the GUI for the setting panel.*/
-  void CreateGui();
+  void CreateGui() override;
 
   /** Initialize the application settings.*/
-  void InitializeSettings();
+  void InitializeSettings() override;
 
   /** Used to enable/disable gui items*/
   void EnableItems(bool enable);

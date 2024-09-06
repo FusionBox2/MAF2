@@ -63,7 +63,7 @@ protected:
 
 public:
 	mafBrickedFileReader();
-	virtual ~mafBrickedFileReader();
+	~mafBrickedFileReader() override;
 
 public:
 	//Gets the associated output data set
@@ -127,17 +127,17 @@ public:
 public:
 	//This method updates the output (i.e., it performs the bricking)	
 	//returns false if an error occurs
-	/*virtual*/ bool Update();
+	/*virtual*/ bool Update() override;
 
 protected:
 	//Called by Update to fill some internal structures
-	/*virtual*/ void ExecuteInformation() ;
+	/*virtual*/ void ExecuteInformation() override;
 
 	//allocates the required buffers
-	/*virtual*/ void AllocateBuffers() ;
+	/*virtual*/ void AllocateBuffers() override;
 
 	//deallocates the buffers created in AllocateBuffers
-	/*virtual*/ void DeallocateBuffers() ;
+	/*virtual*/ void DeallocateBuffers() override;
 
 	//processes data
 	virtual void ExecuteData() ;

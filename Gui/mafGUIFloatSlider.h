@@ -48,7 +48,7 @@ public:
 									const wxPoint &position=wxDefaultPosition, 
 									const wxSize& size=wxDefaultSize, 
 									long style=wxSL_HORIZONTAL );
-  ~mafGUIFloatSlider();
+  ~mafGUIFloatSlider() override;
   
   /** Set the slider value. */
 	void SetValue(double value);

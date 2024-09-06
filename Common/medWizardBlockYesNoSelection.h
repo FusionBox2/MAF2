@@ -40,7 +40,7 @@ public:
   medWizardBlockYesNoSelection(const char *name);
 
   /** Default destructor */
-  ~medWizardBlockYesNoSelection();
+  ~medWizardBlockYesNoSelection() override;
     
   /** Set The title of the selection window */
   void SetWindowTitle(const char *Title);
@@ -68,7 +68,7 @@ public:
 
 
   /** This method has no sense in this class, use AddChoice() instead*/
-  virtual void SetNextBlock(const char *block){};
+  void SetNextBlock(const char *block) override {};
 
   /** Enable or Disable Cancel Button */
   void EnableCancelButton(bool cancel=true);
@@ -78,10 +78,10 @@ public:
 
 protected:
   /** Starts the execution of the block */
-  virtual void ExcutionBegin();
+  void ExcutionBegin() override;
 
   /** Return the name of the Block witch will be executed after this */
-  virtual wxString GetNextBlock();
+  wxString GetNextBlock() override;
 private:
 
   wxString m_Title;

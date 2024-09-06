@@ -66,7 +66,7 @@ public:
   MAF_ID_DEC(DISPATCH_END) 
 
   mafDeviceManager();
-  virtual ~mafDeviceManager();
+  ~mafDeviceManager() override;
 
   mafTypeMacro(mafDeviceManager,mafAgentEventHandler);
 
@@ -105,14 +105,14 @@ public:
   /** return the device set storing first level devices */
   mafDeviceSet *GetDeviceSet() {return m_DeviceSet;}
 
-  virtual void OnEvent(mafEventBase *event);
+  void OnEvent(mafEventBase *event) override;
 
   /**
     Redefined to manage the synchronization with display rendering: during the event
     dispatching all rendering requests must be queued. For this reason at dispatching
     start a StartDispatchingEvent is (synchronously) sent on the default channel, and
     StopDispatchingEvent is sent when dispatching is finished */
-  virtual bool DispatchEvents();
+  bool DispatchEvents() override;
 
   void Store(mafStorageElementBuilder& element) { InternalStore(element); }
   void Restore(const mafStorageElement& element) { InternalRestore(element); }
@@ -121,8 +121,8 @@ protected:
   virtual void InternalStore(mafStorageElementBuilder& node);
   virtual void InternalRestore(const mafStorageElement& node);
 
-  virtual int InternalInitialize();
-  virtual void InternalShutdown();
+  int InternalInitialize() override;
+  void InternalShutdown() override;
 
   mafDeviceSet*   m_DeviceSet;        ///< container for first level devices
   mafID           m_DeviceIdCounter;  ///< number of plugged devices

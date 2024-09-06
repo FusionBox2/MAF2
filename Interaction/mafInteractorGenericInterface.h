@@ -158,10 +158,10 @@ public:
   mafTransform *GetResultTransform() { return m_ResultTransform; }
 
   /** redefined to set the renderer also in the constraint */
-  virtual void SetRenderer(vtkRenderer *ren);
+  void SetRenderer(vtkRenderer *ren) override;
 
   /** Set the node to be transformed */
-  virtual void SetVME(mafVME *vme);
+  void SetVME(mafVME *vme) override;
 
   /** If Surface Snap modifier is on translation and rotation will be constrained to picked surfaces if possible*/
   void SetSurfaceSnap(bool flag) {m_SurfaceSnap=flag;}
@@ -177,7 +177,7 @@ public:
 
 protected:
   mafInteractorGenericInterface();
-  virtual ~mafInteractorGenericInterface();
+  ~mafInteractorGenericInterface() override;
   
  /** Dervived classes should override this methods in order to set internal flags in
   a consistent way. For example the mouse can only translate or rotate during a single 

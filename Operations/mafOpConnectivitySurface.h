@@ -40,24 +40,24 @@ class MAF_EXPORT mafOpConnectivitySurface: public mafOp
 {
 public:
 	mafOpConnectivitySurface(const mafString& label = _R("Connectivity Surface"));
-	~mafOpConnectivitySurface(); 
-	virtual void OnEvent(mafEventBase *maf_event);
+	~mafOpConnectivitySurface() override;
+	void OnEvent(mafEventBase *maf_event) override;
 
   mafTypeMacro(mafOpConnectivitySurface, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode *node);
+	bool Accept(mafNode *node) override;
 
 	/** Builds operation's interface. */
-	void OpRun();
+	void OpRun() override;
 
 	/** Execute the operation. */
-	void OpDo();
+	void OpDo() override;
 
 	/** Makes the undo for the operation. */
-	void OpUndo();
+	void OpUndo() override;
 
   /* Set the threshold */
   void SetThresold(double value){m_Thresold = value;};
@@ -69,7 +69,7 @@ public:
 
 protected:
 	/** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
-	void OpStop(int result);
+	void OpStop(int result) override;
 
   void CreateGui();
 

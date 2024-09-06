@@ -62,7 +62,7 @@ public:
 
 protected:
   mafVMEPGDData();
-  virtual ~mafVMEPGDData();
+  ~mafVMEPGDData() override;
 
   /**
   //Attitude vector to roll pitch conversion; input and

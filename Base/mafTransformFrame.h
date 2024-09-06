@@ -38,7 +38,7 @@ class MAF_EXPORT mafTransformFrame : public mafTransformBase
 {
  public:
    mafTransformFrame();
-  ~mafTransformFrame();
+  ~mafTransformFrame() override;
 	
   mafTypeMacro(mafTransformFrame,mafTransformBase);
 
@@ -66,10 +66,10 @@ class MAF_EXPORT mafTransformFrame : public mafTransformBase
   /** 
     Return current modification time, taking inro consideration also
     Input, InputFrame and TargetFrame. */
-  virtual unsigned long GetMTime();
+   unsigned long GetMTime() override;
 
 protected:
-  void InternalUpdate();
+  void InternalUpdate() override;
 
   mafTransformBase  *m_Input;
   mafTransformBase  *m_InputFrame;

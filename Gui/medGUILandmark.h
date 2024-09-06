@@ -53,10 +53,10 @@ public:
   /** constructor */
   medGUILandmark(mafNode *InputVME, mafBaseEventHandler *listener = NULL, bool testMode  = false);
 	/** destructor */
-  ~medGUILandmark(); 
+  ~medGUILandmark() override; 
 
-  /** Events handling*/        
-  virtual void OnEvent(mafEventBase *maf_event);
+  /** Events handling*/
+  void OnEvent(mafEventBase *maf_event) override;
  
   //----------------------------------------------------------------------------
   //gui constants: 

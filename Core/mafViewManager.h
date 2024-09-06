@@ -49,9 +49,9 @@ class MAF_EXPORT mafViewManager: public mafBaseEventHandler, public mafEventSend
 
 public:
   mafViewManager();
- ~mafViewManager(); 
+ ~mafViewManager() override; 
   void SetRemoteListener(mafBaseEventHandler *Listener) {m_RemoteListener = Listener;};
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Add the vme to all views. */
   void VmeAdd(mafNode *n);

@@ -58,7 +58,7 @@ public:
   vtkAlgorithmOutput *GetOutputPort();
   
   /** Copy the contents of another VME-Gizmo into this one. */
-  virtual int DeepCopy(mafNode *a);
+  int DeepCopy(mafNode *a) override;
   
   /** 
   Set the orchestrator object: mafVMEGizmo's are used togetheter in more complex objects 
@@ -70,7 +70,7 @@ public:
   mafBaseEventHandler *GetMediator() {return m_Mediator;};
 
   /** Compare with another VME-Gizmo. */
-  virtual bool Equals(mafVME *vme);
+  bool Equals(mafVME *vme) override;
 
   /** return the right type of output */  
   mafVMEOutputSurface *GetSurfaceOutput();
@@ -83,22 +83,22 @@ public:
     set or get the Pose for a specified time. When setting, if the time does not exist
     the MatrixVector creates a new KeyMatrix on the fly. When getting, the matrix vector
     interpolates on the fly according to the matrix interpolator.*/
-  virtual void SetMatrix(const mafMatrix &mat);
+  void SetMatrix(const mafMatrix &mat) override;
 
   /**
     Return the list of timestamps for this VME. Timestamps list is 
     obtained merging timestamps for matrixes and VME items*/
-  virtual void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes);
+  void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes) override;
 
   /** return always false since (currently) the slicer is not an animated VME (position 
       is the same for all timestamps). */
-  virtual bool IsAnimated();
+  bool IsAnimated() override;
   
   /** return an xpm-icon that can be used to represent this node */
   //static char ** GetIcon();
 
   /** Return the suggested pipe-typename for the visualization of this vme */
-  virtual mafString GetVisualPipe() {return mafString(_R("mafPipeGizmo"));};
+  mafString GetVisualPipe() override {return mafString(_R("mafPipeGizmo"));};
 
   /**Set/Get Text Value , that is an information that can be renderized in a custom position*/
   void SetTextValue(const mafString& text);
@@ -119,7 +119,7 @@ public:
 
 protected:
   mafVMEGizmo();
-  virtual ~mafVMEGizmo();
+  ~mafVMEGizmo() override;
   
   /** called to prepare the update of the output */
   //virtual void InternalPreUpdate();

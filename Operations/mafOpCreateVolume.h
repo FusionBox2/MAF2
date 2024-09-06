@@ -33,21 +33,21 @@ class MAF_EXPORT mafOpCreateVolume: public mafOp
 {
 public:
   mafOpCreateVolume(const mafString& label = _R("Create Volume"));
-  ~mafOpCreateVolume(); 
+  ~mafOpCreateVolume() override; 
 
   mafTypeMacro(mafOpCreateVolume, mafOp);
 
   /** Receive events coming from the user interface.*/
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Return a copy of the operation.*/
-  mafOp* Copy();
+  mafOp* Copy() override;
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode *node);
+  bool Accept(mafNode *node) override;
 
   /** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
   /** Set the volume density from code.*/
   void SetVolumeDensity(double density) {m_Density = density;};

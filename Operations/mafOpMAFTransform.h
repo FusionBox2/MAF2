@@ -44,40 +44,40 @@ class MAF_EXPORT mafOpMAFTransform : public mafOpTransformInterface
 {
 public:
   mafOpMAFTransform(const mafString& label = _R("Transform  \tCtrl+T"));
- ~mafOpMAFTransform(); 
-  virtual void OnEvent(mafEventBase *maf_event);
+ ~mafOpMAFTransform() override;
+  void OnEvent(mafEventBase *maf_event) override;
   
   mafTypeMacro(mafOpMAFTransform, mafOpTransformInterface);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode* vme);
+  bool Accept(mafNode* vme) override;
 
   /** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
   
   /** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
   
   /** Makes the undo for the operation. */
-  void OpUndo();
+  void OpUndo() override;
 	
   void Reset();
 
 protected:
   /** Create the gui */
-  virtual void CreateGui();
+  void CreateGui() override;
   
-  void OnEventThis(mafEventBase *maf_event);  
-  void OnEventGizmoTranslate(mafEventBase *maf_event);
-  void OnEventGizmoRotate(mafEventBase *maf_event);
+  void OnEventThis(mafEventBase *maf_event) override;  
+  void OnEventGizmoTranslate(mafEventBase *maf_event) override;
+  void OnEventGizmoRotate(mafEventBase *maf_event) override;
   void OnEventGizmoScale(mafEventBase *maf_event);
   void OnEventGuiTransform(mafEventBase *maf_event);
   void OnEventGuiSaveRestorePose(mafEventBase *maf_event);
   void OnEventGuiTransformTextEntries(mafEventBase *maf_event);
 
-  void OpStop(int result);
+  void OpStop(int result) override;
 
   /** 
   plugged objects */
@@ -94,7 +94,7 @@ protected:
 
   /** 
   Override superclass*/
-  void RefSysVmeChanged();
+  void RefSysVmeChanged() override;
 
   /** test friend */
   friend class mafOpMAFTransformTest;

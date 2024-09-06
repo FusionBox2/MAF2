@@ -61,15 +61,15 @@ public:
     m_Canundo = true;
     m_Created = NULL;
   }
- ~lhpOpCreateObject() 
+ ~lhpOpCreateObject() override
  {
    mafDEL(m_Created);
  }
 
-  mafOp* Copy(){return new lhpOpCreateObject(m_CreatedName, GetLabel());}
+  mafOp* Copy() override {return new lhpOpCreateObject(m_CreatedName, GetLabel());}
 
-  bool Accept(mafNode *node){return (node != NULL);}
-  void OpRun()
+  bool Accept(mafNode *node) override {return (node != NULL);}
+  void OpRun() override
   {
     mafNEW(m_Created);
     m_Created->SetName(m_CreatedName);

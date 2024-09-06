@@ -36,18 +36,18 @@ class MAF_EXPORT mafOpExporterSTL: public mafOp
 {
 public:
   mafOpExporterSTL(const mafString& label = _R("STLExporter"));
- ~mafOpExporterSTL(); 
+ ~mafOpExporterSTL() override; 
   
   mafTypeMacro(mafOpExporterSTL, mafOp);
 
-  mafOp* Copy();
-	void OnEvent(mafEventBase *maf_event);
+  mafOp* Copy() override;
+	void OnEvent(mafEventBase *maf_event) override;
 
  	/** Return true for the acceptable vme type. */
-  bool Accept(mafNode *node);
+  bool Accept(mafNode *node) override;
 
 	/** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
   /** Set the filename for the .stl to export */
   void SetFileName(const char *file_name) {m_File = _R(file_name);};
@@ -65,7 +65,7 @@ public:
 
 protected:
 	/** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
-	void OpStop(int result);
+	void OpStop(int result) override;
 
   mafString  m_File;
 	mafString  m_FileDir;

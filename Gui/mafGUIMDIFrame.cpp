@@ -51,7 +51,8 @@ class mafGUIMDIFrameCallback : public vtkCommand
     mafGUIMDIFrameCallback() {m_mode=0; m_Frame=NULL;};
     void SetMode(int mode){m_mode=mode;};
     void SetFrame(mafGUIMDIFrame *frame){m_Frame=frame;};
-    virtual void Execute(vtkObject *caller, unsigned long, void*)
+
+    void Execute(vtkObject *caller, unsigned long, void*) override
     {
       assert(m_Frame);
       if(caller->IsA("vtkAlgorithm"))

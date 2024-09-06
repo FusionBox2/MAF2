@@ -53,7 +53,7 @@ public:
   /** Constructor. */
                mafPipePolylineSlice_BES();
   /** Destructor. */
-  virtual     ~mafPipePolylineSlice_BES ();
+  ~mafPipePolylineSlice_BES () override;
 
   /**Return the thickness of the border*/	
   double GetThickness();
@@ -68,16 +68,16 @@ public:
   void SetRadius(double radius); 
 
   /** process events coming from gui */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Pipe creation */
-  virtual void Create(mafNode *node, mafView *view /*,bool use_axes = true*/ ); //Can't add parameters - is Virtual
+  void Create(mafNode *node, mafView *view /*,bool use_axes = true*/ ) override; //Can't add parameters - is Virtual
   /** called if vme is selected  */
-  virtual void Select(bool select); 
+  void Select(bool select) override; 
   
   /** Set the origin and normal of the slice.
   Both, Origin and Normal may be NULL, if the current value is to be preserved. */
-  /*virtual*/ void SetSlice(double* Origin, double* Normal);  
+  /*virtual*/ void SetSlice(double* Origin, double* Normal) override;  
 
   /** Set spline mode of the polyline */
   void SetSplineMode(int flag){m_SplineMode = flag;};
@@ -123,7 +123,7 @@ public:
   };
 
   /** gui creation */
-  virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
   /** update all properties of the pipe */
   void UpdateProperty();
 

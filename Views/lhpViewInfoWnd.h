@@ -34,13 +34,13 @@ class lhpViewInfoWnd: public wxHtmlWindow, public mafBaseEventHandler, public ma
   DECLARE_DYNAMIC_CLASS(lhpViewInfoWnd)
 public:
   lhpViewInfoWnd(const wxString& label = "", mafBaseEventHandler *listener = NULL);
-  ~lhpViewInfoWnd(void);
+  ~lhpViewInfoWnd(void) override;
 
  // wxBitmap       GetBitmap();
   mafGUI         *GetGui() {return m_Gui;};
   void           CreateGui();
-  void           OnEvent(mafEventBase *maf_event);
-  void           Update(void);
+  void           OnEvent(mafEventBase *maf_event) override;
+  void           Update(void) override;
 
   void           AddInfo(mafNode *pInfo);
   void           RemInfo(mafNode *pInfo);

@@ -80,7 +80,7 @@ public:
   void SetID(unsigned long id) {m_ID=id;};
 
   /** Set the Device name and rise an event to advise consumers */
-  virtual void SetName(const mafString& name);
+  void SetName(const mafString& name) override;
 
   /** Set the AutoStart flag. This makes the device automatically 
       restart net time the application is started */
@@ -136,17 +136,17 @@ public:
   virtual void UpdateGui();
   
   /** process events sent to the device */
-  virtual void OnEvent(mafEventBase *event);
+  void OnEvent(mafEventBase *event) override;
 
   void Store(mafStorageElementBuilder& element) { InternalStore(element); }
   void Restore(const mafStorageElement& element) { InternalRestore(element); }
 
 protected:
   mafDevice();
-  virtual ~mafDevice();
+  ~mafDevice() override;
 
   /** start device */
-  virtual int InternalInitialize();
+  int InternalInitialize() override;
 
   /** Create the dialog that show the interface for settings. */
   virtual void CreateGui();

@@ -33,27 +33,27 @@ class MAF_EXPORT mafOpFilterSurface: public mafOp
 {
 public:
 	mafOpFilterSurface(const mafString& label = _R("FilterSurface"));
-	~mafOpFilterSurface(); 
-	virtual void OnEvent(mafEventBase *maf_event);
+	~mafOpFilterSurface() override;
+	void OnEvent(mafEventBase *maf_event) override;
 
   mafTypeMacro(mafOpFilterSurface, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode *node);
+	bool Accept(mafNode *node) override;
 
 	/** Builds operation's interface. */
-	void OpRun();
+	void OpRun() override;
 
 	/** Execute the operation. */
-	void OpDo();
+	void OpDo() override;
 
 	/** Makes the undo for the operation. */
-	void OpUndo();
+	void OpUndo() override;
 
   /** Return parameters used by operation. */
-  mafString GetParameters();
+  mafString GetParameters() override;
 
   /** Return the number of iteration of the smooth filter */
   int GetNumberOfIterations(){return m_Iterations;};
@@ -76,7 +76,7 @@ public:
 
 protected:
 	/** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
-	void OpStop(int result);
+	void OpStop(int result) override;
 
   /** Create the GUI */
   void CreateGui();

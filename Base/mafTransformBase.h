@@ -47,13 +47,13 @@ class MAF_EXPORT mafTransformBase : public mafReferenceCounted
 {
 public:
   mafTransformBase();
-  ~mafTransformBase();
+  ~mafTransformBase() override;
 
   /** copy constructor */
   mafTransformBase(const mafTransformBase&);
 
   mafAbstractTypeMacro(mafTransformBase,mafReferenceCounted);
-  virtual void Print(std::ostream& os, const int indent=0) const;
+  void Print(std::ostream& os, const int indent=0) const override;
 
   /** update and return internal transform matrix */
   virtual const mafMatrix &GetMatrix() {Update();return *m_Matrix;}

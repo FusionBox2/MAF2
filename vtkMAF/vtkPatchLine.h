@@ -31,7 +31,7 @@ public:
 
 protected:  
 	vtkPatchLine() {};
-	~vtkPatchLine() {};
+	~vtkPatchLine() override {};
 
 private:
 	vtkPatchLine(const vtkPatchLine&);  // Not implemented.

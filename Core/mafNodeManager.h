@@ -44,10 +44,10 @@ public:
   mafNodeManager();
 
   /** destructor */
-  ~mafNodeManager(); 
+  ~mafNodeManager() override; 
 
   /** Process events coming from other components */
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 	/** Return true if the tree has been modifyed. */
   bool MSFIsModified() {return m_Modified;};
   

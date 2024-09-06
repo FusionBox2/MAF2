@@ -39,21 +39,21 @@ class MAF_EXPORT mafRemoteStorage: public mafStorage
 public:
   using Superclass = mafStorage;
   mafRemoteStorage();
-  virtual ~mafRemoteStorage();
+  ~mafRemoteStorage() override;
   
   /** Add the mmdRemoteFileManager device and initialize it.*/
   void Initialize();
 
   /** resolve an URL download remote file and provide local filename to be used as input */
-  virtual int ResolveInputURL(const mafString& url, mafString& filename, mafBaseEventHandler *observer = NULL);
+  int ResolveInputURL(const mafString& url, mafString& filename, mafBaseEventHandler *observer = NULL) override;
 
   /** resolve an URL and provide a local filename to be used as output, then it is uploaded to the original remote msf */
-  virtual int StoreToURL(const mafString& filename, const mafString& url);
+  int StoreToURL(const mafString& filename, const mafString& url) override;
 
   /** populate the list of file in the local cache directory */
-  virtual int OpenDirectory(const mafString& pathname);
+  int OpenDirectory(const mafString& pathname) override;
 
-  virtual const mafString& GetTmpFolder();
+  const mafString& GetTmpFolder() override;
 
   /** Set the user name to be used to connect through a given protocol. 
   If no user name is set, anonymous is used.*/

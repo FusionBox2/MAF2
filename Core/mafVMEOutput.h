@@ -54,7 +54,7 @@ class MAF_EXPORT mafVMEOutput : public mafObject, public mafObjectWithGUI
 {
 public:
   mafVMEOutput();
-  virtual ~mafVMEOutput();
+  ~mafVMEOutput() override;
 
   mafAbstractTypeMacro(mafVMEOutput,mafObject);
 
@@ -182,7 +182,7 @@ protected:
   the superclass enum. The last id value must be defined as "LAST_ID" to allow the 
   subclass to continue the ID enumeration from it. For appending the widgets in the
   same pannel GUI, each CreateGUI() function should first call the superclass' one.*/
-  virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 
   /** retrieve bounds of the output data not considering the VME pose matrix and the visibility. */
   virtual void GetDataBounds(mafOBB &bounds,mafTimeStamp t) const;

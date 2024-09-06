@@ -33,15 +33,15 @@ class MAF_EXPORT mafOpCreateRefSys: public mafOp
 {
 public:
   mafOpCreateRefSys(const mafString& label = _R("CreateRefSys"));
- ~mafOpCreateRefSys(); 
+ ~mafOpCreateRefSys() override; 
 
   mafTypeMacro(mafOpCreateRefSys, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
-  bool Accept(mafNode *node);
-  void OpRun();
-  void OpDo();
+  bool Accept(mafNode *node) override;
+  void OpRun() override;
+  void OpDo() override;
 
 protected: 
   mafVMERefSys *m_RefSys;

@@ -108,18 +108,18 @@ public:
 
 protected:
   vtkMAFVolumeSlicer();
-  ~vtkMAFVolumeSlicer();
+  ~vtkMAFVolumeSlicer() override;
 
-  vtkMTimeType GetMTime();
+  vtkMTimeType GetMTime() override;
 
-  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
   void ExecuteData(vtkDataObject *output,  vtkInformation* outInfo);
   
   // different implementations for polydata and imagedata
   void ExecuteData(vtkPolyData *output , vtkInformation* outInfo);
   void ExecuteData(vtkImageData *output, vtkInformation* outInfo);
 
-  int RequestUpdateExtent(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestUpdateExtent(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   void PrepareVolume();
   void CalculateTextureCoordinates(const float point[3], const int size[2], const double spacing[2], float ts[2]);

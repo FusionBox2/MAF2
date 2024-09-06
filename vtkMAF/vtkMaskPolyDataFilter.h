@@ -46,7 +46,7 @@ public:
   vtkTypeMacro(vtkMaskPolyDataFilter,vtkDataSetAlgorithm);
 
   const char *GetClassName() {return "vtkMaskPolyDataFilter";};
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /**
   Construct with user-specified implicit Surface; initial value of 0.0; and
@@ -96,12 +96,12 @@ public:
   
 protected:
   vtkMaskPolyDataFilter(vtkPolyData *cf=NULL);
-  ~vtkMaskPolyDataFilter();
+  ~vtkMaskPolyDataFilter() override;
   
   vtkMaskPolyDataFilter(const vtkMaskPolyDataFilter&);
   void operator=(const vtkMaskPolyDataFilter&);
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
   vtkPolyData *Mask;
 	vtkPolyData *CurrentSliceMask;
 	vtkIdType *IdConversionTable;

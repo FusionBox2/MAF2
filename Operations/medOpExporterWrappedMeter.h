@@ -42,7 +42,7 @@ public:
   /** object constructor */
   medOpExporterWrappedMeter(const mafString& label = _R("ActionLine"));
   /** object destructor */  
-  ~medOpExporterWrappedMeter(); 
+  ~medOpExporterWrappedMeter() override; 
 
   std::vector<mafNode *> m_Meters;
   std::vector< vnl_matrix<double> > m_MetersCoordinatesList ;
@@ -55,15 +55,15 @@ public:
   /** RTTI macro*/
   mafTypeMacro(medOpExporterWrappedMeter, mafOp);
   /** method for clone object */
-  mafOp* Copy();
+  mafOp* Copy() override;
   /** method for catch the dispatched events */
-	void OnEvent(mafEventBase *maf_event);
+	void OnEvent(mafEventBase *maf_event) override;
 
  	/** Return true for the acceptable vme type. */
-  bool Accept(mafNode *node);
+  bool Accept(mafNode *node) override;
 
 	/** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
   /** Set the filename for the .stl to export */
   void SetFileName(const char *file_name) {m_File = _R(file_name);}
@@ -82,7 +82,7 @@ public:
 
 protected:
 	/** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
-	void OpStop(int result);
+	void OpStop(int result) override;
   
   mafString           m_File;
 };

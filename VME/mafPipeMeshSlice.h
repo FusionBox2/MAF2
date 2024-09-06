@@ -52,13 +52,13 @@ public:
 	mafTypeMacro(mafPipeMeshSlice,mafPipeVTK);
 
 	mafPipeMeshSlice();
-	virtual     ~mafPipeMeshSlice();
+	~mafPipeMeshSlice() override;
 
 	/** process events coming from gui */
-	virtual void OnEvent(mafEventBase *maf_event);
+	void OnEvent(mafEventBase *maf_event) override;
 
-	virtual void Create(mafNode *node, mafView *view /*,bool use_axes = true*/ ); //Can't add parameters - is Virtual
-	virtual void Select(bool select); 
+	void Create(mafNode *node, mafView *view /*,bool use_axes = true*/ ) override; //Can't add parameters - is Virtual
+	void Select(bool select) override; 
 
 	/** IDs for the GUI */
 	enum PIPE_MESH_WIDGET_ID
@@ -82,8 +82,8 @@ public:
   
   
   /** Get assembly front/back */
-  virtual vtkMAFAssembly *GetAssemblyFront(){return m_AssemblyFront;};
-  virtual vtkMAFAssembly *GetAssemblyBack(){return m_AssemblyBack;};
+	vtkMAFAssembly *GetAssemblyFront() override {return m_AssemblyFront;};
+	vtkMAFAssembly *GetAssemblyBack() override {return m_AssemblyBack;};
 
 	
   /** Core of the pipe */
@@ -160,7 +160,7 @@ protected:
   
 
   void CreateFieldDataControlArrays();
-	void UpdateProperty(bool fromTag = false);
+	void UpdateProperty(bool fromTag = false) override;
 	/**Update data value to selected scalar */
   void UpdateScalars();
 
@@ -188,6 +188,6 @@ protected:
   double	m_Origin[3];
   double	m_Normal[3];
 
-	virtual mafGUI  *CreateGui();
+	mafGUI  *CreateGui() override;
 };  
 #endif // __mafPipeMeshSlice_H__

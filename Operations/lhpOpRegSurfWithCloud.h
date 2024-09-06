@@ -34,31 +34,31 @@ class lhpOpRegSurfWithCloud: public mafOp
 {
 public:
   lhpOpRegSurfWithCloud(const mafString& label = _L("Register Surface with Cloud"));
- ~lhpOpRegSurfWithCloud(); 
-  virtual void OnEvent(mafEventBase *maf_event);
+ ~lhpOpRegSurfWithCloud() override;
+  void OnEvent(mafEventBase *maf_event) override;
   
   mafTypeMacro(lhpOpRegSurfWithCloud, mafOp);
   
-  mafOp* Copy();
+  mafOp* Copy() override;
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode* node);   
+  bool Accept(mafNode* node) override;   
 
   /** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
   /** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
 
   /** Makes the undo for the operation. */
-  void OpUndo();
+  void OpUndo() override;
 
   static bool ClosedCloudAccept(mafNode* node) {return (node != NULL);}// && node->IsA("mafVMELandmarkCloud") && !((mafVMELandmarkCloud*)node)->IsOpen());};
 
 protected:
   /** Check the correctness of the vme's type. */
   void OnChooseVme(mafNode *vme);
-  void OpStop(int result);
+  void OpStop(int result) override;
 
   //mafVMELandmarkCloud*                         m_Source;
   mafVME*                                      m_Source;

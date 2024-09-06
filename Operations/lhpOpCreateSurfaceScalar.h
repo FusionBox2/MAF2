@@ -29,14 +29,14 @@ class lhpOpCreateSurfaceScalar: public mafOp
 {
 public:
   lhpOpCreateSurfaceScalar(const mafString& label = _R("Create surface scalar"));
-  ~lhpOpCreateSurfaceScalar(); 
+  ~lhpOpCreateSurfaceScalar() override; 
 
   mafTypeMacro(lhpOpCreateSurfaceScalar, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
-  bool Accept(mafNode *node);
-  void OpRun();
+  bool Accept(mafNode *node) override;
+  void OpRun() override;
 
 protected: 
   lhpVMESurfaceScalarVarying *m_SurfaceScalar;

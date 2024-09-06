@@ -140,25 +140,25 @@ protected:
 
 public:
 	medOpMeshDeformation(const mafString& label = _R("Mesh deformation"));
-	~medOpMeshDeformation(); 
+	~medOpMeshDeformation() override; 
 
-	/*virtual*/ void OnEvent(mafEventBase *maf_event);
+	/*virtual*/ void OnEvent(mafEventBase *maf_event) override;
 
 	mafTypeMacro(medOpMeshDeformation, mafOp);
 
-	/*virtual*/ mafOp* Copy();
+	/*virtual*/ mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-	/*virtual*/ bool Accept(mafNode *node);
+	/*virtual*/ bool Accept(mafNode *node) override;
 
 	/** Builds operation's interface. */
-	/*virtual*/ void OpRun();
+	/*virtual*/ void OpRun() override;
 
 	/** Execute the operation. */
-	/*virtual*/ void OpDo();
+	/*virtual*/ void OpDo() override;
 
 	/** Makes the undo for the operation. */
-	/*virtual*/ void OpUndo();
+	/*virtual*/ void OpUndo() override;
 
 #pragma region //Input Control Curves
   /** Get the number of control curves. */
@@ -207,7 +207,7 @@ public:
 
 protected:
 	/** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
-	/*virtual*/ void OpStop(int result);
+	/*virtual*/ void OpStop(int result) override;
 
   /** Creates internal data structures used in the editor.
   Returns false, if an error occurs (e.g. unsupported input) */

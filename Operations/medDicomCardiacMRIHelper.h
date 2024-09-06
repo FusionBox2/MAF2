@@ -65,7 +65,7 @@ public:
 
   medDicomCardiacMRIHelper();
 
-  ~medDicomCardiacMRIHelper();
+  ~medDicomCardiacMRIHelper() override;
   
 
   /**

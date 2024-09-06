@@ -27,8 +27,8 @@
 class lhpFusionBoxApp : public wxApp
 {
 public:
-  bool OnInit();
-  int  OnExit();
+  bool OnInit() override;
+  int  OnExit() override;
 
 
   ////Called when the application is in the idle state

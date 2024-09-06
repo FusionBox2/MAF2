@@ -39,9 +39,9 @@ public:
   /** constructor. */
 	medGUIWizard (const wxString& title, bool testMode = false);
   /** destructor. */
-	virtual ~medGUIWizard (); 
+  ~medGUIWizard () override; 
   /** Precess events coming from other objects. */
-	void OnEvent(mafEventBase *maf_event);
+	void OnEvent(mafEventBase *maf_event) override;
 
   /** Call wxWizard::RunWizard.  */
 	bool Run();

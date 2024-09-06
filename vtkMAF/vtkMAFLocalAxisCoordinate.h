@@ -33,7 +33,7 @@ class VTK_vtkMAF_EXPORT vtkMAFLocalAxisCoordinate : public vtkCoordinate
 public:
   //vtkTypeRevisionMacro(vtkMAFLocalAxisCoordinate,vtkCoordinate);
   /** destructor */
-  virtual ~vtkMAFLocalAxisCoordinate();
+  ~vtkMAFLocalAxisCoordinate() override;
   /** create an instance of the object */
   static vtkMAFLocalAxisCoordinate* New();
 
@@ -48,7 +48,7 @@ public:
   vtkGetObjectMacro(Matrix,vtkMatrix4x4);
 
   /** used only when the coordinate system is VTK_USERDEFINED  */
-  virtual double *GetComputedUserDefinedValue(vtkViewport *viewport);
+  double *GetComputedUserDefinedValue(vtkViewport *viewport) override;
 
 protected:
   /** constructor */

@@ -93,8 +93,8 @@ public:
   //----------------------------------------------------------------------------
   
   /**
-  Events handling (not implemented)*/        
-  virtual void OnEvent(mafEventBase *maf_event);
+  Events handling (not implemented)*/
+  void OnEvent(mafEventBase *maf_event) override;
  
   //----------------------------------------------------------------------------
   // show 
@@ -141,7 +141,7 @@ public:
 protected:
 
            mafGizmoInterface();
-  virtual ~mafGizmoInterface(); 
+  ~mafGizmoInterface() override; 
 
   mafBaseEventHandler *m_Mediator;
 

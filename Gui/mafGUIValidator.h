@@ -84,14 +84,14 @@ public:
   mafGUIValidator (mafBaseEventHandler* listener,int mid,wxButton     *win,wxColour* var, wxTextCtrl* lab);
 
   mafGUIValidator(const mafGUIValidator& val) {Copy(val);};
- ~mafGUIValidator() {};
-  virtual wxObject *Clone(void) const {return new mafGUIValidator(*this);};
+ ~mafGUIValidator() override {};
+  wxObject *Clone(void) const override {return new mafGUIValidator(*this);};
   bool Copy(const mafGUIValidator& val);
 
   virtual bool IsValid();
-  virtual bool Validate(wxWindow *parent);
-  virtual bool TransferToWindow(void);
-  virtual bool TransferFromWindow(void);
+  bool Validate(wxWindow *parent) override;
+  bool TransferToWindow(void) override;
+  bool TransferFromWindow(void) override;
 
 //	float RoundValue(float f_in);
 //	double RoundValue(double d_in);

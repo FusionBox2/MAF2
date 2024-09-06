@@ -74,7 +74,7 @@ public:
 
   enum VME_ITEM_IO_ERRORS {MAF_NO_IO=MAF_USER_RETURN_VALUE+1};
 
-  virtual void Print(std::ostream& os, const int indent=0) const;
+  void Print(std::ostream& os, const int indent=0) const override;
 
   /** Get the TimeStamp of this dataset*/
   mafTimeStamp GetTimeStamp() const {return m_TimeStamp;}
@@ -248,7 +248,7 @@ public:
 
 protected:
   mafVMEItem(); // to be allocated with New()
-  ~mafVMEItem(); // to be deleted with Delete()
+  ~mafVMEItem() override; // to be deleted with Delete()
 
   virtual void InternalStore(mafStorageElementBuilder& node);
   virtual void InternalRestore(const mafStorageElement& node);
@@ -323,9 +323,9 @@ public:
   MAF_ID_DEC(VME_ITEM_DATA_DOWNLOADED); ///< event used to update the mafVMEItem data when download is finished.
 
   mafVMEItemAsynchObserver();
-  virtual	~mafVMEItemAsynchObserver();
+  ~mafVMEItemAsynchObserver() override;
 
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Set the item to which send the update event when the asynchronous
   message from the storage comes up.*/

@@ -37,17 +37,17 @@ class MAF_EXPORT mafOpExporterMSF: public mafOp
 {
 public:
   mafOpExporterMSF(const mafString& label = _R("MSFExporter"));
- ~mafOpExporterMSF(); 
+ ~mafOpExporterMSF() override; 
   
   mafTypeMacro(mafOpExporterMSF, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-  bool Accept(mafNode *vme);
+  bool Accept(mafNode *vme) override;
 
 	/** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
   /** Set the filename for the .msf to export */
   void SetFileName(const char *file_name) {m_MSFFile = _R(file_name);}

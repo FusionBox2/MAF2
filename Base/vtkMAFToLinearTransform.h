@@ -37,7 +37,7 @@ class MAF_EXPORT vtkMAFToLinearTransform : public vtkLinearTransform
  public:
   static vtkMAFToLinearTransform *New();
   vtkTypeMacro(vtkMAFToLinearTransform,vtkLinearTransform);
-  void PrintSelf (ostream& os, vtkIndent indent);
+  void PrintSelf (ostream& os, vtkIndent indent) override;
   
   /** 
     Set the input matrix.  Any modifications to the MAF matrix will be
@@ -58,20 +58,20 @@ class MAF_EXPORT vtkMAFToLinearTransform : public vtkLinearTransform
   /**
     The input matrix is left as-is, but the transformation matrix
     is inverted. */
-  void Inverse();
+  void Inverse() override;
 
   /** Get the MTime: this is the bit of magic that makes everything work. */
-  vtkMTimeType GetMTime();
+  vtkMTimeType GetMTime() override;
 
   /** Make a new transform of the same type. */
-  vtkAbstractTransform *MakeTransform();
+  vtkAbstractTransform *MakeTransform() override;
 
 protected:
   vtkMAFToLinearTransform();
-  ~vtkMAFToLinearTransform();
+  ~vtkMAFToLinearTransform() override;
 
-  void InternalUpdate();
-  void InternalDeepCopy(vtkAbstractTransform *transform);
+  void InternalUpdate() override;
+  void InternalDeepCopy(vtkAbstractTransform *transform) override;
 
   int               m_InverseFlag;
 

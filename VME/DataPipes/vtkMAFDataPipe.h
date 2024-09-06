@@ -42,7 +42,7 @@ public:
   static vtkMAFDataPipe *New();
 
   /** A bit of magic making this filter to take into consideration VME data pipe MTime */
-  virtual vtkMTimeType GetMTime();
+  vtkMTimeType GetMTime() override;
 
   /** the data pipe it is linked to */
   void SetDataPipe(mafDataPipe *dpipe);
@@ -53,19 +53,19 @@ public:
   /** 
     Overridden to attempt doing something before the pipeline is checked for the
     MTime (i.e. change the inputs) */
-  virtual void UpdateInformation();
+  void UpdateInformation() override;
 
 protected:
   vtkMAFDataPipe();
-  virtual ~vtkMAFDataPipe();
+  ~vtkMAFDataPipe() override;
 
-  virtual int RequestUpdateExtent(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+  int RequestUpdateExtent(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
-  virtual int RequestDataObject(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+  int RequestDataObject(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
-  virtual int RequestInformation(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
+  int RequestInformation(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
-  virtual int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   mafDataPipe *m_DataPipe; ///< the data pipe this object is linked to
 

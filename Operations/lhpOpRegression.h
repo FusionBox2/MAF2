@@ -38,15 +38,15 @@ public:
   static bool Config(LibHandle handle);
   mafTypeMacro(lhpOpRegression, mafOp)
   lhpOpRegression(const mafString& label= _R(""));
- ~lhpOpRegression(); 
+ ~lhpOpRegression() override;
 
-  virtual void OnEvent(mafEventBase *maf_event);
-  mafOp* Copy();
+  void OnEvent(mafEventBase *maf_event) override;
+  mafOp* Copy() override;
 
-  bool Accept(mafNode* vme);   
-  void OpRun();
-  void OpDo();
-  void OpUndo();
+  bool Accept(mafNode* vme) override;   
+  void OpRun() override;
+  void OpDo() override;
+  void OpUndo() override;
   void CreateGui();
 
   enum SPLINE_WIDGET_ID
@@ -59,7 +59,7 @@ public:
 
 protected: 
 
-  void OpStop(int result);
+  void OpStop(int result) override;
   bool Regression();
   bool RegressionPelvis(bool right = true);
   bool RegressionFemur(bool right = true);

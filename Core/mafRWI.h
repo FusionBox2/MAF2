@@ -57,9 +57,9 @@ class MAF_EXPORT mafRWI : public mafBaseEventHandler, public mafEventSender
 public:
 	mafRWI();
 	mafRWI(wxWindow *parent, RWI_LAYERS layers = ONE_LAYER, bool use_grid = false, bool show_axes = false, bool show_ruler = false, int stereo = 0, bool show_orientator = false, int axesType = mafAxes::TRIAD) ;
-	virtual	~mafRWI();
+	~mafRWI() override;
 
-	virtual void OnEvent(mafEventBase *maf_event);
+	void OnEvent(mafEventBase *maf_event) override;
 
 	/** Create all the elements necessary to build the rendering scene.*/
 	void CreateRenderingScene(wxWindow *parent, RWI_LAYERS layers = ONE_LAYER, bool use_grid = false, bool show_axes = false, bool show_ruler = false, int stereo = 0, bool show_orientator = false, int axesType = mafAxes::TRIAD);

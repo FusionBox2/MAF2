@@ -42,7 +42,7 @@ public:
   /** constructor .*/
 	mafGUIApplicationSettings(mafBaseEventHandler *Listener, const mafString &label = _L("Application"));
   /** destructor .*/
-	~mafGUIApplicationSettings(); 
+	~mafGUIApplicationSettings() override; 
 
   /** GUI IDs */
   enum APP_SETTINGS_WIDGET_ID
@@ -65,7 +65,7 @@ public:
 	};
 
   /** Answer to the messages coming from interface. */
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Return true if Log To File is enabled.*/
   bool GetLogToFileStatus() {return m_LogToFile != 0;};
@@ -114,10 +114,10 @@ public:
 
 protected:
   /** Create the GUI for the setting panel.*/
-  void CreateGui();
+  void CreateGui() override;
 
   /** Initialize the application settings.*/
-  void InitializeSettings();
+  void InitializeSettings() override;
 
   /** Used to enable/disable items according to the current widgets state.*/
   void EnableItems();

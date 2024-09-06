@@ -58,15 +58,15 @@ public:
   /** constructor */
 	mafPipeMeshSlice_BES();
   /** destructor */
-	virtual     ~mafPipeMeshSlice_BES();
+  ~mafPipeMeshSlice_BES() override;
 
 	/** process events coming from gui */
-	virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** creation of the pipe */
-	virtual void Create(mafNode *node, mafView *view /*,bool use_axes = true*/ ); //Can't add parameters - is Virtual
+  void Create(mafNode *node, mafView *view /*,bool use_axes = true*/ ) override; //Can't add parameters - is Virtual
   /** called when a vme is selected by user */
-	virtual void Select(bool select); 
+  void Select(bool select) override; 
 
 	/** IDs for the GUI */
 	enum PIPE_MESH_WIDGET_ID
@@ -136,7 +136,7 @@ public:
   
   /** Set the origin and normal of the slice.
   Both, Origin and Normal may be NULL, if the current value is to be preserved. */
-  /*virtual*/ void SetSlice(double* Origin, double* Normal);  
+  /*virtual*/ void SetSlice(double* Origin, double* Normal) override;  
 
 protected:
 	mmaMaterial             *m_MeshMaterial;
@@ -159,7 +159,7 @@ protected:
   /** create controls checking the field arrays of the data */
   void CreateFieldDataControlArrays();
   /** Update Properties of actor */
-	void UpdateProperty(bool fromTag = false);
+	void UpdateProperty(bool fromTag = false) override;
 	/**Update data value to selected scalar */
   void UpdateScalars();
 
@@ -186,6 +186,6 @@ protected:
   int m_RenderingDisplayListFlag; 
 
   /** allow the creation of the gui */
-	virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 };  
 #endif // __mafPipeMeshSlice_H__B

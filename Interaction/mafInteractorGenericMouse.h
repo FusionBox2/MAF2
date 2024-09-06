@@ -101,13 +101,13 @@ public:
 protected:
 
   mafInteractorGenericMouse();
-  ~mafInteractorGenericMouse();
+  ~mafInteractorGenericMouse() override;
 
   /** Superclass override; only one flag can be true*/
-  void EnableTranslationInternal(bool enable);
-  void EnableRotationInternal(bool enable);
-  void EnableScalingInternal(bool enable);
-  void EnableUniformScalingInternal(bool enable);
+  void EnableTranslationInternal(bool enable) override;
+  void EnableRotationInternal(bool enable) override;
+  void EnableScalingInternal(bool enable) override;
+  void EnableUniformScalingInternal(bool enable) override;
 
   /** Perform translation */
   void Translate(double *p1, double *p2);  

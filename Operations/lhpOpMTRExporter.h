@@ -37,15 +37,15 @@ class lhpOpMTRExporter: public mafOp
 public:
   mafTypeMacro(lhpOpMTRExporter, mafOp)
   lhpOpMTRExporter(const mafString& label = _R("MTRExporter"));
-  ~lhpOpMTRExporter(); 
-  mafOp* Copy();
-  void OnEvent(mafEventBase *maf_event);
+  ~lhpOpMTRExporter() override; 
+  mafOp* Copy() override;
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode *node);
+  bool Accept(mafNode *node) override;
 
   /** Build the interface of the operation, i.e the dialog that let choose the name of the output file. */
-  void OpRun();
+  void OpRun() override;
 
   void ExportLandmark();
 

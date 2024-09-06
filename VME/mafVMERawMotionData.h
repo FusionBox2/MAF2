@@ -64,7 +64,7 @@ public:
 protected:
 
   mafVMERawMotionData();
-  virtual ~mafVMERawMotionData();
+  ~mafVMERawMotionData() override;
 
   // By default, UpdateInformation calls this method. Subclasses should fill
   // the output structure information.

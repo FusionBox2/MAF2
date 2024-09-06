@@ -19,10 +19,10 @@ public:
     mafdmPointCloud(vtkSmartPointer<vtkPoints> points);
     
     vtkNew<vtkActor> makeRenderer();
-    void describe();
-        wxXmlNode* getNode();
-		void SetMatrix(const mafMatrix &mat){};
-		void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes){};
+    void describe() override;
+        wxXmlNode* getNode() override;
+		void SetMatrix(const mafMatrix &mat) override {};
+		void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes) override {};
 private:
     vtkSmartPointer <vtkPoints> points;
     void makePointSet();

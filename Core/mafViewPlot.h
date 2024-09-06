@@ -52,13 +52,13 @@ class MAF_EXPORT mafViewPlot: public mafView
 {
 public:
   mafViewPlot(const mafString& label = _R("plot View"));
-  virtual ~mafViewPlot();
+  ~mafViewPlot() override;
 
   mafTypeMacro(mafViewPlot, mafView);
 
-  virtual mafView*  Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
-  virtual void      Create();
-  virtual void			OnEvent(mafEventBase *maf_event);
+  mafView*  Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override;
+  void      Create() override;
+  void			OnEvent(mafEventBase *maf_event) override;
 
   /** IDs for the GUI */
 /*  enum VIEW_VTK_WIDGET_ID
@@ -69,44 +69,44 @@ public:
   };*/
 
   /** Add the vme to the view's scene-graph*/
-  virtual void VmeAdd(mafNode *vme);
+  void VmeAdd(mafNode *vme) override;
   
   /** Remove the vme from the view's scene-graph*/
-  virtual void VmeRemove(mafNode *vme);
+  void VmeRemove(mafNode *vme) override;
 
-  virtual void VmeSelect(mafNode *vme, bool select);
+  void VmeSelect(mafNode *vme, bool select) override;
 
   /** Called to show/hide vme*/
-  virtual void VmeShow(mafNode *vme, bool show);
+  void VmeShow(mafNode *vme, bool show) override;
 
   /** 
   Called to update visual pipe properties of the vme passed as argument. If the 'fromTag' flag is true,
   the update is done by reading the visual parameters from tags.*/
-  virtual void VmeUpdateProperty(mafNode *vme, bool fromTag = false);
+  void VmeUpdateProperty(mafNode *vme, bool fromTag = false) override;
 
   /** 
   Set the visualization status for the node (visible, not visible, mutex, ...) \sa mafSceneGraph*/
-  virtual int GetNodeStatus(mafNode *vme);
+  int GetNodeStatus(mafNode *vme) override;
 
   /** 
   Return a pointer to the visual pipe of the node passed as argument. 
   It is used in mafSideBar to plug the visual pipe's GUI in the tabbed vme panel. \sa mafSideBar*/
-  virtual mafPipe*  GetNodePipe(mafNode *vme);
+  mafPipe*  GetNodePipe(mafNode *vme) override;
   
   /** 
   Create the visual pipe for the node passed as argument. 
   To create visual pipe first check in m_PipeMap if custom visual pipe is defined, 
   otherwise ask to vme which is its visual pipe. */
-  virtual void VmeCreatePipe(mafNode *vme);
+  void VmeCreatePipe(mafNode *vme) override;
 
   /** 
   Delete vme's visual pipe. It is called when vme is removed from visualization.*/
-  virtual void VmeDeletePipe(mafNode *vme);
+  void VmeDeletePipe(mafNode *vme) override;
 
-  virtual mafSceneGraph *GetSceneGraph()	  {return m_Sg;}; 
+  mafSceneGraph *GetSceneGraph() override {return m_Sg;}; 
 
   /** Return a pointer to the image of the plot.*/
-  void GetImage(wxBitmap &bmp, int magnification = 1);
+  void GetImage(wxBitmap &bmp, int magnification = 1) override;
 
   typedef std::map<mafString, mafVisualPipeInfo> mafPipeMap;
 
@@ -116,12 +116,12 @@ public:
   mafPipeMap m_PipeMap; ///< Map used to store visual pipeline associated with vme types
 
   /** Print this view.*/
-  virtual void Print(wxDC *dc, wxRect margins);
+  void Print(wxDC *dc, wxRect margins) override;
 
 protected:
   mafSceneGraph *m_Sg;
 
-  virtual mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
   /** Return the visual pipe's name.*/
   void GetVisualPipeName(mafNode *node, mafString &pipe_name);

@@ -34,7 +34,7 @@ class ClientUnit : public wxFrame , public mafEventSender
 {
 public:
 	ClientUnit();
-	~ClientUnit(); 
+	~ClientUnit() override; 
 
   MAF_ID_DEC(Socket_ID);
   MAF_ID_DEC(RemoteMessage_ID);

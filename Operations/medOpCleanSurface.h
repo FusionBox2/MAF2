@@ -39,34 +39,34 @@ public:
   /** constructor */
 	medOpCleanSurface(const mafString& label = _R("CleanSurface"));
   /** destructor */
-	~medOpCleanSurface();
-  /** Answer to the messages coming from interface. */ 
-	virtual void OnEvent(mafEventBase *maf_event);
+	~medOpCleanSurface() override;
+  /** Answer to the messages coming from interface. */
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** RTTI macro */
 	mafTypeMacro(medOpCleanSurface, mafOp);
 
   /** Return a copy of the operation.*/
-	mafOp* Copy();
+	mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode *node);
+	bool Accept(mafNode *node) override;
 
 	/** Builds operation's interface. */
-	void OpRun();
+	void OpRun() override;
 
 	/** Execute the operation. */
-	void OpDo();
+	void OpDo() override;
 
 	/** Makes the undo for the operation. */
-	void OpUndo();
+	void OpUndo() override;
 
   /** Clean the surface. */
   void OnClean();
 
 protected:
 	/** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
-	void OpStop(int result);
+	void OpStop(int result) override;
 
   /** Create the dialog interface for the importer. */
   void CreateGui();

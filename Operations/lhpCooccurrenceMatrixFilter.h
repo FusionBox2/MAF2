@@ -43,7 +43,7 @@ class lhpCooccurrenceMatrixFilter : public vtkImageAlgorithm
 public:
   static lhpCooccurrenceMatrixFilter *New();
   vtkTypeMacro(lhpCooccurrenceMatrixFilter,vtkImageAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Set/get the output dimensions
   // The user should set this equal to the number of input grey levels.
@@ -123,7 +123,7 @@ protected:
 
 
   lhpCooccurrenceMatrixFilter();
-  ~lhpCooccurrenceMatrixFilter();
+  ~lhpCooccurrenceMatrixFilter() override;
 
   // This gives the subclass a chance to configure the output
   // see VTK user's guide p 246

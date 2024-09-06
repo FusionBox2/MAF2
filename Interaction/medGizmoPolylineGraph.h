@@ -99,13 +99,13 @@ public:
 
   /** Show/Hide the gizmos using actor visibility instead of pipe creation/destruction: this is used for faster 
   rendering*/
-  virtual void Show(bool show) ;
+  void Show(bool show) override;
 
   /** Events handling method */
-  /*virtual*/ void OnEvent(mafEventBase *maf_event); 
+  /*virtual*/ void OnEvent(mafEventBase *maf_event) override; 
 
   /** Not used since this gizmo is not moving anything*/
-  void SetInput(mafVME *vme) {return;};
+  void SetInput(mafVME *vme) override {return;};
 
   /** Set the gizmo color */
   virtual void SetColor(double col[3]);

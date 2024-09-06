@@ -55,10 +55,10 @@ public:
   /** constructor */
            medPipeVolumeMIP();
   /** destructor */
-  virtual ~medPipeVolumeMIP();
+  ~medPipeVolumeMIP() override;
 
   /** process events coming from gui */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** IDs for the GUI */
   enum PIPE_VOLUME_MIP_WIDGET_ID
@@ -69,9 +69,9 @@ public:
   };
  
   /** pipe creation */
-  virtual void Create(mafNode *node, mafView *view);
+  void Create(mafNode *node, mafView *view) override;
   /** called when vme associated with the pipe is selected */
-  virtual void Select(bool select); 
+  void Select(bool select) override; 
 
   /** set a resample factor of the rendered volume */
   void SetResampleFactor(double value);
@@ -79,9 +79,9 @@ public:
   double GetResampleFactor(){return m_ResampleFactor;};
 
   /** Get assembly front */
-  virtual vtkMAFAssembly *GetAssemblyFront(){return m_AssemblyFront;};
+  vtkMAFAssembly *GetAssemblyFront() override {return m_AssemblyFront;};
   /** Get assembly back */
-  virtual vtkMAFAssembly *GetAssemblyBack(){return m_AssemblyBack;};
+  vtkMAFAssembly *GetAssemblyBack() override {return m_AssemblyBack;};
 
 
 protected:
@@ -89,7 +89,7 @@ protected:
   Given a color LUT, generate color transfer function and opacity transfer function*/
   void UpdateMIPFromLUT();
   /** create gui widget for pipe */
-  virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 
   double					  m_ResampleFactor;
   vtkImageCast                *m_Caster;

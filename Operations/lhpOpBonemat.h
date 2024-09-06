@@ -64,15 +64,15 @@ public:
   static bool VolumeAccept(mafNode* node) {return(node != NULL && node->IsMAFType(mafVMEVolumeGray));};
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode *node);
+  bool Accept(mafNode *node) override;
 
   /** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
   lhpOpBonemat(const mafString& label= _R(""));
-  ~lhpOpBonemat(); 
-  mafOp* Copy();
-  void OnEvent(mafEventBase *maf_event);
+  ~lhpOpBonemat() override; 
+  mafOp* Copy() override;
+  void OnEvent(mafEventBase *maf_event) override;
 
 protected:
 
@@ -136,7 +136,7 @@ protected:
   };
 
   /** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
-	void OpStop(int result);
+	void OpStop(int result) override;
 
   void EnableTwoIntervals(bool enable);
   void EnableRhoAshSingleInterval(bool enable);

@@ -43,18 +43,18 @@ public:
   /** constructor .*/
   mafViewGlobalSliceCompound(const mafString& label = _R("View Global Slice Compound"), int num_row = 1, int num_col = 1);
   /** destructor .*/
-  virtual ~mafViewGlobalSliceCompound(); 
+  ~mafViewGlobalSliceCompound() override; 
 
   /** RTTI macro. */
   mafTypeMacro(mafViewGlobalSliceCompound, medViewCompoundWindowing);
 
   /** Redefine this method to package the compounded view */
-  virtual void PackageView();
+  void PackageView() override;
 
   /** Function that clones instance of the object. */
-  virtual mafView *Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
+  mafView *Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override;
 
-  void	OnEvent(mafEventBase *maf_event);
+  void	OnEvent(mafEventBase *maf_event) override;
 
 protected:
   /**
@@ -64,7 +64,7 @@ protected:
   the superclass enum. The last id value must be defined as "LAST_ID" to allow the 
   subclass to continue the ID enumeration from it. For appending the widgets in the
   same pannel GUI, each CreateGUI() function should first call the superclass' one.*/
-  virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 
   /** Function for enable/disable all gui widgets. */
 	//void EnableWidgets(bool enable);

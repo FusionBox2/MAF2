@@ -33,15 +33,15 @@ class MAF_EXPORT mafOpCreateProber: public mafOp
 {
 public:
   mafOpCreateProber(const mafString& label = _R("CreateProber"));
- ~mafOpCreateProber(); 
+ ~mafOpCreateProber() override; 
 
   mafTypeMacro(mafOpCreateProber, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
-  bool Accept(mafNode *node);
-  void OpRun();
-  void OpDo();
+  bool Accept(mafNode *node) override;
+  void OpRun() override;
+  void OpDo() override;
 
 protected: 
   mafVMEProber *m_Prober;

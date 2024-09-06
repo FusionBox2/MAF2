@@ -33,14 +33,14 @@ public:
   mafTypeMacro(mafNodeLayout,mafNode);
 
   /** print a dump of this object */
-  virtual void Print(std::ostream& os, const int tabs=0);// const;
+  void Print(std::ostream& os, const int tabs=0) override;// const;
 
   /** Return the application layout attribute.*/
   mmaApplicationLayout *GetLayout();
 
 protected:
   mafNodeLayout();
-  virtual ~mafNodeLayout() {}
+  ~mafNodeLayout() override {}
 
   mmaApplicationLayout *m_AppLayout;
 

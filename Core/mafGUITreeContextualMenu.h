@@ -38,7 +38,7 @@ class MAF_EXPORT mafGUITreeContextualMenu : public wxMenu, public mafEventSender
 {
 public:
   mafGUITreeContextualMenu();
-  virtual ~mafGUITreeContextualMenu();
+  ~mafGUITreeContextualMenu() override;
 
   /** Create a contextual menu*/
   virtual void CreateContextualMenu(mafGUICheckTree *tree, mafView *view, mafNode *vme, bool vme_menu);

@@ -62,16 +62,16 @@ class MAF_EXPORT mafVMEItemVTK : public mafVMEItem
 public:  
   mafTypeMacro(mafVMEItemVTK,mafVMEItem);
 
-  virtual void Print(std::ostream& os, const int indent=0) const;
+  void Print(std::ostream& os, const int indent=0) const override;
 
   /** copy data from another dataset */
-  virtual void DeepCopy(mafVMEItem *a);
+  void DeepCopy(mafVMEItem *a) override;
 
   /** copy large data from another dataset and release it.*/
-  virtual void DeepCopyVmeLarge(mafVMEItem *a);
+  void DeepCopyVmeLarge(mafVMEItem *a) override;
 
-  /** reference another dataset's internal data */ 
-  virtual void ShallowCopy(mafVMEItem *a);
+  /** reference another dataset's internal data */
+  void ShallowCopy(mafVMEItem *a) override;
 
   /** 
     return data converted into VTK format. (supported only if MAF is compiled
@@ -86,49 +86,49 @@ public:
     the same type of data, have the same TimeStamp and equivalent TagArray.
     Id and URL are not considered for the comparison.
     To force compare the dataset internal data, use SetGlobalCompareDataOn()*/
-  virtual bool Equals(mafVMEItem *a);
+  bool Equals(mafVMEItem *a) override;
 
   /** Read the data file and update the item's data.*/
-  virtual int ReadData(mafString &filename, int resolvedURL = MAF_OK);
+  int ReadData(mafString &filename, int resolvedURL = MAF_OK) override;
 
   /**
   Return true if data is !=NULL. Currently this doesn't ensure data is the same on 
   the file. IsDataModified() can be used to know if data has been changed with respect
   to file.*/
-  virtual bool IsDataPresent() {return m_Data!=NULL;}
+  bool IsDataPresent() override {return m_Data!=NULL;}
 
   /**  UpdateBounds for this data. GetBounds automatically call this function...*/
-  virtual void UpdateBounds();
+  void UpdateBounds() override;
 
   /** Internally used to update data, automatically called by GetData() */
-  virtual void UpdateData();
+  void UpdateData() override;
 
   /** return "vtk" file extension */
-  virtual const char * GetDataFileExtension();
+  const char * GetDataFileExtension() override;
 
   /** destroy VTK reader and unregister VTK dataset */
-  virtual void ReleaseData();
+  void ReleaseData() override;
 
   /** return pointer to memory to be used as input. This must be set with SetInputMemory(). */
-  virtual void GetOutputMemory(const char *&out_str, int &size);
+  void GetOutputMemory(const char *&out_str, int &size) override;
 
   /** 
     Release memory where data has been written. This should
     be used in MEMORY mode where data is written into memory */
-  virtual void ReleaseOutputMemory();
+  void ReleaseOutputMemory() override;
 
   /** Serialize the data into the compressed archive.*/
-  bool StoreToArchive(wxZipOutputStream &zip);
+  bool StoreToArchive(wxZipOutputStream &zip) override;
 
 protected:
   mafVMEItemVTK(); // to be allocated with New()
-  ~mafVMEItemVTK(); // to be deleted with Delete()
+  ~mafVMEItemVTK() override; // to be deleted with Delete()
 
   /** Check that stored file is valid and has the same dimension of that one present in memory.*/
-  int CheckFile(const char *filename);
+  int CheckFile(const char *filename) override;
 
   /** Check that stored string is valid.*/
-  int CheckFile(const char *input_string, int input_len);
+  int CheckFile(const char *input_string, int input_len) override;
   
   /** Update the vtk reader to read from memory or file from disk (encrypted or not).*/
   int UpdateReader(vtkDataReader *reader, mafString &filename);
@@ -137,12 +137,12 @@ protected:
     Restore data stored in this object. This function asks the storage
     for the filename corresponding to the URL.
     This method is automatically called by GetData().*/
-  virtual int InternalRestoreData();
+  int InternalRestoreData() override;
   /**
     Store data stored in this object. This function asks the storage object
     for a tmp filename for saving and then call ... to store the tmp file
     into the URL. This method is called by Store().*/
-  virtual int InternalStoreData(const char *url);
+  int InternalStoreData(const char *url) override;
 
   static void InternalProcessUpdateEvents(vtkObject* sender, unsigned long channel, void* clientdata, void* calldata);
 

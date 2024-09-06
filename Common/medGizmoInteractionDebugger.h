@@ -57,7 +57,7 @@ public:
   /** inputVME is used just to put the gizmo on the vme tree: this gizmo is not moving anything but itself */
 	medGizmoInteractionDebugger(mafNode* inputVme, mafBaseEventHandler *Listener = NULL, const char *name = "GizmoPath", bool testMode = false);
 
-  virtual	~medGizmoInteractionDebugger();
+  ~medGizmoInteractionDebugger() override;
 
   /** Set the constraint polyline graph */
   void SetConstraintPolylineGraph(medVMEPolylineGraph* constraintPolylineGraph);
@@ -76,19 +76,19 @@ public:
 
   /** Show/Hide the gizmos using actor visibility instead of pipe creation/destruction: this is used for faster 
   rendering*/
-  void Show(bool show) ;
+  void Show(bool show) override;
 
   /** Events handling method */
-  void OnEvent(mafEventBase *maf_event); 
+  void OnEvent(mafEventBase *maf_event) override; 
 
   /** Not used since this gizmo is not moving anything*/
-  void SetInput(mafVME *vme) {return;};
+  void SetInput(mafVME *vme) override {return;};
 
   /** Set the gizmo color */
   void SetColor(double col[3]);
 
   /** Get the gizmo gui */
-  mafGUI *GetGui();
+  mafGUI *GetGui() override;
 
 protected:
 

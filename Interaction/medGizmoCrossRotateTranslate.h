@@ -55,7 +55,7 @@ class MED_INTERACTION_EXPORT medGizmoCrossRotateTranslate : mafGizmoInterface
 public:
 	
 	medGizmoCrossRotateTranslate();
-	~medGizmoCrossRotateTranslate();
+	~medGizmoCrossRotateTranslate() override;
 
 	enum NORMAL {X = 0, Y = 1, Z = 2};
 
@@ -65,7 +65,7 @@ public:
 	void SetColor(int component, int color);
 
 	void Create(mafVME *input, mafBaseEventHandler* listener = NULL, bool BuildGUI = true, int normal = X);
-	void SetInput(mafVME *vme);
+	void SetInput(mafVME *vme) override;
 
 	/** Superclass override */
 	void SetRenderWindowHeightPercentage(double percentage);
@@ -80,14 +80,14 @@ public:
 	
 	/**
 	Set/Get the gizmo abs pose at the current time stamp*/
-	void SetAbsPose(mafMatrix *absPose);
-	mafMatrix *GetAbsPose();
+	void SetAbsPose(mafMatrix *absPose) override;
+	mafMatrix *GetAbsPose() override;
     
-	void Show(bool show);
+	void Show(bool show) override;
 
 	void SetName(mafString name);
 	mafString GetName() {return m_NameRTG;}
-	void OnEvent(mafEventBase *maf_event);
+	void OnEvent(mafEventBase *maf_event) override;
 	
 	mafString m_NameRTG;
 

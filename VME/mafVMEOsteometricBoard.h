@@ -52,10 +52,10 @@ public:
 	
 
 	/** Copy the contents of another mafVMESurfaceParametric into this one. */
-	virtual int DeepCopy(mafNode *a);
+	int DeepCopy(mafNode *a) override;
 	void UpdateLinks();
 	/** Compare with another mafVMESurfaceParametric. */
-	virtual bool Equals(mafVME *vme);
+	bool Equals(mafVME *vme) override;
 
 	/** return the right type of output */
 	mafVMEOutputSurface *GetSurfaceOutput();
@@ -63,14 +63,14 @@ public:
 	/**
 	Return the list of timestamps for this VME. Timestamps list is
 	obtained merging timestamps for matrixes and VME items*/
-	virtual void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes);
+	void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes) override;
 
 	/** return always false since (currently) the slicer is not an animated VME (position
 	is the same for all timestamps). */
-	virtual bool IsAnimated();
+	bool IsAnimated() override;
 
 	/** Return the suggested pipe-typename for the visualization of this vme */
-	virtual mafString GetVisualPipe() { return mafString(_R("mafPipeSurface")); };
+	mafString GetVisualPipe() override { return mafString(_R("mafPipeSurface")); };
 
 	/** Return pointer to material attribute. */
 	mmaMaterial *GetMaterial();
@@ -79,14 +79,14 @@ public:
 	static char ** GetIcon();
 
 	/** Precess events coming from other objects */
-	virtual void OnEvent(mafEventBase *maf_event);
+	void OnEvent(mafEventBase *maf_event) override;
 
 	/**
 	Set the Pose matrix of the VME. This function modifies the MatrixVector. You can
 	set or get the Pose for a specified time. When setting, if the time does not exist
 	the MatrixVector creates a new KeyMatrix on the fly. When getting, the matrix vector
 	interpolates on the fly according to the matrix interpolator.*/
-	virtual void SetMatrix(const mafMatrix &mat);
+	void SetMatrix(const mafMatrix &mat) override;
 	static bool VMEAccept(mafNode *node) { return(node != NULL && node->IsMAFType(mafVME)); };
 
 	mafVMEGravityLine *gline1,*gline2,*gline3;
@@ -101,7 +101,7 @@ public:
 protected:
 	double tr=0;
 	mafVMEOsteometricBoard();
-	virtual ~mafVMEOsteometricBoard();
+	~mafVMEOsteometricBoard() override;
 
 	enum PARAMETRIC_SURFACE_WIDGET_ID
 	{
@@ -154,13 +154,13 @@ protected:
 	void InternalRestore(const mafStorageElement& node) override;
 
 	/** called to prepare the update of the output */
-	virtual void InternalPreUpdate();
+	void InternalPreUpdate() override;
 
 	/** update the output data structure */
-	virtual void InternalUpdate();
+	void InternalUpdate() override;
 
 	/** Internally used to create a new instance of the GUI.*/
-	virtual mafGUI *CreateGui();
+	mafGUI *CreateGui() override;
 
 
 	mafVMESurface* GetSurfaceVME();

@@ -41,7 +41,7 @@ public:
     of stored Items is 0. Also special VME could not support VTK dataset output.
     An event is rised when the output data changes to allow attached classes to 
     update their input.*/
-  virtual vtkAlgorithmOutput *GetVTKOutputPort();
+  vtkAlgorithmOutput *GetVTKOutputPort() override;
 
   /**
     Update all the output data structures (data, bounds, matrix and abs matrix).*/
@@ -52,7 +52,7 @@ protected:
   mafVMEOutputVTK(); 
 
   /** destructor protected method. To be deleted with delete(). */
-  virtual ~mafVMEOutputVTK(); 
+  ~mafVMEOutputVTK() override; 
 
 private:
   /** constructor: not implemented. */

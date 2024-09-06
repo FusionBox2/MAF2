@@ -53,7 +53,7 @@ public:
 	mafViewArbitrarySlice(const mafString& label = _R("View Arbitrary Slice with Windowing"), bool show_ruler = false);
 
 	/** destructor*/
-	virtual ~mafViewArbitrarySlice(); 
+	~mafViewArbitrarySlice() override; 
 
 	/** RTTI macro.*/
 	mafTypeMacro(mafViewArbitrarySlice, medViewCompoundWindowing);
@@ -68,25 +68,25 @@ public:
 	};
 
 	/** Create visual pipe and initialize them to build an OrthoSlice visualization */
-	virtual void PackageView();
+	void PackageView() override;
 
 	/** Show/Hide VMEs into plugged sub-views*/
-	virtual void VmeShow(mafNode *node, bool show);
+	void VmeShow(mafNode *node, bool show) override;
 
 	/** Remove VME into plugged sub-views*/
-	virtual void VmeRemove(mafNode *node);
+	void VmeRemove(mafNode *node) override;
 
 	/** Create the GUI on the bottom of the compounded view. */
-	virtual void CreateGuiView();
+	void CreateGuiView() override;
 
 	/** Function that handles events sent from other objects. */
-	virtual void OnEvent(mafEventBase *maf_event);
+	void OnEvent(mafEventBase *maf_event) override;
 
 	/** Function that clones instance of the object. */
-	virtual mafView* Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
+	mafView* Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override;
 
 	/** Force the updating of the camera. */
-	virtual void CameraUpdate();
+	void CameraUpdate() override;
 
 	/* Update slicer settings according to m_CurrentVolume*/
 	void UpdateSlicerBehavior();
@@ -99,10 +99,10 @@ protected:
 	an extension of the superclass enum. The last id value must be defined as "LAST_ID" to allow the 
 	subclass to continue the ID enumeration from it. For appending the widgets in the
 	same panel GUI, each CreateGUI() function should first call the superclass' one.*/
-	virtual mafGUI* CreateGui();
+	mafGUI* CreateGui() override;
 
 	/** Enable/disable view widgets.*/
-	void EnableWidgets(bool enable = true);
+	void EnableWidgets(bool enable = true) override;
 
 	/** Handling events sent from other objects. Called by public method OnEvent().*/
 	void OnEventThis(mafEventBase *maf_event);  
@@ -117,7 +117,7 @@ protected:
 	void PostMultiplyEventMatrix(mafEventBase *maf_event);
 
 	/** Windowing for volumes data. This function overrides superclass method.*/
-	void VolumeWindowing(mafVME *volume);
+	void VolumeWindowing(mafVME *volume) override;
 
 	mafViewVTK *m_ViewSlice;
 	mafViewVTK *m_ViewArbitrary;

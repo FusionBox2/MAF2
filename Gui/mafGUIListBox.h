@@ -42,7 +42,7 @@ public:
                     const wxSize& size = wxDefaultSize, 
                     long style = wxTAB_TRAVERSAL | wxCLIP_CHILDREN);
 
-    virtual  ~mafGUIListBox();
+    ~mafGUIListBox() override;
 
   void Clear();
   void AddItem(wxString label, bool checked = false);

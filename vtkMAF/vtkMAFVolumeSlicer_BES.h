@@ -104,7 +104,7 @@ public:
   //vtkSetMacro( GPUEnabled, int );
   void SetGPUEnabled(int enable);
   vtkGetMacro( GPUEnabled, int );
-  int RequestInformation(vtkInformation* vtkNotUsed(request), vtkInformationVector** inputVector, vtkInformationVector* outputVector);
+  int RequestInformation(vtkInformation* vtkNotUsed(request), vtkInformationVector** inputVector, vtkInformationVector* outputVector) override;
 
   /** Set tri-linear interpolation to on */
   void SetTrilinearInterpolationOn(){m_TriLinearInterpolationOn = true;};
@@ -140,13 +140,13 @@ public:
 
 protected:
   vtkMAFVolumeSlicer_BES();
-  ~vtkMAFVolumeSlicer_BES();
+  ~vtkMAFVolumeSlicer_BES() override;
 
   /** Return this object's modified time. */  
-  /*virtual*/ vtkMTimeType GetMTime();
+  /*virtual*/ vtkMTimeType GetMTime() override;
 
   /** By default copy the output update extent to the input. */
-  /*virtual*/ int RequestUpdateExtent(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  /*virtual*/ int RequestUpdateExtent(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   /** 
   By default, UpdateInformation calls this method to copy information

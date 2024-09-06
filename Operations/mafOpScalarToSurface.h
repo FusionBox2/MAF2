@@ -36,19 +36,19 @@ public:
   mafOpScalarToSurface(const mafString& label = _R("ScalarToSurface"));
 
   /** Destructor. */
- ~mafOpScalarToSurface(); 
+ ~mafOpScalarToSurface() override; 
 
  /** RTTI Macro. */
   mafTypeMacro(mafOpScalarToSurface, mafOp);
 
   /** Copy the operation. */
-  mafOp* Copy();
+  mafOp* Copy() override;
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode *node);
+  bool Accept(mafNode *node) override;
 
   /** Builds the output surface. */
-  void OpRun();
+  void OpRun() override;
 
 protected: 
   mafVMESurface *m_Surface;

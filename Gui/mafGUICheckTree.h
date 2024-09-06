@@ -47,7 +47,7 @@ public:
   /** constructor .*/
   mafGUICheckTree (wxWindow* parent, wxWindowID id=-1, bool CloseButton = false, bool HideTitle = false); 
   /** destructor .*/
-  virtual       ~mafGUICheckTree();
+  ~mafGUICheckTree() override;
 
   void VmeExpand(mafNode *vme);
   void VmeCollapse(mafNode *vme);
@@ -130,7 +130,7 @@ public:
   virtual void ShowContextualMenu(wxMouseEvent& event);
 
   /** respond to Selection Changed */
-  virtual void OnSelectionChanged(wxTreeEvent& event);
+  void OnSelectionChanged(wxTreeEvent& event) override;
 
 protected:
   mafView *m_View;

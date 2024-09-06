@@ -130,8 +130,9 @@ public:
     DEFINE_FIELD(out, true, false);
     DEFINE_FIELD(in1, true, true);
   }
-  bool postRead(){return true;}
-  bool process(){if(!Oper<Type>::checkInputFields())return false;m_out->GetVector() = m_in1->GetVector();Oper<Type>::validateOutputFields();return true;}
+  bool postRead() override {return true;}
+  bool process() override
+  {if(!Oper<Type>::checkInputFields())return false;m_out->GetVector() = m_in1->GetVector();Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -146,8 +147,9 @@ public:
     DEFINE_FIELD(out, false, false);
     DEFINE_FIELD(in1, false, true);
   }
-  bool postRead(){return true;}
-  bool process(){if(!Oper<Type>::checkInputFields())return false;m_out->GetScalar() = m_in1->GetScalar();Oper<Type>::validateOutputFields();return true;}
+  bool postRead() override {return true;}
+  bool process() override
+  {if(!Oper<Type>::checkInputFields())return false;m_out->GetScalar() = m_in1->GetScalar();Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -164,8 +166,9 @@ public:
     DEFINE_FIELD(in1, true, true);
     DEFINE_FIELD(in2, true, true);
   }
-  bool postRead(){return true;}
-  bool process(){if(!Oper<Type>::checkInputFields())return false;m_out->GetVector() = m_in1->GetVector() ^ m_in2->GetVector();Oper<Type>::validateOutputFields();return true;}
+  bool postRead() override {return true;}
+  bool process() override
+  {if(!Oper<Type>::checkInputFields())return false;m_out->GetVector() = m_in1->GetVector() ^ m_in2->GetVector();Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -182,8 +185,9 @@ public:
     DEFINE_FIELD(in1, true, true);
     DEFINE_FIELD(in2, true, true);
   }
-  bool postRead(){return true;}
-  bool process(){if(!Oper<Type>::checkInputFields())return false;m_out->GetScalar() = m_in1->GetVector() * m_in2->GetVector();Oper<Type>::validateOutputFields();return true;}
+  bool postRead() override {return true;}
+  bool process() override
+  {if(!Oper<Type>::checkInputFields())return false;m_out->GetScalar() = m_in1->GetVector() * m_in2->GetVector();Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -199,8 +203,9 @@ public:
     DEFINE_FIELD(in1, false, true);
     DEFINE_FIELD(in2, false, true);
   }
-  bool postRead(){return true;}
-  bool process(){if(!Oper<Type>::checkInputFields())return false;m_out->GetScalar() = m_in1->GetScalar() + m_in2->GetScalar();Oper<Type>::validateOutputFields();return true;}
+  bool postRead() override {return true;}
+  bool process() override
+  {if(!Oper<Type>::checkInputFields())return false;m_out->GetScalar() = m_in1->GetScalar() + m_in2->GetScalar();Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -216,8 +221,9 @@ public:
     DEFINE_FIELD(in1, false, true);
     DEFINE_FIELD(in2, false, true);
   }
-  bool postRead(){return true;}
-  bool process(){if(!Oper<Type>::checkInputFields())return false;m_out->GetScalar() = m_in1->GetScalar() - m_in2->GetScalar();Oper<Type>::validateOutputFields();return true;}
+  bool postRead() override {return true;}
+  bool process() override
+  {if(!Oper<Type>::checkInputFields())return false;m_out->GetScalar() = m_in1->GetScalar() - m_in2->GetScalar();Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -233,8 +239,9 @@ public:
     DEFINE_FIELD(in1, false, true);
     DEFINE_FIELD(in2, false, true);
   }
-  bool postRead(){return true;}
-  bool process(){if(!Oper<Type>::checkInputFields())return false;m_out->GetScalar() = m_in1->GetScalar() * m_in2->GetScalar();Oper<Type>::validateOutputFields();return true;}
+  bool postRead() override {return true;}
+  bool process() override
+  {if(!Oper<Type>::checkInputFields())return false;m_out->GetScalar() = m_in1->GetScalar() * m_in2->GetScalar();Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -250,8 +257,9 @@ public:
     DEFINE_FIELD(in1, false, true);
     DEFINE_FIELD(in2, false, true);
   }
-  bool postRead(){return true;}
-  bool process(){if(!Oper<Type>::checkInputFields())return false;m_out->GetScalar() = m_in1->GetScalar() / m_in2->GetScalar();Oper<Type>::validateOutputFields();return true;}
+  bool postRead() override {return true;}
+  bool process() override
+  {if(!Oper<Type>::checkInputFields())return false;m_out->GetScalar() = m_in1->GetScalar() / m_in2->GetScalar();Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -267,8 +275,9 @@ public:
     DEFINE_FIELD(in1, true, true);
     DEFINE_FIELD(in2, true, true);
   }
-  bool postRead(){return true;}
-  bool process(){if(!Oper<Type>::checkInputFields())return false;m_out->GetVector() = m_in1->GetVector() + m_in2->GetVector();Oper<Type>::validateOutputFields();return true;}
+  bool postRead() override {return true;}
+  bool process() override
+  {if(!Oper<Type>::checkInputFields())return false;m_out->GetVector() = m_in1->GetVector() + m_in2->GetVector();Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -284,8 +293,9 @@ public:
     DEFINE_FIELD(in1, true, true);
     DEFINE_FIELD(in2, true, true);
   }
-  bool postRead(){return true;}
-  bool process(){if(!Oper<Type>::checkInputFields())return false;m_out->GetVector() = m_in1->GetVector() - m_in2->GetVector();Oper<Type>::validateOutputFields();return true;}
+  bool postRead() override {return true;}
+  bool process() override
+  {if(!Oper<Type>::checkInputFields())return false;m_out->GetVector() = m_in1->GetVector() - m_in2->GetVector();Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
   Param<Type>       *m_in1;
@@ -304,8 +314,8 @@ public:
     DEFINE_FIELD(in2s, false, true);
     DEFINE_FIELD(in2v, true, true);
   }
-  bool postRead(){return true;}
-  bool process()
+  bool postRead() override {return true;}
+  bool process() override
   {
     if(!Oper<Type>::checkInputFields())
       return false;
@@ -331,8 +341,9 @@ public:
   {
     DEFINE_FIELD(in, true, true);
   }
-  bool postRead(){return true;}
-  bool process(){/*if(!checkInputFields())return false;validateOutputFields();*/return true;}
+  bool postRead() override {return true;}
+  bool process() override
+  {/*if(!checkInputFields())return false;validateOutputFields();*/return true;}
 private:
   Param<Type>       *m_in;
 };
@@ -345,8 +356,9 @@ public:
   {
     DEFINE_FIELD(in, true, true);
   }
-  bool postRead(){return true;}
-  bool process(){if(!Oper<Type>::checkInputFields())return false;Oper<Type>::validateOutputFields();return true;}
+  bool postRead() override {return true;}
+  bool process() override
+  {if(!Oper<Type>::checkInputFields())return false;Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_in;
 };
@@ -360,8 +372,9 @@ public:
   {
     DEFINE_FIELD(out, true, false);
   }
-  bool postRead(){return true;}
-  bool process(){if(!Oper<Type>::checkInputFields())return false;Oper<Type>::validateOutputFields();return true;}
+  bool postRead() override {return true;}
+  bool process() override
+  {if(!Oper<Type>::checkInputFields())return false;Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
 };
@@ -376,8 +389,8 @@ public:
     DEFINE_SFIELDI(in);
     DEFINE_SFIELDICO(up);
   }
-  bool postRead();
-  bool process(){return true;}
+  bool postRead() override;
+  bool process() override {return true;}
 private:
   Param<Type>       *m_dn;
   Param<Type>       *m_in;
@@ -394,8 +407,9 @@ public:
     DEFINE_SFIELDI(in);
     DEFINE_SFIELDICO(up);
   }
-  bool postRead();
-  bool process(){if(!Oper<Type>::checkInputFields())return false;Oper<Type>::validateOutputFields();return true;}
+  bool postRead() override;
+  bool process() override
+  {if(!Oper<Type>::checkInputFields())return false;Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_dn;
   Param<Type>       *m_in;
@@ -472,8 +486,9 @@ public:
   {
     DEFINE_FIELD(out, false, false);
   }
-  bool postRead(){return true;}
-  bool process(){if(!Oper<Type>::checkInputFields())return false;Oper<Type>::validateOutputFields();return true;}
+  bool postRead() override {return true;}
+  bool process() override
+  {if(!Oper<Type>::checkInputFields())return false;Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
 };
@@ -487,8 +502,9 @@ public:
   {
     DEFINE_FIELD(out, true, true);
   }
-  bool postRead(){return true;}
-  bool process(){if(!Oper<Type>::checkInputFields())return false;Type ln = m_out->GetVector().length2(); if(ln != Type(0)) m_out->GetVector() /= sqrt(ln);Oper<Type>::validateOutputFields();return true;}
+  bool postRead() override {return true;}
+  bool process() override
+  {if(!Oper<Type>::checkInputFields())return false;Type ln = m_out->GetVector().length2(); if(ln != Type(0)) m_out->GetVector() /= sqrt(ln);Oper<Type>::validateOutputFields();return true;}
 private:
   Param<Type>       *m_out;
 };

@@ -129,14 +129,14 @@ public:
   static medOpMMLContourWidget *New();
 
   vtkTypeMacro(medOpMMLContourWidget,vtkPolyDataSourceWidget);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   // Description:
   // Methods that satisfy the superclass' API.
-  virtual void SetEnabled(int);
-  virtual void PlaceWidget(double bounds[6]);
-  void PlaceWidget()
-    {this->Superclass::PlaceWidget();}
+	void SetEnabled(int) override;
+	void PlaceWidget(double bounds[6]) override;
+  void PlaceWidget() override
+  {this->Superclass::PlaceWidget();}
 
   // Description:
   // Set/Get the resolution (number of subdivisions) of the plane.
@@ -249,12 +249,12 @@ public:
   // PolyData.  Make changes to this before calling the initial PlaceWidget()
   // to have the initial placement follow suit.  Or, make changes after the
   // widget has been initialised and call UpdatePlacement() to realise.
-  virtual vtkPolyDataAlgorithm* GetPolyDataAlgorithm() { return m_PlaneSource; }
+	vtkPolyDataAlgorithm* GetPolyDataAlgorithm() override { return m_PlaneSource; }
 
   // Description:
   // Satisfies superclass API.  This will change the state of the widget to
   // match changes that have been made to the underlying PolyDataSource
-  void UpdatePlacement(void);
+  void UpdatePlacement(void) override;
 
   // Description:
   // Get the handle properties (the little balls are the handles). The 
@@ -288,7 +288,7 @@ public:
 
 protected:
   medOpMMLContourWidget();
-  ~medOpMMLContourWidget();
+  ~medOpMMLContourWidget() override;
 
 // MK Operation
   int m_Operation;
@@ -369,7 +369,7 @@ protected:
   void HandlesOn(double length);
   void HandlesOff();
   int HighlightHandle(vtkProp *prop); //returns cell id
-  virtual void SizeHandles();
+	void SizeHandles() override;
   
   // the normal cone
   vtkActor          *m_ConeActor;

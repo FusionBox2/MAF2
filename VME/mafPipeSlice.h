@@ -42,7 +42,7 @@ public:
   /** constructor. */
   mafPipeSlice();
   /** destructor. */
-  virtual ~mafPipeSlice();
+  ~mafPipeSlice() override;
 
 protected: 
   double m_Origin[3];     ///< origin of the cutting plane

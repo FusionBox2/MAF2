@@ -50,10 +50,10 @@ public:
   mafTypeMacro(medPipeVolumeSliceBlend,mafPipeVTK);
 
   medPipeVolumeSliceBlend();
-  virtual ~medPipeVolumeSliceBlend();
+  ~medPipeVolumeSliceBlend() override;
 
   /** process events coming from gui */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** IDs for the GUI */
   enum PIPE_VOLUME_SLICE_WIDGET_ID
@@ -69,7 +69,7 @@ public:
   void InitializeSliceParameters(int direction, bool show_vol_bbox, bool show_bounds=false);
   void InitializeSliceParameters(int direction, double slice_origin0[3],double slice_origin1[3], bool show_vol_bbox,bool show_bounds=false);
   void InitializeSliceParameters(int direction, double slice_origin0[3],double slice_origin1[3], float slice_xVect[3], float slice_yVect[3], bool show_vol_bbox,bool show_bounds=false);
-  virtual void Create(mafNode *node, mafView *view);
+  void Create(mafNode *node, mafView *view) override;
 
   /** Set the range to the lookup table for the slice. */
   void SetLutRange(double low, double high);
@@ -101,13 +101,13 @@ public:
   /** Get the opacity of the slice. */
   float GetSliceOpacity();
 
-  virtual void Select(bool select); 
+  void Select(bool select) override; 
 
 protected:
   /** Create the slicer pipeline. */
   void CreateSlice(int direction);
 
-  virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 
   double	m_Origin[2][3];
   float		m_Normal[3][3];

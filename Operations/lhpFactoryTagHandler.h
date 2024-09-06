@@ -40,8 +40,8 @@ class MAF_EXPORT lhpFactoryTagHandler : public mafObjectFactory
 {
 public: 
   mafTypeMacro(lhpFactoryTagHandler,mafObjectFactory);
-  virtual const char* GetMAFSourceVersion() const;
-  virtual const char* GetDescription() const;
+  const char* GetMAFSourceVersion() const override;
+  const char* GetDescription() const override;
 
   /* Initialize the factory creating and registering a new instance */
   static int Initialize();
@@ -61,7 +61,7 @@ public:
 
 protected:
   lhpFactoryTagHandler();
-  ~lhpFactoryTagHandler() { }
+  ~lhpFactoryTagHandler() override { }
 
   static lhpFactoryTagHandler *m_Instance;
   static std::vector<std::string> m_TagHandlerNames; 

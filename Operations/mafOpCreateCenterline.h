@@ -33,15 +33,15 @@ class MAF_EXPORT mafOpCreateCenterLine : public mafOp
 {
 public:
 	mafOpCreateCenterLine(const mafString& label = _R("CreateCenterLine"));
-	~mafOpCreateCenterLine();
+	~mafOpCreateCenterLine() override;
 
 	mafTypeMacro(mafOpCreateCenterLine, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
-  bool Accept(mafNode *node);
-  void OpRun();
-  void OpDo();
+  bool Accept(mafNode *node) override;
+  void OpRun() override;
+  void OpDo() override;
 
 protected: 
 	mafVMECenterLine *m_Meter;

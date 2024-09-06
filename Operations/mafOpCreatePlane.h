@@ -34,7 +34,7 @@ class MAF_EXPORT mafOpCreatePlane : public mafOp
 {
 public:
 	mafOpCreatePlane(const mafString& label = _R("Create Plane"));
-  ~mafOpCreatePlane();
+  ~mafOpCreatePlane() override;
 
   mafTypeMacro(mafOpCreatePlane, mafOp);
 
@@ -42,14 +42,14 @@ public:
   //void OnEvent(mafEventBase *maf_event);
 
   /** Return a copy of the operation.*/
-  mafOp* Copy();
+  mafOp* Copy() override;
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode *node);
+  bool Accept(mafNode *node) override;
 
   /** Builds operation's interface. */
-  void OpRun();
-  void OpDo();
+  void OpRun() override;
+  void OpDo() override;
 
 
 

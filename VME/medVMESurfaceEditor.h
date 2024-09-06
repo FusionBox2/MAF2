@@ -41,20 +41,20 @@ public:
 	from the source.
 	Return MAF_OK if succeeded, MAF_ERROR if they kind of data is not accepted by
 	this type of VME. */
-	virtual int SetData(vtkDataSet *data, mafTimeStamp t, int mode=MAF_VME_COPY_DATA);
+	int SetData(vtkDataSet *data, mafTimeStamp t, int mode=MAF_VME_COPY_DATA) override;
 
 	/** Return the suggested pipe-typename for the visualization of this vme */
-	virtual mafString GetVisualPipe() {return m_VisualPipeName;};
+	mafString GetVisualPipe() override {return m_VisualPipeName;};
 
-	/** return the right type of output */  
-	virtual mafVMEOutput *GetOutput();
+	/** return the right type of output */
+	mafVMEOutput *GetOutput() override;
 
 	/** Set the suggested pipe-typename for the visualization of this vme */
 	void SetVisualPipe(mafString vpipe){m_VisualPipeName = vpipe;};
 
 protected:
 	medVMESurfaceEditor();
-	virtual ~medVMESurfaceEditor(); 
+	~medVMESurfaceEditor() override; 
 
 	mafString m_VisualPipeName;
 

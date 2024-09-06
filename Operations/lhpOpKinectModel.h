@@ -37,15 +37,15 @@ class lhpOpKinectModel: public mafOp
 public:
   mafTypeMacro(lhpOpKinectModel, mafOp)
   lhpOpKinectModel(const mafString& label = _R("KinectUtil"));
- ~lhpOpKinectModel(); 
+ ~lhpOpKinectModel() override;
 
-  virtual void OnEvent(mafEventBase *maf_event);
-  mafOp* Copy();
+  void OnEvent(mafEventBase *maf_event) override;
+  mafOp* Copy() override;
 
-  bool Accept(mafNode* vme);   
-  void OpRun();
-  void OpDo();
-  void OpUndo();
+  bool Accept(mafNode* vme) override;   
+  void OpRun() override;
+  void OpDo() override;
+  void OpUndo() override;
   bool Import();
 
 protected: 

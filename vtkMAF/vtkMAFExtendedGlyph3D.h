@@ -45,7 +45,7 @@ public:
   // Description:
   // This can be overwritten by subclass to return 0 when a point is
   // blanked. Default implementation is to always return 1;
-  virtual int IsPointVisible(vtkDataSet*, vtkIdType) override;
+  int IsPointVisible(vtkDataSet*, vtkIdType) override;
 
   /**
   Turn on/off scaling of source geometry.*/
@@ -55,7 +55,7 @@ public:
 
 protected:
   vtkMAFExtendedGlyph3D();
-  ~vtkMAFExtendedGlyph3D();
+  ~vtkMAFExtendedGlyph3D() override;
 
   int ScalarVisibility;
 

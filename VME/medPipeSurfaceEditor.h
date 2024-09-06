@@ -49,22 +49,22 @@ public:
   /** constructor. */
 	medPipeSurfaceEditor();
   /** destructor. */
-	virtual ~medPipeSurfaceEditor();
+  ~medPipeSurfaceEditor() override;
 
 	/** process events coming from gui */
-	virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** function that create the pipeline instancing vtk graphic pipe. */
-	virtual void Create(mafNode *node, mafView *view);
+  void Create(mafNode *node, mafView *view) override;
   /** Show can be used for hide or show elements (actually empty) */
 	void Show(bool show); 
   /** During selection of vme, it can visualize graphic element (actually empty)*/
-	virtual void Select(bool select);
+  void Select(bool select) override;
 
 
 protected:
   /** Creation of the gui that will be attached to visual prop panel.*/
-	virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 
 	vtkPolyDataMapper	*m_Mapper;
 	vtkActor					*m_Actor;

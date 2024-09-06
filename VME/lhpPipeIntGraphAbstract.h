@@ -37,13 +37,13 @@ public:
   mafAbstractTypeMacro(lhpPipeIntGraphAbstract, mafPipe);
   
   lhpPipeIntGraphAbstract();
-  virtual     ~lhpPipeIntGraphAbstract();
+  ~lhpPipeIntGraphAbstract() override;
 
   /** Create the VTK rendering pipeline*/
-  virtual void Create(mafNode *node, mafView *view);
+  void Create(mafNode *node, mafView *view) override;
 
   /** Answer events coming from the Gui and from cloud */
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** IDs for the GUI */
   enum PIPE_INT_GRAPH_ABSTRACT
@@ -65,7 +65,7 @@ protected:
   virtual void GrabData() = 0;
 
   /** Create the Gui for the visual pipe that allow the user to change the pipe's parameters.*/
-  virtual mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
   mafGraphDataImpl                      *m_Graph;
   int                                   m_ForcedWholeRange;

@@ -45,17 +45,17 @@ public:
   /** object constructor */
 	medOpImporterLandmarkTXT(const mafString& label = _R(""));
   /** object destructor */
-	~medOpImporterLandmarkTXT();
+	~medOpImporterLandmarkTXT() override;
   /** method for clone object */
-	mafOp* Copy();
+	mafOp* Copy() override;
   /** method for catch the dispatched events */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode* node) {return true;};
+	bool Accept(mafNode* node) override {return true;};
 
 	/** Builds operation's interface. */
-	void OpRun();
+	void OpRun() override;
 
   /** Read the file.
   the format of the file admits some speficics.

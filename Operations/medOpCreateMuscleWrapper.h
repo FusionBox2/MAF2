@@ -29,15 +29,15 @@ class medOpCreateMuscleWrapper: public mafOp
 {
 public:
   medOpCreateMuscleWrapper(const mafString& label = _R("CreateMuscleWrappedMeter"));
-  ~medOpCreateMuscleWrapper(); 
+  ~medOpCreateMuscleWrapper() override; 
 
   mafTypeMacro(medOpCreateMuscleWrapper, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
-  bool Accept(mafNode *node);
-  void OpRun();
-  void OpDo();
+  bool Accept(mafNode *node) override;
+  void OpRun() override;
+  void OpDo() override;
 
 protected: 
   medVMEMuscleWrapper *m_Meter;

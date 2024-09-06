@@ -47,7 +47,7 @@ public:
   mafTypeMacro(medInteractorPERBrushFeedback,mafInteractorPER);
 
   /* Main event handler */
-  virtual void OnEvent(mafEventBase *event);
+  void OnEvent(mafEventBase *event) override;
 
   /** Remove actor from render */
   void RemoveActor();
@@ -74,7 +74,7 @@ protected:
   /** constructor. */
   medInteractorPERBrushFeedback();
   /** destructor. */
-  virtual ~medInteractorPERBrushFeedback();
+  ~medInteractorPERBrushFeedback() override;
   
   /* draw an the Brush ellipse*/
   void DrawEllipse(double x, double y);

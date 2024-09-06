@@ -45,7 +45,7 @@ class MAF_EXPORT mafGUIMDIFrame: public wxMDIParentFrame, public mafEventSender
   /** constructor. */
   mafGUIMDIFrame(const wxString& title, const wxPoint& pos, const wxSize& size);
   /** destructor. */
- ~mafGUIMDIFrame(); 
+ ~mafGUIMDIFrame() override; 
   
   /** Show the Docking Settings Dialog */
   mafGUI* GetDockSettingGui() {return m_DockSettings->GetGui();};  

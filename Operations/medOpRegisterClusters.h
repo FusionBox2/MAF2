@@ -43,24 +43,24 @@ class MED_OPERATION_EXPORT medOpRegisterClusters: public mafOp
 {
 public:
   medOpRegisterClusters(const mafString& label = _L("Register Landmark Cloud"));
- ~medOpRegisterClusters(); 
-  virtual void OnEvent(mafEventBase *maf_event);
+ ~medOpRegisterClusters() override;
+  void OnEvent(mafEventBase *maf_event) override;
   
   mafTypeMacro(medOpRegisterClusters, mafOp);
   
-  mafOp* Copy();
+  mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-  bool Accept(mafNode* node);   
+  bool Accept(mafNode* node) override;   
 
 	/** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
 	/** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
 
 	/** Makes the undo for the operation. */
-  void OpUndo();
+  void OpUndo() override;
 
 	static bool ClosedCloudAccept(mafNode* node) {if(node != NULL && node->IsA("mafVMELandmarkCloud") && !((mafVMELandmarkCloud*)node)->IsOpen())return true;return false;}
 

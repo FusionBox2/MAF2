@@ -45,7 +45,7 @@ class MAF_EXPORT mafGUITransformMouse : public mafGUITransformInterface
 {
 public:
   mafGUITransformMouse(mafVME *input, mafBaseEventHandler *listener = NULL, bool testMode = false);
-	~mafGUITransformMouse(); 
+	~mafGUITransformMouse() override; 
 
   // constraints enum
   enum TRANSFORM_MOUSE_WIDGET_ID
@@ -62,10 +62,10 @@ public:
     NORMAL_SURFACE,
   };
 
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Override superclass */
-	void EnableWidgets(bool enable);
+	void EnableWidgets(bool enable) override;
 
   //----------------------------------------------------------------------------
   //gui constants: 
@@ -96,7 +96,7 @@ protected:
   void CreateISA();
 
   /** Override superclass */
-  void CreateGui();
+  void CreateGui() override;
 
   mafInteractorCompositorMouse *m_IsaCompositor;
 
@@ -108,7 +108,7 @@ protected:
 	int m_TranslationConstraintId;
   
   /** Override superclass */;
-  void RefSysVmeChanged();
+  void RefSysVmeChanged() override;
 
   friend class mafGUITransformMouseTest;
   

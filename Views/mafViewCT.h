@@ -41,26 +41,26 @@ public:
   /** constructor */
 	mafViewCT(const mafString& label = _R("View CT"));
   /** destructor */
-	virtual ~mafViewCT();
+  ~mafViewCT() override;
   /** RTTI macro */
 	mafTypeMacro(mafViewCT, mafViewCompound);
 
     /** clone the object*/
-	virtual mafView *Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
+  mafView *Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override;
 	/** listen to other object events*/
-	virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
 	/** Show/Hide VMEs into plugged sub-views */
-	virtual void VmeShow(mafNode *node, bool show);
+  void VmeShow(mafNode *node, bool show) override;
 
 	/** Remove VME into plugged sub-views */
-	virtual void VmeRemove(mafNode *node);
+  void VmeRemove(mafNode *node) override;
 
 	/** Operations to be performed on vme selection */
-	virtual void VmeSelect(mafNode *node, bool select);
+  void VmeSelect(mafNode *node, bool select) override;
 
 	/** Create visual pipe and initialize them to build a RXCT view */
-	void PackageView();
+	void PackageView() override;
 
 	/** IDs for the GUI */
 	enum VIEW_RXCT_WIDGET_ID
@@ -71,7 +71,7 @@ public:
 	};
 
 	/** Create the GUI on the bottom of the compounded view. */
-	virtual void CreateGuiView();
+  void CreateGuiView() override;
 
 protected:
 	/**
@@ -81,7 +81,7 @@ protected:
 	the superclass enum. The last id value must be defined as "LAST_ID" to allow the
 	subclass to continue the ID enumeration from it. For appending the widgets in the
 	same panel GUI, each CreateGUI() function should first call the superclass' one.*/
-	virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 
 	/**
 	Redefine to arrange views to generate RXCT visualization.*/

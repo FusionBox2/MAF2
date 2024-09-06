@@ -53,7 +53,7 @@ public:
   /** constructor. */
   mafViewGlobalSlice(const mafString& label = _R("Global Slice"), int camera_position = CAMERA_PERSPECTIVE, bool show_axes = false, bool show_grid = false, bool show_ruler = false, int stereo = 0);
   /** destructor. */
-  virtual ~mafViewGlobalSlice(); 
+  ~mafViewGlobalSlice() override; 
 
   /** RTTI macro. */
   mafTypeMacro(mafViewGlobalSlice, mafViewVTK);
@@ -70,25 +70,25 @@ public:
   };
   
   /** Function that clones instance of the object. */
-	virtual mafView *Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
+  mafView *Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override;
 
   /** Function that creates renderwindow, scenegraph, specific actors and interactors. */
-	virtual void Create();
+  void Create() override;
 
 	/** 
   Create the visual pipe for the node passed as argument. 
   To create visual pipe first check in m_PipeMap if custom visual pipe is defined, 
   otherwise ask to vme which is its visual pipe. */
-  virtual void VmeCreatePipe(mafNode *vme);
+  void VmeCreatePipe(mafNode *vme) override;
 
 	/** Delete vme's visual pipe. It is called when vme is removed from visualization.*/
-  virtual void VmeDeletePipe(mafNode *vme);
+  void VmeDeletePipe(mafNode *vme) override;
 
   /** Function that handles events sent from other objects. */
-	virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Function called when select a vme different from selected one.*/
-	virtual void VmeSelect(mafNode *node, bool select);
+  void VmeSelect(mafNode *node, bool select) override;
 
 	/** Set slicer parameter to generate the slice. */
   virtual void SetSlice(double origin[3], float xVect[3], float yVect[3]);
@@ -97,10 +97,10 @@ public:
 	virtual void SetSlice(double origin[3], double dn = 0.0);
 
 	/** Show/Hide VMEs into plugged sub-views*/
-  virtual void VmeShow(mafNode *node, bool show);
+  void VmeShow(mafNode *node, bool show) override;
 
   /** Force the updating of the camera. */
-	virtual void CameraUpdate();
+  void CameraUpdate() override;
 
 protected:
   /** Force the updating of several slice parameters like origin, vectors and gui components. */
@@ -115,7 +115,7 @@ protected:
 	virtual void UpdatePlane();
 
   /** Create gui widgets that will be attached in view settings tab in side bar.*/
-	virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 
 	double		m_SliceOrigin[3];
 	float			m_SliceXVector[3];

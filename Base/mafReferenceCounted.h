@@ -34,8 +34,8 @@
 class MAF_EXPORT mafReferenceCounted : public mafObject
 {
 public:
-  mafReferenceCounted(); 
-  virtual ~mafReferenceCounted(); 
+  mafReferenceCounted();
+  ~mafReferenceCounted() override; 
 
   mafAbstractTypeMacro(mafReferenceCounted,mafObject);
 
@@ -44,7 +44,7 @@ public:
     an object when the New() method was used to create it. Using the
     C++ delete method will not work with reference counting. This is 
     the same as UnRegister(NULL) */
-  virtual void Delete();
+  void Delete() override;
 
   /** Increase the reference count (mark as used by another object). */
   void Register(void *obj);

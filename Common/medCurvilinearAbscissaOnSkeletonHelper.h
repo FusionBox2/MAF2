@@ -73,11 +73,11 @@ public:
   */
   void MoveOnSkeleton( mafEvent *mouseEvent);
 
-  ~medCurvilinearAbscissaOnSkeletonHelper();
+  ~medCurvilinearAbscissaOnSkeletonHelper() override;
 
   /** GUI Stuff */
 
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Return the gui to be plugged*/
   mafGUI *GetGui() {return m_Gui;};

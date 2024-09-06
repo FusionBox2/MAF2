@@ -63,7 +63,7 @@ public:
   //typedef std::vector<mafTimeStamp> std::vector<mafTimeStamp>;
 
   /** print a dump of this object */
-  virtual void Print(std::ostream& os, const int tabs=0);// const;
+  void Print(std::ostream& os, const int tabs=0) override;// const;
 
   /** 
     return the parent VME Node. Notice that a VME can only reparented 
@@ -75,7 +75,7 @@ public:
     are not copied, i.e. copy is not recursive!
     Concrete class should reimplement this function to verify admitted
     conversion. */
-  virtual int DeepCopy(mafNode *a);
+  int DeepCopy(mafNode *a) override;
 
   /** 
     perform a copy by simply referencing the copied VME's data array. 
@@ -139,7 +139,7 @@ public:
  
   /**
     return true if the VME can be reparented under the specified node */
-  virtual bool CanReparentTo(mafNode *parent);
+  bool CanReparentTo(mafNode *parent) override;
   
   // to be revised
 	/** Set auxiliary reference system and its name*/
@@ -207,7 +207,7 @@ public:
   virtual mafVMEOutput *GetOutput() {return m_Output;}
 
   /** process events coming from other components */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** Return the suggested pipe-typename for the visualization of this vme */
   virtual mafString GetVisualPipe() {return mafString();};
@@ -242,13 +242,13 @@ public:
 
 protected:
   mafVME(); // to be allocated with New()
-  virtual ~mafVME(); // to be deleted with Delete()
+  ~mafVME() override; // to be deleted with Delete()
 
   void InternalStore(mafStorageElementBuilder& parent) override;
   void InternalRestore(const mafStorageElement& node) override;
 
   /** used to initialize the AbsMatrixPipe */
-  virtual int InternalInitialize();
+  int InternalInitialize() override;
 
   /** called to prepare the update of output */
   virtual void InternalPreUpdate() {}
@@ -266,7 +266,7 @@ protected:
   /**
   This function set the parent for this Node. It has been redefined to update 
   AbsMatrixPipe input frame. */
-  virtual int SetParent(mafNode *parent);
+  int SetParent(mafNode *parent) override;
 
   /** 
     Set the output and connect it to the VME. This is automatically called
@@ -283,7 +283,7 @@ protected:
   void SetAbsMatrixPipe(mafAbsMatrixPipe *pipe);
 
   /** Create GUI for the VME */
-  virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 
   bool m_TestMode; ///< Flag used with cppunitTest: put this flag at true when executing tests to avoid busy-info or splash screen to be created, default is false.
 
@@ -302,7 +302,7 @@ protected:
 private:
   mafVME(const mafVME&); // Not implemented
   void operator=(const mafVME&); // Not implemented
-  virtual bool Equals(mafNode *node); // not accessible from other classes
+  bool Equals(mafNode *node) override; // not accessible from other classes
 
 
 };

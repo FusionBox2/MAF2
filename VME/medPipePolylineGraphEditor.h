@@ -45,10 +45,10 @@ public:
 	mafTypeMacro(medPipePolylineGraphEditor,mafPipe);
 
 	medPipePolylineGraphEditor();
-	virtual ~medPipePolylineGraphEditor();
+	~medPipePolylineGraphEditor() override;
 
 	/** process events coming from gui */
-	virtual void OnEvent(mafEventBase *maf_event);
+	void OnEvent(mafEventBase *maf_event) override;
 
 	/** IDs for the GUI */
 	enum PIPE_VOLUME_MIP_WIDGET_ID
@@ -64,19 +64,19 @@ public:
 		ID_PERSPECTIVE,
 	};
 
-	virtual void Create(mafNode *node, mafView *view);
-	void Show(bool show); 
-	virtual void Select(bool select);
+	void Create(mafNode *node, mafView *view) override;
+	void Show(bool show);
+	void Select(bool select) override;
 
   /** Set the origin and normal of the slice.
   Both, Origin and Normal may be NULL, if the current value is to be preserved. */
-  /*virtual*/ void SetSlice(double* Origin, double* Normal);  
+  /*virtual*/ void SetSlice(double* Origin, double* Normal) override;  
 
 	void SetModalitySlice();
 	void SetModalityPerspective();
 
 protected:
-	virtual mafGUI  *CreateGui();
+	mafGUI  *CreateGui() override;
 
 	vtkPolyDataMapper	*m_Mapper;
 	vtkActor					*m_Actor;

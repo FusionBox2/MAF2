@@ -38,8 +38,8 @@ class MAF_EXPORT mafGUIDialogRemoteFile : public mafGUIDialog
 {
 public:
 	mafGUIDialogRemoteFile(mafBaseEventHandler *listener = NULL,const mafString &title = _L("Remote file browsing"), long style = mafRESIZABLE);
-	~mafGUIDialogRemoteFile(); 
-	void OnEvent(mafEventBase *maf_event);
+	~mafGUIDialogRemoteFile() override; 
+	void OnEvent(mafEventBase *maf_event) override;
 
   /** Return the filename of the choose (remote or local) file*/
   mafString GetFile() {return m_RemoteFilename;};

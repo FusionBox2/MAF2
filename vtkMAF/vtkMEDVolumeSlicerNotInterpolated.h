@@ -75,11 +75,11 @@ protected:
   vtkMEDVolumeSlicerNotInterpolated();
 
   /** dtor */
-  ~vtkMEDVolumeSlicerNotInterpolated();
+  ~vtkMEDVolumeSlicerNotInterpolated() override;
 
   /** By default, UpdateInformation calls this method to copy information
   unmodified from the input to the output.*/
-  virtual int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
    /**
    This method is the one that should be used by subclasses, right now the 

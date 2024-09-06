@@ -54,12 +54,12 @@ class MED_VIEWS_EXPORT mafViewSlice: public mafViewVTK
 {
 public:
   mafViewSlice(const mafString& label = _R("Slice"), int camera_position = CAMERA_CT, bool show_axes = false, bool show_grid = false, bool show_ruler = false, int stereo = 0,bool showTICKs=false,bool textureInterpolate=true);
-  virtual ~mafViewSlice(); 
+  ~mafViewSlice() override; 
 
   mafTypeMacro(mafViewSlice, mafViewVTK);
 
-  virtual mafView*  Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
-  virtual void			OnEvent(mafEventBase *maf_event);
+  mafView*  Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override;
+  void			OnEvent(mafEventBase *maf_event) override;
 
     /** Set the origin of the slice */
   inline void SetSliceOrigin(double *Origin) {
@@ -88,11 +88,11 @@ public:
   /** Get the slice origin coordinates and normal.*/
   void GetSlice(double* Origin, double* Normal = NULL);
 
-  void Create();
+  void Create() override;
 
   /** 
   Set the visualization status for the node (visible, not visible, mutex, ...) \sa mafSceneGraph mafView*/
-  virtual int GetNodeStatus(mafNode *vme);
+  int GetNodeStatus(mafNode *vme) override;
 
   /** IDs for the view GUI */
   enum VIEW_SLICE_WIDGET_ID
@@ -107,11 +107,11 @@ public:
   Create the visual pipe for the node passed as argument. 
   To create visual pipe first check in m_PipeMap if custom visual pipe is defined, 
   otherwise ask to vme which is its visual pipe. */
-  virtual void VmeCreatePipe(mafNode *vme);
+  void VmeCreatePipe(mafNode *vme) override;
 
   /** 
   Delete vme's visual pipe. It is called when vme is removed from visualization.*/
-  virtual void VmeDeletePipe(mafNode *vme);
+  void VmeDeletePipe(mafNode *vme) override;
 
   /** 
   Change the range of the WindowLevel Lookup table.*/
@@ -140,12 +140,12 @@ public:
   /** Update list of surfaces vme */
   void UpdateSurfacesList(mafNode *node);
 
-  virtual void VmeShow(mafNode *node, bool show);
+  void VmeShow(mafNode *node, bool show) override;
 
-  void VmeRemove(mafNode *vme);
+  void VmeRemove(mafNode *vme) override;
 
   /** print a dump of this object */
-  virtual void Print(std::ostream& os, const int tabs=0);// const;
+  void Print(std::ostream& os, const int tabs=0) override;// const;
 
   /* Update the visualization of the border */
   void BorderUpdate();
@@ -153,7 +153,7 @@ public:
   /* Set the opacity of the border if exist */
   void SetBorderOpacity(double value);
 
-  virtual void CameraUpdate();
+  void CameraUpdate() override;
 
   void SetEnableGPU(int enable){m_EnableGPU = enable;};
 
@@ -170,15 +170,17 @@ public:
 
   /** Set the slice coordinates. 
   DEPRECATED - use SetOrigin or SetSlice */
-  inline virtual DECLSPEC_DEPRECATED_S("SetNormal(double normal[3]) is deprecated, use SetSlice or SetSliceNormal") 
-    void SetNormal(double normal[3]) {
+  inline DECLSPEC_DEPRECATED_S("SetNormal(double normal[3]) is deprecated, use SetSlice or SetSliceNormal") 
+    void SetNormal(double normal[3]) override
+  {
       return SetSlice(NULL, normal);
   }
 
     /** Get the Slice coordinates.
   DEPRECATED - use GetOrigin or GetSlice*/
   inline DECLSPEC_DEPRECATED_S("double *GetSlice() is deprecated, use GetSliceOrigin") 
-    double *GetSlice() {
+    double *GetSlice() override
+  {
     return GetSliceOrigin();
   }
 
@@ -188,7 +190,7 @@ protected:
   the multiplication is performed inplace */
   void MultiplyPointByInputVolumeABSMatrix(double *point);
 
-  virtual mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
   void CameraUpdateForRotatedVolumes();
   void SetCameraParallelToDataSetLocalAxis( int axis );

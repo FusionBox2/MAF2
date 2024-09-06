@@ -47,8 +47,8 @@ public:
   typedef std::map<mafTimeStamp, mafAutoPointer<T> > TimeMap;
   typedef std::pair<mafTimeStamp, mafAutoPointer<T> > mmuTimePair;
 
-  mafTimeMap();  
-  virtual ~mafTimeMap();
+  mafTimeMap();
+  ~mafTimeMap() override;
 
   //mafAbstractTypeMacro(mafTimeMap<T>,mafObject);
 
@@ -131,7 +131,7 @@ public:
     is returned if not found.*/
   T *GetItemBefore(mafTimeStamp t);
 
-  virtual void Print(std::ostream& os, const int tabs=0) const;
+  void Print(std::ostream& os, const int tabs=0) const override;
 
   auto begin() {return m_TimeMap.begin();}
   auto end() {return m_TimeMap.end();}

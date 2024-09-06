@@ -53,11 +53,11 @@ public:
   which send a Stop-Event-Id, when pressed again is reverted to Play. */
   void SetBitmap(const mafString& BitmapId, wxWindowID id = 0);
 
-protected:  
-    virtual wxWindow* SetDefault() { return wxButtonBase::SetDefault(); };
+protected:
+wxWindow* SetDefault() override { return wxButtonBase::SetDefault(); };
 
   /** Overriden function member to intercept event generation and forward it to the Listener. */
-  virtual void Command(wxCommandEvent& event);
+void Command(wxCommandEvent& event) override;
 
   void OnSetFocus(wxFocusEvent& event) {}; 
 

@@ -30,7 +30,7 @@ public:
   mafTypeMacro(mafInteractorGeneric6DOF,mafInteractor6DOF);
 
   /**  Process events coming from tracker */
-  virtual void OnEvent(mafEventBase *event);
+  void OnEvent(mafEventBase *event) override;
 
   /** manage move events */
   virtual void OnMove(mafEventInteraction *e);
@@ -48,7 +48,7 @@ public:
 
 protected:
   mafInteractorGeneric6DOF();
-  virtual ~mafInteractorGeneric6DOF();
+  ~mafInteractorGeneric6DOF() override;
 
   /** Update the transform */
   void Update();

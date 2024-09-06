@@ -39,22 +39,22 @@ public:
   /** constructor */
   medWizardWaitOp(const mafString &label = _R("Go to text step\n"));
   /** destructor */
-  ~medWizardWaitOp();
+  ~medWizardWaitOp() override;
 
   /** RTTI macro*/
   mafTypeMacro(medWizardWaitOp, mafOp);
 
   /** clone the object and retrieve a copy*/
-  mafOp* Copy();
+  mafOp* Copy() override;
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode *node);
+  bool Accept(mafNode *node) override;
 
   /** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
   
   /**Event management*/
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 protected: 
 };
 #endif

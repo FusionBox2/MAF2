@@ -34,26 +34,26 @@ public:
   mafTypeMacro(medVMEAnalog, mafVMEScalarMatrix);
 
   /** print a dump of this object */
-  virtual void Print(std::ostream& os, const int tabs=0);
+  void Print(std::ostream& os, const int tabs=0) override;
 
   /** Get the time bounds for the time varying VME based on scalar matrix.*/
-  void GetLocalTimeBounds(mafTimeStamp tbounds[2]);
+  void GetLocalTimeBounds(mafTimeStamp tbounds[2]) override;
 
   /** Return true if this VME has more than one time stamp, corresponding to the number of elements in the first row.*/
-  bool IsAnimated();
+  bool IsAnimated() override;
 
   void GetTimeBounds(mafTimeStamp tbounds[2]); 
 
   /** Return the list of timestamps for this VME. Timestamps list is 
   obtained by extracting the first row of the scalar matrix.*/
-  void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes);
+  void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes) override;
 
 protected:
   medVMEAnalog();
-  virtual ~medVMEAnalog();
+  ~medVMEAnalog() override;
 
   /** Internally used to create a new instance of the GUI.*/
-  virtual mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
   mafTimeStamp    m_CurrentTime;  ///< the time parameter for generation of the output
 

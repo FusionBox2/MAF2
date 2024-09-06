@@ -109,7 +109,7 @@ class MAF_EXPORT mafGUI: public mafGUIPanel, public mafBaseEventHandler, public 
 {
 public:
            mafGUI(mafBaseEventHandler *listener);
-  virtual ~mafGUI();
+           ~mafGUI() override;
     
   /** Separator widget. */
 	void Divider(long style = 0);
@@ -268,7 +268,7 @@ public:
   void FitGui();
 
 	/** Update gui widget. */
-  void Update();
+  void Update() override;
   
 	/** Enable/Disable gui widget. */
   void Enable(int mod_id, bool enable);
@@ -281,7 +281,7 @@ public:
   /** Return the measure used to layout the widgets - pass one of the GUI_xxx constants. */
   int GetMetrics( int id); 
 
-  void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /**  \par implementation details:
   GetWidgetId is used to obtain a new/unique widget_ID. 

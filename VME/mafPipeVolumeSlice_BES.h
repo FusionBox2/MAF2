@@ -57,10 +57,10 @@ public:
   /** Constructor */
 	  mafPipeVolumeSlice_BES();
   /** Destructor */
-  virtual ~mafPipeVolumeSlice_BES();
+  ~mafPipeVolumeSlice_BES() override;
 	
   /** process events coming from Gui */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
   /** IDs for the GUI */
   enum PIPE_VOLUME_SLICE_WIDGET_ID
@@ -93,7 +93,7 @@ public:
   void InitializeSliceParameters(int direction, double slice_origin[3], float slice_xVect[3], float slice_yVect[3], bool show_vol_bbox,bool show_bounds=false, bool interpolate=true);
   
   /** Create the VTK rendering pipeline*/
-  virtual void Create(mafNode *node, mafView *view);
+  void Create(mafNode *node, mafView *view) override;
 
 	/** Set the range to the lookup table for the slice. */
 	void SetLutRange(double low, double high);
@@ -106,11 +106,11 @@ public:
 	
   /** Set the origin and normal of the slice.
   Both, Origin and Normal may be NULL, if the current value is to be preserved. */
-  /*virtual*/ void SetSlice(double* Origin, double* Normal);  
+  /*virtual*/ void SetSlice(double* Origin, double* Normal) override;  
 	
   /** Get the slice origin coordinates and normal.
   Both, Origin and Normal may be NULL, if the value is not to be retrieved.*/
-  /*virtual*/ void GetSlice(double* Origin, double* Normal);  
+  /*virtual*/ void GetSlice(double* Origin, double* Normal) override;  
 
   /** Assign a color lookup table to the slices*/
   void SetColorLookupTable(vtkLookupTable *lut);
@@ -125,7 +125,7 @@ public:
   float GetSliceOpacity();
 
 	/** Manage the actor selection by showing the corner box around the actor when the corresponding VME is selected.*/
-  virtual void Select(bool select); 
+  void Select(bool select) override; 
 
   /** Show ticks in the rendering window */
 	void ShowTICKsOn();
@@ -166,7 +166,7 @@ protected:
 	void CreateTICKs();
 
   /** Create the Gui for the visual pipe that allow the user to change the pipe's parameters.*/
-  virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 
   /** Updates VTK slicers. It also sets GPUEnabled flag.  */
   void UpdateSlice();

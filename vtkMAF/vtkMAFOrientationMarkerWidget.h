@@ -86,7 +86,7 @@ public:
 
 protected:
   vtkMAFOrientationMarkerWidget();
-  ~vtkMAFOrientationMarkerWidget();
+  ~vtkMAFOrientationMarkerWidget() override;
 
 private:
   vtkMAFOrientationMarkerWidget(const vtkMAFOrientationMarkerWidget&);  // Not implemented

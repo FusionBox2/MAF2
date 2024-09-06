@@ -40,10 +40,10 @@ public:
   mafTypeMacro(mafPipeVTK,mafPipe);
   
   mafPipeVTK();
-  virtual ~mafPipeVTK();
+  ~mafPipeVTK() override;
 
   /** The real setup must be performed here - not in the ctor */
-  virtual void Create(mafNode *node, mafView *view);
+  void Create(mafNode *node, mafView *view) override;
 
   /** Get assembly front/back */
   virtual vtkMAFAssembly *GetAssemblyFront(){return m_AssemblyFront;};

@@ -37,16 +37,16 @@ class MAF_EXPORT mafOpEditMetadata: public mafOp
 {
 public:
   mafOpEditMetadata(const mafString& label = _R("EditMetadata"));
- ~mafOpEditMetadata(); 
-	virtual void OnEvent(mafEventBase *maf_event);
+ ~mafOpEditMetadata() override;
+  void OnEvent(mafEventBase *maf_event) override;
 
   mafTypeMacro(mafOpEditMetadata, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
-  bool Accept(mafNode *node) {return true;};
-  void OpRun();
-  void OpUndo();
+  bool Accept(mafNode *node) override {return true;};
+  void OpRun() override;
+  void OpUndo() override;
 
   /** Select the tag into the tag array and initialize the variables associated with the gui.*/
   void SelectTag(const char *tag_name);

@@ -82,23 +82,23 @@ protected:
   double m_V[3][3] ;
 public:	
   medPipeTensorFieldSurface();
-  virtual ~medPipeTensorFieldSurface();
+  ~medPipeTensorFieldSurface() override;
 
 public:  
   /** Processes events coming from GUI */
-  /*virtual*/ void OnEvent(mafEventBase *maf_event);
+  /*virtual*/ void OnEvent(mafEventBase *maf_event) override;
   void EigenVectors3x3(double A[3][3], double lambda[3], double V[3][3]);
   void MultiplyColumnsByScalars(const double *s, const double *A, double *B) const;
   bool ComputeEigenvalues(vtkStructuredPoints* tensorVolume,double sr[2],int mode);
 
 protected:
-  /*virtual*/ mafGUI  *CreateGui();
+  /*virtual*/ mafGUI  *CreateGui() override;
 
   /** Constructs VTK pipeline. */
-  virtual void CreateVTKPipe();
+  void CreateVTKPipe() override;
 
   /** Updates VTK pipeline (setting radius, etc.). */
-  virtual void UpdateVTKPipe();  
+  void UpdateVTKPipe() override;  
 
   /** Updates the content of m_comboColorBy combobox.
   "magnitude" and 0..NumberOfComponents-1 will be listed.*/

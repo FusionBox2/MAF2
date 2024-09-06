@@ -75,15 +75,15 @@ public:
   static vtkMEDPolyDataDeformation_M1 *New();
 
   vtkTypeMacro(vtkMEDPolyDataDeformation_M1, vtkPolyDataAlgorithm);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   friend class CMatrixTestM1;
   friend class CSkeletonEdgeM1Test;
   friend class CSkeletonVertexM1Test;
 
 protected:
-  vtkMEDPolyDataDeformation_M1();           
-  virtual ~vtkMEDPolyDataDeformation_M1();
+  vtkMEDPolyDataDeformation_M1();
+  ~vtkMEDPolyDataDeformation_M1() override;
 
 protected:
 #pragma region //Nested Classes
@@ -397,12 +397,12 @@ public:
     vtkPolyData* modified, vtkIdList* correspondence);
 
   /** Return this object's modified time. */  
-  /*virtual*/ vtkMTimeType GetMTime();
+  /*virtual*/ vtkMTimeType GetMTime() override;
 protected:
   /** 
   By default, UpdateInformation calls this method to copy information
   unmodified from the input to the output.*/
-  /*virtual*/int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  /*virtual*/int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   /**
   This method is the one that should be used by subclasses, right now the 

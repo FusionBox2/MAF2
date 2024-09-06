@@ -24,7 +24,7 @@ class VTK_vtkMAF_EXPORT vtkMAFDataArrayLayout : public vtkObject
 {
 public:
   vtkTypeMacro(vtkMAFDataArrayLayout,vtkObject);
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
   static vtkMAFDataArrayLayout* New();
 public:
   // Description:
@@ -119,7 +119,7 @@ protected:
   // Construct object with default physical layout, which is
   // interleaved mode, no gaps, starting offset = 0
   vtkMAFDataArrayLayout();
-  ~vtkMAFDataArrayLayout();
+  ~vtkMAFDataArrayLayout() override;
 
 protected:
   int NonInterleaved;               //<non-zero if the data is stored in non-interleaved fashion

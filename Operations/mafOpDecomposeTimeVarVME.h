@@ -49,15 +49,15 @@ class MAF_EXPORT mafOpDecomposeTimeVarVME: public mafOp
 {
 public:
   mafOpDecomposeTimeVarVME(const mafString& label = _R("Decompose time varying VME"));
- ~mafOpDecomposeTimeVarVME(); 
- mafTypeMacro(mafOpDecomposeTimeVarVME, mafOp)
+ ~mafOpDecomposeTimeVarVME() override; 
+  mafTypeMacro(mafOpDecomposeTimeVarVME, mafOp)
 
-  virtual void OnEvent(mafEventBase *maf_event);
-  mafOp* Copy();
+  void OnEvent(mafEventBase *maf_event) override;
+  mafOp* Copy() override;
 
-  bool Accept(mafNode* vme);  
+  bool Accept(mafNode* vme) override;  
 
-  void OpRun();
+  void OpRun() override;
 
   /** Get the number of frames inserted by the user and for each
        call CreateStaticVME(). */

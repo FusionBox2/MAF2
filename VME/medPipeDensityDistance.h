@@ -53,13 +53,13 @@ public:
   mafTypeMacro(medPipeDensityDistance,mafPipeVTK);
 
                medPipeDensityDistance();
-  virtual     ~medPipeDensityDistance ();
+  ~medPipeDensityDistance () override;
 
   /** process events coming from gui */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
-  virtual void Create(mafNode *node, mafView *view /*,bool use_axes = true*/ ); //Can't add parameters - is Virtual
-  virtual void Select(bool select); 
+  void Create(mafNode *node, mafView *view /*,bool use_axes = true*/ ) override; //Can't add parameters - is Virtual
+  void Select(bool select) override; 
 
   void SetVolume(mafNode* volume);
 
@@ -138,6 +138,6 @@ protected:
   Generate texture coordinate for polydata according to the mapping mode*/
   void GenerateTextureMapCoordinate();
 
-  virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 };  
 #endif // __mafPipeSurface_H__

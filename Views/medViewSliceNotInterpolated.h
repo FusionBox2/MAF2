@@ -49,7 +49,7 @@ public:
   medViewSliceNotInterpolated(const mafString& label = _R("View Slice not interpolated"), bool show_ruler = false);
 
   /** dtor */
-  ~medViewSliceNotInterpolated(); 
+  ~medViewSliceNotInterpolated() override; 
 
   /** Create visual pipe and initialize them */
   virtual void PackageView();
@@ -58,13 +58,13 @@ public:
   /*virtual void CreateGuiView(){Superclass::CreateGuiView();};*/
 
   /** Function that clones instance of the object. */
-  virtual mafView* Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
+  mafView* Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override;
 
   /** Create VME visual pipe */
-  virtual void VmeShow(mafNode *vme, bool show);
+  void VmeShow(mafNode *vme, bool show) override;
 
   /** Process events coming from gui */
-  virtual void OnEvent(mafEventBase * event);
+  void OnEvent(mafEventBase * event) override;
 
   /** Set the axis along slice */
   void SetSliceAxis(int axis);
@@ -73,7 +73,7 @@ public:
   void SetSlice(double slicePosition);
 
   /** Set the slice position */
-  void SetSlice(double origin[3]);
+  void SetSlice(double origin[3]) override;
 
   /** update pipes lut */
   void SetLut(mafNode *volume, vtkLookupTable *lut);
@@ -81,7 +81,7 @@ public:
 protected:
 
   /** Create view Gui */
-  mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
   /** Set the axis along slice */
   void SetSliceAxis();

@@ -46,26 +46,26 @@ class MAF_EXPORT lhpOpImporterOBJ: public mafOp
 {
 public:
 	lhpOpImporterOBJ(const mafString& label = _R("OBJImporter"));
-	~lhpOpImporterOBJ(); 
+	~lhpOpImporterOBJ() override; 
 	
   mafTypeMacro(lhpOpImporterOBJ, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode *node);
+	bool Accept(mafNode *node) override;
 
 	/** Set the filename for the .stl to import */
   void SetFileName(const mafString& file_name);
 
   /** Builds operation's interface. */
-	void OpRun();
+	void OpRun() override;
 
   /** Makes the undo for the operation. */
-  void OpUndo();
+  void OpUndo() override;
 
   /** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
 
   /** Import the file. */
 	void ImportOBJ();

@@ -31,7 +31,7 @@ public:
   /** constructor */
            vtkMAFFixedCutter();
   /** destructor */
-  virtual ~vtkMAFFixedCutter();
+  ~vtkMAFFixedCutter() override;
   /** create an instance of the object */
   static vtkMAFFixedCutter* New();
 

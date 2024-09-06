@@ -92,7 +92,7 @@ public:
 
   Eigen::Matrix3d principalAxesLCSRib(int, std::vector<std::vector<double>>& vertex, std::vector<std::vector<double>>& Cross_Sec_PGD_LCS, Eigen::Vector3d);
   Eigen::Matrix3d principalAxesLCS(int nbr, std::vector<std::vector<double>>& vertex, std::vector<std::vector<double>>& Cross_Sec_PGD_LCS);
-  virtual void Update();
+	void Update() override;
   Eigen::Matrix3d theta2r(Eigen::Vector3d);
 
   Eigen::RowVectorXd deg2rad(Eigen::RowVectorXd);
@@ -103,10 +103,10 @@ public:
  
 
   /** Copy the contents of another mafVMESurfaceParametric into this one. */
-  virtual int DeepCopy(mafNode *a);
+	int DeepCopy(mafNode *a) override;
 
-  
-  virtual bool Equals(mafVME *vme);
+
+	bool Equals(mafVME *vme) override;
 
  
   /** return the right type of output */  
@@ -116,22 +116,22 @@ public:
   void SetSurfaceLink(const mafString&, mafNode *);
   /** return always false since (currently) the slicer is not an animated VME (position 
   is the same for all timestamps). */
-  virtual bool IsAnimated();
+	bool IsAnimated() override;
 
   /** Return the suggested pipe-typename for the visualization of this vme */
   //virtual mafString GetVisualPipe() {return mafString("mafPipeSurface");};
-  virtual mafString GetVisualPipe() { return mafString(_R("mafPipePolyline")); };
+	mafString GetVisualPipe() override { return mafString(_R("mafPipePolyline")); };
   /** Return pointer to material attribute. */
   mmaMaterial *GetMaterial();
 
   /** return an xpm-icon that can be used to represent this node */
  // static char ** GetIcon();
 	
-  /** Precess events coming from other objects */ 
-  virtual void OnEvent(mafEventBase *maf_event);
+  /** Precess events coming from other objects */
+	void OnEvent(mafEventBase *maf_event) override;
   ellipse_struct ellipse_t;
 
-  void SetTimeStamp(mafTimeStamp t);
+  void SetTimeStamp(mafTimeStamp t) override;
   /**
   Set the Pose matrix of the VME. This function modifies the MatrixVector. You can
   set or get the Pose for a specified 
@@ -141,11 +141,11 @@ public:
   interpolates on the fly according to the matrix interpolator.*/
 
 
-  virtual void SetMatrix(const mafMatrix &mat);
-  virtual void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes);
+	void SetMatrix(const mafMatrix &mat) override;
+	void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes) override;
 
   mafVMECenterLine();
-  virtual ~mafVMECenterLine();
+	~mafVMECenterLine() override;
 protected:
 	mafVMEMeter* chord, * chordP;
 	int m_Rib = 0;
@@ -176,13 +176,13 @@ protected:
   void InternalRestore(const mafStorageElement& node) override;
 
 	/** called to prepare the update of the output */
-	virtual void InternalPreUpdate();
+	void InternalPreUpdate() override;
 
 	/** update the output data structure */
- void InternalUpdate();
+ void InternalUpdate() override;
 
   /** Internally used to create a new instance of the GUI.*/
-  virtual mafGUI *CreateGui();
+	mafGUI *CreateGui() override;
 
 
 

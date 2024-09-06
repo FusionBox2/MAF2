@@ -36,18 +36,18 @@ class MED_OPERATION_EXPORT medOpExporterVTKXML: public mafOp
 {
 public:
   medOpExporterVTKXML(const mafString &label = _R("VTKXMLExporter"));
- ~medOpExporterVTKXML(); 
+ ~medOpExporterVTKXML() override; 
   
   mafTypeMacro(medOpExporterVTKXML, mafOp);
 
-  mafOp* Copy();
-	void OnEvent(mafEventBase *maf_event);
+  mafOp* Copy() override;
+	void OnEvent(mafEventBase *maf_event) override;
 
 	/** Return true for the acceptable vme type. */
-  bool Accept(mafNode *node);
+  bool Accept(mafNode *node) override;
 
 	/** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
   void ApplyABSMatrixOn() {m_ABSMatrixFlag = 1;};
   void ApplyABSMatrixOff() {m_ABSMatrixFlag = 0;};

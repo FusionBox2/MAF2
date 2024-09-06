@@ -37,16 +37,16 @@ class MAF_EXPORT mafOpImporterMesh: public mafOp
 {
 public:
 	mafOpImporterMesh(const mafString& label = _R("MeshImporter"));
-	~mafOpImporterMesh(); 
+	~mafOpImporterMesh() override; 
 	
   mafTypeMacro(mafOpImporterMesh, mafOp);
 
-  virtual void OnEvent(mafEventBase *maf_event);
+	void OnEvent(mafEventBase *maf_event) override;
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode *node);
+	bool Accept(mafNode *node) override;
 
 	/** Set the filename for the mesh to import */
   void SetFileName(const char *file_name);
@@ -64,7 +64,7 @@ public:
   const char *GetMaterialsFileName() {return this->m_MaterialsFileName.GetCStr();};
 
   /** Builds operation's interface. */
-	void OpRun();
+	void OpRun() override;
 
 	/** Import the mesh*/
 	int Read();

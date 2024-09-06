@@ -35,7 +35,7 @@ class MAF_EXPORT mafUser : public mafObject
 public:
   mafTypeMacro(mafUser, mafObject);
   mafUser();
-  virtual ~mafUser();
+  ~mafUser() override;
 
   /** Allows to show login dialog and get credentials from the application's user.*/
   int ShowLoginDialog();

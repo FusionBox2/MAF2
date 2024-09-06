@@ -48,24 +48,24 @@ class MAF_EXPORT mafOpAddLandmark: public mafOp
 {
 public:
 	mafOpAddLandmark(const mafString& label = _R("AddLandmark"));
-	~mafOpAddLandmark(); 
-	virtual void OnEvent(mafEventBase *maf_event);
+	~mafOpAddLandmark() override;
+	void OnEvent(mafEventBase *maf_event) override;
 
   mafTypeMacro(mafOpAddLandmark, mafOp);
 
-	mafOp* Copy();
+	mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-	bool Accept(mafNode *node);
+	bool Accept(mafNode *node) override;
 
 	/** Builds operation's interface. */
-	void OpRun();
+	void OpRun() override;
 
 	/** Execute the operation. */
-	void OpDo();
+	void OpDo() override;
 
 	/** Makes the undo for the operation. */
-	void OpUndo();
+	void OpUndo() override;
 
   /** Used to add a landmark to the cloud */
   void AddLandmark(double pos[3]);
@@ -86,7 +86,7 @@ protected:
 	void DeleteGui();
 
 	/** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
-	void OpStop(int result);
+	void OpStop(int result) override;
 
   /** Used in redo to add the landmarks to the tree*/
   void AddLandmark();

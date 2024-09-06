@@ -41,13 +41,13 @@ class mafGUIViewFrame: public wxFrame , public mafBaseEventHandler, public mafEv
 							long style = wxDEFAULT_FRAME_STYLE|wxCLIP_CHILDREN 
 							);
        
-	~mafGUIViewFrame(); 
+	~mafGUIViewFrame() override; 
 	
 	/** Set which is the external view. */
 	void SetView(mafView *view);
 
   /** Answer to the messages coming from bottom classes. */
-	virtual void OnEvent(mafEventBase *maf_event);
+	void OnEvent(mafEventBase *maf_event) override;
 
 protected:
 	/** Send the event to destroy the owned view. */

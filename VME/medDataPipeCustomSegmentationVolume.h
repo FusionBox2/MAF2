@@ -37,7 +37,7 @@ public:
   mafTypeMacro(medDataPipeCustomSegmentationVolume,mafDataPipe);
 
   /** Make a copy of itself.*/
-  int DeepCopy(mafDataPipe *pipe);
+  int DeepCopy(mafDataPipe *pipe) override;
 
   /** Set the volume to segment*/
   int SetVolume(mafNode *volume);
@@ -151,13 +151,13 @@ protected:
   /** constructor. */
   medDataPipeCustomSegmentationVolume();
   /** destructor. */
-  virtual ~medDataPipeCustomSegmentationVolume();
+  ~medDataPipeCustomSegmentationVolume() override;
 
   /** Check that the range has right values */
   int AutomaticCheckRange(int startSlice,int endSlice,int indexToExclude = -1);
 
   /** function called before of data pipe execution */
-  /*virtual*/ void PreExecute();
+  /*virtual*/ void PreExecute() override;
 
   /** Apply the automatic segmentation */
   void ApplyAutomaticSegmentation();
@@ -172,7 +172,7 @@ protected:
   void ApplyRegionGrowingSegmentation();
 
   /** function called to updated the data pipe output */
-  /*virtual*/ void Execute();
+  /*virtual*/ void Execute() override;
 
   vtkRectilinearGrid *m_RG;
   vtkStructuredPoints *m_SP;

@@ -32,23 +32,23 @@ class lhpOpMTRULBImporter: public mafOp
 {
 public:
            lhpOpMTRULBImporter(const mafString& label = _R("MTRImporter"));
-  virtual ~lhpOpMTRULBImporter();
+           ~lhpOpMTRULBImporter() override;
   
   mafTypeMacro(lhpOpMTRULBImporter, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode* node) {return true;};
+  bool Accept(mafNode* node) override {return true;};
 
   /** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
   /** Makes the undo for the operation. */
-  void OpUndo();
+  void OpUndo() override;
 
   /** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
 
   /** Import data. */
   void ImportData();

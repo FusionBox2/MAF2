@@ -89,17 +89,17 @@ public:
     Set/Get the renderer this avatar is attached to. When the rederer is
     changed, all props created by this avatar are moved to the new renderer
     and the interaction is changed accordingly */
-  virtual void SetRenderer(vtkRenderer *ren);
+  void SetRenderer(vtkRenderer *ren) override;
   
   /**  
     Hide the 3D cursor, i.e. remove actor from renderer's list. This is
     usually used to compute bounding box without considering avatars */
-  virtual void Hide();
+  void Hide() override;
 
   /**  
     Show the 3D cursor. This function is conditional, in the 
     sense the old visibility state is retained when showing back. */
-  virtual void Show();
+  void Show() override;
   
   /** Return picker 3D used by 3DAvatar for picking */
   vtkMAFRayCast3DPicker *GetPicker3D();
@@ -109,7 +109,7 @@ public:
 
   /** return the picker used by this avatar: from the picker is possible to obtain information 
       about the picked object. */
-  virtual vtkAbstractPropPicker *GetPicker();
+  vtkAbstractPropPicker *GetPicker() override;
   
   /** Display a box showing where input coords are mapped.
       This can be used for debug to understand if the tracker's
@@ -139,10 +139,10 @@ public:
   
 
   /**  Process events coming from tracker */
-  virtual void OnEvent(mafEventBase *event);
+  void OnEvent(mafEventBase *event) override;
 
   /** return the tracker this avatar is the tracker attached to this avatar */
-  virtual void SetTracker(mafDeviceButtonsPadTracker *tracker);
+  void SetTracker(mafDeviceButtonsPadTracker *tracker) override;
 
   /**  Transform a matrix from Canonical to World space*/
   void CanonicalToWorld(const mafMatrix &pose,mafMatrix &dest);
@@ -189,11 +189,11 @@ public:
   mafMatrix &GetLastPoseMatrix() {return m_LastPoseMatrix;}
 
   /** Create the dialog that show the interface for settings. */
-  virtual void CreateGui();
+  void CreateGui() override;
 
 protected:
   mafAvatar3D();
-  virtual ~mafAvatar3D();
+  ~mafAvatar3D() override;
 
   /**
    Internally used to set the last pose matrix.
@@ -204,10 +204,10 @@ protected:
   void InternalRestore(const mafStorageElement& node) override;
 
   /** redefined to add the Cursor actor into the selected renderer */
-  virtual int InternalInitialize();
+  int InternalInitialize() override;
 
   /** redefined to remove Cursor from renderer */
-  virtual void InternalShutdown();
+  void InternalShutdown() override;
 
   /** internally used to update debug text on the screen */
   virtual void UpdateDebugText(const char *title, mafMatrix &pose);
@@ -219,7 +219,7 @@ protected:
   void OnUpdateBoundsEvent(mafDeviceButtonsPadTracker *tracker);
 
   /** process event sent after a camera reset */
-  virtual void OnPostResetCamera(mafEventBase *event);
+  void OnPostResetCamera(mafEventBase *event) override;
 
   /** Internally used to redefine the 3D picker class */  
   void SetPicker3D(vtkMAFRayCast3DPicker *picker);

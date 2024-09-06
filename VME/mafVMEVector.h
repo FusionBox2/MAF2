@@ -47,26 +47,26 @@ public:
     from the source.
     Return MAF_OK if succeeded, MAF_ERROR if they kind of data is not accepted by
     this type of VME. */
-    virtual int SetData(vtkPolyData *data, mafTimeStamp t, int mode=MAF_VME_COPY_DATA);
+  int SetData(vtkPolyData *data, mafTimeStamp t, int mode=MAF_VME_COPY_DATA) override;
 
     /** Return the module of the vector.*/
     double GetModule();
 
     /** Return the suggested pipe-typename for the visualization of this vme */
-    virtual mafString GetVisualPipe() {return mafString(_R("mafPipeVector"));}
+  mafString GetVisualPipe() override {return mafString(_R("mafPipeVector"));}
 
     /** return icon */
     static char** GetIcon();
 
 protected:
   mafVMEVector();
-  virtual ~mafVMEVector();
+  ~mafVMEVector() override;
 
 private:
   mafVMEVector(const mafVMEVector&); // Not implemented
   void operator=(const mafVMEVector&); // Not implemented
   
   /** private to avoid calling by external classes */
-  virtual int SetData(vtkDataSet *data, mafTimeStamp t, int mode=MAF_VME_COPY_DATA);
+  int SetData(vtkDataSet *data, mafTimeStamp t, int mode=MAF_VME_COPY_DATA) override;
 };
 #endif

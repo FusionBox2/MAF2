@@ -35,22 +35,22 @@ class MAF_EXPORT mafOpExplodeCollapse: public mafOp
 {
 public:
   mafOpExplodeCollapse(const mafString& label = _R("ExplodeCollapse"));
- ~mafOpExplodeCollapse(); 
+ ~mafOpExplodeCollapse() override; 
   
   mafTypeMacro(mafOpExplodeCollapse, mafOp);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-  bool Accept(mafNode *node);
+  bool Accept(mafNode *node) override;
 
 	/** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
 
 	/** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
 
 	/** Makes the undo for the operation. */
-  void OpUndo();
+  void OpUndo() override;
 };
 #endif

@@ -26,19 +26,19 @@ public:
   /** constructor. */
   mafOpImporterBBF(const mafString& label = _R("BBFImporter"));
   /** destructor. */
- ~mafOpImporterBBF(); 
+ ~mafOpImporterBBF() override; 
   
   /** RTTI macro */
   mafTypeMacro(mafOpImporterBBF, mafOp);
 
   /** Return a copy of itself, this needs to put the operation into the undo stack. */
-  /*virtual*/ mafOp* Copy();
+  /*virtual*/ mafOp* Copy() override;
 
 	/** Return true for the acceptable vme type. */
-  /*virtual*/ bool Accept(mafNode* node) {return true;};
+  /*virtual*/ bool Accept(mafNode* node) override {return true;};
 
 	/** Builds operation's interface. */
-  /*virtual*/ void OpRun();
+  /*virtual*/ void OpRun() override;
 
 	/** Import bbf data, return MAF_OK on success. */
   virtual int ImportBBF();

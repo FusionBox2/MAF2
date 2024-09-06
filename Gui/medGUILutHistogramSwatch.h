@@ -70,7 +70,7 @@ protected:
   /** OnPaint event handler */ 
   void OnPaint(wxPaintEvent &event);                
   /* Update Function */
-  void Update();                
+  void Update() override;                
 
   /* If Editable run medGUILutHistogramEditor */
   void OnLeftMouseButtonDown(wxMouseEvent &event);

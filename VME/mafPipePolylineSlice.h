@@ -49,7 +49,7 @@ public:
   mafTypeMacro(mafPipePolylineSlice,mafPipeVTK);
 
                mafPipePolylineSlice();
-  virtual     ~mafPipePolylineSlice ();
+  ~mafPipePolylineSlice () override;
 
   /**Return the thickness of the border*/	
   double GetThickness();
@@ -64,10 +64,10 @@ public:
   void SetRadius(double radius); 
 
   /** process events coming from gui */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
-  virtual void Create(mafNode *node, mafView *view /*,bool use_axes = true*/ ); //Can't add parameters - is Virtual
-  virtual void Select(bool select); 
+  void Create(mafNode *node, mafView *view /*,bool use_axes = true*/ ) override; //Can't add parameters - is Virtual
+  void Select(bool select) override; 
 
   void SetSlice(double *Origin);
 
@@ -114,7 +114,7 @@ public:
     ID_LAST,
   };
 
-  virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
   void UpdateProperty();
 
   void ROIEnable(bool enable){m_RoiEnable = enable;}

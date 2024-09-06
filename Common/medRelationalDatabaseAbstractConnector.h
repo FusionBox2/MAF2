@@ -51,7 +51,7 @@ public:
   /** constructor */
   medRelationalDatabaseAbstractConnector(const char *query = "");
   /** destructor */
-	virtual ~medRelationalDatabaseAbstractConnector(); 
+  ~medRelationalDatabaseAbstractConnector() override; 
   
   /** RTTI macro */
   mafAbstractTypeMacro(medRelationalDatabaseAbstractConnector, mafObject);

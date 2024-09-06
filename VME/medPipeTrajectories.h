@@ -48,19 +48,19 @@ public:
   mafTypeMacro(medPipeTrajectories,mafPipeVTK);
 
   medPipeTrajectories();
-  virtual     ~medPipeTrajectories ();
+  ~medPipeTrajectories () override;
 
   /** process events coming from gui */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
 
-  virtual void Create(mafNode *node, mafView *view);
-  virtual void Select(bool select); 
+  void Create(mafNode *node, mafView *view) override;
+  void Select(bool select) override; 
 
   /** Set trajectories interval */
   void SetInterval(int interval) {m_Interval = interval;};
 
   /**Function to update trajectory */
-  void UpdateProperty(bool fromTag = false);
+  void UpdateProperty(bool fromTag = false) override;
 
 
   /** IDs for the GUI */
@@ -89,8 +89,8 @@ protected:
 
   int m_Interval;
   int m_Labels;
-  
-  virtual mafGUI  *CreateGui();
+
+  mafGUI  *CreateGui() override;
 
   
 };  

@@ -48,27 +48,27 @@ public:
   /** constructor */
   mafViewRXCT(const mafString& label = _R("View RXCT Rotated Volumes Debugger"));
   /** destructor*/
-  virtual ~mafViewRXCT(); 
+  ~mafViewRXCT() override; 
   
   /** RTTI macro*/
   mafTypeMacro(mafViewRXCT, mafViewCompound);
 
   /** clone an instance of the object*/
-  virtual mafView *Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false);
+  mafView *Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override;
   /** Precess events coming from other objects */
-  virtual void OnEvent(mafEventBase *maf_event);
+  void OnEvent(mafEventBase *maf_event) override;
   
   /** Show/Hide VMEs into plugged sub-views */
-  virtual void VmeShow(mafNode *node, bool show);
+  void VmeShow(mafNode *node, bool show) override;
 
   /** Remove VME into plugged sub-views */
-  virtual void VmeRemove(mafNode *node);
+  void VmeRemove(mafNode *node) override;
 
   /** Operations to be performed on vme selection */
-	virtual void VmeSelect(mafNode *node, bool select);
+  void VmeSelect(mafNode *node, bool select) override;
 
   /** Create visual pipe and initialize them to build a RXCT view */
-  void PackageView();
+  void PackageView() override;
   
   /** IDs for the GUI */
   enum VIEW_RXCT_WIDGET_ID
@@ -88,13 +88,13 @@ public:
   };
 
   /** Create the GUI on the bottom of the compounded view. */
-  virtual void CreateGuiView();
+  void CreateGuiView() override;
 
   /* Method for determine if the pick is over a Slice view or not*/
   bool IsPickedSliceView();
 
   /** catch on size event and modify layout*/
-  virtual void			OnSize(wxSizeEvent &size_event);
+  void			OnSize(wxSizeEvent &size_event) override;
 
 protected:
   /**
@@ -104,14 +104,14 @@ protected:
   the superclass enum. The last id value must be defined as "LAST_ID" to allow the 
   subclass to continue the ID enumeration from it. For appending the widgets in the
   same panel GUI, each CreateGUI() function should first call the superclass' one.*/
-  virtual mafGUI  *CreateGui();
+  mafGUI  *CreateGui() override;
 
   /*Let the sub-view to be maximized inside the compounded view. */
-  virtual void MaximizeSubView(int subview_id = 0, bool maximize = true);
+  void MaximizeSubView(int subview_id = 0, bool maximize = true) override;
 
   /** 
   Redefine to arrange views to generate RXCT visualization.*/
-  virtual void LayoutSubViewCustom(int width, int height);
+  void LayoutSubViewCustom(int width, int height) override;
 
   /** Create the gizmo to move the slices. */
   void GizmoCreate();

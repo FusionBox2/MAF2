@@ -89,7 +89,7 @@ public:
   /** RTTI Macro */
   vtkTypeMacro(vtkMAFProjectRG,vtkMAFRectilinearGridToRectilinearGridFilter);
   /** Print object information */
-  void PrintSelf(ostream& os, vtkIndent indent);
+  void PrintSelf(ostream& os, vtkIndent indent) override;
 
   /** Static Function for object instantiation */
   static vtkMAFProjectRG *New();
@@ -126,16 +126,16 @@ protected:
   /** constructor */
   vtkMAFProjectRG();
   /** destructor */
- ~vtkMAFProjectRG(){};
+ ~vtkMAFProjectRG() override {};
  /** copy constructor not implemented*/
   vtkMAFProjectRG(const vtkMAFProjectRG&);
   /** assign operator not implemented*/
   void operator=(const vtkMAFProjectRG&);
 
   /** Update dimensions and whole extents */
-  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestInformation(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
   /** Execute the projection and fill output scalars */
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
   int ProjectionMode;  
 };

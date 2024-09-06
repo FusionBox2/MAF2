@@ -56,7 +56,7 @@ class MAF_EXPORT mafTransform : public mafTransformBase
   //MAF_ID_DEC(UpdateEvent); // Event rised by updates of the internal matrix
 	
   mafTransform();
-  ~mafTransform();
+  ~mafTransform() override;
 
   //----------------------------------------------------------------------------
   // Ref Sys Type:
@@ -325,7 +325,7 @@ protected:
   /**
     This only sets the timestamp for the output matrix: output matrix is not computed
     inside InternalUpdate since this is not a procedural transform. */
-  virtual void InternalUpdate() {m_Matrix->SetTimeStamp(m_TimeStamp);}
+  void InternalUpdate() override {m_Matrix->SetTimeStamp(m_TimeStamp);}
 private:
 };
 

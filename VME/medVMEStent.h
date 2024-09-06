@@ -74,11 +74,11 @@ public:
   mafTypeMacro(medVMEStent, mafVMEGeneric);
 
   medVMEStent(); ///< Constructor
-  ~medVMEStent(); ///< Destructor
+  ~medVMEStent() override; ///< Destructor
 
-  int DeepCopy(mafNode *a) ; ///< Deep copy
+  int DeepCopy(mafNode *a) override; ///< Deep copy
 
-  mafString GetVisualPipe() {return mafString(_R("mafPipePolyline"));} ///< Get pipe name
+  mafString GetVisualPipe() override {return mafString(_R("mafPipePolyline"));} ///< Get pipe name
   mafVMEOutputPolyline *GetPolylineOutput(); ///< return the right type of output 
   vtkPolyData *GetStentPolyData(); ///< Get stent polydata
 
@@ -89,7 +89,7 @@ public:
 
   vtkPolyData *GetSimplexPolyData(); ///< Get simplex polydata
 
-  void OnEvent(mafEventBase *maf_event); ///< Event handler
+  void OnEvent(mafEventBase *maf_event) override; ///< Event handler
 
   /// Initialize. \n
   /// This method allows an external op to initialize the vme, \n
@@ -307,7 +307,7 @@ private:
   };
 
   /// Create the VME GUI.
-  mafGUI *CreateGui();
+  mafGUI *CreateGui() override;
 
   void InternalStore(mafStorageElementBuilder& parent) override;
   void InternalRestore(const mafStorageElement& node) override;
@@ -336,7 +336,7 @@ private:
   void SetVesselSurface(mafNode *node);
 
   /// update stent after a change in the parameters.
-  void InternalUpdate();
+  void InternalUpdate() override;
 
   /// Update stent polydata from simplex.
   //void UpdateStentPolydataFromSimplex_old() ;

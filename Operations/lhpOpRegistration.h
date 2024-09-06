@@ -36,17 +36,17 @@ class lhpOpRegistration: public mafOp
 public:
   mafTypeMacro(lhpOpRegistration, mafOp)
   lhpOpRegistration(const mafString& label = _R("DSRegistration"));
- ~lhpOpRegistration(); 
+ ~lhpOpRegistration() override;
 
-  virtual void OnEvent(mafEventBase *maf_event);
-  mafOp* Copy();
+  void OnEvent(mafEventBase *maf_event) override;
+  mafOp* Copy() override;
 
-  bool Accept(mafNode* vme);   
-  void OpRun();
-  void OpDo();
-  void OpUndo();
+  bool Accept(mafNode* vme) override;   
+  void OpRun() override;
+  void OpDo() override;
+  void OpUndo() override;
   void CreateGui();
-  void OpStop(int result);
+  void OpStop(int result) override;
 
 protected: 
 

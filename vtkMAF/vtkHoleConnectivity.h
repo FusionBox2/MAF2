@@ -36,7 +36,7 @@ public:
   /** retrieve class name */
 	const char *GetClassName() {return "vtkHoleConnectivity";};
   /** print information */
-	void PrintSelf(ostream& os, vtkIndent indent); 
+	void PrintSelf(ostream& os, vtkIndent indent) override; 
 
   /** create an instance of the object */
 	static vtkHoleConnectivity *New();
@@ -54,10 +54,10 @@ protected:
   /** constructor */
 	vtkHoleConnectivity(vtkPolyData *input=NULL,vtkIdType ID=-1);
   /** destructor */
-	~vtkHoleConnectivity();
+	~vtkHoleConnectivity() override;
 
   /** execute the filter */
-	int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
+	int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;
 
 	vtkIdType PointID;
 	double Point[3];

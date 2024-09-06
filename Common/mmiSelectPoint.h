@@ -58,13 +58,13 @@ public:
 	mafTypeMacro(mmiSelectPoint,mafInteractorCameraMove);
 
 	/** redefined not to move the camera if something has been picked */
-	virtual void OnMouseMove();
+	void OnMouseMove() override;
 
 	/** redefined to pick cell if CTRL modifier is pressed */
-	virtual void OnLeftButtonDown(mafEventInteraction *e);
+	void OnLeftButtonDown(mafEventInteraction *e) override;
 
 	/** redefined to end pick modality */
-	virtual void OnButtonUp(mafEventInteraction *e);
+	void OnButtonUp(mafEventInteraction *e) override;
 
   /** Set the CTRL modifier to On => picking performed on LeftButtonDown + CTRL */
   void SetCtrlModifierOn(){m_UseCtrlModifier = true;};
@@ -82,7 +82,7 @@ public:
 
 protected:
 	mmiSelectPoint();
-	virtual ~mmiSelectPoint();
+	~mmiSelectPoint() override;
 
 	/** send the picking informations to the listener */
 	void PickCell(mafDevice *device);
@@ -94,7 +94,7 @@ protected:
 private:
 	mmiSelectPoint(const mmiSelectPoint&);  // Not implemented.
 	void operator=(const mmiSelectPoint&);  // Not implemented.
-	void OnEvent(mafEventBase *event);
+	void OnEvent(mafEventBase *event) override;
 
 };
 #endif 

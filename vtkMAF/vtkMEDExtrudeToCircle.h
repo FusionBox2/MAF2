@@ -72,9 +72,9 @@ protected:
   // Protected methods
   //----------------------------------------------------------------------------
   vtkMEDExtrudeToCircle() ;   ///< constructor
-  ~vtkMEDExtrudeToCircle() ;  ///< deconstructor
+  ~vtkMEDExtrudeToCircle() override;  ///< deconstructor
 
-  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);       ///< execute method
+  int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *) override;       ///< execute method
 
   void Initialize() ;   ///< initialize filter (clear old data out for clean start)
 

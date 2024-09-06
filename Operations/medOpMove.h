@@ -45,40 +45,40 @@ class MED_OPERATION_EXPORT medOpMove : public mafOpTransformInterface
 {
 public:
   medOpMove(const mafString& label = _R("Move\tCtrl+T"));
- ~medOpMove(); 
-  virtual void OnEvent(mafEventBase *maf_event);
+ ~medOpMove() override;
+  void OnEvent(mafEventBase *maf_event) override;
   
   mafTypeMacro(medOpMove, mafOpTransformInterface);
 
-  mafOp* Copy();
+  mafOp* Copy() override;
 
   /** Return true for the acceptable vme type. */
-  bool Accept(mafNode* vme);
+  bool Accept(mafNode* vme) override;
 
   /** Builds operation's interface. */
-  void OpRun();
+  void OpRun() override;
   
   /** Execute the operation. */
-  void OpDo();
+  void OpDo() override;
   
   /** Makes the undo for the operation. */
-  void OpUndo();
+  void OpUndo() override;
 	
   void Reset();
 
 protected:
   /** Create the gui */
-  virtual void CreateGui();
+  void CreateGui() override;
   
   void GetDelta(mafMatrix& delta);
-  void OnEventThis(mafEventBase *maf_event);  
-  void OnEventGizmoTranslate(mafEventBase *maf_event);
-  void OnEventGizmoRotate(mafEventBase *maf_event);
+  void OnEventThis(mafEventBase *maf_event) override;  
+  void OnEventGizmoTranslate(mafEventBase *maf_event) override;
+  void OnEventGizmoRotate(mafEventBase *maf_event) override;
   void OnEventGuiTransformMouse(mafEventBase *maf_event);
   void OnEventGuiSaveRestorePose(mafEventBase *maf_event);
   void OnEventGuiTransformTextEntries(mafEventBase *maf_event);
 
-  void OpStop(int result);
+  void OpStop(int result) override;
 
   /** 
   plugged objects */
@@ -98,7 +98,7 @@ protected:
 
   /** 
   Override superclass*/
-  void RefSysVmeChanged();
+  void RefSysVmeChanged() override;
 };
 #endif
   
