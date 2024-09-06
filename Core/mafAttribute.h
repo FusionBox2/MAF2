@@ -95,7 +95,7 @@ namespace serializer
   {
     mafString type_name = _R(attr->GetTypeName());
     assert(attr);
-    value(_R("Type")).template SetValue(type_name);
+    value(_R("Type")).SetValue(type_name);
     attr->Store(value);
   }
 }
