@@ -36,11 +36,11 @@ namespace
 		const XMLCh* Begin() const;
 		const XMLCh* End() const;
 		int Size() const;
-		const char* GetCStr()const;
+		const char* GetCharStr()const;
 		XMLCh& operator [] (const int i);
 		const XMLCh operator [] (const int i) const;
 		operator const XMLCh* () const { return m_WStr; };
-		operator const char* () { return GetCStr(); }
+		operator const char* () { return GetCharStr(); }
 	protected:
 		XMLCh* m_WStr;
 		mutable char* m_CStr;
@@ -162,7 +162,7 @@ namespace
 	}
 
 	//------------------------------------------------------------------------------
-	const char* mafXMLString::GetCStr()const
+	const char* mafXMLString::GetCharStr()const
 		//------------------------------------------------------------------------------
 	{
 		if (m_WStr)
@@ -809,7 +809,7 @@ int mafXMLReader::Load(const mafString& url)
 		// 				// Paolo 30-11-2007: due to changes on name for mafVMEScalar (to mafVMEScalarMatrix)
 		// 				if (doc_version_f < 2.0)
 		// 				{
-		// 					mafErrorMacro("XML parsing error: wrong file version v" << docVersion->GetCStr() << ", should be > v" << version.GetCStr());
+		// 					mafErrorMacro("XML parsing error: wrong file version v" << docVersion->GetCharStr() << ", should be > v" << version.GetCharStr());
 		// 					errorCode = IO_WRONG_FILE_VERSION;
 		//                     return;
 		// 				}
