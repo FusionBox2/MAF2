@@ -26,7 +26,7 @@ void mafTimeStamped::Modified()
 }
 
 //-------------------------------------------------------------------------
-unsigned long mafTimeStamped::GetMTime()
+MTimeType mafTimeStamped::GetMTime()
 //-------------------------------------------------------------------------
 {
   return m_MTime.GetMTime();

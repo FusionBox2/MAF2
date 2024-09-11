@@ -409,7 +409,7 @@ public:
 
   /**
   Return the modification time.*/
-  unsigned long GetMTime() override;
+  MTimeType GetMTime() override;
 
   /** Find new unique id */
   virtual mafID GetNewNodeId();

@@ -83,7 +83,7 @@ void mafDataPipeInterpolatorVTK::PreExecute()
 {
   Superclass::PreExecute();
 
-  unsigned long mtime=this->GetMTime();
+  auto mtime=this->GetMTime();
 
   // if the current item is changed set the data inside new item as input for the interpolator
   // more specialized interpolators could redefine this to have more inputs (e.g. when 

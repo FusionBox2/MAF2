@@ -19,7 +19,7 @@
 #include "mafTimeStamped.h"
 
 #include "mafDefines.h"
-#include "mafMTime.h"
+#include "ftk/Base/MTime.h"
 #include "mafMatrix.h"
 
 //----------------------------------------------------------------------------

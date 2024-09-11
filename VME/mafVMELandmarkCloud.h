@@ -72,7 +72,7 @@ public:
 
   /**
   Return the modification time.*/
-  unsigned long GetMTime() override;
+  MTimeType GetMTime() override;
 
   /**
   Add a new landmark an returns its index. BEWARE: landmark is added to all the

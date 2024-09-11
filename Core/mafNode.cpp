@@ -1000,20 +1000,18 @@ void mafNode::RemoveAllLinks()
   Modified();
 }
 //-------------------------------------------------------------------------
-unsigned long mafNode::GetMTime()
+MTimeType mafNode::GetMTime()
 //-------------------------------------------------------------------------
 {
-  unsigned long mtime = this->mafTimeStamped::GetMTime();
+  auto mtime = this->mafTimeStamped::GetMTime();
   if (m_DependsOnLinkedNode)
   {
-    unsigned long mtimelink;
-    for (mafLinksMap::iterator it=m_Links.begin();it!=m_Links.end();it++)
+    for (auto& link : m_Links)
     {
       // check linked node timestamp
-      if(it->second.m_Node)
+      if(link.second.m_Node)
       {
-        mtimelink = it->second.m_Node->GetMTime();
-        mtime = (mtimelink > mtime) ? mtimelink : mtime;
+        mtime = (std::max)(mtime, link.second.m_Node->GetMTime());
       }
     }
   }

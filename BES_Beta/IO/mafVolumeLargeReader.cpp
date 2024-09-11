@@ -230,7 +230,7 @@ void mafVolumeLargeReader::SetOutputRLGDataSet(vtkRectilinearGrid* ds)
 //returns false if an error occurs
 /*virtual*/ bool mafVolumeLargeReader::Update()
 {
-	if (this->GetMTime() <= m_LastUpdateTime) {
+	if (this->GetMTime() <= (MTimeType)m_LastUpdateTime) {
 		return true; //no change
 	}
 

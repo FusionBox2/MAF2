@@ -99,16 +99,14 @@ int mafGizmoAutoscaleHelper::DeepCopy(mafGizmoAutoscaleHelper *trans)
 
 //----------------------------------------------------------------------------
 // Get the MTime. Take in consideration m_Renderer, m_Camera and m_Bounds modification time
-unsigned long mafGizmoAutoscaleHelper::GetMTime()
+MTimeType mafGizmoAutoscaleHelper::GetMTime()
 //------------------------------------------------------------------------------
 {
-	unsigned long mtime = this->Superclass::GetMTime();
+	auto mtime = this->Superclass::GetMTime();
 
 	if (m_Camera)
 	{
-		unsigned long cameraMTime = m_Camera->GetMTime();
-		if (cameraMTime > mtime)
-			mtime=cameraMTime;
+		mtime = (std::max)(mtime, m_Camera->GetMTime());
 	}
 
 	if (m_Renderer&&m_Camera!=m_Renderer->GetActiveCamera())
@@ -130,9 +128,7 @@ unsigned long mafGizmoAutoscaleHelper::GetMTime()
 
 	if (m_Bounds)
 	{
-		unsigned long boundsMTime = m_Bounds->GetMTime();
-		if (boundsMTime > mtime)
-			mtime=boundsMTime;
+		mtime = (std::max)(mtime, m_Bounds->GetMTime());
 	}
 
 	return mtime;

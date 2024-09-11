@@ -85,7 +85,7 @@ public:
   mafTimeStamp GetTimeStamp() {return m_CurrentTime;}
 
   /** return modification time */
-  unsigned long GetMTime() override;
+  MTimeType GetMTime() override;
 
   /** This function returns true if the VME is accepted by this Pipe. */
   virtual bool Accept(mafVME *vme) {return vme!=NULL;}

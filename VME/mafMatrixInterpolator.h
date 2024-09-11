@@ -54,7 +54,7 @@ public:
 
   /**
   Get the MTime: this is the bit of magic that makes everything work.*/
-  unsigned long GetMTime() override;
+  MTimeType GetMTime() override;
 
   /** Force update of the pipe.*/
   void Update() override;

@@ -18,7 +18,7 @@
 #define __mafInteractor6DOFCameraMove_h
 
 #include "mafInteractor6DOF.h"
-#include "mafMTime.h"
+#include "ftk/Base/MTime.h"
 
 //----------------------------------------------------------------------------
 // forward declarations :

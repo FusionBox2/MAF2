@@ -248,8 +248,8 @@ mmaVolumeMaterial *mafVMEVolumeLarge::GetMaterial()
 {
 	Superclass::InternalUpdate();	//call base
 
-	unsigned long mtime = this->GetMTime();
-	if (mtime > m_UpdateTime)
+	auto mtime = this->GetMTime();
+	if (mtime > (MTimeType)m_UpdateTime)
 	{
 		m_UpdateTime.Modified();
 	

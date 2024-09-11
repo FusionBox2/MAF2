@@ -19,7 +19,7 @@
 #include "mafString.h"
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"
-#include "mafMTime.h"
+#include "ftk/Base/MTime.h"
 #include "vtkImageData.h"
 #include "mafBrickedFileReader.h"
 

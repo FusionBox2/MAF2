@@ -18,7 +18,7 @@
 #define __mafTransformBase_h
 
 #include "mafReferenceCounted.h"
-#include "mafMTime.h"
+#include "ftk/Base/MTime.h"
 #include <mutex>
 #include "mafMatrix.h"
 #include "mafSmartPointer.h"
@@ -127,10 +127,10 @@ public:
   //virtual int CircuitCheck(mafTransformBase *transform);
 
   /** Return current modification time. */
-  virtual unsigned long GetMTime() {return m_MTime.GetMTime();}
+  virtual MTimeType GetMTime() {return m_MTime.GetMTime();}
 
   /** return last update time */
-  virtual unsigned long GetUpdateTime() {return m_UpdateTime.GetMTime();}
+  virtual MTimeType GetUpdateTime() {return m_UpdateTime.GetMTime();}
 
   /** set the timestamp for the output matrix */
   void SetTimeStamp(mafTimeStamp t) {if (!mafEquals(m_TimeStamp,t)){m_TimeStamp=t; Modified();}}

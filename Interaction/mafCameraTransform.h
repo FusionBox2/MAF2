@@ -155,7 +155,7 @@ public:
   /** 
     Get the MTime: this is the bit of magic that makes everything work.
     This MTime takes in consideration also the camera's MTime */
-  unsigned long GetMTime() override;
+  MTimeType GetMTime() override;
 
   virtual int DeepCopy(mafCameraTransform *trans);
   

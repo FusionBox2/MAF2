@@ -30,7 +30,7 @@
 #define MOUSE_CAMERA_LINKED_ROTATE  8
 
 #include "mafInteractor.h"
-#include "mafMTime.h"
+#include "ftk/Base/MTime.h"
 
 //----------------------------------------------------------------------------
 // forward declarations :

@@ -238,36 +238,24 @@ void mafTransformFrame::InternalUpdate()
 }
 
 //----------------------------------------------------------------------------
-unsigned long mafTransformFrame::GetMTime()
+MTimeType mafTransformFrame::GetMTime()
 //----------------------------------------------------------------------------
 {
-  unsigned long mtime = Superclass::GetMTime();
+  auto mtime = Superclass::GetMTime();
 
   if (m_Input)
   {
-    unsigned long matrixMTime = m_Input->GetMTime();
-    if (matrixMTime > mtime)
-    {
-      mtime = matrixMTime;
-    }
+    mtime = (std::max)(mtime, m_Input->GetMTime());
   }
   
   if (m_InputFrame)
   {
-    unsigned long matrixMTime = m_InputFrame->GetMTime();
-    if (matrixMTime > mtime)
-    {
-      mtime = matrixMTime;
-    }
+    mtime = (std::max)(mtime, m_InputFrame->GetMTime());
   }
 
   if (m_TargetFrame)
   {
-    unsigned long matrixMTime = m_TargetFrame->GetMTime();
-    if (matrixMTime > mtime)
-    {
-      mtime = matrixMTime;
-    }
+    mtime = (std::max)(mtime, m_TargetFrame->GetMTime());
   }
 
   return mtime;

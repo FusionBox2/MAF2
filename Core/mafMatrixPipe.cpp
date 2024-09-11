@@ -119,18 +119,14 @@ const mafMatrix &mafMatrixPipe::GetMatrix()
 
 //----------------------------------------------------------------------------
 // Get the MTime. Take in consideration also modifications to the Input Array
-unsigned long mafMatrixPipe::GetMTime()
+MTimeType mafMatrixPipe::GetMTime()
 //------------------------------------------------------------------------------
 {
-  unsigned long mtime = this->Superclass::GetMTime();
+  auto mtime = this->Superclass::GetMTime();
 
   if (m_VME)
   {
-    unsigned long vmeMTime = m_VME->GetMTime();
-    if (vmeMTime > mtime)
-    {
-      return vmeMTime;
-    }
+    mtime = (std::max)(mtime, m_VME->GetMTime());
   }
   return mtime;
 }

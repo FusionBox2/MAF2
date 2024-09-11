@@ -60,7 +60,7 @@ public:
 
   /**
   Get the MTime: this is the bit of magic that makes everything work.*/
-  unsigned long GetMTime() override;
+  MTimeType GetMTime() override;
 
 protected:
   mafDataPipeInterpolator();

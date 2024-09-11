@@ -51,16 +51,12 @@ mafAbsMatrixPipe::~mafAbsMatrixPipe()
 }
 
 //----------------------------------------------------------------------------
-unsigned long mafAbsMatrixPipe::GetMTime()
+MTimeType mafAbsMatrixPipe::GetMTime()
 //----------------------------------------------------------------------------
 {
-  unsigned long mtime = this->Superclass::GetMTime();
+  auto mtime = this->Superclass::GetMTime();
 
-  unsigned long transMTime = m_Transform->GetMTime();
-  if (transMTime > mtime)
-  {
-    return transMTime;
-  }
+  mtime = (std::max)(mtime, m_Transform->GetMTime());
   
   return mtime;
 }

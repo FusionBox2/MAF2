@@ -66,7 +66,7 @@ class MAF_EXPORT mafTransformFrame : public mafTransformBase
   /** 
     Return current modification time, taking inro consideration also
     Input, InputFrame and TargetFrame. */
-   unsigned long GetMTime() override;
+   MTimeType GetMTime() override;
 
 protected:
   void InternalUpdate() override;

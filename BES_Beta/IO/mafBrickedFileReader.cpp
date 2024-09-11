@@ -570,7 +570,7 @@ void mafBrickedFileReader::GetBricksExtent(int VOI[6], int inBExt[6], int bndBEx
 //returns false if an error occurs
 /*virtual*/ bool mafBrickedFileReader::Update()
 {
-	if (this->GetMTime() <= m_LastUpdateTime) {
+	if (this->GetMTime() <= (MTimeType)m_LastUpdateTime) {
 		return true; //no change
 	}
 

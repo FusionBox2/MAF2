@@ -176,7 +176,7 @@ bool mafMatrix::operator==(vtkMatrix4x4 *mat) const
 #endif
 
 //------------------------------------------------------------------------------
-unsigned long mafMatrix::GetMTime() const
+MTimeType mafMatrix::GetMTime() const
 //------------------------------------------------------------------------------
 {
 #ifdef MAF_USE_VTK
