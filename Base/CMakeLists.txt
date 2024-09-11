@@ -9,6 +9,12 @@ DBG_MESSAGE("Configuring project mafCore")
 
 # Set your list of sources here.
 SET(PROJECT_SRCS
+	../ftk/Base/SpinLock.h
+	../ftk/Base/ThreadPool.h
+)
+
+# Set your list of sources here.
+SET(PROJECT_SRCS ${PROJECT_SRCS}
 mafDecl.cpp
 mafDecl.h
 mafDefines.cpp
