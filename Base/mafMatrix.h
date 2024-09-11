@@ -18,7 +18,7 @@
 #define __mafMatrix_h
 
 #include "mafReferenceCounted.h"
-#include "mafMTime.h"
+#include "ftk/Base/MTime.h"
 #include "mafString.h"
 #include "mafTo.h"
 
@@ -92,7 +92,7 @@ public:
   double GetElement(const int i, const int j) const {return GetElements()[i][j];}
 
   /** return modification time for this object */
-  unsigned long GetMTime() const;
+  MTimeType GetMTime() const;
 
   /** update modification time stamp for this object */
   void Modified();

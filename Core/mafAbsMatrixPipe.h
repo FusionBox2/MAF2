@@ -52,7 +52,7 @@ public:
   /** 
     Overridden to take into consideration the internal transform
     object MTime. */
-  unsigned long GetMTime() override;
+  MTimeType GetMTime() override;
   
 protected:
   void InternalUpdate() override;

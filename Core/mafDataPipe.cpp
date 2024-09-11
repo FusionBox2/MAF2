@@ -124,10 +124,10 @@ int mafDataPipe::DeepCopy(mafDataPipe *pipe)
 
 //----------------------------------------------------------------------------
 // Get the MTime. Take in consideration also modifications to the Input Array
-unsigned long mafDataPipe::GetMTime()
+MTimeType mafDataPipe::GetMTime()
 //------------------------------------------------------------------------------
 {
-  unsigned long mtime = this->mafTimeStamped::GetMTime();
+  auto mtime = this->mafTimeStamped::GetMTime();
 
   //if (m_Bounds.GetMTime() > mtime)
   //{
@@ -138,33 +138,21 @@ unsigned long mafDataPipe::GetMTime()
   {
     if (m_DependOnVMETime) 
     {
-      unsigned long vmeMTime = m_VME->GetMTime();
-      if (vmeMTime > mtime)
-      {
-        mtime = vmeMTime;
-      }
+      mtime = (std::max)(mtime, m_VME->GetMTime());
     }
 
     if (m_DependOnAbsPose)
     {
       if (m_VME->GetAbsMatrixPipe())
       {
-        unsigned long vme_abs_poseMTime = m_VME->GetAbsMatrixPipe()->GetMTime();
-        if (vme_abs_poseMTime > mtime)
-        {
-          mtime = vme_abs_poseMTime;
-        }
+        mtime = (std::max)(mtime, m_VME->GetAbsMatrixPipe()->GetMTime());
       }
     }
     else if (m_DependOnPose) // if we depend from AbsPose we do not need to check for pose
     {
       if (m_VME->GetMatrixPipe())
       {
-        unsigned long vme_poseMTime = m_VME->GetMatrixPipe()->GetMTime();
-        if (vme_poseMTime > mtime)
-        {
-          mtime = vme_poseMTime;
-        }
+        mtime = (std::max)(mtime, m_VME->GetMatrixPipe()->GetMTime());
       }
     }
   }

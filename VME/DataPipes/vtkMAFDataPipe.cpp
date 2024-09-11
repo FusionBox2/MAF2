@@ -66,15 +66,11 @@ void vtkMAFDataPipe::SetDataPipe(mafDataPipe *dpipe)
 vtkMTimeType vtkMAFDataPipe::GetMTime()
 //------------------------------------------------------------------------------
 {
-  unsigned long mtime = this->Superclass::GetMTime();
+  auto mtime = this->Superclass::GetMTime();
 
   if (m_DataPipe)
   {
-    unsigned long dpipeMTime = m_DataPipe->GetMTime();
-    if (dpipeMTime > mtime)
-    {
-      mtime = dpipeMTime;
-    }
+    mtime = (std::max)(mtime, m_DataPipe->GetMTime());
   }
 
   return mtime;

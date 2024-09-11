@@ -29,7 +29,7 @@
 #include "mafEventSender.h"
 #include "mafObjectFactory.h"
 #include "mafString.h"
-#include "mafMTime.h"
+#include "ftk/Base/MTime.h"
 #include "mafOBB.h"
 #include "mafBaseEventHandler.h"
 #include "mafEventBase.h"

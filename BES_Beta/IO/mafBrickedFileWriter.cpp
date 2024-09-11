@@ -615,7 +615,7 @@ void mafBrickedFileWriter::CreateBricksIndexTable(int nCurBrickPlane)
 //This method updates the output (i.e., it performs the bricking)	
 /*virtual*/ bool mafBrickedFileWriter::Update()
 {
-	if (this->GetMTime() <= m_LastUpdateTime) {
+	if (this->GetMTime() <= (MTimeType)m_LastUpdateTime) {
 		return true; //no change
 	}
 

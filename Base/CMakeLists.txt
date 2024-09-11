@@ -9,6 +9,8 @@ DBG_MESSAGE("Configuring project mafCore")
 
 # Set your list of sources here.
 SET(PROJECT_SRCS
+	../ftk/Base/MTime.cpp
+	../ftk/Base/MTime.h
 	../ftk/Base/SpinLock.h
 	../ftk/Base/ThreadPool.h
 )
@@ -35,8 +37,6 @@ mafIndent.cpp
 mafIndent.h
 mafLUTLibrary.cpp
 mafLUTLibrary.h
-mafMTime.cpp
-mafMTime.h
 mafMatrix.cpp
 mafMatrix.h
 mafMatrix3x3.cpp

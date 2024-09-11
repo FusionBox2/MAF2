@@ -17,7 +17,7 @@
 #ifndef __mafTimeStamped_h
 #define __mafTimeStamped_h
 
-#include "mafMTime.h"
+#include "ftk/Base/MTime.h"
 
 
 //------------------------------------------------------------------------------
@@ -43,7 +43,7 @@ public:
   virtual void Modified();
 
   /** return modification time */
-  virtual unsigned long GetMTime();
+  virtual MTimeType GetMTime();
 
 protected:
   mafMTime          m_MTime;        ///< Last modification time

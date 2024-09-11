@@ -62,7 +62,7 @@ protected:
 
 
 	//last time of update
-	vtkTimeStamp m_UpdateTime;
+	mafMTime m_UpdateTime;
 
 #pragma region GUIS
 #pragma region INFO GUI

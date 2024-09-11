@@ -148,23 +148,15 @@ vtkAbstractTransform *vtkMAFToLinearTransform::MakeTransform()
 vtkMTimeType vtkMAFToLinearTransform::GetMTime()
 //----------------------------------------------------------------------------
 {
-  unsigned long mtime = this->vtkLinearTransform::GetMTime();
+  auto mtime = this->vtkLinearTransform::GetMTime();
 
   if (this->m_InputMatrix)
   {
-    unsigned long matrixMTime = this->m_InputMatrix->GetMTime();
-    if (matrixMTime > mtime)
-    {
-      return matrixMTime;
-    }
+    mtime = (std::max)(mtime, this->m_InputMatrix->GetMTime());
   }
   else if (this->m_InputTransform)
   {
-    unsigned long transformMTime = this->m_InputTransform->GetMTime();
-    if (transformMTime > mtime)
-    {
-      return transformMTime;
-    }
+    mtime = (std::max)(mtime, this->m_InputTransform->GetMTime());
   }
   return mtime;
 }

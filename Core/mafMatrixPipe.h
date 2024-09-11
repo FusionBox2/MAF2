@@ -60,7 +60,7 @@ public:
   mafTimeStamp GetTimeStamp();
   
   /** Get the MTime: this is the bit of magic that makes everything work. */
-  unsigned long GetMTime() override;
+  MTimeType GetMTime() override;
   
   /** This function returns true if given VME is accepted by this Pipe. */
   virtual bool Accept(mafVME *vme) {return true;}

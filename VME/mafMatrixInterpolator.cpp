@@ -64,20 +64,16 @@ void mafMatrixInterpolator::SetTimeStamp(mafTimeStamp time)
 
 //----------------------------------------------------------------------------
 // Get the MTime. Take in consideration also modifications to the Input Array
-unsigned long mafMatrixInterpolator::GetMTime()
+MTimeType mafMatrixInterpolator::GetMTime()
 //------------------------------------------------------------------------------
 {
-  unsigned long mtime = Superclass::GetMTime();
+  auto mtime = Superclass::GetMTime();
   
   mafVMEGenericAbstract *vme = (mafVMEGenericAbstract *)m_VME;
 
   if (vme && vme->GetMatrixVector())
   {
-    unsigned long arrayMTime = vme->GetMatrixVector()->GetMTime();
-    if (arrayMTime > mtime)
-    {
-      return arrayMTime;
-    }
+    mtime = (std::max)(mtime, vme->GetMatrixVector()->GetMTime());
   }
 
   return mtime;
@@ -95,7 +91,7 @@ void mafMatrixInterpolator::Update()
 //------------------------------------------------------------------------------
 {
 
-  unsigned long mtime=m_UpdateTime.GetMTime();
+  auto mtime=m_UpdateTime.GetMTime();
 
   // if the current time has changed or if this object has been modified...
   if (m_OldTimeStamp!=GetTimeStamp() || !m_CurrentItem || (m_CurrentItem->GetMTime()>mtime) || mtime < GetMTime())

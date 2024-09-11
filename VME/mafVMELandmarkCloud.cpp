@@ -154,20 +154,18 @@ int mafVMELandmarkCloud::SetData(vtkDataSet *data, mafTimeStamp t, int mode)
   return MAF_ERROR;
 }
 //-------------------------------------------------------------------------
-unsigned long mafVMELandmarkCloud::GetMTime()
+MTimeType mafVMELandmarkCloud::GetMTime()
 //-------------------------------------------------------------------------
 {
-  unsigned long mtime = Superclass::GetMTime();
+  auto mtime = Superclass::GetMTime();
   if (IsOpen())
   {
-    unsigned long mtimelm;
     for (int i = 0; i < GetNumberOfChildren(); i++)
     {
       mafVMELandmark *vme = mafVMELandmark::SafeDownCast(GetChild(i));
       if (vme)
       {
-        mtimelm = vme->GetMTime();
-        mtime = (mtimelm > mtime) ? mtimelm : mtime;
+        mtime = (std::max)(mtime, vme->GetMTime());
       }
     }
   }

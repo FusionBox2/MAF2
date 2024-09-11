@@ -25,7 +25,7 @@
 #include "mafObject.h"
 #include "mafTimeStamped.h"
 
-#include "mafMTime.h"
+#include "ftk/Base/MTime.h"
 #include "mafString.h"
 #include <map>
 #include <vector>

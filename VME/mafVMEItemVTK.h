@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 #include "mafVMEItem.h"
 #include "mafString.h"
-#include "mafMTime.h"
+#include "ftk/Base/MTime.h"
 #include "vtkSmartPointer.h"
 //----------------------------------------------------------------------------
 // forward declarations :

@@ -22,7 +22,7 @@
 //----------------------------------------------------------------------------
 
 #include "mafInteractorCameraMove.h"
-#include "mafMTime.h"
+#include "ftk/Base/MTime.h"
 
 //----------------------------------------------------------------------------
 // forward declarations :

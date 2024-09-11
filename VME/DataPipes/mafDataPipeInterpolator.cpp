@@ -68,20 +68,16 @@ void mafDataPipeInterpolator::SetTimeStamp(mafTimeStamp time)
 
 //----------------------------------------------------------------------------
 // Get the MTime. Take in consideration also modifications to the Input Array
-unsigned long mafDataPipeInterpolator::GetMTime()
+MTimeType mafDataPipeInterpolator::GetMTime()
 //------------------------------------------------------------------------------
 {
-  unsigned long mtime = Superclass::GetMTime();
+  auto mtime = Superclass::GetMTime();
   
   mafVMEGenericAbstract *vme = (mafVMEGenericAbstract *)m_VME;
 
   if (vme && vme->GetDataVector())
   {
-    unsigned long arrayMTime = vme->GetDataVector()->GetMTime();
-    if (arrayMTime > mtime)
-    {
-      return arrayMTime;
-    }
+    mtime = (std::max)(mtime, vme->GetDataVector()->GetMTime());
   }
 
   return mtime;
@@ -100,7 +96,7 @@ void mafDataPipeInterpolator::PreExecute()
 {
   Superclass::PreExecute();
 
-  unsigned long mtime=GetMTime();
+  auto mtime=GetMTime();
 
   // If the current time has changed, check if
   // a new item should be considered according to
