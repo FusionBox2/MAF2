@@ -238,6 +238,6 @@ set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT l
 ENDIF(WIN32)
 
 # Create the header to configure the classes.
-CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/mafConfigure.h.in
-             ${PROJECT_BINARY_DIR}/mafConfigure.h
+CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/Configure.h.in
+             ${PROJECT_BINARY_DIR}/ftkConfigure.h
              @ONLY)
