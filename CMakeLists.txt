@@ -65,6 +65,8 @@ OPTION(MAF_BUILD_MAFDLL "Build mafDLL.dll." OFF)
 OPTION(MAF_QA "Generate QA" OFF)
 
 option(BUILD_SHARED_LIBS "Build in shared libraries."           OFF)
+option(MAF_USE_BOOST     "Find and Link the boost library." ON)
+option(MAF_USE_EIGEN     "Find and Link the Eigen library." ON)
 option(MAF_USE_WX        "Find and Link the wxWidgets library." ON)
 option(MAF_USE_QT        "Find and Link the Qt library."        OFF)
 OPTION(MAF_USE_VTK       "Find and Link the VTK library."       ON)
@@ -79,6 +81,20 @@ mark_as_advanced(BUILD_SHARED_LIBS)
 if(MSVC)
 add_compile_options(/Zc:__cplusplus)
 endif(MSVC)
+
+if(MAF_USE_BOOST)
+  set(Boost_DIR ${BST_DIR})
+  find_package(Boost REQUIRED CONFIG)
+  if(Boost_FOUND)
+#  LINK_LIBRARIES(${wxWidgets_LIBRARIES})
+    include_directories(${Boost_INCLUDE_DIRS})
+  endif(Boost_FOUND)
+endif(MAF_USE_BOOST)
+
+if(MAF_USE_EIGEN)
+  set(Eigen3_DIR ${EGN_DIR})
+  find_package(Eigen3 REQUIRED CONFIG)
+endif(MAF_USE_EIGEN)
 
 if(MAF_USE_WX)
   set(wxWidgets_DIR ${WXW_DIR})
@@ -173,8 +189,6 @@ SET(INCLUDE_DIRS "${MAF_BINARY_DIR}"
                  "${MAF_SOURCE_DIR}/VME/DataPipes" 
                  "${MAF_SOURCE_DIR}/vtkMAF") 
 SET(INCLUDE_DIRS ${INCLUDE_DIRS} "${MAF_SOURCE_DIR}/mafDLL")
-SET(INCLUDE_DIRS ${INCLUDE_DIRS} "${MAF_SOURCE_DIR}/../eigen")
-SET(INCLUDE_DIRS ${INCLUDE_DIRS} "${MAF_SOURCE_DIR}/../boost")
 
 INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
 
