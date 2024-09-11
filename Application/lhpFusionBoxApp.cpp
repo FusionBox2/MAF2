@@ -18,8 +18,6 @@
 // Failing in doing this will result in a run-time error saying:
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
-#include "lhpFusionBoxApp.h"
-
 #include <wx/datetime.h>
 #include <wx/config.h>
 
@@ -424,6 +422,33 @@ public:
 //--------------------------------------------------------------------------------
 // Create the Application
 //--------------------------------------------------------------------------------
+#include "medLogicWithManagers.h"
+#include "mafEvent.h"
+#include "mafBaseEventHandler.h"
+#include "mafDynamicLoader.h"
+#include <memory>
+
+//----------------------------------------------------------------------------
+// forward references :
+//----------------------------------------------------------------------------
+
+class lhpFusionBoxApp : public wxApp
+{
+public:
+  bool OnInit() override;
+  int  OnExit() override;
+
+
+  ////Called when the application is in the idle state
+  //virtual void OnIdle(wxIdleEvent& event);  
+  //DECLARE_EVENT_TABLE()
+
+protected:
+  std::unique_ptr<medLogicWithManagers> m_Logic;
+  std::vector<std::pair<LibHandle, void(*)() > > m_Plugins;
+
+};
+DECLARE_APP(lhpFusionBoxApp)
 
 IMPLEMENT_APP(lhpFusionBoxApp)
 

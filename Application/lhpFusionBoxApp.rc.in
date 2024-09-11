@@ -12,7 +12,7 @@
 
 
 #include <wx/msw/wx.rc>
-IDI_ICON1 ICON DISCARDABLE "LHPFusionBoxApplication.ico"
+IDI_ICON1 ICON DISCARDABLE "lhpFusionBoxApp.ico"
 
 IDR_EXE1  EXE              "mrkless.exe"
 

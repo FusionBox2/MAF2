@@ -3,7 +3,6 @@ PROJECT (lhpFusionBox)
 
 SET(PROJECT_SRCS 
 	lhpFusionBoxApp.cpp
-	lhpFusionBoxApp.h
 )
 
 IF (NOT EXECUTABLE_OUTPUT_PATH)
@@ -13,9 +12,9 @@ ENDIF (NOT EXECUTABLE_OUTPUT_PATH)
 
 if(WIN32)
   SET(NO_MANIFEST 1)
-  CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/LHPFusionBoxApplication.rc.in ${PROJECT_BINARY_DIR}/LHPFusionBoxApplication.rc @ONLY)
+  CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/lhpFusionBoxApp.rc.in ${PROJECT_BINARY_DIR}/lhpFusionBoxApp.rc @ONLY)
   set(PROJECT_SRCS ${PROJECT_SRCS}
-      "${PROJECT_BINARY_DIR}/LHPFusionBoxApplication.rc"
+      "${PROJECT_BINARY_DIR}/lhpFusionBoxApp.rc"
   )
 endif(WIN32)
 
