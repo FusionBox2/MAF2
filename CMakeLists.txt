@@ -37,6 +37,13 @@ else(CMAKE_SIZEOF_VOID_P EQUAL 8)
 endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
 
 #-----------------------------------------------------------------------------
+# FTK version number.
+#-----------------------------------------------------------------------------
+SET(FTK_MAJOR_VERSION 2)
+SET(FTK_MINOR_VERSION 2)
+SET(FTK_BUILD_VERSION 0)
+SET(FTK_VERSION "${FTK_MAJOR_VERSION}.${FTK_MINOR_VERSION}.${FTK_BUILD_VERSION}")
+#-----------------------------------------------------------------------------
 # MAF version number.  An even minor number corresponds to releases.
 #-----------------------------------------------------------------------------
 SET(MAF_MAJOR_VERSION 2)
@@ -214,6 +221,8 @@ SUBDIRS(Operations)
 SUBDIRS(Views)
 SUBDIRS(VME)
 SUBDIRS(vtkMAF)
+SUBDIRS(libjson)
+add_subdirectory(wxApp)
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT lhpFusionBox)
 
   SET(BUILD_SHARED_LIBS 0)
