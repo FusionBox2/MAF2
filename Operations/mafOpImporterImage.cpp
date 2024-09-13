@@ -252,34 +252,33 @@ void mafOpImporterImage::BuildImageSequence()
     }
 
     mafSplitPath(m_Files[i],&path,&name,&ext);
-		ext.MakeUpper();
 		if(name.toWx().IsNumber())
 			name.toWx().ToLong(&time);
 		else
 			time = i;
 
-		if(ext == _R("BMP"))
+		if(ext == _R("bmp"))
 		{
 			vtkNew<vtkBMPReader> r;
 			r->SetFileName(m_Files[i].GetCStr());
 			r->Update();
       m_ImportedImage->SetData(r->GetOutput(),time);
 		} 
-		else if (ext == _R("JPG") || ext == _R("JPEG") )
+		else if (ext == _R("jpg") || ext == _R("jpeg") )
 		{
 			vtkNew<vtkJPEGReader> r;
 			r->SetFileName(m_Files[i].GetCStr());
 			r->Update();
       m_ImportedImage->SetData(r->GetOutput(),time);
 		}
-		else if (ext == _R("PNG"))
+		else if (ext == _R("png"))
 		{
 			vtkNew<vtkPNGReader> r;
 			r->SetFileName(m_Files[i].GetCStr());
 			r->Update();
       m_ImportedImage->SetData(r->GetOutput(),time);
 		}
-		else if (ext == _R("TIF") || ext == _R("TIFF") )
+		else if (ext == _R("tif") || ext == _R("tiff") )
 		{
 			vtkNew<vtkTIFFReader> r;
 			r->SetFileName(m_Files[i].GetCStr());
@@ -313,7 +312,7 @@ void mafOpImporterImage::BuildVolume()
   mafNEW(m_ImportedImageAsVolume);
   m_ImportedImageAsVolume->SetName(_R("Imported Volume"));
 
-  if(m_FileExtension.Upper() == _R("BMP"))
+  if(m_FileExtension == _R("bmp"))
 	{
     vtkBMPReader *r = vtkBMPReader::New();
     r->SetFileName(m_Files[0].GetCStr());
@@ -337,7 +336,7 @@ void mafOpImporterImage::BuildVolume()
     
     r->Delete();
 	} 
-	else if (m_FileExtension.Upper() == _R("JPG") || m_FileExtension.Upper() == _R("JPEG"))
+	else if (m_FileExtension == _R("jpg") || m_FileExtension == _R("jpeg"))
 	{
 		vtkJPEGReader *r = vtkJPEGReader::New();
     r->SetFileName(m_Files[0].GetCStr());
@@ -360,7 +359,7 @@ void mafOpImporterImage::BuildVolume()
     
     r->Delete();
 	}
-	else if (m_FileExtension.Upper() == _R("PNG"))
+	else if (m_FileExtension == _R("png"))
 	{
 		vtkPNGReader *r = vtkPNGReader::New();
     r->SetFileName(m_Files[0].GetCStr());
@@ -383,7 +382,7 @@ void mafOpImporterImage::BuildVolume()
     
     r->Delete();
 	}
-	else if (m_FileExtension.Upper() == _R("TIF") || m_FileExtension.Upper() == _R("TIFF") )
+	else if (m_FileExtension == _R("tif") || m_FileExtension == _R("tiff") )
 	{
 		vtkTIFFReader *r = vtkTIFFReader::New();
     r->SetFileName(m_Files[0].GetCStr());
