@@ -814,7 +814,6 @@ void mafRWIBase::SaveImage(const mafString& filename_, int magnification , int f
   GetRenderWindow()->OffScreenRenderingOff();
   
   mafSplitPath(filename,&path,&name,&ext);
-  ext.MakeLower();
   if (ext == _R("bmp"))
   {
     vtkNew<vtkBMPWriter> w;
@@ -1024,7 +1023,6 @@ void mafRWIBase::RecursiveSaving(const mafString& filename, mafViewCompound *v,i
       w2i->Update();
       currentView->GetRWI()->GetRenderWindow()->OffScreenRenderingOff();
       
-      extension.MakeLower();
       if (extension == _R("bmp"))
       {
         vtkNew<vtkBMPWriter> w;
@@ -1144,7 +1142,6 @@ void mafRWIBase::SaveAllImages(const mafString& filename_, mafViewCompound *v, i
   v->GetImage(imageBitmap);
 
   mafSplitPath(filename,&path,&name,&ext);
-  ext.MakeLower();
   if (ext == _R("bmp"))
   {
     imageBitmap.SaveFile(filename.toWx(), wxBITMAP_TYPE_BMP);
