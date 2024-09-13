@@ -25,7 +25,7 @@
 
 
 #include "mafTagItem.h"
-#include "mafString.h"
+#include "ftk/Base/String.h"
 #include "mafIndent.h"
 #include "mafStorageElement.h"
 #include <vector>

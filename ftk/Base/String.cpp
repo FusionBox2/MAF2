@@ -1,29 +1,18 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafString
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#include "mafString.h"
+#include "ftk/Base/String.h"
 #include "mafMatrix.h"
+
+
+#ifdef MAF_USE_WX
+#include "wx/wx.h"
+#include <wx/string.h>
+#endif
 
 #include <stdio.h>
 #include <stdarg.h>
 #include <assert.h>
-
-#include "wx/wx.h"
-#include <wx/string.h>
 #include <string>
+
+BEGIN_FTK_NAMESPACE
 
 //----------------------------------------------------------------------------
 mafString::mafString()
@@ -348,88 +337,88 @@ mafStringChar& mafString::operator [] (mafString::size_type i)
 }
 
 //----------------------------------------------------------------------------
-const mafStringChar mafString::operator [] (mafString::size_type i) const
+mafStringChar mafString::operator [] (mafString::size_type i) const
 //----------------------------------------------------------------------------
 {
     return m_str[i];
 }
 
 //----------------------------------------------------------------------------
-const bool mafString::operator==(mafStrBuf str) const
+bool mafString::operator==(mafStrBuf str) const
 //----------------------------------------------------------------------------
 {
     return compare(str) == 0;
 }
 
 //----------------------------------------------------------------------------
-const bool mafString::operator!=(mafStrBuf str) const
+bool mafString::operator!=(mafStrBuf str) const
 //----------------------------------------------------------------------------
 {
     return compare(str) != 0;
 }
 
 //----------------------------------------------------------------------------
-const bool mafString::operator<(mafStrBuf str) const
+bool mafString::operator<(mafStrBuf str) const
 //----------------------------------------------------------------------------
 {
     return compare(str) < 0;
 }
 //----------------------------------------------------------------------------
-const bool mafString::operator>(mafStrBuf str) const
+bool mafString::operator>(mafStrBuf str) const
 //----------------------------------------------------------------------------
 {
     return compare(str) > 0;
 }
 //----------------------------------------------------------------------------
-const bool mafString::operator<=(mafStrBuf str) const
+bool mafString::operator<=(mafStrBuf str) const
 //----------------------------------------------------------------------------
 {
     return compare(str) <= 0;
 }
 //----------------------------------------------------------------------------
-const bool mafString::operator>=(mafStrBuf str) const
+bool mafString::operator>=(mafStrBuf str) const
 //----------------------------------------------------------------------------
 {
     return compare(str) >= 0;
 }
 
 //----------------------------------------------------------------------------
-const bool mafString::operator!=(const mafString& str) const
+bool mafString::operator!=(const mafString& str) const
 //----------------------------------------------------------------------------
 {
   return compare(str) != 0;
 }
 
 //----------------------------------------------------------------------------
-const bool mafString::operator==(const mafString& str) const
+bool mafString::operator==(const mafString& str) const
 //----------------------------------------------------------------------------
 {
   return compare(str) == 0;
 }
 
 //----------------------------------------------------------------------------
-const bool mafString::operator<(const mafString& str) const
+bool mafString::operator<(const mafString& str) const
 //----------------------------------------------------------------------------
 {
   return compare(str) < 0;
 }
 
 //----------------------------------------------------------------------------
-const bool mafString::operator>(const mafString& str) const
+bool mafString::operator>(const mafString& str) const
 //----------------------------------------------------------------------------
 {
   return compare(str) > 0;
 }
 
 //----------------------------------------------------------------------------
-const bool mafString::operator<=(const mafString& str) const
+bool mafString::operator<=(const mafString& str) const
 //----------------------------------------------------------------------------
 {
   return compare(str) <= 0;
 }
 
 //----------------------------------------------------------------------------
-const bool mafString::operator>=(const mafString& str) const
+bool mafString::operator>=(const mafString& str) const
 //----------------------------------------------------------------------------
 {
   return compare(str) >= 0;
@@ -645,3 +634,5 @@ void mafParseVector(const mafString& str, std::vector<int>& comps)
 {
 	mafParseVector(str, comps.data(), comps.size());
 }
+
+END_FTK_NAMESPACE

@@ -22,7 +22,7 @@
 #include "mafVMEVolumeLargeUtils.h"
 #include "mafBaseEventHandler.h"
 #include "mafEvent.h"
-#include "mafString.h"
+#include "ftk/Base/String.h"
 #include "mafStorage.h"
 #include "mafEventIO.h"
 #include "mafVMEVolumeGray.h"

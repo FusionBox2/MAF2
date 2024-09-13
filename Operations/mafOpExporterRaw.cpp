@@ -27,7 +27,7 @@
 #include "wx/busyinfo.h"
 
 #include "mafDecl.h"
-#include "mafString.h"
+#include "ftk/Base/String.h"
 #include "mafEvent.h"
 #include "mafGUI.h"
 #include "mafOp.h"

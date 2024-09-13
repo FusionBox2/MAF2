@@ -22,7 +22,7 @@
 //----------------------------------------------------------------------------
 #include "mafOp.h"
 #include "mafMatrix.h"
-#include "mafString.h"
+#include "ftk/Base/String.h"
 
 //----------------------------------------------------------------------------
 // forward references :

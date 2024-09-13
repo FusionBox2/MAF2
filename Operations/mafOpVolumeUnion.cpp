@@ -28,7 +28,7 @@
 #include "mafEvent.h"
 #include "mafGUI.h"
 
-#include "mafString.h"
+#include "ftk/Base/String.h"
 #include "mafVME.h"
 #include "mafVMEVolumeGray.h"
 

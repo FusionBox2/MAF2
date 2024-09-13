@@ -21,7 +21,7 @@
 #include <wx/validate.h>
 #include "wx/listctrl.h"
 #include "mafDecl.h"
-#include "mafString.h"
+#include "ftk/Base/String.h"
 #include "mafEventSender.h"
 
 //-----------------------------------------------------------------------------

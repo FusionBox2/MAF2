@@ -29,7 +29,7 @@
 #include "mafView.h"
 #include "mafOp.h"
 #include "mafNode.h"
-#include "mafString.h"
+#include "ftk/Base/String.h"
 #include "mafMatrix.h"
 
 

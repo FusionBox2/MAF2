@@ -18,7 +18,7 @@
 
 #include "mafReferenceCounted.h"
 #include "mafSmartPointer.h"
-#include "mafString.h"
+#include "ftk/Base/String.h"
 
 #include <vector>
 #include <list>

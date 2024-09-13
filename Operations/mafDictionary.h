@@ -19,7 +19,7 @@
 #endif
 
 #include <vector>
-#include "mafString.h"
+#include "ftk/Base/String.h"
 
 bool ReadDictionary(mafString *fileName, std::vector<std::pair<mafString, mafString> >&  dictionary);
 mafString const *LookupUserName(const mafString& name, std::vector<std::pair<mafString, mafString> >&  dictionary);

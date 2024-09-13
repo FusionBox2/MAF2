@@ -22,7 +22,7 @@
 #include "mafTimeStamped.h"
 #include "mafSmartPointer.h"
 #include "ftk/Base/MTime.h"
-#include "mafString.h"
+#include "ftk/Base/String.h"
 #include <map>
 #include <vector>
 

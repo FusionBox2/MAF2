@@ -14,7 +14,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #define __lhpUtils_H__
 
 #include "mafDefines.h"
-#include "mafString.h"
+#include "ftk/Base/String.h"
 
 class lhpUtils
 {

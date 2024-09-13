@@ -17,7 +17,7 @@ This abstract class contains the stuff common to both, the reader and writer
 #pragma warning (disable: 4068) //unknown pragma
 
 #include "mafObject.h"
-#include "mafString.h"
+#include "ftk/Base/String.h"
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"
 #include "mafTimeStamped.h"

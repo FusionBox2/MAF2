@@ -21,7 +21,7 @@ class mafVME;
 // includes :
 //----------------------------------------------------------------------------
 #include "mafObject.h"
-#include "mafString.h"
+#include "ftk/Base/String.h"
 #include "mafUser.h"
 
 class MAF_EXPORT lhpTagHandlerInputOutputParametersCargo : public mafObject

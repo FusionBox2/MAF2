@@ -19,7 +19,7 @@
 // includes :
 //----------------------------------------------------------------------------
 #include "mafConfigure.h"
-#include "mafString.h"
+#include "ftk/Base/String.h"
 #include <vector>
 #include <iosfwd>
 

@@ -18,7 +18,7 @@
 #define __mafVMEDataSetAttributesImporter_h
 
 class mafVMEGeneric;
-#include "mafString.h"
+#include "ftk/Base/String.h"
 
 /** 
 mafVMEDataSetAttributesImporter

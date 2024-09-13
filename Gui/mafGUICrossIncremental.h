@@ -23,7 +23,7 @@
 #include "mafGUIPanel.h"
 #include "mafEventSender.h"
 #include "mafBaseEventHandler.h"
-#include "mafString.h"
+#include "ftk/Base/String.h"
 
 //----------------------------------------------------------------------------
 // Forward refs:

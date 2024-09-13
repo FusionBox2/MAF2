@@ -24,7 +24,7 @@
 #include "vnl/vnl_matrix.h"
 #include "vnl/vnl_vector.h"
 #include <vector>
-#include "mafString.h"
+#include "ftk/Base/String.h"
 #include "mafEventSender.h"
 
 using namespace std;

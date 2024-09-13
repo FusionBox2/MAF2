@@ -13,7 +13,7 @@
 #ifndef __mafFilesDirs_h
 #define __mafFilesDirs_h
 
-#include "mafString.h"
+#include "ftk/Base/String.h"
 
 MAF_EXPORT mafString mafStripMenuCodes(const mafString& com);
 

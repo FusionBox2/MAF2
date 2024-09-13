@@ -21,7 +21,7 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafGUIPanel.h"
-#include "mafString.h"
+#include "ftk/Base/String.h"
 #include "mafEventSender.h"
 
 //----------------------------------------------------------------------------

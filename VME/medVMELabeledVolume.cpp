@@ -40,7 +40,7 @@
 #include "mafRWIBase.h"
 #include "mafRWI.h"
 #include "mafGUIFloatSlider.h"
-#include "mafString.h"
+#include "ftk/Base/String.h"
 #include "mafDataPipeCustom.h"
 #include "mafStorageElement.h"
 #include "mafVMEItemVTK.h" 

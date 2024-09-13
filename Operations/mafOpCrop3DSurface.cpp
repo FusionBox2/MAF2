@@ -29,7 +29,7 @@
 #include "mafVMEOutputSurface.h"
 #include "mafGizmoROI.h"
 
-#include "mafString.h"
+#include "ftk/Base/String.h"
 #include "mafVME.h"
 #include "mafVMEVolumeGray.h"
 #include "mafVMESurfaceParametric.h"

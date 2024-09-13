@@ -19,7 +19,7 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafVMEItem.h"
-#include "mafString.h"
+#include "ftk/Base/String.h"
 #include "ftk/Base/MTime.h"
 #include "vtkSmartPointer.h"
 //----------------------------------------------------------------------------

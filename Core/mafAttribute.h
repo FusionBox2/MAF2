@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 #include "mafReferenceCounted.h" 
 #include "mafObjectFactory.h"
-#include "mafString.h"
+#include "ftk/Base/String.h"
 #include "mafTo.h"
 
 class mafStorageElement;
