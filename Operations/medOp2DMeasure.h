@@ -18,7 +18,7 @@
 #define __medOp2DMeasure_H__
 
 #include "mafOp.h"
-#include "mafString.h"
+#include "ftk/Base/String.h"
 
 //----------------------------------------------------------------------------
 // forward references :

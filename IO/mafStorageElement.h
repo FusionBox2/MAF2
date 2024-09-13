@@ -2,7 +2,7 @@
 #define __mafStorageElement_h__
 
 #include "mafDefines.h"
-#include "mafString.h"
+#include "ftk/Base/String.h"
 #include "mafTo.h"
 
 #include <vector>

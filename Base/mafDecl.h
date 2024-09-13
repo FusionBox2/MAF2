@@ -22,7 +22,7 @@
 #include "mafDefines.h"
 #include <wx/bitmap.h>
 
-#include "mafString.h"
+#include "ftk/Base/String.h"
 #include "mafFilesDirs.h"
 
 #include <vector>

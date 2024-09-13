@@ -16,7 +16,7 @@
 
 #include "mafExpirationDate.h"
 #include "mafCrypt.h"
-#include "mafString.h"
+#include "ftk/Base/String.h"
 
 #include <sstream>
 #include <fstream>

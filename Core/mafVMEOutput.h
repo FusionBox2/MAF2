@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 #include "mafObject.h"
 #include "mafSmartPointer.h"
-#include "mafString.h"
+#include "ftk/Base/String.h"
 #include "mafOBB.h"
 #include "mafObjectWithGUI.h"
 #include "mafDecl.h" // for MINID

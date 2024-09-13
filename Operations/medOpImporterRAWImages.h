@@ -22,7 +22,7 @@
 
 #include "mafOp.h"
 #include "mafEvent.h"
-#include "mafString.h"
+#include "ftk/Base/String.h"
 
 #include "vtkObject.h"
 

@@ -23,7 +23,7 @@
 #include "mafSmartPointer.h"
 #include "mafBaseEventHandler.h"
 #include "mafTagItem.h"
-#include "mafString.h"
+#include "ftk/Base/String.h"
 #include "mafTimeStamped.h"
 #include "mafAttribute.h"
 #include "mafDecl.h"

@@ -28,7 +28,7 @@
 #include "mafTimeStamped.h"
 #include "mafEventSender.h"
 #include "mafObjectFactory.h"
-#include "mafString.h"
+#include "ftk/Base/String.h"
 #include "ftk/Base/MTime.h"
 #include "mafOBB.h"
 #include "mafBaseEventHandler.h"

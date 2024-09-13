@@ -22,7 +22,7 @@
 //----------------------------------------------------------------------------
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"
-#include "mafString.h"
+#include "ftk/Base/String.h"
 #include "mafViewCompound.h"
 #include "vtkRenderWindowInteractor.h"
 

@@ -19,7 +19,7 @@
 
 #include "mafReferenceCounted.h"
 #include "ftk/Base/MTime.h"
-#include "mafString.h"
+#include "ftk/Base/String.h"
 #include "mafTo.h"
 
 typedef double (*mafMatrixElements)[4];

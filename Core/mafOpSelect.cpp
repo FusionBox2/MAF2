@@ -27,7 +27,7 @@
 #include "mafOpSelect.h"
 #include "mafNode.h"
 #include "mafVMERoot.h"
-#include "mafString.h"
+#include "ftk/Base/String.h"
 #include "mafStorage.h"
 #include "mafEventIO.h"
 #include "mafDataVector.h"
