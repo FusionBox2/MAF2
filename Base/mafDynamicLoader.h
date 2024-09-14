@@ -26,8 +26,7 @@ typedef shl_t LibHandle;
 
 #elif defined(_WIN32)
 
-#include "mafIncludeWIN32.h"
-typedef HMODULE LibHandle;
+typedef void* LibHandle;
 
 #elif defined(__powerpc)
 
