@@ -18,7 +18,6 @@
 #include <wx/image.h>
 #include <wx/uri.h>
 #include <wx/filename.h>
-#include "mafIncludeWX.h"
 #include "mmuIdFactory.h"
 #include <math.h>
 
