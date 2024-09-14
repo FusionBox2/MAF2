@@ -14,8 +14,6 @@
 
 =========================================================================*/
 
-#include "mafIncludeWX.h" // to be removed
-
 #include "mafStorage.h"
 #include "mafNodeManager.h"
 #include "mafStorageElement.h"

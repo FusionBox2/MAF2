@@ -14,8 +14,6 @@
 
 =========================================================================*/
 
-#include "mafIncludeWX.h" // to be removed
-
 #include "mafMSFImporter.h"
 #include "mafVMERoot.h"
 #include "mafVMEGenericAbstract.h"
