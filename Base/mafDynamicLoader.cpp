@@ -145,7 +145,12 @@ const char* mafDynamicLoader::LastError()
 //----------------------------------------------------------------------------
 // 3. Implementation for Windows win32 code
 #ifdef _WIN32
-#include "mafIncludeWIN32.h"
+#ifndef NOMINMAX
+	#define NOMINMAX
+#endif
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
 #define MAFDYNAMICLOADER_DEFINED 1
   
 //----------------------------------------------------------------------------
@@ -159,14 +164,14 @@ LibHandle mafDynamicLoader::OpenLibrary(const char* libname )
 int mafDynamicLoader::CloseLibrary(LibHandle lib)
 //----------------------------------------------------------------------------
 {
-  return (int)FreeLibrary(lib);
+  return (int)FreeLibrary((HMODULE)lib);
 }
 
 //----------------------------------------------------------------------------
 void* mafDynamicLoader::GetSymbolAddress(LibHandle lib, const char* sym)
 //----------------------------------------------------------------------------
 { 
-  return (void *)GetProcAddress(lib, sym);
+  return (void *)GetProcAddress((HMODULE)lib, sym);
 }
 
 //----------------------------------------------------------------------------

@@ -17,7 +17,6 @@
 #include <mutex>
 
 #include "wx/string.h"
-#include "mafIncludeWIN32.h"
 
 #include <stdio.h>
 #include <math.h>

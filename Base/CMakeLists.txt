@@ -33,7 +33,6 @@ mafEventSender.cpp
 mafEventSender.h
 mafFilesDirs.cpp
 mafFilesDirs.h
-mafIncludeWIN32.h
 mafIncludeWX.h
 mafIndent.cpp
 mafIndent.h
