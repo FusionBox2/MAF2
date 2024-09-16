@@ -63,8 +63,6 @@ SET(PROJECT_SRCS
   mafGUIDockSettings.h
   mafGUIFloatSlider.cpp
   mafGUIFloatSlider.h
-  mafGUIFrame.cpp
-  mafGUIFrame.h
   mafGUI.cpp
   mafGUI.h
   mafGUIHolder.cpp

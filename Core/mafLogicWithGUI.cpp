@@ -34,7 +34,6 @@
 #include "mafView.h"
 #include "ftk/Gui/MainFrame.h"
 #include "mafGUIMDIChild.h"
-#include "mafGUIFrame.h"
 #include "mafGUIPicButton.h"
 #include "mafGUISplittedPanel.h"
 #include "mafGUINamedPanel.h"

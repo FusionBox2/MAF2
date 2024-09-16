@@ -25,7 +25,6 @@
 
 
 #include "mafGUIMDIChild.h"
-#include "mafGUIFrame.h"
 #include "mafDecl.h"
 #include "mafView.h"
 //#include "mflAssembly.h"
