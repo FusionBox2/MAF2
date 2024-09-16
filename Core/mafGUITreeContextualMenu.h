@@ -21,7 +21,6 @@
 // forward references;
 //----------------------------------------------------------------------------
 class mafView;
-class mafGUIMDIChild;
 class mafEvent;
 class mafGUICheckTree;
 class mafNode;

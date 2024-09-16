@@ -62,7 +62,7 @@
 #include "mafUser.h"
 #include "mafGUIDialogFindVme.h"
 #include "ftk/Gui/MainFrame.h"
-#include "mafGUIMDIChild.h"
+#include "ftk/Gui/ViewFrame.h"
 #include "mafGUICheckTree.h"
 #include "mafGUITimeBar.h"
 #include "mafGUIMaterialChooser.h"
@@ -2065,7 +2065,7 @@ void mafLogicWithManagers::ViewCreated(mafView *v)
     else
     {
       // child views
-      mafGUIMDIChild *c = new mafGUIMDIChild(m_Win,v);
+      mafGUIMDIChild *c = new mafGUIMDIChild(v, m_Win);
       c->SetWindowStyleFlag(m_ChildFrameStyle);
       c->SetListener(m_ViewManager.get());
       v->SetFrame(c);

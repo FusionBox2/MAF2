@@ -79,9 +79,8 @@ SET(PROJECT_SRCS
   mafGUIMeasureUnitSettings.h
   mafGUIMovieCtrl.cpp
   mafGUIMovieCtrl.h
-  mafGUIMDIChild.cpp
-  mafGUIMDIChild.h
   ../ftk/Gui/MainFrame.h
+  ../ftk/Gui/ViewFrame.h
   mafGUIMutexPanel.cpp
   mafGUIMutexPanel.h
   mafGUINamedPanel.cpp

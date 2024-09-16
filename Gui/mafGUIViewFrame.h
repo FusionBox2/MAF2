@@ -62,7 +62,7 @@ protected:
 	/** Send the event to select the owned view. */
   void OnActivate     (wxActivateEvent &event);
 
-	wxWindow    *m_ClientWin;
+	wxWindow    *m_Win;
 	mafView     *m_View;
 
 	DECLARE_EVENT_TABLE()

@@ -33,7 +33,7 @@
 #include "mafVMERoot.h"
 
 #include "ftk/Gui/MainFrame.h"
-#include "mafGUIMDIChild.h"
+#include "ftk/Gui/ViewFrame.h"
 #include "mafGUIViewFrame.h"
 #include "mafViewVTK.h"
 #include "mafViewCompound.h"

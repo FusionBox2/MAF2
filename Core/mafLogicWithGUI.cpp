@@ -33,7 +33,7 @@
 #include "mafDecl.h"
 #include "mafView.h"
 #include "ftk/Gui/MainFrame.h"
-#include "mafGUIMDIChild.h"
+#include "ftk/Gui/ViewFrame.h"
 #include "mafGUIPicButton.h"
 #include "mafGUISplittedPanel.h"
 #include "mafGUINamedPanel.h"
