@@ -55,7 +55,7 @@ mafGUIViewFrame::mafGUIViewFrame( wxFrame* parent,
 //----------------------------------------------------------------------------
 : wxFrame(parent, id, title.toWx(), pos, size, style)
 {
-  m_ClientWin = NULL;
+  m_Win = NULL;
 }
 //----------------------------------------------------------------------------
 mafGUIViewFrame::~mafGUIViewFrame( ) 
@@ -74,10 +74,10 @@ void mafGUIViewFrame::OnSize(wxSizeEvent &event)
 //----------------------------------------------------------------------------
 { 
 	Refresh();
-  if (m_ClientWin)
+  if (m_Win)
   {
     wxLayoutAlgorithm layout;
-    layout.LayoutWindow(this,m_ClientWin);
+    layout.LayoutWindow(this,m_Win);
   }
 
 #ifndef WIN32
@@ -114,9 +114,9 @@ void mafGUIViewFrame::SetView(mafView *view)
 //----------------------------------------------------------------------------
 {
    m_View = view;
-   m_ClientWin = m_View->GetWindow();
-   m_ClientWin->Reparent(this);
-   m_ClientWin->Show(true);
+   m_Win = m_View->GetWindow();
+   m_Win->Reparent(this);
+   m_Win->Show(true);
 
    SetTitle(wxStripMenuCodes(m_View->GetLabel().toWx()));
 }

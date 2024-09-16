@@ -25,7 +25,7 @@
 #include "medDecl.h"
 #include "medLogicWithManagers.h"
 #include "medGUIContextualMenu.h"
-#include "mafGUIMDIChild.h"
+#include "ftk/Gui/ViewFrame.h"
 #include "mafViewManager.h"
 #include "mafOpManager.h"
 #include "medWizardManager.h"
