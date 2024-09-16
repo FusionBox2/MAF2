@@ -84,7 +84,7 @@ class MainFrame: public BaseFrame
 
   int ProgressBarGetStatus();
 
-  void ProgressBarSetText(wxString* msg);
+  void ProgressBarSetText(const wxString& msg);
 
   void RenderStart();
 
@@ -490,9 +490,9 @@ int MainFrame<BaseFrame, DefaultStyle>::ProgressBarGetStatus()
 }
 
 template <class BaseFrame, long DefaultStyle>
-void MainFrame<BaseFrame, DefaultStyle>::ProgressBarSetText(wxString* msg)
+void MainFrame<BaseFrame, DefaultStyle>::ProgressBarSetText(const wxString& msg)
 {
-  if (msg) BaseFrame::SetStatusText(*msg, 0);
+  BaseFrame::SetStatusText(msg, 0);
 }
 
 template <class BaseFrame, long DefaultStyle>
@@ -541,7 +541,7 @@ public:
         frame->ProgressBarShow();
         frame->ProgressBarSetVal(0);
         //m_Frame->ProgressBarSetText(&wxString(po->GetClassName()));
-        { wxString s = po->GetProgressText(); frame->ProgressBarSetText(&s); }
+        { wxString s = po->GetProgressText(); frame->ProgressBarSetText(s); }
       }
       else if (m_mode == 2) // EndEvent-Callback
       {
