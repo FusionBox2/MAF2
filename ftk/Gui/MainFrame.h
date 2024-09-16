@@ -218,8 +218,7 @@ void MainFrame<BaseFrame, DefaultStyle>::CreateStatus()
     m_Busy = nullptr;
     m_Gauge = new wxGauge(BaseFrame::GetStatusBar(), -1, 100, pr.GetPosition(), pr.GetSize(), wxGA_SMOOTH);
     m_Gauge->SetForegroundColour(*wxRED);
-    m_Gauge->SetValue(50);
-    m_Gauge->Show(true);
+    m_Gauge->Show(false);
     BaseFrame::GetStatusBar()->Bind(wxEVT_SIZE,
       [this](const wxSizeEvent& event)
       {
