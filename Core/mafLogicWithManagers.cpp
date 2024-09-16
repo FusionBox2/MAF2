@@ -63,7 +63,7 @@
 //#include "mafGUISRBBrowse.h"
 #include "mafGUIDialogRemoteFile.h"
 #include "mafGUIDialogFindVme.h"
-#include "mafGUIMDIFrame.h"
+#include "ftk/Gui/MainFrame.h"
 #include "mafGUIMDIChild.h"
 #include "mafGUICheckTree.h"
 #include "mafGUITimeBar.h"
@@ -144,8 +144,8 @@ void mafLogicWithManagers::EnableOperations(bool enable)
 }
 
 //----------------------------------------------------------------------------
-mafLogicWithManagers::mafLogicWithManagers(mafGUIMDIFrame *mdiFrame/*=NULL*/)
-: mafLogicWithGUI(mdiFrame)
+mafLogicWithManagers::mafLogicWithManagers()
+: mafLogicWithGUI()
 //----------------------------------------------------------------------------
 {
   m_ExternalViewFlag  = false;
@@ -270,8 +270,8 @@ void mafLogicWithManagers::Configure()
 
   if(this->m_PlugSidebar)
   {
-    m_SideBar = std::make_unique<mafSideBar>(m_Win,MENU_VIEW_SIDEBAR,this,m_SidebarStyle);
-    m_Win->AddDockPane(m_SideBar->m_Notebook, wxAuiPaneInfo()
+    m_SideBar = std::make_unique<mafSideBar>(m_Win,MENU_VIEW_SIDEBAR_,this,m_SidebarStyle);
+    m_Win->AddPane(m_SideBar->m_Notebook, wxAuiPaneInfo()
       .Name("sidebar")
       .Caption(wxT("ControlBar"))
       .Right()
@@ -562,7 +562,7 @@ void mafLogicWithManagers::CreateToolbar()
 {
   
   //m_ToolBar = new wxToolBar(m_Win,-1,wxPoint(0,0),wxSize(-1,-1),wxHORIZONTAL|wxNO_BORDER|wxTB_FLAT  );
-  m_ToolBar = new wxToolBar(m_Win,MENU_VIEW_TOOLBAR,wxPoint(0,0),wxSize(-1,-1),wxTB_FLAT | wxTB_NODIVIDER );
+  m_ToolBar = new wxToolBar(m_Win,MENU_VIEW_TOOLBAR_,wxPoint(0,0),wxSize(-1,-1),wxTB_FLAT | wxTB_NODIVIDER );
   m_ToolBar->SetMargins(0,0);
   m_ToolBar->SetToolSeparation(2);
   m_ToolBar->SetToolBitmapSize(wxSize(20,20));
@@ -775,7 +775,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   {
     VmeModified(e->GetVme());
     if(!m_PlugTimebar && ((mafVME*)e->GetVme())->IsAnimated())
-      m_Win->ShowDockPane("timebar",!m_Win->DockPaneIsShown("timebar") );
+      m_Win->ShowPane("timebar",!m_Win->IsPaneShown("timebar") );
     return; 
   }
   if(VME_EXPAND == eventId)
@@ -2076,7 +2076,7 @@ void mafLogicWithManagers::UpdateTimeBounds()
   if(m_TimePanel)
   {
     m_TimePanel->SetBounds(min,max);
-    m_Win->ShowDockPane("timebar", min<max);
+    m_Win->ShowPane("timebar", min<max);
   }
 }
 //----------------------------------------------------------------------------

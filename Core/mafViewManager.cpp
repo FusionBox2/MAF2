@@ -32,7 +32,7 @@
 #include "mafNodeIterator.h"
 #include "mafVMERoot.h"
 
-#include "mafGUIMDIFrame.h"
+#include "ftk/Gui/MainFrame.h"
 #include "mafGUIMDIChild.h"
 #include "mafGUIViewFrame.h"
 #include "mafViewVTK.h"

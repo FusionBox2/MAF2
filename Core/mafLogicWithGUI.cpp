@@ -32,7 +32,7 @@
 #include <wx/tokenzr.h>
 #include "mafDecl.h"
 #include "mafView.h"
-#include "mafGUIMDIFrame.h"
+#include "ftk/Gui/MainFrame.h"
 #include "mafGUIMDIChild.h"
 #include "mafGUIFrame.h"
 #include "mafGUIPicButton.h"
@@ -51,16 +51,72 @@
   #include "mafVTKLog.h"
   #include "vtkTimerLog.h"
 #endif
+
+namespace
+{
+	
+}
 //----------------------------------------------------------------------------
-mafLogicWithGUI::mafLogicWithGUI(mafGUIMDIFrame *mdiFrame /*=NULL*/)
+mafLogicWithGUI::mafLogicWithGUI()
 //----------------------------------------------------------------------------
 {
-  if (mdiFrame==NULL)
-    m_Win = new mafGUIMDIFrame("maf", wxDefaultPosition, wxSize(800, 600));
-  else
-    m_Win = mdiFrame;
+	m_Win = new mafGUIMDIFrame("maf", wxDefaultPosition, wxWindow::FromDIP(wxSize(800, 600), nullptr));
 
-  m_Win->SetListener(this);
+  //m_Win->SetListener(this);
+  m_Win->Bind(wxEVT_CLOSE_WINDOW, [this](const wxCloseEvent& event){mafEvent evUnq(this, MENU_FILE_QUIT); OnEvent(&evUnq);});
+  m_Win->Bind(wxEVT_MENU, [this](const wxCommandEvent& event){mafEvent evUnq(this, event.GetId());	OnEvent(&evUnq);}, MENU_START, MENU_END);
+  m_Win->Bind(wxEVT_MENU, [this](const wxCommandEvent& event) {mafEvent evUnq(this, event.GetId());	OnEvent(&evUnq); }, wxID_FILE1, wxID_FILE9);
+  m_Win->Bind(wxEVT_IDLE, 
+    [this](const wxIdleEvent& event)
+    {
+#ifdef __WIN32__
+      MEMORYSTATUS ms;
+      GlobalMemoryStatus(&ms);
+      wxString s;
+      int current_free_memory = ms.dwAvailPhys / (1024 * 1024);
+      s << "free mem " << current_free_memory << " MB";
+      if(m_Win->GetStatusBar())
+        m_Win->SetStatusText(s, 5);
+      //if (current_free_memory < m_MemoryLimitAlert && !m_UserAlerted)
+      {
+        //m_UserAlerted = true;
+        //int answere = wxMessageBox(_("Program is running with few free memory!! \nFree memory used by UnDo stack?."), _("Warning"), wxYES_NO);
+        //if (answere == wxYES)
+        {
+          // Clear UnDo stack to gain memory.
+          //{mafEvent evUnq(this, CLEAR_UNDO_STACK); mafEventMacro(evUnq);}
+        }
+      }
+#endif
+    }
+  );
+  m_Win->Bind(wxEVT_UPDATE_UI,
+    [this](wxUpdateUIEvent& event)
+    {
+	    mafEvent evUnq(this, UPDATE_UI, &event);
+    	OnEvent(&evUnq);
+    }, MENU_START, MENU_END);
+  m_Win->Bind(wxEVT_DROP_FILES, 
+    [this](const wxDropFilesEvent& event)
+    {
+      for (int i = 0; i < event.GetNumberOfFiles(); i++)
+      {
+        mafString file_to_open = mafWxToString(event.GetFiles()[i]);
+        mafString path, name, ext;
+        mafSplitPath(file_to_open, &path, &name, &ext);
+        if (ext == _R("msf") || ext == _R("zmsf"))
+        {
+          {mafEvent evUnq(this,MENU_FILE_OPEN,&file_to_open); OnEvent(&evUnq);}
+          return;
+        }
+        else
+        {
+          {mafEvent evUnq(this,IMPORT_FILE,&file_to_open); OnEvent(&evUnq);}
+        }
+      }
+    }
+  );
+  //m_Win->Bind(wxEVT_CLOSE_WINDOW, [this](wxCloseEvent& event) {mafEvent evUnq(this, MENU_FILE_QUIT); OnEvent(&evUnq); });
 
   m_ChildFrameStyle = wxCAPTION | wxMAXIMIZE_BOX | wxMINIMIZE_BOX | wxRESIZE_BORDER; //wxTHICK_FRAME; // Default style
   m_LocaleSettings = std::make_unique<mafGUILocaleSettings>(this);
@@ -178,27 +234,13 @@ void mafLogicWithGUI::OnEvent(mafEventBase *maf_event)
 	  m_Win->Tile(wxVERTICAL);
 	  break;
       // ###############################################################
-      // commands related to the Dockable Panes
-    case MENU_VIEW_LOGBAR:
-        m_Win->ShowDockPane("logbar",!m_Win->DockPaneIsShown("logbar") );
-    break; 
-    case MENU_VIEW_SIDEBAR:
-      m_Win->ShowDockPane("sidebar",!m_Win->DockPaneIsShown("sidebar") );
-    break; 
-    case MENU_VIEW_TIMEBAR:
-      m_Win->ShowDockPane("timebar",!m_Win->DockPaneIsShown("timebar") );
-    break; 
-    case MENU_VIEW_TOOLBAR:
-      m_Win->ShowDockPane("toolbar",!m_Win->DockPaneIsShown("toolbar") );
-    break; 
-      // ###############################################################
       // commands related to the STATUSBAR
     case BIND_TO_PROGRESSBAR:
 #ifdef MAF_USE_VTK
       m_Win->BindToProgressBar(e->GetVtkObj());
 #endif
       break;
-    case PROGRESSBAR_SHOW:
+    case PROGRESSBAR_SHOW:  
       m_Win->ProgressBarShow();
       break;
     case PROGRESSBAR_HIDE:
@@ -230,7 +272,6 @@ void mafLogicWithGUI::OnQuit()
   {
     delete wxLog::SetActiveTarget(NULL);
   }
-  m_Win->OnQuit();
   m_Win->Destroy();
 #ifdef MAF_USE_VTK 
   vtkTimerLog::CleanupLog();
@@ -252,7 +293,7 @@ void mafLogicWithGUI::CreateLogbar()
   m_VtkLog = mafVTKLog::New();
   m_VtkLog->SetInstance(m_VtkLog);
 #endif
-  wxTextCtrl *log  = new wxTextCtrl( m_Win, MENU_VIEW_LOGBAR, "", wxPoint(0,0), wxSize(100,300), /*wxNO_BORDER |*/ wxTE_MULTILINE );
+  wxTextCtrl *log  = new wxTextCtrl( m_Win, MENU_VIEW_LOGBAR_, "", wxPoint(0,0), wxSize(100,300), /*wxNO_BORDER |*/ wxTE_MULTILINE );
   m_Logger = new mafWXLog(log);
   m_Logger->LogToFile(m_LogToFile);
   if(m_LogToFile)
@@ -273,7 +314,7 @@ void mafLogicWithGUI::CreateLogbar()
   wxLog *old_log = wxLog::SetActiveTarget( m_Logger );
   cppDEL(old_log);
 
-  m_Win->AddDockPane(log, wxAuiPaneInfo()
+  m_Win->AddPane(log, wxAuiPaneInfo()
     .Name("logbar")
     .Caption(wxT("LogBar"))
     .Bottom()
@@ -304,7 +345,7 @@ void mafLogicWithGUI::AddToolbar()
 {
   CreateToolbar();
   //m_Win->SetToolBar(m_ToolBar);
-  m_Win->AddDockPane(m_ToolBar,  wxAuiPaneInfo()
+  m_Win->AddPane(m_ToolBar,  wxAuiPaneInfo()
     .Name("toolbar")
     .Caption(wxT("ToolBar"))
     .Top()
@@ -323,7 +364,7 @@ void mafLogicWithGUI::CreateToolbar()
 //----------------------------------------------------------------------------
 {
   //m_ToolBar = new wxToolBar(m_Win,-1,wxPoint(0,0),wxSize(-1,-1),wxHORIZONTAL|wxNO_BORDER|wxTB_FLAT  );
-  m_ToolBar = new wxToolBar(m_Win,MENU_VIEW_TOOLBAR,wxPoint(0,0),wxSize(-1,-1),wxTB_FLAT | wxTB_NODIVIDER );
+  m_ToolBar = new wxToolBar(m_Win,MENU_VIEW_TOOLBAR_,wxPoint(0,0),wxSize(-1,-1),wxTB_FLAT | wxTB_NODIVIDER );
   m_ToolBar->SetMargins(0,0);
   m_ToolBar->SetToolSeparation(2);
   m_ToolBar->SetToolBitmapSize(wxSize(20,20));
@@ -337,7 +378,7 @@ void mafLogicWithGUI::AddTimebar()
 //----------------------------------------------------------------------------
 {
   CreateTimebar();
-  m_Win->AddDockPane(m_TimePanel, wxAuiPaneInfo()
+  m_Win->AddPane(m_TimePanel, wxAuiPaneInfo()
     .Name("timebar")
     .Caption(wxT("TimeBar"))
     .Bottom()
@@ -357,7 +398,7 @@ void mafLogicWithGUI::AddTimebar()
 void mafLogicWithGUI::CreateTimebar()
 //----------------------------------------------------------------------------
 {
-  m_TimePanel = new mafGUITimeBar(m_Win,MENU_VIEW_TIMEBAR,true);
+  m_TimePanel = new mafGUITimeBar(m_Win,MENU_VIEW_TIMEBAR_,true);
   m_TimePanel->SetListener(this);
 
   // Events coming from settings are forwarded to the time bar.

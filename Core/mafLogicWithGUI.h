@@ -25,11 +25,11 @@
 #include <wx/notebook.h>
 #include <wx/icon.h>
 #include <memory>
+#include "ftk/Gui/MainFrame.h"
 //----------------------------------------------------------------------------
 // forward reference
 //----------------------------------------------------------------------------
 class mafView;
-class mafGUIMDIFrame;
 class mafGUINamedPanel;
 class mafGUITimeBar;
 class mafWXLog;
@@ -71,7 +71,7 @@ Proper Initialization must follow this order
 class MAF_EXPORT mafLogicWithGUI: public mafBaseEventHandler
 {
 public:
-               mafLogicWithGUI(mafGUIMDIFrame *mdiFrame=NULL);
+               mafLogicWithGUI();
                ~mafLogicWithGUI() override; 
 
   /** Method that answer at all MAF events. */

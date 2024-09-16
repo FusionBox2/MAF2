@@ -204,7 +204,7 @@ void MainFrame<BaseFrame, DefaultStyle>::CreateStatus()
   if (auto statusBar = BaseFrame::CreateStatusBar())
   {
     int widths[] = { -1,60,60,60,210,150 }; // enlarged the last tab for the "free mem watch" information
-    //std::transform(std::begin(widths), std::end(widths), std::begin(widths), [this](int w) {return BaseFrame::FromDIP(w); });
+    std::transform(std::begin(widths), std::end(widths), std::begin(widths), [this](int w) {return BaseFrame::FromDIP(w); });
     statusBar->SetFieldsCount(6);
     statusBar->SetStatusWidths(6, widths);
     statusBar->SetStatusText(_("welcome"), 0);
@@ -446,7 +446,7 @@ void MainFrame<BaseFrame, DefaultStyle>::Ready()
 template <class BaseFrame, long DefaultStyle>
 void MainFrame<BaseFrame, DefaultStyle>::ProgressBarShow()
 {
-  if (m_PBCalls.size() == 0)
+  if (m_PBCalls.empty())
   {
     BaseFrame::SetStatusText("", 0);
     Busy();
@@ -461,7 +461,7 @@ void MainFrame<BaseFrame, DefaultStyle>::ProgressBarShow()
 template <class BaseFrame, long DefaultStyle>
 void MainFrame<BaseFrame, DefaultStyle>::ProgressBarHide()
 {
-  if (m_PBCalls.size() > 0 && (m_PBCalls.at((m_PBCalls.size() - 1)) == m_ID_PBCall))
+  if (!m_PBCalls.empty() && m_PBCalls.back() == m_ID_PBCall)
   {
     BaseFrame::SetStatusText("", 0);
     Ready();
@@ -476,7 +476,7 @@ void MainFrame<BaseFrame, DefaultStyle>::ProgressBarHide()
 template <class BaseFrame, long DefaultStyle>
 void MainFrame<BaseFrame, DefaultStyle>::ProgressBarSetVal(int progress)
 {
-  if (m_PBCalls.size() > 0 && (m_PBCalls.at((m_PBCalls.size() - 1)) == m_ID_PBCall))
+  if (!m_PBCalls.empty() && m_PBCalls.back() == m_ID_PBCall)
   {
     m_Gauge->SetValue(progress);
     BaseFrame::SetStatusText(wxString::Format(" %d%% ", progress), 3);

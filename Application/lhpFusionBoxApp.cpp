@@ -28,7 +28,7 @@
 
 #include "mafVMEFactory.h"
 #include "mafPics.h"
-#include "mafGUIMDIFrame.h"
+#include "ftk/Gui/MainFrame.h"
 #include "mafInteractionFactory.h"
 
 #include "mafNodeFactory.h" 

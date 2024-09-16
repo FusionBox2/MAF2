@@ -24,7 +24,7 @@
 //----------------------------------------------------------------------------
 class mafViewManager;
 class mmaApplicationLayout;
-class mafGUIMDIFrame;
+class wxFrame;
 class mafStorage;
 class mafParser;
 class mafVMERoot;
@@ -71,7 +71,7 @@ public:
   void SetViewManager(mafViewManager *view_manager) {m_ViewManager = view_manager;};
 
   /** Set a reference to the interface elements to store their visibility.*/
-  void SetApplicationFrame(mafGUIMDIFrame *win) {m_Win = win;};
+  void SetApplicationFrame(wxFrame *win) {m_Win = win;};
 
    /** Set a reference to the interface elements to store their visibility.*/
   void SetVisibilityVME(bool value) {m_VisibilityVme = value;};
@@ -111,7 +111,7 @@ protected:
   /** Set layout as default*/
    void SetLayoutAsDefault();
 
-  mafGUIMDIFrame           *m_Win;
+  wxFrame               *m_Win;
   mafString              m_DefaultLayoutName;
   mafString              m_DefaultLayoutFile;
   mafString              m_ActiveLayoutName;

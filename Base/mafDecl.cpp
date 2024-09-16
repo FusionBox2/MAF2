@@ -325,10 +325,11 @@ mafString  mafIdString(int id)
 
      case MENU_VIEW_START:	    s=_R("MENU_VIEW_START"); break; 
      case SASH_START:	          s=_R("SASH_START"); break; 
-     case MENU_VIEW_TOOLBAR:	  s=_R("MENU_VIEW_TOOLBAR"); break; 
-     case MENU_VIEW_LOGBAR:	    s=_R("MENU_VIEW_LOGBAR"); break; 
-     case MENU_VIEW_SIDEBAR:	  s=_R("MENU_VIEW_SIDEBAR"); break; 
-     case MENU_VIEW_TIMEBAR:	  s=_R("MENU_VIEW_TIMEBAR"); break; 
+     case MENU_VIEW_TOOLBAR_:	  s=_R("MENU_VIEW_TOOLBAR"); break; 
+     case MENU_VIEW_LOGBAR_:	    s=_R("MENU_VIEW_LOGBAR"); break; 
+     case MENU_VIEW_SIDEBAR_:	  s=_R("MENU_VIEW_SIDEBAR"); break; 
+     case MENU_VIEW_TIMEBAR_:	  s=_R("MENU_VIEW_TIMEBAR"); break; 
+     case MENU_VIEW_STATUSBAR_:	  s = _R("MENU_VIEW_STATUSBAR"); break;
      case MENU_OPTION_APPLICATION_SETTINGS: s = _R("MENU_OPTION_APPLICATION_SETTINGS"); break;
      case MENU_OPTION_MEASURE_UNIT_SETTINGS: s = _R("MENU_OPTION_MEASURE_UNIT_SETTINGS"); break;
      case COLLABORATE_ENABLE:   s = _R("COLLABORATE_ENABLE"); break;
