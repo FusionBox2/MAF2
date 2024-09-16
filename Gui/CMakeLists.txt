@@ -59,8 +59,6 @@ SET(PROJECT_SRCS
   mafGUIColorWidget.h
   mafGUIDialog.cpp
   mafGUIDialog.h
-  mafGUIDockManager.cpp
-  mafGUIDockManager.h
   mafGUIDockSettings.cpp
   mafGUIDockSettings.h
   mafGUIFloatSlider.cpp
@@ -85,8 +83,7 @@ SET(PROJECT_SRCS
   mafGUIMovieCtrl.h
   mafGUIMDIChild.cpp
   mafGUIMDIChild.h
-  mafGUIMDIFrame.cpp
-  mafGUIMDIFrame.h
+  ../ftk/Gui/MainFrame.h
   mafGUIMutexPanel.cpp
   mafGUIMutexPanel.h
   mafGUINamedPanel.cpp
@@ -150,8 +147,6 @@ SET(PROJECT_SRCS
   medGUILutHistogramSwatch.h
   medGUILutHistogramEditor.cpp
   medGUILutHistogramEditor.h
-  medGUIMDIFrame.cpp
-  medGUIMDIFrame.h
 )
 
 IF (MAF_USE_CURL)
