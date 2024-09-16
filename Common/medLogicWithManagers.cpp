@@ -27,7 +27,6 @@
 #include "medGUIContextualMenu.h"
 #include "mafGUIMDIChild.h"
 #include "mafViewManager.h"
-#include "medGUIMDIFrame.h"
 #include "mafOpManager.h"
 #include "medWizardManager.h"
 #include "mafGUIApplicationSettings.h"
@@ -48,13 +47,14 @@
 
 //----------------------------------------------------------------------------
 medLogicWithManagers::medLogicWithManagers()
-: mafLogicWithManagers( new medGUIMDIFrame("maf", wxDefaultPosition, wxSize(800, 600)) )
+: mafLogicWithManagers()
 //----------------------------------------------------------------------------
 {
+  m_Win->Bind(wxEVT_MENU, [this](const wxCommandEvent& event) {mafEvent evUnq(this, MENU_WIZARD, (intptr_t)event.GetId());	OnEvent(&evUnq); }, WIZARD_START, WIZARD_END);
   //Set default values
   m_UseWizardManager  = false;
   m_WizardRunning = false;
-  m_WizardManager = NULL;
+  m_WizardManager = nullptr;
 }
 
 //----------------------------------------------------------------------------
@@ -355,12 +355,12 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
         }
       }
       break; 
-	case MENU_VIEW_TOOLBAR:
-		m_Win->ShowDockPane("wizardgauge",!m_Win->DockPaneIsShown("wizardgauge") );
-		m_Win->ShowDockPane("tmpwithtest",!m_Win->DockPaneIsShown("tmpwithtest") );
-		m_Win->ShowDockPane("separator",!m_Win->DockPaneIsShown("separator") );
-		mafLogicWithManagers::OnEvent(maf_event);
-		break;
+	//case MENU_VIEW_TOOLBAR:
+		//m_Win->ShowPane("wizardgauge",!m_Win->IsPaneShown("wizardgauge") );
+		//m_Win->ShowPane("tmpwithtest",!m_Win->IsPaneShown("tmpwithtest") );
+		//m_Win->ShowPane("separator",!m_Win->IsPaneShown("separator") );
+		//mafLogicWithManagers::OnEvent(maf_event);
+		//break;
     case PROGRESSBAR_SHOW:
      {
        if (e->GetSender()==m_WizardManager)
@@ -652,7 +652,7 @@ void medLogicWithManagers::CreateWizardToolbar()
   m_WizardLabel->Disable();
  
 
-  m_Win->AddDockPane(m_WizardGauge,  wxAuiPaneInfo()
+  m_Win->AddPane(m_WizardGauge,  wxAuiPaneInfo()
     .Name("wizardgauge")
     //.Caption(wxT("ToolBar1"))
     .Top()
@@ -666,7 +666,7 @@ void medLogicWithManagers::CreateWizardToolbar()
     );
   
 
-  m_Win->AddDockPane(tmp,  wxAuiPaneInfo()
+  m_Win->AddPane(tmp,  wxAuiPaneInfo()
     .Name("tmpwithtest")
     //.Caption(wxT("ToolBar2"))
     .Top()
@@ -679,7 +679,7 @@ void medLogicWithManagers::CreateWizardToolbar()
     .Gripper(false)
     );
 
-  m_Win->AddDockPane(serparatorBar,  wxAuiPaneInfo()
+  m_Win->AddPane(serparatorBar,  wxAuiPaneInfo()
     .Name("separator")
     //.Caption(wxT("ToolBar3"))
     .Top()

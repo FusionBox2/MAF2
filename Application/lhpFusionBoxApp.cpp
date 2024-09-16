@@ -28,7 +28,7 @@
 
 #include "ftk/VME/VMEFactory.h"
 #include "mafPics.h"
-#include "mafGUIMDIFrame.h"
+#include "ftk/Gui/MainFrame.h"
 #include "ftk/Interaction/InteractionFactory.h"
 
 #include "ftk/Core/AttributeFactory.h"

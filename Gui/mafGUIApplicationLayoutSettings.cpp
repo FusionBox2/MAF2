@@ -26,7 +26,7 @@
 #include "mafGUIApplicationLayoutSettings.h"
 #include "mafDecl.h"
 #include "mafGUI.h"
-#include "mafGUIMDIFrame.h"
+#include "ftk/Gui/MainFrame.h"
 #include "mafViewManager.h"
 #include "mafViewVTK.h"
 #include "mafRWIBase.h"
@@ -194,13 +194,13 @@ void mafGUIApplicationLayoutSettings::SaveTreeLayout()
     }
     m_Layout->SetVisibilityVme(m_VisibilityVme);
     m_Layout->SetApplicationInfo(frame->IsMaximized(), pos, size);
-    wxAuiPaneInfo toolbar = m_Win->GetDockManager().GetPane("toolbar");
+    wxAuiPaneInfo toolbar = static_cast<mafGUIMDIFrame*>(m_Win)->GetDockManager().GetPane("toolbar");
     bool toolbar_vis = toolbar.IsShown();
     m_Layout->SetInterfaceElementVisibility(_R("toolbar"), toolbar_vis);
-    wxAuiPaneInfo sidebar = m_Win->GetDockManager().GetPane("sidebar");
+    wxAuiPaneInfo sidebar = static_cast<mafGUIMDIFrame*>(m_Win)->GetDockManager().GetPane("sidebar");
     bool sidebar_vis = sidebar.IsShown();
     m_Layout->SetInterfaceElementVisibility(_R("sidebar"), sidebar_vis);
-    wxAuiPaneInfo logbar = m_Win->GetDockManager().GetPane("logbar");
+    wxAuiPaneInfo logbar = static_cast<mafGUIMDIFrame*>(m_Win)->GetDockManager().GetPane("logbar");
     bool logbar_vis = logbar.IsShown();
     m_Layout->SetInterfaceElementVisibility(_R("logbar"), logbar_vis);
     m_Layout->SetLayoutName(_R("Layout")); //m_DefaultLayout.GetCStr()
@@ -288,13 +288,13 @@ void mafGUIApplicationLayoutSettings::AddLayout()
     m_Layout->SetVisibilityVme(0);
    
     m_Layout->SetApplicationInfo(frame->IsMaximized(), pos, size);
-    wxAuiPaneInfo toolbar = m_Win->GetDockManager().GetPane("toolbar");
+    wxAuiPaneInfo toolbar = static_cast<mafGUIMDIFrame*>(m_Win)->GetDockManager().GetPane("toolbar");
     bool toolbar_vis = toolbar.IsShown();
     m_Layout->SetInterfaceElementVisibility(_R("toolbar"), toolbar_vis);
-    wxAuiPaneInfo sidebar = m_Win->GetDockManager().GetPane("sidebar");
+    wxAuiPaneInfo sidebar = static_cast<mafGUIMDIFrame*>(m_Win)->GetDockManager().GetPane("sidebar");
     bool sidebar_vis = sidebar.IsShown();
     m_Layout->SetInterfaceElementVisibility(_R("sidebar"), sidebar_vis);
-    wxAuiPaneInfo logbar = m_Win->GetDockManager().GetPane("logbar");
+    wxAuiPaneInfo logbar = static_cast<mafGUIMDIFrame*>(m_Win)->GetDockManager().GetPane("logbar");
     bool logbar_vis = logbar.IsShown();
     m_Layout->SetInterfaceElementVisibility(_R("logbar"), logbar_vis);
     m_Layout->SetLayoutName(_R("Layout")); //m_DefaultLayout.GetCStr()
@@ -439,9 +439,9 @@ void mafGUIApplicationLayoutSettings::ApplyLayout()
     bool tb_vis = app_layout->GetToolBarVisibility() != 0;
     bool sb_vis = app_layout->GetSideBarVisibility() != 0;
     bool lb_vis = app_layout->GetLogBarVisibility() != 0;
-    m_Win->ShowDockPane("toolbar", tb_vis);
-    m_Win->ShowDockPane("logbar", lb_vis);
-    m_Win->ShowDockPane("sidebar", sb_vis);
+    static_cast<mafGUIMDIFrame*>(m_Win)->ShowPane("toolbar", tb_vis);
+    static_cast<mafGUIMDIFrame*>(m_Win)->ShowPane("logbar", lb_vis);
+    static_cast<mafGUIMDIFrame*>(m_Win)->ShowPane("sidebar", sb_vis);
     int num = app_layout->GetNumberOfViewsInLayout();
     std::vector<ViewLayoutInfo>::iterator iter = app_layout->GetLayoutList();
     mafView *v = NULL;
@@ -496,9 +496,9 @@ void mafGUIApplicationLayoutSettings::ApplyTreeLayout()
     bool tb_vis = app_layout->GetToolBarVisibility() != 0;
     bool sb_vis = app_layout->GetSideBarVisibility() != 0;
     bool lb_vis = app_layout->GetLogBarVisibility() != 0;
-    m_Win->ShowDockPane("toolbar", tb_vis);
-    m_Win->ShowDockPane("logbar", lb_vis);
-    m_Win->ShowDockPane("sidebar", sb_vis);
+    static_cast<mafGUIMDIFrame*>(m_Win)->ShowPane("toolbar", tb_vis);
+    static_cast<mafGUIMDIFrame*>(m_Win)->ShowPane("logbar", lb_vis);
+    static_cast<mafGUIMDIFrame*>(m_Win)->ShowPane("sidebar", sb_vis);
     int num = app_layout->GetNumberOfViewsInLayout();
     std::vector<ViewLayoutInfo>::iterator iter = app_layout->GetLayoutList();
     mafView *v = NULL;

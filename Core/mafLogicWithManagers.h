@@ -99,7 +99,7 @@ public:
 class MAF_EXPORT mafLogicWithManagers: public mafLogicWithGUI
 {
 public:
-               mafLogicWithManagers(mafGUIMDIFrame *mdiFrame=NULL);
+               mafLogicWithManagers();
                ~mafLogicWithManagers() override; 
 
   enum UPLOAD_FLAGS
