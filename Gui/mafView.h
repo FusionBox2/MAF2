@@ -85,8 +85,10 @@ public:
   mafTypeMacro(mafView, mafObject);
 
   void			OnEvent(mafEventBase *maf_event) override;
-  virtual mafView*  Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) {m_LightCopyEnabled = lightCopyEnabled; return NULL;};
+  virtual mafView*  Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) {m_LightCopyEnabled = lightCopyEnabled; return nullptr;};
   virtual void      Create() {};
+
+  virtual bool      Close(bool destroyFrame = true);
 
   virtual void			VmeAdd(mafNode *vme)															{};
   virtual void			VmeRemove(mafNode *vme)														{};
@@ -97,10 +99,10 @@ public:
   virtual void	    VmeCreatePipe(mafNode *vme)										    {};
   virtual void	    VmeDeletePipe(mafNode *vme)										    {};
 
-  virtual void			CameraReset(mafNode *node = NULL)  											{};
+  virtual void			CameraReset(mafNode *node = nullptr)  											{};
   virtual void			CameraUpdate()																					{};
-  virtual mafRWIBase *GetRWI()                                              {return NULL;};
-  virtual mafSceneGraph *GetSceneGraph()                                    {return NULL;};
+  virtual mafRWIBase *GetRWI()                                              {return nullptr;};
+  virtual mafSceneGraph *GetSceneGraph()                                    {return nullptr;};
   virtual void      GetImage(wxBitmap &bmp, int magnification = 1)          {};
 
   /** Called to update all components that depends on Application Options.*/
@@ -117,7 +119,7 @@ public:
   virtual int GetNodeStatus(mafNode *vme) {return NODE_NON_VISIBLE;};
   
   /** return the current pipe for the specified vme (if any exist at this moment) */
-  virtual mafPipe* GetNodePipe(mafNode *vme) {return NULL;}
+  virtual mafPipe* GetNodePipe(mafNode *vme) {return nullptr;}
 
   const mafString& GetLabel() {return m_Label;}
   const mafString& GetName() {return m_Name;}
@@ -175,6 +177,7 @@ public:
   /** Return the picker used to pick the in the render window */
   vtkCellPicker *GetPicker2D() {return m_Picker2D;};
 
+  void SetAllowCloseWindow(bool allow_close) {m_AllowCloseFlag = allow_close;};
 protected:
   wxWindow			*m_Win;
   wxFrame				*m_Frame;
@@ -221,5 +224,6 @@ protected:
 private:
   mafString       m_Label;
   mafString       m_Name;
+  bool            m_AllowCloseFlag;
 };
 #endif

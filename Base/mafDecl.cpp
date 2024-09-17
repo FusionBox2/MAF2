@@ -397,7 +397,7 @@ mafString  mafIdString(int id)
      case VIEW_SELECT:          s=_R("VIEW_SELECT"); break; 
      case VIEW_SELECTED:        s=_R("VIEW_SELECTED"); break; 
      case VIEW_CLICKED:         s=_R("VIEW_CLICKED"); break; 
-     case VIEW_MAXIMIZE:        s=_R("VIEW_CLICKED"); break; 
+     case VIEW_MAXIMIZE_:        s=_R("VIEW_CLICKED"); break; 
      case VIEW_RESIZE:          s=_R("VIEW_RESIZE"); break; 
      case VIEW_SAVE_IMAGE:      s=_R("VIEW_SAVE_IMAGE"); break; 
 

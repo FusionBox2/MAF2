@@ -948,17 +948,15 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   }
   if(OP_RUN_STARTING == eventId)
   {
-    mafGUIMDIChild *c = (mafGUIMDIChild *)m_Win->GetActiveChild();
-    if (c != NULL)
-      c->SetAllowCloseWindow(false);
+    if (mafView* view = m_ViewManager->GetSelectedView())
+      view->SetAllowCloseWindow(false);
     OpRunStarting();
     return; 
   }
   if(OP_RUN_TERMINATED == eventId)
   {
-    mafGUIMDIChild *c = (mafGUIMDIChild *)m_Win->GetActiveChild();
-    if (c != NULL)
-      c->SetAllowCloseWindow(true);
+    if (mafView* view = m_ViewManager->GetSelectedView())
+      view->SetAllowCloseWindow(true);
     OpRunTerminated();
     return; 
   }
@@ -1034,9 +1032,8 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
     ViewSelect();
     if (m_OpManager)
     {
-      mafGUIMDIChild *c = (mafGUIMDIChild *)m_Win->GetActiveChild();
-      if (c != NULL)
-        c->SetAllowCloseWindow(!m_OpManager->Running());
+      if (mafView* view = m_ViewManager->GetSelectedView())
+        view->SetAllowCloseWindow(!m_OpManager->Running());
     }
     return;
   }
