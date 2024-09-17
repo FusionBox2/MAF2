@@ -68,6 +68,7 @@ mafView::mafView(const mafString& label):m_Label(label), m_Name(_R(""))
 
   m_HTMLText = _R("");
   m_LightCopyEnabled = false;
+  m_AllowCloseFlag = true;
 }
 //----------------------------------------------------------------------------
 mafView::~mafView()
@@ -113,6 +114,18 @@ void mafView::OnEvent(mafEventBase *maf_event)
     mafEventMacro(*maf_event);
   }
 }
+
+bool mafView::Close(bool destroyFrame)
+{
+	if (m_AllowCloseFlag)
+	{
+		if(destroyFrame)
+		{
+		}
+	}
+	return m_AllowCloseFlag;
+}
+
 //-------------------------------------------------------------------------
 mafGUI* mafView::CreateGui()
 //-------------------------------------------------------------------------

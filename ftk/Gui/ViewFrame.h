@@ -22,43 +22,35 @@ public:
   ViewFrame(mafView* view, ParentFrame* parent, const wxString& title = "child", const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,long style = DefaultStyle, const wxString& name = wxASCII_STR(wxFrameNameStr));
 
   ~ViewFrame() override;
-  
-	void SetAllowCloseWindow(bool allow_close) {m_AllowCloseFlag = allow_close;};
-
-  void EnableResize(bool enable = true);
 
 protected:
 
-  void OnSize(wxSizeEvent &event); 
+  void OnActivate(wxActivateEvent& event);
 
-  void OnSelect(wxCommandEvent &event); 
+  void OnCloseWindow(wxCloseEvent& event);
 
-  void OnCloseWindow  (wxCloseEvent& event);
+  void OnSelect(wxCommandEvent& event);
 
-  void OnActivate (wxActivateEvent& event);
+  void OnSize(wxSizeEvent &event);
 
   void OnMaximize(wxMaximizeEvent &event);
 
   wxWindow		*m_Win;
   mafView     *m_View;
-  bool         m_AllowCloseFlag;
-  bool         m_EnableResize;
 };
 
 template<class BaseFrame, class ParentFrame, long DefaultStyle>
 ViewFrame<BaseFrame, ParentFrame, DefaultStyle>::ViewFrame(mafView* view, ParentFrame* parent, const wxString& title, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
 	: BaseFrame(parent, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, style, name)
 {
-  BaseFrame::Bind(wxEVT_CLOSE_WINDOW, &ViewFrame::OnCloseWindow, this);
-  BaseFrame::Bind(wxEVT_SIZE, &ViewFrame::OnSize, this);
-  BaseFrame::Bind(wxEVT_BUTTON, &ViewFrame::OnSelect, this, VIEW_CLICKED);
   BaseFrame::Bind(wxEVT_ACTIVATE, &ViewFrame::OnActivate, this);
+  BaseFrame::Bind(wxEVT_CLOSE_WINDOW, &ViewFrame::OnCloseWindow, this);
+  BaseFrame::Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ViewFrame::OnSelect, this, VIEW_CLICKED);
+  BaseFrame::Bind(wxEVT_SIZE, &ViewFrame::OnSize, this);
   BaseFrame::Bind(wxEVT_MAXIMIZE, &ViewFrame::OnMaximize, this);
 
 	assert(view);
   m_View = view;
-  m_AllowCloseFlag = true;
-  m_EnableResize = true;
 
   this->Show(false);
   m_Win = m_View->GetWindow();
@@ -76,22 +68,42 @@ ViewFrame<BaseFrame, ParentFrame, DefaultStyle>::~ViewFrame()
 }
 
 template<class BaseFrame, class ParentFrame, long DefaultStyle>
+void ViewFrame<BaseFrame, ParentFrame, DefaultStyle>::OnActivate(wxActivateEvent& event)
+{
+  if (event.GetActive() && m_View)
+  {
+    { mafEvent evUnq(this, VIEW_SELECT, m_View, (wxWindow*)nullptr); mafEventMacro(evUnq); }
+    BaseFrame::Layout();
+  }
+}
+
+template<class BaseFrame, class ParentFrame, long DefaultStyle>
+void ViewFrame<BaseFrame, ParentFrame, DefaultStyle>::OnCloseWindow(wxCloseEvent& event)
+{
+  // VIEW_DELETE must be sent from here and not from the destructor
+  // otherwise VIEW_DELETE is sent also on the closing of the application
+  // when the listener (the ViewManager) has been already destroyed
+  if (m_View && !m_View->Close(false) && event.CanVeto())
+  {
+    event.Veto();
+    return;
+  }
+  { mafEvent evUnq(this, VIEW_DELETE, m_View); mafEventMacro(evUnq); }
+  BaseFrame::Destroy();
+  m_View = nullptr;
+}
+
+template<class BaseFrame, class ParentFrame, long DefaultStyle>
 void ViewFrame<BaseFrame, ParentFrame, DefaultStyle>::OnSelect(wxCommandEvent& event)
-//----------------------------------------------------------------------------
 {
   BaseFrame::Activate(); // allow activation with the RMouse too
   wxWindow* rwi = (wxWindow*)event.GetEventObject();
   { mafEvent evUnq(this, VIEW_SELECT, m_View, rwi); mafEventMacro(evUnq); }
 }
+
 template<class BaseFrame, class ParentFrame, long DefaultStyle>
 void ViewFrame<BaseFrame, ParentFrame, DefaultStyle>::OnSize(wxSizeEvent& event)
-//----------------------------------------------------------------------------
 {
-  if (!m_EnableResize)
-  {
-    return;
-  }
-
   int w, h;
   //don't initialize w & h using the event - use GetClientSize instead
   BaseFrame::GetClientSize(&w, &h);
@@ -109,39 +121,9 @@ void ViewFrame<BaseFrame, ParentFrame, DefaultStyle>::OnSize(wxSizeEvent& event)
 #endif
   m_View->CameraUpdate();
 }
-template<class BaseFrame, class ParentFrame, long DefaultStyle>
-void ViewFrame<BaseFrame, ParentFrame, DefaultStyle>::EnableResize(bool enable)
-//----------------------------------------------------------------------------
-{
-  m_EnableResize = enable;
-}
-template<class BaseFrame, class ParentFrame, long DefaultStyle>
-void ViewFrame<BaseFrame, ParentFrame, DefaultStyle>::OnCloseWindow(wxCloseEvent& event)
-//----------------------------------------------------------------------------
-{
-  if (!m_AllowCloseFlag) { return; }
 
-  // VIEW_DELETE must be sent from here and not from the destructor
-  // otherwise VIEW_DELETE is sent also on the closing of the application
-  // when the listener (the ViewManager) has been already destroyed
-
-  { mafEvent evUnq(this, VIEW_DELETE, m_View); mafEventMacro(evUnq); }
-  BaseFrame::Destroy();
-  m_View = NULL;
-}
-template<class BaseFrame, class ParentFrame, long DefaultStyle>
-void ViewFrame<BaseFrame, ParentFrame, DefaultStyle>::OnActivate(wxActivateEvent& event)
-//----------------------------------------------------------------------------
-{
-  if (event.GetActive() && m_View)
-  {
-    { mafEvent evUnq(this, VIEW_SELECT, m_View, (wxWindow*)NULL); mafEventMacro(evUnq); }
-    BaseFrame::Layout();
-  }
-}
 template<class BaseFrame, class ParentFrame, long DefaultStyle>
 void ViewFrame<BaseFrame, ParentFrame, DefaultStyle>::OnMaximize(wxMaximizeEvent& event)
-//----------------------------------------------------------------------------
 {
   if (m_View)
   {

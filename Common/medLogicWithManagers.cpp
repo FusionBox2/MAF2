@@ -212,9 +212,8 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
       {
         //Manage start event from the wizard lock window close button
         //and disabling toolbar
-        mafGUIMDIChild *c = (mafGUIMDIChild *)m_Win->GetActiveChild();
-        if (c != NULL)
-          c->SetAllowCloseWindow(false);
+        if(mafView *view = m_ViewManager->GetSelectedView())
+          view->SetAllowCloseWindow(false);
         WizardRunStarting();
       }
      break; 
@@ -222,10 +221,9 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
       {
         //Manage end event from the wizard unlock window close button
         //and enabling toolbar
-        mafGUIMDIChild *c = (mafGUIMDIChild *)m_Win->GetActiveChild();
-        if (c != NULL)
-          c->SetAllowCloseWindow(true);
-        WizardRunTerminated();
+       if (mafView* view = m_ViewManager->GetSelectedView())
+         view->SetAllowCloseWindow(true);
+       WizardRunTerminated();
         UpdateFrameTitle();
       }
     break;
@@ -346,9 +344,8 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
         //else we manage the operation end by unlock the close button and so on
         else
         {
-          mafGUIMDIChild *c = (mafGUIMDIChild *)m_Win->GetActiveChild();
-          if (c != NULL)
-            c->SetAllowCloseWindow(true);
+          if (mafView* view = m_ViewManager->GetSelectedView())
+            view->SetAllowCloseWindow(true);
           OpRunTerminated();
         }
       }

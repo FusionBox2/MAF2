@@ -97,6 +97,7 @@ enum MAF_EXPORT MAIN_EVENT_ID
   MENU_VIEW_SIDEBAR_,
   MENU_VIEW_TIMEBAR_,
   MENU_VIEW_STATUSBAR_,
+  VIEW_MAXIMIZE_, // from mafGUI to mafGUICrossSplitter
 
 MENU_START = 10000,
 MENU_FILE_START,
@@ -203,7 +204,6 @@ EVT_START,
   VIEW_SELECT,   // from mafGUIMDIChild and mafGUIViewPanel to mafViewManager
   VIEW_SELECTED, // used to ask to logic if there is a view selected and get a pointer to it
   VIEW_CLICKED,  // from mafRWIBase to mafGUIMDIChild and mafGUIViewPanel to mafViewManager
-  VIEW_MAXIMIZE, // from mafGUI to mafGUICrossSplitter
   VIEW_RESIZE,   // from anyone that want to block the view's size.
   VIEW_SAVE_IMAGE,//from mafMDIChild  to mafViewManager
   PER_PUSH,       // from an Operation to mafInteractionManager
