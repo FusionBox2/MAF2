@@ -96,7 +96,7 @@ void ViewFrame<BaseFrame, ParentFrame, DefaultStyle>::OnCloseWindow(wxCloseEvent
 template<class BaseFrame, class ParentFrame, long DefaultStyle>
 void ViewFrame<BaseFrame, ParentFrame, DefaultStyle>::OnSelect(wxCommandEvent& event)
 {
-  BaseFrame::Activate(); // allow activation with the RMouse too
+  //BaseFrame::Activate(); // allow activation with the RMouse too
   wxWindow* rwi = (wxWindow*)event.GetEventObject();
   { mafEvent evUnq(this, VIEW_SELECT, m_View, rwi); mafEventMacro(evUnq); }
 }
@@ -128,10 +128,11 @@ void ViewFrame<BaseFrame, ParentFrame, DefaultStyle>::OnMaximize(wxMaximizeEvent
   if (m_View)
   {
     mafString msg = _R("MaximizeSelectedView");
-    { mafEvent evUnq(this, VIEW_MAXIMIZE, &msg); mafEventMacro(evUnq); }
+    { mafEvent evUnq(this, VIEW_MAXIMIZE_, &msg); mafEventMacro(evUnq); }
   }
 }
 
 using mafGUIMDIChild = ViewFrame<wxMDIChildFrame, wxMDIParentFrame, wxDEFAULT_FRAME_STYLE>;
+using mafGUIViewFrame = ViewFrame<wxFrame, wxFrame, wxDEFAULT_FRAME_STYLE>;
 
 END_FTK_NAMESPACE

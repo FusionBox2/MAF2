@@ -27,18 +27,6 @@ SET(PROJECT_SRCS
   mafGUISettingsTimeBar.cpp
   mafGUISettingsTimeBar.h
   
-  ##### Example of SRB List Dialog requires OPENSSL #####
-	#mafGUISRBBrowse.cpp
-	#mafGUISRBBrowse.h
-	#---------SRBList stub---------------
-  #./SrbStorageWS/soapC.cpp
-	#./SrbStorageWS/soapClient.cpp	
-	#./SrbStorageWS/soapSrbUploadProxy.h
-	#./SrbStorageWS/soapSrbDownloadProxy.h
-	#./SrbStorageWS/soapSrbListProxy.h
-	#./SrbStorageWS/stdsoap2.cpp
-	#./SrbStorageWS/stdsoap2.h
-	#------------------------------------
   mafPics.cpp
   mafPics.h
   mafWXLog.cpp
@@ -95,8 +83,6 @@ SET(PROJECT_SRCS
   mafGUIRangeSlider.h
   mafGUIRollOut.cpp
   mafGUIRollOut.h
-  mafGUISashPanel.h
-  mafGUISashPanel.cpp
   mafGUIScrolledPanel.cpp
   mafGUIScrolledPanel.h
   mafGUISettingsDialog.cpp
@@ -109,8 +95,6 @@ SET(PROJECT_SRCS
   mafGUITree.h
   mafGUIValidator.cpp
   mafGUIValidator.h
-  mafGUIViewFrame.cpp
-  mafGUIViewFrame.h
   mafGUIViewWin.cpp
   mafGUIViewWin.h
   mafGUICrossIncremental.cpp

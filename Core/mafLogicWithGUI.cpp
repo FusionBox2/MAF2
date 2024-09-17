@@ -117,20 +117,19 @@ mafLogicWithGUI::mafLogicWithGUI()
   );
   //m_Win->Bind(wxEVT_CLOSE_WINDOW, [this](wxCloseEvent& event) {mafEvent evUnq(this, MENU_FILE_QUIT); OnEvent(&evUnq); });
 
-  m_ChildFrameStyle = wxCAPTION | wxMAXIMIZE_BOX | wxMINIMIZE_BOX | wxRESIZE_BORDER; //wxTHICK_FRAME; // Default style
   m_LocaleSettings = std::make_unique<mafGUILocaleSettings>(this);
   m_MeasureUnitSettings = std::make_unique<mafGUIMeasureUnitSettings>(this);
   m_ApplicationSettings = std::make_unique<mafGUIApplicationSettings>(this);
   m_StorageSettings = std::make_unique<mafGUISettingsStorage>(this);
   m_TimeBarSettings = std::make_unique<mafGUISettingsTimeBar>(this);
 
-  m_ToolBar       = NULL;
-  m_MenuBar       = NULL;
+  m_ToolBar       = nullptr;
+  m_MenuBar       = nullptr;
 
 	m_LogToFile			= m_ApplicationSettings->GetLogToFileStatus();
 	m_LogAllEvents	= m_ApplicationSettings->GetLogVerboseStatus();
-	m_Logger				= NULL;
-  m_VtkLog        = NULL;
+	m_Logger				= nullptr;
+  m_VtkLog        = nullptr;
 
 	m_PlugMenu		  = true;
 	m_PlugToolbar	  = true;
@@ -143,12 +142,6 @@ mafLogicWithGUI::mafLogicWithGUI()
 mafLogicWithGUI::~mafLogicWithGUI()
 //----------------------------------------------------------------------------
 {
-}
-//----------------------------------------------------------------------------
-void mafLogicWithGUI::SetParentFrameStyle(long style)
-//----------------------------------------------------------------------------
-{
-  m_Win->SetWindowStyleFlag(style);
 }
 //----------------------------------------------------------------------------
 void mafLogicWithGUI::Configure()

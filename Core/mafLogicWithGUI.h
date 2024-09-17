@@ -83,12 +83,6 @@ public:
   /** Virtual function for plug operations into the application.*/
   //SIL. 27-9-2004: virtual void Plug(mafOp *op)                {};
 
-  /** Allow to change the style for the parent frame.*/
-  virtual void SetParentFrameStyle(long style);
-
-  /** Allow to change the style for the child frame.*/
-  virtual void SetChildFrameStyle(long style) {m_ChildFrameStyle = style;};
-
   /** Create user interface elements like Menù, Toolbar, ... according to the Plug flags.*/
   virtual void Configure();
 
@@ -161,7 +155,6 @@ protected:
   /** Enable/disable a Toolbar or Menu Item */
   void EnableItem(int item, bool enable);
 
-  long                      m_ChildFrameStyle;
   mafGUIMDIFrame            *m_Win;
   wxToolBar                 *m_ToolBar;
   wxMenuBar                 *m_MenuBar;
