@@ -60,7 +60,6 @@
 #include "mafSideBar.h"
 
 #include "mafUser.h"
-//#include "mafGUISRBBrowse.h"
 #include "mafGUIDialogRemoteFile.h"
 #include "mafGUIDialogFindVme.h"
 #include "ftk/Gui/MainFrame.h"
@@ -68,7 +67,6 @@
 #include "mafGUICheckTree.h"
 #include "mafGUITimeBar.h"
 #include "mafGUIMaterialChooser.h"
-#include "mafGUIViewFrame.h"
 #include "mafGUILocaleSettings.h"
 #include "mafGUIMeasureUnitSettings.h"
 #include "mafGUIApplicationSettings.h"
@@ -1029,7 +1027,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
     }
     return;
   }
-  if(VIEW_MAXIMIZE == eventId)
+  if(VIEW_MAXIMIZE_ == eventId)
   {
     if (m_RemoteLogic && m_RemoteLogic->IsSocketConnected() && !m_ViewManager->m_FromRemote)
     {
@@ -2024,20 +2022,14 @@ void mafLogicWithManagers::ViewCreated(mafView *v)
 
     if (GetExternalViewFlag())
     {
-      // external views
-      mafGUIViewFrame *extern_view = new mafGUIViewFrame(m_Win, -1, v->GetLabel(), wxPoint(10,10),wxSize(800,600)/*, wxSIMPLE_BORDER|wxMAXIMIZE*/);
-      extern_view->SetView(v);
+      mafGUIViewFrame *extern_view = new mafGUIViewFrame(v, m_Win, v->GetLabel().toWx(), m_Win->FromDIP(wxPoint(10,10)), m_Win->FromDIP(wxSize(800,600)));
       extern_view->SetListener(m_ViewManager.get());
-      v->GetFrame()->SetWindowStyleFlag(m_ChildFrameStyle);
-      v->SetListener(extern_view);
       v->SetFrame(extern_view);
-      extern_view->Refresh();
     }
     else
     {
       // child views
       mafGUIMDIChild *c = new mafGUIMDIChild(v, m_Win);
-      c->SetWindowStyleFlag(m_ChildFrameStyle);
       c->SetListener(m_ViewManager.get());
       v->SetFrame(c);
     }
