@@ -34,8 +34,9 @@ class MAF_EXPORT mafDataPipeCustom : public mafDataPipe
 public:
   mafTypeMacro(mafDataPipeCustom,mafDataPipe);
 
-  /** process events coming from vtkMAFDataPipe bridge component */
-  void OnEvent(mafEventBase *e) override;
+  void RequestDataObject() override;
+  void RequestInformation() override;
+  void RequestData() override;
 
   /** return the VTK dataset generated as output to this data pipe */
   vtkAlgorithmOutput *GetVTKOutputPort() override;

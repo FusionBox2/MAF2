@@ -24,6 +24,8 @@
 
 #include "mafVMEAFRefSys.h"
 
+#include <boost/fusion/algorithm/iteration/accumulate.hpp>
+
 #include "mafGUI.h"
 #include "mafVMELandmarkCloud.h"
 #include "mmaMaterial.h"
@@ -36,6 +38,7 @@
 #include "mafStorageElement.h"
 #include "mafMatrix3x3.h"
 #include "mafJointAnalysis.h"
+#include <tuple>
 
 #ifndef DIM
 #define DIM(a)  (sizeof((a)) / sizeof(*(a)))
@@ -448,29 +451,31 @@ bool mafVMEAFRefSys::UpdateVM(mafTimeStamp ts)
   m_VMValid = false;
   m_VMTime  = ts;
   m_vm->Preexecute();
+	std::map<mafVMELandmarkCloud*, std::pair<std::vector<int>, std::vector<unsigned> > >  lmcMap;
+
   for(unsigned i = 0; i < m_vm->getInputs().size(); i++)
   {
-    if(m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
+    if (m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
     {
       V3d<double>         vec;
-      mafVMELandmarkCloud *lmcLink = NULL;
-      int                 ind      = -1;
+      mafVMELandmarkCloud* lmcLink = NULL;
+      int                 ind = -1;
       {
         auto it = m_lmMapping.find(_R(m_vm->getInputs()[i].first.c_str()));
-        if(it == m_lmMapping.end())
+        if (it == m_lmMapping.end())
           continue;
-        mafVMELandmarkCloud *tmpLink = mafVMELandmarkCloud::SafeDownCast(GetLink(_R(m_vm->getInputs()[i].first.c_str())));
+        mafVMELandmarkCloud* tmpLink = mafVMELandmarkCloud::SafeDownCast(GetLink(_R(m_vm->getInputs()[i].first.c_str())));
         lmcLink = (tmpLink != NULL) ? tmpLink : parentLMC;
-        if(lmcLink != NULL)
+        if (lmcLink != NULL)
         {
           SetRefSysLink(m_vm->getInputs()[i].first.c_str(), lmcLink);
           mafString refname;
           refname = it->second.Lower();
           int numberOfLandmarks = lmcLink->GetNumberOfLandmarks();
-          for(int i = 0; i < numberOfLandmarks; i++)
+          for (int i = 0; i < numberOfLandmarks; i++)
           {
             mafString lm_name = lmcLink->GetLandmarkName(i).Lower();
-            if(lm_name == refname)
+            if (lm_name == refname)
             {
               ind = i;
               break;
@@ -478,27 +483,39 @@ bool mafVMEAFRefSys::UpdateVM(mafTimeStamp ts)
           }
         }
       }
-      if(lmcLink == NULL || ind == -1 || !lmcLink->GetLandmarkVisibility(ind, ts))
+      if (lmcLink == nullptr || ind == -1)
         continue;
-      mafMatrix cloudAbs;
-      double invec[4];
-      double outvec[4];
-      lmcLink->GetOutput()->GetAbsMatrix(cloudAbs, ts);
-      lmcLink->GetLandmark(ind, vec.components, ts);
-      for(unsigned indx = 0; indx < 3; indx++)
-        invec[indx] = vec[indx];
-      invec[3] = 1.0;
-      cloudAbs.MultiplyPoint(invec, outvec);
-      for(unsigned indx = 0; indx < 3; indx++)
-        vec[indx] = outvec[indx];
-
-      m_vm->getInputs()[i].second->GetVector() = vec;
+      auto& e = lmcMap[lmcLink];
+      e.first.push_back(ind);
+    	e.second.push_back(i);
     }
     else
     {
       //actions for processing scalar inputs, actually there is nothing to do
     }
-    m_vm->getInputs()[i].second->GetValid()  = true;
+    m_vm->getInputs()[i].second->GetValid() = true;
+  }
+
+  for (auto& entry : lmcMap)
+  {
+    auto lmcLink = entry.first;
+    std::vector<double> coords(3 * entry.second.first.size());
+    std::vector<int> vis(3 * entry.second.first.size());
+    const_cast<mafVMELandmarkCloud*>(lmcLink)->GetLandmarksPosVis(entry.second.first.data(), entry.second.first.size(), coords.data(), vis.data(), ts);
+    mafMatrix cloudAbs;
+    double invec[4];
+    double outvec[4];
+    lmcLink->GetOutput()->GetAbsMatrix(cloudAbs, ts);
+    for(size_t ii = 0; ii < vis.size(); ii++)
+    {
+      if (vis[ii] == 0)
+        continue;
+      for (unsigned indx = 0; indx < 3; indx++)
+        invec[indx] = coords[3 * ii + indx];
+      invec[3] = 1.0;
+      cloudAbs.MultiplyPoint(invec, outvec);
+      m_vm->getInputs()[entry.second.second[ii]].second->GetVector() = outvec;
+    }
   }
 
   bool result = m_vm->Execute();

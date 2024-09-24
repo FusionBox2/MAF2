@@ -81,29 +81,24 @@ void mafDataPipeCustom::UpdateBounds()
   if (m_VTKDataPipe->GetOutput())
   {
 	  m_VTKDataPipe->Update();
-	  m_VTKDataPipe->GetOutput()->ComputeBounds();
-	  m_Bounds.DeepCopy(m_VTKDataPipe->GetOutput()->GetBounds());
+    if (auto dataSet = vtkDataSet::SafeDownCast(m_VTKDataPipe->GetOutput()))
+    {
+      dataSet->ComputeBounds();
+      m_Bounds.DeepCopy(dataSet->GetBounds());
+    }
   }
 }
-//------------------------------------------------------------------------------
-void mafDataPipeCustom::OnEvent(mafEventBase *e)
-//------------------------------------------------------------------------------
+void mafDataPipeCustom::RequestDataObject()
 {
-  assert(e->GetSender()==m_VTKDataPipe); // should not receive events from other sources
-
-/*  if (e->GetSender()==m_VTKDataPipe)
-  {
-    switch (e->GetId())
-    {
-    case VME_OUTPUT_DATA_PREUPDATE:
-      PreExecute();
-    break;
-    case VME_OUTPUT_DATA_UPDATE:
-      Execute(); // superclass execute...
-    };
-  }
-*/
-  Superclass::OnEvent(e); // this also forwards the event to parent class
+  Superclass::RequestDataObject();
+}
+void mafDataPipeCustom::RequestInformation()
+{
+  Superclass::RequestInformation();
+}
+void mafDataPipeCustom::RequestData()
+{
+  Superclass::RequestData();
 }
 
 //------------------------------------------------------------------------------

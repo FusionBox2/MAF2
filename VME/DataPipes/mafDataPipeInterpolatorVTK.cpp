@@ -67,7 +67,7 @@ vtkAlgorithmOutput *mafDataPipeInterpolatorVTK::GetVTKOutputPort()
 {
   m_VTKDataPipe->UpdateInformation();
   vtkDataSet *data = vtkDataSet::SafeDownCast(m_VTKDataPipe->GetInput());
-  return (data != NULL) ? m_VTKDataPipe->GetOutputPort() : NULL;
+  return (data != NULL || m_VTKDataPipe->GetOutputOb()) ? m_VTKDataPipe->GetOutputPort() : NULL;
 }
 
 //----------------------------------------------------------------------------
@@ -96,17 +96,20 @@ void mafDataPipeInterpolatorVTK::PreExecute()
     vtkDataSet *data = GetCurrentItem()->GetData();
     if (data != NULL)
     {
-      m_VTKDataPipe->SetInputData(data);
+      m_VTKDataPipe->SetOutputOb(data);
       m_UpdateTime.Modified();
     }
   } 
 }
-
-//------------------------------------------------------------------------------
-void mafDataPipeInterpolatorVTK::OnEvent(mafEventBase *e)
-//------------------------------------------------------------------------------
+void mafDataPipeInterpolatorVTK::RequestDataObject()
 {
-  assert(e->GetSender()==m_VTKDataPipe); // should not receive events from other sources
-
-  Superclass::OnEvent(e); // this also forwards the event to parent class
+  Superclass::RequestDataObject();
+}
+void mafDataPipeInterpolatorVTK::RequestInformation()
+{
+  Superclass::RequestInformation();
+}
+void mafDataPipeInterpolatorVTK::RequestData()
+{
+  Superclass::RequestData();
 }

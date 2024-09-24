@@ -272,6 +272,43 @@ int mafVMEPointSet::GetPoint(int idx, double xyz[3],mafTimeStamp t)
   return ret;
 }
 
+int mafVMEPointSet::GetPoints(const int* idx, int numpnts, double* pnts, mafTimeStamp t)
+{
+  t = t < 0 ? this->m_CurrentTime : t;
+
+  vtkPolyData* polydata;
+
+  int ret = MAF_OK;
+
+  if (t != this->m_CurrentTime)
+  {
+    // force the pipe to the specified timestamp
+    this->GetDataPipe()->SetTimeStamp(t);
+    this->GetDataPipe()->Update();
+  }
+
+  polydata = (vtkPolyData*)this->GetPointSetOutput()->GetPointSetData();
+
+  if (polydata)
+  {
+    //polydata->Update();
+    for (int i = 0; i < numpnts; i++)
+    {
+      if (this->GetPoint(polydata, idx[i], &(pnts[3 * i])) != MAF_OK)
+        ret = MAF_ERROR;
+    }
+  }
+
+  // reset the pipe timestamp and its output
+  if (t != this->m_CurrentTime)
+  {
+    this->GetDataPipe()->SetTimeStamp(this->m_CurrentTime);
+    this->GetDataPipe()->Update();
+  }
+
+  return ret;
+}
+
 //-------------------------------------------------------------------------
 int mafVMEPointSet::GetPoint(vtkPolyData *polydata,int idx,double xyz[3])
 //-------------------------------------------------------------------------

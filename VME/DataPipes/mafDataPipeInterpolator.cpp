@@ -177,25 +177,24 @@ void mafDataPipeInterpolator::UpdateCurrentItem(mafVMEItem *item)
     //m_UpdateTime.Modified();
   }
 }
-//------------------------------------------------------------------------------
-void mafDataPipeInterpolator::OnEvent(mafEventBase *maf_event)
-//------------------------------------------------------------------------------
+
+void mafDataPipeInterpolator::RequestDataObject()
 {
-  switch (maf_event->GetId())
+  InternalItemUpdate();
+}
+void mafDataPipeInterpolator::RequestInformation()
+{
+  if (GetMTime() > m_PreExecuteTime.GetMTime() || (m_CurrentItem && !m_CurrentItem->IsDataPresent()))
   {
-  case VME_OUTPUT_DATA_PREUPDATE:
-    if (GetMTime() > m_PreExecuteTime.GetMTime() || (m_CurrentItem && !m_CurrentItem->IsDataPresent()))
-    {
-      m_PreExecuteTime.Modified();
-      PreExecute();
-      // forward event to VME
-      if (m_VME) m_VME->OnEvent(maf_event);
-    }
-    break;
-  case VME_OUTPUT_DATA_UPDATE:
-    Execute();
+    m_PreExecuteTime.Modified();
+    PreExecute();
     // forward event to VME
-    if (m_VME) m_VME->OnEvent(maf_event);
-    break;
-  }; 
+    if (m_VME) { mafEventBase evUnq(this, VME_OUTPUT_DATA_PREUPDATE); m_VME->OnEvent(&evUnq); }
+  }
+}
+void mafDataPipeInterpolator::RequestData()
+{
+  Execute();
+  // forward event to VME
+  if (m_VME) { mafEventBase evUnq(this, VME_OUTPUT_DATA_UPDATE); m_VME->OnEvent(&evUnq); }
 }

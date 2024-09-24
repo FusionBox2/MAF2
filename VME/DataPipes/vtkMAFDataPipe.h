@@ -50,14 +50,16 @@ public:
   /** return the data pipe connected to this object */
   mafDataPipe *GetDataPipe() {return m_DataPipe;}
 
-  /** 
-    Overridden to attempt doing something before the pipeline is checked for the
-    MTime (i.e. change the inputs) */
-  void UpdateInformation() override;
+  virtual void SetOutputOb(vtkDataSet* output);
+  virtual vtkDataSet* GetOutputOb();
+
+  vtkDataSet* Output;
 
 protected:
-  vtkMAFDataPipe();
+	vtkMAFDataPipe();
   ~vtkMAFDataPipe() override;
+
+  int FillInputPortInformation(int, vtkInformation*) override;
 
   int RequestUpdateExtent(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 

@@ -39,7 +39,9 @@ public:
   /** This DataPipe accepts only VME's with internal DataArray. */
   bool Accept(mafVME *vme) override;
 
-  void OnEvent(mafEventBase *maf_event) override;
+  void RequestDataObject() override;
+  void RequestInformation() override;
+  void RequestData() override;
 
   /**
     This function makes the current bounds to be updated. It's optimized

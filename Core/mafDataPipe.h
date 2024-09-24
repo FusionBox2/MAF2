@@ -48,7 +48,7 @@ class mafVME;
   - rewrite GetOutput()
   - reerite UpdateBounds()
 */
-class MAF_EXPORT mafDataPipe:public mafReferenceCounted, public mafTimeStamped, public mafBaseEventHandler
+class MAF_EXPORT mafDataPipe:public mafReferenceCounted, public mafTimeStamped
 {
 public:
   mafDataPipe();
@@ -122,7 +122,9 @@ public:
   /** print a dump of this object */
   void Print(std::ostream& os, const int tabs=0) const override;
 
-  void OnEvent(mafEventBase *maf_event) override;
+  virtual void RequestDataObject();
+  virtual void RequestInformation();
+  virtual void RequestData();
   
 protected:
   /** function called before of data pipe execution */

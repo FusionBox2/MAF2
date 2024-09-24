@@ -114,6 +114,8 @@ protected:
   return idx-th point of given polydata*/
   int GetPoint(vtkPolyData *polydata,int idx,double xyz[3]);
 
+  int GetPoints(const int* idx, int numpnts, double* pnts, mafTimeStamp t = -1);
+
   /**
   return the polydata of the VME-item at the given time frame. Create a new one at time t.*/
   virtual vtkPolyData *NewPolyData(mafTimeStamp t);

@@ -266,7 +266,6 @@ void mafVMERefSysAbstract::SetScaleFactor(double scale)
   m_ScaleAxisTransform->Scale(m_ScaleFactor,m_ScaleFactor,m_ScaleFactor);
   m_ScaleAxisTransform->Update();
   m_ScaleAxis->Update();
-  Update();
   Modified();
 }
 
@@ -384,8 +383,6 @@ void mafVMERefSysAbstract::InternalUpdate()
   mafTimeStamp ts = GetTimeStamp();
   CalculateMatrix(m, ts);
   SetAbsMatrix(m, ts);
-  SetScaleFactor(m_ScaleFactor);
-  Modified();
 }
 //-------------------------------------------------------------------------
 void mafVMERefSysAbstract::SetRefSysLink(const char *link_name, mafNode *n)

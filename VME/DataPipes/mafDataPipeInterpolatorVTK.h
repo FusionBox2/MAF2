@@ -48,7 +48,9 @@ public:
   //virtual unsigned long GetMTime();
 
   /** process events coming from vtkMAFDataPipe bridge component */
-  void OnEvent(mafEventBase *e) override;
+  void RequestDataObject() override;
+  void RequestInformation() override;
+  void RequestData() override;
 
    /**  Get the output of the interpolator item*/
   mafVMEItemVTK *GetCurrentItem() {return (mafVMEItemVTK *)m_CurrentItem;}

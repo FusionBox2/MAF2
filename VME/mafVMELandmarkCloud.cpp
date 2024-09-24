@@ -488,6 +488,62 @@ int mafVMELandmarkCloud::GetLandmark(int idx, double xyz[3],mafTimeStamp t)
 
   return MAF_ERROR;
 }
+
+int mafVMELandmarkCloud::GetLandmarksPosVis(const int* idx, int numpnts, double* pnts, int* vis, mafTimeStamp t)
+{
+  int ret = MAF_OK;
+  if (GetState() == CLOSED_CLOUD)
+  {
+    vtkPolyData* polydata;
+
+    // extract scalars for visibility
+    if (t != m_CurrentTime)
+    {
+      // set time to the argument value
+      GetDataPipe()->SetTimeStamp(t);
+    }
+    polydata = GetPointSetOutput()->GetPointSetData();
+    if (polydata)
+    {
+      GetPointSetOutput()->Update();
+      for(int i = 0; i < numpnts; i++)
+      {
+	      vis[i] = GetLandmarkVisibility(polydata, idx[i]);
+        GetPoint(polydata, idx[i], &(pnts[3 * i]));
+      }
+    }
+    else
+    {
+      mafErrorMacro("GetLandmarkVisibility: problems retrieving polydata for time stamp" << t);
+    }
+    // restore current time
+    if (t != m_CurrentTime)
+    {
+      GetDataPipe()->SetTimeStamp(m_CurrentTime);
+      GetDataPipe()->Update();
+    }
+    return ret;
+  }
+  else
+  {
+    for (int i = 0; i < numpnts; i++)
+	  {
+		  if (mafVMELandmark* lm = GetLandmark(idx[i]))
+		  {
+		  	vis[i] = lm->GetLandmarkVisibility(t);
+        lm->GetPoint(&(pnts[3 * i]), t);
+		  }
+		  else
+		  {
+		  	mafErrorMacro("GetVisibility: problems retrieving " << idx << "th child landamark for getting its visibility!");
+		  	return MAF_ERROR;
+		  }
+	  }
+  }
+
+  return MAF_OK;
+}
+
 //-------------------------------------------------------------------------
 int mafVMELandmarkCloud::RemoveLandmark(int idx)
 //-------------------------------------------------------------------------

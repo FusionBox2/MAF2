@@ -60,7 +60,7 @@ bool mafDataPipeInterpolatorScalarMatrix::Accept(mafVME *vme)
 vnl_matrix<double> &mafDataPipeInterpolatorScalarMatrix::GetScalarData()
 //------------------------------------------------------------------------------
 {
-  {mafEventBase evUnq(this,VME_OUTPUT_DATA_PREUPDATE); OnEvent(&evUnq);}
+  RequestInformation();
   return m_ScalarData;
 }
 
@@ -88,9 +88,15 @@ void mafDataPipeInterpolatorScalarMatrix::PreExecute()
   } 
 }
 
-//------------------------------------------------------------------------------
-void mafDataPipeInterpolatorScalarMatrix::OnEvent(mafEventBase *e)
-//------------------------------------------------------------------------------
+void mafDataPipeInterpolatorScalarMatrix::RequestDataObject()
 {
-  Superclass::OnEvent(e); // this also forwards the event to parent class
+  Superclass::RequestDataObject();
+}
+void mafDataPipeInterpolatorScalarMatrix::RequestInformation()
+{
+  Superclass::RequestInformation();
+}
+void mafDataPipeInterpolatorScalarMatrix::RequestData()
+{
+  Superclass::RequestData();
 }
