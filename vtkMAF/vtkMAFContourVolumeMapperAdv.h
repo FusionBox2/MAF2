@@ -55,8 +55,6 @@ Then Render()
 
 #include "vtkMAFContourVolumeMapper.h"
 
-#include <vtk_glew.h>
-
 #include "vtkMAFConfigure.h"
 
 //------------------------------------------------------------------------------

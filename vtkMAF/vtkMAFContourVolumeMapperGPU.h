@@ -58,8 +58,6 @@ Then Render()
 #include "vtkPolyData.h"
 #include "vtkMatrix4x4.h"
 
-#include <vtk_glew.h>
-
 #include "vtkMAFConfigure.h"
 class VTK_vtkMAF_EXPORT vtkMAFContourVolumeMapperGPU : public vtkMAFContourVolumeMapper
 {

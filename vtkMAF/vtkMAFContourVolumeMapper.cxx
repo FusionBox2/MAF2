@@ -39,6 +39,7 @@
 #include "vtkMarchingCubesTriangleCases.h"
 #include "vtkMarchingSquaresLineCases.h"
 #include "vtkMAFContourVolumeMapper.h"
+#include "vtk_glad.h"
 #include <algorithm>
 #include <cmath>
 #include <fstream>
