@@ -449,7 +449,7 @@ SUBDIRS(DataPipes)
 
 # List libraries that are needed by this project.
 #SET(PROJECT_LIBS mafCore vtkMAF)
-SET(PROJECT_LIBS mafDataPipes "mafInteraction" "vtkMAF")
+SET(PROJECT_LIBS mafDataPipes "mafInteraction" "vtkMAF" Eigen3::Eigen)
 
 IF (MAF_USE_VTK)
 #  SET(PROJECT_LIBS ${PROJECT_LIBS} vtkIO vtkRendering vtkGraphics vtkHybrid)
