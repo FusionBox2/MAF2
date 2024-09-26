@@ -123,7 +123,7 @@ void mafUser::InitializeUserInformations()
     }
     credentials = decrypt_credentials.c_str();
 #else
-    wxFFile f_in(m_UserInfoFile.GetCStr(), "r");
+    wxFFile f_in(m_UserInfoFile.toWx(), "r");
     f_in.ReadAll(&credentials);
     f_in.Close();
 #endif
@@ -284,7 +284,7 @@ void mafUser::UpdateUserCredentialsFile()
     }
 #else
     wxFFile f_out(m_UserInfoFile.toWx(), "w");
-    f_out.Write(credentials);
+    f_out.Write(credentials.toWx());
     f_out.Close();
 #endif
   }

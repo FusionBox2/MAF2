@@ -682,6 +682,7 @@ int mafVMEItemVTK::CheckFile(const char *filename)
     mafMessage(_M(mafString(_L("File ")) + _R(filename) + _L(" corrupted!!")));
     return MAF_ERROR;
   }
+#ifdef MAF_USE_CRYPTO
   std::string chk_result;
   mafCalculateteChecksum(filename, chk_result);
   m_ChecksumMD5 = _R(chk_result.c_str());
@@ -693,6 +694,7 @@ int mafVMEItemVTK::CheckFile(const char *filename)
   }
   mafTagItem *md5tag = GetTagArray()->GetTag(_R("MD5Checksum"));
   md5tag->SetValue(m_ChecksumMD5);
+#endif
   return MAF_OK;
 }
 //-------------------------------------------------------------------------
@@ -708,6 +710,7 @@ int mafVMEItemVTK::CheckFile(const char *input_string, int input_len)
     mafMessage(_M("String corrupted!!"));
     return MAF_ERROR;
   }
+#ifdef MAF_USE_CRYPTO
   std::string chk_result;
   mafCalculateteChecksum(input_string, input_len, chk_result);
   m_ChecksumMD5 = _R(chk_result.c_str());
@@ -719,6 +722,7 @@ int mafVMEItemVTK::CheckFile(const char *input_string, int input_len)
   }
   mafTagItem *md5tag = GetTagArray()->GetTag(_R("MD5Checksum"));
   md5tag->SetValue(m_ChecksumMD5);
+#endif
   return MAF_OK;
 }
 //-------------------------------------------------------------------------

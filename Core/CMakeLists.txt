@@ -17,9 +17,6 @@ SET(PROJECT_SRCS
   mafAttributeTraceability.h
   mafDataPipe.cpp
   mafDataPipe.h
-  mafExpiration.h
-  mafExpirationDate.cpp
-  mafExpirationDate.h
   mafEventIO.cpp
   mafEventIO.h
   mafLogicWithGUI.cpp
@@ -136,6 +133,14 @@ IF (MAF_USE_VTK)
   vtkMAFAssembly.h
   )
 ENDIF (MAF_USE_VTK)
+
+IF(MAF_USE_CRYPTO)
+  SET(PROJECT_SRCS ${PROJECT_SRCS}
+    mafExpiration.h
+    mafExpirationDate.cpp
+    mafExpirationDate.h
+  )
+ENDIF(MAF_USE_CRYPTO)
 
 IF(MAF_USE_CURL)
   SET(PROJECT_SRCS ${PROJECT_SRCS}

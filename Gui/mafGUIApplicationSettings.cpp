@@ -43,8 +43,10 @@ mafGUISettings(Listener, label)
 
   m_WarnUserFlag = true;
   
+#ifdef MAF_USE_CRYPTO
   m_UseDefaultPasPhrase = 1;
   m_PassPhrase = _R(mafDefaultPassPhrase());
+#endif
 
   InitializeSettings();
 
@@ -61,8 +63,10 @@ void mafGUIApplicationSettings::CreateGui()
 {
   m_Gui = new mafGUI(this);
   m_Gui->Label(_L("Application general settings"));
+#ifdef MAF_USE_CRYPTO
   m_Gui->Bool(ID_USE_DEFAULT_PASSPHRASE,_L("use default passphrase"),&m_UseDefaultPasPhrase,1);
   m_Gui->String(ID_PASSPHRASE,_L("passphrase"),&m_PassPhrase,_R(""),false,true);
+#endif
   m_Gui->Divider(2);
   m_Gui->Bool(ID_LOG_TO_FILE,_L("log to file"),&m_LogToFile,1);
   m_Gui->Bool(ID_LOG_VERBOSE,_L("log verbose"),&m_VerboseLog,1);
@@ -85,7 +89,9 @@ void mafGUIApplicationSettings::EnableItems()
 {
   m_Gui->Enable(ID_LOG_VERBOSE,m_LogToFile != 0);
   m_Gui->Enable(ID_LOG_DIR,m_LogToFile != 0);
+#ifdef MAF_USE_CRYPTO
   m_Gui->Enable(ID_PASSPHRASE,m_UseDefaultPasPhrase == 0);
+#endif
 }
 //----------------------------------------------------------------------------
 void mafGUIApplicationSettings::OnEvent(mafEventBase *maf_event)
@@ -110,6 +116,7 @@ void mafGUIApplicationSettings::OnEvent(mafEventBase *maf_event)
     case ID_PASSPHRASE:
     break;
     case ID_USE_DEFAULT_PASSPHRASE:
+#ifdef MAF_USE_CRYPTO
       m_Config->Write("UseDefaultPassphrase",m_UseDefaultPasPhrase);
       if (m_UseDefaultPasPhrase != 0)
       {
@@ -122,6 +129,7 @@ void mafGUIApplicationSettings::OnEvent(mafEventBase *maf_event)
       }
       EnableItems();
       m_Gui->Update();
+#endif
     break;
 		case IMAGE_TYPE_ID:
 		{
@@ -174,6 +182,7 @@ void mafGUIApplicationSettings::InitializeSettings()
   {
     m_Config->Write("WarnUser",m_WarnUserFlag);
   }
+#ifdef MAF_USE_CRYPTO
   if (m_Config->Read("UseDefaultPassphrase", &long_item))
   {
     m_UseDefaultPasPhrase = long_item;
@@ -186,6 +195,7 @@ void mafGUIApplicationSettings::InitializeSettings()
   {
     m_PassPhrase = mafWxToString(wxGetPasswordFromUser(_("Insert passphrase"),_("Passphrase"),wxEmptyString));
   }
+#endif
   if(m_Config->Read("ImageType", &long_item))
   {
     m_ImageTypeId = long_item;
@@ -229,6 +239,7 @@ void mafGUIApplicationSettings::SetLogVerboseStatus(int log_verbose)
     m_Config->Flush();
   }
 }
+#ifdef MAF_USE_CRYPTO
 //----------------------------------------------------------------------------
 void mafGUIApplicationSettings::SetUseDefaultPassPhrase(int use_default, const mafString& passphrase)
 //----------------------------------------------------------------------------
@@ -261,3 +272,4 @@ void mafGUIApplicationSettings::SetPassPhrase(const mafString& pass_phrase)
 {
   m_PassPhrase = pass_phrase;
 }
+#endif

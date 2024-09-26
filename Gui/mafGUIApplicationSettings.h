@@ -88,18 +88,20 @@ public:
   /** Return the status of the WarnUser flag.*/
   bool GetWarnUserFlag() {return m_WarnUserFlag != 0;};
 
+#ifdef MAF_USE_CRYPTO
   /** Return the status of the default pass phrase usage.*/
-  bool UseDefaultPassPhrase() {return m_UseDefaultPasPhrase != 0;};
+  bool UseDefaultPassPhrase() {return m_UseDefaultPasPhrase != 0;}
 
   /** Set the flag to use the default passphrase with which encrypt saved data.
   If the flag is '0' means that no default passphrase is used, so the second optional argument has to be set.*/
   void SetUseDefaultPassPhrase(int use_default, const mafString& passphrase = _R(""));
 
   /** Return the Pass phrase used to encrypt/decrypt files.*/
-  mafString &GetPassPhrase() {return m_PassPhrase;};
+  mafString &GetPassPhrase() {return m_PassPhrase;}
 
   /** Set the custom passphrase to encrypt data.*/
   void SetPassPhrase(const mafString& pass_phrase);
+#endif
 
   /** Select image type during saving of the views*/
   void SetImageTypeId(int imageTypeId){m_ImageTypeId = imageTypeId;}
@@ -130,8 +132,10 @@ protected:
   int m_WarnUserFlag; ///< Warn user flag on not supported undo operations
 
   // Encryption variables
+#ifdef MAF_USE_CRYPTO
   int       m_UseDefaultPasPhrase;
   mafString m_PassPhrase;
+#endif
 
 	int       m_ImageTypeId;
 
