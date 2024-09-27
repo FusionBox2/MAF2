@@ -426,7 +426,6 @@ public:
 #include "medLogicWithManagers.h"
 #include "mafEvent.h"
 #include "mafBaseEventHandler.h"
-#include "mafDynamicLoader.h"
 #include <memory>
 
 //----------------------------------------------------------------------------
@@ -446,8 +445,6 @@ public:
 
 protected:
   std::unique_ptr<medLogicWithManagers> m_Logic;
-  std::vector<std::pair<LibHandle, void(*)() > > m_Plugins;
-
 };
 DECLARE_APP(lhpFusionBoxApp)
 
@@ -483,9 +480,9 @@ bool lhpFusionBoxApp::OnInit()
   #include "pic/lhpBuilder/MDICHILD_ICON.xpm"
   mafADDPIC(MDICHILD_ICON);
 
-  LibHandle C3DLib      = NULL;
-  LibHandle matlabLib   = NULL;
-  LibHandle fullControl = NULL;
+  //LibHandle C3DLib      = NULL;
+  //LibHandle matlabLib   = NULL;
+  //LibHandle fullControl = NULL;
   bool fullVersion      = true;
 
   /*fullControl = mafDynamicLoader::OpenLibrary("full_ver");
@@ -499,7 +496,7 @@ bool lhpFusionBoxApp::OnInit()
     m_Plugins.push_back(std::make_pair(fullControl, (void(*)())NULL));
   }*/
 
-  matlabLib = mafDynamicLoader::OpenLibrary("MATLAB");
+  /*matlabLib = mafDynamicLoader::OpenLibrary("MATLAB");
   if(matlabLib)
   {
     bool (*minit)() = (bool(*)())mafDynamicLoader::GetSymbolAddress(matlabLib, "Init");
@@ -523,7 +520,7 @@ bool lhpFusionBoxApp::OnInit()
         matlabLib = NULL;
       }
     }
-  }
+  }*/
 
   int result;
  
@@ -874,12 +871,12 @@ int lhpFusionBoxApp::OnExit()
 
   //this hack is fixing VTK internal memory leak
   vtkTimerLog::CleanupLog();
-  for(unsigned i = 0; i < m_Plugins.size(); i++)
+  /*for(unsigned i = 0; i < m_Plugins.size(); i++)
   {
     if(m_Plugins[i].second)
       m_Plugins[i].second();
     mafDynamicLoader::CloseLibrary(m_Plugins[i].first);
-  }
+  }*/
   return 0;
 }
 

@@ -18,7 +18,6 @@
 //----------------------------------------------------------------------------
 #include "mafOp.h"
 #include "mafVectors.h"
-#include "mafDynamicLoader.h"
 
 //----------------------------------------------------------------------------
 // forward references :
@@ -35,7 +34,7 @@ class mafVMELandmarkCloud;
 class lhpOpRegression: public mafOp
 {
 public:
-  static bool Config(LibHandle handle);
+  //static bool Config(LibHandle handle);
   mafTypeMacro(lhpOpRegression, mafOp)
   lhpOpRegression(const mafString& label= _R(""));
  ~lhpOpRegression() override;

@@ -25,8 +25,6 @@ mafDefines.cpp
 mafDefines.h
 mafDirectory.cpp
 mafDirectory.h
-mafDynamicLoader.cpp
-mafDynamicLoader.h
 mafEventBase.cpp
 mafEventBase.h
 mafEventSender.cpp
@@ -59,7 +57,6 @@ mafTransformBase.h
 mafTransformFrame.cpp
 mafTransformFrame.h
 mafVectors.h
-mafVersion.h
 mmuIdFactory.cpp
 mmuIdFactory.h
 )

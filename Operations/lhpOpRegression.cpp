@@ -2878,7 +2878,7 @@ void lhpOpRegression::OpUndo()
   }
 }
 
-bool lhpOpRegression::Config(LibHandle handle)
+/*bool lhpOpRegression::Config(LibHandle handle)
 {
   if((Regr_4_Als=(bool(*)(double glob[], double loc[], double rad[], double transf[], double p1[], double p2[], double p3[], double p4[], bool pelvic, bool left))mafDynamicLoader::GetSymbolAddress(handle, "Regr_4_Als")) &&
      (Regr_3_Als=(bool(*)(double V1[], double V2[], double V3[], double V4[], double FTC[], double FME[], double FLE[], bool left))mafDynamicLoader::GetSymbolAddress(handle, "Regr_3_Als")))
@@ -2888,7 +2888,7 @@ bool lhpOpRegression::Config(LibHandle handle)
   }
   m_Inited = false;
   return false;
-}
+}*/
 
 bool lhpOpRegression::m_Inited = false;
 bool (*lhpOpRegression::Regr_4_Als)(double glob[], double loc[], double rad[], double transf[], double p1[], double p2[], double p3[], double p4[], bool pelvic, bool left);
