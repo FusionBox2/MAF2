@@ -41,7 +41,9 @@ class mafGUIMaterialChooser;
 class mafVME;
 class mafInteractionManager;
 class mafPrintSupport;
+#ifdef MAF_USE_CURL
 class mafRemoteLogic;
+#endif
 class mafGUISettingsDialog;
 class mafGUIApplicationLayoutSettings;
 class mafGUISettings;
@@ -288,7 +290,9 @@ protected:
   std::unique_ptr<mafViewManager>         m_ViewManager;
   std::unique_ptr<mafOpManager>           m_OpManager;
   std::unique_ptr<mafInteractionManager>  m_InteractionManager;
+#ifdef MAF_USE_CURL
   std::unique_ptr<mafRemoteLogic>         m_RemoteLogic;
+#endif
   
   std::unique_ptr<mafGUIMaterialChooser>  m_MaterialChooser;
   std::unique_ptr<mafPrintSupport> m_PrintSupport;

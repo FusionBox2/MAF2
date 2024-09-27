@@ -32,7 +32,9 @@
 #include "medWizardManager.h"
 #include "mafGUIApplicationSettings.h"
 #include "mafView.h"
+#ifdef MAF_USE_CURL
 #include "mafGUIDialogRemoteFile.h"
+#endif
 #include "mafGUISettingsStorage.h"
 
 #include "mafViewCompound.h"

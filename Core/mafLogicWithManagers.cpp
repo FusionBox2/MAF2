@@ -60,8 +60,6 @@
 #include "mafSideBar.h"
 
 #include "mafUser.h"
-//#include "mafGUISRBBrowse.h"
-#include "mafGUIDialogRemoteFile.h"
 #include "mafGUIDialogFindVme.h"
 #include "mafGUIMDIFrame.h"
 #include "mafGUIMDIChild.h"
@@ -75,15 +73,17 @@
 #include "mafGUISettingsStorage.h"
 #include "mafGUIApplicationLayoutSettings.h"
 #include "mafGUISettingsTimeBar.h"
+#if MAF_USE_CURL
 #include "mafRemoteLogic.h"
+#include "mafGUIDialogRemoteFile.h"
+#include "mmdRemoteFileManager.h"
+#endif
 #include "mafGUISettingsDialog.h"
 #include  "mafGUISettingsHelp.h"
 
 #ifdef WIN32
   #include "mafDeviceClientMAF.h"
 #endif
-
-#include "mmdRemoteFileManager.h"
 
 #include "mmaApplicationLayout.h"
 
@@ -292,7 +292,9 @@ void mafLogicWithManagers::Configure()
   {
     m_InteractionManager = std::make_unique<mafInteractionManager>();
     m_InteractionManager->SetListener(this);
+#ifdef MAF_USE_CURL
     mafPlugDevice<mmdRemoteFileManager>("mmdRemoteFileManager");
+#endif
 
     SetGlobalMouse(m_InteractionManager->GetMouseDevice());
     //SIL m_InteractionManager->GetClientDevice()->AddObserver(this, MCH_INPUT);
@@ -314,9 +316,11 @@ void mafLogicWithManagers::Configure()
 #ifdef MAF_USE_VTK
   {
 #ifdef __WIN32__
+#ifdef MAF_USE_CURL
     m_RemoteLogic = std::make_unique<mafRemoteLogic>(this, m_ViewManager.get(), m_OpManager.get());
 
     m_RemoteLogic->SetClientUnit(m_InteractionManager->GetClientDevice());
+#endif
 #endif
 
   }
@@ -765,10 +769,12 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   if(VME_SHOW == eventId)
   {
     VmeShow(e->GetVme(), e->GetBool());
+#ifdef MAF_USE_CURL
     if(m_RemoteLogic && (e->GetSender() != m_RemoteLogic.get()) && m_RemoteLogic->IsSocketConnected())
     {
       m_RemoteLogic->VmeShow(e->GetVme(), e->GetBool());
     }
+#endif
     return;
   }
   if(VME_MODIFIED == eventId)
@@ -898,12 +904,14 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
     if(m_OpManager) 
     {
       m_OpManager->OpRun(e->GetArg());
+#ifdef MAF_USE_CURL
       if(/*m_OpManager->GetRunningOperation() && */m_RemoteLogic && m_RemoteLogic->IsSocketConnected() && !m_OpManager->m_FromRemote)
       {
         mafEvent re(this, mafOpManager::RUN_OPERATION_EVENT, e->GetArg());
         re.SetChannel(REMOTE_COMMAND_CHANNEL);
         m_RemoteLogic->OnEvent(&re);
       }
+#endif
     }
     return;
   }
@@ -1034,10 +1042,12 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   }
   if(VIEW_MAXIMIZE == eventId)
   {
+#ifdef MAF_USE_CURL
     if (m_RemoteLogic && m_RemoteLogic->IsSocketConnected() && !m_ViewManager->m_FromRemote)
     {
       m_RemoteLogic->RemoteMessage(*e->GetString());
     }
+#endif
     return;
   }
   if(VIEW_SELECTED == eventId)
@@ -1251,6 +1261,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   if(COLLABORATE_ENABLE == eventId)
   {
     bool collaborate = e->GetBool();
+#ifdef MAF_USE_CURL
     if (collaborate)
     {
       m_RemoteLogic->SetRemoteMouse(m_InteractionManager->GetRemoteMouseDevice());
@@ -1269,6 +1280,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
         GetGlobalMouse()->RemoveObserver(m_RemoteLogic.get());
       }
     }
+#endif
     m_ViewManager->Collaborate(collaborate);
     m_OpManager->Collaborate(collaborate);
     GetGlobalMouse()->Collaborate(collaborate);
@@ -1381,6 +1393,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
   mafString file = file_to_open;
   if(file.empty())
   {
+#ifdef MAF_USE_CURL
     if (m_StorageSettings->GetStorageType() == mafGUISettingsStorage::HTTP)
     {
       mafGUIDialogRemoteFile remoteFile;
@@ -1388,6 +1401,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
       file = remoteFile.GetFile();
     }
     else
+#endif
     {
 		  mafString wildc = _R("MAF Storage Format file (*.");
 		  wildc += m_StorageData->m_Extension;
@@ -1405,6 +1419,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
     return false;
 
   mafString protocol;
+#ifdef MAF_USE_CURL
   bool remote_file = false;
   if (IsRemote(file,protocol))
   {
@@ -1422,6 +1437,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
     m_Storage = std::move(rs);
   }
   else
+#endif
   {
     if(!mafFileExists(file))
     {
@@ -1452,6 +1468,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
   mafSplitPath(file,&path,&name,&ext);
   if(ext == _R("zmsf"))
   {
+#ifdef MAF_USE_CURL
     if (remote_file) // download remote zmsf
     {
       // Download the file if it is not present into the cache
@@ -1465,6 +1482,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
       ((mafRemoteStorage *)m_Storage.get())->GetRemoteFileManager()->DownloadRemoteFile(remote_filename, local_filename); // download the remote file in the download cache
       file = local_filename;
     }
+#endif
     m_StorageData->m_ZipFile = file;
     unixname = mafOpenZIP(file, m_Storage->GetTmpFolder(), m_Storage->m_TmpDir); // open the zmsf archive and extract it to the temporary directory
     if(unixname.empty())
@@ -1705,7 +1723,9 @@ void mafLogicWithManagers::OnQuit()
   if(answer != wxYES) 
   return;*/
 
+#ifdef MAF_USE_CURL
   m_RemoteLogic.reset();
+#endif
   m_NodeManager.reset();
   m_MaterialChooser.reset();
 // currently mafInteraction is strictly dependent on VTK (marco)
@@ -1767,10 +1787,12 @@ void mafLogicWithManagers::VmeSelect(mafEvent& e)	//modified by Paolo 10-9-2003
     mafLogMessage(_M(_R("node selected: ") + node->GetName()));
   }
 
+#ifdef MAF_USE_CURL
   if(m_RemoteLogic && (e.GetSender() != m_RemoteLogic.get()) && m_RemoteLogic->IsSocketConnected())
   {
     m_RemoteLogic->VmeSelected(node);
   }
+#endif
 }
 //----------------------------------------------------------------------------
 void mafLogicWithManagers::VmeSelected(mafNode *vme, bool remote)
@@ -1785,10 +1807,12 @@ void mafLogicWithManagers::VmeSelected(mafNode *vme, bool remote)
     m_InteractionManager->VmeSelected(vme);
 #endif
 
+#ifdef MAF_USE_CURL
   if(remote && m_RemoteLogic && m_RemoteLogic->IsSocketConnected())
   {
     m_RemoteLogic->VmeSelected(vme);
   }
+#endif
 }
 //----------------------------------------------------------------------------
 void mafLogicWithManagers::VmeShow(mafNode *vme, bool visibility)
@@ -2018,12 +2042,14 @@ void mafLogicWithManagers::ViewCreated(mafView *v)
   // removed temporarily support for external Views
   if(v) 
   {
+#ifdef MAF_USE_CURL
     if(m_RemoteLogic && m_RemoteLogic->IsSocketConnected() && !m_ViewManager->m_FromRemote)
     {
       mafEvent ev(this,VIEW_CREATE,v);
       ev.SetChannel(REMOTE_COMMAND_CHANNEL);
       m_RemoteLogic->OnEvent(&ev);
     }
+#endif
 
     if (GetExternalViewFlag())
     {

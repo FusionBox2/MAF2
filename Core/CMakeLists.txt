@@ -9,8 +9,6 @@ DBG_MESSAGE("Configuring project mafCore")
 
 # Set your list of sources here.
 SET(PROJECT_SRCS
-  mafCurlUtility.cpp
-  mafCurlUtility.h
   mafAbsMatrixPipe.cpp
   mafAbsMatrixPipe.h
   mafAttribute.cpp
@@ -54,12 +52,6 @@ SET(PROJECT_SRCS
   mafOpStack.h
   mafPrintSupport.cpp
   mafPrintSupport.h
-  mmdRemoteFileManager.cpp
-  mmdRemoteFileManager.h
-  mafRemoteLogic.cpp
-  mafRemoteLogic.h
-  mafRemoteStorage.cpp
-  mafRemoteStorage.h
   mafRoot.cpp
   mafRoot.h
   mafTagArray.cpp
@@ -145,8 +137,25 @@ IF (MAF_USE_VTK)
   )
 ENDIF (MAF_USE_VTK)
 
+IF(MAF_USE_CURL)
+  SET(PROJECT_SRCS ${PROJECT_SRCS}
+    mafCurlUtility.cpp
+    mafCurlUtility.h
+    mmdRemoteFileManager.cpp
+    mmdRemoteFileManager.h
+    mafRemoteLogic.cpp
+    mafRemoteLogic.h
+    mafRemoteStorage.cpp
+    mafRemoteStorage.h
+  )
+ENDIF(MAF_USE_CURL)
+
 # List libraries that are needed by this project.
-SET(PROJECT_LIBS mafBase mafIO mafGui mafInteraction mafOperations CURL::libcurl)
+SET(PROJECT_LIBS mafBase mafIO mafGui mafInteraction mafOperations)
+
+IF(MAF_USE_CURL)
+  SET(PROJECT_LIBS ${PROJECT_LIBS} CURL::libcurl)
+ENDIF(MAF_USE_CURL)
 
 IF (MAF_USE_VTK)
 #  SET(PROJECT_LIBS ${PROJECT_LIBS} vtkCommon)
