@@ -19,9 +19,7 @@
 
 #include "mafEventBase.h"
 #include "mafMatrix.h"
-#include "mafSmartPointer.h"
-
-template class MAF_EXPORT mafAutoPointer<mafMatrix>;
+#include "ftk/Base/RegisteringPointer.h"
 
 /** Event class to transport a triggering button and a position from pointing devices.
   Evant issue by 2D and 3D tracking devices in correspondace to

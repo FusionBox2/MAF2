@@ -29,7 +29,7 @@
 #include "mafGUIMaterialButton.h"
 #include "mafInteractorCompositorMouse.h"
 #include "mafInteractorGenericMouse.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafVME.h"
 #include "mafVMEGizmo.h"
 #include "mafVMEPolyline.h"
@@ -263,7 +263,7 @@ void mafGizmoPath::FindGizmoAbsPose( double s )
   mafAutoPointer<mafMatrix> mat2Send = mafMatrix::New();
   mat2Send->DeepCopy(&(trans->GetMatrix()));
 
-  SendTransformMatrix(mat2Send, ID_TRANSFORM, mafGizmoPath::ABS_POSE );
+  SendTransformMatrix(mat2Send.get(), ID_TRANSFORM, mafGizmoPath::ABS_POSE );
 }
   
 

@@ -94,7 +94,7 @@ void mafMatrixInterpolator::Update()
   auto mtime=m_UpdateTime.GetMTime();
 
   // if the current time has changed or if this object has been modified...
-  if (m_OldTimeStamp!=GetTimeStamp() || !m_CurrentItem || (m_CurrentItem->GetMTime()>mtime) || mtime < GetMTime())
+  if (m_OldTimeStamp!=GetTimeStamp() || !m_CurrentItem.get() || (m_CurrentItem->GetMTime()>mtime) || mtime < GetMTime())
   {
     m_OldTimeStamp=GetTimeStamp();    
     
@@ -125,7 +125,7 @@ void mafMatrixInterpolator::InternalItemUpdate()
 void mafMatrixInterpolator::SetCurrentItem(mafMatrix *data)
 //------------------------------------------------------------------------------
 {
-  if (data==m_CurrentItem.GetPointer())
+  if (data==m_CurrentItem.get())
     return;
 
   m_CurrentItem=data;
@@ -138,7 +138,7 @@ void mafMatrixInterpolator::UpdateCurrentItem(mafMatrix *item)
 {
   if (item)
   {	
-    if (item!=m_CurrentItem)
+    if (item!=m_CurrentItem.get())
     {
       SetCurrentItem(item);
     }
@@ -158,7 +158,7 @@ void mafMatrixInterpolator::InternalUpdate()
 //-------------------------------------------------------------------------
 {
   //InternalItemUpdate(); already called by Update
-  if (m_CurrentItem)
+  if (m_CurrentItem.get())
   {
     m_Matrix->DeepCopy(GetCurrentItem());
   }

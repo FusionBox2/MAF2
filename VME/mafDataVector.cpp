@@ -129,7 +129,7 @@ void mafDataVector::ShallowCopy(mafDataVector *array)
   RemoveAllItems();
   for (auto& elem : *array)
   {
-    mafVMEItem *item=elem.second;
+    mafVMEItem *item=elem.second.get();
 	  mafVMEItem *copy = item->NewInstance();
     assert(copy);
 	  copy->ShallowCopy(item);
@@ -147,7 +147,7 @@ void mafDataVector::DeepCopyVmeLarge(mafDataVector *o)
   RemoveAllItems();
   for (auto& elem : *o)
   {
-    mafVMEItem *m=elem.second;
+    mafVMEItem *m=elem.second.get();
     mafVMEItem *new_item=m->NewInstance();
     new_item->DeepCopyVmeLarge(m);
     AppendItem(new_item);
@@ -285,7 +285,7 @@ void mafDataVector::InternalStore(mafStorageElementBuilder& parent)
               progress++;
               {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
             }
-			mafVMEItem* itemTmp = elem.second;
+			mafVMEItem* itemTmp = elem.second.get();
             int IOmode = itemTmp->GetIOMode();
             itemTmp->SetIOModeToDefault();
             itemTmp->UpdateData();
@@ -435,7 +435,7 @@ void mafDataVector::InternalStore(mafStorageElementBuilder& parent)
   // Store meta-data (meta-data is stored later to be able set some info about stored data files)
   for (auto& elem : *this)
   {
-    parent[_R("VItem")].SetValue(elem.second.GetPointer());
+    parent[_R("VItem")].SetValue(elem.second.get());
   }
 
   m_DataModified = false;

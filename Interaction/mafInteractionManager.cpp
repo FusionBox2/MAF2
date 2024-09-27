@@ -154,8 +154,8 @@ mafInteractionManager::~mafInteractionManager()
   {
     mafAutoPointer<mafInteractorPER> old_per=*(m_PERList.rbegin());
     m_PERList.pop_back();
-    assert(old_per);
-    SetPER(old_per);
+    assert(old_per.get());
+    SetPER(old_per.get());
   }
 
   m_DeviceManager->Shutdown();
@@ -205,11 +205,11 @@ bool mafInteractionManager::PopPER()
   mafAutoPointer<mafInteractorPER> old_per=*(m_PERList.rbegin());
   m_PERList.pop_back(); 
 
-  assert(old_per); // should always be != NULL
+  assert(old_per.get()); // should always be != NULL
 
-  if (old_per) // if not NULL
+  if (old_per.get()) // if not NULL
   {
-    SetPER(old_per);
+    SetPER(old_per.get());
     return true;
   }
   
@@ -307,7 +307,7 @@ void mafInteractionManager::GetAvatars(mmuAvatarsVector &avatars)
   int i=0;
   for (mmuAvatarsMap::iterator it=m_Avatars.begin();it!=m_Avatars.end();it++,i++)
   {
-    avatars[i]=it->second.GetPointer();
+    avatars[i]=it->second.get();
   }
 }
 
@@ -350,7 +350,7 @@ mafAvatar *mafInteractionManager::GetAvatar(const char *name)
 //------------------------------------------------------------------------------
 {
   mmuAvatarsMap::iterator it=m_Avatars.find(_R(name));  
-  return (it!=m_Avatars.end())?it->second:NULL;
+  return (it!=m_Avatars.end())?it->second.get() :NULL;
 }
 
 //------------------------------------------------------------------------------
@@ -924,13 +924,13 @@ void mafInteractionManager::UpdateBindings()
     int i=0;
     for (mafInteractorSER::mmuActionsMap::const_iterator it=actions->begin();it!=actions->end();it++)
     {
-      mafAction *action = it->second;
+      mafAction *action = it->second.get();
       bool found=false;
 
       // search through the list
       for (mafAction::mmuDeviceList::const_iterator it_list=action->GetDevices()->begin();it_list!=action->GetDevices()->end();it_list++)
       {
-        if (it_list->GetPointer() == m_CurrentDevice)
+        if (it_list->get() == m_CurrentDevice)
           found = true;
       }
       m_ActionsList->AddItem(i++,action->GetName().toWx(),found);

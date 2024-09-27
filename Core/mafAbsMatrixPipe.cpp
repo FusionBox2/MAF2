@@ -147,7 +147,7 @@ void mafAbsMatrixPipe::InternalUpdate()
 
   if (m_UpdateMatrixObserverFlag)
   {
-    if (m_VME) {mafEventBase evUnq(this,VME_MATRIX_UPDATE,m_Matrix); m_VME->OnEvent(&evUnq);}
+    if (m_VME) {mafEventBase evUnq(this,VME_MATRIX_UPDATE,m_Matrix.get()); m_VME->OnEvent(&evUnq);}
   }
    
   if (input&&GetTimeStamp()!=old_vme_time)

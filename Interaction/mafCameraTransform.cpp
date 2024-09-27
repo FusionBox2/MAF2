@@ -533,7 +533,7 @@ void mafCameraTransform::InternalUpdate()
   {
     // simply follow view's transform changes    
     mafMatrix view_trans=camera->GetViewTransformMatrix();
-    UpdatePoseMatrix(m_Matrix,m_OldViewMatrix,&view_trans);
+    UpdatePoseMatrix(m_Matrix.get(),m_OldViewMatrix,&view_trans);
 
     m_OldViewMatrix->DeepCopy(camera->GetViewTransformMatrix());
   }

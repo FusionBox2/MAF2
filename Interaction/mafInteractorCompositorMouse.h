@@ -22,7 +22,7 @@
 #include "mafInteractorGenericMouse.h"
 #include "mafTransform.h"
 #include "mafMatrix.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 
 #include <map>
 

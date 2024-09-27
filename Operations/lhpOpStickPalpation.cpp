@@ -34,7 +34,7 @@
 #include "mafOpExplodeCollapse.h"
 #include "lhpOpImporterC3DBTK.h"
 
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 
 #include "mafVME.h"
 #include "mafVMEC3DData.h"

@@ -30,7 +30,7 @@
 #include "mafTagItem.h"
 #include "mafTagArray.h"
 #include "mafVME.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "vtkSmartPointer.h"
 #include "mafVMEDataSetAttributesImporter.h"
 #include "mafVMEGeneric.h"

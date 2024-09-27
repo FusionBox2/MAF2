@@ -34,7 +34,7 @@
 #include "mafInteractorGenericMouse.h"
 
 #include "mafTransform.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafTagArray.h"
 #include "mafVME.h"
 #include "mafVMEGizmo.h"

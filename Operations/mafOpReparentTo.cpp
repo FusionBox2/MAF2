@@ -28,7 +28,7 @@
 #include "mafVMERoot.h"
 #include "mmuTimeSet.h"
 #include "mafTransformFrame.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafVMELandmarkCloud.h"
 #include "mafAbsMatrixPipe.h"
 

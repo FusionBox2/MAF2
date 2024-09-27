@@ -44,7 +44,7 @@ const int DEBUG_MODE = false;
 #include "mafVMEItemVTK.h"
 #include "mafVMEGeneric.h"
 #include "mafDataVector.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafVMEMesh.h"
 #include "mafVMESurface.h"
 #include "mafVMEVolume.h"

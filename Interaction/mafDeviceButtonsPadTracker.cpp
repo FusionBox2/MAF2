@@ -21,7 +21,7 @@
 #include "mafGUI.h"
 
 // general
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafEventInteraction.h"
 #include "mmuIdFactory.h"
 
@@ -98,9 +98,9 @@ void mafDeviceButtonsPadTracker::InternalStore(mafStorageElementBuilder& node)
   Superclass::InternalStore(node);
   node[_R("TrackedBoxBounds")].SetValue(mafToString(m_TrackedBounds.m_Bounds,6));
   node[_R("TrackedBoxOrientation")].SetValue(mafToString(m_TrackedBoxOrientation,3));
-  if (m_DefaultAvatar)
+  if (m_DefaultAvatar.get())
   {
-    node[_R("Avatar")].SetValue(m_DefaultAvatar);
+    node[_R("Avatar")].SetValue(m_DefaultAvatar.get());
   }
 }
 //------------------------------------------------------------------------------
@@ -128,10 +128,10 @@ int mafDeviceButtonsPadTracker::InternalInitialize()
   if (Superclass::InternalInitialize()!=MAF_OK)
     return MAF_ERROR;
 
-  if (m_Avatar)
+  if (m_Avatar.get())
   {
     m_Avatar->Initialize();
-    InvokeEvent(AVATAR_ADDED,MCH_UP,m_Avatar);
+    InvokeEvent(AVATAR_ADDED,MCH_UP,m_Avatar.get());
   }
 
   m_LastPose = 0; // initialize last pose flag
@@ -141,9 +141,9 @@ int mafDeviceButtonsPadTracker::InternalInitialize()
 void mafDeviceButtonsPadTracker::InternalShutdown()
 //------------------------------------------------------------------------------
 {
-  if (m_Avatar)
+  if (m_Avatar.get())
   {
-    InvokeEvent(AVATAR_REMOVED,MCH_UP,m_Avatar);
+    InvokeEvent(AVATAR_REMOVED,MCH_UP,m_Avatar.get());
     m_Avatar->Shutdown();
   }
 
@@ -154,11 +154,11 @@ void mafDeviceButtonsPadTracker::InternalShutdown()
 void mafDeviceButtonsPadTracker::SetAvatar(mafAvatar *avatar)
 //------------------------------------------------------------------------------
 {
-  if (m_Avatar)
+  if (m_Avatar.get())
   {
     if (m_Initialized)
     {
-      InvokeEvent(AVATAR_REMOVED,MCH_UP,m_Avatar);
+      InvokeEvent(AVATAR_REMOVED,MCH_UP,m_Avatar.get());
       m_Avatar->Shutdown();
     }
 
@@ -200,7 +200,7 @@ void mafDeviceButtonsPadTracker::SetDefaultAvatar(mafAvatar *avatar)
 void mafDeviceButtonsPadTracker::RestoreDefaultAvatar()
 //------------------------------------------------------------------------------
 {
-  SetAvatar(m_DefaultAvatar);
+  SetAvatar(m_DefaultAvatar.get());
 }
 
 //------------------------------------------------------------------------------
@@ -281,14 +281,14 @@ mafMatrix &mafDeviceButtonsPadTracker::GetLastPoseMatrix()
 void mafDeviceButtonsPadTracker::SendButtonEvent(mafEventInteraction *event)
 //------------------------------------------------------------------------------
 {
-  if (m_Avatar&&m_Avatar->GetMode()==mafAvatar::MODE_2D)
+  if (m_Avatar.get() &&m_Avatar->GetMode()==mafAvatar::MODE_2D)
   {
     event->SetXYFlag(true); // signal we were in 2D mode...
   }
   
   mafAutoPointer<mafMatrix> last_pose = mafMatrix::New();
   last_pose->DeepCopy(m_LastPoseMatrix); // make a copy of current pose to ovoid overwriting
-  event->SetMatrix(last_pose);  
+  event->SetMatrix(last_pose.get());
   
   AsyncInvokeEvent(event,MCH_INPUT);
 }

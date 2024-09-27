@@ -30,7 +30,7 @@
 #include "medGizmoCrossTranslateAxis.h"
 #include "medGizmoCrossTranslatePlane.h"
 #include "mafGUIGizmoTranslate.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 
 #include "mafInteractorGenericMouse.h"
 
@@ -256,7 +256,7 @@ void medGizmoCrossTranslate::OnEventGizmoComponents(mafEventBase *maf_event)
               }
             }
             // set the new pose to the gizmo
-            SetAbsPose(newAbsMatr);
+            SetAbsPose(newAbsMatr.get());
             currTr->Delete();
           }          
           else
@@ -275,7 +275,7 @@ void medGizmoCrossTranslate::OnEventGizmoComponents(mafEventBase *maf_event)
               newAbsMatr->SetTimeStamp(GetAbsPose()->GetTimeStamp());
 
               // set the new pose to the gizmo
-              m_GTUpDown->SetAbsPose(newAbsMatr);
+              m_GTUpDown->SetAbsPose(newAbsMatr.get());
               currTr->Delete();
             }
             else if (m_ActiveGizmoComponent == TRANSLATE_LEFT_RIGHT)
@@ -291,7 +291,7 @@ void medGizmoCrossTranslate::OnEventGizmoComponents(mafEventBase *maf_event)
               newAbsMatr->SetTimeStamp(GetAbsPose()->GetTimeStamp());
 
               // set the new pose to the gizmo
-              m_GTLeftRight->SetAbsPose(newAbsMatr);
+              m_GTLeftRight->SetAbsPose(newAbsMatr.get());
               currTr->Delete();
             }
             else if (m_ActiveGizmoComponent == TRANSLATE_ON_PLANE)
@@ -307,12 +307,12 @@ void medGizmoCrossTranslate::OnEventGizmoComponents(mafEventBase *maf_event)
               newAbsMatr->SetTimeStamp(GetAbsPose()->GetTimeStamp());
 
               // set the new pose to the gizmo
-              m_GTPlane->SetAbsPose(newAbsMatr);
+              m_GTPlane->SetAbsPose(newAbsMatr.get());
               currTr->Delete();
             }     
           }
           // update only gui with gizmo abs position
-          if (m_BuildGUI) m_GuiGizmoTranslate->SetAbsPosition(newAbsMatr);
+          if (m_BuildGUI) m_GuiGizmoTranslate->SetAbsPosition(newAbsMatr.get());
         }
         else if (arg == mafInteractorGenericMouse::MOUSE_UP)
         {
@@ -466,14 +466,14 @@ void medGizmoCrossTranslate::SendTransformMatrixFromGui(mafEventBase *maf_event)
     // incoming matrix is a translation matrix
     newAbsPose->DeepCopy(e->GetMatrix()); // abs position from gui
     // copy rotation part from OldAbsPose into NewAbsPose
-    mafTransform::CopyRotation(*this->GetAbsPose(), *newAbsPose.GetPointer()); // abs orientation from old pose
+    mafTransform::CopyRotation(*this->GetAbsPose(), *newAbsPose); // abs orientation from old pose
     invOldAbsPose.DeepCopy(this->GetAbsPose());
     invOldAbsPose.Invert();
-    mafMatrix::Multiply4x4(*newAbsPose.GetPointer(), invOldAbsPose, *M.GetPointer());
+    mafMatrix::Multiply4x4(*newAbsPose, invOldAbsPose, *M);
     // update gizmo abs pose
-    this->SetAbsPose(newAbsPose, m_InputVME->GetTimeStamp());
+    this->SetAbsPose(newAbsPose.get(), m_InputVME->GetTimeStamp());
     // send transfrom to postmultiply to the listener. Events is sent as a transform event
-    SendTransformMatrix(M, ID_TRANSFORM, mafInteractorGenericMouse::MOUSE_MOVE);
+    SendTransformMatrix(M.get(), ID_TRANSFORM, mafInteractorGenericMouse::MOUSE_MOVE);
   }
 }
 //----------------------------------------------------------------------------  
@@ -484,11 +484,11 @@ void medGizmoCrossTranslate::SetAbsPose(mafMatrix *absPose, mafTimeStamp ts)
   tmpMatr->DeepCopy(absPose);
   tmpMatr->SetTimeStamp(ts);
 
-  m_GTPlane->SetAbsPose(tmpMatr);
-  m_GTUpDown->SetAbsPose(tmpMatr);
-  m_GTLeftRight->SetAbsPose(tmpMatr);
+  m_GTPlane->SetAbsPose(tmpMatr.get());
+  m_GTUpDown->SetAbsPose(tmpMatr.get());
+  m_GTLeftRight->SetAbsPose(tmpMatr.get());
 
-  if (m_BuildGUI) m_GuiGizmoTranslate->SetAbsPosition(tmpMatr);
+  if (m_BuildGUI) m_GuiGizmoTranslate->SetAbsPosition(tmpMatr.get());
 
 }
 //----------------------------------------------------------------------------

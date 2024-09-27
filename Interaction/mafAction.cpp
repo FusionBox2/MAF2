@@ -80,7 +80,7 @@ void mafAction::UnBindDevice(mafDevice *device)
   // remove the device from the list
   for (mmuDeviceList::iterator it=m_Devices.begin();it!=m_Devices.end();it++)
   {
-    if (it->GetPointer() == device)
+    if (it->get() == device)
     {
       m_Devices.erase(it);
       return;
@@ -126,7 +126,7 @@ void mafAction::InternalStore(mafStorageElementBuilder& node)
   for (auto it = m_Devices.begin(); it!=m_Devices.end(); it++)
   {
     auto subnode = node[_R("Device")];
-    mafDevice *device=it->GetPointer();
+    mafDevice *device=it->get();
     subnode(_R("Name")).SetValue(device->GetName());
     subnode(_R("ID")).SetValue((mafID)(device->GetID()));
   }
@@ -181,7 +181,7 @@ void mafAction::OnEvent(mafEventBase *event)
     
     for (auto it=m_Devices.begin();it!=m_Devices.end();++it)
     {
-      mafDevice *dev=it->GetPointer();
+      mafDevice *dev=it->get();
       if (dev->IsInitialized())
       {
         // send an event only to the inquiring object about all plugged devices

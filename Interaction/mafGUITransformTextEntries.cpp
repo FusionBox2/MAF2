@@ -26,7 +26,7 @@
 
 #include "mafGUITransformTextEntries.h"
 #include "mafDecl.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafTransformFrame.h"
 
 #include "mafGUI.h"

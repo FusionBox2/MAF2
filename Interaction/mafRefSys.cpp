@@ -131,20 +131,20 @@ mafTransformBase *mafRefSys::GetTransform()
   switch (m_Type)
   {
   case CUSTOM:
-    return m_Transform?(mafTransformBase*)m_Transform:(mafTransformBase*)m_Identity;
+    return m_Transform.get() ?(mafTransformBase*)m_Transform.get() :(mafTransformBase*)m_Identity.get();
   case GLOBAL: 
-    return m_Identity;
+    return m_Identity.get();
   case PARENT: 
-    if (m_VME && m_VME->GetParent())
+    if (m_VME.get() && m_VME->GetParent())
     {
       return m_VME->GetParent()->GetAbsMatrixPipe();
     }
-    return m_Identity;    
+    return m_Identity.get();
   case LOCAL:
-    if (m_VME.GetPointer())
+    if (m_VME.get())
       return m_VME->GetAbsMatrixPipe();
     
-    return m_Identity;
+    return m_Identity.get();
   case VIEW:
     /*
     if (m_Renderer)
@@ -155,9 +155,9 @@ mafTransformBase *mafRefSys::GetTransform()
     // 
 
     */
-    return m_Transform?(mafTransformBase*)m_Transform:(mafTransformBase*)m_Identity;
+    return m_Transform.get() ?(mafTransformBase*)m_Transform.get() :(mafTransformBase*)m_Identity.get();
   }
-  return m_Identity;
+  return m_Identity.get();
 }
 
 //----------------------------------------------------------------------------
@@ -168,7 +168,7 @@ void mafRefSys::SetMatrix(vtkMatrix4x4 *matrix)
   {
     mafAutoPointer<mafMatrix> mat = mafMatrix::New();
     mat->SetVTKMatrix(matrix);
-    SetMatrix(mat);
+    SetMatrix(mat.get());
   }
   else
   {
@@ -184,7 +184,7 @@ void mafRefSys::SetMatrix(mafMatrix *matrix)
   {
     mafAutoPointer<mafTransform> trans = mafTransform::New(); 
     trans->SetMatrixPointer(matrix);
-    SetTransform(trans);
+    SetTransform(trans.get());
   }
   else
   {
@@ -307,6 +307,6 @@ void mafRefSys::Print(std::ostream& os, const int tabs)
 
   os << indent << "m_Renderer used as Reference System:"<<m_Renderer;
 
-  os << indent << "m_VME: \""<<(m_VME?m_VME->GetName().GetCStr() :_R("NULL"))<<"\"\n";
+  os << indent << "m_VME: \""<<(m_VME.get() ?m_VME->GetName().GetCStr() :_R("NULL"))<<"\"\n";
 
 }

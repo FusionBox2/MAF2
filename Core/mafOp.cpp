@@ -25,7 +25,7 @@
 
 #include "mafOp.h"
 #include "mafDecl.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafGUI.h"
 #include "mafGUIHolder.h"
 #include "mafNode.h"

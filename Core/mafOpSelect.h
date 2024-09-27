@@ -22,14 +22,12 @@
 #include "mafEvent.h"
 #include "mafOp.h"
 #include "mafNodeIterator.h"
-#include "mafSmartPointer.h" //for mafAutoPointer
+#include "ftk/Base/RegisteringPointer.h"
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
 class mafNode;
 class vtkMatrix4x4;
-
-template class MAF_EXPORT mafAutoPointer<mafNode>;
 
 /**
     class name: mafOpSelect
@@ -48,11 +46,11 @@ public:
     /** set input node to the operation. */
     void SetInput(mafNode* vme) override;
     /** retrieve the input node. */
-    mafNode* GetInput() override {return m_OldNodeSelected;};
+    mafNode* GetInput() override {return m_OldNodeSelected.get();};
     /** selection of another node. */
     void SetNewSel(mafNode* vme);
     /** retrieve new selected node. */
-    mafNode* GetNewSel(){return m_NewNodeSelected;};
+    mafNode* GetNewSel(){return m_NewNodeSelected.get();};
     /** execute the operation.  */
     void OpDo() override;
     /** undo the operation. */

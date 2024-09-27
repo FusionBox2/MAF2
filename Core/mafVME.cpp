@@ -88,7 +88,7 @@ int mafVME::InternalInitialize()
 
   if (Superclass::InternalInitialize()==MAF_OK)
   {
-    assert(m_AbsMatrixPipe);
+    assert(m_AbsMatrixPipe.get());
     // force the abs matrix pipe to update its inputs
     m_AbsMatrixPipe->SetVME(this);
 
@@ -209,15 +209,15 @@ int mafVME::SetParent(mafNode *parent)
   // pipes to allow multiple pipes contemporary 
   // working at different times
   // 
-  if (m_DataPipe)
+  if (m_DataPipe.get())
     m_DataPipe->SetTimeStamp(t);
 
-  if (m_MatrixPipe)
+  if (m_MatrixPipe.get())
     m_MatrixPipe->SetTimeStamp(t);
   else
     InternalUpdateMatrix();
   
-  if (m_AbsMatrixPipe)
+  if (m_AbsMatrixPipe.get())
     m_AbsMatrixPipe->SetTimeStamp(t);
 
   Modified();
@@ -505,7 +505,7 @@ void mafVME::Print(std::ostream& os, const int tabs)// const
   GetOutput()->Print(os,indent.GetNextIndent());
 
   os << indent << "Matrix Pipe: ";
-  if (m_MatrixPipe)
+  if (m_MatrixPipe.get())
   {
     os << "\n";
     m_MatrixPipe->Print(os,indent.GetNextIndent());
@@ -514,7 +514,7 @@ void mafVME::Print(std::ostream& os, const int tabs)// const
     os << std::endl;
   
   os << indent << "DataPipe: ";
-  if (m_DataPipe) // allocate data pipe if not done yet
+  if (m_DataPipe.get()) // allocate data pipe if not done yet
   {
     os << "\n";
     m_DataPipe->Print(os,indent.GetNextIndent());
@@ -659,7 +659,7 @@ void mafVME::SetOutput(mafVMEOutput *output)
   }
   
   // force the update of the abs matrix pipe
-  if (m_AbsMatrixPipe.GetPointer())
+  if (m_AbsMatrixPipe.get())
     m_AbsMatrixPipe->SetVME(this);
 }
 
@@ -667,11 +667,11 @@ void mafVME::SetOutput(mafVMEOutput *output)
 int mafVME::SetMatrixPipe(mafMatrixPipe *mpipe)
 //-------------------------------------------------------------------------
 {
-  if (mpipe!=m_MatrixPipe)
+  if (mpipe!=m_MatrixPipe.get())
   {
     if (mpipe==NULL||mpipe->SetVME(this)==MAF_OK)
     { 
-      if (m_MatrixPipe)
+      if (m_MatrixPipe.get())
       {
         // detach the old pipe
         m_MatrixPipe->SetVME(NULL);
@@ -687,7 +687,7 @@ int mafVME::SetMatrixPipe(mafMatrixPipe *mpipe)
       }
       
       // this forces the the pipe to Update its input and input frame
-      if (m_AbsMatrixPipe)
+      if (m_AbsMatrixPipe.get())
         m_AbsMatrixPipe->SetVME(this);
 
       InvokeEvent(this,VME_MATRIX_CHANGED);
@@ -749,13 +749,13 @@ int mafVME::GetCrypting()
 int mafVME::SetDataPipe(mafDataPipe *dpipe)
 //-------------------------------------------------------------------------
 {
-  if (dpipe==m_DataPipe.GetPointer())
+  if (dpipe==m_DataPipe.get())
     return MAF_OK;
 
   if (dpipe==NULL||dpipe->SetVME(this)==MAF_OK)
   { 
     // if we had an observer...
-    if (m_DataPipe)
+    if (m_DataPipe.get())
     {
       // detach the old pipe
       m_DataPipe->SetVME(NULL);
@@ -763,7 +763,7 @@ int mafVME::SetDataPipe(mafDataPipe *dpipe)
 
     m_DataPipe = dpipe;
     
-    if (m_DataPipe)
+    if (m_DataPipe.get())
     {
       m_DataPipe->SetVME(this);
       m_DataPipe->SetTimeStamp(m_CurrentTime);
@@ -829,7 +829,7 @@ void mafVME::OnEvent(mafEventBase *maf_event)
 			{
         InternalUpdateMatrix();//Self process the event
 				mafEventBase absEvent(this, VME_ABSMATRIX_UPDATE);
-				if (maf_event->GetSender() == m_AbsMatrixPipe)
+				if (maf_event->GetSender() == m_AbsMatrixPipe.get())
 				{
 					InvokeEvent(&absEvent);
 				}

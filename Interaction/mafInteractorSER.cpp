@@ -42,7 +42,7 @@ void mafInteractorSER::InternalStore(mafStorageElementBuilder& node)
 {
   for (mmuActionsMap::iterator it=m_Actions.begin();it!=m_Actions.end();it++)
   {
-    mafAction *action=it->second;
+    mafAction *action=it->second.get();
     node[_R("Action")].SetValue(action);
   }
 }
@@ -71,7 +71,7 @@ mafAction *mafInteractorSER::GetAction(const char *name)
 //------------------------------------------------------------------------------
 {
   auto it=m_Actions.find(_R(name));
-  return (it!=m_Actions.end()?it->second:NULL);
+  return (it!=m_Actions.end()?it->second.get() :nullptr);
 }
 
 //------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ void mafInteractorSER::GetActions(std::vector<mafAction *> &actions)
   int i=0;
   for (std::map<mafString,mafAutoPointer<mafAction> >::iterator it=m_Actions.begin();it!=m_Actions.end();it++,i++)
   {
-    actions[i]=it->second;
+    actions[i]=it->second.get();
   }
 }
 //------------------------------------------------------------------------------
@@ -124,9 +124,9 @@ mafAction *mafInteractorSER::AddAction(const char *name, float priority, int typ
   mafAutoPointer<mafAction> action = mafAction::New();
   action->SetName(_R(name));
   action->SetType(type);
-  AddAction(action,priority);
+  AddAction(action.get(),priority);
   
-  return action;
+  return action.get();
 }
 
 //------------------------------------------------------------------------------

@@ -580,7 +580,7 @@ void mafPipeMesh::UpdateActiveScalarsInVMEDataVectorItems()
 
   for (auto& elem : *((mafVMEMesh *)m_Vme)->GetDataVector())
   {
-    mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(elem.second);
+    mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(elem.second.get());
     assert(item);
 
     vtkUnstructuredGrid *outputVTK = vtkUnstructuredGrid::SafeDownCast(item->GetData());

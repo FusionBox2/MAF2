@@ -198,7 +198,7 @@ void medOpSurfaceMirror::OpDo()
 				synthetic_name.append(((mafVMEGroup*)m_Input)->GetChild(i)->GetName());
 				node->SetName(synthetic_name);
 				
-				((mafVMEGroup*)m_Input)->AddChild(node);
+				((mafVMEGroup*)m_Input)->AddChild(node.get());
 
 
 				vtkNEW(m_InputPolydata);
@@ -249,7 +249,7 @@ void medOpSurfaceMirror::OpDo()
 					synthetic_name.append(((mafVMEGroup*)m_Input)->GetChild(i)->GetName());
 					node->SetName(synthetic_name);
 
-					((mafVMEGroup*)m_Input)->AddChild(node);
+					((mafVMEGroup*)m_Input)->AddChild(node.get());
 					std::vector<mafTimeStamp> stamps;
 					cloud->GetLocalTimeStamps(stamps);
 					for (unsigned i = 0; i < stamps.size(); i++)

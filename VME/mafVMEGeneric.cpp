@@ -93,7 +93,7 @@ int mafVMEGeneric::SetData(vtkDataSet *data, mafTimeStamp t, int mode)
   }
 
   item->SetTimeStamp(t);
-  GetDataVector()->InsertItem(item);
+  GetDataVector()->InsertItem(item.get());
 
   Modified();
   if(m_EnableModifiedEvent)

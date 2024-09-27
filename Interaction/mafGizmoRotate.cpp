@@ -29,7 +29,7 @@
 #include "mafGizmoRotateCircle.h"
 #include "mafGizmoRotateFan.h"
 #include "mafGUIGizmoRotate.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 
 #include "mafInteractorGenericMouse.h"
 
@@ -311,18 +311,18 @@ void mafGizmoRotate::SetAbsPose(mafMatrix *absPose, bool applyPoseToFans)
 
   mafAutoPointer<mafMatrix> tmpMatr = mafMatrix::New();
   tmpMatr->SetTimeStamp(absPose->GetTimeStamp());
-  mafTransform::SetPosition(*tmpMatr.GetPointer(), pos);
-  mafTransform::SetOrientation(*tmpMatr.GetPointer(), orient);
+  mafTransform::SetPosition(*tmpMatr, pos);
+  mafTransform::SetOrientation(*tmpMatr, orient);
 
   for (int i = 0; i < 3; i++)
   {
-    m_GRCircle[i]->SetAbsPose(tmpMatr);
+    m_GRCircle[i]->SetAbsPose(tmpMatr.get());
     if (applyPoseToFans == true)
     {
-      m_GRFan[i]->SetAbsPose(tmpMatr);
+      m_GRFan[i]->SetAbsPose(tmpMatr.get());
     }
   }
-  if (m_BuildGUI) m_GuiGizmoRotate->SetAbsOrientation(tmpMatr);
+  if (m_BuildGUI) m_GuiGizmoRotate->SetAbsOrientation(tmpMatr.get());
 }
 
 //----------------------------------------------------------------------------
@@ -369,18 +369,18 @@ void mafGizmoRotate::SendTransformMatrixFromGui(mafEventBase *maf_event)
     // incoming matrix is a rotation matrix
     newAbsPose->DeepCopy(GetAbsPose());
     // copy rotation from incoming matrix
-    mafTransform::CopyRotation(*e->GetMatrix(), *newAbsPose.GetPointer());
+    mafTransform::CopyRotation(*e->GetMatrix(), *newAbsPose);
 
     invOldAbsPose.DeepCopy(this->GetAbsPose());
     invOldAbsPose.Invert();
 
-    mafMatrix::Multiply4x4(*newAbsPose.GetPointer(),invOldAbsPose,*M.GetPointer());
+    mafMatrix::Multiply4x4(*newAbsPose,invOldAbsPose,*M);
 
     // update gizmo abs pose
-    this->SetAbsPose(newAbsPose, true);
+    this->SetAbsPose(newAbsPose.get(), true);
 
     // send transfrom to postmultiply to the listener. Events is sent as a transform event
-    SendTransformMatrix(M, ID_TRANSFORM, mafInteractorGenericMouse::MOUSE_MOVE);
+    SendTransformMatrix(M.get(), ID_TRANSFORM, mafInteractorGenericMouse::MOUSE_MOVE);
   }
 }
 

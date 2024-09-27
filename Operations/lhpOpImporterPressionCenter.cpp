@@ -21,7 +21,7 @@
 #include "mafDecl.h"
 #include "mafGUI.h"
 
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafVME.h"
 #include "vtkSmartPointer.h"
 #include "mafVMEGroup.h"

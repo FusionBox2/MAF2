@@ -22,7 +22,7 @@
 //----------------------------------------------------------------------------
 #include "mafEvent.h"
 #include "mafGizmoInterface.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 
 //----------------------------------------------------------------------------
 // forward references :

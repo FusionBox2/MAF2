@@ -152,13 +152,13 @@ public:
   //int GetAuxiliaryRefSys(vtkMatrix4x4 *AuxRefSys, const char *RefSysName, int type = MFL_LOCAL_FRAME_TAG);
   
   /** return the matrix pipe object, i.e. the source of the output matrix. */
-  mafMatrixPipe *GetMatrixPipe() {return m_MatrixPipe;}
+  mafMatrixPipe *GetMatrixPipe() {return m_MatrixPipe.get();}
   
   /** return the matrix pipe used for computing the AbsMatrix.*/
-  mafAbsMatrixPipe *GetAbsMatrixPipe() {return m_AbsMatrixPipe;}
+  mafAbsMatrixPipe *GetAbsMatrixPipe() {return m_AbsMatrixPipe.get();}
   
   /** return the data pipe object, i.e. the source of the output dataset. */
-  mafDataPipe *GetDataPipe() {return m_DataPipe;}
+  mafDataPipe *GetDataPipe() {return m_DataPipe.get();}
 
   /**
     this function makes the current data pointer to point the right output

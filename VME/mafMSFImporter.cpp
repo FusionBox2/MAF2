@@ -638,7 +638,7 @@ int mafMSFImporter::RestoreVItem(const mafStorageElement& node, mafVME *vme)
           vitem->SetId(item_id);
           vitem->SetURL(data_file.GetCStr());
           vitem->SetDataType(data_type);
-          vme_generic->GetDataVector()->AppendItem(vitem);
+          vme_generic->GetDataVector()->AppendItem(vitem.get());
           vme_generic->GetDataVector()->SetCrypting(vitem->GetCrypting());
           return MAF_OK;
         } // DataFile
@@ -666,7 +666,7 @@ int mafMSFImporter::RestoreVMatrix(const mafStorageElement& node, mafMatrixVecto
     //int restored_matrix = children[i].ReSetValue(*matrix);
     //if (restored_matrix != MAF_ERROR)
     {
-      vmatrix->AppendKeyMatrix(matrix);
+      vmatrix->AppendKeyMatrix(matrix.get());
     }
     //else
     {

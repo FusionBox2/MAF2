@@ -33,7 +33,7 @@ PURPOSE.  See the above copyright notice for more information.
 #include "mafDecl.h"
 #include "mafGizmoScaleAxis.h"
 #include "mafGizmoScaleIsotropic.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafInteractorGenericMouse.h"
 
 // vtk includes
@@ -230,7 +230,7 @@ void mafGizmoScale::OnEventGizmoComponents(mafEventBase *maf_event)
 						newAbsMatr->SetTimeStamp(GetAbsPose()->GetTimeStamp());
 
 						// set the new pose to the gizmo
-						m_GSAxis[m_ActiveGizmoComponent]->SetAbsPose(newAbsMatr);
+						m_GSAxis[m_ActiveGizmoComponent]->SetAbsPose(newAbsMatr.get());
 
 						currTr->Delete();
 					}
@@ -254,11 +254,11 @@ void mafGizmoScale::OnEventGizmoComponents(mafEventBase *maf_event)
 							currTr->Update();
 
 							mafAutoPointer<mafMatrix> newAbsMatr = mafMatrix::New();
-							newAbsMatr->DeepCopy(currTr.GetPointer()->GetMatrixPointer());
+							newAbsMatr->DeepCopy(currTr.get()->GetMatrixPointer());
 							newAbsMatr->SetTimeStamp(GetAbsPose()->GetTimeStamp());
 
 							// set the new pose to the gizmo
-							m_GSAxis[gizmoId]->SetAbsPose(newAbsMatr);
+							m_GSAxis[gizmoId]->SetAbsPose(newAbsMatr.get());
 						}
 					}
 					////////////////////////////////////////
@@ -327,16 +327,16 @@ void mafGizmoScale::OnEventGizmoComponents(mafEventBase *maf_event)
 					scaleTransMatrix->DeepCopy(scaleTrans.GetPointer()->GetMatrix());
 
 					mafAutoPointer<mafTransformFrame> newVmeAbsPoseTr = mafTransformFrame::New();
-					newVmeAbsPoseTr.GetPointer()->SetInput(scaleTransMatrix);
-					newVmeAbsPoseTr.GetPointer()->SetInputFrame(m_RefSysVMEAbsMatrixAtMouseDown);
+					newVmeAbsPoseTr->SetInput(scaleTransMatrix.get());
+					newVmeAbsPoseTr->SetInputFrame(m_RefSysVMEAbsMatrixAtMouseDown);
 
 					// Set VME Pose
-					m_InputVME->SetAbsMatrix(newVmeAbsPoseTr.GetPointer()->GetMatrix());
+					m_InputVME->SetAbsMatrix(newVmeAbsPoseTr->GetMatrix());
 
 					// notify the vme about changed vme abs pose due to scaling; also send new vme bs matrix
 					mafEvent e2s;
 					e2s.SetSender(this);
-					e2s.SetMatrix((newVmeAbsPoseTr.GetPointer())->GetMatrixPointer());
+					e2s.SetMatrix(newVmeAbsPoseTr->GetMatrixPointer());
 					e2s.SetId(ID_TRANSFORM);
 					mafEventMacro(e2s);
 
@@ -344,7 +344,7 @@ void mafGizmoScale::OnEventGizmoComponents(mafEventBase *maf_event)
 					mafAutoPointer<mafMatrix> scaleMat = mafMatrix::New();
 					scaleMat->DeepCopy(absScaleTrans->GetMatrix());
 
-					if (m_BuildGUI) m_GuiGizmoScale->SetAbsScaling(scaleMat);
+					if (m_BuildGUI) m_GuiGizmoScale->SetAbsScaling(scaleMat.get());
 				}
 				else if (arg == mafInteractorGenericMouse::MOUSE_UP)
 				{
@@ -354,7 +354,7 @@ void mafGizmoScale::OnEventGizmoComponents(mafEventBase *maf_event)
 					// Update scale gizmo gui 
 					mafAutoPointer<mafMatrix> identity = mafMatrix::New();
 					identity->Identity();
-					if (m_BuildGUI) m_GuiGizmoScale->SetAbsScaling(identity);
+					if (m_BuildGUI) m_GuiGizmoScale->SetAbsScaling(identity.get());
 				}
 
 				// forward event to the listener ie the operation
@@ -528,11 +528,11 @@ void mafGizmoScale::SendTransformMatrixFromGui(mafEventBase *maf_event)
 	scaleTransformMatrix->DeepCopy(scaleTransform.GetPointer()->GetMatrix());
 
 	mafAutoPointer<mafTransformFrame> newVmeAbsPoseTransformFrame = mafTransformFrame::New();
-	newVmeAbsPoseTransformFrame.GetPointer()->SetInput(scaleTransformMatrix);
-	newVmeAbsPoseTransformFrame.GetPointer()->SetInputFrame(refSysVMEAbsMatrix);
+	newVmeAbsPoseTransformFrame->SetInput(scaleTransformMatrix.get());
+	newVmeAbsPoseTransformFrame->SetInputFrame(refSysVMEAbsMatrix);
 
 	mafMatrix newAbsPose;
-	newAbsPose = newVmeAbsPoseTransformFrame.GetPointer()->GetMatrix();
+	newAbsPose = newVmeAbsPoseTransformFrame->GetMatrix();
 
 	m_InputVME->SetAbsMatrix(newAbsPose , m_InputVME->GetTimeStamp());
 
@@ -544,7 +544,7 @@ void mafGizmoScale::SendTransformMatrixFromGui(mafEventBase *maf_event)
 
 	mafAutoPointer<mafMatrix> identity = mafMatrix::New();
 	identity->Identity();
-	if (m_BuildGUI) m_GuiGizmoScale->SetAbsScaling(identity);
+	if (m_BuildGUI) m_GuiGizmoScale->SetAbsScaling(identity.get());
 
 }
 
@@ -568,11 +568,11 @@ void mafGizmoScale::SetAbsPose(mafMatrix *absPose, mafTimeStamp ts)
 
 	for (int i = 0; i < 3; i++)
 	{
-		m_GSAxis[i]->SetAbsPose(tmpMatr);
+		m_GSAxis[i]->SetAbsPose(tmpMatr.get());
 	}
 
-	m_GSIsotropic->SetAbsPose(tmpMatr);
-	if (m_BuildGUI) m_GuiGizmoScale->SetAbsScaling(tmpMatr);
+	m_GSIsotropic->SetAbsPose(tmpMatr.get());
+	if (m_BuildGUI) m_GuiGizmoScale->SetAbsScaling(tmpMatr.get());
 }
 
 //----------------------------------------------------------------------------

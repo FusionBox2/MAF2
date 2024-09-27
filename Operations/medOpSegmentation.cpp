@@ -517,7 +517,7 @@ void medOpSegmentation::DeleteOutputs(mafNode* vme)
   const  mafNode::mafChildrenVector *children = vme->GetChildren();
   for(int i = 0; i < children->size(); i++)
   {
-    mafNode *child = children->at(i);
+    mafNode *child = children->at(i).get();
     DeleteOutputs(child);
     if(IsOutput(child))
     {

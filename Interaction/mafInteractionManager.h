@@ -20,7 +20,7 @@
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"
 #include "ftk/Base/String.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 
 #include <map>
 #include <set>

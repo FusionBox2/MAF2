@@ -95,7 +95,7 @@ protected:
       Fitting can occur according to different modalities.
       @sa ComputeScaling() */ 
   static void AutoFitting(mafMatrix *matrix,mafOBB *tracked_bounds,vtkRenderer *ren);  
-  void AutoFitting() {AutoFitting(m_Matrix,m_Bounds,m_Renderer);}
+  void AutoFitting() {AutoFitting(m_Matrix.get(),m_Bounds,m_Renderer);}
 
   /** Compute scale between two boxes in order to fit viewport Y */
   static void ComputeScaling(mafOBB *inBox, mafOBB *outBox,double *scale);

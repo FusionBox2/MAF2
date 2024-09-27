@@ -101,13 +101,13 @@ void mafOpSelect::SetNewSel(mafNode* vme)
 void mafOpSelect::OpDo()
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this,VME_SELECTED,m_NewNodeSelected); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_SELECTED,m_NewNodeSelected.get()); mafEventMacro(evUnq);}
 };
 //----------------------------------------------------------------------------
 void mafOpSelect::OpUndo()
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this,VME_SELECTED,m_OldNodeSelected); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_SELECTED,m_OldNodeSelected.get()); mafEventMacro(evUnq);}
 };
 
 
@@ -147,7 +147,7 @@ void mafOpEdit::ClipboardClear()
 void mafOpEdit::ClipboardBackup()
 //----------------------------------------------------------------------------
 {
-  assert(m_Backup.GetPointer() == NULL);
+  assert(!m_Backup.get());
   m_Backup = GetClipboard();
   SetClipboard(NULL);
 }
@@ -156,14 +156,14 @@ void mafOpEdit::ClipboardRestore()
 //----------------------------------------------------------------------------
 {
   //assert(m_Backup.GetPointer() ); - //SIL. 6-11-2003: assert removed, I may make a backup of an empy clipboard
-  SetClipboard(m_Backup);
+  SetClipboard(m_Backup.get());
   m_Backup = NULL;
 }
 //----------------------------------------------------------------------------
 mafNode* mafOpEdit::GetClipboard()
 //----------------------------------------------------------------------------
 {
-  return m_Clipboard;
+  return m_Clipboard.get();
 }
 //----------------------------------------------------------------------------
 void mafOpEdit::SetClipboard(mafNode *node)
@@ -216,27 +216,27 @@ Select the vme parent
 {
   ClipboardBackup();
   m_SelectionParent = m_Selection->GetParent();
-  SetClipboard(m_Selection);
+  SetClipboard(m_Selection.get());
 
   //////////////////////////////////////////////////////////////////////////
   // It is necessary load all vtk data of the vme time varying otherwise paste or undo cause an application crash
   //////////////////////////////////////////////////////////////////////////
-  LoadVTKData(m_Selection);
+  LoadVTKData(m_Selection.get());
 
   //////////////////////////////////////////////////////////////////////////
   // Added by Losi on 03.06.2010, modify by Di Cosmo
   // It is necessary to load all vtk data of children vme otherwise paste or undo cause an application crash
   //////////////////////////////////////////////////////////////////////////
-  mafVME *m_SelectionVme = mafVME::SafeDownCast(m_Selection);
+  mafVME *m_SelectionVme = mafVME::SafeDownCast(m_Selection.get());
   if(m_SelectionVme)
     LoadChild(m_SelectionVme);
   //////////////////////////////////////////////////////////////////////////
 
-  {mafEvent evUnq(this,VME_REMOVE,m_Selection); mafEventMacro(evUnq);}
-  {mafEvent evUnq(this,VME_SELECTED,m_SelectionParent); mafEventMacro(evUnq);}
-  if (mafVME::SafeDownCast(m_SelectionParent.GetPointer()))
+  {mafEvent evUnq(this,VME_REMOVE,m_Selection.get()); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_SELECTED,m_SelectionParent.get()); mafEventMacro(evUnq);}
+  if (mafVME::SafeDownCast(m_SelectionParent.get()))
   {
-    ((mafVME *)m_SelectionParent.GetPointer())->GetOutput()->Update();
+    ((mafVME *)m_SelectionParent.get())->GetOutput()->Update();
   }
 }
 //----------------------------------------------------------------------------
@@ -270,7 +270,7 @@ void mafOpCut::LoadChild(mafNode *vme)
   {
     for(int c = 0; c < children->size(); c++)
     {
-      mafNode *child = children->at(c);
+      mafNode *child = children->at(c).get();
       LoadVTKData(child);
       LoadChild(child);
     }
@@ -289,25 +289,25 @@ Restore the Selection
   m_Selection = GetClipboard();
 
 #ifdef MAF_USE_VTK
-  if (m_SelectionParent->IsMAFType(mafVMELandmarkCloud) && !((mafVMELandmarkCloud *)m_SelectionParent.GetPointer())->IsOpen())
+  if (m_SelectionParent->IsMAFType(mafVMELandmarkCloud) && !((mafVMELandmarkCloud *)m_SelectionParent.get())->IsOpen())
   {
-    ((mafVMELandmarkCloud *)m_SelectionParent.GetPointer())->Open();
-    m_Selection->ReparentTo(m_SelectionParent);
-    ((mafVMELandmarkCloud *)m_SelectionParent.GetPointer())->Close();
+    ((mafVMELandmarkCloud *)m_SelectionParent.get())->Open();
+    m_Selection->ReparentTo(m_SelectionParent.get());
+    ((mafVMELandmarkCloud *)m_SelectionParent.get())->Close();
   }
   else
   {
-    m_Selection->ReparentTo(m_SelectionParent);
+    m_Selection->ReparentTo(m_SelectionParent.get());
   }
 #else
     m_Selection->ReparentTo(m_SelectionParent);
 #endif
 
-  if (mafVME::SafeDownCast(m_SelectionParent.GetPointer()))
+  if (mafVME::SafeDownCast(m_SelectionParent.get()))
   {
-    ((mafVME *)m_SelectionParent.GetPointer())->GetOutput()->Update();
+    ((mafVME *)m_SelectionParent.get())->GetOutput()->Update();
   }
-  {mafEvent evUnq(this,VME_SELECTED,m_Selection); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_SELECTED,m_Selection.get()); mafEventMacro(evUnq);}
   ClipboardRestore();
 }
 
@@ -377,7 +377,7 @@ Select the vme parent
           mafVMEItem *item;
           for (auto& entry : *dv)
           {
-            item = entry.second;
+            item = entry.second.get();
             data_filename = _R(item->GetURL());
             storage->ReleaseURL(data_filename);
           }
@@ -387,8 +387,8 @@ Select the vme parent
   }
   iter->Delete();
   m_SelectionParent = m_Selection->GetParent(); 
-  {mafEvent evUnq(this,VME_REMOVE,m_Selection); mafEventMacro(evUnq);}
-  {mafEvent evUnq(this,VME_SELECTED,m_SelectionParent); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_REMOVE,m_Selection.get()); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_SELECTED,m_SelectionParent.get()); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpDelete::OpUndo()
@@ -498,7 +498,7 @@ Them a VME_ADD is sent, selection is not changed
 */
 {
   m_PastedVme = GetClipboard(); 
-  m_PastedVme->ReparentTo(m_Selection);
+  m_PastedVme->ReparentTo(m_Selection.get());
   SetClipboard(m_PastedVme->CopyTree());
 }
 //----------------------------------------------------------------------------
@@ -509,8 +509,8 @@ Remove the pasted vme from the scene and place it in the clipboard.
 The copy in the clipboard will be automatically deleted
 */
 {
-  SetClipboard(m_PastedVme);
-  {mafEvent evUnq(this,VME_REMOVE,m_PastedVme); mafEventMacro(evUnq);}
+  SetClipboard(m_PastedVme.get());
+  {mafEvent evUnq(this,VME_REMOVE,m_PastedVme.get()); mafEventMacro(evUnq);}
 }
 
 /*

@@ -27,7 +27,7 @@
 #include "mafTransform.h"
 #include "mafTransformFrame.h"
 
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafMatrix3x3.h"
 #include "mafDataVector.h"
 #include "mafMatrixVector.h"

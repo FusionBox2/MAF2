@@ -18,7 +18,7 @@
 #define __mafRefSys_h
 
 #include "mafConfigure.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafVME.h"
 #include "mafTransform.h"
 #include <iostream>
@@ -30,10 +30,6 @@
 class mafMatrix;
 class vtkMatrix4x4;
 class vtkRenderer;
-
-template class mafAutoPointer<mafVME>;
-template class mafAutoPointer<mafTransform>;
-template class mafAutoPointer<mafTransformBase>;
 
 /** class representing reference system
 
@@ -170,7 +166,7 @@ public:
   void SetVME(mafVME *vme);
 
   /** return the reference to the VME stored inside the RefSys */
-  mafVME *GetVME() {return m_VME;}
+  mafVME *GetVME() {return m_VME.get();}
 
 
   /** Debug printing of internal data */

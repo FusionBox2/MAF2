@@ -19,7 +19,7 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafMatrixPipe.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 
 //----------------------------------------------------------------------------
 // forward declarations
@@ -44,7 +44,7 @@ public:
   bool Accept(mafVME *vme) override;
 
   /**  Get the output of the interpolator item. */
-  mafMatrix *GetCurrentItem() {return m_CurrentItem;}
+  mafMatrix *GetCurrentItem() {return m_CurrentItem.get();}
 
   /**
   Set the current time. Overidden to allow the output not to change when 

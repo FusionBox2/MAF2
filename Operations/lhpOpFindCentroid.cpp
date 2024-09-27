@@ -88,7 +88,7 @@ void lhpOpFindCentroid::OpRun()
 
   for(auto& elem : *dvect)
   {
-    mafVMEItemVTK *ivtk = mafVMEItemVTK::SafeDownCast(elem.second);
+    mafVMEItemVTK *ivtk = mafVMEItemVTK::SafeDownCast(elem.second.get());
     if(!ivtk)
       continue;
     vtkPoints    *pts;

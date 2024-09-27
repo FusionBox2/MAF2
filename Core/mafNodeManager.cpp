@@ -72,20 +72,20 @@ void mafNodeManager::OnEvent(mafEventBase *maf_event)
 mafNode *mafNodeManager::GetRoot()
 //----------------------------------------------------------------------------
 {
-  return m_Root;
+  return m_Root.get();
 }
 
 //----------------------------------------------------------------------------
 bool mafNodeManager::SetRoot(mafNode *root)
 //----------------------------------------------------------------------------
 {
-  NotifyRemove(m_Root);
+  NotifyRemove(m_Root.get());
   if(mafRoot *rt = mafRoot::SafeDownCast(GetRoot()))
     rt->SetListener(NULL);
   m_Root = root;
   if(mafRoot *rt = mafRoot::SafeDownCast(GetRoot()))
     rt->SetListener(this);
-  NotifyAdd(m_Root);
+  NotifyAdd(m_Root.get());
   return true;
 }
 //----------------------------------------------------------------------------
@@ -102,7 +102,7 @@ void mafNodeManager::VmeAdd(mafNode *n)
     return;
   }
   if(vp == NULL) 
-    n->ReparentTo(m_Root); // reparent the node to the root
+    n->ReparentTo(m_Root.get()); // reparent the node to the root
   m_Modified = true;
 }
 //----------------------------------------------------------------------------
@@ -111,7 +111,7 @@ void mafNodeManager::VmeRemove(mafNode *n)
 {
   if(n == NULL)
     return ;
-  if(!m_Root || !m_Root->IsInTree(n))
+  if(!m_Root.get() || !m_Root->IsInTree(n))
   {
     assert(false);
     return;
@@ -149,10 +149,10 @@ void mafNodeManager::InternalStore(mafStorageElementBuilder& node)
 //------------------------------------------------------------------------------
 {
   // here should write elements specific for the document
-  if(!m_Root)
+  if(!m_Root.get())
     return;
   //return 
-  node[_R("Root")].SetValue(m_Root);// != MAF_OK ? MAF_ERROR : MAF_OK;
+  node[_R("Root")].SetValue(m_Root.get());// != MAF_OK ? MAF_ERROR : MAF_OK;
 }
 
 //------------------------------------------------------------------------------

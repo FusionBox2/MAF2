@@ -27,7 +27,7 @@ PURPOSE.  See the above copyright notice for more information.
 
 #include "mafDecl.h"
 #include "mafVME.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 
 #include "mafVMEGenericAbstract.h"
 #include "mafVMERoot.h"
@@ -126,7 +126,7 @@ void medOpFreezeVME::OpRun()
 			}
 
 			newVolume->SetMatrix(*labeledVolume->GetOutput()->GetMatrix());
-			m_Output=newVolume;
+			m_Output=newVolume.get();
 			if (m_Output)
 			{
 				m_Output->ReparentTo(m_Input->GetParent());
@@ -154,7 +154,7 @@ void medOpFreezeVME::OpRun()
 				}
 
 				newVolume->SetMatrix(*labeledVolume->GetOutput()->GetMatrix());
-				m_Output=newVolume;
+				m_Output=newVolume.get();
 				if (m_Output)
 				{
 					m_Output->ReparentTo(m_Input->GetParent());
@@ -181,7 +181,7 @@ void medOpFreezeVME::OpRun()
 						newPolyline->GetMaterial()->UpdateProp();
 					}
 					newPolyline->SetMatrix(*vmeSpline->GetOutput()->GetMatrix());
-					m_Output=newPolyline;
+					m_Output=newPolyline.get();
 					if (m_Output)
 					{
 						m_Output->ReparentTo(m_Input->GetParent());
@@ -205,7 +205,7 @@ void medOpFreezeVME::OpRun()
 					}
 
 					newSurface->SetMatrix(*vmeSurface->GetOutput()->GetMatrix());
-					m_Output=newSurface;
+					m_Output=newSurface.get();
 					if (m_Output)
 					{
 						m_Output->ReparentTo(m_Input->GetParent());
@@ -229,7 +229,7 @@ void medOpFreezeVME::OpRun()
 					}
 
 					newPolyline->SetMatrix(*meter->GetOutput()->GetMatrix());
-					m_Output=newPolyline;
+					m_Output=newPolyline.get();
 					if (m_Output)
 					{
 						m_Output->ReparentTo(m_Input->GetParent());
@@ -253,7 +253,7 @@ void medOpFreezeVME::OpRun()
 					}
 
 					surface->SetMatrix(*refsys->GetOutput()->GetMatrix());
-					m_Output=surface;
+					m_Output=surface.get();
 					if (m_Output)
 					{
 						m_Output->ReparentTo(m_Input->GetParent());
@@ -281,7 +281,7 @@ void medOpFreezeVME::OpRun()
 					}
 
 					newSurface->SetMatrix(*slicer->GetOutput()->GetMatrix());
-					m_Output=newSurface;
+					m_Output=newSurface.get();
 					if (m_Output)
 					{
 						m_Output->ReparentTo(m_Input->GetParent());
@@ -306,7 +306,7 @@ void medOpFreezeVME::OpRun()
 					}
 
 					newSurface->SetMatrix(*prober->GetOutput()->GetMatrix());
-					m_Output=newSurface;
+					m_Output=newSurface.get();
 					if (m_Output)
 					{
 						m_Output->ReparentTo(m_Input->GetParent());
@@ -330,7 +330,7 @@ void medOpFreezeVME::OpRun()
 					}
 
 					newPolyline->SetMatrix(*wrappedMeter->GetOutput()->GetMatrix());
-					m_Output=newPolyline;
+					m_Output=newPolyline.get();
 					if (m_Output)
 					{
 						m_Output->ReparentTo(m_Input->GetParent());
@@ -354,7 +354,7 @@ void medOpFreezeVME::OpRun()
 					}
 
 					newPolyline->SetMatrix(*wrappedMeter->GetOutput()->GetMatrix());
-					m_Output=newPolyline;
+					m_Output=newPolyline.get();
 					if (m_Output)
 					{
 						m_Output->ReparentTo(m_Input->GetParent());

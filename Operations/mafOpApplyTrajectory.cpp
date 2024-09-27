@@ -35,7 +35,7 @@
 #include "mafTransform.h"
 #include "mafMatrix.h"
 #include "mafMatrixVector.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 
 #include <iostream>
 #include <fstream>

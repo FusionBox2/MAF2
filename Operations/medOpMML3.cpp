@@ -1494,7 +1494,7 @@ void medOpMML3::OnRegistrationOK()
 
   // add to tree (save now)
   //OurMuscleVME->AddChild(vme);
-  {mafEvent evUnq(this, VME_ADD, vme); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, VME_ADD, vme.get()); mafEventMacro(evUnq);}
 }
 
 

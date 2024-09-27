@@ -32,7 +32,7 @@
 
 #include "mafOpExplodeCollapse.h"
 
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafMatrixVector.h"
 #include "mafDataVector.h"
 #include "mafVME.h"

@@ -295,8 +295,8 @@ void mafOpManager::OpRun(mafOp *op, void *op_param)
         synthetic_vme->GetTagArray()->SetTag(mafTagItem(_R("VME_NATURE"), _R("SYNTHETIC")));
       {mafEvent evUnq(this,VME_SHOW,m_Selected,false); mafEventMacro(evUnq);}
       m_NaturalNode = m_Selected;
-      {mafEvent evUnq(this,VME_SELECT,synthetic_vme,true); mafEventMacro(evUnq);}
-      {mafEvent evUnq(this,VME_SHOW,synthetic_vme,true); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,VME_SELECT,synthetic_vme.get(),true); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,VME_SHOW,synthetic_vme.get(),true); mafEventMacro(evUnq);}
     }
     else
     {

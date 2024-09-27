@@ -29,7 +29,7 @@
 #include "mafEvent.h"
 #include "mafVME.h"
 #include "mafTagArray.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 
 //----------------------------------------------------------------------------
 // forward references :
@@ -143,7 +143,7 @@ public:
 
     reader->Read();
 
-    m_Vme = reader;
+    m_Vme = reader.get();
 
     mafString path, name, ext;
     mafSplitPath(m_File,&path,&name,&ext);

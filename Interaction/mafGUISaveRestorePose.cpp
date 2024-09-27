@@ -27,7 +27,7 @@
 #include "mafGUISaveRestorePose.h"
 #include "mafDecl.h"
 #include "mafGUI.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 
 #include "mafMatrix.h"
 #include "mafTransform.h"

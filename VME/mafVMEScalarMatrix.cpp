@@ -120,7 +120,7 @@ int mafVMEScalarMatrix::SetData(vnl_matrix<double> &data, mafTimeStamp t)
   mafAutoPointer<mafVMEItemScalarMatrix> item = mafVMEItemScalarMatrix::New();
   item->SetData(data);
   item->SetTimeStamp(t);
-  GetDataVector()->InsertItem(item);
+  GetDataVector()->InsertItem(item.get());
 
   return MAF_OK;
 }

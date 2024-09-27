@@ -218,7 +218,7 @@ void mafNode::ForwardDownEvent(mafEventBase *maf_event)
     for (unsigned int i=0;i<GetNumberOfChildren();i++)
     {
       maf_event->SetChannel(MCH_DOWN);
-      mafNode *child=m_Children[i];
+      mafNode *child=m_Children[i].get();
       child->OnEvent(maf_event);
     }
   }
@@ -263,7 +263,7 @@ unsigned long mafNode::GetNumberOfChildren(bool onlyVisible /*=false*/)
     unsigned long visibleNodes=0;
     //counting visible nodes
     for (int i=0;i<m_Children.size();i++)
-      if (m_Children[i].GetPointer()->IsVisible())
+      if (m_Children[i]->IsVisible())
         visibleNodes++;
     return visibleNodes;
   }
@@ -288,8 +288,8 @@ mafNode *mafNode::GetFirstChild(bool onlyVisible /*=false*/)
   {
     //searching for first visible node
     for (int i=0;i<m_Children.size();i++)
-      if (m_Children[i].GetPointer()->IsVisible())
-        return m_Children[i].GetPointer();
+      if (m_Children[i]->IsVisible())
+        return m_Children[i].get();
     //if no visible node was found return NULL
     return NULL;
   }
@@ -307,8 +307,8 @@ mafNode *mafNode::GetLastChild(bool onlyVisible /*=false*/)
   {
     //searching for last visible node
     for (int i=m_Children.size()-1;i>=0;i--)
-      if (m_Children[i].GetPointer()->IsVisible())
-        return m_Children[i].GetPointer();
+      if (m_Children[i]->IsVisible())
+        return m_Children[i].get();
     //if no visible node was found return NULL
     return NULL;
   }
@@ -328,18 +328,18 @@ mafNode * mafNode::GetChild( mafID idx, bool onlyVisible /*=false*//*=false*/ )
   {
     mafID currentVisible=-1;
     for (int i=0;i<m_Children.size();i++)
-      if (m_Children[i].GetPointer()->IsVisible())
+      if (m_Children[i]->IsVisible())
       {
         currentVisible++;
         if (currentVisible==idx)
-          return m_Children[i].GetPointer();
+          return m_Children[i].get();
       }
     //if node was found return NULL
     return NULL;
   }
   else
   {
-    return (idx>=0&&idx<m_Children.size())?m_Children[idx].GetPointer():NULL;
+    return (idx>=0&&idx<m_Children.size())?m_Children[idx].get():NULL;
   }
 }
 
@@ -351,9 +351,9 @@ int mafNode::FindNodeIdx(mafNode *a, bool onlyVisible /*=false*/)
   for (unsigned i=0;i<m_Children.size();i++)
   {
     //if onlyVisible is true we count only Visible VME 
-    if (!onlyVisible || m_Children[i].GetPointer()->IsVisible())
+    if (!onlyVisible || m_Children[i]->IsVisible())
       nChild++;
-    if (m_Children[i].GetPointer()==a)
+    if (m_Children[i].get()==a)
 	  {
 	    return nChild;
 	  }
@@ -369,7 +369,7 @@ int mafNode::FindNodeIdx(const mafString& name, bool onlyVisible /*=false*/)
   for (unsigned i=0;i<m_Children.size();i++)
   {
     //if onlyVisible is true we count only Visible VME 
-    if (!onlyVisible || m_Children[i].GetPointer()->IsVisible())
+    if (!onlyVisible || m_Children[i]->IsVisible())
       nChild++;
     if (m_Children[i]->GetName() == name)
 	  {
@@ -567,7 +567,7 @@ void mafNode::RemoveAllChildren()
   for (unsigned long i=0;i<num;i++)
   {
     mafAutoPointer<mafNode> curr = this->GetLastChild();
-    if(curr.GetPointer())
+    if(curr.get())
       curr->SetParent(NULL);
   }
   m_Children.clear();
@@ -608,8 +608,8 @@ int mafNode::SetParent(mafNode *parent)
     }
     else
     {
-      mafNode *prev = (idx > 0) ? m_Parent->m_Children[idx - 1].GetPointer() : NULL;
-      mafNode *next = (idx < m_Parent->m_Children.size() - 1) ? m_Parent->m_Children[idx + 1].GetPointer() : NULL;
+      mafNode *prev = (idx > 0) ? m_Parent->m_Children[idx - 1].get() : NULL;
+      mafNode *next = (idx < m_Parent->m_Children.size() - 1) ? m_Parent->m_Children[idx + 1].get() : NULL;
       m_Parent->m_Children.erase(m_Parent->m_Children.begin() + idx);
       UpdateUpDownAvailability(prev);
       UpdateUpDownAvailability(next);
@@ -630,7 +630,7 @@ int mafNode::SetParent(mafNode *parent)
   {
     if(m_Parent->IsInitialized() && (Initialize() == MAF_ERROR))
       return MAF_ERROR;
-    mafNode *prev = (m_Parent->m_Children.size() > 0) ? m_Parent->m_Children[m_Parent->m_Children.size() - 1].GetPointer() : NULL;
+    mafNode *prev = (m_Parent->m_Children.size() > 0) ? m_Parent->m_Children[m_Parent->m_Children.size() - 1].get() : NULL;
     m_Parent->m_Children.push_back(this);
     UpdateUpDownAvailability(prev);
     m_Parent->Modified();
@@ -674,7 +674,7 @@ int mafNode::DeepCopy(mafNode *a)
   RemoveAllAttributes();
   for (mafAttributesMap::iterator it = a->m_Attributes.begin(); it != a->m_Attributes.end();it++)
   {
-    mafAttribute *attr=it->second;
+    mafAttribute *attr=it->second.get();
     assert(attr);
     m_Attributes[attr->GetName()]=attr->MakeCopy();
   }
@@ -725,7 +725,7 @@ bool mafNode::Equals(mafNode *node)
   mafAttributesMap::iterator att_it2;
   for (att_it=m_Attributes.begin(),att_it2=node->GetAttributes()->begin();att_it!=m_Attributes.end();att_it++,att_it2++)
   {
-    if (!att_it->second->Equals(att_it2->second))
+    if (!att_it->second->Equals(att_it2->second.get()))
       return false;
 
     if (att_it2==node->GetAttributes()->end())
@@ -863,7 +863,7 @@ mafAttribute *mafNode::GetAttribute(const mafString& name)
 //-------------------------------------------------------------------------
 {
   mafAttributesMap::iterator it=m_Attributes.find(name);
-  return (it!=m_Attributes.end())?(*it).second.GetPointer():NULL;
+  return (it!=m_Attributes.end())?(*it).second.get():NULL;
 }
 
 //-------------------------------------------------------------------------
@@ -871,7 +871,7 @@ const mafAttribute *mafNode::GetAttribute(const mafString& name) const
 //-------------------------------------------------------------------------
 {
   mafAttributesMap::const_iterator it=m_Attributes.find(name);
-  return (it != m_Attributes.end()) ? (*it).second.GetPointer() : NULL;
+  return (it != m_Attributes.end()) ? (*it).second.get() : NULL;
 }
 
 //-------------------------------------------------------------------------
@@ -1196,7 +1196,7 @@ void mafNode::InternalStore(mafStorageElementBuilder& parent)
       size_t idx = 0;
 	  for (auto it = m_Attributes.begin(); it != m_Attributes.end(); ++it)
 	  {
-		  entry[idx++].SetValue(it->second);
+		  entry[idx++].SetValue(it->second.get());
 	  }
   }
 
@@ -1516,8 +1516,8 @@ void mafNode::SwapChildren(int idx1, int idx2)
   mafAutoPointer<mafNode> tmp = m_Children[idx1];
   m_Children[idx1] = m_Children[idx2];
   m_Children[idx2] = tmp;
-  UpdateUpDownAvailability(m_Children[idx1].GetPointer());
-  UpdateUpDownAvailability(m_Children[idx2].GetPointer());
+  UpdateUpDownAvailability(m_Children[idx1].get());
+  UpdateUpDownAvailability(m_Children[idx2].get());
   Modified();
   mafEvent e(this,VME_MODIFIED,this);
   e.SetChannel(MCH_UP);

@@ -26,7 +26,7 @@
 #include "mafEvent.h"
 
 #include "mafVME.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafVMELandmark.h"
 #include "mafGUI.h"
 #include "mafJointAnalysis.h"

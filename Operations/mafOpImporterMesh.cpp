@@ -29,7 +29,7 @@
 #include "mafDecl.h"
 #include "mafGUI.h"
 
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafTagItem.h"
 #include "mafTagArray.h"
 #include "mafVME.h"

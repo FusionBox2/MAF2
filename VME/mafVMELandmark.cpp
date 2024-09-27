@@ -26,7 +26,7 @@
 #include "mafVMELandmark.h"
 #include "mafVMELandmarkCloud.h"
 #include "mafVMEOutputPointSet.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafDataPipeCustom.h"
 #include "mafOBB.h"
 #include "mafIndent.h"

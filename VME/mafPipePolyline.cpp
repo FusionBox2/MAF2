@@ -514,7 +514,7 @@ void mafPipePolyline::UpdateScalars()
 
 	for (auto& elem : *genAbst->GetDataVector())
 	{
-		mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(elem.second);
+		mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(elem.second.get());
 		assert(item);
 
 		vtkPolyData *outputVTK = vtkPolyData::SafeDownCast(item->GetData());

@@ -27,7 +27,7 @@
 #include "mafGizmoPathRuler.h"
 #include "mafDecl.h"
 #include "mafInteractorGenericMouse.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafVMEGizmo.h"
 
 #include "mafMatrix.h"

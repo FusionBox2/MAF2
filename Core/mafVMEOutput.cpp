@@ -30,7 +30,7 @@
 #include "mafNodeIterator.h"
 #include "mafAbsMatrixPipe.h"
 #include "mafDataPipe.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafTransform.h"
 #include "mafIndent.h"
 #include "mafGUI.h"
@@ -355,10 +355,10 @@ mafTransformBase * mafVMEOutput::GetTransform() const
     }
   }
 
-  assert(m_Transform);
+  assert(m_Transform.get());
 
   // return internal transform
-  return m_Transform;
+  return m_Transform.get();
 }
 //-------------------------------------------------------------------------
 mafMatrix *mafVMEOutput::GetMatrix() const

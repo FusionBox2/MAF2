@@ -133,7 +133,7 @@ mafInteractorGenericMouse *mafInteractorCompositorMouse::GetBehavior(MMI_ACTIVAT
 //----------------------------------------------------------------------------
 {
   // return pointer to the behavior given the map key
-  return m_ActivatorMap[activator];
+  return m_ActivatorMap[activator].get();
 }
 
 //----------------------------------------------------------------------------
@@ -259,7 +259,7 @@ void mafInteractorCompositorMouse::InitInteraction(int buttonPressed, mafEventIn
   // get the behavior from the m_ActivatorMap
   if (m_ActivatorMap.count(activator))
   {
-    m_ActiveMMIGeneric = m_ActivatorMap[activator];
+    m_ActiveMMIGeneric = m_ActivatorMap[activator].get();
     if (m_ActiveMMIGeneric != NULL) 
     {
       // m_ActiveMMIGeneric is the current active mouse behavior

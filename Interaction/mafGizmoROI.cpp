@@ -35,7 +35,7 @@
 #include "mafTransform.h"
 #include "mafVME.h"
 #include "mafVMEOutput.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 
 #include "vtkTransform.h"
 #include "vtkCubeSource.h"

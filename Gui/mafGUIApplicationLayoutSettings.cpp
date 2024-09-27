@@ -31,7 +31,7 @@
 #include "mafViewVTK.h"
 #include "mafRWIBase.h"
 
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mmaApplicationLayout.h"
 #include "mafStorage.h"
 #include "mafStorageElement.h"
@@ -273,7 +273,7 @@ void mafGUIApplicationLayoutSettings::AddLayout()
     size[1] = rect.GetSize().GetHeight();
 
     mafAutoPointer<mafNodeLayout> child = mafNodeLayout::New();
-    m_XMLRoot->AddChild(child);
+    m_XMLRoot->AddChild(child.get());
     
     if(m_Layout = mmaApplicationLayout::SafeDownCast(child->GetLayout()));
     else

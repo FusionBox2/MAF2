@@ -27,7 +27,7 @@
 #include "mafGUI.h"
 #include "mafDictionary.h"
 
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 
 #include "mafVMEAFRefSys.h"
 #include "mafVMELandmarkCloud.h"

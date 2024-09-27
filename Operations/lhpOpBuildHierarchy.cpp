@@ -35,7 +35,7 @@
 #include "mmuTimeSet.h"
 #include "mafVMELandmarkCloud.h"
 #include "mafAbsMatrixPipe.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafVMESurface.h"
 #include "mafVMELandmark.h"
 

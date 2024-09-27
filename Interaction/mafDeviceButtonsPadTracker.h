@@ -19,7 +19,7 @@
 
 #include "mafDeviceButtonsPad.h"
 #include <mutex>
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafOBB.h"
 #include "mafAvatar.h"
 //----------------------------------------------------------------------------
@@ -28,8 +28,6 @@
 class mafTransform;
 class mafMatrix;
 class mafOBB;
-
-template class MAF_EXPORT mafAutoPointer<mafAvatar>;
 
 /** Generic spatial position tracking device.
   mafDeviceButtonsPadTracker is a class providing basic functionalities for space trackers, 
@@ -139,7 +137,7 @@ public:
   /**
     Set/Get the avatar assigned to this device */
   void SetAvatar(mafAvatar *avatar);
-  mafAvatar *GetAvatar() {return m_Avatar;}
+  mafAvatar *GetAvatar() {return m_Avatar.get();}
 
   /** 
     Set the default avatar, i.e. the avatar to be used as default one. An application
@@ -148,7 +146,7 @@ public:
     factory when restarting the application. Setting the default avatar automatically
     calls the SetAvatar() too.  */    
   void SetDefaultAvatar(mafAvatar *avatar);
-  mafAvatar *GetDefaultAvatar() {return m_DefaultAvatar;}
+  mafAvatar *GetDefaultAvatar() {return m_DefaultAvatar.get();}
 
   /** 
     Restore the avatar to the default one. An application

@@ -33,7 +33,7 @@
 #include "mafNodeIterator.h"
 #include "mafTagArray.h"
 
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafMatrixVector.h"
 #include "mafDataVector.h"
 #include "mafStorageElement.h"

@@ -28,7 +28,7 @@
 #include "mafVMEOutputNULL.h"
 #include "mafAbsMatrixPipe.h"
 #include "mafDataPipe.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafTransform.h"
 #include "mafIndent.h"
 

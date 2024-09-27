@@ -74,7 +74,7 @@ void medWizardBlockVMEFindOrSelection::ExcutionBegin()
 
 	  for (int i=0;i<nnodes;i++)
 	  {
-		  mafNode *child=(*childs)[i];
+		  mafNode *child=(*childs)[i].get();
 		  if (VMEAccept(child))
 		  {
 			  VMENumber++;
@@ -103,7 +103,7 @@ void medWizardBlockVMEFindOrSelection::ExcutionBegin()
 	  // if there is only one acceptable volume we select it
 	  else if (VMENumber == 1)
 	  {
-		  selVME = (*childs)[VMEIndex];
+		  selVME = (*childs)[VMEIndex].get();
 		  if (VMEAccept(selVME))
 		  {
 			  //Select vme 

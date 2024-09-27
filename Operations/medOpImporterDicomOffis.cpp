@@ -44,7 +44,7 @@ PURPOSE.  See the above copyright notice for more information.
 #include "mafDataVector.h"
 #include "mafTransform.h"
 #include "mafTransformFrame.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafVMEMesh.h"
 #include "mafVMEGroup.h"
 #include "mafMatrixPipe.h"
@@ -780,7 +780,7 @@ int medOpImporterDicomOffis::BuildOutputVMEImagesFromDicom()
 			}
 		}
 
-		m_ImagesGroup->AddChild(image);
+		m_ImagesGroup->AddChild(image.get());
 		s_count++;
 
 		if(!this->m_TestMode)
@@ -842,7 +842,7 @@ int medOpImporterDicomOffis::BuildOutputVMEImagesFromDicomCineMRI()
 		mafString name = m_VolumeName;
 		name.append(mafString::Format(_R("_%d_%d"), i, m_NumberOfTimeFrames));
 		image->SetName(name);
-		m_ImagesGroup->AddChild(image);
+		m_ImagesGroup->AddChild(image.get());
 	}
 
 	long progress = 0;
@@ -5126,7 +5126,7 @@ void medOpImporterDicomOffis::ResampleVolume()
 	box_pose->SetPosition(m_VolumePosition);
 
 	mafAutoPointer<mafTransformFrame> local_pose = mafTransformFrame::New();
-	local_pose->SetInput(box_pose);
+	local_pose->SetInput(box_pose.get());
 
 	mafAutoPointer<mafTransformFrame> output_to_input = mafTransformFrame::New();
 
@@ -5174,7 +5174,7 @@ void medOpImporterDicomOffis::ResampleVolume()
 	double w,l,sr[2];
 	for (auto& entry : *m_Volume->GetDataVector())
 	{
-		if (mafVMEItemVTK *input_item = mafVMEItemVTK::SafeDownCast(entry.second))
+		if (mafVMEItemVTK *input_item = mafVMEItemVTK::SafeDownCast(entry.second.get()))
 		{
 			if (vtkDataSet *input_data = input_item->GetData())
 			{
@@ -5187,21 +5187,21 @@ void medOpImporterDicomOffis::ResampleVolume()
 				// set at each iteration since I'm using the SetMatrix, which doesn't support
 				// transform pipelines.
 				mafAutoPointer<mafMatrix> output_parent_abs_pose = mafMatrix::New();
-				mafVME::SafeDownCast(m_Input)->GetOutput()->GetAbsMatrix(*output_parent_abs_pose.GetPointer(),input_item->GetTimeStamp());
-				local_pose->SetInputFrame(output_parent_abs_pose);
+				mafVME::SafeDownCast(m_Input)->GetOutput()->GetAbsMatrix(*output_parent_abs_pose,input_item->GetTimeStamp());
+				local_pose->SetInputFrame(output_parent_abs_pose.get());
 
 				mafAutoPointer<mafMatrix> input_parent_abs_pose = mafMatrix::New();
-				mafVME::SafeDownCast(m_Input)->GetOutput()->GetAbsMatrix(*input_parent_abs_pose.GetPointer(),input_item->GetTimeStamp());
-				local_pose->SetTargetFrame(input_parent_abs_pose);
+				mafVME::SafeDownCast(m_Input)->GetOutput()->GetAbsMatrix(*input_parent_abs_pose,input_item->GetTimeStamp());
+				local_pose->SetTargetFrame(input_parent_abs_pose.get());
 				local_pose->Update();
 
 				mafAutoPointer<mafMatrix> output_abs_pose = mafMatrix::New();
-				m_Volume->GetOutput()->GetAbsMatrix(*output_abs_pose.GetPointer(),input_item->GetTimeStamp());
+				m_Volume->GetOutput()->GetAbsMatrix(*output_abs_pose,input_item->GetTimeStamp());
 				output_to_input->SetInputFrame(box_pose->GetMatrixPointer());
 
 				mafAutoPointer<mafMatrix> input_abs_pose = mafMatrix::New();
-				mafVME::SafeDownCast(m_Input)->GetOutput()->GetAbsMatrix(*input_abs_pose.GetPointer(),input_item->GetTimeStamp());
-				output_to_input->SetTargetFrame(input_abs_pose);
+				mafVME::SafeDownCast(m_Input)->GetOutput()->GetAbsMatrix(*input_abs_pose,input_item->GetTimeStamp());
+				output_to_input->SetTargetFrame(input_abs_pose.get());
 				output_to_input->Update();
 
 				double origin[3];

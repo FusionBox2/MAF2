@@ -31,7 +31,7 @@ const bool DEBUG_MODE = true;
 #include "mafGUIMaterialButton.h"
 #include "mafInteractorCompositorMouse.h"
 #include "mafInteractorGenericMouse.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafVME.h"
 #include "mafVMEGizmo.h"
 #include "mafVMEPolyline.h"

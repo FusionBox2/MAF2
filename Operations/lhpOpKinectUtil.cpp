@@ -41,7 +41,7 @@
 #include "mafOpExplodeCollapse.h"
 #include "lhpOpKinectAFs.h"
 
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafMatrixVector.h"
 #include "mafDataVector.h"
 #include "mafVME.h"
@@ -235,7 +235,7 @@ namespace
         {
           for(auto& elem : *dataVector)
           {
-            if(mafVMEItemVTK *vitem = mafVMEItemVTK::SafeDownCast(elem.second))
+            if(mafVMEItemVTK *vitem = mafVMEItemVTK::SafeDownCast(elem.second.get()))
               vitem->GetData();
           }
         }

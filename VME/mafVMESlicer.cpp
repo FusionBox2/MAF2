@@ -303,10 +303,10 @@ void mafVMESlicer::InternalPreUpdate()
 			parentTransform->SetMatrix(((mafVME *)GetParent())->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
 			parentTransform->Update();
 
-			parentTransform->Concatenate(slicedVMETransform,0);
+			parentTransform->Concatenate(slicedVMETransform.get(),0);
 			parentTransform->Update();
 
-			m_CopyTransform->Concatenate(parentTransform,0);
+			m_CopyTransform->Concatenate(parentTransform.get(),0);
 			m_CopyTransform->Update();
       m_CopyTransform->GetPosition(pos);
       m_CopyTransform->GetVersor(0, vectX);

@@ -830,7 +830,7 @@ void mafInteractorGenericMouse::SendTransformMatrix(const mafMatrix &matrix, int
   *matrix_copy=matrix;
   
   mafEvent e;
-  e.SetMatrix(matrix_copy);
+  e.SetMatrix(matrix_copy.get());
   e.SetId(ID_TRANSFORM);
   e.SetSender(this);
   e.SetArg(mouseAction);
@@ -843,7 +843,7 @@ void mafInteractorGenericMouse::SendTransformMatrix(const mafMatrix &matrix, int
     mafTransform::SetPosition(*pickPosMatrix, m_LastPickPosition);
     
     //e.SetVtkObj(pickPosMatrix);  //modified by Marco. 24-5-2005
-    e.SetMafObject(pickPosMatrix);
+    e.SetMafObject(pickPosMatrix.get());
     
   }  
 
@@ -862,7 +862,7 @@ void mafInteractorGenericMouse::SendTransformMatrix(const mafMatrix &matrix, int
   tmatrix->DeepCopy(&matrix);
   tmatrix->SetTimeStamp(vtkTimerLog::GetUniversalTime());
 
-  event.SetMatrix(tmatrix);
+  event.SetMatrix(tmatrix.get());
   event.Set2DPosition(m_MousePointer2DPosition[0],m_MousePointer2DPosition[1]);
   if (mouseAction == MOUSE_DOWN)
   {

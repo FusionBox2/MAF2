@@ -143,7 +143,7 @@ int mafOpImporterMSF::ImportMSF()
       {
         for(auto& elem : *dataVector)
         {
-          if(mafVMEItemVTK *vitem = mafVMEItemVTK::SafeDownCast(elem.second))
+          if(mafVMEItemVTK *vitem = mafVMEItemVTK::SafeDownCast(elem.second.get()))
             vitem->GetData();
         }
       }

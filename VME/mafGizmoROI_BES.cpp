@@ -35,7 +35,7 @@
 #include "mafTransform.h"
 #include "mafVME.h"
 #include "mafVMEOutput.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafGizmoTranslatePlane.h"
 #include "mafGizmoTranslateAxis.h"
 #include "mafGizmoBoundingBox.h"
@@ -221,11 +221,11 @@ void mafGizmoROI_BES::OnEventGizmoComponents(mafEventBase *maf_event)
 						tr->SetTimeStamp(m_InputVME->GetTimeStamp());
 
 						if (gtype == GHANDLE)
-							m_GHandle[gindex]->SetPose(tr);
+							m_GHandle[gindex]->SetPose(tr.get());
 						else if (gtype == GAXIS)
-							m_GAxis[gindex]->SetAbsPose(tr);
+							m_GAxis[gindex]->SetAbsPose(tr.get());
 						else
-							m_GPlane[gindex]->SetAbsPose(tr);
+							m_GPlane[gindex]->SetAbsPose(tr.get());
 						currTr->Delete();
 						
 						//update other gizmos

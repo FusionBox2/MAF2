@@ -303,7 +303,7 @@ void mafOpVolumeResample::Resample()
 	//box_pose->SetPosition(m_VolumePosition);
 
   mafAutoPointer<mafTransformFrame> local_pose = mafTransformFrame::New();
-  local_pose->SetInput(box_pose);
+  local_pose->SetInput(box_pose.get());
   
   mafAutoPointer<mafTransformFrame> output_to_input = mafTransformFrame::New();
   
@@ -335,7 +335,7 @@ void mafOpVolumeResample::Resample()
   double w,l,sr[2];
   for (auto& entry : *((mafVMEGenericAbstract *)m_Input)->GetDataVector())
   {
-    if (mafVMEItemVTK *input_item = mafVMEItemVTK::SafeDownCast(entry.second))
+    if (mafVMEItemVTK *input_item = mafVMEItemVTK::SafeDownCast(entry.second.get()))
     {
       if (vtkDataSet *input_data = input_item->GetData())
       {
@@ -347,26 +347,26 @@ void mafOpVolumeResample::Resample()
         // set at each iteration since I'm using the SetMatrix, which doesn't support
         // transform pipelines.
         mafAutoPointer<mafMatrix> output_parent_abs_pose = mafMatrix::New();
-        m_ResampledVme->GetParent()->GetOutput()->GetAbsMatrix(*output_parent_abs_pose.GetPointer(),input_item->GetTimeStamp());
-        local_pose->SetInputFrame(output_parent_abs_pose);
+        m_ResampledVme->GetParent()->GetOutput()->GetAbsMatrix(*output_parent_abs_pose,input_item->GetTimeStamp());
+        local_pose->SetInputFrame(output_parent_abs_pose.get());
 
         mafAutoPointer<mafMatrix> input_parent_abs_pose = mafMatrix::New();
-        ((mafVME *)m_Input->GetParent())->GetOutput()->GetAbsMatrix(*input_parent_abs_pose.GetPointer(),input_item->GetTimeStamp());
-        local_pose->SetTargetFrame(input_parent_abs_pose);
+        ((mafVME *)m_Input->GetParent())->GetOutput()->GetAbsMatrix(*input_parent_abs_pose,input_item->GetTimeStamp());
+        local_pose->SetTargetFrame(input_parent_abs_pose.get());
         local_pose->Update();
 
         mafAutoPointer<mafMatrix> output_abs_pose = mafMatrix::New();
-        m_ResampledVme->GetOutput()->GetAbsMatrix(*output_abs_pose.GetPointer(),input_item->GetTimeStamp());
-        output_to_input->SetInputFrame(output_abs_pose);
+        m_ResampledVme->GetOutput()->GetAbsMatrix(*output_abs_pose,input_item->GetTimeStamp());
+        output_to_input->SetInputFrame(output_abs_pose.get());
 
         mafAutoPointer<mafMatrix> input_abs_pose = mafMatrix::New();
-        ((mafVME *)m_Input)->GetOutput()->GetAbsMatrix(*input_abs_pose.GetPointer(),input_item->GetTimeStamp());
-        output_to_input->SetTargetFrame(input_abs_pose);
+        ((mafVME *)m_Input)->GetOutput()->GetAbsMatrix(*input_abs_pose,input_item->GetTimeStamp());
+        output_to_input->SetTargetFrame(input_abs_pose.get());
         output_to_input->Update();
 
         double orient_input[3],orient_target[3];
-        mafTransform::GetOrientation(*output_abs_pose.GetPointer(),orient_target);
-        mafTransform::GetOrientation(*input_abs_pose.GetPointer(),orient_input);
+        mafTransform::GetOrientation(*output_abs_pose,orient_target);
+        mafTransform::GetOrientation(*input_abs_pose,orient_input);
 
         double origin[3];
         origin[0] = m_VolumeBounds[0];

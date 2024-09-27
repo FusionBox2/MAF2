@@ -34,7 +34,7 @@
 #include "mafGUIMaterialButton.h"
 #include "mafVMELandmarkCloud.h"
 #include "mafTransform.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 
 #include "vtkMAFAssembly.h"
 

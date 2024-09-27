@@ -46,7 +46,7 @@ void mafTimeMap<T>::AppendAndSetItem(T *m)
   if (this->GetNumberOfItems()>0)
   {
     // Get last item
-	  assert(m_TimeMap.rbegin()->second);
+	  assert(m_TimeMap.rbegin()->second.get());
     // append adding 1 to the last time 
     m->SetTimeStamp(m_TimeMap.rbegin()->first+1);
   }
@@ -154,7 +154,7 @@ void mafTimeMap<T>::DeepCopy(mafTimeMap *o)
   //m_TimeMap=o->m_TimeMap;
   for (auto& elem : *o)
   {
-    T *m=elem.second;
+    T *m=elem.second.get();
     T *new_item=m->NewInstance();
     new_item->DeepCopy(m);
     AppendItem(new_item);
@@ -177,8 +177,8 @@ bool mafTimeMap<T>::Equals(mafTimeMap *o)
   typename mafTimeMap<T>::TimeMap::iterator it2;
   for (it=m_TimeMap.begin(),it2=o->m_TimeMap.begin();it!=m_TimeMap.end();it++,it2++)
   {
-    T *m=it->second;
-    T *m2=it2->second;
+    T *m=it->second.get();
+    T *m2=it2->second.get();
 
     if (!m->Equals(m2))
       return false;
@@ -293,7 +293,7 @@ T *mafTimeMap<T>::GetItem(mafTimeStamp t)
 //----------------------------------------------------------------------------
 {
   typename mafTimeMap<T>::TimeMap::iterator it=FindItem(t);
-  return (it!=m_TimeMap.end())?it->second:NULL;
+  return (it!=m_TimeMap.end())?it->second.get():NULL;
 }
 //----------------------------------------------------------------------------
 template <class T>
@@ -301,7 +301,7 @@ T *mafTimeMap<T>::GetNearestItem(mafTimeStamp t)
 //----------------------------------------------------------------------------
 {
   typename mafTimeMap<T>::TimeMap::iterator it=FindNearestItem(t);
-  return (it!=m_TimeMap.end())?it->second:NULL;
+  return (it!=m_TimeMap.end())?it->second.get():NULL;
 }
 //----------------------------------------------------------------------------
 template <class T>
@@ -309,7 +309,7 @@ T *mafTimeMap<T>::GetItemBefore(mafTimeStamp t)
 //----------------------------------------------------------------------------
 {
   typename mafTimeMap<T>::TimeMap::iterator it=FindItemBefore(t);
-  return (it!=m_TimeMap.end())?it->second:NULL;
+  return (it!=m_TimeMap.end())?it->second.get():NULL;
 }
 
 #endif

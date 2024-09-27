@@ -31,7 +31,7 @@
 
 #include "mafOpExplodeCollapse.h"
 
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafVMELandmarkCloud.h"
 #include "mafVME.h"
 #include "mafVMESurface.h"

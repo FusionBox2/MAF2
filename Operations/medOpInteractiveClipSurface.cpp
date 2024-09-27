@@ -36,7 +36,7 @@ bool DEBUG_MODE = true;
 #include "mafInteractorCompositorMouse.h"
 #include "mafInteractorGenericMouse.h"
 
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafVMEGizmo.h"
 #include "mafGizmoTranslate.h"
 #include "mafGizmoRotate.h"

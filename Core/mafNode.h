@@ -19,7 +19,7 @@
 // includes :
 //----------------------------------------------------------------------------
 #include "mafReferenceCounted.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafBaseEventHandler.h"
 #include "mafTagItem.h"
 #include "ftk/Base/String.h"

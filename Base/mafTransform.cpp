@@ -68,7 +68,7 @@ mafTransform::mafTransform(const mafTransform& copy)
 void mafTransform::SetMatrixPointer(mafMatrix *matrix)
 //----------------------------------------------------------------------------
 {
-  if (matrix!=m_Matrix)
+  if (matrix!=m_Matrix.get())
   {
     mafDEL(m_Matrix);
     m_Matrix = matrix;

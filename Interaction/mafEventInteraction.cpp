@@ -80,7 +80,7 @@ void mafEventInteraction::SetKey(unsigned char key)
 mafMatrix *mafEventInteraction::GetMatrix()
 //------------------------------------------------------------------------------
 {
-  return m_Matrix;
+  return m_Matrix.get();
 }
 
 //------------------------------------------------------------------------------

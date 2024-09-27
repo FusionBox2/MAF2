@@ -34,7 +34,7 @@
 #include "mafVMELandmarkCloud.h"
 #include "mafVMELandmark.h"
 #include "mafTagArray.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 
 #include <string>
 

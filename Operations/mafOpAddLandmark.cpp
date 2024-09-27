@@ -28,7 +28,7 @@
 #include "mafGUINamedPanel.h"
 #include "mafGUIDictionaryWidget.h"
 #include "mafOpExplodeCollapse.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 
 #include "mafVME.h"
 #include "mafVMELandmarkCloud.h"
@@ -466,14 +466,14 @@ void mafOpAddLandmark::AddLandmark(double pos[3])
      landmark->SetTimeStamp(m_PickedVme->GetTimeStamp());
   landmark->Update();
   if(m_AddToCurrentTime)
-    SetLandmarkPos(landmark, m_LandmarkPosition[0], m_LandmarkPosition[1], m_LandmarkPosition[2], 0, 0, 0);
+    SetLandmarkPos(landmark.get(), m_LandmarkPosition[0], m_LandmarkPosition[1], m_LandmarkPosition[2], 0, 0, 0);
   else
-    SetLandmarkPos(landmark, m_LandmarkPosition[0], m_LandmarkPosition[1], m_LandmarkPosition[2], 0, 0, 0, 0);
+    SetLandmarkPos(landmark.get(), m_LandmarkPosition[0], m_LandmarkPosition[1], m_LandmarkPosition[2], 0, 0, 0, 0);
 
-  {mafEvent evUnq(this,VME_SHOW,landmark.GetPointer(),true); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW,landmark.get(),true); mafEventMacro(evUnq);}
   {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
 
-  m_LandmarkAdded.push_back(landmark);
+  m_LandmarkAdded.push_back(landmark.get());
   m_LandmarkAdded[m_LandmarkAdded.size()-1]->Register(NULL);
 
   if (!cloud_was_open)

@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 #include "mafObject.h"
 #include "mafTimeStamped.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "ftk/Base/MTime.h"
 #include "ftk/Base/String.h"
 #include <map>

@@ -639,7 +639,7 @@ void medOpLabelizeSurface::OpDo()
 		mafVMESurface::SafeDownCast(m_Input)->SetData(vtkPolyData::SafeDownCast(m_VmeEditor->GetOutput()->GetVTKData()),((mafVMESurface*)m_Input)->GetTimeStamp());
 		mafAutoPointer<mmaMaterial> mat = mmaMaterial::New();
 		mat->DeepCopy(m_VmeEditor->GetMaterial());
-		mafVMESurface::SafeDownCast(m_Input)->GetSurfaceOutput()->SetMaterial(mat);
+		mafVMESurface::SafeDownCast(m_Input)->GetSurfaceOutput()->SetMaterial(mat.get());
 		mafVMESurface::SafeDownCast(m_Input)->GetSurfaceOutput()->Update();
 		mafVMESurface::SafeDownCast(m_Input)->GetOutput()->Update();
 		{mafEvent evUnq(this,VME_SHOW,m_Input,false); mafEventMacro(evUnq);}

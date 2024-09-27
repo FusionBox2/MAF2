@@ -157,7 +157,7 @@ MAF_EXPORT void mafSleep(int msec);
 #define mafNEW(a) do{a=(a)->New();(a)->Register(this);}while(0)
 
 /** Delete a MAF object */
-#define mafDEL(a) do{if (a) { (a)->Delete(); a = NULL;}}while(0)
+#define mafDEL(a) do{if (a != nullptr) { (a)->Delete(); a = NULL;}}while(0)
 
 /** delete a new() allocated object */
 #define cppDEL(a) do{if (a) { delete a; a = NULL;}}while(0)

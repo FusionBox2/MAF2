@@ -205,7 +205,7 @@ int mafOpValidateTree::ValidateTree()
               }
             }
             // binary files exists => VME is animated on data
-            item = entry.second;
+            item = entry.second.get();
             if (item == NULL)
             {
               ErrorLog(mafOpValidateTree::ITEM_NOT_PRESENT, vme->GetName().GetCStr());

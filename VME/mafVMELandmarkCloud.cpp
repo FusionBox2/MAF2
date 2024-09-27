@@ -234,7 +234,7 @@ int mafVMELandmarkCloud::SetNumberOfLandmarks(int num)
       for (int n = oldnum; n < num; n++)
       {
         mafAutoPointer<mafVMELandmark> lm = mafVMELandmark::New();
-        Superclass::AddChild(lm);
+        Superclass::AddChild(lm.get());
 
         mafString name;
         name = _R("LM_NAME_");
@@ -247,7 +247,7 @@ int mafVMELandmarkCloud::SetNumberOfLandmarks(int num)
       // add a new point and a new vertex to all items
       for (auto& elem : *m_DataVector)
       {
-        mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(elem.second);
+        mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(elem.second.get());
         assert(item);
         vtkPolyData *polydata = vtkPolyData::SafeDownCast(item->GetData());
 
@@ -305,7 +305,7 @@ int mafVMELandmarkCloud::SetNumberOfLandmarks(int num)
       // remove point from all items
       for (auto& elem : *m_DataVector)
       {
-        mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(elem.second);
+        mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(elem.second.get());
         assert(item);
         vtkPolyData *polydata=vtkPolyData::SafeDownCast(item->GetData());
         
@@ -503,7 +503,7 @@ int mafVMELandmarkCloud::RemoveLandmark(int idx)
     // remove the point to all items
     for (auto& elem : *m_DataVector)
     {
-      mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(elem.second);
+      mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(elem.second.get());
       assert(item);
       vtkPolyData *polydata = vtkPolyData::SafeDownCast(item->GetData());
       if (RemovePoint(polydata,idx) != MAF_OK)
@@ -783,7 +783,7 @@ void mafVMELandmarkCloud::Close()
       {
         double xyz[3];
         bool vis;
-        mafMatrix *mat = mafMatrix::SafeDownCast(it->second);
+        mafMatrix *mat = mafMatrix::SafeDownCast(it->second.get());
         // extract the position
         xyz[0] = mat->GetElements()[0][3];
         xyz[1] = mat->GetElements()[1][3];
@@ -796,7 +796,7 @@ void mafVMELandmarkCloud::Close()
         
         mafVMEItemVTK *item = NULL;
         if(item_id != m_DataVector->end())
-          item = mafVMEItemVTK::SafeDownCast(item_id->second);
+          item = mafVMEItemVTK::SafeDownCast(item_id->second.get());
         vtkPolyData *polydata;
 
         // All this stuff is to cope with possible open landmark clouds having different
@@ -836,7 +836,7 @@ void mafVMELandmarkCloud::Close()
           if (item_id != m_DataVector->begin())
           {
             item_id--;
-            previous_item = mafVMEItemVTK::SafeDownCast(item_id->second);
+            previous_item = mafVMEItemVTK::SafeDownCast(item_id->second.get());
             assert(previous_item);
             item_id++;
           }
@@ -934,7 +934,7 @@ void mafVMELandmarkCloud::Open()
     
     // force node adding
     m_State = OPEN_CLOUD;
-    Superclass::AddChild(lm);
+    Superclass::AddChild(lm.get());
     m_State = CLOSED_CLOUD;
     mafTimeStamp ct = GetTimeStamp();
     lm->SetTimeStamp(ct);
@@ -942,7 +942,7 @@ void mafVMELandmarkCloud::Open()
 		for (auto& elem : *m_DataVector)
 		{
       double xyz[3];
-      mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(elem.second);
+      mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(elem.second.get());
       assert(item);
       if (vtkPolyData *polydata = (vtkPolyData *)item->GetData())
       {
@@ -1451,12 +1451,12 @@ bool mafVMELandmarkCloud::IsDataAvailable()
       m_DataVector->GetTimeBounds(tbounds);
       if (t < tbounds[0])
       {
-        item = m_DataVector->begin()->second;
+        item = m_DataVector->begin()->second.get();
       }
       else
       {
         auto it = --m_DataVector->end();
-        item = it->second;
+        item = it->second.get();
       }
     }
 

@@ -33,7 +33,7 @@
 #include "mafGUIDialog.h"
 
 #include "mafVME.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 #include "mafVMELandmark.h"
 
 #include "vtkSmartPointer.h"

@@ -50,7 +50,7 @@ void mafMatrixVector::GetKeyMatrixVector(std::vector<mafMatrix *> &mvector)
   mvector.reserve(GetNumberOfMatrices());
   for (auto& elem : *this)
   {
-    mvector.push_back(elem.second);
+    mvector.push_back(elem.second.get());
   }
 }
 //-----------------------------------------------------------------------
@@ -59,7 +59,7 @@ void mafMatrixVector::SetMatrix(const mafMatrix &mat)
 {
   mafAutoPointer<mafMatrix> tmp = mafMatrix::New();
   *tmp=mat;
-  SetMatrix(tmp);
+  SetMatrix(tmp.get());
 }
 //-----------------------------------------------------------------------
 void mafMatrixVector::AppendKeyMatrix(const mafMatrix &m)
@@ -67,7 +67,7 @@ void mafMatrixVector::AppendKeyMatrix(const mafMatrix &m)
 {
   mafAutoPointer<mafMatrix> tmp = mafMatrix::New();
   *tmp=m;
-  AppendKeyMatrix(tmp);
+  AppendKeyMatrix(tmp.get());
 }
 
 //-----------------------------------------------------------------------
@@ -98,6 +98,6 @@ void mafMatrixVector::InternalRestore(const mafStorageElement& node)
     *mat = vector_elements[i].As<mafMatrix>();
     //if (vector_elements[i].ReSetValue(*mat)!=MAF_OK)
     //  return MAF_ERROR;
-    AppendItem(mat);
+    AppendItem(mat.get());
   }
 }

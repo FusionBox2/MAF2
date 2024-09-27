@@ -21,7 +21,7 @@
 #include "ftk/Base/MTime.h"
 #include <mutex>
 #include "mafMatrix.h"
-#include "mafSmartPointer.h"
+#include "ftk/Base/RegisteringPointer.h"
 
 //------------------------------------------------------------------------------
 // Forward declarations
@@ -61,7 +61,7 @@ public:
   /** 
     return pointer to internal matrix (after updating).
     BEWARE: do not change the matrix directly. */
-  mafMatrix *GetMatrixPointer() {Update(); return m_Matrix;}
+  mafMatrix *GetMatrixPointer() {Update(); return m_Matrix.get();}
 
   /**
     Apply the transformation to a coordinate.  You can use the same 

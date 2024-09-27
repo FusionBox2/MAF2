@@ -398,7 +398,7 @@ void medOpVolumeResample::Resample()
   resamplingBoxPose->SetPosition(m_NewVolumePosition);
 
   mafAutoPointer<mafTransformFrame> localPoseTransformFrame = mafTransformFrame::New();
-  localPoseTransformFrame->SetInput(resamplingBoxPose);
+  localPoseTransformFrame->SetInput(resamplingBoxPose.get());
   
   mafAutoPointer<mafTransformFrame> outputToInputTransformFrame = mafTransformFrame::New();
   
@@ -439,7 +439,7 @@ void medOpVolumeResample::Resample()
   double w,l,sr[2];
   for (auto& entry : *((mafVMEGenericAbstract *)m_Input)->GetDataVector())
   {
-    if (mafVMEItemVTK *input_item = mafVMEItemVTK::SafeDownCast(entry.second))
+    if (mafVMEItemVTK *input_item = mafVMEItemVTK::SafeDownCast(entry.second.get()))
     {
       if (vtkDataSet *inputData = input_item->GetData())
       {
@@ -451,21 +451,21 @@ void medOpVolumeResample::Resample()
         // set at each iteration since I'm using the SetMatrix, which doesn't support
         // transform pipelines.
         mafAutoPointer<mafMatrix> outputParentAbsPose = mafMatrix::New();
-        m_ResampledVme->GetParent()->GetOutput()->GetAbsMatrix(*outputParentAbsPose.GetPointer(),input_item->GetTimeStamp());
-        localPoseTransformFrame->SetInputFrame(outputParentAbsPose);
+        m_ResampledVme->GetParent()->GetOutput()->GetAbsMatrix(*outputParentAbsPose,input_item->GetTimeStamp());
+        localPoseTransformFrame->SetInputFrame(outputParentAbsPose.get());
 
         mafAutoPointer<mafMatrix> inputParentAbsPose = mafMatrix::New();
-        ((mafVME *)m_Input->GetParent())->GetOutput()->GetAbsMatrix(*inputParentAbsPose.GetPointer(),input_item->GetTimeStamp());
-        localPoseTransformFrame->SetTargetFrame(inputParentAbsPose);
+        ((mafVME *)m_Input->GetParent())->GetOutput()->GetAbsMatrix(*inputParentAbsPose,input_item->GetTimeStamp());
+        localPoseTransformFrame->SetTargetFrame(inputParentAbsPose.get());
         localPoseTransformFrame->Update();
 
         mafAutoPointer<mafMatrix> outputAbsPose = mafMatrix::New();
-        m_ResampledVme->GetOutput()->GetAbsMatrix(*outputAbsPose.GetPointer(),input_item->GetTimeStamp());
+        m_ResampledVme->GetOutput()->GetAbsMatrix(*outputAbsPose,input_item->GetTimeStamp());
         outputToInputTransformFrame->SetInputFrame(resamplingBoxPose->GetMatrixPointer());
 
         mafAutoPointer<mafMatrix> inputAbsPose = mafMatrix::New();
 				inputAbsPose->Identity();
-        outputToInputTransformFrame->SetTargetFrame(inputAbsPose);
+        outputToInputTransformFrame->SetTargetFrame(inputAbsPose.get());
         outputToInputTransformFrame->Update();
 
         double origin[3];
@@ -577,9 +577,9 @@ void medOpVolumeResample::UpdateGizmoData(mafEvent *e)
 		{
 			mafAutoPointer<mafMatrix> LocMatr = mafMatrix::New();
 			mafAutoPointer<mafMatrix> NewAbsMatr = mafMatrix::New();
-			mafTransform::SetOrientation(*(LocMatr.GetPointer()),m_ROIOrientation[0],m_ROIOrientation[1],m_ROIOrientation[2]);
+			mafTransform::SetOrientation(*LocMatr,m_ROIOrientation[0],m_ROIOrientation[1],m_ROIOrientation[2]);
 			mafAutoPointer<mafTransformFrame> mflTr = mafTransformFrame::New();
-			mflTr->SetInput(LocMatr);
+			mflTr->SetInput(LocMatr.get());
 			mflTr->SetInputFrame(m_CenterVolumeRefSysMatrix);
 			mflTr->Update();
 			NewAbsMatr->DeepCopy(&(mflTr->GetMatrix()));
@@ -595,9 +595,9 @@ void medOpVolumeResample::UpdateGizmoData(mafEvent *e)
 			mafTransform::CopyRotation(*NewAbsMatr,*newAbsPose);
 			invOldAbsPose.DeepCopy(m_GizmoRotate->GetAbsPose());
 			invOldAbsPose.Invert();
-			mafMatrix::Multiply4x4(*newAbsPose.GetPointer(), invOldAbsPose, *M.GetPointer());
+			mafMatrix::Multiply4x4(*newAbsPose, invOldAbsPose, *M);
 			// update gizmo abs pose
-			m_GizmoRotate->SetAbsPose(newAbsPose, 0.0);
+			m_GizmoRotate->SetAbsPose(newAbsPose.get(), 0.0);
 
 			vtkTransform *tranVMEDummy = vtkTransform::New();
 			tranVMEDummy->PostMultiply();
@@ -616,9 +616,9 @@ void medOpVolumeResample::UpdateGizmoData(mafEvent *e)
 		{
 			mafAutoPointer<mafMatrix> LocMatr = mafMatrix::New();
 			mafAutoPointer<mafMatrix> NewAbsMatr = mafMatrix::New();
-			mafTransform::SetPosition(*(LocMatr.GetPointer()),m_ROIPosition[0],m_ROIPosition[1],m_ROIPosition[2]);
+			mafTransform::SetPosition(*LocMatr,m_ROIPosition[0],m_ROIPosition[1],m_ROIPosition[2]);
 			mafAutoPointer<mafTransformFrame> mflTr = mafTransformFrame::New();
-			mflTr->SetInput(LocMatr);
+			mflTr->SetInput(LocMatr.get());
 			mflTr->SetInputFrame(m_CenterVolumeRefSysMatrix);
 			mflTr->Update();
 			NewAbsMatr->DeepCopy(&(mflTr->GetMatrix()));
@@ -629,14 +629,14 @@ void medOpVolumeResample::UpdateGizmoData(mafEvent *e)
 			mafAutoPointer<mafMatrix> newAbsPose = mafMatrix::New();
 
 			// incoming matrix is a translation matrix
-			newAbsPose->DeepCopy(NewAbsMatr);
+			newAbsPose->DeepCopy(NewAbsMatr.get());
 			// copy rotation part from OldAbsPose into NewAbsPose
-			mafTransform::CopyRotation(*(m_GizmoTranslate->GetAbsPose()),*newAbsPose.GetPointer());
+			mafTransform::CopyRotation(*(m_GizmoTranslate->GetAbsPose()),*newAbsPose);
 			invOldAbsPose.DeepCopy(m_GizmoTranslate->GetAbsPose());
 			invOldAbsPose.Invert();
-			mafMatrix::Multiply4x4(*newAbsPose.GetPointer(), invOldAbsPose, *M.GetPointer());
+			mafMatrix::Multiply4x4(*newAbsPose, invOldAbsPose, *M);
 			// update gizmo abs pose
-			m_GizmoTranslate->SetAbsPose(newAbsPose, 0.0);
+			m_GizmoTranslate->SetAbsPose(newAbsPose.get(), 0.0);
 
 			vtkTransform *tranVMEDummy = vtkTransform::New();
 			tranVMEDummy->PostMultiply();
@@ -1038,7 +1038,7 @@ void medOpVolumeResample::PostMultiplyEventMatrix(mafEventBase *maf_event)
 		{
 
 			mafAutoPointer<mafTransformFrame> mflTr = mafTransformFrame::New();
-			mflTr->SetInput(newAbsMatr);
+			mflTr->SetInput(newAbsMatr.get());
 			mflTr->SetTargetFrame(m_CenterVolumeRefSysMatrix);
 			mflTr->Update();
 
@@ -1058,7 +1058,7 @@ void medOpVolumeResample::PostMultiplyEventMatrix(mafEventBase *maf_event)
 		else if(e->GetSender()==m_GizmoRotate)//rotate
 		{
 			mafAutoPointer<mafTransformFrame> mflTr = mafTransformFrame::New();
-			mflTr->SetInput(newAbsMatr);
+			mflTr->SetInput(newAbsMatr.get());
 			mflTr->SetTargetFrame(m_CenterVolumeRefSysMatrix);
 			mflTr->Update();
 			mafTransform::GetOrientation(mflTr->GetMatrix(),m_ROIOrientation);

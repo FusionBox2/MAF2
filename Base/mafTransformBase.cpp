@@ -60,7 +60,7 @@ mafTransformBase::mafTransformBase(const mafTransformBase& copy)
 	m_EventSource = new mafEventSource;
 	m_TimeStamp = 0;
 
-  m_Matrix->DeepCopy(copy.m_Matrix);
+  m_Matrix->DeepCopy(copy.m_Matrix.get());
 #ifdef MAF_USE_VTK
   if(copy.m_VTKTransform)
 	  GetVTKTransform()->DeepCopy(copy.m_VTKTransform);
