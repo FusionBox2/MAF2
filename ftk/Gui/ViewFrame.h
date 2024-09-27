@@ -29,8 +29,6 @@ protected:
 
   void OnCloseWindow(wxCloseEvent& event);
 
-  void OnSelect(wxCommandEvent& event);
-
   void OnSize(wxSizeEvent &event);
 
   void OnMaximize(wxMaximizeEvent &event);
@@ -45,7 +43,6 @@ ViewFrame<BaseFrame, ParentFrame, DefaultStyle>::ViewFrame(mafView* view, Parent
 {
   BaseFrame::Bind(wxEVT_ACTIVATE, &ViewFrame::OnActivate, this);
   BaseFrame::Bind(wxEVT_CLOSE_WINDOW, &ViewFrame::OnCloseWindow, this);
-  BaseFrame::Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ViewFrame::OnSelect, this, VIEW_CLICKED);
   BaseFrame::Bind(wxEVT_SIZE, &ViewFrame::OnSize, this);
   BaseFrame::Bind(wxEVT_MAXIMIZE, &ViewFrame::OnMaximize, this);
 
@@ -91,14 +88,6 @@ void ViewFrame<BaseFrame, ParentFrame, DefaultStyle>::OnCloseWindow(wxCloseEvent
   { mafEvent evUnq(this, VIEW_DELETE, m_View); mafEventMacro(evUnq); }
   BaseFrame::Destroy();
   m_View = nullptr;
-}
-
-template<class BaseFrame, class ParentFrame, long DefaultStyle>
-void ViewFrame<BaseFrame, ParentFrame, DefaultStyle>::OnSelect(wxCommandEvent& event)
-{
-  //BaseFrame::Activate(); // allow activation with the RMouse too
-  wxWindow* rwi = (wxWindow*)event.GetEventObject();
-  { mafEvent evUnq(this, VIEW_SELECT, m_View, rwi); mafEventMacro(evUnq); }
 }
 
 template<class BaseFrame, class ParentFrame, long DefaultStyle>

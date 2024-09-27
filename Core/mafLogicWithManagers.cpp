@@ -2050,6 +2050,12 @@ void mafLogicWithManagers::ViewCreated(mafView *v)
     if (GetExternalViewFlag())
     {
       mafGUIViewFrame *extern_view = new mafGUIViewFrame(v, m_Win, v->GetLabel().toWx(), m_Win->FromDIP(wxPoint(10,10)), m_Win->FromDIP(wxSize(800,600)));
+      extern_view->Bind(wxEVT_COMMAND_BUTTON_CLICKED,
+        [=](wxCommandEvent& event)
+        {
+          wxWindow* rwi = (wxWindow*)event.GetEventObject();
+          { mafEvent evUnq(this, VIEW_SELECT, v, rwi); extern_view->InvokeEvent(evUnq); }
+        }, VIEW_CLICKED);
       extern_view->SetListener(m_ViewManager.get());
       v->SetFrame(extern_view);
     }
@@ -2057,6 +2063,13 @@ void mafLogicWithManagers::ViewCreated(mafView *v)
     {
       // child views
       mafGUIMDIChild *c = new mafGUIMDIChild(v, m_Win);
+      c->Bind(wxEVT_COMMAND_BUTTON_CLICKED, 
+        [=](wxCommandEvent& event)
+        {
+          c->Activate();
+          wxWindow* rwi = (wxWindow*)event.GetEventObject();
+          { mafEvent evUnq(this, VIEW_SELECT, v, rwi); c->InvokeEvent(evUnq); }
+        }, VIEW_CLICKED);
       c->SetListener(m_ViewManager.get());
       v->SetFrame(c);
     }
