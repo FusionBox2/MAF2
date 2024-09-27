@@ -124,7 +124,7 @@ mafGUIPanel(mafGetFrame(),-1,dp,wxDefaultSize,wxNO_BORDER | wxCLIP_CHILDREN | wx
    m_BackgroundColor = wxColour(251,251,253); 
    if(m_UseBackgroundColor) this->SetBackgroundColour(m_BackgroundColor);
 
-   m_EntryStyle = wxSUNKEN_BORDER /*| wxTE_PROCESS_TAB*/;
+   m_EntryStyle = wxSUNKEN_BORDER | wxTE_PROCESS_ENTER/*| wxTE_PROCESS_TAB*/;
 
    m_Sizer =  new wxBoxSizer( wxVERTICAL );
    this->SetAutoLayout( TRUE );
