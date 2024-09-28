@@ -59,7 +59,6 @@
 
 #include "mafSideBar.h"
 
-#include "mafUser.h"
 #include "mafGUIDialogFindVme.h"
 #include "ftk/Gui/MainFrame.h"
 #include "ftk/Gui/ViewFrame.h"
@@ -171,9 +170,6 @@ mafLogicWithManagers::mafLogicWithManagers()
   m_ApplicationLayoutSettings = NULL;
 
   m_HelpSettings = NULL;
-
-
-  m_User = std::make_unique<mafUser>();
 
   m_Config = wxConfigBase::Get();
 
@@ -445,12 +441,6 @@ void mafLogicWithManagers::SetApplicationStamp(const std::vector<mafString>& app
   // Add a vector of time stamps; this can be done manually for adding compatibility with other applications. 
   // The application name itself must not be included since it was already added with the other call (see function above).
   m_AppStamp.insert(m_AppStamp.end(), app_stamp.begin(), app_stamp.end());
-}
-//----------------------------------------------------------------------------
-mafUser *mafLogicWithManagers::GetUser()
-//----------------------------------------------------------------------------
-{
-  return m_User.get();
 }
 //----------------------------------------------------------------------------
 void mafLogicWithManagers::Init(int argc, char **argv)
