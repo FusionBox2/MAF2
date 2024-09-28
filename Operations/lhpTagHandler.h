@@ -22,7 +22,6 @@ class mafVME;
 //----------------------------------------------------------------------------
 #include "ftk/Base/Object.h"
 #include "ftk/Base/String.h"
-#include "mafUser.h"
 
 class MAF_EXPORT lhpTagHandlerInputOutputParametersCargo : public mafObject
 {
@@ -32,10 +31,6 @@ public:
   /** Set the input vme */
   void SetInputVme(mafVME* vme) {m_InputVme = vme;};
   mafVME *GetInputVme(){return m_InputVme;};
-
-  /** Set the input user */
-  void SetInputUser(mafUser* user) {m_InputUser = user;};
-  mafUser *GetInputUser(){return m_InputUser;};
 
 	/** Set the input storage */
 	void SetInputMSF(const char *msfFile) {m_InputMSF = _R(msfFile);};
@@ -47,7 +42,6 @@ public:
 
 private:
   mafVME* m_InputVme;
-  mafUser* m_InputUser;
 	mafString m_InputMSF;
   mafString m_TagHandlerGeneratedString;
   lhpTagHandlerInputOutputParametersCargo();

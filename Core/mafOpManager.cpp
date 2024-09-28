@@ -29,7 +29,6 @@
 #include "mmuIdFactory.h"
 #include "mafDecl.h"
 #include "mafOp.h"
-#include "mafUser.h"
 #include "mafGUI.h"
 #include "mafGUISettings.h"
 #include "mafOpStack.h"
@@ -434,9 +433,6 @@ void mafOpManager::FillTraceabilityAttribute(mafOp *op, mafNode *in_node, mafNod
 
   wxDateTime time = wxDateTime::UNow();
   dateAndTime  = mafString::Format(_R("%02d/%02d/%02d %02d:%02d:%02d"),time.GetDay(), time.GetMonth()+1, time.GetYear(), time.GetHour(), time.GetMinute(),time.GetSecond());
-
-  if (m_User != NULL && m_User->IsAuthenticated())
-      userID = m_User->GetName();
 
   if (in_node != NULL)
   {

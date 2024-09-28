@@ -48,7 +48,6 @@ class mafGUISettingsDialog;
 class mafGUIApplicationLayoutSettings;
 class mafGUISettings;
 class mafGUISettingsHelp;
-class mafUser;
 
 //----------------------------------------------------------------------------
 // mafLogicWithManagers :
@@ -133,9 +132,6 @@ public:
 
   /** Fill the View and operation menu's and set the application stamp to the VMEManager.*/
                void Show() override;
-
-  /** Return the applications' user.*/
-  mafUser *GetUser();
 
   /** Set the application stamp for the application, 
   if set to OPEN_ALL_DATA let's the application to open all msf file. 
@@ -314,10 +310,7 @@ protected:
   std::unique_ptr<mafGUIApplicationLayoutSettings> m_ApplicationLayoutSettings;
   std::unique_ptr<mafGUISettingsHelp> m_HelpSettings;
 
-
-  std::unique_ptr<mafUser> m_User; ///< Applications' user
-
-  std::unique_ptr<mafStorage> m_Storage;          ///< Associated storage
+	std::unique_ptr<mafStorage> m_Storage;          ///< Associated storage
   std::unique_ptr<mafStorageData> m_StorageData;
 
   std::vector<mafString> m_AppStamp;      ///< Application stamps for our application.

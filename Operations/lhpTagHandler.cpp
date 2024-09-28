@@ -28,7 +28,6 @@ lhpTagHandlerInputOutputParametersCargo::lhpTagHandlerInputOutputParametersCargo
 //------------------------------------------------------------------------------
 {
   m_InputVme = NULL;
-	m_InputUser = NULL;
 	m_InputMSF = _R("");
 
   m_TagHandlerGeneratedString = _R("NOT YET HANDLED!");

@@ -911,7 +911,7 @@ lhpTagHandler_L0000_resource_data_Traceability_Ownership_OwnerID::lhpTagHandler_
 void lhpTagHandler_L0000_resource_data_Traceability_Ownership_OwnerID::HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo)
 //------------------------------------------------------------------------------------
 {
-  mafString value = cargo->GetInputUser()->GetName();
+  mafString value;
 
   // tag handling code
   cargo->SetTagHandlerGeneratedString(value);
