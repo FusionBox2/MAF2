@@ -34,7 +34,6 @@
 #include "ftk/Core/AttributeFactory.h"
 #include "ftk/VME/ItemFactory.h"
 #include "ftk/Core/NodeFactory.h" 
-#include "mafNodeGeneric.h"
 #include "mafNodeRoot.h"
 #include "mafVMERoot.h"
 #include "mafVMESurface.h"
