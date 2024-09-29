@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.27)
-project (MAF)
+project (FTK VERSION 0.1.0)
 
 #-----------------------------------------------------------------------------
 # Macro for DEBUG logging
 #-----------------------------------------------------------------------------
-INCLUDE (${MAF_SOURCE_DIR}/modules/DebugMacro.cmake)
+INCLUDE (${FTK_SOURCE_DIR}/modules/DebugMacro.cmake)
 MARK_AS_ADVANCED (
   DEBUG_MESSAGES
 )
@@ -14,8 +14,8 @@ OPTION(DEBUG_MESSAGES "Enable debug Messages" OFF)
 #-----------------------------------------------------------------------------
 # where to place output binaries
 #-----------------------------------------------------------------------------
-set(LIBRARY_OUTPUT_PATH    ${MAF_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all libraries.")
-set(EXECUTABLE_OUTPUT_PATH ${MAF_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all executables.")
+set(LIBRARY_OUTPUT_PATH    ${FTK_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all libraries.")
+set(EXECUTABLE_OUTPUT_PATH ${FTK_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all executables.")
 mark_as_advanced(LIBRARY_OUTPUT_PATH)
 
 MARK_AS_ADVANCED (
@@ -37,13 +37,9 @@ else(CMAKE_SIZEOF_VOID_P EQUAL 8)
 endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
 
 #-----------------------------------------------------------------------------
-# MAF version number.  An even minor number corresponds to releases.
+# FTK version number.
 #-----------------------------------------------------------------------------
-SET(MAF_MAJOR_VERSION 2)
-SET(MAF_MINOR_VERSION 2)
-SET(MAF_BUILD_VERSION 0)
-SET(MAF_VERSION
-    "${MAF_MAJOR_VERSION}.${MAF_MINOR_VERSION}.${MAF_BUILD_VERSION}")
+SET(FTK_VERSION "${FTK_VERSION_MAJOR}.${FTK_VERSION_MINOR}.${FTK_VERSION_PATCH}")
 
 #-----------------------------------------------------------------------------
 # This enables support for Visual Studio Edit & Continue, OpenMP, and parallel compilation
@@ -54,7 +50,7 @@ IF (${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
 ENDIF (${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
 
 #-----------------------------------------------------------------------------
-# Options for MAF building
+# Options for FTK building
 #-----------------------------------------------------------------------------
 #Remove temporarily the BUILD_SHARED_LIBS because it is not possible to switch the compilation to dynamic.
 #SET(BUILD_SHARED_LIBS 0)
@@ -172,23 +168,23 @@ endif(MAF_USE_BTK)
 
 INCLUDE_DIRECTORIES(BEFORE ".")
 
-SET(INCLUDE_DIRS "${MAF_BINARY_DIR}" 
-                 "${MAF_BINARY_DIR}/Interaction" 
-                 "${MAF_BINARY_DIR}/vtkMAF" 
-                 "${MAF_SOURCE_DIR}/Application" 
-                 "${MAF_SOURCE_DIR}/Base" 
-                 "${MAF_SOURCE_DIR}/Common" 
-                 "${MAF_SOURCE_DIR}/Core" 
-                 "${MAF_SOURCE_DIR}/Gui"
-                 "${MAF_SOURCE_DIR}/Interaction" 
-                 "${MAF_SOURCE_DIR}/Interaction/Drivers" 
-                 "${MAF_SOURCE_DIR}/IO" 
-                 "${MAF_SOURCE_DIR}/Operations" 
-                 "${MAF_SOURCE_DIR}/Views"
-                 "${MAF_SOURCE_DIR}/VME" 
-                 "${MAF_SOURCE_DIR}/VME/DataPipes" 
-                 "${MAF_SOURCE_DIR}/vtkMAF") 
-SET(INCLUDE_DIRS ${INCLUDE_DIRS} "${MAF_SOURCE_DIR}/mafDLL")
+SET(INCLUDE_DIRS "${FTK_BINARY_DIR}" 
+                 "${FTK_BINARY_DIR}/Interaction" 
+                 "${FTK_BINARY_DIR}/vtkMAF" 
+                 "${FTK_SOURCE_DIR}/Application" 
+                 "${FTK_SOURCE_DIR}/Base" 
+                 "${FTK_SOURCE_DIR}/Common" 
+                 "${FTK_SOURCE_DIR}/Core" 
+                 "${FTK_SOURCE_DIR}/Gui"
+                 "${FTK_SOURCE_DIR}/Interaction" 
+                 "${FTK_SOURCE_DIR}/Interaction/Drivers" 
+                 "${FTK_SOURCE_DIR}/IO" 
+                 "${FTK_SOURCE_DIR}/Operations" 
+                 "${FTK_SOURCE_DIR}/Views"
+                 "${FTK_SOURCE_DIR}/VME" 
+                 "${FTK_SOURCE_DIR}/VME/DataPipes" 
+                 "${FTK_SOURCE_DIR}/vtkMAF") 
+SET(INCLUDE_DIRS ${INCLUDE_DIRS} "${FTK_SOURCE_DIR}/mafDLL")
 
 INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
 
@@ -229,6 +225,6 @@ set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT l
 ENDIF(WIN32)
 
 # Create the header to configure the classes.
-CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/mafConfigure.h.in
-             ${PROJECT_BINARY_DIR}/mafConfigure.h
+CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/Configure.h.in
+             ${PROJECT_BINARY_DIR}/ftkConfigure.h
              @ONLY)

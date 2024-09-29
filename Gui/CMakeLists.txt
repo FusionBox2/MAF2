@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.27)
 PROJECT(mafGui)
 MESSAGE(STATUS "Configuring project ${PROJECT_NAME}")
 
-CONFIGURE_FILE("${MAF_SOURCE_DIR}/Gui/manifest.in" "${MAF_BINARY_DIR}/Gui/manifest.in" COPYONLY)
+CONFIGURE_FILE("${FTK_SOURCE_DIR}/Gui/manifest.in" "${FTK_BINARY_DIR}/Gui/manifest.in" COPYONLY)
 
 SET(PROJECT_SRCS
   mafEvent.cpp

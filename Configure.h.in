@@ -1,5 +1,4 @@
-#ifndef __mafConfigure_h
-#define __mafConfigure_h
+#pragma once
 
 #if @MAF_BUILD_MAFDLL@
 # define MAF_SHARED
@@ -27,7 +26,15 @@
 #  define MAF_EXPORT __declspec( dllimport ) 
 # endif
 #else
-# define MAF_EXPORT
+#define FTK_BASE_EXPORT
+#define FTK_CORE_EXPORT
+#define FTK_GUI_EXPORT
+#define FTK_IO_EXPORT
+#define FTK_INTERACTION_EXPORT
+#define FTK_VME_EXPORT
+#define FTK_OPERATION_EXPORT
+#define FTK_VIEW_EXPORT
+#define MAF_EXPORT
 #define MED_COMMON_EXPORT
 #define MED_GUI_EXPORT
 #define MED_VME_EXPORT
@@ -50,10 +57,10 @@
 // MAF Versioning
 //--------------------------------------------------------------------------
 
-#define MAF_MAJOR_VERSION @MAF_MAJOR_VERSION@
-#define MAF_MINOR_VERSION @MAF_MINOR_VERSION@
-#define MAF_BUILD_VERSION @MAF_BUILD_VERSION@
-#define MAF_VERSION "@MAF_VERSION@"
+#define FTK_MAJOR_VERSION @FTK_VERSION_MAJOR@
+#define FTK_MINOR_VERSION @FTK_VERSION_MINOR@
+#define FTK_BUILD_VERSION @FTK_VERSION_PATCH@
+#define FTK_VERSION "@FTK_VERSION@"
 
 //--------------------------------------------------------------------------
 // Which threading system are we using
@@ -74,4 +81,5 @@
 
 #cmakedefine MAF_USE_BTK
 
-#endif // __mafConfigure_h
+#define BEGIN_FTK_NAMESPACE
+#define END_FTK_NAMESPACE
