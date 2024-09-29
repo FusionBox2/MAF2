@@ -1,55 +1,39 @@
-/*=========================================================================
-  Program:   Multimod Application Framework
-  Module:    $RCSfile: mafFilesDirs.h,v $
-  Language:  C++
-  Date:      $Date: 2007-11-06 12:48:05 $
-  Version:   $Revision: 1.7 $
-  Authors:   Based on itkDirectory (www.itk.org), adapted by Marco Petrone
-==========================================================================
-  Copyright (c) 2001/2005 
-  CINECA - Interuniversity Consortium (www.cineca.it)
-=========================================================================*/
+#pragma once
 
-#ifndef __mafFilesDirs_h
-#define __mafFilesDirs_h
+#include "ftkConfigure.h"
 
 #include "ftk/Base/String.h"
 
-MAF_EXPORT mafString mafStripMenuCodes(const mafString& com);
+BEGIN_FTK_NAMESPACE
 
-MAF_EXPORT bool mafDirMake(const mafString& directory);
-MAF_EXPORT bool mafDirRemove(const mafString& directory);
-MAF_EXPORT bool mafDirExists(const mafString& directory);
-MAF_EXPORT bool mafFileRemove(const mafString& file);
-MAF_EXPORT bool mafFileRename(const mafString& files, const mafString& filet);
-MAF_EXPORT bool mafFileCopy(const mafString& files, const mafString& filet, bool overwrite = true);
-MAF_EXPORT bool mafFileExists(const mafString& file);
-MAF_EXPORT mafString mafFindFirstFile(const mafString& spec, bool dir = false);
-MAF_EXPORT mafString mafFindNextFile();
-MAF_EXPORT mafString mafCreateTempFileName(const mafString& base);
-MAF_EXPORT void mafSplitPath(const mafString& fullname, mafString* path, mafString* name, mafString* ext);
-MAF_EXPORT void mafSplitPath(const mafString& fullname, mafString* path, mafString* nameext);
-MAF_EXPORT mafString mafPathOnly(const mafString& fullname);
-MAF_EXPORT mafString mafFileNameFromPath(const mafString& fullname);
+FTK_BASE_EXPORT mafString mafStripMenuCodes(const mafString& com);
 
-MAF_EXPORT void mafRemoveDirectory(const mafString& directory);
-MAF_EXPORT mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafString& tmpDir);
-MAF_EXPORT void mafExtractZIP(const mafString& filename, const mafString& temp_directory, const mafString& entry_name);
-MAF_EXPORT bool mafExtractZIP(const mafString& filename, const mafString& entry_name, void *& buffer, size_t& size);
-MAF_EXPORT void mafZIPSave(const mafString& filename, const mafString& dir);
+FTK_BASE_EXPORT bool mafDirMake(const mafString& directory);
+FTK_BASE_EXPORT bool mafDirRemove(const mafString& directory);
+FTK_BASE_EXPORT bool mafDirExists(const mafString& directory);
+FTK_BASE_EXPORT bool mafFileRemove(const mafString& file);
+FTK_BASE_EXPORT bool mafFileRename(const mafString& files, const mafString& filet);
+FTK_BASE_EXPORT bool mafFileCopy(const mafString& files, const mafString& filet, bool overwrite = true);
+FTK_BASE_EXPORT bool mafFileExists(const mafString& file);
+FTK_BASE_EXPORT mafString mafFindFirstFile(const mafString& spec, bool dir = false);
+FTK_BASE_EXPORT mafString mafFindNextFile();
+FTK_BASE_EXPORT mafString mafCreateTempFileName(const mafString& base);
+FTK_BASE_EXPORT void mafSplitPath(const mafString& fullname, mafString* path, mafString* name, mafString* ext);
+FTK_BASE_EXPORT void mafSplitPath(const mafString& fullname, mafString* path, mafString* nameext);
+FTK_BASE_EXPORT mafString mafPathOnly(const mafString& fullname);
+FTK_BASE_EXPORT mafString mafFileNameFromPath(const mafString& fullname);
 
-/** extract the file archived in the zipFile in the directory where is placed the zip file.
-Return the list of the files extracted. */
-MAF_EXPORT std::vector<mafString> mafZIPOpen(const mafString& zipFile);
+FTK_BASE_EXPORT void mafRemoveDirectory(const mafString& directory);
+FTK_BASE_EXPORT mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafString& tmpDir);
+FTK_BASE_EXPORT void mafExtractZIP(const mafString& filename, const mafString& temp_directory, const mafString& entry_name);
+FTK_BASE_EXPORT bool mafExtractZIP(const mafString& filename, const mafString& entry_name, void *& buffer, size_t& size);
+FTK_BASE_EXPORT void mafZIPSave(const mafString& filename, const mafString& dir);
 
-mafString BaseName(const mafString& str);
-void MakeBaseName(mafString& str);
-/** Extract the pathname from a filename string. Result is written inplace. */
-void ExtractPathName(mafString& str);
-/**
-  parse the given string to substitute each (back)slash
-  character with the right pathname separator.*/
-void ParsePathName(mafString& str);
+FTK_BASE_EXPORT std::vector<mafString> mafZIPOpen(const mafString& zipFile);
 
+FTK_BASE_EXPORT mafString BaseName(const mafString& str);
+FTK_BASE_EXPORT void MakeBaseName(mafString& str);
+FTK_BASE_EXPORT void ExtractPathName(mafString& str);
+FTK_BASE_EXPORT void ParsePathName(mafString& str);
 
-#endif
+END_FTK_NAMESPACE
