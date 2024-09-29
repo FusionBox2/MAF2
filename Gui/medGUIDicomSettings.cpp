@@ -99,10 +99,10 @@ void medGUIDicomSettings::CreateGui()
   m_Gui->Bool(ID_ENABLE_POS_INFO,_L("Visualize Position and Orientation"),&m_VisualizePosition,1);
 
   m_Gui->Bool(ID_SCALAR_DISTANCE_TOLERANCE,_L("Scalar distance tolerance"),&m_ScalarTolerance,1);
-  m_Gui->Double(ID_SCALAR_TOLERANCE,_L("Value"),&m_ScalarDistanceTolerance,0,MAXDOUBLE,5,_R("Value in millimeter"));
+  m_Gui->Double(ID_SCALAR_TOLERANCE,_L("Value"),&m_ScalarDistanceTolerance,0, std::numeric_limits<double>::max(),5,_R("Value in millimeter"));
 
   m_Gui->Bool(ID_PERCENTAGE_DISTANCE_TOLERANCE,_L("Percentage distance tolerance"),&m_PercentageTolerance,1);
-  m_Gui->Double(ID_PERCENTAGE_TOLERANCE,_L("Value"),&m_PercentageDistanceTolerance,0,MAXDOUBLE,2,_R("Value in percentage"));
+  m_Gui->Double(ID_PERCENTAGE_TOLERANCE,_L("Value"),&m_PercentageDistanceTolerance,0, std::numeric_limits<double>::max(),2,_R("Value in percentage"));
 
   mafString DCM_IMGchoices[2]={_L("Skip All"),_L("Set Default position")};
   m_Gui->Label(_R("Dicom image position patient exception handling"));

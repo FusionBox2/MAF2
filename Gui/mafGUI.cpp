@@ -413,7 +413,7 @@ mafGUICrossIncremental *mafGUI::CrossIncremental(int id,const mafString& label, 
 {
   int width = (label.empty()) ? FW : DW;
   
-  mafGUICrossIncremental *cI =  new mafGUICrossIncremental(this, GetWidgetId(id), label, stepVariable, topBottomVariable, leftRightVariable, boldLabel, modality, dp, wxDefaultSize, MINFLOAT, MAXFLOAT, digits,wxTAB_TRAVERSAL|wxCLIP_CHILDREN, comboStep,buttonUpDown_text,buttonLeftRight_text);
+  mafGUICrossIncremental *cI =  new mafGUICrossIncremental(this, GetWidgetId(id), label, stepVariable, topBottomVariable, leftRightVariable, boldLabel, modality, dp, wxDefaultSize, -std::numeric_limits<double>::max(), std::numeric_limits<double>::max(), digits,wxTAB_TRAVERSAL|wxCLIP_CHILDREN, comboStep,buttonUpDown_text,buttonLeftRight_text);
   cI->SetListener(this);
   
 	Add(cI,0,wxALL, M); 

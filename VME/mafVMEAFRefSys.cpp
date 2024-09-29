@@ -273,8 +273,8 @@ mafGUI* mafVMEAFRefSys::CreateGui()
     }
     else
     {
-      double minlimit = (m_vm->getInputs()[i].second->IsDnLimited()) ? m_vm->getInputs()[i].second->GetDnLimit() : MINDOUBLE;
-      double maxlimit = (m_vm->getInputs()[i].second->IsUpLimited()) ? m_vm->getInputs()[i].second->GetUpLimit() : MAXDOUBLE;
+      double minlimit = (m_vm->getInputs()[i].second->IsDnLimited()) ? m_vm->getInputs()[i].second->GetDnLimit() : -(std::numeric_limits<double>::max)();
+      double maxlimit = (m_vm->getInputs()[i].second->IsUpLimited()) ? m_vm->getInputs()[i].second->GetUpLimit() : (std::numeric_limits<double>::max)();
       if(m_vm->getInputs()[i].second->IsDnLimited() && m_vm->getInputs()[i].second->IsUpLimited())
         m_Gui->FloatSlider(ID_FIRSTDYN + i, _R(m_vm->getInputs()[i].first.c_str()), &(m_vm->getInputs()[i].second->GetScalar()), minlimit, maxlimit);
       else

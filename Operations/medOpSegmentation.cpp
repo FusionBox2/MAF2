@@ -3904,7 +3904,7 @@ void medOpSegmentation::SelectBrushImage(double x, double y, double z, bool sele
     scalar = 255;
   }
 
-  double min_distance = MAXDOUBLE;
+  double min_distance = (std::numeric_limits<double>::max)();
   int nearestIndex = 0;
   //get the nearest dataset point
   for (int i=0;i<numberOfPoints;i++)

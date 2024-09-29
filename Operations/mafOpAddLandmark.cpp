@@ -296,7 +296,7 @@ void mafOpAddLandmark::OpRun()
 	  m_Gui->Label(_L("and place landmark by"));
 	  m_Gui->Label(_L("clicking on the parent surface"));
 	  m_Gui->Divider();
-	  m_Gui->Vector(ID_CHANGE_POSITION, _L("Position"), m_LandmarkPosition,MINFLOAT,MAXFLOAT,2,_L("landmark position"));
+	  m_Gui->Vector(ID_CHANGE_POSITION, _L("Position"), m_LandmarkPosition,-std::numeric_limits<double>::max(), std::numeric_limits<double>::max(),2,_L("landmark position"));
 	  m_Gui->OkCancel();
 	  m_Gui->Enable(wxOK, false);
 	

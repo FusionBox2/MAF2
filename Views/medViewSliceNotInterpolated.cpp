@@ -82,7 +82,7 @@ mafGUI *medViewSliceNotInterpolated::CreateGui()
   m_LutSwatch = m_Gui->Lut(ID_LUT,_R("LUT"),m_ColorLUT); // Lut widget
   mafString choices[3] = {_R("X"),_R("Y"),_R("Z")};
   m_Gui->Combo(ID_AXIS,_R("Axis"),&m_SliceAxis,3,choices); // Slice Axis
-  m_SliceSlider = m_Gui->FloatSlider(ID_SLICE,_R("Slice"),&m_CurrentSlice,MINDOUBLE,MAXDOUBLE); // Current slice coordinate
+  m_SliceSlider = m_Gui->FloatSlider(ID_SLICE,_R("Slice"),&m_CurrentSlice,-std::numeric_limits<double>::max(), std::numeric_limits<double>::max()); // Current slice coordinate
   m_Gui->Divider();
   EnableGuiWidgets(false);
   return m_Gui;

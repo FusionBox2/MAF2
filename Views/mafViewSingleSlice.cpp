@@ -477,7 +477,7 @@ mafGUI *mafViewSingleSlice::CreateGui()
   //m_Gui->AddGui(m_AttachCamera->GetGui());
 
 	//m_Slider = m_Gui->FloatSlider(ID_POSITION, _("Position"), &m_Position,MINDOUBLE,MAXDOUBLE);
-  m_Gui->Double(ID_POSITION, _L("Position"), &m_Position,MINDOUBLE,MAXDOUBLE,2);
+  m_Gui->Double(ID_POSITION, _L("Position"), &m_Position,-std::numeric_limits<double>::max(), std::numeric_limits<double>::max(),2);
 	m_Gui->Enable(ID_POSITION,false);
 
 	//const wxString plane_string[] = {_("XY"), _("YZ"), _("ZX")};

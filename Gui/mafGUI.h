@@ -27,11 +27,7 @@
 #include "mafEventSender.h"
 #include "mafBaseEventHandler.h"
 #include <map>
-
-#ifdef MAF_EXPORTS
-#include "mafDllMacros.h"
-EXPORT_STL_MAP(MAF_EXPORT,int,int);
-#endif
+#include <limits>
 
 //----------------------------------------------------------------------------
 // class forward :
@@ -54,20 +50,6 @@ It is used and incremented by GetWidgetId.
 \sa GetWidgetId GetModuleId MAFWidgetId m_WidgetTableID
 */
 //extern "C" int MAFWidgetId;
-
-//----------------------------------------------------------------------------
-// Constants :
-//----------------------------------------------------------------------------
-#pragma warning(push)
-#pragma warning (disable:4005)
-
-#define MININT    -2147483647-1
-#define MAXINT     2147483647
-#define MINFLOAT  -1.0e+38F
-#define MAXFLOAT   1.0e+38F
-#define MINDOUBLE -1.0e+299
-#define MAXDOUBLE 1.0e+299
-#pragma warning(pop)
 
 //----------------------------------------------------------------------------
 // Constants to be used with mafGUI::GetMetrics()
@@ -144,37 +126,37 @@ public:
   void String(int id,const mafString& label,mafString *var, const mafString& tooltip = _R(""), bool multiline = false, bool password = false);
 
   /** Integer entry widget. */
-  void Integer(int id,const mafString& label,int *var, int min = MININT, int max = MAXINT, const mafString& tooltip = _R(""), bool labelAlwaysEnable = false);
+  void Integer(int id,const mafString& label,int *var, int min = std::numeric_limits<int>::min(), int max = std::numeric_limits<int>::max(), const mafString& tooltip = _R(""), bool labelAlwaysEnable = false);
 
   /** Float entry widget. */
-  void Float(int id,const mafString& label,float *var, float min = MINFLOAT, float max = MAXFLOAT, int flag=0, int decimal_digit = -1, const mafString& tooltip = _R(""));
+  void Float(int id,const mafString& label,float *var, float min = -std::numeric_limits<float>::max(), float max = std::numeric_limits<float>::max(), int flag=0, int decimal_digit = -1, const mafString& tooltip = _R(""));
 
   /** Double entry widget. */
-  void Double(int id,const mafString& label,double *var, double	min = MINDOUBLE, double max = MAXDOUBLE, int decimal_digit = -1, const mafString& tooltip = _R(""), bool labelAlwaysEnable = false);
+  void Double(int id,const mafString& label,double *var, double	min = -std::numeric_limits<double>::max(), double max = std::numeric_limits<double>::max(), int decimal_digit = -1, const mafString& tooltip = _R(""), bool labelAlwaysEnable = false);
 
   /** Integer vector3 entry widget. */
-  void Vector(int id,const mafString& label, int var[3], int min = MININT, int max = MAXINT, const mafString& tooltip = _R(""), wxColour *bg_colour = NULL);
+  void Vector(int id,const mafString& label, int var[3], int min = std::numeric_limits<int>::min(), int max = std::numeric_limits<int>::max(), const mafString& tooltip = _R(""), wxColour *bg_colour = NULL);
 
   /** Integer vector3 entry widget. */
   void Vector(int id,const mafString& label, int var[3], int minx, int maxx, int miny, int maxy, int minz, int maxz, const mafString& tooltip = _R(""), wxColour *bg_colour = NULL);
 
   /** Float vector3 entry widget. */
-  void Vector(int id,const mafString& label, float var[3], float min = MINFLOAT, float max = MAXFLOAT, int decimal_digit = -1, const mafString& tooltip = _R(""), wxColour *bg_colour = NULL);
+  void Vector(int id,const mafString& label, float var[3], float min = -std::numeric_limits<float>::max(), float max = std::numeric_limits<float>::max(), int decimal_digit = -1, const mafString& tooltip = _R(""), wxColour *bg_colour = NULL);
 
   /** Float vector3 entry widget. */
   void Vector(int id,const mafString& label, float var[3], float minx, float maxx, float miny, float maxy, float minz, float maxz, int decimal_digit = -1, const mafString& tooltip = _R(""), wxColour *bg_colour = NULL);
 
   /** Double vector3 entry widget. */
-  void Vector(int id,const mafString& label, double var[3], double min = MINFLOAT, double max = MAXFLOAT, int decimal_digit = -1, const mafString& tooltip = _R(""), wxColour *bg_colour = NULL);
+  void Vector(int id,const mafString& label, double var[3], double min = -std::numeric_limits<double>::max(), double max = std::numeric_limits<double>::max(), int decimal_digit = -1, const mafString& tooltip = _R(""), wxColour *bg_colour = NULL);
 
   /** Double vector3 entry widget. */
   void Vector(int id,const mafString& label, double var[3], double minx, double maxx, double miny, double maxy, double minz, double maxz, int decimal_digit = -1, const mafString& tooltip = _R(""), wxColour *bg_colour = NULL);
 
   /** Double vectorN entry widget. */
-  void VectorN(int id,const mafString& label, double *var, int num_elem = 3, double min = MINFLOAT, double max = MAXFLOAT, int decimal_digit = -1, const mafString& tooltip = _R(""));
+  void VectorN(int id,const mafString& label, double *var, int num_elem = 3, double min = -std::numeric_limits<double>::max(), double max = std::numeric_limits<double>::max(), int decimal_digit = -1, const mafString& tooltip = _R(""));
   
   /** Int vectorN entry widget. */
-  void VectorN(int id,const mafString& label, int *var,int num_elem = 3,int min = MININT, int max = MAXINT, const mafString& tooltip = _R(""));
+  void VectorN(int id,const mafString& label, int *var,int num_elem = 3,int min = std::numeric_limits<int>::min(), int max = std::numeric_limits<int>::max(), const mafString& tooltip = _R(""));
 
   /** Checkbutton widget. */
   void Bool(int id, const mafString& label, int *var, int flag = 0, const mafString& tooltip = _R("")	);
@@ -183,10 +165,10 @@ public:
   void BoolGrid(int numRows, int numColumns, std::vector<int> &ids, std::vector<const char*> &labelsRows,std::vector<const char*> &labelsColumns, int *var, const mafString& tooltip = _R("")	);
 
   /** Radiobutton widget. */
-  void Radio(int id,const mafString& label, int *var, int numchoices = 0, const mafString choices[] = NULL, int dim = 1, const mafString& tooltip = _R(""), int style = wxRA_SPECIFY_COLS);
+  void Radio(int id,const mafString& label, int *var, int numchoices = 0, const mafString choices[] = nullptr, int dim = 1, const mafString& tooltip = _R(""), int style = wxRA_SPECIFY_COLS);
 
   /** Combo widget. */
-  wxComboBox *Combo(int id,const mafString& label, int *var, int numchoices = 0, const mafString choices[] = NULL, const mafString& tooltip = _R(""));
+  wxComboBox *Combo(int id,const mafString& label, int *var, int numchoices = 0, const mafString choices[] = nullptr, const mafString& tooltip = _R(""));
 
   /** File open dialog widget. */
   void FileOpen(int id,const mafString& label,mafString *var, const mafString& wildcard = _R(""), const mafString& tooltip = _R(""));
@@ -224,7 +206,7 @@ public:
   void OkCancel(int alignment = wxALL);
 
   /** Integer slider widget. */
-	wxSlider *Slider(int id, const mafString& label, int *var,int min = MININT, int max = MAXINT, const mafString& tooltip = _R(""),bool showText=true);
+	wxSlider *Slider(int id, const mafString& label, int *var,int min = std::numeric_limits<int>::min(), int max = std::numeric_limits<int>::max(), const mafString& tooltip = _R(""),bool showText=true);
 
   /** Float slider widget.*/
   mafGUIFloatSlider *FloatSlider(int id, const mafString& label, double *var,double min, double max, wxSize size = wxDefaultSize, const mafString& tooltip = _R(""), bool textBoxEnable = true);

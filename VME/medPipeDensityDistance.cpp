@@ -370,7 +370,7 @@ mafGUI *medPipeDensityDistance::CreateGui()
 		wxTextCtrl   *tex = new wxTextCtrl  (m_Gui,-1,"",         p,s,wxNO_BORDER);
 		tex->SetBackgroundColour(colour[i]);
 		tex->SetToolTip(tip);
-		tex->SetValidator( mafGUIValidator(this,ID_AREA,tex,&m_Area[i], MINFLOAT,MAXFLOAT,3) ); 
+		tex->SetValidator( mafGUIValidator(this,ID_AREA,tex,&m_Area[i], -std::numeric_limits<double>::max(), std::numeric_limits<double>::max(),3) );
 		sizer->Add(lab, 0,wxRIGHT,1);
 		sizer->Add(tex,0,wxRIGHT,1);
 	}
@@ -390,7 +390,7 @@ mafGUI *medPipeDensityDistance::CreateGui()
 		wxTextCtrl   *tex = new wxTextCtrl  (m_Gui,-1,"",         p1,s1,wxNO_BORDER);
 		tex->SetBackgroundColour(colour_distance[i]);
 		tex->SetToolTip(tip);
-		tex->SetValidator( mafGUIValidator(this,ID_AREA_DISTANCE,tex,&m_AreaDistance[i], MINFLOAT,MAXFLOAT,3) ); 
+		tex->SetValidator( mafGUIValidator(this,ID_AREA_DISTANCE,tex,&m_AreaDistance[i], -std::numeric_limits<double>::max(), std::numeric_limits<double>::max(),3) );
 		sizer_distance->Add(lab, 0,wxRIGHT,1);
 		sizer_distance->Add(tex,0,wxRIGHT,1);
 	}

@@ -5468,8 +5468,8 @@ void medOpImporterDicomOffis::GetDicomRange(double *range)
 {
 	double sliceRange[2];
 
-	range[0]=MAXDOUBLE;
-	range[1]=MINDOUBLE;
+	range[0]= std::numeric_limits<double>::max();
+	range[1]=-std::numeric_limits<double>::max();
 
 	for(int imageID=0;imageID<m_SelectedSeriesSlicesList->size();imageID++)
 	{  

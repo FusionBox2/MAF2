@@ -286,7 +286,7 @@ void medOpExtractGeometry::CreateResampleGui()
   op->GetSpacing(m_VolumeSpacing);
   mafDEL(op);
 
-  m_ResampleGui->Vector(ID_RESAMPLE_VOLUME_SPACING, _R(""), this->m_VolumeSpacing,MINFLOAT,MAXFLOAT,4,_R("output volume spacing"));
+  m_ResampleGui->Vector(ID_RESAMPLE_VOLUME_SPACING, _R(""), this->m_VolumeSpacing,-std::numeric_limits<double>::max(), std::numeric_limits<double>::max(),4,_R("output volume spacing"));
 
   m_ResampleGui->Button(ID_RESAMPLE_OK, _L("Resample"), _R(""));
 

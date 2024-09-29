@@ -1318,7 +1318,7 @@ mafGUI* mafVMELandmarkCloud::CreateGui()
   m_CloudStateCheckbox = this->IsOpen() ? 1 : 0;
   m_Gui->Bool(ID_OPEN_CLOSE_CLOUD,_R("Explode"),&m_CloudStateCheckbox);
 
-  m_Gui->Double(ID_LM_RADIUS, _R("radius"), &m_Radius, 0.0,MAXDOUBLE,-1);
+  m_Gui->Double(ID_LM_RADIUS, _R("radius"), &m_Radius, 0.0, std::numeric_limits<double>::max(),-1);
   m_Gui->Enable(ID_LM_RADIUS, m_CloudStateCheckbox == 0);
 
   m_Gui->Integer(ID_LM_SPHERE_RESOLUTION, _R("Resolution"), &m_SphereResolution, 0.0,MAXINT);

@@ -480,13 +480,13 @@ void mafOpVolumeResample::CreateGui()
 
   m_Gui->Label(_R("ROI Orientation"),true);
   m_Gui->Label(_R("Bouding Box Origin"));
-  m_Gui->Vector(ID_VOLUME_ORIGIN, _R(""), m_VolumePosition,MINFLOAT,MAXFLOAT,2,_R("output volume origin"));
+  m_Gui->Vector(ID_VOLUME_ORIGIN, _R(""), m_VolumePosition,-std::numeric_limits<double>::max(), std::numeric_limits<double>::max(),2,_R("output volume origin"));
 
   m_Gui->Label(_R("Bouding Box Orientation"));
-  m_Gui->Vector(ID_VOLUME_ORIENTATION, _R(""), m_VolumeOrientation,MINFLOAT,MAXFLOAT,2,_R("output volume orientation"));
+  m_Gui->Vector(ID_VOLUME_ORIENTATION, _R(""), m_VolumeOrientation,-std::numeric_limits<double>::max(), std::numeric_limits<double>::max(),2,_R("output volume orientation"));
 
   m_Gui->Label(_R("Volume Spacing"),false);
-  m_Gui->Vector(ID_VOLUME_SPACING, _R(""), this->m_VolumeSpacing,MINFLOAT,MAXFLOAT,4,_R("output volume spacing"));
+  m_Gui->Vector(ID_VOLUME_SPACING, _R(""), this->m_VolumeSpacing,-std::numeric_limits<double>::max(), std::numeric_limits<double>::max(),4,_R("output volume spacing"));
   m_Gui->Button(ID_VOLUME_AUTOSPACING,_R("AutoSpacing"), _R(""),_R("compute auto spacing by rotating original spacing"));
 
   UpdateGizmoData();

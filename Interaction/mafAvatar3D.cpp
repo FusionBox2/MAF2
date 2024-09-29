@@ -653,7 +653,7 @@ void mafAvatar3D::CreateGui()
     _R("select the rule for mapping the tracker coordinates into world coordinates"));
   m_Gui->Bool(ID_WBOX_BOOL,_R("working box"),&m_DisplayWorkingBox,0,_R("display working box in the scene"));
   m_Gui->Bool(ID_DEBUG_TEXT,_R("debug text"),&m_DisplayDebugText,0,_R("display working box in the scene"));
-  m_Gui->VectorN(ID_DEBUG_TEXT_POSITION,_R("text pos"),m_DebugTextPosition,2,MINFLOAT,MAXFLOAT,2,_R("where to position the text on the screen"));
+  m_Gui->VectorN(ID_DEBUG_TEXT_POSITION,_R("text pos"),m_DebugTextPosition,2,-std::numeric_limits<double>::max(), std::numeric_limits<double>::max(),2,_R("where to position the text on the screen"));
   m_Gui->Combo(ID_COORDS_COMBO,_R("coords frame"),&m_CoordsFrame,3,coords_system,_R("select pose matrix frame"));
   m_Gui->Divider();
 }
