@@ -35,8 +35,6 @@ SET(PROJECT_SRCS ${PROJECT_SRCS}
   mafMatrixPipe.h
   mafNode.cpp
   mafNode.h
-  mafNodeGeneric.cpp
-  mafNodeGeneric.h
   mafNodeIterator.cpp
   mafNodeIterator.h
   mafNodeLayout.cpp
