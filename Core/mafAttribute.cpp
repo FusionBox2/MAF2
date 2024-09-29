@@ -26,6 +26,7 @@
 
 
 #include "mafAttribute.h"
+#include "mafObjectFactory.h"
 #include "mafStorageElement.h"
 #include "mafIndent.h"
 #include "assert.h"
@@ -107,4 +108,18 @@ void mafAttribute::Print(std::ostream& os, const int tabs) const
   mafIndent indent(tabs);
 
   os << indent << "Name: " << m_Name.GetCStr() << std::endl;
+}
+
+mafAttribute* mafAttribute::Create(const char* AttributeType)
+{
+  if (auto object = mafObjectFactory::CreateInstance(AttributeType))
+  {
+    if (auto attribute = mafAttribute::SafeDownCast(object))
+    {
+      return attribute;
+    }
+    delete object;
+    return nullptr;
+  }
+  return nullptr;
 }

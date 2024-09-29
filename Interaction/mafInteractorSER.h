@@ -17,7 +17,6 @@
 #define __mafInteractorSER_h
 
 #include "mafInteractor.h"
-#include "mafObjectFactory.h"
 #include "mafAction.h"
 #include "mafTo.h"
 #include <map>
@@ -47,7 +46,8 @@ class MAF_EXPORT mafInteractorSER : public mafInteractor
 public: 
   mafTypeMacro(mafInteractorSER,mafInteractor);
 
-   /** Un/Bind a device to an action */
+  static mafInteractorSER* Create(const char* InteractorSERType);
+  /** Un/Bind a device to an action */
   void BindDeviceToAction(mafDevice *device,mafAction *action);
   /** Un/Bind a device to an action */
   void BindDeviceToAction(mafDevice *device,const char *action_name);
@@ -105,8 +105,7 @@ namespace parser
   mafInteractorSER* Parse(const Value& value, parser::To<mafInteractorSER>)
   {
     mafString type_name = value(_R("Type")).template As<mafString>();
-    auto object = mafObjectFactory::CreateInstance(type_name.GetCStr());
-    if (auto interactor = mafInteractorSER::SafeDownCast(object))
+    if (auto interactor = mafInteractorSER::Create(type_name.GetCStr()))
     {
       interactor->Restore(value);
       return interactor;

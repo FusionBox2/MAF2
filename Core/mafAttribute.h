@@ -19,7 +19,6 @@
 // includes :
 //----------------------------------------------------------------------------
 #include "mafReferenceCounted.h" 
-#include "mafObjectFactory.h"
 #include "ftk/Base/String.h"
 #include "mafTo.h"
 
@@ -39,6 +38,7 @@ class MAF_EXPORT mafAttribute : public mafReferenceCounted
 public:
   mafAbstractTypeMacro(mafAttribute,mafReferenceCounted);
 
+  static mafAttribute* Create(const char* AttributeType);
   /** attributes must define a copy rule */
   void operator=(const mafAttribute &a);
 
@@ -78,8 +78,7 @@ namespace parser
   mafAttribute* Parse(const Value& value, parser::To<mafAttribute>)
   {
     mafString type_name = value(_R("Type")).template As<mafString>();
-    auto object = mafObjectFactory::CreateInstance(type_name.GetCStr());
-    if (auto attr = mafAttribute::SafeDownCast(object))
+    if (auto attr = mafAttribute::Create(type_name.GetCStr()))
     {
       attr->Restore(value);
       return attr;

@@ -19,7 +19,6 @@
 // includes :
 //----------------------------------------------------------------------------
 #include "mafReferenceCounted.h"
-#include "mafObjectFactory.h"
 #include "mafSmartPointer.h"
 #include "mafBaseEventHandler.h"
 #include "mafTagItem.h"
@@ -97,6 +96,8 @@ class MAF_EXPORT mafNode : public mafReferenceCounted, public mafEventSource, pu
 {
 public:
   mafTypeMacro(mafNode, mafReferenceCounted);
+
+  static mafNode* Create(const char* NodeType);
   /** print a dump of this object */
   virtual void Print(std::ostream& os, const int tabs=0);// const;
 
@@ -489,8 +490,7 @@ namespace parser
 	mafNode* Parse(const Value& value, parser::To<mafNode>)
   {
     mafString type_name = value(_R("Type")).template As<mafString>();
-    auto object = mafObjectFactory::CreateInstance(type_name.GetCStr());
-    if (auto node = mafNode::SafeDownCast(object))
+    if(auto node = mafNode::Create(type_name.GetCStr()))
     {
       node->Restore(value);
       return node;

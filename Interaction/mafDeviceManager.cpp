@@ -259,3 +259,17 @@ void mafDeviceManager::OnEvent(mafEventBase *event)
  
   Superclass::OnEvent(event);
 }
+
+mafDeviceManager* mafDeviceManager::Create(const char* DeviceManagerType)
+{
+  if (auto object = mafObjectFactory::CreateInstance(DeviceManagerType))
+  {
+    if (auto deviceManager = mafDeviceManager::SafeDownCast(object))
+    {
+      return deviceManager;
+    }
+    delete object;
+    return nullptr;
+  }
+  return nullptr;
+}

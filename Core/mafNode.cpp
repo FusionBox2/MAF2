@@ -27,6 +27,7 @@
 
 #include "mafNode.h"
 #include "mafNodeIterator.h"
+#include "mafObjectFactory.h"
 #include "mafIndent.h"
 #include "mafEventIO.h"
 #include "mafStorageElement.h"
@@ -1806,4 +1807,18 @@ mafNode * mafNode::GetByPath(const mafString& path,  bool onlyVisible /*=true*/)
   } 
   //While end
   return currentNode;
+}
+
+mafNode* mafNode::Create(const char* NodeType)
+{
+  if(auto object = mafObjectFactory::CreateInstance(NodeType))
+  {
+    if(auto node = mafNode::SafeDownCast(object))
+    {
+      return node;
+    }
+    delete object;
+    return nullptr;
+  }
+  return nullptr;
 }

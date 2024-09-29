@@ -53,6 +53,7 @@ public:
   
   mafTypeMacro(mafAction,mafAgent);
 
+  static mafAction* Create(const char* ActionType);
   /** Set the type of action*/
   int GetType() {return m_Type;}
   void SetType(int t) {if (t==SHARED_ACTION||t==EXCLUSIVE_ACTION) m_Type=t;}
@@ -98,8 +99,7 @@ namespace parser
   mafAction* Parse(const Value& value, parser::To<mafAction>)
   {
     mafString type_name = value(_R("Type")).template As<mafString>();
-    auto object = mafObjectFactory::CreateInstance(type_name.GetCStr());
-    if (auto action = mafAction::SafeDownCast(object))
+    if (auto action = mafAction::Create(type_name.GetCStr()))
     {
       action->Restore(value);
       return action;

@@ -27,7 +27,6 @@
 #include "mafReferenceCounted.h"
 #include "mafTimeStamped.h"
 #include "mafEventSender.h"
-#include "mafObjectFactory.h"
 #include "ftk/Base/String.h"
 #include "ftk/Base/MTime.h"
 #include "mafOBB.h"
@@ -72,7 +71,9 @@ public:
 
   mafAbstractTypeMacro(mafVMEItem,mafReferenceCounted);
 
-  enum VME_ITEM_IO_ERRORS {MAF_NO_IO=MAF_USER_RETURN_VALUE+1};
+  static mafVMEItem* Create(const char* ItemType);
+
+	enum VME_ITEM_IO_ERRORS {MAF_NO_IO=MAF_USER_RETURN_VALUE+1};
 
   void Print(std::ostream& os, const int indent=0) const override;
 
@@ -344,8 +345,7 @@ namespace parser
   mafVMEItem* Parse(const Value& value, parser::To<mafVMEItem>)
   {
     mafString type_name = value(_R("Type")).template As<mafString>();
-    auto object = mafObjectFactory::CreateInstance(type_name.GetCStr());
-    if (auto item = mafVMEItem::SafeDownCast(object))
+    if (auto item = mafVMEItem::Create(type_name.GetCStr()))
     {
       item->Restore(value);
       return item;

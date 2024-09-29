@@ -18,6 +18,7 @@
 
 // base includes
 #include "mafDevice.h"
+#include "mafObjectFactory.h"
 #include "mmuIdFactory.h"
 
 // GUI
@@ -207,4 +208,18 @@ void mafDevice::InternalRestore(const mafStorageElement& node)
   {
     SetAutoStart(*flag != 0);
   }
+}
+
+mafDevice* mafDevice::Create(const char* DeviceType)
+{
+  if (auto object = mafObjectFactory::CreateInstance(DeviceType))
+  {
+    if (auto device = mafDevice::SafeDownCast(object))
+    {
+      return device;
+    }
+    delete object;
+    return nullptr;
+  }
+  return nullptr;
 }

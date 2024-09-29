@@ -18,7 +18,6 @@
 #define __mafAvatar_h
 
 #include "mafInteractor.h"
-#include "mafObjectFactory.h"
 #include "mafTo.h"
 #include "vtkProp3D.h"
 #include "vtkActor2D.h"
@@ -68,7 +67,8 @@ public:
 
   mafAbstractTypeMacro(mafAvatar,mafInteractor);
 
-  /**  
+  static mafAvatar* Create(const char* AvatarType);
+  /**
     Set the renderer this avatar is attached to. When the rederer is
     changed, all props created by this avatar are moved to the new renderer
     and the interaction is changed accordingly */
@@ -221,8 +221,7 @@ namespace parser
   mafAvatar* Parse(const Value& value, parser::To<mafAvatar>)
   {
     mafString type_name = value(_R("Type")).template As<mafString>();
-    auto object = mafObjectFactory::CreateInstance(type_name.GetCStr());
-    if (auto avatar = mafAvatar::SafeDownCast(object))
+    if (auto avatar = mafAvatar::Create(type_name.GetCStr()))
     {
       avatar->Restore(value);
       return avatar;

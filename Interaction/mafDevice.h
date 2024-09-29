@@ -17,7 +17,6 @@
 #define __mafDevice_h
 
 #include "mafAgentThreaded.h"
-#include "mafObjectFactory.h"
 #include "mafTo.h"
 
 //----------------------------------------------------------------------------
@@ -71,6 +70,7 @@ public:
 
   mafTypeMacro(mafDevice,mafAgentThreaded);
 
+  static mafDevice* Create(const char* DeviceType);
   /**
    Get the ID for this device. This is usually set by mafDeviceSet */
   unsigned long GetID() {return m_ID;};
@@ -178,8 +178,7 @@ namespace parser
   mafDevice* Parse(const Value& value, parser::To<mafDevice>)
   {
     mafString type_name = value(_R("Type")).template As<mafString>();
-    auto object = mafObjectFactory::CreateInstance(type_name.GetCStr());
-    if (auto device = mafDevice::SafeDownCast(object))
+    if (auto device = mafDevice::Create(type_name.GetCStr()))
     {
       device->Restore(value);
       return device;

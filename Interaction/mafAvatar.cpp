@@ -16,6 +16,7 @@
 
 // base includes
 #include "mafAvatar.h"
+#include "mafObjectFactory.h"
 
 // interactors & devices
 #include "mafDeviceButtonsPadTracker.h"
@@ -356,4 +357,18 @@ void mafAvatar::OnEvent(mafEventBase *event)
     mafEvent *e=mafEvent::SafeDownCast(event);
     OnViewSelected(e);
   }
+}
+
+mafAvatar* mafAvatar::Create(const char* AvatarType)
+{
+  if (auto object = mafObjectFactory::CreateInstance(AvatarType))
+  {
+    if (auto avatar = mafAvatar::SafeDownCast(object))
+    {
+      return avatar;
+    }
+    delete object;
+    return nullptr;
+  }
+  return nullptr;
 }

@@ -25,6 +25,7 @@
 
 
 #include "mafVMEItem.h"
+#include "mafObjectFactory.h"
 #include "mafFilesDirs.h"
 
 #include "mafVMERoot.h"
@@ -411,4 +412,18 @@ void mafVMEItemAsynchObserver::OnEvent(mafEventBase *maf_event)
   {
     m_Item->ReadData(m_Filename);
   }
+}
+
+mafVMEItem* mafVMEItem::Create(const char* ItemType)
+{
+  if (auto object = mafObjectFactory::CreateInstance(ItemType))
+  {
+    if (auto item = mafVMEItem::SafeDownCast(object))
+    {
+      return item;
+    }
+    delete object;
+    return nullptr;
+  }
+  return nullptr;
 }

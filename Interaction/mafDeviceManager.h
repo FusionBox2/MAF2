@@ -17,7 +17,6 @@
 #define __mafDeviceManager_h
 
 #include "mafAgentEventHandler.h"
-#include "mafObjectFactory.h"
 #include "mafTo.h"
 
 #include <list>
@@ -70,6 +69,7 @@ public:
 
   mafTypeMacro(mafDeviceManager,mafAgentEventHandler);
 
+  static mafDeviceManager* Create(const char* DeviceManagerType);
   /**
     Add a new device. If the returned value is 0 the operation has failed! */
   virtual mafID AddDevice(mafDevice *device);
@@ -140,8 +140,7 @@ namespace parser
   mafDeviceManager* Parse(const Value& value, parser::To<mafDeviceManager>)
   {
     mafString type_name = value(_R("Type")).template As<mafString>();
-    auto object = mafObjectFactory::CreateInstance(type_name.GetCStr());
-    if (auto deviceManager = mafDeviceManager::SafeDownCast(object))
+    if (auto deviceManager = mafDeviceManager::Create(type_name.GetCStr()))
     {
       deviceManager->Restore(value);
       return deviceManager;
