@@ -140,13 +140,13 @@ void mafOpLabelExtractor::OpRun()
 
   m_Gui->Bool(ID_SMOOTH,_L("smooth"),&m_SmoothVolume,0,_L("gaussian smooth for extracting big surface"));
   m_Gui->Divider(2);
-  m_Gui->Float(ID_RADIUS_FACTOR,_L("rad. factor"),&m_RadiusFactor,0.1,MAXFLOAT,0,2,_L("max distance to consider for the smooth."));
-  m_Gui->Vector(ID_STD_DEVIATION,_L("std dev."),m_StdDev, 0.1, MAXFLOAT,2,_L("standard deviation for the smooth."));
+  m_Gui->Float(ID_RADIUS_FACTOR,_L("rad. factor"),&m_RadiusFactor,0.1, std::numeric_limits<float>::max(),0,2,_L("max distance to consider for the smooth."));
+  m_Gui->Vector(ID_STD_DEVIATION,_L("std dev."),m_StdDev, 0.1, std::numeric_limits<float>::max(),2,_L("standard deviation for the smooth."));
   m_Gui->Divider();
-  m_Gui->Vector(ID_SAMPLING_RATE,_L("sample rate"),m_SamplingRate, 1, MAXINT,_L("sampling rate for volume sub-sampling."));
+  m_Gui->Vector(ID_SAMPLING_RATE,_L("sample rate"),m_SamplingRate, 1, std::numeric_limits<int>::max(),_L("sampling rate for volume sub-sampling."));
   m_Gui->Divider();
-  m_Gui->Float(ID_RADIUS_FACTOR_AFTER,_L("rad. factor"),&m_RadiusFactorAfter,0.1,MAXFLOAT,0,2,_L("max distance to consider for the smooth."));
-  m_Gui->Vector(ID_STD_DEVIATION_AFTER,_L("std dev."),m_StdDevAfter, 0.1, MAXFLOAT,2,_L("standard deviation for the smooth."));
+  m_Gui->Float(ID_RADIUS_FACTOR_AFTER,_L("rad. factor"),&m_RadiusFactorAfter,0.1, std::numeric_limits<float>::max(),0,2,_L("max distance to consider for the smooth."));
+  m_Gui->Vector(ID_STD_DEVIATION_AFTER,_L("std dev."),m_StdDevAfter, 0.1, std::numeric_limits<float>::max(),2,_L("standard deviation for the smooth."));
   m_Gui->Divider(2);
   m_Gui->Divider();
 

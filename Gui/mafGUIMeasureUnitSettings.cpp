@@ -65,7 +65,7 @@ void mafGUIMeasureUnitSettings::CreateGui()
   m_Gui->Label(_L("custom"));
   m_Gui->String(MEASURE_DATA_STRING_ID,_L("data unit"),&m_DataUnitName);
   m_Gui->String(MEASURE_VISUAL_STRING_ID,_L("visual unit"),&m_VisualUnitName);
-  m_Gui->Double(MEASURE_SCALE_FACTOR_ID,_L("scale"),&m_ScaleFactor, MINDOUBLE, MAXDOUBLE,-1,_L("scale factor of new unit referred to mm"));
+  m_Gui->Double(MEASURE_SCALE_FACTOR_ID,_L("scale"),&m_ScaleFactor, -std::numeric_limits<double>::max(), std::numeric_limits<double>::max(),-1,_L("scale factor of new unit referred to mm"));
   m_Gui->Enable(MEASURE_SCALE_FACTOR_ID,m_ChoosedDataUnit == 4 || m_ChoosedVisualUnit == 4);
   m_Gui->Enable(MEASURE_DATA_STRING_ID,m_ChoosedDataUnit == 4);
   m_Gui->Enable(MEASURE_VISUAL_STRING_ID,m_ChoosedDataUnit == 4);

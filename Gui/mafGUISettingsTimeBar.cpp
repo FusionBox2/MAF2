@@ -63,10 +63,10 @@ void mafGUISettingsTimeBar::CreateGui()
 {
   m_Gui = new mafGUI(this);
   m_Gui->Bool(ID_REAL_TIME, _L("real time"), &m_RealTimeMode, 1);
-  m_Gui->Double(ID_TIME_SCALE, _L("scale:"), &m_TimeScale, 0.000001, MAXDOUBLE, -1, _L("time scale referring to the time unit: seconds"));
-  m_Gui->Double(ID_TIME_SPEED, _L("speed Nx:"), &m_TimeSpeed, 0.000001, MAXDOUBLE, -1, _L("time multiplier to speed up the animation"));
-  m_Gui->Integer(ID_NUMBER_OF_FRAMES, _L("frames:"), &m_NumberOfFrames, 1, MAXINT, _L("Number of frame representing the animation"));
-  m_Gui->Double(ID_TIME_STEP, _L("step:"), &m_TimeStep, 0.000001, MAXDOUBLE, -1, _L("time step between two keyframes"));
+  m_Gui->Double(ID_TIME_SCALE, _L("scale:"), &m_TimeScale, 0.000001, std::numeric_limits<double>::max(), -1, _L("time scale referring to the time unit: seconds"));
+  m_Gui->Double(ID_TIME_SPEED, _L("speed Nx:"), &m_TimeSpeed, 0.000001, std::numeric_limits<double>::max(), -1, _L("time multiplier to speed up the animation"));
+  m_Gui->Integer(ID_NUMBER_OF_FRAMES, _L("frames:"), &m_NumberOfFrames, 1, std::numeric_limits<int>::max(), _L("Number of frame representing the animation"));
+  m_Gui->Double(ID_TIME_STEP, _L("step:"), &m_TimeStep, 0.000001, std::numeric_limits<double>::max(), -1, _L("time step between two keyframes"));
   m_Gui->Bool(ID_LOOP, _L("loop playback"), &m_Loop, 1);
   m_Gui->Divider(2);
   m_Gui->Bool(ID_ANIMATE_IN_SUBRANGE, _L("animate in subrange"), &m_AnimateInSubrange, 1);

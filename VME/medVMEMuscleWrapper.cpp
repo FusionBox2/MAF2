@@ -1448,10 +1448,10 @@ mafGUI* medVMEMuscleWrapper::CreateGui()
   choice1->SetValidator(mafGUIValidator(this, ID_FIBERS_TEMPLATE, choice1, &m_FbTemplate));
   textCtrl20->SetValidator(mafGUIValidator(this, ID_FIBERS_NUMFIB, textCtrl20, &m_FbNumFib, 1, 10000));
   textCtrl201->SetValidator(mafGUIValidator(this, ID_FIBERS_RESOLUTION, textCtrl201, &m_FbResolution, 1, 499));     
-  textCtrl2011->SetValidator(mafGUIValidator(this, ID_FIBERS_THICKNESS, textCtrl2011, &m_FbThickness, 0.0, MAXDOUBLE, -1));
+  textCtrl2011->SetValidator(mafGUIValidator(this, ID_FIBERS_THICKNESS, textCtrl2011, &m_FbThickness, 0.0, std::numeric_limits<double>::max(), -1));
   checkBox10->SetValidator(mafGUIValidator(this, ID_FIBERS_SMOOTH, checkBox10, &m_FbSmooth));
   m_SmStepsCtrl->SetValidator(mafGUIValidator(this, ID_FIBERS_SMOOTH_STEPS, m_SmStepsCtrl, &m_FbSmoothSteps, 1, 100));
-  m_SmWeightCtrl->SetValidator(mafGUIValidator(this, ID_FIBERS_SMOOTH_WEIGHT, m_SmWeightCtrl, &m_FbSmoothWeight, 0.0, MAXDOUBLE, -1));
+  m_SmWeightCtrl->SetValidator(mafGUIValidator(this, ID_FIBERS_SMOOTH_WEIGHT, m_SmWeightCtrl, &m_FbSmoothWeight, 0.0, std::numeric_limits<double>::max(), -1));
   checkBox11->SetValidator(mafGUIValidator(this, ID_FIBERS_DEBUG_SHOWTEMPLATE, checkBox11, &m_FbDebugShowTemplate));  
   chckDebug2->SetValidator(mafGUIValidator(this, ID_FIBERS_DEBUG_SHOWFITTING, chckDebug2, &m_FbDebugShowFitting));  
   chckDebug3->SetValidator(mafGUIValidator(this, ID_FIBERS_DEBUG_SHOWFITTINGRES, chckDebug3, &m_FbDebugShowFittingRes));  

@@ -196,9 +196,9 @@ void mafGUIHistogramWidget::CreateGui()
   }
   m_Gui->Combo(ID_REPRESENTATION,_R("represent"),&m_Representation,3,represent);
   m_Gui->Bool(ID_AUTOSCALE,_R("autoscale"), &m_AutoscaleHistogram);
-  m_Gui->Double(ID_SCALE_FACTOR,_R("scale"),&m_ScaleFactor,1.0e-299,MAXDOUBLE,-1);
+  m_Gui->Double(ID_SCALE_FACTOR,_R("scale"),&m_ScaleFactor,1.0e-299, std::numeric_limits<double>::max(),-1);
   m_Gui->Bool(ID_LOGSCALE,_R("log"),&m_LogHistogramFlag,0,_R("Enable/Disable log scale for histogram"));
-  m_Gui->Double(ID_LOGFACTOR,_R("log constant"),&m_LogScaleConstant,1.0e-299,MAXDOUBLE,-1,_R("multiplicative factor for log scale histogram"));
+  m_Gui->Double(ID_LOGFACTOR,_R("log constant"),&m_LogScaleConstant,1.0e-299, std::numeric_limits<double>::max(),-1,_R("multiplicative factor for log scale histogram"));
   m_Gui->Button(ID_RESET, _R("reset"));
   m_Gui->Divider();
 

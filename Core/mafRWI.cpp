@@ -1018,7 +1018,7 @@ mafGUI *mafRWI::CreateGui()
 	{
 		m_Gui->Divider(2);
 		m_Gui->Bool(ID_SHOW_RULER,_R("show ruler"),&m_ShowRuler);
-		m_Gui->Double(ID_RULER_SCALE_FACTOR,_R("scale factor"),&m_RulerScaleFactor,1.0e-299,MAXDOUBLE,-1);
+		m_Gui->Double(ID_RULER_SCALE_FACTOR,_R("scale factor"),&m_RulerScaleFactor, std::numeric_limits<double>::min(), std::numeric_limits<double>::max(),-1);
 		m_Gui->String(ID_RULER_LEGEND,_R("legend"),&m_RulerLegend);
 	}
 

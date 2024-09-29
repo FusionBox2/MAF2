@@ -451,12 +451,12 @@ void mafDeviceButtonsPadTracker::CreateGui()
   m_Gui->Enable(ID_AVATAR_SELECT,false);
 
   m_Gui->Divider(2);
-  m_Gui->VectorN(ID_TB_X_EXTENT,_R("X extent"),	m_TrackedBounds.m_Bounds,2, MINFLOAT, MAXFLOAT, -1);
-  m_Gui->VectorN(ID_TB_Y_EXTENT,_R("Y extent"),	&(GetTrackedBounds().m_Bounds[2]),2, MINFLOAT, MAXFLOAT, -1);
-  m_Gui->VectorN(ID_TB_Z_EXTENT,_R("Z extent"),	&(GetTrackedBounds().m_Bounds[4]),2, MINFLOAT, MAXFLOAT, -1);
+  m_Gui->VectorN(ID_TB_X_EXTENT,_R("X extent"),	m_TrackedBounds.m_Bounds,2, -std::numeric_limits<double>::max(), std::numeric_limits<double>::max(), -1);
+  m_Gui->VectorN(ID_TB_Y_EXTENT,_R("Y extent"),	&(GetTrackedBounds().m_Bounds[2]),2, -std::numeric_limits<double>::max(), std::numeric_limits<double>::max(), -1);
+  m_Gui->VectorN(ID_TB_Z_EXTENT,_R("Z extent"),	&(GetTrackedBounds().m_Bounds[4]),2, -std::numeric_limits<double>::max(), std::numeric_limits<double>::max(), -1);
   m_Gui->Divider();
-  m_Gui->Vector(ID_TB_POSITION,_R("position"),	m_TBPosition, MINFLOAT, MAXFLOAT, -1);
-  m_Gui->Vector(ID_TB_ORIENTATION,_R("orientation"),	m_TrackedBoxOrientation, MINFLOAT, MAXFLOAT, -1);
+  m_Gui->Vector(ID_TB_POSITION,_R("position"),	m_TBPosition, -std::numeric_limits<double>::max(), std::numeric_limits<double>::max(), -1);
+  m_Gui->Vector(ID_TB_ORIENTATION,_R("orientation"),	m_TrackedBoxOrientation, -std::numeric_limits<double>::max(), std::numeric_limits<double>::max(), -1);
   m_Gui->Divider();
 }
 

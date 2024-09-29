@@ -32,18 +32,6 @@ class mafGUIButton;
 class mafGUIComboBox;
 
 //----------------------------------------------------------------------------
-// constant
-//----------------------------------------------------------------------------
-
-#define MININT    -2147483647-1
-#define MAXINT     2147483647
-#define MINFLOAT  -1.0e+38F 
-#define MAXFLOAT   1.0e+38F
-#define MINDOUBLE -1.0e+299
-#define MAXDOUBLE 1.0e+299
-
-
-//----------------------------------------------------------------------------
 // mafGUICrossIncremental :
 /**
 Class that represent a widget with 4 buttons and a text array disposed like a cross
@@ -64,7 +52,7 @@ public:
 									int modality = ID_COMPLETE_LAYOUT,
                   const wxPoint& pos = wxDefaultPosition, 
                   const wxSize& size = wxDefaultSize,
-                  double min = MINFLOAT, double max = MAXFLOAT, int decimal_digit = -1,
+                  double min = -std::numeric_limits<double>::max(), double max = std::numeric_limits<double>::max(), int decimal_digit = -1,
                   long style = wxTAB_TRAVERSAL | wxCLIP_CHILDREN,
                   bool comboStep = false,
                   mafString *buttonUpDown_text = NULL,
