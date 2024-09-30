@@ -526,25 +526,6 @@ bool mafNode::IsInTree(mafNode *a)
 }
 
 //-------------------------------------------------------------------------
-void mafNode::UnRegister(void *o)
-//-------------------------------------------------------------------------
-{
-  if (this->m_ReferenceCount<=1)
-  {
-    // m_Parent should already be set to NULL when deallocating memory
-    if (m_Parent)
-    {
-      mafWarningMacro("Deallocating a node still attached to the tree, detaching it immediatelly");
-      m_ReferenceCount = (m_ReferenceCount == 1) ? 2 : 1;
-      m_Parent->RemoveChild(this);
-      return;
-    }    
-  }
-  
-  Superclass::UnRegister(o);
-}
-
-//-------------------------------------------------------------------------
 void mafNode::CleanTree()
 //-------------------------------------------------------------------------
 {

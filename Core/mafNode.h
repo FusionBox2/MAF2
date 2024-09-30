@@ -303,9 +303,6 @@ public:
   /**  return true if node can be reparented under the specified node*/
   virtual bool CanReparentTo(mafNode *parent) {return parent==NULL||!IsInTree(parent);}
 
-  /** redefined to cope with tree registering */
-  void UnRegister(void *o) override;
-
   /** Precess events coming from other objects */
   void OnEvent(mafEventBase *e) override;
 
