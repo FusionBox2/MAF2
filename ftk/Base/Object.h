@@ -81,7 +81,7 @@ public: \
   virtual Pointer NewInstance() const { return Thisclass::New(); } \
   mafNewTypeMacro
 
-#define mafAbstractTypeMacro(className, superclass) \
+#define mafAbstractTypeMacroN(className) \
 public: \
   using Superclass = Thisclass; \
   mafCommonTypeMacro(className) \
@@ -94,7 +94,10 @@ public: \
   Pointer NewInstance() const override = 0 ; \
   mafNewAbstractTypeMacro
 
-#define mafTypeMacro(className, superclass) \
+#define mafAbstractTypeMacro(className, superclass) \
+  mafAbstractTypeMacroN(className)
+
+#define mafTypeMacroN(className) \
 public: \
   using Superclass = Thisclass; \
   mafCommonTypeMacro(className) \
@@ -107,6 +110,9 @@ public: \
   Pointer NewInstance() const override {return Thisclass::New(); }; \
   mafNewTypeMacro
   
+#define mafTypeMacro(className, superclass) \
+  mafTypeMacroN(className)
+
 #define mafCxxAbstractTypeMacro(className)
 #define mafCxxTypeMacro(className)
 
