@@ -56,6 +56,8 @@ private: \
 public:
 
 #define mafAbstractBaseTypeMacro(className) \
+protected: \
+  bool m_HeapFlag = false; \
 public: \
   using Rootclass = className; \
   mafCommonTypeMacro(className) \
@@ -66,9 +68,12 @@ public: \
   virtual bool IsA(const char *type) const { return IsStaticType(type); } \
   virtual bool IsA(const mafTypeID& type) const { return IsStaticType(type); } \
   virtual Pointer NewInstance() const = 0; \
+  Rootclass *NewObjectInstance() const {return NewInstance();} \
   mafNewAbstractTypeMacro
 
 #define mafBaseTypeMacro(className) \
+protected: \
+  bool m_HeapFlag = false; \
 public: \
   using Rootclass = className; \
   mafCommonTypeMacro(className) \
@@ -79,6 +84,7 @@ public: \
   virtual bool IsA(const char *type) const { return IsStaticType(type); } \
   virtual bool IsA(const mafTypeID& type) const { return IsStaticType(type); } \
   virtual Pointer NewInstance() const { return Thisclass::New(); } \
+  Rootclass *NewObjectInstance() const {return NewInstance();} \
   mafNewTypeMacro
 
 #define mafAbstractTypeMacroN(className) \
@@ -126,7 +132,6 @@ public:
   virtual ~mafObject();
 
   /** return a new instance of the mafObject instance */
-  mafObject *NewObjectInstance() const {return NewInstance();}
   /** the same as delete obj, implemented for syntax compatibility */
   virtual void Delete() {delete this;};
   
@@ -143,8 +148,6 @@ public:
 	#endif
 #endif
 
-protected:
-  bool m_HeapFlag; ///< Internally used to mark objects created on the Heap with New()
 };
 
 END_FTK_NAMESPACE
