@@ -318,16 +318,6 @@ public:
 
   typedef std::map<mafString,mafAutoPointer<mafAttribute> > mafAttributesMap;
 
-  /** 
-    return the list of attributes. Attributes vector can be manipulated
-    directly by means of the map container APIs. */
-  mafAttributesMap *GetAttributes() {return &m_Attributes;}
-
-  /** 
-  return the list of attributes. Attributes vector can be manipulated
-  directly by means of the map container APIs. */
-  const mafAttributesMap *GetAttributes() const {return &m_Attributes;}
-
   /** Set a new attribute. The given attribute is */
   void SetAttribute(const mafString& name,mafAttribute *a);
 
