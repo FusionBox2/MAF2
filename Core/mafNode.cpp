@@ -718,17 +718,17 @@ bool mafNode::Equals(mafNode *node)
     return false;
 
   // check attributes
-  if (m_Attributes.size()!=node->GetAttributes()->size())
+  if (m_Attributes.size()!=node->m_Attributes.size())
     return false;
 
   mafAttributesMap::iterator att_it;
   mafAttributesMap::iterator att_it2;
-  for (att_it=m_Attributes.begin(),att_it2=node->GetAttributes()->begin();att_it!=m_Attributes.end();att_it++,att_it2++)
+  for (att_it=m_Attributes.begin(),att_it2=node->m_Attributes.begin();att_it!=m_Attributes.end();att_it++,att_it2++)
   {
     if (!att_it->second->Equals(att_it2->second.get()))
       return false;
 
-    if (att_it2==node->GetAttributes()->end())
+    if (att_it2==node->m_Attributes.end())
       return false;
   }
 
