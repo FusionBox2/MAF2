@@ -191,17 +191,7 @@ void mafOpExporterVRML::ExportVRML()
 	mafVMEOutputSurface *out_surface = mafVMEOutputSurface::SafeDownCast(((mafVME *)m_Input)->GetOutput());
   out_surface->Update();
    
-  mafNode::mafAttributesMap* attributes =m_Input->GetAttributes();
- 
-  
-  ofstream file1;
-  file1.open("texture.txt");
-  
-  file1 << "size " << attributes->size() << " Name " << m_Input->GetName().toStd()<<" Link "<<m_Input->GetLinks();
-  file1.close();
-  mafNode::mafLinksMap *linkedNodes = m_Input->GetLinks();
-  
-  
+	mafNode::mafAttributesMap* attributes = nullptr;// m_Input->GetAttributes();
 
   vtkPolyData *data = vtkPolyData::SafeDownCast(out_surface->GetVTKData());
   assert(data);
