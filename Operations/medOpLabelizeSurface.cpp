@@ -385,7 +385,7 @@ void medOpLabelizeSurface::ShowClipPlane(bool show)
 
 			{mafEvent evUnq(this,VME_SHOW,m_ImplicitPlaneGizmo,true); mafEventMacro(evUnq);}
 		}
-		mmaMaterial *material = m_ImplicitPlaneGizmo->GetMaterial();
+		auto material = m_ImplicitPlaneGizmo->GetMaterial();
 		material->m_Prop->SetOpacity(0.5);
 		material->m_Opacity = material->m_Prop->GetOpacity();
 
@@ -401,7 +401,7 @@ void medOpLabelizeSurface::ShowClipPlane(bool show)
 	{
 		if(m_ImplicitPlaneGizmo != NULL)
 		{
-			mmaMaterial *material = m_ImplicitPlaneGizmo->GetMaterial();
+			auto material = m_ImplicitPlaneGizmo->GetMaterial();
 			material->m_Prop->SetOpacity(0);
 			material->m_Opacity = material->m_Prop->GetOpacity();
 		}
@@ -637,9 +637,9 @@ void medOpLabelizeSurface::OpDo()
 	if(m_VmeEditor)
 	{
 		mafVMESurface::SafeDownCast(m_Input)->SetData(vtkPolyData::SafeDownCast(m_VmeEditor->GetOutput()->GetVTKData()),((mafVMESurface*)m_Input)->GetTimeStamp());
-		mafAutoPointer<mmaMaterial> mat = mmaMaterial::New();
-		mat->DeepCopy(m_VmeEditor->GetMaterial());
-		mafVMESurface::SafeDownCast(m_Input)->GetSurfaceOutput()->SetMaterial(mat.get());
+		auto mat = mmaMaterial::NewSPtr();
+		mat->DeepCopy(m_VmeEditor->GetMaterial().get());
+		mafVMESurface::SafeDownCast(m_Input)->GetSurfaceOutput()->SetMaterial(mat);
 		mafVMESurface::SafeDownCast(m_Input)->GetSurfaceOutput()->Update();
 		mafVMESurface::SafeDownCast(m_Input)->GetOutput()->Update();
 		{mafEvent evUnq(this,VME_SHOW,m_Input,false); mafEventMacro(evUnq);}
