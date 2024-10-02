@@ -1867,7 +1867,7 @@ void medViewArbitraryOrthoSlice::VolumeWindowing(mafVME *volume)
 	//data->Update();
 	data->GetScalarRange(sr);
 
-	mmaMaterial *currentSurfaceMaterial = m_SlicerZ->GetMaterial();
+	auto currentSurfaceMaterial = m_SlicerZ->GetMaterial();
 	m_ColorLUT = currentSurfaceMaterial->m_ColorLut;
 	assert(m_ColorLUT);
 	m_LutWidget->SetLut(m_ColorLUT);

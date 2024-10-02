@@ -407,7 +407,7 @@ void medOpVolumeResample::Resample()
 
   m_ResampledVme = (mafVMEVolumeGray *)m_Input->NewInstance();
   m_ResampledVme->Register(m_ResampledVme);
-  m_ResampledVme->GetTagArray()->DeepCopy(m_Input->GetTagArray());
+  m_ResampledVme->GetTagArray()->DeepCopy(m_Input->GetTagArray().get());
   
   mafTagItem *ti = NULL;
   ti = m_ResampledVme->GetTagArray()->GetTag(_R("VME_NATURE"));

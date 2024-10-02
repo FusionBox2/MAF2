@@ -56,7 +56,7 @@ public:
   };
 
   /** Constructor. */
-  medGUILutHistogramEditor(vtkDataSet *dataSet,mmaVolumeMaterial *material, char *name="Histogram & Windowing", mafBaseEventHandler *Listener=NULL, int id=MINID);
+  medGUILutHistogramEditor(vtkDataSet *dataSet,std::shared_ptr<mmaVolumeMaterial> material, char *name="Histogram & Windowing", mafBaseEventHandler *Listener=NULL, int id=MINID);
   
   /** Destructor. */
   ~medGUILutHistogramEditor() override; 
@@ -68,7 +68,7 @@ public:
   void OnSize(wxSizeEvent &event) override;
 
   /** Show the dialog.*/
-  static void ShowLutHistogramDialog(vtkDataSet *dataSet,mmaVolumeMaterial *material, char *name="Histogram & Windowing", mafBaseEventHandler *Listener=NULL, int id=MINID);
+  static void ShowLutHistogramDialog(vtkDataSet *dataSet,std::shared_ptr<mmaVolumeMaterial> material, char *name="Histogram & Windowing", mafBaseEventHandler *Listener=NULL, int id=MINID);
 
 protected:
 
@@ -82,7 +82,7 @@ protected:
   void UpdateVolumeLut(bool reset = false);
 
   /* Set the volume for the histogram */
-  void SetMaterial(mmaVolumeMaterial *material);
+  void SetMaterial(std::shared_ptr<mmaVolumeMaterial> material);
 
   /* Set the volume for the histogram */
   void SetDataSet(vtkDataSet *dataSet);
@@ -95,7 +95,7 @@ protected:
   mafGUILutSlider *m_Windowing;
 
   
-  mmaVolumeMaterial *m_Material;
+  std::shared_ptr<mmaVolumeMaterial> m_Material;
   vtkDataSet *m_DataSet;
   vtkDataArray *m_ResampledData;
 

@@ -109,7 +109,7 @@ public:
   mafNode *GetVolumeLink();
 
   /** return material attribute of this surface if present */
-  mmaVolumeMaterial *GetMaterial();
+  std::shared_ptr<mmaVolumeMaterial> GetMaterial();
 
   /** return icon */
   static char** GetIcon();

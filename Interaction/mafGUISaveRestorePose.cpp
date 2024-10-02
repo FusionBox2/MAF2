@@ -149,7 +149,7 @@ void mafGUISaveRestorePose::EnableWidgets(bool enable)
 void mafGUISaveRestorePose::FillListBoxWithABSPosesStoredInInputVME()
 //----------------------------------------------------------------------------
 {
-	mafTagArray *tag_array = m_InputVME->GetTagArray();
+	auto tag_array = m_InputVME->GetTagArray();
   int n = tag_array->GetNumberOfTags();
   std::vector<mafString> tag_list;
   tag_array->GetTagList(tag_list);
@@ -194,7 +194,7 @@ void mafGUISaveRestorePose::StorePose()
 
   mafString AbsPos_tagName = _R("STORED_ABS_POS_") + mafWxToString(pose_name);
 
-  mafTagArray *tagArray = m_InputVME->GetTagArray();
+  auto tagArray = m_InputVME->GetTagArray();
   if(tagArray->GetTag(AbsPos_tagName)) 
   {
 		wxString msg = "this name is already used, do you want to overwrite it ?";

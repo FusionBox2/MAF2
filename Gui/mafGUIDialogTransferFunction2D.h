@@ -95,7 +95,7 @@ protected:
 
   // vme  
   mafVME                *m_Vme;
-  mmaVolumeMaterial     *m_Material;
+  std::shared_ptr<mmaVolumeMaterial> m_Material;
 	vtkVolumeProperty2  	*m_VolumeProperty;
   vtkMAFTransferFunction2D *m_TransferFunction;
   

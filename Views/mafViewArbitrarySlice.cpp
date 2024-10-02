@@ -956,7 +956,7 @@ void mafViewArbitrarySlice::VolumeWindowing(mafVME *volume)
 	//data->Update();
 	data->GetScalarRange(sr);
 
-	mmaMaterial *currentSurfaceMaterial = m_Slicer->GetMaterial();
+	auto currentSurfaceMaterial = m_Slicer->GetMaterial();
 	m_ColorLUT = m_Slicer->GetMaterial()->m_ColorLut;
 	m_LutWidget->SetLut(m_ColorLUT);
 	m_LutSlider->SetRange((long)sr[0],(long)sr[1]);

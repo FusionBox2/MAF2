@@ -36,10 +36,10 @@ public:
   medGUILutHistogramSwatch(wxWindow* parent, wxWindowID id = -1, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(184,18), long style = wxTAB_TRAVERSAL );
 
   /** constructor. */
-  medGUILutHistogramSwatch(mafGUI *parent, wxWindowID id, wxString name, vtkDataSet *dataSet, mmaVolumeMaterial *material, wxSize size = wxSize(184,18), bool showText=true);
+  medGUILutHistogramSwatch(mafGUI *parent, wxWindowID id, wxString name, vtkDataSet *dataSet, std::shared_ptr<mmaVolumeMaterial> material, wxSize size = wxSize(184,18), bool showText=true);
 
   /** Set the Lock Up Table */
-  void SetMaterial(mmaVolumeMaterial *material);
+  void SetMaterial(std::shared_ptr<mmaVolumeMaterial> material);
 
   /** Set the VME for the histogram */
   void SetDataSet(vtkDataSet *dataSet); 
@@ -89,7 +89,7 @@ protected:
   int m_OverHighlight;
   int m_Highlighted;
   int m_LastHighlighted;
-  mmaVolumeMaterial *m_Material;
+  std::shared_ptr<mmaVolumeMaterial> m_Material;
   vtkLookupTable *m_Lut;
   vtkDataSet *m_DataSet;
 

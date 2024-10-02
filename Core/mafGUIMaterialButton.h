@@ -54,7 +54,7 @@ public:
   /** Enable-Disable material button. */
   void Enable(bool enable);
 
-  mmaMaterial *GetMaterial() {return m_Material;};
+  std::shared_ptr<mmaMaterial> GetMaterial() {return m_Material;};
 
 	void SetVME(mafVME *vme);
 
@@ -64,7 +64,7 @@ protected:
 
   mafGUIPicButton *m_MaterialButton;  // material pic button
   wxStaticText *m_MaterialLabel;   // material name label
-  mmaMaterial  *m_Material;
+  std::shared_ptr<mmaMaterial>  m_Material;
 
 	mafGUI			*m_Gui;
   mafVME      *m_Vme;

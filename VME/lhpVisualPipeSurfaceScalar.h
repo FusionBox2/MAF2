@@ -61,6 +61,6 @@ protected:
   vtkPolyDataMapper *m_Mapper;
   vtkActor *m_Actor;
   vtkActor *m_OutlineActor;
-  mmaMaterial *m_Material;
+  std::shared_ptr<mmaMaterial> m_Material;
 };  
 #endif // __lhpVisualPipeSurfaceScalar_H__

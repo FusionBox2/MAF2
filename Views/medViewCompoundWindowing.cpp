@@ -258,7 +258,7 @@ void medViewCompoundWindowing::VolumeWindowing(mafVME *volume)
   double sr[2];
   volume->GetOutput()->GetVTKData()->GetScalarRange(sr);
   
-  mmaVolumeMaterial *currentSurfaceMaterial = ((mafVMEOutputVolume *)volume->GetOutput())->GetMaterial();
+  auto currentSurfaceMaterial = ((mafVMEOutputVolume *)volume->GetOutput())->GetMaterial();
   m_ColorLUT = mafVMEVolumeGray::SafeDownCast(volume)->GetMaterial()->m_ColorLut;
   if(m_LutWidget)
     m_LutWidget->SetLut(m_ColorLUT);

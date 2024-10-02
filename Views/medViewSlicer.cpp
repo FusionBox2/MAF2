@@ -564,7 +564,7 @@ void medViewSlicer::SlicerWindowing(mafVMESlicer *slicer)
     double sr[2];
     vol->GetOutput()->GetVTKData()->GetScalarRange(sr);
 
-    mmaMaterial *currentSurfaceMaterial = m_CurrentSlicer->GetMaterial();
+    auto currentSurfaceMaterial = m_CurrentSlicer->GetMaterial();
     m_ColorLUT = m_CurrentSlicer->GetMaterial()->m_ColorLut;
     m_CurrentSlicer->GetMaterial()->UpdateProp();
     m_ColorLUT->SetTableRange(sr[0], sr[1]);

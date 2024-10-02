@@ -74,7 +74,7 @@ public:
   /*virtual*/ void OnEvent(mafEventBase *maf_event) override;
 
   /** Return pointer to material attribute. */
-  mmaVolumeMaterial *GetMaterial();
+  std::shared_ptr<mmaVolumeMaterial> GetMaterial();
 
   /** Copy the contents of another medVMESegmentationVolume into this one. */
   /*virtual*/ int DeepCopy(mafNode *a) override;
@@ -231,15 +231,13 @@ protected:
   /*virtual*/ void InternalPreUpdate() override;
 
   /** Return the segmentation volume attribute */
-  medAttributeSegmentationVolume *GetVolumeAttribute();
+  std::shared_ptr<medAttributeSegmentationVolume> GetVolumeAttribute();
 
   mafString m_VolumeName;
 
   mafTransform *m_Transform;
 
   medDataPipeCustomSegmentationVolume *m_SegmentingDataPipe;
-
-  medAttributeSegmentationVolume *m_VolumeAttribute;
 
 private:
   /** Not implemented */
