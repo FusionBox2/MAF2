@@ -152,10 +152,10 @@ public:
   //int GetAuxiliaryRefSys(vtkMatrix4x4 *AuxRefSys, const char *RefSysName, int type = MFL_LOCAL_FRAME_TAG);
   
   /** return the matrix pipe object, i.e. the source of the output matrix. */
-  mafMatrixPipe *GetMatrixPipe() {return m_MatrixPipe.get();}
+  std::shared_ptr<mafMatrixPipe> GetMatrixPipe() {return m_MatrixPipe;}
   
   /** return the matrix pipe used for computing the AbsMatrix.*/
-  mafAbsMatrixPipe *GetAbsMatrixPipe() {return m_AbsMatrixPipe.get();}
+  std::shared_ptr<mafAbsMatrixPipe> GetAbsMatrixPipe() {return m_AbsMatrixPipe;}
   
   /** return the data pipe object, i.e. the source of the output dataset. */
   mafDataPipe *GetDataPipe() {return m_DataPipe.get();}
@@ -277,10 +277,10 @@ protected:
   virtual int SetDataPipe(mafDataPipe *dpipe);
 
   /** Set the matrix pipe object, i.e. the source of the output matrix. */
-  int SetMatrixPipe(mafMatrixPipe *pipe);
+  int SetMatrixPipe(std::shared_ptr<mafMatrixPipe> pipe);
 
   /** Set the abs matrix pipe object, i.e. the source of the output abs matrix. */
-  void SetAbsMatrixPipe(mafAbsMatrixPipe *pipe);
+  void SetAbsMatrixPipe(std::shared_ptr<mafAbsMatrixPipe> pipe);
 
   /** Create GUI for the VME */
   mafGUI  *CreateGui() override;
@@ -288,8 +288,8 @@ protected:
   bool m_TestMode; ///< Flag used with cppunitTest: put this flag at true when executing tests to avoid busy-info or splash screen to be created, default is false.
 
   mafAutoPointer<mafDataPipe>       m_DataPipe;
-  mafAutoPointer<mafMatrixPipe>     m_MatrixPipe;
-  mafAutoPointer<mafAbsMatrixPipe>  m_AbsMatrixPipe;
+  std::shared_ptr<mafMatrixPipe>     m_MatrixPipe;
+  std::shared_ptr<mafAbsMatrixPipe>  m_AbsMatrixPipe;
 
   mafVMEOutput*   m_Output;       ///< the data structure storing the output of this VME
   mafTimeStamp    m_CurrentTime;  ///< the time parameter for generation of the output

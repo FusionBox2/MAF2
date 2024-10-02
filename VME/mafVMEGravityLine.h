@@ -167,7 +167,7 @@ protected:
   vtkAppendPolyData *m_Goniometer;
   mafString m_P0LandmarkName;
 
-  mafTransform *m_Transform; 
+  std::shared_ptr<mafTransform> m_Transform; 
   vtkPolyData  *m_PolyData;
   mafString gLength;
   //int m_GeometryType;

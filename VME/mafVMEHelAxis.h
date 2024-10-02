@@ -171,7 +171,7 @@ protected:
   mafString                  m_ProximalName;
   mafString                  m_DistalName;
 
-  mafTransform               *m_Transform; ///< pose matrix for the slicer plane
+  std::shared_ptr<mafTransform> m_Transform; ///< pose matrix for the slicer plane
 private:
   mafVMEHelAxis (const mafVMEHelAxis &); // Not implemented
   void operator=(const mafVMEHelAxis &); // Not implemented

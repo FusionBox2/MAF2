@@ -60,8 +60,8 @@ mafVMESlicer::mafVMESlicer()
 {
   m_UpdateVTKPropertiesFromMaterial = true;
 
-  mafNEW(m_Transform);
-	mafNEW(m_CopyTransform);
+  m_Transform = mafTransform::NewSPtr();
+  m_CopyTransform = mafTransform::NewSPtr();
   mafVMEOutputSurface *output=mafVMEOutputSurface::New(); // an output with no data
   output->SetTransform(m_Transform); // force my transform in the output
   SetOutput(output);
@@ -109,9 +109,7 @@ mafVMESlicer::~mafVMESlicer()
 //-------------------------------------------------------------------------
 {
   //vtkDEL(m_BackTransformParent);
-  vtkDEL(m_CopyTransform);
   vtkDEL(m_BackTransform);
-  mafDEL(m_Transform);
   SetOutput(NULL);
 
   vtkDEL(m_PSlicer);
@@ -293,13 +291,13 @@ void mafVMESlicer::InternalPreUpdate()
 			m_CopyTransform->SetMatrix(m_Transform->GetMatrix());
 			m_CopyTransform->Update();
 
-			mafAutoPointer<mafTransform> slicedVMETransform = mafTransform::New();
+			auto slicedVMETransform = mafTransform::NewSPtr();
 			slicedVMETransform->SetMatrix(vol->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
 			slicedVMETransform->Update();
 			slicedVMETransform->Invert();
 			slicedVMETransform->Update();
 
-			mafAutoPointer<mafTransform> parentTransform = mafTransform::New();
+			auto parentTransform = mafTransform::NewSPtr();
 			parentTransform->SetMatrix(((mafVME *)GetParent())->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
 			parentTransform->Update();
 

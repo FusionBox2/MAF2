@@ -42,7 +42,7 @@ lhpVMEKMInfo::lhpVMEKMInfo()
     m_values[i] = 0.;
   // The output is created on demand in GetOutput() to avoid
   // subclasses to have to destroy base class output
-  mafNEW(m_Transform);
+  m_Transform = mafTransform::NewSPtr();
   m_MatrixVector->SetMatrix(m_Transform->GetMatrix());
 
   mafVMEOutputNULL *output=mafVMEOutputNULL::New(); // an output with no data
@@ -54,8 +54,6 @@ lhpVMEKMInfo::lhpVMEKMInfo()
 lhpVMEKMInfo::~lhpVMEKMInfo()
 //-------------------------------------------------------------------------
 {
-  mafDEL(m_Transform);
-  
   SetOutput(NULL);
 
   // data pipe destroyed in mafVME

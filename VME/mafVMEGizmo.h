@@ -127,7 +127,7 @@ protected:
   /** update the output data structure */
   //virtual void InternalUpdate();
 
-  mafTransform *m_Transform; ///< pose matrix for the slicer plane
+  std::shared_ptr<mafTransform> m_Transform; ///< pose matrix for the slicer plane
   vtkSmartPointer<vtkAlgorithm> m_Algorithm;
   vtkAlgorithmOutput* m_Port;
 

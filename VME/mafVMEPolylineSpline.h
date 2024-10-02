@@ -144,7 +144,7 @@ protected:
 	/** Internally used to create a new instance of the GUI.*/
   mafGUI *CreateGui() override;
 
-  mafTransform*     m_Transform; ///< pose matrix for the spline 
+  std::shared_ptr<mafTransform>     m_Transform; ///< pose matrix for the spline 
 
   vtkPolyData				*m_Polyline;
 	vtkPoints					*m_PointsSplined;

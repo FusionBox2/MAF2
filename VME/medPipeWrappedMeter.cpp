@@ -187,7 +187,7 @@ void medPipeWrappedMeter::Create(mafNode *node, mafView *view/*, bool use_axes*/
   {
     double pos[3], rot[3];
     mafVME *linked_vme = m_WrappedMeterVME->GetStartVME();
-    mafAutoPointer<mafTransform> TmpTransform = mafTransform::New();
+    auto TmpTransform = mafTransform::NewSPtr();
     if(linked_vme && linked_vme->IsMAFType(mafVMELandmarkCloud) && m_WrappedMeterVME->GetLinkSubId(_R("StartVME")) != -1)
     {
       ((mafVMELandmarkCloud *)linked_vme)->GetLandmark(m_WrappedMeterVME->GetLinkSubId(_R("StartVME")),pos,-1);
@@ -382,7 +382,7 @@ void medPipeWrappedMeter::UpdateProperty(bool fromTag)
   double pos[3] = {0,0,0};
   double rot[3] = {0,0,0};
   mafVME *linked_vme = m_WrappedMeterVME->GetStartVME();
-  mafAutoPointer<mafTransform> TmpTransform = mafTransform::New();
+  auto TmpTransform = mafTransform::NewSPtr();
   if(linked_vme && linked_vme->IsMAFType(mafVMELandmarkCloud) && m_WrappedMeterVME->GetLinkSubId(_R("StartVME")) != -1)
   {
     ((mafVMELandmarkCloud *)linked_vme)->GetLandmark(m_WrappedMeterVME->GetLinkSubId(_R("StartVME")),pos,-1);

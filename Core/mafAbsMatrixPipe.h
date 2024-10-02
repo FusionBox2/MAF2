@@ -57,7 +57,7 @@ public:
 protected:
   void InternalUpdate() override;
 
-  mafTransformFrame *m_Transform; ///< internal transform used to compute the local to ABS frame transformation
+  std::shared_ptr<mafTransformFrame> m_Transform; ///< internal transform used to compute the local to ABS frame transformation
 
 private:
   mafAbsMatrixPipe(const mafAbsMatrixPipe&); // Not implemented

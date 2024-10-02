@@ -55,7 +55,7 @@ mafCxxTypeMacro(mafVMEPolylineSpline)
 mafVMEPolylineSpline::mafVMEPolylineSpline()
 //-------------------------------------------------------------------------
 {
-  mafNEW(m_Transform);
+  m_Transform = mafTransform::NewSPtr();
   mafVMEOutputPolyline *output=mafVMEOutputPolyline::New(); // an output with no data
   output->SetTransform(m_Transform); // force my transform in the output
   SetOutput(output);
@@ -85,7 +85,6 @@ mafVMEPolylineSpline::~mafVMEPolylineSpline()
 {
   vtkDEL(m_Polyline);
 	vtkDEL(m_PointsSplined);
-  mafDEL(m_Transform);
   SetOutput(NULL);
 }
 //-------------------------------------------------------------------------

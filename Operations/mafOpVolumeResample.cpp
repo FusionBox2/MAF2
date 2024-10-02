@@ -171,7 +171,7 @@ void mafOpVolumeResample::AutoSpacing()
 
   // project spacing on new axes.
   // Note: TransformVector ignores the translation column!
-  mafAutoPointer<mafTransformFrame> input_to_output = mafTransformFrame::New();
+  auto input_to_output = mafTransformFrame::NewSPtr();
   input_to_output->SetInputFrame(m_ResampleBoxVme->GetOutput()->GetAbsMatrix());
   input_to_output->SetTargetFrame(((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
   input_to_output->Update();
@@ -297,15 +297,15 @@ void mafOpVolumeResample::OpDo()
 void mafOpVolumeResample::Resample()
 //----------------------------------------------------------------------------
 {
-  mafAutoPointer<mafTransform> box_pose = mafTransform::New();
+  auto box_pose = mafTransform::NewSPtr();
   box_pose->SetOrientation(m_VolumeOrientation);
   box_pose->SetPosition(m_NewVolumePosition);
 	//box_pose->SetPosition(m_VolumePosition);
 
-  mafAutoPointer<mafTransformFrame> local_pose = mafTransformFrame::New();
-  local_pose->SetInput(box_pose.get());
+  auto local_pose = mafTransformFrame::NewSPtr();
+  local_pose->SetInput(box_pose);
   
-  mafAutoPointer<mafTransformFrame> output_to_input = mafTransformFrame::New();
+  auto output_to_input = mafTransformFrame::NewSPtr();
   
   // In a future version if not a "Natural" data the filter should operate in place.
 	mafString new_vme_name = _R("resampled_");

@@ -201,7 +201,7 @@ void medGUITransformSliders::SlidersValuesChanged()
   - translate 
   */
 
-  mafAutoPointer<mafTransform> tran = mafTransform::New();
+  auto tran = mafTransform::NewSPtr();
   tran->Scale(m_Scaling[0], m_Scaling[1], m_Scaling[2],POST_MULTIPLY);
   tran->RotateY(m_Orientation[1], POST_MULTIPLY);
   tran->RotateX(m_Orientation[0], POST_MULTIPLY);
@@ -209,7 +209,7 @@ void medGUITransformSliders::SlidersValuesChanged()
   tran->SetPosition(m_Position);
 
   // premultiply to ref sys abs matrix
-  tran->Concatenate(m_RefSysVME->GetOutput()->GetAbsTransform(), POST_MULTIPLY);
+  tran->Concatenate(m_RefSysVME->GetOutput()->GetAbsTransform().get(), POST_MULTIPLY);
   m_InputVME->SetAbsMatrix(tran->GetMatrix(), m_CurrentTime);
 
   this->SetAbsPose(m_InputVME->GetOutput()->GetAbsMatrix());
@@ -226,7 +226,7 @@ void medGUITransformSliders::SetAbsPose(mafMatrix* absPose, mafTimeStamp timeSta
 //----------------------------------------------------------------------------
 {
   // express absPose in RefSysVME refsys
-  mafTransformFrame *mflTr = mafTransformFrame::New();
+  auto mflTr = mafTransformFrame::NewSPtr();
   mflTr->SetInput(absPose);
   mflTr->SetTargetFrame(m_RefSysVME->GetOutput()->GetAbsMatrix());
   mflTr->Update();
@@ -241,8 +241,6 @@ void medGUITransformSliders::SetAbsPose(mafMatrix* absPose, mafTimeStamp timeSta
   {
   	m_Gui->Update();
   }
-
-  mafDEL(mflTr);
 }
 //----------------------------------------------------------------------------
 void medGUITransformSliders::GetPosition(double pos[3])

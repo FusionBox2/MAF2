@@ -131,8 +131,8 @@ protected:
   /** update the output data structure */
   void InternalUpdate() override;
 
-	mafTransform*     m_CopyTransform; ///< pose matrix for the slicer plane
-  mafTransform*     m_Transform; ///< pose matrix for the slicer plane
+	std::shared_ptr<mafTransform>     m_CopyTransform; ///< pose matrix for the slicer plane
+  std::shared_ptr<mafTransform>     m_Transform; ///< pose matrix for the slicer plane
   vtkMAFVolumeSlicer*  m_PSlicer;  ///< slicer object used to extract the cut contour
   vtkMAFVolumeSlicer*  m_ISlicer;  ///< slicer object used to compute the slice image
 

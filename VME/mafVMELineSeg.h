@@ -151,7 +151,7 @@ protected:
   mafGUI *m_GuiLine;
 
   vtkCellArray* cellArray;
-  mafTransform *m_Transform; 
+  std::shared_ptr<mafTransform> m_Transform;
  
 
   int m_GeometryType;

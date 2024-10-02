@@ -48,7 +48,7 @@ mafVMEGizmo::mafVMEGizmo()
 {
   m_Mediator = NULL;
   m_Port = NULL;
-  mafNEW(m_Transform);
+  m_Transform = mafTransform::NewSPtr();
   mafVMEOutputSurface *output=mafVMEOutputSurface::New(); // an output with no data
   output->SetTransform(m_Transform); // force my transform in the output
   SetOutput(output);
@@ -72,7 +72,6 @@ mafVMEGizmo::mafVMEGizmo()
 mafVMEGizmo::~mafVMEGizmo()
 //-------------------------------------------------------------------------
 {
-  mafDEL(m_Transform);
 }
 //-------------------------------------------------------------------------
 int mafVMEGizmo::DeepCopy(mafNode *a)

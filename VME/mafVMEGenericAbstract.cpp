@@ -56,7 +56,7 @@ mafVMEGenericAbstract::mafVMEGenericAbstract()
 {
 	m_MatrixVector = new mafMatrixVector();
   m_DataVector   = NULL;
-  SetMatrixPipe(mafMatrixInterpolator::New()); // matrix interpolator pipe  
+  SetMatrixPipe(mafMatrixInterpolator::NewSPtr()); // matrix interpolator pipe  
 }
 
 //-------------------------------------------------------------------------

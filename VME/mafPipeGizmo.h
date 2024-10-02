@@ -57,7 +57,7 @@ public:
 
 protected:
 
-  mafGizmoAutoscaleHelper *m_GizmoAutoscaleHelper;
+  std::shared_ptr<mafGizmoAutoscaleHelper> m_GizmoAutoscaleHelper;
 
   /** the master gizmo acting as mediator between its parts : see mafGizmoInterface*/
   mafGizmoInterface *m_Mediator;

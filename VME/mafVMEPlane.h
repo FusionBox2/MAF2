@@ -164,7 +164,7 @@ protected:
 	//mafGUI *m_GuiPlane;
 
 	
-	mafTransform *m_Transform;
+	std::shared_ptr<mafTransform> m_Transform;
 	vtkPolyData  *m_PolyData;
 
 	//int m_GeometryType;

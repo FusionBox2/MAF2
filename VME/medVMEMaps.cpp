@@ -66,7 +66,7 @@ medVMEMaps::medVMEMaps()
   m_PolyData        = NULL;
   m_Table           = NULL;
 
-  mafNEW(m_Transform);
+  m_Transform = mafTransform::NewSPtr();
   vtkNEW(m_Normals);
   vtkNEW(m_DistanceFilter);
   vtkNEW(m_PolyData);
@@ -97,7 +97,6 @@ medVMEMaps::~medVMEMaps()
   vtkDEL(m_Normals);
   vtkDEL(m_DistanceFilter);
   
-  mafDEL(m_Transform);
   vtkDEL(m_PolyData);
 
   if(m_Table)

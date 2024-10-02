@@ -135,10 +135,10 @@ protected:
   /** Internally used to create a new instance of the GUI.*/
   mafGUI *CreateGui() override;
 
-  mafTransform*     m_Transform; ///< pose matrix for the slicer plane
+  std::shared_ptr<mafTransform>     m_Transform; ///< pose matrix for the slicer plane
 
   vtkPolyData       *m_Polygons;
-  mafTransform      *m_TmpTransform;
+  std::shared_ptr<mafTransform> m_TmpTransform;
 
   mafString         m_PointsGroupName;
   BSurface<double>  *m_BSurface;

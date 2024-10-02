@@ -94,7 +94,7 @@ mafVMEMuscleWrapperAQ::mafVMEMuscleWrapperAQ()
   m_EndVme2Name   = _R("");
   m_ProbeVmeName   = _R("");
   
-  mafNEW(m_Transform);
+  m_Transform = mafTransform::NewSPtr();
   mafVMEOutputMuscleWrapperAQ *output = mafVMEOutputMuscleWrapperAQ::New(); // an output with no data
   output->SetTransform(m_Transform); // force my transform in the output
   SetOutput(output);
@@ -112,7 +112,7 @@ mafVMEMuscleWrapperAQ::mafVMEMuscleWrapperAQ()
 
   m_PolyData->DeepCopy(m_Goniometer->GetOutput());
 
-  mafNEW(m_TmpTransform);
+  m_TmpTransform = mafTransform::NewSPtr();
 
   DependsOnLinkedNodeOn();
 
@@ -165,12 +165,10 @@ mafVMEMuscleWrapperAQ::mafVMEMuscleWrapperAQ()
 mafVMEMuscleWrapperAQ::~mafVMEMuscleWrapperAQ()
 //-------------------------------------------------------------------------
 {
-  mafDEL(m_Transform);
   vtkDEL(m_LineSource1);
   vtkDEL(m_LineSource2);
   vtkDEL(m_LineSource3);
   vtkDEL(m_Goniometer);
-  mafDEL(m_TmpTransform);
   vtkDEL(m_PolyData);
   SetOutput(NULL);
 

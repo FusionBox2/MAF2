@@ -76,7 +76,7 @@ mafAvatar3D::mafAvatar3D()
 
   vtkNEW(m_Picker3D);
 
-  mafNEW(m_CanonicalToWorldTransform);
+  m_CanonicalToWorldTransform = mafCameraTransform::NewSPtr();
   m_CanonicalToWorldTransform->SetFittingMode(m_FittingMode);  
   m_CanonicalToWorldTransform->FollowOrientationOn();
   m_CanonicalToWorldTransform->FollowPositionOn();
@@ -140,8 +140,6 @@ mafAvatar3D::~mafAvatar3D()
 {
   Shutdown();
   
-  mafDEL(m_CanonicalToWorldTransform);
-
   vtkDEL(m_Picker3D);
   vtkDEL(m_DebugTextActor);
   vtkDEL(m_DebugTextMapper);

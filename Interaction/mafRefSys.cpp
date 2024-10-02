@@ -72,7 +72,6 @@ mafRefSys::mafRefSys(vtkRenderer *ren)
 mafRefSys::~mafRefSys()
 //------------------------------------------------------------------------------
 {
-  mafDEL(m_Identity);
   vtkDEL(m_Renderer);
 }
 
@@ -102,7 +101,7 @@ void mafRefSys::DeepCopy(const mafRefSys *source)
 void mafRefSys::Initialize()
 //----------------------------------------------------------------------------
 {
-  mafNEW(m_Identity);
+  m_Identity = mafTransform::NewSPtr();
   SetTypeToGlobal();
   m_Renderer  = NULL; 
   m_Transform = NULL;
@@ -113,38 +112,38 @@ void mafRefSys::Initialize()
 void mafRefSys::Reset()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_Identity);
+  m_Identity.reset();
   Initialize();
 }
 
 //----------------------------------------------------------------------------
-void mafRefSys::SetTransform(mafTransformBase *transform)
+void mafRefSys::SetTransform(std::shared_ptr<mafTransformBase> transform)
 //----------------------------------------------------------------------------
 {
   m_Transform = transform;
 }
 
 //----------------------------------------------------------------------------
-mafTransformBase *mafRefSys::GetTransform()
+std::shared_ptr<mafTransformBase> mafRefSys::GetTransform()
 //----------------------------------------------------------------------------
 {
   switch (m_Type)
   {
   case CUSTOM:
-    return m_Transform.get() ?(mafTransformBase*)m_Transform.get() :(mafTransformBase*)m_Identity.get();
+    return m_Transform ? m_Transform : m_Identity;
   case GLOBAL: 
-    return m_Identity.get();
+    return m_Identity;
   case PARENT: 
     if (m_VME.get() && m_VME->GetParent())
     {
       return m_VME->GetParent()->GetAbsMatrixPipe();
     }
-    return m_Identity.get();
+    return m_Identity;
   case LOCAL:
     if (m_VME.get())
       return m_VME->GetAbsMatrixPipe();
     
-    return m_Identity.get();
+    return m_Identity;
   case VIEW:
     /*
     if (m_Renderer)
@@ -155,9 +154,9 @@ mafTransformBase *mafRefSys::GetTransform()
     // 
 
     */
-    return m_Transform.get() ?(mafTransformBase*)m_Transform.get() :(mafTransformBase*)m_Identity.get();
+    return m_Transform ? m_Transform : m_Identity;
   }
-  return m_Identity.get();
+  return m_Identity;
 }
 
 //----------------------------------------------------------------------------
@@ -172,7 +171,7 @@ void mafRefSys::SetMatrix(vtkMatrix4x4 *matrix)
   }
   else
   {
-    SetTransform(NULL);
+    SetTransform(nullptr);
   }
 }
 
@@ -182,13 +181,13 @@ void mafRefSys::SetMatrix(mafMatrix *matrix)
 {
   if (matrix)
   {
-    mafAutoPointer<mafTransform> trans = mafTransform::New(); 
+    auto trans = mafTransform::NewSPtr(); 
     trans->SetMatrixPointer(matrix);
-    SetTransform(trans.get());
+    SetTransform(trans);
   }
   else
   {
-    SetTransform(NULL);
+    SetTransform(nullptr);
   }
 }
 
@@ -238,7 +237,7 @@ void mafRefSys::SetTypeToCustom(mafMatrix *matrix)
 }
 
 //----------------------------------------------------------------------------
-void mafRefSys::SetTypeToCustom(mafTransformBase *transform)
+void mafRefSys::SetTypeToCustom(std::shared_ptr<mafTransformBase> transform)
 //----------------------------------------------------------------------------
 {
   SetTransform(transform);

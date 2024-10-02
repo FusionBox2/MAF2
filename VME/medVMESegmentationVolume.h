@@ -235,7 +235,7 @@ protected:
 
   mafString m_VolumeName;
 
-  mafTransform *m_Transform;
+  std::shared_ptr<mafTransform> m_Transform;
 
   medDataPipeCustomSegmentationVolume *m_SegmentingDataPipe;
 

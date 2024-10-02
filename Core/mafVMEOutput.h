@@ -76,19 +76,19 @@ public:
   /** Return the VME pose matrix for the current time */
   mafMatrix *GetMatrix() const;
   /** Return the transform generating the pose matrix of the VME */ 
-  virtual mafTransformBase *GetTransform() const;
+  virtual std::shared_ptr<mafTransformBase> GetTransform() const;
   
   /** 
     Used by source VME to set internal pointer to Transform: do not use this method directly,
     use instead mafVME::SetMatrix() */
-  virtual void SetTransform(mafTransformBase *trans);
+  virtual void SetTransform(std::shared_ptr<mafTransformBase> trans);
 
   /** Get the global pose matrix of this VME for the given time "t".*/
   void GetAbsMatrix(mafMatrix &matrix,mafTimeStamp t=-1) const;
   /** Get the global pose matrix of this VME for the given time "t".*/
   mafMatrix *GetAbsMatrix() const;
   /** return the transform representing the Abs pose (typically the VME's AbsMatrix pipe) */
-  virtual mafTransformBase * GetAbsTransform() const;
+  virtual std::shared_ptr<mafTransformBase> GetAbsTransform() const;
   
   /** Get the global pose of this VME for the given time "t".*/
   void GetAbsPose(double &x,double &y,double &z,double &rx,double &ry,double &rz,mafTimeStamp t=-1) const;
@@ -191,7 +191,7 @@ protected:
   mafString                 m_DataType; ///< the type of data stored in object expressed as a string
   mafOBB                    m_Bounds;   ///< bounds of the output data (i.e. for current time)
 
-  mafAutoPointer<mafTransformBase> m_Transform; ///< the transform generating the output pose matrix
+  std::shared_ptr<mafTransformBase> m_Transform; ///< the transform generating the output pose matrix
 
 private:
   mafVMEOutput(const mafVMEOutput&); // Not implemented

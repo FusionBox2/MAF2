@@ -172,7 +172,7 @@ protected:
   mafGUI *m_GuiPlane;
   mafGUI *m_GuiEllipsoid;
 
-	mafTransform *m_Transform; 
+	std::shared_ptr<mafTransform> m_Transform; 
 	vtkPolyData  *m_PolyData;
   
   int m_GeometryType;

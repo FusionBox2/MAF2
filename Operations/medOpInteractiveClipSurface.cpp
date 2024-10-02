@@ -906,7 +906,7 @@ void medOpInteractiveClipSurface::ShowClipPlane(bool show)
       m_ImplicitPlaneVMEGizmo->ReparentTo(mafVME::SafeDownCast(m_Input->GetRoot()));
 
       // position the plane
-      mafAutoPointer<mafTransform> currTr = mafTransform::New();
+      auto currTr = mafTransform::NewSPtr();
       currTr->Translate((b[0] + b[1]) / 2, (b[2] + b[3]) / 2,(b[4] + b[5]) / 2 , POST_MULTIPLY);
       currTr->Update();
 

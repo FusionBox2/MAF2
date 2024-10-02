@@ -110,7 +110,7 @@ protected:
     WRAPPER_ITEM* pLast;
   };
   
-  mafTransform *m_Transform;      ///< pose matrix for the output (taken from input muscle)
+  std::shared_ptr<mafTransform> m_Transform;      ///< pose matrix for the output (taken from input muscle)
 
   mafVME* m_RefSysVme[2];         //<VMEs with the reference system
   mafString m_RefSysVmeName[2];   //<and their name to be shown in GUI  

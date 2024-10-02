@@ -92,8 +92,8 @@ protected:
   mafMatrix           *m_StartTrackerPoseMatrix;
   mafMatrix           *m_InverseTrackerPoseMatrix;
   mafMatrix			      *m_InversePoseMatrix;
-  mafTransform        *m_DeltaTransform; 
-  mafTransform        *m_TmpTransform;   
+  std::shared_ptr<mafTransform> m_DeltaTransform; 
+  std::shared_ptr<mafTransform> m_TmpTransform;   
   
   mafAvatar3D         *m_Avatar;
 

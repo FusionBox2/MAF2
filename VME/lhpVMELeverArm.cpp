@@ -72,7 +72,7 @@ lhpVMELeverArm::lhpVMELeverArm()
   m_HAxisVmeName  = _R("");
   m_LineVmeName   = _R("");
   
-  mafNEW(m_Transform);
+  m_Transform = mafTransform::NewSPtr();
   mafVMEOutputPolyline *output = mafVMEOutputPolyline::New(); // an output with no data
   output->SetTransform(m_Transform); // force my transform in the output
   SetOutput(output);
@@ -89,7 +89,7 @@ lhpVMELeverArm::lhpVMELeverArm()
 
   m_PolyData->DeepCopy(m_Goniometer->GetOutput());
 
-  mafNEW(m_TmpTransform);
+  m_TmpTransform = mafTransform::NewSPtr();
 
   DependsOnLinkedNodeOn();
 
@@ -103,10 +103,8 @@ lhpVMELeverArm::lhpVMELeverArm()
 lhpVMELeverArm::~lhpVMELeverArm()
 //-------------------------------------------------------------------------
 {
-  mafDEL(m_Transform);
   vtkDEL(m_LineSource);
   vtkDEL(m_Goniometer);
-  mafDEL(m_TmpTransform);
   vtkDEL(m_PolyData);
   SetOutput(NULL);
 }
@@ -251,7 +249,7 @@ void lhpVMELeverArm::InternalUpdate()
       line->GetAbsMatrix(tmLine, currTs);
       line->GetPolylineData();
 
-      mafAutoPointer<mafTransform> matr = mafTransform::New();;
+      auto matr = mafTransform::NewSPtr();
       vtkNew<vtkTransformPolyDataFilter> transf;
       matr->SetMatrix(tmLine);
       transf->SetInputConnection(line->GetVTKOutputPort());

@@ -75,7 +75,7 @@ medVMEWrappedMeter::medVMEWrappedMeter()
   m_Gui = NULL;
   m_ListBox = NULL;
   
-  mafNEW(m_Transform);
+  m_Transform = mafTransform::NewSPtr();
   medVMEOutputWrappedMeter *output = medVMEOutputWrappedMeter::New(); // an output with no data
   output->SetTransform(m_Transform); // force my transform in the output
   SetOutput(output);
@@ -94,7 +94,7 @@ medVMEWrappedMeter::medVMEWrappedMeter()
   m_Goniometer->AddInputConnection(m_LineSource->GetOutputPort());
   m_Goniometer->AddInputConnection(m_LineSource2->GetOutputPort());
 
-  mafNEW(m_TmpTransform);
+  m_TmpTransform = mafTransform::NewSPtr();
 
   DependsOnLinkedNodeOn();
 
@@ -109,8 +109,6 @@ medVMEWrappedMeter::medVMEWrappedMeter()
 medVMEWrappedMeter::~medVMEWrappedMeter()
 //-------------------------------------------------------------------------
 {
-  mafDEL(m_Transform);
-
   /*vtkDEL(m_PlaneSource);
   vtkDEL(m_PlaneCutter);
   vtkDEL(m_Cutter);
@@ -121,7 +119,6 @@ medVMEWrappedMeter::~medVMEWrappedMeter()
   vtkDEL(m_LineSource2);
 //  vtkDEL(m_LineSourceMiddle);
   vtkDEL(m_Goniometer);
-  mafDEL(m_TmpTransform);
 
 	for(int i=0; i< m_MiddlePointList.size(); i++)
 	{

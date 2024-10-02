@@ -65,7 +65,7 @@ mafString lhpVMELMCLines::GetVisualPipe()
 lhpVMELMCLines::lhpVMELMCLines()
 //-------------------------------------------------------------------------
 {
-  mafNEW(m_Transform);
+  m_Transform = mafTransform::NewSPtr();
   mafVMEOutputPolyline *output=mafVMEOutputPolyline::New(); // an output with no data
   output->SetTransform(m_Transform); // force my transform in the output
   SetOutput(output);
@@ -77,7 +77,7 @@ lhpVMELMCLines::lhpVMELMCLines()
   dpipe->SetDependOnAbsPose(true);
   SetDataPipe(dpipe);
 
-  mafNEW(m_TmpTransform);
+  m_TmpTransform = mafTransform::NewSPtr();
 
 
   m_Polyline = NULL;
@@ -92,8 +92,6 @@ lhpVMELMCLines::~lhpVMELMCLines()
 //-------------------------------------------------------------------------
 {
   vtkDEL(m_Polyline);
-  mafDEL(m_Transform);
-  mafDEL(m_TmpTransform);
   SetOutput(NULL);
 }
 //-------------------------------------------------------------------------

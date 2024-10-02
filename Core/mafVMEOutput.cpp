@@ -45,7 +45,7 @@ mafVMEOutput::mafVMEOutput()
 //-------------------------------------------------------------------------
 {
   m_VME = NULL;
-  m_Transform = mafTransform::New(); // Transform is created by VME 
+  m_Transform = mafTransform::NewSPtr(); // Transform is created by VME 
   m_Gui = NULL;
 }
 
@@ -84,7 +84,7 @@ void mafVMEOutput::Update()
 }
 
 //-------------------------------------------------------------------------
-void mafVMEOutput::SetTransform(mafTransformBase *trans)
+void mafVMEOutput::SetTransform(std::shared_ptr<mafTransformBase> trans)
 //-------------------------------------------------------------------------
 {
   assert(trans);
@@ -343,22 +343,22 @@ void mafVMEOutput::Get4DBounds(mafOBB &bounds) const
 }
 
 //-------------------------------------------------------------------------
-mafTransformBase * mafVMEOutput::GetTransform() const
+std::shared_ptr<mafTransformBase> mafVMEOutput::GetTransform() const
 //-------------------------------------------------------------------------
 {
   // if VME supports a matrix pipe return its pointer
   if (m_VME)
   {
-    if (mafMatrixPipe *mpipe=m_VME->GetMatrixPipe())
+    if (auto mpipe=m_VME->GetMatrixPipe())
     {
       return mpipe;
     }
   }
 
-  assert(m_Transform.get());
+  assert(m_Transform);
 
   // return internal transform
-  return m_Transform.get();
+  return m_Transform;
 }
 //-------------------------------------------------------------------------
 mafMatrix *mafVMEOutput::GetMatrix() const
@@ -372,7 +372,7 @@ void mafVMEOutput::GetMatrix(mafMatrix &matrix,mafTimeStamp t) const
 //-------------------------------------------------------------------------
 {
   assert(m_VME);
-  if (mafMatrixPipe *mpipe=m_VME->GetMatrixPipe()) // check if a matrix pipe is present
+  if (auto mpipe=m_VME->GetMatrixPipe()) // check if a matrix pipe is present
   {
     if (t<0||t==m_VME->GetTimeStamp())
     {
@@ -431,7 +431,7 @@ void mafVMEOutput::GetPose(double &x,double &y,double &z,double &rx,double &ry,d
 
 
 //-------------------------------------------------------------------------
-mafTransformBase * mafVMEOutput::GetAbsTransform() const
+std::shared_ptr<mafTransformBase> mafVMEOutput::GetAbsTransform() const
 //-------------------------------------------------------------------------
 {
   assert(m_VME);
@@ -451,7 +451,7 @@ void mafVMEOutput::GetAbsMatrix(mafMatrix &matrix,mafTimeStamp t) const
   }
   else
   {
-    mafAbsMatrixPipe *abspipe=m_VME->GetAbsMatrixPipe();
+    auto abspipe=m_VME->GetAbsMatrixPipe();
     // disable rising of update event since this is
     // only a temporary change to the matrix
     bool old_flag=abspipe->GetUpdateMatrixObserverFlag();

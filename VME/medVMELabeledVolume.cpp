@@ -107,7 +107,7 @@ medVMELabeledVolume::medVMELabeledVolume()
   m_LabelNameValue = wxEmptyString;
   m_LabelValueValue = wxEmptyString;
 
-  mafNEW(m_Transform);
+  m_Transform = mafTransform::NewSPtr();
   mafVMEOutputVolume *output = mafVMEOutputVolume::New(); // an output with no data
   output->SetTransform(m_Transform); // force my transform in the output
   SetOutput(output);
@@ -127,7 +127,6 @@ medVMELabeledVolume::medVMELabeledVolume()
 medVMELabeledVolume::~medVMELabeledVolume()
 //------------------------------------------------------------------------------
 {
-  mafDEL(m_Transform);
   if (m_DataCopied)
     mafDEL(m_Dataset);
   m_VolumeLink = NULL;

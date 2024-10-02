@@ -252,7 +252,7 @@ void mafGizmoPath::FindGizmoAbsPose( double s )
   mafMatrix constrainAbsPose;
   constrainAbsPose = m_ConstraintPolyline->GetAbsMatrixPipe()->GetMatrix();
   
-  mafAutoPointer<mafTransform> trans = mafTransform::New();
+  auto trans = mafTransform::NewSPtr();
   trans->SetMatrix(constrainAbsPose);
   trans->Concatenate(localGizmoPose, PRE_MULTIPLY);
   trans->Update();

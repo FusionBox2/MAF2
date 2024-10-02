@@ -527,7 +527,7 @@ void medCurvilinearAbscissaOnSkeletonHelper::GetAbsPose( medVMEPolylineGraph *in
   mafMatrix constrainAbsPose; // input
   constrainAbsPose = inputConstrainVMEGraph->GetAbsMatrixPipe()->GetMatrix();
 
-  mafAutoPointer<mafTransform> trans = mafTransform::New(); // output
+  auto trans = mafTransform::NewSPtr(); // output
   trans->SetMatrix(constrainAbsPose);
   trans->Concatenate(localGizmoPose, PRE_MULTIPLY);
   trans->RotateY(90, PRE_MULTIPLY);

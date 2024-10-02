@@ -181,7 +181,7 @@ private:
   vtkPolyDataNormals        *m_Normals;
   vtkMAFDistanceFilter      *m_DistanceFilter;
   mafVMEVolume              *m_Volume;
-  mafTransform              *m_Transform;
+  std::shared_ptr<mafTransform> m_Transform;
   vtkPolyData               *m_PolyData;
   vtkLookupTable            *m_Table;
 

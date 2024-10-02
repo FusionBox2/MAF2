@@ -111,7 +111,7 @@ void mafPipeGizmo::Create(mafNode *node, mafView *view)
 
 	if (m_Mediator && m_Mediator->GetAutoscale() == true)
 	{
-		mafNEW(m_GizmoAutoscaleHelper);
+		m_GizmoAutoscaleHelper = mafGizmoAutoscaleHelper::NewSPtr();
 		m_GizmoAutoscaleHelper->FollowScaleOn();
 
 		if (mediator->GetAlwaysVisible() == true)
@@ -229,7 +229,6 @@ mafPipeGizmo::~mafPipeGizmo()
 	if(NULL != m_RenFront)
 		m_RenFront->RemoveActor2D(m_CaptionActor);
 
-	mafDEL(m_GizmoAutoscaleHelper);
 	vtkDEL(m_Mapper);
 	vtkDEL(m_GizmoActor);
 	vtkDEL(m_OutlineActor);

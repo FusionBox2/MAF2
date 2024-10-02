@@ -427,14 +427,14 @@ protected:
   int    m_InfiniteLine;
   int    m_LineAngle2;
 
-  mafTransform *m_Transform;
+  std::shared_ptr<mafTransform> m_Transform;
 
   vtkLineSource     *m_LineSource1;
   vtkLineSource     *m_LineSource2;
   vtkLineSource     *m_LineSource3;
   vtkAppendPolyData *m_Goniometer;
   vtkPolyData       *m_PolyData;
-  mafTransform      *m_TmpTransform;
+  std::shared_ptr<mafTransform>      m_TmpTransform;
 
   mafString m_StartVmeName;
   mafString m_StartVme2Name;

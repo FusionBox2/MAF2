@@ -141,7 +141,7 @@ protected:
 
   double                     m_ScaleFactor;
 
-  mafTransform *m_Transform; ///< pose matrix for the slicer plane
+  std::shared_ptr<mafTransform> m_Transform; ///< pose matrix for the slicer plane
 
 private:
   mafVMERefSysAbstract(const mafVMERefSysAbstract&); // Not implemented

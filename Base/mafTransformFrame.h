@@ -45,23 +45,23 @@ class MAF_EXPORT mafTransformFrame : public mafTransformBase
   //virtual void Print(std::ostream& os, const int tabs=0) const;
 
   /** set the matrix to be transformed */
-  void SetInput(mafTransformBase *frame);
+  void SetInput(std::shared_ptr<mafTransformBase> frame);
   void SetInput(mafMatrix *frame);
-  mafTransformBase *GetInput() {return m_Input;}
+  std::shared_ptr<mafTransformBase> GetInput() {return m_Input;}
 
   /**
   Set/Get the input reference system, i.e. the reference system of the 
   input matrix.*/
   void SetInputFrame(mafMatrix *frame);
-  void SetInputFrame(mafTransformBase *frame);
-  mafTransformBase *GetInputFrame() {return m_InputFrame;}
+  void SetInputFrame(std::shared_ptr<mafTransformBase> frame);
+  std::shared_ptr<mafTransformBase> GetInputFrame() {return m_InputFrame;}
 
   /**
   Set/Get the output reference system, i.e. the reference system of the output
   matrix or the target reference system for point transformation.*/
   void SetTargetFrame(mafMatrix *frame);
-  void SetTargetFrame(mafTransformBase *frame);
-  mafTransformBase *GetTargetFrame() {return m_TargetFrame;}
+  void SetTargetFrame(std::shared_ptr<mafTransformBase> frame);
+  std::shared_ptr<mafTransformBase> GetTargetFrame() {return m_TargetFrame;}
 
   /** 
     Return current modification time, taking inro consideration also
@@ -71,13 +71,13 @@ class MAF_EXPORT mafTransformFrame : public mafTransformBase
 protected:
   void InternalUpdate() override;
 
-  mafTransformBase  *m_Input;
-  mafTransformBase  *m_InputFrame;
-  mafTransformBase  *m_TargetFrame;
+  std::shared_ptr<mafTransformBase> m_Input;
+  std::shared_ptr<mafTransformBase> m_InputFrame;
+  std::shared_ptr<mafTransformBase> m_TargetFrame;
 
 private:
-  mafTransformFrame(const mafTransformFrame&);  // Not implemented.
-  void operator=(const mafTransformFrame&);  // Not implemented.
+  mafTransformFrame(const mafTransformFrame&) = delete;
+  void operator=(const mafTransformFrame&) = delete;
 };
 
 #endif

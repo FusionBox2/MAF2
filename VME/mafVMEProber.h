@@ -165,7 +165,7 @@ protected:
   mafString m_VolumeName;
   mafString m_SurfaceName;
   
-  mafTransform *m_Transform;
+  std::shared_ptr<mafTransform> m_Transform;
 
   mafDataPipeCustomProber *m_ProbingDataPipe;
 

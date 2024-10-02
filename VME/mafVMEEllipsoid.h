@@ -55,7 +55,7 @@ private:
 	
 	RowVector3d grad(const Vector3d &point) const override;
 	Matrix3d hess(const Vector3d &point) const override;
-	mafTransform *m_Transform;
+	std::shared_ptr<mafTransform> m_Transform;
 	vtkPolyData  *m_PolyData;
 	//vtkPolyData* polyData;
 	double resPhi;

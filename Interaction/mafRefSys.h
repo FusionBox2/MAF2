@@ -91,7 +91,7 @@ public:
     if not the GetTransform will provide the identity by default.
     Notice, the transform is referenced and not copied, thus its changes reflect
     into mafRefSys changes */
-  void SetTypeToCustom(mafTransformBase *transform=NULL);
+  void SetTypeToCustom(std::shared_ptr<mafTransformBase> transform=nullptr);
 
   /** Set the reference system to CUSTOM. A linear transform of the refsys must be provided,
     if not the GetTransform will provide the identity by default.
@@ -127,13 +127,13 @@ public:
     Used to set the transform used for for the CUSTOM ref sys type. Notice the provided object
     is referenced and not copied! The Transform member variable is used only for CUSTOM ref sys type!!!!
     */
-  void SetTransform(mafTransformBase *transform);
+  void SetTransform(std::shared_ptr<mafTransformBase> transform);
   
   /** 
     return a transform representing this RefSys, this could be either the
     internally stored transform (CUSTOM), the renderer's ViewTransform (VIEW),
     the VME AbsMatrixMatrixPipe (LOCAL) or an identity transform when in GLOBAL */
-  mafTransformBase *GetTransform();
+  std::shared_ptr<mafTransformBase> GetTransform();
 
   /** return the matrix of this ref_sys ( @sa GetTransform() )*/
   mafMatrix *GetMatrix();
@@ -185,8 +185,8 @@ protected:
   /** internally used to set default values */
   void Initialize();
 
-  mafAutoPointer<mafTransform> m_Identity;  
-  mafAutoPointer<mafTransformBase> m_Transform;///< the ref sys matrix
+  std::shared_ptr<mafTransform> m_Identity;  
+  std::shared_ptr<mafTransformBase> m_Transform;///< the ref sys matrix
   vtkRenderer*                        m_Renderer; ///< ref sys renderer
   mafAutoPointer<mafVME>              m_VME;     ///< reference to VME
   int                                 m_Type;     ///< type of ref sys (CUSTOM, GLOBAL, LOCAL, PARENT, VIEW)
