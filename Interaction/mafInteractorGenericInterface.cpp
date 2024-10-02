@@ -47,7 +47,6 @@ mafInteractorGenericInterface::mafInteractorGenericInterface()
   m_UniformScalingFlag    = true;
   m_SurfaceSnap           = false;
 	m_SurfaceNormal         = false;
-  m_ResultTransform       = NULL;
   m_TargetRefSys          = new mafRefSys;
   m_TranslationConstraint = new mafInteractorConstraint;
   m_RotationConstraint    = new mafInteractorConstraint;
@@ -62,7 +61,6 @@ mafInteractorGenericInterface::mafInteractorGenericInterface()
 mafInteractorGenericInterface::~mafInteractorGenericInterface()
 //------------------------------------------------------------------------------
 {
-  mafDEL(m_ResultTransform);
   delete m_TargetRefSys; m_TargetRefSys = NULL;
   delete m_PivotRefSys; m_PivotRefSys = NULL;
   delete m_TranslationConstraint; m_TranslationConstraint = NULL;
@@ -71,23 +69,18 @@ mafInteractorGenericInterface::~mafInteractorGenericInterface()
 }
 
 //------------------------------------------------------------------------------
-void mafInteractorGenericInterface::SetResultTransform(mafTransform *result)
+void mafInteractorGenericInterface::SetResultTransform(std::shared_ptr<mafTransform> result)
 //------------------------------------------------------------------------------
 {
-  if (result!=m_ResultTransform)
-  {
-    mafDEL(m_ResultTransform);
-    m_ResultTransform=result;
-    m_ResultTransform->Register(this);
-  }
+	m_ResultTransform=result;
 }
 //------------------------------------------------------------------------------
 void mafInteractorGenericInterface::SetResultMatrix(mafMatrix *result)
 //------------------------------------------------------------------------------
 {
-  mafAutoPointer<mafTransform> trans = mafTransform::New(); // create a transform on the fly
+  auto trans = mafTransform::NewSPtr(); // create a transform on the fly
   trans->SetMatrixPointer(result); // make it reference the result matrix
-  SetResultTransform(trans.get());
+  SetResultTransform(trans);
 }
 
 //------------------------------------------------------------------------------

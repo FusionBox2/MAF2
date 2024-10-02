@@ -186,8 +186,8 @@ mafVMEMuscleWrapping::mafVMEMuscleWrapping()
   rotationMat = Matrix3d::Identity();
 
 
-  mafNEW(m_Transform);
-  mafVMEOutputPolyline* output = mafVMEOutputPolyline::New();
+	m_Transform = mafTransform::NewSPtr();
+	mafVMEOutputPolyline* output = mafVMEOutputPolyline::New();
 
   output->SetTransform(m_Transform); // force my transform in the output
   SetOutput(output);
@@ -213,7 +213,6 @@ mafVMEMuscleWrapping::~mafVMEMuscleWrapping()
 //-------------------------------------------------------------------------
 {
 	vtkDEL(m_PolyData);
-    mafDEL(m_Transform);
 	SetOutput(NULL);
 	
 }
@@ -646,10 +645,8 @@ void mafVMEMuscleWrapping::InternalUpdate()
 		points->Reset();
 		points->Initialize();
 		mafMatrix tm;
-		mafTransform *m_TmpTransform1;
-		mafNEW(m_TmpTransform1);
-		mafTransform *m_TmpTransform2;
-		mafNEW(m_TmpTransform2);
+		auto m_TmpTransform1 = mafTransform::NewSPtr();
+		auto m_TmpTransform2 = mafTransform::NewSPtr();
 		((mafVMELandmark *)P0)->GetPoint(m_StartPoint, currTs);
 
 		((mafVMELandmarkCloud *)((mafVMELandmark *)P0)->GetParent())->GetOutput()->GetAbsMatrix(tm, currTs);

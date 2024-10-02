@@ -309,7 +309,7 @@ protected:
   mafString m_Q0LandmarkName;
   mafString m_insert1LandmarkName;
   mafString m_insert2LandmarkName;
-  mafTransform *m_Transform; 
+  std::shared_ptr<mafTransform> m_Transform; 
   vtkPolyData  *m_PolyData;
   mafString gLength;
   mafString gError;

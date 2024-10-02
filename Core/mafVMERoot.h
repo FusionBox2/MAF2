@@ -108,7 +108,7 @@ protected:
   void InternalRestore(const mafStorageElement& node) override;
 
   mafID         m_MaxItemId; ///< id counter for VME items
-  mafTransform* m_Transform; ///< pose matrix for the root
+  std::shared_ptr<mafTransform> m_Transform; ///< pose matrix for the root
 
   mafString m_ApplicationStamp;
 

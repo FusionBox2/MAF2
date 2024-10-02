@@ -104,7 +104,7 @@ char **mafVMEArrow::GetIcon()
 mafVMEArrow::mafVMEArrow() : mafVMEGeneric()
 //-------------------------------------------------------------------------
 {
-  mafNEW(m_Transform);
+  m_Transform = mafTransform::NewSPtr();
   mafVMEOutputSurface *output=mafVMEOutputSurface::New(); // an output with no data
   output->SetTransform(m_Transform); // force my transform in the output
   SetOutput(output);
@@ -207,7 +207,6 @@ std::shared_ptr<mmaMaterial> mafVMEArrow::GetMaterial()
 mafVMEArrow::~mafVMEArrow()
 //-------------------------------------------------------------------------
 {
-  mafDEL(m_Transform);
   SetOutput(NULL);
 
   vtkDEL(m_ZArrow);

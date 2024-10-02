@@ -501,7 +501,6 @@ void lhpTagHandler_L0000_resource_MAF_TimeSpace_VMEabsoluteMatrixPose::HandleAut
 	mafVME *vme = cargo->GetInputVme();
 	mafString value;
   std::vector<mafTimeStamp> timeStamps;
-  mafAbsMatrixPipe *absMatrixPipe;
   long finalTimeStamps = 0;
 
   if (vme->IsAnimated())
@@ -520,7 +519,7 @@ void lhpTagHandler_L0000_resource_MAF_TimeSpace_VMEabsoluteMatrixPose::HandleAut
   }
 
   
-  absMatrixPipe = vme->GetAbsMatrixPipe();
+  auto absMatrixPipe = vme->GetAbsMatrixPipe();
 
 	long timeCount;
 	for(timeCount = 0; timeCount < finalTimeStamps; timeCount++)

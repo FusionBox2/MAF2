@@ -305,7 +305,7 @@ void mafGizmoROI::OnEventGizmoComponents(mafEventBase *maf_event)
             }
 
 						// translate selected gizmo
-						mafTransform *tr = mafTransform::New();                   
+						auto tr = mafTransform::NewSPtr();                   
 						tr->SetMatrix(*m_GHandle[m_ActiveGizmoComponent]->GetPose());
 						tr->Concatenate(*e->GetMatrix(), PRE_MULTIPLY);
 
@@ -323,7 +323,6 @@ void mafGizmoROI::OnEventGizmoComponents(mafEventBase *maf_event)
             // Update the gizmo length in order to be a fixed fraction
             // of the outline gizmo dimension
             UpdateGizmosLength();
-            tr->Delete();
           }          
           else
           {
@@ -443,7 +442,7 @@ void mafGizmoROI::UpdateHandlePositions()
       mafTransform::SetPosition(*m_GHandle[i]->GetPose(), oldPos);
       mafTransform::SetPosition(m_GHandle[i]->GetPivotMatrix(), oldPos);
 			//Matteo 23-08-06
-			mafAutoPointer<mafTransform> tr = mafTransform::New();
+			auto tr = mafTransform::NewSPtr();
 			tr->SetMatrix(*m_GHandle[i]->GetPose());
 
 			mafMatrix mat;
@@ -471,7 +470,7 @@ void mafGizmoROI::UpdateHandlePositions()
         mafTransform::SetPosition(*m_GHandle[i]->GetPose(), oldPos);
         mafTransform::SetPosition(m_GHandle[i]->GetPivotMatrix(), oldPos);
 				//Matteo 23-08-06
-				mafAutoPointer<mafTransform> tr = mafTransform::New();
+				auto tr = mafTransform::NewSPtr();
 				tr->SetMatrix(*m_GHandle[i]->GetPose());
 
 				mafMatrix mat;
@@ -498,7 +497,7 @@ void mafGizmoROI::UpdateHandlePositions()
       mafTransform::SetPosition(*m_GHandle[i]->GetPose(), oldPos);
       mafTransform::SetPosition(m_GHandle[i]->GetPivotMatrix(), oldPos);
 			//Matteo 23-08-06
-			mafAutoPointer<mafTransform> tr = mafTransform::New();
+			auto tr = mafTransform::NewSPtr();
 			tr->SetMatrix(*m_GHandle[i]->GetPose());
 
 			mafMatrix mat;

@@ -219,12 +219,12 @@ protected:
 
   V3d<double> m_StartPointGlobal;
 
-  mafTransform *m_Transform;
+  std::shared_ptr<mafTransform> m_Transform;
 
   vtkLineSource     *m_LineSource;
   vtkAppendPolyData *m_Goniometer;
   vtkPolyData       *m_PolyData;
-  mafTransform      *m_TmpTransform;
+  std::shared_ptr<mafTransform> m_TmpTransform;
 
   mafString m_HAxisVmeName;
   mafString m_LineVmeName;

@@ -39,7 +39,7 @@ mafCxxTypeMacro(mafAbsMatrixPipe)
 mafAbsMatrixPipe::mafAbsMatrixPipe()
 //------------------------------------------------------------------------------
 {  
-  mafNEW(m_Transform);
+  m_Transform = mafTransformFrame::NewSPtr();
 }
 
 //------------------------------------------------------------------------------
@@ -47,7 +47,6 @@ mafAbsMatrixPipe::~mafAbsMatrixPipe()
 //------------------------------------------------------------------------------
 {
   SetVME(NULL);
-  mafDEL(m_Transform);
 }
 
 //----------------------------------------------------------------------------
@@ -72,7 +71,7 @@ int mafAbsMatrixPipe::SetVME(mafVME *vme)
       if (vme->GetOutput())
         m_Transform->SetInput(vme->GetOutput()->GetTransform());
       else
-        m_Transform->SetInput((mafTransformBase *)NULL);
+        m_Transform->SetInput(std::shared_ptr<mafTransformBase>());
       
       if (vme->GetParent())
       {
@@ -80,13 +79,13 @@ int mafAbsMatrixPipe::SetVME(mafVME *vme)
       }
       else
       {
-        m_Transform->SetInputFrame((mafTransformBase *)NULL);
+        m_Transform->SetInputFrame(std::shared_ptr<mafTransformBase>());
       }
     }
     else
     {
-      m_Transform->SetInput((mafTransformBase *)NULL);
-      m_Transform->SetInputFrame((mafTransformBase *)NULL);
+      m_Transform->SetInput(std::shared_ptr<mafTransformBase>());
+      m_Transform->SetInputFrame(std::shared_ptr<mafTransformBase>());
     }
 
     return MAF_OK;
@@ -105,8 +104,8 @@ void mafAbsMatrixPipe::InternalUpdate()
   
   m_Updating=1;
 
-  mafTransformBase *input = mafTransformBase::SafeDownCast(m_Transform->GetInput());
-  mafTransformBase *input_frame = mafTransformBase::SafeDownCast(m_Transform->GetInputFrame());
+  auto input = m_Transform->GetInput();
+  auto input_frame = m_Transform->GetInputFrame();
 
   mafTimeStamp old_vme_time = -1;
   mafTimeStamp old_vme_parent_time = -1;

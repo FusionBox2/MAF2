@@ -53,7 +53,7 @@ mafCxxTypeMacro(mafDeviceButtonsPadTracker)
 mafDeviceButtonsPadTracker::mafDeviceButtonsPadTracker()
 //------------------------------------------------------------------------------
 {
-  mafNEW(m_TrackerToCanonicalTransform);
+  m_TrackerToCanonicalTransform = mafTransform::NewSPtr();
   mafNEW(m_LastPoseMatrix);
 
   m_TrackerToCanonicalTransform->Identity(); // work arround for a bug in GetMTime
@@ -74,7 +74,6 @@ mafDeviceButtonsPadTracker::~mafDeviceButtonsPadTracker()
 //------------------------------------------------------------------------------
 {
   SetDefaultAvatar(NULL);
-  mafDEL(m_TrackerToCanonicalTransform);
   mafDEL(m_LastPoseMatrix);
 }
 //------------------------------------------------------------------------------
@@ -349,7 +348,7 @@ mafOBB &mafDeviceButtonsPadTracker::GetCanonicalBounds()
 }
 
 //------------------------------------------------------------------------------
-mafTransform *mafDeviceButtonsPadTracker::GetTrackerToCanonicalTransform()
+std::shared_ptr<mafTransform> mafDeviceButtonsPadTracker::GetTrackerToCanonicalTransform()
 //------------------------------------------------------------------------------
 {
   if (m_CanonicalBounds.GetMTime()<m_TrackedBounds.GetMTime())

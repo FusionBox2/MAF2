@@ -154,8 +154,8 @@ public:
     The Result Transform is an optional transform to which the interactor concatenates the
     OutputTransform at each interaction. The USER may set it to have the interactor implicitly
     control a vme.*/
-  void SetResultTransform(mafTransform *result);
-  mafTransform *GetResultTransform() { return m_ResultTransform; }
+  void SetResultTransform(std::shared_ptr<mafTransform> result);
+  std::shared_ptr<mafTransform> GetResultTransform() { return m_ResultTransform; }
 
   /** redefined to set the renderer also in the constraint */
   void SetRenderer(vtkRenderer *ren) override;
@@ -195,7 +195,7 @@ protected:
   
   mafRefSys      *m_TargetRefSys; ///< the target ref_sys matrix
   mafRefSys      *m_PivotRefSys; ///< the pivot point (only position is considered)
-  mafTransform   *m_ResultTransform; ///< store the pointer to the matrix to be updated
+  std::shared_ptr<mafTransform>   m_ResultTransform; ///< store the pointer to the matrix to be updated
 
   bool            m_TranslationFlag; 
   bool            m_RotationFlag;

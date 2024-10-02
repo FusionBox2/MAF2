@@ -351,13 +351,13 @@ protected:
   double m_WrappedTangent2[3];
 
 
-  mafTransform *m_Transform;
+  std::shared_ptr<mafTransform> m_Transform;
 
   vtkLineSource     *m_LineSource;
   vtkLineSource     *m_LineSource2;
   //vtkLineSource     *m_LineSourceMiddle;
   vtkAppendPolyData *m_Goniometer;
-  mafTransform      *m_TmpTransform;
+  std::shared_ptr<mafTransform> m_TmpTransform;
   
 	std::vector<vtkLineSource *> m_LineSourceList; //list of PolyData
 	

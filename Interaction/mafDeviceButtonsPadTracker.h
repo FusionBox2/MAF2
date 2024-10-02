@@ -119,7 +119,7 @@ public:
   /**
    return the transform mapping coordinates from tracker to canonical frame.
   */
-  mafTransform *GetTrackerToCanonicalTransform();
+  std::shared_ptr<mafTransform> GetTrackerToCanonicalTransform();
   
   /**
    This is used to map the RAW transform in tracker's frame into the canonical frame. */
@@ -211,7 +211,7 @@ protected:
   //mafEventInteraction*  m_LastMoveEvent;     
   mafTimeStamp          m_MoveEventTimeOut;
 
-  mafTransform*         m_TrackerToCanonicalTransform;
+  std::shared_ptr<mafTransform>         m_TrackerToCanonicalTransform;
 
   mafAutoPointer<mafAvatar> m_Avatar;        ///< the current avatar
   mafAutoPointer<mafAvatar> m_DefaultAvatar; ///< the avatar set thorugh the GUI

@@ -183,7 +183,7 @@ protected:
   mafRWI            *m_Rwi;
   mafTagItem        *m_TagLabel;
   mafVME            *m_VolumeLink;
-  mafTransform      *m_Transform;
+  std::shared_ptr<mafTransform> m_Transform;
 
   wxString     m_LabelNameValue; 	
   wxString     m_LabelValueValue;

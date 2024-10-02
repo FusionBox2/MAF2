@@ -73,7 +73,7 @@ bool mafVMEBSplineVolume::PolylineAccept(mafNode *node)
 mafVMEBSplineVolume::mafVMEBSplineVolume()
 //-------------------------------------------------------------------------
 {
-  mafNEW(m_Transform);
+  m_Transform= mafTransform::NewSPtr();
   mafVMEOutputSurface *output=mafVMEOutputSurface::New(); // an output with no data
   output->SetTransform(m_Transform); // force my transform in the output
   SetOutput(output);
@@ -85,7 +85,7 @@ mafVMEBSplineVolume::mafVMEBSplineVolume()
   dpipe->SetDependOnAbsPose(true);
   SetDataPipe(dpipe);
 
-  mafNEW(m_TmpTransform);
+  m_TmpTransform= mafTransform::NewSPtr();
 
 
   m_Polygons = NULL;
@@ -112,8 +112,6 @@ mafVMEBSplineVolume::~mafVMEBSplineVolume()
   if(m_BVolume)
     delete m_BVolume;
   vtkDEL(m_Polygons);
-  mafDEL(m_Transform);
-  mafDEL(m_TmpTransform);
   SetOutput(NULL);
 }
 //-------------------------------------------------------------------------

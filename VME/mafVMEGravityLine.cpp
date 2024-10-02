@@ -182,7 +182,7 @@ mafVMEGravityLine::mafVMEGravityLine()
 
   //////
 
-	mafNEW(m_Transform);
+	m_Transform = mafTransform::NewSPtr();
 	mafVMEOutputPolyline* output = mafVMEOutputPolyline::New();
 	//mafVMEOutputSurface *output = mafVMEOutputSurface::New(); // an output with no data
 	//mafVMEOutputMuscleWrapping* output = mafVMEOutputMuscleWrapping::New();
@@ -212,7 +212,6 @@ mafVMEGravityLine::~mafVMEGravityLine()
 	//wxBusyInfo wait001("desturctor");
 	//Sleep(1500);
 	vtkDEL(m_PolyData);
-    mafDEL(m_Transform);
 	SetOutput(NULL);
 	
 }
@@ -578,8 +577,7 @@ void mafVMEGravityLine::InternalUpdate()
 		
 
 		mafMatrix tm;
-		mafTransform *m_TmpTransform;
-		mafNEW(m_TmpTransform);
+		auto m_TmpTransform = mafTransform::NewSPtr();
 		((mafVMELandmark*) P0)->GetPoint(m_Point1, currTs);
 		((mafVMELandmarkCloud *)P0->GetParent())->GetOutput()->GetAbsMatrix(tm, currTs);
 		m_TmpTransform->SetMatrix(tm);
@@ -765,8 +763,7 @@ void mafVMEGravityLine::InternalUpdate()
 
 
 			mafMatrix tm;
-			mafTransform *m_TmpTransform1;
-			mafNEW(m_TmpTransform1);			
+			auto m_TmpTransform1 = mafTransform::NewSPtr();
 			//surface->GetSurfaceOutput()->GetAbsMatrix(tm, currTs);
 			tm=surface->GetOutput()->GetAbsTransform()->GetMatrix();
 			m_TmpTransform1->SetMatrix(tm);

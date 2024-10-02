@@ -100,8 +100,8 @@ medVMEComputeWrapping::medVMEComputeWrapping()
 
 	//m_Tolerance = GetCylinderRadius()/4.0;
 
-	mafNEW(m_Transform);
-	mafNEW(m_TmpTransform2);
+	m_Transform = mafTransform::NewSPtr();
+	m_TmpTransform2 = mafTransform::NewSPtr();
 	medVMEOutputComputeWrapping *output = medVMEOutputComputeWrapping::New(); // an output with no data
 	output->SetTransform(m_Transform); // force my transform in the output
 	SetOutput(output);
@@ -122,7 +122,7 @@ medVMEComputeWrapping::medVMEComputeWrapping()
 	m_Goniometer->AddInputConnection(m_LineSource->GetOutputPort());
 	m_Goniometer->AddInputConnection(m_LineSource2->GetOutputPort());
 
-	mafNEW(m_TmpTransform);
+	m_TmpTransform = mafTransform::NewSPtr();
 
 	DependsOnLinkedNodeOn();
 
@@ -146,14 +146,11 @@ medVMEComputeWrapping::medVMEComputeWrapping()
 medVMEComputeWrapping::~medVMEComputeWrapping()
 //-------------------------------------------------------------------------
 {
-	mafDEL(m_Transform);
 	vtkDEL(m_LineSource);
 	vtkDEL(m_LineSource2);
   vtkDEL(m_LineSource3);
 	vtkDEL(m_Goniometer);
 	vtkDEL(m_LinePatcher);
-	mafDEL(m_TmpTransform);
-	mafDEL(m_TmpTransform2);
 
 	mafDEL(m_Mat);
 	mafDEL(m_Imat);
@@ -552,8 +549,7 @@ WrapCylinderOnly(m_PathNum);
 */
 //transform clip data which has many points
 void medVMEComputeWrapping::TransformOutputClipData(vtkPolyData *clipData){
-	mafTransform* transform;
-	mafNEW(transform);
+	auto transform = mafTransform::NewSPtr();
 	transform->SetMatrix(GetOutput()->GetAbsTransform()->GetMatrix());
 	transform->Invert();
 	transform->Update();
@@ -567,24 +563,18 @@ void medVMEComputeWrapping::TransformOutputClipData(vtkPolyData *clipData){
 		transform->TransformPoint(pRet->GetPoint(j), x);
 		pRet->SetPoint(j, x);
 	}
-
-	mafDEL(transform);
-
 }
 //transform one point
 void medVMEComputeWrapping::TransformOutputPoint( double *point){
-	mafTransform* transform;
-	mafNEW(transform);
+	auto transform = mafTransform::NewSPtr();
 	transform->SetMatrix(GetOutput()->GetAbsTransform()->GetMatrix());
 	transform->Invert();
 	transform->TransformPoint(point, point);
-	mafDEL(transform);
 }
 //transform polydata
 void medVMEComputeWrapping::TransformOutput(vtkPolyData *pData ){
 
-	mafTransform* transform;
-	mafNEW(transform);
+	auto transform = mafTransform::NewSPtr();
 	transform->SetMatrix(GetOutput()->GetAbsTransform()->GetMatrix());
 	transform->Invert();
 
@@ -596,9 +586,6 @@ void medVMEComputeWrapping::TransformOutput(vtkPolyData *pData ){
 		transform->TransformPoint(pRet->GetPoint(i), x);
 		pRet->SetPoint(i, x);
 	}
-
-	mafDEL(transform);
-
 }
 //draw a straight line
 void medVMEComputeWrapping::DirectConnectSE(){

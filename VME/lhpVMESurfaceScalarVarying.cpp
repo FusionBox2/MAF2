@@ -71,7 +71,7 @@ lhpVMESurfaceScalarVarying::lhpVMESurfaceScalarVarying()
 
   m_ScalarTimeStamps.clear();
 
-  mafNEW(m_Transform);
+  m_Transform = mafTransform::NewSPtr();
   mafVMEOutputSurface *output = mafVMEOutputSurface::New(); // an output with no data
   output->SetTransform(m_Transform); // force my transform in the output
   SetOutput(output);
@@ -107,7 +107,6 @@ lhpVMESurfaceScalarVarying::~lhpVMESurfaceScalarVarying()
 
   // these links are children, thus it's not our responsibility to
   // destroy them, it's part of the vtkTree one's
-  mafDEL(m_Transform);
   SetOutput(NULL);
 }
 

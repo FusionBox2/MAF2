@@ -62,7 +62,7 @@ mafVMECylinder::mafVMECylinder()
 	
 	this->name = _R("cylinder");
 
-	mafNEW(m_Transform);
+	m_Transform = mafTransform::NewSPtr();
 	mafVMEOutputSurface *output = mafVMEOutputSurface::New(); // an output with no data
 	output->SetTransform(m_Transform); // force my transform in the output
 	SetOutput(output);
@@ -101,7 +101,6 @@ mafVMECylinder::~mafVMECylinder()
 {
 	
 	vtkDEL(m_PolyData);
-	mafDEL(m_Transform);
 	SetOutput(NULL);
 
 }
@@ -171,9 +170,8 @@ void mafVMECylinder::OnEvent(mafEventBase *maf_event)
 					  {
 
 					  mafTimeStamp currTs = GetTimeStamp();
-					  mafTransform *m_TmpTransform;
-					  mafNEW(m_TmpTransform);
-					  
+						auto m_TmpTransform = mafTransform::NewSPtr();
+
 					  SetCenterLink(_R("centerLandmark"), n);
 					  m_LandmarkName = n->GetName();
 								  
@@ -433,8 +431,7 @@ void mafVMECylinder::InternalUpdate()
 	double r[3] = { 1, 1, 1 };
 	double centerLocal[3];
 	center_vme = GetCenterVME();
-	mafTransform *m_TmpTransform;
-	mafNEW(m_TmpTransform);
+	auto m_TmpTransform = mafTransform::NewSPtr();
 	if (center_vme)
 	{
 		if (center_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId(_R("centerLandmark")) != -1)

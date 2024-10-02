@@ -96,7 +96,7 @@ mafVMECenterLine::mafVMECenterLine()
   chordP->ReparentTo(this);
   chordP->SetMeterMode(1);
 
-	mafNEW(m_Transform);
+	m_Transform = mafTransform::NewSPtr();
 	mafVMEOutputPolyline* output = mafVMEOutputPolyline::New();
 	
 	output->SetTransform(m_Transform); // force my transform in the output
@@ -133,7 +133,6 @@ mafVMECenterLine::~mafVMECenterLine()
 //-------------------------------------------------------------------------
 {
 	vtkDEL(m_PolyData);
-    mafDEL(m_Transform);
 	SetOutput(NULL);
 	
 }
@@ -1927,8 +1926,7 @@ void mafVMECenterLine::InternalUpdate()
 
 		
 		mafMatrix tm;
-		mafTransform *m_TmpTransform1;
-		mafNEW(m_TmpTransform1);
+		auto m_TmpTransform1 = mafTransform::NewSPtr();
 		tm = surface->GetOutput()->GetAbsTransform()->GetMatrix();
 		m_TmpTransform1->SetMatrix(tm);
 		Eigen::Matrix3Xd vert ;

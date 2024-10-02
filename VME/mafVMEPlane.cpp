@@ -104,7 +104,7 @@ mafVMEPlane::mafVMEPlane()
 	surf = vtkPlaneSource::New();
 	//parallelPlane= vtkPlaneSource::New();
 
-	mafNEW(m_Transform);
+	m_Transform = mafTransform::NewSPtr();
 	mafVMEOutputSurface *output = mafVMEOutputSurface::New(); // an output with no data
 	output->SetTransform(m_Transform); // force my transform in the output
 	SetOutput(output);
@@ -126,7 +126,6 @@ mafVMEPlane::~mafVMEPlane()
 {
 //	vtkDEL(m_LineNormal);
 	vtkDEL(m_PolyData);
-	mafDEL(m_Transform);
 	SetOutput(NULL);
 }
 
@@ -227,7 +226,7 @@ double* mafVMEPlane::getPoint1()
 	double d[3];
 	mafTimeStamp currTs = GetTimeStamp();
 	double xyzr[3];
-	mafTransform *m_TmpTransform = mafTransform::New();
+	auto m_TmpTransform = mafTransform::NewSPtr();
 	mafMatrix tm;
 	//((mafVMELandmark *)p1)->GetPoint(d, currTs);
 
@@ -243,12 +242,7 @@ double* mafVMEPlane::getPoint1()
 	//m_TmpTransform->SetMatrix(tm);
 	//m_TmpTransform->TransformPoint(m_PlaneOrigin, d);
 	//Sleep(1500);
-	
 
-
-	
-	mafNEW(m_TmpTransform);
-	
 	this->GetOutput()->GetAbsMatrix(tm, currTs);
 	m_TmpTransform->SetMatrix(tm);
 
@@ -283,7 +277,7 @@ double* mafVMEPlane::getPoint2()
 	mafTimeStamp currTs = GetTimeStamp();
 	double xyzr[3];
 
-	mafTransform *m_TmpTransform = mafTransform::New();
+	auto m_TmpTransform = mafTransform::NewSPtr();
 	mafMatrix tm;
 
 
@@ -296,11 +290,6 @@ double* mafVMEPlane::getPoint2()
 	//((mafVMELandmark *)p2)->GetPoint(d, currTs);
 	//m_TmpTransform->SetMatrix(tm);
 	//m_TmpTransform->TransformPoint(m_PlanePoint1, d);
-
-	
-
-
-	mafNEW(m_TmpTransform);
 
 	this->GetOutput()->GetAbsMatrix(tm, currTs);
 	m_TmpTransform->SetMatrix(tm);
@@ -339,7 +328,7 @@ double* mafVMEPlane::getPoint3()
 	double d[3];
 	mafTimeStamp currTs = GetTimeStamp();
 	double xyzr[3];
-	mafTransform *m_TmpTransform = mafTransform::New();
+	auto m_TmpTransform = mafTransform::NewSPtr();
 
 	mafMatrix tm;
 
@@ -364,8 +353,6 @@ double* mafVMEPlane::getPoint3()
 //	wxBusyInfo wait12040s(sss40.c_str());
 //	Sleep(2500);
 	
-	mafNEW(m_TmpTransform);
-
 	this->GetOutput()->GetAbsMatrix(tm, currTs);
 	m_TmpTransform->SetMatrix(tm);
 
@@ -984,9 +971,8 @@ void mafVMEPlane::computeNormal()
 	double origin[3];
 	double Point1[3];
 	double Point2[3];
-	mafTransform* m_TmpTransform;
+	auto m_TmpTransform = mafTransform::NewSPtr();
 	mafTimeStamp currTs = GetTimeStamp();
-	mafNEW(m_TmpTransform);
 	mafMatrix tm;
 	this->GetOutput()->GetAbsMatrix(tm, currTs);
 	//m_Cloud2->GetOutput()->GetAbsMatrix(tm, currTs);

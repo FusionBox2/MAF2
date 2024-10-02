@@ -97,7 +97,7 @@ medVMEMuscleWrapper::medVMEMuscleWrapper()
   m_bNeedUpdate = false;
   m_bDoNotUpdate = false;
 
-  mafNEW(m_Transform);
+  m_Transform = mafTransform::NewSPtr();
   mafVMEOutputSurface *output = mafVMEOutputSurface::New(); // an output with no data  
   output->SetTransform(m_Transform); // force my transform in the output
   SetOutput(output);  
@@ -121,7 +121,6 @@ medVMEMuscleWrapper::~medVMEMuscleWrapper()
   DeleteAllWrappers();  
 
   vtkDEL(m_PolyData);
-  mafDEL(m_Transform);  
   SetOutput(NULL);  
 }
 

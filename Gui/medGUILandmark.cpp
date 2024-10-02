@@ -616,7 +616,7 @@ void medGUILandmark::TextEntriesChanged()
   - translate 
   */
 
-  mafAutoPointer<mafTransform> tran = mafTransform::New();
+  auto tran = mafTransform::NewSPtr();
   tran->SetPosition(m_Position[0], m_Position[1], m_Position[2]);
 
   // premultiply to ref sys abs matrix
@@ -644,7 +644,7 @@ void medGUILandmark::SetGuiAbsPosition(vtkMatrix4x4* absPose, mafTimeStamp timeS
   mflTr->Update();*/
 
   // Express VME abs matrix in m_RefSysVME refsys via mafTransform
-  mafAutoPointer<mafTransformFrame> mflTr = mafTransformFrame::New();
+  auto mflTr = mafTransformFrame::NewSPtr();
   //mflTr->SetInput(mafMatrix(absPose));
   mafMatrix mat;
   mat.SetVTKMatrix(absPose);

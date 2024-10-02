@@ -45,7 +45,7 @@ mafCxxTypeMacro(medVMESegmentationVolume)
 medVMESegmentationVolume::medVMESegmentationVolume()
 //-------------------------------------------------------------------------
 {
-  mafNEW(m_Transform);
+  m_Transform = mafTransform::NewSPtr();
   mafVMEOutputVolume *output = mafVMEOutputVolume::New(); // an output with no data
   output->SetTransform(m_Transform); // force my transform in the output
   SetOutput(output);
@@ -63,7 +63,6 @@ medVMESegmentationVolume::~medVMESegmentationVolume()
 {
   // these links are children, thus it's not our responsibility to
   // destroy them, it's part of the vtkTree one's
-  mafDEL(m_Transform);
   SetOutput(NULL);
 }
 

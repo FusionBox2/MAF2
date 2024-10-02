@@ -53,7 +53,7 @@ protected:
   /** Update the transform */
   void Update();
 
-  mafTransform*       m_OutputTransform; 
+  std::shared_ptr<mafTransform>       m_OutputTransform; 
   double              m_OutputOrientation[3]; ///< orientation of the output matrix
   double              m_OutputPosition[3]; ///< position of the output matrix
   double              m_PivotPosition[3]; ///< position of the selected object at start of interaction

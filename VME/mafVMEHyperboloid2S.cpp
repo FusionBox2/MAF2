@@ -69,7 +69,7 @@ mafVMEHyperboloid2S::mafVMEHyperboloid2S()
 
 	this->name = _R("TwoSheetedHyperboloid");
 
-	mafNEW(m_Transform);
+	m_Transform = mafTransform::NewSPtr();
 	mafVMEOutputSurface *output = mafVMEOutputSurface::New(); // an output with no data
 	output->SetTransform(m_Transform); // force my transform in the output
 	SetOutput(output);
@@ -116,7 +116,6 @@ mafVMEHyperboloid2S::~mafVMEHyperboloid2S()
 {
 
 	vtkDEL(m_PolyData);
-	mafDEL(m_Transform);
 	SetOutput(NULL);
 
 }
@@ -187,9 +186,8 @@ void mafVMEHyperboloid2S::OnEvent(mafEventBase *maf_event)
 					  {
 
 					  mafTimeStamp currTs = GetTimeStamp();
-					  mafTransform *m_TmpTransform;
-					  mafNEW(m_TmpTransform);
-					  mafMatrix tm;
+						auto m_TmpTransform = mafTransform::NewSPtr();
+						mafMatrix tm;
 
 					  initvme = 1;
 
@@ -447,8 +445,7 @@ void mafVMEHyperboloid2S::InternalUpdate()
 	double r[3] = {1,1,1};
 	
 	center_vme = GetCenterVME();
-	mafTransform *m_TmpTransform;
-	mafNEW(m_TmpTransform);
+	auto m_TmpTransform = mafTransform::NewSPtr();
 	if (center_vme)
 	{
 		if (center_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId(_R("centerLandmark")) != -1)

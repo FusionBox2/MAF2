@@ -116,7 +116,7 @@ protected:
 
   double                     m_StepToNext;
 
-  mafTransform               *m_Transform; ///< pose matrix for the slicer plane
+  std::shared_ptr<mafTransform> m_Transform; ///< pose matrix for the slicer plane
 private:
   mafVMEArrow (const mafVMEArrow &); // Not implemented
   void operator=(const mafVMEArrow &); // Not implemented

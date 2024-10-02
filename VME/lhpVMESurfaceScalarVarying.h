@@ -156,7 +156,7 @@ protected:
 
   mafString m_SurfaceName; ///< Name of the linked surface
   mafString m_ScalarName; ///< Name of the linked scalar
-  mafTransform *m_Transform;
+  std::shared_ptr<mafTransform> m_Transform;
   vtkPolyData *m_PolyData; ///< Surface data
   
   double m_ScalarRange[2];

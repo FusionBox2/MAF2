@@ -86,7 +86,7 @@ mafVMELineSeg::mafVMELineSeg()
 	
 
 
-	mafNEW(m_Transform);
+	m_Transform = mafTransform::NewSPtr();
 	//mafVMEOutputPolyline *output=mafVMEOutputPolyline::New(); // an output with no data
 	mafVMEOutputLineSeg *output = mafVMEOutputLineSeg::New();
 	output->SetTransform(m_Transform); // force my transform in the output
@@ -122,7 +122,6 @@ mafVMELineSeg::~mafVMELineSeg()
 //-------------------------------------------------------------------------
 {
   vtkDEL(m_PolyData);
-  mafDEL(m_Transform);
   vtkDEL(pts);
 	SetOutput(NULL);
 }

@@ -200,7 +200,7 @@ void mafGizmoScale::OnEventGizmoComponents(mafEventBase *maf_event)
 					*/
 
 					// Express VME abs matrix in RefSysVME refsys via mafTransform
-					mafAutoPointer<mafTransformFrame> tr = mafTransformFrame::New();
+					auto tr = mafTransformFrame::NewSPtr();
 					tr->SetInput(m_InputVME->GetOutput()->GetAbsMatrix());
 					tr->SetTargetFrame(m_RefSysVME->GetOutput()->GetAbsMatrix());
 
@@ -240,7 +240,7 @@ void mafGizmoScale::OnEventGizmoComponents(mafEventBase *maf_event)
 						double translationValue = e->GetMatrix()->GetElement(0,3);
 
 						// build translation matrices to premultiply to the three gizmos
-						mafAutoPointer<mafTransform> gizmoTr[3] = { mafTransform::New(), mafTransform::New(), mafTransform::New() };
+						std::shared_ptr<mafTransform> gizmoTr[3] = { mafTransform::NewSPtr(), mafTransform::NewSPtr(), mafTransform::NewSPtr() };
 						gizmoTr[0]->Translate(translationValue, 0, 0,PRE_MULTIPLY);
 						gizmoTr[1]->Translate(0, translationValue, 0,PRE_MULTIPLY);
 						gizmoTr[2]->Translate(0, 0, translationValue,PRE_MULTIPLY);
@@ -248,7 +248,7 @@ void mafGizmoScale::OnEventGizmoComponents(mafEventBase *maf_event)
 						// premultiply translation matrix to each gizmo abs pose
 						for (int gizmoId = X_AXIS; gizmoId < ISOTROPIC; gizmoId++)
 						{        
-							mafAutoPointer<mafTransform> currTr = mafTransform::New();
+							auto currTr = mafTransform::NewSPtr();
 							currTr->SetMatrix(*m_GSAxis[gizmoId]->GetAbsPose());
 							currTr->Concatenate(gizmoTr[gizmoId]->GetMatrix(),PRE_MULTIPLY);
 							currTr->Update();
@@ -326,7 +326,7 @@ void mafGizmoScale::OnEventGizmoComponents(mafEventBase *maf_event)
 					mafAutoPointer<mafMatrix> scaleTransMatrix = mafMatrix::New();
 					scaleTransMatrix->DeepCopy(scaleTrans.GetPointer()->GetMatrix());
 
-					mafAutoPointer<mafTransformFrame> newVmeAbsPoseTr = mafTransformFrame::New();
+					auto newVmeAbsPoseTr = mafTransformFrame::NewSPtr();
 					newVmeAbsPoseTr->SetInput(scaleTransMatrix.get());
 					newVmeAbsPoseTr->SetInputFrame(m_RefSysVMEAbsMatrixAtMouseDown);
 
@@ -508,7 +508,7 @@ void mafGizmoScale::SendTransformMatrixFromGui(mafEventBase *maf_event)
 {
 	mafEvent *e = mafEvent::SafeDownCast(maf_event);
 
-	mafAutoPointer<mafTransformFrame> tr = mafTransformFrame::New();
+	auto tr = mafTransformFrame::NewSPtr();
 	tr->SetInput(m_InputVME->GetOutput()->GetAbsMatrix());
 	tr->SetTargetFrame(m_RefSysVME->GetOutput()->GetAbsMatrix());
 
@@ -527,7 +527,7 @@ void mafGizmoScale::SendTransformMatrixFromGui(mafEventBase *maf_event)
 	mafAutoPointer<mafMatrix> scaleTransformMatrix = mafMatrix::New();
 	scaleTransformMatrix->DeepCopy(scaleTransform.GetPointer()->GetMatrix());
 
-	mafAutoPointer<mafTransformFrame> newVmeAbsPoseTransformFrame = mafTransformFrame::New();
+	auto newVmeAbsPoseTransformFrame = mafTransformFrame::NewSPtr();
 	newVmeAbsPoseTransformFrame->SetInput(scaleTransformMatrix.get());
 	newVmeAbsPoseTransformFrame->SetInputFrame(refSysVMEAbsMatrix);
 

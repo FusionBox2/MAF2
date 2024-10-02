@@ -157,7 +157,7 @@ void mafDataPipeCustomProber::PreExecute()
           m_Prober->SetDistanceModeToVector();
       }
 
-      mafAutoPointer<mafTransformFrame> maps_to_volume = mafTransformFrame::New();
+      auto maps_to_volume = mafTransformFrame::NewSPtr();
       maps_to_volume->SetInput(m_VME->GetAbsMatrixPipe()->GetMatrixPointer());
       maps_to_volume->SetTargetFrame(vol->GetAbsMatrixPipe()->GetMatrixPointer());
 

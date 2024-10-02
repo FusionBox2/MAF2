@@ -17,32 +17,10 @@
 #include "mafTransform.h"
 #include <assert.h>
 
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(mafTransformFrame)
-//----------------------------------------------------------------------------
+mafTransformFrame::mafTransformFrame() = default;
 
-//----------------------------------------------------------------------------
-mafTransformFrame::mafTransformFrame()
-//----------------------------------------------------------------------------
-{
-  m_Input = NULL;
-  m_InputFrame = NULL;
-  m_TargetFrame = NULL;
-}
+mafTransformFrame::~mafTransformFrame() = default;
 
-//----------------------------------------------------------------------------
-mafTransformFrame::~mafTransformFrame()
-//----------------------------------------------------------------------------
-{
-	if(m_Input)
-		m_Input->UnRegister(this);
-
-	if(m_InputFrame)
-		m_InputFrame->UnRegister(this);
-
-	if(m_TargetFrame)
-		m_TargetFrame->UnRegister(this);
-}
 /*
 //----------------------------------------------------------------------------
 virtual void Print(std::ostream& os, const int tabs) const;
@@ -80,33 +58,27 @@ virtual void Print(std::ostream& os, const int tabs) const;
 }
 */
 //----------------------------------------------------------------------------
-void mafTransformFrame::SetInput(mafTransformBase *frame)
+void mafTransformFrame::SetInput(std::shared_ptr<mafTransformBase> frame)
 //----------------------------------------------------------------------------
 {
-  if (m_Input) m_Input->UnRegister(this);
   m_Input = frame;
-  if (frame)
-    frame->Register(this);
 }
 
 //----------------------------------------------------------------------------
 void mafTransformFrame::SetInput(mafMatrix *frame)
 //----------------------------------------------------------------------------
 {
-  mafTransform *trans= mafTransform::New();
+  auto trans= mafTransform::NewSPtr();
   trans->SetMatrix(*frame);
   SetInput(trans);
 }
 
 
 //----------------------------------------------------------------------------
-void mafTransformFrame::SetInputFrame(mafTransformBase *frame)
+void mafTransformFrame::SetInputFrame(std::shared_ptr<mafTransformBase> frame)
 //----------------------------------------------------------------------------
 {
-  if (m_InputFrame) m_InputFrame->UnRegister(this);
   m_InputFrame = frame;
-  if (frame)
-    frame->Register(this);
 }
 
 //----------------------------------------------------------------------------
@@ -114,19 +86,16 @@ void mafTransformFrame::SetInputFrame(mafMatrix *matrix)
 //----------------------------------------------------------------------------
 {
   //mafTransform *trans= new mafTransform;
-  mafTransform *trans= mafTransform::New();
+  auto trans= mafTransform::NewSPtr();
   trans->SetMatrix(*matrix);
   SetInputFrame(trans);
 }
 
 //----------------------------------------------------------------------------
-void mafTransformFrame::SetTargetFrame(mafTransformBase *frame)
+void mafTransformFrame::SetTargetFrame(std::shared_ptr<mafTransformBase> frame)
 //----------------------------------------------------------------------------
 {
-  if (m_TargetFrame) m_TargetFrame->UnRegister(this);
   m_TargetFrame = frame;
-  if (frame)
-    frame->Register(this);
 }
 
 //----------------------------------------------------------------------------
@@ -134,7 +103,7 @@ void mafTransformFrame::SetTargetFrame(mafMatrix *matrix)
 //----------------------------------------------------------------------------
 {
   //mafTransform *trans= new mafTransform;
-  mafTransform *trans = mafTransform::New();
+  auto trans = mafTransform::NewSPtr();
   trans->SetMatrix(*matrix);
   SetTargetFrame(trans);
 }

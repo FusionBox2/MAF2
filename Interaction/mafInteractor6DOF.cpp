@@ -40,8 +40,8 @@ mafInteractor6DOF::mafInteractor6DOF()
   mafNEW(m_TrackerPoseMatrix);
   mafNEW(m_InverseTrackerPoseMatrix);
   mafNEW(m_StartTrackerPoseMatrix);
-  mafNEW(m_TmpTransform);
-  mafNEW(m_DeltaTransform);
+  m_TmpTransform = mafTransform::NewSPtr();
+  m_DeltaTransform = mafTransform::NewSPtr();
     
   m_Avatar = NULL;
 }
@@ -53,8 +53,6 @@ mafInteractor6DOF::~mafInteractor6DOF()
   mafDEL(m_TrackerPoseMatrix);
   mafDEL(m_InverseTrackerPoseMatrix);
   mafDEL(m_StartTrackerPoseMatrix);
-  mafDEL(m_TmpTransform);
-  mafDEL(m_DeltaTransform);
 }
 
 //------------------------------------------------------------------------------
@@ -198,10 +196,10 @@ void mafInteractor6DOF::UpdateDeltaTransform()
     // to world changes accordingly)
     m_TmpTransform->SetMatrix(*m_StartTrackerPoseMatrix);
 
-    GetTracker()->TrackerToCanonical(m_TmpTransform);
+    GetTracker()->TrackerToCanonical(m_TmpTransform.get());
 
     // @todo change here to map to current constrain ref sys
-    m_Avatar->CanonicalToWorld(m_TmpTransform); // map according to current transformations
+    m_Avatar->CanonicalToWorld(m_TmpTransform.get()); // map according to current transformations
 
     // Use of the initial matrix pose of the tracker in the world coordinate system, but 
     // extract the rotation matrix only

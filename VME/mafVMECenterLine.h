@@ -194,7 +194,7 @@ protected:
 //  vtkAppendPolyData *m_Goniometer;
 
 
-  mafTransform *m_Transform; 
+  std::shared_ptr<mafTransform> m_Transform; 
   vtkPolyData  *m_PolyData;
 
   vtkNew<vtkPoints> points;

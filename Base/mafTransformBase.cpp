@@ -74,9 +74,9 @@ mafTransformBase::mafTransformBase(const mafTransformBase& copy)
 void mafTransformBase::Print(std::ostream& os, const int indent) const
 //----------------------------------------------------------------------------
 {
-  Superclass::Print(os,indent);
-
   mafIndent the_indent(indent);
+
+	os << mafIndent(the_indent) << "Object Type Name: " << GetTypeName() << std::endl;
   os << the_indent << "Matrix:" << std::endl;
   m_Matrix->Print(os,the_indent.GetNextIndent());
   

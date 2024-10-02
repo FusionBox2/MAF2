@@ -57,7 +57,7 @@ mafVME::mafVME()
   m_Output        = NULL;
   m_Behavior      = NULL;
 
-  m_AbsMatrixPipe = mafAbsMatrixPipe::New();
+  m_AbsMatrixPipe = mafAbsMatrixPipe::NewSPtr();
 
   m_CurrentTime   = 0.0;
   m_Crypting      = 0;
@@ -76,9 +76,6 @@ mafVME::~mafVME()
   m_DataPipe=NULL; // smart pointer
   
   m_AbsMatrixPipe->SetVME(NULL);
-  m_AbsMatrixPipe=NULL; // smart pointer
-    
-  m_MatrixPipe=NULL; // smart pointer
 }
 
 //-------------------------------------------------------------------------
@@ -113,8 +110,14 @@ int mafVME::DeepCopy(mafNode *a)
   if (Superclass::DeepCopy(a)==MAF_OK)
   {
     mafVME *vme=mafVME::SafeDownCast(a);
-    
-    SetMatrixPipe(vme->GetMatrixPipe()?vme->GetMatrixPipe()->MakeACopy():NULL);
+
+    std::shared_ptr<mafMatrixPipe> newPipe;
+    if(auto p = vme->GetMatrixPipe())
+    {
+      newPipe = mafMatrixPipe::NewSPtr();
+      newPipe->DeepCopy(p.get());
+    }
+    SetMatrixPipe(newPipe);
     SetDataPipe(vme->GetDataPipe()?vme->GetDataPipe()->MakeACopy():NULL);
 
     // Runtime properties
@@ -664,10 +667,10 @@ void mafVME::SetOutput(mafVMEOutput *output)
 }
 
 //-------------------------------------------------------------------------
-int mafVME::SetMatrixPipe(mafMatrixPipe *mpipe)
+int mafVME::SetMatrixPipe(std::shared_ptr<mafMatrixPipe> mpipe)
 //-------------------------------------------------------------------------
 {
-  if (mpipe!=m_MatrixPipe.get())
+  if (mpipe!=m_MatrixPipe)
   {
     if (mpipe==NULL||mpipe->SetVME(this)==MAF_OK)
     { 

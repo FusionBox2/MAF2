@@ -944,7 +944,7 @@ int medOpImporterDicomOffis::BuildOutputVMEImagesFromDicomCineMRI()
 				tr->Translate(-sliceVtkDataCenter[0], -sliceVtkDataCenter[1],-sliceVtkDataCenter[2]);
 				tr->Concatenate(sliceOrientationMatrix);
 
-				mafAutoPointer<mafTransform> boxPose = mafTransform::New();
+				auto boxPose = mafTransform::NewSPtr();
 				boxPose->SetMatrix(tr->GetMatrix());
 				boxPose->Update();
 
@@ -1355,7 +1355,7 @@ int medOpImporterDicomOffis::BuildOutputVMEGrayVolumeFromDicom()
 		mat->SetElement(3,2,0);
 		mat->SetElement(3,3,1);
 
-		mafAutoPointer<mafTransform> boxPose = mafTransform::New();
+		auto boxPose = mafTransform::NewSPtr();
 		boxPose->SetMatrix(mat);     
 		boxPose->Update();
 		m_Volume->SetAbsMatrix(boxPose->GetMatrix());
@@ -1762,7 +1762,7 @@ int medOpImporterDicomOffis::BuildOutputVMEGrayVolumeFromDicomCineMRI()
 
 			slice->GetOrientation(mat);
 
-			mafAutoPointer<mafTransform> boxPose = mafTransform::New();
+			auto boxPose = mafTransform::NewSPtr();
 			boxPose->SetMatrix(mat);
 
 			double pos[3];
@@ -5120,14 +5120,14 @@ void medOpImporterDicomOffis::ResampleVolume()
 	mafVMEVolumeGray *tmpVmeVolumeGray;
 	mafNEW(tmpVmeVolumeGray);
 
-	mafAutoPointer<mafTransform> box_pose = mafTransform::New();
+	auto box_pose = mafTransform::NewSPtr();
 	box_pose->SetOrientation(m_VolumeOrientation);
 	box_pose->SetPosition(m_VolumePosition);
 
-	mafAutoPointer<mafTransformFrame> local_pose = mafTransformFrame::New();
-	local_pose->SetInput(box_pose.get());
+	auto local_pose = mafTransformFrame::NewSPtr();
+	local_pose->SetInput(box_pose);
 
-	mafAutoPointer<mafTransformFrame> output_to_input = mafTransformFrame::New();
+	auto output_to_input = mafTransformFrame::NewSPtr();
 
 	// In a future version if not a "Natural" data the filter should operate in place.
 	mafString new_vme_name = _R("resampled_");
@@ -6329,7 +6329,7 @@ void medOpImporterDicomOffis::ApplyReferenceSystem()
 			dummyTransform->Concatenate(image->GetMatrixPipe()->GetMatrix().GetVTKMatrix());
 			dummyTransform->Update();
 
-			mafAutoPointer<mafTransform> boxPose = mafTransform::New();
+			auto boxPose = mafTransform::NewSPtr();
 			boxPose->SetMatrix(dummyTransform->GetMatrix());
 			boxPose->Update();
 

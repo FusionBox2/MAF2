@@ -35,13 +35,12 @@ mafInteractorGeneric6DOF::mafInteractorGeneric6DOF()
 {
   m_IgnoreTriggerEvents = 0;
   m_DifferentialMoving  = 1;
-  mafNEW(m_OutputTransform);
+  m_OutputTransform = mafTransform::NewSPtr();
 }
 
 //------------------------------------------------------------------------------
 mafInteractorGeneric6DOF::~mafInteractorGeneric6DOF()
 {
-  mafDEL(m_OutputTransform);
 }
 
 //------------------------------------------------------------------------------
@@ -61,7 +60,7 @@ void mafInteractorGeneric6DOF::OnMove(mafEventInteraction *e)
     if (GetResultTransform())
     {
       m_ResultTransform->SetMatrix(*m_VME->GetOutput()->GetAbsMatrix());
-      GetResultTransform()->Concatenate(m_OutputTransform,POST_MULTIPLY);
+      GetResultTransform()->Concatenate(m_OutputTransform.get(),POST_MULTIPLY);
     }
 
     // forward the event with the pose matrix through default channel

@@ -494,7 +494,7 @@ void mafGizmoROI_BES::UpdateHandlePositions()
 			mafTransform::SetPosition(*m_GHandle[i]->GetPose(), oldPos);
 			mafTransform::SetPosition(m_GHandle[i]->GetPivotMatrix(), oldPos);
 			//Matteo 23-08-06
-			mafAutoPointer<mafTransform> tr = mafTransform::New();
+			auto tr = mafTransform::NewSPtr();
 			tr->SetMatrix(*m_GHandle[i]->GetPose());
 
 			mafMatrix mat;
@@ -522,7 +522,7 @@ void mafGizmoROI_BES::UpdateHandlePositions()
 				mafTransform::SetPosition(*m_GHandle[i]->GetPose(), oldPos);
 				mafTransform::SetPosition(m_GHandle[i]->GetPivotMatrix(), oldPos);
 				//Matteo 23-08-06
-				mafAutoPointer<mafTransform> tr = mafTransform::New();
+				auto tr = mafTransform::NewSPtr();
 				tr->SetMatrix(*m_GHandle[i]->GetPose());
 
 				mafMatrix mat;
@@ -549,7 +549,7 @@ void mafGizmoROI_BES::UpdateHandlePositions()
 			mafTransform::SetPosition(*m_GHandle[i]->GetPose(), oldPos);
 			mafTransform::SetPosition(m_GHandle[i]->GetPivotMatrix(), oldPos);
 			//Matteo 23-08-06
-			mafAutoPointer<mafTransform> tr = mafTransform::New();
+			auto tr = mafTransform::NewSPtr();
 			tr->SetMatrix(*m_GHandle[i]->GetPose());
 
 			mafMatrix mat;

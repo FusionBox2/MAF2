@@ -68,7 +68,7 @@ protected:
   /** Internally used to create a new instance of the GUI.*/
   mafGUI *CreateGui() override;
 
-  mafTransform *m_Transform;
+  std::shared_ptr<mafTransform> m_Transform;
 
   void InternalStore(mafStorageElementBuilder& parent) override;
   void InternalRestore(const mafStorageElement& node) override;

@@ -173,7 +173,7 @@ public:
   
 
   /**  return transform between canonical and world space */
-  mafCameraTransform *GetCanonicalToWorldTransform() {return m_CanonicalToWorldTransform;}
+  std::shared_ptr<mafCameraTransform> GetCanonicalToWorldTransform() {return m_CanonicalToWorldTransform;}
 
    /** 
     Set mapping rule, i.e. the policy to be used for scaling the
@@ -236,7 +236,7 @@ protected:
   vtkCellPicker*      m_Picker2D;
 
 
-  mafCameraTransform* m_CanonicalToWorldTransform;
+  std::shared_ptr<mafCameraTransform> m_CanonicalToWorldTransform;
   
   int                 m_FittingMode; ///< specify the current mapping rule from canonical to world
   

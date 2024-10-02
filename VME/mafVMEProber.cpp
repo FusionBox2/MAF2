@@ -58,7 +58,7 @@ mafVMEProber::mafVMEProber()
   m_HighDensity = -1.0;
   m_LowDensity  = -1.0;
   
-  mafNEW(m_Transform);
+  m_Transform = mafTransform::NewSPtr();
   mafVMEOutputSurface *output = mafVMEOutputSurface::New(); // an output with no data
   output->SetTransform(m_Transform); // force my transform in the output
   SetOutput(output);
@@ -83,7 +83,6 @@ mafVMEProber::~mafVMEProber()
 {
   // these links are children, thus it's not our responsibility to
   // destroy them, it's part of the vtkTree one's
-  mafDEL(m_Transform);
   SetOutput(NULL);
 }
 

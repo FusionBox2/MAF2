@@ -603,7 +603,7 @@ protected:
 	double m_Alist[100][3];
 	int m_Idx ;
 
-	mafTransform *m_Transform;
+	std::shared_ptr<mafTransform> m_Transform;
 
 	vtkLineSource     *m_LineSource;
 	vtkLineSource     *m_LineSource2;
@@ -611,8 +611,8 @@ protected:
 	//vtkLineSource     *m_LineSourceMiddle;
 	vtkAppendPolyData *m_Goniometer;
 	vtkPatchLine      *m_LinePatcher;
-	mafTransform      *m_TmpTransform;
-	mafTransform      *m_TmpTransform2;  
+	std::shared_ptr<mafTransform> m_TmpTransform;
+	std::shared_ptr<mafTransform> m_TmpTransform2;
 
 	std::vector<vtkLineSource *> m_LineSourceList; //list of PolyData
 

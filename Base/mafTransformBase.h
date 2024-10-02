@@ -1,23 +1,8 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafTransformBase
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
+#include "ftkConfigure.h"
 
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __mafTransformBase_h
-#define __mafTransformBase_h
-
-#include "mafReferenceCounted.h"
+#include "ftk/Base/Object.h"
 #include "ftk/Base/MTime.h"
 #include <mutex>
 #include "mafMatrix.h"
@@ -30,10 +15,7 @@ class mafEventSource;
 class vtkLinearTransform;
 class vtkMAFToLinearTransform;
 
-#ifdef MAF_EXPORTS
-template class MAF_EXPORT mafAutoPointer<mafMatrix>;
-#endif
-
+BEGIN_FTK_NAMESPACE
 /**  Superclass for Homogeneous transformations.
   mafTransformBase is the superclass for MAF geometric, and currently homogeneous
   only, transformations. The idea behind a mafTransformBase is the Update() method
@@ -43,17 +25,17 @@ template class MAF_EXPORT mafAutoPointer<mafMatrix>;
   - change SetTimeStamp to apply a Modified(), than change matrix pipes to not call it!!!
   - implement issuing of a MATRIX_UPDATED event: add an event source member
   */
-class MAF_EXPORT mafTransformBase : public mafReferenceCounted
+class FTK_CORE_EXPORT mafTransformBase
 {
 public:
   mafTransformBase();
-  ~mafTransformBase() override;
+  virtual ~mafTransformBase();
 
   /** copy constructor */
   mafTransformBase(const mafTransformBase&);
 
-  mafAbstractTypeMacro(mafTransformBase,mafReferenceCounted);
-  void Print(std::ostream& os, const int indent=0) const override;
+  mafAbstractBaseTypeMacro(mafTransformBase);
+  virtual void Print(std::ostream& os, const int indent=0) const;
 
   /** update and return internal transform matrix */
   virtual const mafMatrix &GetMatrix() {Update();return *m_Matrix;}
@@ -177,10 +159,4 @@ inline void mafTransformBase::Modified()
   m_MTime.Modified();
 }
 
-
-#endif
-
-
-
-
-
+END_FTK_NAMESPACE
