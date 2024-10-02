@@ -18,7 +18,7 @@
 //----------------------------------------------------------------------------
 // includes :
 //----------------------------------------------------------------------------
-#include "mafObject.h"
+#include "ftk/Base/Object.h"
 #include "ftk/Base/RegisteringPointer.h"
 #include "ftk/Base/String.h"
 #include "mafOBB.h"

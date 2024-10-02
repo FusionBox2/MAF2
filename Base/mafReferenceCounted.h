@@ -17,7 +17,7 @@
 #ifndef __mafReferenceCounted_h
 #define __mafReferenceCounted_h
 
-#include "mafObject.h"
+#include "ftk/Base/Object.h"
 
 /** mafReferenceCounted - abstract base class for MAF objects with reference counting.
   mafReferenceCounted is the base class for all reference counted classes

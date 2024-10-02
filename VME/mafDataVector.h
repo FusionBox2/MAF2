@@ -91,7 +91,7 @@ public:
   
   /** redefined to set the DataModified flag */
   void Modified() override
-  {m_DataModified = true; Superclass::Modified();}
+  {m_DataModified = true; mafTimeMap<mafVMEItem>::Modified();}
 
   /** return true if any data has been inserted or removed */
   bool IsDataModified() {return m_DataModified;}

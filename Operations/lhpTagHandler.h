@@ -20,7 +20,7 @@ class mafVME;
 //----------------------------------------------------------------------------
 // includes :
 //----------------------------------------------------------------------------
-#include "mafObject.h"
+#include "ftk/Base/Object.h"
 #include "ftk/Base/String.h"
 #include "mafUser.h"
 

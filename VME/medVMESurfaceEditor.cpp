@@ -23,7 +23,7 @@
 //----------------------------------------------------------------------------
 
 #include "medVMESurfaceEditor.h"
-#include "mafObject.h"
+#include "ftk/Base/Object.h"
 #include "medVMEOutputSurfaceEditor.h"
 #include "mafTagArray.h"
 

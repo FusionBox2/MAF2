@@ -23,7 +23,7 @@
 //----------------------------------------------------------------------------
 
 #include "medVMEPolylineEditor.h"
-#include "mafObject.h"
+#include "ftk/Base/Object.h"
 #include "medVMEOutputPolylineEditor.h"
 #include "mafTagArray.h"
 

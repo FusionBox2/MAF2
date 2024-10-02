@@ -17,7 +17,7 @@
 #ifndef __mafDirectory_h
 #define __mafDirectory_h
 
-#include "mafObject.h"
+#include "ftk/Base/Object.h"
 #include "ftk/Base/String.h"
 #include <vector>
 

@@ -22,7 +22,7 @@
 //----------------------------------------------------------------------------
 // includes :
 //----------------------------------------------------------------------------
-#include "mafObject.h"
+#include "ftk/Base/Object.h"
 #include "mafTimeStamped.h"
 
 #include "ftk/Base/MTime.h"

@@ -15,7 +15,7 @@
 #define __mafVolumeLargeWriter__
 
 
-#include "mafObject.h"
+#include "ftk/Base/Object.h"
 #include "ftk/Base/String.h"
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"

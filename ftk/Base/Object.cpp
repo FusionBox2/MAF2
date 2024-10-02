@@ -1,24 +1,10 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafObject
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#include "mafObject.h"
+#include "ftk/Base/Object.h"
 #include "mafIndent.h"
 #include <ostream>
 #include <map>
 #include <string>
+
+BEGIN_FTK_NAMESPACE
 
 //------------------------------------------------------------------------------
 // PIMPL declarations
@@ -32,8 +18,6 @@ class mafObjectDictionaryType
   mafObjectDictionaryType() {if (m_TypeIDs==NULL) m_TypeIDs=new std::map<std::string,mafID>;}
   ~mafObjectDictionaryType() {if (m_TypeIDs) delete m_TypeIDs;} // this is to allow memory deallocation
 }; 
-
-mafCxxTypeI0Macro(mafObject)
 
 #ifndef _DEBUG
   #ifdef _WIN32
@@ -73,3 +57,5 @@ void mafObject::Print(std::ostream &os, const int indent) const
 {
   os << mafIndent(indent) << "Object Type Name: " << GetTypeName() << std::endl;
 }
+
+END_FTK_NAMESPACE

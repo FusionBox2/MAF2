@@ -16,7 +16,7 @@
 #ifndef __mafInteractionManager_h
 #define __mafInteractionManager_h
 
-#include "mafObject.h"
+#include "ftk/Base/Object.h"
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"
 #include "ftk/Base/String.h"

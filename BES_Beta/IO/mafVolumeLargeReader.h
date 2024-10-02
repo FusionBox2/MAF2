@@ -14,7 +14,7 @@
 #ifndef __mafVolumeLargeReader__
 #define __mafVolumeLargeReader__
 
-#include "mafobject.h"
+#include "ftk/Base/Object.h"
 
 #include "ftk/Base/String.h"
 #include "mafBaseEventHandler.h"

@@ -15,7 +15,7 @@
 =========================================================================*/
 
 #include "mafRoot.h"
-#include "mafObject.h"
+#include "ftk/Base/Object.h"
 #include "mafStorageElement.h"
 #include "mafIndent.h"
 

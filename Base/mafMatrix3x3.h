@@ -17,7 +17,7 @@
 #ifndef __mafMatrix3x3_h
 #define __mafMatrix3x3_h
 
-#include "mafObject.h"
+#include "ftk/Base/Object.h"
 #include "mafTimeStamped.h"
 #include <math.h>
 
