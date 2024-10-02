@@ -23,7 +23,7 @@
 //----------------------------------------------------------------------------
 
 #include "medVMEPolylineGraph.h"
-#include "mafObject.h"
+#include "ftk/Base/Object.h"
 #include "mafVMEOutputPolyline.h"
 #include "mafPolylineGraph.h"
 

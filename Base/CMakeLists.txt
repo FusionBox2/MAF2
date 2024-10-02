@@ -11,6 +11,8 @@ DBG_MESSAGE("Configuring project mafCore")
 SET(PROJECT_SRCS
 	../ftk/Base/MTime.cpp
 	../ftk/Base/MTime.h
+	../ftk/Base/Object.cpp
+	../ftk/Base/Object.h
 	../ftk/Base/RegisteringPointer.h
 	../ftk/Base/String.cpp
 	../ftk/Base/String.h
@@ -42,8 +44,6 @@ mafMatrix3x3.cpp
 mafMatrix3x3.h
 mafOBB.cpp
 mafOBB.h
-mafObject.cpp
-mafObject.h
 mafBaseEventHandler.cpp
 mafBaseEventHandler.h
 mafReferenceCounted.cpp

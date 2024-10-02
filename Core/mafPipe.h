@@ -20,7 +20,7 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafDecl.h" // for MINID
-#include "mafObject.h"
+#include "ftk/Base/Object.h"
 #include "mafBaseEventHandler.h"
 #include "mafEvent.h"
 #include "mafEventSender.h"

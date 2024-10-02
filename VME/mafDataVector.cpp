@@ -168,21 +168,21 @@ void mafDataVector::AppendItem(mafVMEItem *m)
 //-----------------------------------------------------------------------
 {
   m->SetListener(this);
-  Superclass::AppendItem(m);
+  mafTimeMap<mafVMEItem>::AppendItem(m);
 }
 //-----------------------------------------------------------------------
 void mafDataVector::PrependItem(mafVMEItem *m)
 //-----------------------------------------------------------------------
 {
   m->SetListener(this);
-  Superclass::PrependItem(m);
+  mafTimeMap<mafVMEItem>::PrependItem(m);
 }
 //-----------------------------------------------------------------------
 void mafDataVector::InsertItem(mafVMEItem *m)
 //-----------------------------------------------------------------------
 {
   m->SetListener(this);
-  Superclass::InsertItem(m);
+  mafTimeMap<mafVMEItem>::InsertItem(m);
 }
 //-----------------------------------------------------------------------
 void mafDataVector::InternalStore(mafStorageElementBuilder& parent)

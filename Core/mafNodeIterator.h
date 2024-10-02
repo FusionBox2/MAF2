@@ -18,7 +18,7 @@
 //----------------------------------------------------------------------------
 // includes :
 //----------------------------------------------------------------------------
-#include "mafObject.h"
+#include "ftk/Base/Object.h"
 #include "mafNode.h"
 #include "mafEventSender.h"
 #include <vector>

@@ -22,7 +22,7 @@
 #include "mafEvent.h"
 #include "mafEventSender.h"
 #include "mafBaseEventHandler.h"
-#include "mafObject.h"
+#include "ftk/Base/Object.h"
 
 //----------------------------------------------------------------------------
 // forward references :
