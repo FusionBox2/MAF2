@@ -128,18 +128,18 @@ char** mafVMEMesh::GetIcon()
   return mafVMEFem_xpm;
 }
 //-------------------------------------------------------------------------
-mmaMaterial *mafVMEMesh::GetMaterial()
+std::shared_ptr<mmaMaterial> mafVMEMesh::GetMaterial()
 //-------------------------------------------------------------------------
 {
-	mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
-	if (material == NULL)
-	{
-		material = mmaMaterial::New();
-		SetAttribute(_R("MaterialAttributes"), material);
-		if (m_Output)
-		{
-			((mafVMEOutputMesh *)m_Output)->SetMaterial(material);
-		}
-	}
-	return material;
+  auto material = mmaMaterial::SafeDownCast(GetAttribute(_R("MaterialAttributes")));
+  if (!material)
+  {
+    material = mmaMaterial::NewSPtr();
+    SetAttribute(_R("MaterialAttributes"), material);
+    if (m_Output)
+    {
+      ((mafVMEOutputMesh*)m_Output)->SetMaterial(material);
+    }
+  }
+  return material;
 }

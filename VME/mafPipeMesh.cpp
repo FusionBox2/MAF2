@@ -132,7 +132,7 @@ void mafPipeMesh::ExecutePipe()
 	vtkAlgorithmOutput* port = mesh_output->GetVTKOutputPort();
 	assert(port);
 
-	m_MeshMaterial = (mmaMaterial *)m_Vme->GetAttribute(_R("MaterialAttributes"));
+	m_MeshMaterial = mmaMaterial::SafeDownCast(m_Vme->GetAttribute(_R("MaterialAttributes")));
 
   m_PointCellArraySeparation = data->GetPointData()->GetNumberOfArrays();
   m_NumberOfArrays = m_PointCellArraySeparation + data->GetCellData()->GetNumberOfArrays();
@@ -228,7 +228,7 @@ void mafPipeMesh::ExecutePipe()
   m_ActorWired->SetMapper(m_MapperWired);
   m_ActorWired->GetProperty()->SetRepresentationToWireframe();
 
-	mmaMaterial *material = (mmaMaterial *)m_Vme->GetAttribute(_R("MaterialAttributes"));
+	auto material = mmaMaterial::SafeDownCast(m_Vme->GetAttribute(_R("MaterialAttributes")));
 	
 	if(material && material->m_Prop )
 		m_Wireframe=(material->m_Prop->GetRepresentation() == VTK_WIREFRAME);
@@ -462,7 +462,7 @@ void mafPipeMesh::OnEvent(mafEventBase *maf_event)
 			case VME_CHOOSE_MATERIAL:
 				{
 					mafEventMacro(*e);
-					mmaMaterial *material = (mmaMaterial *)m_Vme->GetAttribute(_R("MaterialAttributes"));
+					auto material = mmaMaterial::SafeDownCast(m_Vme->GetAttribute(_R("MaterialAttributes")));
 					if(material && material->m_Prop )
 					{
 						bool newWireframe=(material->m_Prop->GetRepresentation() == VTK_WIREFRAME);

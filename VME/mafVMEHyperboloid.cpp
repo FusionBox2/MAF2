@@ -625,15 +625,13 @@ void mafVMEHyperboloid::setSize(double a, double b, double c)
 	this->b = b;
 	this->c = c;
 }
-mmaMaterial *mafVMEHyperboloid::GetMaterial()
+std::shared_ptr<mmaMaterial> mafVMEHyperboloid::GetMaterial()
 //-------------------------------------------------------------------------
 {
-	//wxBusyInfo wait12("getmaterial");
-	//Sleep(1500);
-	mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
-	if (material == NULL)
+	auto material = mmaMaterial::SafeDownCast(GetAttribute(_R("MaterialAttributes")));
+	if (!material)
 	{
-		material = mmaMaterial::New();
+		material = mmaMaterial::NewSPtr();
 		SetAttribute(_R("MaterialAttributes"), material);
 	}
 	return material;

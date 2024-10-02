@@ -1135,11 +1135,12 @@ void medVMELabeledVolume::RemoveLabelTag(int component)
 mmaVolumeMaterial * medVMELabeledVolume::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  mmaVolumeMaterial *material = (mmaVolumeMaterial *)GetAttribute(_R("VolumeMaterialAttributes"));
-  if (material == NULL)
+  auto material = (mmaVolumeMaterial *)GetAttribute(_R("VolumeMaterialAttributes"));
+  if (!material)
   {
-    material = mmaVolumeMaterial::New();
-    SetAttribute(_R("VolumeMaterialAttributes"), material);
+    auto newMaterial = mmaVolumeMaterial::NewSPtr();
+    material = newMaterial.get();
+    SetAttribute(_R("VolumeMaterialAttributes"), newMaterial);
     if (m_Output)
     {
       ((mafVMEOutputVolume *)m_Output)->SetMaterial(material);

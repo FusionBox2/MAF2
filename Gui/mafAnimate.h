@@ -96,8 +96,8 @@ protected:
   mafNode *m_Vme;
   mafVME *m_Root;
 
-	mafTagArray		*m_Tags;
-  mafTagArray		*m_StoredPositions;
+	std::shared_ptr<mafTagArray> m_Tags;
+  std::unique_ptr<mafTagArray> m_StoredPositions;
 	vtkRenderer		*m_Renderer;
 	mafGUI				*m_Gui;
 

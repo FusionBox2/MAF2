@@ -112,7 +112,7 @@ void medOpFreezeVME::OpRun()
 	{
 		if(medVMELabeledVolume *labeledVolume = medVMELabeledVolume::SafeDownCast(vme))
 		{
-			mmaMaterial *material = (mmaMaterial *)labeledVolume->GetAttribute(_R("MaterialAttributes"));
+			auto material = labeledVolume->GetMaterial();
 
 			mafAutoPointer<mafVMEVolumeGray> newVolume = mafVMEVolumeGray::New();
 			newVolume->SetName(labeledVolume->GetName());
@@ -121,7 +121,7 @@ void medOpFreezeVME::OpRun()
 
 			if(material)
 			{
-				newVolume->GetMaterial()->DeepCopy(material);
+				newVolume->GetMaterial()->DeepCopy(material.get());
 				newVolume->GetMaterial()->UpdateProp();
 			}
 
@@ -140,7 +140,7 @@ void medOpFreezeVME::OpRun()
 		{
 			if(medVMELabeledVolume *labeledVolume = medVMELabeledVolume::SafeDownCast(vme))
 			{
-				mmaMaterial *material = (mmaMaterial *)labeledVolume->GetAttribute(_R("MaterialAttributes"));
+				auto material = labeledVolume->GetMaterial();
 
 				mafAutoPointer<mafVMEVolumeGray> newVolume = mafVMEVolumeGray::New();
 				newVolume->SetName(labeledVolume->GetName());
@@ -149,7 +149,7 @@ void medOpFreezeVME::OpRun()
 
 				if(material)
 				{
-					newVolume->GetMaterial()->DeepCopy(material);
+					newVolume->GetMaterial()->DeepCopy(material.get());
 					newVolume->GetMaterial()->UpdateProp();
 				}
 
@@ -168,7 +168,7 @@ void medOpFreezeVME::OpRun()
 			{
 				if(mafVMEPolylineSpline *vmeSpline = mafVMEPolylineSpline::SafeDownCast(vme))
 				{
-					mmaMaterial *material = vmeSpline->GetMaterial();
+					auto material = vmeSpline->GetMaterial();
 
 					mafAutoPointer<mafVMEPolyline> newPolyline = mafVMEPolyline::New();
 					newPolyline->SetName(vmeSpline->GetName());
@@ -177,7 +177,7 @@ void medOpFreezeVME::OpRun()
 
 					if(material)
 					{
-						newPolyline->GetMaterial()->DeepCopy(material);
+						newPolyline->GetMaterial()->DeepCopy(material.get());
 						newPolyline->GetMaterial()->UpdateProp();
 					}
 					newPolyline->SetMatrix(*vmeSpline->GetOutput()->GetMatrix());
@@ -191,7 +191,7 @@ void medOpFreezeVME::OpRun()
 				}
 				else if(mafVMESurfaceParametric *vmeSurface = mafVMESurfaceParametric::SafeDownCast(vme))
 				{
-					mmaMaterial *material = vmeSurface->GetMaterial();
+					auto material = vmeSurface->GetMaterial();
 
 					mafAutoPointer<mafVMESurface> newSurface = mafVMESurface::New();
 					newSurface->SetName(vmeSurface->GetName());
@@ -200,7 +200,7 @@ void medOpFreezeVME::OpRun()
 
 					if(material)
 					{
-						newSurface->GetMaterial()->DeepCopy(material);
+						newSurface->GetMaterial()->DeepCopy(material.get());
 						newSurface->GetMaterial()->UpdateProp();
 					}
 
@@ -215,7 +215,7 @@ void medOpFreezeVME::OpRun()
 				}
 				else if(mafVMEMeter *meter = mafVMEMeter::SafeDownCast(vme))
 				{
-					mmaMaterial *material = meter->GetMaterial();
+					auto material = meter->GetMaterial();
 
 					mafAutoPointer<mafVMEPolyline> newPolyline = mafVMEPolyline::New();
 					newPolyline->SetName(meter->GetName());
@@ -224,7 +224,7 @@ void medOpFreezeVME::OpRun()
 
 					if(material)
 					{
-						newPolyline->GetMaterial()->DeepCopy(material);
+						newPolyline->GetMaterial()->DeepCopy(material.get());
 						newPolyline->GetMaterial()->UpdateProp();
 					}
 
@@ -239,7 +239,7 @@ void medOpFreezeVME::OpRun()
 				}
 				else if(mafVMERefSys *refsys = mafVMERefSys::SafeDownCast(vme))
 				{
-					mmaMaterial *material = refsys->GetMaterial();
+					auto material = refsys->GetMaterial();
 
 					mafAutoPointer<mafVMESurface> surface = mafVMESurface::New();
 					surface->SetName(refsys->GetName());
@@ -248,7 +248,7 @@ void medOpFreezeVME::OpRun()
 
 					if(material)
 					{
-						surface->GetMaterial()->DeepCopy(material);
+						surface->GetMaterial()->DeepCopy(material.get());
 						surface->GetMaterial()->UpdateProp();
 					}
 
@@ -263,7 +263,7 @@ void medOpFreezeVME::OpRun()
 				}
 				else if(mafVMESlicer *slicer = mafVMESlicer::SafeDownCast(vme))
 				{
-					mmaMaterial *material = slicer->GetMaterial();
+					auto material = slicer->GetMaterial();
 
 					mafAutoPointer<mafVMESurface> newSurface = mafVMESurface::New();
 					newSurface->SetName(slicer->GetName());
@@ -275,7 +275,7 @@ void medOpFreezeVME::OpRun()
 
 					if(material)
 					{
-						newSurface->GetMaterial()->DeepCopy(material);
+						newSurface->GetMaterial()->DeepCopy(material.get());
 						newSurface->GetMaterial()->SetMaterialTextureData(newSurface->GetSurfaceOutput()->GetTexture());
 						newSurface->GetMaterial()->UpdateProp();
 					}
@@ -292,7 +292,7 @@ void medOpFreezeVME::OpRun()
 				}
 				else if(mafVMEProber *prober = mafVMEProber::SafeDownCast(vme))
 				{
-					mmaMaterial *material = prober->GetMaterial();
+					auto material = prober->GetMaterial();
 
 					mafAutoPointer<mafVMESurface> newSurface = mafVMESurface::New();
 					newSurface->SetName(prober->GetName());
@@ -301,7 +301,7 @@ void medOpFreezeVME::OpRun()
 
 					if(material)
 					{
-						newSurface->GetMaterial()->DeepCopy(material);
+						newSurface->GetMaterial()->DeepCopy(material.get());
 						newSurface->GetMaterial()->UpdateProp();
 					}
 
@@ -316,7 +316,7 @@ void medOpFreezeVME::OpRun()
 				}
 				else if(medVMEWrappedMeter *wrappedMeter = medVMEWrappedMeter::SafeDownCast(vme))
 				{
-					mmaMaterial *material = wrappedMeter->GetMaterial();
+					auto material = wrappedMeter->GetMaterial();
 
 					mafAutoPointer<mafVMEPolyline> newPolyline = mafVMEPolyline::New();
 					newPolyline->SetName(wrappedMeter->GetName());
@@ -325,7 +325,7 @@ void medOpFreezeVME::OpRun()
 
 					if(material)
 					{
-						newPolyline->GetMaterial()->DeepCopy(material);
+						newPolyline->GetMaterial()->DeepCopy(material.get());
 						newPolyline->GetMaterial()->UpdateProp();
 					}
 
@@ -340,7 +340,7 @@ void medOpFreezeVME::OpRun()
 				}
 				else if(medVMEComputeWrapping *wrappedMeter = medVMEComputeWrapping::SafeDownCast(vme))
 				{
-					mmaMaterial *material = wrappedMeter->GetMaterial();
+					auto material = wrappedMeter->GetMaterial();
 
 					mafAutoPointer<mafVMEPolyline> newPolyline = mafVMEPolyline::New();
 					newPolyline->SetName(wrappedMeter->GetName());
@@ -349,7 +349,7 @@ void medOpFreezeVME::OpRun()
 
 					if(material)
 					{
-						newPolyline->GetMaterial()->DeepCopy(material);
+						newPolyline->GetMaterial()->DeepCopy(material.get());
 						newPolyline->GetMaterial()->UpdateProp();
 					}
 

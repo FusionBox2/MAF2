@@ -70,7 +70,7 @@ public:
   mafString GetVisualPipe() override {return mafString(_R("lhpVisualPipeSurfaceScalar"));};
 
   /** Return pointer to material attribute. */
-  mmaMaterial *GetMaterial();
+  std::shared_ptr<mmaMaterial> GetMaterial();
 
   /** Copy the contents of another lhpVMESurfaceScalarVarying into this one. */
   int DeepCopy(mafNode *a) override;

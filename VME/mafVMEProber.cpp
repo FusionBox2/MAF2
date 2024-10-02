@@ -88,13 +88,13 @@ mafVMEProber::~mafVMEProber()
 }
 
 //-------------------------------------------------------------------------
-mmaMaterial *mafVMEProber::GetMaterial()
+std::shared_ptr<mmaMaterial> mafVMEProber::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
-  if (material == NULL)
+  auto material = mmaMaterial::SafeDownCast(GetAttribute(_R("MaterialAttributes")));
+  if (!material)
   {
-    material = mmaMaterial::New();
+    material = mmaMaterial::NewSPtr();
     SetAttribute(_R("MaterialAttributes"), material);
   }
   return material;

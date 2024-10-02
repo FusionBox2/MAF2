@@ -139,7 +139,7 @@ public:
 	vtkLookupTable *GetLookupTable(){return m_Table;};
 
 protected:
-	mmaMaterial             *m_MeshMaterial;
+	std::shared_ptr<mmaMaterial> m_MeshMaterial;
 	vtkPolyDataMapper        *m_Mapper;
   vtkPolyDataMapper        *m_MapperWired;
 	vtkActor                *m_Actor;

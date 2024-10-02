@@ -99,7 +99,7 @@ void mafVMEOutputMesh::Update()
   }
 }
 //-------------------------------------------------------------------------
-mmaMaterial *mafVMEOutputMesh::GetMaterial()
+std::shared_ptr<mmaMaterial> mafVMEOutputMesh::GetMaterial()
 //-------------------------------------------------------------------------
 {
 	// if the VME set the material directly in the output return it
@@ -107,11 +107,11 @@ mmaMaterial *mafVMEOutputMesh::GetMaterial()
 		return  m_Material;
 
 	// search for a material attribute in the VME connected to this output
-	return GetVME() ? mmaMaterial::SafeDownCast(GetVME()->GetAttribute(_R("MaterialAttributes"))) : NULL;
+	return GetVME() ? mmaMaterial::SafeDownCast(GetVME()->GetAttribute(_R("MaterialAttributes"))) : nullptr;
 }
 
 //-------------------------------------------------------------------------
-void mafVMEOutputMesh::SetMaterial(mmaMaterial *material)
+void mafVMEOutputMesh::SetMaterial(std::shared_ptr<mmaMaterial> material)
 //-------------------------------------------------------------------------
 {
 	m_Material = material;

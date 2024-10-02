@@ -132,7 +132,7 @@ protected:
   int m_RenderingDisplayListFlag;
 
   std::vector<mafNode *> m_OBJs;
-  mmaMaterial *m_SurfaceMaterial;
+  std::shared_ptr<mmaMaterial> m_SurfaceMaterial;
   mafGUIMaterialButton *m_MaterialButton;
 
   void UpdateProperty(bool fromTag = false) override;

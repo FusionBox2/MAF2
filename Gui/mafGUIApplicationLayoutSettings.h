@@ -119,7 +119,6 @@ protected:
   
   mafString              m_LayoutFileSave;
   mafViewManager        *m_ViewManager;
-  mmaApplicationLayout  *m_Layout;
 	mafVMERoot            *m_XMLRoot;
   int                    m_VisibilityVme;
   wxListBox				      *m_List;

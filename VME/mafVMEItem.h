@@ -287,7 +287,7 @@ protected:
   user but only by mafVME and mafVMEItemArray functions.*/
   //void SetVME(mafVME *vme) {m_VME=vme;}
 
-  mafTagArray * m_TagArray;             ///< meta data attributes attached to this dataset      
+  std::shared_ptr<mafTagArray> m_TagArray;             ///< meta data attributes attached to this dataset      
   bool          m_DataModified;         ///< true when data has been modified from last storing
   // static bool   m_GlobalCompareDataFlag;///< if true Equals will also compare internal data
 

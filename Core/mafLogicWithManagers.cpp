@@ -1858,7 +1858,7 @@ void mafLogicWithManagers::RestoreLayout()
 {
   // Retrieve the saved layout.
   mafNode *vme = m_NodeManager->GetRoot();
-  mmaApplicationLayout *app_layout = mmaApplicationLayout::SafeDownCast(vme->GetAttribute(_R("ApplicationLayout")));
+  auto app_layout = mmaApplicationLayout::SafeDownCast(vme->GetAttribute(_R("ApplicationLayout")));
   if (app_layout)
   {
     int answer = wxMessageBox(_("Do you want to load the layout?"), _("Warning"), wxYES_NO);

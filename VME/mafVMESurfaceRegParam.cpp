@@ -128,16 +128,16 @@ mafVMESurfaceRegParam::~mafVMESurfaceRegParam()
 }
 
 //-------------------------------------------------------------------------
-mmaMaterial *mafVMESurfaceRegParam::GetMaterial()
+std::shared_ptr<mmaMaterial> mafVMESurfaceRegParam::GetMaterial()
 //-------------------------------------------------------------------------
 {
-	mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
-	if (material == NULL)
-	{
-		material = mmaMaterial::New();
-		SetAttribute(_R("MaterialAttributes"), material);
-	}
-	return material;
+  auto material = mmaMaterial::SafeDownCast(GetAttribute(_R("MaterialAttributes")));
+  if (!material)
+  {
+    material = mmaMaterial::NewSPtr();
+    SetAttribute(_R("MaterialAttributes"), material);
+  }
+  return material;
 }
 
 //-------------------------------------------------------------------------

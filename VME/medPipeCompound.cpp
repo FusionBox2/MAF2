@@ -108,7 +108,7 @@ void medPipeCompound::AddActor(){
 	m_ColorLUT->SetTableRange(sr);
 
 	//vtkNEW(m_OpacityTransferFunction);
-	mmaVolumeMaterial *material = ((mafVMEVolume *)m_Vme)->GetMaterial();
+	auto material = ((mafVMEVolume *)m_Vme)->GetMaterial();
 	m_OpacityTransferFunction = material->m_OpacityTransferFunction;
 
 	vtkNEW(m_VolumeProperty);

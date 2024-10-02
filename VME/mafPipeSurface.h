@@ -131,7 +131,7 @@ protected:
 	int m_NormalVisibility;         ///< Flag to switch On/Off the visibility of normals on the surface
 	int m_EdgeVisibility;           ///< Flag to switch On/Off the visibility of edge feature on the surface
   int m_RenderingDisplayListFlag; ///< Flag to switch On/Off the 
-  mmaMaterial *m_SurfaceMaterial;
+  std::shared_ptr<mmaMaterial> m_SurfaceMaterial;
   mafGUIMaterialButton *m_MaterialButton;
 
   int m_SelectedScalarsArray;           ///< Contains the index of the visivle scalars array of the input surface (added by Losi 2011/04/08 to allow scalars array selection)

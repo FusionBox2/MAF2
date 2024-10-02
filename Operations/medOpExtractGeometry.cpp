@@ -571,7 +571,7 @@ int medOpExtractGeometry::GenerateIsosurface()
 
     m_ResampledVolume = (mafVMEVolumeGray *)m_VolumeInput->NewInstance();
     m_ResampledVolume->Register(m_ResampledVolume);
-    m_ResampledVolume->GetTagArray()->DeepCopy(m_VolumeInput->GetTagArray());
+    m_ResampledVolume->GetTagArray()->DeepCopy(m_VolumeInput->GetTagArray().get());
 
     mafTagItem *ti = NULL;
     ti = m_ResampledVolume->GetTagArray()->GetTag(_R("VME_NATURE"));

@@ -236,7 +236,7 @@ void  mafOpImporterVRML::ImportVRML()
 
         double rgb[3];
         actor->GetProperty()->GetColor(rgb);
-        mmaMaterial *m = surface->GetMaterial();
+        auto m = surface->GetMaterial();
         m->m_Diffuse[0] = rgb[0];
         m->m_Diffuse[1] = rgb[1];
         m->m_Diffuse[2] = rgb[2];

@@ -557,11 +557,12 @@ void mafMSFImporter::RestoreMeterAttribute(mafVME *vme)
 void mafMSFImporter::RestoreMaterial(mafVME *vme)
 //------------------------------------------------------------------------------
 {
-  mmaMaterial *material = (mmaMaterial *)vme->GetAttribute(_R("MaterialAttributes"));
-  if (material == NULL)
+  auto material = (mmaMaterial *)vme->GetAttribute(_R("MaterialAttributes"));
+  if (!material)
   {
-    material = mmaMaterial::New();
-    vme->SetAttribute(_R("MaterialAttributes"), material);
+    auto newMaterial = mmaMaterial::NewSPtr();
+    material = newMaterial.get();
+    vme->SetAttribute(_R("MaterialAttributes"), newMaterial);
   }
 
   mafTagItem *mat_item = vme->GetTagArray()->GetTag(_R("material"));

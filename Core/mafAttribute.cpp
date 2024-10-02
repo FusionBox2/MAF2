@@ -9,8 +9,6 @@
 
 #include <ostream>
 
-mafCxxAbstractTypeMacro(mafAttribute);
-
 //-------------------------------------------------------------------------
 mafAttribute& mafAttribute::operator=(const mafAttribute &a)
 //-------------------------------------------------------------------------
@@ -36,10 +34,10 @@ void mafAttribute::DeepCopy(const mafAttribute *a)
 }
 
 //-------------------------------------------------------------------------
-mafAttribute *mafAttribute::MakeCopy()
+std::shared_ptr<mafAttribute> mafAttribute::MakeCopy()
 //-------------------------------------------------------------------------
 {
-  mafAttribute *new_attr=NewInstance();
+  std::shared_ptr<mafAttribute> new_attr(NewInstance());
   assert(new_attr);
   new_attr->DeepCopy(this);
   return new_attr;
@@ -84,19 +82,12 @@ void mafAttribute::Print(std::ostream& os, const int tabs) const
 {
   mafIndent indent(tabs);
 
+  os << indent << "Attribute Type Name: " << GetTypeName() << std::endl;
+
   os << indent << "Name: " << m_Name.GetCStr() << std::endl;
 }
 
 mafAttribute* mafAttribute::Create(const char* AttributeType)
 {
-  if (auto object = AttributeFactory::CreateAttribute(AttributeType))
-  {
-    if (auto attribute = mafAttribute::SafeDownCast(object))
-    {
-      return attribute;
-    }
-    delete object;
-    return nullptr;
-  }
-  return nullptr;
+  return AttributeFactory::CreateInstance(AttributeType);
 }

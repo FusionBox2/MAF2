@@ -122,7 +122,7 @@ public:
   //virtual mafString GetVisualPipe() {return mafString("mafPipeSurface");};
 	mafString GetVisualPipe() override { return mafString(_R("mafPipePolyline")); };
   /** Return pointer to material attribute. */
-  mmaMaterial *GetMaterial();
+  std::shared_ptr<mmaMaterial> GetMaterial();
 
   /** return an xpm-icon that can be used to represent this node */
  // static char ** GetIcon();

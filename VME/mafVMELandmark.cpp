@@ -361,21 +361,21 @@ mafGUI* mafVMELandmark::CreateGui()
 }
 
 //-------------------------------------------------------------------------
-mmaMaterial *mafVMELandmark::GetMaterial()
+std::shared_ptr<mmaMaterial> mafVMELandmark::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  mmaMaterial *material;
+  std::shared_ptr<mmaMaterial> material;
   if (m_Parent)
   {
-    material = (mmaMaterial *)m_Parent->GetAttribute(_R("MaterialAttributes"));
+    material = mmaMaterial::SafeDownCast(m_Parent->GetAttribute(_R("MaterialAttributes")));
   }
   else
   {
-    material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
+    material = mmaMaterial::SafeDownCast(GetAttribute(_R("MaterialAttributes")));
   }
-  if (material == NULL)
+  if (!material)
   {
-    material = mmaMaterial::New();
+    material = mmaMaterial::NewSPtr();
     SetAttribute(_R("MaterialAttributes"), material);
   }
   if (m_Output)

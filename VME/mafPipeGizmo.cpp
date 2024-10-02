@@ -91,7 +91,7 @@ void mafPipeGizmo::Create(mafNode *node, mafView *view)
 
 	m_GizmoActor = vtkActor::New();
 	m_GizmoActor->SetMapper(m_Mapper);
-	mmaMaterial *material = inputVMEGizmo->GetMaterial();
+	auto material = inputVMEGizmo->GetMaterial();
 	if (material)
 		m_GizmoActor->SetProperty(material->m_Prop);
 

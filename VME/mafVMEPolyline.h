@@ -56,7 +56,7 @@ public:
   mafVMEOutput *GetOutput() override;
 
     /** Return pointer to material attribute. */
-    mmaMaterial *GetMaterial();
+    std::shared_ptr<mmaMaterial> GetMaterial();
 
     /** Return the suggested pipe-typename for the visualization of this vme */
   mafString GetVisualPipe() override {return mafString(_R("mafPipePolyline"));};

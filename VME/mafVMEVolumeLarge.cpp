@@ -159,13 +159,13 @@ int mafVMEVolumeLarge::InternalInitialize()
 }
 
 //-------------------------------------------------------------------------
-mmaVolumeMaterial *mafVMEVolumeLarge::GetMaterial()
+std::shared_ptr<mmaVolumeMaterial> mafVMEVolumeLarge::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  mmaVolumeMaterial *material = (mmaVolumeMaterial *)GetAttribute(_R("VolumeMaterialAttributes"));
-  if (material == NULL)
+  auto material = mmaVolumeMaterial::SafeDownCast(GetAttribute(_R("VolumeMaterialAttributes")));
+  if (!material)
   {
-    material = mmaVolumeMaterial::New();
+    material = mmaVolumeMaterial::NewSPtr();
     
     if(GetOutput() && GetOutput()->GetVTKData())
     {

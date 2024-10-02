@@ -48,7 +48,6 @@ mafOpEditMetadata::mafOpEditMetadata(const mafString& label) : Superclass(label)
 
   m_MetadataList  = NULL;
   m_TagArray      = NULL;
-  m_OldTagArray   = NULL;
   m_SelectedTag   = NULL;
 
   m_TagName = _L("Name");
@@ -63,7 +62,6 @@ mafOpEditMetadata::mafOpEditMetadata(const mafString& label) : Superclass(label)
 mafOpEditMetadata::~mafOpEditMetadata()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_OldTagArray);
 }
 
 //----------------------------------------------------------------------------
@@ -95,8 +93,8 @@ void mafOpEditMetadata::OpRun()
 //----------------------------------------------------------------------------
 {
   m_TagArray = m_Input->GetTagArray();
-  mafNEW(m_OldTagArray);
-  m_OldTagArray->DeepCopy(m_TagArray);
+  m_OldTagArray = mafTagArray::NewSPtr();
+  m_OldTagArray->DeepCopy(m_TagArray.get());
   std::vector<mafString> tag_list;
   m_TagArray->GetTagList(tag_list);
 
@@ -382,5 +380,5 @@ void mafOpEditMetadata::OpUndo()
   for (int t=0; t<tag_list.size();t++)
     m_TagArray->DeleteTag(tag_list[t]);
   
-  m_TagArray->DeepCopy(m_OldTagArray);
+  m_TagArray->DeepCopy(m_OldTagArray.get());
 }

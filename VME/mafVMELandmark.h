@@ -88,7 +88,7 @@ public:
 
   /**
   This is overridden to allow share seamless the Tag array of the landmark with the TAG array of the cloud.*/
-  mafTagArray *GetTagArray() {if (mafVME *parent=this->GetParent()) return parent->GetTagArray(); return NULL;}
+  std::shared_ptr<mafTagArray> GetTagArray() override {if (auto parent=this->GetParent()) return parent->GetTagArray(); return nullptr;}
 
   /**
   Overriden to always return [-r,+r,-r,+r,-r,+r] or invalid,
@@ -104,7 +104,7 @@ public:
   static char** GetIcon();
 
   /** Return pointer to material attribute. */
-  mmaMaterial *GetMaterial();
+  std::shared_ptr<mmaMaterial> GetMaterial();
 
   /** Return the suggested pipe-typename for the visualization of this vme */
   mafString GetVisualPipe() override {return mafString(_R("mafPipeLandmarkCloud"));}

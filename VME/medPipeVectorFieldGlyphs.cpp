@@ -1104,7 +1104,7 @@ void medPipeVectorFieldGlyphs::CreateAddItemDlg(int idx)
   if (dlg.ShowChooserDialog(m_GlyphMaterial))
   {
     //set new material label
-    mmaMaterial* mat = m_GlyphMaterial->GetMaterial();     
+    auto mat = m_GlyphMaterial->GetMaterial();     
     m_GlyphMaterialLabel->SetLabel(mat->m_MaterialName.toWx());
 
     //and set a new material icon

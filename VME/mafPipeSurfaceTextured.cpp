@@ -403,7 +403,7 @@ mafGUI *mafPipeSurfaceTextured::CreateGui()
   m_Gui->Bool(ID_ENABLE_LOD,_R("LOD"),&m_EnableActorLOD);
   m_Gui->Label(_R(""));
 
-  if (m_SurfaceMaterial == NULL)
+  if (!m_SurfaceMaterial)
   {
     mafVMEOutputSurface *surface_output = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
     m_SurfaceMaterial = surface_output->GetMaterial();

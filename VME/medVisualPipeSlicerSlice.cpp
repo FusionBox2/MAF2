@@ -120,7 +120,7 @@ void medVisualPipeSlicerSlice::Create(mafNode *node, mafView *view/*, bool use_a
 
   assert(m_Vme->IsMAFType(mafVMESlicer));
   vtkPolyData *data = NULL;
-  mmaMaterial *material = NULL;
+  std::shared_ptr<mmaMaterial> material;
   
   if(m_Vme->GetOutput()->IsMAFType(mafVMEOutputSurface))
   {

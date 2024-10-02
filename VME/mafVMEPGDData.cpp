@@ -102,7 +102,7 @@ int mafVMEPGDData::Read()
   m_pPGDFile = fopen(m_FileName.GetCStr(), "rb");
 
   mafTagItem  TmpTagItem;
-  mafTagArray *PGDDictionaryTagArray = mafTagArray::New();
+  auto PGDDictionaryTagArray = mafTagArray::NewUPtr();
   std::ifstream dict_iff;
 
   dict_iff.open(m_DictionaryFileName.GetCStr());
@@ -365,7 +365,6 @@ int mafVMEPGDData::Read()
   pgd_iff.close();
 
   //cleaning
-  PGDDictionaryTagArray->Delete();
   TmpVMEFound = NULL;
 
 

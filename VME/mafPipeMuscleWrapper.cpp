@@ -260,7 +260,7 @@ mafGUI *mafPipeMuscleWrapperAQ::CreateGui()
   const mafString color_string[] = {_R("one"), _R("range")};
   int num_choices = 2;
 
-  mmaMuscleWrapperAQ *meter_attrib = m_MuscleWrapperVME->GetMeterAttributes();
+  auto meter_attrib = m_MuscleWrapperVME->GetMeterAttributes();
 
   assert(m_Gui == NULL);
   m_Gui = new mafGUI(this);
@@ -300,7 +300,7 @@ void mafPipeMuscleWrapperAQ::OnEvent(mafEventBase *maf_event)
 	mafSleep(1000);
   if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
   {
-	  mmaMuscleWrapperAQ *meter_attrib = m_MuscleWrapperVME->GetMeterAttributes();
+	  auto meter_attrib = m_MuscleWrapperVME->GetMeterAttributes();
     switch(e->GetId()) 
     {
       case ID_SHOW_LABEL:

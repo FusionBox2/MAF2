@@ -357,7 +357,7 @@ int mafVMEC3DData::Read_C3D_Data(unsigned short	num_markers,				// number of mar
   // LKNE LSH...
   // where SACR, LASI, LTHI and LKNE are landmark names 
   // while IPE and LSH are segment names
-  mafTagArray *dictionaryTagArray = mafTagArray::New();
+  auto dictionaryTagArray = mafTagArray::NewUPtr();
 
   // dictionary tag item
   mafTagItem	dictTI;
@@ -384,7 +384,6 @@ int mafVMEC3DData::Read_C3D_Data(unsigned short	num_markers,				// number of mar
     else
     {
       std::cout << "Dictionary file does not exist!\n";
-      dictionaryTagArray->Delete();
       return 1;
     }
 
@@ -474,9 +473,7 @@ int mafVMEC3DData::Read_C3D_Data(unsigned short	num_markers,				// number of mar
   } 
 
   //Clean up
-  dictionaryTagArray->Delete();
   return 0; 
-
 }
 
 //----------------------------------------------------------------------------

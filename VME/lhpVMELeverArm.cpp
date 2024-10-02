@@ -167,13 +167,13 @@ int lhpVMELeverArm::InternalInitialize()
   return MAF_ERROR;
 }
 //-------------------------------------------------------------------------
-mmaMaterial *lhpVMELeverArm::GetMaterial()
+std::shared_ptr<mmaMaterial> lhpVMELeverArm::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
-  if (material == NULL)
+  auto material = mmaMaterial::SafeDownCast(GetAttribute(_R("MaterialAttributes")));
+  if (!material)
   {
-    material = mmaMaterial::New();
+    material = mmaMaterial::NewSPtr();
     SetAttribute(_R("MaterialAttributes"), material);
   }
   return material;
@@ -414,13 +414,13 @@ void lhpVMELeverArm::Print(std::ostream& os, const int tabs)
 //  return lhpVMELeverArm_xpm;
 //}
 //-------------------------------------------------------------------------
-mmaMeter *lhpVMELeverArm::GetMeterAttributes()
+std::shared_ptr<mmaMeter> lhpVMELeverArm::GetMeterAttributes()
 //-------------------------------------------------------------------------
 {
-  mmaMeter *meter_attributes = (mmaMeter *)GetAttribute(_R("MeterAttributes"));
-  if (meter_attributes == NULL)
+  auto meter_attributes = mmaMeter::SafeDownCast(GetAttribute(_R("MeterAttributes")));
+  if (!meter_attributes)
   {
-    meter_attributes = mmaMeter::New();
+    meter_attributes = mmaMeter::NewSPtr();
     SetAttribute(_R("MeterAttributes"), meter_attributes);
   }
   return meter_attributes;

@@ -78,13 +78,13 @@ mafVMEOutput *mafVMEVolume::GetOutput()
   return m_Output;
 }
 //-------------------------------------------------------------------------
-mmaVolumeMaterial *mafVMEVolume::GetMaterial()
+std::shared_ptr<mmaVolumeMaterial> mafVMEVolume::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  mmaVolumeMaterial *material = (mmaVolumeMaterial *)GetAttribute(_R("VolumeMaterialAttributes"));
-  if (material == NULL)
+  auto material = mmaVolumeMaterial::SafeDownCast(GetAttribute(_R("VolumeMaterialAttributes")));
+  if (!material)
   {
-    material = mmaVolumeMaterial::New();
+    material = mmaVolumeMaterial::NewSPtr();
 
     // Paolo Q.: commented lines below to avoid loading data during the msf loading on startup
     /*if(GetOutput() && GetOutput()->GetVTKData())

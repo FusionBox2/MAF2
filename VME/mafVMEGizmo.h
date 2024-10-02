@@ -76,7 +76,7 @@ public:
   mafVMEOutputSurface *GetSurfaceOutput();
 
   /** Return pointer to material attribute. */
-  mmaMaterial *GetMaterial();
+  std::shared_ptr<mmaMaterial> GetMaterial();
 
   /**
     Set the Pose matrix of the VME. This function modifies the MatrixVector. You can

@@ -56,7 +56,6 @@ mafGUISettings(listener, label)
   m_DefaultFlag       = 0;
   
   m_ViewManager   = NULL;
-  m_Layout        = NULL;
   m_Win           = NULL;
   m_List          = NULL;
   m_XMLRoot       = NULL;
@@ -182,32 +181,32 @@ void mafGUIApplicationLayoutSettings::SaveTreeLayout()
     size[1] = rect.GetSize().GetHeight();
 
     mafNode *root = m_ViewManager->GetCurrentRoot();
-    m_Layout = mmaApplicationLayout::SafeDownCast(root->GetAttribute(_R("ApplicationLayout")));
-    if (m_Layout == NULL)
+    auto layout = mmaApplicationLayout::SafeDownCast(root->GetAttribute(_R("ApplicationLayout")));
+    if (!layout)
     {
-      mafNEW(m_Layout);
-      root->SetAttribute(m_Layout->GetName(), m_Layout);
+      layout = mmaApplicationLayout::NewSPtr();
+      root->SetAttribute(layout->GetName(), layout);
     }
     else
     {
-      m_Layout->ClearLayout();
+      layout->ClearLayout();
     }
-    m_Layout->SetVisibilityVme(m_VisibilityVme);
-    m_Layout->SetApplicationInfo(frame->IsMaximized(), pos, size);
+    layout->SetVisibilityVme(m_VisibilityVme);
+    layout->SetApplicationInfo(frame->IsMaximized(), pos, size);
     wxAuiPaneInfo toolbar = static_cast<mafGUIMDIFrame*>(m_Win)->GetDockManager().GetPane("toolbar");
     bool toolbar_vis = toolbar.IsShown();
-    m_Layout->SetInterfaceElementVisibility(_R("toolbar"), toolbar_vis);
+    layout->SetInterfaceElementVisibility(_R("toolbar"), toolbar_vis);
     wxAuiPaneInfo sidebar = static_cast<mafGUIMDIFrame*>(m_Win)->GetDockManager().GetPane("sidebar");
     bool sidebar_vis = sidebar.IsShown();
-    m_Layout->SetInterfaceElementVisibility(_R("sidebar"), sidebar_vis);
+    layout->SetInterfaceElementVisibility(_R("sidebar"), sidebar_vis);
     wxAuiPaneInfo logbar = static_cast<mafGUIMDIFrame*>(m_Win)->GetDockManager().GetPane("logbar");
     bool logbar_vis = logbar.IsShown();
-    m_Layout->SetInterfaceElementVisibility(_R("logbar"), logbar_vis);
-    m_Layout->SetLayoutName(_R("Layout")); //m_DefaultLayout.GetCStr()
+    layout->SetInterfaceElementVisibility(_R("logbar"), logbar_vis);
+    layout->SetLayoutName(_R("Layout")); //m_DefaultLayout.GetCStr()
     const std::list<mafView *>& v = m_ViewManager->GetList();
     for(std::list<mafView*>::const_iterator it = v.begin(); it != v.end(); ++it)
     {
-      m_Layout->AddView(*it);
+      layout->AddView(*it);
     }
     m_Gui->Enable(APPLY_TREE_LAYOUT_ID,true);
   }
@@ -274,40 +273,41 @@ void mafGUIApplicationLayoutSettings::AddLayout()
 
     mafAutoPointer<mafNodeLayout> child = mafNodeLayout::New();
     m_XMLRoot->AddChild(child.get());
-    
-    if(m_Layout = mmaApplicationLayout::SafeDownCast(child->GetLayout()));
+
+    auto layout = child->GetLayout();
+    if(layout);
     else
     {
-      mafNEW(m_Layout);
-      child->SetAttribute(_R("ApplicationLayout"), m_Layout); //mettere application layout
+      layout = mmaApplicationLayout::NewSPtr();
+      child->SetAttribute(_R("ApplicationLayout"), layout); //mettere application layout
     }
-    m_Layout->SetName(_R("ApplicationLayout"));
+    layout->SetName(_R("ApplicationLayout"));
     child->SetName(name);
     
     //disable visibility (useless for application layout)
-    m_Layout->SetVisibilityVme(0);
+    layout->SetVisibilityVme(0);
    
-    m_Layout->SetApplicationInfo(frame->IsMaximized(), pos, size);
+    layout->SetApplicationInfo(frame->IsMaximized(), pos, size);
     wxAuiPaneInfo toolbar = static_cast<mafGUIMDIFrame*>(m_Win)->GetDockManager().GetPane("toolbar");
     bool toolbar_vis = toolbar.IsShown();
-    m_Layout->SetInterfaceElementVisibility(_R("toolbar"), toolbar_vis);
+    layout->SetInterfaceElementVisibility(_R("toolbar"), toolbar_vis);
     wxAuiPaneInfo sidebar = static_cast<mafGUIMDIFrame*>(m_Win)->GetDockManager().GetPane("sidebar");
     bool sidebar_vis = sidebar.IsShown();
-    m_Layout->SetInterfaceElementVisibility(_R("sidebar"), sidebar_vis);
+    layout->SetInterfaceElementVisibility(_R("sidebar"), sidebar_vis);
     wxAuiPaneInfo logbar = static_cast<mafGUIMDIFrame*>(m_Win)->GetDockManager().GetPane("logbar");
     bool logbar_vis = logbar.IsShown();
-    m_Layout->SetInterfaceElementVisibility(_R("logbar"), logbar_vis);
-    m_Layout->SetLayoutName(_R("Layout")); //m_DefaultLayout.GetCStr()
+    layout->SetInterfaceElementVisibility(_R("logbar"), logbar_vis);
+    layout->SetLayoutName(_R("Layout")); //m_DefaultLayout.GetCStr()
 
     const std::list<mafView *>& v = m_ViewManager->GetList();
     for(std::list<mafView*>::const_iterator it = v.begin(); it != v.end(); ++it)
     {
-      m_Layout->AddView(*it);
+      layout->AddView(*it);
     }
     m_List->Append(name.toWx());
 
     //restore the original visibility
-    m_Layout->SetVisibilityVme(m_VisibilityVme);
+    layout->SetVisibilityVme(m_VisibilityVme);
 
     m_ModifiedLayouts = true;
   }
@@ -417,7 +417,7 @@ void mafGUIApplicationLayoutSettings::ApplyLayout()
 
   // Retrieve the saved layout.
   mafNodeLayout *vme = mafNodeLayout::SafeDownCast(m_XMLRoot->FindInTreeByName(name));
-  mmaApplicationLayout *app_layout = mmaApplicationLayout::SafeDownCast(vme->GetLayout()); //application layout
+  auto app_layout = vme->GetLayout(); //application layout
   m_ActiveLayoutName = vme->GetName();
   m_LayoutType       = _L("Application Layout");
   if(m_Gui) m_Gui->Update();
@@ -473,7 +473,7 @@ void mafGUIApplicationLayoutSettings::ApplyTreeLayout()
 {
   // Retrieve the saved layout.
   mafNode *vme = m_ViewManager->GetCurrentRoot();
-  mmaApplicationLayout *app_layout = mmaApplicationLayout::SafeDownCast(vme->GetAttribute(_R("ApplicationLayout"))); 
+  auto app_layout = mmaApplicationLayout::SafeDownCast(vme->GetAttribute(_R("ApplicationLayout"))); 
 
   if (app_layout)
   {

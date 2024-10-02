@@ -340,7 +340,7 @@ public:
   double GetAngle();
 
   /** return the meter's attributes */
-  mmaMuscleWrapperAQ *GetMeterAttributes();
+  std::shared_ptr<mmaMuscleWrapperAQ> GetMeterAttributes();
 
   mafVME *GetStartVME();
   mafVME *GetStart2VME();
@@ -352,7 +352,7 @@ public:
   virtual void SetMeterLink(const mafString& link_name, mafNode *n);
 
   /** Return pointer to material attribute. */
-  mmaMaterial *GetMaterial();
+  std::shared_ptr<mmaMaterial> GetMaterial();
 
   /** Turn On/Off the creation of the histogram.*/
   void GenerateHistogram(int generate);

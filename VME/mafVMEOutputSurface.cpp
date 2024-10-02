@@ -87,7 +87,7 @@ vtkImageData *mafVMEOutputSurface::GetTexture()
 }
 
 //-------------------------------------------------------------------------
-mmaMaterial *mafVMEOutputSurface::GetMaterial()
+std::shared_ptr<mmaMaterial> mafVMEOutputSurface::GetMaterial()
 //-------------------------------------------------------------------------
 {
   // if the VME set the material directly in the output return it
@@ -95,11 +95,11 @@ mmaMaterial *mafVMEOutputSurface::GetMaterial()
     return  m_Material;
 
   // search for a material attribute in the VME connected to this output
-  return GetVME() ? mmaMaterial::SafeDownCast(GetVME()->GetAttribute(_R("MaterialAttributes"))) : NULL;
+  return GetVME() ? mmaMaterial::SafeDownCast(GetVME()->GetAttribute(_R("MaterialAttributes"))) : nullptr;
 }
 
 //-------------------------------------------------------------------------
-void mafVMEOutputSurface::SetMaterial(mmaMaterial *material)
+void mafVMEOutputSurface::SetMaterial(std::shared_ptr<mmaMaterial> material)
 //-------------------------------------------------------------------------
 {
   m_Material = material;

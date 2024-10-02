@@ -103,7 +103,7 @@ mafGizmoHandle::mafGizmoHandle(mafVME *input, mafBaseEventHandler *listener /* =
   else
     m_ShadingPlaneGizmo->ReparentTo(m_InputVme);
 
-  mmaMaterial *material = m_ShadingPlaneGizmo->GetMaterial();
+  auto material = m_ShadingPlaneGizmo->GetMaterial();
   material->m_Prop->SetOpacity(0.5);
   material->m_Opacity = material->m_Prop->GetOpacity();
   material->m_Prop->SetColor(0.2,0.2,0.8);

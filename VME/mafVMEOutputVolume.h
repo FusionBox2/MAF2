@@ -48,10 +48,10 @@ public:
   virtual vtkUnstructuredGrid *GetUnstructuredData();
 
   /** return material attribute of this surface if present */
-  mmaVolumeMaterial *GetMaterial();
+  std::shared_ptr<mmaVolumeMaterial> GetMaterial();
 
   /** set the material of the surface */ 
-  void SetMaterial(mmaVolumeMaterial *material);
+  void SetMaterial(std::shared_ptr<mmaVolumeMaterial> material);
 
   /** Update all the output data structures (data, bounds, matrix and abs matrix).*/
   void Update() override;
@@ -63,7 +63,7 @@ protected:
   mafString m_VtkDataType;
   mafString m_VolumeBounds[3];
   mafString m_ScaralRangeString;
-  mmaVolumeMaterial *m_Material;
+  std::shared_ptr<mmaVolumeMaterial> m_Material;
 
   mafGUI *CreateGui() override;
 

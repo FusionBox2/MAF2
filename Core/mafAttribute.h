@@ -8,12 +8,16 @@
 class mafStorageElement;
 class mafStorageElementBuilder;
 
-class FTK_CORE_EXPORT mafAttribute : public mafReferenceCounted
+class FTK_CORE_EXPORT mafAttribute
 {
 public:
-  mafAbstractTypeMacro(mafAttribute,mafReferenceCounted);
+  mafAbstractBaseTypeMacro(mafAttribute);
 
-  static mafAttribute* Create(const char* AttributeType);
+  mafAttribute() = default;
+
+  virtual ~mafAttribute() = default;
+
+  static std::shared_ptr<mafAttribute> Create(const char* AttributeType);
 
   mafAttribute& operator=(const mafAttribute &a);
 
@@ -21,15 +25,15 @@ public:
 
   virtual void DeepCopy(const mafAttribute *a);
 
-  mafAttribute *MakeCopy();
+  std::shared_ptr<mafAttribute> MakeCopy();
 
-  bool Equals(const mafAttribute *a) const;
+  virtual bool Equals(const mafAttribute *a) const;
 
   void SetName(const mafString& name);
 
 	const mafString& GetName() const;
 
-  void Print(std::ostream& os, const int tabs=0) const override;
+  virtual void Print(std::ostream& os, const int tabs=0) const;
 
   void Store(mafStorageElementBuilder& element) { InternalStore(element); }
 
@@ -46,7 +50,7 @@ protected:
 namespace parser
 {
   template<class Value>
-  mafAttribute* Parse(const Value& value, parser::To<mafAttribute>)
+  std::shared_ptr<mafAttribute> Parse(const Value& value, parser::To<mafAttribute>)
   {
     mafString type_name = value(_R("Type")).template As<mafString>();
     if (auto attr = mafAttribute::Create(type_name.GetCStr()))

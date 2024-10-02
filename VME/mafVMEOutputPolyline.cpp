@@ -61,7 +61,7 @@ vtkPolyData *mafVMEOutputPolyline::GetPolylineData()
   return (vtkPolyData *)GetVTKData();
 }
 //-------------------------------------------------------------------------
-void mafVMEOutputPolyline::SetMaterial(mmaMaterial *material)
+void mafVMEOutputPolyline::SetMaterial(std::shared_ptr<mmaMaterial> material)
 //-------------------------------------------------------------------------
 {
   m_Material = material;
@@ -92,7 +92,7 @@ mafGUI* mafVMEOutputPolyline::CreateGui()
   return m_Gui;
 }
 //-------------------------------------------------------------------------
-mmaMaterial *mafVMEOutputPolyline::GetMaterial()
+std::shared_ptr<mmaMaterial> mafVMEOutputPolyline::GetMaterial()
 //-------------------------------------------------------------------------
 {
   // if the VME set the material directly in the output return it
@@ -100,7 +100,7 @@ mmaMaterial *mafVMEOutputPolyline::GetMaterial()
     return  m_Material;
 
   // search for a material attribute in the VME connected to this output
-  return GetVME() ? mmaMaterial::SafeDownCast(GetVME()->GetAttribute(_R("MaterialAttributes"))) : NULL;
+  return GetVME() ? mmaMaterial::SafeDownCast(GetVME()->GetAttribute(_R("MaterialAttributes"))) : nullptr;
 }
 //-------------------------------------------------------------------------
 void mafVMEOutputPolyline::Update()

@@ -48,10 +48,10 @@ public:
   virtual vtkPolyData *GetPolylineData();
 
   /** return material attribute of this polyline if present */
-  mmaMaterial *GetMaterial();
+  std::shared_ptr<mmaMaterial> GetMaterial();
 
   /** set the material of the polyline.*/ 
-  void SetMaterial(mmaMaterial *material);
+  void SetMaterial(std::shared_ptr<mmaMaterial> material);
 
   /** Update all the output data structures (data, bounds, matrix and abs matrix).*/
   void Update() override;
@@ -66,7 +66,7 @@ public:
   mafString GetNumberOfPointsSTR(){return m_NumberOfPoints;};
 
 protected:
-  mmaMaterial *m_Material; ///< material object used to store shading propertied to render the polyline
+  std::shared_ptr<mmaMaterial> m_Material; ///< material object used to store shading propertied to render the polyline
 
   mafGUI *CreateGui() override;
 

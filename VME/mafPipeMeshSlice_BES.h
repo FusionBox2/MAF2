@@ -139,7 +139,7 @@ public:
   /*virtual*/ void SetSlice(double* Origin, double* Normal) override;  
 
 protected:
-	mmaMaterial             *m_MeshMaterial;
+  std::shared_ptr<mmaMaterial> m_MeshMaterial;
 	vtkPolyDataMapper        *m_Mapper;
   vtkPolyDataMapper        *m_MapperWired;
 	vtkActor                *m_Actor;

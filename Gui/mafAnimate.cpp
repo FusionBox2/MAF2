@@ -68,7 +68,6 @@ mafAnimate::mafAnimate(vtkRenderer *renderer, mafNode *vme, mafBaseEventHandler 
 mafAnimate::~mafAnimate() 
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_StoredPositions);
 }
 //----------------------------------------------------------------------------
 void mafAnimate::SetInputVME(mafNode *vme) 
@@ -631,8 +630,7 @@ void mafAnimate::ResetKit()
   {
     DeleteViewPoint(0);
   }
-  mafDEL(m_StoredPositions); // Initialize the tag array.
-  mafNEW(m_StoredPositions);
+  m_StoredPositions = mafTagArray::NewUPtr();
   EnableWidgets(); // disable all
   m_Gui->Update();
 }
@@ -642,9 +640,8 @@ void mafAnimate::RetrieveStoredPositions(bool update_listbox /*= true*/)
 //----------------------------------------------------------------------------
 {
   if(!m_Tags) return;
-  mafDEL(m_StoredPositions); // Initialize the tag array.
-  mafNEW(m_StoredPositions);
-  
+  m_StoredPositions = mafTagArray::NewUPtr();
+
   std::vector<mafString> tag_list;
   m_Tags->GetTagList(tag_list);
 
@@ -709,5 +706,5 @@ mafTagArray * mafAnimate::GetStoredPositions()
 //----------------------------------------------------------------------------
 {
   RetrieveStoredPositions(false);
-  return m_StoredPositions;
+  return m_StoredPositions.get();
 }

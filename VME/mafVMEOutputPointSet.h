@@ -48,10 +48,10 @@ public:
   virtual vtkPolyData *GetPointSetData();
 
   /** return material attribute of this surface if present */
-  mmaMaterial *GetMaterial();
+  std::shared_ptr<mmaMaterial> GetMaterial();
 
   /** set the material of the surface */ 
-  void SetMaterial(mmaMaterial *material);
+  void SetMaterial(std::shared_ptr<mmaMaterial> material);
 
   /** Update all the output data structures (data, bounds, matrix and abs matrix).*/
   void Update() override;
@@ -59,7 +59,7 @@ public:
 protected:
   mafGUI *CreateGui() override;
   mafString     m_NumPoints;
-  mmaMaterial  *m_Material; ///< material object used to store shading propertied to render the pointset
+  std::shared_ptr<mmaMaterial> m_Material; ///< material object used to store shading propertied to render the pointset
 
 private:
   mafVMEOutputPointSet(const mafVMEOutputPointSet&); // Not implemented

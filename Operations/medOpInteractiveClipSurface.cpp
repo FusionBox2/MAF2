@@ -918,7 +918,7 @@ void medOpInteractiveClipSurface::ShowClipPlane(bool show)
 
       {mafEvent evUnq(this,VME_SHOW,m_ImplicitPlaneVMEGizmo,true); mafEventMacro(evUnq);}
     }
-    mmaMaterial *material = m_ImplicitPlaneVMEGizmo->GetMaterial();
+    auto material = m_ImplicitPlaneVMEGizmo->GetMaterial();
     material->m_Prop->SetOpacity(0.5);
     material->m_Opacity = material->m_Prop->GetOpacity();
     
@@ -934,7 +934,7 @@ void medOpInteractiveClipSurface::ShowClipPlane(bool show)
   {
     if(m_ImplicitPlaneVMEGizmo != NULL)
     {
-      mmaMaterial *material = m_ImplicitPlaneVMEGizmo->GetMaterial();
+      auto material = m_ImplicitPlaneVMEGizmo->GetMaterial();
       material->m_Prop->SetOpacity(0);
       material->m_Opacity = material->m_Prop->GetOpacity();
     }

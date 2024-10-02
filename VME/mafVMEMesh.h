@@ -64,7 +64,7 @@ public:
   int InternalInitialize() override;
 
   /** Return pointer to material attribute. */
-  mmaMaterial *GetMaterial();
+  std::shared_ptr<mmaMaterial> GetMaterial();
 
 protected:
   mafVMEMesh();

@@ -137,7 +137,7 @@ void medPipeTrajectories::Create(mafNode *node, mafView *view)
 
   m_Actor = vtkActor::New();
   m_Actor->SetMapper(m_Mapper);
-  mmaMaterial *material = m_Landmark->GetMaterial();
+  auto material = m_Landmark->GetMaterial();
   if (material)
     m_Actor->SetProperty(material->m_Prop);
  

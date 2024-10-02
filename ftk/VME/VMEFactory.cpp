@@ -45,12 +45,6 @@
 #include "mafVMEVolumeGray.h"
 #include "mafVMEVolumeRGB.h"
 
-#include "mmaMaterial.h"
-#include "mmaVolumeMaterial.h"
-#include "mmaApplicationLayout.h"
-#include "mafAttributeTraceability.h"
-#include "mmaMeter.h"
-#include "mafTagArray.h"
 #include "mafVMEItemVTK.h"
 
 #include <string>
@@ -63,7 +57,6 @@
 #include "medVMESurfaceEditor.h"
 #include "medVMELabeledVolume.h"
 #include "medVMESegmentationVolume.h"
-#include "medAttributeSegmentationVolume.h"
 
 #ifdef MAF_USE_ITK
 #include "mafVMERawMotionData.h"
