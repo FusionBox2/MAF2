@@ -683,8 +683,8 @@ void lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_Operation::Handl
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  mafAttributeTraceability *trial = (mafAttributeTraceability *)vme->GetAttribute(_R("TrialAttribute"));
-  if (trial != NULL)
+  auto trial = mafAttributeTraceability::SafeDownCast(vme->GetAttribute(_R("TrialAttribute")));
+  if (trial)
   {
     value = trial->m_TraceabilityVector[0].m_OperationName;
   }
@@ -707,8 +707,8 @@ void lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_CreationDate::Ha
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  mafAttributeTraceability *trial = (mafAttributeTraceability *)vme->GetAttribute(_R("TrialAttribute"));
-  if (trial != NULL)
+  auto trial = mafAttributeTraceability::SafeDownCast(vme->GetAttribute(_R("TrialAttribute")));
+  if (trial)
   {
     value = trial->m_TraceabilityVector[0].m_Date;
   }
@@ -730,8 +730,8 @@ void lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_Application::Han
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  mafAttributeTraceability *trial = (mafAttributeTraceability *)vme->GetAttribute(_R("TrialAttribute"));
-  if (trial != NULL)
+  auto trial = mafAttributeTraceability::SafeDownCast(vme->GetAttribute(_R("TrialAttribute")));
+  if (trial)
   {
     value = trial->m_TraceabilityVector[0].m_AppStamp;
   }
@@ -753,8 +753,8 @@ void lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_IsNatural::Handl
   mafVME *vme = cargo->GetInputVme();
   mafString value = _R("false");
 
-  mafAttributeTraceability *trial = (mafAttributeTraceability *)vme->GetAttribute(_R("TrialAttribute"));
-  if (trial != NULL)
+  auto trial = mafAttributeTraceability::SafeDownCast(vme->GetAttribute(_R("TrialAttribute")));
+  if (trial)
   {
     value = trial->m_TraceabilityVector[0].m_IsNatural;
   }
@@ -776,8 +776,8 @@ void lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_OperatorID::Hand
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  mafAttributeTraceability *trial = (mafAttributeTraceability *)vme->GetAttribute(_R("TrialAttribute"));
-  if (trial != NULL)
+  auto trial = mafAttributeTraceability::SafeDownCast(vme->GetAttribute(_R("TrialAttribute")));
+  if (trial)
   {
     value = trial->m_TraceabilityVector[0].m_OperatorID;
   }
@@ -799,8 +799,8 @@ void lhpTagHandler_L0000_resource_data_Traceability_CreateEvent_Parameters::Hand
   mafVME *vme = cargo->GetInputVme();
   mafString value;
 
-  mafAttributeTraceability *trial = (mafAttributeTraceability *)vme->GetAttribute(_R("TrialAttribute"));
-  if (trial != NULL)
+  auto trial = mafAttributeTraceability::SafeDownCast(vme->GetAttribute(_R("TrialAttribute")));
+  if (trial)
   {
      value = trial->m_TraceabilityVector[0].m_Parameters;
   }

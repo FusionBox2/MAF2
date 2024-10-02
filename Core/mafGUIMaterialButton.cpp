@@ -60,12 +60,11 @@ void mafGUIMaterialButton::SetVME(mafVME *vme)
 
 	if(m_Vme)
 	{
-		m_Material = (mmaMaterial *)m_Vme->GetAttribute(_R("MaterialAttributes"));
+		m_Material = mmaMaterial::SafeDownCast(m_Vme->GetAttribute(_R("MaterialAttributes")));
 		if (!m_Material)
 		{
-      auto newMaterial = mmaMaterial::NewSPtr();
-			m_Material = newMaterial.get();
-			m_Vme->SetAttribute(_R("MaterialAttributes"), newMaterial);
+      m_Material = mmaMaterial::NewSPtr();
+			m_Vme->SetAttribute(_R("MaterialAttributes"), m_Material);
 		}
 	}
 }

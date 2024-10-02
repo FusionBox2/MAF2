@@ -52,8 +52,6 @@ medVMESegmentationVolume::medVMESegmentationVolume()
 
   //DependsOnLinkedNodeOn();
 
-  m_VolumeAttribute = NULL;
-
   // attach a data pipe which creates a bridge between VTK and MAF
   m_SegmentingDataPipe = medDataPipeCustomSegmentationVolume::New();
   SetDataPipe(m_SegmentingDataPipe);
@@ -70,33 +68,28 @@ medVMESegmentationVolume::~medVMESegmentationVolume()
 }
 
 //-------------------------------------------------------------------------
-mmaVolumeMaterial *medVMESegmentationVolume::GetMaterial()
+std::shared_ptr<mmaVolumeMaterial> medVMESegmentationVolume::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  auto material = (mmaVolumeMaterial *)GetAttribute(_R("VolumeMaterialAttributes"));
+  auto material = mmaVolumeMaterial::SafeDownCast(GetAttribute(_R("VolumeMaterialAttributes")));
   if (!material)
   {
-    auto newMaterial = mmaVolumeMaterial::NewSPtr();
-    material = newMaterial.get();
-    SetAttribute(_R("VolumeMaterialAttributes"), newMaterial);
+    material = mmaVolumeMaterial::NewSPtr();
+    SetAttribute(_R("VolumeMaterialAttributes"), material);
   }
   return material;
 }
 //-------------------------------------------------------------------------
-medAttributeSegmentationVolume *medVMESegmentationVolume::GetVolumeAttribute()
+std::shared_ptr<medAttributeSegmentationVolume> medVMESegmentationVolume::GetVolumeAttribute()
 //-------------------------------------------------------------------------
 {
-  if (this->GetAttribute(_R("SegmentationVolumeData")))
+  auto volumeAttribute = medAttributeSegmentationVolume::SafeDownCast(this->GetAttribute(_R("SegmentationVolumeData")));
+  if (!volumeAttribute)
   {
-    m_VolumeAttribute = medAttributeSegmentationVolume::SafeDownCast(this->GetAttribute(_R("SegmentationVolumeData")));
+    volumeAttribute = medAttributeSegmentationVolume::NewSPtr();
+    this->SetAttribute(_R("SegmentationVolumeData"),volumeAttribute);
   }
-  else
-  {
-    auto newVolumeAttribute = medAttributeSegmentationVolume::NewSPtr();
-    m_VolumeAttribute = newVolumeAttribute.get();
-    this->SetAttribute(_R("SegmentationVolumeData"),newVolumeAttribute);
-  }
-  return m_VolumeAttribute;
+  return volumeAttribute;
 
 }
 //-------------------------------------------------------------------------
@@ -108,20 +101,20 @@ int medVMESegmentationVolume::InternalInitialize()
     // force material allocation
     GetMaterial();
     
-    m_VolumeAttribute = GetVolumeAttribute();
+    auto volumeAttribute = GetVolumeAttribute();
     
     // attach a data pipe which creates a bridge between VTK and MAF
     m_SegmentingDataPipe->SetVolume(this->GetVolumeLink());
     m_SegmentingDataPipe->SetManualVolumeMask(this->GetManualVolumeMask());
     m_SegmentingDataPipe->SetDependOnVMETime(false);
-    m_SegmentingDataPipe->SetAutomaticSegmentationThresholdModality(m_VolumeAttribute->GetAutomaticSegmentationThresholdModality());
-    m_SegmentingDataPipe->SetDoubleThresholdModality(m_VolumeAttribute->GetDoubleThresholdModality());
-    m_SegmentingDataPipe->SetAutomaticSegmentationGlobalThreshold(m_VolumeAttribute->GetAutomaticSegmentationGlobalThreshold());
-    for (int i=0;i<m_VolumeAttribute->GetNumberOfRanges();i++)
+    m_SegmentingDataPipe->SetAutomaticSegmentationThresholdModality(volumeAttribute->GetAutomaticSegmentationThresholdModality());
+    m_SegmentingDataPipe->SetDoubleThresholdModality(volumeAttribute->GetDoubleThresholdModality());
+    m_SegmentingDataPipe->SetAutomaticSegmentationGlobalThreshold(volumeAttribute->GetAutomaticSegmentationGlobalThreshold());
+    for (int i=0;i<volumeAttribute->GetNumberOfRanges();i++)
     {
       int startSlice,endSlice;
       double threshold;
-      m_VolumeAttribute->GetRange(i,startSlice,endSlice,threshold);
+      volumeAttribute->GetRange(i,startSlice,endSlice,threshold);
       m_SegmentingDataPipe->AddRange(startSlice,endSlice,threshold);
     }
 
@@ -274,7 +267,7 @@ int medVMESegmentationVolume::AddRange(int startSlice,int endSlice,double thresh
   int result = m_SegmentingDataPipe->AddRange(startSlice,endSlice,threshold, upperThreshold);
   if (result == MAF_OK)
   {
-    result = m_VolumeAttribute->AddRange(startSlice,endSlice,threshold, upperThreshold);
+    result = GetVolumeAttribute()->AddRange(startSlice, endSlice, threshold, upperThreshold);
     if (result == MAF_OK)
     {
       Modified();
@@ -288,14 +281,14 @@ int medVMESegmentationVolume::AddRange(int startSlice,int endSlice,double thresh
 int medVMESegmentationVolume::GetRange(int index,int &startSlice, int &endSlice, double &threshold, double &upperThreshold)
 //-----------------------------------------------------------------------
 {
-  return m_VolumeAttribute->GetRange(index,startSlice,endSlice,threshold, upperThreshold );
+  return GetVolumeAttribute()->GetRange(index, startSlice, endSlice, threshold, upperThreshold);
 }
 
 //-----------------------------------------------------------------------
 int medVMESegmentationVolume::GetRange(int index,int &startSlice, int &endSlice, double &threshold)
 //-----------------------------------------------------------------------
 {
-  return m_VolumeAttribute->GetRange(index,startSlice,endSlice,threshold );
+  return GetVolumeAttribute()->GetRange(index, startSlice, endSlice, threshold);
 }
 
 
@@ -312,7 +305,7 @@ int medVMESegmentationVolume::UpdateRange(int index,int startSlice, int endSlice
   int result = m_SegmentingDataPipe->UpdateRange(index,startSlice,endSlice,threshold, upperThershold);
   if (result == MAF_OK)
   {
-    result = m_VolumeAttribute->UpdateRange(index,startSlice,endSlice,threshold, upperThershold);
+    result = GetVolumeAttribute()->UpdateRange(index, startSlice, endSlice, threshold, upperThershold);
     if (result == MAF_OK)
     {
       Modified();
@@ -329,7 +322,7 @@ int medVMESegmentationVolume::RemoveAllRanges()
   int result = m_SegmentingDataPipe->RemoveAllRanges();
   if (result == MAF_OK)
   {
-    result = m_VolumeAttribute->RemoveAllRanges();
+    result = GetVolumeAttribute()->RemoveAllRanges();
     if (result == MAF_OK)
     {
       Modified();
@@ -346,7 +339,7 @@ int medVMESegmentationVolume::RemoveAllSeeds()
   int result = m_SegmentingDataPipe->RemoveAllSeeds();
   if (result == MAF_OK)
   {
-    result = m_VolumeAttribute->RemoveAllSeeds();
+    result = GetVolumeAttribute()->RemoveAllSeeds();
     if (result == MAF_OK)
     {
       Modified();
@@ -363,7 +356,7 @@ int medVMESegmentationVolume::DeleteSeed(int index)
   int result = m_SegmentingDataPipe->DeleteSeed(index);
   if (result == MAF_OK)
   {
-    result = m_VolumeAttribute->DeleteSeed(index);
+    result = GetVolumeAttribute()->DeleteSeed(index);
     if (result == MAF_OK)
     {
       Modified();
@@ -380,7 +373,7 @@ int medVMESegmentationVolume::DeleteRange(int index)
   int result = m_SegmentingDataPipe->DeleteRange(index);
   if (result == MAF_OK)
   {
-    result = m_VolumeAttribute->DeleteRange(index);
+    result = GetVolumeAttribute()->DeleteRange(index);
     if (result == MAF_OK)
     {
       Modified();
@@ -471,7 +464,7 @@ int medVMESegmentationVolume::AddSeed(int seed[3])
   int result = m_SegmentingDataPipe->AddSeed(seed);
   if (result == MAF_OK)
   {
-    result = m_VolumeAttribute->AddSeed(seed);
+    result = GetVolumeAttribute()->AddSeed(seed);
     if (result == MAF_OK)
     {
       Modified();
@@ -485,39 +478,39 @@ int medVMESegmentationVolume::AddSeed(int seed[3])
 int medVMESegmentationVolume::GetSeed(int index,int seed[3])
 //-----------------------------------------------------------------------
 {
-  return m_VolumeAttribute->GetSeed(index,seed);
+  return GetVolumeAttribute()->GetSeed(index,seed);
 }
 //-------------------------------------------------------------------------
 double medVMESegmentationVolume::GetRegionGrowingLowerThreshold()
 //-------------------------------------------------------------------------
 {
-  return m_VolumeAttribute->GetRegionGrowingLowerThreshold();
+  return GetVolumeAttribute()->GetRegionGrowingLowerThreshold();
 }
 //-------------------------------------------------------------------------
 double medVMESegmentationVolume::GetRegionGrowingUpperThreshold()
 //-------------------------------------------------------------------------
 {
-  return m_VolumeAttribute->GetRegionGrowingUpperThreshold();
+  return GetVolumeAttribute()->GetRegionGrowingUpperThreshold();
 }
 //-------------------------------------------------------------------------
 int medVMESegmentationVolume::GetNumberOfRanges()
 //-------------------------------------------------------------------------
 {
-  return m_VolumeAttribute->GetNumberOfRanges();
+  return GetVolumeAttribute()->GetNumberOfRanges();
 }
 //-------------------------------------------------------------------------
 int medVMESegmentationVolume::GetNumberOfSeeds()
 //-------------------------------------------------------------------------
 {
-  return m_VolumeAttribute->GetNumberOfSeeds();
+  return GetVolumeAttribute()->GetNumberOfSeeds();
 }
 //-------------------------------------------------------------------------
 void medVMESegmentationVolume::SetRegionGrowingLowerThreshold(double value)
 //-------------------------------------------------------------------------
 {
-  if (m_VolumeAttribute && m_SegmentingDataPipe)
+  if (GetVolumeAttribute() && m_SegmentingDataPipe)
   {
-	  m_VolumeAttribute->SetRegionGrowingLowerThreshold(value);
+    GetVolumeAttribute()->SetRegionGrowingLowerThreshold(value);
 	  m_SegmentingDataPipe->SetRegionGrowingLowerThreshold(value);
   }
 }
@@ -525,9 +518,9 @@ void medVMESegmentationVolume::SetRegionGrowingLowerThreshold(double value)
 void medVMESegmentationVolume::SetRegionGrowingUpperThreshold(double value)
 //-------------------------------------------------------------------------
 {
-  if (m_VolumeAttribute && m_SegmentingDataPipe)
+  if (GetVolumeAttribute() && m_SegmentingDataPipe)
   {
-    m_VolumeAttribute->SetRegionGrowingUpperThreshold(value);
+    GetVolumeAttribute()->SetRegionGrowingUpperThreshold(value);
     m_SegmentingDataPipe->SetRegionGrowingUpperThreshold(value);
   }
 }
@@ -535,12 +528,7 @@ void medVMESegmentationVolume::SetRegionGrowingUpperThreshold(double value)
 void medVMESegmentationVolume::SetAutomaticSegmentationThresholdModality(int modality)
 //-----------------------------------------------------------------------
 {
-  if (m_VolumeAttribute == NULL)// force attribute reading
-  {
-    GetVolumeAttribute();
-  }
-
-  m_VolumeAttribute->SetAutomaticSegmentationThresholdModality(modality);
+  GetVolumeAttribute()->SetAutomaticSegmentationThresholdModality(modality);
   m_SegmentingDataPipe->SetAutomaticSegmentationThresholdModality(modality);
   Modified();
 }
@@ -548,19 +536,14 @@ void medVMESegmentationVolume::SetAutomaticSegmentationThresholdModality(int mod
 int medVMESegmentationVolume::GetAutomaticSegmentationThresholdModality()
 //-----------------------------------------------------------------------
 {
-  return m_VolumeAttribute->GetAutomaticSegmentationThresholdModality();
+  return GetVolumeAttribute()->GetAutomaticSegmentationThresholdModality();
 }
 
 //-----------------------------------------------------------------------
 void medVMESegmentationVolume::SetDoubleThresholdModality(int modality)
 //-----------------------------------------------------------------------
 {
-  if (m_VolumeAttribute == NULL)// force attribute reading
-  {
-    GetVolumeAttribute();
-  }
-
-  m_VolumeAttribute->SetDoubleThresholdModality(modality);
+  GetVolumeAttribute()->SetDoubleThresholdModality(modality);
   m_SegmentingDataPipe->SetDoubleThresholdModality(modality);
   Modified();
 }
@@ -568,18 +551,13 @@ void medVMESegmentationVolume::SetDoubleThresholdModality(int modality)
 int medVMESegmentationVolume::GetDoubleThresholdModality()
 //-----------------------------------------------------------------------
 {
-  return m_VolumeAttribute->GetDoubleThresholdModality();
+  return GetVolumeAttribute()->GetDoubleThresholdModality();
 }
 //-----------------------------------------------------------------------
 void medVMESegmentationVolume::SetAutomaticSegmentationGlobalThreshold(double lowerThreshold, double uppperThreshold)
 //-----------------------------------------------------------------------
 {
-  if (m_VolumeAttribute == NULL)// force attribute reading
-  {
-    GetVolumeAttribute();
-  }
-
-  m_VolumeAttribute->SetAutomaticSegmentationGlobalThreshold(lowerThreshold,uppperThreshold);
+  GetVolumeAttribute()->SetAutomaticSegmentationGlobalThreshold(lowerThreshold,uppperThreshold);
   m_SegmentingDataPipe->SetAutomaticSegmentationGlobalThreshold(lowerThreshold,uppperThreshold);
   Modified();
 }
@@ -587,14 +565,14 @@ void medVMESegmentationVolume::SetAutomaticSegmentationGlobalThreshold(double lo
 double medVMESegmentationVolume::GetAutomaticSegmentationGlobalThreshold()
 //-----------------------------------------------------------------------
 {
-  return m_VolumeAttribute->GetAutomaticSegmentationGlobalThreshold();
+  return GetVolumeAttribute()->GetAutomaticSegmentationGlobalThreshold();
 }
 
 //-----------------------------------------------------------------------
 double medVMESegmentationVolume::GetAutomaticSegmentationGlobalUpperThreshold()
 //-----------------------------------------------------------------------
 {
-  return m_VolumeAttribute->GetAutomaticSegmentationGlobalUpperThreshold();
+  return GetVolumeAttribute()->GetAutomaticSegmentationGlobalUpperThreshold();
 }
 
 //------------------------------------------------------------------------

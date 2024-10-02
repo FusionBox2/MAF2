@@ -104,9 +104,9 @@ protected:
 	mafGUI						*m_Gui;
 	mafRWI						*m_RWI;
 
-  std::vector<mmaMaterial	*> m_List;
-	mmaMaterial				*m_ChoosedMaterial;
-	mmaMaterial       *m_VmeMaterial;
+  std::vector<std::shared_ptr<mmaMaterial> > m_List;
+	std::shared_ptr<mmaMaterial> m_ChoosedMaterial;
+	std::shared_ptr<mmaMaterial>       m_VmeMaterial;
   mafVME            *m_Vme;
 	vtkSphereSource		*m_Sphere;
 	vtkProperty				*m_Property;
@@ -136,12 +136,12 @@ class MAF_EXPORT mafStorableMaterialLibrary: public mafObject
 public:
   mafTypeMacro(mafStorableMaterialLibrary,mafObject);
   mafStorableMaterialLibrary(){};
-  mafStorableMaterialLibrary(std::vector<mmaMaterial *> *mat_list);
+  mafStorableMaterialLibrary(std::vector<std::shared_ptr<mmaMaterial> > *mat_list);
   ~mafStorableMaterialLibrary() override {};
   void Store(mafStorageElementBuilder& element) { InternalStore(element); }
   void Restore(const mafStorageElement& element) { InternalRestore(element); }
   virtual void InternalStore(mafStorageElementBuilder& node);
   virtual void InternalRestore(const mafStorageElement& node);
-  std::vector<mmaMaterial *> *m_MaterialList;
+  std::vector<std::shared_ptr<mmaMaterial> > *m_MaterialList;
 };
 #endif // _mafGUIMaterialChooser_H_

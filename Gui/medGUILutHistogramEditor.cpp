@@ -49,7 +49,7 @@
 
 //----------------------------------------------------------------------------
 //vtkDataSet *dataSet, mmaVolumeMaterial *material, char *name="Histogram & Windowing", mafObserver *Listener=NULL, int id=MINID);
-medGUILutHistogramEditor::medGUILutHistogramEditor(vtkDataSet *dataSet,mmaVolumeMaterial *material, char *name, mafBaseEventHandler *Listener, int id)
+medGUILutHistogramEditor::medGUILutHistogramEditor(vtkDataSet *dataSet,std::shared_ptr<mmaVolumeMaterial> material, char *name, mafBaseEventHandler *Listener, int id)
 :mafGUIDialog(_R(name))
 //----------------------------------------------------------------------------
 {
@@ -237,7 +237,7 @@ void medGUILutHistogramEditor::SetDataSet(vtkDataSet *dataSet)
 }
 
 //----------------------------------------------------------------------------
-void medGUILutHistogramEditor::SetMaterial(mmaVolumeMaterial *material)
+void medGUILutHistogramEditor::SetMaterial(std::shared_ptr<mmaVolumeMaterial> material)
 //----------------------------------------------------------------------------
 {
   m_Material=material;
@@ -279,7 +279,7 @@ void medGUILutHistogramEditor::CopyLut(vtkLookupTable *from, vtkLookupTable *to)
  
 }
 //----------------------------------------------------------------------------
-void medGUILutHistogramEditor::ShowLutHistogramDialog(vtkDataSet *dataSet,mmaVolumeMaterial *material,char *name, mafBaseEventHandler *listener, int id)
+void medGUILutHistogramEditor::ShowLutHistogramDialog(vtkDataSet *dataSet,std::shared_ptr<mmaVolumeMaterial> material,char *name, mafBaseEventHandler *listener, int id)
 //----------------------------------------------------------------------------
 {
   //Call the default constructor to show the Dialog

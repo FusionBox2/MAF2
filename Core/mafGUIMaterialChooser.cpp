@@ -67,7 +67,6 @@
 mafGUIMaterialChooser::mafGUIMaterialChooser(const mafString& dialog_title)
 //----------------------------------------------------------------------------
 {  
-	m_ChoosedMaterial	= NULL;
   m_VmeMaterial     = NULL;
   m_Vme             = NULL;
   m_Dialog			    = NULL;
@@ -97,8 +96,6 @@ mafGUIMaterialChooser::mafGUIMaterialChooser(const mafString& dialog_title)
 mafGUIMaterialChooser::~mafGUIMaterialChooser()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_ChoosedMaterial); //BES: 31.3.2009 - fixed memory leak
-
   ClearList();
   m_RWI->m_RenFront->RemoveActor(m_Actor);
 
@@ -120,17 +117,17 @@ bool mafGUIMaterialChooser::ShowChooserDialog(mafVME *vme, bool remember_last_ma
 	}
 
   m_Vme = vme;
-  m_VmeMaterial = (mmaMaterial *)m_Vme->GetAttribute(_R("MaterialAttributes"));
+  m_VmeMaterial = mmaMaterial::SafeDownCast(m_Vme->GetAttribute(_R("MaterialAttributes")));
   assert(m_VmeMaterial);
 
   if (!remember_last_material)
   {
-    mafDEL(m_ChoosedMaterial);// = NULL;
+    m_ChoosedMaterial.reset();
   }
-  SelectMaterial(m_VmeMaterial);
+  SelectMaterial(m_VmeMaterial.get());
 
   bool res = m_Dialog->ShowModal() != 0;
-  m_VmeMaterial	= NULL;
+  m_VmeMaterial.reset();
   return res;
 }
 //----------------------------------------------------------------------------
@@ -418,13 +415,13 @@ void mafGUIMaterialChooser::OnEvent(mafEventBase *maf_event)
       //case wxOK:
       case ID_OK:
         assert(m_VmeMaterial);
-        m_VmeMaterial->DeepCopy(m_ChoosedMaterial);
+        m_VmeMaterial->DeepCopy(m_ChoosedMaterial.get());
         m_VmeMaterial->m_Prop->DeepCopy(m_Property);
         m_Dialog->EndModal(wxOK); 
       break;
       case ID_APPLY:
         assert(m_VmeMaterial);
-        m_VmeMaterial->DeepCopy(m_ChoosedMaterial);
+        m_VmeMaterial->DeepCopy(m_ChoosedMaterial.get());
         m_VmeMaterial->m_Prop->DeepCopy(m_Property);
         {mafEvent evUnq(m_Vme,CAMERA_UPDATE); m_Vme->ForwardUpEvent(&evUnq);}
       break;
@@ -479,7 +476,7 @@ void mafGUIMaterialChooser::LoadMaterials_old()
 	{
 		f_in.getline(line,128);
 
-		mmaMaterial *mat = mmaMaterial::New();
+		auto mat = mmaMaterial::NewSPtr();
 
 		//name
 		f_in.getline(line,128);
@@ -531,7 +528,7 @@ void mafGUIMaterialChooser::LoadMaterials_old()
     m_List.push_back(mat);
 
 		// insert mat in the tree
-		{wxBitmap bmp(50,50); this->m_ListCtrlMaterial->AddItem((intptr_t)mat,mat->m_MaterialName.toWx(),&bmp);}
+		{wxBitmap bmp(50,50); this->m_ListCtrlMaterial->AddItem((intptr_t)mat.get(), mat->m_MaterialName.toWx(), &bmp); }
 
 		//blank line
 		f_in.getline(line,128);
@@ -554,7 +551,7 @@ void mafGUIMaterialChooser::SaveMaterials_old()
 	f_out.open(m_Filename.GetCStr());
 	f_out<<"MATERIALS PROPERTIES:"<<std::endl;
 
-	for( mmaMaterial *n = m_List[i]; i < m_List.size();)
+	for( auto& n: m_List)
 	{			
 		f_out<<"material n. "<<++i<<std::endl;
 
@@ -601,11 +598,9 @@ void mafGUIMaterialChooser::LoadLibraryFromFile()
   mafStorableMaterialLibrary *mat_lib = new mafStorableMaterialLibrary(&m_List);
   mat_lib->Restore(reader.GetRoot());
 
-  mmaMaterial *mat = NULL;
-  for (int m = 0; m < m_List.size(); m++)
+  for (auto&  mat : m_List)
   {
-    mat = m_List[m];
-    this->m_ListCtrlMaterial->AddItem((intptr_t)mat,mat->m_MaterialName.toWx(),mat->MakeIcon());
+    this->m_ListCtrlMaterial->AddItem((intptr_t)mat.get(), mat->m_MaterialName.toWx(), mat->MakeIcon());
   }
 
   mat_lib->Delete();
@@ -630,7 +625,7 @@ void mafGUIMaterialChooser::StoreLibraryToFile()
 void mafGUIMaterialChooser::RemoveMaterial()
 //----------------------------------------------------------------------------
 {
-  m_ListCtrlMaterial->DeleteItem((intptr_t)m_ChoosedMaterial);
+  m_ListCtrlMaterial->DeleteItem((intptr_t)m_ChoosedMaterial.get());
 
 	//remove m_ChoosedMaterial from the list
 /*  bool found = false;
@@ -668,10 +663,6 @@ void mafGUIMaterialChooser::RemoveMaterial()
 void mafGUIMaterialChooser::ClearList()
 //----------------------------------------------------------------------------
 {
-  for (int i = 0; i < m_List.size(); i++)
-  {
-    delete m_List[i];
-  }
   m_List.clear();
 	this->m_ListCtrlMaterial->Reset();
 }
@@ -679,10 +670,10 @@ void mafGUIMaterialChooser::ClearList()
 void mafGUIMaterialChooser::SelectMaterial(mmaMaterial *m)
 //----------------------------------------------------------------------------
 {
-  if(m_ListCtrlMaterial->SelectItem((intptr_t)m) || m_ChoosedMaterial == NULL)
+  if(m_ListCtrlMaterial->SelectItem((intptr_t)m) || !m_ChoosedMaterial)
   {
-    if(m_ChoosedMaterial == NULL)
-      mafNEW(m_ChoosedMaterial);
+    if(!m_ChoosedMaterial)
+      m_ChoosedMaterial = mmaMaterial::NewSPtr();
     m_ChoosedMaterial->DeepCopy(m);
 
     //copy chose material on m_Property
@@ -729,16 +720,16 @@ void mafGUIMaterialChooser::SelectMaterial(mmaMaterial *m)
 void mafGUIMaterialChooser::AddMaterial()
 //----------------------------------------------------------------------------
 {
-  mmaMaterial *mat = mmaMaterial::New();
-  mat->DeepCopy(m_ChoosedMaterial);
+  auto mat = mmaMaterial::NewSPtr();
+  mat->DeepCopy(m_ChoosedMaterial.get());
 
 	// insert mat in the list
   m_List.push_back(mat);
 
 	// insert mat in the tree
-	m_ListCtrlMaterial->AddItem((intptr_t)mat, mat->m_MaterialName.toWx(), mat->MakeIcon());	
-  m_ListCtrlMaterial->SelectItem((intptr_t)mat);
-	SelectMaterial(mat);
+	m_ListCtrlMaterial->AddItem((intptr_t)mat.get(), mat->m_MaterialName.toWx(), mat->MakeIcon());
+  m_ListCtrlMaterial->SelectItem((intptr_t)mat.get());
+	SelectMaterial(mat.get());
 }
 //----------------------------------------------------------------------------
 void mafGUIMaterialChooser::LoadLibraryFromVme(mafVME *vme)
@@ -857,7 +848,7 @@ void mafGUIMaterialChooser::CreateDefaultLibrary()
 		); 
     if(res != 16) break;
 
-    mmaMaterial *mat = mmaMaterial::New();
+    auto mat = mmaMaterial::NewSPtr();
 		mat->m_MaterialName = _R(name); 
     mat->m_AmbientIntensity = a;
     mat->m_Ambient[0] = ac[0];
@@ -882,15 +873,12 @@ void mafGUIMaterialChooser::CreateDefaultLibrary()
     m_List.push_back(mat);
 
 		// insert mat in the tree
-		m_ListCtrlMaterial->AddItem((intptr_t)mat,mat->m_MaterialName.toWx(),mat->MakeIcon());
+		m_ListCtrlMaterial->AddItem((intptr_t)mat.get(),mat->m_MaterialName.toWx(),mat->MakeIcon());
   }
 }
-//------------------------------------------------------------------------------
-mafCxxTypeMacro(mafStorableMaterialLibrary);
-//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-mafStorableMaterialLibrary::mafStorableMaterialLibrary(std::vector<mmaMaterial *> *mat_list) : m_MaterialList(mat_list)
+mafStorableMaterialLibrary::mafStorableMaterialLibrary(std::vector<std::shared_ptr<mmaMaterial> > *mat_list) : m_MaterialList(mat_list)
 //------------------------------------------------------------------------------
 {
 }
@@ -910,7 +898,7 @@ void mafStorableMaterialLibrary::InternalRestore(const mafStorageElement& node)
 	for (size_t i = 0; i < mat_items.GetNumItems(); i++)
 	{
 		auto obj = mat_items[i].As<mafAttribute>();
-		mmaMaterial* item = mmaMaterial::SafeDownCast(obj);
+		auto item = std::static_pointer_cast<mmaMaterial>(obj);
 		m_MaterialList->push_back(item);
 	}
 }
@@ -926,7 +914,7 @@ void mafStorableMaterialLibrary::InternalStore( mafStorageElementBuilder& parent
 		
 		for (size_t idx = 0; idx < m_MaterialList->size(); idx++)
 		{
-			entry[idx].SetValue((*m_MaterialList)[idx]);
+			entry[idx].SetValue((*m_MaterialList)[idx].get());
 		}
 	}
 }

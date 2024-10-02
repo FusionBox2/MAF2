@@ -747,7 +747,7 @@ void medOpSegmentation::CreateOpDialog()
   m_OLdWindowingLow = data[0];
   m_OLdWindowingHi = data[1];
 
-  m_LutWidget = new medGUILutHistogramSwatch(m_GuiDialog,m_GuiDialog->GetWidgetId(ID_LUT_CHOOSER), "LUT", m_Volume->GetOutput()->GetVTKData(), m_Volume->GetMaterial(),wxSize(135,18) );
+  m_LutWidget = new medGUILutHistogramSwatch(m_GuiDialog,m_GuiDialog->GetWidgetId(ID_LUT_CHOOSER), "LUT", m_Volume->GetOutput()->GetVTKData(), m_Volume->GetMaterial(), wxSize(135, 18));
   m_LutWidget->SetEditable(true);
 
   /////////////////////////////////////////////////////
@@ -1947,7 +1947,7 @@ void medOpSegmentation::OnAutomaticStep()
     InitMaskColorLut(m_SegmentationColorLUT);
 
     m_ThresholdVolume->GetMaterial()->m_ColorLut->SetTableRange(0,255);
-    mmaVolumeMaterial *currentVolumeMaterial = ((mafVMEOutputVolume *)m_ThresholdVolume->GetOutput())->GetMaterial();
+    auto currentVolumeMaterial = ((mafVMEOutputVolume *)m_ThresholdVolume->GetOutput())->GetMaterial();
     currentVolumeMaterial->UpdateFromTables();
 
     
@@ -3091,7 +3091,7 @@ void medOpSegmentation::OnAutomaticPreview()
   InitMaskColorLut(m_SegmentationColorLUT);
 
   m_ThresholdVolume->GetMaterial()->m_ColorLut->SetTableRange(0,255);
-  mmaVolumeMaterial *currentVolumeMaterial = ((mafVMEOutputVolume *)m_ThresholdVolume->GetOutput())->GetMaterial();
+  auto currentVolumeMaterial = ((mafVMEOutputVolume *)m_ThresholdVolume->GetOutput())->GetMaterial();
   currentVolumeMaterial->UpdateFromTables();
 
   m_View->VmeShow(m_ThresholdVolume,true);
@@ -3804,7 +3804,7 @@ void medOpSegmentation::UpdateWindowing()
   mafVMEOutputVolume *volumeOutput = mafVMEOutputVolume::SafeDownCast(m_Volume->GetOutput());
   double sr[2],subR[2];
   volumeOutput->GetVTKData()->GetScalarRange(sr);
-  mmaVolumeMaterial *currentSurfaceMaterial = volumeOutput->GetMaterial();
+  auto currentSurfaceMaterial = volumeOutput->GetMaterial();
   currentSurfaceMaterial->m_ColorLut->GetTableRange(subR);
 
   volumeOutput->GetMaterial()->UpdateProp();
@@ -5146,7 +5146,7 @@ void medOpSegmentation::UpdateThresholdRealTimePreview()
   InitMaskColorLut(m_SegmentationColorLUT);
 
   m_ThresholdVolumeSlice->GetMaterial()->m_ColorLut->SetTableRange(0,255);
-  mmaVolumeMaterial *currentVolumeMaterial = ((mafVMEOutputVolume *)m_ThresholdVolumeSlice->GetOutput())->GetMaterial();
+  auto currentVolumeMaterial = ((mafVMEOutputVolume *)m_ThresholdVolumeSlice->GetOutput())->GetMaterial();
   currentVolumeMaterial->UpdateFromTables();
   
   m_ThresholdVolumeSlice->Modified();

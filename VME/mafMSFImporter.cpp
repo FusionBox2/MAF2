@@ -111,7 +111,7 @@ void mafMSFImporter::InternalRestore(const mafStorageElement& node)
   {
     //if (children[i]->GetName() == _R("TArray"))
     {
-      if (RestoreTagArray(children_tags[i],root->GetTagArray()) != MAF_OK)
+      if (RestoreTagArray(children_tags[i],root->GetTagArray().get()) != MAF_OK)
       {
         mafErrorMacro("MSFImporter: error restoring Tag Array of node: \""<<root->GetName().GetCStr() <<"\"");
       }
@@ -250,7 +250,7 @@ mafVME *mafMSFImporter::RestoreVME(const mafStorageElement& node, mafVME *parent
 			  //if (mafCString("TArray") == children[i]->GetName())
 			  //if (children[i].GetName() == _R("TArray"))
 			  {
-				  if (RestoreTagArray(children[i], vme->GetTagArray()) != MAF_OK)
+				  if (RestoreTagArray(children[i], vme->GetTagArray().get()) != MAF_OK)
 				  {
 					  mafErrorMacro("MSFImporter: error restoring Tag Array of node: \"" << vme->GetName().GetCStr() << "\"");
 					  return NULL;
@@ -259,7 +259,7 @@ mafVME *mafMSFImporter::RestoreVME(const mafStorageElement& node, mafVME *parent
 				  /////////////////////////////////////////// 
 				  // here should process VME-specific tags //
 				  ///////////////////////////////////////////
-				  mafTagArray* ta = vme->GetTagArray();
+				  auto ta = vme->GetTagArray();
 				  if (ta->GetTag(_R("material")))
 				  {
 					  RestoreMaterial(vme);
@@ -483,8 +483,8 @@ void mafMSFImporter::RestoreMeterAttribute(mafVME *vme)
   mafVMEMeter *meter = mafVMEMeter::SafeDownCast(vme);
   if (meter)
   {
-    mmaMeter *meter_attrib = meter->GetMeterAttributes();
-    mafTagArray *meter_ta  = meter->GetTagArray();
+    auto meter_attrib = meter->GetMeterAttributes();
+    auto meter_ta  = meter->GetTagArray();
     int num_tags = meter_ta->GetNumberOfTags();
     std::vector<mafString> tag_list;
     meter_ta->GetTagList(tag_list);
@@ -557,12 +557,11 @@ void mafMSFImporter::RestoreMeterAttribute(mafVME *vme)
 void mafMSFImporter::RestoreMaterial(mafVME *vme)
 //------------------------------------------------------------------------------
 {
-  auto material = (mmaMaterial *)vme->GetAttribute(_R("MaterialAttributes"));
+  auto material = mmaMaterial::SafeDownCast(vme->GetAttribute(_R("MaterialAttributes")));
   if (!material)
   {
-    auto newMaterial = mmaMaterial::NewSPtr();
-    material = newMaterial.get();
-    vme->SetAttribute(_R("MaterialAttributes"), newMaterial);
+    material = mmaMaterial::NewSPtr();
+    vme->SetAttribute(_R("MaterialAttributes"), material);
   }
 
   mafTagItem *mat_item = vme->GetTagArray()->GetTag(_R("material"));

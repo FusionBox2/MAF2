@@ -235,15 +235,15 @@ void medVMELabeledVolume::CopyDataset()
     originalScalars->Modified();
     originalScalars->GetRange(scalarRange);
 
-    mmaVolumeMaterial *volMaterial = GetMaterial();
+    auto volMaterial = GetMaterial();
 //    mafNEW(volMaterial);  //@@@@@@@@ Do the code below needs for something??
-    volMaterial->DeepCopy(((mafVMEVolumeGray *)m_VolumeLink)->GetMaterial());
+    volMaterial->DeepCopy(((mafVMEVolumeGray *)m_VolumeLink)->GetMaterial().get());
     volMaterial->UpdateFromTables();
 
-    mmaVolumeMaterial *labelMaterial = ((mafVMEOutputVolume *)this->GetOutput())->GetMaterial();
+    auto labelMaterial = ((mafVMEOutputVolume *)this->GetOutput())->GetMaterial();
     if  (labelMaterial)
     {
-      ((mafVMEOutputVolume *)this->GetOutput())->GetMaterial()->DeepCopy(volMaterial);
+      ((mafVMEOutputVolume *)this->GetOutput())->GetMaterial()->DeepCopy(volMaterial.get());
       labelMaterial->m_ColorLut->SetTableRange(scalarRange);
       labelMaterial->UpdateFromTables();
     }
@@ -251,7 +251,7 @@ void medVMELabeledVolume::CopyDataset()
     {
       ((mafVMEOutputVolume *)this->GetOutput())->SetMaterial(volMaterial);
       ((mafVMEOutputVolume *)this->GetOutput())->Update();
-      mmaVolumeMaterial *NewlabelMaterial = ((mafVMEOutputVolume *)this->GetOutput())->GetMaterial();
+      auto NewlabelMaterial = ((mafVMEOutputVolume *)this->GetOutput())->GetMaterial();
       NewlabelMaterial->m_ColorLut->SetTableRange(scalarRange);
       NewlabelMaterial->UpdateFromTables();
     }
@@ -415,7 +415,7 @@ void medVMELabeledVolume::GenerateLabeledVolume()
     double scalarRange[2];
     labelScalars->GetRange(scalarRange);
 
-    mmaVolumeMaterial *labelMaterial = ((mafVMEOutputVolume *)this->GetOutput())->GetMaterial();
+    auto labelMaterial = ((mafVMEOutputVolume *)this->GetOutput())->GetMaterial();
     labelMaterial->m_ColorLut->SetTableRange(scalarRange);
     labelMaterial->UpdateFromTables();
 
@@ -1132,15 +1132,14 @@ void medVMELabeledVolume::RemoveLabelTag(int component)
 }
 
 //-------------------------------------------------------------------------
-mmaVolumeMaterial * medVMELabeledVolume::GetMaterial()
+std::shared_ptr<mmaVolumeMaterial> medVMELabeledVolume::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  auto material = (mmaVolumeMaterial *)GetAttribute(_R("VolumeMaterialAttributes"));
+  auto material = mmaVolumeMaterial::SafeDownCast(GetAttribute(_R("VolumeMaterialAttributes")));
   if (!material)
   {
-    auto newMaterial = mmaVolumeMaterial::NewSPtr();
-    material = newMaterial.get();
-    SetAttribute(_R("VolumeMaterialAttributes"), newMaterial);
+    material = mmaVolumeMaterial::NewSPtr();
+    SetAttribute(_R("VolumeMaterialAttributes"), material);
     if (m_Output)
     {
       ((mafVMEOutputVolume *)m_Output)->SetMaterial(material);

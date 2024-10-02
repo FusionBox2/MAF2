@@ -273,7 +273,7 @@ void mafViewOrthoSlice::OnEvent(mafEventBase *maf_event)
 			break;
       case ID_LUT_CHOOSER:
       {
-        mmaVolumeMaterial *currentVolumeMaterial = ((mafVMEOutputVolume *)m_CurrentVolume->GetOutput())->GetMaterial();
+        auto currentVolumeMaterial = ((mafVMEOutputVolume *)m_CurrentVolume->GetOutput())->GetMaterial();
         currentVolumeMaterial->UpdateFromTables();
         for(int i=0; i<m_NumOfChildView; i++)
         {
@@ -293,7 +293,7 @@ void mafViewOrthoSlice::OnEvent(mafEventBase *maf_event)
           double low, hi;
           m_LutSlider->GetSubRange(&low,&hi);
           m_ColorLUT->SetTableRange(low,hi);
-          mmaVolumeMaterial *currentVolumeMaterial = ((mafVMEOutputVolume *)m_CurrentVolume->GetOutput())->GetMaterial();
+          auto currentVolumeMaterial = ((mafVMEOutputVolume *)m_CurrentVolume->GetOutput())->GetMaterial();
           currentVolumeMaterial->UpdateFromTables();
           CameraUpdate();
         }
@@ -734,7 +734,7 @@ void mafViewOrthoSlice::CreateOrthoslicesAndGizmos( mafNode * node )
   double colorsX[]    = {1,0,0};
   double colorsY[]    = {0,1,0};
   double colorsZ[]    = {0,0,1};
-	mmaVolumeMaterial *currentVolumeMaterial = ((mafVMEOutputVolume *)m_CurrentVolume->GetOutput())->GetMaterial();
+	auto currentVolumeMaterial = ((mafVMEOutputVolume *)m_CurrentVolume->GetOutput())->GetMaterial();
 	double sr[2],vtkDataCenter[3];
 	vtkDataSet *vtkData = m_CurrentVolume->GetOutput()->GetVTKData();
 	//vtkData->Update();

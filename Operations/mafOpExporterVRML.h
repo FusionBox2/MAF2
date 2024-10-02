@@ -63,6 +63,6 @@ protected:
 	mafString m_File;
 	mafString m_FileDir;
   
-	mmaMaterial *m_SurfaceMaterial;
+	std::shared_ptr<mmaMaterial> m_SurfaceMaterial;
 };
 #endif

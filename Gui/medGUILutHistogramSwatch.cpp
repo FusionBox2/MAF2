@@ -91,7 +91,7 @@ medGUILutHistogramSwatch::medGUILutHistogramSwatch(wxWindow* parent, wxWindowID 
   m_Font.SetPointSize(9);
 }
 
-medGUILutHistogramSwatch::medGUILutHistogramSwatch(mafGUI *parent, wxWindowID id, wxString name, vtkDataSet *dataSet, mmaVolumeMaterial *material, wxSize size, bool showText)
+medGUILutHistogramSwatch::medGUILutHistogramSwatch(mafGUI *parent, wxWindowID id, wxString name, vtkDataSet *dataSet, std::shared_ptr<mmaVolumeMaterial> material, wxSize size, bool showText)
 :wxPanel(parent,id,wxDefaultPosition, size,  wxTAB_TRAVERSAL | wxSIMPLE_BORDER )
 {
 
@@ -272,7 +272,7 @@ void medGUILutHistogramSwatch::OnSize(wxSizeEvent &event)
   Refresh();
 }
 //----------------------------------------------------------------------------
-void medGUILutHistogramSwatch::SetMaterial(mmaVolumeMaterial *material)
+void medGUILutHistogramSwatch::SetMaterial(std::shared_ptr<mmaVolumeMaterial> material)
 //----------------------------------------------------------------------------
 {
   //update lut pointer
