@@ -8,9 +8,9 @@
 #include <string>
 
 #define mafPlugAttributeMacro(node_type,descr) \
-  AttributeFactory::RegisterNewAttribute(node_type::GetStaticTypeName(), descr, node_type::NewObject);
+  AttributeFactory::RegisterNewAttribute(node_type::GetStaticTypeName(), descr, node_type::NewObjectS);
 
-using AttributeCreateType = mafObject*;
+using AttributeCreateType = std::shared_ptr<mafAttribute>;
 using CreateAttributeFunction = AttributeCreateType(*)();
 
 BEGIN_FTK_NAMESPACE

@@ -381,7 +381,7 @@ protected:
 	wxSlider		 *m_TimeScannerBuildPage;
 	wxSlider		 *m_TimeScannerReferenceSystemPage; ///< Time slider for RS page
 
-	mafTagArray	*m_TagArray;
+	std::shared_ptr<mafTagArray>	m_TagArray;
 
 	double	m_SliceBounds[6];
 

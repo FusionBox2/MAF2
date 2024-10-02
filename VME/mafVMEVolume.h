@@ -50,7 +50,7 @@ public:
   static char** GetIcon();
 
   /** Return pointer to material attribute. */
-  mmaVolumeMaterial *GetMaterial();
+  std::shared_ptr<mmaVolumeMaterial> GetMaterial();
 
   /** Return the suggested pipe-typename for the visualization of this vme */
   mafString GetVisualPipe() override {return mafString(_R("mafPipeBox"));}

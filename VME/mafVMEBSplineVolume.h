@@ -82,7 +82,7 @@ public:
   static char ** GetIcon();
 
   /** Return pointer to material attribute. */
-  mmaMaterial *GetMaterial();
+  std::shared_ptr<mmaMaterial> GetMaterial();
 
   enum SPLINE_WIDGET_ID
   {

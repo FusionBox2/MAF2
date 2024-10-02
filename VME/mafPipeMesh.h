@@ -123,7 +123,7 @@ public:
 
 protected:
 
-	mmaMaterial             *m_MeshMaterial;
+	std::shared_ptr<mmaMaterial>             m_MeshMaterial;
 	vtkGeometryFilter                  *m_GeometryFilter;
   mafParabolicMeshToLinearMeshFilter *m_LinearizationFilter;
 	vtkDataSetMapper        *m_Mapper;

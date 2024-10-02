@@ -56,7 +56,7 @@ public:
   /** Return the suggested pipe-typename for the visualization of this vme */
   mafString GetVisualPipe() override {return mafString(_R("mafPipeSurface"));};
   /** Return pointer to material attribute. */
-  mmaMaterial *GetMaterial();
+  std::shared_ptr<mmaMaterial> GetMaterial();
 
   /** return an xpm-icon that can be used to represent this node */
   static char ** GetIcon();

@@ -56,7 +56,7 @@ public:
   mafString GetVisualPipe() override {return mafString(_R("mafPipeSurface"));};
 
   /** Return pointer to material attribute. */
-  mmaMaterial *GetMaterial();
+  std::shared_ptr<mmaMaterial> GetMaterial();
 
   /** Copy the contents of another mafVMEProber into this one. */
   int DeepCopy(mafNode *a) override;

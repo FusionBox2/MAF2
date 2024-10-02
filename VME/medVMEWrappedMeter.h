@@ -239,7 +239,7 @@ public:
   double GetAngle();
 
   /** return the meter's attributes */
-  mmaMeter *GetMeterAttributes();
+  std::shared_ptr<mmaMeter> GetMeterAttributes();
 
   mafVME *GetStartVME();
   mafVME *GetEnd1VME();
@@ -256,7 +256,7 @@ public:
 	void RemoveLink(const mafString& link_name);
 
   /** Return pointer to material attribute. */
-  mmaMaterial *GetMaterial();
+  std::shared_ptr<mmaMaterial> GetMaterial();
 
 	/**Return Number of middle points*/
 	int GetNumberMiddlePoints(){return m_MiddlePointList.size();};

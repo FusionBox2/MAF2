@@ -318,7 +318,7 @@ void mafOpVolumeResample::Resample()
 	mafVME *Node = mafVME::SafeDownCast(m_Input);*/
   m_ResampledVme = (mafVMEVolumeGray *)m_Input->NewInstance();
   m_ResampledVme->Register(m_ResampledVme);
-  m_ResampledVme->GetTagArray()->DeepCopy(m_Input->GetTagArray()); // copy tags
+  m_ResampledVme->GetTagArray()->DeepCopy(m_Input->GetTagArray().get()); // copy tags
   m_ResampledVme->SetName(new_vme_name);
 
   m_ResampledVme->ReparentTo(m_Input->GetParent());

@@ -534,7 +534,7 @@ void mafOpExtractIsosurface::CreateSlicePipeline()
   m_VolumeSlicer->SetOutput(m_SliceImage);
   m_VolumeSlicer->Update();
 
-  mmaVolumeMaterial *material = ((mafVMEVolume *)m_Input)->GetMaterial();
+  auto material = ((mafVMEVolume *)m_Input)->GetMaterial();
   double sr[2];
   ((mafVMEVolume*)m_Input)->GetOutput()->GetVTKData()->GetScalarRange(sr);
   material->m_ColorLut->SetRange(sr[0],sr[1]);

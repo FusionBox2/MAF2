@@ -291,13 +291,13 @@ void mafVMERefSysAbstract::InternalRestore(const mafStorageElement& node)
   SetScaleFactor(node[_R("ScaleFactor")].As<double>());
 }
 //-------------------------------------------------------------------------
-mmaMaterial *mafVMERefSysAbstract::GetMaterial()
+std::shared_ptr<mmaMaterial> mafVMERefSysAbstract::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
-  if (material == NULL)
+  auto material = mmaMaterial::SafeDownCast(GetAttribute(_R("MaterialAttributes")));
+  if (!material)
   {
-    material = mmaMaterial::New();
+    material = mmaMaterial::NewSPtr();
     SetAttribute(_R("MaterialAttributes"), material);
     if (m_Output)
     {

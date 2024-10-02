@@ -114,7 +114,7 @@ void mafPipeSurfaceSlice::Create(mafNode *node, mafView *view/*, bool use_axes*/
          || m_Vme->GetOutput()->IsMAFType(mafVMEOutputLandmarkCloud));
   vtkPolyData *data = NULL;
   vtkAlgorithmOutput* port = nullptr;
-  mmaMaterial *material = NULL;
+  std::shared_ptr<mmaMaterial> material;
 
 	m_Vme->AddObserver(this);
   
@@ -425,7 +425,7 @@ void mafPipeSurfaceSlice::GenerateTextureMapCoordinate()
 //----------------------------------------------------------------------------
 {
   mafVMEOutputSurface *surface_output = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
-  mmaMaterial *material = surface_output->GetMaterial();
+  auto material = surface_output->GetMaterial();
   vtkPolyData *data = vtkPolyData::SafeDownCast(surface_output->GetVTKData());
   vtkAlgorithmOutput* port = surface_output->GetVTKOutputPort();
   port->GetProducer()->Update();
@@ -526,7 +526,7 @@ void mafPipeSurfaceSlice::CreateClosedCloudPipe()
   vtkPolyData *data = vtkPolyData::SafeDownCast(glyph->GetOutput());
   vtkAlgorithmOutput* port = glyph->GetOutputPort();
 
-  mmaMaterial *material = landmark_cloud_output->GetMaterial();
+  auto material = landmark_cloud_output->GetMaterial();
 
   assert(data);
   vtkDataArray *scalars = data->GetPointData()->GetScalars();

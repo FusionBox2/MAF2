@@ -112,13 +112,13 @@ lhpVMESurfaceScalarVarying::~lhpVMESurfaceScalarVarying()
 }
 
 //-------------------------------------------------------------------------
-mmaMaterial *lhpVMESurfaceScalarVarying::GetMaterial()
+std::shared_ptr<mmaMaterial> lhpVMESurfaceScalarVarying::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
-  if (material == NULL)
+  auto material = mmaMaterial::SafeDownCast(GetAttribute(_R("MaterialAttributes")));
+  if (!material)
   {
-    material = mmaMaterial::New();
+    material = mmaMaterial::NewSPtr();
     SetAttribute(_R("MaterialAttributes"), material);
   }
   return material;
@@ -667,7 +667,7 @@ void lhpVMESurfaceScalarVarying::FillScalarsName(bool new_scalars)
 
         m_ScalarRange[0] = mat_scalars.min_value();
         m_ScalarRange[1] = mat_scalars.max_value();
-        mmaMaterial *material = GetMaterial();
+        auto material = GetMaterial();
         material->m_ColorLut->SetTableRange(m_ScalarRange);
         material->m_ColorLut->Build();
       }

@@ -833,26 +833,30 @@ mafNode *mafNode::CopyTree(mafNode *vme, mafNode *parent)
 }
 
 //-------------------------------------------------------------------------
-void mafNode::SetAttribute(const mafString& name,mafAttribute *a)
+void mafNode::SetAttribute(const mafString& name,std::shared_ptr<mafAttribute> a)
 //-------------------------------------------------------------------------
 {
   m_Attributes[name]=a;
 }
 
 //-------------------------------------------------------------------------
-mafAttribute *mafNode::GetAttribute(const mafString& name)
+std::shared_ptr<mafAttribute> mafNode::GetAttribute(const mafString& name)
 //-------------------------------------------------------------------------
 {
-  mafAttributesMap::iterator it=m_Attributes.find(name);
-  return (it!=m_Attributes.end())?(*it).second.get():NULL;
+  auto it = m_Attributes.find(name);
+  if (it != end(m_Attributes))
+    return it->second;
+  return nullptr;
 }
 
 //-------------------------------------------------------------------------
-const mafAttribute *mafNode::GetAttribute(const mafString& name) const
+std::shared_ptr<const mafAttribute> mafNode::GetAttribute(const mafString& name) const
 //-------------------------------------------------------------------------
 {
-  mafAttributesMap::const_iterator it=m_Attributes.find(name);
-  return (it != m_Attributes.end()) ? (*it).second.get() : NULL;
+  auto it = m_Attributes.find(name);
+  if (it != end(m_Attributes))
+    return it->second;
+  return nullptr;
 }
 
 //-------------------------------------------------------------------------
@@ -870,15 +874,15 @@ void mafNode::RemoveAllAttributes()
 }
 
 //-------------------------------------------------------------------------
-mafTagArray  *mafNode::GetTagArray()
+std::shared_ptr<mafTagArray> mafNode::GetTagArray()
 //-------------------------------------------------------------------------
 {
-  mafTagArray *tarray = mafTagArray::SafeDownCast(GetAttribute(_R("TagArray")));
+  auto tarray = mafTagArray::SafeDownCast(GetAttribute(_R("TagArray")));
   if (!tarray)
   {
-    tarray = mafTagArray::New();
+    tarray = mafTagArray::NewSPtr();
     tarray->SetName(_R("TagArray"));
-    SetAttribute(_R("TagArray"),tarray);
+    SetAttribute(_R("TagArray"), tarray);
   }
   return tarray;
 }
@@ -1252,7 +1256,7 @@ void mafNode::InternalRestore(const mafStorageElement& node)
 
   for (size_t i = 0; i < attr_items.GetNumItems(); i++)
   {
-      mafAttribute* item = attr_items[i].As<mafAttribute>();
+      auto item = attr_items[i].As<mafAttribute>();
 	  assert(item);
 	  if (item)
 	  {

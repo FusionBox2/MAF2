@@ -36,18 +36,13 @@ mafCxxTypeMacro(mafNodeLayout)
 mafNodeLayout::mafNodeLayout()
 //-------------------------------------------------------------------------
 {
-  m_AppLayout = NULL;
 }
 
 //-------------------------------------------------------------------------
-mmaApplicationLayout *mafNodeLayout::GetLayout()
+std::shared_ptr<mmaApplicationLayout> mafNodeLayout::GetLayout()
 //-------------------------------------------------------------------------
 {
-  if (m_AppLayout == NULL)
-  {
-    m_AppLayout = (mmaApplicationLayout *)GetAttribute(_R("ApplicationLayout"));
-  }
-  return m_AppLayout;
+  return mmaApplicationLayout::SafeDownCast(GetAttribute(_R("ApplicationLayout")));
 }
 
 //-------------------------------------------------------------------------

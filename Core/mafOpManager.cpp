@@ -436,10 +436,10 @@ void mafOpManager::FillTraceabilityAttribute(mafOp *op, mafNode *in_node, mafNod
 
   if (in_node != NULL)
   {
-    mafAttributeTraceability *traceability = (mafAttributeTraceability *)in_node->GetAttribute(_R("TrialAttribute"));
-    if (traceability == NULL)
+    auto traceability = mafAttributeTraceability::SafeDownCast(in_node->GetAttribute(_R("TrialAttribute")));
+    if (!traceability)
     {
-      traceability = mafAttributeTraceability::New();
+      traceability = mafAttributeTraceability::NewSPtr();
       traceability->SetName(_R("TrialAttribute"));
       in_node->SetAttribute(_R("TrialAttribute"), traceability);
     }
@@ -485,11 +485,11 @@ void mafOpManager::FillTraceabilityAttribute(mafOp *op, mafNode *in_node, mafNod
       if (node != NULL)
       {
         c++;
-        mafAttributeTraceability *traceability = (mafAttributeTraceability *)node->GetAttribute(_R("TrialAttribute"));
-        if (traceability == NULL)
+        auto traceability = mafAttributeTraceability::SafeDownCast(node->GetAttribute(_R("TrialAttribute")));
+        if (!traceability)
         {
           trialEvent = _R("Create");
-          traceability = mafAttributeTraceability::New();
+          traceability = mafAttributeTraceability::NewSPtr();
           traceability->SetName(_R("TrialAttribute"));
           node->SetAttribute(_R("TrialAttribute"), traceability);
         }
@@ -548,8 +548,8 @@ void mafOpManager::OpUndo()
   if (in_node != NULL)
   {
     mafLogMessage(_M(_R("undo = ") + op->GetLabel() + _R(" on input data: ") + in_node->GetName()));
-    mafAttributeTraceability *traceability = (mafAttributeTraceability *)in_node->GetAttribute(_R("TrialAttribute"));
-    if (traceability != NULL)
+    auto traceability = mafAttributeTraceability::SafeDownCast(in_node->GetAttribute(_R("TrialAttribute")));
+    if (traceability)
     {
       traceability->RemoveTraceabilityEvent();
       mafString trial = traceability->GetLastTrialEvent();
@@ -569,8 +569,8 @@ void mafOpManager::OpUndo()
     {
       if (node != NULL)
       {
-        mafAttributeTraceability *traceability = (mafAttributeTraceability *)node->GetAttribute(_R("TrialAttribute"));
-        if (traceability != NULL)
+        auto traceability = mafAttributeTraceability::SafeDownCast(node->GetAttribute(_R("TrialAttribute")));
+        if (traceability)
         {
           traceability->RemoveTraceabilityEvent();
         }

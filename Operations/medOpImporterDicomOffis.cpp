@@ -314,7 +314,6 @@ medOpImporterDicomOffis::~medOpImporterDicomOffis()
 {
 	vtkDEL(m_SliceActor);
 
-	mafDEL(m_TagArray);
 	mafDEL(m_Image);
 	mafDEL(m_Mesh);
 	mafDEL(m_Volume);
@@ -658,7 +657,7 @@ void medOpImporterDicomOffis::Destroy()
 	vtkDEL(m_TextMapper);
 	vtkDEL(m_TextActor);
 
-	mafDEL(m_TagArray);
+	m_TagArray.reset();
 	mafDEL(m_DicomInteractor);
 
 	if(!this->m_TestMode)
@@ -751,7 +750,7 @@ int medOpImporterDicomOffis::BuildOutputVMEImagesFromDicom()
 		name.append(mafString::Format(_R("_%d"), count));
 		image->SetName(name);
 		image->SetData(im,0);
-		image->GetTagArray()->DeepCopy(m_TagArray);
+		image->GetTagArray()->DeepCopy(m_TagArray.get());
 
 
 		mafTagItem tag_Nature;
@@ -956,7 +955,7 @@ int medOpImporterDicomOffis::BuildOutputVMEImagesFromDicomCineMRI()
 
 			}
 
-			m_ImagesGroup->GetChild(targetVolumeSliceId)->GetTagArray()->DeepCopy(m_TagArray);
+			m_ImagesGroup->GetChild(targetVolumeSliceId)->GetTagArray()->DeepCopy(m_TagArray.get());
 
 			mafTagItem tag_Nature;
 			tag_Nature.SetName(_R("VME_NATURE"));
@@ -1369,8 +1368,8 @@ int medOpImporterDicomOffis::BuildOutputVMEGrayVolumeFromDicom()
 
 	ImportDicomTags(); 
 	//Copy inside the first VME item of m_Volume the CT volume and Dicom's tags
-	m_Volume->GetTagArray()->DeepCopy(m_TagArray);
-	mafDEL(m_TagArray);
+	m_Volume->GetTagArray()->DeepCopy(m_TagArray.get());
+	m_TagArray.reset();
 	mafTagItem tag_Nature;
 	tag_Nature.SetName(_R("VME_NATURE"));
 	tag_Nature.SetValue(_R("NATURAL"));
@@ -1796,8 +1795,8 @@ int medOpImporterDicomOffis::BuildOutputVMEGrayVolumeFromDicomCineMRI()
 
 	// update m_tag_array ivar
 	ImportDicomTags();
-	m_Volume->GetTagArray()->DeepCopy(m_TagArray);
-	vtkDEL(m_TagArray);
+	m_Volume->GetTagArray()->DeepCopy(m_TagArray.get());
+	m_TagArray.reset();
 
 	mafTagItem tag_Nature;
 	tag_Nature.SetName(_R("VME_NATURE"));
@@ -5043,8 +5042,8 @@ vtkImageData* medOpImporterDicomOffis::GetSliceImageDataFromLocalDicomFileName(m
 void medOpImporterDicomOffis::ImportDicomTags()
 	//----------------------------------------------------------------------------
 {
-	if (m_TagArray == NULL) 
-		mafNEW(m_TagArray);
+	if (!m_TagArray) 
+		m_TagArray = mafTagArray::NewSPtr();
 
 	m_TagArray->SetName(_R("TagArray"));
 

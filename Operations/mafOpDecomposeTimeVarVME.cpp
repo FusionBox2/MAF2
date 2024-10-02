@@ -507,7 +507,7 @@ void mafOpDecomposeTimeVarVME::CreateStaticVME(mafTimeStamp timeSt)
     m_VectorVME.push_back(newVme);
   }
   
-  newVme->GetTagArray()->DeepCopy(oldVme->GetTagArray());
+  newVme->GetTagArray()->DeepCopy(oldVme->GetTagArray().get());
   
   mafVMEGenericAbstract *vmeGeneric = mafVMEGenericAbstract::SafeDownCast(newVme);
 

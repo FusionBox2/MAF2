@@ -110,13 +110,13 @@ protected:
 };
 
 //-------------------------------------------------------------------------
-template <class TType>
-inline TType mafRestoreNumericFromTag(mafTagArray *array,const mafString& name, TType &variable, TType unset_value, TType default_value)
+template <class ArrayPtr, class TType>
+inline TType mafRestoreNumericFromTag(ArrayPtr array,const mafString& name, TType &variable, TType unset_value, TType default_value)
 //-------------------------------------------------------------------------
 {
   if (variable==unset_value)
   {
-    if (mafTagItem *item=array->GetTag(name))
+    if (auto item=array->GetTag(name))
     {
       variable = item->GetValueAsDouble();
     }
@@ -130,13 +130,13 @@ inline TType mafRestoreNumericFromTag(mafTagArray *array,const mafString& name, 
 }
 
 //-------------------------------------------------------------------------
-template <class TType>
-inline TType mafRestoreStringFromTag(mafTagArray *array,const mafString& name, TType &variable, const mafString& unset_value, const mafString& default_value)
+template <class ArrayPtr, class TType>
+inline TType mafRestoreStringFromTag(ArrayPtr array,const mafString& name, TType &variable, const mafString& unset_value, const mafString& default_value)
 //-------------------------------------------------------------------------
 {
   if (variable==unset_value)
   {
-    if (mafTagItem *item=array->GetTag(name))
+    if (auto item=array->GetTag(name))
     {
       variable = item->GetValue();
     }

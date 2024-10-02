@@ -187,7 +187,7 @@ int mafVMELandmarkCloud::GetNumberOfLandmarks()
       {
         // try counting the number of landmarks (this is for compatibility with 
         // old MSF files
-        mafTagArray *tarray=GetTagArray();
+        auto tarray=GetTagArray();
         m_NumberOfLandmarks=0;
         std::vector<mafString> tag_list;
         tarray->GetTagList(tag_list);
@@ -1461,13 +1461,13 @@ void mafVMELandmarkCloud::InternalRestore(const mafStorageElement& node)
   m_Radius = node[_R("LM_RADIUS")].As<double>();
 }
 //-------------------------------------------------------------------------
-mmaMaterial *mafVMELandmarkCloud::GetMaterial()
+std::shared_ptr<mmaMaterial> mafVMELandmarkCloud::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
-  if (material == NULL)
+  auto material = mmaMaterial::SafeDownCast(GetAttribute(_R("MaterialAttributes")));
+  if (!material)
   {
-    material = mmaMaterial::New();
+    material = mmaMaterial::NewSPtr();
     SetAttribute(_R("MaterialAttributes"), material);
     if (m_Output)
     {

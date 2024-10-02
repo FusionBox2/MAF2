@@ -77,7 +77,7 @@ vtkUnstructuredGrid *mafVMEOutputVolume::GetUnstructuredData()
   return vtkUnstructuredGrid::SafeDownCast(GetVTKData());
 }
 //-------------------------------------------------------------------------
-mmaVolumeMaterial *mafVMEOutputVolume::GetMaterial()
+std::shared_ptr<mmaVolumeMaterial> mafVMEOutputVolume::GetMaterial()
 //-------------------------------------------------------------------------
 {
   // if the VME set the material directly in the output return it
@@ -85,10 +85,10 @@ mmaVolumeMaterial *mafVMEOutputVolume::GetMaterial()
     return  m_Material;
 
   // search for a material attribute in the VME connected to this output
-  return GetVME() ? mmaVolumeMaterial::SafeDownCast(GetVME()->GetAttribute(_R("VolumeMaterialAttributes"))) : NULL;
+  return GetVME() ? mmaVolumeMaterial::SafeDownCast(GetVME()->GetAttribute(_R("VolumeMaterialAttributes"))) : nullptr;
 }
 //-------------------------------------------------------------------------
-void mafVMEOutputVolume::SetMaterial(mmaVolumeMaterial *material)
+void mafVMEOutputVolume::SetMaterial(std::shared_ptr<mmaVolumeMaterial> material)
 //-------------------------------------------------------------------------
 {
   m_Material = material;

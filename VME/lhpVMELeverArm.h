@@ -178,7 +178,7 @@ public:
   double GetDistance();
 
   /** return the meter's attributes */
-  mmaMeter *GetMeterAttributes();
+  std::shared_ptr<mmaMeter> GetMeterAttributes();
 
   mafVME *GetHAxisVME();
   mafVME *GetLineVME();
@@ -188,7 +188,7 @@ public:
   void SetMeterLink(const char *link_name, mafNode *n);
 
   /** Return pointer to material attribute. */
-  mmaMaterial *GetMaterial();
+  std::shared_ptr<mmaMaterial> GetMaterial();
 
 protected:
   lhpVMELeverArm();

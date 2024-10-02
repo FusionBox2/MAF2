@@ -54,7 +54,7 @@ mafVMEItem::mafVMEItem()
 {
   m_DataModified  = false;
   //m_VME=NULL;
-  mafNEW(m_TagArray);
+  m_TagArray = mafTagArray::NewSPtr();
   
   m_Id            = -1;
   m_TimeStamp     = 0;
@@ -81,7 +81,6 @@ mafVMEItem::~mafVMEItem()
 {
   cppDEL(m_DataObserver);
   SetURL(""); // this simply force to garbage collect the linked URL when the item is destroyed
-  mafDEL(m_TagArray);
 }
 
 //-------------------------------------------------------------------------
@@ -137,7 +136,7 @@ double *mafVMEItem::GetBounds()
 mafTagArray *mafVMEItem::GetTagArray()
 //-------------------------------------------------------------------------
 {
-  return m_TagArray;
+  return m_TagArray.get();
 }
 
 //-------------------------------------------------------------------------
@@ -233,7 +232,7 @@ void mafVMEItem::InternalStore(mafStorageElementBuilder& parent)
   parent[_R("TimeStamp")].SetValue(m_TimeStamp);
   parent[_R("Crypting")].SetValue(m_Crypting ? _R("true") : _R("false"));
   parent[_R("Bounds")].SetValue(mafToString(m_Bounds.m_Bounds, 6));
-  parent[_R("TagArray")].SetValue(m_TagArray);
+  parent[_R("TagArray")].SetValue(m_TagArray.get());
 }
 
 //-------------------------------------------------------------------------

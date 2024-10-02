@@ -57,10 +57,10 @@ public:
   void SetTexture(vtkImageData *tex);
 
   /** return material attribute of this surface if present */
-  mmaMaterial *GetMaterial();
+  std::shared_ptr<mmaMaterial> GetMaterial();
 
   /** set the material of the surface */ 
-  void SetMaterial(mmaMaterial *material);
+  void SetMaterial(std::shared_ptr<mmaMaterial> material);
 
   /** IDs for the GUI */
   /*enum 
@@ -79,7 +79,7 @@ public:
 protected: 
   vtkImageData *m_Texture; ///< the optional texture to be applied to the surface
   mafString     m_NumTriangles;
-  mmaMaterial  *m_Material; ///< material object used to store shading propertied to render the surface
+  std::shared_ptr<mmaMaterial> m_Material; ///< material object used to store shading propertied to render the surface
 
   mafGUI *CreateGui() override;
 

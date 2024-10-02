@@ -36,13 +36,11 @@ public:
   void Print(std::ostream& os, const int tabs=0) override;// const;
 
   /** Return the application layout attribute.*/
-  mmaApplicationLayout *GetLayout();
+  std::shared_ptr<mmaApplicationLayout> GetLayout();
 
 protected:
   mafNodeLayout();
   ~mafNodeLayout() override {}
-
-  mmaApplicationLayout *m_AppLayout;
 
 private:
   mafNodeLayout(const mafNodeLayout&); // Not implemented

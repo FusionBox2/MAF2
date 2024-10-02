@@ -227,7 +227,7 @@ mafGUI *lhpPipeLeverArm::CreateGui()
   const mafString color_string[] = {_R("one"), _R("range")};
   int num_choices = 2;
 
-  mmaMeter *meter_attrib = m_MeterVME->GetMeterAttributes();
+  auto meter_attrib = m_MeterVME->GetMeterAttributes();
 
   assert(m_Gui == NULL);
   m_Gui = new mafGUI(this);
@@ -258,7 +258,7 @@ void lhpPipeLeverArm::OnEvent(mafEventBase *maf_event)
 {
   if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
   {
-    mmaMeter *meter_attrib = m_MeterVME->GetMeterAttributes();
+    auto meter_attrib = m_MeterVME->GetMeterAttributes();
     switch(e->GetId()) 
     {
       case ID_SHOW_LABEL:

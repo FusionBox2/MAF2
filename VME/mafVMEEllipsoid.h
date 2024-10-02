@@ -79,7 +79,7 @@ public:
 	static char ** GetIcon();
 	int DeepCopy(mafNode *a) override;
 	mafVME *GetCenterVME();
-	mmaMaterial *GetMaterial();
+	std::shared_ptr<mmaMaterial> GetMaterial();
 	mafVMEEllipsoid();
 	~mafVMEEllipsoid() override;
 	void InternalStore(mafStorageElementBuilder& parent) override;

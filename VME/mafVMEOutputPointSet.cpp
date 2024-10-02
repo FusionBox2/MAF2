@@ -60,7 +60,7 @@ vtkPolyData *mafVMEOutputPointSet::GetPointSetData()
 }
 
 //-------------------------------------------------------------------------
-mmaMaterial *mafVMEOutputPointSet::GetMaterial()
+std::shared_ptr<mmaMaterial> mafVMEOutputPointSet::GetMaterial()
 //-------------------------------------------------------------------------
 {
   // if the VME set the material directly in the output return it
@@ -68,11 +68,11 @@ mmaMaterial *mafVMEOutputPointSet::GetMaterial()
     return  m_Material;
 
   // search for a material attribute in the VME connected to this output
-  return GetVME() ? mmaMaterial::SafeDownCast(GetVME()->GetAttribute(_R("MaterialAttributes"))) : NULL;
+  return GetVME() ? mmaMaterial::SafeDownCast(GetVME()->GetAttribute(_R("MaterialAttributes"))) : nullptr;
 }
 
 //-------------------------------------------------------------------------
-void mafVMEOutputPointSet::SetMaterial(mmaMaterial *material)
+void mafVMEOutputPointSet::SetMaterial(std::shared_ptr<mmaMaterial> material)
 //-------------------------------------------------------------------------
 {
   m_Material = material;

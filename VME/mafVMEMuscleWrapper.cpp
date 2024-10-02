@@ -228,20 +228,15 @@ int mafVMEMuscleWrapperAQ::InternalInitialize()
   return MAF_ERROR;
 }
 //-------------------------------------------------------------------------
-mmaMaterial *mafVMEMuscleWrapperAQ::GetMaterial()
+std::shared_ptr<mmaMaterial> mafVMEMuscleWrapperAQ::GetMaterial()
 //-------------------------------------------------------------------------
 {
-	wxBusyInfo wait("muscle wrapperAQ getting material...");
-	mafSleep(3000);
-  mmaMaterial *material = (mmaMaterial *)GetAttribute(_R("MaterialAttributes"));
-  if (material == NULL)
+  auto material = mmaMaterial::SafeDownCast(GetAttribute(_R("MaterialAttributes")));
+  if (!material)
   {
-    material = mmaMaterial::New();
+    material = mmaMaterial::NewSPtr();
     SetAttribute(_R("MaterialAttributes"), material);
   }
-
-  wxBusyInfo wait2("muscle wrapperAQ getting material done");
-  mafSleep(3000);
   return material;
 }
 //-------------------------------------------------------------------------
@@ -864,21 +859,16 @@ void mafVMEMuscleWrapperAQ::Print(std::ostream& os, const int tabs)
 //  return mafVMEMeter_xpm;
 //}
 //-------------------------------------------------------------------------
-mmaMuscleWrapperAQ *mafVMEMuscleWrapperAQ::GetMeterAttributes()
+std::shared_ptr<mmaMuscleWrapperAQ> mafVMEMuscleWrapperAQ::GetMeterAttributes()
 //-------------------------------------------------------------------------
 {
-	wxBusyInfo wait("muscle wrapperAQ getting attributes...");
-	mafSleep(3000);
-	mmaMuscleWrapperAQ *meter_attributes = (mmaMuscleWrapperAQ *)GetAttribute(_R("MeterAttributes"));
-  if (meter_attributes == NULL)
+	auto meter_attributes = mmaMuscleWrapperAQ::SafeDownCast(GetAttribute(_R("MeterAttributes")));
+  if (!meter_attributes)
   {
-    meter_attributes = mmaMuscleWrapperAQ::New();
+    meter_attributes = mmaMuscleWrapperAQ::NewSPtr();
     SetAttribute(_R("MeterAttributes"), meter_attributes);
   }
-
-  wxBusyInfo wait2("muscle wrapperAQ getting attributes done");
-  mafSleep(3000);
-  return meter_attributes;
+	return meter_attributes;
 }
 //-------------------------------------------------------------------------
 void mafVMEMuscleWrapperAQ::SetMeterMode(int mode)

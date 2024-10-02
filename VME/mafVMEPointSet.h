@@ -93,7 +93,7 @@ public:
   virtual void SetNumberOfPoints(int num,mafTimeStamp t=-1);
 
   /** Return pointer to material attribute. */
-  mmaMaterial *GetMaterial();
+  std::shared_ptr<mmaMaterial> GetMaterial();
 
   /** return icon */
   static char** GetIcon();

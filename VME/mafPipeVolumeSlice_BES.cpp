@@ -205,7 +205,7 @@ void mafPipeVolumeSlice_BES::Create(mafNode *node, mafView *view)
   //data->Update();
   m_Vme->GetOutput()->GetVMELocalBounds(b);
 
-  mmaVolumeMaterial *material = m_VolumeOutput->GetMaterial();
+  auto material = m_VolumeOutput->GetMaterial();
   if (material->m_TableRange[1] < material->m_TableRange[0]) 
   {
     data->GetScalarRange(material->m_TableRange);
@@ -540,7 +540,7 @@ mafPipeVolumeSlice_BES::~mafPipeVolumeSlice_BES()
 void mafPipeVolumeSlice_BES::SetLutRange(double low, double high)
 //----------------------------------------------------------------------------
 {
-  mmaVolumeMaterial *material = m_VolumeOutput->GetMaterial();
+  auto material = m_VolumeOutput->GetMaterial();
   material->m_Window_LUT = high-low;
   material->m_Level_LUT  = (low+high)*.5;
   material->m_TableRange[0] = low;
@@ -563,7 +563,7 @@ void mafPipeVolumeSlice_BES::SetLutRange(double low, double high)
 void mafPipeVolumeSlice_BES::GetLutRange(double range[2])
 //----------------------------------------------------------------------------
 {
-  mmaVolumeMaterial *material = m_VolumeOutput->GetMaterial();
+  auto material = m_VolumeOutput->GetMaterial();
   material->m_ColorLut->GetTableRange(range);
   /*
 	if(m_SliceDirection != SLICE_ORTHO)
@@ -733,7 +733,7 @@ void mafPipeVolumeSlice_BES::OnEvent(mafEventBase *maf_event)
     {
       case ID_LUT_CHOOSER:
       {
-        mmaVolumeMaterial *material = m_VolumeOutput->GetMaterial();
+        auto material = m_VolumeOutput->GetMaterial();
         material->UpdateFromTables();
         {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       }

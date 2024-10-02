@@ -51,17 +51,17 @@ public:
   void Update() override;
 
 	/** return material attribute of this mesh if present */
-	mmaMaterial *GetMaterial();
+	std::shared_ptr<mmaMaterial> GetMaterial();
 
 	/** set the material of the mesh */ 
-	void SetMaterial(mmaMaterial *material);
+	void SetMaterial(std::shared_ptr<mmaMaterial> material);
 
 protected: 
 
   mafString  m_NumCells;
   mafGUI *CreateGui() override;
 
-	mmaMaterial  *m_Material; ///< material object used to store shading propertied to render the surface
+	std::shared_ptr<mmaMaterial>  m_Material; ///< material object used to store shading propertied to render the surface
 
 
 private:

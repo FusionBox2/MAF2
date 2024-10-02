@@ -71,8 +71,8 @@ protected:
   void EnableWidgets();
 
   wxListBox   *m_MetadataList;
-  mafTagArray *m_TagArray;
-  mafTagArray *m_OldTagArray;
+  std::shared_ptr<mafTagArray> m_TagArray;
+  std::shared_ptr<mafTagArray> m_OldTagArray;
   mafTagItem  *m_SelectedTag;
 
   mafString    m_TagName;

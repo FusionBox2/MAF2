@@ -601,7 +601,7 @@ void mafOpBooleanSurface::ShowClipPlane(bool show)
 		{
 
 		}*/
-		mmaMaterial *material = m_ImplicitPlaneGizmo->GetMaterial();
+		auto material = m_ImplicitPlaneGizmo->GetMaterial();
 		material->m_Prop->SetOpacity(0.5);
 		material->m_Opacity = material->m_Prop->GetOpacity();
 
@@ -617,7 +617,7 @@ void mafOpBooleanSurface::ShowClipPlane(bool show)
 	{
 		if(m_ImplicitPlaneGizmo != NULL)
 		{
-			mmaMaterial *material = m_ImplicitPlaneGizmo->GetMaterial();
+			auto material = m_ImplicitPlaneGizmo->GetMaterial();
 			material->m_Prop->SetOpacity(0);
 			material->m_Opacity = material->m_Prop->GetOpacity();
 		}

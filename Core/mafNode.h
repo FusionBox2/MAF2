@@ -313,16 +313,16 @@ public:
     modified by means of nodes APIs */
   const mafChildrenVector *GetChildren() {return &m_Children;}
 
-  typedef std::map<mafString,mafAutoPointer<mafAttribute> > mafAttributesMap;
+  typedef std::map<mafString,std::shared_ptr<mafAttribute> > mafAttributesMap;
 
   /** Set a new attribute. The given attribute is */
-  void SetAttribute(const mafString& name,mafAttribute *a);
+  void SetAttribute(const mafString& name, std::shared_ptr<mafAttribute> a);
 
   /** return an attribute given the name */
-  mafAttribute *GetAttribute(const mafString& name);
+  std::shared_ptr<mafAttribute> GetAttribute(const mafString& name);
 
   /** return an attribute given the name */
-  const mafAttribute *GetAttribute(const mafString& name) const;
+  std::shared_ptr<const mafAttribute> GetAttribute(const mafString& name) const;
 
   /** remove an attibute */
   void RemoveAttribute(const mafString& name);
@@ -337,7 +337,7 @@ public:
     simple way to attach persistent attributes. For more complex attributes
     customized classes should be created, inheriting from mafAttribute
     (e.g. @sa mmaMaterial). */
-  mafTagArray  *GetTagArray();
+  virtual std::shared_ptr<mafTagArray> GetTagArray();
 
   typedef std::map<mafString,mmuNodeLink> mafLinksMap;
 

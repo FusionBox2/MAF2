@@ -187,7 +187,7 @@ void medPipeVolumeSliceBlend::Create(mafNode *node, mafView *view)
   //m_Vme->GetOutput()->GetVTKData()->Update();
   m_Vme->GetOutput()->GetVMELocalBounds(b);
 
-  mmaVolumeMaterial *material = ((mafVMEVolume *)m_Vme)->GetMaterial();
+  auto material = ((mafVMEVolume *)m_Vme)->GetMaterial();
   //If material has a valid table range use it
   if (material->m_TableRange[1] < material->m_TableRange[0]) 
   {
@@ -430,7 +430,7 @@ void medPipeVolumeSliceBlend::SetLutRange(double low, double high)
 //----------------------------------------------------------------------------
 {
   //Update material with new LUT range
-  mmaVolumeMaterial *material = ((mafVMEVolume *)m_Vme)->GetMaterial();
+  auto material = ((mafVMEVolume *)m_Vme)->GetMaterial();
   material->m_Window_LUT = high-low;
   material->m_Level_LUT  = (low+high)*.5;
   material->m_TableRange[0] = low;
@@ -441,7 +441,7 @@ void medPipeVolumeSliceBlend::SetLutRange(double low, double high)
 void medPipeVolumeSliceBlend::GetLutRange(double range[2])
 //----------------------------------------------------------------------------
 {
-  mmaVolumeMaterial *material = ((mafVMEVolume *)m_Vme)->GetMaterial();
+  auto material = ((mafVMEVolume *)m_Vme)->GetMaterial();
   material->m_ColorLut->GetTableRange(range);
 }
 //----------------------------------------------------------------------------
@@ -567,7 +567,7 @@ void medPipeVolumeSliceBlend::OnEvent(mafEventBase *maf_event)
     {
     case ID_LUT_CHOOSER:
       {
-        mmaVolumeMaterial *material = ((mafVMEVolume *)m_Vme)->GetMaterial();
+        auto material = ((mafVMEVolume *)m_Vme)->GetMaterial();
         material->UpdateFromTables();
         {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
       }

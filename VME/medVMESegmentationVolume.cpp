@@ -73,11 +73,12 @@ medVMESegmentationVolume::~medVMESegmentationVolume()
 mmaVolumeMaterial *medVMESegmentationVolume::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  mmaVolumeMaterial *material = (mmaVolumeMaterial *)GetAttribute(_R("VolumeMaterialAttributes"));
-  if (material == NULL)
+  auto material = (mmaVolumeMaterial *)GetAttribute(_R("VolumeMaterialAttributes"));
+  if (!material)
   {
-    material = mmaVolumeMaterial::New();
-    SetAttribute(_R("VolumeMaterialAttributes"), material);
+    auto newMaterial = mmaVolumeMaterial::NewSPtr();
+    material = newMaterial.get();
+    SetAttribute(_R("VolumeMaterialAttributes"), newMaterial);
   }
   return material;
 }
@@ -85,18 +86,16 @@ mmaVolumeMaterial *medVMESegmentationVolume::GetMaterial()
 medAttributeSegmentationVolume *medVMESegmentationVolume::GetVolumeAttribute()
 //-------------------------------------------------------------------------
 {
-  if (this->GetAttribute(_R("SegmentationVolumeData")) != NULL)
+  if (this->GetAttribute(_R("SegmentationVolumeData")))
   {
     m_VolumeAttribute = medAttributeSegmentationVolume::SafeDownCast(this->GetAttribute(_R("SegmentationVolumeData")));
   }
   else
   {
-    m_VolumeAttribute = medAttributeSegmentationVolume::New();
-    this->SetAttribute(_R("SegmentationVolumeData"),m_VolumeAttribute);
-
-    m_VolumeAttribute = medAttributeSegmentationVolume::SafeDownCast(this->GetAttribute(_R("SegmentationVolumeData")));
+    auto newVolumeAttribute = medAttributeSegmentationVolume::NewSPtr();
+    m_VolumeAttribute = newVolumeAttribute.get();
+    this->SetAttribute(_R("SegmentationVolumeData"),newVolumeAttribute);
   }
-
   return m_VolumeAttribute;
 
 }

@@ -149,7 +149,7 @@ void medPipeVolumeMIP::Create(mafNode *node, mafView *view)
   m_Caster->Update();
 
 
-  mmaVolumeMaterial *material = ((mafVMEVolume *)m_Vme)->GetMaterial();
+  auto material = ((mafVMEVolume *)m_Vme)->GetMaterial();
 
   m_OpacityTransferFunction = material->m_OpacityTransferFunction;
 //  m_ColorTransferFunction = material->m_ColorTransferFunction;			//BES 19.2.2008

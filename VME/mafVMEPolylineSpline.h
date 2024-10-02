@@ -100,7 +100,7 @@ public:
   void OrderPolyline(vtkPolyData *polyline);
 
   /** Return pointer to material attribute. */
-  mmaMaterial *GetMaterial();
+  std::shared_ptr<mmaMaterial> GetMaterial();
 
   /** reorganize the points in order to follow an axis */
   void OrderPolylineByAxis(vtkPolyData* polyline, int axis);

@@ -79,7 +79,7 @@ protected:
   vtkActor                *m_Actor;
   vtkActor                *m_ActorBunch;
   vtkActor                *m_OutlineActor;
-  mmaMaterial             *m_Material;
+  std::shared_ptr<mmaMaterial> m_Material;
 
   vtkAppendPolyData        *m_Apd;
   vtkConeSource            *m_ArrowTip;

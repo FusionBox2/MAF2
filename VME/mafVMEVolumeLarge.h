@@ -157,7 +157,7 @@ public:
 	static char** GetIcon();
 
   /** Return pointer to material attribute. */
-  mmaVolumeMaterial *GetMaterial();
+  std::shared_ptr<mmaVolumeMaterial> GetMaterial();
 
 	/** this method stores information about the large data set
 	//it calls SetData to set it to the Snapshot of the give data

@@ -203,7 +203,7 @@ protected:
   vtkActor               *m_BorderActor;
   
 	vtkColorTransferFunction *m_Table;
-  mmaMaterial              *m_PolylineMaterial;
+  std::shared_ptr<mmaMaterial> m_PolylineMaterial;
 	vtkPolyData              *m_PolyFilteredLine;
   mafGUIMaterialButton        *m_MaterialButton;
   std::vector<vtkCaptionActor2D *> m_CaptionActorList;
