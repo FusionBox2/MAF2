@@ -40,15 +40,15 @@ typedef std::vector<mafTimeStamp> mmuTimeVector;
   -
 */
 
-template <class T>
+template <class T, template<typename> typename Ptr = mafAutoPointer>
 class mafTimeMap : public mafObject, public mafTimeStamped
 {
 public:
-  typedef std::map<mafTimeStamp, mafAutoPointer<T> > TimeMap;
-  typedef std::pair<mafTimeStamp, mafAutoPointer<T> > mmuTimePair;
+  typedef std::map<mafTimeStamp, Ptr<T> > TimeMap;
+  typedef std::pair<mafTimeStamp, Ptr<T> > mmuTimePair;
 
-  mafTimeMap();
-  ~mafTimeMap() override;
+  mafTimeMap() = default;
+  ~mafTimeMap() override = default;
 
   //mafAbstractTypeMacro(mafTimeMap<T>,mafObject);
 
@@ -70,7 +70,7 @@ public:
   virtual void PrependItem(T *m);
 
   /** Find an item index given its pointer*/
-  typename mafTimeMap<T>::TimeMap::iterator FindItem(T *m);
+  auto FindItem(T *m){assert(m); return m_TimeMap.find(m->GetTimeStamp());}
 
   /**
     Set the item for a specified time. If no item with the same time exist
@@ -80,7 +80,9 @@ public:
   virtual void InsertItem(T *m);
   
   /** Remove an item given its iterator */
-  virtual void RemoveItem(typename mafTimeMap<T>::TimeMap::iterator it);
+  virtual void RemoveItem(typename TimeMap::iterator it) {m_TimeMap.erase(it); Modified();
+  }
+
 
   /** Remove all the items*/
   virtual void RemoveAllItems();
@@ -107,16 +109,16 @@ public:
   bool Equals(mafTimeMap *vmat);
 
   /** Find the item with the timestamp nearest to t*/
-  typename mafTimeMap<T>::TimeMap::iterator FindNearestItem(mafTimeStamp t);
+  typename TimeMap::iterator FindNearestItem(mafTimeStamp t);
 
   /** Find the item with timestamp <=t*/
-  typename mafTimeMap<T>::TimeMap::iterator FindItemBefore(mafTimeStamp t);
+  typename TimeMap::iterator FindItemBefore(mafTimeStamp t);
 
   /**
     Find the item with the timestamp==t. Returns the item index, and 
     set "item" to its pointer. Return -1 and NULL if not found.
     not*/
-  typename mafTimeMap<T>::TimeMap::iterator FindItem(mafTimeStamp t);
+  auto FindItem(mafTimeStamp t){ return m_TimeMap.find(t); }
 
   /** find and return item corresponding to timestamp t. return NULL if not found. */
   T *GetItem(mafTimeStamp t);
