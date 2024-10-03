@@ -28,8 +28,8 @@ vtkStandardNewMacro(vtkMAFToLinearTransform);
 //----------------------------------------------------------------------------
 vtkMAFToLinearTransform::vtkMAFToLinearTransform()
 {
-  this->m_InputMatrix     = NULL;
-  this->m_InputTransform  = NULL;
+  this->m_InputMatrix;
+  this->m_InputTransform  = nullptr;
   this->m_InverseFlag     = 0;
 }
 
@@ -37,8 +37,7 @@ vtkMAFToLinearTransform::vtkMAFToLinearTransform()
 vtkMAFToLinearTransform::~vtkMAFToLinearTransform()
 //----------------------------------------------------------------------------
 {
-  this->SetInputMatrix((mafMatrix *)NULL);
-  this->SetInputTransform((mafTransformBase *)NULL);
+  this->SetInputTransform(nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -54,17 +53,12 @@ void vtkMAFToLinearTransform::PrintSelf(ostream& os, vtkIndent indent)
 }
 
 //----------------------------------------------------------------------------
-void vtkMAFToLinearTransform::SetInputMatrix(mafMatrix *mat)
+void vtkMAFToLinearTransform::SetInputMatrix(std::shared_ptr<mafMatrix> mat)
 //----------------------------------------------------------------------------
 {
   if (mat!=m_InputMatrix)
   {
-    vtkDEL(m_InputMatrix);
     m_InputMatrix=mat;
-    if (mat != NULL)
-    {
-      mat->Register(this);
-    }
     Modified();
   }
 }

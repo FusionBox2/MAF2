@@ -115,17 +115,17 @@ void mafMatrixInterpolator::InternalItemUpdate()
 
   if (array)
   {
-    mafMatrix *item = array->GetItemBefore(GetTimeStamp());
+    auto item = array->GetItemBefore(GetTimeStamp());
     UpdateCurrentItem(item);
   }
   
 }
 
 //-------------------------------------------------------------------------
-void mafMatrixInterpolator::SetCurrentItem(mafMatrix *data)
+void mafMatrixInterpolator::SetCurrentItem(std::shared_ptr<mafMatrix> data)
 //------------------------------------------------------------------------------
 {
-  if (data==m_CurrentItem.get())
+  if (data==m_CurrentItem)
     return;
 
   m_CurrentItem=data;
@@ -133,12 +133,12 @@ void mafMatrixInterpolator::SetCurrentItem(mafMatrix *data)
 }
 
 //-------------------------------------------------------------------------
-void mafMatrixInterpolator::UpdateCurrentItem(mafMatrix *item)
+void mafMatrixInterpolator::UpdateCurrentItem(std::shared_ptr<mafMatrix> item)
 //------------------------------------------------------------------------------
 {
   if (item)
   {	
-    if (item!=m_CurrentItem.get())
+    if (item!=m_CurrentItem)
     {
       SetCurrentItem(item);
     }
@@ -160,7 +160,7 @@ void mafMatrixInterpolator::InternalUpdate()
   //InternalItemUpdate(); already called by Update
   if (m_CurrentItem.get())
   {
-    m_Matrix->DeepCopy(GetCurrentItem());
+    m_Matrix->DeepCopy(*GetCurrentItem());
   }
   else
   {

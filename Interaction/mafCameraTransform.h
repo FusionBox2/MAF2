@@ -160,35 +160,35 @@ public:
   virtual int DeepCopy(mafCameraTransform *trans);
   
   /** Change the given matrix to follow camera movements */
-  void UpdatePoseMatrix(mafMatrix *matrix,mafMatrix *old_view_matrix, mafMatrix *new_view_matrix);
+  void UpdatePoseMatrix(std::shared_ptr<mafMatrix> matrix, std::shared_ptr<mafMatrix> old_view_matrix, std::shared_ptr<mafMatrix> new_view_matrix);
 
   /** change matrix orientation to create a transform making points to be
       oriented according to camera orientation. Translation is left unchanged
       while scale is reset to 1. The input matrix posiiton is used to compute
       the direction, in case call AutoPosition() before of this. */
-  static void AutoOrientation(mafMatrix *matrix,vtkRenderer *ren);
-  void AutoOrientation() {AutoOrientation(m_Matrix.get(),m_Renderer);}
+  static void AutoOrientation(std::shared_ptr<mafMatrix> matrix,vtkRenderer *ren);
+  void AutoOrientation() {AutoOrientation(m_Matrix,m_Renderer);}
 
   /** change matrix translation to create a transform making points to be
       centered into the camera's focal point. Orientation and scale are 
       left unchanged */
-  static void AutoPosition(mafMatrix *matrix,vtkRenderer *ren, int mode=ATTACH_TO_FOCAL_POINT);
-  void AutoPosition() {AutoPosition(m_Matrix.get(),m_Renderer,m_PositionMode);}
+  static void AutoPosition(std::shared_ptr<mafMatrix> matrix,vtkRenderer *ren, int mode=ATTACH_TO_FOCAL_POINT);
+  void AutoPosition() {AutoPosition(m_Matrix,m_Renderer,m_PositionMode);}
 
   /** Change matrix scale to create a transform making two boxes 
       to fit.Translation and Orientation are left unchanged.
       Fitting can occur according to different modalities.
       @sa ComputeScaling() */ 
-  static void AutoFitting(mafMatrix *matrix,mafOBB *tracked_bounds,vtkRenderer *ren,int mode=MIN_SCALE);  
-  void AutoFitting() {AutoFitting(m_Matrix.get(),m_Bounds,m_Renderer,m_FittingMode);}
+  static void AutoFitting(std::shared_ptr<mafMatrix> matrix,mafOBB *tracked_bounds,vtkRenderer *ren,int mode=MIN_SCALE);
+  void AutoFitting() {AutoFitting(m_Matrix,m_Bounds,m_Renderer,m_FittingMode);}
 
   /** Change matrix scale to create a transform making two boxes 
       to fit. Translation and Orientation are left unchanged. This specific algrothim
       is thought to be used with AutoPosition() and ATTACH_TO_FOCAL_POINT mode.
       Fitting can occur according to different modalities.
       @sa ComputeScaling() */
-  static void AutoFitting2(mafMatrix *matrix,mafOBB *tracked_bounds,vtkRenderer *ren,int mode=ANISOTROPIC);
-  void AutoFitting2() {AutoFitting2(m_Matrix.get(),m_Bounds,m_Renderer,m_FittingMode);}
+  static void AutoFitting2(std::shared_ptr<mafMatrix> matrix,mafOBB *tracked_bounds,vtkRenderer *ren,int mode=ANISOTROPIC);
+  void AutoFitting2() {AutoFitting2(m_Matrix,m_Bounds,m_Renderer,m_FittingMode);}
 
   /** Compute scale between two boxes according to given modality:
     - 0 select isotropic min scale
@@ -220,7 +220,7 @@ protected:
 
   float         m_OldViewAngle;
   double        m_OldDistance;
-  mafMatrix*    m_OldViewMatrix;
+  std::shared_ptr<mafMatrix> m_OldViewMatrix;
 
   vtkCallbackCommand* m_EventRouter;
 

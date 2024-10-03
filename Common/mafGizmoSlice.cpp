@@ -81,7 +81,7 @@ void mafGizmoSlice::CreateGizmoSlice(mafNode *imputVme, mafBaseEventHandler *lis
 
   m_CentralClipFactor = centralClipfactor;
 
-  mafNEW(m_GizmoHandleCenterMatrix);
+  m_GizmoHandleCenterMatrix = mafMatrix::NewSPtr();
 
   // default gizmo moving modality set to SNAP
   m_MovingModality = SNAP;
@@ -129,7 +129,6 @@ void mafGizmoSlice::SetGizmoEnableMoving(bool enable)
 void mafGizmoSlice::DestroyGizmoSlice()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_GizmoHandleCenterMatrix);
   m_VmeGizmo->SetBehavior(NULL);
   mafDEL(m_GizmoBehavior);
 
@@ -412,7 +411,7 @@ void mafGizmoSlice::InitSnapArray(mafVME *vol, int axis)
 void mafGizmoSlice::SetHandleCenterMatrix(mafMatrix *m)
 //----------------------------------------------------------------------------
 {
-  m_GizmoHandleCenterMatrix->DeepCopy(m);
+  m_GizmoHandleCenterMatrix->DeepCopy(*m);
 }
 //----------------------------------------------------------------------------
 void mafGizmoSlice::OnEvent(mafEventBase *maf_event)
@@ -586,11 +585,11 @@ void mafGizmoSlice::SetOnSnapArray(int axis)
   }
   m_GizmoHandleCenterMatrix->SetElement(axis, 3, m_GizmoHandleCenterMatrix->GetElement(axis, 3) + translation);
 
-  mafMatrix matrix;
-  matrix.SetElement(axis, 3, translation);
+  auto matrix = mafMatrix::NewSPtr();
+  matrix->SetElement(axis, 3, translation);
   mafEvent event;
   event.SetId(ID_TRANSFORM);
-  event.SetMatrix(&matrix);
+  event.SetMatrix(matrix);
   OnEvent(&event);
 }
 
@@ -620,9 +619,9 @@ void mafGizmoSlice::SetInput( mafVME *vme )
   }
 }
 //----------------------------------------------------------------------------
-void mafGizmoSlice::SetPosition( mafMatrix *mat )
+void mafGizmoSlice::SetPosition(const mafMatrix& mat )
 //----------------------------------------------------------------------------
 {
   // update the gizmo local position
-  m_VmeGizmo->SetMatrix(*mat);		 
+  m_VmeGizmo->SetMatrix(mat);		 
 }

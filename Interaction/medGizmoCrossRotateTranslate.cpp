@@ -89,13 +89,13 @@ void medGizmoCrossRotateTranslate::SetRefSys(mafVME *refSys)
 	m_GizmoCrossRotate->SetRefSys(refSys);
 }
 
-void medGizmoCrossRotateTranslate::SetAbsPose( mafMatrix *absPose)
+void medGizmoCrossRotateTranslate::SetAbsPose(std::shared_ptr<mafMatrix> absPose)
 {
 	m_GizmoCrossRotate->SetAbsPose(absPose);
 	m_GizmoCrossTranslate->SetAbsPose(absPose);
 }
 
-mafMatrix * medGizmoCrossRotateTranslate::GetAbsPose()
+std::shared_ptr<mafMatrix> medGizmoCrossRotateTranslate::GetAbsPose()
 {
 	return m_GizmoCrossTranslate->GetAbsPose();
 }

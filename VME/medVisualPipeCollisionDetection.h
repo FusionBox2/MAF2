@@ -111,8 +111,8 @@ protected:
   vtkPolyDataMapper *m_Mapper;
   vtkActor *m_Actor;
   vtkMEDCollisionDetectionFilter *m_CollisionFilter;
-  mafMatrix *m_Matrix0;
-  std::vector<mafMatrix *> m_Matrix1;
+  std::shared_ptr<mafMatrix> m_Matrix0;
+  std::vector<std::shared_ptr<mafMatrix> > m_Matrix1;
   bool m_ShowSurfaceToCollide;
   bool m_EnablePipeUpdate;
   wxString m_ScalarNameToExclude;

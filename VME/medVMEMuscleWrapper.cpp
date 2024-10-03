@@ -584,7 +584,7 @@ void medVMEMuscleWrapper::InternalUpdate()
           pItem->pCurves[i] = FixPolyline(pPoly);
 
           //transform coordinates into output reference system
-          TransformPoints(pItem->pCurves[i]->GetPoints(), pItem->pVmeRP_CP[i]->GetOutput()->GetAbsMatrix());
+          TransformPoints(pItem->pCurves[i]->GetPoints(), *pItem->pVmeRP_CP[i]->GetOutput()->GetAbsMatrix());
           pItem->VMECheckSums[i] = nNewCheckSum;
           bCurvesUpdated = true;
         }      
@@ -659,7 +659,7 @@ void medVMEMuscleWrapper::InternalUpdate()
       //BES: 13.5.2009 - transform muscle points
       vtkPoints* pTrPoints = pPoly->GetPoints()->NewInstance();
       pTrPoints->DeepCopy(pPoly->GetPoints());
-      TransformPoints(pTrPoints, m_MuscleVme->GetOutput()->GetAbsMatrix());
+      TransformPoints(pTrPoints, *m_MuscleVme->GetOutput()->GetAbsMatrix());
      
       vtkPolyData* pTransformedMuscle = vtkPolyData::New();
       pTransformedMuscle->ShallowCopy(pPoly);
@@ -914,7 +914,7 @@ vtkPoints* medVMEMuscleWrapper::CreatePointsFromVME(mafVME* vme)
     //returned coordinates are local, so we will need to convert them to 
     //absolute (world coordinates) and from them to local coordinates 
     //of our output (corresponds to the coordinate system of input muscle)
-    TransformPoints(pRet, vme->GetOutput()->GetAbsMatrix());   
+    TransformPoints(pRet, *vme->GetOutput()->GetAbsMatrix());   
   }
 
   return pRet;
@@ -1059,14 +1059,14 @@ bool medVMEMuscleWrapper::GetRefSysVMEOrigin(mafVME* vme, double* origin)
 //from one reference system into another one.
 void medVMEMuscleWrapper::TransformPoints(
   vtkPoints* inPoints, vtkPoints* outPoints, 
-  const mafMatrix* inTransform, const mafMatrix* outTransform)
+  const mafMatrix& inTransform, const mafMatrix& outTransform)
 //------------------------------------------------------------------------
 {
   mafTransform transform;
-  transform.SetMatrix(*outTransform);  
+  transform.SetMatrix(outTransform);  
   transform.Invert();
 
-  transform.Concatenate(*inTransform, 0);
+  transform.Concatenate(inTransform, 0);
 
   double x[3];
   int N = inPoints->GetNumberOfPoints();

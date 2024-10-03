@@ -84,11 +84,11 @@ public:
 
   /** Set the gizmo abs pose */
   void SetAbsPose(mafMatrix *absPose);
-  mafMatrix *GetAbsPose();
+  std::shared_ptr<mafMatrix> GetAbsPose();
 
   /** Set the gizmo local pose*/
   void SetPose(mafMatrix *pose);
-	mafMatrix *GetPose();
+  std::shared_ptr<mafMatrix> GetPose();
 
 protected:
   /** Set gizmo color*/

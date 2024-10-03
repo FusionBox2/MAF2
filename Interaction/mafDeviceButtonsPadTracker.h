@@ -204,7 +204,7 @@ protected:
 
   int AvatarChooser(mafString& avatar_name,mafString& avatar_type);
 
-  mafMatrix*            m_LastPoseMatrix; ///< stores the last pose matrix
+  std::shared_ptr<mafMatrix> m_LastPoseMatrix; ///< stores the last pose matrix
   int                   m_LastPose;       ///< Flag used when last pose has not been served yet
   mafTimeStamp          m_LastMoveTime;   ///< Time stamp of last MoveEvent
   std::mutex          m_LastPoseMutex;

@@ -126,19 +126,19 @@ public:
   double GetLength();
    
   /** Set the gizmo abs pose */
-  void SetAbsPose(mafMatrix *absPose);
+  void SetAbsPose(std::shared_ptr<mafMatrix> absPose);
   /** Get the gizmo abs pose */
-  mafMatrix *GetAbsPose();
+  std::shared_ptr<mafMatrix> GetAbsPose();
 
   /** Set the gizmo local pose*/
-  void SetPose(mafMatrix *pose);
+  void SetPose(std::shared_ptr<mafMatrix> pose);
   /** Get the gizmo abs pose */
-  mafMatrix *GetPose();
+  std::shared_ptr<mafMatrix> GetPose();
 
   /** Set the constrain ref sys */
-  void SetConstrainRefSys(mafMatrix *constrain);
+  void SetConstrainRefSys(std::shared_ptr<mafMatrix> constrain);
   /** Get the constrain ref sys */
-  mafMatrix *GetConstrainRefSys();
+  std::shared_ptr<mafMatrix> GetConstrainRefSys();
 
 	enum CONSTRAINT_MODALITY {BOUNDS = 0, FREE};
 

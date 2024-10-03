@@ -146,7 +146,7 @@ void mafGizmoBoundingBox::SetPose(mafMatrix *pose)
 }
 
 //----------------------------------------------------------------------------
-mafMatrix *mafGizmoBoundingBox::GetAbsPose()
+std::shared_ptr<mafMatrix> mafGizmoBoundingBox::GetAbsPose()
 //----------------------------------------------------------------------------
 {
   return m_BoxGizmo->GetOutput()->GetAbsMatrix();
@@ -193,7 +193,7 @@ void mafGizmoBoundingBox::SetBounds(double bounds[6])
   m_BoxGizmo->GetOutput()->Update();
 }
 //----------------------------------------------------------------------------
-mafMatrix * mafGizmoBoundingBox::GetPose()
+std::shared_ptr<mafMatrix> mafGizmoBoundingBox::GetPose()
 //----------------------------------------------------------------------------
 {
   return m_BoxGizmo->GetOutput()->GetMatrix();

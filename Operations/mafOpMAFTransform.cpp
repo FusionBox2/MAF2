@@ -395,7 +395,7 @@ void mafOpMAFTransform::OnEventGizmoTranslate(mafEventBase *maf_event)
       if (!m_TestMode)
       {
 	      // update gui 
-	      m_GuiTransformTextEntries->SetAbsPose(((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
+	      m_GuiTransformTextEntries->SetAbsPose(*((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
       }
 	  }
     break;
@@ -423,7 +423,7 @@ void mafOpMAFTransform::OnEventGizmoRotate(mafEventBase *maf_event)
       if (!m_TestMode)
       {
 	      // update gui 
-	      m_GuiTransformTextEntries->SetAbsPose(((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
+	      m_GuiTransformTextEntries->SetAbsPose(*((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
       }
 	  }
     break;
@@ -447,7 +447,7 @@ void mafOpMAFTransform::OnEventGizmoScale(mafEventBase *maf_event)
       if (!m_TestMode)
       {
 	      // update gui 
-	      m_GuiTransformTextEntries->SetAbsPose(&m_NewAbsMatrix);
+	      m_GuiTransformTextEntries->SetAbsPose(m_NewAbsMatrix);
 	      {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
       }
 	  }
@@ -479,7 +479,7 @@ void mafOpMAFTransform::OnEventGuiTransform(mafEventBase *maf_event)
       if (!m_TestMode)
       {
 	      m_GuiTransform->SetRefSys(m_RefSysVME);      
-	      m_GuiTransformTextEntries->SetAbsPose(((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
+	      m_GuiTransformTextEntries->SetAbsPose(*((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
       }
     }
     break;
@@ -505,7 +505,7 @@ void mafOpMAFTransform::OnEventGuiSaveRestorePose(mafEventBase *maf_event)
       m_GuiTransform->SetRefSys(m_RefSysVME);
 
       // update gui 
-      m_GuiTransformTextEntries->SetAbsPose(((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
+      m_GuiTransformTextEntries->SetAbsPose(*((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
       
       m_NewAbsMatrix = *(m_RefSysVME->GetOutput()->GetAbsMatrix());
     }
@@ -528,20 +528,20 @@ void mafOpMAFTransform::OnEventGuiTransformTextEntries(mafEventBase *maf_event)
     {
       case ID_TRANSFORM: // from m_GuiTransformTextEntries
       {
-        mafMatrix absPose;
-        absPose = *(e->GetMatrix());
-        absPose.SetTimeStamp(m_CurrentTime);
+        auto absPose = mafMatrix::NewSPtr();
+        *absPose = *(e->GetMatrix());
+        absPose->SetTimeStamp(m_CurrentTime);
 
         // update gizmos positions if refsys is local
         if (m_RefSysVME == mafVME::SafeDownCast(m_Input))
         {      
-          m_GizmoTranslate->SetAbsPose(&absPose);
-          m_GizmoRotate->SetAbsPose(&absPose);
-          m_GizmoScale->SetAbsPose(&absPose);
+          m_GizmoTranslate->SetAbsPose(absPose);
+          m_GizmoRotate->SetAbsPose(absPose);
+          m_GizmoScale->SetAbsPose(absPose);
           m_GuiTransform->SetRefSys(m_RefSysVME);
         }
 
-        m_NewAbsMatrix = absPose;
+        m_NewAbsMatrix = *absPose;
       }
       break;
       default:

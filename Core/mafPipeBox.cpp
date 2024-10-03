@@ -247,7 +247,7 @@ void mafPipeBox::OnEvent(mafEventBase *maf_event)
           max_vector[1] = b[3];
           max_vector[2] = b[5];
           min_vector[3] = max_vector[3] = 1;
-          mafMatrix *absMat = m_Vme->GetOutput()->GetAbsMatrix();
+          auto absMat = m_Vme->GetOutput()->GetAbsMatrix();
           mafMatrix invAbsMat;
           mafMatrix::Invert(*absMat, invAbsMat);
           invAbsMat.MultiplyPoint(min_vector, min_vector);

@@ -39,17 +39,17 @@ public:
   mafAbstractTypeMacro(mafInteractor6DOF,mafInteractorGenericInterface);
   
   /**  Start the interaction with the selected object */
-  virtual int StartInteraction(mafDeviceButtonsPadTracker *tracker,mafMatrix *pose=NULL);
+  virtual int StartInteraction(mafDeviceButtonsPadTracker *tracker, std::shared_ptr<mafMatrix> pose=nullptr);
   
   /**  Stop the interaction */
-  virtual int StopInteraction(mafDeviceButtonsPadTracker *tracker,mafMatrix *pose=NULL);
+  virtual int StopInteraction(mafDeviceButtonsPadTracker *tracker, std::shared_ptr<mafMatrix> pose=nullptr);
   
   /**  Set/Get the current pose matrix */
-  virtual void SetTrackerPoseMatrix(mafMatrix *pose);
-  mafMatrix *GetTrackerPoseMatrix() {return this->m_TrackerPoseMatrix;}
+  virtual void SetTrackerPoseMatrix(const mafMatrix& pose);
+  std::shared_ptr<mafMatrix> GetTrackerPoseMatrix() {return this->m_TrackerPoseMatrix;}
   
   /**  Stores the current m_TrackerPoseMatrix. */
-  void TrackerSnapshot(mafMatrix *pose);
+  void TrackerSnapshot(const mafMatrix& pose);
   
   /**
    Update the delta transform, i.e. transform from last snapshot */
@@ -88,10 +88,10 @@ protected:
   /** reimplemented to manage interaction events from trackers */
   int OnStopInteraction(mafEventInteraction *event) override;
   
-  mafMatrix           *m_TrackerPoseMatrix;  
-  mafMatrix           *m_StartTrackerPoseMatrix;
-  mafMatrix           *m_InverseTrackerPoseMatrix;
-  mafMatrix			      *m_InversePoseMatrix;
+  std::shared_ptr<mafMatrix> m_TrackerPoseMatrix;  
+  std::shared_ptr<mafMatrix> m_StartTrackerPoseMatrix;
+  std::shared_ptr<mafMatrix> m_InverseTrackerPoseMatrix;
+  std::shared_ptr<mafMatrix> m_InversePoseMatrix;
   std::shared_ptr<mafTransform> m_DeltaTransform; 
   std::shared_ptr<mafTransform> m_TmpTransform;   
   

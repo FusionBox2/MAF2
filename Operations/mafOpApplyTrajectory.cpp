@@ -59,17 +59,12 @@ mafOpApplyTrajectory::mafOpApplyTrajectory(const mafString& label) : Superclass(
 	m_Canundo	= true;
 	m_File		= _R("");
 	m_FileDir = mafGetApplicationDirectory() + _R("/Data/");
-  m_OriginalMatrix = NULL;
   m_VME = NULL;
 }
 //----------------------------------------------------------------------------
 mafOpApplyTrajectory::~mafOpApplyTrajectory()
 //----------------------------------------------------------------------------
 {
-  if (m_OriginalMatrix != NULL)
-  {
-    mafDEL(m_OriginalMatrix);
-  }
 }
 //----------------------------------------------------------------------------
 mafOp* mafOpApplyTrajectory::Copy()   
@@ -285,8 +280,8 @@ int mafOpApplyTrajectory::Read()
     wxBusyInfo wait("Working, please wait ..");
   }
 
-  mafNEW(m_OriginalMatrix);
-  m_OriginalMatrix->DeepCopy(((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
+  m_OriginalMatrix = mafMatrix::NewSPtr();
+  m_OriginalMatrix->DeepCopy(*((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
 
   mafString path, name, ext;
   mafSplitPath(m_File,&path,&name,&ext);
@@ -349,8 +344,8 @@ int mafOpApplyTrajectory::ApplyTrajectoriesFromVME()
     wxBusyInfo wait("Please wait, working...");
   }
 
-  mafNEW(m_OriginalMatrix);
-  m_OriginalMatrix->DeepCopy(((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
+  m_OriginalMatrix = mafMatrix::NewSPtr();
+  m_OriginalMatrix->DeepCopy(*((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
 
   std::vector<mafTimeStamp> time_stamps;
   m_VME->GetTimeStamps(time_stamps);

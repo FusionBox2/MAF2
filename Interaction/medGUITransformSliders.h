@@ -80,7 +80,7 @@ public:
   void Reset() override;
 
   /** Set abs pose and update position, orientation and scale text entries according to current reference system. */
-  void SetAbsPose(mafMatrix *absPose, mafTimeStamp timeStamp = -1);
+  void SetAbsPose(std::shared_ptr<mafMatrix> absPose, mafTimeStamp timeStamp = -1);
 
   /** Return the current position */
   void GetPosition(double pos[3]);
@@ -119,6 +119,6 @@ protected:
 
   bool m_EnableScaling;
 
-  mafMatrix *m_OldAbsMatrix;
+  std::shared_ptr<mafMatrix> m_OldAbsMatrix;
 };
 #endif

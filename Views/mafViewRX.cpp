@@ -374,7 +374,7 @@ void mafViewRX::CameraUpdate()
     if (DEBUG_MODE == true)
         mafLogMessage(_M(stringStream.str().c_str()));
 
-    if (m_NewABSPose.Equals(&m_OldABSPose))
+    if (m_NewABSPose.Equals(m_OldABSPose))
     { 
       if (DEBUG_MODE == true)
         mafLogMessage(_M("Calling Superclass Camera Update "));

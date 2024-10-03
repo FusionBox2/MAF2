@@ -94,8 +94,8 @@ public:
 
   /**
   Set/Get the gizmo pose: works by setting the pose to all gizmo subcomponents */
-  void SetAbsPose(mafMatrix *absPose, mafTimeStamp ts = -1);
-  mafMatrix *GetAbsPose() override;
+  void SetAbsPose(std::shared_ptr<mafMatrix> absPose, mafTimeStamp ts = -1);
+  std::shared_ptr<mafMatrix> GetAbsPose() override;
   
   //----------------------------------------------------------------------------
   // RefSys
@@ -184,7 +184,7 @@ protected:
 
   /**
   Pivot point position; */
-  mafMatrix *m_PivotPose;
+  std::shared_ptr<mafMatrix> m_PivotPose;
 
   /** Send matrix to postmultiply to listener */
   void SendTransformMatrixFromGui(mafEventBase *maf_event);

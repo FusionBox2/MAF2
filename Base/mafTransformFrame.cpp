@@ -65,11 +65,11 @@ void mafTransformFrame::SetInput(std::shared_ptr<mafTransformBase> frame)
 }
 
 //----------------------------------------------------------------------------
-void mafTransformFrame::SetInput(mafMatrix *frame)
+void mafTransformFrame::SetInput(const mafMatrix& matrix)
 //----------------------------------------------------------------------------
 {
   auto trans= mafTransform::NewSPtr();
-  trans->SetMatrix(*frame);
+  trans->SetMatrix(matrix);
   SetInput(trans);
 }
 
@@ -82,12 +82,12 @@ void mafTransformFrame::SetInputFrame(std::shared_ptr<mafTransformBase> frame)
 }
 
 //----------------------------------------------------------------------------
-void mafTransformFrame::SetInputFrame(mafMatrix *matrix)
+void mafTransformFrame::SetInputFrame(const mafMatrix& matrix)
 //----------------------------------------------------------------------------
 {
   //mafTransform *trans= new mafTransform;
   auto trans= mafTransform::NewSPtr();
-  trans->SetMatrix(*matrix);
+  trans->SetMatrix(matrix);
   SetInputFrame(trans);
 }
 
@@ -99,12 +99,12 @@ void mafTransformFrame::SetTargetFrame(std::shared_ptr<mafTransformBase> frame)
 }
 
 //----------------------------------------------------------------------------
-void mafTransformFrame::SetTargetFrame(mafMatrix *matrix)
+void mafTransformFrame::SetTargetFrame(const mafMatrix& matrix)
 //----------------------------------------------------------------------------
 {
   //mafTransform *trans= new mafTransform;
   auto trans = mafTransform::NewSPtr();
-  trans->SetMatrix(*matrix);
+  trans->SetMatrix(matrix);
   SetTargetFrame(trans);
 }
 

@@ -63,7 +63,7 @@ mafGizmoRotateFan::mafGizmoRotateFan(mafVME *input, mafBaseEventHandler *listene
   m_InputVme    = input;
 
   // get the input vme abs matrix
-  mafMatrix *absInputMatrix = m_InputVme->GetOutput()->GetAbsMatrix();
+  auto absInputMatrix = m_InputVme->GetOutput()->GetAbsMatrix();
   
   // create refsys from abs input matrix
   m_RefSys = new mafRefSys(absInputMatrix->GetVTKMatrix());
@@ -258,7 +258,8 @@ void mafGizmoRotateFan::OnEvent(mafEventBase *maf_event)
 
           // get the picked position from the event
           double pos[3];
-          mafTransform::GetPosition(*mafMatrix::SafeDownCast(e->GetMafObject()),pos);
+#pragma message("SUPER RISKY CAST Object to Matrix")
+          //mafTransform::GetPosition(*mafMatrix::SafeDownCast(e->GetMafObject()),pos);
 
           // get the start theta
           double offsetAngle = PointPickedToStartTheta(pos[0], pos[1], pos[2]);
@@ -416,7 +417,7 @@ double mafGizmoRotateFan::PointPickedToStartTheta(double xp, double yp, double z
   return ((startThetaDeg > 0) ? startThetaDeg : (360 + startThetaDeg));  
 }
 //----------------------------------------------------------------------------
-void mafGizmoRotateFan::SetAbsPose(mafMatrix *absPose )
+void mafGizmoRotateFan::SetAbsPose(std::shared_ptr<mafMatrix> absPose )
 //----------------------------------------------------------------------------
 {
   m_GizmoFan->SetAbsMatrix(*absPose);
@@ -430,7 +431,7 @@ void mafGizmoRotateFan::SetInput(mafVME *vme)
  SetAbsPose(vme->GetOutput()->GetAbsMatrix());
 }
 //----------------------------------------------------------------------------
-void mafGizmoRotateFan::SetRefSysMatrix(mafMatrix *matrix)
+void mafGizmoRotateFan::SetRefSysMatrix(std::shared_ptr<mafMatrix> matrix)
 //----------------------------------------------------------------------------
 {  
   m_RefSys->SetTypeToCustom(matrix);

@@ -74,8 +74,8 @@ void mafInteractor6DOFCameraMove::OnEvent(mafEventBase *event)
       if (!m_CurrentCamera)
         return;
 
-	    mafMatrix *tracker_pose=e->GetMatrix();
-      SetTrackerPoseMatrix(tracker_pose);
+	    auto tracker_pose=e->GetMatrix();
+      SetTrackerPoseMatrix(*tracker_pose);
       Update();
       return;
 
@@ -85,7 +85,7 @@ void mafInteractor6DOFCameraMove::OnEvent(mafEventBase *event)
   Superclass::OnEvent(event);
 }
 //------------------------------------------------------------------------------
-int mafInteractor6DOFCameraMove::StartInteraction(mafDeviceButtonsPadTracker *tracker,mafMatrix *pose)
+int mafInteractor6DOFCameraMove::StartInteraction(mafDeviceButtonsPadTracker *tracker, std::shared_ptr<mafMatrix> pose)
 //------------------------------------------------------------------------------
 {
   //assert(ObjectPoseMatrix);
@@ -205,7 +205,7 @@ void mafInteractor6DOFCameraMove::Update()
   }
 
   // Store current pose matrix
-  TrackerSnapshot(m_TrackerPoseMatrix);
+  TrackerSnapshot(*m_TrackerPoseMatrix);
 
 
 

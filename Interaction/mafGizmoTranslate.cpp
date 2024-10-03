@@ -67,9 +67,9 @@ mafGizmoTranslate::mafGizmoTranslate(mafVME* input, mafBaseEventHandler *listene
   this->m_ActiveGizmoComponent = -1;
   this->SetModalityToLocal();
 
-  mafMatrix *absInputMatrix = m_InputVME->GetOutput()->GetAbsMatrix();
-  mafNEW(m_PivotPose);
-  m_PivotPose->DeepCopy(absInputMatrix);
+  auto absInputMatrix = m_InputVME->GetOutput()->GetAbsMatrix();
+  m_PivotPose = mafMatrix::NewSPtr();
+  m_PivotPose->DeepCopy(*absInputMatrix);
 
   for (int i = 0; i < 3; i++)
   {
@@ -110,7 +110,6 @@ mafGizmoTranslate::~mafGizmoTranslate()
     cppDEL(m_GTAxis[i]);
     cppDEL(m_GTPlane[i]);
   }
-  mafDEL(m_PivotPose);
   cppDEL(m_GuiGizmoTranslate);
 }
 //----------------------------------------------------------------------------
@@ -181,12 +180,12 @@ void mafGizmoTranslate::OnEventGizmoComponents(mafEventBase *maf_event)
             m_ActiveGizmoComponent = ZN_PLANE;
           }
           // Store pivot position
-          m_PivotPose->DeepCopy(m_GTAxis[m_ActiveGizmoComponent]->GetAbsPose());
+          m_PivotPose->DeepCopy(*m_GTAxis[m_ActiveGizmoComponent]->GetAbsPose());
         }
         else if (arg == mafInteractorGenericMouse::MOUSE_MOVE)
         {     
           // matrix holding abs pose after mouse move event
-          mafAutoPointer<mafMatrix> newAbsMatr = mafMatrix::New();
+          auto newAbsMatr = mafMatrix::NewSPtr();
           if (this->m_Modality == G_LOCAL) // gizmo working in local mode; all its components are moving
                                          // in a single mouse move event
           {
@@ -202,7 +201,7 @@ void mafGizmoTranslate::OnEventGizmoComponents(mafEventBase *maf_event)
             newAbsMatr->SetTimeStamp(GetAbsPose()->GetTimeStamp());
 
             // set the new pose to the gizmo
-            SetAbsPose(newAbsMatr.get());
+            SetAbsPose(newAbsMatr);
             currTr->Delete();
           }          
           else
@@ -221,7 +220,7 @@ void mafGizmoTranslate::OnEventGizmoComponents(mafEventBase *maf_event)
               newAbsMatr->SetTimeStamp(GetAbsPose()->GetTimeStamp());
 
               // set the new pose to the gizmo
-              m_GTAxis[m_ActiveGizmoComponent]->SetAbsPose(newAbsMatr.get());
+              m_GTAxis[m_ActiveGizmoComponent]->SetAbsPose(newAbsMatr);
               currTr->Delete();
             }
             else if (m_ActiveGizmoComponent == XN_PLANE ||  m_ActiveGizmoComponent == YN_PLANE || m_ActiveGizmoComponent == ZN_PLANE)
@@ -237,12 +236,12 @@ void mafGizmoTranslate::OnEventGizmoComponents(mafEventBase *maf_event)
               newAbsMatr->SetTimeStamp(GetAbsPose()->GetTimeStamp());
 
               // set the new pose to the gizmo
-              m_GTPlane[m_ActiveGizmoComponent - 3]->SetAbsPose(newAbsMatr.get());
+              m_GTPlane[m_ActiveGizmoComponent - 3]->SetAbsPose(newAbsMatr);
               currTr->Delete();
             }     
           }
           // update only gui with gizmo abs position
-          if (m_BuildGUI) m_GuiGizmoTranslate->SetAbsPosition(newAbsMatr.get());
+          if (m_BuildGUI) m_GuiGizmoTranslate->SetAbsPosition(newAbsMatr);
         }
         else if (arg == mafInteractorGenericMouse::MOUSE_UP)
         {
@@ -395,7 +394,7 @@ void mafGizmoTranslate::Show( bool showX,bool showY,bool showZ )
   }
 }
 //----------------------------------------------------------------------------
-mafMatrix *mafGizmoTranslate::GetAbsPose()
+std::shared_ptr<mafMatrix> mafGizmoTranslate::GetAbsPose()
 //----------------------------------------------------------------------------
 {
   return m_GTAxis[0]->GetAbsPose();
@@ -422,29 +421,29 @@ void mafGizmoTranslate::SendTransformMatrixFromGui(mafEventBase *maf_event)
     // [NewAbsPose] = [M]*[OldAbsPose] => [M] = [NewAbsPose][OldAbsPose]
 
     // build objects
-    mafAutoPointer<mafMatrix> M = mafMatrix::New();
+    auto M = mafMatrix::NewSPtr();
     mafMatrix invOldAbsPose;
-    mafAutoPointer<mafMatrix> newAbsPose = mafMatrix::New();
+    auto newAbsPose = mafMatrix::NewSPtr();
 
     // incoming matrix is a translation matrix
-    newAbsPose->DeepCopy(e->GetMatrix()); // abs position from gui
+    newAbsPose->DeepCopy(*e->GetMatrix()); // abs position from gui
     // copy rotation part from OldAbsPose into NewAbsPose
-    mafTransform::CopyRotation(*this->GetAbsPose(), *newAbsPose.get()); // abs orientation from old pose
-    invOldAbsPose.DeepCopy(this->GetAbsPose());
+    mafTransform::CopyRotation(*this->GetAbsPose(), *newAbsPose); // abs orientation from old pose
+    invOldAbsPose.DeepCopy(*GetAbsPose());
     invOldAbsPose.Invert();
-    mafMatrix::Multiply4x4(*newAbsPose.get(), invOldAbsPose, *M.get());
+    mafMatrix::Multiply4x4(*newAbsPose, invOldAbsPose, *M);
     // update gizmo abs pose
-    this->SetAbsPose(newAbsPose.get(), m_InputVME->GetTimeStamp());
+    this->SetAbsPose(newAbsPose, m_InputVME->GetTimeStamp());
     // send transfrom to postmultiply to the listener. Events is sent as a transform event
-    SendTransformMatrix(M.get(), ID_TRANSFORM, mafInteractorGenericMouse::MOUSE_MOVE);
+    SendTransformMatrix(M, ID_TRANSFORM, mafInteractorGenericMouse::MOUSE_MOVE);
   }
 }
 //----------------------------------------------------------------------------  
-void mafGizmoTranslate::SetAbsPose(mafMatrix *absPose, mafTimeStamp ts)
+void mafGizmoTranslate::SetAbsPose(std::shared_ptr<mafMatrix> absPose, mafTimeStamp ts)
 //----------------------------------------------------------------------------
 {
-  mafAutoPointer<mafMatrix> tmpMatr = mafMatrix::New();
-  tmpMatr->DeepCopy(absPose);
+  auto tmpMatr = mafMatrix::NewSPtr();
+  tmpMatr->DeepCopy(*absPose);
   tmpMatr->SetTimeStamp(ts);
   // remove scaling part from gizmo abs pose; gizmo not scale
 //  double pos[3] = {0,0,0};
@@ -458,10 +457,10 @@ void mafGizmoTranslate::SetAbsPose(mafMatrix *absPose, mafTimeStamp ts)
 
   for (int i = 0; i < 3; i++)
   {
-    m_GTPlane[i]->SetAbsPose(tmpMatr.get());
-    m_GTAxis[i]->SetAbsPose(tmpMatr.get());
+    m_GTPlane[i]->SetAbsPose(tmpMatr);
+    m_GTAxis[i]->SetAbsPose(tmpMatr);
   }
-  if (m_BuildGUI) m_GuiGizmoTranslate->SetAbsPosition(tmpMatr.get());
+  if (m_BuildGUI) m_GuiGizmoTranslate->SetAbsPosition(tmpMatr);
 }
 //----------------------------------------------------------------------------
 void mafGizmoTranslate::SetRefSys(mafVME *refSys)

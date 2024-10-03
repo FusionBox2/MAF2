@@ -94,7 +94,7 @@ mafGizmoTranslatePlane::mafGizmoTranslatePlane(mafVME *input, mafBaseEventHandle
   m_Gizmo[S1]->SetBehavior(m_IsaComp[S1]);
   m_Gizmo[S2]->SetBehavior(m_IsaComp[S2]);
 
-  mafMatrix *absInputMatrix = m_InputVme->GetOutput()->GetAbsMatrix();
+  auto absInputMatrix = m_InputVme->GetOutput()->GetAbsMatrix();
   SetAbsPose(absInputMatrix);
   SetConstrainRefSys(absInputMatrix);
 
@@ -438,7 +438,7 @@ void mafGizmoTranslatePlane::ShowSquare(bool show)
   m_Gizmo[SQ]->GetMaterial()->m_Prop->SetOpacity(opacity);
 }
 //----------------------------------------------------------------------------
-void mafGizmoTranslatePlane::SetAbsPose(mafMatrix *absPose)
+void mafGizmoTranslatePlane::SetAbsPose(std::shared_ptr<mafMatrix> absPose)
 //----------------------------------------------------------------------------
 {
   for (int i = 0; i < 3; i++)
@@ -449,7 +449,7 @@ void mafGizmoTranslatePlane::SetAbsPose(mafMatrix *absPose)
   SetConstrainRefSys(absPose);
 }
 //----------------------------------------------------------------------------
-void mafGizmoTranslatePlane::SetConstrainRefSys(mafMatrix *constrain)
+void mafGizmoTranslatePlane::SetConstrainRefSys(std::shared_ptr<mafMatrix> constrain)
 //----------------------------------------------------------------------------
 {  
   for (int i = 0; i < SQ; i++)
@@ -458,7 +458,7 @@ void mafGizmoTranslatePlane::SetConstrainRefSys(mafMatrix *constrain)
   }
 }
 //----------------------------------------------------------------------------
-mafMatrix *mafGizmoTranslatePlane::GetAbsPose()
+std::shared_ptr<mafMatrix> mafGizmoTranslatePlane::GetAbsPose()
 //----------------------------------------------------------------------------
 {
   return m_Gizmo[S1]->GetOutput()->GetAbsMatrix();

@@ -80,8 +80,8 @@ public:
 	
 	/**
 	Set/Get the gizmo abs pose at the current time stamp*/
-	void SetAbsPose(mafMatrix *absPose) override;
-	mafMatrix *GetAbsPose() override;
+	void SetAbsPose(std::shared_ptr<mafMatrix> absPose) override;
+	std::shared_ptr<mafMatrix> GetAbsPose() override;
     
 	void Show(bool show) override;
 

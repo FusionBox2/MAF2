@@ -485,7 +485,7 @@ void mafGizmoScaleAxis::Show(bool show)
 }
 
 //----------------------------------------------------------------------------
-void mafGizmoScaleAxis::SetAbsPose(mafMatrix *absPose)
+void mafGizmoScaleAxis::SetAbsPose(std::shared_ptr<mafMatrix> absPose)
 //----------------------------------------------------------------------------
 {
   m_CubeGizmo->SetAbsMatrix(*absPose); 
@@ -494,7 +494,7 @@ void mafGizmoScaleAxis::SetAbsPose(mafMatrix *absPose)
 }
 
 //----------------------------------------------------------------------------
-void mafGizmoScaleAxis::SetRefSysMatrix(mafMatrix *matrix)
+void mafGizmoScaleAxis::SetRefSysMatrix(std::shared_ptr<mafMatrix> matrix)
 //----------------------------------------------------------------------------
 {  
   for (int i = 0; i < 2; i++)
@@ -505,7 +505,7 @@ void mafGizmoScaleAxis::SetRefSysMatrix(mafMatrix *matrix)
 }
 
 //----------------------------------------------------------------------------
-mafMatrix *mafGizmoScaleAxis::GetAbsPose()
+std::shared_ptr<mafMatrix> mafGizmoScaleAxis::GetAbsPose()
 //----------------------------------------------------------------------------
 {
   return m_CylGizmo->GetOutput()->GetAbsMatrix();

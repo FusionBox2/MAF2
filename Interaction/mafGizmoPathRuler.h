@@ -115,10 +115,10 @@ public:
 
   /**
   Set the gizmo pose; not yet implemented!!!*/
-  void SetAbsPose(mafMatrix *absPose) override;
+  void SetAbsPose(std::shared_ptr<mafMatrix> absPose) override;
 
   /** get the abs pose for each tick */
-  mafMatrix *GetAbsPose(int tickId);
+  std::shared_ptr<mafMatrix> GetAbsPose(int tickId);
 
   /** not yet available... */
   mafGUI *GetGui() override {return NULL;};

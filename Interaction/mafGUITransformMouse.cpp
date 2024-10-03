@@ -287,8 +287,7 @@ void mafGUITransformMouse::CreateISA()
   // default aux ref sys is the vme ref sys
   m_RefSysVME = m_InputVME;
 
-  mafMatrix *absMatrix;
-  absMatrix = m_RefSysVME->GetOutput()->GetAbsMatrix();
+  auto absMatrix = m_RefSysVME->GetOutput()->GetAbsMatrix();
   //----------------------------------------------------------------------------
 	// create the rotate behavior
 	//----------------------------------------------------------------------------

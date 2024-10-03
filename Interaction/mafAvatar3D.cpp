@@ -523,7 +523,7 @@ void mafAvatar3D::OnMove3DEvent(mafEventInteraction *e)
 //------------------------------------------------------------------------------
 {
   // Process tracker coordinates to get World coordinates
-  mafMatrix *tracker_pose=e->GetMatrix();
+  auto tracker_pose=e->GetMatrix();
   mafMatrix world_pose;
 
   assert(tracker_pose);

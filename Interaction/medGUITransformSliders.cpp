@@ -73,14 +73,13 @@ medGUITransformSliders::medGUITransformSliders(mafVME *input, double translation
   }
   SetAbsPose(m_InputVME->GetOutput()->GetAbsMatrix());
 
-  mafNEW(m_OldAbsMatrix);
-  m_OldAbsMatrix->DeepCopy(m_InputVME->GetOutput()->GetAbsMatrix());
+  m_OldAbsMatrix = mafMatrix::NewSPtr();
+  m_OldAbsMatrix->DeepCopy(*m_InputVME->GetOutput()->GetAbsMatrix());
 }
 //----------------------------------------------------------------------------
 medGUITransformSliders::~medGUITransformSliders() 
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_OldAbsMatrix);
 }
 
 //----------------------------------------------------------------------------
@@ -222,13 +221,13 @@ void medGUITransformSliders::SlidersValuesChanged()
   mafEventMacro(e2s);
 }
 //----------------------------------------------------------------------------
-void medGUITransformSliders::SetAbsPose(mafMatrix* absPose, mafTimeStamp timeStamp)
+void medGUITransformSliders::SetAbsPose(std::shared_ptr<mafMatrix> absPose, mafTimeStamp timeStamp)
 //----------------------------------------------------------------------------
 {
   // express absPose in RefSysVME refsys
   auto mflTr = mafTransformFrame::NewSPtr();
-  mflTr->SetInput(absPose);
-  mflTr->SetTargetFrame(m_RefSysVME->GetOutput()->GetAbsMatrix());
+  mflTr->SetInput(*absPose);
+  mflTr->SetTargetFrame(*m_RefSysVME->GetOutput()->GetAbsMatrix());
   mflTr->Update();
 
 

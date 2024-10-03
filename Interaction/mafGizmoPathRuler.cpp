@@ -93,14 +93,14 @@ void mafGizmoPathRuler::Show(bool show)
   }
 }
 //----------------------------------------------------------------------------
-mafMatrix *mafGizmoPathRuler::GetAbsPose(int tickId)
+std::shared_ptr<mafMatrix> mafGizmoPathRuler::GetAbsPose(int tickId)
 //----------------------------------------------------------------------------
 {
   assert(tickId < m_TicksNumber);
   return m_GizmoPathVector[tickId]->GetAbsPose();
 }
 
-void mafGizmoPathRuler::SetAbsPose( mafMatrix *absPose )
+void mafGizmoPathRuler::SetAbsPose(std::shared_ptr<mafMatrix> absPose )
 {
 
 }

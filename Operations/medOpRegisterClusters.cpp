@@ -391,7 +391,7 @@ void medOpRegisterClusters::OpDo()
 			int num = time.size();
 			
 			vtkNew<vtkPolyData> data;
-			mafAutoPointer<mafMatrix> matrix = mafMatrix::New(); //modified by Marco. 2-2-2004
+			auto matrix = mafMatrix::NewSPtr(); //modified by Marco. 2-2-2004
 			vtkNew<vtkTransform> transform;
 			vtkNew<vtkTransformPolyDataFilter> transformData;
 			transformData->SetTransform(transform);
@@ -530,7 +530,7 @@ void medOpRegisterClusters::OpDo()
           landmark->SetAbsPose(pos,rot,cTime);
 
           //avoid matrix error log for the first creation of landmarks
-          mafMatrix *matrix = landmark->GetMatrixVector()->GetMatrix(cTime);
+          auto matrix = landmark->GetMatrixVector()->GetMatrix(cTime);
           matrix->SetElement(0,0,1);
           matrix->SetElement(1,1,1);
           matrix->SetElement(2,2,1);
@@ -748,12 +748,10 @@ double medOpRegisterClusters::RegisterPoints(double currTime)
 	
 	//post-multiply the registration matrix by the abs matrix of the target to position the
 	//registered  at the correct position in the space
-  mafMatrix *mat;
-	mafNEW(mat);
+  auto mat = mafMatrix::NewSPtr();
 	mat->Identity();
   m_Target->GetOutput()->GetAbsMatrix(*mat,currTime);  //modified by Marco. 2-2-2004
   vtkMatrix4x4::Multiply4x4(mat->GetVTKMatrix(),RegisterTransform->GetMatrix(),t_matrix);
-  mafDEL(mat);
   
 	int numLandmarks = m_Target->GetNumberOfVisibleLandmarks(currTime);
 
@@ -769,8 +767,7 @@ double medOpRegisterClusters::RegisterPoints(double currTime)
  
     //m_Registered->SetPose(t_matrix,currTime);
     //m_Registered->Update();
-    mafMatrix *temp;
-    mafNEW(temp);
+    auto temp = mafMatrix::NewSPtr();
     temp->SetVTKMatrix(t_matrix);
     temp->SetTimeStamp(currTime);
     temp->Modified();
@@ -809,7 +806,6 @@ double medOpRegisterClusters::RegisterPoints(double currTime)
       m_Follower->Update();
       vtkDEL(t_matrix1);
 		}
-    mafDEL(temp);
 	}
 
   vtkDEL(RegisterTransform);

@@ -133,8 +133,8 @@ medGizmoCrossRotateAxis::medGizmoCrossRotateAxis(mafVME *input, mafBaseEventHand
 
 	m_AbsInputMatrix = m_InputVme->GetOutput()->GetAbsMatrix();
 	m_InputVme->GetOutput()->Update();
-	SetAbsPose(m_AbsInputMatrix.get());
-	SetRefSysMatrix(m_AbsInputMatrix.get());
+	SetAbsPose(m_AbsInputMatrix);
+	SetRefSysMatrix(m_AbsInputMatrix);
 
 	// add the gizmo to the tree, this should increase reference count  
 	m_GizmoCross->ReparentTo(mafVME::SafeDownCast(m_InputVme->GetRoot()));
@@ -274,8 +274,8 @@ void medGizmoCrossRotateAxis::CreateISA()
 	m_IsaGen = m_IsaComp->CreateBehavior(MOUSE_LEFT);
 	m_IsaGen->SetVME(m_InputVme);
 	m_IsaGen->GetRotationConstraint()->SetConstraintModality(mafInteractorConstraint::FREE, mafInteractorConstraint::LOCK, mafInteractorConstraint::LOCK); 
-	m_IsaGen->GetRotationConstraint()->GetRefSys()->SetTypeToCustom(m_AbsInputMatrix.get());
-	m_IsaGen->GetPivotRefSys()->SetTypeToCustom(m_AbsInputMatrix.get());
+	m_IsaGen->GetRotationConstraint()->GetRefSys()->SetTypeToCustom(m_AbsInputMatrix);
+	m_IsaGen->GetPivotRefSys()->SetTypeToCustom(m_AbsInputMatrix);
 	m_IsaGen->EnableRotation(true);
 
 	//isa will send events to this
@@ -394,21 +394,21 @@ void medGizmoCrossRotateAxis::Show(bool show)
 	{mafEvent evUnq(this,VME_SHOW,m_GizmoCross,show); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
-void medGizmoCrossRotateAxis::SetAbsPose(mafMatrix *absPose)
+void medGizmoCrossRotateAxis::SetAbsPose(std::shared_ptr<mafMatrix> absPose)
 //----------------------------------------------------------------------------
 {
 	m_GizmoCross->SetAbsMatrix(*absPose);
 	SetRefSysMatrix(absPose);
 }
 //----------------------------------------------------------------------------
-void medGizmoCrossRotateAxis::SetRefSysMatrix(mafMatrix *matrix)
+void medGizmoCrossRotateAxis::SetRefSysMatrix(std::shared_ptr<mafMatrix> matrix)
 //----------------------------------------------------------------------------
 {  
 	m_IsaGen->GetRotationConstraint()->GetRefSys()->SetTypeToCustom(matrix);
 	m_IsaGen->GetPivotRefSys()->SetTypeToCustom(matrix);
 }
 //----------------------------------------------------------------------------
-mafMatrix *medGizmoCrossRotateAxis::GetAbsPose()
+std::shared_ptr<mafMatrix> medGizmoCrossRotateAxis::GetAbsPose()
 //----------------------------------------------------------------------------
 {
 	return m_GizmoCross->GetOutput()->GetAbsMatrix();

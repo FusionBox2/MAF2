@@ -139,8 +139,8 @@ public:
  
   /** 
   Set the abs pose */
-  void SetAbsPose(mafMatrix *absPose) override;
-  mafMatrix *GetAbsPose() override;
+  void SetAbsPose(std::shared_ptr<mafMatrix> absPose) override;
+  std::shared_ptr<mafMatrix> GetAbsPose() override;
 
   /**
   Get the gizmo interactor*/
@@ -158,9 +158,9 @@ protected:
   /**
   Set the reference system matrix and the Pivot ref sys matrix.
   Both reference system type are set to CUSTOM.*/
-  void SetRefSysMatrix(mafMatrix *matrix);
+  void SetRefSysMatrix(std::shared_ptr<mafMatrix> matrix);
 
-  mafAutoPointer<mafMatrix> m_AbsInputMatrix;
+  std::shared_ptr<mafMatrix> m_AbsInputMatrix;
   
   /** Circle gizmo */
   mafVMEGizmo *m_GizmoCross;

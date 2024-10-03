@@ -453,21 +453,21 @@ void medGizmoCrossTranslateAxis::ShowTranslationFeedbackArrows(bool show)
 }
 
 //----------------------------------------------------------------------------
-void medGizmoCrossTranslateAxis::SetAbsPose(mafMatrix *absPose)
+void medGizmoCrossTranslateAxis::SetAbsPose(std::shared_ptr<mafMatrix> absPose)
 //----------------------------------------------------------------------------
 {
 	m_TranslationCylinderGizmo->SetAbsMatrix(*absPose); 
 	SetRefSysMatrix(absPose);
 }
 //----------------------------------------------------------------------------
-void medGizmoCrossTranslateAxis::SetRefSysMatrix(mafMatrix *matrix)
+void medGizmoCrossTranslateAxis::SetRefSysMatrix(std::shared_ptr<mafMatrix> matrix)
 //----------------------------------------------------------------------------
 {  
 	m_IsaGen->GetTranslationConstraint()->GetRefSys()->SetTypeToCustom(matrix);
 	m_IsaGen->GetPivotRefSys()->SetTypeToCustom(matrix);
 }
 //----------------------------------------------------------------------------
-mafMatrix *medGizmoCrossTranslateAxis::GetAbsPose()
+std::shared_ptr<mafMatrix> medGizmoCrossTranslateAxis::GetAbsPose()
 //----------------------------------------------------------------------------
 {
 	return m_TranslationCylinderGizmo->GetOutput()->GetAbsMatrix();

@@ -143,7 +143,7 @@ medGizmoCrossTranslatePlane::medGizmoCrossTranslatePlane(mafVME *input, mafBaseE
 	m_Gizmo[S0]->SetBehavior(m_IsaComp[S0]);
 	m_Gizmo[S1]->SetBehavior(m_IsaComp[S1]);
 
-	mafMatrix *absInputMatrix = m_InputVme->GetOutput()->GetAbsMatrix();
+	auto absInputMatrix = m_InputVme->GetOutput()->GetAbsMatrix();
 	SetAbsPose(absInputMatrix);
 	SetConstrainRefSys(absInputMatrix);
 
@@ -469,7 +469,7 @@ void medGizmoCrossTranslatePlane::Show(bool show)
 }
 
 //----------------------------------------------------------------------------
-void medGizmoCrossTranslatePlane::SetAbsPose(mafMatrix *absPose)
+void medGizmoCrossTranslatePlane::SetAbsPose(std::shared_ptr<mafMatrix> absPose)
 //----------------------------------------------------------------------------
 {
 	// set the abs pose to al gizmo components
@@ -482,7 +482,7 @@ void medGizmoCrossTranslatePlane::SetAbsPose(mafMatrix *absPose)
 	SetConstrainRefSys(absPose);
 }
 //----------------------------------------------------------------------------
-void medGizmoCrossTranslatePlane::SetConstrainRefSys(mafMatrix *constrain)
+void medGizmoCrossTranslatePlane::SetConstrainRefSys(std::shared_ptr<mafMatrix> constrain)
 //----------------------------------------------------------------------------
 {  
 	for (int i = 0; i < NUM_GIZMO_PARTS; i++)
@@ -491,7 +491,7 @@ void medGizmoCrossTranslatePlane::SetConstrainRefSys(mafMatrix *constrain)
 	}
 }
 //----------------------------------------------------------------------------
-mafMatrix *medGizmoCrossTranslatePlane::GetAbsPose()
+std::shared_ptr<mafMatrix> medGizmoCrossTranslatePlane::GetAbsPose()
 //----------------------------------------------------------------------------
 {
 	// get the abs pose from a gizmo component

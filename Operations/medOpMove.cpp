@@ -340,7 +340,7 @@ void medOpMove::OnEventThis(mafEventBase *maf_event)
 	 
 
       // update gui 
-      m_GuiTransformTextEntries->SetAbsPose(((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
+      m_GuiTransformTextEntries->SetAbsPose(*((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
 
       m_Gui->Update();
       {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
@@ -499,7 +499,7 @@ void medOpMove::OnEventGizmoTranslate(mafEventBase *maf_event)
       PostMultiplyEventMatrix(maf_event);
       
       // update gui 
-      m_GuiTransformTextEntries->SetAbsPose(((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
+      m_GuiTransformTextEntries->SetAbsPose(*((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
 	  }
     break;
   
@@ -524,7 +524,7 @@ void medOpMove::OnEventGizmoRotate(mafEventBase *maf_event)
       PostMultiplyEventMatrix(maf_event);
 
       // update gui 
-      m_GuiTransformTextEntries->SetAbsPose(((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
+      m_GuiTransformTextEntries->SetAbsPose(*((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
 	  }
     break;
 
@@ -550,7 +550,7 @@ void medOpMove::OnEventGuiTransformMouse(mafEventBase *maf_event)
       if (m_GizmoRotate) m_GizmoRotate->SetAbsPose(m_RefSysVME->GetOutput()->GetAbsMatrix());
 
       m_GuiTransformMouse->SetRefSys(m_RefSysVME);      
-      m_GuiTransformTextEntries->SetAbsPose(((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
+      m_GuiTransformTextEntries->SetAbsPose(*((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
     }
     break;
     default:
@@ -574,7 +574,7 @@ void medOpMove::OnEventGuiSaveRestorePose(mafEventBase *maf_event)
       m_GuiTransformMouse->SetRefSys(m_RefSysVME);
 
       // update gui 
-      m_GuiTransformTextEntries->SetAbsPose(((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
+      m_GuiTransformTextEntries->SetAbsPose(*((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
       
       m_NewAbsMatrix = *(m_RefSysVME->GetOutput()->GetAbsMatrix());
     }
@@ -597,19 +597,19 @@ void medOpMove::OnEventGuiTransformTextEntries(mafEventBase *maf_event)
     {
       case ID_TRANSFORM: // from m_GuiTransformTextEntries
       {
-        mafMatrix absPose;
-        absPose = *(e->GetMatrix());
-        absPose.SetTimeStamp(m_CurrentTime);
+        auto absPose = mafMatrix::NewSPtr();
+        *absPose = *(e->GetMatrix());
+        absPose->SetTimeStamp(m_CurrentTime);
 
         // update gizmos positions if refsys is local
         if (m_RefSysVME == mafVME::SafeDownCast(m_Input))
         {      
-          m_GizmoTranslate->SetAbsPose(&absPose);
-          m_GizmoRotate->SetAbsPose(&absPose);
+          m_GizmoTranslate->SetAbsPose(absPose);
+          m_GizmoRotate->SetAbsPose(absPose);
           m_GuiTransformMouse->SetRefSys(m_RefSysVME);
         }
 
-        m_NewAbsMatrix = absPose;
+        m_NewAbsMatrix = *absPose;
       }
       break;
       default:

@@ -60,7 +60,7 @@ enum HIGHEST_EVENT_ID
   mafEvent::mafEvent(void *sender, int id, mafView          *view,    wxWindow *win)				{ Init(sender, id, 0);   m_View =view; m_Win  =win;             Initialized();}
   mafEvent::mafEvent(void *sender, int id, mafNode          *vme,     bool b,intptr_t arg)			{ Init(sender, id, arg); m_Vme  =vme; m_Bool = b;               Initialized();}
   mafEvent::mafEvent(void *sender, int id, mafOp            *op,      intptr_t arg)							{ Init(sender, id, arg);   m_Op   =op;                          Initialized();}
-  mafEvent::mafEvent(void *sender, int id, mafMatrix        *m1,mafMatrix  *m2)					    { Init(sender, id, 0);   m_Matrix =m1; m_OldMatrix =m2;         Initialized();}
+  mafEvent::mafEvent(void *sender, int id, std::shared_ptr<mafMatrix> m1, std::shared_ptr<mafMatrix> m2)					    { Init(sender, id, 0);   m_Matrix =m1; m_Matrix2 =m2;         Initialized();}
   mafEvent::mafEvent(void *sender, int id, mafObject        *mafobj,  intptr_t arg)						  { Init(sender, id, arg); m_MafObject = mafobj;                  Initialized();}
   mafEvent::mafEvent(void *sender, int id, mafObject        *mafobj,  mafString *s,intptr_t arg){ Init(sender, id, arg); m_MafObject = mafobj; m_MAFString =s;  Initialized();}
   mafEvent::mafEvent(void *sender, int id, WidgetDataType   &widget_data,  intptr_t arg)
@@ -105,8 +105,8 @@ void mafEvent::Log()
 #endif
 #ifdef MAF_USE_VTK
   if(m_VtkProp)   s += _R(" prop= ") + mafToString((intptr_t)m_VtkProp);
-  if(m_Matrix) s += _R(" matrix= ") + mafToString((intptr_t)m_Matrix);
-  if(m_OldMatrix)s += _R(" matrix= ") + mafToString((intptr_t)m_OldMatrix);
+  if(m_Matrix) s += _R(" matrix= ") + mafToString((intptr_t)m_Matrix.get());
+  if(m_Matrix2)s += _R(" matrix= ") + mafToString((intptr_t)m_Matrix2.get());
   if(m_VtkObj) s += _R(" vtkobj= ") + mafToString((intptr_t)m_VtkObj) + _R(" : ") + _R(m_VtkObj->GetClassName());
 #endif
   if(m_MafObject) s += _R(" mafobj= ") + mafToString((intptr_t)m_MafObject) + _R(" : ") + _R(m_MafObject->GetTypeName());
@@ -137,7 +137,7 @@ mafEvent* mafEvent::Copy()
 #ifdef MAF_USE_VTK
   e->m_VtkProp		  = m_VtkProp;
   e->m_Matrix   = m_Matrix;
-  e->m_OldMatrix  = m_OldMatrix;
+  e->m_Matrix2  = m_Matrix2;
   e->m_VtkObj   = m_VtkObj;
 #endif
 
@@ -157,7 +157,7 @@ void mafEvent::DeepCopy(const mafEventBase *maf_event)
   m_View    = ((mafEvent *)maf_event)->GetView();
   m_Op      = ((mafEvent *)maf_event)->GetOp();
   m_Matrix  = ((mafEvent *)maf_event)->GetMatrix();
-  m_OldMatrix = ((mafEvent *)maf_event)->GetOldMatrix();
+  m_Matrix2 = ((mafEvent *)maf_event)->GetMatrix2();
   m_MafObject = ((mafEvent *)maf_event)->GetMafObject();
   m_x         = ((mafEvent *)maf_event)->GetX();
   m_y         = ((mafEvent *)maf_event)->GetY();
@@ -206,8 +206,6 @@ void mafEvent::Init(void *sender, int id, intptr_t arg)
   m_Vme    = NULL; 
   m_Op	   = NULL; 
   m_MafObject = NULL;
-  m_Matrix = NULL;
-  m_OldMatrix= NULL;
   m_x = 0;
   m_y = 0;
   m_width = 0;

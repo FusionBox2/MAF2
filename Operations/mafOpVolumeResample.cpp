@@ -172,8 +172,8 @@ void mafOpVolumeResample::AutoSpacing()
   // project spacing on new axes.
   // Note: TransformVector ignores the translation column!
   auto input_to_output = mafTransformFrame::NewSPtr();
-  input_to_output->SetInputFrame(m_ResampleBoxVme->GetOutput()->GetAbsMatrix());
-  input_to_output->SetTargetFrame(((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
+  input_to_output->SetInputFrame(*m_ResampleBoxVme->GetOutput()->GetAbsMatrix());
+  input_to_output->SetTargetFrame(*((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
   input_to_output->Update();
   input_to_output->TransformPoint(m_VolumeSpacing,m_VolumeSpacing);
 
@@ -346,22 +346,22 @@ void mafOpVolumeResample::Resample()
         // Set the target be vme's parent frame. And Input frame to the root. I've to 
         // set at each iteration since I'm using the SetMatrix, which doesn't support
         // transform pipelines.
-        mafAutoPointer<mafMatrix> output_parent_abs_pose = mafMatrix::New();
+        auto output_parent_abs_pose = mafMatrix::NewSPtr();
         m_ResampledVme->GetParent()->GetOutput()->GetAbsMatrix(*output_parent_abs_pose,input_item->GetTimeStamp());
-        local_pose->SetInputFrame(output_parent_abs_pose.get());
+        local_pose->SetInputFrame(*output_parent_abs_pose);
 
-        mafAutoPointer<mafMatrix> input_parent_abs_pose = mafMatrix::New();
+        auto input_parent_abs_pose = mafMatrix::NewSPtr();
         ((mafVME *)m_Input->GetParent())->GetOutput()->GetAbsMatrix(*input_parent_abs_pose,input_item->GetTimeStamp());
-        local_pose->SetTargetFrame(input_parent_abs_pose.get());
+        local_pose->SetTargetFrame(*input_parent_abs_pose);
         local_pose->Update();
 
-        mafAutoPointer<mafMatrix> output_abs_pose = mafMatrix::New();
+        auto output_abs_pose = mafMatrix::NewSPtr();
         m_ResampledVme->GetOutput()->GetAbsMatrix(*output_abs_pose,input_item->GetTimeStamp());
-        output_to_input->SetInputFrame(output_abs_pose.get());
+        output_to_input->SetInputFrame(*output_abs_pose);
 
-        mafAutoPointer<mafMatrix> input_abs_pose = mafMatrix::New();
+        auto input_abs_pose = mafMatrix::NewSPtr();
         ((mafVME *)m_Input)->GetOutput()->GetAbsMatrix(*input_abs_pose,input_item->GetTimeStamp());
-        output_to_input->SetTargetFrame(input_abs_pose.get());
+        output_to_input->SetTargetFrame(*input_abs_pose);
         output_to_input->Update();
 
         double orient_input[3],orient_target[3];

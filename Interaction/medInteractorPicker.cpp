@@ -66,7 +66,7 @@ void medInteractorPicker::OnButtonDown(mafEventInteraction *e)
   Superclass::OnButtonDown(e);
   if (mafDeviceButtonsPadTracker *tracker=mafDeviceButtonsPadTracker::SafeDownCast((mafDevice *)e->GetSender()))
   { // is it a tracker?
-    mafMatrix *tracker_pose = e->GetMatrix();
+    auto tracker_pose = e->GetMatrix();
     // extract device avatar's renderer, no avatar == no picking
     mafAvatar *avatar = tracker->GetAvatar();
     if (avatar)
@@ -101,7 +101,7 @@ void medInteractorPicker::OnButtonUp(mafEventInteraction *e)
   {
     if (mafDeviceButtonsPadTracker *tracker=mafDeviceButtonsPadTracker::SafeDownCast((mafDevice *)e->GetSender()))
     { // is it a tracker?
-      mafMatrix *tracker_pose = e->GetMatrix();
+      auto tracker_pose = e->GetMatrix();
       // extract device avatar's renderer, no avatar == no picking
       mafAvatar *avatar = tracker->GetAvatar();
       if (avatar)

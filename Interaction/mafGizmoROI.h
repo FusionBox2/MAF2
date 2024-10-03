@@ -109,7 +109,7 @@ public:
   void ShowROI(bool show);
 
   /** Set the constrain ref sys*/
-  void SetConstrainRefSys(mafMatrix *constrain);
+  void SetConstrainRefSys(std::shared_ptr<mafMatrix> constrain);
 
   /** Set/Get the gizmo bounds */
   void SetBounds(double bounds[6]);

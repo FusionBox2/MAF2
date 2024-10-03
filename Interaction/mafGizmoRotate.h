@@ -111,8 +111,8 @@ public:
 
   /**
   Set the gizmo pose*/
-  void SetAbsPose(mafMatrix *absPose, bool applyPoseToFans = true);
-  mafMatrix *GetAbsPose() override;
+  void SetAbsPose(std::shared_ptr<mafMatrix> absPose, bool applyPoseToFans = true);
+  std::shared_ptr<mafMatrix> GetAbsPose() override;
 
   /**
   Get the Interactor asscociated to each axis*/

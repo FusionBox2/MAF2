@@ -125,11 +125,11 @@ public:
   //----------------------------------------------------------------------------
   /**
   Set the gizmo abs pose (not implemented)*/
-  virtual void SetAbsPose(mafMatrix *absPose);
+  virtual void SetAbsPose(std::shared_ptr<mafMatrix> absPose);
   
   /**
   Get the gizmo abs pose*/
-  virtual mafMatrix *GetAbsPose();
+  virtual std::shared_ptr<mafMatrix> GetAbsPose();
   
   //----------------------------------------------------------------------------
   // Gizmo gui
@@ -171,7 +171,7 @@ protected:
   /** Gizmo autoscale */
   bool m_Autoscale;
 
-  void SendTransformMatrix(mafMatrix* matrix, int eventId, long arg);
+  void SendTransformMatrix(std::shared_ptr<mafMatrix>, int eventId, long arg);
 
     /** Gizmo components events handling */
   virtual void OnEventGizmoGui(mafEventBase *maf_event) {};

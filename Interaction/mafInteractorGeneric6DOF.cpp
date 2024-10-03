@@ -52,8 +52,8 @@ void mafInteractorGeneric6DOF::OnMove(mafEventInteraction *e)
   
   if (m_Avatar)
 	{
-    mafMatrix *tracker_pose=e->GetMatrix();
-    SetTrackerPoseMatrix(tracker_pose);
+    auto tracker_pose=e->GetMatrix();
+    SetTrackerPoseMatrix(*tracker_pose);
 
     Update();
     
@@ -118,7 +118,7 @@ void mafInteractorGeneric6DOF::Update()
     m_OutputTransform->Translate(pivot_position,POST_MULTIPLY);
 
     // Store current pose matrix
-    TrackerSnapshot(m_TrackerPoseMatrix);
+    TrackerSnapshot(*m_TrackerPoseMatrix);
   }
 	else
 	{

@@ -454,9 +454,9 @@ protected:
 	mafVMESlicer			*m_SlicerY;
 	mafVMESlicer			*m_SlicerZ;
 
-	mafMatrix					*m_SlicerXResetMatrix;
-	mafMatrix					*m_SlicerYResetMatrix;
-	mafMatrix					*m_SlicerZResetMatrix;
+	std::shared_ptr<mafMatrix> m_SlicerXResetMatrix;
+	std::shared_ptr<mafMatrix> m_SlicerYResetMatrix;
+	std::shared_ptr<mafMatrix>m_SlicerZResetMatrix;
 
 	mafAttachCamera		*m_AttachCameraToSlicerXInXView;
 	mafAttachCamera		*m_AttachCameraToSlicerYInYView;

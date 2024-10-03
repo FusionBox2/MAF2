@@ -6,7 +6,6 @@
 #include "ftk/Base/MTime.h"
 #include <mutex>
 #include "mafMatrix.h"
-#include "ftk/Base/RegisteringPointer.h"
 
 //------------------------------------------------------------------------------
 // Forward declarations
@@ -43,7 +42,7 @@ public:
   /** 
     return pointer to internal matrix (after updating).
     BEWARE: do not change the matrix directly. */
-  mafMatrix *GetMatrixPointer() {Update(); return m_Matrix.get();}
+  std::shared_ptr<mafMatrix> GetMatrixPointer() {Update(); return m_Matrix;}
 
   /**
     Apply the transformation to a coordinate.  You can use the same 
@@ -132,7 +131,7 @@ public:
 #endif
 
 protected:
-  mafAutoPointer<mafMatrix> m_Matrix;        ///< internally stored matrix.
+  std::shared_ptr<mafMatrix> m_Matrix;        ///< internally stored matrix.
   mafMTime        m_MTime;           ///< modification time
   mafMTime        m_UpdateTime;      ///< We need to record the time of the last update
   std::mutex    m_UpdateMutex; ///< we also need to do mutex locking so updates don't collide.

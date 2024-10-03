@@ -65,14 +65,12 @@ mafTransform::mafTransform(const mafTransform& copy)
 }
 
 //----------------------------------------------------------------------------
-void mafTransform::SetMatrixPointer(mafMatrix *matrix)
+void mafTransform::SetMatrixPointer(std::shared_ptr<mafMatrix> matrix)
 //----------------------------------------------------------------------------
 {
-  if (matrix!=m_Matrix.get())
+  if (matrix!=m_Matrix)
   {
-    mafDEL(m_Matrix);
     m_Matrix = matrix;
-    m_Matrix->Register(this);
     Modified();
   }
 }

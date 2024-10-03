@@ -174,15 +174,13 @@ void mafGizmoPath::SetCurvilinearAbscissa( double s )
   double pos[3], rot[3];
   m_VmeGizmoPath->GetOutput()->GetPose(pos, rot);
   
-  mafMatrix *matrix;
-  matrix = m_VmeGizmoPath->GetOutput()->GetMatrix();
+  auto matrix = m_VmeGizmoPath->GetOutput()->GetMatrix();
   
   //calculate position of the text
   double point1[3], point2[3];
   m_LineSource->GetPoint1(point1);
   m_LineSource->GetPoint2(point2);
-  double halfLength;
-  halfLength = sqrt(vtkMath::Distance2BetweenPoints(point1,point2))/2.;
+  double halfLength = sqrt(vtkMath::Distance2BetweenPoints(point1,point2))/2.;
 
   double versorY[3];
   matrix->GetVersor(1, versorY);
@@ -260,10 +258,10 @@ void mafGizmoPath::FindGizmoAbsPose( double s )
   // set the new pose to the Gizmo
   m_VmeGizmoPath->SetPose(trans->GetMatrix(), -1);
  
-  mafAutoPointer<mafMatrix> mat2Send = mafMatrix::New();
-  mat2Send->DeepCopy(&(trans->GetMatrix()));
+  auto mat2Send = mafMatrix::NewSPtr();
+  mat2Send->DeepCopy(trans->GetMatrix());
 
-  SendTransformMatrix(mat2Send.get(), ID_TRANSFORM, mafGizmoPath::ABS_POSE );
+  SendTransformMatrix(mat2Send, ID_TRANSFORM, mafGizmoPath::ABS_POSE );
 }
   
 
@@ -441,7 +439,7 @@ void mafGizmoPath::DestroyVMEGizmo()
   mafDEL(m_VmeGizmoPath);
 }
 
-mafMatrix* mafGizmoPath::GetAbsPose()
+std::shared_ptr<mafMatrix> mafGizmoPath::GetAbsPose()
 {
   return m_VmeGizmoPath->GetOutput()->GetAbsMatrix();
 

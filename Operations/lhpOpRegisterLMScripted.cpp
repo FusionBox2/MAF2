@@ -658,13 +658,11 @@ double lhpOpRegisterLMScripted::RegisterPoints(mafVMELandmarkCloud *src, mafVMEL
   RegisterTransform->GetMatrix(regt_matrix);
   vtkDEL(RegisterTransform);
 
-  mafMatrix *mat;
-  mafNEW(mat);
+  auto mat = mafMatrix::NewSPtr();
   mat->Identity();
   trg->GetOutput()->GetAbsMatrix(*mat,currTime);  //modified by Marco. 2-2-2004
 
   vtkMatrix4x4::Multiply4x4(mat->GetVTKMatrix(),regt_matrix,t_matrix);
-  mafDEL(mat);
   vtkDEL(regt_matrix);
 
   int numLandmarks = trg->GetNumberOfVisibleLandmarks(currTime);

@@ -151,12 +151,12 @@ void medGizmoCrossRotate::OnEventGizmoComponents(mafEventBase *maf_event)
 						currTr->Concatenate(e->GetMatrix()->GetVTKMatrix());
 						currTr->Update();
 
-						mafMatrix newAbsMatr;
-						newAbsMatr.DeepCopy(currTr->GetMatrix());
-						newAbsMatr.SetTimeStamp(GetAbsPose()->GetTimeStamp());
+						auto newAbsMatr = mafMatrix::NewSPtr();
+						newAbsMatr->DeepCopy(currTr->GetMatrix());
+						newAbsMatr->SetTimeStamp(GetAbsPose()->GetTimeStamp());
 
 						// set the new pose to the gizmo
-						SetAbsPose(&newAbsMatr, false);
+						SetAbsPose(newAbsMatr, false);
 						currTr->Delete();
 					}
 				}
@@ -253,7 +253,7 @@ void medGizmoCrossRotate::Show(bool show)
 }
 
 //----------------------------------------------------------------------------  
-void medGizmoCrossRotate::SetAbsPose(mafMatrix *absPose, bool applyPoseToFans)
+void medGizmoCrossRotate::SetAbsPose(std::shared_ptr<mafMatrix> absPose, bool applyPoseToFans)
 //----------------------------------------------------------------------------
 {
 	// remove scaling part from gizmo abs pose; gizmo not scale
@@ -263,25 +263,25 @@ void medGizmoCrossRotate::SetAbsPose(mafMatrix *absPose, bool applyPoseToFans)
 	mafTransform::GetPosition(*absPose, pos);
 	mafTransform::GetOrientation(*absPose, orient);
 
-	mafAutoPointer<mafMatrix> tmpMatr = mafMatrix::New();
+	auto tmpMatr = mafMatrix::NewSPtr();
 	tmpMatr->SetTimeStamp(absPose->GetTimeStamp());
 	mafTransform::SetPosition(*tmpMatr, pos);
 	mafTransform::SetOrientation(*tmpMatr, orient);
 
 	for (int i = 0; i < 3; i++)
 	{
-		m_GizmoCrossRotateAxisNS->SetAbsPose(tmpMatr.get());
-		m_GizmoCrossRotateAxisEW->SetAbsPose(tmpMatr.get());
+		m_GizmoCrossRotateAxisNS->SetAbsPose(tmpMatr);
+		m_GizmoCrossRotateAxisEW->SetAbsPose(tmpMatr);
 		if (applyPoseToFans == true)
 		{
-			m_GizmoCrossRotateFan->SetAbsPose(tmpMatr.get());
+			m_GizmoCrossRotateFan->SetAbsPose(tmpMatr);
 		}
 	}
-	if (m_BuildGUI) m_GuiGizmoRotate->SetAbsOrientation(tmpMatr.get());
+	if (m_BuildGUI) m_GuiGizmoRotate->SetAbsOrientation(tmpMatr);
 }
 
 //----------------------------------------------------------------------------
-mafMatrix *medGizmoCrossRotate::GetAbsPose()
+std::shared_ptr<mafMatrix> medGizmoCrossRotate::GetAbsPose()
 //----------------------------------------------------------------------------
 {
 	return m_GizmoCrossRotateAxisNS->GetAbsPose();
@@ -317,25 +317,25 @@ void medGizmoCrossRotate::SendTransformMatrixFromGui(mafEventBase *maf_event)
 		// [NewAbsPose] = [M]*[OldAbsPose] => [M] = [NewAbsPose][OldAbsPose]
 
 		// build objects
-		mafAutoPointer<mafMatrix> M = mafMatrix::New();
+		auto M = mafMatrix::NewSPtr();
 		mafMatrix invOldAbsPose;
-		mafAutoPointer<mafMatrix> newAbsPose = mafMatrix::New();
+		auto newAbsPose = mafMatrix::NewSPtr();
 
 		// incoming matrix is a rotation matrix
-		newAbsPose->DeepCopy(GetAbsPose());
+		newAbsPose->DeepCopy(*GetAbsPose());
 		// copy rotation from incoming matrix
 		mafTransform::CopyRotation(*e->GetMatrix(), *newAbsPose);
 
-		invOldAbsPose.DeepCopy(this->GetAbsPose());
+		invOldAbsPose.DeepCopy(*GetAbsPose());
 		invOldAbsPose.Invert();
 
 		mafMatrix::Multiply4x4(*newAbsPose,invOldAbsPose,*M);
 
 		// update gizmo abs pose
-		this->SetAbsPose(newAbsPose.get(), true);
+		this->SetAbsPose(newAbsPose, true);
 
 		// send transfrom to postmultiply to the listener. Events is sent as a transform event
-		SendTransformMatrix(M.get(), ID_TRANSFORM, mafInteractorGenericMouse::MOUSE_MOVE);
+		SendTransformMatrix(M, ID_TRANSFORM, mafInteractorGenericMouse::MOUSE_MOVE);
 	}
 }
 

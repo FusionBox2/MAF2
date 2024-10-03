@@ -54,7 +54,7 @@ mafGizmoAutoscaleHelper::mafGizmoAutoscaleHelper()
 	m_OldViewAngle      = -1;
 	m_OldDistance       = -1;
 
-	mafNEW(m_OldViewMatrix);
+	m_OldViewMatrix = mafMatrix::NewSPtr();
 
 	double bounds[6] = {-1,1,-1,1,-1,1};
 
@@ -78,7 +78,6 @@ mafGizmoAutoscaleHelper::~mafGizmoAutoscaleHelper()
 {
 	SetRenderer(NULL);
 	m_Camera=NULL;
-	mafDEL(m_OldViewMatrix);
 	vtkDEL(m_EventRouter);
 	cppDEL(m_Bounds);
 }
@@ -161,15 +160,15 @@ void mafGizmoAutoscaleHelper::SetRenderer(vtkRenderer *ren)
 }
 
 //------------------------------------------------------------------------------
-void mafGizmoAutoscaleHelper::UpdatePoseMatrix(mafMatrix *matrix,mafMatrix *old_view_matrix, mafMatrix *new_view_matrix)
+void mafGizmoAutoscaleHelper::UpdatePoseMatrix(std::shared_ptr<mafMatrix> matrix, std::shared_ptr<mafMatrix> old_view_matrix, std::shared_ptr<mafMatrix> new_view_matrix)
 //------------------------------------------------------------------------------
 { 
 	mafTransformFrame new_local_pose;
-	new_local_pose.SetInputFrame(old_view_matrix);
-	new_local_pose.SetTargetFrame(new_view_matrix);
-	new_local_pose.SetInput(matrix);
+	new_local_pose.SetInputFrame(*old_view_matrix);
+	new_local_pose.SetTargetFrame(*new_view_matrix);
+	new_local_pose.SetInput(*matrix);
 
-	matrix->DeepCopy(new_local_pose.GetMatrixPointer());
+	matrix->DeepCopy(*new_local_pose.GetMatrixPointer());
 }
 
 

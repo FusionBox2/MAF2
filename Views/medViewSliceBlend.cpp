@@ -561,7 +561,7 @@ void medViewSliceBlend::MultiplyPointByInputVolumeABSMatrix(double *point)
 {
   if(m_CurrentVolume && m_CurrentVolume->m_Vme)
   {
-    mafMatrix *mat = ((mafVME *)m_CurrentVolume->m_Vme)->GetOutput()->GetMatrix();
+    auto mat = ((mafVME *)m_CurrentVolume->m_Vme)->GetOutput()->GetMatrix();
     double coord[4];
     coord[0] = point[0];
     coord[1] = point[1];

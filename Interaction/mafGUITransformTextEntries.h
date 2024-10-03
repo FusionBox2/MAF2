@@ -89,7 +89,7 @@ public:
   void Reset() override;
   
   /** Set abs pose and update position, orientation and scale text entries according to current reference system*/
-  void SetAbsPose(mafMatrix *absPose, mafTimeStamp timeStamp = -1);
+  void SetAbsPose(const mafMatrix& absPose, mafTimeStamp timeStamp = -1);
 
 protected:
 

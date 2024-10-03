@@ -42,10 +42,10 @@ class MAF_EXPORT vtkMAFToLinearTransform : public vtkLinearTransform
   /** 
     Set the input matrix.  Any modifications to the MAF matrix will be
     reflected in the VTK transformation. This also set InputTransform to NULL.*/
-  virtual void SetInputMatrix(mafMatrix *);
+  virtual void SetInputMatrix(std::shared_ptr<mafMatrix>);
 
   /** return connected matrix if exists. */
-  mafMatrix *GetInputMatrix() {return m_InputMatrix;}
+  std::shared_ptr<mafMatrix> GetInputMatrix() {return m_InputMatrix;}
   
   /** 
     Set the input transform.  Any modifications to the MAF transform will be
@@ -75,7 +75,7 @@ protected:
 
   int               m_InverseFlag;
 
-  mafMatrix         *m_InputMatrix;
+  std::shared_ptr<mafMatrix> m_InputMatrix;
   mafTransformBase  *m_InputTransform;
   
 private:

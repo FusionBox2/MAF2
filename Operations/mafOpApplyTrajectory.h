@@ -103,7 +103,7 @@ public:
 
 protected:
 
-  mafMatrix *m_OriginalMatrix;
+  std::shared_ptr<mafMatrix> m_OriginalMatrix;
   mafString m_FileDir;
 	mafString m_File;
   mafVME* m_VME;

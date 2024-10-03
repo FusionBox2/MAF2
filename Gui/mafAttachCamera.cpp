@@ -181,7 +181,7 @@ void mafAttachCamera::SetVme(mafNode *node)
   m_AttachedVme->AddObserver(this);
 }
 //----------------------------------------------------------------------------
-void mafAttachCamera::SetStartingMatrix(mafMatrix *matrix)
+void mafAttachCamera::SetStartingMatrix(std::shared_ptr<mafMatrix> matrix)
 //----------------------------------------------------------------------------
 {
   if(matrix)

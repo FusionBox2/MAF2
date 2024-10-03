@@ -44,7 +44,7 @@ public:
   bool Accept(mafVME *vme) override;
 
   /**  Get the output of the interpolator item. */
-  mafMatrix *GetCurrentItem() {return m_CurrentItem.get();}
+  std::shared_ptr<mafMatrix> GetCurrentItem() {return m_CurrentItem;}
 
   /**
   Set the current time. Overidden to allow the output not to change when 
@@ -77,14 +77,14 @@ protected:
   void InternalUpdate() override;
 
   /** Set the current matrix of the pipe. */
-  void SetCurrentItem(mafMatrix *data);
+  void SetCurrentItem(std::shared_ptr<mafMatrix>data);
 
   /** request the update of the current matrix of the pipe. */
-  void UpdateCurrentItem(mafMatrix *item);
+  void UpdateCurrentItem(std::shared_ptr<mafMatrix>item);
 
-  mafAutoPointer<mafMatrix>    m_CurrentItem; ///< the item currently selected for the current time
+  std::shared_ptr<mafMatrix>    m_CurrentItem; ///< the item currently selected for the current time
 
-  mafAutoPointer<mafMatrix>    m_OldItem;     ///< the item previously selected
+  std::shared_ptr<mafMatrix>    m_OldItem;     ///< the item previously selected
 
   mafTimeStamp  m_OldTimeStamp; ///< previous time
 private:

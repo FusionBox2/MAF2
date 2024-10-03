@@ -69,7 +69,7 @@ mafGUITransformTextEntries::mafGUITransformTextEntries(mafVME *input, mafBaseEve
     CreateGui();
   }
 
-  SetAbsPose(m_InputVME->GetOutput()->GetAbsMatrix());
+  SetAbsPose(*m_InputVME->GetOutput()->GetAbsMatrix());
 }
 //----------------------------------------------------------------------------
 mafGUITransformTextEntries::~mafGUITransformTextEntries() 
@@ -159,7 +159,7 @@ void mafGUITransformTextEntries::Reset()
 //----------------------------------------------------------------------------
 {
   SetRefSys(m_InputVME);
-  SetAbsPose(m_InputVME->GetOutput()->GetAbsMatrix());
+  SetAbsPose(*m_InputVME->GetOutput()->GetAbsMatrix());
   m_Scaling[0] = m_Scaling[1] = m_Scaling[2] = 1;
   m_Gui->Update();
 }
@@ -168,7 +168,7 @@ void mafGUITransformTextEntries::Reset()
 void mafGUITransformTextEntries::RefSysVmeChanged()
 //----------------------------------------------------------------------------
 {
-  this->SetAbsPose(m_InputVME->GetOutput()->GetAbsMatrix());
+  this->SetAbsPose(*m_InputVME->GetOutput()->GetAbsMatrix());
 }
 
 //----------------------------------------------------------------------------
@@ -194,7 +194,7 @@ void mafGUITransformTextEntries::TextEntriesChanged()
   tran->Concatenate(m_RefSysVME->GetOutput()->GetAbsTransform().get(), POST_MULTIPLY);
   m_InputVME->SetAbsMatrix(tran->GetMatrix(), m_CurrentTime);
   
-  this->SetAbsPose(m_InputVME->GetOutput()->GetAbsMatrix());
+  this->SetAbsPose(*m_InputVME->GetOutput()->GetAbsMatrix());
   
   // notify the listener about the new abs pose
   mafEvent e2s;
@@ -206,13 +206,13 @@ void mafGUITransformTextEntries::TextEntriesChanged()
 
 #define TOLERANCE 1.0e-02
 //----------------------------------------------------------------------------
-void mafGUITransformTextEntries::SetAbsPose(mafMatrix* absPose, mafTimeStamp timeStamp)
+void mafGUITransformTextEntries::SetAbsPose(const mafMatrix& absPose, mafTimeStamp timeStamp)
 //----------------------------------------------------------------------------
 {
   // express absPose in RefSysVME refsys
   auto mflTr = mafTransformFrame::NewSPtr();
   mflTr->SetInput(absPose);
-  mflTr->SetTargetFrame(m_RefSysVME->GetOutput()->GetAbsMatrix());
+  mflTr->SetTargetFrame(*m_RefSysVME->GetOutput()->GetAbsMatrix());
   mflTr->Update();
   
   // update gui with new pose: Position, Orientation, Scale

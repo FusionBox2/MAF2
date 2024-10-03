@@ -1976,7 +1976,7 @@ void medViewArbitraryOrthoSlice::ShowMafVMEVolume( mafVME * vme, bool show )
 	transformReset->RotateY(m_VolumeVTKDataABSOrientation[1]);
 	transformReset->Update();
 
-	mafNEW(m_SlicerZResetMatrix);
+	m_SlicerZResetMatrix = mafMatrix::NewSPtr();
 	m_SlicerZResetMatrix->Identity();
 	m_SlicerZResetMatrix->SetVTKMatrix(transformReset->GetMatrix());
 
@@ -2104,10 +2104,6 @@ void medViewArbitraryOrthoSlice::HideMafVMEVolume()
 
 
 	cppDEL(m_GuiGizmos);
-
-	mafDEL(m_SlicerXResetMatrix);
-	mafDEL(m_SlicerYResetMatrix);
-	mafDEL(m_SlicerZResetMatrix);
 
 	m_CurrentVolume = NULL;
 	m_ColorLUT = NULL;
@@ -2285,7 +2281,7 @@ void medViewArbitraryOrthoSlice::ShowSlicers( mafVME * vmeVolume, bool show )
 	slicerXTransform->RotateY(89.999);
 	slicerXTransform->Update();
 
-	mafNEW(m_SlicerXResetMatrix);
+	m_SlicerXResetMatrix = mafMatrix::NewSPtr();
 	m_SlicerXResetMatrix->Identity();
 	m_SlicerXResetMatrix->DeepCopy(slicerXTransform->GetMatrix());
 
@@ -2308,7 +2304,7 @@ void medViewArbitraryOrthoSlice::ShowSlicers( mafVME * vmeVolume, bool show )
 	slicerYTransform->RotateX(90);
 	slicerYTransform->Update();
 
-	mafNEW(m_SlicerYResetMatrix);
+	m_SlicerYResetMatrix = mafMatrix::NewSPtr();
 	m_SlicerYResetMatrix->Identity();
 	m_SlicerYResetMatrix->DeepCopy(slicerYTransform->GetMatrix());
 
@@ -2865,11 +2861,11 @@ void medViewArbitraryOrthoSlice::PostMultiplyEventMatrixToGizmoCross( mafEventBa
 	tr1->Concatenate(e->GetMatrix()->GetVTKMatrix());
 	tr1->Update();
 
-	mafMatrix absPose;
-	absPose.DeepCopy(tr1->GetMatrix());
-	absPose.SetTimeStamp(m_GizmoYView->GetAbsPose()->GetTimeStamp());
+	auto absPose = mafMatrix::NewSPtr();
+	absPose->DeepCopy(tr1->GetMatrix());
+	absPose->SetTimeStamp(m_GizmoYView->GetAbsPose()->GetTimeStamp());
 
-	targetGizmo->SetAbsPose(&absPose);
+	targetGizmo->SetAbsPose(absPose);
 
 	vtkDEL(tr1);
 }
@@ -4583,8 +4579,8 @@ void medViewArbitraryOrthoSlice::MyMethod( medInteractorPicker * picker, double 
 	mat.DeepCopy(gizmoStartMatrix);     
 	mafTransform::GetPosition(gizmoStartMatrix, startPosition);
 
-	mafMatrix ngm;
-	ngm.DeepCopy(gizmoStartMatrix);
+	auto ngm = mafMatrix::NewSPtr();
+	ngm->DeepCopy(gizmoStartMatrix);
 
 	endPosition[0] = pickedPointCoordinates[0];
 	endPosition[1] = pickedPointCoordinates[1];
@@ -4594,14 +4590,14 @@ void medViewArbitraryOrthoSlice::MyMethod( medInteractorPicker * picker, double 
 	delta[1] = endPosition[1] - startPosition[1];
 	delta[2] = endPosition[2] - startPosition[2];
 
-	mafTransform::SetPosition(ngm, endPosition);
+	mafTransform::SetPosition(*ngm, endPosition);
 
-	mafMatrix matrixToSend;
-	mafTransform::SetPosition(matrixToSend, delta);
+	auto matrixToSend = mafMatrix::NewSPtr();
+	mafTransform::SetPosition(*matrixToSend, delta);
 
 	mafEvent fakeEvent;
 	fakeEvent.SetId(ID_TRANSFORM);
-	fakeEvent.SetMatrix(&matrixToSend);
+	fakeEvent.SetMatrix(matrixToSend);
 	fakeEvent.SetArg(mafInteractorGenericMouse::MOUSE_MOVE);
 
 	if (picker == m_XSlicerPicker)
@@ -4617,7 +4613,7 @@ void medViewArbitraryOrthoSlice::MyMethod( medInteractorPicker * picker, double 
 		OnEventGizmoCrossTranslateZNormalView(&fakeEvent);
 	}
 
-	gizmo->SetAbsPose(&ngm);
+	gizmo->SetAbsPose(ngm);
 
 	UpdateAllViewsThickness();
 }

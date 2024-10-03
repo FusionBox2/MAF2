@@ -648,8 +648,8 @@ void medGUILandmark::SetGuiAbsPosition(vtkMatrix4x4* absPose, mafTimeStamp timeS
   //mflTr->SetInput(mafMatrix(absPose));
   mafMatrix mat;
   mat.SetVTKMatrix(absPose);
-  mflTr->SetInput(&mat);
-  mflTr->SetTargetFrame(m_RefSysVME->GetOutput()->GetAbsMatrix());
+  mflTr->SetInput(mat);
+  mflTr->SetTargetFrame(*m_RefSysVME->GetOutput()->GetAbsMatrix());
   mflTr->Update();
   
   // update gui with new position 
