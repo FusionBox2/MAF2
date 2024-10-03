@@ -66,7 +66,7 @@ public:
   mafEvent(void *sender, int id, mafObject       *mafobj, intptr_t arg=0);
   mafEvent(void *sender, int id, mafObject       *mafobj,  mafString       *s, intptr_t arg=0);
   mafEvent(void *sender, int id, WidgetDataType  &widget_data, intptr_t arg=0);
-  mafEvent(void *sender, int id, mafMatrix    *m1,mafMatrix  *m2=NULL);
+  mafEvent(void *sender, int id, std::shared_ptr<mafMatrix> m1, std::shared_ptr<mafMatrix> m2=nullptr);
 
   void DeepCopy(const mafEventBase *maf_event) override;
 
@@ -77,8 +77,8 @@ public:
   mafView*          GetView()    {return m_View;};
   mafNode*          GetVme()     {return m_Vme;};
   mafOp*					  GetOp()      {return m_Op;};
-  mafMatrix*        GetMatrix()    {return m_Matrix;};
-  mafMatrix*        GetOldMatrix() {return m_OldMatrix;};
+  std::shared_ptr<mafMatrix>         GetMatrix()    {return m_Matrix;};
+  std::shared_ptr<mafMatrix> GetMatrix2() {return m_Matrix2;};
   mafObject*        GetMafObject() {return m_MafObject;}
 
   int GetX() {return m_x;};
@@ -102,8 +102,8 @@ public:
   void SetView(mafView* view)   { m_View = view;};
   void SetVme(mafNode* vme)     { m_Vme = vme;};
   void SetOp(mafOp* op)         { m_Op = op;};
-  void SetMatrix(mafMatrix* mat)       { m_Matrix = mat;};
-  void SetOldMatrix(mafMatrix* mat2)   { m_OldMatrix =mat2;};
+  void SetMatrix(std::shared_ptr<mafMatrix> mat)       { m_Matrix = mat;};
+  void SetMatrix2(std::shared_ptr<mafMatrix> mat2)   { m_Matrix2 =mat2;};
   void SetMafObject(mafObject* obj)    { m_MafObject = obj;}
   void SetWidgetData(WidgetDataType &widget_data);
 
@@ -116,8 +116,8 @@ protected:
   mafNode         *m_Vme;
   mafView         *m_View;
   mafOp						*m_Op;
-  mafMatrix       *m_Matrix;
-  mafMatrix       *m_OldMatrix;
+  std::shared_ptr<mafMatrix> m_Matrix;
+  std::shared_ptr<mafMatrix> m_Matrix2;
   mafObject       *m_MafObject;
   std::vector<mafNode*> m_VmeVector;
   WidgetDataType   m_WidgetData;

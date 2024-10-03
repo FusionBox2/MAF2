@@ -911,7 +911,7 @@ void medOpInteractiveClipSurface::ShowClipPlane(bool show)
       currTr->Update();
 
       mafMatrix mat;
-      mat.DeepCopy(&currTr->GetMatrix());
+      mat.DeepCopy(currTr->GetMatrix());
       mat.SetTimeStamp(((mafVME *)m_Input)->GetTimeStamp());
 
       m_ImplicitPlaneVMEGizmo->SetAbsMatrix(mat);

@@ -102,9 +102,9 @@ public:
 
   /**
   Set the gizmo pose*/
-  void SetAbsPose(mafMatrix *absPose, mafTimeStamp ts = -1);
+  void SetAbsPose(std::shared_ptr<mafMatrix> absPose, mafTimeStamp ts = -1);
 
-  mafMatrix *GetAbsPose() override;
+  std::shared_ptr<mafMatrix> GetAbsPose() override;
   
   //----------------------------------------------------------------------------
   // RefSys
@@ -158,15 +158,15 @@ private:
 
   /**
   Scaling gizmo initial pose; used to restore scale gizmo axis pose after a gizmo drag event*/
-  mafMatrix *m_InitialGizmoPose;
+  std::shared_ptr<mafMatrix> m_InitialGizmoPose;
   
   /**
   Vme matrix relative to RefSysVME at MOUSE_DOWN*/
-  mafMatrix *m_VmeMatrixRelativeToRefSysVME;
+  std::shared_ptr<mafMatrix> m_VmeMatrixRelativeToRefSysVME;
 
   /**
   RefSys abs matrix at MOUSE_DOWN*/
-  mafMatrix *m_RefSysVMEAbsMatrixAtMouseDown;
+  std::shared_ptr<mafMatrix> m_RefSysVMEAbsMatrixAtMouseDown;
 
   /** 
   Return the scaling value to be applied to vme on current axis based on active gizmo position */

@@ -63,7 +63,7 @@ enum GUI_GIZMO_TRANSLATE_ID
 
   /**
   Update Position ivar; only translation part is copied from pose */
-  void SetAbsPosition(mafMatrix *pose);
+  void SetAbsPosition(std::shared_ptr<mafMatrix> pose);
 
 protected:
 

@@ -46,20 +46,20 @@ class MAF_EXPORT mafTransformFrame : public mafTransformBase
 
   /** set the matrix to be transformed */
   void SetInput(std::shared_ptr<mafTransformBase> frame);
-  void SetInput(mafMatrix *frame);
+  void SetInput(const mafMatrix &matrix);
   std::shared_ptr<mafTransformBase> GetInput() {return m_Input;}
 
   /**
   Set/Get the input reference system, i.e. the reference system of the 
   input matrix.*/
-  void SetInputFrame(mafMatrix *frame);
+  void SetInputFrame(const mafMatrix& matrix);
   void SetInputFrame(std::shared_ptr<mafTransformBase> frame);
   std::shared_ptr<mafTransformBase> GetInputFrame() {return m_InputFrame;}
 
   /**
   Set/Get the output reference system, i.e. the reference system of the output
   matrix or the target reference system for point transformation.*/
-  void SetTargetFrame(mafMatrix *frame);
+  void SetTargetFrame(const mafMatrix& matrix);
   void SetTargetFrame(std::shared_ptr<mafTransformBase> frame);
   std::shared_ptr<mafTransformBase> GetTargetFrame() {return m_TargetFrame;}
 

@@ -176,9 +176,9 @@ void lhpOpICPRegFollow::OpDo()
 	((mafVME*)m_Input)->GetOutput()->Update();
   
 
-	mafAutoPointer<mafMatrix> icp_matrix = mafMatrix::New();  
-	mafAutoPointer<mafMatrix> final_matrix = mafMatrix::New();
-  mafAutoPointer<mafMatrix> target_matrix = mafMatrix::New();
+	auto icp_matrix = mafMatrix::NewSPtr();  
+	auto final_matrix = mafMatrix::NewSPtr();
+  auto target_matrix = mafMatrix::NewSPtr();
   m_Target->GetOutput()->GetAbsMatrix(*target_matrix,m_Target->GetTimeStamp());
 	
 
@@ -229,7 +229,7 @@ void lhpOpICPRegFollow::OpDo()
   sourceABSPoseInverseTr->PreMultiply();
   sourceABSPoseInverseTr->Concatenate((m_Registered->GetAbsMatrixPipe()->GetMatrix()).GetVTKMatrix());
   
-  mafAutoPointer<mafMatrix> mat = mafMatrix::New();
+  auto mat = mafMatrix::NewSPtr();
   mat->SetVTKMatrix(sourceABSPoseInverseTr->GetMatrix());
 
   m_Registered->SetAbsMatrix(*mat);

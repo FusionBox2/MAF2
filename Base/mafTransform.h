@@ -82,7 +82,7 @@ class MAF_EXPORT mafTransform : public mafTransformBase
   virtual void SetMatrix(const mafMatrix &input) {*m_Matrix=input;SetTimeStamp(input.GetTimeStamp());Modified();}
 
   /** set the internal matrix pointer to the given matrix. Do not use this if you don't know what you are doing */
-  void SetMatrixPointer(mafMatrix *matrix);
+  void SetMatrixPointer(std::shared_ptr<mafMatrix> matrix);
 
 	/**
 	  Polar Decomposition of matrix M in Q * S.*/

@@ -109,19 +109,19 @@ void mafGUIGizmoScale::SendAbsScaling(mafEventBase *sourceEvent)
 //----------------------------------------------------------------------------
 {
   // build abs matrix scaling
-  mafMatrix m2send;
-  mafTransform::Scale(m2send, m_Scaling[0], m_Scaling[1], m_Scaling[2], PRE_MULTIPLY);
+  auto m2send = mafMatrix::NewSPtr();
+  mafTransform::Scale(*m2send, m_Scaling[0], m_Scaling[1], m_Scaling[2], PRE_MULTIPLY);
 
   mafEvent event2Send;
   event2Send.SetSender(this);
   event2Send.SetId(sourceEvent->GetId());
-  event2Send.SetMatrix(&m2send);
+  event2Send.SetMatrix(m2send);
   
   mafEventMacro(event2Send);
 }
 
 //----------------------------------------------------------------------------
-void mafGUIGizmoScale::SetAbsScaling(mafMatrix *pose)
+void mafGUIGizmoScale::SetAbsScaling(std::shared_ptr<mafMatrix> pose)
 //----------------------------------------------------------------------------
 {
   mafTransform::GetScale(*pose, m_Scaling);

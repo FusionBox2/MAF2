@@ -726,9 +726,9 @@ int lhpOpBonemat::HUIntegration()
   mafMatrix inputMeshABSMatrix = inMesh->GetAbsMatrixPipe()->GetMatrix();
 
   // just to test that equals is working
-  assert(inputMeshABSMatrix.Equals(&inputMeshABSMatrix));
+  assert(inputMeshABSMatrix.Equals(inputMeshABSMatrix));
 
-  bool inputMeshABSMatrixEqualToIdentity = inputMeshABSMatrix.Equals(&identityMatrix);
+  bool inputMeshABSMatrixEqualToIdentity = inputMeshABSMatrix.Equals(identityMatrix);
 
   vtkUnstructuredGrid *inputUnstructuredGrid = inMesh->GetUnstructuredGridOutput()->GetUnstructuredGridData();
   assert(inputUnstructuredGrid);
@@ -1339,9 +1339,9 @@ int lhpOpBonemat::YoungModuleIntegration()
   mafMatrix inputMeshABSMatrix = inMesh->GetAbsMatrixPipe()->GetMatrix();
 
   // just to test that equals is working
-  assert(inputMeshABSMatrix.Equals(&inputMeshABSMatrix));
+  assert(inputMeshABSMatrix.Equals(inputMeshABSMatrix));
 
-  bool inputMeshABSMatrixEqualToIdentity = inputMeshABSMatrix.Equals(&identityMatrix);
+  bool inputMeshABSMatrixEqualToIdentity = inputMeshABSMatrix.Equals(identityMatrix);
 
   vtkUnstructuredGrid *inputUnstructuredGrid = inMesh->GetUnstructuredGridOutput()->GetUnstructuredGridData();
   assert(inputUnstructuredGrid);

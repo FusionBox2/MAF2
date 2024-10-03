@@ -34,16 +34,16 @@ class mafStorageElementBuilder;
   -
 */
 
-class MAF_EXPORT mafMatrixVector : public mafTimeMap<mafMatrix>
+class MAF_EXPORT mafMatrixVector : public mafTimeMap<mafMatrix, std::shared_ptr, std::shared_ptr<mafMatrix> >
 {
 public:
-  typedef mafTimeMap<mafMatrix>::TimeMap::iterator Iterator;
+  typedef mafTimeMap<mafMatrix, std::shared_ptr, std::shared_ptr<mafMatrix> >::TimeMap::iterator Iterator;
 
   mafMatrixVector();
   ~mafMatrixVector() override;
 
   // set as parent mafObject since type macro does not work for template classes
-  mafTypeMacro(mafMatrixVector,mafObject); 
+  mafTypeMacroN(mafMatrixVector); 
   
   /**
     Append a matrix to the vector setting its timestamp to the highest one + 1
@@ -52,7 +52,7 @@ public:
   /**
     Append a matrix to the vector setting its timestamp to the highest one + 1
     The matrix object is <U>referenced</U> and <B>NOT</B> <U>copied</U>. same effect of AppendItem(). */
-  void AppendKeyMatrix(mafMatrix *m) {AppendItem(m);}
+  void AppendKeyMatrix(std::shared_ptr<mafMatrix> m) {AppendItem(m);}
 
   /** return a vector of key matrices. */
   void GetKeyMatrixVector(std::vector<mafMatrix *> &mvector);
@@ -61,11 +61,11 @@ public:
   int GetNumberOfMatrices() const {return GetNumberOfItems();}
   
   /** return the matrix with the timestamp nearest to t*/
-  mafMatrix *GetNearestMatrix(mafTimeStamp t) {return GetNearestItem(t);}
+  std::shared_ptr<mafMatrix> GetNearestMatrix(mafTimeStamp t) {return GetNearestItem(t);}
   /** return the matrix with timestamp <=t */
-  mafMatrix *GetMatrixBefore(mafTimeStamp t) {return GetItemBefore(t);}
+  std::shared_ptr<mafMatrix> GetMatrixBefore(mafTimeStamp t) {return GetItemBefore(t);}
   /** return  the matrix with the timestamp==t. return NULL if not found.*/
-  mafMatrix *GetMatrix(mafTimeStamp t) {return GetItem(t);}
+  std::shared_ptr<mafMatrix> GetMatrix(mafTimeStamp t) {return GetItem(t);}
 
   /**
     Set the matrix for a specified time. If no key-matrix with the same time exist
@@ -79,7 +79,7 @@ public:
     a new key-matrix is created. If a key-matrix with the same time exist, simply
     overwrite the old 4x4 Matrix value. The given matrix object is referenced and
     not copied.*/
-  void SetMatrix(mafMatrix *mat) {InsertItem(mat);}
+  void SetMatrix(std::shared_ptr<mafMatrix> mat) {InsertItem(mat);}
 
   void Store(mafStorageElementBuilder& element) { InternalStore(element); }
   void Restore(const mafStorageElement& element) { InternalRestore(element); }

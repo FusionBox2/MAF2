@@ -541,7 +541,7 @@ void mafInteractorPER::FlyTo(mafEventInteraction *e,int numstep, double zoom)
   mafVME        *picked_vme  = NULL;
   vtkProp3D     *picked_prop = NULL;
   mafInteractor *picked_bh   = NULL;
-  mafMatrix     *point_pose  = e->GetMatrix();
+  auto point_pose  = e->GetMatrix();
   double         pose_2d[2];
 
   mafDeviceButtonsPadTracker *tracker = mafDeviceButtonsPadTracker::SafeDownCast((mafDevice*)e->GetSender());

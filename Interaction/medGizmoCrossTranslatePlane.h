@@ -113,12 +113,12 @@ public:
 
    /** 
   Set the abs pose */
-  void SetAbsPose(mafMatrix *absPose) override;
-  mafMatrix *GetAbsPose() override;
+  void SetAbsPose(std::shared_ptr<mafMatrix> absPose) override;
+  std::shared_ptr<mafMatrix> GetAbsPose() override;
 
   /** 
   Set the constrain ref sys */
-  void SetConstrainRefSys(mafMatrix *constrain);
+  void SetConstrainRefSys(std::shared_ptr<mafMatrix> constrain);
  
   /**
   Set the constraint modality for the given axis; allowed constraint modality are:

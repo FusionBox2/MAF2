@@ -71,7 +71,7 @@ public:
 
   /**Set an initial transform matrix before attaching camera. 
   this method must be called before SetVme*/
-  void SetStartingMatrix(mafMatrix *matrix);
+  void SetStartingMatrix(std::shared_ptr<mafMatrix> matrix);
   mafMatrix GetStartingMatrix();
 
 	void OnEvent(mafEventBase *maf_event) override;

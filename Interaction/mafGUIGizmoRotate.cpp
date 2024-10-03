@@ -107,19 +107,19 @@ void mafGUIGizmoRotate::SendAbsOrientation(mafEventBase *sourceEvent)
 //----------------------------------------------------------------------------
 {
   // build abs matrix position
-  mafMatrix m2send;
-  mafTransform::SetOrientation(m2send, m_Orientation[0], m_Orientation[1], m_Orientation[2]);
+  auto m2send = mafMatrix::NewSPtr();
+  mafTransform::SetOrientation(*m2send, m_Orientation[0], m_Orientation[1], m_Orientation[2]);
 
   mafEvent event2Send;
   event2Send.SetSender(this);
   event2Send.SetId(sourceEvent->GetId());
-  event2Send.SetMatrix(&m2send);
+  event2Send.SetMatrix(m2send);
   
   mafEventMacro(event2Send);
 }
 
 //----------------------------------------------------------------------------
-void mafGUIGizmoRotate::SetAbsOrientation(mafMatrix *pose)
+void mafGUIGizmoRotate::SetAbsOrientation(std::shared_ptr<mafMatrix> pose)
 //----------------------------------------------------------------------------
 {
   mafTransform::GetOrientation(*pose, m_Orientation);

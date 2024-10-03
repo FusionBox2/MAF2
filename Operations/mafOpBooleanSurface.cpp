@@ -588,7 +588,7 @@ void mafOpBooleanSurface::ShowClipPlane(bool show)
 			currTr->Update();
 
 			mafMatrix mat;
-			mat.DeepCopy(&currTr->GetMatrix());
+			mat.DeepCopy(currTr->GetMatrix());
 			mat.SetTimeStamp(((mafVME *)m_Input)->GetTimeStamp());
 
 			m_ImplicitPlaneGizmo->SetAbsMatrix(mat);

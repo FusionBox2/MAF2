@@ -37,9 +37,9 @@ mafCxxAbstractTypeMacro(mafInteractor6DOF)
 mafInteractor6DOF::mafInteractor6DOF()
 //------------------------------------------------------------------------------
 {
-  mafNEW(m_TrackerPoseMatrix);
-  mafNEW(m_InverseTrackerPoseMatrix);
-  mafNEW(m_StartTrackerPoseMatrix);
+  m_TrackerPoseMatrix = mafMatrix::NewSPtr();
+  m_InverseTrackerPoseMatrix = mafMatrix::NewSPtr();
+  m_StartTrackerPoseMatrix = mafMatrix::NewSPtr();
   m_TmpTransform = mafTransform::NewSPtr();
   m_DeltaTransform = mafTransform::NewSPtr();
     
@@ -50,9 +50,6 @@ mafInteractor6DOF::mafInteractor6DOF()
 mafInteractor6DOF::~mafInteractor6DOF()
 //------------------------------------------------------------------------------
 {
-  mafDEL(m_TrackerPoseMatrix);
-  mafDEL(m_InverseTrackerPoseMatrix);
-  mafDEL(m_StartTrackerPoseMatrix);
 }
 
 //------------------------------------------------------------------------------
@@ -100,13 +97,13 @@ void mafInteractor6DOF::ShowAvatar()
 }
 
 //------------------------------------------------------------------------------
-int mafInteractor6DOF::StartInteraction(mafDeviceButtonsPadTracker *tracker,mafMatrix *pose)
+int mafInteractor6DOF::StartInteraction(mafDeviceButtonsPadTracker *tracker, std::shared_ptr<mafMatrix> pose)
 //------------------------------------------------------------------------------
 {
   if (Superclass::StartInteraction(tracker))
   {
     if (pose)
-      TrackerSnapshot(pose);
+      TrackerSnapshot(*pose);
     else
     {
       m_StartTrackerPoseMatrix->Identity();
@@ -119,7 +116,8 @@ int mafInteractor6DOF::StartInteraction(mafDeviceButtonsPadTracker *tracker,mafM
     {
       // store the current renderer: camera cannot be changed during interaction!!!
       SetRenderer(tracker->GetAvatar()->GetRenderer());
-      InvokeEvent(INTERACTION_STARTED,MCH_UP,m_StartTrackerPoseMatrix);
+#pragma message ("DANGEROUS!!!!!")
+      InvokeEvent(INTERACTION_STARTED,MCH_UP,m_StartTrackerPoseMatrix.get());
       return true;
     }
     // if wrong type of avatar force unlock device and stop interaction 
@@ -129,7 +127,7 @@ int mafInteractor6DOF::StartInteraction(mafDeviceButtonsPadTracker *tracker,mafM
 }
 
 //------------------------------------------------------------------------------
-int mafInteractor6DOF::StopInteraction(mafDeviceButtonsPadTracker *tracker,mafMatrix *pose)
+int mafInteractor6DOF::StopInteraction(mafDeviceButtonsPadTracker *tracker, std::shared_ptr<mafMatrix> pose)
 //------------------------------------------------------------------------------
 {
   if (Superclass::StopInteraction(tracker))
@@ -143,19 +141,17 @@ int mafInteractor6DOF::StopInteraction(mafDeviceButtonsPadTracker *tracker,mafMa
 }
 
 //------------------------------------------------------------------------------
-void mafInteractor6DOF::SetTrackerPoseMatrix(mafMatrix *pose)
+void mafInteractor6DOF::SetTrackerPoseMatrix(const mafMatrix& pose)
 //------------------------------------------------------------------------------
 {
-  assert(pose);
   m_TrackerPoseMatrix->DeepCopy(pose);
 }
 
 // Raw Pose
 //------------------------------------------------------------------------------
-void mafInteractor6DOF::TrackerSnapshot(mafMatrix *pose)
+void mafInteractor6DOF::TrackerSnapshot(const mafMatrix& pose)
 //------------------------------------------------------------------------------
 {
-  assert(pose);
   m_StartTrackerPoseMatrix->DeepCopy(pose);
   mafMatrix::Invert(*m_StartTrackerPoseMatrix,*m_InverseTrackerPoseMatrix);
 }
@@ -223,7 +219,7 @@ int mafInteractor6DOF::OnStartInteraction(mafEventInteraction *event)
 {
   mafDeviceButtonsPadTracker *tracker=mafDeviceButtonsPadTracker::SafeDownCast((mafDevice *)event->GetSender());
   assert(tracker);
-  mafMatrix *start_tracker_pose=event->GetMatrix();
+  auto start_tracker_pose=event->GetMatrix();
   return StartInteraction(tracker,start_tracker_pose);
 }
 //------------------------------------------------------------------------------
@@ -232,6 +228,6 @@ int mafInteractor6DOF::OnStopInteraction(mafEventInteraction *event)
 {
   mafDeviceButtonsPadTracker *tracker=mafDeviceButtonsPadTracker::SafeDownCast((mafDevice *)event->GetSender());
   assert(tracker);
-  mafMatrix *stop_tracker_pose=event->GetMatrix();
+  auto stop_tracker_pose=event->GetMatrix();
   return StopInteraction(tracker,stop_tracker_pose);
 }

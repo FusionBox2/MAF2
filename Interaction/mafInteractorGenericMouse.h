@@ -154,13 +154,13 @@ protected:
   int m_HelpPIndex;
 
   //the constrain ref sys matrix
-  mafMatrix *m_ConstrainRefSys;
+  std::shared_ptr<mafMatrix> m_ConstrainRefSys;
 
   //----------------------------------------------------------------------------
   // result matrix: the matrix to keep updated 
   //----------------------------------------------------------------------------
   // Register the pointer to the matrix to be updated
-  mafMatrix *m_ResultMatrix;
+  std::shared_ptr<mafMatrix> m_ResultMatrix;
   
   int m_ResultMatrixConcatenationSemantic;
 

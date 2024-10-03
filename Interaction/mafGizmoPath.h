@@ -80,7 +80,7 @@ public:
   /** return the gizmo object*/
   mafVMEGizmo *GetOutput() {return m_VmeGizmoPath;}; 
 
-  mafMatrix *GetAbsPose() override;
+  std::shared_ptr<mafMatrix> GetAbsPose() override;
   
   /** Set the gizmo color */
   void SetColor(double col[3]);

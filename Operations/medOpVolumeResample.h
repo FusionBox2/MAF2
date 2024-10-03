@@ -159,7 +159,7 @@ protected:
 	mafGizmoRotate		*m_GizmoRotate;
 	mafGizmoROI				*m_GizmoROI;
 	mafVMESurface			*m_VMEDummy;
-	mafMatrix					*m_CenterVolumeRefSysMatrix;
+	std::shared_ptr<mafMatrix> m_CenterVolumeRefSysMatrix;
 
 	int	m_ShowHandle;
 	int m_ShowGizmoTransform;

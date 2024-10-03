@@ -213,7 +213,7 @@ void mafGizmoScaleIsotropic::Show(bool show)
 }
 
 //----------------------------------------------------------------------------
-void mafGizmoScaleIsotropic::SetAbsPose(mafMatrix *absPose)
+void mafGizmoScaleIsotropic::SetAbsPose(std::shared_ptr<mafMatrix> absPose)
 //----------------------------------------------------------------------------
 {
   m_CubeGizmo->SetAbsMatrix(*absPose); 
@@ -221,7 +221,7 @@ void mafGizmoScaleIsotropic::SetAbsPose(mafMatrix *absPose)
 }
 
 //----------------------------------------------------------------------------
-void mafGizmoScaleIsotropic::SetRefSysMatrix(mafMatrix *matrix)
+void mafGizmoScaleIsotropic::SetRefSysMatrix(std::shared_ptr<mafMatrix> matrix)
 //----------------------------------------------------------------------------
 {  
   m_IsaGen->GetTranslationConstraint()->GetRefSys()->SetMatrix(matrix);
@@ -229,7 +229,7 @@ void mafGizmoScaleIsotropic::SetRefSysMatrix(mafMatrix *matrix)
 }
 
 //----------------------------------------------------------------------------
-mafMatrix *mafGizmoScaleIsotropic::GetAbsPose()
+std::shared_ptr<mafMatrix> mafGizmoScaleIsotropic::GetAbsPose()
 //----------------------------------------------------------------------------
 {
   return m_CubeGizmo->GetOutput()->GetAbsMatrix();

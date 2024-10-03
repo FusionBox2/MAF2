@@ -206,12 +206,12 @@ static void makeReparent(mafVME *child, mafVME *newParent)
 
   startTime = newParent->GetTimeStamp();
 
-  std::vector< mafAutoPointer<mafMatrix> > new_input_pose;
+  std::vector< std::shared_ptr<mafMatrix> > new_input_pose;
   new_input_pose.resize(num);
 
   for (t = 0; t < num; t++)
   {
-    new_input_pose[t] = mafMatrix::New();
+    new_input_pose[t] = mafMatrix::NewSPtr();
   }
 
   //change reference system
@@ -230,7 +230,7 @@ static void makeReparent(mafVME *child, mafVME *newParent)
     transform->SetTargetFrame(newParent->GetAbsMatrixPipe());
     transform->Update();
 
-    new_input_pose[t]->DeepCopy(transform->GetMatrixPointer());
+    new_input_pose[t]->DeepCopy(*transform->GetMatrixPointer());
 #else
     mafMatrix mtr;
     child->GetOutput()->GetAbsMatrix(mtr, cTime);

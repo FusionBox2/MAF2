@@ -85,8 +85,8 @@ public:
   /** Gizmo is reparented under the vme tree root, this modality is currently not supported */
   void SetModalityToGlobal() {mafLogMessage(_M("Global modality is currently not supported for this item"));}
 
-  void  SetPosition(mafMatrix *matrix);
-  mafMatrix *GetPosition(){return m_GizmoHandleCenterMatrix;};
+  void  SetPosition(const mafMatrix& matrix);
+  std::shared_ptr<mafMatrix> GetPosition(){return m_GizmoHandleCenterMatrix;};
 
   /** Set matrix of the handle */
   void SetHandleCenterMatrix(mafMatrix *m);
@@ -112,7 +112,7 @@ protected:
   mafInteractorCompositorMouse *m_GizmoBehavior;
 	vtkDoubleArray     *m_SnapArray;
 
-  mafMatrix     *m_GizmoHandleCenterMatrix;
+  std::shared_ptr<mafMatrix> m_GizmoHandleCenterMatrix;
   vtkPoints		  *m_Point;
 
 	bool m_CustomizedSnapArrayFlag;

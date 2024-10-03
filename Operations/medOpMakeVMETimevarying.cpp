@@ -629,7 +629,7 @@ void medOpMakeVMETimevarying::Execute()
   }
 
   mafVMEItemVTK * lastVmeItem = NULL;
-  mafMatrix * lastVmeMatrix = NULL;
+  std::shared_ptr<mafMatrix> lastVmeMatrix;
 
   //Fill VME's DataVector and MatrixVector
   for(auto& AddedVME : m_AddedVMEs)
@@ -661,29 +661,26 @@ void medOpMakeVMETimevarying::Execute()
     mafDEL(vmeItem); // remove leaks
 
     //Matrix changes
-    mafMatrix * vmeMatrix;
-    mafNEW(vmeMatrix);
-    vmeMatrix->DeepCopy(AddedVME->m_VME->GetOutput()->GetMatrix());
+    auto vmeMatrix = mafMatrix::NewSPtr();
+    vmeMatrix->DeepCopy(*AddedVME->m_VME->GetOutput()->GetMatrix());
     vmeMatrix->SetTimeStamp((mafTimeStamp)AddedVME->m_TimeStamp);
     if(lastVmeMatrix==NULL)
     {
-      mafNEW(lastVmeMatrix);
+      lastVmeMatrix = mafMatrix::NewSPtr();
       m_VMETimevarying->GetMatrixVector()->SetMatrix(vmeMatrix);
-      lastVmeMatrix->DeepCopy(vmeMatrix);
+      lastVmeMatrix->DeepCopy(*vmeMatrix);
     }
     else
     {
       lastVmeMatrix->SetTimeStamp((mafTimeStamp)AddedVME->m_TimeStamp);
-      if(!lastVmeMatrix->Equals(vmeMatrix))
+      if(!lastVmeMatrix->Equals(*vmeMatrix))
       {
          m_VMETimevarying->GetMatrixVector()->SetMatrix(vmeMatrix);
-         lastVmeMatrix->DeepCopy(vmeMatrix);
+         lastVmeMatrix->DeepCopy(*vmeMatrix);
       }
     }
-    mafDEL(vmeMatrix); // remove leaks
   }
   mafDEL(lastVmeItem); // remove leaks
-  mafDEL(lastVmeMatrix);
 
   //Update VME's DataPipe and MatrixPipe
   m_VMETimevarying->SetName(m_VMETimevaryingName);

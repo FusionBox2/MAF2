@@ -285,7 +285,7 @@ void medPipeTrajectories::UpdateProperty(bool fromTag)
     int maxValue = (i + m_Interval) >= m_TimeVector.size() ? m_TimeVector.size() - 1 : (i + m_Interval);
     
     //Get landmark position form the current transformation matrix
-    mafMatrix *m = m_MatrixVector->GetMatrix(m_TimeVector[i]);
+    auto m = m_MatrixVector->GetMatrix(m_TimeVector[i]);
     mafTransform::GetPosition(*m,xyzTransform);
 
     //Landmark center position. Set to zero, because position is applied by the current transformation matrix

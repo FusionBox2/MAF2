@@ -79,9 +79,9 @@ void medVisualPipeCollisionDetection::Create(mafNode *n, mafView *v/*, bool use_
   assert(surface_output);
   surface_output->Update();
 
-  mafNEW(m_Matrix0);
+  m_Matrix0 = mafMatrix::NewSPtr();
   //Store old matrix to speedup dispacth of events
-  m_Matrix0->DeepCopy(m_Vme->GetOutput()->GetAbsMatrix());
+  m_Matrix0->DeepCopy(*m_Vme->GetOutput()->GetAbsMatrix());
 
   vtkPolyData *pd = vtkPolyData::SafeDownCast(surface_output->GetVTKData());
   //pd->Update();
@@ -103,10 +103,9 @@ void medVisualPipeCollisionDetection::Create(mafNode *n, mafView *v/*, bool use_
       vtkPolyData *pdToCollide = vtkPolyData::SafeDownCast(surfaceOutputToCollide->GetVTKData());
       //pdToCollide->Update();
 
-      mafMatrix *m1;
-      mafNEW(m1);
+      auto m1 = mafMatrix::NewSPtr();
       //Store old matrix to speedup dispacth of events
-      m1->DeepCopy(m_SurfacesToCollide[i]->GetOutput()->GetAbsMatrix());
+      m1->DeepCopy(*m_SurfacesToCollide[i]->GetOutput()->GetAbsMatrix());
       m_CollisionFilter->SetInputData(1,pdToCollide);
       m_CollisionFilter->SetMatrix(1,m1->GetVTKMatrix());
       m_Matrix1.push_back(m1);
@@ -173,12 +172,6 @@ medVisualPipeCollisionDetection::~medVisualPipeCollisionDetection()
   vtkDEL(m_Actor);
   vtkDEL(m_Mapper);
   vtkDEL(m_CollisionFilter);
-  //Delete matrix
-  mafDEL(m_Matrix0);
-  for (int i=0;i<m_Matrix1.size();i++)
-  {
-    mafDEL(m_Matrix1[i]);
-  }
   //remove actors
   for (int i=0;i<m_SurfacebToCollideActor.size();i++)
   {
@@ -288,10 +281,10 @@ void medVisualPipeCollisionDetection::UpdatePipeline(bool force /* = false */)
     //for all surfaces to compute collisions
     for (int i=0;i<m_SurfacesToCollide.size();i++)
     {
-	    mafMatrix *m0 = m_Vme->GetOutput()->GetAbsMatrix();
-	    mafMatrix *m1 = m_SurfacesToCollide[i]->GetOutput()->GetAbsMatrix();
+	    auto m0 = m_Vme->GetOutput()->GetAbsMatrix();
+	    auto m1 = m_SurfacesToCollide[i]->GetOutput()->GetAbsMatrix();
       //if matrix are equals and so it's not necessary compute collision
-	    if (!force && (m0->Equals(m_Matrix0) && m1->Equals(m_Matrix1[i])))
+	    if (!force && (m0->Equals(*m_Matrix0) && m1->Equals(*(m_Matrix1[i]))))
 	    {
 	      return;
 	    }
@@ -302,8 +295,8 @@ void medVisualPipeCollisionDetection::UpdatePipeline(bool force /* = false */)
         m_CollisionFilter->SetInputData(1,data);
       }
       //store new matrix
-      m_Matrix0->DeepCopy(m0);
-      m_Matrix1[i]->DeepCopy(m1);
+      m_Matrix0->DeepCopy(*m0);
+      m_Matrix1[i]->DeepCopy(*m1);
       m_CollisionFilter->SetCollisionModeToHalfContacts();
       m_CollisionFilter->SetMatrix(0,m_Matrix0->GetVTKMatrix());
       m_CollisionFilter->SetMatrix(1,m_Matrix1[i]->GetVTKMatrix());
@@ -469,7 +462,6 @@ void medVisualPipeCollisionDetection::SetSurfaceToCollide( mafVME *surface )
     {
 	    //Remove observer before change surface to collide
 	    m_SurfacesToCollide[i]->RemoveObserver(this);
-	    mafDEL(m_Matrix1[i]);
     }
     m_SurfacesToCollide.clear();
     m_Matrix1.clear();
@@ -477,9 +469,8 @@ void medVisualPipeCollisionDetection::SetSurfaceToCollide( mafVME *surface )
   m_SurfacesToCollide.push_back(surface);
   //To capture matrix changes events
   m_SurfacesToCollide[m_SurfacesToCollide.size()-1]->AddObserver(this);
-  mafMatrix *m1;
-  mafNEW(m1);
-  m1->DeepCopy(m_SurfacesToCollide[m_SurfacesToCollide.size()-1]->GetOutput()->GetAbsMatrix());
+  auto m1 = mafMatrix::NewSPtr();
+  m1->DeepCopy(*m_SurfacesToCollide[m_SurfacesToCollide.size()-1]->GetOutput()->GetAbsMatrix());
   m_Matrix1.push_back(m1);
   UpdatePipeline(true);
 }
@@ -502,9 +493,8 @@ void medVisualPipeCollisionDetection::AddSurfaceToCollide( mafVME *surface )
   m_SurfacesToCollide.push_back(surface);
   //To capture matrix changes events
   m_SurfacesToCollide[m_SurfacesToCollide.size()-1]->AddObserver(this);
-  mafMatrix *m1;
-  mafNEW(m1);
-  m1->DeepCopy(m_SurfacesToCollide[m_SurfacesToCollide.size()-1]->GetOutput()->GetAbsMatrix());
+  auto m1 = mafMatrix::NewSPtr();
+  m1->DeepCopy(*m_SurfacesToCollide[m_SurfacesToCollide.size()-1]->GetOutput()->GetAbsMatrix());
   m_Matrix1.push_back(m1);
   UpdatePipeline(true);
 }

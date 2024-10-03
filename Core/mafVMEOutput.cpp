@@ -361,7 +361,7 @@ std::shared_ptr<mafTransformBase> mafVMEOutput::GetTransform() const
   return m_Transform;
 }
 //-------------------------------------------------------------------------
-mafMatrix *mafVMEOutput::GetMatrix() const
+std::shared_ptr<mafMatrix> mafVMEOutput::GetMatrix() const
 //-------------------------------------------------------------------------
 {
   return GetTransform()->GetMatrixPointer();
@@ -376,7 +376,7 @@ void mafVMEOutput::GetMatrix(mafMatrix &matrix,mafTimeStamp t) const
   {
     if (t<0||t==m_VME->GetTimeStamp())
     {
-      matrix.DeepCopy(GetMatrix());
+      matrix.DeepCopy(*GetMatrix());
     }
     else
     {
@@ -394,8 +394,8 @@ void mafVMEOutput::GetMatrix(mafMatrix &matrix,mafTimeStamp t) const
   }
   else
   {
-    mafMatrix *mat=GetMatrix();
-    matrix.DeepCopy(mat);
+    auto mat=GetMatrix();
+    matrix.DeepCopy(*mat);
   }
 }
 
@@ -447,7 +447,7 @@ void mafVMEOutput::GetAbsMatrix(mafMatrix &matrix,mafTimeStamp t) const
 
   if (t<0||t==m_VME->GetTimeStamp())
   {
-    matrix.DeepCopy(GetAbsMatrix());
+    matrix.DeepCopy(*GetAbsMatrix());
   }
   else
   {
@@ -466,7 +466,7 @@ void mafVMEOutput::GetAbsMatrix(mafMatrix &matrix,mafTimeStamp t) const
 }
 
 //-------------------------------------------------------------------------
-mafMatrix *mafVMEOutput::GetAbsMatrix() const
+std::shared_ptr<mafMatrix> mafVMEOutput::GetAbsMatrix() const
 //-------------------------------------------------------------------------
 {
   assert(m_VME);

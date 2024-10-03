@@ -127,7 +127,7 @@ protected:
 	mafVME          	*m_CurrentVolume;
 	mafVME				    *m_CurrentImage;
 	mafVMESlicer			*m_Slicer;
-	mafMatrix					*m_MatrixReset;
+	std::shared_ptr<mafMatrix> m_MatrixReset;
 	mafAttachCamera		*m_AttachCamera;
 
 	double	m_SliceCenterSurface[3];

@@ -1584,8 +1584,8 @@ bool lhpOpRegistration::RegistrationProcedure()
       {
         if(kframes[i] != m_RefStampTrg)
         {
-          mafMatrixVector::Iterator itm = mv->FindItem(kframes[i]);
-          mafDataVector::Iterator   itd = dv->FindItem(kframes[i]);
+          auto itm = mv->FindItem(kframes[i]);
+          auto itd = dv->FindItem(kframes[i]);
           if(itm != mv->end())
             mv->RemoveItem(itm);
           if(itd != dv->end())

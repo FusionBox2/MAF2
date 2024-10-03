@@ -656,7 +656,7 @@ void medViewSliceOnCurveCompound::OnEvent(mafEventBase *maf_event)
   double pos[3], normal[3];
 
   mafVME* g = mafVME::SafeDownCast(m_Gizmo->GetOutput());
-  const mafMatrix* gmat = g->GetOutput()->GetMatrix();
+  auto gmat = g->GetOutput()->GetMatrix();
   mafTransform::GetPosition(*gmat, pos);    //get the position
 
   mafMatrix matrix;  
@@ -935,7 +935,7 @@ void medViewSliceOnCurveCompound::Print(std::ostream& os, const int tabs)// cons
     double pos[3];
 
     mafVME* g = mafVME::SafeDownCast(m_Gizmo->GetOutput());
-    const mafMatrix* gmat = g->GetOutput()->GetMatrix();
+    auto gmat = g->GetOutput()->GetMatrix();
     mafTransform::GetPosition(*gmat, pos);    //get the position
 
     //update text

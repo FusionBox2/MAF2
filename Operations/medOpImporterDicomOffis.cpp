@@ -5185,22 +5185,22 @@ void medOpImporterDicomOffis::ResampleVolume()
 				// Set the target be vme's parent frame. And Input frame to the root. I've to 
 				// set at each iteration since I'm using the SetMatrix, which doesn't support
 				// transform pipelines.
-				mafAutoPointer<mafMatrix> output_parent_abs_pose = mafMatrix::New();
+				auto output_parent_abs_pose = mafMatrix::NewSPtr();
 				mafVME::SafeDownCast(m_Input)->GetOutput()->GetAbsMatrix(*output_parent_abs_pose,input_item->GetTimeStamp());
-				local_pose->SetInputFrame(output_parent_abs_pose.get());
+				local_pose->SetInputFrame(*output_parent_abs_pose);
 
-				mafAutoPointer<mafMatrix> input_parent_abs_pose = mafMatrix::New();
+				auto input_parent_abs_pose = mafMatrix::NewSPtr();
 				mafVME::SafeDownCast(m_Input)->GetOutput()->GetAbsMatrix(*input_parent_abs_pose,input_item->GetTimeStamp());
-				local_pose->SetTargetFrame(input_parent_abs_pose.get());
+				local_pose->SetTargetFrame(*input_parent_abs_pose);
 				local_pose->Update();
 
-				mafAutoPointer<mafMatrix> output_abs_pose = mafMatrix::New();
+				auto output_abs_pose = mafMatrix::NewSPtr();
 				m_Volume->GetOutput()->GetAbsMatrix(*output_abs_pose,input_item->GetTimeStamp());
-				output_to_input->SetInputFrame(box_pose->GetMatrixPointer());
+				output_to_input->SetInputFrame(*box_pose->GetMatrixPointer());
 
-				mafAutoPointer<mafMatrix> input_abs_pose = mafMatrix::New();
+				auto input_abs_pose = mafMatrix::NewSPtr();
 				mafVME::SafeDownCast(m_Input)->GetOutput()->GetAbsMatrix(*input_abs_pose,input_item->GetTimeStamp());
-				output_to_input->SetTargetFrame(input_abs_pose.get());
+				output_to_input->SetTargetFrame(*input_abs_pose);
 				output_to_input->Update();
 
 				double origin[3];

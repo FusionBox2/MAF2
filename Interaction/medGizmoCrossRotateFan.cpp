@@ -62,7 +62,7 @@ medGizmoCrossRotateFan::medGizmoCrossRotateFan(mafVME *input, mafBaseEventHandle
   SetListener(listener);
   m_InputVme    = input;
 
-  mafMatrix *absInputMatrix = m_InputVme->GetOutput()->GetAbsMatrix();
+  auto absInputMatrix = m_InputVme->GetOutput()->GetAbsMatrix();
   m_RefSys = new mafRefSys(absInputMatrix->GetVTKMatrix());
 
   // create pipeline stuff
@@ -253,7 +253,7 @@ void medGizmoCrossRotateFan::OnEvent(mafEventBase *maf_event)
 
           // get the picked position from the event
           double pos[3];
-          mafTransform::GetPosition(*mafMatrix::SafeDownCast(e->GetMafObject()),pos);
+          mafTransform::GetPosition(*e->GetMatrix2(),pos);
 
           // get the start theta
           double offsetAngle = PointPickedToStartTheta(pos[0], pos[1], pos[2]);
@@ -411,7 +411,7 @@ double medGizmoCrossRotateFan::PointPickedToStartTheta(double xp, double yp, dou
   return ((startThetaDeg > 0) ? startThetaDeg : (360 + startThetaDeg));  
 }
 //----------------------------------------------------------------------------
-void medGizmoCrossRotateFan::SetAbsPose(mafMatrix *absPose )
+void medGizmoCrossRotateFan::SetAbsPose(std::shared_ptr<mafMatrix> absPose )
 //----------------------------------------------------------------------------
 {
   m_Gizmo->SetAbsMatrix(*absPose);
@@ -425,7 +425,7 @@ void medGizmoCrossRotateFan::SetInput(mafVME *vme)
  SetAbsPose(vme->GetOutput()->GetAbsMatrix());
 }
 //----------------------------------------------------------------------------
-void medGizmoCrossRotateFan::SetRefSysMatrix(mafMatrix *matrix)
+void medGizmoCrossRotateFan::SetRefSysMatrix(std::shared_ptr<mafMatrix> matrix)
 //----------------------------------------------------------------------------
 {  
   m_RefSys->SetTypeToCustom(matrix);

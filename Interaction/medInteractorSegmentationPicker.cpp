@@ -67,7 +67,7 @@ void medInteractorSegmentationPicker::OnLeftButtonDown(mafEventInteraction *e)
   Superclass::OnLeftButtonDown(e);
   if (mafDeviceButtonsPadTracker *tracker=mafDeviceButtonsPadTracker::SafeDownCast((mafDevice *)e->GetSender()))
   { // is it a tracker?
-    mafMatrix *tracker_pose = e->GetMatrix();
+    auto tracker_pose = e->GetMatrix();
     // extract device avatar's renderer, no avatar == no picking
     mafAvatar *avatar = tracker->GetAvatar();
     if (avatar)

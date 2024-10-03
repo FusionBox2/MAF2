@@ -165,9 +165,9 @@ void mafRefSys::SetMatrix(vtkMatrix4x4 *matrix)
 {
   if (matrix)
   {
-    mafAutoPointer<mafMatrix> mat = mafMatrix::New();
+    auto mat = mafMatrix::NewSPtr();
     mat->SetVTKMatrix(matrix);
-    SetMatrix(mat.get());
+    SetMatrix(mat);
   }
   else
   {
@@ -176,13 +176,13 @@ void mafRefSys::SetMatrix(vtkMatrix4x4 *matrix)
 }
 
 //----------------------------------------------------------------------------
-void mafRefSys::SetMatrix(mafMatrix *matrix)
+void mafRefSys::SetMatrix(std::shared_ptr<mafMatrix> matrix)
 //---------------------------------------------------------------------------- 
 {
   if (matrix)
   {
     auto trans = mafTransform::NewSPtr(); 
-    trans->SetMatrixPointer(matrix);
+    trans->SetMatrix(*matrix);
     SetTransform(trans);
   }
   else
@@ -192,7 +192,7 @@ void mafRefSys::SetMatrix(mafMatrix *matrix)
 }
 
 //----------------------------------------------------------------------------
-mafMatrix *mafRefSys::GetMatrix()
+std::shared_ptr<mafMatrix> mafRefSys::GetMatrix()
 //----------------------------------------------------------------------------
 {
   return GetTransform() ? GetTransform()->GetMatrixPointer() : NULL;
@@ -229,7 +229,7 @@ void mafRefSys::SetTypeToCustom(vtkMatrix4x4 *matrix)
 }
 
 //----------------------------------------------------------------------------
-void mafRefSys::SetTypeToCustom(mafMatrix *matrix)
+void mafRefSys::SetTypeToCustom(std::shared_ptr<mafMatrix> matrix)
 //----------------------------------------------------------------------------
 {
   SetMatrix(matrix);

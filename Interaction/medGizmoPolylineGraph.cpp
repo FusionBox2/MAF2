@@ -257,8 +257,7 @@ void medGizmoPolylineGraph::DestroyVMEGizmo()
 {  
   m_RefSysVME = m_InputVME;
 
-  mafMatrix *absMatrix;
-  absMatrix = m_RefSysVME->GetOutput()->GetAbsMatrix();
+  auto absMatrix = m_RefSysVME->GetOutput()->GetAbsMatrix();
 
   mafNEW(m_GizmoInteractor);
   m_LeftMouseInteractor = m_GizmoInteractor->CreateBehavior(MOUSE_LEFT);

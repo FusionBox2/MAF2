@@ -63,7 +63,7 @@ enum GIZMO_ROTATE_ID
 
   /**
   Set RotAngles ivar, only rotation part is copied from pose*/
-  void SetAbsOrientation(mafMatrix *pose);
+  void SetAbsOrientation(std::shared_ptr<mafMatrix> pose);
   
 protected:
 

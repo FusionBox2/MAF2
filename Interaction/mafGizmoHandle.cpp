@@ -360,34 +360,34 @@ void mafGizmoHandle::ShowShadingPlane(bool show)
   }
 }
 //----------------------------------------------------------------------------
-void mafGizmoHandle::SetConstrainRefSys(mafMatrix *constrain)
+void mafGizmoHandle::SetConstrainRefSys(std::shared_ptr<mafMatrix> constrain)
 //----------------------------------------------------------------------------
 {  
   m_IsaGen->GetTranslationConstraint()->GetRefSys()->SetTypeToCustom(constrain);
 }
 
 
-mafMatrix * mafGizmoHandle::GetConstrainRefSys()
+std::shared_ptr<mafMatrix>  mafGizmoHandle::GetConstrainRefSys()
 {
   return m_IsaGen->GetTranslationConstraint()->GetRefSys()->GetMatrix();
 }
 
 //----------------------------------------------------------------------------
-void mafGizmoHandle::SetAbsPose(mafMatrix *absPose)
+void mafGizmoHandle::SetAbsPose(std::shared_ptr<mafMatrix> absPose)
 //----------------------------------------------------------------------------
 {
   m_BoxGizmo->SetAbsMatrix(*absPose);
 }
 
 //----------------------------------------------------------------------------
-mafMatrix *mafGizmoHandle::GetAbsPose()
+std::shared_ptr<mafMatrix> mafGizmoHandle::GetAbsPose()
 //----------------------------------------------------------------------------
 {
   return m_BoxGizmo->GetOutput()->GetAbsMatrix();
 }
 
 //----------------------------------------------------------------------------
-void mafGizmoHandle::SetPose(mafMatrix *pose)
+void mafGizmoHandle::SetPose(std::shared_ptr<mafMatrix> pose)
 //----------------------------------------------------------------------------
 {
   m_BoxGizmo->SetMatrix(*pose);
@@ -395,7 +395,7 @@ void mafGizmoHandle::SetPose(mafMatrix *pose)
 }
 
 //----------------------------------------------------------------------------
-mafMatrix *mafGizmoHandle::GetPose()
+std::shared_ptr<mafMatrix> mafGizmoHandle::GetPose()
 //----------------------------------------------------------------------------
 {
   return m_BoxGizmo->GetOutput()->GetMatrix();
@@ -568,11 +568,10 @@ void mafGizmoHandle::Update()
   m_RotateShadingPlaneTr->Identity();
   double rot[3] = {0,0,0};
   
-	mafMatrix *matIdentity;
-	mafNEW(matIdentity);
+	auto matIdentity = mafMatrix::NewSPtr();
 	matIdentity->Identity();
 	SetPose(matIdentity);
-	mafDEL(matIdentity);	//BES: 3.2.3008 - memory leaks bug fix
+	matIdentity.reset();	//BES: 3.2.3008 - memory leaks bug fix
 
   switch(m_GizmoType) 
   {

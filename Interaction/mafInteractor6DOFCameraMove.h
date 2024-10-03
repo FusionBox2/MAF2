@@ -36,7 +36,7 @@ public:
   mafTypeMacro(mafInteractor6DOFCameraMove,mafInteractor6DOF);
 
   /** Start the interaction with the selected object */
-  int StartInteraction(mafDeviceButtonsPadTracker *tracker,mafMatrix *pose=NULL) override;
+  int StartInteraction(mafDeviceButtonsPadTracker *tracker, std::shared_ptr<mafMatrix> pose=nullptr) override;
 
   /**  Process events coming from tracker */
   void OnEvent(mafEventBase *event) override;

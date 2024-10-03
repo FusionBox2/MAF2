@@ -70,9 +70,9 @@ medGizmoCrossTranslate::medGizmoCrossTranslate(mafVME* input, mafBaseEventHandle
   this->m_ActiveGizmoComponent = -1;
   this->SetModalityToLocal();
 
-  mafMatrix *absInputMatrix = m_InputVME->GetOutput()->GetAbsMatrix();
-  mafNEW(m_PivotPose);
-  m_PivotPose->DeepCopy(absInputMatrix);
+  auto absInputMatrix = m_InputVME->GetOutput()->GetAbsMatrix();
+  m_PivotPose = mafMatrix::NewSPtr();
+  m_PivotPose->DeepCopy(*absInputMatrix);
 
 
   // Create mafGizmoTranslateAxis and send events to this
@@ -117,7 +117,6 @@ medGizmoCrossTranslate::~medGizmoCrossTranslate()
   cppDEL(m_GTLeftRight);
   cppDEL(m_GTPlane);
 
-  mafDEL(m_PivotPose);
   cppDEL(m_GuiGizmoTranslate);
 }
 //----------------------------------------------------------------------------
@@ -182,12 +181,12 @@ void medGizmoCrossTranslate::OnEventGizmoComponents(mafEventBase *maf_event)
           }
 
           // Store pivot position
-          m_PivotPose->DeepCopy(m_GTUpDown->GetAbsPose());
+          m_PivotPose->DeepCopy(*m_GTUpDown->GetAbsPose());
         }
         else if (arg == mafInteractorGenericMouse::MOUSE_MOVE)
         {     
           // matrix holding abs pose after mouse move event
-          mafAutoPointer<mafMatrix> newAbsMatr = mafMatrix::New();
+          auto newAbsMatr = mafMatrix::NewSPtr();
           if (this->m_Modality == G_LOCAL) // gizmo working in local mode; all its components are moving
             // in a single mouse move event
           {
@@ -256,7 +255,7 @@ void medGizmoCrossTranslate::OnEventGizmoComponents(mafEventBase *maf_event)
               }
             }
             // set the new pose to the gizmo
-            SetAbsPose(newAbsMatr.get());
+            SetAbsPose(newAbsMatr);
             currTr->Delete();
           }          
           else
@@ -275,7 +274,7 @@ void medGizmoCrossTranslate::OnEventGizmoComponents(mafEventBase *maf_event)
               newAbsMatr->SetTimeStamp(GetAbsPose()->GetTimeStamp());
 
               // set the new pose to the gizmo
-              m_GTUpDown->SetAbsPose(newAbsMatr.get());
+              m_GTUpDown->SetAbsPose(newAbsMatr);
               currTr->Delete();
             }
             else if (m_ActiveGizmoComponent == TRANSLATE_LEFT_RIGHT)
@@ -291,7 +290,7 @@ void medGizmoCrossTranslate::OnEventGizmoComponents(mafEventBase *maf_event)
               newAbsMatr->SetTimeStamp(GetAbsPose()->GetTimeStamp());
 
               // set the new pose to the gizmo
-              m_GTLeftRight->SetAbsPose(newAbsMatr.get());
+              m_GTLeftRight->SetAbsPose(newAbsMatr);
               currTr->Delete();
             }
             else if (m_ActiveGizmoComponent == TRANSLATE_ON_PLANE)
@@ -307,12 +306,12 @@ void medGizmoCrossTranslate::OnEventGizmoComponents(mafEventBase *maf_event)
               newAbsMatr->SetTimeStamp(GetAbsPose()->GetTimeStamp());
 
               // set the new pose to the gizmo
-              m_GTPlane->SetAbsPose(newAbsMatr.get());
+              m_GTPlane->SetAbsPose(newAbsMatr);
               currTr->Delete();
             }     
           }
           // update only gui with gizmo abs position
-          if (m_BuildGUI) m_GuiGizmoTranslate->SetAbsPosition(newAbsMatr.get());
+          if (m_BuildGUI) m_GuiGizmoTranslate->SetAbsPosition(newAbsMatr);
         }
         else if (arg == mafInteractorGenericMouse::MOUSE_UP)
         {
@@ -432,7 +431,7 @@ void medGizmoCrossTranslate::Show(bool show)
   }
 }
 //----------------------------------------------------------------------------
-mafMatrix *medGizmoCrossTranslate::GetAbsPose()
+std::shared_ptr<mafMatrix> medGizmoCrossTranslate::GetAbsPose()
 //----------------------------------------------------------------------------
 {
   return m_GTUpDown->GetAbsPose();
@@ -459,36 +458,36 @@ void medGizmoCrossTranslate::SendTransformMatrixFromGui(mafEventBase *maf_event)
     // [NewAbsPose] = [M]*[OldAbsPose] => [M] = [NewAbsPose][OldAbsPose]
 
     // build objects
-    mafAutoPointer<mafMatrix> M = mafMatrix::New();
+    auto M = mafMatrix::NewSPtr();
     mafMatrix invOldAbsPose;
-    mafAutoPointer<mafMatrix> newAbsPose = mafMatrix::New();
+    auto newAbsPose = mafMatrix::NewSPtr();
 
     // incoming matrix is a translation matrix
-    newAbsPose->DeepCopy(e->GetMatrix()); // abs position from gui
+    newAbsPose->DeepCopy(*e->GetMatrix()); // abs position from gui
     // copy rotation part from OldAbsPose into NewAbsPose
     mafTransform::CopyRotation(*this->GetAbsPose(), *newAbsPose); // abs orientation from old pose
-    invOldAbsPose.DeepCopy(this->GetAbsPose());
+    invOldAbsPose.DeepCopy(*GetAbsPose());
     invOldAbsPose.Invert();
     mafMatrix::Multiply4x4(*newAbsPose, invOldAbsPose, *M);
     // update gizmo abs pose
-    this->SetAbsPose(newAbsPose.get(), m_InputVME->GetTimeStamp());
+    this->SetAbsPose(newAbsPose, m_InputVME->GetTimeStamp());
     // send transfrom to postmultiply to the listener. Events is sent as a transform event
-    SendTransformMatrix(M.get(), ID_TRANSFORM, mafInteractorGenericMouse::MOUSE_MOVE);
+    SendTransformMatrix(M, ID_TRANSFORM, mafInteractorGenericMouse::MOUSE_MOVE);
   }
 }
 //----------------------------------------------------------------------------  
-void medGizmoCrossTranslate::SetAbsPose(mafMatrix *absPose, mafTimeStamp ts)
+void medGizmoCrossTranslate::SetAbsPose(std::shared_ptr<mafMatrix> absPose, mafTimeStamp ts)
 //----------------------------------------------------------------------------
 {
-  mafAutoPointer<mafMatrix> tmpMatr = mafMatrix::New();
-  tmpMatr->DeepCopy(absPose);
+  auto tmpMatr = mafMatrix::NewSPtr();
+  tmpMatr->DeepCopy(*absPose);
   tmpMatr->SetTimeStamp(ts);
 
-  m_GTPlane->SetAbsPose(tmpMatr.get());
-  m_GTUpDown->SetAbsPose(tmpMatr.get());
-  m_GTLeftRight->SetAbsPose(tmpMatr.get());
+  m_GTPlane->SetAbsPose(tmpMatr);
+  m_GTUpDown->SetAbsPose(tmpMatr);
+  m_GTLeftRight->SetAbsPose(tmpMatr);
 
-  if (m_BuildGUI) m_GuiGizmoTranslate->SetAbsPosition(tmpMatr.get());
+  if (m_BuildGUI) m_GuiGizmoTranslate->SetAbsPosition(tmpMatr);
 
 }
 //----------------------------------------------------------------------------

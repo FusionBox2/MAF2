@@ -75,7 +75,7 @@ void mafInteractorGenericInterface::SetResultTransform(std::shared_ptr<mafTransf
 	m_ResultTransform=result;
 }
 //------------------------------------------------------------------------------
-void mafInteractorGenericInterface::SetResultMatrix(mafMatrix *result)
+void mafInteractorGenericInterface::SetResultMatrix(std::shared_ptr<mafMatrix> result)
 //------------------------------------------------------------------------------
 {
   auto trans = mafTransform::NewSPtr(); // create a transform on the fly
@@ -84,10 +84,10 @@ void mafInteractorGenericInterface::SetResultMatrix(mafMatrix *result)
 }
 
 //------------------------------------------------------------------------------
-mafMatrix *mafInteractorGenericInterface::GetResultMatrix()
+std::shared_ptr<mafMatrix> mafInteractorGenericInterface::GetResultMatrix()
 //------------------------------------------------------------------------------
 { 
-  return (m_ResultTransform?m_ResultTransform->GetMatrixPointer():NULL);
+  return m_ResultTransform ? m_ResultTransform->GetMatrixPointer() : nullptr;
 }
 
 //------------------------------------------------------------------------------

@@ -610,10 +610,10 @@ void medViewSliceGlobal::CameraUpdate()
     // Fix bug #2192: Added by Losi 07/07/2010
     // Avoid pan & zoom reset while changing timestamp
     mafMatrix oldABSPoseForEquals;
-    oldABSPoseForEquals.DeepCopy(&m_OldABSPose);
+    oldABSPoseForEquals.DeepCopy(m_OldABSPose);
     oldABSPoseForEquals.SetTimeStamp(m_NewABSPose.GetTimeStamp());
 
-    if (m_NewABSPose.Equals(&oldABSPoseForEquals))
+    if (m_NewABSPose.Equals(oldABSPoseForEquals))
     { 
       if (DEBUG_MODE == true)
         mafLogMessage(_M("Calling Superclass Camera Update "));

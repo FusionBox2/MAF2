@@ -147,8 +147,8 @@ public:
     OutputTransform at each interaction. The result matrix is referenced. The USER may set it e.g. 
     to have the interactor implicitly
     control a vme.*/
-  void SetResultMatrix(mafMatrix *result);
-  mafMatrix *GetResultMatrix();
+  void SetResultMatrix(std::shared_ptr<mafMatrix> result);
+  std::shared_ptr<mafMatrix> GetResultMatrix();
 
   /**
     The Result Transform is an optional transform to which the interactor concatenates the

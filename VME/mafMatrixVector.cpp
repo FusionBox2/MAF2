@@ -57,17 +57,17 @@ void mafMatrixVector::GetKeyMatrixVector(std::vector<mafMatrix *> &mvector)
 void mafMatrixVector::SetMatrix(const mafMatrix &mat)
 //-----------------------------------------------------------------------
 {
-  mafAutoPointer<mafMatrix> tmp = mafMatrix::New();
+  auto tmp = mafMatrix::NewSPtr();
   *tmp=mat;
-  SetMatrix(tmp.get());
+  SetMatrix(tmp);
 }
 //-----------------------------------------------------------------------
 void mafMatrixVector::AppendKeyMatrix(const mafMatrix &m)
 //-----------------------------------------------------------------------
 {
-  mafAutoPointer<mafMatrix> tmp = mafMatrix::New();
+  auto tmp = mafMatrix::NewSPtr();
   *tmp=m;
-  AppendKeyMatrix(tmp.get());
+  AppendKeyMatrix(tmp);
 }
 
 //-----------------------------------------------------------------------
@@ -77,7 +77,7 @@ void mafMatrixVector::InternalStore(mafStorageElementBuilder& parent)
   parent(_R("NumberOfItems")).SetValue(mafToString(GetNumberOfItems()));
   for (auto& elem : *this)
   {
-    {auto vv = parent[_R("Matrix")]; serializer::Serialize(vv, *(elem.second));}
+    {auto vv = parent[_R("Matrix")]; Serialize(vv, *(elem.second));}
   }
 }
 //-----------------------------------------------------------------------
@@ -94,10 +94,10 @@ void mafMatrixVector::InternalRestore(const mafStorageElement& node)
 
   for (int i = 0; i < vector_elements.GetNumItems(); i++)
   {
-    mafAutoPointer<mafMatrix> mat = mafMatrix::New();
+    auto mat = mafMatrix::NewSPtr();
     *mat = vector_elements[i].As<mafMatrix>();
     //if (vector_elements[i].ReSetValue(*mat)!=MAF_OK)
     //  return MAF_ERROR;
-    AppendItem(mat.get());
+    AppendItem(mat);
   }
 }

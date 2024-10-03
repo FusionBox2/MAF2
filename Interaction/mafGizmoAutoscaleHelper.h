@@ -86,7 +86,7 @@ protected:
   mafOBB *GetBounds() {return m_Bounds;}
 
   /** Change the given matrix to follow camera movements */
-  void UpdatePoseMatrix(mafMatrix *matrix,mafMatrix *old_view_matrix, mafMatrix *new_view_matrix);
+  void UpdatePoseMatrix(std::shared_ptr<mafMatrix> matrix, std::shared_ptr<mafMatrix> old_view_matrix, std::shared_ptr<mafMatrix> new_view_matrix);
 
   void RecomputeAll();
 
@@ -118,7 +118,7 @@ protected:
 
   float         m_OldViewAngle;
   double        m_OldDistance;
-  mafMatrix*    m_OldViewMatrix;
+  std::shared_ptr<mafMatrix> m_OldViewMatrix;
 
   vtkCallbackCommand* m_EventRouter;
 

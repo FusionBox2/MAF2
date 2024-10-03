@@ -172,7 +172,7 @@ void mafGUISaveRestorePose::StorePose()
 {
   assert(m_InputVME);
 
-  mafMatrix *absPose = m_InputVME->GetOutput()->GetAbsMatrix();
+  auto absPose = m_InputVME->GetOutput()->GetAbsMatrix();
 
   wxString pose_name = "";
   
@@ -259,30 +259,30 @@ void mafGUISaveRestorePose::RestorePoseHelper( mafString pose_name )
 
   mafString AbsPos_tagName = _R("STORED_ABS_POS_") + pose_name;
   int comp = 0;
-  mafMatrix abs_pose;
+  auto abs_pose = mafMatrix::NewSPtr();
   if(mafTagItem *item = m_InputVME->GetTagArray()->GetTag(AbsPos_tagName))
   {
     for (int r=0; r<4; r++)
       for (int c=0; c<4; c++)
-        abs_pose.SetElement(r,c,item->GetComponentAsDouble(comp++));
+        abs_pose->SetElement(r,c,item->GetComponentAsDouble(comp++));
   }
   else
   {
     return;
   }
 
-  m_InputVME->SetAbsMatrix(abs_pose);
+  m_InputVME->SetAbsMatrix(*abs_pose);
 
   mafEvent e2s;
   e2s.SetSender(this);
-  e2s.SetMatrix(&abs_pose);
+  e2s.SetMatrix(abs_pose);
   e2s.SetId(ID_TRANSFORM);
   mafEventMacro(e2s);
 }
 void mafGUISaveRestorePose::StorePoseHelper( mafString absPoseTagName )
 {
   assert(m_InputVME);
-  mafMatrix *absPose = m_InputVME->GetOutput()->GetAbsMatrix();
+  auto absPose = m_InputVME->GetOutput()->GetAbsMatrix();
   mafTagItem item;
   item.SetName(absPoseTagName);
   item.SetNumberOfComponents(16);

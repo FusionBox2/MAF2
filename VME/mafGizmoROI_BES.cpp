@@ -195,14 +195,14 @@ void mafGizmoROI_BES::OnEventGizmoComponents(mafEventBase *maf_event)
 				}
 				else if (arg == mafInteractorGenericMouse::MOUSE_MOVE)
 				{     
-					 mafAutoPointer<mafMatrix> tr = mafMatrix::New();
+					auto tr = mafMatrix::NewSPtr();
 					if (this->m_Modality == G_LOCAL)
 					{
 						// local mode
 						int gtype = GetActiveGizmoComponentType();
 						int gindex = GetActiveGizmoComponentIndex();
 
-						mafMatrix* oldMatrix;
+						std::shared_ptr<mafMatrix> oldMatrix;
 						if (gtype == GHANDLE)
 							oldMatrix = m_GHandle[gindex]->GetPose();
 						else if (gtype == GAXIS)
@@ -221,11 +221,11 @@ void mafGizmoROI_BES::OnEventGizmoComponents(mafEventBase *maf_event)
 						tr->SetTimeStamp(m_InputVME->GetTimeStamp());
 
 						if (gtype == GHANDLE)
-							m_GHandle[gindex]->SetPose(tr.get());
+							m_GHandle[gindex]->SetPose(tr);
 						else if (gtype == GAXIS)
-							m_GAxis[gindex]->SetAbsPose(tr.get());
+							m_GAxis[gindex]->SetAbsPose(tr);
 						else
-							m_GPlane[gindex]->SetAbsPose(tr.get());
+							m_GPlane[gindex]->SetAbsPose(tr);
 						currTr->Delete();
 						
 						//update other gizmos
@@ -335,7 +335,7 @@ void mafGizmoROI_BES::ShowROI(bool show)
 }
 
 //----------------------------------------------------------------------------  
-void mafGizmoROI_BES::SetConstrainRefSys(mafMatrix *constrain)
+void mafGizmoROI_BES::SetConstrainRefSys(std::shared_ptr<mafMatrix> constrain)
 //----------------------------------------------------------------------------
 {
 	for (int i = 0; i < 6; i++ ){
@@ -497,11 +497,11 @@ void mafGizmoROI_BES::UpdateHandlePositions()
 			auto tr = mafTransform::NewSPtr();
 			tr->SetMatrix(*m_GHandle[i]->GetPose());
 
-			mafMatrix mat;
-			mat.DeepCopy(tr->GetMatrixPointer());
-			mat.SetTimeStamp(m_InputVME->GetTimeStamp());
+			auto mat = mafMatrix::NewSPtr();
+			mat->DeepCopy(*tr->GetMatrixPointer());
+			mat->SetTimeStamp(m_InputVME->GetTimeStamp());
 
-			m_GHandle[i]->SetPose(&mat);
+			m_GHandle[i]->SetPose(mat);
 			//End Matteo
 		}
 	}
@@ -525,11 +525,11 @@ void mafGizmoROI_BES::UpdateHandlePositions()
 				auto tr = mafTransform::NewSPtr();
 				tr->SetMatrix(*m_GHandle[i]->GetPose());
 
-				mafMatrix mat;
-				mat.DeepCopy(tr->GetMatrixPointer());
-				mat.SetTimeStamp(m_InputVME->GetTimeStamp());
+				auto mat = mafMatrix::NewSPtr();
+				mat->DeepCopy(*tr->GetMatrixPointer());
+				mat->SetTimeStamp(m_InputVME->GetTimeStamp());
 
-				m_GHandle[i]->SetPose(&mat);
+				m_GHandle[i]->SetPose(mat);
 				//End Matteo
 			}
 		}
@@ -552,11 +552,11 @@ void mafGizmoROI_BES::UpdateHandlePositions()
 			auto tr = mafTransform::NewSPtr();
 			tr->SetMatrix(*m_GHandle[i]->GetPose());
 
-			mafMatrix mat;
-			mat.DeepCopy(tr->GetMatrixPointer());
-			mat.SetTimeStamp(m_InputVME->GetTimeStamp());
+			auto mat = mafMatrix::NewSPtr();
+			mat->DeepCopy(*tr->GetMatrixPointer());
+			mat->SetTimeStamp(m_InputVME->GetTimeStamp());
 
-			m_GHandle[i]->SetPose(&mat);
+			m_GHandle[i]->SetPose(mat);
 			//End Matteo
 		}
 	}
@@ -664,7 +664,7 @@ void mafGizmoROI_BES::UpdateTranslationGizmos()
 
 	for (int i = 0; i < 3; i++)
 	{
-		mafMatrix* matAxis = m_GAxis[i]->GetAbsPose();
+		auto matAxis = m_GAxis[i]->GetAbsPose();
 		mafTransform::SetPosition(*matAxis, posAxis);
 		m_GAxis[i]->SetAbsPose(matAxis);
 

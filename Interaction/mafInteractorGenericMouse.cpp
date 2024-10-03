@@ -788,7 +788,7 @@ void mafInteractorGenericMouse::ConcatenateToResultMatrix(const mafMatrix &matri
       tmptr.Concatenate(matrix,PRE_MULTIPLY);
     }
     
-    GetResultMatrix()->DeepCopy(tmptr.GetMatrixPointer());
+    GetResultMatrix()->DeepCopy(*tmptr.GetMatrixPointer());
   }
 }
 
@@ -819,18 +819,18 @@ void mafInteractorGenericMouse::SendTransformMatrix(const mafMatrix &matrix, int
 //----------------------------------------------------------------------------
 { 
   // matrix registering the pick position in world coordinates at MOUSE_DOWN
-  mafAutoPointer<mafMatrix> pickPosMatrix = mafMatrix::New();
+  auto pickPosMatrix = mafMatrix::NewSPtr();
 
   if (GetResultMatrixConcatenation())
   {
     ConcatenateToResultMatrix(matrix);
   }
 
-  mafAutoPointer<mafMatrix> matrix_copy = mafMatrix::New();
+  auto matrix_copy = mafMatrix::NewSPtr();
   *matrix_copy=matrix;
   
   mafEvent e;
-  e.SetMatrix(matrix_copy.get());
+  e.SetMatrix(matrix_copy);
   e.SetId(ID_TRANSFORM);
   e.SetSender(this);
   e.SetArg(mouseAction);
@@ -838,12 +838,12 @@ void mafInteractorGenericMouse::SendTransformMatrix(const mafMatrix &matrix, int
 
   // if mouseAction == MOUSE_DOWN notify the listener about the
   // picked position in world coordinates
-  if (mouseAction == MOUSE_DOWN)
+  if (mouseAction == mafInteractorGenericMouse::MOUSE_DOWN)
   {
     mafTransform::SetPosition(*pickPosMatrix, m_LastPickPosition);
     
     //e.SetVtkObj(pickPosMatrix);  //modified by Marco. 24-5-2005
-    e.SetMafObject(pickPosMatrix.get());
+  	e.SetMatrix2(pickPosMatrix);
     
   }  
 
@@ -858,11 +858,11 @@ void mafInteractorGenericMouse::SendTransformMatrix(const mafMatrix &matrix, int
   event.SetSender(this);
   
   // have to recreate the time stamp :-(
-  mafAutoPointer<mafMatrix> tmatrix = mafMatrix::New();
-  tmatrix->DeepCopy(&matrix);
+  auto tmatrix = mafMatrix::NewSPtr();
+  tmatrix->DeepCopy(matrix);
   tmatrix->SetTimeStamp(vtkTimerLog::GetUniversalTime());
 
-  event.SetMatrix(tmatrix.get());
+  event.SetMatrix(tmatrix);
   event.Set2DPosition(m_MousePointer2DPosition[0],m_MousePointer2DPosition[1]);
   if (mouseAction == MOUSE_DOWN)
   {
@@ -1370,7 +1370,7 @@ void mafInteractorGenericMouse::NormalOnSurface()
 	vtkDEL(matrix_rotation);
 	vtkDEL(matrix_translation);
 
-	m_VME->GetOutput()->GetAbsMatrix()->DeepCopy(&c);
+	m_VME->GetOutput()->GetAbsMatrix()->DeepCopy(c);
 
 
 }

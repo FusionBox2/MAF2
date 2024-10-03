@@ -50,7 +50,7 @@ mafCameraTransform::mafCameraTransform()
   m_OldViewAngle      = -1;
   m_OldDistance       = -1;
 
-  mafNEW(m_OldViewMatrix);
+  m_OldViewMatrix = mafMatrix::NewSPtr();
 
   m_PositionMode      = ATTACH_TO_FOCAL_POINT;
   m_ScalingMode       = AUTO_FITTING;
@@ -69,7 +69,6 @@ mafCameraTransform::~mafCameraTransform()
 {
   SetRenderer(NULL);
   m_Camera=NULL;
-  mafDEL(m_OldViewMatrix);
 
   vtkDEL(m_EventRouter);
 }
@@ -152,19 +151,19 @@ void mafCameraTransform::SetRenderer(vtkRenderer *ren)
 }
 
 //------------------------------------------------------------------------------
-void mafCameraTransform::UpdatePoseMatrix(mafMatrix *matrix,mafMatrix *old_view_matrix, mafMatrix *new_view_matrix)
+void mafCameraTransform::UpdatePoseMatrix(std::shared_ptr<mafMatrix> matrix, std::shared_ptr<mafMatrix> old_view_matrix, std::shared_ptr<mafMatrix> new_view_matrix)
 //------------------------------------------------------------------------------
 { 
   mafTransformFrame new_local_pose;
-  new_local_pose.SetInputFrame(old_view_matrix);
-  new_local_pose.SetTargetFrame(new_view_matrix);
-  new_local_pose.SetInput(matrix);
+  new_local_pose.SetInputFrame(*old_view_matrix);
+  new_local_pose.SetTargetFrame(*new_view_matrix);
+  new_local_pose.SetInput(*matrix);
   
-  matrix->DeepCopy(new_local_pose.GetMatrixPointer());
+  matrix->DeepCopy(*new_local_pose.GetMatrixPointer());
 }
 
 //------------------------------------------------------------------------------
-void mafCameraTransform::AutoPosition(mafMatrix *matrix,vtkRenderer *ren, int mode)
+void mafCameraTransform::AutoPosition(std::shared_ptr<mafMatrix> matrix,vtkRenderer *ren, int mode)
 //------------------------------------------------------------------------------
 {
    assert(ren);
@@ -185,7 +184,7 @@ void mafCameraTransform::AutoPosition(mafMatrix *matrix,vtkRenderer *ren, int mo
 }
 
 //------------------------------------------------------------------------------
-void mafCameraTransform::AutoOrientation(mafMatrix *matrix,vtkRenderer *ren)
+void mafCameraTransform::AutoOrientation(std::shared_ptr<mafMatrix> matrix,vtkRenderer *ren)
 //------------------------------------------------------------------------------
 {
   double *campos, *vup;
@@ -319,7 +318,7 @@ void mafCameraTransform::ComputeScaling(mafOBB *inBox, mafOBB *outBox,double *sc
 
 
 //------------------------------------------------------------------------------
-void mafCameraTransform::AutoFitting(mafMatrix *matrix,mafOBB *tracked_bounds,vtkRenderer *ren,int mode)
+void mafCameraTransform::AutoFitting(std::shared_ptr<mafMatrix> matrix,mafOBB *tracked_bounds,vtkRenderer *ren,int mode)
 //------------------------------------------------------------------------------
 {
   vtkCamera *camera=ren->GetActiveCamera();
@@ -381,7 +380,7 @@ void mafCameraTransform::AutoFitting(mafMatrix *matrix,mafOBB *tracked_bounds,vt
 }
 
 //------------------------------------------------------------------------------
-void mafCameraTransform::AutoFitting2(mafMatrix *matrix,mafOBB *tracked_bounds,vtkRenderer *ren,int mode)
+void mafCameraTransform::AutoFitting2(std::shared_ptr<mafMatrix> matrix,mafOBB *tracked_bounds,vtkRenderer *ren,int mode)
 //------------------------------------------------------------------------------
 {
   // We want to scale the tracked box to make the upper bound fall
@@ -531,9 +530,11 @@ void mafCameraTransform::InternalUpdate()
   }
   else
   {
-    // simply follow view's transform changes    
-    mafMatrix view_trans=camera->GetViewTransformMatrix();
-    UpdatePoseMatrix(m_Matrix.get(),m_OldViewMatrix,&view_trans);
+    // simply follow view's transform changes
+#pragma message("CAN BE DANGEROUS!!!!")
+    auto view_trans = mafMatrix::NewSPtr();
+  	*view_trans = camera->GetViewTransformMatrix();
+    UpdatePoseMatrix(m_Matrix,m_OldViewMatrix,view_trans);
 
     m_OldViewMatrix->DeepCopy(camera->GetViewTransformMatrix());
   }

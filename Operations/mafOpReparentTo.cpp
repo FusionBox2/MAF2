@@ -123,12 +123,12 @@ void mafOpReparentTo::OpDo()
     mmuTimeVector time = mmuTimeSet::Merge(input_time,target_time);
     num = time.size();
 
-    std::vector< mafAutoPointer<mafMatrix> > new_input_pose;
+    std::vector< std::shared_ptr<mafMatrix> > new_input_pose;
     new_input_pose.resize(num);
 
     for (t = 0; t < num; t++)
     {
-      new_input_pose[t] = mafMatrix::New();
+      new_input_pose[t] = mafMatrix::NewSPtr();
     }
 
   //change reference system

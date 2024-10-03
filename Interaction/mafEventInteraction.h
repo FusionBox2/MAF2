@@ -61,9 +61,9 @@ public:
   unsigned char GetKey() {return m_Key;}
 
   /** Get the pose matrix, for 3D tracking devices */
-  mafMatrix *GetMatrix();
+  std::shared_ptr<mafMatrix> GetMatrix();
   /** Set the pose matrix, for 3D tracking devices */
-  void SetMatrix(mafMatrix *matrix);
+  void SetMatrix(std::shared_ptr<mafMatrix> matrix);
 
   /** Set the given modifier value*/
   void SetModifier(unsigned long idx,bool value=true);
@@ -82,7 +82,7 @@ public:
   mafEventBase(sender,id),m_Button(button),m_Modifiers(modifiers),m_Key(0),m_X(0),m_Y(0),m_XYFlag(false) {}
 
   /** overloaded constructor */
-  mafEventInteraction(void *sender,mafID id,mafMatrix *matrix,int button=0,unsigned long modifiers=0):
+  mafEventInteraction(void *sender,mafID id,std::shared_ptr<mafMatrix> matrix,int button=0,unsigned long modifiers=0):
   mafEventBase(sender,id),m_Button(button),m_Modifiers(modifiers),m_Key(0),m_Matrix(matrix),m_X(0),m_Y(0),m_XYFlag(false) {}
 
   /** overloaded constructor */
@@ -100,7 +100,7 @@ protected:
   double        m_Y;          ///< Y coordinate, used by mouse device
   bool          m_XYFlag;     ///< Used to signal a 2D coordinate is present
 
-  mafAutoPointer<mafMatrix>  m_Matrix;    ///< Pose matrix, used by 3D trackers
+  std::shared_ptr<mafMatrix>  m_Matrix;    ///< Pose matrix, used by 3D trackers
 };
 
 #endif /* __mafEventInteraction_h */

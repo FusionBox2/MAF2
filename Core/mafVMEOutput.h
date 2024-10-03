@@ -74,7 +74,7 @@ public:
   /** Return the VME pose */
   virtual void GetMatrix(mafMatrix &matrix,mafTimeStamp t=-1) const;
   /** Return the VME pose matrix for the current time */
-  mafMatrix *GetMatrix() const;
+  std::shared_ptr<mafMatrix> GetMatrix() const;
   /** Return the transform generating the pose matrix of the VME */ 
   virtual std::shared_ptr<mafTransformBase> GetTransform() const;
   
@@ -86,7 +86,7 @@ public:
   /** Get the global pose matrix of this VME for the given time "t".*/
   void GetAbsMatrix(mafMatrix &matrix,mafTimeStamp t=-1) const;
   /** Get the global pose matrix of this VME for the given time "t".*/
-  mafMatrix *GetAbsMatrix() const;
+  std::shared_ptr<mafMatrix> GetAbsMatrix() const;
   /** return the transform representing the Abs pose (typically the VME's AbsMatrix pipe) */
   virtual std::shared_ptr<mafTransformBase> GetAbsTransform() const;
   

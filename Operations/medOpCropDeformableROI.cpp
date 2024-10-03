@@ -191,8 +191,8 @@ void medOpCropDeformableROI::Algorithm(mafVME *vme)
 		mafMatrix maskABSMatrix = mafVME::SafeDownCast(vme)->GetAbsMatrixPipe()->GetMatrix();
 		mafMatrix volumeABSMatrix = mafVME::SafeDownCast(m_Input)->GetAbsMatrixPipe()->GetMatrix();
 
-		bool isMaskMatrixIdentity = maskABSMatrix.Equals(&identityMatrix);
-		bool isVolumeMatrixIdentity = volumeABSMatrix.Equals(&identityMatrix);
+		bool isMaskMatrixIdentity = maskABSMatrix.Equals(identityMatrix);
+		bool isVolumeMatrixIdentity = volumeABSMatrix.Equals(identityMatrix);
 
 		if (isMaskMatrixIdentity && isVolumeMatrixIdentity)
 			transformedMaskPolydata=maskPolydata;

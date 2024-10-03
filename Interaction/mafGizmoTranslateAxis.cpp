@@ -460,7 +460,7 @@ void mafGizmoTranslateAxis::Show(bool show)
 	{mafEvent evUnq(this,VME_SHOW,m_ConeGizmo,show); mafEventMacro(evUnq);}
 }
 //----------------------------------------------------------------------------
-void mafGizmoTranslateAxis::SetAbsPose(mafMatrix *absPose)
+void mafGizmoTranslateAxis::SetAbsPose(std::shared_ptr<mafMatrix> absPose)
 //----------------------------------------------------------------------------
 {
   m_ConeGizmo->SetAbsMatrix(*absPose); 
@@ -468,7 +468,7 @@ void mafGizmoTranslateAxis::SetAbsPose(mafMatrix *absPose)
   SetRefSysMatrix(absPose);
 }
 //----------------------------------------------------------------------------
-void mafGizmoTranslateAxis::SetRefSysMatrix(mafMatrix *matrix)
+void mafGizmoTranslateAxis::SetRefSysMatrix(std::shared_ptr<mafMatrix> matrix)
 //----------------------------------------------------------------------------
 {  
   for (int i = 0; i < 2; i++)
@@ -478,7 +478,7 @@ void mafGizmoTranslateAxis::SetRefSysMatrix(mafMatrix *matrix)
   } 
 }
 //----------------------------------------------------------------------------
-mafMatrix *mafGizmoTranslateAxis::GetAbsPose()
+std::shared_ptr<mafMatrix> mafGizmoTranslateAxis::GetAbsPose()
 //----------------------------------------------------------------------------
 {
   return m_CylGizmo->GetOutput()->GetAbsMatrix();

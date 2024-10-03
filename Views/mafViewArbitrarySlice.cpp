@@ -213,7 +213,7 @@ void mafViewArbitrarySlice::VmeShow(mafNode *node, bool show)
 			TransformReset->RotateY(m_SliceAngleReset[1]);
 			TransformReset->RotateZ(m_SliceAngleReset[2]);
 			TransformReset->Update();
-			mafNEW(m_MatrixReset);
+			m_MatrixReset = mafMatrix::NewSPtr();
 			m_MatrixReset->Identity();
 			m_MatrixReset->SetVTKMatrix(TransformReset->GetMatrix());
 
@@ -383,7 +383,6 @@ void mafViewArbitrarySlice::VmeShow(mafNode *node, bool show)
 			cppDEL(m_GizmoTranslate);
 			cppDEL(m_GizmoRotate);
 			cppDEL(m_GuiGizmos);
-			mafDEL(m_MatrixReset);
 
 			m_CurrentVolume = NULL;
 			m_ColorLUT = NULL;
@@ -462,8 +461,7 @@ void mafViewArbitrarySlice::OnEventGizmoTranslate(mafEventBase *maf_event)
 			TransformReset->RotateY(m_SliceAngleReset[1]);
 			TransformReset->RotateZ(m_SliceAngleReset[2]);
 			TransformReset->Update();
-			mafMatrix *matrix;
-			mafNEW(matrix);
+			auto matrix = mafMatrix::NewSPtr();
 			matrix->Identity();
 			matrix->SetVTKMatrix(TransformReset->GetMatrix());
 
@@ -530,7 +528,6 @@ void mafViewArbitrarySlice::OnEventGizmoTranslate(mafEventBase *maf_event)
 			CameraUpdate();
 			vtkDEL(tr);
 			vtkDEL(TransformReset);
-			vtkDEL(matrix);
 		}
 		break;
 

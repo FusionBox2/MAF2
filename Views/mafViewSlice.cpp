@@ -952,7 +952,7 @@ void mafViewSlice::MultiplyPointByInputVolumeABSMatrix(double *point)
 {
   if(m_CurrentVolume && m_CurrentVolume->m_Vme)
   {
-    mafMatrix *mat = ((mafVME *)m_CurrentVolume->m_Vme)->GetAbsMatrixPipe()->GetMatrixPointer();
+    auto mat = ((mafVME *)m_CurrentVolume->m_Vme)->GetAbsMatrixPipe()->GetMatrixPointer();
     double coord[4];
     coord[0] = point[0];
     coord[1] = point[1];
@@ -991,10 +991,10 @@ void mafViewSlice::CameraUpdate()
     // Fix bug #2085: Added by Losi 05.11.2010
     // Avoid pan & zoom reset while changing timestamp
     mafMatrix oldABSPoseForEquals;
-    oldABSPoseForEquals.DeepCopy(&m_OldABSPose);
+    oldABSPoseForEquals.DeepCopy(m_OldABSPose);
     oldABSPoseForEquals.SetTimeStamp(m_NewABSPose.GetTimeStamp());
 
-    if (m_NewABSPose.Equals(&oldABSPoseForEquals))
+    if (m_NewABSPose.Equals(oldABSPoseForEquals))
     { 
       if (DEBUG_MODE == true)
         mafLogMessage(_M("Calling Superclass Camera Update "));

@@ -77,14 +77,14 @@ void mafEventInteraction::SetKey(unsigned char key)
 }
 
 //------------------------------------------------------------------------------
-mafMatrix *mafEventInteraction::GetMatrix()
+std::shared_ptr<mafMatrix> mafEventInteraction::GetMatrix()
 //------------------------------------------------------------------------------
 {
-  return m_Matrix.get();
+  return m_Matrix;
 }
 
 //------------------------------------------------------------------------------
-void mafEventInteraction::SetMatrix(mafMatrix *matrix)
+void mafEventInteraction::SetMatrix(std::shared_ptr<mafMatrix> matrix)
 //------------------------------------------------------------------------------
 {
   m_Matrix=matrix;

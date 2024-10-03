@@ -64,7 +64,7 @@ public:
 
   /**
   Update Scaling ivar; only scaling part is copied from pose */
-  void SetAbsScaling(mafMatrix *pose);
+  void SetAbsScaling(std::shared_ptr<mafMatrix> pose);
 
 protected:
 

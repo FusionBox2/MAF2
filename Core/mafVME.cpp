@@ -156,14 +156,14 @@ bool mafVME::Equals(mafVME *vme)
     {
       if (GetParent())
       {
-        if (GetOutput()->GetAbsMatrix()->Equals(vme->GetOutput()->GetAbsMatrix()))
+        if (GetOutput()->GetAbsMatrix()->Equals(*vme->GetOutput()->GetAbsMatrix()))
         {
           return true;
         }
       }
       else
       {
-        if (GetOutput()->GetMatrix()->Equals(vme->GetOutput()->GetMatrix()))
+        if (GetOutput()->GetMatrix()->Equals(*vme->GetOutput()->GetMatrix()))
         {
           return true;
         }

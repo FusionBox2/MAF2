@@ -309,8 +309,8 @@ mafVME *mafMSFImporter::RestoreVME(const mafStorageElement& node, mafVME *parent
 				  }
 				  if (mafVMEGroup::SafeDownCast(vme))
 				  {
-					  mafAutoPointer<mafMatrix> m = mafMatrix::New();
-					  m->DeepCopy(mafVMEGroup::SafeDownCast(vme)->GetMatrixVector()->GetMatrix(0));
+					  auto m = mafMatrix::NewSPtr();
+					  m->DeepCopy(*mafVMEGroup::SafeDownCast(vme)->GetMatrixVector()->GetMatrix(0));
 					  mafVMEGroup::SafeDownCast(vme)->SetMatrix(*m);
 				  }
 
@@ -661,12 +661,12 @@ int mafMSFImporter::RestoreVMatrix(const mafStorageElement& node, mafMatrixVecto
   {
     //assert(children[i]->GetName() == _R("Matrix"));
 
-    mafAutoPointer<mafMatrix> matrix = mafMatrix::New();
+    auto matrix = mafMatrix::NewSPtr();
     *matrix = children[i].As<mafMatrix>();
     //int restored_matrix = children[i].ReSetValue(*matrix);
     //if (restored_matrix != MAF_ERROR)
     {
-      vmatrix->AppendKeyMatrix(matrix.get());
+      vmatrix->AppendKeyMatrix(matrix);
     }
     //else
     {

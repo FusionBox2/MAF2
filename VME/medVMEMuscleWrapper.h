@@ -306,14 +306,14 @@ protected:
   outPoints that have outTransform matrix (i.e., transforms coordinates
   from one reference system into another one. */
   void TransformPoints(vtkPoints* inPoints, vtkPoints* outPoints, 
-    const mafMatrix* inTransform, const mafMatrix* outTransform);
+    const mafMatrix& inTransform, const mafMatrix& outTransform);
 
   /** Transform the coordinates of the inoutPoints that are given in the 
   reference system described by inTransform into the coordinates in the
   output reference system (i.e., output of this VME) */
-  inline void TransformPoints(vtkPoints* inoutPoints, const mafMatrix* inTransform){
+  inline void TransformPoints(vtkPoints* inoutPoints, const mafMatrix& inTransform){
     TransformPoints(inoutPoints, inoutPoints, inTransform,
-      &GetOutput()->GetAbsTransform()->GetMatrix());
+      GetOutput()->GetAbsTransform()->GetMatrix());
   }
 private:
   medVMEMuscleWrapper(const medVMEMuscleWrapper&); // Not implemented

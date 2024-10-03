@@ -103,7 +103,7 @@ public:
  
   /** 
   Set the abs pose */
-  void SetAbsPose(mafMatrix *absPose) override;
+  void SetAbsPose(std::shared_ptr<mafMatrix> absPose) override;
   
   /** Superclass override */
   void SetMediator(mafBaseEventHandler *mediator);
@@ -163,7 +163,7 @@ protected:
 
   /**
   Set the reference system matrix. Reference system type is set to CUSTOM.*/
-  void SetRefSysMatrix(mafMatrix *matrix);
+  void SetRefSysMatrix(std::shared_ptr<mafMatrix> matrix);
 
   mafRefSys *m_RefSys;
 

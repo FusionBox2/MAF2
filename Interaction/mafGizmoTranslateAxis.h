@@ -97,8 +97,8 @@ public:
   
   /** 
   Set the abs pose */
-  void SetAbsPose(mafMatrix *absPose) override;
-  mafMatrix *GetAbsPose() override;
+  void SetAbsPose(std::shared_ptr<mafMatrix> absPose) override;
+  std::shared_ptr<mafMatrix> GetAbsPose() override;
 
   /**
   Set the constraint modality for the given axis; allowed constraint modality are:
@@ -111,7 +111,7 @@ public:
 protected:
   /** 
   Set the constrain ref sys */
-  void SetRefSysMatrix(mafMatrix *constrain);
+  void SetRefSysMatrix(std::shared_ptr<mafMatrix> constrain);
 
   /** Cone gizmo */
   mafVMEGizmo *m_ConeGizmo;

@@ -54,7 +54,7 @@ mafDeviceButtonsPadTracker::mafDeviceButtonsPadTracker()
 //------------------------------------------------------------------------------
 {
   m_TrackerToCanonicalTransform = mafTransform::NewSPtr();
-  mafNEW(m_LastPoseMatrix);
+  m_LastPoseMatrix =mafMatrix::NewSPtr();
 
   m_TrackerToCanonicalTransform->Identity(); // work arround for a bug in GetMTime
   
@@ -74,7 +74,6 @@ mafDeviceButtonsPadTracker::~mafDeviceButtonsPadTracker()
 //------------------------------------------------------------------------------
 {
   SetDefaultAvatar(NULL);
-  mafDEL(m_LastPoseMatrix);
 }
 //------------------------------------------------------------------------------
 mafID mafDeviceButtonsPadTracker::GetTracker3DMoveId()
@@ -285,9 +284,9 @@ void mafDeviceButtonsPadTracker::SendButtonEvent(mafEventInteraction *event)
     event->SetXYFlag(true); // signal we were in 2D mode...
   }
   
-  mafAutoPointer<mafMatrix> last_pose = mafMatrix::New();
-  last_pose->DeepCopy(m_LastPoseMatrix); // make a copy of current pose to ovoid overwriting
-  event->SetMatrix(last_pose.get());
+  auto last_pose = mafMatrix::NewSPtr();
+  last_pose->DeepCopy(*m_LastPoseMatrix); // make a copy of current pose to ovoid overwriting
+  event->SetMatrix(last_pose);
   
   AsyncInvokeEvent(event,MCH_INPUT);
 }

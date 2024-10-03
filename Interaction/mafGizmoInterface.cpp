@@ -51,7 +51,7 @@ mafGizmoInterface::~mafGizmoInterface()
 }
 
 //----------------------------------------------------------------------------  
-void mafGizmoInterface::SendTransformMatrix(mafMatrix* matrix, int eventId, long arg)
+void mafGizmoInterface::SendTransformMatrix(std::shared_ptr<mafMatrix> matrix, int eventId, long arg)
 //----------------------------------------------------------------------------
 {
   mafEvent e2s;
@@ -98,14 +98,14 @@ int mafGizmoInterface::GetModality()
   return this->m_Modality;
 }
 
-void mafGizmoInterface::SetAbsPose( mafMatrix *absPose )
+void mafGizmoInterface::SetAbsPose(std::shared_ptr<mafMatrix> absPose )
 {
   // not implemented
 }
 
-mafMatrix * mafGizmoInterface::GetAbsPose()
+std::shared_ptr<mafMatrix>  mafGizmoInterface::GetAbsPose()
 {
-  return NULL;
+  return nullptr;
 }
 
 mafGUI * mafGizmoInterface::GetGui()

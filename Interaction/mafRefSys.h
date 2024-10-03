@@ -98,7 +98,7 @@ public:
     Notice, the matrix is referenced and not copied, thus its changes reflect
     into mafRefSys changes */
   void SetTypeToCustom(vtkMatrix4x4 *matrix);
-  void SetTypeToCustom(mafMatrix *matrix);
+  void SetTypeToCustom(std::shared_ptr<mafMatrix> matrix);
 
   /** Set the reference system to the VME's abs matrix.*/
   void SetTypeToLocal(mafVME *vme=NULL);
@@ -136,7 +136,7 @@ public:
   std::shared_ptr<mafTransformBase> GetTransform();
 
   /** return the matrix of this ref_sys ( @sa GetTransform() )*/
-  mafMatrix *GetMatrix();
+  std::shared_ptr<mafMatrix> GetMatrix();
 
   /** 
     Set the matrix relative to the ref_sys: mafTransform is
@@ -150,7 +150,7 @@ public:
     created on the fly and stored in the Transform field to link
     the matrix. This function follows same rules as the SetTransform() function.
   */
-  void SetMatrix(mafMatrix *matrix);
+  void SetMatrix(std::shared_ptr<mafMatrix> matrix);
 
   /** 
     Set the internal Renderer variable. This has effect only if in VIEW mode.

@@ -109,19 +109,19 @@ void mafGUIGizmoTranslate::SendAbsPosition(mafEventBase *sourceEvent)
 //----------------------------------------------------------------------------
 {
   // build abs matrix position
-  mafMatrix m2send;
-  mafTransform::SetPosition(m2send, m_Position);
+  auto m2send = mafMatrix::NewSPtr();
+  mafTransform::SetPosition(*m2send, m_Position);
 
   mafEvent event2Send;
   event2Send.SetSender(this);
   event2Send.SetId(sourceEvent->GetId());
-  event2Send.SetMatrix(&m2send);
+  event2Send.SetMatrix(m2send);
   
   mafEventMacro(event2Send);
 }
 
 //----------------------------------------------------------------------------
-void mafGUIGizmoTranslate::SetAbsPosition(mafMatrix *pose)
+void mafGUIGizmoTranslate::SetAbsPosition(std::shared_ptr<mafMatrix> pose)
 //----------------------------------------------------------------------------
 {
   mafTransform::GetPosition(*pose, m_Position);
