@@ -40,7 +40,7 @@ typedef std::vector<mafTimeStamp> mmuTimeVector;
   -
 */
 
-template <class T, template<typename> typename Ptr = mafAutoPointer>
+template <class T, template<typename> typename Ptr = mafAutoPointer, typename ArgPtr = T*>
 class mafTimeMap : public mafObject, public mafTimeStamped
 {
 public:
@@ -59,29 +59,28 @@ public:
   /**
     Insert an item to the vector trying to append it, anyway the array
     is kept sorted. */
-  virtual void AppendItem(T *m);
+  virtual void AppendItem(ArgPtr m);
 
   /** append item setting its timestamp to the highest one + 1 */
-  virtual void AppendAndSetItem(T *m);
+  virtual void AppendAndSetItem(ArgPtr m);
 
    /**
     Insert an item to the vector trying to prepend it, anyway the array is kept sorted.
     Item's timestamp must be >=0 */
-  virtual void PrependItem(T *m);
+  virtual void PrependItem(ArgPtr m);
 
   /** Find an item index given its pointer*/
-  auto FindItem(T *m){assert(m); return m_TimeMap.find(m->GetTimeStamp());}
+  auto FindItem(ArgPtr m){assert(m); return m_TimeMap.find(m->GetTimeStamp());}
 
   /**
     Set the item for a specified time. If no item with the same time exist
     the item is inserted in the vector. If an item with the same time exist, it's simply
     substituted with the new one. The item is always references and not copied.
     This function also automatically call the UpdateData() member function.*/
-  virtual void InsertItem(T *m);
+  virtual void InsertItem(ArgPtr m);
   
   /** Remove an item given its iterator */
-  virtual void RemoveItem(typename TimeMap::iterator it) {m_TimeMap.erase(it); Modified();
-  }
+  virtual void RemoveItem(typename TimeMap::iterator it) {/*m_TimeMap.erase(it); Modified();*/}
 
 
   /** Remove all the items*/
@@ -121,17 +120,17 @@ public:
   auto FindItem(mafTimeStamp t){ return m_TimeMap.find(t); }
 
   /** find and return item corresponding to timestamp t. return NULL if not found. */
-  T *GetItem(mafTimeStamp t);
+  ArgPtr GetItem(mafTimeStamp t);
 
   /**
     Return the pointer to the item with timestamp nearest the given one. NULL 
     is returned if not found.*/
-  T *GetNearestItem(mafTimeStamp t);
+  ArgPtr GetNearestItem(mafTimeStamp t);
 
   /**
     Return the pointer to the item with timestamp nearest the given one. NULL 
     is returned if not found.*/
-  T *GetItemBefore(mafTimeStamp t);
+  ArgPtr GetItemBefore(mafTimeStamp t);
 
   void Print(std::ostream& os, const int tabs=0) const override;
 
@@ -150,4 +149,5 @@ private:
   mafTimeMap(const mafTimeMap<T>&);  
   void operator=(const mafTimeMap<T>&);
 };
+
 #endif
