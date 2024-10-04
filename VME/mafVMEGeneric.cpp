@@ -71,7 +71,7 @@ int mafVMEGeneric::SetData(vtkDataSet *data, mafTimeStamp t, int mode)
 //-------------------------------------------------------------------------
 {
   assert(data);
-  mafAutoPointer<mafVMEItemVTK> item = mafVMEItemVTK::New();
+  auto item = mafVMEItemVTK::NewSPtr();
   
   switch (mode)
   {
@@ -93,7 +93,7 @@ int mafVMEGeneric::SetData(vtkDataSet *data, mafTimeStamp t, int mode)
   }
 
   item->SetTimeStamp(t);
-  GetDataVector()->InsertItem(item.get());
+  GetDataVector()->InsertItem(item);
 
   Modified();
   if(m_EnableModifiedEvent)

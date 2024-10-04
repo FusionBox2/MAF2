@@ -600,7 +600,7 @@ int mafMSFImporter::RestoreVItem(const mafStorageElement& node, mafVME *vme)
         mafString data_file = node(_R("DataFile")).As<mafString>();
         //if (node->GetAttribute(_R("DataFile"),data_file) == MAF_OK)
         {
-          mafAutoPointer<mafVMEItemVTK> vitem = mafVMEItemVTK::New();
+          auto vitem = mafVMEItemVTK::NewSPtr();
           //mafStorageElement* tarray = nullptr;
           auto tarray_nodes = node[_R("TArray")];
           //if (!tarray_nodes.empty())
@@ -638,7 +638,7 @@ int mafMSFImporter::RestoreVItem(const mafStorageElement& node, mafVME *vme)
           vitem->SetId(item_id);
           vitem->SetURL(data_file.GetCStr());
           vitem->SetDataType(data_type);
-          vme_generic->GetDataVector()->AppendItem(vitem.get());
+          vme_generic->GetDataVector()->AppendItem(vitem);
           vme_generic->GetDataVector()->SetCrypting(vitem->GetCrypting());
           return MAF_OK;
         } // DataFile

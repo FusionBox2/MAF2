@@ -628,23 +628,22 @@ void medOpMakeVMETimevarying::Execute()
     m_VMETimevarying = tmpVME;
   }
 
-  mafVMEItemVTK * lastVmeItem = NULL;
+  std::shared_ptr<mafVMEItemVTK> lastVmeItem;
   std::shared_ptr<mafMatrix> lastVmeMatrix;
 
   //Fill VME's DataVector and MatrixVector
   for(auto& AddedVME : m_AddedVMEs)
   {
     //Data changes
-    mafVMEItemVTK * vmeItem;
-    mafNEW(vmeItem);
+    auto vmeItem = mafVMEItemVTK::NewSPtr();
     vmeItem->SetData(AddedVME->m_VME->GetOutput()->GetVTKData());
 
     vmeItem->SetTimeStamp((mafTimeStamp)AddedVME->m_TimeStamp);
-    if(lastVmeItem == NULL)
+    if(!lastVmeItem)
     {
-      mafNEW(lastVmeItem);
+      lastVmeItem = mafVMEItemVTK::NewSPtr();
       m_VMETimevarying->GetDataVector()->AppendItem(vmeItem);
-      lastVmeItem->DeepCopy(vmeItem);
+      lastVmeItem->DeepCopy(vmeItem.get());
     }
     else
     {
@@ -652,13 +651,12 @@ void medOpMakeVMETimevarying::Execute()
       //Todo: Add conditions on vme type
       lastVmeItem->GlobalCompareDataFlagOn();//For volumes and meshes must compare scalar values
       vmeItem->GlobalCompareDataFlagOn();
-      if(!lastVmeItem->Equals(vmeItem))
+      if(!lastVmeItem->Equals(vmeItem.get()))
       {
          m_VMETimevarying->GetDataVector()->AppendItem(vmeItem);
-         lastVmeItem->DeepCopy(vmeItem);
+         lastVmeItem->DeepCopy(vmeItem.get());
       }
     }
-    mafDEL(vmeItem); // remove leaks
 
     //Matrix changes
     auto vmeMatrix = mafMatrix::NewSPtr();
@@ -680,7 +678,6 @@ void medOpMakeVMETimevarying::Execute()
       }
     }
   }
-  mafDEL(lastVmeItem); // remove leaks
 
   //Update VME's DataPipe and MatrixPipe
   m_VMETimevarying->SetName(m_VMETimevaryingName);

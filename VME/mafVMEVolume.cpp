@@ -113,8 +113,8 @@ int mafVMEVolume::SetData(vtkDataSet *data, mafTimeStamp t, int mode)
   assert(data);
   if (data->IsA("vtkImageData")||data->IsA("vtkRectilinearGrid")||data->IsA("vtkUnstructuredGrid"))
   {
-    mafVMEItem *item = GetDataVector()->GetItem(t);
-    if (item != NULL)
+    auto item = GetDataVector()->GetItem(t);
+    if (item)
     {
       mafString dt = item->GetDataType();
       if (dt != _R(data->GetClassName()))

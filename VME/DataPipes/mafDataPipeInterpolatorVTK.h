@@ -19,10 +19,10 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafDataPipeInterpolator.h"
+#include "mafVMEItemVTK.h"
 //----------------------------------------------------------------------------
 // forward declarations
 //----------------------------------------------------------------------------
-class mafVMEItemVTK;
 class vtkMAFDataPipe;
 
 /** data interpolator specialized for mafVMEGenericVTK (for VTK data).
@@ -53,7 +53,7 @@ public:
   void RequestData() override;
 
    /**  Get the output of the interpolator item*/
-  mafVMEItemVTK *GetCurrentItem() {return (mafVMEItemVTK *)m_CurrentItem;}
+  std::shared_ptr<mafVMEItemVTK> GetCurrentItemVTK() { return std::static_pointer_cast<mafVMEItemVTK>(m_CurrentItem); }
 
   /** return the VTK dataset generated as output to this data pipe */
   vtkAlgorithmOutput *GetVTKOutputPort() override;

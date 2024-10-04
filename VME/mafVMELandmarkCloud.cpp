@@ -1492,7 +1492,7 @@ bool mafVMELandmarkCloud::IsDataAvailable()
   if (m_DataVector)
   {
     mafTimeStamp t = this->GetTimeStamp();
-    mafVMEItem *item = m_DataVector->GetItem(t);
+    auto item = m_DataVector->GetItem(t);
     // WORKAROUND CODE:
     // needed by closed landmark cloud to update data
     if (item)
@@ -1501,18 +1501,18 @@ bool mafVMELandmarkCloud::IsDataAvailable()
     }
     // END WORKAROUND CODE
 
-    if (IsAnimated() && item == NULL && m_DataVector->GetNumberOfItems() > 0)
+    if (IsAnimated() && !item && m_DataVector->GetNumberOfItems() > 0)
     {
       mafTimeStamp tbounds[2];
       m_DataVector->GetTimeBounds(tbounds);
       if (t < tbounds[0])
       {
-        item = m_DataVector->begin()->second.get();
+        item = m_DataVector->begin()->second;
       }
       else
       {
         auto it = --m_DataVector->end();
-        item = it->second.get();
+        item = it->second;
       }
     }
 

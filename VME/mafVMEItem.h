@@ -1,30 +1,16 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafVMEItem
- Authors: Marco Petrone - Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
+#include "ftkConfigure.h"
 
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
+#include "ftk/Base/Object.h"
+#include "ftk/Base/String.h"
 
-=========================================================================*/
-#ifndef __mafVMEItem_h
-#define __mafVMEItem_h
-//----------------------------------------------------------------------------
-// Include:
-//----------------------------------------------------------------------------
 #include <wx/zipstrm.h>
 #include <wx/zstream.h>
 #include <wx/sstream.h>
 #include <wx/wfstream.h>
 #include <wx/fs_zip.h>
 
-#include "mafReferenceCounted.h"
 #include "mafTimeStamped.h"
 #include "mafEventSender.h"
 #include "ftk/Base/String.h"
@@ -64,18 +50,20 @@ class mafVMEItemAsynchObserver;
   - Implement DeepCopy and SmartCopy functions
   - build a test
 */
-class MAF_EXPORT mafVMEItem : public mafReferenceCounted, public mafEventSender, public mafTimeStamped
+BEGIN_FTK_NAMESPACE
+
+class FTK_VME_EXPORT mafVMEItem : public mafEventSender, public mafTimeStamped
 {
 public:
   MAF_ID_DEC(VME_ITEM_DATA_MODIFIED) ///< event raised by mafVMEItem to advice DataVector a dataset has been modified
 
-  mafAbstractTypeMacro(mafVMEItem,mafReferenceCounted);
+  mafAbstractBaseTypeMacro(mafVMEItem);
 
-  static mafVMEItem* Create(const char* ItemType);
+  static std::shared_ptr<mafVMEItem> Create(const char* ItemType);
 
 	enum VME_ITEM_IO_ERRORS {MAF_NO_IO=MAF_USER_RETURN_VALUE+1};
 
-  void Print(std::ostream& os, const int indent=0) const override;
+  virtual void Print(std::ostream& os, const int indent=0) const;
 
   /** Get the TimeStamp of this dataset*/
   mafTimeStamp GetTimeStamp() const {return m_TimeStamp;}
@@ -90,6 +78,11 @@ public:
   /** copy large data from another dataset and release it (for mafVMEItem is equals to DeepCopy()).*/
   virtual void DeepCopyVmeLarge(mafVMEItem *a){DeepCopy(a);};
 
+  std::shared_ptr<mafVMEItem> MakeClone();
+
+  std::shared_ptr<mafVMEItem> MakeShallowClone();
+
+  std::shared_ptr<mafVMEItem> MakeLargeClone();
   /** release data from memory */
   virtual void ReleaseData()=0;
 
@@ -191,6 +184,11 @@ public:
     Id and URL are not considered for the comparison.
     To force compare the dataset internal data, use SetGlobalCompareDataOn()*/
   virtual bool Equals(mafVMEItem *item);
+
+  bool operator==(mafVMEItem& item)
+  {
+    return Equals(&item);
+  }
 
   /**
     Set/Get the flag for enabling comparison of dataset internal data in the
@@ -339,31 +337,25 @@ protected:
   mafString   m_Filename; ///< Filename downloaded and to be read.
 };
 
-namespace parser
+template<class Value>
+std::shared_ptr<mafVMEItem> Parse(const Value& value, parser::To<mafVMEItem>)
 {
-  template<class Value>
-  mafVMEItem* Parse(const Value& value, parser::To<mafVMEItem>)
+  mafString type_name = value(_R("Type")).template As<mafString>();
+  if (auto item = mafVMEItem::Create(type_name.GetCStr()))
   {
-    mafString type_name = value(_R("Type")).template As<mafString>();
-    if (auto item = mafVMEItem::Create(type_name.GetCStr()))
-    {
-      item->Restore(value);
-      return item;
-    }
-    return nullptr;
+    item->Restore(value);
+    return item;
   }
+  return nullptr;
 }
 
-namespace serializer
+template<class Value>
+void Serialize(Value& value, mafVMEItem* const& item)
 {
-  template<class Value>
-  void Serialize(Value& value, mafVMEItem* const& item)
-  {
-    mafString type_name = _R(item->GetTypeName());
-    assert(item);
-    value(_R("Type")).SetValue(type_name);
-    item->Store(value);
-  }
+  mafString type_name = _R(item->GetTypeName());
+  assert(item);
+  value(_R("Type")).SetValue(type_name);
+  item->Store(value);
 }
 
-#endif
+END_FTK_NAMESPACE

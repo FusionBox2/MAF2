@@ -79,10 +79,10 @@ void mafDataPipeInterpolatorScalarMatrix::PreExecute()
     mtime > m_UpdateTime.GetMTime() ||
     !m_CurrentItem->IsDataPresent() ))
   {
-    vnl_matrix<double> scalar = GetCurrentItem()->GetData();
+    vnl_matrix<double> scalar = GetCurrentItemScalarMatrix()->GetData();
     if (scalar.size() != 0)
     {
-      m_ScalarData = GetCurrentItem()->GetData();
+      m_ScalarData = GetCurrentItemScalarMatrix()->GetData();
       m_UpdateTime.Modified();
     }
   } 

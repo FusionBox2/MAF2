@@ -52,7 +52,7 @@ public:
 
   /**
   Get the output of the interpolator item*/
-  mafVMEItem *GetCurrentItem() {return m_CurrentItem;}
+  std::shared_ptr<mafVMEItem> GetCurrentItem() {return m_CurrentItem;}
 
   /**
   Set the current time. Overidden to allow the output not to change whem 
@@ -76,19 +76,19 @@ protected:
   virtual void InternalItemUpdate();
 
   /** Internally used to set the current item member variable*/
-  void SetCurrentItem(mafVMEItem *data);
+  void SetCurrentItem(std::shared_ptr<mafVMEItem> data);
 
   /** Internally used update the current item variable to a new value (only if necessary)*/
-  void UpdateCurrentItem(mafVMEItem *item);
+  void UpdateCurrentItem(std::shared_ptr<mafVMEItem> item);
 
   /** Set a flag making the interpolator to release data of unnecessary items */
   void SetReleaseDataFlag(bool flag);
   void ReleaseDataFlagOn();
   void ReleaseDataFlagOff();
 
-  mafVMEItem    *m_CurrentItem; ///< the item currently selected for the current time
+  std::shared_ptr<mafVMEItem> m_CurrentItem; ///< the item currently selected for the current time
 
-  mafVMEItem    *m_OldItem;     ///< the item previously selected
+  std::shared_ptr<mafVMEItem> m_OldItem;     ///< the item previously selected
 
   mafTimeStamp  m_OldTimeStamp; ///< previous time
 

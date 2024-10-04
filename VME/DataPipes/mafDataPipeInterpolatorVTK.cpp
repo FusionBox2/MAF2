@@ -93,7 +93,7 @@ void mafDataPipeInterpolatorVTK::PreExecute()
     //mtime>m_VTKDataPipe->GetInformationTime() ||
     !m_CurrentItem->IsDataPresent()))
   {
-    vtkDataSet *data = GetCurrentItem()->GetData();
+    vtkDataSet *data = GetCurrentItemVTK()->GetData();
     if (data != NULL)
     {
       m_VTKDataPipe->SetOutputOb(data);

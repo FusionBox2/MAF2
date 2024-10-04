@@ -106,7 +106,7 @@ void mafVMEOutputScalarMatrix::UpdateVTKRepresentation()
   scalarInterpolator->Update();
   if (scalarInterpolator->GetCurrentItem() != NULL)
   {
-    vnl_matrix<double> scalar = scalarInterpolator->GetCurrentItem()->GetData();
+    vnl_matrix<double> scalar = scalarInterpolator->GetCurrentItemScalarMatrix()->GetData();
     if (scalar.size() != 0)
     {
       vnl_matrix<double> mat = scalarInterpolator->GetScalarData();
