@@ -1,30 +1,5 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafVMEItem
- Authors: Marco Petrone - Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-
 #include "mafVMEItem.h"
+
 #include "ftk/VME/ItemFactory.h"
 #include "mafFilesDirs.h"
 
@@ -210,7 +185,7 @@ void mafVMEItem::Print(std::ostream& os, const int tabs) const
 {
   mafIndent indent(tabs);
 
-  Superclass::Print(os,indent);
+  os << indent << "Object Type Name: " << GetTypeName() << std::endl;
 
   os << indent << "Contents:"<<std::endl;
 
@@ -413,16 +388,40 @@ void mafVMEItemAsynchObserver::OnEvent(mafEventBase *maf_event)
   }
 }
 
-mafVMEItem* mafVMEItem::Create(const char* ItemType)
+std::shared_ptr<mafVMEItem> mafVMEItem::MakeClone()
 {
-  if (auto object = ItemFactory::CreateItem(ItemType))
-  {
-    if (auto item = mafVMEItem::SafeDownCast(object))
-    {
-      return item;
-    }
-    delete object;
-    return nullptr;
-  }
-  return nullptr;
+  //std::shared_ptr<mafVMEItem> res;
+	//res.reset(NewInstance());
+  auto res = Create(GetTypeName());
+  //mafVMEItem* v; auto vv = NewInstance();
+  //res.reset (vv);
+  res->DeepCopy(this);
+  return res;
+}
+
+std::shared_ptr<mafVMEItem> mafVMEItem::MakeLargeClone()
+{
+  //std::shared_ptr<mafVMEItem> res;
+  //res.reset(NewInstance());
+  auto res = Create(GetTypeName());
+  //mafVMEItem* v; auto vv = NewInstance();
+  //res.reset (vv);
+  res->DeepCopyVmeLarge(this);
+  return res;
+}
+
+std::shared_ptr<mafVMEItem> mafVMEItem::MakeShallowClone()
+{
+  //std::shared_ptr<mafVMEItem> res;
+  //res.reset(NewInstance());
+  auto res = Create(GetTypeName());
+  //mafVMEItem* v; auto vv = NewInstance();
+  //res.reset (vv);
+  res->ShallowCopy(this);
+  return res;
+}
+
+std::shared_ptr<mafVMEItem> mafVMEItem::Create(const char* ItemType)
+{
+  return ItemFactory::CreateItem(ItemType);
 }

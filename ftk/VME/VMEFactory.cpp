@@ -45,8 +45,6 @@
 #include "mafVMEVolumeGray.h"
 #include "mafVMEVolumeRGB.h"
 
-#include "mafVMEItemVTK.h"
-
 #include <string>
 
 #include "medVMEWrappedMeter.h"

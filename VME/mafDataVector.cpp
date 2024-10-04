@@ -129,10 +129,8 @@ void mafDataVector::ShallowCopy(mafDataVector *array)
   RemoveAllItems();
   for (auto& elem : *array)
   {
-    mafVMEItem *item=elem.second.get();
-	  mafVMEItem *copy = item->NewInstance();
+    auto copy  = elem.second->MakeShallowClone();
     assert(copy);
-	  copy->ShallowCopy(item);
     AppendItem(copy); //  Changed by Losi 09.24.2009:
                       //  Before was AppendItem(item) this generated leaks because copy was unreferenced
   }
@@ -147,9 +145,7 @@ void mafDataVector::DeepCopyVmeLarge(mafDataVector *o)
   RemoveAllItems();
   for (auto& elem : *o)
   {
-    mafVMEItem *m=elem.second.get();
-    mafVMEItem *new_item=m->NewInstance();
-    new_item->DeepCopyVmeLarge(m);
+    auto new_item = elem.second->MakeLargeClone();
     AppendItem(new_item);
   }
   Modified();
@@ -164,25 +160,25 @@ void mafDataVector::SetSingleFileMode(bool mode)
 }
 
 //-----------------------------------------------------------------------
-void mafDataVector::AppendItem(mafVMEItem *m)
+void mafDataVector::AppendItem(std::shared_ptr<mafVMEItem> m)
 //-----------------------------------------------------------------------
 {
   m->SetListener(this);
-  mafTimeMap<mafVMEItem>::AppendItem(m);
+  mafTimeMap<mafVMEItem, std::shared_ptr, std::shared_ptr<mafVMEItem> >::AppendItem(m);
 }
 //-----------------------------------------------------------------------
-void mafDataVector::PrependItem(mafVMEItem *m)
+void mafDataVector::PrependItem(std::shared_ptr<mafVMEItem> m)
 //-----------------------------------------------------------------------
 {
   m->SetListener(this);
-  mafTimeMap<mafVMEItem>::PrependItem(m);
+  mafTimeMap<mafVMEItem, std::shared_ptr, std::shared_ptr<mafVMEItem> >::PrependItem(m);
 }
 //-----------------------------------------------------------------------
-void mafDataVector::InsertItem(mafVMEItem *m)
+void mafDataVector::InsertItem(std::shared_ptr<mafVMEItem> m)
 //-----------------------------------------------------------------------
 {
   m->SetListener(this);
-  mafTimeMap<mafVMEItem>::InsertItem(m);
+  mafTimeMap<mafVMEItem, std::shared_ptr, std::shared_ptr<mafVMEItem> >::InsertItem(m);
 }
 //-----------------------------------------------------------------------
 void mafDataVector::InternalStore(mafStorageElementBuilder& parent)
@@ -476,8 +472,8 @@ void mafDataVector::InternalRestore(const mafStorageElement& node)
 
   for (size_t i = 0; i < elements.GetNumItems(); i++)
   {
-    mafVMEItem *obj = elements[i].As<mafVMEItem>();
-    mafVMEItem *item = mafVMEItem::SafeDownCast(obj);
+    auto obj = elements[i].As<mafVMEItem>();
+    auto item = mafVMEItem::SafeDownCast(obj);
     assert(item);
     if (!item)
     {

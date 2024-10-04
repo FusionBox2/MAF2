@@ -170,12 +170,12 @@ int mafVMEPointSet::AppendPoint(double x,double y,double z,mafTimeStamp t)
 vtkPolyData *mafVMEPointSet::GetPolyData(mafTimeStamp t)
 //-------------------------------------------------------------------------
 {
-  mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(m_DataVector->GetItem(t));
+  auto item = mafVMEItemVTK::SafeDownCast(m_DataVector->GetItem(t));
   if (item)
   {
     return vtkPolyData::SafeDownCast(item->GetData());
   }
-  return NULL;
+  return nullptr;
 }
 //-------------------------------------------------------------------------
 vtkPolyData *mafVMEPointSet::NewPolyData(mafTimeStamp t)

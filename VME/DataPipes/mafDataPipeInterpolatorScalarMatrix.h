@@ -55,7 +55,7 @@ public:
   void OnEvent(mafEventBase *e) override;
 
    /**  Get the output of the interpolator item*/
-  mafVMEItemScalarMatrix *GetCurrentItem() {return (mafVMEItemScalarMatrix *)m_CurrentItem;}
+  std::shared_ptr<mafVMEItemScalarMatrix> GetCurrentItemScalarMatrix() {return std::static_pointer_cast<mafVMEItemScalarMatrix>(m_CurrentItem);}
 
   /** return the vnl_matrix data generated as output to this data pipe */
   virtual vnl_matrix<double> &GetScalarData();

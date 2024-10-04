@@ -117,7 +117,7 @@ void mafDataPipeInterpolator::PreExecute()
 void mafDataPipeInterpolator::UpdateBounds()
 //------------------------------------------------------------------------------
 {
-  mafVMEItem *old_item=m_CurrentItem;
+  auto old_item=m_CurrentItem;
   this->InternalItemUpdate();
 
   if (m_CurrentItem)
@@ -139,14 +139,14 @@ void mafDataPipeInterpolator::InternalItemUpdate()
 
   if (array)
   {
-    mafVMEItem *item = array->GetItemBefore(m_CurrentTime);
+    auto item = array->GetItemBefore(m_CurrentTime);
     UpdateCurrentItem(item);
   }
   
 }
 
 //-------------------------------------------------------------------------
-void mafDataPipeInterpolator::SetCurrentItem(mafVMEItem *data)
+void mafDataPipeInterpolator::SetCurrentItem(std::shared_ptr<mafVMEItem> data)
 //------------------------------------------------------------------------------
 {
   if (data==m_CurrentItem)
@@ -156,7 +156,7 @@ void mafDataPipeInterpolator::SetCurrentItem(mafVMEItem *data)
 }
 
 //-------------------------------------------------------------------------
-void mafDataPipeInterpolator::UpdateCurrentItem(mafVMEItem *item)
+void mafDataPipeInterpolator::UpdateCurrentItem(std::shared_ptr<mafVMEItem> item)
 //------------------------------------------------------------------------------
 {
   if (item)

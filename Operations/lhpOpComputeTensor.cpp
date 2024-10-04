@@ -260,7 +260,7 @@ int lhpOpComputeTensor::ComputeTensors()
   //vectors->Update();
 
   // calculate tensor
-  mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(m_VmeTensors->GetDataVector()->GetItem(0));
+  auto item = mafVMEItemVTK::SafeDownCast(m_VmeTensors->GetDataVector()->GetItem(0));
   m_RenderVolume = vtkImageData::SafeDownCast(item->GetData());
   //m_RenderVolume->Update();
 

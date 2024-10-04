@@ -40,18 +40,14 @@ class mafStorageElementBuilder;
   - implement deletion of single files in "SingleFileMode"
   - reimplement IsDataModified() mechanism
 */
-class MAF_EXPORT mafDataVector : public mafTimeMap<mafVMEItem>, public mafBaseEventHandler, public mafEventSender
+class MAF_EXPORT mafDataVector : public mafTimeMap<mafVMEItem, std::shared_ptr, std::shared_ptr<mafVMEItem> >, public mafBaseEventHandler, public mafEventSender
 {
 public:
 
   mafDataVector();
   ~mafDataVector() override;
 
-  mafTypeMacro(mafDataVector,mafTimeMap<mafVMEItem>);
-
-  typedef mafTimeMap<mafVMEItem>::TimeMap::iterator Iterator;
-  typedef mafTimeMap<mafVMEItem>::TimeMap DataMap;
-  typedef mafTimeMap<mafVMEItem>::mmuTimePair DataPair;
+  mafTypeMacroN(mafDataVector);
 
   /** copy another vector referencing the data */
   void ShallowCopy(mafDataVector *a);
@@ -67,19 +63,19 @@ public:
    /**
     Insert an item to the vector trying to append it, anyway the array
     is kept sorted. */
-  void AppendItem(mafVMEItem *m) override;
+  void AppendItem(std::shared_ptr<mafVMEItem> m) override;
 
    /**
     Insert an item to the vector trying to prepend it, anyway the array is kept sorted.
     Item's timestamp must be >=0 */
-  void PrependItem(mafVMEItem *m) override;
+  void PrependItem(std::shared_ptr<mafVMEItem> m) override;
 
   /**
     Set the item for a specified time. If no item with the same time exist
     the item is inserted in the vector. If an item with the same time exist, it's simply
     substituted with the new one. The item is always references and not copied.
     This function also automatically call the UpdateData() member function.*/
-  void InsertItem(mafVMEItem *m) override;
+  void InsertItem(std::shared_ptr<mafVMEItem> m) override;
 
   void OnEvent(mafEventBase *maf_event) override;
 
@@ -91,7 +87,7 @@ public:
   
   /** redefined to set the DataModified flag */
   void Modified() override
-  {m_DataModified = true; mafTimeMap<mafVMEItem>::Modified();}
+  {m_DataModified = true; mafTimeMap<mafVMEItem, std::shared_ptr, std::shared_ptr<mafVMEItem> >::Modified();}
 
   /** return true if any data has been inserted or removed */
   bool IsDataModified() {return m_DataModified;}

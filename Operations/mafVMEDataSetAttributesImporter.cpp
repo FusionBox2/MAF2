@@ -371,18 +371,14 @@ int mafVMEDataSetAttributesImporter::Read()
     float currentTime = GetUseTSFile() == true ? tsMatrixWith1Column(tsIndex, 0) : (double)tsIndex;
 
     int ni = m_Input->GetDataVector()->GetNumberOfItems();
-    mafVMEItem *it = m_Input->GetDataVector()->GetItem(currentTime);
+    auto it = m_Input->GetDataVector()->GetItem(currentTime);
     
-    mafVMEItemVTK *currentItem = mafVMEItemVTK::SafeDownCast(it);
-
-
-    // check if an item at the current time exists already
-    bool itemExist = currentItem ? true : false;
+    auto currentItem = mafVMEItemVTK::SafeDownCast(it);
 
     // the dataset attribute
     vtkDataSetAttributes *targetAttributeData = NULL;
 
-    if (itemExist) // only attach attribute data
+    if (currentItem) // only attach attribute data
     {
       if (GetAttributeType() == POINT_DATA)
       {
