@@ -464,7 +464,6 @@ void mafOpDecomposeTimeVarVME::CreateStaticVME(mafTimeStamp timeSt)
 //----------------------------------------------------------------------------
 {
   std::shared_ptr<mafMatrix> matrix;
-  std::shared_ptr<mafMatrix> matrixCopy;
   mafVMEItem *vmeItem;
   mafVMEItem *vmeItemCopy;
   mafTimeStamp oldTime;
@@ -517,9 +516,7 @@ void mafOpDecomposeTimeVarVME::CreateStaticVME(mafTimeStamp timeSt)
     matrix = mv->GetNearestMatrix(timeSt);
     if (matrix)
     {
-      matrixCopy = mafMatrix::NewSPtr();
-      matrixCopy->DeepCopy(*matrix);
-      vmeGeneric->GetMatrixVector()->SetMatrix(matrixCopy);
+      vmeGeneric->GetMatrixVector()->SetMatrix(matrix->MakeClone());
       oldTime = matrix->GetTimeStamp();
     }
   }
