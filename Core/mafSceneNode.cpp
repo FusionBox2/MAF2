@@ -141,7 +141,7 @@ mafSceneNode::mafSceneNode(mafSceneGraph *sg,mafSceneNode *parent, const mafNode
 mafSceneNode::~mafSceneNode()
 //----------------------------------------------------------------------------
 {
-	cppDEL(m_Pipe);
+	m_Pipe.reset();
 	
 	if(m_RenFront != NULL)  //modified by Vladik. 03-03-2004
   {

@@ -170,7 +170,7 @@ void medViewSliceNotInterpolated::OnEvent(mafEventBase * event)
     case ID_LUT:
       {
         // Set the pipe lut
-        for(std::map<mafNode*,medPipeVolumeSliceNotInterpolated*>::iterator it = m_PipesSlice.begin(); it != m_PipesSlice.end(); it++)
+        for(auto it = m_PipesSlice.begin(); it != m_PipesSlice.end(); ++it)
         {
           it->second->SetLut(m_ColorLUT);
         }
@@ -185,7 +185,7 @@ void medViewSliceNotInterpolated::OnEvent(mafEventBase * event)
     case ID_SLICE:
       {
         // Update the pipe
-        for(std::map<mafNode*,medPipeVolumeSliceNotInterpolated*>::iterator it = m_PipesSlice.begin(); it != m_PipesSlice.end(); it++)
+        for(auto it = m_PipesSlice.begin(); it != m_PipesSlice.end(); ++it)
         {
           it->second->SetSlice(m_CurrentSlice,m_SliceAxis);
         }
@@ -195,7 +195,7 @@ void medViewSliceNotInterpolated::OnEvent(mafEventBase * event)
       {
         Superclass::OnEvent(event);
         // Set the pipe lut
-        for(std::map<mafNode*,medPipeVolumeSliceNotInterpolated*>::iterator it = m_PipesSlice.begin(); it != m_PipesSlice.end(); it++)
+        for(auto it = m_PipesSlice.begin(); it != m_PipesSlice.end(); ++it)
         {
           it->second->SetLut(m_ColorLUT);
         }
@@ -277,7 +277,7 @@ void medViewSliceNotInterpolated::UpdateSlice()
 //----------------------------------------------------------------------------
 {
   // Update the pipe
-  for(std::map<mafNode*,medPipeVolumeSliceNotInterpolated*>::iterator it = m_PipesSlice.begin(); it != m_PipesSlice.end(); it++)
+  for(auto it = m_PipesSlice.begin(); it != m_PipesSlice.end(); ++it)
   {
     it->second->SetSlice(m_CurrentSlice,m_SliceAxis);
   }

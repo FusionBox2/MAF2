@@ -379,7 +379,7 @@ void medViewSlicer::CameraUpdate()
     {
       if(Inode->IsA("mafVMESurface") || Inode->IsA("mafVMESurfaceParametric"))
       {
-        mafPipeSurfaceSlice *PipeSliceViewSurface = mafPipeSurfaceSlice::SafeDownCast(((mafViewVTK *)m_ChildViewList[SLICE_VIEW])->GetNodePipe(Inode));
+        auto PipeSliceViewSurface = mafPipeSurfaceSlice::SafeDownCast(((mafViewVTK *)m_ChildViewList[SLICE_VIEW])->GetNodePipe(Inode));
         if(PipeSliceViewSurface)
         {
           double center[3], surfaceOriginTranslated[3];
@@ -542,7 +542,7 @@ bool medViewSlicer::ActivateWindowing(mafNode *node)
 
     for(int i=0; i<m_NumOfChildView; i++) {
 
-      mafPipeImage3D *pipe = (mafPipeImage3D *)m_ChildViewList[i]->GetNodePipe(node);
+      auto pipe = mafPipeImage3D::StaticDownCast(m_ChildViewList[i]->GetNodePipe(node));
       conditions = (conditions && (pipe && pipe->IsGrayImage()));
     }
     //conditions = conditions & m_CurrentImage;

@@ -136,7 +136,7 @@ bool medViewVTKCompound::ActivateWindowing(mafNode *node)
     for(int i=0; i<m_NumOfChildView; i++) {
       //m_ChildViewList[i]->VmeSelect(node, select);
 
-      mafPipeImage3D *pipe = (mafPipeImage3D *)m_ChildViewList[i]->GetNodePipe(node);
+      auto pipe = mafPipeImage3D::StaticDownCast(m_ChildViewList[i]->GetNodePipe(node));
       conditions = (conditions && (pipe && pipe->IsGrayImage()));
     }
   }
@@ -169,10 +169,10 @@ void medViewVTKCompound::CameraUpdate()
       mafVME* vme = (mafVME*) node->m_Vme;
 
       assert(vme);
-      mafPipe* maf_pipe = (mafPipe*)GetNodePipe(vme);
+      auto maf_pipe = GetNodePipe(vme);
       if (maf_pipe && strcmp(maf_pipe->GetTypeName(),"medPipeVectorFieldMapWithArrows")==0)
       {
-        medPipeVectorFieldMapWithArrows* pipe = (medPipeVectorFieldMapWithArrows*)maf_pipe;
+        auto pipe = medPipeVectorFieldMapWithArrows::StaticDownCast(maf_pipe);
         if (pipe) {
           pipe->UpdateVTKPipe();
         }

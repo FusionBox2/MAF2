@@ -52,7 +52,7 @@ public:
 
   mafNode           *m_Vme;
   mafSceneNode      *m_Parent;
-  mafPipe           *m_Pipe;
+  std::shared_ptr<mafPipe> m_Pipe;
   bool               m_PipeCreatable;
   bool               m_Mutex;
   vtkRenderer       *m_RenFront;

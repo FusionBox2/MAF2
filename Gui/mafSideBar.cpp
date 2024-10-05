@@ -250,7 +250,7 @@ void mafSideBar::UpdateVmePanel()
 //----------------------------------------------------------------------------
 {
   mafVMEOutput *vme_out = NULL;
-  mafPipe      *vme_pipe = NULL;
+  std::shared_ptr<mafPipe> vme_pipe;
   mafGUI       *vme_gui = NULL;
   mafGUI       *vme_out_gui = NULL;
   mafGUI       *vme_pipe_gui = NULL;

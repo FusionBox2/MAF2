@@ -85,7 +85,7 @@ public:
   /** 
   Return a pointer to the visual pipe of the node passed as argument. 
   It is used in mafSideBar to plug the visual pipe's GUI in the tabbed vme panel. \sa mafSideBar*/
-  mafPipe* GetNodePipe(mafNode *vme) override;
+  std::shared_ptr<mafPipe> GetNodePipe(mafNode *vme) override;
   /** Access function. See name. */
   wxHtmlWindow       *GetRenderWindow()    {return m_RenderWindow;}
 
@@ -126,7 +126,7 @@ protected:
   //graph rendering window
   wxHtmlWindow            *m_RenderWindow;
   mafSceneGraph           *m_Sg;
-  std::vector<mafPipe *>   m_VNodes;
+  std::vector<std::shared_ptr<mafPipe> >   m_VNodes;
 
   mafGUI *CreateGui() override;
   /** Return the visual pipe's name.*/

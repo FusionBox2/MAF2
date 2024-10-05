@@ -109,7 +109,7 @@ protected:
 	vtkLookupTable	        *m_ColorLUT;
 	
 	/** Function that get node pipe of first child     */
-  mafPipe* GetNodePipe(mafNode *vme) override;
+  std::shared_ptr<mafPipe> GetNodePipe(mafNode *vme) override;
 
 };
 #endif

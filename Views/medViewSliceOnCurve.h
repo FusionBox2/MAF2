@@ -144,7 +144,7 @@ public:
 	/*virtual*/ void VmeShow(mafNode *node, bool show) override;
   
   /** return the current pipe for the specified vme (if any exist at this moment) */
-  /*virtual*/ mafPipe* GetNodePipe(mafNode *vme) override;
+  /*virtual*/ std::shared_ptr<mafPipe> GetNodePipe(mafNode *vme) override;
 
 	/** 
 	return the status of the node within this view. es: NON_VISIBLE,VISIBLE_ON, ... 

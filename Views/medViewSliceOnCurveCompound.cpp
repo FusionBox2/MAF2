@@ -282,7 +282,7 @@ int medViewSliceOnCurveCompound::GetNodeStatus(mafNode *node)
 
 //------------------------------------------------------------------------
 //return the current pipe for the specified vme (if any exist at this moment) */
-/*virtual*/ mafPipe* medViewSliceOnCurveCompound::GetNodePipe(mafNode *vme)
+/*virtual*/ std::shared_ptr<mafPipe> medViewSliceOnCurveCompound::GetNodePipe(mafNode *vme)
 //------------------------------------------------------------------------
 {
   return m_ChildViewList[MAIN_VIEW]->GetNodePipe(vme);
@@ -375,8 +375,7 @@ mafGUI* medViewSliceOnCurveCompound::CreateGui()
   // Added by Losi 11.25.2009
   if (m_CurrentVolume)
   {
-    mafPipeVolumeSlice_BES *p = NULL;
-    p = mafPipeVolumeSlice_BES::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
+    auto p = mafPipeVolumeSlice_BES::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
     if (p) // Is this required?
     {
       p->SetEnableGPU(m_EnableGPU);
@@ -496,8 +495,7 @@ void medViewSliceOnCurveCompound::OnEvent(mafEventBase *maf_event)
       {
         if (m_CurrentVolume)
         {
-          mafPipeVolumeSlice_BES *p = NULL;
-          p = mafPipeVolumeSlice_BES::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
+          auto p = mafPipeVolumeSlice_BES::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
           if(p)
           {
             p->SetEnableGPU(m_EnableGPU);

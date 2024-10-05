@@ -286,9 +286,8 @@ void mafViewSlice::VmeCreatePipe(mafNode *vme)
     else {
       m_NumberOfVisibleVme++;
     }
-    mafObject *obj= PipeFactory::CreatePipe(pipe_name.GetCStr());
-    mafPipe *pipe = (mafPipe*)obj;
-    if (pipe != NULL)
+    auto pipe = PipeFactory::CreateInstance(pipe_name.GetCStr());
+    if (pipe)
     {
       pipe->SetListener(this);
       if (pipe->IsA("mafPipeVolumeSlice_BES"))  //BES: 3.4.2009 - changed to support inheritance
@@ -320,26 +319,26 @@ void mafViewSlice::VmeCreatePipe(mafNode *vme)
         }
         if (m_SliceInitialized)
         {
-          ((mafPipeVolumeSlice_BES *)pipe)->InitializeSliceParameters(slice_mode, m_Slice, false,false,m_TextureInterpolate);
-          ((mafPipeVolumeSlice_BES *)pipe)->SetNormal(m_SliceNormal);
+          mafPipeVolumeSlice_BES::StaticDownCast(pipe)->InitializeSliceParameters(slice_mode, m_Slice, false,false,m_TextureInterpolate);
+          mafPipeVolumeSlice_BES::StaticDownCast(pipe)->SetNormal(m_SliceNormal);
         }
         else
         {
-          ((mafPipeVolumeSlice_BES *)pipe)->InitializeSliceParameters(slice_mode,false,false,m_TextureInterpolate);
+          mafPipeVolumeSlice_BES::StaticDownCast(pipe)->InitializeSliceParameters(slice_mode,false,false,m_TextureInterpolate);
         }
 
         if(m_ShowVolumeTICKs)
-          ((mafPipeVolumeSlice_BES *)pipe)->ShowTICKsOn();
+          mafPipeVolumeSlice_BES::StaticDownCast(pipe)->ShowTICKsOn();
         else
-          ((mafPipeVolumeSlice_BES *)pipe)->ShowTICKsOff();
-        ((mafPipeVolumeSlice_BES *)pipe)->SetEnableGPU(m_EnableGPU);
-        ((mafPipeVolumeSlice_BES *)pipe)->SetTrilinearInterpolation(m_TrilinearInterpolationOn);
+          mafPipeVolumeSlice_BES::StaticDownCast(pipe)->ShowTICKsOff();
+        mafPipeVolumeSlice_BES::StaticDownCast(pipe)->SetEnableGPU(m_EnableGPU);
+        mafPipeVolumeSlice_BES::StaticDownCast(pipe)->SetTrilinearInterpolation(m_TrilinearInterpolationOn);
         UpdateText();
       }
       else 
       {
         //not a VolumeSlice pipe, check, if it is some slicer
-        mafPipeSlice* spipe = mafPipeSlice::SafeDownCast(pipe);
+        auto spipe = mafPipeSlice::SafeDownCast(pipe);
         if (spipe != NULL)
         { 
           //it is slicing pipe
@@ -355,9 +354,9 @@ void mafViewSlice::VmeCreatePipe(mafNode *vme)
             m_CurrentPolylineGraphEditor.push_back(n);
 
             if(m_CameraPositionId==CAMERA_OS_P)
-              ((medPipePolylineGraphEditor *)pipe)->SetModalityPerspective();
+              medPipePolylineGraphEditor::StaticDownCast(pipe)->SetModalityPerspective();
             else
-              ((medPipePolylineGraphEditor *)pipe)->SetModalitySlice();				
+              medPipePolylineGraphEditor::StaticDownCast(pipe)->SetModalitySlice();				
           }
           else if(pipe->IsA("mafPipeMeshSlice_BES"))  {
             m_CurrentMesh.push_back(n);        
@@ -415,8 +414,8 @@ void mafViewSlice::VmeCreatePipe(mafNode *vme)
             positionSlice[1] = m_Slice[1];
             positionSlice[2] = m_Slice[2];
             MultiplyPointByInputVolumeABSMatrix(positionSlice);
-            ((mafPipeSurfaceSlice *)pipe)->SetSlice(positionSlice);
-            ((mafPipeSurfaceSlice *)pipe)->SetNormal(normal);
+            mafPipeSurfaceSlice::StaticDownCast(pipe)->SetSlice(positionSlice);
+            mafPipeSurfaceSlice::StaticDownCast(pipe)->SetNormal(normal);
 
           }
           else if(pipe_name == _R("mafPipePolylineSlice"))
@@ -458,8 +457,8 @@ void mafViewSlice::VmeCreatePipe(mafNode *vme)
             positionSlice[1] = m_Slice[1];
             positionSlice[2] = m_Slice[2];
             MultiplyPointByInputVolumeABSMatrix(positionSlice);
-            ((mafPipePolylineSlice *)pipe)->SetSlice(positionSlice);
-            ((mafPipePolylineSlice *)pipe)->SetNormal(normal);
+            mafPipePolylineSlice::StaticDownCast(pipe)->SetSlice(positionSlice);
+            mafPipePolylineSlice::StaticDownCast(pipe)->SetNormal(normal);
           }          
           else if(pipe_name == _R("mafPipeMeshSlice"))
           {
@@ -500,14 +499,14 @@ void mafViewSlice::VmeCreatePipe(mafNode *vme)
             positionSlice[1] = m_Slice[1];
             positionSlice[2] = m_Slice[2];
             MultiplyPointByInputVolumeABSMatrix(positionSlice);
-            ((mafPipeMeshSlice *)pipe)->SetSlice(positionSlice);
-            ((mafPipeMeshSlice *)pipe)->SetNormal(normal);
+            mafPipeMeshSlice::StaticDownCast(pipe)->SetSlice(positionSlice);
+            mafPipeMeshSlice::StaticDownCast(pipe)->SetNormal(normal);
           }
         }
       } //end else [it is not volume slicing]                     
 
       pipe->Create(vme, this);
-      n->m_Pipe = (mafPipe*)pipe;
+      n->m_Pipe = pipe;
     }
     else
       mafErrorMessage(_M(_R("Cannot create visual pipe object of type \"") + pipe_name + _R("\"!")));
@@ -534,7 +533,7 @@ void mafViewSlice::VmeDeletePipe(mafNode *vme)
     }
   }
   assert(n && n->m_Pipe);
-  cppDEL(n->m_Pipe);
+  n->m_Pipe.reset();
 
   if(vme->IsMAFType(mafVMELandmark))
     UpdateSurfacesList(vme);
@@ -579,8 +578,7 @@ mafGUI *mafViewSlice::CreateGui()
   // Added by Losi 11.25.2009
   if (m_CurrentVolume)
   {
-    mafPipeVolumeSlice_BES *p = NULL;
-    p = mafPipeVolumeSlice_BES::SafeDownCast(this->GetNodePipe(m_CurrentVolume->m_Vme)); // m_CurrentVolume->m_Pipe is better?
+    auto p = mafPipeVolumeSlice_BES::SafeDownCast(this->GetNodePipe(m_CurrentVolume->m_Vme)); // m_CurrentVolume->m_Pipe is better?
     if (p) // Is this required?
     {
       p->SetEnableGPU(m_EnableGPU);
@@ -607,8 +605,7 @@ void mafViewSlice::OnEvent(mafEventBase *maf_event)
         {
           if (m_CurrentVolume)
           {
-            mafPipeVolumeSlice_BES *p = NULL;
-            p = mafPipeVolumeSlice_BES::SafeDownCast(this->GetNodePipe(m_CurrentVolume->m_Vme));
+            auto p = mafPipeVolumeSlice_BES::SafeDownCast(this->GetNodePipe(m_CurrentVolume->m_Vme));
             if(p)
             {
               p->SetEnableGPU(m_EnableGPU);
@@ -621,8 +618,7 @@ void mafViewSlice::OnEvent(mafEventBase *maf_event)
         {
           if (m_CurrentVolume)
           {
-            mafPipeVolumeSlice_BES *p = NULL;
-            p = mafPipeVolumeSlice_BES::SafeDownCast(this->GetNodePipe(m_CurrentVolume->m_Vme));
+            auto p = mafPipeVolumeSlice_BES::SafeDownCast(this->GetNodePipe(m_CurrentVolume->m_Vme));
             if(p)
             {
               p->SetTrilinearInterpolation(m_TrilinearInterpolationOn);
@@ -644,7 +640,7 @@ void mafViewSlice::SetLutRange(double low_val, double high_val)
   if(!m_CurrentVolume) 
     return;
   
-  mafPipeVolumeSlice_BES *pipe = mafPipeVolumeSlice_BES::SafeDownCast(m_CurrentVolume->m_Pipe);
+  auto pipe = mafPipeVolumeSlice_BES::SafeDownCast(m_CurrentVolume->m_Pipe);
   if (pipe != NULL) {    
     pipe->SetLutRange(low_val, high_val); 
   }
@@ -675,7 +671,7 @@ void mafViewSlice::SetSlice(double* Origin, double* Normal)
   //and now set it for every VME
   if (m_CurrentVolume)
 	{
-    mafPipeSlice* pipe = mafPipeSlice::SafeDownCast(m_CurrentVolume->m_Pipe);
+    auto pipe = mafPipeSlice::SafeDownCast(m_CurrentVolume->m_Pipe);
 		if (pipe != NULL)
 		{
 			pipe->SetSlice(Origin, Normal); 
@@ -695,15 +691,15 @@ void mafViewSlice::SetSlice(double* Origin, double* Normal)
   {
     if (m_CurrentSurface.at(i) && m_CurrentSurface.at(i)->m_Pipe)
     {
-      mafPipeSlice* pipe = mafPipeSlice::SafeDownCast(m_CurrentSurface.at(i)->m_Pipe);
-      if (pipe != NULL){
+      auto pipe = mafPipeSlice::SafeDownCast(m_CurrentSurface.at(i)->m_Pipe);
+      if (pipe){
         pipe->SetSlice(coord, m_SliceNormal); 
       }
       else
       {
         //BES: 12.6.2009 - TODO: this branch should be removed when mafPipeSurfaceSlice_BES committed down
-        mafPipeSurfaceSlice* pipe = mafPipeSurfaceSlice::SafeDownCast(m_CurrentSurface.at(i)->m_Pipe);
-        if (pipe != NULL) 
+        auto pipe = mafPipeSurfaceSlice::SafeDownCast(m_CurrentSurface.at(i)->m_Pipe);
+        if (pipe) 
         {
           pipe->SetSlice(coord); 
           pipe->SetNormal(m_SliceNormal); 
@@ -717,15 +713,15 @@ void mafViewSlice::SetSlice(double* Origin, double* Normal)
   {
     if(m_CurrentPolyline.at(i) && m_CurrentPolyline.at(i)->m_Pipe)
     {
-      mafPipeSlice* pipe = mafPipeSlice::SafeDownCast(m_CurrentPolyline.at(i)->m_Pipe);
-      if (pipe != NULL){
+      auto pipe = mafPipeSlice::SafeDownCast(m_CurrentPolyline.at(i)->m_Pipe);
+      if (pipe){
         pipe->SetSlice(coord, m_SliceNormal); 
       }
       else
       {
         //BES: 12.6.2009 - TODO: this branch should be removed when mafPipeSurfaceSlice_BES committed down
-        mafPipePolylineSlice* pipe = mafPipePolylineSlice::SafeDownCast(m_CurrentPolyline.at(i)->m_Pipe);
-        if (pipe != NULL) 
+        auto pipe = mafPipePolylineSlice::SafeDownCast(m_CurrentPolyline.at(i)->m_Pipe);
+        if (pipe) 
         {
           pipe->SetSlice(coord); 
           pipe->SetNormal(m_SliceNormal); 
@@ -738,8 +734,8 @@ void mafViewSlice::SetSlice(double* Origin, double* Normal)
 	{
     if (m_CurrentPolylineGraphEditor.at(i) && m_CurrentPolylineGraphEditor.at(i)->m_Pipe)
     {
-      mafPipeSlice* pipe = mafPipeSlice::SafeDownCast(m_CurrentPolylineGraphEditor.at(i)->m_Pipe);
-      if (pipe != NULL){
+      auto pipe = mafPipeSlice::SafeDownCast(m_CurrentPolylineGraphEditor.at(i)->m_Pipe);
+      if (pipe){
         pipe->SetSlice(coord, m_SliceNormal); 
       }
     }   
@@ -749,15 +745,15 @@ void mafViewSlice::SetSlice(double* Origin, double* Normal)
   {
     if (m_CurrentMesh.at(i) && m_CurrentMesh.at(i)->m_Pipe)
     {
-      mafPipeSlice* pipe = mafPipeSlice::SafeDownCast(m_CurrentMesh.at(i)->m_Pipe);
-      if (pipe != NULL){
+      auto pipe = mafPipeSlice::SafeDownCast(m_CurrentMesh.at(i)->m_Pipe);
+      if (pipe){
         pipe->SetSlice(coord, m_SliceNormal); 
       }
       else
       {
         //BES: 12.6.2009 - TODO: this branch should be removed when mafPipeSurfaceSlice_BES committed down
-        mafPipeMeshSlice* pipe = mafPipeMeshSlice::SafeDownCast(m_CurrentMesh.at(i)->m_Pipe);
-        if (pipe != NULL) 
+        auto pipe = mafPipeMeshSlice::SafeDownCast(m_CurrentMesh.at(i)->m_Pipe);
+        if (pipe) 
         {
           pipe->SetSlice(coord); 
           pipe->SetNormal(m_SliceNormal); 

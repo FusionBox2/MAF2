@@ -294,9 +294,9 @@ void medViewSliceBlendRX::GizmoCreate()
 //----------------------------------------------------------------------------
 {
   // Retrieve medPipeVolumeSliceBlend to obtain slices positions
-  medPipeVolumeSliceBlend *p = medPipeVolumeSliceBlend::SafeDownCast(m_ChildViewList[BLEND_VIEW]->GetNodePipe(m_CurrentVolume));
+  auto p = medPipeVolumeSliceBlend::SafeDownCast(m_ChildViewList[BLEND_VIEW]->GetNodePipe(m_CurrentVolume));
 
-  if (p == NULL)
+  if (!p)
   {
     //No volume is visualized
     return;

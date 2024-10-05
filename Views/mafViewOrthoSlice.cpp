@@ -277,7 +277,7 @@ void mafViewOrthoSlice::OnEvent(mafEventBase *maf_event)
         currentVolumeMaterial->UpdateFromTables();
         for(int i=0; i<m_NumOfChildView; i++)
         {
-          mafPipeVolumeSlice_BES *p = (mafPipeVolumeSlice_BES *)((mafViewSlice *)m_ChildViewList[i])->GetNodePipe(m_CurrentVolume);
+          auto p = mafPipeVolumeSlice_BES::StaticDownCast(((mafViewSlice *)m_ChildViewList[i])->GetNodePipe(m_CurrentVolume));
           p->SetColorLookupTable(m_ColorLUT);
         }
         double *sr;
@@ -344,8 +344,7 @@ void mafViewOrthoSlice::OnEvent(mafEventBase *maf_event)
           {
             for(int i=0; i<m_NumOfChildView; i++)
             {
-              mafPipeVolumeSlice_BES *p = NULL;
-              p = mafPipeVolumeSlice_BES::SafeDownCast(((mafViewSlice *)m_ChildViewList[i])->GetNodePipe(m_CurrentVolume));
+              auto p = mafPipeVolumeSlice_BES::SafeDownCast(((mafViewSlice *)m_ChildViewList[i])->GetNodePipe(m_CurrentVolume));
               if (p)
               {
                 p->SetEnableGPU(m_EnableGPU);
@@ -361,8 +360,7 @@ void mafViewOrthoSlice::OnEvent(mafEventBase *maf_event)
           {
             for(int i=0; i<m_NumOfChildView; i++)
             {
-              mafPipeVolumeSlice_BES *p = NULL;
-              p = mafPipeVolumeSlice_BES::SafeDownCast(((mafViewSlice *)m_ChildViewList[i])->GetNodePipe(m_CurrentVolume));
+              auto p = mafPipeVolumeSlice_BES::SafeDownCast(((mafViewSlice *)m_ChildViewList[i])->GetNodePipe(m_CurrentVolume));
               if (p)
               {
                 p->SetTrilinearInterpolation(m_TrilinearInterpolationOn);
@@ -416,8 +414,7 @@ mafGUI* mafViewOrthoSlice::CreateGui()
   {
     for (int i=0; i<m_NumOfChildView; i++)
     {
-      mafPipeVolumeSlice_BES *p = NULL;
-      p = mafPipeVolumeSlice_BES::SafeDownCast(((mafViewSlice *)m_ChildViewList[i])->GetNodePipe(m_CurrentVolume));
+      auto p = mafPipeVolumeSlice_BES::SafeDownCast(((mafViewSlice *)m_ChildViewList[i])->GetNodePipe(m_CurrentVolume));
       if (p)
       {
         p->SetEnableGPU(m_EnableGPU);
@@ -537,8 +534,7 @@ void mafViewOrthoSlice::GizmoCreate()
 		for(gizmoId=GIZMO_XN; gizmoId<GIZMOS_NUMBER; gizmoId++) 
 		{
 			double sliceOrigin[3];
-			mafPipeVolumeSlice_BES *p = NULL;
-			p = mafPipeVolumeSlice_BES::SafeDownCast(((mafViewSlice *)((mafViewCompound *)m_ChildViewList[0]))->GetNodePipe(m_CurrentVolume));
+			auto p = mafPipeVolumeSlice_BES::SafeDownCast(((mafViewSlice *)((mafViewCompound *)m_ChildViewList[0]))->GetNodePipe(m_CurrentVolume));
       double normal[3];
 			p->GetSlice(sliceOrigin,normal);
 
@@ -672,28 +668,28 @@ void mafViewOrthoSlice::OnEventSetThickness()
 		mafNode *node=this->GetSceneGraph()->GetSelectedVme();
 		mafSceneNode *SN = this->GetSceneGraph()->Vme2Node(node);
 
-		if(mafPipeSurfaceSlice *pipe = mafPipeSurfaceSlice::SafeDownCast(m_ChildViewList[CHILD_XN_VIEW]->GetNodePipe(node)))
+		if(auto pipe = mafPipeSurfaceSlice::SafeDownCast(m_ChildViewList[CHILD_XN_VIEW]->GetNodePipe(node)))
 		{
 			pipe->SetThickness(m_Border);
 		}
-		if(mafPipeSurfaceSlice *pipe = mafPipeSurfaceSlice::SafeDownCast(m_ChildViewList[CHILD_YN_VIEW]->GetNodePipe(node)))
+		if(auto pipe = mafPipeSurfaceSlice::SafeDownCast(m_ChildViewList[CHILD_YN_VIEW]->GetNodePipe(node)))
 		{
 			pipe->SetThickness(m_Border);
 		}
-		if(mafPipeSurfaceSlice *pipe = mafPipeSurfaceSlice::SafeDownCast(m_ChildViewList[CHILD_ZN_VIEW]->GetNodePipe(node)))
+		if(auto pipe = mafPipeSurfaceSlice::SafeDownCast(m_ChildViewList[CHILD_ZN_VIEW]->GetNodePipe(node)))
 		{
 			pipe->SetThickness(m_Border);
 		}
 
-		if(medVisualPipeSlicerSlice *pipe = medVisualPipeSlicerSlice::SafeDownCast(m_ChildViewList[CHILD_XN_VIEW]->GetNodePipe(node)))
+		if(auto pipe = medVisualPipeSlicerSlice::SafeDownCast(m_ChildViewList[CHILD_XN_VIEW]->GetNodePipe(node)))
 		{
 			pipe->SetThickness(m_Border);
 		}
-		if(medVisualPipeSlicerSlice *pipe = medVisualPipeSlicerSlice::SafeDownCast(m_ChildViewList[CHILD_YN_VIEW]->GetNodePipe(node)))
+		if(auto pipe = medVisualPipeSlicerSlice::SafeDownCast(m_ChildViewList[CHILD_YN_VIEW]->GetNodePipe(node)))
 		{
 			pipe->SetThickness(m_Border);
 		}
-		if(medVisualPipeSlicerSlice *pipe = medVisualPipeSlicerSlice::SafeDownCast(m_ChildViewList[CHILD_ZN_VIEW]->GetNodePipe(node)))
+		if(auto pipe = medVisualPipeSlicerSlice::SafeDownCast(m_ChildViewList[CHILD_ZN_VIEW]->GetNodePipe(node)))
 		{
 			pipe->SetThickness(m_Border);
 		}
@@ -747,7 +743,7 @@ void mafViewOrthoSlice::CreateOrthoslicesAndGizmos( mafNode * node )
 	m_LutSlider->SetSubRange((long)currentVolumeMaterial->m_TableRange[0],(long)currentVolumeMaterial->m_TableRange[1]);
 	for(int i=0; i<m_NumOfChildView; i++)
 	{
-		mafPipeVolumeSlice_BES *p = (mafPipeVolumeSlice_BES *)((mafViewSlice *)m_ChildViewList[i])->GetNodePipe(m_CurrentVolume);
+		auto p = mafPipeVolumeSlice_BES::StaticDownCast(((mafViewSlice *)m_ChildViewList[i])->GetNodePipe(m_CurrentVolume));
     p->SetEnableGPU(m_EnableGPU);
     p->SetTrilinearInterpolation(m_TrilinearInterpolationOn);
 		p->SetColorLookupTable(m_ColorLUT);
@@ -793,15 +789,15 @@ void mafViewOrthoSlice::SetThicknessForAllSurfaceSlices(mafNode *root)
 	{
 		if (((mafVME *)node)->GetOutput()->IsA("mafVMEOutputSurface")) //if(node->IsA("mafVMESurface"))
 		{
-			if(mafPipeSurfaceSlice *pipe = mafPipeSurfaceSlice::SafeDownCast(m_ChildViewList[CHILD_XN_VIEW]->GetNodePipe(node)))
+			if(auto pipe = mafPipeSurfaceSlice::SafeDownCast(m_ChildViewList[CHILD_XN_VIEW]->GetNodePipe(node)))
 			{
 				pipe->SetThickness(m_Border);
 			}
-			if(mafPipeSurfaceSlice *pipe = mafPipeSurfaceSlice::SafeDownCast(m_ChildViewList[CHILD_YN_VIEW]->GetNodePipe(node)))
+			if(auto pipe = mafPipeSurfaceSlice::SafeDownCast(m_ChildViewList[CHILD_YN_VIEW]->GetNodePipe(node)))
 			{
 				pipe->SetThickness(m_Border);
 			}
-			if(mafPipeSurfaceSlice *pipe = mafPipeSurfaceSlice::SafeDownCast(m_ChildViewList[CHILD_ZN_VIEW]->GetNodePipe(node)))
+			if(auto pipe = mafPipeSurfaceSlice::SafeDownCast(m_ChildViewList[CHILD_ZN_VIEW]->GetNodePipe(node)))
 			{
 				pipe->SetThickness(m_Border);
 			}
@@ -845,7 +841,7 @@ void mafViewOrthoSlice::ApplyViewSettings(mafNode *node)
   {
     for (int i=CHILD_ZN_VIEW;i<=CHILD_YN_VIEW;i++)
     {
-      mafPipePolylineSlice *pipeSlice = mafPipePolylineSlice::SafeDownCast(((mafViewSlice *)((mafViewCompound *)m_ChildViewList[i]))->GetNodePipe(node));
+      auto pipeSlice = mafPipePolylineSlice::SafeDownCast(((mafViewSlice *)((mafViewCompound *)m_ChildViewList[i]))->GetNodePipe(node));
       if(pipeSlice) 
       {
         if(!node->IsA("mafVMEMeter"))

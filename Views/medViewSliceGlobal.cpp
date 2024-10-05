@@ -264,7 +264,7 @@ void medViewSliceGlobal::VmeDeletePipe(mafNode *vme)
     }
   }
   assert(n && n->m_Pipe);
-  cppDEL(n->m_Pipe);
+  n->m_Pipe.reset();
 
   if(vme->IsMAFType(mafVMELandmark))
     UpdateSurfacesList(vme);
@@ -553,7 +553,7 @@ void medViewSliceGlobal::VmeShow(mafNode *node, bool show)
       if (((mafVME *)node)->GetOutput()->IsA("mafVMEOutputVolume"))
       {
         if(mafPipeVolumeSlice::SafeDownCast(m_CurrentVolume->m_Pipe))
-          m_Opacity   = ((mafPipeVolumeSlice *)m_CurrentVolume->m_Pipe)->GetSliceOpacity();
+          m_Opacity   = mafPipeVolumeSlice::StaticDownCast(m_CurrentVolume->m_Pipe)->GetSliceOpacity();
         if(mafPipeVolumeSlice_BES::SafeDownCast(m_CurrentVolume->m_Pipe))
           m_Opacity   = mafPipeVolumeSlice_BES::SafeDownCast(m_CurrentVolume->m_Pipe)->GetSliceOpacity();
         m_Gui->Enable(ID_OPACITY_SLIDER,true);
@@ -806,14 +806,14 @@ void medViewSliceGlobal::SetSlice(double* Origin, double* Normal)
   {
     if (m_CurrentSurface.at(i) && m_CurrentSurface.at(i)->m_Pipe)
     {
-      mafPipeSlice* pipe = mafPipeSlice::SafeDownCast(m_CurrentSurface.at(i)->m_Pipe);
-      if (pipe != NULL){
+      auto pipe = mafPipeSlice::SafeDownCast(m_CurrentSurface.at(i)->m_Pipe);
+      if (pipe){
         pipe->SetSlice(coord, normal); 
       }
       else
       {
-        mafPipeSurfaceSlice* pipe = mafPipeSurfaceSlice::SafeDownCast(m_CurrentSurface.at(i)->m_Pipe);
-        if (pipe != NULL) 
+        auto pipe = mafPipeSurfaceSlice::SafeDownCast(m_CurrentSurface.at(i)->m_Pipe);
+        if (pipe) 
         {
           pipe->SetSlice(coord); 
           pipe->SetNormal(normal); 
@@ -827,14 +827,14 @@ void medViewSliceGlobal::SetSlice(double* Origin, double* Normal)
   {
     if(m_CurrentPolyline.at(i) && m_CurrentPolyline.at(i)->m_Pipe)
     {
-      mafPipeSlice* pipe = mafPipeSlice::SafeDownCast(m_CurrentPolyline.at(i)->m_Pipe);
-      if (pipe != NULL){
+      auto pipe = mafPipeSlice::SafeDownCast(m_CurrentPolyline.at(i)->m_Pipe);
+      if (pipe){
         pipe->SetSlice(coord, normal); 
       }
       else
       {
-        mafPipePolylineSlice* pipe = mafPipePolylineSlice::SafeDownCast(m_CurrentPolyline.at(i)->m_Pipe);
-        if (pipe != NULL) 
+        auto pipe = mafPipePolylineSlice::SafeDownCast(m_CurrentPolyline.at(i)->m_Pipe);
+        if (pipe) 
         {
           pipe->SetSlice(coord); 
           pipe->SetNormal(normal); 
@@ -847,8 +847,8 @@ void medViewSliceGlobal::SetSlice(double* Origin, double* Normal)
   {
     if (m_CurrentPolylineGraphEditor.at(i) && m_CurrentPolylineGraphEditor.at(i)->m_Pipe)
     {
-      mafPipeSlice* pipe = mafPipeSlice::SafeDownCast(m_CurrentPolylineGraphEditor.at(i)->m_Pipe);
-      if (pipe != NULL){
+      auto pipe = mafPipeSlice::SafeDownCast(m_CurrentPolylineGraphEditor.at(i)->m_Pipe);
+      if (pipe){
         pipe->SetSlice(coord, normal); 
       }
     }   
@@ -858,14 +858,14 @@ void medViewSliceGlobal::SetSlice(double* Origin, double* Normal)
   {
     if (m_CurrentMesh.at(i) && m_CurrentMesh.at(i)->m_Pipe)
     {
-      mafPipeSlice* pipe = mafPipeSlice::SafeDownCast(m_CurrentMesh.at(i)->m_Pipe);
-      if (pipe != NULL){
+      auto pipe = mafPipeSlice::SafeDownCast(m_CurrentMesh.at(i)->m_Pipe);
+      if (pipe){
         pipe->SetSlice(coord, normal); 
       }
       else
       {
-        mafPipeMeshSlice* pipe = mafPipeMeshSlice::SafeDownCast(m_CurrentMesh.at(i)->m_Pipe);
-        if (pipe != NULL) 
+        auto pipe = mafPipeMeshSlice::SafeDownCast(m_CurrentMesh.at(i)->m_Pipe);
+        if (pipe) 
         {
           pipe->SetSlice(coord); 
           pipe->SetNormal(normal); 

@@ -91,7 +91,7 @@ public:
   /** 
   Return a pointer to the visual pipe of the node passed as argument. 
   It is used in mafSideBar to plug the visual pipe's GUI in the tabbed vme panel. \sa mafSideBar*/
-  mafPipe*  GetNodePipe(mafNode *vme) override;
+  std::shared_ptr<mafPipe> GetNodePipe(mafNode *vme) override;
   
   /** 
   Create the visual pipe for the node passed as argument. 

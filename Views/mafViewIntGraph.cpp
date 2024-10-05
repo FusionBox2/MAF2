@@ -213,7 +213,7 @@ void mafViewIntGraph::CameraUpdate()
     m_RenderWindow->Update();
 }
 //----------------------------------------------------------------------------
-mafPipe* mafViewIntGraph::GetNodePipe(mafNode *vme)
+std::shared_ptr<mafPipe>mafViewIntGraph::GetNodePipe(mafNode *vme)
 //----------------------------------------------------------------------------
 {
   assert(m_Sg);
@@ -256,8 +256,7 @@ void mafViewIntGraph::VmeCreatePipe(mafNode *vme)
   if (!pipe_name.empty())
   {
     m_NumberOfVisibleVme++;
-    mafObject *obj = PipeFactory::CreatePipe(pipe_name.GetCStr());
-    lhpPipeIntGraphAbstract *pipe = lhpPipeIntGraphAbstract::SafeDownCast(obj);
+    auto pipe = lhpPipeIntGraphAbstract::SafeDownCast(PipeFactory::CreateInstance(pipe_name.GetCStr()));
     if (pipe)
     {
       pipe->SetListener(this);
@@ -270,8 +269,6 @@ void mafViewIntGraph::VmeCreatePipe(mafNode *vme)
     }
     else
     {
-      if(obj)
-        cppDEL(obj);
       mafErrorMessage(_M(_L("Cannot create visual pipe object of type \"")+ pipe_name + _L("\"!")));
     }
   }
@@ -286,7 +283,7 @@ void mafViewIntGraph::VmeDeletePipe(mafNode *vme)
   mafSceneNode *n = m_Sg->Vme2Node(vme);
 
   assert(n && n->m_Pipe);
-  cppDEL(n->m_Pipe);
+  n->m_Pipe.reset();
 }
 //-------------------------------------------------------------------------
 mafGUI *mafViewIntGraph::CreateGui()
@@ -368,7 +365,7 @@ void mafViewIntGraph::OnEvent(mafEventBase *maf_event)
         {
           for(mafSceneNode *n = m_Sg->GetNodeList(); n != NULL; n = n->m_Next)
           {
-            lhpPipeIntGraphAbstract *pg = lhpPipeIntGraphAbstract::SafeDownCast(n->m_Pipe);
+            auto pg = lhpPipeIntGraphAbstract::SafeDownCast(n->m_Pipe);
             if(pg)
               pg->SetForcedWholeRange(m_IsFrozen);
           }
@@ -381,7 +378,7 @@ void mafViewIntGraph::OnEvent(mafEventBase *maf_event)
         {
           for(mafSceneNode *n = m_Sg->GetNodeList(); n != NULL; n = n->m_Next)
           {
-            lhpPipeIntGraphAbstract *pg = lhpPipeIntGraphAbstract::SafeDownCast(n->m_Pipe);
+            auto pg = lhpPipeIntGraphAbstract::SafeDownCast(n->m_Pipe);
             if(pg)
               pg->SetSmoothParam(m_Smoothing);
           }
@@ -490,12 +487,12 @@ void mafViewIntGraph::savePlot(void)
     trav.pop();
     for (unsigned long i = 0, ie = curr->GetNumberOfChildren(); i != ie; ++i)
       trav.push(curr->GetChild(i));
-    lhpPipeIntGraphAbstract *pipe = static_cast<lhpPipeIntGraphAbstract*>(GetNodePipe(curr));
+    auto pipe = lhpPipeIntGraphAbstract::SafeDownCast(GetNodePipe(curr));
     m_shown_flags.push_back(pipe != nullptr);
     if (pipe)
     {
       std::ostringstream oss;
-      if (lhpPipeIntGraphLocal *lcl = lhpPipeIntGraphLocal::SafeDownCast(pipe))
+      if (auto lcl = lhpPipeIntGraphLocal::SafeDownCast(pipe))
       {
         mafNode *nd = lcl->GetProximal();
         auto it = indexator.find(nd);
@@ -629,12 +626,12 @@ void mafViewIntGraph::loadPlot(bool readfile)
       if (show)
         VmeCreatePipe(curr);
     }
-    if(lhpPipeIntGraphAbstract *pipe = static_cast<lhpPipeIntGraphAbstract*>(GetNodePipe(curr)))
+    if(auto pipe = lhpPipeIntGraphAbstract::SafeDownCast(GetNodePipe(curr)))
     {
       if (its != m_pipe_config.cend())
       {
         std::istringstream iss(*its++);
-        if (lhpPipeIntGraphLocal *lcl = lhpPipeIntGraphLocal::SafeDownCast(pipe))
+        if (auto lcl = lhpPipeIntGraphLocal::SafeDownCast(pipe))
         {
           size_t ix;
           iss >> ix;
