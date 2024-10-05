@@ -125,7 +125,7 @@ void mafViewPlot::VmeSelect(mafNode *vme, bool select)
   m_Sg->VmeSelect(vme,select);
 }
 //----------------------------------------------------------------------------
-mafPipe* mafViewPlot::GetNodePipe(mafNode *vme)
+std::shared_ptr<mafPipe> mafViewPlot::GetNodePipe(mafNode *vme)
 //----------------------------------------------------------------------------
 {
    assert(m_Sg);
@@ -161,15 +161,14 @@ void mafViewPlot::VmeCreatePipe(mafNode *vme)
 
   if (!pipe_name.empty())
   {
-    mafObject *obj = PipeFactory::CreatePipe(pipe_name.GetCStr());
-    mafPipe *pipe = (mafPipe*)obj;
+    auto pipe = PipeFactory::CreateInstance(pipe_name.GetCStr());
     if (pipe)
     {
       pipe->SetListener(this);
       mafSceneNode *n = m_Sg->Vme2Node(vme);
       assert(n && !n->m_Pipe);
       pipe->Create(vme, this);
-      n->m_Pipe = (mafPipe*)pipe;
+      n->m_Pipe = pipe;
     }
     else
     {
@@ -183,7 +182,7 @@ void mafViewPlot::VmeDeletePipe(mafNode *vme)
 {
   mafSceneNode *n = m_Sg->Vme2Node(vme);
   assert(n && n->m_Pipe);
-  cppDEL(n->m_Pipe);
+  n->m_Pipe.reset();
 }
 //-------------------------------------------------------------------------
 mafGUI *mafViewPlot::CreateGui()

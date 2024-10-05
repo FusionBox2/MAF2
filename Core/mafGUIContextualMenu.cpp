@@ -196,7 +196,7 @@ void mafGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
         mafSceneNode *sn = sg->Vme2Node(vme);
         if (sn)
         {
-          mafPipe *p = sn->m_Pipe;
+          auto p = sn->m_Pipe;
           if (p)
           {
             mafString t = vme->GetName();

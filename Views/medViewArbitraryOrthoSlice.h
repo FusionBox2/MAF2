@@ -408,7 +408,7 @@ protected:
 	void UpdateYCutPlanes();
 	void ShowYCutPlanes( bool show );
 
-	mafPipeSurface * GetPipe(int inView, mafVMESurface *inSurface);
+	std::shared_ptr<mafPipeSurface> GetPipe(int inView, mafVMESurface *inSurface);
 
 	void HideAllCutPlanes();
 	void OnID_CHOOSE_DIR();

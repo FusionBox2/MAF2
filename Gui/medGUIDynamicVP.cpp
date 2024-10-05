@@ -378,8 +378,8 @@ void medGUIDynamicVP::SetName(const char* szNewName)
 {
   DestroyVisualPipe();
 
-  mafPipe *pipe = mafPipe::SafeDownCast(PipeFactory::CreatePipe(classname));
-  if (pipe != nullptr)
+  auto pipe = PipeFactory::CreateInstance(classname);
+  if (pipe)
   {
     pipe->SetListener(this->GetListener());
     pipe->Create(m_Node, m_View);
@@ -402,7 +402,7 @@ void medGUIDynamicVP::SetName(const char* szNewName)
 //------------------------------------------------------------------------
 {  
   medPipeRegister::UnregisterPipe(m_VPipe);
-  cppDEL(m_VPipe); 
+  m_VPipe.reset();
 }
 
 #pragma region Register of Pipes
@@ -415,29 +415,28 @@ void medGUIDynamicVP::SetName(const char* szNewName)
 //Registers the specified pipe with the view.
 //Returns number of pipes registered for this view.
 //N.B. duplicity check of pipes is not performed!
-/*static*/ int medGUIDynamicVP::medPipeRegister::RegisterPipe(mafPipe* pipe, mafView* view)
+/*static*/ int medGUIDynamicVP::medPipeRegister::RegisterPipe(std::shared_ptr<mafPipe> pipe, mafView* view)
 //------------------------------------------------------------------------
 {
-  //try to find view
-  int nIndex = FindView(view);
-  if (nIndex < 0)
+  auto it = std::find_if(begin(m_RegViews), end(m_RegViews), 
+    [&](auto& item)
+    {
+      return item.m_View == view;
+    }
+  );
+  if(it != end(m_RegViews))
   {
-    nIndex = (int)m_RegViews.size();
-
-    VIEW_ITEM newitem;
-    newitem.m_View = view;
-    m_RegViews.push_back(newitem);    
+    it->m_Pipes.push_back(pipe);
+    return it->m_Pipes.size();
   }
-
-  VIEW_ITEM& item = m_RegViews[nIndex];
-  item.m_Pipes.push_back(pipe);     //we do not check for the duplicities!
-  return (int)item.m_Pipes.size();
+  m_RegViews.push_back({view, {pipe}});
+  return 1;
 }
 
 //------------------------------------------------------------------------
 //Unregisters the specified pipe with the view (if specified).
 //Returns number of pipes registered for this view (after unregister).
-/*static*/ int medGUIDynamicVP::medPipeRegister::UnregisterPipe(mafPipe* pipe, mafView* view)
+/*static*/ int medGUIDynamicVP::medPipeRegister::UnregisterPipe(std::shared_ptr<mafPipe> pipe, mafView* view)
 //------------------------------------------------------------------------
 {
   int nStartIndex, nEndIndex;

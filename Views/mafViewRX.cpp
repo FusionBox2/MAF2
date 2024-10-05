@@ -117,14 +117,13 @@ void mafViewRX::VmeCreatePipe(mafNode *vme)
     {
       m_NumberOfVisibleVme++;
     }
-    mafObject *obj= PipeFactory::CreatePipe(pipe_name.GetCStr());
-    mafPipe *pipe = (mafPipe*)obj;
+    auto pipe = PipeFactory::CreateInstance(pipe_name.GetCStr());
     if (pipe)
     {
       pipe->SetListener(this);
       if (pipe_name == _R("mafPipeVolumeProjected"))
       {
-        ((mafPipeVolumeProjected *)pipe)->InitializeProjectParameters(m_CameraPositionId);
+        mafPipeVolumeProjected::StaticDownCast(pipe)->InitializeProjectParameters(m_CameraPositionId);
         m_CurrentVolume = n;
         if (m_AttachCamera)
         {
@@ -166,8 +165,8 @@ void mafViewRX::VmeCreatePipe(mafNode *vme)
         positionSlice[0] = (b[1]+b[0])/2;
         positionSlice[1] = (b[3]+b[2])/2;
         positionSlice[2] = (b[5]+b[4])/2;
-        ((mafPipeSurfaceSlice *)pipe)->SetSlice(positionSlice);
-        ((mafPipeSurfaceSlice *)pipe)->SetNormal(normal);
+        mafPipeSurfaceSlice::StaticDownCast(pipe)->SetSlice(positionSlice);
+        mafPipeSurfaceSlice::StaticDownCast(pipe)->SetNormal(normal);
 
       }
       else if(pipe_name == _R("medVisualPipeSlicerSlice"))
@@ -234,14 +233,14 @@ void mafViewRX::VmeCreatePipe(mafNode *vme)
           positionSlice2[2] = (b[5]+b[4])/2;
         }
 
-        ((medVisualPipeSlicerSlice *)pipe)->SetSlice1(positionSlice1);
-        ((medVisualPipeSlicerSlice *)pipe)->SetSlice2(positionSlice2);
-        ((medVisualPipeSlicerSlice *)pipe)->SetNormal(normal);
+        medVisualPipeSlicerSlice::StaticDownCast(pipe)->SetSlice1(positionSlice1);
+        medVisualPipeSlicerSlice::StaticDownCast(pipe)->SetSlice2(positionSlice2);
+        medVisualPipeSlicerSlice::StaticDownCast(pipe)->SetNormal(normal);
         
 
       }
       pipe->Create(vme, this);
-      n->m_Pipe = (mafPipe*)pipe;
+      n->m_Pipe = pipe;
     }
     else
       mafErrorMessage(_M(_R("Cannot create visual pipe object of type \"") + pipe_name + _R("\"!")));
@@ -265,7 +264,7 @@ void mafViewRX::VmeDeletePipe(mafNode *vme)
     }
   }
   assert(n && n->m_Pipe);
-  cppDEL(n->m_Pipe);
+  n->m_Pipe.reset();
 }
 //-------------------------------------------------------------------------
 int mafViewRX::GetNodeStatus(mafNode *vme)
@@ -339,7 +338,7 @@ void mafViewRX::SetLutRange(double low_val, double high_val)
   mafString pipe_name = _R(m_CurrentVolume->m_Pipe->GetTypeName());
   if (pipe_name == _R("mafPipeVolumeProjected"))
   {
-    mafPipeVolumeProjected *pipe = (mafPipeVolumeProjected *)m_CurrentVolume->m_Pipe;
+    auto pipe = mafPipeVolumeProjected::StaticDownCast(m_CurrentVolume->m_Pipe);
     pipe->SetLutRange(low_val, high_val); 
   }
 }
@@ -352,7 +351,7 @@ void mafViewRX::GetLutRange(double minMax[2])
   mafString pipe_name = _R(m_CurrentVolume->m_Pipe->GetTypeName());
   if (pipe_name == _R("mafPipeVolumeProjected"))
   {
-    mafPipeVolumeProjected *pipe = (mafPipeVolumeProjected *)m_CurrentVolume->m_Pipe;
+    auto pipe = mafPipeVolumeProjected::StaticDownCast(m_CurrentVolume->m_Pipe);
     pipe->GetLutRange(minMax); 
   }
 }

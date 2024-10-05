@@ -40,7 +40,7 @@ public:
 
 public:
   /** Returns the currently constructed scalar visual pipe. */
-  virtual mafPipe* GetCurrentScalarVisualPipe();
+  virtual std::shared_ptr<mafPipe> GetCurrentScalarVisualPipe();
 
 protected:  
   /** Called from CreatePageGroups to create groups for scalars. */

@@ -88,23 +88,25 @@ mafCxxTypeMacro(medPipeCompoundVolumeVR);
 
 //------------------------------------------------------------------------
 //Returns the currently constructed scalar visual pipe.
-/*virtual*/ mafPipe* medPipeCompoundVolumeFixedScalars::GetCurrentScalarVisualPipe()
+/*virtual*/ std::shared_ptr<mafPipe> medPipeCompoundVolumeFixedScalars::GetCurrentScalarVisualPipe()
 //------------------------------------------------------------------------
 {
-  if (GetDefaultScalarVisualPipe() == NULL)
-    return NULL; //we have no scalar pipe by the default
+  if (GetDefaultScalarVisualPipe() == nullptr)
+    return nullptr; //we have no scalar pipe by the default
 
   //scalar page is always the first one (if it exists)
-  medGUIDynamicVP* page = NULL;
-  if (m_FirstPage != NULL)
+  medGUIDynamicVP* page = nullptr;
+  if (m_FirstPage)
     page = m_FirstPage;
   else if (m_Notebook && m_Notebook->GetPageCount() > 0)
     page = (medGUIDynamicVP*)m_Notebook->GetPage(0);
-    
-  mafPipe* pipe;
-  if (page == NULL || (pipe = page->GetCurrentVisualPipe()) == NULL)
-    return NULL;  //no page available or no visual pipe
+
+  if (!page)
+    return nullptr;
+  auto pipe = page->GetCurrentVisualPipe();
+	if(!pipe)
+    return nullptr;  //no page available or no visual pipe
   
   return strcmp(pipe->GetTypeName(), 
-    GetDefaultScalarVisualPipe()) == 0 ? pipe : NULL;
+    GetDefaultScalarVisualPipe()) == 0 ? pipe : nullptr;
 }

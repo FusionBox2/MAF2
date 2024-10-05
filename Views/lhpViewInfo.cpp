@@ -204,7 +204,7 @@ void lhpViewInfo::CameraReset(mafNode *node)
 }
 
 //----------------------------------------------------------------------------
-mafPipe* lhpViewInfo::GetNodePipe(mafNode *vme)
+std::shared_ptr<mafPipe> lhpViewInfo::GetNodePipe(mafNode *vme)
 //----------------------------------------------------------------------------
 {
   assert(m_Sg);
@@ -246,8 +246,7 @@ void lhpViewInfo::VmeCreatePipe(mafNode *vme)
   if (!pipe_name.empty())
   {
     m_NumberOfVisibleVme++;
-    mafObject *obj = PipeFactory::CreatePipe(pipe_name.GetCStr());
-    lhpPipeInfo *pipe = lhpPipeInfo::SafeDownCast(obj);
+    auto pipe = lhpPipeInfo::SafeDownCast(PipeFactory::CreateInstance(pipe_name.GetCStr()));
     if (pipe)
     {
       pipe->SetListener(this);
@@ -260,8 +259,6 @@ void lhpViewInfo::VmeCreatePipe(mafNode *vme)
     }
     else
     {
-      if(obj)
-        cppDEL(obj);
       mafErrorMessage(_M(_L("Cannot create visual pipe object of type \"") + pipe_name + _L("\"!")));
     }
   }
@@ -278,7 +275,7 @@ void lhpViewInfo::VmeDeletePipe(mafNode *vme)
 
 
   assert(n && n->m_Pipe);
-  for(std::vector<mafPipe *>::iterator it = m_VNodes.begin(); it != m_VNodes.end(); ++it)
+  for(auto it = m_VNodes.begin(); it != m_VNodes.end(); ++it)
   {
     if((*it) == n->m_Pipe)
     {
@@ -287,14 +284,14 @@ void lhpViewInfo::VmeDeletePipe(mafNode *vme)
     }
   }
   UpdatePage();
-  cppDEL(n->m_Pipe);
+  n->m_Pipe.reset();
 }
 void lhpViewInfo::UpdatePage()
 {
   mafString pageText;
-  for(std::vector<mafPipe *>::iterator it = m_VNodes.begin(); it != m_VNodes.end(); ++it)
+  for(auto it = m_VNodes.begin(); it != m_VNodes.end(); ++it)
   {
-    if(lhpPipeInfo *pi = lhpPipeInfo::SafeDownCast(*it))
+    if(auto pi = lhpPipeInfo::SafeDownCast(*it))
     {
       pageText += pi->GetPageText();
       pageText += _R("\n");

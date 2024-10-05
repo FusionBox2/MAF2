@@ -119,7 +119,7 @@ public:
   virtual int GetNodeStatus(mafNode *vme) {return NODE_NON_VISIBLE;};
   
   /** return the current pipe for the specified vme (if any exist at this moment) */
-  virtual mafPipe* GetNodePipe(mafNode *vme) {return nullptr;}
+  virtual std::shared_ptr<mafPipe> GetNodePipe(mafNode *vme) {return nullptr;}
 
   const mafString& GetLabel() {return m_Label;}
   const mafString& GetName() {return m_Name;}

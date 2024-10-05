@@ -1,24 +1,7 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafPipe
- Authors: Silvano Imboden
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
+#include "ftkConfigure.h"
 
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafPipe_H__
-#define __mafPipe_H__
-
-//----------------------------------------------------------------------------
-// Include:
-//----------------------------------------------------------------------------
 #include "mafDecl.h" // for MINID
 #include "ftk/Base/Object.h"
 #include "mafBaseEventHandler.h"
@@ -32,6 +15,7 @@
 class mafView;
 class mafNode;
 
+BEGIN_FTK_NAMESPACE
 //----------------------------------------------------------------------------
 // mafPipe :
 //----------------------------------------------------------------------------
@@ -41,10 +25,10 @@ class mafNode;
   creates actors that will be rendered in a render view.
   It can handle a GUI, which events can be catched by OnEvent.
 */
-class MAF_EXPORT mafPipe : public mafObject, public mafBaseEventHandler, public mafEventSender, public mafObjectWithGUI
+class FTK_CORE_EXPORT mafPipe : public mafBaseEventHandler, public mafEventSender, public mafObjectWithGUI
 {
 public:
-  mafTypeMacro(mafPipe,mafObject);
+  mafBaseTypeMacro(mafPipe);
   
   mafPipe();
   ~mafPipe() override;
@@ -82,4 +66,5 @@ protected:
   same panel GUI, each CreateGUI() function should first call the superclass' one.*/
   mafGUI  *CreateGui() override;
 };
-#endif
+
+END_FTK_NAMESPACE

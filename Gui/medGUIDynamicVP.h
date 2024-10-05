@@ -87,7 +87,7 @@ protected:
     typedef struct VIEW_ITEM
     {
       mafView* m_View;
-      std::vector< mafPipe* > m_Pipes;      
+      std::vector< std::shared_ptr<mafPipe> > m_Pipes;      
     } VIEW_ITEM;
       
     static std::vector< VIEW_ITEM > m_RegViews; ///<array of registered views-pipes
@@ -95,11 +95,11 @@ protected:
     /** Registers the specified pipe with the view.
     Returns number of pipes registered for this view.
     N.B. duplicity check of pipes is not performed!*/
-    static int RegisterPipe(mafPipe* pipe, mafView* view);
+    static int RegisterPipe(std::shared_ptr<mafPipe> pipe, mafView* view);
 
     /** Unregisters the specified pipe with the view (if specified).
     Returns number of pipes registered for this view (after unregister). */
-    static int UnregisterPipe(mafPipe* pipe, mafView* view = NULL);
+    static int UnregisterPipe(std::shared_ptr<mafPipe> pipe, mafView* view = NULL);
   protected:
     /** returns index of given view in m_RegViews, or -1, if not found */
     static int FindView(mafView* view);
@@ -113,7 +113,7 @@ protected:
   const SUPPORTED_VP_ENTRY* m_VPipes; ///<list of currently supported visual pipes, terminated by (NULL, NULL)
 
   int m_VPipeIndex;             ///<index of the selected visual pipe
-  mafPipe* m_VPipe;             ///<this is the current visual pipe  
+  std::shared_ptr<mafPipe> m_VPipe;             ///<this is the current visual pipe  
   mafNode* m_Node;    ///<reference to the scene node associated with this pipe
   mafView *m_View;
   mafString m_Name;             ///<user name associated with this panel
@@ -182,7 +182,7 @@ public:
   void SetNodeView(mafNode* node, mafView* view);  
 
   /** Gets the currently constructed visual pipe. */
-  inline mafPipe* GetCurrentVisualPipe() {
+  inline std::shared_ptr<mafPipe> GetCurrentVisualPipe() {
     return m_VPipe;
   }
 

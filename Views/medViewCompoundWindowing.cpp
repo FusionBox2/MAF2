@@ -225,7 +225,7 @@ bool medViewCompoundWindowing::ActivateWindowing(mafNode *node)
 
     for(int i=0; i<m_NumOfChildView; i++) {
 
-      mafPipeImage3D *pipe = (mafPipeImage3D *)m_ChildViewList[i]->GetNodePipe(node);
+      auto pipe = mafPipeImage3D::StaticDownCast(m_ChildViewList[i]->GetNodePipe(node));
       conditions = (conditions && (pipe && pipe->IsGrayImage()));
     }
   }
@@ -244,7 +244,7 @@ void medViewCompoundWindowing::ImageWindowing(mafVMEImage *image)
   //Get scalar range of the image
   data->GetScalarRange(sr);
 
-  m_ColorLUT = (vtkLookupTable*)((mafPipeImage3D *)m_ChildViewList[0]->GetNodePipe(image))->GetLUT();
+  m_ColorLUT = (vtkLookupTable*)mafPipeImage3D::StaticDownCast(m_ChildViewList[0]->GetNodePipe(image))->GetLUT();
   if(m_LutWidget)
     m_LutWidget->SetLut(m_ColorLUT);
   m_LutSlider->SetRange((long)sr[0],(long)sr[1]);
@@ -269,10 +269,10 @@ void medViewCompoundWindowing::VolumeWindowing(mafVME *volume)
 }
 
 //-------------------------------------------------------------------------
-mafPipe* medViewCompoundWindowing::GetNodePipe(mafNode *vme)
+std::shared_ptr<mafPipe> medViewCompoundWindowing::GetNodePipe(mafNode *vme)
 //-------------------------------------------------------------------------
 {
-	mafPipe* rtn = NULL;
+	std::shared_ptr<mafPipe> rtn;
 	if (m_NumOfChildView ==1)
 	{
 	rtn = m_ChildViewList[0]->GetNodePipe(vme);

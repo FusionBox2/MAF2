@@ -168,7 +168,7 @@ void mafViewImageCompound::VmeShow(mafNode *node, bool show)
 
 	if(GetSceneGraph()->GetSelectedVme()==node)
 	{
-    mafPipeImage3D *pipe = (mafPipeImage3D *)m_ChildViewList[ID_VIEW_IMAGE]->GetNodePipe(node);
+    auto pipe = mafPipeImage3D::StaticDownCast(m_ChildViewList[ID_VIEW_IMAGE]->GetNodePipe(node));
 		UpdateWindowing(show && pipe && pipe->IsGrayImage(),node);
 	}
 
@@ -190,7 +190,7 @@ void mafViewImageCompound::VmeSelect(mafNode *node, bool select)
   for(int i=0; i<m_NumOfChildView; i++)
     m_ChildViewList[i]->VmeSelect(node, select);
 
-  mafPipeImage3D *pipe = (mafPipeImage3D *)m_ChildViewList[ID_VIEW_IMAGE]->GetNodePipe(node);
+  auto pipe = mafPipeImage3D::StaticDownCast(m_ChildViewList[ID_VIEW_IMAGE]->GetNodePipe(node));
 	UpdateWindowing(node->IsA("mafVMEImage") && select && pipe && pipe->IsGrayImage(),node);
 }
 //----------------------------------------------------------------------------
@@ -204,7 +204,7 @@ void mafViewImageCompound::UpdateWindowing(bool enable,mafNode *node)
 		double sr[2];
 		image->GetOutput()->GetVTKData()->GetScalarRange(sr);
 
-    m_ColorLUT = ((mafPipeImage3D *)m_ChildViewList[ID_VIEW_IMAGE]->GetNodePipe(node))->GetLUT();;
+    m_ColorLUT = mafPipeImage3D::StaticDownCast(m_ChildViewList[ID_VIEW_IMAGE]->GetNodePipe(node))->GetLUT();
 
     m_ColorLUT->SetRange(sr);
     m_ColorLUT->Build();
