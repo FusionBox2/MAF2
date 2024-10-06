@@ -31,7 +31,6 @@
 #include <wx/wfstream.h>
 #include <wx/fs_zip.h>
 
-#include "mafZipUtility.h"
 #include "mmuTimeSet.h"
 #include "mafStorageElement.h"
 #include "mafStorage.h"

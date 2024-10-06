@@ -36,7 +36,6 @@
 #include "mafStorage.h"
 #include <math.h>
 #include <assert.h>
-#include "mafZipUtility.h"
 #include "mafFilesDirs.h"
 
 
