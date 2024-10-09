@@ -50,7 +50,7 @@ public:
 template <class T>
 mafPlugPipe<T>::mafPlugPipe(const char *description)
 { 
-  PipeFactory::RegisterNewPipe(T::GetStaticTypeName(), description, T::NewObject);
+  PipeFactory::RegisterNewPipe(T::GetStaticTypeName(), description, T::NewObjectS);
 }
 
 END_FTK_NAMESPACE

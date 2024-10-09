@@ -302,7 +302,7 @@ void mafView3D::VmeCreatePipe(mafNode *vme)
   if (!pipe_name.empty())
   {
     m_NumberOfVisibleVme++;
-    auto pipe  = PipeFactory::CreateInstance(pipe_name.GetCStr());
+    auto pipe  = PipeFactory::CreatePipe(pipe_name.GetCStr());
     if (pipe)
     {
       pipe->SetListener(this);
