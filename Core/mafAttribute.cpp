@@ -87,7 +87,7 @@ void mafAttribute::Print(std::ostream& os, const int tabs) const
   os << indent << "Name: " << m_Name.GetCStr() << std::endl;
 }
 
-mafAttribute* mafAttribute::Create(const char* AttributeType)
+std::shared_ptr<mafAttribute> mafAttribute::Create(const char* AttributeType)
 {
-  return AttributeFactory::CreateInstance(AttributeType);
+  return AttributeFactory::CreateAttribute(AttributeType);
 }
