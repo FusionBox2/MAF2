@@ -8,9 +8,9 @@
 #include <string>
 
 #define mafPlugPipeMacro(node_type,descr) \
-  PipeFactory::RegisterNewPipe(node_type::GetStaticTypeName(), descr, node_type::NewObject);
+  PipeFactory::RegisterNewPipe(node_type::GetStaticTypeName(), descr, node_type::NewObjectS);
 
-using PipeCreateType = mafObject*;
+using PipeCreateType = std::shared_ptr<mafPipe>;
 using CreatePipeFunction = PipeCreateType(*)();
 
 BEGIN_FTK_NAMESPACE
