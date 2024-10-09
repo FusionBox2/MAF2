@@ -378,7 +378,7 @@ void medGUIDynamicVP::SetName(const char* szNewName)
 {
   DestroyVisualPipe();
 
-  auto pipe = PipeFactory::CreateInstance(classname);
+  auto pipe = PipeFactory::CreatePipe(classname);
   if (pipe)
   {
     pipe->SetListener(this->GetListener());
