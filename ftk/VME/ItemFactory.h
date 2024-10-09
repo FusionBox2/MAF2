@@ -8,9 +8,9 @@
 #include <string>
 
 #define mafPlugItemMacro(node_type,descr) \
-  ItemFactory::RegisterNewItem(node_type::GetStaticTypeName(), descr, node_type::NewObject);
+  ItemFactory::RegisterNewItem(node_type::GetStaticTypeName(), descr, node_type::NewObjectS);
 
-using ItemCreateType = mafObject*;
+using ItemCreateType = std::shared_ptr<mafVMEItem>;
 using CreateItemFunction = ItemCreateType(*)();
 
 BEGIN_FTK_NAMESPACE
