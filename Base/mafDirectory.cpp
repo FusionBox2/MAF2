@@ -1,33 +1,4 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafDirectory
- Authors: Based on itkDirectory (www.itk.org), adapted by Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
 #include "mafDirectory.h"
-
-mafCxxTypeMacro(mafDirectory);
-
-//------------------------------------------------------------------------------
-mafDirectory::mafDirectory() 
-//------------------------------------------------------------------------------
-{
-}
-
-//------------------------------------------------------------------------------
-mafDirectory::~mafDirectory() 
-//------------------------------------------------------------------------------
-{
-}
 
 //------------------------------------------------------------------------------
 // First microsoft compilers
@@ -114,7 +85,7 @@ bool mafDirectory::Load(const mafString& namestr)
 #endif
 
 //------------------------------------------------------------------------------
-const mafString& mafDirectory::GetFile(int index)const
+const mafString& mafDirectory::GetFile(size_t index)const
 //------------------------------------------------------------------------------
 {
   static mafString empty;

@@ -23,10 +23,10 @@ class mafVME;
 #include "ftk/Base/Object.h"
 #include "ftk/Base/String.h"
 
-class MAF_EXPORT lhpTagHandlerInputOutputParametersCargo : public mafObject
+class MAF_EXPORT lhpTagHandlerInputOutputParametersCargo
 {
 public:
-  mafTypeMacro(lhpTagHandlerInputOutputParametersCargo, mafObject);
+  mafBaseTypeMacro(lhpTagHandlerInputOutputParametersCargo);
   
   /** Set the input vme */
   void SetInputVme(mafVME* vme) {m_InputVme = vme;};
@@ -48,10 +48,10 @@ private:
 
 };
 
-class MAF_EXPORT lhpTagHandler : public mafObject
+class MAF_EXPORT lhpTagHandler
 {
 public:
-  mafTypeMacro(lhpTagHandler,mafObject);
+  mafBaseTypeMacro(lhpTagHandler);
 
   virtual void HandleAutoTag(lhpTagHandlerInputOutputParametersCargo *cargo){mafLogMessage(_M("Please write handling code for this tag!"));}
   const char *GetTagName(){return m_TagName.GetCStr();};
