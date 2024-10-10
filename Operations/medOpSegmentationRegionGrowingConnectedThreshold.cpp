@@ -222,7 +222,7 @@ void medOpSegmentationRegionGrowingConnectedThreshold::OpStop(int result)
       m_ResampleInput->ReparentTo(NULL);
       m_ResampleInput->Update();
     }
-    mafDEL(m_Resample); 
+    m_Resample.reset(); 
     HideGui();
     {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
   }
@@ -482,7 +482,7 @@ int medOpSegmentationRegionGrowingConnectedThreshold::CreateResample()
     wxBusyInfo *info;
     wxBusyCursor *wait;
 
-    m_Resample=new medOpVolumeResample();
+    m_Resample=std::make_unique<medOpVolumeResample>();
     m_Resample->SetInput(m_Input);
     m_Resample->TestModeOn();
     m_Resample->AutoSpacing();

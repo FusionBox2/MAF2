@@ -134,7 +134,7 @@ protected:
   vtkSphereSource *m_SphereVTK;
 
   mafString m_SeedScalarValue;
-  medOpVolumeResample *m_Resample;
+  std::unique_ptr<medOpVolumeResample> m_Resample;
 
   mafVMEVolumeGray *m_ResampleInput;
   double m_VolumeSpacing[3];

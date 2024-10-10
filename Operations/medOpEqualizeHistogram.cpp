@@ -120,7 +120,7 @@ void medOpEqualizeHistogram::OpRun()
       return;
     }
     wxBusyInfo wait_info1("Resampling...");
-    medOpVolumeResample *op = new medOpVolumeResample();
+    auto op = std::make_unique<medOpVolumeResample>();
     op->SetInput(m_VolumeInput);
     op->TestModeOn();
     op->OpRun();
@@ -129,8 +129,6 @@ void medOpEqualizeHistogram::OpRun()
     mafVMEVolumeGray *volOut=mafVMEVolumeGray::SafeDownCast(op->GetOutput());
     volOut->GetOutput()->Update();
     volOut->Update();
-
-    mafDEL(op);
 
     m_VolumeInput=volOut;
   }

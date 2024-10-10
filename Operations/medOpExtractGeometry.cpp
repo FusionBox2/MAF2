@@ -279,12 +279,11 @@ void medOpExtractGeometry::CreateResampleGui()
   m_ResampleGui->Label( _L("Resample volume"), true );
   m_ResampleGui->Label( _L("Volume Spacing") ,false );
 
-  medOpVolumeResample *op = new medOpVolumeResample();
+  auto op = std::make_unique<medOpVolumeResample>();
   op->SetInput(m_VolumeInput);
   op->TestModeOn();
   op->AutoSpacing();
   op->GetSpacing(m_VolumeSpacing);
-  mafDEL(op);
 
   m_ResampleGui->Vector(ID_RESAMPLE_VOLUME_SPACING, _R(""), this->m_VolumeSpacing,-std::numeric_limits<double>::max(), std::numeric_limits<double>::max(),4,_R("output volume spacing"));
 
@@ -713,7 +712,7 @@ int medOpExtractGeometry::Resample()
   }
   
   wxBusyInfo wait_info1("Resampling...");
-  medOpVolumeResample *op = new medOpVolumeResample();
+  auto op = std::make_unique<medOpVolumeResample>();
   op->SetInput(m_VolumeInput);
   op->TestModeOn();
   op->OpRun();
@@ -786,8 +785,6 @@ int medOpExtractGeometry::Resample()
   mafVMEVolumeGray *volOut=mafVMEVolumeGray::SafeDownCast(op->GetOutput());
   volOut->GetOutput()->Update();
   volOut->Update();
-
-  mafDEL(op);
 
   m_VolumeInput=volOut;
 

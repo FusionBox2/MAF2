@@ -48,10 +48,10 @@ enum OPERATIONS_TYPE_ID
 //----------------------------------------------------------------------------
 /**
 */
-class MAF_EXPORT mafOp: public mafBaseEventHandler, public mafEventSender, public mafObject
+class MAF_EXPORT mafOp: public mafBaseEventHandler, public mafEventSender
 {
 public:
-  mafTypeMacro(mafOp, mafObject);
+  mafBaseTypeMacro(mafOp);
 
 					mafOp();
 					mafOp(const mafString &label);

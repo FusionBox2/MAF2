@@ -512,7 +512,7 @@ void medOpExporterWrappedMeter::Test()
 	//printf("\n%.2f %.2f %.2f\n", l3[0] , l3[1], l3[2]);
 
 	//Inizialize exporter
-	medOpExporterWrappedMeter *exporter=new medOpExporterWrappedMeter(_R("test exporter"));
+	auto exporter = std::make_unique<medOpExporterWrappedMeter>(_R("test exporter"));
 	exporter->SetInput(wrappedMeter);
 	mafString fileExp=_R(MED_DATA_ROOT);
 	fileExp+=_R("/RAW_MAL/ExportWrappedMeter.txt");
@@ -547,7 +547,6 @@ void medOpExporterWrappedMeter::Test()
 
 	wrappedMeter->ReparentTo(NULL);
 
-	mafDEL(exporter);
 	mafDEL(wrappedMeter);
 	cppDEL(importer);
 

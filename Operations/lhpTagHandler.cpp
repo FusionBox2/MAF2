@@ -22,7 +22,6 @@
 #include "lhpTagHandler.h"
 #include "mafDecl.h"
 
-mafCxxTypeMacro(lhpTagHandlerInputOutputParametersCargo);
 //------------------------------------------------------------------------
 lhpTagHandlerInputOutputParametersCargo::lhpTagHandlerInputOutputParametersCargo()
 //------------------------------------------------------------------------------
@@ -33,8 +32,6 @@ lhpTagHandlerInputOutputParametersCargo::lhpTagHandlerInputOutputParametersCargo
   m_TagHandlerGeneratedString = _R("NOT YET HANDLED!");
 }
 
-
-mafCxxTypeMacro(lhpTagHandler);
 //------------------------------------------------------------------------
 lhpTagHandler::lhpTagHandler()
 //------------------------------------------------------------------------------

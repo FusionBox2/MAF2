@@ -10,7 +10,7 @@
 #define lhpPlugTagHandlerMacro(tag_handler_type,descr) \
   TagHandlerFactory::RegisterNewTagHandler(tag_handler_type::GetStaticTypeName(), descr, tag_handler_type::NewObject);
 
-using TagHandlerCreateType = mafObject*;
+using TagHandlerCreateType = lhpTagHandler*;
 using CreateTagHandlerFunction = TagHandlerCreateType(*)();
 
 BEGIN_FTK_NAMESPACE
