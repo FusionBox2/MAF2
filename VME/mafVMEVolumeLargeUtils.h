@@ -56,7 +56,7 @@ public:
   1, if it is small volume and 2, if it is large volume.
   For large volumes, it returns also path, where the brick files
   should be placed (see szOutDir) */
-  static int VolumeLargeCheck(mafObject* caller, mafBaseEventHandler* listener,
+  static int VolumeLargeCheck(void* caller, mafBaseEventHandler* listener,
     int VOI[6], int nDataType, int nNumOfComp, 
     int nMemLimit, mafString& szOutDir);
 
