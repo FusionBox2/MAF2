@@ -175,7 +175,7 @@
 
 //------------------------------------------------------------------------
 /*static*/ int mafVMEVolumeLargeUtils::VolumeLargeCheck(
-      mafObject* caller, mafBaseEventHandler* listener, int VOI[6], int nDataType, 
+      void* caller, mafBaseEventHandler* listener, int VOI[6], int nDataType, 
       int nNumOfComp, int nMemLimit, mafString& szOutDir)
 //------------------------------------------------------------------------
 {
