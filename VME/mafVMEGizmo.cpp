@@ -54,7 +54,7 @@ mafVMEGizmo::mafVMEGizmo()
   SetOutput(output);
 
   // attach a datapipe which creates a bridge between VTK and MAF
-  mafDataPipeCustom *dpipe=mafDataPipeCustom::New();
+  auto dpipe=mafDataPipeCustom::NewSPtr();
   SetDataPipe(dpipe);
   
   // modified by Stefano 14-3-2005: gizmos set to not visible in the tree and node chooser

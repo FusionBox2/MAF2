@@ -1,20 +1,4 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafDataPipe
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafDataPipe_h
-#define __mafDataPipe_h
+#pragma once
 //----------------------------------------------------------------------------
 // includes :
 //----------------------------------------------------------------------------
@@ -48,13 +32,13 @@ class mafVME;
   - rewrite GetOutput()
   - reerite UpdateBounds()
 */
-class MAF_EXPORT mafDataPipe:public mafReferenceCounted, public mafTimeStamped, public mafBaseEventHandler
+class MAF_EXPORT mafDataPipe:public mafTimeStamped, public mafBaseEventHandler
 {
 public:
   mafDataPipe();
-  ~mafDataPipe() override;
+  virtual ~mafDataPipe();
 
-  mafTypeMacro(mafDataPipe,mafReferenceCounted);
+  mafBaseTypeMacro(mafDataPipe);
 
   /**
     This function makes the current bounds to be updated. It should be optimized
@@ -96,7 +80,7 @@ public:
     BEWARE: the returned object has reference counter already set to 0. This avoid the 
     to do an extra Delete(), but requires to Register it before passing it
     to other objects. */
-  mafDataPipe *MakeACopy();
+  std::shared_ptr<mafDataPipe> MakeACopy();
 
   /**
     Copy from another pipe, the function return VTK_ERROR if the specified pipe 
@@ -120,7 +104,7 @@ public:
   int GetDependOnAbsPose() {return m_DependOnAbsPose;}
 
   /** print a dump of this object */
-  void Print(std::ostream& os, const int tabs=0) const override;
+  virtual void Print(std::ostream& os, const int tabs=0) const;
 
   void OnEvent(mafEventBase *maf_event) override;
   
@@ -144,4 +128,3 @@ private:
   mafDataPipe(const mafDataPipe&);   //Not implemented
   void operator=(const mafDataPipe&);   //Not implemented  
 };
-#endif /* __mafDataPipe_h */

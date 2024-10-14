@@ -237,7 +237,7 @@ protected:
 
   std::shared_ptr<mafTransform> m_Transform;
 
-  medDataPipeCustomSegmentationVolume *m_SegmentingDataPipe;
+  std::shared_ptr<medDataPipeCustomSegmentationVolume> m_SegmentingDataPipe;
 
 private:
   /** Not implemented */

@@ -77,7 +77,7 @@ medVMEMaps::medVMEMaps()
   
   DependsOnLinkedNodeOn();
 
-  mafDataPipeCustom *dpipe = mafDataPipeCustom::New();
+  auto dpipe = mafDataPipeCustom::NewSPtr();
   dpipe->SetDependOnAbsPose(true);
   SetDataPipe(dpipe);
   dpipe->GetVTKDataPipe()->SetInputData(0, m_PolyData);
