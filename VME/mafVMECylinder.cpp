@@ -90,7 +90,7 @@ mafVMECylinder::mafVMECylinder()
 
 	DependsOnLinkedNodeOn();
 	// attach a data pipe which creates a bridge between VTK and MAF
-	mafDataPipeCustom *dpipe = mafDataPipeCustom::New();
+	auto dpipe = mafDataPipeCustom::NewSPtr();
 	dpipe->SetInputData(m_PolyData);
 	SetDataPipe(dpipe);
 }

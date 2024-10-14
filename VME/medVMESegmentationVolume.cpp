@@ -53,7 +53,7 @@ medVMESegmentationVolume::medVMESegmentationVolume()
   //DependsOnLinkedNodeOn();
 
   // attach a data pipe which creates a bridge between VTK and MAF
-  m_SegmentingDataPipe = medDataPipeCustomSegmentationVolume::New();
+  m_SegmentingDataPipe = medDataPipeCustomSegmentationVolume::NewSPtr();
   SetDataPipe(m_SegmentingDataPipe);
 }
 

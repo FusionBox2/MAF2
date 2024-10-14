@@ -100,10 +100,10 @@ int mafDataPipe::SetVME(mafVME *vme)
 }
 
 //------------------------------------------------------------------------------
-mafDataPipe *mafDataPipe::MakeACopy()
+std::shared_ptr<mafDataPipe> mafDataPipe::MakeACopy()
 //------------------------------------------------------------------------------
 {
-  mafDataPipe *newpipe=NewInstance();
+  std::shared_ptr<mafDataPipe> newpipe(NewInstance());
   newpipe->DeepCopy(this);
   return newpipe;
 }
@@ -198,6 +198,7 @@ void mafDataPipe::Print(std::ostream& os, const int tabs) const
 //------------------------------------------------------------------------------
 {
   mafIndent indent(tabs);
+  os << indent << "DataPipe Type Name: " << GetTypeName() << std::endl;
   mafString dp_name;
   dp_name = m_VME ? m_VME->GetName() : _R("(NULL)");
   os << indent << "VME:" << dp_name.GetCStr() << std::endl;

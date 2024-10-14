@@ -307,7 +307,7 @@ mafVMEHelAxis::mafVMEHelAxis() : mafVME()
   SetOutput(output);
 
   // attach a datapipe which creates a bridge between VTK and MAF
-  mafDataPipeCustom *dpipe = mafDataPipeCustom::New();
+  auto dpipe = mafDataPipeCustom::NewSPtr();
   SetDataPipe(dpipe);
 
   DependsOnLinkedNodeOn();

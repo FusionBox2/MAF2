@@ -40,7 +40,7 @@ mafVMEGeneric::mafVMEGeneric()
   m_DataVector = mafDataVector::New();
   m_DataVector->SetItemTypeName(mafVMEItemVTK::GetStaticTypeName());  
   m_DataVector->SetListener(this);
-  SetDataPipe(mafDataPipeInterpolatorVTK::New()); // interpolator data pipe
+  SetDataPipe(mafDataPipeInterpolatorVTK::NewSPtr()); // interpolator data pipe
 
   // The output is created on demand in GetOutput() to avoid
   // subclasses to have to destroy base class output

@@ -127,7 +127,7 @@ medVMEComputeWrapping::medVMEComputeWrapping()
 	DependsOnLinkedNodeOn();
 
 	// attach a data pipe which creates a bridge between VTK and MAF
-	mafDataPipeCustom *dpipe = mafDataPipeCustom::New();
+	auto dpipe = mafDataPipeCustom::NewSPtr();
 	dpipe->SetDependOnAbsPose(true);
 	SetDataPipe(dpipe);
 	//-------------------------------------------------

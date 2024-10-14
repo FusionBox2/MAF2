@@ -73,8 +73,6 @@ mafVME::~mafVME()
   // to take into consideration dependencies
   cppDEL(m_Output);
 
-  m_DataPipe=NULL; // smart pointer
-  
   m_AbsMatrixPipe->SetVME(NULL);
 }
 
@@ -118,7 +116,7 @@ int mafVME::DeepCopy(mafNode *a)
       newPipe->DeepCopy(p.get());
     }
     SetMatrixPipe(newPipe);
-    SetDataPipe(vme->GetDataPipe()?vme->GetDataPipe()->MakeACopy():NULL);
+    SetDataPipe(vme->GetDataPipe()?vme->GetDataPipe()->MakeACopy():nullptr);
 
     // Runtime properties
     //AutoUpdateAbsMatrix=vme->GetAutoUpdateAbsMatrix();
@@ -749,24 +747,24 @@ int mafVME::GetCrypting()
 }
 
 //-------------------------------------------------------------------------
-int mafVME::SetDataPipe(mafDataPipe *dpipe)
+int mafVME::SetDataPipe(std::shared_ptr<mafDataPipe> dpipe)
 //-------------------------------------------------------------------------
 {
-  if (dpipe==m_DataPipe.get())
+  if (dpipe==m_DataPipe)
     return MAF_OK;
 
-  if (dpipe==NULL||dpipe->SetVME(this)==MAF_OK)
+  if (!dpipe || dpipe->SetVME(this) == MAF_OK)
   { 
     // if we had an observer...
-    if (m_DataPipe.get())
+    if (m_DataPipe)
     {
       // detach the old pipe
-      m_DataPipe->SetVME(NULL);
+      m_DataPipe->SetVME(nullptr);
     }
 
     m_DataPipe = dpipe;
     
-    if (m_DataPipe.get())
+    if (m_DataPipe)
     {
       m_DataPipe->SetVME(this);
       m_DataPipe->SetTimeStamp(m_CurrentTime);

@@ -99,7 +99,7 @@ medVMEWrappedMeter::medVMEWrappedMeter()
   DependsOnLinkedNodeOn();
 
   // attach a data pipe which creates a bridge between VTK and MAF
-  mafDataPipeCustom *dpipe = mafDataPipeCustom::New();
+  auto dpipe = mafDataPipeCustom::NewSPtr();
   dpipe->SetDependOnAbsPose(true);
   SetDataPipe(dpipe);
   dpipe->SetInputConnection(m_Goniometer->GetOutputPort());

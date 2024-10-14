@@ -167,7 +167,7 @@ protected:
   
   std::shared_ptr<mafTransform> m_Transform;
 
-  mafDataPipeCustomProber *m_ProbingDataPipe;
+  std::shared_ptr<mafDataPipeCustomProber> m_ProbingDataPipe;
 
 private:
   mafVMEProber(const mafVMEProber&); // Not implemented

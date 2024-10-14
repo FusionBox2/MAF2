@@ -107,7 +107,7 @@ mafVMECenterLine::mafVMECenterLine()
 	vtkNEW(m_PolyData);
 	DependsOnLinkedNodeOn();
   // attach a data pipe which creates a bridge between VTK and MAF
-	mafDataPipeCustom *dpipe = mafDataPipeCustom::New();
+	auto dpipe = mafDataPipeCustom::NewSPtr();
 	//m_PolyData->DeepCopy(m_Goniometer->GetOutput());
 	//m_PolyData->Update();
 	dpipe->SetInputData(m_PolyData);

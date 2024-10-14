@@ -116,7 +116,7 @@ medVMEStent::medVMEStent()
   mafVMEOutputPolyline *output = mafVMEOutputPolyline::New(); // output with no data.  Deleted by Maf.
   SetOutput(output);
 
-  mafDataPipeCustom *pipe = mafDataPipeCustom::New(); // Deleted by MAF
+  auto pipe = mafDataPipeCustom::NewSPtr(); // Deleted by MAF
   pipe->SetInputData(m_StentPolyData);
   SetDataPipe(pipe);
 

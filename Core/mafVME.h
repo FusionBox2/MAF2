@@ -274,7 +274,7 @@ protected:
   void SetOutput(mafVMEOutput *output);
   
   /** Set/Get the data pipe object, i.e. the source of the output dataset. */
-  virtual int SetDataPipe(mafDataPipe *dpipe);
+  virtual int SetDataPipe(std::shared_ptr<mafDataPipe> dpipe);
 
   /** Set the matrix pipe object, i.e. the source of the output matrix. */
   int SetMatrixPipe(std::shared_ptr<mafMatrixPipe> pipe);
@@ -287,7 +287,7 @@ protected:
 
   bool m_TestMode; ///< Flag used with cppunitTest: put this flag at true when executing tests to avoid busy-info or splash screen to be created, default is false.
 
-  mafAutoPointer<mafDataPipe>       m_DataPipe;
+  std::shared_ptr<mafDataPipe>       m_DataPipe;
   std::shared_ptr<mafMatrixPipe>     m_MatrixPipe;
   std::shared_ptr<mafAbsMatrixPipe>  m_AbsMatrixPipe;
 

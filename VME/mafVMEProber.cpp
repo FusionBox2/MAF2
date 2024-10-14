@@ -66,7 +66,7 @@ mafVMEProber::mafVMEProber()
   DependsOnLinkedNodeOn();
 
   // attach a data pipe which creates a bridge between VTK and MAF
-  m_ProbingDataPipe = mafDataPipeCustomProber::New();
+  m_ProbingDataPipe = mafDataPipeCustomProber::NewSPtr();
   m_ProbingDataPipe->SetDependOnAbsPose(true);
   m_ProbingDataPipe->SetMode(GetMode());
   m_ProbingDataPipe->SetDistanceThreshold(GetDistanceThreshold());

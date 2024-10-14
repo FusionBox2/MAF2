@@ -46,7 +46,7 @@ mafVMEScalarMatrix::mafVMEScalarMatrix()
   m_DataVector = mafDataVector::New();
   m_DataVector->SetItemTypeName(mafVMEItemScalarMatrix::GetStaticTypeName());  
   m_DataVector->SetListener(this);
-  SetDataPipe(mafDataPipeInterpolatorScalarMatrix::New()); // interpolator data pipe
+  SetDataPipe(mafDataPipeInterpolatorScalarMatrix::NewSPtr()); // interpolator data pipe
 
   m_ScalarArrayOrientationInMatrix = ROWS;
   m_Xtype = USE_TIME;
