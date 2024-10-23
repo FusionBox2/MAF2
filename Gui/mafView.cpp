@@ -101,17 +101,17 @@ void mafView::OnEvent(mafEventBase *maf_event)
 		mafString viewLabel = this->m_Label;
 		helpEvent.SetString(&viewLabel);
 		helpEvent.SetId(OPEN_HELP_PAGE);
-		mafEventMacro(helpEvent);
+		InvokeEvent(helpEvent);
 	  }
 	  break;
 
       default:
-        mafEventMacro(*maf_event);
+        InvokeEvent(*maf_event);
     }
   }
   else
   {
-    mafEventMacro(*maf_event);
+    InvokeEvent(*maf_event);
   }
 }
 
@@ -141,7 +141,7 @@ mafGUI* mafView::CreateGui()
   mafEvent buildHelpGui;
   buildHelpGui.SetSender(this);
   buildHelpGui.SetId(GET_BUILD_HELP_GUI);
-  mafEventMacro(buildHelpGui);
+  InvokeEvent(buildHelpGui);
 
   if (buildHelpGui.GetArg())
   {

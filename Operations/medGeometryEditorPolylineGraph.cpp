@@ -167,11 +167,11 @@ medGeometryEditorPolylineGraph::~medGeometryEditorPolylineGraph()
 void medGeometryEditorPolylineGraph::Show(bool show)
 //----------------------------------------------------------------------------
 {
-	{mafEvent evUnq(this,VME_SHOW,m_VMEPolylineEditor,show); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW,m_VMEPolylineEditor,show); InvokeEvent(evUnq);}
 	if(show==false)
-		{mafEvent evUnq(this,VME_SHOW,m_VMEPolylineSelection,show); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this,VME_SHOW,m_VMEPolylineSelection,show); InvokeEvent(evUnq);}
 
-	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medGeometryEditorPolylineGraph::OnEvent(mafEventBase *maf_event)
@@ -190,7 +190,7 @@ void medGeometryEditorPolylineGraph::OnEvent(mafEventBase *maf_event)
           vtkNew<vtkPolyData> poly_new;
           m_PolylineGraph->CopyToPolydata(poly_new);
           UpdateVMEEditorData(poly_new);
-          {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+          {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
         }
       break;
 			case ID_ACTION:
@@ -223,9 +223,9 @@ void medGeometryEditorPolylineGraph::OnEvent(mafEventBase *maf_event)
 						m_SelectedPoint = UNDEFINED_POINT_ID;
 						
 						if(!m_TestMode)
-							{mafEvent evUnq(this,VME_SHOW,m_VMEPolylineSelection,false); mafEventMacro(evUnq);}
+							{mafEvent evUnq(this,VME_SHOW,m_VMEPolylineSelection,false); InvokeEvent(evUnq);}
 
-						{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+						{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 					}
 					else
 						mafLogMessage(_M("It's impossible to delete a point of degree > 2"));
@@ -241,16 +241,16 @@ void medGeometryEditorPolylineGraph::OnEvent(mafEventBase *maf_event)
 					m_PolylineGraph->CopyToPolydata(poly_new);
 					UpdateVMEEditorData(poly_new);
 
-					{mafEvent evUnq(this,VME_SHOW,m_VMEPolylineSelection,false); mafEventMacro(evUnq);}
+					{mafEvent evUnq(this,VME_SHOW,m_VMEPolylineSelection,false); InvokeEvent(evUnq);}
 
-					{mafEvent evUnq(this,VME_SHOW,m_VMEPolylineEditor,false); mafEventMacro(evUnq);}
-					{mafEvent evUnq(this,VME_SHOW,m_VMEPolylineEditor,true); mafEventMacro(evUnq);}
+					{mafEvent evUnq(this,VME_SHOW,m_VMEPolylineEditor,false); InvokeEvent(evUnq);}
+					{mafEvent evUnq(this,VME_SHOW,m_VMEPolylineEditor,true); InvokeEvent(evUnq);}
 
-					{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+					{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 
 				}
 		default:
-			mafEventMacro(*e);
+			InvokeEvent(*e);
 			break; 
 		}
 	}
@@ -291,7 +291,7 @@ void medGeometryEditorPolylineGraph::BehaviorUpdate()
 		}
 	}
 
-  {mafEvent evUnq(this,ID_VME_BEHAVIOR_UPDATE,m_InputVME); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,ID_VME_BEHAVIOR_UPDATE,m_InputVME); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medGeometryEditorPolylineGraph::CreateGui()
@@ -419,7 +419,7 @@ void medGeometryEditorPolylineGraph::CreateISA()
 	m_InputVME->SetBehavior(m_Picker);
 	m_VMEPolylineEditor->SetBehavior(m_Picker);
 
-  {mafEvent evUnq(this,ID_VME_BEHAVIOR_UPDATE,m_InputVME); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,ID_VME_BEHAVIOR_UPDATE,m_InputVME); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 vtkPolyData* medGeometryEditorPolylineGraph::GetOutput()
@@ -449,7 +449,7 @@ void medGeometryEditorPolylineGraph::VmePicked(mafEvent *e)
 				AddNewVertex(pos);
 
 				if(!m_TestMode)
-					{mafEvent evUnq(this,VME_SHOW,m_VMEPolylineSelection,false); mafEventMacro(evUnq);}
+					{mafEvent evUnq(this,VME_SHOW,m_VMEPolylineSelection,false); InvokeEvent(evUnq);}
 			}
 			else if(m_PointTool==ID_MOVE_POINT)
 			{
@@ -466,8 +466,8 @@ void medGeometryEditorPolylineGraph::VmePicked(mafEvent *e)
           SelectPoint(vertexCoord);
           if(!m_TestMode)
           {
-            {mafEvent evUnq(this,VME_SHOW,m_VMEPolylineSelection,false); mafEventMacro(evUnq);}
-            {mafEvent evUnq(this,VME_SHOW,m_VMEPolylineSelection,true); mafEventMacro(evUnq);}
+            {mafEvent evUnq(this,VME_SHOW,m_VMEPolylineSelection,false); InvokeEvent(evUnq);}
+            {mafEvent evUnq(this,VME_SHOW,m_VMEPolylineSelection,true); InvokeEvent(evUnq);}
           }
         }
         MovePoint(vertexCoord);
@@ -488,8 +488,8 @@ void medGeometryEditorPolylineGraph::VmePicked(mafEvent *e)
 
 				if(!m_TestMode)
 				{
-					{mafEvent evUnq(this,VME_SHOW,m_VMEPolylineSelection,false); mafEventMacro(evUnq);}
-					{mafEvent evUnq(this,VME_SHOW,m_VMEPolylineSelection,true); mafEventMacro(evUnq);}
+					{mafEvent evUnq(this,VME_SHOW,m_VMEPolylineSelection,false); InvokeEvent(evUnq);}
+					{mafEvent evUnq(this,VME_SHOW,m_VMEPolylineSelection,true); InvokeEvent(evUnq);}
 				}
 
 				m_Gui->Enable(ID_BUTTON_POINT_DELETE,m_Action==ID_POINT_ACTION && m_SelectedPoint!=UNDEFINED_POINT_ID);
@@ -505,8 +505,8 @@ void medGeometryEditorPolylineGraph::VmePicked(mafEvent *e)
 
         if(!m_TestMode)
         {
-          {mafEvent evUnq(this,VME_SHOW,m_VMEPolylineSelection,false); mafEventMacro(evUnq);}
-          {mafEvent evUnq(this,VME_SHOW,m_VMEPolylineSelection,true); mafEventMacro(evUnq);}
+          {mafEvent evUnq(this,VME_SHOW,m_VMEPolylineSelection,false); InvokeEvent(evUnq);}
+          {mafEvent evUnq(this,VME_SHOW,m_VMEPolylineSelection,true); InvokeEvent(evUnq);}
         }
 
 				//m_Picker->EnableContinuousPicking(true);
@@ -557,7 +557,7 @@ void medGeometryEditorPolylineGraph::VmePicked(mafEvent *e)
 						m_Gui->Update();
 
 						if(!m_TestMode)
-							{mafEvent evUnq(this,VME_SHOW,m_VMEPolylineSelection,false); mafEventMacro(evUnq);}
+							{mafEvent evUnq(this,VME_SHOW,m_VMEPolylineSelection,false); InvokeEvent(evUnq);}
 					}
 					else
 					{
@@ -567,7 +567,7 @@ void medGeometryEditorPolylineGraph::VmePicked(mafEvent *e)
 			}
 		}
 	}
-	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 	//mafLogMessage(wxString::Format("current branch %d di %d",m_CurrentBranch,m_PolylineGraph->GetNumberOfBranches()));
 }
 //----------------------------------------------------------------------------
@@ -977,8 +977,8 @@ void medGeometryEditorPolylineGraph::SelectBranch(double position[3])
 
 	m_SelectedBranch = m_CurrentBranch;
   
-	{mafEvent evUnq(this,VME_SHOW,m_VMEPolylineSelection,false); mafEventMacro(evUnq);}
-	{mafEvent evUnq(this,VME_SHOW,m_VMEPolylineSelection,true); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW,m_VMEPolylineSelection,false); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW,m_VMEPolylineSelection,true); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 int medGeometryEditorPolylineGraph::AddBranch(double position[3])

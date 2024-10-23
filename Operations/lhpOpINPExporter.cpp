@@ -146,7 +146,7 @@ void lhpOpINPExporter::OnEvent(mafEventBase *maf_event)
 //----------------------------------------------------------------------------
 {
   HideGui();
-  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}        
+  {mafEvent evUnq(this,result); InvokeEvent(evUnq);}        
 }*/
 
 
@@ -166,7 +166,7 @@ void lhpOpINPExporter::ExportOneSurface(const char *filename, mafVMEOutputSurfac
   v_tpdf->Update();
 
   vtkNew<mafINPWriter> writer;
-  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,writer); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,writer); InvokeEvent(evUnq);}
   writer->SetFileName(filename);
   if(this->m_ABSMatrixFlag)
     writer->SetInputConnection(v_tpdf->GetOutputPort());

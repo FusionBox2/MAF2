@@ -113,7 +113,7 @@ void mafOpScalarToSurface::OpRun()
   scalar->SetTimeStamp(ts);
   if (!m_TestMode)
   {
-    {mafEvent evUnq(this, BIND_TO_PROGRESSBAR,delaunay); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this, BIND_TO_PROGRESSBAR,delaunay); InvokeEvent(evUnq);}
   }
   delaunay->SetInputConnection(scalar_surface->GetOutputPort());
   delaunay->Update();
@@ -123,5 +123,5 @@ void mafOpScalarToSurface::OpRun()
   for (int i = 0; i < kframes.size(); i++)
     items[i]->Delete();
   items.clear();
-  {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
 }

@@ -400,7 +400,7 @@ void mafGizmoTranslatePlane::OnEvent(mafEventBase *maf_event)
     }
     // forward events to the listener
     e->SetSender(this);
-    mafEventMacro(*e);
+    InvokeEvent(*e);
   }
 }
 /** Gizmo color */
@@ -428,7 +428,7 @@ void mafGizmoTranslatePlane::Show(bool show)
 //----------------------------------------------------------------------------
 {
   for (int i = 0; i < 3; i++)
-		{mafEvent evUnq(this,VME_SHOW,m_Gizmo[i],show); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this,VME_SHOW,m_Gizmo[i],show); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGizmoTranslatePlane::ShowSquare(bool show)

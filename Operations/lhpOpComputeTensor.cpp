@@ -168,7 +168,7 @@ void lhpOpComputeTensor::OpRun()
   
   if (!vmeData || !vmeDisplacements )
     {
-    {mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);} // TODO: terminated? or just cancel?
+    {mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);} // TODO: terminated? or just cancel?
     return;     // TODO: this breaks the selection in the lhpBuilder
     }
 
@@ -179,7 +179,7 @@ void lhpOpComputeTensor::OpRun()
   if (!DatasetsMatch())
     {
     mafMessage(_M("The datasets do not match!"));
-    {mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);} // TODO: terminated? or just cancel?
+    {mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);} // TODO: terminated? or just cancel?
     return;     // TODO: this breaks the selection in the lhpBuilder
     }
 
@@ -205,7 +205,7 @@ void lhpOpComputeTensor::OpRun()
   DeleteOpDialog();
   mafDEL(m_VmeTensors);
 
-  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }
 
 
@@ -451,7 +451,7 @@ void lhpOpComputeTensor::OnEvent(mafEventBase *maf_event)
         OpStop(OP_RUN_CANCEL);    
         break;
       default:
-        mafEventMacro(*maf_event);
+        InvokeEvent(*maf_event);
     }
   }
 }

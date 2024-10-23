@@ -107,7 +107,7 @@ void mafGizmoROI::OnEvent(mafEventBase *maf_event)
   else
   {
     // forward event to the listener
-    mafEventMacro(*maf_event);
+    InvokeEvent(*maf_event);
   }
 }
 
@@ -333,15 +333,15 @@ void mafGizmoROI::OnEventGizmoComponents(mafEventBase *maf_event)
         else if (arg == mafInteractorGenericMouse::MOUSE_UP)
         {
         }
-        {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
         // forward isa transform events to the listener op
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       }
       break;
 
       default:
       {
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       }
       break;
     }

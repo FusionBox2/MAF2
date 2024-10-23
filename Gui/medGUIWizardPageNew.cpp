@@ -151,12 +151,12 @@ void medGUIWizardPageNew::OnEvent(mafEventBase *maf_event)
       if(maf_event->GetSender() == this->m_LutSlider)
         UpdateActor();  //Windowing
       else if(maf_event->GetSender() == this->m_ZCropSlider)
-        mafEventMacro(*maf_event);
+        InvokeEvent(*maf_event);
     }
     break;
 
   default:
-    mafEventMacro(*maf_event);
+    InvokeEvent(*maf_event);
   }
 }
 //----------------------------------------------------------------------------

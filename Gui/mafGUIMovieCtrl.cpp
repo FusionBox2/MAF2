@@ -106,23 +106,23 @@ void mafGUIMovieCtrl::OnEvent(mafEventBase *maf_event)
       case TIME_PREV:
         m_Frame -= m_FrameStep;
         m_Frame = (m_Frame <= m_FrameMin) ? m_FrameMin : m_Frame;
-        {mafEvent evUnq(this,TIME_SET, m_Frame); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,TIME_SET, m_Frame); InvokeEvent(evUnq);}
       break;
       case TIME_NEXT:
         m_Frame += m_FrameStep;
         m_Frame = (m_Frame >= m_FrameMax) ? m_FrameMax : m_Frame;
-        {mafEvent evUnq(this,TIME_SET, m_Frame); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,TIME_SET, m_Frame); InvokeEvent(evUnq);}
       break;
       case TIME_BEGIN:
         m_Frame = m_FrameMin;
-        {mafEvent evUnq(this,TIME_SET, m_Frame); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,TIME_SET, m_Frame); InvokeEvent(evUnq);}
       break;
       case TIME_END:
         m_Frame = m_FrameMax;
-        {mafEvent evUnq(this,TIME_SET, m_Frame); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,TIME_SET, m_Frame); InvokeEvent(evUnq);}
       break;
       case MOVIE_RECORD:
-        {mafEvent evUnq(this,MOVIE_RECORD); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,MOVIE_RECORD); InvokeEvent(evUnq);}
       break;
       default:
         e->Log();
@@ -176,7 +176,7 @@ void mafGUIMovieCtrl::OnTimer(wxTimerEvent &event)
       OnEvent(&ev_stop);
     }
   }
-  {mafEvent evUnq(this,TIME_SET,m_Frame,0); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,TIME_SET,m_Frame,0); InvokeEvent(evUnq);}
   Update();
 }
 //----------------------------------------------------------------------------
@@ -193,12 +193,12 @@ void mafGUIMovieCtrl::SetFrameBounds(double min, double max, double step)
   if(m_Frame < min) 
   {
     m_Frame = min;
-    {mafEvent evUnq(this,TIME_SET,m_Frame,0); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,TIME_SET,m_Frame,0); InvokeEvent(evUnq);}
   }
   if(m_Frame > max) 
   {
     m_Frame = max;
-    {mafEvent evUnq(this,TIME_SET,m_Frame,0); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,TIME_SET,m_Frame,0); InvokeEvent(evUnq);}
   }
 }
 //----------------------------------------------------------------------------

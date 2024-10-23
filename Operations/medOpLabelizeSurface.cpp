@@ -132,7 +132,7 @@ bool medOpLabelizeSurface::Accept(mafNode *node)
 void medOpLabelizeSurface::OpRun()   
 //----------------------------------------------------------------------------
 {
-	{mafEvent evUnq(this,VME_SHOW,m_Input,false); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW,m_Input,false); InvokeEvent(evUnq);}
 
 	mafNEW(m_VmeEditor);
 	vtkNew<vtkPolyData> inputOriginalPolydata;
@@ -185,7 +185,7 @@ void medOpLabelizeSurface::OpRun()
 	m_VmeEditor->Modified();
 	m_VmeEditor->Update();
 
-	{mafEvent evUnq(this,VME_SHOW,m_VmeEditor,true); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW,m_VmeEditor,true); InvokeEvent(evUnq);}
 
 	vtkPolyData *initialData;
 	vtkNEW(initialData);
@@ -383,7 +383,7 @@ void medOpLabelizeSurface::ShowClipPlane(bool show)
 
 			m_ImplicitPlaneGizmo->SetAbsMatrix(mat);
 
-			{mafEvent evUnq(this,VME_SHOW,m_ImplicitPlaneGizmo,true); mafEventMacro(evUnq);}
+			{mafEvent evUnq(this,VME_SHOW,m_ImplicitPlaneGizmo,true); InvokeEvent(evUnq);}
 		}
 		auto material = m_ImplicitPlaneGizmo->GetMaterial();
 		material->m_Prop->SetOpacity(0.5);
@@ -407,7 +407,7 @@ void medOpLabelizeSurface::ShowClipPlane(bool show)
 		}
 	}
 
-	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpLabelizeSurface::OnEvent(mafEventBase *maf_event)
@@ -445,7 +445,7 @@ void medOpLabelizeSurface::OnEventThis(mafEventBase *maf_event)
 		case ID_UNDO:
 			{
 				Undo();
-				{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
 			break;
 		case ID_PLANE_WIDTH:
@@ -481,7 +481,7 @@ void medOpLabelizeSurface::OnEventThis(mafEventBase *maf_event)
 			}
 			break;
 		default:
-			mafEventMacro(*e);
+			InvokeEvent(*e);
 			break; 
 		}
 	}
@@ -504,7 +504,7 @@ void medOpLabelizeSurface::SetPlaneDimension()
 		m_PlaneSource->SetPoint2(-m_PlaneWidth/2, m_PlaneHeight/2, 0);
 		m_PlaneSource->SetOrigin(-m_PlaneWidth/2,-m_PlaneHeight/2, 0);
 		m_PlaneSource->Update();
-		{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 	}
 }
 //----------------------------------------------------------------------------
@@ -526,7 +526,7 @@ void medOpLabelizeSurface::OnEventGizmoPlane(mafEventBase *maf_event)
 							m_LabelInside= m_LabelInside ? 0 : 1;
 							m_Gui->Update();
 							m_Arrow->SetScaleFactor(-1 * m_Arrow->GetScaleFactor());
-							{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+							{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 						}
 					}
 				}
@@ -535,7 +535,7 @@ void medOpLabelizeSurface::OnEventGizmoPlane(mafEventBase *maf_event)
 					if(e->GetArg()==mafInteractorGenericMouse::MOUSE_DOWN)
 					{
 						Labelize();
-						{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+						{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 					}
 				}
 				else
@@ -554,14 +554,14 @@ void medOpLabelizeSurface::OnEventGizmoPlane(mafEventBase *maf_event)
 					m_ImplicitPlaneGizmo->SetAbsMatrix(newAbsMatr);
 					UpdateISARefSys();
 
-					{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+					{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 					currTr->Delete();
 				}
 			}
 			break;
 		default:
 			{
-				mafEventMacro(*maf_event);
+				InvokeEvent(*maf_event);
 			}
 		}
 	}
@@ -593,13 +593,13 @@ void medOpLabelizeSurface::UpdateISARefSys()
 void medOpLabelizeSurface::OpStop(int result)
 //----------------------------------------------------------------------------
 {
-	{mafEvent evUnq(this,VME_SHOW,m_VmeEditor,false); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW,m_VmeEditor,false); InvokeEvent(evUnq);}
 	m_VmeEditor->ReparentTo(NULL);
 
 	if(m_ImplicitPlaneGizmo)
 	{
 		m_ImplicitPlaneGizmo->SetBehavior(NULL);
-		{mafEvent evUnq(this, VME_REMOVE, m_ImplicitPlaneGizmo); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this, VME_REMOVE, m_ImplicitPlaneGizmo); InvokeEvent(evUnq);}
 	}
 	mafDEL(m_ImplicitPlaneGizmo);
 
@@ -623,12 +623,12 @@ void medOpLabelizeSurface::OpStop(int result)
 	cppDEL(m_GizmoRotate);
 	cppDEL(m_GizmoScale);
 
-	{mafEvent evUnq(this,VME_SHOW,m_Input,true); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW,m_Input,true); InvokeEvent(evUnq);}
 
 	if(!m_TestMode)
 		HideGui();
 
-	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpLabelizeSurface::OpDo()
@@ -642,9 +642,9 @@ void medOpLabelizeSurface::OpDo()
 		mafVMESurface::SafeDownCast(m_Input)->GetSurfaceOutput()->SetMaterial(mat);
 		mafVMESurface::SafeDownCast(m_Input)->GetSurfaceOutput()->Update();
 		mafVMESurface::SafeDownCast(m_Input)->GetOutput()->Update();
-		{mafEvent evUnq(this,VME_SHOW,m_Input,false); mafEventMacro(evUnq);}
-		{mafEvent evUnq(this,VME_SHOW,m_Input,true); mafEventMacro(evUnq);}
-		{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this,VME_SHOW,m_Input,false); InvokeEvent(evUnq);}
+		{mafEvent evUnq(this,VME_SHOW,m_Input,true); InvokeEvent(evUnq);}
+		{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 	}
 }
 //----------------------------------------------------------------------------
@@ -652,7 +652,7 @@ void medOpLabelizeSurface::OpUndo()
 //----------------------------------------------------------------------------
 {
 	mafVMESurface::SafeDownCast(m_Input)->SetData(m_OriginalPolydata,((mafVMESurface*)m_Input)->GetTimeStamp());
-	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpLabelizeSurface::Labelize()
@@ -770,7 +770,7 @@ void medOpLabelizeSurface::ChangeGizmo()
 			break;
 		}
 	}
-	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpLabelizeSurface::PostMultiplyEventMatrix(mafEventBase *maf_event)
@@ -798,7 +798,7 @@ void medOpLabelizeSurface::PostMultiplyEventMatrix(mafEventBase *maf_event)
 			// update matrix for OpDo()
 			//m_NewAbsMatrix = absPose;
 		} 
-		{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 
 		// clean up
 		tr->Delete();
@@ -820,7 +820,7 @@ void medOpLabelizeSurface::OnEventGizmoTranslate(mafEventBase *maf_event)
 
 	default:
 		{
-			mafEventMacro(*maf_event);
+			InvokeEvent(*maf_event);
 		}
 	}
 }
@@ -840,7 +840,7 @@ void medOpLabelizeSurface::OnEventGizmoRotate(mafEventBase *maf_event)
 
 	default:
 		{
-			mafEventMacro(*maf_event);
+			InvokeEvent(*maf_event);
 		}
 	}
 }
@@ -852,13 +852,13 @@ void medOpLabelizeSurface::OnEventGizmoScale(mafEventBase *maf_event)
 	{
 	case ID_TRANSFORM:
 		{ 
-			{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+			{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 		}
 		break;
 
 	default:
 		{
-			mafEventMacro(*maf_event);
+			InvokeEvent(*maf_event);
 		}
 	}
 }

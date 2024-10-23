@@ -375,7 +375,7 @@ void medOpFreezeVME::OpRun()
 void medOpFreezeVME::OpDo()   
 	//----------------------------------------------------------------------------
 {
-	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 
 

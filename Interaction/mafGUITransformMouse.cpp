@@ -263,13 +263,13 @@ void mafGUITransformMouse::OnEvent(mafEventBase *maf_event)
     {
       // forward transform events to listener operation; the operation will move the vme
       maf_event->SetSender(this);
-      mafEventMacro(*maf_event);
+      InvokeEvent(*maf_event);
     }
     break;
 
     default:
     {
-      mafEventMacro(*maf_event);
+      InvokeEvent(*maf_event);
     }
     break;
   }

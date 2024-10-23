@@ -105,11 +105,11 @@ void mafOpExporterMesh::OpRun()
 
   if (result==MAF_OK)
   {
-    {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
   }
   else
   {
-    {mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);}
   }
 }
 //----------------------------------------------------------------------------

@@ -143,7 +143,7 @@ void medPipeVolumeSliceNotInterpolated::OnEvent(mafEventBase * event)
     case ID_LUT:
       {
         SetLut(m_VolumeLUT);
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       } break;
     case ID_AXIS:
       {
@@ -153,14 +153,14 @@ void medPipeVolumeSliceNotInterpolated::OnEvent(mafEventBase * event)
         m_Gui->Update();
         // set the origin and update slicer pipeline
         SetSlice();
-        {mafEvent evUnq(this,CAMERA_RESET); mafEventMacro(evUnq);}
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_RESET); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       } break;
     case ID_SLICE:
       {
         // set the origin and update slicer pipeline
         SetSlice();
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       } break;
     default:
       {

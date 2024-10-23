@@ -215,7 +215,7 @@ void medPipeCompound::OnEvent(mafEventBase *maf_event)
         break;
       }
 
-      {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       return;
     }    
 
@@ -223,7 +223,7 @@ void medPipeCompound::OnEvent(mafEventBase *maf_event)
 	}
   
   //forward the event to our listener to deal with it
-  mafEventMacro(*maf_event);    
+  InvokeEvent(*maf_event);    
 }
 
 //------------------------------------------------------------------------

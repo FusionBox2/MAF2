@@ -427,7 +427,7 @@ void mafGizmoScaleAxis::OnEvent(mafEventBase *maf_event)
 {
   // forward events to the listener
 	maf_event->SetSender(this);
-  mafEventMacro(*maf_event);
+  InvokeEvent(*maf_event);
 }
 
 /** Gizmo color */
@@ -480,8 +480,8 @@ void mafGizmoScaleAxis::Show(bool show)
 //----------------------------------------------------------------------------
 {
   m_Show = show;
-  {mafEvent evUnq(this,VME_SHOW,m_CylGizmo,show); mafEventMacro(evUnq);}
-  {mafEvent evUnq(this,VME_SHOW,m_CubeGizmo,show); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW,m_CylGizmo,show); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW,m_CubeGizmo,show); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------

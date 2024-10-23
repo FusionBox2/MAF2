@@ -399,11 +399,11 @@ void mafViewSingleSlice::VmeCreatePipe(mafNode *vme)
       n->m_Pipe = pipe;
       if (m_NumberOfVisibleVme == 1)
       {
-        {mafEvent evUnq(this,CAMERA_RESET); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_RESET); InvokeEvent(evUnq);}
       }
       else
       {
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       }
     }
     else
@@ -544,7 +544,7 @@ void mafViewSingleSlice::OnEvent(mafEventBase *maf_event)
 				}
         iter->Delete();
 			}
-      {mafEvent evUnq(this,ID_POSITION,m_Position); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,ID_POSITION,m_Position); InvokeEvent(evUnq);}
 		break;
 		case ID_PLANE_SELECT:
 		{
@@ -597,13 +597,13 @@ void mafViewSingleSlice::OnEvent(mafEventBase *maf_event)
 		}
 		break;
     default:
-      mafEventMacro(*maf_event);
+      InvokeEvent(*maf_event);
     break;
     }
   }
   else
   {
-    mafEventMacro(*maf_event);
+    InvokeEvent(*maf_event);
   }
   
 }
@@ -838,11 +838,11 @@ void mafViewSingleSlice::VmeShow(mafNode *node, bool show)
 				{
 					if(Inode->IsA("mafVMESurface"))
 					{
-						{mafEvent evUnq(this,VME_SHOW,Inode,false); mafEventMacro(evUnq);}
+						{mafEvent evUnq(this,VME_SHOW,Inode,false); InvokeEvent(evUnq);}
 					}
 					if(Inode->IsA("mafVMEPolyline"))
 					{
-						{mafEvent evUnq(this,VME_SHOW,Inode,false); mafEventMacro(evUnq);}
+						{mafEvent evUnq(this,VME_SHOW,Inode,false); InvokeEvent(evUnq);}
 					}
 				}
 			}

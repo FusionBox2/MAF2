@@ -536,5 +536,5 @@ void mafGUIColorWidget::OnColorChanged(bool notify)
   Refresh();               // call paint, which draws the birmap and the cursors  
 
   if(notify)
-    {mafEvent evUnq(this,GetId()); mafEventMacro(evUnq);} // notify the user that the color has changed
+    {mafEvent evUnq(this,GetId()); InvokeEvent(evUnq);} // notify the user that the color has changed
 }

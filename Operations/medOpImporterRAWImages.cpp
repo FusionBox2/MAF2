@@ -414,7 +414,7 @@ void medOpImporterRAWImages::CreateGui()
   if (res == OP_RUN_OK && IsVolumeLarge())
   {
     //save the VME data, it should not prompt for saving
-    {mafEvent evUnq(this, MENU_FILE_SAVE); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this, MENU_FILE_SAVE); InvokeEvent(evUnq);}
   }
 #endif // VME_VOLUME_LARGE
   return;
@@ -460,21 +460,21 @@ void medOpImporterRAWImages::OpStop(int result)
   //m_VolumeRGB = NULL;
 
   if(!this->m_TestMode)
-    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpImporterRAWImages::OpDo()
 //----------------------------------------------------------------------------
 {
   assert(m_Output);
-  {mafEvent evUnq(this,VME_ADD,m_Output); mafEventMacro(evUnq);} 		  
+  {mafEvent evUnq(this,VME_ADD,m_Output); InvokeEvent(evUnq);} 		  
 }
 //----------------------------------------------------------------------------
 void medOpImporterRAWImages::OpUndo()
 //----------------------------------------------------------------------------
 {
   assert(m_Output);
-  {mafEvent evUnq(this,VME_REMOVE,m_Output); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_REMOVE,m_Output); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpImporterRAWImages::EnableWidgets(bool enable)
@@ -818,7 +818,7 @@ void medOpImporterRAWImages::OnEvent(mafEventBase *maf_event)
       m_Dialog->EndModal(wxID_CANCEL);
       break;
     default:
-      mafEventMacro(*e);
+      InvokeEvent(*e);
       break;
     }
   }

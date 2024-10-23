@@ -246,7 +246,7 @@ void mafOpConnectivitySurface::OpStop(int result)
 		m_ExtractedVmes.clear();
 	}
 	HideGui();
-	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}        
+	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}        
 }
 //----------------------------------------------------------------------------
 void mafOpConnectivitySurface::OnVtkConnect()

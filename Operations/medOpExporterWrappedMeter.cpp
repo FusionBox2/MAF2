@@ -143,7 +143,7 @@ void medOpExporterWrappedMeter::OpStop(int result)
 //----------------------------------------------------------------------------
 {
 	HideGui();
-	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}        
+	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}        
 }
 
 //----------------------------------------------------------------------------
@@ -202,7 +202,7 @@ void medOpExporterWrappedMeter::ExportWrappedMeter()
 	for(int j=0; j< m_Times.size(); j++)
 	{
 		m_CurrentTime = m_Times[j];
-		{mafEvent evUnq(this, TIME_SET, m_CurrentTime, 0); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this, TIME_SET, m_CurrentTime, 0); InvokeEvent(evUnq);}
 
 		for(int i=0;i< m_Meters.size();i++)
 		{

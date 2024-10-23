@@ -105,7 +105,7 @@ void mafOpEditMetadata::OpRun()
 	mafEvent buildHelpGui;
 	buildHelpGui.SetSender(this);
 	buildHelpGui.SetId(GET_BUILD_HELP_GUI);
-	mafEventMacro(buildHelpGui);
+	InvokeEvent(buildHelpGui);
 
 	if (buildHelpGui.GetArg())
 	{
@@ -190,7 +190,7 @@ void mafOpEditMetadata::OnEvent(mafEventBase *maf_event)
 			mafString operationLabel = GetLabel();
 			helpEvent.SetString(&operationLabel);
 			helpEvent.SetId(OPEN_HELP_PAGE);
-			mafEventMacro(helpEvent);
+			InvokeEvent(helpEvent);
 		}
 		break;
 
@@ -272,7 +272,7 @@ void mafOpEditMetadata::OnEvent(mafEventBase *maf_event)
         OpStop(OP_RUN_CANCEL);
       break;
       default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       break; 
     }
   }

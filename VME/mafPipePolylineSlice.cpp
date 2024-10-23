@@ -319,7 +319,7 @@ void mafPipePolylineSlice::OnEvent(mafEventBase *maf_event)
 		  {
 			  m_Actor->GetProperty()->SetLineWidth(m_Border);
 			  m_Actor->Modified();
-			  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+			  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 		  }
 	  break;
     case ID_RADIUS_CHANGE:
@@ -330,7 +330,7 @@ void mafPipePolylineSlice::OnEvent(mafEventBase *maf_event)
     case ID_SPLINE:
       {
         UpdateProperty();
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       }
       break;
     case ID_FILL:
@@ -339,11 +339,11 @@ void mafPipePolylineSlice::OnEvent(mafEventBase *maf_event)
           m_Mapper->SetInputData(RegionsCapping(m_Cutter->GetOutput()));
         else
           m_Mapper->SetInputConnection(m_Cutter->GetOutputPort());
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       }
       break;
       default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       break;
     }
   }
@@ -406,7 +406,7 @@ void mafPipePolylineSlice::SetThickness(double thickness)
     m_Actor->GetProperty()->SetColor(((mafVMEOutputPolyline *)((mafVME *)m_Vme)->GetOutput())->GetMaterial()->m_Diffuse);
   
   m_Actor->Modified();
-	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 double mafPipePolylineSlice::GetRadius()
@@ -427,7 +427,7 @@ void mafPipePolylineSlice::SetRadius(double radius)
       m_Actor->GetProperty()->SetColor(((mafVMEOutputPolyline *)((mafVME *)m_Vme)->GetOutput())->GetMaterial()->m_Diffuse);
     m_Actor->Modified();
   }
-	//{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+	//{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafPipePolylineSlice::UpdateProperty()

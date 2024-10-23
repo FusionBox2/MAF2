@@ -510,7 +510,7 @@ void medViewArbitraryOrthoSlice::OnEvent(mafEventBase *maf_event)
 		{
 			// if no one can handle this event send it to the operation listener
 
-			mafEventMacro(*maf_event); 
+			InvokeEvent(*maf_event); 
 		}	
 	}
 	else if (maf_event->GetId() == VME_PICKED)
@@ -563,7 +563,7 @@ void medViewArbitraryOrthoSlice::OnEvent(mafEventBase *maf_event)
 	}
 	else
 	{
-		mafEventMacro(*maf_event);
+		InvokeEvent(*maf_event);
 	}
 }
 
@@ -668,7 +668,7 @@ void medViewArbitraryOrthoSlice::OnEventGizmoCrossTranslateZNormalView(mafEventB
 
 	default:
 		{
-			mafEventMacro(*maf_event);
+			InvokeEvent(*maf_event);
 		}
 	}
 }
@@ -712,7 +712,7 @@ void medViewArbitraryOrthoSlice::OnEventGizmoCrossRotateZNormalView(mafEventBase
 			// 			}
 
 
-			{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+			{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 
 			//update the normal of the cutter plane of the surface
 			mafNode *root=m_CurrentVolume->GetRoot();
@@ -796,7 +796,7 @@ void medViewArbitraryOrthoSlice::OnEventGizmoCrossRotateZNormalView(mafEventBase
 
 	default:
 		{
-			mafEventMacro(*maf_event);
+			InvokeEvent(*maf_event);
 		}
 	}
 }
@@ -893,7 +893,7 @@ void medViewArbitraryOrthoSlice::OnEventGizmoCrossRotateYNormalView(mafEventBase
 					surfaceOriginTranslated[2] = m_VolumeVTKDataCenterABSCoords[2] + normal[2] * 0.1;
 
 					PipeSliceViewPolylineEditor->SetSlice(surfaceOriginTranslated, normal);          
-					//{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+					//{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 				}
 			}
 
@@ -903,13 +903,13 @@ void medViewArbitraryOrthoSlice::OnEventGizmoCrossRotateYNormalView(mafEventBase
 
 			ChildViewsCameraUpdate();
 
-			{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+			{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 		}
 		break;
 
 	default:
 		{
-			mafEventMacro(*maf_event);
+			InvokeEvent(*maf_event);
 		}
 	}
 }
@@ -1016,7 +1016,7 @@ void medViewArbitraryOrthoSlice::OnEventGizmoCrossTranslateYNormalView(mafEventB
 
 	default:
 		{
-			mafEventMacro(*maf_event);
+			InvokeEvent(*maf_event);
 		}
 	}
 }
@@ -1047,7 +1047,7 @@ void medViewArbitraryOrthoSlice::OnEventGizmoCrossRotateXNormalView(mafEventBase
 			m_ChildViewList[Y_VIEW]->GetRWI()->GetCamera()->ApplyTransform(tr);
 			m_ChildViewList[Z_VIEW]->GetRWI()->GetCamera()->ApplyTransform(tr);
 
-			{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+			{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 
 			//update the normal of the cutter plane of the surface
 			mafNode *root=m_CurrentVolume->GetRoot();
@@ -1129,7 +1129,7 @@ void medViewArbitraryOrthoSlice::OnEventGizmoCrossRotateXNormalView(mafEventBase
 
 	default:
 		{
-			mafEventMacro(*maf_event);
+			InvokeEvent(*maf_event);
 		}
 	}
 }
@@ -1235,7 +1235,7 @@ void medViewArbitraryOrthoSlice::OnEventGizmoCrossTranslateXNormalView(mafEventB
 
 	default:
 		{
-			mafEventMacro(*maf_event);
+			InvokeEvent(*maf_event);
 		}
 	}
 }
@@ -2037,7 +2037,7 @@ void medViewArbitraryOrthoSlice::ShowMafVMEMesh( mafNode * node )
 
 		PipeSliceViewMesh->SetSlice(surfaceOriginTranslated);
 		PipeSliceViewMesh->SetNormal(normal);
-		//{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+		//{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 	}
 }
 
@@ -2152,7 +2152,7 @@ void medViewArbitraryOrthoSlice::OnReset()
 		m_SlicerZ->SetAbsMatrix(*m_SlicerZResetMatrix);
 
 		//update because I need to refresh the normal of the camera
-		//{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+		//{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 
 		RestoreCameraParametersForAllSubviews();
 
@@ -2171,7 +2171,7 @@ void medViewArbitraryOrthoSlice::OnReset()
 
 		UpdateSlicersLUT();
 
-		// {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+		// {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 
 	}
 }
@@ -2201,7 +2201,7 @@ void medViewArbitraryOrthoSlice::OnLUTChooser()
 		m_SlicerY->GetMaterial()->m_ColorLut->DeepCopy(m_ColorLUT);
 		m_SlicerY->GetMaterial()->m_ColorLut->Modified();
 
-		{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 
 	}
 }
@@ -3213,7 +3213,7 @@ void medViewArbitraryOrthoSlice::AccumulateTextures( mafVMESlicer *inSlicer, dou
 	if (showProgressBar)
 	{
 		mafEvent e(this,PROGRESSBAR_SHOW);
-		mafEventMacro(e);
+		InvokeEvent(e);
 	}
 
 	int direction = -1;
@@ -3303,7 +3303,7 @@ void medViewArbitraryOrthoSlice::AccumulateTextures( mafVMESlicer *inSlicer, dou
 		if (showProgressBar)
 		{
 			mafEvent eUpdate(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress);
-			mafEventMacro(eUpdate);
+			InvokeEvent(eUpdate);
 		}
 
 		if (profileId == 0)
@@ -3373,7 +3373,7 @@ void medViewArbitraryOrthoSlice::AccumulateTextures( mafVMESlicer *inSlicer, dou
 	if (showProgressBar)
 	{
 		mafEvent eHideProgress(this,PROGRESSBAR_HIDE);
-		mafEventMacro(eHideProgress);
+		InvokeEvent(eHideProgress);
 	}
 
 	for (int scalarId = 0; scalarId < numberOfTuples; scalarId++)
@@ -3724,7 +3724,7 @@ void medViewArbitraryOrthoSlice::AddVMEToMSFTree(mafVMESurface *vme)
 {
 	assert(vme != NULL);
 	vme->GetTagArray()->SetTag(mafTagItem(_R("VISIBLE_IN_THE_TREE"), 0.0));
-	{mafEvent evUnq(this, VME_ADD, vme); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this, VME_ADD, vme); InvokeEvent(evUnq);}
 	assert(vme);
 }
 
@@ -3979,7 +3979,7 @@ void medViewArbitraryOrthoSlice::HideAllCutPlanes()
 	ShowYCutPlanes(false);
 	ShowZCutPlanes(false);
 
-	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 
 void medViewArbitraryOrthoSlice::OnID_CHOOSE_DIR()
@@ -4054,7 +4054,7 @@ void medViewArbitraryOrthoSlice::SaveSlicesTextureToFile(int choosedExportAxis)
 	wxBusyInfo wait("please wait");
 
 	mafEvent e(this,PROGRESSBAR_SHOW);
-	mafEventMacro(e);
+	InvokeEvent(e);
 
 	mafVMESlicer *currentSlicer = NULL;
 
@@ -4089,7 +4089,7 @@ void medViewArbitraryOrthoSlice::SaveSlicesTextureToFile(int choosedExportAxis)
 		long progress = (100 * ((double )i) / ((double) m_NumberOfAxialSections[choosedExportAxis]));
 
 		mafEvent eUpdate(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress);
-		mafEventMacro(eUpdate);
+		InvokeEvent(eUpdate);
 
 		// move the slicer in the target abs pose
 		vtkNew<vtkTransform> tr;
@@ -4131,7 +4131,7 @@ void medViewArbitraryOrthoSlice::SaveSlicesTextureToFile(int choosedExportAxis)
 			assert(textureToWriteOnDisk);
 			writer->SetInputData(textureToWriteOnDisk);
 
-			{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}				
+			{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}				
 		}
 		else if (m_EnableThickness[choosedExportAxis]) // use rx projection
 		{
@@ -4140,7 +4140,7 @@ void medViewArbitraryOrthoSlice::SaveSlicesTextureToFile(int choosedExportAxis)
 			writer->SetInputData(textureToWriteOnDisk);
 			textureToWriteOnDisk->Delete();
 
-			{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}				
+			{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}				
 		}
 
 		// write it
@@ -4182,7 +4182,7 @@ void medViewArbitraryOrthoSlice::SaveSlicesTextureToFile(int choosedExportAxis)
 
 
 	mafEvent eHide(this,PROGRESSBAR_HIDE);
-	mafEventMacro(eHide);
+	InvokeEvent(eHide);
 
 	UpdateSlicersLUT();
 }
@@ -4438,7 +4438,7 @@ void medViewArbitraryOrthoSlice::UpdateSlicersLUT()
 	surfaceOutputSlicerZ->Update();
 	surfaceOutputSlicerZ->GetMaterial()->m_ColorLut->SetTableRange(low,hi);
 
-	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -4655,7 +4655,7 @@ void medViewArbitraryOrthoSlice::SaveSlicesFromRenderWindowToFile(int chooseExpo
 	wxBusyInfo wait(message.c_str());
 
 	mafEvent e(this,PROGRESSBAR_SHOW);
-	mafEventMacro(e);
+	InvokeEvent(e);
 
 	int viewToExport = -1;
 
@@ -4716,7 +4716,7 @@ void medViewArbitraryOrthoSlice::SaveSlicesFromRenderWindowToFile(int chooseExpo
 		long progress = (100 * ((double )i) / ((double) m_NumberOfAxialSections[chooseExportAxis]));
 
 		mafEvent eUpdate(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress);
-		mafEventMacro(eUpdate);
+		InvokeEvent(eUpdate);
 
 		// move the slicer in the target abs pose
 		vtkNew<vtkTransform> tr;
@@ -4758,7 +4758,7 @@ void medViewArbitraryOrthoSlice::SaveSlicesFromRenderWindowToFile(int chooseExpo
 			assert(textureToWriteOnDisk);
 			writer->SetInputData(textureToWriteOnDisk);
 
-			{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}				
+			{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}				
 		}
 		else if (m_EnableThickness[chooseExportAxis])
 		{
@@ -4767,7 +4767,7 @@ void medViewArbitraryOrthoSlice::SaveSlicesFromRenderWindowToFile(int chooseExpo
 			writer->SetInputData(textureToWriteOnDisk);
 			textureToWriteOnDisk->Delete();
 
-			{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}				
+			{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}				
 		}
 
 		// write it
@@ -4867,7 +4867,7 @@ void medViewArbitraryOrthoSlice::SaveSlicesFromRenderWindowToFile(int chooseExpo
 	//currentSlicer->GetSurfaceOutput()->GetOutputDataSet()->Update();
 
 	mafEvent eHide(this,PROGRESSBAR_HIDE);
-	mafEventMacro(eHide);
+	InvokeEvent(eHide);
 
 	ShowRuler(chooseExportAxis, false);
 
@@ -5030,7 +5030,7 @@ void medViewArbitraryOrthoSlice::HideRulerVMEVector(vector<mafVMESurface *> &rul
 	captionActorVector.clear();
 	rulerVector.clear();
 
-	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 
 }
 

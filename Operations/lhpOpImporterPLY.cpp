@@ -93,7 +93,7 @@ void lhpOpImporterPLY::OpRun()
 		ImportPLY();
 	}
 
-	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -107,7 +107,7 @@ void lhpOpImporterPLY::OpDo()
       m_ImportedPLYs[i]->ReparentTo(m_Input);
     }
   }
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -121,7 +121,7 @@ void lhpOpImporterPLY::OpUndo()
       m_ImportedPLYs[i]->ReparentTo(NULL);
     }
   }
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -144,7 +144,7 @@ void lhpOpImporterPLY::ImportPLY()
     fn = m_Files[kk];
     
     vtkNew<vtkPLYReader> reader;
-	  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,reader); mafEventMacro(evUnq);}
+	  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,reader); InvokeEvent(evUnq);}
     reader->SetFileName(fn.GetCStr());
 	  reader->Update();
 

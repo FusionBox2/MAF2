@@ -210,12 +210,12 @@ make it protected, and make mafGUIValidator friend
   {
     int id = e->GetId();
     if(m_CollaborateStatus)
-      {mafEvent evUnq(this,REMOTE_PARAMETER, (intptr_t)id); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,REMOTE_PARAMETER, (intptr_t)id); InvokeEvent(evUnq);}
     if(id >= MINID && id <MAXID)
       id = GetModuleId(id);
     e->SetSender(this);
     e->SetId(id);
-    mafEventMacro(*e);
+    InvokeEvent(*e);
   }
 }
 //----------------------------------------------------------------------------
@@ -1658,7 +1658,7 @@ void mafGUI::SetWidgetValue(int id, WidgetDataType &widget_data)
 
   if(id >= MINID && id <MAXID)
     id = GetModuleId(id);
-  {mafEvent evUnq(this, id); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, id); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 int* mafGUI::GetMAFWidgetId()

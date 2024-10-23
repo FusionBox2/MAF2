@@ -161,7 +161,7 @@ void mafGUIApplicationLayoutSettings::OnEvent(mafEventBase *maf_event)
       SaveApplicationLayout();
     break;
     default:
-      mafEventMacro(*maf_event);
+      InvokeEvent(*maf_event);
     break; 
   }
 }
@@ -527,7 +527,7 @@ void mafGUIApplicationLayoutSettings::ApplyTreeLayout()
           mafNode *node_restored = m_ViewManager->GetCurrentRoot()->FindInTreeById((*iter).m_VisibleVmes[i]);
           if (node_restored)
           {
-            {mafEvent evUnq(this, VME_SHOW, node_restored, true); mafEventMacro(evUnq);}
+            {mafEvent evUnq(this, VME_SHOW, node_restored, true); InvokeEvent(evUnq);}
           }
         }
 

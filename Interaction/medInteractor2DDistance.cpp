@@ -235,7 +235,7 @@ void medInteractor2DDistance::OnLeftButtonDown(mafEventInteraction *e)
   double pos_2d[2];
   e->Get2DPosition(pos_2d);
   
-  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 
   if(m_EndMeasure)
   { 
@@ -339,7 +339,7 @@ void medInteractor2DDistance::OnRightButtonUp(mafEventInteraction *e)
   if(m_ShowContextMenu && mouse)
   {
     mafVME *vme = GetPickedVME(mouse);
-    {mafEvent evUnq(this,SHOW_CONTEXTUAL_MENU, vme,true); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,SHOW_CONTEXTUAL_MENU, vme,true); InvokeEvent(evUnq);}
   }
 
   OnButtonUp(e);
@@ -697,7 +697,7 @@ void medInteractor2DDistance::CalculateMeasure()
   if(m_MeasureType == DISTANCE_BETWEEN_POINTS)
   {
     m_Distance = sqrt(vtkMath::Distance2BetweenPoints(p1_1,p2_1));
-    {mafEvent evUnq(this,ID_RESULT_MEASURE,m_Distance); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,ID_RESULT_MEASURE,m_Distance); InvokeEvent(evUnq);}
     return;
   }
 
@@ -706,7 +706,7 @@ void medInteractor2DDistance::CalculateMeasure()
   if(m_MeasureType == DISTANCE_BETWEEN_LINES)
   {
     m_Distance = sqrt(vtkLine::DistanceToLine(p1_2,p1_1,p2_1));
-    {mafEvent evUnq(this,ID_RESULT_MEASURE,m_Distance); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,ID_RESULT_MEASURE,m_Distance); InvokeEvent(evUnq);}
     return;
   }
 
@@ -861,13 +861,13 @@ void medInteractor2DDistance::UndoMeasure()
       GenerateHistogram(m_GenerateHistogram);
     if(m_Measure.size() == 0)
     {
-      {mafEvent evUnq(this,ID_RESULT_MEASURE,0.0); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,ID_RESULT_MEASURE,0.0); InvokeEvent(evUnq);}
     }
     else
     {
-      {mafEvent evUnq(this,m_FlagMeasureType[m_FlagMeasureType.size()-1],m_Measure[m_Measure.size()-1]); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,m_FlagMeasureType[m_FlagMeasureType.size()-1],m_Measure[m_Measure.size()-1]); InvokeEvent(evUnq);}
     }
-    {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
 }
 //----------------------------------------------------------------------------

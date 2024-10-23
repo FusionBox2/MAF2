@@ -134,7 +134,7 @@ void mafGizmoScale::OnEvent(mafEventBase *maf_event)
 	else
 	{
 		// otherwise send to the listener
-		mafEventMacro(*maf_event);
+		InvokeEvent(*maf_event);
 	}
 }
 
@@ -335,7 +335,7 @@ void mafGizmoScale::OnEventGizmoComponents(mafEventBase *maf_event)
 					e2s.SetSender(this);
 					e2s.SetMatrix(newVmeAbsPoseTr->GetMatrixPointer());
 					e2s.SetId(ID_TRANSFORM);
-					mafEventMacro(e2s);
+					InvokeEvent(e2s);
 
 					// Update scale gizmo gui
 					auto scaleMat = mafMatrix::NewSPtr();
@@ -358,13 +358,13 @@ void mafGizmoScale::OnEventGizmoComponents(mafEventBase *maf_event)
 				// instanciating the gizmo; the sender is changed to "this" so that the operation can check for
 				// gizmo sending events
 				e->SetSender(this);
-				mafEventMacro(*e);
+				InvokeEvent(*e);
 			}
 			break;
 
 		default:
 			{
-				mafEventMacro(*e);
+				InvokeEvent(*e);
 			}
 			break;
 		}
@@ -395,7 +395,7 @@ void mafGizmoScale::OnEventGizmoGui(mafEventBase *maf_event)
 		break;
 	default:
 		{
-			mafEventMacro(*maf_event);
+			InvokeEvent(*maf_event);
 		}
 		break;
 	}
@@ -468,7 +468,7 @@ void mafGizmoScale::Show(bool show)
 	}
 	*/
 	// update the camera
-	//  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}   // Paolo 20-07-2005
+	//  {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}   // Paolo 20-07-2005
 }
 //----------------------------------------------------------------------------  
 void mafGizmoScale::Show(bool showX, bool showY, bool showZ, bool showIso)

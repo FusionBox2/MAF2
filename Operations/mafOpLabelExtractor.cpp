@@ -131,7 +131,7 @@ void mafOpLabelExtractor::OpRun()
 	mafEvent buildHelpGui;
 	buildHelpGui.SetSender(this);
 	buildHelpGui.SetId(GET_BUILD_HELP_GUI);
-	mafEventMacro(buildHelpGui);
+	InvokeEvent(buildHelpGui);
 
 	if (buildHelpGui.GetArg())
 	{
@@ -234,7 +234,7 @@ void mafOpLabelExtractor::OnEvent(mafEventBase *maf_event)
 			mafString operationLabel = GetLabel();
 			helpEvent.SetString(&operationLabel);
 			helpEvent.SetId(OPEN_HELP_PAGE);
-			mafEventMacro(helpEvent);
+			InvokeEvent(helpEvent);
 		}
 		break;
 
@@ -272,7 +272,7 @@ void mafOpLabelExtractor::OnEvent(mafEventBase *maf_event)
         }
         break;
       default:
-          mafEventMacro(*e); 
+          InvokeEvent(*e); 
         break;
     }
   }

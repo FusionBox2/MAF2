@@ -121,7 +121,7 @@ void medGUIWizardPage::OnEvent(mafEventBase *maf_event)
 {
 	if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
 	{
-			mafEventMacro(*e);
+			InvokeEvent(*e);
 	}
 }
 //--------------------------------------------------------------------------------

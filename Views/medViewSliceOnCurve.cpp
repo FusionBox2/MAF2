@@ -263,7 +263,7 @@ void medViewSliceOnCurve::HideSameVMEs(mafView* pView, mafNode* pNode)
     {
       if (pScNode->m_Pipe != NULL && pScNode->m_Vme != pNode)
       {            
-        {mafEvent evUnq(this, VME_SHOW, pScNode->m_Vme, false); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this, VME_SHOW, pScNode->m_Vme, false); InvokeEvent(evUnq);}
       }
     }
 
@@ -641,7 +641,7 @@ void medViewSliceOnCurve::OnEvent(mafEventBase *maf_event)
       m_ChildViewList[i]->VmeRemove(g);
     }
 
-    //{mafEvent evUnq(this, VME_REMOVING, g); mafEventMacro(evUnq);}
+    //{mafEvent evUnq(this, VME_REMOVING, g); InvokeEvent(evUnq);}
 
     mafDEL(m_Gizmo); //unfortunately this must not be done because of crash if you close the view frame    
     mafDEL(m_CurrentPolyLineGizmo);    
@@ -870,7 +870,7 @@ void medViewSliceOnCurve::SetSlicePosition(double abscisa, vtkIdType branchId)
     m_ChildViewList[MAIN_VIEW]->VmeShow(m_CurrentVolume, true);	
    
     //force GUI construction for new pipe
-    {mafEvent evUnq( this, VME_SELECTED, m_CurrentVolume); mafEventMacro(evUnq);}
+    {mafEvent evUnq( this, VME_SELECTED, m_CurrentVolume); InvokeEvent(evUnq);}
   }
 }
 #pragma endregion

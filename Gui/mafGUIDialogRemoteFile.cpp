@@ -170,7 +170,7 @@ void mafGUIDialogRemoteFile::OnEvent(mafEventBase *maf_event)
         mafGUIDialog::OnEvent(e);
       break;
       default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       break;
     }
   }

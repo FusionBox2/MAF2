@@ -152,7 +152,7 @@ void mafOsgTerrainManipulatorGui::OnEvent(mafEventBase *maf_event)
         SetAutoUpdate(m_auto_update != 0 );
       break;
       default:
-        mafEventMacro(*maf_event);
+        InvokeEvent(*maf_event);
       break; 
     }
   }

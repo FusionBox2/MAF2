@@ -173,7 +173,7 @@ void mafOpAddLandmark::OpRun()
       int answer = wxMessageBox(_("The time stamp is not 0, this could cause data corruption, would you like to continue?"),_("Confirm"),wxYES_NO|wxICON_QUESTION,mafGetFrame()); // ask user if will save msf before closing
       if(answer == wxNO)
       {
-        {mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);}
         return;
       }
     }
@@ -207,7 +207,7 @@ void mafOpAddLandmark::OpRun()
 			m_Cloud->SetName(_L("new landmark cloud"));
 			m_Cloud->SetRadius(m_PickedVme->GetOutput()->GetVTKData()->GetLength()/60.0);
 			m_Cloud->ReparentTo(m_PickedVme);
-			{mafEvent evUnq(this,VME_SHOW,m_Cloud,true); mafEventMacro(evUnq);}
+			{mafEvent evUnq(this,VME_SHOW,m_Cloud,true); InvokeEvent(evUnq);}
 			m_CloudCreatedFlag = true;
 		}
 		else if(m_Input->IsMAFType(mafVMELandmark))
@@ -251,7 +251,7 @@ void mafOpAddLandmark::OpRun()
 			m_Cloud->Open();
 			m_Cloud->SetName(_L("new landmark cloud"));
 			m_Cloud->ReparentTo(m_Input);
-			{mafEvent evUnq(this,VME_SHOW,m_Cloud,true); mafEventMacro(evUnq);}
+			{mafEvent evUnq(this,VME_SHOW,m_Cloud,true); InvokeEvent(evUnq);}
 			m_CloudCreatedFlag = true;
 		}
 	}
@@ -304,7 +304,7 @@ void mafOpAddLandmark::OpRun()
 	  m_Guih->Put(m_Gui);
 	
 	  sp->PutOnBottom(m_Guih);
-	  {mafEvent evUnq(this,OP_SHOW_GUI,(wxWindow *)m_GuiPanel); mafEventMacro(evUnq);}
+	  {mafEvent evUnq(this,OP_SHOW_GUI,(wxWindow *)m_GuiPanel); InvokeEvent(evUnq);}
   }
 
 }
@@ -374,7 +374,7 @@ void mafOpAddLandmark::OnEvent(mafEventBase *maf_event)
 		    {
 			    SetLandmarkPos(landmark, m_LandmarkPosition[0], m_LandmarkPosition[1], m_LandmarkPosition[2], 0, 0, 0);
 			    m_Gui->Update();
-			    {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+			    {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 		    }
       }
       break;
@@ -414,7 +414,7 @@ void mafOpAddLandmark::OnEvent(mafEventBase *maf_event)
       }
       break;
       default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       break; 
     }
   }
@@ -432,7 +432,7 @@ void mafOpAddLandmark::OpStop(int result)
 {
 	if(m_PickingActiveFlag == true)
   {
-		{mafEvent evUnq(this,OP_HIDE_GUI,(wxWindow *)m_GuiPanel); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this,OP_HIDE_GUI,(wxWindow *)m_GuiPanel); InvokeEvent(evUnq);}
 		cppDEL(m_Dict);
 		cppDEL(m_GuiPanel);
     mafDEL(m_LandmarkPicker);
@@ -443,7 +443,7 @@ void mafOpAddLandmark::OpStop(int result)
 	  HideGui();
 	}
 
-	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpAddLandmark::AddLandmark(double pos[3])
@@ -470,8 +470,8 @@ void mafOpAddLandmark::AddLandmark(double pos[3])
   else
     SetLandmarkPos(landmark.get(), m_LandmarkPosition[0], m_LandmarkPosition[1], m_LandmarkPosition[2], 0, 0, 0, 0);
 
-  {mafEvent evUnq(this,VME_SHOW,landmark.get(),true); mafEventMacro(evUnq);}
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW,landmark.get(),true); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 
   m_LandmarkAdded.push_back(landmark.get());
   m_LandmarkAdded[m_LandmarkAdded.size()-1]->Register(NULL);
@@ -499,7 +499,7 @@ void mafOpAddLandmark::AddLandmark()
 		  reparent_result = m_Cloud->ReparentTo(m_Input);
     if (reparent_result == MAF_OK)
     {
-      {mafEvent evUnq(this,VME_SHOW,m_Cloud,true); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,VME_SHOW,m_Cloud,true); InvokeEvent(evUnq);}
     }
   }
   else
@@ -514,7 +514,7 @@ void mafOpAddLandmark::AddLandmark()
       reparent_result = m_LandmarkAdded[l]->ReparentTo(m_Cloud);
       if (reparent_result == MAF_OK)
       {
-        {mafEvent evUnq(this,VME_SHOW,m_LandmarkAdded[l],true); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,VME_SHOW,m_LandmarkAdded[l],true); InvokeEvent(evUnq);}
       }
     }
     if (!cloud_was_open)
@@ -522,7 +522,7 @@ void mafOpAddLandmark::AddLandmark()
       m_Cloud->Close();
     }
   }
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpAddLandmark::RemoveLandmark()
@@ -530,14 +530,14 @@ void mafOpAddLandmark::RemoveLandmark()
 {
   if(m_CloudCreatedFlag)
   {
-    {mafEvent evUnq(this,VME_REMOVE,m_Cloud); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,VME_REMOVE,m_Cloud); InvokeEvent(evUnq);}
   }
   else
   {
     for (int l=0; l < m_LandmarkAdded.size(); l++)
     {
-      {mafEvent evUnq(this,VME_REMOVE,m_LandmarkAdded[l]); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,VME_REMOVE,m_LandmarkAdded[l]); InvokeEvent(evUnq);}
     }
   }
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }

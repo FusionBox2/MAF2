@@ -113,7 +113,7 @@ void medOpMergeDicomSeries::OpRun()
         m_ChangeManufacturer = wxMessageBox("Would you like to set manufacturer as INVALID?","Question:",wxYES_NO);
         if( m_DicomSeriesInstanceUID == -1)
         {
-          {mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);} 
+          {mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);} 
           return;
         }
         // call the "renaming" function
@@ -121,7 +121,7 @@ void medOpMergeDicomSeries::OpRun()
 			}
 			else
 			{
-				{mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);} 
+				{mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);} 
 				return;
 			}
 
@@ -133,7 +133,7 @@ void medOpMergeDicomSeries::OpRun()
 		}
 	} while(!result);
 
-  {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);} 
+  {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);} 
   
 }
 //----------------------------------------------------------------------------
@@ -170,7 +170,7 @@ bool medOpMergeDicomSeries::RenameSeriesAndManufacturer(const mafString& dicomDi
 
   if (!this->m_TestMode)
   {
-    {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
   }
 
   int i = -1;
@@ -269,13 +269,13 @@ bool medOpMergeDicomSeries::RenameSeriesAndManufacturer(const mafString& dicomDi
       status = dicomImg.saveFile(currentSliceABSFileName.toStd().c_str());
 
       mafLogMessage(_M(_R("Modified file ") + currentSliceABSFileName));
-      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,intptr_t((double(i)/double(m_DICOMDirectoryReader->GetNumberOfFiles()))*100)); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,intptr_t((double(i)/double(m_DICOMDirectoryReader->GetNumberOfFiles()))*100)); InvokeEvent(evUnq);}
 
     }  
   }
   if (!this->m_TestMode)
   {
-    {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
   }
   delete busyInfo;
 	return !errorOccurred;

@@ -948,7 +948,7 @@ void mafGUIDialogTransferFunction2D::OnEvent(mafEventBase *maf_event)
     case ID_GUI_UPDATE:
     break;
     default:
-      mafEventMacro(*maf_event);
+      InvokeEvent(*maf_event);
     break; 
   }
 }

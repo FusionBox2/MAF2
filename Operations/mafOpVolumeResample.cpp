@@ -94,7 +94,7 @@ bool mafOpVolumeResample::Accept(mafNode* vme)
 //----------------------------------------------------------------------------
 {
 	mafEvent e(this,VIEW_SELECTED);
-	mafEventMacro(e);
+	InvokeEvent(e);
   return (vme && vme->IsMAFType(mafVMEVolumeGray) /*&& e.GetBool()*/);
 }
 //----------------------------------------------------------------------------
@@ -221,7 +221,7 @@ void mafOpVolumeResample::CreateGizmoCube()
   m_ResampleBoxVme->GetMaterial()->m_Diffuse[2] = 0;
   m_ResampleBoxVme->GetMaterial()->UpdateProp();
   m_ResampleBoxVme->ReparentTo((mafVME *)m_Input->GetRoot());
-	{mafEvent evUnq(this,VME_SHOW,m_ResampleBoxVme,true); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW,m_ResampleBoxVme,true); InvokeEvent(evUnq);}
   
   UpdateGizmoData();
   AutoSpacing();
@@ -269,7 +269,7 @@ void mafOpVolumeResample::GizmoDelete()
   m_ResampleBoxVme->ReparentTo(NULL);
   vtkDEL(m_ResampleBox);
   mafDEL(m_ResampleBoxVme);
-	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 mafOp *mafOpVolumeResample::Copy()
@@ -285,7 +285,7 @@ void mafOpVolumeResample::OpRun()
 	CreateGizmoCube();
 	if(!this->m_TestMode)
 		CreateGui();
-	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpVolumeResample::OpDo()
@@ -541,7 +541,7 @@ void mafOpVolumeResample::OnEvent(mafEventBase *maf_event)
       case ID_VOLUME_DIR_Y:
       case ID_VOLUME_DIR_Z:
         UpdateGizmoData();
-        {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 				break;
       case ID_VOLUME_SPACING:
       break;
@@ -549,19 +549,19 @@ void mafOpVolumeResample::OnEvent(mafEventBase *maf_event)
         SetBoundsToVMEBounds();
         UpdateGizmoData();
         UpdateGui();
-        {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
       break;
       case ID_VOLUME_4DBOUNDS:
         SetBoundsToVME4DBounds();
         UpdateGizmoData();
         UpdateGui();
-        {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
       break;
       case ID_VOLUME_VMELOCALBOUNDS:
         SetBoundsToVMELocalBounds();
         UpdateGizmoData();
         UpdateGui();
-        {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
       break;
       case ID_VOLUME_AUTOSPACING:
         AutoSpacing();
@@ -571,12 +571,12 @@ void mafOpVolumeResample::OnEvent(mafEventBase *maf_event)
 				Resample();
         GizmoDelete();
         HideGui();
-        {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
       break;
       case wxCANCEL:
         GizmoDelete();
         HideGui();
-        {mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);}		
+        {mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);}		
       break;
 
       /*		case MOUSE_MOVE:
@@ -587,7 +587,7 @@ void mafOpVolumeResample::OnEvent(mafEventBase *maf_event)
       p->GetPoint(0,pos);
       UpdateGizmo(handle_id, pos);
       UpdateGui();
-      {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 
       }
       break;
@@ -598,7 +598,7 @@ void mafOpVolumeResample::OnEvent(mafEventBase *maf_event)
       }
       */
       default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       break;
     }	
   }

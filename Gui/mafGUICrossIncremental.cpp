@@ -295,7 +295,7 @@ void mafGUICrossIncremental::OnEvent(mafEventBase *maf_event)
     if(eventId != ID_COMBO_ENTRY)
     {
 		  e->SetId(GetId());
-		  mafEventMacro(*e);
+		  InvokeEvent(*e);
     }
   }
 }

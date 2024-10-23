@@ -560,7 +560,7 @@ void medOpSegmentation::OpUndo()
 //     m_SegmentatedVolume->ReparentTo(NULL);
 //     mafDEL(m_SegmentatedVolume);
 //   }
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpSegmentation::RemoveVMEs()
@@ -625,7 +625,7 @@ void medOpSegmentation::OpStop(int result)
   ResetRefinementUndoList();
   ResetRefinementRedoList();
 
-  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpSegmentation::CreateOpDialog()
@@ -2768,7 +2768,7 @@ void medOpSegmentation::OnEvent(mafEventBase *maf_event)
           m_ColorLUT->SetTableRange(low,hi);
           m_View->SetLut(m_Input,m_ColorLUT);
           m_View->CameraUpdate();
-          //{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+          //{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
         }
         else if(e->GetSender() == m_AutomaticRangeSlider)
         {
@@ -3326,7 +3326,7 @@ void medOpSegmentation::OnAutomaticSegmentationEvent(mafEvent *e)
     }
     break;
   default:
-    mafEventMacro(*e);
+    InvokeEvent(*e);
   }
 
 }
@@ -3578,7 +3578,7 @@ void medOpSegmentation::OnManualSegmentationEvent(mafEvent *e)
       break;
     }
    default:
-    mafEventMacro(*e);
+    InvokeEvent(*e);
   }
   m_GuiDialog->SetFocusIgnoringChildren();
 }
@@ -3595,7 +3595,7 @@ void medOpSegmentation::OnLoadSegmentationEvent(mafEvent *e)
       mafEvent e(this,VME_CHOOSE);
       e.SetString(&title);
       e.SetArg((intptr_t)(&medOpSegmentation::SegmentedVolumeAccept));
-      mafEventMacro(e);
+      InvokeEvent(e);
       mafVME *vme = (mafVME *)e.GetVme();
       mafVMEVolumeGray *newVolume = mafVMEVolumeGray::SafeDownCast(vme);
 
@@ -3771,7 +3771,7 @@ void medOpSegmentation::OnRefinementSegmentationEvent(mafEvent *e)
     }
     break;
   default:
-    mafEventMacro(*e);
+    InvokeEvent(*e);
   }
 
 }

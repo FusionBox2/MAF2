@@ -83,7 +83,7 @@ mafLogicWithGUI::mafLogicWithGUI()
         //if (answere == wxYES)
         {
           // Clear UnDo stack to gain memory.
-          //{mafEvent evUnq(this, CLEAR_UNDO_STACK); mafEventMacro(evUnq);}
+          //{mafEvent evUnq(this, CLEAR_UNDO_STACK); InvokeEvent(evUnq);}
         }
       }
 #endif

@@ -99,7 +99,7 @@ void mafGUIMeasureUnitSettings::OnEvent(mafEventBase *maf_event)
       m_Gui->Update();
     break;
     default:
-      mafEventMacro(*maf_event);
+      InvokeEvent(*maf_event);
     break; 
     if (m_ScaleFactor == 0.0) 
     {
@@ -110,7 +110,7 @@ void mafGUIMeasureUnitSettings::OnEvent(mafEventBase *maf_event)
   m_Config->Write("DataUnitName",m_DataUnitName.toWx());
   m_Config->Write("ScaleFactor",m_ScaleFactor);
   m_Config->Flush();
-  {mafEvent evUnq(this,MEASURE_UNIT_UPDATED); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,MEASURE_UNIT_UPDATED); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGUIMeasureUnitSettings::InitializeSettings()

@@ -171,7 +171,7 @@ void mafInteractor2DIndicator::OnLeftButtonDown(mafEventInteraction *e)
   double pos_2d[2];
   e->Get2DPosition(pos_2d);
   
-  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 
   if(m_EndMeasure)
   { 
@@ -468,7 +468,7 @@ void mafInteractor2DIndicator::DrawMeasureTool(double x, double y)
 
     m_RegisterMeasure = true;
 
-    {mafEvent evUnq(this,ID_RESULT_INDICATOR,true); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,ID_RESULT_INDICATOR,true); InvokeEvent(evUnq);}
     //delete temporary measure
     m_CurrentRenderer->RemoveActor2D(m_LineActor);
     m_CurrentRenderer->RemoveActor2D(m_LineActor2);
@@ -526,7 +526,7 @@ void mafInteractor2DIndicator::UndoMeasure()
     m_RendererVector[m_RendererVector.size()-1]->GetRenderWindow()->Render();
     m_RendererVector.pop_back();
       
-    {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
 }
 //----------------------------------------------------------------------------

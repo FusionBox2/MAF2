@@ -238,7 +238,7 @@ void medOpSplitSurface::OnEventThis(mafEventBase *maf_event)
         e->SetArg((intptr_t)&medOpSplitSurface::SurfaceAccept);
 				e->SetString(&title);
 				e->SetId(VME_CHOOSE);
-				mafEventMacro(*e);
+				InvokeEvent(*e);
 				m_ClipperVME = mafVMESurface::SafeDownCast(e->GetVme());
 				if(m_ClipperVME == NULL)
 					return;
@@ -249,7 +249,7 @@ void medOpSplitSurface::OnEventThis(mafEventBase *maf_event)
 			if(m_Arrow) 
 			{
 				m_Arrow->SetScaleFactor(-1 * m_Arrow->GetScaleFactor());
-				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
 			break;
 		case ID_CLIP_BY:
@@ -272,7 +272,7 @@ void medOpSplitSurface::OnEventThis(mafEventBase *maf_event)
 					m_PlaneSource->SetPoint2(-m_PlaneWidth/2, m_PlaneHeight/2, 0);
 					m_PlaneSource->SetOrigin(-m_PlaneWidth/2,-m_PlaneHeight/2, 0);
 					m_PlaneSource->Update();
-					{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+					{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 				}
 			}
 			break;
@@ -303,14 +303,14 @@ void medOpSplitSurface::OnEventThis(mafEventBase *maf_event)
 				else
 					OpStop(OP_RUN_OK);
 
-				{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
 			break;
 		case wxCANCEL:
 			OpStop(OP_RUN_CANCEL);
 			break;
 		default:
-			mafEventMacro(*e);
+			InvokeEvent(*e);
 			break; 
 		}
 	}
@@ -368,7 +368,7 @@ void medOpSplitSurface::OnEventGizmoTranslate(mafEventBase *maf_event)
 
 	default:
 		{
-			mafEventMacro(*maf_event);
+			InvokeEvent(*maf_event);
 		}
 	}
 }
@@ -388,7 +388,7 @@ void medOpSplitSurface::OnEventGizmoRotate(mafEventBase *maf_event)
 
 	default:
 		{
-			mafEventMacro(*maf_event);
+			InvokeEvent(*maf_event);
 		}
 	}
 }
@@ -400,13 +400,13 @@ void medOpSplitSurface::OnEventGizmoScale(mafEventBase *maf_event)
 	{
 	case ID_TRANSFORM:
 		{ 
-			{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+			{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 		}
 		break;
 
 	default:
 		{
-			mafEventMacro(*maf_event);
+			InvokeEvent(*maf_event);
 		}
 	}
 }
@@ -434,13 +434,13 @@ void medOpSplitSurface::OnEventGizmoPlane(mafEventBase *maf_event)
 				m_ImplicitPlaneGizmo->SetAbsMatrix(newAbsMatr);
 				UpdateISARefSys();
 
-				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 				currTr->Delete();
 			}
 			break;
 		default:
 			{
-				mafEventMacro(*maf_event);
+				InvokeEvent(*maf_event);
 			}
 		}
 	}
@@ -502,7 +502,7 @@ void medOpSplitSurface::ChangeGizmo()
 		m_GizmoRotate->Show(false);
 		m_GizmoScale->Show(false);
 	}
-	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpSplitSurface::OpStop(int result)
@@ -526,7 +526,7 @@ void medOpSplitSurface::OpStop(int result)
 	cppDEL(m_GizmoScale);
 
   HideGui();
-  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpSplitSurface::OpDo()
@@ -553,7 +553,7 @@ void medOpSplitSurface::OpDo()
 
 		m_ClippedVME->ReparentTo(m_Input->GetParent());
 	}
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpSplitSurface::OpUndo()
@@ -565,7 +565,7 @@ void medOpSplitSurface::OpUndo()
 		m_ClippedVME->ReparentTo(NULL);
 		mafDEL(m_ClippedVME);
 	}
-	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 int medOpSplitSurface::Clip()
@@ -682,7 +682,7 @@ void medOpSplitSurface::PostMultiplyEventMatrix(mafEventBase *maf_event)
 			// update matrix for OpDo()
 			//m_NewAbsMatrix = absPose;
 		} 
-		{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 
 		// clean up
 		tr->Delete();
@@ -749,7 +749,7 @@ void medOpSplitSurface::ShowClipPlane(bool show)
 
       m_ImplicitPlaneGizmo->SetAbsMatrix(mat);
 
-      {mafEvent evUnq(this,VME_SHOW,m_ImplicitPlaneGizmo,true); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,VME_SHOW,m_ImplicitPlaneGizmo,true); InvokeEvent(evUnq);}
     }
     auto material = m_ImplicitPlaneGizmo->GetMaterial();
     material->m_Prop->SetOpacity(0.5);
@@ -773,7 +773,7 @@ void medOpSplitSurface::ShowClipPlane(bool show)
     }
   }
 
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpSplitSurface::AttachInteraction()

@@ -121,7 +121,7 @@ void mafGUILutSwatch::OnLeftMouseButtonDown(wxMouseEvent &event)
   }
 
   //notify the user
-  {mafEvent evUnq(this,GetId()); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,GetId()); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGUILutSwatch::OnLeftMouseButtonUp(wxMouseEvent &event)

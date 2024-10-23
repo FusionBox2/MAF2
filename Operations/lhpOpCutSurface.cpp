@@ -122,7 +122,7 @@ void lhpOpCutSurface::OnEvent(mafEventBase *maf_event)
     {
       mafString s(_R("Choose cutting surface"));
       mafEvent e(this,VME_CHOOSE, &s);
-      mafEventMacro(e);
+      InvokeEvent(e);
       if(e.GetVme() == NULL)
       {
         return;
@@ -146,7 +146,7 @@ void lhpOpCutSurface::OnEvent(mafEventBase *maf_event)
     break;
   default:
     {
-      mafEventMacro(*maf_event); 
+      InvokeEvent(*maf_event); 
     }
     break;
   }
@@ -347,7 +347,7 @@ void lhpOpCutSurface::OpStop(int result)
 
   vtkDEL(output);
 
-  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -381,7 +381,7 @@ void lhpOpCutSurface::OpDo()
   {
     m_OutSurface->ReparentTo(m_Input->GetRoot());
   }
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -392,5 +392,5 @@ void lhpOpCutSurface::OpUndo()
   {
     m_OutSurface->ReparentTo(NULL);
   }
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }

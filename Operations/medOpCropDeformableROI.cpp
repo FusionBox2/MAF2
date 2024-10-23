@@ -117,7 +117,7 @@ void medOpCropDeformableROI::OpDo()
 void medOpCropDeformableROI::OpUndo()
 //----------------------------------------------------------------------------
 {
-	{mafEvent evUnq(this,VME_REMOVE,m_ResultVme); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,VME_REMOVE,m_ResultVme); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpCropDeformableROI::OnEvent(mafEventBase *maf_event)
@@ -144,7 +144,7 @@ void medOpCropDeformableROI::OpStop(int result)
 //----------------------------------------------------------------------------
 {
 	HideGui();
-	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}        
+	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}        
 }
 //----------------------------------------------------------------------------
 void medOpCropDeformableROI::Algorithm(mafVME *vme)
@@ -227,7 +227,7 @@ void medOpCropDeformableROI::Algorithm(mafVME *vme)
 		m_MaskPolydataFilter->SetFillValue(m_FillValue);
 		m_MaskPolydataFilter->SetInsideOut(m_InsideOut);
 		m_MaskPolydataFilter->SetMask(transformedMaskPolydata);
-    {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,m_MaskPolydataFilter); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,m_MaskPolydataFilter); InvokeEvent(evUnq);}
 		m_MaskPolydataFilter->Update();
 
 		if(vtkRectilinearGrid::SafeDownCast(m_MaskPolydataFilter->GetOutput()))
@@ -271,7 +271,7 @@ void medOpCropDeformableROI::MaskSelection()
 	e->SetId(VME_CHOOSE);
 	e->SetArg((intptr_t)&medOpCropDeformableROI::OutputSurfaceAccept);
 	e->SetString(&title);
-	mafEventMacro(*e);
+	InvokeEvent(*e);
 	m_PNode = e->GetVme();
 	delete e;
 }

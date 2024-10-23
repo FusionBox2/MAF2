@@ -275,7 +275,7 @@ void medGizmoCrossRotateFan::OnEvent(mafEventBase *maf_event)
 
           // change the sender and forward the event
           e->SetSender(this);
-          mafEventMacro(*e);
+          InvokeEvent(*e);
         }
         else if (e->GetArg() == mafInteractorGenericMouse::MOUSE_MOVE)
         {
@@ -318,7 +318,7 @@ void medGizmoCrossRotateFan::OnEvent(mafEventBase *maf_event)
           // change the sender and forward the event
           e->SetSender(this);
           
-          mafEventMacro(*e);
+          InvokeEvent(*e);
         }
         else if (e->GetArg() == mafInteractorGenericMouse::MOUSE_UP)
         {
@@ -332,13 +332,13 @@ void medGizmoCrossRotateFan::OnEvent(mafEventBase *maf_event)
 
           // change the sender and forward the event
           e->SetSender(this);
-          mafEventMacro(*e);
+          InvokeEvent(*e);
         }
       }
       break;
       default:
       {
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       }
     }
   }
@@ -365,7 +365,7 @@ void medGizmoCrossRotateFan::SetColor(double colR, double colG, double colB)
 void medGizmoCrossRotateFan::Show(bool show)
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this,VME_SHOW,m_Gizmo,show); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW,m_Gizmo,show); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 double medGizmoCrossRotateFan::PointPickedToStartTheta(double xp, double yp, double zp)

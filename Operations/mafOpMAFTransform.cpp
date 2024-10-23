@@ -107,7 +107,7 @@ bool mafOpMAFTransform::Accept(mafNode* vme)
 //----------------------------------------------------------------------------
 {
 	mafEvent e(this,VIEW_SELECTED);
-	mafEventMacro(e);
+	InvokeEvent(e);
 	return (vme!=NULL && vme->IsMAFType(mafVME) && !vme->IsA("mafVMERoot") && !vme->IsA("mafVMEExternalData") /*&& e.GetBool()*/);
 }
 //----------------------------------------------------------------------------
@@ -170,17 +170,17 @@ void mafOpMAFTransform::OnEvent(mafEventBase *maf_event)
   else if (maf_event->GetSender() == this->m_GuiSaveRestorePose) // from save/restore gui
   {
     OnEventGuiSaveRestorePose(maf_event); 
-		{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
   else if (maf_event->GetSender() == this->m_GuiTransformTextEntries)
   {
     OnEventGuiTransformTextEntries(maf_event);
-		{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
   else
   {
     // if no one can handle this event send it to the operation listener
-    mafEventMacro(*maf_event); 
+    InvokeEvent(*maf_event); 
   }	
 }
 	  
@@ -197,7 +197,7 @@ void mafOpMAFTransform::OpUndo()
 	((mafVME *)m_Input)->SetAbsMatrix(m_OldAbsMatrix);
   ((mafVME *)m_Input)->GetOutput()->Update();
 
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);} 
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);} 
 }
 //----------------------------------------------------------------------------
 void mafOpMAFTransform::OpStop(int result)
@@ -219,8 +219,8 @@ void mafOpMAFTransform::OpStop(int result)
 
   // HideGui seems not to work  with plugged guis :(; using it generate a SetFocusToChild
   // error when operation tab is selected after the operation has ended
-  {mafEvent evUnq(this,OP_HIDE_GUI,(wxWindow *)m_Gui->GetParent()); mafEventMacro(evUnq);}
-  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}  
+  {mafEvent evUnq(this,OP_HIDE_GUI,(wxWindow *)m_Gui->GetParent()); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,result); InvokeEvent(evUnq);}  
 }
 
 //----------------------------------------------------------------------------
@@ -228,7 +228,7 @@ void mafOpMAFTransform::OnEventThis(mafEventBase *maf_event)
 //----------------------------------------------------------------------------
 {
   mafEvent e(this,VIEW_SELECTED);
-  mafEventMacro(e);
+  InvokeEvent(e);
 
   switch(maf_event->GetId())
 	{
@@ -274,7 +274,7 @@ void mafOpMAFTransform::OnEventThis(mafEventBase *maf_event)
           m_GizmoScale->Show(true && e.GetBool());
         }
       }
-      {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
     }
     break;
     
@@ -301,7 +301,7 @@ void mafOpMAFTransform::OnEventThis(mafEventBase *maf_event)
         m_GizmoScale->SetRefSys(m_RefSysVME);
         m_GizmoScale->Show(true && e.GetBool());
       }
-      {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
     }
     break;
 
@@ -352,7 +352,7 @@ void mafOpMAFTransform::OnEventThis(mafEventBase *maf_event)
       mafString s;
       s += _R("Choose VME ref sys");
 			mafEvent e(this,VME_CHOOSE, &s);
-			mafEventMacro(e);
+			InvokeEvent(e);
       SetRefSysVME(mafVME::SafeDownCast(e.GetVme()));
     }
     break;
@@ -374,7 +374,7 @@ void mafOpMAFTransform::OnEventThis(mafEventBase *maf_event)
 
     default:
     {
-      mafEventMacro(*maf_event);
+      InvokeEvent(*maf_event);
     }
     break;
   }
@@ -402,7 +402,7 @@ void mafOpMAFTransform::OnEventGizmoTranslate(mafEventBase *maf_event)
   
     default:
     {
-      mafEventMacro(*maf_event);
+      InvokeEvent(*maf_event);
     }
   }
 }
@@ -430,7 +430,7 @@ void mafOpMAFTransform::OnEventGizmoRotate(mafEventBase *maf_event)
 
     default:
     {
-      mafEventMacro(*maf_event);
+      InvokeEvent(*maf_event);
     }
   }
 }
@@ -448,14 +448,14 @@ void mafOpMAFTransform::OnEventGizmoScale(mafEventBase *maf_event)
       {
 	      // update gui 
 	      m_GuiTransformTextEntries->SetAbsPose(m_NewAbsMatrix);
-	      {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+	      {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
       }
 	  }
     break;
 
     default:
     {
-      mafEventMacro(*maf_event);
+      InvokeEvent(*maf_event);
     }
   }
 }
@@ -485,7 +485,7 @@ void mafOpMAFTransform::OnEventGuiTransform(mafEventBase *maf_event)
     break;
     default:
     {
-      mafEventMacro(*maf_event);
+      InvokeEvent(*maf_event);
     }
   }
 }             
@@ -512,7 +512,7 @@ void mafOpMAFTransform::OnEventGuiSaveRestorePose(mafEventBase *maf_event)
     break;
     default:
     {
-      mafEventMacro(*maf_event);
+      InvokeEvent(*maf_event);
     }
   }
 }
@@ -546,7 +546,7 @@ void mafOpMAFTransform::OnEventGuiTransformTextEntries(mafEventBase *maf_event)
       break;
       default:
       {
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       }
     }
   }
@@ -680,7 +680,7 @@ void mafOpMAFTransform::Reset()
     SetRefSysVME(mafVME::SafeDownCast(m_Input)); 
   }
   m_NewAbsMatrix = m_OldAbsMatrix;
-  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------

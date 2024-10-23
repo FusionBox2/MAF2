@@ -76,7 +76,7 @@ void mafOpCreateEllipsoid::OpRun()
 	
 	m_Ellipsoid->SetName(_R("Ellipsoid"));
 	m_Output = m_Ellipsoid;
-  {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
   
 }
 //----------------------------------------------------------------------------

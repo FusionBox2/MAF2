@@ -104,7 +104,7 @@ void mafOpTransformInterface::PostMultiplyEventMatrix(mafEventBase *maf_event)
       // update matrix for OpDo()
       m_NewAbsMatrix = absPose;
     } 
-    {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 
     // clean up
     tr->Delete();
@@ -195,7 +195,7 @@ void mafOpTransformInterface::OpDo()
         wxBusyInfo wait(progress_string.c_str());
       }
 
-      {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,tPDF.GetPointer()); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,tPDF.GetPointer()); InvokeEvent(evUnq);}
       tPDF->Update();
 
       ((mafVMEGeneric *)m_Input)->SetData(tPDF->GetOutput(),((mafVME *)m_Input)->GetTimeStamp());
@@ -216,7 +216,7 @@ void mafOpTransformInterface::OpDo()
       wxString progress_string("Applying scaling to data...");
       wxBusyInfo wait(progress_string.c_str());
 
-      {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,tf.GetPointer()); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,tf.GetPointer()); InvokeEvent(evUnq);}
       tf->Update();
 
       ((mafVMEGeneric *)m_Input)->SetData(tf->GetOutput(),((mafVME *)m_Input)->GetTimeStamp());
@@ -255,7 +255,7 @@ void mafOpTransformInterface::OpDo()
   
       //mafProgressBarShowMacro();
       //mafProgressBarSetTextMacro("Applying scaling to data...");
-      //{mafEvent evUnq(this,PROGRESSBAR_SET_TEXT,&mafString("transform")); mafEventMacro(evUnq);}
+      //{mafEvent evUnq(this,PROGRESSBAR_SET_TEXT,&mafString("transform")); InvokeEvent(evUnq);}
       long progress = 0;
 
       vtkRectilinearGrid *currentRG = vtkRectilinearGrid::SafeDownCast(((mafVME *)m_Input)->GetOutput()->GetVTKData());
@@ -277,7 +277,7 @@ void mafOpTransformInterface::OpDo()
         }
 
         progress = (arrayId + 1) * 100 / 3;
-        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); InvokeEvent(evUnq);}
         //mafProgressBarSetValueMacro(progress);
       }
       
@@ -292,7 +292,7 @@ void mafOpTransformInterface::OpDo()
   
   ((mafVME *)m_Input)->GetOutput()->Update();
 
-  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -305,6 +305,6 @@ void mafOpTransformInterface::SetRefSysVME(mafVME* refSysVME)
 
   m_RefSysVME = refSysVME;
   RefSysVmeChanged();
-  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 
 }

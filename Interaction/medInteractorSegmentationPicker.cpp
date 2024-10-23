@@ -160,7 +160,7 @@ void medInteractorSegmentationPicker::SendPickingInformation(mafView *v, double 
         int pid = vtk_data->FindPoint(pos_picked);
         mafEvent pick_event(this,msg_id,p);
         pick_event.SetArg(pid);
-        mafEventMacro(pick_event);
+        InvokeEvent(pick_event);
         p->Delete();
       }
     }

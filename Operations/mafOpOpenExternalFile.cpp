@@ -76,7 +76,7 @@ void mafOpOpenExternalFile::OpRun()
 	if (filetype == NULL)
   {
 		wxMessageBox("Don't know how to handle this type of file");
-		{mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);}
 		return;
 	}
 	
@@ -88,13 +88,13 @@ void mafOpOpenExternalFile::OpRun()
     mafLogMessage( _M(_R("Executing command: '") + mafWxToString(command2execute) + _R("'")) );
 		m_Pid = wxExecute(command2execute); //,FALSE
 		cppDEL(filetype);
-		{mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
 	}
 	else
 	{
 		wxMessageBox("Don't know how to handle this type of file");
 		cppDEL(filetype);
-		{mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);}
 	}	
 }
 //----------------------------------------------------------------------------

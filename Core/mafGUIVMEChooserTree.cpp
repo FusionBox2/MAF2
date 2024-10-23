@@ -283,7 +283,7 @@ void mafGUIVMEChooserTree::OnSelectionChanged(wxTreeEvent& event)
     {
       enable_ok = status != NODE_NON_VISIBLE;
     }
-    {mafEvent evUnq(this,VME_SELECTED, enable_ok); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,VME_SELECTED, enable_ok); InvokeEvent(evUnq);}
   }
 }
 //----------------------------------------------------------------------------
@@ -294,7 +294,7 @@ void mafGUIVMEChooserTree::OnIconClick(wxTreeItemId item)
   VmeUpdateIcon(vme);
 
   bool enable_ok = GetChoosedNode().size() > 0;
-  {mafEvent evUnq(this,VME_SELECTED, enable_ok); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_SELECTED, enable_ok); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGUIVMEChooserTree::ShowContextualMenu(wxMouseEvent& event)

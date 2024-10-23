@@ -75,7 +75,7 @@ void medOpCreateLabeledVolume::OpRun()
   
   m_Output = m_LabeledVolume;
   m_LabeledVolume->SetVolumeLink(m_Input);
-  {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpCreateLabeledVolume::OpDo()

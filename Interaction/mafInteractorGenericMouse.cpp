@@ -847,7 +847,7 @@ void mafInteractorGenericMouse::SendTransformMatrix(const mafMatrix &matrix, int
     
   }  
 
-  mafEventMacro(e);
+  InvokeEvent(e);
 
   // this code is used by some vertical applications...
   // cannot remove since this will impact on 
@@ -881,7 +881,7 @@ void mafInteractorGenericMouse::SendTransformMatrix(const mafMatrix &matrix, int
     event.SetId(mafDeviceButtonsPadMouse::GetMouse2DMoveId());
   }
 
-  mafEventMacro(event);
+  InvokeEvent(event);
 }
 
 //----------------------------------------------------------------------------

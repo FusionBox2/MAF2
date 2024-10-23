@@ -215,7 +215,7 @@ void medOpComputeInertialTensor::OnEvent(mafEventBase *maf_event)
 			mafString operationLabel = GetLabel();
 			helpEvent.SetString(&operationLabel);
 			helpEvent.SetId(OPEN_HELP_PAGE);
-			mafEventMacro(helpEvent);
+			InvokeEvent(helpEvent);
 		}
 		break;
 
@@ -247,7 +247,7 @@ void medOpComputeInertialTensor::OnEvent(mafEventBase *maf_event)
       }
 			break;
     default:
-      mafEventMacro(*e);
+      InvokeEvent(*e);
       break;
 		}
 	}
@@ -315,7 +315,7 @@ void medOpComputeInertialTensor::OpStop(int result)
 //----------------------------------------------------------------------------
 {
   HideGui();
-  {mafEvent evUnq(this,result); mafEventMacro(evUnq);} 
+  {mafEvent evUnq(this,result); InvokeEvent(evUnq);} 
 }
 //----------------------------------------------------------------------------
 void medOpComputeInertialTensor::CreateGui()
@@ -325,7 +325,7 @@ void medOpComputeInertialTensor::CreateGui()
   mafEvent buildHelpGui;
   buildHelpGui.SetSender(this);
   buildHelpGui.SetId(GET_BUILD_HELP_GUI);
-  mafEventMacro(buildHelpGui);
+  InvokeEvent(buildHelpGui);
 
   if (buildHelpGui.GetArg())
   {
@@ -404,8 +404,8 @@ int medOpComputeInertialTensor::ComputeLocalInertialTensor(mafNode* node, int cu
   {
     wxSetCursor(wxCursor(wxCURSOR_WAIT));
     wait = new wxBusyInfo("Computing inertial tensor components...");
-    {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
-    {mafEvent evUnq(this,PROGRESSBAR_SET_TEXT,&s); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_SET_TEXT,&s); InvokeEvent(evUnq);}
   }
 
   // initialize variables
@@ -495,7 +495,7 @@ int medOpComputeInertialTensor::ComputeLocalInertialTensor(mafNode* node, int cu
 
       if (!m_TestMode)
       {
-        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)(((double) i)/((double) ncells)*100.)); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)(((double) i)/((double) ncells)*100.)); InvokeEvent(evUnq);}
       }
 
     } // end foreach triangle
@@ -525,7 +525,7 @@ int medOpComputeInertialTensor::ComputeLocalInertialTensor(mafNode* node, int cu
 
 	if(!m_TestMode)
 	{
-		{mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 		wxSetCursor(wxCursor(wxCURSOR_DEFAULT));
 		cppDEL(wait);
 	}

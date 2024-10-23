@@ -141,10 +141,10 @@ void mmiInfoImage::OnEvent(mafEventBase *event)
                 vtkDataArray *scalars = data->GetPointData()->GetScalars();
                 //scalars->GetTuple(pid,&iso_value);
                 info += _R("x = ") + mafToString((int)picked_pos[0]) + _R(" y = ") + mafToString((int)picked_pos[1]) + _R(" z = ") + mafToString((int)picked_pos[2]) + _R(" d = ") + mafToString(iso_value);
-                {mafEvent evUnq(this,PROGRESSBAR_SET_TEXT,&info); mafEventMacro(evUnq);}
+                {mafEvent evUnq(this,PROGRESSBAR_SET_TEXT,&info); InvokeEvent(evUnq);}
               }
             }
-            {mafEvent evUnq(this,PROGRESSBAR_SET_TEXT,&info); mafEventMacro(evUnq);}
+            {mafEvent evUnq(this,PROGRESSBAR_SET_TEXT,&info); InvokeEvent(evUnq);}
           }
         }
       }

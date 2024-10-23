@@ -348,7 +348,7 @@ void medGizmoPolylineGraph::DestroyVMEGizmo()
       break;
 
     default:
-      mafEventMacro(*e);
+      InvokeEvent(*e);
       break; 
     }
   }
@@ -360,13 +360,13 @@ void medGizmoPolylineGraph::DestroyVMEGizmo()
 //------------------------------------------------------------------------
 {
   m_CurvilinearAbscissaHelper->MoveOnSkeleton(e);
-  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}      
+  {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}      
 
   // forward isa transform events to the listener op
   // instanciating the gizmo; the sender is changed to "this" so that the operation can check for
   // gizmo sending events
   e->SetSender(this);
-  mafEventMacro(*e);
+  InvokeEvent(*e);
 }
 
 //----------------------------------------------------------------------------
@@ -374,7 +374,7 @@ void medGizmoPolylineGraph::DestroyVMEGizmo()
 //----------------------------------------------------------------------------
 {
   assert(m_VmeGizmo);
-  {mafEvent evUnq(this,VME_SHOW,m_VmeGizmo,show); mafEventMacro(evUnq);}  
+  {mafEvent evUnq(this,VME_SHOW,m_VmeGizmo,show); InvokeEvent(evUnq);}  
 }
 
 //------------------------------------------------------------------------

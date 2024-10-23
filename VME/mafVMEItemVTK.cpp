@@ -356,7 +356,7 @@ int mafVMEItemVTK::InternalRestoreData()
     }
     
     mafEventIO e(this,NODE_GET_STORAGE);
-    mafEventMacro(e);
+    InvokeEvent(e);
     mafStorage *storage = e.GetStorage();
     if(!storage)
       return MAF_WAIT;
@@ -444,7 +444,7 @@ int mafVMEItemVTK::UpdateReader(vtkDataReader *reader, mafString &filename)
 {
   // Progressbar removed to improve vector data loading speed
   // reader->SetProgressText("Loading data...");
-  // {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,reader); mafEventMacro(evUnq);}
+  // {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,reader); InvokeEvent(evUnq);}
   if (m_IOMode != MEMORY)
   {
     if (GetCrypting())
@@ -499,7 +499,7 @@ int mafVMEItemVTK::InternalStoreData(const char *url)
     mafString filename;
           
     mafEventIO e(this,NODE_GET_STORAGE);
-    mafEventMacro(e);
+    InvokeEvent(e);
     mafStorage *storage=e.GetStorage();
     if(!storage)
       return MAF_NO_IO;
@@ -567,7 +567,7 @@ int mafVMEItemVTK::InternalStoreData(const char *url)
       vtkNew<vtkDataSetWriter> writer;
       // Progressbar removed to improve vector data storage speed
       // writer->SetProgressText("Storing data...");
-      // {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,writer); mafEventMacro(evUnq);}
+      // {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,writer); InvokeEvent(evUnq);}
 
       // this is to catch possible I/O errors
       //unsigned long tag=mflAgent::PlugEventSource(writer,mflMSFWriter::ErrorHandler,this,vtkCommand::ErrorEvent);

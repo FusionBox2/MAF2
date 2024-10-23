@@ -72,7 +72,7 @@ void mafOpCreatePlane::OpRun()
 
 	m_Plane->SetName(_R("Plane"));
 	m_Output = m_Plane;
-	{mafEvent evUnq(this, OP_RUN_OK); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this, OP_RUN_OK); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 

@@ -130,7 +130,7 @@ void mafGUICheckTree::ShowContextualMenu(wxMouseEvent& event)
   e.SetArg(m_Autosort);
   if(vmeMenu)
     e.SetVme((mafNode *) (NodeFromItem(i)));
-  mafEventMacro(e);
+  InvokeEvent(e);
 }
 //----------------------------------------------------------------------------
 void mafGUICheckTree::EnableSelect(bool enable)
@@ -199,8 +199,8 @@ void mafGUICheckTree::OnIconClick(wxTreeItemId item)
     {
       return;
     }
-    {mafEvent evUnq(this, VME_SHOW, vme, show); mafEventMacro(evUnq);}
-    {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this, VME_SHOW, vme, show); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
 }
 //----------------------------------------------------------------------------
@@ -462,6 +462,6 @@ void mafGUICheckTree::OnSelectionChanged(wxTreeEvent& event)
 
   i = event.GetItem();
   if(i.IsOk())
-    {mafEvent evUnq(this, VME_SELECT, NodeFromItem(i)); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this, VME_SELECT, NodeFromItem(i)); InvokeEvent(evUnq);}
   event.Skip();
 }

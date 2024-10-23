@@ -322,7 +322,7 @@ void mafPipeVector::OnEvent(mafEventBase *maf_event)
           m_Actor->SetProperty(NULL);
         }
         m_MaterialButton->Enable(m_UseVTKProperty != 0);
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       break;
       case ID_USE_ARROW:
         if (m_UseArrow == FALSE)
@@ -336,7 +336,7 @@ void mafPipeVector::OnEvent(mafEventBase *maf_event)
           m_Apd->AddInputConnection(m_ArrowTip->GetOutputPort());
           m_Apd->Update();
         }
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       break;
       case ID_USE_SPHERE:
         if (m_UseSphere == FALSE)
@@ -350,7 +350,7 @@ void mafPipeVector::OnEvent(mafEventBase *maf_event)
           m_Apd->AddInputConnection(m_Sphere->GetOutputPort());
           m_Apd->Update();
         }
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       break;
       case ID_USE_BUNCH:
         if (m_UseBunch == TRUE)
@@ -366,17 +366,17 @@ void mafPipeVector::OnEvent(mafEventBase *maf_event)
           m_Bunch->RemoveAllInputs();
         }
         EnableWidget();
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       break;
       case ID_INTERVAL:
         m_Bunch->RemoveAllInputs();
         AllVector();
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       break;
       case ID_STEP:
         m_Bunch->RemoveAllInputs();
         AllVector();
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       break;
       case ID_ALL_BUNCH:
         if (m_AllBunch == TRUE)
@@ -393,10 +393,10 @@ void mafPipeVector::OnEvent(mafEventBase *maf_event)
           m_Bunch->RemoveAllInputs();
         }
         EnableWidget();
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       break;
       default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       break;
     }
   }

@@ -506,7 +506,7 @@ void mafOpExporterRAW::OnEvent(mafEventBase *maf_event)
 			break;
 			default:
 			{
-				mafEventMacro(*e); 
+				InvokeEvent(*e); 
 			}
 			break;
 		}
@@ -517,7 +517,7 @@ void mafOpExporterRAW::OpStop(int result)
 //----------------------------------------------------------------------------
 {
 	HideGui();
-  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}	
+  {mafEvent evUnq(this,result); InvokeEvent(evUnq);}	
 }
 //----------------------------------------------------------------------------
 void mafOpExporterRAW::SetSingleFile(int enable)

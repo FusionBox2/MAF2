@@ -69,7 +69,7 @@ mafGUI* mafGUISettings::GetGui()
 void mafGUISettings::OnEvent(mafEventBase *maf_event)
 //----------------------------------------------------------------------------
 {
-  mafEventMacro(*maf_event);
+  InvokeEvent(*maf_event);
   m_Config->Flush();
 }
 //----------------------------------------------------------------------------

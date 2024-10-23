@@ -102,7 +102,7 @@ enum
 };
 
 //----------------------------------------------------------------------------
-void mafOpTest::OpStop(int result) {	HideGui();{mafEvent evUnq(this,result); mafEventMacro(evUnq);}}
+void mafOpTest::OpStop(int result) {	HideGui();{mafEvent evUnq(this,result); InvokeEvent(evUnq);}}
 //----------------------------------------------------------------------------
 void mafOpTest::OnEvent(mafEventBase *event)
 //----------------------------------------------------------------------------
@@ -119,7 +119,7 @@ void mafOpTest::OnEvent(mafEventBase *event)
       break;
       case ID0:
         event->SetId(VME_CHOOSE);
-        mafEventMacro(*e);
+        InvokeEvent(*e);
         wxLogMessage(e->GetVme()->GetName());
       break;
       default:

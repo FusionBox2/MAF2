@@ -145,14 +145,14 @@ void mafOpDecimateSurface::OpDo()
 //----------------------------------------------------------------------------
 {
 	((mafVMESurface *)m_Input)->SetData(m_ResultPolydata,((mafVME *)m_Input)->GetTimeStamp());
-	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpDecimateSurface::OpUndo()
 //----------------------------------------------------------------------------
 {
   ((mafVMESurface *)m_Input)->SetData(m_OriginalPolydata,((mafVME *)m_Input)->GetTimeStamp());
-	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpDecimateSurface::OnEvent(mafEventBase *maf_event)
@@ -172,8 +172,8 @@ void mafOpDecimateSurface::OnEvent(mafEventBase *maf_event)
           else
             surface->GetMaterial()->m_Prop->SetRepresentationToSurface();
 
-          {mafEvent evUnq(this,UPDATE_PROPERTY,m_Input, true); mafEventMacro(evUnq);}
-					{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+          {mafEvent evUnq(this,UPDATE_PROPERTY,m_Input, true); InvokeEvent(evUnq);}
+					{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 
         }
       break;
@@ -206,10 +206,10 @@ void mafOpDecimateSurface::OpStop(int result)
   mafVMESurface *surface;
   surface = mafVMESurface::SafeDownCast(m_Input);
   surface->GetMaterial()->m_Prop->SetRepresentationToSurface();
-  {mafEvent evUnq(this,UPDATE_PROPERTY,m_Input, true); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,UPDATE_PROPERTY,m_Input, true); InvokeEvent(evUnq);}
 
 	HideGui();
-	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpDecimateSurface::OnDecimate()
@@ -268,7 +268,7 @@ void mafOpDecimateSurface::OnPreview()
 	m_ClearInterfaceFlag	= true;
 
 	if(!m_TestMode)
-		{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpDecimateSurface::OnClear()  
@@ -301,5 +301,5 @@ void mafOpDecimateSurface::OnClear()
   
   m_Gui->Update();
 
-	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }

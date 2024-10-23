@@ -74,7 +74,7 @@ public:
     mafNEW(m_Created);
     m_Created->SetName(m_CreatedName);
     m_Output = m_Created;
-    {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
   }
 
 

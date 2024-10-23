@@ -735,27 +735,27 @@ void mafPipeVolumeSlice_BES::OnEvent(mafEventBase *maf_event)
       {
         auto material = m_VolumeOutput->GetMaterial();
         material->UpdateFromTables();
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       }
       break;
       case ID_SLICE_SLIDER_X:
       case ID_SLICE_SLIDER_Y:
       case ID_SLICE_SLIDER_Z:
         SetOrigin(m_Origin);
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       break;
 			case ID_OPACITY_SLIDER:
 				SetSliceOpacity(m_SliceOpacity);
-				{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
         break;
 			break;
       case ID_ENABLE_GPU:
         UpdateSlice();
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
         break;
       case ID_ENABLE_TRILINEAR_INTERPOLATION:
         UpdateSlice();
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
         break;
       default:
       break;
@@ -770,7 +770,7 @@ void mafPipeVolumeSlice_BES::OnEvent(mafEventBase *maf_event)
   }
   else
   {
-    mafEventMacro(*maf_event);
+    InvokeEvent(*maf_event);
   }
 }
 //----------------------------------------------------------------------------
@@ -793,7 +793,7 @@ void mafPipeVolumeSlice_BES::SetColorLookupTable(vtkLookupTable *lut)
     if(m_Texture[i])
       m_Texture[i]->SetLookupTable(m_CustomColorLUT);
   }
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafPipeVolumeSlice_BES::Select(bool sel)

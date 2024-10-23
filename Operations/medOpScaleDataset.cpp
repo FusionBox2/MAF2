@@ -129,11 +129,11 @@ void medOpScaleDataset::OnEvent(mafEventBase *maf_event)
   else if (maf_event->GetSender() == this->m_GuiSaveRestorePose) // from save/restore gui
   {
     OnEventGuiSaveRestorePose(maf_event); 
-		{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
   else
   {
-    mafEventMacro(*maf_event); 
+    InvokeEvent(*maf_event); 
   }	
 }
 	  
@@ -148,7 +148,7 @@ void medOpScaleDataset::OpUndo()
 //----------------------------------------------------------------------------
 {  
 	((mafVME *)m_Input)->SetAbsMatrix(m_OldAbsMatrix);
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);} 
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);} 
 }
 //----------------------------------------------------------------------------
 void medOpScaleDataset::OpStop(int result)
@@ -161,8 +161,8 @@ void medOpScaleDataset::OpStop(int result)
 
   // HideGui seems not to work  with plugged guis :(; using it generate a SetFocusToChild
   // error when operation tab is selected after the operation has ended
-  {mafEvent evUnq(this,OP_HIDE_GUI,(wxWindow *)m_Gui->GetParent()); mafEventMacro(evUnq);}
-  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}  
+  {mafEvent evUnq(this,OP_HIDE_GUI,(wxWindow *)m_Gui->GetParent()); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,result); InvokeEvent(evUnq);}  
 }
 
 //----------------------------------------------------------------------------
@@ -178,7 +178,7 @@ void medOpScaleDataset::OnEventThis(mafEventBase *maf_event)
 		  mafString operationLabel = GetLabel();
 		  helpEvent.SetString(&operationLabel);
 		  helpEvent.SetId(OPEN_HELP_PAGE);
-		  mafEventMacro(helpEvent);
+		  InvokeEvent(helpEvent);
 	  }
 	  break;
 
@@ -207,14 +207,14 @@ void medOpScaleDataset::OnEventThis(mafEventBase *maf_event)
 	{
 		mafString s = _R("Choose VME ref sys");
 		mafEvent e(this,VME_CHOOSE, &s);
-		mafEventMacro(e);
+		InvokeEvent(e);
 		SetRefSysVME(mafVME::SafeDownCast(e.GetVme()));
 	}
 	break;
 
     default:
     {
-      mafEventMacro(*maf_event);
+      InvokeEvent(*maf_event);
     }
     break;
   }
@@ -228,13 +228,13 @@ void medOpScaleDataset::OnEventGizmoScale(mafEventBase *maf_event)
     case ID_TRANSFORM:
   	{ 
       m_NewAbsMatrix = *((mafVME *)m_Input)->GetOutput()->GetAbsMatrix();
-      {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 	  }
     break;
 
     default:
     {
-      mafEventMacro(*maf_event);
+      InvokeEvent(*maf_event);
     }
   }
 }
@@ -253,7 +253,7 @@ void medOpScaleDataset::OnEventGuiSaveRestorePose(mafEventBase *maf_event)
     break;
     default:
     {
-      mafEventMacro(*maf_event);
+      InvokeEvent(*maf_event);
     }
   }
 }
@@ -267,7 +267,7 @@ void medOpScaleDataset::CreateGui()
   mafEvent buildHelpGui;
   buildHelpGui.SetSender(this);
   buildHelpGui.SetId(GET_BUILD_HELP_GUI);
-  mafEventMacro(buildHelpGui);
+  InvokeEvent(buildHelpGui);
 
   if (buildHelpGui.GetArg())
   {
@@ -320,7 +320,7 @@ void medOpScaleDataset::CreateGui()
 	m_GizmoScale->Show(true);
 
 
-	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -329,7 +329,7 @@ void medOpScaleDataset::Reset()
 {
   ((mafVME *)m_Input)->SetAbsMatrix(m_OldAbsMatrix);  
   SetRefSysVME(mafVME::SafeDownCast(m_Input)); 
-  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------

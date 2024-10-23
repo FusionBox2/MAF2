@@ -169,11 +169,11 @@ void medOpExporterVTKXML::OnEvent(mafEventBase *maf_event)
         //trap the VME_ADD of the mafOpCollapse and mafOpExplode to update the
         //m_Input, then forward the message to mafDMLlogicMDI
         this->m_Input = e->GetVme();
-        {mafEvent evUnq(this,VME_ADD,this->m_Input); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,VME_ADD,this->m_Input); InvokeEvent(evUnq);}
       }
       break;
       default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       break;
     }
 	}
@@ -266,20 +266,20 @@ void medOpExporterVTKXML::SaveVTKData()
     writer->SetDataModeToBinary();
   else
     writer->SetDataModeToAscii();
-  //{mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
+  //{mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
 
-  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,writer); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,writer); InvokeEvent(evUnq);}
 
   // workaround code:  this is not working so I'm setting a dummy 50/100 progress value 
-  // {mafEvent evUnq(this,BIND_TO_PROGRESSBAR, writer); mafEventMacro(evUnq);}
+  // {mafEvent evUnq(this,BIND_TO_PROGRESSBAR, writer); InvokeEvent(evUnq);}
   //long dummyProgressValue = 50;
   
-  //{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,dummyProgressValue); mafEventMacro(evUnq);}
+  //{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,dummyProgressValue); InvokeEvent(evUnq);}
 
   writer->SetFileName(m_File.GetCStr());
   writer->Write();
   
-  //{mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
+  //{mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 
   if (busyCursor)
   {

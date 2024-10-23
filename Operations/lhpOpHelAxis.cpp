@@ -82,7 +82,7 @@ void lhpOpHelAxis::OpRun()
   lmc->AppendLandmark(0, 0, -100, _R("PntBck"));
   lmc->ReparentTo(m_HelicalSys);
   mafDEL(lmc);
-  {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);} 
+  {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);} 
 }
 
 

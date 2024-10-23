@@ -1472,7 +1472,7 @@ bool lhpOpRegistration::RegistrationProcedure()
 {
   mafNode *inputCopy = m_Input->CopyTree();
   inputCopy->Register(this);
-  //{mafEvent evUnq(this, VME_ADD, inputCopy); mafEventMacro(evUnq);}
+  //{mafEvent evUnq(this, VME_ADD, inputCopy); InvokeEvent(evUnq);}
   mafVMELandmarkCloud *src = mafVMELandmarkCloud::SafeDownCast(inputCopy);
   mafVMELandmarkCloud *trg = mafVMELandmarkCloud::SafeDownCast(m_RegTarget);
   if(!src || !trg)
@@ -1657,7 +1657,7 @@ void lhpOpRegistration::OpStop(int result)
   if (result == OP_RUN_CANCEL)
   {
     HideGui();
-    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
     return;
   }
   if(m_RegTarget == NULL)
@@ -1669,11 +1669,11 @@ void lhpOpRegistration::OpStop(int result)
   wxBusyInfo wait(_("Please wait, working..."));
   if(RegistrationProcedure())
   {
-    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
   }
   else
   {
-    {mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);}
   }
 }
 
@@ -1714,7 +1714,7 @@ void lhpOpRegistration::OnEvent(mafEventBase *maf_event)
     {
       mafString s(_R("Choose reg data"));
       mafEvent e(this,VME_CHOOSE, &s);
-      mafEventMacro(e);
+      InvokeEvent(e);
       if(e.GetVme() == NULL)
       {
         return;
@@ -1749,7 +1749,7 @@ void lhpOpRegistration::OnEvent(mafEventBase *maf_event)
     }
     default:
     {
-      mafEventMacro(*maf_event); 
+      InvokeEvent(*maf_event); 
     }
     break;
   }
@@ -1762,11 +1762,11 @@ void lhpOpRegistration::OnEvent(mafEventBase *maf_event)
 void lhpOpRegistration::OpDo()
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this, VME_ADD, m_Result); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, VME_ADD, m_Result); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void lhpOpRegistration::OpUndo()
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this, VME_REMOVE, m_Result); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, VME_REMOVE, m_Result); InvokeEvent(evUnq);}
 }

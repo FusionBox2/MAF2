@@ -123,11 +123,11 @@ void mafViewScalar::OnEvent(mafEventBase *maf_event)
     {
       case CAMERA_PRE_RESET:
         OnPreResetCamera();
-        mafEventMacro(*maf_event);
+        InvokeEvent(*maf_event);
       break;
       case CAMERA_POST_RESET:
         OnPostResetCamera();
-        mafEventMacro(*maf_event);
+        InvokeEvent(*maf_event);
       break;
       case ID_ASCII_FILE:
       {
@@ -162,7 +162,7 @@ void mafViewScalar::OnEvent(mafEventBase *maf_event)
   }
   else
   {
-    mafEventMacro(*maf_event);
+    InvokeEvent(*maf_event);
   }
 }
 //----------------------------------------------------------------------------

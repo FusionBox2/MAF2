@@ -317,7 +317,7 @@ void lhpOpKinectAFs::OnEvent(mafEventBase *maf_event)
       SetTypeOfRefs(m_TypeOfRefs);
       break;
     default:
-      mafEventMacro(*maf_event); 
+      InvokeEvent(*maf_event); 
       break;
   }
 }

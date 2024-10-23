@@ -441,7 +441,7 @@ void mafBrickedFileReader::GetBricksExtent(int VOI[6], int inBExt[6], int bndBEx
 		nLRIdxZ += m_NBricksDimSize[1]*m_NVoxelSizeInB)
 	{
 		{mafEvent evUnq(this, PROGRESSBAR_SET_VALUE, (intptr_t)(
-			100*(xyzb[2] - bndBExt[4]) / (bndBExt[5] - bndBExt[4] + 1))); mafEventMacro(evUnq);}
+			100*(xyzb[2] - bndBExt[4]) / (bndBExt[5] - bndBExt[4] + 1))); InvokeEvent(evUnq);}
 
 		//planes from bndBExt[4] to inBExt[4] (exclusively)
 		//and planes from inBExt[5] (exclusively) to bndExt[5]
@@ -574,11 +574,11 @@ void mafBrickedFileReader::GetBricksExtent(int VOI[6], int inBExt[6], int bndBEx
 		return true; //no change
 	}
 
-	{mafEvent evUnq(this, PROGRESSBAR_SHOW, this); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this, PROGRESSBAR_SHOW, this); InvokeEvent(evUnq);}
 
 	mafString szMsg = _L("Retrieving data ...");
-	{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT, &szMsg); mafEventMacro(evUnq);}
-	{mafEvent evUnq(this, PROGRESSBAR_SET_VALUE, (intptr_t)0); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT, &szMsg); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this, PROGRESSBAR_SET_VALUE, (intptr_t)0); InvokeEvent(evUnq);}
 
 	try
 	{
@@ -609,7 +609,7 @@ void mafBrickedFileReader::GetBricksExtent(int VOI[6], int inBExt[6], int bndBEx
 		return false;
 	}
 
-	{mafEvent evUnq(this, PROGRESSBAR_HIDE, this); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this, PROGRESSBAR_HIDE, this); InvokeEvent(evUnq);}
 
 	m_LastUpdateTime.Modified();
 	return true;

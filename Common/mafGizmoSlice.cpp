@@ -454,14 +454,14 @@ void mafGizmoSlice::OnEvent(mafEventBase *maf_event)
 
 				
 				m_Point->SetPoint(0,slicePlaneOrigin);
-				{mafEvent evUnq(this,MOUSE_MOVE, m_Point, m_Id); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this,MOUSE_MOVE, m_Point, m_Id); InvokeEvent(evUnq);}
 
 
       }
       break;
       default:
 				{
-					mafEventMacro(*e);
+					InvokeEvent(*e);
 				}
       break; 
     }
@@ -499,7 +499,7 @@ void mafGizmoSlice::OnEvent(mafEventBase *maf_event)
 		  }
 
 			m_Point->SetPoint(0,slicePlaneOrigin);
-			{mafEvent evUnq(this,MOUSE_UP, m_Point, m_Id); mafEventMacro(evUnq);}
+			{mafEvent evUnq(this,MOUSE_UP, m_Point, m_Id); InvokeEvent(evUnq);}
 		}
 	}
 }
@@ -602,7 +602,7 @@ void mafGizmoSlice::Show(bool show)
 
   // can not use this since it's too slow... this requires destroying and creating
   // the pipeline each time...
-  // {mafEvent evUnq(this,VME_SHOW,m_VmeGizmo,show); mafEventMacro(evUnq);}
+  // {mafEvent evUnq(this,VME_SHOW,m_VmeGizmo,show); InvokeEvent(evUnq);}
   
   // ... instead I am using vtk opacity to speed up the render
   double opacity = show ? 1 : 0;

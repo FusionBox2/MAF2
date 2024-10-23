@@ -210,7 +210,7 @@ void medOpRegisterClusters2::OnEvent(mafEventBase *maf_event)
 		  {
 			  mafString s(_L("Choose cloud"));
         mafEvent e(this,VME_CHOOSE, &s, (intptr_t)&medOpRegisterClusters2::ClosedCloudAccept);
-			  mafEventMacro(e);
+			  InvokeEvent(e);
 			  mafNode *vme = e.GetVme();
 		    OnChooseTargetVme(vme);
         if(vme != NULL)
@@ -221,7 +221,7 @@ void medOpRegisterClusters2::OnEvent(mafEventBase *maf_event)
 		  {
 			  mafString s(_L("Choose surface"));
         mafEvent e(this,VME_CHOOSE, &s, (intptr_t)&medOpRegisterClusters2::SurfaceAccept);
-			  mafEventMacro(e);
+			  InvokeEvent(e);
 			  mafNode *vme = e.GetVme();
 		    OnChooseSurfaceVme(vme);
 		  }
@@ -307,7 +307,7 @@ void medOpRegisterClusters2::OnEvent(mafEventBase *maf_event)
         }
 		  break;
 		  default:
-			  mafEventMacro(*e);
+			  InvokeEvent(*e);
 		  break;
 	  }
   }
@@ -329,7 +329,7 @@ void medOpRegisterClusters2::OpDo()
   m_Info->SetName(name);
   m_Info->SetPosLabel(_R("Registration residual: "), 0);
   m_Info->SetPosShow(true, 0);
-  {mafEvent evUnq(this, VME_ADD, m_Info); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, VME_ADD, m_Info); InvokeEvent(evUnq);}
   
   //check for the multi-time registration
 	if(m_MultiTime)
@@ -340,7 +340,7 @@ void medOpRegisterClusters2::OpDo()
 
 		//mafProgressBarShowMacro();
     if(!m_TestMode)
-      {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
     
 		//mafProgressBarSetTextMacro("Multi time registration...");
 		
@@ -350,7 +350,7 @@ void medOpRegisterClusters2::OpDo()
 			long p = t * 100 / numTimeStamps;
 		//	mafProgressBarSetValueMacro(p);
       if(!m_TestMode)
-        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)p); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)p); InvokeEvent(evUnq);}
 			//Set the new time for the vme used to register the one frame source 
       m_Target->SetTimeStamp(currTime); //set current time
       m_Target->Update(); //>UpdateAllData();
@@ -363,7 +363,7 @@ void medOpRegisterClusters2::OpDo()
     timeStamps.clear();
 
     if(!m_TestMode)
-      {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 	}
 	else
 	{
@@ -376,12 +376,12 @@ void medOpRegisterClusters2::OpDo()
     mafNEW(m_Result);
     mafString name = m_Source->GetName() + _R(" registered into ") + m_Target->GetName();
     m_Result->SetName(name);
-    {mafEvent evUnq(this, VME_ADD, m_Result); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this, VME_ADD, m_Result); InvokeEvent(evUnq);}
     m_Info->ReparentTo(m_Result);
   }
   else
   {
-    {mafEvent evUnq(this, VME_REMOVE, m_Info); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this, VME_REMOVE, m_Info); InvokeEvent(evUnq);}
     mafDEL(m_Info);
   }
 
@@ -499,7 +499,7 @@ void medOpRegisterClusters2::OpDo()
 
       mafVMELandmarkCloud *landmarkCloudWithTimeVariantLandmarks;
       mafNEW(landmarkCloudWithTimeVariantLandmarks);
-      {mafEvent evUnq(this, VME_ADD, landmarkCloudWithTimeVariantLandmarks); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this, VME_ADD, landmarkCloudWithTimeVariantLandmarks); InvokeEvent(evUnq);}
       landmarkCloudWithTimeVariantLandmarks->ReparentTo(m_Result);
 
       landmarkCloudWithTimeVariantLandmarks->SetName(m_Registered->GetName());
@@ -519,7 +519,7 @@ void medOpRegisterClusters2::OpDo()
           if(landmark == NULL)
           {
             mafNEW(landmark);
-            {mafEvent evUnq(this, VME_ADD,landmark); mafEventMacro(evUnq);}
+            {mafEvent evUnq(this, VME_ADD,landmark); InvokeEvent(evUnq);}
             landmark->SetName(m_Registered->GetLandmark(i)->GetName());
             landmark->ReparentTo(landmarkCloudWithTimeVariantLandmarks);
           }
@@ -558,7 +558,7 @@ void medOpRegisterClusters2::OpDo()
     else
     {
       //m_Registered->SetAbsMatrix(((mafVMELandmarkCloud *)m_Target)->GetAbsMatrixPipe()->GetMatrix());
-      {mafEvent evUnq(this, VME_ADD, m_Registered); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this, VME_ADD, m_Registered); InvokeEvent(evUnq);}
       /*std::vector<mafTimeStamp> timeStamps;
       m_Registered->GetTimeStamps(timeStamps);
       for(int i=0; i<timeStamps.size();i++)
@@ -583,18 +583,18 @@ void medOpRegisterClusters2::OpDo()
 	{
 		mafString name = m_Follower->GetName() + _R(" registered on ") + m_Target->GetName();
 		m_Follower->SetName(name);
-		{mafEvent evUnq(this, VME_ADD, m_Follower); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this, VME_ADD, m_Follower); InvokeEvent(evUnq);}
     m_Follower->ReparentTo(m_Result);
 	}
 
-  {mafEvent evUnq(this,TIME_SET,-1.0); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,TIME_SET,-1.0); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpRegisterClusters2::OpUndo()
 //----------------------------------------------------------------------------
 {
   assert(m_Result);
-  {mafEvent evUnq(this, VME_REMOVE, m_Result); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, VME_REMOVE, m_Result); InvokeEvent(evUnq);}
 	mafDEL(m_Result);
   mafDEL(m_Registered);
   mafDEL(m_Follower);

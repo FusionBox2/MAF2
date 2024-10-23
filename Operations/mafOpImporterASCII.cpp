@@ -151,7 +151,7 @@ void mafOpImporterASCII::OpRun()
       m_Output = m_ScalarData;
       res = OP_RUN_OK;
     }
-    {mafEvent evUnq(this,res); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,res); InvokeEvent(evUnq);}
     return;
   }
 

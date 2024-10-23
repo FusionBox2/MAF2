@@ -93,7 +93,7 @@ void lhpOpImporterOBJ::OpRun()
 		ImportOBJ();
 	}
 
-	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -107,7 +107,7 @@ void lhpOpImporterOBJ::OpDo()
       m_ImportedOBJs[i]->ReparentTo(m_Input);
     }
   }
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -121,7 +121,7 @@ void lhpOpImporterOBJ::OpUndo()
       m_ImportedOBJs[i]->ReparentTo(NULL);
     }
   }
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -144,7 +144,7 @@ void lhpOpImporterOBJ::ImportOBJ()
     fn = m_Files[kk];
     
     vtkNew<vtkOBJReader> reader;
-	  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,reader); mafEventMacro(evUnq);}
+	  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,reader); InvokeEvent(evUnq);}
     reader->SetFileName(fn.GetCStr());
 	  reader->Update();
 

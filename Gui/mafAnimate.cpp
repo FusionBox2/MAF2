@@ -340,7 +340,7 @@ void mafAnimate::FlyTo()
       camera->SetViewUp(fly[6],fly[7],fly[8]);
       camera->SetParallelScale(fly[9]);
 
-      {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
     }
   }
   else
@@ -349,7 +349,7 @@ void mafAnimate::FlyTo()
     camera->SetPosition(fly1[3],fly1[4],fly1[5]);
     camera->SetViewUp(fly1[6],fly1[7],fly1[8]);
     camera->SetParallelScale(fly1[9]);
-    {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
   m_Renderer->ResetCameraClippingRange();
 }
@@ -478,7 +478,7 @@ void mafAnimate::FlyTo()
 			camera->SetPosition(posX, posY, posZ); 
 			camera->SetViewUp(vx, vy, vz);
       camera->SetParallelScale(ps);
-			{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+			{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 		}
 	}
 	else
@@ -487,7 +487,7 @@ void mafAnimate::FlyTo()
 		camera->SetPosition(fly[3],fly[4],fly[5]);
 		camera->SetViewUp(fly[6],fly[7],fly[8]);
     camera->SetParallelScale(fly[9]);
-    {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 	}
   m_Renderer->ResetCameraClippingRange();
 }

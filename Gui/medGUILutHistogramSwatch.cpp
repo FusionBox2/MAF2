@@ -185,7 +185,7 @@ void medGUILutHistogramSwatch::OnLeftMouseButtonDown(wxMouseEvent &event)
   }
 
   //notify the user
-  {mafEvent evUnq(this,GetId()); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,GetId()); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medGUILutHistogramSwatch::OnLeftMouseButtonUp(wxMouseEvent &event)
@@ -245,7 +245,7 @@ void medGUILutHistogramSwatch::OnMouseMotion(wxMouseEvent &event)
         //for highlighting on the views
         m_Lut->SetTableValue(i,newcol);
         m_Material->UpdateFromTables();
-        {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
         m_LastHighlighted=i;
         m_Highlighted=true;
       }
@@ -258,7 +258,7 @@ void medGUILutHistogramSwatch::OnMouseMotion(wxMouseEvent &event)
     m_Material->ApplyGammaCorrection(4);
     m_Material->UpdateProp();
     m_Highlighted=0;
-    {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
 }
 //----------------------------------------------------------------------------
@@ -268,7 +268,7 @@ void medGUILutHistogramSwatch::OnSize(wxSizeEvent &event)
   m_Material->ApplyGammaCorrection(4);
   m_Material->UpdateProp();
   m_Highlighted=0;
-  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
   Refresh();
 }
 //----------------------------------------------------------------------------

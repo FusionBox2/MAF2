@@ -114,7 +114,7 @@ void lhpPipeIntGraphLocal::OnEvent(mafEventBase *maf_event)
     {
       mafString s(_L("Choose cloud"));
       mafEvent e(this,VME_CHOOSE, &s, NULL/*, (long)&lhpOpRegisterLMScripted::ClosedCloudAccept*/);
-      mafEventMacro(e);
+      InvokeEvent(e);
       mafVME *vme = mafVME::SafeDownCast(e.GetVme());
       SetProximal(vme);
       return;

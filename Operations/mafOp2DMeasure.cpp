@@ -74,7 +74,7 @@ bool mafOp2DMeasure::Accept(mafNode *node)
 //----------------------------------------------------------------------------
 {
   mafEvent e(this,VIEW_SELECTED);
-  mafEventMacro(e);
+  InvokeEvent(e);
   return e.GetBool();
 }
 //----------------------------------------------------------------------------
@@ -88,11 +88,11 @@ void mafOp2DMeasure::OpRun()
 //----------------------------------------------------------------------------
 {
   m_DistanceInteractor2D = mafInteractor2DDistance::New();
-  {mafEvent evUnq(this,PER_PUSH,(mafObject *)m_DistanceInteractor2D); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,PER_PUSH,(mafObject *)m_DistanceInteractor2D); InvokeEvent(evUnq);}
   m_DistanceInteractor2D->SetListener(this);
 
 	m_AngleInteractor2D = mafInteractor2DAngle::New();
-	//{mafEvent evUnq(this,PER_PUSH,(mafObject *)m_2DAngleInteractor); mafEventMacro(evUnq);}
+	//{mafEvent evUnq(this,PER_PUSH,(mafObject *)m_2DAngleInteractor); InvokeEvent(evUnq);}
 	//m_2DAngleInteractor->SetListener(this);
   m_IndicatorInteractor2D = mafInteractor2DIndicator::New();
   
@@ -111,7 +111,7 @@ void mafOp2DMeasure::OpRun()
 	mafEvent buildHelpGui;
 	buildHelpGui.SetSender(this);
 	buildHelpGui.SetId(GET_BUILD_HELP_GUI);
-	mafEventMacro(buildHelpGui);
+	InvokeEvent(buildHelpGui);
 
 	if (buildHelpGui.GetArg())
 	{
@@ -191,15 +191,15 @@ void mafOp2DMeasure::OnEvent(mafEventBase *maf_event)
 			mafString operationLabel = GetLabel();
 			helpEvent.SetString(&operationLabel);
 			helpEvent.SetId(OPEN_HELP_PAGE);
-			mafEventMacro(helpEvent);
+			InvokeEvent(helpEvent);
 		}
 		break;
 
         case ID_MEASURE_TYPE:
 					if(m_MeasureType == 0 || m_MeasureType == 1)
 					{
-						{mafEvent evUnq(this,PER_POP); mafEventMacro(evUnq);}	
-						{mafEvent evUnq(this,PER_PUSH,(mafObject *)m_DistanceInteractor2D); mafEventMacro(evUnq);}
+						{mafEvent evUnq(this,PER_POP); InvokeEvent(evUnq);}	
+						{mafEvent evUnq(this,PER_PUSH,(mafObject *)m_DistanceInteractor2D); InvokeEvent(evUnq);}
 						m_DistanceInteractor2D->SetListener(this);
 
 						if(m_DistanceInteractor2D->SizeMeasureVector() != 0)
@@ -225,8 +225,8 @@ void mafOp2DMeasure::OnEvent(mafEventBase *maf_event)
 					}
 					else if(m_MeasureType == 2 || m_MeasureType == 3)
 					{
-						{mafEvent evUnq(this,PER_POP); mafEventMacro(evUnq);}	
-						{mafEvent evUnq(this,PER_PUSH,(mafObject *)m_AngleInteractor2D); mafEventMacro(evUnq);}
+						{mafEvent evUnq(this,PER_POP); InvokeEvent(evUnq);}	
+						{mafEvent evUnq(this,PER_PUSH,(mafObject *)m_AngleInteractor2D); InvokeEvent(evUnq);}
 						m_AngleInteractor2D->SetListener(this);
 
 						if(m_AngleInteractor2D->SizeMeasureVector() != 0)
@@ -252,8 +252,8 @@ void mafOp2DMeasure::OnEvent(mafEventBase *maf_event)
 					}
           else if(m_MeasureType == 4)
           {
-            {mafEvent evUnq(this,PER_POP); mafEventMacro(evUnq);}	
-						{mafEvent evUnq(this,PER_PUSH,(mafObject *)m_IndicatorInteractor2D); mafEventMacro(evUnq);}
+            {mafEvent evUnq(this,PER_POP); InvokeEvent(evUnq);}	
+						{mafEvent evUnq(this,PER_PUSH,(mafObject *)m_IndicatorInteractor2D); InvokeEvent(evUnq);}
 						m_IndicatorInteractor2D->SetListener(this);
             m_Gui->Enable(ID_PLOT_PROFILE, false);
             m_Gui->Update();
@@ -571,7 +571,7 @@ void mafOp2DMeasure::OnEvent(mafEventBase *maf_event)
         }
         break;
         default:
-          mafEventMacro(*e);
+          InvokeEvent(*e);
         break; 
       }
     }
@@ -591,17 +591,17 @@ void mafOp2DMeasure::OpStop(int result)
   if(root->GetTagArray()->GetTag(_R("2D_MEASURE")))
     root->GetTagArray()->DeleteTag(_R("2D_MEASURE"));
   root->GetTagArray()->SetTag(measure_item);
-  {mafEvent evUnq(this,VME_MODIFIED,root); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_MODIFIED,root); InvokeEvent(evUnq);}
 
 	m_DistanceInteractor2D->RemoveMeter();  
 	m_AngleInteractor2D->RemoveMeter();
   m_IndicatorInteractor2D->RemoveMeter();
  
 	HideGui();
-  {mafEvent evUnq(this,PER_POP); mafEventMacro(evUnq);}	
+  {mafEvent evUnq(this,PER_POP); InvokeEvent(evUnq);}	
   mafDEL(m_DistanceInteractor2D);
 	mafDEL(m_AngleInteractor2D);
   mafDEL(m_IndicatorInteractor2D);
 
-	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }

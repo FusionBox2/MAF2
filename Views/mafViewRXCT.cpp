@@ -614,7 +614,7 @@ void mafViewRXCT::OnEvent(mafEventBase *maf_event)
 		mafString viewLabel = GetLabel();
 		helpEvent.SetString(&viewLabel);
 		helpEvent.SetId(OPEN_HELP_PAGE);
-		mafEventMacro(helpEvent);
+		InvokeEvent(helpEvent);
 	  }
 	  break;
 
@@ -741,7 +741,7 @@ mafGUI* mafViewRXCT::CreateGui()
   mafEvent buildHelpGui;
   buildHelpGui.SetSender(this);
   buildHelpGui.SetId(GET_BUILD_HELP_GUI);
-  mafEventMacro(buildHelpGui);
+  InvokeEvent(buildHelpGui);
 
   if (buildHelpGui.GetArg())
   {

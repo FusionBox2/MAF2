@@ -79,10 +79,10 @@ void lhpOpFindCentroid::OpRun()
 {
   mafVMEGenericAbstract *gabs = mafVMEGenericAbstract::SafeDownCast(m_Input);
   if(!gabs)
-    {mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);}
   mafDataVector * dvect = gabs->GetDataVector();
   if(!dvect)
-    {mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);}
 
   mafVMELandmarkCloud *cloud = NULL;
 
@@ -109,7 +109,7 @@ void lhpOpFindCentroid::OpRun()
     {
       mafNEW(cloud);
       if(!cloud)
-        {mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);}
       cloud->SetName(_R("Centroid"));
       mafTagItem tag_Nature;
       tag_Nature.SetName(_R("VME_NATURE"));
@@ -120,7 +120,7 @@ void lhpOpFindCentroid::OpRun()
     cloud->SetLandmark(0, centroid.x, centroid.y, centroid.z, elem.first);
   }
   if(!cloud)
-    {mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);}
   m_Output = cloud;
-  {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
 }

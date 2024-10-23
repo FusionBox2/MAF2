@@ -56,13 +56,13 @@ mafOp* mafOpCreateVmeSurface::Copy()
 void mafOpCreateVmeSurface::OnEvent(mafEventBase *event)
 //----------------------------------------------------------------------------
 {
-  mafEventMacro(*event);
+  InvokeEvent(*event);
 }
 //----------------------------------------------------------------------------
 void mafOpCreateVmeSurface::OpRun()
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpCreateVmeSurface::OpDo()
@@ -83,13 +83,13 @@ void mafOpCreateVmeSurface::OpDo()
   m_vme->SetData(cs->GetOutput(),0);
   cs->Delete();
 
-  {mafEvent evUnq(this,VME_ADD,m_vme); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_ADD,m_vme); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpCreateVmeSurface::OpUndo()
 //----------------------------------------------------------------------------
 {
   assert(m_vme);
-  {mafEvent evUnq(this,VME_REMOVE,m_vme); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_REMOVE,m_vme); InvokeEvent(evUnq);}
   mafDEL(m_vme);
 }

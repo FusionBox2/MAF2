@@ -209,7 +209,7 @@ void lhpOpLMProj::OpRun()
     ShowGui();
   }
 
-  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void lhpOpLMProj::OpDo()
@@ -236,7 +236,7 @@ void lhpOpLMProj::OpDo()
   }
   if(stmps.size() == 0)
   {
-    {mafEvent evUnq(this, OP_RUN_CANCEL); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this, OP_RUN_CANCEL); InvokeEvent(evUnq);}
     return;
   }
 
@@ -350,7 +350,7 @@ void lhpOpLMProj::OpDo()
   newcloud->Modified();
   newcloud->Update();
   //newcloud->Register(this);
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void lhpOpLMProj::OpUndo()
@@ -358,8 +358,8 @@ void lhpOpLMProj::OpUndo()
 {
   if (m_Output)
   {
-    {mafEvent evUnq(this, VME_REMOVE, m_Output); mafEventMacro(evUnq);}
-    {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this, VME_REMOVE, m_Output); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
 }
 
@@ -368,7 +368,7 @@ void lhpOpLMProj::OpStop(int result)
 //----------------------------------------------------------------------------
 {
   HideGui();
-  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }
 
 
@@ -386,7 +386,7 @@ void lhpOpLMProj::OnEvent(mafEventBase *maf_event)
         {
           mafString s(_R("Choose surface to join"));
           mafEvent e(this,VME_CHOOSE, &s);
-          mafEventMacro(e);
+          InvokeEvent(e);
           if(e.GetVme() == NULL)
           {
             return;
@@ -413,7 +413,7 @@ void lhpOpLMProj::OnEvent(mafEventBase *maf_event)
         OpStop(OP_RUN_CANCEL);
       break;
         default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       break; 
     }
   }  

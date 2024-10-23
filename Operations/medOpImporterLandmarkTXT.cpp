@@ -116,7 +116,7 @@ void medOpImporterLandmarkTXT::OpRun()
 	}
   else
   {
-    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
   }
 }
 //----------------------------------------------------------------------------
@@ -137,7 +137,7 @@ void medOpImporterLandmarkTXT::	OnEvent(mafEventBase *maf_event)
       case ID_TYPE_FILE:
       break;
       default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
     }
   }
 }

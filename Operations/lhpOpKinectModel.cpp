@@ -172,11 +172,11 @@ void lhpOpKinectModel::OpRun()
   {
     if(Import())
     {
-      {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
     }
     else
     {
-      {mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);}
     }
   }
 }
@@ -210,7 +210,7 @@ void lhpOpKinectModel::OnEvent(mafEventBase *maf_event)
       break;
     default:
     {
-      mafEventMacro(*maf_event); 
+      InvokeEvent(*maf_event); 
     }
     break;
   }

@@ -781,12 +781,12 @@ void mafRWI::CameraReset(mafNode *vme, double zoom)
 	if(m_Grid && m_ShowGrid) 
 		m_Grid->VisibilityOff();
 
-	{mafEvent evUnq(this,CAMERA_PRE_RESET,m_RenFront); mafEventMacro(evUnq);} //- Attention - I'm sending m_RenFront, I suppose that m_RenBack is never required 
+	{mafEvent evUnq(this,CAMERA_PRE_RESET,m_RenFront); InvokeEvent(evUnq);} //- Attention - I'm sending m_RenFront, I suppose that m_RenBack is never required 
 	CameraReset(ComputeVisibleBounds(vme), zoom);
 	if(m_Grid && m_ShowGrid) 
 		m_Grid->VisibilityOn();
 
-	{mafEvent evUnq(this,CAMERA_POST_RESET,m_RenFront); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,CAMERA_POST_RESET,m_RenFront); InvokeEvent(evUnq);}
 	m_RenFront->ResetCameraClippingRange();
 	m_RenderWindow->Render();
 	UpdateCameraParameters();
@@ -1159,13 +1159,13 @@ void mafRWI::OnEvent(mafEventBase *maf_event)
 			}
 			break;
 		default:
-			mafEventMacro(*maf_event);
+			InvokeEvent(*maf_event);
 			break;
 		}
 	}
 	else
 	{
-		mafEventMacro(*maf_event);
+		InvokeEvent(*maf_event);
 	}
 }
 //----------------------------------------------------------------------------
@@ -1181,7 +1181,7 @@ void mafRWI::LinkCamera(bool linc_camera)
 	mafEvent e(this,LINK_CAMERA_TO_INTERACTOR);
 	e.SetVtkObj(m_Camera);
 	e.SetBool(m_LinkCamera != 0);
-	mafEventMacro(e);
+	InvokeEvent(e);
 }
 //----------------------------------------------------------------------------
 void mafRWI::UpdateRulerUnit()

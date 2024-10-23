@@ -122,12 +122,12 @@ void mafGUISettingsTimeBar::OnEvent(mafEventBase *maf_event)
       PlayInActiveViewport(m_PlayInActiveViewport);
     break;
     default:
-      mafEventMacro(*maf_event);
+      InvokeEvent(*maf_event);
     break; 
   }
   // Update the time bar.
   maf_event->SetSender(this);
-  mafEventMacro(*maf_event);
+  InvokeEvent(*maf_event);
 }
 //----------------------------------------------------------------------------
 void mafGUISettingsTimeBar::InitializeSettings()

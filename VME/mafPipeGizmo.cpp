@@ -253,7 +253,7 @@ void mafPipeGizmo::OnEvent(mafEventBase *maf_event)
 		switch(e->GetId()) 
 		{
 		default:
-			mafEventMacro(*e);
+			InvokeEvent(*e);
 			break;
 		}
 	}

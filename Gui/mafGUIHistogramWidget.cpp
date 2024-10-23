@@ -241,7 +241,7 @@ void mafGUIHistogramWidget::OnEvent( mafEventBase *event )
         m_SelectedRange[0] = m_Slider->GetValue(0);
         m_SelectedRange[1] = m_Slider->GetValue(2);
         m_Lut->SetTableRange(m_SelectedRange);
-        {mafEvent evUnq(this,mafGUIHistogramWidget::RANGE_MODIFIED); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,mafGUIHistogramWidget::RANGE_MODIFIED); InvokeEvent(evUnq);}
       break;
       default:
         e->Log();
@@ -289,7 +289,7 @@ void mafGUIHistogramWidget::OnEvent( mafEventBase *event )
 // 
 //         m_HistogramRWI->CameraUpdate();
 
-        mafEventMacro(*event);
+        InvokeEvent(*event);
       }
       else if (ei->GetButton() == MAF_RIGHT_BUTTON)
       {
@@ -472,7 +472,7 @@ void mafGUIHistogramWidget::ResetHistogram()
     m_Slider->SetValue(0, m_SelectedRange[0]);
     m_Slider->SetValue(2, m_SelectedRange[1]);
     m_Lut->SetTableRange(m_SelectedRange);
-    {mafEvent evUnq(this,mafGUIHistogramWidget::RANGE_MODIFIED); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,mafGUIHistogramWidget::RANGE_MODIFIED); InvokeEvent(evUnq);}
   }
 
   UpdateGui();

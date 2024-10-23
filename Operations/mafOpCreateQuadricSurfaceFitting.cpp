@@ -70,7 +70,7 @@ void mafOpCreateQuadricSurfaceFitting::OpRun()
 	mafNEW(m_QuadricSurfaceFitting);
 	m_QuadricSurfaceFitting->SetName(_R("Quadric_Surface_Fitting"));
 	m_Output = m_QuadricSurfaceFitting;
-	{mafEvent evUnq(this, OP_RUN_OK); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this, OP_RUN_OK); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpCreateQuadricSurfaceFitting::OpDo()

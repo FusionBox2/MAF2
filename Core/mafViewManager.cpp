@@ -103,7 +103,7 @@ void mafViewManager::OnEvent(mafEventBase *maf_event)
         ViewSelected(view/*, rwi*/);
 
         if(notifylogic)
-          {mafEvent evUnq(this,VIEW_SELECT,(intptr_t)e->GetSender()); mafEventMacro(evUnq);} // forward the view selection event to logic
+          {mafEvent evUnq(this,VIEW_SELECT,(intptr_t)e->GetSender()); InvokeEvent(evUnq);} // forward the view selection event to logic
 
         if(m_CollaborateStatus && m_RemoteListener && !m_FromRemote)
         {
@@ -115,7 +115,7 @@ void mafViewManager::OnEvent(mafEventBase *maf_event)
       }
       break;
       default:
-        mafEventMacro(*e); // forward up the event
+        InvokeEvent(*e); // forward up the event
       break; 
     }
 	}
@@ -297,7 +297,7 @@ mafView *mafViewManager::ViewCreate(int id)
 	ViewInsert(new_view);
 	m_ViewBeingCreated = NULL;
 
-  {mafEvent evUnq(this,VIEW_CREATED,new_view); mafEventMacro(evUnq);} // ask Logic to create the frame
+  {mafEvent evUnq(this,VIEW_CREATED,new_view); InvokeEvent(evUnq);} // ask Logic to create the frame
 	
 	new_view->GetFrame()->Show(true); // show the view's frame
 
@@ -343,7 +343,7 @@ mafView *mafViewManager::ViewCreate(const mafString& label)
 	ViewInsert(new_view);
 	m_ViewBeingCreated = NULL;
 
-  {mafEvent evUnq(this,VIEW_CREATED,new_view); mafEventMacro(evUnq);} // ask Logic to create the frame
+  {mafEvent evUnq(this,VIEW_CREATED,new_view); InvokeEvent(evUnq);} // ask Logic to create the frame
   
   new_view->GetFrame()->Show(true); // show the view's frame
 
@@ -385,7 +385,7 @@ void mafViewManager::ViewDelete(mafView *view)
     m_SelectedView = NULL;
   }
 
-  {mafEvent evUnq(this,VIEW_DELETE,view); mafEventMacro(evUnq);} // inform the sidebar
+  {mafEvent evUnq(this,VIEW_DELETE,view); InvokeEvent(evUnq);} // inform the sidebar
 	
   // Paolo 2005-04-22
   // calculate the view type index

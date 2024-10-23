@@ -420,7 +420,7 @@ void mafViewGlobalSlice::VmeCreatePipe(mafNode *node)
 
       if (m_NumberOfVisibleVme == 1)
       {
-        {mafEvent evUnq(this,CAMERA_RESET); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_RESET); InvokeEvent(evUnq);}
       }
       else
       {
@@ -491,7 +491,7 @@ void mafViewGlobalSlice::OnEvent(mafEventBase *maf_event)
 				if (pipe)
 				{
 					pipe->SetSliceOpacity(m_Opacity);
-					{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+					{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 					m_OpacitySlider->SetValue(m_Opacity);
 				}
 			}
@@ -502,7 +502,7 @@ void mafViewGlobalSlice::OnEvent(mafEventBase *maf_event)
         if (pipe)
         {
           pipe->SetTrilinearInterpolation(m_TrilinearInterpolationOn);
-          {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+          {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
         }
       }
 			break;
@@ -708,7 +708,7 @@ void mafViewGlobalSlice::UpdateSlice()
 	UpdatePlane();
 	UpdateText();
   
-  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafViewGlobalSlice::UpdatePlane()

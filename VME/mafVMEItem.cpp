@@ -217,7 +217,7 @@ void mafVMEItem::SetURL(const char *name)
   if (!m_URL.empty()&&m_URL!=_R(name))
   {
     mafEventIO e(this,NODE_GET_STORAGE);
-    mafEventMacro(e);
+    InvokeEvent(e);
     mafStorage *storage=e.GetStorage();
     if (storage)
     {

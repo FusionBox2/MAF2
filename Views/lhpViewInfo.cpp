@@ -339,7 +339,7 @@ void lhpViewInfo::OnEvent(mafEventBase *maf_event)
   }
   else
   {
-    mafEventMacro(*maf_event);
+    InvokeEvent(*maf_event);
   }
 }
 //----------------------------------------------------------------------------

@@ -135,7 +135,7 @@ void medGizmoCrossTranslate::OnEvent(mafEventBase *maf_event)
   }
   else
   {
-    mafEventMacro(*maf_event);
+    InvokeEvent(*maf_event);
   }
 }
 //----------------------------------------------------------------------------
@@ -333,13 +333,13 @@ void medGizmoCrossTranslate::OnEventGizmoComponents(mafEventBase *maf_event)
         // instanciating the gizmo; the sender is changed to "this" so that the operation can check for
         // gizmo sending events
         e->SetSender(this);
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       }
       break;
 
     default:
       {
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       }
       break;
     }
@@ -370,7 +370,7 @@ void medGizmoCrossTranslate::OnEventGizmoGui(mafEventBase *maf_event)
     break;
   default:
     {
-      mafEventMacro(*maf_event);
+      InvokeEvent(*maf_event);
     }
     break;
   }

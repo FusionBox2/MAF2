@@ -200,7 +200,7 @@ void lhpOpImporterC3DBTK::OpRun()
 
   if(m_C3DInputFileNameFullPaths.size() == 0) 
   {
-    {mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);}
   }
   else if (!m_TestMode)
   {
@@ -211,11 +211,11 @@ void lhpOpImporterC3DBTK::OpRun()
   {
     if(Import())
     {
-      {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
     }
     else
     {
-      {mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);}
     }
   }
 }
@@ -435,7 +435,7 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
   else//with dictionary just prepare name, creation only if needed
     specCloudName.append(_R("NOT_IN_DICTIONARY"));
 
-  {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
   
   long progress = 0;
 
@@ -607,7 +607,7 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
     }
 
     progress = (currentFrame + 1) * 100 / intData.m_NumFrames;
-    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); InvokeEvent(evUnq);}
   }
 
   //if specCloud exists add it to all clouds
@@ -621,7 +621,7 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
     it->second->Update();
   }
 
-  {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 
   if(!m_TestMode)
   {
@@ -639,7 +639,7 @@ void lhpOpImporterC3DBTK::ImportAnalog(lhpOpImporterC3DBTK::_InternalC3DData &in
   }
   
   long progress = 0;
-  {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
 
   //name analog vme
   mafNEW(intData.m_VmeAnalog);
@@ -674,10 +674,10 @@ void lhpOpImporterC3DBTK::ImportAnalog(lhpOpImporterC3DBTK::_InternalC3DData &in
     }
 
     progress = (currentSample +1 ) * 100 / (intData.m_NumSamples);
-    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); InvokeEvent(evUnq);}
   }
 
-  {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 
   intData.m_VmeAnalog->SetData(analogMatrix, 0);
 
@@ -708,7 +708,7 @@ void lhpOpImporterC3DBTK::ImportPlatform(lhpOpImporterC3DBTK::_InternalC3DData &
   }
 
   long progress = 0;
-  {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
 
   //For every platform
   for(int currentPlatform=0; currentPlatform<intData.m_NumPlatforms; currentPlatform++)
@@ -864,10 +864,10 @@ void lhpOpImporterC3DBTK::ImportPlatform(lhpOpImporterC3DBTK::_InternalC3DData &
       intData.m_MomentList[currentPlatform]->SetData(vectorMoment, currentTime, mafVMEGeneric::MAF_VME_REFERENCE_DATA); //look here times
 
       progress = (currentSample + 1 + (currentPlatform * intData.m_NumSamples)) * 100 / (intData.m_NumSamples * intData.m_NumPlatforms);
-      {mafEvent evUnq(this, PROGRESSBAR_SET_VALUE, (intptr_t)progress); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this, PROGRESSBAR_SET_VALUE, (intptr_t)progress); InvokeEvent(evUnq);}
     }
   }
-  {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void lhpOpImporterC3DBTK::ImportEvent(lhpOpImporterC3DBTK::_InternalC3DData &intData)
@@ -1019,7 +1019,7 @@ void lhpOpImporterC3DBTK::OnEvent(mafEventBase *maf_event)
           break;
         }
       default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       break;
     }	
   }

@@ -149,7 +149,7 @@ void mafOpBooleanSurface::OpRun()
 
   m_ResultVME->ReparentTo(m_Input->GetRoot());
 
-  {mafEvent evUnq(this,VME_SHOW,m_ResultVME,true); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW,m_ResultVME,true); InvokeEvent(evUnq);}
 
 	m_FirstOperatorVME = m_ResultVME;
 	vtkPolyData *initialData;
@@ -206,7 +206,7 @@ void mafOpBooleanSurface::OnEvent(mafEventBase *maf_event)
 		case ID_CLIP:
 			{
 				Clip();
-				{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
 			break;
 		case ID_CHOOSE_UNION:
@@ -219,7 +219,7 @@ void mafOpBooleanSurface::OnEvent(mafEventBase *maf_event)
           return;
         }
 				Union();
-				{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
 			break;
 		case ID_CHOOSE_INTERSECTION:
@@ -233,7 +233,7 @@ void mafOpBooleanSurface::OnEvent(mafEventBase *maf_event)
         }
 				Intersection();
 
-				{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
 			break;
 		case ID_CHOOSE_DIFFERENCE:
@@ -246,21 +246,21 @@ void mafOpBooleanSurface::OnEvent(mafEventBase *maf_event)
           return;
         }
 				Difference();
-				{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
 			break;
 		case ID_CLIP_INSIDE:
 			if(m_Arrow) 
 			{
 				m_Arrow->SetScaleFactor(-1 * m_Arrow->GetScaleFactor());
-				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
 			break;
 		case ID_UNDO:
 			{
 				Undo();
 				ShowClipPlane(m_Modality != MODE_SURFACE);
-				{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
 			break;
 		case ID_MODALITY:
@@ -275,7 +275,7 @@ void mafOpBooleanSurface::OnEvent(mafEventBase *maf_event)
 
 				m_Gui->Update();
 				ShowClipPlane(m_Modality == MODE_IMPLICIT_FUNCTION);
-				{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
 			break;
 		case ID_TRANSFORM:
@@ -294,7 +294,7 @@ void mafOpBooleanSurface::OnEvent(mafEventBase *maf_event)
 				m_ImplicitPlaneGizmo->SetAbsMatrix(newAbsMatr);
 				UpdateISARefSys();
 
-				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
 			break;
 		case wxOK:
@@ -304,7 +304,7 @@ void mafOpBooleanSurface::OnEvent(mafEventBase *maf_event)
 			OpStop(OP_RUN_CANCEL);        
 			break;
 		default:
-			mafEventMacro(*e);
+			InvokeEvent(*e);
 			break; 
 		}
 	}
@@ -595,7 +595,7 @@ void mafOpBooleanSurface::ShowClipPlane(bool show)
 			m_ImplicitPlaneGizmo->Modified();
 			m_ImplicitPlaneGizmo->Update();
 
-			{mafEvent evUnq(this,VME_SHOW,m_ImplicitPlaneGizmo,true); mafEventMacro(evUnq);}
+			{mafEvent evUnq(this,VME_SHOW,m_ImplicitPlaneGizmo,true); InvokeEvent(evUnq);}
 		/*}
 		else
 		{
@@ -751,7 +751,7 @@ void mafOpBooleanSurface::VmeChoose(mafString title,mafEvent *e)
 	e->SetArg((intptr_t)&mafOpBooleanSurface::SurfaceAccept);
 	e->SetString(&title);
 	e->SetId(VME_CHOOSE);
-	mafEventMacro(*e);
+	InvokeEvent(*e);
 	m_SecondOperatorVME = mafVMESurface::SafeDownCast(e->GetVme());
 	if(m_SecondOperatorVME == NULL && mafVMESurfaceParametric::SafeDownCast(e->GetVme()) != NULL)
   {
@@ -784,5 +784,5 @@ void mafOpBooleanSurface::OpStop(int result)
 	}
 
 	HideGui();
-	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}        
+	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}        
 }

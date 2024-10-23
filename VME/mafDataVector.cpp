@@ -267,7 +267,7 @@ void mafDataVector::InternalStore(mafStorageElementBuilder& parent)
 
         if (resolvedURL == MAF_OK && mafFileExists(filename))//Only if exist an archive where it is possible read the vtk data
         {
-          {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
+          {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
           long progress = 0;
 
           std::vector<mafString> filesExtracted = mafZIPOpen(filename);
@@ -279,7 +279,7 @@ void mafDataVector::InternalStore(mafStorageElementBuilder& parent)
             if ((dataIndex % step == 0))
             {
               progress++;
-              {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
+              {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); InvokeEvent(evUnq);}
             }
 			mafVMEItem* itemTmp = elem.second.get();
             int IOmode = itemTmp->GetIOMode();
@@ -290,8 +290,8 @@ void mafDataVector::InternalStore(mafStorageElementBuilder& parent)
             dataIndex++;
           }
           
-          {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)100); mafEventMacro(evUnq);}
-          {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
+          {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)100); InvokeEvent(evUnq);}
+          {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 
           for (int i=0;i<filesExtracted.size();i++)
           {
@@ -502,5 +502,5 @@ void mafDataVector::OnEvent(mafEventBase *maf_event)
     m_DataModified=true;
     return;
   }
-  mafEventMacro(*maf_event);
+  InvokeEvent(*maf_event);
 }

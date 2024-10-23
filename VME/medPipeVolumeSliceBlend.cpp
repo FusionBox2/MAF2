@@ -202,7 +202,7 @@ void medPipeVolumeSliceBlend::Create(mafNode *node, mafView *view)
   m_Vme->GetOutput()->GetVTKData()->GetScalarRange(sr);
   m_ColorLUT->SetTableRange(sr[0], sr[1]);
   material->UpdateFromTables();
-  //{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+  //{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 
   if(m_SliceDirection == SLICE_ARB)
     m_SliceDirection = SLICE_Z;
@@ -569,25 +569,25 @@ void medPipeVolumeSliceBlend::OnEvent(mafEventBase *maf_event)
       {
         auto material = ((mafVMEVolume *)m_Vme)->GetMaterial();
         material->UpdateFromTables();
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       }
       break;
     case ID_OPACITY_SLIDER:
       {
         //Event to modify the opacity of the slice at top
         SetSliceOpacity(m_SliceOpacity);
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       }
       break;
     default:
       //Other events
-      mafEventMacro(*maf_event);
+      InvokeEvent(*maf_event);
       break;
     }
   }
   else
   {
-    mafEventMacro(*maf_event);
+    InvokeEvent(*maf_event);
   }
 }
 //----------------------------------------------------------------------------
@@ -617,7 +617,7 @@ void medPipeVolumeSliceBlend::SetColorLookupTable(vtkLookupTable *lut)
         m_Texture[j][i]->SetLookupTable(m_CustomColorLUT);
     }
   }
-  //{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  //{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medPipeVolumeSliceBlend::Select(bool sel)

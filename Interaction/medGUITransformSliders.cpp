@@ -147,7 +147,7 @@ void medGUITransformSliders::OnEvent(mafEventBase *maf_event)
       break;
 
     default:
-      mafEventMacro(*e);
+      InvokeEvent(*e);
       break;
     }
   }
@@ -218,7 +218,7 @@ void medGUITransformSliders::SlidersValuesChanged()
   e2s.SetSender(this);
   e2s.SetMatrix(tran->GetMatrixPointer());
   e2s.SetId(ID_TRANSFORM);
-  mafEventMacro(e2s);
+  InvokeEvent(e2s);
 }
 //----------------------------------------------------------------------------
 void medGUITransformSliders::SetAbsPose(std::shared_ptr<mafMatrix> absPose, mafTimeStamp timeStamp)

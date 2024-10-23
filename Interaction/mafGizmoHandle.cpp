@@ -116,9 +116,9 @@ mafGizmoHandle::mafGizmoHandle(mafVME *input, mafBaseEventHandler *listener /* =
   this->Show(false);
 
   // ask the manager to create the pipeline
-  {mafEvent evUnq(this,VME_SHOW,m_BoxGizmo,true); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW,m_BoxGizmo,true); InvokeEvent(evUnq);}
 
-  {mafEvent evUnq(this,VME_SHOW,m_ShadingPlaneGizmo,m_ShowShadingPlane); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW,m_ShadingPlaneGizmo,m_ShowShadingPlane); InvokeEvent(evUnq);}
   
   //-----------------
   // create isa stuff
@@ -309,7 +309,7 @@ void mafGizmoHandle::OnEvent(mafEventBase *maf_event)
 {
   // forward events to the listener
 	maf_event->SetSender(this);
-  mafEventMacro(*maf_event);
+  InvokeEvent(*maf_event);
 }
 
 /** Gizmo color */

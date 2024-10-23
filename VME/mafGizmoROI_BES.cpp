@@ -166,7 +166,7 @@ void mafGizmoROI_BES::OnEvent(mafEventBase *maf_event)
 	else
 	{
 		// forward event to the listener
-		mafEventMacro(*maf_event);
+		InvokeEvent(*maf_event);
 	}
 }
 
@@ -241,19 +241,19 @@ void mafGizmoROI_BES::OnEventGizmoComponents(mafEventBase *maf_event)
 				{
 				}
 
-				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 				
 				// forward isa transform events to the listener op
 				// instanciating the gizmo; the sender is changed to "this" so that the operation can check for
 				// gizmo sending events
 				e->SetSender(this);
-				mafEventMacro(*e);
+				InvokeEvent(*e);
 			}
 			break;
 
 		default:
 			{
-				mafEventMacro(*e);
+				InvokeEvent(*e);
 			}
 			break;
 		}

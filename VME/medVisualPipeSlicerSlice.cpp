@@ -329,11 +329,11 @@ void medVisualPipeSlicerSlice::OnEvent(mafEventBase *maf_event)
 			  m_Actor1->Modified();
         m_Actor2->GetProperty()->SetLineWidth(m_Border);
         m_Actor2->Modified();
-			  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+			  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 		  }
 	  break;
       default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       break;
     }
   }
@@ -429,5 +429,5 @@ void medVisualPipeSlicerSlice::SetThickness(double thickness)
   m_Actor1->Modified();
   m_Actor2->GetProperty()->SetLineWidth(m_Border);
   m_Actor2->Modified();
-	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }

@@ -183,7 +183,7 @@ void mafOpExtractIsosurface::OpRun()
   }
   DeleteOpDialog();
 
-  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -269,7 +269,7 @@ void mafOpExtractIsosurface::CreateOpDialog()
   mafEvent buildHelpGui;
   buildHelpGui.SetSender(this);
   buildHelpGui.SetId(GET_BUILD_HELP_GUI);
-  mafEventMacro(buildHelpGui);
+  InvokeEvent(buildHelpGui);
 
   mafGUIButton *b_help = NULL;
 
@@ -668,7 +668,7 @@ void mafOpExtractIsosurface::OnEvent(mafEventBase *maf_event)
 			mafString operationLabel = GetLabel();
 			helpEvent.SetString(&operationLabel);
 			helpEvent.SetId(OPEN_HELP_PAGE);
-			mafEventMacro(helpEvent);
+			InvokeEvent(helpEvent);
 		}
 		break;
 
@@ -811,7 +811,7 @@ void mafOpExtractIsosurface::OnEvent(mafEventBase *maf_event)
         m_Rwi->CameraUpdate();
       }
     default:
-      mafEventMacro(*e);
+      InvokeEvent(*e);
       break; 
     }
   }

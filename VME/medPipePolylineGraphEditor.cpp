@@ -227,7 +227,7 @@ void medPipePolylineGraphEditor::OnEvent(mafEventBase *maf_event)
 		{
 		default:
 			{*/
-				mafEventMacro(*e);
+				InvokeEvent(*e);
 			//}
 		//}
 	}

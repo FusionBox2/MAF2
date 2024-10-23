@@ -65,7 +65,7 @@ void mafNodeManager::OnEvent(mafEventBase *maf_event)
     MSFModified(true);
     return;
   }
-  mafEventMacro(*maf_event);
+  InvokeEvent(*maf_event);
 }
 
 //----------------------------------------------------------------------------
@@ -127,7 +127,7 @@ void mafNodeManager::NotifyRemove(mafNode *n)
   iter->IgnoreVisibleToTraverse(true); // ignore visible to traverse flag and visits all nodes
   iter->SetTraversalModeToPostOrder(); // traverse is: first the subtree left to right, then the root
   for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
-		{mafEvent evUnq(this,VME_REMOVING,node); mafEventMacro(evUnq);} // raise notification event (to logic)
+		{mafEvent evUnq(this,VME_REMOVING,node); InvokeEvent(evUnq);} // raise notification event (to logic)
   iter->Delete();
 }
 //----------------------------------------------------------------------------
@@ -138,7 +138,7 @@ void mafNodeManager::NotifyAdd(mafNode *n)
   iter->IgnoreVisibleToTraverse(true); // ignore visible to traverse flag and visits all nodes
   for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {
-    {mafEvent evUnq(this,VME_ADDED,node); mafEventMacro(evUnq);} // raise notification event (to logic)
+    {mafEvent evUnq(this,VME_ADDED,node); InvokeEvent(evUnq);} // raise notification event (to logic)
   }
   iter->Delete();
   m_Modified = true;

@@ -286,11 +286,11 @@ void mafGizmoRotateCircle::OnEvent(mafEventBase *maf_event)
       }
       // forward events to the listener
       e->SetSender(this);
-      mafEventMacro(*e);
+      InvokeEvent(*e);
     }
     else
     {
-      mafEventMacro(*e);
+      InvokeEvent(*e);
     }
   }
 }
@@ -315,7 +315,7 @@ void mafGizmoRotateCircle::SetColor(double colR, double colG, double colB)
 void mafGizmoRotateCircle::Show(bool show)
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this,VME_SHOW,m_GizmoCircle,show); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW,m_GizmoCircle,show); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGizmoRotateCircle::SetAbsPose(std::shared_ptr<mafMatrix> absPose)
