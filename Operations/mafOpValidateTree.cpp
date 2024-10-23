@@ -85,7 +85,7 @@ void mafOpValidateTree::OpRun()
       wxMessageBox(_("Tree invalid!! In log area you can find details."), _("Warning"));
     }
   }
-  {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 int mafOpValidateTree::ValidateTree()

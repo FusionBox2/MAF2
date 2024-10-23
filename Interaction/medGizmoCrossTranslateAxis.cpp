@@ -407,7 +407,7 @@ void medGizmoCrossTranslateAxis::OnEvent(mafEventBase *maf_event)
 {
 	// forward events to the listener
 	maf_event->SetSender(this);
-	mafEventMacro(*maf_event);
+	InvokeEvent(*maf_event);
 }
 /** Gizmo color */
 //----------------------------------------------------------------------------
@@ -442,14 +442,14 @@ void medGizmoCrossTranslateAxis::SetColor(double cylR, double cylG, double cylB)
 void medGizmoCrossTranslateAxis::Show(bool show)
 //----------------------------------------------------------------------------
 {
-	{mafEvent evUnq(this,VME_SHOW,m_TranslationCylinderGizmo,show); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW,m_TranslationCylinderGizmo,show); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
 void medGizmoCrossTranslateAxis::ShowTranslationFeedbackArrows(bool show)
 //----------------------------------------------------------------------------
 {
-	{mafEvent evUnq(this,VME_SHOW,m_TranslationFeedbackGizmo,show); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW,m_TranslationFeedbackGizmo,show); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------

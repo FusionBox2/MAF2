@@ -166,7 +166,7 @@ void medGUILutHistogramEditor::OnEvent(mafEventBase *maf_event)
           UpdateVolumeLut();
           m_LutSwatch->Modified();
           //Generating Event to update other views
-          {mafEvent evUnq(this,GetId()); mafEventMacro(evUnq);}
+          {mafEvent evUnq(this,GetId()); InvokeEvent(evUnq);}
         }
         break;
       case ID_GAMMA_CORRETION:
@@ -174,7 +174,7 @@ void medGUILutHistogramEditor::OnEvent(mafEventBase *maf_event)
           UpdateVolumeLut();
           m_LutSwatch->Modified();
           //Generating Event to update other views
-          {mafEvent evUnq(this,GetId()); mafEventMacro(evUnq);}
+          {mafEvent evUnq(this,GetId()); InvokeEvent(evUnq);}
         }
         break;
       case ID_RESET_LUT:
@@ -185,7 +185,7 @@ void medGUILutHistogramEditor::OnEvent(mafEventBase *maf_event)
           UpdateVolumeLut();
           m_LutSwatch->Modified();
           //Generating Event to update other views
-          {mafEvent evUnq(this,GetId()); mafEventMacro(evUnq);}
+          {mafEvent evUnq(this,GetId()); InvokeEvent(evUnq);}
         }
         break;
       case ID_FULL_SAMPLING:
@@ -219,7 +219,7 @@ void medGUILutHistogramEditor::OnEvent(mafEventBase *maf_event)
          //forward up events, needed for showing highlight in other views  
          this->Update();
          this->Refresh();
-         mafEventMacro(*e);
+         InvokeEvent(*e);
         }
       break;
     }
@@ -371,7 +371,7 @@ void medGUILutHistogramEditor::UpdateVolumeLut(bool reset)
     m_LutSwatch->Modified();
 
   //Forward event to update other views
-  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -379,5 +379,5 @@ void medGUILutHistogramEditor::OnSize(wxSizeEvent &event)
 //----------------------------------------------------------------------------
 {
   mafGUIDialog::OnSize(event);
-  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }

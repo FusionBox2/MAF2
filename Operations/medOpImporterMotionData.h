@@ -117,7 +117,7 @@ public:
         result = OP_RUN_OK;
       }
     }
-    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
   }
   //----------------------------------------------------------------------------
   /** Execute the operation. */
@@ -158,7 +158,7 @@ public:
     // Must register in order to preserve output for do/undo operation (since it is a smart pointer)
     m_Output = m_Vme;
     m_Vme->Register(m_Output);
-    {mafEvent evUnq(this,VME_ADD,m_Vme); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,VME_ADD,m_Vme); InvokeEvent(evUnq);}
   }
   //----------------------------------------------------------------------------
   /** Set file name. */

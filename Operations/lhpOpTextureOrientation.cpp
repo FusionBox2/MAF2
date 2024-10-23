@@ -192,7 +192,7 @@ void lhpOpTextureOrientation::OpRun()
 
     DeleteOpDialog();
 
-    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
   }
 }
 
@@ -514,7 +514,7 @@ void lhpOpTextureOrientation::OnEvent(mafEventBase *maf_event)
       break;
 
     default:
-      mafEventMacro(*e);
+      InvokeEvent(*e);
       break; 
     }
   }

@@ -277,7 +277,7 @@ void medOpMML3::OpDo()  {}
 void medOpMML3::OpUndo() {}
 
 //----------------------------------------------------------------------------
-void medOpMML3::OpStop(int result) {	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}}
+void medOpMML3::OpStop(int result) {	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}}
 
 
 
@@ -807,7 +807,7 @@ void medOpMML3::CreateRegistrationDlg()
   m_Model->Update() ; // update because SetUpParameterViews intializes the transform splines
   SetUpContourWidget();
  
-  {mafEvent evUnq(this, ID_REG_T_OPERATION); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, ID_REG_T_OPERATION); InvokeEvent(evUnq);}
   
   m_OpDlg->ShowModal();	
 }
@@ -1258,7 +1258,7 @@ void medOpMML3::OnEvent(mafEventBase *maf_event)
       break;
 
     default:
-      mafEventMacro(*e); 
+      InvokeEvent(*e); 
       break;
     }
   }
@@ -1453,7 +1453,7 @@ void medOpMML3::OnRegistrationOK()
   RegisteredMusclesVME = mafVMEGroup::New();
   RegisteredMusclesVME->SetName("registered muscles");
   PatientSectionVME->AddChild(RegisteredMusclesVME);
-  {mafEvent evUnq(this, VME_ADD, RegisteredMusclesVME); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, VME_ADD, RegisteredMusclesVME); InvokeEvent(evUnq);}
   }
 
   // is there a groupVME under the "registered muscles" groupVME with name identical to
@@ -1464,7 +1464,7 @@ void medOpMML3::OnRegistrationOK()
   OurMuscleVME = mafVMEGroup::New();
   OurMuscleVME->SetName(m_Surface_name);
   RegisteredMusclesVME->AddChild(OurMuscleVME);
-  {mafEvent evUnq(this, VME_ADD, OurMuscleVME); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, VME_ADD, OurMuscleVME); InvokeEvent(evUnq);}
   }
 
   // no children?
@@ -1494,7 +1494,7 @@ void medOpMML3::OnRegistrationOK()
 
   // add to tree (save now)
   //OurMuscleVME->AddChild(vme);
-  {mafEvent evUnq(this, VME_ADD, vme.get()); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, VME_ADD, vme.get()); InvokeEvent(evUnq);}
 }
 
 
@@ -1661,7 +1661,7 @@ void medOpMML3::OnMuscleSelection()
   mafEvent e(this,VME_CHOOSE);
   e.SetString(&title);
   e.SetArg((intptr_t)(&medOpMML3::AcceptVMESurface)) ; // accept only landmark vme's
-  mafEventMacro(e);
+  InvokeEvent(e);
   mafVME *vme = (mafVME*)e.GetVme();
   if(!vme) return;
 
@@ -2418,7 +2418,7 @@ void medOpMML3::OnLandmark1AtlasPatientSelection()
   mafEvent e(this,VME_CHOOSE);
   e.SetString(&title);
   e.SetArg((intptr_t)(&medOpMML3::AcceptVMELandmark)) ; // accept only landmark vme's
-  mafEventMacro(e);
+  InvokeEvent(e);
   mafVME *vme = (mafVME*)e.GetVme();
   if(!vme) return;
 
@@ -2537,7 +2537,7 @@ void medOpMML3::OnLandmark2AtlasPatientSelection()
   mafEvent e(this,VME_CHOOSE);
   e.SetString(&title);
   e.SetArg((intptr_t)(&medOpMML3::AcceptVMELandmark)) ; // accept only landmark vme's
-  mafEventMacro(e);
+  InvokeEvent(e);
   mafVME *vme = (mafVME*)e.GetVme();
   if(!vme) return;
 
@@ -2655,7 +2655,7 @@ void medOpMML3::OnLandmark3AtlasPatientSelection()
   mafEvent e(this,VME_CHOOSE);
   e.SetString(&title);
   e.SetArg((intptr_t)(&medOpMML3::AcceptVMELandmark)) ; // accept only landmark vme's
-  mafEventMacro(e);
+  InvokeEvent(e);
   mafVME *vme = (mafVME*)e.GetVme();
   if(!vme) return;
 
@@ -2773,7 +2773,7 @@ void medOpMML3::OnLandmark4AtlasPatientSelection()
   mafEvent e(this,VME_CHOOSE);
   e.SetString(&title);
   e.SetArg((intptr_t)(&medOpMML3::AcceptVMELandmark)) ; // accept only landmark vme's
-  mafEventMacro(e);
+  InvokeEvent(e);
   mafVME *vme = (mafVME*)e.GetVme();
   if(!vme) return;
 
@@ -2891,7 +2891,7 @@ void medOpMML3::OnLandmarkAxis1AtlasSelection()
   mafEvent e(this,VME_CHOOSE);
   e.SetString(&title);
   e.SetArg((intptr_t)(&medOpMML3::AcceptVMELandmark)) ; // accept only landmark vme's
-  mafEventMacro(e);
+  InvokeEvent(e);
   mafVME *vme = (mafVME*)e.GetVme();
   if(!vme) return;
 
@@ -2988,7 +2988,7 @@ void medOpMML3::OnLandmarkAxis2AtlasSelection()
   mafEvent e(this,VME_CHOOSE);
   e.SetString(&title);
   e.SetArg((intptr_t)(&medOpMML3::AcceptVMELandmark)) ; // accept only landmark vme's
-  mafEventMacro(e);
+  InvokeEvent(e);
   mafVME *vme = (mafVME*)e.GetVme();
   if(!vme) return;
 
@@ -3085,7 +3085,7 @@ void medOpMML3::OnLandmarkAxis3AtlasSelection()
   mafEvent e(this,VME_CHOOSE);
   e.SetString(&title);
   e.SetArg((intptr_t)(&medOpMML3::AcceptVMELandmark)) ; // accept only landmark vme's
-  mafEventMacro(e);
+  InvokeEvent(e);
   mafVME *vme = (mafVME*)e.GetVme();
   if(!vme) return;
 

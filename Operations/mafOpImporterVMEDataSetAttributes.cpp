@@ -142,7 +142,7 @@ void mafOpImporterVMEDataSetAttributes::OpStop(int result)
   
   HideGui();
 
-	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}  	   
+	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}  	   
 }
 
 enum Mesh_Importer_ID
@@ -171,7 +171,7 @@ void mafOpImporterVMEDataSetAttributes::CreateGui()
   mafEvent buildHelpGui;
   buildHelpGui.SetSender(this);
   buildHelpGui.SetId(GET_BUILD_HELP_GUI);
-  mafEventMacro(buildHelpGui);
+  InvokeEvent(buildHelpGui);
 
   if (buildHelpGui.GetArg())
   {
@@ -239,7 +239,7 @@ void mafOpImporterVMEDataSetAttributes::OnEvent(mafEventBase *maf_event)
 		mafString operationLabel = GetLabel();
 		helpEvent.SetString(&operationLabel);
 		helpEvent.SetId(OPEN_HELP_PAGE);
-		mafEventMacro(helpEvent);
+		InvokeEvent(helpEvent);
 	}
 	break;
 
@@ -272,8 +272,8 @@ void mafOpImporterVMEDataSetAttributes::OnEvent(mafEventBase *maf_event)
       //referred to bug 933
       if (m_Output != NULL)
       {
-        {mafEvent evUnq(this,VME_SHOW, m_Output, false); mafEventMacro(evUnq);}
-        {mafEvent evUnq(this,VME_SHOW, m_Output, true); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,VME_SHOW, m_Output, false); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this,VME_SHOW, m_Output, true); InvokeEvent(evUnq);}
       }
       //END WORKAROUND CODE 
 
@@ -289,7 +289,7 @@ void mafOpImporterVMEDataSetAttributes::OnEvent(mafEventBase *maf_event)
     break;
     
     default:
-      mafEventMacro(*e);
+      InvokeEvent(*e);
     break;
     }	
   }

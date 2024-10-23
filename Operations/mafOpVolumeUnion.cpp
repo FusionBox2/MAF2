@@ -98,7 +98,7 @@ bool mafOpVolumeUnion::Accept(mafNode* node)
 //----------------------------------------------------------------------------
 {
 	mafEvent e(this,VIEW_SELECTED);
-	mafEventMacro(e);
+	InvokeEvent(e);
 	return (node && node->IsA("mafVMEVolumeGray"));
 }
 //----------------------------------------------------------------------------
@@ -106,7 +106,7 @@ void mafOpVolumeUnion::OpRun()
 ////----------------------------------------------------------------------------
 {
     mafEvent e(this,VIEW_SELECTED);
-    mafEventMacro(e);
+    InvokeEvent(e);
 
 	m_FirstVMEVolume = mafVMEVolume::SafeDownCast(m_Input);
 	m_FirstVMEVolume->Update();
@@ -120,7 +120,7 @@ void mafOpVolumeUnion::OpRun()
 	if(!m_TestMode)
 	{
 		CreateGui();
-		{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 	}
 }
 //----------------------------------------------------------------------------
@@ -132,8 +132,8 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 	if(!this->m_TestMode)
 	{
 		wait = new wxBusyInfo("Build Volume Union: please wait...");
-		{mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
-		{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE, (intptr_t)progress); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
+		{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE, (intptr_t)progress); InvokeEvent(evUnq);}
 	}
 
 	//Input data(first volume)
@@ -233,7 +233,7 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 		{
 			progress++;
 			mafSleep(150); // Workaround: I need this sleep function to update slowly the progress bar
-			{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
+			{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); InvokeEvent(evUnq);}
 		}	
 	}
 	 
@@ -292,7 +292,7 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 		{
 			progress++;
 			mafSleep(150);
-		    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
+		    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); InvokeEvent(evUnq);}
 		}
 	}
 	
@@ -351,7 +351,7 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 		{
 			progress++;
 			mafSleep(150);
-			{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
+			{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); InvokeEvent(evUnq);}
 		}
 	}
 	
@@ -407,13 +407,13 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 		{
 			progress++;
 			mafSleep(150);
-			{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
+			{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); InvokeEvent(evUnq);}
 		}
 	}
 
 	if(!this->m_TestMode)
 	{
-	    {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
+	    {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 	}
 	if(wait) delete wait;
 
@@ -475,7 +475,7 @@ bool mafOpVolumeUnion::VmeChoose(mafString title,mafEvent *e)
 	e->SetArg((intptr_t)&mafOpVolumeUnion::VmeUnionAccept);
 	e->SetString(&title);
 	e->SetId(VME_CHOOSE);
-	mafEventMacro(*e);
+	InvokeEvent(*e);
 	if(e->GetVme()) {
         m_SecondVMEVolume = mafVMEVolume::SafeDownCast(e->GetVme());
 		return true;
@@ -504,7 +504,7 @@ void mafOpVolumeUnion::CreateGui()
 	mafEvent buildHelpGui;
 	buildHelpGui.SetSender(this);
 	buildHelpGui.SetId(GET_BUILD_HELP_GUI);
-	mafEventMacro(buildHelpGui);
+	InvokeEvent(buildHelpGui);
 
 	if (buildHelpGui.GetArg())
 	{
@@ -565,7 +565,7 @@ void mafOpVolumeUnion::OnEvent(mafEventBase *maf_event)
 				mafString operationLabel = this->GetLabel();
 				helpEvent.SetString(&operationLabel);
 				helpEvent.SetId(OPEN_HELP_PAGE);
-				mafEventMacro(helpEvent);
+				InvokeEvent(helpEvent);
 			}
 			break;
 			case ID_RESOLUTION:
@@ -657,7 +657,7 @@ void mafOpVolumeUnion::OnEvent(mafEventBase *maf_event)
 				OpStop(OP_RUN_CANCEL);
 			    break;
 			default:
-				mafEventMacro(*e);
+				InvokeEvent(*e);
 			    break;
 		}	
 	}

@@ -175,7 +175,7 @@ void medOpExtrusionHoles::OpDo()
 	if(m_ResultPolydata)
 		((mafVMESurface*)m_Input)->SetData(m_ResultPolydata,((mafVME*)m_Input)->GetTimeStamp());
 
-	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpExtrusionHoles::OpUndo()
@@ -184,7 +184,7 @@ void medOpExtrusionHoles::OpUndo()
 	if(m_OriginalPolydata)
 		((mafVMESurface*)m_Input)->SetData(m_OriginalPolydata,((mafVME*)m_Input)->GetTimeStamp());
 
-	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpExtrusionHoles::OnEvent(mafEventBase *maf_event)
@@ -248,7 +248,7 @@ void medOpExtrusionHoles::OnEvent(mafEventBase *maf_event)
 			m_Dialog->EndModal(wxID_CANCEL);
 			break;
 		default:
-			mafEventMacro(*e);
+			InvokeEvent(*e);
 		}
 	}
 }
@@ -402,7 +402,7 @@ void medOpExtrusionHoles::SelectHole(int pointID)
 void medOpExtrusionHoles::OpStop(int result)
 //----------------------------------------------------------------------------
 {
-	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}        
+	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}        
 }
 //----------------------------------------------------------------------------
 void medOpExtrusionHoles::DeleteOpDialog()

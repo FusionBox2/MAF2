@@ -420,7 +420,7 @@ void mafViewArbitrarySlice::OnEvent(mafEventBase *maf_event)
 	else
 	{
 		// if no one can handle this event send it to the operation listener
-		mafEventMacro(*maf_event); 
+		InvokeEvent(*maf_event); 
 	}	
 }
 //----------------------------------------------------------------------------
@@ -533,7 +533,7 @@ void mafViewArbitrarySlice::OnEventGizmoTranslate(mafEventBase *maf_event)
 
 	default:
 		{
-			mafEventMacro(*maf_event);
+			InvokeEvent(*maf_event);
 		}
 	}
 }
@@ -549,7 +549,7 @@ void mafViewArbitrarySlice::OnEventGizmoRotate(mafEventBase *maf_event)
 			// gizmo does not set vme pose  since they cannot scale
 			PostMultiplyEventMatrix(maf_event);
 
-			{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+			{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 
 			//update the normal of the cutter plane of the surface
 			mafNode *root=m_CurrentVolume->GetRoot();
@@ -623,7 +623,7 @@ void mafViewArbitrarySlice::OnEventGizmoRotate(mafEventBase *maf_event)
 
 	default:
 		{
-			mafEventMacro(*maf_event);
+			InvokeEvent(*maf_event);
 		}
 	}
 }
@@ -661,7 +661,7 @@ void mafViewArbitrarySlice::OnEventThis(mafEventBase *maf_event)
 				mafString viewLabel = GetLabel();
 				helpEvent.SetString(&viewLabel);
 				helpEvent.SetId(OPEN_HELP_PAGE);
-				mafEventMacro(helpEvent);
+				InvokeEvent(helpEvent);
 			}
 			break;
 
@@ -674,7 +674,7 @@ void mafViewArbitrarySlice::OnEventThis(mafEventBase *maf_event)
 					double low, hi;
 					m_LutSlider->GetSubRange(&low,&hi);
 					m_ColorLUT->SetTableRange(low,hi);
-					{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+					{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 				}
 			}
 			break;
@@ -694,7 +694,7 @@ void mafViewArbitrarySlice::OnEventThis(mafEventBase *maf_event)
 				m_GizmoTranslate->SetAbsPose(m_MatrixReset);
 				m_Slicer->SetAbsMatrix(*m_MatrixReset);
 				//update because I need to refresh the normal of the camera
-				{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 				//update the normal of the cutter plane of the surface
 				mafNode *root=m_CurrentVolume->GetRoot();
 				mafNodeIterator *iter = root->NewIterator();
@@ -764,7 +764,7 @@ void mafViewArbitrarySlice::OnEventThis(mafEventBase *maf_event)
 		case ID_TRILINEAR_INTERPOLATION_ON:
 			{
 				m_Slicer->SetTrilinearInterpolation(m_TrilinearInterpolationOn == TRUE);
-				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 
 			}
 			break;
@@ -799,7 +799,7 @@ mafGUI* mafViewArbitrarySlice::CreateGui()
 	mafEvent buildHelpGui;
 	buildHelpGui.SetSender(this);
 	buildHelpGui.SetId(GET_BUILD_HELP_GUI);
-	mafEventMacro(buildHelpGui);
+	InvokeEvent(buildHelpGui);
 
 	if (buildHelpGui.GetArg())
 	{

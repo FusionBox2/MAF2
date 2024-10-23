@@ -77,11 +77,11 @@ void mafGizmoPathRuler::OnEvent(mafEventBase *maf_event)
   //}
   //else
   //{
-  //  mafEventMacro(*maf_event);
+  //  InvokeEvent(*maf_event);
   //}
   
   // for the moment just forward up...
-  mafEventMacro(*maf_event);
+  InvokeEvent(*maf_event);
 }
 //----------------------------------------------------------------------------  
 void mafGizmoPathRuler::Show(bool show)
@@ -221,7 +221,7 @@ void mafGizmoPathRuler::SetCurvilinearAbscissa( double s )
   //matrixVectorEvent.SetId(ID_TRANSFORM);
   //matrixVectorEvent.SetArg(mafGizmoPath::ABS_POSE);
   //
-  //mafEventMacro(matrixVectorEvent);
+  //InvokeEvent(matrixVectorEvent);
 
 }
 

@@ -198,15 +198,15 @@ void lhpOpImporterPressionCenter::OpRun()
 
   if (m_PCInputFileNameFullPaths.size() == 0)
   {
-	  {mafEvent evUnq(this, OP_RUN_CANCEL); mafEventMacro(evUnq);}
+	  {mafEvent evUnq(this, OP_RUN_CANCEL); InvokeEvent(evUnq);}
   }
    else if(Import())
    {
-	   {mafEvent evUnq(this, OP_RUN_OK); mafEventMacro(evUnq);}
+	   {mafEvent evUnq(this, OP_RUN_OK); InvokeEvent(evUnq);}
    }
 	else
 	{
-		{mafEvent evUnq(this, OP_RUN_CANCEL); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this, OP_RUN_CANCEL); InvokeEvent(evUnq);}
 	}
 
  
@@ -482,7 +482,7 @@ bool lhpOpImporterPressionCenter::Import()
   else//with dictionary just prepare name, creation only if needed
     specCloudName.Append("NOT_IN_DICTIONARY");
 
-  {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
   
   long progress = 0;
 
@@ -654,7 +654,7 @@ bool lhpOpImporterPressionCenter::Import()
     }
 
     progress = (currentFrame + 1) * 100 / intData.m_NumFrames;
-    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,progress); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,progress); InvokeEvent(evUnq);}
   }
 
   //if specCloud exists add it to all clouds
@@ -668,7 +668,7 @@ bool lhpOpImporterPressionCenter::Import()
     it->second->Update();
   }
 
-  {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 
   if(!m_TestMode)
   {
@@ -686,7 +686,7 @@ bool lhpOpImporterPressionCenter::Import()
   }
   
   long progress = 0;
-  {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
 
   //name analog vme
   mafNEW(intData.m_VmeAnalog);
@@ -721,10 +721,10 @@ bool lhpOpImporterPressionCenter::Import()
     }
 
     progress = (currentSample +1 ) * 100 / (intData.m_NumSamples);
-    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,progress); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,progress); InvokeEvent(evUnq);}
   }
 
-  {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 
   intData.m_VmeAnalog->SetData(analogMatrix, 0);
 
@@ -755,7 +755,7 @@ bool lhpOpImporterPressionCenter::Import()
   }
 
   long progress = 0;
-  {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
 
   //For every platform
   for(int currentPlatform=0; currentPlatform<intData.m_NumPlatforms; currentPlatform++)
@@ -951,10 +951,10 @@ bool lhpOpImporterPressionCenter::Import()
       intData.m_MomentList[currentPlatform]->GetOutput()->GetVTKData()->Update();
 
       progress = (currentSample + 1 + (currentPlatform * intData.m_NumSamples )) * 100 / (intData.m_NumSamples * intData.m_NumPlatforms);
-      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,progress); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,progress); InvokeEvent(evUnq);}
     }
   }
-  {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 
   if(!m_TestMode)
   {
@@ -1111,7 +1111,7 @@ bool lhpOpImporterPressionCenter::Import()
   //        break;
  //       }
       default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       break;
     }	
   }

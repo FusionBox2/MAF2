@@ -137,7 +137,7 @@ void lhpOpImporterC3DFused::OpRun()
 
   if (m_C3DInputFileNameFullPaths.size() == 0)
   {
-    {mafEvent evUnq(this, OP_RUN_CANCEL); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this, OP_RUN_CANCEL); InvokeEvent(evUnq);}
   }
   else if (!m_TestMode)
   {
@@ -179,11 +179,11 @@ void lhpOpImporterC3DFused::OpRun()
   {
     /*if (Import())
     {
-      {mafEvent evUnq(this, OP_RUN_OK); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this, OP_RUN_OK); InvokeEvent(evUnq);}
     }
     else
     {
-      {mafEvent evUnq(this, OP_RUN_CANCEL); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this, OP_RUN_CANCEL); InvokeEvent(evUnq);}
     }*/
   }
   assert(!m_PointsSource && !m_PointsTarget);
@@ -352,7 +352,7 @@ void lhpOpImporterC3DFused::OnEvent(mafEventBase *maf_event)
         OpStop(OP_RUN_CANCEL);
       break;
       default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       break;
     }
   }
@@ -625,14 +625,14 @@ bool lhpOpImporterC3DFused::ProcessNode(mafVMELandmarkCloud *src, mafVMELandmark
     trg->GetLocalTimeStamps(timeStamps);
     int numTimeStamps = timeStamps.size();
 
-    {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
 
     for (int t = 0; t < numTimeStamps; t++)
     {
       double currTime = timeStamps[t];
       long p = t * 100 / numTimeStamps;
       //  mafProgressBarSetValueMacro(p);
-      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)p); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)p); InvokeEvent(evUnq);}
       //Set the new time for the vme used to register the one frame source 
       trg->SetTimeStamp(currTime); //set current time
       trg->Update(); //>UpdateAllData();
@@ -647,7 +647,7 @@ bool lhpOpImporterC3DFused::ProcessNode(mafVMELandmarkCloud *src, mafVMELandmark
     }
     timeStamps.clear();
 
-    {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
   }
   else
   {

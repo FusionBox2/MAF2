@@ -47,7 +47,7 @@ vtkNew<vtkPoints> position_point;
 position_point->SetNumberOfPoints(1);
 position_point->SetPoint(0,wp[0],wp[1],wp[2]);
 
-mafEventMacro(mafEvent(this, event_id, position_point.GetPointer()));
+InvokeEvent(mafEvent(this, event_id, position_point.GetPointer()));
 -----------------
 
 @sa medOpImporterDicomOffis where this class is used in the Dicom importer wizard dialog

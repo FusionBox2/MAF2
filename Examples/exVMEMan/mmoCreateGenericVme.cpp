@@ -54,13 +54,13 @@ mafOp* mmoCreateGenericVme::Copy()
 void mmoCreateGenericVme::OnEvent(mafEventBase *event)
 //----------------------------------------------------------------------------
 {
-  mafEventMacro(*event);
+  InvokeEvent(*event);
 }
 //----------------------------------------------------------------------------
 void mmoCreateGenericVme::OpRun()
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mmoCreateGenericVme::OpDo()
@@ -73,14 +73,14 @@ void mmoCreateGenericVme::OpDo()
   wxString name = wxString::Format("vme generic %d",counter++);
   m_vme->SetName(name);
   m_vme->ReparentTo(m_Input);
-  {mafEvent evUnq(this,VME_ADD,m_vme); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_ADD,m_vme); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mmoCreateGenericVme::OpUndo()
 //----------------------------------------------------------------------------
 {
   assert(m_vme);
-  {mafEvent evUnq(this,VME_REMOVE,m_vme); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_REMOVE,m_vme); InvokeEvent(evUnq);}
   mafDEL(m_vme);
 }
 

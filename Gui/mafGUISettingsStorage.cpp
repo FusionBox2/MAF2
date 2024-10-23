@@ -180,7 +180,7 @@ void mafGUISettingsStorage::OnEvent(mafEventBase *maf_event)
       m_Config->Write("SRBCacheFolder",m_SRBCacheFolder.GetCStr());
       break;*/
     default:
-      mafEventMacro(*maf_event);
+      InvokeEvent(*maf_event);
     break; 
   }
   EnableItems();

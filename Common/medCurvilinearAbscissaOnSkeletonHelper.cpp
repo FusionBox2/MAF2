@@ -472,7 +472,7 @@ int medCurvilinearAbscissaOnSkeletonHelper::SetCurvilinearAbscissa( vtkIdType br
     m_Gui->Update();
   }
 
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   return MAF_OK;
 }
 
@@ -920,7 +920,7 @@ void medCurvilinearAbscissaOnSkeletonHelper::OnEvent(mafEventBase *maf_event)
       break;
 
       default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       break;
     }
   }

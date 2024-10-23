@@ -35,5 +35,5 @@ void lhpTextureOrientationProgressCallback::Execute(vtkObject *caller, unsigned 
 
   mafEvent e(this, m_id) ;
   e.SetData(calldata) ;
-  mafEventMacro(e) ;
+  InvokeEvent(e) ;
 }

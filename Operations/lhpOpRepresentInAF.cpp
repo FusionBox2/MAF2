@@ -124,7 +124,7 @@ void lhpOpRepresentInAF::OnEvent(mafEventBase *maf_event)
       {
         mafString s(_L("Choose refsys"));
         mafEvent e(this, VME_CHOOSE, &s, NULL/*, (long)&lhpOpRepresentInAF::RefSysAccept*/);
-        mafEventMacro(e);
+        InvokeEvent(e);
         mafVMERefSysAbstract *rsa = mafVMERefSysAbstract::SafeDownCast(e.GetVme());
         if(rsa)
         {
@@ -142,7 +142,7 @@ void lhpOpRepresentInAF::OnEvent(mafEventBase *maf_event)
         OpStop(OP_RUN_CANCEL);
         break;
       default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       break;
     }
   }

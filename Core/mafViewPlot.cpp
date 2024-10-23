@@ -202,15 +202,15 @@ void mafViewPlot::OnEvent(mafEventBase *maf_event)
     switch(e->GetId()) 
     {
       default:
-        mafEventMacro(*maf_event);
+        InvokeEvent(*maf_event);
       break;
     }
   }
   else
   {
-    mafEventMacro(*maf_event);
+    InvokeEvent(*maf_event);
   }*/
-  mafEventMacro(*maf_event);
+  InvokeEvent(*maf_event);
 }
 //----------------------------------------------------------------------------
 void mafViewPlot::Print(wxDC *dc, wxRect margins)

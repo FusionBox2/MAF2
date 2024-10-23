@@ -119,7 +119,7 @@ void medOpSurfaceMirror::OpRun()
 		mafEvent buildHelpGui;
 		buildHelpGui.SetSender(this);
 		buildHelpGui.SetId(GET_BUILD_HELP_GUI);
-		mafEventMacro(buildHelpGui);
+		InvokeEvent(buildHelpGui);
 
 		if (buildHelpGui.GetArg())
 		{
@@ -275,7 +275,7 @@ void medOpSurfaceMirror::OpDo()
 	}
 
 	
-	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpSurfaceMirror::OpUndo()
@@ -284,7 +284,7 @@ void medOpSurfaceMirror::OpUndo()
   assert(m_InputPolydata);
 
 	((mafVMESurface *)m_Input)->SetData(m_InputPolydata,((mafVME *)m_Input)->GetTimeStamp());
-	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpSurfaceMirror::OnEvent(mafEventBase *maf_event)
@@ -301,7 +301,7 @@ void medOpSurfaceMirror::OnEvent(mafEventBase *maf_event)
 				mafString operationLabel = GetLabel();
 				helpEvent.SetString(&operationLabel);
 				helpEvent.SetId(OPEN_HELP_PAGE);
-				mafEventMacro(helpEvent);
+				InvokeEvent(helpEvent);
 			}
 			break;
 
@@ -325,7 +325,7 @@ void medOpSurfaceMirror::OnEvent(mafEventBase *maf_event)
 				OpStop(OP_RUN_CANCEL);        
 			break;
 				default:
-				mafEventMacro(*e);
+				InvokeEvent(*e);
 			break; 
 	  }
 	}  
@@ -341,7 +341,7 @@ void medOpSurfaceMirror::OpStop(int result)
 	  HideGui();
 	  delete m_Gui;
 	}
-	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}        
+	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}        
 }
 //----------------------------------------------------------------------------
 void medOpSurfaceMirror::Preview()  
@@ -364,7 +364,7 @@ void medOpSurfaceMirror::Preview()
   ((mafVMESurface *)m_Input)->SetData(m_OutputPolydata,((mafVME *)m_Input)->GetTimeStamp());
 
 
-  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 
 	if (wait)
 		delete wait;
@@ -385,7 +385,7 @@ void medOpSurfaceMirror::PreviewGroup()
 	//m_MirrorFilter->SetFlipNormals(m_FlipNormals);
 	m_MirrorFilter->Update();
 	
-	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 
 	if (wait)
 		delete wait;

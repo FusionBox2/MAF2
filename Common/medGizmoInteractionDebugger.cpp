@@ -175,12 +175,12 @@ void medGizmoInteractionDebugger::OnEvent(mafEventBase *maf_event)
           m_CurvilinearAbscissaHelper->MoveOnSkeleton(e);
         }
 
-        {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
       }
       break;
 
     default:
-      mafEventMacro(*e);
+      InvokeEvent(*e);
       break; 
     }
   }
@@ -191,7 +191,7 @@ void medGizmoInteractionDebugger::Show(bool show)
 //----------------------------------------------------------------------------
 {
   assert(m_VmeGizmo);
-  {mafEvent evUnq(this,VME_SHOW,m_VmeGizmo,show); mafEventMacro(evUnq);}  
+  {mafEvent evUnq(this,VME_SHOW,m_VmeGizmo,show); InvokeEvent(evUnq);}  
 }
 
 void medGizmoInteractionDebugger::SetCurvilinearAbscissa( vtkIdType branchId, double s )

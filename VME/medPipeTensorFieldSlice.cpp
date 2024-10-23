@@ -125,7 +125,7 @@ void medPipeTensorFieldSlice::OnEvent(mafEventBase *maf_event)
 
       UpdateVTKPipe(); 
     
-      {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       return;
     }     
   }

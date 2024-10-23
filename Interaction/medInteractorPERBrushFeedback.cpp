@@ -158,7 +158,7 @@ void medInteractorPERBrushFeedback::OnEvent(mafEventBase *event)
           mafEventInteraction *e = mafEventInteraction::SafeDownCast(event);
           e->Get2DPosition(pos_2d);
 
-          {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+          {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 
           if(m_EnableDrawing)
           {
@@ -269,7 +269,7 @@ void medInteractorPERBrushFeedback::OnEvent(mafEventBase *event)
             pick_event.SetArg(pid);
             pick_event.SetDouble(m_Count);
             pick_event.SetBool(e->GetModifier(MAF_CTRL_KEY) == true);
-            mafEventMacro(pick_event);
+            InvokeEvent(pick_event);
             p->Delete();
           }
         }

@@ -335,7 +335,7 @@ void mafViewIntGraph::OnEvent(mafEventBase *maf_event)
         if(m_RenderWindow) 
           m_RenderWindow->Destroy();
         m_RenderWindow = NULL;
-        mafEventMacro(*e);
+        InvokeEvent(*e);
         break;
       }*/
     case ID_ROLLOUT_RENDER:
@@ -393,7 +393,7 @@ void mafViewIntGraph::OnEvent(mafEventBase *maf_event)
   }
   else
   {
-    mafEventMacro(*maf_event);
+    InvokeEvent(*maf_event);
 
   }
 
@@ -534,7 +534,7 @@ void mafViewIntGraph::savePlotGen(void)
     if(vme)
     {
       vme->GetTagArray()->SetTag(mafTagItem(_R(mafINTGG_SAVEINFO_TAG), strv));
-      {mafEvent evUnq(this,VME_MODIFIED, vme); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,VME_MODIFIED, vme); InvokeEvent(evUnq);}
     }
   }
 }
@@ -620,7 +620,7 @@ void mafViewIntGraph::loadPlot(bool readfile)
     if (it != m_shown_flags.cend())
       show = *it++;
     if (readfile)
-      {mafEvent evUnq(this, VME_SHOW, curr, show); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this, VME_SHOW, curr, show); InvokeEvent(evUnq);}
     else
     {
       if (show)
@@ -652,7 +652,7 @@ void mafViewIntGraph::loadPlot(bool readfile)
     mafNode *vme = n->m_Vme;
     if(vme)
     {
-      {mafEvent evUnq(this, VME_SHOW, vme, false); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this, VME_SHOW, vme, false); InvokeEvent(evUnq);}
     }
   }
   for(mafSceneNode *n = m_Sg->GetNodeList(); n != NULL; n = n->m_Next)

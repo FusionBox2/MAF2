@@ -234,7 +234,7 @@ void medOpEqualizeHistogram::OpStop(int result)
 //----------------------------------------------------------------------------
 {
   HideGui();
-  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}  
+  {mafEvent evUnq(this,result); InvokeEvent(evUnq);}  
 }
 //----------------------------------------------------------------------------
 void medOpEqualizeHistogram::OpUndo()

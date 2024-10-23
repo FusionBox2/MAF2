@@ -79,7 +79,7 @@ void medWizardBlockInformation::ExcutionBegin()
   mafEvent e=mafEvent(this,WIZARD_INFORMATION_BOX_SHOW_GET);
 
   //Ask upward to the wizard manager if information box shows is enabled
-  mafEventMacro(e);
+  InvokeEvent(e);
 
   //read value
   m_ShowBoxes=e.GetBool();
@@ -237,12 +237,12 @@ void medWizardBlockInformation::OnEvent( mafEventBase *maf_event )
     case WIZARD_INFO_SHOW_ID:
       {
         //Forward up event to update persistent settings
-        {mafEvent evUnq(this,WIZARD_INFORMATION_BOX_SHOW_SET,(bool)m_ShowBoxes); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,WIZARD_INFORMATION_BOX_SHOW_SET,(bool)m_ShowBoxes); InvokeEvent(evUnq);}
       }
       break;
     default:
       //All event will be forwarded up
-      mafEventMacro(*e);
+      InvokeEvent(*e);
       break;
     } // end switch case
   }

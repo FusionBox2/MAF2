@@ -182,7 +182,7 @@ void mafGizmoScaleIsotropic::OnEvent(mafEventBase *maf_event)
 {
   // forward events to the listener
 	maf_event->SetSender(this);
-  mafEventMacro(*maf_event);
+  InvokeEvent(*maf_event);
 }
 
 /** Gizmo color */
@@ -209,7 +209,7 @@ void mafGizmoScaleIsotropic::SetColor(double colR, double colG, double colB)
 void mafGizmoScaleIsotropic::Show(bool show)
 //----------------------------------------------------------------------------
 {
-	{mafEvent evUnq(this,VME_SHOW,m_CubeGizmo,show); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW,m_CubeGizmo,show); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------

@@ -433,17 +433,17 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
           data->GetScalarRange(range);
           m_Mapper->SetScalarRange(range);
         }
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       }
     	break;
       case ID_LUT:
         m_SurfaceMaterial->UpdateFromLut();
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       break;
       case ID_ENABLE_LOD:
         m_Actor->SetEnableHighThreshold(m_EnableActorLOD);
         m_OutlineActor->SetEnableHighThreshold(m_EnableActorLOD);
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       break;
       case ID_USE_VTK_PROPERTY:
         if (m_UseVTKProperty != 0)
@@ -458,7 +458,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 		{
 		  m_MaterialButton->Enable(m_UseVTKProperty != 0);
 		}
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       break;
       case ID_USE_LOOKUP_TABLE:
         m_Gui->Enable(ID_LUT,m_UseLookupTable != 0);
@@ -475,7 +475,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
         m_Gui->Enable(ID_CHOOSE_TEXTURE,m_UseTexture != 0);
         m_Gui->Enable(ID_TEXTURE_MAPPING_MODE,m_UseTexture != 0);
         m_Gui->Enable(ID_TEXTURE_MAPPING_MODE,m_SurfaceMaterial->m_MaterialType == mmaMaterial::USE_TEXTURE && m_UseTexture != 0);
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       break;
       case ID_CHOOSE_TEXTURE:
       {
@@ -483,7 +483,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
         e->SetId(VME_CHOOSE);
         e->SetArg((intptr_t)&mafPipeSurfaceTextured::ImageAccept);
         e->SetString(&title);
-        mafEventMacro(*e);
+        InvokeEvent(*e);
         mafNode *n = e->GetVme();
         if (n != NULL)
         {
@@ -507,18 +507,18 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
             m_Gui->Enable(ID_TEXTURE_MAPPING_MODE,true);
 			m_UseTexture = 1;
 			m_Gui->Update();
-			{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+			{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
           }
         }
       }
       break;
       case ID_TEXTURE_MAPPING_MODE:
         GenerateTextureMapCoordinate();
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       break;
       case ID_RENDERING_DISPLAY_LIST:
         //m_Mapper->SetImmediateModeRendering(m_RenderingDisplayListFlag);
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       break;
 	 
 	  case ID_CHOOSE_FILENAME1:
@@ -537,20 +537,20 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 
 								 wxBusyInfo wait("Writing temp file: ...");
 								 
-								 //{mafEvent evUnq(m_Gui, BIND_TO_PROGRESSBAR, writer); mafEventMacro(evUnq);}
+								 //{mafEvent evUnq(m_Gui, BIND_TO_PROGRESSBAR, writer); InvokeEvent(evUnq);}
 								 writer->SetRenderWindow(renderWindow);
 								 writer->Write();
 								 
 								
-								 // {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
+								 // {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
 								 //long dummyProgressValue = 50;
-								 //{mafEvent evUnq(this, PROGRESSBAR_SET_VALUE, dummyProgressValue); mafEventMacro(evUnq);}
+								 //{mafEvent evUnq(this, PROGRESSBAR_SET_VALUE, dummyProgressValue); InvokeEvent(evUnq);}
 								 //writer->SetFileName(m_File.GetCStr());
 								 //writer->Write();
-								 //{mafEvent evUnq(this, PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
+								 //{mafEvent evUnq(this, PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 									
 									 vtkNew<vtkJPEGWriter> exporter;
-									 //{mafEvent evUnq(m_Actor->GetTexture()->GetInput(), BIND_TO_PROGRESSBAR, exporter); mafEventMacro(evUnq);}
+									 //{mafEvent evUnq(m_Actor->GetTexture()->GetInput(), BIND_TO_PROGRESSBAR, exporter); InvokeEvent(evUnq);}
 									 
 									 if (m_Actor->GetTexture()!= NULL)
 									 {
@@ -803,7 +803,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
 
 		  break;
       default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       break;
     }
   }
@@ -863,5 +863,5 @@ void mafPipeSurfaceTextured::SetActorPicking(int enable)
 {
 	m_Actor->SetPickable(enable);
   m_Actor->Modified();
-	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }

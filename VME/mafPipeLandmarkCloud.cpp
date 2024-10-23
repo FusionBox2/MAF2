@@ -234,7 +234,7 @@ void mafPipeLandmarkCloud::OnEvent(mafEventBase *maf_event)
           data->GetScalarRange(range);
           m_CloudMapper->SetScalarRange(range);
         }
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       }
       break;
       case ID_LABELS:
@@ -246,16 +246,16 @@ void mafPipeLandmarkCloud::OnEvent(mafEventBase *maf_event)
             else
               m_Caption->SetVisibility(0);
           }
-          {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+          {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
         }
       case ID_RENDERING_DISPLAY_LIST:
 #if VTK_MAJOR_VERSION <= 7
         m_CloudMapper->SetImmediateModeRendering(m_RenderingDisplayListFlag);
 #endif
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       break;
       default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       break;
     }
   }
@@ -270,7 +270,7 @@ void mafPipeLandmarkCloud::OnEvent(mafEventBase *maf_event)
         mafVME *child_lm = m_Cloud->GetLandmark(i);
         mafEvent e(this,VME_SHOW,child_lm,true);
         //m_Cloud->ForwardUpEvent(&e);
-        mafEventMacro(e);
+        InvokeEvent(e);
       }
     }
     else
@@ -284,14 +284,14 @@ void mafPipeLandmarkCloud::OnEvent(mafEventBase *maf_event)
       }*/
       CreateClosedCloudPipe(m_Cloud->GetOutput()->GetVTKOutputPort(), m_Cloud->GetRadius(), m_Cloud->GetSphereResolution());
     }
-    {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
   else if (maf_event->GetId() == mafVMELandmarkCloud::CLOUD_RADIUS_MODIFIED)
   {
     if (m_SphereSource)
     {
       m_SphereSource->SetRadius(m_Cloud->GetRadius());
-      {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
     }
   }
   else if (maf_event->GetId() == mafVMELandmarkCloud::CLOUD_SPHERE_RES)
@@ -300,7 +300,7 @@ void mafPipeLandmarkCloud::OnEvent(mafEventBase *maf_event)
     {
       m_SphereSource->SetThetaResolution(m_Cloud->GetSphereResolution());
       m_SphereSource->SetPhiResolution(m_Cloud->GetSphereResolution());
-      {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
     }
   }
   

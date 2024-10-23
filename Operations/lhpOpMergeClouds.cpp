@@ -132,7 +132,7 @@ void lhpOpMergeClouds::OnEvent(mafEventBase *maf_event)
       }*/
       mafString s(_R("Choose surface to join"));
       mafEvent e(this,VME_CHOOSE, &s);
-      mafEventMacro(e);
+      InvokeEvent(e);
       if(e.GetVme() == NULL)
       {
         return;
@@ -184,7 +184,7 @@ void lhpOpMergeClouds::OnEvent(mafEventBase *maf_event)
     {
       mafString s("Choose surface to join");
       mafEvent e(this,VME_CHOOSE, &s);
-      mafEventMacro(e);
+      InvokeEvent(e);
       if(e.GetVme() == NULL)
       {
         return;
@@ -203,7 +203,7 @@ void lhpOpMergeClouds::OnEvent(mafEventBase *maf_event)
     break;*/
   default:
     {
-      mafEventMacro(*maf_event); 
+      InvokeEvent(*maf_event); 
     }
     break;
   }
@@ -222,12 +222,12 @@ void lhpOpMergeClouds::OpStop(int result)
   HideGui();
   if (result == OP_RUN_CANCEL)
   {
-    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
     return;
   }
 
 
-  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -324,10 +324,10 @@ void lhpOpMergeClouds::OpDo()
   //if(m_OutSurface)
   {
     //m_OutSurface->ReparentTo(m_Input->GetRoot());
-    //{mafEvent evUnq(this, VME_ADD, m_OutSurface); mafEventMacro(evUnq);}
+    //{mafEvent evUnq(this, VME_ADD, m_OutSurface); InvokeEvent(evUnq);}
   }
-  {mafEvent evUnq(this, VME_MODIFIED, m_Input); mafEventMacro(evUnq);}
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, VME_MODIFIED, m_Input); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------

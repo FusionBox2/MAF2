@@ -174,7 +174,7 @@ void mafOpImporterImage::OpStop(int result)
 //----------------------------------------------------------------------------
 {
 	HideGui();
-	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpImporterImage::OnEvent(mafEventBase *maf_event)
@@ -242,13 +242,13 @@ void mafOpImporterImage::BuildImageSequence()
 
 	mafTimeStamp start_time = ((mafVME *)m_Input->GetRoot())->GetTimeStamp();
   long progress_value = 0;
-  {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
   for(int i=0; i<m_NumFiles; i++)
 	{
     if (mafFloatEquals(fmod(i,10.0f),0.0f))
     {
       progress_value = (i*100)/m_NumFiles;
-      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress_value); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress_value); InvokeEvent(evUnq);}
     }
 
     mafSplitPath(m_Files[i],&path,&name,&ext);
@@ -294,7 +294,7 @@ void mafOpImporterImage::BuildImageSequence()
   else
     m_ImportedImage->SetName(name);
 
-  {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 
   m_ImportedImage->SetTimeStamp(start_time);
   m_ImportedImage->ReparentTo(m_Input);
@@ -320,7 +320,7 @@ void mafOpImporterImage::BuildVolume()
     r->GetDataExtent(extent);
     r->Delete();
     r = vtkBMPReader::New();
-    {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,r); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,r); InvokeEvent(evUnq);}
     r->SetFileDimensionality(2);
     r->SetFilePrefix(prefix.GetCStr());
     r->SetFilePattern(pattern.GetCStr());
@@ -344,7 +344,7 @@ void mafOpImporterImage::BuildVolume()
     r->GetDataExtent(extent);
     r->Delete();
 		r = vtkJPEGReader::New();
-    {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,r); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,r); InvokeEvent(evUnq);}
     r->SetFileDimensionality(2);
     r->SetFilePrefix(prefix.GetCStr());
     r->SetFilePattern(pattern.GetCStr());
@@ -367,7 +367,7 @@ void mafOpImporterImage::BuildVolume()
     r->GetDataExtent(extent);
     r->Delete();
 		r = vtkPNGReader::New();
-    {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,r); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,r); InvokeEvent(evUnq);}
     r->SetFileDimensionality(2);
     r->SetFilePrefix(prefix.GetCStr());
     r->SetFilePattern(pattern.GetCStr());
@@ -390,7 +390,7 @@ void mafOpImporterImage::BuildVolume()
     r->GetDataExtent(extent);
     r->Delete();
 		r = vtkTIFFReader::New();
-    {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,r); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,r); InvokeEvent(evUnq);}
     r->SetFileDimensionality(2);
     r->SetFilePrefix(prefix.GetCStr());
     r->SetFilePattern(pattern.GetCStr());

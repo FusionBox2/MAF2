@@ -222,7 +222,7 @@ void medViewSlicer::VmeShow(mafNode *node, bool show)
                     GetSceneGraph()->GetSelectedVme()
     );
 
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 
 	//EnableWidgets(m_CurrentVolume != NULL);
 }
@@ -237,9 +237,9 @@ void medViewSlicer::OnEvent(mafEventBase *maf_event)
 	else
   {
     // if no one can handle this event send it to the operation listener
-    mafEventMacro(*maf_event); 
+    InvokeEvent(*maf_event); 
   }	
-	//{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+	//{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medViewSlicer::OnEventThis(mafEventBase *maf_event)
@@ -256,7 +256,7 @@ void medViewSlicer::OnEventThis(mafEventBase *maf_event)
           double low, hi;
           m_LutSlider->GetSubRange(&low,&hi);
           m_ColorLUT->SetTableRange(low,hi);
-          {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+          {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
         }
       }
       break;
@@ -268,7 +268,7 @@ void medViewSlicer::OnEventThis(mafEventBase *maf_event)
 			mafString viewLabel = GetLabel();
 			helpEvent.SetString(&viewLabel);
 			helpEvent.SetId(OPEN_HELP_PAGE);
-			mafEventMacro(helpEvent);
+			InvokeEvent(helpEvent);
 		}
 		break;
 
@@ -319,7 +319,7 @@ mafGUI* medViewSlicer::CreateGui()
   mafEvent buildHelpGui;
   buildHelpGui.SetSender(this);
   buildHelpGui.SetId(GET_BUILD_HELP_GUI);
-  mafEventMacro(buildHelpGui);
+  InvokeEvent(buildHelpGui);
 
   if (buildHelpGui.GetArg())
   {

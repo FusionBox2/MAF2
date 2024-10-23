@@ -109,7 +109,7 @@ void medOpClassicICPRegistration::CreateGui()
 	mafEvent buildHelpGui;
 	buildHelpGui.SetSender(this);
 	buildHelpGui.SetId(GET_BUILD_HELP_GUI);
-	mafEventMacro(buildHelpGui);
+	InvokeEvent(buildHelpGui);
 
 	if (buildHelpGui.GetArg())
 	{
@@ -165,12 +165,12 @@ void medOpClassicICPRegistration::OnEvent(mafEventBase *maf_event)
 					mafString operationLabel = GetLabel();
 					helpEvent.SetString(&operationLabel);
 					helpEvent.SetId(OPEN_HELP_PAGE);
-					mafEventMacro(helpEvent);
+					InvokeEvent(helpEvent);
 				}
 			break;
 
 			default:
-				mafEventMacro(*e);
+				InvokeEvent(*e);
 			break; 
 		}
 	}
@@ -180,7 +180,7 @@ void medOpClassicICPRegistration::OpStop(int result)
 //----------------------------------------------------------------------------
 {
 	HideGui();
-	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}       
+	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}       
 }
 //----------------------------------------------------------------------------
 void medOpClassicICPRegistration::OpDo()
@@ -255,7 +255,7 @@ void medOpClassicICPRegistration::OpDo()
 
   m_Registered->SetAbsMatrix(*mat);
   
-  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 
   // modified by Stefano 7-11-2004 (beg)
   // registration error feedback to user
@@ -274,7 +274,7 @@ void medOpClassicICPRegistration::OnChooseTarget()
 //----------------------------------------------------------------------------
 {
 	mafEvent e(this,VME_CHOOSE);
-	mafEventMacro(e);
+	InvokeEvent(e);
 	mafNode *vme = e.GetVme();
 
 	if(!vme) return; // the user choosed cancel - keep previous target

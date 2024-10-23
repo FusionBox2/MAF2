@@ -66,14 +66,14 @@ void medWizardBlockVMESelection::ExcutionBegin()
   e.SetString(&title);
   e.SetArg((intptr_t)(&VMEAccept)); 
   // accept only Specified VME
-  mafEventMacro(e);
+  InvokeEvent(e);
   selVME=e.GetVme();
 
   if(selVME)
   {
     //Select vme 
     m_SelectedVME=selVME;
-    {mafEvent evUnq(this,VME_SELECT,m_SelectedVME); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,VME_SELECT,m_SelectedVME); InvokeEvent(evUnq);}
   }
   else
     //Abort on user cancel

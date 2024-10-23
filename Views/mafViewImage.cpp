@@ -151,15 +151,15 @@ void mafViewImage::OnEvent(mafEventBase *maf_event)
     switch(e->GetId()) 
     {
       default:
-        mafEventMacro(*maf_event);
+        InvokeEvent(*maf_event);
       break;
     }
   }
   else
   {
-    mafEventMacro(*maf_event);
+    InvokeEvent(*maf_event);
   }*/
-  mafEventMacro(*maf_event);
+  InvokeEvent(*maf_event);
 }
 //----------------------------------------------------------------------------
 void mafViewImage::VmeShow(mafNode *node, bool show)

@@ -416,7 +416,7 @@ void mafInteractionManager::CameraUpdate(mafView *view)
     else
     {
       // ask logic->view_mgr to perform a global update
-      {mafEvent evUnq(this,CAMERA_SYNCHRONOUS_UPDATE); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,CAMERA_SYNCHRONOUS_UPDATE); InvokeEvent(evUnq);}
       m_LastRenderTime=vtkTimerLog::GetUniversalTime(); // store time at end of rendering
     }
   }
@@ -560,7 +560,7 @@ void mafInteractionManager::OnEndDispatching()
     if((vtkTimerLog::GetUniversalTime()-m_LastRenderTime)>m_IntraFrameTime)
     {
       // ask logic->view_mgr to perform a global update
-      {mafEvent evUnq(this,CAMERA_SYNCHRONOUS_UPDATE); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,CAMERA_SYNCHRONOUS_UPDATE); InvokeEvent(evUnq);}
       m_LastRenderTime=vtkTimerLog::GetUniversalTime(); // store time at end of rendering
     }
     
@@ -767,7 +767,7 @@ void mafInteractionManager::OnEvent(mafEventBase *event)
           else
           {
             // Paolo 9/11/2005: events to be forwarded to logic
-            mafEventMacro(*e);
+            InvokeEvent(*e);
           }
       break; 
       }
@@ -778,7 +778,7 @@ void mafInteractionManager::OnEvent(mafEventBase *event)
   if (id == VME_SELECT || id == VME_DCLICKED)
   {
     // event raised by PER to advise of VME selection or double click on a VME
-    {mafEvent evUnq(event->GetSender(), id, (mafVME *)event->GetData()); mafEventMacro(evUnq);}
+    {mafEvent evUnq(event->GetSender(), id, (mafVME *)event->GetData()); InvokeEvent(evUnq);}
   }
   else if (id == VIEW_SELECT)
   {
@@ -802,7 +802,7 @@ void mafInteractionManager::OnEvent(mafEventBase *event)
   {
     mafVME *vme = (mafVME *)event->GetData();
     bool vme_context_menu = (vme != NULL) && !vme->IsA("mafVMEGizmo");
-    {mafEvent evUnq(event->GetSender(),SHOW_CONTEXTUAL_MENU, vme_context_menu); mafEventMacro(evUnq);}
+    {mafEvent evUnq(event->GetSender(),SHOW_CONTEXTUAL_MENU, vme_context_menu); InvokeEvent(evUnq);}
   }
   else if (id == mafDevice::DEVICE_NAME_CHANGED) 
   {

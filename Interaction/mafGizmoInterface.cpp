@@ -60,7 +60,7 @@ void mafGizmoInterface::SendTransformMatrix(std::shared_ptr<mafMatrix> matrix, i
   e2s.SetId(eventId);
   e2s.SetArg(arg);
 
-  mafEventMacro(e2s);
+  InvokeEvent(e2s);
 }
 
 void mafGizmoInterface::SetInput( mafVME *vme )

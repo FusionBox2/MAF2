@@ -206,7 +206,7 @@ void medViewSliceNotInterpolated::OnEvent(mafEventBase * event)
       }
     }
   }
-  mafEventMacro(*event);
+  InvokeEvent(*event);
 }
 
 //----------------------------------------------------------------------------

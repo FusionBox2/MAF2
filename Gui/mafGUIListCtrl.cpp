@@ -168,7 +168,7 @@ void mafGUIListCtrl::OnSelectionChanged(wxListEvent& event)
   long item_id = event.GetData();
   long icon = event.GetImage();
 
-  {mafEvent evUnq(this, ITEM_SELECTED, &s, item_id ); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, ITEM_SELECTED, &s, item_id ); InvokeEvent(evUnq);}
   event.Skip();
 }
 //----------------------------------------------------------------------------

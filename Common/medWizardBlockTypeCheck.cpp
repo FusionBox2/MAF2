@@ -95,7 +95,7 @@ void medWizardBlockTypeCheck::ExcutionBegin()
   else
     return;  
 
-  {mafEvent evUnq(this,VME_SELECT,m_SelectedVME); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_SELECT,m_SelectedVME); InvokeEvent(evUnq);}
   
   for (int i=0;i<m_AcceptedVmes.size();i++)
     if (m_SelectedVME->IsA(m_AcceptedVmes[i].c_str()))

@@ -88,7 +88,7 @@ void mafGUIGizmoRotate::OnEvent(mafEventBase *maf_event)
       }
       break;
       default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       break;
     }
   }
@@ -115,7 +115,7 @@ void mafGUIGizmoRotate::SendAbsOrientation(mafEventBase *sourceEvent)
   event2Send.SetId(sourceEvent->GetId());
   event2Send.SetMatrix(m2send);
   
-  mafEventMacro(event2Send);
+  InvokeEvent(event2Send);
 }
 
 //----------------------------------------------------------------------------

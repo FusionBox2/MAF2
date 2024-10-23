@@ -132,7 +132,7 @@ void lhpOpRegSurfWithCloud::OnEvent(mafEventBase *maf_event)
       {
         mafString s(_L("Choose cloud"));
         mafEvent e(this,VME_CHOOSE, &s, (intptr_t)&lhpOpRegSurfWithCloud::ClosedCloudAccept);
-        mafEventMacro(e);
+        InvokeEvent(e);
         mafNode *vme = e.GetVme();
         OnChooseVme(vme);
         break;
@@ -144,7 +144,7 @@ void lhpOpRegSurfWithCloud::OnEvent(mafEventBase *maf_event)
         OpStop(OP_RUN_CANCEL);
         break;
       default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       break;
     }
   }
@@ -158,7 +158,7 @@ void lhpOpRegSurfWithCloud::OpStop(int result)
   if (result == OP_RUN_CANCEL)
   {
     HideGui();
-    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
     return;
   }
 
@@ -263,7 +263,7 @@ void lhpOpRegSurfWithCloud::OpStop(int result)
   m_Resultat->ReparentTo(m_Input->GetParent());
 
   HideGui();
-  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 
 }
 
@@ -271,13 +271,13 @@ void lhpOpRegSurfWithCloud::OpStop(int result)
 void lhpOpRegSurfWithCloud::OpDo()
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this, VME_ADD, m_Resultat); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, VME_ADD, m_Resultat); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void lhpOpRegSurfWithCloud::OpUndo()
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this, VME_REMOVE, m_Resultat); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, VME_REMOVE, m_Resultat); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------

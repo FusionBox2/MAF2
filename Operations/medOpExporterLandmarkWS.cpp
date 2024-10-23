@@ -86,7 +86,7 @@ void medOpExporterLandmarkWS::OpRun()
 		Write();
 		result = OP_RUN_OK;
 	}
-	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -96,7 +96,7 @@ void medOpExporterLandmarkWS::Write()
   if (!m_TestMode)
   {
     wxSetCursor(wxCursor(wxCURSOR_WAIT));
-	  {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
+	  {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
   }
   
   m_Cloud = mafVMELandmarkCloud::SafeDownCast(m_Input);
@@ -173,7 +173,7 @@ void medOpExporterLandmarkWS::Write()
 
       if (!m_TestMode)
       {
-        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)(((double) i)/((double) timeStamps.size())*100.)); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)(((double) i)/((double) timeStamps.size())*100.)); InvokeEvent(evUnq);}
       }
     }
 
@@ -187,7 +187,7 @@ void medOpExporterLandmarkWS::Write()
 
   if (!m_TestMode)
   {
-    {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
     wxSetCursor(wxCursor(wxCURSOR_DEFAULT));
   }
 }

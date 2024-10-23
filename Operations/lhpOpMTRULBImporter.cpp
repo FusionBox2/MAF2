@@ -87,7 +87,7 @@ void  lhpOpMTRULBImporter::OpRun()
     ImportData();
   }
 
-  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }
 
 void lhpOpMTRULBImporter::ReadMatrix(const char *fstring, vtkMatrix4x4 *mat)
@@ -301,7 +301,7 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
   fp = fopen(fileName.GetCStr(), "rt");
   if(fp == NULL)
   {
-    {mafEvent evUnq(this, VME_ADD, grp); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this, VME_ADD, grp); InvokeEvent(evUnq);}
     return;
   }
 
@@ -318,7 +318,7 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
     if(pRet == NULL)
     {
       fclose(fp);
-      {mafEvent evUnq(this, VME_ADD, grp); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this, VME_ADD, grp); InvokeEvent(evUnq);}
       return;
     }
     if(sLine[0] != '#')
@@ -328,7 +328,7 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
   if(2 != sscanf(sLine, "%d %d\n", &nPointsNumber, &nBonesNumber))
   {
     fclose(fp);
-    {mafEvent evUnq(this, VME_ADD, grp); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this, VME_ADD, grp); InvokeEvent(evUnq);}
     return;
   }
   //skip points
@@ -386,7 +386,7 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
     mafDEL(surface);
   }
   fclose(fp);
-  {mafEvent evUnq(this, VME_ADD, grp); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, VME_ADD, grp); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -410,7 +410,7 @@ void  lhpOpMTRULBImporter::ImportData()
     if(ext == _R("mtr"))
     {
       ProcessSingleFile(m_Files[i]);
-      {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       continue;
     }
     FILE         *fp;
@@ -436,7 +436,7 @@ void  lhpOpMTRULBImporter::ImportData()
     }
     fclose(fp);
 
-    {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 
   }
   return;
@@ -451,10 +451,10 @@ void lhpOpMTRULBImporter::OpDo()
     if (m_Groups[i])
     {
       m_Groups[i]->ReparentTo(m_Input);
-      {mafEvent evUnq(this, VME_ADD, m_Groups[i]); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this, VME_ADD, m_Groups[i]); InvokeEvent(evUnq);}
     }
   }
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -465,9 +465,9 @@ void lhpOpMTRULBImporter::OpUndo()
   {
     if (m_Groups[i])
     {
-      {mafEvent evUnq(this, VME_REMOVE, m_Groups[i]); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this, VME_REMOVE, m_Groups[i]); InvokeEvent(evUnq);}
     }
   }
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 

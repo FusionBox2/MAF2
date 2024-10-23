@@ -398,7 +398,7 @@ void mafPipePolyline::OnEvent(mafEventBase *maf_event)
 				SetRepresentation(m_Representation);
 				mafTagItem *item = m_Vme->GetTagArray()->GetTag(_R("REPRESENTATION"));
 				item->SetValue(m_Representation);
-				{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
 			break;
 		  case ID_TUBE_RADIUS:
@@ -406,7 +406,7 @@ void mafPipePolyline::OnEvent(mafEventBase *maf_event)
 				m_Tube->SetRadius(m_TubeRadius);
 				mafTagItem *item = m_Vme->GetTagArray()->GetTag(_R("TUBE_RADIUS"));
 				item->SetValue(m_TubeRadius);
-				{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
 			break;
 		  case ID_TUBE_CAPPING:
@@ -414,7 +414,7 @@ void mafPipePolyline::OnEvent(mafEventBase *maf_event)
 				m_Tube->SetCapping(m_Capping);
 				mafTagItem *item = m_Vme->GetTagArray()->GetTag(_R("TUBE_CAPPING"));
 				item->SetValue(m_Capping);
-				{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
 			break;
 		  case ID_TUBE_RESOLUTION:
@@ -422,7 +422,7 @@ void mafPipePolyline::OnEvent(mafEventBase *maf_event)
 				m_Tube->SetNumberOfSides(m_TubeResolution);
 				mafTagItem *item = m_Vme->GetTagArray()->GetTag(_R("TUBE_RESOLUTION"));
 				item->SetValue(m_TubeResolution);
-				{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
 			break;
 		  case ID_SPHERE_RADIUS:
@@ -430,7 +430,7 @@ void mafPipePolyline::OnEvent(mafEventBase *maf_event)
 				m_Sphere->SetRadius(m_SphereRadius);
 				mafTagItem *item = m_Vme->GetTagArray()->GetTag(_R("SPHERE_RADIUS"));
 				item->SetValue(m_SphereRadius);
-				{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
 			break;
 		  case ID_SPHERE_RESOLUTION:
@@ -439,17 +439,17 @@ void mafPipePolyline::OnEvent(mafEventBase *maf_event)
 				m_Sphere->SetThetaResolution(m_SphereResolution);
 				mafTagItem *item = m_Vme->GetTagArray()->GetTag(_R("SPHERE_RESOLUTION"));
 				item->SetValue(m_SphereResolution);
-				{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
 			break;
 		  case ID_SCALAR_DIMENSION:
 			  UpdateProperty();
-			  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+			  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 			break;
 		  case ID_SCALAR:
 			{
 				UpdateScalars();
-				{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
 			break;
       case ID_SPLINE:
@@ -457,17 +457,17 @@ void mafPipePolyline::OnEvent(mafEventBase *maf_event)
         mafTagItem *item = m_Vme->GetTagArray()->GetTag(_R("SPLINE_MODE"));
         item->SetValue(m_SplineMode);
         UpdateProperty();
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
         break;
       }
       case ID_DISTANCE_BORDER:
       {
         UpdateProperty();
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       }
       break;
 		  default:
-			  mafEventMacro(*e);
+			  InvokeEvent(*e);
 			break;
 		}
 	}
@@ -562,7 +562,7 @@ void mafPipePolyline::UpdatePipeFromScalars()
   m_Actor->Modified();
 
   UpdateProperty();
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 
 }
 //----------------------------------------------------------------------------
@@ -834,7 +834,7 @@ void mafPipePolyline::SetRadius(double radius)
   item = m_Vme->GetTagArray()->GetTag(_R("TUBE_RADIUS"));
   item->SetValue(m_TubeRadius);
 
-	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafPipePolyline::SetColor(double color[3])

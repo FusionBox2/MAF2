@@ -122,7 +122,7 @@ void medOpCreateEditSkeleton::OpDo()
 		medVMEPolylineGraph::SafeDownCast(m_Input)->SetData(m_ResultPolydata,((mafVME*)m_Input)->GetTimeStamp());
 	}
 	
-	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpCreateEditSkeleton::OpUndo()
@@ -157,7 +157,7 @@ void medOpCreateEditSkeleton::OnEvent(mafEventBase *maf_event)
 			}
 			break;
 		default:
-			mafEventMacro(*e);
+			InvokeEvent(*e);
 			break; 
 		}
 	}
@@ -178,5 +178,5 @@ void medOpCreateEditSkeleton::OpStop(int result)
   {
     HideGui();
   }
-	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }

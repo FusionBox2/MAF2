@@ -319,13 +319,13 @@ void medViewSliceGlobal::OnEvent(mafEventBase *maf_event)
         if ( mafPipeVolumeSlice_BES::SafeDownCast(m_CurrentVolume->m_Pipe) )
         {
           mafPipeVolumeSlice_BES::SafeDownCast(m_CurrentVolume->m_Pipe)->SetSliceOpacity(m_Opacity);
-          {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+          {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
           m_OpacitySlider->SetValue(m_Opacity);
         }
         else if ( mafPipeVolumeSlice::SafeDownCast(m_CurrentVolume->m_Pipe) )
         {
           mafPipeVolumeSlice::SafeDownCast(m_CurrentVolume->m_Pipe)->SetSliceOpacity(m_Opacity);
-          {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+          {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
           m_OpacitySlider->SetValue(m_Opacity);
         }
       }

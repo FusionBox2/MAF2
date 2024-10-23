@@ -135,7 +135,7 @@ void mafGizmoPath::OnEvent(mafEventBase *maf_event)
       }
       break;
       default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       break; 
     }
 	}
@@ -149,7 +149,7 @@ void mafGizmoPath::Show(bool show)
 
   // can not use this since it's too slow... this requires destroying and creating
   // the pipeline each time...
-  // {mafEvent evUnq(this,VME_SHOW,m_VmeGizmo,show); mafEventMacro(evUnq);}
+  // {mafEvent evUnq(this,VME_SHOW,m_VmeGizmo,show); InvokeEvent(evUnq);}
   
   // ... instead I am using vtk opacity to speed up the render
   double opacity = show ? 1 : 0;
@@ -424,7 +424,7 @@ void mafGizmoPath::CreateVMEGizmo()
 
   // ask the manager to create the pipelines
   // this his giving problems... amounted for the moment
-  // {mafEvent evUnq(this,VME_SHOW,m_VmeGizmoPath,true); mafEventMacro(evUnq);}
+  // {mafEvent evUnq(this,VME_SHOW,m_VmeGizmoPath,true); InvokeEvent(evUnq);}
   
 }
 

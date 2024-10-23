@@ -247,7 +247,7 @@ void lhpOpFuseLMScripted::OnEvent(mafEventBase *maf_event)
       {
         mafString s(_L("Choose cloud"));
         mafEvent e(this,VME_CHOOSE, &s, NULL/*, (long)&lhpOpFuseLMScripted::ClosedCloudAccept*/);
-        mafEventMacro(e);
+        InvokeEvent(e);
         mafNode *vme = e.GetVme();
         OnChooseTargetVme(vme);
       }
@@ -269,7 +269,7 @@ void lhpOpFuseLMScripted::OnEvent(mafEventBase *maf_event)
         OpStop(OP_RUN_CANCEL);
       break;
       default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       break;
     }
   }

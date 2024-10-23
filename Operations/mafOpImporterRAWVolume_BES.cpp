@@ -313,13 +313,13 @@ void mafOpImporterRAWVolume_BES::OpRun()
 	cppDEL(m_Dialog);
 
 	//finish the Run +++++++++++++++++++++++++++++++++
-	{mafEvent evUnq(this,res); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,res); InvokeEvent(evUnq);}
 
 #ifdef VME_VOLUME_LARGE
 if (res == OP_RUN_OK && (IsVolumeLarge()/* || IsFileLarge()*/))
 	{
 		//save the VME data, it should not prompt for saving
-		{mafEvent evUnq(this, MENU_FILE_SAVE); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this, MENU_FILE_SAVE); InvokeEvent(evUnq);}
 	}
 #endif // VME_VOLUME_LARGE
 }
@@ -497,7 +497,7 @@ void mafOpImporterRAWVolume_BES::	OnEvent(mafEventBase *maf_event)
 			m_Dialog->EndModal(wxID_CANCEL);
 			break;
 		default:
-			mafEventMacro(*e);
+			InvokeEvent(*e);
 			break;
 		}	
 	}
@@ -633,11 +633,11 @@ bool mafOpImporterRAWVolume_BES::Import()
 //----------------------------------------------------------------------------
 {
 	if(!this->m_TestMode) {
-		{mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}			
-		{mafEvent evUnq(this, PROGRESSBAR_SET_VALUE, (intptr_t)0); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}			
+		{mafEvent evUnq(this, PROGRESSBAR_SET_VALUE, (intptr_t)0); InvokeEvent(evUnq);}
 
 		mafString szText = _L("Importing RAW data ...");
-		{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT, &szText); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT, &szText); InvokeEvent(evUnq);}
 	}
 
   vtkNew<vtkDoubleArray> ZDoubleArray;	//Ref(ZDoubleArray) = 1
@@ -776,7 +776,7 @@ bool mafOpImporterRAWVolume_BES::Import()
 		  vtkNew< vtkImageReader > reader;
 		
 		  if (!m_TestMode) {
-			  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR, reader); mafEventMacro(evUnq);}
+			  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR, reader); InvokeEvent(evUnq);}
 		  }
 
 		  img = (vtkImageData*)ImportT< vtkImageReader >(reader);
@@ -873,7 +873,7 @@ bool mafOpImporterRAWVolume_BES::Import()
 	m_Output->GetTagArray()->SetTag(tag_Nature);
 
 	if(!m_TestMode) {
-		{mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 	}
 
 	return true;

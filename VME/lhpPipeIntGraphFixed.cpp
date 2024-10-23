@@ -193,7 +193,7 @@ void lhpPipeIntGraphFixed::OnEvent(mafEventBase *maf_event)
         }
         if(m_ForcedWholeRange || m_WholeRange)
           GrabData();
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       }
       break;
     case ID_CHECK_BOXYVAL:
@@ -214,7 +214,7 @@ void lhpPipeIntGraphFixed::OnEvent(mafEventBase *maf_event)
         }
         if(m_ForcedWholeRange || m_WholeRange)
           GrabData();
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       }
       break;
     case ID_CHECK_BOXYDER:
@@ -235,7 +235,7 @@ void lhpPipeIntGraphFixed::OnEvent(mafEventBase *maf_event)
         }
         if(m_ForcedWholeRange || m_WholeRange)
           GrabData();
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       }
       break;
     default:

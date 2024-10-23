@@ -220,7 +220,7 @@ void medOpMML::OpDo()  {}
 void medOpMML::OpUndo() {}
 
 //----------------------------------------------------------------------------
-void medOpMML::OpStop(int result) {	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}}
+void medOpMML::OpStop(int result) {	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}}
 
 //----------------------------------------------------------------------------
 void medOpMML::OpRun()   
@@ -363,7 +363,7 @@ void medOpMML::OnEvent(mafEventBase *maf_event)
       break;
 
     default:
-      mafEventMacro(*e); 
+      InvokeEvent(*e); 
       break;
     }
   }
@@ -484,7 +484,7 @@ void medOpMML::OnRegistrationOK()
   RegisteredMusclesVME = mafVMEGroup::New();
   RegisteredMusclesVME->SetName("registered muscles");
   PatientSectionVME->AddChild(RegisteredMusclesVME);
-  {mafEvent evUnq(this, VME_ADD, RegisteredMusclesVME); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, VME_ADD, RegisteredMusclesVME); InvokeEvent(evUnq);}
   }
 
   // is there a groupVME under the "registered muscles" groupVME with name identical to
@@ -495,7 +495,7 @@ void medOpMML::OnRegistrationOK()
   OurMuscleVME = mafVMEGroup::New();
   OurMuscleVME->SetName(m_surface_name);
   RegisteredMusclesVME->AddChild(OurMuscleVME);
-  {mafEvent evUnq(this, VME_ADD, OurMuscleVME); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, VME_ADD, OurMuscleVME); InvokeEvent(evUnq);}
   }
 
   // no children?
@@ -525,7 +525,7 @@ void medOpMML::OnRegistrationOK()
 
   // add to tree (save now)
   //OurMuscleVME->AddChild(vme);
-  {mafEvent evUnq(this, VME_ADD, vme.get()); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, VME_ADD, vme.get()); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -631,7 +631,7 @@ void medOpMML::OnMuscleSelection()
   mafString title = _R("Select Muscle (Atlas)");
   mafEvent e(this,VME_CHOOSE);
   e.SetString(&title);
-  mafEventMacro(e);
+  InvokeEvent(e);
   mafVME *vme = (mafVME*)e.GetVme();
   if(!vme) return;
 
@@ -1502,7 +1502,7 @@ void medOpMML::OnLandmark1AtlasPatientSelection()
   mafString title = _R("Select Landmark 1 (Atlas)");
   mafEvent e(this,VME_CHOOSE);
   e.SetString(&title);
-  mafEventMacro(e);
+  InvokeEvent(e);
   mafVME *vme = (mafVME*)e.GetVme();
   if(!vme) return;
 
@@ -1612,7 +1612,7 @@ void medOpMML::OnLandmark2AtlasPatientSelection()
   mafString title = _R("Select Landmark 2 (Atlas)");
   mafEvent e(this,VME_CHOOSE);
   e.SetString(&title);
-  mafEventMacro(e);
+  InvokeEvent(e);
   mafVME *vme = (mafVME*)e.GetVme();
   if(!vme) return;
 
@@ -1722,7 +1722,7 @@ void medOpMML::OnLandmark3AtlasPatientSelection()
   mafString title = _R("Select Landmark 3 (Atlas)");
   mafEvent e(this,VME_CHOOSE);
   e.SetString(&title);
-  mafEventMacro(e);
+  InvokeEvent(e);
   mafVME *vme = (mafVME*)e.GetVme();
   if(!vme) return;
 
@@ -1832,7 +1832,7 @@ void medOpMML::OnLandmark4AtlasPatientSelection()
   mafString title = _R("Select Landmark 3 (Atlas)");
   mafEvent e(this,VME_CHOOSE);
   e.SetString(&title);
-  mafEventMacro(e);
+  InvokeEvent(e);
   mafVME *vme = (mafVME*)e.GetVme();
   if(!vme) return;
 
@@ -2361,7 +2361,7 @@ void medOpMML::CreateRegistrationDlg()
   SetUpModelView();
   SetUpParameterViews();
   //
-  {mafEvent evUnq(this, ID_T_OPERATION); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, ID_T_OPERATION); InvokeEvent(evUnq);}
   //
 
   m_OpDlg->ShowModal();	

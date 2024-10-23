@@ -190,7 +190,7 @@ void lhpOpMultiscaleExplore::OpRun()
 
     DeleteOpDialog();
 
-    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
   }
 }
 
@@ -202,7 +202,7 @@ void lhpOpMultiscaleExplore::OpRun()
 void lhpOpMultiscaleExplore::OpDo()
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 
 
@@ -850,7 +850,7 @@ void lhpOpMultiscaleExplore::OnEvent(mafEventBase *maf_event)
         // The VME_CHOOSE event is handled by mafLogicWithManagers
         mafEvent e(this,VME_CHOOSE);  // create choose event 
         e.SetArg((intptr_t)acceptFunc) ;  // pass the accept function to the event.
-        mafEventMacro(e);
+        InvokeEvent(e);
         mafVME* vme = mafVME::SafeDownCast(e.GetVme());
 
         // Add vme to scene
@@ -928,7 +928,7 @@ void lhpOpMultiscaleExplore::OnEvent(mafEventBase *maf_event)
       break ;
 
     default:
-      mafEventMacro(*e);
+      InvokeEvent(*e);
       break; 
     }
   }

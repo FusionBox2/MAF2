@@ -247,7 +247,7 @@ int mafVMEItemScalarMatrix::InternalRestoreData()
     }
     
     mafEventIO e(this,NODE_GET_STORAGE);
-    mafEventMacro(e);
+    InvokeEvent(e);
     mafStorage *storage = e.GetStorage();
     if(!storage)
       return MAF_WAIT;
@@ -375,7 +375,7 @@ int mafVMEItemScalarMatrix::InternalStoreData(const char *url)
     mafString filename;
           
     mafEventIO e(this,NODE_GET_STORAGE);
-    mafEventMacro(e);
+    InvokeEvent(e);
     mafStorage *storage = e.GetStorage();
     if(!storage)
       return MAF_NO_IO;

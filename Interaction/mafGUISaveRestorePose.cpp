@@ -129,7 +129,7 @@ void mafGUISaveRestorePose::OnEvent(mafEventBase *maf_event)
       }
       break;
       default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       break;
     }
   }
@@ -277,7 +277,7 @@ void mafGUISaveRestorePose::RestorePoseHelper( mafString pose_name )
   e2s.SetSender(this);
   e2s.SetMatrix(abs_pose);
   e2s.SetId(ID_TRANSFORM);
-  mafEventMacro(e2s);
+  InvokeEvent(e2s);
 }
 void mafGUISaveRestorePose::StorePoseHelper( mafString absPoseTagName )
 {

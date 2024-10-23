@@ -274,7 +274,7 @@ void medWizardManager::OnEvent( mafEventBase *maf_event )
       //All event form wizard (like vme select/show, view request, ecc...)
       //will be forwarded up to logic
       e->SetSender(this);
-      mafEventMacro(*e);
+      InvokeEvent(*e);
       break;
     } // end switch case
   }
@@ -298,7 +298,7 @@ void medWizardManager::Notify( int msg )
 //----------------------------------------------------------------------------
 {
   //notify operation to logic
-  {mafEvent evUnq(this,msg); mafEventMacro(evUnq);}  
+  {mafEvent evUnq(this,msg); InvokeEvent(evUnq);}  
 }
 
 //----------------------------------------------------------------------------
@@ -331,44 +331,44 @@ void medWizardManager::OnRunOp(mafEvent *e)
   if (opString==_R("PAUSE"))
   {
     //pause op
-    {mafEvent evUnq(this,WIZARD_PAUSE,m_WaitOp); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,WIZARD_PAUSE,m_WaitOp); InvokeEvent(evUnq);}
   }
   else if (opString==_R("SAVE"))
   {
     //Save msf
-    {mafEvent evUnq(this,MENU_FILE_SAVE); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,MENU_FILE_SAVE); InvokeEvent(evUnq);}
   }
   else if (opString==_R("SAVE_AS"))
   {
     //save msf with name
-    {mafEvent evUnq(this,MENU_FILE_SAVEAS); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,MENU_FILE_SAVEAS); InvokeEvent(evUnq);}
   }
   else if (opString==_R("OPEN"))
   {
     //Open MSF
-    {mafEvent evUnq(this,MENU_FILE_OPEN); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,MENU_FILE_OPEN); InvokeEvent(evUnq);}
   }
   else if (opString==_R("DELETE"))
   {
     //Delete current VME
-    {mafEvent evUnq(this,WIZARD_OP_DELETE); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,WIZARD_OP_DELETE); InvokeEvent(evUnq);}
   }
   else if (opString==_R("NEW"))
   {
-    {mafEvent evUnq(this,WIZARD_OP_NEW); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,WIZARD_OP_NEW); InvokeEvent(evUnq);}
   }
   else if (opString==_R("RELOAD"))
   {
-    {mafEvent evUnq(this,WIZARD_RELOAD_MSF); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,WIZARD_RELOAD_MSF); InvokeEvent(evUnq);}
   }
   else if (opString==_R("SNAPSHOT"))
   {
-    {mafEvent evUnq(this,MENU_FILE_SNAPSHOT,true); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,MENU_FILE_SNAPSHOT,true); InvokeEvent(evUnq);}
   }
   else
   {
     //Run the standard operations
-    mafEventMacro(*e);
+    InvokeEvent(*e);
   }
 }
 

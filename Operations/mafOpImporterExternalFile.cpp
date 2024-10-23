@@ -77,7 +77,7 @@ void mafOpImporterExternalFile::OpRun()
     ImportExternalFile();
     result = OP_RUN_OK;
   }
-  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------

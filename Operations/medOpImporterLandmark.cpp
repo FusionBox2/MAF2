@@ -137,7 +137,7 @@ void medOpImporterLandmark::OpRun()
 
   if(m_Files.size() == 0) 
   {
-    {mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);}
   }
   else if (!m_TestMode)
   {
@@ -148,11 +148,11 @@ void medOpImporterLandmark::OpRun()
   {
     if(Read())
     {
-      {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
     }
     else
     {
-      {mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);}
     }
   }
 }
@@ -229,7 +229,7 @@ void medOpImporterLandmark::OnEvent(mafEventBase *maf_event)
           break;
         }
     default:
-      mafEventMacro(*e);
+      InvokeEvent(*e);
       break;
     }  
   }
@@ -243,10 +243,10 @@ void medOpImporterLandmark::OpDo()
     if (m_Results[i])
     {
       m_Results[i]->ReparentTo(m_Input);
-      //{mafEvent evUnq(this, VME_ADD, m_Clouds[i]); mafEventMacro(evUnq);}
+      //{mafEvent evUnq(this, VME_ADD, m_Clouds[i]); InvokeEvent(evUnq);}
     }
   }
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -257,10 +257,10 @@ void medOpImporterLandmark::OpUndo()
   {
     if (m_Results[i])
     {
-      {mafEvent evUnq(this, VME_REMOVE, m_Results[i]); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this, VME_REMOVE, m_Results[i]); InvokeEvent(evUnq);}
     }
   }
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -307,7 +307,7 @@ void medOpImporterLandmark::OpStop(int result)
 //----------------------------------------------------------------------------
 {
 	HideGui();
-	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 mafVME *medOpImporterLandmark::ReadFile(mafString& fname)   
@@ -378,7 +378,7 @@ mafVME *medOpImporterLandmark::ReadFile(mafString& fname)
     wxBusyInfo wait("Reading landmark cloud");
   }
 
-  {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
 
   long counter = 0;
   long progress = 0;
@@ -505,7 +505,7 @@ mafVME *medOpImporterLandmark::ReadFile(mafString& fname)
       counter++;
 
       progress = counter * 100 / numberOfLines;
-      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE, (intptr_t)progress); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE, (intptr_t)progress); InvokeEvent(evUnq);}
 
     }
   }
@@ -514,7 +514,7 @@ mafVME *medOpImporterLandmark::ReadFile(mafString& fname)
 
   landmarkFileStream.close();
 
-  {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
   return result;
 }
 //----------------------------------------------------------------------------
@@ -581,7 +581,7 @@ mafVME *medOpImporterLandmark::ReadFileWithoutTag(mafString& fname)
     wxBusyInfo wait("Reading landmark cloud");
   }
 
-  {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
 
   while(!landmarkFileStream.fail())
   {
@@ -613,7 +613,7 @@ mafVME *medOpImporterLandmark::ReadFileWithoutTag(mafString& fname)
     counter++;
 
     progress = counter * 100 / numberOfLines;
-    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE, (intptr_t)progress); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE, (intptr_t)progress); InvokeEvent(evUnq);}
 
   }
 
@@ -622,7 +622,7 @@ mafVME *medOpImporterLandmark::ReadFileWithoutTag(mafString& fname)
 
   landmarkFileStream.close();
 
-  {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
   return cloud;
 }
 //----------------------------------------------------------------------------

@@ -327,7 +327,7 @@ void mafViewRX::VmeShow(mafNode *vme, bool show)
 void mafViewRX::OnEvent(mafEventBase *maf_event)
 //----------------------------------------------------------------------------
 {
-  mafEventMacro(*maf_event);
+  InvokeEvent(*maf_event);
 }
 //----------------------------------------------------------------------------
 void mafViewRX::SetLutRange(double low_val, double high_val)

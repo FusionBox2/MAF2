@@ -222,7 +222,7 @@ void mafOpImporterRAWVolume::OpRun()
 	cppDEL(m_Dialog);
 
   //finish the Run +++++++++++++++++++++++++++++++++
-	{mafEvent evUnq(this,res); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,res); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpImporterRAWVolume::EnableWidgets(bool enable)
@@ -344,7 +344,7 @@ void mafOpImporterRAWVolume::	OnEvent(mafEventBase *maf_event)
         m_Dialog->EndModal(wxID_CANCEL);
       break;
       default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       break;
     }	
   }
@@ -465,8 +465,8 @@ bool mafOpImporterRAWVolume::Import()
   reader->SetDataVOI(0, m_DataDimemsion[0] - 1, 0, m_DataDimemsion[1] - 1, m_SliceVOI[0], m_SliceVOI[1] - 1);
   if(!this->m_TestMode)
 	{
-		{mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
-		{mafEvent evUnq(this,BIND_TO_PROGRESSBAR,reader); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
+		{mafEvent evUnq(this,BIND_TO_PROGRESSBAR,reader); InvokeEvent(evUnq);}
 	}
 //  reader->SetDataVOI(0, m_DataDimemsion[0] - 1, 0, m_DataDimemsion[1] - 1, 0, m_SliceVOI[1] - m_SliceVOI[0] - 1);
 //  reader->SetDataOrigin(0.0,0.0,m_SliceVOI[0]*m_DataSpacing[2]);
@@ -580,7 +580,7 @@ bool mafOpImporterRAWVolume::Import()
   m_Output->GetTagArray()->SetTag(tag_Nature);
   m_Output->ReparentTo(m_Input);
 	if(!m_TestMode)
-		{mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 	return true;
 }
 //----------------------------------------------------------------------------

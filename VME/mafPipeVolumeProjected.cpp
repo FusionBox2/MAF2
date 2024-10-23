@@ -139,7 +139,7 @@ void mafPipeVolumeProjected::Create(mafNode *node, mafView *view)
 	if (vtk_data->IsA("vtkImageData")) //BES: 4.11.2008 - vtkStructuredPoints are derived from vtkImageData
 	{
 		SPProjection = vtkMAFProjectSP::New();
-    {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,SPProjection); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,SPProjection); InvokeEvent(evUnq);}
 		SPProjection->SetInputConnection(vtk_port); //BES: 4.11.2008
 		if (m_CamPosition == CAMERA_RX_FRONT )
 			SPProjection->SetProjectionModeToY();
@@ -153,7 +153,7 @@ void mafPipeVolumeProjected::Create(mafNode *node, mafView *view)
   if (vtk_data->IsA("vtkRectilinearGrid"))
 	{
 		RGProjection = vtkMAFProjectRG::New();
-    {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,RGProjection); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,RGProjection); InvokeEvent(evUnq);}
 		RGProjection->SetInput(vtkRectilinearGrid::SafeDownCast(vtk_data));
 		vtkStructuredPoints *SP = vtkStructuredPoints::New();
 		if (m_CamPosition == CAMERA_RX_FRONT)
@@ -377,5 +377,5 @@ void mafPipeVolumeProjected::SetActorPicking(int enable)
 {
   m_RXActor->SetPickable(enable);
   m_RXActor->Modified();
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }

@@ -245,7 +245,7 @@ void lhpOpAFSys::OpStop(int result)
     {
       m_RefSys->ReparentTo(NULL);
     }
-    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
   }
   else if (result == OP_RUN_OK)
   {
@@ -255,7 +255,7 @@ void lhpOpAFSys::OpStop(int result)
       return;
     }
     HideGui();
-    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
   }
 }
 
@@ -326,7 +326,7 @@ void lhpOpAFSys::OnEvent(mafEventBase *maf_event)
       }
       break;
     default:
-      mafEventMacro(*maf_event); 
+      InvokeEvent(*maf_event); 
       break;
   }
 }

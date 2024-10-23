@@ -74,7 +74,7 @@ void mafOpCreateSlicer::OpRun()
   e.SetId(VME_CHOOSE);
   e.SetArg((intptr_t)&mafOpCreateSlicer::VolumeAccept);
   e.SetString(&title);
-  mafEventMacro(e);
+  InvokeEvent(e);
 
   int result = OP_RUN_CANCEL;
 
@@ -89,7 +89,7 @@ void mafOpCreateSlicer::OpRun()
     m_Slicer->SetSlicedVMELink(m_SlicedVME);
     result = OP_RUN_OK;
   }
-  {mafEvent evUnq(this, result); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, result); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpCreateSlicer::OpDo()

@@ -381,7 +381,7 @@ void lhpOpStickPalpation::OpStop(int result)
   if (result == OP_RUN_CANCEL)
   {
     HideGui();
-    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
   }
   else if (result == OP_RUN_OK)
   {
@@ -402,7 +402,7 @@ void lhpOpStickPalpation::OpStop(int result)
       }
     }
     HideGui();
-    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
   }
 }
 //----------------------------------------------------------------------------
@@ -460,7 +460,7 @@ void lhpOpStickPalpation::OnEvent(mafEventBase *e)
     {
       mafString s(_R("Choose wand calibration cloud"));
       mafEvent e(this,VME_CHOOSE, &s);
-      mafEventMacro(e);
+      InvokeEvent(e);
       if(e.GetVme() == NULL)
       {
         return;
@@ -479,7 +479,7 @@ void lhpOpStickPalpation::OnEvent(mafEventBase *e)
     {
       mafString s(_R("Choose wand definition cloud"));
       mafEvent e(this,VME_CHOOSE, &s);
-      mafEventMacro(e);
+      InvokeEvent(e);
       if(e.GetVme() == NULL)
       {
         return;
@@ -498,7 +498,7 @@ void lhpOpStickPalpation::OnEvent(mafEventBase *e)
     {
       mafString s(_R("Choose  target calibration cloud"));
       mafEvent e(this,VME_CHOOSE, &s);
-      mafEventMacro(e);
+      InvokeEvent(e);
       if(e.GetVme() == NULL)
       {
         return;
@@ -517,7 +517,7 @@ void lhpOpStickPalpation::OnEvent(mafEventBase *e)
     {
       mafString s(_R("Choose target cloud"));
       mafEvent e(this,VME_CHOOSE, &s);
-      mafEventMacro(e);
+      InvokeEvent(e);
       if(e.GetVme() == NULL)
       {
         return;
@@ -536,7 +536,7 @@ void lhpOpStickPalpation::OnEvent(mafEventBase *e)
     {
       mafString s(_R("Choose node with landmark clouds as children"));
       mafEvent e(this,VME_CHOOSE, &s);
-      mafEventMacro(e);
+      InvokeEvent(e);
       if(e.GetVme() == NULL)
       {
         return;
@@ -562,7 +562,7 @@ void lhpOpStickPalpation::OnEvent(mafEventBase *e)
     }
     default:
     {
-      mafEventMacro(*e); 
+      InvokeEvent(*e); 
     }
     break;
   }
@@ -649,7 +649,7 @@ void lhpOpStickPalpation::OpDo()
     mafString path, name, ext;
     mafSplitPath(file,&path,&name,&ext);
     vme->SetName(name);
-    {mafEvent evUnq(this,VME_ADD,vme); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,VME_ADD,vme); InvokeEvent(evUnq);}
 
     m_LimbCloud        = mafVMELandmarkCloud::SafeDownCast(MatchCriterion(m_TrgMotion, MatchWithName, m_LMDict[nL].second.GetCStr()));
     m_LimbCalibration  = mafVMELandmarkCloud::SafeDownCast(MatchCriterion(vme, MatchWithName, m_LMDict[nL].second.GetCStr()));
@@ -663,7 +663,7 @@ void lhpOpStickPalpation::OpDo()
       wxLogMessage("Wand calibration cloud is not found");
     if(m_LimbCloud != NULL && m_LimbCalibration != NULL && m_StickCalibration != NULL)
       ProcessSingleLM();
-    {mafEvent evUnq(this,VME_REMOVE,vme); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,VME_REMOVE,vme); InvokeEvent(evUnq);}
     mafDEL(vme);
   }
 }

@@ -125,18 +125,18 @@ void medGizmoCrossRotateTranslate::OnEvent(mafEventBase *maf_event)
 				if (maf_event->GetSender() == m_GizmoCrossTranslate)
 				{
 					this->m_GizmoCrossRotate->SetAbsPose(m_GizmoCrossTranslate->GetAbsPose());
-					mafEventMacro(*maf_event);
+					InvokeEvent(*maf_event);
 				}
 				else if (maf_event->GetSender() == m_GizmoCrossRotate)
 				{
 					this->m_GizmoCrossTranslate->SetAbsPose(m_GizmoCrossRotate->GetAbsPose());
-					mafEventMacro(*maf_event);
+					InvokeEvent(*maf_event);
 				}
 			}
 			break;
 			default:
 			{
-				mafEventMacro(*e);
+				InvokeEvent(*e);
 			}
 		}
 	}

@@ -134,7 +134,7 @@ bool medOpVolumeResample::Accept(mafNode* vme)
 //----------------------------------------------------------------------------
 {
 	mafEvent e(this,VIEW_SELECTED);
-	mafEventMacro(e);
+	InvokeEvent(e);
   return (vme && vme->IsMAFType(mafVMEVolumeGray));
 }
 //----------------------------------------------------------------------------
@@ -179,7 +179,7 @@ void medOpVolumeResample::CreateGizmos()
 //----------------------------------------------------------------------------
 {
   mafEvent e(this,VIEW_SELECTED);
-  mafEventMacro(e);
+  InvokeEvent(e);
   m_ViewSelectedMessage = e.GetBool();
 
 	m_GizmoROI = new mafGizmoROI(mafVME::SafeDownCast(m_Input), this, mafGizmoHandle::FREE,m_VMEDummy,m_ShowShadingPlane);
@@ -237,7 +237,7 @@ void medOpVolumeResample::CreateGizmos()
 		m_GizmoRotate->SetRefSys(mafVME::SafeDownCast(m_Input));
 		m_GizmoRotate->SetAbsPose(m_CenterVolumeRefSysMatrix);
 		m_GizmoRotate->Show(false);
-		{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 	}
 }
 //----------------------------------------------------------------------------
@@ -348,7 +348,7 @@ void medOpVolumeResample::GizmoDelete()
     cppDEL(m_GizmoROI);
   }	
 
-	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 mafOp *medOpVolumeResample::Copy()
@@ -378,7 +378,7 @@ void medOpVolumeResample::OpRun()
 	if(!this->m_TestMode)
 		CreateGui();
 	UpdateGui();
-	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpVolumeResample::OpDo()
@@ -658,7 +658,7 @@ void medOpVolumeResample::CreateGui()
 	mafEvent buildHelpGui;
 	buildHelpGui.SetSender(this);
 	buildHelpGui.SetId(GET_BUILD_HELP_GUI);
-	mafEventMacro(buildHelpGui);
+	InvokeEvent(buildHelpGui);
 
 	if (buildHelpGui.GetArg())
 	{
@@ -729,7 +729,7 @@ void medOpVolumeResample::CreateGui()
 
 	ShowGui();
 
-	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpVolumeResample::OnEvent(mafEventBase *maf_event)
@@ -763,15 +763,15 @@ void medOpVolumeResample::OnEvent(mafEventBase *maf_event)
         else
           mafVME::SafeDownCast(m_Input)->GetOutput()->GetVMELocalBounds(m_VolumeBounds);
 					m_Gui->Update();
-					mafEventMacro(*e);
+					InvokeEvent(*e);
 					break;
 				default:
-					mafEventMacro(*e);
+					InvokeEvent(*e);
 					break;
 			}
 		}
 		else
-			mafEventMacro(*maf_event);
+			InvokeEvent(*maf_event);
 	}
 }
 //----------------------------------------------------------------------------
@@ -788,7 +788,7 @@ void medOpVolumeResample::OnEventGizmoROI(mafEventBase *maf_event)
 			}
 			break;
 		default:
-			mafEventMacro(*e);
+			InvokeEvent(*e);
 			break;
 		}
 	}
@@ -808,21 +808,21 @@ void medOpVolumeResample::OnEventThis(mafEventBase *maf_event)
 			mafString operationLabel = GetLabel();
 			helpEvent.SetString(&operationLabel);
 			helpEvent.SetId(OPEN_HELP_PAGE);
-			mafEventMacro(helpEvent);
+			InvokeEvent(helpEvent);
 		}
 		break;
 
 		case ID_SHOW_HANDLE:
 			{
 				m_GizmoROI->ShowHandles(m_ShowHandle != 0);
-				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
 			break;
 		case ID_SHOW_GIZMO_TRANSFORM:
 			{
 				m_GizmoRotate->Show(m_ShowGizmoTransform&&(m_GizmoChoose==ID_GIZMO_ROTATE));
 				m_GizmoTranslate->Show(m_ShowGizmoTransform&&(m_GizmoChoose==ID_GIZMO_TRANSLATE));
-				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
 			break;
 			case ID_VOLUME_ORIENTATION:
@@ -831,7 +831,7 @@ void medOpVolumeResample::OnEventThis(mafEventBase *maf_event)
 
 					UpdateGizmoData(e);
 
-					{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+					{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 				}
 				break;
 			case ID_VOLUME_ORIGIN:
@@ -849,7 +849,7 @@ void medOpVolumeResample::OnEventThis(mafEventBase *maf_event)
 
 					UpdateGizmoData(e);
 
-					{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+					{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 				}
 				break;
       case ID_VOLUME_DIR_X:		
@@ -868,7 +868,7 @@ void medOpVolumeResample::OnEventThis(mafEventBase *maf_event)
 					m_VolumeBounds[5] = inputVolumeBBCentre[2] + (m_MaxBoundZ/2);
 					m_GizmoROI->SetBounds(m_VolumeBounds);
 
-					{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+					{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 				}
 				break;
       case ID_VOLUME_SPACING:
@@ -877,19 +877,19 @@ void medOpVolumeResample::OnEventThis(mafEventBase *maf_event)
         SetBoundsToVMEBounds();
         //UpdateGizmoData();
         UpdateGui();
-        {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
       break;
       case ID_VOLUME_4DBOUNDS:
         SetBoundsToVME4DBounds();
         //UpdateGizmoData();
         UpdateGui();
-        {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
       break;
       case ID_VOLUME_VMELOCALBOUNDS:
         SetBoundsToVMELocalBounds();
         //UpdateGizmoData();
         UpdateGui();
-        {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
       break;
       case ID_VOLUME_AUTOSPACING:
         AutoSpacing();
@@ -920,7 +920,7 @@ void medOpVolumeResample::OnEventThis(mafEventBase *maf_event)
       p->GetPoint(0,pos);
       UpdateGizmo(handle_id, pos);
       UpdateGui();
-      {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 
       }
       break;
@@ -948,11 +948,11 @@ void medOpVolumeResample::OnEventThis(mafEventBase *maf_event)
 						m_GizmoRotate->Show(m_ShowGizmoTransform&&(m_GizmoChoose==ID_GIZMO_ROTATE));
 					}
 
-					{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+					{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 				}
 				break;
       default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       break;
     }	
   }
@@ -992,7 +992,7 @@ void medOpVolumeResample::OnEventGizmoTranslate(mafEventBase *maf_event)
 
 	default:
 		{
-			mafEventMacro(*maf_event);
+			InvokeEvent(*maf_event);
 		}
 	}
 }
@@ -1012,7 +1012,7 @@ void medOpVolumeResample::OnEventGizmoRotate(mafEventBase *maf_event)
 
 	default:
 		{
-			mafEventMacro(*maf_event);
+			InvokeEvent(*maf_event);
 		}
 	}
 }
@@ -1075,7 +1075,7 @@ void medOpVolumeResample::PostMultiplyEventMatrix(mafEventBase *maf_event)
 
 		m_VMEDummy->SetAbsMatrix(*newAbsMatrBox);
 
-		{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 	}
 }
 //----------------------------------------------------------------------------
@@ -1181,7 +1181,7 @@ void medOpVolumeResample::OpStop(int result)
 	{
 		HideGui();
 	}
-	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------

@@ -413,7 +413,7 @@ void mafGUITree::OnSelectionChanged(wxTreeEvent& event)
 
   i = event.GetItem();
   if(i.IsOk())
-    {mafEvent evUnq(this, VME_SELECT, NodeFromItem(i)); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this, VME_SELECT, NodeFromItem(i)); InvokeEvent(evUnq);}
   event.Skip();
 }
 //----------------------------------------------------------------------------

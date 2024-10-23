@@ -219,7 +219,7 @@ void medVisualPipeCollisionDetection::OnEvent(mafEventBase *maf_event)
         e->SetArg((intptr_t)&medVisualPipeCollisionDetection::SurfaceAccept);
         e->SetString(&title);
         e->SetId(VME_CHOOSE);
-        mafEventMacro(*e);
+        InvokeEvent(*e);
         mafVME *surfaceTMP = mafVME::SafeDownCast(e->GetVme());
         //if not surface has been selected
         if (surfaceTMP == NULL)
@@ -237,7 +237,7 @@ void medVisualPipeCollisionDetection::OnEvent(mafEventBase *maf_event)
         e->SetArg((intptr_t)&medVisualPipeCollisionDetection::SurfaceAccept);
         e->SetString(&title);
         e->SetId(VME_CHOOSE);
-        mafEventMacro(*e);
+        InvokeEvent(*e);
         mafVME *surfaceTMP = mafVME::SafeDownCast(e->GetVme());
         //if not surface has been selected
         if (surfaceTMP == NULL)
@@ -249,7 +249,7 @@ void medVisualPipeCollisionDetection::OnEvent(mafEventBase *maf_event)
       }
       break;
       default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       break;
     }
   }
@@ -438,7 +438,7 @@ void medVisualPipeCollisionDetection::UpdatePipeline(bool force /* = false */)
     //output0->Update();
     m_Mapper->SetInputData(output0);
     m_Mapper->Update();
-    {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
 }
 //----------------------------------------------------------------------------

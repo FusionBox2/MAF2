@@ -85,7 +85,7 @@ void mafOpInteractionOp::OpRun()
   m_Gizmo->SetData(sphere->GetOutput());
   
   // add the VME Gizmo to the VME tree
-  mafEventMacro( mafEvent( this, VME_ADD, m_Gizmo ) );
+  InvokeEvent( mafEvent( this, VME_ADD, m_Gizmo ) );
 
 
 
@@ -112,7 +112,7 @@ void mafOpInteractionOp::OpRun()
   /******************************************************************************/
   /** UNCOMMENT HERE TO ATTACH THE INTERACTOR TO THE ACTION    (PASS 3)         */
 	/* */
-  mafEventMacro( mafEvent( this, INTERACTOR_ADD, m_MouseInteractor, &mafString(m_Actions[0])) );
+  InvokeEvent( mafEvent( this, INTERACTOR_ADD, m_MouseInteractor, &mafString(m_Actions[0])) );
   /******************************************************************************/
 
   /******************************************************************************/
@@ -149,7 +149,7 @@ void mafOpInteractionOp::OpStop(int result)
   /******************************************************************************/
   /** UNCOMMENT HERE TO DETACH THE INTERACTOR FROM THE ACTION      (PASS 3)     */
 	/* */
-  mafEventMacro( mafEvent( this, INTERACTOR_REMOVE, m_MouseInteractor, &mafString(m_Actions[0]) ) );
+  InvokeEvent( mafEvent( this, INTERACTOR_REMOVE, m_MouseInteractor, &mafString(m_Actions[0]) ) );
   /******************************************************************************/
 
 
@@ -167,10 +167,10 @@ void mafOpInteractionOp::OpStop(int result)
   
 
   // REMOVE VME-GIZMO FROM THE TREE
-  mafEventMacro( mafEvent( this, VME_REMOVE, m_Gizmo ) );
+  InvokeEvent( mafEvent( this, VME_REMOVE, m_Gizmo ) );
   mafDEL(m_Gizmo);
 
-  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -191,11 +191,11 @@ void mafOpInteractionOp::OnEvent(mafEventBase *e)
       mafEvent *event = mafEvent::SafeDownCast(e);
       assert(event);
       m_Gizmo->ApplyMatrix(*(event->GetMatrix()),POST_MULTIPLY);
-      {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
     }    
     break;
     default:
-      mafEventMacro(*e); 
+      InvokeEvent(*e); 
     break;
   }
 }

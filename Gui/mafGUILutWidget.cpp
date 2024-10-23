@@ -408,7 +408,7 @@ void mafGUILutWidget::OnLeftMouseButtonUp(wxMouseEvent &event)
     m_Dragging = false;
 
     // signal to Listener that the selection has changed
-    {mafEvent evUnq(this,GetId()); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,GetId()); InvokeEvent(evUnq);}
   }
 }
 //----------------------------------------------------------------------------

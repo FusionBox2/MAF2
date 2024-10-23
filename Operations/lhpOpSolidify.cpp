@@ -1219,7 +1219,7 @@ void lhpOpSolidify::OpRun()
     ShowGui();
   }
 
-  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void lhpOpSolidify::OpDo()
@@ -1228,8 +1228,8 @@ void lhpOpSolidify::OpDo()
   if (m_Output)
   {
     m_Output->ReparentTo(m_Input->GetParent());
-    //{mafEvent evUnq(this, VME_ADD, m_Output); mafEventMacro(evUnq);}
-    {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+    //{mafEvent evUnq(this, VME_ADD, m_Output); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
 }
 //----------------------------------------------------------------------------
@@ -1238,8 +1238,8 @@ void lhpOpSolidify::OpUndo()
 {
   if (m_Output)
   {
-    {mafEvent evUnq(this, VME_REMOVE, m_Output); mafEventMacro(evUnq);}
-    {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this, VME_REMOVE, m_Output); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
 }
 
@@ -1250,7 +1250,7 @@ void lhpOpSolidify::OpStop(int result)
   HideGui();
   if (result == OP_RUN_CANCEL)
   {
-    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
     return;
   }
 
@@ -1311,7 +1311,7 @@ void lhpOpSolidify::OpStop(int result)
   //newcloud->Register(this);
   m_Output = newcloud;
 
-  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }
 
 
@@ -1327,7 +1327,7 @@ void lhpOpSolidify::OnEvent(mafEventBase *maf_event)
         {
           mafString s(_L("Choose solid landmark"));
           mafEvent e(this,VME_CHOOSE, &s, (intptr_t)&lhpOpSolidify::RigidBodyAccept);
-          mafEventMacro(e);
+          InvokeEvent(e);
           if(e.GetVme() == NULL)
           {
             return;
@@ -1354,7 +1354,7 @@ void lhpOpSolidify::OnEvent(mafEventBase *maf_event)
         OpStop(OP_RUN_CANCEL);
       break;
         default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       break; 
     }
   }  

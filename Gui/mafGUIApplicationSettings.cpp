@@ -111,7 +111,7 @@ void mafGUIApplicationSettings::OnEvent(mafEventBase *maf_event)
     break;
     case ID_WARN_UNDO:
       m_Config->Write("WarnUser",m_WarnUserFlag);
-      {mafEvent evUnq(this,MENU_OPTION_APPLICATION_SETTINGS); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,MENU_OPTION_APPLICATION_SETTINGS); InvokeEvent(evUnq);}
     break;
     case ID_PASSPHRASE:
     break;
@@ -137,7 +137,7 @@ void mafGUIApplicationSettings::OnEvent(mafEventBase *maf_event)
 		}
 		break;
     default:
-      mafEventMacro(*maf_event);
+      InvokeEvent(*maf_event);
     break; 
   }
   EnableItems();

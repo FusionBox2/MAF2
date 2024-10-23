@@ -173,7 +173,7 @@ void medOpMeshDeformation::OpRun()
   //create internal structures for the visualization
   if (!CreateInternalStructures())
   {
-    {mafEvent evUnq(this, OP_RUN_CANCEL); mafEventMacro(evUnq);} 
+    {mafEvent evUnq(this, OP_RUN_CANCEL); InvokeEvent(evUnq);} 
     return;
   }
  
@@ -187,7 +187,7 @@ void medOpMeshDeformation::OpRun()
   DeleteOpDialog();
 
   DeleteInternalStructures();
-  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -210,7 +210,7 @@ void medOpMeshDeformation::OpDo()
     }
   }
   
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -239,14 +239,14 @@ void medOpMeshDeformation::OpUndo()
     }
   }
 
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
 void medOpMeshDeformation::OpStop(int result)
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}        
+  {mafEvent evUnq(this,result); InvokeEvent(evUnq);}        
 }
 
 //----------------------------------------------------------------------------
@@ -319,7 +319,7 @@ void medOpMeshDeformation::CreateOpDialog()
   mafEvent buildHelpGui;
   buildHelpGui.SetSender(this);
   buildHelpGui.SetId(GET_BUILD_HELP_GUI);
-  mafEventMacro(buildHelpGui);
+  InvokeEvent(buildHelpGui);
 
   wxButton* helpButton = NULL;
 
@@ -677,7 +677,7 @@ void medOpMeshDeformation::OnEvent(mafEventBase *maf_event)
 			mafString operationLabel = GetLabel();
 			helpEvent.SetString(&operationLabel);
 			helpEvent.SetId(OPEN_HELP_PAGE);
-			mafEventMacro(helpEvent);
+			InvokeEvent(helpEvent);
 		}
 		break;
 
@@ -882,7 +882,7 @@ void medOpMeshDeformation::OnEvent(mafEventBase *maf_event)
   ev.SetString(&title);
   ev.SetArg((intptr_t)&medOpMeshDeformation::SelectCurveVMECallback);
 
-  mafEventMacro(ev);
+  InvokeEvent(ev);
   return mafVME::SafeDownCast(ev.GetVme());
 }
 
@@ -2870,13 +2870,13 @@ void medOpMeshDeformation::RemoveAllActors()
 //{
 //  {
 //  mafEvent ev(this, VME_SELECT, (long)24/*14*//*5*//*12*/);
-//  mafEventMacro(ev);
+//  InvokeEvent(ev);
 //  m_DCToAdd = mafVME::SafeDownCast(ev.GetVme());
 //  }
 //  
 //  {
 //    mafEvent ev(this, VME_SELECT, (long)23/*15*//*7*//*13*/);
-//    mafEventMacro(ev);
+//    InvokeEvent(ev);
 //    m_OCToAdd = mafVME::SafeDownCast(ev.GetVme());
 //  }
 //  

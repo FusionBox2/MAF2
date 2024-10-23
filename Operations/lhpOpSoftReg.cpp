@@ -171,13 +171,13 @@ void lhpOpSoftReg::OnEvent(mafEventBase *maf_event)
       {
         mafString s(_L("Choose cloud"));
         mafEvent e(this,VME_CHOOSE, &s, (intptr_t)&lhpOpSoftReg::BonesSetAccept);
-        mafEventMacro(e);
+        InvokeEvent(e);
         mafNode *vme = e.GetVme();
         OnChooseVme(vme);
         break;
       }
     default:
-      mafEventMacro(*maf_event);
+      InvokeEvent(*maf_event);
     break;
   }
 }
@@ -459,14 +459,14 @@ void lhpOpSoftReg::OpDo()
     if(outSurface)
     {
       outSurface->ReparentTo(m_Input->GetRoot());
-      {mafEvent evUnq(this, VME_ADD, outSurface); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this, VME_ADD, outSurface); InvokeEvent(evUnq);}
     }
     mafDEL(outSurface);
 
   }
 
 
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 
 
 }

@@ -233,7 +233,7 @@ void mafView3D::OnEvent(mafEventBase *maf_event)
 					{
 						if(!(m_Choose == ID_PIPE_ISO))
 						{
-							//{mafEvent evUnq(this,VME_SHOW,m_CurrentSurface,false); mafEventMacro(evUnq);}
+							//{mafEvent evUnq(this,VME_SHOW,m_CurrentSurface,false); InvokeEvent(evUnq);}
 							VmeShow(m_CurrentSurface,false);
 						}
 						CameraUpdate();
@@ -261,13 +261,13 @@ void mafView3D::OnEvent(mafEventBase *maf_event)
 			}
 			break;
     default:
-      mafEventMacro(*maf_event);
+      InvokeEvent(*maf_event);
     break;
     }
   }
   else
   {
-    mafEventMacro(*maf_event);
+    InvokeEvent(*maf_event);
   }
 }
 //----------------------------------------------------------------------------

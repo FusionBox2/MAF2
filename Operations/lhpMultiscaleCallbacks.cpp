@@ -35,7 +35,7 @@ void vtkStartRenderCallback::Execute(vtkObject *caller, unsigned long, void*)
     return ;
 
   mafEvent e(this, m_id) ;
-  mafEventMacro(e) ;
+  InvokeEvent(e) ;
 }
 
 
@@ -49,7 +49,7 @@ void vtkMouseClickCallback::Execute(vtkObject *caller, unsigned long, void*)
     return ;
 
   mafEvent e(this, m_id) ;
-  mafEventMacro(e) ;
+  InvokeEvent(e) ;
 }
 
 
@@ -66,6 +66,6 @@ void lhpMultiscaleDoubleClickCallback::OnEvent(mafEventBase *event)
 
     mafLogMessage(_M("double click !")) ;
     mafEvent e(this, m_id) ;
-    mafEventMacro(e) ;
+    InvokeEvent(e) ;
   }
 }

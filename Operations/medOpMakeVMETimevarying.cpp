@@ -124,7 +124,7 @@ bool medOpMakeVMETimevarying::Accept(mafNode* vme)
 //----------------------------------------------------------------------------
 {
 	mafEvent e(this,VIEW_SELECTED);
-	mafEventMacro(e);
+	InvokeEvent(e);
   return true;
 }
 //----------------------------------------------------------------------------
@@ -149,7 +149,7 @@ void medOpMakeVMETimevarying::OpDo()
 void medOpMakeVMETimevarying::OpUndo()
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this,VME_REMOVE,m_Output); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_REMOVE,m_Output); InvokeEvent(evUnq);}
   mafDEL(m_Output);
 }
 //----------------------------------------------------------------------------
@@ -212,7 +212,7 @@ void medOpMakeVMETimevarying::CreateGui()
   //--------------------------//
 
 	ShowGui();
-	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpMakeVMETimevarying::OnEvent(mafEventBase *maf_event)
@@ -242,7 +242,7 @@ void medOpMakeVMETimevarying::OnEvent(mafEventBase *maf_event)
       {
         mafString title = _L("Choose VME");
         mafEvent e(this,VME_CHOOSE,&title,(intptr_t)&medOpMakeVMETimevarying::DialogAcceptVME);
-        mafEventMacro(e);
+        InvokeEvent(e);
         
         //mafNEW(m_CurrentVME);
         m_CurrentVME = mafVME::SafeDownCast(e.GetVme());
@@ -435,13 +435,13 @@ void medOpMakeVMETimevarying::OnEvent(mafEventBase *maf_event)
       //------------------------------------------//
       default:
       {
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       }
     }
   }
   else
   {
-    mafEventMacro(*e);
+    InvokeEvent(*e);
   }
 }
 //----------------------------------------------------------------------------
@@ -449,7 +449,7 @@ void medOpMakeVMETimevarying::OpStop(int result)
 //----------------------------------------------------------------------------
 {
   HideGui();
-	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 bool medOpMakeVMETimevarying::AcceptVME(mafVME * vme)
@@ -685,7 +685,7 @@ void medOpMakeVMETimevarying::Execute()
   m_VMETimevarying->GetMatrixPipe()->Update();
   m_VMETimevarying->GetDataPipe()->Update();
 
-  {mafEvent evUnq(this,VME_ADD,m_VMETimevarying); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_ADD,m_VMETimevarying); InvokeEvent(evUnq);}
 
   m_Output = m_VMETimevarying;
 

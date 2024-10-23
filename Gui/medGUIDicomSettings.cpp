@@ -346,7 +346,7 @@ void medGUIDicomSettings::OnEvent(mafEventBase *maf_event)
 	}
 	break;
 	default:
-		mafEventMacro(*maf_event);
+		InvokeEvent(*maf_event);
 		break; 
 	}
 	EnableItems();

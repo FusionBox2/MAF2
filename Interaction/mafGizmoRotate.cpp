@@ -119,7 +119,7 @@ void mafGizmoRotate::OnEvent(mafEventBase *maf_event)
   else
   {
     // forward to the listener
-    mafEventMacro(*maf_event);
+    InvokeEvent(*maf_event);
   }
 }
 
@@ -187,12 +187,12 @@ void mafGizmoRotate::OnEventGizmoComponents(mafEventBase *maf_event)
         // instanciating the gizmo; the sender is changed to "this" so that the operation can check for
         // the gizmo sending events
         e->SetSender(this);
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       }
       break;
       default:
       {
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       }
     }
   }
@@ -223,7 +223,7 @@ void mafGizmoRotate::OnEventGizmoGui(mafEventBase *maf_event)
     break;
     default:
     {
-     mafEventMacro(*maf_event);
+     InvokeEvent(*maf_event);
     }
     break;
   }

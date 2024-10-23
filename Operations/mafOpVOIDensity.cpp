@@ -122,7 +122,7 @@ void mafOpVOIDensity::OpRun()
 		mafEvent buildHelpGui;
 		buildHelpGui.SetSender(this);
 		buildHelpGui.SetId(GET_BUILD_HELP_GUI);
-		mafEventMacro(buildHelpGui);
+		InvokeEvent(buildHelpGui);
 
 		if (buildHelpGui.GetArg())
 		{
@@ -179,7 +179,7 @@ void mafOpVOIDensity::OnEvent(mafEventBase *maf_event)
 				mafString operationLabel = GetLabel();
 				helpEvent.SetString(&operationLabel);
 				helpEvent.SetId(OPEN_HELP_PAGE);
-				mafEventMacro(helpEvent);
+				InvokeEvent(helpEvent);
 			}
 			break;
 
@@ -187,7 +187,7 @@ void mafOpVOIDensity::OnEvent(mafEventBase *maf_event)
 			{
 				mafString title = _L("VOI surface");
         mafEvent event(this,VME_CHOOSE,&title,(intptr_t)&mafOpVOIDensity::OutputSurfaceAccept);
-				mafEventMacro(event);
+				InvokeEvent(event);
 				m_Surface = event.GetVme();
 				if(m_Surface == NULL)
 					return;
@@ -232,7 +232,7 @@ void mafOpVOIDensity::OnEvent(mafEventBase *maf_event)
 				OpStop(OP_RUN_CANCEL);
 			break;
 			default:
-				mafEventMacro(*e);
+				InvokeEvent(*e);
 			break; 
 		}
 	}

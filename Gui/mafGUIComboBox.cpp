@@ -59,7 +59,7 @@ bool mafGUIComboBox::MSWCommand(WXUINT param, WXWORD id)
     case CBN_SELCHANGE:
       {
         if(GetSelection() != m_OldValue)
-          {mafEvent evUnq(this, GetId(), (intptr_t)GetSelection()); mafEventMacro(evUnq);}
+          {mafEvent evUnq(this, GetId(), (intptr_t)GetSelection()); InvokeEvent(evUnq);}
         m_OldValue = GetSelection();
       }
       

@@ -417,7 +417,7 @@ void mafPipeMeshSlice_BES::OnEvent(mafEventBase *maf_event)
             m_ActiveScalarType = CELL_TYPE;
           }
           UpdateScalars();
-          {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+          {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
         }
         break;
       case ID_LUT:
@@ -426,7 +426,7 @@ void mafPipeMeshSlice_BES::OnEvent(mafEventBase *maf_event)
           m_Table->GetTableRange(sr);
           m_Mapper->SetScalarRange(sr);
         }
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
         break;
       case ID_SCALAR_MAP_ACTIVE:
         {
@@ -438,7 +438,7 @@ void mafPipeMeshSlice_BES::OnEvent(mafEventBase *maf_event)
           m_Gui->Update();
 
           UpdateScalars();
-          {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+          {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
         }
         break;
       case ID_USE_VTK_PROPERTY:
@@ -454,17 +454,17 @@ void mafPipeMeshSlice_BES::OnEvent(mafEventBase *maf_event)
         m_MaterialButton->UpdateMaterialIcon();
         
         m_Gui->Update();
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
         break;
       case ID_BORDER_CHANGE:
 		  {
 			  m_Actor->GetProperty()->SetLineWidth(m_Border);
 			  m_Actor->Modified();
-			  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+			  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 		  }
 	  break;
 			default:
-				mafEventMacro(*e);
+				InvokeEvent(*e);
 				break;
 		}
 	}
@@ -532,7 +532,7 @@ void mafPipeMeshSlice_BES::SetThickness(double thickness)
 	m_Border=thickness;
 	m_Actor->GetProperty()->SetLineWidth(m_Border);
   m_Actor->Modified();
-	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafPipeMeshSlice_BES::SetActorPicking(int enable)
@@ -540,7 +540,7 @@ void mafPipeMeshSlice_BES::SetActorPicking(int enable)
 {
 	m_Actor->SetPickable(enable);
 	m_Actor->Modified();
-	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafPipeMeshSlice_BES::SetWireframeOn()
@@ -550,7 +550,7 @@ void mafPipeMeshSlice_BES::SetWireframeOn()
   m_Actor->Modified();
   m_ActorWired->SetVisibility(0);
   m_ActorWired->Modified();
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafPipeMeshSlice_BES::SetWireframeOff()
@@ -560,7 +560,7 @@ void mafPipeMeshSlice_BES::SetWireframeOff()
   m_Actor->Modified();
   m_ActorWired->SetVisibility(1);
   m_ActorWired->Modified();
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafPipeMeshSlice_BES::SetWiredActorVisibilityOn()
@@ -568,7 +568,7 @@ void mafPipeMeshSlice_BES::SetWiredActorVisibilityOn()
 {
   m_ActorWired->SetVisibility(1);
   m_ActorWired->Modified();
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafPipeMeshSlice_BES::SetWiredActorVisibilityOff()
@@ -576,7 +576,7 @@ void mafPipeMeshSlice_BES::SetWiredActorVisibilityOff()
 {
   m_ActorWired->SetVisibility(0);
   m_ActorWired->Modified();
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafPipeMeshSlice_BES::SetFlipNormalOn()
@@ -649,7 +649,7 @@ void mafPipeMeshSlice_BES::UpdateLUTAndMapperFromNewActiveScalars()
   m_Actor->Modified();
 
   UpdateProperty();
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 
 }
 

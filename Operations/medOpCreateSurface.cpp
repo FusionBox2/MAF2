@@ -87,12 +87,12 @@ void medOpCreateSurface::OpDo()
 	if (m_Output)
 	{
 		m_Output->ReparentTo(m_Input);
-		{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 	}
 }
 //----------------------------------------------------------------------------
 void medOpCreateSurface::OpStop(int result)   
 //----------------------------------------------------------------------------
 {
-	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }

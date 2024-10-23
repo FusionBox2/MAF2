@@ -133,7 +133,7 @@ void mafGUITransformTextEntries::OnEvent(mafEventBase *maf_event)
       break;
 
       default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       break;
     }
   }
@@ -201,7 +201,7 @@ void mafGUITransformTextEntries::TextEntriesChanged()
   e2s.SetSender(this);
   e2s.SetMatrix(tran->GetMatrixPointer());
   e2s.SetId(ID_TRANSFORM);
-  mafEventMacro(e2s);
+  InvokeEvent(e2s);
 }
 
 #define TOLERANCE 1.0e-02

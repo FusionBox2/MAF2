@@ -172,7 +172,7 @@ void medOpIterativeRegistration::OnEvent(mafEventBase *maf_event)
     else
     {
       // if no one can handle this event send it to the operation listener
-      mafEventMacro(*e); 
+      InvokeEvent(*e); 
     }	
   }
   
@@ -191,12 +191,12 @@ void medOpIterativeRegistration::OpStop(int result)
    
   // HideGui seems not to work  with plugged guis :(; using it generate a SetFocusToChild
   // error when operation tab is selected after the operation has ended
-  /*{mafEvent evUnq(this,OP_HIDE_GUI,(wxWindow *)m_Gui->GetParent()); mafEventMacro(evUnq);}
+  /*{mafEvent evUnq(this,OP_HIDE_GUI,(wxWindow *)m_Gui->GetParent()); InvokeEvent(evUnq);}
   cppDEL(m_Gui);*/
   HideGui();
 
 
-  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}   
+  {mafEvent evUnq(this,result); InvokeEvent(evUnq);}   
 }
 
 
@@ -261,7 +261,7 @@ void medOpIterativeRegistration::OnRegister(mafEventBase *maf_event)
   m_GuiLandmark[SOURCE]->SetGUIStatusToPick();
   m_GuiLandmark[TARGET]->SpawnLMOn();
   m_GuiLandmark[TARGET]->SetGUIStatusToPick();    
-  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);} 
+  {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);} 
 }
 
 void medOpIterativeRegistration::OnEventThis(mafEventBase *maf_event)
@@ -274,7 +274,7 @@ void medOpIterativeRegistration::OnEventThis(mafEventBase *maf_event)
     {
       mafString title = _L("Choose target vme");
       mafEvent e(this,VME_CHOOSE,&title,(intptr_t)&medGUILandmark::VmeAccept);
-      mafEventMacro(e); 
+      InvokeEvent(e); 
       m_TargetVME = mafVME::SafeDownCast(e.GetVme());
       if (m_TargetVME)
       {
@@ -311,7 +311,7 @@ void medOpIterativeRegistration::OnEventThis(mafEventBase *maf_event)
 
     default:
     {
-      mafEventMacro(*e);
+      InvokeEvent(*e);
     } 
   } 
   }
@@ -336,7 +336,7 @@ void medOpIterativeRegistration::OnEventGuiSource(mafEventBase *maf_event)
     break; 
     default:
     {
-      mafEventMacro(*e);
+      InvokeEvent(*e);
     } 
   }
   }
@@ -361,7 +361,7 @@ void medOpIterativeRegistration::OnEventGuiTarget(mafEventBase *maf_event)
     break; 
     default:
     {
-      mafEventMacro(*e);
+      InvokeEvent(*e);
     } 
   }
 

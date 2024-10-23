@@ -200,7 +200,7 @@ void medOpInteractiveClipSurface::OpRun()
     CreateGui();
     ShowGui();
 
-    {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
   // Added facility for test case
   else
@@ -289,7 +289,7 @@ void medOpInteractiveClipSurface::OnEventThis(mafEventBase *maf_event)
         }
         mafString s(_R("Choose Constrain"));
         mafEvent e(this,VME_CHOOSE, &s, (intptr_t)&medOpInteractiveClipSurface::ConstrainAccept);
-        mafEventMacro(e);
+        InvokeEvent(e);
         mafNode *vme = e.GetVme();
         if(vme != NULL)
         {
@@ -305,7 +305,7 @@ void medOpInteractiveClipSurface::OnEventThis(mafEventBase *maf_event)
 				e->SetArg((intptr_t)&medOpInteractiveClipSurface::SurfaceAccept);
 				e->SetString(&title);
 				e->SetId(VME_CHOOSE);
-				mafEventMacro(*e);
+				InvokeEvent(*e);
 				m_ClipperVME = mafVMESurface::SafeDownCast(e->GetVme());
 				if(m_ClipperVME == NULL)
 					return;
@@ -316,7 +316,7 @@ void medOpInteractiveClipSurface::OnEventThis(mafEventBase *maf_event)
 			if(m_Arrow) 
 			{
 				m_Arrow->SetScaleFactor(-1 * m_Arrow->GetScaleFactor());
-				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
 			break;
 		case ID_CLIP_BY:
@@ -329,7 +329,7 @@ void medOpInteractiveClipSurface::OnEventThis(mafEventBase *maf_event)
 			m_Gui->Update();
 			ShowClipPlane(m_ClipModality != medOpInteractiveClipSurface::MODE_SURFACE);
 			ChangeGizmo();
-      {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 			break;
 		case ID_PLANE_WIDTH:
 		case ID_PLANE_HEIGHT:
@@ -340,14 +340,14 @@ void medOpInteractiveClipSurface::OnEventThis(mafEventBase *maf_event)
 					m_PlaneSource->SetPoint2(-m_PlaneWidth/2, m_PlaneHeight/2, 0);
 					m_PlaneSource->SetOrigin(-m_PlaneWidth/2,-m_PlaneHeight/2, 0);
 					m_PlaneSource->Update();
-					{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+					{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 				}
 			}
 			break;
 		case ID_CHOOSE_GIZMO:
 			{
 				ChangeGizmo();
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
 			break;
 		case ID_USE_GIZMO:
@@ -362,13 +362,13 @@ void medOpInteractiveClipSurface::OnEventThis(mafEventBase *maf_event)
 				{
 					wxMessageBox("Error while clipping surface!!", "Clipping Error");
 				}
-				{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
 			break;
 		case ID_UNDO:
 			{
 				Undo();
-				{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
 			break;
 		case wxOK:
@@ -381,7 +381,7 @@ void medOpInteractiveClipSurface::OnEventThis(mafEventBase *maf_event)
 			break;
     
 		default:
-			mafEventMacro(*e);
+			InvokeEvent(*e);
 			break; 
 		}
 	}
@@ -400,7 +400,7 @@ void medOpInteractiveClipSurface::OnUseGizmo()
 	m_Gui->Enable(ID_CHOOSE_CONSTRAINT_VME, m_UseGizmo?false:true);
 	m_CASH->EnableWidgets(!m_UseGizmo && m_ConstrainMedVMEPolylineGraph ? true : false);
 
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -470,7 +470,7 @@ void medOpInteractiveClipSurface::OnEventGizmoTranslate(mafEventBase *maf_event)
 
 	default:
 		{
-			mafEventMacro(*maf_event);
+			InvokeEvent(*maf_event);
 		}
 	}
 }
@@ -490,7 +490,7 @@ void medOpInteractiveClipSurface::OnEventGizmoRotate(mafEventBase *maf_event)
 
 	default:
 		{
-			mafEventMacro(*maf_event);
+			InvokeEvent(*maf_event);
 		}
 	}
 }
@@ -502,13 +502,13 @@ void medOpInteractiveClipSurface::OnEventGizmoScale(mafEventBase *maf_event)
 	{
 	case ID_TRANSFORM:
 		{ 
-			{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+			{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 		}
 		break;
 
 	default:
 		{
-			mafEventMacro(*maf_event);
+			InvokeEvent(*maf_event);
 		}
 	}
 }
@@ -532,7 +532,7 @@ void medOpInteractiveClipSurface::OnEventGizmoPlane(mafEventBase *maf_event)
 							m_ClipInside= m_ClipInside ? 0 : 1;
 							m_Gui->Update();
 							m_Arrow->SetScaleFactor(-1 * m_Arrow->GetScaleFactor());
-							{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+							{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 						}
 					}
 				}
@@ -541,7 +541,7 @@ void medOpInteractiveClipSurface::OnEventGizmoPlane(mafEventBase *maf_event)
 					if(e->GetArg()==mafInteractorGenericMouse::MOUSE_DOWN)
 					{
 						Clip();
-						{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+						{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 					}
 				}
 				else
@@ -556,13 +556,13 @@ void medOpInteractiveClipSurface::OnEventGizmoPlane(mafEventBase *maf_event)
               mafLogMessage(_M(stringStream.str().c_str()));
           }
 
-					{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+					{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 				}
 			}
 			break;
 		default:
 			{
-				mafEventMacro(*maf_event);
+				InvokeEvent(*maf_event);
 			}
 		}
 	}
@@ -638,7 +638,7 @@ void medOpInteractiveClipSurface::OpStop(int result)
   if(m_ImplicitPlaneVMEGizmo)
   {
     m_ImplicitPlaneVMEGizmo->SetBehavior(NULL);
-    {mafEvent evUnq(this, VME_REMOVE, m_ImplicitPlaneVMEGizmo); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this, VME_REMOVE, m_ImplicitPlaneVMEGizmo); InvokeEvent(evUnq);}
   }
 
   if(m_GizmoTranslate)
@@ -675,7 +675,7 @@ void medOpInteractiveClipSurface::OpStop(int result)
     HideGui();
   }
 
-  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpInteractiveClipSurface::OpDo()
@@ -688,7 +688,7 @@ void medOpInteractiveClipSurface::OpDo()
 
 	((mafVMESurface *)m_Input)->SetData(transform_output->GetOutput(),((mafVME *)m_Input)->GetTimeStamp());
 	
-  {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpInteractiveClipSurface::OpUndo()
@@ -696,7 +696,7 @@ void medOpInteractiveClipSurface::OpUndo()
 {
   ((mafVMESurface *)m_Input)->SetData(m_OldSurface,((mafVME *)m_Input)->GetTimeStamp());
 
-	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 int medOpInteractiveClipSurface::Clip()
@@ -832,7 +832,7 @@ void medOpInteractiveClipSurface::PostMultiplyEventMatrix(mafEventBase *maf_even
 			// update matrix for OpDo()
 			//m_NewAbsMatrix = absPose;
 		} 
-		{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 
 		// clean up
 		tr->Delete();
@@ -916,7 +916,7 @@ void medOpInteractiveClipSurface::ShowClipPlane(bool show)
 
       m_ImplicitPlaneVMEGizmo->SetAbsMatrix(mat);
 
-      {mafEvent evUnq(this,VME_SHOW,m_ImplicitPlaneVMEGizmo,true); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,VME_SHOW,m_ImplicitPlaneVMEGizmo,true); InvokeEvent(evUnq);}
     }
     auto material = m_ImplicitPlaneVMEGizmo->GetMaterial();
     material->m_Prop->SetOpacity(0.5);
@@ -1017,7 +1017,7 @@ void medOpInteractiveClipSurface::OnChooseConstrainVme( mafNode *vme )
   m_CASH->SetConstraintPolylineGraph(medVMEPolylineGraph::SafeDownCast(m_ConstrainMedVMEPolylineGraph));
   m_CASH->SetCurvilinearAbscissa(m_ActiveBranchId, 0.0);
   m_CASH->EnableWidgets(true)  ;
-  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 
 void medOpInteractiveClipSurface::GuiEnable()

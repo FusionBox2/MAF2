@@ -160,8 +160,8 @@ void medOpSegmentationRegionGrowingConnectedThreshold::OpDo()
   if(m_Output)
   {
     m_Output->ReparentTo(m_ResampleInput);
-    {mafEvent evUnq(this,VME_SHOW,m_Output,true); mafEventMacro(evUnq);}
-    {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,VME_SHOW,m_Output,true); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
 }
 //----------------------------------------------------------------------------
@@ -193,20 +193,20 @@ void medOpSegmentationRegionGrowingConnectedThreshold::OpStop(int result)
 {  
   if (result==OP_RUN_OK)
   {
-    {mafEvent evUnq(this,VME_SHOW,m_Sphere,false); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,VME_SHOW,m_Sphere,false); InvokeEvent(evUnq);}
     m_Sphere->ReparentTo(NULL);
 
     mafVME::SafeDownCast(m_ResampleInput)->SetBehavior(m_OldBehavior);
     mafVME::SafeDownCast(m_ResampleInput)->Update();
 
     HideGui();
-    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
   } 
   else if (result==OP_RUN_CANCEL)
   { 
     if(m_Sphere!=NULL )
     {
-      {mafEvent evUnq(this,VME_SHOW,m_Sphere,false); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,VME_SHOW,m_Sphere,false); InvokeEvent(evUnq);}
       m_Sphere->ReparentTo(NULL);
   
       mafVME::SafeDownCast(m_ResampleInput)->SetBehavior(m_OldBehavior);
@@ -215,16 +215,16 @@ void medOpSegmentationRegionGrowingConnectedThreshold::OpStop(int result)
     
     if(m_ResampleInput!=NULL && m_ResampleInput!=m_Input)
     {
-      {mafEvent evUnq(this,VME_SHOW,m_ResampleInput,false); mafEventMacro(evUnq);} 
-      {mafEvent evUnq(this,VME_SELECT,m_ResampleInput,false); mafEventMacro(evUnq);} 
-      {mafEvent evUnq(this, VME_SELECT, m_Input, true); mafEventMacro(evUnq);}
-      {mafEvent evUnq(this,VME_SHOW,m_Input,true); mafEventMacro(evUnq);} 
+      {mafEvent evUnq(this,VME_SHOW,m_ResampleInput,false); InvokeEvent(evUnq);} 
+      {mafEvent evUnq(this,VME_SELECT,m_ResampleInput,false); InvokeEvent(evUnq);} 
+      {mafEvent evUnq(this, VME_SELECT, m_Input, true); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,VME_SHOW,m_Input,true); InvokeEvent(evUnq);} 
       m_ResampleInput->ReparentTo(NULL);
       m_ResampleInput->Update();
     }
     m_Resample.reset(); 
     HideGui();
-    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
   }
 }
 //----------------------------------------------------------------------------
@@ -389,7 +389,7 @@ void medOpSegmentationRegionGrowingConnectedThreshold::OnEvent(mafEventBase *maf
         m_Sphere->SetData(m_SphereVTK->GetOutput(),0.0);
         m_Sphere->Update();
 
-        {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       }
       break;
     case VME_PICKED:
@@ -406,8 +406,8 @@ void medOpSegmentationRegionGrowingConnectedThreshold::OnEvent(mafEventBase *maf
           m_Sphere->SetData(m_SphereVTK->GetOutput(),0.0);
           m_Sphere->Update();
 
-          {mafEvent evUnq(this,VME_SHOW,m_Sphere,true); mafEventMacro(evUnq);}
-          {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+          {mafEvent evUnq(this,VME_SHOW,m_Sphere,true); InvokeEvent(evUnq);}
+          {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 
           vtkStructuredPoints *sp = vtkStructuredPoints::SafeDownCast(mafVMEVolumeGray::SafeDownCast(m_ResampleInput)->GetOutput()->GetVTKData());
           //sp->Update();
@@ -448,7 +448,7 @@ void medOpSegmentationRegionGrowingConnectedThreshold::OnEvent(mafEventBase *maf
       }
       break;
     default:
-      mafEventMacro(*e);
+      InvokeEvent(*e);
       break;
     }
   }
@@ -513,9 +513,9 @@ int medOpSegmentationRegionGrowingConnectedThreshold::CreateResample()
     m_ResampleInput->Update();
 
     // show volume resampled
-    {mafEvent evUnq(this, VME_SHOW, m_ResampleInput, true); mafEventMacro(evUnq);}
-    {mafEvent evUnq(this, VME_SELECT, m_ResampleInput, true); mafEventMacro(evUnq);}
-    {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this, VME_SHOW, m_ResampleInput, true); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_SELECT, m_ResampleInput, true); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
      
     if(!m_TestMode)
     {

@@ -264,7 +264,7 @@ void lhpOpRegisterLMScripted::OnEvent(mafEventBase *maf_event)
       {
         mafString s(_L("Choose cloud"));
         mafEvent e(this,VME_CHOOSE, &s, NULL/*, (long)&lhpOpRegisterLMScripted::ClosedCloudAccept*/);
-        mafEventMacro(e);
+        InvokeEvent(e);
         mafNode *vme = e.GetVme();
         OnChooseTargetVme(vme);
       }
@@ -288,7 +288,7 @@ void lhpOpRegisterLMScripted::OnEvent(mafEventBase *maf_event)
         OpStop(OP_RUN_CANCEL);
       break;
       default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       break;
     }
   }
@@ -468,14 +468,14 @@ bool lhpOpRegisterLMScripted::ProcessNode(mafVMELandmarkCloud *src, mafVMELandma
     trg->GetLocalTimeStamps(timeStamps);
     int numTimeStamps = timeStamps.size();
 
-    {mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
 
     for (int t = 0; t < numTimeStamps; t++)
     {
       double currTime = timeStamps[t];
       long p = t * 100 / numTimeStamps;
       //  mafProgressBarSetValueMacro(p);
-      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)p); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)p); InvokeEvent(evUnq);}
       //Set the new time for the vme used to register the one frame source 
       trg->SetTimeStamp(currTime); //set current time
       trg->Update(); //>UpdateAllData();
@@ -490,7 +490,7 @@ bool lhpOpRegisterLMScripted::ProcessNode(mafVMELandmarkCloud *src, mafVMELandma
     }
     timeStamps.clear();
 
-    {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
   }
   else
   {

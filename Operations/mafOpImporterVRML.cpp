@@ -173,7 +173,7 @@ void  mafOpImporterVRML::OpRun()
     ImportVRML();
   }
 
-  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void  mafOpImporterVRML::SetFileName(const mafString& file_name)

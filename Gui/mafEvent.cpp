@@ -85,7 +85,7 @@ void mafEvent::Log()
 //----------------------------------------------------------------------------
 {
   mafString s = _R("[EV]");
-               s += _R(" sender= ") + mafToString((intptr_t)m_Sender);
+               //s += _R(" sender= ") + mafToString((intptr_t)m_Sender);
                s += _R(" ID= ") + mafIdString(m_Id);
   if(m_Arg)    s += _R(" arg= ") + mafToString(m_Arg);
   if(m_Bool)   s += _R(" bool= ") + mafToString((int)m_Bool);
@@ -147,7 +147,7 @@ mafEvent* mafEvent::Copy()
 void mafEvent::DeepCopy(const mafEventBase *maf_event)
 //----------------------------------------------------------------------------
 {
-  m_Sender  = ((mafEvent *)maf_event)->GetSender();
+  //m_Sender  = ((mafEvent *)maf_event)->GetSender();
   m_Id      = ((mafEvent *)maf_event)->GetId();
   m_Arg     = ((mafEvent *)maf_event)->GetArg();
   m_Bool    = ((mafEvent *)maf_event)->GetBool();

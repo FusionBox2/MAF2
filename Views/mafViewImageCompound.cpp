@@ -120,7 +120,7 @@ void mafViewImageCompound::OnEvent(mafEventBase *maf_event)
 					double low, hi;
 					m_LutSlider->GetSubRange(&low,&hi);
 					m_ColorLUT->SetTableRange(low,hi);
-					{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+					{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 				}
 			}
 			break;
@@ -132,7 +132,7 @@ void mafViewImageCompound::OnEvent(mafEventBase *maf_event)
 			}
 			break;
     default:
-      mafEventMacro(*maf_event);
+      InvokeEvent(*maf_event);
   }
 }
 //-------------------------------------------------------------------------
@@ -172,7 +172,7 @@ void mafViewImageCompound::VmeShow(mafNode *node, bool show)
 		UpdateWindowing(show && pipe && pipe->IsGrayImage(),node);
 	}
 
-	{mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafViewImageCompound::EnableWidgets(bool enable)

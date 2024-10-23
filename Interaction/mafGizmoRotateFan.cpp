@@ -281,7 +281,7 @@ void mafGizmoRotateFan::OnEvent(mafEventBase *maf_event)
 
           // change the sender and forward the event
           e->SetSender(this);
-          mafEventMacro(*e);
+          InvokeEvent(*e);
         }
         else if (e->GetArg() == mafInteractorGenericMouse::MOUSE_MOVE)
         {
@@ -324,7 +324,7 @@ void mafGizmoRotateFan::OnEvent(mafEventBase *maf_event)
           // change the sender and forward the event
           e->SetSender(this);
           
-          mafEventMacro(*e);
+          InvokeEvent(*e);
         }
         else if (e->GetArg() == mafInteractorGenericMouse::MOUSE_UP)
         {
@@ -338,13 +338,13 @@ void mafGizmoRotateFan::OnEvent(mafEventBase *maf_event)
 
           // change the sender and forward the event
           e->SetSender(this);
-          mafEventMacro(*e);
+          InvokeEvent(*e);
         }
       }
       break;
       default:
       {
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       }
     }
   }
@@ -371,7 +371,7 @@ void mafGizmoRotateFan::SetColor(double colR, double colG, double colB)
 void mafGizmoRotateFan::Show(bool show)
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this,VME_SHOW,m_GizmoFan,show); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW,m_GizmoFan,show); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 double mafGizmoRotateFan::PointPickedToStartTheta(double xp, double yp, double zp)

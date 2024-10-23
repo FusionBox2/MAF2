@@ -85,7 +85,7 @@ bool mafOpCrop::Accept(mafNode* node)
 //----------------------------------------------------------------------------
 {
 	mafEvent e(this,VIEW_SELECTED);
-	mafEventMacro(e);
+	InvokeEvent(e);
 	return (node && node->IsA("mafVMEVolumeGray") /*&& e.GetBool()*/);
 }
 //----------------------------------------------------------------------------
@@ -94,7 +94,7 @@ void mafOpCrop::OpRun()
 {
 	//m_Input->Modified();
   mafEvent e(this,VIEW_SELECTED);
-  mafEventMacro(e);
+  InvokeEvent(e);
 
 	mafVME* volume = mafVME::SafeDownCast(m_Input);
 	volume->Update();
@@ -131,7 +131,7 @@ void mafOpCrop::OpRun()
 	if(!m_TestMode)
 	{
 		CreateGui();
-		{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 	}
 }
 //----------------------------------------------------------------------------
@@ -310,11 +310,11 @@ void mafOpCrop::OpDo()
 	((mafVMEVolume*)m_Input)->Update();
 	
     // bug# 2628: gizmos do not update after cropping (workaround code)
-	{mafEvent evUnq(this,VME_SHOW,m_Input,false); mafEventMacro(evUnq);}
-	{mafEvent evUnq(this,VME_SHOW,m_Input,true); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW,m_Input,false); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW,m_Input,true); InvokeEvent(evUnq);}
 	///////
 
-	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpCrop::OpUndo()
@@ -329,11 +329,11 @@ void mafOpCrop::OpUndo()
 	((mafVMEVolume*)m_Input)->Update();
 
 	// bug# 2628: gizmos do not update after cropping (workaround code)
-	{mafEvent evUnq(this,VME_SHOW,m_Input,false); mafEventMacro(evUnq);}
-	{mafEvent evUnq(this,VME_SHOW,m_Input,true); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW,m_Input,false); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW,m_Input,true); InvokeEvent(evUnq);}
 	///////
 
-	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpCrop::UpdateGui()
@@ -383,7 +383,7 @@ void mafOpCrop::CreateGui()
 	mafEvent buildHelpGui;
 	buildHelpGui.SetSender(this);
 	buildHelpGui.SetId(GET_BUILD_HELP_GUI);
-	mafEventMacro(buildHelpGui);
+	InvokeEvent(buildHelpGui);
 
 	if (buildHelpGui.GetArg())
 	{
@@ -424,20 +424,20 @@ void mafOpCrop::OnEvent(mafEventBase *maf_event)
 				mafString operationLabel = GetLabel();
 				helpEvent.SetString(&operationLabel);
 				helpEvent.SetId(OPEN_HELP_PAGE);
-				mafEventMacro(helpEvent);
+				InvokeEvent(helpEvent);
 			}
 			break;
 
 			case ID_SHOW_HANDLES:
 			{
 				m_GizmoROI->ShowHandles(m_ShowHandles != 0);
-				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
 			break;
 			case ID_SHOW_ROI:      
 			{
 				m_GizmoROI->ShowROI(m_ShowROI != 0);
-				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
 			break;
 			case ID_CROP_DIR_X:
@@ -446,7 +446,7 @@ void mafOpCrop::OnEvent(mafEventBase *maf_event)
 				bb[1] = m_XminXmax[1];
 				m_Gui->Update();
 				m_GizmoROI->SetBounds(bb);
-				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 			break;
 			case ID_CROP_DIR_Y:
 				m_GizmoROI->GetBounds(bb);
@@ -454,7 +454,7 @@ void mafOpCrop::OnEvent(mafEventBase *maf_event)
 				bb[3] = m_YminYmax[1];
 				m_Gui->Update();
 				m_GizmoROI->SetBounds(bb);
-				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 			break;
 			case ID_CROP_DIR_Z:
 				m_GizmoROI->GetBounds(bb);
@@ -462,12 +462,12 @@ void mafOpCrop::OnEvent(mafEventBase *maf_event)
 				bb[5] = m_ZminZmax[1];
 				m_Gui->Update();
 				m_GizmoROI->SetBounds(bb);
-				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 			break;
 			case ID_RESET_CROPPING_AREA:
 				m_GizmoROI->Reset();
 				UpdateGui();
-				{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+				{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 			break;    
 			case wxOK:
 				Crop();
@@ -480,7 +480,7 @@ void mafOpCrop::OnEvent(mafEventBase *maf_event)
 				UpdateGui();
 			break;
 			default:
-				mafEventMacro(*e);
+				InvokeEvent(*e);
 			break;
 		}	
 	}
@@ -495,7 +495,7 @@ void mafOpCrop::OpStop(int result)
 
 	cppDEL(m_GizmoROI);
 	m_GizmoROI = NULL;
-  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}  
+  {mafEvent evUnq(this,result); InvokeEvent(evUnq);}  
 }
 //----------------------------------------------------------------------------
 void mafOpCrop::SetCroppingBoxBounds(double bounds[])

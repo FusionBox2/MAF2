@@ -114,7 +114,7 @@ void mafOpApplyTrajectory::OpStop(int result)
 //----------------------------------------------------------------------------
 {
   HideGui();
-  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpApplyTrajectory::CreateGui()
@@ -127,7 +127,7 @@ void mafOpApplyTrajectory::CreateGui()
   mafEvent buildHelpGui;
   buildHelpGui.SetSender(this);
   buildHelpGui.SetId(GET_BUILD_HELP_GUI);
-  mafEventMacro(buildHelpGui);
+  InvokeEvent(buildHelpGui);
 
   if (buildHelpGui.GetArg())
   {
@@ -195,8 +195,8 @@ void mafOpApplyTrajectory::OpUndo()
   }
 
   oldVme->Modified();
-  {mafEvent evUnq(this, VME_MODIFIED, m_Input); mafEventMacro(evUnq);}
-  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, VME_MODIFIED, m_Input); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpApplyTrajectory::OnEvent(mafEventBase *maf_event) 
@@ -214,7 +214,7 @@ void mafOpApplyTrajectory::OnEvent(mafEventBase *maf_event)
 			mafString operationLabel = GetLabel();
 			helpEvent.SetString(&operationLabel);
 			helpEvent.SetId(OPEN_HELP_PAGE);
-			mafEventMacro(helpEvent);
+			InvokeEvent(helpEvent);
 		}
 	break;
     
@@ -251,7 +251,7 @@ void mafOpApplyTrajectory::OnEvent(mafEventBase *maf_event)
         mafEvent e(this,VME_CHOOSE);
         e.SetString(&title);
         e.SetArg((intptr_t)(&mafOpApplyTrajectory::AcceptInputVME)) ; // accept only time-varying VME
-        mafEventMacro(e);
+        InvokeEvent(e);
         if (e.GetVme())
         {
           m_VME = (mafVME*)e.GetVme();
@@ -267,7 +267,7 @@ void mafOpApplyTrajectory::OnEvent(mafEventBase *maf_event)
       }
       break;
     default:
-      mafEventMacro(*e);
+      InvokeEvent(*e);
     }
   }
 }
@@ -328,8 +328,8 @@ int mafOpApplyTrajectory::Read()
 
   } while (!inputFile.Eof());
 
-  {mafEvent evUnq(this, VME_MODIFIED, m_Input); mafEventMacro(evUnq);}
-  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, VME_MODIFIED, m_Input); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 
   return MAF_OK;
 }
@@ -361,7 +361,7 @@ int mafOpApplyTrajectory::ApplyTrajectoriesFromVME()
     ((mafVME *)m_Input)->SetAbsMatrix(boxPose, time);
   }
 
-  {mafEvent evUnq(this, VME_MODIFIED, m_Input); mafEventMacro(evUnq);}
-  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, VME_MODIFIED, m_Input); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
   return MAF_OK;
 }

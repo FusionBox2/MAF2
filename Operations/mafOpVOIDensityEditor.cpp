@@ -109,7 +109,7 @@ void mafOpVOIDensityEditor::OpRun()
 		mafEvent buildHelpGui;
 		buildHelpGui.SetSender(this);
 		buildHelpGui.SetId(GET_BUILD_HELP_GUI);
-		mafEventMacro(buildHelpGui);
+		InvokeEvent(buildHelpGui);
 
 		if (buildHelpGui.GetArg())
 		{
@@ -143,7 +143,7 @@ void mafOpVOIDensityEditor::OnEvent(mafEventBase *maf_event)
 				mafString operationLabel = GetLabel();
 				helpEvent.SetString(&operationLabel);
 				helpEvent.SetId(OPEN_HELP_PAGE);
-				mafEventMacro(helpEvent);
+				InvokeEvent(helpEvent);
 			}
 			break;
 
@@ -151,7 +151,7 @@ void mafOpVOIDensityEditor::OnEvent(mafEventBase *maf_event)
 			{
 				mafString title = _L("VOI surface");
         mafEvent event(this,VME_CHOOSE,&title,(intptr_t)&mafOpVOIDensityEditor::OutputSurfaceAccept);
-				mafEventMacro(event);
+				InvokeEvent(event);
 				m_Surface = event.GetVme();
 				if(m_Surface == NULL)
 					return;
@@ -194,7 +194,7 @@ void mafOpVOIDensityEditor::OnEvent(mafEventBase *maf_event)
       case ID_SCALAR_VALUE:
       break;
 			default:
-				mafEventMacro(*e);
+				InvokeEvent(*e);
 			break; 
 		}
 	}
@@ -273,8 +273,8 @@ void mafOpVOIDensityEditor::EditVolumeScalars()
   }
 
   ((mafVME *)m_Input)->GetOutput()->Update();
-  {mafEvent evUnq(this, VME_MODIFIED, m_Input); mafEventMacro(evUnq);}
-  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, VME_MODIFIED, m_Input); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -306,6 +306,6 @@ void mafOpVOIDensityEditor::OpUndo()
     }
     ((mafVMEVolumeGray *)m_Input)->Update();
     vtkDEL(m_OldData);
-    {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
 }

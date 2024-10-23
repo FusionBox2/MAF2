@@ -150,7 +150,7 @@ void medOpSubdivide::OnEvent(mafEventBase *maf_event)
     {	
       case ID_PREVIEW:
         {
-          {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+          {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
         }
       break;
       case ID_NUMBER_OF_SUBDIVISION:
@@ -190,7 +190,7 @@ void medOpSubdivide::OpStop(int result)
   }
 
   HideGui();
-  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}  
+  {mafEvent evUnq(this,result); InvokeEvent(evUnq);}  
 }
 //----------------------------------------------------------------------------
 void medOpSubdivide::OpUndo()

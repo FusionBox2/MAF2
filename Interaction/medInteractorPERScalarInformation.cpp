@@ -175,7 +175,7 @@ void medInteractorPERScalarInformation::OnEvent(mafEventBase *event)
             mafEvent pick_event(this,MOUSE_MOVE,p);
             pick_event.SetDouble(scalar_value);
             pick_event.SetArg(pid);
-            mafEventMacro(pick_event);
+            InvokeEvent(pick_event);
             p->Delete();
           }
         }

@@ -82,7 +82,7 @@ void mafGUIDictionaryWidget::OnEvent(mafEventBase *maf_event)
 	  switch(e->GetId())
 	  {
 			case ITEM_SELECTED:
-	      mafEventMacro(*e);
+	      InvokeEvent(*e);
 			break;
 	  }
 	}

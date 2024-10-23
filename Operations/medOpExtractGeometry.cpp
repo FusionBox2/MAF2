@@ -364,7 +364,7 @@ void medOpExtractGeometry::OpStop(int result)
 {
   if(m_Gui)
     HideGui();
-  {mafEvent evUnq(this,result); mafEventMacro(evUnq);}  
+  {mafEvent evUnq(this,result); InvokeEvent(evUnq);}  
 }
 //----------------------------------------------------------------------------
 void medOpExtractGeometry::OpUndo()

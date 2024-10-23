@@ -355,5 +355,5 @@ void mafGUIRangeSlider::DrawLabel(int x, int y, double val)
 void mafGUIRangeSlider::OnRangeModified(wxCommandEvent &event)
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this, this->GetId()); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, this->GetId()); InvokeEvent(evUnq);}
 }

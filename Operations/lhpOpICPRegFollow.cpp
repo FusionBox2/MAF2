@@ -152,7 +152,7 @@ void lhpOpICPRegFollow::OnEvent(mafEventBase *maf_event)
 				OpStop(OP_RUN_CANCEL);        
 			break;
 			default:
-				mafEventMacro(*e);
+				InvokeEvent(*e);
 			break; 
 		}
 	}
@@ -162,7 +162,7 @@ void lhpOpICPRegFollow::OpStop(int result)
 //----------------------------------------------------------------------------
 {
 	HideGui();
-	{mafEvent evUnq(this,result); mafEventMacro(evUnq);}       
+	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}       
 }
 //----------------------------------------------------------------------------
 void lhpOpICPRegFollow::OpDo()
@@ -234,7 +234,7 @@ void lhpOpICPRegFollow::OpDo()
 
   m_Registered->SetAbsMatrix(*mat);
   
-  {mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 
   // modified by Stefano 7-11-2004 (beg)
   // registration error feedback to user
@@ -250,7 +250,7 @@ void lhpOpICPRegFollow::OnChooseTarget()
 //----------------------------------------------------------------------------
 {
 	mafEvent e(this,VME_CHOOSE);
-	mafEventMacro(e);
+	InvokeEvent(e);
 	mafNode *vme = e.GetVme();
 
 	if(!vme) return; // the user choosed cancel - keep previous target
@@ -276,7 +276,7 @@ void lhpOpICPRegFollow::OnChooseSource()
 //----------------------------------------------------------------------------
 {
   mafEvent e(this,VME_CHOOSE);
-  mafEventMacro(e);
+  InvokeEvent(e);
   mafNode *vme = e.GetVme();
 
   if(!vme) return; // the user choosed cancel - keep previous target

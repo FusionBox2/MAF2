@@ -158,7 +158,7 @@ void mafGUIDialog::OnEvent(mafEventBase *maf_event)
         wxDialog::Close(); // will call OnCloseWindow -- which will call OnCancel
       break;
       default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
     }
   }
 }

@@ -169,7 +169,7 @@ void medOpFlipNormals::OpRun()
 
 		DeleteOpDialog();
 
-		{mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+		{mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 	}
 }
 //----------------------------------------------------------------------------
@@ -177,14 +177,14 @@ void medOpFlipNormals::OpDo()
 //----------------------------------------------------------------------------
 {
 	((mafVMESurface *)m_Input)->SetData(m_ResultPolydata,((mafVME *)m_Input)->GetTimeStamp());
-	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpFlipNormals::OpUndo()
 //----------------------------------------------------------------------------
 {
 	((mafVMESurface *)m_Input)->SetData(m_OriginalPolydata,((mafVME *)m_Input)->GetTimeStamp());
-	{mafEvent evUnq(this, CAMERA_UPDATE); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 // widget ID's
@@ -463,7 +463,7 @@ void medOpFlipNormals::OnEvent(mafEventBase *maf_event)
 			break ;
 
 		default:
-			mafEventMacro(*e);
+			InvokeEvent(*e);
 			break; 
 		}
 	}

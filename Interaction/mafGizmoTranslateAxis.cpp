@@ -409,7 +409,7 @@ void mafGizmoTranslateAxis::OnEvent(mafEventBase *maf_event)
 {
   // forward events to the listener
 	maf_event->SetSender(this);
-  mafEventMacro(*maf_event);
+  InvokeEvent(*maf_event);
 }
 /** Gizmo color */
 //----------------------------------------------------------------------------
@@ -456,8 +456,8 @@ void mafGizmoTranslateAxis::SetColor(double cylR, double cylG, double cylB, doub
 void mafGizmoTranslateAxis::Show(bool show)
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this,VME_SHOW,m_CylGizmo,show); mafEventMacro(evUnq);}
-	{mafEvent evUnq(this,VME_SHOW,m_ConeGizmo,show); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW,m_CylGizmo,show); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW,m_ConeGizmo,show); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGizmoTranslateAxis::SetAbsPose(std::shared_ptr<mafMatrix> absPose)

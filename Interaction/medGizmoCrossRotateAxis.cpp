@@ -358,11 +358,11 @@ void medGizmoCrossRotateAxis::OnEvent(mafEventBase *maf_event)
 			}
 			// forward events to the listener
 			e->SetSender(this);
-			mafEventMacro(*e);
+			InvokeEvent(*e);
 		}
 		else
 		{
-			mafEventMacro(*e);
+			InvokeEvent(*e);
 		}
 	}
 }
@@ -391,7 +391,7 @@ void medGizmoCrossRotateAxis::SetColor(double colR, double colG, double colB)
 void medGizmoCrossRotateAxis::Show(bool show)
 //----------------------------------------------------------------------------
 {
-	{mafEvent evUnq(this,VME_SHOW,m_GizmoCross,show); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW,m_GizmoCross,show); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medGizmoCrossRotateAxis::SetAbsPose(std::shared_ptr<mafMatrix> absPose)
@@ -570,7 +570,7 @@ void medGizmoCrossRotateAxis::CreateFeedbackGizmoPipeline()
 
 void medGizmoCrossRotateAxis::ShowTranslationFeedbackArrows(bool show)
 {
-	{mafEvent evUnq(this,VME_SHOW,m_RotationFeedbackGizmo,show); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW,m_RotationFeedbackGizmo,show); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------

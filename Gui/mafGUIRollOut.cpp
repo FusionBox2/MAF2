@@ -80,7 +80,7 @@ void mafGUIRollOut::OnRollOut(wxCommandEvent &event)
   int widget_id = this->GetId();
   RollOut(!m_RollGui->IsShown());
   bool isOpen = m_RollGui->IsShown();
-  {mafEvent evUnq(this, widget_id, isOpen); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, widget_id, isOpen); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGUIRollOut::RollOut(bool open)

@@ -1262,7 +1262,7 @@ void lhpOpKinectUtil::OpRun()
     mafGetOpenMultiFiles(m_FileDir,wildcard, m_C3DInputFileNameFullPaths);
     if(m_C3DInputFileNameFullPaths.size() == 0) 
     {
-      {mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);}
       return;
     }
   }
@@ -1275,11 +1275,11 @@ void lhpOpKinectUtil::OpRun()
   {
     if(Import())
     {
-      {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
     }
     else
     {
-      {mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);}
     }
   }
 }
@@ -1334,7 +1334,7 @@ void lhpOpKinectUtil::OnEvent(mafEventBase *maf_event)
     }
   default:
     {
-      mafEventMacro(*maf_event); 
+      InvokeEvent(*maf_event); 
     }
     break;
   }
@@ -1349,8 +1349,8 @@ void lhpOpKinectUtil::OpDo()
   for(unsigned i = 0; i < m_Imported.size(); i++)
   {
     m_Imported[i]->ReparentTo(m_Input);
-    {mafEvent evUnq(this, VME_COLLAPSESUBTREE, m_Imported[i]); mafEventMacro(evUnq);}
-    {mafEvent evUnq(this, VME_EXPAND, m_Imported[i]); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this, VME_COLLAPSESUBTREE, m_Imported[i]); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_EXPAND, m_Imported[i]); InvokeEvent(evUnq);}
   }
 }
 
@@ -2066,8 +2066,8 @@ bool lhpOpKinectUtil::Import()
     mafRemoveDirectory(mtlbTmp);
   }
   mafDEL(skeletalGroup);
-  //{mafEvent evUnq(this,VIEW_CREATE, (long)12399); mafEventMacro(evUnq);}
-  //{mafEvent evUnq(this,VIEW_CREATE, (long)12400); mafEventMacro(evUnq);}
+  //{mafEvent evUnq(this,VIEW_CREATE, (long)12399); InvokeEvent(evUnq);}
+  //{mafEvent evUnq(this,VIEW_CREATE, (long)12400); InvokeEvent(evUnq);}
   return result;
 }
 

@@ -630,7 +630,7 @@ void mafViewSlice::OnEvent(mafEventBase *maf_event)
     }
   }
 
-  mafEventMacro(*maf_event);
+  InvokeEvent(*maf_event);
 }
 
 //----------------------------------------------------------------------------

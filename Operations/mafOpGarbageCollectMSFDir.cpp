@@ -84,7 +84,7 @@ Proceed?";
     int answer = wxMessageBox(msg,_("Confirm"),wxYES_NO|wxCANCEL|wxICON_QUESTION,mafGetFrame()); // ask user if will save msf before closing
     if(answer == wxCANCEL || answer == wxNO)
     {
-      {mafEvent evUnq(this,OP_RUN_CANCEL); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);}
       return;
     }
     else if(answer == wxYES)
@@ -95,7 +95,7 @@ Proceed?";
  
   this->GarbageCollect();
 
-  {mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
 }
 
 int mafOpGarbageCollectMSFDir::GetFilesToRemove(std::set<std::string> &filesToRemoveSet )
@@ -296,7 +296,7 @@ int mafOpGarbageCollectMSFDir::GarbageCollect()
   }
  
   // Clear UnDo stack if successful
-  {mafEvent evUnq(this, CLEAR_UNDO_STACK); mafEventMacro(evUnq);}
+  {mafEvent evUnq(this, CLEAR_UNDO_STACK); InvokeEvent(evUnq);}
 
   return MAF_OK;
 }

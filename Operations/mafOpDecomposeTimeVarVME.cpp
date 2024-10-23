@@ -120,7 +120,7 @@ void mafOpDecomposeTimeVarVME::OpRun()
   mafEvent buildHelpGui;
   buildHelpGui.SetSender(this);
   buildHelpGui.SetId(GET_BUILD_HELP_GUI);
-  mafEventMacro(buildHelpGui);
+  InvokeEvent(buildHelpGui);
 
   if (buildHelpGui.GetArg())
   {
@@ -185,7 +185,7 @@ void mafOpDecomposeTimeVarVME::OnEvent(mafEventBase *maf_event)
 			mafString operationLabel = GetLabel();
 			helpEvent.SetString(&operationLabel);
 			helpEvent.SetId(OPEN_HELP_PAGE);
-			mafEventMacro(helpEvent);
+			InvokeEvent(helpEvent);
 	  }
 	  break;
 
@@ -237,7 +237,7 @@ void mafOpDecomposeTimeVarVME::OnEvent(mafEventBase *maf_event)
       }
       default:
       {
-        mafEventMacro(*maf_event); 
+        InvokeEvent(*maf_event); 
       }
       break;
     }

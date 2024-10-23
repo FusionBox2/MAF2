@@ -190,7 +190,7 @@ int medDicomCardiacMRIHelper::ParseDicomDirectory()
   if (!m_TestMode)
   {
     busyCursor = new wxBusyCursor();
-	{mafEvent evUnq(this,PROGRESSBAR_SHOW); mafEventMacro(evUnq);}
+	{mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
   }
 
   long progress = 0;
@@ -278,7 +278,7 @@ int medDicomCardiacMRIHelper::ParseDicomDirectory()
         cppDEL(busyInfo);
         busyInfo = new wxBusyInfo(busyMessage);
 		    progress = i * 100 / (double) (timeFrames*planesPerFrame);
-		    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); mafEventMacro(evUnq);}
+		    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); InvokeEvent(evUnq);}
       }
     }
   }
@@ -324,7 +324,7 @@ int medDicomCardiacMRIHelper::ParseDicomDirectory()
       wxMessageBox("ERROR during processing Cardiac MRI");
       vtkDEL(directoryReader);
 
-      {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
+      {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 
       cppDEL(busyCursor);
       cppDEL(busyInfo);
@@ -529,7 +529,7 @@ int medDicomCardiacMRIHelper::ParseDicomDirectory()
         wxMessageBox("ERROR during processing Cardiac MRI");
         vtkDEL(directoryReader);
 
-        {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
+        {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 
         cppDEL(busyCursor);
         cppDEL(busyInfo);
@@ -1152,7 +1152,7 @@ int medDicomCardiacMRIHelper::ParseDicomDirectory()
 
   if (!m_TestMode)
   {
-	  {mafEvent evUnq(this,PROGRESSBAR_HIDE); mafEventMacro(evUnq);}
+	  {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 
 	  cppDEL(busyCursor);
 	  cppDEL(busyInfo);

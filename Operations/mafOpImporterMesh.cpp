@@ -193,7 +193,7 @@ void mafOpImporterMesh::OnEvent(mafEventBase *maf_event)
       }
       break;
       default:
-        mafEventMacro(*e);
+        InvokeEvent(*e);
       break;
     }	
   }

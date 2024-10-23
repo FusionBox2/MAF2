@@ -317,13 +317,13 @@ void medViewSliceBlend::OnEvent(mafEventBase *maf_event)
       break;
     default:
       //Other events
-      mafEventMacro(*maf_event);
+      InvokeEvent(*maf_event);
       break;
     }
   }
   else
   {
-    mafEventMacro(*maf_event);
+    InvokeEvent(*maf_event);
   }
 }
 //----------------------------------------------------------------------------

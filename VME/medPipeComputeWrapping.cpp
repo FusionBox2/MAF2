@@ -301,7 +301,7 @@ void medPipeComputeWrapping::OnEvent(mafEventBase *maf_event)
         m_WrappedMeterVME->ForwardUpEvent(*e);
       break;
     }
-    {mafEvent evUnq(this,CAMERA_UPDATE); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
   else if (maf_event->GetSender() == m_WrappedMeterVME)
   {

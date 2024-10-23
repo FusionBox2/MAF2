@@ -675,7 +675,7 @@ void lhpOpRegression::OpRun()
 {
   m_Cloud     = (mafVMELandmarkCloud *)m_Input;
   CreateGui();
-  //{mafEvent evUnq(this,OP_RUN_OK); mafEventMacro(evUnq);} 
+  //{mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);} 
 }
 
 //----------------------------------------------------------------------------
@@ -815,12 +815,12 @@ void lhpOpRegression::OpStop(int result)
   if (result == OP_RUN_CANCEL)
   {
     //HideGui();
-    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
   }
   else if (result == OP_RUN_OK)
   {
     //HideGui();
-    {mafEvent evUnq(this,result); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
   }
 }
 //----------------------------------------------------------------------------
@@ -863,7 +863,7 @@ void lhpOpRegression::OnEvent(mafEventBase *maf_event)
       break;
     default:
     {
-      mafEventMacro(*maf_event); 
+      InvokeEvent(*maf_event); 
     }
     break;
   }
@@ -2846,7 +2846,7 @@ void lhpOpRegression::OpDo()
 //----------------------------------------------------------------------------
 {
   for(unsigned i = 0; i < m_Added.size(); i++)
-    {mafEvent evUnq(this, VME_ADD, m_Added[i]); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this, VME_ADD, m_Added[i]); InvokeEvent(evUnq);}
   for(unsigned i = 0; i < m_LMAdd.size(); i++)
   {
     if(!m_LMAdd[i].m_Pelvic)
@@ -2868,7 +2868,7 @@ void lhpOpRegression::OpUndo()
 //----------------------------------------------------------------------------
 {
   for(unsigned i = 0; i < m_Added.size(); i++)
-    {mafEvent evUnq(this, VME_REMOVE, m_Added[i]); mafEventMacro(evUnq);}
+    {mafEvent evUnq(this, VME_REMOVE, m_Added[i]); InvokeEvent(evUnq);}
   for(unsigned i = m_LMAdd.size(); i > 0; i--)
   {
     if(m_LMAdd[i - 1].m_Index != -1)

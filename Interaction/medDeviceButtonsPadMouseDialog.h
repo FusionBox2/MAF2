@@ -34,7 +34,7 @@ Add SetView method to mafDeviceButtonsPadMouse class to directly set a view to a
 This class avoid the following problem that occurs trying to use a mafDeviceButtonsPadMouse to
 interact with a view plugged inside a modal dialog:
 In a standard MAF application to set a view to a mouse object you must use the method
-mafEventMacro(mafEvent(this, VIEW_SELECT, View); that rise a VIEW_SELECT event.
+InvokeEvent(mafEvent(this, VIEW_SELECT, View); that rise a VIEW_SELECT event.
 Logic's OnEvent method trap this event but ignore the view parameter and use ViewManager
 to find the selected view;
 Views plugged into modal dialogs are not listed inside the view manager so this method don't
