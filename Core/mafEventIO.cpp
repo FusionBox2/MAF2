@@ -34,11 +34,10 @@ mafCxxTypeMacro(mafEventIO)
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-mafEventIO::mafEventIO(void *sender, mafID id, mafID item_id, void *data, mafID channel):
+mafEventIO::mafEventIO(void *sender, mafID id, void *data, mafID channel):
   mafEventBase(sender,id,data,channel)
 //------------------------------------------------------------------------------
 {
-  m_ItemId = item_id;
   m_Storage = NULL;
   m_Root    = NULL;
 }
@@ -54,20 +53,6 @@ void mafEventIO::DeepCopy(const mafEventIO *c)
 //------------------------------------------------------------------------------
 {
   Superclass::DeepCopy(c);
-  m_ItemId = c->m_ItemId;
-}
-
-//------------------------------------------------------------------------------
-void mafEventIO::SetItemId(mafID id)
-//------------------------------------------------------------------------------
-{
-  m_ItemId = id;
-}
-//------------------------------------------------------------------------------
-mafID mafEventIO::GetItemId()
-//------------------------------------------------------------------------------
-{
-  return m_ItemId;
 }
 
 //------------------------------------------------------------------------------
