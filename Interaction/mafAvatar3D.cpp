@@ -35,7 +35,7 @@
 #include "mafOBB.h"
 
 // Serialization
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 
 // Visualization
 #include "vtkProp3D.h"

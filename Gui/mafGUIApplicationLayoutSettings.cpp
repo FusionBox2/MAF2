@@ -34,7 +34,7 @@
 #include "ftk/Base/RegisteringPointer.h"
 #include "mmaApplicationLayout.h"
 #include "mafStorage.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafVMERoot.h"
 #include "mafNodeLayout.h"
 #include "mafNodeIterator.h"

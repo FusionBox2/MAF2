@@ -30,7 +30,7 @@
 #include "ftk/Core/NodeFactory.h"
 #include "mafIndent.h"
 #include "mafEventIO.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafStorage.h"
 #include "mafGUI.h"
 #include <wx/tokenzr.h>

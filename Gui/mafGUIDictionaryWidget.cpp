@@ -41,7 +41,7 @@
 #include "mafVMERoot.h"
 #include "mafVMELandmarkCloud.h"
 
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 
 
 

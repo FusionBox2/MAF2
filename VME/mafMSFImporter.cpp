@@ -22,7 +22,7 @@
 #include "mafTagItem.h"
 #include "mafVMEItemVTK.h"
 #include "mafDataVector.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mmaMaterial.h"
 #include "mmaMeter.h"
 #include "mafMatrixVector.h"

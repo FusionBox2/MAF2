@@ -17,7 +17,7 @@
 #define __mafDevice_h
 
 #include "mafAgentThreaded.h"
-#include "mafTo.h"
+#include "ftk/IO/To.h"
 
 //----------------------------------------------------------------------------
 // forward declarations :

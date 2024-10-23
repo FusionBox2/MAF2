@@ -6,7 +6,7 @@
 #include "mafVMERoot.h"
 #include "mafTagArray.h"
 #include "mafIndent.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mmuIdFactory.h"
 #include "mafEventIO.h"
 #include "mafStorage.h"

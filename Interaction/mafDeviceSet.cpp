@@ -22,7 +22,7 @@
 #include "mafEventBase.h"
 
 // serialization
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 
 #include <mutex>
 #include "mmuIdFactory.h"

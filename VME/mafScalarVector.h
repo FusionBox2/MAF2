@@ -22,7 +22,7 @@
 //----------------------------------------------------------------------------
 #include "mafTimeMapScalar.h"
 #include "mafTimeMapScalar.txx"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 
 //------------------------------------------------------------------------------
 // Forward declarations

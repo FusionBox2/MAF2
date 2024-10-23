@@ -28,7 +28,7 @@
 #include "mafGUI.h"
 
 #include "mmuTimeSet.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafVME.h"
 #include "mafVMEOutputScalar.h"
 

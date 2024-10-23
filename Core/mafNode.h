@@ -29,7 +29,7 @@
 #include "mafTagArray.h"
 #include "mafObjectWithGUI.h"
 #include "mafEventSender.h"
-#include "mafTo.h"
+#include "ftk/IO/To.h"
 #include <vector>
 #include <map>
 #include <string>

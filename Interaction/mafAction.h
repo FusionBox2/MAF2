@@ -19,7 +19,7 @@
 
 #include "mafAgent.h"
 #include "ftk/Base/RegisteringPointer.h"
-#include "mafTo.h"
+#include "ftk/IO/To.h"
 #include <list>
 
 //----------------------------------------------------------------------------

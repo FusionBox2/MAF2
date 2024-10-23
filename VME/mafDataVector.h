@@ -24,7 +24,7 @@
 #include "mafTimeStamped.h"
 #include "mafEventSender.h"
 #include "mafVMEItem.h"
-#include "mafTo.h"
+#include "ftk/IO/To.h"
 
 //------------------------------------------------------------------------------
 // Forward declarations

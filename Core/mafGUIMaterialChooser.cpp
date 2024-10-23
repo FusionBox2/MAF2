@@ -44,7 +44,7 @@
 #include "mafRWI.h"
 #include "mafGUIPicButton.h"
 
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafVME.h"
 
 #include "vtkProperty.h"

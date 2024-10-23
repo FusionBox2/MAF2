@@ -158,7 +158,7 @@ IF(MAF_USE_CURL)
 ENDIF(MAF_USE_CURL)
 
 # List libraries that are needed by this project.
-SET(PROJECT_LIBS mafBase mafIO mafGui mafInteraction mafOperations)
+SET(PROJECT_LIBS mafBase IO mafGui mafInteraction mafOperations)
 
 IF(MAF_USE_CURL)
   SET(PROJECT_LIBS ${PROJECT_LIBS} CURL::libcurl)

@@ -26,7 +26,7 @@
 #include "ftk/Interaction/InteractionFactory.h"
 
 // serialization
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafStorage.h"
 
 // VTK local

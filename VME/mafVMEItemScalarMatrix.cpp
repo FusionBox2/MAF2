@@ -29,7 +29,7 @@
 #include "mafEventIO.h"
 #include "mafIndent.h"
 #include "mafStorage.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafCrypt.h"
 #include "mafTagItem.h"
 #include "mafTagArray.h"

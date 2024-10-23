@@ -19,7 +19,7 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafTimeMap.txx"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafMatrix.h"
 
 //------------------------------------------------------------------------------

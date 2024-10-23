@@ -27,7 +27,7 @@
 #include "mafVMEScalarMatrix.h"
 #include "mafGUI.h"
 
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafVME.h"
 #include "mafVMEOutputScalarMatrix.h"
 

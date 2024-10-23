@@ -29,7 +29,7 @@
 #include "mafNode.h"
 #include "mafRoot.h"
 #include "mafNodeIterator.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafEvent.h"
 
 //----------------------------------------------------------------------------

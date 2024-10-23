@@ -29,7 +29,7 @@
 #include "mafTagArray.h"
 #include "mafStorage.h"
 #include "mafEventIO.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 
 #include <vtkIndent.h>
 

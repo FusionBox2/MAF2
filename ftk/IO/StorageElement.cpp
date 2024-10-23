@@ -1,5 +1,4 @@
-#include "mafStorageElement.h"
-#include "ftk/Base/String.h"
+#include "ftk/IO/StorageElement.h"
 
 #include <xercesc/dom/DOM.hpp>
 #include <xercesc/util/PlatformUtils.hpp>

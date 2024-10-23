@@ -61,7 +61,7 @@
   
 #include "mafVME.h"
 #include "mafVMEGizmo.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 
 #include "vtkRenderer.h"
 #include "vtkRenderWindow.h"
