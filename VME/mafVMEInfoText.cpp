@@ -25,7 +25,7 @@
 #include "mafVMEInfoText.h"
 #include "mafGUI.h"
 
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafIndent.h"
 
 #include "vtkSmartPointer.h"

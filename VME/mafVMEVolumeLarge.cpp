@@ -31,7 +31,7 @@ June 9-11, 2008, Manchester, UK, p. 1-8
 #include "mafVMEItemVTK.h"
 #include "mafTagArray.h"
 #include "mafStorage.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafGUI.h"
 #include "mafGUIRollOut.h"
 

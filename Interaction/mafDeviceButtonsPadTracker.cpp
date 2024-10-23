@@ -26,7 +26,7 @@
 #include "mmuIdFactory.h"
 
 // I/O
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "ftk/Interaction/InteractionFactory.h"
 
 // geometric

@@ -29,7 +29,7 @@
 #include "mafGUI.h"
 #include "mafTransform.h"
 #include "mafVMEOutputSurface.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafGUILutPreset.h"
 #include "mafEventSender.h"
 #include "mafVMEVolume.h"

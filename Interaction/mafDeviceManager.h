@@ -17,7 +17,7 @@
 #define __mafDeviceManager_h
 
 #include "mafAgentEventHandler.h"
-#include "mafTo.h"
+#include "ftk/IO/To.h"
 
 #include <list>
 

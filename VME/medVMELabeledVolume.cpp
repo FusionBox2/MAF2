@@ -42,7 +42,7 @@
 #include "mafGUIFloatSlider.h"
 #include "ftk/Base/String.h"
 #include "mafDataPipeCustom.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafVMEItemVTK.h" 
 #include "mafTagItem.h"
 #include "mafTagArray.h"

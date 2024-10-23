@@ -26,7 +26,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "mafDataPipeCustom.h"
 #include "mafGUI.h"
 #include "mafGUIValidator.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafVMELandmarkCloud.h"
 #include "mafVMELandmark.h"
 

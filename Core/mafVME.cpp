@@ -40,7 +40,7 @@
 #include "mafTransform.h"
 #include "mmuTimeSet.h"
 #include "mafIndent.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 
 #include <assert.h>
 

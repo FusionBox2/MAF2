@@ -190,7 +190,7 @@ ENDIF(WITH_OPENSSL)
 
 
 # List the kits from VTK that are needed by this project.
-SET(PROJECT_LIBS mafBase mafIO vtkMAF)
+SET(PROJECT_LIBS mafBase IO vtkMAF)
 
 IF (MAF_USE_CURL)
   SET(PROJECT_LIBS ${PROJECT_LIBS} CURL::libcurl)

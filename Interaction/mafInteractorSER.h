@@ -18,7 +18,7 @@
 
 #include "mafInteractor.h"
 #include "mafAction.h"
-#include "mafTo.h"
+#include "ftk/IO/To.h"
 #include <map>
 
 //----------------------------------------------------------------------------

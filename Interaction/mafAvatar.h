@@ -18,7 +18,7 @@
 #define __mafAvatar_h
 
 #include "mafInteractor.h"
-#include "mafTo.h"
+#include "ftk/IO/To.h"
 #include "vtkProp3D.h"
 #include "vtkActor2D.h"
 

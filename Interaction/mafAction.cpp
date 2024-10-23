@@ -19,7 +19,7 @@
 
 #include "mafAction.h"
 #include "mmuIdFactory.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafEvent.h"
 
 //#include "vtkRenderer.h"

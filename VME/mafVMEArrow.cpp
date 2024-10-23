@@ -33,7 +33,7 @@
 #include "mafVMEAFRefSys.h"
 #include "mafVMEOutputSurface.h"
 #include "mafDataPipeCustom.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafMatrix3x3.h"
 #include "mafJointAnalysis.h"
 #include "mafVectors.h"

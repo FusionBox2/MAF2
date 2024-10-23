@@ -26,7 +26,7 @@
 #include "medDecl.h"
 #include "mafEvent.h"
 
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafIndent.h"
 #include "medVMESegmentationVolume.h"
 

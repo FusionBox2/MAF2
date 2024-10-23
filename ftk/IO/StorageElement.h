@@ -1,9 +1,9 @@
-#ifndef __mafStorageElement_h__
-#define __mafStorageElement_h__
+#pragma once
 
-#include "mafDefines.h"
+#include "ftkConfigure.h"
+
 #include "ftk/Base/String.h"
-#include "mafTo.h"
+#include "ftk/IO/To.h"
 
 #include <vector>
 #include <map>
@@ -11,7 +11,7 @@
 
 class mafXMLReader;
 
-class MAF_EXPORT mafStorageElement
+class FTK_IO_EXPORT mafStorageElement
 {
 public:
   mafStorageElement(void* element, mafXMLReader* storage);
@@ -146,5 +146,3 @@ protected:
 private:
 	std::unique_ptr<mafXMLWriterImpl> m_impl;
 };
-
-#endif // _mafStorageElement_h_

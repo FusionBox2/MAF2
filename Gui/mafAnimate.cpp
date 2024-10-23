@@ -35,7 +35,7 @@
 #include "mafVME.h"
 #include "mafTagArray.h"
 #include "mafTagItem.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 
 #include "vtkMath.h"
 #include "vtkCamera.h"

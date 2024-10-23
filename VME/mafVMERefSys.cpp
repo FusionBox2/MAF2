@@ -29,7 +29,7 @@
 
 #include "mafTagArray.h"
 #include "mafTransform.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafIndent.h"
 #include "mafVMELandmarkCloud.h"
 #include "mafMatrix.h"

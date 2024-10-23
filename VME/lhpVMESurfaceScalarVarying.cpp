@@ -34,7 +34,7 @@
 #include "mafEventSender.h"
 #include "mafTransform.h"
 #include "mafTransformFrame.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafDataPipeCustom.h"
 #include "mafVMEOutputSurface.h"
 #include "mafTagItem.h"

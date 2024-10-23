@@ -32,7 +32,7 @@
 #include <wx/fs_zip.h>
 
 #include "mmuTimeSet.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafStorage.h"
 #include "mafEvent.h"
 #include "mafEventIO.h"

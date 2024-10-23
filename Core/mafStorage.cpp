@@ -16,12 +16,11 @@
 
 #include "mafStorage.h"
 #include "mafNodeManager.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mmuIdFactory.h"
 #include "mafEventIO.h"
 
 #include "mafDirectory.h"
-#include "mafStorageElement.h"
 
 //------------------------------------------------------------------------------
 mafStorage::mafStorage()

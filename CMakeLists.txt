@@ -67,7 +67,7 @@ option(MAF_USE_WX        "Find and Link the wxWidgets library." ON)
 option(MAF_USE_QT        "Find and Link the Qt library."        OFF)
 OPTION(MAF_USE_VTK       "Find and Link the VTK library."       ON)
 OPTION(MAF_USE_ITK       "Find and Link the ITK library."       ON)
-OPTION(MAF_USE_XercesC   "Find and Link the XercesC library."   ON)
+OPTION(FTK_USE_XercesC   "Find and Link the XercesC library."   ON)
 OPTION(MAF_USE_CURL      "Find and Link the cURL library."      ON)
 OPTION(MAF_USE_CRYPTO    "Find and Link the CRYPTO library."    ON)
 OPTION(MAF_USE_Offis     "Find and Link the Offis library."     ON)
@@ -128,12 +128,12 @@ if(MAF_USE_ITK)
   endif(ITK_FOUND)
 endif(MAF_USE_ITK)
 
-if(MAF_USE_XercesC)
+if(FTK_USE_XercesC)
   set(XercesC_DIR ${XRC_DIR}/cmake)
   find_package(XercesC REQUIRED CONFIG)
   if(XercesC_FOUND)
   endif(XercesC_FOUND)
-endif(MAF_USE_XercesC)
+endif(FTK_USE_XercesC)
 
 if(MAF_USE_CURL)
   set(CURL_DIR ${CRL_DIR})
@@ -178,7 +178,6 @@ SET(INCLUDE_DIRS "${FTK_BINARY_DIR}"
                  "${FTK_SOURCE_DIR}/Gui"
                  "${FTK_SOURCE_DIR}/Interaction" 
                  "${FTK_SOURCE_DIR}/Interaction/Drivers" 
-                 "${FTK_SOURCE_DIR}/IO" 
                  "${FTK_SOURCE_DIR}/Operations" 
                  "${FTK_SOURCE_DIR}/Views"
                  "${FTK_SOURCE_DIR}/VME" 
@@ -205,7 +204,7 @@ SUBDIRS(Common)
 SUBDIRS(Core)
 SUBDIRS(Gui)
 SUBDIRS(Interaction)
-SUBDIRS(IO)
+SUBDIRS(ftk/IO)
 SUBDIRS(Operations)
 SUBDIRS(Views)
 SUBDIRS(VME)

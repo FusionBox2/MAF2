@@ -28,7 +28,7 @@
 #include "mmaVolumeMaterial.h"
 
 #include "mafTransform.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "medDataPipeCustomSegmentationVolume.h"
 #include "mafVMEOutputVolume.h"
 #include "mafMatrix.h"

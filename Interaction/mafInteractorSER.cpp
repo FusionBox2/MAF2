@@ -17,7 +17,7 @@
 #include "mafInteractorSER.h"
 #include "ftk/Interaction/InteractionFactory.h"
 #include "mafDeviceButtonsPadTracker.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 
 #include <assert.h>
 

@@ -3,7 +3,7 @@
 #include "mafDefines.h" 
 
 #include "ftk/Core/AttributeFactory.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafIndent.h"
 #include "assert.h"
 

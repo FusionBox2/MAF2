@@ -29,7 +29,7 @@
 
 #include "mafTransform.h"
 #include "mafTransformFrame.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafDataPipeCustomProber.h"
 #include "mafVMEOutputSurface.h"
 #include "mafTagItem.h"

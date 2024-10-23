@@ -28,7 +28,7 @@
 #include "mafEvent.h"
 #include "mafView.h"
 
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafIndent.h"
 #include "mafNode.h"
 #include "mafViewVTK.h"

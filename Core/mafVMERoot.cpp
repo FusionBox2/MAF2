@@ -35,7 +35,7 @@
 #include "mafVMEOutputNULL.h"
 #include "mafIndent.h"
 #include "mafStorage.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafEventIO.h"
 
 //-------------------------------------------------------------------------

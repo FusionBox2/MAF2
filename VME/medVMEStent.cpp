@@ -33,7 +33,7 @@ University of Bedfordshire, UK
 #include "vtkMEDPolyDataNavigator.h"
 #include "vtkMEDMatrixVectorMath.h"
 #include "medVMEStent.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "vtkMEDPolyDataNavigator.h"
 
 #include "vtkPointData.h"

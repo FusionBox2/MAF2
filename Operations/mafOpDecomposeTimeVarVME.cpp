@@ -36,7 +36,7 @@
 #include "ftk/Base/RegisteringPointer.h"
 #include "mafMatrixVector.h"
 #include "mafDataVector.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafMatrix.h"
 #include "ftk/Core/NodeFactory.h"
 #include "mafVMEItem.h"

@@ -25,7 +25,7 @@
 #include "mafGUI.h"
 
 // serialization
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include <optional>
 
 //------------------------------------------------------------------------------

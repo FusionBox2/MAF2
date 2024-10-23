@@ -31,7 +31,7 @@
 #include "mmaMaterial.h"
 #include "mafEventSender.h"
 #include "mafTransform.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafIndent.h"
 #include "mafDataPipeCustom.h"
 #include "mmuIdFactory.h"

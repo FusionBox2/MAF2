@@ -25,7 +25,7 @@
 
 #include "mafVMEPolylineSpline.h"
 #include "mafTransform.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafIndent.h"
 #include "mafDataPipeCustom.h"
 #include "mafVMEPolyline.h"

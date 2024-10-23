@@ -28,7 +28,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "mafTransform.h"
 #include "mafVMEOutputSurface.h"
 #include "mafDataPipeCustom.h"
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafIndent.h"
 #include "mafVMELandmarkCloud.h"
 #include "mafMatrix.h"
