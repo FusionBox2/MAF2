@@ -373,7 +373,6 @@ NODE_START,
   VME_OUTPUT_DATA_PREUPDATE, ///< issued by mafDataPipe before the output data is actually updated
   VME_OUTPUT_DATA_UPDATE, ///< issued when the output data is updated
   VME_OUTPUT_DATA_CHANGED,///< issued when the output data object has changed (i.e. object pointer changed)
-  VME_GET_NEWITEM_ID,     ///< issued by VMEItems or DataVector to retrieve a new item-ID (served by mafVMERoot)
 NODE_END,
 
 AVATAR_ADDED,     ///< used to advise the InteractionManager an avatar has been added (issued by mmdTracker's)

@@ -37,19 +37,13 @@ class mafRoot;
 class MAF_EXPORT mafEventIO: public mafEventBase
 {
 public:
-  mafEventIO(void *sender=NULL,mafID id=ID_NO_EVENT,mafID item_id=-1,void *data=NULL, mafID channel=MCH_UP);
+  mafEventIO(void *sender=NULL,mafID id=ID_NO_EVENT,void *data=NULL, mafID channel=MCH_UP);
   ~mafEventIO() override;
 
   mafTypeMacro(mafEventIO,mafEventBase);
  
   /** copy constructor, this makes a copy of the event */
   virtual void DeepCopy(const mafEventIO *c);
-
-  /** set item Id stored into this event */
-  void SetItemId(mafID id);
-
-  /** return item Id of this event */
-  mafID GetItemId();
 
   /** set the storage reference */
   void SetStorage(mafStorage *storage);
@@ -61,7 +55,6 @@ public:
   mafNode *GetRoot();
 
 protected:
-  mafID           m_ItemId;
   mafStorage*     m_Storage;
   mafNode*        m_Root;
 };

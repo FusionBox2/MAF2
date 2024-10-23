@@ -499,7 +499,6 @@ mafString  mafIdString(int id)
      case VME_OUTPUT_DATA_PREUPDATE:s=_R("VME_OUTPUT_DATA_PREUPDATE"); break;
      case VME_OUTPUT_DATA_UPDATE:   s=_R("VME_OUTPUT_DATA_UPDATE"); break;
      case VME_OUTPUT_DATA_CHANGED:  s=_R("VME_OUTPUT_DATA_CHANGED"); break;
-     case VME_GET_NEWITEM_ID:       s=_R("VME_GET_NEWITEM_ID"); break;
      case NODE_END:                 s=_R("NODE_END"); break;
 
      case AVATAR_ADDED:         s=_R("AVATAR_ADDED"); break;

@@ -148,12 +148,6 @@ void mafVMERoot::OnEvent(mafEventBase *maf_event)
   {
     switch (maf_event->GetId())
     {
-      case VME_GET_NEWITEM_ID:
-        if (mafEventIO *event_io=mafEventIO::SafeDownCast(maf_event))
-        {
-          event_io->SetItemId(mafVMERoot::SafeDownCast(GetRoot())->GetNextItemId()); // retrieve and return an item ID
-        }
-      break;
       default:
         mafRoot::InvokeEvent(maf_event);
     }
