@@ -67,10 +67,10 @@ mafMatrix3x3::mafMatrix3x3(mafMatrix3x3 &mat)
 void mafMatrix3x3::Print (std::ostream& os, const int indent) const
 //------------------------------------------------------------------------------
 {
-  this->Superclass::Print(os, indent);
   mafIndent the_indent(indent);
   mafIndent next_indent = the_indent.GetNextIndent();
 
+  os << the_indent << "Object Type Name: " << GetTypeName() << std::endl;
   int i, j;
   
   os << the_indent << "Elements:\n";
