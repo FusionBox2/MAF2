@@ -1,37 +1,13 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafMatrix
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
 #include "mafMatrix.h"
 #include "mafMatrix3x3.h"
 #include "mafIndent.h"
 #include <assert.h>
-//#include <winbase.h>
 
 #ifdef MAF_USE_VTK
   #include "vtkMatrix4x4.h"
 #endif
 
-
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(mafMatrix);
-//----------------------------------------------------------------------------
-//#include "mafMemDbg.h"
-
-//----------------------------------------------------------------------------
 mafMatrix::mafMatrix()
-//----------------------------------------------------------------------------
 {
   m_TimeStamp=0;
 
@@ -41,19 +17,33 @@ mafMatrix::mafMatrix()
 #endif
 }
 
-//----------------------------------------------------------------------------
 mafMatrix::~mafMatrix()
-//----------------------------------------------------------------------------
 {
 #ifdef MAF_USE_VTK
   vtkDEL(m_VTKMatrix);
 #endif
 }
 
-//------------------------------------------------------------------------------
-mafMatrix &mafMatrix::operator=(const mafMatrix &mat)
-//------------------------------------------------------------------------------
+mafMatrix::mafMatrix(const mafMatrix& mat)
+	: mafMatrix()
 {
+  *this = mat;
+}
+
+mafMatrix::mafMatrix(mafMatrix&& mat) noexcept
+{
+  m_TimeStamp = 0;
+#ifdef MAF_USE_VTK 
+  // in case we are building under VTK we store the elements in a VTK Matrix
+  m_VTKMatrix = nullptr;
+#endif
+  *this = std::move(mat);
+}
+
+mafMatrix &mafMatrix::operator=(const mafMatrix &mat)
+{
+  if (&mat == this)
+    return *this;
 #ifdef MAF_USE_VTK
   m_VTKMatrix->DeepCopy(mat.m_VTKMatrix);
 #else
@@ -62,50 +52,60 @@ mafMatrix &mafMatrix::operator=(const mafMatrix &mat)
       m_Elements[i][j]=mat.m_Elements[i][j];
 #endif  
 
-  m_TimeStamp=mat.m_TimeStamp;
+  m_TimeStamp = mat.m_TimeStamp;
   Modified();
   return *this;
 }
-//------------------------------------------------------------------------------
-mafMatrix::mafMatrix(const mafMatrix &mat)
-//------------------------------------------------------------------------------
+
+mafMatrix& mafMatrix::operator=(mafMatrix&& mat) noexcept
 {
-  m_TimeStamp=0;
+#ifdef MAF_USE_VTK
+  std::swap(m_VTKMatrix, mat.m_VTKMatrix);
+#else
+  for (int i = 0; i < 4; i++)
+    for (int j = 0; j < 4; j++)
+      m_Elements[i][j] = mat.m_Elements[i][j];
+#endif  
 
-#ifdef MAF_USE_VTK 
-  // in case we are building under VTK we store the elements in a VTK Matrix
-  vtkNEW(m_VTKMatrix);
-#endif
-
-  *this=mat;
+  std::swap(m_TimeStamp, mat.m_TimeStamp);
+  Modified();
+  return *this;
 }
 
-//------------------------------------------------------------------------------
-bool mafMatrix::operator==(const mafMatrix& mat) const
-//------------------------------------------------------------------------------
+std::shared_ptr<mafMatrix> mafMatrix::MakeClone() const
 {
-  if (!mafEquals(m_TimeStamp,mat.m_TimeStamp))
+  auto res = mafMatrix::NewSPtr();
+  *res = *this;
+  return res;
+}
+
+
+bool mafMatrix::operator==(const mafMatrix& mat) const
+{
+  return Equals(mat);
+}
+
+bool mafMatrix::operator!=(const mafMatrix& mat) const
+{
+  return !Equals(mat);
+}
+
+bool mafMatrix::Equals(const mafMatrix& mat) const
+{
+  if (!mafEquals(m_TimeStamp, mat.m_TimeStamp))
     return false;
 
-  for (int i=0;i<4;i++)
+  for (int i = 0; i < 4; i++)
   {
-    for (int j=0;j<4;j++)
+    for (int j = 0; j < 4; j++)
     {
       mafMatrixElements myelements = GetElements();
       mafMatrixElements otherelements = mat.GetElements();
-      if (!mafEquals(myelements[i][j],otherelements[i][j])) // only 15 digits are considered since the I/O mechanism saves only 16 digits to avoid dirty bits
+      if (!mafEquals(myelements[i][j], otherelements[i][j])) // only 15 digits are considered since the I/O mechanism saves only 16 digits to avoid dirty bits
         return false;
     }
   }
   return true;
-}
-
-//------------------------------------------------------------------------------
-bool mafMatrix::Equals(const mafMatrix *mat) const
-//------------------------------------------------------------------------------
-{
-  assert(mat);
-  return (*this==*mat);
 }
 
 #ifdef MAF_USE_VTK
@@ -213,10 +213,10 @@ mafMatrixElements mafMatrix::GetElements() const
 void mafMatrix::Print (std::ostream& os, const int indent) const
 //------------------------------------------------------------------------------
 {
-  this->Superclass::Print(os, indent);
   mafIndent the_indent(indent);
   mafIndent next_indent = the_indent.GetNextIndent();
 
+  os << the_indent << "Object Type Name: " << GetTypeName() << std::endl;
   int i, j;
   
   os << the_indent << "TimeStamp: " << m_TimeStamp << std::endl;

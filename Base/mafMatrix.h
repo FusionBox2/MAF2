@@ -1,64 +1,46 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafMatrix
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
+#include "ftkConfigure.h"
 
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __mafMatrix_h
-#define __mafMatrix_h
-
-#include "mafReferenceCounted.h"
+#include "ftk/Base/Object.h"
 #include "ftk/Base/MTime.h"
 #include "ftk/Base/String.h"
 #include "mafTo.h"
 
 typedef double (*mafMatrixElements)[4];
 
-//------------------------------------------------------------------------------
-// Forward declarations
-//------------------------------------------------------------------------------
 #ifdef MAF_USE_VTK
 class vtkMatrix4x4;
 #endif
 
+BEGIN_FTK_NAMESPACE
 
-/** mafMatrix - Time stamped 4x4 Matrix.
-  This class defines a TimeStamped 4x4 Matrix class. If MAF has been compiled
-  with VTK support, this class can be used wherever a vtkMatrix4x4 is requested, 
-  and indeed the internal representation is a vtkMatrix4x4. Also GetVTKMatrix() explicitly
-  return a vtkMatrix4x4 pointer.
-  Also mafMatrix can reference a vtkMatrix4x4, i.e. register it and share the
-  same Elements vector, with SetVTKMatrix.
-  @sa mafReferenceCounted vtkMatrix4x4
-*/
-class MAF_EXPORT mafMatrix : public mafReferenceCounted
+class FTK_BASE_EXPORT mafMatrix final
 {
 public:
-  mafTypeMacro(mafMatrix,mafReferenceCounted);
-  void Print(std::ostream& os, const int indent=0) const override;
+  mafBaseTypeMacro(mafMatrix);
 
   mafMatrix();
-  ~mafMatrix() override;
+
+  ~mafMatrix();
 
   mafMatrix(const mafMatrix &mat);
 
+  mafMatrix(mafMatrix&& mat) noexcept;
+
   mafMatrix &operator=(const mafMatrix &mat);
+
+  mafMatrix& operator=(mafMatrix&& mat) noexcept;
 
   bool operator==(const mafMatrix& mat) const;
 
-  bool Equals(const mafMatrix *mat) const;
+	bool operator!=(const mafMatrix& mat) const;
 
-  void DeepCopy(const mafMatrix* mat) {*this=*mat;}
+  bool Equals(const mafMatrix& mat) const;
+
+	void DeepCopy(const mafMatrix& mat) {*this = mat;}
+
+  std::shared_ptr<mafMatrix> MakeClone() const;
 
 #ifdef MAF_USE_VTK
 
@@ -186,6 +168,8 @@ public:
     The in[4] and out[4] can be the same array. */
   static void PointMultiply(const double Elements[16], 
                             const double in[4], double out[4]);
+  void Print(std::ostream& os, const int indent = 0) const;
+
 protected:
   mafTimeStamp m_TimeStamp;
 
@@ -197,39 +181,34 @@ protected:
 #endif
   
 };
-namespace parser
+template<class Value>
+mafMatrix Parse(const Value& value, parser::To<mafMatrix>)
 {
-    template<class Value>
-    mafMatrix Parse(const Value& value, parser::To<mafMatrix>)
-	{
-		mafMatrix matrix;
-		matrix.Zero();
-		mafParseVector(value.template As<mafString>(), *matrix.GetElements(), 16);
-		matrix.SetTimeStamp(value(_R("TimeStamp")).template As<double>());
-		return matrix;
-	}
-}
-namespace serializer
-{
-	template<class Value>
-	void Serialize(Value& value, const mafMatrix& matrix)
-	{
-		// Write all the 16 elements into as a single 16-tupla
-		mafString elements;
-		for (int i = 0; i < 4; i++)
-		{
-			for (int j = 0; j < 4; j++)
-			{
-				elements += mafToString(matrix.GetElements()[i][j]) + _R(" ");
-			}
-			elements += _R("\n"); // cr for read-ability
-		}
-
-		value.SetValue(elements);
-
-		// add also the timestamp as an attribute
-		value(_R("TimeStamp")).SetValue(mafToString(matrix.GetTimeStamp()));
-	}
+  mafMatrix matrix;
+  matrix.Zero();
+  mafParseVector(value.template As<mafString>(), *matrix.GetElements(), 16);
+  matrix.SetTimeStamp(value(_R("TimeStamp")).template As<double>());
+  return matrix;
 }
 
-#endif 
+template<class Value>
+void Serialize(Value& value, const mafMatrix& matrix)
+{
+  // Write all the 16 elements into as a single 16-tupla
+  mafString elements;
+  for (int i = 0; i < 4; i++)
+  {
+    for (int j = 0; j < 4; j++)
+    {
+      elements += mafToString(matrix.GetElements()[i][j]) + _R(" ");
+    }
+    elements += _R("\n"); // cr for read-ability
+  }
+
+  value.SetValue(elements);
+
+  // add also the timestamp as an attribute
+  value(_R("TimeStamp")).SetValue(mafToString(matrix.GetTimeStamp()));
+}
+
+END_FTK_NAMESPACE
