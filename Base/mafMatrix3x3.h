@@ -1,21 +1,6 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafMatrix3x3
- Authors: Based on vtkMath code (www.vtk.org), adapted by Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __mafMatrix3x3_h
-#define __mafMatrix3x3_h
+#include "ftkConfigure.h"
 
 #include "ftk/Base/Object.h"
 #include "mafTimeStamped.h"
@@ -29,14 +14,14 @@ typedef double (*mafMatrix3x3Elements)[3];
   This is typically used for internal algorithms, use mafMatrix for complex usage.
   @sa mafMatrix
 */
-class MAF_EXPORT mafMatrix3x3: public mafObject, public mafTimeStamped
+class MAF_EXPORT mafMatrix3x3: public mafTimeStamped
 {
 public:
-  mafTypeMacro(mafMatrix3x3,mafObject);
-  void Print (std::ostream& os, const int indent=0) const override;
+  mafBaseTypeMacro(mafMatrix3x3);
+  void Print (std::ostream& os, const int indent=0) const;
 
   mafMatrix3x3();
-  ~mafMatrix3x3() override;
+  ~mafMatrix3x3();
 
   mafMatrix3x3 &operator=(const mafMatrix3x3 &mat);
   mafMatrix3x3(mafMatrix3x3 &mat);
@@ -282,6 +267,3 @@ inline double mafMatrix3x3::Normalize(double x[3])
   }
   return den;
 }
-
-#endif 
-

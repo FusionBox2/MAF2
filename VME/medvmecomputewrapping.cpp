@@ -110,8 +110,8 @@ medVMEComputeWrapping::medVMEComputeWrapping()
 	//m_WrappedMode2 = -1;
 
 
-	m_Mat = new mafMatrix3x3();
-	m_Imat = new mafMatrix3x3();
+	m_Mat = mafMatrix3x3::NewSPtr();
+	m_Imat = mafMatrix3x3::NewSPtr();
 
 	vtkNEW(m_LineSource);
 	vtkNEW(m_LineSource2);
@@ -151,9 +151,6 @@ medVMEComputeWrapping::~medVMEComputeWrapping()
   vtkDEL(m_LineSource3);
 	vtkDEL(m_Goniometer);
 	vtkDEL(m_LinePatcher);
-
-	mafDEL(m_Mat);
-	mafDEL(m_Imat);
 
 	for (int i = 0; i < (int)m_ExportPointList.size(); i++) {
 		delete[] m_ExportPointList[i];
@@ -3855,7 +3852,7 @@ void medVMEComputeWrapping::GetGlobalCylinderCenter(double *cylCoord,int objIdx)
 // |z''|       |z-Zr |
 //from global get local
 //imat is invert matrix
-void medVMEComputeWrapping::GetLocalTransformedCoord(double *localCoord,double *globalCoord,mafMatrix3x3 *imat){
+void medVMEComputeWrapping::GetLocalTransformedCoord(double *localCoord,double *globalCoord, std::shared_ptr<mafMatrix3x3> imat){
 	double ele0,ele1,ele2;
 	for (int i=0;i<3;i++)
 	{
@@ -3868,7 +3865,7 @@ void medVMEComputeWrapping::GetLocalTransformedCoord(double *localCoord,double *
 //|x|     |x''|  |Xr|
 //|y| = T |y''| +|Yr|
 //|z|     |z''|  |Zr|
-void medVMEComputeWrapping::GetGlobalTransformedCoord(double *localCoord,double *globalCoord,mafMatrix3x3 *mat){
+void medVMEComputeWrapping::GetGlobalTransformedCoord(double *localCoord,double *globalCoord, std::shared_ptr<mafMatrix3x3> mat){
 	double ele0,ele1,ele2;
 	for (int i=0;i<3;i++)
 	{
@@ -3878,7 +3875,7 @@ void medVMEComputeWrapping::GetGlobalTransformedCoord(double *localCoord,double 
 		globalCoord[i] = ele0*localCoord[0] + ele1*localCoord[1] + ele2*localCoord[2] + m_SphereWrapLocal[i];
 	}
 }
-void medVMEComputeWrapping::GetTransFormMatrix(double cosA,double sinA,double cosB,double sinB,mafMatrix3x3 *mat){
+void medVMEComputeWrapping::GetTransFormMatrix(double cosA,double sinA,double cosB,double sinB, std::shared_ptr<mafMatrix3x3> mat){
 
 	// i is row and j is column 
 	mat->SetElement(0,0,cosB);

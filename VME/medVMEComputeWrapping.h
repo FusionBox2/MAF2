@@ -449,7 +449,7 @@ protected:
 	bool GetBcoordinate(double *Ap,double *oCoord,double *iCoord,double *mCoord,double Rm,double R,double *bCoord1,double *bCoord2);
 	bool GetBcoordinateUpdate(double *cCoord ,double *bCoord1,double *bCoord2);
 	bool GetCcoordinate(double *cCoord1,double *cCoord2);
-	void GetTransFormMatrix(double cosA,double sinA,double cosB,double sinB,mafMatrix3x3 *mat);
+	void GetTransFormMatrix(double cosA,double sinA,double cosB,double sinB, std::shared_ptr<mafMatrix3x3> mat);
 	void GetAngleAandB(double & cosA,double & sinA,double & cosB,double & sinB);
 	double GetPi();
 	void GetGlobalSphereCenter(double *sphCoord);
@@ -461,9 +461,9 @@ protected:
 	double ComputeDistanceOfLm2(double *oCoord,double *iCoord,double *aCoord,double *bCoord,double *cCoord,double rm);
 	void GetLocalCenterCoord(double *newCoord,double *oldCoord);
 	void GetGlobalCenterCoord(double *globalCoord,double *localCoord);
-	void GetLocalTransformedCoord(double *newCoord,double *oldCoord,mafMatrix3x3 *mat);
+	void GetLocalTransformedCoord(double *newCoord,double *oldCoord, std::shared_ptr<mafMatrix3x3>mat);
 	void GetIntersectCircle(double *Ap,double *oCoord,double *iCoord,double *mCoord,double & Rm);
-	void GetGlobalTransformedCoord(double *localCoord,double *globalCoord,mafMatrix3x3 *mat);
+	void GetGlobalTransformedCoord(double *localCoord,double *globalCoord, std::shared_ptr<mafMatrix3x3> mat);
 	double GetCutPlane();
 	double GetSphereRadius();
 	double GetCylinderRadius();
@@ -640,8 +640,8 @@ protected:
 	vtkNew<vtkPlane> m_PlaneClip;
 	vtkNew<vtkClipPolyData> m_Clip;
 
-	mafMatrix3x3 *m_Mat;
-	mafMatrix3x3 *m_Imat;
+	std::shared_ptr<mafMatrix3x3> m_Mat;
+	std::shared_ptr<mafMatrix3x3> m_Imat;
 	mafMatrix m_InMx2,m_InMy2,m_InMx1,m_InMy1;
 	mafMatrix m_OutMx2,m_OutMy2,m_OutMx1,m_OutMy1;
 
