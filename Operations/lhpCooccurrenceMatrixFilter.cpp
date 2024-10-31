@@ -257,7 +257,7 @@ void ImageFilterExecute(
   int ncompsOut = outData->GetNumberOfScalarComponents() ;
 
   // Get input Extent
-  int *inExt = inData->GetWholeExtent() ;
+  int* inExt = nullptr;// inData->GetWholeExtent();
 
 
 
@@ -616,7 +616,7 @@ void ImageFilterExecute(
 //----------------------------------------------------------------------------
 // This intermediate function calls lhpCooccurrenceMatrixFilterExecute() with arguments of
 // the correct input and output type
-template <class T>
+/*template <class T>
 void ImageFilterExecute1(
                          lhpCooccurrenceMatrixFilter *self,
                          vtkImageData *inData,
@@ -637,7 +637,7 @@ void ImageFilterExecute1(
     vtkGenericWarningMacro("Execute: Unknown input ScalarType");
     return;
   }
-}
+}*/
 
 
 

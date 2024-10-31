@@ -158,7 +158,7 @@ void ImageFilterExecute(
   int ncompsOut = outData->GetNumberOfScalarComponents() ;
 
   // Get whole extent of the output image
-  int *outWholeExt = outData->GetWholeExtent() ;
+  int* outWholeExt = nullptr;// outData->GetWholeExtent();
 
   // this sets the limits of x, y and z
   int zstart = outExt[4] ;
@@ -258,7 +258,7 @@ void ImageFilterExecute(
 //----------------------------------------------------------------------------
 // This intermediate function calls lhpHistogramEqualizationFilterExecute() with arguments of
 // the correct input and output type
-template <class T>
+/*template <class T>
 void ImageFilterExecute1(
                          lhpHistogramEqualizationFilter *self,
                          vtkImageData *inData,
@@ -279,7 +279,7 @@ void ImageFilterExecute1(
     vtkGenericWarningMacro("Execute: Unknown input ScalarType");
     return;
   }
-}
+}*/
 
 
 
