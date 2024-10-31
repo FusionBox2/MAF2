@@ -18,7 +18,7 @@
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 
-#include "medDecl.h"
+#include "mafDecl.h"
 #include "medPipeCompoundVolumeFixedScalars.h"
 #include "medGUIDynamicVP.h"
 #include "wx/notebook.h"
