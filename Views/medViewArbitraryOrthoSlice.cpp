@@ -27,7 +27,7 @@ const int BOUND_1=1;
 
 #include "medGizmoCrossRotateTranslate.h"
 #include "mafGUI.h"
-#include "medDecl.h"
+#include "mafDecl.h"
 #include "medViewArbitraryOrthoSlice.h"
 #include "mafViewSlice.h"
 #include "mafVme.h"

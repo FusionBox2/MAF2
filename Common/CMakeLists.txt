@@ -26,7 +26,6 @@ SET(PROJECT_SRCS
 
   # medGeometryEditorPolylineGraph.cpp
   # medGeometryEditorPolylineGraph.h
-  medDecl.h
   medCurvilinearAbscissaOnSkeletonHelper.cpp
   medCurvilinearAbscissaOnSkeletonHelper.h
   medGizmoInteractionDebugger.cpp

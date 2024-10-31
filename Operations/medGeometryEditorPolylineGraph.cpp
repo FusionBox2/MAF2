@@ -24,7 +24,7 @@
 //----------------------------------------------------------------------------
 
 #include "medGeometryEditorPolylineGraph.h"
-#include "medDecl.h"
+#include "mafDecl.h"
 
 #include "mafGUI.h"
 #include "medVMEPolylineEditor.h"

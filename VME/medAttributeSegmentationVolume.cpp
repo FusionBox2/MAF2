@@ -23,7 +23,7 @@
 //----------------------------------------------------------------------------
 
 #include "medAttributeSegmentationVolume.h"
-#include "medDecl.h"
+#include "mafDecl.h"
 #include "mafEvent.h"
 
 #include "ftk/IO/StorageElement.h"
