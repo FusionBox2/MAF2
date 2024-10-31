@@ -201,7 +201,7 @@ void mafPipeIsosurfaceGPU::OnEvent(mafEventBase *maf_event)
 		  case ID_CONTOUR_VALUE:
 			{
 				SetContourValue((float)m_ContourValue);
-				m_Vme->ForwardUpEvent(&mafEvent(this,CAMERA_UPDATE));
+				{ mafEvent ev(this, CAMERA_UPDATE); m_Vme->ForwardUpEvent(&ev); }
 				m_Gui->Update();
 			}
 			break;
@@ -214,13 +214,13 @@ void mafPipeIsosurfaceGPU::OnEvent(mafEventBase *maf_event)
 			{
 				m_ContourMapper->SetAlpha(m_AlphaValue);
 				m_ContourMapper->Modified();
-				m_Vme->ForwardUpEvent(&mafEvent(this,CAMERA_UPDATE));
+				{ mafEvent ev(this, CAMERA_UPDATE); m_Vme->ForwardUpEvent(&ev); }
 			}
 			break;
 
-      case ID_ENABLE_GPU:
-        //m_ContourMapper->SetGPUEnabled(m_EnableGPU);        
-        m_Vme->ForwardUpEvent(&mafEvent(this,CAMERA_UPDATE));
+			case ID_ENABLE_GPU:
+				//m_ContourMapper->SetGPUEnabled(m_EnableGPU);        
+			{ mafEvent ev(this, CAMERA_UPDATE); m_Vme->ForwardUpEvent(&ev); }
         break;
 
 		  default:
@@ -281,5 +281,5 @@ void mafPipeIsosurfaceGPU::SetAlphaValue(double value)
 	m_AlphaValue=value;
 	m_ContourMapper->SetAlpha(m_AlphaValue);
 	m_ContourMapper->Modified();
-	m_Vme->ForwardUpEvent(&mafEvent(this,CAMERA_UPDATE));
+	{ mafEvent ev(this, CAMERA_UPDATE); m_Vme->ForwardUpEvent(&ev); }
 }

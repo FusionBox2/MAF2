@@ -47,7 +47,7 @@ public:
   int SetData(vtkDataSet *data, mafTimeStamp t, int mode=MAF_VME_COPY_DATA) override;
 
   /** return icon */
-  static char** GetIcon();
+  static const char** GetIcon();
 
   /** Return pointer to material attribute. */
   std::shared_ptr<mmaVolumeMaterial> GetMaterial();

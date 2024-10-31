@@ -1,5 +1,5 @@
 /* XPM */
-static char *RADIO_ON_xpm[] = {
+static const char *RADIO_ON_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "15 15 74 1",
 "l c Black",

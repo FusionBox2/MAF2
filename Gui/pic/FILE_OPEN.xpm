@@ -1,5 +1,5 @@
 /* XPM */
-static char *FILE_OPEN_xpm[] = {
+static const char *FILE_OPEN_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "20 20 5 1",
 ". c #4D4D4D",

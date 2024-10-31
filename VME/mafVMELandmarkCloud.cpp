@@ -1477,7 +1477,7 @@ std::shared_ptr<mmaMaterial> mafVMELandmarkCloud::GetMaterial()
   return material;
 }
 //-------------------------------------------------------------------------
-char** mafVMELandmarkCloud::GetIcon() 
+const char** mafVMELandmarkCloud::GetIcon() 
 //-------------------------------------------------------------------------
 {
 #include "mafVMELandmarkCloud.xpm"

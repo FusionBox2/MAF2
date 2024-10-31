@@ -107,7 +107,7 @@ public:
     {this->SetProjectionMode(VTK_PROJECT_FROM_Z);};
  
   /** Retrieve the direction of projection as string */
-  char *GetProjectionModeAsString(void)
+  const char *GetProjectionModeAsString(void)
   {
      switch (this->ProjectionMode) {
         case VTK_PROJECT_FROM_X: return "X";

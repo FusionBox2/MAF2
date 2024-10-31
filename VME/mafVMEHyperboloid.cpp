@@ -634,7 +634,7 @@ std::shared_ptr<mmaMaterial> mafVMEHyperboloid::GetMaterial()
 	return material;
 }
 
-char** mafVMEHyperboloid::GetIcon()
+const char** mafVMEHyperboloid::GetIcon()
 //-------------------------------------------------------------------------
 {
 	//wxBusyInfo wait12("geticon");

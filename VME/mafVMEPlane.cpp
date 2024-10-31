@@ -846,7 +846,7 @@ void mafVMEPlane::InternalRestore(const mafStorageElement& node)
 //-------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------
-char** mafVMEPlane::GetIcon()
+const char** mafVMEPlane::GetIcon()
 //-------------------------------------------------------------------------
 {
 #include "mafVMEProcedural.xpm"

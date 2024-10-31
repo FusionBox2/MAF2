@@ -390,7 +390,7 @@ public:
   mafID GetId() const;
 
   /** return an xpm-icon that can be used to represent this node */
-  static char ** GetIcon();
+  static const char ** GetIcon();
 
   /** Check if m_Id and regenerate it if is invalid (-1) */
   void UpdateId();

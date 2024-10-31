@@ -1316,10 +1316,10 @@ int lhpOpBonemat::YoungModuleIntegration()
   DataSet *dataset;
   double HU, E, ro, Ni = 0.3;
   ID_TYPE freq;
-  char *header = "%2d%8d%8d%8d%8d%8d%8d%8d%8d\n";
-  char *nodedata = "%16.8E%16.8E%16.8E\n";
-  char *matdata = "%16.9E%16.9E%16.9E%16.9E%16.9E\n" ;
-  char *elemdata1 = "%8d%8d%8d%8d%16.9E%16.9E%16.9E\n";
+  const char *header = "%2d%8d%8d%8d%8d%8d%8d%8d%8d\n";
+  const char *nodedata = "%16.8E%16.8E%16.8E\n";
+  const char *matdata = "%16.9E%16.9E%16.9E%16.9E%16.9E\n" ;
+  const char *elemdata1 = "%8d%8d%8d%8d%16.9E%16.9E%16.9E\n";
 
   if ((freq_fp = fopen(m_FrequencyFileName.GetCStr(), "w")) == NULL)
   {

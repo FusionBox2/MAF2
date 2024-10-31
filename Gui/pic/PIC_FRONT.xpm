@@ -1,5 +1,5 @@
 /* XPM */
-static char *PIC_FRONT_xpm[] = {
+static const char *PIC_FRONT_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "25 25 164 2",
 ">. c #649BB4",

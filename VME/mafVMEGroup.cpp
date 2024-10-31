@@ -119,7 +119,7 @@ void mafVMEGroup::OnEvent(mafEventBase *maf_event)
 }
 
 //-------------------------------------------------------------------------
-char** mafVMEGroup::GetIcon() 
+const char** mafVMEGroup::GetIcon() 
 //-------------------------------------------------------------------------
 {
   #include "mafVMEGroup.xpm"

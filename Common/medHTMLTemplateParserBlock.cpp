@@ -488,7 +488,7 @@ void medHTMLTemplateParserBlock::PreParse( wxString *inputTemplate, int &parsing
 }
 
 //----------------------------------------------------------------------------
-int medHTMLTemplateParserBlock::SubStringCompare( wxString *input, char *subString, int inputPos )
+int medHTMLTemplateParserBlock::SubStringCompare( wxString *input, const char *subString, int inputPos )
 //----------------------------------------------------------------------------
 {
     int subStringSize;

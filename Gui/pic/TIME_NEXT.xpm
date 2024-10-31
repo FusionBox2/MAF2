@@ -1,5 +1,5 @@
 /* XPM */
-static char *TIME_NEXT_xpm[] = {
+static const char *TIME_NEXT_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "20 20 114 2",
 "i  c #7280A2",

@@ -1337,7 +1337,7 @@ void mafNode::Print(std::ostream& os, const int tabs)
   }
 }
 //-------------------------------------------------------------------------
-char** mafNode::GetIcon() 
+const char** mafNode::GetIcon() 
 //-------------------------------------------------------------------------
 {
   #include "mafNode.xpm"

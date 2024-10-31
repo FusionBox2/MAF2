@@ -115,14 +115,6 @@ protected:
   void* m_DOMElement;
 };
 
-template<typename T>
-int mafStorageElementBuilder::SetValue(const T& val)
-{
-  using namespace serializer;
-  Serialize(*this, val);
-  return MAF_OK;
-}
-
 namespace serializer
 {
   void Serialize(mafStorageElementBuilder& value, const mafString&);
@@ -131,6 +123,14 @@ namespace serializer
   void Serialize(mafStorageElementBuilder& value, const int64_t&);
   void Serialize(mafStorageElementBuilder& value, const uint64_t&);
   void Serialize(mafStorageElementBuilder& value, const double&);
+}
+
+template<typename T>
+int mafStorageElementBuilder::SetValue(const T& val)
+{
+  using namespace serializer;
+  Serialize(*this, val);
+  return MAF_OK;
 }
 
 class mafXMLWriterImpl;

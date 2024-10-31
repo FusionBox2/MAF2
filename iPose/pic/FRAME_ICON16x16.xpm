@@ -1,5 +1,5 @@
 /* XPM */ 
-static char * FRAME_ICON16x16_xpm[] = {
+static const char * FRAME_ICON16x16_xpm[] = {
 "32 32 651 2",
 "  	c None",
 "! 	c #E9F3E9",

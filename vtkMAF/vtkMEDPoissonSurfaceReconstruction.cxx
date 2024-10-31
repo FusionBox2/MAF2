@@ -3080,7 +3080,7 @@ SparseNMatrix<T,Dim> SparseNMatrix<T,Dim>::operator * (const T& V) const
 template<class T,int Dim>
 SparseNMatrix<T,Dim>& SparseNMatrix<T,Dim>::operator *= (const T& V)
 {
-	for (int i=0; i<rows(); i++)
+	for (int i=0; i<rows; i++)
 	{
 		for(int ii=0;ii<m_ppElements[i];i++){
 			for(int jj=0;jj<Dim;jj++){

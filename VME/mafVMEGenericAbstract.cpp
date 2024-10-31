@@ -401,7 +401,7 @@ void mafVMEGenericAbstract::Print(std::ostream& os, const int tabs)// const
   }
 }
 //-------------------------------------------------------------------------
-char** mafVMEGenericAbstract::GetIcon() 
+const char** mafVMEGenericAbstract::GetIcon() 
 //-------------------------------------------------------------------------
 {
   #include "mafVMEGeneric.xpm"

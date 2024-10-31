@@ -118,7 +118,7 @@ public:
   std::shared_ptr<mmaMaterial> GetMaterial();
 
   /** return an xpm-icon that can be used to represent this node */
-  static char ** GetIcon();
+  static const char **GetIcon();
 	
   /** Precess events coming from other objects */
 	void OnEvent(mafEventBase *maf_event) override;

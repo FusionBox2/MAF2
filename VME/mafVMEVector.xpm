@@ -1,5 +1,5 @@
 /* XPM */
-static char *mafVMEVector_xpm[] = {
+static const char *mafVMEVector_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "15 15 194 2",
 "V. c #F7FAFF",

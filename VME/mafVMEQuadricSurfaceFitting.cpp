@@ -934,7 +934,7 @@ void mafVMEQuadricSurfaceFitting::SetSphereRadius(double radius)
   Modified();
 }
 //-------------------------------------------------------------------------
-char** mafVMEQuadricSurfaceFitting::GetIcon()
+const char** mafVMEQuadricSurfaceFitting::GetIcon()
 //-------------------------------------------------------------------------
 {
   #include "mafVMEProcedural.xpm"

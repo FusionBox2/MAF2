@@ -58,7 +58,7 @@ public:
   mafString GetVisualPipe() override {return mafString(_R("mafPipeImage3D"));}
 
     /** return icon */
-    static char** GetIcon();
+    static const char** GetIcon();
 protected:
   mafVMEImage();
   ~mafVMEImage() override;

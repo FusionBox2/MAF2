@@ -100,7 +100,7 @@ public:
   bool IsDataAvailable() override;
 
   /** return icon */
-  static char** GetIcon();
+  static const char** GetIcon();
 
   /** Return the number of medVMEAnalog used to color the polydata.*/
   int GetNumberOfScalarData() {return m_ScalarRegionMap.size();};

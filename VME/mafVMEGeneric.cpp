@@ -105,7 +105,7 @@ int mafVMEGeneric::SetData(vtkDataSet *data, mafTimeStamp t, int mode)
 }
 
 //-------------------------------------------------------------------------
-char** mafVMEGeneric::GetIcon() 
+const char** mafVMEGeneric::GetIcon() 
 //-------------------------------------------------------------------------
 {
   #include "mafVMEGeneric.xpm"

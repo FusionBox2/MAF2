@@ -368,7 +368,7 @@ void mafVMELineSeg::InternalRestore(const mafStorageElement& node)
 //-------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------
-char** mafVMELineSeg::GetIcon()
+const char** mafVMELineSeg::GetIcon()
 //-------------------------------------------------------------------------
 {
   #include "mafVMEProcedural.xpm"

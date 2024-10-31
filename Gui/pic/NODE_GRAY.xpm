@@ -1,5 +1,5 @@
 /* XPM */
-static char *NODE_GRAY_xpm[] = {
+static const char *NODE_GRAY_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "15 15 44 1",
 ", c #C1C1C1",

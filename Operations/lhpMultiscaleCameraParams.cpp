@@ -137,7 +137,7 @@ void lhpMultiscaleCameraParams::PrintSelf(std::ostream& os, vtkIndent indent) co
 // == operator
 // Note that we have to allow a tolerance in this because the camera 
 // can change a bit after being saved - don't know why.
-bool lhpMultiscaleCameraParams::operator==(const lhpMultiscaleCameraParams& cameraParams)
+bool lhpMultiscaleCameraParams::operator==(const lhpMultiscaleCameraParams& cameraParams) const
 //------------------------------------------------------------------------------
 {
   double eq0, eq1, eq2, eq3, tol ;

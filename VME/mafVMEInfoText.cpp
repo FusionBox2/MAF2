@@ -305,7 +305,7 @@ const char *mafVMEInfoText::GetPosText(int index)
   return m_PositionText[index].GetCStr();
 }
 //-------------------------------------------------------------------------
-char** mafVMEInfoText::GetIcon() 
+const char** mafVMEInfoText::GetIcon() 
 //-------------------------------------------------------------------------
 {
 #include "mafVMELandmark.xpm"

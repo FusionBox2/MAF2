@@ -29,7 +29,7 @@ public:
   void SaveCamera(vtkRenderer *renderer) ;                                      ///< Save camera parameters
   void RestoreCamera(vtkRenderer* renderer) ;                                   ///< Restore camera parameters
   void PrintSelf(std::ostream& os, vtkIndent indent) const ;                    ///< Print parameters
-  bool operator==(const lhpMultiscaleCameraParams& cameraParams) ;              ///< == operator
+  bool operator==(const lhpMultiscaleCameraParams& cameraParams) const;              ///< == operator
 private:
   double m_pos[3] ;
   double m_focalPoint[3] ;

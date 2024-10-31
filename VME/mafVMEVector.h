@@ -56,7 +56,7 @@ public:
   mafString GetVisualPipe() override {return mafString(_R("mafPipeVector"));}
 
     /** return icon */
-    static char** GetIcon();
+    static const char** GetIcon();
 
 protected:
   mafVMEVector();

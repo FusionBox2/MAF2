@@ -1,5 +1,5 @@
 /* XPM */ 
-static char * MDICHILD_ICON_xpm[] = {
+static const char * MDICHILD_ICON_xpm[] = {
 "32 32 651 2",
 "  	c None",
 "! 	c #E9F3E9",

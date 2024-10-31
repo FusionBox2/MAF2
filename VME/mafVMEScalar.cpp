@@ -213,7 +213,7 @@ void mafVMEScalar::Print(std::ostream& os, const int tabs)
   mafIndent indent(tabs);
 }
 //-------------------------------------------------------------------------
-char** mafVMEScalar::GetIcon() 
+const char** mafVMEScalar::GetIcon() 
 //-------------------------------------------------------------------------
 {
   #include "mafVMEScalar.xpm"

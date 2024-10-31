@@ -117,7 +117,7 @@ void lhpVMEKMInfo::OnEvent(mafEventBase *maf_event)
 }
 
 //-------------------------------------------------------------------------
-char** lhpVMEKMInfo::GetIcon() 
+const char** lhpVMEKMInfo::GetIcon() 
 //-------------------------------------------------------------------------
 {
   #include "mafVMEGroup.xpm"

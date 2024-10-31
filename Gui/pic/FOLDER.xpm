@@ -1,5 +1,5 @@
 /* XPM */
-static char *FOLDER_xpm[] = {
+static const char *FOLDER_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "20 20 69 1",
 "1 c #F7F7F7",

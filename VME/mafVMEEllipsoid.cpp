@@ -626,7 +626,7 @@ std::shared_ptr<mmaMaterial> mafVMEEllipsoid::GetMaterial()
 	return material;
 }
 
-char** mafVMEEllipsoid::GetIcon()
+const char** mafVMEEllipsoid::GetIcon()
 //-------------------------------------------------------------------------
 {
 

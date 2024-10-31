@@ -187,7 +187,7 @@ public:
 
 
 	/** Return if a particular type of Dicom or Vme is Enabled to be read */
-	bool EnableToRead(char* type);
+	bool EnableToRead(const char* type);
 
   /** Enable/disable a particular type of Dicom or Vme to be read */
   void SetEnableToRead(char *type,bool enable);

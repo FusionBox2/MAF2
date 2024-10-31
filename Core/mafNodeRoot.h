@@ -47,7 +47,7 @@ public:
   mafID GetNewNodeId() override {return GetNextNodeId();}
 
   /** return an xpm-icon that can be used to represent this node */
-  static char ** GetIcon();   //SIL. 11-4-2005:  
+  static const char ** GetIcon();   //SIL. 11-4-2005:  
 protected:
   mafNodeRoot() {}
   ~mafNodeRoot() override {}

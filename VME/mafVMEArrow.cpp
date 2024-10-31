@@ -92,7 +92,7 @@ void mafVMEArrow::UpdateScaleFactor()
   Modified();
 }
 //-------------------------------------------------------------------------
-char **mafVMEArrow::GetIcon()
+const char **mafVMEArrow::GetIcon()
 //-------------------------------------------------------------------------
 {
 #include "mafVMESurface.xpm"

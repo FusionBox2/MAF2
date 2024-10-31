@@ -1,5 +1,5 @@
 /* XPM */
-static char *ZOOM_SEL_xpm[] = {
+static const char *ZOOM_SEL_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "20 20 91 1",
 "0 c #C1C1C1",

@@ -25,6 +25,45 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 // T E N S O R   C A L C U L U S
 //---------------------------------------------------------------------------------------------------------------------
 
+/** TODO: Add comment
+*/
+//------------------------------------------------------------------------------
+void GetGaussPoint(int i, double coordinates[3])
+//------------------------------------------------------------------------------
+{
+  const double a = 0.57735027;
+  const double a1 = (1 - a) / 2.0;
+  const double a2 = (1 + a) / 2.0;
+  double points[8][3] = { {a1, a1, a1}, {a2, a1, a1}, {a2, a2, a1}, { a1, a2, a1},
+  {a1, a1, a2}, {a2, a1, a2}, {a2, a2, a2}, {a1, a2, a2} };
+
+  coordinates[0] = points[i][0];
+  coordinates[1] = points[i][1];
+  coordinates[2] = points[i][2];
+}
+
+
+/** TODO: Add comment
+*/
+//------------------------------------------------------------------------------
+void CreateGaussPointMatrix(double matrix[8][8])
+//------------------------------------------------------------------------------
+{
+  for (int i = 0; i < 8; i++)
+  {
+    double GP[3];
+    GetGaussPoint(i, GP);
+    matrix[i][0] = 1;
+    matrix[i][1] = GP[0];
+    matrix[i][2] = GP[1];
+    matrix[i][3] = GP[3];
+    matrix[i][4] = GP[0] * GP[1];
+    matrix[i][5] = GP[1] * GP[2];
+    matrix[i][6] = GP[2] * GP[0];
+    matrix[i][7] = GP[0] * GP[1] * GP[2];
+  }
+
+}
 /**
 */
 
@@ -576,52 +615,6 @@ inline void Compute_Epsilon_optimized(const double JTinv[3][3], double BuM[3][24
     Epsilon[5][21] = JTinv[2][0] * BuM[0][21]  +  JTinv[2][1] * BuM[1][21]  +  JTinv[2][2] * BuM[2][21];
     Epsilon[5][23] = JTinv[0][0] * BwM[0][23]  +  JTinv[0][1] * BwM[1][23]  +  JTinv[0][2] * BwM[2][23];
   }
-
-
-
-
-/** TODO: Add comment
-*/
-//------------------------------------------------------------------------------
-void GetGaussPoint(int i, double coordinates[3])
-//------------------------------------------------------------------------------
-{
-  const double a = 0.57735027;
-  const double a1 = (1 - a) / 2.0;
-  const double a2 = (1 + a) / 2.0;
-  double points[8][3] = { {a1, a1, a1}, {a2, a1, a1}, {a2, a2, a1}, { a1, a2, a1},
-  {a1, a1, a2}, {a2, a1, a2}, {a2, a2, a2}, {a1, a2, a2}};
-
-  coordinates[0] = points[i][0]; 
-  coordinates[1] = points[i][1]; 
-  coordinates[2] = points[i][2]; 
-}
-
-
-/** TODO: Add comment
-*/
-//------------------------------------------------------------------------------
-void CreateGaussPointMatrix(double matrix[8][8])
-//------------------------------------------------------------------------------
-{
-  for (int i=0; i<8; i++)
-  {
-    double GP[3];
-    GetGaussPoint(i, GP);
-    matrix[i][0] = 1;
-    matrix[i][1] = GP[0];
-    matrix[i][2] = GP[1];
-    matrix[i][3] = GP[3];
-    matrix[i][4] = GP[0] * GP[1];
-    matrix[i][5] = GP[1] * GP[2];
-    matrix[i][6] = GP[2] * GP[0];
-    matrix[i][7] = GP[0] * GP[1] * GP[2];
-  }
-
-}
-
-
-
 
 /** TODO: Add comment
 */

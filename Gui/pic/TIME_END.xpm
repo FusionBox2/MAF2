@@ -1,5 +1,5 @@
 /* XPM */
-static char *TIME_END_xpm[] = {
+static const char *TIME_END_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "20 20 136 2",
 "u. c #8F9DBF",

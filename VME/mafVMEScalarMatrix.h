@@ -134,7 +134,7 @@ public:
   mafVMEOutput *GetOutput() override;
 
   /** return icon */
-  static char** GetIcon();
+  static const char** GetIcon();
 
   /** Return the suggested pipe-typename for the visualization of this vme */
   mafString GetVisualPipe() override {return mafString(_R("mafPipeScalarMatrix"));};

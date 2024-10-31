@@ -95,7 +95,7 @@ public:
   std::shared_ptr<mmaMaterial> GetMaterial();
 
   /** return an xpm-icon that can be used to represent this node */
-  static char ** GetIcon();
+  static const char **GetIcon();
 
   /** Set the link to the slicer.*/
   void SetSlicedVMELink(mafNode *node);

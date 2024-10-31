@@ -59,7 +59,7 @@ public:
   void SetTimeStamp(mafTimeStamp t) override;
 
   /** return icon */
-  static char** GetIcon();
+  static const char** GetIcon();
 
 protected:
   mafVMEInfoText();

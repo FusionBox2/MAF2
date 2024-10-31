@@ -1,5 +1,5 @@
 /* XPM */
-static char * ROLLOUT_OPEN_xpm[] = {
+static const char * ROLLOUT_OPEN_xpm[] = {
 "16 16 3 1",
 " 	c None",
 ".	c #EFEDDE",

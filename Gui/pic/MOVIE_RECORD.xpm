@@ -1,5 +1,5 @@
 /* XPM */
-static char *MOVIE_RECORD_xpm[] = {
+static const char *MOVIE_RECORD_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "20 20 7 1",
 "X c #800000",

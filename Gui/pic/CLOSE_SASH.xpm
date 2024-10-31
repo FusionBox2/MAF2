@@ -1,5 +1,5 @@
 /* XPM */
-static char *CLOSE_SASH_xpm[] = {
+static const char *CLOSE_SASH_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "13 13 19 1",
 "< c Black",

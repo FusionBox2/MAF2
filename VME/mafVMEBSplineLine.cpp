@@ -408,7 +408,7 @@ void mafVMEBSplineLine::Print(std::ostream& os, const int tabs)
   m.Print(os,indent.GetNextIndent());
 }
 //-------------------------------------------------------------------------
-char** mafVMEBSplineLine::GetIcon() 
+const char** mafVMEBSplineLine::GetIcon() 
 //-------------------------------------------------------------------------
 {
   #include "mafVMESurface.xpm"

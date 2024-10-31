@@ -157,7 +157,7 @@ mafPictureFactory::~mafPictureFactory()
   cppDEL(m_PictureMaps);
 }
 //----------------------------------------------------------------------------
-void mafPictureFactory::Add(const mafString& id,char** xpm)
+void mafPictureFactory::Add(const mafString& id,const char** xpm)
 //----------------------------------------------------------------------------
 {
   m_PictureMaps->map[id] = wxImage(xpm);
@@ -207,7 +207,7 @@ wxIcon mafPictureFactory::GetIcon(const mafString& id)
   }
 }
 //----------------------------------------------------------------------------
-void mafPictureFactory::AddVmePic(const mafString& id,char** xpm)
+void mafPictureFactory::AddVmePic(const mafString& id,const char** xpm)
 //----------------------------------------------------------------------------
 {
   m_PictureMaps->vme_map[id] = wxImage(xpm);

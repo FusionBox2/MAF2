@@ -85,7 +85,7 @@ public:
 	void Update() override;
 	double* GetCenter();
 	double* GetCenterAbs();
-	static char ** GetIcon();
+	static const char **GetIcon();
 	int DeepCopy(mafNode *a) override;
 	mafVME *GetCenterVME();
 	std::shared_ptr<mmaMaterial> GetMaterial();

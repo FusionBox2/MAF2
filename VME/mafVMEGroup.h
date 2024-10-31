@@ -47,7 +47,7 @@ public:
   mafVMEOutput *GetOutput() override;
 
   /** return icon */
-  static char** GetIcon();
+  static const char** GetIcon();
   
   /** override superclass */
   void SetMatrix(const mafMatrix &mat) override;

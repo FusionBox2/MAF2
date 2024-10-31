@@ -424,7 +424,7 @@ int mafVMEPointSet::RemovePoint(int idx,mafTimeStamp t)
    
 }
 //-------------------------------------------------------------------------
-char** mafVMEPointSet::GetIcon() 
+const char** mafVMEPointSet::GetIcon() 
 //-------------------------------------------------------------------------
 {
   #include "mafVMEPointSet.xpm"

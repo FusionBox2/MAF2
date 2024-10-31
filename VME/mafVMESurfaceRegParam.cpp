@@ -724,7 +724,7 @@ void mafVMESurfaceRegParam::SetEllipsoidZSemiAxis(double axis)
 }
 
 //-------------------------------------------------------------------------
-char** mafVMESurfaceRegParam::GetIcon() 
+const char** mafVMESurfaceRegParam::GetIcon() 
 //-------------------------------------------------------------------------
 {
   #include "mafVMEProcedural.xpm"

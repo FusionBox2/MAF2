@@ -289,7 +289,7 @@ void mafVMEHelAxis::UpdateLengthFactor()
   Modified();
 }
 //-------------------------------------------------------------------------
-char **mafVMEHelAxis::GetIcon()
+const char **mafVMEHelAxis::GetIcon()
 //-------------------------------------------------------------------------
 {
 #include "mafVMESurface.xpm"

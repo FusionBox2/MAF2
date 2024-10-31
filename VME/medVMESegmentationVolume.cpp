@@ -600,7 +600,7 @@ mafVMEOutput *medVMESegmentationVolume::GetOutput()
   return m_Output;
 }
 //-------------------------------------------------------------------------
-char** medVMESegmentationVolume::GetIcon() 
+const char** medVMESegmentationVolume::GetIcon() 
 //-------------------------------------------------------------------------
 {
 #include "mafVMEVolume.xpm"

@@ -385,7 +385,7 @@ std::shared_ptr<mmaMaterial> mafVMELandmark::GetMaterial()
   return material;
 }
 //-------------------------------------------------------------------------
-char** mafVMELandmark::GetIcon() 
+const char** mafVMELandmark::GetIcon() 
 //-------------------------------------------------------------------------
 {
 #include "mafVMELandmark.xpm"
