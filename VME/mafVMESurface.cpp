@@ -141,7 +141,7 @@ std::shared_ptr<mmaMaterial> mafVMESurface::GetMaterial()
   return material;
 }
 //-------------------------------------------------------------------------
-char** mafVMESurface::GetIcon() 
+const char** mafVMESurface::GetIcon() 
 //-------------------------------------------------------------------------
 {
   #include "mafVMESurface.xpm"

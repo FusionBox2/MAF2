@@ -170,7 +170,7 @@ bool MainFrame<BaseFrame, DefaultStyle>::Create(const wxString& title, const wxP
   BaseFrame::Centre();
 
 #ifdef __WIN32__
-  DragAcceptFiles(true);
+  BaseFrame::DragAcceptFiles(true);
 #endif
 
   wxIconBundle ib;

@@ -428,7 +428,7 @@ void mafTagItem::Print(std::ostream& os, const int tabs) const
   os << indent <<"Name: \"" << (m_Name.GetCStr()?m_Name.GetCStr():_R("(NULL)")) <<"\"";
 
   int t=this->GetType();
-  char *tstr;
+  const char *tstr;
 
   switch (t)
   {

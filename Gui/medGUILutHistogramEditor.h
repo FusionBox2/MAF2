@@ -56,7 +56,7 @@ public:
   };
 
   /** Constructor. */
-  medGUILutHistogramEditor(vtkDataSet *dataSet,std::shared_ptr<mmaVolumeMaterial> material, char *name="Histogram & Windowing", mafBaseEventHandler *Listener=NULL, int id=MINID);
+  medGUILutHistogramEditor(vtkDataSet *dataSet,std::shared_ptr<mmaVolumeMaterial> material, const char *name="Histogram & Windowing", mafBaseEventHandler *Listener=NULL, int id=MINID);
   
   /** Destructor. */
   ~medGUILutHistogramEditor() override; 
@@ -68,7 +68,7 @@ public:
   void OnSize(wxSizeEvent &event) override;
 
   /** Show the dialog.*/
-  static void ShowLutHistogramDialog(vtkDataSet *dataSet,std::shared_ptr<mmaVolumeMaterial> material, char *name="Histogram & Windowing", mafBaseEventHandler *Listener=NULL, int id=MINID);
+  static void ShowLutHistogramDialog(vtkDataSet *dataSet,std::shared_ptr<mmaVolumeMaterial> material, const char *name="Histogram & Windowing", mafBaseEventHandler *Listener=NULL, int id=MINID);
 
 protected:
 

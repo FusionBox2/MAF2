@@ -594,7 +594,7 @@ void mafVMESurfaceParametric::SetSphereRadius(double radius)
   Modified();
 }
 //-------------------------------------------------------------------------
-char** mafVMESurfaceParametric::GetIcon() 
+const char** mafVMESurfaceParametric::GetIcon() 
 //-------------------------------------------------------------------------
 {
   #include "mafVMEProcedural.xpm"

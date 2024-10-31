@@ -1,5 +1,5 @@
 /* XPM */
-static char *CHECK_OFF_xpm[] = {
+static const char *CHECK_OFF_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "15 15 14 1",
 ". c #D3D3D3",

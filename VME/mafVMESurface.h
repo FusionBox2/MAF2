@@ -55,7 +55,7 @@ public:
   mafVMEOutput *GetOutput() override;
 
   /** return icon */
-  static char** GetIcon();
+  static const char** GetIcon();
 
   /** Return pointer to material attribute. */
   std::shared_ptr<mmaMaterial> GetMaterial();

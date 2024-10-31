@@ -764,7 +764,7 @@ void medGUIDicomSettings::SetEnableToRead(char* type,bool enable)
   InitializeSettings();
 }
 //----------------------------------------------------------------------------
-bool medGUIDicomSettings::EnableToRead(char* type)
+bool medGUIDicomSettings::EnableToRead(const char* type)
 //----------------------------------------------------------------------------
 {
 	if (m_Gui)

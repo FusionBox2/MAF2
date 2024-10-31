@@ -1,5 +1,5 @@
 /* XPM */
-static char *GREEN_SQUARE_xpm[] = {
+static const char *GREEN_SQUARE_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "20 20 304 2",
 "YX c #298829",

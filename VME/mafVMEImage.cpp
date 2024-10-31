@@ -89,7 +89,7 @@ int mafVMEImage::SetData(vtkDataSet *data, mafTimeStamp t, int mode)
 }
 
 //-------------------------------------------------------------------------
-char** mafVMEImage::GetIcon() 
+const char** mafVMEImage::GetIcon() 
 //-------------------------------------------------------------------------
 {
   #include "mafVMEImage.xpm"

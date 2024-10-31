@@ -1,5 +1,5 @@
 /* XPM */
-static char *TIME_BEGIN_xpm[] = {
+static const char *TIME_BEGIN_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "20 20 150 2",
 "A  c #A9B9E1",

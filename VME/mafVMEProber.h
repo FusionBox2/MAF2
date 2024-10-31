@@ -138,7 +138,7 @@ public:
   bool IsDataAvailable() override;
 
   /** return icon */
-  static char** GetIcon();
+  static const char** GetIcon();
 
 protected:
   mafVMEProber();

@@ -1222,7 +1222,7 @@ void medVMELabeledVolume::EnableWidgets(bool enable)
   }
 }
 //-------------------------------------------------------------------------
-char** medVMELabeledVolume::GetIcon() 
+const char** medVMELabeledVolume::GetIcon() 
 //-------------------------------------------------------------------------
 {
 #include "mafVMEVolume.xpm"

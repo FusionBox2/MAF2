@@ -71,7 +71,7 @@ public:
   std::shared_ptr<mmaMaterial> GetMaterial();
 
   /** return an xpm-icon that can be used to represent this node */
-  static char ** GetIcon();
+  static const char **GetIcon();
 
   /** Used to change the axes size */
   void SetLengthFactor(double scale);

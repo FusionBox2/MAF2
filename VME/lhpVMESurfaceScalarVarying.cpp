@@ -679,7 +679,7 @@ void lhpVMESurfaceScalarVarying::FillScalarsName(bool new_scalars)
 }
 
 //-------------------------------------------------------------------------
-char** lhpVMESurfaceScalarVarying::GetIcon() 
+const char** lhpVMESurfaceScalarVarying::GetIcon() 
 //-------------------------------------------------------------------------
 {
 #include "mafVMESurface.xpm"

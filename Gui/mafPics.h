@@ -72,7 +72,7 @@ public:
   void Initialize();
 
   /** add a picture to the factory -- if id already exist it is overwritten */
-  void Add(const mafString& id,char** xpm);
+  void Add(const mafString& id,const char** xpm);
 
   /** retrieve a picture from the Factory as a wxBitmap */
   wxBitmap GetBmp(const mafString& id);
@@ -92,7 +92,7 @@ public:
       id should be the ClassName.
       if id already exist it is overwritten.
   */
-  void AddVmePic(const mafString& id,char** xpm);
+  void AddVmePic(const mafString& id,const char** xpm);
 
   /** retrieve a vme-picture from the Factory as a wxBitmap. */
   wxBitmap GetVmePic(const mafString& id);

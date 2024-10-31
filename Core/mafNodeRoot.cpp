@@ -57,7 +57,7 @@ void mafNodeRoot::Print(std::ostream& os, const int tabs)// const
 }
 
 //-------------------------------------------------------------------------
-char** mafNodeRoot::GetIcon() 
+const char** mafNodeRoot::GetIcon() 
 //-------------------------------------------------------------------------
 {
   #include "mafNodeRoot.xpm"

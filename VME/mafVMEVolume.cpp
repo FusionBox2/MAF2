@@ -131,7 +131,7 @@ int mafVMEVolume::SetData(vtkDataSet *data, mafTimeStamp t, int mode)
 }
 
 //-------------------------------------------------------------------------
-char** mafVMEVolume::GetIcon() 
+const char** mafVMEVolume::GetIcon() 
 //-------------------------------------------------------------------------
 {
   #include "mafVMEVolume.xpm"

@@ -471,7 +471,7 @@ void mafVMEProber::OnEvent(mafEventBase *maf_event)
   }
 }
 //-------------------------------------------------------------------------
-char** mafVMEProber::GetIcon() 
+const char** mafVMEProber::GetIcon() 
 //-------------------------------------------------------------------------
 {
 #include "mafVMEProber.xpm"

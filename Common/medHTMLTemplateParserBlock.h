@@ -153,7 +153,7 @@ protected:
   int AddForward(wxString *tagName, int substitutionType);
 
   /** Return true if input contains subString starting from inputPos */
-  int SubStringCompare(wxString *input, char *subString, int inputPos);
+  int SubStringCompare(wxString *input, const char *subString, int inputPos);
 
   /** Clean the structures generated on PreParse phase */
   void CleanPreParsingInfo();

@@ -1,5 +1,5 @@
 /* XPM */
-static char * mafVMEVolumeLarge_xpm[] = {
+static const char * mafVMEVolumeLarge_xpm[] = {
 "15 15 166 2",
 "  	c None",
 ". 	c #FFFFFF",

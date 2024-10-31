@@ -273,7 +273,7 @@ void lhpVMELMCLines::Print(std::ostream& os, const int tabs)
   m.Print(os,indent.GetNextIndent());
 }
 //-------------------------------------------------------------------------
-char** lhpVMELMCLines::GetIcon() 
+const char** lhpVMELMCLines::GetIcon() 
 //-------------------------------------------------------------------------
 {
   #include "mafVMESurface.xpm"

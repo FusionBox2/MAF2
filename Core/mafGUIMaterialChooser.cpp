@@ -809,7 +809,7 @@ void mafGUIMaterialChooser::CreateDefaultLibrary()
 {
   ClearList();
 
-  char *mat_lib[] = {
+  const char *mat_lib[] = {
 	"0.10  0.25  0.00  0.00  0.75  0.96  0.29  0.29  0.18  1.00  0.50  0.50  80.00  1.00 2 muscle",
 	"0.10  0.25  0.00  0.00  0.91  0.95  0.94  0.81  0.06  1.00  1.00  1.00   1.00  1.00 2 bone",
 	"0.10  0.00  0.00  0.50  0.91  0.50  0.50  0.75  1.00  1.00  1.00  1.00  23.00  1.00 2 metal_blue",

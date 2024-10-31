@@ -475,7 +475,7 @@ void mafVMEScalarMatrix::Print(std::ostream& os, const int tabs)
   }
 }
 //-------------------------------------------------------------------------
-char** mafVMEScalarMatrix::GetIcon() 
+const char** mafVMEScalarMatrix::GetIcon() 
 //-------------------------------------------------------------------------
 {
   #include "mafVMEScalar.xpm"

@@ -846,7 +846,7 @@ void mafVMEOsteometricBoard::InternalRestore(const mafStorageElement& node)
 //-------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------
-char** mafVMEOsteometricBoard::GetIcon()
+const char** mafVMEOsteometricBoard::GetIcon()
 //-------------------------------------------------------------------------
 {
 

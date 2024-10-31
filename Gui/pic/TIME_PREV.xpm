@@ -1,5 +1,5 @@
 /* XPM */
-static char *TIME_PREV_xpm[] = {
+static const char *TIME_PREV_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "20 20 107 2",
 "n  c #A8AFC0",

@@ -96,7 +96,7 @@ public:
   std::shared_ptr<mmaMaterial> GetMaterial();
 
   /** return icon */
-  static char** GetIcon();
+  static const char** GetIcon();
 
 protected:
   mafVMEPointSet();

@@ -358,7 +358,7 @@ void mafVMERefSysAbstract::Print(std::ostream& os, const int tabs)
   m.Print(os,indent.GetNextIndent());
 }
 //-------------------------------------------------------------------------
-char **mafVMERefSysAbstract::GetIcon()
+const char **mafVMERefSysAbstract::GetIcon()
 //-------------------------------------------------------------------------
 {
   #include "mafVMEProcedural.xpm"

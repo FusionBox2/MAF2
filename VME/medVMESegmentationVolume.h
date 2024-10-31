@@ -96,7 +96,7 @@ public:
   /*virtual*/ bool IsDataAvailable() override;
 
   /** return icon */
-  static char** GetIcon();
+  static const char** GetIcon();
 
   /** Set the link to the volume.*/
   int SetVolumeLink(mafNode *volume);

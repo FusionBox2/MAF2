@@ -633,7 +633,7 @@ void vtkMAFSimpleRulerActor2D::RulerUpdate(vtkCamera *camera, vtkRenderer *ren)
   
   if (GlobalAxes) 
   {
-    char *alab[] = {"x","y","z","-x","-y","-z"};
+    const char *alab[] = {"x","y","z","-x","-y","-z"};
     int direction = ( w1X-w0X > 0 ) ? 0 : 3;
     HorizontalAxesLabel->SetInput(alab[ XIndex + direction]);
     HorizontalAxesLabel->SetDisplayPosition(Position[0] + RwWidth - Margin , Position[1] + axesOffsetY + Margin + 4);

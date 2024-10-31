@@ -1,5 +1,5 @@
 /* XPM */
-static char *CHECK_ON_xpm[] = {
+static const char *CHECK_ON_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "15 15 19 1",
 "- c Black",

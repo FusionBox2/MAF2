@@ -269,7 +269,7 @@ float  CT::ComputeScalar(float *x) {
 int RG::ReadStructure(FILE *fp, int type) { 
   char line[256];  
   unsigned int i,j;
-  char *tag[3] = { "X_COORDINATES\0", "Y_COORDINATES\0", "Z_COORDINATES\0" };
+  const char *tag[3] = { "X_COORDINATES\0", "Y_COORDINATES\0", "Z_COORDINATES\0" };
   
   for (j=0; j<3; j++) {
     fgets(line, 255, fp);

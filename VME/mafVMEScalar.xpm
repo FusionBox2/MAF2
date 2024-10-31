@@ -1,5 +1,5 @@
 /* XPM */
-static char *mafVMEScalar_xpm[] = {
+static const char *mafVMEScalar_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "15 15 93 2",
 " . c Black",

@@ -310,7 +310,7 @@ namespace itk
 
     // Filters should not modify their input...
     // There is a design flaw here.
-    InputPointsContainer *nonConstPoints = const_cast< InputPointsContainer * >( inputMesh->GetPoints() );
+    auto nonConstPoints = const_cast<DeformableSimplexMesh3DFilter< TInputMesh, TOutputMesh >::InputPointsContainer * >( inputMesh->GetPoints() );
 
     SimplexMeshGeometry *data;
     VectorType displacement;
@@ -341,8 +341,8 @@ namespace itk
       constrained[i] = 0 ;
 
     std::vector<int>::const_iterator centerIdx = m_CenterLocationIdx ;
-    GeometryMapType::Iterator dataIt ;
-    for (dataIt = m_Data->Begin(), centerIdx = m_CenterLocationIdx, i = 0 ;  dataIt != m_Data->End() ;  dataIt++, centerIdx++, i++){
+    typename DeformableSimplexMesh3DFilter< TInputMesh, TOutputMesh >::GeometryMapType::Iterator dataIt ;
+    for (dataIt = DeformableSimplexMesh3DFilter< TInputMesh, TOutputMesh >::m_Data->Begin(), centerIdx = m_CenterLocationIdx, i = 0 ;  dataIt != DeformableSimplexMesh3DFilter< TInputMesh, TOutputMesh >::m_Data->End() ;  dataIt++, centerIdx++, i++){
       data = dataIt.Value();
 
       // Create table showing whether vertices are constrained by catheter
@@ -360,7 +360,7 @@ namespace itk
     //--------------------------------------------------------------------------
     // Loop for every simplex vertex
     //--------------------------------------------------------------------------
-    for (dataIt = m_Data->Begin(), centerIdx = m_CenterLocationIdx, i = 0 ;  dataIt != m_Data->End() ;  dataIt++, centerIdx++, i++){
+    for (dataIt = DeformableSimplexMesh3DFilter< TInputMesh, TOutputMesh >::m_Data->Begin(), centerIdx = m_CenterLocationIdx, i = 0 ;  dataIt != DeformableSimplexMesh3DFilter< TInputMesh, TOutputMesh >::m_Data->End() ;  dataIt++, centerIdx++, i++){
       data = dataIt.Value();
 
       //Use KD tree to calculate the distance from the simplex vertex to the vessel wall
@@ -394,7 +394,7 @@ namespace itk
 
       // calculate the displacement, equal to the total force
       displacement.SetVnlVector( 
-        m_Alpha * ( data->internalForce).GetVnlVector()
+        DeformableSimplexMesh3DFilter< TInputMesh, TOutputMesh >::m_Alpha * ( data->internalForce).GetVnlVector()
         +  m_DistanceCoefficient * (data->externalForce).GetVnlVector()
         +  StrutLengthForce.GetVnlVector()
         +  LinkLengthForce.GetVnlVector());
@@ -435,9 +435,9 @@ namespace itk
   void vtkMEDDeformableSimplexMeshFilter< TInputMesh, TOutputMesh >
     ::ComputeExternalForce(SimplexMeshGeometry *data)
   {
-    data->externalForce[0] = m_Beta * ( data->normal )[0];
-    data->externalForce[1] = m_Beta * ( data->normal )[1];
-    data->externalForce[2] = m_Beta * ( data->normal )[2];
+    data->externalForce[0] = DeformableSimplexMesh3DFilter< TInputMesh, TOutputMesh >::m_Beta * ( data->normal )[0];
+    data->externalForce[1] = DeformableSimplexMesh3DFilter< TInputMesh, TOutputMesh >::m_Beta * ( data->normal )[1];
+    data->externalForce[2] = DeformableSimplexMesh3DFilter< TInputMesh, TOutputMesh >::m_Beta * ( data->normal )[2];
   }
 
 
@@ -806,7 +806,7 @@ namespace itk
     for (int i = 0 ;  i < n ;  i++){
       vtkMEDStentModelSource::CellAutoPointer cellPtr ;
       mesh->GetCell(i, cellPtr) ;
-      CellInterface<PixelType, vtkMEDStentModelSource::SimplexMeshType::CellTraits>::PointIdConstIterator ptIdIterator = cellPtr->GetPointIds() ;
+      auto ptIdIterator = cellPtr->GetPointIds() ;
       int id0 = *ptIdIterator ;
       ptIdIterator++ ;
       int id1 = *ptIdIterator ;

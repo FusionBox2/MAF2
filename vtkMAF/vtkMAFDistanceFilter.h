@@ -91,7 +91,7 @@ class VTK_vtkMAF_EXPORT vtkMAFDistanceFilter : public vtkDataSetAlgorithm
     /** set distance mode to vector type */
     void SetDistanceModeToVector() { this->SetDistanceMode(VTK_VECTOR); };
     /** get distance mode as string */
-    char *GetDistanceModeAsString() const { if (this->DistanceMode == VTK_SCALAR) return "Scalar"; else return "Vector"; }
+    const char *GetDistanceModeAsString() const { if (this->DistanceMode == VTK_SCALAR) return "Scalar"; else return "Vector"; }
 
 #define VTK_DISTANCE_MODE 1
 #define VTK_DENSITY_MODE  2
@@ -105,7 +105,7 @@ class VTK_vtkMAF_EXPORT vtkMAFDistanceFilter : public vtkDataSetAlgorithm
     /** set filter mode to density */
     void SetFilterModeToDensity()  { this->SetFilterMode(VTK_DENSITY_MODE); };
     /** get filter mode as string*/
-    char *GetFilterModeAsString() const { if (this->FilterMode == VTK_DISTANCE_MODE) return "Distance"; else return "Density"; }
+    const char *GetFilterModeAsString() const { if (this->FilterMode == VTK_DISTANCE_MODE) return "Distance"; else return "Density"; }
 
   protected:
     /** constructor */

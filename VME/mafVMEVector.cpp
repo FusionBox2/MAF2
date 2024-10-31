@@ -81,7 +81,7 @@ int mafVMEVector::SetData(vtkDataSet *data, mafTimeStamp t, int mode)
   return MAF_ERROR;
 }
 //-------------------------------------------------------------------------
-char** mafVMEVector::GetIcon() 
+const char** mafVMEVector::GetIcon() 
 //-------------------------------------------------------------------------
 {
 #include "mafVMEVector.xpm"

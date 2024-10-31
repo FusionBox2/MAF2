@@ -416,7 +416,7 @@ void mafVMESlicer::Print(std::ostream& os, const int tabs)
   m.Print(os,indent.GetNextIndent());
 }
 //-------------------------------------------------------------------------
-char** mafVMESlicer::GetIcon() 
+const char** mafVMESlicer::GetIcon() 
 //-------------------------------------------------------------------------
 {
   #include "mafVMESurface.xpm"

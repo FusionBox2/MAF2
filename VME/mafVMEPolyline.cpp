@@ -61,7 +61,7 @@ mafVMEOutput *mafVMEPolyline::GetOutput()
   return m_Output;
 }
 //-------------------------------------------------------------------------
-char** mafVMEPolyline::GetIcon() 
+const char** mafVMEPolyline::GetIcon() 
 //-------------------------------------------------------------------------
 {
   #include "mafVMEFem.xpm"

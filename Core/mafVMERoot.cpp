@@ -167,7 +167,7 @@ void mafVMERoot::Print(std::ostream& os, const int tabs)// const
   os << mafIndent(tabs) << "MaxItemId: " << m_MaxItemId << "\n";
 }
 //-------------------------------------------------------------------------
-char** mafVMERoot::GetIcon() 
+const char** mafVMERoot::GetIcon() 
 //-------------------------------------------------------------------------
 {
 #include "mafVMERoot.xpm"

@@ -1,5 +1,5 @@
 /* XPM */
-static char *mafVMEGroup_xpm[] = {
+static const char *mafVMEGroup_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "15 15 114 2",
 "f  c #6B95B6",

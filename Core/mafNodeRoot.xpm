@@ -1,5 +1,5 @@
 /* XPM */
-static char *mafNodeRoot_xpm[] = {
+static const char *mafNodeRoot_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "15 15 91 1",
 "T c #5E84A2",

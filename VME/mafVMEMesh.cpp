@@ -121,7 +121,7 @@ int mafVMEMesh::SetData(vtkDataSet *data, mafTimeStamp t, int mode)
 }
 
 //-------------------------------------------------------------------------
-char** mafVMEMesh::GetIcon() 
+const char** mafVMEMesh::GetIcon() 
 //-------------------------------------------------------------------------
 {
   #include "mafVMEFem.xpm"

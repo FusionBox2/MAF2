@@ -131,7 +131,7 @@ mafVMEVolumeLarge::~mafVMEVolumeLarge()
 }
 
 //-------------------------------------------------------------------------
-char** mafVMEVolumeLarge::GetIcon() 
+const char** mafVMEVolumeLarge::GetIcon() 
 //-------------------------------------------------------------------------
 {
 #include "mafVMEVolumeLarge.xpm"

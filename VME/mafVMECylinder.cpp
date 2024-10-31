@@ -662,7 +662,7 @@ std::shared_ptr<mmaMaterial> mafVMECylinder::GetMaterial()
 	return material;
 }
 
-char** mafVMECylinder::GetIcon()
+const char** mafVMECylinder::GetIcon()
 //-------------------------------------------------------------------------
 {
 

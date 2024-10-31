@@ -78,7 +78,7 @@ public:
   mafString GetVisualPipe() override;
 
   /** return an xpm-icon that can be used to represent this node */
-  static char ** GetIcon();
+  static const char **GetIcon();
 
 	/** 
   Set links for the Polyline*/
