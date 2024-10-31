@@ -30,7 +30,7 @@
 
 #include "mafGUI.h"
 #include "mafPipe.h"
-#include "mafPipeFactory.h"
+#include "ftk/Core/PipeFactory.h"
 #include "mafLightKit.h"
 #include "mafAttachCamera.h"
 #include "mafTextKit.h"
@@ -295,10 +295,7 @@ void mafViewVTK::VmeCreatePipe(mafNode *vme)
   if (!pipe_name.empty())
   {
     m_NumberOfVisibleVme++;
-    mafPipeFactory *pipe_factory  = mafPipeFactory::GetInstance();
-    assert(pipe_factory!=NULL);
-    mafObject *obj = NULL;
-    obj = pipe_factory->CreateInstance(pipe_name.GetCStr());
+    mafObject *obj = PipeFactory::CreatePipe(pipe_name.GetCStr());
     mafPipe *pipe = (mafPipe*)obj;
     if (pipe)
     {

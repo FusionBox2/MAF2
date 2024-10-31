@@ -23,7 +23,7 @@
 // local 
 #include "mafDeviceSet.h"
 #include "mmuIdFactory.h"
-#include "mafInteractionFactory.h"
+#include "ftk/Interaction/InteractionFactory.h"
 
 // serialization
 #include "mafStorageElement.h"
@@ -102,15 +102,14 @@ mafID mafDeviceManager::AddDevice(mafDevice *device)
 mafDevice *mafDeviceManager::AddDevice(const char *type, bool persistent)
 //------------------------------------------------------------------------------
 {
-  mafDevice *device = mafInteractionFactory::CreateDeviceInstance(type);
+  mafDevice *device = mafDevice::SafeDownCast(InteractionFactory::CreateInteraction(type));
   
   if (device)
   {
     device->SetPersistentFlag(persistent); // set persistent flag
 
     
-    mafInteractionFactory *iFactory = mafInteractionFactory::GetInstance();
-    const char *dev_name=iFactory->GetDeviceDescription(type);
+    const char *dev_name= InteractionFactory::GetDescription(type);
     assert(dev_name);
 
     mafString base_name=_R(dev_name);
@@ -262,7 +261,7 @@ void mafDeviceManager::OnEvent(mafEventBase *event)
 
 mafDeviceManager* mafDeviceManager::Create(const char* DeviceManagerType)
 {
-  if (auto object = mafObjectFactory::CreateInstance(DeviceManagerType))
+  if (auto object = InteractionFactory::CreateInteraction(DeviceManagerType))
   {
     if (auto deviceManager = mafDeviceManager::SafeDownCast(object))
     {

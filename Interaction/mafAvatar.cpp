@@ -16,7 +16,7 @@
 
 // base includes
 #include "mafAvatar.h"
-#include "mafObjectFactory.h"
+#include "ftk/Interaction/InteractionFactory.h"
 
 // interactors & devices
 #include "mafDeviceButtonsPadTracker.h"
@@ -361,7 +361,7 @@ void mafAvatar::OnEvent(mafEventBase *event)
 
 mafAvatar* mafAvatar::Create(const char* AvatarType)
 {
-  if (auto object = mafObjectFactory::CreateInstance(AvatarType))
+  if (auto object = InteractionFactory::CreateInteraction(AvatarType))
   {
     if (auto avatar = mafAvatar::SafeDownCast(object))
     {

@@ -9,6 +9,12 @@ DBG_MESSAGE("Configuring project ${PROJECT_NAME}")
 
 # Set your list of sources here.
 SET(PROJECT_SRCS
+	../ftk/Interaction/InteractionFactory.cpp
+	../ftk/Interaction/InteractionFactory.h
+)
+
+# Set your list of sources here.
+SET(PROJECT_SRCS ${PROJECT_SRCS}
   
   #mafAvatar3D2DPicker.cpp
   #mafAvatar3D2DPicker.h
@@ -89,8 +95,6 @@ SET(PROJECT_SRCS
   mafGUITransformMouse.h
   mafGUITransformTextEntries.cpp
   mafGUITransformTextEntries.h
-  mafInteractionFactory.cpp
-  mafInteractionFactory.h
   mafInteractionManager.cpp
   mafInteractionManager.h
   mafInteractor.cpp

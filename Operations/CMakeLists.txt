@@ -9,6 +9,8 @@ DBG_MESSAGE("Configuring project mafOperations")
 
 # Set your list of sources here.
 SET(PROJECT_SRCS
+  ../ftk/Operations/TagHandlerFactory.cpp
+  ../ftk/Operations/TagHandlerFactory.h
 )
 
 IF (MAF_USE_VTK)
@@ -322,9 +324,6 @@ IF (MAF_USE_VTK)
 	#
 	# VMEUploaderDownloader (Production)
 	#
-
-	lhpFactoryTagHandler.cpp
-	lhpFactoryTagHandler.h
 	
 	lhpTagHandlerContainer.cpp
 	lhpTagHandlerContainer.h

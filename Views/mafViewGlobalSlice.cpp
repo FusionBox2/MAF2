@@ -27,7 +27,7 @@
 #include "mafBaseEventHandler.h"
 #include "mafNode.h"
 #include "mafSceneNode.h"
-#include "mafPipeFactory.h"
+#include "ftk/Core/PipeFactory.h"
 #include "mafPipe.h"
 #include "mafPipeVolumeSlice.h"
 #include "mafPipeSurfaceSlice.h"
@@ -370,10 +370,7 @@ void mafViewGlobalSlice::VmeCreatePipe(mafNode *node)
     {
       m_NumberOfVisibleVme++;
     }
-    mafPipeFactory *pipe_factory  = mafPipeFactory::GetInstance();
-    assert(pipe_factory!=NULL);
-    mafObject *obj= NULL;
-    obj = pipe_factory->CreateInstance(pipe_name.GetCStr());
+    mafObject *obj= PipeFactory::CreatePipe(pipe_name.GetCStr());
     mafPipe *pipe = (mafPipe*)obj;
     if (pipe)
     {

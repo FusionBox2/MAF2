@@ -25,7 +25,7 @@
 
 
 #include "mafVMEItem.h"
-#include "mafObjectFactory.h"
+#include "ftk/VME/ItemFactory.h"
 #include "mafFilesDirs.h"
 
 #include "mafVMERoot.h"
@@ -416,7 +416,7 @@ void mafVMEItemAsynchObserver::OnEvent(mafEventBase *maf_event)
 
 mafVMEItem* mafVMEItem::Create(const char* ItemType)
 {
-  if (auto object = mafObjectFactory::CreateInstance(ItemType))
+  if (auto object = ItemFactory::CreateItem(ItemType))
   {
     if (auto item = mafVMEItem::SafeDownCast(object))
     {

@@ -27,7 +27,7 @@
 
 // I/O
 #include "mafStorageElement.h"
-#include "mafInteractionFactory.h"
+#include "ftk/Interaction/InteractionFactory.h"
 
 // geometric
 #include "mafMatrix.h"
@@ -403,11 +403,7 @@ void mafDeviceButtonsPadTracker::CanonicalToTracker(mafTransform *trans)
 int mafDeviceButtonsPadTracker::AvatarChooser(mafString& avatar_name,mafString& avatar_type)
 //----------------------------------------------------------------------------
 {
-  mafInteractionFactory *iFactory=mafInteractionFactory::GetInstance();
-
-  assert(iFactory);
-  
-  const std::set<std::string> *avatars=iFactory->GetAvatarNames();
+  const std::set<std::string> *avatars= InteractionFactory::GetAvatarNames();
 
   if (avatars->size()==0)
   {
@@ -422,7 +418,7 @@ int mafDeviceButtonsPadTracker::AvatarChooser(mafString& avatar_name,mafString& 
   for (int id=0;it!=avatars->end();id++,it++)
   {
     avatar_types[id] = _R(it->c_str());
-    avatar_names[id]=iFactory->GetAvatarDescription(it->c_str());
+    avatar_names[id]= InteractionFactory::GetDescription(it->c_str());
   }
 
   int index = -1;
@@ -520,7 +516,7 @@ void mafDeviceButtonsPadTracker::OnEvent(mafEventBase *event)
           {
             // Set the default avatar for the tracker
             //no SafeDownCast in mafAvatar3D: how can I create an mafAvatar3D from mafAvatar
-            mafAvatar *avatar = mafInteractionFactory::CreateAvatarInstance(avatar_type.GetCStr());
+            mafAvatar *avatar = mafAvatar::SafeDownCast(InteractionFactory::CreateInteraction(avatar_type.GetCStr()));
             assert(avatar);
             avatar->SetName(avatar_name);
             SetDefaultAvatar(avatar);

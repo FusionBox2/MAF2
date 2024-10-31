@@ -41,7 +41,7 @@ const bool DEBUG_MODE = false;
 #include "mafVMESlicer.h"
 #include "mafVMELandmarkCloud.h"
 #include "mafVMELandmark.h"
-#include "mafPipeFactory.h"
+#include "ftk/Core/PipeFactory.h"
 #include "mafPipe.h"
 #include "mafRWI.h"
 #include "mafSceneGraph.h"
@@ -286,10 +286,7 @@ void mafViewSlice::VmeCreatePipe(mafNode *vme)
     else {
       m_NumberOfVisibleVme++;
     }
-    mafPipeFactory *pipe_factory  = mafPipeFactory::GetInstance();
-    assert(pipe_factory!=NULL);
-    mafObject *obj= NULL;
-    obj = pipe_factory->CreateInstance(pipe_name.GetCStr());
+    mafObject *obj= PipeFactory::CreatePipe(pipe_name.GetCStr());
     mafPipe *pipe = (mafPipe*)obj;
     if (pipe != NULL)
     {

@@ -49,7 +49,7 @@
 
 #include "mafEventBase.h"
 
-#include "mafInteractionFactory.h"
+#include "ftk/Interaction/InteractionFactory.h"
 
 #include "mafDeviceManager.h"
 #include "mafAvatar3D.h"
@@ -878,21 +878,18 @@ bool mafInteractionManager::ShowModal()
 int mafInteractionManager::DeviceChooser(mafString &dev_name,mafString &dev_type)
 //----------------------------------------------------------------------------
 {
-  mafInteractionFactory *iFactory=mafInteractionFactory::GetInstance();
-  
-  assert(iFactory);
-  if (iFactory->GetNumberOfDevices()>0)
+  if (InteractionFactory::GetNumberOfDevices()>0)
   {
-    std::vector<wxString> devices(iFactory->GetNumberOfDevices());
+    std::vector<wxString> devices(InteractionFactory::GetNumberOfDevices());
 
 
-    for (int id=0;id<iFactory->GetNumberOfDevices();id++)
+    for (int id=0;id< InteractionFactory::GetNumberOfDevices();id++)
     {
-      devices[id]=iFactory->GetDeviceDescription(iFactory->GetDeviceName(id));
+      devices[id]= InteractionFactory::GetDescription(InteractionFactory::GetDeviceName(id));
     }
 
     //wxSingleChoiceDialog chooser(m_Dialog,"select a device","Device Chooser",iFactory->GetNumberOfDevices(),devices);
-    wxSingleChoiceDialog chooser(mafGetFrame(),"select a device","Device Chooser",iFactory->GetNumberOfDevices(),devices.data());
+    wxSingleChoiceDialog chooser(mafGetFrame(),"select a device","Device Chooser", InteractionFactory::GetNumberOfDevices(),devices.data());
 
     int index=-1;
     if (chooser.ShowModal()==wxID_OK)
@@ -901,8 +898,8 @@ int mafInteractionManager::DeviceChooser(mafString &dev_name,mafString &dev_type
     
       if (index>=0)
       {
-        dev_type = _R(iFactory->GetDeviceName(index));
-        dev_name = _R(iFactory->GetDeviceDescription(iFactory->GetDeviceName(index)));
+        dev_type = _R(InteractionFactory::GetDeviceName(index));
+        dev_name = _R(InteractionFactory::GetDescription(InteractionFactory::GetDeviceName(index)));
       }
     }
       return index;

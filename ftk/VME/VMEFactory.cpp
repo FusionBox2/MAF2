@@ -1,30 +1,6 @@
-/*=========================================================================
+#include "ftk/VME/VMEFactory.h"
 
- Program: MAF2
- Module: mafVMEFactory
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-#include "mafVMEFactory.h"
-
-#include "mafVersion.h"
+#include "ftk/Core/NodeFactory.h"
 #include "mafNodeLayout.h"
 #include "mafVMEExternalData.h"
 #include "mafVMEGeneric.h"
@@ -77,12 +53,7 @@
 #include "mafTagArray.h"
 #include "mafVMEItemVTK.h"
 
-#include "mafIndent.h"
 #include <string>
-#include <ostream>
-
-
-
 
 #include "medVMEWrappedMeter.h"
 #include "medVMEPolylineGraph.h"
@@ -103,55 +74,9 @@
 #include "mafVMEVolumeLarge.h"
 
 
-mafCxxTypeMacro(mafVMEFactory);
-
-bool mafVMEFactory::m_Initialized=false;
-
-//----------------------------------------------------------------------------
-// This is used to register the factory when linking statically
-int mafVMEFactory::Initialize()
-//----------------------------------------------------------------------------
+int VMEFactory::Initialize()
 {
-  if (!m_Initialized)
-  {
-    // m_Instance=mafVMEFactory::New();
-
-    m_Initialized=true;
-    if (GetInstance())
-    {
-      GetInstance()->RegisterFactory(GetInstance());
-      return MAF_OK;  
-    }
-    else
-    {
-      m_Initialized=true;
-      return MAF_ERROR;
-    }
-  }
-  
-  return MAF_OK;
-}
-
-//------------------------------------------------------------------------
-mafVMEFactory::mafVMEFactory()
-//------------------------------------------------------------------------------
-{
-  //
-  // Plug here Nodes in this factory
-  //
-
-  mafPlugNodeMacro(mafNodeLayout,"node for layout list");
-
-  mafPlugObjectMacro(mafTagArray,"a basic kind of attribute used to store key-value pairs");
-  mafPlugObjectMacro(mafVMEItemVTK,"a VME item storing VTK datasets");
-#ifdef MAF_USE_ITK
-  mafPlugObjectMacro(mafVMEItemScalarMatrix,"a VME item storing matrix scalar data through vnl matrix");
-#endif
-  mafPlugObjectMacro(mmaMeter,"Meter attributes");
-  mafPlugObjectMacro(mmaMaterial,"Material attributes");
-  mafPlugObjectMacro(mmaVolumeMaterial,"Volume material attributes");
-  mafPlugObjectMacro(mmaApplicationLayout,"Applycation layout attributes");
-  mafPlugObjectMacro(mafAttributeTraceability,"Trial event attributes");
+  NodeFactory::Initialize();
   
   mafPlugNodeMacro(mafVMERoot,"root for VME tree");
   mafPlugNodeMacro(mafVMEExternalData,"VME used for referencing MAF external data.");
@@ -191,12 +116,7 @@ mafVMEFactory::mafVMEFactory()
   mafPlugNodeMacro(mafVMESlicer,"VME representing a slice of a volume");
   mafPlugNodeMacro(mafVMEVector,"VME representing aa applyed vector");
 
-
-
-  //mafPlugObjectMacro(mmaObject,"Object attributes");
-  mafPlugObjectMacro(medAttributeSegmentationVolume, "Segmentation Volume attributes");
-
-  mafPlugNodeMacro(medVMEWrappedMeter, "Generalized VME Meter with wrapping geometry");
+	mafPlugNodeMacro(medVMEWrappedMeter, "Generalized VME Meter with wrapping geometry");
   mafPlugNodeMacro(medVMEPolylineGraph, "VME for Graph and Polyline");
   mafPlugNodeMacro(medVMEPolylineEditor, "VME for Editing Graph and Polyline");
   mafPlugNodeMacro(medVMESurfaceEditor, "VME for Editing Surface");
@@ -209,56 +129,9 @@ mafVMEFactory::mafVMEFactory()
   mafPlugNodeMacro(medVMEAnalog, "VME rapresenting EMG scalar data");
   mafPlugNodeMacro(medVMEStent, "VME representing stent structure");
 #endif
-  //mafPlugNodeMacro(mafVMEthing,"VME representing a thing");
-
+  
   //TODO: to be committed down
   mafPlugNodeMacro(mafVMEVolumeLarge, "VME storing large volume datasets with one scalar component");
-}
 
-//------------------------------------------------------------------------------
-const char* mafVMEFactory::GetMAFSourceVersion() const
-//------------------------------------------------------------------------------
-{
-  return MAF_SOURCE_VERSION;
+	return MAF_OK;
 }
-
-//------------------------------------------------------------------------------
-const char* mafVMEFactory::GetDescription() const
-//------------------------------------------------------------------------------
-{
-  return "Factory for MAF VMEs";
-}
-
-//------------------------------------------------------------------------------
-mafVME *mafVMEFactory::CreateVMEInstance(const char *type_name)
-//------------------------------------------------------------------------------
-{
-  return mafVME::SafeDownCast(Superclass::CreateInstance(type_name));
-}
-//------------------------------------------------------------------------------
-mafVMEFactory* mafVMEFactory::GetInstance()
-//------------------------------------------------------------------------------
-{
-  static mafVMEFactory &istance = *(mafVMEFactory::New());
-  Initialize();
-  return &istance;
-}
-// //------------------------------------------------------------------------------
-// void mafVMEFactory::RegisterNewNode(const char* node_name, const char* description, mafCreateObjectFunction createFunction)
-// //------------------------------------------------------------------------------
-// {
-//   std::vector<std::string, std::allocator<std::string> >::const_iterator it = std::find(GetNodeNames().begin (), GetNodeNames().end (), std::string(node_name));
-//   if(it != GetNodeNames().end() )
-//   {
-//     return;
-//   }
-//   GetNodeNames().push_back(node_name);
-//   RegisterNewObject(node_name,description,createFunction);
-// }
-// //------------------------------------------------------------------------------
-// std::vector<std::string> & mafVMEFactory::GetNodeNames()
-// //------------------------------------------------------------------------------
-// {
-//   static std::vector<std::string> nodeNames;
-//   return nodeNames;
-// }

@@ -33,7 +33,7 @@
 #include "mafVMELandmarkCloud.h"
 #include "mafVMELandmark.h"
 #include "mafVMESurface.h"
-#include "mafPipeFactory.h"
+#include "ftk/Core/PipeFactory.h"
 #include "mafPipe.h"
 #include "mafRWI.h"
 #include "mafSceneGraph.h"

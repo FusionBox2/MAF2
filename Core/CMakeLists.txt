@@ -9,6 +9,16 @@ DBG_MESSAGE("Configuring project mafCore")
 
 # Set your list of sources here.
 SET(PROJECT_SRCS
+	../ftk/Core/AttributeFactory.cpp
+	../ftk/Core/AttributeFactory.h
+	../ftk/Core/NodeFactory.cpp
+	../ftk/Core/NodeFactory.h
+	../ftk/Core/PipeFactory.cpp
+	../ftk/Core/PipeFactory.h
+)
+
+# Set your list of sources here.
+SET(PROJECT_SRCS ${PROJECT_SRCS}
   mafAbsMatrixPipe.cpp
   mafAbsMatrixPipe.h
   mafAttribute.cpp
@@ -25,8 +35,6 @@ SET(PROJECT_SRCS
   mafMatrixPipe.h
   mafNode.cpp
   mafNode.h
-  mafNodeFactory.cpp
-  mafNodeFactory.h
   mafNodeGeneric.cpp
   mafNodeGeneric.h
   mafNodeIterator.cpp
@@ -97,8 +105,6 @@ IF (MAF_USE_VTK)
   mafPipeVTK.h
   mafPipeBox.cpp
   mafPipeBox.h
-  mafPipeFactory.cpp
-  mafPipeFactory.h
   mafRWI.cpp
   mafRWI.h
   mafRWIBase.cpp

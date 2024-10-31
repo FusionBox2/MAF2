@@ -1,34 +1,6 @@
-/*=========================================================================
+#include "ftk/VME/PipeFactoryVME.h"
 
- Program: MAF2
- Module: mafPipeFactoryVME
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-
-#include "mafPipeFactoryVME.h"
-#include "mafVersion.h"
-#include "mafIndent.h"
-
-#include "mafPipe.h"
+#include "ftk/Core/PipeFactory.h"
 #include "mafPipeSurface.h"
 #include "mafPipeSurfaceSlice.h"
 #include "mafPipePolylineSlice.h"
@@ -55,11 +27,6 @@
 #ifdef MAF_USE_ITK
   #include "mafPipeScalarMatrix.h"
 #endif
-
-#include <string>
-#include <ostream>
-
-
 
 
 #include "medPipeVolumeMIP.h"
@@ -104,48 +71,10 @@
 
 #include "medPipeRayCast.h"
 
-
-
-//mafPipeFactoryVME *mafPipeFactoryVME::m_Instance=NULL;
-
-bool mafPipeFactoryVME::m_Initialized=false;
-
-mafCxxTypeMacro(mafPipeFactoryVME);
-
-//----------------------------------------------------------------------------
-// This is used to register the factory when linking statically
 int mafPipeFactoryVME::Initialize()
-//----------------------------------------------------------------------------
 {
-  if (!m_Initialized)
-  {
-    //m_Instance=mafPipeFactoryVME::New();
+  PipeFactory::Initialize();
 
-    m_Initialized=true;
-    if (GetInstance())
-    {
-      GetInstance()->RegisterFactory(GetInstance());
-      return MAF_OK;  
-    }
-    else
-    {
-      m_Initialized=false;
-      return MAF_ERROR;
-    }
-  }
-  
-  return MAF_OK;
-}
-
-//------------------------------------------------------------------------
-mafPipeFactoryVME::mafPipeFactoryVME()
-//------------------------------------------------------------------------------
-{
-  //m_Instance = NULL;
-  
-  //
-  // Plug here Pipes in this factory
-  //
   mafPlugPipeMacro(mafPipeSurface,"Pipe to render vtk polydata as surface rendering");
   mafPlugPipeMacro(mafPipeSurfaceSlice,"Pipe for render vtk surface as an arbitrary slice");
   mafPlugPipeMacro(mafPipeSurfaceTextured,"Pipe for render vtk polydata as textured surface rendering");
@@ -225,28 +154,5 @@ mafPipeFactoryVME::mafPipeFactoryVME()
 
   mafPlugPipeMacro(medPipeRayCast, "Pipe for RayCast Volume rendering of bone-blood-muscle");
 
-
-
-}
-
-//------------------------------------------------------------------------------
-const char* mafPipeFactoryVME::GetMAFSourceVersion() const
-//------------------------------------------------------------------------------
-{
-  return MAF_SOURCE_VERSION;
-}
-
-//------------------------------------------------------------------------------
-const char* mafPipeFactoryVME::GetDescription() const
-//------------------------------------------------------------------------------
-{
-  return "Factory for MAF Pipes of VME library";
-}
-//------------------------------------------------------------------------------
-mafPipeFactoryVME* mafPipeFactoryVME::GetInstance()
-//------------------------------------------------------------------------------
-{
-  static mafPipeFactoryVME &istance = *(mafPipeFactoryVME::New());
-  Initialize();
-  return &istance;
+	return MAF_OK;
 }

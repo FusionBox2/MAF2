@@ -36,7 +36,7 @@
 #include "mafVMEPolyline.h"
 #include "mafVMEPolylineSpline.h"
 #include "mafVMESurface.h"
-#include "mafPipeFactory.h"
+#include "ftk/Core/PipeFactory.h"
 #include "mafPipe.h"
 #include "mafRWI.h"
 #include "mafSceneGraph.h"
@@ -240,10 +240,7 @@ void mafViewSingleSlice::VmeCreatePipe(mafNode *vme)
     {
       m_NumberOfVisibleVme++;
     }
-    mafPipeFactory *pipe_factory  = mafPipeFactory::GetInstance();
-    assert(pipe_factory!=NULL);
-    mafObject *obj= NULL;
-    obj = pipe_factory->CreateInstance(pipe_name.GetCStr());
+    mafObject *obj= PipeFactory::CreatePipe(pipe_name.GetCStr());
     mafPipe *pipe = (mafPipe*)obj;
     if (pipe)
     {

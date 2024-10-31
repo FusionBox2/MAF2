@@ -43,7 +43,7 @@
   #include "mafOpImporterVTK.h"
   #include "mafOpImporterSTL.h"
   #include "mafInteractionManager.h"
-  #include "mafInteractionFactory.h"
+  #include "ftk/Interaction/InteractionFactory.h"
   #include "mafInteractor.h"
   #include "mafDeviceManager.h"
   #include "mafAction.h"

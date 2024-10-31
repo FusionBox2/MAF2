@@ -45,8 +45,6 @@ mafOBB.cpp
 mafOBB.h
 mafObject.cpp
 mafObject.h
-mafObjectFactory.cpp
-mafObjectFactory.h
 mafBaseEventHandler.cpp
 mafBaseEventHandler.h
 mafReferenceCounted.cpp

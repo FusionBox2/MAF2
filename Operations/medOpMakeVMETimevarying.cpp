@@ -41,7 +41,7 @@
 #include "mafVMEVolume.h"
 #include "mafVMEVolumeGray.h"
 #include "mafVMEVolumeRGB.h"
-#include "mafVMEFactory.h"
+#include "ftk/VME/VMEFactory.h"
 #include "mafVMESurfaceParametric.h"
 #include "mafMatrixPipe.h"
 #include "mafAbsMatrixPipe.h"

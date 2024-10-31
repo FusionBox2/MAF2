@@ -18,7 +18,7 @@
 
 // base includes
 #include "mafDevice.h"
-#include "mafObjectFactory.h"
+#include "ftk/Interaction/InteractionFactory.h"
 #include "mmuIdFactory.h"
 
 // GUI
@@ -212,7 +212,7 @@ void mafDevice::InternalRestore(const mafStorageElement& node)
 
 mafDevice* mafDevice::Create(const char* DeviceType)
 {
-  if (auto object = mafObjectFactory::CreateInstance(DeviceType))
+  if (auto object = InteractionFactory::CreateInteraction(DeviceType))
   {
     if (auto device = mafDevice::SafeDownCast(object))
     {

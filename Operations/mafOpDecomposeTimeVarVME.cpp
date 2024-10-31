@@ -38,7 +38,7 @@
 #include "mafDataVector.h"
 #include "mafStorageElement.h"
 #include "mafMatrix.h"
-#include "mafVMEFactory.h"
+#include "ftk/Core/NodeFactory.h"
 #include "mafVMEItem.h"
 #include "mafVME.h"
 #include "mafVMEGroup.h"
@@ -476,8 +476,7 @@ void mafOpDecomposeTimeVarVME::CreateStaticVME(mafTimeStamp timeSt)
   mafString typeVme;
   typeVme = _R(m_Input->GetTypeName());
 
-  mafAutoPointer<mafVMEFactory> factory = mafVMEFactory::New();
-  mafObject *objVme = factory->CreateInstance(typeVme.GetCStr());
+  mafObject *objVme = NodeFactory::CreateNode(typeVme.GetCStr());
   mafVME *newVme = mafVME::SafeDownCast(objVme);
   if (!newVme)
   {
@@ -532,7 +531,7 @@ void mafOpDecomposeTimeVarVME::CreateStaticVME(mafTimeStamp timeSt)
     vmeItem = dv->GetNearestItem(timeSt);
     if (vmeItem)
     {
-      mafObject *objVmeItem = factory->CreateInstance(vmeItem->GetTypeName());
+      mafObject *objVmeItem = NodeFactory::CreateNode(vmeItem->GetTypeName());
       vmeItemCopy = mafVMEItem::SafeDownCast(objVmeItem);
       if (!vmeItemCopy)
       {

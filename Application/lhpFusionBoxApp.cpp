@@ -26,21 +26,22 @@
 
 #include "mafDefines.h"
 
-#include "mafVMEFactory.h"
+#include "ftk/VME/VMEFactory.h"
 #include "mafPics.h"
 #include "mafGUIMDIFrame.h"
-#include "mafInteractionFactory.h"
+#include "ftk/Interaction/InteractionFactory.h"
 
-#include "mafNodeFactory.h" 
+#include "ftk/Core/AttributeFactory.h"
+#include "ftk/VME/ItemFactory.h"
+#include "ftk/Core/NodeFactory.h" 
 #include "mafNodeGeneric.h"
 #include "mafNodeRoot.h"
 #include "mafVMERoot.h"
 #include "mafVMESurface.h"
 #include "mafVMELandmark.h" 
-#include "mafPipeFactoryVME.h"
+#include "ftk/VME/PipeFactoryVME.h"
+#include "ftk/Core/PipeFactory.h"
 #include "mafPipeVolumeSlice.h"
-#include "mafPipeFactoryVME.h"
-#include "mafVMEFactory.h"
 #include "medPipeVolumeDRR.h"
 #include "medPipeTrajectories.h" 
 #include "mafVMEAFRefSys.h" 
@@ -526,13 +527,19 @@ bool lhpFusionBoxApp::OnInit()
 
   int result;
  
-  result = mafVMEFactory::Initialize();
+  result = AttributeFactory::Initialize();
+  assert(result == MAF_OK);
+
+  result = ItemFactory::Initialize();
+  assert(result == MAF_OK);
+
+  result = VMEFactory::Initialize();
   assert(result == MAF_OK);
 
   result = mafPipeFactoryVME::Initialize();
   assert(result == MAF_OK);
 
-  result = mafInteractionFactory::Initialize();
+  result = InteractionFactory::Initialize();
   assert(result==MAF_OK);
 
   

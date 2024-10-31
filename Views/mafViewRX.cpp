@@ -25,7 +25,7 @@ const bool DEBUG_MODE = false;
 //----------------------------------------------------------------------------
 
 #include "mafViewRX.h"
-#include "mafPipeFactory.h"
+#include "ftk/Core/PipeFactory.h"
 #include "mafRWI.h"
 #include "mafSceneGraph.h"
 #include "mafAttachCamera.h"
@@ -117,10 +117,7 @@ void mafViewRX::VmeCreatePipe(mafNode *vme)
     {
       m_NumberOfVisibleVme++;
     }
-    mafPipeFactory *pipe_factory  = mafPipeFactory::GetInstance();
-    assert(pipe_factory!=NULL);
-    mafObject *obj= NULL;
-    obj = pipe_factory->CreateInstance(pipe_name.GetCStr());
+    mafObject *obj= PipeFactory::CreatePipe(pipe_name.GetCStr());
     mafPipe *pipe = (mafPipe*)obj;
     if (pipe)
     {

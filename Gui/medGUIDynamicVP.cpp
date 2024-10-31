@@ -26,7 +26,7 @@
 #include "mafSceneGraph.h"
 #include "mafSceneNode.h"
 #include "mafPipe.h"
-#include "mafPipeFactory.h"
+#include "ftk/Core/PipeFactory.h"
 #include "mafView.h"
 
 #include <wx/statline.h>
@@ -378,9 +378,8 @@ void medGUIDynamicVP::SetName(const char* szNewName)
 {
   DestroyVisualPipe();
 
-  mafPipeFactory *pipe_factory  = mafPipeFactory::GetInstance();    
-  mafPipe *pipe = (mafPipe*)pipe_factory->CreateInstance(classname);
-  if (pipe != NULL)
+  mafPipe *pipe = mafPipe::SafeDownCast(PipeFactory::CreatePipe(classname));
+  if (pipe != nullptr)
   {
     pipe->SetListener(this->GetListener());
     pipe->Create(m_Node, m_View);

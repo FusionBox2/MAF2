@@ -26,7 +26,7 @@
 
 
 #include "mafAttribute.h"
-#include "mafObjectFactory.h"
+#include "ftk/Core/AttributeFactory.h"
 #include "mafStorageElement.h"
 #include "mafIndent.h"
 #include "assert.h"
@@ -112,7 +112,7 @@ void mafAttribute::Print(std::ostream& os, const int tabs) const
 
 mafAttribute* mafAttribute::Create(const char* AttributeType)
 {
-  if (auto object = mafObjectFactory::CreateInstance(AttributeType))
+  if (auto object = AttributeFactory::CreateAttribute(AttributeType))
   {
     if (auto attribute = mafAttribute::SafeDownCast(object))
     {

@@ -5,24 +5,28 @@ cmake_minimum_required(VERSION 3.27)
 
 PROJECT(mafVME)
 
-DBG_MESSAGE("Configuring project ${PROJECT_NAME}")
-
 # Set your list of sources here.
 SET(PROJECT_SRCS
+	../ftk/VME/ItemFactory.cpp
+	../ftk/VME/ItemFactory.h
+	../ftk/VME/PipeFactoryVME.cpp
+	../ftk/VME/PipeFactoryVME.h
+	../ftk/VME/VMEFactory.cpp
+	../ftk/VME/VMEFactory.h
+)
+
+# Set your list of sources here.
+SET(PROJECT_SRCS ${PROJECT_SRCS}
   mafDataVector.cpp
   mafDataVector.h
   mafMatrixInterpolator.cpp
   mafMatrixInterpolator.h
   mafMatrixVector.cpp
   mafMatrixVector.h
-  mafPipeFactoryVME.cpp
-  mafPipeFactoryVME.h
   mafScalarVector.cpp
   mafScalarVector.h
   mafVMEExternalData.cpp
   mafVMEExternalData.h
-  mafVMEFactory.cpp
-  mafVMEFactory.h
   mafVMEGenericAbstract.cpp
   mafVMEGenericAbstract.h
   mafVMEGroup.cpp

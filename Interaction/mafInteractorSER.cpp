@@ -15,7 +15,7 @@
 =========================================================================*/
 
 #include "mafInteractorSER.h"
-#include "mafObjectFactory.h"
+#include "ftk/Interaction/InteractionFactory.h"
 #include "mafDeviceButtonsPadTracker.h"
 #include "mafStorageElement.h"
 
@@ -208,7 +208,7 @@ void mafInteractorSER::GetDeviceBindings(mafDevice *device,std::vector<mafAction
 
 mafInteractorSER* mafInteractorSER::Create(const char* InteractorSERType)
 {
-  if (auto object = mafObjectFactory::CreateInstance(InteractorSERType))
+  if (auto object = InteractionFactory::CreateInteraction(InteractorSERType))
   {
     if (auto interactorSER = mafInteractorSER::SafeDownCast(object))
     {

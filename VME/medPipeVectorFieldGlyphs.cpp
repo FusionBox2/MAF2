@@ -24,7 +24,7 @@
 #include "medPipeVectorFieldGlyphs.h"
 
 #include "mafSceneNode.h"
-#include "mafPipeFactory.h"
+#include "ftk/Core/PipeFactory.h"
 #include "mafGUI.h"
 #include "mafGUIValidator.h"
 #include "mafGUILutSwatch.h"

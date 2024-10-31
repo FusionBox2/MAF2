@@ -39,7 +39,7 @@
 #include "mafGUIRollOut.h"
 #include "mafGUIValidator.h"
 #include "mafInteractor.h"
-#include "mafInteractionFactory.h"
+#include "ftk/Interaction/InteractionFactory.h"
 #include "mafInteractorPicker.h"
 #include "mafInteractorCompositorMouse.h"
 #include "mafInteractorCameraMove.h"
