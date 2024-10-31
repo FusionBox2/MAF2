@@ -700,11 +700,6 @@ namespace
 		m_SawErrors = true;
 		if (m_TestFlag == false)
 		{
-			mafErrorMessageMacro("Error at file \"" << toCatch.getSystemId() \
-				<< "\", line " << toCatch.getLineNumber() \
-				<< ", column " << toCatch.getColumnNumber() \
-				<< "\n   Message: " << mafXMLString(toCatch.getMessage()) \
-			);
 		}
 	}
 	//------------------------------------------------------------------------------
@@ -714,11 +709,6 @@ namespace
 		m_SawErrors = true;
 		if (m_TestFlag == false)
 		{
-			mafErrorMessageMacro("Fatal Error at file \"" << mafXMLString(toCatch.getSystemId()) \
-				<< "\", line " << toCatch.getLineNumber() \
-				<< ", column " << toCatch.getColumnNumber() \
-				<< "\n   Message: " << mafXMLString(toCatch.getMessage()) \
-			);
 		}
 
 	}
