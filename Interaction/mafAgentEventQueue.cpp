@@ -46,30 +46,24 @@ mafAgentEventQueue::mafAgentEventQueue()
 //------------------------------------------------------------------------------
 {
   m_Dispatched      = true;
-  m_EventQueue      = new InternalEventQueue;
+  m_EventQueue      = std::make_unique<InternalEventQueue>();
   m_DispatchMode    = SelfProcessMode;
   m_DequeueMode     = MultipleEventMode;
   m_PushMode        = DispatchEventMode;
-  
-  m_Mutex = new std::mutex;
 }
 
 //------------------------------------------------------------------------------
 mafAgentEventQueue::~mafAgentEventQueue()
 //------------------------------------------------------------------------------
 {
-  //vtkGenericWarningMacro("Destroying mafAgentEventQueue");
-  delete m_EventQueue; m_EventQueue=NULL;
-  cppDEL(m_Mutex);
 }
 
 //------------------------------------------------------------------------------
 void mafAgentEventQueue::SetDispatched(bool value)
 //------------------------------------------------------------------------------
 {
-  m_Mutex->lock();
+  std::lock_guard lock(m_Mutex);
   m_Dispatched=value;
-  m_Mutex->unlock();
 }
 
 //------------------------------------------------------------------------------
@@ -118,7 +112,7 @@ bool mafAgentEventQueue::DispatchEvents()
 
     //this->SetDispatched();
 
-    m_Mutex->lock();
+    std::lock_guard lock(m_Mutex);
     if (m_EventQueue->Q.size()==0)
     {
         this->SetDispatched();
@@ -127,7 +121,6 @@ bool mafAgentEventQueue::DispatchEvents()
     {
       this->RequestForDispatching();
     }
-    m_Mutex->unlock();
   }
   else
   {
@@ -183,8 +176,8 @@ bool mafAgentEventQueue::PushEvent(mafEventBase *event)
   assert(event);
   if (event)
   {
-    m_Mutex->lock();
-    
+    std::lock_guard lock(m_Mutex);
+
     mafEventBase *new_event=event->NewInstance();
     assert(new_event);
     *new_event=*event;
@@ -199,7 +192,6 @@ bool mafAgentEventQueue::PushEvent(mafEventBase *event)
       m_Dispatched=false;
       RequestForDispatching();
     }
-    m_Mutex->unlock();
     return true;
   }
   
@@ -218,7 +210,7 @@ void mafAgentEventQueue::RequestForDispatching()
 int mafAgentEventQueue::PopEvent(mafEventBase *&event)
 //------------------------------------------------------------------------------
 {
-  m_Mutex->lock();
+  std::lock_guard lock(m_Mutex);
 
   int ret;
   if (m_EventQueue->Q.size()>0)
@@ -237,8 +229,6 @@ int mafAgentEventQueue::PopEvent(mafEventBase *&event)
     event=NULL;
     ret=false;
   }
-
-  m_Mutex->unlock();
 
   return ret;
 
@@ -279,7 +269,7 @@ int mafAgentEventQueue::PopEvent(mafEventBase &event)
 mafEventBase *mafAgentEventQueue::PeekEvent()
 //------------------------------------------------------------------------------
 {
-  m_Mutex->lock();
+  std::lock_guard lock(m_Mutex);
 
   mafEventBase *event=NULL;
   if (m_EventQueue->Q.size()>0)
@@ -288,8 +278,6 @@ mafEventBase *mafAgentEventQueue::PeekEvent()
     event=item.m_Event;  
   }
   
-  m_Mutex->unlock();
-
   return event;
 }
 
@@ -297,7 +285,7 @@ mafEventBase *mafAgentEventQueue::PeekEvent()
 mafEventBase *mafAgentEventQueue::PeekLastEvent()
 //------------------------------------------------------------------------------
 {
-  m_Mutex->lock();
+  std::lock_guard lock(m_Mutex);
 
   mafEventBase *event=NULL;
   if (m_EventQueue->Q.size()>0)
@@ -306,16 +294,13 @@ mafEventBase *mafAgentEventQueue::PeekLastEvent()
     event=item.m_Event;  
   }
   
-  m_Mutex->unlock();
-
   return event;
 }
 //------------------------------------------------------------------------------
 int mafAgentEventQueue::GetQueueSize()
 //------------------------------------------------------------------------------
 {
-  m_Mutex->lock();
+  std::lock_guard lock(m_Mutex);
   return m_EventQueue->Q.size();
-  m_Mutex->unlock();
 }
 

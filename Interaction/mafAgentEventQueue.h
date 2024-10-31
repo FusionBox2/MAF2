@@ -160,9 +160,9 @@ protected:
   Internal function used to request the dispatching*/
   virtual void RequestForDispatching();
 
-  InternalEventQueue *m_EventQueue;
+  std::unique_ptr<InternalEventQueue> m_EventQueue;
 
-  std::mutex *m_Mutex;
+  std::mutex m_Mutex;
 
   int m_DispatchMode;
   int m_DequeueMode;
