@@ -595,15 +595,13 @@ void mafGUIMaterialChooser::LoadLibraryFromFile()
   mafXMLReader reader(_R("MAP"), _R("1.0"));
   reader.Load(m_Filename);
 
-  mafStorableMaterialLibrary *mat_lib = new mafStorableMaterialLibrary(&m_List);
+  auto mat_lib = std::make_unique<mafStorableMaterialLibrary>(&m_List);
   mat_lib->Restore(reader.GetRoot());
 
   for (auto&  mat : m_List)
   {
     this->m_ListCtrlMaterial->AddItem((intptr_t)mat.get(), mat->m_MaterialName.toWx(), mat->MakeIcon());
   }
-
-  mat_lib->Delete();
 }
 //----------------------------------------------------------------------------
 void mafGUIMaterialChooser::StoreLibraryToFile()
@@ -615,11 +613,9 @@ void mafGUIMaterialChooser::StoreLibraryToFile()
   // XML storage to restore
   mafXMLWriter writer(_R("MAP"), _R("1.0"));
 
-  mafStorableMaterialLibrary *mat_lib = new mafStorableMaterialLibrary(&m_List);
+  auto mat_lib = std::make_unique<mafStorableMaterialLibrary>(&m_List);
   mat_lib->Store(writer.GetRoot());
   writer.Save(m_Filename);
-
-  mat_lib->Delete();
 }
 //----------------------------------------------------------------------------
 void mafGUIMaterialChooser::RemoveMaterial()

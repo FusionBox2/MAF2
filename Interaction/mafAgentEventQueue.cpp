@@ -105,7 +105,7 @@ bool mafAgentEventQueue::DispatchEvents()
             InvokeEvent(event,channel);
           }
         }
-        event->Delete(); // release memory
+        delete event; // release memory
       }      
     }
     while (event&&PeekEvent()!=last_event);
@@ -145,7 +145,7 @@ bool mafAgentEventQueue::DispatchEvents()
         {
           this->InvokeEvent(event,channel);
         }
-        event->Delete(); // release memory
+        delete event; // release memory
       }
     }
 
@@ -257,7 +257,7 @@ int mafAgentEventQueue::PopEvent(mafEventBase &event)
   if (this->PopEvent(ev))
   {
     event.DeepCopy(ev);
-    ev->Delete(); // destroy the queued event
+    delete ev; // destroy the queued event
 
     return true;
   }

@@ -480,10 +480,15 @@ void mafOpDecomposeTimeVarVME::CreateStaticVME(mafTimeStamp timeSt)
   {
     if(objVme)
     {
-      mafReferenceCounted *refCntObj = mafReferenceCounted::SafeDownCast(objVme);
-      if(refCntObj)
-        refCntObj->Register(this);
-      mafDEL(objVme);
+      if(mafReferenceCounted *refCntObj = mafReferenceCounted::SafeDownCast(objVme))
+      {
+      	refCntObj->Register(this);
+      	mafDEL(refCntObj);
+      }
+      else
+      {
+        delete objVme;
+      }
     }
     return;
   }

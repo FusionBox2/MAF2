@@ -127,10 +127,6 @@ public:
   mafObject();
   virtual ~mafObject();
 
-  /** return a new instance of the mafObject instance */
-  /** the same as delete obj, implemented for syntax compatibility */
-  virtual void Delete() {delete this;};
-  
   /** print debug information for this object */
   virtual void Print(std::ostream &os, const int indent=0) const;
 

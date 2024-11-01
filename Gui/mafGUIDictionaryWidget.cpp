@@ -108,7 +108,7 @@ void mafGUIDictionaryWidget::LoadDictionary(const mafString& file)
   restore.Load(m_File);
 
   // create a new object to restore into
-  mafStorableDictionary *storeDict = new mafStorableDictionary;
+  auto storeDict = std::make_unique<mafStorableDictionary>();
   storeDict->Restore(restore.GetRoot());
   
 	if(m_NumItem) delete [] m_Items;
@@ -123,8 +123,6 @@ void mafGUIDictionaryWidget::LoadDictionary(const mafString& file)
      m_Items[i] = new mafString(storeDict->m_StrVector[i]);
      m_List->AddItem(i,*m_Items[i]);
   }
-  
-  storeDict->Delete();
   ValidateAllItem();
 }
 //----------------------------------------------------------------------------

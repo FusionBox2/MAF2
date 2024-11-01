@@ -18,7 +18,7 @@ public:
 
   virtual void UnRegister(void* obj);
 
-  void Delete() override;
+  virtual void Delete();
 
 protected:
 
