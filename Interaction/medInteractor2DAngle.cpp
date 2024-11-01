@@ -1373,8 +1373,6 @@ void medInteractor2DAngle::SetLabel(mafString label)
 medInteractor2DAngle* medInteractor2DAngle::NewTest()
 //----------------------------------------------------------------------------
 {
-  medInteractor2DAngle *obj = new medInteractor2DAngle(true); \
-    if (obj) 
-      obj->m_HeapFlag=true;
+  medInteractor2DAngle *obj = new medInteractor2DAngle(true);
   return obj;
 }

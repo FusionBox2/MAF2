@@ -12,17 +12,13 @@ public:
   mafReferenceCounted();
   ~mafReferenceCounted() override; 
 
-  mafAbstractTypeMacro(mafReferenceCounted,mafObject);
+  mafAbstractTypeMacroN(mafReferenceCounted);
 
   void Register(void* obj);
 
   virtual void UnRegister(void* obj);
 
   void Delete() override;
-
-  ssize_t GetReferenceCount();
-
-  void SetReferenceCount(ssize_t);
 
 protected:
 

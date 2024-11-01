@@ -35,7 +35,7 @@
   static Rootclass::Pointer NewObject() { return New(); } \
   static std::unique_ptr<Rootclass> NewObjectU() { return NewUPtr(); } \
   static std::shared_ptr<Rootclass> NewObjectS() { return NewSPtr(); } \
-  static Pointer New() { auto obj = new Thisclass; obj->m_HeapFlag = true; return obj; } \
+  static Pointer New() { auto obj = new Thisclass; return obj; } \
   static std::unique_ptr<Thisclass> NewUPtr() { return std::unique_ptr<Thisclass>(New()); } \
   static std::shared_ptr<Thisclass> NewSPtr() { return NewUPtr(); }
 
@@ -56,8 +56,6 @@ private: \
 public:
 
 #define mafAbstractBaseTypeMacro(className) \
-protected: \
-  bool m_HeapFlag = false; \
 public: \
   using Rootclass = className; \
   mafCommonTypeMacro(className) \
@@ -72,8 +70,6 @@ public: \
   mafNewAbstractTypeMacro
 
 #define mafBaseTypeMacro(className) \
-protected: \
-  bool m_HeapFlag = false; \
 public: \
   using Rootclass = className; \
   mafCommonTypeMacro(className) \
