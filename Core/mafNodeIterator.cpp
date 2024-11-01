@@ -59,14 +59,6 @@ mafNodeIterator::mafNodeIterator(mafNode *root)
 }
 
 //----------------------------------------------------------------------------
-mafNodeIterator::~mafNodeIterator()
-//----------------------------------------------------------------------------
-{
-  m_CurrentNode=NULL; // do not unregister since it was not registered!
-  SetRootNode(NULL);
-}
-
-//----------------------------------------------------------------------------
 void mafNodeIterator::InitTraversal()
 //----------------------------------------------------------------------------
 {
@@ -122,7 +114,7 @@ int mafNodeIterator::GoToNextNode()
           }
           else
           { 
-						if (m_CurrentNode!=m_RootNode)
+						if (m_CurrentNode!=m_RootNode.get())
             {
 							mafID idx=0;
 							mafNode *parent=m_CurrentNode->GetParent();
@@ -131,7 +123,7 @@ int mafNodeIterator::GoToNextNode()
 								Pop(m_CurrentIdx, idx);
 								UpperExecute(parent); //call the upper-callback
 
-								while (parent&&parent!=m_RootNode&&idx>=(parent->GetNumberOfChildren()-1))
+								while (parent&&parent!=m_RootNode.get() &&idx>=(parent->GetNumberOfChildren()-1))
 								{
 									parent=parent->GetParent();
 									Pop(m_CurrentIdx, idx);
@@ -175,7 +167,7 @@ int mafNodeIterator::GoToNextNode()
       }
     case PostOrder:
       {
-        if ((m_CurrentNode)&&(m_CurrentNode!=m_RootNode))
+        if ((m_CurrentNode)&&(m_CurrentNode!=m_RootNode.get()))
         {
           mafNode *parent=m_CurrentNode->GetParent();
 
@@ -257,7 +249,7 @@ int mafNodeIterator::GoToPreviousNode()
   {
     case PreOrder:
       {
-        if ((m_CurrentNode)&&(m_CurrentNode!=m_RootNode))
+        if ((m_CurrentNode)&&(m_CurrentNode!=m_RootNode.get()))
         {
           mafNode *parent=m_CurrentNode->GetParent();
 
@@ -336,7 +328,7 @@ int mafNodeIterator::GoToPreviousNode()
             {
               UpperExecute(parent); 
 
-              while (parent && parent!=m_RootNode && idx<=0) // search for the first root where we still have children to be visited
+              while (parent && parent!=m_RootNode.get() && idx<=0) // search for the first root where we still have children to be visited
               {
                 parent=parent->GetParent();
 
@@ -451,11 +443,11 @@ int mafNodeIterator::GoToFirstNode()
   switch (m_TraversalMode)
   {
     case PreOrder:
-      m_CurrentNode=m_RootNode;
+      m_CurrentNode=m_RootNode.get();
       DeeperExecute(m_CurrentNode);
       break;
     case PostOrder:
-      m_CurrentNode=FindLeftMostLeaf(m_RootNode);
+      m_CurrentNode=FindLeftMostLeaf(m_RootNode.get());
       break;
     default:
       mafErrorMacro("Unsupported Traversal Mode");
@@ -490,10 +482,10 @@ int mafNodeIterator::GoToLastNode()
   switch (m_TraversalMode)
   {
     case PreOrder:
-      m_CurrentNode=FindRightMostLeaf(m_RootNode);
+      m_CurrentNode=FindRightMostLeaf(m_RootNode.get());
       break;
     case PostOrder:
-      m_CurrentNode=m_RootNode;
+      m_CurrentNode=m_RootNode.get();
       DeeperExecute(m_CurrentNode);
       break;
     default:
@@ -522,18 +514,7 @@ int mafNodeIterator::GoToLastNode()
 void mafNodeIterator::SetRootNode(mafNode *root)
 //----------------------------------------------------------------------------
 {
-  if (m_RootNode==root)
-    return;
-
-  if (m_RootNode)
-  {
-    m_RootNode->UnRegister(this);
-  }
-
-  m_RootNode=root;
-
-  if (m_RootNode)
-    m_RootNode->Register(this);
+  m_RootNode = root;
 }
 
 //----------------------------------------------------------------------------

@@ -365,7 +365,7 @@ void mafGUIApplicationLayoutSettings::LoadLayout(bool fileDefault)
     m_XMLRoot->Restore(reader.GetRoot());
 
     //fill listbox
-    mafNodeIterator *iter = m_XMLRoot->NewIterator();
+    auto iter = m_XMLRoot->NewIterator();
     for(mafNode *vme = iter->GetFirstNode(); vme; vme = iter->GetNextNode())
     {
       if(!vme->IsMAFType(mafVMERoot))
@@ -375,7 +375,7 @@ void mafGUIApplicationLayoutSettings::LoadLayout(bool fileDefault)
           m_DefaultLayoutName = ((mafNodeLayout *)vme)->GetName();
       }
     }
-    iter->Delete();
+    iter.reset();
 
     m_LayoutFileSave = file;
     
@@ -572,13 +572,13 @@ void mafGUIApplicationLayoutSettings::SetLayoutAsDefault()
   if(m_SelectedItem != -1)
   {   
     m_ModifiedLayouts = true;
-    mafNodeIterator *iter = m_XMLRoot->NewIterator();
+    auto iter = m_XMLRoot->NewIterator();
     for(mafNode *vme = iter->GetFirstNode(); vme; vme = iter->GetNextNode())
     {
       if(!vme->IsMAFType(mafVMERoot))
         ((mafNodeLayout *)vme)->GetLayout()->SetLayoutName(_R("Layout"));
     }
-    iter->Delete();
+    iter.reset();
 
     if(m_DefaultFlag != 0)
       m_DefaultLayoutName = mafWxToString(m_List->GetString(m_SelectedItem));

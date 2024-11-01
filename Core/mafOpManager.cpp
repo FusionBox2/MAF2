@@ -479,7 +479,7 @@ void mafOpManager::FillTraceabilityAttribute(mafOp *op, mafNode *in_node, mafNod
   {
     int c = 0; //counter not to write single parameter on first VME which is a group
     wxString singleParameter = parameters.toWx();
-    mafNodeIterator *iter = out_node->NewIterator();
+    auto iter = out_node->NewIterator();
     for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
     {
       if (node != NULL)
@@ -529,7 +529,6 @@ void mafOpManager::FillTraceabilityAttribute(mafOp *op, mafNode *in_node, mafNod
         }
       }
     }
-    iter->Delete();
   }
 }
 //----------------------------------------------------------------------------
@@ -564,7 +563,7 @@ void mafOpManager::OpUndo()
 
   if (out_node != NULL)
   {
-    mafNodeIterator *iter = out_node->NewIterator();
+    auto iter = out_node->NewIterator();
     for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
     {
       if (node != NULL)
@@ -576,7 +575,6 @@ void mafOpManager::OpUndo()
         }
       }
     }
-    iter->Delete();
   }
 
 	op->OpUndo();

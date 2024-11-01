@@ -282,7 +282,7 @@ int mafGUICheckTree::GetVmeStatus(mafNode *vme)
 void mafGUICheckTree::VmeUpdateIcon(mafNode *vme)
 //----------------------------------------------------------------------------
 {
-  mafNodeIterator *iter = vme->NewIterator();
+  auto iter = vme->NewIterator();
   for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {
     int dataStatus = 1;
@@ -311,7 +311,6 @@ void mafGUICheckTree::VmeUpdateIcon(mafNode *vme)
       }
     }
   }
-  iter->Delete();
 //  int icon_index = ClassNameToIcon(vme->GetTypeName()) + (GetVmeStatus(vme)*2) + dataStatus;
 //  SetNodeIcon( (long)vme, icon_index );
 }

@@ -136,7 +136,7 @@ void mafMSFImporter::InternalRestore(const mafStorageElement& node)
   }
   mafNode *n = NULL;
   std::vector<mafNode *> link_list;
-  mafNodeIterator *iter = root->NewIterator();
+  auto iter = root->NewIterator();
   // iteration for updating VME's ID
   for (n = iter->GetFirstNode(); n; n=iter->GetNextNode())
   {
@@ -161,7 +161,7 @@ void mafMSFImporter::InternalRestore(const mafStorageElement& node)
       }
     }
   }
-  iter->Delete();
+  iter.reset();
   // remove all mafVMEGeneric representing links
   for (int l=0;l<link_list.size();l++)
   {

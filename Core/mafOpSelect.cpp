@@ -354,7 +354,7 @@ Select the vme parent
   mafEventIO e(this,NODE_GET_STORAGE);
   m_Selection->ForwardUpEvent(e);
   mafStorage *storage = e.GetStorage();
-  mafNodeIterator *iter = m_Selection->NewIterator();
+  auto iter = m_Selection->NewIterator();
   mafString data_filename;
   for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {
@@ -385,7 +385,6 @@ Select the vme parent
       }
     }
   }
-  iter->Delete();
   m_SelectionParent = m_Selection->GetParent(); 
   {mafEvent evUnq(this,VME_REMOVE,m_Selection.get()); InvokeEvent(evUnq);}
   {mafEvent evUnq(this,VME_SELECTED,m_SelectionParent.get()); InvokeEvent(evUnq);}

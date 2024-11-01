@@ -190,10 +190,9 @@ void lhpOpExporterCSVGraph::ExportGraphs()
 
   if (mafNode * root = m_Input->GetRoot())
   {
-    mafNodeIterator *iter = root->NewIterator(); // iterate over inserted vme
+    auto iter = root->NewIterator(); // iterate over inserted vme
     for (mafNode *vme = iter->GetFirstNode(); vme; vme = iter->GetNextNode())
       vgraph->VmeAdd(vme); // Add them in the specified view
-    iter->Delete();
   }
   vgraph->VmeSelect(m_Input, true);
   vgraph->loadPlot(false);

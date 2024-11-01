@@ -379,7 +379,7 @@ void mafSceneGraph::VmeShowByType(mafNode *vme,  bool show)
 void mafSceneGraph::VmeShowSubTree(mafNode *vme,  bool show)
 //----------------------------------------------------------------------------
 {
-  mafNodeIterator *iter = vme->NewIterator();
+  auto iter = vme->NewIterator();
 	for(mafNode *v = iter->GetFirstNode(); v; v = iter->GetNextNode())
 	{
     mafSceneNode *n = Vme2Node(v);
@@ -391,7 +391,6 @@ void mafSceneGraph::VmeShowSubTree(mafNode *vme,  bool show)
         {mafEvent evUnq(this, VME_SHOW, v, show); InvokeEvent(evUnq);}
 		} 
 	}
-	iter->Delete();
 }
 
 /* @@@

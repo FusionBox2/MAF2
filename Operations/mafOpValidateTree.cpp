@@ -102,7 +102,7 @@ int mafOpValidateTree::ValidateTree()
   int max_item_id = root->GetMaxItemId();
   int max_node_id = root->GetMaxNodeId();
 
-  mafNodeIterator *iter = root->NewIterator();
+  auto iter = root->NewIterator();
   try
   {
     for (node = iter->GetFirstNode(); node; node = iter->GetNextNode())
@@ -269,7 +269,6 @@ int mafOpValidateTree::ValidateTree()
   {
     ErrorLog(mafOpValidateTree::EXCEPTION_ON_ITERATOR, iter->GetCurrentNode()->GetName().GetCStr());
   }
-  iter->Delete();
  
   return result;
 }

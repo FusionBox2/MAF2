@@ -133,7 +133,7 @@ mafOpExtractIsosurface::~mafOpExtractIsosurface()
 {
   if (m_OutputGroup != NULL)
   {
-    mafNodeIterator *iter = m_OutputGroup->NewIterator();
+    auto iter = m_OutputGroup->NewIterator();
     for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
     {
       if (node != NULL)
@@ -141,7 +141,6 @@ mafOpExtractIsosurface::~mafOpExtractIsosurface()
         mafDEL(node);
       }
     }
-    iter->Delete();
   }
 
   m_IsoValueVector.clear();

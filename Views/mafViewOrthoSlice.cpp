@@ -784,7 +784,7 @@ void mafViewOrthoSlice::ResetSlicesPosition( mafNode *node )
 void mafViewOrthoSlice::SetThicknessForAllSurfaceSlices(mafNode *root)
 //----------------------------------------------------------------------------
 {
-	mafNodeIterator *iter = root->NewIterator();
+	auto iter = root->NewIterator();
 	for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
 	{
 		if (((mafVME *)node)->GetOutput()->IsA("mafVMEOutputSurface")) //if(node->IsA("mafVMESurface"))
@@ -803,7 +803,6 @@ void mafViewOrthoSlice::SetThicknessForAllSurfaceSlices(mafNode *root)
 			}
 		}
 	}
-	iter->Delete();
 }
 //----------------------------------------------------------------------------
 bool mafViewOrthoSlice::IsPickedSliceView()

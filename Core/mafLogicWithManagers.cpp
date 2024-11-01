@@ -1650,7 +1650,7 @@ bool mafLogicWithManagers::OnFileSaveAs()
 
   if(m_Storage && m_StorageData->m_MSFFile != m_Storage->GetURL())
   {
-    mafNodeIterator *iter = root->NewIterator();
+    auto iter = root->NewIterator();
     for(mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
     {
       if(mafVMEGenericAbstract *vga = mafVMEGenericAbstract::SafeDownCast(node))
@@ -1661,7 +1661,6 @@ bool mafLogicWithManagers::OnFileSaveAs()
         }
       }
     }
-    iter->Delete();
   }
 
   if(!m_Storage)

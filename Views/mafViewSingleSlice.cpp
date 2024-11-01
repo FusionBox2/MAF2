@@ -520,7 +520,7 @@ void mafViewSingleSlice::OnEvent(mafEventBase *maf_event)
 				}
 				else
 					return;
-				mafNodeIterator *iter = m_CurrentVolume->m_Vme->GetRoot()->NewIterator();
+				auto iter = m_CurrentVolume->m_Vme->GetRoot()->NewIterator();
 				for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
 				{
 					if(node->IsA("mafVMESurface"))
@@ -542,7 +542,6 @@ void mafViewSingleSlice::OnEvent(mafEventBase *maf_event)
 							p->SetSlice(m_OriginVolume);
 					}
 				}
-        iter->Delete();
 			}
       {mafEvent evUnq(this,ID_POSITION,m_Position); InvokeEvent(evUnq);}
 		break;
@@ -578,7 +577,7 @@ void mafViewSingleSlice::OnEvent(mafEventBase *maf_event)
 			m_Gui->Update();
 
 
-			mafNodeIterator *iter = m_CurrentVolume->m_Vme->GetRoot()->NewIterator();
+			auto iter = m_CurrentVolume->m_Vme->GetRoot()->NewIterator();
 			for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
 			{
 			  if(node->IsA("mafVMESurface") || (((mafVME *)node)->GetOutput()->IsA("mafVMEOutputVolume")) || node->IsA("mafVMEPolyline"))
@@ -591,7 +590,6 @@ void mafViewSingleSlice::OnEvent(mafEventBase *maf_event)
 					}
 				}
 			}
-      iter->Delete();
 			
 			CameraUpdate();
 		}
@@ -831,7 +829,7 @@ void mafViewSingleSlice::VmeShow(mafNode *node, bool show)
       for(int i=0; i<m_NumOfChildView; i++)
         ((mafViewSingleSliceLHPBuilder *)m_ChildViewList[i])->UpdateText(0);
 	*/  
-			mafNodeIterator *iter = node->GetRoot()->NewIterator();
+			auto iter = node->GetRoot()->NewIterator();
 			for (mafNode *Inode = iter->GetFirstNode(); Inode; Inode = iter->GetNextNode())
 			{
 				if(this->GetNodePipe(Inode))
@@ -846,7 +844,6 @@ void mafViewSingleSlice::VmeShow(mafNode *node, bool show)
 					}
 				}
 			}
-      iter->Delete();
       this->UpdateText(0);
 			m_Gui->Enable(ID_POSITION,false);
 			m_Gui->Update();

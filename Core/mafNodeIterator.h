@@ -1,20 +1,6 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafNodeIterator
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafNodeIterator_h
-#define __mafNodeIterator_h
+#include "ftkConfigure.h"
 //----------------------------------------------------------------------------
 // includes :
 //----------------------------------------------------------------------------
@@ -34,11 +20,13 @@
   @sa mafNode
   */
 
-class MAF_EXPORT mafNodeIterator : public mafObject, public mafEventSource
+class MAF_EXPORT mafNodeIterator final : public mafEventSource
 {
 public:
-  mafTypeMacro(mafNodeIterator,mafObject);
-  
+  mafBaseTypeMacro(mafNodeIterator);
+  mafNodeIterator(mafNode* root = nullptr);
+
+
   /** Retrieve the current node pointer data from the iterator. */
   mafNode * GetCurrentNode() {return m_CurrentNode;}
 
@@ -54,10 +42,10 @@ public:
   /**
     Return true if the VME is visible. This function can be overridden to implement
     different visibility rules.*/
-  //virtual bool IsVisible(mafNode *node) { return node->IsVisible();}
+  //bool IsVisible(mafNode *node) { return node->IsVisible();}
 
   /** Allow to ignore m_VisibleToTraverse flag for the iterator. */
-  virtual void IgnoreVisibleToTraverse(bool ignore) {m_IgnoreVisibleToTraverse = ignore;};
+  void IgnoreVisibleToTraverse(bool ignore) {m_IgnoreVisibleToTraverse = ignore;};
 
   /**
   Set the root node of the (sub)tree to be traversed. Used to set the start 
@@ -75,16 +63,16 @@ public:
   int IsDoneWithTraversal() {return m_TraversalDone;}
   
   /** Increment the iterator to the next location.*/
-  virtual int GoToNextNode();
+  int GoToNextNode();
   
   /** Decrement the iterator to the next location.*/
-  virtual int GoToPreviousNode();
+  int GoToPreviousNode();
   
   /** Go to the first item of the list.*/
-  virtual int GoToFirstNode();
+  int GoToFirstNode();
   
   /** Go to the last item of the list.*/
-  virtual int GoToLastNode();
+  int GoToLastNode();
 
   /**
     Set/Get the traverse modality. Default to PreOrder, i.e. process 
@@ -121,40 +109,31 @@ protected:
   mafNode *FindRightMostLeaf(mafNode *node);
 
   /** Callback function. By default send an event through the m_EventSource source. */
-  virtual void PreExecute(); 
+  void PreExecute(); 
 
   /** Callback function. By default send an event through the m_EventSource source. */
-  virtual void PostExecute();  
+  void PostExecute();  
 
   /** Callback function. By default send an event through the m_EventSource source. */
-  virtual void DeeperExecute(mafNode *); 
+  void DeeperExecute(mafNode *); 
 
   /** Callback function. By default send an event through the m_EventSource source. */
-  virtual void UpperExecute(mafNode *);  
+  void UpperExecute(mafNode *);  
 
   /** Callback function. By default send an event through the m_EventSource source. */
-  virtual void FirstExecute(); 
+  void FirstExecute(); 
 
   /** Callback function. By default send an event through the m_EventSource source. */
-  virtual void LastExecute();  
+  void LastExecute();  
 
   /** Callback function. By default send an event through the m_EventSource source. */
-  virtual void DoneExecute();  
+  void DoneExecute();  
 
-  mafNodeIterator(mafNode *root=NULL);
-  ~mafNodeIterator() override;
-
-  mafNode         *m_RootNode;
+	RegisteringPointer<mafNode> m_RootNode;
   mafNode         *m_CurrentNode;
   int             m_TraversalMode;
   int             m_TraversalDone;
   bool            m_IgnoreVisibleToTraverse;
 
   std::vector<mafID> m_CurrentIdx;
-
-private:
-  mafNodeIterator(const mafNodeIterator&) {} // Not implemented
-  void operator=(const mafNodeIterator&) {} // Not implemented
 };
-
-#endif

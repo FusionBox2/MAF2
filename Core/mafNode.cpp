@@ -237,12 +237,10 @@ void mafNode::SetName(const mafString& name)
 } 
 
 //-------------------------------------------------------------------------
-mafNodeIterator *mafNode::NewIterator()
+std::unique_ptr<mafNodeIterator> mafNode::NewIterator()
 //-------------------------------------------------------------------------
 {
-  mafNodeIterator *iter= mafNodeIterator::New();
-  iter->SetRootNode(this);
-  return iter;
+  return std::make_unique<mafNodeIterator>(this);
 }
 
 //-------------------------------------------------------------------------
@@ -600,12 +598,12 @@ int mafNode::SetParent(mafNode *parent)
 
   m_Parent = parent;
 
-  mafNodeIterator *iter = NewIterator();
+  auto iter = NewIterator();
   for (mafNode *n = iter->GetFirstNode(); n; n = iter->GetNextNode())
   {
     n->UpdateId();
   }
-  mafDEL(iter);
+  iter.reset();
 
   if(new_root != NULL)
   {
@@ -781,12 +779,11 @@ mafNode *mafNode::CopyTree()
 {
   std::vector<std::pair<mafNode*, mafNode*> > nodes;
   {
-    mafNodeIterator *iter = NewIterator();
+    auto iter = NewIterator();
     for (mafNode *n = iter->GetFirstNode(); n; n = iter->GetNextNode())
     {
       nodes.push_back(std::make_pair(n, (mafNode*)NULL));
     }
-    mafDEL(iter);
   }
   mafNode *res = CopyTree(this);
   if(res == NULL)
@@ -794,21 +791,19 @@ mafNode *mafNode::CopyTree()
   RegisteringPointer<mafNode> holder = res;
   res->Register(NULL);
   {
-    mafNodeIterator *iter = res->NewIterator();
+    auto iter = res->NewIterator();
     unsigned i = 0;
     for(mafNode *n = iter->GetFirstNode(); n; n = iter->GetNextNode(), i++)
     {
       nodes[i].second = n;
     }
-    mafDEL(iter);
   }
   {
-    mafNodeIterator *iter = res->NewIterator();
+    auto iter = res->NewIterator();
     for(mafNode *n = iter->GetFirstNode(); n; n = iter->GetNextNode())
     {
       n->UpdateLinks(nodes);
     }
-    mafDEL(iter);
   }
   return res;
 }

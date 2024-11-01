@@ -222,7 +222,7 @@ namespace
 
     mafString group_name = _R("Skeletal model");
 
-    mafNodeIterator *iter = root->NewIterator();
+    auto iter = root->NewIterator();
     for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
     {
       if(node == root)
@@ -241,7 +241,7 @@ namespace
         }
       }
     }
-    iter->Delete();
+    iter.reset();
 
 
     mafVMEGroup *m_Group;
@@ -1765,7 +1765,7 @@ namespace
       }
       if(search_name)
       {
-        mafNodeIterator *lmitert = m_Target->NewIterator();
+        auto lmitert = m_Target->NewIterator();
         for(mafNode *lmt = lmitert->GetFirstNode(); lmt; lmt = lmitert->GetNextNode())
         {
           mafVMELandmarkCloud *lmtmp = mafVMELandmarkCloud::SafeDownCast(lmt);
@@ -1777,7 +1777,6 @@ namespace
             break;
           }
         }
-        mafDEL(lmitert);
       }
       if(lmct == NULL)
         continue;
