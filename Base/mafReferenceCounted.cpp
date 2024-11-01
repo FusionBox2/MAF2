@@ -21,12 +21,6 @@ mafReferenceCounted::~mafReferenceCounted()
 
 void mafReferenceCounted::Register(void *obj)
 {
-  if (!m_HeapFlag)
-  {
-    mafErrorMacro(<< "Trying to Register a non-dynamically allocated object.");
-    return;
-  }
-
   if (m_ReferenceCount < 0)
   {
     mafErrorMacro("Trying to Register an object with negative reference counter equal.");
@@ -42,12 +36,6 @@ void mafReferenceCounted::Register(void *obj)
 
 void mafReferenceCounted::UnRegister(void *obj)
 {
-  if (!m_HeapFlag)
-  {
-    mafErrorMacro("Trying to UnRegister a non-dynamically allocated object.");
-    return;
-  }
-
 	if(m_ReferenceCount <= 0)
   {
     mafErrorMacro("Trying to UnRegister an object with reference counter equal to zero.");
@@ -57,14 +45,4 @@ void mafReferenceCounted::UnRegister(void *obj)
   {
     delete this;
   }
-}
-
-ssize_t mafReferenceCounted::GetReferenceCount()
-{
-  return m_ReferenceCount;
-}
-
-void mafReferenceCounted::SetReferenceCount(ssize_t val)
-{
-  m_ReferenceCount = val;
 }

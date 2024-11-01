@@ -1012,8 +1012,6 @@ void medInteractor2DDistance::SetLabel(mafString label)
 medInteractor2DDistance* medInteractor2DDistance::NewTest()
 //----------------------------------------------------------------------------
 {
-  medInteractor2DDistance *obj = new medInteractor2DDistance(true); \
-  if (obj) 
-    obj->m_HeapFlag=true;
+  medInteractor2DDistance *obj = new medInteractor2DDistance(true);
   return obj;
 }
