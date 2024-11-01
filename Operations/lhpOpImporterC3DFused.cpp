@@ -501,7 +501,7 @@ bool lhpOpImporterC3DFused::RegistrationProcedure()
       }
       if (search_name)
       {
-        mafNodeIterator *lmitert = Target->NewIterator();
+        auto lmitert = Target->NewIterator();
         for (mafNode *lmt = lmitert->GetFirstNode(); lmt; lmt = lmitert->GetNextNode())
         {
           mafVMELandmarkCloud *lmtmp = mafVMELandmarkCloud::SafeDownCast(lmt);
@@ -513,7 +513,6 @@ bool lhpOpImporterC3DFused::RegistrationProcedure()
             break;
           }
         }
-        mafDEL(lmitert);
       }
       if (lmct == NULL)
         continue;

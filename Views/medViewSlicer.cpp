@@ -374,7 +374,7 @@ void medViewSlicer::CameraUpdate()
     ((mafViewVTK*)m_ChildViewList[SLICE_VIEW])->GetRWI()->GetCamera()->GetViewPlaneNormal(normal);
 
     mafNode *root=m_CurrentSlicer->GetRoot();
-    mafNodeIterator *iter = root->NewIterator();
+    auto iter = root->NewIterator();
     for (mafNode *Inode = iter->GetFirstNode(); Inode; Inode = iter->GetNextNode())
     {
       if(Inode->IsA("mafVMESurface") || Inode->IsA("mafVMESurfaceParametric"))
@@ -402,8 +402,6 @@ void medViewSlicer::CameraUpdate()
         }
       }
     }
-    iter->Delete();
-
     ((mafViewVTK*)m_ChildViewList[SLICE_VIEW])->CameraReset(m_CurrentSlicer);
   }
   

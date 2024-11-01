@@ -467,7 +467,7 @@ void mafViewArbitrarySlice::OnEventGizmoTranslate(mafEventBase *maf_event)
 
 			//for each surface visualized change the center of the cut plane
 			mafNode *root=m_CurrentVolume->GetRoot();
-			mafNodeIterator *iter = root->NewIterator();
+			auto iter = root->NewIterator();
 			for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
 			{
 				if(node->IsA("mafVMESurface") || node->IsA("mafVMESurfaceParametric") || node->IsA("mafVMELandmark") || node->IsA("mafVMELandmarkCloud"))
@@ -503,7 +503,7 @@ void mafViewArbitrarySlice::OnEventGizmoTranslate(mafEventBase *maf_event)
 					}
 				}
 			}
-			iter->Delete();
+			iter.reset();
 			if(m_CurrentPolylineGraphEditor)
 			{
 				//a surface is visible only if there is a volume in the view
@@ -553,7 +553,7 @@ void mafViewArbitrarySlice::OnEventGizmoRotate(mafEventBase *maf_event)
 
 			//update the normal of the cutter plane of the surface
 			mafNode *root=m_CurrentVolume->GetRoot();
-			mafNodeIterator *iter = root->NewIterator();
+			auto iter = root->NewIterator();
 			for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
 			{
 				if(node->IsA("mafVMESurface") || node->IsA("mafVMESurfaceParametric") || node->IsA("mafVMELandmark") || node->IsA("mafVMELandmarkCloud"))
@@ -595,7 +595,7 @@ void mafViewArbitrarySlice::OnEventGizmoRotate(mafEventBase *maf_event)
 					}
 				}
 			}
-			iter->Delete();
+			iter.reset();
 			if(m_CurrentPolylineGraphEditor)
 			{
 				//a surface is visible only if there is a volume in the view
@@ -697,7 +697,7 @@ void mafViewArbitrarySlice::OnEventThis(mafEventBase *maf_event)
 				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 				//update the normal of the cutter plane of the surface
 				mafNode *root=m_CurrentVolume->GetRoot();
-				mafNodeIterator *iter = root->NewIterator();
+				auto iter = root->NewIterator();
 				for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
 				{
 					if(node->IsA("mafVMESurface") || node->IsA("mafVMESurfaceParametric") || node->IsA("mafVMELandmark") || node->IsA("mafVMELandmarkCloud"))
@@ -737,7 +737,7 @@ void mafViewArbitrarySlice::OnEventThis(mafEventBase *maf_event)
 						}
 					}
 				}
-				iter->Delete();
+				iter.reset();
 				if(m_CurrentPolylineGraphEditor)
 				{
 					//a surface is visible only if there is a volume in the view

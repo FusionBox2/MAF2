@@ -220,7 +220,7 @@ void medOpExporterMeters::ExportTypeOfMeters()
 //----------------------------------------------------------------------------
 {
   //must be a cicle in all vme of a msf
-  mafNodeIterator *iter = NULL;
+  std::unique_ptr<mafNodeIterator> iter;
   if(m_SubTreeExportMeter == TRUE)
   {
     iter = m_Input->NewIterator();
@@ -242,7 +242,7 @@ void medOpExporterMeters::ExportTypeOfMeters()
       m_Meters.push_back(node);
     }
   }
-  iter->Delete();
+  iter.reset();
 
   if(m_Meters.size() != 0)
   {

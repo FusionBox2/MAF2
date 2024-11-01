@@ -356,10 +356,9 @@ void mafViewManager::ViewInsert(mafView *view)
 	view->SetListener(this);
   if(m_RootVme != NULL)
   {
-    mafNodeIterator *iter = m_RootVme->NewIterator(); // iterate over inserted vme
+    auto iter = m_RootVme->NewIterator(); // iterate over inserted vme
     for(mafNode *vme = iter->GetFirstNode(); vme; vme = iter->GetNextNode())
 			view->VmeAdd(vme); // Add them in the specified view
-    iter->Delete();
   }
 
   if(m_SelectedVme)

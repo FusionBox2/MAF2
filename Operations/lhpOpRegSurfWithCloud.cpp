@@ -200,8 +200,7 @@ void lhpOpRegSurfWithCloud::OpStop(int result)
     if(surf == NULL)
       continue;
 
-    mafNodeIterator *iter = mafNodeIterator::New();
-    iter->SetRootNode(m_Source);
+    auto iter = m_Source->NewIterator();
     for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
     {
       mafVMELandmarkCloud *cloudChild = mafVMELandmarkCloud::SafeDownCast(node);
@@ -211,7 +210,7 @@ void lhpOpRegSurfWithCloud::OpStop(int result)
         break;
       }
     }
-    iter->Delete();
+    iter.reset();
 
     /*for(unsigned i = 0; i < m_Source->GetNumberOfChildren(); i++)
     {

@@ -312,14 +312,12 @@ void lhpOpMergeClouds::OpDo()
 {
   for(int i = 0; i < m_MergeClouds.size(); i++)
   {
-    mafNodeIterator *iter1 = m_Input->NewIterator();
-    mafNodeIterator *iter2 = m_MergeClouds[i]->NewIterator();
+    auto iter1 = m_Input->NewIterator();
+    auto iter2 = m_MergeClouds[i]->NewIterator();
     mafMatrix m;
     mafNode *node1, *node2;
     for (node1 = iter1->GetFirstNode(), node2 = iter2->GetFirstNode(); node1 && node2; node1 = iter1->GetNextNode(), node2 = iter2->GetNextNode())
       MergeNodes(mafVME::SafeDownCast(node1), mafVME::SafeDownCast(node2), m);
-    iter2->Delete();
-    iter1->Delete();
   }
   //if(m_OutSurface)
   {

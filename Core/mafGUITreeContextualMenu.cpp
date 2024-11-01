@@ -278,7 +278,7 @@ void mafGUITreeContextualMenu::OnContextualMenu(wxCommandEvent &event)
 void mafGUITreeContextualMenu::CryptSubTree(bool crypt)
 //----------------------------------------------------------------------------
 {
-  mafNodeIterator *iter = m_NodeActive->NewIterator();
+  auto iter = m_NodeActive->NewIterator();
 
 	for(mafNode *v=iter->GetFirstNode();v;v=iter->GetNextNode())
 	{
@@ -286,5 +286,4 @@ void mafGUITreeContextualMenu::CryptSubTree(bool crypt)
       continue;
     ((mafVME *)v)->SetCrypting(crypt);
 	}
-	iter->Delete();
 }

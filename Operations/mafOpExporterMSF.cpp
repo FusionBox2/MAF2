@@ -116,14 +116,14 @@ int mafOpExporterMSF::ExportMSF()
 
   std::vector<idValues> values;
 
-  mafNodeIterator *iter = m_Input->NewIterator();
+  auto iter = m_Input->NewIterator();
   for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {
     idValues value;
     value.oldID = node;//->GetId();
     values.push_back(value);
   }
-  iter->Delete();
+  iter.reset();
 //  mafVME *parent = (mafVME *)m_Input->GetParent();
 //  m_Input->ReparentTo(storage.GetRoot());
   mafNode::CopyTree(m_Input,root);
@@ -139,7 +139,7 @@ int mafOpExporterMSF::ExportMSF()
 
     
   }
-  iter->Delete();
+  iter.reset();
 
   std::vector<mafString> linkToEliminate;
   iter = root->GetFirstChild()->NewIterator();
@@ -171,7 +171,7 @@ int mafOpExporterMSF::ExportMSF()
       node->RemoveLink(linkToEliminate[i]);
     }
   }
-  iter->Delete();
+  iter.reset();
 
 //   mafNode *n = m_Input->CopyTree();
 //   n->Register(NULL);

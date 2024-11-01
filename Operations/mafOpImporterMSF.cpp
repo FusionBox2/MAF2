@@ -130,7 +130,7 @@ int mafOpImporterMSF::ImportMSF()
       
   mafString group_name = _R("imported from ") + name + _R(".") + ext;
 
-  mafNodeIterator *iter = root->NewIterator();
+  auto iter = root->NewIterator();
   for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {
     if(node == root)
@@ -149,7 +149,7 @@ int mafOpImporterMSF::ImportMSF()
       }
     }
   }
-  iter->Delete();
+  iter.reset();
  
 
 

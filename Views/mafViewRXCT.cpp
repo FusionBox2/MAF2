@@ -291,7 +291,7 @@ void mafViewRXCT::VmeShow(mafNode *node, bool show)
 
       //BEGIN cycle for remove old surface and redraw the right slice
       
-      mafNodeIterator *iter = node->GetRoot()->NewIterator();
+      auto iter = node->GetRoot()->NewIterator();
       for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
       {
         if(node->IsA("mafVMESurface"))
@@ -304,7 +304,6 @@ void mafViewRXCT::VmeShow(mafNode *node, bool show)
           }
         } 
       }
-      iter->Delete();
       //END cycle for remove old surface and redraw the rigth slice
     }
     else
@@ -1001,7 +1000,7 @@ void mafViewRXCT::SortSlices()
 void mafViewRXCT::SetThicknessForAllSurfaceSlices(mafNode *root)
 //----------------------------------------------------------------------------
 {
-  mafNodeIterator *iter = root->NewIterator();
+  auto iter = root->NewIterator();
   for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {
     if(node->IsA("mafVMESurface"))
@@ -1011,7 +1010,6 @@ void mafViewRXCT::SetThicknessForAllSurfaceSlices(mafNode *root)
         mafPipeSurfaceSlice::StaticDownCast(p)->SetThickness(m_Border);
     }
   }
-  iter->Delete();
 }
 //----------------------------------------------------------------------------
 void mafViewRXCT::VmeSelect(mafNode *node, bool select)

@@ -279,7 +279,7 @@ public:
   /**
     Return a new Tree iterator already set to traverse 
     the sub tree starting a this node. Remember to delete the iterator after use it.*/
-  mafNodeIterator *NewIterator();
+  std::unique_ptr<mafNodeIterator> NewIterator();
 
   /**
     Set/Get the flag to make this VME visible to tree traversal. mafVMEIterator,
