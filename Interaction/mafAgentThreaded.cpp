@@ -177,7 +177,7 @@ void mafAgentThreaded::AsyncInvokeEvent(mafEventBase *event, mafID channel)
   copy_of_event->DeepCopy(event);
   copy_of_event->SetChannel(channel);
   PushEvent(AGENT_ASYNC_DISPATCH,this,copy_of_event); // this make a copy of the event
-  mafDEL(copy_of_event);
+  delete copy_of_event;
 }
 
 //------------------------------------------------------------------------------

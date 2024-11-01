@@ -69,7 +69,7 @@ mafViewManager::~mafViewManager()
   ViewDeleteAll();
 
   for(int i=0; i<m_ViewTemplate.size(); i++) // destroy all template views
-    mafDEL(m_ViewTemplate[i]);
+    delete m_ViewTemplate[i];
 }
 
 //----------------------------------------------------------------------------
@@ -403,7 +403,7 @@ void mafViewManager::ViewDelete(mafView *view)
       break;
     }
   }
-	mafDEL(view);
+	delete view;
 }
 //----------------------------------------------------------------------------
 void mafViewManager::ViewDeleteAll()
