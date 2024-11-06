@@ -24,7 +24,7 @@
 #include "mafEvent.h"
 #include "vtkSmartPointer.h"
 #include "vtkPointSet.h"
-#include "../Eigen/Eigen/Dense"
+#include "Eigen/Dense"
 #include "mafVMEPlane.h"
 #include "mafVMEMeter.h"
 #include "mafVMELineSeg.h"

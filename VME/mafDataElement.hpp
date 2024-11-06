@@ -41,7 +41,7 @@
 //#include "../VTKContentActor.hpp"
 
 
-#include "../Eigen/Eigen/Dense"
+#include "Eigen/Dense"
 #include <iostream>
 
 using Eigen::Vector3d;
