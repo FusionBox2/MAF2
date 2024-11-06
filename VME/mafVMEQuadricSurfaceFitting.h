@@ -24,7 +24,7 @@
 #include "mafEvent.h"
 #include "vtkSmartPointer.h"
 
-#include "../Eigen/Eigen/Dense"
+#include "Eigen/Dense"
 #include "mafVMEEllipsoid.h"
 
 //#include "../QuadricSurfaces/vtkContentActor.hpp"
