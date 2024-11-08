@@ -133,7 +133,7 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 	{
 		wait = new wxBusyInfo("Build Volume Union: please wait...");
 		{mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
-		{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE, (intptr_t)progress); InvokeEvent(evUnq);}
+		{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(progress); InvokeEvent(evUnq);}
 	}
 
 	//Input data(first volume)
@@ -233,7 +233,7 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 		{
 			progress++;
 			mafSleep(150); // Workaround: I need this sleep function to update slowly the progress bar
-			{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); InvokeEvent(evUnq);}
+			{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(progress); InvokeEvent(evUnq);}
 		}	
 	}
 	 
@@ -292,7 +292,7 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 		{
 			progress++;
 			mafSleep(150);
-		    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); InvokeEvent(evUnq);}
+		    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(progress); InvokeEvent(evUnq);}
 		}
 	}
 	
@@ -351,7 +351,7 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 		{
 			progress++;
 			mafSleep(150);
-			{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); InvokeEvent(evUnq);}
+			{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(progress); InvokeEvent(evUnq);}
 		}
 	}
 	
@@ -407,7 +407,7 @@ void mafOpVolumeUnion::BuildVolumeUnion()
 		{
 			progress++;
 			mafSleep(150);
-			{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); InvokeEvent(evUnq);}
+			{mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(progress); InvokeEvent(evUnq);}
 		}
 	}
 

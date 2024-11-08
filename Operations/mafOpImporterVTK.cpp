@@ -154,7 +154,7 @@ int mafOpImporterVTK::ImportVTK()
     default:
       return MAF_ERROR;
   }
-  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,preader); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR); evUnq.SetVtkObj(preader); InvokeEvent(evUnq);}
   preader->SetFileName(m_File.GetCStr());
   preader->Update();
   

@@ -3302,7 +3302,7 @@ void medViewArbitraryOrthoSlice::AccumulateTextures( mafVMESlicer *inSlicer, dou
 
 		if (showProgressBar)
 		{
-			mafEvent eUpdate(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress);
+			mafEvent eUpdate(this,PROGRESSBAR_SET_VALUE); eUpdate.SetArg(progress);
 			InvokeEvent(eUpdate);
 		}
 
@@ -3724,7 +3724,7 @@ void medViewArbitraryOrthoSlice::AddVMEToMSFTree(mafVMESurface *vme)
 {
 	assert(vme != NULL);
 	vme->GetTagArray()->SetTag(mafTagItem(_R("VISIBLE_IN_THE_TREE"), 0.0));
-	{mafEvent evUnq(this, VME_ADD, vme); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this, VME_ADD); evUnq.SetVme(vme); InvokeEvent(evUnq);}
 	assert(vme);
 }
 
@@ -4088,7 +4088,7 @@ void medViewArbitraryOrthoSlice::SaveSlicesTextureToFile(int choosedExportAxis)
 	{          
 		long progress = (100 * ((double )i) / ((double) m_NumberOfAxialSections[choosedExportAxis]));
 
-		mafEvent eUpdate(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress);
+		mafEvent eUpdate(this,PROGRESSBAR_SET_VALUE); eUpdate.SetArg(progress);
 		InvokeEvent(eUpdate);
 
 		// move the slicer in the target abs pose
@@ -4715,7 +4715,7 @@ void medViewArbitraryOrthoSlice::SaveSlicesFromRenderWindowToFile(int chooseExpo
 	{          
 		long progress = (100 * ((double )i) / ((double) m_NumberOfAxialSections[chooseExportAxis]));
 
-		mafEvent eUpdate(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress);
+		mafEvent eUpdate(this,PROGRESSBAR_SET_VALUE); eUpdate.SetArg(progress);
 		InvokeEvent(eUpdate);
 
 		// move the slicer in the target abs pose

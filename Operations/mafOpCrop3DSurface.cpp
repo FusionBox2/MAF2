@@ -474,8 +474,8 @@ void mafOpCrop3DSurface::OpUndo()
 	
 
 	// bug# 2628: gizmos do not update after cropping (workaround code)
-	{mafEvent evUnq(this,VME_SHOW,m_Input,false); InvokeEvent(evUnq);}
-	{mafEvent evUnq(this,VME_SHOW,m_Input,true); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Input); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Input); evUnq.SetBool(true); InvokeEvent(evUnq);}
 	///////
 
 	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}

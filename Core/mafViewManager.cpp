@@ -78,7 +78,9 @@ void mafViewManager::SetMouse(mafDeviceButtonsPadMouse *mouse)
 {
   m_Mouse = mouse;
   if(m_SelectedView && m_Mouse)
-    {mafEvent evUnq(this,VIEW_SELECT,m_SelectedView); m_Mouse->OnEvent(&evUnq);} // Update the mouse for the selected view
+  {
+      mafEvent evUnq(this, VIEW_SELECT); evUnq.SetView(m_SelectedView); m_Mouse->OnEvent(&evUnq);
+  } // Update the mouse for the selected view
 }
 
 //----------------------------------------------------------------------------
@@ -103,12 +105,12 @@ void mafViewManager::OnEvent(mafEventBase *maf_event)
         ViewSelected(view/*, rwi*/);
 
         if(notifylogic)
-          {mafEvent evUnq(this,VIEW_SELECT,(intptr_t)e->GetSender()); InvokeEvent(evUnq);} // forward the view selection event to logic
+          {mafEvent evUnq(this,VIEW_SELECT); evUnq.SetArg((intptr_t)e->GetSender()); InvokeEvent(evUnq);} // forward the view selection event to logic
 
         if(m_CollaborateStatus && m_RemoteListener && !m_FromRemote)
         {
           // Send the event to synchronize the remote application in case of collaboration modality
-          mafEvent ev(this,VIEW_SELECTED,view);
+          mafEvent ev(this, VIEW_SELECTED);ev.SetView(view);
           ev.SetChannel(REMOTE_COMMAND_CHANNEL);
           m_RemoteListener->OnEvent(&ev);
         }
@@ -144,7 +146,8 @@ void mafViewManager::ViewSelected(mafView *view/*, mafRWIBase *rwi*/)
   m_SelectedRWI = view->GetRWI();
   if (m_Mouse)
   {
-    mafEvent e(this,VIEW_SELECT,m_SelectedView);
+    mafEvent e(this, VIEW_SELECT);
+    e.SetView(m_SelectedView);
     e.SetChannel(MCH_OUTPUT);
     m_Mouse->OnEvent(&e); // update the mouse
   }
@@ -297,7 +300,7 @@ mafView *mafViewManager::ViewCreate(int id)
 	ViewInsert(new_view);
 	m_ViewBeingCreated = NULL;
 
-  {mafEvent evUnq(this,VIEW_CREATED,new_view); InvokeEvent(evUnq);} // ask Logic to create the frame
+    { mafEvent evUnq(this, VIEW_CREATED); evUnq.SetView(new_view); InvokeEvent(evUnq); } // ask Logic to create the frame
 	
 	new_view->GetFrame()->Show(true); // show the view's frame
 
@@ -343,7 +346,7 @@ mafView *mafViewManager::ViewCreate(const mafString& label)
 	ViewInsert(new_view);
 	m_ViewBeingCreated = NULL;
 
-  {mafEvent evUnq(this,VIEW_CREATED,new_view); InvokeEvent(evUnq);} // ask Logic to create the frame
+  {mafEvent evUnq(this,VIEW_CREATED); evUnq.SetView(new_view); InvokeEvent(evUnq);} // ask Logic to create the frame
   
   new_view->GetFrame()->Show(true); // show the view's frame
 
@@ -373,7 +376,7 @@ void mafViewManager::ViewDelete(mafView *view)
   if(m_CollaborateStatus && m_RemoteListener && !m_FromRemote)
   {
     // Send the event to synchronize the remote application in case of collaboration modality
-    mafEvent e(this,VIEW_DELETE,view);
+    mafEvent e(this,VIEW_DELETE); e.SetView(view);
     e.SetChannel(REMOTE_COMMAND_CHANNEL);
     m_RemoteListener->OnEvent(&e);
   }
@@ -384,7 +387,7 @@ void mafViewManager::ViewDelete(mafView *view)
     m_SelectedView = NULL;
   }
 
-  {mafEvent evUnq(this,VIEW_DELETE,view); InvokeEvent(evUnq);} // inform the sidebar
+  {mafEvent evUnq(this,VIEW_DELETE); evUnq.SetView(view); InvokeEvent(evUnq);} // inform the sidebar
 	
   // Paolo 2005-04-22
   // calculate the view type index

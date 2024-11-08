@@ -490,8 +490,8 @@ void lhpOpBonemat::OnEvent(mafEventBase *maf_event)
         {
           //WORKAROUND CODE 
           //referred to bug 933
-          {mafEvent evUnq(this,VME_SHOW, m_Input, false); InvokeEvent(evUnq);}
-          {mafEvent evUnq(this,VME_SHOW, m_Input, true); InvokeEvent(evUnq);}
+          {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Input); InvokeEvent(evUnq);}
+          {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Input); evUnq.SetBool(true); InvokeEvent(evUnq);}
           //END WORKAROUND CODE
           OpStop(OP_RUN_OK);
         }
@@ -609,7 +609,7 @@ void lhpOpBonemat::OnEvent(mafEventBase *maf_event)
           //trap the VME_ADD of the mmoCollapse and mmoExplode to update the
           //m_Input, then forward the message to mafDMLlogicMDI
           this->m_Input = e->GetVme();
-          {mafEvent evUnq(this,VME_ADD,this->m_Input); InvokeEvent(evUnq);}
+          {mafEvent evUnq(this,VME_ADD); evUnq.SetVme(this->m_Input); InvokeEvent(evUnq);}
         }
         break;
       case ID_PRINT_DEBUG_INFO:
@@ -1106,7 +1106,7 @@ int lhpOpBonemat::HUIntegration()
     arrayMaterial->InsertNextTuple1(0);
 
     progress = (elementNumber + 1) * 100 / numElements;
-    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(progress); InvokeEvent(evUnq);}
 
   }
   
@@ -1678,7 +1678,7 @@ int lhpOpBonemat::YoungModuleIntegration()
     arrayMaterial->InsertNextTuple1(0);
 
     progress = (id + 1) * 100 / numElements;
-    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(progress); InvokeEvent(evUnq);}
   }
 
   {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
@@ -1824,7 +1824,7 @@ int lhpOpBonemat::YoungModuleIntegration()
     eModuleSource[id].rho = 0;
 
     progress = (id + 1) * 100 / numElements;
-    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(progress); InvokeEvent(evUnq);}
     float valueE = arrayE->GetValue(id);
     float valueRo = arrayRo->GetValue(id);
     arrayE->SetValue(id, eModuleSource[id].E);

@@ -634,10 +634,10 @@ bool mafOpImporterRAWVolume_BES::Import()
 {
 	if(!this->m_TestMode) {
 		{mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}			
-		{mafEvent evUnq(this, PROGRESSBAR_SET_VALUE, (intptr_t)0); InvokeEvent(evUnq);}
+		{mafEvent evUnq(this, PROGRESSBAR_SET_VALUE); evUnq.SetArg(0); InvokeEvent(evUnq);}
 
 		mafString szText = _L("Importing RAW data ...");
-		{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT, &szText); InvokeEvent(evUnq);}
+		{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT); evUnq.SetString(&szText); InvokeEvent(evUnq);}
 	}
 
   vtkNew<vtkDoubleArray> ZDoubleArray;	//Ref(ZDoubleArray) = 1
@@ -776,7 +776,7 @@ bool mafOpImporterRAWVolume_BES::Import()
 		  vtkNew< vtkImageReader > reader;
 		
 		  if (!m_TestMode) {
-			  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR, reader); InvokeEvent(evUnq);}
+			  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR); evUnq.SetVtkObj(reader); InvokeEvent(evUnq);}
 		  }
 
 		  img = (vtkImageData*)ImportT< vtkImageReader >(reader);

@@ -104,7 +104,7 @@ void mafOp::OpUndo()
 {
   if (m_Output)
   {
-    {mafEvent evUnq(this, VME_REMOVE, m_Output); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Output); InvokeEvent(evUnq);}
     {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
 }
@@ -166,7 +166,7 @@ void mafOp::ShowGui()
   mafString menu_codes=mafStripMenuCodes(m_Label);
   mafString title = _R(" ") + menu_codes + _R(" parameters:");
   m_Guih->SetTitle(title);
-  {mafEvent evUnq(this,OP_SHOW_GUI,(wxWindow *)m_Guih); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,OP_SHOW_GUI); evUnq.SetWin(m_Guih); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOp::HideGui()
@@ -174,7 +174,7 @@ void mafOp::HideGui()
 {
   if(!m_Gui)
     return;
-  {mafEvent evUnq(this,OP_HIDE_GUI,(wxWindow *)m_Guih); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,OP_HIDE_GUI); evUnq.SetWin(m_Guih); InvokeEvent(evUnq);}
   delete m_Guih;
   m_Guih = NULL;
   m_Gui = NULL;

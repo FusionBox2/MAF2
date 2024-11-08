@@ -191,7 +191,7 @@ void medGizmoInteractionDebugger::Show(bool show)
 //----------------------------------------------------------------------------
 {
   assert(m_VmeGizmo);
-  {mafEvent evUnq(this,VME_SHOW,m_VmeGizmo,show); InvokeEvent(evUnq);}  
+  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VmeGizmo); evUnq.SetBool(show); InvokeEvent(evUnq);}
 }
 
 void medGizmoInteractionDebugger::SetCurvilinearAbscissa( vtkIdType branchId, double s )

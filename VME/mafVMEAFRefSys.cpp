@@ -383,14 +383,15 @@ void mafVMEAFRefSys::OnEvent(mafEventBase *maf_event)
     {
       if(maf_event->GetId() >= ID_FIRSTDYN)
       {
-        std::map<int, mafString>::iterator itbtn = m_buttonMapping.find(maf_event->GetId());
+        auto itbtn = m_buttonMapping.find(maf_event->GetId());
         if(itbtn != m_buttonMapping.end())
         {
-          std::map<mafString, mafString>::iterator itlm = m_lmMapping.find(itbtn->second);
+          auto itlm = m_lmMapping.find(itbtn->second);
           if(itlm != m_lmMapping.end())
           {
             mafString title = _R("Choose landmark");
-            mafEvent e(this,VME_CHOOSE, &title);
+            mafEvent e(this,VME_CHOOSE);
+            e.SetString(&title);
             e.SetArg((intptr_t)&mafVMERefSysAbstract::LandmarkAccept);
             e.SetString(&title);
             e.SetId(VME_CHOOSE);

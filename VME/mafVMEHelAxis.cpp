@@ -627,7 +627,7 @@ void mafVMEHelAxis::OnEvent(mafEventBase *maf_event)
   case ID_PROXIMAL:
     {
       mafString s(_L("Choose cloud"));
-      mafEvent e(this,VME_CHOOSE, &s, NULL/*, (long)&lhpOpRegisterLMScripted::ClosedCloudAccept*/);
+      mafEvent e(this,VME_CHOOSE); e.SetString(&s); e.SetArg(NULL/*, (long)&lhpOpRegisterLMScripted::ClosedCloudAccept*/);
       this->ForwardUpEvent(e);
       mafVME *vme = mafVME::SafeDownCast(e.GetVme());
       SetProximal(vme);
@@ -636,7 +636,7 @@ void mafVMEHelAxis::OnEvent(mafEventBase *maf_event)
   case ID_DISTAL:
   {
     mafString s(_L("Choose cloud"));
-    mafEvent e(this,VME_CHOOSE, &s, NULL/*, (long)&lhpOpRegisterLMScripted::ClosedCloudAccept*/);
+    mafEvent e(this,VME_CHOOSE); e.SetString(&s); e.SetArg(NULL/*, (long)&lhpOpRegisterLMScripted::ClosedCloudAccept*/);
     this->ForwardUpEvent(e);
     mafVME *vme = mafVME::SafeDownCast(e.GetVme());
     SetDistal(vme);

@@ -301,7 +301,7 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
   fp = fopen(fileName.GetCStr(), "rt");
   if(fp == NULL)
   {
-    {mafEvent evUnq(this, VME_ADD, grp); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(grp); InvokeEvent(evUnq);}
     return;
   }
 
@@ -318,7 +318,7 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
     if(pRet == NULL)
     {
       fclose(fp);
-      {mafEvent evUnq(this, VME_ADD, grp); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(grp); InvokeEvent(evUnq);}
       return;
     }
     if(sLine[0] != '#')
@@ -328,7 +328,7 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
   if(2 != sscanf(sLine, "%d %d\n", &nPointsNumber, &nBonesNumber))
   {
     fclose(fp);
-    {mafEvent evUnq(this, VME_ADD, grp); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(grp); InvokeEvent(evUnq);}
     return;
   }
   //skip points
@@ -386,7 +386,7 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
     mafDEL(surface);
   }
   fclose(fp);
-  {mafEvent evUnq(this, VME_ADD, grp); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(grp); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -451,7 +451,7 @@ void lhpOpMTRULBImporter::OpDo()
     if (m_Groups[i])
     {
       m_Groups[i]->ReparentTo(m_Input);
-      {mafEvent evUnq(this, VME_ADD, m_Groups[i]); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_Groups[i]); InvokeEvent(evUnq);}
     }
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
@@ -465,7 +465,7 @@ void lhpOpMTRULBImporter::OpUndo()
   {
     if (m_Groups[i])
     {
-      {mafEvent evUnq(this, VME_REMOVE, m_Groups[i]); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Groups[i]); InvokeEvent(evUnq);}
     }
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}

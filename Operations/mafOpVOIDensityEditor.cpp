@@ -150,7 +150,7 @@ void mafOpVOIDensityEditor::OnEvent(mafEventBase *maf_event)
 			case ID_CHOOSE_SURFACE:
 			{
 				mafString title = _L("VOI surface");
-        mafEvent event(this,VME_CHOOSE,&title,(intptr_t)&mafOpVOIDensityEditor::OutputSurfaceAccept);
+        mafEvent event(this,VME_CHOOSE); event.SetString(&title); event.SetArg((intptr_t)&mafOpVOIDensityEditor::OutputSurfaceAccept);
 				InvokeEvent(event);
 				m_Surface = event.GetVme();
 				if(m_Surface == NULL)
@@ -273,7 +273,7 @@ void mafOpVOIDensityEditor::EditVolumeScalars()
   }
 
   ((mafVME *)m_Input)->GetOutput()->Update();
-  {mafEvent evUnq(this, VME_MODIFIED, m_Input); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this, VME_MODIFIED); evUnq.SetVme(m_Input); InvokeEvent(evUnq);}
   {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 

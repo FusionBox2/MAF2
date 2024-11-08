@@ -136,7 +136,7 @@ void mafVMERoot::OnEvent(mafEventBase *maf_event)
         // Bug Fixing for the root GUI event management
         Superclass::OnEvent(maf_event);
       }
-      mafEvent ev(this,VME_MODIFIED,this);
+      mafEvent ev(this,VME_MODIFIED); ev.SetVme(this);
       mafRoot::InvokeEvent(&ev);
     }
     else

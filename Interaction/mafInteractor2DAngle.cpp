@@ -588,7 +588,7 @@ void mafInteractor2DAngle::CalculateMeasure()
     //  angle = 180.0 - angle; 
 
     m_Angle = angle;
-    {mafEvent evUnq(this,ID_RESULT_ANGLE,angle); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,ID_RESULT_ANGLE); evUnq.SetDouble(angle); InvokeEvent(evUnq);}
     return;
   } 
 }
@@ -643,11 +643,11 @@ void mafInteractor2DAngle::UndoMeasure()
     }
     if(m_Measure.size() == 0)
     {
-      {mafEvent evUnq(this,ID_RESULT_ANGLE,0.0); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,ID_RESULT_ANGLE); evUnq.SetDouble(0.0); InvokeEvent(evUnq);}
     }
     else
     {
-      {mafEvent evUnq(this,m_FlagMeasureType[m_FlagMeasureType.size()-1],m_Measure[m_Measure.size()-1]); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,m_FlagMeasureType[m_FlagMeasureType.size()-1]); evUnq.SetDouble(m_Measure[m_Measure.size()-1]); InvokeEvent(evUnq);}
     }
     {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
   }

@@ -136,7 +136,7 @@ void lhpOpINPImporter::OpDo()
     if (m_Surfaces[i])
     {
       m_Surfaces[i]->ReparentTo(m_Input);
-      {mafEvent evUnq(this, VME_ADD, m_Surfaces[i]); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_Surfaces[i]); InvokeEvent(evUnq);}
     }
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
@@ -150,7 +150,7 @@ void lhpOpINPImporter::OpUndo()
   {
     if (m_Surfaces[i])
     {
-      {mafEvent evUnq(this, VME_REMOVE, m_Surfaces[i]); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Surfaces[i]); InvokeEvent(evUnq);}
     }
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}

@@ -130,7 +130,7 @@ void lhpOpJoinSurf::OnEvent(mafEventBase *maf_event)
       return;
       }*/
       mafString s(_R("Choose surface to join"));
-      mafEvent e(this,VME_CHOOSE, &s);
+      mafEvent e(this,VME_CHOOSE); e.SetString(&s);
       InvokeEvent(e);
       if(e.GetVme() == NULL)
       {
@@ -396,7 +396,7 @@ void lhpOpJoinSurf::OpDo()
   if(m_OutSurface)
   {
     m_OutSurface->ReparentTo(m_Input->GetRoot());
-    {mafEvent evUnq(this, VME_ADD, m_OutSurface); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_OutSurface); InvokeEvent(evUnq);}
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
@@ -407,7 +407,7 @@ void lhpOpJoinSurf::OpUndo()
 {
   if(m_OutSurface)
   {
-    {mafEvent evUnq(this, VME_REMOVE, m_OutSurface); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_OutSurface); InvokeEvent(evUnq);}
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }

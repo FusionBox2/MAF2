@@ -514,7 +514,6 @@ void mafGUIColorWidget::OnEvent( mafEventBase *event )
       OnColorChanged();
       break;
     default:
-      e->Log();
       break; 
     }
   }

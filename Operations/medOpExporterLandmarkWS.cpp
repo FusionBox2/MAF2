@@ -173,7 +173,7 @@ void medOpExporterLandmarkWS::Write()
 
       if (!m_TestMode)
       {
-        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)(((double) i)/((double) timeStamps.size())*100.)); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg((((double) i)/((double) timeStamps.size())*100.)); InvokeEvent(evUnq);}
       }
     }
 

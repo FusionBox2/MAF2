@@ -97,7 +97,7 @@ void medWizardBlockVMEFindOrSelection::ExcutionBegin()
 		  {
 			  //Select vme 
 			  m_SelectedVME=selVME;
-			  {mafEvent evUnq(this,VME_SELECT,m_SelectedVME); InvokeEvent(evUnq);}
+			  {mafEvent evUnq(this,VME_SELECT); evUnq.SetVme(m_SelectedVME); InvokeEvent(evUnq);}
 		  }
 	  }
 	  // if there is only one acceptable volume we select it
@@ -108,7 +108,7 @@ void medWizardBlockVMEFindOrSelection::ExcutionBegin()
 		  {
 			  //Select vme 
 			  m_SelectedVME=selVME;
-			  {mafEvent evUnq(this,VME_SELECT,m_SelectedVME); InvokeEvent(evUnq);}
+			  {mafEvent evUnq(this,VME_SELECT); evUnq.SetVme(m_SelectedVME); InvokeEvent(evUnq);}
 		  }
 	  }
 	  else {

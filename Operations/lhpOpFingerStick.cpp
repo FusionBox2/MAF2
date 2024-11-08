@@ -391,7 +391,7 @@ void lhpOpFingerStick::OnEvent(mafEventBase *e)
     case ID_PLATE_CALIBRATION:
     {
       mafString s(_R("Choose wand calibration cloud"));
-      mafEvent e(this,VME_CHOOSE, &s);
+      mafEvent e(this,VME_CHOOSE); e.SetString(&s);
       InvokeEvent(e);
       if(e.GetVme() == NULL)
       {
@@ -410,7 +410,7 @@ void lhpOpFingerStick::OnEvent(mafEventBase *e)
     case ID_BALLS_CALIBRATION:
     {
       mafString s(_R("Choose wand definition cloud"));
-      mafEvent e(this,VME_CHOOSE, &s);
+      mafEvent e(this,VME_CHOOSE); e.SetString(&s);
       InvokeEvent(e);
       if(e.GetVme() == NULL)
       {
@@ -429,7 +429,7 @@ void lhpOpFingerStick::OnEvent(mafEventBase *e)
     case ID_PALPATOR_CALIBRATION:
     {
       mafString s(_R("Choose  target calibration cloud"));
-      mafEvent e(this,VME_CHOOSE, &s);
+      mafEvent e(this,VME_CHOOSE); e.SetString(&s);
       InvokeEvent(e);
       if(e.GetVme() == NULL)
       {
@@ -463,7 +463,7 @@ void lhpOpFingerStick::OnEvent(mafEventBase *e)
     case ID_PLATE_CLOUD:
     {
       mafString s(_R("Choose target cloud"));
-      mafEvent e(this,VME_CHOOSE, &s);
+      mafEvent e(this,VME_CHOOSE); e.SetString(&s);
       InvokeEvent(e);
       if(e.GetVme() == NULL)
       {
@@ -482,7 +482,7 @@ void lhpOpFingerStick::OnEvent(mafEventBase *e)
     case ID_PALPATOR_CLOUD:
     {
       mafString s(_R("Choose target cloud"));
-      mafEvent e(this,VME_CHOOSE, &s);
+      mafEvent e(this,VME_CHOOSE); e.SetString(&s);
       InvokeEvent(e);
       if(e.GetVme() == NULL)
       {
@@ -571,7 +571,7 @@ void lhpOpFingerStick::OpDo()
   mafNEW(group); //We got a Reference on it
   group->SetName(_R("Finger palpator"));
   group->ReparentTo(m_Input);
-  {mafEvent evUnq(this,VME_ADD,group); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_ADD); evUnq.SetVme(group); InvokeEvent(evUnq);}
 
   for(nI = 0; nI < ((!m_ListFName.empty()) ? m_LMDict.size() : m_BallsCalibration->GetNumberOfLandmarks()); nI++)
   {
@@ -600,7 +600,7 @@ void lhpOpFingerStick::OpDo()
     vme = c3dImported;
     delete importer;
 
-    {mafEvent evUnq(this,VME_ADD,vme); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,VME_ADD); evUnq.SetVme(vme); InvokeEvent(evUnq);}
 
     if(vme != NULL)
     {
@@ -650,16 +650,16 @@ void lhpOpFingerStick::OpDo()
 
         locCalibr->AppendLandmark(res[0], res[1], res[2], _R("TIP"));
         locCalibr->ReparentTo(group);
-        {mafEvent evUnq(this,VME_ADD,locCalibr); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this,VME_ADD); evUnq.SetVme(locCalibr); InvokeEvent(evUnq);}
         mafDEL(locCalibr);
       }
-      {mafEvent evUnq(this,VME_REMOVE,vme); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(vme); InvokeEvent(evUnq);}
       mafDEL(vme);
     }
   }
   if(calculated == 0)
   {
-    {mafEvent evUnq(this,VME_REMOVE,group); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(group); InvokeEvent(evUnq);}
     mafDEL(group);
     return;
   }
@@ -683,7 +683,7 @@ void lhpOpFingerStick::OpDo()
 
   averagedCalibr->AppendLandmark(tipPoint[0], tipPoint[1], tipPoint[2], _R("TIP"));
   averagedCalibr->ReparentTo(group);
-  {mafEvent evUnq(this,VME_ADD,averagedCalibr); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_ADD); evUnq.SetVme(averagedCalibr); InvokeEvent(evUnq);}
   mafDEL(averagedCalibr);
   m_Output = group;
 }

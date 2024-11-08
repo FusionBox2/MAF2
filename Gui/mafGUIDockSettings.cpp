@@ -191,7 +191,6 @@ void mafGUIDockSettings::OnEvent(mafEventBase *evt)
       if(m_CaptionMode == 2) m_Mgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_HORIZONTAL);
       break;
     default: 
-      e->Log();
     break;
     }
     m_Mgr.Update();

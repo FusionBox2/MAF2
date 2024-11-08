@@ -84,9 +84,9 @@ void medOpImporterGRFWS::OpUndo()
 //----------------------------------------------------------------------------
 {   
   if(m_PlatformLeft != NULL)
-    {mafEvent evUnq(this,VME_REMOVE,m_PlatformLeft); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_PlatformLeft); InvokeEvent(evUnq);}
   if(m_PlatformRight != NULL)
-    {mafEvent evUnq(this,VME_REMOVE,m_PlatformRight); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_PlatformRight); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 mafOp* medOpImporterGRFWS::Copy()   
@@ -452,7 +452,7 @@ void medOpImporterGRFWS::ReadForcePlates()
     count++;
     if (!m_TestMode)
     {
-      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)(((double) count)/((double) totlines)*100.)); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg((((double) count)/((double) totlines)*100.)); InvokeEvent(evUnq);}
     }
 
   }while (!inputFile.Eof());
@@ -607,7 +607,7 @@ void medOpImporterGRFWS::ReadSingleVector()
     count++;
     if (!m_TestMode)
     {
-      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)(((double) count)/((double) totlines)*100.)); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg((((double) count)/((double) totlines)*100.)); InvokeEvent(evUnq);}
     }
 
   }while (!inputFile.Eof());

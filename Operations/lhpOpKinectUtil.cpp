@@ -1349,8 +1349,8 @@ void lhpOpKinectUtil::OpDo()
   for(unsigned i = 0; i < m_Imported.size(); i++)
   {
     m_Imported[i]->ReparentTo(m_Input);
-    {mafEvent evUnq(this, VME_COLLAPSESUBTREE, m_Imported[i]); InvokeEvent(evUnq);}
-    {mafEvent evUnq(this, VME_EXPAND, m_Imported[i]); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_COLLAPSESUBTREE); evUnq.SetVme(m_Imported[i]); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_EXPAND); evUnq.SetVme(m_Imported[i]); InvokeEvent(evUnq);}
   }
 }
 

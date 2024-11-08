@@ -288,7 +288,7 @@ void medOpInteractiveClipSurface::OnEventThis(mafEventBase *maf_event)
           return;
         }
         mafString s(_R("Choose Constrain"));
-        mafEvent e(this,VME_CHOOSE, &s, (intptr_t)&medOpInteractiveClipSurface::ConstrainAccept);
+        mafEvent e(this,VME_CHOOSE); e.SetString(&s); e.SetArg((intptr_t)&medOpInteractiveClipSurface::ConstrainAccept);
         InvokeEvent(e);
         mafNode *vme = e.GetVme();
         if(vme != NULL)
@@ -638,7 +638,7 @@ void medOpInteractiveClipSurface::OpStop(int result)
   if(m_ImplicitPlaneVMEGizmo)
   {
     m_ImplicitPlaneVMEGizmo->SetBehavior(NULL);
-    {mafEvent evUnq(this, VME_REMOVE, m_ImplicitPlaneVMEGizmo); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_ImplicitPlaneVMEGizmo); InvokeEvent(evUnq);}
   }
 
   if(m_GizmoTranslate)
@@ -916,7 +916,7 @@ void medOpInteractiveClipSurface::ShowClipPlane(bool show)
 
       m_ImplicitPlaneVMEGizmo->SetAbsMatrix(mat);
 
-      {mafEvent evUnq(this,VME_SHOW,m_ImplicitPlaneVMEGizmo,true); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_ImplicitPlaneVMEGizmo); evUnq.SetBool(true); InvokeEvent(evUnq);}
     }
     auto material = m_ImplicitPlaneVMEGizmo->GetMaterial();
     material->m_Prop->SetOpacity(0.5);

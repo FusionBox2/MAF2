@@ -145,7 +145,7 @@ void  lhpOpMTRImporter::ImportData()
       break;
     }
 
-    {mafEvent evUnq(this, VME_ADD, grp); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(grp); InvokeEvent(evUnq);}
     {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
 }
@@ -159,7 +159,7 @@ void lhpOpMTRImporter::OpDo()
     if (m_Groups[i])
     {
       m_Groups[i]->ReparentTo(m_Input);
-      {mafEvent evUnq(this, VME_ADD, m_Groups[i]); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_Groups[i]); InvokeEvent(evUnq);}
     }
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
@@ -173,7 +173,7 @@ void lhpOpMTRImporter::OpUndo()
   {
     if (m_Groups[i])
     {
-      {mafEvent evUnq(this, VME_REMOVE, m_Groups[i]); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Groups[i]); InvokeEvent(evUnq);}
     }
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}

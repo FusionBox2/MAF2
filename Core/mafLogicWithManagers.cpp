@@ -2043,7 +2043,7 @@ void mafLogicWithManagers::ViewCreated(mafView *v)
         [=](wxCommandEvent& event)
         {
           wxWindow* rwi = (wxWindow*)event.GetEventObject();
-          { mafEvent evUnq(this, VIEW_SELECT, v, rwi); extern_view->InvokeEvent(evUnq); }
+          { mafEvent evUnq(this, VIEW_SELECT); evUnq.SetView(v); evUnq.SetWin(rwi); extern_view->InvokeEvent(evUnq); }
         }, VIEW_CLICKED);
       extern_view->SetListener(m_ViewManager.get());
       v->SetFrame(extern_view);
@@ -2057,7 +2057,7 @@ void mafLogicWithManagers::ViewCreated(mafView *v)
         {
           c->Activate();
           wxWindow* rwi = (wxWindow*)event.GetEventObject();
-          { mafEvent evUnq(this, VIEW_SELECT, v, rwi); c->InvokeEvent(evUnq); }
+          { mafEvent evUnq(this, VIEW_SELECT); evUnq.SetView(v); evUnq.SetWin(rwi); c->InvokeEvent(evUnq); }
         }, VIEW_CLICKED);
       c->SetListener(m_ViewManager.get());
       v->SetFrame(c);

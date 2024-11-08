@@ -288,7 +288,6 @@ void mafGUICrossIncremental::OnEvent(mafEventBase *maf_event)
       }
       break;
     default:
-      e->Log();
       break;
     }
 

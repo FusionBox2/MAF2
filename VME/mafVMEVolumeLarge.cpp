@@ -538,7 +538,7 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
       (vtkDataSet*)m_LargeDataReader->GetOutputDataSet()), 0, MAF_VME_REFERENCE_DATA);
     this->Modified();
     //force redraw
-    mafEvent ev(this, VME_SELECTED,this);
+    mafEvent ev(this, VME_SELECTED); ev.SetVme(this);
     this->ForwardUpEvent(&ev);
     UpdateGui();
   }
@@ -633,7 +633,7 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 //	UpdateOutput();	
 
   //force redraw
-  mafEvent ev(this, VME_SELECTED,this);
+  mafEvent ev(this, VME_SELECTED); ev.SetVme(this);
   this->ForwardUpEvent(&ev);
   UpdateGui();
 #endif
@@ -695,7 +695,7 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 //	UpdateOutput();	
     
   //force redraw
-  mafEvent ev(this, VME_SELECTED,this);
+  mafEvent ev(this, VME_SELECTED); ev.SetVme(this);
   this->ForwardUpEvent(&ev);
   UpdateGui();
 }
@@ -804,7 +804,7 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
     m_VOI[0], m_VOI[2], m_VOI[4], m_LargeDataReader->GetSampleRate()));
   newVME->GetTagArray()->SetTag(tag_Nature);
     
-  mafEvent ev(this, VME_ADD, newVME);
+  mafEvent ev(this, VME_ADD); ev.SetVme(newVME);
   this->ForwardUpEvent(&ev);
 
   mafDEL(newVME);   //VME_ADD increased reference

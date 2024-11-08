@@ -153,7 +153,7 @@ void mafOpExporterVTK::OnEvent(mafEventBase *maf_event)
         //trap the VME_ADD of the mafOpCollapse and mafOpExplode to update the
         //m_Input, then forward the message to mafDMLlogicMDI
         this->m_Input = e->GetVme();
-        {mafEvent evUnq(this,VME_ADD,this->m_Input); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this,VME_ADD); evUnq.SetVme(this->m_Input); InvokeEvent(evUnq);}
       }
       break;
       default:
@@ -256,7 +256,7 @@ void mafOpExporterVTK::SaveVTKData()
   // {mafEvent evUnq(this,BIND_TO_PROGRESSBAR, writer); InvokeEvent(evUnq);}
   long dummyProgressValue = 50;
   
-  {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)dummyProgressValue); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(dummyProgressValue); InvokeEvent(evUnq);}
 
   writer->SetFileName(m_File.GetCStr());
   writer->Write();

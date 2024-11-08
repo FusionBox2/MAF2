@@ -23,7 +23,7 @@
 	{
 		if (eventId == vtkCommand::ProgressEvent)
 		{
-			mafEvent ev(this, PROGRESSBAR_SET_VALUE, (intptr_t)(*((double*)callData)*100));
+			mafEvent ev(this, PROGRESSBAR_SET_VALUE); ev.SetArg((*((double*)callData)*100));
 			InvokeEvent(&ev);
 		}
 		else if (eventId == vtkCommand::StartEvent)

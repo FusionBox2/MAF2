@@ -167,8 +167,7 @@ mafGUILutSlider::~mafGUILutSlider()
 void mafGUILutSlider::DoubleLeftButton(int id)
 //----------------------------------------------------------------------------
 {
-  mafEvent event;
-  event = mafEvent(this,ID_MOUSE_D_CLICK_LEFT);
+  mafEvent event(this,ID_MOUSE_D_CLICK_LEFT);
   event.SetArg(id);
   InvokeEvent(event);
 }
@@ -255,8 +254,8 @@ void mafGUILutSlider::MoveButton(int id, int pos)
 		}
 		break;
   }
-  mafEvent event;
-  event = mafEvent(this,ID_RANGE_MODIFIED,(wxObject *)this);
+  mafEvent event(this, ID_RANGE_MODIFIED);
+  event.SetWxObj(this);
   event.SetArg(ID_MOUSE_MOVE);
   InvokeEvent(event);
 }
@@ -264,8 +263,8 @@ void mafGUILutSlider::MoveButton(int id, int pos)
 void mafGUILutSlider::ReleaseButton()
 //----------------------------------------------------------------------------
 {
-  mafEvent event;
-  event = mafEvent(this,ID_RANGE_MODIFIED,(wxObject *)this);
+	mafEvent event(this, ID_RANGE_MODIFIED);
+	event.SetWxObj(this);
   event.SetArg(ID_MOUSE_RELEASE);
   InvokeEvent(event);
 }
@@ -388,7 +387,8 @@ void mafGUILutSlider::ShowEntry(int id)
 				val = (val>=m_MinValue) ? val : m_MinValue;
 				val = (val< m_HighValue)  ? val : m_HighValue;
 				SetSubRange(val,m_HighValue);
-        mafEvent event = mafEvent(this,ID_RANGE_MODIFIED,this);
+				mafEvent event(this, ID_RANGE_MODIFIED);
+				event.SetWin(this);
 		    InvokeEvent(event);
 			}
 		}
@@ -404,7 +404,8 @@ void mafGUILutSlider::ShowEntry(int id)
 				val = (val> m_LowValue) ? val : m_LowValue;
 				val = (val<=m_MaxValue) ? val : m_MaxValue;
 				SetSubRange(m_LowValue,val);
-        mafEvent event = mafEvent(this,ID_RANGE_MODIFIED,this);
+				mafEvent event(this, ID_RANGE_MODIFIED);
+				event.SetWin(this);
         InvokeEvent(event);
 			}
 		}

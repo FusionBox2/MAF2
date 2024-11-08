@@ -132,7 +132,7 @@ bool medOpLabelizeSurface::Accept(mafNode *node)
 void medOpLabelizeSurface::OpRun()   
 //----------------------------------------------------------------------------
 {
-	{mafEvent evUnq(this,VME_SHOW,m_Input,false); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Input); InvokeEvent(evUnq);}
 
 	mafNEW(m_VmeEditor);
 	vtkNew<vtkPolyData> inputOriginalPolydata;
@@ -185,7 +185,7 @@ void medOpLabelizeSurface::OpRun()
 	m_VmeEditor->Modified();
 	m_VmeEditor->Update();
 
-	{mafEvent evUnq(this,VME_SHOW,m_VmeEditor,true); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VmeEditor); evUnq.SetBool(true); InvokeEvent(evUnq);}
 
 	vtkPolyData *initialData;
 	vtkNEW(initialData);
@@ -383,7 +383,7 @@ void medOpLabelizeSurface::ShowClipPlane(bool show)
 
 			m_ImplicitPlaneGizmo->SetAbsMatrix(mat);
 
-			{mafEvent evUnq(this,VME_SHOW,m_ImplicitPlaneGizmo,true); InvokeEvent(evUnq);}
+			{mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(m_ImplicitPlaneGizmo); evUnq.SetBool(true); InvokeEvent(evUnq);}
 		}
 		auto material = m_ImplicitPlaneGizmo->GetMaterial();
 		material->m_Prop->SetOpacity(0.5);
@@ -593,13 +593,13 @@ void medOpLabelizeSurface::UpdateISARefSys()
 void medOpLabelizeSurface::OpStop(int result)
 //----------------------------------------------------------------------------
 {
-	{mafEvent evUnq(this,VME_SHOW,m_VmeEditor,false); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VmeEditor); InvokeEvent(evUnq);}
 	m_VmeEditor->ReparentTo(NULL);
 
 	if(m_ImplicitPlaneGizmo)
 	{
 		m_ImplicitPlaneGizmo->SetBehavior(NULL);
-		{mafEvent evUnq(this, VME_REMOVE, m_ImplicitPlaneGizmo); InvokeEvent(evUnq);}
+		{mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_ImplicitPlaneGizmo); InvokeEvent(evUnq);}
 	}
 	mafDEL(m_ImplicitPlaneGizmo);
 
@@ -623,7 +623,7 @@ void medOpLabelizeSurface::OpStop(int result)
 	cppDEL(m_GizmoRotate);
 	cppDEL(m_GizmoScale);
 
-	{mafEvent evUnq(this,VME_SHOW,m_Input,true); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Input); evUnq.SetBool(true); InvokeEvent(evUnq);}
 
 	if(!m_TestMode)
 		HideGui();
@@ -642,8 +642,8 @@ void medOpLabelizeSurface::OpDo()
 		mafVMESurface::SafeDownCast(m_Input)->GetSurfaceOutput()->SetMaterial(mat);
 		mafVMESurface::SafeDownCast(m_Input)->GetSurfaceOutput()->Update();
 		mafVMESurface::SafeDownCast(m_Input)->GetOutput()->Update();
-		{mafEvent evUnq(this,VME_SHOW,m_Input,false); InvokeEvent(evUnq);}
-		{mafEvent evUnq(this,VME_SHOW,m_Input,true); InvokeEvent(evUnq);}
+		{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Input); InvokeEvent(evUnq);}
+		{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Input); evUnq.SetBool(true); InvokeEvent(evUnq);}
 		{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 	}
 }

@@ -59,7 +59,7 @@ public:
   void UnBindDeviceFromAllActions(mafDevice *device);
 
   /** return list of device bindings to actions */
-  void GetDeviceBindings(mafDevice *device,std::vector<mafAction *> &actions);
+  std::vector<mafAction*> GetDeviceBindings(mafDevice *device);
   /** 
     Bind an agent to the specified action. 
     If the action is not present return -1 */

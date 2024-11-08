@@ -172,8 +172,8 @@ void mafOpDecimateSurface::OnEvent(mafEventBase *maf_event)
           else
             surface->GetMaterial()->m_Prop->SetRepresentationToSurface();
 
-          {mafEvent evUnq(this,UPDATE_PROPERTY,m_Input, true); InvokeEvent(evUnq);}
-					{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
+          {mafEvent evUnq(this,UPDATE_PROPERTY); evUnq.SetVme(m_Input); evUnq.SetBool(true); InvokeEvent(evUnq);}
+          {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 
         }
       break;
@@ -206,7 +206,7 @@ void mafOpDecimateSurface::OpStop(int result)
   mafVMESurface *surface;
   surface = mafVMESurface::SafeDownCast(m_Input);
   surface->GetMaterial()->m_Prop->SetRepresentationToSurface();
-  {mafEvent evUnq(this,UPDATE_PROPERTY,m_Input, true); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,UPDATE_PROPERTY); evUnq.SetVme(m_Input); evUnq.SetBool(true); InvokeEvent(evUnq);}
 
 	HideGui();
 	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}

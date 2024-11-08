@@ -751,7 +751,7 @@ void mafOpClipSurface::ShowClipPlane(bool show)
 
       m_ImplicitPlaneGizmo->SetAbsMatrix(mat);
 
-      {mafEvent evUnq(this,VME_SHOW,m_ImplicitPlaneGizmo,true); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_ImplicitPlaneGizmo); evUnq.SetBool(true); InvokeEvent(evUnq);}
     }
     auto material = m_ImplicitPlaneGizmo->GetMaterial();
     material->m_Prop->SetOpacity(0.5);

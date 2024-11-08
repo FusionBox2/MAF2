@@ -64,7 +64,7 @@
   pTempVME->Register(sender);   //cannot use mafNEW from a static routine
   if (m_Listener) 
   {
-    mafEvent e(sender, VME_ADD, pTempVME);
+    mafEvent e(sender, VME_ADD); e.SetVme(pTempVME);
     m_Listener->OnEvent(&e);
   }
 
@@ -73,7 +73,7 @@
 
   if (m_Listener) 
   {
-    mafEvent e(sender, VME_REMOVE, pTempVME);
+    mafEvent e(sender, VME_REMOVE); e.SetVme(pTempVME);
     m_Listener->OnEvent(&e);
   }
 

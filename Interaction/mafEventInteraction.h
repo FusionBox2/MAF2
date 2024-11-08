@@ -1,21 +1,6 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafEventInteraction
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __mafEventInteraction_h
-#define __mafEventInteraction_h
+#include "ftkConfigure.h"
 
 #include "mafEventBase.h"
 #include "mafMatrix.h"
@@ -32,9 +17,18 @@
 */
 class MAF_EXPORT mafEventInteraction : public mafEventBase
 {
+	mafTypeMacroN(mafEventInteraction);
 public:
-  /** RTTI macro*/
-  mafTypeMacro(mafEventInteraction,mafEventBase);
+	mafEventInteraction(void* sender = NULL, mafID id = -1, int button = 0, unsigned long modifiers = 0) :
+		mafEventBase(sender, id), m_Button(button), m_Modifiers(modifiers) {}
+
+	mafEventInteraction(void* sender, mafID id, std::shared_ptr<mafMatrix> matrix, int button = 0, unsigned long modifiers = 0) :
+		mafEventBase(sender, id), m_Button(button), m_Modifiers(modifiers), m_Matrix(matrix) {}
+
+	mafEventInteraction(void* sender, mafID id, double x, double y, int button = 0, unsigned long modifiers = 0) :
+		mafEventBase(sender, id), m_X(x), m_Y(y), m_XYFlag(true), m_Button(button), m_Modifiers(modifiers) {}
+
+	~mafEventInteraction() override = default;
 
   /** Set screen position, for 2D tracking devices */
   void Set2DPosition(double x,double y);
@@ -76,32 +70,15 @@ public:
 
   /** Deep Copy of the object*/
   void DeepCopy(const mafEventBase *event) override;
-  
-  /** overloaded constructor */
-  mafEventInteraction(void *sender=NULL,mafID id=-1,int button=0,unsigned long modifiers=0):
-  mafEventBase(sender,id),m_Button(button),m_Modifiers(modifiers),m_Key(0),m_X(0),m_Y(0),m_XYFlag(false) {}
 
-  /** overloaded constructor */
-  mafEventInteraction(void *sender,mafID id,std::shared_ptr<mafMatrix> matrix,int button=0,unsigned long modifiers=0):
-  mafEventBase(sender,id),m_Button(button),m_Modifiers(modifiers),m_Key(0),m_Matrix(matrix),m_X(0),m_Y(0),m_XYFlag(false) {}
-
-  /** overloaded constructor */
-  mafEventInteraction(void *sender,mafID id,double x,double y,int button=0,unsigned long modifiers=0):
-  mafEventBase(sender,id),m_X(x),m_Y(y),m_XYFlag(true),m_Button(button),m_Modifiers(modifiers),m_Key(0) {}
-
-  ~mafEventInteraction() override {}
- 
 protected:
 
-  int           m_Button;     ///< Optional button which triggered the event
-  unsigned long m_Modifiers;  ///< Optional modifiers for the button 
-  unsigned char m_Key;        ///< Optional Key 
-  double        m_X;          ///< X coordinate, used by mouse device
-  double        m_Y;          ///< Y coordinate, used by mouse device
-  bool          m_XYFlag;     ///< Used to signal a 2D coordinate is present
+  int           m_Button = 0;     ///< Optional button which triggered the event
+  unsigned long m_Modifiers = 0;  ///< Optional modifiers for the button 
+  unsigned char m_Key = 0;        ///< Optional Key 
+  double        m_X = 0.0;        ///< X coordinate, used by mouse device
+  double        m_Y = 0.0;        ///< Y coordinate, used by mouse device
+  bool          m_XYFlag = false; ///< Used to signal a 2D coordinate is present
 
   std::shared_ptr<mafMatrix>  m_Matrix;    ///< Pose matrix, used by 3D trackers
 };
-
-#endif /* __mafEventInteraction_h */
- 

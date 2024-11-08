@@ -173,11 +173,10 @@ void mafAgentThreaded::RequestForDispatching()
 void mafAgentThreaded::AsyncInvokeEvent(mafEventBase *event, mafID channel)
 //------------------------------------------------------------------------------
 {
-  mafEventBase *copy_of_event = event->NewInstance();
+  std::unique_ptr<mafEventBase> copy_of_event(event->NewInstance());
   copy_of_event->DeepCopy(event);
   copy_of_event->SetChannel(channel);
-  PushEvent(AGENT_ASYNC_DISPATCH,this,copy_of_event); // this make a copy of the event
-  delete copy_of_event;
+  PushEvent(AGENT_ASYNC_DISPATCH,this,copy_of_event.get()); // this make a copy of the event
 }
 
 //------------------------------------------------------------------------------
@@ -198,12 +197,12 @@ void mafAgentThreaded::AsyncSendEvent(mafBaseEventHandler *target,mafEventBase *
 void mafAgentThreaded::AsyncInvokeEvent(mafID id, mafID channel,void *data)
 //----------------------------------------------------------------------------
 {
-  {mafEventBase evUnq(this,id,data,channel); AsyncInvokeEvent(&evUnq,channel);}
+  {mafEventBase evUnq(this,id); evUnq.SetData(data); evUnq.SetChannel(channel); AsyncInvokeEvent(&evUnq,channel);}
 }
 
 //----------------------------------------------------------------------------
 void mafAgentThreaded::AsyncSendEvent(mafBaseEventHandler *target, void *sender, mafID id, mafID channel,void *data)
 //----------------------------------------------------------------------------
 {
-  {mafEventBase evUnq(sender,id,data,channel); AsyncSendEvent(target,&evUnq,channel);}
+  {mafEventBase evUnq(sender,id); evUnq.SetData(data); evUnq.SetChannel(channel); AsyncSendEvent(target,&evUnq,channel);}
 }

@@ -467,14 +467,14 @@ void medOpImporterRAWImages::OpDo()
 //----------------------------------------------------------------------------
 {
   assert(m_Output);
-  {mafEvent evUnq(this,VME_ADD,m_Output); InvokeEvent(evUnq);} 		  
+  {mafEvent evUnq(this,VME_ADD); evUnq.SetVme(m_Output); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpImporterRAWImages::OpUndo()
 //----------------------------------------------------------------------------
 {
   assert(m_Output);
-  {mafEvent evUnq(this,VME_REMOVE,m_Output); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_Output); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpImporterRAWImages::EnableWidgets(bool enable)

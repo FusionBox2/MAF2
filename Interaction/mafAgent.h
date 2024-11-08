@@ -105,7 +105,7 @@ public:
   bool HasObservers(mafID channel);
   
   /** return a list of the observers on a channel */
-  void GetObservers(mafID channel,std::vector<mafBaseEventHandler *> &olist);
+  std::vector<mafBaseEventHandler*> GetObservers(mafID channel);
 
   /**
     Initialize this agent. Subclasses can redefine InternalInitialize() to customize

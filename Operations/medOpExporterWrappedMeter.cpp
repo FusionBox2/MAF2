@@ -133,7 +133,6 @@ void medOpExporterWrappedMeter::OnEvent(mafEventBase *maf_event)
         OpStop(OP_RUN_CANCEL);
       break;
       default:
-        e->Log();
       break;
     }
 	}
@@ -202,7 +201,7 @@ void medOpExporterWrappedMeter::ExportWrappedMeter()
 	for(int j=0; j< m_Times.size(); j++)
 	{
 		m_CurrentTime = m_Times[j];
-		{mafEvent evUnq(this, TIME_SET, m_CurrentTime, 0); InvokeEvent(evUnq);}
+		{mafEvent evUnq(this, TIME_SET); evUnq.SetDouble(m_CurrentTime); InvokeEvent(evUnq);}
 
 		for(int i=0;i< m_Meters.size();i++)
 		{

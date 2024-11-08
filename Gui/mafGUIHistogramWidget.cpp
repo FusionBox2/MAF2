@@ -244,7 +244,6 @@ void mafGUIHistogramWidget::OnEvent( mafEventBase *event )
         {mafEvent evUnq(this,mafGUIHistogramWidget::RANGE_MODIFIED); InvokeEvent(evUnq);}
       break;
       default:
-        e->Log();
       break; 
     }
     m_HistogramRWI->CameraUpdate();

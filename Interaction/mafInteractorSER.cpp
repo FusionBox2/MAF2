@@ -174,36 +174,28 @@ void mafInteractorSER::UnBindDeviceFromAllActions(mafDevice *device)
 //------------------------------------------------------------------------------
 {
   assert(device);
-  std::vector<mafAction *> device_actions;
-  GetDeviceBindings(device,device_actions);
-
-  for (int i=0;i<device_actions.size();i++)
+  for (auto& action : GetDeviceBindings(device))
   {
-    device_actions[i]->UnBindDevice(device);
+    action->UnBindDevice(device);
   }
 }
 
 //------------------------------------------------------------------------------
-void mafInteractorSER::GetDeviceBindings(mafDevice *device,std::vector<mafAction *> &actions)
+std::vector<mafAction*> mafInteractorSER::GetDeviceBindings(mafDevice *device)
 //------------------------------------------------------------------------------
 {
   assert(device);
   
-  actions.clear();
+  std::vector<mafAction*> actions;
 
-  std::vector<mafBaseEventHandler *> observers;
-  device->GetObservers(MCH_INPUT,observers);
-  
-  for (int i=0;i<observers.size();i++)
+  for (auto observer : device->GetObservers(MCH_INPUT))
   {
-    mafAction *action;
-    try { action=dynamic_cast<mafAction *>(observers[i]); } catch (std::bad_cast) { action=NULL;}
-   
-    if (action)
+    if (auto action = dynamic_cast<mafAction*>(observer))
     {
       actions.push_back(action);
     }  
   }
+  return actions;
 }
 
 mafInteractorSER* mafInteractorSER::Create(const char* InteractorSERType)

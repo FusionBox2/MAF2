@@ -129,14 +129,14 @@ medGUILandmark::~medGUILandmark()
     for (int i = 0; i < m_LMCloud->GetNumberOfLandmarks(); i++)
     {
       mafNode *lm = m_LMCloud->GetChild(i);
-      {mafEvent evUnq(this, VME_SHOW, lm, false); InvokeEvent(evUnq);}
-      {mafEvent evUnq(this, VME_REMOVE, lm); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(lm); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(lm); InvokeEvent(evUnq);}
       mafDEL(lm);
       //vtkDEL(lm);
     }
 
-    {mafEvent evUnq(this, VME_SHOW, m_LMCloud, false); InvokeEvent(evUnq);}
-    {mafEvent evUnq(this, VME_REMOVE, m_LMCloud); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(m_LMCloud); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_LMCloud); InvokeEvent(evUnq);}
     mafDEL(m_LMCloud);
     //vtkDEL(m_LMCloud);
   }
@@ -219,7 +219,7 @@ void medGUILandmark::OnEvent(mafEventBase *maf_event)
     case ID_REF_SYS:
       {
         mafString title = _L("Choose VME ref sys");
-        mafEvent e(this,VME_CHOOSE,&title,(intptr_t)&medGUILandmark::VmeAccept);
+        mafEvent e(this,VME_CHOOSE); e.SetString(&title); e.SetArg((intptr_t)&medGUILandmark::VmeAccept);
         InvokeEvent(e); 
         SetRefSysVME(mafVME::SafeDownCast(e.GetVme())); 			
       }
@@ -344,8 +344,8 @@ void medGUILandmark::OnVmePicked(mafEvent& e)
     Force vme data creation since this is required by mafPipePointSet
     */
 //    {mafEvent evUnq(this,VME_CREATE_CLIENT_DATA,m_LMCloud); InvokeEvent(evUnq);}
-		{mafEvent evUnq(this,VME_ADD,m_LMCloud); InvokeEvent(evUnq);}
-		{mafEvent evUnq(this,VME_SHOW,m_LMCloud,true); InvokeEvent(evUnq);} 
+		{mafEvent evUnq(this,VME_ADD); evUnq.SetVme(m_LMCloud); InvokeEvent(evUnq);}
+		{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_LMCloud); evUnq.SetBool(true); InvokeEvent(evUnq);}
     
   }
 
@@ -365,8 +365,8 @@ void medGUILandmark::OnVmePicked(mafEvent& e)
     m_Landmark->SetAbsPose(absPosition[0],absPosition[1],absPosition[2],0,0,0);
     
     //{mafEvent evUnq(this,VME_CREATE_CLIENT_DATA,m_Landmark); InvokeEvent(evUnq);}
-	  {mafEvent evUnq(this,VME_ADD,m_Landmark); InvokeEvent(evUnq);}
-    {mafEvent evUnq(this,VME_SHOW,m_Landmark,true); InvokeEvent(evUnq);} 
+	  {mafEvent evUnq(this,VME_ADD); evUnq.SetVme(m_Landmark); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Landmark); evUnq.SetBool(true); InvokeEvent(evUnq);}
 	  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);} 
 
     CreateTranslateISACompositor(); 
@@ -380,7 +380,7 @@ void medGUILandmark::OnVmePicked(mafEvent& e)
   else
   {
     m_Landmark->SetAbsPose(absPosition[0],absPosition[1],absPosition[2],0,0,0);
-    {mafEvent evUnq(this,VME_SHOW,m_Landmark,true); InvokeEvent(evUnq);} 
+    {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Landmark); evUnq.SetBool(true); InvokeEvent(evUnq);}
   }
    
   // notify listener
@@ -576,8 +576,8 @@ void medGUILandmark::SpawnLandmark()
   m_Landmark->SetPose(position[0],position[1],position[2],rot[0], rot[1], rot[2],-1);
   
   //{mafEvent evUnq(this,VME_CREATE_CLIENT_DATA,m_Landmark); InvokeEvent(evUnq);}
-	{mafEvent evUnq(this,VME_ADD,m_Landmark); InvokeEvent(evUnq);}
-  {mafEvent evUnq(this,VME_SHOW,m_Landmark,true); InvokeEvent(evUnq);} 
+	{mafEvent evUnq(this,VME_ADD); evUnq.SetVme(m_Landmark); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Landmark); evUnq.SetBool(true); InvokeEvent(evUnq);}
 	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);} 
   
   AttachInteractor(m_Landmark, m_IsaCompositor);

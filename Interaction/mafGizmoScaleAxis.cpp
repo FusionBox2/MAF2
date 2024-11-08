@@ -480,8 +480,8 @@ void mafGizmoScaleAxis::Show(bool show)
 //----------------------------------------------------------------------------
 {
   m_Show = show;
-  {mafEvent evUnq(this,VME_SHOW,m_CylGizmo,show); InvokeEvent(evUnq);}
-  {mafEvent evUnq(this,VME_SHOW,m_CubeGizmo,show); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_CylGizmo); evUnq.SetBool(show); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_CubeGizmo); evUnq.SetBool(show); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------

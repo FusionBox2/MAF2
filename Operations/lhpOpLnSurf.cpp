@@ -353,7 +353,7 @@ void lhpOpLnSurf::OpDo()
 void lhpOpLnSurf::OpUndo()
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this,VME_REMOVE,m_Surface); InvokeEvent(evUnq);}
-  {mafEvent evUnq(this,VME_REMOVE,m_Muscles); InvokeEvent(evUnq);}
-  {mafEvent evUnq(this,VME_REMOVE,m_Tendons); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_Surface); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_Muscles); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_Tendons); InvokeEvent(evUnq);}
 }

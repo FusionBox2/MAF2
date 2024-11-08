@@ -131,7 +131,7 @@ void lhpOpRegSurfWithCloud::OnEvent(mafEventBase *maf_event)
       case ID_CHOOSE:
       {
         mafString s(_L("Choose cloud"));
-        mafEvent e(this,VME_CHOOSE, &s, (intptr_t)&lhpOpRegSurfWithCloud::ClosedCloudAccept);
+        mafEvent e(this,VME_CHOOSE); e.SetString(&s); e.SetArg((intptr_t)&lhpOpRegSurfWithCloud::ClosedCloudAccept);
         InvokeEvent(e);
         mafNode *vme = e.GetVme();
         OnChooseVme(vme);
@@ -270,13 +270,13 @@ void lhpOpRegSurfWithCloud::OpStop(int result)
 void lhpOpRegSurfWithCloud::OpDo()
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this, VME_ADD, m_Resultat); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_Resultat); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void lhpOpRegSurfWithCloud::OpUndo()
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this, VME_REMOVE, m_Resultat); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Resultat); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------

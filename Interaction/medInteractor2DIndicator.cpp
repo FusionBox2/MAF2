@@ -242,7 +242,7 @@ void medInteractor2DIndicator::OnRightButtonUp(mafEventInteraction *e)
   if(m_ShowContextMenu && mouse)
   {
     mafVME *vme = GetPickedVME(mouse);
-    {mafEvent evUnq(this,SHOW_CONTEXTUAL_MENU, vme,true); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,SHOW_CONTEXTUAL_MENU); evUnq.SetVme(vme); evUnq.SetBool(true); InvokeEvent(evUnq);}
   }
 
   OnButtonUp(e);
@@ -476,7 +476,7 @@ void medInteractor2DIndicator::DrawMeasureTool(double x, double y)
 
     m_RegisterMeasure = true;
 
-    {mafEvent evUnq(this,ID_RESULT_INDICATOR,true); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,ID_RESULT_INDICATOR); evUnq.SetBool(true); InvokeEvent(evUnq);}
     //delete temporary measure
     m_CurrentRenderer->RemoveActor2D(m_LineActor);
     m_CurrentRenderer->RemoveActor2D(m_LineActor2);

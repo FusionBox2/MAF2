@@ -432,7 +432,6 @@ void mafGUIMaterialChooser::OnEvent(mafEventBase *maf_event)
       case ID_GUI_UPDATE:
       break;
       default:
-        e->Log();
       break; 
     }
     m_RWI->CameraUpdate();	

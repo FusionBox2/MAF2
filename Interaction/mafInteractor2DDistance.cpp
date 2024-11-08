@@ -748,7 +748,7 @@ void mafInteractor2DDistance::CalculateMeasure()
   if(m_MeasureType == DISTANCE_BETWEEN_POINTS)
   {
     m_Distance = sqrt(vtkMath::Distance2BetweenPoints(p1_1,p2_1));
-    {mafEvent evUnq(this,ID_RESULT_MEASURE,m_Distance); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,ID_RESULT_MEASURE); evUnq.SetDouble(m_Distance); InvokeEvent(evUnq);}
     return;
   }
 
@@ -757,7 +757,7 @@ void mafInteractor2DDistance::CalculateMeasure()
   if(m_MeasureType == DISTANCE_BETWEEN_LINES)
   {
     m_Distance = sqrt(vtkLine::DistanceToLine(p1_2,p1_1,p2_1));
-    {mafEvent evUnq(this,ID_RESULT_MEASURE,m_Distance); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,ID_RESULT_MEASURE); evUnq.SetDouble(m_Distance); InvokeEvent(evUnq);}
     return;
   }
 }
@@ -899,11 +899,11 @@ void mafInteractor2DDistance::UndoMeasure()
       GenerateHistogram(m_GenerateHistogram);
     if(m_Measure.size() == 0)
     {
-      {mafEvent evUnq(this,ID_RESULT_MEASURE,0.0); InvokeEvent(evUnq);}
+      mafEvent evUnq(this,ID_RESULT_MEASURE); evUnq.SetDouble(0.0); InvokeEvent(evUnq);
     }
     else
     {
-      {mafEvent evUnq(this,m_FlagMeasureType[m_FlagMeasureType.size()-1],m_Measure[m_Measure.size()-1]); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,m_FlagMeasureType[m_FlagMeasureType.size()-1]); evUnq.SetDouble(m_Measure[m_Measure.size()-1]); InvokeEvent(evUnq);}
     }
     {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
   }

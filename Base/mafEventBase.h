@@ -8,45 +8,42 @@
 
 BEGIN_FTK_NAMESPACE
 
-class FTK_BASE_EXPORT mafEventBase: public mafObject
+class FTK_BASE_EXPORT mafEventBase
 {
-public:
-  mafEventBase(void *sender=NULL,mafID id=ID_NO_EVENT,void *data=NULL, mafID channel=MCH_UP);
+  mafBaseTypeMacro(mafEventBase);
 
-	~mafEventBase() override;
+  mafEventBase() = default;
+  
+  mafEventBase(void *sender,mafID id);
 
-  mafTypeMacro(mafEventBase,mafObject);
- 
+  virtual ~mafEventBase();
+
   mafEventBase(const mafEventBase& c);
 
-  virtual void DeepCopy(const mafEventBase *maf_event);
+public:
+  virtual void DeepCopy(const mafEventBase* maf_event);
 
-  static void SetLogVerbose(bool verbose = true);
+  void* GetSender() const { return m_Sender; }
 
-  static bool* GetLogVerbose();
+  void SetSender(void* sender) { m_Sender = sender; }
 
-  void SetSender(void *sender);
+  mafID GetId() const { return m_Id; }
 
-  void *GetSender();
+  void SetId(mafID id) { m_Id = m_Channel; }
 
-  void SetId(mafID id);
-
-  mafID GetId();
-
-  mafID GetChannel();
+  mafID GetChannel() const { return m_Channel; }
   
-  void SetChannel(mafID channel);
+  void SetChannel(mafID channel) { m_Channel = channel; }
 
-  void SetData(void *calldata);
+  void* GetData() const { return m_Data; }
 
-  void *GetData();
+  void SetData(void* calldata) { m_Data = calldata; }
 
 protected:
-  void            *m_Sender;
-  void            *m_Data;
-  mafID           m_Id;
-  mafID           m_Channel;
-  static bool     m_LogVerbose;
+  void            *m_Sender = nullptr;
+  void            *m_Data = nullptr;
+  mafID           m_Id = ID_NO_EVENT;
+  mafID           m_Channel = MCH_UP;
 };
 
 END_FTK_NAMESPACE

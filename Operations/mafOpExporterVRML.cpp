@@ -175,7 +175,6 @@ void mafOpExporterVRML::OnEvent(mafEventBase *maf_event)
         OpStop(OP_RUN_CANCEL);
       break;
       default:
-        e->Log();
       break;
     }
 	}

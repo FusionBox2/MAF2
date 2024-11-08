@@ -1238,7 +1238,7 @@ void lhpOpSolidify::OpUndo()
 {
   if (m_Output)
   {
-    {mafEvent evUnq(this, VME_REMOVE, m_Output); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Output); InvokeEvent(evUnq);}
     {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
 }
@@ -1326,7 +1326,7 @@ void lhpOpSolidify::OnEvent(mafEventBase *maf_event)
       case ID_CHOOSE:
         {
           mafString s(_L("Choose solid landmark"));
-          mafEvent e(this,VME_CHOOSE, &s, (intptr_t)&lhpOpSolidify::RigidBodyAccept);
+          mafEvent e(this,VME_CHOOSE); e.SetString(&s); e.SetArg((intptr_t)&lhpOpSolidify::RigidBodyAccept);
           InvokeEvent(e);
           if(e.GetVme() == NULL)
           {

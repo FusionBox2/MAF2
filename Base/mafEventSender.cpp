@@ -1,28 +1,6 @@
-/*=========================================================================
-  Program:   Multimod Application Framework
-  Module:    $RCSfile: mafEventSource.cpp,v $
-  Language:  C++
-  Date:      $Date: 2007-06-07 07:33:35 $
-  Version:   $Revision: 1.8 $
-  Authors:   Marco Petrone
-==========================================================================
-  Copyright (c) 2001/2005 
-  CINECA - Interuniversity Consortium (www.cineca.it)
-=========================================================================*/
-
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-
+#include "mafEventSender.h"
 
 #include "mafEventBase.h"
-#include "mafEventSender.h"
 #include "mafBaseEventHandler.h"
 #include <list>
 #include <utility>
@@ -39,32 +17,19 @@ public:
   mafObserversListType m_List; 
 };
 
-//------------------------------------------------------------------------------
-mafEventSourceBase::mafEventSourceBase(void *owner)
-//------------------------------------------------------------------------------
+mafEventSourceBase::mafEventSourceBase()
 {
-  m_Observers   = new mafObserversList;
-  m_Channel     = -1;
+  m_Observers = std::make_unique<mafObserversList>();
 }
 
-//------------------------------------------------------------------------------
-mafEventSourceBase::~mafEventSourceBase()
-//------------------------------------------------------------------------------
-{
-  delete m_Observers; 
-  m_Observers = NULL;
-}
+mafEventSourceBase::~mafEventSourceBase() = default;
 
-//------------------------------------------------------------------------------
 void mafEventSourceBase::AddObserverBase(mafBaseEventHandler &obj, int priority)
-//------------------------------------------------------------------------------
 {
   AddObserverBase(&obj,priority);
 }
 
-//------------------------------------------------------------------------------
 void mafEventSourceBase::AddObserverBase(mafBaseEventHandler *obj, int priority)
-//------------------------------------------------------------------------------
 {
   // search for first element with priority <= priority
   mafObserversListType::iterator it;
@@ -72,9 +37,8 @@ void mafEventSourceBase::AddObserverBase(mafBaseEventHandler *obj, int priority)
 
   m_Observers->m_List.insert(it,mafObserversPairType(priority,obj));
 }
-//------------------------------------------------------------------------------
+
 bool mafEventSourceBase::RemoveObserverBase(mafBaseEventHandler *obj)
-//------------------------------------------------------------------------------
 {
   if (m_Observers->m_List.empty())
     return false;
@@ -95,16 +59,12 @@ bool mafEventSourceBase::RemoveObserverBase(mafBaseEventHandler *obj)
   return flag;
 }
 
-//------------------------------------------------------------------------------
 void mafEventSourceBase::RemoveAllObserversBase()
-//------------------------------------------------------------------------------
 {
   m_Observers->m_List.clear();
 }
 
-//------------------------------------------------------------------------------
 bool mafEventSourceBase::IsObserverBase(mafBaseEventHandler *obj)const
-//------------------------------------------------------------------------------
 {
   if (m_Observers->m_List.empty())
     return false;
@@ -116,29 +76,23 @@ bool mafEventSourceBase::IsObserverBase(mafBaseEventHandler *obj)const
   return false;
 }
 
-//------------------------------------------------------------------------------
 bool mafEventSourceBase::HasObserversBase()const
-//------------------------------------------------------------------------------
 {
   return !m_Observers->m_List.empty();
 }
 
-//------------------------------------------------------------------------------
-void mafEventSourceBase::GetObserversBase(std::vector<mafBaseEventHandler *> &olist)const
-//------------------------------------------------------------------------------
+std::vector<mafBaseEventHandler*> mafEventSourceBase::GetObserversBase()const
 {
-  olist.clear();
-  olist.resize(m_Observers->m_List.size());
-  int i=0;
-  for (mafObserversListType::iterator it=m_Observers->m_List.begin();it!=m_Observers->m_List.end();it++,i++)
+  std::vector<mafBaseEventHandler*> res;
+  res.reserve(m_Observers->m_List.size());
+  for (auto& entry : m_Observers->m_List)
   {
-    olist[i]=it->second;
+    res.push_back(entry.second);
   }
+  return res;
 }
 
-//------------------------------------------------------------------------------
 void mafEventSourceBase::InvokeEvent(mafEventBase *e)
-//------------------------------------------------------------------------------
 {
   if (m_Observers->m_List.empty())
     return;
@@ -174,15 +128,12 @@ void mafEventSourceBase::InvokeEvent(mafEventBase *e)
   if (old_ch>0) e->SetChannel(old_ch);
 }
 
-//------------------------------------------------------------------------------
 void mafEventSourceBase::SetChannelBase(mafID ch)
-//------------------------------------------------------------------------------
 {
   m_Channel = ch;
 }
-//------------------------------------------------------------------------------
+
 mafID mafEventSourceBase::GetChannelBase()
-//------------------------------------------------------------------------------
 {
   return m_Channel;
 }

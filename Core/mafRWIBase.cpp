@@ -590,7 +590,7 @@ void mafRWIBase::OnChar(wxKeyEvent &event)
   {
     if(mafDeviceButtonsPadMouse *m_Mouse = GetGlobalMouse()) 
     {
-      mafEvent e(this,mafDeviceButtonsPadMouse::GetMouseCharEventId(),(intptr_t) event.GetKeyCode());
+      mafEvent e(this,mafDeviceButtonsPadMouse::GetMouseCharEventId()); e.SetArg(event.GetKeyCode());
       e.SetChannel(MCH_OUTPUT);
       m_Mouse->OnEvent(&e);
     }

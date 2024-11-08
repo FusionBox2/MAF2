@@ -358,7 +358,7 @@ void lhpOpLMProj::OpUndo()
 {
   if (m_Output)
   {
-    {mafEvent evUnq(this, VME_REMOVE, m_Output); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Output); InvokeEvent(evUnq);}
     {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
 }
@@ -385,7 +385,7 @@ void lhpOpLMProj::OnEvent(mafEventBase *maf_event)
       case ID_CHOOSE:
         {
           mafString s(_R("Choose surface to join"));
-          mafEvent e(this,VME_CHOOSE, &s);
+          mafEvent e(this,VME_CHOOSE); e.SetString(&s);
           InvokeEvent(e);
           if(e.GetVme() == NULL)
           {

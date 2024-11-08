@@ -182,7 +182,7 @@ void medGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
         } 
         if(pipe_created && mutex) 
           m_ViewActive->VmeDeletePipe(vme);
-        {mafEvent evUnq(this, VME_SHOW, vme, false); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(vme); InvokeEvent(evUnq);}
 			}
 		}
 		break;
@@ -223,7 +223,7 @@ void medGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
 		case CONTEXTUAL_MENU_TRANSFORM:
 		{
 			mafString s = _R("Move\tCtrl+T");
-			{mafEvent evUnq(this, PARSE_STRING, &s); InvokeEvent(evUnq);}
+			{mafEvent evUnq(this, PARSE_STRING); evUnq.SetString(&s); InvokeEvent(evUnq);}
 		}
 		break;
 		case CONTEXTUAL_MENU_MAXIMIZE_CHILD_VIEW:
@@ -264,10 +264,10 @@ void medGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
     }
     break;*/
 		case CONTEXTUAL_MENU_SAVE_AS_IMAGE:
-			{mafEvent evUnq(this, VIEW_SAVE_IMAGE,false); InvokeEvent(evUnq);}
+			{mafEvent evUnq(this, VIEW_SAVE_IMAGE); evUnq.SetBool(false); InvokeEvent(evUnq);}
 		break;
     case CONTEXTUAL_MENU_SAVE_ALL_AS_IMAGE:
-			{mafEvent evUnq(this, VIEW_SAVE_IMAGE,true); InvokeEvent(evUnq);}
+			{mafEvent evUnq(this, VIEW_SAVE_IMAGE); evUnq.SetBool(true); InvokeEvent(evUnq);}
 		break;
     case CONTEXTUAL_MENU_EXPORT_AS_VRML:
     {

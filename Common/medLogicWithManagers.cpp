@@ -50,7 +50,7 @@ medLogicWithManagers::medLogicWithManagers()
 : mafLogicWithManagers()
 //----------------------------------------------------------------------------
 {
-  m_Win->Bind(wxEVT_MENU, [this](const wxCommandEvent& event) {mafEvent evUnq(this, MENU_WIZARD, (intptr_t)event.GetId());	OnEvent(&evUnq); }, WIZARD_START, WIZARD_END);
+  m_Win->Bind(wxEVT_MENU, [this](const wxCommandEvent& event) {mafEvent evUnq(this, MENU_WIZARD); evUnq.SetArg(event.GetId());	OnEvent(&evUnq); }, WIZARD_START, WIZARD_END);
   //Set default values
   m_UseWizardManager  = false;
   m_WizardRunning = false;
@@ -202,7 +202,7 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
 					  wxSetWorkingDirectory(oldWD);
 				  }
 
-				  {mafEvent evUnq(this,WIZARD_RUN_CONTINUE,true); OnEvent(&evUnq);}
+				  {mafEvent evUnq(this,WIZARD_RUN_CONTINUE); evUnq.SetBool(true); OnEvent(&evUnq);}
 			  }
 		break;
      case MENU_WIZARD:

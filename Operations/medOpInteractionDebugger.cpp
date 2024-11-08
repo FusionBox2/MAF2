@@ -142,7 +142,7 @@ void medOpInteractionDebugger::OnEvent(mafEventBase *maf_event)
       case ID_CHOOSE:
       {
         mafString s(_L("Choose Constrain"));
-        mafEvent e(this,VME_CHOOSE, &s, (intptr_t)&medOpInteractionDebugger::ConstrainAccept);
+        mafEvent e(this,VME_CHOOSE); e.SetString(&s); e.SetArg((intptr_t)&medOpInteractionDebugger::ConstrainAccept);
         InvokeEvent(e);
         mafNode *vme = e.GetVme();
         if(vme != NULL)
@@ -400,7 +400,7 @@ void medOpInteractionDebugger::AddMEDGizmoDebuggerToTree()
   assert(constraint != NULL);
   
   // Create the output vtk data...
-  {mafEvent evUnq(this,VME_SHOW,constraint,true); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(constraint); evUnq.SetBool(true); InvokeEvent(evUnq);}
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 
   // build constrained gizmo
@@ -430,7 +430,7 @@ void medOpInteractionDebugger::OnChooseConstrainVme( mafNode *vme )
   m_Constrain = mafVME::SafeDownCast(vme);
   assert(m_Constrain);
 
-  {mafEvent evUnq(this,VME_SHOW, m_Constrain, true); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Constrain); evUnq.SetBool(true); InvokeEvent(evUnq);}
 
   m_GizmoDebugger->SetGizmoLength(2);
   m_GizmoDebugger->SetConstraintPolylineGraph(medVMEPolylineGraph::SafeDownCast(m_Constrain));

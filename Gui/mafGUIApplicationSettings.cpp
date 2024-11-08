@@ -104,7 +104,6 @@ void mafGUIApplicationSettings::OnEvent(mafEventBase *maf_event)
     break;
     case ID_LOG_VERBOSE:
       m_Config->Write("LogVerbose",m_VerboseLog);
-      mafEventBase::SetLogVerbose(m_VerboseLog != 0);
     break;
     case ID_LOG_DIR:
       m_Config->Write("LogFolder",m_LogFolder.toWx());
@@ -160,7 +159,6 @@ void mafGUIApplicationSettings::InitializeSettings()
   if(m_Config->Read("LogVerbose", &long_item))
   {
     m_VerboseLog = long_item;
-    mafEventBase::SetLogVerbose(m_VerboseLog != 0);
   }
   else
   {

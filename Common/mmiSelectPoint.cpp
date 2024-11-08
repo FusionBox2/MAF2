@@ -130,7 +130,7 @@ void mmiSelectPoint::PickCell( mafDevice *device )
 			vtkPoints *pickedPoint = vtkPoints::New();
 			pickedPoint->SetNumberOfPoints(1);
 			pickedPoint->SetPoint(0,pos_picked);
-			{mafEvent evUnq(this,VME_PICKED,(vtkObject *)pickedPoint,pointPicker->GetPointId()); InvokeEvent(evUnq);}
+			{mafEvent evUnq(this,VME_PICKED); evUnq.SetVtkObj(pickedPoint); evUnq.SetArg(pointPicker->GetPointId()); InvokeEvent(evUnq);}
 			pickedPoint->Delete();
 
 			//  wxString msg = "picked something";

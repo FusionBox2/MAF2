@@ -543,7 +543,7 @@ void mafViewSingleSlice::OnEvent(mafEventBase *maf_event)
 					}
 				}
 			}
-      {mafEvent evUnq(this,ID_POSITION,m_Position); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,ID_POSITION); evUnq.SetDouble(m_Position); InvokeEvent(evUnq);}
 		break;
 		case ID_PLANE_SELECT:
 		{
@@ -836,11 +836,11 @@ void mafViewSingleSlice::VmeShow(mafNode *node, bool show)
 				{
 					if(Inode->IsA("mafVMESurface"))
 					{
-						{mafEvent evUnq(this,VME_SHOW,Inode,false); InvokeEvent(evUnq);}
+						{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(Inode); InvokeEvent(evUnq);}
 					}
 					if(Inode->IsA("mafVMEPolyline"))
 					{
-						{mafEvent evUnq(this,VME_SHOW,Inode,false); InvokeEvent(evUnq);}
+						{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(Inode); InvokeEvent(evUnq);}
 					}
 				}
 			}

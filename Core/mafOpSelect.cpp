@@ -101,13 +101,13 @@ void mafOpSelect::SetNewSel(mafNode* vme)
 void mafOpSelect::OpDo()
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this,VME_SELECTED,m_NewNodeSelected.get()); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SELECTED); evUnq.SetVme(m_NewNodeSelected.get()); InvokeEvent(evUnq);}
 };
 //----------------------------------------------------------------------------
 void mafOpSelect::OpUndo()
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this,VME_SELECTED,m_OldNodeSelected.get()); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SELECTED); evUnq.SetVme(m_OldNodeSelected.get()); InvokeEvent(evUnq);}
 };
 
 
@@ -232,8 +232,8 @@ Select the vme parent
     LoadChild(m_SelectionVme);
   //////////////////////////////////////////////////////////////////////////
 
-  {mafEvent evUnq(this,VME_REMOVE,m_Selection.get()); InvokeEvent(evUnq);}
-  {mafEvent evUnq(this,VME_SELECTED,m_SelectionParent.get()); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_Selection.get()); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SELECTED); evUnq.SetVme(m_SelectionParent.get()); InvokeEvent(evUnq);}
   if (mafVME::SafeDownCast(m_SelectionParent.get()))
   {
     ((mafVME *)m_SelectionParent.get())->GetOutput()->Update();
@@ -307,7 +307,7 @@ Restore the Selection
   {
     ((mafVME *)m_SelectionParent.get())->GetOutput()->Update();
   }
-  {mafEvent evUnq(this,VME_SELECTED,m_Selection.get()); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SELECTED); evUnq.SetVme(m_Selection.get()); InvokeEvent(evUnq);}
   ClipboardRestore();
 }
 
@@ -386,8 +386,8 @@ Select the vme parent
     }
   }
   m_SelectionParent = m_Selection->GetParent(); 
-  {mafEvent evUnq(this,VME_REMOVE,m_Selection.get()); InvokeEvent(evUnq);}
-  {mafEvent evUnq(this,VME_SELECTED,m_SelectionParent.get()); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_Selection.get()); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SELECTED); evUnq.SetVme(m_SelectionParent.get()); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpDelete::OpUndo()
@@ -509,7 +509,7 @@ The copy in the clipboard will be automatically deleted
 */
 {
   SetClipboard(m_PastedVme.get());
-  {mafEvent evUnq(this,VME_REMOVE,m_PastedVme.get()); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_PastedVme.get()); InvokeEvent(evUnq);}
 }
 
 /*

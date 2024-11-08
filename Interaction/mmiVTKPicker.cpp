@@ -59,7 +59,7 @@ void mmiVTKPicker::OnLeftButtonDown(mafEventInteraction *e)
   //we will fix it here
   if (m_Picker != NULL)
   {
-    {mafEvent evUnq(this, VME_PICKED, m_Picker); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_PICKED); evUnq.SetVtkObj(m_Picker); InvokeEvent(evUnq);}
     vtkDEL(m_Picker);
   }
 
@@ -83,7 +83,8 @@ void mmiVTKPicker::OnLeftButtonDown(mafEventInteraction *e)
       else
       {   
         //picking successful               
-        mafEvent ev(this, VME_PICKING, m_Picker);
+        mafEvent ev(this, VME_PICKING);
+        ev.SetVtkObj(m_Picker);
         ev.SetBool(false);
         InvokeEvent(ev);
       }
@@ -101,7 +102,7 @@ void mmiVTKPicker::OnLeftButtonUp()
 {
   if (m_Picker != NULL)
   {
-    {mafEvent evUnq(this, VME_PICKED, m_Picker); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_PICKED); evUnq.SetVtkObj(m_Picker); InvokeEvent(evUnq);}
     vtkDEL(m_Picker);
   }
 
@@ -160,7 +161,8 @@ void mmiVTKPicker::OnMouseMove()
       vtkNew< vtkPoints > points;      
       points->InsertNextPoint(pointNewPos);
 
-      mafEvent ev(this, VME_PICKING, points);
+      mafEvent ev(this, VME_PICKING);
+      ev.SetVtkObj(points);
       ev.SetBool(true);        //continuous picking      
       InvokeEvent(ev);
     }    

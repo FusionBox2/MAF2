@@ -525,7 +525,7 @@ void medOpMML::OnRegistrationOK()
 
   // add to tree (save now)
   //OurMuscleVME->AddChild(vme);
-  {mafEvent evUnq(this, VME_ADD, vme.get()); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(vme.get()); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------

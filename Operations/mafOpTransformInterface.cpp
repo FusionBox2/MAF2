@@ -195,7 +195,7 @@ void mafOpTransformInterface::OpDo()
         wxBusyInfo wait(progress_string.c_str());
       }
 
-      {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,tPDF.GetPointer()); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,BIND_TO_PROGRESSBAR); evUnq.SetVtkObj(tPDF.GetPointer()); InvokeEvent(evUnq);}
       tPDF->Update();
 
       ((mafVMEGeneric *)m_Input)->SetData(tPDF->GetOutput(),((mafVME *)m_Input)->GetTimeStamp());
@@ -216,7 +216,7 @@ void mafOpTransformInterface::OpDo()
       wxString progress_string("Applying scaling to data...");
       wxBusyInfo wait(progress_string.c_str());
 
-      {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,tf.GetPointer()); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,BIND_TO_PROGRESSBAR); evUnq.SetVtkObj(tf.GetPointer()); InvokeEvent(evUnq);}
       tf->Update();
 
       ((mafVMEGeneric *)m_Input)->SetData(tf->GetOutput(),((mafVME *)m_Input)->GetTimeStamp());
@@ -277,7 +277,7 @@ void mafOpTransformInterface::OpDo()
         }
 
         progress = (arrayId + 1) * 100 / 3;
-        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(progress); InvokeEvent(evUnq);}
         //mafProgressBarSetValueMacro(progress);
       }
       

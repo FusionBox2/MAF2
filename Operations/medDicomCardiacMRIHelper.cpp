@@ -278,7 +278,7 @@ int medDicomCardiacMRIHelper::ParseDicomDirectory()
         cppDEL(busyInfo);
         busyInfo = new wxBusyInfo(busyMessage);
 		    progress = i * 100 / (double) (timeFrames*planesPerFrame);
-		    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); InvokeEvent(evUnq);}
+		    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(progress); InvokeEvent(evUnq);}
       }
     }
   }

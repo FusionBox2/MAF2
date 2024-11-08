@@ -224,7 +224,7 @@ void medOpVolumeMeasure::OpStop(int result)
     if(root->GetTagArray()->GetTag(_R("VOLUME_MEASURE")))
       root->GetTagArray()->DeleteTag(_R("VOLUME_MEASURE"));
     root->GetTagArray()->SetTag(measure_item);
-    {mafEvent evUnq(this,VME_MODIFIED,root); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,VME_MODIFIED); evUnq.SetVme(root); InvokeEvent(evUnq);}
   }
 
     vtkDEL(m_TriangleFilter);

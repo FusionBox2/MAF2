@@ -265,7 +265,7 @@ void mafOpExporterBmp::SaveBmp()
       if (mafFloatEquals(fmod(z,10.0f),0.0f))
       {
         progress = (z*100)/zdim;
-        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(progress); InvokeEvent(evUnq);}
       }
       for (int i = counter, n = 0; i < (counter + size); i++,n++)
       {

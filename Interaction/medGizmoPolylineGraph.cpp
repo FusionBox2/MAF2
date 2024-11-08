@@ -374,7 +374,7 @@ void medGizmoPolylineGraph::DestroyVMEGizmo()
 //----------------------------------------------------------------------------
 {
   assert(m_VmeGizmo);
-  {mafEvent evUnq(this,VME_SHOW,m_VmeGizmo,show); InvokeEvent(evUnq);}  
+  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VmeGizmo); evUnq.SetBool(show); InvokeEvent(evUnq);}
 }
 
 //------------------------------------------------------------------------

@@ -146,7 +146,8 @@ void ClientUnit::ReadMessageFromServer(wxSocketBase *sock)
   if (len > 0) 
   {
     mafString s = _R(msg);
-    mafEvent e(this,RemoteMessage_ID,&s);
+    mafEvent e(this,RemoteMessage_ID);
+    e.SetString(&s);
     InvokeEvent(e);
   }
 

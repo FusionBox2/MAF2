@@ -1,23 +1,7 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafEventIO
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
+#include "ftkConfigure.h"
 
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafEventIO_h
-#define __mafEventIO_h
-//----------------------------------------------------------------------------
-// includes :
-//----------------------------------------------------------------------------
 #include "mafEventBase.h"
 //------------------------------------------------------------------------------
 // Forward declarations
@@ -36,27 +20,25 @@ class mafRoot;
 */
 class MAF_EXPORT mafEventIO: public mafEventBase
 {
+	mafTypeMacroN(mafEventIO);
 public:
-  mafEventIO(void *sender=NULL,mafID id=ID_NO_EVENT,void *data=NULL, mafID channel=MCH_UP);
+	mafEventIO() = default;
+	mafEventIO(void* sender, mafID id);
   ~mafEventIO() override;
 
-  mafTypeMacro(mafEventIO,mafEventBase);
  
   /** copy constructor, this makes a copy of the event */
   virtual void DeepCopy(const mafEventIO *c);
 
-  /** set the storage reference */
+  mafStorage* GetStorage() const;
+
   void SetStorage(mafStorage *storage);
-  mafStorage *GetStorage();
+
+  mafNode* GetRoot() const;
 
   void SetRoot(mafNode *root);
   
-  /** return the pointer to the tree root node */
-  mafNode *GetRoot();
-
 protected:
-  mafStorage*     m_Storage;
-  mafNode*        m_Root;
+  mafStorage*     m_Storage = nullptr;
+  mafNode*        m_Root = nullptr;
 };
-
-#endif /* __mafEventIO_h */

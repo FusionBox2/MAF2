@@ -225,7 +225,6 @@ void mafGUILutWidget::OnEvent( mafEventBase *event )
     {
     case 0:
     default:
-      e->Log();
       break; 
     }
   }

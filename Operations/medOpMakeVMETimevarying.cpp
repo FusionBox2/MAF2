@@ -149,7 +149,7 @@ void medOpMakeVMETimevarying::OpDo()
 void medOpMakeVMETimevarying::OpUndo()
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this,VME_REMOVE,m_Output); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_Output); InvokeEvent(evUnq);}
   mafDEL(m_Output);
 }
 //----------------------------------------------------------------------------
@@ -241,7 +241,7 @@ void medOpMakeVMETimevarying::OnEvent(mafEventBase *maf_event)
       case ID_ADD_VME_BUTTON:
       {
         mafString title = _L("Choose VME");
-        mafEvent e(this,VME_CHOOSE,&title,(intptr_t)&medOpMakeVMETimevarying::DialogAcceptVME);
+        mafEvent e(this,VME_CHOOSE); e.SetString(&title); e.SetArg((intptr_t)&medOpMakeVMETimevarying::DialogAcceptVME);
         InvokeEvent(e);
         
         //mafNEW(m_CurrentVME);
@@ -685,7 +685,7 @@ void medOpMakeVMETimevarying::Execute()
   m_VMETimevarying->GetMatrixPipe()->Update();
   m_VMETimevarying->GetDataPipe()->Update();
 
-  {mafEvent evUnq(this,VME_ADD,m_VMETimevarying); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_ADD); evUnq.SetVme(m_VMETimevarying); InvokeEvent(evUnq);}
 
   m_Output = m_VMETimevarying;
 

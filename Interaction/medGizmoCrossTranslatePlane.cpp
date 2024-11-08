@@ -465,7 +465,7 @@ void medGizmoCrossTranslatePlane::Show(bool show)
 {
 	// show gizmo components by issuing events
 	for (int i = 0; i < NUM_GIZMO_PARTS; i++)
-		{mafEvent evUnq(this,VME_SHOW,m_Gizmo[i],show); InvokeEvent(evUnq);}
+		{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Gizmo[i]); evUnq.SetBool(show); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -637,5 +637,5 @@ void medGizmoCrossTranslatePlane::CreateFeedbackGizmoPipeline()
 void medGizmoCrossTranslatePlane::ShowTranslationFeedbackArrows(bool show)
 //----------------------------------------------------------------------------
 {
-	{mafEvent evUnq(this,VME_SHOW,m_TranslationFeedbackGizmo,show); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_TranslationFeedbackGizmo); evUnq.SetBool(show); InvokeEvent(evUnq);}
 }

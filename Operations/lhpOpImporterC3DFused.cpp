@@ -631,7 +631,7 @@ bool lhpOpImporterC3DFused::ProcessNode(mafVMELandmarkCloud *src, mafVMELandmark
       double currTime = timeStamps[t];
       long p = t * 100 / numTimeStamps;
       //  mafProgressBarSetValueMacro(p);
-      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)p); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(p); InvokeEvent(evUnq);}
       //Set the new time for the vme used to register the one frame source 
       trg->SetTimeStamp(currTime); //set current time
       trg->Update(); //>UpdateAllData();

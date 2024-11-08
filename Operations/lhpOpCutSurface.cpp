@@ -121,7 +121,7 @@ void lhpOpCutSurface::OnEvent(mafEventBase *maf_event)
   case ID_PARAMSURF:
     {
       mafString s(_R("Choose cutting surface"));
-      mafEvent e(this,VME_CHOOSE, &s);
+      mafEvent e(this,VME_CHOOSE); e.SetString(&s);
       InvokeEvent(e);
       if(e.GetVme() == NULL)
       {

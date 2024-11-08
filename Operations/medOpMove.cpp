@@ -275,7 +275,7 @@ void medOpMove::OpStop(int result)
 
     // HideGui seems not to work  with plugged guis :(; using it generate a SetFocusToChild
     // error when operation tab is selected after the operation has ended
-    {mafEvent evUnq(this,OP_HIDE_GUI,(wxWindow *)m_Gui->GetParent()); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,OP_HIDE_GUI); evUnq.SetWin(m_Gui->GetParent()); InvokeEvent(evUnq);}
   }
   {mafEvent evUnq(this,result); InvokeEvent(evUnq);}  
 }
@@ -457,8 +457,8 @@ void medOpMove::OnEventThis(mafEventBase *maf_event)
     case ID_AUX_REF_SYS:
     {
       mafString s = _R("Choose VME ref sys");
-			mafEvent e(this,VME_CHOOSE, &s);
-			InvokeEvent(e);
+      mafEvent e(this,VME_CHOOSE); e.SetString(&s);
+      InvokeEvent(e);
       SetRefSysVME(mafVME::SafeDownCast(e.GetVme()));
     }
     break;

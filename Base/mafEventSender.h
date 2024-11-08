@@ -13,12 +13,10 @@ BEGIN_FTK_NAMESPACE
 class FTK_BASE_EXPORT mafEventSourceBase
 {
 public:
-  mafEventSourceBase(void *owner=NULL);
+  mafEventSourceBase();
   virtual ~mafEventSourceBase();
 
-  void InvokeEvent(mafID id, void *data=NULL) {InvokeEvent(this,id,data);}
-
-  void InvokeEvent(void *sender,mafID id, void *data=NULL){{mafEventBase evUnq(sender,id,data); InvokeEvent(evUnq);}}
+  void InvokeEvent(void* sender, mafID id) {}//{mafEventBase evUnq(sender,id); InvokeEvent(evUnq);}}
 
   void InvokeEvent(mafEventBase &e) {InvokeEvent(&e);}
 
@@ -38,20 +36,20 @@ protected:
 
   bool HasObserversBase()const;
 
-  void GetObserversBase(std::vector<mafBaseEventHandler *> &olist)const;
+  std::vector<mafBaseEventHandler*> GetObserversBase() const;
 
   void SetChannelBase(mafID ch);
 
   mafID GetChannelBase();
 
-  mafObserversList  *m_Observers;
-  mafID             m_Channel;
+  std::unique_ptr<mafObserversList> m_Observers;
+  mafID             m_Channel = -1;
 };
 
 class FTK_BASE_EXPORT mafEventSource : public mafEventSourceBase
 {
 public:
-  mafEventSource(void *owner = nullptr):mafEventSourceBase(owner){}
+  mafEventSource():mafEventSourceBase(){}
 
   void AddObserver(mafBaseEventHandler *obj, int priority=0){AddObserverBase(obj, priority);}
 
@@ -65,7 +63,7 @@ public:
 
   bool HasObservers()const{return HasObserversBase();}
 
-  void GetObservers(std::vector<mafBaseEventHandler *> &olist)const{GetObserversBase(olist);}
+  std::vector<mafBaseEventHandler*> GetObservers() const {return GetObserversBase();}
 
   void SetChannel(mafID ch){SetChannelBase(ch);}
 
@@ -79,7 +77,7 @@ public:
 
   void SetListener(mafBaseEventHandler *o) {RemoveAllObserversBase(); if (o) AddObserverBase(o);}
 
-  mafBaseEventHandler *GetListener() const {if(!HasListener()) return nullptr; std::vector<mafBaseEventHandler *> a; GetObserversBase(a); return a[0];}
+  mafBaseEventHandler *GetListener() const {if(!HasListener()) return nullptr; return GetObserversBase()[0];}
 
   bool HasListener() const {return HasObserversBase();}
 };

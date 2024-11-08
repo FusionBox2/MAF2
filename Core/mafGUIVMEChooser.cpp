@@ -86,7 +86,6 @@ void mafGUIVMEChooser::OnEvent(mafEventBase *maf_event)
 				m_OkButton->Enable(e->GetBool());
       break;
       default:
-        e->Log();
       break;
     }
   }

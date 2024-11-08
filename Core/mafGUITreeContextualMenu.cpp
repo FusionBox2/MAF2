@@ -231,7 +231,7 @@ void mafGUITreeContextualMenu::OnContextualMenu(wxCommandEvent &event)
       bool show = true;
       if(n)
         show = !n->IsVisible();
-			{mafEvent evUnq(this, VME_SHOW, m_VmeActive, show); InvokeEvent(evUnq);}
+			{mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(m_VmeActive); evUnq.SetBool(show); InvokeEvent(evUnq);}
     }
 		break;
     case RMENU_ADD_TREE_LAYOUT:

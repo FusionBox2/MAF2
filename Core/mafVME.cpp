@@ -247,10 +247,10 @@ void mafVME::SetTreeTime(mafTimeStamp t)
 {
 	//BES: 26.11.2012 - avoid calling SetTimeStamp because it notifies our listeners
 	//before all VMEs are correctly set, which would cause time inconsistency between VMEs
-  {mafEventBase evUnq(this,VME_TIME_SET,&t, MCH_DOWN); this->OnEvent(&evUnq);}
+  {mafEventBase evUnq(this,VME_TIME_SET); evUnq.SetData(&t); evUnq.SetChannel(MCH_DOWN); this->OnEvent(&evUnq);}
 
 	//now all VMEs have consistent times, so notify our listeners
-	{mafEventBase evUnq(this,VME_TIME_SET, NULL, MCH_DOWN); this->OnEvent(&evUnq);}
+	{mafEventBase evUnq(this,VME_TIME_SET); evUnq.SetChannel(MCH_DOWN); this->OnEvent(&evUnq);}
 }
 
 //-------------------------------------------------------------------------
@@ -735,7 +735,7 @@ void mafVME::SetCrypting(int crypting)
   }
 
   Modified();
-  mafEvent ev(this,VME_MODIFIED,this);
+  mafEvent ev(this,VME_MODIFIED); ev.SetVme(this);
   ForwardUpEvent(ev);
 }
 
@@ -897,7 +897,7 @@ void mafVME::SetVisualMode(int mode)
   if (m_VisualMode != mode)
   {
     m_VisualMode = mode;
-    mafEvent updateModalityEvent(this, VME_VISUAL_MODE_CHANGED, this);
+    mafEvent updateModalityEvent(this, VME_VISUAL_MODE_CHANGED); updateModalityEvent.SetVme(this);
     Superclass::OnEvent(&updateModalityEvent);
   }
 }

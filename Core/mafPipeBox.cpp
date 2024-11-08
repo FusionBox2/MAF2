@@ -262,8 +262,6 @@ void mafPipeBox::OnEvent(mafEventBase *maf_event)
         m_Box->SetBounds(b);
       }
    	  break;
-      default:
-        e->Log();
     }
     //mafEvent cam_event(this,CAMERA_UPDATE);
     //m_Vme->ForwardUpEvent(cam_event);

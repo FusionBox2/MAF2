@@ -102,7 +102,8 @@ int mafDeviceClientMAF::InternalInitialize()
   server_address.Service(m_PortNumber);
   server_address.Hostname(hn);
   m_Connected = (ConnectClient(server_address) == MAF_OK);
-  mafEvent e(this,COLLABORATE_ENABLE,m_Connected);
+  mafEvent e(this,COLLABORATE_ENABLE);
+  e.SetBool(m_Connected);
   InvokeEvent(&e);
   return m_Connected ? MAF_OK : MAF_ERROR;
 }
@@ -111,7 +112,8 @@ void mafDeviceClientMAF::InternalShutdown()
 //------------------------------------------------------------------------------
 {
   m_Connected = !(DisconnectClient() == MAF_OK);
-  mafEvent e(this,COLLABORATE_ENABLE,m_Connected);
+  mafEvent e(this,COLLABORATE_ENABLE);
+  e.SetBool(m_Connected);
   InvokeEvent(&e);
 
   Superclass::InternalShutdown();

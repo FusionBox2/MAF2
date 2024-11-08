@@ -170,7 +170,7 @@ void lhpOpSoftReg::OnEvent(mafEventBase *maf_event)
     case ID_SELECTBONES:
       {
         mafString s(_L("Choose cloud"));
-        mafEvent e(this,VME_CHOOSE, &s, (intptr_t)&lhpOpSoftReg::BonesSetAccept);
+        mafEvent e(this,VME_CHOOSE); e.SetString(&s); e.SetArg((intptr_t)&lhpOpSoftReg::BonesSetAccept);
         InvokeEvent(e);
         mafNode *vme = e.GetVme();
         OnChooseVme(vme);
@@ -459,7 +459,7 @@ void lhpOpSoftReg::OpDo()
     if(outSurface)
     {
       outSurface->ReparentTo(m_Input->GetRoot());
-      {mafEvent evUnq(this, VME_ADD, outSurface); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(outSurface); InvokeEvent(evUnq);}
     }
     mafDEL(outSurface);
 

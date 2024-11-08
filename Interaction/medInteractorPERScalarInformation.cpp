@@ -172,7 +172,8 @@ void medInteractorPERScalarInformation::OnEvent(mafEventBase *event)
             vtkDataArray *scalars = vtk_data->GetPointData()->GetScalars();
             if (scalars)
               scalars->GetTuple(pid,&scalar_value);
-            mafEvent pick_event(this,MOUSE_MOVE,p);
+            mafEvent pick_event(this,MOUSE_MOVE);
+            pick_event.SetVtkObj(p);
             pick_event.SetDouble(scalar_value);
             pick_event.SetArg(pid);
             InvokeEvent(pick_event);

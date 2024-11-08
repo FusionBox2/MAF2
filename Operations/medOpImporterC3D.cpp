@@ -134,7 +134,7 @@ void medOpImporterC3D::OpUndo()
 //----------------------------------------------------------------------------
 {
 	assert(m_Vme);
-	{mafEvent evUnq(this,VME_REMOVE,m_Vme); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_Vme); InvokeEvent(evUnq);}
 	m_Vme->Delete();
 	m_Vme = NULL;
 }

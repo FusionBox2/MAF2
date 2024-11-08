@@ -144,7 +144,7 @@ void lhpOpImporterOBJ::ImportOBJ()
     fn = m_Files[kk];
     
     vtkNew<vtkOBJReader> reader;
-	  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,reader); InvokeEvent(evUnq);}
+	  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR); evUnq.SetVtkObj(reader); InvokeEvent(evUnq);}
     reader->SetFileName(fn.GetCStr());
 	  reader->Update();
 

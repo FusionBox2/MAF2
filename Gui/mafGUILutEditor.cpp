@@ -451,7 +451,6 @@ void mafGUILutEditor::OnEvent(mafEventBase *maf_event)
         {mafEvent evUnq(this,GetId()); InvokeEvent(evUnq);}
       break; 
       default:
-			  e->Log();
 		  break; 
     }
   }

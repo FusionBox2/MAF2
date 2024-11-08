@@ -1,25 +1,8 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafEvent
- Authors: Silvano Imboden, Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
+#include "ftkConfigure.h"
 
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafEvent_h
-#define __mafEvent_h
-//----------------------------------------------------------------------------
-// includes:
-//----------------------------------------------------------------------------
 #include "mafDefines.h"   // mafDefines should alway be included as first
-#include "mafDecl.h"
 #include "mafEventBase.h" // base class for mafEvent
 #include "mafBaseEventHandler.h"
 
@@ -37,10 +20,6 @@ class mafString;
   class vtkProp;  
 #endif
 
-#ifdef MAF_EXPORTS
-#include "mafDllMacros.h"
-  EXPORT_STL_VECTOR(MAF_EXPORT,mafNode *);
-#endif
 //----------------------------------------------------------------------------
 // mafEvent :
 //----------------------------------------------------------------------------
@@ -52,22 +31,12 @@ class mafString;
 class MAF_EXPORT mafEvent : public mafEventBase
 {
 public:
-  mafTypeMacro(mafEvent,mafEventBase);
+  mafTypeMacroN(mafEvent);
 
-  mafEvent();                                                         
-  mafEvent(void *sender, int id,                           intptr_t arg=0);
-  mafEvent(void *sender, int id, bool             b,       intptr_t arg=0);
-  mafEvent(void *sender, int id, double           f,       intptr_t arg=0);
-  mafEvent(void *sender, int id, mafString       *s,       intptr_t arg=0);
-  mafEvent(void *sender, int id, mafString       *s, int x, int y, int width, int height, intptr_t arg=0);
-  mafEvent(void *sender, int id, mafNode         *vme,     bool b=false, intptr_t arg=0);
-  mafEvent(void *sender, int id, mafView         *view,    wxWindow *win=NULL);
-  mafEvent(void *sender, int id, mafOp					 *op, intptr_t arg=0);
-  mafEvent(void *sender, int id, mafObject       *mafobj, intptr_t arg=0);
-  mafEvent(void *sender, int id, mafObject       *mafobj,  mafString       *s, intptr_t arg=0);
-  mafEvent(void *sender, int id, WidgetDataType  &widget_data, intptr_t arg=0);
-  mafEvent(void *sender, int id, std::shared_ptr<mafMatrix> m1, std::shared_ptr<mafMatrix> m2=nullptr);
+  mafEvent();
+  mafEvent(void* sender, int id);
 
+  mafEvent* Copy();
   void DeepCopy(const mafEventBase *maf_event) override;
 
   intptr_t          GetArg()     {return m_Arg;};
@@ -76,7 +45,7 @@ public:
   mafString*        GetString();
   mafView*          GetView()    {return m_View;};
   mafNode*          GetVme()     {return m_Vme;};
-  mafOp*					  GetOp()      {return m_Op;};
+  mafOp*            GetOp()      {return m_Op;};
   std::shared_ptr<mafMatrix>         GetMatrix()    {return m_Matrix;};
   std::shared_ptr<mafMatrix> GetMatrix2() {return m_Matrix2;};
   mafObject*        GetMafObject() {return m_MafObject;}
@@ -106,34 +75,34 @@ public:
   void SetMatrix2(std::shared_ptr<mafMatrix> mat2)   { m_Matrix2 =mat2;};
   void SetMafObject(mafObject* obj)    { m_MafObject = obj;}
   void SetWidgetData(WidgetDataType &widget_data);
+  void SetX(int x) { m_x = x; };
+  void SetY(int y) { m_y = y; };
+  void SetWidth(int w) { m_width = w; };
+  void SetHeight(int h) { m_height = h; };
 
 protected:
-  intptr_t         m_Arg;
-  bool             m_Bool;
-  double           m_Double;
-  mafString       *m_MAFString;
+  intptr_t         m_Arg = 0;
+  bool             m_Bool = false;
+  double           m_Double = 0.0;
+  mafString       *m_MAFString = nullptr;
 
-  mafNode         *m_Vme;
-  mafView         *m_View;
-  mafOp						*m_Op;
+  mafNode         *m_Vme = nullptr;
+  mafView         *m_View = nullptr;
+  mafOp           *m_Op = nullptr;
   std::shared_ptr<mafMatrix> m_Matrix;
   std::shared_ptr<mafMatrix> m_Matrix2;
-  mafObject       *m_MafObject;
+  mafObject       *m_MafObject = nullptr;
   std::vector<mafNode*> m_VmeVector;
   WidgetDataType   m_WidgetData;
 
-  int m_x;
-  int m_y;
-  int m_width;
-  int m_height;
+  int m_x = 0;
+  int m_y = 0;
+  int m_width = 0;
+  int m_height = 0;
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #ifdef MAF_USE_WX
 public:
-  mafEvent(void *sender, int id, wxWindow        *win,    intptr_t arg=0);
-  mafEvent(void *sender, int id, wxUpdateUIEvent *e,      intptr_t arg=0);
-  mafEvent(void *sender, int id, wxObject        *wxobj,  intptr_t arg=0);
-
   wxWindow*        GetWin()       {return m_Win;};
   wxUpdateUIEvent* GetUIEvent()   {return m_UpdateUIEvent;};
   wxObject*        GetWxObj()     {return m_WxObj;};
@@ -143,18 +112,14 @@ public:
   void SetWxObj(wxObject *wxobj)        { m_WxObj = wxobj;};
 
 protected:
-  wxWindow        *m_Win;
-  wxUpdateUIEvent *m_UpdateUIEvent; 
-  wxObject        *m_WxObj; 
+  wxWindow        *m_Win = nullptr;
+  wxUpdateUIEvent *m_UpdateUIEvent = nullptr; 
+  wxObject        *m_WxObj = nullptr; 
 #endif
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #ifdef MAF_USE_VTK
 public:
-  mafEvent(void *sender, int id, vtkProp         *prop,   mafNode *vme=NULL);
-  mafEvent(void *sender, int id, vtkObject       *vtkobj, intptr_t arg=0);
-  mafEvent(void *sender, int id, vtkObject       *vtkobj, mafString *s);
-
   vtkProp*         GetProp()      {return m_VtkProp;};
   vtkObject*       GetVtkObj()    {return m_VtkObj;};
 
@@ -162,22 +127,9 @@ public:
   void SetVtkObj(vtkObject *vtkobj)       { m_VtkObj = vtkobj;};
 
 protected:
-  vtkProp         *m_VtkProp;
-  vtkObject       *m_VtkObj; 
+  vtkProp         *m_VtkProp = nullptr;
+  vtkObject       *m_VtkObj = nullptr; 
 #endif  
-
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-public:
-  mafEvent* Copy();
-
-  void Log();
-  static void     SetLogMode(int logmode);
-  static int      m_LogMode;
-  
-protected:
-
-  void Init(void *sender, int id, intptr_t arg=0);
-  void Initialized();
 };
-#endif /* __mafEvent_h */

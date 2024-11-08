@@ -92,7 +92,7 @@ mafLogicWithGUI::mafLogicWithGUI()
   m_Win->Bind(wxEVT_UPDATE_UI,
     [this](wxUpdateUIEvent& event)
     {
-	    mafEvent evUnq(this, UPDATE_UI, &event);
+	    mafEvent evUnq(this, UPDATE_UI); evUnq.SetUIEvent(&event);
     	OnEvent(&evUnq);
     }, MENU_START, MENU_END);
   m_Win->Bind(wxEVT_DROP_FILES, 
@@ -105,12 +105,12 @@ mafLogicWithGUI::mafLogicWithGUI()
         mafSplitPath(file_to_open, &path, &name, &ext);
         if (ext == _R("msf") || ext == _R("zmsf"))
         {
-          {mafEvent evUnq(this,MENU_FILE_OPEN,&file_to_open); OnEvent(&evUnq);}
+          {mafEvent evUnq(this,MENU_FILE_OPEN); evUnq.SetString(&file_to_open); OnEvent(&evUnq);}
           return;
         }
         else
         {
-          {mafEvent evUnq(this,IMPORT_FILE,&file_to_open); OnEvent(&evUnq);}
+          {mafEvent evUnq(this,IMPORT_FILE); evUnq.SetString(&file_to_open); OnEvent(&evUnq);}
         }
       }
     }
@@ -248,7 +248,6 @@ void mafLogicWithGUI::OnEvent(mafEventBase *maf_event)
     case UPDATE_UI:
       break; 
     default:
-      e->Log();
       break; 
     }
   }

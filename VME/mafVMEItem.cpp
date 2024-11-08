@@ -79,7 +79,7 @@ void mafVMEItem::SetDataModified(bool flag)
 {
   m_DataModified=flag;
   Modified();
-  InvokeEvent(VME_ITEM_DATA_MODIFIED);
+  InvokeEvent(this, VME_ITEM_DATA_MODIFIED);
 }
 
 //-------------------------------------------------------------------------

@@ -370,7 +370,7 @@ void medOpExporterGRFWS::Write()
   if (!m_TestMode)
   {
     wxSetCursor(wxCursor(wxCURSOR_WAIT));
-    {mafEvent evUnq(this,PROGRESSBAR_SET_TEXT,&info); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_SET_TEXT); evUnq.SetString(&info); InvokeEvent(evUnq);}
 	  {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
     wait = new wxBusyInfo("This may take several minutes, please be patient...");
   }
@@ -447,7 +447,7 @@ void medOpExporterGRFWS::Write()
 
     if (!m_TestMode)
     {
-      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)(((double) i)/((double) size)*25.)); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg((((double) i)/((double) size)*25.)); InvokeEvent(evUnq);}
     }
   }
   // ---------------------
@@ -472,7 +472,7 @@ void medOpExporterGRFWS::Write()
 
     if (!m_TestMode)
     {
-      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)(25+((double) i)/((double) size)*25.)); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg((25+((double) i)/((double) size)*25.)); InvokeEvent(evUnq);}
     }
   }  
   // ---------------------
@@ -503,7 +503,7 @@ void medOpExporterGRFWS::Write()
       
     if (!m_TestMode)
     {
-      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)(50+((double) i)/((double) size)*25.)); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg((50+((double) i)/((double) size)*25.)); InvokeEvent(evUnq);}
     }
   }
   // ---------------------
@@ -528,7 +528,7 @@ void medOpExporterGRFWS::Write()
 
     if (!m_TestMode)
     {
-      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)(75+((double) i)/((double) size)*25.)); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg((75+((double) i)/((double) size)*25.)); InvokeEvent(evUnq);}
     }
   }  
 
@@ -550,7 +550,7 @@ void medOpExporterGRFWS::Write()
 
   if (!m_TestMode)
   {
-    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)0.0); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(0); InvokeEvent(evUnq);}
   }
 
   // Write to final file
@@ -629,7 +629,7 @@ void medOpExporterGRFWS::Write()
 
       if (!m_TestMode)
       {
-        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)(((double) i)/((double) size)*100.)); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg((((double) i)/((double) size)*100.)); InvokeEvent(evUnq);}
       }
 
     }
@@ -640,7 +640,7 @@ void medOpExporterGRFWS::Write()
   info = _R("");
   if (!m_TestMode)
   {
-    {mafEvent evUnq(this,PROGRESSBAR_SET_TEXT,&info); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_SET_TEXT); evUnq.SetString(&info); InvokeEvent(evUnq);}
     {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
     wxSetCursor(wxCursor(wxCURSOR_DEFAULT));
     cppDEL(wait);
@@ -773,7 +773,7 @@ void medOpExporterGRFWS::WriteFast()
 
     if (!m_TestMode)
     {
-      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)(((double) i)/((double) size)*25.)); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg((((double) i)/((double) size)*25.)); InvokeEvent(evUnq);}
     }
   }  
   // ---------------------
@@ -811,7 +811,7 @@ void medOpExporterGRFWS::WriteFast()
 
     if (!m_TestMode)
     {
-      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)(25+((double) i)/((double) size)*25.)); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg((25+((double) i)/((double) size)*25.)); InvokeEvent(evUnq);}
     }
   }  
   // ---------------------
@@ -858,7 +858,7 @@ void medOpExporterGRFWS::WriteFast()
       
     if (!m_TestMode)
     {
-      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)(50+((double) i)/((double) size)*25.)); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg((50+((double) i)/((double) size)*25.)); InvokeEvent(evUnq);}
     }
   }  
   // ---------------------
@@ -896,7 +896,7 @@ void medOpExporterGRFWS::WriteFast()
 
     if (!m_TestMode)
     {
-      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)(75+((double) i)/((double) size)*25.)); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg((75+((double) i)/((double) size)*25.)); InvokeEvent(evUnq);}
     }
   }  
 
@@ -918,7 +918,7 @@ void medOpExporterGRFWS::WriteFast()
 
   if (!m_TestMode)
   {
-    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)0.0); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(0); InvokeEvent(evUnq);}
   }
 
   // Write to final file
@@ -997,7 +997,7 @@ void medOpExporterGRFWS::WriteFast()
 
       if (!m_TestMode)
       {
-        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)(((double) i)/((double) size)*100.)); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg((((double) i)/((double) size)*100.)); InvokeEvent(evUnq);}
       }
 
     }
@@ -1091,7 +1091,7 @@ void medOpExporterGRFWS::WriteSingleVector()
 
       if (!m_TestMode)
       {
-        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)(((double) i)/((double) size)*100.)); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg((((double) i)/((double) size)*100.)); InvokeEvent(evUnq);}
       }
     }
 
@@ -1203,7 +1203,7 @@ void medOpExporterGRFWS::WriteSingleVectorFast()
 
       if (!m_TestMode)
       {
-        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)(((double) i)/((double) size)*100.)); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg((((double) i)/((double) size)*100.)); InvokeEvent(evUnq);}
       }
     }
 

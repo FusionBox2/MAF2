@@ -136,7 +136,6 @@ void lhpOpINPExporter::OnEvent(mafEventBase *maf_event)
       OpStop(OP_RUN_CANCEL);
       break;
     default:
-      e->Log();
       break;
     }
   }
@@ -166,7 +165,7 @@ void lhpOpINPExporter::ExportOneSurface(const char *filename, mafVMEOutputSurfac
   v_tpdf->Update();
 
   vtkNew<mafINPWriter> writer;
-  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,writer); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR); evUnq.SetVtkObj(writer); InvokeEvent(evUnq);}
   writer->SetFileName(filename);
   if(this->m_ABSMatrixFlag)
     writer->SetInputConnection(v_tpdf->GetOutputPort());

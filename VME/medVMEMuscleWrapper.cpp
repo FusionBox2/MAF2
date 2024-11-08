@@ -1591,7 +1591,7 @@ void medVMEMuscleWrapper::OnEvent(mafEventBase *maf_event)
       InternalUpdate();
       
       //force redrawing
-      mafEvent ev(this, VME_SELECTED,this);
+      mafEvent ev(this, VME_SELECTED); ev.SetVme(this);
       this->ForwardUpEvent(&ev);
       return;
     }
@@ -1730,7 +1730,7 @@ bool medVMEMuscleWrapper::SelectVme(mafString title,
     intptr_t accept_callback, mafVME*& pOutVME, mafString& szOutVmeName)
 //------------------------------------------------------------------------
 {
-  mafEvent ev(this, VME_CHOOSE, accept_callback);
+  mafEvent ev(this, VME_CHOOSE); ev.SetArg(accept_callback);
   ev.SetString(&title);
   ForwardUpEvent(ev);
 

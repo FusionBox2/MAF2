@@ -101,13 +101,13 @@ bool mafAgent::HasObservers(mafID channel)
 }
 
 //------------------------------------------------------------------------------
-void mafAgent::GetObservers(mafID channel,std::vector<mafBaseEventHandler *> &olist)
+std::vector<mafBaseEventHandler*> mafAgent::GetObservers(mafID channel)
 //------------------------------------------------------------------------------
 {
-  olist.clear();
-  for (int i=0;i<m_Channels.size();i++)
-    if (m_Channels[i]->GetChannel() == channel)
-      m_Channels[i]->GetObservers(olist);  
+  for (auto& esource : m_Channels)
+    if (esource->GetChannel() == channel)
+      return esource->GetObservers();
+  return {};
 }
 //------------------------------------------------------------------------------
 void mafAgent::AddObserver(mafBaseEventHandler *listener,mafID channel, int priority)
@@ -266,14 +266,14 @@ void mafAgent::InternalProcessVTKEvents(vtkObject* sender, unsigned long eventid
 //------------------------------------------------------------------------------
 {
   mafAgent* self = reinterpret_cast<mafAgent *>( clientdata );
-  {mafEventBase evUnq(sender,eventid,clientdata,MCH_VTK); self->OnEvent(&evUnq);}
+  { mafEventBase evUnq(sender,eventid); evUnq.SetData(clientdata); evUnq.SetChannel(MCH_VTK); self->OnEvent(&evUnq);}
 }
 
 //------------------------------------------------------------------------------
 void mafAgent::InvokeEvent(int id, mafID channel,void *data)
 //------------------------------------------------------------------------------
 {
-  {mafEventBase evUnq(this,id,data,channel); this->InvokeEvent(&evUnq,channel);}
+  {mafEventBase evUnq(this,id); evUnq.SetData(data); evUnq.SetChannel(channel); this->InvokeEvent(&evUnq,channel);}
 }
 
 //------------------------------------------------------------------------------

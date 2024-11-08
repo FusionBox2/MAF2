@@ -357,7 +357,7 @@ mafAvatar *mafInteractionManager::GetAvatar(const char *name)
 void mafInteractionManager::ViewSelected(mafView *view)
 //------------------------------------------------------------------------------
 {
-  mafEvent e(this,VIEW_SELECT,view);
+  mafEvent e(this, VIEW_SELECT); e.SetView(view);
   OnViewSelected(&e);
 }
 
@@ -368,7 +368,7 @@ void mafInteractionManager::PreResetCamera(vtkRenderer *ren)
   // propagate event to all avatars...
   for (mmuAvatarsMap::iterator it=m_Avatars.begin();it!=m_Avatars.end();it++)
   {
-    {mafEventBase evUnq(this,CAMERA_PRE_RESET,ren); it->second->OnEvent(&evUnq);}
+    {mafEventBase evUnq(this,CAMERA_PRE_RESET); evUnq.SetData(ren); it->second->OnEvent(&evUnq);}
   }
 }
 
@@ -379,7 +379,7 @@ void mafInteractionManager::PostResetCamera(vtkRenderer *ren)
   // propagate event to all avatars...
   for (mmuAvatarsMap::iterator it=m_Avatars.begin();it!=m_Avatars.end();it++)
   {
-    {mafEventBase evUnq(this,CAMERA_POST_RESET,ren); it->second->OnEvent(&evUnq);}
+    {mafEventBase evUnq(this,CAMERA_POST_RESET); evUnq.SetData(ren); it->second->OnEvent(&evUnq);}
   }
 }
 
@@ -761,7 +761,6 @@ void mafInteractionManager::OnEvent(mafEventBase *event)
 		    default:
           if (e->GetSender() == m_Devices || e->GetSender() == m_DeviceTree)
           {
-			      e->Log();
             return;
           }
           else
@@ -778,7 +777,7 @@ void mafInteractionManager::OnEvent(mafEventBase *event)
   if (id == VME_SELECT || id == VME_DCLICKED)
   {
     // event raised by PER to advise of VME selection or double click on a VME
-    {mafEvent evUnq(event->GetSender(), id, (mafVME *)event->GetData()); InvokeEvent(evUnq);}
+    {mafEvent evUnq(event->GetSender(), id); evUnq.SetVme((mafVME *)event->GetData()); InvokeEvent(evUnq);}
   }
   else if (id == VIEW_SELECT)
   {
@@ -802,7 +801,7 @@ void mafInteractionManager::OnEvent(mafEventBase *event)
   {
     mafVME *vme = (mafVME *)event->GetData();
     bool vme_context_menu = (vme != NULL) && !vme->IsA("mafVMEGizmo");
-    {mafEvent evUnq(event->GetSender(),SHOW_CONTEXTUAL_MENU, vme_context_menu); InvokeEvent(evUnq);}
+    {mafEvent evUnq(event->GetSender(),SHOW_CONTEXTUAL_MENU); evUnq.SetBool(vme_context_menu); InvokeEvent(evUnq);}
   }
   else if (id == mafDevice::DEVICE_NAME_CHANGED) 
   {

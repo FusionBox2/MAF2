@@ -232,7 +232,7 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::MorphologicalMathema
   ConvertervtkTOitk::Pointer vtkTOitk = ConvertervtkTOitk::New();
   vtkTOitk->SetInput( m_SegmentedImage );
   vtkTOitk->Update();
-  {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)10); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(10); InvokeEvent(evUnq);}
 
   //Structuring element is a sphere
   StructuringElementType  structuringElement;
@@ -244,20 +244,20 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::MorphologicalMathema
   binaryDilate->SetInput( vtkTOitk->GetOutput() );
   binaryDilate->SetDilateValue( m_LowerLabel );
   binaryDilate->Update();
-  {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)50); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(50); InvokeEvent(evUnq);}
 
   ErodeFilterType::Pointer  binaryErode  = ErodeFilterType::New();
   binaryErode->SetKernel(  structuringElement );
   binaryErode->SetInput( binaryDilate->GetOutput() );
   binaryErode->SetErodeValue( m_LowerLabel );
   binaryErode->Update();
-  {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)90); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(90); InvokeEvent(evUnq);}
 
   typedef itk::ImageToVTKImageFilter< OutputImageType > ConverteritkTOvtk;
   ConverteritkTOvtk::Pointer itkTOvtk = ConverteritkTOvtk::New();
   itkTOvtk->SetInput( binaryErode->GetOutput() );
   itkTOvtk->Update();
-  {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)100); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(100); InvokeEvent(evUnq);}
 
   m_MorphoImage->DeepCopy(itkTOvtk->GetOutput());
   //m_MorphoImage->Update();
@@ -288,7 +288,7 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::RegionGrowing()
   localFilter->SetLowerThreshold(m_Threshold);
   localFilter->SetUpperLabel(m_UpperLabel);
   localFilter->SetUpperThreshold(m_Threshold+400);
-  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,localFilter); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR); evUnq.SetVtkObj(localFilter); InvokeEvent(evUnq);}
   localFilter->Update();
 
   //Save the result of the region growing
@@ -749,7 +749,7 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::OnEvent(mafEventBase
         m_VolumeOutputRegionGrowing->ReparentTo(m_VolumeInput);
         m_VolumeOutputRegionGrowing->Update();
 
-        {mafEvent evUnq(this,VME_SHOW,m_VolumeOutputRegionGrowing,true); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VolumeOutputRegionGrowing); evUnq.SetBool(true); InvokeEvent(evUnq);}
 
         if (m_SegmentedImage != NULL)
         {
@@ -806,7 +806,7 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::OnEvent(mafEventBase
         	m_SurfaceOutput->ReparentTo(m_VolumeInput);
         	m_SurfaceOutput->Update();
   
-        	{mafEvent evUnq(this,VME_SHOW,m_VolumeOutputMorpho,true); InvokeEvent(evUnq);}
+        	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VolumeOutputMorpho); evUnq.SetBool(true); InvokeEvent(evUnq);}
           m_Gui->Enable(wxOK,true);
         }
 
@@ -897,15 +897,15 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::OpUndo()
 {
   if (m_VolumeOutputRegionGrowing)
   {
-    {mafEvent evUnq(this, VME_REMOVE, m_VolumeOutputRegionGrowing); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_VolumeOutputRegionGrowing); InvokeEvent(evUnq);}
   }
   if (m_VolumeOutputMorpho)
   {
-    {mafEvent evUnq(this, VME_REMOVE, m_VolumeOutputMorpho); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_VolumeOutputMorpho); InvokeEvent(evUnq);}
   }
   if (m_SurfaceOutput)
   {
-    {mafEvent evUnq(this, VME_REMOVE, m_SurfaceOutput); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_SurfaceOutput); InvokeEvent(evUnq);}
   }
 
   if (m_VolumeOutputMorpho == NULL && m_VolumeOutputRegionGrowing == NULL && m_SurfaceOutput == NULL)

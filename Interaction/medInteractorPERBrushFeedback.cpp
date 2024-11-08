@@ -265,7 +265,8 @@ void medInteractorPERBrushFeedback::OnEvent(mafEventBase *event)
             //add a patch otherwise some old events will be rise at the end of mouse move
             m_Count++;
 
-            mafEvent pick_event(this,MOUSE_MOVE,p);
+            mafEvent pick_event(this,MOUSE_MOVE);
+            pick_event.SetVtkObj(p);
             pick_event.SetArg(pid);
             pick_event.SetDouble(m_Count);
             pick_event.SetBool(e->GetModifier(MAF_CTRL_KEY) == true);
