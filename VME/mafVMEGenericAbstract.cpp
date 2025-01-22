@@ -190,7 +190,7 @@ bool mafVMEGenericAbstract::IsDataAvailable()
   {
     mafTimeStamp t = this->GetTimeStamp();
     auto item = m_DataVector->GetItem(t);
-    if (IsAnimated() && !item)
+    if (IsAnimated() && !item && m_DataVector->GetNumberOfItems() > 0)
     {
       mafTimeStamp tbounds[2];
       m_DataVector->GetTimeBounds(tbounds);
