@@ -1,0 +1,26 @@
+/*  PM */
+static char *FRAME_ICON16x16_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 4 1",
+"X c Black",
+"0 c #FF0000",
+"  c #FFFFFF",
+". c None",
+/* pixels */
+"XXXXXXXXXXXXXXX.",
+"X             X.",
+"X 00000 00000 X.",
+"X 0 0 0 0 0 0 X.",
+"X 0 0 0 0 0 0 X.",
+"X 0 0 0 0 0 0 X.",
+"X 0 0 0 0 0 0 X.",
+"X 0 0 0 0 0 0 X.",
+"X 0 0 0 0 0 0 X.",
+"X 0 0 0 0 0 0 X.",
+"X 0 0 0 0 0 0 X.",
+"X 0 0 0 0 0 0 X.",
+"X 0 0 0 0 0 0 X.",
+"X 0 0 0 0 0 0 X.",
+"X             X.",
+"XXXXXXXXXXXXXXX."
+};
