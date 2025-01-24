@@ -1,0 +1,30 @@
+/* XPM */
+static char *FILE_SAVE_xpm[] = {
+/* columns rows colors chars-per-pixel */
+"20 20 4 1",
+". c #4D4D4D",
+"o c #D3D3D3",
+"X c #A6A64D",
+"  c None",
+/* pixels */
+"                    ",
+"                    ",
+"                    ",
+"   ..............   ",
+"   .X.oooooooo.o.   ",
+"   .X.oooooooo...   ",
+"   .X.oooooooo.X.   ",
+"   .X.oooooooo.X.   ",
+"   .X.oooooooo.X.   ",
+"   .X.oooooooo.X.   ",
+"   .XX........XX.   ",
+"   .XXXXXXXXXXXX.   ",
+"   .XX.........X.   ",
+"   .XX......oo.X.   ",
+"   .XX......oo.X.   ",
+"   .XX......oo.X.   ",
+"    .............   ",
+"                    ",
+"                    ",
+"                    "
+};
