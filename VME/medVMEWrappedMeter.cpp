@@ -2333,8 +2333,8 @@ void medVMEWrappedMeter::OnEvent(mafEventBase *maf_event)
         mafString t;
         t = n->GetName();
         //m_ListBox->Append(_(t));
-        m_ListBox->Append(_(t.toWx()));
-        m_ListBox->SetStringSelection(_(t.toWx()));
+        m_ListBox->Append(t.toWx());
+        m_ListBox->SetStringSelection(t.toWx());
 
 				
         //m_OrderedMidPoints.push_back(_(t));
@@ -2399,7 +2399,7 @@ void medVMEWrappedMeter::OnEvent(mafEventBase *maf_event)
           m_OrderedMidPoints[number] = temp2;
           m_OrderedMidPoints[number-1] = temp;*/
 
-          m_ListBox->SetStringSelection(_(name));
+          m_ListBox->SetStringSelection(name);
 //          m_ListBox->SetClientData(m_ListBox->GetSelection(), (void *) m_IdList[number]);
 
           /*wxString message;
@@ -2438,7 +2438,7 @@ void medVMEWrappedMeter::OnEvent(mafEventBase *maf_event)
           m_OrderedMidPoints[number] = temp2;
           m_OrderedMidPoints[number+1] = temp;*/
 
-          m_ListBox->SetStringSelection(_(name));
+          m_ListBox->SetStringSelection(name);
 
           /*wxString message;
           for(int i= 0 ; i< m_OrderedMidPoints.size(); i++)

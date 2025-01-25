@@ -5680,8 +5680,8 @@ void medVMEComputeWrapping::OnEvent(mafEventBase *maf_event)
 				mafString t;
 				t = n->GetName();
 				//m_ListBox->Append(_(t));
-				m_ListBox->Append(_(t.toWx()));
-				m_ListBox->SetStringSelection(_(t.toWx()));
+				m_ListBox->Append(t.toWx());
+				m_ListBox->SetStringSelection(t.toWx());
 
 				m_ListBox->Update();
 				m_Gui->Update();
@@ -5732,7 +5732,7 @@ void medVMEComputeWrapping::OnEvent(mafEventBase *maf_event)
 					m_ListBox->Insert(name, number-1);
 
 
-					m_ListBox->SetStringSelection(_(name));
+					m_ListBox->SetStringSelection(name);
 
 					m_OrderMiddlePointsNameVMEList.clear();
 					for(int i=0;i<m_ListBox->GetCount();i++)
@@ -5760,7 +5760,7 @@ void medVMEComputeWrapping::OnEvent(mafEventBase *maf_event)
 					temp = m_ListBox->GetStringSelection(); 
 					m_ListBox->Delete(m_ListBox->FindString(temp));
 					m_ListBox->Insert(name, number+1);
-					m_ListBox->SetStringSelection(_(name));
+					m_ListBox->SetStringSelection(name);
 
 					m_OrderMiddlePointsNameVMEList.clear();
 					for(int i=0;i<m_ListBox->GetCount();i++)

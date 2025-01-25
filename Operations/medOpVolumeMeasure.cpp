@@ -162,10 +162,10 @@ void medOpVolumeMeasure::OnEvent(mafEventBase *maf_event)
     break;
     case ID_STORE_MEASURE:
     {
-      m_MeasureText = mafWxToString(wxGetTextFromUser("",_("Insert measure description"), _(m_MeasureText.toWx())));
+      m_MeasureText = mafWxToString(wxGetTextFromUser("",_("Insert measure description"), m_MeasureText.toWx()));
       if(m_MeasureText.empty()) break;
       mafString t = m_VolumeMeasure + _L(" ") + m_SurfaceArea + _R(" ") + m_NormalizedShapeIndex + _R(" ") + m_MeasureText;
-      m_MeasureList->Append(_(t.toWx()));
+      m_MeasureList->Append(t.toWx());
       m_MeasureText = _R("");
       m_Gui->Enable(ID_REMOVE_MEASURE,true);
       //m_gui->Enable(ID_ADD_TO_VME_TREE,true);

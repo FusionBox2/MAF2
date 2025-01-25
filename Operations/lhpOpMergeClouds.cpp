@@ -151,8 +151,8 @@ void lhpOpMergeClouds::OnEvent(mafEventBase *maf_event)
 
       mafString t;
       t = mafVME::SafeDownCast(sel)->GetName();
-      m_ListBox->Append(_(t.toWx()));
-      m_ListBox->SetStringSelection(_(t.toWx()));
+      m_ListBox->Append(t.toWx());
+      m_ListBox->SetStringSelection(t.toWx());
       m_MergeClouds.push_back(mafVME::SafeDownCast(sel));
 
 

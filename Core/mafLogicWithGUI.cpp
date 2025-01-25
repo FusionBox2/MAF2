@@ -421,7 +421,7 @@ void mafLogicWithGUI::AddToMenu(const mafString& name, long id, wxMenu* path_men
     while ( path_tkz.HasMoreTokens() )
     {
       op_path = path_tkz.GetNextToken();
-      int item = path_menu->FindItem(_(op_path));
+      int item = path_menu->FindItem(op_path);
       if (item != wxNOT_FOUND)
       {
         wxMenuItem *menu_item = path_menu->FindItem(item);
@@ -431,12 +431,12 @@ void mafLogicWithGUI::AddToMenu(const mafString& name, long id, wxMenu* path_men
       else
       {
         wxMenu *sub_menu = new wxMenu;
-        path_menu->Append(-1,_(op_path),sub_menu);
+        path_menu->Append(-1,op_path,sub_menu);
         path_menu = sub_menu;
       }
     }
   }
-  path_menu->Append(id, _(name.toWx()), _(name.toWx()));
+  path_menu->Append(id, name.toWx(), name.toWx());
   SetAccelerator(name, id);
 }
 //----------------------------------------------------------------------------
