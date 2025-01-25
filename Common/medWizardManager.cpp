@@ -106,7 +106,7 @@ void medWizardManager::FillMenu( wxMenu* wizardMenu )
       {
         //search inside the menu for the token
         wizardPath = path_tkz.GetNextToken();
-        int item = wizardMenu->FindItem(_(wizardPath));
+        int item = wizardMenu->FindItem(wizardPath);
         if (item != wxNOT_FOUND)
         {
           //if the submenu is found select it
@@ -122,20 +122,20 @@ void medWizardManager::FillMenu( wxMenu* wizardMenu )
             wizardMenu = sub_menu;
           }
           sub_menu = new wxMenu;
-          wizardMenu->Append(submenu_id++,_(wizardPath),sub_menu);
+          wizardMenu->Append(submenu_id++,wizardPath,sub_menu);
         }
       }
 
       //append entry to the menu
       if(sub_menu)
-        sub_menu->Append(wizard->GetId(), _(wizard->GetLabel()), _(wizard->GetLabel()));
+        sub_menu->Append(wizard->GetId(), wizard->GetLabel(), wizard->GetLabel());
       else
         mafLogMessage(_M(mafString(_L("error in FillMenu"))));
     }
     else
     {
       //append entry to the menu
-      wizardMenu->Append(wizard->GetId(), _(wizard->GetLabel()), _(wizard->GetLabel()));
+      wizardMenu->Append(wizard->GetId(), wizard->GetLabel(), wizard->GetLabel());
     }
   }
 
