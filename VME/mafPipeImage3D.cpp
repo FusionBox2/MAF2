@@ -25,6 +25,8 @@
 
 #include "mafPipeImage3D.h"
 
+#include <vtkAlgorithmOutput.h>
+
 #include "mafDecl.h"
 
 #include "mafVME.h"
@@ -89,6 +91,7 @@ void mafPipeImage3D::Create(mafNode *node, mafView *view)
   // image pipeline
   m_Vme->GetOutput()->Update();
   vtkAlgorithmOutput *port = m_Vme->GetOutput()->GetVTKOutputPort();
+  port->GetProducer()->Update();
   vtkImageData *image_data = (vtkImageData *)m_Vme->GetOutput()->GetVTKData();
   //image_data->Update();
 
