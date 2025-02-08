@@ -116,7 +116,7 @@ private:
   std::vector<medWizard *> m_WizardList; ///< List of pointer of plugged wizzard.
   medWizard *m_RunningWizard;
   medWizardSettings *m_Settings;
-  wxMenuBar         *m_MenuBar; ///< Pointer to the Application's main menù
+  wxMenuBar         *m_MenuBar; ///< Pointer to the Application's main menu
   wxToolBar         *m_ToolBar; ///< Pointer to the application's Toolbal
   mafNode						*m_Selected; ///< Pointer to the current selected node.
   bool               m_Warn; ///< Flag to warn the user when an operation that can not undo is starting.

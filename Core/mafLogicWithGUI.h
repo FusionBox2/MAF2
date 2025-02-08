@@ -83,7 +83,7 @@ public:
   /** Virtual function for plug operations into the application.*/
   //SIL. 27-9-2004: virtual void Plug(mafOp *op)                {};
 
-  /** Create user interface elements like Menù, Toolbar, ... according to the Plug flags.*/
+  /** Create user interface elements like Menu, Toolbar, ... according to the Plug flags.*/
   virtual void Configure();
 
   /** Main initialization.*/

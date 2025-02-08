@@ -17,11 +17,11 @@
 
   SILVIA S. BLEMKER and SCOTT L. DELP: Three-Dimensional Representation of
   Complex Muscle Architectures and Geometries. Annals of Biomedical Engineering, 
-  Vol. 33, No. 5, May 2005, pp. 661–673
+  Vol. 33, No. 5, May 2005, pp. 661â€“673
   http://www.mae.virginia.edu/muscle/pdf/Blemker2005b.pdf
 
   Silvia S. Blemker, Scott L. Delp: Rectus femoris and vastus intermedius fiber excursions predicted
-  by three-dimensional muscle models. Journal of Biomechanics 39 (2006): 1383–1391
+  by three-dimensional muscle models. Journal of Biomechanics 39 (2006): 1383â€“1391
   http://www.mae.virginia.edu/muscle/pdf/Blemker2006.pdf
 */
 #ifndef vtkMAFMuscleDecomposition_h__

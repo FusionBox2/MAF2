@@ -209,7 +209,7 @@ private:
 %   immagine apprtentente all'acquisizione
 % - flag_img: contiene l'indice dell'immagine per ogni coordinata
 %   piano-frame (eg: se flag_img(i,j) == num_img, allora
-%   filelist(num_img).name è il nome file che contiente l'immagine del piano i nel frame j
+%   filelist(num_img).name Ã¨ il nome file che contiente l'immagine del piano i nel frame j
 % 
 % parametri di posizione/orientamento originali da DICOM
 % - P patient position (da DICOM)
@@ -428,8 +428,8 @@ theta(i) = acos(dot(Vidx(1,2:4),V(i,2:4)));
 end
 
 % individuo i piani adiacenti al piano 1, con una tolleranza del 10%
-% rispetto all'angolo teorico. Il piano adiacente è un unico quando piano 1
-% è un piano estremo
+% rispetto all'angolo teorico. Il piano adiacente Ã¨ un unico quando piano 1
+% Ã¨ un piano estremo
 id_theta = find(theta<1.1*(pi/S));
 if numel(id_theta)==1
 Vidx = [Vidx; V(id_theta,:)];

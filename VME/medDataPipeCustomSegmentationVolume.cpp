@@ -1083,7 +1083,7 @@ bool medDataPipeCustomSegmentationVolume::CheckNumberOfThresholds()
         }
         if (!found)
         {
-          mafLogMessage(_M(_R("Slice ") + mafToString(i + 1) + _R("° hasn't a threshold")));
+          mafLogMessage(_M(_R("Slice ") + mafToString(i + 1) + _R("Â° hasn't a threshold")));
 #pragma message ("degree sign")
           return false;
         }

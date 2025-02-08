@@ -2,7 +2,7 @@
 
  Program: MAF2Medical
  Module: medWizardBlockFileExistCheck
- Authors: Simone Bn‡
+ Authors: Simone Bn√†
  
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or

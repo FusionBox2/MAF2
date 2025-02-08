@@ -624,7 +624,7 @@ void vtkMAFVolumeSlicer_BES::ExecuteDataHotFix(vtkDataObject* outputData)
   //create a clockwise oriented convex polygon from the detected points  
   //we will use a modified version of Jarvis' March for convex hull computation. 
   //See: Jarvis, R. A. (1973). "On the identification of the convex hull of 
-  //a finite set of points in the plane". Information Processing Letters 2: 18–21
+  //a finite set of points in the plane". Information Processing Letters 2: 18â€“21
   //http://en.wikipedia.org/wiki/Gift_wrapping_algorithm    
   vtkCellArray *polys = vtkCellArray::New();
   polys->Allocate(polys->EstimateSize(1, numberOfPoints));

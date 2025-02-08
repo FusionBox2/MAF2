@@ -483,9 +483,9 @@ void medOp2DMeasure::OnEvent(mafEventBase *maf_event)
           }
           else
           {
-            //t = m_AcuteAngle + "° (" + m_ObtuseAngle + "°) " + m_MeasureText;
+            //t = m_AcuteAngle + "Â° (" + m_ObtuseAngle + "Â°) " + m_MeasureText;
             t = m_AcuteAngle;
-            t += _R("° (");
+            t += _R("Â° (");
 #pragma message ("degree symbol")
             t += m_MeasureText;
           }

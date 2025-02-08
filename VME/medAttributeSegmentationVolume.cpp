@@ -417,7 +417,7 @@ void medAttributeSegmentationVolume::Print(std::ostream& os, const int tabs) con
   //////////////////////////////////////////////////////////////////////////
   for (int i=0;i<m_AutomaticSegmentationRanges.size();i++)
   {
-    os << indent << indent << "Range " << i+1 << "°:";
+    os << indent << indent << "Range " << i+1 << "Â°:";
     os << indent << indent << indent << "Start Slice " << m_AutomaticSegmentationRanges[i][0]<<std::endl;
     os << indent << indent << indent << "End Slice " << m_AutomaticSegmentationRanges[i][1]<<std::endl;
     //show the second threshold only if m_UseDoubleThreshold 
@@ -432,7 +432,7 @@ void medAttributeSegmentationVolume::Print(std::ostream& os, const int tabs) con
   //////////////////////////////////////////////////////////////////////////
   for (int i=0;i<m_RegionGrowingSeeds.size();i++)
   {
-    os << indent << indent << "Seed " << i+1 << "°:";
+    os << indent << indent << "Seed " << i+1 << "Â°:";
     os << indent << indent << indent << "x " << m_RegionGrowingSeeds[i][0]<<std::endl;
     os << indent << indent << indent << "y " << m_RegionGrowingSeeds[i][1]<<std::endl;
     os << indent << indent << indent << "z " << m_RegionGrowingSeeds[i][2]<<std::endl;

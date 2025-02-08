@@ -1380,7 +1380,7 @@ s = wxString::Format(L"tmp4OLD:%f , %f , %f" , tmp4[0],tmp4[1],tmp4[2]);
     m_LineSourceVector2[m_LineSourceVector2.size()-1]->Update();
 
     mafString ds = mafString::Format(_R("%.2f"), manualAngle);
-    mafString degree = _R("°");
+    mafString degree = _R("Â°");
 #pragma message ("Degree symbol to fix")
     ds.append(degree);
     m_MeterVector[m_MeterVector.size()-1]->SetText(ds.GetCStr());

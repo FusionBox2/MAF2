@@ -272,7 +272,7 @@ protected:
 
   virtual void RestoreLayout();
 
-  /** Called when user change the measure unit from menù Options.*/
+  /** Called when user change the measure unit from menu Options.*/
   void UpdateMeasureUnit();
 
   /** Enable/Disable menu items when an operation start/end running. */

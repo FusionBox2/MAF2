@@ -287,7 +287,7 @@ void medPipeTensorFieldSurface::OnEvent(mafEventBase *maf_event)
 	 m_ColorMappingLUT->SetVectorModeToMagnitude();    
 	 da->GetRange(sr, idx);
   }
-  else if ( m_ColorMappingMode>CMM_MAGNITUDE && m_ColorMappingMode<CMM_COMPONENT1)    // eigenvalue ¦Ë
+  else if ( m_ColorMappingMode>CMM_MAGNITUDE && m_ColorMappingMode<CMM_COMPONENT1)    // eigenvalue Â¦Ã‹
   {
 	  ComputeEigenvalues(orgData,sr,m_ColorMappingMode-1);
   }
@@ -449,9 +449,9 @@ void medPipeTensorFieldSurface:: EigenVectors3x3(double A[3][3], double lambda[3
 
   m_ComboColorBy->Clear();
   m_ComboColorBy->Append( _("magnitude") );
-  m_ComboColorBy->Append(_("¦Ë0"));
-  m_ComboColorBy->Append(_("¦Ë1"));
-  m_ComboColorBy->Append(_("¦Ë2"));
+  m_ComboColorBy->Append(_("Â¦Ã‹0"));
+  m_ComboColorBy->Append(_("Â¦Ã‹1"));
+  m_ComboColorBy->Append(_("Â¦Ã‹2"));
 
   
 

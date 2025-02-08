@@ -347,8 +347,8 @@ mafGUI *medPipeDensityDistance::CreateGui()
 
 	m_Gui->Divider(1);
 #pragma message("degree signs")
-  m_Gui->Integer(ID_FIRST_THRESHOLD,_R("1° Threshold"),&m_FirstThreshold,range[0],range[1]);
-  m_Gui->Integer(ID_SECOND_THRESHOLD,_R("2° Threshold"),&m_SecondThreshold,range[0],range[1]);
+  m_Gui->Integer(ID_FIRST_THRESHOLD,_R("1Â° Threshold"),&m_FirstThreshold,range[0],range[1]);
+  m_Gui->Integer(ID_SECOND_THRESHOLD,_R("2Â° Threshold"),&m_SecondThreshold,range[0],range[1]);
   m_Gui->Divider(1);
   m_Gui->Integer(ID_MAX_DISTANCE,_R("Max Dist."),&m_MaxDistance,1,100);
   //m_Gui->Integer(ID_NUM_SECTIONS,"Intervals",&m_NumSections,2,100);

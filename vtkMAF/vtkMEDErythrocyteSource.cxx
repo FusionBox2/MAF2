@@ -44,7 +44,7 @@ vtkMEDErythrocyteSource::vtkMEDErythrocyteSource(void)
   }
 
   //the model is based on: 
-  //S. Mu?oz San MartÌn, J.L. Sebasti·n,M. Sancho and G. ¡lvarez:
+  //S. Mu?oz San Mart√≠n, J.L. Sebasti√°n,M. Sancho and G. √Ålvarez:
   //Modeling Human Erythrocyte Shape and Size Abnormalities
   //http://arxiv.org/ftp/q-bio/papers/0507/0507024.pdf
 

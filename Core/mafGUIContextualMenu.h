@@ -37,14 +37,14 @@ public:
   /** destructor  */
   ~mafGUIContextualMenu() override;
 
-	/**  Visualize contextual menù for the MDI child and selected view. */
+	/**  Visualize contextual menÃ¹ for the MDI child and selected view. */
   void ShowContextualMenu(wxFrame *child, mafView *view, bool vme_menu);		
 
 protected:
   wxFrame     *m_ChildViewActive;
   mafView     *m_ViewActive;
 
-	/**  Answer contextual menù's selection. */
+	/**  Answer contextual menÃ¹'s selection. */
 	void OnContextualViewMenu(wxCommandEvent& event);
   /** declaring event table macro */
   DECLARE_EVENT_TABLE()

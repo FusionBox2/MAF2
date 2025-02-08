@@ -2132,7 +2132,7 @@ void vtkMEDPolyDataDeformation_M1
 {
   //the matrix for the rotation can be computed by procedure given in
   //Bloomenthal J. Calculation of reference frames along a
-  //space curve. Graphics Gems I, 1990, 567–571.
+  //space curve. Graphics Gems I, 1990, 567â€“571.
   //http://www.unchainedgeometry.com/jbloom/pdf/ref-frames.pdf
   //or also by Schneider: Geometric Tools for Computer Games
 

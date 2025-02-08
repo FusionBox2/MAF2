@@ -33,7 +33,7 @@ class mafEvent;
 //----------------------------------------------------------------------------
 /** This importer loads an ASCII file containing all landmarks trajectories,i.e. the position of any marker 
 for any single frame that composes the marker trajectory. Particularly, this file is produced by means of 
-Vicon Workstation© employed in Human Movement Analysis.*/
+Vicon WorkstationÂ© employed in Human Movement Analysis.*/
 
 class MED_OPERATION_EXPORT medOpImporterLandmarkWS : public mafOp
 {
