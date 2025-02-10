@@ -112,6 +112,7 @@ mafRWI::mafRWI(wxWindow *parent, RWI_LAYERS layers, bool use_grid, bool show_axe
 	m_RwiBase = NULL;
 	m_RenderWindow = NULL;
 	m_Ruler   = NULL;
+	m_Orientator = NULL;
 	m_Grid    = NULL;
 	m_Axes    = NULL;
 	m_AxesType = axesType;
