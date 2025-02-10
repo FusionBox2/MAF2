@@ -129,7 +129,7 @@ int vtkMAFTextOrientator::RenderOpaqueGeometry(vtkViewport *viewport)
 void vtkMAFTextOrientator::OrientatorCreate()
 //------------------------------------------------------------------------------
 {
-  vtkTransform* m_ScaleTransform = vtkTransform::New();
+  m_ScaleTransform = vtkTransform::New();
   m_ScaleTransform->PostMultiply();
   vtkTransformPolyDataFilter* ltpdf = vtkTransformPolyDataFilter::New();
   ltpdf->SetTransform(m_ScaleTransform);
