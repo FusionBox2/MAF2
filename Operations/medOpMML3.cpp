@@ -664,7 +664,7 @@ void medOpMML3::CreateRegistrationDlg()
   // maf model view RWI
   m_ModelmafRWI = new mafRWI(m_OpDlg);
   m_ModelmafRWI->SetListener(this);
-  m_ModelmafRWI->m_RwiBase->SetInteractorStyle(NULL);
+  m_ModelmafRWI->m_RwiBase->GetInteractor()->SetInteractorStyle(NULL);
   m_ModelmafRWI->SetSize(0,0,420,420);
   m_ModelmafRWI->Show(true);
   m_ModelmafRWI->CameraUpdate();
@@ -916,7 +916,7 @@ void medOpMML3::CreateNonUniformSlicesDlg()
   // create render window
   m_SectionsViewRWI = new mafRWI(m_NonUniformSlicesDlg);
   m_SectionsViewRWI->SetListener(this);
-  m_SectionsViewRWI->m_RwiBase->SetInteractorStyle(NULL);
+  m_SectionsViewRWI->m_RwiBase->GetInteractor()->SetInteractorStyle(NULL);
   m_SectionsViewRWI->SetSize(0,0,winSize,winSize);
   m_SectionsViewRWI->Show(true);
 
@@ -3733,7 +3733,7 @@ mafRWI* medOpMML3::CreateParameterViewmafRWI(vtkTextSource *ts, wxString lab, fl
 { 
   mafRWI *rwi = new mafRWI(m_OpDlg);
   rwi->SetListener(this);
-  rwi->m_RwiBase->SetInteractorStyle(NULL);
+  rwi->m_RwiBase->GetInteractor()->SetInteractorStyle(NULL);
 
   // width/height
   rwi->SetSize(0, 0, 250, 65);

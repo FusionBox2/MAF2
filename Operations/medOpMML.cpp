@@ -2247,7 +2247,7 @@ void medOpMML::CreateRegistrationDlg()
   // maf model view RWI
   m_ModelmafRWI = new mafRWI(m_OpDlg);
   m_ModelmafRWI->SetListener(this);
-  m_ModelmafRWI->m_RwiBase->SetInteractorStyle(NULL);
+  m_ModelmafRWI->m_RwiBase->GetInteractor()->SetInteractorStyle(NULL);
 
   // width/height
   m_ModelmafRWI->SetSize(0,0,420,420);
@@ -2755,7 +2755,7 @@ mafRWI* medOpMML::CreateParameterViewmafRWI(wxString lab, float r, float g, floa
 { 
   mafRWI *rwi = new mafRWI(m_OpDlg);
   rwi->SetListener(this);
-  rwi->m_RwiBase->SetInteractorStyle(NULL);
+  rwi->m_RwiBase->GetInteractor()->SetInteractorStyle(NULL);
 
   // width/height
   rwi->SetSize(0, 0, 250, 65);

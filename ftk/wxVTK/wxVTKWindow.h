@@ -1,11 +1,21 @@
 #pragma once
 
+#include "wx/wxprec.h"
+
+#ifndef WX_PRECOMP
+#include <wx/wx.h>
+#endif
+
+#include "ftkConfigure.h"
+
+#include "mafDefines.h"
+
+#include "vtkRenderWindowInteractor.h"
+
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"
 #include "ftk/Base/String.h"
 #include "mafViewCompound.h"
-#include "vtkRenderWindowInteractor.h"
-
 
 class wxPaintEvent;
 class wxMouseEvent;
@@ -18,6 +28,45 @@ class vtkImageAppend;
 class vtkPNGWriter;
 class vtkWindowToImageFilter;
 
+class wxVTKWindow : public wxWindow, public mafEventSender
+{
+public:
+  DECLARE_DYNAMIC_CLASS(wxVTKWindow)
+
+  wxVTKWindow();
+
+  wxVTKWindow(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxASCII_STR(wxPanelNameStr));
+
+  virtual ~wxVTKWindow();
+
+  bool Create(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxASCII_STR(wxPanelNameStr));
+
+  virtual void SetRenderWindow(vtkRenderWindow*);
+
+  virtual vtkRenderWindow* GetRenderWindow();
+
+  virtual vtkRenderWindowInteractor* GetInteractor();
+
+  //---------FROM OLD
+  vtkCamera* GetCamera();
+  void GetImage(wxBitmap& bitmap, int magnification = 1);
+  void SaveImage(const mafString& filename = _R(""), int magnification = 1, int forceExtension = -1);
+  void SaveAllImages(const mafString& filename = _R(""), mafViewCompound* v = NULL, int forceExtension = -1);
+  void SetStereoMovieDirectory(const char* dir);
+  void EnableStereoMovie(bool enable = true);
+
+protected:
+  void OnSize(wxSizeEvent& event);
+
+  void OnPaint(wxPaintEvent& event);
+
+  void OnEraseBackground(wxEraseEvent& event);
+
+  void OnDestroy(wxWindowDestroyEvent& event);
+
+  vtkSmartPointer<vtkRenderWindow> m_renderWindow;
+};
+#if 0
 //----------------------------------------------------------------------------
 // Constant:
 //----------------------------------------------------------------------------
@@ -35,22 +84,22 @@ wxVTKWindow behave differently, and you
 must explicitly destroy them by calling "Delete()"
 BEFORE wxWindow destroy it (using "delete"). 
 */
-class MAF_EXPORT wxVTKWindow : public wxWindow, public vtkRenderWindowInteractor, public mafEventSender
+class MAF_EXPORT wxVTKWindow__ : public wxWindow, public vtkRenderWindowInteractor, public mafEventSender
 {
-  DECLARE_DYNAMIC_CLASS(wxVTKWindow)
+  DECLARE_DYNAMIC_CLASS(wxVTKWindow__)
 
 protected:
   wxTimer m_Timer;
 
 public:
 
-  vtkTypeMacro(wxVTKWindow,vtkRenderWindowInteractor);
+  vtkTypeMacro(wxVTKWindow__,vtkRenderWindowInteractor);
 
-  wxVTKWindow();
-  wxVTKWindow(wxWindow *parent, wxWindowID id, const wxPoint &pos = wxDefaultPosition,
+  wxVTKWindow__();
+  wxVTKWindow__(wxWindow *parent, wxWindowID id, const wxPoint &pos = wxDefaultPosition,
 	      const wxSize &size = wxDefaultSize, long style = wxWANTS_CHARS , const wxString &name = wxPanelNameStr);
-  ~wxVTKWindow() override;
-  static wxVTKWindow* New();
+  ~wxVTKWindow__() override;
+  static wxVTKWindow__* New();
 
 	/** Notify mouse click on a view. */
   void NotifyClick();
@@ -174,3 +223,6 @@ protected:
   
 	DECLARE_EVENT_TABLE()
 };
+#endif
+
+

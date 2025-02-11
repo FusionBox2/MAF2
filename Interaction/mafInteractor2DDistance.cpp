@@ -819,7 +819,7 @@ void mafInteractor2DDistance::CreateHistogram()
     m_PlotActor->RemoveAllDataSetInputConnections();
 
     m_PlotActor->AddDataSetInputConnection(prober->GetOutputPort());
-    m_HistogramRWI->m_RwiBase->Render();
+    m_HistogramRWI->m_RwiBase->GetInteractor()->Render();
   }
 }
 //----------------------------------------------------------------------------
@@ -841,7 +841,7 @@ void mafInteractor2DDistance::GenerateHistogram(bool generate)
   if (m_GenerateHistogram)
   {
     m_PlotActor->RemoveAllDataSetInputConnections();
-    m_HistogramRWI->m_RwiBase->Render();
+    m_HistogramRWI->m_RwiBase->GetInteractor()->Render();
     RemoveMeter();
     SetMeasureTypeToDistanceBetweenPoints();
   }

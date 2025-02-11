@@ -402,13 +402,13 @@ void mafOpRemoveCells::OnEvent(mafEventBase *maf_event)
 		  {
 			  //achiarini (27.11.2007)
 			  //this is to guarantee that the clippingplanes are not reset during interaction
-			  vtkInteractorStyle::SafeDownCast(m_Rwi->m_RwiBase->GetInteractorStyle())->AutoAdjustCameraClippingRangeOn(); 
+			  vtkInteractorStyle::SafeDownCast(m_Rwi->m_RwiBase->GetInteractor()->GetInteractorStyle())->AutoAdjustCameraClippingRangeOn();
 			  m_SelectCellInteractor->AutoResetClippingRangeOn();
 
 		  }
 		  else{
 			  //this is to guarantee that the clippingplanes are not reset during interaction
-			  vtkInteractorStyle::SafeDownCast(m_Rwi->m_RwiBase->GetInteractorStyle())->AutoAdjustCameraClippingRangeOff(); 
+			  vtkInteractorStyle::SafeDownCast(m_Rwi->m_RwiBase->GetInteractor()->GetInteractorStyle())->AutoAdjustCameraClippingRangeOff();
 			  m_SelectCellInteractor->AutoResetClippingRangeOff();
 			  m_Rwi->CameraUpdate();
 		  }
