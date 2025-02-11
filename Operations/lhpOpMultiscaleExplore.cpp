@@ -482,7 +482,7 @@ void lhpOpMultiscaleExplore::CreateOpDialog()
 
   // Set the interactor style to trackball camera
   vtkInteractorStyleTrackballCamera* style = vtkInteractorStyleTrackballCamera::New() ;
-  m_Rwi->m_RwiBase->SetInteractorStyle(style) ;
+  m_Rwi->m_RwiBase->GetInteractor()->SetInteractorStyle(style) ;
   style->Delete() ;
 
   // add observer to catch vtk start render event
@@ -823,7 +823,7 @@ vtkRenderWindowInteractor* lhpOpMultiscaleExplore::GetInteractor()
 //----------------------------------------------------------------------------
 {
   if (m_Rwi != NULL)
-    return vtkRenderWindowInteractor::SafeDownCast(m_Rwi->m_RwiBase) ;
+    return vtkRenderWindowInteractor::SafeDownCast(m_Rwi->m_RwiBase->GetInteractor()) ;
   else if (m_externalRenderer != NULL)
     return m_externalRenderer->GetRenderWindow()->GetInteractor() ;
   else

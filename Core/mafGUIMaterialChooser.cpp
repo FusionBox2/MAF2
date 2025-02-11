@@ -266,8 +266,8 @@ void mafGUIMaterialChooser::CreatePipe()
   m_RWI->m_Camera->SetFocalPoint(0,0,0);
   m_RWI->m_Camera->SetPosition(0,0,2);
   m_RWI->m_Camera->SetViewUp(0,1,0);
-	m_RWI->m_RwiBase->GetInteractorStyle()->SetInteractor(NULL);
-	m_RWI->m_RwiBase->SetInteractorStyle(NULL);
+	m_RWI->m_RwiBase->GetInteractor()->GetInteractorStyle()->SetInteractor(NULL);
+	m_RWI->m_RwiBase->GetInteractor()->SetInteractorStyle(NULL);
 
 	m_Sphere = vtkSphereSource::New();
 	m_Sphere->SetPhiResolution(20);

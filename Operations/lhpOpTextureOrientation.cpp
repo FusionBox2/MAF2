@@ -385,7 +385,7 @@ void lhpOpTextureOrientation::CreateOpDialog()
 
   // Set the interactor style to trackball camera
   vtkInteractorStyleTrackballCamera* style = vtkInteractorStyleTrackballCamera::New() ;
-  m_Rwi->m_RwiBase->SetInteractorStyle(style) ;
+  m_Rwi->m_RwiBase->GetInteractor()->SetInteractorStyle(style) ;
   style->Delete() ;
 
 

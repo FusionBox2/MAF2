@@ -126,9 +126,9 @@ void mafInteractorExtractIsosurface::PickIsoValue(mafDevice *device)
   {
     double pos_picked[3];
     mafViewVTK *vvtk = mafViewVTK::SafeDownCast(mouse->GetView());
-    if (vvtk->GetRWI()->GetPicker()->Pick(x,y,0,m_Renderer))
+    if (vvtk->GetRWI()->GetInteractor()->GetPicker()->Pick(x,y,0,m_Renderer))
     {
-      vvtk->GetRWI()->GetPicker()->GetPickPosition(pos_picked);
+      vvtk->GetRWI()->GetInteractor()->GetPicker()->GetPickPosition(pos_picked);
       vtkPoints *p = vtkPoints::New();
       p->SetNumberOfPoints(1);
       p->SetPoint(0,pos_picked);

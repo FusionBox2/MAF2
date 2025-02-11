@@ -773,7 +773,7 @@ void medInteractor2DDistance::CreateHistogram()
     m_PlotActor->RemoveAllDataSetInputConnections();
 
     m_PlotActor->AddDataSetInputConnection(prober->GetOutputPort());
-    m_HistogramRWI->m_RwiBase->Render();
+    m_HistogramRWI->m_RwiBase->GetInteractor()->Render();
   }
 }
 //----------------------------------------------------------------------------
@@ -797,7 +797,7 @@ void medInteractor2DDistance::GenerateHistogram(bool generate)
     m_PlotActor->RemoveAllDataSetInputConnections();
     if (m_HistogramRWI)
     {
-    	m_HistogramRWI->m_RwiBase->Render();
+    	m_HistogramRWI->m_RwiBase->GetInteractor()->Render();
     }
     RemoveMeter();
     SetMeasureTypeToDistanceBetweenPoints();

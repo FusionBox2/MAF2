@@ -198,7 +198,7 @@ vtkRenderer *mafDeviceButtonsPadMouse::GetRenderer()
   vtkRenderer *r = NULL;
   if (m_SelectedRWI)
   {
-    r = m_SelectedRWI->FindPokedRenderer((int)m_LastPosition[0],(int)m_LastPosition[1]);
+    r = m_SelectedRWI->GetInteractor()->FindPokedRenderer((int)m_LastPosition[0],(int)m_LastPosition[1]);
   }
 
   return r;
