@@ -27,7 +27,7 @@
 #include "mafEventBase.h"
 #include "mafView.h"
 #include "mafSceneGraph.h"
-#include "mafRWIBase.h"
+#include "ftk/wxVTK/wxVTKWindow.h"
 
 #include "mafEventInteraction.h"
 #include "mmuIdFactory.h"

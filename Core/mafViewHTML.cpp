@@ -108,7 +108,7 @@ void mafViewHTML::Create()
 //----------------------------------------------------------------------------
 mafSceneGraph *mafViewHTML::GetSceneGraph()									  {return m_Sg;}
 //----------------------------------------------------------------------------
-mafRWIBase *mafViewHTML::GetDefaultRWI()											{ return m_Rwi->m_RwiBase;}
+wxVTKWindow *mafViewHTML::GetDefaultRWI()											{ return m_Rwi->m_RwiBase;}
 //----------------------------------------------------------------------------
 void mafViewHTML::VmeSelect(mafNode *vme, bool select)					{ m_Sg->VmeSelect(vme, select);}
 //----------------------------------------------------------------------------

@@ -43,7 +43,7 @@ public:
 	mafView				*Copy(mafBaseEventHandler *Listener = NULL, bool lightCopyEnabled = false) override;
   void           Create() override;
 	mafSceneGraph *GetSceneGraph() override;
-  mafRWIBase    *GetDefaultRWI();
+  wxVTKWindow    *GetDefaultRWI();
 
   void VmeAdd   (mafNode *vme) override;
 	void VmeRemove(mafNode *vme) override;

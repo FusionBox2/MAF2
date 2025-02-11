@@ -36,7 +36,6 @@
 #include "mafEventInteraction.h"
 
 #include "mafViewVTK.h"
-#include "mafRWIBase.h"
 #include "mafVME.h"
 #include "mafTransform.h"
 

@@ -34,7 +34,6 @@
 #include "mafGUI.h"
 #include "mafOp.h"
 #include "mafGUIValidator.h"
-#include "mafRWIBase.h"
 #include "mafRWI.h"
 #include "mafGUIDialogPreview.h"
 #include "mafDeviceButtonsPadMouse.h"

@@ -1074,7 +1074,7 @@ void mafInteractor2DDistance::ShowOnlyLastMeasure( bool show )
   m_CurrentRenderer->GetRenderWindow()->Render();
 }
 //----------------------------------------------------------------------------
-mafRWIBase * mafInteractor2DDistance::GetCurrentRwi()
+wxVTKWindow * mafInteractor2DDistance::GetCurrentRwi()
 //----------------------------------------------------------------------------
 {
   return m_CurrentRwi;

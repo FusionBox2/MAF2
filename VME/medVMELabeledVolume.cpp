@@ -37,7 +37,6 @@
 #include "mafGUIValidator.h"
 #include "mafGUICheckListBox.h"
 #include "mafInteractorExtractIsosurface.h"
-#include "mafRWIBase.h"
 #include "mafRWI.h"
 #include "mafGUIFloatSlider.h"
 #include "ftk/Base/String.h"

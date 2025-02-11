@@ -26,7 +26,6 @@
 #include "wx/busyinfo.h"
 
 #include "mafGUIDialog.h"
-#include "mafRWIBase.h"
 #include "mafRWI.h"
 #include "mafDeviceButtonsPadMouse.h"
 #include "mafEvent.h"

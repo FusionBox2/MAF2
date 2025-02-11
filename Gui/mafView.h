@@ -35,7 +35,7 @@ class mafDeviceButtonsPadMouse;
 class mafDevice;
 class mafInteractor;
 
-class mafRWIBase;
+class wxVTKWindow;
 class vtkCellPicker;
 class vtkMAFRayCast3DPicker;
 class vtkAssemblyPath;
@@ -101,7 +101,7 @@ public:
 
   virtual void			CameraReset(mafNode *node = nullptr)  											{};
   virtual void			CameraUpdate()																					{};
-  virtual mafRWIBase *GetRWI()                                              {return nullptr;};
+  virtual wxVTKWindow*GetRWI()                                              {return nullptr;};
   virtual mafSceneGraph *GetSceneGraph()                                    {return nullptr;};
   virtual void      GetImage(wxBitmap &bmp, int magnification = 1)          {};
 

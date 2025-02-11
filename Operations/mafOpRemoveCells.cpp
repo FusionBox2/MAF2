@@ -30,7 +30,6 @@
 
 #include "mafGUIDialog.h"
 
-#include "mafRWIBase.h"
 #include "mafRWI.h"
 #include "mafDeviceButtonsPadMouse.h"
 

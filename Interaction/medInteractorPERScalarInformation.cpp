@@ -37,7 +37,7 @@
 #include "mafEventBase.h"
 #include "mafEventInteraction.h"
 
-#include "mafRWIBase.h"
+#include "ftk/wxVTK/wxVTKWindow.h"
 
 #include "mafVME.h"
 #include "mafVMEOutput.h"

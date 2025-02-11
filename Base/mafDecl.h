@@ -203,7 +203,7 @@ EVT_START,
   VIEW_DELETE,   // from mafGUIMDIChild to mafViewManager
   VIEW_SELECT,   // from mafGUIMDIChild and mafGUIViewPanel to mafViewManager
   VIEW_SELECTED, // used to ask to logic if there is a view selected and get a pointer to it
-  VIEW_CLICKED,  // from mafRWIBase to mafGUIMDIChild and mafGUIViewPanel to mafViewManager
+  VIEW_CLICKED,  // from wxVTKWindow to mafGUIMDIChild and mafGUIViewPanel to mafViewManager
   VIEW_RESIZE,   // from anyone that want to block the view's size.
   VIEW_SAVE_IMAGE,//from mafMDIChild  to mafViewManager
   PER_PUSH,       // from an Operation to mafInteractionManager

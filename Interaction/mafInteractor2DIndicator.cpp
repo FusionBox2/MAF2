@@ -589,7 +589,7 @@ void mafInteractor2DIndicator::ShowOnlyLastMeasure( bool show )
   m_CurrentRenderer->GetRenderWindow()->Render();
 }
 //----------------------------------------------------------------------------
-mafRWIBase * mafInteractor2DIndicator::GetCurrentRwi()
+wxVTKWindow * mafInteractor2DIndicator::GetCurrentRwi()
   //----------------------------------------------------------------------------
 {
   return m_CurrentRwi;

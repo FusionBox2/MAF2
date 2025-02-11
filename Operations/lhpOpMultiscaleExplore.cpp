@@ -23,7 +23,6 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "mafDecl.h"
 #include "mafGUI.h"
 #include "mafGUIDialog.h"
-#include "mafRWIBase.h"
 #include "mafRWI.h"
 #include "mafDeviceButtonsPadMouse.h"
 #include "mafGUIButton.h"

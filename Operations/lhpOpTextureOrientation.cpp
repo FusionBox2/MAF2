@@ -24,7 +24,6 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "mafDecl.h"
 #include "mafGUI.h"
 #include "mafGUIDialog.h"
-#include "mafRWIBase.h"
 #include "mafRWI.h"
 #include "mafGUIButton.h"
 #include "mafGUIFloatSlider.h"

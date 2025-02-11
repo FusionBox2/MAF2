@@ -32,7 +32,7 @@ class wxNotebook;
 
 class mafVME;
 class mmaVolumeMaterial;
-class mafRWIBase;
+class wxVTKWindow;
 class mafGUI;
 class mafGUIRangeSlider;
 
@@ -101,7 +101,7 @@ protected:
   
   // slice preview
   wxNotebook            *m_PreviewBook;
-  mafRWIBase    				*m_SliceRwi;
+  wxVTKWindow    				*m_SliceRwi;
   vtkRenderWindow       *m_SliceWindow;
   vtkTextActor          *m_WaitActor;
   vtkRenderer           *m_SliceRenderer;
@@ -111,14 +111,14 @@ protected:
   vtkActor2D            *m_SliceActor;
 
   // 3d preview
-  mafRWIBase    				  *m_Rwi3D;
+  wxVTKWindow    				  *m_Rwi3D;
   vtkRenderer             *m_Renderer3D;
   vtkRenderWindow         *m_Window3D;
   vtkMAFAdaptiveVolumeMapper *m_Mapper3D;
   vtkVolume               *m_Volume3D;
 
   // graph/widget window
-  mafRWIBase  		*m_GraphRwi;
+  wxVTKWindow  		*m_GraphRwi;
   vtkRenderer     *m_GraphRenderer;
   vtkRenderWindow *m_GraphWindow;
   vtkWidgetActor  *m_WidgetActor;

@@ -29,7 +29,6 @@
 #include "ftk/Gui/MainFrame.h"
 #include "mafViewManager.h"
 #include "mafViewVTK.h"
-#include "mafRWIBase.h"
 
 #include "ftk/Base/RegisteringPointer.h"
 #include "mmaApplicationLayout.h"

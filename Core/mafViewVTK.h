@@ -20,7 +20,6 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafView.h"
-#include "mafRWIBase.h"
 #include "mafRWI.h"
 #include "mafSceneGraph.h"
 #include "mafSceneNode.h" //used in subclasses
@@ -42,7 +41,7 @@ class mafAnimate;
 //----------------------------------------------------------------------------
 /** 
 mafViewVTK is a View that got a RenderWindow and a SceneGraph
-\sa mafSceneNode mafRWIBase mafRWI
+\sa mafSceneNode wxVTKWindow mafRWI
 */
 class MAF_EXPORT mafViewVTK: public mafView
 {
@@ -115,7 +114,7 @@ public:
   virtual int GetCameraPosition();
 
   mafSceneGraph *GetSceneGraph() override {return m_Sg;};
-  mafRWIBase    *GetRWI() override {return m_Rwi->m_RwiBase;};
+  wxVTKWindow    *GetRWI() override {return m_Rwi->m_RwiBase;};
 
   /** Return a pointer to the image of the renderwindow.*/
   void GetImage(wxBitmap &bmp, int magnification = 1) override;

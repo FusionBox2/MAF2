@@ -28,7 +28,7 @@ class vtkRenderer;
 class vtkAbstractPropPicker;
 class vtkCellPicker;
 class vtkRenderWindowInteractor;
-class mafRWIBase;
+class wxVTKWindow;
 
 /** Tracking 2D device, i.e. "Mouse".
   mafDeviceButtonsPadMouseRemote is a class implementing interface for a Mouse. Current implementation 

@@ -21,7 +21,6 @@
 #include "mafAvatar3D.h"
 #include "mafInteractor.h"
 #include "mafViewVTK.h"
-#include "mafRWIBase.h"
 #include "mafEventInteraction.h"
 #include "mafEvent.h"
 

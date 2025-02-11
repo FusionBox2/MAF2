@@ -19,7 +19,6 @@
 #include "mmiSelectPoint.h"
 #include "mafDeviceButtonsPadMouse.h"
 #include "mafInteractor.h"
-#include "mafRWIBase.h"
 #include "mafEventInteraction.h"
 #include "mafEvent.h"
 

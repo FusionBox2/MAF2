@@ -25,7 +25,7 @@
 // forward refs
 //----------------------------------------------------------------------------
 class mafRWI;
-class mafRWIBase;
+class wxVTKWindow;
 class mafDeviceButtonsPadMouse;
 
 class vtkLineSource;
@@ -107,7 +107,7 @@ public:
   void ShowAllMeasures(bool show);
 
   /** return the current rwi */
-  mafRWIBase *GetCurrentRwi();
+  wxVTKWindow *GetCurrentRwi();
 
 protected:
 	mafInteractor2DIndicator();
@@ -162,7 +162,7 @@ protected:
 	vtkRenderer         *m_CurrentRenderer;
   vtkRenderer         *m_PreviousRenderer;
   
-  mafRWIBase *m_CurrentRwi;
+  wxVTKWindow *m_CurrentRwi;
 	
 	bool m_DraggingLine;
 	bool m_DraggingLeft;

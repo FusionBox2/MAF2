@@ -27,7 +27,7 @@
 //----------------------------------------------------------------------------
 class mafSceneGraph;
 class mafGUI;
-class mafRWIBase;
+class wxVTKWindow;
 
 #ifdef MAF_EXPORTS
 #include "mafDllMacros.h"
@@ -121,7 +121,7 @@ public:
   virtual void OnLayout();
 
   mafSceneGraph *GetSceneGraph() override;
-  mafRWIBase    *GetRWI() override;
+  wxVTKWindow *GetRWI() override;
 
   /** 
   Return a pointer to the image of all sub-views.*/

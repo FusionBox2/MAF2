@@ -32,7 +32,6 @@
 class mafViewVTK;
 class mafSceneGraph;
 class mafGUI;
-class mafRWIBase;
 class mafViewImage;
 class mafGUILutSlider;
 class mafGUILutSwatch;

@@ -28,7 +28,7 @@
 //----------------------------------------------------------------------------
 class mafSceneGraph;
 class mafGUI;
-class mafRWIBase;
+class wxVTKWindow;
 class mafViewImage;
 class mafGUILutSlider;
 class mafGUILutSwatch;

@@ -87,53 +87,54 @@ SET(PROJECT_SRCS ${PROJECT_SRCS}
 )
 
 IF (MAF_USE_VTK)
-  SET(PROJECT_SRCS
-  ${PROJECT_SRCS}
-  mafAxes.cpp
-  mafAxes.h
-  mafLODActor.cpp
-  mafLODActor.h
-  mafLogicWithManagers.cpp
-  mafLogicWithManagers.h
-  mafPipe.cpp
-  mafPipe.h
-  mafPipeVTK.cpp
-  mafPipeVTK.h
-  mafPipeBox.cpp
-  mafPipeBox.h
-  mafRWI.cpp
-  mafRWI.h
-  mafRWIBase.cpp
-  mafRWIBase.h
-  mafSceneGraph.cpp
-  mafSceneGraph.h
-  mafSceneNode.cpp
-  mafSceneNode.h
-  mafViewCompound.cpp
-  mafViewCompound.h
-  mafViewHTML.cpp
-  mafViewHTML.h
-  mafViewManager.cpp
-  mafViewManager.h
-  mafViewPlot.cpp
-  mafViewPlot.h
-  mafViewVTK.cpp
-  mafViewVTK.h
-  mmaMaterial.cpp
-  mmaMaterial.h
-  mmaVolumeMaterial.cpp
-  mmaVolumeMaterial.h
-  mafGUIContextualMenu.cpp
-  mafGUIContextualMenu.h
-  mafGUIMaterialButton.cpp
-  mafGUIMaterialButton.h
-  mafGUIMaterialChooser.cpp
-  mafGUIMaterialChooser.h
-  mafGUITreeContextualMenu.cpp
-  mafGUITreeContextualMenu.h
-  vtkMAFAssembly.cpp
-  vtkMAFAssembly.h
+  SET(PROJECT_SRCS ${PROJECT_SRCS}
+      mafAxes.cpp
+      mafAxes.h
+      mafLODActor.cpp
+      mafLODActor.h
+      mafLogicWithManagers.cpp
+      mafLogicWithManagers.h
+      mafPipe.cpp
+      mafPipe.h
+      mafPipeVTK.cpp
+      mafPipeVTK.h
+      mafPipeBox.cpp
+      mafPipeBox.h
+      mafRWI.cpp
+      mafRWI.h
+      mafSceneGraph.cpp
+      mafSceneGraph.h
+      mafSceneNode.cpp
+      mafSceneNode.h
+      mafViewCompound.cpp
+      mafViewCompound.h
+      mafViewHTML.cpp
+      mafViewHTML.h
+      mafViewManager.cpp
+      mafViewManager.h
+      mafViewPlot.cpp
+      mafViewPlot.h
+      mafViewVTK.cpp
+      mafViewVTK.h
+      mmaMaterial.cpp
+      mmaMaterial.h
+      mmaVolumeMaterial.cpp
+      mmaVolumeMaterial.h
+      mafGUIContextualMenu.cpp
+      mafGUIContextualMenu.h
+      mafGUIMaterialButton.cpp
+      mafGUIMaterialButton.h
+      mafGUIMaterialChooser.cpp
+      mafGUIMaterialChooser.h
+      mafGUITreeContextualMenu.cpp
+      mafGUITreeContextualMenu.h
+      vtkMAFAssembly.cpp
+      vtkMAFAssembly.h
   )
+	SET(PROJECT_SRCS ${PROJECT_SRCS}
+		../ftk/wxVTK/wxVTKWindow.cpp
+		../ftk/wxVTK/wxVTKWindow.h
+	)
 ENDIF (MAF_USE_VTK)
 
 IF(MAF_USE_CRYPTO)
@@ -172,7 +173,7 @@ ENDIF (MAF_USE_VTK)
 
 # ------------------------------------
 # Find GTK include Dirs 
-# as required by mafRWIBase
+# as required by wxVTKRenderWindowInteractor
 # ------------------------------------
 #INCLUDE_DIRECTORIES(/usr/include/gtk-2.0 /usr/lib/gtk-2.0/include /usr/include/atk-1.0 /usr/X11R6/include /usr/include/glib-2.0 #/usr/lib/glib-2.0/include /usr/include/pango-1.0 /usr/include/freetype2 /usr/include/freetype2/config )
 

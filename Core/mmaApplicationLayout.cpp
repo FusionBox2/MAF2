@@ -34,7 +34,6 @@
 #include "mafViewVTK.h"
 #include "mafSceneGraph.h"
 #include "mafSceneNode.h"
-#include "mafRWIBase.h"
 
 #include "vtkCamera.h"
 #include <iterator>

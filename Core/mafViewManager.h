@@ -32,7 +32,7 @@ class mafNode;
 class mafVMERoot;
 class mafView;
 class mafGUIViewPanel;
-class mafRWIBase;
+class wxVTKWindow;
 class mafDeviceButtonsPadMouse;
 
 #ifdef MAF_EXPORTS
@@ -72,7 +72,7 @@ public:
 	virtual long ViewAdd(mafView *view);
   
 	/** Pass the selected render window to the mouse device. */
-  void ViewSelected(mafView *view /*, mafRWIBase *rwi*/);
+  void ViewSelected(mafView *view /*, wxVTKWindow *rwi*/);
   
   /** Activate the view from software to simulate the click on the view (used by remote). */
   void Activate(mafView *view);
@@ -146,7 +146,7 @@ protected:
   mafVMERoot    *m_RootVme;
   mafNode       *m_SelectedVme;
   mafView       *m_SelectedView;
-  mafRWIBase    *m_SelectedRWI;
+  wxVTKWindow    *m_SelectedRWI;
 	mafView       *m_ViewBeingCreated;
   std::vector<std::vector<mafView*> > m_ViewMatrixID;  ///< Matrix to access views directly by (id, multiplicity)
   bool m_CollaborateStatus;

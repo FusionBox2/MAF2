@@ -42,7 +42,6 @@
 #include "mafSceneGraph.h"
 #include "mafView.h"
 #include "mafViewVTK.h"
-#include "mafRWIBase.h"
 
 #include "mafInteractorPER.h"
 #include "mafInteractorSER.h"

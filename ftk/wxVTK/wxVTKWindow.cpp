@@ -1,30 +1,6 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafRWIBase
- Authors: Silvano Imboden - Paolo Quadrani - Daniele Giunchi (Save Image)
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-
 #include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
 
-
-#include "mafRWIBase.h"
+#include "ftk/wxVTK/wxVTKWindow.h"
 #include "mafDecl.h"
 
 #include <wx/event.h>
@@ -79,37 +55,37 @@
 
 #include <fstream>
 //----------------------------------------------------------------------------
-IMPLEMENT_DYNAMIC_CLASS(mafRWIBase, wxWindow)
+IMPLEMENT_DYNAMIC_CLASS(wxVTKWindow, wxWindow)
 //----------------------------------------------------------------------------
-BEGIN_EVENT_TABLE(mafRWIBase, wxWindow)
-  EVT_PAINT(mafRWIBase::OnPaint)
-  EVT_ERASE_BACKGROUND(mafRWIBase::OnEraseBackground)
-  EVT_LEFT_DCLICK(mafRWIBase::OnLeftMouseDoubleClick)
-  EVT_LEFT_DOWN(mafRWIBase::OnLeftMouseButtonDown)
-  EVT_LEFT_UP(mafRWIBase::OnLeftMouseButtonUp)
-  EVT_MIDDLE_DOWN(mafRWIBase::OnMiddleMouseButtonDown)
-  EVT_MIDDLE_UP(mafRWIBase::OnMiddleMouseButtonUp)
-  EVT_RIGHT_DOWN(mafRWIBase::OnRightMouseButtonDown)
-  EVT_RIGHT_UP(mafRWIBase::OnRightMouseButtonUp)
-  EVT_MOTION(mafRWIBase::OnMouseMotion)
-  EVT_TIMER(ID_mafRWIBase_TIMER, mafRWIBase::OnTimer)
-  EVT_KEY_DOWN(mafRWIBase::OnKeyDown)
-  EVT_KEY_UP(mafRWIBase::OnKeyUp)
-  EVT_CHAR(mafRWIBase::OnChar)
-  EVT_SIZE(mafRWIBase::OnSize)
-  EVT_IDLE(mafRWIBase::OnIdle)
-  EVT_MOUSE_CAPTURE_LOST(mafRWIBase::OnMouseCaptureLost)
+BEGIN_EVENT_TABLE(wxVTKWindow, wxWindow)
+  EVT_PAINT(wxVTKWindow::OnPaint)
+  EVT_ERASE_BACKGROUND(wxVTKWindow::OnEraseBackground)
+  EVT_LEFT_DCLICK(wxVTKWindow::OnLeftMouseDoubleClick)
+  EVT_LEFT_DOWN(wxVTKWindow::OnLeftMouseButtonDown)
+  EVT_LEFT_UP(wxVTKWindow::OnLeftMouseButtonUp)
+  EVT_MIDDLE_DOWN(wxVTKWindow::OnMiddleMouseButtonDown)
+  EVT_MIDDLE_UP(wxVTKWindow::OnMiddleMouseButtonUp)
+  EVT_RIGHT_DOWN(wxVTKWindow::OnRightMouseButtonDown)
+  EVT_RIGHT_UP(wxVTKWindow::OnRightMouseButtonUp)
+  EVT_MOTION(wxVTKWindow::OnMouseMotion)
+  EVT_TIMER(ID_wxVTKWindow_TIMER, wxVTKWindow::OnTimer)
+  EVT_KEY_DOWN(wxVTKWindow::OnKeyDown)
+  EVT_KEY_UP(wxVTKWindow::OnKeyUp)
+  EVT_CHAR(wxVTKWindow::OnChar)
+  EVT_SIZE(wxVTKWindow::OnSize)
+  EVT_IDLE(wxVTKWindow::OnIdle)
+  EVT_MOUSE_CAPTURE_LOST(wxVTKWindow::OnMouseCaptureLost)
 END_EVENT_TABLE()
 //----------------------------------------------------------------------------
-mafRWIBase::mafRWIBase() : wxWindow(), vtkRenderWindowInteractor(), m_Timer(this, ID_mafRWIBase_TIMER)
+wxVTKWindow::wxVTKWindow() : wxWindow(), vtkRenderWindowInteractor(), m_Timer(this, ID_wxVTKWindow_TIMER)
 //----------------------------------------------------------------------------
 {
 }
 //----------------------------------------------------------------------------
-mafRWIBase::mafRWIBase(wxWindow *parent, wxWindowID id, const wxPoint &pos,
+wxVTKWindow::wxVTKWindow(wxWindow *parent, wxWindowID id, const wxPoint &pos,
 			 const wxSize &size, long style, const wxString &name)
   : wxWindow(parent, id, pos, size, style, name), vtkRenderWindowInteractor(), 
-    m_Timer(this, ID_mafRWIBase_TIMER)
+    m_Timer(this, ID_wxVTKWindow_TIMER)
 //----------------------------------------------------------------------------
 {
 #if wxCHECK_VERSION(3,3,0)
@@ -139,7 +115,7 @@ mafRWIBase::mafRWIBase(wxWindow *parent, wxWindowID id, const wxPoint &pos,
   m_CustomInteractorStyle = false;
 }
 //----------------------------------------------------------------------------
-mafRWIBase::~mafRWIBase()
+wxVTKWindow::~wxVTKWindow()
 //----------------------------------------------------------------------------
 {
   vtkDEL(m_StereoMovieLeftEye);
@@ -150,19 +126,19 @@ mafRWIBase::~mafRWIBase()
   this->SetRenderWindow(NULL);
 }
 //----------------------------------------------------------------------------
-mafRWIBase * mafRWIBase::New()
+wxVTKWindow* wxVTKWindow::New()
 //----------------------------------------------------------------------------
 {
-  return new mafRWIBase();
+  return new wxVTKWindow();
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::Initialize()
+void wxVTKWindow::Initialize()
 //----------------------------------------------------------------------------
 {
   // if don't have render window then stuck
   if (!RenderWindow)
   {
-   // mafLogMessage("mafRWIBase::Initialize has no render window");
+   // mafLogMessage("wxVTKWindow::Initialize has no render window");
     return;
   }
 
@@ -202,7 +178,7 @@ void mafRWIBase::Initialize()
   Initialized = 1;
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::Enable()
+void wxVTKWindow::Enable()
 //----------------------------------------------------------------------------
 {
   // if already enabled then done
@@ -214,7 +190,7 @@ void mafRWIBase::Enable()
   Modified();
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::Disable()
+void wxVTKWindow::Disable()
 //----------------------------------------------------------------------------
 {
   // if already disabled then done
@@ -226,14 +202,14 @@ void mafRWIBase::Disable()
   Modified();
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::Start()
+void wxVTKWindow::Start()
 //----------------------------------------------------------------------------
 {
   // the interactor cannot control the event loop
-  mafLogMessage(_M("mafRWIBase::Start() interactor cannot control event loop."));
+  mafLogMessage(_M("wxVTKWindow::Start() interactor cannot control event loop."));
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::UpdateSize(int x, int y)
+void wxVTKWindow::UpdateSize(int x, int y)
 //----------------------------------------------------------------------------
 {
   // if the size changed tell render window
@@ -245,7 +221,7 @@ void mafRWIBase::UpdateSize(int x, int y)
   }
 }
 //----------------------------------------------------------------------------
-int mafRWIBase::CreateTimer(int timertype)
+int wxVTKWindow::CreateTimer(int timertype)
 //----------------------------------------------------------------------------
 {
   // it's a one shot timer
@@ -254,19 +230,19 @@ int mafRWIBase::CreateTimer(int timertype)
   return 1;
 }
 //----------------------------------------------------------------------------
-int mafRWIBase::DestroyTimer()
+int wxVTKWindow::DestroyTimer()
 //----------------------------------------------------------------------------
 {
   // do nothing
   return 1;
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::TerminateApp()
+void wxVTKWindow::TerminateApp()
 //----------------------------------------------------------------------------
 {
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::OnPaint(wxPaintEvent &event)
+void wxVTKWindow::OnPaint(wxPaintEvent &event)
 //----------------------------------------------------------------------------
 {
   wxPaintDC pDC(this);
@@ -285,13 +261,13 @@ void mafRWIBase::OnPaint(wxPaintEvent &event)
   Render();
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::OnEraseBackground(wxEraseEvent &event)
+void wxVTKWindow::OnEraseBackground(wxEraseEvent &event)
 //----------------------------------------------------------------------------
 {
   event.Skip(false);
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::OnLeftMouseDoubleClick(wxMouseEvent &event)
+void wxVTKWindow::OnLeftMouseDoubleClick(wxMouseEvent &event)
 //----------------------------------------------------------------------------
 {
   if (!Enabled) return;
@@ -320,7 +296,7 @@ void mafRWIBase::OnLeftMouseDoubleClick(wxMouseEvent &event)
   }
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::OnLeftMouseButtonDown(wxMouseEvent &event)
+void wxVTKWindow::OnLeftMouseButtonDown(wxMouseEvent &event)
 //----------------------------------------------------------------------------
 {
   if (!Enabled) return;
@@ -349,7 +325,7 @@ void mafRWIBase::OnLeftMouseButtonDown(wxMouseEvent &event)
   }
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::OnMiddleMouseButtonDown(wxMouseEvent &event)
+void wxVTKWindow::OnMiddleMouseButtonDown(wxMouseEvent &event)
 //----------------------------------------------------------------------------
 {
   if (!Enabled) return;
@@ -378,7 +354,7 @@ void mafRWIBase::OnMiddleMouseButtonDown(wxMouseEvent &event)
   }
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::OnRightMouseButtonDown(wxMouseEvent &event)
+void wxVTKWindow::OnRightMouseButtonDown(wxMouseEvent &event)
 //----------------------------------------------------------------------------
 {
   if (!Enabled) return;
@@ -407,7 +383,7 @@ void mafRWIBase::OnRightMouseButtonDown(wxMouseEvent &event)
   }
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::OnLeftMouseButtonUp(wxMouseEvent &event)
+void wxVTKWindow::OnLeftMouseButtonUp(wxMouseEvent &event)
 //----------------------------------------------------------------------------
 {
   if (!Enabled) return;
@@ -438,7 +414,7 @@ void mafRWIBase::OnLeftMouseButtonUp(wxMouseEvent &event)
   }
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::OnMiddleMouseButtonUp(wxMouseEvent &event)
+void wxVTKWindow::OnMiddleMouseButtonUp(wxMouseEvent &event)
 //----------------------------------------------------------------------------
 {
   if (!Enabled) return;
@@ -469,7 +445,7 @@ void mafRWIBase::OnMiddleMouseButtonUp(wxMouseEvent &event)
   }
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::OnRightMouseButtonUp(wxMouseEvent &event)
+void wxVTKWindow::OnRightMouseButtonUp(wxMouseEvent &event)
 //----------------------------------------------------------------------------
 {
   if (!Enabled) return;
@@ -500,7 +476,7 @@ void mafRWIBase::OnRightMouseButtonUp(wxMouseEvent &event)
   }
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::OnMouseMotion(wxMouseEvent &event)
+void wxVTKWindow::OnMouseMotion(wxMouseEvent &event)
 //----------------------------------------------------------------------------
 {
   if (!Enabled) return;
@@ -537,7 +513,7 @@ void mafRWIBase::OnMouseMotion(wxMouseEvent &event)
   }
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::OnTimer(wxTimerEvent &event)
+void wxVTKWindow::OnTimer(wxTimerEvent &event)
 //----------------------------------------------------------------------------
 {
   if (!Enabled) return;
@@ -548,7 +524,7 @@ void mafRWIBase::OnTimer(wxTimerEvent &event)
   }
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::OnKeyDown(wxKeyEvent &event)
+void wxVTKWindow::OnKeyDown(wxKeyEvent &event)
 //----------------------------------------------------------------------------
 {
   if (!Enabled) return;
@@ -562,7 +538,7 @@ void mafRWIBase::OnKeyDown(wxKeyEvent &event)
   event.Skip();
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::OnKeyUp(wxKeyEvent &event)
+void wxVTKWindow::OnKeyUp(wxKeyEvent &event)
 //----------------------------------------------------------------------------
 {
   if (!Enabled) return;
@@ -576,7 +552,7 @@ void mafRWIBase::OnKeyUp(wxKeyEvent &event)
   event.Skip();
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::OnChar(wxKeyEvent &event)
+void wxVTKWindow::OnChar(wxKeyEvent &event)
 //----------------------------------------------------------------------------
 {
   if (!Enabled) return;
@@ -599,7 +575,7 @@ void mafRWIBase::OnChar(wxKeyEvent &event)
   event.Skip();
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::OnIdle(wxIdleEvent& event)
+void wxVTKWindow::OnIdle(wxIdleEvent& event)
 //----------------------------------------------------------------------------
 {
   //if(m_Hidden)
@@ -610,13 +586,13 @@ void mafRWIBase::OnIdle(wxIdleEvent& event)
 }
 
 //----------------------------------------------------------------------------
-void mafRWIBase::OnMouseCaptureLost(wxMouseCaptureLostEvent&)
+void wxVTKWindow::OnMouseCaptureLost(wxMouseCaptureLostEvent&)
 //----------------------------------------------------------------------------
 {
 }
 
 //----------------------------------------------------------------------------
-void mafRWIBase::NotifyClick()
+void wxVTKWindow::NotifyClick()
 //----------------------------------------------------------------------------
 {
   m_StereoFrameGenerate = m_StereoMovieEnable;
@@ -626,7 +602,7 @@ void mafRWIBase::NotifyClick()
   ProcessEvent(e);
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::OnSize(wxSizeEvent &event)
+void wxVTKWindow::OnSize(wxSizeEvent &event)
 //----------------------------------------------------------------------------
 {
   //   this->Show(false); 
@@ -661,7 +637,7 @@ void mafRWIBase::OnSize(wxSizeEvent &event)
   }
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::GetImage(wxBitmap& bitmap, int magnification)
+void wxVTKWindow::GetImage(wxBitmap& bitmap, int magnification)
 //----------------------------------------------------------------------------
 {
 	int dim[3];
@@ -694,7 +670,7 @@ void mafRWIBase::GetImage(wxBitmap& bitmap, int magnification)
   delete buffer;
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::SaveImage(const mafString& filename_, int magnification , int forceExtension)
+void wxVTKWindow::SaveImage(const mafString& filename_, int magnification , int forceExtension)
 //---------------------------------------------------------------------------
 {
 #pragma message ("argument is modified below, so we need to copy it, refactor")
@@ -860,7 +836,7 @@ void mafRWIBase::SaveImage(const mafString& filename_, int magnification , int f
   ::wxEndBusyCursor();
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::SaveImageRecursive(const mafString& filename_, mafViewCompound *v,int magnification,int forceExtension)
+void wxVTKWindow::SaveImageRecursive(const mafString& filename_, mafViewCompound *v,int magnification,int forceExtension)
 //----------------------------------------------------------------------------
 {
   if(v == NULL) return;
@@ -929,7 +905,7 @@ void mafRWIBase::SaveImageRecursive(const mafString& filename_, mafViewCompound 
   RecursiveSaving(filename, v, magnification);
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::RecursiveSaving(const mafString& filename, mafViewCompound *v,int magnification)
+void wxVTKWindow::RecursiveSaving(const mafString& filename, mafViewCompound *v,int magnification)
 //----------------------------------------------------------------------------
 {
   for(int i=0; i< v->GetNumberOfSubView(); i++)
@@ -1075,7 +1051,7 @@ void mafRWIBase::RecursiveSaving(const mafString& filename, mafViewCompound *v,i
   }
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::SaveAllImages(const mafString& filename_, mafViewCompound *v, int forceExtension)
+void wxVTKWindow::SaveAllImages(const mafString& filename_, mafViewCompound *v, int forceExtension)
 //---------------------------------------------------------------------------
 {
   if(v == NULL) return;
@@ -1193,7 +1169,7 @@ void mafRWIBase::SaveAllImages(const mafString& filename_, mafViewCompound *v, i
   ::wxEndBusyCursor();
 }
 //----------------------------------------------------------------------------
-vtkCamera* mafRWIBase::GetCamera()
+vtkCamera* wxVTKWindow::GetCamera()
 //---------------------------------------------------------------------------
 {
   if(m_Camera == NULL)
@@ -1216,20 +1192,20 @@ vtkCamera* mafRWIBase::GetCamera()
   return m_Camera;
 }
 //---------------------------------------------------------------------------
-void mafRWIBase::SetInteractorStyle(vtkInteractorObserver *o)
+void wxVTKWindow::SetInteractorStyle(vtkInteractorObserver *o)
 //---------------------------------------------------------------------------
 {
   vtkRenderWindowInteractor::SetInteractorStyle(o);
   m_CustomInteractorStyle = o != NULL;
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::SetStereoMovieDirectory(const char *dir)
+void wxVTKWindow::SetStereoMovieDirectory(const char *dir)
 //----------------------------------------------------------------------------
 {
   m_StereoMovieDir = _R(dir);
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::GenerateStereoFrames()
+void wxVTKWindow::GenerateStereoFrames()
 //----------------------------------------------------------------------------
 {
   RenderWindow->SetStereoTypeToLeft();
@@ -1252,7 +1228,7 @@ void mafRWIBase::GenerateStereoFrames()
   m_StereoMovieFrameCounter++;
 }
 //----------------------------------------------------------------------------
-void mafRWIBase::EnableStereoMovie(bool enable)
+void wxVTKWindow::EnableStereoMovie(bool enable)
 //----------------------------------------------------------------------------
 {
   m_StereoMovieEnable = enable;

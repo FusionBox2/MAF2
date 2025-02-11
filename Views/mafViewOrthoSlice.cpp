@@ -808,7 +808,7 @@ void mafViewOrthoSlice::SetThicknessForAllSurfaceSlices(mafNode *root)
 bool mafViewOrthoSlice::IsPickedSliceView()
 //----------------------------------------------------------------------------
 {
-  mafRWIBase *rwi = GetGlobalMouse()->GetRWI();
+  wxVTKWindow *rwi = GetGlobalMouse()->GetRWI();
   if (rwi)
   {
     for(int i=0; i<m_NumOfChildView; i++)

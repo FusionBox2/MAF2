@@ -35,7 +35,7 @@ class vtkPolyDataMapper;
 //----------------------------------------------------------------------------
 /** 
 mafViewScalar is a View that got a RenderWindow and a SceneGraph
-\sa mafSceneNode mafRWIBase mafRWI
+\sa mafSceneNode wxVTKWindow mafRWI
 */
 class __declspec( dllexport ) mafViewScalar: public mafViewVTK
 {

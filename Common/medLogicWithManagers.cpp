@@ -37,7 +37,7 @@
 #include "mafGUISettingsStorage.h"
 
 #include "mafViewCompound.h"
-#include "mafRWIBase.h"
+#include "ftk/wxVTK/wxVTKWindow.h"
 #include <wx/dir.h>
 
 #ifdef MAF_USE_VTK
@@ -135,7 +135,7 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
 					  imageFileName->append(mafString::Format(_R("_%d"),i));
 					  imageFileName->append(_R(".png"));
 
-					  /*mafRWIBase::SafeDownCast(e->GetVtkObj())->SaveImage(imageFileName);*/
+					  /*wxVTKWindow::SafeDownCast(e->GetVtkObj())->SaveImage(imageFileName);*/
 					  e->SetString(imageFileName);
 
 					  mafString path,name,ext;

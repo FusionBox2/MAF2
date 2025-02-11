@@ -23,7 +23,7 @@
 // forward declarations :
 //----------------------------------------------------------------------------
 class mafView;
-class mafRWIBase;
+class wxVTKWindow;
 class vtkRenderer;
 class vtkRenderWindowInteractor;
 
@@ -80,7 +80,7 @@ public:
   vtkRenderWindowInteractor *GetInteractor();
 
   /** Return the RenderWindowInteractor used by mouse device */
-  mafRWIBase *GetRWI();
+  wxVTKWindow *GetRWI();
 
   /** Used to set the flag for updating the m_SelectedRWI during mouse motion and not only on ViewSelected event.*/
   void SetUpdateRWIDuringMotion(bool update_on_motion) {m_UpdateRwiInOnMoveFlag = update_on_motion;};
@@ -114,7 +114,7 @@ protected:
   bool        m_ButtonPressed;
 
   mafView    *m_SelectedView;   ///< store the selected view to perform the mouse picking
-  mafRWIBase *m_SelectedRWI;
+  wxVTKWindow *m_SelectedRWI;
 
 private:
   mafDeviceButtonsPadMouse(const mafDeviceButtonsPadMouse&);  // Not implemented.

@@ -28,7 +28,7 @@
 #include "mafEventBase.h"
 #include "mafView.h"
 #include "mafSceneGraph.h"
-#include "mafRWIBase.h"
+#include "ftk/wxVTK/wxVTKWindow.h"
 
 #include "mafEventInteraction.h"
 #include "mmuIdFactory.h"
@@ -89,7 +89,7 @@ void mafDeviceButtonsPadMouse::OnEvent(mafEventBase *event)
     e->Get2DPosition(pos);
     if (m_UpdateRwiInOnMoveFlag)
     {
-      m_SelectedRWI = (mafRWIBase *)event->GetSender();
+      m_SelectedRWI = (wxVTKWindow *)event->GetSender();
     }
     SetLastPosition(pos[0],pos[1],e->GetModifiers());
   }
@@ -98,7 +98,7 @@ void mafDeviceButtonsPadMouse::OnEvent(mafEventBase *event)
     // store the Selected RWI is needed for compounded view
     m_ButtonPressed = true;
     e->Get2DPosition(m_LastPosition);
-    m_SelectedRWI = (mafRWIBase *)event->GetSender();
+    m_SelectedRWI = (wxVTKWindow *)event->GetSender();
     e->SetSender(this);
     InvokeEvent(e,MCH_INPUT);
     if (m_CollaborateStatus)
@@ -219,7 +219,7 @@ vtkRenderWindowInteractor *mafDeviceButtonsPadMouse::GetInteractor()
   return (vtkRenderWindowInteractor *)NULL;
 }
 //------------------------------------------------------------------------------
-mafRWIBase *mafDeviceButtonsPadMouse::GetRWI()
+wxVTKWindow *mafDeviceButtonsPadMouse::GetRWI()
 //------------------------------------------------------------------------------
 {
   return m_SelectedRWI;

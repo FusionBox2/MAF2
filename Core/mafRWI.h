@@ -18,7 +18,7 @@
 //----------------------------------------------------------------------------
 // Include :
 //----------------------------------------------------------------------------
-#include "mafRWIBase.h"
+#include "ftk/wxVTK/wxVTKWindow.h"
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"
 #include "mafAxes.h"
@@ -32,7 +32,6 @@ class vtkLight;
 class vtkCamera;
 class vtkRenderer;
 class vtkRenderWindow;
-class mafRWIBase;
 class mafSceneGraph;
 class mafAxes;
 class mafGUI;
@@ -151,7 +150,7 @@ public:
   void ResetCameraClippingRange();
 
 	mafSceneGraph    *m_Sg; 
-	mafRWIBase			 *m_RwiBase;
+	wxVTKWindow *m_RwiBase;
 	vtkRenderer      *m_RenFront; ///< Renderer used to show actors on the first layer
 	vtkRenderer      *m_RenBack; ///< Renderer used to show actors on the second layer
 	vtkRenderer		 *m_AlwaysVisibleRenderer; /// < Renderer used to superimpose utility stuff to main render window

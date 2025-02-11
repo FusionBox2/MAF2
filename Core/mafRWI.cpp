@@ -170,7 +170,7 @@ void mafRWI::CreateRenderingScene(wxWindow *parent, RWI_LAYERS layers, bool use_
 	m_RenFront->BackingStoreOff();
 	m_RenFront->LightFollowCameraOn(); 
 
-	m_RwiBase = new mafRWIBase(parent, -1);
+	m_RwiBase = new wxVTKWindow(parent, -1);
 	m_RenderWindow = vtkRenderWindow::New();
 	m_RenderWindow->GlobalWarningDisplayOff();
 

@@ -93,7 +93,6 @@ const int BOUND_1=1;
 #include "vtkLineSource.h"
 #include "vtkMatrix4x4.h"
 #include "vtkBMPWriter.h"
-#include "mafRWIBase.h"
 #include "vtkPNGWriter.h"
 #include "wx/busyinfo.h"
 #include "vtkPlaneSource.h"

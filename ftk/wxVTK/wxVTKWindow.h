@@ -1,34 +1,12 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafRWIBase
- Authors: Silvano Imboden - Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __mafRWIBase_H__
-#define __mafRWIBase_H__
-
-//----------------------------------------------------------------------------
-// Include :
-//----------------------------------------------------------------------------
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"
 #include "ftk/Base/String.h"
 #include "mafViewCompound.h"
 #include "vtkRenderWindowInteractor.h"
 
-//----------------------------------------------------------------------------
-// Forward References :
-//----------------------------------------------------------------------------
+
 class wxPaintEvent;
 class wxMouseEvent;
 class wxTimerEvent;
@@ -43,36 +21,36 @@ class vtkWindowToImageFilter;
 //----------------------------------------------------------------------------
 // Constant:
 //----------------------------------------------------------------------------
-#define ID_mafRWIBase_TIMER 1001
+#define ID_wxVTKWindow_TIMER 1001
 
 //----------------------------------------------------------------------------
-// mafRWIBase :
+// wxVTKWindow :
 //----------------------------------------------------------------------------
-/** mafRWIBase is a vtkRenderWindowInteractor placed on a wxWindow 
+/** wxVTKWindow is a vtkRenderWindowInteractor placed on a wxWindow 
 \par Attention:
 Normally there is no need to destroy any object
 derived from wxWindow, they will be automatically 
 destroyed as a result of closing the MainFrame.
-mafRWIBase behave differently, and you 
+wxVTKWindow behave differently, and you 
 must explicitly destroy them by calling "Delete()"
 BEFORE wxWindow destroy it (using "delete"). 
 */
-class MAF_EXPORT mafRWIBase : public wxWindow, public vtkRenderWindowInteractor, public mafEventSender
+class MAF_EXPORT wxVTKWindow : public wxWindow, public vtkRenderWindowInteractor, public mafEventSender
 {
-  DECLARE_DYNAMIC_CLASS(mafRWIBase)
+  DECLARE_DYNAMIC_CLASS(wxVTKWindow)
 
 protected:
   wxTimer m_Timer;
 
 public:
 
-  vtkTypeMacro(mafRWIBase,vtkRenderWindowInteractor);
+  vtkTypeMacro(wxVTKWindow,vtkRenderWindowInteractor);
 
-  mafRWIBase();
-  mafRWIBase(wxWindow *parent, wxWindowID id, const wxPoint &pos = wxDefaultPosition,
+  wxVTKWindow();
+  wxVTKWindow(wxWindow *parent, wxWindowID id, const wxPoint &pos = wxDefaultPosition,
 	      const wxSize &size = wxDefaultSize, long style = wxWANTS_CHARS , const wxString &name = wxPanelNameStr);
-  ~mafRWIBase() override;
-  static mafRWIBase * New();
+  ~wxVTKWindow() override;
+  static wxVTKWindow* New();
 
 	/** Notify mouse click on a view. */
   void NotifyClick();
@@ -196,4 +174,3 @@ protected:
   
 	DECLARE_EVENT_TABLE()
 };
-#endif

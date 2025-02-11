@@ -38,7 +38,6 @@
 #include "mafViewCompound.h"
 
 #include "mafEvent.h"
-#include "mafRWIBase.h"
 #include "mafDeviceButtonsPadMouse.h"
 
 /*
@@ -133,7 +132,7 @@ long mafViewManager::ViewAdd(mafView *view)
   return m_ViewTemplate.size() - 1;
 }
 //----------------------------------------------------------------------------
-void mafViewManager::ViewSelected(mafView *view/*, mafRWIBase *rwi*/)
+void mafViewManager::ViewSelected(mafView *view/*, wxVTKWindow *rwi*/)
 //----------------------------------------------------------------------------
 {
   m_SelectedView = view;

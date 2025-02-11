@@ -35,7 +35,6 @@
 #include "mafGUIButton.h"
 #include "mafGUIPicButton.h"
 #include "mafGUIFloatSlider.h"
-#include "mafRWIBase.h"
 #include "mafRWI.h"
 #include "mmaVolumeMaterial.h"
 #include "mafGUIValidator.h"
@@ -283,7 +282,7 @@ void mafGUIDialogTransferFunction2D::CreateGUI()
   c->SetValue(0.35, 0.5f);
   this->m_SliceRenderer->AddActor(this->m_WaitActor);
 
-  this->m_SliceRwi = new mafRWIBase(previewPage, -1);
+  this->m_SliceRwi = new wxVTKWindow(previewPage, -1);
 	this->m_SliceRwi->SetRenderWindow(m_SliceWindow);
   vtkInteractorStylePreviewImage *pstyle = vtkInteractorStylePreviewImage::New();
   pstyle->SetDialog(this);
@@ -318,7 +317,7 @@ void mafGUIDialogTransferFunction2D::CreateGUI()
   this->m_Renderer3D	= vtkRenderer::New();
   m_Window3D->AddRenderer(this->m_Renderer3D);
   this->m_Renderer3D->SetBackground(0.f,0.f,0.f);
-  this->m_Rwi3D = new mafRWIBase(previewPage, -1);
+  this->m_Rwi3D = new wxVTKWindow(previewPage, -1);
 	this->m_Rwi3D->SetRenderWindow(m_Window3D);
   m_Window3D->SetInteractor(NULL);
   vtkDEL(m_Window3D);
@@ -333,7 +332,7 @@ void mafGUIDialogTransferFunction2D::CreateGUI()
   this->m_GraphRenderer->SetBackground(0.f,0.f,0.f);
   this->m_GraphRenderer->LightFollowCameraOff();
   this->m_GraphRenderer->GetActiveCamera()->ParallelProjectionOn();
-  this->m_GraphRwi = new mafRWIBase(this, -1);
+  this->m_GraphRwi = new wxVTKWindow(this, -1);
 	this->m_GraphRwi->SetRenderWindow(m_GraphWindow);
   vtkInteractorStyleWidget *wstyle = vtkInteractorStyleWidget::New();
   wstyle->SetDialog(this);

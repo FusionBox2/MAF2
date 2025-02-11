@@ -36,7 +36,6 @@
 
 #include "mafDecl.h"
 #include "mmaMaterial.h"
-#include "mafRWIBase.h"
 #include "mafGUIButton.h"
 #include "mafGUIMaterialButton.h"
 #include "mafGUIListCtrlBitmap.h"

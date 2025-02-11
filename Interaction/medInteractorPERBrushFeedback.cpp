@@ -31,7 +31,7 @@
 #include "mafEventBase.h"
 #include "mafEventInteraction.h"
 #include "mafInteractorCameraMove.h"
-#include "mafRWIBase.h"
+#include "ftk/wxVTK/wxVTKWindow.h"
 #include "mafView.h"
 #include "mafViewCompound.h"
 #include "mafVME.h"

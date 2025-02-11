@@ -159,7 +159,7 @@ IF (MAF_USE_VTK)
   mafVTKLog.cpp
   mafVTKLog.h
 
-  # depends on mafAssembly -> mafRWIBase
+  # depends on mafAssembly -> wxVTKRenderWindowInteractor
   mafView.cpp
   mafView.h
 

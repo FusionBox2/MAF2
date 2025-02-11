@@ -39,7 +39,6 @@
 #include "mafGUIDialog.h"
 #include "mafGUIButton.h"
 #include "mafRWI.h"
-#include "mafRWIBase.h"
 #include "mafGUIValidator.h"
 #include "mafGUILutSlider.h"
 #include "mafVMEVolumeGray.h"
