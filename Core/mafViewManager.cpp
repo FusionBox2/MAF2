@@ -191,12 +191,12 @@ void mafViewManager::VmeSelect(mafNode *n)
 	if(n != m_SelectedVme)
 	{
 		if(m_SelectedVme)
-      for(std::list<mafView*>::iterator v = m_ViewList.begin(); v != m_ViewList.end(); ++v) 
-				(*v)->VmeSelect(m_SelectedVme,false); //deselect the previous selected vme
+      for(auto v : m_ViewList) 
+				v->VmeSelect(m_SelectedVme,false); //deselect the previous selected vme
 		m_SelectedVme = n; // set the new selected vme
 	}
-  for(std::list<mafView*>::iterator v = m_ViewList.begin(); v != m_ViewList.end(); ++v) 
-    (*v)->VmeSelect(n,true); // select the new one in the views
+  for(auto v : m_ViewList) 
+    v->VmeSelect(n,true); // select the new one in the views
 	CameraUpdate();
 }
 //----------------------------------------------------------------------------

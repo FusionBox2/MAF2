@@ -23,6 +23,13 @@
 #include <map>
 #include <sstream>
 
+
+
+#include "wx/ribbon/bar.h"
+#include "wx/ribbon/buttonbar.h"
+#include "wx/ribbon/gallery.h"
+#include "wx/ribbon/toolbar.h"
+
 namespace ftk
 {
 	class StringWriter : public DataWriter
@@ -221,7 +228,7 @@ namespace ftk
 				for (auto name : panelNames)
 				{
 					panels.push_back(new wxPanel(nodeNotebook, wxID_ANY));// , false, true));
-					nodeNotebook->AddPage(panels.back(), _(name));
+					nodeNotebook->AddPage(panels.back(), name);
 				}
 				nodeNotebook->SetSelection(2);
 
@@ -627,6 +634,9 @@ namespace ftk
 			CreateMenuBar();
 			CreateStatus();
 			m_auiManager.SetManagedWindow(this);
+			//ribbon = CreateRibbon();
+			//AddPane(ribbon, wxAuiPaneInfo().ToolbarPane().Caption("Ribbon").Name("Ribbon").Top().Floatable(false));
+
 			AddPane(CreateStdToolBar(), wxAuiPaneInfo().ToolbarPane().Caption("Standard").Name("Standard Toolbar").Top().Floatable(false));
 			AddPane(CreateAddToolBar(), wxAuiPaneInfo().ToolbarPane().Caption("Additional").Name("Additional Toolbar").Top().Position(2).Floatable(false));
 			AddPane(CreateNavigator(), wxAuiPaneInfo().Right().Layer(1)/*.PinButton().MinimizeButton().MaximizeButton()*/.Name("Navigator").Caption("Navigator").MinSize(BaseFrame::FromDIP(wxSize(240, 450))));
@@ -691,7 +701,7 @@ namespace ftk
 				m_Gauge = new wxGauge(m_frameStatusBar, -1, 100, pr.GetPosition(), pr.GetSize(), wxGA_SMOOTH | wxGA_PROGRESS);
 				m_Gauge->SetForegroundColour(*wxRED);
 				m_Gauge->SetValue(50);
-				m_Gauge->Show(true);
+				m_Gauge->Show(false);
 				statusBar->Bind(wxEVT_SIZE,
 					[this](const wxSizeEvent& event)
 					{
@@ -754,6 +764,100 @@ namespace ftk
 			return toolBar;
 		}
 
+		wxRibbonBar* CreateRibbon()
+		{
+			auto m_ribbon = new wxRibbonBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxRIBBON_BAR_FLOW_HORIZONTAL
+				| wxRIBBON_BAR_SHOW_PAGE_LABELS
+				| wxRIBBON_BAR_SHOW_PANEL_EXT_BUTTONS
+				| wxRIBBON_BAR_SHOW_TOGGLE_BUTTON
+				//| wxRIBBON_BAR_SHOW_HELP_BUTTON
+			);
+			wxRibbonPage* home = new wxRibbonPage(m_ribbon, wxID_ANY, "Examples");// , ribbon_xpm);
+			wxRibbonPanel* toolbar_panel = new wxRibbonPanel(home, wxID_ANY, "Toolbar",
+				wxNullBitmap, wxDefaultPosition, wxDefaultSize,
+				wxRIBBON_PANEL_NO_AUTO_MINIMISE |
+				wxRIBBON_PANEL_EXT_BUTTON);
+			wxRibbonToolBar* toolbar = new wxRibbonToolBar(toolbar_panel, -1);// ID_MAIN_TOOLBAR);
+			m_ribbon->Realize();
+			return m_ribbon;
+		}
+
+		//In this code, the ribbon is a member of MainFrame called ribbon.
+//Rendered bitmap are also members of MainFrame, and are called ribbonFileNormalBitmap and ribbonFileHoveredBitmap
+//Finally, the wxStaticBitmap is called ribbonFileBt.
+		void RealizeRibbonCustomButtons()
+		{
+			wxRibbonArtProvider* artProvider = ribbon->GetArtProvider();
+			if (artProvider == NULL) return;
+
+			wxColor buttonColor;
+			//if (!wxConfigBase::Get()->Read(_T("/Skin/FileButtonColor"), &buttonColor))
+				buttonColor = wxColour(200, 200, 255);
+
+			//Create a temporary fake ribbon used to render the button with a custom color
+			wxRibbonBar* fakeRibbon = new wxRibbonBar(this);
+			fakeRibbon->SetArtProvider(artProvider->Clone());
+			fakeRibbon->GetArtProvider()->SetColourScheme(buttonColor, buttonColor, buttonColor);
+
+			//The device context used to render the button in memory
+			wxMemoryDC dc;
+
+			//Compute width of the bitmap button
+			int width; artProvider->GetBarTabWidth(dc, fakeRibbon, _("File"), wxNullBitmap, &width, NULL, NULL, NULL);
+
+			//Create a fake ribbon page...
+			wxRibbonPage* page = new wxRibbonPage(fakeRibbon, wxID_ANY, _("File"));
+			//...and the associated wxRibbonPageTabInfo
+			wxRibbonPageTabInfo tabInfo;
+			tabInfo.rect = wxRect(0, 0, width, 16 /*Will be changed later*/);
+			tabInfo.ideal_width = width;
+			tabInfo.small_begin_need_separator_width = width;
+			tabInfo.small_must_have_separator_width = width;
+			tabInfo.minimum_width = width;
+			tabInfo.page = page;
+			tabInfo.active = true;
+			tabInfo.hovered = false;
+			wxRibbonPageTabInfoArray pages;
+			pages.Add(tabInfo);
+			pages.Add(tabInfo); //Add page twice to ensure that tab have a correct height
+
+			//Compute height of the bitmap button and create bitmap
+			int height = artProvider->GetTabCtrlHeight(dc, ribbon, pages);
+			wxBitmap bitmapLabel(width + 2, height);
+			dc.SelectObject(bitmapLabel);
+
+			tabInfo.rect = wxRect(0, 0, width, height + 2); //We've got the correct height now.
+
+			//Render the file button. Use the background of the real ribbon.
+			artProvider->DrawTabCtrlBackground(dc, fakeRibbon, bitmapLabel.GetSize());
+			fakeRibbon->GetArtProvider()->DrawTab(dc, fakeRibbon, tabInfo);
+			/*ribbonFileNormalBitmap = wxBitmap(bitmapLabel);
+
+			//Render the hovered file button
+			wxBitmap bitmapHoveredLabel(ribbonFileNormalBitmap.ConvertToImage());
+			dc.SelectObject(bitmapHoveredLabel);
+
+			tabInfo.active = false;
+			tabInfo.hovered = true;
+			artProvider->DrawTabCtrlBackground(dc, fakeRibbon, bitmapHoveredLabel.GetSize());
+			wxColour backgroundColour = wxColor(bitmapHoveredLabel.ConvertToImage().GetRed(0, 0), bitmapHoveredLabel.ConvertToImage().GetGreen(0, 0), bitmapHoveredLabel.ConvertToImage().GetBlue(0, 0)); //For later use...
+			fakeRibbon->GetArtProvider()->DrawTab(dc, fakeRibbon, tabInfo);
+			ribbonFileHoveredBitmap = bitmapHoveredLabel;
+
+			//Cut a bit the bottom of the bitmaps
+			if (ribbonFileNormalBitmap.GetSize().GetHeight() > 3)
+				ribbonFileNormalBitmap.SetHeight(ribbonFileNormalBitmap.GetSize().GetHeight() - 2);
+
+			if (ribbonFileHoveredBitmap.GetSize().GetHeight() > 3)
+				ribbonFileHoveredBitmap.SetHeight(ribbonFileHoveredBitmap.GetSize().GetHeight() - 2);
+
+			fakeRibbon->Destroy();
+
+			//Finally create our bitmaps and make sure the ribbon is ready.
+			ribbonFileBt->SetPosition(wxPoint(3, 1));
+			ribbonFileBt->SetBitmap(ribbonFileNormalBitmap);
+			ribbon->SetTabCtrlMargins(bitmapLabel.GetSize().GetWidth() + 3 + 3, 0);*/
+		}
 		wxWindow* CreateNavigator()
 		{
 			return new NewNavigator(this, ID_NAVIGATOR, wxDefaultPosition, BaseFrame::FromDIP(wxSize(200, 500)));
@@ -869,6 +973,7 @@ namespace ftk
 		}
 
 		wxAuiManager m_auiManager;
+		wxRibbonBar* ribbon = nullptr;
 		wxGauge *m_Gauge = nullptr;
 		std::unique_ptr<wxPreferencesEditor> m_preferencesEditor;
 		wxDECLARE_EVENT_TABLE();

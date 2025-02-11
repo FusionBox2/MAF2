@@ -8,7 +8,11 @@ set(PROJECT_SRCS
 
 add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE ${PROJECT_SRCS})
 
-target_link_libraries(${PROJECT_NAME} PRIVATE ${Qt6Widgets_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${Qt6Widgets_LIBRARIES} ${VTK_LIBRARIES} vtkMAF)
+
+vtk_module_autoinit(
+  TARGETS ${PROJECT_NAME}
+  MODULES ${VTK_LIBRARIES})
 
 if(WIN32)
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD

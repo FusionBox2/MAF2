@@ -8,6 +8,8 @@ set(PROJECT_HEADERS
 )
 
 set(PROJECT_SOURCES
+#	Sample.cpp
+    MainWnd.cpp
     MainWindow.cpp
     Model.cpp
     NewMainWindow.cpp
@@ -26,6 +28,8 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE ${PROJECT_SOURCES})
 if(WIN32)
     set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/MANIFEST:NO")
 endif(WIN32)
-
-target_link_libraries(${PROJECT_NAME} wx::base wx::core wx::aui wx::html wx::propgrid libjson mafIO)
+target_link_libraries(${PROJECT_NAME} wx::base wx::core wx::aui wx::html wx::propgrid libjson IO vtkMAF mafCommon mafCore mafGui mafOperations mafViews mafVME vtkMAF)
 #target_link_libraries(${PROJECT_NAME} wx::base wx::core)
+vtk_module_autoinit(
+  TARGETS ${PROJECT_NAME}
+  MODULES ${VTK_LIBRARIES})

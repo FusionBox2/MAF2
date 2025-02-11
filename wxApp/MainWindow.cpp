@@ -2551,7 +2551,7 @@ namespace ftk
                 for (auto name : panelNames)
                 {
                     panels.push_back(new NamedScrolledPanel(nodeNotebook, wxID_ANY, false, true));
-                    nodeNotebook->AddPage(panels.back(), _(name));
+                    nodeNotebook->AddPage(panels.back(), name);
                 }
 				wxPropertyGrid* pg = new wxPropertyGrid(panels.back(), PGID, wxDefaultPosition, wxSize(400, 400),
 					wxPG_SPLITTER_AUTO_CENTER |

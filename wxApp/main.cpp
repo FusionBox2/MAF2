@@ -10,7 +10,7 @@
 #include <fstream>
 #include <libjson/json.h>
 
-#include "mafStorageElement.h"
+#include "ftk/IO/StorageElement.h"
 #include "mafDefines.h" 
 
 namespace utils {
@@ -196,7 +196,7 @@ namespace formats::parse {
 		template <typename T, typename Value>
 		void CheckInBounds(const Value& value, T x, T min, T max) {
 			if (x < min || x > max) {
-				throw Value::ParseException{"Value is out of bounds"};
+				throw Value::ParseException("Value is out of bounds");
 // 				throw typename Value::ParseException(
 // 					fmt::format("Value of '{}' is out of bounds ({} <= {} <= {})",
 // 						value.GetPath(), min, x, max));
