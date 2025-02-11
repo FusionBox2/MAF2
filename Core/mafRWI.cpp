@@ -220,17 +220,17 @@ void mafRWI::CreateRenderingScene(wxWindow *parent, RWI_LAYERS layers, bool use_
 	}
 
   m_RwiBase->SetRenderWindow(m_RenderWindow);
-  m_RwiBase->Initialize();
 
   assert(m_AlwaysVisibleRenderer->Transparent());
 
 	m_ShowRuler = show_ruler;
 	m_ShowOrientator = show_orientator;
 
-	mafGUIMeasureUnitSettings *unit_settings = new mafGUIMeasureUnitSettings(this);
-	m_RulerScaleFactor = unit_settings->GetScaleFactor();
-	m_RulerLegend = unit_settings->GetUnitName();
-	cppDEL(unit_settings);
+	{
+		auto unit_settings = std::make_unique<mafGUIMeasureUnitSettings>(this);
+		m_RulerScaleFactor = unit_settings->GetScaleFactor();
+		m_RulerLegend = unit_settings->GetUnitName();
+	}
 	vtkNEW(m_Ruler);
 	m_Ruler->SetLabelAxesVisibility();
 	m_Ruler->SetLabelScaleVisibility(true);
@@ -328,7 +328,7 @@ mafRWI::~mafRWI()
 	m_RenderWindow->Delete();
 	if(m_RwiBase) 
 		m_RwiBase->SetRenderWindow(NULL);
-	vtkDEL(m_RwiBase);  //The renderer has to be Deleted as last
+	//vtkDEL(m_RwiBase);  //The renderer has to be Deleted as last
 }
 //-----------------------------------------------------------------------------------------
 void mafRWI::CameraSet(int cam_position, double zoom)
@@ -652,7 +652,7 @@ void mafRWI::SetStereo(int stereo_type)
 	m_RenderWindow->SetStereoCapableWindow(m_StereoType != 0);
 	m_RenderWindow->SetStereoRender(m_StereoType != 0);
 	m_RenderWindow->SetStereoType(m_StereoType);
-	m_RwiBase->ReInitialize();
+	//m_RwiBase->ReInitialize();
 }
 //----------------------------------------------------------------------------
 void mafRWI::CameraUpdate()
@@ -669,7 +669,7 @@ void mafRWI::CameraUpdate()
 	m_RenderWindow->Render();
 	if (m_StereoMovieEnable!=0)
 	{
-		m_RwiBase->GenerateStereoFrames();
+		//m_RwiBase->GenerateStereoFrames();
 	}
 	UpdateCameraParameters();
 }
@@ -923,7 +923,7 @@ void mafRWI::CameraReset(double bounds[6], double zoom)
 	height = (height == 0) ? 1.0 : height;	
 
 	//check aspect ratio - and eventually compensate height
-	double view_aspect  = (m_RwiBase->m_Width*1.0)/(m_RwiBase->m_Height*1.0);
+	double view_aspect  = (m_RwiBase->GetInteractor()->GetSize()[0] * 1.0) / (m_RwiBase->GetInteractor()->GetSize()[0] * 1.0);
 	double scene_aspect = (width)/(height);
 	if( scene_aspect > view_aspect )
 	{
