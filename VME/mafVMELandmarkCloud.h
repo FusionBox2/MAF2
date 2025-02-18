@@ -96,6 +96,7 @@ public:
   int GetLandmark(const mafString& name, double &x,double &y,double &z,mafTimeStamp t=0) {return this->GetLandmark(this->FindLandmarkIndex(name),x,y,z,t);} 
   int GetLandmark(int idx, double xyz[3],mafTimeStamp t=0);
   int GetLandmark(const mafString& name, double xyz[3],mafTimeStamp t=0) {return this->GetLandmark(this->FindLandmarkIndex(name), xyz,t);}
+  int GetLandmarksPosVis(const int* idx, int numpnts, double* pnts, int *vis, mafTimeStamp t = -1);
 
   /** Find the index of a landmark given its name. This only works when cloud is OPEN*/
   mafVMELandmark *GetLandmark(const mafString& name);
