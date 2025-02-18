@@ -153,15 +153,15 @@ void medWizardBlockOperation::ExcutionBegin()
 	{
 		if(!m_tile_windows.compare(_R("Tile_window_horizontally"))) 
 		{
-	        {mafEvent evUnq(this,TILE_WINDOW_HORIZONTALLY); InvokeEvent(evUnq);}
+	        //{mafEvent evUnq(this,TILE_WINDOW_HORIZONTALLY); InvokeEvent(evUnq);}
 		}
 		else if (!m_tile_windows.compare(_R("Tile_window_vertically"))) 
 		{
-			{mafEvent evUnq(this,TILE_WINDOW_VERTICALLY); InvokeEvent(evUnq);}
+			//{mafEvent evUnq(this,TILE_WINDOW_VERTICALLY); InvokeEvent(evUnq);}
 		}
 		else if (!m_tile_windows.compare(_R("Tile_window_cascade")))
 		{
-			{mafEvent evUnq(this,TILE_WINDOW_CASCADE); InvokeEvent(evUnq);}
+			//{mafEvent evUnq(this,TILE_WINDOW_CASCADE); InvokeEvent(evUnq);}
 		}
 		else 
 		{

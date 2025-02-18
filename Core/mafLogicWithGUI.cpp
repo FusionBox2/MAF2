@@ -216,16 +216,6 @@ void mafLogicWithGUI::OnEvent(mafEventBase *maf_event)
       OnQuit();		
       break; 
     //resize view
-	case TILE_WINDOW_CASCADE:
-		m_Win->Cascade();
-		break;
-	case TILE_WINDOW_HORIZONTALLY:
-      m_Win->Tile(wxHORIZONTAL);
-	  break;
-	case TILE_WINDOW_VERTICALLY:
-	  m_Win->Tile(wxVERTICAL);
-	  break;
-      // ###############################################################
       // commands related to the STATUSBAR
     case BIND_TO_PROGRESSBAR:
 #ifdef MAF_USE_VTK

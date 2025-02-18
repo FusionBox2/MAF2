@@ -37,7 +37,7 @@
 #include "mafVME.h"
 #include "mafVMEOutput.h"
 #include "mafVMERoot.h"
-
+wxNotebook* pp = nullptr;
 //----------------------------------------------------------------------------
 mafSideBar::mafSideBar(wxWindow* parent, int id, mafBaseEventHandler *Listener, long style)
 //----------------------------------------------------------------------------
@@ -51,13 +51,15 @@ mafSideBar::mafSideBar(wxWindow* parent, int id, mafBaseEventHandler *Listener, 
 
   //splitted panel  
   m_Notebook = new wxNotebook(parent,id);
+  pp = m_Notebook;
+  int w, h;
   m_Notebook->SetFont(wxFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT)));
-  m_SideSplittedPanel = new wxSplitterWindow(m_Notebook, -1, wxDefaultPosition, wxSize(-1,-1),/*wxSP_3DSASH |*/ wxSP_NOBORDER);
+  m_SideSplittedPanel = new wxSplitterWindow(m_Notebook, -1, wxDefaultPosition, wxDefaultSize,/*wxSP_3DSASH |*/ wxSP_NOBORDER);
 
   //tree ----------------------------
   m_Tree = new mafGUICheckTree(m_SideSplittedPanel,-1,false,true);
   m_Tree->SetListener(Listener);
-  m_Tree->SetSize(-1,300);
+  m_Tree->SetSize(-1, wxWindow::FromDIP(300, parent));
   m_Tree->SetTitle(_R(" vme hierarchy: "));
   m_Notebook->AddPage(m_SideSplittedPanel,_("data tree"),true);
 
@@ -85,7 +87,7 @@ mafSideBar::mafSideBar(wxWindow* parent, int id, mafBaseEventHandler *Listener, 
     m_VmePanel = new mafGUIHolder(m_VmeNotebook,-1,false,true);
     m_VmeNotebook->AddPage(m_VmePanel,_("vme"));
 
-    m_SideSplittedPanel->SetMinimumPaneSize(50);
+    m_SideSplittedPanel->SetMinimumPaneSize(wxWindow::FromDIP(50, parent));
     m_SideSplittedPanel->SplitHorizontally(m_Tree,m_VmeNotebook);
   }
   else
@@ -95,7 +97,7 @@ mafSideBar::mafSideBar(wxWindow* parent, int id, mafBaseEventHandler *Listener, 
 
     m_VmeOutputPanel = new mafGUIHolder(m_SideSplittedPanel,-1,false,true);
     m_VmeOutputPanel->Show(false);
-    m_SideSplittedPanel->SetMinimumPaneSize(5);
+    m_SideSplittedPanel->SetMinimumPaneSize(wxWindow::FromDIP(5, parent));
     m_SideSplittedPanel->SplitHorizontally(m_Tree,m_VmeOutputPanel);
 
 //     m_VmePipePanel = new mafGUIHolder(m_Notebook,-1,false,true);

@@ -1000,7 +1000,7 @@ namespace ftk
 }
 namespace ftk
 {
-    wxFrame* CreateFrame(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
+    wxFrame* CreateFrameNW(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
         const wxSize& size, long style, const wxString& name)
     {
         wxSize sz = (size == wxDefaultSize) ? wxWindow::FromDIP(wxSize(800, 600), nullptr) : size;

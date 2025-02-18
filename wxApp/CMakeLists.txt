@@ -3,22 +3,25 @@ cmake_minimum_required(VERSION 3.20)
 project(App)
 
 set(PROJECT_HEADERS
-    MainWindow.h
-    Model.h
+    #MainFrame.h
+    #MainWindow.h
+    #Model.h
 )
 
 set(PROJECT_SOURCES
+  wxApp.cpp
+#  MainFrame.cpp
 #	Sample.cpp
-    MainWnd.cpp
-    MainWindow.cpp
-    Model.cpp
-    NewMainWindow.cpp
-    main.cpp
+#    MainWnd.cpp
+#    MainWindow.cpp
+#    Model.cpp
+#    NewMainWindow.cpp
+#    main.cpp
 )
 
 if(WIN32)
-    set(PROJECT_SOURCES ${PROJECT_HEADERS} ${PROJECT_SOURCES}
-        wxapp.rc
+    set(PROJECT_SOURCES ${PROJECT_SOURCES} ${PROJECT_HEADERS} 
+        wxApp.rc
     )
 endif(WIN32)
 

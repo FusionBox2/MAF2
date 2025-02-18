@@ -32,15 +32,15 @@ class mafGUIMDIFrameCallback;
 BEGIN_FTK_NAMESPACE
 
 template <class BaseFrame, long DefaultStyle>
-class MainFrame: public BaseFrame
+class MainFrameMAF: public BaseFrame
 {
  public:
 
-	MainFrame();
+	MainFrameMAF();
 
-	MainFrame(const wxString& title, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = DefaultStyle, const wxString& name = wxASCII_STR(wxFrameNameStr));
+	MainFrameMAF(const wxString& title, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = DefaultStyle, const wxString& name = wxASCII_STR(wxFrameNameStr));
 
-  ~MainFrame() override;
+  ~MainFrameMAF() override;
 
   bool Create(const wxString& title, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = DefaultStyle, const wxString& name = wxASCII_STR(wxFrameNameStr));
 
@@ -123,17 +123,17 @@ private:
 };
 
 template <class BaseFrame, long DefaultStyle>
-MainFrame<BaseFrame, DefaultStyle>::MainFrame() = default;
+MainFrameMAF<BaseFrame, DefaultStyle>::MainFrameMAF() = default;
 
 template <class BaseFrame, long DefaultStyle>
-MainFrame<BaseFrame, DefaultStyle>::MainFrame(const wxString& title, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
-: MainFrame()
+MainFrameMAF<BaseFrame, DefaultStyle>::MainFrameMAF(const wxString& title, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
+: MainFrameMAF()
 {
   Create(title, pos, size, style, name);
 }
 
 template <class BaseFrame, long DefaultStyle>
-MainFrame<BaseFrame, DefaultStyle>::~MainFrame()
+MainFrameMAF<BaseFrame, DefaultStyle>::~MainFrameMAF()
 {
 #ifdef MAF_USE_VTK
   vtkDEL(m_ProgressCallback);
@@ -146,7 +146,7 @@ MainFrame<BaseFrame, DefaultStyle>::~MainFrame()
 }
 
 template <class BaseFrame, long DefaultStyle>
-bool MainFrame<BaseFrame, DefaultStyle>::Create(const wxString& title, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
+bool MainFrameMAF<BaseFrame, DefaultStyle>::Create(const wxString& title, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
 {
   if (!BaseFrame::Create(nullptr, wxID_ANY, title, pos, size, style, name))
   {
@@ -193,13 +193,13 @@ bool MainFrame<BaseFrame, DefaultStyle>::Create(const wxString& title, const wxP
 }
 
 template <class BaseFrame, long DefaultStyle>
-void MainFrame<BaseFrame, DefaultStyle>::CreateControls()
+void MainFrameMAF<BaseFrame, DefaultStyle>::CreateControls()
 {
   CreateStatus();
 }
 
 template <class BaseFrame, long DefaultStyle>
-void MainFrame<BaseFrame, DefaultStyle>::CreateStatus()
+void MainFrameMAF<BaseFrame, DefaultStyle>::CreateStatus()
 {
   if (auto statusBar = BaseFrame::CreateStatusBar())
   {
@@ -232,7 +232,7 @@ void MainFrame<BaseFrame, DefaultStyle>::CreateStatus()
 }
 
 template <class BaseFrame, long DefaultStyle>
-bool MainFrame<BaseFrame, DefaultStyle>::AddPane(wxWindow* window, wxAuiPaneInfo& pane_info)
+bool MainFrameMAF<BaseFrame, DefaultStyle>::AddPane(wxWindow* window, wxAuiPaneInfo& pane_info)
 {
   if (!m_auiManager.AddPane(window, pane_info))
   {
@@ -269,8 +269,8 @@ bool MainFrame<BaseFrame, DefaultStyle>::AddPane(wxWindow* window, wxAuiPaneInfo
     {
       toolbarsMenu->Append(window->GetId(), pane_info.caption, "", wxITEM_CHECK);
     }
-    BaseFrame::Bind(wxEVT_MENU, &MainFrame::OnSwitchPane, this, window->GetId(), window->GetId());
-    BaseFrame::Bind(wxEVT_UPDATE_UI, &MainFrame::OnUpdatePaneUI, this, window->GetId(), window->GetId());
+    BaseFrame::Bind(wxEVT_MENU, &MainFrameMAF::OnSwitchPane, this, window->GetId(), window->GetId());
+    BaseFrame::Bind(wxEVT_UPDATE_UI, &MainFrameMAF::OnUpdatePaneUI, this, window->GetId(), window->GetId());
   }
   else
   {
@@ -285,14 +285,14 @@ bool MainFrame<BaseFrame, DefaultStyle>::AddPane(wxWindow* window, wxAuiPaneInfo
     {
       viewMenu->Append(window->GetId(), pane_info.caption, "", wxITEM_CHECK);
     }
-    BaseFrame::Bind(wxEVT_MENU, &MainFrame::OnSwitchPane, this, window->GetId(), window->GetId());
-    BaseFrame::Bind(wxEVT_UPDATE_UI, &MainFrame::OnUpdatePaneUI, this, window->GetId(), window->GetId());
+    BaseFrame::Bind(wxEVT_MENU, &MainFrameMAF::OnSwitchPane, this, window->GetId(), window->GetId());
+    BaseFrame::Bind(wxEVT_UPDATE_UI, &MainFrameMAF::OnUpdatePaneUI, this, window->GetId(), window->GetId());
   }
   return true;
 }
 
 template <class BaseFrame, long DefaultStyle>
-void MainFrame<BaseFrame, DefaultStyle>::OnSwitchPane(wxCommandEvent& event)
+void MainFrameMAF<BaseFrame, DefaultStyle>::OnSwitchPane(wxCommandEvent& event)
 {
   wxAuiPaneInfoArray& all_panes = m_auiManager.GetAllPanes();
   size_t count = all_panes.GetCount();
@@ -308,7 +308,7 @@ void MainFrame<BaseFrame, DefaultStyle>::OnSwitchPane(wxCommandEvent& event)
 }
 
 template <class BaseFrame, long DefaultStyle>
-void MainFrame<BaseFrame, DefaultStyle>::OnUpdatePaneUI(wxUpdateUIEvent& event)
+void MainFrameMAF<BaseFrame, DefaultStyle>::OnUpdatePaneUI(wxUpdateUIEvent& event)
 {
   wxAuiPaneInfoArray& all_panes = m_auiManager.GetAllPanes();
   size_t count = all_panes.GetCount();
@@ -322,7 +322,7 @@ void MainFrame<BaseFrame, DefaultStyle>::OnUpdatePaneUI(wxUpdateUIEvent& event)
 }
 
 template <class BaseFrame, long DefaultStyle>
-wxWindow* MainFrame<BaseFrame, DefaultStyle>::RemovePane(const wxString& pane_name)
+wxWindow* MainFrameMAF<BaseFrame, DefaultStyle>::RemovePane(const wxString& pane_name)
 {
   wxAuiPaneInfo& pi = m_auiManager.GetPane(pane_name);
   if (pi.IsOk())
@@ -333,7 +333,7 @@ wxWindow* MainFrame<BaseFrame, DefaultStyle>::RemovePane(const wxString& pane_na
 }
 
 template <class BaseFrame, long DefaultStyle>
-wxWindow* MainFrame<BaseFrame, DefaultStyle>::RemovePane(wxWindow* window)
+wxWindow* MainFrameMAF<BaseFrame, DefaultStyle>::RemovePane(wxWindow* window)
 {
   wxAuiPaneInfo& pi = m_auiManager.GetPane(window);
   if (pi.IsOk())
@@ -344,7 +344,7 @@ wxWindow* MainFrame<BaseFrame, DefaultStyle>::RemovePane(wxWindow* window)
 }
 
 template <class BaseFrame, long DefaultStyle>
-wxWindow* MainFrame<BaseFrame, DefaultStyle>::RemovePane(wxAuiPaneInfo& pane_info)
+wxWindow* MainFrameMAF<BaseFrame, DefaultStyle>::RemovePane(wxAuiPaneInfo& pane_info)
 {
   wxMenuBar* menubar = BaseFrame::GetMenuBar();
   int idx = menubar->FindMenu("View");
@@ -356,8 +356,8 @@ wxWindow* MainFrame<BaseFrame, DefaultStyle>::RemovePane(wxAuiPaneInfo& pane_inf
       int ids = viewMenu->FindItem("Toolbars");
       wxMenuItem* sm = viewMenu->FindItem(ids);
       wxMenu* toolbarsMenu = sm->GetSubMenu();
-      BaseFrame::Unbind(wxEVT_MENU, &MainFrame::OnSwitchPane, this, pane_info.window->GetId(), pane_info.window->GetId());
-      BaseFrame::Unbind(wxEVT_UPDATE_UI, &MainFrame::OnUpdatePaneUI, this, pane_info.window->GetId(), pane_info.window->GetId());
+      BaseFrame::Unbind(wxEVT_MENU, &MainFrameMAF::OnSwitchPane, this, pane_info.window->GetId(), pane_info.window->GetId());
+      BaseFrame::Unbind(wxEVT_UPDATE_UI, &MainFrameMAF::OnUpdatePaneUI, this, pane_info.window->GetId(), pane_info.window->GetId());
       delete toolbarsMenu->Remove(pane_info.window->GetId());
       if (toolbarsMenu->GetMenuItemCount() == 0)
       {
@@ -366,8 +366,8 @@ wxWindow* MainFrame<BaseFrame, DefaultStyle>::RemovePane(wxAuiPaneInfo& pane_inf
     }
     else
     {
-      BaseFrame::Unbind(wxEVT_MENU, &MainFrame::OnSwitchPane, this, pane_info.window->GetId(), pane_info.window->GetId());
-      BaseFrame::Unbind(wxEVT_UPDATE_UI, &MainFrame::OnUpdatePaneUI, this, pane_info.window->GetId(), pane_info.window->GetId());
+      BaseFrame::Unbind(wxEVT_MENU, &MainFrameMAF::OnSwitchPane, this, pane_info.window->GetId(), pane_info.window->GetId());
+      BaseFrame::Unbind(wxEVT_UPDATE_UI, &MainFrameMAF::OnUpdatePaneUI, this, pane_info.window->GetId(), pane_info.window->GetId());
       delete viewMenu->Remove(pane_info.window->GetId());
     }
   }
@@ -378,7 +378,7 @@ wxWindow* MainFrame<BaseFrame, DefaultStyle>::RemovePane(wxAuiPaneInfo& pane_inf
 }
 
 template <class BaseFrame, long DefaultStyle>
-void MainFrame<BaseFrame, DefaultStyle>::ShowPane(const wxString& pane_name, bool show)
+void MainFrameMAF<BaseFrame, DefaultStyle>::ShowPane(const wxString& pane_name, bool show)
 {
   wxAuiPaneInfo& pi = m_auiManager.GetPane(pane_name);
   if (pi.IsOk())
@@ -389,13 +389,13 @@ void MainFrame<BaseFrame, DefaultStyle>::ShowPane(const wxString& pane_name, boo
 }
 
 template <class BaseFrame, long DefaultStyle>
-void MainFrame<BaseFrame, DefaultStyle>::ShowPane(wxWindow* window, bool show)
+void MainFrameMAF<BaseFrame, DefaultStyle>::ShowPane(wxWindow* window, bool show)
 {
   ShowPane(m_auiManager.GetPane(window), show);
 }
 
 template <class BaseFrame, long DefaultStyle>
-void MainFrame<BaseFrame, DefaultStyle>::ShowPane(wxAuiPaneInfo& pane_info, bool show)
+void MainFrameMAF<BaseFrame, DefaultStyle>::ShowPane(wxAuiPaneInfo& pane_info, bool show)
 {
   if (pane_info.IsOk())
   {
@@ -405,26 +405,26 @@ void MainFrame<BaseFrame, DefaultStyle>::ShowPane(wxAuiPaneInfo& pane_info, bool
 }
 
 template <class BaseFrame, long DefaultStyle>
-bool MainFrame<BaseFrame, DefaultStyle>::IsPaneShown(const wxString& pane_name)
+bool MainFrameMAF<BaseFrame, DefaultStyle>::IsPaneShown(const wxString& pane_name)
 {
   return IsPaneShown(m_auiManager.GetPane(pane_name));
 }
 
 template <class BaseFrame, long DefaultStyle>
-bool MainFrame<BaseFrame, DefaultStyle>::IsPaneShown(wxWindow* window)
+bool MainFrameMAF<BaseFrame, DefaultStyle>::IsPaneShown(wxWindow* window)
 {
   return IsPaneShown(m_auiManager.GetPane(window));
 }
 
 template <class BaseFrame, long DefaultStyle>
-bool MainFrame<BaseFrame, DefaultStyle>::IsPaneShown(const wxAuiPaneInfo& pane_info)
+bool MainFrameMAF<BaseFrame, DefaultStyle>::IsPaneShown(const wxAuiPaneInfo& pane_info)
 {
   return pane_info.IsOk() && pane_info.IsShown();
  
 }
 
 template <class BaseFrame, long DefaultStyle>
-void MainFrame<BaseFrame, DefaultStyle>::Busy()
+void MainFrameMAF<BaseFrame, DefaultStyle>::Busy()
 {
   BaseFrame::SetStatusText("Busy", 2);
   BaseFrame::SetStatusText("", 3);
@@ -434,7 +434,7 @@ void MainFrame<BaseFrame, DefaultStyle>::Busy()
 }
 
 template <class BaseFrame, long DefaultStyle>
-void MainFrame<BaseFrame, DefaultStyle>::Ready()
+void MainFrameMAF<BaseFrame, DefaultStyle>::Ready()
 {
   BaseFrame::SetStatusText("", 2);
   BaseFrame::SetStatusText("", 3);
@@ -443,7 +443,7 @@ void MainFrame<BaseFrame, DefaultStyle>::Ready()
 }
 
 template <class BaseFrame, long DefaultStyle>
-void MainFrame<BaseFrame, DefaultStyle>::ProgressBarShow()
+void MainFrameMAF<BaseFrame, DefaultStyle>::ProgressBarShow()
 {
   if (m_PBCalls.empty())
   {
@@ -458,7 +458,7 @@ void MainFrame<BaseFrame, DefaultStyle>::ProgressBarShow()
 }
 
 template <class BaseFrame, long DefaultStyle>
-void MainFrame<BaseFrame, DefaultStyle>::ProgressBarHide()
+void MainFrameMAF<BaseFrame, DefaultStyle>::ProgressBarHide()
 {
   if (!m_PBCalls.empty() && m_PBCalls.back() == m_ID_PBCall)
   {
@@ -473,7 +473,7 @@ void MainFrame<BaseFrame, DefaultStyle>::ProgressBarHide()
 }
 
 template <class BaseFrame, long DefaultStyle>
-void MainFrame<BaseFrame, DefaultStyle>::ProgressBarSetVal(int progress)
+void MainFrameMAF<BaseFrame, DefaultStyle>::ProgressBarSetVal(int progress)
 {
   if (!m_PBCalls.empty() && m_PBCalls.back() == m_ID_PBCall)
   {
@@ -484,30 +484,30 @@ void MainFrame<BaseFrame, DefaultStyle>::ProgressBarSetVal(int progress)
 }
 
 template <class BaseFrame, long DefaultStyle>
-int MainFrame<BaseFrame, DefaultStyle>::ProgressBarGetStatus()
+int MainFrameMAF<BaseFrame, DefaultStyle>::ProgressBarGetStatus()
 {
   return m_Gauge->GetValue();
 }
 
 template <class BaseFrame, long DefaultStyle>
-void MainFrame<BaseFrame, DefaultStyle>::ProgressBarSetText(const wxString& msg)
+void MainFrameMAF<BaseFrame, DefaultStyle>::ProgressBarSetText(const wxString& msg)
 {
   BaseFrame::SetStatusText(msg, 0);
 }
 
 template <class BaseFrame, long DefaultStyle>
-void MainFrame<BaseFrame, DefaultStyle>::RenderStart()
+void MainFrameMAF<BaseFrame, DefaultStyle>::RenderStart()
 {
   BaseFrame::SetStatusText("Rendering", 1);
 }
 
 template <class BaseFrame, long DefaultStyle>
-void MainFrame<BaseFrame, DefaultStyle>::RenderEnd()
+void MainFrameMAF<BaseFrame, DefaultStyle>::RenderEnd()
 {
   BaseFrame::SetStatusText(" ", 1);
 }
 
-using mafGUIMDIFrame = MainFrame<wxMDIParentFrame, wxDEFAULT_FRAME_STYLE | wxHSCROLL | wxVSCROLL>;
+using mafGUIMDIFrame = MainFrameMAF<wxMDIParentFrame, wxDEFAULT_FRAME_STYLE | wxHSCROLL | wxVSCROLL>;
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #ifdef MAF_USE_VTK
@@ -566,7 +566,7 @@ protected:
 };
 
 template <class BaseFrame, long DefaultStyle>
-void MainFrame<BaseFrame, DefaultStyle>::BindToProgressBar(vtkObject* vtkobj)
+void MainFrameMAF<BaseFrame, DefaultStyle>::BindToProgressBar(vtkObject* vtkobj)
 {
   if (vtkobj->IsA("vtkViewport"))
     BindToProgressBar((vtkViewport*)vtkobj);
@@ -577,7 +577,7 @@ void MainFrame<BaseFrame, DefaultStyle>::BindToProgressBar(vtkObject* vtkobj)
 }
 
 template <class BaseFrame, long DefaultStyle>
-void MainFrame<BaseFrame, DefaultStyle>::BindToProgressBar(vtkAlgorithm* filter)
+void MainFrameMAF<BaseFrame, DefaultStyle>::BindToProgressBar(vtkAlgorithm* filter)
 {
   filter->AddObserver(vtkCommand::ProgressEvent, m_ProgressCallback);
   filter->AddObserver(vtkCommand::StartEvent, m_StartCallback);
@@ -585,7 +585,7 @@ void MainFrame<BaseFrame, DefaultStyle>::BindToProgressBar(vtkAlgorithm* filter)
 }
 
 template <class BaseFrame, long DefaultStyle>
-void MainFrame<BaseFrame, DefaultStyle>::BindToProgressBar(vtkViewport* ren)
+void MainFrameMAF<BaseFrame, DefaultStyle>::BindToProgressBar(vtkViewport* ren)
 {
   ren->AddObserver(vtkCommand::StartEvent, m_StartCallback);
   ren->AddObserver(vtkCommand::EndEvent, m_EndCallback);

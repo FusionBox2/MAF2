@@ -79,27 +79,38 @@
                            <------------------------>    DW: data width
 
 */
-const int  M	= 1;											// margin all around a row  
-const int LM	= 5;											// label margin             
-const int HM	= 2*M;										// horizontal margin        (2)
+const int  M_	= 1;											// margin all around a row  
+const int LM_	= 5;											// label margin             
+const int HM_	= 2*M_;										// horizontal margin        (2)
 
-const int LH	= 18;											// label/entry height       
-const int BH	= 20;											// button height            
+const int LH_	= 18;											// label/entry height       
+const int BH_	= 20;											// button height            
 
 //const int LW	= 60;											// label width
 //const int EW	= 60;											// entry width  - (was 48)  
 
 #ifdef WIN32
-const int LW	= 55;	// label width Windows
+const int LW_	= 55;	// label width Windows
 #else
-const int LW	= 100;	// label width Linux
+const int LW_	= 100;	// label width Linux
 #endif
-const int EW	= 45;											// entry width  - (was 48)  
-const int FW	= LW+LM+EW+HM+EW+HM+EW;		// full width               (304)
-const int DW	= EW+HM+EW+HM+EW;					// Data Width - Full Width without the Label (184)
+const int EW_	= 45;											// entry width  - (was 48)  
+const int FW_	= LW_+LM_+EW_+HM_+EW_+HM_+EW_;		// full width               (304)
+const int DW_	= EW_+HM_+EW_+HM_+EW_;					// Data Width - Full Width without the Label (184)
 
 static wxPoint dp = wxDefaultPosition; 
 
+#define M wxWindow::FromDIP(M_, nullptr)
+#define  LM wxWindow::FromDIP(LM_, nullptr)
+#define  HM wxWindow::FromDIP(HM_, nullptr)
+
+#define  LH wxWindow::FromDIP(LH_, nullptr)
+#define  BH wxWindow::FromDIP(BH_, nullptr)
+
+#define  LW wxWindow::FromDIP(LW_, nullptr)
+#define  EW wxWindow::FromDIP(EW_, nullptr)
+#define  FW wxWindow::FromDIP(FW_, nullptr)
+#define  DW wxWindow::FromDIP(DW_, nullptr)
 // int MAFWidgetId = MINID;
 
 //----------------------------------------------------------------------------

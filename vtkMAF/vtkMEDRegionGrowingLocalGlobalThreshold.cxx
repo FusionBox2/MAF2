@@ -420,12 +420,12 @@ void vtkMEDRegionGrowingLocalGlobalThreshold::Update()
           return;
         }
         mean = ComputeMeanValue(i,indexNearest,error,imBordered);
-        if (error == true)
+        if (error != 0)
         {
           return;
         }
         stdDev = ComputeStandardDeviation(i,indexNearest,mean,error,imBordered);
-        if (error == true)
+        if (error != 0)
         {
           return;
         }
