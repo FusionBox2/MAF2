@@ -1,27 +1,9 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafVMEGenericAbstract
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
+#include "ftkConfigure.h"
 
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafVMEGenericAbstract_h
-#define __mafVMEGenericAbstract_h
-//----------------------------------------------------------------------------
-// Include:
-//----------------------------------------------------------------------------
 #include "mafVME.h"
-//----------------------------------------------------------------------------
-// forward declarations :
-//----------------------------------------------------------------------------
+
 class mafDataVector;
 class mafMatrixVector;
 class mafNode;
@@ -36,7 +18,7 @@ class mafGUI;
   @todo
   - 
   */
-class MAF_EXPORT mafVMEGenericAbstract : public mafVME
+class FTK_CORE_EXPORT mafVMEGenericAbstract : public mafVME
 {
 public:
   mafTypeMacro(mafVMEGenericAbstract,mafVME);
@@ -81,7 +63,7 @@ public:
     for metadata).
     This array can be NULL for VMEs generating the output matrix procedurally starting from from
     different sources. */
-  mafMatrixVector *GetMatrixVector() {return m_MatrixVector;}
+  mafMatrixVector *GetMatrixVector() {return m_MatrixVector.get();}
 
   /**
     Set the Pose matrix of the VME. This function modifies the MatrixVector. You can
@@ -91,7 +73,7 @@ public:
   void SetMatrix(const mafMatrix &mat) override;
 
   /** Get the pointer to the array of VMEItem's*/
-  mafDataVector *GetDataVector() {return m_DataVector;}
+  mafDataVector *GetDataVector() {return m_DataVector.get();}
 
   /** Return the list of time stamps of the VMEItemArray stored in this VME. */
   virtual void GetDataTimeStamps(std::vector<mafTimeStamp> &kframes);
@@ -131,10 +113,9 @@ protected:
   /** Create GUI for the VME */
   mafGUI *CreateGui() override;
 
-  mafMatrixVector *m_MatrixVector;
-  mafDataVector   *m_DataVector;
+  std::unique_ptr<mafMatrixVector> m_MatrixVector;
+  std::unique_ptr<mafDataVector>   m_DataVector;
 private:
   mafVMEGenericAbstract(const mafVMEGenericAbstract&); // Not implemented
   void operator=(const mafVMEGenericAbstract&); // Not implemented
 };
-#endif

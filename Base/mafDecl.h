@@ -366,7 +366,7 @@ NODE_START,
   VME_MATRIX_PREUPDATE,  ///< issued by mafMatrixPipe before updating the matrix 
   VME_MATRIX_UPDATE,      ///< issued when pose matrix is updated
   VME_ABSMATRIX_UPDATE,   ///< issued when absolute pose matrix is updated
-  VME_OUTPUT_DATA_PREUPDATE, ///< issued by mafDataPipe before the output data is actually updated
+  VME_OUTPUT_DATA_PREUPDATE_, ///< issued by mafDataPipe before the output data is actually updated
   VME_OUTPUT_DATA_UPDATE, ///< issued when the output data is updated
   VME_OUTPUT_DATA_CHANGED,///< issued when the output data object has changed (i.e. object pointer changed)
 NODE_END,

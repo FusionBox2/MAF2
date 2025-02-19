@@ -80,13 +80,13 @@ public:
 	void SetMatrix(const mafMatrix &mat) override;
 	static bool VMEAccept(mafNode *node) { return(node != NULL && node->IsMAFType(mafVME)); };
 	mafVME *GetVMEPt1();
-	double* getPoint1();
-	double* getPoint2();
-	double* getPoint3();
+	void getPoint1(double*);
+	void getPoint2(double*);
+	void getPoint3(double*);
 	void setPoint1(double, double, double);
 	void setPoint2(double, double, double);
 	void setPoint3(double,double,double);
-	//double* getPoint4();
+	//void getPoint4(double*);
 	double* getNormalVector();
 	void computeNormal();
 //	mafVMELineSeg     *m_LineNormal;

@@ -1,29 +1,3 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafDataPipeInterpolator
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-
 #include "mafDataPipeInterpolator.h"
 
 #include "mafVME.h"
@@ -32,31 +6,21 @@
 
 #include "mafDataVector.h"
 
-//------------------------------------------------------------------------------
-mafCxxAbstractTypeMacro(mafDataPipeInterpolator)
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
 mafDataPipeInterpolator::mafDataPipeInterpolator()
-//------------------------------------------------------------------------------
 {
-  m_CurrentItem     = NULL;
+  m_CurrentItem     = nullptr;
   m_OldTimeStamp    = -1;
-  m_OldItem         = NULL;
+  m_OldItem         = nullptr;
   m_ReleaseDataFlag = false;
   m_DependOnVMETime = 0;
 }
 
-//------------------------------------------------------------------------------
 mafDataPipeInterpolator::~mafDataPipeInterpolator()
-//------------------------------------------------------------------------------
 {
-  SetCurrentItem(NULL);
+  SetCurrentItem(nullptr);
 }
 
-//----------------------------------------------------------------------------
 void mafDataPipeInterpolator::SetTimeStamp(mafTimeStamp time)
-//----------------------------------------------------------------------------
 {
   if (m_CurrentTime==time)
     return;
@@ -66,10 +30,8 @@ void mafDataPipeInterpolator::SetTimeStamp(mafTimeStamp time)
   // to be automatically updated
 }
 
-//----------------------------------------------------------------------------
 // Get the MTime. Take in consideration also modifications to the Input Array
 MTimeType mafDataPipeInterpolator::GetMTime()
-//------------------------------------------------------------------------------
 {
   auto mtime = Superclass::GetMTime();
   
@@ -83,18 +45,14 @@ MTimeType mafDataPipeInterpolator::GetMTime()
   return mtime;
 }
 
-//------------------------------------------------------------------------------
 bool mafDataPipeInterpolator::Accept(mafVME *vme)
-//------------------------------------------------------------------------------
 {
   return vme && vme->IsA(mafVMEGenericAbstract::GetStaticTypeId());
 }
 
-//------------------------------------------------------------------------------
-void mafDataPipeInterpolator::PreExecute()
-//------------------------------------------------------------------------------
+void mafDataPipeInterpolator::PreExecute1()
 {
-  Superclass::PreExecute();
+  Superclass::PreExecute1();
 
   auto mtime=GetMTime();
 
@@ -113,9 +71,28 @@ void mafDataPipeInterpolator::PreExecute()
   } 
 }
 
-//------------------------------------------------------------------------------
+void mafDataPipeInterpolator::PreExecute2()
+{
+  Superclass::PreExecute1();
+
+  auto mtime=GetMTime();
+
+  // If the current time has changed, check if
+  // a new item should be considered according to
+  // interpolation rules (InternalItemUpdate() )
+
+  // the current time has changed or if output data has been regenerated...
+  if (m_OldTimeStamp!=m_CurrentTime||mtime>m_UpdateTime.GetMTime())
+  {
+    m_OldTimeStamp=m_CurrentTime;
+    
+    // First of all find the right item to be used as input
+    // and update the output bounds
+    UpdateBounds();
+  } 
+}
+
 void mafDataPipeInterpolator::UpdateBounds()
-//------------------------------------------------------------------------------
 {
   auto old_item=m_CurrentItem;
   this->InternalItemUpdate();
@@ -130,9 +107,7 @@ void mafDataPipeInterpolator::UpdateBounds()
   }
 }
 
-//------------------------------------------------------------------------------
 void mafDataPipeInterpolator::InternalItemUpdate()
-//------------------------------------------------------------------------------
 {  
   mafVMEGenericAbstract *vme=(mafVMEGenericAbstract *)m_VME;
   mafDataVector *array = vme ? vme->GetDataVector() : NULL;
@@ -145,9 +120,7 @@ void mafDataPipeInterpolator::InternalItemUpdate()
   
 }
 
-//-------------------------------------------------------------------------
 void mafDataPipeInterpolator::SetCurrentItem(std::shared_ptr<mafVMEItem> data)
-//------------------------------------------------------------------------------
 {
   if (data==m_CurrentItem)
     return;
@@ -155,9 +128,7 @@ void mafDataPipeInterpolator::SetCurrentItem(std::shared_ptr<mafVMEItem> data)
   Modified();
 }
 
-//-------------------------------------------------------------------------
 void mafDataPipeInterpolator::UpdateCurrentItem(std::shared_ptr<mafVMEItem> item)
-//------------------------------------------------------------------------------
 {
   if (item)
   {	
@@ -177,25 +148,25 @@ void mafDataPipeInterpolator::UpdateCurrentItem(std::shared_ptr<mafVMEItem> item
     //m_UpdateTime.Modified();
   }
 }
-//------------------------------------------------------------------------------
-void mafDataPipeInterpolator::OnEvent(mafEventBase *maf_event)
-//------------------------------------------------------------------------------
+
+void mafDataPipeInterpolator::OnPreUpdate1()
 {
-  switch (maf_event->GetId())
-  {
-  case VME_OUTPUT_DATA_PREUPDATE:
     if (GetMTime() > m_PreExecuteTime.GetMTime() || (m_CurrentItem && !m_CurrentItem->IsDataPresent()))
     {
       m_PreExecuteTime.Modified();
-      PreExecute();
+      PreExecute1();
       // forward event to VME
-      if (m_VME) m_VME->OnEvent(maf_event);
+      if (m_VME) { m_VME->DoPreUpdate(); }
     }
-    break;
-  case VME_OUTPUT_DATA_UPDATE:
-    Execute();
-    // forward event to VME
-    if (m_VME) m_VME->OnEvent(maf_event);
-    break;
-  }; 
+}
+
+void mafDataPipeInterpolator::OnPreUpdate2()
+{
+    if (GetMTime() > m_PreExecuteTime.GetMTime() || (m_CurrentItem && !m_CurrentItem->IsDataPresent()))
+    {
+      m_PreExecuteTime.Modified();
+      PreExecute2();
+      // forward event to VME
+      if (m_VME) { m_VME->DoPreUpdate(); }
+    }
 }

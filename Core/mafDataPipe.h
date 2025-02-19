@@ -1,15 +1,10 @@
 #pragma once
-//----------------------------------------------------------------------------
-// includes :
-//----------------------------------------------------------------------------
-#include "mafReferenceCounted.h"
-#include "mafBaseEventHandler.h"
+
+#include "ftkConfigure.h"
+
 #include "mafTimeStamped.h"
 #include "mafOBB.h"
 
-//----------------------------------------------------------------------------
-//  forward declarations
-//----------------------------------------------------------------------------
 class mafVMEItem;
 class mafVME;
 
@@ -32,13 +27,20 @@ class mafVME;
   - rewrite GetOutput()
   - reerite UpdateBounds()
 */
-class MAF_EXPORT mafDataPipe:public mafTimeStamped, public mafBaseEventHandler
+class FTK_CORE_EXPORT mafDataPipe:public mafTimeStamped
 {
 public:
   mafDataPipe();
-  virtual ~mafDataPipe();
 
-  mafBaseTypeMacro(mafDataPipe);
+  mafDataPipe(const mafDataPipe&) = delete;
+	mafDataPipe& operator=(const mafDataPipe&) = delete;
+
+  mafDataPipe(mafDataPipe&&) = delete;
+  mafDataPipe& operator=(mafDataPipe&&) = delete;
+
+	virtual ~mafDataPipe();
+
+	mafBaseTypeMacro(mafDataPipe)
 
   /**
     This function makes the current bounds to be updated. It should be optimized
@@ -61,7 +63,7 @@ public:
   /**
     Return a VTK dataset corresponding to the current time.*/
   virtual vtkAlgorithmOutput *GetVTKOutputPort() {return nullptr;}
-  virtual vtkDataSet *GetVTKData();
+  vtkDataSet *GetVTKData();
 #endif
 
   /** Set/Get the current time */
@@ -72,14 +74,8 @@ public:
   MTimeType GetMTime() override;
 
   /** This function returns true if the VME is accepted by this Pipe. */
-  virtual bool Accept(mafVME *vme) {return vme!=NULL;}
+  virtual bool Accept(mafVME *vme) {return vme != nullptr;}
 
-  /**
-    Make a copy of this pipe, also copying all parameters. This is equivalent to
-    NewInstance + DeepCopy.
-    BEWARE: the returned object has reference counter already set to 0. This avoid the 
-    to do an extra Delete(), but requires to Register it before passing it
-    to other objects. */
   std::shared_ptr<mafDataPipe> MakeACopy();
 
   /**
@@ -106,11 +102,15 @@ public:
   /** print a dump of this object */
   virtual void Print(std::ostream& os, const int tabs=0) const;
 
-  void OnEvent(mafEventBase *maf_event) override;
-  
+  virtual void OnPreUpdate1();
+  virtual void OnPreUpdate2();
+  virtual void OnUpdate();
+
 protected:
   /** function called before of data pipe execution */
-  virtual void PreExecute();
+  virtual void PreExecute1();
+  /** function called before of data pipe execution */
+  virtual void PreExecute2();
 
   /** function called to updated the data pipe output */
   virtual void Execute();
@@ -123,8 +123,4 @@ protected:
   int           m_DependOnPose;
   int           m_DependOnAbsPose;
   int           m_DependOnVMETime;
-
-private:
-  mafDataPipe(const mafDataPipe&);   //Not implemented
-  void operator=(const mafDataPipe&);   //Not implemented  
 };

@@ -1,23 +1,5 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafTimeMap
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafTimeMap_h
-#define __mafTimeMap_h
-//----------------------------------------------------------------------------
-// includes :
-//----------------------------------------------------------------------------
 #include "ftk/Base/Object.h"
 #include "mafTimeStamped.h"
 #include "ftk/Base/RegisteringPointer.h"
@@ -26,29 +8,24 @@
 #include <map>
 #include <vector>
 
-//------------------------------------------------------------------------------
-// Forward declarations
-//------------------------------------------------------------------------------
 typedef std::vector<mafTimeStamp> mmuTimeVector;
-
-/** a dynamic associative sorted array of timestamped objects indexed by their "timestamp".
-  This class wraps an STL set (associative sorted array) of timestamped datasets,
-  indexed by "timestamp". Its implementation depends on the undergoing data structure
-  (currently an STL "vector", next release could be based on "map" or "hash_map"). 
-  Some utility functions are also provided.
-  @todo
-  -
-*/
 
 template <class T, template<typename> typename Ptr = mafAutoPointer, typename ArgPtr = T*>
 class mafTimeMap : public mafObject, public mafTimeStamped
 {
 public:
-  typedef std::map<mafTimeStamp, Ptr<T> > TimeMap;
-  typedef std::pair<mafTimeStamp, Ptr<T> > mmuTimePair;
+  using TimeMap = std::map<mafTimeStamp, Ptr<T> >;
+  using mmuTimePair = std::pair<mafTimeStamp, Ptr<T> >;
 
   mafTimeMap() = default;
-  ~mafTimeMap() override = default;
+
+	mafTimeMap(const mafTimeMap<T>&) = delete;
+  mafTimeMap& operator=(const mafTimeMap<T>&) = delete;
+
+	mafTimeMap(mafTimeMap<T>&&) = delete;
+  mafTimeMap& operator=(mafTimeMap<T>&&) = delete;
+
+	~mafTimeMap() override = default;
 
   //mafAbstractTypeMacro(mafTimeMap<T>,mafObject);
 
@@ -92,10 +69,6 @@ public:
   /** Return the number of ITEMS stored in this object*/
   int GetNumberOfItems() const {return m_TimeMap.size();};
   
-  /** Set/Get the Current time for this object*/
-  //mafTimeStamp GetTimeStamp() {return m_CurrentTime;}
-  //void SetTimeStamp(mafTimeStamp t);
-
   /** Return the time bounds for this vector, i.e. minimum and maximum time stamps */
   void GetTimeBounds(mafTimeStamp tbounds[2]);
 
@@ -128,7 +101,7 @@ public:
   ArgPtr GetNearestItem(mafTimeStamp t);
 
   /**
-    Return the pointer to the item with timestamp nearest the given one. NULL 
+    Return the pointer to the item with timestamp <= the given one. NULL 
     is returned if not found.*/
   ArgPtr GetItemBefore(mafTimeStamp t);
 
@@ -144,10 +117,4 @@ public:
 protected:
   TimeMap         m_TimeMap;        ///< the set storing the datasets
   mafString       m_ItemTypeName;   ///< the name of the item type accepted by this container
-
-private:
-  mafTimeMap(const mafTimeMap<T>&);  
-  void operator=(const mafTimeMap<T>&);
 };
-
-#endif

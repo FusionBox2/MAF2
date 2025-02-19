@@ -114,7 +114,8 @@ protected:
   ~mafDataPipeCustomProber() override;
 
   /** function called before of data pipe execution */
-  void PreExecute() override;
+  void PreExecute1() override;
+  void PreExecute2() override;
 
   /** function called to updated the data pipe output */
   void Execute() override;

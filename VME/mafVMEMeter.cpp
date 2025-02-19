@@ -1367,4 +1367,5 @@ double mafVMEMeter::GetValue()
 		return m_Distance;
 	if (m_Angle > -1)
 		return m_Angle;
+  return -1;
 }

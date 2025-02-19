@@ -1,30 +1,3 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafVMEGenericAbstract
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-
-
 #include "mafVMEGenericAbstract.h"
 #include "mafGUI.h"
 
@@ -47,15 +20,10 @@
 #include "vtkDataSetReader.h"
 
 //-------------------------------------------------------------------------
-mafCxxTypeMacro(mafVMEGenericAbstract)
-//-------------------------------------------------------------------------
-
-//-------------------------------------------------------------------------
 mafVMEGenericAbstract::mafVMEGenericAbstract()
 //-------------------------------------------------------------------------
 {
-	m_MatrixVector = new mafMatrixVector();
-  m_DataVector   = NULL;
+	m_MatrixVector = std::make_unique<mafMatrixVector>();
   SetMatrixPipe(mafMatrixInterpolator::NewSPtr()); // matrix interpolator pipe  
 }
 
@@ -63,9 +31,9 @@ mafVMEGenericAbstract::mafVMEGenericAbstract()
 mafVMEGenericAbstract::~mafVMEGenericAbstract()
 //-------------------------------------------------------------------------
 {
-  cppDEL(m_MatrixVector);
-  cppDEL(m_DataVector);
-  SetMatrixPipe(NULL); // destroy matrix pipe
+  //cppDEL(m_MatrixVector);
+  //cppDEL(m_DataVector);
+  SetMatrixPipe(nullptr); // destroy matrix pipe
 }
 
 //-------------------------------------------------------------------------
@@ -78,8 +46,8 @@ int mafVMEGenericAbstract::DeepCopy(mafNode *a)
 
     if (vme->GetDataVector())
     {
-      if(m_DataVector == NULL)
-        m_DataVector=vme->GetDataVector()->NewInstance(); // create a new instance of the same type
+      if(m_DataVector == nullptr)
+        m_DataVector=std::unique_ptr<mafDataVector>(vme->GetDataVector()->NewInstance()); // create a new instance of the same type
       m_DataVector->DeepCopy(vme->GetDataVector()); // copy data
       m_DataVector->SetListener(this);
     }
@@ -106,8 +74,8 @@ int mafVMEGenericAbstract::DeepCopyVmeLarge(mafNode *a)
       //mafDataPipeInterpolatorVTK::SafeDownCast(vme->GetDataPipe())->GetVTKDataPipe()->UnRegisterAllOutputs();
       //////////////////////////////////////////////////////////////////////////
 
-      if(m_DataVector == NULL)
-        m_DataVector=vme->GetDataVector()->NewInstance(); // create a new instance of the same type
+      if(m_DataVector == nullptr)
+        m_DataVector = std::unique_ptr<mafDataVector>(vme->GetDataVector()->NewInstance()); // create a new instance of the same type
 
       m_DataVector->DeepCopyVmeLarge(vme->GetDataVector()); // copy data
       m_DataVector->SetListener(this);

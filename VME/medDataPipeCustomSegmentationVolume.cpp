@@ -788,7 +788,7 @@ void medDataPipeCustomSegmentationVolume::ApplyRegionGrowingSegmentation()
 
 }
 //------------------------------------------------------------------------------
-void medDataPipeCustomSegmentationVolume::PreExecute()
+void medDataPipeCustomSegmentationVolume::PreExecute1()
 //------------------------------------------------------------------------------
 {
   mafVME *vol = mafVME::SafeDownCast(m_Volume);
@@ -804,6 +804,46 @@ void medDataPipeCustomSegmentationVolume::PreExecute()
         ApplyAutomaticSegmentation();
       }
       if ((m_ChangedAutomaticData ) || m_ChangedRegionGrowingData)
+      {
+        ApplyRegionGrowingSegmentation();
+      }
+      if ((m_ChangedAutomaticData) || m_ChangedRegionGrowingData || m_ChangedManualData)
+      {
+        ApplyManualSegmentation();
+      }
+      if ((m_ChangedAutomaticData) || m_ChangedRegionGrowingData || m_ChangedManualData || m_ChangedRefinementData)
+      {
+        ApplyRefinementSegmentation();
+      }
+
+      m_ChangedAutomaticData = false;
+      m_ChangedManualData = false;
+      m_ChangedRefinementData = false;
+      m_ChangedRegionGrowingData = false;
+    }
+  }
+  else
+  {
+    SetInputConnection(NULL);
+  }
+}
+//------------------------------------------------------------------------------
+void medDataPipeCustomSegmentationVolume::PreExecute2()
+//------------------------------------------------------------------------------
+{
+  mafVME* vol = mafVME::SafeDownCast(m_Volume);
+
+  if (vol)
+  {
+    vol->GetOutput()->Update();
+    vtkDataSet* volumeData = vol->GetOutput()->GetVTKData();
+    if (volumeData)
+    {
+      if (m_ChangedAutomaticData)
+      {
+        ApplyAutomaticSegmentation();
+      }
+      if ((m_ChangedAutomaticData) || m_ChangedRegionGrowingData)
       {
         ApplyRegionGrowingSegmentation();
       }

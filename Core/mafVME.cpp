@@ -782,6 +782,22 @@ int mafVME::SetDataPipe(std::shared_ptr<mafDataPipe> dpipe)
 }
 
 //-------------------------------------------------------------------------
+void mafVME::DoPreUpdate()
+//-------------------------------------------------------------------------
+{
+  InternalPreUpdate();  // self process the event
+  { mafEventBase maf_event(this, VME_OUTPUT_DATA_PREUPDATE_); InvokeEvent(&maf_event); }
+}
+
+//-------------------------------------------------------------------------
+void mafVME::DoUpdate()
+//-------------------------------------------------------------------------
+{
+  InternalUpdate();
+  { mafEventBase maf_event(this, VME_OUTPUT_DATA_UPDATE); InvokeEvent(&maf_event); }
+}
+
+//-------------------------------------------------------------------------
 void mafVME::OnEvent(mafEventBase *maf_event)
 //-------------------------------------------------------------------------
 {
@@ -818,13 +834,11 @@ void mafVME::OnEvent(mafEventBase *maf_event)
   {
     switch (maf_event->GetId())
     {
-      case VME_OUTPUT_DATA_PREUPDATE:      
-        InternalPreUpdate();  // self process the event
-        InvokeEvent(maf_event); // forward event to observers
+      case VME_OUTPUT_DATA_PREUPDATE_:      
+        DoPreUpdate();  // self process the event
       break;
       case VME_OUTPUT_DATA_UPDATE:
-        InternalUpdate();   // self process the event
-        InvokeEvent(maf_event); // forward event to observers
+        DoUpdate();   // self process the event
       break;
       case VME_MATRIX_UPDATE:
 			{

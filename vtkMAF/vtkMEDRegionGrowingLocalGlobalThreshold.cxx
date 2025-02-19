@@ -415,7 +415,7 @@ void vtkMEDRegionGrowingLocalGlobalThreshold::Update()
         double mean = 0.0;
         double stdDev = 0.0;
         ComputeIndexNearstPoints(i,indexNearest,error,imBordered);
-        if (error == true)
+        if (error != 0)
         {
           return;
         }

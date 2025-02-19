@@ -1441,7 +1441,7 @@ double mafVMEMuscleWrapperAQ::GetValue()
 		return m_Angle;
 
 		
-
+  return -1;
 }
 /*void mafVMEMuscleWrapperAQ::ComputeWrap()
 {

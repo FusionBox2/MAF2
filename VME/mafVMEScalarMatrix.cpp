@@ -43,7 +43,7 @@ mafCxxTypeMacro(mafVMEScalarMatrix)
 mafVMEScalarMatrix::mafVMEScalarMatrix()
 //-------------------------------------------------------------------------
 {
-  m_DataVector = mafDataVector::New();
+  m_DataVector = mafDataVector::NewUPtr();
   m_DataVector->SetItemTypeName(mafVMEItemScalarMatrix::GetStaticTypeName());  
   m_DataVector->SetListener(this);
   SetDataPipe(mafDataPipeInterpolatorScalarMatrix::NewSPtr()); // interpolator data pipe

@@ -220,10 +220,9 @@ void mafVMEPlane::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)
 	kframes.push_back(t);
 }
 
-double* mafVMEPlane::getPoint1()
+void mafVMEPlane::getPoint1(double* d)
 //-------------------------------------------------------------------------
 {
-	double d[3];
 	mafTimeStamp currTs = GetTimeStamp();
 	double xyzr[3];
 	auto m_TmpTransform = mafTransform::NewSPtr();
@@ -248,9 +247,6 @@ double* mafVMEPlane::getPoint1()
 
 	//((mafVMELandmarkCloud *)m_Cloud2)->GetLandmark(GetLinkSubId(_R("p1")), m_PlaneOrigin, currTs);
 	m_TmpTransform->TransformPoint(m_PlaneOrigin, d);
-
-	return d;// m_PlaneOrigin;//d;
-	
 }
 
 void mafVMEPlane::setPoint1(double d0,double d1,double d2)
@@ -269,11 +265,9 @@ void mafVMEPlane::setPoint1(double d0,double d1,double d2)
 	//pts_change = true;
 
 }
-double* mafVMEPlane::getPoint2()
+void mafVMEPlane::getPoint2(double *d)
 //-------------------------------------------------------------------------
 {
-
-	double d[3];
 	mafTimeStamp currTs = GetTimeStamp();
 	double xyzr[3];
 
@@ -296,9 +290,8 @@ double* mafVMEPlane::getPoint2()
 
 	//((mafVMELandmarkCloud *)m_Cloud2)->GetLandmark(GetLinkSubId(_R("p2")), m_PlanePoint1, currTs);
 	m_TmpTransform->TransformPoint(m_PlanePoint1, d);
-
-	return d;// m_PlanePoint1;// d;
 }
+
 void mafVMEPlane::setPoint2(double d0,double d1,double d2)
 //-------------------------------------------------------------------------
 {
@@ -321,11 +314,9 @@ double* mafVMEPlane::getNormalVector()
 //	surf->GetNormal(normal);
 	return normal;
 }
-double* mafVMEPlane::getPoint3()
+ void mafVMEPlane::getPoint3(double* d)
 //-------------------------------------------------------------------------
 {
-
-	double d[3];
 	mafTimeStamp currTs = GetTimeStamp();
 	double xyzr[3];
 	auto m_TmpTransform = mafTransform::NewSPtr();
@@ -359,7 +350,6 @@ double* mafVMEPlane::getPoint3()
 	//((mafVMELandmarkCloud *)m_Cloud2)->GetLandmark(GetLinkSubId(_R("p3")), m_PlanePoint2, currTs);
 	m_TmpTransform->TransformPoint(m_PlanePoint2, d);
 	//return m_PlanePoint2;
-	return d;
 }
 void mafVMEPlane::setPoint3(double d0,double d1,double d2)
 //-------------------------------------------------------------------------
@@ -801,7 +791,7 @@ double mafVMEPlane::GetUVector(int a)
 	{
 		return m_PlaneXRes;
 	}
-	if (a==1)
+	else //if (a==1)
 	
 	{
 		return m_PlaneYRes;

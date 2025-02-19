@@ -496,7 +496,7 @@ mafString  mafIdString(int id)
      case VME_MATRIX_PREUPDATE:     s=_R("VME_MATRIX_PREUPDATE"); break;
      case VME_MATRIX_UPDATE:        s=_R("VME_MATRIX_UPDATE"); break;
      case VME_ABSMATRIX_UPDATE:     s=_R("VME_ABSMATRIX_UPDATE"); break;
-     case VME_OUTPUT_DATA_PREUPDATE:s=_R("VME_OUTPUT_DATA_PREUPDATE"); break;
+     case VME_OUTPUT_DATA_PREUPDATE_:s=_R("VME_OUTPUT_DATA_PREUPDATE"); break;
      case VME_OUTPUT_DATA_UPDATE:   s=_R("VME_OUTPUT_DATA_UPDATE"); break;
      case VME_OUTPUT_DATA_CHANGED:  s=_R("VME_OUTPUT_DATA_CHANGED"); break;
      case NODE_END:                 s=_R("NODE_END"); break;

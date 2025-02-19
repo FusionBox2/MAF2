@@ -60,15 +60,15 @@ bool mafDataPipeInterpolatorScalarMatrix::Accept(mafVME *vme)
 vnl_matrix<double> &mafDataPipeInterpolatorScalarMatrix::GetScalarData()
 //------------------------------------------------------------------------------
 {
-  {mafEventBase evUnq(this,VME_OUTPUT_DATA_PREUPDATE); OnEvent(&evUnq);}
+  OnPreUpdate1();
   return m_ScalarData;
 }
 
 //------------------------------------------------------------------------------
-void mafDataPipeInterpolatorScalarMatrix::PreExecute()
+void mafDataPipeInterpolatorScalarMatrix::PreExecute1()
 //------------------------------------------------------------------------------
 {
-  Superclass::PreExecute();
+  Superclass::PreExecute1();
 
   auto mtime = this->GetMTime();
 
@@ -87,10 +87,26 @@ void mafDataPipeInterpolatorScalarMatrix::PreExecute()
     }
   } 
 }
-
 //------------------------------------------------------------------------------
-void mafDataPipeInterpolatorScalarMatrix::OnEvent(mafEventBase *e)
+void mafDataPipeInterpolatorScalarMatrix::PreExecute2()
 //------------------------------------------------------------------------------
 {
-  Superclass::OnEvent(e); // this also forwards the event to parent class
+  Superclass::PreExecute2();
+
+  auto mtime = this->GetMTime();
+
+  // if the current item is changed set the data inside new item as input for the interpolator
+  // more specialized interpolators could redefine this to have more inputs (e.g. when 
+  // interpolating different items)
+  if ( m_CurrentItem && (m_CurrentItem != m_OldItem || \
+    mtime > m_UpdateTime.GetMTime() ||
+    !m_CurrentItem->IsDataPresent() ))
+  {
+    vnl_matrix<double> scalar = GetCurrentItemScalarMatrix()->GetData();
+    if (scalar.size() != 0)
+    {
+      m_ScalarData = GetCurrentItemScalarMatrix()->GetData();
+      m_UpdateTime.Modified();
+    }
+  } 
 }

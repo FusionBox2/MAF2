@@ -1,29 +1,8 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafDataPipeInterpolatorScalarMatrix
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafScalarMatrixInterpolator_h
-#define __mafScalarMatrixInterpolator_h
-//----------------------------------------------------------------------------
-// Include:
-//----------------------------------------------------------------------------
 #include "mafDataPipeInterpolator.h"
 #include <vnl/vnl_matrix.h>
 
-//----------------------------------------------------------------------------
-// forward declarations
-//----------------------------------------------------------------------------
 class mafVMEItemScalarMatrix;
 
 /**
@@ -51,9 +30,6 @@ public:
     Get the MTime: this is the bit of magic that makes everything work.*/
   //virtual unsigned long GetMTime();
 
-  /** process events coming from vtkMAFDataPipe bridge component */
-  void OnEvent(mafEventBase *e) override;
-
    /**  Get the output of the interpolator item*/
   std::shared_ptr<mafVMEItemScalarMatrix> GetCurrentItemScalarMatrix() {return std::static_pointer_cast<mafVMEItemScalarMatrix>(m_CurrentItem);}
 
@@ -67,7 +43,8 @@ protected:
   ~mafDataPipeInterpolatorScalarMatrix() override;
 
   /** Set m_ScalarData to current item data*/
-  void PreExecute() override;
+  void PreExecute1() override;
+  void PreExecute2() override;
 
   /** Execute possible procedural code: Empty function */
   void Execute() override {}
@@ -80,5 +57,3 @@ private:
   /** assignment operator not implemeted */
   void operator=(const mafDataPipeInterpolatorScalarMatrix&); 
 };
-
-#endif /* __mafScalarInterpolator_h */

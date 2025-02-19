@@ -606,9 +606,7 @@ void mafVMEGravityLine::InternalUpdate()
 		//NewplanPt[0] = pt3[0];
 		//NewplanPt[01] = pt3[01];
 		//[02] = pt3[02];
-		NewplanPt[0] = plan->getPoint1()[0];
-		NewplanPt[01] = plan->getPoint1()[01];
-		NewplanPt[02] = plan->getPoint1()[02];
+		plan->getPoint1(NewplanPt);
 		//string s = std::to_string(pt3[0]) + " " + std::to_string(pt3[1]) + " " + std::to_string(pt3[2]) + " " + std::to_string(NewplanPt[0]) + " " + std::to_string(NewplanPt[1]) + " " + std::to_string(NewplanPt[2]);
 		//wxBusyInfo wait12(s.c_str());
 		//Sleep(1500);
@@ -698,9 +696,7 @@ void mafVMEGravityLine::InternalUpdate()
 
 		//ParallelPlane
 		double point[3];
-		point[0] = plan->getPoint1()[0];
-		point[1] = plan->getPoint1()[1];
-		point[2] = plan->getPoint1()[2];
+		plan->getPoint1(point);
 		m_TmpTransform->TransformPoint(point, point);
 		
 		m_Cloud2->SetLandmark(_R("parallelPlanePt1"), point[0] + vectAdded[0], point[01] + vectAdded[01], point[02] + vectAdded[02], currTs);
@@ -708,9 +704,7 @@ void mafVMEGravityLine::InternalUpdate()
 		parallelPlane->SetLandmarkLink(_R("first_Point"), m_Cloud2->GetLandmark(_R("parallelPlanePt1")));
 		parallelPlane->Setm_p1LName(_R("parallelPlanePt1"));
 
-		point[0] = plan->getPoint2()[0];
-		point[1] = plan->getPoint2()[1];
-		point[2] = plan->getPoint2()[2];
+		plan->getPoint2(point);
 		m_TmpTransform->TransformPoint(point, point);
 				
 		m_Cloud2->SetLandmark(_R("parallelPlanePt2"), point[0] + vectAdded[0], point[01] + vectAdded[01], point[02] + vectAdded[02], currTs);
@@ -719,9 +713,7 @@ void mafVMEGravityLine::InternalUpdate()
 		parallelPlane->Setm_p2LName(_R("parallelPlanePt2"));
 
 
-		point[0] = plan->getPoint3()[0];
-		point[1] = plan->getPoint3()[1];
-		point[2] = plan->getPoint3()[2];
+		plan->getPoint3(point);
 		m_TmpTransform->TransformPoint(point, point);
 		
 		m_Cloud2->SetLandmark(_R("parallelPlanePt3"), point[0] + vectAdded[0], point[01] + vectAdded[1], point[02] + vectAdded[02], currTs);
@@ -774,9 +766,11 @@ void mafVMEGravityLine::InternalUpdate()
 				{
 					coord = surface->GetSurfaceOutput()->GetVTKData()->GetPoint(i);
 					m_TmpTransform1->TransformPoint(coord, coord);
-					PointToPlanPt1[0] = coord[0] - plan->getPoint1()[0];
-					PointToPlanPt1[1] = coord[1] - plan->getPoint1()[1];
-					PointToPlanPt1[2] = coord[2] - plan->getPoint1()[2];
+					double tmpPnt[3];
+					plan->getPoint1(tmpPnt);
+					PointToPlanPt1[0] = coord[0] - tmpPnt[0];
+					PointToPlanPt1[1] = coord[1] - tmpPnt[1];
+					PointToPlanPt1[2] = coord[2] - tmpPnt[2];
 
 
 					dist = (PointToPlanPt1[0] * normal[0] + PointToPlanPt1[1] * normal[1] + PointToPlanPt1[2] * normal[2]);
@@ -870,9 +864,7 @@ void mafVMEGravityLine::InternalUpdate()
 			
 				//ParallelPlane
 				double point[3];
-				point[0] =  plan->getPoint1()[0];
-				point[1] =  plan->getPoint1()[1];
-				point[2] =  plan->getPoint1()[2];
+				plan->getPoint1(point);
 				
 				
 
@@ -890,9 +882,7 @@ void mafVMEGravityLine::InternalUpdate()
 
 				
 
-			point[0] =  plan->getPoint2()[0];
-			point[1] =  plan->getPoint2()[1];
-			point[2] =  plan->getPoint2()[2];
+			plan->getPoint2(point);
 				
 				m_Cloud2->SetLandmark(_R("parallelPlanePt2"), point[0] + vectAdded[0], point[01] + vectAdded[1], point[02] + vectAdded[2], currTs);
 			parallelPlane->setPoint2(point[0], point[01], point[02]);
@@ -900,9 +890,7 @@ void mafVMEGravityLine::InternalUpdate()
 				parallelPlane->Setm_p2LName(_R("parallelPlanePt2"));
 			
 
-			point[0] =  plan->getPoint3()[0];
-			point[1] =  plan->getPoint3()[1];
-			point[2] =  plan->getPoint3()[2];
+			plan->getPoint3(point);
 			parallelPlane->setPoint3(point[0], point[01], point[02]);
 			
 				m_Cloud2->SetLandmark(_R("parallelPlanePt3"), point[0] + vectAdded[0], point[01] + vectAdded[1], point[02] + vectAdded[2], currTs);

@@ -89,11 +89,8 @@ void mafPipeImage3D::Create(mafNode *node, mafView *view)
   m_Selected = false;
 
   // image pipeline
-  m_Vme->GetOutput()->Update();
+  vtkImageData* image_data = (vtkImageData*)m_Vme->GetOutput()->GetVTKData();//for the moment update is inside
   vtkAlgorithmOutput *port = m_Vme->GetOutput()->GetVTKOutputPort();
-  port->GetProducer()->Update();
-  vtkImageData *image_data = (vtkImageData *)m_Vme->GetOutput()->GetVTKData();
-  //image_data->Update();
 
   double b[6];
   image_data->GetBounds(b);

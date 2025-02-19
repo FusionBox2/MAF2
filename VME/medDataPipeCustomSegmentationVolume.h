@@ -157,7 +157,8 @@ protected:
   int AutomaticCheckRange(int startSlice,int endSlice,int indexToExclude = -1);
 
   /** function called before of data pipe execution */
-  /*virtual*/ void PreExecute() override;
+  /*virtual*/ void PreExecute1() override;
+  /*virtual*/ void PreExecute2() override;
 
   /** Apply the automatic segmentation */
   void ApplyAutomaticSegmentation();

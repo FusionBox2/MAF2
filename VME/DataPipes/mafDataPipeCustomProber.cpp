@@ -122,7 +122,7 @@ int mafDataPipeCustomProber::DeepCopy(mafDataPipe *pipe)
   return MAF_ERROR;
 }
 //------------------------------------------------------------------------------
-void mafDataPipeCustomProber::PreExecute()
+void mafDataPipeCustomProber::PreExecute1()
 //------------------------------------------------------------------------------
 {
   mafVME *vol = mafVME::SafeDownCast(m_Volume);
@@ -152,6 +152,56 @@ void mafDataPipeCustomProber::PreExecute()
         m_Prober->SetThreshold(GetDistanceThreshold());
         m_Prober->SetMaxDistance(GetMaxDistance());
         if(GetDistanceMode() == mafDataPipeCustomProber::DISTANCE_MODE_SCALAR)
+          m_Prober->SetDistanceModeToScalar();
+        else
+          m_Prober->SetDistanceModeToVector();
+      }
+
+      auto maps_to_volume = mafTransformFrame::NewSPtr();
+      maps_to_volume->SetInput(*m_VME->GetAbsMatrixPipe()->GetMatrixPointer());
+      maps_to_volume->SetTargetFrame(*vol->GetAbsMatrixPipe()->GetMatrixPointer());
+
+      mafMatrix tmp_matrix = maps_to_volume->GetMatrix();
+
+      m_Prober->SetInputMatrix(tmp_matrix.GetVTKMatrix());
+    }
+  }
+  else
+  {
+    m_Prober->SetSourceConnection(nullptr);
+  }
+}
+//------------------------------------------------------------------------------
+void mafDataPipeCustomProber::PreExecute2()
+//------------------------------------------------------------------------------
+{
+  mafVME* vol = mafVME::SafeDownCast(m_Volume);
+  mafVME* surf = mafVME::SafeDownCast(m_Surface);
+
+  if (vol && surf)
+  {
+    vol->GetOutput()->Update();
+    surf->GetOutput()->Update();
+    vtkDataSet* vol_data = vol->GetOutput()->GetVTKData();
+    vtkDataSet* surf_data = surf->GetOutput()->GetVTKData();
+    vtkAlgorithmOutput* vol_port = vol->GetOutput()->GetVTKOutputPort();
+    vtkAlgorithmOutput* surf_port = surf->GetOutput()->GetVTKOutputPort();
+    if (vol_data && surf_data)
+    {
+      m_Normals->SetInputConnection(surf_port);
+      m_Normals->ComputePointNormalsOn();
+      m_Normals->SplittingOff();
+      m_Normals->Update();
+
+      m_Prober->SetSourceConnection(vol_port);
+      if (GetMode() == mafDataPipeCustomProber::DENSITY_MODE)
+        m_Prober->SetFilterModeToDensity();
+      else
+      {
+        m_Prober->SetFilterModeToDistance();
+        m_Prober->SetThreshold(GetDistanceThreshold());
+        m_Prober->SetMaxDistance(GetMaxDistance());
+        if (GetDistanceMode() == mafDataPipeCustomProber::DISTANCE_MODE_SCALAR)
           m_Prober->SetDistanceModeToScalar();
         else
           m_Prober->SetDistanceModeToVector();

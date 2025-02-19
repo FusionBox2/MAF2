@@ -240,6 +240,9 @@ public:
   /** Get TestMode*/
   bool GetTestMode(){return m_TestMode;};
 
+  void DoPreUpdate();
+  void DoUpdate();
+
 protected:
   mafVME(); // to be allocated with New()
   ~mafVME() override; // to be deleted with Delete()
@@ -274,7 +277,7 @@ protected:
   void SetOutput(mafVMEOutput *output);
   
   /** Set/Get the data pipe object, i.e. the source of the output dataset. */
-  virtual int SetDataPipe(std::shared_ptr<mafDataPipe> dpipe);
+  int SetDataPipe(std::shared_ptr<mafDataPipe> dpipe);
 
   /** Set the matrix pipe object, i.e. the source of the output matrix. */
   int SetMatrixPipe(std::shared_ptr<mafMatrixPipe> pipe);

@@ -1,27 +1,7 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafDataPipeInterpolator
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafDataPipeInterpolator_h
-#define __mafDataPipeInterpolator_h
-//----------------------------------------------------------------------------
-// Include:
-//----------------------------------------------------------------------------
 #include "mafDataPipe.h"
-//----------------------------------------------------------------------------
-// forward declarations
-//----------------------------------------------------------------------------
+
 class mafVMEItem;
 
 /** superclass for computing the VME output data out of the internal VME-Items.
@@ -39,7 +19,8 @@ public:
   /** This DataPipe accepts only VME's with internal DataArray. */
   bool Accept(mafVME *vme) override;
 
-  void OnEvent(mafEventBase *maf_event) override;
+  void OnPreUpdate1() override;
+  void OnPreUpdate2() override;
 
   /**
     This function makes the current bounds to be updated. It's optimized
@@ -66,7 +47,8 @@ protected:
   mafDataPipeInterpolator();
   ~mafDataPipeInterpolator() override;
 
-  void PreExecute() override =0;
+  void PreExecute1() override = 0;
+  void PreExecute2() override =0;
   void Execute() override =0;
 
   /** This function is called internally to updated the output data according
@@ -95,10 +77,7 @@ protected:
   bool          m_ReleaseDataFlag; ///< this flag forces the interpolator to release unnecessary data (default == false)
 
 private:
-  mafDataPipeInterpolator(const mafDataPipeInterpolator&); // Not implemented
-  void operator=(const mafDataPipeInterpolator&); // Not implemented
+  mafDataPipeInterpolator(const mafDataPipeInterpolator&) = delete;
+  void operator=(const mafDataPipeInterpolator&) = delete;
   
 };
-
-#endif /* __mafDataPipeInterpolator_h */
- 
