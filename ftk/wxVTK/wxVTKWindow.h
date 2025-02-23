@@ -28,7 +28,18 @@ class vtkImageAppend;
 class vtkPNGWriter;
 class vtkWindowToImageFilter;
 
-class wxVTKWindow : public wxWindow, public mafEventSender
+//#define USE_WXGLCANVAS
+#ifdef USE_WXGLCANVAS
+#include <wx/glcanvas.h>
+#endif
+
+#ifdef USE_WXGLCANVAS
+using wxVTKWindowBase = wxGLCanvas;
+#else
+using wxVTKWindowBase = wxWindow;
+#endif
+
+class wxVTKWindow : public wxVTKWindowBase, public mafEventSender
 {
 public:
   DECLARE_DYNAMIC_CLASS(wxVTKWindow)
@@ -65,6 +76,10 @@ protected:
   void OnDestroy(wxWindowDestroyEvent& event);
 
   vtkSmartPointer<vtkRenderWindow> m_renderWindow;
+
+#ifdef USE_WXGLCANVAS
+  std::unique_ptr<wxGLContext> m_glContext;
+#endif
 };
 #if 0
 //----------------------------------------------------------------------------

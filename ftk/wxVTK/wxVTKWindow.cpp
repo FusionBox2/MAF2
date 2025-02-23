@@ -639,7 +639,17 @@ void wxVTKRenderWindowInteractor::PrintSelf(ostream& os, vtkIndent indent)
   this->Superclass::PrintSelf(os, indent);
 }
 
-IMPLEMENT_DYNAMIC_CLASS(wxVTKWindow, wxWindow)
+IMPLEMENT_DYNAMIC_CLASS(wxVTKWindow, wxVTKWindowBase)
+
+#if defined(USE_WXGLCANVAS)
+static int wxvtk_attributes[] = {
+  WX_GL_DOUBLEBUFFER,
+  WX_GL_RGBA,
+  WX_GL_DEPTH_SIZE,
+  16,
+  0
+};
+#endif
 
 wxVTKWindow::wxVTKWindow() = default;
 
@@ -684,14 +694,20 @@ bool wxVTKWindow::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, co
   Bind(wxEVT_SET_FOCUS, [this](wxFocusEvent& event) {if (auto iren = static_cast<wxVTKRenderWindowInteractor*>(GetInteractor())) iren->OnSetFocus(event); });
   Bind(wxEVT_KILL_FOCUS, [this](wxFocusEvent& event) {if (auto iren = static_cast<wxVTKRenderWindowInteractor*>(GetInteractor())) iren->OnKillFocus(event); });
 
-  if (!wxWindow::Create(parent, id, pos, size, style, name))
+#ifdef USE_WXGLCANVAS
+  if (!wxVTKWindowBase::Create(parent, id, pos, size, style, name, wxvtk_attributes))
+    return false;
+  m_glContext = std::make_unique<wxGLContext>(this);
+#else
+  if (!wxVTKWindowBase::Create(parent, id, pos, size, style, name))
     return false;
 #if wxCHECK_VERSION(3,3,0)
 #if __WXMSW__
   MSWDisableComposited();
 #endif
 #endif
-  vtkNew<vtkRenderWindow> win;
+#endif
+	vtkNew<vtkRenderWindow> win;
   this->SetRenderWindow(win);
   return true;
 }
@@ -699,6 +715,9 @@ bool wxVTKWindow::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, co
 void wxVTKWindow::OnDestroy(wxWindowDestroyEvent& event)
 {
   this->SetRenderWindow(nullptr);
+#ifdef USE_WXGLCANVAS
+  m_glContext = nullptr;
+#endif
 }
 
 void wxVTKWindow::SetRenderWindow(vtkRenderWindow* win)
@@ -707,6 +726,8 @@ void wxVTKWindow::SetRenderWindow(vtkRenderWindow* win)
   {
     if (this->m_renderWindow->GetMapped())
       this->m_renderWindow->Finalize();
+    else
+      this->m_renderWindow->ReleaseGraphicsResources(this->m_renderWindow);
     this->m_renderWindow->UnRegister(nullptr);
   }
 
@@ -717,11 +738,12 @@ void wxVTKWindow::SetRenderWindow(vtkRenderWindow* win)
     this->m_renderWindow->Register(nullptr);
 
     // setup the parent window
+#ifdef USE_WXGLCANVAS
+    SetCurrent(*m_glContext);
+    this->m_renderWindow->InitializeFromCurrentContext();
+#endif
     this->m_renderWindow->SetWindowId(this->GetHandle());
     this->m_renderWindow->SetParentId(GetParent() ? GetParent()->GetHandle() : nullptr);
-    //((vtkWin32OpenGLRenderWindow*)this->m_renderWindow.Get())->InitializeApplication();
-    //((vtkWin32OpenGLRenderWindow*)this->m_renderWindow.Get())->SetDeviceContext(GetDC(GetHWND()));
-    //this->m_renderWindow->SetDisplayId(GetDC(GetHWND()));
 
     // update size
     wxRect cRect(0, 0, 1, 1);
