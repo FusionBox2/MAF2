@@ -530,7 +530,7 @@ void mafOpCrop3DSurface::CreateGui()
 	buildHelpGui.SetId(GET_BUILD_HELP_GUI);
 	InvokeEvent(buildHelpGui);
 
-	if (buildHelpGui.GetArg() == true)
+	if (buildHelpGui.GetArg() != 0)
 	{
 		m_Gui->Button(ID_HELP, _R("Help"),_R(""));	
 	}
