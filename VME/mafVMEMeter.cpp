@@ -42,7 +42,6 @@
 #include "mafGUIDialogPreview.h"
 #include "mafVectors.h"
 
-#include "vtkMAFDataPipe.h"
 #include "vtkMath.h"
 #include "vtkSmartPointer.h"
 #include "vtkPolyData.h"
@@ -1367,4 +1366,5 @@ double mafVMEMeter::GetValue()
 		return m_Distance;
 	if (m_Angle > -1)
 		return m_Angle;
+  return -1;
 }

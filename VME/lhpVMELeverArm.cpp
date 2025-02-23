@@ -37,7 +37,6 @@
 #include "mafRWI.h"
 #include "mafGUIDialogPreview.h"
 
-#include "vtkMAFDataPipe.h"
 #include "vtkMath.h"
 #include "vtkSmartPointer.h"
 #include "vtkPolyData.h"

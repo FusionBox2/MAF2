@@ -42,7 +42,6 @@
 #include "mafGUIDialogPreview.h"
 #include "mafVectors.h"
 
-#include "vtkMAFDataPipe.h"
 #include "vtkMath.h"
 #include "vtkSmartPointer.h"
 #include "vtkPolyData.h"
@@ -1441,7 +1440,7 @@ double mafVMEMuscleWrapperAQ::GetValue()
 		return m_Angle;
 
 		
-
+  return -1;
 }
 /*void mafVMEMuscleWrapperAQ::ComputeWrap()
 {

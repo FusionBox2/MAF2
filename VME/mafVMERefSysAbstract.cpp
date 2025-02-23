@@ -34,7 +34,6 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "mafMatrix.h"
 
 #include "vtkSmartPointer.h"
-#include "vtkMAFDataPipe.h"
 #include "vtkPoints.h"
 #include "vtkGlyph3D.h"
 #include "vtkPolyData.h"

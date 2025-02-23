@@ -38,7 +38,6 @@
 #include "mafAbsMatrixPipe.h"
 #include "vtkSmartPointer.h"
 
-#include "vtkMAFDataPipe.h"
 #include "vtkMath.h"
 #include "vtkPolyData.h"
 #include "vtkLine.h"

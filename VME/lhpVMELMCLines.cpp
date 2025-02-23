@@ -30,7 +30,6 @@
 #include "mmaMaterial.h"
 
 #include "vtkSmartPointer.h"
-#include "vtkMAFDataPipe.h"
 #include "vtkPolyData.h"
 #include "vtkCardinalSpline.h"
 #include "vtkPoints.h"
