@@ -716,9 +716,7 @@ void mafVMEOsteometricBoard::InternalUpdate()
 			//triangle->Update();
 			if (plan2 != NULL)
 			{
-				m_PlaneOrigin[0] = plan2->getPoint1()[0];
-				m_PlaneOrigin[01] = plan2->getPoint1()[01];
-				m_PlaneOrigin[02] = plan2->getPoint1()[02];
+				plan2->getPoint1(m_PlaneOrigin);
 			}
 			
 			pos[0] = m_PlaneOrigin[0] + m_PlaneXRes*normal1[0];
@@ -799,7 +797,7 @@ double mafVMEOsteometricBoard::GetUVector(int a)
 	{
 		return m_PlaneXRes;
 	}
-	if (a==1)
+	else //if (a==1)
 	
 	{
 		return m_PlaneYRes;
