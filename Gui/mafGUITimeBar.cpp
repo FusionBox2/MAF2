@@ -85,7 +85,7 @@ m_Timer(NULL, ID_TIMER)
   labTimeMax->SetValidator( mafGUIValidator(this, -1, labTimeMax, &m_TimeMaxString) );
 
   wxStaticText *lab1 = new wxStaticText(this,-1," time ");
-  m_TimeBarEntry = new wxTextCtrl  (this, ID_ENTRY, "" , wxDefaultPosition, wxSize(40,17), 0 );
+  m_TimeBarEntry = new wxTextCtrl  (this, ID_ENTRY, "" , wxDefaultPosition, wxSize(40,17), wxTE_PROCESS_ENTER );
   m_TimeBarEntry->SetValidator(mafGUIValidator(this,ID_ENTRY,m_TimeBarEntry,&m_Time,m_TimeMin,m_TimeMax));
 
   m_TimeBarSlider = new mafGUIFloatSlider(this,ID_SLIDER,m_Time,m_TimeMin,m_TimeMax);
