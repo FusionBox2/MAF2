@@ -29,8 +29,6 @@ SET(PROJECT_SRCS ${PROJECT_SRCS}
   mafDataPipe.h
   mafEventIO.cpp
   mafEventIO.h
-  mafLogicWithGUI.cpp
-  mafLogicWithGUI.h
   mafMatrixPipe.cpp
   mafMatrixPipe.h
   mafNode.cpp

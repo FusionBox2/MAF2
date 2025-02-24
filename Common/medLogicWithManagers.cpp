@@ -1,30 +1,6 @@
-/*=========================================================================
-
- Program: MAF2Medical
- Module: medLogicWithManagers
- Authors: Matteo Giacomoni, Gianluigi Crimi
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-#include "mafDecl.h"
 #include "medLogicWithManagers.h"
-#include "medGUIContextualMenu.h"
+
+#include "mafGUIContextualMenu.h"
 #include "ftk/Gui/ViewFrame.h"
 #include "mafViewManager.h"
 #include "mafOpManager.h"
@@ -47,37 +23,23 @@
 
 //----------------------------------------------------------------------------
 medLogicWithManagers::medLogicWithManagers()
-: mafLogicWithManagers()
 //----------------------------------------------------------------------------
 {
-  m_Win->Bind(wxEVT_MENU, [this](const wxCommandEvent& event) {mafEvent evUnq(this, MENU_WIZARD, (intptr_t)event.GetId());	OnEvent(&evUnq); }, WIZARD_START, WIZARD_END);
-  //Set default values
-  m_UseWizardManager  = false;
-  m_WizardRunning = false;
-  m_WizardManager = nullptr;
 }
 
-//----------------------------------------------------------------------------
-medLogicWithManagers::~medLogicWithManagers()
-//----------------------------------------------------------------------------
-{
-  //free mem
-  if(m_WizardManager)
-    delete m_WizardManager;
-}
+medLogicWithManagers::~medLogicWithManagers() = default;
 
 //----------------------------------------------------------------------------
 void medLogicWithManagers::ViewContextualMenu(bool vme_menu)
 //----------------------------------------------------------------------------
 {
   // Create and visualize the contextual menu for the active vme
-  medGUIContextualMenu *contextMenu = new medGUIContextualMenu();
+  auto contextMenu = std::make_unique<mafGUIContextualMenu>();
   contextMenu->SetListener(this);
-  mafView *v = m_ViewManager->GetSelectedView();
-  mafGUIMDIChild *c = (mafGUIMDIChild *)m_Win->GetActiveChild();
+  mafView *v = m_logic->m_ViewManager->GetSelectedView();
+  mafGUIMDIChild *c = (mafGUIMDIChild *)m_logic->m_frame->GetActiveChild();
   if(c != NULL)
     contextMenu->ShowContextualMenu(c,v,vme_menu);
-  cppDEL(contextMenu);
 }
 
 //----------------------------------------------------------------------------
@@ -90,21 +52,21 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
 		{
 		 case ID_GET_FILENAME:
 			  {
-				  e->SetString(&m_StorageData->m_MSFFile);
+				  e->SetString(&m_logic->m_StorageData->m_MSFFile);
 			  }
 			  break;
 		 case MENU_FILE_SNAPSHOT:
 			  {
-				  mafString msfFilename = m_StorageData->m_MSFFile;
+				  mafString msfFilename = m_logic->m_StorageData->m_MSFFile;
 				  if (msfFilename.empty())
 				  {
 					  mafString dirName = mafGetApplicationDirectory();
 					  dirName += _R("\\data\\msf\\");
 
-            m_StorageData->m_MSFDir = dirName;
+            m_logic->m_StorageData->m_MSFDir = dirName;
 					  this->OnFileSaveAs();
 					  {mafEvent evUnq(this,CAMERA_UPDATE); this->OnEvent((mafEventBase*)&evUnq);}
-					  msfFilename = m_StorageData->m_MSFFile;
+					  msfFilename = m_logic->m_StorageData->m_MSFFile;
 				  }
 
 				  mafString path, name, ext;
@@ -152,7 +114,7 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
 				  else
 				  {
 					  mafString imageFileName = _R("");
-					  mafViewCompound *v = mafViewCompound::SafeDownCast(m_ViewManager->GetSelectedView());
+					  mafViewCompound *v = mafViewCompound::SafeDownCast(m_logic->m_ViewManager->GetSelectedView());
 					  if (v)
 					  {
 						  imageFileName = imagesDirectoryName;
@@ -166,13 +128,13 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
 
 						  imageFileName += mafWxToString(tmpImageFile);
 
-						  v->GetRWI()->SaveAllImages(imageFileName,v, m_ApplicationSettings->GetImageTypeId());
+						  v->GetRWI()->SaveAllImages(imageFileName,v, m_logic->m_ApplicationSettings->GetImageTypeId());
 
 						  wxMessageBox(_("Snapshot saved!"));
 					  }
 					  else
 					  {
-						  mafView *v = m_ViewManager->GetSelectedView();
+						  mafView *v = m_logic->m_ViewManager->GetSelectedView();
 
 						  imageFileName = imagesDirectoryName;
 						  imageFileName += _R("/");
@@ -214,7 +176,7 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
       {
         //Manage start event from the wizard lock window close button
         //and disabling toolbar
-        if(mafView *view = m_ViewManager->GetSelectedView())
+        if(mafView *view = m_logic->m_ViewManager->GetSelectedView())
           view->SetAllowCloseWindow(false);
         WizardRunStarting();
       }
@@ -223,7 +185,7 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
       {
         //Manage end event from the wizard unlock window close button
         //and enabling toolbar
-       if (mafView* view = m_ViewManager->GetSelectedView())
+       if (mafView* view = m_logic->m_ViewManager->GetSelectedView())
          view->SetAllowCloseWindow(true);
        WizardRunTerminated();
         UpdateFrameTitle();
@@ -247,11 +209,11 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
          mafView *view;
          const char *viewStr=e->GetString()->GetCStr();
          
-         view=m_ViewManager->GetFromList(viewStr);
+         view= m_logic->m_ViewManager->GetFromList(viewStr);
          if (view)
-           m_ViewManager->Activate(view);
+           m_logic->m_ViewManager->Activate(view);
          else
-           m_ViewManager->ViewCreate(_R(viewStr));
+           m_logic->m_ViewManager->ViewCreate(_R(viewStr));
        }
     break;
 	case WIZARD_DELETE_VIEW:
@@ -259,11 +221,11 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
 			mafView *view;
 			const char *viewStr=e->GetString()->GetCStr();
 
-			view=m_ViewManager->GetFromList(viewStr);
+			view= m_logic->m_ViewManager->GetFromList(viewStr);
 			if (view) 
 			{
 				mafGUIMDIChild *c = (mafGUIMDIChild *)view->GetFrame();
-				m_ViewManager->ViewDelete(view);
+        m_logic->m_ViewManager->ViewDelete(view);
 				if (c != NULL)
 					c->Destroy();
 			}
@@ -276,7 +238,7 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
         mafLogMessage(_M(_R("wiz starting :") + *tmp));
         m_CancelledBeforeOpStarting=true;
         UpdateFrameTitle();
-        m_OpManager->OpRun(*(e->GetString()));
+        m_logic->m_OpManager->OpRun(*(e->GetString()));
         //If the op is started the value of m_CancelledBeforeOpStarting 
         //is changed by OP_RUN_STARTING event
         if (m_CancelledBeforeOpStarting)
@@ -292,14 +254,14 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
         //Running an op required from the wizard
         m_CancelledBeforeOpStarting=true;
         UpdateFrameTitle();
-        m_OpManager->OpRun(MENU_USER_START + 2);//OP_DELETE
+        m_logic->m_OpManager->OpRun(MENU_USER_START + 2);//OP_DELETE
         m_WizardManager->WizardContinue(true);
       }
     break;
     case WIZARD_OP_NEW:
       {
         //Running an op required from the wizard
-        if(m_NodeManager)
+        if(m_logic->m_NodeManager)
           OnFileNew();
         m_WizardManager->WizardContinue(true);
       }
@@ -307,14 +269,14 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
     case WIZARD_PAUSE:
       {
         UpdateFrameTitle();
-        m_OpManager->OpRun(e->GetOp());
+        m_logic->m_OpManager->OpRun(e->GetOp());
       }
       break;
     case WIZARD_RELOAD_MSF:
       {
         UpdateFrameTitle();
         mafString file;
-        file= m_StorageData->m_MSFFile;
+        file= m_logic->m_StorageData->m_MSFFile;
         if(file.empty())
         {
           mafLogMessage (_M("Reload requested whitout opened MSF"));
@@ -346,7 +308,7 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
         //else we manage the operation end by unlock the close button and so on
         else
         {
-          if (mafView* view = m_ViewManager->GetSelectedView())
+          if (mafView* view = m_logic->m_ViewManager->GetSelectedView())
             view->SetAllowCloseWindow(true);
           OpRunTerminated();
         }
@@ -360,7 +322,7 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
 		//break;
     case PROGRESSBAR_SHOW:
      {
-       if (e->GetSender()==m_WizardManager)
+       if (e->GetSender()==m_WizardManager.get())
        {
          m_WizardLabel->Enable();
          m_WizardGauge->Enable();
@@ -371,7 +333,7 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
     break;
     case PROGRESSBAR_HIDE:
       {
-        if (e->GetSender()==m_WizardManager)
+        if (e->GetSender()==m_WizardManager.get())
         {
           m_WizardGauge->SetValue(0);
           m_WizardGauge->Enable(false);
@@ -383,7 +345,7 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
     break;
     case PROGRESSBAR_SET_VALUE:
       {
-        if (e->GetSender()==m_WizardManager)
+        if (e->GetSender()==m_WizardManager.get())
           m_WizardGauge->SetValue(e->GetArg());
         else
           mafLogicWithManagers::OnEvent(maf_event);
@@ -405,7 +367,7 @@ void medLogicWithManagers::Init(int argc, char **argv)
 //----------------------------------------------------------------------------
 {
   if (m_WizardManager)
-    m_WizardManager->FillSettingDialog(m_SettingsDialog.get());
+    m_WizardManager->FillSettingDialog(m_logic->m_SettingsDialog.get());
   
   mafLogicWithManagers::Init(argc,argv);
 }
@@ -443,13 +405,15 @@ void medLogicWithManagers::Plug( medWizard *wizard, const mafString& menuPath /*
 }
 
 //----------------------------------------------------------------------------
-void medLogicWithManagers::Configure()
+bool medLogicWithManagers::Configure()
 //----------------------------------------------------------------------------
 {
-  mafLogicWithManagers::Configure();
+  if (!mafLogicWithManagers::Configure())
+    return false;
+  m_logic->m_frame->Bind(wxEVT_MENU, [this](const wxCommandEvent& event) {mafEvent evUnq(this, MENU_WIZARD, (intptr_t)event.GetId());	OnEvent(&evUnq); }, WIZARD_START, WIZARD_END);
 
   ConfigureWizardManager();
-
+  return true;
 }
 
 //----------------------------------------------------------------------------
@@ -461,13 +425,13 @@ void medLogicWithManagers::Show()
   //setting gui pointers to the Wizard Manager
   if(m_WizardManager)
   {
-    if(m_MenuBar)
+    if(m_logic->m_MenuBar)
     {
       m_WizardManager->FillMenu(m_WizardMenu);
-      m_WizardManager->SetMenubar(m_MenuBar);
+      m_WizardManager->SetMenubar(m_logic->m_MenuBar);
     }
-    if(m_ToolBar)
-      m_WizardManager->SetToolbar(m_ToolBar);
+    if(m_logic->m_ToolBar)
+      m_WizardManager->SetToolbar(m_logic->m_ToolBar);
   }
 
 }
@@ -481,8 +445,8 @@ void medLogicWithManagers::HandleException()
   {
     OnFileSaveAs();
     
-    if (m_OpManager->Running())
-      m_OpManager->StopCurrentOperation();
+    if (m_logic->m_OpManager->Running())
+      m_logic->m_OpManager->StopCurrentOperation();
   }
   OnQuit();
 }
@@ -496,7 +460,7 @@ void medLogicWithManagers::OnQuit()
     wxMessageBox(_("Please exit wizard before quit."), _("Wizard running"), wxOK|wxCENTER|wxICON_STOP);
     return;
   }
-  if (m_OpManager && m_OpManager->Running())
+  if (m_logic->m_OpManager && m_logic->m_OpManager->Running())
   {
     wxMessageBox(_("Please exit operation before quit."), _("Operation running"), wxOK|wxCENTER|wxICON_STOP);
     return;
@@ -524,7 +488,7 @@ void medLogicWithManagers::CreateMenu()
   if (m_UseWizardManager)
   {
     m_WizardMenu = new wxMenu;
-    m_MenuBar->Insert(4,m_WizardMenu, _("&Wizard"));
+    m_logic->m_MenuBar->Insert(4,m_WizardMenu, _("&Wizard"));
   }
 }
 
@@ -538,9 +502,9 @@ void medLogicWithManagers::WizardRunStarting()
   EnableMenuAndToolbar(false);
   // currently mafInteraction is strictly dependent on VTK (marco)
   #ifdef MAF_USE_VTK
-    if(m_InteractionManager) m_InteractionManager->EnableSelect(false);
+    if(m_logic->m_InteractionManager) m_logic->m_InteractionManager->EnableSelect(false);
   #endif
-    if(m_SideBar)    m_SideBar->EnableSelect(false);
+    if(m_logic->m_SideBar)    m_logic->m_SideBar->EnableSelect(false);
 
 }
 
@@ -554,11 +518,11 @@ void medLogicWithManagers::WizardRunTerminated()
   EnableMenuAndToolbar(true);
   // currently mafInteraction is strictly dependent on VTK (marco)
   #ifdef MAF_USE_VTK
-    if(m_InteractionManager) 
-      m_InteractionManager->EnableSelect(true);
+    if(m_logic->m_InteractionManager)
+      m_logic->m_InteractionManager->EnableSelect(true);
   #endif
-    if(m_SideBar)
-      m_SideBar->EnableSelect(true);
+    if(m_logic->m_SideBar)
+      m_logic->m_SideBar->EnableSelect(true);
 
 }
 
@@ -573,7 +537,7 @@ void medLogicWithManagers::UpdateFrameTitle()
     wxString title = wxTheApp->GetAppDisplayName();
 
     title += "   " + m_WizardManager->GetDescription().toWx();
-    m_Win->SetTitle(title);
+    m_logic->m_frame->SetTitle(title);
   }
   else 
     mafLogicWithManagers::UpdateFrameTitle();
@@ -584,7 +548,7 @@ bool medLogicWithManagers::OnFileOpen(const mafString& file_to_open)
 //----------------------------------------------------------------------------
 {
   bool res = mafLogicWithManagers::OnFileOpen(file_to_open);
-  if(m_NodeManager)
+  if(m_logic->m_NodeManager)
   {
       //If there is a wizzard running we need to continue it after open operation
       if (m_WizardManager && m_WizardRunning)
@@ -599,7 +563,7 @@ bool medLogicWithManagers::OnFileSave()
 //----------------------------------------------------------------------------
 {
   bool res = mafLogicWithManagers::OnFileSave();
-  if(m_NodeManager)
+  if(m_logic->m_NodeManager)
   {
     //If there is a wizard running we need to continue it after save operation
     if (m_WizardManager && m_WizardRunning)
@@ -613,7 +577,7 @@ bool medLogicWithManagers::OnFileSaveAs()
 //----------------------------------------------------------------------------
 {
   bool res = mafLogicWithManagers::OnFileSaveAs();
-  if(m_NodeManager) 
+  if(m_logic->m_NodeManager)
   {
     //If there is a wizard running we need to continue it after save operation
     if (m_WizardManager && m_WizardRunning)
@@ -627,7 +591,7 @@ void medLogicWithManagers::CreateWizardToolbar()
   //----------------------------------------------------------------------------
 {
  
-  wxToolBar *serparatorBar = new wxToolBar(m_Win,-1,wxPoint(0,0),wxSize(-1,-1),wxTB_FLAT | wxTB_NODIVIDER );
+  wxToolBar *serparatorBar = new wxToolBar(m_logic->m_frame,-1,wxPoint(0,0),wxSize(-1,-1),wxTB_FLAT | wxTB_NODIVIDER );
   serparatorBar->SetMargins(0,0);
   serparatorBar->SetToolSeparation(2);
   serparatorBar->SetToolBitmapSize(wxSize(20,20));
@@ -635,21 +599,20 @@ void medLogicWithManagers::CreateWizardToolbar()
   serparatorBar->Update();
   serparatorBar->Realize();
 
-  m_WizardGauge;
-  m_WizardGauge = new wxGauge(m_Win,-1, 100,wxDefaultPosition,wxDefaultSize,wxGA_SMOOTH);
+  m_WizardGauge = new wxGauge(m_logic->m_frame,-1, 100,wxDefaultPosition,wxDefaultSize,wxGA_SMOOTH);
   m_WizardGauge->SetForegroundColour( *wxBLUE );
   m_WizardGauge->Disable();
 
   
 
-  wxWindow *tmp=new wxWindow(m_Win,-1, wxDefaultPosition,wxSize(50,20));
+  wxWindow *tmp=new wxWindow(m_logic->m_frame,-1, wxDefaultPosition,wxSize(50,20));
   
   m_WizardLabel = new wxStaticText(tmp, -1, " Wizard\n Progress",wxDefaultPosition,wxDefaultSize,wxALIGN_LEFT);
   //lab->Show(false);
   m_WizardLabel->Disable();
  
 
-  m_Win->AddPane(m_WizardGauge,  wxAuiPaneInfo()
+  m_logic->m_frame->AddPane(m_WizardGauge,  wxAuiPaneInfo()
     .Name("wizardgauge")
     //.Caption(wxT("ToolBar1"))
     .Top()
@@ -663,7 +626,7 @@ void medLogicWithManagers::CreateWizardToolbar()
     );
   
 
-  m_Win->AddPane(tmp,  wxAuiPaneInfo()
+  m_logic->m_frame->AddPane(tmp,  wxAuiPaneInfo()
     .Name("tmpwithtest")
     //.Caption(wxT("ToolBar2"))
     .Top()
@@ -676,7 +639,7 @@ void medLogicWithManagers::CreateWizardToolbar()
     .Gripper(false)
     );
 
-  m_Win->AddPane(serparatorBar,  wxAuiPaneInfo()
+  m_logic->m_frame->AddPane(serparatorBar,  wxAuiPaneInfo()
     .Name("separator")
     //.Caption(wxT("ToolBar3"))
     .Top()
@@ -698,8 +661,8 @@ void medLogicWithManagers::ConfigureWizardManager()
   if(m_UseWizardManager)
   {
     CreateWizardToolbar();
-    m_WizardManager = new medWizardManager();
+    m_WizardManager = std::make_unique<medWizardManager>();
     m_WizardManager->SetListener(this);
-    m_WizardManager->WarningIfCantUndo(m_ApplicationSettings->GetWarnUserFlag());
+    m_WizardManager->WarningIfCantUndo(m_logic->m_ApplicationSettings->GetWarnUserFlag());
   }
 }

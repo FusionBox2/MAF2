@@ -575,6 +575,8 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
   mafPlugPipe<lhpPipeInfo>("Visual pipe for lever arm");
 
   m_Logic = std::make_unique<medLogicWithManagers>();
+  if (!m_Logic->Configure())
+    return false;
   if(fullVersion)
   {
     SetAppName("lhpFusionBox");
@@ -587,7 +589,6 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
     SetAppDisplayName("ULBViewer");
     m_Logic->GetTopWin()->SetTitle("ULBViewer");
   }
-  m_Logic->Configure();
   SetTopWindow(mafGetFrame());  
 
   //------------------------- Editors -------------------------

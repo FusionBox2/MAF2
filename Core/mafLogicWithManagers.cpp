@@ -1,34 +1,11 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafLogicWithManagers
- Authors: Silvano Imboden, Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-#include "mafDecl.h"
-
 #include "mafLogicWithManagers.h"
+
 #include <wx/config.h>
+#include <wx/tokenzr.h>
 
 #include "mafView.h"
 #include "mafViewCompound.h"
+#include "mafWXLog.h"
 
 #include "mafViewManager.h"
 #include "mafOp.h"
@@ -37,6 +14,10 @@
 #include "mafTagItem.h"
 #include "mafPrintSupport.h"
 
+#ifdef MAF_USE_VTK
+#include "mafVTKLog.h"
+#include "vtkTimerLog.h"
+#endif
 #ifdef MAF_USE_VTK
   #include "mafViewVTK.h"
   
@@ -96,12 +77,282 @@
 #include "mafVMEGenericAbstract.h"
 #include "mafVMERoot.h"
 #include <wx/aboutdlg.h>
+#include <wx/splash.h>
 
-//----------------------------------------------------------------------------
-bool mafLogicWithManagers::AskConfirmAndSave()
-//----------------------------------------------------------------------------
+
+InnerLogic::InnerLogic(mafBaseEventHandler* listener)
 {
-  if (m_NodeManager&& m_NodeManager->MSFIsModified()) // check if the msf has been modified
+  m_LocaleSettings = std::make_unique<mafGUILocaleSettings>(listener);
+  m_MeasureUnitSettings = std::make_unique<mafGUIMeasureUnitSettings>(listener);
+  m_ApplicationSettings = std::make_unique<mafGUIApplicationSettings>(listener);
+  m_StorageSettings = std::make_unique<mafGUISettingsStorage>(listener);
+  m_TimeBarSettings = std::make_unique<mafGUISettingsTimeBar>(listener);
+
+  // this is needed to manage events coming from the widget
+  // when the user change the unit settings.
+  m_MeasureUnitSettings->SetListener(listener);
+
+  m_LogToFile = m_ApplicationSettings->GetLogToFileStatus();
+  m_LogAllEvents = m_ApplicationSettings->GetLogVerboseStatus();
+
+  m_PrintSupport = std::make_unique<mafPrintSupport>();
+
+  m_SettingsDialog = std::make_unique<mafGUISettingsDialog>();
+
+  m_Config = wxConfigBase::Get();
+}
+InnerLogic::~InnerLogic() = default;
+
+
+mafLogicWithManagers::mafLogicWithManagers() = default;
+
+mafLogicWithManagers::~mafLogicWithManagers() = default;
+
+bool mafLogicWithManagers::Configure()
+{
+  auto frame = new mafGUIMDIFrame("maf", wxDefaultPosition, wxWindow::FromDIP(wxSize(800, 600), nullptr));
+
+  //m_Win->SetListener(this);
+  frame->Bind(wxEVT_CLOSE_WINDOW, [this](const wxCloseEvent& event) {mafEvent evUnq(this, MENU_FILE_QUIT); OnEvent(&evUnq); });
+  frame->Bind(wxEVT_MENU, [this](const wxCommandEvent& event) {mafEvent evUnq(this, event.GetId());	OnEvent(&evUnq); }, MENU_START, MENU_END);
+  frame->Bind(wxEVT_MENU, [this](const wxCommandEvent& event) {mafEvent evUnq(this, event.GetId());	OnEvent(&evUnq); }, wxID_FILE1, wxID_FILE9);
+  frame->Bind(wxEVT_IDLE,
+    [frame](const wxIdleEvent& event)
+    {
+#ifdef __WIN32__
+      MEMORYSTATUS ms;
+      GlobalMemoryStatus(&ms);
+      wxString s;
+      int current_free_memory = ms.dwAvailPhys / (1024 * 1024);
+      s << "free mem " << current_free_memory << " MB";
+      if (frame->GetStatusBar())
+        frame->SetStatusText(s, 5);
+      //if (current_free_memory < m_MemoryLimitAlert && !m_UserAlerted)
+      {
+        //m_UserAlerted = true;
+        //int answere = wxMessageBox(_("Program is running with few free memory!! \nFree memory used by UnDo stack?."), _("Warning"), wxYES_NO);
+        //if (answere == wxYES)
+        {
+          // Clear UnDo stack to gain memory.
+          //{mafEvent evUnq(this, CLEAR_UNDO_STACK); InvokeEvent(evUnq);}
+        }
+      }
+#endif
+    }
+  );
+  frame->Bind(wxEVT_UPDATE_UI,
+    [this](wxUpdateUIEvent& event)
+    {
+      mafEvent evUnq(this, UPDATE_UI, &event);
+      OnEvent(&evUnq);
+    }, MENU_START, MENU_END);
+
+	frame->Bind(wxEVT_DROP_FILES,
+    [this](const wxDropFilesEvent& event)
+    {
+      for (int i = 0; i < event.GetNumberOfFiles(); i++)
+      {
+        mafString file_to_open = mafWxToString(event.GetFiles()[i]);
+        mafString path, name, ext;
+        mafSplitPath(file_to_open, &path, &name, &ext);
+        if (ext == _R("msf") || ext == _R("zmsf"))
+        {
+          { mafEvent evUnq(this, MENU_FILE_OPEN, &file_to_open); OnEvent(&evUnq); }
+          return;
+        }
+        else
+        {
+          { mafEvent evUnq(this, IMPORT_FILE, &file_to_open); OnEvent(&evUnq); }
+        }
+      }
+    }
+  );
+  //m_Win->Bind(wxEVT_CLOSE_WINDOW, [this](wxCloseEvent& event) {mafEvent evUnq(this, MENU_FILE_QUIT); OnEvent(&evUnq); });
+
+  m_logic = std::make_unique<InnerLogic>(this);
+  m_logic->m_frame = frame;
+
+  mafString msfDir = mafGetApplicationDirectory();
+  ParsePathName(msfDir);
+  m_logic->m_StorageData = std::make_unique<mafStorageData>(_R("msf"), true, msfDir);
+
+  //////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////
+
+
+	if (m_logic->m_PlugMenu)    this->AddMenu();
+  if (m_logic->m_PlugToolbar) this->AddToolbar();
+  if (m_logic->m_PlugTimebar) this->AddTimebar();
+  if (m_logic->m_PlugLogbar)  this->AddLogbar(); else this->CreateNullLog();
+  EnableItem(CAMERA_RESET, false);
+  EnableItem(CAMERA_FIT, false);
+  EnableItem(CAMERA_FLYTO, false);
+
+  EnableItem(CAMERA_RESET, false);
+  EnableItem(CAMERA_FIT, false);
+  EnableItem(CAMERA_FLYTO, false);
+  EnableItem(MENU_FILE_PRINT, false);
+  EnableItem(MENU_FILE_PRINT_PREVIEW, false);
+  EnableItem(MENU_FILE_PRINT_SETUP, false);
+  EnableItem(MENU_FILE_PRINT_PAGE_SETUP, false);
+
+  if (m_logic->m_PlugSidebar)
+  {
+    m_logic->m_SideBar = std::make_unique<mafSideBar>(m_logic->m_frame, MENU_VIEW_SIDEBAR_, this, m_logic->m_SidebarStyle);
+    m_logic->m_frame->AddPane(m_logic->m_SideBar->m_Notebook, wxAuiPaneInfo()
+      .Name("sidebar")
+      .Caption(wxT("ControlBar"))
+      .Right()
+      .Layer(2)
+      .MinSize(240, 450)
+      .TopDockable(false)
+      .BottomDockable(false)
+    );
+  }
+
+  {
+    m_logic->m_NodeManager = std::make_unique<mafNodeManager>();
+    m_logic->m_NodeManager->SetListener(this);
+  }
+
+  // currently mafInteraction is strictly dependent on VTK (marco)
+#ifdef MAF_USE_VTK
+  {
+    m_logic->m_InteractionManager = std::make_unique<mafInteractionManager>();
+    m_logic->m_InteractionManager->SetListener(this);
+#ifdef MAF_USE_CURL
+    mafPlugDevice<mmdRemoteFileManager>("mmdRemoteFileManager");
+#endif
+
+    SetGlobalMouse(m_logic->m_InteractionManager->GetMouseDevice());
+    //SIL m_InteractionManager->GetClientDevice()->AddObserver(this, MCH_INPUT);
+  }
+#endif
+
+  {
+    m_logic->m_ViewManager = std::make_unique<mafViewManager>();
+    m_logic->m_ViewManager->SetListener(this);
+  }
+
+  {
+    m_logic->m_OpManager = std::make_unique<mafOpManager>();
+    m_logic->m_OpManager->SetListener(this);
+    m_logic->m_OpManager->WarningIfCantUndo(m_logic->m_ApplicationSettings->GetWarnUserFlag());
+  }
+
+  // currently mafInteraction is strictly dependent on VTK (marco)
+#ifdef MAF_USE_VTK
+  {
+#ifdef __WIN32__
+#ifdef MAF_USE_CURL
+    m_RemoteLogic = std::make_unique<mafRemoteLogic>(this, m_ViewManager.get(), m_OpManager.get());
+
+    m_RemoteLogic->SetClientUnit(m_InteractionManager->GetClientDevice());
+#endif
+#endif
+
+  }
+#endif
+
+  // Fill the SettingsDialog
+  m_logic->m_SettingsDialog->AddPage(m_logic->m_ApplicationSettings->GetGui(), m_logic->m_ApplicationSettings->GetLabel());
+  m_logic->m_SettingsDialog->AddPage(m_logic->m_StorageSettings->GetGui(), m_logic->m_StorageSettings->GetLabel());
+
+  if (m_logic->m_ViewManager)
+  {
+    m_logic->m_ApplicationLayoutSettings = std::make_unique<mafGUIApplicationLayoutSettings>(this);
+    m_logic->m_ApplicationLayoutSettings->SetViewManager(m_logic->m_ViewManager.get());
+    m_logic->m_ApplicationLayoutSettings->SetApplicationFrame(m_logic->m_frame);
+    m_logic->m_SettingsDialog->AddPage(m_logic->m_ApplicationLayoutSettings->GetGui(), m_logic->m_ApplicationLayoutSettings->GetLabel());
+  }
+
+  m_logic->m_SettingsDialog->AddPage(m_logic->m_frame->GetDockSettingGui(), _("User Interface Preferences"));
+
+  m_logic->m_HelpSettings = std::make_unique<mafGUISettingsHelp>(this);
+  m_logic->m_SettingsDialog->AddPage(m_logic->m_HelpSettings->GetGui(), m_logic->m_HelpSettings->GetLabel());
+
+  // currently mafInteraction is strictly dependent on VTK (marco)
+#ifdef MAF_USE_VTK
+  if (m_logic->m_InteractionManager)
+    m_logic->m_SettingsDialog->AddPage(m_logic->m_InteractionManager->GetGui(), _("Interaction Manager"));
+#endif    
+  if (m_logic->m_LocaleSettings)
+    m_logic->m_SettingsDialog->AddPage(m_logic->m_LocaleSettings->GetGui(), m_logic->m_LocaleSettings->GetLabel());
+
+  if (m_logic->m_MeasureUnitSettings)
+    m_logic->m_SettingsDialog->AddPage(m_logic->m_MeasureUnitSettings->GetGui(), m_logic->m_MeasureUnitSettings->GetLabel());
+
+  if (m_logic->m_TimeBarSettings)
+    m_logic->m_SettingsDialog->AddPage(m_logic->m_TimeBarSettings->GetGui(), m_logic->m_TimeBarSettings->GetLabel());
+
+  return true;
+}
+void mafLogicWithManagers::Plug(mafView* view, bool visibleInMenu)
+{
+  if (m_logic->m_ViewManager)
+  {
+    long id = m_logic->m_ViewManager->ViewAdd(view);
+    if (visibleInMenu)
+    {
+      if (!m_logic->m_ViewListMenu)
+      {
+        m_logic->m_ViewListMenu = new wxMenu;
+        m_logic->m_ViewMenu->AppendSeparator();
+        m_logic->m_ViewMenu->Append(0, _("Add View"), m_logic->m_ViewListMenu);
+      }
+      wxString s = view->GetLabel().toWx();
+      mafID command = GetNewMenuId();
+      m_logic->m_ViewListMenu->Append(command, s, (wxMenu*)NULL, s);
+      m_logic->m_MenuElems.push_back(mafMenuElems(false, id, command));
+    }
+  }
+}
+void mafLogicWithManagers::Plug(mafOp* op, const mafString& menuPath, bool canUndo, mafGUISettings* setting)
+{
+  if (m_logic->m_OpManager)
+  {
+    mafString fullLabel = op->GetLabel();
+    op->SetLabel(mafStripMenuCodes(fullLabel));
+    long id = m_logic->m_OpManager->OpAdd(op/*, canUndo/*, setting*/);
+    wxMenu* path_menu = m_logic->m_OpMenu;
+    if (op->GetType() == OPTYPE_IMPORTER)
+      path_menu = m_logic->m_ImportMenu;
+    else if (op->GetType() == OPTYPE_EXPORTER)
+      path_menu = m_logic->m_ExportMenu;
+    else if (op->GetType() == OPTYPE_EDIT)
+      path_menu = m_logic->m_EditMenu;
+    mafID command = GetNewMenuId();
+    AddToMenu(fullLabel, command, path_menu, menuPath);
+    m_logic->m_MenuElems.push_back(mafMenuElems(true, id, command));
+
+
+    // currently mafInteraction is strictly dependent on VTK
+#ifdef MAF_USE_VTK    
+    if (m_logic->m_InteractionManager)
+    {
+      if (const char** actions = op->GetActions())
+      {
+        const char* action;
+        for (int i = 0; action = actions[i]; i++)
+        {
+          m_logic->m_InteractionManager->AddAction(action);
+        }
+      }
+    }
+#endif
+  }
+}
+
+void mafLogicWithManagers::PlugMenu(bool plug) { m_logic->m_PlugMenu = plug; };
+void mafLogicWithManagers::PlugToolbar(bool plug) { m_logic->m_PlugToolbar = plug; };
+void mafLogicWithManagers::PlugSidebar(bool plug, long style) { m_logic->m_PlugSidebar = plug; m_logic->m_SidebarStyle = style; };
+void mafLogicWithManagers::PlugTimebar(bool plug) { m_logic->m_PlugTimebar = plug; };
+void mafLogicWithManagers::PlugLogbar(bool plug) { m_logic->m_PlugLogbar = plug; };
+
+bool mafLogicWithManagers::AskConfirmAndSave()
+{
+  if (m_logic->m_NodeManager&& m_logic->m_NodeManager->MSFIsModified()) // check if the msf has been modified
   {
     int answer = wxMessageBox(_("your work is modified, would you like to save it?"),_("Confirm"),wxYES_NO|wxCANCEL|wxICON_QUESTION,mafGetFrame()); // ask user if will save msf before closing
     if(answer == wxCANCEL)
@@ -114,81 +365,46 @@ bool mafLogicWithManagers::AskConfirmAndSave()
 
 mafID mafLogicWithManagers::GetNewMenuId()
 {
-  return MENU_USER_START + m_UserCommandIndex++;
+  return MENU_USER_START + m_logic->m_UserCommandIndex++;
 }
 
 void mafLogicWithManagers::EnableOperations(bool enable)
 {
-  for(unsigned i = 0; i < m_MenuElems.size(); i++)
+  for(unsigned i = 0; i < m_logic->m_MenuElems.size(); i++)
   {
     if(i == 0)
     {
-      EnableItem(i + MENU_USER_START,enable && m_OpManager->UndoAvailable());
+      EnableItem(i + MENU_USER_START,enable && m_logic->m_OpManager->UndoAvailable());
       continue;
     }
     if(i == 1)
     {
-      EnableItem(i + MENU_USER_START,enable && m_OpManager->RedoAvailable()); 
+      EnableItem(i + MENU_USER_START,enable && m_logic->m_OpManager->RedoAvailable());
       continue;
     }
-    if(m_MenuElems[i].m_op)
+    if(m_logic->m_MenuElems[i].m_op)
     {
       bool enableOp = enable;
-      mafNode *node = m_OpManager->GetSelectedVme();
-      enableOp = enableOp && node && m_OpManager->GetOperationById(m_MenuElems[i].m_id)->Accept(node);
+      mafNode *node = m_logic->m_OpManager->GetSelectedVme();
+      enableOp = enableOp && node && m_logic->m_OpManager->GetOperationById(m_logic->m_MenuElems[i].m_id)->Accept(node);
       EnableItem(i + MENU_USER_START, enableOp); 
     }
   }
 }
 
-//----------------------------------------------------------------------------
-mafLogicWithManagers::mafLogicWithManagers()
-: mafLogicWithGUI()
-//----------------------------------------------------------------------------
+mafGUIMDIFrame* mafLogicWithManagers::GetTopWin()
 {
-  m_ExternalViewFlag  = false;
+	return m_logic->m_frame;
+};
 
-  m_CameraLinkingObserverFlag = false;
-
-  m_ImportMenu  = NULL; 
-  m_ExportMenu  = NULL; 
-  m_OpMenu      = NULL;
-  m_ViewMenu    = NULL; 
-  m_ViewListMenu= NULL; 
-  m_EditMenu    = NULL;
-  m_UserCommandIndex = 0;
-  m_RecentFileMenu = NULL;
-
-  // this is needed to manage events coming from the widget
-  // when the user change the unit settings.
-  m_MeasureUnitSettings->SetListener(this);
-
-  m_PrintSupport = std::make_unique<mafPrintSupport>();
-  
-  m_SettingsDialog = std::make_unique<mafGUISettingsDialog>();
-
-  m_ApplicationLayoutSettings = NULL;
-
-  m_HelpSettings = NULL;
-
-  m_Config = wxConfigBase::Get();
-
-  mafString msfDir = mafGetApplicationDirectory();
-  ParsePathName(msfDir);
-  m_StorageData = std::make_unique<mafStorageData>(_R("msf"), true, msfDir);
-  m_FileHistoryIdx = -1;
-}
-
-//----------------------------------------------------------------------------
 bool mafLogicWithManagers::SetAppTag(mafNode *vme)
-//----------------------------------------------------------------------------
 {
   if(!vme->GetTagArray()->GetTag(_R("APP_STAMP")))
   {
     mafTagItem tag_appstamp;
     tag_appstamp.SetName(_R("APP_STAMP"));
-    if(!m_AppStamp.empty())
-      tag_appstamp.SetValue(m_AppStamp.at(0));
+    if(!m_logic->m_AppStamp.empty())
+      tag_appstamp.SetValue(m_logic->m_AppStamp.at(0));
     else
       tag_appstamp.SetValue(_R(""));
     vme->GetTagArray()->SetTag(tag_appstamp);
@@ -198,9 +414,7 @@ bool mafLogicWithManagers::SetAppTag(mafNode *vme)
 }
 
 
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::AddCreationDate(mafNode *vme)
-//----------------------------------------------------------------------------
 {
   mafString dateAndTime;
   wxDateTime time = wxDateTime::UNow(); // get time with millisecond precision
@@ -221,20 +435,20 @@ bool mafLogicWithManagers::CheckAppTag(mafNode *vme)
   bool stamp_found = false;
   bool stamp_data_manager_found = false;
   bool stamp_open_all_found = false;
-  for (int k=0; k<m_AppStamp.size(); k++)
+  for (int k=0; k< m_logic->m_AppStamp.size(); k++)
   {
     // Check with the Application name
-    if (app_stamp == m_AppStamp.at(k))
+    if (app_stamp == m_logic->m_AppStamp.at(k))
     {
       stamp_found = true;
     }
     // Check with the "Data Manager" tag
-    if (m_AppStamp.at(k) == _R("DataManager"))
+    if (m_logic->m_AppStamp.at(k) == _R("DataManager"))
     {
       stamp_data_manager_found = true;
     }
     // Check with the "OPEN_ALL_DATA" tag
-    if (m_AppStamp.at(k) == _R("OPEN_ALL_DATA"))
+    if (m_logic->m_AppStamp.at(k) == _R("OPEN_ALL_DATA"))
     {
       stamp_open_all_found = true;
     }
@@ -244,209 +458,57 @@ bool mafLogicWithManagers::CheckAppTag(mafNode *vme)
   return true;
 }
 
-//----------------------------------------------------------------------------
-mafLogicWithManagers::~mafLogicWithManagers()
-//----------------------------------------------------------------------------
-{
-}
-//----------------------------------------------------------------------------
-void mafLogicWithManagers::Configure()
-//----------------------------------------------------------------------------
-{
-  mafLogicWithGUI::Configure(); // create the GUI - and calls CreateMenu
-
-  EnableItem(CAMERA_RESET, false);
-  EnableItem(CAMERA_FIT,   false);
-  EnableItem(CAMERA_FLYTO, false);
-  EnableItem(MENU_FILE_PRINT, false);
-  EnableItem(MENU_FILE_PRINT_PREVIEW, false);
-  EnableItem(MENU_FILE_PRINT_SETUP, false);
-  EnableItem(MENU_FILE_PRINT_PAGE_SETUP, false);
-
-  if(this->m_PlugSidebar)
-  {
-    m_SideBar = std::make_unique<mafSideBar>(m_Win,MENU_VIEW_SIDEBAR_,this,m_SidebarStyle);
-    m_Win->AddPane(m_SideBar->m_Notebook, wxAuiPaneInfo()
-      .Name("sidebar")
-      .Caption(wxT("ControlBar"))
-      .Right()
-      .Layer(2)
-      .MinSize(240,450)
-      .TopDockable(false)
-      .BottomDockable(false)
-      );
-  }
-
-  {
-    m_NodeManager = std::make_unique<mafNodeManager>();
-    m_NodeManager->SetListener(this); 
-  }
-
-// currently mafInteraction is strictly dependent on VTK (marco)
-#ifdef MAF_USE_VTK
-  {
-    m_InteractionManager = std::make_unique<mafInteractionManager>();
-    m_InteractionManager->SetListener(this);
-#ifdef MAF_USE_CURL
-    mafPlugDevice<mmdRemoteFileManager>("mmdRemoteFileManager");
-#endif
-
-    SetGlobalMouse(m_InteractionManager->GetMouseDevice());
-    //SIL m_InteractionManager->GetClientDevice()->AddObserver(this, MCH_INPUT);
-  }
-#endif
-
-  {
-    m_ViewManager = std::make_unique<mafViewManager>();
-    m_ViewManager->SetListener(this);
-  }
-
-  {
-    m_OpManager = std::make_unique<mafOpManager>();
-    m_OpManager->SetListener(this);
-    m_OpManager->WarningIfCantUndo(m_ApplicationSettings->GetWarnUserFlag());
-  }
-  
-// currently mafInteraction is strictly dependent on VTK (marco)
-#ifdef MAF_USE_VTK
-  {
-#ifdef __WIN32__
-#ifdef MAF_USE_CURL
-    m_RemoteLogic = std::make_unique<mafRemoteLogic>(this, m_ViewManager.get(), m_OpManager.get());
-
-    m_RemoteLogic->SetClientUnit(m_InteractionManager->GetClientDevice());
-#endif
-#endif
-
-  }
-#endif
-
-  // Fill the SettingsDialog
-  m_SettingsDialog->AddPage( m_ApplicationSettings->GetGui(), m_ApplicationSettings->GetLabel());
-  m_SettingsDialog->AddPage( m_StorageSettings->GetGui(), m_StorageSettings->GetLabel());
-
-  if (m_ViewManager)
-  {
-    m_ApplicationLayoutSettings = std::make_unique<mafGUIApplicationLayoutSettings>(this);
-    m_ApplicationLayoutSettings->SetViewManager(m_ViewManager.get());
-    m_ApplicationLayoutSettings->SetApplicationFrame(m_Win);
-    m_SettingsDialog->AddPage( m_ApplicationLayoutSettings->GetGui(), m_ApplicationLayoutSettings->GetLabel());
-  }
-
-  m_SettingsDialog->AddPage( m_Win->GetDockSettingGui(), _("User Interface Preferences"));
-
-  m_HelpSettings = std::make_unique<mafGUISettingsHelp>(this);
-  m_SettingsDialog->AddPage(m_HelpSettings->GetGui(), m_HelpSettings->GetLabel());
-
-// currently mafInteraction is strictly dependent on VTK (marco)
-#ifdef MAF_USE_VTK
-  if(m_InteractionManager)
-    m_SettingsDialog->AddPage(m_InteractionManager->GetGui(), _("Interaction Manager"));
-#endif    
-  if(m_LocaleSettings)
-    m_SettingsDialog->AddPage(m_LocaleSettings->GetGui(), m_LocaleSettings->GetLabel());
-
-  if (m_MeasureUnitSettings)
-    m_SettingsDialog->AddPage(m_MeasureUnitSettings->GetGui(), m_MeasureUnitSettings->GetLabel());
-
-  if (m_TimeBarSettings)
-    m_SettingsDialog->AddPage(m_TimeBarSettings->GetGui(), m_TimeBarSettings->GetLabel());
-}
-//----------------------------------------------------------------------------
-void mafLogicWithManagers::Plug(mafView* view, bool visibleInMenu)
-//----------------------------------------------------------------------------
-{
-  if(m_ViewManager) 
-  {
-    long id = m_ViewManager->ViewAdd(view);
-    if(visibleInMenu)
-    {
-      if(!m_ViewListMenu)
-      {
-        m_ViewListMenu = new wxMenu;
-        m_ViewMenu->AppendSeparator();
-        m_ViewMenu->Append(0,_("Add View"),m_ViewListMenu);
-      }
-      wxString s = view->GetLabel().toWx();
-      mafID command = GetNewMenuId();
-      m_ViewListMenu->Append(command, s, (wxMenu *)NULL, s );
-      m_MenuElems.push_back(mafMenuElems(false, id, command));
-    }
-  }
-}
-//----------------------------------------------------------------------------
-void mafLogicWithManagers::Plug(mafOp *op, const mafString& menuPath, bool canUndo, mafGUISettings *setting)
-//----------------------------------------------------------------------------
-{
-  if(m_OpManager) 
-  {
-    mafString fullLabel = op->GetLabel();
-    op->SetLabel(mafStripMenuCodes(fullLabel));
-    long id = m_OpManager->OpAdd(op/*, canUndo/*, setting*/);
-    wxMenu *path_menu = m_OpMenu;
-    if(op->GetType() == OPTYPE_IMPORTER)
-      path_menu = m_ImportMenu;
-    else if(op->GetType() == OPTYPE_EXPORTER)
-      path_menu = m_ExportMenu;
-    else if(op->GetType() == OPTYPE_EDIT)
-      path_menu = m_EditMenu;
-    mafID command = GetNewMenuId();
-    AddToMenu(fullLabel, command, path_menu, menuPath);
-    m_MenuElems.push_back(mafMenuElems(true, id, command));
-
-    
-// currently mafInteraction is strictly dependent on VTK
-#ifdef MAF_USE_VTK    
-    if (m_InteractionManager)
-    {
-      if (const char **actions = op->GetActions())
-      {
-        const char *action;
-        for (int i=0;action=actions[i];i++)
-        {
-          m_InteractionManager->AddAction(action);
-        }
-      }
-    }
-#endif
-  }
-}
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::Show()
-//----------------------------------------------------------------------------
 {
-  if(m_NodeManager && m_RecentFileMenu)
+  if(m_logic->m_NodeManager && m_logic->m_RecentFileMenu)
   {
-    m_FileHistory.UseMenu(m_RecentFileMenu);
-    m_FileHistory.Load(*m_Config); // Loads file history from registry
+    m_logic->m_FileHistory.UseMenu(m_logic->m_RecentFileMenu);
+    m_logic->m_FileHistory.Load(*m_logic->m_Config); // Loads file history from registry
   }
 
-  mafLogicWithGUI::Show();
+  wxAcceleratorEntry* entries = new wxAcceleratorEntry[m_logic->m_AccelTable.size()];
+  for (int i = 0; i < m_logic->m_AccelTable.size(); i++)
+    entries[i] = m_logic->m_AccelTable[i];
+  wxAcceleratorTable atable(m_logic->m_AccelTable.size(), entries);
+  if (atable.Ok())
+    mafGetFrame()->SetAcceleratorTable(atable);
+  delete[] entries;
+  m_logic->m_frame->Show(TRUE);
   EnableOperations(true);
 
   // must be after the mafLogicWithGUI::Show(); because in that method is set the m_AppTitle var
   SetApplicationStamp(mafWxToString(wxTheApp->GetAppDisplayName()));
 }
-//----------------------------------------------------------------------------
+
+void mafLogicWithManagers::ShowSplashScreen()
+{
+  wxBitmap splashImage = mafPictureFactory::GetPictureFactory()->GetBmp(_R("SPLASH_SCREEN"));
+  ShowSplashScreen(splashImage);
+}
+void mafLogicWithManagers::ShowSplashScreen(wxBitmap& splashImage)
+{
+  long splash_style = wxSIMPLE_BORDER | wxSTAY_ON_TOP;
+  wxSplashScreen* splash = new wxSplashScreen(splashImage,
+    wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_TIMEOUT,
+    2000, NULL, -1, wxDefaultPosition, wxDefaultSize,
+    splash_style);
+  mafYield();
+}
+
 void mafLogicWithManagers::SetApplicationStamp(const mafString &app_stamp)
-//----------------------------------------------------------------------------
 {
   // Add a single application stamp; this is done automatically while creating the application with the application name
-  m_AppStamp.push_back(app_stamp);
+  m_logic->m_AppStamp.push_back(app_stamp);
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::SetApplicationStamp(const std::vector<mafString>& app_stamp)
-//----------------------------------------------------------------------------
 {
   // Add a vector of time stamps; this can be done manually for adding compatibility with other applications. 
   // The application name itself must not be included since it was already added with the other call (see function above).
-  m_AppStamp.insert(m_AppStamp.end(), app_stamp.begin(), app_stamp.end());
+  m_logic->m_AppStamp.insert(m_logic->m_AppStamp.end(), app_stamp.begin(), app_stamp.end());
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::Init(int argc, char **argv)
-//----------------------------------------------------------------------------
 {
-  if(m_NodeManager)
+  if(m_logic->m_NodeManager)
   {
     if(argc > 1 )
 	  {
@@ -466,9 +528,9 @@ void mafLogicWithManagers::Init(int argc, char **argv)
       OnFileNew();
     }
   }
-  if (m_OpManager)
+  if (m_logic->m_OpManager)
   {
-    m_OpManager->FillSettingDialog(m_SettingsDialog.get());
+    m_logic->m_OpManager->FillSettingDialog(m_logic->m_SettingsDialog.get());
 
     if(argc > 1 )
     {
@@ -479,32 +541,30 @@ void mafLogicWithManagers::Init(int argc, char **argv)
         op_param += _R(" ");
         op_param += _R(argv[p]);
       }
-      m_OpManager->OpRun(op_type, (void *)op_param.toStd().c_str());
+      m_logic->m_OpManager->OpRun(op_type, (void *)op_param.toStd().c_str());
     }
   }
 
-  m_ApplicationLayoutSettings->LoadLayout(true);
+  m_logic->m_ApplicationLayoutSettings->LoadLayout(true);
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::CreateMenu()
-//----------------------------------------------------------------------------
 {
-  m_MenuBar  = new wxMenuBar;
+  m_logic->m_MenuBar  = new wxMenuBar;
   wxMenu *file_menu = new wxMenu;
   file_menu->Append(MENU_FILE_NEW,   _("&New  \tCtrl+N"));
   file_menu->Append(MENU_FILE_OPEN,  _("&Open   \tCtrl+O"));
   file_menu->Append(MENU_FILE_SAVE,  _("&Save  \tCtrl+S"));
   file_menu->Append(MENU_FILE_SAVEAS,_("Save &As  \tCtrl+Shift+S"));
-  if (m_StorageSettings->UseRemoteStorage())
+  if (m_logic->m_StorageSettings->UseRemoteStorage())
   {
     //file_menu->Append(MENU_FILE_UPLOAD, _("&Upload"));
   }
-  m_ImportMenu = new wxMenu;
+  m_logic->m_ImportMenu = new wxMenu;
   file_menu->AppendSeparator();
-  file_menu->Append(0,_("Import"),m_ImportMenu );
+  file_menu->Append(0,_("Import"), m_logic->m_ImportMenu );
 
-  m_ExportMenu = new wxMenu;
-  file_menu->Append(0,_("Export"),m_ExportMenu);
+  m_logic->m_ExportMenu = new wxMenu;
+  file_menu->Append(0,_("Export"), m_logic->m_ExportMenu);
 
   // Print menu item
   file_menu->AppendSeparator();
@@ -513,121 +573,114 @@ void mafLogicWithManagers::CreateMenu()
   file_menu->Append(MENU_FILE_PRINT_SETUP, _("Printer Setup"));
   file_menu->Append(MENU_FILE_PRINT_PAGE_SETUP, _("Page Setup"));
 
-  m_RecentFileMenu = new wxMenu;
+  m_logic->m_RecentFileMenu = new wxMenu;
   file_menu->AppendSeparator();
-  file_menu->Append(0,_("Recent Files"),m_RecentFileMenu);
+  file_menu->Append(0,_("Recent Files"), m_logic->m_RecentFileMenu);
 
   file_menu->AppendSeparator();
   file_menu->Append(MENU_FILE_QUIT,  _("&Quit  \tCtrl+Q"));
 
-  m_MenuBar->Append(file_menu, _("&File"));
+  m_logic->m_MenuBar->Append(file_menu, _("&File"));
 
-  m_EditMenu = new wxMenu;
+  m_logic->m_EditMenu = new wxMenu;
   mafID undoCommand = GetNewMenuId();
   mafID redoCommand = GetNewMenuId();
-  AddToMenu(_L("Undo  \tCtrl+Z"),      MENU_USER_START + 0,m_EditMenu);
-  AddToMenu(_L("Redo  \tCtrl+Shift+Z"),MENU_USER_START + 1,m_EditMenu);
-  m_EditMenu->AppendSeparator();
-  m_MenuElems.push_back(mafMenuElems(true, 0, undoCommand));
-  m_MenuElems.push_back(mafMenuElems(true, 0, redoCommand));
-  m_EditMenu->Append(MENU_EDIT_FIND_VME, _("Find VME \tCtrl+F"));
-  m_MenuBar->Append(m_EditMenu, _("&Edit"));
+  AddToMenu(_L("Undo  \tCtrl+Z"),      MENU_USER_START + 0, m_logic->m_EditMenu);
+  AddToMenu(_L("Redo  \tCtrl+Shift+Z"),MENU_USER_START + 1, m_logic->m_EditMenu);
+  m_logic->m_EditMenu->AppendSeparator();
+  m_logic->m_MenuElems.push_back(mafMenuElems(true, 0, undoCommand));
+  m_logic->m_MenuElems.push_back(mafMenuElems(true, 0, redoCommand));
+  m_logic->m_EditMenu->Append(MENU_EDIT_FIND_VME, _("Find VME \tCtrl+F"));
+  m_logic->m_MenuBar->Append(m_logic->m_EditMenu, _("&Edit"));
 
-  m_ViewMenu = new wxMenu;
-  m_MenuBar->Append(m_ViewMenu, _("&View"));
+  m_logic->m_ViewMenu = new wxMenu;
+  m_logic->m_MenuBar->Append(m_logic->m_ViewMenu, _("&View"));
 
-  m_OpMenu = new wxMenu;
-  m_MenuBar->Append(m_OpMenu, _("&Operations"));
+  m_logic->m_OpMenu = new wxMenu;
+  m_logic->m_MenuBar->Append(m_logic->m_OpMenu, _("&Operations"));
 
   wxMenu    *option_menu = new wxMenu;
   option_menu->Append(ID_APP_SETTINGS, _("Options..."));
-  m_MenuBar->Append(option_menu, _("Tools"));
+  m_logic->m_MenuBar->Append(option_menu, _("Tools"));
 
 	wxMenu    *help_menu = new wxMenu;
 	help_menu->Append(ABOUT_APPLICATION,_("About"));
 	help_menu->Append(HELP_HOME, _("Help"));
 
-	m_MenuBar->Append(help_menu, _("&Help"));
+  m_logic->m_MenuBar->Append(help_menu, _("&Help"));
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::CreateToolbar()
-//----------------------------------------------------------------------------
 {
   
   //m_ToolBar = new wxToolBar(m_Win,-1,wxPoint(0,0),wxSize(-1,-1),wxHORIZONTAL|wxNO_BORDER|wxTB_FLAT  );
-  m_ToolBar = new wxToolBar(m_Win,MENU_VIEW_TOOLBAR_,wxPoint(0,0),wxSize(-1,-1),wxTB_FLAT | wxTB_NODIVIDER );
-  m_ToolBar->SetMargins(0,0);
-  m_ToolBar->SetToolSeparation(2);
-  m_ToolBar->SetToolBitmapSize(wxSize(20,20));
-  m_ToolBar->AddTool(MENU_FILE_NEW, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_NEW")),    (_L("new ") + m_StorageData->m_Extension + _L(" storage file")).toWx());
-  m_ToolBar->AddTool(MENU_FILE_OPEN, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_OPEN")),  (_L("open ") + m_StorageData->m_Extension + _L(" storage file")).toWx());
-  m_ToolBar->AddTool(MENU_FILE_SAVE, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_SAVE")),  (_L("save current ") + m_StorageData->m_Extension + _L(" storage file")).toWx());
-  m_ToolBar->AddSeparator();
+  m_logic->m_ToolBar = new wxToolBar(m_logic->m_frame,MENU_VIEW_TOOLBAR_,wxPoint(0,0),wxSize(-1,-1),wxTB_FLAT | wxTB_NODIVIDER );
+  m_logic->m_ToolBar->SetMargins(0,0);
+  m_logic->m_ToolBar->SetToolSeparation(2);
+  m_logic->m_ToolBar->SetToolBitmapSize(wxSize(20,20));
+  m_logic->m_ToolBar->AddTool(MENU_FILE_NEW, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_NEW")),    (_L("new ") + m_logic->m_StorageData->m_Extension + _L(" storage file")).toWx());
+  m_logic->m_ToolBar->AddTool(MENU_FILE_OPEN, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_OPEN")),  (_L("open ") + m_logic->m_StorageData->m_Extension + _L(" storage file")).toWx());
+  m_logic->m_ToolBar->AddTool(MENU_FILE_SAVE, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_SAVE")),  (_L("save current ") + m_logic->m_StorageData->m_Extension + _L(" storage file")).toWx());
+  m_logic->m_ToolBar->AddSeparator();
 
-  m_ToolBar->AddTool(MENU_FILE_PRINT, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("PRINT")),  _("print the selected view"));
-  m_ToolBar->AddTool(MENU_FILE_PRINT_PREVIEW, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("PRINT_PREVIEW")),  _("show the print preview for the selected view"));
-  m_ToolBar->AddSeparator();
+  m_logic->m_ToolBar->AddTool(MENU_FILE_PRINT, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("PRINT")),  _("print the selected view"));
+  m_logic->m_ToolBar->AddTool(MENU_FILE_PRINT_PREVIEW, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("PRINT_PREVIEW")),  _("show the print preview for the selected view"));
+  m_logic->m_ToolBar->AddSeparator();
 
-  m_ToolBar->AddTool(MENU_USER_START + 0, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_UNDO")),  _("undo (ctrl+z)"));
-  m_ToolBar->AddTool(MENU_USER_START + 1, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_REDO")),  _("redo (ctrl+shift+z)"));
-  m_ToolBar->AddSeparator();
+  m_logic->m_ToolBar->AddTool(MENU_USER_START + 0, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_UNDO")),  _("undo (ctrl+z)"));
+  m_logic->m_ToolBar->AddTool(MENU_USER_START + 1, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_REDO")),  _("redo (ctrl+shift+z)"));
+  m_logic->m_ToolBar->AddSeparator();
 
-  m_ToolBar->AddTool(MENU_USER_START + 2, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_DELETE")),  _("delete selected vme (ctrl+shift+d)"));
-  m_ToolBar->AddTool(MENU_USER_START + 3, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_CUT")),  _("cut selected vme (ctrl+x)"));
-  m_ToolBar->AddTool(MENU_USER_START + 4, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_COPY")), _("copy selected vme (ctrl+c)"));
-  m_ToolBar->AddTool(MENU_USER_START + 5, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_PASTE")),_("paste vme (ctrl+v)"));
-  m_ToolBar->AddSeparator();
-  m_ToolBar->AddTool(CAMERA_RESET, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("ZOOM_ALL")),_("reset camera to fit all (ctrl+f)"));
-  m_ToolBar->AddTool(CAMERA_FIT, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("ZOOM_SEL")),_("reset camera to fit selected object (ctrl+shift+f)"));
-  m_ToolBar->AddTool(CAMERA_FLYTO, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FLYTO")),_("fly to object under mouse"));
-  m_ToolBar->Realize();
+  m_logic->m_ToolBar->AddTool(MENU_USER_START + 2, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_DELETE")),  _("delete selected vme (ctrl+shift+d)"));
+  m_logic->m_ToolBar->AddTool(MENU_USER_START + 3, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_CUT")),  _("cut selected vme (ctrl+x)"));
+  m_logic->m_ToolBar->AddTool(MENU_USER_START + 4, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_COPY")), _("copy selected vme (ctrl+c)"));
+  m_logic->m_ToolBar->AddTool(MENU_USER_START + 5, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_PASTE")),_("paste vme (ctrl+v)"));
+  m_logic->m_ToolBar->AddSeparator();
+  m_logic->m_ToolBar->AddTool(CAMERA_RESET, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("ZOOM_ALL")),_("reset camera to fit all (ctrl+f)"));
+  m_logic->m_ToolBar->AddTool(CAMERA_FIT, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("ZOOM_SEL")),_("reset camera to fit selected object (ctrl+shift+f)"));
+  m_logic->m_ToolBar->AddTool(CAMERA_FLYTO, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FLYTO")),_("fly to object under mouse"));
+  m_logic->m_ToolBar->Realize();
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::UpdateFrameTitle()
-//----------------------------------------------------------------------------
 {
   mafString title = mafWxToString(wxTheApp->GetAppDisplayName());
-  if(!m_StorageData->m_MSFFile.empty())
-    title += _R("   ") + m_StorageData->m_MSFFile;
-  m_Win->SetTitle(title.toWx());
+  if(!m_logic->m_StorageData->m_MSFFile.empty())
+    title += _R("   ") + m_logic->m_StorageData->m_MSFFile;
+  m_logic->m_frame->SetTitle(title.toWx());
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
-//----------------------------------------------------------------------------
 {
   mafEvent *e = mafEvent::SafeDownCast(maf_event);
   if(!e)
   {
-    mafLogicWithGUI::OnEvent(maf_event);
     return;
   }
   mafID eventId = e->GetId();
-  for(int i = 0; i < m_MenuElems.size(); i++)
+  for(int i = 0; i < m_logic->m_MenuElems.size(); i++)
   {
-    if(eventId != m_MenuElems[i].m_command)
+    if(eventId != m_logic->m_MenuElems[i].m_command)
       continue;
-    if(!m_MenuElems[i].m_op)
+    if(!m_logic->m_MenuElems[i].m_op)
     {
-      if(m_ViewManager)
-        m_ViewManager->ViewCreate(m_MenuElems[i].m_id + VIEW_START);
+      if(m_logic->m_ViewManager)
+        m_logic->m_ViewManager->ViewCreate(m_logic->m_MenuElems[i].m_id + VIEW_START);
       return;
     }
-    if(!m_OpManager) 
+    if(!m_logic->m_OpManager)
       break;
     EnableOperations(false);
     if(i == 0)
     {
-      m_OpManager->OpUndo();
+      m_logic->m_OpManager->OpUndo();
       EnableOperations(true);
       return;
     }
     if(i == 1)
     {
-      m_OpManager->OpRedo();
+      m_logic->m_OpManager->OpRedo();
       EnableOperations(true);
       return;
     }
-    m_OpManager->OpRun(m_MenuElems[i].m_id, m_OpManager->GetSelectedVme());
+    m_logic->m_OpManager->OpRun(m_logic->m_MenuElems[i].m_id, m_logic->m_OpManager->GetSelectedVme());
     EnableOperations(true);
     return;
   }
@@ -706,26 +759,26 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
 
   if(MENU_FILE_PRINT == eventId)
   {
-    if (m_ViewManager && m_PrintSupport)
-      m_PrintSupport->OnPrint(m_ViewManager->GetSelectedView());
+    if (m_logic->m_ViewManager && m_logic->m_PrintSupport)
+      m_logic->m_PrintSupport->OnPrint(m_logic->m_ViewManager->GetSelectedView());
     return;
   }
   if(MENU_FILE_PRINT_PREVIEW == eventId)
   {
-    if (m_ViewManager && m_PrintSupport)
-      m_PrintSupport->OnPrintPreview(m_ViewManager->GetSelectedView());
+    if (m_logic->m_ViewManager && m_logic->m_PrintSupport)
+      m_logic->m_PrintSupport->OnPrintPreview(m_logic->m_ViewManager->GetSelectedView());
     return;
   }
   if(MENU_FILE_PRINT_SETUP == eventId)
   {
-    if (m_PrintSupport)
-      m_PrintSupport->OnPrintSetup();
+    if (m_logic->m_PrintSupport)
+      m_logic->m_PrintSupport->OnPrintSetup();
     return;
   }
   if(MENU_FILE_PRINT_PAGE_SETUP == eventId)
   {
-    if (m_PrintSupport)
-      m_PrintSupport->OnPageSetup();
+    if (m_logic->m_PrintSupport)
+      m_logic->m_PrintSupport->OnPageSetup();
     return;
   }
   if(MENU_FILE_QUIT == eventId)
@@ -769,8 +822,8 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   if(VME_MODIFIED == eventId)
   {
     VmeModified(e->GetVme());
-    if(!m_PlugTimebar && ((mafVME*)e->GetVme())->IsAnimated())
-      m_Win->ShowPane("timebar",!m_Win->IsPaneShown("timebar") );
+    if(!m_logic->m_PlugTimebar && ((mafVME*)e->GetVme())->IsAnimated())
+      m_logic->m_frame->ShowPane("timebar",!m_logic->m_frame->IsPaneShown("timebar") );
     return; 
   }
   if(VME_EXPAND == eventId)
@@ -880,7 +933,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   }
   if(SHOW_CONTEXTUAL_MENU == eventId)
   {
-    if (e->GetSender() == m_SideBar->GetTree())
+    if (e->GetSender() == m_logic->m_SideBar->GetTree())
       TreeContextualMenu(*e);
     else
       ViewContextualMenu(e->GetBool());
@@ -890,9 +943,9 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   // commands related to OP
   if(MENU_OP == eventId)
   {
-    if(m_OpManager) 
+    if(m_logic->m_OpManager)
     {
-      m_OpManager->OpRun(e->GetArg());
+      m_logic->m_OpManager->OpRun(e->GetArg());
 #ifdef MAF_USE_CURL
       if(/*m_OpManager->GetRunningOperation() && */m_RemoteLogic && m_RemoteLogic->IsSocketConnected() && !m_OpManager->m_FromRemote)
       {
@@ -906,45 +959,45 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   }
   if(PARSE_STRING == eventId)
   {
-    if(this->m_OpManager->Running())
+    if(m_logic->m_OpManager->Running())
     {
       wxMessageBox("There is an other operation running!!");
       return;
     }
     int menuId, opId;
     mafString *s = e->GetString();
-    menuId = m_MenuBar->FindMenu(_("Operations"));
-    opId = m_MenuBar->GetMenu(menuId)->FindItem(s->toWx());
-    m_OpManager->OpRun(opId);
+    menuId = m_logic->m_MenuBar->FindMenu(_("Operations"));
+    opId = m_logic->m_MenuBar->GetMenu(menuId)->FindItem(s->toWx());
+    m_logic->m_OpManager->OpRun(opId);
     return;
   }
   if(MENU_OPTION_APPLICATION_SETTINGS == eventId)
   {
-    if (m_OpManager)
+    if (m_logic->m_OpManager)
     {
-      m_OpManager->WarningIfCantUndo(m_ApplicationSettings->GetWarnUserFlag());
+      m_logic->m_OpManager->WarningIfCantUndo(m_logic->m_ApplicationSettings->GetWarnUserFlag());
       return;
     }
   }
   if(CLEAR_UNDO_STACK == eventId)
   {
-    if (!m_OpManager->Running())
+    if (!m_logic->m_OpManager->Running())
     {
-      m_OpManager->ClearUndoStack();
+      m_logic->m_OpManager->ClearUndoStack();
       EnableOperations(true);
     }
     return;
   }
   if(OP_RUN_STARTING == eventId)
   {
-    if (mafView* view = m_ViewManager->GetSelectedView())
+    if (mafView* view = m_logic->m_ViewManager->GetSelectedView())
       view->SetAllowCloseWindow(false);
     OpRunStarting();
     return; 
   }
   if(OP_RUN_TERMINATED == eventId)
   {
-    if (mafView* view = m_ViewManager->GetSelectedView())
+    if (mafView* view = m_logic->m_ViewManager->GetSelectedView())
       view->SetAllowCloseWindow(true);
     OpRunTerminated();
     return; 
@@ -961,7 +1014,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   }
   if(OP_FORCE_STOP == eventId)
   {
-    m_OpManager->StopCurrentOperation();
+    m_logic->m_OpManager->StopCurrentOperation();
     return;
   }
   // ###############################################################
@@ -980,7 +1033,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   {
     mafView *view = NULL;
     const char *viewStr=e->GetString()->GetCStr();
-    view=m_ViewManager->GetFromList(viewStr);
+    view= m_logic->m_ViewManager->GetFromList(viewStr);
     if(view) 
     {
       view->GetFrame()->SetSize(e->GetWidth(),e->GetHeight());
@@ -990,16 +1043,16 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   if(VIEW_DELETE == eventId)
   {
 
-    if(m_PlugSidebar)
-      this->m_SideBar->ViewDeleted(e->GetView());
+    if(m_logic->m_PlugSidebar)
+      m_logic->m_SideBar->ViewDeleted(e->GetView());
 
 #ifdef MAF_USE_VTK
     // currently mafInteraction is strictly dependent on VTK (marco)
-    if(m_InteractionManager)
-      m_InteractionManager->ViewSelected(NULL);
+    if(m_logic->m_InteractionManager)
+      m_logic->m_InteractionManager->ViewSelected(NULL);
 #endif
 
-    if (m_ViewManager)
+    if (m_logic->m_ViewManager)
     {
       EnableItem(CAMERA_RESET, false);
       EnableItem(CAMERA_FIT,   false);
@@ -1010,19 +1063,19 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
       EnableItem(MENU_FILE_PRINT_SETUP, false);
       EnableItem(MENU_FILE_PRINT_PAGE_SETUP, false);
     }
-    if (m_OpManager)
+    if (m_logic->m_OpManager)
     {
-      EnableOperations(!m_OpManager->Running());
+      EnableOperations(!m_logic->m_OpManager->Running());
     }
     return;
   }
   if(VIEW_SELECT == eventId)
   {
     ViewSelect();
-    if (m_OpManager)
+    if (m_logic->m_OpManager)
     {
-      if (mafView* view = m_ViewManager->GetSelectedView())
-        view->SetAllowCloseWindow(!m_OpManager->Running());
+      if (mafView* view = m_logic->m_ViewManager->GetSelectedView())
+        view->SetAllowCloseWindow(!m_logic->m_OpManager->Running());
     }
     return;
   }
@@ -1038,20 +1091,20 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   }
   if(VIEW_SELECTED == eventId)
   {
-    e->SetBool(m_ViewManager->GetSelectedView() != NULL);
-    e->SetView(m_ViewManager->GetSelectedView());
+    e->SetBool(m_logic->m_ViewManager->GetSelectedView() != NULL);
+    e->SetView(m_logic->m_ViewManager->GetSelectedView());
     return;
   }
   if(VIEW_SAVE_IMAGE == eventId)
   {
-    mafViewCompound *v = mafViewCompound::SafeDownCast(m_ViewManager->GetSelectedView());
+    mafViewCompound *v = mafViewCompound::SafeDownCast(m_logic->m_ViewManager->GetSelectedView());
     if (v && e->GetBool())
     {
-      v->GetRWI()->SaveAllImages(v->GetLabel(),v, m_ApplicationSettings->GetImageTypeId());
+      v->GetRWI()->SaveAllImages(v->GetLabel(),v, m_logic->m_ApplicationSettings->GetImageTypeId());
     }
     else
     {
-      mafView *v = m_ViewManager->GetSelectedView();
+      mafView *v = m_logic->m_ViewManager->GetSelectedView();
       if (v)
       {
         v->GetRWI()->SaveImage(v->GetLabel());
@@ -1066,20 +1119,20 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   }
   if(CAMERA_RESET == eventId)
   {
-    if(m_ViewManager) m_ViewManager->CameraReset();
+    if(m_logic->m_ViewManager) m_logic->m_ViewManager->CameraReset();
     return; 
   }
   if(CAMERA_FIT == eventId)
   {
-    if(m_ViewManager) m_ViewManager->CameraReset(true);
+    if(m_logic->m_ViewManager) m_logic->m_ViewManager->CameraReset(true);
     return;
   }
   if(CAMERA_FLYTO == eventId)
   {
-    if(m_ViewManager) m_ViewManager->CameraFlyToMode();
+    if(m_logic->m_ViewManager) m_logic->m_ViewManager->CameraFlyToMode();
     // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
-    if(m_InteractionManager) m_InteractionManager->CameraFlyToMode();  //modified by Marco. 15-9-2004 fly to with devices.
+    if(m_logic->m_InteractionManager) m_logic->m_InteractionManager->CameraFlyToMode();  //modified by Marco. 15-9-2004 fly to with devices.
 #endif
     return;
   }
@@ -1087,7 +1140,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   {
     // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
-    if (m_InteractionManager == NULL || m_InteractionManager->GetPER() == NULL)
+    if (m_logic->m_InteractionManager == NULL || m_logic->m_InteractionManager->GetPER() == NULL)
       return;
 
     vtkCamera *cam = vtkCamera::SafeDownCast(e->GetVtkObj());
@@ -1095,24 +1148,24 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
     if (!link_camera) 
     {
       if (cam) 
-        m_InteractionManager->GetPER()->LinkCameraRemove(cam);
+        m_logic->m_InteractionManager->GetPER()->LinkCameraRemove(cam);
       else
-        m_InteractionManager->GetPER()->LinkCameraRemoveAll();
+        m_logic->m_InteractionManager->GetPER()->LinkCameraRemoveAll();
 
-      if (m_CameraLinkingObserverFlag) 
+      if (m_logic->m_CameraLinkingObserverFlag)
       {
-        m_InteractionManager->GetPER()->GetCameraMouseInteractor()->RemoveObserver(this);
-        m_CameraLinkingObserverFlag = false;
+        m_logic->m_InteractionManager->GetPER()->GetCameraMouseInteractor()->RemoveObserver(this);
+        m_logic->m_CameraLinkingObserverFlag = false;
       }
     }
     else if (cam) 
     {
-      if (!m_CameraLinkingObserverFlag) 
+      if (!m_logic->m_CameraLinkingObserverFlag)
       {
-        m_InteractionManager->GetPER()->GetCameraMouseInteractor()->AddObserver(this);
-        m_CameraLinkingObserverFlag = true;
+        m_logic->m_InteractionManager->GetPER()->GetCameraMouseInteractor()->AddObserver(this);
+        m_logic->m_CameraLinkingObserverFlag = true;
       }
-      m_InteractionManager->GetPER()->LinkCameraAdd(cam);
+      m_logic->m_InteractionManager->GetPER()->LinkCameraAdd(cam);
     }
 #endif
     return;
@@ -1126,7 +1179,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   // commands related to interaction manager
   if(ID_APP_SETTINGS == eventId)
   {
-    m_SettingsDialog->ShowModal();
+    m_logic->m_SettingsDialog->ShowModal();
     return;
   }
   if(mafGUIMeasureUnitSettings::MEASURE_UNIT_UPDATED == eventId)
@@ -1138,11 +1191,11 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   {
     // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
-    if(m_InteractionManager) 
+    if(m_logic->m_InteractionManager)
     {
       vtkRenderer *ren = (vtkRenderer*)e->GetVtkObj();
       //assert(ren);
-      m_InteractionManager->PreResetCamera(ren);
+      m_logic->m_InteractionManager->PreResetCamera(ren);
       //mafLogMessage("CAMERA_PRE_RESET");
     }
 #endif
@@ -1152,11 +1205,11 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   {
     // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
-    if(m_InteractionManager) 
+    if(m_logic->m_InteractionManager)
     {
       vtkRenderer *ren = (vtkRenderer*)e->GetVtkObj();
       //assert(ren); //modified by Marco. 2-11-2004 Commented out to allow reset camera of all cameras.
-      m_InteractionManager->PostResetCamera(ren);
+      m_logic->m_InteractionManager->PostResetCamera(ren);
       //mafLogMessage("CAMERA_POST_RESET");
     }
 #endif
@@ -1164,19 +1217,19 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   }
   if(CAMERA_UPDATE == eventId)
   {
-    if(m_ViewManager) m_ViewManager->CameraUpdate();
+    if(m_logic->m_ViewManager) m_logic->m_ViewManager->CameraUpdate();
     // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
 		//PERFORMANCE WARNING : if view manager exist this will cause another camera update!!
 		// An else could be added to reduce CAMERA_UPDATE by a 2 factor. This has been done for the HipOp vertical App showing
 		// big performance improvement in composite views creation.
-    if(m_InteractionManager) m_InteractionManager->CameraUpdate(e->GetView());
+    if(m_logic->m_InteractionManager) m_logic->m_InteractionManager->CameraUpdate(e->GetView());
 #endif
     return;
   }
   if(CAMERA_SYNCHRONOUS_UPDATE == eventId)     
   {
-    m_ViewManager->CameraUpdate();
+    m_logic->m_ViewManager->CameraUpdate();
     return;
   }
   // ###############################################################
@@ -1185,12 +1238,12 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   {
     // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
-    if(m_InteractionManager)
+    if(m_logic->m_InteractionManager)
     {
       mafInteractor *interactor = mafInteractor::SafeDownCast(e->GetMafObject());
       assert(interactor);
       mafString *action_name = e->GetString();
-      m_InteractionManager->BindAction(action_name->GetCStr(),interactor);
+      m_logic->m_InteractionManager->BindAction(action_name->GetCStr(),interactor);
     }
 #endif
     return;
@@ -1199,12 +1252,12 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   {
     // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
-    if(m_InteractionManager) 
+    if(m_logic->m_InteractionManager)
     {
       mafInteractor *interactor = mafInteractor::SafeDownCast(e->GetMafObject());
       assert(interactor);
       mafString *action_name = e->GetString();
-      m_InteractionManager->UnBindAction(action_name->GetCStr(),interactor);
+      m_logic->m_InteractionManager->UnBindAction(action_name->GetCStr(),interactor);
     }
 #endif
     return;
@@ -1213,11 +1266,11 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   {
     // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
-    if(m_InteractionManager)
+    if(m_logic->m_InteractionManager)
     {
       mafInteractorPER *per = mafInteractorPER::SafeDownCast(e->GetMafObject());
       assert(per);
-      m_InteractionManager->PushPER(per);
+      m_logic->m_InteractionManager->PushPER(per);
     }
 #endif
     return; 
@@ -1226,18 +1279,18 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   {
     // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
-    if(m_InteractionManager) m_InteractionManager->PopPER();
+    if(m_logic->m_InteractionManager) m_logic->m_InteractionManager->PopPER();
 #endif
     return;
   }
   if(DEVICE_ADD == eventId)
   {
-    m_InteractionManager->AddDeviceToTree((mafDevice *)e->GetMafObject());
+    m_logic->m_InteractionManager->AddDeviceToTree((mafDevice *)e->GetMafObject());
     return;
   }
   if(DEVICE_REMOVE == eventId)
   {
-    m_InteractionManager->RemoveDeviceFromTree((mafDevice *)e->GetMafObject());
+    m_logic->m_InteractionManager->RemoveDeviceFromTree((mafDevice *)e->GetMafObject());
     return;
   }
   if(DEVICE_GET == eventId)
@@ -1267,8 +1320,8 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
       }
     }
 #endif
-    m_ViewManager->Collaborate(collaborate);
-    m_OpManager->Collaborate(collaborate);
+    m_logic->m_ViewManager->Collaborate(collaborate);
+    m_logic->m_OpManager->Collaborate(collaborate);
     GetGlobalMouse()->Collaborate(collaborate);
     return;
   }
@@ -1281,61 +1334,91 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   }
   if(HELP_HOME == eventId)
   {
-    if (m_HelpSettings)
+    if (m_logic->m_HelpSettings)
     {
-      m_HelpSettings->OpenHelpPage(_R("HELP_HOME"));
+      m_logic->m_HelpSettings->OpenHelpPage(_R("HELP_HOME"));
     }
   }
   if(GET_BUILD_HELP_GUI == eventId)
   {
     int buildGui = -1;
-    if (m_HelpSettings == NULL)
+    if (m_logic->m_HelpSettings == NULL)
     {
       buildGui = false;
       e->SetArg(buildGui);
     }
     else
     {
-      buildGui = m_HelpSettings->GetBuildHelpGui();
+      buildGui = m_logic->m_HelpSettings->GetBuildHelpGui();
     }
     e->SetArg(buildGui);
   }
   if(OPEN_HELP_PAGE == eventId)
   {
   // open help for entity
-    m_HelpSettings->OpenHelpPage(*e->GetString());
+    m_logic->m_HelpSettings->OpenHelpPage(*e->GetString());
   }
-  mafLogicWithGUI::OnEvent(maf_event);
+  if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
+  {
+    switch (e->GetId())
+    {
+    case MENU_FILE_QUIT:
+      OnQuit();
+      break;
+      //resize view
+        // ###############################################################
+        // commands related to the STATUSBAR
+    case BIND_TO_PROGRESSBAR:
+#ifdef MAF_USE_VTK
+      m_logic->m_frame->BindToProgressBar(e->GetVtkObj());
+#endif
+      break;
+    case PROGRESSBAR_SHOW:
+      m_logic->m_frame->ProgressBarShow();
+      break;
+    case PROGRESSBAR_HIDE:
+      m_logic->m_frame->ProgressBarHide();
+      break;
+    case PROGRESSBAR_SET_VALUE:
+      m_logic->m_frame->ProgressBarSetVal(e->GetArg());
+      break;
+    case PROGRESSBAR_SET_TEXT:
+    { wxString s = e->GetString()->toWx(); m_logic->m_frame->ProgressBarSetText(s); }
+    break;
+    // ###############################################################
+    case UPDATE_UI:
+      break;
+    default:
+      e->Log();
+      break;
+    }
+  }
 }
-//----------------------------------------------------------------------------
 bool mafLogicWithManagers::OnFileClose(bool force)
-//----------------------------------------------------------------------------
 {
-  if(!m_NodeManager)
+  if(!m_logic->m_NodeManager)
     return true;
   if(!force && !AskConfirmAndSave())
     return false;
   {mafEvent evUnq(this,CLEAR_UNDO_STACK); OnEvent(&evUnq);} // ask logic to clear the undo stack
-  if(m_Storage && !m_Storage->m_TmpDir.empty())
+  if(m_logic->m_Storage && !m_logic->m_Storage->m_TmpDir.empty())
   {
-    mafRemoveDirectory(m_Storage->m_TmpDir); // remove the temporary directory
-    m_Storage->m_TmpDir.clear();
+    mafRemoveDirectory(m_logic->m_Storage->m_TmpDir); // remove the temporary directory
+    m_logic->m_Storage->m_TmpDir.clear();
   }
-  m_NodeManager->SetRoot(NULL);
-  m_NodeManager->MSFModified(false);
-  m_Storage.reset();
-  m_NodeManager->SetListener(this);
+  m_logic->m_NodeManager->SetRoot(NULL);
+  m_logic->m_NodeManager->MSFModified(false);
+  m_logic->m_Storage.reset();
+  m_logic->m_NodeManager->SetListener(this);
   VmeSelected(NULL);
-  m_StorageData->m_MSFFile.clear();
-  m_StorageData->m_ZipFile.clear();
+  m_logic->m_StorageData->m_MSFFile.clear();
+  m_logic->m_StorageData->m_ZipFile.clear();
   UpdateFrameTitle();
   return true;
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::OnFileNew()
-//----------------------------------------------------------------------------
 {
-  if(!m_NodeManager)
+  if(!m_logic->m_NodeManager)
     return;
   if(!OnFileClose())
     return;
@@ -1346,31 +1429,17 @@ void mafLogicWithManagers::OnFileNew()
   //Add the application stamps
   SetAppTag(root);
   AddCreationDate(root);
-  m_NodeManager->SetRoot(root);
+  m_logic->m_NodeManager->SetRoot(root);
   VmeSelected(root);
   root->SetTreeTime(0.0); // set the tree time
   UpdateFrameTitle();
   mafDEL(root);
-  m_NodeManager->MSFModified(false);
+  m_logic->m_NodeManager->MSFModified(false);
 }
-//----------------------------------------------------------------------------
-void mafLogicWithManagers::OnFileUpload(const char *remote_file, unsigned int upload_flag)
-//----------------------------------------------------------------------------
-{
-  if (remote_file == NULL)
-  {
-    wxMessageBox(_("remote filename not valid!!"), _("Warning"));
-    return;
-  }
-
-  wxMessageBox(_("Not implemented: think about it!!"), _("Warning"));
-}
-//----------------------------------------------------------------------------
 bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
-//----------------------------------------------------------------------------
 {
   //!!remember upgrade of data to current VERSION!!!!!!!!!!!!!!!!!!!!!!!
-  if(!m_NodeManager)
+  if(!m_logic->m_NodeManager)
     return false;
 
   if(!AskConfirmAndSave())
@@ -1390,10 +1459,10 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
 #endif
     {
 		  mafString wildc = _R("MAF Storage Format file (*.");
-		  wildc += m_StorageData->m_Extension;
+		  wildc += m_logic->m_StorageData->m_Extension;
 		  wildc += _R(")|*.");
-		  wildc += m_StorageData->m_Extension;
-			wildc += _R("|Compressed file (*.z") + m_StorageData->m_Extension + _R(")|*.z") + m_StorageData->m_Extension;
+		  wildc += m_logic->m_StorageData->m_Extension;
+			wildc += _R("|Compressed file (*.z") + m_logic->m_StorageData->m_Extension + _R(")|*.z") + m_logic->m_StorageData->m_Extension;
 		  //mafString wildc    = _("MAF Storage Format file (*.msf)|*.msf|Compressed file (*.zmsf)|*.zmsf");
       file = mafGetOpenFile(_R(""), wildc);
     }
@@ -1433,18 +1502,18 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
       msg += _L(" not found!");
       mafWarningMessage(_M(msg));
 
-      if(m_FileHistoryIdx != -1)
+      if(m_logic->m_FileHistoryIdx != -1)
       {
-        m_FileHistory.RemoveFileFromHistory(m_FileHistoryIdx); // remove filename to history
-        m_FileHistory.Save(*m_Config); // Save file history to registry
-        m_FileHistoryIdx = -1;
+        m_logic->m_FileHistory.RemoveFileFromHistory(m_logic->m_FileHistoryIdx); // remove filename to history
+        m_logic->m_FileHistory.Save(*m_logic->m_Config); // Save file history to registry
+        m_logic->m_FileHistoryIdx = -1;
       }
       return false;
     }
-    m_Storage = std::make_unique<mafStorage>();
+    m_logic->m_Storage = std::make_unique<mafStorage>();
   }
-  m_Storage->SetListener(this);
-  m_Storage->SetManager(m_NodeManager.get());
+  m_logic->m_Storage->SetListener(this);
+  m_logic->m_Storage->SetManager(m_logic->m_NodeManager.get());
 
   auto disableAll = std::make_unique<wxWindowDisabler>();
   auto wait_cursor = std::make_unique<wxBusyCursor>();
@@ -1469,44 +1538,44 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
       file = local_filename;
     }
 #endif
-    m_StorageData->m_ZipFile = file;
-    unixname = mafOpenZIP(file, m_Storage->GetTmpFolder(), m_Storage->m_TmpDir); // open the zmsf archive and extract it to the temporary directory
+    m_logic->m_StorageData->m_ZipFile = file;
+    unixname = mafOpenZIP(file, m_logic->m_Storage->GetTmpFolder(), m_logic->m_Storage->m_TmpDir); // open the zmsf archive and extract it to the temporary directory
     if(unixname.empty())
     {
       mafMessage(_M(mafString(_L("Bad or corrupted zmsf file!"))));
-      m_NodeManager->SetListener(this);
-      m_Storage.reset();
+      m_logic->m_NodeManager->SetListener(this);
+      m_logic->m_Storage.reset();
       return false;
     }
-    wxSetWorkingDirectory(m_Storage->m_TmpDir.toWx());
+    wxSetWorkingDirectory(m_logic->m_Storage->m_TmpDir.toWx());
   }
 
   ParsePathName(unixname);
 
-  m_StorageData->m_MSFFile = unixname;
-  m_Storage->SetURL(m_StorageData->m_MSFFile);
+  m_logic->m_StorageData->m_MSFFile = unixname;
+  m_logic->m_Storage->SetURL(m_logic->m_StorageData->m_MSFFile);
 
 
-  int res = m_Storage->Restore();
+  int res = m_logic->m_Storage->Restore();
   if(res != mafStorage::IO_OK && res != mafStorage::IO_WRONG_OBJECT_TYPE)
   {
-    m_Storage.reset();
-    m_NodeManager->SetListener(this);
+    m_logic->m_Storage.reset();
+    m_logic->m_NodeManager->SetListener(this);
     return false;
   }
   if(res == mafStorage::IO_WRONG_OBJECT_TYPE)
   {
     mafErrorMessage(_M(mafString(_L("Errors during file parsing! Look the log area for error messages."))));
   }
-  mafVMERoot *root = mafVMERoot::SafeDownCast(m_NodeManager->GetRoot());
+  mafVMERoot *root = mafVMERoot::SafeDownCast(m_logic->m_NodeManager->GetRoot());
   SetAppTag(root);
   if(!CheckAppTag(root))
   {
     //Application stamp not valid
     mafMessage(_M(mafString(_L("File not valid for this application!"))));
-    m_Storage.reset();
-    m_NodeManager->SetListener(this);
-    m_NodeManager->SetRoot(NULL);
+    m_logic->m_Storage.reset();
+    m_logic->m_NodeManager->SetListener(this);
+    m_logic->m_NodeManager->SetRoot(NULL);
     return false;
   }
   //root->Initialize();
@@ -1517,101 +1586,93 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
   root->SetTreeTime(b[0]); // Set tree time to the starting time
   RestoreLayout();
 
-  if (!m_Storage->m_TmpDir.empty())
+  if (!m_logic->m_Storage->m_TmpDir.empty())
   {
-    m_FileHistory.AddFileToHistory(m_StorageData->m_ZipFile.toWx()); // add the zmsf file to the history
+    m_logic->m_FileHistory.AddFileToHistory(m_logic->m_StorageData->m_ZipFile.toWx()); // add the zmsf file to the history
   }
   else if(/*!remote_file && */res == MAF_OK)
   {
-    m_FileHistory.AddFileToHistory(m_StorageData->m_MSFFile.toWx()); // add the msf file to the history
+    m_logic->m_FileHistory.AddFileToHistory(m_logic->m_StorageData->m_MSFFile.toWx()); // add the msf file to the history
   }
-  else if(res != MAF_OK && m_FileHistoryIdx != -1)
+  else if(res != MAF_OK && m_logic->m_FileHistoryIdx != -1)
   {
-    m_FileHistory.RemoveFileFromHistory(m_FileHistoryIdx); // if something get wrong retoring the file remove it from istory
+    m_logic->m_FileHistory.RemoveFileFromHistory(m_logic->m_FileHistoryIdx); // if something get wrong retoring the file remove it from istory
   }
-  m_FileHistory.Save(*m_Config); // save file history to registry
+  m_logic->m_FileHistory.Save(*m_logic->m_Config); // save file history to registry
   return true;
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::OnFileHistory(int fileId)
-//----------------------------------------------------------------------------
 {
-  m_FileHistoryIdx = fileId;
-  OnFileOpen(mafWxToString(m_FileHistory.GetHistoryFile(fileId)));
-  m_FileHistoryIdx = -1;
+  m_logic->m_FileHistoryIdx = fileId;
+  OnFileOpen(mafWxToString(m_logic->m_FileHistory.GetHistoryFile(fileId)));
+  m_logic->m_FileHistoryIdx = -1;
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::Save()
-//----------------------------------------------------------------------------
 {
-  if(!m_NodeManager)
+  if(!m_logic->m_NodeManager)
     return;
-	mafString save_default_folder = m_StorageSettings->GetDefaultSaveFolder();
+	mafString save_default_folder = m_logic->m_StorageSettings->GetDefaultSaveFolder();
 	ParsePathName(save_default_folder);
-  m_StorageData->m_MSFDir = save_default_folder;
-  mafVMERoot *root = mafVMERoot::SafeDownCast(m_NodeManager->GetRoot());
+  m_logic->m_StorageData->m_MSFDir = save_default_folder;
+  mafVMERoot *root = mafVMERoot::SafeDownCast(m_logic->m_NodeManager->GetRoot());
   if(!root)
     return;
-  if(m_StorageData->m_MSFFile.empty())
+  if(m_logic->m_StorageData->m_MSFFile.empty())
   {
     assert(false);
     return;
   }
-  if(!m_Storage)
+  if(!m_logic->m_Storage)
     return;
-  if(mafFileExists(m_StorageData->m_MSFFile) && m_StorageData->m_MakeBakFile) // an msf with the same name exists
+  if(mafFileExists(m_logic->m_StorageData->m_MSFFile) && m_logic->m_StorageData->m_MakeBakFile) // an msf with the same name exists
   {
-    mafString bak_filename = m_StorageData->m_MSFFile + _R(".bak");                // create the backup for the saved msf
-    mafFileRename(m_StorageData->m_MSFFile, bak_filename);  // renaming the founded one
+    mafString bak_filename = m_logic->m_StorageData->m_MSFFile + _R(".bak");                // create the backup for the saved msf
+    mafFileRename(m_logic->m_StorageData->m_MSFFile, bak_filename);  // renaming the founded one
   }
   auto bi = std::make_unique<wxBusyInfo>(_("Saving MSF: Please wait"));
-  if (m_Storage->Store() != MAF_OK) // store the tree
+  if (m_logic->m_Storage->Store() != MAF_OK) // store the tree
   {
     mafLogMessage(_M(mafString(_L("Error during MSF saving"))));
     return;
   }
   // add the msf (or zmsf) to the history
 
-  m_StorageData->m_MakeBakFile = true;
+  m_logic->m_StorageData->m_MakeBakFile = true;
   UpdateFrameTitle();
-  m_NodeManager->MSFModified(false);
-  m_FileHistory.Save(*m_Config);
+  m_logic->m_NodeManager->MSFModified(false);
+  m_logic->m_FileHistory.Save(*m_logic->m_Config);
 }
-//----------------------------------------------------------------------------
 bool mafLogicWithManagers::OnFileSave()
-//----------------------------------------------------------------------------
 {
-  if(!m_NodeManager)
+  if(!m_logic->m_NodeManager)
     return true;
-	mafString save_default_folder = m_StorageSettings->GetDefaultSaveFolder();
+	mafString save_default_folder = m_logic->m_StorageSettings->GetDefaultSaveFolder();
 	ParsePathName(save_default_folder);
-  m_StorageData->m_MSFDir = save_default_folder;
-  mafVMERoot *root = mafVMERoot::SafeDownCast(m_NodeManager->GetRoot());
+  m_logic->m_StorageData->m_MSFDir = save_default_folder;
+  mafVMERoot *root = mafVMERoot::SafeDownCast(m_logic->m_NodeManager->GetRoot());
   if(!root)
     return true;;
 
-  if(m_Storage && m_Storage->GetURL() != m_StorageData->m_MSFFile)
+  if(m_logic->m_Storage && m_logic->m_Storage->GetURL() != m_logic->m_StorageData->m_MSFFile)
   {
     assert(false);
   }
-  if(m_StorageData->m_MSFFile.empty())
+  if(m_logic->m_StorageData->m_MSFFile.empty())
     return OnFileSaveAs();
   Save();
   return true;
 }
-//----------------------------------------------------------------------------
 bool mafLogicWithManagers::OnFileSaveAs()
-//----------------------------------------------------------------------------
 {
-  if(!m_NodeManager)
+  if(!m_logic->m_NodeManager)
     return true;
-  mafVMERoot *root = mafVMERoot::SafeDownCast(m_NodeManager->GetRoot());
+  mafVMERoot *root = mafVMERoot::SafeDownCast(m_logic->m_NodeManager->GetRoot());
   if(!root)
     return true;
 
-  m_StorageData->m_MSFFile.clear(); // set filenames to empty so the MSFSave method will ask for them
-  m_StorageData->m_ZipFile.clear();
-  m_StorageData->m_MakeBakFile = false;
+  m_logic->m_StorageData->m_MSFFile.clear(); // set filenames to empty so the MSFSave method will ask for them
+  m_logic->m_StorageData->m_ZipFile.clear();
+  m_logic->m_StorageData->m_MakeBakFile = false;
 
   // new file to save: ask to the application which is the default
   // modality to save binary files.
@@ -1621,7 +1682,7 @@ bool mafLogicWithManagers::OnFileSaveAs()
 
   // ask for the new file name.
   mafString wildc = _L("MAF Storage Format file (*.msf)|*.msf|Compressed file (*.zmsf)|*.zmsf");
-  mafString file = mafGetSaveFile(m_StorageData->m_MSFDir, wildc);
+  mafString file = mafGetSaveFile(m_logic->m_StorageData->m_MSFDir, wildc);
   if(file.empty())
     return false;
   mafString tmpDir;
@@ -1637,7 +1698,7 @@ bool mafLogicWithManagers::OnFileSaveAs()
       mafDirMake(file_dir);
     if (ext == _R("zmsf"))
     {
-      m_StorageData->m_ZipFile = file;
+      m_logic->m_StorageData->m_ZipFile = file;
       tmpDir = file_dir;
       ext = _R("msf");
     }
@@ -1646,9 +1707,9 @@ bool mafLogicWithManagers::OnFileSaveAs()
 
   ParsePathName(file);
 
-  m_StorageData->m_MSFFile = file;
+  m_logic->m_StorageData->m_MSFFile = file;
 
-  if(m_Storage && m_StorageData->m_MSFFile != m_Storage->GetURL())
+  if(m_logic->m_Storage && m_logic->m_StorageData->m_MSFFile != m_logic->m_Storage->GetURL())
   {
     auto iter = root->NewIterator();
     for(mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
@@ -1663,43 +1724,41 @@ bool mafLogicWithManagers::OnFileSaveAs()
     }
   }
 
-  if(!m_Storage)
+  if(!m_logic->m_Storage)
   {
-    m_Storage = std::make_unique<mafStorage>();
-    m_Storage->SetListener(this);
-    m_Storage->SetManager(m_NodeManager.get());
+    m_logic->m_Storage = std::make_unique<mafStorage>();
+    m_logic->m_Storage->SetListener(this);
+    m_logic->m_Storage->SetManager(m_logic->m_NodeManager.get());
   }
-  m_Storage->SetURL(m_StorageData->m_MSFFile);
-  m_Storage->m_TmpDir = tmpDir;
+  m_logic->m_Storage->SetURL(m_logic->m_StorageData->m_MSFFile);
+  m_logic->m_Storage->m_TmpDir = tmpDir;
   Save();
   // add the msf (or zmsf) to the history
-  if (!m_StorageData->m_ZipFile.empty())
+  if (!m_logic->m_StorageData->m_ZipFile.empty())
   {
-    mafZIPSave(m_StorageData->m_ZipFile, m_Storage->m_TmpDir);
-    m_FileHistory.AddFileToHistory(m_StorageData->m_ZipFile.toWx()); // add the zmsf to the file history
+    mafZIPSave(m_logic->m_StorageData->m_ZipFile, m_logic->m_Storage->m_TmpDir);
+    m_logic->m_FileHistory.AddFileToHistory(m_logic->m_StorageData->m_ZipFile.toWx()); // add the zmsf to the file history
   }
   else
   {
-    m_FileHistory.AddFileToHistory(m_StorageData->m_MSFFile.toWx()); // add the msf to the file history
+    m_logic->m_FileHistory.AddFileToHistory(m_logic->m_StorageData->m_MSFFile.toWx()); // add the msf to the file history
   }
   return true;
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::OnQuit()
-//----------------------------------------------------------------------------
 {
-  if (m_OpManager && m_OpManager->Running())
+  if (m_logic->m_OpManager && m_logic->m_OpManager->Running())
   {
     return;
   }
 
-  if(m_ApplicationLayoutSettings->GetModifiedLayouts())
+  if(m_logic->m_ApplicationLayoutSettings->GetModifiedLayouts())
   {
-    int answer = wxMessageBox(_("would you like to save your layout list ?"),_("Confirm"),wxYES_NO|wxCANCEL|wxICON_QUESTION , m_Win);
+    int answer = wxMessageBox(_("would you like to save your layout list ?"),_("Confirm"),wxYES_NO|wxCANCEL|wxICON_QUESTION , m_logic->m_frame);
     if(answer == wxCANCEL) 
       return;
     else if(answer == wxYES) 
-      m_ApplicationLayoutSettings->SaveApplicationLayout();
+      m_logic->m_ApplicationLayoutSettings->SaveApplicationLayout();
   }
 
   if(!OnFileClose())
@@ -1711,24 +1770,33 @@ void mafLogicWithManagers::OnQuit()
 #ifdef MAF_USE_CURL
   m_RemoteLogic.reset();
 #endif
-  m_NodeManager.reset();
-  m_MaterialChooser.reset();
+  m_logic->m_NodeManager.reset();
+  m_logic->m_MaterialChooser.reset();
 // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
   SetGlobalMouse(NULL);
-  m_InteractionManager.reset();
+  m_logic->m_InteractionManager.reset();
 #endif
-  m_ViewManager.reset();
-  m_OpManager.reset();
+  m_logic->m_ViewManager.reset();
+  m_logic->m_OpManager.reset();
 
   // must be deleted after m_NodeManager
-  m_SideBar.reset();
+  m_logic->m_SideBar.reset();
 
-  mafLogicWithGUI::OnQuit();
+  // if OnQuit is redefined in a derived class,  mafLogicWithGUI::OnQuit() must be called last
+
+  mafYield();
+  if (m_logic->m_PlugLogbar)
+  {
+    delete wxLog::SetActiveTarget(NULL);
+  }
+  m_logic->m_frame->Destroy();
+#ifdef MAF_USE_VTK 
+  vtkTimerLog::CleanupLog();
+  vtkDEL(m_logic->m_VtkLog);
+#endif
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::VmeDoubleClicked(mafEvent &e)
-//----------------------------------------------------------------------------
 {
   mafNode *node = e.GetVme();
   if (node)
@@ -1736,13 +1804,11 @@ void mafLogicWithManagers::VmeDoubleClicked(mafEvent &e)
     mafLogMessage(_M(_R("Double click on ") + node->GetName()));
   }
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::VmeSelect(mafEvent& e)	//modified by Paolo 10-9-2003
-//----------------------------------------------------------------------------
 {
   mafNode *node = NULL;
 
-	if(m_PlugSidebar && (e.GetSender() == this->m_SideBar->GetTree()))
+	if(m_logic->m_PlugSidebar && (e.GetSender() == m_logic->m_SideBar->GetTree()))
     node = (mafNode*)e.GetArg();//sender == tree => the node is in e.arg
   else
     node = e.GetVme();          //sender == PER  => the node is in e.node  
@@ -1750,10 +1816,10 @@ void mafLogicWithManagers::VmeSelect(mafEvent& e)	//modified by Paolo 10-9-2003
   if(node == NULL)
   {
     //node can be selected by its ID
-    if(m_NodeManager)
+    if(m_logic->m_NodeManager)
     {
 		  long vme_id = e.GetArg();
-		  mafVMERoot *root = mafVMERoot::SafeDownCast(m_NodeManager->GetRoot());
+		  mafVMERoot *root = mafVMERoot::SafeDownCast(m_logic->m_NodeManager->GetRoot());
 		  if (root)
 		  {
 			  node = root->FindInTreeById(vme_id);
@@ -1762,11 +1828,11 @@ void mafLogicWithManagers::VmeSelect(mafEvent& e)	//modified by Paolo 10-9-2003
     }
   }
 
-  if(node && m_OpManager && node != m_OpManager->GetSelectedVme()) 
+  if(node && m_logic->m_OpManager && node != m_logic->m_OpManager->GetSelectedVme())
   {
     mafOpSelect opsel;
     opsel.SetNewSel(node);
-    m_OpManager->OpExec(&opsel);
+    m_logic->m_OpManager->OpExec(&opsel);
 
     //OnEvent(&mafEvent(this,VME_SELECTED,node));
     mafLogMessage(_M(_R("node selected: ") + node->GetName()));
@@ -1779,17 +1845,15 @@ void mafLogicWithManagers::VmeSelect(mafEvent& e)	//modified by Paolo 10-9-2003
   }
 #endif
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::VmeSelected(mafNode *vme, bool remote)
-//----------------------------------------------------------------------------
 {
-  if(m_ViewManager) m_ViewManager->VmeSelect(vme);
-  if(m_OpManager)   {m_OpManager->VmeSelected(vme);    EnableOperations(true);}
-	if(m_SideBar)     m_SideBar->VmeSelected(vme);
+  if(m_logic->m_ViewManager) m_logic->m_ViewManager->VmeSelect(vme);
+  if(m_logic->m_OpManager)   { m_logic->m_OpManager->VmeSelected(vme);    EnableOperations(true);}
+	if(m_logic->m_SideBar)     m_logic->m_SideBar->VmeSelected(vme);
 // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
-  if (m_InteractionManager)
-    m_InteractionManager->VmeSelected(vme);
+  if (m_logic->m_InteractionManager)
+    m_logic->m_InteractionManager->VmeSelected(vme);
 #endif
 
 #ifdef MAF_USE_CURL
@@ -1799,39 +1863,32 @@ void mafLogicWithManagers::VmeSelected(mafNode *vme, bool remote)
   }
 #endif
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::VmeShow(mafNode *vme, bool visibility)
-//----------------------------------------------------------------------------
 {
-	if(m_ViewManager) m_ViewManager->VmeShow(vme, visibility);
+	if(m_logic->m_ViewManager) m_logic->m_ViewManager->VmeShow(vme, visibility);
   bool vme_in_tree = vme->IsVisible(); //check VisibleToTraverse flag.
-  if(m_SideBar && vme_in_tree)
-    m_SideBar->VmeShow(vme,visibility);
+  if(m_logic->m_SideBar && vme_in_tree)
+    m_logic->m_SideBar->VmeShow(vme,visibility);
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::VmeModified(mafNode *vme)
-//----------------------------------------------------------------------------
 {
-  if(m_PlugTimebar) UpdateTimeBounds();
+  if(m_logic->m_PlugTimebar) UpdateTimeBounds();
   bool vme_in_tree = vme->IsVisible();
-  if(m_SideBar && vme_in_tree)
-    m_SideBar->VmeModified(vme);
-	if(m_NodeManager) m_NodeManager->MSFModified(true);
+  if(m_logic->m_SideBar && vme_in_tree)
+    m_logic->m_SideBar->VmeModified(vme);
+	if(m_logic->m_NodeManager) m_logic->m_NodeManager->MSFModified(true);
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::VmeAdd(mafNode *vme)
 //----------------------------------------------------------------------------
 {
-  if(m_NodeManager)
-    m_NodeManager->VmeAdd(vme);
+  if(m_logic->m_NodeManager)
+    m_logic->m_NodeManager->VmeAdd(vme);
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::VmeAdded(mafNode *vme)
-//----------------------------------------------------------------------------
 {
-  if(m_NodeManager)
+  if(m_logic->m_NodeManager)
   {
-    if (mafVMERoot *root = mafVMERoot::SafeDownCast(m_NodeManager->GetRoot()))
+    if (mafVMERoot *root = mafVMERoot::SafeDownCast(m_logic->m_NodeManager->GetRoot()))
     {
       if (mafVME *vmenode = mafVME::SafeDownCast(vme))
       {
@@ -1841,22 +1898,20 @@ void mafLogicWithManagers::VmeAdded(mafNode *vme)
       }
     }
   }
-  if(m_ViewManager)
-    m_ViewManager->VmeAdd(vme);
+  if(m_logic->m_ViewManager)
+    m_logic->m_ViewManager->VmeAdd(vme);
   bool vme_in_tree = true;
   vme_in_tree = !vme->GetTagArray()->GetTag(_R("VISIBLE_IN_THE_TREE")) || 
     (vme->GetTagArray()->GetTag(_R("VISIBLE_IN_THE_TREE")) && vme->GetTagArray()->GetTag(_R("VISIBLE_IN_THE_TREE"))->GetValueAsDouble() != 0);
-  if(m_SideBar && vme_in_tree)
-    m_SideBar->VmeAdd(vme);
-  if(m_PlugTimebar)
+  if(m_logic->m_SideBar && vme_in_tree)
+    m_logic->m_SideBar->VmeAdd(vme);
+  if(m_logic->m_PlugTimebar)
     UpdateTimeBounds();
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::RestoreLayout()
-//----------------------------------------------------------------------------
 {
   // Retrieve the saved layout.
-  mafNode *vme = m_NodeManager->GetRoot();
+  mafNode *vme = m_logic->m_NodeManager->GetRoot();
   auto app_layout = mmaApplicationLayout::SafeDownCast(vme->GetAttribute(_R("ApplicationLayout")));
   if (app_layout)
   {
@@ -1866,89 +1921,77 @@ void mafLogicWithManagers::RestoreLayout()
       return;
     }
     
-    m_ApplicationLayoutSettings->SetVisibilityVME(true);
-    m_ApplicationLayoutSettings->ApplyTreeLayout();
-    m_ApplicationLayoutSettings->SetVisibilityVME(false);
+    m_logic->m_ApplicationLayoutSettings->SetVisibilityVME(true);
+    m_logic->m_ApplicationLayoutSettings->ApplyTreeLayout();
+    m_logic->m_ApplicationLayoutSettings->SetVisibilityVME(false);
   }
 }
 
 
 void mafLogicWithManagers::VmeExpand(mafNode *vme)
 {
-  m_SideBar->VmeExpand(vme);
+  m_logic->m_SideBar->VmeExpand(vme);
 }
 void mafLogicWithManagers::VmeCollapse(mafNode *vme)
 {
-  m_SideBar->VmeCollapse(vme);
+  m_logic->m_SideBar->VmeCollapse(vme);
 }
 void mafLogicWithManagers::VmeExpandSubTree(mafNode *vme)
 {
-  m_SideBar->VmeExpandSubTree(vme);
+  m_logic->m_SideBar->VmeExpandSubTree(vme);
 }
 void mafLogicWithManagers::VmeCollapseSubTree(mafNode *vme)
 {
-  m_SideBar->VmeCollapseSubTree(vme);
+  m_logic->m_SideBar->VmeCollapseSubTree(vme);
 }
 void mafLogicWithManagers::VmeExpandVisible(mafNode *vme)
 {
-  m_SideBar->VmeExpandVisible(vme);
+  m_logic->m_SideBar->VmeExpandVisible(vme);
 }
-
-
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::VmeRemove(mafNode *vme)
-//----------------------------------------------------------------------------
 {
-  if(m_NodeManager)
-    m_NodeManager->VmeRemove(vme);
+  if(m_logic->m_NodeManager)
+    m_logic->m_NodeManager->VmeRemove(vme);
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::VmeRemoving(mafNode *vme)
-//----------------------------------------------------------------------------
 {
   bool vme_in_tree = true;
   vme_in_tree = !vme->GetTagArray()->GetTag(_R("VISIBLE_IN_THE_TREE")) || 
     (vme->GetTagArray()->GetTag(_R("VISIBLE_IN_THE_TREE")) && vme->GetTagArray()->GetTag(_R("VISIBLE_IN_THE_TREE"))->GetValueAsDouble() != 0);
-  if(m_SideBar && vme_in_tree)
-    m_SideBar->VmeRemove(vme);
-	if(m_ViewManager)
-    m_ViewManager->VmeRemove(vme);
-  if(m_PlugTimebar)
+  if(m_logic->m_SideBar && vme_in_tree)
+    m_logic->m_SideBar->VmeRemove(vme);
+	if(m_logic->m_ViewManager)
+    m_logic->m_ViewManager->VmeRemove(vme);
+  if(m_logic->m_PlugTimebar)
     UpdateTimeBounds();
-  if (m_ViewManager)
-    m_ViewManager->CameraUpdate();
+  if (m_logic->m_ViewManager)
+    m_logic->m_ViewManager->CameraUpdate();
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::OpRunStarting()
-//----------------------------------------------------------------------------
 {
   EnableMenuAndToolbar(false);
   EnableOperations(false);
 // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
-  if(m_InteractionManager) m_InteractionManager->EnableSelect(false);
+  if(m_logic->m_InteractionManager) m_logic->m_InteractionManager->EnableSelect(false);
 #endif
-  if(m_SideBar)    m_SideBar->EnableSelect(false);
+  if(m_logic->m_SideBar)    m_logic->m_SideBar->EnableSelect(false);
   EnableItem(MENU_EDIT_FIND_VME, false);
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::OpRunTerminated()
-//----------------------------------------------------------------------------
 {
   EnableMenuAndToolbar(true);
   EnableOperations(true);
 // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
-  if(m_InteractionManager) 
-    m_InteractionManager->EnableSelect(true);
+  if(m_logic->m_InteractionManager)
+    m_logic->m_InteractionManager->EnableSelect(true);
 #endif
-  if(m_SideBar)
-    m_SideBar->EnableSelect(true);
+  if(m_logic->m_SideBar)
+    m_logic->m_SideBar->EnableSelect(true);
   EnableItem(MENU_EDIT_FIND_VME, true);
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::EnableMenuAndToolbar(bool enable)
-//----------------------------------------------------------------------------
 {
   EnableItem(MENU_FILE_NEW,enable);
   EnableItem(MENU_FILE_OPEN,enable);
@@ -1966,35 +2009,27 @@ void mafLogicWithManagers::EnableMenuAndToolbar(bool enable)
   EnableItem(wxID_FILE8,enable);
   EnableItem(wxID_FILE9,enable);
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::OpShowGui(bool push_gui, mafGUIPanel *panel)
-//----------------------------------------------------------------------------
 {
-	if(m_SideBar) m_SideBar->OpShowGui(push_gui, panel);
+	if(m_logic->m_SideBar) m_logic->m_SideBar->OpShowGui(push_gui, panel);
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::OpHideGui(bool view_closed)
-//----------------------------------------------------------------------------
 {
-	if(m_SideBar) m_SideBar->OpHideGui(view_closed);
+	if(m_logic->m_SideBar) m_logic->m_SideBar->OpHideGui(view_closed);
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::ViewCreate(int viewId)
-//----------------------------------------------------------------------------
 {
-	if(m_ViewManager)
+	if(m_logic->m_ViewManager)
   {
-    mafView* v = m_ViewManager->ViewCreate(viewId);
+    mafView* v = m_logic->m_ViewManager->ViewCreate(viewId);
   }
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::ViewSelect()
-//----------------------------------------------------------------------------
 {
-  if(m_ViewManager) 
+  if(m_logic->m_ViewManager)
   {
-    mafView *view = m_ViewManager->GetSelectedView();
-    if(m_SideBar)	m_SideBar->ViewSelect(view);
+    mafView *view = m_logic->m_ViewManager->GetSelectedView();
+    if(m_logic->m_SideBar)	m_logic->m_SideBar->ViewSelect(view);
 
     EnableItem(CAMERA_RESET, view!=NULL);
     EnableItem(CAMERA_FIT,   view!=NULL);
@@ -2007,22 +2042,20 @@ void mafLogicWithManagers::ViewSelect()
 
 // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
-    if (m_InteractionManager)
+    if (m_logic->m_InteractionManager)
     {
-      m_InteractionManager->ViewSelected(view);
+      m_logic->m_InteractionManager->ViewSelected(view);
     }
 #endif
 
-    if(m_OpManager && !m_OpManager->Running()) 
+    if(m_logic->m_OpManager && !m_logic->m_OpManager->Running())
     {
       // needed to update all the operations that will be enabled on View Creation
-      m_OpManager->VmeSelected(m_OpManager->GetSelectedVme());
+      m_logic->m_OpManager->VmeSelected(m_logic->m_OpManager->GetSelectedVme());
     }
   }
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::ViewCreated(mafView *v)
-//----------------------------------------------------------------------------
 {
   // removed temporarily support for external Views
   if(v) 
@@ -2038,20 +2071,20 @@ void mafLogicWithManagers::ViewCreated(mafView *v)
 
     if (GetExternalViewFlag())
     {
-      mafGUIViewFrame *extern_view = new mafGUIViewFrame(v, m_Win, v->GetLabel().toWx(), m_Win->FromDIP(wxPoint(10,10)), m_Win->FromDIP(wxSize(800,600)));
+      mafGUIViewFrame *extern_view = new mafGUIViewFrame(v, m_logic->m_frame, v->GetLabel().toWx(), m_logic->m_frame->FromDIP(wxPoint(10,10)), m_logic->m_frame->FromDIP(wxSize(800,600)));
       extern_view->Bind(wxEVT_COMMAND_BUTTON_CLICKED,
         [=](wxCommandEvent& event)
         {
           wxWindow* rwi = (wxWindow*)event.GetEventObject();
           { mafEvent evUnq(this, VIEW_SELECT, v, rwi); extern_view->InvokeEvent(evUnq); }
         }, VIEW_CLICKED);
-      extern_view->SetListener(m_ViewManager.get());
+      extern_view->SetListener(m_logic->m_ViewManager.get());
       v->SetFrame(extern_view);
     }
     else
     {
       // child views
-      mafGUIMDIChild *c = new mafGUIMDIChild(v, m_Win);
+      mafGUIMDIChild *c = new mafGUIMDIChild(v, m_logic->m_frame);
       c->Bind(wxEVT_COMMAND_BUTTON_CLICKED, 
         [=](wxCommandEvent& event)
         {
@@ -2059,148 +2092,122 @@ void mafLogicWithManagers::ViewCreated(mafView *v)
           wxWindow* rwi = (wxWindow*)event.GetEventObject();
           { mafEvent evUnq(this, VIEW_SELECT, v, rwi); c->InvokeEvent(evUnq); }
         }, VIEW_CLICKED);
-      c->SetListener(m_ViewManager.get());
+      c->SetListener(m_logic->m_ViewManager.get());
       v->SetFrame(c);
     }
   }
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::TimeSet(double t)
-//----------------------------------------------------------------------------
 {
-  if(m_NodeManager)
+  if(m_logic->m_NodeManager)
   {
-    if(mafVMERoot *root = mafVMERoot::SafeDownCast(m_NodeManager->GetRoot()))
+    if(mafVMERoot *root = mafVMERoot::SafeDownCast(m_logic->m_NodeManager->GetRoot()))
       root->SetTreeTime(t);
   }
-  if(m_ViewManager)
+  if(m_logic->m_ViewManager)
   {
-    m_ViewManager->CameraUpdate(m_TimeBarSettings->GetPlayingInActiveViewport() != 0);
+    m_logic->m_ViewManager->CameraUpdate(m_logic->m_TimeBarSettings->GetPlayingInActiveViewport() != 0);
   }
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::UpdateTimeBounds()
-//----------------------------------------------------------------------------
 {
   double min, max; 
-  if(m_NodeManager)
+  if(m_logic->m_NodeManager)
   {
     mafTimeStamp b[2] = {0, 0};
-    if(mafVMERoot *root = mafVMERoot::SafeDownCast(m_NodeManager->GetRoot()))
+    if(mafVMERoot *root = mafVMERoot::SafeDownCast(m_logic->m_NodeManager->GetRoot()))
       root->GetOutput()->GetTimeBounds(b);
     min = b[0];
     max = b[1];
   }
-  if(m_TimePanel)
+  if(m_logic->m_TimePanel)
   {
-    m_TimePanel->SetBounds(min,max);
-    m_Win->ShowPane("timebar", min<max);
+    m_logic->m_TimePanel->SetBounds(min,max);
+    m_logic->m_frame->ShowPane("timebar", min<max);
   }
 }
-//----------------------------------------------------------------------------
 std::vector<mafNode*> mafLogicWithManagers::VmeChoose(intptr_t vme_accept_function, long style, mafString title, bool multiSelect)
-//----------------------------------------------------------------------------
 {
-  mafGUIVMEChooser vc(m_SideBar->GetTree(),title, vme_accept_function, style, multiSelect);
+  mafGUIVMEChooser vc(m_logic->m_SideBar->GetTree(),title, vme_accept_function, style, multiSelect);
   return vc.ShowChooserDialog();
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::VmeChooseMaterial(mafVME *vme, bool updateProperty)
-//----------------------------------------------------------------------------
 {
-  if (!m_MaterialChooser)
+  if (!m_logic->m_MaterialChooser)
   {
-    m_MaterialChooser = std::make_unique<mafGUIMaterialChooser>();
+    m_logic->m_MaterialChooser = std::make_unique<mafGUIMaterialChooser>();
   }
-  if(m_MaterialChooser->ShowChooserDialog(vme))
+  if(m_logic->m_MaterialChooser->ShowChooserDialog(vme))
   {
-    this->m_ViewManager->PropertyUpdate(updateProperty);
-    this->m_ViewManager->CameraUpdate();
-    this->m_NodeManager->MSFModified(true);
+    m_logic->m_ViewManager->PropertyUpdate(updateProperty);
+    m_logic->m_ViewManager->CameraUpdate();
+    m_logic->m_NodeManager->MSFModified(true);
   }
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::VmeUpdateProperties(mafVME *vme, bool updatePropertyFromTag)
-//----------------------------------------------------------------------------
 {
-  this->m_ViewManager->PropertyUpdate(updatePropertyFromTag);
-  this->m_ViewManager->CameraUpdate();
-  this->m_NodeManager->MSFModified(true);
+  m_logic->m_ViewManager->PropertyUpdate(updatePropertyFromTag);
+  m_logic->m_ViewManager->CameraUpdate();
+  m_logic->m_NodeManager->MSFModified(true);
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::FindVME()
-//----------------------------------------------------------------------------
 {
-  mafGUICheckTree *tree = m_SideBar->GetTree();
+  mafGUICheckTree *tree = m_logic->m_SideBar->GetTree();
   mafGUIDialogFindVme fd(_L("Find VME"));
   fd.SetTree(tree);
   fd.ShowModal();
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::ViewContextualMenu(bool vme_menu)
-//----------------------------------------------------------------------------
 {
   auto contextMenu = std::make_unique<mafGUIContextualMenu>();
   contextMenu->SetListener(this);
-  mafView *v = m_ViewManager->GetSelectedView();
-  mafGUIMDIChild *c = (mafGUIMDIChild *)m_Win->GetActiveChild();
+  mafView *v = m_logic->m_ViewManager->GetSelectedView();
+  mafGUIMDIChild *c = (mafGUIMDIChild *)m_logic->m_frame->GetActiveChild();
   if(c != NULL)
     contextMenu->ShowContextualMenu(c,v,vme_menu);
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::TreeContextualMenu(mafEvent &e)
-//----------------------------------------------------------------------------
 {
   auto contextMenu = std::make_unique<mafGUITreeContextualMenu>();
-  contextMenu->SetListener(m_ApplicationLayoutSettings.get());
-  mafView *v = m_ViewManager->GetSelectedView();
+  contextMenu->SetListener(m_logic->m_ApplicationLayoutSettings.get());
+  mafView *v = m_logic->m_ViewManager->GetSelectedView();
   mafVME  *vme = (mafVME *)e.GetVme();
   bool vme_menu = e.GetBool();
   bool autosort = e.GetArg() != 0;
   contextMenu->CreateContextualMenu((mafGUICheckTree *)e.GetSender(),v,vme,vme_menu);
   contextMenu->ShowContextualMenu();
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::HandleException()
-//----------------------------------------------------------------------------
 {
   int answare = wxMessageBox(_("Do you want to try to save the unsaved work ?"), _("Fatal Exception!!"), wxYES_NO|wxCENTER);
   if(answare == wxYES)
   {
     OnFileSaveAs();
-    m_OpManager->StopCurrentOperation();
+    m_logic->m_OpManager->StopCurrentOperation();
   }
   OnQuit();
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::SetExternalViewFlag(bool external)
-//----------------------------------------------------------------------------
 {
-  m_ExternalViewFlag = external;
+  m_logic->m_ExternalViewFlag = external;
   wxConfig *config = new wxConfig(wxEmptyString);
-  config->Write("ExternalViewFlag",m_ExternalViewFlag);
+  config->Write("ExternalViewFlag", m_logic->m_ExternalViewFlag);
   cppDEL(config);
 }
-//----------------------------------------------------------------------------
 bool mafLogicWithManagers::GetExternalViewFlag()
-//----------------------------------------------------------------------------
 {
   wxConfig *config = new wxConfig(wxEmptyString);
-  config->Read("ExternalViewFlag", &m_ExternalViewFlag, false);
+  config->Read("ExternalViewFlag", &m_logic->m_ExternalViewFlag, false);
   cppDEL(config);
-  return m_ExternalViewFlag;
+  return m_logic->m_ExternalViewFlag;
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::UpdateMeasureUnit()
-//----------------------------------------------------------------------------
 {
-  const std::list<mafView *>& v = m_ViewManager->GetList();
+  const std::list<mafView *>& v = m_logic->m_ViewManager->GetList();
   for(std::list<mafView*>::const_iterator it = v.begin(); it != v.end(); ++it)
     (*it)->OptionsUpdate();
 }
-//----------------------------------------------------------------------------
 void mafLogicWithManagers::ImportExternalFile(mafString &filename)
-//----------------------------------------------------------------------------
 {
   mafString path, name, ext;
   mafSplitPath(filename,&path,&name,&ext);
@@ -2208,8 +2215,8 @@ void mafLogicWithManagers::ImportExternalFile(mafString &filename)
   if (ext == _R("vtk"))
   {
     mafOpImporterVTK *vtkImporter = new mafOpImporterVTK(_R("importer"));
-    vtkImporter->SetInput(m_NodeManager->GetRoot());
-    vtkImporter->SetListener(m_OpManager.get());
+    vtkImporter->SetInput(m_logic->m_NodeManager->GetRoot());
+    vtkImporter->SetListener(m_logic->m_OpManager.get());
     vtkImporter->SetFileName(filename);
     vtkImporter->ImportVTK();
     vtkImporter->OpDo();
@@ -2218,8 +2225,8 @@ void mafLogicWithManagers::ImportExternalFile(mafString &filename)
   else if (ext == _R("stl"))
   {
     mafOpImporterSTL *stlImporter = new mafOpImporterSTL(_R("importer"));
-    stlImporter->SetInput(m_NodeManager->GetRoot());
-    stlImporter->SetListener(m_OpManager.get());
+    stlImporter->SetInput(m_logic->m_NodeManager->GetRoot());
+    stlImporter->SetListener(m_logic->m_OpManager.get());
     stlImporter->SetFileName(filename.GetCStr());
     stlImporter->ImportSTL();
     stlImporter->OpDo();
@@ -2228,3 +2235,204 @@ void mafLogicWithManagers::ImportExternalFile(mafString &filename)
   else
     mafWarningMessage(_M("Can not import this type of file!"));
 }
+
+void mafLogicWithManagers::AddToMenu(const mafString& name, long id, wxMenu* path_menu, const mafString& menuPath)
+{
+  if (!menuPath.empty())
+  {
+    wxString op_path = "";
+    wxStringTokenizer path_tkz(menuPath.toWx(), "/");
+    while (path_tkz.HasMoreTokens())
+    {
+      op_path = path_tkz.GetNextToken();
+      int item = path_menu->FindItem(op_path);
+      if (item != wxNOT_FOUND)
+      {
+        wxMenuItem* menu_item = path_menu->FindItem(item);
+        if (menu_item)
+          path_menu = menu_item->GetSubMenu();
+      }
+      else
+      {
+        wxMenu* sub_menu = new wxMenu;
+        path_menu->Append(-1, op_path, sub_menu);
+        path_menu = sub_menu;
+      }
+    }
+  }
+  path_menu->Append(id, name.toWx(), name.toWx());
+  SetAccelerator(name, id);
+}
+
+void mafLogicWithManagers::SetAccelerator(const mafString& name, long id)
+{
+  wxString accelerator, flag = "", extra_flag = "", key_code = "";
+  int flag_num;
+  accelerator = name.GetCStr();
+  wxStringTokenizer tkz(accelerator, "\t");
+  int token = tkz.CountTokens();
+
+  if (token > 1)
+  {
+    accelerator = tkz.GetNextToken();
+    accelerator = tkz.GetNextToken();
+    wxStringTokenizer tkz2(accelerator, "+");
+    token = tkz2.CountTokens();
+    if (token == 2)
+    {
+      flag = tkz2.GetNextToken();
+      key_code = tkz2.GetNextToken();
+    }
+    else
+    {
+      flag = tkz2.GetNextToken();
+      extra_flag = tkz2.GetNextToken();
+      key_code = tkz2.GetNextToken();
+    }
+    if (flag == "Ctrl")
+      flag_num = wxACCEL_CTRL;
+    else if (flag == "Alt")
+      flag_num = wxACCEL_ALT;
+    else if (flag == "Shift")
+      flag_num = wxACCEL_SHIFT;
+
+    if (extra_flag == "Ctrl")
+      flag_num |= wxACCEL_CTRL;
+    else if (extra_flag == "Alt")
+      flag_num |= wxACCEL_ALT;
+    else if (extra_flag == "Shift")
+      flag_num |= wxACCEL_SHIFT;
+
+    m_logic->m_AccelTable.push_back(wxAcceleratorEntry(flag_num, (int)*key_code.c_str(), id));
+  }
+}
+void mafLogicWithManagers::AddMenu()
+{
+  CreateMenu();
+  m_logic->m_frame->SetMenuBar(m_logic->m_MenuBar);
+}
+void mafLogicWithManagers::AddToolbar()
+{
+  CreateToolbar();
+  //m_Win->SetToolBar(m_ToolBar);
+  m_logic->m_frame->AddPane(m_logic->m_ToolBar, wxAuiPaneInfo()
+    .Name("toolbar")
+    .Caption(wxT("ToolBar"))
+    .Top()
+    .Layer(2)
+    .ToolbarPane()
+    .LeftDockable(false)
+    .RightDockable(false)
+    .Floatable(false)
+    .Movable(false)
+    .Gripper(false)
+  );
+}
+
+void mafLogicWithManagers::AddTimebar()
+{
+  CreateTimebar();
+  m_logic->m_frame->AddPane(m_logic->m_TimePanel, wxAuiPaneInfo()
+    .Name("timebar")
+    .Caption(wxT("TimeBar"))
+    .Bottom()
+    .Row(1)
+    .Layer(2)
+    .ToolbarPane()
+    .LeftDockable(false)
+    .RightDockable(false)
+    .MinSize(100, 22)
+    .Floatable(false)
+    .Gripper(false)
+    .Resizable(false)
+    .Movable(false)
+  );
+}
+
+void mafLogicWithManagers::AddLogbar()
+{
+  CreateLogbar();
+}
+
+
+
+void mafLogicWithManagers::CreateLogbar()
+{
+#ifdef MAF_USE_VTK
+  m_logic->m_VtkLog = mafVTKLog::New();
+  m_logic->m_VtkLog->SetInstance(m_logic->m_VtkLog);
+#endif
+  wxTextCtrl* log = new wxTextCtrl(m_logic->m_frame, MENU_VIEW_LOGBAR_, "", wxPoint(0, 0), wxSize(100, 300), /*wxNO_BORDER |*/ wxTE_MULTILINE);
+  m_logic->m_Logger = new mafWXLog(log);
+  m_logic->m_Logger->LogToFile(m_logic->m_LogToFile);
+  if (m_logic->m_LogToFile)
+  {
+    mafString s = m_logic->m_ApplicationSettings->GetLogFolder();
+    wxDateTime log_time = wxDateTime::Now();
+    s += _R("\\");
+    s += mafWxToString(m_logic->m_frame->GetTitle());
+    s += mafString::Format(_R("_%02d_%02d_%d_%02d_%2d"), log_time.GetYear(), log_time.GetMonth() + 1, log_time.GetDay(), log_time.GetHour(), log_time.GetMinute());
+    s += _R(".log");
+    if (m_logic->m_Logger->SetFileName(s.toWx()) == MAF_ERROR)
+    {
+      mafLogMessage(_M(_R("Unable to create log file ") + s));
+    }
+  }
+  m_logic->m_Logger->SetVerbose(m_logic->m_LogAllEvents);
+
+  wxLog* old_log = wxLog::SetActiveTarget(m_logic->m_Logger);
+  cppDEL(old_log);
+
+  m_logic->m_frame->AddPane(log, wxAuiPaneInfo()
+    .Name("logbar")
+    .Caption(wxT("LogBar"))
+    .Bottom()
+    .Layer(0)
+    .MinSize(100, 10)
+    .TopDockable(false) // prevent docking on top side - otherwise may dock also beside the toolbar -- and it's hugely
+  );
+
+  mafLogMessage(_M(mafString(_L("welcome"))));
+}
+void mafLogicWithManagers::CreateNullLog()
+{
+#ifdef MAF_USE_VTK
+  m_logic->m_VtkLog = mafVTKLog::New();
+  m_logic->m_VtkLog->SetInstance(m_logic->m_VtkLog);
+#endif  
+  wxTextCtrl* log = new wxTextCtrl(m_logic->m_frame, -1, "", wxPoint(0, 0), wxSize(100, 300), wxNO_BORDER | wxTE_MULTILINE);
+  m_logic->m_Logger = new mafWXLog(log);
+  log->Show(false);
+  wxLog* old_log = wxLog::SetActiveTarget(m_logic->m_Logger);
+  cppDEL(old_log);
+}
+void mafLogicWithManagers::CreateTimebar()
+{
+  m_logic->m_TimePanel = new mafGUITimeBar(m_logic->m_frame, MENU_VIEW_TIMEBAR_, true);
+  m_logic->m_TimePanel->SetListener(this);
+
+  // Events coming from settings are forwarded to the time bar.
+  m_logic->m_TimePanel->SetTimeSettings(m_logic->m_TimeBarSettings.get());
+  m_logic->m_TimeBarSettings->SetListener(m_logic->m_TimePanel);
+}
+
+void mafLogicWithManagers::EnableItem(int item, bool enable)
+{
+  if (m_logic->m_MenuBar)
+    // must always check if a menu item exist because
+    // during application shutdown it is not guaranteed
+    if (m_logic->m_MenuBar->FindItem(item))
+      m_logic->m_MenuBar->Enable(item, enable);
+  if (m_logic->m_ToolBar)
+    m_logic->m_ToolBar->EnableTool(item, enable);
+}
+
+void mafLogicWithManagers::SetDirName(const mafString& dirname)
+{
+  m_logic->m_StorageData->m_MSFDir = dirname;
+};
+
+void mafLogicWithManagers::SetFileExtension(mafString& extension)
+{
+	m_logic->m_StorageData->m_Extension = extension;
+};
