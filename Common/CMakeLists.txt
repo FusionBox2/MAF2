@@ -10,8 +10,6 @@ SET(PROJECT_SRCS
 
   itkRawMotionImporterUtility.cxx
   itkRawMotionImporterUtility.h
-  medGUIContextualMenu.cpp
-  medGUIContextualMenu.h
   mafPolylineGraph.cpp
   mafPolylineGraph.h
   mafGizmoSlice.cpp
