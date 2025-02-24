@@ -658,6 +658,8 @@ void mafRWI::SetStereo(int stereo_type)
 void mafRWI::CameraUpdate()
 //----------------------------------------------------------------------------
 {
+	if (m_RenderWindow == nullptr)
+		return;
 	//if(!m_RwiBase->IsShown()) return;
 	if (m_RenderWindow->GetGenericWindowId() == 0) 
 		return;
