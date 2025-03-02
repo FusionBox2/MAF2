@@ -62,12 +62,12 @@ mafGUISettingsDialog::mafGUISettingsDialog(const mafString& dialog_title)
 
   m_Tree->SetListener(this);
 	//m_Tree->SetTreeStyle( wxSIMPLE_BORDER | wxTR_HAS_BUTTONS );//| wxTR_HIDE_ROOT );
-	m_Tree->SetSize(270,400);
-	m_Tree->SetMinSize(wxSize(270,400));
+	m_Tree->SetSize(wxWindow::FromDIP(wxSize(270,400), nullptr));
+	m_Tree->SetMinSize(wxWindow::FromDIP(wxSize(270, 400), nullptr));
   m_Tree->SetImageList(tree_images);
 
-  m_Guih->SetSize(270,400);
-  m_Guih->SetMinSize(wxSize(270,400));
+  m_Guih->SetSize(wxWindow::FromDIP(wxSize(270, 400), nullptr));
+  m_Guih->SetMinSize(wxWindow::FromDIP(wxSize(270, 400), nullptr));
 	
   wxBoxSizer *vsz = new wxBoxSizer(wxVERTICAL);
   vsz->Add(m_Guih,1,wxEXPAND);

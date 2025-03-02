@@ -85,7 +85,7 @@ mafGUITree::mafGUITree( wxWindow* parent,wxWindowID id, bool CloseButton, bool H
   m_PreventNotify = false;
   m_Autosort	    = false;
 
-  m_NodeTree = new mafTreeCtrlSortable(this,m_Autosort,ID_TREE,wxDefaultPosition,wxSize(100,100),wxNO_BORDER | wxTR_HAS_BUTTONS );
+  m_NodeTree = new mafTreeCtrlSortable(this,m_Autosort,ID_TREE,wxDefaultPosition,FromDIP(wxSize(100,100)),wxNO_BORDER | wxTR_HAS_BUTTONS );
   m_Sizer->Add(m_NodeTree,1,wxEXPAND);
 
   //default image list

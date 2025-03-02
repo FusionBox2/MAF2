@@ -50,7 +50,7 @@ mafGUIPicButton::mafGUIPicButton(wxWindow *parent, const mafString& BitmapId, wx
   wxSize size(b.GetWidth()+offset,b.GetHeight()+offset);
 
   //Create(parent, m_Id, b, wxDefaultPosition, size,0);
-  Create(parent, m_Id, b, wxDefaultPosition, size);
+  Create(parent, m_Id, b, wxDefaultPosition, wxWindow::FromDIP(size, parent));
   SetBitmap(BitmapId,id);
 }
 //----------------------------------------------------------------------------
