@@ -92,7 +92,7 @@ mafGizmoScaleIsotropic::~mafGizmoScaleIsotropic()
 {
   m_CubeGizmo->SetBehavior(NULL);
   vtkDEL(m_Cube);
-  vtkDEL(m_IsaComp); 
+  mafDEL(m_IsaComp); 
 
 	m_CubeGizmo->ReparentTo(NULL);
 }
@@ -130,7 +130,7 @@ void mafGizmoScaleIsotropic::CreateISA()
 {
   
   // create isa compositor and assign behaviors to m_IsaGen ivar
-  m_IsaComp = mafInteractorCompositorMouse::New();
+  mafNEW(m_IsaComp);
 
   // default behavior is activated by mouse left and is constrained to X axis,
   // default ref sys is input vme abs matrix

@@ -119,7 +119,7 @@ mafGizmoScaleAxis::~mafGizmoScaleAxis()
 	// No leaks so somebody is performing this...
 	// wxDEL(GizmoData[i]);
 	//----------------------
-    vtkDEL(m_IsaComp[i]); 
+    mafDEL(m_IsaComp[i]); 
   }
 	m_CylGizmo->ReparentTo(NULL);
 	m_CubeGizmo->ReparentTo(NULL);
@@ -247,7 +247,7 @@ void mafGizmoScaleAxis::CreateISA()
   // create isa compositor and assign behaviors to IsaGen ivar
   for (int i = 0; i < 2; i++)
   {
-    m_IsaComp[i] = mafInteractorCompositorMouse::New();
+    mafNEW(m_IsaComp[i]);
 
     // default behavior is activated by mouse left and is constrained to X axis,
     // default ref sys is input vme abs matrix
