@@ -853,13 +853,12 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
 
   wxBitmap splashBitmap;
   splashBitmap.LoadFile("../Splash/SPLASH_SCREEN.bmp", wxBITMAP_TYPE_BMP);
-    m_Logic->ShowSplashScreen(splashBitmap); 
 
   // show the application
   m_Logic->ShowSplashScreen(splashBitmap);
   m_Logic->Show();
 
-  m_Logic->Init(0,NULL); // calls FileNew - which create the root
+  m_Logic->Init(0,nullptr); // calls FileNew - which create the root
 
   return TRUE;
 }
