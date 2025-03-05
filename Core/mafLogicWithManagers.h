@@ -160,12 +160,6 @@ public:
 
   virtual void Show();
 
-  void PlugMenu(bool plug);
-  void PlugToolbar(bool plug);
-  void PlugSidebar(bool plug, long style = mafSideBar::DOUBLE_NOTEBOOK);
-  void PlugTimebar(bool plug);
-  void PlugLogbar(bool plug);
-
   virtual void ShowSplashScreen();
   virtual void ShowSplashScreen(wxBitmap& splashImage);
 
@@ -189,11 +183,6 @@ public:
 protected:
   void AddToMenu(const mafString& name, long id, wxMenu* path_menu, const mafString& menuPath = _R(""));
   void SetAccelerator(const mafString& name, long id);
-  void AddMenu();
-  void AddToolbar();
-  void AddSidebar();
-  void AddTimebar();
-  void AddLogbar();
 
 	bool AskConfirmAndSave();
   void EnableOperations(bool enable = true);
@@ -201,10 +190,6 @@ protected:
 
   virtual void TimeSet(double t);
   
-  virtual void CreateMenu();
-
-  virtual void CreateToolbar();
-
 	virtual void OnFileNew();
 	virtual bool OnFileOpen(const mafString& file_to_open = _R(""));
 	virtual void OnFileHistory(int fileId);
@@ -266,10 +251,6 @@ protected:
   void AddCreationDate(mafNode *vme);
   bool SetAppTag(mafNode *vme);
   bool CheckAppTag(mafNode *vme);
-
-  void CreateTimebar();
-  void CreateLogbar();
-  void CreateNullLog();
 
   void EnableItem(int item, bool enable);
   std::unique_ptr<InnerLogic> m_logic;

@@ -40,8 +40,6 @@ protected:
   
   virtual void VmeSelected(mafNode *vme);
 
-  void CreateMenu() override;
-
   virtual void WizardRunStarting();
 
   virtual void WizardRunTerminated();

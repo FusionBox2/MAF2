@@ -123,15 +123,14 @@ bool mafLogicWithManagers::Configure()
       MEMORYSTATUS ms;
       GlobalMemoryStatus(&ms);
       wxString s;
-      int current_free_memory = ms.dwAvailPhys / (1024 * 1024);
-      s << "free mem " << current_free_memory << " MB";
+      s << "free mem " << (ms.dwAvailPhys >> 20) << " MB";
       if (frame->GetStatusBar())
         frame->SetStatusText(s, 5);
       //if (current_free_memory < m_MemoryLimitAlert && !m_UserAlerted)
       {
         //m_UserAlerted = true;
-        //int answere = wxMessageBox(_("Program is running with few free memory!! \nFree memory used by UnDo stack?."), _("Warning"), wxYES_NO);
-        //if (answere == wxYES)
+        //int answer = wxMessageBox(_("Program is running with few free memory!! \nFree memory used by UnDo stack?."), _("Warning"), wxYES_NO);
+        //if (answer == wxYES)
         {
           // Clear UnDo stack to gain memory.
           //{mafEvent evUnq(this, CLEAR_UNDO_STACK); InvokeEvent(evUnq);}
@@ -157,12 +156,13 @@ bool mafLogicWithManagers::Configure()
         mafSplitPath(file_to_open, &path, &name, &ext);
         if (ext == _R("msf") || ext == _R("zmsf"))
         {
-          { mafEvent evUnq(this, MENU_FILE_OPEN, &file_to_open); OnEvent(&evUnq); }
+          OnFileOpen(file_to_open);
+          UpdateFrameTitle();
           return;
         }
         else
         {
-          { mafEvent evUnq(this, IMPORT_FILE, &file_to_open); OnEvent(&evUnq); }
+          ImportExternalFile(file_to_open);
         }
       }
     }
@@ -180,22 +180,218 @@ bool mafLogicWithManagers::Configure()
   ////////////////////////////////////////////////////////////////////////////////
   ////////////////////////////////
 
+  m_logic->m_frame->Bind(wxEVT_MENU, [&](wxCommandEvent& event) {OnFileNew(); }, wxID_NEW);
+  m_logic->m_frame->Bind(wxEVT_MENU, [&](wxCommandEvent& event) {OnFileOpen(); UpdateFrameTitle(); }, wxID_OPEN);
+  m_logic->m_frame->Bind(wxEVT_MENU, [&](wxCommandEvent& event) {OnFileSave(); }, wxID_SAVE);
+  m_logic->m_frame->Bind(wxEVT_MENU, [&](wxCommandEvent& event) {OnFileSaveAs(); }, wxID_SAVEAS);
+  m_logic->m_frame->Bind(wxEVT_MENU, [&](wxCommandEvent& event) {OnFileHistory(event.GetId() - wxID_FILE1); }, wxID_FILE1, wxID_FILE9);
 
-	if (m_logic->m_PlugMenu)    this->AddMenu();
-  if (m_logic->m_PlugToolbar) this->AddToolbar();
-  if (m_logic->m_PlugTimebar) this->AddTimebar();
-  if (m_logic->m_PlugLogbar)  this->AddLogbar(); else this->CreateNullLog();
+  m_logic->m_frame->Bind(wxEVT_MENU, [&](wxCommandEvent& event) {if (m_logic->m_ViewManager && m_logic->m_PrintSupport) m_logic->m_PrintSupport->OnPrint(m_logic->m_ViewManager->GetSelectedView()); }, wxID_PRINT);
+  m_logic->m_frame->Bind(wxEVT_MENU, [&](wxCommandEvent& event) {if (m_logic->m_ViewManager && m_logic->m_PrintSupport) m_logic->m_PrintSupport->OnPrintPreview(m_logic->m_ViewManager->GetSelectedView()); }, wxID_PREVIEW);
+  m_logic->m_frame->Bind(wxEVT_MENU, [&](wxCommandEvent& event) {if (m_logic->m_PrintSupport) m_logic->m_PrintSupport->OnPrintSetup(); }, wxID_PRINT_SETUP);
+  m_logic->m_frame->Bind(wxEVT_MENU, [&](wxCommandEvent& event) {if (m_logic->m_PrintSupport) m_logic->m_PrintSupport->OnPageSetup(); }, wxID_PAGE_SETUP);
+
+  //m_logic->m_frame->Bind(wxEVT_UPDATE_UI, [&](wxUpdateUIEvent& event) {auto sb = m_logic->m_frame->GetStatusBar();  event.Check(sb && sb->IsShown()); }, MENU_VIEW_STATUSBAR_);
+  m_logic->m_frame->Bind(wxEVT_MENU, [&](wxCommandEvent& event) {EnableOperations(false); m_logic->m_OpManager->OpUndo(); EnableOperations(true); }, wxID_UNDO);
+  m_logic->m_frame->Bind(wxEVT_MENU, [&](wxCommandEvent& event) {EnableOperations(false); m_logic->m_OpManager->OpRedo(); EnableOperations(true); }, wxID_REDO);
+
+	//m_logic->m_frame->Bind(wxEVT_UPDATE_UI, [&](wxUpdateUIEvent& event) {event.Enable(true); }, wxID_UNDO);
+  //m_logic->m_frame->Bind(wxEVT_UPDATE_UI, [&](wxUpdateUIEvent& event) {event.Enable(true); }, wxID_REDO);
+
+  m_logic->m_frame->Bind(wxEVT_MENU, [&](wxCommandEvent&) { m_logic->m_SettingsDialog->ShowModal(); }, wxID_PREFERENCES);
+
+	if (m_logic->m_PlugMenu)
+	{
+    m_logic->m_MenuBar = new wxMenuBar;
+    wxMenu* fileMenu = new wxMenu;
+    fileMenu->Append(wxID_NEW);
+    fileMenu->Append(wxID_OPEN);
+    fileMenu->Append(wxID_SAVE);
+    fileMenu->Append(wxID_SAVEAS);
+    fileMenu->Append(wxID_OPEN, _("&Open   \tCtrl+O"));
+
+		if (m_logic->m_StorageSettings->UseRemoteStorage())
+    {
+      //file_menu->Append(MENU_FILE_UPLOAD, _("&Upload"));
+    }
+
+    fileMenu->AppendSeparator();
+
+		m_logic->m_ImportMenu = new wxMenu;
+    fileMenu->Append(0, _("Import"), m_logic->m_ImportMenu);
+
+    m_logic->m_ExportMenu = new wxMenu;
+    fileMenu->Append(0, _("Export"), m_logic->m_ExportMenu);
+
+    // Print menu item
+    fileMenu->AppendSeparator();
+
+    fileMenu->Append(wxID_PRINT);
+    fileMenu->Append(wxID_PREVIEW);
+    fileMenu->Append(wxID_PRINT_SETUP, _("Printer Setup"));
+    fileMenu->Append(wxID_PAGE_SETUP, _("Page Setup"));
+    
+    m_logic->m_RecentFileMenu = new wxMenu;
+    fileMenu->AppendSeparator();
+    fileMenu->Append(0, _("Recent Files"), m_logic->m_RecentFileMenu);
+
+    fileMenu->AppendSeparator();
+    fileMenu->Append(MENU_FILE_QUIT, _("&Quit  \tCtrl+Q"));
+
+    m_logic->m_MenuBar->Append(fileMenu, _("&File"));
+
+    m_logic->m_EditMenu = new wxMenu;
+    m_logic->m_EditMenu->Append(wxID_UNDO);
+    m_logic->m_EditMenu->Append(wxID_REDO);
+    m_logic->m_EditMenu->AppendSeparator();
+    m_logic->m_EditMenu->Append(MENU_EDIT_FIND_VME, _("Find VME \tCtrl+F"));
+    m_logic->m_MenuBar->Append(m_logic->m_EditMenu, _("&Edit"));
+
+    m_logic->m_ViewMenu = new wxMenu;
+    m_logic->m_MenuBar->Append(m_logic->m_ViewMenu, _("&View"));
+
+    m_logic->m_OpMenu = new wxMenu;
+    m_logic->m_MenuBar->Append(m_logic->m_OpMenu, _("&Operations"));
+
+    wxMenu* option_menu = new wxMenu;
+    option_menu->Append(wxID_PREFERENCES);
+    m_logic->m_MenuBar->Append(option_menu, _("Tools"));
+
+    wxMenu* help_menu = new wxMenu;
+    help_menu->Append(wxID_ABOUT);
+    help_menu->Append(HELP_HOME, _("Help"));
+    m_logic->m_frame->Bind(wxEVT_MENU, [&](wxCommandEvent& event) {wxAboutDialogInfo info; info.SetVersion("0.1"); wxAboutBox(info); }, wxID_ABOUT);
+
+    m_logic->m_MenuBar->Append(help_menu, _("&Help"));
+    m_logic->m_frame->SetMenuBar(m_logic->m_MenuBar);
+	}
+
+  if (m_logic->m_PlugToolbar)
+  {
+    //m_ToolBar = new wxToolBar(m_Win,-1,wxPoint(0,0),wxSize(-1,-1),wxHORIZONTAL|wxNO_BORDER|wxTB_FLAT  );
+    m_logic->m_ToolBar = new wxToolBar(m_logic->m_frame, MENU_VIEW_TOOLBAR_, wxPoint(0, 0), wxSize(-1, -1), wxTB_FLAT | wxTB_NODIVIDER);
+    m_logic->m_ToolBar->SetMargins(0, 0);
+    m_logic->m_ToolBar->SetToolSeparation(2);
+    m_logic->m_ToolBar->SetToolBitmapSize(wxSize(20, 20));
+    m_logic->m_ToolBar->AddTool(wxID_NEW, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_NEW")), (_L("new ") + m_logic->m_StorageData->m_Extension + _L(" storage file")).toWx());
+    m_logic->m_ToolBar->AddTool(wxID_OPEN, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_OPEN")), (_L("open ") + m_logic->m_StorageData->m_Extension + _L(" storage file")).toWx());
+    m_logic->m_ToolBar->AddTool(wxID_SAVE, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_SAVE")), (_L("save current ") + m_logic->m_StorageData->m_Extension + _L(" storage file")).toWx());
+    m_logic->m_ToolBar->AddSeparator();
+
+    m_logic->m_ToolBar->AddTool(wxID_PRINT, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("PRINT")), _("print the selected view"));
+    m_logic->m_ToolBar->AddTool(wxID_PREVIEW, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("PRINT_PREVIEW")), _("show the print preview for the selected view"));
+    m_logic->m_ToolBar->AddSeparator();
+
+    m_logic->m_ToolBar->AddTool(wxID_UNDO, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_UNDO")), _("undo (ctrl+z)"));
+    m_logic->m_ToolBar->AddTool(wxID_REDO, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_REDO")), _("redo (ctrl+shift+z)"));
+    m_logic->m_ToolBar->AddSeparator();
+
+    m_logic->m_ToolBar->AddTool(MENU_USER_START + 2, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_DELETE")), _("delete selected vme (ctrl+shift+d)"));
+    m_logic->m_ToolBar->AddTool(MENU_USER_START + 3, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_CUT")), _("cut selected vme (ctrl+x)"));
+    m_logic->m_ToolBar->AddTool(MENU_USER_START + 4, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_COPY")), _("copy selected vme (ctrl+c)"));
+    m_logic->m_ToolBar->AddTool(MENU_USER_START + 5, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_PASTE")), _("paste vme (ctrl+v)"));
+    m_logic->m_ToolBar->AddSeparator();
+    m_logic->m_ToolBar->AddTool(CAMERA_RESET, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("ZOOM_ALL")), _("reset camera to fit all (ctrl+f)"));
+    m_logic->m_ToolBar->AddTool(CAMERA_FIT, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("ZOOM_SEL")), _("reset camera to fit selected object (ctrl+shift+f)"));
+    m_logic->m_ToolBar->AddTool(CAMERA_FLYTO, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FLYTO")), _("fly to object under mouse"));
+    m_logic->m_ToolBar->Realize();
+
+  	//m_Win->SetToolBar(m_ToolBar);
+    m_logic->m_frame->AddPane(m_logic->m_ToolBar, wxAuiPaneInfo()
+      .Name("toolbar")
+      .Caption(wxT("ToolBar"))
+      .Top()
+      .Layer(2)
+      .ToolbarPane()
+      .LeftDockable(false)
+      .RightDockable(false)
+      .Floatable(false)
+      .Movable(false)
+      .Gripper(false)
+    );
+  }
+  if (m_logic->m_PlugTimebar)
+  {
+    m_logic->m_TimePanel = new mafGUITimeBar(m_logic->m_frame, MENU_VIEW_TIMEBAR_, true);
+    m_logic->m_TimePanel->SetListener(this);
+
+    // Events coming from settings are forwarded to the time bar.
+    m_logic->m_TimePanel->SetTimeSettings(m_logic->m_TimeBarSettings.get());
+    m_logic->m_TimeBarSettings->SetListener(m_logic->m_TimePanel);
+    m_logic->m_frame->AddPane(m_logic->m_TimePanel, wxAuiPaneInfo()
+      .Name("timebar")
+      .Caption(wxT("TimeBar"))
+      .Bottom()
+      .Row(1)
+      .Layer(2)
+      .ToolbarPane()
+      .LeftDockable(false)
+      .RightDockable(false)
+      .MinSize(100, 22)
+      .Floatable(false)
+      .Gripper(false)
+      .Resizable(false)
+      .Movable(false)
+    );
+  }
+  if (m_logic->m_PlugLogbar)
+  {
+#ifdef MAF_USE_VTK
+    m_logic->m_VtkLog = mafVTKLog::New();
+    m_logic->m_VtkLog->SetInstance(m_logic->m_VtkLog);
+#endif
+    wxTextCtrl* log = new wxTextCtrl(m_logic->m_frame, MENU_VIEW_LOGBAR_, "", wxPoint(0, 0), wxSize(100, 300), /*wxNO_BORDER |*/ wxTE_MULTILINE);
+    m_logic->m_Logger = new mafWXLog(log);
+    m_logic->m_Logger->LogToFile(m_logic->m_LogToFile);
+    if (m_logic->m_LogToFile)
+    {
+      mafString s = m_logic->m_ApplicationSettings->GetLogFolder();
+      wxDateTime log_time = wxDateTime::Now();
+      s += _R("\\");
+      s += mafWxToString(m_logic->m_frame->GetTitle());
+      s += mafString::Format(_R("_%02d_%02d_%d_%02d_%2d"), log_time.GetYear(), log_time.GetMonth() + 1, log_time.GetDay(), log_time.GetHour(), log_time.GetMinute());
+      s += _R(".log");
+      if (m_logic->m_Logger->SetFileName(s.toWx()) == MAF_ERROR)
+      {
+        mafLogMessage(_M(_R("Unable to create log file ") + s));
+      }
+    }
+    m_logic->m_Logger->SetVerbose(m_logic->m_LogAllEvents);
+
+    wxLog* old_log = wxLog::SetActiveTarget(m_logic->m_Logger);
+    cppDEL(old_log);
+
+    m_logic->m_frame->AddPane(log, wxAuiPaneInfo()
+      .Name("logbar")
+      .Caption(wxT("LogBar"))
+      .Bottom()
+      .Layer(0)
+      .MinSize(100, 10)
+      .TopDockable(false) // prevent docking on top side - otherwise may dock also beside the toolbar -- and it's hugely
+    );
+
+    mafLogMessage(_M(mafString(_L("welcome"))));
+  }
+	else
+	{
+#ifdef MAF_USE_VTK
+    m_logic->m_VtkLog = mafVTKLog::New();
+    m_logic->m_VtkLog->SetInstance(m_logic->m_VtkLog);
+#endif  
+    wxTextCtrl* log = new wxTextCtrl(m_logic->m_frame, -1, "", wxPoint(0, 0), wxSize(100, 300), wxNO_BORDER | wxTE_MULTILINE);
+    m_logic->m_Logger = new mafWXLog(log);
+    log->Show(false);
+    wxLog* old_log = wxLog::SetActiveTarget(m_logic->m_Logger);
+    cppDEL(old_log);
+  }
+
   EnableItem(CAMERA_RESET, false);
   EnableItem(CAMERA_FIT, false);
   EnableItem(CAMERA_FLYTO, false);
-
-  EnableItem(CAMERA_RESET, false);
-  EnableItem(CAMERA_FIT, false);
-  EnableItem(CAMERA_FLYTO, false);
-  EnableItem(MENU_FILE_PRINT, false);
-  EnableItem(MENU_FILE_PRINT_PREVIEW, false);
-  EnableItem(MENU_FILE_PRINT_SETUP, false);
-  EnableItem(MENU_FILE_PRINT_PAGE_SETUP, false);
+  EnableItem(wxID_PRINT, false);
+  EnableItem(wxID_PREVIEW, false);
+  EnableItem(wxID_PRINT_SETUP, false);
+  EnableItem(wxID_PAGE_SETUP, false);
 
   if (m_logic->m_PlugSidebar)
   {
@@ -344,12 +540,6 @@ void mafLogicWithManagers::Plug(mafOp* op, const mafString& menuPath, bool canUn
   }
 }
 
-void mafLogicWithManagers::PlugMenu(bool plug) { m_logic->m_PlugMenu = plug; };
-void mafLogicWithManagers::PlugToolbar(bool plug) { m_logic->m_PlugToolbar = plug; };
-void mafLogicWithManagers::PlugSidebar(bool plug, long style) { m_logic->m_PlugSidebar = plug; m_logic->m_SidebarStyle = style; };
-void mafLogicWithManagers::PlugTimebar(bool plug) { m_logic->m_PlugTimebar = plug; };
-void mafLogicWithManagers::PlugLogbar(bool plug) { m_logic->m_PlugLogbar = plug; };
-
 bool mafLogicWithManagers::AskConfirmAndSave()
 {
   if (m_logic->m_NodeManager&& m_logic->m_NodeManager->MSFIsModified()) // check if the msf has been modified
@@ -370,18 +560,10 @@ mafID mafLogicWithManagers::GetNewMenuId()
 
 void mafLogicWithManagers::EnableOperations(bool enable)
 {
+  EnableItem(wxID_UNDO, enable && m_logic->m_OpManager->UndoAvailable());
+  EnableItem(wxID_REDO, enable && m_logic->m_OpManager->RedoAvailable());
   for(unsigned i = 0; i < m_logic->m_MenuElems.size(); i++)
   {
-    if(i == 0)
-    {
-      EnableItem(i + MENU_USER_START,enable && m_logic->m_OpManager->UndoAvailable());
-      continue;
-    }
-    if(i == 1)
-    {
-      EnableItem(i + MENU_USER_START,enable && m_logic->m_OpManager->RedoAvailable());
-      continue;
-    }
     if(m_logic->m_MenuElems[i].m_op)
     {
       bool enableOp = enable;
@@ -547,99 +729,7 @@ void mafLogicWithManagers::Init(int argc, char **argv)
 
   m_logic->m_ApplicationLayoutSettings->LoadLayout(true);
 }
-void mafLogicWithManagers::CreateMenu()
-{
-  m_logic->m_MenuBar  = new wxMenuBar;
-  wxMenu *file_menu = new wxMenu;
-  file_menu->Append(MENU_FILE_NEW,   _("&New  \tCtrl+N"));
-  file_menu->Append(MENU_FILE_OPEN,  _("&Open   \tCtrl+O"));
-  file_menu->Append(MENU_FILE_SAVE,  _("&Save  \tCtrl+S"));
-  file_menu->Append(MENU_FILE_SAVEAS,_("Save &As  \tCtrl+Shift+S"));
-  if (m_logic->m_StorageSettings->UseRemoteStorage())
-  {
-    //file_menu->Append(MENU_FILE_UPLOAD, _("&Upload"));
-  }
-  m_logic->m_ImportMenu = new wxMenu;
-  file_menu->AppendSeparator();
-  file_menu->Append(0,_("Import"), m_logic->m_ImportMenu );
 
-  m_logic->m_ExportMenu = new wxMenu;
-  file_menu->Append(0,_("Export"), m_logic->m_ExportMenu);
-
-  // Print menu item
-  file_menu->AppendSeparator();
-  file_menu->Append(MENU_FILE_PRINT, _("&Print  \tCtrl+P"));
-  file_menu->Append(MENU_FILE_PRINT_PREVIEW, _("Print Preview"));
-  file_menu->Append(MENU_FILE_PRINT_SETUP, _("Printer Setup"));
-  file_menu->Append(MENU_FILE_PRINT_PAGE_SETUP, _("Page Setup"));
-
-  m_logic->m_RecentFileMenu = new wxMenu;
-  file_menu->AppendSeparator();
-  file_menu->Append(0,_("Recent Files"), m_logic->m_RecentFileMenu);
-
-  file_menu->AppendSeparator();
-  file_menu->Append(MENU_FILE_QUIT,  _("&Quit  \tCtrl+Q"));
-
-  m_logic->m_MenuBar->Append(file_menu, _("&File"));
-
-  m_logic->m_EditMenu = new wxMenu;
-  mafID undoCommand = GetNewMenuId();
-  mafID redoCommand = GetNewMenuId();
-  AddToMenu(_L("Undo  \tCtrl+Z"),      MENU_USER_START + 0, m_logic->m_EditMenu);
-  AddToMenu(_L("Redo  \tCtrl+Shift+Z"),MENU_USER_START + 1, m_logic->m_EditMenu);
-  m_logic->m_EditMenu->AppendSeparator();
-  m_logic->m_MenuElems.push_back(mafMenuElems(true, 0, undoCommand));
-  m_logic->m_MenuElems.push_back(mafMenuElems(true, 0, redoCommand));
-  m_logic->m_EditMenu->Append(MENU_EDIT_FIND_VME, _("Find VME \tCtrl+F"));
-  m_logic->m_MenuBar->Append(m_logic->m_EditMenu, _("&Edit"));
-
-  m_logic->m_ViewMenu = new wxMenu;
-  m_logic->m_MenuBar->Append(m_logic->m_ViewMenu, _("&View"));
-
-  m_logic->m_OpMenu = new wxMenu;
-  m_logic->m_MenuBar->Append(m_logic->m_OpMenu, _("&Operations"));
-
-  wxMenu    *option_menu = new wxMenu;
-  option_menu->Append(ID_APP_SETTINGS, _("Options..."));
-  m_logic->m_MenuBar->Append(option_menu, _("Tools"));
-
-	wxMenu    *help_menu = new wxMenu;
-	help_menu->Append(ABOUT_APPLICATION,_("About"));
-	help_menu->Append(HELP_HOME, _("Help"));
-
-  m_logic->m_MenuBar->Append(help_menu, _("&Help"));
-}
-void mafLogicWithManagers::CreateToolbar()
-{
-  
-  //m_ToolBar = new wxToolBar(m_Win,-1,wxPoint(0,0),wxSize(-1,-1),wxHORIZONTAL|wxNO_BORDER|wxTB_FLAT  );
-  m_logic->m_ToolBar = new wxToolBar(m_logic->m_frame,MENU_VIEW_TOOLBAR_,wxPoint(0,0),wxSize(-1,-1),wxTB_FLAT | wxTB_NODIVIDER );
-  m_logic->m_ToolBar->SetMargins(0,0);
-  m_logic->m_ToolBar->SetToolSeparation(2);
-  m_logic->m_ToolBar->SetToolBitmapSize(wxSize(20,20));
-  m_logic->m_ToolBar->AddTool(MENU_FILE_NEW, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_NEW")),    (_L("new ") + m_logic->m_StorageData->m_Extension + _L(" storage file")).toWx());
-  m_logic->m_ToolBar->AddTool(MENU_FILE_OPEN, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_OPEN")),  (_L("open ") + m_logic->m_StorageData->m_Extension + _L(" storage file")).toWx());
-  m_logic->m_ToolBar->AddTool(MENU_FILE_SAVE, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_SAVE")),  (_L("save current ") + m_logic->m_StorageData->m_Extension + _L(" storage file")).toWx());
-  m_logic->m_ToolBar->AddSeparator();
-
-  m_logic->m_ToolBar->AddTool(MENU_FILE_PRINT, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("PRINT")),  _("print the selected view"));
-  m_logic->m_ToolBar->AddTool(MENU_FILE_PRINT_PREVIEW, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("PRINT_PREVIEW")),  _("show the print preview for the selected view"));
-  m_logic->m_ToolBar->AddSeparator();
-
-  m_logic->m_ToolBar->AddTool(MENU_USER_START + 0, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_UNDO")),  _("undo (ctrl+z)"));
-  m_logic->m_ToolBar->AddTool(MENU_USER_START + 1, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_REDO")),  _("redo (ctrl+shift+z)"));
-  m_logic->m_ToolBar->AddSeparator();
-
-  m_logic->m_ToolBar->AddTool(MENU_USER_START + 2, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_DELETE")),  _("delete selected vme (ctrl+shift+d)"));
-  m_logic->m_ToolBar->AddTool(MENU_USER_START + 3, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_CUT")),  _("cut selected vme (ctrl+x)"));
-  m_logic->m_ToolBar->AddTool(MENU_USER_START + 4, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_COPY")), _("copy selected vme (ctrl+c)"));
-  m_logic->m_ToolBar->AddTool(MENU_USER_START + 5, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_PASTE")),_("paste vme (ctrl+v)"));
-  m_logic->m_ToolBar->AddSeparator();
-  m_logic->m_ToolBar->AddTool(CAMERA_RESET, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("ZOOM_ALL")),_("reset camera to fit all (ctrl+f)"));
-  m_logic->m_ToolBar->AddTool(CAMERA_FIT, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("ZOOM_SEL")),_("reset camera to fit selected object (ctrl+shift+f)"));
-  m_logic->m_ToolBar->AddTool(CAMERA_FLYTO, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FLYTO")),_("fly to object under mouse"));
-  m_logic->m_ToolBar->Realize();
-}
 void mafLogicWithManagers::UpdateFrameTitle()
 {
   mafString title = mafWxToString(wxTheApp->GetAppDisplayName());
@@ -668,18 +758,6 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
     if(!m_logic->m_OpManager)
       break;
     EnableOperations(false);
-    if(i == 0)
-    {
-      m_logic->m_OpManager->OpUndo();
-      EnableOperations(true);
-      return;
-    }
-    if(i == 1)
-    {
-      m_logic->m_OpManager->OpRedo();
-      EnableOperations(true);
-      return;
-    }
     m_logic->m_OpManager->OpRun(m_logic->m_MenuElems[i].m_id, m_logic->m_OpManager->GetSelectedVme());
     EnableOperations(true);
     return;
@@ -757,30 +835,6 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
     return;
   }
 
-  if(MENU_FILE_PRINT == eventId)
-  {
-    if (m_logic->m_ViewManager && m_logic->m_PrintSupport)
-      m_logic->m_PrintSupport->OnPrint(m_logic->m_ViewManager->GetSelectedView());
-    return;
-  }
-  if(MENU_FILE_PRINT_PREVIEW == eventId)
-  {
-    if (m_logic->m_ViewManager && m_logic->m_PrintSupport)
-      m_logic->m_PrintSupport->OnPrintPreview(m_logic->m_ViewManager->GetSelectedView());
-    return;
-  }
-  if(MENU_FILE_PRINT_SETUP == eventId)
-  {
-    if (m_logic->m_PrintSupport)
-      m_logic->m_PrintSupport->OnPrintSetup();
-    return;
-  }
-  if(MENU_FILE_PRINT_PAGE_SETUP == eventId)
-  {
-    if (m_logic->m_PrintSupport)
-      m_logic->m_PrintSupport->OnPageSetup();
-    return;
-  }
   if(MENU_FILE_QUIT == eventId)
   {
     OnQuit();		
@@ -1058,10 +1112,10 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
       EnableItem(CAMERA_FIT,   false);
       EnableItem(CAMERA_FLYTO, false);
 
-      EnableItem(MENU_FILE_PRINT, false);
-      EnableItem(MENU_FILE_PRINT_PREVIEW, false);
-      EnableItem(MENU_FILE_PRINT_SETUP, false);
-      EnableItem(MENU_FILE_PRINT_PAGE_SETUP, false);
+      EnableItem(wxID_PRINT, false);
+      EnableItem(wxID_PREVIEW, false);
+      EnableItem(wxID_PRINT_SETUP, false);
+      EnableItem(wxID_PAGE_SETUP, false);
     }
     if (m_logic->m_OpManager)
     {
@@ -1323,13 +1377,6 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
     m_logic->m_ViewManager->Collaborate(collaborate);
     m_logic->m_OpManager->Collaborate(collaborate);
     GetGlobalMouse()->Collaborate(collaborate);
-    return;
-  }
-  if(ABOUT_APPLICATION == eventId)
-  {
-    wxAboutDialogInfo info;
-    info.SetVersion("0.1");
-    wxAboutBox(info);
     return;
   }
   if(HELP_HOME == eventId)
@@ -1993,10 +2040,10 @@ void mafLogicWithManagers::OpRunTerminated()
 }
 void mafLogicWithManagers::EnableMenuAndToolbar(bool enable)
 {
-  EnableItem(MENU_FILE_NEW,enable);
+  EnableItem(wxID_NEW,enable);
   EnableItem(MENU_FILE_OPEN,enable);
-  EnableItem(MENU_FILE_SAVE,enable);
-  EnableItem(MENU_FILE_SAVEAS,enable);
+  EnableItem(wxID_SAVE,enable);
+  EnableItem(wxID_SAVEAS,enable);
   EnableItem(MENU_FILE_MERGE,enable);
   EnableItem(MENU_FILE_QUIT,enable);
   EnableItem(wxID_FILE1,enable);
@@ -2035,10 +2082,10 @@ void mafLogicWithManagers::ViewSelect()
     EnableItem(CAMERA_FIT,   view!=NULL);
     EnableItem(CAMERA_FLYTO, view!=NULL);
 
-    EnableItem(MENU_FILE_PRINT, view != NULL);
-    EnableItem(MENU_FILE_PRINT_PREVIEW, view != NULL);
-    EnableItem(MENU_FILE_PRINT_SETUP, view != NULL);
-    EnableItem(MENU_FILE_PRINT_PAGE_SETUP, view != NULL);
+    EnableItem(wxID_PRINT, view != NULL);
+    EnableItem(wxID_PREVIEW, view != NULL);
+    EnableItem(wxID_PRINT_SETUP, view != NULL);
+    EnableItem(wxID_PAGE_SETUP, view != NULL);
 
 // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
@@ -2305,115 +2352,6 @@ void mafLogicWithManagers::SetAccelerator(const mafString& name, long id)
 
     m_logic->m_AccelTable.push_back(wxAcceleratorEntry(flag_num, (int)*key_code.c_str(), id));
   }
-}
-void mafLogicWithManagers::AddMenu()
-{
-  CreateMenu();
-  m_logic->m_frame->SetMenuBar(m_logic->m_MenuBar);
-}
-void mafLogicWithManagers::AddToolbar()
-{
-  CreateToolbar();
-  //m_Win->SetToolBar(m_ToolBar);
-  m_logic->m_frame->AddPane(m_logic->m_ToolBar, wxAuiPaneInfo()
-    .Name("toolbar")
-    .Caption(wxT("ToolBar"))
-    .Top()
-    .Layer(2)
-    .ToolbarPane()
-    .LeftDockable(false)
-    .RightDockable(false)
-    .Floatable(false)
-    .Movable(false)
-    .Gripper(false)
-  );
-}
-
-void mafLogicWithManagers::AddTimebar()
-{
-  CreateTimebar();
-  m_logic->m_frame->AddPane(m_logic->m_TimePanel, wxAuiPaneInfo()
-    .Name("timebar")
-    .Caption(wxT("TimeBar"))
-    .Bottom()
-    .Row(1)
-    .Layer(2)
-    .ToolbarPane()
-    .LeftDockable(false)
-    .RightDockable(false)
-    .MinSize(100, 22)
-    .Floatable(false)
-    .Gripper(false)
-    .Resizable(false)
-    .Movable(false)
-  );
-}
-
-void mafLogicWithManagers::AddLogbar()
-{
-  CreateLogbar();
-}
-
-
-
-void mafLogicWithManagers::CreateLogbar()
-{
-#ifdef MAF_USE_VTK
-  m_logic->m_VtkLog = mafVTKLog::New();
-  m_logic->m_VtkLog->SetInstance(m_logic->m_VtkLog);
-#endif
-  wxTextCtrl* log = new wxTextCtrl(m_logic->m_frame, MENU_VIEW_LOGBAR_, "", wxPoint(0, 0), wxSize(100, 300), /*wxNO_BORDER |*/ wxTE_MULTILINE);
-  m_logic->m_Logger = new mafWXLog(log);
-  m_logic->m_Logger->LogToFile(m_logic->m_LogToFile);
-  if (m_logic->m_LogToFile)
-  {
-    mafString s = m_logic->m_ApplicationSettings->GetLogFolder();
-    wxDateTime log_time = wxDateTime::Now();
-    s += _R("\\");
-    s += mafWxToString(m_logic->m_frame->GetTitle());
-    s += mafString::Format(_R("_%02d_%02d_%d_%02d_%2d"), log_time.GetYear(), log_time.GetMonth() + 1, log_time.GetDay(), log_time.GetHour(), log_time.GetMinute());
-    s += _R(".log");
-    if (m_logic->m_Logger->SetFileName(s.toWx()) == MAF_ERROR)
-    {
-      mafLogMessage(_M(_R("Unable to create log file ") + s));
-    }
-  }
-  m_logic->m_Logger->SetVerbose(m_logic->m_LogAllEvents);
-
-  wxLog* old_log = wxLog::SetActiveTarget(m_logic->m_Logger);
-  cppDEL(old_log);
-
-  m_logic->m_frame->AddPane(log, wxAuiPaneInfo()
-    .Name("logbar")
-    .Caption(wxT("LogBar"))
-    .Bottom()
-    .Layer(0)
-    .MinSize(100, 10)
-    .TopDockable(false) // prevent docking on top side - otherwise may dock also beside the toolbar -- and it's hugely
-  );
-
-  mafLogMessage(_M(mafString(_L("welcome"))));
-}
-void mafLogicWithManagers::CreateNullLog()
-{
-#ifdef MAF_USE_VTK
-  m_logic->m_VtkLog = mafVTKLog::New();
-  m_logic->m_VtkLog->SetInstance(m_logic->m_VtkLog);
-#endif  
-  wxTextCtrl* log = new wxTextCtrl(m_logic->m_frame, -1, "", wxPoint(0, 0), wxSize(100, 300), wxNO_BORDER | wxTE_MULTILINE);
-  m_logic->m_Logger = new mafWXLog(log);
-  log->Show(false);
-  wxLog* old_log = wxLog::SetActiveTarget(m_logic->m_Logger);
-  cppDEL(old_log);
-}
-void mafLogicWithManagers::CreateTimebar()
-{
-  m_logic->m_TimePanel = new mafGUITimeBar(m_logic->m_frame, MENU_VIEW_TIMEBAR_, true);
-  m_logic->m_TimePanel->SetListener(this);
-
-  // Events coming from settings are forwarded to the time bar.
-  m_logic->m_TimePanel->SetTimeSettings(m_logic->m_TimeBarSettings.get());
-  m_logic->m_TimeBarSettings->SetListener(m_logic->m_TimePanel);
 }
 
 void mafLogicWithManagers::EnableItem(int item, bool enable)

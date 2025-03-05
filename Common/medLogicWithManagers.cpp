@@ -410,6 +410,12 @@ bool medLogicWithManagers::Configure()
 {
   if (!mafLogicWithManagers::Configure())
     return false;
+  //add the wizard menu between "operation" and "settings"
+  if (m_UseWizardManager)
+  {
+    m_WizardMenu = new wxMenu;
+    m_logic->m_MenuBar->Insert(4, m_WizardMenu, _("&Wizard"));
+  }
   m_logic->m_frame->Bind(wxEVT_MENU, [this](const wxCommandEvent& event) {mafEvent evUnq(this, MENU_WIZARD, (intptr_t)event.GetId());	OnEvent(&evUnq); }, WIZARD_START, WIZARD_END);
 
   ConfigureWizardManager();
@@ -479,18 +485,6 @@ void medLogicWithManagers::VmeSelected( mafNode *vme )
   mafLogicWithManagers::VmeSelected(vme);
 }
 
-
-void medLogicWithManagers::CreateMenu()
-{
-  mafLogicWithManagers::CreateMenu();
-
-  //add the wizard menu between "operation" and "settings"
-  if (m_UseWizardManager)
-  {
-    m_WizardMenu = new wxMenu;
-    m_logic->m_MenuBar->Insert(4,m_WizardMenu, _("&Wizard"));
-  }
-}
 
 //----------------------------------------------------------------------------
 void medLogicWithManagers::WizardRunStarting()
