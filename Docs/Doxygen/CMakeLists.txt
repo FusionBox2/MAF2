@@ -3,7 +3,6 @@
 #
 #
 PROJECT(mafDoxygen)
-DBG_MESSAGE("Configuring project mafDoxygen")
 
 INCLUDE (${CMAKE_ROOT}/Modules/Documentation.cmake OPTIONAL)
 

@@ -5,8 +5,6 @@ cmake_minimum_required(VERSION 3.27)
 
 PROJECT(mafBase)
 
-DBG_MESSAGE("Configuring project mafCore")
-
 # Set your list of sources here.
 SET(PROJECT_SRCS
 	../ftk/Base/MTime.cpp

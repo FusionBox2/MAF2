@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.27)
 PROJECT(mafDataPipes)
 
-DBG_MESSAGE("Configuring project ${PROJECT_NAME}")
-
 # Set your list of sources here.
 SET(PROJECT_SRCS
   mafDataPipeInterpolator.cpp

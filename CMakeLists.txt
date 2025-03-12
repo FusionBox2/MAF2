@@ -1,15 +1,8 @@
 cmake_minimum_required(VERSION 3.27)
+
 project (FTK VERSION 0.1.0)
 
-#-----------------------------------------------------------------------------
-# Macro for DEBUG logging
-#-----------------------------------------------------------------------------
-INCLUDE (${FTK_SOURCE_DIR}/modules/DebugMacro.cmake)
-MARK_AS_ADVANCED (
-  DEBUG_MESSAGES
-)
-
-OPTION(DEBUG_MESSAGES "Enable debug Messages" OFF)
+set(FTK_VERSION "${FTK_VERSION_MAJOR}.${FTK_VERSION_MINOR}.${FTK_VERSION_PATCH}")
 
 #-----------------------------------------------------------------------------
 # where to place output binaries
@@ -37,17 +30,17 @@ else(CMAKE_SIZEOF_VOID_P EQUAL 8)
 endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
 
 #-----------------------------------------------------------------------------
-# FTK version number.
+# This enables support for Visual Studio Edit & Continue and OpenMP
 #-----------------------------------------------------------------------------
-SET(FTK_VERSION "${FTK_VERSION_MAJOR}.${FTK_VERSION_MINOR}.${FTK_VERSION_PATCH}")
-
-#-----------------------------------------------------------------------------
-# This enables support for Visual Studio Edit & Continue, OpenMP, and parallel compilation
-#-----------------------------------------------------------------------------
-IF (${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /openmp")
-	SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /ZI")
-ENDIF (${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
+if(MSVC)
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /openmp")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /openmp")
+#	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /ZI")
+#	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /ZI")
+  set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<CONFIG:Debug,RelWithDebInfo>,EditAndContinue,ProgramDatabase>")
+  set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<CONFIG:Debug,RelWithDebInfo>,EditAndContinue,ProgramDatabase>")
+  add_compile_options(/Zc:__cplusplus)
+endif(MSVC)
 
 #-----------------------------------------------------------------------------
 # Options for FTK building
@@ -74,9 +67,6 @@ option(MAF_USE_Offis     "Find and Link the Offis library."     ON)
 option(MAF_USE_BTK       "Find and Link the BTK library."       ON)
 
 mark_as_advanced(BUILD_SHARED_LIBS)
-if(MSVC)
-add_compile_options(/Zc:__cplusplus)
-endif(MSVC)
 
 if(MAF_USE_BOOST)
   set(Boost_DIR ${BST_DIR})
