@@ -286,10 +286,10 @@ bool mafLogicWithManagers::Configure()
     m_logic->m_ToolBar->AddTool(wxID_REDO, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_REDO")), _("redo (ctrl+shift+z)"));
     m_logic->m_ToolBar->AddSeparator();
 
-    m_logic->m_ToolBar->AddTool(MENU_USER_START + 2, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_DELETE")), _("delete selected vme (ctrl+shift+d)"));
-    m_logic->m_ToolBar->AddTool(MENU_USER_START + 3, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_CUT")), _("cut selected vme (ctrl+x)"));
-    m_logic->m_ToolBar->AddTool(MENU_USER_START + 4, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_COPY")), _("copy selected vme (ctrl+c)"));
-    m_logic->m_ToolBar->AddTool(MENU_USER_START + 5, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_PASTE")), _("paste vme (ctrl+v)"));
+    m_logic->m_ToolBar->AddTool(MENU_USER_START + 0, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_DELETE")), _("delete selected vme (ctrl+shift+d)"));
+    m_logic->m_ToolBar->AddTool(MENU_USER_START + 1, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_CUT")), _("cut selected vme (ctrl+x)"));
+    m_logic->m_ToolBar->AddTool(MENU_USER_START + 2, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_COPY")), _("copy selected vme (ctrl+c)"));
+    m_logic->m_ToolBar->AddTool(MENU_USER_START + 3, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("OP_PASTE")), _("paste vme (ctrl+v)"));
     m_logic->m_ToolBar->AddSeparator();
     m_logic->m_ToolBar->AddTool(CAMERA_RESET, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("ZOOM_ALL")), _("reset camera to fit all (ctrl+f)"));
     m_logic->m_ToolBar->AddTool(CAMERA_FIT, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("ZOOM_SEL")), _("reset camera to fit selected object (ctrl+shift+f)"));
