@@ -788,7 +788,6 @@ mafNode *mafNode::CopyTree()
   mafNode *res = CopyTree(this);
   if(res == NULL)
     return NULL;
-  RegisteringPointer<mafNode> holder = res;
   res->Register(NULL);
   {
     auto iter = res->NewIterator();
@@ -805,6 +804,7 @@ mafNode *mafNode::CopyTree()
       n->UpdateLinks(nodes);
     }
   }
+  res->m_ReferenceCount--; // this hack avoid that 'v' node die when return
   return res;
 }
 
@@ -814,7 +814,7 @@ mafNode *mafNode::CopyTree(mafNode *vme, mafNode *parent)
 {
   
   mafNode *v = vme->MakeCopy();
-  RegisteringPointer<mafNode> holder = v;
+  v->Register(NULL);
   v->ReparentTo(parent);
 
   for(unsigned long i=0; i<vme->GetNumberOfChildren(); i++)
@@ -823,6 +823,7 @@ mafNode *mafNode::CopyTree(mafNode *vme, mafNode *parent)
       if (child->IsVisible())
         mafNode::CopyTree(child,v);
   }
+  v->m_ReferenceCount--; // this hack avoid that 'v' node die when return
   return v;
 }
 
