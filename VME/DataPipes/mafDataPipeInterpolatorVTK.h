@@ -56,9 +56,6 @@ public:
   /** update the data pipe output */
   void Update() override;
 
-  /** retrieve vtk data pipe*/
-  vtkMAFDataPipe *GetVTKDataPipe(){return m_VTKDataPipe;};
-
 protected:
   mafDataPipeInterpolatorVTK();
   ~mafDataPipeInterpolatorVTK() override;
