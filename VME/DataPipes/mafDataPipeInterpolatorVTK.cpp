@@ -101,12 +101,3 @@ void mafDataPipeInterpolatorVTK::PreExecute()
     }
   } 
 }
-
-//------------------------------------------------------------------------------
-void mafDataPipeInterpolatorVTK::OnEvent(mafEventBase *e)
-//------------------------------------------------------------------------------
-{
-  assert(e->GetSender()==m_VTKDataPipe); // should not receive events from other sources
-
-  Superclass::OnEvent(e); // this also forwards the event to parent class
-}

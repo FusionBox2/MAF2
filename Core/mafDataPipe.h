@@ -61,7 +61,7 @@ public:
   /**
     Return a VTK dataset corresponding to the current time.*/
   virtual vtkAlgorithmOutput *GetVTKOutputPort() {return nullptr;}
-  virtual vtkDataSet *GetVTKData();
+  vtkDataSet *GetVTKData();
 #endif
 
   /** Set/Get the current time */

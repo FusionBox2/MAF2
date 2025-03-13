@@ -51,9 +51,6 @@ public:
     Get the MTime: this is the bit of magic that makes everything work.*/
   //virtual unsigned long GetMTime();
 
-  /** process events coming from vtkMAFDataPipe bridge component */
-  void OnEvent(mafEventBase *e) override;
-
    /**  Get the output of the interpolator item*/
   std::shared_ptr<mafVMEItemScalarMatrix> GetCurrentItemScalarMatrix() {return std::static_pointer_cast<mafVMEItemScalarMatrix>(m_CurrentItem);}
 

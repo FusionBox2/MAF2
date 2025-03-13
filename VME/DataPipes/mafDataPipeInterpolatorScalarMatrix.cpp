@@ -87,10 +87,3 @@ void mafDataPipeInterpolatorScalarMatrix::PreExecute()
     }
   } 
 }
-
-//------------------------------------------------------------------------------
-void mafDataPipeInterpolatorScalarMatrix::OnEvent(mafEventBase *e)
-//------------------------------------------------------------------------------
-{
-  Superclass::OnEvent(e); // this also forwards the event to parent class
-}

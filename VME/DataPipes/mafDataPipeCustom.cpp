@@ -86,27 +86,6 @@ void mafDataPipeCustom::UpdateBounds()
   }
 }
 //------------------------------------------------------------------------------
-void mafDataPipeCustom::OnEvent(mafEventBase *e)
-//------------------------------------------------------------------------------
-{
-  assert(e->GetSender()==m_VTKDataPipe); // should not receive events from other sources
-
-/*  if (e->GetSender()==m_VTKDataPipe)
-  {
-    switch (e->GetId())
-    {
-    case VME_OUTPUT_DATA_PREUPDATE:
-      PreExecute();
-    break;
-    case VME_OUTPUT_DATA_UPDATE:
-      Execute(); // superclass execute...
-    };
-  }
-*/
-  Superclass::OnEvent(e); // this also forwards the event to parent class
-}
-
-//------------------------------------------------------------------------------
 void mafDataPipeCustom::SetInputConnection(vtkAlgorithmOutput *input_dataset)
 //------------------------------------------------------------------------------
 {
