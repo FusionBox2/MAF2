@@ -31,14 +31,6 @@
 #include "mafOBB.h"
 #include "mafEventBase.h"
 #include "mafIndent.h"
-#ifdef MAF_USE_VTK
-#include <vtkAlgorithm.h>
-#include <vtkAlgorithmOutput.h>
-#include <vtkDataSet.h>
-#endif
-//------------------------------------------------------------------------------
-mafCxxTypeMacro(mafDataPipe)
-//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 mafDataPipe::mafDataPipe()
@@ -59,19 +51,6 @@ mafDataPipe::~mafDataPipe()
   //this->SetVME(NULL);
   m_VME=NULL;
 }
-
-#ifdef MAF_USE_VTK
-vtkDataSet* mafDataPipe::GetVTKData()
-{
-    vtkAlgorithmOutput* port = GetVTKOutputPort();
-    if (port != nullptr)
-    {
-        port->GetProducer()->Update();
-        return vtkDataSet::SafeDownCast(port->GetProducer()->GetOutputDataObject(port->GetIndex()));
-    }
-    return nullptr;
-}
-#endif
 
 //------------------------------------------------------------------------------
 void mafDataPipe::SetTimeStamp(mafTimeStamp t)

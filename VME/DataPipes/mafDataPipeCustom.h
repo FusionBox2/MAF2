@@ -18,11 +18,12 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "mafDataPipeInterpolator.h"
+#include "mafDataPipe.h"
 //----------------------------------------------------------------------------
 // forward declarations
 //----------------------------------------------------------------------------
 class vtkMAFDataPipe;
+class vtkDataSet;
 
 /** a data pipe which simply forwards VTK update events to the VME.
   This data pipe creates an internal vtkSource objects and links to it to 

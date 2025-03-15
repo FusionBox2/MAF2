@@ -2,7 +2,6 @@
 //----------------------------------------------------------------------------
 // includes :
 //----------------------------------------------------------------------------
-#include "mafReferenceCounted.h"
 #include "mafBaseEventHandler.h"
 #include "mafTimeStamped.h"
 #include "mafOBB.h"
@@ -10,11 +9,9 @@
 //----------------------------------------------------------------------------
 //  forward declarations
 //----------------------------------------------------------------------------
-class mafVMEItem;
 class mafVME;
 
 #ifdef MAF_USE_VTK
-  class vtkDataSet;
   class vtkAlgorithmOutput;
 #endif
 
@@ -61,7 +58,6 @@ public:
   /**
     Return a VTK dataset corresponding to the current time.*/
   virtual vtkAlgorithmOutput *GetVTKOutputPort() {return nullptr;}
-  vtkDataSet *GetVTKData();
 #endif
 
   /** Set/Get the current time */
