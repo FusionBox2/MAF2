@@ -35,6 +35,11 @@
 #include "mafIndent.h"
 #include "mafGUI.h"
 #include <assert.h>
+#ifdef MAF_USE_VTK
+#include <vtkAlgorithm.h>
+#include <vtkAlgorithmOutput.h>
+#include <vtkDataSet.h>
+#endif
 
 //-------------------------------------------------------------------------
 mafCxxAbstractTypeMacro(mafVMEOutput)
@@ -70,7 +75,13 @@ vtkDataSet *mafVMEOutput::GetVTKData()
 //-------------------------------------------------------------------------
 {
   assert(m_VME);
-  return m_VME&&m_VME->GetDataPipe()?m_VME->GetDataPipe()->GetVTKData():NULL;
+  vtkAlgorithmOutput* port = GetVTKOutputPort();
+  if (port != nullptr)
+  {
+    port->GetProducer()->Update();
+    return vtkDataSet::SafeDownCast(port->GetProducer()->GetOutputDataObject(port->GetIndex()));
+  }
+  return nullptr;
 }
 #endif
 

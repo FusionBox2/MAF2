@@ -105,7 +105,7 @@ public:
     An event is rised when the output data changes to allow attached classes to 
     update their input.*/
   virtual vtkAlgorithmOutput *GetVTKOutputPort();
-  virtual vtkDataSet *GetVTKData();
+  vtkDataSet *GetVTKData();
 #endif
 
   /**

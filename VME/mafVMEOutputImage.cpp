@@ -106,7 +106,7 @@ mafGUI* mafVMEOutputImage::CreateGui()
 
   wxBusyCursor wait;
 
-  if (m_VME && m_VME->GetDataPipe() && m_VME->GetDataPipe()->GetVTKOutputPort())
+  if (GetVTKOutputPort())
   {
     this->Update();
   }

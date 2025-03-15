@@ -75,7 +75,7 @@ mafGUI* mafVMEOutputPolyline::CreateGui()
 
   wxBusyCursor wait;
   
-  if (m_VME && m_VME->GetDataPipe() && m_VME->GetDataPipe()->GetVTKData())
+  if (GetVTKData())
   {
     this->Update();
   }
@@ -108,7 +108,7 @@ void mafVMEOutputPolyline::Update()
 {
   assert(m_VME);
   m_VME->Update();
-  if (m_VME && m_VME->GetDataPipe() && m_VME->GetDataPipe()->GetVTKData())
+  if (GetVTKData())
   {
   	m_Length = mafString::Format(_L("%.2f"),CalculateLength());  
     m_NumberOfPoints = mafToString(((vtkPolyData *)m_VME->GetOutput()->GetVTKData())->GetNumberOfPoints());

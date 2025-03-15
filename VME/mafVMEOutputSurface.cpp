@@ -81,8 +81,8 @@ void mafVMEOutputSurface::SetTexture(vtkImageData *tex)
 vtkImageData *mafVMEOutputSurface::GetTexture()
 //-------------------------------------------------------------------------
 {
-  if (m_VME && m_VME->GetDataPipe() && m_VME->GetDataPipe()->GetVTKData())
-    m_VME->GetDataPipe()->GetVTKOutputPort()->GetProducer()->UpdateInformation();
+  if (GetVTKData())
+    GetVTKOutputPort()->GetProducer()->UpdateInformation();
   return m_Texture;
 }
 

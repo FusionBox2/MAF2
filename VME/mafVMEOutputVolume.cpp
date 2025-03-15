@@ -101,7 +101,7 @@ mafGUI* mafVMEOutputVolume::CreateGui()
   assert(m_Gui == NULL);
   m_Gui = mafVMEOutput::CreateGui();
 
-  if (m_VME && m_VME->GetDataPipe() && m_VME->GetDataPipe()->GetVTKData())
+  if (GetVTKData())
   {
     this->Update();
   }
@@ -130,7 +130,7 @@ void mafVMEOutputVolume::Update()
 {
   assert(m_VME);
   m_VME->Update();
-  if (m_VME && m_VME->GetDataPipe() && m_VME->GetDataPipe()->GetVTKData())
+  if (GetVTKData())
   {
     m_VtkDataType = _R("");
     m_VtkDataType += _R(this->GetVTKData()->GetClassName());

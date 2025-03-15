@@ -3233,7 +3233,7 @@ void medViewArbitraryOrthoSlice::AccumulateTextures( mafVMESlicer *inSlicer, dou
 	assert(m_InputVolume);
 	assert(m_InputVolume->IsA("mafVMEVolumeGray"));
 
-	vtkStructuredPoints *structuredPoints = vtkStructuredPoints::SafeDownCast(m_InputVolume->GetDataPipe()->GetVTKData());
+	vtkStructuredPoints *structuredPoints = vtkStructuredPoints::SafeDownCast(m_InputVolume->GetOutput()->GetVTKData());
 
 	// BEWARE: working for structured points only
 	// TODO REFACTOR THIS:
@@ -4190,7 +4190,7 @@ void medViewArbitraryOrthoSlice::OnEventID_ENABLE_THICKNESS( int color )
 {
 	assert(m_InputVolume);
 
-	vtkStructuredPoints *structuredPoints = vtkStructuredPoints::SafeDownCast(m_InputVolume->GetDataPipe()->GetVTKData());
+	vtkStructuredPoints *structuredPoints = vtkStructuredPoints::SafeDownCast(m_InputVolume->GetOutput()->GetVTKData());
 
 	// BEWARE: working for structured points only
 	// TODO REFACTOR THIS:
