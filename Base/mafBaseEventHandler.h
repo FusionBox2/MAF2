@@ -9,8 +9,12 @@ BEGIN_FTK_NAMESPACE
 class FTK_BASE_EXPORT mafBaseEventHandler
 {
 public:
-  mafBaseEventHandler() {}
-  virtual ~mafBaseEventHandler() {}
+  mafBaseEventHandler() = default;
+  virtual ~mafBaseEventHandler() = default;
+  mafBaseEventHandler(const mafBaseEventHandler&) = delete;
+  mafBaseEventHandler(mafBaseEventHandler&&) = delete;
+  mafBaseEventHandler& operator=(const mafBaseEventHandler&) = delete;
+  mafBaseEventHandler& operator=(mafBaseEventHandler&&) = delete;
 
   /** process the events sent by subjects */
   virtual void OnEvent(mafEventBase *e) = 0;
