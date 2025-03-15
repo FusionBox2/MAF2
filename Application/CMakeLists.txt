@@ -31,6 +31,9 @@ endif(WIN32)
 SET(PROJECT_LIBS
   mafCommon mafCore mafGui mafOperations mafViews mafVME vtkMAF
 )
+target_include_directories(${PROJECT_NAME} PRIVATE .)
+target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_SOURCE_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_BINARY_DIR})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${PROJECT_LIBS})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${VTK_LIBRARIES} )
 

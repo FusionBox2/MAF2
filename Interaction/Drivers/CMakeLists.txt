@@ -93,6 +93,10 @@ ENDIF (MAF_USE_WIIMOTE)
 # Create the mafDrivers library
 #
 ADD_LIBRARY (mafDrivers STATIC ${DRIVERS_SRCS})
+target_include_directories(mafDrivers PRIVATE ${FTK_SOURCE_DIR})
+target_include_directories(mafDrivers PRIVATE ${FTK_BINARY_DIR})
+target_include_directories(mafDrivers PRIVATE ${FTK_SOURCE_DIR}/Base)
+target_include_directories(mafDrivers PRIVATE ${FTK_SOURCE_DIR}/Gui)
 
 # 
 # Copy drivers libs to library and execute path

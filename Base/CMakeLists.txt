@@ -86,5 +86,10 @@ IF (MAF_USE_VTK)
 ENDIF (MAF_USE_VTK)
 
 # Create the library.
-ADD_LIBRARY(${PROJECT_NAME} ${PROJECT_SRCS})
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${PROJECT_LIBS})
+add_library(${PROJECT_NAME} ${PROJECT_SRCS})
+target_include_directories(${PROJECT_NAME} PUBLIC .)
+target_include_directories(${PROJECT_NAME} PUBLIC ${FTK_SOURCE_DIR}/Core)
+target_include_directories(${PROJECT_NAME} PUBLIC ${FTK_SOURCE_DIR}/Gui)
+target_include_directories(${PROJECT_NAME} PUBLIC ${FTK_SOURCE_DIR}/Interaction)
+target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_SOURCE_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_BINARY_DIR})

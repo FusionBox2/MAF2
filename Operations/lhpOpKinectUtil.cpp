@@ -73,9 +73,6 @@
 #include "vtkTransformPolyDataFilter.h"
 #include "medVMEAnalog.h"
 
-
-#include "resource.h"
-
 //----------------------------------------------------------------------------
 // Required for MSVC
 //----------------------------------------------------------------------------

@@ -15,4 +15,7 @@ if(FTK_USE_XercesC)
 endif(FTK_USE_XercesC)
 
 add_library(${PROJECT_NAME} ${PROJECT_SRCS})
+target_include_directories(${PROJECT_NAME} PUBLIC .)
+target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_SOURCE_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_BINARY_DIR})
 target_link_libraries(${PROJECT_NAME} ${PROJECT_LIBS})

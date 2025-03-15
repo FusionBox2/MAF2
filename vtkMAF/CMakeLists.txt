@@ -248,5 +248,10 @@ IF (MAF_USE_VTK)
 ENDIF (MAF_USE_VTK)
 
 # Create the library.
-ADD_LIBRARY(${PROJECT_NAME} ${vtkMAF_SRCS} ${vtkMED_SRCS} ${vtkLHP_SRCS})
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${PROJECT_LIBS})
+add_library(${PROJECT_NAME} ${vtkMAF_SRCS} ${vtkMED_SRCS} ${vtkLHP_SRCS})
+target_include_directories(${PROJECT_NAME} PUBLIC .)
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_BINARY_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_SOURCE_DIR}/Base)
+target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_SOURCE_DIR}/Common)
+target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_BINARY_DIR})
+target_link_libraries(${PROJECT_NAME} ${PROJECT_LIBS})

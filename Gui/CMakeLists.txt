@@ -196,47 +196,12 @@ IF (MAF_USE_CURL)
   SET(PROJECT_LIBS ${PROJECT_LIBS} CURL::libcurl)
 ENDIF (MAF_USE_CURL)
 
-#........................................................
-#solo la vtkCommon e' linkata per default
-#per linkare altre lib inserirle qui di seguito
-#
-#  # VTK specific classes
-#  IF (MAF_USE_VTK)
-#  SET(PROJECT_LIBS ${PROJECT_LIBS} 
-#    ...... place libname here .....     
-#  )
-#
-#  SET(PROJECT_SRCS
-#    ${PROJECT_SRCS}
-#    ...... place source filenames here .....     
-#  )
-#ENDIF (MAF_USE_VTK)
-#........................................................
-
-#--------------------------------------------------------
-# Do not change anything below this line.
-
-##### SIL ------------ IF (NOT WIN32)
-##### SIL ------------   #INCLUDE (${MAF_SOURCE_DIR}/modules/FindGTK20.cmake)
-##### SIL ------------ INCLUDE (${CMAKE_ROOT}/Modules/FindGTK.cmake)
-##### SIL ------------   INCLUDE_DIRECTORIES(${GTK_gtk_INCLUDE_PATH})
-##### SIL ------------   INCLUDE_DIRECTORIES(${GTK_glib_INCLUDE_PATH})
-##### SIL ------------   INCLUDE_DIRECTORIES(${GTK_glibconfig_INCLUDE_PATH})
-##### SIL ------------   #INCLUDE_DIRECTORIES(${GTK_gtkgl_INCLUDE_PATH})
-##### SIL ------------ ENDIF (NOT WIN32)
-
-# Need to include class headers and the configuration header.
-INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR})
-INCLUDE_DIRECTORIES(${PROJECT_BINARY_DIR})
-
 # Create the library.
-ADD_LIBRARY(${PROJECT_NAME} ${PROJECT_SRCS})
-##MESSAGE ("${PROJECT_NAME} linked libraries: ${PROJECT_LIBS}")
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${PROJECT_LIBS})
-
-# this is necessaty to force MFL compilation....
-##MESSAGE ("${PROJECT_NAME} dependencies: ${MFL_BUILD_TARGETS}")
-##ADD_DEPENDENCIES(${PROJECT_NAME} ${MFL_BUILD_TARGETS})
-
-#--------------------------------------------------------
-#SUBDIRS(examples)
+add_library(${PROJECT_NAME} ${PROJECT_SRCS})
+target_include_directories(${PROJECT_NAME} PUBLIC .)
+target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_SOURCE_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_SOURCE_DIR}/Common)
+target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_SOURCE_DIR}/VME)
+target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_BINARY_DIR})
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_BINARY_DIR})
+target_link_libraries(${PROJECT_NAME} ${PROJECT_LIBS})

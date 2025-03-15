@@ -252,8 +252,13 @@ SET(PROJECT_LIBS mafBase IO mafGui vtkMAF)
 #ENDIF (MAF_USE_VTK)
 
 # Create the library.
-ADD_LIBRARY(${PROJECT_NAME} ${PROJECT_SRCS})
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${PROJECT_LIBS})
+add_library(${PROJECT_NAME} ${PROJECT_SRCS})
+target_include_directories(${PROJECT_NAME} PUBLIC .)
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_BINARY_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_SOURCE_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_BINARY_DIR})
+target_include_directories(${PROJECT_NAME} PUBLIC Drivers)
+target_link_libraries(${PROJECT_NAME} ${PROJECT_LIBS} mafBase mafVME)
 
-CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/mafInteractionConfigure.h.in ${PROJECT_BINARY_DIR}/mafInteractionConfigure.h IMMEDIATE)
+configure_file(${PROJECT_SOURCE_DIR}/mafInteractionConfigure.h.in ${PROJECT_BINARY_DIR}/mafInteractionConfigure.h IMMEDIATE)
 

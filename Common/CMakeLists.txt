@@ -151,8 +151,8 @@ IF (MAF_USE_CURL)
   SET(PROJECT_LIBS ${PROJECT_LIBS} CURL::libcurl)
 ENDIF (MAF_USE_CURL)
 
-# Create the library.
-ADD_LIBRARY(${PROJECT_NAME} ${PROJECT_SRCS})
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${PROJECT_LIBS})
-
-ADD_DEPENDENCIES(${PROJECT_NAME} vtkMAF)
+add_library(${PROJECT_NAME} ${PROJECT_SRCS})
+target_include_directories(${PROJECT_NAME} PUBLIC .)
+target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_SOURCE_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_BINARY_DIR})
+target_link_libraries(${PROJECT_NAME} ${PROJECT_LIBS})

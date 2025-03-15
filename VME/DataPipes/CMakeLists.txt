@@ -26,6 +26,8 @@ ENDIF (MAF_USE_ITK)
 SET(PROJECT_LIBS mafCore vtkMAF)
 
 # Create the library.
-ADD_LIBRARY(${PROJECT_NAME} ${PROJECT_SRCS})
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${PROJECT_LIBS})
-
+add_library(${PROJECT_NAME} ${PROJECT_SRCS})
+target_include_directories(${PROJECT_NAME} PUBLIC .)
+target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_SOURCE_DIR})
+target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_BINARY_DIR})
+target_link_libraries(${PROJECT_NAME} ${PROJECT_LIBS})
