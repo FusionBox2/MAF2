@@ -124,7 +124,7 @@ void mafVMEGizmo::SetInputConnection(vtkAlgorithmOutput* port)
 
     // set data as input to VTK 
     mafDataPipeCustom* dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
-    dpipe->GetVTKDataPipe()->SetInputConnection(m_Port);
+    dpipe->SetInputConnection(m_Port);
 
     Modified();
 }

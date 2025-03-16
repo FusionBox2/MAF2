@@ -73,7 +73,7 @@ mafVMELandmark::mafVMELandmark()
   dpipe->SetDependOnAbsPose(true);
   SetDataPipe(dpipe);
 
-  dpipe->GetVTKDataPipe()->SetInputData(m_Polydata);
+  dpipe->SetInputData(m_Polydata);
   m_Position[0] = m_Position[1] = m_Position[2] = _R("0.0");
   m_LocalPosition[0] = m_LocalPosition[1] = m_LocalPosition[2] = _R("0.0");
 }
@@ -101,7 +101,7 @@ int mafVMELandmark::DeepCopy(mafNode *a)
     mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
     if (dpipe)
     {
-      dpipe->GetVTKDataPipe()->SetInputData(m_Polydata);
+      dpipe->SetInputData(m_Polydata);
       //m_Polydata->Update();
     }
 

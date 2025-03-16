@@ -80,7 +80,7 @@ medVMEMaps::medVMEMaps()
   auto dpipe = mafDataPipeCustom::NewSPtr();
   dpipe->SetDependOnAbsPose(true);
   SetDataPipe(dpipe);
-  dpipe->GetVTKDataPipe()->SetInputData(0, m_PolyData);
+  dpipe->SetInputData(m_PolyData);
 
   GetMaterial()->m_MaterialType = mmaMaterial::USE_LOOKUPTABLE;
 
@@ -118,7 +118,7 @@ int medVMEMaps::DeepCopy(mafNode *a)
     if (dpipe)
     {
       dpipe->SetDependOnAbsPose(true);
-      dpipe->GetVTKDataPipe()->SetInputData(0, m_PolyData);
+      dpipe->SetInputData(m_PolyData);
     }
     m_MappedName      = maps->m_MappedName;
     GetMaterial()->m_MaterialType = mmaMaterial::USE_LOOKUPTABLE;
