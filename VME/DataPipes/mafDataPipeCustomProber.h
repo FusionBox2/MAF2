@@ -1,24 +1,5 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafDataPipeCustomProber
- Authors: Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafDataPipeCustomProber_h
-#define __mafDataPipeCustomProber_h
-
-//----------------------------------------------------------------------------
-// Include:
-//----------------------------------------------------------------------------
 #include "mafDataPipeCustom.h"
 
 //----------------------------------------------------------------------------
@@ -36,7 +17,7 @@ class mafNode;
 class MAF_EXPORT mafDataPipeCustomProber : public mafDataPipeCustom
 {
 public:
-  mafTypeMacro(mafDataPipeCustomProber,mafDataPipe);
+  mafTypeMacroN(mafDataPipeCustomProber);
 
   enum PROBING_MODALITY
   {
@@ -111,12 +92,13 @@ public:
 
 protected:
   mafDataPipeCustomProber();
+  mafDataPipeCustomProber(const mafDataPipeCustomProber&) = delete;
+  mafDataPipeCustomProber(mafDataPipeCustomProber&&) = delete;
+  mafDataPipeCustomProber& operator=(const mafDataPipeCustomProber&) = delete;
+  mafDataPipeCustomProber& operator=(mafDataPipeCustomProber&&) = delete;
   ~mafDataPipeCustomProber() override;
 
   /** function called before of data pipe execution */
-  void PreExecute() override;
-
-  /** function called to updated the data pipe output */
   void Execute() override;
 
   mafNode *m_Surface;
@@ -131,9 +113,4 @@ protected:
   int		 m_ProberMode;
   float  m_HighDensity;
   float  m_LowDensity;
-
-private:
-  mafDataPipeCustomProber(const mafDataPipeCustomProber&); // Not implemented
-  void operator=(const mafDataPipeCustomProber&); // Not implemented  
 };
-#endif /* __mafDataPipeCustomProber_h */

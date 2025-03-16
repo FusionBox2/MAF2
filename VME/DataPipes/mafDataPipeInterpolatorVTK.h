@@ -1,23 +1,5 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafDataPipeInterpolatorVTK
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafVTKInterpolator_h
-#define __mafVTKInterpolator_h
-//----------------------------------------------------------------------------
-// Include:
-//----------------------------------------------------------------------------
 #include "mafDataPipeInterpolator.h"
 #include "mafVMEItemVTK.h"
 //----------------------------------------------------------------------------
@@ -38,7 +20,7 @@ class vtkMAFDataPipe;
 class MAF_EXPORT mafDataPipeInterpolatorVTK : public mafDataPipeInterpolator
 {
 public:
-  mafTypeMacro(mafDataPipeInterpolatorVTK,mafDataPipeInterpolator);
+  mafTypeMacroN(mafDataPipeInterpolatorVTK);
 
   /** This DataPipe accepts only VME's with internal DataArray. */
   bool Accept(mafVME *vme) override;
@@ -58,17 +40,13 @@ public:
 
 protected:
   mafDataPipeInterpolatorVTK();
+  mafDataPipeInterpolatorVTK(const mafDataPipeInterpolatorVTK&) = delete;
+  mafDataPipeInterpolatorVTK(mafDataPipeInterpolatorVTK&&) = delete;
+  mafDataPipeInterpolatorVTK& operator=(const mafDataPipeInterpolatorVTK&) = delete;
+  mafDataPipeInterpolatorVTK& operator=(mafDataPipeInterpolatorVTK&&) = delete;
   ~mafDataPipeInterpolatorVTK() override;
 
-  void PreExecute() override;
-  void Execute() override {}
+  void Execute() override;
 
-  vtkMAFDataPipe *m_VTKDataPipe; ///< VTK pipeline bridge component
-
-private:
-  mafDataPipeInterpolatorVTK(const mafDataPipeInterpolatorVTK&); // Not implemented
-  void operator=(const mafDataPipeInterpolatorVTK&); // Not implemented  
+  vtkSmartPointer<vtkMAFDataPipe> m_VTKDataPipe; ///< VTK pipeline bridge component
 };
-
-#endif /* __mafVTKInterpolator_h */
- 

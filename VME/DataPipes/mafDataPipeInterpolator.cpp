@@ -1,29 +1,3 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafDataPipeInterpolator
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-
 #include "mafDataPipeInterpolator.h"
 
 #include "mafVME.h"
@@ -31,10 +5,6 @@
 #include "mafVMEGenericAbstract.h"
 
 #include "mafDataVector.h"
-
-//------------------------------------------------------------------------------
-mafCxxAbstractTypeMacro(mafDataPipeInterpolator)
-//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 mafDataPipeInterpolator::mafDataPipeInterpolator()
@@ -91,10 +61,10 @@ bool mafDataPipeInterpolator::Accept(mafVME *vme)
 }
 
 //------------------------------------------------------------------------------
-void mafDataPipeInterpolator::PreExecute()
+void mafDataPipeInterpolator::Execute()
 //------------------------------------------------------------------------------
 {
-  Superclass::PreExecute();
+  Superclass::Execute();
 
   auto mtime=GetMTime();
 
@@ -177,25 +147,27 @@ void mafDataPipeInterpolator::UpdateCurrentItem(std::shared_ptr<mafVMEItem> item
     //m_UpdateTime.Modified();
   }
 }
-//------------------------------------------------------------------------------
-void mafDataPipeInterpolator::OnEvent(mafEventBase *maf_event)
+void mafDataPipeInterpolator::OnPreUpdate()
 //------------------------------------------------------------------------------
 {
-  switch (maf_event->GetId())
+  if (GetMTime() > m_PreExecuteTime.GetMTime() || (m_CurrentItem && !m_CurrentItem->IsDataPresent()))
   {
-  case VME_OUTPUT_DATA_PREUPDATE:
-    if (GetMTime() > m_PreExecuteTime.GetMTime() || (m_CurrentItem && !m_CurrentItem->IsDataPresent()))
-    {
-      m_PreExecuteTime.Modified();
-      PreExecute();
-      // forward event to VME
-      if (m_VME) m_VME->OnEvent(maf_event);
-    }
-    break;
-  case VME_OUTPUT_DATA_UPDATE:
+    m_PreExecuteTime.Modified();
     Execute();
     // forward event to VME
-    if (m_VME) m_VME->OnEvent(maf_event);
-    break;
-  }; 
+    if (m_VME)
+    {
+      { mafEventBase evUnq(this, VME_OUTPUT_DATA_PREUPDATE); m_VME->OnEvent(&evUnq); }
+    }
+  }
+}
+//------------------------------------------------------------------------------
+void mafDataPipeInterpolator::OnUpdate()
+//------------------------------------------------------------------------------
+{
+  // forward event to VME
+  if (m_VME)
+  {
+    { mafEventBase evUnq(this, VME_OUTPUT_DATA_UPDATE); m_VME->OnEvent(&evUnq); }
+  }
 }

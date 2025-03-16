@@ -1,23 +1,5 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafDataPipeInterpolator
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafDataPipeInterpolator_h
-#define __mafDataPipeInterpolator_h
-//----------------------------------------------------------------------------
-// Include:
-//----------------------------------------------------------------------------
 #include "mafDataPipe.h"
 //----------------------------------------------------------------------------
 // forward declarations
@@ -34,12 +16,13 @@ class mafVMEItem;
 class MAF_EXPORT mafDataPipeInterpolator : public mafDataPipe
 {
 public:
-  mafAbstractTypeMacro(mafDataPipeInterpolator,mafDataPipe);
+  mafAbstractTypeMacroN(mafDataPipeInterpolator);
 
   /** This DataPipe accepts only VME's with internal DataArray. */
   bool Accept(mafVME *vme) override;
 
-  void OnEvent(mafEventBase *maf_event) override;
+  void OnUpdate() override;
+  void OnPreUpdate() override;
 
   /**
     This function makes the current bounds to be updated. It's optimized
@@ -64,9 +47,12 @@ public:
 
 protected:
   mafDataPipeInterpolator();
+  mafDataPipeInterpolator(const mafDataPipeInterpolator&) = delete;
+  mafDataPipeInterpolator(mafDataPipeInterpolator&&) = delete;
+  mafDataPipeInterpolator& operator=(const mafDataPipeInterpolator&) = delete;
+  mafDataPipeInterpolator& operator=(mafDataPipeInterpolator&&) = delete;
   ~mafDataPipeInterpolator() override;
 
-  void PreExecute() override =0;
   void Execute() override =0;
 
   /** This function is called internally to updated the output data according
@@ -93,12 +79,4 @@ protected:
   mafMTime      m_UpdateTime;   ///< the modification time of last data update
 
   bool          m_ReleaseDataFlag; ///< this flag forces the interpolator to release unnecessary data (default == false)
-
-private:
-  mafDataPipeInterpolator(const mafDataPipeInterpolator&); // Not implemented
-  void operator=(const mafDataPipeInterpolator&); // Not implemented
-  
 };
-
-#endif /* __mafDataPipeInterpolator_h */
- 

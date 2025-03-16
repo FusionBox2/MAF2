@@ -1,23 +1,5 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafDataPipeInterpolatorScalarMatrix
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafScalarMatrixInterpolator_h
-#define __mafScalarMatrixInterpolator_h
-//----------------------------------------------------------------------------
-// Include:
-//----------------------------------------------------------------------------
 #include "mafDataPipeInterpolator.h"
 #include <vnl/vnl_matrix.h>
 
@@ -42,7 +24,7 @@ class MAF_EXPORT mafDataPipeInterpolatorScalarMatrix : public mafDataPipeInterpo
 {
 public:
   /** type macro for RTTI and instance creation*/
-  mafTypeMacro(mafDataPipeInterpolatorScalarMatrix,mafDataPipeInterpolator);
+  mafTypeMacroN(mafDataPipeInterpolatorScalarMatrix);
 
   /** This DataPipe accepts only VME's with internal DataArray. */
   bool Accept(mafVME *vme) override;
@@ -58,24 +40,15 @@ public:
   virtual vnl_matrix<double> &GetScalarData();
 
 protected:
-  /** constructor */
   mafDataPipeInterpolatorScalarMatrix();
-  /** destructor */
+  mafDataPipeInterpolatorScalarMatrix(const mafDataPipeInterpolatorScalarMatrix&) = delete;
+  mafDataPipeInterpolatorScalarMatrix(mafDataPipeInterpolatorScalarMatrix&&) = delete;
+  mafDataPipeInterpolatorScalarMatrix& operator=(const mafDataPipeInterpolatorScalarMatrix&) = delete;
+  mafDataPipeInterpolatorScalarMatrix& operator=(mafDataPipeInterpolatorScalarMatrix&&) = delete;
   ~mafDataPipeInterpolatorScalarMatrix() override;
 
   /** Set m_ScalarData to current item data*/
-  void PreExecute() override;
-
-  /** Execute possible procedural code: Empty function */
-  void Execute() override {}
+  void Execute() override;
 
   vnl_matrix<double> m_ScalarData;
-
-private:
-  /** copy constructor not implemented */
-  mafDataPipeInterpolatorScalarMatrix(const mafDataPipeInterpolatorScalarMatrix&); 
-  /** assignment operator not implemeted */
-  void operator=(const mafDataPipeInterpolatorScalarMatrix&); 
 };
-
-#endif /* __mafScalarInterpolator_h */

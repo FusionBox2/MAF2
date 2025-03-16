@@ -1,27 +1,8 @@
-/*=========================================================================
+#pragma once 
 
- Program: MAF2
- Module: mafDataPipeCustom
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafDataPipeCustom_h
-#define __mafDataPipeCustom_h
-//----------------------------------------------------------------------------
-// Include:
-//----------------------------------------------------------------------------
 #include "mafDataPipe.h"
-//----------------------------------------------------------------------------
-// forward declarations
-//----------------------------------------------------------------------------
+#include "vtkSmartPointer.h"
+
 class vtkMAFDataPipe;
 class vtkDataSet;
 
@@ -33,13 +14,10 @@ class vtkDataSet;
 class MAF_EXPORT mafDataPipeCustom : public mafDataPipe
 {
 public:
-  mafTypeMacro(mafDataPipeCustom,mafDataPipe);
+  mafTypeMacroN(mafDataPipeCustom);
 
   /** return the VTK dataset generated as output to this data pipe */
   vtkAlgorithmOutput *GetVTKOutputPort() override;
-
-  /** return the bridge object between VTK datapipe and MAF update mechanism */
-  vtkMAFDataPipe *GetVTKDataPipe();
 
   /** update the data pipe output */
   void Update() override;
@@ -55,14 +33,11 @@ public:
 
 protected:
   mafDataPipeCustom();
+  mafDataPipeCustom(const mafDataPipeCustom&) = delete;
+  mafDataPipeCustom(mafDataPipeCustom&&) = delete;
+  mafDataPipeCustom& operator=(const mafDataPipeCustom&) = delete;
+  mafDataPipeCustom& operator=(mafDataPipeCustom&&) = delete;
   ~mafDataPipeCustom() override;
 
-  vtkMAFDataPipe *m_VTKDataPipe; ///< VTK pipeline bridge component
-
-private:
-  mafDataPipeCustom(const mafDataPipeCustom&); // Not implemented
-  void operator=(const mafDataPipeCustom&); // Not implemented  
+  vtkSmartPointer<vtkMAFDataPipe> m_VTKDataPipe; ///< VTK pipeline bridge component
 };
-
-#endif /* __mafDataPipeCustom_h */
- 

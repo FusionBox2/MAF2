@@ -1,24 +1,4 @@
-/*=========================================================================
-
- Program: MAF2Medical
- Module: medDataPipeCustomSegmentationVolume
- Authors: Matteo Giacomoni, Gianluigi Crimi
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __medDataPipeCustomSegmentationVolume_h
-#define __medDataPipeCustomSegmentationVolume_h
-
-//----------------------------------------------------------------------------
-// Include:
-//----------------------------------------------------------------------------
+#pragma once
 
 #include "mafDataPipeCustom.h"
 #include <vector>
@@ -34,7 +14,7 @@ class vtkStructuredPoints;
 class MED_VME_EXPORT medDataPipeCustomSegmentationVolume : public mafDataPipeCustom
 {
 public:
-  mafTypeMacro(medDataPipeCustomSegmentationVolume,mafDataPipe);
+  mafTypeMacroN(medDataPipeCustomSegmentationVolume);
 
   /** Make a copy of itself.*/
   int DeepCopy(mafDataPipe *pipe) override;
@@ -148,16 +128,18 @@ public:
   int GetNumberOfSeeds(){return m_RegionGrowingSeeds.size();};
 
 protected:
-  /** constructor. */
   medDataPipeCustomSegmentationVolume();
-  /** destructor. */
+  medDataPipeCustomSegmentationVolume(const medDataPipeCustomSegmentationVolume&);
+  medDataPipeCustomSegmentationVolume(medDataPipeCustomSegmentationVolume&&);
+  medDataPipeCustomSegmentationVolume& operator=(const medDataPipeCustomSegmentationVolume&);
+  medDataPipeCustomSegmentationVolume& operator=(medDataPipeCustomSegmentationVolume&&);
   ~medDataPipeCustomSegmentationVolume() override;
 
   /** Check that the range has right values */
   int AutomaticCheckRange(int startSlice,int endSlice,int indexToExclude = -1);
 
   /** function called before of data pipe execution */
-  /*virtual*/ void PreExecute() override;
+  /*virtual*/ void Execute() override;
 
   /** Apply the automatic segmentation */
   void ApplyAutomaticSegmentation();
@@ -170,9 +152,6 @@ protected:
 
   /** Apply the region growing segmentation */
   void ApplyRegionGrowingSegmentation();
-
-  /** function called to updated the data pipe output */
-  /*virtual*/ void Execute() override;
 
   vtkRectilinearGrid *m_RG;
   vtkStructuredPoints *m_SP;
@@ -212,12 +191,4 @@ protected:
   int m_RegionGrowingStartSlice;
   int m_RegionGrowingEndSlice;
   //////////////////////////////////////////////////////////////////////////
-
-
-private:
-  /** Not implemented */
-  medDataPipeCustomSegmentationVolume(const medDataPipeCustomSegmentationVolume&); 
-  /** Operator = Not implemented*/
-  void operator=(const medDataPipeCustomSegmentationVolume&); 
 };
-#endif /* __medDataPipeCustomSegmentationVolume_h */

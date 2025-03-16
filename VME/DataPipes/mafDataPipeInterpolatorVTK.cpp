@@ -1,58 +1,24 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafDataPipeInterpolatorVTK
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-
 #include "mafDataPipeInterpolatorVTK.h"
 
 #include "mafVME.h"
 #include "mafVMEItemVTK.h"
 #include "mafVMEGeneric.h"
 #include "vtkMAFDataPipe.h"
-#include "mafEventBase.h"
 #include "vtkDataSet.h"
-
-#include <assert.h>
-
-//------------------------------------------------------------------------------
-mafCxxTypeMacro(mafDataPipeInterpolatorVTK)
-//------------------------------------------------------------------------------
+#include "vtkTrivialProducer.h"
+#include "vtkStreamingDemandDrivenPipeline.h"
 
 //------------------------------------------------------------------------------
 mafDataPipeInterpolatorVTK::mafDataPipeInterpolatorVTK()
 //------------------------------------------------------------------------------
 {
-  vtkNEW(m_VTKDataPipe);
+  m_VTKDataPipe = vtkNew<vtkMAFDataPipe>();
   m_VTKDataPipe->SetDataPipe(this);
 }
 
 //------------------------------------------------------------------------------
-mafDataPipeInterpolatorVTK::~mafDataPipeInterpolatorVTK()
+mafDataPipeInterpolatorVTK::~mafDataPipeInterpolatorVTK() = default;
 //------------------------------------------------------------------------------
-{
-  vtkDEL(m_VTKDataPipe);
-} 
 
 //------------------------------------------------------------------------------
 bool mafDataPipeInterpolatorVTK::Accept(mafVME *vme)
@@ -78,10 +44,10 @@ void mafDataPipeInterpolatorVTK::Update()
 }
 
 //------------------------------------------------------------------------------
-void mafDataPipeInterpolatorVTK::PreExecute()
+void mafDataPipeInterpolatorVTK::Execute()
 //------------------------------------------------------------------------------
 {
-  Superclass::PreExecute();
+  Superclass::Execute();
 
   auto mtime=this->GetMTime();
 

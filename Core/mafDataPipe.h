@@ -1,14 +1,8 @@
 #pragma once
-//----------------------------------------------------------------------------
-// includes :
-//----------------------------------------------------------------------------
-#include "mafBaseEventHandler.h"
+
 #include "mafTimeStamped.h"
 #include "mafOBB.h"
 
-//----------------------------------------------------------------------------
-//  forward declarations
-//----------------------------------------------------------------------------
 class mafVME;
 
 #ifdef MAF_USE_VTK
@@ -29,10 +23,14 @@ class mafVME;
   - rewrite GetOutput()
   - reerite UpdateBounds()
 */
-class MAF_EXPORT mafDataPipe:public mafTimeStamped, public mafBaseEventHandler
+class MAF_EXPORT mafDataPipe:public mafTimeStamped
 {
 public:
   mafDataPipe();
+  mafDataPipe(const mafDataPipe&) = delete;
+  mafDataPipe(mafDataPipe&&) = delete;
+  mafDataPipe& operator=(const mafDataPipe&) = delete;
+  mafDataPipe& operator=(mafDataPipe&&) = delete;
   virtual ~mafDataPipe();
 
   mafBaseTypeMacro(mafDataPipe);
@@ -102,13 +100,11 @@ public:
   /** print a dump of this object */
   virtual void Print(std::ostream& os, const int tabs=0) const;
 
-  void OnEvent(mafEventBase *maf_event) override;
-  
+  virtual void OnUpdate();
+  virtual void OnPreUpdate();
+
 protected:
   /** function called before of data pipe execution */
-  virtual void PreExecute();
-
-  /** function called to updated the data pipe output */
   virtual void Execute();
 
   mafOBB        m_Bounds;///< bounds of the output data
@@ -119,8 +115,4 @@ protected:
   int           m_DependOnPose;
   int           m_DependOnAbsPose;
   int           m_DependOnVMETime;
-
-private:
-  mafDataPipe(const mafDataPipe&);   //Not implemented
-  void operator=(const mafDataPipe&);   //Not implemented  
 };

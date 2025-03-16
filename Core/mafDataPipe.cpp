@@ -1,29 +1,3 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafDataPipe
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-
 #include "mafDataPipe.h"
 
 #include "mafVME.h"
@@ -38,19 +12,13 @@ mafDataPipe::mafDataPipe()
 {
   m_CurrentTime = 0;
   m_Bounds.Reset();
-  m_VME=NULL;
+  m_VME = nullptr;
   m_DependOnAbsPose=0;
   m_DependOnPose=0;
   m_DependOnVMETime = 1; //Paolo
 }
 
-//------------------------------------------------------------------------------
-mafDataPipe::~mafDataPipe()
-//------------------------------------------------------------------------------
-{
-  //this->SetVME(NULL);
-  m_VME=NULL;
-}
+mafDataPipe::~mafDataPipe() = default;
 
 //------------------------------------------------------------------------------
 void mafDataPipe::SetTimeStamp(mafTimeStamp t)
@@ -140,37 +108,38 @@ MTimeType mafDataPipe::GetMTime()
 }
 
 //------------------------------------------------------------------------------
-void mafDataPipe::PreExecute()
-//------------------------------------------------------------------------------
-{
-}
-//------------------------------------------------------------------------------
 void mafDataPipe::Execute()
 //------------------------------------------------------------------------------
 {
 }
 
 //------------------------------------------------------------------------------
-void mafDataPipe::OnEvent(mafEventBase *maf_event)
+void mafDataPipe::OnPreUpdate()
 //------------------------------------------------------------------------------
 {
-  switch (maf_event->GetId())
-  {
-  case VME_OUTPUT_DATA_PREUPDATE:
     if (GetMTime()>m_PreExecuteTime.GetMTime())
     {
       m_PreExecuteTime.Modified();
-      PreExecute();
+      Execute();
       // forward event to VME
-      if (m_VME) m_VME->OnEvent(maf_event);
+      if (m_VME)
+      {
+        mafEventBase evUnq(this, VME_OUTPUT_DATA_PREUPDATE);
+      	m_VME->OnEvent(&evUnq);
+      }
     }
-  break;
-  case VME_OUTPUT_DATA_UPDATE:
-    Execute();
+}
+
+//------------------------------------------------------------------------------
+void mafDataPipe::OnUpdate()
+//------------------------------------------------------------------------------
+{
     // forward event to VME
-    if (m_VME) m_VME->OnEvent(maf_event);
-  break;
-  }; 
+    if (m_VME)
+    {
+      mafEventBase evUnq(this, VME_OUTPUT_DATA_UPDATE);
+    	m_VME->OnEvent(&evUnq);
+    }
 }
 
 //------------------------------------------------------------------------------
