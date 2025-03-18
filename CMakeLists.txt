@@ -65,7 +65,7 @@ endif(ITK_FOUND)
 
 if(wxWidgets_FOUND)
   link_libraries(${wxWidgets_LIBRARIES})
-  endif(wxWidgets_FOUND)
+endif(wxWidgets_FOUND)
 
 add_subdirectory(Application)
 add_subdirectory(Base)

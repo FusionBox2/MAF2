@@ -37,20 +37,35 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_BINARY_DIR})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${PROJECT_LIBS})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${VTK_LIBRARIES} )
 
-FOREACH(config ${CMAKE_CONFIGURATION_TYPES})
-  SET(OUT_SHADER_DIR ${EXECUTABLE_OUTPUT_PATH}/${config}/Shaders/iso-surface)
-  FILE(MAKE_DIRECTORY ${OUT_SHADER_DIR})
-		
-  FILE(GLOB cg_shading_file_list "${FTK_SOURCE_DIR}/vtkMAF/iso-surface/*.cg")
-  FILE(GLOB glshader_shading_file_list "${FTK_SOURCE_DIR}/vtkMAF/iso-surface/*.glshader")
-		
-  FOREACH(file ${cg_shading_file_list})
-    FILE(RELATIVE_PATH file_name "${FTK_SOURCE_DIR}/vtkMAF/iso-surface/" "${file}")
-    CONFIGURE_FILE("${file}" "${OUT_SHADER_DIR}/${file_name}" @ONLY)
-  ENDFOREACH(file ${cg_shading_file_list})
-		
-  FOREACH(file ${glshader_shading_file_list})
-    FILE(RELATIVE_PATH file_name "${FTK_SOURCE_DIR}/vtkMAF/iso-surface/" "${file}")
-    CONFIGURE_FILE("${file}" "${OUT_SHADER_DIR}/${file_name}" @ONLY)
-  ENDFOREACH(file ${glshader_shading_file_list})
-ENDFOREACH(config)
+FILE(GLOB cg_shading_file_list  RELATIVE "${FTK_SOURCE_DIR}/vtkMAF/iso-surface" "${FTK_SOURCE_DIR}/vtkMAF/iso-surface/*.cg")
+FILE(GLOB glshader_shading_file_list  RELATIVE "${FTK_SOURCE_DIR}/vtkMAF/iso-surface" "${FTK_SOURCE_DIR}/vtkMAF/iso-surface/*.glshader")
+
+FOREACH(file ${cg_shading_file_list})
+  add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy "${FTK_SOURCE_DIR}/vtkMAF/iso-surface/${file}" $<TARGET_FILE_DIR:${PROJECT_NAME}>/Shaders/iso-surface/${file} 
+  )
+ENDFOREACH(file ${cg_shading_file_list})
+
+FOREACH(file ${glshader_shading_file_list})
+  add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy "${FTK_SOURCE_DIR}/vtkMAF/iso-surface/${file}" $<TARGET_FILE_DIR:${PROJECT_NAME}>/Shaders/iso-surface/${file} 
+  )
+ENDFOREACH(file ${glshader_shading_file_list})
+
+install(
+  TARGETS ${PROJECT_NAME}
+#  EXPORT ${PROJECT_NAME}Targets 
+  DESTINATION .
+)
+
+install(
+  FILES $<TARGET_RUNTIME_DLLS:${PROJECT_NAME}>
+  DESTINATION .
+)
+
+install(
+  DIRECTORY $<TARGET_FILE_DIR:${PROJECT_NAME}>/Shaders
+  DESTINATION .
+)
+
+#install(RUNTIME_DEPENDENCY_SET ${PROJECT_NAME}Deps) 
