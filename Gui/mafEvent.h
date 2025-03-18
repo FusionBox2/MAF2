@@ -39,30 +39,30 @@ public:
 
   void DeepCopy(const mafEventBase *maf_event) override;
 
-  intptr_t          GetArg()     {return m_Arg;};
-  bool              GetBool()    {return m_Bool;};
-  double            GetDouble()   {return m_Double;};
-  mafString*        GetString();
-  mafView*          GetView()    {return m_View;};
-  mafNode*          GetVme()     {return m_Vme;};
-  mafOp*					  GetOp()      {return m_Op;};
-  std::shared_ptr<mafMatrix>         GetMatrix()    {return m_Matrix;};
-  std::shared_ptr<mafMatrix> GetMatrix2() {return m_Matrix2;};
-  mafObject*        GetMafObject() {return m_MafObject;}
+  intptr_t                   GetArg() const {return m_Arg;};
+  bool                       GetBool() const {return m_Bool;};
+  double                     GetDouble() const {return m_Double;};
+  mafString*                 GetString() const;
+  mafView*                   GetView() const {return m_View;};
+  mafNode*                   GetVme() const {return m_Vme;};
+  mafOp*                     GetOp() const {return m_Op;};
+  std::shared_ptr<mafMatrix> GetMatrix() const {return m_Matrix;};
+  std::shared_ptr<mafMatrix> GetMatrix2() const {return m_Matrix2;};
+  mafObject*                 GetMafObject() const {return m_MafObject;}
 
-  int GetX() {return m_x;};
-  int GetY() {return m_y;};
-  int GetWidth() {return m_width;};
-  int GetHeight() {return m_height;};
+  int GetX() const {return m_x;};
+  int GetY() const {return m_y;};
+  int GetWidth() const {return m_width;};
+  int GetHeight() const {return m_height;};
 
   /** set call data, data sent by sender (event's invoker) to all observers. 
   Be aware that the vmeVector argument will be empty after the Set */
   void SetVmeVector(std::vector<mafNode*> vmeVector);
 
   /** return call data, data sent by sender (event's invoker) to all observers */
-  std::vector<mafNode*> GetVmeVector();
+  std::vector<mafNode*> GetVmeVector() const;
 
-  void GetWidgetData(WidgetDataType &widget_data);
+  void GetWidgetData(WidgetDataType &widget_data) const;
 
   void SetArg(intptr_t arg)         { m_Arg = arg;};
   void SetBool(bool b)          { m_Bool = b;};
@@ -103,9 +103,9 @@ public:
   mafEvent(void *sender, int id, wxUpdateUIEvent *e,      intptr_t arg=0);
   mafEvent(void *sender, int id, wxObject        *wxobj,  intptr_t arg=0);
 
-  wxWindow*        GetWin()       {return m_Win;};
-  wxUpdateUIEvent* GetUIEvent()   {return m_UpdateUIEvent;};
-  wxObject*        GetWxObj()     {return m_WxObj;};
+  wxWindow*        GetWin() const {return m_Win;};
+  wxUpdateUIEvent* GetUIEvent() const {return m_UpdateUIEvent;};
+  wxObject*        GetWxObj() const {return m_WxObj;};
 
   void SetWin(wxWindow* win)            { m_Win = win;};
   void SetUIEvent(wxUpdateUIEvent *e)   { m_UpdateUIEvent =e;};
@@ -138,7 +138,7 @@ protected:
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 public:
-  mafEvent* Copy();
+  mafEvent* Clone() const;
 
   void Log();
   static void     SetLogMode(int logmode);

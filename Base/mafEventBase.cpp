@@ -38,7 +38,7 @@ void mafEventBase::SetSender(void *sender)
   m_Sender = sender;
 }
 //------------------------------------------------------------------------------
-void *mafEventBase::GetSender()
+void *mafEventBase::GetSender() const
 //------------------------------------------------------------------------------
 {
   return m_Sender;
@@ -52,7 +52,7 @@ void mafEventBase::SetData(void *calldata)
 }
 
 //------------------------------------------------------------------------------
-void *mafEventBase::GetData()
+void *mafEventBase::GetData() const
 //------------------------------------------------------------------------------
 {
   return m_Data;
@@ -65,7 +65,7 @@ void mafEventBase::SetId(mafID id)
   m_Id = id;
 }
 //------------------------------------------------------------------------------
-mafID mafEventBase::GetId()
+mafID mafEventBase::GetId() const
 //------------------------------------------------------------------------------
 {
   bool *verbose = GetLogVerbose();
@@ -91,7 +91,7 @@ mafID mafEventBase::GetId()
 }
 
 //------------------------------------------------------------------------------
-mafID mafEventBase::GetChannel()
+mafID mafEventBase::GetChannel() const
 //------------------------------------------------------------------------------
 {
   return m_Channel;

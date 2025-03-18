@@ -84,7 +84,7 @@ void mafEvent::Log()
   mafLogMessage(_M(s));
 }
 //----------------------------------------------------------------------------
-mafEvent* mafEvent::Copy() 
+mafEvent* mafEvent::Clone() const 
 //----------------------------------------------------------------------------
 {
   mafEvent *e	= new mafEvent(m_Sender,m_Id,m_Bool,m_Arg);
@@ -204,7 +204,7 @@ void mafEvent::SetLogMode(int logmode)
 	m_LogMode = logmode;
 }
 //----------------------------------------------------------------------------
-void mafEvent::GetWidgetData(WidgetDataType &widget_data)
+void mafEvent::GetWidgetData(WidgetDataType &widget_data) const
 //----------------------------------------------------------------------------
 {
   widget_data = m_WidgetData;
@@ -223,13 +223,13 @@ void mafEvent::SetVmeVector(std::vector<mafNode*> vmeVector)
 }
 
 //------------------------------------------------------------------------------
-std::vector<mafNode*> mafEvent::GetVmeVector()
+std::vector<mafNode*> mafEvent::GetVmeVector() const
 //------------------------------------------------------------------------------
 {
   return m_VmeVector;
 }
 //------------------------------------------------------------------------------
-mafString* mafEvent::GetString()
+mafString* mafEvent::GetString() const
 //------------------------------------------------------------------------------
 {
   return m_MAFString;

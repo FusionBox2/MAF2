@@ -27,24 +27,24 @@ public:
 
   void SetSender(void *sender);
 
-  void *GetSender();
+  void *GetSender() const;
 
   void SetId(mafID id);
 
-  mafID GetId();
+  mafID GetId() const;
 
-  mafID GetChannel();
+  mafID GetChannel() const;
   
   void SetChannel(mafID channel);
 
   void SetData(void *calldata);
 
-  void *GetData();
+  void *GetData() const;
 
 protected:
   void            *m_Sender = nullptr;
-  void            *m_Data = nullptr;
-  mafID           m_Id = ID_NO_EVENT;
+  void            *m_Data   = nullptr;
+  mafID           m_Id      = ID_NO_EVENT;
   mafID           m_Channel = MCH_UP;
 };
 
