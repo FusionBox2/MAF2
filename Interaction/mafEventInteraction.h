@@ -1,25 +1,7 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafEventInteraction
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __mafEventInteraction_h
-#define __mafEventInteraction_h
+#pragma once
 
 #include "mafEventBase.h"
 #include "mafMatrix.h"
-#include "ftk/Base/RegisteringPointer.h"
 
 /** Event class to transport a triggering button and a position from pointing devices.
   Evant issue by 2D and 3D tracking devices in correspondace to
@@ -102,6 +84,3 @@ protected:
 
   std::shared_ptr<mafMatrix>  m_Matrix;    ///< Pose matrix, used by 3D trackers
 };
-
-#endif /* __mafEventInteraction_h */
- 

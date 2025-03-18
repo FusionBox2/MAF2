@@ -11,7 +11,7 @@ BEGIN_FTK_NAMESPACE
 class FTK_BASE_EXPORT mafEventBase: public mafObject
 {
 public:
-  mafEventBase(void *sender=NULL,mafID id=ID_NO_EVENT,void *data=NULL, mafID channel=MCH_UP);
+  mafEventBase(void *sender = nullptr, mafID id = ID_NO_EVENT, void *data = nullptr, mafID channel=MCH_UP);
 
 	~mafEventBase() override;
 
@@ -42,11 +42,10 @@ public:
   void *GetData();
 
 protected:
-  void            *m_Sender;
-  void            *m_Data;
-  mafID           m_Id;
-  mafID           m_Channel;
-  static bool     m_LogVerbose;
+  void            *m_Sender = nullptr;
+  void            *m_Data = nullptr;
+  mafID           m_Id = ID_NO_EVENT;
+  mafID           m_Channel = MCH_UP;
 };
 
 END_FTK_NAMESPACE

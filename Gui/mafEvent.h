@@ -1,31 +1,12 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafEvent
- Authors: Silvano Imboden, Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
+#include "ftkConfigure.h"
 
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafEvent_h
-#define __mafEvent_h
-//----------------------------------------------------------------------------
-// includes:
-//----------------------------------------------------------------------------
 #include "mafDefines.h"   // mafDefines should alway be included as first
 #include "mafDecl.h"
 #include "mafEventBase.h" // base class for mafEvent
 #include "mafBaseEventHandler.h"
 
-//----------------------------------------------------------------------------
-// Forward References:
-//----------------------------------------------------------------------------
 class mafView;
 class mafOp;
 class mafNode;
@@ -37,18 +18,6 @@ class mafString;
   class vtkProp;  
 #endif
 
-#ifdef MAF_EXPORTS
-#include "mafDllMacros.h"
-  EXPORT_STL_VECTOR(MAF_EXPORT,mafNode *);
-#endif
-//----------------------------------------------------------------------------
-// mafEvent :
-//----------------------------------------------------------------------------
-/** mafEvent - Class implementing MAF application events.
-  This class implements a type of event object similar to original mafEvent, where
-  all kind of possible information traveling around the MAF is defined. 
-  @sa mafEventBase mafSubject mafObserver
-*/
 class MAF_EXPORT mafEvent : public mafEventBase
 {
 public:
@@ -180,4 +149,3 @@ protected:
   void Init(void *sender, int id, intptr_t arg=0);
   void Initialized();
 };
-#endif /* __mafEvent_h */
