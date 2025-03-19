@@ -591,7 +591,7 @@ void mafOp2DMeasure::OpStop(int result)
   if(root->GetTagArray()->GetTag(_R("2D_MEASURE")))
     root->GetTagArray()->DeleteTag(_R("2D_MEASURE"));
   root->GetTagArray()->SetTag(measure_item);
-  {mafEvent evUnq(this,VME_MODIFIED,root); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_MODIFIED); evUnq.SetVme(root); InvokeEvent(evUnq);}
 
 	m_DistanceInteractor2D->RemoveMeter();  
 	m_AngleInteractor2D->RemoveMeter();

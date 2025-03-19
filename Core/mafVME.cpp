@@ -735,7 +735,7 @@ void mafVME::SetCrypting(int crypting)
   }
 
   Modified();
-  mafEvent ev(this,VME_MODIFIED,this);
+  mafEvent ev(this,VME_MODIFIED); ev.SetVme(this);
   ForwardUpEvent(ev);
 }
 
@@ -897,7 +897,7 @@ void mafVME::SetVisualMode(int mode)
   if (m_VisualMode != mode)
   {
     m_VisualMode = mode;
-    mafEvent updateModalityEvent(this, VME_VISUAL_MODE_CHANGED, this);
+    mafEvent updateModalityEvent(this, VME_VISUAL_MODE_CHANGED); updateModalityEvent.SetVme(this);
     Superclass::OnEvent(&updateModalityEvent);
   }
 }

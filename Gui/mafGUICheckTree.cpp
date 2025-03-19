@@ -199,7 +199,7 @@ void mafGUICheckTree::OnIconClick(wxTreeItemId item)
     {
       return;
     }
-    {mafEvent evUnq(this, VME_SHOW, vme, show); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(vme); evUnq.SetBool(show); InvokeEvent(evUnq);}
     {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
 }

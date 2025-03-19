@@ -534,7 +534,7 @@ void mafViewIntGraph::savePlotGen(void)
     if(vme)
     {
       vme->GetTagArray()->SetTag(mafTagItem(_R(mafINTGG_SAVEINFO_TAG), strv));
-      {mafEvent evUnq(this,VME_MODIFIED, vme); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,VME_MODIFIED); evUnq.SetVme(vme); InvokeEvent(evUnq);}
     }
   }
 }
@@ -620,7 +620,7 @@ void mafViewIntGraph::loadPlot(bool readfile)
     if (it != m_shown_flags.cend())
       show = *it++;
     if (readfile)
-      {mafEvent evUnq(this, VME_SHOW, curr, show); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(curr); evUnq.SetBool(show); InvokeEvent(evUnq);}
     else
     {
       if (show)

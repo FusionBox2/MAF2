@@ -778,7 +778,7 @@ void mafInteractionManager::OnEvent(mafEventBase *event)
   if (id == VME_SELECT || id == VME_DCLICKED)
   {
     // event raised by PER to advise of VME selection or double click on a VME
-    {mafEvent evUnq(event->GetSender(), id, (mafVME *)event->GetData()); InvokeEvent(evUnq);}
+    {mafEvent evUnq(event->GetSender(), id); evUnq.SetVme((mafVME *)event->GetData()); InvokeEvent(evUnq);}
   }
   else if (id == VIEW_SELECT)
   {

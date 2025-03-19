@@ -230,7 +230,7 @@ void mafNode::SetName(const mafString& name)
 {
   m_Name=name; // force string copy
   Modified();
-  mafEvent ev(this,VME_MODIFIED,this);
+  mafEvent ev(this,VME_MODIFIED); ev.SetVme(this);
   InvokeEvent(ev);
   ForwardUpEvent(ev);
   ForwardDownEvent(ev);
@@ -1120,7 +1120,7 @@ void mafNode::OnEvent(mafEventBase *e)
             if(this != parent->GetFirstChild())
             {
               ReparentTo(parent->GetChild(parent->FindNodeIdx(this) - 1));
-              {mafEvent evUnq(this, VME_SELECT, this); ForwardUpEvent(evUnq);}
+              {mafEvent evUnq(this, VME_SELECT); evUnq.SetVme(this); ForwardUpEvent(evUnq);}
             }
           }
         }
@@ -1134,7 +1134,7 @@ void mafNode::OnEvent(mafEventBase *e)
               int numChildren = grandparent->GetNumberOfChildren();
               int parentidx   = grandparent->FindNodeIdx(parent);
               ReparentTo(grandparent);
-              {mafEvent evUnq(this, VME_SELECT, this); ForwardUpEvent(evUnq);}
+              {mafEvent evUnq(this, VME_SELECT); evUnq.SetVme(this); ForwardUpEvent(evUnq);}
               for(int i = 0; i < (numChildren - parentidx - 1); i++)
                 grandparent->MoveChildUp(this);
             }
@@ -1499,7 +1499,7 @@ void mafNode::SwapChildren(int idx1, int idx2)
   UpdateUpDownAvailability(m_Children[idx1].get());
   UpdateUpDownAvailability(m_Children[idx2].get());
   Modified();
-  mafEvent e(this,VME_MODIFIED,this);
+  mafEvent e(this,VME_MODIFIED); e.SetVme(this);
   e.SetChannel(MCH_UP);
   OnEvent(&e);
 }

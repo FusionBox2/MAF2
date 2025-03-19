@@ -279,7 +279,7 @@ void mafSceneGraph::VmeShow(mafNode *vme, bool show)
           bool vme_type_check = in_vme != NULL && current_vme != NULL;
           if(n->m_Pipe != NULL && n->m_Vme != vme && vme_type_check && !current_vme->IsA("mafVMEGizmo") && in_vme->GetOutput()->GetTypeId() == current_vme->GetOutput()->GetTypeId())
           {
-            {mafEvent evUnq(this,VME_SHOW,n->m_Vme,false); InvokeEvent(evUnq);}
+            {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(n->m_Vme); evUnq.SetBool(false); InvokeEvent(evUnq);}
           }
         }
       }
@@ -290,7 +290,7 @@ void mafSceneGraph::VmeShow(mafNode *vme, bool show)
         for(mafSceneNode *n = m_List; n; n=n->m_Next)
           //if(n->m_Pipe != NULL && n->m_Vme != vme && n->m_Mutex)
           if(n->m_Pipe != NULL && n->m_Vme != vme)
-            {mafEvent evUnq(this,VME_SHOW,n->m_Vme,false); InvokeEvent(evUnq);}
+            {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(n->m_Vme); evUnq.SetBool(false); InvokeEvent(evUnq);}
       }
 
 		}
@@ -364,7 +364,7 @@ void mafSceneGraph::VmeShowByType(mafNode *vme,  bool show)
     {
       //- mutex vme may be shown only is no other vme of the same type is currently shown.
       //- mutex vme may always be hidden.
-      {mafEvent evUnq(this,VME_SHOW,n->m_Vme,show); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(n->m_Vme); evUnq.SetBool(show); InvokeEvent(evUnq);}
       if (n->m_Mutex)
       {
         break;
@@ -388,7 +388,7 @@ void mafSceneGraph::VmeShowSubTree(mafNode *vme,  bool show)
 			// Mutex vme may be shown only is no other vme of the same type is currently shown.
 			// Mutex vme may always be hidden.
 			if(!show || !n->m_Mutex)
-        {mafEvent evUnq(this, VME_SHOW, v, show); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(v); evUnq.SetBool(show); InvokeEvent(evUnq);}
 		} 
 	}
 }

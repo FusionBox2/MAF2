@@ -126,7 +126,7 @@ void medWizardBlock::ExcutionEnd()
 {
   //Setting back the select vme to the input on user abort
   if (!m_Success)
-     {mafEvent evUnq(this,VME_SELECT,m_InputVME); InvokeEvent(evUnq);}
+     {mafEvent evUnq(this,VME_SELECT); evUnq.SetVme(m_InputVME); InvokeEvent(evUnq);}
   //Stopping execution
   m_Running=false;
 }
