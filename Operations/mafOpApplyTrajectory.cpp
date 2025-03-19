@@ -195,7 +195,7 @@ void mafOpApplyTrajectory::OpUndo()
   }
 
   oldVme->Modified();
-  {mafEvent evUnq(this, VME_MODIFIED, m_Input); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this, VME_MODIFIED); evUnq.SetVme(m_Input); InvokeEvent(evUnq);}
   {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
@@ -328,7 +328,7 @@ int mafOpApplyTrajectory::Read()
 
   } while (!inputFile.Eof());
 
-  {mafEvent evUnq(this, VME_MODIFIED, m_Input); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this, VME_MODIFIED); evUnq.SetVme(m_Input); InvokeEvent(evUnq);}
   {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 
   return MAF_OK;
@@ -361,7 +361,7 @@ int mafOpApplyTrajectory::ApplyTrajectoriesFromVME()
     ((mafVME *)m_Input)->SetAbsMatrix(boxPose, time);
   }
 
-  {mafEvent evUnq(this, VME_MODIFIED, m_Input); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this, VME_MODIFIED); evUnq.SetVme(m_Input); InvokeEvent(evUnq);}
   {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
   return MAF_OK;
 }

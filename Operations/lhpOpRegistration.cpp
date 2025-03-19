@@ -1762,11 +1762,11 @@ void lhpOpRegistration::OnEvent(mafEventBase *maf_event)
 void lhpOpRegistration::OpDo()
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this, VME_ADD, m_Result); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_Result); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void lhpOpRegistration::OpUndo()
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this, VME_REMOVE, m_Result); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Result); InvokeEvent(evUnq);}
 }

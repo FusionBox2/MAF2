@@ -459,7 +459,7 @@ void lhpOpSoftReg::OpDo()
     if(outSurface)
     {
       outSurface->ReparentTo(m_Input->GetRoot());
-      {mafEvent evUnq(this, VME_ADD, outSurface); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(outSurface); InvokeEvent(evUnq);}
     }
     mafDEL(outSurface);
 

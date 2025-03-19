@@ -2846,7 +2846,7 @@ void lhpOpRegression::OpDo()
 //----------------------------------------------------------------------------
 {
   for(unsigned i = 0; i < m_Added.size(); i++)
-    {mafEvent evUnq(this, VME_ADD, m_Added[i]); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_Added[i]); InvokeEvent(evUnq);}
   for(unsigned i = 0; i < m_LMAdd.size(); i++)
   {
     if(!m_LMAdd[i].m_Pelvic)
@@ -2868,7 +2868,7 @@ void lhpOpRegression::OpUndo()
 //----------------------------------------------------------------------------
 {
   for(unsigned i = 0; i < m_Added.size(); i++)
-    {mafEvent evUnq(this, VME_REMOVE, m_Added[i]); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Added[i]); InvokeEvent(evUnq);}
   for(unsigned i = m_LMAdd.size(); i > 0; i--)
   {
     if(m_LMAdd[i - 1].m_Index != -1)

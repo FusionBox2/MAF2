@@ -490,8 +490,8 @@ void lhpOpBonemat::OnEvent(mafEventBase *maf_event)
         {
           //WORKAROUND CODE 
           //referred to bug 933
-          {mafEvent evUnq(this,VME_SHOW, m_Input, false); InvokeEvent(evUnq);}
-          {mafEvent evUnq(this,VME_SHOW, m_Input, true); InvokeEvent(evUnq);}
+          {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Input); evUnq.SetBool(false); InvokeEvent(evUnq);}
+          {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Input); evUnq.SetBool(true); InvokeEvent(evUnq);}
           //END WORKAROUND CODE
           OpStop(OP_RUN_OK);
         }
@@ -609,7 +609,7 @@ void lhpOpBonemat::OnEvent(mafEventBase *maf_event)
           //trap the VME_ADD of the mmoCollapse and mmoExplode to update the
           //m_Input, then forward the message to mafDMLlogicMDI
           this->m_Input = e->GetVme();
-          {mafEvent evUnq(this,VME_ADD,this->m_Input); InvokeEvent(evUnq);}
+          {mafEvent evUnq(this,VME_ADD); evUnq.SetVme(this->m_Input); InvokeEvent(evUnq);}
         }
         break;
       case ID_PRINT_DEBUG_INFO:

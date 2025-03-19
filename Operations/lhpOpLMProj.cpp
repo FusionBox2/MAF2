@@ -358,7 +358,7 @@ void lhpOpLMProj::OpUndo()
 {
   if (m_Output)
   {
-    {mafEvent evUnq(this, VME_REMOVE, m_Output); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Output); InvokeEvent(evUnq);}
     {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
 }

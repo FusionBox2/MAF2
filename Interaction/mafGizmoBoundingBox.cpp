@@ -77,7 +77,7 @@ mafGizmoBoundingBox::mafGizmoBoundingBox(mafVME *input, mafBaseEventHandler *lis
   this->Show(false);
 
   // ask the manager to create the pipeline
-  {mafEvent evUnq(this,VME_SHOW,m_BoxGizmo,true); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_BoxGizmo); evUnq.SetBool(true); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 mafGizmoBoundingBox::~mafGizmoBoundingBox() 

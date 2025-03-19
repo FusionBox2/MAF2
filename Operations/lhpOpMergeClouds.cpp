@@ -324,7 +324,7 @@ void lhpOpMergeClouds::OpDo()
     //m_OutSurface->ReparentTo(m_Input->GetRoot());
     //{mafEvent evUnq(this, VME_ADD, m_OutSurface); InvokeEvent(evUnq);}
   }
-  {mafEvent evUnq(this, VME_MODIFIED, m_Input); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this, VME_MODIFIED); evUnq.SetVme(m_Input); InvokeEvent(evUnq);}
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 

@@ -270,13 +270,13 @@ void lhpOpRegSurfWithCloud::OpStop(int result)
 void lhpOpRegSurfWithCloud::OpDo()
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this, VME_ADD, m_Resultat); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_Resultat); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void lhpOpRegSurfWithCloud::OpUndo()
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this, VME_REMOVE, m_Resultat); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Resultat); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------

@@ -116,9 +116,9 @@ mafGizmoHandle::mafGizmoHandle(mafVME *input, mafBaseEventHandler *listener /* =
   this->Show(false);
 
   // ask the manager to create the pipeline
-  {mafEvent evUnq(this,VME_SHOW,m_BoxGizmo,true); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_BoxGizmo); evUnq.SetBool(true); InvokeEvent(evUnq);}
 
-  {mafEvent evUnq(this,VME_SHOW,m_ShadingPlaneGizmo,m_ShowShadingPlane); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_ShadingPlaneGizmo); evUnq.SetBool(m_ShowShadingPlane); InvokeEvent(evUnq);}
   
   //-----------------
   // create isa stuff

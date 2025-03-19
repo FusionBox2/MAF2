@@ -396,7 +396,7 @@ void lhpOpJoinSurf::OpDo()
   if(m_OutSurface)
   {
     m_OutSurface->ReparentTo(m_Input->GetRoot());
-    {mafEvent evUnq(this, VME_ADD, m_OutSurface); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_OutSurface); InvokeEvent(evUnq);}
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
@@ -407,7 +407,7 @@ void lhpOpJoinSurf::OpUndo()
 {
   if(m_OutSurface)
   {
-    {mafEvent evUnq(this, VME_REMOVE, m_OutSurface); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_OutSurface); InvokeEvent(evUnq);}
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
