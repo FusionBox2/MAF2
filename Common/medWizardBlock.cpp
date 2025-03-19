@@ -117,7 +117,7 @@ void medWizardBlock::ExcutionBegin()
   m_InputVME=m_SelectedVME;
 
   if (m_BlockProgress>=0)
-    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)m_BlockProgress); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(m_BlockProgress); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
