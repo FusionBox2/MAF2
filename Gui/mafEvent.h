@@ -28,14 +28,11 @@ public:
   mafEvent(void *sender, int id, bool             b,       intptr_t arg=0);
   mafEvent(void *sender, int id, double           f,       intptr_t arg=0);
   mafEvent(void *sender, int id, mafString       *s,       intptr_t arg=0);
-  mafEvent(void *sender, int id, mafString       *s, int x, int y, int width, int height, intptr_t arg=0);
   mafEvent(void *sender, int id, mafNode         *vme,     bool b=false, intptr_t arg=0);
   mafEvent(void *sender, int id, mafView         *view,    wxWindow *win=nullptr);
   mafEvent(void *sender, int id, mafOp					 *op, intptr_t arg=0);
   mafEvent(void *sender, int id, mafObject       *mafobj, intptr_t arg=0);
   mafEvent(void *sender, int id, mafObject       *mafobj,  mafString       *s, intptr_t arg=0);
-  mafEvent(void *sender, int id, WidgetDataType  &widget_data, intptr_t arg=0);
-  mafEvent(void *sender, int id, std::shared_ptr<mafMatrix> m1, std::shared_ptr<mafMatrix> m2=nullptr);
 
   void DeepCopy(const mafEventBase *maf_event) override;
 
@@ -55,6 +52,10 @@ public:
   int GetWidth() const {return m_width;};
   int GetHeight() const {return m_height;};
 
+  void SetX(int x);
+  void SetY(int y);
+  void SetWidth(int width);
+  void SetHeight(int height);
   /** set call data, data sent by sender (event's invoker) to all observers. 
   Be aware that the vmeVector argument will be empty after the Set */
   void SetVmeVector(std::vector<mafNode*> vmeVector);

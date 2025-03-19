@@ -147,7 +147,14 @@ void medWizardBlockOperation::ExcutionBegin()
 		int width = m_width*mafframesize.GetWidth();
 		int height = m_height*mafframesize.GetHeight();
 
-	    {mafEvent evUnq(this,VIEW_RESIZE,&tmpStr,x,y,width,height); InvokeEvent(evUnq);}	
+		{
+			mafEvent evUnq(this, VIEW_RESIZE);
+			evUnq.SetString(&tmpStr);
+			evUnq.SetX(x);
+			evUnq.SetY(y);
+			evUnq.SetWidth(width);
+			evUnq.SetHeight(height);
+		}	
 	}
 	if(m_windowhastobetiled)
 	{
