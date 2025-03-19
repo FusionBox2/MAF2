@@ -21,7 +21,7 @@ class mafString;
 class MAF_EXPORT mafEvent : public mafEventBase
 {
 public:
-  mafTypeMacro(mafEvent,mafEventBase);
+  mafTypeMacroN(mafEvent);
 
   mafEvent();                                                         
   mafEvent(void *sender, int id,                           intptr_t arg=0);

@@ -15,7 +15,7 @@ public:
 
 	~mafEventBase() override;
 
-  mafTypeMacro(mafEventBase,mafObject);
+  mafTypeMacroN(mafEventBase);
  
   mafEventBase(const mafEventBase& c);
 

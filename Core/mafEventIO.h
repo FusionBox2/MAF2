@@ -26,7 +26,7 @@ public:
   mafEventIO(void* sender, mafID id);
   ~mafEventIO() override;
 
-  mafTypeMacro(mafEventIO,mafEventBase);
+  mafTypeMacroN(mafEventIO);
  
   /** copy constructor, this makes a copy of the event */
   virtual void DeepCopy(const mafEventIO *c);
