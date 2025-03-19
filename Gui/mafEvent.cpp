@@ -12,13 +12,6 @@
 #endif
 
 //----------------------------------------------------------------------------
-// Constants
-//----------------------------------------------------------------------------
-enum HIGHEST_EVENT_ID
-{
-  NO_EVENT =9999//= wxID_HIGHEST +1
-};
-//----------------------------------------------------------------------------
 // mafEvent CTOR's
 //----------------------------------------------------------------------------
   mafEvent::mafEvent()																																		  { Init(NULL,NO_EVENT,0);                                        Initialized();}
@@ -88,58 +81,39 @@ mafEvent* mafEvent::Clone() const
 //----------------------------------------------------------------------------
 {
   mafEvent *e	= new mafEvent(m_Sender,m_Id,m_Bool,m_Arg);
-  e->m_Double		= m_Double;
-  e->m_MAFString= m_MAFString;
-  e->m_View		  = m_View;
-  e->m_Vme			= m_Vme;
-  e->m_Op		    = m_Op;
-  e->m_MafObject= m_MafObject;
-  e->m_x = m_x;
-  e->m_y = m_y;
-  e->m_width = m_width;
-  e->m_height = m_height;
-  e->m_WidgetData = m_WidgetData;
-#ifdef MAF_USE_WX
-  e->m_Win			= m_Win;
-  e->m_UpdateUIEvent     = m_UpdateUIEvent;
-  e->m_WxObj    = m_WxObj;
-#endif
-#ifdef MAF_USE_VTK
-  e->m_VtkProp		  = m_VtkProp;
-  e->m_Matrix   = m_Matrix;
-  e->m_Matrix2  = m_Matrix2;
-  e->m_VtkObj   = m_VtkObj;
-#endif
-
+  e->DeepCopy(this);
   return e;
 }
 //----------------------------------------------------------------------------
-void mafEvent::DeepCopy(const mafEventBase *maf_event)
+void mafEvent::DeepCopy(const mafEventBase *maf_base_event)
 //----------------------------------------------------------------------------
 {
-  //m_Sender  = ((mafEvent *)maf_event)->GetSender();
-  m_Id      = ((mafEvent *)maf_event)->GetId();
-  m_Arg     = ((mafEvent *)maf_event)->GetArg();
-  m_Bool    = ((mafEvent *)maf_event)->GetBool();
-  m_Double  = ((mafEvent *)maf_event)->GetDouble();
-  m_MAFString  = ((mafEvent *)maf_event)->GetString();
-  m_Vme     = ((mafEvent *)maf_event)->GetVme();
-  m_View    = ((mafEvent *)maf_event)->GetView();
-  m_Op      = ((mafEvent *)maf_event)->GetOp();
-  m_Matrix  = ((mafEvent *)maf_event)->GetMatrix();
-  m_Matrix2 = ((mafEvent *)maf_event)->GetMatrix2();
-  m_MafObject = ((mafEvent *)maf_event)->GetMafObject();
-  m_x         = ((mafEvent *)maf_event)->GetX();
-  m_y         = ((mafEvent *)maf_event)->GetY();
-  m_width     = ((mafEvent *)maf_event)->GetWidth();
-  m_height    = ((mafEvent *)maf_event)->GetHeight();
-  ((mafEvent *)maf_event)->GetWidgetData(m_WidgetData);
+  Superclass::DeepCopy(maf_base_event);
+  auto maf_event = static_cast<const mafEvent*>(maf_base_event);
+  m_Arg        = maf_event->GetArg();
+  m_Bool       = maf_event->GetBool();
+  m_Double     = maf_event->GetDouble();
+  m_MAFString  = maf_event->GetString();
+  m_Vme        = maf_event->GetVme();
+  m_View       = maf_event->GetView();
+  m_Op         = maf_event->GetOp();
+  m_Matrix     = maf_event->GetMatrix();
+  m_Matrix2    = maf_event->GetMatrix2();
+  m_MafObject  = maf_event->GetMafObject();
+  m_VmeVector  = maf_event->GetVmeVector();
+  m_x          = maf_event->GetX();
+  m_y          = maf_event->GetY();
+  m_width      = maf_event->GetWidth();
+  m_height     = maf_event->GetHeight();
+  maf_event->GetWidgetData(m_WidgetData);
 #ifdef MAF_USE_WX
-  m_WxObj   = ((mafEvent *)maf_event)->GetWxObj();
-  m_Win     = ((mafEvent *)maf_event)->GetWin();
+  m_WxObj      = maf_event->GetWxObj();
+  m_Win        = maf_event->GetWin();
+  m_UpdateUIEvent = maf_event->GetUIEvent();
 #endif
 #ifdef MAF_USE_VTK
-  m_VtkObj  = ((mafEvent *)maf_event)->GetVtkObj();
+  m_VtkProp     = maf_event->GetProp();
+  m_VtkObj = maf_event->GetVtkObj();
 #endif
 }
 //----------------------------------------------------------------------------
@@ -169,26 +143,6 @@ void mafEvent::Init(void *sender, int id, intptr_t arg)
   m_Sender = sender;
   m_Id     = id; 
   m_Arg    = arg;
-  m_Bool   = false; 
-  m_Double  = 0; 
-  m_MAFString = NULL; 
-  m_View   = NULL; 
-  m_Vme    = NULL; 
-  m_Op	   = NULL; 
-  m_MafObject = NULL;
-  m_x = 0;
-  m_y = 0;
-  m_width = 0;
-  m_height = 0;
-#ifdef MAF_USE_WX
-  m_Win    = NULL;
-  m_UpdateUIEvent   = NULL;
-  m_WxObj  = NULL;
-#endif
-#ifdef MAF_USE_VTK
-  m_VtkProp   = NULL;
-  m_VtkObj = NULL;
-#endif
 }
 //----------------------------------------------------------------------------
 void mafEvent::Initialized() 

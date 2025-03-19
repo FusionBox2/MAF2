@@ -30,7 +30,7 @@ public:
   mafEvent(void *sender, int id, mafString       *s,       intptr_t arg=0);
   mafEvent(void *sender, int id, mafString       *s, int x, int y, int width, int height, intptr_t arg=0);
   mafEvent(void *sender, int id, mafNode         *vme,     bool b=false, intptr_t arg=0);
-  mafEvent(void *sender, int id, mafView         *view,    wxWindow *win=NULL);
+  mafEvent(void *sender, int id, mafView         *view,    wxWindow *win=nullptr);
   mafEvent(void *sender, int id, mafOp					 *op, intptr_t arg=0);
   mafEvent(void *sender, int id, mafObject       *mafobj, intptr_t arg=0);
   mafEvent(void *sender, int id, mafObject       *mafobj,  mafString       *s, intptr_t arg=0);
@@ -78,23 +78,23 @@ public:
 
 protected:
   intptr_t         m_Arg;
-  bool             m_Bool;
-  double           m_Double;
-  mafString       *m_MAFString;
+  bool             m_Bool = false;
+  double           m_Double = 0.0;
+  mafString       *m_MAFString = nullptr;
 
-  mafNode         *m_Vme;
-  mafView         *m_View;
-  mafOp						*m_Op;
+  mafNode         *m_Vme = nullptr;
+  mafView         *m_View = nullptr;
+  mafOp						*m_Op = nullptr;
   std::shared_ptr<mafMatrix> m_Matrix;
   std::shared_ptr<mafMatrix> m_Matrix2;
-  mafObject       *m_MafObject;
+  mafObject       *m_MafObject = nullptr;
   std::vector<mafNode*> m_VmeVector;
   WidgetDataType   m_WidgetData;
 
-  int m_x;
-  int m_y;
-  int m_width;
-  int m_height;
+  int m_x = 0;
+  int m_y = 0;
+  int m_width = 0;
+  int m_height = 0;
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #ifdef MAF_USE_WX
@@ -112,9 +112,9 @@ public:
   void SetWxObj(wxObject *wxobj)        { m_WxObj = wxobj;};
 
 protected:
-  wxWindow        *m_Win;
-  wxUpdateUIEvent *m_UpdateUIEvent; 
-  wxObject        *m_WxObj; 
+  wxWindow        *m_Win = nullptr;
+  wxUpdateUIEvent *m_UpdateUIEvent = nullptr; 
+  wxObject        *m_WxObj = nullptr; 
 #endif
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -131,8 +131,8 @@ public:
   void SetVtkObj(vtkObject *vtkobj)       { m_VtkObj = vtkobj;};
 
 protected:
-  vtkProp         *m_VtkProp;
-  vtkObject       *m_VtkObj; 
+  vtkProp         *m_VtkProp = nullptr;
+  vtkObject       *m_VtkObj = nullptr; 
 #endif  
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
