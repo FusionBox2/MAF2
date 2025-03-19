@@ -245,7 +245,7 @@ void mafBrickedFileWriter::SetInputZCoordinates(vtkDoubleArray* pCoords)
 	mafString szMsg = mafString::Format(_L("Sampling and bricking data (sr: %d, bs: %d) ..."),
 		nSampleRate, m_NBrickSize[0]);
 
-	{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT, &szMsg); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT); evUnq.SetString(&szMsg); InvokeEvent(evUnq);}
 	{mafEvent evUnq(this, PROGRESSBAR_SET_VALUE, (intptr_t)0); InvokeEvent(evUnq);}
 
 	vtkMAFLargeDataProvider* dp = m_InputDataSet->GetPointDataProvider();	
@@ -622,7 +622,7 @@ void mafBrickedFileWriter::CreateBricksIndexTable(int nCurBrickPlane)
 	{mafEvent evUnq(this, PROGRESSBAR_SHOW); evUnq.SetMafObject(this); InvokeEvent(evUnq);}
 
 	mafString szMsg = _L("Initialization ...");
-	{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT, &szMsg); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT); evUnq.SetString(&szMsg); InvokeEvent(evUnq);}
 	{mafEvent evUnq(this, PROGRESSBAR_SET_VALUE, (intptr_t)0); InvokeEvent(evUnq);}
 
 	try
@@ -640,7 +640,7 @@ void mafBrickedFileWriter::CreateBricksIndexTable(int nCurBrickPlane)
 
 		//time to store low resolution
 		szMsg = _L("Writing LOW Resolution map ...");
-		{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT, &szMsg); InvokeEvent(evUnq);}    
+		{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT); evUnq.SetString(&szMsg); InvokeEvent(evUnq);}
 		
 		m_BrickFile->Write( m_PLowResLevel, m_NBricksDimSize[2]*m_NVoxelSizeInB);
 
@@ -651,7 +651,7 @@ void mafBrickedFileWriter::CreateBricksIndexTable(int nCurBrickPlane)
 
 		//and our index table
 		szMsg = _L("Writing index table ...");
-		{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT, &szMsg); InvokeEvent(evUnq);}
+		{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT); evUnq.SetString(&szMsg); InvokeEvent(evUnq);}
 				
 		int nPrevSum = 0;		
 		int nCount = m_NBricksDim[1]*m_NBricksDim[2];
@@ -693,7 +693,7 @@ void mafBrickedFileWriter::CreateBricksIndexTable(int nCurBrickPlane)
 
 
 	szMsg = _L("Finalization ...");
-	{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT, &szMsg); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT); evUnq.SetString(&szMsg); InvokeEvent(evUnq);}
 
 	DeallocateBuffers();	
 	m_BrickFile->Close();	

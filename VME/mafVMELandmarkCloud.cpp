@@ -825,7 +825,7 @@ void mafVMELandmarkCloud::Close()
   long progress = 0;
 
   {mafEvent evUnq(this,PROGRESSBAR_SHOW); ForwardUpEvent(&evUnq);}
-  {mafString srtr(_R("Collapsing cloud")); mafEvent evUnq(this,PROGRESSBAR_SET_TEXT, &srtr); ForwardUpEvent(&evUnq);}
+  {mafString srtr(_R("Collapsing cloud")); mafEvent evUnq(this,PROGRESSBAR_SET_TEXT); evUnq.SetString(&srtr); ForwardUpEvent(&evUnq);}
 
   m_EnableModifiedEvent = false;
   for (int c = 0; c < numberOfChildren;c++)
@@ -978,7 +978,7 @@ void mafVMELandmarkCloud::Open()
   }
 
   {mafEvent evUnq(this,PROGRESSBAR_SHOW); ForwardUpEvent(&evUnq);}
-  {mafString sgtr(_R("Exploding cloud")); mafEvent evUnq(this,PROGRESSBAR_SET_TEXT, &sgtr); ForwardUpEvent(&evUnq);}
+  {mafString sgtr(_R("Exploding cloud")); mafEvent evUnq(this,PROGRESSBAR_SET_TEXT); evUnq.SetString(&sgtr); ForwardUpEvent(&evUnq);}
   long progress  = 0;
 
   int i,numlm = GetNumberOfLandmarks();

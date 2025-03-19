@@ -387,7 +387,7 @@ void mafVMEAFRefSys::OnEvent(mafEventBase *maf_event)
           if(itlm != m_lmMapping.end())
           {
             mafString title = _R("Choose landmark");
-            mafEvent e(this,VME_CHOOSE, &title);
+            mafEvent e(this,VME_CHOOSE); e.SetString(&title);
             e.SetArg((intptr_t)&mafVMERefSysAbstract::LandmarkAccept);
             e.SetString(&title);
             e.SetId(VME_CHOOSE);

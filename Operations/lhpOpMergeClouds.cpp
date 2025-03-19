@@ -131,7 +131,7 @@ void lhpOpMergeClouds::OnEvent(mafEventBase *maf_event)
       return;
       }*/
       mafString s(_R("Choose surface to join"));
-      mafEvent e(this,VME_CHOOSE, &s);
+      mafEvent e(this,VME_CHOOSE); e.SetString(&s);
       InvokeEvent(e);
       if(e.GetVme() == NULL)
       {
