@@ -277,7 +277,7 @@ void mafOpTransformInterface::OpDo()
         }
 
         progress = (arrayId + 1) * 100 / 3;
-        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(progress); InvokeEvent(evUnq);}
         //mafProgressBarSetValueMacro(progress);
       }
       

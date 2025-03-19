@@ -256,7 +256,7 @@ void mafOpExporterVTK::SaveVTKData()
   // {mafEvent evUnq(this,BIND_TO_PROGRESSBAR, writer); InvokeEvent(evUnq);}
   long dummyProgressValue = 50;
   
-  {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)dummyProgressValue); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(dummyProgressValue); InvokeEvent(evUnq);}
 
   writer->SetFileName(m_File.GetCStr());
   writer->Write();

@@ -634,7 +634,7 @@ bool mafOpImporterRAWVolume_BES::Import()
 {
 	if(!this->m_TestMode) {
 		{mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}			
-		{mafEvent evUnq(this, PROGRESSBAR_SET_VALUE, (intptr_t)0); InvokeEvent(evUnq);}
+		{mafEvent evUnq(this, PROGRESSBAR_SET_VALUE); evUnq.SetArg(0); InvokeEvent(evUnq);}
 
 		mafString szText = _L("Importing RAW data ...");
 		{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT); evUnq.SetString(&szText); InvokeEvent(evUnq);}

@@ -102,7 +102,7 @@ void mafViewManager::OnEvent(mafEventBase *maf_event)
         ViewSelected(view/*, rwi*/);
 
         if(notifylogic)
-          {mafEvent evUnq(this,VIEW_SELECT,(intptr_t)e->GetSender()); InvokeEvent(evUnq);} // forward the view selection event to logic
+          {mafEvent evUnq(this,VIEW_SELECT); evUnq.SetArg((intptr_t)e->GetSender()); InvokeEvent(evUnq);} // forward the view selection event to logic
 
         if(m_CollaborateStatus && m_RemoteListener && !m_FromRemote)
         {

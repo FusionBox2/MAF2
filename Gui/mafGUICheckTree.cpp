@@ -461,6 +461,6 @@ void mafGUICheckTree::OnSelectionChanged(wxTreeEvent& event)
 
   i = event.GetItem();
   if(i.IsOk())
-    {mafEvent evUnq(this, VME_SELECT, NodeFromItem(i)); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_SELECT); evUnq.SetArg(NodeFromItem(i)); InvokeEvent(evUnq);}
   event.Skip();
 }
