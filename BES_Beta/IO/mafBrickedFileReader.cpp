@@ -574,7 +574,7 @@ void mafBrickedFileReader::GetBricksExtent(int VOI[6], int inBExt[6], int bndBEx
 		return true; //no change
 	}
 
-	{mafEvent evUnq(this, PROGRESSBAR_SHOW, this); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this, PROGRESSBAR_SHOW); evUnq.SetMafObject(this); InvokeEvent(evUnq);}
 
 	mafString szMsg = _L("Retrieving data ...");
 	{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT, &szMsg); InvokeEvent(evUnq);}
@@ -609,7 +609,7 @@ void mafBrickedFileReader::GetBricksExtent(int VOI[6], int inBExt[6], int bndBEx
 		return false;
 	}
 
-	{mafEvent evUnq(this, PROGRESSBAR_HIDE, this); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this, PROGRESSBAR_HIDE); evUnq.SetMafObject(this); InvokeEvent(evUnq);}
 
 	m_LastUpdateTime.Modified();
 	return true;

@@ -142,7 +142,8 @@ bool mafLogicWithManagers::Configure()
   frame->Bind(wxEVT_UPDATE_UI,
     [this](wxUpdateUIEvent& event)
     {
-      mafEvent evUnq(this, UPDATE_UI, &event);
+      mafEvent evUnq(this, UPDATE_UI);
+      evUnq.SetUIEvent(&event);
       OnEvent(&evUnq);
     }, MENU_START, MENU_END);
 
@@ -2123,7 +2124,7 @@ void mafLogicWithManagers::ViewCreated(mafView *v)
         [=](wxCommandEvent& event)
         {
           wxWindow* rwi = (wxWindow*)event.GetEventObject();
-          { mafEvent evUnq(this, VIEW_SELECT, v, rwi); extern_view->InvokeEvent(evUnq); }
+          { mafEvent evUnq(this, VIEW_SELECT); evUnq.SetView(v); evUnq.SetWin(rwi); extern_view->InvokeEvent(evUnq); }
         }, VIEW_CLICKED);
       extern_view->SetListener(m_logic->m_ViewManager.get());
       v->SetFrame(extern_view);
@@ -2137,7 +2138,7 @@ void mafLogicWithManagers::ViewCreated(mafView *v)
         {
           c->Activate();
           wxWindow* rwi = (wxWindow*)event.GetEventObject();
-          { mafEvent evUnq(this, VIEW_SELECT, v, rwi); c->InvokeEvent(evUnq); }
+          { mafEvent evUnq(this, VIEW_SELECT); evUnq.SetView(v); evUnq.SetWin(rwi); c->InvokeEvent(evUnq); }
         }, VIEW_CLICKED);
       c->SetListener(m_logic->m_ViewManager.get());
       v->SetFrame(c);

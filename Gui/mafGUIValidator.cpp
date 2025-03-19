@@ -974,7 +974,7 @@ void mafGUIValidator::OnScrollEvent(wxScrollEvent& event)
 				TransferFromWindow();
 				s.Printf("%g",*m_DoubleVar);
 				m_TextCtrl->SetValue(s);
-				{mafEvent evUnq(m_FloatSlider, m_ModuleId, m_FloatSlider,event.GetEventType()); InvokeEvent(evUnq);}
+				{mafEvent evUnq(m_FloatSlider, m_ModuleId); evUnq.SetWin(m_FloatSlider); evUnq.SetArg(event.GetEventType()); InvokeEvent(evUnq);}
       break;
 		}
   }

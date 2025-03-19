@@ -304,7 +304,7 @@ void mafOpAddLandmark::OpRun()
 	  m_Guih->Put(m_Gui);
 	
 	  sp->PutOnBottom(m_Guih);
-	  {mafEvent evUnq(this,OP_SHOW_GUI,(wxWindow *)m_GuiPanel); InvokeEvent(evUnq);}
+	  {mafEvent evUnq(this,OP_SHOW_GUI); evUnq.SetWin(m_GuiPanel); InvokeEvent(evUnq);}
   }
 
 }
@@ -432,7 +432,7 @@ void mafOpAddLandmark::OpStop(int result)
 {
 	if(m_PickingActiveFlag == true)
   {
-		{mafEvent evUnq(this,OP_HIDE_GUI,(wxWindow *)m_GuiPanel); InvokeEvent(evUnq);}
+		{mafEvent evUnq(this,OP_HIDE_GUI); evUnq.SetWin(m_GuiPanel); InvokeEvent(evUnq);}
 		cppDEL(m_Dict);
 		cppDEL(m_GuiPanel);
     mafDEL(m_LandmarkPicker);

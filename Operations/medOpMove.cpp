@@ -275,7 +275,7 @@ void medOpMove::OpStop(int result)
 
     // HideGui seems not to work  with plugged guis :(; using it generate a SetFocusToChild
     // error when operation tab is selected after the operation has ended
-    {mafEvent evUnq(this,OP_HIDE_GUI,(wxWindow *)m_Gui->GetParent()); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,OP_HIDE_GUI); evUnq.SetWin(m_Gui->GetParent()); InvokeEvent(evUnq);}
   }
   {mafEvent evUnq(this,result); InvokeEvent(evUnq);}  
 }

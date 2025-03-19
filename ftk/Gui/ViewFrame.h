@@ -69,7 +69,7 @@ void ViewFrame<BaseFrame, ParentFrame, DefaultStyle>::OnActivate(wxActivateEvent
 {
   if (event.GetActive() && m_View)
   {
-    { mafEvent evUnq(this, VIEW_SELECT, m_View, (wxWindow*)nullptr); InvokeEvent(evUnq); }
+    { mafEvent evUnq(this, VIEW_SELECT); evUnq.SetView(m_View); InvokeEvent(evUnq); }
     BaseFrame::Layout();
   }
 }
@@ -85,7 +85,7 @@ void ViewFrame<BaseFrame, ParentFrame, DefaultStyle>::OnCloseWindow(wxCloseEvent
     event.Veto();
     return;
   }
-  { mafEvent evUnq(this, VIEW_DELETE, m_View); InvokeEvent(evUnq); }
+  { mafEvent evUnq(this, VIEW_DELETE); evUnq.SetView(m_View); InvokeEvent(evUnq); }
   BaseFrame::Destroy();
   m_View = nullptr;
 }

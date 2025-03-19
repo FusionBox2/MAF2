@@ -619,7 +619,7 @@ void mafBrickedFileWriter::CreateBricksIndexTable(int nCurBrickPlane)
 		return true; //no change
 	}
 
-	{mafEvent evUnq(this, PROGRESSBAR_SHOW, this); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this, PROGRESSBAR_SHOW); evUnq.SetMafObject(this); InvokeEvent(evUnq);}
 
 	mafString szMsg = _L("Initialization ...");
 	{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT, &szMsg); InvokeEvent(evUnq);}
@@ -700,7 +700,7 @@ void mafBrickedFileWriter::CreateBricksIndexTable(int nCurBrickPlane)
   m_BrickFile->Delete();
   m_BrickFile = NULL;
 
-	{mafEvent evUnq(this, PROGRESSBAR_HIDE, this); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this, PROGRESSBAR_HIDE); evUnq.SetMafObject(this); InvokeEvent(evUnq);}
 
 	m_LastUpdateTime.Modified();
 	return true;

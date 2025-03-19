@@ -356,7 +356,8 @@ mafAvatar *mafInteractionManager::GetAvatar(const char *name)
 void mafInteractionManager::ViewSelected(mafView *view)
 //------------------------------------------------------------------------------
 {
-  mafEvent e(this,VIEW_SELECT,view);
+  mafEvent e(this,VIEW_SELECT);
+  e.SetView(view);
   OnViewSelected(&e);
 }
 
