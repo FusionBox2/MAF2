@@ -124,8 +124,8 @@ public:
   mafEvent(void *sender, int id, vtkObject       *vtkobj, intptr_t arg=0);
   mafEvent(void *sender, int id, vtkObject       *vtkobj, mafString *s);
 
-  vtkProp*         GetProp()      {return m_VtkProp;};
-  vtkObject*       GetVtkObj()    {return m_VtkObj;};
+  vtkProp*         GetProp() const {return m_VtkProp;};
+  vtkObject*       GetVtkObj() const {return m_VtkObj;};
 
   void SetProp(vtkProp* prop)             { m_VtkProp = prop;};
   void SetVtkObj(vtkObject *vtkobj)       { m_VtkObj = vtkobj;};
