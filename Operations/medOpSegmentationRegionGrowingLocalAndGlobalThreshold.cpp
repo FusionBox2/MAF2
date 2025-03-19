@@ -232,7 +232,7 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::MorphologicalMathema
   ConvertervtkTOitk::Pointer vtkTOitk = ConvertervtkTOitk::New();
   vtkTOitk->SetInput( m_SegmentedImage );
   vtkTOitk->Update();
-  {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)10); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(10); InvokeEvent(evUnq);}
 
   //Structuring element is a sphere
   StructuringElementType  structuringElement;
@@ -244,20 +244,20 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::MorphologicalMathema
   binaryDilate->SetInput( vtkTOitk->GetOutput() );
   binaryDilate->SetDilateValue( m_LowerLabel );
   binaryDilate->Update();
-  {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)50); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(50); InvokeEvent(evUnq);}
 
   ErodeFilterType::Pointer  binaryErode  = ErodeFilterType::New();
   binaryErode->SetKernel(  structuringElement );
   binaryErode->SetInput( binaryDilate->GetOutput() );
   binaryErode->SetErodeValue( m_LowerLabel );
   binaryErode->Update();
-  {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)90); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(90); InvokeEvent(evUnq);}
 
   typedef itk::ImageToVTKImageFilter< OutputImageType > ConverteritkTOvtk;
   ConverteritkTOvtk::Pointer itkTOvtk = ConverteritkTOvtk::New();
   itkTOvtk->SetInput( binaryErode->GetOutput() );
   itkTOvtk->Update();
-  {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)100); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(100); InvokeEvent(evUnq);}
 
   m_MorphoImage->DeepCopy(itkTOvtk->GetOutput());
   //m_MorphoImage->Update();
