@@ -257,7 +257,7 @@ void medOpImporterLandmark::OpUndo()
   {
     if (m_Results[i])
     {
-      {mafEvent evUnq(this, VME_REMOVE, m_Results[i]); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Results[i]); InvokeEvent(evUnq);}
     }
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}

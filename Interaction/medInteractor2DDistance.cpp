@@ -339,7 +339,7 @@ void medInteractor2DDistance::OnRightButtonUp(mafEventInteraction *e)
   if(m_ShowContextMenu && mouse)
   {
     mafVME *vme = GetPickedVME(mouse);
-    {mafEvent evUnq(this,SHOW_CONTEXTUAL_MENU, vme,true); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,SHOW_CONTEXTUAL_MENU); evUnq.SetVme(vme); evUnq.SetBool(true); InvokeEvent(evUnq);}
   }
 
   OnButtonUp(e);

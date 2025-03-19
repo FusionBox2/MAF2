@@ -84,9 +84,9 @@ void medOpImporterGRFWS::OpUndo()
 //----------------------------------------------------------------------------
 {   
   if(m_PlatformLeft != NULL)
-    {mafEvent evUnq(this,VME_REMOVE,m_PlatformLeft); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_PlatformLeft); InvokeEvent(evUnq);}
   if(m_PlatformRight != NULL)
-    {mafEvent evUnq(this,VME_REMOVE,m_PlatformRight); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_PlatformRight); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 mafOp* medOpImporterGRFWS::Copy()   

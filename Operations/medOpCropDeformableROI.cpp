@@ -117,7 +117,7 @@ void medOpCropDeformableROI::OpDo()
 void medOpCropDeformableROI::OpUndo()
 //----------------------------------------------------------------------------
 {
-	{mafEvent evUnq(this,VME_REMOVE,m_ResultVme); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_ResultVme); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpCropDeformableROI::OnEvent(mafEventBase *maf_event)

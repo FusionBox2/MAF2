@@ -442,14 +442,14 @@ void medGizmoCrossTranslateAxis::SetColor(double cylR, double cylG, double cylB)
 void medGizmoCrossTranslateAxis::Show(bool show)
 //----------------------------------------------------------------------------
 {
-	{mafEvent evUnq(this,VME_SHOW,m_TranslationCylinderGizmo,show); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_TranslationCylinderGizmo); evUnq.SetBool(show); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
 void medGizmoCrossTranslateAxis::ShowTranslationFeedbackArrows(bool show)
 //----------------------------------------------------------------------------
 {
-	{mafEvent evUnq(this,VME_SHOW,m_TranslationFeedbackGizmo,show); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_TranslationFeedbackGizmo); evUnq.SetBool(show); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
