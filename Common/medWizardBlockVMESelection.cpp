@@ -73,7 +73,7 @@ void medWizardBlockVMESelection::ExcutionBegin()
   {
     //Select vme 
     m_SelectedVME=selVME;
-    {mafEvent evUnq(this,VME_SELECT,m_SelectedVME); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,VME_SELECT); evUnq.SetVme(m_SelectedVME); InvokeEvent(evUnq);}
   }
   else
     //Abort on user cancel

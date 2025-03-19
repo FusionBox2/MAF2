@@ -749,7 +749,7 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::OnEvent(mafEventBase
         m_VolumeOutputRegionGrowing->ReparentTo(m_VolumeInput);
         m_VolumeOutputRegionGrowing->Update();
 
-        {mafEvent evUnq(this,VME_SHOW,m_VolumeOutputRegionGrowing,true); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VolumeOutputRegionGrowing); evUnq.SetBool(true); InvokeEvent(evUnq);}
 
         if (m_SegmentedImage != NULL)
         {
@@ -806,7 +806,7 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::OnEvent(mafEventBase
         	m_SurfaceOutput->ReparentTo(m_VolumeInput);
         	m_SurfaceOutput->Update();
   
-        	{mafEvent evUnq(this,VME_SHOW,m_VolumeOutputMorpho,true); InvokeEvent(evUnq);}
+        	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VolumeOutputMorpho); evUnq.SetBool(true); InvokeEvent(evUnq);}
           m_Gui->Enable(wxOK,true);
         }
 
@@ -897,15 +897,15 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::OpUndo()
 {
   if (m_VolumeOutputRegionGrowing)
   {
-    {mafEvent evUnq(this, VME_REMOVE, m_VolumeOutputRegionGrowing); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_VolumeOutputRegionGrowing); InvokeEvent(evUnq);}
   }
   if (m_VolumeOutputMorpho)
   {
-    {mafEvent evUnq(this, VME_REMOVE, m_VolumeOutputMorpho); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_VolumeOutputMorpho); InvokeEvent(evUnq);}
   }
   if (m_SurfaceOutput)
   {
-    {mafEvent evUnq(this, VME_REMOVE, m_SurfaceOutput); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_SurfaceOutput); InvokeEvent(evUnq);}
   }
 
   if (m_VolumeOutputMorpho == NULL && m_VolumeOutputRegionGrowing == NULL && m_SurfaceOutput == NULL)

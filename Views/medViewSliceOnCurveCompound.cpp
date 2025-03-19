@@ -250,7 +250,7 @@ void medViewSliceOnCurveCompound::HideSameVMEs(mafView* pView, mafNode* pNode)
     {
       if (pScNode->m_Pipe != NULL && pScNode->m_Vme != pNode)
       {            
-        {mafEvent evUnq(this, VME_SHOW, pScNode->m_Vme, false); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(pScNode->m_Vme); evUnq.SetBool(false); InvokeEvent(evUnq);}
       }
     }
 
@@ -858,7 +858,7 @@ void medViewSliceOnCurveCompound::SetSlicePosition(double abscisa, vtkIdType bra
     m_ChildViewList[MAIN_VIEW]->VmeShow(m_CurrentVolume, true);	
 
     //force GUI construction for new pipe
-    {mafEvent evUnq( this, VME_SELECTED, m_CurrentVolume); InvokeEvent(evUnq);}
+    {mafEvent evUnq( this, VME_SELECTED); evUnq.SetVme(m_CurrentVolume); InvokeEvent(evUnq);}
   }
 }
 #pragma endregion

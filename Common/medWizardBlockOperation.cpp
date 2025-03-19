@@ -186,7 +186,7 @@ void medWizardBlockOperation::ExcutionBegin()
   {
     //forward up vme selection event 
     //for view/logic/operation update
-    {mafEvent evUnq(this,VME_SELECT,m_SelectedVME); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,VME_SELECT); evUnq.SetVme(m_SelectedVME); InvokeEvent(evUnq);}
   }
   else 
   {
@@ -205,14 +205,14 @@ void medWizardBlockOperation::ExcutionBegin()
   {
     //Showing input vme to ensure visualization in the operation
     if (m_AutoShowSelectedVME)
-      {mafEvent evUnq(this,VME_SHOW,m_SelectedVME,true); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_SelectedVME); evUnq.SetBool(true); InvokeEvent(evUnq);}
 
     for(int i=0;i<m_VmeShow.size();i++)
     {
       //detecting all other vme starting on selected vme and show it
       mafNode *toShow=m_SelectedVME->GetByPath(mafWxToString(m_VmeShow[i]));
       if (toShow != NULL)
-        {mafEvent evUnq(this,VME_SHOW,toShow,true); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(toShow); evUnq.SetBool(true); InvokeEvent(evUnq);}
     }
   }
   
@@ -236,7 +236,7 @@ void medWizardBlockOperation::ExcutionEnd()
   for(int i=0;i<m_VmeHide.size();i++)
   {
     mafNode *toHide=m_SelectedVME->GetByPath(mafWxToString(m_VmeHide[i]));
-    {mafEvent evUnq(this,VME_SHOW,toHide,false); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(toHide); evUnq.SetBool(false); InvokeEvent(evUnq);}
   }
 
   if(m_viewhastobedeleted) 

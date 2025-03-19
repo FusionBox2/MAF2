@@ -3723,7 +3723,7 @@ void medViewArbitraryOrthoSlice::AddVMEToMSFTree(mafVMESurface *vme)
 {
 	assert(vme != NULL);
 	vme->GetTagArray()->SetTag(mafTagItem(_R("VISIBLE_IN_THE_TREE"), 0.0));
-	{mafEvent evUnq(this, VME_ADD, vme); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this, VME_ADD); evUnq.SetVme(vme); InvokeEvent(evUnq);}
 	assert(vme);
 }
 
