@@ -505,7 +505,7 @@ mafVME *medOpImporterLandmark::ReadFile(mafString& fname)
       counter++;
 
       progress = counter * 100 / numberOfLines;
-      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE, (intptr_t)progress); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(progress); InvokeEvent(evUnq);}
 
     }
   }
@@ -613,7 +613,7 @@ mafVME *medOpImporterLandmark::ReadFileWithoutTag(mafString& fname)
     counter++;
 
     progress = counter * 100 / numberOfLines;
-    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE, (intptr_t)progress); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(progress); InvokeEvent(evUnq);}
 
   }
 

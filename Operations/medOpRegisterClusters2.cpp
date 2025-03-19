@@ -350,7 +350,7 @@ void medOpRegisterClusters2::OpDo()
 			long p = t * 100 / numTimeStamps;
 		//	mafProgressBarSetValueMacro(p);
       if(!m_TestMode)
-        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)p); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(p); InvokeEvent(evUnq);}
 			//Set the new time for the vme used to register the one frame source 
       m_Target->SetTimeStamp(currTime); //set current time
       m_Target->Update(); //>UpdateAllData();
