@@ -802,7 +802,7 @@ void mafInteractionManager::OnEvent(mafEventBase *event)
   {
     mafVME *vme = (mafVME *)event->GetData();
     bool vme_context_menu = (vme != NULL) && !vme->IsA("mafVMEGizmo");
-    {mafEvent evUnq(event->GetSender(),SHOW_CONTEXTUAL_MENU, vme_context_menu); InvokeEvent(evUnq);}
+    {mafEvent evUnq(event->GetSender(),SHOW_CONTEXTUAL_MENU); evUnq.SetBool(vme_context_menu); InvokeEvent(evUnq);}
   }
   else if (id == mafDevice::DEVICE_NAME_CHANGED) 
   {

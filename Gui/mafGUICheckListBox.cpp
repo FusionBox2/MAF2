@@ -227,7 +227,7 @@ void mafGUICheckListBox::OnCheck(wxCommandEvent &event)
   bool checked = m_CheckListBox->IsChecked(index);
 
   m_CheckEvent = true;
-  {mafEvent evUnq(this, widget_id, checked, item_id); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this, widget_id); evUnq.SetBool(checked); evUnq.SetArg(item_id); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGUICheckListBox::OnSize(wxSizeEvent& event)

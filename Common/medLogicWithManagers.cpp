@@ -164,7 +164,7 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
 					  wxSetWorkingDirectory(oldWD);
 				  }
 
-				  {mafEvent evUnq(this,WIZARD_RUN_CONTINUE,true); OnEvent(&evUnq);}
+				  {mafEvent evUnq(this,WIZARD_RUN_CONTINUE); evUnq.SetBool(true); OnEvent(&evUnq);}
 			  }
 		break;
      case MENU_WIZARD:

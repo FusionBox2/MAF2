@@ -363,7 +363,7 @@ void medWizardManager::OnRunOp(mafEvent *e)
   }
   else if (opString==_R("SNAPSHOT"))
   {
-    {mafEvent evUnq(this,MENU_FILE_SNAPSHOT,true); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,MENU_FILE_SNAPSHOT); evUnq.SetBool(true); InvokeEvent(evUnq);}
   }
   else
   {

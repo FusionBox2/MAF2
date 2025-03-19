@@ -197,7 +197,7 @@ void medWizard::AbortWizard()
   if (m_ShowProgressBar)
     {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 
-  {mafEvent evUnq(this,WIZARD_RUN_TERMINATED,false); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,WIZARD_RUN_TERMINATED); evUnq.SetBool(false); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -219,7 +219,7 @@ void medWizard::BlockExecutionEnd()
     if (m_ShowProgressBar)
       {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 
-    {mafEvent evUnq(this,WIZARD_RUN_TERMINATED,true); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,WIZARD_RUN_TERMINATED); evUnq.SetBool(true); InvokeEvent(evUnq);}
   }
   //If the next block is in the form WIZARD{<name>} We switch to the wizard <name> and execute it
   else if (nextBlock.StartsWith("WIZARD{"))
@@ -233,7 +233,7 @@ void medWizard::BlockExecutionEnd()
       if (m_ShowProgressBar)
         {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 
-      {mafEvent evUnq(this,WIZARD_RUN_TERMINATED,true); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,WIZARD_RUN_TERMINATED); evUnq.SetBool(true); InvokeEvent(evUnq);}
     }
     else 
     {
@@ -294,7 +294,7 @@ void medWizard::ContinueExecution(int opSuccess)
 
       //if the operation has aborted by the user we abort the entire wizard
       //this behavior can be updated for error management
-      {mafEvent evUnq(this,WIZARD_RUN_TERMINATED,false); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,WIZARD_RUN_TERMINATED); evUnq.SetBool(false); InvokeEvent(evUnq);}
       m_CurrentBlock=NULL;
     }
     else

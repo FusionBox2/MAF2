@@ -468,7 +468,7 @@ void mafInteractor2DIndicator::DrawMeasureTool(double x, double y)
 
     m_RegisterMeasure = true;
 
-    {mafEvent evUnq(this,ID_RESULT_INDICATOR,true); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,ID_RESULT_INDICATOR); evUnq.SetBool(true); InvokeEvent(evUnq);}
     //delete temporary measure
     m_CurrentRenderer->RemoveActor2D(m_LineActor);
     m_CurrentRenderer->RemoveActor2D(m_LineActor2);

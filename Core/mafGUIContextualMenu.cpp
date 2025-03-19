@@ -264,10 +264,10 @@ void mafGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
     }
     break;*/
 		case CONTEXTUAL_MENU_SAVE_AS_IMAGE:
-			{mafEvent evUnq(this, VIEW_SAVE_IMAGE,false); InvokeEvent(evUnq);}
+			{mafEvent evUnq(this, VIEW_SAVE_IMAGE); evUnq.SetBool(false); InvokeEvent(evUnq);}
 		break;
     case CONTEXTUAL_MENU_SAVE_ALL_AS_IMAGE:
-			{mafEvent evUnq(this, VIEW_SAVE_IMAGE,true); InvokeEvent(evUnq);}
+			{mafEvent evUnq(this, VIEW_SAVE_IMAGE); evUnq.SetBool(true); InvokeEvent(evUnq);}
 		break;
     case CONTEXTUAL_MENU_EXPORT_AS_VRML:
     {
