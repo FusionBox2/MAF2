@@ -78,7 +78,7 @@ void mafOpExplodeCollapse::OpDo()
   {
     cloud->Open();  
   }
-	{mafEvent evUnq(this,VME_MODIFIED,cloud); InvokeEvent(evUnq);} //update the icon in the tree
+	{mafEvent evUnq(this,VME_MODIFIED); evUnq.SetVme(cloud); InvokeEvent(evUnq);} //update the icon in the tree
 	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------

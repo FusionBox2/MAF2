@@ -272,8 +272,8 @@ void mafOpImporterVMEDataSetAttributes::OnEvent(mafEventBase *maf_event)
       //referred to bug 933
       if (m_Output != NULL)
       {
-        {mafEvent evUnq(this,VME_SHOW, m_Output, false); InvokeEvent(evUnq);}
-        {mafEvent evUnq(this,VME_SHOW, m_Output, true); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Output); evUnq.SetBool(false); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Output); evUnq.SetBool(true); InvokeEvent(evUnq);}
       }
       //END WORKAROUND CODE 
 
