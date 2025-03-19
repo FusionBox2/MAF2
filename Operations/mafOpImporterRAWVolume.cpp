@@ -466,7 +466,7 @@ bool mafOpImporterRAWVolume::Import()
   if(!this->m_TestMode)
 	{
 		{mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
-		{mafEvent evUnq(this,BIND_TO_PROGRESSBAR,reader); InvokeEvent(evUnq);}
+		{mafEvent evUnq(this,BIND_TO_PROGRESSBAR); evUnq.SetVtkObj(reader); InvokeEvent(evUnq);}
 	}
 //  reader->SetDataVOI(0, m_DataDimemsion[0] - 1, 0, m_DataDimemsion[1] - 1, 0, m_SliceVOI[1] - m_SliceVOI[0] - 1);
 //  reader->SetDataOrigin(0.0,0.0,m_SliceVOI[0]*m_DataSpacing[2]);

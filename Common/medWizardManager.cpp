@@ -331,7 +331,7 @@ void medWizardManager::OnRunOp(mafEvent *e)
   if (opString==_R("PAUSE"))
   {
     //pause op
-    {mafEvent evUnq(this,WIZARD_PAUSE,m_WaitOp); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,WIZARD_PAUSE); evUnq.SetOp(m_WaitOp); InvokeEvent(evUnq);}
   }
   else if (opString==_R("SAVE"))
   {

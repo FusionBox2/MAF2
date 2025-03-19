@@ -227,7 +227,7 @@ void medOpCropDeformableROI::Algorithm(mafVME *vme)
 		m_MaskPolydataFilter->SetFillValue(m_FillValue);
 		m_MaskPolydataFilter->SetInsideOut(m_InsideOut);
 		m_MaskPolydataFilter->SetMask(transformedMaskPolydata);
-    {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,m_MaskPolydataFilter); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,BIND_TO_PROGRESSBAR); evUnq.SetVtkObj(m_MaskPolydataFilter); InvokeEvent(evUnq);}
 		m_MaskPolydataFilter->Update();
 
 		if(vtkRectilinearGrid::SafeDownCast(m_MaskPolydataFilter->GetOutput()))

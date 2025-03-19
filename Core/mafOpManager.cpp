@@ -618,7 +618,7 @@ void mafOpManager::Notify(int msg, long arg)
 {
 	if(m_Context.Caller() == NULL)
 	// not a nested operation - notify logic
-		{mafEvent evUnq(this,msg,m_RunningOp,arg); InvokeEvent(evUnq);}   //SIL. 17-9-2004: added the m_RunningOp at the event (may be NULL)
+		{mafEvent evUnq(this,msg); evUnq.SetOp(m_RunningOp); evUnq.SetArg(arg); InvokeEvent(evUnq);}   //SIL. 17-9-2004: added the m_RunningOp at the event (may be NULL)
 	//else
 	// nested operation - notify caller
 		    // m_Context.Caller()->OnEvent(mafEvent(this,msg));   

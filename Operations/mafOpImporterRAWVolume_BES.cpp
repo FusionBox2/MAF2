@@ -776,7 +776,7 @@ bool mafOpImporterRAWVolume_BES::Import()
 		  vtkNew< vtkImageReader > reader;
 		
 		  if (!m_TestMode) {
-			  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR, reader); InvokeEvent(evUnq);}
+			  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR); evUnq.SetVtkObj(reader); InvokeEvent(evUnq);}
 		  }
 
 		  img = (vtkImageData*)ImportT< vtkImageReader >(reader);

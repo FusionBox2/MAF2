@@ -189,7 +189,8 @@ void mafInteractorPicker::SendPickingInformation(mafView *v, double *mouse_pos, 
         vtkDataArray *scalars = vtk_data->GetPointData()->GetScalars();
         if (scalars)
           scalars->GetTuple(pid,&scalar_value);
-        mafEvent pick_event(this,msg_id,p);
+        mafEvent pick_event(this,msg_id);
+      	pick_event.SetVtkObj(p);
         pick_event.SetDouble(scalar_value);
         pick_event.SetArg(pid);
         InvokeEvent(pick_event);

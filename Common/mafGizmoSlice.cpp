@@ -454,7 +454,7 @@ void mafGizmoSlice::OnEvent(mafEventBase *maf_event)
 
 				
 				m_Point->SetPoint(0,slicePlaneOrigin);
-				{mafEvent evUnq(this,MOUSE_MOVE, m_Point, m_Id); InvokeEvent(evUnq);}
+				{mafEvent evUnq(this,MOUSE_MOVE); evUnq.SetVtkObj(m_Point); evUnq.SetArg(m_Id); InvokeEvent(evUnq);}
 
 
       }
@@ -499,7 +499,7 @@ void mafGizmoSlice::OnEvent(mafEventBase *maf_event)
 		  }
 
 			m_Point->SetPoint(0,slicePlaneOrigin);
-			{mafEvent evUnq(this,MOUSE_UP, m_Point, m_Id); InvokeEvent(evUnq);}
+			{mafEvent evUnq(this,MOUSE_UP); evUnq.SetVtkObj(m_Point); evUnq.SetArg(m_Id); InvokeEvent(evUnq);}
 		}
 	}
 }
