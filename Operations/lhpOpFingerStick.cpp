@@ -391,7 +391,7 @@ void lhpOpFingerStick::OnEvent(mafEventBase *e)
     case ID_PLATE_CALIBRATION:
     {
       mafString s(_R("Choose wand calibration cloud"));
-      mafEvent e(this,VME_CHOOSE, &s);
+      mafEvent e(this,VME_CHOOSE); e.SetString(&s);
       InvokeEvent(e);
       if(e.GetVme() == NULL)
       {
@@ -410,7 +410,7 @@ void lhpOpFingerStick::OnEvent(mafEventBase *e)
     case ID_BALLS_CALIBRATION:
     {
       mafString s(_R("Choose wand definition cloud"));
-      mafEvent e(this,VME_CHOOSE, &s);
+      mafEvent e(this,VME_CHOOSE); e.SetString(&s);
       InvokeEvent(e);
       if(e.GetVme() == NULL)
       {
@@ -429,7 +429,7 @@ void lhpOpFingerStick::OnEvent(mafEventBase *e)
     case ID_PALPATOR_CALIBRATION:
     {
       mafString s(_R("Choose  target calibration cloud"));
-      mafEvent e(this,VME_CHOOSE, &s);
+      mafEvent e(this,VME_CHOOSE); e.SetString(&s);
       InvokeEvent(e);
       if(e.GetVme() == NULL)
       {
@@ -463,7 +463,7 @@ void lhpOpFingerStick::OnEvent(mafEventBase *e)
     case ID_PLATE_CLOUD:
     {
       mafString s(_R("Choose target cloud"));
-      mafEvent e(this,VME_CHOOSE, &s);
+      mafEvent e(this,VME_CHOOSE); e.SetString(&s);
       InvokeEvent(e);
       if(e.GetVme() == NULL)
       {
@@ -482,7 +482,7 @@ void lhpOpFingerStick::OnEvent(mafEventBase *e)
     case ID_PALPATOR_CLOUD:
     {
       mafString s(_R("Choose target cloud"));
-      mafEvent e(this,VME_CHOOSE, &s);
+      mafEvent e(this,VME_CHOOSE); e.SetString(&s);
       InvokeEvent(e);
       if(e.GetVme() == NULL)
       {

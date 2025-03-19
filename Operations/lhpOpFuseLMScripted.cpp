@@ -246,7 +246,7 @@ void lhpOpFuseLMScripted::OnEvent(mafEventBase *maf_event)
       case ID_CHOOSE:
       {
         mafString s(_L("Choose cloud"));
-        mafEvent e(this,VME_CHOOSE, &s, NULL/*, (long)&lhpOpFuseLMScripted::ClosedCloudAccept*/);
+        mafEvent e(this,VME_CHOOSE); e.SetString(&s); e.SetArg(NULL/*, (long)&lhpOpFuseLMScripted::ClosedCloudAccept*/);
         InvokeEvent(e);
         mafNode *vme = e.GetVme();
         OnChooseTargetVme(vme);
