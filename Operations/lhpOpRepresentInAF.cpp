@@ -123,7 +123,7 @@ void lhpOpRepresentInAF::OnEvent(mafEventBase *maf_event)
       case ID_CHOOSE:
       {
         mafString s(_L("Choose refsys"));
-        mafEvent e(this, VME_CHOOSE, &s, NULL/*, (long)&lhpOpRepresentInAF::RefSysAccept*/);
+        mafEvent e(this, VME_CHOOSE); e.SetString(&s); e.SetArg(NULL/*, (long)&lhpOpRepresentInAF::RefSysAccept*/);
         InvokeEvent(e);
         mafVMERefSysAbstract *rsa = mafVMERefSysAbstract::SafeDownCast(e.GetVme());
         if(rsa)

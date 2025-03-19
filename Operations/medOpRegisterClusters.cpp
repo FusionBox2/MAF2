@@ -208,7 +208,7 @@ void medOpRegisterClusters::OnEvent(mafEventBase *maf_event)
 		  case ID_CHOOSE:
 		  {
 			  mafString s(_L("Choose cloud"));
-        mafEvent e(this,VME_CHOOSE, &s, (intptr_t)&medOpRegisterClusters::ClosedCloudAccept);
+        mafEvent e(this,VME_CHOOSE); e.SetString(&s); e.SetArg((intptr_t)&medOpRegisterClusters::ClosedCloudAccept);
 			  InvokeEvent(e);
 			  mafNode *vme = e.GetVme();
 		    OnChooseTargetVme(vme);

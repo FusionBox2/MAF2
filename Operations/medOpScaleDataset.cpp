@@ -206,7 +206,7 @@ void medOpScaleDataset::OnEventThis(mafEventBase *maf_event)
 	case ID_AUX_REF_SYS:
 	{
 		mafString s = _R("Choose VME ref sys");
-		mafEvent e(this,VME_CHOOSE, &s);
+		mafEvent e(this,VME_CHOOSE); e.SetString(&s);
 		InvokeEvent(e);
 		SetRefSysVME(mafVME::SafeDownCast(e.GetVme()));
 	}

@@ -142,7 +142,7 @@ void medOpInteractionDebugger::OnEvent(mafEventBase *maf_event)
       case ID_CHOOSE:
       {
         mafString s(_L("Choose Constrain"));
-        mafEvent e(this,VME_CHOOSE, &s, (intptr_t)&medOpInteractionDebugger::ConstrainAccept);
+        mafEvent e(this,VME_CHOOSE); e.SetString(&s); e.SetArg((intptr_t)&medOpInteractionDebugger::ConstrainAccept);
         InvokeEvent(e);
         mafNode *vme = e.GetVme();
         if(vme != NULL)

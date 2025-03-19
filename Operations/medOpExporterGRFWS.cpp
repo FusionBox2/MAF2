@@ -370,7 +370,7 @@ void medOpExporterGRFWS::Write()
   if (!m_TestMode)
   {
     wxSetCursor(wxCursor(wxCURSOR_WAIT));
-    {mafEvent evUnq(this,PROGRESSBAR_SET_TEXT,&info); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_SET_TEXT); evUnq.SetString(&info); InvokeEvent(evUnq);}
 	  {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
     wait = new wxBusyInfo("This may take several minutes, please be patient...");
   }
@@ -640,7 +640,7 @@ void medOpExporterGRFWS::Write()
   info = _R("");
   if (!m_TestMode)
   {
-    {mafEvent evUnq(this,PROGRESSBAR_SET_TEXT,&info); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_SET_TEXT); evUnq.SetString(&info); InvokeEvent(evUnq);}
     {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
     wxSetCursor(wxCursor(wxCURSOR_DEFAULT));
     cppDEL(wait);

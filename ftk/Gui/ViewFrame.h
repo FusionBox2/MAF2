@@ -117,7 +117,7 @@ void ViewFrame<BaseFrame, ParentFrame, DefaultStyle>::OnMaximize(wxMaximizeEvent
   if (m_View)
   {
     mafString msg = _R("MaximizeSelectedView");
-    { mafEvent evUnq(this, VIEW_MAXIMIZE_, &msg); InvokeEvent(evUnq); }
+    { mafEvent evUnq(this, VIEW_MAXIMIZE_); evUnq.SetString(&msg); InvokeEvent(evUnq); }
   }
 }
 

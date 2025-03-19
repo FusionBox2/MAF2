@@ -186,7 +186,7 @@ void mafOpVOIDensity::OnEvent(mafEventBase *maf_event)
 			case ID_CHOOSE_SURFACE:
 			{
 				mafString title = _L("VOI surface");
-        mafEvent event(this,VME_CHOOSE,&title,(intptr_t)&mafOpVOIDensity::OutputSurfaceAccept);
+        mafEvent event(this,VME_CHOOSE); event.SetString(&title); event.SetArg((intptr_t)&mafOpVOIDensity::OutputSurfaceAccept);
 				InvokeEvent(event);
 				m_Surface = event.GetVme();
 				if(m_Surface == NULL)

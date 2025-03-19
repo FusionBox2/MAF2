@@ -170,7 +170,7 @@ void lhpOpSoftReg::OnEvent(mafEventBase *maf_event)
     case ID_SELECTBONES:
       {
         mafString s(_L("Choose cloud"));
-        mafEvent e(this,VME_CHOOSE, &s, (intptr_t)&lhpOpSoftReg::BonesSetAccept);
+        mafEvent e(this,VME_CHOOSE); e.SetString(&s); e.SetArg((intptr_t)&lhpOpSoftReg::BonesSetAccept);
         InvokeEvent(e);
         mafNode *vme = e.GetVme();
         OnChooseVme(vme);

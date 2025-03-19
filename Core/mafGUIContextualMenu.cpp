@@ -223,7 +223,7 @@ void mafGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
 		case CONTEXTUAL_MENU_TRANSFORM:
 		{
 			mafString s = _R("Transform  \tCtrl+T");
-			{mafEvent evUnq(this, PARSE_STRING, &s); InvokeEvent(evUnq);}
+			{mafEvent evUnq(this, PARSE_STRING); evUnq.SetString(&s); InvokeEvent(evUnq);}
 		}
 		break;
 		case CONTEXTUAL_MENU_MAXIMIZE_CHILD_VIEW:

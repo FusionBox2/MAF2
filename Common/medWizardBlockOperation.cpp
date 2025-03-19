@@ -138,7 +138,7 @@ void medWizardBlockOperation::ExcutionBegin()
   {
     //send up the event in order to open/select the required view
     tmpStr=mafWxToString(m_RequiredView);
-    {mafEvent evUnq(this,WIZARD_REQUIRED_VIEW,&tmpStr); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,WIZARD_REQUIRED_VIEW); evUnq.SetString(&tmpStr); InvokeEvent(evUnq);}
 	if(m_windowhastoberesized) 
 	{
 		wxSize mafframesize = mafGetFrame()->GetSize();
@@ -222,7 +222,7 @@ void medWizardBlockOperation::ExcutionBegin()
   {
     tmpStr=mafWxToString(m_Operation);
     //ask logic for operation run the flow will continue after operation stop
-    {mafEvent evUnq(this,WIZARD_RUN_OP,&tmpStr); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,WIZARD_RUN_OP); evUnq.SetString(&tmpStr); InvokeEvent(evUnq);}
   }
 }
 
@@ -241,7 +241,7 @@ void medWizardBlockOperation::ExcutionEnd()
 
   if(m_viewhastobedeleted) 
   {
-      {mafEvent evUnq(this,WIZARD_DELETE_VIEW,&m_viewtodelete); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,WIZARD_DELETE_VIEW); evUnq.SetString(&m_viewtodelete); InvokeEvent(evUnq);}
   }
  
 }

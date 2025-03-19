@@ -241,7 +241,7 @@ void medOpMakeVMETimevarying::OnEvent(mafEventBase *maf_event)
       case ID_ADD_VME_BUTTON:
       {
         mafString title = _L("Choose VME");
-        mafEvent e(this,VME_CHOOSE,&title,(intptr_t)&medOpMakeVMETimevarying::DialogAcceptVME);
+        mafEvent e(this,VME_CHOOSE); e.SetString(&title); e.SetArg((intptr_t)&medOpMakeVMETimevarying::DialogAcceptVME);
         InvokeEvent(e);
         
         //mafNEW(m_CurrentVME);
