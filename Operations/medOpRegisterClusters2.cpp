@@ -587,7 +587,7 @@ void medOpRegisterClusters2::OpDo()
     m_Follower->ReparentTo(m_Result);
 	}
 
-  {mafEvent evUnq(this,TIME_SET,-1.0); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,TIME_SET); evUnq.SetDouble(-1.0); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpRegisterClusters2::OpUndo()

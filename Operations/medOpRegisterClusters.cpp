@@ -219,7 +219,7 @@ void medOpRegisterClusters::OnEvent(mafEventBase *maf_event)
 		  case ID_CHOOSE_SURFACE:
 		  {
 			  mafString s(_L("Choose surface"));
-        mafEvent e(this,VME_CHOOSE, &s, (intptr_t)&medOpRegisterClusters::SurfaceAccept);
+        mafEvent e(this,VME_CHOOSE); e.SetString(&s); e.SetArg((intptr_t)&medOpRegisterClusters::SurfaceAccept);
 			  InvokeEvent(e);
 			  mafNode *vme = e.GetVme();
 		    OnChooseSurfaceVme(vme);
@@ -581,7 +581,7 @@ void medOpRegisterClusters::OpDo()
     m_Follower->ReparentTo(m_Result);
 	}
 
-  {mafEvent evUnq(this,TIME_SET,-1.0); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,TIME_SET); evUnq.SetDouble(-1.0); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpRegisterClusters::OpUndo()

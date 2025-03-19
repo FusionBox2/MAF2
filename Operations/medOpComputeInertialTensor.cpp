@@ -405,7 +405,7 @@ int medOpComputeInertialTensor::ComputeLocalInertialTensor(mafNode* node, int cu
     wxSetCursor(wxCursor(wxCURSOR_WAIT));
     wait = new wxBusyInfo("Computing inertial tensor components...");
     {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
-    {mafEvent evUnq(this,PROGRESSBAR_SET_TEXT,&s); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_SET_TEXT); evUnq.SetString(&s); InvokeEvent(evUnq);}
   }
 
   // initialize variables

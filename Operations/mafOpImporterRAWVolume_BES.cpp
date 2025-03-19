@@ -637,7 +637,7 @@ bool mafOpImporterRAWVolume_BES::Import()
 		{mafEvent evUnq(this, PROGRESSBAR_SET_VALUE, (intptr_t)0); InvokeEvent(evUnq);}
 
 		mafString szText = _L("Importing RAW data ...");
-		{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT, &szText); InvokeEvent(evUnq);}
+		{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT); evUnq.SetString(&szText); InvokeEvent(evUnq);}
 	}
 
   vtkNew<vtkDoubleArray> ZDoubleArray;	//Ref(ZDoubleArray) = 1

@@ -288,7 +288,7 @@ void medOpInteractiveClipSurface::OnEventThis(mafEventBase *maf_event)
           return;
         }
         mafString s(_R("Choose Constrain"));
-        mafEvent e(this,VME_CHOOSE, &s, (intptr_t)&medOpInteractiveClipSurface::ConstrainAccept);
+        mafEvent e(this,VME_CHOOSE); e.SetString(&s); e.SetArg((intptr_t)&medOpInteractiveClipSurface::ConstrainAccept);
         InvokeEvent(e);
         mafNode *vme = e.GetVme();
         if(vme != NULL)

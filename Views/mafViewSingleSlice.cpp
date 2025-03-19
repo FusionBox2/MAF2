@@ -543,7 +543,7 @@ void mafViewSingleSlice::OnEvent(mafEventBase *maf_event)
 					}
 				}
 			}
-      {mafEvent evUnq(this,ID_POSITION,m_Position); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,ID_POSITION); evUnq.SetDouble(m_Position); InvokeEvent(evUnq);}
 		break;
 		case ID_PLANE_SELECT:
 		{

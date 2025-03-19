@@ -1713,7 +1713,7 @@ void lhpOpRegistration::OnEvent(mafEventBase *maf_event)
     case ID_REGTRG:
     {
       mafString s(_R("Choose reg data"));
-      mafEvent e(this,VME_CHOOSE, &s);
+      mafEvent e(this,VME_CHOOSE); e.SetString(&s);
       InvokeEvent(e);
       if(e.GetVme() == NULL)
       {
