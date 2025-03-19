@@ -279,7 +279,7 @@ void mafDataVector::InternalStore(mafStorageElementBuilder& parent)
             if ((dataIndex % step == 0))
             {
               progress++;
-              {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); InvokeEvent(evUnq);}
+              {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(progress); InvokeEvent(evUnq);}
             }
 			mafVMEItem* itemTmp = elem.second.get();
             int IOmode = itemTmp->GetIOMode();
@@ -290,7 +290,7 @@ void mafDataVector::InternalStore(mafStorageElementBuilder& parent)
             dataIndex++;
           }
           
-          {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)100); InvokeEvent(evUnq);}
+          {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(100); InvokeEvent(evUnq);}
           {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 
           for (int i=0;i<filesExtracted.size();i++)

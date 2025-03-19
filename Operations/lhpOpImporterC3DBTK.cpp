@@ -607,7 +607,7 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
     }
 
     progress = (currentFrame + 1) * 100 / intData.m_NumFrames;
-    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(progress); InvokeEvent(evUnq);}
   }
 
   //if specCloud exists add it to all clouds
@@ -674,7 +674,7 @@ void lhpOpImporterC3DBTK::ImportAnalog(lhpOpImporterC3DBTK::_InternalC3DData &in
     }
 
     progress = (currentSample +1 ) * 100 / (intData.m_NumSamples);
-    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(progress); InvokeEvent(evUnq);}
   }
 
   {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
@@ -864,7 +864,7 @@ void lhpOpImporterC3DBTK::ImportPlatform(lhpOpImporterC3DBTK::_InternalC3DData &
       intData.m_MomentList[currentPlatform]->SetData(vectorMoment, currentTime, mafVMEGeneric::MAF_VME_REFERENCE_DATA); //look here times
 
       progress = (currentSample + 1 + (currentPlatform * intData.m_NumSamples)) * 100 / (intData.m_NumSamples * intData.m_NumPlatforms);
-      {mafEvent evUnq(this, PROGRESSBAR_SET_VALUE, (intptr_t)progress); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this, PROGRESSBAR_SET_VALUE); evUnq.SetArg(progress); InvokeEvent(evUnq);}
     }
   }
   {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}

@@ -1106,7 +1106,7 @@ int lhpOpBonemat::HUIntegration()
     arrayMaterial->InsertNextTuple1(0);
 
     progress = (elementNumber + 1) * 100 / numElements;
-    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(progress); InvokeEvent(evUnq);}
 
   }
   
@@ -1678,7 +1678,7 @@ int lhpOpBonemat::YoungModuleIntegration()
     arrayMaterial->InsertNextTuple1(0);
 
     progress = (id + 1) * 100 / numElements;
-    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(progress); InvokeEvent(evUnq);}
   }
 
   {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
@@ -1824,7 +1824,7 @@ int lhpOpBonemat::YoungModuleIntegration()
     eModuleSource[id].rho = 0;
 
     progress = (id + 1) * 100 / numElements;
-    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)progress); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(progress); InvokeEvent(evUnq);}
     float valueE = arrayE->GetValue(id);
     float valueRo = arrayRo->GetValue(id);
     arrayE->SetValue(id, eModuleSource[id].E);

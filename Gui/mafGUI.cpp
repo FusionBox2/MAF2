@@ -221,7 +221,7 @@ make it protected, and make mafGUIValidator friend
   {
     int id = e->GetId();
     if(m_CollaborateStatus)
-      {mafEvent evUnq(this,REMOTE_PARAMETER, (intptr_t)id); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,REMOTE_PARAMETER); evUnq.SetArg(id); InvokeEvent(evUnq);}
     if(id >= MINID && id <MAXID)
       id = GetModuleId(id);
     e->SetSender(this);
@@ -1598,7 +1598,7 @@ mafGUIRollOut *mafGUI::RollOut(int id, const mafString& title, mafGUI *roll_gui,
 void mafGUI::OnMouseWheel(wxMouseEvent &event)
   //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this,MOUSE_WHEEL,(intptr_t) event.GetWheelRotation()); OnEvent(&evUnq);}
+  {mafEvent evUnq(this,MOUSE_WHEEL); evUnq.SetArg(event.GetWheelRotation()); OnEvent(&evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGUI::OnListBox (wxCommandEvent &event)
@@ -1606,7 +1606,7 @@ void mafGUI::OnListBox (wxCommandEvent &event)
 {
   wxListBox *lb = (wxListBox *)event.GetEventObject();
   ((mafGUIValidator *)lb->GetValidator())->TransferFromWindow();
-  {mafEvent evUnq(this, event.GetId(),(intptr_t) event.GetInt()); OnEvent(&evUnq);}
+  {mafEvent evUnq(this, event.GetId()); evUnq.SetArg(event.GetInt()); OnEvent(&evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGUI::OnListCtrl (wxCommandEvent &event)
@@ -1614,14 +1614,14 @@ void mafGUI::OnListCtrl (wxCommandEvent &event)
 {
 	wxListCtrl *lb = (wxListCtrl *)event.GetEventObject();
 	((mafGUIValidator *)lb->GetValidator())->TransferFromWindow();
-	{mafEvent evUnq(this, event.GetId(),(intptr_t) event.GetInt()); OnEvent(&evUnq);}
+	{mafEvent evUnq(this, event.GetId()); evUnq.SetArg(event.GetInt()); OnEvent(&evUnq);}
 }
 //----------------------------------------------------------------------------
 //----------------------------------------------------------------------------
 void mafGUI::OnCheckListBox (wxCommandEvent &event)
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this, event.GetId(),(intptr_t) event.GetInt()); OnEvent(&evUnq);}
+  {mafEvent evUnq(this, event.GetId()); evUnq.SetArg(event.GetInt()); OnEvent(&evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGUI::Reparent(wxWindow *parent)
