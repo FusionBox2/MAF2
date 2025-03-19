@@ -268,7 +268,7 @@ void medOpExporterVTKXML::SaveVTKData()
     writer->SetDataModeToAscii();
   //{mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
 
-  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,writer); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR); evUnq.SetVtkObj(writer); InvokeEvent(evUnq);}
 
   // workaround code:  this is not working so I'm setting a dummy 50/100 progress value 
   // {mafEvent evUnq(this,BIND_TO_PROGRESSBAR, writer); InvokeEvent(evUnq);}

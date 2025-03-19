@@ -158,7 +158,7 @@ void medInteractorSegmentationPicker::SendPickingInformation(mafView *v, double 
         if (pos_picked[2]>bounds[5]) pos_picked[2]=bounds[5];
 
         int pid = vtk_data->FindPoint(pos_picked);
-        mafEvent pick_event(this,msg_id,p);
+        mafEvent pick_event(this,msg_id); pick_event.SetVtkObj(p);
         pick_event.SetArg(pid);
         InvokeEvent(pick_event);
         p->Delete();

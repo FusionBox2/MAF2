@@ -113,7 +113,7 @@ void mafOpScalarToSurface::OpRun()
   scalar->SetTimeStamp(ts);
   if (!m_TestMode)
   {
-    {mafEvent evUnq(this, BIND_TO_PROGRESSBAR,delaunay); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, BIND_TO_PROGRESSBAR); evUnq.SetVtkObj(delaunay); InvokeEvent(evUnq);}
   }
   delaunay->SetInputConnection(scalar_surface->GetOutputPort());
   delaunay->Update();

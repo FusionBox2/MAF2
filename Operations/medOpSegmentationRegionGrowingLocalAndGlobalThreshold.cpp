@@ -288,7 +288,7 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::RegionGrowing()
   localFilter->SetLowerThreshold(m_Threshold);
   localFilter->SetUpperLabel(m_UpperLabel);
   localFilter->SetUpperThreshold(m_Threshold+400);
-  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR,localFilter); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR); evUnq.SetVtkObj(localFilter); InvokeEvent(evUnq);}
   localFilter->Update();
 
   //Save the result of the region growing
