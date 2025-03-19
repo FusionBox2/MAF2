@@ -14,33 +14,28 @@
 //----------------------------------------------------------------------------
 // mafEvent CTOR's
 //----------------------------------------------------------------------------
-  mafEvent::mafEvent()																																		  { Init(NULL,NO_EVENT,0);                                        Initialized();}
-  mafEvent::mafEvent(void *sender, int id,                            intptr_t arg)							{ Init(sender, id, arg);                                        Initialized();}
-  mafEvent::mafEvent(void *sender, int id, bool             b,        intptr_t arg)							{ Init(sender, id, arg); m_Bool =b;                             Initialized();}
-  mafEvent::mafEvent(void *sender, int id, double           f,        intptr_t arg)             { Init(sender, id, arg); m_Double=f;                            Initialized();}
-  mafEvent::mafEvent(void *sender, int id, mafString        *s,       intptr_t arg)							{ Init(sender, id, arg); m_MAFString =s;                        Initialized();}
-  mafEvent::mafEvent(void *sender, int id, mafString       *s, int x, int y, int width, int height,  intptr_t arg)  { Init(sender, id, arg); m_MAFString =s; m_x = x; m_y = y; m_width = width; m_height = height;   Initialized();}
-  mafEvent::mafEvent(void *sender, int id, mafView          *view,    wxWindow *win)				{ Init(sender, id, 0);   m_View =view; m_Win  =win;             Initialized();}
-  mafEvent::mafEvent(void *sender, int id, mafNode          *vme,     bool b,intptr_t arg)			{ Init(sender, id, arg); m_Vme  =vme; m_Bool = b;               Initialized();}
-  mafEvent::mafEvent(void *sender, int id, mafOp            *op,      intptr_t arg)							{ Init(sender, id, arg);   m_Op   =op;                          Initialized();}
-  mafEvent::mafEvent(void *sender, int id, std::shared_ptr<mafMatrix> m1, std::shared_ptr<mafMatrix> m2)					    { Init(sender, id, 0);   m_Matrix =m1; m_Matrix2 =m2;         Initialized();}
-  mafEvent::mafEvent(void *sender, int id, mafObject        *mafobj,  intptr_t arg)						  { Init(sender, id, arg); m_MafObject = mafobj;                  Initialized();}
-  mafEvent::mafEvent(void *sender, int id, mafObject        *mafobj,  mafString *s,intptr_t arg){ Init(sender, id, arg); m_MafObject = mafobj; m_MAFString =s;  Initialized();}
-  mafEvent::mafEvent(void *sender, int id, WidgetDataType   &widget_data,  intptr_t arg)
-  {
-    Init(sender, id, arg);
-    m_WidgetData = widget_data;
-    Initialized();
-  }
+mafEvent::mafEvent() = default;
+mafEvent::mafEvent(void *sender, int id,                            intptr_t arg)                                { Init(sender, id, arg);}
+mafEvent::mafEvent(void *sender, int id, bool             b,        intptr_t arg)                                { Init(sender, id, arg); m_Bool =b;}
+mafEvent::mafEvent(void *sender, int id, double           f,        intptr_t arg)                                { Init(sender, id, arg); m_Double=f;}
+mafEvent::mafEvent(void *sender, int id, mafString        *s,       intptr_t arg)                                { Init(sender, id, arg); m_MAFString = s;}
+mafEvent::mafEvent(void *sender, int id, mafString       *s, int x, int y, int width, int height,  intptr_t arg) { Init(sender, id, arg); m_MAFString =s; m_x = x; m_y = y; m_width = width; m_height = height;}
+mafEvent::mafEvent(void *sender, int id, mafView          *view,    wxWindow *win)                               { Init(sender, id, 0); m_View =view; m_Win  =win;}
+mafEvent::mafEvent(void *sender, int id, mafNode          *vme,     bool b,intptr_t arg)                         { Init(sender, id, arg); m_Vme  =vme; m_Bool = b;}
+mafEvent::mafEvent(void *sender, int id, mafOp            *op,      intptr_t arg)                                { Init(sender, id, arg); m_Op   =op;}
+mafEvent::mafEvent(void *sender, int id, std::shared_ptr<mafMatrix> m1, std::shared_ptr<mafMatrix> m2)		     { Init(sender, id, 0);   m_Matrix =m1; m_Matrix2 =m2;}
+mafEvent::mafEvent(void *sender, int id, mafObject        *mafobj,  intptr_t arg)                                { Init(sender, id, arg); m_MafObject = mafobj;}
+mafEvent::mafEvent(void *sender, int id, mafObject        *mafobj,  mafString *s,intptr_t arg)                   { Init(sender, id, arg); m_MafObject = mafobj; m_MAFString =s;}
+mafEvent::mafEvent(void *sender, int id, WidgetDataType   &widget_data,  intptr_t arg)                           { Init(sender, id, arg); m_WidgetData = widget_data;}
 #ifdef MAF_USE_WX
-  mafEvent::mafEvent(void *sender, int id, wxWindow        *win,    intptr_t arg)							{ Init(sender, id, arg); m_Win  =win;										Initialized();}
-  mafEvent::mafEvent(void *sender, int id, wxUpdateUIEvent *e,      intptr_t arg)							{ Init(sender, id, arg); m_UpdateUIEvent = e;																	}
-  mafEvent::mafEvent(void *sender, int id, wxObject        *wxobj,  intptr_t arg)							{ Init(sender, id, arg); m_WxObj = wxobj;							  Initialized();}
+mafEvent::mafEvent(void *sender, int id, wxWindow        *win,    intptr_t arg)                                  { Init(sender, id, arg); m_Win  =win;}
+mafEvent::mafEvent(void *sender, int id, wxUpdateUIEvent *e,      intptr_t arg)                                  { Init(sender, id, arg); m_UpdateUIEvent = e;                                 }
+mafEvent::mafEvent(void *sender, int id, wxObject        *wxobj,  intptr_t arg)                                  { Init(sender, id, arg); m_WxObj = wxobj;}
 #endif
 #ifdef MAF_USE_VTK
-  mafEvent::mafEvent(void *sender, int id, vtkObject       *vtkobj, intptr_t arg)							{ Init(sender, id, arg); m_VtkObj = vtkobj;							Initialized();}
-  mafEvent::mafEvent(void *sender, int id, vtkObject       *vtkobj, mafString *s)         { Init(sender, id, 0);   m_VtkObj = vtkobj;m_MAFString =s; Initialized();}
-  mafEvent::mafEvent(void *sender, int id, vtkProp         *prop,   mafNode *vme)   			{ Init(sender, id, 0);   m_VtkProp= prop; m_Vme = vme;  Initialized();}
+mafEvent::mafEvent(void *sender, int id, vtkObject       *vtkobj, intptr_t arg)                                  { Init(sender, id, arg); m_VtkObj = vtkobj;}
+mafEvent::mafEvent(void *sender, int id, vtkObject       *vtkobj, mafString *s)                                  { Init(sender, id, 0); m_VtkObj = vtkobj;m_MAFString =s;}
+mafEvent::mafEvent(void *sender, int id, vtkProp         *prop,   mafNode *vme)                                  { Init(sender, id, 0); m_VtkProp= prop; m_Vme = vme;}
 #endif
 		
 //----------------------------------------------------------------------------
