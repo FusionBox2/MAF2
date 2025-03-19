@@ -495,7 +495,7 @@ int medOpComputeInertialTensor::ComputeLocalInertialTensor(mafNode* node, int cu
 
       if (!m_TestMode)
       {
-        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE,(intptr_t)(((double) i)/((double) ncells)*100.)); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(((double) i)/((double) ncells)*100.); InvokeEvent(evUnq);}
       }
 
     } // end foreach triangle

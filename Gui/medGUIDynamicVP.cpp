@@ -251,7 +251,7 @@ void medGUIDynamicVP::OnEvent(mafEventBase *maf_event)
 /*virtual*/ void medGUIDynamicVP::NotifyListener(intptr_t nData)
 {
   //notify the listener about change
-  mafEvent ev(this, m_NotifyId, nData);
+  mafEvent ev(this, m_NotifyId); ev.SetArg(nData);
   InvokeEvent(&ev);
 }
 

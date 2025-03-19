@@ -416,7 +416,7 @@ bool medLogicWithManagers::Configure()
     m_WizardMenu = new wxMenu;
     m_logic->m_MenuBar->Insert(4, m_WizardMenu, _("&Wizard"));
   }
-  m_logic->m_frame->Bind(wxEVT_MENU, [this](const wxCommandEvent& event) {mafEvent evUnq(this, MENU_WIZARD, (intptr_t)event.GetId());	OnEvent(&evUnq); }, WIZARD_START, WIZARD_END);
+  m_logic->m_frame->Bind(wxEVT_MENU, [this](const wxCommandEvent& event) {mafEvent evUnq(this, MENU_WIZARD); evUnq.SetArg(event.GetId());	OnEvent(&evUnq); }, WIZARD_START, WIZARD_END);
 
   ConfigureWizardManager();
   return true;

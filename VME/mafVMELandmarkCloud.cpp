@@ -926,7 +926,7 @@ void mafVMELandmarkCloud::Close()
       landmarks.push_back(lm); 
     }
     progress = c * 100 / numberOfChildren;
-  {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE, (intptr_t)progress); ForwardUpEvent(&evUnq);}
+  {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(progress); ForwardUpEvent(&evUnq);}
 
   }
   m_EnableModifiedEvent = true;
@@ -1025,7 +1025,7 @@ void mafVMELandmarkCloud::Open()
       }
 		}
     progress = i * 100 / numlm;
-    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE, (intptr_t)progress); ForwardUpEvent(&evUnq);}
+    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(progress); ForwardUpEvent(&evUnq);}
 
 	}
   // remove all items and tags...
