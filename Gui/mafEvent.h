@@ -24,15 +24,7 @@ public:
   mafTypeMacroN(mafEvent);
 
   mafEvent();                                                         
-  mafEvent(void *sender, int id,                           intptr_t arg=0);
-  mafEvent(void *sender, int id, bool             b,       intptr_t arg=0);
-  mafEvent(void *sender, int id, double           f,       intptr_t arg=0);
-  mafEvent(void *sender, int id, mafString       *s,       intptr_t arg=0);
-  mafEvent(void *sender, int id, mafNode         *vme,     bool b=false, intptr_t arg=0);
-  mafEvent(void *sender, int id, mafView         *view,    wxWindow *win=nullptr);
-  mafEvent(void *sender, int id, mafOp					 *op, intptr_t arg=0);
-  mafEvent(void *sender, int id, mafObject       *mafobj, intptr_t arg=0);
-  mafEvent(void *sender, int id, mafObject       *mafobj,  mafString       *s, intptr_t arg=0);
+  mafEvent(void *sender, int id);
 
   void DeepCopy(const mafEventBase *maf_event) override;
 
@@ -100,9 +92,9 @@ protected:
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #ifdef MAF_USE_WX
 public:
-  mafEvent(void *sender, int id, wxWindow        *win,    intptr_t arg=0);
-  mafEvent(void *sender, int id, wxUpdateUIEvent *e,      intptr_t arg=0);
-  mafEvent(void *sender, int id, wxObject        *wxobj,  intptr_t arg=0);
+  mafEvent(void *sender, int id, wxWindow        *win,    intptr_t arg=0) = delete;
+  mafEvent(void *sender, int id, wxUpdateUIEvent *e,      intptr_t arg=0) = delete;
+  mafEvent(void *sender, int id, wxObject        *wxobj,  intptr_t arg=0) = delete;
 
   wxWindow*        GetWin() const {return m_Win;};
   wxUpdateUIEvent* GetUIEvent() const {return m_UpdateUIEvent;};
@@ -121,9 +113,9 @@ protected:
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #ifdef MAF_USE_VTK
 public:
-  mafEvent(void *sender, int id, vtkProp         *prop,   mafNode *vme=NULL);
-  mafEvent(void *sender, int id, vtkObject       *vtkobj, intptr_t arg=0);
-  mafEvent(void *sender, int id, vtkObject       *vtkobj, mafString *s);
+  mafEvent(void *sender, int id, vtkProp         *prop,   mafNode *vme=NULL) = delete;
+  mafEvent(void *sender, int id, vtkObject       *vtkobj, intptr_t arg=0) = delete;
+  mafEvent(void *sender, int id, vtkObject       *vtkobj, mafString *s) = delete;
 
   vtkProp*         GetProp() const {return m_VtkProp;};
   vtkObject*       GetVtkObj() const {return m_VtkObj;};
@@ -147,6 +139,6 @@ public:
   
 protected:
 
-  void Init(void *sender, int id, intptr_t arg=0);
+  void Init();
   void Initialized();
 };

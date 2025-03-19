@@ -13,11 +13,12 @@ class FTK_BASE_EXPORT mafEventBase: public mafObject
 public:
   mafEventBase(void *sender = nullptr, mafID id = ID_NO_EVENT, void *data = nullptr, mafID channel=MCH_UP);
 
-	~mafEventBase() override;
+  ~mafEventBase() override;
 
   mafTypeMacroN(mafEventBase);
  
   mafEventBase(const mafEventBase& c);
+  mafEventBase& operator=(const mafEventBase& c);
 
   virtual void DeepCopy(const mafEventBase *maf_event);
 

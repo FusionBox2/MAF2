@@ -15,31 +15,13 @@
 // mafEvent CTOR's
 //----------------------------------------------------------------------------
 mafEvent::mafEvent() = default;
-mafEvent::mafEvent(void *sender, int id,                            intptr_t arg)                                { Init(sender, id, arg);}
-mafEvent::mafEvent(void *sender, int id, bool             b,        intptr_t arg)                                { Init(sender, id, arg); m_Bool =b;}
-mafEvent::mafEvent(void *sender, int id, double           f,        intptr_t arg)                                { Init(sender, id, arg); m_Double=f;}
-mafEvent::mafEvent(void *sender, int id, mafString        *s,       intptr_t arg)                                { Init(sender, id, arg); m_MAFString = s;}
-mafEvent::mafEvent(void *sender, int id, mafView          *view,    wxWindow *win)                               { Init(sender, id, 0); m_View =view; m_Win  =win;}
-mafEvent::mafEvent(void *sender, int id, mafNode          *vme,     bool b,intptr_t arg)                         { Init(sender, id, arg); m_Vme  =vme; m_Bool = b;}
-mafEvent::mafEvent(void *sender, int id, mafOp            *op,      intptr_t arg)                                { Init(sender, id, arg); m_Op   =op;}
-mafEvent::mafEvent(void *sender, int id, mafObject        *mafobj,  intptr_t arg)                                { Init(sender, id, arg); m_MafObject = mafobj;}
-mafEvent::mafEvent(void *sender, int id, mafObject        *mafobj,  mafString *s,intptr_t arg)                   { Init(sender, id, arg); m_MafObject = mafobj; m_MAFString =s;}
-#ifdef MAF_USE_WX
-mafEvent::mafEvent(void *sender, int id, wxWindow        *win,    intptr_t arg)                                  { Init(sender, id, arg); m_Win  =win;}
-mafEvent::mafEvent(void *sender, int id, wxUpdateUIEvent *e,      intptr_t arg)                                  { Init(sender, id, arg); m_UpdateUIEvent = e;                                 }
-mafEvent::mafEvent(void *sender, int id, wxObject        *wxobj,  intptr_t arg)                                  { Init(sender, id, arg); m_WxObj = wxobj;}
-#endif
-#ifdef MAF_USE_VTK
-mafEvent::mafEvent(void *sender, int id, vtkObject       *vtkobj, intptr_t arg)                                  { Init(sender, id, arg); m_VtkObj = vtkobj;}
-mafEvent::mafEvent(void *sender, int id, vtkObject       *vtkobj, mafString *s)                                  { Init(sender, id, 0); m_VtkObj = vtkobj;m_MAFString =s;}
-mafEvent::mafEvent(void *sender, int id, vtkProp         *prop,   mafNode *vme)                                  { Init(sender, id, 0); m_VtkProp= prop; m_Vme = vme;}
-#endif
+mafEvent::mafEvent(void *sender, int id) : mafEventBase(sender, id) { Init();}
 		
 //----------------------------------------------------------------------------
 void mafEvent::Log() 
 //----------------------------------------------------------------------------
 {
-  mafString s = _R("[EV]");
+  /*mafString s = _R("[EV]");
                //s += _R(" sender= ") + mafToString((intptr_t)m_Sender);
                s += _R(" ID= ") + mafIdString(m_Id);
   if(m_Arg)    s += _R(" arg= ") + mafToString(m_Arg);
@@ -66,13 +48,13 @@ void mafEvent::Log()
 #endif
   if(m_MafObject) s += _R(" mafobj= ") + mafToString((intptr_t)m_MafObject) + _R(" : ") + _R(m_MafObject->GetTypeName());
 
-  mafLogMessage(_M(s));
+  mafLogMessage(_M(s));*/
 }
 //----------------------------------------------------------------------------
 mafEvent* mafEvent::Clone() const 
 //----------------------------------------------------------------------------
 {
-  mafEvent *e	= new mafEvent(m_Sender,m_Id,m_Bool,m_Arg);
+  mafEvent *e	= new mafEvent(m_Sender,m_Id);
   e->DeepCopy(this);
   return e;
 }
@@ -109,10 +91,10 @@ void mafEvent::DeepCopy(const mafEventBase *maf_base_event)
 #endif
 }
 //----------------------------------------------------------------------------
-void mafEvent::Init(void *sender, int id, intptr_t arg) 
+void mafEvent::Init() 
 //----------------------------------------------------------------------------
 {
-  bool *verbose = GetLogVerbose();
+  /*bool *verbose = GetLogVerbose();
   if (id != UPDATE_UI && (*verbose))
   {
     mafString sender_type = _R("Sent Event. Sender: ");
@@ -130,11 +112,7 @@ void mafEvent::Init(void *sender, int id, intptr_t arg)
     mafString id_name = mafIdString(id);
     mafString msg = sender_type + _R("  ID: ") + id_name;
     mafLogMessage(_M(msg));
-  }
-
-  m_Sender = sender;
-  m_Id     = id; 
-  m_Arg    = arg;
+  }*/
 }
 //----------------------------------------------------------------------------
 void mafEvent::Initialized() 
