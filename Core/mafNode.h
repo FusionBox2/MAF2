@@ -95,7 +95,7 @@ public:
 class MAF_EXPORT mafNode : public mafReferenceCounted, public mafEventSource, public mafBaseEventHandler, public mafTimeStamped, public mafObjectWithGUI
 {
 public:
-  mafTypeMacro(mafNode, mafReferenceCounted);
+  mafTypeMacroN(mafNode);
 
   static mafNode* Create(const char* NodeType);
   /** print a dump of this object */
