@@ -149,7 +149,7 @@ void medOpMakeVMETimevarying::OpDo()
 void medOpMakeVMETimevarying::OpUndo()
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this,VME_REMOVE,m_Output); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_Output); InvokeEvent(evUnq);}
   mafDEL(m_Output);
 }
 //----------------------------------------------------------------------------
@@ -685,7 +685,7 @@ void medOpMakeVMETimevarying::Execute()
   m_VMETimevarying->GetMatrixPipe()->Update();
   m_VMETimevarying->GetDataPipe()->Update();
 
-  {mafEvent evUnq(this,VME_ADD,m_VMETimevarying); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_ADD); evUnq.SetVme(m_VMETimevarying); InvokeEvent(evUnq);}
 
   m_Output = m_VMETimevarying;
 
