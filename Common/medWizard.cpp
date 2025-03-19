@@ -239,7 +239,7 @@ void medWizard::BlockExecutionEnd()
     {
       //getting the wizard substring
       mafString wizardName = mafWxToString(nextBlock.SubString(7,nextBlock.size()-2));
-      {mafEvent evUnq(this,WIZARD_SWITCH,&wizardName); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,WIZARD_SWITCH); evUnq.SetString(&wizardName); InvokeEvent(evUnq);}
     }
   }
   else
