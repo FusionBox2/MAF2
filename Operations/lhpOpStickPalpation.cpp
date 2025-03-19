@@ -459,7 +459,7 @@ void lhpOpStickPalpation::OnEvent(mafEventBase *e)
     case ID_STICK_CALIBRATION:
     {
       mafString s(_R("Choose wand calibration cloud"));
-      mafEvent e(this,VME_CHOOSE, &s);
+      mafEvent e(this,VME_CHOOSE); e.SetString(&s);
       InvokeEvent(e);
       if(e.GetVme() == NULL)
       {
@@ -478,7 +478,7 @@ void lhpOpStickPalpation::OnEvent(mafEventBase *e)
     case ID_STICK_DEFINITION:
     {
       mafString s(_R("Choose wand definition cloud"));
-      mafEvent e(this,VME_CHOOSE, &s);
+      mafEvent e(this,VME_CHOOSE); e.SetString(&s);
       InvokeEvent(e);
       if(e.GetVme() == NULL)
       {
@@ -497,7 +497,7 @@ void lhpOpStickPalpation::OnEvent(mafEventBase *e)
     case ID_LIMB_CALIBRATION:
     {
       mafString s(_R("Choose  target calibration cloud"));
-      mafEvent e(this,VME_CHOOSE, &s);
+      mafEvent e(this,VME_CHOOSE); e.SetString(&s);
       InvokeEvent(e);
       if(e.GetVme() == NULL)
       {
@@ -516,7 +516,7 @@ void lhpOpStickPalpation::OnEvent(mafEventBase *e)
     case ID_LIMB_CLOUD:
     {
       mafString s(_R("Choose target cloud"));
-      mafEvent e(this,VME_CHOOSE, &s);
+      mafEvent e(this,VME_CHOOSE); e.SetString(&s);
       InvokeEvent(e);
       if(e.GetVme() == NULL)
       {
@@ -535,7 +535,7 @@ void lhpOpStickPalpation::OnEvent(mafEventBase *e)
     case ID_TRG_MOT:
     {
       mafString s(_R("Choose node with landmark clouds as children"));
-      mafEvent e(this,VME_CHOOSE, &s);
+      mafEvent e(this,VME_CHOOSE); e.SetString(&s);
       InvokeEvent(e);
       if(e.GetVme() == NULL)
       {
