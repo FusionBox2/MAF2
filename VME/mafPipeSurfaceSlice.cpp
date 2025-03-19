@@ -381,7 +381,7 @@ void mafPipeSurfaceSlice::OnEvent(mafEventBase *maf_event)
       for (int i = 0; i < num_lm; i++)
       {
         mafVME *child_lm = ((mafVMELandmarkCloud *)m_Vme)->GetLandmark(i);
-        mafEvent e(this,VME_SHOW,child_lm,true);
+        mafEvent e(this,VME_SHOW); e.SetVme(child_lm); e.SetBool(true);
         //((mafVMELandmarkCloud *)m_Vme)->ForwardUpEvent(&e);
         InvokeEvent(e);
       }

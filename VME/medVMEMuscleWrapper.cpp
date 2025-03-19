@@ -1591,7 +1591,7 @@ void medVMEMuscleWrapper::OnEvent(mafEventBase *maf_event)
       InternalUpdate();
       
       //force redrawing
-      mafEvent ev(this, VME_SELECTED,this);
+      mafEvent ev(this, VME_SELECTED); ev.SetVme(this);
       this->ForwardUpEvent(&ev);
       return;
     }

@@ -930,7 +930,7 @@ void mafVMELandmarkCloud::Close()
 
   }
   m_EnableModifiedEvent = true;
-  {mafEvent evUnq(this, VME_MODIFIED, this); ForwardUpEvent(&evUnq);}
+  {mafEvent evUnq(this, VME_MODIFIED); evUnq.SetVme(this); ForwardUpEvent(&evUnq);}
 
   // remove all child landmarks
   for (int i=0;i<landmarks.size();i++)
@@ -1030,7 +1030,7 @@ void mafVMELandmarkCloud::Open()
 	}
   // remove all items and tags...
   m_DataVector->RemoveAllItems();
-  {mafEvent evUnq(this, VME_MODIFIED, this); ForwardUpEvent(&evUnq);}
+  {mafEvent evUnq(this, VME_MODIFIED); evUnq.SetVme(this); ForwardUpEvent(&evUnq);}
 
   for (i = 0; i < numlm; i++)
     RemoveLandmarkName(i);
@@ -1382,7 +1382,7 @@ void mafVMELandmarkCloud::OnEvent(mafEventBase *maf_event)
 
         m_Gui->Update();
 
-        mafEvent ev(this,VME_SELECTED,this);
+        mafEvent ev(this,VME_SELECTED); ev.SetVme(this);
         this->ForwardUpEvent(&ev);
       }
       break;
