@@ -130,6 +130,8 @@ IF (MAF_USE_VTK)
 	SET(PROJECT_SRCS ${PROJECT_SRCS}
 		../ftk/wxVTK/wxVTKWindow.cpp
 		../ftk/wxVTK/wxVTKWindow.h
+		../ftk/wxVTK/wxGLVTKWindow.cpp
+		../ftk/wxVTK/wxGLVTKWindow.h
 	)
 ENDIF (MAF_USE_VTK)
 

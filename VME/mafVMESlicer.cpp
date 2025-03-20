@@ -96,7 +96,7 @@ mafVMESlicer::mafVMESlicer()
   //dpipe->SetNthInput(1,image);
 
   // set the texture in the output, must do it here, after setting slicer filter's input
-  GetSurfaceOutput()->SetTexture((vtkImageData *)((mafDataPipeCustom *)GetDataPipe())->GetVTKDataPipe()->GetOutput(1));
+  //GetSurfaceOutput()->SetTexture((vtkImageData *)dpipe->GetVTKDataPipe()->GetOutput(1));
   //GetMaterial()->SetMaterialTexture(GetSurfaceOutput()->GetTexture());
   GetMaterial()->m_MaterialType = mmaMaterial::USE_TEXTURE;
   GetMaterial()->m_TextureMappingMode = mmaMaterial::PLANE_MAPPING;

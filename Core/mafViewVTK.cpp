@@ -258,7 +258,7 @@ void mafViewVTK::GetVisualPipeName(mafNode *node, mafString &pipe_name)
   mafVME *v = mafVME::SafeDownCast(node);
   assert(v);
 
-  v->Modified();
+  /*v->Modified();
   vtkDataSet *data = v->GetOutput()->GetVTKData();
   mafVMELandmarkCloud *lmc = mafVMELandmarkCloud::SafeDownCast(v);
   mafVMELandmark *lm = mafVMELandmark::SafeDownCast(v);
@@ -266,7 +266,7 @@ void mafViewVTK::GetVisualPipeName(mafNode *node, mafString &pipe_name)
   {
     pipe_name = _R("mafPipeBox");
   }
-  else
+  else*/
   {
     // custom visualization for the view should be considered only
     // if we are not in editing mode.

@@ -78,6 +78,12 @@ add_subdirectory(Operations)
 add_subdirectory(Views)
 add_subdirectory(VME)
 add_subdirectory(vtkMAF)
+add_subdirectory(libjson)
+add_subdirectory(wxApp)
+
+if(Qt6_FOUND)
+  add_subdirectory(QtApp)
+endif(Qt6_FOUND)
 
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT lhpFusionBox)
 

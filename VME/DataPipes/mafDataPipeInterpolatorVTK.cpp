@@ -13,6 +13,10 @@ mafDataPipeInterpolatorVTK::mafDataPipeInterpolatorVTK()
 //------------------------------------------------------------------------------
 {
   m_VTKDataPipe = vtkNew<vtkMAFDataPipe>();
+  vtkNew<vtkStreamingDemandDrivenPipeline> sddp;
+  m_VTKDataPipe->SetExecutive(sddp);
+  //vtkNew<vtkTrivialProducer> prod;
+  //m_VTKDataPipe->SetInputConnection(prod->GetOutputPort());
   m_VTKDataPipe->SetDataPipe(this);
 }
 
@@ -62,7 +66,11 @@ void mafDataPipeInterpolatorVTK::Execute()
     vtkDataSet *data = GetCurrentItemVTK()->GetData();
     if (data != NULL)
     {
-      m_VTKDataPipe->SetInputData(data);
+      if (auto producer = vtkTrivialProducer::SafeDownCast(m_VTKDataPipe->GetInputAlgorithm()))
+        producer->SetOutput(data);
+      else
+        m_VTKDataPipe->SetInputData(data);
+      //m_VTKDataPipe->SetInputData(data);
       m_UpdateTime.Modified();
     }
   } 
