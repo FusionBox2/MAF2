@@ -116,7 +116,7 @@ int mafOpImporterMesh::Read()
     tag_Nature.SetValue(_R("NATURAL"));
     m_ImportedVmeMesh->GetTagArray()->SetTag(tag_Nature);
 
-    m_Output = m_ImportedVmeMesh;
+    SetOutput(m_ImportedVmeMesh);
   }
 
   delete reader;

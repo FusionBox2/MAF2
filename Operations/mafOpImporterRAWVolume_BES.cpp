@@ -728,7 +728,7 @@ bool mafOpImporterRAWVolume_BES::Import()
 		if (rd != NULL && m_VolumeLarge->SetLargeData(rd) == MAF_OK) {
 			img->Delete();
 
-			m_Output = m_VolumeLarge;			
+			SetOutput(m_VolumeLarge);			
 		}
 		else
 		{
@@ -832,10 +832,10 @@ bool mafOpImporterRAWVolume_BES::Import()
 			mafNEW(m_VolumeGray);
 			mafNEW(m_VolumeRGB);
 			if (m_VolumeGray->SetDataByDetaching((vtkDataSet *)rectilinear_data,0) == MAF_OK) {
-				m_Output = m_VolumeGray;
+				SetOutput(m_VolumeGray);
 			}
 			else if (m_VolumeRGB->SetDataByDetaching((vtkDataSet *)rectilinear_data,0) == MAF_OK) {
-				m_Output = m_VolumeRGB;
+				SetOutput(m_VolumeRGB);
 			}
 			else
 			{
@@ -850,10 +850,10 @@ bool mafOpImporterRAWVolume_BES::Import()
 
 			vtkDataSet* volume = (vtkDataSet *)image_to_sp->GetOutput();
 			if (m_VolumeGray->SetDataByDetaching(volume, 0) == MAF_OK){
-				m_Output = m_VolumeGray;
+				SetOutput(m_VolumeGray);
 			}
 			else if (m_VolumeRGB->SetDataByDetaching(volume, 0) == MAF_OK){
-				m_Output = m_VolumeRGB;
+				SetOutput(m_VolumeRGB);
 			}
 			else
 			{
@@ -869,8 +869,8 @@ bool mafOpImporterRAWVolume_BES::Import()
 
 	mafString name, ext, path;
 	mafSplitPath(m_RawFile,&path,&name,&ext);
-	m_Output->SetName(name);
-	m_Output->GetTagArray()->SetTag(tag_Nature);
+	GetOutput()->SetName(name);
+	GetOutput()->GetTagArray()->SetTag(tag_Nature);
 
 	if(!m_TestMode) {
 		{mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}

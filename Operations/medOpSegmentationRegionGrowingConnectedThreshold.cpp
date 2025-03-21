@@ -157,10 +157,10 @@ void medOpSegmentationRegionGrowingConnectedThreshold::OpRun()
 void medOpSegmentationRegionGrowingConnectedThreshold::OpDo()
 //----------------------------------------------------------------------------
 {
-  if(m_Output)
+  if(GetOutput())
   {
-    m_Output->ReparentTo(m_ResampleInput);
-    {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Output); evUnq.SetBool(true); InvokeEvent(evUnq);}
+    GetOutput()->ReparentTo(m_ResampleInput);
+    {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetOutput()); evUnq.SetBool(true); InvokeEvent(evUnq);}
     {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
 }
@@ -348,7 +348,7 @@ void medOpSegmentationRegionGrowingConnectedThreshold::Algorithm()
   //                          |-Binary volume
   m_VolumeOut->ReparentTo(m_SurfaceOut);
 
-  m_Output=m_SurfaceOut;
+  SetOutput(m_SurfaceOut);
 
   if(!m_TestMode)
   {

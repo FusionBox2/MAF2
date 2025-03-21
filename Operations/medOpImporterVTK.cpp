@@ -97,7 +97,7 @@ int medOpImporterVTK::ImportVTK()
       mafNEW(m_VmePolyLine);
       if (m_VmePolyLine->SetDataByDetaching(data,0) == MAF_OK)
       {
-        m_Output = m_VmePolyLine;
+        SetOutput(m_VmePolyLine);
       }
       else
       {
@@ -108,8 +108,8 @@ int medOpImporterVTK::ImportVTK()
       mafTagItem tag_Nature;
       tag_Nature.SetName(_R("VME_NATURE"));
       tag_Nature.SetValue(_R("NATURAL"));
-      m_Output->GetTagArray()->SetTag(tag_Nature);
-      m_Output->SetName(name);
+      GetOutput()->GetTagArray()->SetTag(tag_Nature);
+      GetOutput()->SetName(name);
 
       success = true;
     }

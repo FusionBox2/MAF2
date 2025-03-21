@@ -566,7 +566,7 @@ void mafOpLabelExtractor::ExtractLabel()
 	m_Vme->SetData(surface, 0.0);
   m_Vme->SetName(m_SurfaceName);
   m_Vme->Update();
-  m_Output = m_Vme;
+  SetOutput(m_Vme);
 }
 
 //----------------------------------------------------------------------------

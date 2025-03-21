@@ -132,5 +132,5 @@ void mafOpImporterMSF1x::ImportMSF()
     }
   }
   m_Group->Update();
-  m_Output = m_Group;
+  SetOutput(m_Group);
 }

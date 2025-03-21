@@ -41,10 +41,10 @@ public:
   //----------------------------------------------------------------------------
   {
     // Must unregister in order to avoid leaks or data loss
-    if (m_Output)
+    if (GetOutput())
     {
-      m_Vme->UnRegister(m_Output);
-      m_Output = NULL;
+      m_Vme->UnRegister(GetOutput());
+      SetOutput(nullptr);
     }
     m_Vme = NULL;    
   }
@@ -136,7 +136,7 @@ public:
     m_Vme->GetTagArray()->SetTag(tag_Nature); 
 
     // Must register in order to preserve output for do/undo operation (since it is a smart pointer)
-    m_Output = m_Vme;
+    SetOutput(m_Vme);
   }
   //----------------------------------------------------------------------------
   /** Set file name. */

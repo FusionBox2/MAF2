@@ -55,7 +55,7 @@ lhpOpFindCentroid::lhpOpFindCentroid(const mafString& label) : Superclass(label)
 lhpOpFindCentroid::~lhpOpFindCentroid( ) 
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_Output);
+  mafDEL(m_CoreOpOutput);
 }
 //----------------------------------------------------------------------------
 mafOp* lhpOpFindCentroid::Copy()   
@@ -121,6 +121,6 @@ void lhpOpFindCentroid::OpRun()
   }
   if(!cloud)
     {mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);}
-  m_Output = cloud;
+  SetOutput(cloud);
   {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
 }

@@ -503,7 +503,7 @@ void medOpSegmentation::OpDo()
   //                          |-Binary volume
   m_OutputVolume->ReparentTo(m_OutputSurface);
 
-  m_Output=m_OutputSurface;
+  SetOutput(m_OutputSurface);
 
   }
   RemoveVMEs();

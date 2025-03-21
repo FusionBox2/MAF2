@@ -568,9 +568,9 @@ int medOpImporterDicomOffis::RunWizard()
 void medOpImporterDicomOffis::OpDo()
 	//----------------------------------------------------------------------------
 {
-	if(m_Output != NULL)
+	if(GetOutput() != nullptr)
 	{
-		m_Output->ReparentTo(GetInput());
+		GetOutput()->ReparentTo(GetInput());
 	}
 }
 //----------------------------------------------------------------------------
@@ -795,7 +795,7 @@ int medOpImporterDicomOffis::BuildOutputVMEImagesFromDicom()
 
 	if(m_ImagesGroup != NULL)
 	{
-		m_Output = m_ImagesGroup;
+		SetOutput(m_ImagesGroup);
 	}
 
 	return OP_RUN_OK;
@@ -994,7 +994,7 @@ int medOpImporterDicomOffis::BuildOutputVMEImagesFromDicomCineMRI()
 
 	if(m_ImagesGroup != NULL)
 	{
-		m_Output = m_ImagesGroup;
+		SetOutput(m_ImagesGroup);
 	}
 
 	return OP_RUN_OK;
@@ -1400,7 +1400,7 @@ int medOpImporterDicomOffis::BuildOutputVMEGrayVolumeFromDicom()
 
 	if(m_Volume != NULL)
 	{
-		m_Output = m_Volume;
+		SetOutput(m_Volume);
 	}
 	return OP_RUN_OK;
 }
@@ -1828,7 +1828,7 @@ int medOpImporterDicomOffis::BuildOutputVMEGrayVolumeFromDicomCineMRI()
 
 	if(m_Volume != NULL)
 	{
-		m_Output = m_Volume;
+		SetOutput(m_Volume);
 	}
 	return OP_RUN_OK;
 }
@@ -1949,7 +1949,7 @@ int medOpImporterDicomOffis::BuildOutputVMEMeshFromDicom()
 
 	m_Mesh->SetName(m_VolumeName);
 
-	m_Output = m_Mesh;
+	SetOutput(m_Mesh);
 	return OP_RUN_OK;
 }
 //----------------------------------------------------------------------------
@@ -2073,7 +2073,7 @@ int medOpImporterDicomOffis::BuildOutputVMEMeshFromDicomCineMRI()
 
 	m_Mesh->SetName(m_VolumeName);
 
-	m_Output = m_Mesh;
+	SetOutput(m_Mesh);
 	return OP_RUN_OK;
 }
 

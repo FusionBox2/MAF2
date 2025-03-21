@@ -216,7 +216,7 @@ void lhpOpICPRegFollow::OpDo()
   m_Registered->ReparentTo(m_Target->GetParent());
   m_Registered->SetMatrix(*final_matrix);
 
-  m_Output = m_Registered;
+  SetOutput(m_Registered);
 
   m_Registered->ReparentTo(GetInput());
 

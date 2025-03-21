@@ -315,11 +315,11 @@ void lhpOpComputeTensor::CreateOutputDataset()
    
 
     // Get the tensor output and redirect it to output
-    m_Output = m_VmeTensors;
-    m_Output->ReparentTo(GetInput());
+    SetOutput(m_VmeTensors);
+    m_VmeTensors->ReparentTo(GetInput());
     // Set the name of the dataset
     mafString name = GetInput()->GetName() + _R(" - tensors");
-    m_Output->SetName(name);
+    m_VmeTensors->SetName(name);
     }
   }
 

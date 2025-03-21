@@ -538,11 +538,11 @@ bool mafOpImporterRAWVolume::Import()
 		mafNEW(m_VolumeRGB);
 		if (m_VolumeGray->SetDataByDetaching((vtkDataSet *)rectilinear_data,0) == MAF_OK)
 		{
-			m_Output = m_VolumeGray;
+			SetOutput(m_VolumeGray);
 		}
 		else if (m_VolumeRGB->SetDataByDetaching((vtkDataSet *)rectilinear_data,0) == MAF_OK)
 		{
-			m_Output = m_VolumeRGB;
+			SetOutput(m_VolumeRGB);
 		}
 		else
 		{
@@ -557,11 +557,11 @@ bool mafOpImporterRAWVolume::Import()
 		mafNEW(m_VolumeRGB);
 		if (m_VolumeGray->SetDataByDetaching((vtkDataSet *)image_to_sp->GetOutput(),0) == MAF_OK)
 		{
-			m_Output = m_VolumeGray;
+			SetOutput(m_VolumeGray);
 		}
 		else if (m_VolumeRGB->SetDataByDetaching((vtkDataSet *)image_to_sp->GetOutput(),0) == MAF_OK)
 		{
-			m_Output = m_VolumeRGB;
+			SetOutput(m_VolumeRGB);
 		}
 		else
 		{
@@ -576,9 +576,9 @@ bool mafOpImporterRAWVolume::Import()
 
 	mafString name, ext, path;
   mafSplitPath(m_RawFile,&path,&name,&ext);
-  m_Output->SetName(name);
-  m_Output->GetTagArray()->SetTag(tag_Nature);
-  m_Output->ReparentTo(GetInput());
+	GetOutput()->SetName(name);
+	GetOutput()->GetTagArray()->SetTag(tag_Nature);
+	GetOutput()->ReparentTo(GetInput());
 	if(!m_TestMode)
 		{mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 	return true;

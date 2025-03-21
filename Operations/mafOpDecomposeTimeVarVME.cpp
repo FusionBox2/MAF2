@@ -455,7 +455,7 @@ int mafOpDecomposeTimeVarVME::UpdateFrames()
     }
     break;
   }
-  m_Output = m_Group;
+  SetOutput(m_Group);
   return MAF_OK;
 }
 

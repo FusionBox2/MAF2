@@ -223,7 +223,7 @@ void mafOpImporterImage::ImportImage()
   tag_Nature.SetName(_R("VME_NATURE"));
   tag_Nature.SetValue(_R("NATURAL"));
 
-  m_Output->GetTagArray()->SetTag(tag_Nature);
+  GetOutput()->GetTagArray()->SetTag(tag_Nature);
 }
 //----------------------------------------------------------------------------
 void mafOpImporterImage::BuildImageSequence()
@@ -298,7 +298,7 @@ void mafOpImporterImage::BuildImageSequence()
 
   m_ImportedImage->SetTimeStamp(start_time);
   m_ImportedImage->ReparentTo(GetInput());
-  m_Output = m_ImportedImage;
+  SetOutput(m_ImportedImage);
 }
 //----------------------------------------------------------------------------
 void mafOpImporterImage::BuildVolume()
@@ -411,7 +411,7 @@ void mafOpImporterImage::BuildVolume()
     mafDEL(m_ImportedImageAsVolume);
   }
   
-  m_Output = m_ImportedImageAsVolume;
+  SetOutput(m_ImportedImageAsVolume);
 }
 //----------------------------------------------------------------------------
 void mafOpImporterImage::SetFileName(const char *file_name)

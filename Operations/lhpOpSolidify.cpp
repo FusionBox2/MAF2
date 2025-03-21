@@ -1175,7 +1175,7 @@ lhpOpSolidify::lhpOpSolidify(const mafString& label) : Superclass(label)
 lhpOpSolidify::~lhpOpSolidify()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_Output);
+  mafDEL(m_CoreOpOutput);
 }
 //----------------------------------------------------------------------------
 mafOp* lhpOpSolidify::Copy()
@@ -1225,10 +1225,10 @@ void lhpOpSolidify::OpRun()
 void lhpOpSolidify::OpDo()
 //----------------------------------------------------------------------------
 {
-  if (m_Output)
+  if (GetOutput())
   {
-    m_Output->ReparentTo(GetInput()->GetParent());
-    //{mafEvent evUnq(this, VME_ADD, m_Output); InvokeEvent(evUnq);}
+    GetOutput()->ReparentTo(GetInput()->GetParent());
+    //{mafEvent evUnq(this, VME_ADD, GetOutput()); InvokeEvent(evUnq);}
     {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
 }
@@ -1236,9 +1236,9 @@ void lhpOpSolidify::OpDo()
 void lhpOpSolidify::OpUndo()
 //----------------------------------------------------------------------------
 {
-  if (m_Output)
+  if (GetOutput())
   {
-    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Output); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(GetOutput()); InvokeEvent(evUnq);}
     {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
 }
@@ -1309,7 +1309,7 @@ void lhpOpSolidify::OpStop(int result)
   newcloud->Modified();
   newcloud->Update();
   //newcloud->Register(this);
-  m_Output = newcloud;
+  SetOutput(newcloud);
 
   {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }

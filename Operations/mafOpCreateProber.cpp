@@ -69,7 +69,7 @@ void mafOpCreateProber::OpRun()
 {
   mafNEW(m_Prober);
   m_Prober->SetName(_R("prober"));
-  m_Output = m_Prober;
+  SetOutput(m_Prober);
   {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------

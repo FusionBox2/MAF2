@@ -57,7 +57,6 @@ medOpImporterGRFWS::medOpImporterGRFWS(const mafString& label) : Superclass(labe
 	m_Canundo	      = true;
 	m_File		      = _R("");
 	m_FileDir       = mafGetApplicationDirectory() + _R("/Data/External/");
-  m_Output        = NULL;
   m_PlatformLeft  = NULL;
   m_PlatformRight = NULL;
   m_ForceLeft    = NULL;
@@ -481,8 +480,8 @@ void medOpImporterGRFWS::ReadForcePlates()
     wxSetCursor(wxCursor(wxCURSOR_DEFAULT));
   }
 
-  m_Output = m_Group;
-  m_Output->ReparentTo(GetInput());
+  SetOutput(m_Group);
+  GetOutput()->ReparentTo(GetInput());
 }
 //----------------------------------------------------------------------------
 void medOpImporterGRFWS::ReadSingleVector()   
@@ -618,6 +617,6 @@ void medOpImporterGRFWS::ReadSingleVector()
     wxSetCursor(wxCursor(wxCURSOR_DEFAULT));
   }
 
-  m_Output = m_ForceLeft;
-  m_Output->ReparentTo(GetInput());
+  SetOutput(m_ForceLeft);
+  GetOutput()->ReparentTo(GetInput());
 }

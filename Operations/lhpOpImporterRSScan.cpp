@@ -112,7 +112,7 @@ int lhpOpImporterRSScan::Read()
   {
     m_ImportedVmeMesh = reader->GetOutput();
     m_ImportedVmeMesh->Register(this);
-    m_Output = m_ImportedVmeMesh;
+    SetOutput(m_ImportedVmeMesh);
   }
 
   delete reader;

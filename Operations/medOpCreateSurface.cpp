@@ -76,7 +76,7 @@ void medOpCreateSurface::OpRun()
 	m_Surface->SetData(vtkPolyData::SafeDownCast(inputSurface->GetOutput()->GetVTKData()),inputSurface->GetTimeStamp());
 	m_Surface->Update();
 
-	m_Output=m_Surface;
+	SetOutput(m_Surface);
 	
 	OpStop(OP_RUN_OK);
 }
@@ -84,9 +84,9 @@ void medOpCreateSurface::OpRun()
 void medOpCreateSurface::OpDo()   
 //----------------------------------------------------------------------------
 {
-	if (m_Output)
+	if (GetOutput())
 	{
-		m_Output->ReparentTo(GetInput());
+		GetOutput()->ReparentTo(GetInput());
 		{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 	}
 }

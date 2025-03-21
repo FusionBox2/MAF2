@@ -419,10 +419,10 @@ void mafOpVolumeResample::Resample()
     }
   }
 	//m_ResampledVme->ReparentTo(GetInput()); //Re-parenting a VME implies that it is also added to the tree.
-  //m_Output = m_ResampledVme; // Used to make the UnDo: if the output var is set, the undo is done by default.
+  //SetOutput(m_ResampledVme); // Used to make the UnDo: if the output var is set, the undo is done by default.
 	mafMatrix identity_matrix;
 	m_ResampledVme->SetMatrix(identity_matrix);
-	m_Output = m_ResampledVme; // Used to make the UnDo: if the output var is set, the undo is done by default.
+	SetOutput(m_ResampledVme); // Used to make the UnDo: if the output var is set, the undo is done by default.
 	//mafDEL(m_ResampledVme);
 }
 //----------------------------------------------------------------------------

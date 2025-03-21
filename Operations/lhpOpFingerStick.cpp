@@ -190,7 +190,6 @@ lhpOpFingerStick::lhpOpFingerStick(const mafString& label) : Superclass(label), 
 {
   m_OpType  = OPTYPE_OP;
   m_Canundo = true;
-  m_Output  = NULL;
 
   
   m_PlateCalibration = NULL;
@@ -226,7 +225,7 @@ lhpOpFingerStick::lhpOpFingerStick(const mafString& label) : Superclass(label), 
 lhpOpFingerStick::~lhpOpFingerStick( ) 
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_Output);
+  mafDEL(m_CoreOpOutput);
   vtkDEL(m_Registered);
   vtkDEL(m_pointsSource);
   vtkDEL(m_pointsTarget);
@@ -525,7 +524,7 @@ void lhpOpFingerStick::OpDo()
   wxBusyInfo wait("Please wait, working...");
 
 
-  mafDEL(m_Output);
+  mafDEL(m_CoreOpOutput);
   if(m_BallsCalibration == NULL)
   {
     mafVME *parent = m_PalpatorCalibration->GetParent();
@@ -685,7 +684,7 @@ void lhpOpFingerStick::OpDo()
   averagedCalibr->ReparentTo(group);
   {mafEvent evUnq(this,VME_ADD); evUnq.SetVme(averagedCalibr); InvokeEvent(evUnq);}
   mafDEL(averagedCalibr);
-  m_Output = group;
+  SetOutput(group);
 }
 
 //----------------------------------------------------------------------------

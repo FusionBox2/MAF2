@@ -236,5 +236,5 @@ void medOpImporterLandmarkTXT::Read()
 
   m_VmeCloud->Modified();
 
-  m_Output = m_VmeCloud;
+  SetOutput(m_VmeCloud);
 }

@@ -146,7 +146,6 @@ protected:
   /** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
   virtual void OpStop(int result);
 
-  mafNode        *m_Output = nullptr; ///< Pointer to the Output VME
 	mafGUI         *m_Gui = nullptr; ///< Pointer to the operation's GUI.
 	mafGUIHolder   *m_Guih = nullptr;
 	bool           m_Canundo = false; ///< Flag to establish if the operation define the UnDo method or not.
@@ -158,5 +157,6 @@ protected:
 
 private:
 	mafNode        *m_Input = nullptr; ///< Pointer to the Input VME.
+	mafNode        *m_Output = nullptr; ///< Pointer to the Output VME
 	mafString      m_Label; ///< Label of the operation that will appear on the SideBar tab.
 };

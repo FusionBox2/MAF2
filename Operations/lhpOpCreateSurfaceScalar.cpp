@@ -60,6 +60,6 @@ void lhpOpCreateSurfaceScalar::OpRun()
 {
   mafNEW(m_SurfaceScalar);
   m_SurfaceScalar->SetName(_R("Surface Scalar"));
-  m_Output = m_SurfaceScalar;
+  SetOutput(m_SurfaceScalar);
   {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
 }

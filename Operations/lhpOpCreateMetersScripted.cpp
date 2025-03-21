@@ -92,7 +92,7 @@ void lhpOpCreateMetersScripted::OpRun()
   mafNEW(m_Group);
   auto inputLMC = mafVMELandmarkCloud::SafeDownCast(GetInput());
   m_Group->SetName(inputLMC->GetName() + _R("_scripted_meters"));
-  m_Output = m_Group;
+  SetOutput(m_Group);
 
   mafString filename = mafGetOpenFile(mafGetApplicationDirectory(), _R("dic files (*.dic)|*.dic"), _R("Choose dictionary"));
   if (filename.empty())

@@ -252,5 +252,5 @@ void  mafOpImporterVRML::ImportVRML()
       
     }
   }
-  m_Output = m_Group;
+  SetOutput(m_Group);
 }

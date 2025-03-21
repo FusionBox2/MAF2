@@ -691,7 +691,7 @@ int medOpExtractGeometry::GenerateIsosurface()
   m_SurfaceOutput->ReparentTo(GetInput());
   m_SurfaceOutput->Update();
 
-  m_Output = m_SurfaceOutput;
+  SetOutput(m_SurfaceOutput);
 
   m_SurfaceData->Delete();
 

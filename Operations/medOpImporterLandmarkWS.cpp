@@ -252,5 +252,5 @@ void medOpImporterLandmarkWS::Read()
 
   m_VmeCloud->Modified();
   m_VmeCloud->ReparentTo(GetInput());  
-  m_Output = m_VmeCloud;
+  SetOutput(m_VmeCloud);
 }

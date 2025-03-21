@@ -118,7 +118,7 @@ void mafOpScalarToSurface::OpRun()
   delaunay->SetInputConnection(scalar_surface->GetOutputPort());
   delaunay->Update();
   m_Surface->SetData(delaunay->GetOutput(),ts);
-  m_Output = m_Surface;
+  SetOutput(m_Surface);
 
   for (int i = 0; i < kframes.size(); i++)
     items[i]->Delete();

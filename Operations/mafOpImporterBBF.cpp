@@ -112,9 +112,9 @@ int mafOpImporterBBF::ImportBBF()
   m_VmeLarge->SetFileName("");
   if (m_VmeLarge->SetLargeData(reader) == MAF_OK)
   {
-	  m_Output = m_VmeLarge;
-    m_Output->ReparentTo(GetInput());
-    m_Output->SetName(mafWxToString(showName));
+	  SetOutput(m_VmeLarge);
+    GetOutput()->ReparentTo(GetInput());
+    GetOutput()->SetName(mafWxToString(showName));
     return MAF_OK;
   }
   else

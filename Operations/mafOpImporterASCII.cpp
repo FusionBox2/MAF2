@@ -148,7 +148,7 @@ void mafOpImporterASCII::OpRun()
     int res = OP_RUN_CANCEL;
     if (ImportASCII() == MAF_OK)
     {
-      m_Output = m_ScalarData;
+      SetOutput(m_ScalarData);
       res = OP_RUN_OK;
     }
     {mafEvent evUnq(this,res); InvokeEvent(evUnq);}
@@ -175,7 +175,7 @@ void mafOpImporterASCII::OnEvent(mafEventBase *maf_event)
       case wxOK:
         if (ImportASCII() == MAF_OK)
         {
-          m_Output = m_ScalarData;
+          SetOutput(m_ScalarData);
           OpStop(OP_RUN_OK);
         }
         else

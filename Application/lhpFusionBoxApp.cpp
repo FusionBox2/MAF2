@@ -313,7 +313,7 @@ public:
   {
     mafNEW(m_Created);
     m_Created->SetName(_R("Cloud lines"));
-    m_Output = m_Created;
+    SetOutput(m_Created);
     {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
   }
   void OpDo() override;
@@ -329,7 +329,7 @@ mafCxxTypeMacro(lhpOpCreateLMCLines);
 
 void lhpOpCreateLMCLines::OpDo()
 {
-  m_Output->ReparentTo(GetInput());
+  GetOutput()->ReparentTo(GetInput());
   mafVMELandmarkCloud *lmc = mafVMELandmarkCloud::SafeDownCast(GetInput());
   if(m_Created && lmc)
   {
@@ -340,7 +340,7 @@ void lhpOpCreateLMCLines::OpUndo()
 {
   if(m_Created)
     m_Created->SetCloud(NULL);
-  m_Output->ReparentTo(NULL);
+  GetOutput()->ReparentTo(NULL);
 }
 //----------------------------------------------------------------------------
 void lhpOpMoveSeq::TransfMatr(mafMatrix& convMatrix, mafTimeStamp tsSkip)

@@ -529,8 +529,8 @@ void lhpOpTextureOrientation::CreateOutputVME()
   mafNEW(m_polydataVME) ;
   m_polydataVME->SetName(_R("orientation")) ;
   m_polydataVME->SetData(m_polydata, 0) ;
-  m_Output = m_polydataVME ;
-  m_Output->ReparentTo(GetInput()) ;
+  SetOutput(m_polydataVME );
+  GetOutput()->ReparentTo(GetInput()) ;
 }
 
 

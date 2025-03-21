@@ -72,7 +72,7 @@ void mafOpCreateRefSys::OpRun()
 {
   mafNEW(m_RefSys);
   m_RefSys->SetName(_R("ref_sys"));
-  m_Output = m_RefSys;
+  SetOutput(m_RefSys);
   {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
 }
 

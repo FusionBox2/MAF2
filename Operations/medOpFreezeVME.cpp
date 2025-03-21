@@ -126,10 +126,10 @@ void medOpFreezeVME::OpRun()
 			}
 
 			newVolume->SetMatrix(*labeledVolume->GetOutput()->GetMatrix());
-			m_Output=newVolume.get();
-			if (m_Output)
+			SetOutput(newVolume.get());
+			if (GetOutput())
 			{
-				m_Output->ReparentTo(GetInput()->GetParent());
+				GetOutput()->ReparentTo(GetInput()->GetParent());
 				if(!m_TestMode)
 					OpStop(OP_RUN_OK);
 			}
@@ -154,10 +154,10 @@ void medOpFreezeVME::OpRun()
 				}
 
 				newVolume->SetMatrix(*labeledVolume->GetOutput()->GetMatrix());
-				m_Output=newVolume.get();
-				if (m_Output)
+				SetOutput(newVolume.get());
+				if (GetOutput())
 				{
-					m_Output->ReparentTo(GetInput()->GetParent());
+					GetOutput()->ReparentTo(GetInput()->GetParent());
 					if(!m_TestMode)
 						OpStop(OP_RUN_OK);
 				}
@@ -181,10 +181,10 @@ void medOpFreezeVME::OpRun()
 						newPolyline->GetMaterial()->UpdateProp();
 					}
 					newPolyline->SetMatrix(*vmeSpline->GetOutput()->GetMatrix());
-					m_Output=newPolyline.get();
-					if (m_Output)
+					SetOutput(newPolyline.get());
+					if (GetOutput())
 					{
-						m_Output->ReparentTo(GetInput()->GetParent());
+						GetOutput()->ReparentTo(GetInput()->GetParent());
 						if(!m_TestMode)
 							OpStop(OP_RUN_OK);
 					}
@@ -205,10 +205,10 @@ void medOpFreezeVME::OpRun()
 					}
 
 					newSurface->SetMatrix(*vmeSurface->GetOutput()->GetMatrix());
-					m_Output=newSurface.get();
-					if (m_Output)
+					SetOutput(newSurface.get());
+					if (GetOutput())
 					{
-						m_Output->ReparentTo(GetInput()->GetParent());
+						GetOutput()->ReparentTo(GetInput()->GetParent());
 						if(!m_TestMode)
 							OpStop(OP_RUN_OK);
 					}
@@ -229,10 +229,10 @@ void medOpFreezeVME::OpRun()
 					}
 
 					newPolyline->SetMatrix(*meter->GetOutput()->GetMatrix());
-					m_Output=newPolyline.get();
-					if (m_Output)
+					SetOutput(newPolyline.get());
+					if (GetOutput())
 					{
-						m_Output->ReparentTo(GetInput()->GetParent());
+						GetOutput()->ReparentTo(GetInput()->GetParent());
 						if(!m_TestMode)
 							OpStop(OP_RUN_OK);
 					}
@@ -253,10 +253,10 @@ void medOpFreezeVME::OpRun()
 					}
 
 					surface->SetMatrix(*refsys->GetOutput()->GetMatrix());
-					m_Output=surface.get();
-					if (m_Output)
+					SetOutput(surface.get());
+					if (GetOutput())
 					{
-						m_Output->ReparentTo(GetInput()->GetParent());
+						GetOutput()->ReparentTo(GetInput()->GetParent());
 						if(!m_TestMode)
 							OpStop(OP_RUN_OK);
 					}
@@ -281,10 +281,10 @@ void medOpFreezeVME::OpRun()
 					}
 
 					newSurface->SetMatrix(*slicer->GetOutput()->GetMatrix());
-					m_Output=newSurface.get();
-					if (m_Output)
+					SetOutput(newSurface.get());
+					if (GetOutput())
 					{
-						m_Output->ReparentTo(GetInput()->GetParent());
+						GetOutput()->ReparentTo(GetInput()->GetParent());
 						if(!m_TestMode)
 							OpStop(OP_RUN_OK);
 					}
@@ -306,10 +306,10 @@ void medOpFreezeVME::OpRun()
 					}
 
 					newSurface->SetMatrix(*prober->GetOutput()->GetMatrix());
-					m_Output=newSurface.get();
-					if (m_Output)
+					SetOutput(newSurface.get());
+					if (GetOutput())
 					{
-						m_Output->ReparentTo(GetInput()->GetParent());
+						GetOutput()->ReparentTo(GetInput()->GetParent());
 						if(!m_TestMode)
 							OpStop(OP_RUN_OK);
 					}
@@ -330,10 +330,10 @@ void medOpFreezeVME::OpRun()
 					}
 
 					newPolyline->SetMatrix(*wrappedMeter->GetOutput()->GetMatrix());
-					m_Output=newPolyline.get();
-					if (m_Output)
+					SetOutput(newPolyline.get());
+					if (GetOutput())
 					{
-						m_Output->ReparentTo(GetInput()->GetParent());
+						GetOutput()->ReparentTo(GetInput()->GetParent());
 						if(!m_TestMode)
 							OpStop(OP_RUN_OK);
 					}
@@ -354,10 +354,10 @@ void medOpFreezeVME::OpRun()
 					}
 
 					newPolyline->SetMatrix(*wrappedMeter->GetOutput()->GetMatrix());
-					m_Output=newPolyline.get();
-					if (m_Output)
+					SetOutput(newPolyline.get());
+					if (GetOutput())
 					{
-						m_Output->ReparentTo(GetInput()->GetParent());
+						GetOutput()->ReparentTo(GetInput()->GetParent());
 						if(!m_TestMode)
 							OpStop(OP_RUN_OK);
 					}

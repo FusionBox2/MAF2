@@ -153,7 +153,7 @@ void mafOpCreateVolume::CreateVolume()
   mafNEW(m_Volume);
   m_Volume->SetName(_R("volume"));
   m_Volume->SetData(vol, -1);
-  m_Output = m_Volume;
+  SetOutput(m_Volume);
 }
 
 //----------------------------------------------------------------------------

@@ -144,7 +144,7 @@ mafOpExtractIsosurface::~mafOpExtractIsosurface()
 
   m_IsoValueVector.clear();
   vtkDEL(m_ContourVolumeMapper);
-  m_Output = NULL;
+  SetOutput(NULL);
 }
 //----------------------------------------------------------------------------
 mafOp* mafOpExtractIsosurface::Copy()
@@ -977,12 +977,12 @@ void mafOpExtractIsosurface::ExtractSurface(bool clean)
     }
     else
     {
-      m_Output = vme_surf;      
+      SetOutput(vme_surf);      
     }
   }
   if (m_OutputGroup != NULL)
   {
-    m_Output = m_OutputGroup;
+    SetOutput(m_OutputGroup);
   }
   
 

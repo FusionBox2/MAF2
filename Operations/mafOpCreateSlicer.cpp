@@ -83,7 +83,7 @@ void mafOpCreateSlicer::OpRun()
   {
 		mafNEW(m_Slicer);
 		m_Slicer->SetName(_R("slicer"));
-		m_Output = m_Slicer;
+		SetOutput(m_Slicer);
 
     m_SlicedVME = n;
     m_Slicer->SetSlicedVMELink(m_SlicedVME);

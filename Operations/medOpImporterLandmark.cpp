@@ -298,7 +298,7 @@ bool medOpImporterLandmark::Read()
   }
   if(m_Files.size() == 1)
   {
-    m_Output = m_Results[0];
+    SetOutput(m_Results[0]);
   }
   return true;
 }

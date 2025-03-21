@@ -124,7 +124,7 @@ int mafOpImporterVMEDataSetAttributes::Read()
   } 
   else
   {
-    m_Output = attributesImporter->GetOutput();
+    SetOutput(attributesImporter->GetOutput());
   }
 
   cppDEL(attributesImporter);
@@ -269,10 +269,10 @@ void mafOpImporterVMEDataSetAttributes::OnEvent(mafEventBase *maf_event)
 
       //WORKAROUND CODE 
       //referred to bug 933
-      if (m_Output != NULL)
+      if (GetOutput() != nullptr)
       {
-        {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Output); evUnq.SetBool(false); InvokeEvent(evUnq);}
-        {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Output); evUnq.SetBool(true); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetOutput()); evUnq.SetBool(false); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetOutput()); evUnq.SetBool(true); InvokeEvent(evUnq);}
       }
       //END WORKAROUND CODE 
 

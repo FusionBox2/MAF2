@@ -177,48 +177,48 @@ int mafOpImporterVTK::ImportVTK()
       mafNEW(m_VmeGeneric);
       //if (m_VmePointSet->SetDataByDetaching(data,0) == MAF_OK)
       //{
-      //  m_Output = m_VmePointSet;
+      //  SetOutput(m_VmePointSet);
       //}
 	  if (m_VmeLandmarkCloud->SetDataByDetaching(data,0) == MAF_OK)
       {
-        m_Output = m_VmeLandmarkCloud;
+        SetOutput(m_VmeLandmarkCloud);
       }
       else if (m_VmePolyLine->SetDataByDetaching(data,0) == MAF_OK)
       {
-        m_Output = m_VmePolyLine;
+        SetOutput(m_VmePolyLine);
       }
       else if (m_VmeSurface->SetDataByDetaching(data,0) == MAF_OK)
       {
-        m_Output = m_VmeSurface;
+        SetOutput(m_VmeSurface);
       }
 	  else if (m_VmeImage->SetDataByDetaching(data,0) == MAF_OK)
 	  {
-		  m_Output = m_VmeImage;
+		  SetOutput(m_VmeImage);
 	  }
       else if (m_VmeGrayVol->SetDataByDetaching(data,0) == MAF_OK)
       {
-        m_Output = m_VmeGrayVol;
+        SetOutput(m_VmeGrayVol);
       }
       else if (m_VmeRGBVol->SetDataByDetaching(data,0) == MAF_OK)
       {
-        m_Output = m_VmeRGBVol;
+        SetOutput(m_VmeRGBVol);
       }
       else if (m_VmeMesh->SetDataByDetaching(data,0) == MAF_OK)
       {
-        m_Output = m_VmeMesh;
+        SetOutput(m_VmeMesh);
       }
       else
       {
         m_VmeGeneric->SetDataByDetaching(data,0);
-        m_Output = m_VmeGeneric;
+        SetOutput(m_VmeGeneric);
       }
 
       mafTagItem tag_Nature;
       tag_Nature.SetName(_R("VME_NATURE"));
       tag_Nature.SetValue(_R("NATURAL"));
-      m_Output->GetTagArray()->SetTag(tag_Nature);
-      m_Output->ReparentTo(GetInput());
-      m_Output->SetName(name);
+      GetOutput()->GetTagArray()->SetTag(tag_Nature);
+      GetOutput()->ReparentTo(GetInput());
+      GetOutput()->SetName(name);
 
       success = true;
     }

@@ -95,6 +95,6 @@ void lhpOpHelAxis::OpDo()
   m_HelicalSys->SetLengthFactor(100.0);
   m_HelicalSys->SetRadiusFactor(100.0);
   m_HelicalSys->Update();
-  m_Output = m_HelicalSys;
+  SetOutput(m_HelicalSys);
 }
 

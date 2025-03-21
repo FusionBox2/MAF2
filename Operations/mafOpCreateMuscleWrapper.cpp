@@ -70,7 +70,7 @@ void mafOpCreateMuscleWrapperAQ::OpRun()
 {
 	mafNEW(m_MuscleWrapper);
 	m_MuscleWrapper->SetName(_R("Muscle_Wrapper"));
-	m_Output = m_MuscleWrapper;
+	SetOutput(m_MuscleWrapper);
 	{mafEvent evUnq(this, OP_RUN_OK); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------

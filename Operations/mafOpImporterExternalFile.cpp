@@ -96,7 +96,7 @@ void mafOpImporterExternalFile::ImportExternalFile()
   m_Vme->ReparentTo(GetInput());
   m_Vme->Update();
 
-  m_Output = m_Vme;
+  SetOutput(m_Vme);
 }
 
 //----------------------------------------------------------------------------

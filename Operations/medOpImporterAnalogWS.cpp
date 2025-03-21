@@ -211,6 +211,6 @@ void medOpImporterAnalogWS::Read()
     wxSetCursor(wxCursor(wxCURSOR_DEFAULT));
   }
 
-  m_Output = m_EmgScalar;
-  m_Output->ReparentTo(GetInput());
+  SetOutput(m_EmgScalar);
+  GetOutput()->ReparentTo(GetInput());
 }
