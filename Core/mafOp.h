@@ -68,12 +68,14 @@ public:
 	virtual mafGUI *GetGui()	{return m_Gui;}
 
   /** Set/Get the input vme for the operation. */
-  void SetInput(mafNode* vme) {m_Input = vme;}
-  mafNode	*GetInput() {return m_Input;}
+	void SetInput(mafNode* vme);
+
+  mafNode* const & GetInput() const;
 
   /** Return the mafNode result of the operation.*/
-  mafNode *GetOutput() {return m_Output;}
-  void SetOutput(mafNode *output) {m_Output = output;}
+	mafNode* const & GetOutput() const;
+
+	void SetOutput(mafNode* output);
 
 	/** Return true for the acceptable vme type. */
 	virtual bool Accept(mafNode* vme);

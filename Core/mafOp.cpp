@@ -57,6 +57,29 @@ void mafOp::OpUndo()
     {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
 }
+
+void mafOp::SetInput(mafNode* vme)
+{
+  m_Input = vme;
+}
+
+mafNode* const & mafOp::GetInput() const
+{
+  return m_Input;
+}
+
+/** Return the mafNode result of the operation.*/
+mafNode* const & mafOp::GetOutput() const
+{
+  return m_Output;
+}
+
+void mafOp::SetOutput(mafNode* output)
+{
+  m_Output = output;
+}
+
+
 //----------------------------------------------------------------------------
 mafOp* mafOp::Copy()
 //----------------------------------------------------------------------------
