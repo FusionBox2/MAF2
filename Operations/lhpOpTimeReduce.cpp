@@ -123,7 +123,7 @@ void lhpOpTimeReduce::CreateGui()
   if(m_Gui == NULL)
   {
     mafString strng;
-    int nFrames = mafVMEGenericAbstract::SafeDownCast(m_Input)->GetNumberOfLocalTimeStamps();
+    int nFrames = mafVMEGenericAbstract::SafeDownCast(GetInput())->GetNumberOfLocalTimeStamps();
     strng = mafString::Format(_R("Node has %d timestamps"), nFrames);
     m_Gui = new mafGUI(this);
     m_Gui->SetListener(this);
@@ -190,7 +190,7 @@ void lhpOpTimeReduce::OpDo()
   //modified by Stefano. 18-9-2003
   wxBusyInfo wait("Please wait, working...");
   std::vector<mafTimeStamp> kframes;
-  mafVMEGenericAbstract *vme = mafVMEGenericAbstract::SafeDownCast(m_Input);
+  mafVMEGenericAbstract *vme = mafVMEGenericAbstract::SafeDownCast(GetInput());
 
   if(m_Number == 0)
     return;

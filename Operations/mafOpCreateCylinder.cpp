@@ -87,7 +87,7 @@ void mafOpCreateCylinder::OpDo()
 	
 
 	
-	m_Cylinder->ReparentTo(m_Input);
+	m_Cylinder->ReparentTo(GetInput());
 	
 
 	

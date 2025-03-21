@@ -58,7 +58,6 @@ mafOpImporterVMEDataSetAttributes::mafOpImporterVMEDataSetAttributes(const mafSt
   m_AttributeType = mafVMEDataSetAttributesImporter::POINT_DATA;
   
   m_InputPreserving = false;
-  m_Input = NULL;
 
   m_UseIdArray = false;
   m_IdArrayName = _R("ANSYS_ELEMENT_ID");
@@ -99,7 +98,7 @@ int mafOpImporterVMEDataSetAttributes::Read()
     wxBusyInfo wait("Reading file: ...");  
   }
 
-  mafVMEGeneric *input = mafVMEGeneric::SafeDownCast(m_Input);
+  mafVMEGeneric *input = mafVMEGeneric::SafeDownCast(GetInput());
 
   mafVMEDataSetAttributesImporter* attributesImporter = NULL;
   

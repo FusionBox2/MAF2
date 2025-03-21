@@ -140,15 +140,15 @@ void mafOpRemoveCells::OpRun()
 {
   
   vtkNEW(m_ResultPolydata);
-  m_ResultPolydata->DeepCopy((vtkPolyData*)((mafVME *)m_Input)->GetOutput()->GetVTKData());
+  m_ResultPolydata->DeepCopy((vtkPolyData*)((mafVME *)GetInput())->GetOutput()->GetVTKData());
 
   vtkNEW(m_OriginalPolydata);
-  m_OriginalPolydata->DeepCopy((vtkPolyData*)((mafVME *)m_Input)->GetOutput()->GetVTKData());
+  m_OriginalPolydata->DeepCopy((vtkPolyData*)((mafVME *)GetInput())->GetOutput()->GetVTKData());
 
   int result = OP_RUN_CANCEL;
   // default size for the brush (depends on the input dimensions)
   double bounds[6]= {0.,0.,0.,0.,0.,0.};
-  ((mafVME *)m_Input)->GetOutput()->GetVTKData()->GetBounds(bounds);
+  ((mafVME *)GetInput())->GetOutput()->GetVTKData()->GetBounds(bounds);
    // bounds x0 x1 y0 y1 z0 z1
    m_Diameter = sqrt((bounds[1]-bounds[0])*(bounds[1]-bounds[0])+(bounds[3]-bounds[2])*(bounds[3]-bounds[2])+(bounds[5]-bounds[4])*(bounds[5]-bounds[4]))/10.0;
 
@@ -182,14 +182,14 @@ void mafOpRemoveCells::OpRun()
 void mafOpRemoveCells::OpDo()
 //----------------------------------------------------------------------------
 {
-  ((mafVMESurface *)m_Input)->SetData(m_ResultPolydata,((mafVME *)m_Input)->GetTimeStamp());
+  ((mafVMESurface *)GetInput())->SetData(m_ResultPolydata,((mafVME *)GetInput())->GetTimeStamp());
   {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpRemoveCells::OpUndo()
 //----------------------------------------------------------------------------
 {
-  ((mafVMESurface *)m_Input)->SetData(m_OriginalPolydata,((mafVME *)m_Input)->GetTimeStamp());
+  ((mafVMESurface *)GetInput())->SetData(m_OriginalPolydata,((mafVME *)GetInput())->GetTimeStamp());
   {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
@@ -228,7 +228,7 @@ void mafOpRemoveCells::CreateOpDialog()
   m_Rwi->SetAxesVisibility(1);
 
   
-  vtkPolyData *polydata = vtkPolyData::SafeDownCast(((mafVME *)m_Input)->GetOutput()->GetVTKData());
+  vtkPolyData *polydata = vtkPolyData::SafeDownCast(((mafVME *)GetInput())->GetOutput()->GetVTKData());
  
   double bounds[6] = {0,0,0,0,0,0};
   polydata->GetBounds(bounds);
@@ -305,10 +305,10 @@ void mafOpRemoveCells::CreateOpDialog()
 void mafOpRemoveCells::CreateSurfacePipeline()
 //----------------------------------------------------------------------------
 {
-  vtkPolyData *polydata = vtkPolyData::SafeDownCast(((mafVME *)m_Input)->GetOutput()->GetVTKData());
+  vtkPolyData *polydata = vtkPolyData::SafeDownCast(((mafVME *)GetInput())->GetOutput()->GetVTKData());
 
   m_Rcf = vtkMAFRemoveCellsFilter::New();
-  m_Rcf->SetInputConnection(((mafVME*)m_Input)->GetOutput()->GetVTKOutputPort());
+  m_Rcf->SetInputConnection(((mafVME*)GetInput())->GetOutput()->GetVTKOutputPort());
   m_Rcf->Update();
 
   m_PolydataMapper	= vtkPolyDataMapper::New();
@@ -355,7 +355,7 @@ void mafOpRemoveCells::OnEvent(mafEventBase *maf_event)
 
       case ID_FIT:
       {
-        vtkPolyData *polydata = vtkPolyData::SafeDownCast(((mafVME *)m_Input)->GetOutput()->GetVTKData());
+        vtkPolyData *polydata = vtkPolyData::SafeDownCast(((mafVME *)GetInput())->GetOutput()->GetVTKData());
 
         double bounds[6] = {0,0,0,0,0,0};
         polydata->GetBounds(bounds);
@@ -504,7 +504,7 @@ void mafOpRemoveCells::MarkCellsInRadius(double radius){
 
   vtkIdType i;
   int numPts, numCells;
-  vtkPolyData *polydata = vtkPolyData::SafeDownCast(((mafVME *)m_Input)->GetOutput()->GetVTKData());
+  vtkPolyData *polydata = vtkPolyData::SafeDownCast(((mafVME *)GetInput())->GetOutput()->GetVTKData());
 
   // Initialize.  Keep track of points and cells visited.
   
@@ -567,7 +567,7 @@ void mafOpRemoveCells::CreateHelperStructures()
   // Build cell structure
   //
   vtkNEW(m_Mesh);
-  vtkPolyData *polydata = vtkPolyData::SafeDownCast(((mafVME *)m_Input)->GetOutput()->GetVTKData());
+  vtkPolyData *polydata = vtkPolyData::SafeDownCast(((mafVME *)GetInput())->GetOutput()->GetVTKData());
   assert(polydata);
   
 

@@ -166,7 +166,7 @@ void medOpExporterWrappedMeter::Export()
 
 	//must be a cicle in all vme of a msf
 	/*mafNodeIterator *iter = NULL;
-	iter = m_Input->GetRoot()->NewIterator();
+	iter = GetInput()->GetRoot()->NewIterator();
 
 	for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
 	{
@@ -175,7 +175,7 @@ void medOpExporterWrappedMeter::Export()
 	iter->Delete();
 	*/
 	
-	m_Meters.push_back(m_Input);
+	m_Meters.push_back(GetInput());
 
 	if(m_Meters.size() != 0)
 	{
@@ -347,7 +347,7 @@ void medOpExporterWrappedMeter::WriteOnFile()
 	
 }
 
-/*medVMEWrappedMeter *vmeWrappedMeter =  medVMEWrappedMeter::SafeDownCast(m_Input);
+/*medVMEWrappedMeter *vmeWrappedMeter =  medVMEWrappedMeter::SafeDownCast(GetInput());
 vmeWrappedMeter->Update();
 medVMEOutputWrappedMeter *out_wm = medVMEOutputWrappedMeter::SafeDownCast(vmeWrappedMeter->GetOutput());
 out_wm->Update();*/
@@ -358,7 +358,7 @@ void medOpExporterWrappedMeter::ExportWrappedMeterCoordinates()
 {
 
 
-  medVMEComputeWrapping *vmeMeter = medVMEComputeWrapping::SafeDownCast(m_Input);
+  medVMEComputeWrapping *vmeMeter = medVMEComputeWrapping::SafeDownCast(GetInput());
   vmeMeter->Update();
   medVMEOutputComputeWrapping *out_cm = medVMEOutputComputeWrapping::SafeDownCast(vmeMeter->GetOutput());
   out_cm->Update();

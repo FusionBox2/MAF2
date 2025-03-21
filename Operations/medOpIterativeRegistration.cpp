@@ -116,18 +116,18 @@ void medOpIterativeRegistration::OpRun()
   m_UndoSourceAbsPose = vtkMatrix4x4::New();
   m_RegistrationMatrix = vtkMatrix4x4::New();
 
-  m_SourceVME = mafVME::SafeDownCast(m_Input);
+  m_SourceVME = mafVME::SafeDownCast(GetInput());
   m_RegistrationMatrix->DeepCopy(m_SourceVME->GetAbsMatrixPipe()->GetMatrixPointer()->GetVTKMatrix());
 
   // store source abs pose for undo
   m_UndoSourceAbsPose->DeepCopy(m_SourceVME->GetAbsMatrixPipe()->GetMatrixPointer()->GetVTKMatrix());   
 
-  assert(m_Input);
-//  m_CurrentTime = m_Input->GetCurrentTime();
-  m_CurrentTime = mafVME::SafeDownCast(m_Input)->GetTimeStamp();
+  assert(GetInput());
+//  m_CurrentTime = GetInput()->GetCurrentTime();
+  m_CurrentTime = mafVME::SafeDownCast(GetInput())->GetTimeStamp();
   
   
-  m_SourceVmeName = m_Input->GetName();  
+  m_SourceVmeName = GetInput()->GetName();  
   CreateGui();
 }
 //----------------------------------------------------------------------------

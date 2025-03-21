@@ -172,7 +172,7 @@ void lhpOpCutSurface::OpStop(int result)
   }
   HideGui();
 
-  mafVMEOutputSurface *out_surface = mafVMEOutputSurface::SafeDownCast(mafVME::SafeDownCast(m_Input)->GetOutput());
+  mafVMEOutputSurface *out_surface = mafVMEOutputSurface::SafeDownCast(mafVME::SafeDownCast(GetInput())->GetOutput());
   out_surface->Update();
 
   vtkNew<vtkTriangleFilter>triangles;
@@ -334,7 +334,7 @@ void lhpOpCutSurface::OpStop(int result)
   newPolys->Delete();
 
   mafTimeStamp t;
-  t = ((mafVME *)m_Input)->GetTimeStamp();
+  t = ((mafVME *)GetInput())->GetTimeStamp();
   mafNEW(m_OutSurface);
   m_OutSurface->SetName(_R("cutted"));
   m_OutSurface->SetData(output,t);
@@ -379,7 +379,7 @@ void lhpOpCutSurface::OpDo()
 {
   if(m_OutSurface)
   {
-    m_OutSurface->ReparentTo(m_Input->GetRoot());
+    m_OutSurface->ReparentTo(GetInput()->GetRoot());
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }

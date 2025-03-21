@@ -65,7 +65,6 @@ lhpOpExporterC3DBTK::lhpOpExporterC3DBTK(const mafString& label) : Superclass(la
   m_Canundo = true;
   m_File = _R("");
   m_FileDir = _R("");
-  m_Input   = NULL;
   m_GlobalPos = true;
   m_Subtree   = false;
 }
@@ -97,9 +96,9 @@ void lhpOpExporterC3DBTK::OpRun()
   m_Gui = new mafGUI(this);
   m_Gui->Label(_R("absolute matrix"),true);
   m_Gui->Bool(ID_ABS_POSITION,_R("apply"),&m_GlobalPos,0);
-  if(mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(m_Input))
+  if(mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(GetInput()))
     m_Gui->Bool(ID_SUBTREE,_R("Subtree"),&m_Subtree,0);
-  else if(medVMEAnalog *analog = medVMEAnalog::SafeDownCast(m_Input))
+  else if(medVMEAnalog *analog = medVMEAnalog::SafeDownCast(GetInput()))
     m_Gui->Bool(ID_SUBTREE,_R("Subtree"),&m_Subtree,0);
   m_Gui->OkCancel();
   m_Gui->Divider();
@@ -121,7 +120,7 @@ void lhpOpExporterC3DBTK::OnEvent(mafEventBase *maf_event)
       /*{
         wxString proposed = mafGetApplicationDirectory().c_str();
         proposed += "/Data/External/";
-        proposed += m_Input->GetName();
+        proposed += GetInput()->GetName();
         proposed += ".txt";
         wxString wildc = "ascii file (*.txt)|*.txt";
         wxString f = mafGetSaveFile(proposed,wildc).c_str(); 
@@ -139,12 +138,12 @@ void lhpOpExporterC3DBTK::OnEvent(mafEventBase *maf_event)
         m_Gui->Enable(wxOK, false);
         m_Gui->Enable(wxCANCEL, false);
 
-        assert(m_Input);
+        assert(GetInput());
         mafString proposed = mafGetApplicationDirectory() + _R("/Data/External/");
 
-        if(true)//(m_Input->IsMAFType(mafVMELandmarkCloud))
+        if(true)//(GetInput()->IsMAFType(mafVMELandmarkCloud))
         {
-          proposed += m_Input->GetName();
+          proposed += GetInput()->GetName();
           proposed += _R(".c3d");
           mafString wildc = _R("c3d file (*.c3d)|*.c3d");
 
@@ -164,7 +163,7 @@ void lhpOpExporterC3DBTK::OnEvent(mafEventBase *maf_event)
           if(dialog.ShowModal() == wxID_NO)
           {
 
-            proposed += m_Input->GetName();
+            proposed += GetInput()->GetName();
             proposed += ".txt";
             wxString wildc = "ascii file (*.txt)|*.txt";
             wxString f = mafGetSaveFile(proposed,wildc).c_str(); 
@@ -562,17 +561,17 @@ void lhpOpExporterC3DBTK::ExportLandmark()
 
   std::vector<mafVMELandmarkCloud*> clouds;
   std::vector<medVMEAnalog*>        analogs;
-  if(m_Input->IsMAFType(mafVMELandmarkCloud) && !m_Subtree)
+  if(GetInput()->IsMAFType(mafVMELandmarkCloud) && !m_Subtree)
   {
-    clouds.push_back(mafVMELandmarkCloud::SafeDownCast(m_Input));
+    clouds.push_back(mafVMELandmarkCloud::SafeDownCast(GetInput()));
   }
-  else if(m_Input->IsMAFType(medVMEAnalog) && !m_Subtree)
+  else if(GetInput()->IsMAFType(medVMEAnalog) && !m_Subtree)
   {
-    analogs.push_back(medVMEAnalog::SafeDownCast(m_Input));
+    analogs.push_back(medVMEAnalog::SafeDownCast(GetInput()));
   }
   else
   {
-    ExportingTraverse(m_Input, clouds, analogs);
+    ExportingTraverse(GetInput(), clouds, analogs);
   }
   if(!clouds.empty() || !analogs.empty())
   {
@@ -601,7 +600,7 @@ mafOp* lhpOpExporterC3DBTK::Copy()
   cp->SetListener(GetListener());
   cp->m_Next         = NULL;
   cp->m_File         = m_File;
-  cp->m_Input        = m_Input;
+  cp->SetInput(GetInput());
   cp->m_FileDir      = m_FileDir;
   cp->m_GlobalPos    = m_GlobalPos;
   cp->m_Subtree      = m_Subtree;

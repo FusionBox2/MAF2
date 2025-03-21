@@ -212,5 +212,5 @@ void medOpImporterAnalogWS::Read()
   }
 
   m_Output = m_EmgScalar;
-  m_Output->ReparentTo(m_Input);
+  m_Output->ReparentTo(GetInput());
 }

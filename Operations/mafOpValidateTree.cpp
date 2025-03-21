@@ -97,7 +97,7 @@ int mafOpValidateTree::ValidateTree()
   int result = mafOpValidateTree::VALIDATE_SUCCESS;
 
   mafNode *node;
-  mafVMERoot *root = mafVMERoot::SafeDownCast(m_Input->GetRoot());
+  mafVMERoot *root = mafVMERoot::SafeDownCast(GetInput()->GetRoot());
   assert(root != NULL);
   int max_item_id = root->GetMaxItemId();
   int max_node_id = root->GetMaxNodeId();

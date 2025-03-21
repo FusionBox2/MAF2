@@ -84,7 +84,7 @@ void mafOpCreatePlane::OpRun()
 void mafOpCreatePlane::OpDo()
 //----------------------------------------------------------------------------
 {
-	m_Plane->ReparentTo(m_Input);
+	m_Plane->ReparentTo(GetInput());
   
 }
 

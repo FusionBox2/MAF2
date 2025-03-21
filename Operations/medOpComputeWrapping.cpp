@@ -76,5 +76,5 @@ void medOpComputeWrapping::OpRun()
 void medOpComputeWrapping::OpDo()
 //----------------------------------------------------------------------------
 {
-  m_Meter->ReparentTo(m_Input);
+  m_Meter->ReparentTo(GetInput());
 }

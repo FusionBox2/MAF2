@@ -68,7 +68,7 @@ void mafOpExplodeCollapse::OpRun()
 void mafOpExplodeCollapse::OpDo()
 //----------------------------------------------------------------------------
 {
-  mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(m_Input);
+  mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(GetInput());
 
   if (cloud->IsOpen())
   {

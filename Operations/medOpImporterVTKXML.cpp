@@ -63,7 +63,6 @@ mafOp(label)
 {
   m_OpType  = OPTYPE_IMPORTER;
   m_Canundo = true;
-  m_Input   = NULL;
 
   m_VmePointSet = NULL;
   m_VmePolyLine = NULL;
@@ -139,7 +138,7 @@ void medOpImporterVTKXML::OpRun()
       tag_Nature.SetName(_R("VME_NATURE"));
       tag_Nature.SetValue(_R("NATURAL"));
       m_Output->GetTagArray()->SetTag(tag_Nature);
-      m_Output->ReparentTo(m_Input);
+      m_Output->ReparentTo(GetInput());
       m_Output->SetName(name);
 
       result = OP_RUN_OK;

@@ -103,7 +103,7 @@ void medOpFreezeVME::OpRun()
 	}
 
 	//control the output and create the right vme
-	mafVME *vme = mafVME::SafeDownCast(m_Input);
+	mafVME *vme = mafVME::SafeDownCast(GetInput());
 	vme->Update();
 	mafVMEOutput *output = vme->GetOutput();
 	output->Update();
@@ -129,7 +129,7 @@ void medOpFreezeVME::OpRun()
 			m_Output=newVolume.get();
 			if (m_Output)
 			{
-				m_Output->ReparentTo(m_Input->GetParent());
+				m_Output->ReparentTo(GetInput()->GetParent());
 				if(!m_TestMode)
 					OpStop(OP_RUN_OK);
 			}
@@ -157,7 +157,7 @@ void medOpFreezeVME::OpRun()
 				m_Output=newVolume.get();
 				if (m_Output)
 				{
-					m_Output->ReparentTo(m_Input->GetParent());
+					m_Output->ReparentTo(GetInput()->GetParent());
 					if(!m_TestMode)
 						OpStop(OP_RUN_OK);
 				}
@@ -184,7 +184,7 @@ void medOpFreezeVME::OpRun()
 					m_Output=newPolyline.get();
 					if (m_Output)
 					{
-						m_Output->ReparentTo(m_Input->GetParent());
+						m_Output->ReparentTo(GetInput()->GetParent());
 						if(!m_TestMode)
 							OpStop(OP_RUN_OK);
 					}
@@ -208,7 +208,7 @@ void medOpFreezeVME::OpRun()
 					m_Output=newSurface.get();
 					if (m_Output)
 					{
-						m_Output->ReparentTo(m_Input->GetParent());
+						m_Output->ReparentTo(GetInput()->GetParent());
 						if(!m_TestMode)
 							OpStop(OP_RUN_OK);
 					}
@@ -232,7 +232,7 @@ void medOpFreezeVME::OpRun()
 					m_Output=newPolyline.get();
 					if (m_Output)
 					{
-						m_Output->ReparentTo(m_Input->GetParent());
+						m_Output->ReparentTo(GetInput()->GetParent());
 						if(!m_TestMode)
 							OpStop(OP_RUN_OK);
 					}
@@ -256,7 +256,7 @@ void medOpFreezeVME::OpRun()
 					m_Output=surface.get();
 					if (m_Output)
 					{
-						m_Output->ReparentTo(m_Input->GetParent());
+						m_Output->ReparentTo(GetInput()->GetParent());
 						if(!m_TestMode)
 							OpStop(OP_RUN_OK);
 					}
@@ -284,7 +284,7 @@ void medOpFreezeVME::OpRun()
 					m_Output=newSurface.get();
 					if (m_Output)
 					{
-						m_Output->ReparentTo(m_Input->GetParent());
+						m_Output->ReparentTo(GetInput()->GetParent());
 						if(!m_TestMode)
 							OpStop(OP_RUN_OK);
 					}
@@ -309,7 +309,7 @@ void medOpFreezeVME::OpRun()
 					m_Output=newSurface.get();
 					if (m_Output)
 					{
-						m_Output->ReparentTo(m_Input->GetParent());
+						m_Output->ReparentTo(GetInput()->GetParent());
 						if(!m_TestMode)
 							OpStop(OP_RUN_OK);
 					}
@@ -333,7 +333,7 @@ void medOpFreezeVME::OpRun()
 					m_Output=newPolyline.get();
 					if (m_Output)
 					{
-						m_Output->ReparentTo(m_Input->GetParent());
+						m_Output->ReparentTo(GetInput()->GetParent());
 						if(!m_TestMode)
 							OpStop(OP_RUN_OK);
 					}
@@ -357,7 +357,7 @@ void medOpFreezeVME::OpRun()
 					m_Output=newPolyline.get();
 					if (m_Output)
 					{
-						m_Output->ReparentTo(m_Input->GetParent());
+						m_Output->ReparentTo(GetInput()->GetParent());
 						if(!m_TestMode)
 							OpStop(OP_RUN_OK);
 					}

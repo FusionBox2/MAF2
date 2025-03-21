@@ -148,7 +148,7 @@ void lhpOpComputeTensor::OpRun()
 //----------------------------------------------------------------------------
 {
   // Get the type of the input dataset
-  mafVMEVolumeGray* vmeData = mafVMEVolumeGray::SafeDownCast(m_Input) ;
+  mafVMEVolumeGray* vmeData = mafVMEVolumeGray::SafeDownCast(GetInput()) ;
   
   // Look for a dataset containing displacement vectors
   mafVMEVolume* vmeDisplacements= NULL;
@@ -316,9 +316,9 @@ void lhpOpComputeTensor::CreateOutputDataset()
 
     // Get the tensor output and redirect it to output
     m_Output = m_VmeTensors;
-    m_Output->ReparentTo(m_Input);
+    m_Output->ReparentTo(GetInput());
     // Set the name of the dataset
-    mafString name = m_Input->GetName() + _R(" - tensors");
+    mafString name = GetInput()->GetName() + _R(" - tensors");
     m_Output->SetName(name);
     }
   }

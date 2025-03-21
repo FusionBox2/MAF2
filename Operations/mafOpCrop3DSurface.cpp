@@ -101,11 +101,11 @@ bool mafOpCrop3DSurface::Accept(mafNode* node)
 void mafOpCrop3DSurface::OpRun()
 //----------------------------------------------------------------------------
 {
-	//m_Input->Modified();
+	//GetInput()->Modified();
   mafEvent e(this,VIEW_SELECTED);
   InvokeEvent(e);
 
-	mafVME* volume = mafVME::SafeDownCast(m_Input);
+	mafVME* volume = mafVME::SafeDownCast(GetInput());
 	volume->Update();
 	// create gizmo roi
 	if(!m_TestMode)
@@ -190,8 +190,8 @@ void mafOpCrop3DSurface::Crop()
 	if (!m_TestMode)
 		m_GizmoROI->GetBounds(m_CroppingBoxBounds);
 
-	//m_Input->Modified();
-	mafVME *volume = mafVME::SafeDownCast(m_Input);
+	//GetInput()->Modified();
+	mafVME *volume = mafVME::SafeDownCast(GetInput());
 
 	mafVMEOutput *output = volume->GetOutput();
 
@@ -373,7 +373,7 @@ void mafOpCrop3DSurface::Crop()
 		m_Cloud->Open();
 		m_Cloud->SetName(_L("SelectedPoints"));
 		m_Cloud->SetRadius(0.2);
-		m_Cloud->ReparentTo(m_Input);
+		m_Cloud->ReparentTo(GetInput());
 		m_Cloud->Open();
 		//m_Cloud->RemoveAllChildren();
 		m_Cloud->Update();
@@ -413,16 +413,16 @@ void mafOpCrop3DSurface::OpDo()
 	{
 
 		
-		((mafVMEVolume*)m_Input)->SetData(m_OutputSP, ((mafVME*)m_Input)->GetTimeStamp());
-		((mafVMEVolume*)m_Input)->GetOutput()->Update();
-		((mafVMEVolume*)m_Input)->Update();
+		((mafVMEVolume*)GetInput())->SetData(m_OutputSP, ((mafVME*)GetInput())->GetTimeStamp());
+		((mafVMEVolume*)GetInput())->GetOutput()->Update();
+		((mafVMEVolume*)GetInput())->Update();
 	}
 	else if (m_OutputRG)
 	{
 		
-		((mafVMEVolume*)m_Input)->SetData(m_OutputRG, ((mafVME*)m_Input)->GetTimeStamp());
-		((mafVMEVolume*)m_Input)->GetOutput()->Update();
-		((mafVMEVolume*)m_Input)->Update();
+		((mafVMEVolume*)GetInput())->SetData(m_OutputRG, ((mafVME*)GetInput())->GetTimeStamp());
+		((mafVMEVolume*)GetInput())->GetOutput()->Update();
+		((mafVMEVolume*)GetInput())->Update();
 	}
 		
 
@@ -432,16 +432,16 @@ void mafOpCrop3DSurface::OpDo()
 		
 		assert(m_Cloud);
 
-		/*((mafVMESurface*)m_Input)->SetData(m_OutputPolyData, ((mafVME*)m_Input)->GetTimeStamp());
-		((mafVMESurface*)m_Input)->GetOutput()->Update();
-		((mafVMESurface*)m_Input)->Update();*/
+		/*((mafVMESurface*)GetInput())->SetData(m_OutputPolyData, ((mafVME*)GetInput())->GetTimeStamp());
+		((mafVMESurface*)GetInput())->GetOutput()->Update();
+		((mafVMESurface*)GetInput())->Update();*/
 	}
 
 	
 	
     // bug# 2628: gizmos do not update after cropping (workaround code)
-//	{mafEvent evUnq(this,VME_SHOW,m_Input,false); InvokeEvent(evUnq);}
-//	{mafEvent evUnq(this,VME_SHOW,m_Input,true); InvokeEvent(evUnq);}
+//	{mafEvent evUnq(this,VME_SHOW,GetInput(),false); InvokeEvent(evUnq);}
+//	{mafEvent evUnq(this,VME_SHOW,GetInput(),true); InvokeEvent(evUnq);}
 	///////
 
 	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
@@ -454,28 +454,28 @@ void mafOpCrop3DSurface::OpUndo()
 {
 	if (m_InputSP)
 	{
-		((mafVMEVolume*)m_Input)->SetData(m_InputSP, ((mafVME*)m_Input)->GetTimeStamp());
-		((mafVMEVolume*)m_Input)->GetOutput()->Update();
-		((mafVMEVolume*)m_Input)->Update();
+		((mafVMEVolume*)GetInput())->SetData(m_InputSP, ((mafVME*)GetInput())->GetTimeStamp());
+		((mafVMEVolume*)GetInput())->GetOutput()->Update();
+		((mafVMEVolume*)GetInput())->Update();
 
 	}
 	else if (m_InputRG)
 	{
-		((mafVMEVolume*)m_Input)->SetData(m_InputRG, ((mafVME*)m_Input)->GetTimeStamp());
-		((mafVMEVolume*)m_Input)->GetOutput()->Update();
-		((mafVMEVolume*)m_Input)->Update();
+		((mafVMEVolume*)GetInput())->SetData(m_InputRG, ((mafVME*)GetInput())->GetTimeStamp());
+		((mafVMEVolume*)GetInput())->GetOutput()->Update();
+		((mafVMEVolume*)GetInput())->Update();
 	}
 	if (m_InputPolyData)
 	{
-		((mafVMESurface*)m_Input)->SetData(m_OutputPolyData, ((mafVME*)m_Input)->GetTimeStamp());
-		((mafVMESurface*)m_Input)->GetOutput()->Update();
-		((mafVMESurface*)m_Input)->Update();
+		((mafVMESurface*)GetInput())->SetData(m_OutputPolyData, ((mafVME*)GetInput())->GetTimeStamp());
+		((mafVMESurface*)GetInput())->GetOutput()->Update();
+		((mafVMESurface*)GetInput())->Update();
 	}
 	
 
 	// bug# 2628: gizmos do not update after cropping (workaround code)
-	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Input); evUnq.SetBool(false); InvokeEvent(evUnq);}
-	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Input); evUnq.SetBool(true); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetInput()); evUnq.SetBool(false); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetInput()); evUnq.SetBool(true); InvokeEvent(evUnq);}
 	///////
 
 	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
@@ -515,7 +515,7 @@ void mafOpCrop3DSurface::CreateGui()
 //----------------------------------------------------------------------------
 {
 	double bounds[6];
-	mafVME *volume = mafVME::SafeDownCast(m_Input);
+	mafVME *volume = mafVME::SafeDownCast(GetInput());
 	volume->GetOutput()->GetVTKData()->GetBounds(bounds);
 	m_XminXmax[0] = bounds[0];
 	m_XminXmax[1] = bounds[1];

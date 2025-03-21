@@ -77,5 +77,5 @@ void mafOpCreateGravityLine::OpRun()
 void mafOpCreateGravityLine::OpDo()
 //----------------------------------------------------------------------------
 {
-  m_Meter->ReparentTo(m_Input);
+  m_Meter->ReparentTo(GetInput());
 }

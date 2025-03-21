@@ -62,7 +62,7 @@ void mafOpSelect::OpDo()
 //----------------------------------------------------------------------------
 {
   if (m_OldNodeSelected == nullptr)
-    m_OldNodeSelected = m_Input;
+    m_OldNodeSelected = GetInput();
   {mafEvent evUnq(this,VME_SELECTED); evUnq.SetVme(m_NewNodeSelected.get()); InvokeEvent(evUnq);}
 };
 //----------------------------------------------------------------------------
@@ -138,7 +138,7 @@ void mafOpEdit::OpRun()
 //----------------------------------------------------------------------------
 {
   if (m_Selection == nullptr)
-    m_Selection = m_Input;
+    m_Selection = GetInput();
   OpStop(OP_RUN_OK);
 }
 

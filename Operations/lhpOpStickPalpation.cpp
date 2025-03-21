@@ -319,15 +319,15 @@ bool lhpOpStickPalpation::Accept(mafNode* vme)
 void lhpOpStickPalpation::OpRun()
 //----------------------------------------------------------------------------
 {
-  m_LimbCloud     = mafVMELandmarkCloud::SafeDownCast(m_Input);
+  m_LimbCloud     = mafVMELandmarkCloud::SafeDownCast(GetInput());
   SetNodeName(m_LimbCloud, &m_LimbCloudName);
 
-  m_TrgMotion     = mafVME::SafeDownCast(m_Input->GetParent());
+  m_TrgMotion     = mafVME::SafeDownCast(GetInput()->GetParent());
   SetNodeName(m_TrgMotion, &m_TrgMotionName);
 
   if(m_StickDefinition == NULL)
   {
-    m_StickDefinition = (mafVMELandmarkCloud *)MatchCriterion((mafVME *)m_Input->GetRoot(), MatchStickDefinition, NULL);
+    m_StickDefinition = (mafVMELandmarkCloud *)MatchCriterion((mafVME *)GetInput()->GetRoot(), MatchStickDefinition, NULL);
     if(m_StickDefinition)
       SetNodeName(m_StickDefinition, &m_StickDefinitionName);
   }

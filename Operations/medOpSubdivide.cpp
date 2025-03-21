@@ -77,7 +77,7 @@ mafOp *medOpSubdivide::Copy()
 void medOpSubdivide::OpRun()   
 //----------------------------------------------------------------------------
 {
-  mafVMESurface *surface = mafVMESurface::SafeDownCast(m_Input);
+  mafVMESurface *surface = mafVMESurface::SafeDownCast(GetInput());
   surface->Update();
 
   vtkPolyData *polydataInput = vtkPolyData::SafeDownCast(surface->GetOutput()->GetVTKData());
@@ -182,7 +182,7 @@ void medOpSubdivide::OpStop(int result)
 {
   if (result == OP_RUN_CANCEL)
   {
-    mafVMESurface *surface = mafVMESurface::SafeDownCast(m_Input);
+    mafVMESurface *surface = mafVMESurface::SafeDownCast(GetInput());
     surface->Update();
     
     surface->SetData(m_OriginalPolydata,surface->GetTimeStamp());
@@ -196,7 +196,7 @@ void medOpSubdivide::OpStop(int result)
 void medOpSubdivide::OpUndo()
 //----------------------------------------------------------------------------
 {
-  mafVMESurface *surface = mafVMESurface::SafeDownCast(m_Input);
+  mafVMESurface *surface = mafVMESurface::SafeDownCast(GetInput());
   surface->Update();
 
   surface->SetData(m_OriginalPolydata,surface->GetTimeStamp());
@@ -206,7 +206,7 @@ void medOpSubdivide::OpUndo()
 void medOpSubdivide::OpDo()
 //----------------------------------------------------------------------------
 {
-  mafVMESurface *surface = mafVMESurface::SafeDownCast(m_Input);
+  mafVMESurface *surface = mafVMESurface::SafeDownCast(GetInput());
   surface->Update();
 
   surface->SetData(m_ResultPolydata,surface->GetTimeStamp());
@@ -219,7 +219,7 @@ void medOpSubdivide::Algorithm()
   vtkLinearSubdivisionFilter *subdivisionFilter;
   vtkNEW(subdivisionFilter);
 
-  mafVMESurface *surface = mafVMESurface::SafeDownCast(m_Input);
+  mafVMESurface *surface = mafVMESurface::SafeDownCast(GetInput());
   surface->Update();
 
   vtkPolyData *polydataInput = vtkPolyData::SafeDownCast(surface->GetOutput()->GetVTKData());

@@ -396,7 +396,7 @@ void medOpMML::OnRegistrationOK()
   mafAutoPointer<mafVMESurface> vme = mafVMESurface::New();
 
   // vme item
-  vme->SetData(deformedpd->GetOutput(), ((mafVME *)m_Input)->GetTimeStamp()) ;
+  vme->SetData(deformedpd->GetOutput(), ((mafVME *)GetInput())->GetTimeStamp()) ;
 
 
   // tag 1: status
@@ -468,7 +468,7 @@ void medOpMML::OnRegistrationOK()
   vme->GetTagArray()->SetTag(typeofmuscle);
 
   // root vme
-  mafVME *RootVME = mafVME::SafeDownCast(m_Input->GetRoot());
+  mafVME *RootVME = mafVME::SafeDownCast(GetInput()->GetRoot());
   /*
 
   // patient section vme
@@ -776,7 +776,7 @@ void medOpMML::OnMuscleSelection()
   if (m_RegistrationStatus == 1)
   {
     // root vme
-    RootVME = mafVME::SafeDownCast(m_Input->GetRoot());
+    RootVME = mafVME::SafeDownCast(GetInput()->GetRoot());
 
     // atlas section vme
     AtlasSectionVME = (mafVME*)(RootVME->FindInTreeByName(mafWxToString(m_AtlasMSFSectionName)));
@@ -1513,7 +1513,7 @@ void medOpMML::OnLandmark1AtlasPatientSelection()
   }
 
   // get root node
-  mafVME *root = mafVME::SafeDownCast(m_Input->GetRoot());
+  mafVME *root = mafVME::SafeDownCast(GetInput()->GetRoot());
 
   // get landmarks parent node
   mafVME* parentvme = vme->GetParent();
@@ -1623,7 +1623,7 @@ void medOpMML::OnLandmark2AtlasPatientSelection()
   }
 
   // get root node
-  mafVME *root = mafVME::SafeDownCast(m_Input->GetRoot());
+  mafVME *root = mafVME::SafeDownCast(GetInput()->GetRoot());
 
   // get landmarks parent node
   mafVME* parentvme = vme->GetParent();
@@ -1733,7 +1733,7 @@ void medOpMML::OnLandmark3AtlasPatientSelection()
   }
 
   // get root node
-  mafVME *root = mafVME::SafeDownCast(m_Input->GetRoot());
+  mafVME *root = mafVME::SafeDownCast(GetInput()->GetRoot());
 
   // get landmarks parent node
   mafVME* parentvme = vme->GetParent();
@@ -1843,7 +1843,7 @@ void medOpMML::OnLandmark4AtlasPatientSelection()
   }
 
   // get root node
-  mafVME *root = mafVME::SafeDownCast(m_Input->GetRoot());
+  mafVME *root = mafVME::SafeDownCast(GetInput()->GetRoot());
 
   // get landmarks parent node
   mafVME* parentvme = vme->GetParent();
@@ -2264,7 +2264,7 @@ void medOpMML::CreateRegistrationDlg()
   LeftVerticalBoxSizer->Add(m_Lut,0,wxEXPAND ,6);
 
   // get maf gray volume 
-  m_Vol = mafVMEVolumeGray::SafeDownCast(m_Input);
+  m_Vol = mafVMEVolumeGray::SafeDownCast(GetInput());
   assert(!(m_Vol == NULL));
 
   /*vtkTransform *t = vtkTransform::New();
@@ -3122,7 +3122,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
                                               }
 
                                               // get root node
-                                              mafVME *RootVME = mafVME::SafeDownCast(m_Input->GetRoot());
+                                              mafVME *RootVME = mafVME::SafeDownCast(GetInput()->GetRoot());
 
                                               // get atlas section node
                                               mafVME *AtlasSectionVME = (mafVME*)(RootVME->FindInTreeByName(mafWxToString(AtlasSectionVMEName)));
@@ -3726,8 +3726,8 @@ void medOpMML::CreateFakeLandmarks()
 {
   double inputBounds[6]; 
 
-  assert(m_Input);
-  ((mafVME*)m_Input)->GetOutput()->GetBounds(inputBounds);
+  assert(GetInput());
+  ((mafVME*)GetInput())->GetOutput()->GetBounds(inputBounds);
   double xmed = (inputBounds[0] + inputBounds[1])/2;
   double ymed = (inputBounds[2] + inputBounds[3])/2;
 

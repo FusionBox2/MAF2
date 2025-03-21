@@ -82,5 +82,5 @@ void lhpOpCreateRefSysLM::OpRun()
 void lhpOpCreateRefSysLM::OpDo()
 //----------------------------------------------------------------------------
 {
-  m_Cloud->ReparentTo(m_Input);
+  m_Cloud->ReparentTo(GetInput());
 }

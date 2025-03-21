@@ -234,7 +234,7 @@ void medOpMeshQuality::CreateOpDialog()
 void medOpMeshQuality::CreatePolydataPipeline()
 //----------------------------------------------------------------------------
 {
-	mafVMESurface *surface = mafVMESurface::SafeDownCast(m_Input);
+	mafVMESurface *surface = mafVMESurface::SafeDownCast(GetInput());
 	vtkPolyData *dataset = vtkPolyData::SafeDownCast(surface->GetSurfaceOutput()->GetVTKData());
 	//dataset->Update();
 

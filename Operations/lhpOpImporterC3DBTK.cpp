@@ -1033,7 +1033,7 @@ void lhpOpImporterC3DBTK::OpDo()
 
   for(unsigned i = 0; i < m_intData.size(); i++)
   {
-    m_intData[i].m_VmeGroup->ReparentTo(m_Input);
+    m_intData[i].m_VmeGroup->ReparentTo(GetInput());
   }
 }
 //----------------------------------------------------------------------------

@@ -194,7 +194,7 @@ void medOpMeshDeformation::OpDo()
 //----------------------------------------------------------------------------
 {
   if (m_Output != NULL)
-    m_Output->ReparentTo(m_Input);
+    m_Output->ReparentTo(GetInput());
 
   mafVME** pCVMEs[2] = { m_OriginalCurves, m_DeformedCurves };
   for (int i = 0; i < 2; i++)
@@ -1466,7 +1466,7 @@ void medOpMeshDeformation::OnEvent(mafEventBase *maf_event)
   mafVMESurface* surface;
 
   mafNEW(surface);
-  surface->SetName(mafString::Format(_R("Deformed ")) + m_Input->GetName());
+  surface->SetName(mafString::Format(_R("Deformed ")) + GetInput()->GetName());
   surface->SetData(m_Meshes[1]->pPoly, 0, mafVMEGeneric::MAF_VME_REFERENCE_DATA);
 
   mafDEL(m_Output);
@@ -2251,7 +2251,7 @@ void medOpMeshDeformation::DeformMeshT()
 /*virtual*/ bool medOpMeshDeformation::CreateInternalStructures()
 //------------------------------------------------------------------------
 {
-  mafVMESurface* surface = mafVMESurface::SafeDownCast(m_Input); 
+  mafVMESurface* surface = mafVMESurface::SafeDownCast(GetInput()); 
   _VERIFY_RETVAL(surface != NULL, false);  
 
   vtkPolyData* pPoly = vtkPolyData::SafeDownCast(surface->GetOutput()->GetVTKData());

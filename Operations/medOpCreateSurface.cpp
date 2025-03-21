@@ -69,7 +69,7 @@ bool medOpCreateSurface::Accept(mafNode* vme)
 void medOpCreateSurface::OpRun()
 //----------------------------------------------------------------------------
 {
-	mafVMESurfaceParametric *inputSurface=mafVMESurfaceParametric::SafeDownCast(m_Input);
+	mafVMESurfaceParametric *inputSurface=mafVMESurfaceParametric::SafeDownCast(GetInput());
 	
 	mafNEW(m_Surface);
 	m_Surface->SetName(inputSurface->GetName());
@@ -86,7 +86,7 @@ void medOpCreateSurface::OpDo()
 {
 	if (m_Output)
 	{
-		m_Output->ReparentTo(m_Input);
+		m_Output->ReparentTo(GetInput());
 		{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 	}
 }

@@ -223,11 +223,11 @@ void medOpExporterMeters::ExportTypeOfMeters()
   std::unique_ptr<mafNodeIterator> iter;
   if(m_SubTreeExportMeter == TRUE)
   {
-    iter = m_Input->NewIterator();
+    iter = GetInput()->NewIterator();
   }
   else
   {
-    iter = m_Input->GetRoot()->NewIterator();
+    iter = GetInput()->GetRoot()->NewIterator();
   }
   
   for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
@@ -255,7 +255,7 @@ void medOpExporterMeters::ExportTypeOfMeters()
 void medOpExporterMeters::ExportSelectedMeter()
 //----------------------------------------------------------------------------
 {
-  m_Meters.push_back(m_Input);
+  m_Meters.push_back(GetInput());
   ExportMeter();
   m_Meters.clear();
 }
@@ -483,7 +483,7 @@ bool medOpExporterMeters::ControlExportChoose()
   {
   case VME_SELECTED_METER:
     {
-      control = (mafVMEMeter::SafeDownCast(m_Input) || medVMEWrappedMeter::SafeDownCast(m_Input));
+      control = (mafVMEMeter::SafeDownCast(GetInput()) || medVMEWrappedMeter::SafeDownCast(GetInput()));
       if(control == false)
       {
         wxMessageBox("Current Vme is not a meter");

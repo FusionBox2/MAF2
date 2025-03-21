@@ -132,7 +132,7 @@ mafOp *medOpExtractGeometry::Copy()
 void medOpExtractGeometry::OpRun()   
 //----------------------------------------------------------------------------
 {
-  m_VolumeInput = mafVMEVolumeGray::SafeDownCast(m_Input);
+  m_VolumeInput = mafVMEVolumeGray::SafeDownCast(GetInput());
 
   vtkImageData *imageData = NULL;
   if ( m_VolumeInput->GetOutput()->GetVTKData()->IsA("vtkImageData") )
@@ -379,11 +379,11 @@ void medOpExtractGeometry::OpUndo()
 void medOpExtractGeometry::OpDo()
 //----------------------------------------------------------------------------
 {
-  m_VolumeInput->ReparentTo(m_Input->GetParent());
+  m_VolumeInput->ReparentTo(GetInput()->GetParent());
 
   if (m_SurfaceOutput != NULL)
   {
-    m_SurfaceOutput->ReparentTo(m_Input);
+    m_SurfaceOutput->ReparentTo(GetInput());
   }
 }
 //----------------------------------------------------------------------------
@@ -566,7 +566,7 @@ int medOpExtractGeometry::GenerateIsosurface()
     // smoothing volume with some itk filters
 
     mafString smoothedVolumeName = _R("smoothed_");
-    smoothedVolumeName += m_Input->GetName();
+    smoothedVolumeName += GetInput()->GetName();
 
     m_ResampledVolume = (mafVMEVolumeGray *)m_VolumeInput->NewInstance();
     m_ResampledVolume->Register(m_ResampledVolume);
@@ -679,7 +679,7 @@ int medOpExtractGeometry::GenerateIsosurface()
 
 
   mafNEW(m_SurfaceOutput);
-  m_SurfaceOutput->SetData(m_SurfaceData,mafVMEVolumeGray::SafeDownCast(m_Input)->GetTimeStamp());
+  m_SurfaceOutput->SetData(m_SurfaceData,mafVMEVolumeGray::SafeDownCast(GetInput())->GetTimeStamp());
 
   mafTagItem tag_Nature;
   tag_Nature.SetName(_R("VME_NATURE"));
@@ -688,7 +688,7 @@ int medOpExtractGeometry::GenerateIsosurface()
   m_SurfaceOutput->GetTagArray()->SetTag(tag_Nature);
 
   m_SurfaceOutput->SetName(_R("Surface"));
-  m_SurfaceOutput->ReparentTo(m_Input);
+  m_SurfaceOutput->ReparentTo(GetInput());
   m_SurfaceOutput->Update();
 
   m_Output = m_SurfaceOutput;

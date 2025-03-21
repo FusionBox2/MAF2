@@ -150,7 +150,7 @@ void mafOpLabelExtractor::OpRun()
   m_Gui->Divider(2);
   m_Gui->Divider();
 
-  if (m_Input->IsA("medVMELabeledVolume"))
+  if (GetInput()->IsA("medVMELabeledVolume"))
   {
     m_LabelCheckBox = m_Gui->CheckList(ID_LABELS,_L("Labels"),360,_L("Chose label to extract"));
 
@@ -158,7 +158,7 @@ void mafOpLabelExtractor::OpRun()
     LIST myList;     
     LIST::iterator myListIter;   
 
-    if  (const mafTagItem *tagLabel = m_Input->GetTagArray()->GetTag( _R("LABELS") ))
+    if  (const mafTagItem *tagLabel = GetInput()->GetTagArray()->GetTag( _R("LABELS") ))
     {
       int noc = tagLabel->GetNumberOfComponents();
       if(noc != 0)
@@ -240,7 +240,7 @@ void mafOpLabelExtractor::OnEvent(mafEventBase *maf_event)
 
 		  case wxOK:
 			  ExtractLabel();
-			  if(((mafVME *)m_Input)->GetOutput()->GetVTKData() != NULL)
+			  if(((mafVME *)GetInput())->GetOutput()->GetVTKData() != NULL)
 				  OpStop(OP_RUN_OK);
 			  else
 			  {
@@ -281,7 +281,7 @@ void mafOpLabelExtractor::OnEvent(mafEventBase *maf_event)
 void mafOpLabelExtractor::UpdateDataLabel()
 //----------------------------------------------------------------------------
 {
-  mafNode *linkedNode = m_Input->GetLink(_R("VolumeLink"));
+  mafNode *linkedNode = GetInput()->GetLink(_R("VolumeLink"));
   mafAutoPointer<mafVME> linkedVolume = mafVME::SafeDownCast(linkedNode);
 
   //Get dataset from volume linked to
@@ -365,13 +365,13 @@ void mafOpLabelExtractor::ExtractLabel()
 {
   mafVME *vme = NULL;
   
-  if (m_Input->IsA("medVMELabeledVolume"))
+  if (GetInput()->IsA("medVMELabeledVolume"))
   {
     UpdateDataLabel();
   }
   else
   {
-    mafAutoPointer<mafVME> vmeLabeled = (mafVME *)m_Input;
+    mafAutoPointer<mafVME> vmeLabeled = (mafVME *)GetInput();
     m_Ds = vmeLabeled->GetOutput()->GetVTKData();
     vmeLabeled->GetOutput()->Update();
   }
@@ -467,7 +467,7 @@ void mafOpLabelExtractor::ExtractLabel()
 
     resampler->SetWindow(w);
     resampler->SetLevel(l);
-    resampler->SetInputConnection(((mafVME*)m_Input)->GetOutput()->GetVTKOutputPort());
+    resampler->SetInputConnection(((mafVME*)GetInput())->GetOutput()->GetVTKOutputPort());
     resampler->SetOutput(sp);
     resampler->AutoSpacingOff();
     resampler->Update();
@@ -476,7 +476,7 @@ void mafOpLabelExtractor::ExtractLabel()
     m_OutputData = sp->NewInstance();
     m_OutputData->DeepCopy(sp);
 
-    if (m_Input->IsA("medVMELabeledVolume"))
+    if (GetInput()->IsA("medVMELabeledVolume"))
     {
       GenerateLabeledVolume();
     }

@@ -217,7 +217,7 @@ void lhpOpLMProj::OpDo()
 {
 
   std::vector<mafTimeStamp> stmps;
-  mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(m_Input);
+  mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(GetInput());
   mafVMELandmarkCloud *newcloud;// = mafVMELandmarkCloud::New();
   mafString           ncname;
 
@@ -251,7 +251,7 @@ void lhpOpLMProj::OpDo()
   {
     newcloud->SetLandmarkName(i, cloud->GetLandmarkName(i));
   }
-  m_Output->ReparentTo(m_Input->GetParent());
+  m_Output->ReparentTo(GetInput()->GetParent());
 
   mafVMEOutputSurface *surface = NULL;
   vtkNew<vtkTriangleFilter> triangles;

@@ -54,7 +54,6 @@ lhpOpMTRExporter::lhpOpMTRExporter(const mafString& label) : Superclass(label)
   m_Canundo = true;
   m_File    = _R("");
   m_FileDir = _R("");
-  m_Input   = NULL;
   m_ABSPos  = 1;
 }
 //----------------------------------------------------------------------------
@@ -106,12 +105,12 @@ void lhpOpMTRExporter::OnEvent(mafEventBase *maf_event)
         m_Gui->Enable(wxOK, false);
         m_Gui->Enable(wxCANCEL, false);
 
-        assert(m_Input);
+        assert(GetInput());
         mafString proposed = mafGetApplicationDirectory() + _R("/Data/External/");
 
-        if(m_Input->IsMAFType(mafVMELandmarkCloud))
+        if(GetInput()->IsMAFType(mafVMELandmarkCloud))
         {
-          proposed += m_Input->GetName();
+          proposed += GetInput()->GetName();
           proposed += _R(".mtr");
           mafString wildc = _R("FARO MTR file (*.mtr)|*.mtr");
 
@@ -131,7 +130,7 @@ void lhpOpMTRExporter::OnEvent(mafEventBase *maf_event)
           if(dialog.ShowModal() == wxID_NO)
           {
 
-            proposed += m_Input->GetName();
+            proposed += GetInput()->GetName();
             proposed += _R(".mtr");
             mafString wildc = _R("FARO MTR file (*.mtr)|*.mtr");
             mafString f = mafGetSaveFile(proposed,wildc); 
@@ -174,7 +173,7 @@ void lhpOpMTRExporter::OnEvent(mafEventBase *maf_event)
 void lhpOpMTRExporter::ExportOneCloud(std::ostream &out, mafVMELandmarkCloud* cloud)
 {
   std::vector<mafTimeStamp> timeStamps;
-  mafVME *vmeTemp = mafVME::SafeDownCast(m_Input);
+  mafVME *vmeTemp = mafVME::SafeDownCast(GetInput());
   cloud->GetLocalTimeStamps(timeStamps);
 
   int numberLandmark = cloud->GetNumberOfLandmarks();
@@ -303,11 +302,11 @@ void lhpOpMTRExporter::ExportLandmark()
   //file creation
   std::ofstream f_Out;
 
-  if(m_Input->IsMAFType(mafVMELandmarkCloud))
+  if(GetInput()->IsMAFType(mafVMELandmarkCloud))
   {
     f_Out.open(m_File.GetCStr());
     f_Out<<"Index     Xmm        Ymm        Zmm     A(deg)     B(deg)     C(deg)\n";
-    ExportOneCloud(f_Out, mafVMELandmarkCloud::SafeDownCast(m_Input));
+    ExportOneCloud(f_Out, mafVMELandmarkCloud::SafeDownCast(GetInput()));
     f_Out.close();
   }
   else
@@ -316,12 +315,12 @@ void lhpOpMTRExporter::ExportLandmark()
     {
       f_Out.open(m_File.GetCStr());
       f_Out<<"Index     Xmm        Ymm        Zmm     A(deg)     B(deg)     C(deg)\n";
-      ExportingTraverse(f_Out, NULL, m_Input);
+      ExportingTraverse(f_Out, NULL, GetInput());
       f_Out.close();
     }
     else
     {
-      ExportingTraverse(f_Out, m_FileDir.GetCStr(), m_Input);
+      ExportingTraverse(f_Out, m_FileDir.GetCStr(), GetInput());
     }
   }
 }
@@ -336,6 +335,6 @@ mafOp* lhpOpMTRExporter::Copy()
   cp->SetListener(GetListener());
   cp->m_Next         = NULL;
   cp->m_File         = m_File;
-  cp->m_Input        = m_Input;
+  cp->SetInput(GetInput());
   return cp;
 }

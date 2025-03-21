@@ -114,8 +114,8 @@ enum
 void lhpOpRegisterLMScripted::OpRun()   
 //----------------------------------------------------------------------------
 {
-  m_Source = (mafVME*)m_Input;
-  m_SourceName = m_Input->GetName();
+  m_Source = (mafVME*)GetInput();
+  m_SourceName = GetInput()->GetName();
   
   int num_choices = 3;
   const mafString choices_string[] = {_L("rigid"), _L("similarity"), _L("affine")}; 
@@ -517,7 +517,7 @@ bool lhpOpRegisterLMScripted::ProcessNode(mafVMELandmarkCloud *src, mafVMELandma
 void lhpOpRegisterLMScripted::OpDo()
 //----------------------------------------------------------------------------
 {
-  m_Registered->ReparentTo(m_Input->GetRoot());
+  m_Registered->ReparentTo(GetInput()->GetRoot());
 }
 //----------------------------------------------------------------------------
 void lhpOpRegisterLMScripted::OpUndo()

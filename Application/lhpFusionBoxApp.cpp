@@ -329,8 +329,8 @@ mafCxxTypeMacro(lhpOpCreateLMCLines);
 
 void lhpOpCreateLMCLines::OpDo()
 {
-  m_Output->ReparentTo(m_Input);
-  mafVMELandmarkCloud *lmc = mafVMELandmarkCloud::SafeDownCast(m_Input);
+  m_Output->ReparentTo(GetInput());
+  mafVMELandmarkCloud *lmc = mafVMELandmarkCloud::SafeDownCast(GetInput());
   if(m_Created && lmc)
   {
     m_Created->SetCloud(lmc);
@@ -349,17 +349,17 @@ void lhpOpMoveSeq::TransfMatr(mafMatrix& convMatrix, mafTimeStamp tsSkip)
   mafMatrix newMatr;
   mafMatrix oldMatr;
   std::vector<mafTimeStamp> stamps;
-  ((mafVME *)m_Input)->GetTimeStamps(stamps);
+  ((mafVME *)GetInput())->GetTimeStamps(stamps);
   for(int i = 0; i < stamps.size(); i++)
   {
     if(stamps[i] == tsSkip)
       continue;
     // apply roto-translation to abs pose
-    ((mafVME *)m_Input)->GetOutput()->GetAbsMatrix(oldMatr, stamps[i]);
+    ((mafVME *)GetInput())->GetOutput()->GetAbsMatrix(oldMatr, stamps[i]);
     mafMatrix::Multiply4x4(convMatrix, oldMatr, newMatr);
-    ((mafVME *)m_Input)->SetAbsMatrix(newMatr, stamps[i]);
+    ((mafVME *)GetInput())->SetAbsMatrix(newMatr, stamps[i]);
   }
-  ((mafVME *)m_Input)->GetOutput()->Update();
+  ((mafVME *)GetInput())->GetOutput()->Update();
   {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 void lhpOpMoveSeq::OpDo()
@@ -373,8 +373,8 @@ void lhpOpMoveSeq::OpDo()
   oldMatr.Invert();
   mafMatrix::Multiply4x4(newMatr, oldMatr, convMatrix);
   m_ConvMatrix = convMatrix;
-  //((mafVME *)m_Input)->SetAbsMatrix(oldMatr);
-  TransfMatr(convMatrix, ((mafVME *)m_Input)->GetTimeStamp());
+  //((mafVME *)GetInput())->SetAbsMatrix(oldMatr);
+  TransfMatr(convMatrix, ((mafVME *)GetInput())->GetTimeStamp());
 }
 void lhpOpMoveSeq::OpUndo()
 //----------------------------------------------------------------------------

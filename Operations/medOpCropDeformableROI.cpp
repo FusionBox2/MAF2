@@ -111,7 +111,7 @@ void medOpCropDeformableROI::OpRun()
 void medOpCropDeformableROI::OpDo()
 //----------------------------------------------------------------------------
 {
-	m_ResultVme->ReparentTo(m_Input->GetRoot());
+	m_ResultVme->ReparentTo(GetInput()->GetRoot());
 }
 //----------------------------------------------------------------------------
 void medOpCropDeformableROI::OpUndo()
@@ -180,16 +180,16 @@ void medOpCropDeformableROI::Algorithm(mafVME *vme)
 
 		
 		mafNEW(m_ResultVme);
-		m_ResultVme->DeepCopy(m_Input);
+		m_ResultVme->DeepCopy(GetInput());
 		mafString resultName = _R("Masked ");
-		resultName+=m_Input->GetName();
+		resultName+=GetInput()->GetName();
 		m_ResultVme->SetName(resultName);
 
 		vtkPolyData *Mask;
 
 		mafMatrix identityMatrix;
 		mafMatrix maskABSMatrix = mafVME::SafeDownCast(vme)->GetAbsMatrixPipe()->GetMatrix();
-		mafMatrix volumeABSMatrix = mafVME::SafeDownCast(m_Input)->GetAbsMatrixPipe()->GetMatrix();
+		mafMatrix volumeABSMatrix = mafVME::SafeDownCast(GetInput())->GetAbsMatrixPipe()->GetMatrix();
 
 		bool isMaskMatrixIdentity = maskABSMatrix.Equals(identityMatrix);
 		bool isVolumeMatrixIdentity = volumeABSMatrix.Equals(identityMatrix);
@@ -221,7 +221,7 @@ void medOpCropDeformableROI::Algorithm(mafVME *vme)
 
 
 		vtkNEW(m_MaskPolydataFilter);
-		mafVMEVolumeGray *volume = mafVMEVolumeGray::SafeDownCast(m_Input);
+		mafVMEVolumeGray *volume = mafVMEVolumeGray::SafeDownCast(GetInput());
 		m_MaskPolydataFilter->SetInputConnection(volume->GetOutput()->GetVTKOutputPort());
 		m_MaskPolydataFilter->SetDistance(m_Distance);
 		m_MaskPolydataFilter->SetFillValue(m_FillValue);
@@ -231,9 +231,9 @@ void medOpCropDeformableROI::Algorithm(mafVME *vme)
 		m_MaskPolydataFilter->Update();
 
 		if(vtkRectilinearGrid::SafeDownCast(m_MaskPolydataFilter->GetOutput()))
-			m_ResultVme->SetData(((vtkRectilinearGrid*)m_MaskPolydataFilter->GetOutput()),((mafVME*)m_Input)->GetTimeStamp());
+			m_ResultVme->SetData(((vtkRectilinearGrid*)m_MaskPolydataFilter->GetOutput()),((mafVME*)GetInput())->GetTimeStamp());
 		else if(vtkImageData::SafeDownCast(m_MaskPolydataFilter->GetOutput()))
-			m_ResultVme->SetData(((vtkImageData*)m_MaskPolydataFilter->GetOutput()),((mafVME*)m_Input)->GetTimeStamp());
+			m_ResultVme->SetData(((vtkImageData*)m_MaskPolydataFilter->GetOutput()),((mafVME*)GetInput())->GetTimeStamp());
 	
 		m_ResultVme->Modified();
 		m_ResultVme->Update();

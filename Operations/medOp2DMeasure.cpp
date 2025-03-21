@@ -156,7 +156,7 @@ void medOp2DMeasure::OpRun()
 	m_Gui->OkCancel();
 
   // storing
-  mafNode *root = (mafNode *)m_Input->GetRoot();
+  mafNode *root = (mafNode *)GetInput()->GetRoot();
   if(mafTagItem *measure_item = root->GetTagArray()->GetTag(_R("2D_MEASURE")))
   {
     int c = measure_item->GetNumberOfComponents();
@@ -586,7 +586,7 @@ void medOp2DMeasure::OpStop(int result)
   measure_item.SetNumberOfComponents(c);
   for(int i = 0; i < c; i++)
     measure_item.SetComponent(mafWxToString(m_MeasureList->GetString(i)),i);
-  mafNode *root = (mafNode *)m_Input->GetRoot();
+  mafNode *root = (mafNode *)GetInput()->GetRoot();
   if(root->GetTagArray()->GetTag(_R("2D_MEASURE")))
     root->GetTagArray()->DeleteTag(_R("2D_MEASURE"));
   root->GetTagArray()->SetTag(measure_item);

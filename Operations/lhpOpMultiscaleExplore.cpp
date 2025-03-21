@@ -226,7 +226,7 @@ void lhpOpMultiscaleExplore::CreateOpWithoutDialog(vtkRenderer *renderer)
   //----------------------------------------------------------------------------
   // get input vme
   //----------------------------------------------------------------------------
-  mafVME* vme = mafVME::SafeDownCast(m_Input) ;
+  mafVME* vme = mafVME::SafeDownCast(GetInput()) ;
 
 
   //----------------------------------------------------------------------------
@@ -295,7 +295,7 @@ void lhpOpMultiscaleExplore::CreateOpDialog()
   //----------------------------------------------------------------------------
   // get input vme
   //----------------------------------------------------------------------------
-  mafVME* vme = mafVME::SafeDownCast(m_Input) ;
+  mafVME* vme = mafVME::SafeDownCast(GetInput()) ;
 
 
 

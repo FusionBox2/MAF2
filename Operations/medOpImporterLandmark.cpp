@@ -242,7 +242,7 @@ void medOpImporterLandmark::OpDo()
   {
     if (m_Results[i])
     {
-      m_Results[i]->ReparentTo(m_Input);
+      m_Results[i]->ReparentTo(GetInput());
       //{mafEvent evUnq(this, VME_ADD, m_Clouds[i]); InvokeEvent(evUnq);}
     }
   }

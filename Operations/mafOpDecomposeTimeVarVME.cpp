@@ -127,7 +127,7 @@ void mafOpDecomposeTimeVarVME::OpRun()
 	  m_Gui->Button(ID_HELP, _R("Help"), _R(""));
   }
 
-  m_NumberFrames = mafVMEGenericAbstract::SafeDownCast(m_Input)->GetNumberOfLocalTimeStamps();
+  m_NumberFrames = mafVMEGenericAbstract::SafeDownCast(GetInput())->GetNumberOfLocalTimeStamps();
   mafString string = mafString::Format(_R("Node has %d timestamps"), m_NumberFrames);
   m_Gui->Label(string);
 
@@ -348,7 +348,7 @@ int mafOpDecomposeTimeVarVME::UpdateFrames()
 {
   //wxBusyInfo wait("Please wait, working...");
   std::vector<mafTimeStamp> kframes;
-  mafVMEGenericAbstract *vme = mafVMEGenericAbstract::SafeDownCast(m_Input);
+  mafVMEGenericAbstract *vme = mafVMEGenericAbstract::SafeDownCast(GetInput());
 
   vme->GetLocalTimeStamps(kframes);
   mafString name = vme->GetName();
@@ -468,11 +468,11 @@ void mafOpDecomposeTimeVarVME::CreateStaticVME(mafTimeStamp timeSt)
   mafTimeStamp oldTime;
 
   std::vector<mafTimeStamp> kframes;
-  mafVMEGenericAbstract *oldVme = mafVMEGenericAbstract::SafeDownCast(m_Input);
+  mafVMEGenericAbstract *oldVme = mafVMEGenericAbstract::SafeDownCast(GetInput());
 
   // restore due attributes
   mafString typeVme;
-  typeVme = _R(m_Input->GetTypeName());
+  typeVme = _R(GetInput()->GetTypeName());
 
   mafObject *objVme = NodeFactory::CreateNode(typeVme.GetCStr());
   mafVME *newVme = mafVME::SafeDownCast(objVme);

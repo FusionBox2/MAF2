@@ -52,7 +52,6 @@ mafOpExporterBmp::mafOpExporterBmp(const mafString& label) : Superclass(label)
 {
   m_OpType = OPTYPE_EXPORTER;
   m_Canundo = true;
-  m_Input = NULL;
   m_Offset = 0;
   m_Bit8 = 1;
 	m_DirName = _R("");
@@ -108,7 +107,7 @@ void mafOpExporterBmp::OpRun()
 void mafOpExporterBmp::OpDo()   
 //----------------------------------------------------------------------------
 {					
-	assert(m_Input);
+	assert(GetInput());
 	this->SaveBmp();
 }
 //----------------------------------------------------------------------------
@@ -140,7 +139,7 @@ void mafOpExporterBmp::SaveBmp()
 #endif TEST_MODE
     */
 
-  mafVMEVolumeGray *volume=mafVMEVolumeGray::SafeDownCast(m_Input);
+  mafVMEVolumeGray *volume=mafVMEVolumeGray::SafeDownCast(GetInput());
   volume->Update();
 
   vtkDataSet *ds = volume->GetVolumeOutput()->GetVTKData();

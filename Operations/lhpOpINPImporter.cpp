@@ -110,7 +110,7 @@ void  lhpOpINPImporter::ImportData()
     reader->Update();
 
     mafTimeStamp t;
-    t = ((mafVME *)m_Input)->GetTimeStamp();
+    t = ((mafVME *)GetInput())->GetTimeStamp();
     mafNEW(surface);
     surface->SetName(name);
     vtkPolyData *data = reader->GetOutput();
@@ -135,7 +135,7 @@ void lhpOpINPImporter::OpDo()
   {
     if (m_Surfaces[i])
     {
-      m_Surfaces[i]->ReparentTo(m_Input);
+      m_Surfaces[i]->ReparentTo(GetInput());
       {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_Surfaces[i]); InvokeEvent(evUnq);}
     }
   }

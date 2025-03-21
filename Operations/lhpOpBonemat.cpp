@@ -292,7 +292,7 @@ void lhpOpBonemat::CreateGui()
   mafString wildc = _R("Frequency File (*.*)|*.*");
   m_FrequencyFileName = mafWxToString(wxGetCwd());
   m_FrequencyFileName +=  _R("\\") ;
-  m_FrequencyFileName +=  m_Input->GetName();
+  m_FrequencyFileName +=  GetInput()->GetName();
   m_FrequencyFileName +=  _R("-Freq.txt");
   m_Gui->FileSave(ID_OUTPUT_FREQUENCY_FILE_NAME, _L("Freq file"), &m_FrequencyFileName, wildc);
   
@@ -449,7 +449,7 @@ void lhpOpBonemat::CreateGui()
   m_Gui->Label(_R(""));
 
   mafNEW(m_OriginalVMEMesh);
-  m_OriginalVMEMesh->DeepCopy(mafVMEMesh::SafeDownCast(m_Input));
+  m_OriginalVMEMesh->DeepCopy(mafVMEMesh::SafeDownCast(GetInput()));
   m_OriginalVMEMesh->Update();
 
 }
@@ -490,14 +490,14 @@ void lhpOpBonemat::OnEvent(mafEventBase *maf_event)
         {
           //WORKAROUND CODE 
           //referred to bug 933
-          {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Input); evUnq.SetBool(false); InvokeEvent(evUnq);}
-          {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Input); evUnq.SetBool(true); InvokeEvent(evUnq);}
+          {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetInput()); evUnq.SetBool(false); InvokeEvent(evUnq);}
+          {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetInput()); evUnq.SetBool(true); InvokeEvent(evUnq);}
           //END WORKAROUND CODE
           OpStop(OP_RUN_OK);
         }
       break;
       case wxCANCEL:
-        mafVMEMesh::SafeDownCast(m_Input)->DeepCopy(m_OriginalVMEMesh);
+        mafVMEMesh::SafeDownCast(GetInput())->DeepCopy(m_OriginalVMEMesh);
         OpStop(OP_RUN_CANCEL);
       break;
   
@@ -607,9 +607,9 @@ void lhpOpBonemat::OnEvent(mafEventBase *maf_event)
       case VME_ADD:
         {
           //trap the VME_ADD of the mmoCollapse and mmoExplode to update the
-          //m_Input, then forward the message to mafDMLlogicMDI
-          this->m_Input = e->GetVme();
-          {mafEvent evUnq(this,VME_ADD); evUnq.SetVme(this->m_Input); InvokeEvent(evUnq);}
+          //GetInput(), then forward the message to mafDMLlogicMDI
+          this->SetInput(e->GetVme());
+          {mafEvent evUnq(this,VME_ADD); evUnq.SetVme(this->GetInput()); InvokeEvent(evUnq);}
         }
         break;
       case ID_PRINT_DEBUG_INFO:
@@ -718,7 +718,7 @@ int lhpOpBonemat::HUIntegration()
     return MAF_ERROR;
   }
   
-  mafVMEMesh *inMesh =  mafVMEMesh::SafeDownCast(m_Input);
+  mafVMEMesh *inMesh =  mafVMEMesh::SafeDownCast(GetInput());
   assert(inMesh);
 
   mafMatrix identityMatrix;
@@ -1273,7 +1273,7 @@ int lhpOpBonemat::HUIntegration()
   }
 
   // input modified in place
-  mafVMEMesh::SafeDownCast(m_Input)->SetData(outputUG, 0);
+  mafVMEMesh::SafeDownCast(GetInput())->SetData(outputUG, 0);
 
   // clean up
   vtkDEL(inputUGTransformed);
@@ -1331,7 +1331,7 @@ int lhpOpBonemat::YoungModuleIntegration()
     return MAF_ERROR;
   }
   
-  mafVMEMesh *inMesh =  mafVMEMesh::SafeDownCast(m_Input);
+  mafVMEMesh *inMesh =  mafVMEMesh::SafeDownCast(GetInput());
   assert(inMesh);
 
   mafMatrix identityMatrix;
@@ -1860,7 +1860,7 @@ int lhpOpBonemat::YoungModuleIntegration()
   //outputUG->Update();
 
 
-	mafVMEMesh::SafeDownCast(m_Input)->SetData(outputUG, 0);
+	mafVMEMesh::SafeDownCast(GetInput())->SetData(outputUG, 0);
 
   // COMPUTE MATERIALS & WRITE FREQUENCY FILE
 
@@ -2157,7 +2157,7 @@ int lhpOpBonemat::YoungModuleIntegration()
   }
 
   // input modified in place
-  mafVMEMesh::SafeDownCast(m_Input)->SetData(outputUG, 0);
+  mafVMEMesh::SafeDownCast(GetInput())->SetData(outputUG, 0);
 
   // clean up
   vtkDEL(inputUGTransformed);

@@ -76,5 +76,5 @@ void mafOpCreateSpline::OpRun()
 void mafOpCreateSpline::OpDo()
 //----------------------------------------------------------------------------
 {
-  m_PolylineSpline->ReparentTo(m_Input);
+  m_PolylineSpline->ReparentTo(GetInput());
 }

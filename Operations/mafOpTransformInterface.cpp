@@ -89,7 +89,7 @@ void mafOpTransformInterface::PostMultiplyEventMatrix(mafEventBase *maf_event)
     // handle incoming transform events
     vtkTransform *tr = vtkTransform::New();
     tr->PostMultiply();
-    tr->SetMatrix(((mafVME *)m_Input)->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
+    tr->SetMatrix(((mafVME *)GetInput())->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
     tr->Concatenate(e->GetMatrix()->GetVTKMatrix());
     tr->Update();
 
@@ -100,7 +100,7 @@ void mafOpTransformInterface::PostMultiplyEventMatrix(mafEventBase *maf_event)
     if (arg == mafInteractorGenericMouse::MOUSE_MOVE)
     {
       // move vme
-      ((mafVME *)m_Input)->SetAbsMatrix(absPose);
+      ((mafVME *)GetInput())->SetAbsMatrix(absPose);
       // update matrix for OpDo()
       m_NewAbsMatrix = absPose;
     } 
@@ -147,19 +147,19 @@ void mafOpTransformInterface::OpDo()
 
   if (m_EnableScaling == 1 && 
       // group has no dataset
-      !m_Input->IsA("mafVMEGroup") &&
+      !GetInput()->IsA("mafVMEGroup") &&
       //  landmarks do not scale
-      !m_Input->IsA("mafVMELandmark") && 
+      !GetInput()->IsA("mafVMELandmark") && 
       //  parametric surfaces do not scale
-      !m_Input->IsA("mafVMESurfaceParametric") &&
+      !GetInput()->IsA("mafVMESurfaceParametric") &&
       //  parametric surfaces do not scale
-      !m_Input->IsA("mafVMESurfaceRegParam") &&
+      !GetInput()->IsA("mafVMESurfaceRegParam") &&
       //  refSys do not scale
-      !m_Input->IsA("mafVMERefSysAbstract") &&
+      !GetInput()->IsA("mafVMERefSysAbstract") &&
       //  slicer  do not scale
-      !m_Input->IsA("mafVMESlicer") &&
+      !GetInput()->IsA("mafVMESlicer") &&
       //  slicer  do not scale
-      !m_Input->IsA("mafVMELandmarkCloud")
+      !GetInput()->IsA("mafVMELandmarkCloud")
      )
   {
     // apply scale to data
@@ -168,7 +168,7 @@ void mafOpTransformInterface::OpDo()
     vtkNew<vtkTransform> scaleTransform;
     scaleTransform->Scale(scaling);
 
-    mafVME *inVME = mafVME::SafeDownCast(m_Input);
+    mafVME *inVME = mafVME::SafeDownCast(GetInput());
 
     vtkDataSet *dataSet = inVME->GetOutput()->GetVTKData();
     
@@ -179,7 +179,7 @@ void mafOpTransformInterface::OpDo()
     if (dataSet->IsA("vtkPolyData"))
     {
       // apply fast vtkPolyDataTransformFilter
-      vtkPolyData *currentPD = vtkPolyData::SafeDownCast(((mafVME *)m_Input)->GetOutput()->GetVTKData());
+      vtkPolyData *currentPD = vtkPolyData::SafeDownCast(((mafVME *)GetInput())->GetOutput()->GetVTKData());
       assert(currentPD);
 
       pd->DeepCopy(currentPD);
@@ -198,12 +198,12 @@ void mafOpTransformInterface::OpDo()
       {mafEvent evUnq(this,BIND_TO_PROGRESSBAR); evUnq.SetVtkObj(tPDF.GetPointer()); InvokeEvent(evUnq);}
       tPDF->Update();
 
-      ((mafVMEGeneric *)m_Input)->SetData(tPDF->GetOutput(),((mafVME *)m_Input)->GetTimeStamp());
+      ((mafVMEGeneric *)GetInput())->SetData(tPDF->GetOutput(),((mafVME *)GetInput())->GetTimeStamp());
     }
     else if (dataSet->IsA("vtkUnstructuredGrid"))
     {
       // apply fast vtkPolyDataTransformFilter
-      vtkUnstructuredGrid *currentUG = vtkUnstructuredGrid::SafeDownCast(((mafVME *)m_Input)->GetOutput()->GetVTKData());
+      vtkUnstructuredGrid *currentUG = vtkUnstructuredGrid::SafeDownCast(((mafVME *)GetInput())->GetOutput()->GetVTKData());
       assert(currentUG);
 
       ug->DeepCopy(currentUG);
@@ -219,7 +219,7 @@ void mafOpTransformInterface::OpDo()
       {mafEvent evUnq(this,BIND_TO_PROGRESSBAR); evUnq.SetVtkObj(tf.GetPointer()); InvokeEvent(evUnq);}
       tf->Update();
 
-      ((mafVMEGeneric *)m_Input)->SetData(tf->GetOutput(),((mafVME *)m_Input)->GetTimeStamp());
+      ((mafVMEGeneric *)GetInput())->SetData(tf->GetOutput(),((mafVME *)GetInput())->GetTimeStamp());
     }
     else if (dataSet->IsA("vtkStructuredPoints"))
     {
@@ -228,7 +228,7 @@ void mafOpTransformInterface::OpDo()
       	wxBusyInfo wait_info("Applying scaling to data...");
       }
 
-      vtkStructuredPoints *currentSP = vtkStructuredPoints::SafeDownCast(((mafVME *)m_Input)->GetOutput()->GetVTKData());
+      vtkStructuredPoints *currentSP = vtkStructuredPoints::SafeDownCast(((mafVME *)GetInput())->GetOutput()->GetVTKData());
       assert(currentSP);
  
       sp->DeepCopy(currentSP);
@@ -244,7 +244,7 @@ void mafOpTransformInterface::OpDo()
       sp->SetSpacing(newSpacing);      
       sp->Modified();
 
-      ((mafVMEGeneric *)m_Input)->SetData(sp,((mafVME *)m_Input)->GetTimeStamp());
+      ((mafVMEGeneric *)GetInput())->SetData(sp,((mafVME *)GetInput())->GetTimeStamp());
     }
     else if (dataSet->IsA("vtkRectilinearGrid"))
     {
@@ -258,7 +258,7 @@ void mafOpTransformInterface::OpDo()
       //{mafEvent evUnq(this,PROGRESSBAR_SET_TEXT,&mafString("transform")); InvokeEvent(evUnq);}
       long progress = 0;
 
-      vtkRectilinearGrid *currentRG = vtkRectilinearGrid::SafeDownCast(((mafVME *)m_Input)->GetOutput()->GetVTKData());
+      vtkRectilinearGrid *currentRG = vtkRectilinearGrid::SafeDownCast(((mafVME *)GetInput())->GetOutput()->GetVTKData());
       assert(currentRG);
 
       rg->DeepCopy(currentRG);
@@ -284,13 +284,13 @@ void mafOpTransformInterface::OpDo()
       rg->Modified();
 
       //mafProgressBarHideMacro();
-      ((mafVMEGeneric *)m_Input)->SetData(rg,((mafVME *)m_Input)->GetTimeStamp());
+      ((mafVMEGeneric *)GetInput())->SetData(rg,((mafVME *)GetInput())->GetTimeStamp());
     }
   }
   // apply roto-translation to abs pose
-  ((mafVME *)m_Input)->SetAbsMatrix(rotoTraslMatrix, m_CurrentTime);
+  ((mafVME *)GetInput())->SetAbsMatrix(rotoTraslMatrix, m_CurrentTime);
   
-  ((mafVME *)m_Input)->GetOutput()->Update();
+  ((mafVME *)GetInput())->GetOutput()->Update();
 
   {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }

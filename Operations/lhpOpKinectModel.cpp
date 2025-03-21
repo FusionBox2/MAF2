@@ -224,7 +224,7 @@ void lhpOpKinectModel::OpDo()
 
   for(unsigned i = 0; i < m_Imported.size(); i++)
   {
-    m_Imported[i]->ReparentTo(m_Input->GetParent());
+    m_Imported[i]->ReparentTo(GetInput()->GetParent());
   }
 }
 
@@ -261,7 +261,7 @@ bool lhpOpKinectModel::Import()
     return false;
 
   std::vector<mafTimeStamp> timeStamps;
-  mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(m_Input);
+  mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(GetInput());
   cloud->GetTimeStamps(timeStamps);
   int    numframes = timeStamps.size();
 

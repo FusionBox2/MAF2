@@ -88,10 +88,10 @@ void medOpTriangulateSurface::OpRun()
 //----------------------------------------------------------------------------
 {  
 	vtkNEW(m_ResultPolydata);
-	m_ResultPolydata->DeepCopy((vtkPolyData*)((mafVME *)m_Input)->GetOutput()->GetVTKData());
+	m_ResultPolydata->DeepCopy((vtkPolyData*)((mafVME *)GetInput())->GetOutput()->GetVTKData());
 
 	vtkNEW(m_OriginalPolydata);
-	m_OriginalPolydata->DeepCopy((vtkPolyData*)((mafVME *)m_Input)->GetOutput()->GetVTKData());
+	m_OriginalPolydata->DeepCopy((vtkPolyData*)((mafVME *)GetInput())->GetOutput()->GetVTKData());
 
 	if(!m_TestMode)
   {
@@ -127,14 +127,14 @@ void medOpTriangulateSurface::CreateGui()
 void medOpTriangulateSurface::OpDo()
 //----------------------------------------------------------------------------
 {
-	((mafVMESurface *)m_Input)->SetData(m_ResultPolydata,((mafVME *)m_Input)->GetTimeStamp());
+	((mafVMESurface *)GetInput())->SetData(m_ResultPolydata,((mafVME *)GetInput())->GetTimeStamp());
 	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpTriangulateSurface::OpUndo()
 //----------------------------------------------------------------------------
 {
-	((mafVMESurface *)m_Input)->SetData(m_OriginalPolydata,((mafVME *)m_Input)->GetTimeStamp());
+	((mafVMESurface *)GetInput())->SetData(m_OriginalPolydata,((mafVME *)GetInput())->GetTimeStamp());
 	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
@@ -210,7 +210,7 @@ void medOpTriangulateSurface::OnPreview()
 {
 	wxBusyCursor wait;
 
-	((mafVMESurface *)m_Input)->SetData(m_ResultPolydata,((mafVME *)m_Input)->GetTimeStamp());
+	((mafVMESurface *)GetInput())->SetData(m_ResultPolydata,((mafVME *)GetInput())->GetTimeStamp());
 
 	m_Gui->Enable(ID_PREVIEW,false);
 	m_Gui->Enable(ID_CLEAR,true);
@@ -227,7 +227,7 @@ void medOpTriangulateSurface::OnClear()
 {
 	wxBusyCursor wait;
 
-	((mafVMESurface *)m_Input)->SetData(m_OriginalPolydata,((mafVME *)m_Input)->GetTimeStamp());
+	((mafVMESurface *)GetInput())->SetData(m_OriginalPolydata,((mafVME *)GetInput())->GetTimeStamp());
 
 	m_ResultPolydata->DeepCopy(m_OriginalPolydata);
 

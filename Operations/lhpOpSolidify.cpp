@@ -1227,7 +1227,7 @@ void lhpOpSolidify::OpDo()
 {
   if (m_Output)
   {
-    m_Output->ReparentTo(m_Input->GetParent());
+    m_Output->ReparentTo(GetInput()->GetParent());
     //{mafEvent evUnq(this, VME_ADD, m_Output); InvokeEvent(evUnq);}
     {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
@@ -1255,7 +1255,7 @@ void lhpOpSolidify::OpStop(int result)
   }
 
   std::vector<mafTimeStamp> stmps;
-  mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(m_Input);
+  mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(GetInput());
   mafVMELandmarkCloud *newcloud;// = mafVMELandmarkCloud::New();
   mafString           ncname;
   ncname.append(cloud->GetName());

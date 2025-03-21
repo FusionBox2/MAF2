@@ -1470,7 +1470,7 @@ bool lhpOpRegistration::ScaleLMC(mafVMELandmarkCloud *lmc, double scale)
 bool lhpOpRegistration::RegistrationProcedure()
 //----------------------------------------------------------------------------
 {
-  mafNode *inputCopy = m_Input->CopyTree();
+  mafNode *inputCopy = GetInput()->CopyTree();
   inputCopy->Register(this);
   //{mafEvent evUnq(this, VME_ADD, inputCopy); InvokeEvent(evUnq);}
   mafVMELandmarkCloud *src = mafVMELandmarkCloud::SafeDownCast(inputCopy);
@@ -1726,7 +1726,7 @@ void lhpOpRegistration::OnEvent(mafEventBase *maf_event)
         if(lmc) 
         {
           mafVMEAFRefSys *sys    = GetAFRefSys(lmc);
-          mafVMEAFRefSys *sysInp = GetAFRefSys((mafVME*)m_Input);
+          mafVMEAFRefSys *sysInp = GetAFRefSys((mafVME*)GetInput());
           if(sys    != NULL && sys->GetBoneID()    != mafVMEAFRefSys::ID_AFS_NOTDEFINED &&
              sysInp != NULL && sysInp->GetBoneID() != mafVMEAFRefSys::ID_AFS_NOTDEFINED &&
              sys->GetBoneID() == sysInp->GetBoneID())

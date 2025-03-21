@@ -76,5 +76,5 @@ void mafOpCreateQuadricSurfaceFitting::OpRun()
 void mafOpCreateQuadricSurfaceFitting::OpDo()
 //----------------------------------------------------------------------------
 {
-	m_QuadricSurfaceFitting->ReparentTo(m_Input);
+	m_QuadricSurfaceFitting->ReparentTo(GetInput());
 }

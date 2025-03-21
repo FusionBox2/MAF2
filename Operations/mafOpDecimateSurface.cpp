@@ -103,10 +103,10 @@ void mafOpDecimateSurface::OpRun()
 //----------------------------------------------------------------------------
 {  
 	vtkNEW(m_ResultPolydata);
-	m_ResultPolydata->DeepCopy((vtkPolyData*)((mafVME *)m_Input)->GetOutput()->GetVTKData());
+	m_ResultPolydata->DeepCopy((vtkPolyData*)((mafVME *)GetInput())->GetOutput()->GetVTKData());
 	
 	vtkNEW(m_OriginalPolydata);
-	m_OriginalPolydata->DeepCopy((vtkPolyData*)((mafVME *)m_Input)->GetOutput()->GetVTKData());
+	m_OriginalPolydata->DeepCopy((vtkPolyData*)((mafVME *)GetInput())->GetOutput()->GetVTKData());
 
 	if(!m_TestMode)
 	{
@@ -122,7 +122,7 @@ void mafOpDecimateSurface::OpRun()
 		m_Gui->Slider(ID_REDUCTION,_R("reduc.to %"),&m_Reduction,1, 100);
 		m_Gui->Button(ID_DECIMATE,_R("apply decimate"));
 
-		//mafGUIMaterialButton *m_MaterialButton = new mafGUIMaterialButton(m_Input,this);
+		//mafGUIMaterialButton *m_MaterialButton = new mafGUIMaterialButton(GetInput(),this);
 		
 		m_Gui->Divider(2);
 		m_Gui->Label(_R(""));
@@ -144,14 +144,14 @@ void mafOpDecimateSurface::OpRun()
 void mafOpDecimateSurface::OpDo()
 //----------------------------------------------------------------------------
 {
-	((mafVMESurface *)m_Input)->SetData(m_ResultPolydata,((mafVME *)m_Input)->GetTimeStamp());
+	((mafVMESurface *)GetInput())->SetData(m_ResultPolydata,((mafVME *)GetInput())->GetTimeStamp());
 	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpDecimateSurface::OpUndo()
 //----------------------------------------------------------------------------
 {
-  ((mafVMESurface *)m_Input)->SetData(m_OriginalPolydata,((mafVME *)m_Input)->GetTimeStamp());
+  ((mafVMESurface *)GetInput())->SetData(m_OriginalPolydata,((mafVME *)GetInput())->GetTimeStamp());
 	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
@@ -165,14 +165,14 @@ void mafOpDecimateSurface::OnEvent(mafEventBase *maf_event)
       case ID_WIREFRAME:
         {
           mafVMESurface *surface;
-          surface = mafVMESurface::SafeDownCast(m_Input);
+          surface = mafVMESurface::SafeDownCast(GetInput());
 
           if(m_WireFrame == 1)
             surface->GetMaterial()->m_Prop->SetRepresentationToWireframe();
           else
             surface->GetMaterial()->m_Prop->SetRepresentationToSurface();
 
-          {mafEvent evUnq(this,UPDATE_PROPERTY); evUnq.SetVme(m_Input); evUnq.SetBool(true); InvokeEvent(evUnq);}
+          {mafEvent evUnq(this,UPDATE_PROPERTY); evUnq.SetVme(GetInput()); evUnq.SetBool(true); InvokeEvent(evUnq);}
 					{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 
         }
@@ -204,9 +204,9 @@ void mafOpDecimateSurface::OpStop(int result)
 //----------------------------------------------------------------------------
 {
   mafVMESurface *surface;
-  surface = mafVMESurface::SafeDownCast(m_Input);
+  surface = mafVMESurface::SafeDownCast(GetInput());
   surface->GetMaterial()->m_Prop->SetRepresentationToSurface();
-  {mafEvent evUnq(this,UPDATE_PROPERTY); evUnq.SetVme(m_Input); evUnq.SetBool(true); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,UPDATE_PROPERTY); evUnq.SetVme(GetInput()); evUnq.SetBool(true); InvokeEvent(evUnq);}
 
 	HideGui();
 	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}
@@ -253,7 +253,7 @@ void mafOpDecimateSurface::OnPreview()
 	if(!m_TestMode)
 		wxBusyCursor wait;
 	
-  ((mafVMESurface *)m_Input)->SetData(m_ResultPolydata,((mafVME *)m_Input)->GetTimeStamp());
+  ((mafVMESurface *)GetInput())->SetData(m_ResultPolydata,((mafVME *)GetInput())->GetTimeStamp());
 
 	if(!m_TestMode)
 	{
@@ -276,7 +276,7 @@ void mafOpDecimateSurface::OnClear()
 {
 	wxBusyCursor wait;
 
-  ((mafVMESurface *)m_Input)->SetData(m_OriginalPolydata,((mafVME *)m_Input)->GetTimeStamp());
+  ((mafVMESurface *)GetInput())->SetData(m_OriginalPolydata,((mafVME *)GetInput())->GetTimeStamp());
 	
 	m_ResultPolydata->DeepCopy(m_OriginalPolydata);
 

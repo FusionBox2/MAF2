@@ -166,7 +166,7 @@ void mafOpAddLandmark::SetLandmarkPos(mafVMELandmark* lm, double x, double y, do
 void mafOpAddLandmark::OpRun()
 //----------------------------------------------------------------------------
 {
-  if(mafVME *vm = mafVME::SafeDownCast(m_Input))
+  if(mafVME *vm = mafVME::SafeDownCast(GetInput()))
   {
     if(vm->GetTimeStamp() != 0)
     {
@@ -186,16 +186,16 @@ void mafOpAddLandmark::OpRun()
 
 	if(m_PickingActiveFlag == true)
 	{
-		if(m_Input->IsMAFType(mafVMESurface) ||
-		   m_Input->IsMAFType(mafVMEVolumeGray) ||
-		   m_Input->IsMAFType(mafVMESurfaceParametric) ||
-		   m_Input->IsMAFType(mafVMEPlane) ||
-		   m_Input->IsMAFType(mafVMEEllipsoid) ||
-		   m_Input->IsMAFType(mafVMEHyperboloid) ||
-		   m_Input->IsMAFType(mafVMEHyperboloid2S) ||
-		   m_Input->IsMAFType(mafVMECylinder))
+		if(GetInput()->IsMAFType(mafVMESurface) ||
+		   GetInput()->IsMAFType(mafVMEVolumeGray) ||
+		   GetInput()->IsMAFType(mafVMESurfaceParametric) ||
+		   GetInput()->IsMAFType(mafVMEPlane) ||
+		   GetInput()->IsMAFType(mafVMEEllipsoid) ||
+		   GetInput()->IsMAFType(mafVMEHyperboloid) ||
+		   GetInput()->IsMAFType(mafVMEHyperboloid2S) ||
+		   GetInput()->IsMAFType(mafVMECylinder))
 		{
-			m_PickedVme = mafVME::SafeDownCast(m_Input);
+			m_PickedVme = mafVME::SafeDownCast(GetInput());
 			mafNEW(m_Cloud);
 
 			if (m_TestMode == true)
@@ -210,16 +210,16 @@ void mafOpAddLandmark::OpRun()
 			{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Cloud); evUnq.SetBool(true); InvokeEvent(evUnq);}
 			m_CloudCreatedFlag = true;
 		}
-		else if(m_Input->IsMAFType(mafVMELandmark))
+		else if(GetInput()->IsMAFType(mafVMELandmark))
 		{
 			// add a new landmark as brother of this one
-			m_Cloud   = (mafVMELandmarkCloud *) m_Input->GetParent();
-			m_PickedVme = mafVME::SafeDownCast(m_Input->GetParent()->GetParent());
+			m_Cloud   = (mafVMELandmarkCloud *) GetInput()->GetParent();
+			m_PickedVme = mafVME::SafeDownCast(GetInput()->GetParent()->GetParent());
 		}
-		else if(m_Input->IsMAFType(mafVMELandmarkCloud))
+		else if(GetInput()->IsMAFType(mafVMELandmarkCloud))
 		{
-			m_Cloud   = (mafVMELandmarkCloud*)m_Input;
-			m_PickedVme = mafVME::SafeDownCast(m_Input->GetParent());
+			m_Cloud   = (mafVMELandmarkCloud*)GetInput();
+			m_PickedVme = mafVME::SafeDownCast(GetInput()->GetParent());
 		}
 		else
 		{
@@ -236,21 +236,21 @@ void mafOpAddLandmark::OpRun()
 	}
 	else
 	{
-		if(m_Input->IsMAFType(mafVMELandmark))
+		if(GetInput()->IsMAFType(mafVMELandmark))
 		{
 			// add a new landmark as brother of this one
-			m_Cloud = (mafVMELandmarkCloud *) m_Input->GetParent();
+			m_Cloud = (mafVMELandmarkCloud *) GetInput()->GetParent();
 		}
-		else if(m_Input->IsMAFType(mafVMELandmarkCloud))
+		else if(GetInput()->IsMAFType(mafVMELandmarkCloud))
 		{
-			m_Cloud = (mafVMELandmarkCloud*) m_Input;
+			m_Cloud = (mafVMELandmarkCloud*) GetInput();
 		}
 		else
 		{
 			mafNEW(m_Cloud);
 			m_Cloud->Open();
 			m_Cloud->SetName(_L("new landmark cloud"));
-			m_Cloud->ReparentTo(m_Input);
+			m_Cloud->ReparentTo(GetInput());
 			{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Cloud); evUnq.SetBool(true); InvokeEvent(evUnq);}
 			m_CloudCreatedFlag = true;
 		}
@@ -496,7 +496,7 @@ void mafOpAddLandmark::AddLandmark()
 		if(m_PickingActiveFlag == true)
 			reparent_result = m_Cloud->ReparentTo(m_PickedVme);
 		else
-		  reparent_result = m_Cloud->ReparentTo(m_Input);
+		  reparent_result = m_Cloud->ReparentTo(GetInput());
     if (reparent_result == MAF_OK)
     {
       {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Cloud); evUnq.SetBool(true); InvokeEvent(evUnq);}

@@ -324,7 +324,7 @@ void medOpInteractionDebugger::AddMAFVMEPolylineTestConstrain1ToTree()
   BuildVMEPolyline(in_points, polyline);
 
   polyline->SetName(_R("pippo constrain"));
-  polyline->ReparentTo(m_Input);
+  polyline->ReparentTo(GetInput());
   
   mafDEL(polyline);
 
@@ -343,7 +343,7 @@ void medOpInteractionDebugger::AddMEDVMEPolylineGraphTestConstrain1ToTree()
   polyline->Update();
 
   polyline->SetName(_R("test graph"));
-  polyline->ReparentTo(m_Input);
+  polyline->ReparentTo(GetInput());
 
   mafDEL(polyline);
 }
@@ -352,7 +352,7 @@ void medOpInteractionDebugger::AddMEDVMEPolylineGraphTestConstrain1ToTree()
 void medOpInteractionDebugger::RemoveTestConstraintGraph1FromTree()
 {
 
-  mafVME *vmeRoot = mafVME::SafeDownCast(m_Input->GetRoot());
+  mafVME *vmeRoot = mafVME::SafeDownCast(GetInput()->GetRoot());
 
   mafVME *constraint = mafVME::SafeDownCast(vmeRoot->FindInTreeByName(_R("test graph")));
   assert(constraint != NULL);
@@ -370,7 +370,7 @@ void medOpInteractionDebugger::AddMAFVMEPolylineTestConstrain2ToTree()
   BuildVMEPolyline(in_points, polyline);
 
   polyline->SetName(_R("test constrain"));
-  polyline->ReparentTo(m_Input);
+  polyline->ReparentTo(GetInput());
 
   mafDEL(polyline);
 }
@@ -385,7 +385,7 @@ void medOpInteractionDebugger::AddMAFVMEPolylineTestConstrain3ToTree()
   BuildVMEPolyline(in_points, polyline);
 
   polyline->SetName(_R("pluto constrain"));
-  polyline->ReparentTo(m_Input);
+  polyline->ReparentTo(GetInput());
 
   mafDEL(polyline);
 
@@ -394,7 +394,7 @@ void medOpInteractionDebugger::AddMAFVMEPolylineTestConstrain3ToTree()
 void medOpInteractionDebugger::AddMEDGizmoDebuggerToTree()
 {
 
-  mafVME *vmeRoot = mafVME::SafeDownCast(m_Input->GetRoot());
+  mafVME *vmeRoot = mafVME::SafeDownCast(GetInput()->GetRoot());
 
   mafVME *constraint = mafVME::SafeDownCast(vmeRoot->FindInTreeByName(_R("test graph")));
   assert(constraint != NULL);

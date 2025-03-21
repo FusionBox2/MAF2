@@ -90,7 +90,7 @@ void lhpOpCreateMetersScripted::OpRun()
 //----------------------------------------------------------------------------
 {
   mafNEW(m_Group);
-  auto inputLMC = mafVMELandmarkCloud::SafeDownCast(m_Input);
+  auto inputLMC = mafVMELandmarkCloud::SafeDownCast(GetInput());
   m_Group->SetName(inputLMC->GetName() + _R("_scripted_meters"));
   m_Output = m_Group;
 
@@ -155,5 +155,5 @@ void lhpOpCreateMetersScripted::OpRun()
 void lhpOpCreateMetersScripted::OpDo()
 //----------------------------------------------------------------------------
 {
-  m_Group->ReparentTo(m_Input->GetParent());
+  m_Group->ReparentTo(GetInput()->GetParent());
 }

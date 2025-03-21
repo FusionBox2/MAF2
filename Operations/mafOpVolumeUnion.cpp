@@ -108,7 +108,7 @@ void mafOpVolumeUnion::OpRun()
     mafEvent e(this,VIEW_SELECTED);
     InvokeEvent(e);
 
-	m_FirstVMEVolume = mafVMEVolume::SafeDownCast(m_Input);
+	m_FirstVMEVolume = mafVMEVolume::SafeDownCast(GetInput());
 	m_FirstVMEVolume->Update();
 
 	if ( !(m_FirstVMEVolume->GetOutput()->GetVTKData()->IsA("vtkRectilinearGrid")) && !(m_FirstVMEVolume->GetOutput()->GetVTKData()->IsA("vtkStructuredPoints")) )
@@ -426,20 +426,20 @@ void mafOpVolumeUnion::OpDo()
 //----------------------------------------------------------------------------
 {
 	if(m_VolUnionRG || m_VolUnionRGstr) {
-		//((mafVMEVolume*)m_Input)->GetOutput()->GetOutputDataSet()->SetUpdateExtentToWholeExtent();
+		//((mafVMEVolume*)GetInput())->GetOutput()->GetOutputDataSet()->SetUpdateExtentToWholeExtent();
 
 		if(m_FirstVMEVolume->GetOutput()->GetVTKData()->IsA("vtkRectilinearGrid"))
 		{
-		  ((mafVMEVolume*)m_Input)->SetData(m_VolUnionRG,((mafVME*)m_Input)->GetTimeStamp());
+		  ((mafVMEVolume*)GetInput())->SetData(m_VolUnionRG,((mafVME*)GetInput())->GetTimeStamp());
 		}
 		else
 		{
-          ((mafVMEVolume*)m_Input)->SetData(m_VolUnionRGstr,((mafVME*)m_Input)->GetTimeStamp());
+          ((mafVMEVolume*)GetInput())->SetData(m_VolUnionRGstr,((mafVME*)GetInput())->GetTimeStamp());
 		}
 	}
 
-	((mafVMEVolume*)m_Input)->GetOutput()->Update();
-	((mafVMEVolume*)m_Input)->Update();
+	((mafVMEVolume*)GetInput())->GetOutput()->Update();
+	((mafVMEVolume*)GetInput())->Update();
 
 }
 //----------------------------------------------------------------------------
@@ -447,10 +447,10 @@ void mafOpVolumeUnion::OpUndo()
 //----------------------------------------------------------------------------
 {
 	if(m_FirstVMEVolume->GetOutput()->GetVTKData())
-		((mafVMEVolume*)m_Input)->SetData(m_FirstVMEVolume->GetOutput()->GetVTKData(),((mafVME*)m_Input)->GetTimeStamp());
+		((mafVMEVolume*)GetInput())->SetData(m_FirstVMEVolume->GetOutput()->GetVTKData(),((mafVME*)GetInput())->GetTimeStamp());
 
-	((mafVMEVolume*)m_Input)->GetOutput()->Update();
-	((mafVMEVolume*)m_Input)->Update();
+	((mafVMEVolume*)GetInput())->GetOutput()->Update();
+	((mafVMEVolume*)GetInput())->Update();
 
 }
 //----------------------------------------------------------------------------
@@ -583,7 +583,7 @@ void mafOpVolumeUnion::OnEvent(mafEventBase *maf_event)
 							wxMessageBox("The second input VME has not a VTK RectilinearGrid or StructuredPoints data!");
 							OpStop(OP_RUN_CANCEL);
 						}
-					    if(m_Input == m_SecondVMEVolume)
+					    if(GetInput() == m_SecondVMEVolume)
 					    {
 					 	     mafMessage(_M(mafString(_L("Can't operate over the same VME"))));
 						     return;

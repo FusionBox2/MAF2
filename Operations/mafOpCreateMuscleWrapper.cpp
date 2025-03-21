@@ -77,5 +77,5 @@ void mafOpCreateMuscleWrapperAQ::OpRun()
 void mafOpCreateMuscleWrapperAQ::OpDo()
 //----------------------------------------------------------------------------
 {
-	m_MuscleWrapper->ReparentTo(m_Input);
+	m_MuscleWrapper->ReparentTo(GetInput());
 }

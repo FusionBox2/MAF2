@@ -240,7 +240,7 @@ void mafOpImporterImage::BuildImageSequence()
   else
     std::sort(m_Files.begin(),m_Files.end());
 
-	mafTimeStamp start_time = ((mafVME *)m_Input->GetRoot())->GetTimeStamp();
+	mafTimeStamp start_time = ((mafVME *)GetInput()->GetRoot())->GetTimeStamp();
   long progress_value = 0;
   {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
   for(int i=0; i<m_NumFiles; i++)
@@ -297,7 +297,7 @@ void mafOpImporterImage::BuildImageSequence()
   {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 
   m_ImportedImage->SetTimeStamp(start_time);
-  m_ImportedImage->ReparentTo(m_Input);
+  m_ImportedImage->ReparentTo(GetInput());
   m_Output = m_ImportedImage;
 }
 //----------------------------------------------------------------------------
@@ -332,7 +332,7 @@ void mafOpImporterImage::BuildVolume()
     r->SetDataSpacing(1.0,1.0,m_ImageZSpacing);
     r->Update();
     
-    m_ImportedImageAsVolume->SetData(r->GetOutput(),((mafVME *)m_Input)->GetTimeStamp());
+    m_ImportedImageAsVolume->SetData(r->GetOutput(),((mafVME *)GetInput())->GetTimeStamp());
     
     r->Delete();
 	} 
@@ -355,7 +355,7 @@ void mafOpImporterImage::BuildVolume()
     r->SetDataSpacing(1.0,1.0,m_ImageZSpacing);
     r->Update();
     
-    m_ImportedImageAsVolume->SetData(r->GetOutput(),((mafVME *)m_Input)->GetTimeStamp());
+    m_ImportedImageAsVolume->SetData(r->GetOutput(),((mafVME *)GetInput())->GetTimeStamp());
     
     r->Delete();
 	}
@@ -378,7 +378,7 @@ void mafOpImporterImage::BuildVolume()
     r->SetDataSpacing(1.0,1.0,m_ImageZSpacing);
     r->Update();
 
-    m_ImportedImageAsVolume->SetData(r->GetOutput(),((mafVME *)m_Input)->GetTimeStamp());
+    m_ImportedImageAsVolume->SetData(r->GetOutput(),((mafVME *)GetInput())->GetTimeStamp());
     
     r->Delete();
 	}
@@ -401,7 +401,7 @@ void mafOpImporterImage::BuildVolume()
     r->SetDataSpacing(1.0,1.0,m_ImageZSpacing);
     r->Update();
     
-    m_ImportedImageAsVolume->SetData(r->GetOutput(),((mafVME *)m_Input)->GetTimeStamp());
+    m_ImportedImageAsVolume->SetData(r->GetOutput(),((mafVME *)GetInput())->GetTimeStamp());
 
     r->Delete();
 	}

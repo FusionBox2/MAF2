@@ -157,7 +157,7 @@ void mafOpImporterSTL::OpDo()
   {
     if (m_ImportedSTLs[i])
     {
-      m_ImportedSTLs[i]->ReparentTo(m_Input);
+      m_ImportedSTLs[i]->ReparentTo(GetInput());
     }
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}

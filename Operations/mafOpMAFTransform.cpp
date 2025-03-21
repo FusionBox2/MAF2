@@ -127,11 +127,11 @@ void mafOpMAFTransform::OpRun()
   	wxBusyInfo wait("creating gui...");
   }
 
-  assert(m_Input);
-  m_CurrentTime = ((mafVME *)m_Input)->GetTimeStamp();
+  assert(GetInput());
+  m_CurrentTime = ((mafVME *)GetInput())->GetTimeStamp();
 
-  m_NewAbsMatrix = *((mafVME *)m_Input)->GetOutput()->GetAbsMatrix();
-  m_OldAbsMatrix = *((mafVME *)m_Input)->GetOutput()->GetAbsMatrix();
+  m_NewAbsMatrix = *((mafVME *)GetInput())->GetOutput()->GetAbsMatrix();
+  m_OldAbsMatrix = *((mafVME *)GetInput())->GetOutput()->GetAbsMatrix();
 
   if (!m_TestMode)
   {
@@ -194,8 +194,8 @@ void mafOpMAFTransform::OpDo()
 void mafOpMAFTransform::OpUndo()
 //----------------------------------------------------------------------------
 {  
-	((mafVME *)m_Input)->SetAbsMatrix(m_OldAbsMatrix);
-  ((mafVME *)m_Input)->GetOutput()->Update();
+	((mafVME *)GetInput())->SetAbsMatrix(m_OldAbsMatrix);
+  ((mafVME *)GetInput())->GetOutput()->Update();
 
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);} 
 }
@@ -395,7 +395,7 @@ void mafOpMAFTransform::OnEventGizmoTranslate(mafEventBase *maf_event)
       if (!m_TestMode)
       {
 	      // update gui 
-	      m_GuiTransformTextEntries->SetAbsPose(*((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
+	      m_GuiTransformTextEntries->SetAbsPose(*((mafVME *)GetInput())->GetOutput()->GetAbsMatrix());
       }
 	  }
     break;
@@ -423,7 +423,7 @@ void mafOpMAFTransform::OnEventGizmoRotate(mafEventBase *maf_event)
       if (!m_TestMode)
       {
 	      // update gui 
-	      m_GuiTransformTextEntries->SetAbsPose(*((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
+	      m_GuiTransformTextEntries->SetAbsPose(*((mafVME *)GetInput())->GetOutput()->GetAbsMatrix());
       }
 	  }
     break;
@@ -443,7 +443,7 @@ void mafOpMAFTransform::OnEventGizmoScale(mafEventBase *maf_event)
 	{
     case ID_TRANSFORM:
   	{ 
-      m_NewAbsMatrix = *((mafVME *)m_Input)->GetOutput()->GetAbsMatrix();
+      m_NewAbsMatrix = *((mafVME *)GetInput())->GetOutput()->GetAbsMatrix();
       if (!m_TestMode)
       {
 	      // update gui 
@@ -479,7 +479,7 @@ void mafOpMAFTransform::OnEventGuiTransform(mafEventBase *maf_event)
       if (!m_TestMode)
       {
 	      m_GuiTransform->SetRefSys(m_RefSysVME);      
-	      m_GuiTransformTextEntries->SetAbsPose(*((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
+	      m_GuiTransformTextEntries->SetAbsPose(*((mafVME *)GetInput())->GetOutput()->GetAbsMatrix());
       }
     }
     break;
@@ -505,7 +505,7 @@ void mafOpMAFTransform::OnEventGuiSaveRestorePose(mafEventBase *maf_event)
       m_GuiTransform->SetRefSys(m_RefSysVME);
 
       // update gui 
-      m_GuiTransformTextEntries->SetAbsPose(*((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
+      m_GuiTransformTextEntries->SetAbsPose(*((mafVME *)GetInput())->GetOutput()->GetAbsMatrix());
       
       m_NewAbsMatrix = *(m_RefSysVME->GetOutput()->GetAbsMatrix());
     }
@@ -533,7 +533,7 @@ void mafOpMAFTransform::OnEventGuiTransformTextEntries(mafEventBase *maf_event)
         absPose->SetTimeStamp(m_CurrentTime);
 
         // update gizmos positions if refsys is local
-        if (m_RefSysVME == mafVME::SafeDownCast(m_Input))
+        if (m_RefSysVME == mafVME::SafeDownCast(GetInput()))
         {      
           m_GizmoTranslate->SetAbsPose(absPose);
           m_GizmoRotate->SetAbsPose(absPose);
@@ -584,7 +584,7 @@ void mafOpMAFTransform::CreateGui()
   // Transform Gui
   //---------------------------------
   // create the transform Gui
-  m_GuiTransform = new mafGUITransformMouse(mafVME::SafeDownCast(m_Input), this);
+  m_GuiTransform = new mafGUITransformMouse(mafVME::SafeDownCast(GetInput()), this);
 
   // add transform gui to operation
   m_Gui->AddGui(m_GuiTransform->GetGui());
@@ -593,7 +593,7 @@ void mafOpMAFTransform::CreateGui()
   // Text transform Gui
   //---------------------------------
   // create the transform Gui
-  m_GuiTransformTextEntries = new mafGUITransformTextEntries(mafVME::SafeDownCast(m_Input), this);
+  m_GuiTransformTextEntries = new mafGUITransformTextEntries(mafVME::SafeDownCast(GetInput()), this);
 
   // add transform Gui to operation
   //m_Gui->AddGui(m_GuiTransformTextEntries->GetGui());
@@ -604,7 +604,7 @@ void mafOpMAFTransform::CreateGui()
   //---------------------------------
 	
   // create the gizmos
-  m_GizmoTranslate = new mafGizmoTranslate(mafVME::SafeDownCast(m_Input), this);
+  m_GizmoTranslate = new mafGizmoTranslate(mafVME::SafeDownCast(GetInput()), this);
   m_GizmoTranslate->Show(false);
 
   // add translation gizmo Gui to operation
@@ -614,7 +614,7 @@ void mafOpMAFTransform::CreateGui()
   //---------------------------------
   // Rotation Gizmo Gui
   //---------------------------------
-  m_GizmoRotate = new mafGizmoRotate(mafVME::SafeDownCast(m_Input), this);
+  m_GizmoRotate = new mafGizmoRotate(mafVME::SafeDownCast(GetInput()), this);
   m_GizmoRotate->Show(false);
 
   // add rotation gizmo Gui to operation
@@ -624,7 +624,7 @@ void mafOpMAFTransform::CreateGui()
   //---------------------------------
   // Scaling Gizmo Gui
   //---------------------------------
-  m_GizmoScale = new mafGizmoScale(mafVME::SafeDownCast(m_Input), this);
+  m_GizmoScale = new mafGizmoScale(mafVME::SafeDownCast(GetInput()), this);
   m_GizmoScale->Show(false);
 
   // add scaling gizmo gui to operation
@@ -634,7 +634,7 @@ void mafOpMAFTransform::CreateGui()
   //---------------------------------
   // Store/Restore position Gui
   //---------------------------------
-  m_GuiSaveRestorePose = new mafGUISaveRestorePose(mafVME::SafeDownCast(m_Input), this);
+  m_GuiSaveRestorePose = new mafGUISaveRestorePose(mafVME::SafeDownCast(GetInput()), this);
   
   // add Gui to operation
   //m_Gui->AddGui(m_GuiSaveRestorePose->GetGui());
@@ -647,8 +647,8 @@ void mafOpMAFTransform::CreateGui()
 	m_Gui->Button(ID_AUX_REF_SYS,_R("choose"));
 	if(this->m_RefSysVME == NULL)
   {
-    SetRefSysVME(mafVME::SafeDownCast(m_Input));
-    m_RefSysVMEName = m_Input->GetName();
+    SetRefSysVME(mafVME::SafeDownCast(GetInput()));
+    m_RefSysVMEName = GetInput()->GetName();
   }
   m_Gui->Label(_R("refsys name: "),&m_RefSysVMEName);
 
@@ -673,11 +673,11 @@ void mafOpMAFTransform::CreateGui()
 void mafOpMAFTransform::Reset()
 //----------------------------------------------------------------------------
 {
-  ((mafVME *)m_Input)->SetAbsMatrix(m_OldAbsMatrix);  
+  ((mafVME *)GetInput())->SetAbsMatrix(m_OldAbsMatrix);  
   if (!m_TestMode)
   {
   	m_GuiTransformTextEntries->Reset();
-    SetRefSysVME(mafVME::SafeDownCast(m_Input)); 
+    SetRefSysVME(mafVME::SafeDownCast(GetInput())); 
   }
   m_NewAbsMatrix = m_OldAbsMatrix;
   {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}

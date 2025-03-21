@@ -134,11 +134,11 @@ void medOpExtrusionHoles::OpRun()
 	vtkNEW(m_ExtractHole);
 	vtkNEW(m_ExtrusionFilter);
 
-  ((mafVMESurface*)m_Input)->Update();
+  ((mafVMESurface*)GetInput())->Update();
 
-	m_OriginalPolydata->DeepCopy(((vtkPolyData*)((mafVMESurface*)m_Input)->GetOutput()->GetVTKData()));
+	m_OriginalPolydata->DeepCopy(((vtkPolyData*)((mafVMESurface*)GetInput())->GetOutput()->GetVTKData()));
 	//m_OriginalPolydata->Update();
-	m_ResultPolydata->DeepCopy(((vtkPolyData*)((mafVMESurface*)m_Input)->GetOutput()->GetVTKData()));
+	m_ResultPolydata->DeepCopy(((vtkPolyData*)((mafVMESurface*)GetInput())->GetOutput()->GetVTKData()));
 	//m_ResultPolydata->Update();
 
   double BoundingBox[6];
@@ -173,7 +173,7 @@ void medOpExtrusionHoles::OpDo()
 //----------------------------------------------------------------------------
 {
 	if(m_ResultPolydata)
-		((mafVMESurface*)m_Input)->SetData(m_ResultPolydata,((mafVME*)m_Input)->GetTimeStamp());
+		((mafVMESurface*)GetInput())->SetData(m_ResultPolydata,((mafVME*)GetInput())->GetTimeStamp());
 
 	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
@@ -182,7 +182,7 @@ void medOpExtrusionHoles::OpUndo()
 //----------------------------------------------------------------------------
 {
 	if(m_OriginalPolydata)
-		((mafVMESurface*)m_Input)->SetData(m_OriginalPolydata,((mafVME*)m_Input)->GetTimeStamp());
+		((mafVMESurface*)GetInput())->SetData(m_OriginalPolydata,((mafVME*)GetInput())->GetTimeStamp());
 
 	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }

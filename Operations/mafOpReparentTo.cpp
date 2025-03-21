@@ -84,7 +84,7 @@ void mafOpReparentTo::OpRun()
   }
 	
 	int result = OP_RUN_CANCEL;
-	if((m_TargetVme != NULL) && (m_Input->CanReparentTo(m_TargetVme)))
+	if((m_TargetVme != NULL) && (GetInput()->CanReparentTo(m_TargetVme)))
 		result = OP_RUN_OK;
   else
     mafErrorMessage(_M(mafString(_L("Cannot re-parent to specified node"))));
@@ -97,7 +97,7 @@ void mafOpReparentTo::SetTargetVme(mafVME *target)
 {
   m_TargetVme = target;
 
-  if((m_TargetVme == NULL) || !m_Input->CanReparentTo(m_TargetVme))
+  if((m_TargetVme == NULL) || !GetInput()->CanReparentTo(m_TargetVme))
   {
     mafErrorMessage(_M(mafString(_L("Cannot re-parent to specified node"))));
     {mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);}
@@ -110,7 +110,7 @@ void mafOpReparentTo::OpDo()
   int num, t;
 	mafTimeStamp cTime, startTime;
 	
-  m_OldParent = mafVME::SafeDownCast(m_Input->GetParent());
+  m_OldParent = mafVME::SafeDownCast(GetInput()->GetParent());
 
 	startTime = m_TargetVme->GetTimeStamp();
 
@@ -118,7 +118,7 @@ void mafOpReparentTo::OpDo()
   {
     mmuTimeVector input_time;
     mmuTimeVector target_time;
-    ((mafVME *)m_Input)->GetAbsTimeStamps(input_time);
+    ((mafVME *)GetInput())->GetAbsTimeStamps(input_time);
     m_TargetVme->GetAbsTimeStamps(target_time);
     mmuTimeVector time = mmuTimeSet::Merge(input_time,target_time);
     num = time.size();
@@ -137,15 +137,15 @@ void mafOpReparentTo::OpDo()
 	{
 		cTime = time[t];
 		
-		((mafVME *)m_Input)->SetTimeStamp(cTime);
+		((mafVME *)GetInput())->SetTimeStamp(cTime);
 		m_TargetVme->SetTimeStamp(cTime);
     m_OldParent->SetTimeStamp(cTime);
 		
     transform->SetTimeStamp(cTime);
-    mafMatrixPipe *mp = ((mafVME *)m_Input)->GetMatrixPipe();
+    mafMatrixPipe *mp = ((mafVME *)GetInput())->GetMatrixPipe();
     if (mp == NULL)
     {
-      transform->SetInput(((mafVME *)m_Input)->GetOutput()->GetMatrix());
+      transform->SetInput(((mafVME *)GetInput())->GetOutput()->GetMatrix());
     }
     else
     {
@@ -158,7 +158,7 @@ void mafOpReparentTo::OpDo()
     new_input_pose[t]->DeepCopy(transform->GetMatrixPointer());
 	}
 	
-  ((mafVME *)m_Input)->SetTimeStamp(startTime);
+  ((mafVME *)GetInput())->SetTimeStamp(startTime);
   m_TargetVme->SetTimeStamp(startTime);
   m_OldParent->SetTimeStamp(startTime);*/
 
@@ -168,7 +168,7 @@ void mafOpReparentTo::OpDo()
       cTime = time[t];
       mafMatrix vmeMatr, parMatr, parMatrInv;
 
-      ((mafVME *)m_Input)->GetOutput()->GetAbsMatrix(vmeMatr, cTime);
+      ((mafVME *)GetInput())->GetOutput()->GetAbsMatrix(vmeMatr, cTime);
       m_TargetVme->GetOutput()->GetAbsMatrix(parMatr, cTime);
       mafMatrix::Invert(parMatr,  parMatrInv);
       mafMatrix::Multiply4x4(parMatrInv, vmeMatr, *(new_input_pose[t]));
@@ -176,22 +176,22 @@ void mafOpReparentTo::OpDo()
     }
     for (t = 0; t < num; t++)
     {
-      ((mafVME *)m_Input)->SetMatrix(*new_input_pose[t]);
+      ((mafVME *)GetInput())->SetMatrix(*new_input_pose[t]);
     }
   }
   else
   {
     mafMatrix vmeMatr, parMatr, parMatrInv, new_input_pose;
-    ((mafVME *)m_Input)->GetOutput()->GetAbsMatrix(vmeMatr, startTime);
+    ((mafVME *)GetInput())->GetOutput()->GetAbsMatrix(vmeMatr, startTime);
     m_TargetVme->GetOutput()->GetAbsMatrix(parMatr, startTime);
     mafMatrix::Invert(parMatr,  parMatrInv);
     mafMatrix::Multiply4x4(parMatrInv, vmeMatr, new_input_pose);
     new_input_pose.SetTimeStamp(startTime);
-    ((mafVME *)m_Input)->SetMatrix(new_input_pose);
+    ((mafVME *)GetInput())->SetMatrix(new_input_pose);
   }
   
 
-  if (m_Input->ReparentTo(m_TargetVme) == MAF_OK)
+  if (GetInput()->ReparentTo(m_TargetVme) == MAF_OK)
   {
     {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   }

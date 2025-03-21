@@ -183,7 +183,7 @@ void mafOpApplyTrajectory::OpUndo()
 //----------------------------------------------------------------------------
 { 
   std::vector<mafTimeStamp> timestamps;
-  mafVMEGenericAbstract *oldVme = mafVMEGenericAbstract::SafeDownCast(m_Input);
+  mafVMEGenericAbstract *oldVme = mafVMEGenericAbstract::SafeDownCast(GetInput());
 
   oldVme->SetTimeStamp(m_OriginalMatrix->GetTimeStamp());
 
@@ -195,7 +195,7 @@ void mafOpApplyTrajectory::OpUndo()
   }
 
   oldVme->Modified();
-  {mafEvent evUnq(this, VME_MODIFIED); evUnq.SetVme(m_Input); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this, VME_MODIFIED); evUnq.SetVme(GetInput()); InvokeEvent(evUnq);}
   {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
@@ -281,7 +281,7 @@ int mafOpApplyTrajectory::Read()
   }
 
   m_OriginalMatrix = mafMatrix::NewSPtr();
-  m_OriginalMatrix->DeepCopy(*((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
+  m_OriginalMatrix->DeepCopy(*((mafVME *)GetInput())->GetOutput()->GetAbsMatrix());
 
   mafString path, name, ext;
   mafSplitPath(m_File,&path,&name,&ext);
@@ -324,11 +324,11 @@ int mafOpApplyTrajectory::Read()
     boxPose->RotateZ(newOrientation[2], POST_MULTIPLY);
     boxPose->SetPosition(newPosition);
 
-    ((mafVME *)m_Input)->SetAbsMatrix(boxPose->GetMatrix(), time);
+    ((mafVME *)GetInput())->SetAbsMatrix(boxPose->GetMatrix(), time);
 
   } while (!inputFile.Eof());
 
-  {mafEvent evUnq(this, VME_MODIFIED); evUnq.SetVme(m_Input); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this, VME_MODIFIED); evUnq.SetVme(GetInput()); InvokeEvent(evUnq);}
   {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 
   return MAF_OK;
@@ -345,7 +345,7 @@ int mafOpApplyTrajectory::ApplyTrajectoriesFromVME()
   }
 
   m_OriginalMatrix = mafMatrix::NewSPtr();
-  m_OriginalMatrix->DeepCopy(*((mafVME *)m_Input)->GetOutput()->GetAbsMatrix());
+  m_OriginalMatrix->DeepCopy(*((mafVME *)GetInput())->GetOutput()->GetAbsMatrix());
 
   std::vector<mafTimeStamp> time_stamps;
   m_VME->GetTimeStamps(time_stamps);
@@ -358,10 +358,10 @@ int mafOpApplyTrajectory::ApplyTrajectoriesFromVME()
 
     mafMatrix boxPose;
     m_VME->GetOutput()->GetAbsMatrix(boxPose,time);
-    ((mafVME *)m_Input)->SetAbsMatrix(boxPose, time);
+    ((mafVME *)GetInput())->SetAbsMatrix(boxPose, time);
   }
 
-  {mafEvent evUnq(this, VME_MODIFIED); evUnq.SetVme(m_Input); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this, VME_MODIFIED); evUnq.SetVme(GetInput()); InvokeEvent(evUnq);}
   {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
   return MAF_OK;
 }

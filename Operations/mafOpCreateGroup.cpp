@@ -73,5 +73,5 @@ void mafOpCreateGroup::OpRun()
 void mafOpCreateGroup::OpDo()
 //----------------------------------------------------------------------------
 {
-  m_Group->ReparentTo(m_Input);
+  m_Group->ReparentTo(GetInput());
 }

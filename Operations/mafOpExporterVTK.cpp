@@ -53,7 +53,6 @@ mafOpExporterVTK::mafOpExporterVTK(const mafString& label) : Superclass(label)
   m_OpType  = OPTYPE_EXPORTER;
   m_Canundo = true;
   m_File    = _R("");
-  m_Input   = NULL;
 
 	m_Binary        = 1;
 	m_ABSMatrixFlag = 0;
@@ -95,11 +94,11 @@ void mafOpExporterVTK::OpRun()
 //----------------------------------------------------------------------------
 {
 // bug #2880 export LM in VTK 
-  if(m_Input->IsA("mafVMELandmarkCloud")) 
+  if(GetInput()->IsA("mafVMELandmarkCloud")) 
   {
-    ((mafVMELandmarkCloud *)m_Input)->Close();
+    ((mafVMELandmarkCloud *)GetInput())->Close();
   }
-  vtkDataSet *inputData = ((mafVME *)m_Input)->GetOutput()->GetVTKData();
+  vtkDataSet *inputData = ((mafVME *)GetInput())->GetOutput()->GetVTKData();
   assert(inputData);
 
   bool isStructuredPoints = inputData->IsA("vtkStructuredPoints");
@@ -112,7 +111,7 @@ void mafOpExporterVTK::OpRun()
 	m_Gui->Bool(ID_VTK_BINARY_FILE,_R("binary"),&m_Binary,0);
 	m_Gui->Label(_R("absolute matrix"),true);
 	m_Gui->Bool(ID_ABS_MATRIX,_R("apply"),&m_ABSMatrixFlag,0);
-	if (m_Input->IsA("mafVMESurface") || m_Input->IsA("mafVMEPointSet") || m_Input->IsA("mafVMEGroup"))
+	if (GetInput()->IsA("mafVMESurface") || GetInput()->IsA("mafVMEPointSet") || GetInput()->IsA("mafVMEGroup"))
 		m_Gui->Enable(ID_ABS_MATRIX,true);
 	else
 		m_Gui->Enable(ID_ABS_MATRIX,false);
@@ -151,9 +150,9 @@ void mafOpExporterVTK::OnEvent(mafEventBase *maf_event)
       case VME_ADD:
       {
         //trap the VME_ADD of the mafOpCollapse and mafOpExplode to update the
-        //m_Input, then forward the message to mafDMLlogicMDI
-        this->m_Input = e->GetVme();
-        {mafEvent evUnq(this,VME_ADD); evUnq.SetVme(this->m_Input); InvokeEvent(evUnq);}
+        //GetInput(), then forward the message to mafDMLlogicMDI
+        this->SetInput(e->GetVme());
+        {mafEvent evUnq(this,VME_ADD); evUnq.SetVme(this->GetInput()); InvokeEvent(evUnq);}
       }
       break;
       default:
@@ -167,22 +166,22 @@ void mafOpExporterVTK::OnEvent(mafEventBase *maf_event)
 void mafOpExporterVTK::ExportVTK()
 //----------------------------------------------------------------------------
 {					
-	((mafVME *)m_Input)->GetOutput()->Update();
-	if(this->m_Input->IsA("mafVMELandmarkCloud"))
+	((mafVME *)GetInput())->GetOutput()->Update();
+	if(this->GetInput()->IsA("mafVMELandmarkCloud"))
 	{
-    if(((mafVMELandmarkCloud *)m_Input)->GetNumberOfLandmarks() > 0)
+    if(((mafVMELandmarkCloud *)GetInput())->GetNumberOfLandmarks() > 0)
 		{
-      bool oldstate = ((mafVMELandmarkCloud *)m_Input)->IsOpen();
+      bool oldstate = ((mafVMELandmarkCloud *)GetInput())->IsOpen();
 
 	    if (oldstate)
       {
-        ((mafVMELandmarkCloud *)m_Input)->Close();
+        ((mafVMELandmarkCloud *)GetInput())->Close();
       }
       SaveVTKData();
 		  
       if (oldstate)
       {
-        ((mafVMELandmarkCloud *)m_Input)->Open();
+        ((mafVMELandmarkCloud *)GetInput())->Open();
       }
     }
 		else
@@ -212,7 +211,7 @@ void mafOpExporterVTK::SaveVTKData()
     mafLogMessage(_M(stringStream.str().c_str()));
   }
 
-  vtkAlgorithmOutput *inputPort = ((mafVME *)m_Input)->GetOutput()->GetVTKOutputPort();
+  vtkAlgorithmOutput *inputPort = ((mafVME *)GetInput())->GetOutput()->GetVTKOutputPort();
   assert(inputPort);
 
   vtkAlgorithmOutput *writerInput = NULL;
@@ -236,8 +235,8 @@ void mafOpExporterVTK::SaveVTKData()
   if (m_ABSMatrixFlag)
   {
     vtkNew<vtkTransformPolyDataFilter> v_tpdf;
-    v_tpdf->SetInputConnection(((mafVME *)m_Input)->GetOutput()->GetVTKOutputPort());
-    v_tpdf->SetTransform(((mafVME *)m_Input)->GetOutput()->GetAbsTransform()->GetVTKTransform());
+    v_tpdf->SetInputConnection(((mafVME *)GetInput())->GetOutput()->GetVTKOutputPort());
+    v_tpdf->SetTransform(((mafVME *)GetInput())->GetOutput()->GetAbsTransform()->GetVTKTransform());
     v_tpdf->Update();
     writer->SetInputConnection(v_tpdf->GetOutputPort());
   }

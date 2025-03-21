@@ -570,7 +570,7 @@ void lhpOpFingerStick::OpDo()
   mafVMEGroup *group;
   mafNEW(group); //We got a Reference on it
   group->SetName(_R("Finger palpator"));
-  group->ReparentTo(m_Input);
+  group->ReparentTo(GetInput());
   {mafEvent evUnq(this,VME_ADD); evUnq.SetVme(group); InvokeEvent(evUnq);}
 
   for(nI = 0; nI < ((!m_ListFName.empty()) ? m_LMDict.size() : m_BallsCalibration->GetNumberOfLandmarks()); nI++)

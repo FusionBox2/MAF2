@@ -129,7 +129,7 @@ void mafOpExporterVRML::OnEvent(mafEventBase *maf_event)
 		/*		{
 					//mafString FileDir = mafGetApplicationDirectory().c_str();
 					//FileDir<<"\\";
-          mafString name = m_Input->GetName();
+          mafString name = GetInput()->GetName();
           if (name.FindChr('\\') != -1 || name.FindChr('/') != -1 || name.FindChr(':') != -1 || 
             name.FindChr('?')  != -1 || name.FindChr('"') != -1 || name.FindChr('<') != -1 || 
             name.FindChr('>')  != -1 || name.FindChr('|') != -1 )
@@ -139,7 +139,7 @@ void mafOpExporterVRML::OnEvent(mafEventBase *maf_event)
           }
           else
           {
-            m_FileDir << this->m_Input->GetName();
+            m_FileDir << this->GetInput()->GetName();
             m_FileDir << ".stl";
             mafString wildc = "STL (*.stl)|*.stl";
             m_File = mafGetSaveFile(m_FileDir.GetCStr(), wildc.GetCStr());
@@ -188,10 +188,10 @@ void mafOpExporterVRML::ExportVRML()
 //----------------------------------------------------------------------------
 {
 	
-	mafVMEOutputSurface *out_surface = mafVMEOutputSurface::SafeDownCast(((mafVME *)m_Input)->GetOutput());
+	mafVMEOutputSurface *out_surface = mafVMEOutputSurface::SafeDownCast(((mafVME *)GetInput())->GetOutput());
   out_surface->Update();
    
-	mafNode::mafAttributesMap* attributes = nullptr;// m_Input->GetAttributes();
+	mafNode::mafAttributesMap* attributes = nullptr;// GetInput()->GetAttributes();
 
   vtkPolyData *data = vtkPolyData::SafeDownCast(out_surface->GetVTKData());
   assert(data);
@@ -273,7 +273,7 @@ void mafOpExporterVRML::ExportVRML()
 		}
 		else if (m_SurfaceMaterial->GetMaterialTextureID() != -1)
 		{
-			mafVME *texture_vme = mafVME::SafeDownCast(m_Input->GetRoot()->FindInTreeById(m_SurfaceMaterial->GetMaterialTextureID()));
+			mafVME *texture_vme = mafVME::SafeDownCast(GetInput()->GetRoot()->FindInTreeById(m_SurfaceMaterial->GetMaterialTextureID()));
 			texture_vme->GetOutput()->Update();
 			vtkImageData *image = (vtkImageData *)texture_vme->GetOutput()->GetVTKData();
 			m_Texture->SetInputConnection(texture_vme->GetOutput()->GetVTKOutputPort());

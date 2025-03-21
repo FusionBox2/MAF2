@@ -76,5 +76,5 @@ void mafOpCreateProber::OpRun()
 void mafOpCreateProber::OpDo()
 //----------------------------------------------------------------------------
 {
-  m_Prober->ReparentTo(mafVME::SafeDownCast(m_Input));
+  m_Prober->ReparentTo(mafVME::SafeDownCast(GetInput()));
 }

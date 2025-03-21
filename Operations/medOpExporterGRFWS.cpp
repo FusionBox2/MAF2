@@ -118,13 +118,13 @@ void medOpExporterGRFWS::OpRun()
 //----------------------------------------------------------------------------
 {
   // Load inputs
-  if (m_Input->IsA("mafVMEVector"))
+  if (GetInput()->IsA("mafVMEVector"))
   {
-    m_ForceLeft = mafVMEVector::SafeDownCast(m_Input); 
+    m_ForceLeft = mafVMEVector::SafeDownCast(GetInput()); 
   }
   else
   {
-    LoadVMEs(m_Input);
+    LoadVMEs(GetInput());
   }
   // Create GUI
   if (!m_TestMode)
@@ -192,11 +192,11 @@ void medOpExporterGRFWS::OpDo()
 //----------------------------------------------------------------------------
 {
   // INPUT is a VECTOR:
-  if (m_Input->IsA("mafVMEVector"))
+  if (GetInput()->IsA("mafVMEVector"))
   {
     mafString proposed = mafGetApplicationDirectory();
     proposed += _R("/Data/External/");
-    proposed += m_Input->GetName();
+    proposed += GetInput()->GetName();
     proposed += _R("_VECTOR");
     proposed += _R(".csv");
 
@@ -222,7 +222,7 @@ void medOpExporterGRFWS::OpDo()
   {
     mafString proposed = mafGetApplicationDirectory();
     proposed += _R("/Data/External/");
-    proposed += m_Input->GetName();
+    proposed += GetInput()->GetName();
     proposed += _R("_FORCEPLATES");
     proposed += _R(".csv");
 

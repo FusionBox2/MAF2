@@ -105,7 +105,7 @@ void mafOpExporterSTL::OnEvent(mafEventBase *maf_event)
 				/*{
 					//mafString FileDir = mafGetApplicationDirectory().c_str();
 					//FileDir<<"\\";
-          mafString name = m_Input->GetName();
+          mafString name = GetInput()->GetName();
           if (name.FindChr('\\') != -1 || name.FindChr('/') != -1 || name.FindChr(':') != -1 || 
             name.FindChr('?')  != -1 || name.FindChr('"') != -1 || name.FindChr('<') != -1 || 
             name.FindChr('>')  != -1 || name.FindChr('|') != -1 )
@@ -115,7 +115,7 @@ void mafOpExporterSTL::OnEvent(mafEventBase *maf_event)
           }
           else
           {
-            m_FileDir << this->m_Input->GetName();
+            m_FileDir << this->GetInput()->GetName();
             m_FileDir << ".stl";
             mafString wildc = "STL (*.stl)|*.stl";
             m_File = mafGetSaveFile(m_FileDir.GetCStr(), wildc.GetCStr());
@@ -157,7 +157,7 @@ void mafOpExporterSTL::OpStop(int result)
 void mafOpExporterSTL::ExportSurface()
 //----------------------------------------------------------------------------
 {
-  mafVMEOutputSurface *out_surface = mafVMEOutputSurface::SafeDownCast(((mafVME *)m_Input)->GetOutput());
+  mafVMEOutputSurface *out_surface = mafVMEOutputSurface::SafeDownCast(((mafVME *)GetInput())->GetOutput());
   out_surface->Update();
 
   vtkNew<vtkTriangleFilter>triangles;

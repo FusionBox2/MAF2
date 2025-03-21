@@ -578,7 +578,7 @@ bool mafOpImporterRAWVolume::Import()
   mafSplitPath(m_RawFile,&path,&name,&ext);
   m_Output->SetName(name);
   m_Output->GetTagArray()->SetTag(tag_Nature);
-  m_Output->ReparentTo(m_Input);
+  m_Output->ReparentTo(GetInput());
 	if(!m_TestMode)
 		{mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 	return true;

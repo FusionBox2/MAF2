@@ -227,9 +227,9 @@ void lhpOpSoftReg::OpDo()
 //----------------------------------------------------------------------------
 #ifndef SURF_VERSION
 {
-  for(unsigned i = 0; i < m_Input->GetNumberOfChildren(); i++)
+  for(unsigned i = 0; i < GetInput()->GetNumberOfChildren(); i++)
   {
-    mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(m_Input->GetChild(i));
+    mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(GetInput()->GetChild(i));
     mafMatrix cloudAbs;
     if(cloud == NULL)
       continue;
@@ -294,7 +294,7 @@ void lhpOpSoftReg::OpDo()
 }
 #else
 {
-  mafVMEOutputSurface *out_surface = mafVMEOutputSurface::SafeDownCast(mafVME::SafeDownCast(m_Input)->GetOutput());
+  mafVMEOutputSurface *out_surface = mafVMEOutputSurface::SafeDownCast(mafVME::SafeDownCast(GetInput())->GetOutput());
   out_surface->Update();
 
   vtkNew<vtkTriangleFilter>triangles;
@@ -442,7 +442,7 @@ void lhpOpSoftReg::OpDo()
     newPolys->Delete();
 
     mafTimeStamp t;
-    t = ((mafVME *)m_Input)->GetTimeStamp();
+    t = ((mafVME *)GetInput())->GetTimeStamp();
     mafVMESurface *outSurface;
     mafNEW(outSurface);
     outSurface->SetName(_R("cutted"));
@@ -458,7 +458,7 @@ void lhpOpSoftReg::OpDo()
 
     if(outSurface)
     {
-      outSurface->ReparentTo(m_Input->GetRoot());
+      outSurface->ReparentTo(GetInput()->GetRoot());
       {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(outSurface); InvokeEvent(evUnq);}
     }
     mafDEL(outSurface);

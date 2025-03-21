@@ -225,7 +225,7 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
       //data->Update();
       if(data->GetNumberOfPoints() != 0 && data->GetNumberOfCells() != 0)
       {
-        t = ((mafVME *)m_Input)->GetTimeStamp();
+        t = ((mafVME *)GetInput())->GetTimeStamp();
         mafNEW(lines);
         lines->SetName(_R("TndFbr_") + name);
         lines->SetData(data,t);
@@ -250,7 +250,7 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
       //data->Update();
       if(data->GetNumberOfPoints() != 0 && data->GetNumberOfCells() != 0)
       {
-        t = ((mafVME *)m_Input)->GetTimeStamp();
+        t = ((mafVME *)GetInput())->GetTimeStamp();
         mafNEW(lines);
         lines->SetName(_R("MscFbr_") + name);
         lines->SetData(data,t);
@@ -275,7 +275,7 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
       //data->Update();
       if(data->GetNumberOfPoints() != 0 && data->GetNumberOfCells() != 0)
       {
-        t = ((mafVME *)m_Input)->GetTimeStamp();
+        t = ((mafVME *)GetInput())->GetTimeStamp();
         mafNEW(surf);
         surf->SetName(_R("Surf_") + name);
         surf->SetData(data,t);
@@ -354,7 +354,7 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
 
     mafVMESurface *surface;
     mafTimeStamp t;
-    t = ((mafVME *)m_Input)->GetTimeStamp();
+    t = ((mafVME *)GetInput())->GetTimeStamp();
     mafNEW(surface);
     surface->SetName(name);
     vtkPolyData *data = reader->GetOutput();
@@ -450,7 +450,7 @@ void lhpOpMTRULBImporter::OpDo()
   {
     if (m_Groups[i])
     {
-      m_Groups[i]->ReparentTo(m_Input);
+      m_Groups[i]->ReparentTo(GetInput());
       {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_Groups[i]); InvokeEvent(evUnq);}
     }
   }

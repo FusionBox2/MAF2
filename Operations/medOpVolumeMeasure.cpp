@@ -97,7 +97,7 @@ enum ID_VOLUME_MEASURE
 void medOpVolumeMeasure::OpRun()   
 //----------------------------------------------------------------------------
 {
-  m_VmeSurface = (mafVME*)m_Input;
+  m_VmeSurface = (mafVME*)GetInput();
 
 	wxString measure[3] = {_("points"), _("lines"), _("angle")};
 
@@ -121,7 +121,7 @@ void medOpVolumeMeasure::OpRun()
   m_MeasureList = m_Gui->ListBox(ID_MEASURE_LIST);
 	m_Gui->Button(ID_CLOSE_OP,_L("Close"));
 
-  mafVME *root = (mafVME *)m_Input->GetRoot();
+  mafVME *root = (mafVME *)GetInput()->GetRoot();
   if(mafTagItem *measure_item = root->GetTagArray()->GetTag(_R("VOLUME_MEASURE")))
   {
     int c = measure_item->GetNumberOfComponents();
@@ -191,7 +191,7 @@ void medOpVolumeMeasure::OnEvent(mafEventBase *maf_event)
       measure_item.SetNumberOfComponents(c);
       for(int i = 0; i < c; i++)
         measure_item.SetComponent(m_MeasureList->GetString(i).c_str(),i);
-      mafVME *root = (mafVME *)m_Input->GetRoot();
+      mafVME *root = (mafVME *)GetInput()->GetRoot();
       if(root->GetTagArray()->FindTag("VOLUME_MEASURE") != -1)
         root->GetTagArray()->DeleteTag("VOLUME_MEASURE");
       root->GetTagArray()->AddTag(measure_item);
@@ -220,7 +220,7 @@ void medOpVolumeMeasure::OpStop(int result)
     measure_item.SetNumberOfComponents(c);
     for(int i = 0; i < c; i++)
       measure_item.SetComponent(mafWxToString(m_MeasureList->GetString(i)),i);
-    mafVME *root = (mafVME *)m_Input->GetRoot();
+    mafVME *root = (mafVME *)GetInput()->GetRoot();
     if(root->GetTagArray()->GetTag(_R("VOLUME_MEASURE")))
       root->GetTagArray()->DeleteTag(_R("VOLUME_MEASURE"));
     root->GetTagArray()->SetTag(measure_item);

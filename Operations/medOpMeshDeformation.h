@@ -396,7 +396,7 @@ protected:
 protected:  
 #pragma region //Input Control Curves
   int m_NumberOfCurves;                   //<the number of control curves
-  mafVME** m_OriginalCurves;             //<original curves that correspond to the input mesh (m_Input)
+  mafVME** m_OriginalCurves;             //<original curves that correspond to the input mesh (GetInput())
   mafVME** m_DeformedCurves;             //<deformed curves that correspond to the output mesh
   vtkIdList** m_CurvesCorrespondence;    //<correspondence between vertices of original and deformed curves
 #pragma endregion

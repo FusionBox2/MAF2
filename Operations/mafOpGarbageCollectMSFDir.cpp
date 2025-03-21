@@ -100,9 +100,9 @@ Proceed?";
 
 int mafOpGarbageCollectMSFDir::GetFilesToRemove(std::set<std::string> &filesToRemoveSet )
 {
-  assert(m_Input);
+  assert(GetInput());
   mafOpValidateTree* validateTree = new mafOpValidateTree();
-  validateTree->SetInput(m_Input);
+  validateTree->SetInput(GetInput());
 
   // the input msf must be valid
   int result = validateTree->ValidateTree();
@@ -131,7 +131,7 @@ int mafOpGarbageCollectMSFDir::GetFilesToRemove(std::set<std::string> &filesToRe
     std::set<std::string> msfDirFiles = this->GetMSFDirABSFileNamesSet();
 
     // add the msf file name:
-    mafString msfXMLFileABSFileName = GetMSFXMLFileAbsFileName(m_Input);
+    mafString msfXMLFileABSFileName = GetMSFXMLFileAbsFileName(GetInput());
 
     assert(mafFileExists(msfXMLFileABSFileName));
     msfTreeFiles.insert(msfXMLFileABSFileName.toStd());
@@ -178,8 +178,8 @@ void mafOpGarbageCollectMSFDir::PrintSet( std::set<std::string> inputSet )
 
 std::set<std::string> mafOpGarbageCollectMSFDir::GetMSFDirABSFileNamesSet()
 {
-  assert(m_Input);
-  mafString msfABSPath = GetMSFDirAbsPath(m_Input);
+  assert(GetInput());
+  mafString msfABSPath = GetMSFDirAbsPath(GetInput());
   
   assert(msfABSPath.empty() == false);
   assert(mafDirExists(msfABSPath));

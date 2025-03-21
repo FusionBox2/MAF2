@@ -213,12 +213,12 @@ void medOpSegmentationRegionGrowingConnectedThreshold::OpStop(int result)
       mafVME::SafeDownCast(m_ResampleInput)->Update();
     }
     
-    if(m_ResampleInput!=NULL && m_ResampleInput!=m_Input)
+    if(m_ResampleInput!=NULL && m_ResampleInput!=GetInput())
     {
       {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_ResampleInput); evUnq.SetBool(false); InvokeEvent(evUnq);}
       {mafEvent evUnq(this,VME_SELECT); evUnq.SetVme(m_ResampleInput); evUnq.SetBool(false); InvokeEvent(evUnq);}
-      {mafEvent evUnq(this, VME_SELECT); evUnq.SetVme(m_Input); evUnq.SetBool(true); InvokeEvent(evUnq);}
-      {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Input); evUnq.SetBool(true); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this, VME_SELECT); evUnq.SetVme(GetInput()); evUnq.SetBool(true); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetInput()); evUnq.SetBool(true); InvokeEvent(evUnq);}
       m_ResampleInput->ReparentTo(NULL);
       m_ResampleInput->Update();
     }
@@ -477,18 +477,18 @@ int medOpSegmentationRegionGrowingConnectedThreshold::CreateResample()
 {
  
   // if the volume is a rectilinear grid we resample it 
-  if(((mafVME*)m_Input)->GetOutput()->GetVTKData()->IsA("vtkRectilinearGrid"))
+  if(((mafVME*)GetInput())->GetOutput()->GetVTKData()->IsA("vtkRectilinearGrid"))
   { 
     wxBusyInfo *info;
     wxBusyCursor *wait;
 
     m_Resample=std::make_unique<medOpVolumeResample>();
-    m_Resample->SetInput(m_Input);
+    m_Resample->SetInput(GetInput());
     m_Resample->TestModeOn();
     m_Resample->AutoSpacing();
     m_Resample->GetSpacing(m_VolumeSpacing);
       
-    ((mafVME*)m_Input)->GetOutput()->GetVMELocalBounds(m_VolumeBounds);
+    ((mafVME*)GetInput())->GetOutput()->GetVMELocalBounds(m_VolumeBounds);
     m_Resample->SetBounds(m_VolumeBounds,medOpVolumeResample::CUSTOMBOUNDS);
           
     if (!CheckSpacing())
@@ -525,7 +525,7 @@ int medOpSegmentationRegionGrowingConnectedThreshold::CreateResample()
   }
   else 
   {
-    m_ResampleInput=mafVMEVolumeGray::SafeDownCast(m_Input);
+    m_ResampleInput=mafVMEVolumeGray::SafeDownCast(GetInput());
   }
   return true;
 

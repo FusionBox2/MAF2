@@ -252,7 +252,7 @@ void lhpOpKinectAFs::OpRun()
   {
     mafVMEAFRefSys *refsys;
     mafNEW(refsys);
-    mafString str(m_Input->GetName());
+    mafString str(GetInput()->GetName());
     str += _R("_");
     str += predefinedScripts[nm].m_Name;
     str += _R("_");
@@ -288,7 +288,7 @@ void lhpOpKinectAFs::SetTypeOfRefs(int i)
   for(unsigned nm = 0; nm < predefinedScripts.size(); nm++)
   {
     mafVMEAFRefSys *refsys = m_RefSys[nm];
-    mafString str(m_Input->GetName());
+    mafString str(GetInput()->GetName());
     str += _R("_");
     str += predefinedScripts[nm].m_Name;
     str += _R("_");
@@ -331,7 +331,7 @@ void lhpOpKinectAFs::OpDo()
   for(std::vector<mafVMEAFRefSys*>::iterator it = m_RefSys.begin(); it != m_RefSys.end(); ++it)
   {
     assert(*it);
-    (*it)->ReparentTo(m_Input);
+    (*it)->ReparentTo(GetInput());
     (*it)->SetScaleFactor(100.0);
     (*it)->SetActive(1);
   }

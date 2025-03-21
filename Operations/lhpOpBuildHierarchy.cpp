@@ -373,9 +373,9 @@ static void hierarchyReparent(lhpOpBuildHierarchy::mafFrame *pRoot, mafVME *pare
 void lhpOpBuildHierarchy::OpDo()
 //----------------------------------------------------------------------------
 {
-  BindToVME((mafVME*)m_Input, m_root);
+  BindToVME((mafVME*)GetInput(), m_root);
 
-  mafVME *pVMERoot = (mafVME *)m_Input->GetRoot();
+  mafVME *pVMERoot = (mafVME *)GetInput()->GetRoot();
 
   if(!checkPossibility(m_root))
   {
@@ -385,7 +385,7 @@ void lhpOpBuildHierarchy::OpDo()
 
   reparentAll(m_root, pVMERoot);
   hierarchyReparent(m_root, NULL);
-  restoreRootPlaces(m_root, (mafVME*)m_Input);
+  restoreRootPlaces(m_root, (mafVME*)GetInput());
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   return;
 }

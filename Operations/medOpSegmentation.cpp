@@ -315,7 +315,7 @@ void medOpSegmentation::OpRun()
   //////////////////////////////////////////////////////////////////////////
   //Initialize of the volume matrix to the indentity
   //////////////////////////////////////////////////////////////////////////
-  m_Volume=mafVMEVolumeGray::SafeDownCast(m_Input);
+  m_Volume=mafVMEVolumeGray::SafeDownCast(GetInput());
 
   m_Volume->Update();
   m_Matrix = m_Volume->GetMatrixPipe()->GetMatrix();
@@ -422,7 +422,7 @@ void medOpSegmentation::OpDo()
 //     }
 
   //Eliminate previous outputs
-  //DeleteOutputs(m_Input->GetRoot());
+  //DeleteOutputs(GetInput()->GetRoot());
   //Replace the loaded output
   if(m_LoadedVolume != NULL)
   {
@@ -475,8 +475,8 @@ void medOpSegmentation::OpDo()
   //Generating Surface VME
   mafNEW(m_OutputSurface);
   m_OutputSurface->SetName(_R("Segmentation Surface (") + m_Volume->GetName() + _R(")"));
-  m_OutputSurface->SetData(surface,mafVMEVolumeGray::SafeDownCast(m_Input)->GetTimeStamp());
-  m_OutputSurface->ReparentTo(m_Input);
+  m_OutputSurface->SetData(surface,mafVMEVolumeGray::SafeDownCast(GetInput())->GetTimeStamp());
+  m_OutputSurface->ReparentTo(GetInput());
   m_OutputSurface->Modified();
   
   vtkDEL(surface);
@@ -650,7 +650,7 @@ void medOpSegmentation::CreateOpDialog()
   m_View->Create();
   m_View->GetGui();
 
-  m_View->VmeAdd(m_Input->GetRoot()); //add Root
+  m_View->VmeAdd(GetInput()->GetRoot()); //add Root
 
   //////////////////////////////////////////////////////////////////////////
   //Label to indicate the threshold of the slice
@@ -2766,7 +2766,7 @@ void medOpSegmentation::OnEvent(mafEventBase *maf_event)
           double low, hi;
           m_LutSlider->GetSubRange(&low,&hi);
           m_ColorLUT->SetTableRange(low,hi);
-          m_View->SetLut(m_Input,m_ColorLUT);
+          m_View->SetLut(GetInput(),m_ColorLUT);
           m_View->CameraUpdate();
           //{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
         }
@@ -2813,7 +2813,7 @@ void medOpSegmentation::OnEvent(mafEventBase *maf_event)
         double *sr;
         sr = m_ColorLUT->GetRange();
         m_LutSlider->SetSubRange((long)sr[0],(long)sr[1]);
-        m_View->SetLut(m_Input,m_ColorLUT);
+        m_View->SetLut(GetInput(),m_ColorLUT);
         m_View->CameraUpdate();
         break;
       }

@@ -178,7 +178,7 @@ void medOpInteractiveClipSurface::OpRun()
 	vtkNEW(m_ClipperBoundingBox);
   vtkNEW(m_OldSurface);
 
-  m_OldSurface->DeepCopy((vtkPolyData*)((mafVME *)m_Input)->GetOutput()->GetVTKData());
+  m_OldSurface->DeepCopy((vtkPolyData*)((mafVME *)GetInput())->GetOutput()->GetVTKData());
   
 	vtkPolyData *initialData;
 	vtkNEW(initialData);
@@ -429,8 +429,8 @@ void medOpInteractiveClipSurface::ClipBoundingBox()
 	transform_plane->Update();
 
 	vtkNew<vtkTransformPolyDataFilter> transform_data_input;
-	transform_data_input->SetTransform(((mafVME*)m_Input)->GetAbsMatrixPipe()->GetVTKTransform());
-	transform_data_input->SetInputConnection(((mafVME *)m_Input)->GetOutput()->GetVTKOutputPort());
+	transform_data_input->SetTransform(((mafVME*)GetInput())->GetAbsMatrixPipe()->GetVTKTransform());
+	transform_data_input->SetInputConnection(((mafVME *)GetInput())->GetOutput()->GetVTKOutputPort());
 	transform_data_input->Update();
 
 	m_ClipperBoundingBox->SetInputConnection(transform_data_input->GetOutputPort());
@@ -443,7 +443,7 @@ void medOpInteractiveClipSurface::ClipBoundingBox()
 	newPolyData->DeepCopy(m_ClipperBoundingBox->GetOutput());
 	//newPolyData->Update();
 
-	int result=((mafVMESurface*)m_Input)->SetData(newPolyData,((mafVME*)m_Input)->GetTimeStamp());
+	int result=((mafVMESurface*)GetInput())->SetData(newPolyData,((mafVME*)GetInput())->GetTimeStamp());
 
 	if(result==MAF_OK)
 		m_ResultPolyData.push_back(newPolyData);
@@ -631,8 +631,8 @@ void medOpInteractiveClipSurface::OpStop(int result)
 {
   if(result == OP_RUN_CANCEL)
   {
-    ((mafVMESurface *)m_Input)->SetData(m_OldSurface,((mafVME *)m_Input)->GetTimeStamp());
-    ((mafVMESurface *)m_Input)->Update();
+    ((mafVMESurface *)GetInput())->SetData(m_OldSurface,((mafVME *)GetInput())->GetTimeStamp());
+    ((mafVMESurface *)GetInput())->Update();
   }
 
   if(m_ImplicitPlaneVMEGizmo)
@@ -682,11 +682,11 @@ void medOpInteractiveClipSurface::OpDo()
 //----------------------------------------------------------------------------
 {
 	vtkNew<vtkTransformPolyDataFilter> transform_output;
-	transform_output->SetTransform((vtkAbstractTransform *)((mafVME *)m_Input)->GetAbsMatrixPipe()->GetVTKTransform()->GetInverse());
+	transform_output->SetTransform((vtkAbstractTransform *)((mafVME *)GetInput())->GetAbsMatrixPipe()->GetVTKTransform()->GetInverse());
 	transform_output->SetInputData(m_ResultPolyData[m_ResultPolyData.size()-1]);
 	transform_output->Update();
 
-	((mafVMESurface *)m_Input)->SetData(transform_output->GetOutput(),((mafVME *)m_Input)->GetTimeStamp());
+	((mafVMESurface *)GetInput())->SetData(transform_output->GetOutput(),((mafVME *)GetInput())->GetTimeStamp());
 	
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
@@ -694,7 +694,7 @@ void medOpInteractiveClipSurface::OpDo()
 void medOpInteractiveClipSurface::OpUndo()
 //----------------------------------------------------------------------------
 {
-  ((mafVMESurface *)m_Input)->SetData(m_OldSurface,((mafVME *)m_Input)->GetTimeStamp());
+  ((mafVMESurface *)GetInput())->SetData(m_OldSurface,((mafVME *)GetInput())->GetTimeStamp());
 
 	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
@@ -713,8 +713,8 @@ int medOpInteractiveClipSurface::Clip()
       return MAF_ERROR;
 
     vtkNew<vtkTransformPolyDataFilter> transform_data_input;
-    transform_data_input->SetTransform((vtkAbstractTransform *)((mafVME *)m_Input)->GetAbsMatrixPipe()->GetVTKTransform());
-    transform_data_input->SetInputConnection(((mafVME *)m_Input)->GetOutput()->GetVTKOutputPort());
+    transform_data_input->SetTransform((vtkAbstractTransform *)((mafVME *)GetInput())->GetAbsMatrixPipe()->GetVTKTransform());
+    transform_data_input->SetInputConnection(((mafVME *)GetInput())->GetOutput()->GetVTKOutputPort());
     transform_data_input->Update();
 
     // clip input surface by another surface
@@ -752,7 +752,7 @@ int medOpInteractiveClipSurface::Clip()
 		else
 		{
 			vtkMatrix4x4 *mat = vtkMatrix4x4::New();
-			mat->DeepCopy(((mafVME *)m_Input)->GetAbsMatrixPipe()->GetMatrixPointer()->GetVTKMatrix());
+			mat->DeepCopy(((mafVME *)GetInput())->GetAbsMatrixPipe()->GetMatrixPointer()->GetVTKMatrix());
 			mat->Invert();
 			mat->Modified();
 
@@ -764,7 +764,7 @@ int medOpInteractiveClipSurface::Clip()
 			tr->Update();
 
 			m_ClipperPlane->SetTransform(tr);
-			m_Clipper->SetInputConnection(((mafVME *)m_Input)->GetOutput()->GetVTKOutputPort());
+			m_Clipper->SetInputConnection(((mafVME *)GetInput())->GetOutput()->GetVTKOutputPort());
 			m_Clipper->SetClipFunction(m_ClipperPlane);
 			tr->Delete();
 			mat->Delete();
@@ -781,7 +781,7 @@ int medOpInteractiveClipSurface::Clip()
 	newPolyData->DeepCopy(m_Clipper->GetOutput());
 	//newPolyData->Update();
 
-	int result=((mafVMESurface*)m_Input)->SetData(newPolyData,((mafVME*)m_Input)->GetTimeStamp());
+	int result=((mafVMESurface*)GetInput())->SetData(newPolyData,((mafVME*)GetInput())->GetTimeStamp());
 
 	if(result==MAF_OK)
 		m_ResultPolyData.push_back(newPolyData);
@@ -801,7 +801,7 @@ void medOpInteractiveClipSurface::Undo()
 	{
 		vtkDEL(m_ResultPolyData[m_ResultPolyData.size()-1]);
 		m_ResultPolyData.pop_back();
-		((mafVMESurface*)m_Input)->SetData((vtkPolyData*)m_ResultPolyData[m_ResultPolyData.size()-1],((mafVME*)m_Input)->GetTimeStamp());
+		((mafVMESurface*)GetInput())->SetData((vtkPolyData*)m_ResultPolyData[m_ResultPolyData.size()-1],((mafVME*)GetInput())->GetTimeStamp());
 	}
 	m_Gui->Enable(ID_UNDO,m_ResultPolyData.size()>1);
 	m_Gui->Enable(wxOK,m_ResultPolyData.size()>1);
@@ -847,7 +847,7 @@ void medOpInteractiveClipSurface::ShowClipPlane(bool show)
     if(m_ClipperPlane == NULL)
     {
       double b[6];
-      ((mafVME *)m_Input)->GetOutput()->GetVMEBounds(b);
+      ((mafVME *)GetInput())->GetOutput()->GetVMEBounds(b);
 
       // bounding box dim
       double xdim = b[1] - b[0];
@@ -903,7 +903,7 @@ void medOpInteractiveClipSurface::ShowClipPlane(bool show)
       mafNEW(m_ImplicitPlaneVMEGizmo);
       m_ImplicitPlaneVMEGizmo->SetInputConnection(m_AppendPolydata->GetOutputPort());
       m_ImplicitPlaneVMEGizmo->SetName(_R("implicit plane gizmo"));
-      m_ImplicitPlaneVMEGizmo->ReparentTo(mafVME::SafeDownCast(m_Input->GetRoot()));
+      m_ImplicitPlaneVMEGizmo->ReparentTo(mafVME::SafeDownCast(GetInput()->GetRoot()));
 
       // position the plane
       auto currTr = mafTransform::NewSPtr();
@@ -912,7 +912,7 @@ void medOpInteractiveClipSurface::ShowClipPlane(bool show)
 
       mafMatrix mat;
       mat.DeepCopy(currTr->GetMatrix());
-      mat.SetTimeStamp(((mafVME *)m_Input)->GetTimeStamp());
+      mat.SetTimeStamp(((mafVME *)GetInput())->GetTimeStamp());
 
       m_ImplicitPlaneVMEGizmo->SetAbsMatrix(mat);
 

@@ -171,8 +171,8 @@ void lhpOpRegSurfWithCloud::OpStop(int result)
   mafNEW(grp);
   m_Resultat = grp;
   
-  /*if(m_Resultat->CanCopy(m_Input))
-    m_Resultat->DeepCopy(m_Input);
+  /*if(m_Resultat->CanCopy(GetInput()))
+    m_Resultat->DeepCopy(GetInput());
   else
   {
     wxMessageBox(_("Bad follower!"), _("Alert"), wxOK, NULL);
@@ -185,9 +185,9 @@ void lhpOpRegSurfWithCloud::OpStop(int result)
     mafVMESurface       *surf  = NULL;
     mafVMELandmarkCloud *cloud = NULL;
 
-    for(unsigned i = 0; i < m_Input->GetNumberOfChildren(); i++)
+    for(unsigned i = 0; i < GetInput()->GetNumberOfChildren(); i++)
     {
-      mafVMESurface *surfChild = mafVMESurface::SafeDownCast(m_Input->GetChild(i));
+      mafVMESurface *surfChild = mafVMESurface::SafeDownCast(GetInput()->GetChild(i));
       if(surfChild == NULL || surfChild->GetName() != m_LMDict[s].first)
         continue;
       mafNEW(surf);
@@ -259,7 +259,7 @@ void lhpOpRegSurfWithCloud::OpStop(int result)
 
   mafString name = m_Resultat->GetName() + _R(" registered on ") + m_Source->GetName();
   m_Resultat->SetName(name);
-  m_Resultat->ReparentTo(m_Input->GetParent());
+  m_Resultat->ReparentTo(GetInput()->GetParent());
 
   HideGui();
   {mafEvent evUnq(this,result); InvokeEvent(evUnq);}

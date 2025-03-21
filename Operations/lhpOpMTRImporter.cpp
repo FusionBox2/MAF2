@@ -158,7 +158,7 @@ void lhpOpMTRImporter::OpDo()
   {
     if (m_Groups[i])
     {
-      m_Groups[i]->ReparentTo(m_Input);
+      m_Groups[i]->ReparentTo(GetInput());
       {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_Groups[i]); InvokeEvent(evUnq);}
     }
   }

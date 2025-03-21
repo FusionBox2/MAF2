@@ -72,7 +72,7 @@ void medOpExporterLandmarkWS::OpRun()
 {
 	mafString proposed = mafGetApplicationDirectory();
   proposed += _R("/Data/External/");
-	proposed += m_Input->GetName();
+	proposed += GetInput()->GetName();
   proposed += _R("_TRAJECTORIES");
 	proposed += _R(".csv");
 	
@@ -99,7 +99,7 @@ void medOpExporterLandmarkWS::Write()
 	  {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
   }
   
-  m_Cloud = mafVMELandmarkCloud::SafeDownCast(m_Input);
+  m_Cloud = mafVMELandmarkCloud::SafeDownCast(GetInput());
   bool statusOpen = m_Cloud->IsOpen();
   if (!statusOpen)
   {

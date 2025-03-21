@@ -91,11 +91,11 @@ void mafOpExporterOBJ::OnEvent(mafEventBase *maf_event)
     {
     case wxOK:
       {
-        if(mafVME::SafeDownCast(m_Input)->GetOutput()->IsMAFType(mafVMEOutputSurface))
+        if(mafVME::SafeDownCast(GetInput())->GetOutput()->IsMAFType(mafVMEOutputSurface))
         {
           mafString FileDir = mafGetApplicationDirectory();
           FileDir += _R("\\");
-          FileDir += m_Input->GetName();
+          FileDir += GetInput()->GetName();
           FileDir += _R(".obj");
           mafString wildc = _R("OBJ (*.obj)|*.obj");
           m_File = mafGetSaveFile(FileDir, wildc);
@@ -194,13 +194,13 @@ void mafOpExporterOBJ::ExportingTraverse(const char *dirName, mafNode* node)
 void mafOpExporterOBJ::ExportSurface()
 //----------------------------------------------------------------------------
 {
-  if(mafVME::SafeDownCast(m_Input)->GetOutput()->IsMAFType(mafVMEOutputSurface))
+  if(mafVME::SafeDownCast(GetInput())->GetOutput()->IsMAFType(mafVMEOutputSurface))
   {
-    ExportOneSurface(m_File.GetCStr(), mafVMEOutputSurface::SafeDownCast(mafVME::SafeDownCast(m_Input)->GetOutput()));
+    ExportOneSurface(m_File.GetCStr(), mafVMEOutputSurface::SafeDownCast(mafVME::SafeDownCast(GetInput())->GetOutput()));
   }
   else
   {
-    ExportingTraverse(m_FileDir.GetCStr(), m_Input);
+    ExportingTraverse(m_FileDir.GetCStr(), GetInput());
   }
 }
 //----------------------------------------------------------------------------

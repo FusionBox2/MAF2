@@ -104,7 +104,7 @@ void lhpOpImporterPLY::OpDo()
   {
     if (m_ImportedPLYs[i])
     {
-      m_ImportedPLYs[i]->ReparentTo(m_Input);
+      m_ImportedPLYs[i]->ReparentTo(GetInput());
     }
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}

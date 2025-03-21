@@ -76,5 +76,5 @@ void mafOpCreateMeter2::OpRun()
 void mafOpCreateMeter2::OpDo()
 //----------------------------------------------------------------------------
 {
-  m_Meter->ReparentTo(m_Input);
+  m_Meter->ReparentTo(GetInput());
 }

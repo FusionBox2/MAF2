@@ -172,7 +172,7 @@ void mafOpConnectivitySurface::OpRun()
 //----------------------------------------------------------------------------
 {  	
 	vtkNEW(m_OriginalPolydata);
-	m_OriginalPolydata->DeepCopy((vtkPolyData*)((mafVME *)m_Input)->GetOutput()->GetVTKData());
+	m_OriginalPolydata->DeepCopy((vtkPolyData*)((mafVME *)GetInput())->GetOutput()->GetVTKData());
 	
 	// interface:
   if(!m_TestMode)
@@ -185,7 +185,7 @@ void mafOpConnectivitySurface::OpDo()
 //----------------------------------------------------------------------------
 {
 	for(int vmeShowed = 0; vmeShowed < m_ExtractedVmes.size(); vmeShowed++)
-		m_ExtractedVmes[vmeShowed]->ReparentTo(m_Input);
+		m_ExtractedVmes[vmeShowed]->ReparentTo(GetInput());
 }
 //----------------------------------------------------------------------------
 void mafOpConnectivitySurface::OpUndo()

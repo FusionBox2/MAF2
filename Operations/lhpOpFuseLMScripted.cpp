@@ -106,8 +106,8 @@ enum
 void lhpOpFuseLMScripted::OpRun()   
 //----------------------------------------------------------------------------
 {
-  m_Source = (mafVMELandmarkCloud*)m_Input;
-  m_SourceName = m_Input->GetName();
+  m_Source = (mafVMELandmarkCloud*)GetInput();
+  m_SourceName = GetInput()->GetName();
   
   m_Gui = new mafGUI(this);
   m_Gui->SetListener(this);
@@ -445,7 +445,7 @@ bool lhpOpFuseLMScripted::ProcessNode(mafVMELandmarkCloud *src, mafVMELandmarkCl
 void lhpOpFuseLMScripted::OpDo()
 //----------------------------------------------------------------------------
 {
-  m_Registered->ReparentTo(m_Input->GetRoot());
+  m_Registered->ReparentTo(GetInput()->GetRoot());
 }
 //----------------------------------------------------------------------------
 void lhpOpFuseLMScripted::OpUndo()

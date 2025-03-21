@@ -247,7 +247,7 @@ namespace
     m_Group->Register(NULL);
     m_Group->Initialize();
     m_Group->SetName(group_name);
-    //m_Group->ReparentTo(m_Input);
+    //m_Group->ReparentTo(GetInput());
 
     while (mafNode *node = root->GetFirstChild())
     {
@@ -1345,7 +1345,7 @@ void lhpOpKinectUtil::OpDo()
 
   for(unsigned i = 0; i < m_Imported.size(); i++)
   {
-    m_Imported[i]->ReparentTo(m_Input);
+    m_Imported[i]->ReparentTo(GetInput());
     {mafEvent evUnq(this, VME_COLLAPSESUBTREE); evUnq.SetVme(m_Imported[i]); InvokeEvent(evUnq);}
     {mafEvent evUnq(this, VME_EXPAND); evUnq.SetVme(m_Imported[i]); InvokeEvent(evUnq);}
   }
@@ -1821,7 +1821,7 @@ bool lhpOpKinectUtil::Import()
     fclose(exeF);
     skeletalGroup = ImportMSFFile(zmsfName);
     mafRemoveDirectory(zmsfPlacement);
-    //skeletalGroup->ReparentTo(m_Input);
+    //skeletalGroup->ReparentTo(GetInput());
   }
   if(m_ExtApp)
   {

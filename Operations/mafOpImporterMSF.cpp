@@ -155,7 +155,7 @@ int mafOpImporterMSF::ImportMSF()
 
   mafNEW(m_Group);
   m_Group->SetName(group_name);
-  m_Group->ReparentTo(m_Input);
+  m_Group->ReparentTo(GetInput());
   
   while (mafNode *node = root->GetFirstChild())
   {

@@ -148,7 +148,7 @@ void medOpComputeInertialTensor::OpRun()
 void medOpComputeInertialTensor::OpDo()
 //----------------------------------------------------------------------------
 {
-  mafVME* vme = (mafVME*) m_Input;
+  mafVME* vme = (mafVME*) GetInput();
 
 
   if (!vme->GetTagArray()->GetTag(_R("LOCAL_CENTER_OF_MASS_COMPONENTS")))
@@ -188,7 +188,7 @@ void medOpComputeInertialTensor::OpDo()
 void medOpComputeInertialTensor::OpUndo()
 //----------------------------------------------------------------------------
 {
-  mafVME* vme = (mafVME*) m_Input;
+  mafVME* vme = (mafVME*) GetInput();
   vme->GetTagArray()->GetTag(_R("LOCAL_CENTER_OF_MASS_COMPONENTS"),m_LocalCenterOfMassTag);
   vme->GetTagArray()->GetTag(_R("PRINCIPAL_INERTIAL_TENSOR_COMPONENTS"),m_PrincipalInertialTensorTag);
   vme->GetTagArray()->GetTag(_R("INERTIAL_TENSOR_COMPONENTS"),m_InertialTensorTag);
@@ -223,11 +223,11 @@ void medOpComputeInertialTensor::OnEvent(mafEventBase *maf_event)
       {
         int result = OP_RUN_CANCEL;
 
-        if (m_Input->IsMAFType(mafVMESurface))
+        if (GetInput()->IsMAFType(mafVMESurface))
         {
-          result = ComputeInertialTensor(m_Input);
+          result = ComputeInertialTensor(GetInput());
         }
-        else if (m_Input->IsMAFType(mafVMEGroup))
+        else if (GetInput()->IsMAFType(mafVMEGroup))
         {
           result = ComputeInertialTensorFromGroup();
         }
@@ -265,7 +265,7 @@ void medOpComputeInertialTensor::AddAttributes()
 	tagLocalCenterOfMass.SetName(_R("LOCAL_CENTER_OF_MASS_COMPONENTS"));
 	tagLocalCenterOfMass.SetNumberOfComponents(localCenterOfMassComponents.size());
 	tagLocalCenterOfMass.SetComponents(localCenterOfMassComponents);
-	m_Input->GetTagArray()->SetTag(tagLocalCenterOfMass);
+	GetInput()->GetTagArray()->SetTag(tagLocalCenterOfMass);
 
 	std::vector<double> principalInertialTensorComponents;
 	principalInertialTensorComponents.push_back(m_Principal_I1);
@@ -276,7 +276,7 @@ void medOpComputeInertialTensor::AddAttributes()
 	tagPrincipalInertialTensor.SetName(_R("PRINCIPAL_INERTIAL_TENSOR_COMPONENTS"));
 	tagPrincipalInertialTensor.SetNumberOfComponents(principalInertialTensorComponents.size());
 	tagPrincipalInertialTensor.SetComponents(principalInertialTensorComponents);
-	m_Input->GetTagArray()->SetTag(tagPrincipalInertialTensor);
+	GetInput()->GetTagArray()->SetTag(tagPrincipalInertialTensor);
 
 	std::vector<double> inertialTensorComponents;
 	for (int i = 0 ; i < 9 ; i++)
@@ -288,14 +288,14 @@ void medOpComputeInertialTensor::AddAttributes()
 	tagInertialTensor.SetName(_R("INERTIAL_TENSOR_COMPONENTS"));
 	tagInertialTensor.SetNumberOfComponents(inertialTensorComponents.size());
 	tagInertialTensor.SetComponents(inertialTensorComponents);
-	m_Input->GetTagArray()->SetTag(tagInertialTensor);
+	GetInput()->GetTagArray()->SetTag(tagInertialTensor);
 
 	mafTagItem tagMass;
 	tagMass.SetName(_R("SURFACE_MASS"));
 	tagMass.SetValue(m_Mass);
-	m_Input->GetTagArray()->SetTag(tagMass);
+	GetInput()->GetTagArray()->SetTag(tagMass);
 
-	if (m_Input->IsA("mafVMEGroup")) 
+	if (GetInput()->IsA("mafVMEGroup")) 
 	{
 		for (auto iter = m_NodeMassPairVector.begin() ; iter != m_NodeMassPairVector.end() ; ++iter)
 		{
@@ -643,7 +643,7 @@ void medOpComputeInertialTensor::ComputeGlobalInertiaTensor()
 int medOpComputeInertialTensor::ComputeInertialTensorFromGroup()
 //----------------------------------------------------------------------------
 {
-  mafVMEGroup* group = (mafVMEGroup*) m_Input;
+  mafVMEGroup* group = (mafVMEGroup*) GetInput();
 
   int result = OP_RUN_CANCEL;
 

@@ -41,7 +41,6 @@ mafOpOpenExternalFile::mafOpOpenExternalFile(const mafString& label) : Superclas
 {
   m_OpType	= OPTYPE_OP;
   m_Canundo = false;
-  m_Input		= NULL; 
 }
 //----------------------------------------------------------------------------
 mafOpOpenExternalFile::~mafOpOpenExternalFile( ) 
@@ -67,9 +66,9 @@ void mafOpOpenExternalFile::OpRun()
 {
 	wxString file, ext, mime, command2execute;
 
-	file = ((mafVMEExternalData *)(this->m_Input))->GetAbsoluteFileName().GetCStr();
+	file = ((mafVMEExternalData *)(this->GetInput()))->GetAbsoluteFileName().GetCStr();
   
-  ext = ((mafVMEExternalData *)(this->m_Input))->GetExtension();
+  ext = ((mafVMEExternalData *)(this->GetInput()))->GetExtension();
 
 	wxFileType *filetype;
 	filetype = wxTheMimeTypesManager->GetFileTypeFromExtension(ext);

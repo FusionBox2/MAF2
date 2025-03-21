@@ -91,7 +91,7 @@ void lhpOpHelAxis::OpDo()
 //----------------------------------------------------------------------------
 {
   assert(m_HelicalSys);
-  m_HelicalSys->ReparentTo(m_Input);
+  m_HelicalSys->ReparentTo(GetInput());
   m_HelicalSys->SetLengthFactor(100.0);
   m_HelicalSys->SetRadiusFactor(100.0);
   m_HelicalSys->Update();

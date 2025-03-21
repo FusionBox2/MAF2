@@ -77,7 +77,7 @@ bool lhpOpFindCentroid::Accept(mafNode *node)
 void lhpOpFindCentroid::OpRun()
 //----------------------------------------------------------------------------
 {
-  mafVMEGenericAbstract *gabs = mafVMEGenericAbstract::SafeDownCast(m_Input);
+  mafVMEGenericAbstract *gabs = mafVMEGenericAbstract::SafeDownCast(GetInput());
   if(!gabs)
     {mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);}
   mafDataVector * dvect = gabs->GetDataVector();

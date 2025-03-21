@@ -97,7 +97,7 @@ void mafOpCreateSlicer::OpDo()
 {
   double center[3] = {0.0,0.0,0.0}, rot[3] = {0.0,0.0,0.0};
   mafOBB b;
-  m_Slicer->ReparentTo(mafVME::SafeDownCast(m_Input));
+  m_Slicer->ReparentTo(mafVME::SafeDownCast(GetInput()));
   rot[0] = rot[1] = rot[2] = 0;
   ((mafVME *)m_SlicedVME)->GetOutput()->GetVMELocalBounds(b);
   if (b.IsValid())

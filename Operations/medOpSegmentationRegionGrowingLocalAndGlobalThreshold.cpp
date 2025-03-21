@@ -151,7 +151,7 @@ bool medOpSegmentationRegionGrowingLocalAndGlobalThreshold::Accept(mafNode* vme)
 void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::OpRun()
 //----------------------------------------------------------------------------
 {
-  m_VolumeInput = mafVMEVolumeGray::SafeDownCast(m_Input);
+  m_VolumeInput = mafVMEVolumeGray::SafeDownCast(GetInput());
 
   vtkStructuredPoints *sp = vtkStructuredPoints::SafeDownCast(m_VolumeInput->GetOutput()->GetVTKData());
   vtkImageData *im = vtkImageData::SafeDownCast(m_VolumeInput->GetOutput()->GetVTKData());
@@ -196,7 +196,7 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::OpRun()
     int k = d->GetNumberOfPoints();
     double sr[2];
     d->GetPointData()->GetScalars()->GetRange(sr);
-    mafString name = m_Input->GetName();
+    mafString name = GetInput()->GetName();
     name+=_R(" - Applied Median Filter");
     volMediano->SetName(name);
     vtkNew<vtkImageToStructuredPoints> f;
@@ -874,15 +874,15 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::OpDo()
 {
   if (m_VolumeOutputRegionGrowing )
   {
-    m_VolumeOutputRegionGrowing->ReparentTo(m_Input);
+    m_VolumeOutputRegionGrowing->ReparentTo(GetInput());
   }
   if (m_VolumeOutputMorpho)
   {
-    m_VolumeOutputMorpho->ReparentTo(m_Input);
+    m_VolumeOutputMorpho->ReparentTo(GetInput());
   }
   if (m_SurfaceOutput)
   {
-    m_SurfaceOutput->ReparentTo(m_Input);
+    m_SurfaceOutput->ReparentTo(GetInput());
   }
 
   if (m_VolumeOutputMorpho == NULL && m_VolumeOutputRegionGrowing == NULL && m_SurfaceOutput == NULL)

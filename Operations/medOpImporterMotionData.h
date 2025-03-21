@@ -178,7 +178,7 @@ public:
   void OpDo() override
     //----------------------------------------------------------------------------
   {
-    m_Vme->ReparentTo(m_Input);
+    m_Vme->ReparentTo(GetInput());
   }
 	//----------------------------------------------------------------------------
   //** Makes the undo for the operation.

@@ -39,7 +39,6 @@ mafOpImporterExternalFile::mafOpImporterExternalFile(const mafString &label) : S
 {
   m_OpType  = OPTYPE_IMPORTER;
   m_Canundo = true;
-  m_Input = NULL; 
 
   m_Vme = NULL;
 	m_FileDir = _R("");//mafGetApplicationDirectory().c_str();
@@ -94,7 +93,7 @@ void mafOpImporterExternalFile::ImportExternalFile()
 	m_Vme->SetFileName(name.GetCStr());
   m_Vme->SetCurrentPath(path);
 	m_Vme->SetName(vmeName);
-  m_Vme->ReparentTo(m_Input);
+  m_Vme->ReparentTo(GetInput());
   m_Vme->Update();
 
   m_Output = m_Vme;

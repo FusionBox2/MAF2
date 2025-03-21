@@ -74,12 +74,12 @@ void medOpCreateLabeledVolume::OpRun()
  
   
   m_Output = m_LabeledVolume;
-  m_LabeledVolume->SetVolumeLink(m_Input);
+  m_LabeledVolume->SetVolumeLink(GetInput());
   {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpCreateLabeledVolume::OpDo()
 //----------------------------------------------------------------------------
 {
-  m_LabeledVolume->ReparentTo(m_Input);
+  m_LabeledVolume->ReparentTo(GetInput());
 }

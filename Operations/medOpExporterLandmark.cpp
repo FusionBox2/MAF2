@@ -46,7 +46,6 @@ medOpExporterLandmark::medOpExporterLandmark(const mafString& label) : Superclas
   m_Canundo = true;
   m_File = _R("");
   m_FileDir = _R("");
-  m_Input   = NULL;
   m_GlobalPos = true;
 }
 //----------------------------------------------------------------------------
@@ -92,7 +91,7 @@ void medOpExporterLandmark::OnEvent(mafEventBase *maf_event)
       /*{
         wxString proposed = mafGetApplicationDirectory().c_str();
         proposed += "/Data/External/";
-        proposed += m_Input->GetName();
+        proposed += GetInput()->GetName();
         proposed += ".txt";
         wxString wildc = "ascii file (*.txt)|*.txt";
         wxString f = mafGetSaveFile(proposed,wildc).c_str(); 
@@ -110,12 +109,12 @@ void medOpExporterLandmark::OnEvent(mafEventBase *maf_event)
         m_Gui->Enable(wxOK, false);
         m_Gui->Enable(wxCANCEL, false);
 
-        assert(m_Input);
+        assert(GetInput());
         mafString proposed = mafGetApplicationDirectory() + _R("/Data/External/");
 
-        if(m_Input->IsMAFType(mafVMELandmarkCloud))
+        if(GetInput()->IsMAFType(mafVMELandmarkCloud))
         {
-          proposed += m_Input->GetName();
+          proposed += GetInput()->GetName();
           proposed += _R(".txt");
           mafString wildc = _R("ascii file (*.txt)|*.txt");
 
@@ -135,7 +134,7 @@ void medOpExporterLandmark::OnEvent(mafEventBase *maf_event)
           if(dialog.ShowModal() == wxID_NO)
           {
 
-            proposed += m_Input->GetName();
+            proposed += GetInput()->GetName();
             proposed += ".txt";
             wxString wildc = "ascii file (*.txt)|*.txt";
             wxString f = mafGetSaveFile(proposed,wildc).c_str(); 
@@ -364,7 +363,7 @@ void medOpExporterLandmark::ExportingTraverse(std::ostream &out, const char *dir
           intpath = tmp;
         }
       }
-      while(nd != NULL && nd!= m_Input);
+      while(nd != NULL && nd!= GetInput());
       fn += _R("\\");
       fn += intpath;//node->GetName();
       /*if(node->GetParent() != NULL)
@@ -398,10 +397,10 @@ void medOpExporterLandmark::ExportLandmark()
   //file creation
   std::ofstream f_Out;
 
-  if(m_Input->IsMAFType(mafVMELandmarkCloud))
+  if(GetInput()->IsMAFType(mafVMELandmarkCloud))
   {
     f_Out.open(m_File.GetCStr());
-    ExportOneCloud(f_Out, mafVMELandmarkCloud::SafeDownCast(m_Input));
+    ExportOneCloud(f_Out, mafVMELandmarkCloud::SafeDownCast(GetInput()));
     f_Out.close();
   }
   else
@@ -409,12 +408,12 @@ void medOpExporterLandmark::ExportLandmark()
     /*if(m_FileDir == "")
     {
       f_Out.open(fileName);
-      ExportingTraverse(f_Out, NULL, m_Input);
+      ExportingTraverse(f_Out, NULL, GetInput());
       f_Out.close();
     }
     else*/
     {
-      ExportingTraverse(f_Out, m_FileDir.GetCStr(), m_Input);
+      ExportingTraverse(f_Out, m_FileDir.GetCStr(), GetInput());
     }
   }
   if(!m_TestMode)
@@ -433,7 +432,7 @@ mafOp* medOpExporterLandmark::Copy()
   cp->SetListener(GetListener());
   cp->m_Next         = NULL;
   cp->m_File         = m_File;
-  cp->m_Input        = m_Input;
+  cp->SetInput(GetInput());
   cp->m_FileDir      = m_FileDir;
   return cp;
 }

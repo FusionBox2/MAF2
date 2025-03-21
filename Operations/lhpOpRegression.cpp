@@ -673,7 +673,7 @@ bool lhpOpRegression::Accept(mafNode* vme)
 void lhpOpRegression::OpRun()   
 //----------------------------------------------------------------------------
 {
-  m_Cloud     = (mafVMELandmarkCloud *)m_Input;
+  m_Cloud     = (mafVMELandmarkCloud *)GetInput();
   CreateGui();
   //{mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);} 
 }
@@ -1877,7 +1877,7 @@ bool lhpOpRegression::RegressionPelvis(bool right)
 
 bool lhpOpRegression::RegressionHumerus(bool right)
 {
-  mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(m_Input);
+  mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(GetInput());
 
   mafString name2 = right ? _R("RHLT") : _R("LHLT");
   mafString name5 = right ? _R("RHME") : _R("LHME");
@@ -2166,7 +2166,7 @@ bool lhpOpRegression::RegressionHumerus(bool right)
 }
 bool lhpOpRegression::RegressionScapula(bool right)
 {
-  mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(m_Input);
+  mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(GetInput());
   mafString name1 = right ? _R("RSIA") : _R("LSIA");
   mafString name2 = right ? _R("RSRS") : _R("LSRS");
   mafString name4 = right ? _R("RSAA") : _R("LSAA");
@@ -2416,7 +2416,7 @@ bool lhpOpRegression::RegressionScapula(bool right)
 }
 bool lhpOpRegression::RegressionClavicle(bool right)
 {
-  mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(m_Input);
+  mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(GetInput());
   mafString name1 = right ? _R("RCSJ") : _R("LCSJ");
   mafString name2 = right ? _R("RCAS") : _R("LCAS");
   mafString name5 = right ? _R("RCAJ") : _R("LCAJ");
@@ -2709,7 +2709,7 @@ void lhpOpRegression::AddSphere(const mafString& name, double *center, double ra
   parName  = name;
   parName += _R("_group");
   grp->SetName(name);
-  grp->ReparentTo(m_Input);
+  grp->ReparentTo(GetInput());
   grp->SetAbsMatrix(mtr);
   m_Added.push_back(grp);
   /*{
@@ -2718,7 +2718,7 @@ void lhpOpRegression::AddSphere(const mafString& name, double *center, double ra
     mtr.Identity();
     mafNEW(srf);
     srf->SetName(name);
-    srf->ReparentTo(m_Input->GetParent());
+    srf->ReparentTo(GetInput()->GetParent());
     srf->SetGeometryType(mafVMESurfaceRegParam::PARAMETRIC_SPHERE);
     srf->SetSphereRadius(radius);
     srf->SetSphereCenter(center);
@@ -2745,7 +2745,7 @@ void lhpOpRegression::AddEllipsoid(const mafString& name, const mafMatrix &mtr, 
   parName  = name;
   parName += _R("_group");
   grp->SetName(name);
-  grp->ReparentTo(m_Input);
+  grp->ReparentTo(GetInput());
   grp->SetAbsMatrix(mtr);
   m_Added.push_back(grp);
   /*{
@@ -2754,7 +2754,7 @@ void lhpOpRegression::AddEllipsoid(const mafString& name, const mafMatrix &mtr, 
   mtr.Identity();
   mafNEW(srf);
   srf->SetName(name);
-  srf->ReparentTo(m_Input->GetParent());
+  srf->ReparentTo(GetInput()->GetParent());
   srf->SetGeometryType(mafVMESurfaceRegParam::PARAMETRIC_SPHERE);
   srf->SetSphereRadius(radius);
   srf->SetSphereCenter(center);
@@ -2781,7 +2781,7 @@ void lhpOpRegression::AddPlane(const mafString& name, double *center, double *no
   mtr.Identity();
   mafNEW(srf);
   srf->SetName(name);
-  srf->ReparentTo(m_Input->GetParent());
+  srf->ReparentTo(GetInput()->GetParent());
   srf->SetGeometryType(mafVMESurfaceRegParam::PARAMETRIC_PLANE);
   srf->SetPlaneNormal(normal);
   srf->SetPlaneCenter(center);
@@ -2796,7 +2796,7 @@ void lhpOpRegression::AddArrow(const mafString& name, double *center, double *no
   mtr.Identity();
   mafNEW(srf);
   srf->SetName(name);
-  srf->ReparentTo(m_Input->GetParent());
+  srf->ReparentTo(GetInput()->GetParent());
 
   V3d<double> norm(normal);
   V3d<double> dir1(1.0, 1.0, 1.0);

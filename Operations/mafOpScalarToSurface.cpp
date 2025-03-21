@@ -85,7 +85,7 @@ void mafOpScalarToSurface::OpRun()
     wxBusyCursor wait;
   }
 
-  mafString surface_name = m_Input->GetName();
+  mafString surface_name = GetInput()->GetName();
   surface_name += _R(" surface");
   mafNEW(m_Surface);
   m_Surface->SetName(surface_name);
@@ -96,7 +96,7 @@ void mafOpScalarToSurface::OpRun()
   std::vector<vtkPolyData *> items;
   vtkPolyData *scalar_item;
   vtkPolyData *current_item;
-  mafVMEScalar *scalar = mafVMEScalar::SafeDownCast(m_Input);
+  mafVMEScalar *scalar = mafVMEScalar::SafeDownCast(GetInput());
   double ts = scalar->GetTimeStamp();
   std::vector<mafTimeStamp> kframes;
   scalar->GetTimeStamps(kframes);

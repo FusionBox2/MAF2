@@ -87,7 +87,7 @@ void mafOpCreateEllipsoid::OpDo()
 	
 
 	
-	m_Ellipsoid->ReparentTo(m_Input);
+	m_Ellipsoid->ReparentTo(GetInput());
 	
 
 	

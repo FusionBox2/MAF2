@@ -78,10 +78,10 @@ void medOpCreateEditSkeleton::OpRun()
 {
 	mafNEW(m_Skeleton);
 
-	if(m_Input->IsMAFType(mafVMEVolumeGray))
-    m_Editor = new medGeometryEditorPolylineGraph(mafVME::SafeDownCast(m_Input), this, 0, this->m_TestMode);
-	else if(m_Input->IsMAFType(medVMEPolylineGraph) && m_Input->GetParent()->IsMAFType(mafVMEVolumeGray))
-    m_Editor = new medGeometryEditorPolylineGraph(mafVME::SafeDownCast(m_Input->GetParent()), this,medVMEPolylineGraph::SafeDownCast(m_Input),this->m_TestMode);
+	if(GetInput()->IsMAFType(mafVMEVolumeGray))
+    m_Editor = new medGeometryEditorPolylineGraph(mafVME::SafeDownCast(GetInput()), this, 0, this->m_TestMode);
+	else if(GetInput()->IsMAFType(medVMEPolylineGraph) && GetInput()->GetParent()->IsMAFType(mafVMEVolumeGray))
+    m_Editor = new medGeometryEditorPolylineGraph(mafVME::SafeDownCast(GetInput()->GetParent()), this,medVMEPolylineGraph::SafeDownCast(GetInput()),this->m_TestMode);
 	else
     OpStop(OP_RUN_CANCEL);
 
@@ -104,9 +104,9 @@ void medOpCreateEditSkeleton::OpRun()
 void medOpCreateEditSkeleton::OpDo()
 //----------------------------------------------------------------------------
 {
-	if(m_Input->IsMAFType(mafVMEVolumeGray))
+	if(GetInput()->IsMAFType(mafVMEVolumeGray))
 	{
-		m_Skeleton->SetData(m_ResultPolydata,((mafVME*)m_Input)->GetTimeStamp());
+		m_Skeleton->SetData(m_ResultPolydata,((mafVME*)GetInput())->GetTimeStamp());
 		m_Skeleton->SetName(_R("VME Skeleton"));
 
     mafTagItem tag_Nature;
@@ -115,11 +115,11 @@ void medOpCreateEditSkeleton::OpDo()
 
     m_Skeleton->GetTagArray()->SetTag(tag_Nature);
 
-		m_Skeleton->ReparentTo(m_Input);
+		m_Skeleton->ReparentTo(GetInput());
 	}
-	else if(m_Input->IsMAFType(medVMEPolylineGraph))
+	else if(GetInput()->IsMAFType(medVMEPolylineGraph))
 	{
-		medVMEPolylineGraph::SafeDownCast(m_Input)->SetData(m_ResultPolydata,((mafVME*)m_Input)->GetTimeStamp());
+		medVMEPolylineGraph::SafeDownCast(GetInput())->SetData(m_ResultPolydata,((mafVME*)GetInput())->GetTimeStamp());
 	}
 	
 	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}

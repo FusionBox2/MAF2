@@ -482,7 +482,7 @@ void medOpImporterGRFWS::ReadForcePlates()
   }
 
   m_Output = m_Group;
-  m_Output->ReparentTo(m_Input);
+  m_Output->ReparentTo(GetInput());
 }
 //----------------------------------------------------------------------------
 void medOpImporterGRFWS::ReadSingleVector()   
@@ -619,5 +619,5 @@ void medOpImporterGRFWS::ReadSingleVector()
   }
 
   m_Output = m_ForceLeft;
-  m_Output->ReparentTo(m_Input);
+  m_Output->ReparentTo(GetInput());
 }

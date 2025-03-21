@@ -103,7 +103,7 @@ void lhpOpRepresentInAF::OpRun()
   m_Gui->Button(ID_CHOOSE,_L("refsys "));
 
   //m_Gui->Bool(ID_MULTIPLE_TIME_REGISTRATION,_("multi-time"),&m_MultiTime,1);
-  //m_Gui->Enable(ID_MULTIPLE_TIME_REGISTRATION,((mafVMELandmarkCloud*)m_Input)->IsAnimated());
+  //m_Gui->Enable(ID_MULTIPLE_TIME_REGISTRATION,((mafVMELandmarkCloud*)GetInput())->IsAnimated());
   ////m_Gui->Bool(ID_APPLY_CHILDREN,_("Apply children"),&m_ApplyChildren,1);
 
   m_Gui->OkCancel();
@@ -152,7 +152,7 @@ void lhpOpRepresentInAF::OpDo()
 //----------------------------------------------------------------------------
 {
   wxBusyInfo wait(_("Please wait, working..."));
-  mafVMELandmarkCloud *inputCloud = mafVMELandmarkCloud::SafeDownCast(m_Input);
+  mafVMELandmarkCloud *inputCloud = mafVMELandmarkCloud::SafeDownCast(GetInput());
   mafVMERefSysAbstract *refAF     = m_RefSys;
 
   std::vector<mafTimeStamp> timeStamps;

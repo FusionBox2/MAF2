@@ -1314,7 +1314,7 @@ bool medOpImporterRAWImages::Import()
    tag_Nature.SetValue(_R("NATURAL"));
 
    m_Output->SetName(name);
-   m_Output->ReparentTo(m_Input);
+   m_Output->ReparentTo(GetInput());
 
    m_Output->GetTagArray()->SetTag(tag_Nature);
    //m_Output->Register(m_Output); //increment reference count so that the vme can't die

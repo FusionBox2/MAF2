@@ -140,13 +140,13 @@ void medOpSurfaceMirror::OpRun()
 	}
 
 
-	if (m_Input->IsMAFType(mafVMESurface))
+	if (GetInput()->IsMAFType(mafVMESurface))
 	{
 		vtkNEW(m_InputPolydata);
-		m_InputPolydata->DeepCopy((vtkPolyData*)((mafVMESurface *)m_Input)->GetOutput()->GetVTKData());
+		m_InputPolydata->DeepCopy((vtkPolyData*)((mafVMESurface *)GetInput())->GetOutput()->GetVTKData());
 
 		vtkNEW(m_OutputPolydata);
-		m_OutputPolydata->DeepCopy((vtkPolyData*)((mafVMESurface *)m_Input)->GetOutput()->GetVTKData());
+		m_OutputPolydata->DeepCopy((vtkPolyData*)((mafVMESurface *)GetInput())->GetOutput()->GetVTKData());
 
 
 
@@ -157,7 +157,7 @@ void medOpSurfaceMirror::OpRun()
 		Preview();
 	}
 
-	if (m_Input->IsMAFType(mafVMEGroup))
+	if (GetInput()->IsMAFType(mafVMEGroup))
 
 	{
 		
@@ -172,16 +172,16 @@ void medOpSurfaceMirror::OpDo()
 	wxBusyInfo wait("operation do ..");
 	mafSleep(2500);
  
-	if (m_Input->IsMAFType(mafVMESurface))
+	if (GetInput()->IsMAFType(mafVMESurface))
 	{
 		assert(m_OutputPolydata);
 
-		((mafVMESurface *)m_Input)->SetData(m_OutputPolydata, ((mafVME *)m_Input)->GetTimeStamp());
+		((mafVMESurface *)GetInput())->SetData(m_OutputPolydata, ((mafVME *)GetInput())->GetTimeStamp());
 
 	}
-	if (m_Input->IsMAFType(mafVMEGroup))
+	if (GetInput()->IsMAFType(mafVMEGroup))
 	{
-		int nbr = ((mafVMEGroup*)m_Input)->GetNumberOfChildren();
+		int nbr = ((mafVMEGroup*)GetInput())->GetNumberOfChildren();
 		std::string str = "nbr children" + std::to_string(nbr);
 		wxString mafs = str.c_str();
 		wxBusyInfo wait(mafs);
@@ -191,23 +191,23 @@ void medOpSurfaceMirror::OpDo()
 		for (int i = 0; i < nbr; i++)
 
 		{
-			if (((mafVMEGroup*)m_Input)->GetChild(i)->IsMAFType(mafVMESurface))
+			if (((mafVMEGroup*)GetInput())->GetChild(i)->IsMAFType(mafVMESurface))
 			{
 				mafString synthetic_name = _R("Copied ");
-				mafAutoPointer<mafNode> node = (((mafVMEGroup*)m_Input)->GetChild(i))->MakeCopy();
-				synthetic_name.append(((mafVMEGroup*)m_Input)->GetChild(i)->GetName());
+				mafAutoPointer<mafNode> node = (((mafVMEGroup*)GetInput())->GetChild(i))->MakeCopy();
+				synthetic_name.append(((mafVMEGroup*)GetInput())->GetChild(i)->GetName());
 				node->SetName(synthetic_name);
 				
-				((mafVMEGroup*)m_Input)->AddChild(node.get());
+				((mafVMEGroup*)GetInput())->AddChild(node.get());
 
 
 				vtkNEW(m_InputPolydata);
 				vtkNEW(m_OutputPolydata);
-				m_InputPolydata->DeepCopy((vtkPolyData*)((mafVMESurface*)((mafVMEGroup*)m_Input)->GetChild(i))->GetOutput()->GetVTKData());
-				m_OutputPolydata->DeepCopy((vtkPolyData*)((mafVMESurface*)((mafVMEGroup*)m_Input)->GetChild(i))->GetOutput()->GetVTKData());
+				m_InputPolydata->DeepCopy((vtkPolyData*)((mafVMESurface*)((mafVMEGroup*)GetInput())->GetChild(i))->GetOutput()->GetVTKData());
+				m_OutputPolydata->DeepCopy((vtkPolyData*)((mafVMESurface*)((mafVMEGroup*)GetInput())->GetChild(i))->GetOutput()->GetVTKData());
 
 
-				//m_OutputGroup->AddChild(((mafVMEGroup*)m_Input)->GetChild(i));
+				//m_OutputGroup->AddChild(((mafVMEGroup*)GetInput())->GetChild(i));
 
 
 				m_MirrorFilter->SetInputData(m_InputPolydata);
@@ -226,9 +226,9 @@ void medOpSurfaceMirror::OpDo()
 				wxBusyInfo wait4("mirror output ok");
 				mafSleep(2500);
 
-				((mafVMESurface*)((mafVMEGroup*)m_Input)->GetChild(i))->SetData(m_OutputPolydata, ((mafVME*)((mafVMEGroup*)m_Input)->GetChild(i))->GetTimeStamp());
+				((mafVMESurface*)((mafVMEGroup*)GetInput())->GetChild(i))->SetData(m_OutputPolydata, ((mafVME*)((mafVMEGroup*)GetInput())->GetChild(i))->GetTimeStamp());
 				assert(m_OutputPolydata);
-				((mafVMESurface*)((mafVMEGroup*)m_Input)->GetChild(i))->SetData(m_OutputPolydata, ((mafVME*)((mafVMEGroup*)m_Input)->GetChild(i))->GetTimeStamp());
+				((mafVMESurface*)((mafVMEGroup*)GetInput())->GetChild(i))->SetData(m_OutputPolydata, ((mafVME*)((mafVMEGroup*)GetInput())->GetChild(i))->GetTimeStamp());
 
 
 				
@@ -237,19 +237,19 @@ void medOpSurfaceMirror::OpDo()
 				m_MirrorFilter->RemoveAllInputs();
 
 			}
-			if (((mafVMEGroup*)m_Input)->GetChild(i)->IsMAFType(mafVMELandmarkCloud))
+			if (((mafVMEGroup*)GetInput())->GetChild(i)->IsMAFType(mafVMELandmarkCloud))
 			{
-				mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(((mafVMEGroup*)m_Input)->GetChild(i));
+				mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(((mafVMEGroup*)GetInput())->GetChild(i));
 
 				if (cloud != NULL)
 				{
 
 					mafString synthetic_name = _R("Copied ");
-					mafAutoPointer<mafNode> node = (((mafVMEGroup*)m_Input)->GetChild(i))->MakeCopy();
-					synthetic_name.append(((mafVMEGroup*)m_Input)->GetChild(i)->GetName());
+					mafAutoPointer<mafNode> node = (((mafVMEGroup*)GetInput())->GetChild(i))->MakeCopy();
+					synthetic_name.append(((mafVMEGroup*)GetInput())->GetChild(i)->GetName());
 					node->SetName(synthetic_name);
 
-					((mafVMEGroup*)m_Input)->AddChild(node.get());
+					((mafVMEGroup*)GetInput())->AddChild(node.get());
 					std::vector<mafTimeStamp> stamps;
 					cloud->GetLocalTimeStamps(stamps);
 					for (unsigned i = 0; i < stamps.size(); i++)
@@ -283,7 +283,7 @@ void medOpSurfaceMirror::OpUndo()
 {
   assert(m_InputPolydata);
 
-	((mafVMESurface *)m_Input)->SetData(m_InputPolydata,((mafVME *)m_Input)->GetTimeStamp());
+	((mafVMESurface *)GetInput())->SetData(m_InputPolydata,((mafVME *)GetInput())->GetTimeStamp());
 	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
@@ -309,11 +309,11 @@ void medOpSurfaceMirror::OnEvent(mafEventBase *maf_event)
 			case ID_MIRRORY:
 			case ID_MIRRORZ:
 			case ID_FLIPNORMALS:
-				if (m_Input->IsMAFType(mafVMESurface))
+				if (GetInput()->IsMAFType(mafVMESurface))
 				{
 					Preview();
 				}
-				if (m_Input->IsMAFType(mafVMEGroup))
+				if (GetInput()->IsMAFType(mafVMEGroup))
 				{
 					PreviewGroup();
 				}
@@ -361,7 +361,7 @@ void medOpSurfaceMirror::Preview()
   
 
   m_OutputPolydata->DeepCopy(m_MirrorFilter->GetOutput());
-  ((mafVMESurface *)m_Input)->SetData(m_OutputPolydata,((mafVME *)m_Input)->GetTimeStamp());
+  ((mafVMESurface *)GetInput())->SetData(m_OutputPolydata,((mafVME *)GetInput())->GetTimeStamp());
 
 
   {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}

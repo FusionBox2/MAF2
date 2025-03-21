@@ -84,7 +84,7 @@ void mafOpCreateOsteometricBoard::OpRun()
 void mafOpCreateOsteometricBoard::OpDo()
 //----------------------------------------------------------------------------
 {
-	m_osteometricBoard->ReparentTo(m_Input);
+	m_osteometricBoard->ReparentTo(GetInput());
   
 }
 

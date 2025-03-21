@@ -68,7 +68,6 @@ lhpOpExporterCSVGraph::lhpOpExporterCSVGraph(const mafString& label) : Superclas
   m_Canundo = true;
   m_File = _R("");
   m_FileDir = _R("");
-  m_Input   = NULL;
   m_GlobalPos = true;
   m_Subtree   = false;
 }
@@ -148,9 +147,9 @@ void lhpOpExporterCSVGraph::OnEvent(mafEventBase *maf_event)
         m_Gui->Enable(wxOK, false);
         m_Gui->Enable(wxCANCEL, false);
 
-        assert(m_Input);
+        assert(GetInput());
         mafString proposed = mafGetApplicationDirectory() + _R("/Data/External/");
-        proposed += m_Input->GetName();
+        proposed += GetInput()->GetName();
         proposed += _R(".csv");
         mafString wildc = _R("csv file (*.csv)|*.csv");
 
@@ -188,13 +187,13 @@ void lhpOpExporterCSVGraph::ExportGraphs()
   vgraph->m_shown_flags = m_shown_flags;
   vgraph->m_pipe_config = m_pipe_config;
 
-  if (mafNode * root = m_Input->GetRoot())
+  if (mafNode * root = GetInput()->GetRoot())
   {
     auto iter = root->NewIterator(); // iterate over inserted vme
     for (mafNode *vme = iter->GetFirstNode(); vme; vme = iter->GetNextNode())
       vgraph->VmeAdd(vme); // Add them in the specified view
   }
-  vgraph->VmeSelect(m_Input, true);
+  vgraph->VmeSelect(GetInput(), true);
   vgraph->loadPlot(false);
   vgraph->GetRenderWindow()->SaveGraphAsCSV(m_File.toWx());
   if(!m_TestMode)
@@ -213,7 +212,7 @@ mafOp* lhpOpExporterCSVGraph::Copy()
   cp->SetListener(GetListener());
   cp->m_Next         = NULL;
   cp->m_File         = m_File;
-  cp->m_Input        = m_Input;
+  cp->SetInput(GetInput());
   cp->m_FileDir      = m_FileDir;
   cp->m_GlobalPos    = m_GlobalPos;
   cp->m_Subtree      = m_Subtree;

@@ -76,5 +76,5 @@ void mafOpCreateMuscleWrapping2::OpRun()
 void mafOpCreateMuscleWrapping2::OpDo()
 //----------------------------------------------------------------------------
 {
-	m_QuadricSurfaceFitting->ReparentTo(m_Input);
+	m_QuadricSurfaceFitting->ReparentTo(GetInput());
 }

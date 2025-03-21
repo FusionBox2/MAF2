@@ -59,7 +59,6 @@ mafOpExporterRAW::mafOpExporterRAW(const mafString& label) : Superclass(label)
   m_Canundo = true;
   m_FileName = _R("");
 	m_FileNameZ = _R("");
-  m_Input = NULL;
 	m_SingleFile = 1;
 	m_Offset = 0;
 
@@ -89,7 +88,7 @@ enum RAW_EXPORTER_ID
 void mafOpExporterRAW::OpRun()   
 //----------------------------------------------------------------------------
 {
-	m_ProposedDirectory += m_Input->GetName();
+	m_ProposedDirectory += GetInput()->GetName();
 	m_ProposedDirectory += _R(".raw");
 	if(!m_TestMode)
 	{
@@ -120,7 +119,7 @@ void mafOpExporterRAW::OpRun()
 void mafOpExporterRAW::OpDo()   
 //----------------------------------------------------------------------------
 {					
-	assert(m_Input);
+	assert(GetInput());
 	assert(!m_FileName.empty());
 	this->SaveVolume();
 }
@@ -135,7 +134,7 @@ void mafOpExporterRAW::SaveVolume()
 	if(!m_TestMode)
 		wxBusyInfo wait("Please wait, working...");
 	
-	mafVMEVolumeGray *volume=mafVMEVolumeGray::SafeDownCast(m_Input);
+	mafVMEVolumeGray *volume=mafVMEVolumeGray::SafeDownCast(GetInput());
 	volume->Modified();
 	
 	//if it is a vtkStructuredPoints
@@ -277,7 +276,7 @@ void mafOpExporterRAW::SaveVolume()
 				mafString proposed = mafGetApplicationDirectory();
 				proposed += _L("/Data/External/");
 				proposed += _L("Z_coordinates_");
-				proposed += m_Input->GetName();
+				proposed += GetInput()->GetName();
 				proposed += _L(".txt");
 				mafString wildc = _L("txt file (*.txt)|*.txt");
 				mafString file = mafGetSaveFile(proposed,wildc);   
@@ -363,7 +362,7 @@ void mafOpExporterRAW::SaveVolume()
 				mafString proposed = mafGetApplicationDirectory();
 				proposed += _L("/Data/External/");
 				proposed += _L("Z_coordinates_");
-				proposed += m_Input->GetName();
+				proposed += GetInput()->GetName();
 				proposed += _L(".txt");
 				mafString wildc = _L("txt file (*.txt)|*.txt");
 				mafString file = mafGetSaveFile(proposed,wildc);   

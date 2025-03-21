@@ -76,7 +76,7 @@ void medOpExporterAnalogWS::OpRun()
 {
 	mafString proposed = mafGetApplicationDirectory();
   proposed += _R("/Data/External/");
-	proposed += m_Input->GetName();
+	proposed += GetInput()->GetName();
 	proposed += _R(".csv");
 	
   mafString wildc = _R("ASCII CSV file (*.csv)|*.csv");
@@ -102,7 +102,7 @@ void medOpExporterAnalogWS::Write()
 	  {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
   }
   
-  m_Analog = medVMEAnalog::SafeDownCast(m_Input);
+  m_Analog = medVMEAnalog::SafeDownCast(GetInput());
   mafTagItem *tag_sig = m_Analog->GetTagArray()->GetTag(_R("SIGNALS_NAME"));
   int n_sig = (tag_sig) ? tag_sig->GetNumberOfComponents() : 0;
 

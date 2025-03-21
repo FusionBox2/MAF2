@@ -1132,7 +1132,7 @@ void lhpOpImporterPressionCenter::OpDo()
 	  //wxBusyInfo wait((m_intData[i].m_VmeGroup)->GetName().GetCStr());
 	  //Sleep(1000);
 
-    m_intData[i].m_VmeGroup->ReparentTo(m_Input->GetRoot());
+    m_intData[i].m_VmeGroup->ReparentTo(GetInput()->GetRoot());
 	  
   }
   //wxBusyInfo wait1("opDo ok");

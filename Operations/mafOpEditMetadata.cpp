@@ -92,7 +92,7 @@ enum METADATA_EDIT_ID
 void mafOpEditMetadata::OpRun()
 //----------------------------------------------------------------------------
 {
-  m_TagArray = m_Input->GetTagArray();
+  m_TagArray = GetInput()->GetTagArray();
   m_OldTagArray = mafTagArray::NewSPtr();
   m_OldTagArray->DeepCopy(m_TagArray.get());
   std::vector<mafString> tag_list;

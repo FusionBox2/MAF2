@@ -98,7 +98,7 @@ int lhpOpImporterRSScan::Read()
   reader->SetDataFileName(m_DataFileName.GetCStr());
   reader->SetScale(m_Scale);
   reader->SetTimeShift(m_TimeShift);
-  reader->SetSensors(mafVMELandmarkCloud::SafeDownCast(m_Input));
+  reader->SetSensors(mafVMELandmarkCloud::SafeDownCast(GetInput()));
   int returnValue = reader->Read();
 
   if (returnValue == MAF_ERROR)

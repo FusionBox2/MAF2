@@ -101,7 +101,7 @@ void medOpClassicICPRegistration::CreateGui()
 	if(!mafDirExists(dir)) dir = _R("");
 	m_ReportFilename = dir + _L("report.log");
 	
-	m_InputName = m_Input->GetName();
+	m_InputName = GetInput()->GetName();
 	
 	m_Gui = new mafGUI(this);
 	m_Gui->SetListener(this);
@@ -194,7 +194,7 @@ void medOpClassicICPRegistration::OpDo()
   assert( m_Target);
 	assert(!m_Registered);
 
-	((mafVME*)m_Input)->GetOutput()->Update();
+	((mafVME*)GetInput())->GetOutput()->Update();
   
 
 	auto icp_matrix = mafMatrix::NewSPtr();  
@@ -206,7 +206,7 @@ void medOpClassicICPRegistration::OpDo()
 	vtkNew<mafClassicICPRegistration> icp; //to be deleted 
 	//mafProgressMacro(icp,"classic ICP - registering");
 	icp->SetConvergence(m_Convergence);
-	icp->SetSource(((mafVME*)m_Input)->GetOutput()->GetVTKData());
+	icp->SetSource(((mafVME*)GetInput())->GetOutput()->GetVTKData());
 	icp->SetTarget(m_Target->GetOutput()->GetVTKData());
 	icp->SetResultsFileName(m_ReportFilename.GetCStr());
 	icp->SaveResultsOn();
@@ -219,18 +219,18 @@ void medOpClassicICPRegistration::OpDo()
 
 	target_matrix->Multiply4x4(*target_matrix, *icp_matrix, *final_matrix);
 
-  mafString name = m_Input->GetName() + mafString::Format(_L(" registered on ")) + m_Target->GetName();
+  mafString name = GetInput()->GetName() + mafString::Format(_L(" registered on ")) + m_Target->GetName();
 
   mafNEW(m_Registered);
 
-  if(m_Input->IsMAFType(mafVMESurface))
+  if(GetInput()->IsMAFType(mafVMESurface))
    {	
-     m_Registered->DeepCopy(m_Input); //not to be deleted, - delete it in the Undo or in destructor
+     m_Registered->DeepCopy(GetInput()); //not to be deleted, - delete it in the Undo or in destructor
      m_Registered->GetOutput()->Update();
    }
   else
    {
-     m_Registered->SetData((vtkPolyData*)(((mafVME*)m_Input)->GetOutput()->GetVTKData()),0.0);
+     m_Registered->SetData((vtkPolyData*)(((mafVME*)GetInput())->GetOutput()->GetVTKData()),0.0);
      m_Registered->Update();
    }
   m_Registered->SetName(name);
@@ -239,9 +239,9 @@ void medOpClassicICPRegistration::OpDo()
 
 	m_Output = m_Registered;
 
-	m_Registered->ReparentTo(m_Input);
+	m_Registered->ReparentTo(GetInput());
 
-  mafVME *sourceVME = mafVME::SafeDownCast(m_Input);
+  mafVME *sourceVME = mafVME::SafeDownCast(GetInput());
 
   vtkNew<vtkTransform> sourceABSPoseInverseTr;
   sourceABSPoseInverseTr->PostMultiply();

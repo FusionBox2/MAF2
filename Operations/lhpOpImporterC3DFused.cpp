@@ -141,8 +141,8 @@ void lhpOpImporterC3DFused::OpRun()
   }
   else if (!m_TestMode)
   {
-    m_Source = (mafVME*)m_Input;
-    m_SourceName = m_Input->GetName();
+    m_Source = (mafVME*)GetInput();
+    m_SourceName = GetInput()->GetName();
 
     m_Gui = new mafGUI(this);
     m_Gui->SetListener(this);
@@ -675,9 +675,9 @@ void lhpOpImporterC3DFused::OpDo()
 //----------------------------------------------------------------------------
 {
   for (auto p : m_Imported)
-    p->ReparentTo(m_Input->GetRoot());
+    p->ReparentTo(GetInput()->GetRoot());
   for (auto p : m_Registered)
-    p->ReparentTo(m_Input->GetRoot());
+    p->ReparentTo(GetInput()->GetRoot());
   if (!m_CSVExported && !m_PscScriptFileName.empty())
   {
     m_CSVExported = true;

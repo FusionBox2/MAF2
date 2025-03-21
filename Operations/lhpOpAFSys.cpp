@@ -178,7 +178,7 @@ enum
 void lhpOpAFSys::OpRun()   
 //----------------------------------------------------------------------------
 {
-  mafString strBase(m_Input->GetName());
+  mafString strBase(GetInput()->GetName());
   mafNEW(m_RefSys);
   strBase += _R("_AF_Frame");
   mafString str = strBase;
@@ -186,9 +186,9 @@ void lhpOpAFSys::OpRun()
   unsigned i;
   do
   {
-    for(i = 0; i < m_Input->GetNumberOfChildren(); i++)
+    for(i = 0; i < GetInput()->GetNumberOfChildren(); i++)
     {
-      mafNode *node = m_Input->GetChild(i);
+      mafNode *node = GetInput()->GetChild(i);
       if(node->GetName() == str)
       {
         str = strBase + mafString::Format(_R("_%u"), ind);
@@ -197,11 +197,11 @@ void lhpOpAFSys::OpRun()
       }
     }
   }
-  while(i < m_Input->GetNumberOfChildren() && ind != UINT_MAX);
+  while(i < GetInput()->GetNumberOfChildren() && ind != UINT_MAX);
   m_RefSys->SetName(str);
   for(unsigned nm = 0; nm < m_predefinedScripts.size(); nm++)
   {
-    if(stricmp(m_predefinedScripts[nm].m_Name.GetCStr(), m_Input->GetName().GetCStr()) == 0)
+    if(stricmp(m_predefinedScripts[nm].m_Name.GetCStr(), GetInput()->GetName().GetCStr()) == 0)
     {
       m_Radio = nm;
       m_RefSys->SetScriptText(m_predefinedScripts[m_Radio].m_Script);
@@ -338,7 +338,7 @@ void lhpOpAFSys::OpDo()
   wxBusyInfo wait("Please wait, working...");
 
   assert(m_RefSys);
-  m_RefSys->ReparentTo(m_Input);
+  m_RefSys->ReparentTo(GetInput());
   m_RefSys->SetScaleFactor(100.0);
   m_RefSys->SetActive(1);
 }

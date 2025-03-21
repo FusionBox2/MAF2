@@ -87,7 +87,7 @@ void mafOpCreateHyperboloid::OpDo()
 	
 
 	
-	m_Hyperboloid->ReparentTo(m_Input);
+	m_Hyperboloid->ReparentTo(GetInput());
 	
 
 	

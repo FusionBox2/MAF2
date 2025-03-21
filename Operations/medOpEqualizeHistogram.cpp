@@ -107,7 +107,7 @@ enum U_OP_EQUALIZE_HISTOGRAM_ID
 void medOpEqualizeHistogram::OpRun()   
 //----------------------------------------------------------------------------
 {
-  m_VolumeInput = mafVMEVolumeGray::SafeDownCast(m_Input);
+  m_VolumeInput = mafVMEVolumeGray::SafeDownCast(GetInput());
 
   vtkStructuredPoints *sp = vtkStructuredPoints::SafeDownCast(m_VolumeInput->GetOutput()->GetVTKData());
   //vtkImageData *im = vtkImageData::SafeDownCast(m_VolumeInput->GetOutput()->GetVTKData());
@@ -140,7 +140,7 @@ void medOpEqualizeHistogram::OpRun()
   mafString name = m_VolumeInput->GetName();
   name+=_R(" - Equalized Histogram");
   m_VolumeOutput->SetName(name);
-  m_VolumeOutput->ReparentTo(m_Input);
+  m_VolumeOutput->ReparentTo(GetInput());
   m_VolumeOutput->Update();
 
   CreateGui();
@@ -251,7 +251,7 @@ void medOpEqualizeHistogram::OpDo()
 {
   if (m_VolumeOutput != NULL)
   {
-    m_VolumeOutput->ReparentTo(m_Input);
+    m_VolumeOutput->ReparentTo(GetInput());
   }
 }
 //----------------------------------------------------------------------------

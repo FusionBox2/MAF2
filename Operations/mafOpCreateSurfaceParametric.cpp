@@ -76,5 +76,5 @@ void mafOpCreateSurfaceParametric::OpRun()
 void mafOpCreateSurfaceParametric::OpDo()
 //----------------------------------------------------------------------------
 {
-  m_SurfaceParametric->ReparentTo(m_Input);
+  m_SurfaceParametric->ReparentTo(GetInput());
 }

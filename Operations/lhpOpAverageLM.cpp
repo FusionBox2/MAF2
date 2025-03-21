@@ -92,7 +92,7 @@ bool lhpOpAverageLM::Accept(mafNode* vme)
 void lhpOpAverageLM::OpRun()   
 //----------------------------------------------------------------------------
 {
-  m_LimbCloud     = (mafVMELandmarkCloud *)m_Input;
+  m_LimbCloud     = (mafVMELandmarkCloud *)GetInput();
   //CreateGui();
   {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);} 
 }

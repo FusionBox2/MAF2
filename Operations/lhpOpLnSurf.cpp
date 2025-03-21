@@ -218,11 +218,11 @@ void lhpOpLnSurf::OpDo()
   //modified by Stefano. 18-9-2003
   wxBusyInfo wait("Please wait, working...");
 
-  for(int i=0; i < m_Input->GetNumberOfChildren(); i++)
+  for(int i=0; i < GetInput()->GetNumberOfChildren(); i++)
   {
-    if(m_Input->GetChild(i)->IsMAFType(mafVMELandmarkCloud)) 
+    if(GetInput()->GetChild(i)->IsMAFType(mafVMELandmarkCloud)) 
     {
-      mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(m_Input->GetChild(i));
+      mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(GetInput()->GetChild(i));
       unsigned            from   = 0;
       bool                tendon = true;
       bool                OriIns = (cloudCounter < 2);
@@ -300,11 +300,11 @@ void lhpOpLnSurf::OpDo()
     mafTimeStamp t;
     mafString     muscnm(_R("MscFbr_"));
     mafString     tendnm(_R("TndFbr_"));
-    t = ((mafVME *)m_Input)->GetTimeStamp();
+    t = ((mafVME *)GetInput())->GetTimeStamp();
     mafNEW(m_Muscles);
     mafNEW(m_Tendons);
-    muscnm += m_Input->GetName();
-    tendnm += m_Input->GetName();
+    muscnm += GetInput()->GetName();
+    tendnm += GetInput()->GetName();
     m_Muscles->SetName(muscnm);
     m_Muscles->SetData(musc,t);
     m_Tendons->SetName(tendnm);
@@ -317,8 +317,8 @@ void lhpOpLnSurf::OpDo()
     m_Muscles->GetTagArray()->SetTag(tag_Nature);
     m_Tendons->GetTagArray()->SetTag(tag_Nature);
 
-    m_Muscles->ReparentTo(m_Input);
-    m_Tendons->ReparentTo(m_Input);
+    m_Muscles->ReparentTo(GetInput());
+    m_Tendons->ReparentTo(GetInput());
     //{mafEvent evUnq(this,VME_ADD,m_Muscles); InvokeEvent(evUnq);}
     //{mafEvent evUnq(this,VME_ADD,m_Tendons); InvokeEvent(evUnq);}
   }
@@ -326,9 +326,9 @@ void lhpOpLnSurf::OpDo()
   {
     mafTimeStamp t;
     mafString     sfnm(_R("Surf_"));
-    t = ((mafVME *)m_Input)->GetTimeStamp();
+    t = ((mafVME *)GetInput())->GetTimeStamp();
     mafNEW(m_Surface);
-    sfnm += m_Input->GetName();
+    sfnm += GetInput()->GetName();
     m_Surface->SetName(sfnm);
     m_Surface->SetData(surf, t);
 
@@ -338,7 +338,7 @@ void lhpOpLnSurf::OpDo()
 
     m_Surface->GetTagArray()->SetTag(tag_Nature);
 
-    m_Surface->ReparentTo(m_Input);
+    m_Surface->ReparentTo(GetInput());
     //{mafEvent evUnq(this,VME_ADD,m_Surface); InvokeEvent(evUnq);}
   }
   musc->Delete();

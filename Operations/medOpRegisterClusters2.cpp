@@ -150,8 +150,8 @@ enum
 void medOpRegisterClusters2::OpRun()   
 //----------------------------------------------------------------------------
 {
-  m_Source = (mafVMELandmarkCloud*)m_Input;
-  m_SourceName = m_Input->GetName();
+  m_Source = (mafVMELandmarkCloud*)GetInput();
+  m_SourceName = GetInput()->GetName();
 	
   if(!m_TestMode)
   {

@@ -78,7 +78,7 @@ void mafOpExporterMesh::OpRun()
   // Save the file
   mafString wildc = _R("lis files (*.lis)|*.lis|All Files (*.*)|*.*");
 
-  mafString name = m_Input->GetName();
+  mafString name = GetInput()->GetName();
   if (name.find_first_of(_R("\\/:?\"<>|")) != mafString::npos)
   {
     mafMessage(_M("Node name contains invalid chars.\nA node name can not contain chars like \\ / : * ? \" < > |"));
@@ -86,7 +86,7 @@ void mafOpExporterMesh::OpRun()
   }
   else
   {
-    m_FileDir += this->m_Input->GetName();
+    m_FileDir += this->GetInput()->GetName();
     m_FileDir += _R(".lis");
     m_File = mafGetSaveFile(m_FileDir, wildc);
   }
@@ -123,7 +123,7 @@ int mafOpExporterMesh::Write()
 	
   // Create the writer and pass the file name
   mafVMEMeshAnsysTextExporter *writer = new mafVMEMeshAnsysTextExporter;
-  writer->SetInput((vtkUnstructuredGrid*)((mafVME*)(m_Input))->GetOutput()->GetVTKData());
+  writer->SetInput((vtkUnstructuredGrid*)((mafVME*)(GetInput()))->GetOutput()->GetVTKData());
   writer->SetOutputNodesFileName(m_NodesFileName.GetCStr());
   writer->SetOutputElementsFileName(m_ElementsFileName.GetCStr());
   writer->SetOutputMaterialsFileName(m_MaterialsFileName.GetCStr());
