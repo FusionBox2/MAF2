@@ -540,8 +540,6 @@ IF (MAF_USE_ITK)
   medOpExporterLandmark.h
   medOpClassicICPRegistration.cpp
   medOpClassicICPRegistration.h
-  medOpImporterC3D.cpp
-  medOpImporterC3D.h
   medOpImporterGRFWS.cpp
   medOpImporterGRFWS.h
   medOpImporterAnalogWS.cpp

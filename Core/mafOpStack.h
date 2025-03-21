@@ -1,20 +1,5 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafOpStack
- Authors: Silvano Imboden
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafOpStack_H__
-#define __mafOpStack_H__
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
@@ -27,36 +12,22 @@ class mafOp;
 class MAF_EXPORT mafOpStack
 {
 public:
-				mafOpStack();
-			 ~mafOpStack(); 
+	mafOpStack();
+
+	~mafOpStack(); 
 	
 	/** Return true is the stack is empty */
-	bool 		IsEmpty();
+	bool IsEmpty() const;
 
   /** Insert op on top od the stack */
-	void 		Push(mafOp* op);
+	void Push(mafOp* op);
 	
   /** Return the op on the top of the stack, and remove it */
-	mafOp*	Pop();
+	mafOp* Pop();
 	
   /** Empty the stack and call delete on every inserted op */
-	void 		Clear();
+	void Clear();
 
 protected:
-	mafOp	 *m_Stack;
+	mafOp *m_Stack = nullptr;
 };
-#endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-

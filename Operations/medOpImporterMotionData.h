@@ -1,21 +1,4 @@
-/*=========================================================================
-
- Program: MAF2Medical
- Module: medOpImporterMotionData
- Authors: Fedor Moiseev, Simone Brazzale
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __medOpImporterMotionData_H__
-#define __medOpImporterMotionData_H__
+#pragma once
 
 //----------------------------------------------------------------------------
 // Include :
@@ -29,7 +12,6 @@
 #include "mafEvent.h"
 #include "mafVME.h"
 #include "mafTagArray.h"
-#include "ftk/Base/RegisteringPointer.h"
 
 //----------------------------------------------------------------------------
 // forward references :
@@ -53,10 +35,6 @@ public:
     m_Dict		= _R("");
     m_FileDir = mafGetApplicationDirectory() + _R("/Data/External/");
     m_DictDir = mafGetApplicationDirectory() + _R("/Config/Dictionary/");
-
-    m_Vme		= NULL;
-
-    m_DictionaryAvailable = 0;
   }
       //----------------------------------------------------------------------------
   ~medOpImporterMotionData( ) override
@@ -117,22 +95,24 @@ public:
         result = OP_RUN_OK;
       }
     }
-    {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
+    if (result == OP_RUN_OK)
+    {
+	    Import();
+    }
+    OpStop(result);
   }
   //----------------------------------------------------------------------------
   /** Execute the operation. */
-  void OpDo() override
+  void Import()
   //----------------------------------------------------------------------------
   {
-    // Modified by Simone Brazzale, 03/12/2010
-    assert(!m_Vme);
-
     if (!m_TestMode)
     {
       wxBusyInfo wait("Please wait, working...");
     }
 
-    mafAutoPointer<MotionReader> reader = MotionReader::New(); 
+    MotionReader* reader = nullptr;
+    mafNEW(reader);
     reader->SetFileName(m_File.GetCStr());
     reader->SetDictionaryFileName(m_Dict.GetCStr());
 
@@ -143,7 +123,7 @@ public:
 
     reader->Read();
 
-    m_Vme = reader.get();
+    m_Vme = reader;
 
     mafString path, name, ext;
     mafSplitPath(m_File,&path,&name,&ext);
@@ -157,8 +137,6 @@ public:
 
     // Must register in order to preserve output for do/undo operation (since it is a smart pointer)
     m_Output = m_Vme;
-    m_Vme->Register(m_Output);
-    {mafEvent evUnq(this,VME_ADD); evUnq.SetVme(m_Vme); InvokeEvent(evUnq);}
   }
   //----------------------------------------------------------------------------
   /** Set file name. */
@@ -196,24 +174,18 @@ public:
     return this->m_DictionaryAvailable;
   }
   //----------------------------------------------------------------------------
-  /** Get output. */
-  mafNode* GetOutput() override
-  //----------------------------------------------------------------------------
+  //** Makes the undo for the operation.
+  void OpDo() override
+    //----------------------------------------------------------------------------
   {
-    return this->m_Vme;
+    m_Vme->ReparentTo(m_Input);
   }
-  //----------------------------------------------------------------------------
+	//----------------------------------------------------------------------------
   //** Makes the undo for the operation.
   void OpUndo() override
   //----------------------------------------------------------------------------
   {
-    assert(m_Vme);
-    m_Output = NULL;
-    // Must unregister in order to delete completely all data (since it was a smart pointer)
-    m_Vme->UnRegister(m_Output);
-    m_Vme->ReparentTo(NULL);
-    // m_Vme->Delete(); // remove vme from the tree will kill it - do not use this if it has been previously registered
-    m_Vme = NULL;
+    m_Vme->ReparentTo(nullptr);
   }
   
 
@@ -224,8 +196,6 @@ protected:
 	mafString m_Dict;
   mafString m_PgdWildc;
   mafString m_DicWildc;
-	mafVME  *m_Vme; 						
-	int m_DictionaryAvailable;
+	mafVME  *m_Vme = nullptr;
+	int m_DictionaryAvailable = 0;
 };
-
-#endif

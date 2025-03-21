@@ -1,20 +1,5 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafOpSelect
- Authors: Silvano Imboden
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafOpSelect_H__
-#define __mafOpSelect_H__
 //----------------------------------------------------------------------------
 // includes :
 //----------------------------------------------------------------------------
@@ -43,14 +28,10 @@ public:
    ~mafOpSelect() override; 
     /** check if node can be input of the operation. */
     bool Accept(mafNode* vme) override;
-    /** set input node to the operation. */
-    void SetInput(mafNode* vme) override;
-    /** retrieve the input node. */
-    mafNode* GetInput() override {return m_OldNodeSelected.get();};
     /** selection of another node. */
     void SetNewSel(mafNode* vme);
     /** retrieve new selected node. */
-    mafNode* GetNewSel(){return m_NewNodeSelected.get();};
+    mafNode* GetNewSel(){return m_NewNodeSelected.get();}
     /** execute the operation.  */
     void OpDo() override;
     /** undo the operation. */
@@ -75,8 +56,6 @@ public:
     ~mafOpEdit() override; 
     /** Builds operation's interface. */
     void OpRun() override;
-    /** set input node to the operation. */
-    void     SetInput(mafNode* vme) override {m_Selection = vme;};
     /** check if the clipboard is empty.*/
     bool     ClipboardIsEmpty();
     /** clear the clipboard. */
@@ -188,4 +167,3 @@ public:
 protected:
     mafAutoPointer<mafNode> m_PastedVme;
 };
-#endif

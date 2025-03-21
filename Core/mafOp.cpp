@@ -1,28 +1,3 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafOp
- Authors: Silvano Imboden
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
 #include "mafOp.h"
 #include "mafDecl.h"
 #include "ftk/Base/RegisteringPointer.h"
@@ -34,42 +9,16 @@
 mafOp::mafOp(const mafString &label) : m_Label(label)
 //----------------------------------------------------------------------------
 {
-	m_Gui       = NULL;
-	m_Next      = NULL;
-	m_OpType    = OPTYPE_OP;
-	m_Canundo   = false;
-  m_Guih      = NULL;
-	m_Input     = NULL;
-  m_Output    = NULL;
-  m_SettingPanel = NULL;
-  m_Compatibility     = 0xFFFF;
-  m_InputPreserving = true;
-  m_CollaborateStatus = false;
-  m_TestMode = false;
 }
 //----------------------------------------------------------------------------
-mafOp::mafOp()
+mafOp::mafOp() : m_Label(_R("default op name"))
 //----------------------------------------------------------------------------
 {
-	m_Gui       = NULL;
-	m_Next      = NULL;
-	m_OpType    = OPTYPE_OP;
-	m_Canundo   = false;
-	m_Label     = _R("default op name");
-  m_Guih      = NULL;
-	m_Input     = NULL;
-  m_Output    = NULL;
-	m_Compatibility     = 0xFFFF;
-  m_InputPreserving = true;
-  m_CollaborateStatus = false;
-  m_SettingPanel = NULL;
 }
 //----------------------------------------------------------------------------
-mafOp::~mafOp()
+mafOp::~mafOp() = default;
 //----------------------------------------------------------------------------
-{
-  m_Output = NULL;
-}
+
 //----------------------------------------------------------------------------
 void mafOp::OnEvent(mafEventBase *maf_event)
 //----------------------------------------------------------------------------
@@ -127,26 +76,6 @@ bool mafOp::IsCompatible(long state)
   return (m_Compatibility & state) != 0;
 }
 
-/*
-//----------------------------------------------------------------------------
-bool mafOp::IsImporter()   
-//----------------------------------------------------------------------------
-{
-  return m_OpType == OPTYPE_IMPORTER;
-}
-//----------------------------------------------------------------------------
-bool mafOp::IsExporter()   
-//----------------------------------------------------------------------------
-{
-  return m_OpType == OPTYPE_EXPORTER;
-}
-//----------------------------------------------------------------------------
-bool mafOp::IsOp()   
-//----------------------------------------------------------------------------
-{
-  return m_OpType == OPTYPE_OP;
-}
-*/
 //----------------------------------------------------------------------------
 int mafOp::GetType()
 //----------------------------------------------------------------------------
@@ -176,8 +105,8 @@ void mafOp::HideGui()
     return;
   {mafEvent evUnq(this,OP_HIDE_GUI); evUnq.SetWin(m_Guih); InvokeEvent(evUnq);}
   delete m_Guih;
-  m_Guih = NULL;
-  m_Gui = NULL;
+  m_Guih = nullptr;
+  m_Gui = nullptr;
 }
 //----------------------------------------------------------------------------
 bool mafOp::OkEnabled()

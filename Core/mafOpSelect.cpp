@@ -1,29 +1,3 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafOpSelect
- Authors: Silvano Imboden
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-
 #include "mafOpSelect.h"
 #include "mafNode.h"
 #include "mafVMERoot.h"
@@ -44,14 +18,6 @@
 
 static mafAutoPointer<mafNode> m_Clipboard = NULL;
 int  mafOpEdit::m_NumOperations(0); 
-
-mafCxxTypeMacro(mafOpPaste)
-mafCxxTypeMacro(mafOpDelete)
-mafCxxTypeMacro(mafOpCut)
-mafCxxTypeMacro(mafOpCopy)
-mafCxxTypeMacro(mafOpEdit)
-mafCxxTypeMacro(mafOpSelect)
-
 
 //////////////////
 // mafOpSelect ://
@@ -86,12 +52,6 @@ bool mafOpSelect::Accept(mafNode* vme)
   return true;
 }
 //----------------------------------------------------------------------------
-void mafOpSelect::SetInput(mafNode* vme)   
-//----------------------------------------------------------------------------
-{
-  m_OldNodeSelected = vme;
-}
-//----------------------------------------------------------------------------
 void mafOpSelect::SetNewSel(mafNode* vme)  
 //----------------------------------------------------------------------------
 {
@@ -101,6 +61,8 @@ void mafOpSelect::SetNewSel(mafNode* vme)
 void mafOpSelect::OpDo()
 //----------------------------------------------------------------------------
 {
+  if (m_OldNodeSelected == nullptr)
+    m_OldNodeSelected = m_Input;
   {mafEvent evUnq(this,VME_SELECTED); evUnq.SetVme(m_NewNodeSelected.get()); InvokeEvent(evUnq);}
 };
 //----------------------------------------------------------------------------
@@ -175,6 +137,8 @@ void mafOpEdit::SetClipboard(mafNode *node)
 void mafOpEdit::OpRun()
 //----------------------------------------------------------------------------
 {
+  if (m_Selection == nullptr)
+    m_Selection = m_Input;
   OpStop(OP_RUN_OK);
 }
 
