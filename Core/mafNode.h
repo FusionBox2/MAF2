@@ -1,20 +1,5 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafNode
- Authors: Marco Petrone, Gianluigi Crimi
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafNode_h
-#define __mafNode_h
 //----------------------------------------------------------------------------
 // includes :
 //----------------------------------------------------------------------------
@@ -96,6 +81,11 @@ class MAF_EXPORT mafNode : public mafReferenceCounted, public mafEventSource, pu
 {
 public:
   mafTypeMacroN(mafNode);
+
+  enum
+  {
+	  INVALID_ID = -1
+  };
 
   static mafNode* Create(const char* NodeType);
   /** print a dump of this object */
@@ -243,27 +233,27 @@ public:
   /**
     Find a node in all the subtrees, searching recursively into sub nodes.
     Return true if found. */
-  bool IsInTree(mafNode *a);
+  bool IsInTree(mafNode *a) const;
 
   /** Return the root of the tree this node owns to. */
   mafNode *GetRoot();
 
-  bool IsEmpty() const {return GetNumberOfChildren()==0;}
+  bool IsEmpty() const;
 
   /** Valid VMEs have m_ID >= 0. The root has m_Id = 0, other VMEs have m_Id > 0.*/
   bool IsValid() {return m_Id >= 0;};
 
   /** Return the number of children of this node 
         If only visible is true return the number visible to traverse nodes */
-  unsigned long GetNumberOfChildren() const ;
+  size_t GetNumberOfChildren() const ;
   
   /** Return the number of children of this node 
         If only visible is true return the number visible to traverse nodes */
-  unsigned long GetNumberOfChildren(bool onlyVisible);
+  size_t GetNumberOfChildren(bool onlyVisible);
   
   /**
   Return the pointer to the parent node (if present)*/
-  mafNode *GetParent() const {return m_Parent;};
+  mafNode *GetParent() const {return m_Parent;}
 
   /**
     Remove recursively all nodes from this tree, forcing all subnodes
@@ -357,7 +347,7 @@ public:
   void RemoveLink(const mafString& name);
 
   /** return the number of links stored in this Node */
-  unsigned GetNumberOfLinks() {return m_Links.size();}
+  size_t GetNumberOfLinks() {return m_Links.size();}
 
   /** remove all links */
   void RemoveAllLinks();
@@ -457,18 +447,18 @@ protected:
 
 
   mafChildrenVector m_Children;     ///< list of children
-  mafNode           *m_Parent;      ///< parent node
+  mafNode           *m_Parent = nullptr;      ///< parent node
 
   mafAttributesMap  m_Attributes;   ///< attributes attached to this node
 
   mafLinksMap       m_Links;        ///< links to other nodes in the tree
 
   mafString         m_Name;         ///< name of this node
-  mafID             m_Id;           ///< ID of this node
+  mafID             m_Id = INVALID_ID;           ///< ID of this node
 
-  bool m_VisibleToTraverse;         ///< enable/disable traversing visit of this node
-  bool m_Initialized;               ///< set true by Initialize()
-  bool m_DependsOnLinkedNode;       ///< enable/disable calculation of MTime considering links
+  bool m_VisibleToTraverse = true;         ///< enable/disable traversing visit of this node
+  bool m_Initialized = false;               ///< set true by Initialize()
+  bool m_DependsOnLinkedNode = false;       ///< enable/disable calculation of MTime considering links
 };
 
 namespace parser
@@ -497,5 +487,3 @@ namespace serializer
     node->Store(value);
   }
 }
-
-#endif
