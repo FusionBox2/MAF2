@@ -150,7 +150,9 @@ void medOpMakeVMETimevarying::OpUndo()
 //----------------------------------------------------------------------------
 {
   {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(GetOutput()); InvokeEvent(evUnq);}
-  mafDEL(m_CoreOpOutput);
+  if (GetOutput())
+    GetOutput()->Delete();
+  SetOutput(nullptr);
 }
 //----------------------------------------------------------------------------
 void medOpMakeVMETimevarying::CreateGui() 

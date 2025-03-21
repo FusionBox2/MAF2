@@ -163,7 +163,9 @@ lhpOpLMProj::lhpOpLMProj(bool internalproj, const mafString& label) : Superclass
 lhpOpLMProj::~lhpOpLMProj()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_CoreOpOutput);
+  if (GetOutput())
+    GetOutput()->Delete();
+  SetOutput(nullptr);
 }
 //----------------------------------------------------------------------------
 mafOp* lhpOpLMProj::Copy()
@@ -221,7 +223,11 @@ void lhpOpLMProj::OpDo()
   mafVMELandmarkCloud *newcloud;// = mafVMELandmarkCloud::New();
   mafString           ncname;
 
-	mafDEL(m_CoreOpOutput);
+	{
+		if (GetOutput())
+			GetOutput()->Delete();
+  	SetOutput(nullptr);
+	}
   stmps.clear();
   if(cloud->IsOpen())
   {

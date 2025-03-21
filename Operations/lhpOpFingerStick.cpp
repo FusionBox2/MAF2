@@ -225,7 +225,11 @@ lhpOpFingerStick::lhpOpFingerStick(const mafString& label) : Superclass(label), 
 lhpOpFingerStick::~lhpOpFingerStick( ) 
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_CoreOpOutput);
+	{
+    if (GetOutput())
+      GetOutput()->Delete();
+    SetOutput(nullptr);
+  }
   vtkDEL(m_Registered);
   vtkDEL(m_pointsSource);
   vtkDEL(m_pointsTarget);
@@ -524,7 +528,11 @@ void lhpOpFingerStick::OpDo()
   wxBusyInfo wait("Please wait, working...");
 
 
-  mafDEL(m_CoreOpOutput);
+	{
+    if (GetOutput())
+      GetOutput()->Delete();
+    SetOutput(nullptr);
+  }
   if(m_BallsCalibration == NULL)
   {
     mafVME *parent = m_PalpatorCalibration->GetParent();

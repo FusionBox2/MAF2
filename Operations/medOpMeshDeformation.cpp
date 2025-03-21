@@ -150,7 +150,11 @@ medOpMeshDeformation::~medOpMeshDeformation()
   m_OriginalCurves = NULL;
   m_CurvesCorrespondence = NULL;
 
-  mafDEL(m_CoreOpOutput);
+	{
+		if (GetOutput())
+			GetOutput()->Delete();
+  	SetOutput(nullptr);
+	}
 }
 //----------------------------------------------------------------------------
 bool medOpMeshDeformation::Accept(mafNode *node)
@@ -219,7 +223,11 @@ void medOpMeshDeformation::OpUndo()
   if (GetOutput() != nullptr)
   {
     GetOutput()->ReparentTo(nullptr);
-    mafDEL(m_CoreOpOutput);
+	  {
+      if (GetOutput())
+        GetOutput()->Delete();
+      SetOutput(nullptr);
+    }
   }
 
   mafVME** pCVMEs[2] = { m_OriginalCurves, m_DeformedCurves };
@@ -1469,7 +1477,11 @@ void medOpMeshDeformation::OnEvent(mafEventBase *maf_event)
   surface->SetName(mafString::Format(_R("Deformed ")) + GetInput()->GetName());
   surface->SetData(m_Meshes[1]->pPoly, 0, mafVMEGeneric::MAF_VME_REFERENCE_DATA);
 
-  mafDEL(m_CoreOpOutput);
+	{
+    if (GetOutput())
+      GetOutput()->Delete();
+    SetOutput(nullptr);
+  }
   SetOutput(surface);
 
   //check, if we need to save also curves

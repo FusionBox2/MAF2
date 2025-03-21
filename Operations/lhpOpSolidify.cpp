@@ -1175,7 +1175,9 @@ lhpOpSolidify::lhpOpSolidify(const mafString& label) : Superclass(label)
 lhpOpSolidify::~lhpOpSolidify()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_CoreOpOutput);
+  if (GetOutput())
+    GetOutput()->Delete();
+  SetOutput(nullptr);
 }
 //----------------------------------------------------------------------------
 mafOp* lhpOpSolidify::Copy()

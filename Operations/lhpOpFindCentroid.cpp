@@ -55,7 +55,9 @@ lhpOpFindCentroid::lhpOpFindCentroid(const mafString& label) : Superclass(label)
 lhpOpFindCentroid::~lhpOpFindCentroid( ) 
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_CoreOpOutput);
+  if (GetOutput())
+    GetOutput()->Delete();
+  SetOutput(nullptr);
 }
 //----------------------------------------------------------------------------
 mafOp* lhpOpFindCentroid::Copy()   
