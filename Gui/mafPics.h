@@ -1,24 +1,14 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafPics
- Authors: Silvano Imboden
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafPics_H__
-#define __mafPics_H__
+#pragma once
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "mafGUICheckTree.h" // friend class
+#include "ftk/Base/String.h"
+
+#include "wx/wxprec.h"
+#ifndef WX_PRECOMP
+#include "wx/wx.h"
+#endif
+
 #include <wx/bitmap.h>
 #include <wx/image.h>
 #include <wx/icon.h>
@@ -116,10 +106,3 @@ protected:
 
 /* shotcut to add a vmepicture to the factory */
 #define mafADDVMEPIC(X) mafPictureFactory::GetPictureFactory()->AddVmePic( _R(#X) , X##_xpm )
-
-//----------------------------------------------------------------------------
-// the mafPics and mafVmePics singleton
-//----------------------------------------------------------------------------
-// extern "C" __declspec(dllexport) mafPictureFactory mafPics;
-// extern bool mafPics_Initialized;
-#endif // __mafPics_H__

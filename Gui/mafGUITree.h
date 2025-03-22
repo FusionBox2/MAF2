@@ -1,23 +1,11 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafGUITree
- Authors: Silvano Imboden
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
+#include "ftkConfigure.h"
 
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafGUITree_H__
-#define __mafGUITree_H__
-//----------------------------------------------------------------------------
-// Include:
-//----------------------------------------------------------------------------
+#include "wx/wxprec.h"
+#ifndef WX_PRECOMP
+#include "wx/wx.h"
+#endif
 #include <wx/laywin.h>
 #include <wx/image.h>
 #include <wx/imaglist.h>
@@ -95,8 +83,8 @@ item subtree, then Delete the item and remove the corresponding m_NodeTable entr
 class MAF_EXPORT mafGUITree: public mafGUINamedPanel, public mafEventSender
 {
 public:
-                 mafGUITree (wxWindow* parent, wxWindowID id=-1, bool CloseButton = false, bool HideTitle = false);
-                 ~mafGUITree() override;
+	mafGUITree (wxWindow* parent, wxWindowID id = wxID_ANY, bool CloseButton = false, bool HideTitle = false);
+	~mafGUITree() override;
 
   /** Clears all items in the tree. */
 	void Reset();
@@ -258,4 +246,3 @@ protected:
 
 DECLARE_EVENT_TABLE()
 }; // end of mafGUITree
-#endif
