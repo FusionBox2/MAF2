@@ -178,7 +178,7 @@ int mafNodeIterator::GoToNextNode()
             {
               mafErrorMacro("Stack Underflow");
               m_TraversalDone=1; //set the traversal flag
-              m_CurrentNode=NULL;
+              m_CurrentNode = nullptr;
               DoneExecute();
             }
             else if (idx<(parent->GetNumberOfChildren()-1))
@@ -214,13 +214,13 @@ int mafNodeIterator::GoToNextNode()
           {
             mafErrorMacro("Troubles: found an orphan node: stopping traversing immediately!");
             m_TraversalDone=1; //set the traversal flag
-            m_CurrentNode=NULL;
+            m_CurrentNode = nullptr;
             DoneExecute();
           }
         }
         else
         {
-          // Got to the last node (or Current==NULL)
+          // Got to the last node (or Current == nullptr)
           m_TraversalDone=1; //set the traversal flag
           DoneExecute();
         }
@@ -228,7 +228,7 @@ int mafNodeIterator::GoToNextNode()
       }
     default:
       mafErrorMacro("Unsupported Traversal Mode");
-      m_CurrentNode=NULL;
+      m_CurrentNode = nullptr;
       m_TraversalDone=1;
   }
 
@@ -260,7 +260,7 @@ int mafNodeIterator::GoToPreviousNode()
             {
               mafErrorMacro("Stack Underflow");
               m_TraversalDone=1;
-              m_CurrentNode=NULL;
+              m_CurrentNode = nullptr;
               DoneExecute();
             }
             else if (idx>0)
@@ -291,7 +291,7 @@ int mafNodeIterator::GoToPreviousNode()
           {
             mafErrorMacro("Find an orphan node: stopping traversing immediately!");
             m_TraversalDone=1;
-            m_CurrentNode=NULL;
+            m_CurrentNode = nullptr;
             DoneExecute();
           }
         }
@@ -336,7 +336,7 @@ int mafNodeIterator::GoToPreviousNode()
                 {
                   mafErrorMacro("Stack Underflow");
                   m_TraversalDone=1;
-                  m_CurrentNode=NULL;
+                  m_CurrentNode = nullptr;
                   DoneExecute();
                   return MAF_ERROR;
                 }
@@ -347,7 +347,7 @@ int mafNodeIterator::GoToPreviousNode()
             else
             {
               mafErrorMacro("Stack Underflow");
-              m_CurrentNode=NULL;
+              m_CurrentNode = nullptr;
               m_TraversalDone=1;
               return MAF_ERROR;
             }
@@ -379,7 +379,7 @@ int mafNodeIterator::GoToPreviousNode()
             {
               m_TraversalDone=1;
               mafErrorMacro("Troubles: found an orphan node: stopping traversing immediately!");
-              m_CurrentNode=NULL;
+              m_CurrentNode = nullptr;
               DoneExecute();
             }            
           }
@@ -451,7 +451,7 @@ int mafNodeIterator::GoToFirstNode()
       break;
     default:
       mafErrorMacro("Unsupported Traversal Mode");
-      m_CurrentNode=NULL;
+      m_CurrentNode = nullptr;
   }
 
   FirstExecute(); // Call the FirstNode-Callback
@@ -490,7 +490,7 @@ int mafNodeIterator::GoToLastNode()
       break;
     default:
       mafErrorMacro("Unsupported Traversal Mode");
-      m_CurrentNode=NULL;
+      m_CurrentNode = nullptr;
   }
 
   LastExecute(); // Call the LastNode-callbacks

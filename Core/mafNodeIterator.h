@@ -31,13 +31,13 @@ public:
   mafNode * GetCurrentNode() {return m_CurrentNode;}
 
   /**  Shortcut to traverse the tree*/
-  mafNode * GetFirstNode() {this->GoToFirstNode(); return (m_TraversalDone)?NULL:this->GetCurrentNode();}
+  mafNode * GetFirstNode() {this->GoToFirstNode(); return (m_TraversalDone)?nullptr:this->GetCurrentNode();}
   /**  Shortcut to traverse the tree*/
-  mafNode * GetLastNode() {this->GoToLastNode(); return (m_TraversalDone)?NULL:this->GetCurrentNode();}
+  mafNode * GetLastNode() {this->GoToLastNode(); return (m_TraversalDone)?nullptr:this->GetCurrentNode();}
   /**  Shortcut to traverse the tree*/
-  mafNode * GetNextNode() {this->GoToNextNode(); return (m_TraversalDone)?NULL:this->GetCurrentNode();}
+  mafNode * GetNextNode() {this->GoToNextNode(); return (m_TraversalDone)?nullptr:this->GetCurrentNode();}
   /**  Shortcut to traverse the tree*/
-  mafNode * GetPreviousNode() {this->GoToPreviousNode(); return (m_TraversalDone)?NULL:this->GetCurrentNode();}
+  mafNode * GetPreviousNode() {this->GoToPreviousNode(); return (m_TraversalDone)?nullptr:this->GetCurrentNode();}
 
   /**
     Return true if the VME is visible. This function can be overridden to implement
