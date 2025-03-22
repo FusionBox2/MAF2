@@ -107,7 +107,7 @@ public:
   bool NodeHasChildren(intptr_t node_id);
 
   /** Return the parent id of the node. Add by Mucci 19/09/2007*/
-  long GetNodeParent(intptr_t node_id);
+  intptr_t GetNodeParent(intptr_t node_id);
   
 	/** Move a node, and its subtree. */
 	bool SetNodeParent(intptr_t node_id, intptr_t parent_id );

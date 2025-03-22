@@ -267,7 +267,7 @@ bool mafGUITree::NodeHasChildren(intptr_t node_id)
   return m_NodeTree->ItemHasChildren(item);
 }
 //----------------------------------------------------------------------------
-long mafGUITree::GetNodeParent(intptr_t node_id)
+intptr_t mafGUITree::GetNodeParent(intptr_t node_id)
 //----------------------------------------------------------------------------
 {
   if( !NodeExist(node_id))
