@@ -173,7 +173,7 @@ protected:
   vtkDoubleArray *m_SurfaceScalars; ///< Data Array representing the scalar data of the polydata.
   vtkPoints *m_PickedPoint; ///< Represent the last picked point on the linked surface
 
-  mafInteractorPicker *m_PickScalar; ///< Picker interactor used to position the time varying scalar value on the surface
+  std::shared_ptr<mafInteractorPicker> m_PickScalar; ///< Picker interactor used to position the time varying scalar value on the surface
   mafInteractor *m_OldBehavior; ///< pointer to the old behavior of the surface.
 
   bool m_SuggestUser; ///< This flag is to pop up a dialog (only the first time) to explain the work flow to add a new scalar to a particular position af the linked surface

@@ -59,14 +59,12 @@ mafInteractorPER::mafInteractorPER()
   m_FlyToFlag       = false;
   m_StartButton     = -1;
 
-  m_CameraBehavior  = mafInteractor6DOFCameraMove::New(); // allocate camera behavior
-  m_CameraBehavior->Register(this);
+  m_CameraBehavior  = mafInteractor6DOFCameraMove::NewSPtr(); // allocate camera behavior
   m_CameraBehavior->SetStartButton(MAF_LEFT_BUTTON); // any button
   SetModeToSingleButton();
   m_FirstTime = 0;
 
-  m_CameraMouseBehavior = mafInteractorCameraMove::New(); // allocate mouse camera behavior
-  m_CameraMouseBehavior->Register(this);
+  m_CameraMouseBehavior = mafInteractorCameraMove::NewSPtr(); // allocate mouse camera behavior
   m_CameraMouseBehavior->SetStartButton(-1);
 }
 
@@ -74,8 +72,8 @@ mafInteractorPER::mafInteractorPER()
 mafInteractorPER::~mafInteractorPER()
 //------------------------------------------------------------------------------
 {
-  mafDEL(m_CameraBehavior);
-  mafDEL(m_CameraMouseBehavior);
+  m_CameraBehavior.reset();
+  m_CameraMouseBehavior.reset();
 }
 
 //----------------------------------------------------------------------------
@@ -663,17 +661,17 @@ void mafInteractorPER::FlyTo(mafEventInteraction *e,int numstep, double zoom)
 void mafInteractorPER::LinkCameraAdd(vtkCamera *cam)
 //----------------------------------------------------------------------------
 {
-  ((mafInteractorCameraMove *)m_CameraMouseBehavior)->AddLinkedCamera(cam);
+  mafInteractorCameraMove::StaticDownCast(m_CameraMouseBehavior)->AddLinkedCamera(cam);
 }
 //----------------------------------------------------------------------------
 void mafInteractorPER::LinkCameraRemove(vtkCamera *cam)
 //----------------------------------------------------------------------------
 {
-  ((mafInteractorCameraMove *)m_CameraMouseBehavior)->RemoveLinkedCamera(cam);
+  mafInteractorCameraMove::StaticDownCast(m_CameraMouseBehavior)->RemoveLinkedCamera(cam);
 }
 //----------------------------------------------------------------------------
 void mafInteractorPER::LinkCameraRemoveAll()
 //----------------------------------------------------------------------------
 {
-  ((mafInteractorCameraMove *)m_CameraMouseBehavior)->RemoveAllLinkedCamera();
+  mafInteractorCameraMove::StaticDownCast(m_CameraMouseBehavior)->RemoveAllLinkedCamera();
 }

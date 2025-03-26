@@ -141,7 +141,7 @@ protected:
   mafString           m_Name;
   mafVMEGizmo        *m_VmeGizmo;     //<VME gizmo (this is used by medCurvilinearAbscisaHelper)
 
-  mafInteractorCompositorMouse *m_GizmoInteractor;
+  std::shared_ptr<mafInteractorCompositorMouse> m_GizmoInteractor;
   mafInteractorGenericMouse *m_LeftMouseInteractor;
     
   vtkSphereSource  *m_SphereSource;   //<sphere denoting the position  

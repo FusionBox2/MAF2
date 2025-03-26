@@ -107,14 +107,14 @@ enum MEASURE2D_ID
 void medOp2DMeasure::OpRun()   
 //----------------------------------------------------------------------------
 {
-  m_DistanceInteractor2D = medInteractor2DDistance::New();
-  {mafEvent evUnq(this,PER_PUSH); evUnq.SetMafObject(m_DistanceInteractor2D); InvokeEvent(evUnq);}
+  m_DistanceInteractor2D = medInteractor2DDistance::NewSPtr();
+  {mafEvent evUnq(this,PER_PUSH); evUnq.SetAgent(m_DistanceInteractor2D); InvokeEvent(evUnq);}
   m_DistanceInteractor2D->SetListener(this);
 
-	m_AngleInteractor2D = medInteractor2DAngle::New();
+	m_AngleInteractor2D = medInteractor2DAngle::NewSPtr();
 	//{mafEvent evUnq(this,PER_PUSH,(mafObject *)m_2DAngleInteractor); InvokeEvent(evUnq);}
 	//m_2DAngleInteractor->SetListener(this);
-  m_IndicatorInteractor2D = medInteractor2DIndicator::New();
+  m_IndicatorInteractor2D = medInteractor2DIndicator::NewSPtr();
   
   mafString measure[5] = {_L("points"), _L("lines"), _L("angle by lines"), _L("angle by points"), _L("indicator")};
   
@@ -198,7 +198,7 @@ void medOp2DMeasure::OnEvent(mafEventBase *maf_event)
 					if(m_MeasureType == 0 || m_MeasureType == 1)
 					{
 						{mafEvent evUnq(this,PER_POP); InvokeEvent(evUnq);}	
-						{mafEvent evUnq(this,PER_PUSH); evUnq.SetMafObject(m_DistanceInteractor2D); InvokeEvent(evUnq);}
+						{mafEvent evUnq(this,PER_PUSH); evUnq.SetAgent(m_DistanceInteractor2D); InvokeEvent(evUnq);}
 						m_DistanceInteractor2D->SetListener(this);
 
 						if(m_DistanceInteractor2D->SizeMeasureVector() != 0)
@@ -225,7 +225,7 @@ void medOp2DMeasure::OnEvent(mafEventBase *maf_event)
 					else if(m_MeasureType == 2 || m_MeasureType == 3)
 					{
 						{mafEvent evUnq(this,PER_POP); InvokeEvent(evUnq);}	
-						{mafEvent evUnq(this,PER_PUSH); evUnq.SetMafObject(m_AngleInteractor2D); InvokeEvent(evUnq);}
+						{mafEvent evUnq(this,PER_PUSH); evUnq.SetAgent(m_AngleInteractor2D); InvokeEvent(evUnq);}
 						m_AngleInteractor2D->SetListener(this);
 
 						if(m_AngleInteractor2D->SizeMeasureVector() != 0)
@@ -252,7 +252,7 @@ void medOp2DMeasure::OnEvent(mafEventBase *maf_event)
           else if(m_MeasureType == 4)
           {
             {mafEvent evUnq(this,PER_POP); InvokeEvent(evUnq);}	
-						{mafEvent evUnq(this,PER_PUSH); evUnq.SetMafObject(m_IndicatorInteractor2D); InvokeEvent(evUnq);}
+						{mafEvent evUnq(this,PER_PUSH); evUnq.SetAgent(m_IndicatorInteractor2D); InvokeEvent(evUnq);}
 						m_IndicatorInteractor2D->SetListener(this);
             m_Gui->Enable(ID_PLOT_PROFILE, false);
             m_Gui->Update();
@@ -598,9 +598,9 @@ void medOp2DMeasure::OpStop(int result)
  
 	HideGui();
   {mafEvent evUnq(this,PER_POP); InvokeEvent(evUnq);}	
-  mafDEL(m_DistanceInteractor2D);
-	mafDEL(m_AngleInteractor2D);
-  mafDEL(m_IndicatorInteractor2D);
+  m_DistanceInteractor2D.reset();
+	m_AngleInteractor2D.reset();
+  m_IndicatorInteractor2D.reset();
 
 	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }

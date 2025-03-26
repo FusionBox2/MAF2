@@ -540,9 +540,9 @@ protected:
 	/** Enable debug facilities */
 	bool m_DebugMode;
 
-	medInteractorPicker *m_XSlicerPicker;
-	medInteractorPicker *m_YSlicerPicker;
-	medInteractorPicker *m_ZSlicerPicker;
+	std::shared_ptr<medInteractorPicker> m_XSlicerPicker;
+	std::shared_ptr<medInteractorPicker> m_YSlicerPicker;
+	std::shared_ptr<medInteractorPicker> m_ZSlicerPicker;
 
 	mafString m_ThicknessText[3];
 

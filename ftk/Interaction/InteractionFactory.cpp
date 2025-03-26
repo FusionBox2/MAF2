@@ -23,7 +23,7 @@ const char* InteractionFactory::GetAvatarName(int idx)
 {
   auto it = GetFactory().m_AvatarNames.begin();
   for (int i = 0; i < idx; i++)
-    it++;
+    ++it;
   return it->c_str();
 }
 
@@ -47,7 +47,7 @@ const char* InteractionFactory::GetDeviceName(int idx)
 {
   auto it = GetFactory().m_DeviceNames.begin();
   for (int i = 0; i < idx; i++)
-    it++;
+    ++it;
   return it->c_str();
 }
 

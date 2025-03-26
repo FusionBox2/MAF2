@@ -58,9 +58,9 @@ protected:
   /** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
   /*virtual*/ void OpStop(int result) override;
 
-  medInteractor2DDistance *m_DistanceInteractor2D;
-  medInteractor2DAngle *m_AngleInteractor2D;
-  medInteractor2DIndicator *m_IndicatorInteractor2D;
+  std::shared_ptr<medInteractor2DDistance> m_DistanceInteractor2D;
+  std::shared_ptr<medInteractor2DAngle> m_AngleInteractor2D;
+  std::shared_ptr<medInteractor2DIndicator> m_IndicatorInteractor2D;
 
   mafString m_DistanceMeasure;
   mafString m_AcuteAngle;

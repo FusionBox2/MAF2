@@ -123,7 +123,7 @@ protected:
 
   int m_ImageDim;
 
-  mafInteractorPicker           *m_Picker;
+  std::shared_ptr<mafInteractorPicker>           m_Picker;
   mafInteractor       *m_OldBehavior;
 
   mafVMEVolumeGray *m_VolumeOut;

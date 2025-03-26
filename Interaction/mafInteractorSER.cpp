@@ -56,7 +56,7 @@ void mafInteractorSER::InternalRestore(const mafStorageElement& node)
   {
     // create the object to be restored mannualy since mafAction is not in the factory
     mafString action_name = children[i](_R("Name")).As<mafString>();
-    mafAction *action = GetAction(action_name.GetCStr());
+    auto action = GetAction(action_name.GetCStr());
 
     if (action)
     {
@@ -67,36 +67,34 @@ void mafInteractorSER::InternalRestore(const mafStorageElement& node)
 }
 
 //------------------------------------------------------------------------------
-mafAction *mafInteractorSER::GetAction(const char *name)
+std::shared_ptr<mafAction> mafInteractorSER::GetAction(const char *name)
 //------------------------------------------------------------------------------
 {
   auto it=m_Actions.find(_R(name));
-  return (it!=m_Actions.end()?it->second.get() :nullptr);
+  return (it!=m_Actions.end()?it->second :nullptr);
 }
 
 //------------------------------------------------------------------------------
-void mafInteractorSER::GetActions(std::vector<mafAction *> &actions)
+void mafInteractorSER::GetActions(std::vector<std::shared_ptr<mafAction> > &actions)
 //------------------------------------------------------------------------------
 {
-  actions.clear();
-  actions.resize(m_Actions.size());
-  int i=0;
-  for (std::map<mafString,mafAutoPointer<mafAction> >::iterator it=m_Actions.begin();it!=m_Actions.end();it++,i++)
+  std::vector<std::shared_ptr<mafAction> > res;
+  res.reserve(m_Actions.size());
+  for (auto& entry : m_Actions)
   {
-    actions[i]=it->second.get();
+    res.push_back(entry.second);
   }
+  actions = std::move(res);
 }
 //------------------------------------------------------------------------------
 int mafInteractorSER::BindAction(const char *action,mafInteractor *agent)
 //------------------------------------------------------------------------------
 {
-  mafAction *a=GetAction(action);
-  if (a)
+  if (auto a = GetAction(action))
   {
     a->BindInteractor(agent);
     return 0;
   }
-  
   return -1;
 }
 
@@ -104,33 +102,31 @@ int mafInteractorSER::BindAction(const char *action,mafInteractor *agent)
 int mafInteractorSER::UnBindAction(const char *action,mafInteractor *agent)
 //------------------------------------------------------------------------------
 {
-  mafAction *a=GetAction(action);
-  if (a)
+  if (auto a = GetAction(action))
   {
     a->UnBindInteractor(agent);
     return 0;
   }
-
   return -1;
 }
 
 //------------------------------------------------------------------------------
-mafAction *mafInteractorSER::AddAction(const char *name, float priority, int type)
+std::shared_ptr<mafAction> mafInteractorSER::AddAction(const char *name, float priority, int type)
 //------------------------------------------------------------------------------
 {
-  if (mafAction *old_action=GetAction(name))
+  if (auto old_action = GetAction(name))
     return old_action;
 
-  mafAutoPointer<mafAction> action = mafAction::New();
+  auto action = mafAction::NewSPtr();
   action->SetName(_R(name));
   action->SetType(type);
-  AddAction(action.get(),priority);
+  AddAction(action, priority);
   
-  return action.get();
+  return action;
 }
 
 //------------------------------------------------------------------------------
-void mafInteractorSER::AddAction(mafAction *action, float priority)
+void mafInteractorSER::AddAction(std::shared_ptr<mafAction> action, float priority)
 //------------------------------------------------------------------------------
 {
   assert(action);
@@ -141,7 +137,7 @@ void mafInteractorSER::AddAction(mafAction *action, float priority)
   //action->PlugEventSource(this,MCH_CAMERA CameraUpdateChannel);
 }
 //------------------------------------------------------------------------------
-void mafInteractorSER::BindDeviceToAction(mafDevice *device,mafAction *action)
+void mafInteractorSER::BindDeviceToAction(std::shared_ptr<mafDevice> device,mafAction *action)
 //------------------------------------------------------------------------------
 {
   assert(device);
@@ -149,10 +145,10 @@ void mafInteractorSER::BindDeviceToAction(mafDevice *device,mafAction *action)
   action->BindDevice(device);
 }
 //------------------------------------------------------------------------------
-void mafInteractorSER::BindDeviceToAction(mafDevice *device,const char *action_name)
+void mafInteractorSER::BindDeviceToAction(std::shared_ptr<mafDevice> device,const char *action_name)
 //------------------------------------------------------------------------------
 {
-  BindDeviceToAction(device,GetAction(action_name));
+  BindDeviceToAction(device,GetAction(action_name).get());
 }
 //------------------------------------------------------------------------------
 void mafInteractorSER::UnBindDeviceFromAction(mafDevice *device,mafAction *action)
@@ -166,7 +162,7 @@ void mafInteractorSER::UnBindDeviceFromAction(mafDevice *device,mafAction *actio
 void mafInteractorSER::UnBindDeviceFromAction(mafDevice *device,const char *action_name)
 //------------------------------------------------------------------------------
 {
-  UnBindDeviceFromAction(device,GetAction(action_name));
+  UnBindDeviceFromAction(device,GetAction(action_name).get());
 }
 
 //------------------------------------------------------------------------------
@@ -177,36 +173,34 @@ void mafInteractorSER::UnBindDeviceFromAllActions(mafDevice *device)
   std::vector<mafAction *> device_actions;
   GetDeviceBindings(device,device_actions);
 
-  for (int i=0;i<device_actions.size();i++)
+  for (auto& action : device_actions)
   {
-    device_actions[i]->UnBindDevice(device);
+    action->UnBindDevice(device);
   }
 }
 
 //------------------------------------------------------------------------------
-void mafInteractorSER::GetDeviceBindings(mafDevice *device,std::vector<mafAction *> &actions)
+void mafInteractorSER::GetDeviceBindings(mafDevice *device, std::vector<mafAction *> &actions)
 //------------------------------------------------------------------------------
 {
   assert(device);
-  
-  actions.clear();
+
+  std::vector<mafAction*> res;
 
   std::vector<mafBaseEventHandler *> observers;
   device->GetObservers(MCH_INPUT,observers);
   
-  for (int i=0;i<observers.size();i++)
+  for (auto& observer : observers)
   {
-    mafAction *action;
-    try { action=dynamic_cast<mafAction *>(observers[i]); } catch (std::bad_cast) { action=NULL;}
-   
-    if (action)
+    if (auto action = dynamic_cast<mafAction *>(observer))
     {
       actions.push_back(action);
     }  
   }
+  actions = std::move(res);
 }
 
-mafInteractorSER* mafInteractorSER::Create(const char* InteractorSERType)
+std::shared_ptr<mafInteractorSER> mafInteractorSER::Create(const char* InteractorSERType)
 {
   if (auto object = InteractionFactory::CreateInteraction(InteractorSERType))
   {
@@ -214,8 +208,6 @@ mafInteractorSER* mafInteractorSER::Create(const char* InteractorSERType)
     {
       return interactorSER;
     }
-    delete object;
-    return nullptr;
   }
   return nullptr;
 }

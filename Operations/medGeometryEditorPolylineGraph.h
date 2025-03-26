@@ -163,7 +163,7 @@ protected:
   /** compute distance to polyline */
   double ComputeDistancePointLine(double lineP0[3],double lineP1[3],double point[3]);
 
-	mafInteractorPicker *m_Picker;
+	std::shared_ptr<mafInteractorPicker> m_Picker;
 	mafInteractor *m_OldBehavior;
 
 	medVMEPolylineEditor			*m_VMEPolylineEditor;

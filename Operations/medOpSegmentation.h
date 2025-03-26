@@ -376,9 +376,9 @@ protected:
   wxComboBox *m_OperationsList;         //<List if operations (not used)
   mafInteractor *m_OldBehavior;         //<Old volume behavior
   mafNode *m_OldVolumeParent;           //<Old volume parent
-  medDeviceButtonsPadMouseDialog* m_DialogMouse; //<Dialog mouse
-  mafDeviceManager *m_DeviceManager;    //<Device manager
-  mafInteractorSER *m_SER;              //<Static event router                        
+  std::shared_ptr<medDeviceButtonsPadMouseDialog> m_DialogMouse; //<Dialog mouse
+  std::shared_ptr<mafDeviceManager> m_DeviceManager;    //<Device manager
+  std::shared_ptr<mafInteractorSER> m_SER;              //<Static event router                        
   mafMatrix m_Matrix;                   //<Volume initial matrix
   mafVMEVolumeGray *m_LoadedVolume;     //<Loaded volume
   mafString m_LoadedVolumeName;        //<Loaded volume name
@@ -388,7 +388,7 @@ protected:
   mafVMEVolumeGray *m_OutputVolume;     //<Output volume
   mafVMESurface *m_OutputSurface;          //<Output Surface
   wxStaticText *m_SnippetsLabel;        //<Suggestion labels - GUI
-  medInteractorSegmentationPicker *m_SegmentationPicker; //<Segmentation picker for interaction
+  std::shared_ptr<medInteractorSegmentationPicker> m_SegmentationPicker; //<Segmentation picker for interaction
 
   //////////////////////////////////////////////////////////////////////////
   //Manual segmentation stuff
@@ -454,7 +454,7 @@ protected:
   std::vector<UndoRedoState> m_ManualUndoList;  //< Undo stack
   std::vector<UndoRedoState> m_ManualRedoList;  // Redo stack
   bool m_PickingStarted;                        //<Determine if picking has started
-  medInteractorPERBrushFeedback *m_ManualPER;   //<Dynamic event router
+  std::shared_ptr<medInteractorPERBrushFeedback> m_ManualPER;   //<Dynamic event router
   double m_CurrentBrushMoveEventCount;          //<Id for mouse move event raised by the brush
   vtkUnsignedCharArray *m_RealDrawnImage;       //<Real drawn image used in brush preview
   int m_LastMouseMovePointID;                   //<Last point id in mouse move event
@@ -540,7 +540,7 @@ protected:
   vtkTextMapper *m_AutomaticSliceTextMapper;    //<Text mapper for slice visualization
   vtkActor2D *m_AutomaticSliceTextActor;        //<Text mapper for slice visualization
 
-  medInteractorPERScalarInformation *m_AutomaticPER; //<Interactor for scalar value visualization on mouse move
+  std::shared_ptr<medInteractorPERScalarInformation> m_AutomaticPER; //<Interactor for scalar value visualization on mouse move
   //////////////////////////////////////////////////////////////////////////
 
   //////////////////////////////////////////////////////////////////////////

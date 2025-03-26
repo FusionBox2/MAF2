@@ -75,7 +75,7 @@ mafGizmoScaleIsotropic::mafGizmoScaleIsotropic(mafVME *input, mafBaseEventHandle
   m_CubeGizmo->SetMediator(GetListener());
 
   // assign isa to cube
-  m_CubeGizmo->SetBehavior(m_IsaComp); 
+  m_CubeGizmo->SetBehavior(m_IsaComp.get()); 
 
 
   SetAbsPose(m_InputVme->GetOutput()->GetAbsMatrix());
@@ -90,9 +90,9 @@ mafGizmoScaleIsotropic::mafGizmoScaleIsotropic(mafVME *input, mafBaseEventHandle
 mafGizmoScaleIsotropic::~mafGizmoScaleIsotropic() 
 //----------------------------------------------------------------------------
 {
-  m_CubeGizmo->SetBehavior(NULL);
+  m_CubeGizmo->SetBehavior(nullptr);
   vtkDEL(m_Cube);
-  mafDEL(m_IsaComp); 
+  m_IsaComp.reset(); 
 
 	m_CubeGizmo->ReparentTo(NULL);
 }
@@ -130,11 +130,11 @@ void mafGizmoScaleIsotropic::CreateISA()
 {
   
   // create isa compositor and assign behaviors to m_IsaGen ivar
-  mafNEW(m_IsaComp);
+  m_IsaComp = mafInteractorCompositorMouse::NewSPtr();
 
   // default behavior is activated by mouse left and is constrained to X axis,
   // default ref sys is input vme abs matrix
-  m_IsaGen = m_IsaComp->CreateBehavior(MOUSE_LEFT);
+  m_IsaGen = m_IsaComp->CreateBehavior(MOUSE_LEFT).get();
 
   m_IsaGen->SetVME(m_InputVme);
   m_IsaGen->GetTranslationConstraint()->SetConstraintModality(mafInteractorConstraint::FREE, mafInteractorConstraint::LOCK, mafInteractorConstraint::LOCK);

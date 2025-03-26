@@ -143,7 +143,7 @@ protected:
 	vtkMAFClipSurfaceBoundingBox	*m_ClipperBoundingBox;
   vtkGlyph3D      *m_Arrow;
 
-  mafInteractorCompositorMouse *m_IsaCompositor;
+  std::shared_ptr<mafInteractorCompositorMouse> m_IsaCompositor;
   mafInteractorGenericMouse    *m_IsaTranslate;
   mafInteractorGenericMouse    *m_IsaRotate;
 

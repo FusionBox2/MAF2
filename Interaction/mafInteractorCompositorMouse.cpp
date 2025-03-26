@@ -81,11 +81,11 @@ int mafInteractorCompositorMouse::StartInteraction(mafDeviceButtonsPadMouse *mou
 }
 
 //----------------------------------------------------------------------------
-mafInteractorGenericMouse *mafInteractorCompositorMouse::CreateBehavior(MMI_ACTIVATOR activator)
+std::shared_ptr<mafInteractorGenericMouse> mafInteractorCompositorMouse::CreateBehavior(MMI_ACTIVATOR activator)
 //----------------------------------------------------------------------------
 {
   // create the generic behavior and populate the map
-  mafInteractorGenericMouse *pISAG = mafInteractorGenericMouse::New();
+  auto pISAG = mafInteractorGenericMouse::NewSPtr();
   
   m_ActivatorMap[activator] = pISAG;
   switch (activator)

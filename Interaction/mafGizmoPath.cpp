@@ -56,8 +56,8 @@ mafGizmoPath::mafGizmoPath(mafNode* imputVme, mafBaseEventHandler *listener, con
 //----------------------------------------------------------------------------
 void mafGizmoPath::CreateInteractor()
 {
-  mafNEW(m_GizmoInteractor);
-  m_LeftMouseInteractor = m_GizmoInteractor->CreateBehavior(MOUSE_LEFT);
+  m_GizmoInteractor = mafInteractorCompositorMouse::NewSPtr();
+  m_LeftMouseInteractor = m_GizmoInteractor->CreateBehavior(MOUSE_LEFT).get();
   m_LeftMouseInteractor->SetListener(this);
   m_LeftMouseInteractor->SetVME(m_VmeGizmoPath);
   m_LeftMouseInteractor->GetTranslationConstraint()->GetRefSys()->SetTypeToLocal(m_InputVME);
@@ -90,7 +90,7 @@ void mafGizmoPath::Constructor(mafNode *imputVme, mafBaseEventHandler *listener,
 
 
   CreateInteractor();
-  m_VmeGizmoPath->SetBehavior(m_GizmoInteractor);
+  m_VmeGizmoPath->SetBehavior(m_GizmoInteractor.get());
 
   m_TextSidePosition = ID_LEFT_TEXT_SIDE;
 }
@@ -100,10 +100,10 @@ void mafGizmoPath::Destructor()
 {
   m_LineSource->Delete();
 
-  m_VmeGizmoPath->SetBehavior(NULL);
-  mafDEL(m_GizmoInteractor);
+  m_VmeGizmoPath->SetBehavior(nullptr);
+  m_GizmoInteractor.reset();
 
-  m_VmeGizmoPath->ReparentTo(NULL);
+  m_VmeGizmoPath->ReparentTo(nullptr);
   mafDEL(m_VmeGizmoPath);
 }
 //----------------------------------------------------------------------------
@@ -432,10 +432,10 @@ void mafGizmoPath::DestroyVMEGizmo()
 {
   assert(m_VmeGizmoPath != NULL);
 
-  m_VmeGizmoPath->SetBehavior(NULL);
-  mafDEL(m_GizmoInteractor);
+  m_VmeGizmoPath->SetBehavior(nullptr);
+  m_GizmoInteractor.reset();
 
-  m_VmeGizmoPath->ReparentTo(NULL);
+  m_VmeGizmoPath->ReparentTo(nullptr);
   mafDEL(m_VmeGizmoPath);
 }
 

@@ -106,7 +106,7 @@ protected:
 
   mafString           m_Name;
   mafVMEGizmo        *m_VmeGizmo;
-  mafInteractorCompositorMouse *m_GizmoInteractor;
+  std::shared_ptr<mafInteractorCompositorMouse> m_GizmoInteractor;
   mafInteractorGenericMouse *m_LeftMouseInteractor;
   
   vtkLineSource *m_LineSource;

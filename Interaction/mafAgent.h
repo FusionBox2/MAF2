@@ -1,32 +1,10 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafAgent
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __mafAgent_h
-#define __mafAgent_h
-
-#include "mafReferenceCounted.h"
+#include "ftk/Base/Object.h"
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"
 #include "ftk/Base/String.h"
 #include "mafEventBase.h"
-
-#ifdef MAF_EXPORTS
-#include "mafDllMacros.h"
-EXPORT_STL_VECTOR(MAF_EXPORT,mafEventSource*);
-#endif
 
 //----------------------------------------------------------------------------
 // forward declarations
@@ -46,10 +24,10 @@ class mafEventSource;
   This class support also bridging of events coming from VTK: a mafAgent can be set as observer of VTK events
   which are tunneled inside MAF events.
   @sa mafEventBase mafAgent mafAgentEventQueue mafAgentThreaded */
-class MAF_EXPORT mafAgent: public mafReferenceCounted, public mafBaseEventHandler, public mafEventSender
+class MAF_EXPORT mafAgent: public mafBaseEventHandler, public mafEventSender
 {
 public:
-  mafAbstractTypeMacro(mafAgent,mafReferenceCounted);
+  mafAbstractBaseTypeMacro(mafAgent);
   
   //------------------------------------------------------------------------------
   // Events
@@ -152,12 +130,12 @@ protected:
   void InvokeEvent(int id, mafID channel=MCH_UP,void *data=NULL);
 
   mafString       m_Name;
-  bool            m_Initialized; // flag set true by Initialize()
+  bool            m_Initialized = false; // flag set true by Initialize()
 
   std::vector<mafEventSource *> m_Channels;
 
 #ifdef MAF_USE_VTK
-  vtkCallbackCommand *m_EventCallbackCommand; ///< this object is used as connection to event sources
+  vtkCallbackCommand *m_EventCallbackCommand = nullptr; ///< this object is used as connection to event sources
 #endif 
 
 private:
@@ -165,6 +143,3 @@ private:
   void operator=(const mafAgent&);  // Not implemented.
 
 };
-
-#endif 
-

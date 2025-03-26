@@ -236,10 +236,10 @@ void mafOpRemoveCells::CreateOpDialog()
   m_Rwi->m_RenFront->ResetCamera(polydata->GetBounds());
   m_Rwi->m_RenFront->ResetCameraClippingRange(bounds);
 
-  mafNEW(m_SelectCellInteractor);
+  m_SelectCellInteractor = mafInteractorSelectCell::NewSPtr();
 
   m_SelectCellInteractor->SetListener(this);
-  GetGlobalMouse()->AddObserver(m_SelectCellInteractor, MCH_INPUT);
+  GetGlobalMouse()->AddObserver(m_SelectCellInteractor.get(), MCH_INPUT);
 
  
   wxPoint p = wxDefaultPosition;
@@ -323,9 +323,9 @@ void mafOpRemoveCells::CreateSurfacePipeline()
 void mafOpRemoveCells::DeleteOpDialog()
 //----------------------------------------------------------------------------
 {
-  GetGlobalMouse()->RemoveObserver(m_SelectCellInteractor);
+  GetGlobalMouse()->RemoveObserver(m_SelectCellInteractor.get());
 
-  mafDEL(m_SelectCellInteractor);
+  m_SelectCellInteractor.reset();
 
   cppDEL(m_Rwi); 
   cppDEL(m_Dialog);

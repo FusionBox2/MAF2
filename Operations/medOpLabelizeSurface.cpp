@@ -269,9 +269,9 @@ void medOpLabelizeSurface::CreateGizmos()
 void medOpLabelizeSurface::AttachInteraction()
 //----------------------------------------------------------------------------
 {
-	mafNEW(m_IsaCompositorWithoutGizmo);
+	m_IsaCompositorWithoutGizmo = mafInteractorCompositorMouse::NewSPtr();
 
-	m_IsaRotate = m_IsaCompositorWithoutGizmo->CreateBehavior(MOUSE_LEFT);
+	m_IsaRotate = m_IsaCompositorWithoutGizmo->CreateBehavior(MOUSE_LEFT).get();
 	m_IsaRotate->SetListener(this);
 	m_IsaRotate->SetVME(m_ImplicitPlaneGizmo);
 	m_IsaRotate->GetRotationConstraint()->GetRefSys()->SetTypeToView();
@@ -281,7 +281,7 @@ void medOpLabelizeSurface::AttachInteraction()
 	m_IsaRotate->GetRotationConstraint()->SetConstraintModality(mafInteractorConstraint::FREE, mafInteractorConstraint::FREE, mafInteractorConstraint::LOCK);
 	m_IsaRotate->EnableRotation(true);
 
-	m_IsaTranslate = m_IsaCompositorWithoutGizmo->CreateBehavior(MOUSE_MIDDLE);
+	m_IsaTranslate = m_IsaCompositorWithoutGizmo->CreateBehavior(MOUSE_MIDDLE).get();
 	m_IsaTranslate->SetListener(this);
 	m_IsaTranslate->SetVME(m_ImplicitPlaneGizmo);
 	m_IsaTranslate->GetTranslationConstraint()->GetRefSys()->SetTypeToView();
@@ -291,28 +291,28 @@ void medOpLabelizeSurface::AttachInteraction()
 	m_IsaTranslate->GetTranslationConstraint()->SetConstraintModality(mafInteractorConstraint::FREE, mafInteractorConstraint::FREE, mafInteractorConstraint::LOCK);
 	m_IsaTranslate->EnableTranslation(true);
 
-	m_IsaChangeArrowWithoutGizmo = m_IsaCompositorWithoutGizmo->CreateBehavior(MOUSE_LEFT_SHIFT);
+	m_IsaChangeArrowWithoutGizmo = m_IsaCompositorWithoutGizmo->CreateBehavior(MOUSE_LEFT_SHIFT).get();
 	m_IsaChangeArrowWithoutGizmo->SetListener(this);
 	m_IsaChangeArrowWithoutGizmo->SetVME(m_ImplicitPlaneGizmo);
 
-	m_IsaLabelizeWithoutGizmo = m_IsaCompositorWithoutGizmo->CreateBehavior(MOUSE_LEFT_CONTROL);
+	m_IsaLabelizeWithoutGizmo = m_IsaCompositorWithoutGizmo->CreateBehavior(MOUSE_LEFT_CONTROL).get();
 	m_IsaLabelizeWithoutGizmo->SetListener(this);
 	m_IsaLabelizeWithoutGizmo->SetVME(m_ImplicitPlaneGizmo);
 
-	mafNEW(m_IsaCompositorWithGizmo);
+	m_IsaCompositorWithGizmo = mafInteractorCompositorMouse::NewSPtr();
 
-	m_IsaChangeArrowWithGizmo = m_IsaCompositorWithGizmo->CreateBehavior(MOUSE_LEFT_SHIFT);
+	m_IsaChangeArrowWithGizmo = m_IsaCompositorWithGizmo->CreateBehavior(MOUSE_LEFT_SHIFT).get();
 	m_IsaChangeArrowWithGizmo->SetListener(this);
 	m_IsaChangeArrowWithGizmo->SetVME(m_ImplicitPlaneGizmo);
 
-	m_IsaLabelizeWithGizmo = m_IsaCompositorWithGizmo->CreateBehavior(MOUSE_LEFT_CONTROL);
+	m_IsaLabelizeWithGizmo = m_IsaCompositorWithGizmo->CreateBehavior(MOUSE_LEFT_CONTROL).get();
 	m_IsaLabelizeWithGizmo->SetListener(this);
 	m_IsaLabelizeWithGizmo->SetVME(m_ImplicitPlaneGizmo);
 
 	if(!m_UseGizmo)
-		m_ImplicitPlaneGizmo->SetBehavior(m_IsaCompositorWithoutGizmo);
+		m_ImplicitPlaneGizmo->SetBehavior(m_IsaCompositorWithoutGizmo.get());
 	else
-		m_ImplicitPlaneGizmo->SetBehavior(m_IsaCompositorWithGizmo);
+		m_ImplicitPlaneGizmo->SetBehavior(m_IsaCompositorWithGizmo.get());
 }
 //----------------------------------------------------------------------------
 void medOpLabelizeSurface::ShowClipPlane(bool show)
@@ -457,9 +457,9 @@ void medOpLabelizeSurface::OnEventThis(mafEventBase *maf_event)
 		case ID_USE_GIZMO:
 			{
 				if(m_IsaCompositorWithoutGizmo && !m_UseGizmo)
-					m_ImplicitPlaneGizmo->SetBehavior(m_IsaCompositorWithoutGizmo);
+					m_ImplicitPlaneGizmo->SetBehavior(m_IsaCompositorWithoutGizmo.get());
 				else if(m_IsaCompositorWithGizmo && m_UseGizmo)
-					m_ImplicitPlaneGizmo->SetBehavior(m_IsaCompositorWithGizmo);
+					m_ImplicitPlaneGizmo->SetBehavior(m_IsaCompositorWithGizmo.get());
 
 
 				ChangeGizmo();
@@ -610,8 +610,8 @@ void medOpLabelizeSurface::OpStop(int result)
 	vtkDEL(m_Arrow);
 	vtkDEL(m_ClipperPlane);
 
-	mafDEL(m_IsaCompositorWithoutGizmo);
-	mafDEL(m_IsaCompositorWithGizmo);
+	m_IsaCompositorWithoutGizmo.reset();
+	m_IsaCompositorWithGizmo.reset();
 
 	if(m_GizmoTranslate)
 		m_GizmoTranslate->Show(false);

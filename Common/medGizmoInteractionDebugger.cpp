@@ -70,8 +70,8 @@ void medGizmoInteractionDebugger::CreateInteractor()
 
   auto absMatrix = m_RefSysVME->GetOutput()->GetAbsMatrix();
 
-  mafNEW(m_GizmoInteractor);
-  m_LeftMouseInteractor = m_GizmoInteractor->CreateBehavior(MOUSE_LEFT);
+  m_GizmoInteractor = mafInteractorCompositorMouse::NewSPtr();
+  m_LeftMouseInteractor = m_GizmoInteractor->CreateBehavior(MOUSE_LEFT).get();
 
   m_LeftMouseInteractor->SetListener(this);
   m_LeftMouseInteractor->SetVME(m_InputVME);
@@ -81,7 +81,7 @@ void medGizmoInteractionDebugger::CreateInteractor()
   m_LeftMouseInteractor->GetTranslationConstraint()->SetConstraintModality(mafInteractorConstraint::FREE, mafInteractorConstraint::FREE, mafInteractorConstraint::LOCK);
   m_LeftMouseInteractor->EnableTranslation(true);    
 
-  m_VmeGizmo->SetBehavior(m_GizmoInteractor);
+  m_VmeGizmo->SetBehavior(m_GizmoInteractor.get());
 }
 
 void medGizmoInteractionDebugger::Constructor(mafNode *imputVme, mafBaseEventHandler *listener, const char* name, bool testMode)
@@ -107,10 +107,10 @@ void medGizmoInteractionDebugger::Destructor()
   m_PlaneSource->Delete();
   m_AppendPolyData->Delete();
 
-  m_VmeGizmo->SetBehavior(NULL);
-  mafDEL(m_GizmoInteractor);
+  m_VmeGizmo->SetBehavior(nullptr);
+  m_GizmoInteractor.reset();
 
-  m_VmeGizmo->ReparentTo(NULL);
+  m_VmeGizmo->ReparentTo(nullptr);
   mafDEL(m_VmeGizmo);
 
   cppDEL(m_CurvilinearAbscissaHelper);
@@ -242,10 +242,10 @@ void medGizmoInteractionDebugger::DestroyVMEGizmo()
 {
   assert(m_VmeGizmo != NULL);
 
-  m_VmeGizmo->SetBehavior(NULL);
-  mafDEL(m_GizmoInteractor);
+  m_VmeGizmo->SetBehavior(nullptr);
+  m_GizmoInteractor.reset();
 
-  m_VmeGizmo->ReparentTo(NULL);
+  m_VmeGizmo->ReparentTo(nullptr);
   mafDEL(m_VmeGizmo);
 }
 

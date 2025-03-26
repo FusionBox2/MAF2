@@ -30,8 +30,6 @@
 //------------------------------------------------------------------------------
 // Events
 //------------------------------------------------------------------------------
-MAF_ID_IMP(mafDeviceSet::DEVICE_ADD);
-MAF_ID_IMP(mafDeviceSet::DEVICE_REMOVE);
 MAF_ID_IMP(mafDeviceSet::DEVICE_ADDED);
 MAF_ID_IMP(mafDeviceSet::DEVICE_REMOVING);
 //MAF_ID_IMP(mafDeviceSet::MCH_DEVICE_SETUP);
@@ -61,9 +59,8 @@ int mafDeviceSet::InternalInitialize()
 {
   Superclass::InternalInitialize();
   m_DevicesMutex->lock();
-  for (std::list<mafDevice*>::iterator it=m_Devices.begin();it!=m_Devices.end();it++)
+  for (auto& device : m_Devices)
   {
-    mafDevice *device=*it;
     assert(device);
     if (device->StartUp())
     {
@@ -81,9 +78,8 @@ void mafDeviceSet::InternalShutdown()
 //------------------------------------------------------------------------------
 {
   m_DevicesMutex->lock();
-  for (std::list<mafDevice*>::iterator it=m_Devices.begin();it!=m_Devices.end();it++)
+  for (auto& device : m_Devices)
   {
-    mafDevice *device=*it;
     assert(device);
     device->Stop();
   }
@@ -101,7 +97,7 @@ void mafDeviceSet::InternalStore(mafStorageElementBuilder& node)
   {
     if (device->IsPersistent()) // do not store persistent devices
       continue;
-    node[_R("Device")].SetValue(device);
+    node[_R("Device")].SetValue(device.get());
   }
 }
 
@@ -119,7 +115,7 @@ void mafDeviceSet::InternalRestore(const mafStorageElement& node)
   auto devices = node[_R("Device")];
   for (size_t i = 0; i < devices.GetNumItems(); i++)
   {
-    if (mafDevice* device = devices[i].As<mafDevice>())
+    if (auto device = devices[i].As<mafDevice>())
     {
       AddDevice(device);
     }
@@ -143,29 +139,27 @@ int mafDeviceSet::GetNumberOfDevices()
 }
 
 //------------------------------------------------------------------------------
-void mafDeviceSet::AddDevice(mafDevice *device)
+void mafDeviceSet::AddDevice(std::shared_ptr<mafDevice> device)
 //------------------------------------------------------------------------------
 {
   assert (device);
   assert (!device->GetName().empty()); // all devices must have a name
   m_DevicesMutex->lock();
   m_Devices.push_back(device);
-  device->Register(this);
   device->SetListener(this);
   device->PlugEventSource(this,MCH_DOWN);
   m_DevicesMutex->unlock();
   
-  InvokeEvent(DEVICE_ADDED,MCH_UP,device);
+  InvokeEvent(DEVICE_ADDED,MCH_UP,device.get());
 }
 
 //------------------------------------------------------------------------------
-mafDevice *mafDeviceSet::GetDevice(const char *name)
+std::shared_ptr<mafDevice> mafDeviceSet::GetDevice(const char *name)
 //------------------------------------------------------------------------------
 {
   m_DevicesMutex->lock();
-  for (std::list<mafDevice*>::iterator it=m_Devices.begin();it!=m_Devices.end();it++)
+  for (auto& device : m_Devices)
   {
-    mafDevice *device=*it;
     if (device->GetName()==_R(name))
     {
       m_DevicesMutex->unlock();
@@ -174,17 +168,15 @@ mafDevice *mafDeviceSet::GetDevice(const char *name)
   }
 
   m_DevicesMutex->unlock();
-  return NULL;
+  return nullptr;
 }
 //------------------------------------------------------------------------------
-mafDevice *mafDeviceSet::GetDevice(mafID id)
+std::shared_ptr<mafDevice> mafDeviceSet::GetDevice(mafID id)
 //------------------------------------------------------------------------------
 {
-  m_DevicesMutex->lock();
-  std::list<mafDevice*>::iterator it;
-  for (it=m_Devices.begin();it!=m_Devices.end();it++)
+  std::unique_lock guard(*m_DevicesMutex);
+  for (auto& device : m_Devices)
   {
-    mafDevice *device=*it;
     if (device && device->GetID()==id)
     {
       m_DevicesMutex->unlock();
@@ -192,37 +184,28 @@ mafDevice *mafDeviceSet::GetDevice(mafID id)
     }
   }
 
-  for (it=m_Devices.begin();it!=m_Devices.end();it++)
+  for (auto& device : m_Devices)
   {
-    mafDevice *device=*it;
-    mafDeviceSet *device_set=mafDeviceSet::SafeDownCast(device);
-    if (device_set)
+    if (auto device_set=mafDeviceSet::SafeDownCast(device))
     {
-      mafDevice *sub_device=device_set->GetDevice(id);
-      if (sub_device)
+      if (auto sub_device=device_set->GetDevice(id))
       {
-        m_DevicesMutex->unlock();
         return sub_device;
       }
     }
   }
-
-  m_DevicesMutex->unlock();
-  return NULL;
+  return nullptr;
 }
 
 //------------------------------------------------------------------------------
-mafDevice *mafDeviceSet::GetDeviceByIndex(int idx)
+std::shared_ptr<mafDevice> mafDeviceSet::GetDeviceByIndex(int idx)
 //------------------------------------------------------------------------------
 {
-  m_DevicesMutex->lock();
-  std::list<mafDevice*>::iterator it=m_Devices.begin();
+  std::unique_lock guard(*m_DevicesMutex);
+  auto  it = m_Devices.begin();
   
-  for (int i=0;i<idx;i++) it++;
-  
-  mafDevice *device=*it;
-  m_DevicesMutex->unlock();
-  return device;
+  std::advance(it, idx);
+	return *it;
   
 }
 
@@ -230,9 +213,9 @@ mafDevice *mafDeviceSet::GetDeviceByIndex(int idx)
 int mafDeviceSet::RemoveDeviceByIndex(int idx, bool force)
 //------------------------------------------------------------------------------
 {
-  if (mafDevice *device=GetDeviceByIndex(idx))
+  if (auto device = GetDeviceByIndex(idx))
   {
-    return RemoveDevice(device,force);
+    return RemoveDevice(device.get(), force);
   }
 
   mafErrorMacro("Trying to delete an inexistent device");
@@ -243,9 +226,9 @@ int mafDeviceSet::RemoveDeviceByIndex(int idx, bool force)
 int mafDeviceSet::RemoveDevice(mafID id, bool force)
 //------------------------------------------------------------------------------
 {
-  if (mafDevice *device=GetDevice(id))
+  if (auto device = GetDevice(id))
   {
-    return RemoveDevice(device,force);
+    return RemoveDevice(device.get(), force);
   }
 
   mafErrorMacro("Trying to delete an inexistent device");
@@ -257,25 +240,24 @@ int mafDeviceSet::RemoveDevice(mafDevice *device, bool force)
 //------------------------------------------------------------------------------
 {
   assert(device);
-  std::list<mafDevice*>::iterator it;
-  for (it=m_Devices.begin();it!=m_Devices.end();it++)
+  auto it = m_Devices.begin();
+  for (it=m_Devices.begin();it!=m_Devices.end();++it)
   {
-    if (device==*it)
+    if (device==it->get())
       break;
   }
   
-  if (it!=m_Devices.end())
+  if (it != m_Devices.end())
   {
     // do not remove persistent devices if not forced
     if (device->IsPersistent()&&!force) 
       return false;
   
     InvokeEvent(DEVICE_REMOVING,MCH_UP,device);
-    m_DevicesMutex->lock();
+    std::unique_lock guard(*m_DevicesMutex);
     device->Stop();
     device->RemoveObserver(this);
     m_Devices.erase(it);
-    device->Delete();
     m_DevicesMutex->unlock();
     return MAF_OK;
   }
@@ -288,72 +270,37 @@ int mafDeviceSet::RemoveDevice(mafDevice *device, bool force)
 int mafDeviceSet::RemoveDevice(const char *name, bool force)
 //------------------------------------------------------------------------------
 {
-  mafDevice *device=GetDevice(name);
+  auto device = GetDevice(name);
 
-  return RemoveDevice(device,force);
+  return RemoveDevice(device.get(),force);
 }
 
 //------------------------------------------------------------------------------ 
 void mafDeviceSet::RemoveAllDevices(bool force)
 //------------------------------------------------------------------------------
 {
-  m_DevicesMutex->lock();
+  std::unique_lock guard(*m_DevicesMutex);
 
   // Remove All (non-persistent) devices
-  std::list<mafDevice*>::iterator it;
-  for (it=m_Devices.begin();it!=m_Devices.end();it++)
+  auto it = m_Devices.begin();
+  for (auto& device : m_Devices)
   {
-    mafDevice *device=*it;
-
     // do not remove persistent devices if not forced
     if (device->IsPersistent()&&!force)
       continue;
 
     device->Stop();
-    InvokeEvent(DEVICE_REMOVING,MCH_UP,device);
+    InvokeEvent(DEVICE_REMOVING,MCH_UP,device.get());
     
-    device->Delete();
-    *it=NULL;
+    device.reset();
   }
-  
-  // remove cleaned nodes
-  std::list<mafDevice*>::iterator next_it;
 
-  for (it=m_Devices.begin();it!=m_Devices.end();it=next_it)
-  {
-    next_it=it;
-    next_it++;
-
-    if (*it==NULL)
-      m_Devices.erase(it);
-  }
-  
-  m_DevicesMutex->unlock();
+  m_Devices.remove_if([](const std::shared_ptr<mafDevice>& p) {return !p; });
 }
 
 //------------------------------------------------------------------------------
 void mafDeviceSet::OnEvent(mafEventBase *event)
 //------------------------------------------------------------------------------
 {
-  assert(event&&event->GetSender());
-
-  int id = event->GetId();
-  int channel = event->GetChannel();
-
-  if (channel == MCH_UP)
-  {
-    if (id==DEVICE_ADD)
-    {
-      // this could create problems since there's no control on data to really be of the right type
-      AddDevice((mafDevice *)event->GetData());
-      return;
-    }
-    else if (id==DEVICE_REMOVE)
-    {
-      this->RemoveDevice((mafDevice *)event->GetData());
-      return;
-    }
-  }
-  
   Superclass::OnEvent(event);
 }

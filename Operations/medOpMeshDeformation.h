@@ -404,7 +404,7 @@ protected:
 #pragma region //Visualization stuff
   mafGUIDialog						*m_Dialog;     //<dialog - GUI
   mafRWI									*m_Rwi;	       //<rendering window
-  mmiVTKPicker					  *m_Picker;     //<picks VTK objects
+  std::shared_ptr<mmiVTKPicker>					  m_Picker;     //<picks VTK objects
 
   vtkSphereSource* m_Spheres[2];        //<this is the source for glyph of vertices
   double m_SphereRadius[2];             //<this is its radius

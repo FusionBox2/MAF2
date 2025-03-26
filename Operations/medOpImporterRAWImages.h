@@ -215,7 +215,7 @@ protected:
   mafGUIDialogPreview	*m_Dialog;
   mafGUI* m_GuiSlider;
 
-  medInteractorDICOMImporter *m_DicomInteractor;
+  std::shared_ptr<medInteractorDICOMImporter> m_DicomInteractor;
 
   mafVMEVolumeGray  *m_VolumeGray;
   mafVMEVolumeRGB   *m_VolumeRGB;

@@ -97,15 +97,15 @@ void mafGizmoSlice::CreateGizmoSlice(mafNode *imputVme, mafBaseEventHandler *lis
   m_VmeGizmo->SetName(m_Name);
   m_VmeGizmo->ReparentTo(imputVme);
 
-  mafNEW(m_GizmoBehavior);
-  m_MouseBH = m_GizmoBehavior->CreateBehavior(MOUSE_LEFT);
+  m_GizmoBehavior = mafInteractorCompositorMouse::NewSPtr();
+  m_MouseBH = m_GizmoBehavior->CreateBehavior(MOUSE_LEFT).get();
   m_MouseBH->SetListener(this);
   m_MouseBH->SetVME(m_VmeGizmo);
   m_MouseBH->GetTranslationConstraint()->GetRefSys()->SetTypeToLocal(m_InputVME);
   m_MouseBH->EnableTranslation(true);
   m_MouseBH->ResultMatrixConcatenationOn();
 
-  m_VmeGizmo->SetBehavior(m_GizmoBehavior);
+  m_VmeGizmo->SetBehavior(m_GizmoBehavior.get());
 
   vtkNEW(m_Point);
   m_Point->SetNumberOfPoints(1);
@@ -117,11 +117,11 @@ void mafGizmoSlice::SetGizmoEnableMoving(bool enable)
 {
   if(true == enable)
   {
-    m_VmeGizmo->SetBehavior(m_GizmoBehavior);
+    m_VmeGizmo->SetBehavior(m_GizmoBehavior.get());
   }
   else
   {
-    m_VmeGizmo->SetBehavior(NULL);
+    m_VmeGizmo->SetBehavior(nullptr);
   }
 }
 
@@ -129,10 +129,10 @@ void mafGizmoSlice::SetGizmoEnableMoving(bool enable)
 void mafGizmoSlice::DestroyGizmoSlice()
 //----------------------------------------------------------------------------
 {
-  m_VmeGizmo->SetBehavior(NULL);
-  mafDEL(m_GizmoBehavior);
+  m_VmeGizmo->SetBehavior(nullptr);
+  m_GizmoBehavior.reset();
 
-  m_VmeGizmo->ReparentTo(NULL);
+  m_VmeGizmo->ReparentTo(nullptr);
   mafDEL(m_VmeGizmo);
   vtkDEL(m_SnapArray);
   vtkDEL(m_Point);

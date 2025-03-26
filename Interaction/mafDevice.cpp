@@ -210,7 +210,7 @@ void mafDevice::InternalRestore(const mafStorageElement& node)
   }
 }
 
-mafDevice* mafDevice::Create(const char* DeviceType)
+std::shared_ptr<mafDevice>  mafDevice::Create(const char* DeviceType)
 {
   if (auto object = InteractionFactory::CreateInteraction(DeviceType))
   {
@@ -218,8 +218,6 @@ mafDevice* mafDevice::Create(const char* DeviceType)
     {
       return device;
     }
-    delete object;
-    return nullptr;
   }
   return nullptr;
 }

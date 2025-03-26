@@ -78,7 +78,7 @@ mafOpAddLandmark::~mafOpAddLandmark()
     mafDEL(m_LandmarkAdded[i]);
   }
 	m_LandmarkAdded.clear();
-  mafDEL(m_LandmarkPicker);
+  m_LandmarkPicker.reset();
 	if(m_CloudCreatedFlag) 
     mafDEL(m_Cloud);
 }
@@ -226,11 +226,11 @@ void mafOpAddLandmark::OpRun()
 			assert(false); 
 		}
 		// customize m_PickedVme behavior
-		mafNEW(m_LandmarkPicker);
+		m_LandmarkPicker = mafInteractorPicker::NewSPtr();
 		m_LandmarkPicker->SetListener(this);
 
 		m_OldBehavior = m_PickedVme->GetBehavior();
-		m_PickedVme->SetBehavior(m_LandmarkPicker);
+		m_PickedVme->SetBehavior(m_LandmarkPicker.get());
 
 		
 	}
@@ -435,7 +435,7 @@ void mafOpAddLandmark::OpStop(int result)
 		{mafEvent evUnq(this,OP_HIDE_GUI); evUnq.SetWin(m_GuiPanel); InvokeEvent(evUnq);}
 		cppDEL(m_Dict);
 		cppDEL(m_GuiPanel);
-    mafDEL(m_LandmarkPicker);
+    m_LandmarkPicker.reset();
     m_PickedVme->SetBehavior(m_OldBehavior);
 	}
 	else

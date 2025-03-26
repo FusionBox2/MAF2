@@ -585,7 +585,7 @@ void medOpImporterDicomOffis::Destroy()
 	//----------------------------------------------------------------------------
 {
 	if(m_DicomInteractor)
-		GetGlobalMouse()->RemoveObserver(m_DicomInteractor);
+		GetGlobalMouse()->RemoveObserver(m_DicomInteractor.get());
 
 	if(!this->m_TestMode) {
 		//		m_SeriesListbox->Clear();
@@ -658,7 +658,7 @@ void medOpImporterDicomOffis::Destroy()
 	vtkDEL(m_TextActor);
 
 	m_TagArray.reset();
-	mafDEL(m_DicomInteractor);
+	m_DicomInteractor.reset();
 
 	if(!this->m_TestMode)
 	{
@@ -3215,9 +3215,9 @@ void medOpImporterDicomOffis::CreateSliceVTKPipeline()
 
 	if(!this->m_TestMode)
 	{
-		mafNEW(m_DicomInteractor);
+		m_DicomInteractor = medInteractorDICOMImporter::NewSPtr();
 		m_DicomInteractor->SetListener(this);
-		GetGlobalMouse()->AddObserver(m_DicomInteractor, MCH_INPUT);
+		GetGlobalMouse()->AddObserver(m_DicomInteractor.get(), MCH_INPUT);
 	}
 }
 

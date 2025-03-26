@@ -78,9 +78,9 @@ public:
   /** Remove all vtkCamera to linked camera vector of the mouse camera interactor.*/
   void LinkCameraRemoveAll();
 
-  mafInteractor *GetCameraMouseInteractor() {return m_CameraMouseBehavior;};
+  mafInteractor *GetCameraMouseInteractor() {return m_CameraMouseBehavior.get();}
 
-  mafInteractor *GetCameraInteractor() {return m_CameraBehavior;};
+  mafInteractor *GetCameraInteractor() {return m_CameraBehavior.get();}
 
 protected:
   mafInteractorPER();
@@ -134,8 +134,8 @@ protected:
 
   int             m_Mode;
   int             m_FirstTime;
-  mafInteractor*  m_CameraBehavior; ///< the camera interactor
-  mafInteractor*  m_CameraMouseBehavior; ///< the mouse camera interactor
+  std::shared_ptr<mafInteractor>  m_CameraBehavior; ///< the camera interactor
+  std::shared_ptr<mafInteractor>  m_CameraMouseBehavior; ///< the mouse camera interactor
 
   class DeviceItem
   {

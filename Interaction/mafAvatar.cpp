@@ -359,7 +359,7 @@ void mafAvatar::OnEvent(mafEventBase *event)
   }
 }
 
-mafAvatar* mafAvatar::Create(const char* AvatarType)
+std::shared_ptr<mafAvatar> mafAvatar::Create(const char* AvatarType)
 {
   if (auto object = InteractionFactory::CreateInteraction(AvatarType))
   {
@@ -367,8 +367,6 @@ mafAvatar* mafAvatar::Create(const char* AvatarType)
     {
       return avatar;
     }
-    delete object;
-    return nullptr;
   }
   return nullptr;
 }

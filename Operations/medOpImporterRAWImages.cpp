@@ -247,9 +247,9 @@ void medOpImporterRAWImages::CreatePipeline()
 
   if(!this->m_TestMode)
   {
-    mafNEW(m_DicomInteractor);
+    m_DicomInteractor = medInteractorDICOMImporter::NewSPtr();
     m_DicomInteractor->SetListener(this);
-    GetGlobalMouse()->AddObserver(m_DicomInteractor, MCH_INPUT);
+    GetGlobalMouse()->AddObserver(m_DicomInteractor.get(), MCH_INPUT);
   }
 }
 //----------------------------------------------------------------------------
@@ -429,7 +429,7 @@ void medOpImporterRAWImages::OpStop(int result)
 //----------------------------------------------------------------------------
 {
   if(m_DicomInteractor)
-    GetGlobalMouse()->RemoveObserver(m_DicomInteractor);
+    GetGlobalMouse()->RemoveObserver(m_DicomInteractor.get());
 
   //cleanup +++++++++++++++++++++++++++++++++
   if(!this->m_TestMode)
@@ -447,7 +447,7 @@ void medOpImporterRAWImages::OpStop(int result)
   vtkDEL(m_Plane);
   vtkDEL(m_Mapper);
   vtkDEL(m_Texture);
-  mafDEL(m_DicomInteractor);
+  m_DicomInteractor.reset();
   vtkDEL(m_Actor);
   vtkDEL(m_GizmoPlane);
   vtkDEL(m_GizmoActor);

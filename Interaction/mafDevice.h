@@ -70,7 +70,7 @@ public:
 
   mafTypeMacro(mafDevice,mafAgentThreaded);
 
-  static mafDevice* Create(const char* DeviceType);
+  static std::shared_ptr<mafDevice> Create(const char* DeviceType);
   /**
    Get the ID for this device. This is usually set by mafDeviceSet */
   unsigned long GetID() {return m_ID;};
@@ -175,7 +175,7 @@ private:
 namespace parser
 {
   template<class Value>
-  mafDevice* Parse(const Value& value, parser::To<mafDevice>)
+  std::shared_ptr<mafDevice>  Parse(const Value& value, parser::To<mafDevice>)
   {
     mafString type_name = value(_R("Type")).template As<mafString>();
     if (auto device = mafDevice::Create(type_name.GetCStr()))

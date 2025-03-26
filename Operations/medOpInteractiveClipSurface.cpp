@@ -125,7 +125,7 @@ medOpInteractiveClipSurface::~medOpInteractiveClipSurface()
 	}
 	m_ResultPolyData.clear();
 
-  mafDEL(m_IsaCompositor);
+  m_IsaCompositor.reset();
 	mafDEL(m_ClippedVME);
   vtkDEL(m_ClipperPlane);
   vtkDEL(m_Clipper);
@@ -391,9 +391,9 @@ void medOpInteractiveClipSurface::OnUseGizmo()
 //----------------------------------------------------------------------------
 {
 	if(m_IsaCompositor && !m_UseGizmo)
-	m_ImplicitPlaneVMEGizmo->SetBehavior(m_IsaCompositor);
+	m_ImplicitPlaneVMEGizmo->SetBehavior(m_IsaCompositor.get());
 	else if(m_IsaCompositorWithArrowGizmo && m_UseGizmo)
-	m_ImplicitPlaneVMEGizmo->SetBehavior(m_IsaCompositorWithArrowGizmo);
+	m_ImplicitPlaneVMEGizmo->SetBehavior(m_IsaCompositorWithArrowGizmo.get());
 	
 	m_Gui->Enable(ID_CHOOSE_GIZMO, m_ClipModality == medOpInteractiveClipSurface::MODE_IMPLICIT_FUNCTION  && m_UseGizmo);    				
 	ChangeGizmo();
@@ -654,8 +654,8 @@ void medOpInteractiveClipSurface::OpStop(int result)
 		m_GizmoScale->Show(false);
 	}
 
-  mafDEL(m_IsaCompositor);
-  mafDEL(m_IsaCompositorWithArrowGizmo);
+  m_IsaCompositor.reset();
+  m_IsaCompositorWithArrowGizmo.reset();
 
 	cppDEL(m_GizmoTranslate);
 	cppDEL(m_GizmoRotate);
@@ -944,37 +944,37 @@ void medOpInteractiveClipSurface::ShowClipPlane(bool show)
 void medOpInteractiveClipSurface::AttachInteraction()
 //----------------------------------------------------------------------------
 {
-  mafNEW(m_IsaCompositor);
+  m_IsaCompositor = mafInteractorCompositorMouse::NewSPtr();
 
-  m_IsaTranslate = m_IsaCompositor->CreateBehavior( MOUSE_LEFT );
+  m_IsaTranslate = m_IsaCompositor->CreateBehavior( MOUSE_LEFT ).get();
   m_IsaTranslate->SetListener(this);
   m_IsaTranslate->SetVME(m_ImplicitPlaneVMEGizmo);
   m_IsaTranslate->GetTranslationConstraint()->GetRefSys()->SetTypeToView();
   m_IsaTranslate->GetTranslationConstraint()->SetConstraintModality(mafInteractorConstraint::FREE, mafInteractorConstraint::FREE, mafInteractorConstraint::LOCK);
   m_IsaTranslate->EnableTranslation(true);
   
-	m_IsaChangeArrowWithoutGizmo = m_IsaCompositor->CreateBehavior(MOUSE_LEFT_SHIFT);
+	m_IsaChangeArrowWithoutGizmo = m_IsaCompositor->CreateBehavior(MOUSE_LEFT_SHIFT).get();
 	m_IsaChangeArrowWithoutGizmo->SetListener(this);
 	m_IsaChangeArrowWithoutGizmo->SetVME(m_ImplicitPlaneVMEGizmo);
 
-	m_IsaClipWithoutGizmo = m_IsaCompositor->CreateBehavior(MOUSE_LEFT_CONTROL);
+	m_IsaClipWithoutGizmo = m_IsaCompositor->CreateBehavior(MOUSE_LEFT_CONTROL).get();
 	m_IsaClipWithoutGizmo->SetListener(this);
 	m_IsaClipWithoutGizmo->SetVME(m_ImplicitPlaneVMEGizmo);
 
-	mafNEW(m_IsaCompositorWithArrowGizmo);
+	m_IsaCompositorWithArrowGizmo = mafInteractorCompositorMouse::NewSPtr();
 
-	m_IsaChangeArrowWithGizmo = m_IsaCompositorWithArrowGizmo->CreateBehavior(MOUSE_LEFT_SHIFT);
+	m_IsaChangeArrowWithGizmo = m_IsaCompositorWithArrowGizmo->CreateBehavior(MOUSE_LEFT_SHIFT).get();
 	m_IsaChangeArrowWithGizmo->SetListener(this);
 	m_IsaChangeArrowWithGizmo->SetVME(m_ImplicitPlaneVMEGizmo);
 
-	m_IsaClipWithGizmo = m_IsaCompositorWithArrowGizmo->CreateBehavior(MOUSE_LEFT_CONTROL);
+	m_IsaClipWithGizmo = m_IsaCompositorWithArrowGizmo->CreateBehavior(MOUSE_LEFT_CONTROL).get();
 	m_IsaClipWithGizmo->SetListener(this);
 	m_IsaClipWithGizmo->SetVME(m_ImplicitPlaneVMEGizmo);
 
 	if(!m_UseGizmo)
-		m_ImplicitPlaneVMEGizmo->SetBehavior(m_IsaCompositor);
+		m_ImplicitPlaneVMEGizmo->SetBehavior(m_IsaCompositor.get());
 	else
-		m_ImplicitPlaneVMEGizmo->SetBehavior(m_IsaCompositorWithArrowGizmo);
+		m_ImplicitPlaneVMEGizmo->SetBehavior(m_IsaCompositorWithArrowGizmo.get());
 }
 
 //----------------------------------------------------------------------------

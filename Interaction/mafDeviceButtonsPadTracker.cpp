@@ -126,7 +126,7 @@ int mafDeviceButtonsPadTracker::InternalInitialize()
   if (Superclass::InternalInitialize()!=MAF_OK)
     return MAF_ERROR;
 
-  if (m_Avatar.get())
+  if (m_Avatar)
   {
     m_Avatar->Initialize();
     InvokeEvent(AVATAR_ADDED,MCH_UP,m_Avatar.get());

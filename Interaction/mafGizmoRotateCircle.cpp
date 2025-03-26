@@ -85,7 +85,7 @@ mafGizmoRotateCircle::mafGizmoRotateCircle(mafVME *input, mafBaseEventHandler *l
   m_GizmoCircle->SetMediator(GetListener());
 
   // assign isa to S1 and S2;
-  m_GizmoCircle->SetBehavior(m_IsaComp);
+  m_GizmoCircle->SetBehavior(m_IsaComp.get());
   
   // set the axis to X axis
   this->SetAxis(m_ActiveAxis);
@@ -118,9 +118,9 @@ mafGizmoRotateCircle::~mafGizmoRotateCircle()
 	//----------------------
 	// No leaks so somebody is performing this...
 	//----------------------
-  vtkDEL(m_IsaComp); 
+  m_IsaComp.reset(); 
   
-	m_GizmoCircle->ReparentTo(NULL);
+	m_GizmoCircle->ReparentTo(nullptr);
 }
 //----------------------------------------------------------------------------
 void mafGizmoRotateCircle::CreatePipeline() 
@@ -173,11 +173,11 @@ void mafGizmoRotateCircle::CreateISA()
 {
   // Create isa compositor and assign behaviors to IsaGen ivar.
   // Default isa constrain rotation around X axis.
-  mafNEW(m_IsaComp);
+  m_IsaComp = mafInteractorCompositorMouse::NewSPtr();
 
   // default behavior is activated by mouse left and is constrained to X axis,
   // default ref sys is input vme abs matrix
-  m_IsaGen = m_IsaComp->CreateBehavior(MOUSE_LEFT);
+  m_IsaGen = m_IsaComp->CreateBehavior(MOUSE_LEFT).get();
   m_IsaGen->SetVME(m_InputVme);
   m_IsaGen->GetRotationConstraint()->SetConstraintModality(mafInteractorConstraint::FREE, mafInteractorConstraint::LOCK, mafInteractorConstraint::LOCK); 
   m_IsaGen->GetRotationConstraint()->GetRefSys()->SetTypeToCustom(m_AbsInputMatrix);

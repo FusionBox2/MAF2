@@ -259,8 +259,8 @@ void medGizmoPolylineGraph::DestroyVMEGizmo()
 
   auto absMatrix = m_RefSysVME->GetOutput()->GetAbsMatrix();
 
-  mafNEW(m_GizmoInteractor);
-  m_LeftMouseInteractor = m_GizmoInteractor->CreateBehavior(MOUSE_LEFT);
+  m_GizmoInteractor = mafInteractorCompositorMouse::NewSPtr();
+  m_LeftMouseInteractor = m_GizmoInteractor->CreateBehavior(MOUSE_LEFT).get();
 
   m_LeftMouseInteractor->SetListener(this);
   m_LeftMouseInteractor->SetVME(m_InputVME);
@@ -270,7 +270,7 @@ void medGizmoPolylineGraph::DestroyVMEGizmo()
   m_LeftMouseInteractor->GetTranslationConstraint()->SetConstraintModality(mafInteractorConstraint::FREE, mafInteractorConstraint::FREE, mafInteractorConstraint::LOCK);
   m_LeftMouseInteractor->EnableTranslation(true);    
 
-  m_VmeGizmo->SetBehavior(m_GizmoInteractor);
+  m_VmeGizmo->SetBehavior(m_GizmoInteractor.get());
 }
 
 //------------------------------------------------------------------------
@@ -279,7 +279,7 @@ void medGizmoPolylineGraph::DestroyVMEGizmo()
 //------------------------------------------------------------------------
 {
   m_VmeGizmo->SetBehavior(NULL);
-  mafDEL(m_GizmoInteractor);
+  m_GizmoInteractor.reset();
 }
 
 //------------------------------------------------------------------------

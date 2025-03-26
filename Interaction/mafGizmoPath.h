@@ -126,7 +126,7 @@ protected:
 
   mafString           m_Name;
   mafVMEGizmo        *m_VmeGizmoPath;
-  mafInteractorCompositorMouse *m_GizmoInteractor;
+  std::shared_ptr<mafInteractorCompositorMouse> m_GizmoInteractor;
   mafInteractorGenericMouse    *m_LeftMouseInteractor;
   mafGUI             *m_GizmoGui;
 

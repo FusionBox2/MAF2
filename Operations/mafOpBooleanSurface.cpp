@@ -93,7 +93,7 @@ mafOpBooleanSurface::~mafOpBooleanSurface()
 	}
 	m_VTKResult.clear();
 
-	mafDEL(m_IsaCompositor);
+	m_IsaCompositor.reset();
 	vtkDEL(m_ClipperPlane);
 	vtkDEL(m_Arrow);
 	vtkDEL(m_PlaneSource);
@@ -627,9 +627,9 @@ void mafOpBooleanSurface::ShowClipPlane(bool show)
 void mafOpBooleanSurface::AttachInteraction()
 //----------------------------------------------------------------------------
 {
-	mafNEW(m_IsaCompositor);
+	m_IsaCompositor = mafInteractorCompositorMouse::NewSPtr();
 
-	m_IsaRotate = m_IsaCompositor->CreateBehavior(MOUSE_LEFT);
+	m_IsaRotate = m_IsaCompositor->CreateBehavior(MOUSE_LEFT).get();
 	m_IsaRotate->SetListener(this);
 	m_IsaRotate->SetVME(m_ImplicitPlaneGizmo);
 	m_IsaRotate->GetRotationConstraint()->GetRefSys()->SetTypeToView();
@@ -639,7 +639,7 @@ void mafOpBooleanSurface::AttachInteraction()
 	m_IsaRotate->GetRotationConstraint()->SetConstraintModality(mafInteractorConstraint::FREE, mafInteractorConstraint::FREE, mafInteractorConstraint::LOCK);
 	m_IsaRotate->EnableRotation(true);
 
-	m_IsaTranslate = m_IsaCompositor->CreateBehavior(MOUSE_MIDDLE);
+	m_IsaTranslate = m_IsaCompositor->CreateBehavior(MOUSE_MIDDLE).get();
 	m_IsaTranslate->SetListener(this);
 	m_IsaTranslate->SetVME(m_ImplicitPlaneGizmo);
 	m_IsaTranslate->GetTranslationConstraint()->GetRefSys()->SetTypeToView();
@@ -649,7 +649,7 @@ void mafOpBooleanSurface::AttachInteraction()
 	m_IsaTranslate->GetTranslationConstraint()->SetConstraintModality(mafInteractorConstraint::FREE, mafInteractorConstraint::FREE, mafInteractorConstraint::LOCK);
 	m_IsaTranslate->EnableTranslation(true);
 
-	m_ImplicitPlaneGizmo->SetBehavior(m_IsaCompositor);
+	m_ImplicitPlaneGizmo->SetBehavior(m_IsaCompositor.get());
 }
 //----------------------------------------------------------------------------
 void mafOpBooleanSurface::Difference()

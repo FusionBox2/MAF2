@@ -72,7 +72,7 @@ protected:
 
 	mafGUIDialog								*m_Dialog;
 	mafRWI									*m_Rwi;
-	mafInteractorCameraMove						*m_Picker;
+	std::shared_ptr<mafInteractorCameraMove>						m_Picker;
 	vtkPolyDataMapper				*m_Mapper;
 	vtkActor								*m_Actor;
 	vtkScalarBarActor				*m_BarActor;

@@ -98,7 +98,7 @@ protected:
   /** Override superclass */
   void CreateGui() override;
 
-  mafInteractorCompositorMouse *m_IsaCompositor;
+  std::shared_ptr<mafInteractorCompositorMouse> m_IsaCompositor;
 
   mafInteractorGenericMouse *m_IsaRotate;
   mafInteractorGenericMouse *m_IsaTranslate;

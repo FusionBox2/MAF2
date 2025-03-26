@@ -111,7 +111,7 @@ protected:
 
 	mafGUIDialog						*m_Dialog;
 	mafRWI									*m_Rwi;
-	mmiSelectPoint					*m_Picker;
+	std::shared_ptr<mmiSelectPoint>					m_Picker;
 
 	vtkFeatureEdges					*m_ExctractFreeEdges;
 	vtkHoleConnectivity			*m_ExctractHole;

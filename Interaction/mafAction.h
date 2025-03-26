@@ -49,7 +49,7 @@ public:
     EXCLUSIVE_ACTION 
   };
 
-  typedef std::list<mafAutoPointer<mafDevice> > mmuDeviceList;
+  typedef std::list<std::shared_ptr<mafDevice> > mmuDeviceList;
   
   mafTypeMacro(mafAction,mafAgent);
 
@@ -61,7 +61,7 @@ public:
   void SetTypeToExclusive() {SetType(EXCLUSIVE_ACTION);}
   
   /** Bind/Unbind a device to this action */
-  void BindDevice(mafDevice *device);
+  void BindDevice(std::shared_ptr<mafDevice> device);
   void UnBindDevice(mafDevice *device);
 
   /** Bind/Unbind an interactor to this action */
@@ -86,7 +86,7 @@ protected:
   virtual void InternalRestore(const mafStorageElement& node);
 
   int   m_Type;
-  std::list<mafAutoPointer<mafDevice> > m_Devices;
+  mmuDeviceList m_Devices;
 
 private:
   mafAction(const mafAction&);  // Not implemented.

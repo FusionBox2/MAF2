@@ -152,7 +152,7 @@ protected:
   vtkPlane          *m_CutterPlane;
   vtkMAFFixedCutter    *m_IsosurfaceCutter;
 
-  mafInteractorExtractIsosurface *m_DensityPicker;
+  std::shared_ptr<mafInteractorExtractIsosurface> m_DensityPicker;
 
 	/** Builds operation's interface and visualization pipeline. */
   void CreateOpDialog();

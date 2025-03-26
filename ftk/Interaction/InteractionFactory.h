@@ -11,12 +11,12 @@
 #include <string>
 
 #define mafPlugDeviceMacro(node_type,descr) \
-  InteractionFactory::RegisterNewDevice(node_type::GetStaticTypeName(), descr, node_type::NewObject);
+  InteractionFactory::RegisterNewDevice(node_type::GetStaticTypeName(), descr, node_type::NewObjectS);
 
 #define mafPlugAvatarMacro(node_type,descr) \
-  InteractionFactory::RegisterNewAvatar(node_type::GetStaticTypeName(), descr, node_type::NewObject);
+  InteractionFactory::RegisterNewAvatar(node_type::GetStaticTypeName(), descr, node_type::NewObjectS);
 
-using InteractionCreateType = mafObject*;
+using InteractionCreateType = std::shared_ptr<mafAgent>;
 using CreateInteractionFunction = InteractionCreateType(*)();
 
 BEGIN_FTK_NAMESPACE
@@ -75,7 +75,7 @@ public:
 template <class T>
 mafPlugAvatar<T>::mafPlugAvatar(const char* description)
 {
-  InteractionFactory::RegisterNewAvatar(T::GetStaticTypeName(), description, T::NewObject);
+  InteractionFactory::RegisterNewAvatar(T::GetStaticTypeName(), description, T::NewObjectS);
 }
 
 template <class T>
@@ -89,7 +89,7 @@ public:
 template <class T>
 mafPlugDevice<T>::mafPlugDevice(const char* description)
 {
-  InteractionFactory::RegisterNewDevice(T::GetStaticTypeName(), description, T::NewObject);
+  InteractionFactory::RegisterNewDevice(T::GetStaticTypeName(), description, T::NewObjectS);
 }
 
 END_FTK_NAMESPACE

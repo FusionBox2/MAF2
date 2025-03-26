@@ -65,7 +65,7 @@ class mafOBB;
 class MAF_EXPORT mafDeviceButtonsPadTracker : public mafDeviceButtonsPad
 {
 public:
-  mafTypeMacro(mafDeviceButtonsPadTracker,mafDeviceButtonsPad);
+  mafTypeMacroN(mafDeviceButtonsPadTracker);
 
   //------------------------------------------------------------------------------
   // Events
@@ -136,7 +136,7 @@ public:
 
   /**
     Set/Get the avatar assigned to this device */
-  void SetAvatar(mafAvatar *avatar);
+  void SetAvatar(std::shared_ptr<mafAvatar> avatar);
   mafAvatar *GetAvatar() {return m_Avatar.get();}
 
   /** 
@@ -145,7 +145,7 @@ public:
     The default avatar is made persistent and will be recreated by means of the object
     factory when restarting the application. Setting the default avatar automatically
     calls the SetAvatar() too.  */    
-  void SetDefaultAvatar(mafAvatar *avatar);
+  void SetDefaultAvatar(std::shared_ptr<mafAvatar> avatar);
   mafAvatar *GetDefaultAvatar() {return m_DefaultAvatar.get();}
 
   /** 
@@ -213,8 +213,8 @@ protected:
 
   std::shared_ptr<mafTransform>         m_TrackerToCanonicalTransform;
 
-  mafAutoPointer<mafAvatar> m_Avatar;        ///< the current avatar
-  mafAutoPointer<mafAvatar> m_DefaultAvatar; ///< the avatar set thorugh the GUI
+  std::shared_ptr<mafAvatar> m_Avatar;        ///< the current avatar
+  std::shared_ptr<mafAvatar> m_DefaultAvatar; ///< the avatar set thorugh the GUI
 
   
   

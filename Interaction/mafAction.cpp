@@ -53,19 +53,19 @@ mafAction::~mafAction()
 }
 
 //------------------------------------------------------------------------------
-void mafAction::BindDevice(mafDevice *device)
+void mafAction::BindDevice(std::shared_ptr<mafDevice> device)
 //------------------------------------------------------------------------------
 {
   assert(device);
   
   // the device is plugged as a source of events on the
   // device input channel
-  PlugEventSource(device,MCH_INPUT);
+  PlugEventSource(device.get(), MCH_INPUT);
   
   // its also plugged as listener on the output channel
-  AddObserver(device,MCH_OUTPUT);
+  AddObserver(device.get(),MCH_OUTPUT);
 
-  m_Devices.push_back(mafAutoPointer<mafDevice>(device));
+  m_Devices.push_back(device);
 }
 //------------------------------------------------------------------------------
 void mafAction::UnBindDevice(mafDevice *device)
@@ -76,16 +76,8 @@ void mafAction::UnBindDevice(mafDevice *device)
   // disconnect the device from this action
   UnPlugEventSource(device);   
   this->RemoveObserver(device);  
-  
-  // remove the device from the list
-  for (mmuDeviceList::iterator it=m_Devices.begin();it!=m_Devices.end();it++)
-  {
-    if (it->get() == device)
-    {
-      m_Devices.erase(it);
-      return;
-    }
-  }
+
+  m_Devices.remove_if([=](const std::shared_ptr<mafDevice>& p) {return p.get() == device; });
 }
 
 //------------------------------------------------------------------------------

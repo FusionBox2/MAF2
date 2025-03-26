@@ -122,7 +122,7 @@ medGizmoCrossTranslateAxis::medGizmoCrossTranslateAxis(mafVME *input, mafBaseEve
 	// cone gizmo
 
 	// assign isa to cylinder and cone
-	m_TranslationCylinderGizmo->SetBehavior(m_IsaComp);
+	m_TranslationCylinderGizmo->SetBehavior(m_IsaComp.get());
 
 	// default gizmo abs pose is the input vme one
 	SetAbsPose(m_InputVme->GetOutput()->GetAbsMatrix());
@@ -178,7 +178,7 @@ medGizmoCrossTranslateAxis::~medGizmoCrossTranslateAxis()
 	// No leaks so somebody is performing this...
 	// wxDEL(GizmoData);
 	//----------------------
-	vtkDEL(m_IsaComp); 
+	m_IsaComp.reset(); 
 
 	m_TranslationCylinderGizmo->ReparentTo(NULL);
 
@@ -310,9 +310,9 @@ void medGizmoCrossTranslateAxis::CreateTranslationGizmoPipeline()
 void medGizmoCrossTranslateAxis::CreateISA()
 //----------------------------------------------------------------------------
 {
-	m_IsaComp = mafInteractorCompositorMouse::New();
+	m_IsaComp = mafInteractorCompositorMouse::NewSPtr();
 
-	m_IsaGen = m_IsaComp->CreateBehavior(MOUSE_LEFT);
+	m_IsaGen = m_IsaComp->CreateBehavior(MOUSE_LEFT).get();
 
 	m_IsaGen->SetVME(m_InputVme);
 	m_IsaGen->GetTranslationConstraint()->SetConstraintModality(mafInteractorConstraint::FREE, mafInteractorConstraint::LOCK, mafInteractorConstraint::LOCK);

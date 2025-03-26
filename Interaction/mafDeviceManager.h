@@ -69,16 +69,16 @@ public:
 
   mafTypeMacro(mafDeviceManager,mafAgentEventHandler);
 
-  static mafDeviceManager* Create(const char* DeviceManagerType);
+  static std::shared_ptr<mafDeviceManager> Create(const char* DeviceManagerType);
   /**
     Add a new device. If the returned value is 0 the operation has failed! */
-  virtual mafID AddDevice(mafDevice *device);
+  virtual mafID AddDevice(std::shared_ptr<mafDevice> device);
 
   /**
     Add a new device specifying only its class name.
     If the returned pointer is NULL the operation has failed! "persistent" flag must be
     used to add persistent devices */
-  virtual mafDevice *AddDevice(const char *type, bool persistent=false);
+  virtual std::shared_ptr<mafDevice> AddDevice(const char *type, bool persistent=false);
 
   /** Remove a device from the manager's list. force flag must be used to remove
       persistent devices */
@@ -87,10 +87,10 @@ public:
   int RemoveDevice(const char *name, bool force=false);
 
   /**  Return a device handler given its name. */
-  mafDevice *GetDevice(const char *name);
+  std::shared_ptr<mafDevice> GetDevice(const char *name);
 
   /**  Return a device handler given its ID. Persistent devices have ID < MIN_DEVICE_ID */
-  mafDevice *GetDevice(mafID id);
+  std::shared_ptr<mafDevice> GetDevice(mafID id);
 
   /** Return the number of devices assigned to this manager */
   int GetNumberOfDevices();
@@ -100,10 +100,10 @@ public:
   void RemoveAllDevices(bool force=false);
 
   /** return the list of active devices */
-  std::list<mafDevice *> *GetDevices();
+  std::list<std::shared_ptr<mafDevice> > *GetDevices();
 
   /** return the device set storing first level devices */
-  mafDeviceSet *GetDeviceSet() {return m_DeviceSet;}
+  mafDeviceSet *GetDeviceSet() {return m_DeviceSet.get();}
 
   void OnEvent(mafEventBase *event) override;
 
@@ -124,7 +124,7 @@ protected:
   int InternalInitialize() override;
   void InternalShutdown() override;
 
-  mafDeviceSet*   m_DeviceSet;        ///< container for first level devices
+  std::shared_ptr<mafDeviceSet>   m_DeviceSet;        ///< container for first level devices
   mafID           m_DeviceIdCounter;  ///< number of plugged devices
   mafID           m_PersistentDeviceIdCounter; ///< number of persistent plugged devices
   bool            m_RestoringFlag;
@@ -137,7 +137,7 @@ private:
 namespace parser
 {
   template<class Value>
-  mafDeviceManager* Parse(const Value& value, parser::To<mafDeviceManager>)
+  std::shared_ptr<mafDeviceManager> Parse(const Value& value, parser::To<mafDeviceManager>)
   {
     mafString type_name = value(_R("Type")).template As<mafString>();
     if (auto deviceManager = mafDeviceManager::Create(type_name.GetCStr()))

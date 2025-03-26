@@ -1289,41 +1289,13 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   }
   // ###############################################################
   // commands related to interaction manager
-  if(INTERACTOR_ADD == eventId)
-  {
-    // currently mafInteraction is strictly dependent on VTK (marco)
-#ifdef MAF_USE_VTK
-    if(m_logic->m_InteractionManager)
-    {
-      mafInteractor *interactor = mafInteractor::SafeDownCast(e->GetMafObject());
-      assert(interactor);
-      mafString *action_name = e->GetString();
-      m_logic->m_InteractionManager->BindAction(action_name->GetCStr(),interactor);
-    }
-#endif
-    return;
-  }
-  if(INTERACTOR_REMOVE == eventId)
-  {
-    // currently mafInteraction is strictly dependent on VTK (marco)
-#ifdef MAF_USE_VTK
-    if(m_logic->m_InteractionManager)
-    {
-      mafInteractor *interactor = mafInteractor::SafeDownCast(e->GetMafObject());
-      assert(interactor);
-      mafString *action_name = e->GetString();
-      m_logic->m_InteractionManager->UnBindAction(action_name->GetCStr(),interactor);
-    }
-#endif
-    return;
-  }
   if(PER_PUSH == eventId)
   {
     // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
     if(m_logic->m_InteractionManager)
     {
-      mafInteractorPER *per = mafInteractorPER::SafeDownCast(e->GetMafObject());
+      auto per = mafInteractorPER::SafeDownCast(e->GetAgent());
       assert(per);
       m_logic->m_InteractionManager->PushPER(per);
     }
@@ -1336,16 +1308,6 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
 #ifdef MAF_USE_VTK
     if(m_logic->m_InteractionManager) m_logic->m_InteractionManager->PopPER();
 #endif
-    return;
-  }
-  if(DEVICE_ADD == eventId)
-  {
-    m_logic->m_InteractionManager->AddDeviceToTree((mafDevice *)e->GetMafObject());
-    return;
-  }
-  if(DEVICE_REMOVE == eventId)
-  {
-    m_logic->m_InteractionManager->RemoveDeviceFromTree((mafDevice *)e->GetMafObject());
     return;
   }
   if(DEVICE_GET == eventId)

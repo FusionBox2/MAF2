@@ -180,7 +180,7 @@ protected:
   void CreateISA();
 
   /** isa compositor*/
-  mafInteractorCompositorMouse *m_IsaComp[2];
+  std::shared_ptr<mafInteractorCompositorMouse> m_IsaComp[2];
 
   /** isa generic*/
   mafInteractorGenericMouse *m_IsaGen[2];

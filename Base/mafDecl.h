@@ -289,11 +289,6 @@ EVT_START,
   ID_TRANSFORM, //added by Stefano. 30-11-2003 
   SHOW_CONTEXTUAL_MENU,	//Added by Paolo 16-9-2003
 
-  INTERACTOR_ADD,     //modified by Marco. 25-8-2004 bind an interactor to an action 
-  INTERACTOR_REMOVE,  //modified by Marco. 25-8-2004 unbind an interactor from an action
-
-  DEVICE_ADD,
-  DEVICE_REMOVE,
   DEVICE_GET,
   // resize window
   TILE_WINDOW_CASCADE,

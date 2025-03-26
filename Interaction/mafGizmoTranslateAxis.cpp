@@ -93,8 +93,8 @@ mafGizmoTranslateAxis::mafGizmoTranslateAxis(mafVME *input, mafBaseEventHandler 
   m_ConeGizmo->SetMediator(GetListener());
 
   // assign isa to cylinder and cone
-  m_CylGizmo->SetBehavior(m_IsaComp[CYLINDER]);
-  m_ConeGizmo->SetBehavior(m_IsaComp[CONE]);
+  m_CylGizmo->SetBehavior(m_IsaComp[CYLINDER].get());
+  m_ConeGizmo->SetBehavior(m_IsaComp[CONE].get());
 
   SetAbsPose(m_InputVme->GetOutput()->GetAbsMatrix());
   
@@ -128,10 +128,10 @@ mafGizmoTranslateAxis::~mafGizmoTranslateAxis()
 	// No leaks so somebody is performing this...
 	// wxDEL(GizmoData[i]);
 	//----------------------
-    vtkDEL(m_IsaComp[i]); 
+    m_IsaComp[i].reset(); 
   }
-	m_CylGizmo->ReparentTo(NULL);
-	m_ConeGizmo->ReparentTo(NULL);
+	m_CylGizmo->ReparentTo(nullptr);
+	m_ConeGizmo->ReparentTo(nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -250,11 +250,11 @@ void mafGizmoTranslateAxis::CreateISA()
   // create isa compositor and assign behaviors to IsaGen ivar
   for (int i = 0; i < 2; i++)
   {
-    mafNEW(m_IsaComp[i]);
+    m_IsaComp[i] = mafInteractorCompositorMouse::NewSPtr();
 
     // default behavior is activated by mouse left and is constrained to X axis,
     // default ref sys is input vme abs matrix
-    m_IsaGen[i] = m_IsaComp[i]->CreateBehavior(MOUSE_LEFT);
+    m_IsaGen[i] = m_IsaComp[i]->CreateBehavior(MOUSE_LEFT).get();
 
     m_IsaGen[i]->SetVME(m_InputVme);
     m_IsaGen[i]->GetTranslationConstraint()->SetConstraintModality(mafInteractorConstraint::FREE, mafInteractorConstraint::LOCK, mafInteractorConstraint::LOCK);

@@ -99,7 +99,7 @@ protected:
 	mafVMEGizmo			*m_ImplicitPlaneGizmo;
 	bool						m_PlaneCreated;
 
-	mafInteractorCompositorMouse *m_IsaCompositor;
+	std::shared_ptr<mafInteractorCompositorMouse> m_IsaCompositor;
 	mafInteractorGenericMouse    *m_IsaTranslate;
 	mafInteractorGenericMouse    *m_IsaRotate;
 

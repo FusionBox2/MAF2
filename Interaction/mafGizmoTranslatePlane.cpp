@@ -91,8 +91,8 @@ mafGizmoTranslatePlane::mafGizmoTranslatePlane(mafVME *input, mafBaseEventHandle
   }
 
   // assign isa to S1 and S2;
-  m_Gizmo[S1]->SetBehavior(m_IsaComp[S1]);
-  m_Gizmo[S2]->SetBehavior(m_IsaComp[S2]);
+  m_Gizmo[S1]->SetBehavior(m_IsaComp[S1].get());
+  m_Gizmo[S2]->SetBehavior(m_IsaComp[S2].get());
 
   auto absInputMatrix = m_InputVme->GetOutput()->GetAbsMatrix();
   SetAbsPose(absInputMatrix);
@@ -124,9 +124,9 @@ mafGizmoTranslatePlane::mafGizmoTranslatePlane(mafVME *input, mafBaseEventHandle
 mafGizmoTranslatePlane::~mafGizmoTranslatePlane() 
 //----------------------------------------------------------------------------
 {
-  m_Gizmo[S1]->SetBehavior(NULL);
-  m_Gizmo[S2]->SetBehavior(NULL);
-  m_Gizmo[SQ]->SetBehavior(NULL);
+  m_Gizmo[S1]->SetBehavior(nullptr);
+  m_Gizmo[S2]->SetBehavior(nullptr);
+  m_Gizmo[SQ]->SetBehavior(nullptr);
   
   vtkDEL(m_Line[S1]);
   vtkDEL(m_Line[S2]);
@@ -138,7 +138,7 @@ mafGizmoTranslatePlane::~mafGizmoTranslatePlane()
   for (i = 0; i < SQ; i++)
   {
     vtkDEL(m_LineTF[i]);
-    vtkDEL(m_IsaComp[i]); 
+    m_IsaComp[i].reset(); 
   }
 
   m_PivotTransform->Delete();
@@ -146,7 +146,7 @@ mafGizmoTranslatePlane::~mafGizmoTranslatePlane()
   for (i = 0; i < 3; i++)
   {
     vtkDEL(m_RotatePDF[i]);
-		m_Gizmo[i]->ReparentTo(NULL);
+		m_Gizmo[i]->ReparentTo(nullptr);
   }
 }
 
@@ -238,11 +238,11 @@ void mafGizmoTranslatePlane::CreateISA()
   // Default isa is constrained to plane XZ.
   for (int i = 0; i < SQ; i++)
   {
-    mafNEW(m_IsaComp[i]);
+    m_IsaComp[i] = mafInteractorCompositorMouse::NewSPtr();
 
     // default behavior is activated by mouse left and is constrained to X axis,
     // default ref sys is input vme abs matrix
-    m_IsaGen[i] = m_IsaComp[i]->CreateBehavior(MOUSE_LEFT);
+    m_IsaGen[i] = m_IsaComp[i]->CreateBehavior(MOUSE_LEFT).get();
     m_IsaGen[i]->SetVME(m_InputVme);
     m_IsaGen[i]->GetTranslationConstraint()->SetConstraintModality(mafInteractorConstraint::FREE, mafInteractorConstraint::LOCK, mafInteractorConstraint::FREE);     
     

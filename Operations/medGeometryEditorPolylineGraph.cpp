@@ -154,7 +154,7 @@ medGeometryEditorPolylineGraph::~medGeometryEditorPolylineGraph()
 	mafDEL(m_VMEPolylineSelection);
 	mafDEL(m_VMEPolylineEditor);
 	
-	mafDEL(m_Picker);
+	m_Picker.reset();
 
 	vtkDEL(m_AppendPolydata);
 	vtkDEL(m_Tube);
@@ -263,31 +263,31 @@ void medGeometryEditorPolylineGraph::BehaviorUpdate()
 	{
 		if(m_PointTool==ID_ADD_POINT)//If the user want to add a point
 		{
-			m_VMEPolylineEditor->SetBehavior(NULL);
-			m_InputVME->SetBehavior(m_Picker);
+			m_VMEPolylineEditor->SetBehavior(nullptr);
+			m_InputVME->SetBehavior(m_Picker.get());
 		}
 		else if(m_PointTool==ID_INSERT_POINT||m_PointTool==ID_SELECT_POINT)
 		{
-			m_VMEPolylineEditor->SetBehavior(m_Picker);
-			m_InputVME->SetBehavior(NULL);
+			m_VMEPolylineEditor->SetBehavior(m_Picker.get());
+			m_InputVME->SetBehavior(nullptr);
 		}
 		else if(m_PointTool==ID_MOVE_POINT)
 		{
-			m_VMEPolylineEditor->SetBehavior(m_Picker);
-			m_InputVME->SetBehavior(m_Picker);
+			m_VMEPolylineEditor->SetBehavior(m_Picker.get());
+			m_InputVME->SetBehavior(m_Picker.get());
 		}
 	}
 	else if(m_Action==ID_BRANCH_ACTION)
 	{
 		if(m_BranchTool==ID_ADD_BRANCH)//If the user want add a branch
 		{
-			m_VMEPolylineEditor->SetBehavior(NULL);
-			m_InputVME->SetBehavior(m_Picker);
+			m_VMEPolylineEditor->SetBehavior(nullptr);
+			m_InputVME->SetBehavior(m_Picker.get());
 		}
 		else if(m_BranchTool==ID_SELECT_BRANCH)
 		{
-			m_VMEPolylineEditor->SetBehavior(m_Picker);
-			m_InputVME->SetBehavior(m_Picker);
+			m_VMEPolylineEditor->SetBehavior(m_Picker.get());
+			m_InputVME->SetBehavior(m_Picker.get());
 		}
 	}
 
@@ -413,11 +413,11 @@ void medGeometryEditorPolylineGraph::CreateISA()
 {
 	m_OldBehavior = m_InputVME->GetBehavior();
 
-	m_Picker = mafInteractorPicker::New();
+	m_Picker = mafInteractorPicker::NewSPtr();
 	m_Picker->SetListener(this);
 
-	m_InputVME->SetBehavior(m_Picker);
-	m_VMEPolylineEditor->SetBehavior(m_Picker);
+	m_InputVME->SetBehavior(m_Picker.get());
+	m_VMEPolylineEditor->SetBehavior(m_Picker.get());
 
   {mafEvent evUnq(this,ID_VME_BEHAVIOR_UPDATE); evUnq.SetVme(m_InputVME); InvokeEvent(evUnq);}
 }
@@ -434,7 +434,7 @@ vtkPolyData* medGeometryEditorPolylineGraph::GetOutput()
 void medGeometryEditorPolylineGraph::VmePicked(mafEvent *e)
 //----------------------------------------------------------------------------
 {
-	if(e->GetSender()==m_Picker)
+	if(e->GetSender()==m_Picker.get())
 	{
 		if(m_Action==ID_POINT_ACTION)
 		{

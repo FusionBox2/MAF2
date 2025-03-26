@@ -253,9 +253,9 @@ void mafOpExtractIsosurface::CreateOpDialog()
   m_Rwi->m_RenderWindow->AddRenderer(m_PIPRen);
   m_Rwi->m_RenderWindow->SetDesiredUpdateRate(0.0001f);
   m_Rwi->Show(true);
-  mafNEW(m_DensityPicker);
+  m_DensityPicker = mafInteractorExtractIsosurface::NewSPtr();
   m_DensityPicker->SetListener(this);	
-  GetGlobalMouse()->AddObserver(m_DensityPicker, MCH_INPUT);
+  GetGlobalMouse()->AddObserver(m_DensityPicker.get(), MCH_INPUT);
   m_PIPRen->SetViewport(.6, .01, .99, .4);
   m_PIPRen->GetActiveCamera()->SetFocalPoint(0,0,0);
   m_PIPRen->GetActiveCamera()->SetPosition(0,0,-70);
@@ -617,7 +617,7 @@ void mafOpExtractIsosurface::CreateSlicePipeline()
 void mafOpExtractIsosurface::DeleteOpDialog()
 //----------------------------------------------------------------------------
 {
-  GetGlobalMouse()->RemoveObserver(m_DensityPicker);
+  GetGlobalMouse()->RemoveObserver(m_DensityPicker.get());
 
   m_Rwi->m_RenFront->RemoveActor(m_ContourActor);
   m_Rwi->m_RenFront->RemoveActor(m_Box);
@@ -627,7 +627,7 @@ void mafOpExtractIsosurface::DeleteOpDialog()
   vtkDEL(m_Box);
   vtkDEL(m_OutlineFilter);
   vtkDEL(m_OutlineMapper);
-  mafDEL(m_DensityPicker);
+  m_DensityPicker.reset();
 
   m_PIPRen->RemoveActor(m_SlicerActor);
   m_PIPRen->RemoveActor(m_PolydataActor);

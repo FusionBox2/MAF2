@@ -113,7 +113,7 @@ medOpSplitSurface::~medOpSplitSurface()
 
 	vtkDEL(m_ResultPolyData);
 	vtkDEL(m_ClippedPolyData);
-  mafDEL(m_IsaCompositor);
+  m_IsaCompositor.reset();
 	mafDEL(m_ClippedVME);
   vtkDEL(m_ClipperPlane);
   vtkDEL(m_Clipper);
@@ -284,9 +284,9 @@ void medOpSplitSurface::OnEventThis(mafEventBase *maf_event)
 		case ID_USE_GIZMO:
 			{
 				if(m_IsaCompositor && !m_UseGizmo)
-					m_ImplicitPlaneGizmo->SetBehavior(m_IsaCompositor);
+					m_ImplicitPlaneGizmo->SetBehavior(m_IsaCompositor.get());
 				else if(m_UseGizmo)
-					m_ImplicitPlaneGizmo->SetBehavior(NULL);
+					m_ImplicitPlaneGizmo->SetBehavior(nullptr);
 
 				m_Gui->Enable(ID_CHOOSE_GIZMO, m_ClipModality == medOpSplitSurface::MODE_IMPLICIT_FUNCTION  && m_UseGizmo);
 				
@@ -779,9 +779,9 @@ void medOpSplitSurface::ShowClipPlane(bool show)
 void medOpSplitSurface::AttachInteraction()
 //----------------------------------------------------------------------------
 {
-  mafNEW(m_IsaCompositor);
+  m_IsaCompositor = mafInteractorCompositorMouse::NewSPtr();
 
-  m_IsaRotate = m_IsaCompositor->CreateBehavior(MOUSE_LEFT);
+  m_IsaRotate = m_IsaCompositor->CreateBehavior(MOUSE_LEFT).get();
   m_IsaRotate->SetListener(this);
   m_IsaRotate->SetVME(m_ImplicitPlaneGizmo);
   m_IsaRotate->GetRotationConstraint()->GetRefSys()->SetTypeToView();
@@ -791,7 +791,7 @@ void medOpSplitSurface::AttachInteraction()
   m_IsaRotate->GetRotationConstraint()->SetConstraintModality(mafInteractorConstraint::FREE, mafInteractorConstraint::FREE, mafInteractorConstraint::LOCK);
   m_IsaRotate->EnableRotation(true);
 
-  m_IsaTranslate = m_IsaCompositor->CreateBehavior(MOUSE_MIDDLE);
+  m_IsaTranslate = m_IsaCompositor->CreateBehavior(MOUSE_MIDDLE).get();
   m_IsaTranslate->SetListener(this);
   m_IsaTranslate->SetVME(m_ImplicitPlaneGizmo);
   m_IsaTranslate->GetTranslationConstraint()->GetRefSys()->SetTypeToView();
@@ -802,7 +802,7 @@ void medOpSplitSurface::AttachInteraction()
   m_IsaTranslate->EnableTranslation(true);
 
 	if(!m_UseGizmo)
-		m_ImplicitPlaneGizmo->SetBehavior(m_IsaCompositor);
+		m_ImplicitPlaneGizmo->SetBehavior(m_IsaCompositor.get());
 }
 
 //----------------------------------------------------------------------------

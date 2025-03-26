@@ -109,7 +109,7 @@ protected:
 	bool                 m_CloudCreatedFlag;
 	bool                 m_PickingActiveFlag;
 	mafString						 m_LandmarkName;
-  mafInteractorPicker           *m_LandmarkPicker;
+	std::shared_ptr<mafInteractorPicker>           m_LandmarkPicker;
   mafInteractor       *m_OldBehavior;
 
 	double							 m_LandmarkPosition[3];

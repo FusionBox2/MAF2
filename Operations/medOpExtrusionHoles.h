@@ -104,7 +104,7 @@ protected:
 	mafGUIDialog							*m_Dialog;
 	mafGUIButton							*m_ButtonOk;
 	mafRWI								*m_Rwi;
-	mmiSelectPoint				*m_Picker;
+	std::shared_ptr<mmiSelectPoint>				m_Picker;
 
 	vtkPolyData						*m_ResultPolydata;
 	vtkPolyData						*m_OriginalPolydata;

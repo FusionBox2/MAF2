@@ -126,7 +126,7 @@ medGizmoCrossRotateAxis::medGizmoCrossRotateAxis(mafVME *input, mafBaseEventHand
 	// m_GizmoCross->GetTagArray()->SetTag(mafTagItem("VISIBLE_IN_THE_TREE", 1));
 
 	// assign isa to S1 and S2;
-	m_GizmoCross->SetBehavior(m_IsaComp);
+	m_GizmoCross->SetBehavior(m_IsaComp.get());
 
 	// set the axis to X axis
 	this->SetRotationAxis(m_RotationAxis);
@@ -159,9 +159,9 @@ medGizmoCrossRotateAxis::~medGizmoCrossRotateAxis()
 	//----------------------
 	// No leaks so somebody is performing this...
 	//----------------------
-	vtkDEL(m_IsaComp); 
+	m_IsaComp.reset(); 
 
-	m_GizmoCross->ReparentTo(NULL);
+	m_GizmoCross->ReparentTo(nullptr);
 
 	vtkDEL(m_FGCircle);
 	vtkDEL(m_FGCleanCircle);
@@ -267,11 +267,11 @@ void medGizmoCrossRotateAxis::CreateISA()
 {
 	// Create isa compositor and assign behaviors to IsaGen ivar.
 	// Default isa constrain rotation around X axis.
-	m_IsaComp = mafInteractorCompositorMouse::New();
+	m_IsaComp = mafInteractorCompositorMouse::NewSPtr();
 
 	// default behavior is activated by mouse left and is constrained to X axis,
 	// default ref sys is input vme abs matrix
-	m_IsaGen = m_IsaComp->CreateBehavior(MOUSE_LEFT);
+	m_IsaGen = m_IsaComp->CreateBehavior(MOUSE_LEFT).get();
 	m_IsaGen->SetVME(m_InputVme);
 	m_IsaGen->GetRotationConstraint()->SetConstraintModality(mafInteractorConstraint::FREE, mafInteractorConstraint::LOCK, mafInteractorConstraint::LOCK); 
 	m_IsaGen->GetRotationConstraint()->GetRefSys()->SetTypeToCustom(m_AbsInputMatrix);

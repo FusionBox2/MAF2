@@ -54,7 +54,7 @@ mafDeviceManager::mafDeviceManager()
   m_RestoringFlag   = false;
   m_DeviceIdCounter = mafDevice::MIN_DEVICE_ID;
   m_PersistentDeviceIdCounter = 0;
-  mafNEW(m_DeviceSet);
+  m_DeviceSet = mafDeviceSet::NewSPtr();
   m_DeviceSet->SetPersistentFlag(false);
   m_DeviceSet->SetThreaded(false);
   m_DeviceSet->SetName(_R("DeviceSet"));
@@ -67,7 +67,7 @@ mafDeviceManager::mafDeviceManager()
 mafDeviceManager::~mafDeviceManager()
 //------------------------------------------------------------------------------
 {
-  mafDEL(m_DeviceSet);
+  m_DeviceSet.reset();
 }
 
 //------------------------------------------------------------------------------
@@ -91,7 +91,7 @@ void mafDeviceManager::InternalShutdown()
 }
 
 //------------------------------------------------------------------------------
-mafID mafDeviceManager::AddDevice(mafDevice *device)
+mafID mafDeviceManager::AddDevice(std::shared_ptr<mafDevice> device)
 //------------------------------------------------------------------------------
 {
   m_DeviceSet->AddDevice(device);
@@ -99,12 +99,10 @@ mafID mafDeviceManager::AddDevice(mafDevice *device)
 }
 
 //------------------------------------------------------------------------------
-mafDevice *mafDeviceManager::AddDevice(const char *type, bool persistent)
+std::shared_ptr<mafDevice> mafDeviceManager::AddDevice(const char *type, bool persistent)
 //------------------------------------------------------------------------------
 {
-  mafDevice *device = mafDevice::SafeDownCast(InteractionFactory::CreateInteraction(type));
-  
-  if (device)
+  if (auto device = mafDevice::SafeDownCast(InteractionFactory::CreateInteraction(type)))
   {
     device->SetPersistentFlag(persistent); // set persistent flag
 
@@ -119,7 +117,7 @@ mafDevice *mafDeviceManager::AddDevice(const char *type, bool persistent)
     {
       
       // if no device with the same name exists break!
-      if (m_DeviceSet->GetDevice(instance_name.GetCStr())==NULL)
+      if (m_DeviceSet->GetDevice(instance_name.GetCStr())==nullptr)
         break;
 
       // else append an numeric postfix
@@ -128,14 +126,12 @@ mafDevice *mafDeviceManager::AddDevice(const char *type, bool persistent)
     
     device->SetName(instance_name);
     
-    mafDevice *ret = (AddDevice(device)>0)?device:NULL;
-
-    //device->Delete();
+    auto ret = (AddDevice(device)>0) ? device : nullptr;
 
     return ret;
   }
 
-  return device;
+  return nullptr;
 }
 
 //------------------------------------------------------------------------------
@@ -153,14 +149,14 @@ int mafDeviceManager::RemoveDevice(const char *name, bool force)
 }
 
 //------------------------------------------------------------------------------
-mafDevice *mafDeviceManager::GetDevice(const char *name)
+std::shared_ptr<mafDevice>mafDeviceManager::GetDevice(const char *name)
 //------------------------------------------------------------------------------
 {
   return m_DeviceSet->GetDevice(name);
 }
 
 //------------------------------------------------------------------------------
-mafDevice *mafDeviceManager::GetDevice(mafID id)
+std::shared_ptr<mafDevice>mafDeviceManager::GetDevice(mafID id)
 //------------------------------------------------------------------------------
 {
   if (id==m_DeviceSet->GetID())
@@ -169,7 +165,7 @@ mafDevice *mafDeviceManager::GetDevice(mafID id)
   return m_DeviceSet->GetDevice(id);
 }
 //------------------------------------------------------------------------------
-std::list<mafDevice *> *mafDeviceManager::GetDevices()
+std::list<std::shared_ptr<mafDevice> > *mafDeviceManager::GetDevices()
 //------------------------------------------------------------------------------
 {
   return m_DeviceSet->GetDevices();
@@ -193,7 +189,7 @@ void mafDeviceManager::InternalStore(mafStorageElementBuilder& node)
 //----------------------------------------------------------------------------
 {
   node(_R("DeviceIdCounter")).SetValue(m_DeviceIdCounter);
-  node[_R("DeviceSet")].SetValue(m_DeviceSet);
+  node[_R("DeviceSet")].SetValue(m_DeviceSet.get());
 }
 
 //----------------------------------------------------------------------------
@@ -259,7 +255,7 @@ void mafDeviceManager::OnEvent(mafEventBase *event)
   Superclass::OnEvent(event);
 }
 
-mafDeviceManager* mafDeviceManager::Create(const char* DeviceManagerType)
+std::shared_ptr<mafDeviceManager> mafDeviceManager::Create(const char* DeviceManagerType)
 {
   if (auto object = InteractionFactory::CreateInteraction(DeviceManagerType))
   {
@@ -267,8 +263,6 @@ mafDeviceManager* mafDeviceManager::Create(const char* DeviceManagerType)
     {
       return deviceManager;
     }
-    delete object;
-    return nullptr;
   }
   return nullptr;
 }

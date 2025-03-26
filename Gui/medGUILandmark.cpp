@@ -77,7 +77,7 @@ medGUILandmark::medGUILandmark(mafNode *inputVME, mafBaseEventHandler *listener,
 
   m_OldInputVMEBehavior = NULL;
 
-  m_PickerInteractor = mafInteractorPicker::New();
+  m_PickerInteractor = mafInteractorPicker::NewSPtr();
   //m_PickerInteractor->SetMListener(this);
   m_PickerInteractor->SetListener(this);
 
@@ -104,7 +104,7 @@ medGUILandmark::medGUILandmark(mafNode *inputVME, mafBaseEventHandler *listener,
     m_RefSysVMEName = m_InputVME->GetName(); 
     m_CurrentTime = m_InputVME->GetTimeStamp();
     //PPP  Attach interactor to vme and register ald behavior
-    AttachInteractor(m_InputVME, m_PickerInteractor, m_OldInputVMEBehavior);        
+    AttachInteractor(m_InputVME, m_PickerInteractor.get(), m_OldInputVMEBehavior);        
     SetGUIStatusToPick();
   }  
   if (!m_TestMode)
@@ -120,9 +120,9 @@ medGUILandmark::~medGUILandmark()
 
   if (m_InputVME) AttachInteractor(m_InputVME, m_OldInputVMEBehavior);
 
-  mafDEL(m_IsaCompositor); 
+  m_IsaCompositor.reset(); 
 
-  mafDEL(m_PickerInteractor);
+  m_PickerInteractor.reset();
 
   if (m_LMCloud)
   {
@@ -243,7 +243,7 @@ void medGUILandmark::CreateTranslateISACompositor()
   assert(m_Landmark);
 
   // Create the isa compositor:
-  m_IsaCompositor = mafInteractorCompositorMouse::New();
+  m_IsaCompositor = mafInteractorCompositorMouse::NewSPtr();
 
   // default aux ref sys is the vme ref sys
   m_RefSysVME = m_InputVME;
@@ -252,7 +252,7 @@ void medGUILandmark::CreateTranslateISACompositor()
 	// create the translate behavior  
 	//----------------------------------------------------------------------------
    
-  m_IsaTranslate = m_IsaCompositor->CreateBehavior(MOUSE_MIDDLE); 
+  m_IsaTranslate = m_IsaCompositor->CreateBehavior(MOUSE_MIDDLE).get(); 
   m_IsaTranslate->SetListener(this);
   m_IsaTranslate->SetVME(m_Landmark);
   m_IsaTranslate->GetTranslationConstraint()->GetRefSys()->SetTypeToView();
@@ -268,7 +268,7 @@ void medGUILandmark::CreateTranslateISACompositor()
 	// create the translate behavior with snap
 	//----------------------------------------------------------------------------
   
-  m_IsaTranslateSnap = m_IsaCompositor->CreateBehavior(MOUSE_MIDDLE_CONTROL); 
+  m_IsaTranslateSnap = m_IsaCompositor->CreateBehavior(MOUSE_MIDDLE_CONTROL).get(); 
   m_IsaTranslateSnap->SetListener(this);
   m_IsaTranslateSnap->SetVME(m_Landmark);
   m_IsaTranslateSnap->GetTranslationConstraint()->GetRefSys()->SetTypeToView();
@@ -372,7 +372,7 @@ void medGUILandmark::OnVmePicked(mafEvent& e)
     CreateTranslateISACompositor(); 
 
     //AttachInteractor(m_InputVME, m_OldInputVMEBehavior); 
-    AttachInteractor(m_Landmark, m_IsaCompositor);
+    AttachInteractor(m_Landmark, m_IsaCompositor.get());
 
     SetGUIStatusToEnabled(); 
     SetGuiAbsPosition(m_Landmark->GetAbsMatrixPipe()->GetMatrixPointer()->GetVTKMatrix());     
@@ -488,7 +488,7 @@ void medGUILandmark::SetInputVME(mafNode *vme)
    m_InputVME = mafVME::SafeDownCast(vme);
    m_CurrentTime = m_InputVME->GetTimeStamp();
    SetRefSysVME(m_InputVME);
-   AttachInteractor(m_InputVME, m_PickerInteractor, m_OldInputVMEBehavior);        
+   AttachInteractor(m_InputVME, m_PickerInteractor.get(), m_OldInputVMEBehavior);        
 }
 
 void medGUILandmark::GetSpawnPointCoordinates(double newPointCoord[3]) 
@@ -580,7 +580,7 @@ void medGUILandmark::SpawnLandmark()
   {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Landmark); evUnq.SetBool(true); InvokeEvent(evUnq);}
 	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);} 
   
-  AttachInteractor(m_Landmark, m_IsaCompositor);
+  AttachInteractor(m_Landmark, m_IsaCompositor.get());
 
   SetGUIStatusToEnabled(); 
   SetGuiAbsPosition(m_Landmark->GetAbsMatrixPipe()->GetMatrixPointer()->GetVTKMatrix());     

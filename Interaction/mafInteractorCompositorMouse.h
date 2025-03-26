@@ -92,7 +92,7 @@ public:
 
   /**
   Create a behavior given the activator*/
-  mafInteractorGenericMouse *CreateBehavior(MMI_ACTIVATOR activator);
+  std::shared_ptr<mafInteractorGenericMouse>CreateBehavior(MMI_ACTIVATOR activator);
 
   /**
   Get a behavior given the activator*/
@@ -116,7 +116,7 @@ protected:
   void OnRightButtonDown  (mafEventInteraction *e);
   void OnRightButtonUp    (mafEventInteraction *e);
 
-  typedef std::map<int, mafAutoPointer<mafInteractorGenericMouse> > mmuActivatorMap;
+  typedef std::map<int, std::shared_ptr<mafInteractorGenericMouse> > mmuActivatorMap;
 
   /**
                     ActivatorMap

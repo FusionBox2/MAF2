@@ -100,8 +100,8 @@ protected:
 
 	void SetPlaneDimension();
 
-	mafInteractorCompositorMouse *m_IsaCompositorWithoutGizmo;
-	mafInteractorCompositorMouse *m_IsaCompositorWithGizmo;
+	std::shared_ptr<mafInteractorCompositorMouse> m_IsaCompositorWithoutGizmo;
+	std::shared_ptr<mafInteractorCompositorMouse> m_IsaCompositorWithGizmo;
 	mafInteractorGenericMouse    *m_IsaTranslate;
 	mafInteractorGenericMouse    *m_IsaRotate;
 	mafInteractorGenericMouse		 *m_IsaChangeArrowWithGizmo;

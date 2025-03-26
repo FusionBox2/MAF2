@@ -130,7 +130,7 @@ protected:
 	mafRWI							*m_Rwi;
 	vtkPolyDataMapper		*m_PolydataMapper;
 	vtkActor						*m_PolydataActor;
-	mafInteractorSelectCell				*m_SelectCellInteractor;
+	std::shared_ptr<mafInteractorSelectCell>				m_SelectCellInteractor;
 	vtkMAFCellsFilter			*m_CellFilter;
 	vtkPolyData					*m_Mesh;
 

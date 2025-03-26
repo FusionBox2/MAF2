@@ -295,8 +295,8 @@ medViewArbitraryOrthoSlice::medViewArbitraryOrthoSlice(const mafString& label, b
 
 medViewArbitraryOrthoSlice::~medViewArbitraryOrthoSlice()
 {
-	mafDEL(m_XSlicerPicker);
-	mafDEL(m_XSlicerPicker);
+	m_XSlicerPicker.reset();
+	m_XSlicerPicker.reset();
 
 
 
@@ -527,27 +527,27 @@ void medViewArbitraryOrthoSlice::OnEvent(mafEventBase *maf_event)
 		using namespace::std;
 
 		string pickedSliceName;
-		if (event->GetSender() == m_XSlicerPicker)
+		if (event->GetSender() == m_XSlicerPicker.get())
 		{
 			pickedSliceName = m_XSlicerPicker->GetName().GetCStr();
 
-			medInteractorPicker *picker = m_XSlicerPicker;
+			medInteractorPicker *picker = m_XSlicerPicker.get();
 			MyMethod(picker, pickedPointCoordinates);
 
 		}
-		else if (event->GetSender() == m_YSlicerPicker)
+		else if (event->GetSender() == m_YSlicerPicker.get())
 		{
 			pickedSliceName = m_YSlicerPicker->GetName().GetCStr();
 
-			medInteractorPicker *picker = m_YSlicerPicker;
+			medInteractorPicker *picker = m_YSlicerPicker.get();
 			MyMethod(picker, pickedPointCoordinates);
 
 		}
-		else if (event->GetSender() == m_ZSlicerPicker)
+		else if (event->GetSender() == m_ZSlicerPicker.get())
 		{
 			pickedSliceName = m_ZSlicerPicker->GetName().GetCStr();
 
-			medInteractorPicker *picker = m_ZSlicerPicker;
+			medInteractorPicker *picker = m_ZSlicerPicker.get();
 			MyMethod(picker, pickedPointCoordinates);
 		}
 
@@ -2490,22 +2490,22 @@ void medViewArbitraryOrthoSlice::ShowSlicers( mafVME * vmeVolume, bool show )
 	CreateViewCameraNormalFeedbackActor(blue, Z_VIEW);
 
 	// create the pick interactor for slicer X
-	m_XSlicerPicker = medInteractorPicker::New();
+	m_XSlicerPicker = medInteractorPicker::NewSPtr();
 	m_XSlicerPicker->SetListener(this);
 	m_XSlicerPicker->SetName(_R("m_XSlicerPicker"));
-	m_SlicerX->SetBehavior(m_XSlicerPicker);
+	m_SlicerX->SetBehavior(m_XSlicerPicker.get());
 
 	// create the pick interactor for slicer X
-	m_YSlicerPicker = medInteractorPicker::New();
+	m_YSlicerPicker = medInteractorPicker::NewSPtr();
 	m_YSlicerPicker->SetListener(this);
 	m_YSlicerPicker->SetName(_R("m_YSlicerPicker"));
-	m_SlicerY->SetBehavior(m_YSlicerPicker);
+	m_SlicerY->SetBehavior(m_YSlicerPicker.get());
 
 	// create the pick interactor for slicer X
-	m_ZSlicerPicker = medInteractorPicker::New();
+	m_ZSlicerPicker = medInteractorPicker::NewSPtr();
 	m_ZSlicerPicker->SetListener(this);
 	m_ZSlicerPicker->SetName(_R("m_ZSlicerPicker"));
-	m_SlicerZ->SetBehavior(m_ZSlicerPicker);
+	m_SlicerZ->SetBehavior(m_ZSlicerPicker.get());
 
 	EnableSlicersPicking(true);
 }
@@ -4555,15 +4555,15 @@ void medViewArbitraryOrthoSlice::MyMethod( medInteractorPicker * picker, double 
 {
 	medGizmoCrossRotateTranslate *gizmo = NULL;
 
-	if (picker == m_XSlicerPicker)
+	if (picker == m_XSlicerPicker.get())
 	{
 		gizmo = m_GizmoXView;
 	}
-	else if (picker == m_YSlicerPicker)
+	else if (picker == m_YSlicerPicker.get())
 	{
 		gizmo = m_GizmoYView;
 	}
-	else if (picker == m_ZSlicerPicker)
+	else if (picker == m_ZSlicerPicker.get())
 	{
 		gizmo = m_GizmoZView;
 	}
@@ -4599,15 +4599,15 @@ void medViewArbitraryOrthoSlice::MyMethod( medInteractorPicker * picker, double 
 	fakeEvent.SetMatrix(matrixToSend);
 	fakeEvent.SetArg(mafInteractorGenericMouse::MOUSE_MOVE);
 
-	if (picker == m_XSlicerPicker)
+	if (picker == m_XSlicerPicker.get())
 	{
 		OnEventGizmoCrossTranslateXNormalView(&fakeEvent);
 	}
-	else if (picker == m_YSlicerPicker)
+	else if (picker == m_YSlicerPicker.get())
 	{
 		OnEventGizmoCrossTranslateYNormalView(&fakeEvent);
 	}
-	else if (picker == m_ZSlicerPicker)
+	else if (picker == m_ZSlicerPicker.get())
 	{
 		OnEventGizmoCrossTranslateZNormalView(&fakeEvent);
 	}

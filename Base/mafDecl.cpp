@@ -432,11 +432,7 @@ mafString  mafIdString(int id)
 		 case CAMERA_FIT:						s=_R("CAMERA_FIT"); break; 
 		 case CAMERA_FLYTO:					s=_R("CAMERA_FLYTO"); break; 
      case LINK_CAMERA_TO_INTERACTOR: s=_R("LINK_CAMERA_TO_INTERACTOR"); break; 
-     case DEVICE_ADD:           s=_R("DEVICE_ADD"); break; 
-     case DEVICE_REMOVE:        s=_R("DEVICE_REMOVE"); break; 
      case DEVICE_GET:           s=_R("DEVICE_GET"); break; 
-     case INTERACTOR_ADD:       s=_R("INTERACTOR_ADD"); break; 
-     case INTERACTOR_REMOVE:    s=_R("INTERACTOR_REMOVE"); break; 
 
      case OP_RUN:	              s=_R("OP_RUN"); break; 
      case OP_RUN_OK:	          s=_R("OP_RUN_OK"); break; 

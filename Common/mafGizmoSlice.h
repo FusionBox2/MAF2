@@ -109,7 +109,7 @@ protected:
   mafString           m_Name;
   long                m_Id;
   mafVMEGizmo        *m_VmeGizmo;
-  mafInteractorCompositorMouse *m_GizmoBehavior;
+  std::shared_ptr<mafInteractorCompositorMouse> m_GizmoBehavior;
 	vtkDoubleArray     *m_SnapArray;
 
   std::shared_ptr<mafMatrix> m_GizmoHandleCenterMatrix;

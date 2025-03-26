@@ -298,7 +298,7 @@ protected:
 	vtkTextMapper	*m_TextMapper;
 	wxString m_Text;
 
-	medInteractorDICOMImporter *m_DicomInteractor;
+	std::shared_ptr<medInteractorDICOMImporter> m_DicomInteractor;
 
 	medGUIWizard			*m_Wizard;
 	medGUIWizardPageNew	*m_LoadPage;

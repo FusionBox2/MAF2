@@ -1,20 +1,4 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafDeviceSet
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafDeviceSet_h
-#define __mafDeviceSet_h
+#pragma once
 
 #include "mafDevice.h"
 #include <list>
@@ -37,12 +21,6 @@ public:
   // Events
   //------------------------------------------------------------------------------
   /** @ingroup Events 
-      Adds a device (passed in the Data argument) to this set (to be removed) */
-  MAF_ID_DEC(DEVICE_ADD);
-  /** @ingroup Events 
-      Remove a device (passed in the Data argument) from this set (to be removed) */
-  MAF_ID_DEC(DEVICE_REMOVE);
-  /** @ingroup Events 
       Issued when a new device (passed in the Data argument) is added to this set */
   MAF_ID_DEC(DEVICE_ADDED);
   /** @ingroup Events 
@@ -58,16 +36,16 @@ public:
   mafTypeMacro(mafDeviceSet,mafDevice);
 
   /** Add a new device. If the returned value is false the operation has failed! */
-  virtual void AddDevice(mafDevice *device);
+  virtual void AddDevice(std::shared_ptr<mafDevice> device);
 
   /**  Return a device in the set given its ID */
-  mafDevice *GetDeviceByIndex(int idx);
+  std::shared_ptr<mafDevice> GetDeviceByIndex(int idx);
 
   /**  Return a device in the set given its ID */
-  mafDevice *GetDevice(mafID id);
+  std::shared_ptr<mafDevice> GetDevice(mafID id);
   
   /**  Return a device in the set given its name */
-  mafDevice *GetDevice(const char *name);
+  std::shared_ptr<mafDevice> GetDevice(const char *name);
 
   /** Return the number of devices assigned to this manager */
   int GetNumberOfDevices();
@@ -91,7 +69,7 @@ public:
   void OnEvent(mafEventBase *event) override;
 
   /** Return the list of devices pluged into this device set */
-  std::list<mafDevice*> *GetDevices() {return &m_Devices;}
+  std::list<std::shared_ptr<mafDevice> > *GetDevices() {return &m_Devices;}
 
 protected:
   mafDeviceSet();
@@ -106,7 +84,7 @@ protected:
   /** shutdown also subdevices */
   void InternalShutdown() override;
 
-  std::list<mafDevice *> m_Devices;
+  std::list<std::shared_ptr<mafDevice> > m_Devices;
 
   std::mutex *          m_DevicesMutex;
 
@@ -114,5 +92,3 @@ private:
   mafDeviceSet(const mafDeviceSet&);  // Not implemented.
   void operator=(const mafDeviceSet&);  // Not implemented.
 };
-
-#endif 

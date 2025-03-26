@@ -77,7 +77,7 @@ mafGUITransformMouse::~mafGUITransformMouse()
 //----------------------------------------------------------------------------
 { 
   DetachInteractorFromVme();    
-  mafDEL(m_IsaCompositor); 
+  m_IsaCompositor.reset(); 
 }
 
 //----------------------------------------------------------------------------
@@ -282,7 +282,7 @@ void mafGUITransformMouse::CreateISA()
   m_OldInteractor = m_InputVME->GetBehavior();
 
   // Create the isa compositor:
-  mafNEW(m_IsaCompositor);
+  m_IsaCompositor = mafInteractorCompositorMouse::NewSPtr();
 
   // default aux ref sys is the vme ref sys
   m_RefSysVME = m_InputVME;
@@ -292,7 +292,7 @@ void mafGUITransformMouse::CreateISA()
 	// create the rotate behavior
 	//----------------------------------------------------------------------------
   
-  m_IsaRotate = m_IsaCompositor->CreateBehavior(MOUSE_LEFT);
+  m_IsaRotate = m_IsaCompositor->CreateBehavior(MOUSE_LEFT).get();
   
   m_IsaRotate->SetListener(this); 
   m_IsaRotate->SetVME(m_InputVME);
@@ -308,7 +308,7 @@ void mafGUITransformMouse::CreateISA()
 	// create the translate behavior
 	//----------------------------------------------------------------------------
   
-  m_IsaTranslate = m_IsaCompositor->CreateBehavior(MOUSE_MIDDLE);
+  m_IsaTranslate = m_IsaCompositor->CreateBehavior(MOUSE_MIDDLE).get();
   
   m_IsaTranslate->SetListener(this);
   m_IsaTranslate->SetVME(m_InputVME);
@@ -324,7 +324,7 @@ void mafGUITransformMouse::CreateISA()
 	// create the roll behavior
 	//----------------------------------------------------------------------------
   
-  m_IsaRoll = m_IsaCompositor->CreateBehavior(MOUSE_LEFT_CONTROL);
+  m_IsaRoll = m_IsaCompositor->CreateBehavior(MOUSE_LEFT_CONTROL).get();
   
   // isa gen is sending matrix to the operation
   m_IsaRoll->SetListener(this);
@@ -363,7 +363,7 @@ void mafGUITransformMouse::EnableWidgets(bool enable)
 void mafGUITransformMouse::AttachInteractorToVme()
 //----------------------------------------------------------------------------
 {
-  m_InputVME->SetBehavior(m_IsaCompositor);
+  m_InputVME->SetBehavior(m_IsaCompositor.get());
 }
 
 //----------------------------------------------------------------------------
@@ -390,7 +390,7 @@ void mafGUITransformMouse::RefSysVmeChanged()
 mafInteractorGenericMouse* mafGUITransformMouse::CreateBehavior(MMI_ACTIVATOR activator)
 //----------------------------------------------------------------------------
 {
-  return m_IsaCompositor->CreateBehavior(activator);
+  return m_IsaCompositor->CreateBehavior(activator).get();
 }
 
 mafInteractorGenericMouse* mafGUITransformMouse::GetIsaRotate()

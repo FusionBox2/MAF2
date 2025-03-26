@@ -106,7 +106,7 @@ medOpSegmentationRegionGrowingConnectedThreshold::~medOpSegmentationRegionGrowin
   delete []m_Seed;
   mafDEL(m_VolumeOut);
   mafDEL(m_SurfaceOut);
-  mafDEL(m_Picker);
+  m_Picker.reset();
   vtkDEL(m_SphereVTK);
 }
 //----------------------------------------------------------------------------
@@ -132,9 +132,9 @@ void medOpSegmentationRegionGrowingConnectedThreshold::OpRun()
     
 	  m_OldBehavior = mafVME::SafeDownCast(m_ResampleInput)->GetBehavior();
 
-	  m_Picker = mafInteractorPicker::New();
+	  m_Picker = mafInteractorPicker::NewSPtr();
 	  m_Picker->SetListener(this);
-	  mafVME::SafeDownCast(m_ResampleInput)->SetBehavior(m_Picker);
+	  mafVME::SafeDownCast(m_ResampleInput)->SetBehavior(m_Picker.get());
 
 	  mafNEW(m_Sphere);
 	  m_Sphere->GetTagArray()->SetTag(mafTagItem(_R("VISIBLE_IN_THE_TREE"), 0.0));

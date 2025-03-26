@@ -140,8 +140,8 @@ medGizmoCrossTranslatePlane::medGizmoCrossTranslatePlane(mafVME *input, mafBaseE
 		m_Gizmo[i]->SetMediator(GetListener());
 	}
 	// assign isa to S1 and S2;
-	m_Gizmo[S0]->SetBehavior(m_IsaComp[S0]);
-	m_Gizmo[S1]->SetBehavior(m_IsaComp[S1]);
+	m_Gizmo[S0]->SetBehavior(m_IsaComp[S0].get());
+	m_Gizmo[S1]->SetBehavior(m_IsaComp[S1].get());
 
 	auto absInputMatrix = m_InputVme->GetOutput()->GetAbsMatrix();
 	SetAbsPose(absInputMatrix);
@@ -173,7 +173,7 @@ medGizmoCrossTranslatePlane::~medGizmoCrossTranslatePlane()
 	for (i = 0; i < NUM_GIZMO_PARTS; i++)
 	{
 		vtkDEL(m_LineTF[i]);
-		vtkDEL(m_IsaComp[i]); 
+		m_IsaComp[i].reset(); 
 	}
 
 	m_PivotTransform->Delete();
@@ -181,7 +181,7 @@ medGizmoCrossTranslatePlane::~medGizmoCrossTranslatePlane()
 	for (i = 0; i < NUM_GIZMO_PARTS; i++)
 	{
 		vtkDEL(m_RotatePDF[i]);
-		m_Gizmo[i]->ReparentTo(NULL);
+		m_Gizmo[i]->ReparentTo(nullptr);
 	}
 
 	vtkDEL(m_TranslationFeedbackGizmo);
@@ -292,11 +292,11 @@ void medGizmoCrossTranslatePlane::CreateISA()
 	// Default isa is constrained to plane XZ.
 	for (int i = 0; i < NUM_GIZMO_PARTS; i++)
 	{
-		m_IsaComp[i] = mafInteractorCompositorMouse::New();
+		m_IsaComp[i] = mafInteractorCompositorMouse::NewSPtr();
 
 		// default behavior is activated by mouse left and is constrained to X axis,
 		// default ref sys is input vme abs matrix
-		m_IsaGen[i] = m_IsaComp[i]->CreateBehavior(MOUSE_LEFT);
+		m_IsaGen[i] = m_IsaComp[i]->CreateBehavior(MOUSE_LEFT).get();
 		m_IsaGen[i]->SetVME(m_InputVme);
 
 		// default movement is constrained to plane XZ 

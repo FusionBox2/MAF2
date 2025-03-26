@@ -841,7 +841,7 @@ void medOpSegmentation::CreateOpDialog()
 void medOpSegmentation::DeleteOpDialog()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_SegmentationPicker);
+  m_SegmentationPicker.reset();
   
   if (m_ThresholdVolume)
   {
@@ -933,16 +933,16 @@ void medOpSegmentation::DeleteOpDialog()
   cppDEL(m_GuiDialog);
   cppDEL(m_Dialog);
 
-  mafDEL(m_SegmentationPicker);
+  m_SegmentationPicker.reset();
 
   if (m_DeviceManager)
   {
     m_DeviceManager->Shutdown();
   }
-  mafDEL(m_DeviceManager);
-  mafDEL(m_AutomaticPER);
-  mafDEL(m_ManualPER);
-  mafDEL(m_SER);
+  m_DeviceManager.reset();
+  m_AutomaticPER.reset();
+  m_ManualPER.reset();
+  m_SER.reset();
 
 }
 
@@ -1992,9 +1992,9 @@ void medOpSegmentation::OnManualStep()
   m_View->CameraUpdate();
 
   
-  m_SER->GetAction("pntActionAutomatic")->UnBindDevice(m_DialogMouse);
-  m_SER->GetAction("pntActionAutomatic")->UnBindInteractor(m_AutomaticPER);
-  m_SER->GetAction("pntEditingAction")->BindInteractor(m_ManualPER);
+  m_SER->GetAction("pntActionAutomatic")->UnBindDevice(m_DialogMouse.get());
+  m_SER->GetAction("pntActionAutomatic")->UnBindInteractor(m_AutomaticPER.get());
+  m_SER->GetAction("pntEditingAction")->BindInteractor(m_ManualPER.get());
   m_SER->GetAction("pntEditingAction")->BindDevice(m_DialogMouse);
   
   
@@ -2079,10 +2079,10 @@ void medOpSegmentation::OnManualStepExit()
   m_View->GetWindow()->SetCursor(cursor);
   m_ManualPER->RemoveActor();
   //logic stuff
-  m_SER->GetAction("pntEditingAction")->UnBindInteractor(m_ManualPER);
-  m_SER->GetAction("pntEditingAction")->UnBindDevice(m_DialogMouse);
+  m_SER->GetAction("pntEditingAction")->UnBindInteractor(m_ManualPER.get());
+  m_SER->GetAction("pntEditingAction")->UnBindDevice(m_DialogMouse.get());
   m_SER->GetAction("pntActionAutomatic")->BindDevice(m_DialogMouse);
-  m_SER->GetAction("pntActionAutomatic")->BindInteractor(m_AutomaticPER);
+  m_SER->GetAction("pntActionAutomatic")->BindInteractor(m_AutomaticPER.get());
   //apply residual changes
   ApplyVolumeSliceChanges(); 
   
@@ -2333,14 +2333,14 @@ void medOpSegmentation::OnEvent(mafEventBase *maf_event)
       OnManualSegmentationEvent(e);
     else if(e->GetSender() == m_SegmentationOperationsGui[REFINEMENT_SEGMENTATION])
       OnRefinementSegmentationEvent(e);
-    else if (e->GetSender() == m_AutomaticPER && e->GetId()== MOUSE_MOVE)
+    else if (e->GetSender() == m_AutomaticPER.get() && e->GetId()== MOUSE_MOVE)
     {
       m_AutomaticMouseThreshold = e->GetDouble();
       mafString text = mafString::Format(_R("Scalar = %.3f"),m_AutomaticMouseThreshold);
       m_AutomaticScalarTextMapper->SetInput(text.GetCStr());
       m_View->CameraUpdate();
     }
-    else if (e->GetSender() == m_ManualPER && e->GetId()== MOUSE_MOVE && m_ManualSegmentationTools == 0)
+    else if (e->GetSender() == m_ManualPER.get() && e->GetId()== MOUSE_MOVE && m_ManualSegmentationTools == 0)
     {
       UndoBrushPreview();
       if(e->GetDouble() > m_CurrentBrushMoveEventCount && m_ManualSegmentationTools == 0)
@@ -2363,7 +2363,7 @@ void medOpSegmentation::OnEvent(mafEventBase *maf_event)
       m_View->CameraUpdate();
       UndoBrushPreview(); // Undo is execute twice to ensure no spot are left by the brush
     }
-    else if (e->GetSender() == m_SegmentationPicker && e->GetId()== medInteractorSegmentationPicker::VME_ALT_PICKED)
+    else if (e->GetSender() == m_SegmentationPicker.get() && e->GetId()== medInteractorSegmentationPicker::VME_ALT_PICKED)
     {
       //Picking during automatic segmentation
       if (m_CurrentOperation==AUTOMATIC_SEGMENTATION)
@@ -4152,36 +4152,36 @@ void medOpSegmentation::InitializeInteractors()
 //------------------------------------------------------------------------
 {
   //Create the device manager
-  mafNEW(m_DeviceManager);
+  m_DeviceManager = mafDeviceManager::NewSPtr();
   m_DeviceManager->SetListener(this);
   m_DeviceManager->SetName(_R("DialogDeviceManager"));
   m_DeviceManager->Initialize();
 
   //Create the static event router and connect it
-  mafNEW(m_SER);
+  m_SER = mafInteractorSER::NewSPtr();
   m_SER->SetName(_R("StaticEventRouter"));
   m_SER->SetListener(this);
 
   //Create a Mouse device
   mafPlugDevice<medDeviceButtonsPadMouseDialog>("Mouse");
-  m_DialogMouse = (medDeviceButtonsPadMouseDialog *)m_DeviceManager->AddDevice("medDeviceButtonsPadMouseDialog",false); // add as persistent device
+  m_DialogMouse = medDeviceButtonsPadMouseDialog::StaticDownCast(m_DeviceManager->AddDevice("medDeviceButtonsPadMouseDialog",false)); // add as persistent device
   assert(m_DialogMouse);
   m_DialogMouse->SetName(_R("DialogMouse"));
 
   //Define the action for pointing and manipulating
-  mafAction *pntAction = m_SER->AddAction("pntAction",-10);
+  auto pntAction = m_SER->AddAction("pntAction",-10);
 
   //create the positional event router
 
 
-  mafNEW(m_ManualPER);
+  m_ManualPER = medInteractorPERBrushFeedback::NewSPtr();
   m_ManualPER->SetName(_R("m_EditingPER"));
   m_ManualPER->SetListener(this);
 
   assert(m_View);
   m_ManualPER->SetRenderer(m_View->GetFrontRenderer());
 
-  mafNEW(m_SegmentationPicker);
+  m_SegmentationPicker = medInteractorSegmentationPicker::NewSPtr();
 
   m_SegmentationPicker->SetRenderer(m_View->GetFrontRenderer());
   m_SegmentationPicker->SetListener(this);
@@ -4189,11 +4189,11 @@ void medOpSegmentation::InitializeInteractors()
   m_OldBehavior=m_Volume->GetBehavior();
   m_DialogMouse->SetView(m_View);
 
-  m_Volume->SetBehavior(m_SegmentationPicker);
+  m_Volume->SetBehavior(m_SegmentationPicker.get());
 
   m_SER->AddAction("pntEditingAction");
   pntAction = m_SER->GetAction("pntEditingAction");
-  m_ManualPER->AddObserver(m_SegmentationPicker);
+  m_ManualPER->AddObserver(m_SegmentationPicker.get());
 
 //   m_View->GetRWI()->SetMouse(m_DialogMouse);
 //   m_View->SetMouse(m_DialogMouse);
@@ -4205,10 +4205,10 @@ void medOpSegmentation::InitializeInteractors()
 
 
   
-  mafNEW(m_AutomaticPER);
+  m_AutomaticPER = medInteractorPERScalarInformation::NewSPtr();
   pntAction = m_SER->AddAction("pntActionAutomatic",-10);
   pntAction->BindDevice(m_DialogMouse);
-  pntAction->BindInteractor(m_AutomaticPER);
+  pntAction->BindInteractor(m_AutomaticPER.get());
   m_AutomaticPER->SetListener(this);
   m_AutomaticPER->SetRenderer(m_View->GetFrontRenderer());
 

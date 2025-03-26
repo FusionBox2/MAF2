@@ -46,11 +46,11 @@ class MAF_EXPORT mafInteractorSER : public mafInteractor
 public: 
   mafTypeMacro(mafInteractorSER,mafInteractor);
 
-  static mafInteractorSER* Create(const char* InteractorSERType);
+  static std::shared_ptr<mafInteractorSER> Create(const char* InteractorSERType);
   /** Un/Bind a device to an action */
-  void BindDeviceToAction(mafDevice *device,mafAction *action);
+  void BindDeviceToAction(std::shared_ptr<mafDevice> device,mafAction *action);
   /** Un/Bind a device to an action */
-  void BindDeviceToAction(mafDevice *device,const char *action_name);
+  void BindDeviceToAction(std::shared_ptr<mafDevice> device,const char *action_name);
   /** Un/Bind a device to an action */
   void UnBindDeviceFromAction(mafDevice *device,mafAction *action);
   /** Un/Bind a device to an action */
@@ -70,16 +70,16 @@ public:
   int UnBindAction(const char *action,mafInteractor *agent);
 
   /** Define a new action router.*/
-  mafAction *AddAction(const char *name, float priority = 0.0, int type = mafAction::SHARED_ACTION);
-  void AddAction(mafAction *action, float priority = 0.0);
+  std::shared_ptr<mafAction> AddAction(const char *name, float priority = 0.0, int type = mafAction::SHARED_ACTION);
+  void AddAction(std::shared_ptr<mafAction> action, float priority = 0.0);
   
   /** Get an action router.*/
-  mafAction *GetAction(const char *name);
+  std::shared_ptr<mafAction> GetAction(const char *name);
   
-  typedef std::map<mafString,mafAutoPointer<mafAction> > mmuActionsMap;
+  typedef std::map<mafString, std::shared_ptr<mafAction>  > mmuActionsMap;
 
   /** Return the actions container */
-  void GetActions(std::vector<mafAction *> &actions);
+  void GetActions(std::vector<std::shared_ptr<mafAction> > &actions);
   const mmuActionsMap *GetActions() {return &m_Actions;}
 
   void Store(mafStorageElementBuilder& element) { InternalStore(element); }
@@ -102,7 +102,7 @@ private:
 namespace parser
 {
   template<class Value>
-  mafInteractorSER* Parse(const Value& value, parser::To<mafInteractorSER>)
+  std::shared_ptr<mafInteractorSER> Parse(const Value& value, parser::To<mafInteractorSER>)
   {
     mafString type_name = value(_R("Type")).template As<mafString>();
     if (auto interactor = mafInteractorSER::Create(type_name.GetCStr()))

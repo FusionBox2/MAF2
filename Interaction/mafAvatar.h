@@ -67,7 +67,7 @@ public:
 
   mafAbstractTypeMacro(mafAvatar,mafInteractor);
 
-  static mafAvatar* Create(const char* AvatarType);
+  static std::shared_ptr<mafAvatar> Create(const char* AvatarType);
   /**
     Set the renderer this avatar is attached to. When the rederer is
     changed, all props created by this avatar are moved to the new renderer
@@ -218,7 +218,7 @@ private:
 namespace parser
 {
   template<class Value>
-  mafAvatar* Parse(const Value& value, parser::To<mafAvatar>)
+  std::shared_ptr<mafAvatar> Parse(const Value& value, parser::To<mafAvatar>)
   {
     mafString type_name = value(_R("Type")).template As<mafString>();
     if (auto avatar = mafAvatar::Create(type_name.GetCStr()))

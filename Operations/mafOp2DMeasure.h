@@ -83,9 +83,9 @@ protected:
   /** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
   void OpStop(int result) override;
 
-	mafInteractor2DDistance *m_DistanceInteractor2D;
-  mafInteractor2DAngle *m_AngleInteractor2D;
-  mafInteractor2DIndicator *m_IndicatorInteractor2D;
+	std::shared_ptr<mafInteractor2DDistance> m_DistanceInteractor2D;
+  std::shared_ptr<mafInteractor2DAngle> m_AngleInteractor2D;
+  std::shared_ptr<mafInteractor2DIndicator> m_IndicatorInteractor2D;
 
   mafString m_DistanceMeasure;
   mafString m_AcuteAngle;

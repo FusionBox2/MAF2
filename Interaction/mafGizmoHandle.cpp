@@ -124,11 +124,11 @@ mafGizmoHandle::mafGizmoHandle(mafVME *input, mafBaseEventHandler *listener /* =
   // create isa stuff
   //-----------------
   // create isa compositor and assign behaviors to m_IsaGen ivar
-  m_IsaComp  = mafInteractorCompositorMouse::New();
+  m_IsaComp  = mafInteractorCompositorMouse::NewSPtr();
 
   // default behavior is activated by mouse left and is constrained to X axis,
   // default ref sys is input vme abs matrix
-  m_IsaGen = m_IsaComp->CreateBehavior(MOUSE_LEFT);
+  m_IsaGen = m_IsaComp->CreateBehavior(MOUSE_LEFT).get();
 
   //isa will send events to this
 	if(m_ConstraintModality==BOUNDS)
@@ -147,7 +147,7 @@ mafGizmoHandle::mafGizmoHandle(mafVME *input, mafBaseEventHandler *listener /* =
 	}
 
   // assign isa to cylinder and cone
-  m_BoxGizmo->SetBehavior(m_IsaComp);
+  m_BoxGizmo->SetBehavior(m_IsaComp.get());
 
    // default axis is X
   SetType(mafGizmoHandle::XMIN);
@@ -181,7 +181,7 @@ mafGizmoHandle::~mafGizmoHandle()
 
   vtkDEL(m_PlaneSource);
 	
-  mafDEL(m_IsaComp);	//m_IsaGen is released automatically
+  m_IsaComp.reset();	//m_IsaGen is released automatically
 
   m_BoxGizmo->ReparentTo(NULL);
   m_ShadingPlaneGizmo->ReparentTo(NULL);

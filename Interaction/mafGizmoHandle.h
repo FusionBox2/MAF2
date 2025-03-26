@@ -213,7 +213,7 @@ protected:
   /** Create vtk objects needed*/
   void CreatePipeline();
 
-  mafInteractorCompositorMouse *m_IsaComp; ///< Interactor style compositor
+  std::shared_ptr<mafInteractorCompositorMouse> m_IsaComp; ///< Interactor style compositor
 
   mafInteractorGenericMouse *m_IsaGen; ///< Generic Interactor style
 

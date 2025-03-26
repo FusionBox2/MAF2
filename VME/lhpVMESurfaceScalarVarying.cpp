@@ -66,7 +66,7 @@ lhpVMESurfaceScalarVarying::lhpVMESurfaceScalarVarying()
   m_SuggestUser = true;
   m_PickedPoint = NULL;
   m_OldBehavior = NULL;
-  mafNEW(m_PickScalar);
+  m_PickScalar = mafInteractorPicker::NewSPtr();
   m_PickScalar->SetListener(this);
 
   m_ScalarTimeStamps.clear();
@@ -101,7 +101,7 @@ lhpVMESurfaceScalarVarying::lhpVMESurfaceScalarVarying()
 lhpVMESurfaceScalarVarying::~lhpVMESurfaceScalarVarying()
 //-------------------------------------------------------------------------
 {
-  mafDEL(m_PickScalar);
+  m_PickScalar.reset();
   vtkDEL(m_PolyData);
   vtkDEL(m_Locator);
 
@@ -584,7 +584,7 @@ void lhpVMESurfaceScalarVarying::OnEvent(mafEventBase *maf_event)
           e->SetId(OP_RUN_STARTING);
           ForwardUpEvent(e);
           m_OldBehavior = GetBehavior();
-          SetBehavior(m_PickScalar);
+          SetBehavior(m_PickScalar.get());
           if (m_SuggestUser)
           {
             mafMessage(_M(mafString(_L("Check the signal from the listbox then pick on the linked surface to position the scalar."))));

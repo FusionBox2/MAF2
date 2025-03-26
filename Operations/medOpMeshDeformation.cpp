@@ -640,9 +640,9 @@ void medOpMeshDeformation::CreateOpDialog()
   m_Dialog->SetSize(x_pos+5,y_pos+5,w,h);
 
   //create the picker
-  mafNEW(m_Picker);
+  m_Picker = mmiVTKPicker::NewSPtr();
   m_Picker->SetListener(this);
-  GetGlobalMouse()->AddObserver(m_Picker, MCH_INPUT);
+  GetGlobalMouse()->AddObserver(m_Picker.get(), MCH_INPUT);
 
   //and initialize the renderer window
   double bounds[6];	
@@ -659,8 +659,8 @@ void medOpMeshDeformation::CreateOpDialog()
 void medOpMeshDeformation::DeleteOpDialog()
 //----------------------------------------------------------------------------
 {
-  GetGlobalMouse()->RemoveObserver(m_Picker);
-  mafDEL(m_Picker);
+  GetGlobalMouse()->RemoveObserver(m_Picker.get());
+  m_Picker.reset();
 
   //remove all actors
   RemoveAllActors();    

@@ -408,7 +408,7 @@ void medOpExtrusionHoles::OpStop(int result)
 void medOpExtrusionHoles::DeleteOpDialog()
 //----------------------------------------------------------------------------
 {
-	GetGlobalMouse()->RemoveObserver(m_Picker);
+	GetGlobalMouse()->RemoveObserver(m_Picker.get());
 
 	if(m_SurfaceActor)
 		m_Rwi->m_RenFront->RemoveActor(m_SurfaceActor);
@@ -427,7 +427,7 @@ void medOpExtrusionHoles::DeleteOpDialog()
 	vtkDEL(m_SurfaceActor);
 	vtkDEL(m_SurfaceMapper);
 
-	mafDEL(m_Picker);
+	m_Picker.reset();
 	cppDEL(m_Rwi); 
 	cppDEL(m_Dialog);
 }
@@ -447,9 +447,9 @@ void medOpExtrusionHoles::CreateOpDialog()
 	m_Rwi->SetSize(0,0,500,500);
 	m_Rwi->Show(true);
 
-	mafNEW(m_Picker);
+	m_Picker = mmiSelectPoint::NewSPtr();
 	m_Picker->SetListener(this);
-	GetGlobalMouse()->AddObserver(m_Picker, MCH_INPUT);
+	GetGlobalMouse()->AddObserver(m_Picker.get(), MCH_INPUT);
 
 	wxPoint p = wxDefaultPosition;
 

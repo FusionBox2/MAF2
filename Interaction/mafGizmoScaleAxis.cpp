@@ -83,8 +83,8 @@ mafGizmoScaleAxis::mafGizmoScaleAxis(mafVME *input, mafBaseEventHandler *listene
   m_CubeGizmo->SetMediator(GetListener());
 
   // assign isa to cylinder and cube
-  m_CylGizmo->SetBehavior(m_IsaComp[0]);
-  m_CubeGizmo->SetBehavior(m_IsaComp[1]);
+  m_CylGizmo->SetBehavior(m_IsaComp[0].get());
+  m_CubeGizmo->SetBehavior(m_IsaComp[1].get());
 
   m_InputVme->Update();
   SetAbsPose(m_InputVme->GetOutput()->GetAbsMatrix());
@@ -102,8 +102,8 @@ mafGizmoScaleAxis::mafGizmoScaleAxis(mafVME *input, mafBaseEventHandler *listene
 mafGizmoScaleAxis::~mafGizmoScaleAxis() 
 //----------------------------------------------------------------------------
 {
-  m_CylGizmo->SetBehavior(NULL);
-  m_CubeGizmo->SetBehavior(NULL);
+  m_CylGizmo->SetBehavior(nullptr);
+  m_CubeGizmo->SetBehavior(nullptr);
    
   vtkDEL(m_Cube);
   vtkDEL(m_Cylinder);
@@ -119,10 +119,10 @@ mafGizmoScaleAxis::~mafGizmoScaleAxis()
 	// No leaks so somebody is performing this...
 	// wxDEL(GizmoData[i]);
 	//----------------------
-    mafDEL(m_IsaComp[i]); 
+    m_IsaComp[i].reset(); 
   }
-	m_CylGizmo->ReparentTo(NULL);
-	m_CubeGizmo->ReparentTo(NULL);
+	m_CylGizmo->ReparentTo(nullptr);
+	m_CubeGizmo->ReparentTo(nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -247,11 +247,11 @@ void mafGizmoScaleAxis::CreateISA()
   // create isa compositor and assign behaviors to IsaGen ivar
   for (int i = 0; i < 2; i++)
   {
-    mafNEW(m_IsaComp[i]);
+    m_IsaComp[i] = mafInteractorCompositorMouse::NewSPtr();
 
     // default behavior is activated by mouse left and is constrained to X axis,
     // default ref sys is input vme abs matrix
-    m_IsaGen[i] = m_IsaComp[i]->CreateBehavior(MOUSE_LEFT);
+    m_IsaGen[i] = m_IsaComp[i]->CreateBehavior(MOUSE_LEFT).get();
 
     m_IsaGen[i]->SetVME(m_InputVme);
     m_IsaGen[i]->GetTranslationConstraint()->SetConstraintModality(mafInteractorConstraint::FREE, mafInteractorConstraint::LOCK, mafInteractorConstraint::LOCK);

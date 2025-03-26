@@ -139,8 +139,8 @@ protected:
   bool m_TestMode;
   
   mafInteractor* m_OldInteractor;
-  mafInteractorPicker *m_PickerInteractor;
-  mafInteractorCompositorMouse *m_IsaCompositor;
+  std::shared_ptr<mafInteractorPicker> m_PickerInteractor;
+  std::shared_ptr<mafInteractorCompositorMouse> m_IsaCompositor;
   mafInteractorGenericMouse *m_IsaTranslate;
   mafInteractorGenericMouse *m_IsaTranslateSnap;
   mafInteractor *m_OldInputVMEBehavior;
