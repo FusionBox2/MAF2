@@ -101,7 +101,7 @@ mafInteractionManager::mafInteractionManager()
   m_SettingFileName.append(_R("Config/Presets"));
   if(!mafDirExists(m_SettingFileName)) m_SettingFileName = mafGetApplicationDirectory();
   
-  mafNEW(m_DeviceManager);
+  m_DeviceManager = mafDeviceManager::NewSPtr();
   m_DeviceManager->SetListener(this);
   m_DeviceManager->SetName(_R("DeviceManager"));
   
@@ -111,36 +111,36 @@ mafInteractionManager::mafInteractionManager()
   AddDeviceToTree(m_DeviceManager->GetDeviceSet()); // add dev_mgr node as root
   
   // create the static event router and connect it
-  mafNEW(m_StaticEventRouter);
+  m_StaticEventRouter = mafInteractorSER::NewSPtr();
   m_StaticEventRouter->SetName(_R("StaticEventRouter"));
   m_StaticEventRouter->SetListener(this);
   //m_StaticEventRouter->PlugEventSource(this,CameraUpdateChannel); // propagate camera events to actions
 
   // define the action for pointing and manipulating with negative priority to allow
   // static priority defined by operations to override it.
-  mafAction *pointing_action = m_StaticEventRouter->AddAction("PointAndManipulate",-10);
+  auto pointing_action = m_StaticEventRouter->AddAction("PointAndManipulate",-10);
 
   // create positional event router
-  mafNEW(m_PositionalEventRouter);
+  m_PositionalEventRouter = mafInteractorPER::NewSPtr();
   m_PositionalEventRouter->SetName(_R("PositionalEventRouter"));
-  pointing_action->BindInteractor(m_PositionalEventRouter);
+  pointing_action->BindInteractor(m_PositionalEventRouter.get());
   m_PositionalEventRouter->SetListener(this);
 
   // create a Mouse device
   // the device is plugged here instead of App::Init() since mouse is plugged 
   // by default in all applications!
   mafPlugDevice<mafDeviceButtonsPadMouse>("Mouse");
-  mafDeviceButtonsPadMouse *mouse_device = (mafDeviceButtonsPadMouse *)m_DeviceManager->AddDevice("mafDeviceButtonsPadMouse",true); // add as persistent device
+  auto mouse_device = mafDeviceButtonsPadMouse::StaticDownCast(m_DeviceManager->AddDevice("mafDeviceButtonsPadMouse",true)); // add as persistent device
   assert(mouse_device);
   //mafAction *mouse_action = m_StaticEventRouter->AddAction("Mouse"); // action for RWIs output
   //mouse_action->BindDevice(mouse_device); // bind mouse to mouse action
   pointing_action->BindDevice(mouse_device); // bind mouse to point&manipulate action
 
   mafPlugDevice<mafDeviceClientMAF>("Client MAF");
-  m_ClientDevice = (mafDeviceClientMAF *)m_DeviceManager->AddDevice("mafDeviceClientMAF",true);
+  m_ClientDevice = mafDeviceClientMAF::StaticDownCast(m_DeviceManager->AddDevice("mafDeviceClientMAF",true)).get();
 
   mafPlugDevice<mafDeviceButtonsPadMouseRemote>("RemoteMouse");
-  mafDeviceButtonsPadMouseRemote *remote_mouse_device = (mafDeviceButtonsPadMouseRemote *)m_DeviceManager->AddDevice("mafDeviceButtonsPadMouseRemote", true); // add as persistent device
+  auto remote_mouse_device = mafDeviceButtonsPadMouseRemote::StaticDownCast(m_DeviceManager->AddDevice("mafDeviceButtonsPadMouseRemote", true)); // add as persistent device
   assert(remote_mouse_device);
   pointing_action->BindDevice(remote_mouse_device); // bind mouse to point&manipulate action
 }
@@ -151,32 +151,32 @@ mafInteractionManager::~mafInteractionManager()
 {
   while(!m_PERList.empty())
   {
-    mafAutoPointer<mafInteractorPER> old_per=*(m_PERList.rbegin());
+    auto old_per = *m_PERList.rbegin();
     m_PERList.pop_back();
-    assert(old_per.get());
-    SetPER(old_per.get());
+    assert(old_per);
+    SetPER(old_per);
   }
 
   m_DeviceManager->Shutdown();
   cppDEL(m_Frame);
-  mafDEL(m_DeviceManager);
-  mafDEL(m_StaticEventRouter);
-  mafDEL(m_PositionalEventRouter);
+  m_DeviceManager.reset();
+  m_StaticEventRouter.reset();
+  m_PositionalEventRouter.reset();
 
   //vtkDEL(m_CurrentRenderer);
 }
 
 //------------------------------------------------------------------------------
-void mafInteractionManager::SetPER(mafInteractorPER *per)
+void mafInteractionManager::SetPER(std::shared_ptr<mafInteractorPER> per)
 //------------------------------------------------------------------------------
 {
-  mafAction *pointing_action = m_StaticEventRouter->GetAction("PointAndManipulate");
+  auto pointing_action = m_StaticEventRouter->GetAction("PointAndManipulate");
   assert(pointing_action);
 
   // unbind old PER
   if (m_PositionalEventRouter)
   {
-    pointing_action->UnBindInteractor(m_PositionalEventRouter);
+    pointing_action->UnBindInteractor(m_PositionalEventRouter.get());
     m_PositionalEventRouter->SetListener(NULL);
   }
 
@@ -184,15 +184,15 @@ void mafInteractionManager::SetPER(mafInteractorPER *per)
 
   // bind new PER
   m_PositionalEventRouter->SetName(_R("PositionalEventRouter"));
-  pointing_action->BindInteractor(m_PositionalEventRouter);
+  pointing_action->BindInteractor(m_PositionalEventRouter.get());
   m_PositionalEventRouter->SetListener(this);
 }
 
 //----------------------------------------------------------------------------
-void mafInteractionManager::PushPER(mafInteractorPER *per)
+void mafInteractionManager::PushPER(std::shared_ptr<mafInteractorPER> per)
 //----------------------------------------------------------------------------
 {
-  mafInteractorPER *old_per=GetPER();
+  auto old_per = GetPER();
   m_PERList.push_back(old_per);
   SetPER(per);
 }
@@ -201,14 +201,14 @@ bool mafInteractionManager::PopPER()
 //----------------------------------------------------------------------------
 {
   // retrieve and delete last item
-  mafAutoPointer<mafInteractorPER> old_per=*(m_PERList.rbegin());
+  auto old_per = *m_PERList.rbegin();
   m_PERList.pop_back(); 
 
-  assert(old_per.get()); // should always be != NULL
+  assert(old_per); // should always be != NULL
 
-  if (old_per.get()) // if not NULL
+  if (old_per) // if not NULL
   {
-    SetPER(old_per.get());
+    SetPER(old_per);
     return true;
   }
   
@@ -247,14 +247,14 @@ void mafInteractionManager::EnableSelect(bool enable)
 mafDeviceButtonsPadMouse *mafInteractionManager::GetMouseDevice()
 //------------------------------------------------------------------------------
 {
-  return mafDeviceButtonsPadMouse::SafeDownCast(m_DeviceManager->GetDevice("Mouse"));
+  return mafDeviceButtonsPadMouse::SafeDownCast(m_DeviceManager->GetDevice("Mouse")).get();
 }
 
 //------------------------------------------------------------------------------
 mafDeviceButtonsPadMouseRemote *mafInteractionManager::GetRemoteMouseDevice()
 //------------------------------------------------------------------------------
 {
-  return mafDeviceButtonsPadMouseRemote::SafeDownCast(m_DeviceManager->GetDevice("RemoteMouse"));
+  return mafDeviceButtonsPadMouseRemote::SafeDownCast(m_DeviceManager->GetDevice("RemoteMouse")).get();
 }
 //------------------------------------------------------------------------------
 mafDeviceClientMAF *mafInteractionManager::GetClientDevice()
@@ -277,14 +277,14 @@ int mafInteractionManager::UnBindAction(const char *action,mafInteractor *agent)
 }
 
 //------------------------------------------------------------------------------
-mafAction *mafInteractionManager::AddAction(const char *name, float priority)
+std::shared_ptr<mafAction> mafInteractionManager::AddAction(const char *name, float priority)
 //------------------------------------------------------------------------------
 {
   return m_StaticEventRouter->AddAction(name,priority);
 }
 
 //------------------------------------------------------------------------------
-mafAction *mafInteractionManager::GetAction(const char *name)
+std::shared_ptr<mafAction> mafInteractionManager::GetAction(const char *name)
 //------------------------------------------------------------------------------
 {
   return m_StaticEventRouter->GetAction(name);
@@ -304,14 +304,14 @@ void mafInteractionManager::GetAvatars(mmuAvatarsVector &avatars)
   avatars.clear();
   avatars.resize(m_Avatars.size());
   int i=0;
-  for (mmuAvatarsMap::iterator it=m_Avatars.begin();it!=m_Avatars.end();it++,i++)
+  for (auto it=m_Avatars.begin();it!=m_Avatars.end();it++,i++)
   {
     avatars[i]=it->second.get();
   }
 }
 
 //------------------------------------------------------------------------------
-void mafInteractionManager::AddAvatar(mafAvatar *avatar)
+void mafInteractionManager::AddAvatar(std::shared_ptr<mafAvatar>avatar)
 //------------------------------------------------------------------------------
 {
   m_Avatars[avatar->GetName()] = avatar;
@@ -511,8 +511,7 @@ void mafInteractionManager::OnBindDeviceToAction(mafEvent *e)
 {
   // this event is rosed by mafAction to ask for 
   // binding of a device to an action. Device is specified by its ID.
-  mafDevice *device=m_DeviceManager->GetDevice(e->GetArg());
-  if (device)
+  if (auto device=m_DeviceManager->GetDevice(e->GetArg()))
   {
     mafAction *action=mafAction::SafeDownCast((mafObject *)e->GetSender());
     m_StaticEventRouter->BindDeviceToAction(device,action);
@@ -685,7 +684,7 @@ void mafInteractionManager::OnEvent(mafEventBase *event)
           }
           else
           {
-            GetSER()->UnBindDeviceFromAction(m_CurrentDevice,action_name.GetCStr());
+            GetSER()->UnBindDeviceFromAction(m_CurrentDevice.get(), action_name.GetCStr());
           }
           return;
         }
@@ -698,7 +697,7 @@ void mafInteractionManager::OnEvent(mafEventBase *event)
           if (sel>=0)
           {
             // add the new device to the devices manager's pool
-            mafDevice *device = GetDeviceManager()->AddDevice(device_type.GetCStr());
+            auto device = GetDeviceManager()->AddDevice(device_type.GetCStr());
             // the device is added to the list by an 
             // event returned by DeviceManager which is
             // served by InteractionManager by calling
@@ -710,14 +709,14 @@ void mafInteractionManager::OnEvent(mafEventBase *event)
         case ID_REMOVE_DEVICE:
           if (m_CurrentDevice)
           {
-            int success = GetDeviceManager()->RemoveDevice(m_CurrentDevice);
+            int success = GetDeviceManager()->RemoveDevice(m_CurrentDevice.get());
             if (!success)
             {
               wxMessageBox("Cannot remove device: I/O manager error");
             }
             else
             {
-              m_StaticEventRouter->UnBindDeviceFromAllActions(m_CurrentDevice);
+              m_StaticEventRouter->UnBindDeviceFromAllActions(m_CurrentDevice.get());
             }
           }
           return;
@@ -726,7 +725,7 @@ void mafInteractionManager::OnEvent(mafEventBase *event)
           if (e->GetSender() == m_DeviceTree)
           { 
             // Event rised by the CheckTree used to show the devices tree
-            if (mafDevice *device = GetDeviceManager()->GetDevice(e->GetArg()))
+            if (auto device = GetDeviceManager()->GetDevice(e->GetArg()))
             {
               // remove the GUI and Bindings-GUI for the previous seleced device (if any)
               if(m_CurrentDevice)
@@ -852,8 +851,8 @@ void mafInteractionManager::Restore(const mafString& filename)
 void mafInteractionManager::InternalStore(mafStorageElementBuilder& node)
 //------------------------------------------------------------------------------
 {
-  node[_R("DeviceManager")].SetValue(m_DeviceManager);
-  node[_R("DeviceBindings")].SetValue(m_StaticEventRouter);
+  node[_R("DeviceManager")].SetValue(m_DeviceManager.get());
+  node[_R("DeviceBindings")].SetValue(m_StaticEventRouter.get());
 }
 
 //------------------------------------------------------------------------------
@@ -928,9 +927,9 @@ void mafInteractionManager::UpdateBindings()
       bool found=false;
 
       // search through the list
-      for (mafAction::mmuDeviceList::const_iterator it_list=action->GetDevices()->begin();it_list!=action->GetDevices()->end();it_list++)
+      for (auto it_list=action->GetDevices()->begin();it_list!=action->GetDevices()->end();it_list++)
       {
-        if (it_list->get() == m_CurrentDevice)
+        if (*it_list == m_CurrentDevice)
           found = true;
       }
       m_ActionsList->AddItem(i++,action->GetName().toWx(),found);

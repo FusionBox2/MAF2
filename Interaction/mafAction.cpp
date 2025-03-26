@@ -171,10 +171,9 @@ void mafAction::OnEvent(mafEventBase *event)
     assert(sender);
     
     
-    for (auto it=m_Devices.begin();it!=m_Devices.end();++it)
+    for (auto& device : m_Devices)
     {
-      mafDevice *dev=it->get();
-      if (dev->IsInitialized())
+      if (device->IsInitialized())
       {
         // send an event only to the inquiring object about all plugged devices
         {mafEventBase evUnq(this,DEVICE_PLUGGED,dev,MCH_INPUT); sender->OnEvent(&evUnq);}

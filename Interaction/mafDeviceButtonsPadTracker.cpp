@@ -139,7 +139,7 @@ int mafDeviceButtonsPadTracker::InternalInitialize()
 void mafDeviceButtonsPadTracker::InternalShutdown()
 //------------------------------------------------------------------------------
 {
-  if (m_Avatar.get())
+  if (m_Avatar)
   {
     InvokeEvent(AVATAR_REMOVED,MCH_UP,m_Avatar.get());
     m_Avatar->Shutdown();
@@ -149,10 +149,10 @@ void mafDeviceButtonsPadTracker::InternalShutdown()
 }
 
 //------------------------------------------------------------------------------
-void mafDeviceButtonsPadTracker::SetAvatar(mafAvatar *avatar)
+void mafDeviceButtonsPadTracker::SetAvatar(std::shared_ptr<mafAvatar> avatar)
 //------------------------------------------------------------------------------
 {
-  if (m_Avatar.get())
+  if (m_Avatar)
   {
     if (m_Initialized)
     {
@@ -165,7 +165,7 @@ void mafDeviceButtonsPadTracker::SetAvatar(mafAvatar *avatar)
     //m_Avatar->GetGui()->SetParent(NULL);
     m_Avatar->GetGui()->Show(false);
     m_Avatar->GetGui()->Refresh();
-    m_Avatar->SetTracker(NULL);
+    m_Avatar->SetTracker(nullptr);
   }
 
   m_Avatar = avatar;
@@ -187,7 +187,7 @@ void mafDeviceButtonsPadTracker::SetAvatar(mafAvatar *avatar)
 }
 
 //------------------------------------------------------------------------------
-void mafDeviceButtonsPadTracker::SetDefaultAvatar(mafAvatar *avatar)
+void mafDeviceButtonsPadTracker::SetDefaultAvatar(std::shared_ptr<mafAvatar> avatar)
 //------------------------------------------------------------------------------
 {
   m_DefaultAvatar=avatar;
@@ -198,7 +198,7 @@ void mafDeviceButtonsPadTracker::SetDefaultAvatar(mafAvatar *avatar)
 void mafDeviceButtonsPadTracker::RestoreDefaultAvatar()
 //------------------------------------------------------------------------------
 {
-  SetAvatar(m_DefaultAvatar.get());
+  SetAvatar(m_DefaultAvatar);
 }
 
 //------------------------------------------------------------------------------
@@ -514,7 +514,7 @@ void mafDeviceButtonsPadTracker::OnEvent(mafEventBase *event)
           {
             // Set the default avatar for the tracker
             //no SafeDownCast in mafAvatar3D: how can I create an mafAvatar3D from mafAvatar
-            mafAvatar *avatar = mafAvatar::SafeDownCast(InteractionFactory::CreateInteraction(avatar_type.GetCStr()));
+            auto avatar = mafAvatar::SafeDownCast(InteractionFactory::CreateInteraction(avatar_type.GetCStr()));
             assert(avatar);
             avatar->SetName(avatar_name);
             SetDefaultAvatar(avatar);
