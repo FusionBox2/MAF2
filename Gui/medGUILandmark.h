@@ -84,7 +84,7 @@ public:
   void SetGUIStatusToEnabled();
   int GetGuiStatus() {return m_GUIStatus;};
 
-  mafVMELandmarkCloud *GetLandmarkCLoud() {return m_LMCloud;};
+  std::shared_ptr<mafVMELandmarkCloud> GetLandmarkCLoud() {return m_LMCloud;};
  
   void SetInputVME(mafNode *vme); 
     
@@ -152,8 +152,8 @@ protected:
 
   mafVME *m_InputVME;
   mafVME *m_RefSysVME;
-  mafVMELandmarkCloud *m_LMCloud;
-  mafVMELandmark *m_Landmark;
+  std::shared_ptr<mafVMELandmarkCloud> m_LMCloud;
+  std::shared_ptr<mafVMELandmark> m_Landmark;
 
   const char *m_LandmarkName;
 

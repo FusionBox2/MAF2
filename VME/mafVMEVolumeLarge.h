@@ -177,8 +177,6 @@ public:
 	virtual const char* GetFileName();
 #pragma endregion
 
-	void UnRegister(void *obj) override;
-
 protected:
 	mafVMEVolumeLarge();
 	~mafVMEVolumeLarge() override;

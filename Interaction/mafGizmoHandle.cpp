@@ -58,7 +58,7 @@
 using namespace std;
 
 //----------------------------------------------------------------------------
-mafGizmoHandle::mafGizmoHandle(mafVME *input, mafBaseEventHandler *listener /* = NULL */, int constraintModality/* =BOUNDS */,mafVME *parent/* =NULL */, bool showShadingPlane /* = true */)
+mafGizmoHandle::mafGizmoHandle(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener /* = NULL */, int constraintModality/* =BOUNDS */,mafVME *parent/* =NULL */, bool showShadingPlane /* = true */)
 //----------------------------------------------------------------------------
 {
 	m_ConstraintModality = constraintModality;
@@ -87,7 +87,7 @@ mafGizmoHandle::mafGizmoHandle(mafVME *input, mafBaseEventHandler *listener /* =
   m_ShadingPlaneGizmo = mafVMEGizmo::New();
   m_ShadingPlaneGizmo->SetName(_R("ShadingPlaneGizmo"));
   // cone gizmo
-  m_BoxGizmo = mafVMEGizmo::New();  
+  m_BoxGizmo = mafVMEGizmo::NewSPtr();  
   m_BoxGizmo->SetName(_R("BoxGizmo"));
   
   // since i'm working in local mode i reparent to input vme the gizmo
@@ -95,13 +95,13 @@ mafGizmoHandle::mafGizmoHandle(mafVME *input, mafBaseEventHandler *listener /* =
 	if(parent)
 		m_BoxGizmo->ReparentTo(parent);
 	else
-		m_BoxGizmo->ReparentTo(m_InputVme);
+		m_BoxGizmo->ReparentTo(m_InputVme.get());
 
   m_ShadingPlaneGizmo->SetInputConnection(m_TranslateShadingPlanePolyDataFilterEnd->GetOutputPort());
   if(parent)
     m_ShadingPlaneGizmo->ReparentTo(parent);
   else
-    m_ShadingPlaneGizmo->ReparentTo(m_InputVme);
+    m_ShadingPlaneGizmo->ReparentTo(m_InputVme.get());
 
   auto material = m_ShadingPlaneGizmo->GetMaterial();
   material->m_Prop->SetOpacity(0.5);
@@ -402,7 +402,7 @@ std::shared_ptr<mafMatrix> mafGizmoHandle::GetPose()
 }
 
 //----------------------------------------------------------------------------
-void mafGizmoHandle::SetInput(mafVME *vme)
+void mafGizmoHandle::SetInput(std::shared_ptr<mafVME> vme)
 //----------------------------------------------------------------------------
 { 
   this->m_InputVme = vme; 

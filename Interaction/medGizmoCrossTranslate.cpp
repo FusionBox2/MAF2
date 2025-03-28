@@ -30,7 +30,7 @@
 #include "medGizmoCrossTranslateAxis.h"
 #include "medGizmoCrossTranslatePlane.h"
 #include "mafGUIGizmoTranslate.h"
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 
 #include "mafInteractorGenericMouse.h"
 
@@ -46,7 +46,7 @@
 #include "mafVMEVolumeGray.h"
 
 //----------------------------------------------------------------------------
-medGizmoCrossTranslate::medGizmoCrossTranslate(mafVME* input, mafBaseEventHandler *listener, bool buildGUI, int normal)
+medGizmoCrossTranslate::medGizmoCrossTranslate(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener, bool buildGUI, int normal)
 //----------------------------------------------------------------------------
 {
   assert(input);
@@ -205,14 +205,11 @@ void medGizmoCrossTranslate::OnEventGizmoComponents(mafEventBase *maf_event)
             {
               double slicedVolumeBounds[6];
 
-              mafVMESlicer *slicer = NULL;
-              slicer = mafVMESlicer::SafeDownCast(m_InputVME);
+              auto slicer = mafVMESlicer::SafeDownCast(m_InputVME);
 
               assert(slicer);
 
-              mafVMEVolumeGray *slicedVolume = NULL;
-
-              slicedVolume = mafVMEVolumeGray::SafeDownCast(slicer->GetSlicedVMELink());
+              auto slicedVolume = mafVMEVolumeGray::SafeDownCast(slicer->GetSlicedVMELink());
               assert(slicedVolume);
 
               slicedVolume->GetOutput()->GetVTKData()->GetBounds(slicedVolumeBounds);
@@ -420,7 +417,7 @@ void medGizmoCrossTranslate::Show(bool show)
   {
     // if auxiliary ref sys is different from vme its orientation cannot be changed
     // so gui must not be keyable. Otherwise set gui keyability to show.
-    if (m_RefSysVME == m_InputVME)
+    if (m_RefSysVME == m_InputVME.get())
     {
       m_GuiGizmoTranslate->EnableWidgets(show);
     }
@@ -438,7 +435,7 @@ std::shared_ptr<mafMatrix> medGizmoCrossTranslate::GetAbsPose()
 }
 
 //----------------------------------------------------------------------------  
-void medGizmoCrossTranslate::SetInput(mafVME *input)
+void medGizmoCrossTranslate::SetInput(std::shared_ptr<mafVME> input)
 //----------------------------------------------------------------------------
 {
   this->m_InputVME = input;
@@ -499,7 +496,7 @@ void medGizmoCrossTranslate::SetRefSys(mafVME *refSys)
 
   m_RefSysVME = refSys;
   SetAbsPose(m_RefSysVME->GetOutput()->GetAbsMatrix());
-  if (m_RefSysVME == m_InputVME)
+  if (m_RefSysVME == m_InputVME.get())
   {
     SetModalityToLocal();
     // if the gizmo is visible set the widgets visibility to true

@@ -1,20 +1,4 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafSceneNode
- Authors: Silvano Imboden
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafSceneNode_H__
-#define __mafSceneNode_H__
+#pragma once
 //----------------------------------------------------------------------------
 // forward declarations:
 //----------------------------------------------------------------------------
@@ -23,8 +7,6 @@ class vtkMAFAssembly;
 class mafPipe;
 class vtkRenderer;
 class mafSceneGraph;
-//@@@ class mafNodeLandmarkCloud;
-//@@@ class mafNodeScalar;
 //----------------------------------------------------------------------------
 // mafSceneNode :
 //----------------------------------------------------------------------------
@@ -32,7 +14,7 @@ class mafSceneGraph;
 class MAF_EXPORT mafSceneNode
 {
 public:
-								mafSceneNode(mafSceneGraph *sg, mafSceneNode *parent, const mafNode* vme, vtkRenderer *ren1, vtkRenderer *ren2=NULL, vtkRenderer *ren3 = NULL);
+  mafSceneNode(mafSceneGraph *sg, mafSceneNode *parent, std::shared_ptr<mafNode> vme, vtkRenderer *ren1, vtkRenderer *ren2 = nullptr, vtkRenderer *ren3 = nullptr);
   virtual      ~mafSceneNode    ();
 
   /** Call Select method for the vme's pipe. */
@@ -50,7 +32,7 @@ public:
   /** print a dump of this object */
   virtual void Print(std::ostream& os, const int tabs=0);// const;
 
-  mafNode           *m_Vme;
+  std::shared_ptr<mafNode> m_Vme;
   mafSceneNode      *m_Parent;
   std::shared_ptr<mafPipe> m_Pipe;
   bool               m_PipeCreatable;
@@ -63,49 +45,4 @@ public:
   vtkMAFAssembly    *m_AlwaysVisibleAssembly;
   mafSceneNode      *m_Next;
   mafSceneGraph     *m_Sg;
-
-
-  //observer to Listen to Clouds Open/CloseEvent
-	//@@@ mafNodeLandmarkCloud	*m_cloud;
-	
-	//@@@ unsigned long m_CloudOpenClose_observer;
-	//@@@ unsigned long	m_CloudRadiusModified_observer;
-	//@@@ unsigned long	m_CloudSphereResolutionModified_observer;
-
-  /** 
-  Static function called by the landmark cloud open/close observer. */
-	//@@@ static void	OnOpenCloseEvent(void *arg);
-
-  /** 
-  Static function called by the landmark observer when the landmark's radius change. */
-	//@@@ static void	OnRadiusModifiedEvent(void *arg);
-
-  /** 
-  Static function called by the landmark observer when the landmark's sphere resolution change. */
-	//@@@ static void	OnSphereResolutionModifiedEvent(void *arg);
-
-	//modified by STEFY 16-6-2004(begin)
-	//observer to Listen to Vector Arrow Modified Scaling Factor and Diameter Event
-	//@@@ mafNodeScalar	*m_scalar;
-	
-	//@@@ unsigned long	m_Scalar_ScalingModified_observer;
-	//@@@ unsigned long	m_Scalar_DiameterModified_observer;
-	//@@@ unsigned long	m_Scalar_HeadModified_observer;
-	 
-	/** 
-	Static function called by the scalar observer when the vector arrow scaling factor change. */
-	//@@@ static void	OnScalingModifiedEvent(void *arg);
-
-	/** 
-	Static function called by the scalar observer when the vector arrow diameter scaling factor change. */
-	//@@@ static void	OnDiameterModifiedEvent(void *arg);
-
-	/** 
-	Static function called by the scalar observer when the head arrow change. */
-	//@@@ static void OnHeadModifiedEvent(void *arg);
-
-protected:
-  
-  //bool m_visible;   // a SceneNode is visible if a pipe has been created
-};  
-#endif // __mafSceneNode_H__
+};

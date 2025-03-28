@@ -61,13 +61,13 @@ class vtkTubeFilter;
 class medGizmoCrossTranslatePlane: public mafGizmoInterface 
 {
 public:
-           medGizmoCrossTranslatePlane(mafVME *input, mafBaseEventHandler *listener = NULL);
+           medGizmoCrossTranslatePlane(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener = NULL);
            ~medGizmoCrossTranslatePlane() override; 
   
   /** 
   Set the gizmo generating vme; the gizmo will be centered on this vme*/
-  void SetInput(mafVME *vme) override; 
-  mafVME *GetInput() {return this->m_InputVme;};
+  void SetInput(std::shared_ptr<mafVME> vme) override;
+  mafVME *GetInput() {return this->m_InputVme.get();};
 
   //----------------------------------------------------------------------------
   // events handling 
@@ -168,7 +168,7 @@ protected:
   mafVMEGizmo *m_Gizmo[3];
 
   /** Register input vme*/
-  mafVME *m_InputVme;
+  std::shared_ptr<mafVME> m_InputVme;
 
   
   /** Register the gizmo plane */
@@ -211,7 +211,7 @@ protected:
   bool m_IsActive;
 
   /** Translation feedback arrows gizmo*/
-  mafVMEGizmo *m_TranslationFeedbackGizmo;
+  std::shared_ptr<mafVMEGizmo> m_TranslationFeedbackGizmo;
 
   vtkConeSource *m_FeedbackConeSource;
 

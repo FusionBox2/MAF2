@@ -66,9 +66,9 @@ public:
 	/** Send the event VME_ADDED to inform logic that the vme and its subtree are added to the tree. */
   void NotifyAdd(mafNode *n);
 	/** Return the tree's root. */
-  mafNode *GetRoot();
+  std::shared_ptr<mafNode> GetRoot();
    /** Set the tree's root. */
-  bool SetRoot(mafNode *root);
+  bool SetRoot(std::shared_ptr<mafNode> root);
 
   void Store(mafStorageElementBuilder& element) { InternalStore(element); }
   void Restore(const mafStorageElement& element) { InternalRestore(element); }
@@ -78,7 +78,7 @@ protected:
   virtual void InternalRestore(const mafStorageElement& node);
 
   bool                m_Modified;         ///< Used to known when the tree has been modified...
-  mafAutoPointer<mafNode> m_Root;
+  std::shared_ptr<mafNode> m_Root;
 
   /** friend test class */
   friend class mafNodeManagerTest; // Losi 02/16/2010 for test class

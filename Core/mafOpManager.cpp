@@ -176,13 +176,13 @@ void mafOpManager::FillSettingDialog(mafGUISettingsDialog *settingDialog)
   }
 }
 //----------------------------------------------------------------------------
-void mafOpManager::VmeSelected(mafNode* v)   
+void mafOpManager::VmeSelected(std::shared_ptr<mafNode> v)
 //----------------------------------------------------------------------------
 {
   m_Selected = v;
 }
 //----------------------------------------------------------------------------
-mafNode* mafOpManager::GetSelectedVme()
+std::shared_ptr<mafNode> mafOpManager::GetSelectedVme()
 //----------------------------------------------------------------------------
 {
 	return m_Selected;
@@ -260,8 +260,8 @@ void mafOpManager::OpRun(mafOp *op, void *op_param)
 		if(dialog.ShowModal() == wxID_YES)
     {
       mafString synthetic_name = _R("Copied ");
-      mafAutoPointer<mafNode> synthetic_vme = m_Selected->MakeCopy();
-      synthetic_vme->ReparentTo(m_Selected->GetParent());
+      auto synthetic_vme = m_Selected->MakeCopy();
+      synthetic_vme->ReparentTo(m_Selected->GetParent().get());
       synthetic_name.append(m_Selected->GetName());
       synthetic_vme->SetName(synthetic_name);
       if(mafTagItem *ti = synthetic_vme->GetTagArray()->GetTag(_R("VME_NATURE")))
@@ -270,8 +270,8 @@ void mafOpManager::OpRun(mafOp *op, void *op_param)
         synthetic_vme->GetTagArray()->SetTag(mafTagItem(_R("VME_NATURE"), _R("SYNTHETIC")));
       {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Selected); evUnq.SetBool(false); InvokeEvent(evUnq);}
       m_NaturalNode = m_Selected;
-      {mafEvent evUnq(this,VME_SELECT); evUnq.SetVme(synthetic_vme.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
-      {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(synthetic_vme.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,VME_SELECT); evUnq.SetVme(synthetic_vme); evUnq.SetBool(true); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(synthetic_vme); evUnq.SetBool(true); InvokeEvent(evUnq);}
     }
     else
     {
@@ -340,7 +340,7 @@ void mafOpManager::OpExec(mafOp *op, void *op_param)
 //----------------------------------------------------------------------------
 {
 	assert(op);
-	if(op->Accept(m_Selected))
+	if(op->Accept(m_Selected.get()))
   {
 		mafOp *o = op->Copy();
 		o->SetListener(this);
@@ -354,8 +354,8 @@ void mafOpManager::OpDo(mafOp *op)
 {
   m_Context.Redo_Clear();
   op->OpDo();
-  mafNode *in_node = op->GetInput();
-  mafNode *out_node = op->GetOutput();
+  auto in_node = op->GetInput();
+  auto out_node = op->GetOutput();
 
   if (in_node != NULL)
   {
@@ -371,7 +371,7 @@ void mafOpManager::OpDo(mafOp *op)
   }
 
   if (op->GetType() != OPTYPE_EDIT)
-      FillTraceabilityAttribute(op, in_node, out_node);
+      FillTraceabilityAttribute(op, in_node.get(), out_node.get());
 
   if(op->CanUndo()) 
   {
@@ -410,7 +410,7 @@ void mafOpManager::FillTraceabilityAttribute(mafOp *op, mafNode *in_node, mafNod
   wxDateTime time = wxDateTime::UNow();
   dateAndTime  = mafString::Format(_R("%02d/%02d/%02d %02d:%02d:%02d"),time.GetDay(), time.GetMonth()+1, time.GetYear(), time.GetHour(), time.GetMinute(),time.GetSecond());
 
-  if (in_node != NULL)
+  if (in_node)
   {
     auto traceability = mafAttributeTraceability::SafeDownCast(in_node->GetAttribute(_R("TrialAttribute")));
     if (!traceability)
@@ -451,58 +451,55 @@ void mafOpManager::FillTraceabilityAttribute(mafOp *op, mafNode *in_node, mafNod
     traceability->AddTraceabilityEvent(trialEvent, operationName, parameters, dateAndTime, appStamp, userID, isNatural);
   }
 
-  if (out_node != NULL)
+  if (out_node)
   {
     int c = 0; //counter not to write single parameter on first VME which is a group
     wxString singleParameter = parameters.toWx();
     auto iter = out_node->NewIterator();
-    for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+    for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
     {
-      if (node != NULL)
+      c++;
+      auto traceability = mafAttributeTraceability::SafeDownCast(node->GetAttribute(_R("TrialAttribute")));
+      if (!traceability)
       {
-        c++;
-        auto traceability = mafAttributeTraceability::SafeDownCast(node->GetAttribute(_R("TrialAttribute")));
-        if (!traceability)
-        {
+        trialEvent = _R("Create");
+        traceability = mafAttributeTraceability::NewSPtr();
+        traceability->SetName(_R("TrialAttribute"));
+        node->SetAttribute(_R("TrialAttribute"), traceability);
+      }
+      else
+      {
+        mafString trial = traceability->GetLastTrialEvent();
+        if (trial.empty())
           trialEvent = _R("Create");
-          traceability = mafAttributeTraceability::NewSPtr();
-          traceability->SetName(_R("TrialAttribute"));
-          node->SetAttribute(_R("TrialAttribute"), traceability);
-        }
+      }
+
+      if (mafTagItem* ti = in_node->GetRoot()->GetTagArray()->GetTag(_R("APP_STAMP")))
+        appStamp = ti->GetValue();
+
+      if (mafTagItem* ti = in_node->GetTagArray()->GetTag(_R("VME_NATURE")))
+      {
+        isNatural = ti->GetValue();
+        if (isNatural.compare(_R("NATURAL")) == 0)
+          isNatural = _R("true");
         else
-        {
-          mafString trial = traceability->GetLastTrialEvent();
-          if (trial.empty())
-            trialEvent = _R("Create");
-        }
+          isNatural = _R("false");
+      }
 
-        if(mafTagItem *ti = in_node->GetRoot()->GetTagArray()->GetTag(_R("APP_STAMP")))
-          appStamp = ti->GetValue();
-
-        if(mafTagItem *ti = in_node->GetTagArray()->GetTag(_R("VME_NATURE")))
-        {
-          isNatural = ti->GetValue();
-          if (isNatural.compare(_R("NATURAL")) == 0 )
-            isNatural = _R("true");
-          else
-            isNatural = _R("false");
-        }
-
-        if (out_node->GetNumberOfChildren() == 0 || c == 1)
-        {
-           traceability->AddTraceabilityEvent(trialEvent, operationName, parameters, dateAndTime, appStamp, userID, isNatural);
-        }
-        else
-        {
-          int count = singleParameter.find_first_of('=');
-          wxString par = singleParameter.Mid(0, count);
-          singleParameter = singleParameter.AfterFirst('=');
-          count = singleParameter.Find(par.c_str());
-          par.Append("=");
-          par.Append(singleParameter.substr(0, count-2));
-          singleParameter = singleParameter.Mid(count);
-          traceability->AddTraceabilityEvent(trialEvent, operationName, mafWxToString(par), dateAndTime, appStamp, userID, isNatural);
-        }
+      if (out_node->GetNumberOfChildren() == 0 || c == 1)
+      {
+        traceability->AddTraceabilityEvent(trialEvent, operationName, parameters, dateAndTime, appStamp, userID, isNatural);
+      }
+      else
+      {
+        int count = singleParameter.find_first_of('=');
+        wxString par = singleParameter.Mid(0, count);
+        singleParameter = singleParameter.AfterFirst('=');
+        count = singleParameter.Find(par.c_str());
+        par.Append("=");
+        par.Append(singleParameter.substr(0, count - 2));
+        singleParameter = singleParameter.Mid(count);
+        traceability->AddTraceabilityEvent(trialEvent, operationName, mafWxToString(par), dateAndTime, appStamp, userID, isNatural);
       }
     }
   }
@@ -518,9 +515,9 @@ void mafOpManager::OpUndo()
   }
 
 	mafOp* op = m_Context.Undo_Pop();
-  mafNode *in_node = op->GetInput();
-  mafNode *out_node = op->GetOutput();
-  if (in_node != NULL)
+  auto in_node = op->GetInput();
+  auto out_node = op->GetOutput();
+  if (in_node)
   {
     mafLogMessage(_M(_R("undo = ") + op->GetLabel() + _R(" on input data: ") + in_node->GetName()));
     auto traceability = mafAttributeTraceability::SafeDownCast(in_node->GetAttribute(_R("TrialAttribute")));
@@ -537,18 +534,15 @@ void mafOpManager::OpUndo()
     mafLogMessage(_M(_R("undo = ") + op->GetLabel()));
   }
 
-  if (out_node != NULL)
+  if (out_node)
   {
     auto iter = out_node->NewIterator();
-    for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+    for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
     {
-      if (node != NULL)
+      auto traceability = mafAttributeTraceability::SafeDownCast(node->GetAttribute(_R("TrialAttribute")));
+      if (traceability)
       {
-        auto traceability = mafAttributeTraceability::SafeDownCast(node->GetAttribute(_R("TrialAttribute")));
-        if (traceability)
-        {
-          traceability->RemoveTraceabilityEvent();
-        }
+        traceability->RemoveTraceabilityEvent();
       }
     }
   }
@@ -568,10 +562,10 @@ void mafOpManager::OpRedo()
   }
 
 	mafOp* op = m_Context.Redo_Pop();
-  mafNode *in_node = op->GetInput();
-  mafNode *out_node = op->GetOutput();
+  auto in_node = op->GetInput();
+  auto out_node = op->GetOutput();
   mafString parameters = op->GetParameters();
-  if (in_node != NULL)
+  if (in_node)
   {
     mafLogMessage(_M(_R("redo = ") + op->GetLabel() + _R(" on input data: ") + in_node->GetName()));
   }
@@ -583,7 +577,7 @@ void mafOpManager::OpRedo()
   
 	m_Context.Undo_Push(op);
 
-  FillTraceabilityAttribute(op, in_node, out_node);
+  FillTraceabilityAttribute(op, in_node.get(), out_node.get());
 
 }
 //----------------------------------------------------------------------------

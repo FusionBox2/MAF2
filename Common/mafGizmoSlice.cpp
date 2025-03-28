@@ -34,7 +34,7 @@
 #include "mafInteractorGenericMouse.h"
 
 #include "mafTransform.h"
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 #include "mafTagArray.h"
 #include "mafVME.h"
 #include "mafVMEGizmo.h"
@@ -59,13 +59,13 @@
 
 
 //----------------------------------------------------------------------------
-mafGizmoSlice::mafGizmoSlice(mafNode* inputVme, mafBaseEventHandler *Listener /* = NULL */, const char *name /* =  */, bool inverseHandle /* = false */, double centralClipfactor /* = 0 */)
+mafGizmoSlice::mafGizmoSlice(std::shared_ptr<mafNode> inputVme, mafBaseEventHandler *Listener /* = NULL */, const char *name /* =  */, bool inverseHandle /* = false */, double centralClipfactor /* = 0 */)
 //----------------------------------------------------------------------------
 {
   CreateGizmoSlice(inputVme, Listener, name, inverseHandle, centralClipfactor);
 }
 //----------------------------------------------------------------------------
-void mafGizmoSlice::CreateGizmoSlice(mafNode *imputVme, mafBaseEventHandler *listener, const char *name, bool inverseHandle, double centralClipfactor)
+void mafGizmoSlice::CreateGizmoSlice(std::shared_ptr<mafNode> imputVme, mafBaseEventHandler *listener, const char *name, bool inverseHandle, double centralClipfactor)
 //----------------------------------------------------------------------------
 {
   m_Name = _R(name);
@@ -93,9 +93,9 @@ void mafGizmoSlice::CreateGizmoSlice(mafNode *imputVme, mafBaseEventHandler *lis
 	m_CustomizedArrayStep = 0.1;
   
 
-  mafNEW(m_VmeGizmo);
+  m_VmeGizmo = mafVMEGizmo::NewSPtr();
   m_VmeGizmo->SetName(m_Name);
-  m_VmeGizmo->ReparentTo(imputVme);
+  m_VmeGizmo->ReparentTo(imputVme.get());
 
   m_GizmoBehavior = mafInteractorCompositorMouse::NewSPtr();
   m_MouseBH = m_GizmoBehavior->CreateBehavior(MOUSE_LEFT).get();
@@ -133,7 +133,7 @@ void mafGizmoSlice::DestroyGizmoSlice()
   m_GizmoBehavior.reset();
 
   m_VmeGizmo->ReparentTo(nullptr);
-  mafDEL(m_VmeGizmo);
+  m_VmeGizmo.reset();
   vtkDEL(m_SnapArray);
   vtkDEL(m_Point);
 }
@@ -197,7 +197,7 @@ void mafGizmoSlice::CreateGizmoSliceInLocalPositionOnAxis(int gizmoSliceId, int 
 
     double interval[3][2] ={{localBounds[0], localBounds[1]}, {localBounds[2], localBounds[3]}, {localBounds[4], localBounds[5]}};
 
-	  this->InitSnapArray(m_InputVME,axis);
+	  this->InitSnapArray(m_InputVME.get(),axis);
     m_MouseBH->GetTranslationConstraint()->SetSnapArray(axis, m_SnapArray);
     m_MouseBH->GetTranslationConstraint()->SetConstraintModality(axis, mafInteractorConstraint::BOUNDS);
 
@@ -303,7 +303,7 @@ void mafGizmoSlice::SetColor(double col[3])
 mafVME *mafGizmoSlice::GetOutput()
 //----------------------------------------------------------------------------
 {
-	return m_VmeGizmo;
+	return m_VmeGizmo.get();
 }
 //----------------------------------------------------------------------------
 void mafGizmoSlice::InitSnapArray(mafVME *vol, int axis)
@@ -609,10 +609,10 @@ void mafGizmoSlice::Show(bool show)
   m_VmeGizmo->GetMaterial()->m_Prop->SetOpacity(opacity);
 }
 //----------------------------------------------------------------------------
-void mafGizmoSlice::SetInput( mafVME *vme )
+void mafGizmoSlice::SetInput(std::shared_ptr<mafVME> vme )
 //----------------------------------------------------------------------------
 {
-  if (m_VmeGizmo != NULL)
+  if (m_VmeGizmo)
   {
     DestroyGizmoSlice();
     CreateGizmoSlice(vme, GetListener(), m_Name.GetCStr(), m_InverseHandle, m_CentralClipFactor);

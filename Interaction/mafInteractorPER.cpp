@@ -167,7 +167,7 @@ void mafInteractorPER::SetPickedVME(mafDevice *device,mafVME *vme)
   }
   else
   {
-    SetVME(vme);
+    SetVME(mafVME::StaticDownCast(vme->SharedFromThis()));
   }
 }
 
@@ -343,7 +343,7 @@ void mafInteractorPER::OnButtonDown(mafEventInteraction *e)
   if(picked_bh)
   {
     // if a vme with a behavior has been picked... 
-    picked_bh->SetVME(picked_vme);   // set the VME (Marco: to be removed, the operation should set the VME to the interactor!) 
+    picked_bh->SetVME(mafVME::StaticDownCast(picked_vme->SharedFromThis()));   // set the VME (Marco: to be removed, the operation should set the VME to the interactor!) 
     picked_bh->SetProp(picked_prop); // set the prop (Marco: to be removed, no access to the vtkProp!!!) 
     picked_bh->OnEvent(e); // forward the start event to picked behavior
   }

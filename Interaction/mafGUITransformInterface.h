@@ -79,7 +79,7 @@ protected:
   /** Create the GUI */
   virtual void CreateGui() {};
 
-  mafVME *m_InputVME;
+  std::shared_ptr<mafVME> m_InputVME;
 
   mafGUI      *m_Gui;
    

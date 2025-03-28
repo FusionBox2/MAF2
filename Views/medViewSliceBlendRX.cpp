@@ -132,7 +132,7 @@ void medViewSliceBlendRX::VmeShow(mafNode *node, bool show)
 
       ((mafViewRX*)m_ChildViewList[RX_VIEW])->SetLutRange(minMax[0],minMax[1]);
       
-      m_CurrentVolume = mafVME::SafeDownCast(node);
+      m_CurrentVolume = mafVME::SafeDownCast(GetSceneGraph()->Vme2Node(node)->m_Vme);
 
       //Create Gizmos for the volume visualized
       GizmoCreate();
@@ -152,9 +152,9 @@ void medViewSliceBlendRX::VmeRemove(mafNode *node)
 //----------------------------------------------------------------------------
 {
   //If node is a volume delete gizmos
-  if (m_CurrentVolume && node == m_CurrentVolume) 
+  if (m_CurrentVolume && node == m_CurrentVolume.get()) 
   {
-    m_CurrentVolume = NULL;
+    m_CurrentVolume = nullptr;
     GizmoDelete();
   }
   Superclass::VmeRemove(node);

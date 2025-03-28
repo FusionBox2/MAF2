@@ -1086,27 +1086,26 @@ void mafVMEMeter::OnEvent(mafEventBase *maf_event)
         e->SetArg((intptr_t)&mafVMEMeter::VMEAccept);
         e->SetString(&title);
         ForwardUpEvent(e);
-        mafNode *n = e->GetVme();
-        if (n != NULL)
+        if (auto n = e->GetVme())
         {
           if (button_id == ID_START_METER_LINK)
           {
-            SetMeterLink("StartVME", n);
+            SetMeterLink("StartVME", n.get());
             m_StartVmeName = n->GetName();
           }
           else if (button_id == ID_START2_METER_LINK)
           {
-            SetMeterLink("StartVME2", n);
+            SetMeterLink("StartVME2", n.get());
             m_StartVme2Name = n->GetName();
           }
           else if (button_id == ID_END1_METER_LINK)
           {
-            SetMeterLink("EndVME1", n);
+            SetMeterLink("EndVME1", n.get());
             m_EndVme1Name = n->GetName();
           }
           else
           {
-            SetMeterLink("EndVME2", n);
+            SetMeterLink("EndVME2", n.get());
             m_EndVme2Name = n->GetName();
           }
           m_Gui->Update();
@@ -1122,11 +1121,10 @@ void mafVMEMeter::OnEvent(mafEventBase *maf_event)
           e->SetArg((intptr_t)&mafVMEMeter::VolumeAccept);
           e->SetString(&title);
           ForwardUpEvent(e);
-          mafNode *n = e->GetVme();
-          if (n != NULL)
+          if (auto n = e->GetVme())
           {
-            SetMeterLink("PlottedVME",n);
-            m_ProbedVME = mafVMEVolumeGray::SafeDownCast(n);
+            SetMeterLink("PlottedVME",n.get());
+            m_ProbedVME = mafVMEVolumeGray::SafeDownCast(n).get();
             m_ProbeVmeName = n->GetName();
             CreateHistogram();
           }
@@ -1203,7 +1201,7 @@ void mafVMEMeter::SetMeterLink(const char *link_name, mafNode *n)
 {
   if (n->IsMAFType(mafVMELandmark))
   {
-    SetLink(_R(link_name),n->GetParent(),((mafVMELandmarkCloud *)n->GetParent())->FindLandmarkIndex(n->GetName()));
+    SetLink(_R(link_name),n->GetParent().get(),mafVMELandmarkCloud::StaticDownCast(n->GetParent())->FindLandmarkIndex(n->GetName()));
   }
   else
     SetLink(_R(link_name), n);
@@ -1273,7 +1271,7 @@ void mafVMEMeter::CreateHistogram()
     if (start_vme && start_vme->IsMAFType(mafVMELandmarkCloud))
     {
       int sub_id = GetLinkSubId(_R("StartVME"));
-      ((mafVMELandmark *)((mafVMELandmarkCloud *)start_vme)->GetChild(sub_id))->GetOutput()->GetAbsPose(point1, rotStart, currTs);
+      mafVMELandmark::StaticDownCast(mafVMELandmarkCloud::StaticDownCast(start_vme)->GetChild(sub_id))->GetOutput()->GetAbsPose(point1, rotStart, currTs);
       
     }
     else
@@ -1293,7 +1291,7 @@ void mafVMEMeter::CreateHistogram()
     if (end_vme1 && end_vme1->IsMAFType(mafVMELandmarkCloud))
     {
       int sub_id = GetLinkSubId(_R("EndVME1"));
-      ((mafVMELandmark *)((mafVMELandmarkCloud *)end_vme1)->GetChild(sub_id))->GetOutput()->GetAbsPose(point2, rotEnd, currTs);
+      mafVMELandmark::StaticDownCast(mafVMELandmarkCloud::StaticDownCast(end_vme1)->GetChild(sub_id))->GetOutput()->GetAbsPose(point2, rotEnd, currTs);
 
     }
     else

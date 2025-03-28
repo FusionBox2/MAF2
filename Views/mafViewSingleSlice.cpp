@@ -248,7 +248,7 @@ void mafViewSingleSlice::VmeCreatePipe(mafNode *vme)
       {
         m_CurrentVolume = n;
         if (m_AttachCamera)
-          m_AttachCamera->SetVme(m_CurrentVolume->m_Vme);
+          m_AttachCamera->SetVme(m_CurrentVolume->m_Vme.get());
         int slice_mode;
         vtkDataSet *data = ((mafVME *)vme)->GetOutput()->GetVTKData();
         assert(data);
@@ -431,7 +431,7 @@ void mafViewSingleSlice::VmeDeletePipe(mafNode *vme)
   n->m_Pipe.reset();
 }
 //-------------------------------------------------------------------------
-int mafViewSingleSlice::GetNodeStatus(mafNode *vme)
+int mafViewSingleSlice::GetNodeStatusI(mafNode *vme)
 //-------------------------------------------------------------------------
 {
   mafSceneNode *n = NULL;
@@ -521,7 +521,7 @@ void mafViewSingleSlice::OnEvent(mafEventBase *maf_event)
 				else
 					return;
 				auto iter = m_CurrentVolume->m_Vme->GetRoot()->NewIterator();
-				for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+				for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
 				{
 					if(node->IsA("mafVMESurface"))
 					{
@@ -548,7 +548,7 @@ void mafViewSingleSlice::OnEvent(mafEventBase *maf_event)
 		case ID_PLANE_SELECT:
 		{
 			double b[6];
-			((mafVME *)m_CurrentVolume->m_Vme)->GetOutput()->GetBounds(b);
+			mafVME::StaticDownCast(m_CurrentVolume->m_Vme)->GetOutput()->GetBounds(b);
 
 
 			if(m_PlaneSelect == XY)
@@ -578,15 +578,15 @@ void mafViewSingleSlice::OnEvent(mafEventBase *maf_event)
 
 
 			auto iter = m_CurrentVolume->m_Vme->GetRoot()->NewIterator();
-			for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+			for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
 			{
-			  if(node->IsA("mafVMESurface") || (((mafVME *)node)->GetOutput()->IsA("mafVMEOutputVolume")) || node->IsA("mafVMEPolyline"))
+			  if(node->IsA("mafVMESurface") || (mafVME::StaticDownCast(node)->GetOutput()->IsA("mafVMEOutputVolume")) || node->IsA("mafVMEPolyline"))
 				{
-					mafSceneNode *n = m_Sg->Vme2Node(node);
+					mafSceneNode *n = m_Sg->Vme2Node(node.get());
 					if(n && n->IsVisible())
 					{
-						VmeDeletePipe(node);
-						VmeCreatePipe(node);
+						VmeDeletePipe(node.get());
+						VmeCreatePipe(node.get());
 					}
 				}
 			}
@@ -786,7 +786,7 @@ void mafViewSingleSlice::VmeShow(mafNode *node, bool show)
 
 			mafPipeVolumeSlice::StaticDownCast(m_CurrentVolume->m_Pipe)->GetSliceOrigin(m_OriginVolume);
       double b[6];
-			((mafVME *)m_CurrentVolume->m_Vme)->GetOutput()->GetBounds(b);
+			mafVME::StaticDownCast(m_CurrentVolume->m_Vme)->GetOutput()->GetBounds(b);
 
 			if(m_PlaneSelect == XY)
 			{
@@ -830,7 +830,7 @@ void mafViewSingleSlice::VmeShow(mafNode *node, bool show)
         ((mafViewSingleSliceLHPBuilder *)m_ChildViewList[i])->UpdateText(0);
 	*/  
 			auto iter = node->GetRoot()->NewIterator();
-			for (mafNode *Inode = iter->GetFirstNode(); Inode; Inode = iter->GetNextNode())
+			for (auto Inode = iter->GetFirstNode(); Inode; Inode = iter->GetNextNode())
 			{
 				if(this->GetNodePipe(Inode))
 				{

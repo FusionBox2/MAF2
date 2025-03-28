@@ -46,7 +46,7 @@ mafRefSys::mafRefSys(int type)
   SetType(type);
 }
 //------------------------------------------------------------------------------
-mafRefSys::mafRefSys(mafVME *vme)
+mafRefSys::mafRefSys(std::shared_ptr<mafVME> vme)
 //------------------------------------------------------------------------------
 {
   Initialize();
@@ -199,7 +199,7 @@ std::shared_ptr<mafMatrix> mafRefSys::GetMatrix()
 }
 
 //----------------------------------------------------------------------------
-void mafRefSys::SetVME(mafVME *vme)
+void mafRefSys::SetVME(std::shared_ptr<mafVME> vme)
 //----------------------------------------------------------------------------
 {
   m_VME = vme;
@@ -252,7 +252,7 @@ void mafRefSys::SetTypeToView(vtkRenderer *renderer)
 }
  
 //----------------------------------------------------------------------------
-void mafRefSys::SetTypeToParent(mafVME *vme)
+void mafRefSys::SetTypeToParent(std::shared_ptr<mafVME> vme)
 //----------------------------------------------------------------------------
 {
   assert(vme);
@@ -261,7 +261,7 @@ void mafRefSys::SetTypeToParent(mafVME *vme)
 }
 
 //----------------------------------------------------------------------------
-void mafRefSys::SetTypeToLocal(mafVME *vme)
+void mafRefSys::SetTypeToLocal(std::shared_ptr<mafVME> vme)
 //----------------------------------------------------------------------------
 {
   //assert(vme);

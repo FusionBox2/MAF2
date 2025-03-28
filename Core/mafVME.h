@@ -68,7 +68,7 @@ public:
   /** 
     return the parent VME Node. Notice that a VME can only reparented 
     under another VME, not to other kind of nodes! */
-  mafVME *GetParent() const;
+  std::shared_ptr<mafVME> GetParent();
 
   /**
     Copy the contents of another VME into this one. Notice that subtrees

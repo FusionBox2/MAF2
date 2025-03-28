@@ -132,14 +132,6 @@ auto CloneEntry(std::shared_ptr<T> v)
   return v->MakeClone();
 }
 
-template<class T>
-auto CloneEntry(mafAutoPointer<T>& v)
-{
-  T *new_item=v->NewInstance();
-  new_item->DeepCopy(v.get());
-  return new_item;
-}
-
 //-------------------------------------------------------------------------
 template <class T, template<typename> typename Ptr, typename ArgPtr>
 void mafTimeMap<T, Ptr, ArgPtr>::DeepCopy(mafTimeMap *o)
@@ -158,12 +150,6 @@ template <class T>
 bool Compare(std::shared_ptr<T> v1, std::shared_ptr<T> v2)
 {
   return *v1 == *v2;
-}
-
-template <class T>
-bool Compare(mafAutoPointer<T>& v1, mafAutoPointer<T>& v2)
-{
-  return v1->Equals(v2.get());
 }
 
 //-------------------------------------------------------------------------
@@ -264,12 +250,6 @@ template<class T>
 auto RetVal(std::shared_ptr<T> v)
 {
   return v;
-}
-
-template<class T>
-auto RetVal(mafAutoPointer<T>& v)
-{
-  return v.get();
 }
 
 //----------------------------------------------------------------------------

@@ -29,7 +29,7 @@
 #include "mafGizmoRotateCircle.h"
 #include "mafGizmoRotateFan.h"
 #include "mafGUIGizmoRotate.h"
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 
 #include "mafInteractorGenericMouse.h"
 
@@ -41,7 +41,7 @@
 #include "vtkTransform.h"
 
 //----------------------------------------------------------------------------
-mafGizmoRotate::mafGizmoRotate(mafVME* input, mafBaseEventHandler *listener, bool buildGUI)
+mafGizmoRotate::mafGizmoRotate(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener, bool buildGUI)
 //----------------------------------------------------------------------------
 {
   assert(input);
@@ -273,7 +273,7 @@ void mafGizmoRotate::Show(bool show)
   // so gui must not be keyable. Otherwise set gui keyability to show.
   if (m_BuildGUI)
   {
-    if (m_RefSysVME == m_InputVME)
+    if (m_RefSysVME == m_InputVME.get())
     {
       m_GuiGizmoRotate->EnableWidgets(show);
     }
@@ -333,7 +333,7 @@ std::shared_ptr<mafMatrix> mafGizmoRotate::GetAbsPose()
 }
 
 //----------------------------------------------------------------------------  
-void mafGizmoRotate::SetInput(mafVME *input)
+void mafGizmoRotate::SetInput(std::shared_ptr<mafVME> input)
 //----------------------------------------------------------------------------
 {
   m_InputVME = input;
@@ -393,7 +393,7 @@ void mafGizmoRotate::SetRefSys(mafVME *refSys)
   m_RefSysVME = refSys;
   SetAbsPose(m_RefSysVME->GetOutput()->GetAbsMatrix());
 
-  if (m_RefSysVME == m_InputVME)
+  if (m_RefSysVME == m_InputVME.get())
   {
     SetModalityToLocal();
 

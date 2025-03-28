@@ -55,7 +55,7 @@ mafCxxTypeMacro(mafVMEC3DData)
 mafVMEC3DData::mafVMEC3DData()
 //----------------------------------------------------------------------------
 {
-  this->C3D_DLCloud = mafVMELandmarkCloud::New();
+  this->C3D_DLCloud = mafVMELandmarkCloud::NewSPtr();
   C3D_DLCloud->SetRadius(15.0);
   C3D_DLCloud->SetDefaultVisibility(0);  //modified by Marco. 3-10-2003
 
@@ -76,7 +76,7 @@ mafVMEC3DData::mafVMEC3DData()
 mafVMEC3DData::~mafVMEC3DData()
 //----------------------------------------------------------------------------
 {
-  this->C3D_DLCloud->Delete();
+  this->C3D_DLCloud.reset();
 
   delete num_markers;
   num_markers = NULL;
@@ -395,7 +395,7 @@ int mafVMEC3DData::Read_C3D_Data(unsigned short	num_markers,				// number of mar
     {// for
 
       // c3DLMNamesTagArray(i) is in the dictionary?
-      mafVMELandmarkCloud *currentCloud;
+      std::shared_ptr<mafVMELandmarkCloud> currentCloud;
       mafString newSegName;
 
       // searching in dictionary for c3DLMNamesTagArray(i)...
@@ -407,12 +407,12 @@ int mafVMEC3DData::Read_C3D_Data(unsigned short	num_markers,				// number of mar
 
         // ok, the landmark exist in the dictionary; does the parent segment already exist?		
 
-        if ((currentCloud = (mafVMELandmarkCloud::SafeDownCast(this->FindInTreeByName(newSegName)))) == NULL)
+        if ((currentCloud = (mafVMELandmarkCloud::SafeDownCast(this->FindInTreeByName(newSegName)))) == nullptr)
         {
           // parent not exist => create the new cloud
 
           //new segment name
-          mafVMELandmarkCloud *newVmeSegment = mafVMELandmarkCloud::New();
+          auto newVmeSegment = mafVMELandmarkCloud::NewSPtr();
           newVmeSegment->SetRadius(15);
           newVmeSegment->SetDefaultVisibility(0);
           newVmeSegment->SetName(newSegName);

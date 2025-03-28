@@ -42,12 +42,12 @@
 //@@@ #include "mflAgent.h"
 
 //----------------------------------------------------------------------------
-mafSceneNode::mafSceneNode(mafSceneGraph *sg,mafSceneNode *parent, const mafNode* vme, vtkRenderer *ren, vtkRenderer *ren2, vtkRenderer *ren3)
+mafSceneNode::mafSceneNode(mafSceneGraph *sg,mafSceneNode *parent, std::shared_ptr<mafNode> vme, vtkRenderer *ren, vtkRenderer *ren2, vtkRenderer *ren3)
 //----------------------------------------------------------------------------
 {
 	m_Sg            = sg;
 	m_Parent				= parent;
-	m_Vme						= (mafNode *)vme;
+	m_Vme						= vme;
 	m_RenFront			= ren;
 	m_RenBack				= ren2;
   m_AlwaysVisibleRenderer = ren3;
@@ -65,7 +65,7 @@ mafSceneNode::mafSceneNode(mafSceneGraph *sg,mafSceneNode *parent, const mafNode
   vtkLinearTransform *transform = NULL;
   if(m_Vme->IsA("mafVME"))
   {
-    mafVME* v = ((mafVME*)m_Vme);
+    auto v = mafVME::StaticDownCast(m_Vme);
     assert(v->GetOutput());
     assert(v->GetOutput()->GetTransform());
     assert(v->GetOutput()->GetTransform()->GetVTKTransform());
@@ -73,10 +73,10 @@ mafSceneNode::mafSceneNode(mafSceneGraph *sg,mafSceneNode *parent, const mafNode
   }
 
   m_AssemblyFront = vtkMAFAssembly::New();
-  m_AssemblyFront->SetVme(m_Vme);
+  m_AssemblyFront->SetVme(m_Vme.get());
   m_AssemblyFront->SetUserTransform(transform);
 
-  if(m_RenFront != NULL) //modified by Vladik. 03-03-2004
+  if(m_RenFront) //modified by Vladik. 03-03-2004
   {
 	  if(m_Vme->IsA("mafNodeRoot") || m_Vme->IsA("mafVMERoot")) 
 		  m_RenFront->AddActor(m_AssemblyFront); 
@@ -84,10 +84,10 @@ mafSceneNode::mafSceneNode(mafSceneGraph *sg,mafSceneNode *parent, const mafNode
 		  m_Parent->m_AssemblyFront->AddPart(m_AssemblyFront);
   }
 
-	if(m_RenBack != NULL)
+	if(m_RenBack)
 	{
 		m_AssemblyBack = vtkMAFAssembly::New();
-    m_AssemblyBack->SetVme(m_Vme);
+    m_AssemblyBack->SetVme(m_Vme.get());
     m_AssemblyBack->SetUserTransform(transform);
     if(m_Vme->IsA("mafNodeRoot") || m_Vme->IsA("mafVMERoot")) 
 			m_RenBack->AddActor(m_AssemblyBack); 
@@ -96,10 +96,10 @@ mafSceneNode::mafSceneNode(mafSceneGraph *sg,mafSceneNode *parent, const mafNode
 	}
 
 	m_AlwaysVisibleAssembly = vtkMAFAssembly::New();
-	m_AlwaysVisibleAssembly->SetVme(m_Vme);
+	m_AlwaysVisibleAssembly->SetVme(m_Vme.get());
 	m_AlwaysVisibleAssembly->SetUserTransform(transform);
 
-	if(m_AlwaysVisibleRenderer != NULL)
+	if(m_AlwaysVisibleRenderer)
 	{
 		if(m_Vme->IsA("mafNodeRoot") || m_Vme->IsA("mafVMERoot")) 
 			m_AlwaysVisibleRenderer->AddActor(m_AlwaysVisibleAssembly); 

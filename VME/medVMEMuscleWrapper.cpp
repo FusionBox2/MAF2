@@ -1591,7 +1591,7 @@ void medVMEMuscleWrapper::OnEvent(mafEventBase *maf_event)
       InternalUpdate();
       
       //force redrawing
-      mafEvent ev(this, VME_SELECTED); ev.SetVme(this);
+      mafEvent ev(this, VME_SELECTED); ev.SetVme(this->SharedFromThis());
       this->ForwardUpEvent(&ev);
       return;
     }
@@ -1734,11 +1734,11 @@ bool medVMEMuscleWrapper::SelectVme(mafString title,
   ev.SetString(&title);
   ForwardUpEvent(ev);
 
-  mafVME* vme = mafVME::SafeDownCast(ev.GetVme());
-  if (vme == NULL)
+  auto vme = mafVME::SafeDownCast(ev.GetVme());
+  if (vme == nullptr)
     return false;
   
-  szOutVmeName = (pOutVME = vme)->GetName();  
+  szOutVmeName = (pOutVME = vme.get())->GetName();  
   m_Gui->Update();       
   return true;
 }

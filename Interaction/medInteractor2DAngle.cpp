@@ -242,7 +242,7 @@ void medInteractor2DAngle::OnRightButtonUp(mafEventInteraction *e)
   if(m_ShowContextMenu && mouse)
   {
     mafVME *vme = GetPickedVME(mouse);
-    {mafEvent evUnq(this,SHOW_CONTEXTUAL_MENU); evUnq.SetVme(vme); evUnq.SetBool(true); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,SHOW_CONTEXTUAL_MENU); evUnq.SetVme(vme->SharedFromThis()); evUnq.SetBool(true); InvokeEvent(evUnq);}
   }
 
   OnButtonUp(e);

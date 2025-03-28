@@ -269,7 +269,7 @@ void medViewCompoundWindowing::VolumeWindowing(mafVME *volume)
 }
 
 //-------------------------------------------------------------------------
-std::shared_ptr<mafPipe> medViewCompoundWindowing::GetNodePipe(mafNode *vme)
+std::shared_ptr<mafPipe> medViewCompoundWindowing::GetNodePipeI(mafNode *vme)
 //-------------------------------------------------------------------------
 {
 	std::shared_ptr<mafPipe> rtn;

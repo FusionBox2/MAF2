@@ -24,20 +24,20 @@ class MAF_EXPORT mafNodeIterator final : public mafEventSource
 {
 public:
   mafBaseTypeMacro(mafNodeIterator);
-  mafNodeIterator(mafNode* root = nullptr);
+  mafNodeIterator(std::shared_ptr<mafNode> root = nullptr);
 
 
   /** Retrieve the current node pointer data from the iterator. */
-  mafNode * GetCurrentNode() {return m_CurrentNode;}
+  std::shared_ptr<mafNode> GetCurrentNode() {return m_CurrentNode;}
 
   /**  Shortcut to traverse the tree*/
-  mafNode * GetFirstNode() {this->GoToFirstNode(); return (m_TraversalDone)?nullptr:this->GetCurrentNode();}
+  std::shared_ptr<mafNode> GetFirstNode() {this->GoToFirstNode(); return (m_TraversalDone)?nullptr:this->GetCurrentNode();}
   /**  Shortcut to traverse the tree*/
-  mafNode * GetLastNode() {this->GoToLastNode(); return (m_TraversalDone)?nullptr:this->GetCurrentNode();}
+  std::shared_ptr<mafNode> GetLastNode() {this->GoToLastNode(); return (m_TraversalDone)?nullptr:this->GetCurrentNode();}
   /**  Shortcut to traverse the tree*/
-  mafNode * GetNextNode() {this->GoToNextNode(); return (m_TraversalDone)?nullptr:this->GetCurrentNode();}
+  std::shared_ptr<mafNode> GetNextNode() {this->GoToNextNode(); return (m_TraversalDone)?nullptr:this->GetCurrentNode();}
   /**  Shortcut to traverse the tree*/
-  mafNode * GetPreviousNode() {this->GoToPreviousNode(); return (m_TraversalDone)?nullptr:this->GetCurrentNode();}
+  std::shared_ptr<mafNode> GetPreviousNode() {this->GoToPreviousNode(); return (m_TraversalDone)?nullptr:this->GetCurrentNode();}
 
   /**
     Return true if the VME is visible. This function can be overridden to implement
@@ -50,7 +50,7 @@ public:
   /**
   Set the root node of the (sub)tree to be traversed. Used to set the start 
   point. */
-  void SetRootNode(mafNode *root);
+  void SetRootNode(std::shared_ptr<mafNode> root);
   
   /**
     Initialize the traversal of the container. 
@@ -103,10 +103,10 @@ public:
 protected:
 
   /** Find the left most leaf of the tree*/
-  mafNode *FindLeftMostLeaf(mafNode *node);
+  std::shared_ptr<mafNode> FindLeftMostLeaf(std::shared_ptr<mafNode> node);
 
   /** Find the right most leaf of the tree*/
-  mafNode *FindRightMostLeaf(mafNode *node);
+  std::shared_ptr<mafNode> FindRightMostLeaf(std::shared_ptr<mafNode> node);
 
   /** Callback function. By default send an event through the m_EventSource source. */
   void PreExecute(); 
@@ -129,11 +129,11 @@ protected:
   /** Callback function. By default send an event through the m_EventSource source. */
   void DoneExecute();  
 
-	RegisteringPointer<mafNode> m_RootNode;
-  mafNode         *m_CurrentNode;
-  int             m_TraversalMode;
-  int             m_TraversalDone;
-  bool            m_IgnoreVisibleToTraverse;
+  std::shared_ptr<mafNode> m_RootNode;
+  std::shared_ptr<mafNode> m_CurrentNode;
+  int             m_TraversalMode = 0;
+  int             m_TraversalDone = 0;
+  bool            m_IgnoreVisibleToTraverse = false;
 
   std::vector<mafID> m_CurrentIdx;
 };

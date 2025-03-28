@@ -60,8 +60,8 @@ public:
 protected:
   void InternalStore(mafStorageElementBuilder& parent) override;
   void InternalRestore(const mafStorageElement& node) override;
-  mafVME *CreateVMEInstance(const mafString &name);
-  mafVME *RestoreVME(const mafStorageElement& node, mafVME *parent);
+  std::shared_ptr<mafVME> CreateVMEInstance(const mafString &name);
+  std::shared_ptr<mafVME> RestoreVME(const mafStorageElement& node, mafVME *parent);
   int RestoreTagArray(const mafStorageElement& node, mafTagArray *tarray);
   int RestoreVItem(const mafStorageElement& node, mafVME *vme);
   int RestoreVMatrix(const mafStorageElement& node, mafMatrixVector *vmatrix);

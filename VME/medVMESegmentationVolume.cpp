@@ -241,10 +241,10 @@ void medVMESegmentationVolume::OnEvent(mafEventBase *maf_event)
         e->SetArg((intptr_t)&medVMESegmentationVolume::VolumeAccept);
         e->SetString(&title);
         ForwardUpEvent(e);
-        mafNode *n = e->GetVme();
-        if (n != NULL)
+        auto n = e->GetVme();
+        if (n)
         {
-          SetVolumeLink(n);
+          SetVolumeLink(n.get());
           m_VolumeName = n->GetName();
           m_Gui->Update();
         }

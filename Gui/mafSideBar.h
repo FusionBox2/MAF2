@@ -60,7 +60,7 @@ public:
   void VmeExpandVisible(mafNode *vme);
   // Description:
 	// Add a new vme into the tree.
-	void VmeAdd(mafNode *vme);
+	void VmeAdd(std::shared_ptr<mafNode> vme);
 
 	// Description:
 	// Remove a vme from the tree.

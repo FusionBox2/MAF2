@@ -19,7 +19,7 @@
 
 #include "mafDeviceButtonsPad.h"
 #include <mutex>
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 #include "mafOBB.h"
 #include "mafAvatar.h"
 //----------------------------------------------------------------------------

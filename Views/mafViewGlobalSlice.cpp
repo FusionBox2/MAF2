@@ -409,7 +409,7 @@ void mafViewGlobalSlice::VmeCreatePipe(mafNode *node)
 				mafPipeVolumeSlice::StaticDownCast(pipe)->HideSlider();
 			}
 
-			if (m_SelectedVolume == n && ((mafVME *)m_SelectedVolume->m_Vme)->GetOutput()->IsA("mafVMEOutputVolume"))
+			if (m_SelectedVolume == n && mafVME::StaticDownCast(m_SelectedVolume->m_Vme)->GetOutput()->IsA("mafVMEOutputVolume"))
 			{
 				m_Gui->Enable(ID_OPACITY_SLIDER,true);
 				m_Opacity=mafPipeVolumeSlice::StaticDownCast(m_SelectedVolume->m_Pipe)->GetSliceOpacity();
@@ -660,7 +660,7 @@ void mafViewGlobalSlice::UpdateSlice()
 			float applied_yVector[3];
 			float applied_normal[3];
 
-			mafVME *vme = mafVME::SafeDownCast(node->m_Vme);
+			auto vme = mafVME::SafeDownCast(node->m_Vme);
 			vtkTransform *transform;
 			vtkNEW(transform);
 			transform->Identity();
@@ -693,7 +693,7 @@ void mafViewGlobalSlice::UpdateSlice()
         DoubleNormal[2]=(double)m_SliceNormal[2];
         mafPipeMeshSlice::StaticDownCast(node->m_Pipe)->SetNormal(DoubleNormal);
       }
-      else if(((mafVME *)node->m_Vme)->GetOutput()->IsA("mafVMEOutputVolume"))
+      else if(mafVME::StaticDownCast(node->m_Vme)->GetOutput()->IsA("mafVMEOutputVolume"))
       {
         mafPipeVolumeSlice::StaticDownCast(node->m_Pipe)->SetSlice(applied_origin, applied_xVector, applied_yVector);
         mafPipeVolumeSlice::StaticDownCast(node->m_Pipe)->SetTrilinearInterpolation(m_TrilinearInterpolationOn);
@@ -818,7 +818,7 @@ void mafViewGlobalSlice::CameraUpdate()
       if(n->m_Pipe)
       {
         mafOBB b;
-        ((mafVME *)n->m_Vme)->GetOutput()->GetVME4DBounds(b);
+        mafVME::StaticDownCast(n->m_Vme)->GetOutput()->GetVME4DBounds(b);
         globalBounds.MergeBounds(b);
       }
     }

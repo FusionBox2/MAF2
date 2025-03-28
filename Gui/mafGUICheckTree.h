@@ -29,6 +29,16 @@ class mafView;
 class MAF_EXPORT mafGUICheckTree: public mafGUITree
 {
 public:
+  class mafGUICheckTreeItemData : public mafGUITreeItemData
+  {
+  public:
+    mafGUICheckTreeItemData(intptr_t node_id, std::shared_ptr<mafNode> n = nullptr): mafGUITreeItemData(node_id), sharednode(n){}
+    ~mafGUICheckTreeItemData() override = default;
+    void SetSharedNode(std::shared_ptr<mafNode> n) { sharednode = n; }
+    std::shared_ptr<mafNode> GetSharedNode() const { return sharednode; }
+  private:
+    std::shared_ptr<mafNode> sharednode;
+  };
   /** constructor .*/
   mafGUICheckTree (wxWindow* parent, wxWindowID id=-1, bool CloseButton = false, bool HideTitle = false); 
   /** destructor .*/
@@ -40,7 +50,7 @@ public:
   void VmeCollapseSubTree(mafNode *vme);
   void VmeExpandVisible(mafNode *vme);
   /** Add the vme to the checked tree and create the related icon. */
-	void VmeAdd(mafNode *n);
+	void VmeAdd(std::shared_ptr<mafNode> n);
 
   /** Remove the vme from the checked tree. */
   void VmeRemove(mafNode *n);

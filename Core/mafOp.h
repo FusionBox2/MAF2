@@ -68,14 +68,14 @@ public:
 	virtual mafGUI *GetGui()	{return m_Gui;}
 
   /** Set/Get the input vme for the operation. */
-	void SetInput(mafNode* vme);
+	void SetInput(std::shared_ptr<mafNode> vme);
 
-  mafNode* const & GetInput() const;
+	std::shared_ptr<mafNode> GetInput() const;
 
   /** Return the mafNode result of the operation.*/
-	mafNode* const & GetOutput() const;
+	std::shared_ptr<mafNode> GetOutput() const;
 
-	void SetOutput(mafNode* output);
+	void SetOutput(std::shared_ptr<mafNode> output);
 
 	/** Return true for the acceptable vme type. */
 	virtual bool Accept(mafNode* vme);
@@ -156,7 +156,7 @@ protected:
   bool           m_TestMode = false; ///< Flag used with cppunitTest: put this flag at true when executing tests to avoid busy-info or splash screen to be created, default is false.
 
 private:
-	mafNode        *m_Input = nullptr; ///< Pointer to the Input VME.
-	mafNode        *m_Output = nullptr; ///< Pointer to the Output VME
+	std::shared_ptr<mafNode> m_Input; ///< Pointer to the Input VME.
+	std::shared_ptr<mafNode> m_Output; ///< Pointer to the Output VME
 	mafString      m_Label; ///< Label of the operation that will appear on the SideBar tab.
 };

@@ -64,8 +64,8 @@ public:
 	enum COLOR {RED = 0, GREEN , BLUE };
 	void SetColor(int component, int color);
 
-	void Create(mafVME *input, mafBaseEventHandler* listener = NULL, bool BuildGUI = true, int normal = X);
-	void SetInput(mafVME *vme) override;
+	void Create(std::shared_ptr<mafVME> input, mafBaseEventHandler* listener = NULL, bool BuildGUI = true, int normal = X);
+	void SetInput(std::shared_ptr<mafVME> vme) override;
 
 	/** Superclass override */
 	void SetRenderWindowHeightPercentage(double percentage);

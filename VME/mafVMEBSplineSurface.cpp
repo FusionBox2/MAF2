@@ -207,19 +207,19 @@ void mafVMEBSplineSurface::InternalUpdate() //Multi
   {
     if(!m_useBSLines)
     {
-      mafVMELandmarkCloud *cl = mafVMELandmarkCloud::SafeDownCast(vme->GetChild(i));
+      auto cl = mafVMELandmarkCloud::SafeDownCast(vme->GetChild(i));
       if(cl)
       {
         cl->Update();
-        clds.push_back(cl);
+        clds.push_back(cl.get());
       }
     }
     else
     {
-      mafVMEBSplineLine *bln = mafVMEBSplineLine::SafeDownCast(vme->GetChild(i));
+      auto bln = mafVMEBSplineLine::SafeDownCast(vme->GetChild(i));
       if(bln)
         bln->Update();
-      mafVMEOutputPolyline *opln = (bln == NULL) ? NULL : bln->GetPolylineOutput();
+      mafVMEOutputPolyline *opln = (bln == nullptr) ? nullptr : bln->GetPolylineOutput();
       if(opln)
         plns.push_back(opln);
     }
@@ -620,14 +620,14 @@ void mafVMEBSplineSurface::OnEvent(mafEventBase *maf_event)
           e->SetArg((intptr_t)&mafVMEBSplineSurface::PolylineAccept);
           e->SetString(&title);
           ForwardUpEvent(e);
-          vme = mafVMEGroup::SafeDownCast(e->GetVme());
-          if(vme != NULL)
+          vme = mafVMEGroup::SafeDownCast(e->GetVme()).get();
+          if(vme != nullptr)
           {
             SetPointsGroupLink(vme);
             m_PointsGroupName = vme->GetName();
           }
         }
-        if(vme != NULL)
+        if(vme)
         {
           std::vector<mafVMELandmarkCloud*>  clds;
           std::vector<mafVMEOutputPolyline*> plns;
@@ -635,24 +635,23 @@ void mafVMEBSplineSurface::OnEvent(mafEventBase *maf_event)
           {
             if(!m_useBSLines)
             {
-              mafVMELandmarkCloud *cl = mafVMELandmarkCloud::SafeDownCast(vme->GetChild(i));
-              if(cl)
+              if (auto cl = mafVMELandmarkCloud::SafeDownCast(vme->GetChild(i)))
               {
                 cl->Update();
-                clds.push_back(cl);
-                SetElemLink(cl, clds.size() - 1);
+                clds.push_back(cl.get());
+                SetElemLink(cl.get(), clds.size() - 1);
               }
             }
             else
             {
-              mafVMEBSplineLine *bln = mafVMEBSplineLine::SafeDownCast(vme->GetChild(i));
+              auto bln = mafVMEBSplineLine::SafeDownCast(vme->GetChild(i));
               if(bln)
                 bln->Update();
-              mafVMEOutputPolyline *opln = (bln == NULL) ? NULL : bln->GetPolylineOutput();
+              mafVMEOutputPolyline *opln = (bln == nullptr) ? nullptr : bln->GetPolylineOutput();
               if(opln)
               {
                 plns.push_back(opln);
-                SetElemLink(bln, plns.size() - 1);
+                SetElemLink(bln.get(), plns.size() - 1);
               }
             }
           }

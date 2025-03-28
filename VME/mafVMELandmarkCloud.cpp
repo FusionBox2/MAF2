@@ -162,7 +162,7 @@ MTimeType mafVMELandmarkCloud::GetMTime()
   {
     for (int i = 0; i < GetNumberOfChildren(); i++)
     {
-      mafVMELandmark *vme = mafVMELandmark::SafeDownCast(GetChild(i));
+      auto vme = mafVMELandmark::SafeDownCast(GetChild(i));
       if (vme)
       {
         mtime = (std::max)(mtime, vme->GetMTime());
@@ -208,7 +208,7 @@ int mafVMELandmarkCloud::GetNumberOfLandmarks()
 
     for (int i = 0; i < numberOfChildren; i++)
     {
-      mafVMELandmark *vme = mafVMELandmark::SafeDownCast(GetChild(i));
+      auto vme = mafVMELandmark::SafeDownCast(GetChild(i));
       if (vme)
         num++;
     }
@@ -233,8 +233,8 @@ int mafVMELandmarkCloud::SetNumberOfLandmarks(int num)
       // add default names to new landmarks
       for (int n = oldnum; n < num; n++)
       {
-        mafAutoPointer<mafVMELandmark> lm = mafVMELandmark::New();
-        Superclass::AddChild(lm.get());
+        auto lm = mafVMELandmark::NewSPtr();
+        Superclass::AddChild(lm);
 
         mafString name;
         name = _R("LM_NAME_");
@@ -289,9 +289,9 @@ int mafVMELandmarkCloud::SetNumberOfLandmarks(int num)
       for (int n = oldnum-1; n >= num; n--)
       {
         // if the cloud is open remove the extra children
-        if (mafVMELandmark *lm = GetLandmark(n))
+        if (auto lm = GetLandmark(n))
         {
-          RemoveChild(lm);
+          RemoveChild(lm.get());
         }
         else
         {
@@ -439,7 +439,7 @@ int mafVMELandmarkCloud::SetLandmark(int idx,double x,double y,double z,mafTimeS
   }
   else
   {
-    if (mafVMELandmark *lm = GetLandmark(idx))
+    if (auto lm = GetLandmark(idx))
     {
       lm->SetPose(x,y,z,0,0,0,t);
       return MAF_OK;
@@ -471,7 +471,7 @@ int mafVMELandmarkCloud::GetLandmark(int idx, double &x,double &y,double &z,mafT
   if (GetState() == CLOSED_CLOUD)
     return Superclass::GetPoint(idx,x,y,z,t);
 
-  if (mafVMELandmark *lm = GetLandmark(idx))
+  if (auto lm = GetLandmark(idx))
     return lm->GetPoint(x,y,z,t);
 
   return MAF_ERROR;
@@ -483,7 +483,7 @@ int mafVMELandmarkCloud::GetLandmark(int idx, double xyz[3],mafTimeStamp t)
   if (GetState() == CLOSED_CLOUD)
     return Superclass::GetPoint(idx,xyz,t);
 
-  if (mafVMELandmark *lm = GetLandmark(idx))
+  if (auto lm = GetLandmark(idx))
     return lm->GetPoint(xyz,t);
 
   return MAF_ERROR;
@@ -528,7 +528,7 @@ int mafVMELandmarkCloud::GetLandmarksPosVis(const int* idx, int numpnts, double*
   {
     for (int i = 0; i < numpnts; i++)
 	  {
-		  if (mafVMELandmark* lm = GetLandmark(idx[i]))
+		  if (auto lm = GetLandmark(idx[i]))
 		  {
 		  	vis[i] = lm->GetLandmarkVisibility(t);
         lm->GetPoint(&(pnts[3 * i]), t);
@@ -569,9 +569,9 @@ int mafVMELandmarkCloud::RemoveLandmark(int idx)
   }
   else
   {
-    mafVMELandmark *lm = GetLandmark(idx);
+    auto lm = GetLandmark(idx);
     if (lm)
-      RemoveChild(lm);
+      RemoveChild(lm.get());
     else
       return MAF_ERROR;
   } 
@@ -595,7 +595,7 @@ const mafString& mafVMELandmarkCloud::GetLandmarkName(int idx)
   }
   else
   {
-  	mafVME *vme = GetLandmark(idx);
+  	auto vme = GetLandmark(idx);
     return vme ? vme->GetName() : empty;
   }
 }
@@ -722,14 +722,14 @@ int mafVMELandmarkCloud::GetSphereResolution()
 }
 
 //-------------------------------------------------------------------------
-mafVMELandmark *mafVMELandmarkCloud::GetLandmark(const mafString& name)
+std::shared_ptr<mafVMELandmark> mafVMELandmarkCloud::GetLandmark(const mafString& name)
 //-------------------------------------------------------------------------
 {
   if (GetState() == OPEN_CLOUD)
   {
     for (int i = 0; i < GetNumberOfChildren(); i++)
     {
-      mafVMELandmark *vme = mafVMELandmark::SafeDownCast(GetChild(i));
+      auto vme = mafVMELandmark::SafeDownCast(GetChild(i));
       if (vme && vme->GetName() == name)
        return vme;
     }
@@ -738,11 +738,11 @@ mafVMELandmark *mafVMELandmarkCloud::GetLandmark(const mafString& name)
   {
     mafErrorMacro("GetLandmark by name: this function works only when cloud is open!");
   }
-  return NULL;
+  return nullptr;
 }
 
 //-------------------------------------------------------------------------
-mafVMELandmark *mafVMELandmarkCloud::GetLandmark(int idx)
+std::shared_ptr<mafVMELandmark> mafVMELandmarkCloud::GetLandmark(int idx)
 //-------------------------------------------------------------------------
 {
   if (GetState() == OPEN_CLOUD)
@@ -750,7 +750,7 @@ mafVMELandmark *mafVMELandmarkCloud::GetLandmark(int idx)
 	  int num = 0;
 	  for (int i = 0; i < GetNumberOfChildren(); i++)
 	  {
-		  mafVMELandmark *vme = mafVMELandmark::SafeDownCast(GetChild(i));
+		  auto vme = mafVMELandmark::SafeDownCast(GetChild(i));
 		  if (vme)
 		  {
 			  if (num == idx)
@@ -765,7 +765,7 @@ mafVMELandmark *mafVMELandmarkCloud::GetLandmark(int idx)
   {
     mafErrorMacro("GetLandmark by index: this function works only when cloud is Open!");
   }
-	return NULL;
+	return nullptr;
 }
 //-------------------------------------------------------------------------
 void mafVMELandmarkCloud::GetLandmarkPosition(int idx, double pos[3], mafTimeStamp t)
@@ -777,7 +777,7 @@ void mafVMELandmarkCloud::GetLandmarkPosition(int idx, double pos[3], mafTimeSta
   }
   else
   {
-    if (mafVMELandmark *lm = GetLandmark(idx))
+    if (auto lm = GetLandmark(idx))
     {
       lm->GetPoint(pos, t);
     }
@@ -830,7 +830,7 @@ void mafVMELandmarkCloud::Close()
   m_EnableModifiedEvent = false;
   for (int c = 0; c < numberOfChildren;c++)
   {
-    if (mafVMELandmark *lm = mafVMELandmark::SafeDownCast(GetChild(c)))
+    if (auto lm = mafVMELandmark::SafeDownCast(GetChild(c)))
     {
       SetLandmarkName(idx,lm->GetName());
 
@@ -923,14 +923,14 @@ void mafVMELandmarkCloud::Close()
       }
       idx++;
 
-      landmarks.push_back(lm); 
+      landmarks.push_back(lm.get()); 
     }
     progress = c * 100 / numberOfChildren;
   {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(progress); ForwardUpEvent(&evUnq);}
 
   }
   m_EnableModifiedEvent = true;
-  {mafEvent evUnq(this, VME_MODIFIED); evUnq.SetVme(this); ForwardUpEvent(&evUnq);}
+  {mafEvent evUnq(this, VME_MODIFIED); evUnq.SetVme(this->SharedFromThis()); ForwardUpEvent(&evUnq);}
 
   // remove all child landmarks
   for (int i=0;i<landmarks.size();i++)
@@ -985,12 +985,12 @@ void mafVMELandmarkCloud::Open()
   for (i = 0; i < numlm; i++)
 	{
     // add a new LM child with the same name of the corresponding LM
-    mafAutoPointer<mafVMELandmark> lm = mafVMELandmark::New();
+    auto lm = mafVMELandmark::NewSPtr();
     lm->SetName(GetLandmarkName(i));
     
     // force node adding
     m_State = OPEN_CLOUD;
-    Superclass::AddChild(lm.get());
+    Superclass::AddChild(lm);
     m_State = CLOSED_CLOUD;
     mafTimeStamp ct = GetTimeStamp();
     lm->SetTimeStamp(ct);
@@ -1030,7 +1030,7 @@ void mafVMELandmarkCloud::Open()
 	}
   // remove all items and tags...
   m_DataVector->RemoveAllItems();
-  {mafEvent evUnq(this, VME_MODIFIED); evUnq.SetVme(this); ForwardUpEvent(&evUnq);}
+  {mafEvent evUnq(this, VME_MODIFIED); evUnq.SetVme(this->SharedFromThis()); ForwardUpEvent(&evUnq);}
 
   for (i = 0; i < numlm; i++)
     RemoveLandmarkName(i);
@@ -1078,7 +1078,7 @@ int mafVMELandmarkCloud::SetLandmarkVisibility(int idx,bool a,mafTimeStamp t)
   }
   else
   {
-    if (mafVMELandmark *lm = GetLandmark(idx))
+    if (auto lm = GetLandmark(idx))
     {
       return lm->SetLandmarkVisibility(a,t);
     }
@@ -1125,7 +1125,7 @@ bool mafVMELandmarkCloud::GetLandmarkVisibility(int idx,mafTimeStamp t)
   }
   else
   {
-    if (mafVMELandmark *lm = GetLandmark(idx))
+    if (auto lm = GetLandmark(idx))
     {
       return lm->GetLandmarkVisibility(t);
     }
@@ -1353,8 +1353,8 @@ void mafVMELandmarkCloud::OnEvent(mafEventBase *maf_event)
           bool existLandmarkChild = false;
           for(int i = 0; i < GetNumberOfChildren(); i++)
           {
-            mafVMELandmark *lm = mafVMELandmark::SafeDownCast(GetChild(i));
-            if(lm != NULL && lm->GetNumberOfChildren() > 0)
+            auto lm = mafVMELandmark::SafeDownCast(GetChild(i));
+            if(lm && lm->GetNumberOfChildren() > 0)
             {
               existLandmarkChild = true;
             }
@@ -1382,7 +1382,7 @@ void mafVMELandmarkCloud::OnEvent(mafEventBase *maf_event)
 
         m_Gui->Update();
 
-        mafEvent ev(this,VME_SELECTED); ev.SetVme(this);
+        mafEvent ev(this,VME_SELECTED); ev.SetVme(this->SharedFromThis());
         this->ForwardUpEvent(&ev);
       }
       break;

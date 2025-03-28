@@ -51,13 +51,11 @@ mafOpImporterMSF::mafOpImporterMSF(const mafString& label) : Superclass(label)
   m_OpType  = OPTYPE_IMPORTER;
   m_Canundo = true;
   m_File    = _R("");
-  m_Group   = NULL;
 }
 //----------------------------------------------------------------------------
 mafOpImporterMSF::~mafOpImporterMSF()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_Group);
   mafRemoveDirectory(m_TmpDir);
   m_TmpDir = _R("");
 }
@@ -126,16 +124,16 @@ int mafOpImporterMSF::ImportMSF()
       mafErrorMessage(_M(mafString(_L("Errors during file parsing! Look the log area for error messages."))));
     //return MAF_ERROR;
   }
-  mafVMERoot *root = mafVMERoot::SafeDownCast(manager.GetRoot());
+  auto root = mafVMERoot::SafeDownCast(manager.GetRoot());
       
   mafString group_name = _R("imported from ") + name + _R(".") + ext;
 
   auto iter = root->NewIterator();
-  for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+  for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {
     if(node == root)
       continue;
-    mafVMEGenericAbstract *vmeWithDataVector = mafVMEGenericAbstract::SafeDownCast(node);
+    auto vmeWithDataVector = mafVMEGenericAbstract::SafeDownCast(node);
     if (vmeWithDataVector)
     {
       mafDataVector *dataVector = vmeWithDataVector->GetDataVector();
@@ -153,16 +151,16 @@ int mafOpImporterMSF::ImportMSF()
  
 
 
-  mafNEW(m_Group);
+  m_Group = mafVMEGroup::NewSPtr();
   m_Group->SetName(group_name);
-  m_Group->ReparentTo(GetInput());
+  m_Group->ReparentTo(GetInput().get());
   
-  while (mafNode *node = root->GetFirstChild())
+  while (auto node = root->GetFirstChild())
   {
-    node->ReparentTo(m_Group);
+    node->ReparentTo(m_Group.get());
 
     // Losi 03/16/2010 Bug #2049 fix
-    mafVMEGeneric *vme = mafVMEGeneric::SafeDownCast(node);
+    auto vme = mafVMEGeneric::SafeDownCast(node);
     if(vme)
     {
       // Update data vector id to avoid duplicates

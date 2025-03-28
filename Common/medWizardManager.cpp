@@ -175,7 +175,7 @@ void medWizardManager::WizardRun( medWizard *wizard, void *wizard_param /*= NULL
 }
 
 //----------------------------------------------------------------------------
-void medWizardManager::VmeSelected( mafNode* node )
+void medWizardManager::VmeSelected(std::shared_ptr<mafNode> node )
 //----------------------------------------------------------------------------
 {
   //update selected vme
@@ -217,7 +217,7 @@ void medWizardManager::EnableWizardMenus( bool CanEnable /*= true*/ )
       //and can enable parameter, when can enable is false all menu will be disabled
       medWizard *wizard = m_WizardList[i];
       if(m_MenuBar->FindItem(wizard->GetId()))
-        m_MenuBar->Enable(wizard->GetId(),CanEnable && wizard->Accept(m_Selected)); 
+        m_MenuBar->Enable(wizard->GetId(),CanEnable && wizard->Accept(m_Selected.get())); 
     }
   }
   //Disabling toolbar

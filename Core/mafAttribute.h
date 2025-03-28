@@ -2,7 +2,6 @@
 
 #include "ftk/Base/Object.h"
 #include "ftk/Base/String.h"
-#include "mafReferenceCounted.h" 
 #include "ftk/IO/To.h"
 
 class mafStorageElement;

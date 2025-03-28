@@ -112,7 +112,7 @@ protected:
   mafVMELandmarkCloud *m_CurrentDlc;
 	mafVMELandmarkCloud *m_Dlc;
 
-  mafVMELandmarkCloud *C3D_DLCloud;
+  std::shared_ptr<mafVMELandmarkCloud> C3D_DLCloud;
   std::vector<mafString> *c3DLMNamesTagArray;
   FILE* pC3DFile;
 

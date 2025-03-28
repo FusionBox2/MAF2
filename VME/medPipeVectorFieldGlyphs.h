@@ -116,7 +116,7 @@ protected:
   int m_GlyphRes;                   ///<resolution of the glyph
   int m_GlyphScaling;               ///<glyph scaling mode
   
-  mafVMESurface* m_GlyphMaterial;     ///<material used for glyphs  
+  std::shared_ptr<mafVMESurface> m_GlyphMaterial;     ///<material used for glyphs  
   vtkLookupTable* m_ColorMappingLUT;  ///<lookup table used for the mapping
   int m_UseColorMapping;              ///<non-zero, if colors should be mapped using LUT
   int m_UseSFColorMapping;            ///<non-zero, if scalars should be used for mapping  

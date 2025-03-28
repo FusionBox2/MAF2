@@ -151,7 +151,7 @@ void mafViewManager::ViewSelected(mafView *view/*, wxVTKWindow *rwi*/)
   }
 }
 //----------------------------------------------------------------------------
-void mafViewManager::VmeAdd(mafNode *n)   
+void mafViewManager::VmeAdd(std::shared_ptr<mafNode> n)
 //----------------------------------------------------------------------------
 {
   for(std::list<mafView*>::iterator v = m_ViewList.begin(); v != m_ViewList.end(); ++v) 
@@ -161,8 +161,8 @@ void mafViewManager::VmeAdd(mafNode *n)
   s = n->GetTypeName();
   if(s == "mafVMERoot") // Add a root means add a new tree
   {
-    m_RootVme     = (mafVMERoot*)n;
-    m_SelectedVme = n; // Adding new tree, selected vme must be initialized at the root.
+    m_RootVme     = mafVMERoot::StaticDownCast(n).get();
+    m_SelectedVme = n.get(); // Adding new tree, selected vme must be initialized at the root.
   }
 }
 //----------------------------------------------------------------------------
@@ -358,7 +358,7 @@ void mafViewManager::ViewInsert(mafView *view)
   if(m_RootVme != NULL)
   {
     auto iter = m_RootVme->NewIterator(); // iterate over inserted vme
-    for(mafNode *vme = iter->GetFirstNode(); vme; vme = iter->GetNextNode())
+    for(auto vme = iter->GetFirstNode(); vme; vme = iter->GetNextNode())
 			view->VmeAdd(vme); // Add them in the specified view
   }
 

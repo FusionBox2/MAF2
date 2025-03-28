@@ -33,7 +33,7 @@ PURPOSE.  See the above copyright notice for more information.
 #include "mafDecl.h"
 #include "mafGizmoScaleAxis.h"
 #include "mafGizmoScaleIsotropic.h"
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 #include "mafInteractorGenericMouse.h"
 
 // vtk includes
@@ -42,7 +42,7 @@ PURPOSE.  See the above copyright notice for more information.
 #include "vtkMath.h"
 
 //----------------------------------------------------------------------------
-mafGizmoScale::mafGizmoScale(mafVME* input, mafBaseEventHandler *listener , bool buildGUI)
+mafGizmoScale::mafGizmoScale(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener , bool buildGUI)
 	//----------------------------------------------------------------------------
 {
 	assert(input);
@@ -488,7 +488,7 @@ std::shared_ptr<mafMatrix> mafGizmoScale::GetAbsPose()
 }
 
 //----------------------------------------------------------------------------  
-void mafGizmoScale::SetInput(mafVME *input)
+void mafGizmoScale::SetInput(std::shared_ptr<mafVME> input)
 	//----------------------------------------------------------------------------
 {
 	this->m_InputVME = input;

@@ -31,7 +31,7 @@ const bool DEBUG_MODE = true;
 #include "mafGUIMaterialButton.h"
 #include "mafInteractorCompositorMouse.h"
 #include "mafInteractorGenericMouse.h"
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 #include "mafVME.h"
 #include "mafVMEGizmo.h"
 #include "mafVMEPolyline.h"
@@ -59,14 +59,14 @@ const bool DEBUG_MODE = true;
 const double defaultLineLength = 50;
  
 
-medGizmoInteractionDebugger::medGizmoInteractionDebugger(mafNode* imputVme, mafBaseEventHandler *listener, const char* name, bool testMode) 
+medGizmoInteractionDebugger::medGizmoInteractionDebugger(std::shared_ptr<mafNode>  imputVme, mafBaseEventHandler *listener, const char* name, bool testMode)
 {
   Constructor(imputVme, listener, name, testMode);
 }
 
 void medGizmoInteractionDebugger::CreateInteractor()
 {  
-  m_RefSysVME = m_InputVME;
+  m_RefSysVME = m_InputVME.get();
 
   auto absMatrix = m_RefSysVME->GetOutput()->GetAbsMatrix();
 
@@ -84,10 +84,10 @@ void medGizmoInteractionDebugger::CreateInteractor()
   m_VmeGizmo->SetBehavior(m_GizmoInteractor.get());
 }
 
-void medGizmoInteractionDebugger::Constructor(mafNode *imputVme, mafBaseEventHandler *listener, const char* name, bool testMode)
+void medGizmoInteractionDebugger::Constructor(std::shared_ptr<mafNode> imputVme, mafBaseEventHandler *listener, const char* name, bool testMode)
 {
   m_CurvilinearAbscissaHelper = NULL;
-  m_VmeGizmo = NULL;
+  m_VmeGizmo = nullptr;
 
   m_Name = _R(name);
   SetListener(listener);
@@ -96,7 +96,7 @@ void medGizmoInteractionDebugger::Constructor(mafNode *imputVme, mafBaseEventHan
 
   CreateVMEGizmo();
 
-  m_CurvilinearAbscissaHelper = new medCurvilinearAbscissaOnSkeletonHelper( m_VmeGizmo, this , testMode);
+  m_CurvilinearAbscissaHelper = new medCurvilinearAbscissaOnSkeletonHelper( m_VmeGizmo.get(), this , testMode);
 }
 //----------------------------------------------------------------------------
 void medGizmoInteractionDebugger::Destructor()
@@ -111,7 +111,7 @@ void medGizmoInteractionDebugger::Destructor()
   m_GizmoInteractor.reset();
 
   m_VmeGizmo->ReparentTo(nullptr);
-  mafDEL(m_VmeGizmo);
+  m_VmeGizmo.reset();
 
   cppDEL(m_CurvilinearAbscissaHelper);
 }
@@ -229,7 +229,7 @@ void medGizmoInteractionDebugger::CreateVMEGizmo()
   CreateGizmoVTKData();
   SetGizmoLength(defaultLineLength);
 
-  mafNEW(m_VmeGizmo);
+  m_VmeGizmo = mafVMEGizmo::NewSPtr();
   m_VmeGizmo->SetName(m_Name);
   m_VmeGizmo->ReparentTo(root); 
   m_VmeGizmo->SetInputConnection(m_AppendPolyData->GetOutputPort());  
@@ -246,7 +246,7 @@ void medGizmoInteractionDebugger::DestroyVMEGizmo()
   m_GizmoInteractor.reset();
 
   m_VmeGizmo->ReparentTo(nullptr);
-  mafDEL(m_VmeGizmo);
+  m_VmeGizmo.reset();
 }
 
 void medGizmoInteractionDebugger::LogTransformEvent( mafEvent *e )

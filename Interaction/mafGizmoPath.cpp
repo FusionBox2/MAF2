@@ -29,7 +29,7 @@
 #include "mafGUIMaterialButton.h"
 #include "mafInteractorCompositorMouse.h"
 #include "mafInteractorGenericMouse.h"
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 #include "mafVME.h"
 #include "mafVMEGizmo.h"
 #include "mafVMEPolyline.h"
@@ -47,7 +47,7 @@
 const double defaultLineLength = 50;
 
 //----------------------------------------------------------------------------
-mafGizmoPath::mafGizmoPath(mafNode* imputVme, mafBaseEventHandler *listener, const char* name, int textVisibility) 
+mafGizmoPath::mafGizmoPath(std::shared_ptr<mafVME>  imputVme, mafBaseEventHandler *listener, const char* name, int textVisibility) 
 //----------------------------------------------------------------------------
 {
   m_TextVisibility = textVisibility;
@@ -64,7 +64,7 @@ void mafGizmoPath::CreateInteractor()
   m_LeftMouseInteractor->EnableTranslation(true);
   m_LeftMouseInteractor->ResultMatrixConcatenationOn();
 }
-void mafGizmoPath::Constructor(mafNode *imputVme, mafBaseEventHandler *listener, const char* name)
+void mafGizmoPath::Constructor(std::shared_ptr<mafVME> imputVme, mafBaseEventHandler *listener, const char* name)
 //----------------------------------------------------------------------------
 {
 
@@ -104,7 +104,7 @@ void mafGizmoPath::Destructor()
   m_GizmoInteractor.reset();
 
   m_VmeGizmoPath->ReparentTo(nullptr);
-  mafDEL(m_VmeGizmoPath);
+  m_VmeGizmoPath.reset();
 }
 //----------------------------------------------------------------------------
 mafGizmoPath::~mafGizmoPath()
@@ -156,7 +156,7 @@ void mafGizmoPath::Show(bool show)
   m_VmeGizmoPath->GetMaterial()->m_Prop->SetOpacity(opacity);
 }
 //----------------------------------------------------------------------------
-void mafGizmoPath::SetInput( mafVME *vme )
+void mafGizmoPath::SetInput(std::shared_ptr<mafVME> vme )
 //----------------------------------------------------------------------------
 {
   if (m_VmeGizmoPath != NULL)
@@ -411,7 +411,7 @@ void mafGizmoPath::CreateVMEGizmo()
 {
   assert(m_VmeGizmoPath == NULL);
 
-  mafNEW(m_VmeGizmoPath);
+  m_VmeGizmoPath = mafVMEGizmo::NewSPtr();
   m_VmeGizmoPath->SetName(m_Name);
   m_VmeGizmoPath->SetTextVisibility(m_TextVisibility);
 
@@ -436,7 +436,7 @@ void mafGizmoPath::DestroyVMEGizmo()
   m_GizmoInteractor.reset();
 
   m_VmeGizmoPath->ReparentTo(nullptr);
-  mafDEL(m_VmeGizmoPath);
+  m_VmeGizmoPath.reset();
 }
 
 std::shared_ptr<mafMatrix> mafGizmoPath::GetAbsPose()

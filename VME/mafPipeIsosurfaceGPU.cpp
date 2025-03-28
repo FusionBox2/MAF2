@@ -259,14 +259,14 @@ void mafPipeIsosurfaceGPU::ExctractIsosurface()
 
 	mafString name = mafString::Format(_L("Isosurface %g"),m_ContourValue);
 
-	mafNEW(m_IsosurfaceVme);
+	m_IsosurfaceVme = mafVMESurface::NewSPtr();
 	m_IsosurfaceVme->SetName(name);
 	m_IsosurfaceVme->SetDataByDetaching(surface,0);
 
 	m_IsosurfaceVme->ReparentTo(m_Vme);
 
 	surface->Delete(); 
-	mafDEL(m_IsosurfaceVme);
+	m_IsosurfaceVme.reset();
 }
 //----------------------------------------------------------------------------
 void mafPipeIsosurfaceGPU::EnableBoundingBoxVisibility(bool enable)

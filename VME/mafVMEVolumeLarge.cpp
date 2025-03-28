@@ -105,6 +105,24 @@ mafVMEVolumeLarge::mafVMEVolumeLarge()
 mafVMEVolumeLarge::~mafVMEVolumeLarge()
 //-------------------------------------------------------------------------
 {
+	//NB. if ROI gizmo is on, it keeps some references to this VME,
+	//which prevents the VME from its destruction, thus also GizmoROI 
+	//is not deleted => memory leaks. Therefore, if our parent does not exist, i.e.,
+	//the VME is disconnected from the tree and the gizmo is on,
+	//we need to destroy the gizmo first to allow the destruction of VME
+	if (m_GizmoROI != nullptr && GetParent() == nullptr)
+	{
+		mafGizmoROI_BES* roi = m_GizmoROI;
+		m_GizmoROI = nullptr;
+
+		roi->Show(false);
+		cppDEL(roi);
+	}
+
+
+
+
+
   // data pipe destroyed in mafVME
   // data vector destroyed in mafVMEGeneric	
 #ifdef VME_VOLUME_VER1
@@ -421,7 +439,7 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 		{	
 			double usrBounds[6];
 			TransformExtent(m_FullExtent, usrBounds);
-			m_GizmoROI = new mafGizmoROI_BES(this, this, mafGizmoROI_BES::USER_BOUNDS, 
+			m_GizmoROI = new mafGizmoROI_BES(mafVME::StaticDownCast(this->SharedFromThis()), this, mafGizmoROI_BES::USER_BOUNDS, 
         this, /*GetParent(),*/ usrBounds);			
 			m_GizmoROI->SetBounds(m_ROI);
 			m_GizmoROI->Show(true);
@@ -538,7 +556,7 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
       (vtkDataSet*)m_LargeDataReader->GetOutputDataSet()), 0, MAF_VME_REFERENCE_DATA);
     this->Modified();
     //force redraw
-    mafEvent ev(this, VME_SELECTED); ev.SetVme(this);
+    mafEvent ev(this, VME_SELECTED); ev.SetVme(this->SharedFromThis());
     this->ForwardUpEvent(&ev);
     UpdateGui();
   }
@@ -633,7 +651,7 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 //	UpdateOutput();	
 
   //force redraw
-  mafEvent ev(this, VME_SELECTED); ev.SetVme(this);
+  mafEvent ev(this, VME_SELECTED); ev.SetVme(this->SharedFromThis());
   this->ForwardUpEvent(&ev);
   UpdateGui();
 #endif
@@ -695,7 +713,7 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 //	UpdateOutput();	
     
   //force redraw
-  mafEvent ev(this, VME_SELECTED); ev.SetVme(this);
+  mafEvent ev(this, VME_SELECTED); ev.SetVme(this->SharedFromThis());
   this->ForwardUpEvent(&ev);
   UpdateGui();
 }
@@ -786,8 +804,7 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
     return;	//invalid state
   }
   
-  mafVMEVolumeGray* newVME;
-  mafNEW(newVME);
+  auto newVME = mafVMEVolumeGray::NewSPtr();
   if (bRLG)
     newVME->SetData(pCopyRLG, 0, MAF_VME_REFERENCE_DATA);
   else
@@ -807,7 +824,7 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
   mafEvent ev(this, VME_ADD); ev.SetVme(newVME);
   this->ForwardUpEvent(&ev);
 
-  mafDEL(newVME);   //VME_ADD increased reference
+  newVME.reset();   //VME_ADD increased reference
 #else
   //This code saves the highest resolution of the selected ROI
   //into the output ROI
@@ -2154,25 +2171,6 @@ void mafVMEVolumeLarge::UpdateVOI(int VOI[6])
 
 #pragma endregion //GUI MISC
 #pragma endregion //GUI
-
-/*virtual*/ void mafVMEVolumeLarge::UnRegister(void *obj)
-{
-	//NB. if ROI gizmo is on, it keeps some references to this VME,
-	//which prevents the VME from its destruction, thus also GizmoROI 
-	//is not deleted => memory leaks. Therefore, if our parent does not exist, i.e.,
-	//the VME is disconnected from the tree and the gizmo is on,
-	//we need to destroy the gizmo first to allow the destruction of VME
-	if (m_GizmoROI != NULL && GetParent() == NULL)
-	{
-		mafGizmoROI_BES* roi = m_GizmoROI;
-		m_GizmoROI = NULL;
-
-		roi->Show(false);
-		cppDEL(roi);
-	}
-
-	Superclass::UnRegister(obj);
-}
 
 #ifdef _TEMP_STUFF
 #pragma region Temporary Stuff

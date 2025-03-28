@@ -70,13 +70,13 @@ class mafRefSys;
 class medGizmoCrossRotateFan: public mafGizmoInterface
 {
 public:
-           medGizmoCrossRotateFan(mafVME *input, mafBaseEventHandler *listener = NULL);
+           medGizmoCrossRotateFan(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener = NULL);
            ~medGizmoCrossRotateFan() override; 
   
   /** 
   Set the gizmo generating vme; the gizmo will be centered on this vme*/
-  void SetInput(mafVME *vme) override;
-  mafVME *GetInput() {return this->m_InputVme;};
+  void SetInput(std::shared_ptr<mafVME> vme) override;
+  mafVME *GetInput() {return this->m_InputVme.get();};
 
   //----------------------------------------------------------------------------
   // events handling 
@@ -121,7 +121,7 @@ protected:
   
  
   /** Register input vme*/
-  mafVME *m_InputVme;
+  std::shared_ptr<mafVME> m_InputVme;
 
   /** Register the gizmo axis */
   int m_ActiveAxis;

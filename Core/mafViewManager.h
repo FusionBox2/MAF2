@@ -54,7 +54,7 @@ public:
   void OnEvent(mafEventBase *maf_event) override;
 
   /** Add the vme to all views. */
-  void VmeAdd(mafNode *n);
+  void VmeAdd(std::shared_ptr<mafNode> n);
 
   /** Remove the vme from all views. */
   void VmeRemove(mafNode *n);

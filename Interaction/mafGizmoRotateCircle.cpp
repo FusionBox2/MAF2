@@ -52,7 +52,7 @@
 #include "vtkProperty.h"
 
 //----------------------------------------------------------------------------
-mafGizmoRotateCircle::mafGizmoRotateCircle(mafVME *input, mafBaseEventHandler *listener, mafString name)
+mafGizmoRotateCircle::mafGizmoRotateCircle(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener, mafString name)
 //----------------------------------------------------------------------------
 {
   this->SetIsActive(false);
@@ -338,7 +338,7 @@ std::shared_ptr<mafMatrix> mafGizmoRotateCircle::GetAbsPose()
   return m_GizmoCircle->GetOutput()->GetAbsMatrix();
 }
 //----------------------------------------------------------------------------
-void mafGizmoRotateCircle::SetInput(mafVME *vme)
+void mafGizmoRotateCircle::SetInput(std::shared_ptr<mafVME> vme)
 //----------------------------------------------------------------------------
 {
   // register the input vme
@@ -377,7 +377,7 @@ bool mafGizmoRotateCircle::GetIsActive()
 
 mafVME * mafGizmoRotateCircle::GetInput()
 {
-  return this->m_InputVme;
+  return this->m_InputVme.get();
 }
 
 void mafGizmoRotateCircle::SetMediator(mafBaseEventHandler *mediator)

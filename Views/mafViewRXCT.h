@@ -154,7 +154,7 @@ protected:
 
 
   mafGizmoSlice   *m_GizmoSlice[6];
-  mafVME    *m_CurrentVolume; ///< Current visualized volume
+  std::shared_ptr<mafVME> m_CurrentVolume; ///< Current visualized volume
   
   mafViewRX       *m_ViewsRX[2];
   mafViewCompound *m_ViewCTCompound;

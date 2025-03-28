@@ -1,21 +1,4 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafGUIApplicationLayoutSettings
- Authors: Daniele Giunchi
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __mafGUIApplicationLayoutSettings_H__
-#define __mafGUIApplicationLayoutSettings_H__
+#pragma once
 
 #include "mafGUISettings.h"
 
@@ -111,19 +94,18 @@ protected:
   /** Set layout as default*/
    void SetLayoutAsDefault();
 
-  wxFrame               *m_Win;
+  wxFrame               *m_Win = nullptr;
   mafString              m_DefaultLayoutName;
   mafString              m_DefaultLayoutFile;
   mafString              m_ActiveLayoutName;
   mafString              m_LayoutType;
   
   mafString              m_LayoutFileSave;
-  mafViewManager        *m_ViewManager;
-	mafVMERoot            *m_XMLRoot;
-  int                    m_VisibilityVme;
-  wxListBox				      *m_List;
-	int                    m_SelectedItem;
-  int                    m_DefaultFlag;
-  bool                   m_ModifiedLayouts;
+  mafViewManager        *m_ViewManager = nullptr;
+  std::shared_ptr<mafVMERoot> m_XMLRoot;
+  int                    m_VisibilityVme = 0;
+  wxListBox				      *m_List = nullptr;
+	int                    m_SelectedItem = -1;
+  int                    m_DefaultFlag = 0;
+  bool                   m_ModifiedLayouts = false;
 };
-#endif

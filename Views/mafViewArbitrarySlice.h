@@ -126,7 +126,7 @@ protected:
 	mafGizmoRotate		*m_GizmoRotate;
 	mafVME          	*m_CurrentVolume;
 	mafVME				    *m_CurrentImage;
-	mafVMESlicer			*m_Slicer;
+	std::shared_ptr<mafVMESlicer> m_Slicer;
 	std::shared_ptr<mafMatrix> m_MatrixReset;
 	mafAttachCamera		*m_AttachCamera;
 

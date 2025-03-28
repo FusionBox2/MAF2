@@ -80,7 +80,7 @@ void mafViewPlot::Create()
   m_Sg->SetListener(this);
 }
 //----------------------------------------------------------------------------
-void mafViewPlot::VmeAdd(mafNode *vme)
+void mafViewPlot::VmeAdd(std::shared_ptr<mafNode> vme)
 //----------------------------------------------------------------------------
 {
   assert(m_Sg); 
@@ -90,7 +90,7 @@ void mafViewPlot::VmeAdd(mafNode *vme)
 void mafViewPlot::VmeShow(mafNode *vme, bool show)												{assert(m_Sg); m_Sg->VmeShow(vme,show);}
 void mafViewPlot::VmeUpdateProperty(mafNode *vme, bool fromTag)	        {assert(m_Sg); m_Sg->VmeUpdateProperty(vme,fromTag);}
 //----------------------------------------------------------------------------
-int  mafViewPlot::GetNodeStatus(mafNode *vme)
+int  mafViewPlot::GetNodeStatusI(mafNode *vme)
 //----------------------------------------------------------------------------
 {
   int status = m_Sg ? m_Sg->GetNodeStatus(vme) : NODE_NON_VISIBLE;
@@ -125,7 +125,7 @@ void mafViewPlot::VmeSelect(mafNode *vme, bool select)
   m_Sg->VmeSelect(vme,select);
 }
 //----------------------------------------------------------------------------
-std::shared_ptr<mafPipe> mafViewPlot::GetNodePipe(mafNode *vme)
+std::shared_ptr<mafPipe> mafViewPlot::GetNodePipeI(mafNode *vme)
 //----------------------------------------------------------------------------
 {
    assert(m_Sg);

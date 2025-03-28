@@ -173,7 +173,7 @@ void medWizard::BlockExecutionBegin()
   {mafEvent evUnq(this,WIZARD_UPDATE_WINDOW_TITLE); InvokeEvent(evUnq);}
 
   //Setting selected vme to the block and execute it
-  m_CurrentBlock->SetSelectedVME(m_SelectedVME);
+  m_CurrentBlock->SetSelectedVME(m_SelectedVME.get());
   m_CurrentBlock->ExcutionBegin();
 
   if (m_CurrentBlock)
@@ -268,13 +268,13 @@ void medWizard::OnEvent(mafEventBase *maf_event)
 
 
 //----------------------------------------------------------------------------  
-void medWizard::SetSelectedVME( mafNode *node )
+void medWizard::SetSelectedVME(std::shared_ptr<mafNode> node )
 //----------------------------------------------------------------------------  
 {
   //Selecting VME an (if necessary) setting it to the current block
   m_SelectedVME=node;
   if (m_CurrentBlock)
-    m_CurrentBlock->SetSelectedVME(node);
+    m_CurrentBlock->SetSelectedVME(node.get());
 }
 
 //----------------------------------------------------------------------------  

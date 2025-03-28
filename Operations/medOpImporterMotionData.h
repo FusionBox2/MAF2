@@ -43,10 +43,9 @@ public:
     // Must unregister in order to avoid leaks or data loss
     if (GetOutput())
     {
-      m_Vme->UnRegister(GetOutput());
+      m_Vme.reset();
       SetOutput(nullptr);
     }
-    m_Vme = NULL;    
   }
   //----------------------------------------------------------------------------
   mafOp* Copy() override
@@ -111,8 +110,7 @@ public:
       wxBusyInfo wait("Please wait, working...");
     }
 
-    MotionReader* reader = nullptr;
-    mafNEW(reader);
+    auto reader = MotionReader::NewSPtr();
     reader->SetFileName(m_File.GetCStr());
     reader->SetDictionaryFileName(m_Dict.GetCStr());
 
@@ -178,7 +176,7 @@ public:
   void OpDo() override
     //----------------------------------------------------------------------------
   {
-    m_Vme->ReparentTo(GetInput());
+    m_Vme->ReparentTo(GetInput().get());
   }
 	//----------------------------------------------------------------------------
   //** Makes the undo for the operation.
@@ -196,6 +194,6 @@ protected:
 	mafString m_Dict;
   mafString m_PgdWildc;
   mafString m_DicWildc;
-	mafVME  *m_Vme = nullptr;
+	std::shared_ptr<mafVME> m_Vme;
 	int m_DictionaryAvailable = 0;
 };

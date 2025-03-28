@@ -42,6 +42,7 @@ using Eigen::RowVector3d;
 class mafQuadraticSurface : public mafVME//public mafDataElement
 {
     public:
+  mafTypeMacroN(mafQuadraticSurface)
     
     mafQuadraticSurface();
     ~mafQuadraticSurface() override;

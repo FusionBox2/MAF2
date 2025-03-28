@@ -147,7 +147,7 @@ public:
   mafVMECenterLine();
 	~mafVMECenterLine() override;
 protected:
-	mafVMEMeter* chord, * chordP;
+	std::shared_ptr<mafVMEMeter> chord, chordP;
 	int m_Rib = 0;
 	int m_FS = 1;
 	mafString m_File = _L("ptsResults.txt");
@@ -165,7 +165,7 @@ protected:
   };
 
   void SetInputPointsCloud(vtkPoints *);
-  mafVMELandmarkCloud	*m_CloudPath1;
+  std::shared_ptr<mafVMELandmarkCloud>	m_CloudPath1;
   double Delt_1 = 5;///5
   double Mult_01 = 0.05;
   double	D_1mm = 1.5;

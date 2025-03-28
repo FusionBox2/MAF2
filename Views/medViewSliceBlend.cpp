@@ -170,7 +170,7 @@ void medViewSliceBlend::VmeCreatePipe(mafNode *vme)
       {
         m_CurrentVolume = n;
         if (m_AttachCamera)
-          m_AttachCamera->SetVme(m_CurrentVolume->m_Vme);
+          m_AttachCamera->SetVme(m_CurrentVolume->m_Vme.get());
         int slice_mode;
         vtkDataSet *data = ((mafVME *)vme)->GetOutput()->GetVTKData();
         assert(data);
@@ -242,7 +242,7 @@ void medViewSliceBlend::VmeDeletePipe(mafNode *vme)
   }
 }
 //-------------------------------------------------------------------------
-int medViewSliceBlend::GetNodeStatus(mafNode *vme)
+int medViewSliceBlend::GetNodeStatusI(mafNode *vme)
 //-------------------------------------------------------------------------
 {
   mafSceneNode *n = NULL;
@@ -560,7 +560,7 @@ void medViewSliceBlend::MultiplyPointByInputVolumeABSMatrix(double *point)
 {
   if(m_CurrentVolume && m_CurrentVolume->m_Vme)
   {
-    auto mat = ((mafVME *)m_CurrentVolume->m_Vme)->GetOutput()->GetMatrix();
+    auto mat = mafVME::StaticDownCast(m_CurrentVolume->m_Vme)->GetOutput()->GetMatrix();
     double coord[4];
     coord[0] = point[0];
     coord[1] = point[1];

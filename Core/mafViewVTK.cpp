@@ -162,21 +162,21 @@ vtkRenderer *mafViewVTK::GetAlwaysVisibleRenderer()
 }
 
 //----------------------------------------------------------------------------
-void mafViewVTK::VmeAdd(mafNode *vme)
+void mafViewVTK::VmeAdd(std::shared_ptr<mafNode> vme)
 //----------------------------------------------------------------------------
 {
   assert(m_Sg); 
   m_Sg->VmeAdd(vme);
   if (m_AnimateKit && vme->IsMAFType(mafVMERoot))
   {
-    m_AnimateKit->SetInputVME(vme);
+    m_AnimateKit->SetInputVME(vme.get());
   }
 }
 //----------------------------------------------------------------------------
 void mafViewVTK::VmeShow(mafNode *vme, bool show)												{assert(m_Sg); m_Sg->VmeShow(vme,show);}
 void mafViewVTK::VmeUpdateProperty(mafNode *vme, bool fromTag)	        {assert(m_Sg); m_Sg->VmeUpdateProperty(vme,fromTag);}
 //----------------------------------------------------------------------------
-int  mafViewVTK::GetNodeStatus(mafNode *vme)
+int  mafViewVTK::GetNodeStatusI(mafNode *vme)
 //----------------------------------------------------------------------------
 {
   int status = m_Sg ? m_Sg->GetNodeStatus(vme) : NODE_NON_VISIBLE;
@@ -243,7 +243,7 @@ void mafViewVTK::CameraUpdate()
   m_Rwi->CameraUpdate();
 }
 //----------------------------------------------------------------------------
-std::shared_ptr<mafPipe> mafViewVTK::GetNodePipe(mafNode *vme)
+std::shared_ptr<mafPipe> mafViewVTK::GetNodePipeI(mafNode *vme)
 //----------------------------------------------------------------------------
 {
    assert(m_Sg);

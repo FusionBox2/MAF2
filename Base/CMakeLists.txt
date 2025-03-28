@@ -11,7 +11,6 @@ SET(PROJECT_SRCS
 	../ftk/Base/MTime.h
 	../ftk/Base/Object.cpp
 	../ftk/Base/Object.h
-	../ftk/Base/RegisteringPointer.h
 	../ftk/Base/String.cpp
 	../ftk/Base/String.h
 	../ftk/Base/SpinLock.h
@@ -44,8 +43,6 @@ mafOBB.cpp
 mafOBB.h
 mafBaseEventHandler.cpp
 mafBaseEventHandler.h
-mafReferenceCounted.cpp
-mafReferenceCounted.h
 mafTimeStamped.cpp
 mafTimeStamped.h
 mafTransform.cpp

@@ -30,7 +30,7 @@
 #include "mafNodeIterator.h"
 #include "mafAbsMatrixPipe.h"
 #include "mafDataPipe.h"
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 #include "mafTransform.h"
 #include "mafIndent.h"
 #include "mafGUI.h"
@@ -142,7 +142,7 @@ void mafVMEOutput::GetTimeBounds(mafTimeStamp tbounds[2]) const
   {
     mafTimeStamp tmp[2];
     
-    if (mafVME *child_vme=mafVME::SafeDownCast(m_VME->GetChild(i)))
+    if (auto child_vme=mafVME::SafeDownCast(m_VME->GetChild(i)))
     {
       child_vme->GetOutput()->GetTimeBounds(tmp);
       if (tmp[0]<0 || tmp[1]<0)
@@ -313,8 +313,7 @@ void mafVMEOutput::GetBounds(mafOBB &bounds,mafTimeStamp t, mafNodeIterator *ite
   
   for (int i=0;i<m_VME->GetNumberOfChildren();i++)
   {
-    mafVME *child=mafVME::SafeDownCast(m_VME->GetChild(i));
-    if (child)
+    if (auto child=mafVME::SafeDownCast(m_VME->GetChild(i)))
     {
       mafOBB childBounds;
       child->GetOutput()->GetBounds(childBounds,t);

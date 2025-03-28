@@ -62,7 +62,7 @@ int mafVMEScalar::DeepCopy(mafNode *a)
     mafVMEScalar *scalar = mafVMEScalar::SafeDownCast(a);
     if (scalar->GetScalarVector())
     {
-      if(m_ScalarVector == NULL)
+      if(m_ScalarVector == nullptr)
         m_ScalarVector = scalar->GetScalarVector()->NewInstance(); // create a new instance of the same type
       m_ScalarVector->DeepCopy(scalar->GetScalarVector()); // copy data
     }

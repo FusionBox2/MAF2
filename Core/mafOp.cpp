@@ -1,6 +1,6 @@
 #include "mafOp.h"
 #include "mafDecl.h"
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 #include "mafGUI.h"
 #include "mafGUIHolder.h"
 #include "mafNode.h"
@@ -42,7 +42,7 @@ void mafOp::OpDo()
 {
   if (m_Output)
   {
-    m_Output->ReparentTo(m_Input);
+    m_Output->ReparentTo(m_Input.get());
     //{mafEvent evUnq(this, VME_ADD, m_Output); InvokeEvent(evUnq);}
     {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
@@ -58,23 +58,23 @@ void mafOp::OpUndo()
   }
 }
 
-void mafOp::SetInput(mafNode* vme)
+void mafOp::SetInput(std::shared_ptr<mafNode> vme)
 {
   m_Input = vme;
 }
 
-mafNode* const & mafOp::GetInput() const
+std::shared_ptr<mafNode> mafOp::GetInput() const
 {
   return m_Input;
 }
 
 /** Return the mafNode result of the operation.*/
-mafNode* const & mafOp::GetOutput() const
+std::shared_ptr<mafNode> mafOp::GetOutput() const
 {
   return m_Output;
 }
 
-void mafOp::SetOutput(mafNode* output)
+void mafOp::SetOutput(std::shared_ptr<mafNode> output)
 {
   m_Output = output;
 }

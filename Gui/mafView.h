@@ -90,7 +90,7 @@ public:
 
   virtual bool      Close(bool destroyFrame = true);
 
-  virtual void			VmeAdd(mafNode *vme)															{};
+  virtual void			VmeAdd(std::shared_ptr<mafNode> vme)															{};
   virtual void			VmeRemove(mafNode *vme)														{};
   virtual void			VmeSelect(mafNode *vme, bool select)							{};
   virtual void			VmeShow(mafNode *vme, bool show)									{};
@@ -116,10 +116,20 @@ public:
 
   /** return the status of the node within this view. es: NON_VISIBLE,VISIBLE_ON, ... */
   //having mafView::GetNodeStatus allow mafGUICheckTree to not know about mafSceneGraph
-  virtual int GetNodeStatus(mafNode *vme) {return NODE_NON_VISIBLE;};
+  virtual int GetNodeStatusI(mafNode *vme) {return NODE_NON_VISIBLE;}
   
   /** return the current pipe for the specified vme (if any exist at this moment) */
-  virtual std::shared_ptr<mafPipe> GetNodePipe(mafNode *vme) {return nullptr;}
+  virtual std::shared_ptr<mafPipe> GetNodePipeI(mafNode *vme) {return nullptr;}
+
+  int GetNodeStatus(mafNode* vme) { return GetNodeStatusI(vme); }
+
+  /** return the current pipe for the specified vme (if any exist at this moment) */
+  std::shared_ptr<mafPipe> GetNodePipe(mafNode* vme) { return GetNodePipeI(vme); }
+
+  int GetNodeStatus(std::shared_ptr<mafNode> vme) { return GetNodeStatusI(vme.get()); }
+
+  /** return the current pipe for the specified vme (if any exist at this moment) */
+  std::shared_ptr<mafPipe> GetNodePipe(std::shared_ptr<mafNode> vme) { return GetNodePipeI(vme.get()); }
 
   const mafString& GetLabel() {return m_Label;}
   const mafString& GetName() {return m_Name;}

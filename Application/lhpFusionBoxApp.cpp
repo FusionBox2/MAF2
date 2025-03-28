@@ -299,11 +299,9 @@ public:
   {
     m_OpType  = OPTYPE_OP;
     m_Canundo = true;
-    m_Created = NULL;
   }
   ~lhpOpCreateLMCLines() override
   {
-    mafDEL(m_Created);
   }
 
   mafOp* Copy() override {return new lhpOpCreateLMCLines(GetLabel());}
@@ -311,7 +309,7 @@ public:
   bool Accept(mafNode *node) override {return (node != NULL);}
   void OpRun() override
   {
-    mafNEW(m_Created);
+    m_Created = lhpVMELMCLines::NewSPtr();
     m_Created->SetName(_R("Cloud lines"));
     SetOutput(m_Created);
     {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
@@ -320,7 +318,7 @@ public:
   void OpUndo() override;
 
 protected: 
-  lhpVMELMCLines *m_Created;
+  std::shared_ptr<lhpVMELMCLines> m_Created;
 };
 
 mafCxxTypeMacro(lhpOpMove)
@@ -329,18 +327,18 @@ mafCxxTypeMacro(lhpOpCreateLMCLines);
 
 void lhpOpCreateLMCLines::OpDo()
 {
-  GetOutput()->ReparentTo(GetInput());
-  mafVMELandmarkCloud *lmc = mafVMELandmarkCloud::SafeDownCast(GetInput());
+  GetOutput()->ReparentTo(GetInput().get());
+  auto lmc = mafVMELandmarkCloud::SafeDownCast(GetInput());
   if(m_Created && lmc)
   {
-    m_Created->SetCloud(lmc);
+    m_Created->SetCloud(lmc.get());
   }
 }
 void lhpOpCreateLMCLines::OpUndo()
 {
   if(m_Created)
-    m_Created->SetCloud(NULL);
-  GetOutput()->ReparentTo(NULL);
+    m_Created->SetCloud(nullptr);
+  GetOutput()->ReparentTo(nullptr);
 }
 //----------------------------------------------------------------------------
 void lhpOpMoveSeq::TransfMatr(mafMatrix& convMatrix, mafTimeStamp tsSkip)
@@ -349,17 +347,17 @@ void lhpOpMoveSeq::TransfMatr(mafMatrix& convMatrix, mafTimeStamp tsSkip)
   mafMatrix newMatr;
   mafMatrix oldMatr;
   std::vector<mafTimeStamp> stamps;
-  ((mafVME *)GetInput())->GetTimeStamps(stamps);
+  mafVME::StaticDownCast(GetInput())->GetTimeStamps(stamps);
   for(int i = 0; i < stamps.size(); i++)
   {
     if(stamps[i] == tsSkip)
       continue;
     // apply roto-translation to abs pose
-    ((mafVME *)GetInput())->GetOutput()->GetAbsMatrix(oldMatr, stamps[i]);
+    mafVME::StaticDownCast(GetInput())->GetOutput()->GetAbsMatrix(oldMatr, stamps[i]);
     mafMatrix::Multiply4x4(convMatrix, oldMatr, newMatr);
-    ((mafVME *)GetInput())->SetAbsMatrix(newMatr, stamps[i]);
+    mafVME::StaticDownCast(GetInput())->SetAbsMatrix(newMatr, stamps[i]);
   }
-  ((mafVME *)GetInput())->GetOutput()->Update();
+  mafVME::StaticDownCast(GetInput())->GetOutput()->Update();
   {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 void lhpOpMoveSeq::OpDo()
@@ -374,7 +372,7 @@ void lhpOpMoveSeq::OpDo()
   mafMatrix::Multiply4x4(newMatr, oldMatr, convMatrix);
   m_ConvMatrix = convMatrix;
   //((mafVME *)GetInput())->SetAbsMatrix(oldMatr);
-  TransfMatr(convMatrix, ((mafVME *)GetInput())->GetTimeStamp());
+  TransfMatr(convMatrix, mafVME::StaticDownCast(GetInput())->GetTimeStamp());
 }
 void lhpOpMoveSeq::OpUndo()
 //----------------------------------------------------------------------------

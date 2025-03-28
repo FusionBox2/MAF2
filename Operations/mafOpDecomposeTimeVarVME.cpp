@@ -33,7 +33,7 @@
 #include "mafNodeIterator.h"
 #include "mafTagArray.h"
 
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 #include "mafMatrixVector.h"
 #include "mafDataVector.h"
 #include "ftk/IO/StorageElement.h"
@@ -58,29 +58,26 @@ mafOpDecomposeTimeVarVME::mafOpDecomposeTimeVarVME(const mafString& label) : Sup
   m_FramesListBox = NULL;
   m_Frame = 0;
   m_Group = NULL;
-  m_Cloud = NULL;
-  m_VectorVME.clear();
-  m_VectorCloud.clear();
 }
 
 //----------------------------------------------------------------------------
 mafOpDecomposeTimeVarVME::~mafOpDecomposeTimeVarVME()
 //----------------------------------------------------------------------------
 {
-  if (m_Group != NULL) 
+  if (m_Group) 
   {
     for (int i = 0; i < m_VectorCloud.size(); i++)
     {
       m_VectorCloud[i]->RemoveLandmark(0);
-      mafDEL(m_VectorCloud[i]);
+      m_VectorCloud[i].reset();
     }
 
     for (int i = 0; i < m_VectorVME.size(); i++)
     {
-      mafDEL(m_VectorVME[i]);
+      m_VectorVME[i].reset();
     }
-    m_Group->ReparentTo(NULL);
-    mafDEL(m_Group);
+    m_Group->ReparentTo(nullptr);
+    m_Group.reset();
   }
 }
 
@@ -95,7 +92,7 @@ mafOp* mafOpDecomposeTimeVarVME::Copy()
 bool mafOpDecomposeTimeVarVME::Accept(mafNode* node)
 //----------------------------------------------------------------------------
 {
-  if(mafVMELandmarkCloud::SafeDownCast(node) != NULL)
+  if(mafVMELandmarkCloud::SafeDownCast(node))
   {
     if(mafVMELandmarkCloud::SafeDownCast(node)->IsOpen())
       return false;
@@ -348,14 +345,14 @@ int mafOpDecomposeTimeVarVME::UpdateFrames()
 {
   //wxBusyInfo wait("Please wait, working...");
   std::vector<mafTimeStamp> kframes;
-  mafVMEGenericAbstract *vme = mafVMEGenericAbstract::SafeDownCast(GetInput());
+  auto vme = mafVMEGenericAbstract::SafeDownCast(GetInput());
 
   vme->GetLocalTimeStamps(kframes);
   mafString name = vme->GetName();
   mafString groupName = _R("Decomposed from ");
   groupName += name;
   
-  mafNEW(m_Group);
+  m_Group = mafVMEGroup::NewSPtr();
   m_Group->SetName(groupName);
   
   mafTimeStamp timeSt;
@@ -468,36 +465,25 @@ void mafOpDecomposeTimeVarVME::CreateStaticVME(mafTimeStamp timeSt)
   mafTimeStamp oldTime;
 
   std::vector<mafTimeStamp> kframes;
-  mafVMEGenericAbstract *oldVme = mafVMEGenericAbstract::SafeDownCast(GetInput());
+  auto oldVme = mafVMEGenericAbstract::SafeDownCast(GetInput());
 
   // restore due attributes
   mafString typeVme;
   typeVme = _R(GetInput()->GetTypeName());
 
-  mafObject *objVme = NodeFactory::CreateNode(typeVme.GetCStr());
-  mafVME *newVme = mafVME::SafeDownCast(objVme);
+  auto objVme = NodeFactory::CreateNode(typeVme.GetCStr());
+  auto newVme = mafVME::SafeDownCast(objVme);
   if (!newVme)
   {
-    if(objVme)
-    {
-      if(mafReferenceCounted *refCntObj = mafReferenceCounted::SafeDownCast(objVme))
-      {
-      	refCntObj->Register(this);
-      	mafDEL(refCntObj);
-      }
-      else
-      {
-        delete objVme;
-      }
-    }
     return;
   }
 
   //If VME is a landmark, a landmark cloud must be created
 #pragma message ("IsATypeOf to be used")
+  std::shared_ptr<mafVMELandmarkCloud> m_Cloud;
   if (typeVme == _R("mafVMELandmark"))
   {
-    mafNEW(m_Cloud);
+    m_Cloud = mafVMELandmarkCloud::NewSPtr();
 	if (m_TestMode == true)
 	{
 		m_Cloud->TestModeOn();
@@ -512,7 +498,7 @@ void mafOpDecomposeTimeVarVME::CreateStaticVME(mafTimeStamp timeSt)
   
   newVme->GetTagArray()->DeepCopy(oldVme->GetTagArray().get());
   
-  mafVMEGenericAbstract *vmeGeneric = mafVMEGenericAbstract::SafeDownCast(newVme);
+  auto vmeGeneric = mafVMEGenericAbstract::SafeDownCast(newVme);
 
   mafMatrixVector *mv = oldVme->GetMatrixVector();
   if (mv)
@@ -548,13 +534,13 @@ void mafOpDecomposeTimeVarVME::CreateStaticVME(mafTimeStamp timeSt)
   newVme->SetName(newName);  
 
   //If VME is a landmark, the new landmark must be added to the landmark cloud created
-  if (m_Cloud != NULL)
+  if (m_Cloud)
   {
     mafString cloudName = _R("cloud_");
     cloudName += newName;
     m_Cloud->SetName(cloudName);
     m_Cloud->AddChild(newVme);
-    m_Cloud->ReparentTo(m_Group);
+    m_Cloud->ReparentTo(m_Group.get());
     m_Group->Update();
   }
   else

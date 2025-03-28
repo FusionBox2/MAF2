@@ -112,7 +112,7 @@ wxVTKWindow *mafViewHTML::GetDefaultRWI()											{ return m_Rwi->m_RwiBase;}
 //----------------------------------------------------------------------------
 void mafViewHTML::VmeSelect(mafNode *vme, bool select)					{ m_Sg->VmeSelect(vme, select);}
 //----------------------------------------------------------------------------
-void mafViewHTML::VmeAdd(mafNode *vme)													{ m_Sg->VmeAdd(vme);} 
+void mafViewHTML::VmeAdd(std::shared_ptr<mafNode> vme)													{ m_Sg->VmeAdd(vme);}
 //----------------------------------------------------------------------------
 void mafViewHTML::VmeRemove(mafNode *vme)
 //----------------------------------------------------------------------------
@@ -144,23 +144,22 @@ void mafViewHTML::VmeCreatePipe(mafNode *vme)
 //----------------------------------------------------------------------------
 {
   mafString body;
-  mafNode *ExternalNote = NULL;
-  bool found = false;
+  mafNode *ExternalNote = nullptr;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("HTML_INFO")))
     body = ti->GetValue();
   else
     return;
   for(int i = 0; i < vme->GetNumberOfChildren(); i++)
   {
-    ExternalNote = vme->GetChild(i);
-    if(ExternalNote->GetTagArray()->GetTag(_R("HTML_INFO")))
+    auto child = vme->GetChild(i);
+    if(child->GetTagArray()->GetTag(_R("HTML_INFO")))
     {
-      found = true;
+      ExternalNote = child.get();
       break;
     }
   }
-  if(found)
-    m_Html->LoadPage(((mafVMEExternalData *)ExternalNote)->GetAbsoluteFileName().toWx());
+  if(ExternalNote)
+    m_Html->LoadPage(mafVMEExternalData::StaticDownCast(ExternalNote)->GetAbsoluteFileName().toWx());
   else
     m_Html->SetPage(body.toWx());
 

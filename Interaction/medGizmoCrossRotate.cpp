@@ -27,7 +27,7 @@
 #include "medGizmoCrossRotate.h"
 #include "mafDecl.h"
 #include "mafGUIGizmoRotate.h"
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 
 #include "mafInteractorGenericMouse.h"
 
@@ -41,7 +41,7 @@
 #include "medGizmoCrossRotateFan.h"
 
 //----------------------------------------------------------------------------
-medGizmoCrossRotate::medGizmoCrossRotate(mafVME* input, mafBaseEventHandler *listener, bool buildGUI , int axis)
+medGizmoCrossRotate::medGizmoCrossRotate(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener, bool buildGUI , int axis)
 //----------------------------------------------------------------------------
 {
 	axis = Z;
@@ -241,7 +241,7 @@ void medGizmoCrossRotate::Show(bool show)
 	// so gui must not be keyable. Otherwise set gui keyability to show.
 	if (m_BuildGUI)
 	{
-		if (m_RefSysVME == m_InputVME)
+		if (m_RefSysVME == m_InputVME.get())
 		{
 			m_GuiGizmoRotate->EnableWidgets(show);
 		}
@@ -288,7 +288,7 @@ std::shared_ptr<mafMatrix> medGizmoCrossRotate::GetAbsPose()
 }
 
 //----------------------------------------------------------------------------  
-void medGizmoCrossRotate::SetInput(mafVME *input)
+void medGizmoCrossRotate::SetInput(std::shared_ptr<mafVME> input)
 //----------------------------------------------------------------------------
 {
 	m_InputVME = input;
@@ -348,7 +348,7 @@ void medGizmoCrossRotate::SetRefSys(mafVME *refSys)
 	m_RefSysVME = refSys;
 	SetAbsPose(m_RefSysVME->GetOutput()->GetAbsMatrix());
 
-	if (m_RefSysVME == m_InputVME)
+	if (m_RefSysVME == m_InputVME.get())
 	{
 		SetModalityToLocal();
 

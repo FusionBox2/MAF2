@@ -35,7 +35,7 @@
 #include "mafTransform.h"
 #include "mafVME.h"
 #include "mafVMEOutput.h"
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 #include "mafGizmoTranslatePlane.h"
 #include "mafGizmoTranslateAxis.h"
 #include "mafGizmoBoundingBox.h"
@@ -51,7 +51,7 @@
 using namespace std;
 
 //----------------------------------------------------------------------------
-mafGizmoROI_BES::mafGizmoROI_BES(mafVME* input, mafBaseEventHandler *listener , int constraintModality,
+mafGizmoROI_BES::mafGizmoROI_BES(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener , int constraintModality,
 							 mafVME* parent, double* usrBounds)
 //----------------------------------------------------------------------------
 {
@@ -92,7 +92,7 @@ mafGizmoROI_BES::mafGizmoROI_BES(mafVME* input, mafBaseEventHandler *listener , 
 	}
 
 	// create the outline gizmo
-	m_OutlineGizmo = new mafGizmoBoundingBox(input, this,parent);		
+	m_OutlineGizmo = new mafGizmoBoundingBox(input.get(), this,parent);		
 }
 //----------------------------------------------------------------------------
 mafGizmoROI_BES::~mafGizmoROI_BES() 
@@ -346,7 +346,7 @@ void mafGizmoROI_BES::SetConstrainRefSys(std::shared_ptr<mafMatrix> constrain)
 }
 
 //----------------------------------------------------------------------------  
-void mafGizmoROI_BES::SetInput(mafVME *input)
+void mafGizmoROI_BES::SetInput(std::shared_ptr<mafVME> input)
 //----------------------------------------------------------------------------
 {
 	this->m_InputVME = input;
@@ -360,7 +360,7 @@ void mafGizmoROI_BES::SetInput(mafVME *input)
 		m_GPlane[i]->SetInput(input);
 	}
 
-	m_OutlineGizmo->SetInput(input);
+	m_OutlineGizmo->SetInput(input.get());
 }
 
 

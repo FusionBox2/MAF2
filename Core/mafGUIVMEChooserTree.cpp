@@ -117,7 +117,7 @@ int mafGUIVMEChooserTree::GetVmeStatus(mafNode *node)
 }
 
 //----------------------------------------------------------------------------
-std::vector<mafNode*> mafGUIVMEChooserTree::GetChoosedNode()
+std::vector<std::shared_ptr<mafNode> > mafGUIVMEChooserTree::GetChoosedNode()
 //----------------------------------------------------------------------------
 {
   if (!m_MultipleSelection)
@@ -263,21 +263,21 @@ void mafGUIVMEChooserTree::OnSelectionChanged(wxTreeEvent& event)
   i = event.GetItem();
   if(i.IsOk())
   {
-    m_ChoosedNode = (mafNode *)NodeFromItem(i);
+    m_ChoosedNode = static_cast<mafGUICheckTreeItemData*>(m_NodeTree->GetItemData(i))->GetSharedNode();
   }
   event.Skip();
 
-  if (m_ChoosedNode != NULL)
+  if (m_ChoosedNode)
   {
-     status = GetVmeStatus(m_ChoosedNode);
+     status = GetVmeStatus(m_ChoosedNode.get());
   }
   
   bool enable_ok = false;
   if (!m_MultipleSelection)
   {
-    if (m_ValidateFunction && m_ChoosedNode != NULL)
+    if (m_ValidateFunction && m_ChoosedNode)
     {
-      enable_ok = m_ValidateFunction(m_ChoosedNode);
+      enable_ok = m_ValidateFunction(m_ChoosedNode.get());
     }
     else
     {
@@ -290,7 +290,7 @@ void mafGUIVMEChooserTree::OnSelectionChanged(wxTreeEvent& event)
 void mafGUIVMEChooserTree::OnIconClick(wxTreeItemId item)
 //----------------------------------------------------------------------------
 {
-  mafNode* vme = (mafNode*) (NodeFromItem(item));
+  auto vme = static_cast<mafGUICheckTreeItemData*>(m_NodeTree->GetItemData(item))->GetSharedNode();
   VmeUpdateIcon(vme);
 
   bool enable_ok = GetChoosedNode().size() > 0;
@@ -359,7 +359,7 @@ void mafGUIVMEChooserTree::CloneSubTree(mafGUICheckTree *source_tree, wxTreeItem
   m_NodeTable->Put(node, el);
 }
 //----------------------------------------------------------------------------
-void mafGUIVMEChooserTree::VmeUpdateIcon(mafNode *vme)
+void mafGUIVMEChooserTree::VmeUpdateIcon(std::shared_ptr<mafNode> vme)
 //----------------------------------------------------------------------------
 {
   int dataStatus = 1;
@@ -369,9 +369,9 @@ void mafGUIVMEChooserTree::VmeUpdateIcon(mafNode *vme)
   //When root VME is checked, all the sub-tree will be checked.
   if (vme->IsA("mafVMERoot"))
   {
-    bool checked = IsIconChecked(ItemFromNode((intptr_t)vme));
+    bool checked = IsIconChecked(ItemFromNode((intptr_t)vme.get()));
     auto iter = vme->NewIterator();
-    for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+    for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
     {
       if (!checked)
       {
@@ -383,18 +383,18 @@ void mafGUIVMEChooserTree::VmeUpdateIcon(mafNode *vme)
       {
         nodeSatus = NODE_VISIBLE_ON;
         icon_index = ClassNameToIcon(_R(node->GetTypeName())) + nodeSatus;
-        std::vector<mafNode *>::iterator found = std::find(m_CheckedNode.begin(), m_CheckedNode.end(), node);
+        auto found = std::find(m_CheckedNode.begin(), m_CheckedNode.end(), node);
         if (found != m_CheckedNode.end())
         {
           m_CheckedNode.erase(found);
         }
       }
-      SetNodeIcon( (intptr_t)node, icon_index );
+      SetNodeIcon( (intptr_t)node.get(), icon_index);
     }
   }
   else
   {
-    bool checked = IsIconChecked(ItemFromNode((intptr_t)vme));
+    bool checked = IsIconChecked(ItemFromNode((intptr_t)vme.get()));
     if (!checked)
     {
       nodeSatus = NODE_VISIBLE_ON*2;
@@ -411,6 +411,6 @@ void mafGUIVMEChooserTree::VmeUpdateIcon(mafNode *vme)
         m_CheckedNode.erase(found);
       }
     }
-    SetNodeIcon( (intptr_t)vme, icon_index );
+    SetNodeIcon( (intptr_t)vme.get(), icon_index);
   }
 }

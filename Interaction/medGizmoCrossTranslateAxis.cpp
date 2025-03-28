@@ -61,7 +61,7 @@
 #include "vtkAppendPolyData.h"
 
 //----------------------------------------------------------------------------
-medGizmoCrossTranslateAxis::medGizmoCrossTranslateAxis(mafVME *input, mafBaseEventHandler *listener)
+medGizmoCrossTranslateAxis::medGizmoCrossTranslateAxis(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener)
 //----------------------------------------------------------------------------
 {
 
@@ -183,7 +183,7 @@ medGizmoCrossTranslateAxis::~medGizmoCrossTranslateAxis()
 	m_TranslationCylinderGizmo->ReparentTo(NULL);
 
 	// clean up translation feedback stuff
-	vtkDEL(m_TranslationFeedbackGizmo);
+	m_TranslationFeedbackGizmo.reset();
 	vtkDEL(m_FeedbackConeSource);
 	vtkDEL(m_LeftUpFeedbackConeTransform);
 	vtkDEL(m_LeftDownFeedbackConeTransform);
@@ -473,7 +473,7 @@ std::shared_ptr<mafMatrix> medGizmoCrossTranslateAxis::GetAbsPose()
 	return m_TranslationCylinderGizmo->GetOutput()->GetAbsMatrix();
 }
 //----------------------------------------------------------------------------
-void medGizmoCrossTranslateAxis::SetInput(mafVME *vme)
+void medGizmoCrossTranslateAxis::SetInput(std::shared_ptr<mafVME> vme)
 //----------------------------------------------------------------------------
 {
 	this->m_InputVme = vme; 
@@ -555,7 +555,7 @@ void medGizmoCrossTranslateAxis::CreateFeedbackGizmoPipeline()
 	m_RightUpFeedbackConeTransform->Translate(x, 0,0);
 
 
-	m_TranslationFeedbackGizmo = mafVMEGizmo::New();
+	m_TranslationFeedbackGizmo = mafVMEGizmo::NewSPtr();
 
 	m_FeedbackConeSource->SetResolution(coneResolution);
 	m_FeedbackConeSource->SetHeight(coneHeight);

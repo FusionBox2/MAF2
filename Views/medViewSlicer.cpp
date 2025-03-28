@@ -375,7 +375,7 @@ void medViewSlicer::CameraUpdate()
 
     mafNode *root=m_CurrentSlicer->GetRoot();
     auto iter = root->NewIterator();
-    for (mafNode *Inode = iter->GetFirstNode(); Inode; Inode = iter->GetNextNode())
+    for (auto Inode = iter->GetFirstNode(); Inode; Inode = iter->GetNextNode())
     {
       if(Inode->IsA("mafVMESurface") || Inode->IsA("mafVMESurfaceParametric"))
       {
@@ -438,7 +438,7 @@ void medViewSlicer::EnableWidgets(bool enable)
 
 }
 //-------------------------------------------------------------------------
-int medViewSlicer::GetNodeStatus(mafNode *vme)
+int medViewSlicer::GetNodeStatusI(mafNode *vme)
 //-------------------------------------------------------------------------
 {
   mafSceneNode *n = NULL;

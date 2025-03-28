@@ -125,19 +125,16 @@ int mafVMERawMotionData::Read()
 			while(v_dictionary >> v_lmname)	
 			{
 			  v_dictionary >> v_segment_name;			
-        mafVMELandmarkCloud *currentDlc;
-        currentDlc = mafVMELandmarkCloud::SafeDownCast(this->FindInTreeByName(_R(v_segment_name.c_str())));
-			  if (currentDlc == NULL)
+        auto currentDlc = mafVMELandmarkCloud::SafeDownCast(this->FindInTreeByName(_R(v_segment_name.c_str())));
+			  if (currentDlc == nullptr)
 			  {
 			    //Create the new cloud
-			    mafNEW(currentDlc);
+					currentDlc = mafVMELandmarkCloud::NewSPtr();
 			    currentDlc->SetRadius(m_DefaultRadius);
 			    currentDlc->SetName(_R(v_segment_name.c_str()));
 
 			    //Add new cloud to vme tree
 			    this->AddChild(currentDlc);
-          if(currentDlc)
-            currentDlc->Delete();
 			  }
 						
 				currentDlc->AppendLandmark(_R(v_lmname.c_str()));
@@ -178,8 +175,7 @@ int mafVMERawMotionData::Read()
     not_used_identifier = 9999;
 			
 		int current_lm = 0;
-    mafVMELandmarkCloud *dlc;
-		mafNEW(dlc);
+    auto dlc = mafVMELandmarkCloud::NewSPtr();
     dlc->SetName(_R("dummy segment"));
 		dlc->SetRadius(m_DefaultRadius);
     		
@@ -213,8 +209,6 @@ int mafVMERawMotionData::Read()
 			
 		}						
 		this->AddChild(dlc);						
-		dlc->Delete();
-		dlc = NULL;
 	}//if
 	  
   return 0;

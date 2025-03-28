@@ -20,7 +20,6 @@
 //----------------------------------------------------------------------------
 #include "ftk/Base/Object.h"
 #include "mafTimeStamped.h"
-#include "ftk/Base/RegisteringPointer.h"
 #include "ftk/Base/MTime.h"
 #include "ftk/Base/String.h"
 #include <map>
@@ -40,7 +39,7 @@ typedef std::vector<mafTimeStamp> mmuTimeVector;
   -
 */
 
-template <class T, template<typename> typename Ptr = mafAutoPointer, typename ArgPtr = T*>
+template <class T, template<typename> typename Ptr = std::shared_ptr, typename ArgPtr = std::shared_ptr<T> >
 class mafTimeMap : public mafObject, public mafTimeStamped
 {
 public:

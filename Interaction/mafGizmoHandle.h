@@ -92,13 +92,13 @@ public:
 
   /** Create a handle, input vme must be different from NULL and default handle type
   is XMIN */
-  mafGizmoHandle(mafVME *input, mafBaseEventHandler *listener = NULL,\
+  mafGizmoHandle(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener = NULL,\
     int constraintModality=BOUNDS,mafVME *parent=NULL, bool showShadingPlane = false);
   ~mafGizmoHandle() override; 
   
   /** Set the gizmo generating vme; the gizmo will be centered on this vme*/
-  void SetInput(mafVME *vme); 
-  mafVME *GetInput() {return this->m_InputVme;};
+  void SetInput(std::shared_ptr<mafVME> vme);
+  mafVME *GetInput() {return this->m_InputVme.get();}
 
   //----------------------------------------------------------------------------
   // events handling 
@@ -185,11 +185,11 @@ protected:
   /** Set translation intervals*/
   void SetTranslationIntervals(double bounds[6]);
 
-  mafVME *m_InputVme;///<Register input vme
+  std::shared_ptr<mafVME> m_InputVme;///<Register input vme
 
   vtkCubeSource *m_Cube;///<Cube source
 
-  mafVMEGizmo *m_BoxGizmo; 
+  std::shared_ptr<mafVMEGizmo> m_BoxGizmo; 
   mafVMEGizmo *m_ShadingPlaneGizmo;
 
   vtkTransformPolyDataFilter *m_TranslateBoxPolyDataFilter;///<translate PDF for box

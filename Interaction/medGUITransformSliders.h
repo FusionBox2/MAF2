@@ -46,7 +46,7 @@ class MED_INTERACTION_EXPORT medGUITransformSliders : public mafGUITransformInte
 public:
 
   /** Constructor. */
-  medGUITransformSliders(mafVME *input, double translationRange[6], mafBaseEventHandler *listener = NULL, bool enableScaling = true,bool testMode = false);
+  medGUITransformSliders(std::shared_ptr<mafVME> input, double translationRange[6], mafBaseEventHandler *listener = NULL, bool enableScaling = true,bool testMode = false);
 
   /** Destructor */
   ~medGUITransformSliders() override; 

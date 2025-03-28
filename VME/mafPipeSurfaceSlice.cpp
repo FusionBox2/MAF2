@@ -257,7 +257,7 @@ void mafPipeSurfaceSlice::Create(mafNode *node, mafView *view/*, bool use_axes*/
     }
     else if (material->GetMaterialTextureID() != -1)
     {
-      mafVME *texture_vme = mafVME::SafeDownCast(m_Vme->GetRoot()->FindInTreeById(material->GetMaterialTextureID()));
+      auto texture_vme = mafVME::SafeDownCast(m_Vme->GetRoot()->FindInTreeById(material->GetMaterialTextureID()));
       texture_vme->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
       m_Texture->SetInputConnection(texture_vme->GetOutput()->GetVTKOutputPort());
     }
@@ -374,13 +374,13 @@ void mafPipeSurfaceSlice::OnEvent(mafEventBase *maf_event)
   }
   else if (maf_event->GetId() == mafVMELandmarkCloud::CLOUD_OPEN_CLOSE)
   {
-    if(((mafVMELandmarkCloud *)m_Vme)->IsOpen())
+    if(mafVMELandmarkCloud::StaticDownCast(m_Vme)->IsOpen())
     {
       RemoveClosedCloudPipe();
-      int num_lm = ((mafVMELandmarkCloud *)m_Vme)->GetNumberOfLandmarks();
+      int num_lm = mafVMELandmarkCloud::StaticDownCast(m_Vme)->GetNumberOfLandmarks();
       for (int i = 0; i < num_lm; i++)
       {
-        mafVME *child_lm = ((mafVMELandmarkCloud *)m_Vme)->GetLandmark(i);
+        auto child_lm = mafVMELandmarkCloud::StaticDownCast(m_Vme)->GetLandmark(i);
         mafEvent e(this,VME_SHOW); e.SetVme(child_lm); e.SetBool(true);
         //((mafVMELandmarkCloud *)m_Vme)->ForwardUpEvent(&e);
         InvokeEvent(e);
@@ -595,7 +595,7 @@ void mafPipeSurfaceSlice::CreateClosedCloudPipe()
     }
     else if (material->GetMaterialTextureID() != -1)
     {
-      mafVME *texture_vme = mafVME::SafeDownCast(m_Vme->GetRoot()->FindInTreeById(material->GetMaterialTextureID()));
+      auto texture_vme = mafVME::SafeDownCast(m_Vme->GetRoot()->FindInTreeById(material->GetMaterialTextureID()));
       texture_vme->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
       m_Texture->SetInputConnection(texture_vme->GetOutput()->GetVTKOutputPort());
     }

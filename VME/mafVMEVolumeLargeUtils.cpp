@@ -60,8 +60,7 @@
     m_Listener->OnEvent(&e);
   }
 
-  mafVMEVolumeGray* pTempVME = mafVMEVolumeGray::New();  
-  pTempVME->Register(sender);   //cannot use mafNEW from a static routine
+  auto pTempVME = mafVMEVolumeGray::NewSPtr();  
   if (m_Listener) 
   {
     mafEvent e(sender, VME_ADD); e.SetVme(pTempVME);

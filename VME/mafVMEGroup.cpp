@@ -92,11 +92,11 @@ void mafVMEGroup::OnEvent(mafEventBase *maf_event)
     mafID eid = maf_event->GetId();
     if(eid == NODE_ATTACHED_TO_TREE)
     {
-      mafNode *n = mafNode::SafeDownCast((mafObject *)maf_event->GetSender());
+      mafNode *n = (mafNode*)maf_event->GetSender();
       if (n)
       {
-        mafNode *parent = n->GetParent();
-        if (parent == this)
+        auto parent = n->GetParent();
+        if (parent.get() == this)
         {
           //mafMessage("Ask for shared GUI!!");
         }
@@ -104,11 +104,11 @@ void mafVMEGroup::OnEvent(mafEventBase *maf_event)
     }
     else if(eid == NODE_DETACHED_FROM_TREE)
     {
-      mafNode *n = mafNode::SafeDownCast((mafObject *)maf_event->GetSender());
+      mafNode *n = (mafNode*)maf_event->GetSender();
       if (n)
       {
-        mafNode *parent = n->GetParent();
-        if (parent == this)
+        auto parent = n->GetParent();
+        if (parent.get() == this)
         {
           //mafMessage("Remove shared GUI!!");
         }

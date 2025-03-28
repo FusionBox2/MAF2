@@ -88,14 +88,14 @@ public:
 	};
 
 public:
-	mafGizmoROI_BES(mafVME *input, mafBaseEventHandler* listener = NULL , 
+	mafGizmoROI_BES(std::shared_ptr<mafVME> input, mafBaseEventHandler* listener = NULL ,
 		int constraintModality = mafGizmoROI_BES::VTK_OUTPUT_BOUNDS,
 		mafVME* parent = NULL, double* usrBounds = NULL);
 
   ~mafGizmoROI_BES() override; 
 
 	/** Set input vme for the gizmo*/
-  void SetInput(mafVME *vme) override; 
+  void SetInput(std::shared_ptr<mafVME> vme) override;
 
 	/** Events handling*/
   void OnEvent(mafEventBase *maf_event) override;

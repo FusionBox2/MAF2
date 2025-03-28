@@ -107,7 +107,7 @@ protected:
   /** check and correct gizmos positions using volume bounds  */
   void BoundsValidate(double *pos);
 
-  mafVME *m_CurrentVolume; ///< Current visualized volume
+  std::shared_ptr<mafVME> m_CurrentVolume; ///< Current visualized volume
   
   mafViewRX *m_ViewsRX;
   medViewSliceBlend *m_ViewSliceBlend;

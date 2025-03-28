@@ -69,7 +69,7 @@ public:
   };*/
 
   /** Add the vme to the view's scene-graph*/
-  void VmeAdd(mafNode *vme) override;
+  void VmeAdd(std::shared_ptr<mafNode> vme) override;
   
   /** Remove the vme from the view's scene-graph*/
   void VmeRemove(mafNode *vme) override;
@@ -86,12 +86,12 @@ public:
 
   /** 
   Set the visualization status for the node (visible, not visible, mutex, ...) \sa mafSceneGraph*/
-  int GetNodeStatus(mafNode *vme) override;
+  int GetNodeStatusI(mafNode *vme) override;
 
   /** 
   Return a pointer to the visual pipe of the node passed as argument. 
   It is used in mafSideBar to plug the visual pipe's GUI in the tabbed vme panel. \sa mafSideBar*/
-  std::shared_ptr<mafPipe> GetNodePipe(mafNode *vme) override;
+  std::shared_ptr<mafPipe> GetNodePipeI(mafNode *vme) override;
   
   /** 
   Create the visual pipe for the node passed as argument. 

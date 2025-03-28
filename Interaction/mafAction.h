@@ -18,7 +18,7 @@
 #define __mafAction_h
 
 #include "mafAgent.h"
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 #include "ftk/IO/To.h"
 #include <list>
 

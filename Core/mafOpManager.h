@@ -39,31 +39,31 @@ public:
   void FillSettingDialog(mafGUISettingsDialog *settingDialog);
 
 	/** Record the selected vme and enable the menu_entries relative to the compatible operations. */
-	virtual void VmeSelected(mafNode* v);
+	virtual void VmeSelected(std::shared_ptr<mafNode> v);
 	
 	/** Return the selected vme. */
-	virtual mafNode* GetSelectedVme();
+	virtual std::shared_ptr<mafNode> GetSelectedVme();
 
 	bool UndoAvailable(){return !m_Context.Undo_IsEmpty();}
   bool RedoAvailable(){return !m_Context.Redo_IsEmpty();}
 
 	/** Run the operation by id. */
-  virtual void OpRun(int op_id, void *op_param = NULL);
+  virtual void OpRun(int op_id, void *op_param = nullptr);
 	
 	/** Call this to exec an operation with user interaction and undo/redo services. */
-  virtual void OpRun(mafOp *op, void *op_param = NULL);
+  virtual void OpRun(mafOp *op, void *op_param = nullptr);
 
   /** Run the operation by searching it from its type name.*/
-  virtual void OpRun(mafString &op_type, void *op_param = NULL);
+  virtual void OpRun(mafString &op_type, void *op_param = nullptr);
 
 	/** Execute the operation 'op' and warn the user if the operation is undoable. */
-  virtual void OpExec(mafOp *op, void *op_param = NULL);
+  virtual void OpExec(mafOp *op, void *op_param = nullptr);
 
 	/** Set the flag for warning the user if the operation is undoable. */
   virtual void WarningIfCantUndo (bool warn) {m_Warn = warn;};
 
 	/** return true if there is a running operation. */
-  virtual bool Running()								 {return m_Context.Caller() != NULL;};
+  virtual bool Running()								 {return m_Context.Caller() != nullptr;};
 
 	/** Clear the stack of executed operation. */
   virtual void ClearUndoStack(); 
@@ -123,8 +123,8 @@ protected:
   bool               m_Warn; ///< Flag to warn the user when an operation that can not undo is starting.
 	mafOpContextStack  m_Context;
   mafOp             *m_RunningOp; ///< Pointer to the current running operation.
-  mafNode						*m_Selected; ///< Pointer to the current selected node.
-  mafNode           *m_NaturalNode; ///< Pointer to the NATURAL node on which is running a non-input preserving operation.
+  std::shared_ptr<mafNode> m_Selected; ///< Pointer to the current selected node.
+  std::shared_ptr<mafNode> m_NaturalNode; ///< Pointer to the NATURAL node on which is running a non-input preserving operation.
 
   mafUser           *m_User; ///<User credentials
 

@@ -18,7 +18,7 @@
 #define __mafRefSys_h
 
 #include "mafConfigure.h"
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 #include "mafVME.h"
 #include "mafTransform.h"
 #include <iostream>
@@ -46,7 +46,7 @@ class MAF_EXPORT mafRefSys
 public:
   mafRefSys();
   mafRefSys(int type);
-  mafRefSys(mafVME *vme);
+  mafRefSys(std::shared_ptr<mafVME> vme);
   mafRefSys(vtkMatrix4x4 *matrix);
   mafRefSys(vtkRenderer *ren);
   virtual ~mafRefSys();
@@ -101,7 +101,7 @@ public:
   void SetTypeToCustom(std::shared_ptr<mafMatrix> matrix);
 
   /** Set the reference system to the VME's abs matrix.*/
-  void SetTypeToLocal(mafVME *vme=NULL);
+  void SetTypeToLocal(std::shared_ptr<mafVME> vme=nullptr);
 
   /** Set the reference system to VIEW. Optionally a vtkRenderer can be passed. */
   void SetTypeToView(vtkRenderer *renderer=NULL);
@@ -110,7 +110,7 @@ public:
     Set the reference system to the parent Abs matrix of a VME. The argument is the VME to which
     the parent refers. If no parent exists GetTransform() return the identity. The VME is stored 
     and changes to its parent reflect into ref sys changes.*/
-  void SetTypeToParent(mafVME *vme);
+  void SetTypeToParent(std::shared_ptr<mafVME> vme);
 
   /** Set the reference system to identity */ 
   void SetTypeToGlobal();
@@ -163,7 +163,7 @@ public:
   /** 
     Set the reference to the VME. This is used for types LOCAL and GLOBAL to
     retrieve the transform */    
-  void SetVME(mafVME *vme);
+  void SetVME(std::shared_ptr<mafVME> vme);
 
   /** return the reference to the VME stored inside the RefSys */
   mafVME *GetVME() {return m_VME.get();}
@@ -188,7 +188,7 @@ protected:
   std::shared_ptr<mafTransform> m_Identity;  
   std::shared_ptr<mafTransformBase> m_Transform;///< the ref sys matrix
   vtkRenderer*                        m_Renderer; ///< ref sys renderer
-  mafAutoPointer<mafVME>              m_VME;     ///< reference to VME
+  std::shared_ptr<mafVME>              m_VME;     ///< reference to VME
   int                                 m_Type;     ///< type of ref sys (CUSTOM, GLOBAL, LOCAL, PARENT, VIEW)
 };
 

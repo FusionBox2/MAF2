@@ -447,14 +447,13 @@ void mafVMEMuscleWrapping::OnEvent(mafEventBase *maf_event)
 								 e->SetArg((intptr_t)&mafQuadraticSurface::VMEAccept);
 								 e->SetString(&title);
 								 ForwardUpEvent(e);
-								 mafNode *n = e->GetVme();
-								 if (n != NULL)
+								 if (auto n = e->GetVme())
 								 {
 									
-										 SetEllipsoidLink(_R("EllipVME"), n);
+										 SetEllipsoidLink(_R("EllipVME"), n.get());
 										 m_EllipsoidVmeName = n->GetName();
 										 
-										 ellip = (mafQuadraticSurface*)n;
+										 ellip = mafQuadraticSurface::StaticDownCast(n).get();
 									 	 length = std::max(length,std::max(std::max(ellip->getSzZ(), ellip->getSzY()), ellip->getSzX()));
 									 m_Gui->Update();
 									
@@ -473,13 +472,12 @@ void mafVMEMuscleWrapping::OnEvent(mafEventBase *maf_event)
 								e->SetArg((intptr_t)&mafQuadraticSurface::VMEAccept);
 								e->SetString(&title);
 								ForwardUpEvent(e);
-								mafNode *n = e->GetVme();
-								if (n != NULL)
+								if (auto n = e->GetVme())
 								{
 
-									SetEllipsoidLink(_R("EllipVME2"), n);
+									SetEllipsoidLink(_R("EllipVME2"), n.get());
 									m_EllipsoidVmeName2 = n->GetName();
-									ellip2 = (mafQuadraticSurface*)n;
+									ellip2 = mafQuadraticSurface::StaticDownCast(n).get();
 									length = std::max(length,std::max(std::max(ellip2->getSzZ(), ellip2->getSzY()), ellip2->getSzX()));
 									m_Gui->Update();
 									
@@ -498,11 +496,10 @@ void mafVMEMuscleWrapping::OnEvent(mafEventBase *maf_event)
 
 			e->SetString(&title);
 			ForwardUpEvent(e);
-			mafNode *n = e->GetVme();
-			if (n != NULL)
+			if (auto n = e->GetVme())
 			{							 
 				//q0 = (mafVMELandmark*)n;
-				SetLandmarkLink(_R("Q0Landmark"), n);
+				SetLandmarkLink(_R("Q0Landmark"), n.get());
 				m_Q0LandmarkName = n->GetName();
 				m_Gui->Update();							 
 			}
@@ -521,11 +518,10 @@ void mafVMEMuscleWrapping::OnEvent(mafEventBase *maf_event)
 
 			e->SetString(&title);
 			ForwardUpEvent(e);
-			mafNode *n = e->GetVme();
-			if (n != NULL)
+			if (auto n = e->GetVme())
 			{
 				//p0 = (mafVMELandmark*)n;
-				SetLandmarkLink(_R("P0Landmark"), n);
+				SetLandmarkLink(_R("P0Landmark"), n.get());
 				m_P0LandmarkName = n->GetName();
 				m_Gui->Update();		  
 			}
@@ -546,11 +542,10 @@ void mafVMEMuscleWrapping::OnEvent(mafEventBase *maf_event)
 
 						 e->SetString(&title);
 						 ForwardUpEvent(e);
-						 mafNode *n = e->GetVme();
-						 if (n != NULL)
+						 if (auto n = e->GetVme())
 						 {
 							 //p0 = (mafVMELandmark*)n;
-							 SetLandmarkLink(_R("insert1"), n);
+							 SetLandmarkLink(_R("insert1"), n.get());
 							 m_insert1LandmarkName = n->GetName();
 							 m_Gui->Update();
 						 }
@@ -571,11 +566,10 @@ void mafVMEMuscleWrapping::OnEvent(mafEventBase *maf_event)
 
 						 e->SetString(&title);
 						 ForwardUpEvent(e);
-						 mafNode *n = e->GetVme();
-						 if (n != NULL)
+						 if (auto n = e->GetVme())
 						 {
 							 
-							 SetLandmarkLink(_R("insert2"), n);
+							 SetLandmarkLink(_R("insert2"), n.get());
 							 m_insert2LandmarkName = n->GetName();
 							 m_Gui->Update();
 						 }
@@ -647,9 +641,9 @@ void mafVMEMuscleWrapping::InternalUpdate()
 		mafMatrix tm;
 		auto m_TmpTransform1 = mafTransform::NewSPtr();
 		auto m_TmpTransform2 = mafTransform::NewSPtr();
-		((mafVMELandmark *)P0)->GetPoint(m_StartPoint, currTs);
+		mafVMELandmark::StaticDownCast(P0)->GetPoint(m_StartPoint, currTs);
 
-		((mafVMELandmarkCloud *)((mafVMELandmark *)P0)->GetParent())->GetOutput()->GetAbsMatrix(tm, currTs);
+		mafVMELandmarkCloud::StaticDownCast(mafVMELandmark::StaticDownCast(P0)->GetParent())->GetOutput()->GetAbsMatrix(tm, currTs);
 		m_TmpTransform1->SetMatrix(tm);
 		m_TmpTransform1->TransformPoint(m_StartPoint, m_StartPoint);
 
@@ -668,8 +662,8 @@ void mafVMEMuscleWrapping::InternalUpdate()
 	//	m_Cloud2->SetLandmark(_R("p0"), local_start[0], local_start[1], local_start[2], currTs);
 	//	m_Cloud2->Update();
 		//			
-		((mafVMELandmark *)Q0)->GetPoint(m_EndPoint, currTs);
-		((mafVMELandmarkCloud *)((mafVMELandmark *)Q0)->GetParent())->GetOutput()->GetAbsMatrix(tm, currTs);
+		mafVMELandmark::StaticDownCast(Q0)->GetPoint(m_EndPoint, currTs);
+		mafVMELandmarkCloud::StaticDownCast(mafVMELandmark::StaticDownCast(Q0)->GetParent())->GetOutput()->GetAbsMatrix(tm, currTs);
 
 		m_TmpTransform1->SetMatrix(tm);
 		m_TmpTransform1->TransformPoint(m_EndPoint, m_EndPoint);
@@ -686,7 +680,7 @@ void mafVMEMuscleWrapping::InternalUpdate()
 		if (insert1 != NULL)
 		{
 			((mafVMELandmark *)insert1)->GetPoint(m_insert1Point, currTs);
-			((mafVMELandmarkCloud *)((mafVMELandmark *)insert1)->GetParent())->GetOutput()->GetAbsMatrix(tm, currTs);
+			mafVMELandmarkCloud::StaticDownCast(mafVMELandmark::StaticDownCast(insert1)->GetParent())->GetOutput()->GetAbsMatrix(tm, currTs);
 
 			m_TmpTransform1->SetMatrix(tm);
 			m_TmpTransform1->TransformPoint(m_insert1Point, m_insert1Point);
@@ -702,7 +696,7 @@ void mafVMEMuscleWrapping::InternalUpdate()
 		if (insert2 != NULL)
 		{
 			((mafVMELandmark *)insert2)->GetPoint(m_insert2Point, currTs);
-			((mafVMELandmarkCloud *)((mafVMELandmark *)insert2)->GetParent())->GetOutput()->GetAbsMatrix(tm, currTs);
+			mafVMELandmarkCloud::StaticDownCast(mafVMELandmark::StaticDownCast(insert2)->GetParent())->GetOutput()->GetAbsMatrix(tm, currTs);
 
 			m_TmpTransform1->SetMatrix(tm);
 			m_TmpTransform1->TransformPoint(m_insert2Point, m_insert2Point);
@@ -767,7 +761,7 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					pts1->InsertNextPoint(local_start);
 					pts1->InsertNextPoint(local_end);
 
-					mafVMELineSeg* line13 = mafVMELineSeg::New();
+					auto line13 = mafVMELineSeg::NewSPtr();
 					line13->SetName(_R("line13"));
 
 					line13->setPoints(pts1);
@@ -787,7 +781,6 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					m_PolyData->DeepCopy(m_Goniometer->GetOutput());
 
 					pts1->Delete();
-					line13->Delete();
 				}
 				else //n2==1
 				{
@@ -913,7 +906,7 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					m_TmpTransform2->TransformPoint(pointP, localP);
 
 					pts1->InsertNextPoint(localP);
-					mafVMELineSeg* line13 = mafVMELineSeg::New();
+					auto line13 = mafVMELineSeg::NewSPtr();
 					//line13->SetName("line13");
 					line13->resetPoints();
 					line13->setPoints(pts1);
@@ -932,13 +925,13 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					pts2->InsertNextPoint(local_end[0], local_end[1], local_end[2]);
 
 					globalLength = globalLength + sqrt((m_EndPoint[0] - positionQ[0])*(m_EndPoint[0] - positionQ[0]) + (m_EndPoint[1] - positionQ[1])*(m_EndPoint[1] - positionQ[1]) + (m_EndPoint[2] - positionQ[2])*(m_EndPoint[2] - positionQ[2]));
-					mafVMELineSeg* line14 = mafVMELineSeg::New();
+					auto line14 = mafVMELineSeg::NewSPtr();
 					//line14->SetName("line14");
 					line14->resetPoints();
 					line14->setPoints(pts2);
 					line14->GetOutput()->Update();
 					line14->Update();
-					mafVMELineSeg* line15 = mafVMELineSeg::New();
+					auto line15 = mafVMELineSeg::NewSPtr();
 					//line15->SetName("line15");
 					if (path.size() > 1)
 					{
@@ -975,9 +968,6 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					pts1->Delete();
 					pts2->Delete();
 					pts5->Delete();
-					line14->Delete();
-					line15->Delete();
-					line13->Delete();
 
 				}
 			}
@@ -1097,7 +1087,7 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					m_TmpTransform2->TransformPoint(posPt, local_posPt);
 					pts1->InsertNextPoint(local_posPt);
 					
-					mafVMELineSeg* line13 = mafVMELineSeg::New();
+					auto line13 = mafVMELineSeg::NewSPtr();
 					
 					line13->resetPoints();
 					line13->setPoints(pts1);
@@ -1118,14 +1108,14 @@ void mafVMEMuscleWrapping::InternalUpdate()
 
 					globalLength = globalLength + sqrt((m_EndPoint[0] - positionQ[0])*(m_EndPoint[0] - positionQ[0]) + (m_EndPoint[1] - positionQ[1])*(m_EndPoint[1] - positionQ[1]) + (m_EndPoint[2] - positionQ[2])*(m_EndPoint[2] - positionQ[2]));
 
-					mafVMELineSeg* line14 = mafVMELineSeg::New();
+					auto line14 = mafVMELineSeg::NewSPtr();
 					//line14->SetName("line14");
 					line14->resetPoints();
 					line14->setPoints(pts2);
 					line14->GetOutput()->Update();
 					line14->Update();
 
-					mafVMELineSeg* line15 = mafVMELineSeg::New();
+					auto line15 = mafVMELineSeg::NewSPtr();
 					//line15->SetName("line15");
 					if (path.size() > 1)
 					{
@@ -1163,9 +1153,6 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					pts1->Delete();
 					pts2->Delete();
 					pts5->Delete();
-					line14->Delete();
-					line15->Delete();
-					line13->Delete();
 
 
 				}//end one intersecion
@@ -1401,28 +1388,28 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					pts4->InsertNextPoint(local_posPt);
 					globalLength = globalLength + sqrt((positionP2[0] - positionQ1[0])*(positionP2[0] - positionQ1[0]) + (positionP2[1] - positionQ1[1])*(positionP2[1] - positionQ1[1]) + (positionP2[2] - positionQ1[2])*(positionP2[2] - positionQ1[2]));
 
-					mafVMELineSeg* line11 = mafVMELineSeg::New();
+					auto line11 = mafVMELineSeg::NewSPtr();
 					//line11->SetName("line11");
 					line11->resetPoints();
 					line11->setPoints(pts1);
 					line11->GetOutput()->Update();
 					line11->Update();
 
-					mafVMELineSeg* line12 = mafVMELineSeg::New();
+					auto line12 = mafVMELineSeg::NewSPtr();
 					//line12->SetName("line12");
 					line12->resetPoints();
 					line12->setPoints(pts2);
 					line12->GetOutput()->Update();
 					line12->Update();
 
-					mafVMELineSeg* line13 = mafVMELineSeg::New();
+					auto line13 = mafVMELineSeg::NewSPtr();
 					//line13->SetName("line13");
 					line13->resetPoints();
 					line13->setPoints(pts3);
 					line13->GetOutput()->Update();
 					line13->Update();
 
-					mafVMELineSeg* line14 = mafVMELineSeg::New();
+					auto line14 = mafVMELineSeg::NewSPtr();
 					//line14->SetName("line14");
 					line14->resetPoints();
 					line14->setPoints(pts4);
@@ -1430,7 +1417,7 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					line14->Update();
 
 
-					mafVMELineSeg* line15 = mafVMELineSeg::New();
+					auto line15 = mafVMELineSeg::NewSPtr();
 					//line15->SetName("line15");
 					line15->resetPoints();
 					line15->setPoints(pts5);
@@ -1475,12 +1462,6 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					pts3->Delete();
 					pts4->Delete();
 					pts5->Delete();
-					line12->Delete();
-					line11->Delete();
-					line14->Delete();
-					line15->Delete();
-					line13->Delete();
-
 
 				}//Else 2 intersections end
 
@@ -1538,7 +1519,7 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					pts1->InsertNextPoint(local_start);
 					pts1->InsertNextPoint(local_end);
 
-					mafVMELineSeg* line11 = mafVMELineSeg::New();
+					auto line11 = mafVMELineSeg::NewSPtr();
 					line11->SetName(_R("line11"));
 					line11->resetPoints();
 					line11->setPoints(pts1);
@@ -1558,7 +1539,6 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					m_PolyData->DeepCopy(m_Goniometer->GetOutput());
 
 
-					line11->Delete();
 					pts1->Delete();
 				}
 				else //n1==1
@@ -1568,9 +1548,9 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					globalError = 21;
 					double posPt[3];
 					double local_posPt[3];
-					mafVMELineSeg* line13 = mafVMELineSeg::New();
-					mafVMELineSeg* line14 = mafVMELineSeg::New();
-					mafVMELineSeg* line15 = mafVMELineSeg::New();
+					auto line13 = mafVMELineSeg::NewSPtr();
+					auto line14 = mafVMELineSeg::NewSPtr();
+					auto line15 = mafVMELineSeg::NewSPtr();
 					
 					vtkPoints* pts1 = vtkPoints::New();
 					vtkPoints* pts2 = vtkPoints::New();
@@ -1787,9 +1767,6 @@ void mafVMEMuscleWrapping::InternalUpdate()
 					
 					functor.surfaces = NULL;
 				//	m_CloudPath1->Update();
-					line15->Delete();
-					line14->Delete();
-					line13->Delete();
 					path.clear();
 					pts5->Delete();
 					pts2->Delete();
@@ -1812,7 +1789,7 @@ void mafVMEMuscleWrapping::InternalUpdate()
 
 
 
-				mafVMELineSeg* line11 = mafVMELineSeg::New();
+				auto line11 = mafVMELineSeg::NewSPtr();
 				line11->SetName(_R("line11"));
 
 				line11->resetPoints();
@@ -1833,7 +1810,6 @@ void mafVMEMuscleWrapping::InternalUpdate()
 
 				m_Goniometer->Update();
 				m_PolyData->DeepCopy(m_Goniometer->GetOutput());
-				line11->Delete();
 				pts1->Delete();
 
 
@@ -1994,7 +1970,7 @@ void mafVMEMuscleWrapping::SetLandmarkLink(const mafString& link_name, mafNode *
 
 	if (n->IsMAFType(mafVMELandmark))
 	{
-		SetLink(link_name, n, ((mafVMELandmarkCloud *)(n->GetParent()))->FindLandmarkIndex(n->GetName()));
+		SetLink(link_name, n, mafVMELandmarkCloud::StaticDownCast(n->GetParent())->FindLandmarkIndex(n->GetName()));
 	}
 	else
 		SetLink(link_name, NULL);
@@ -2066,7 +2042,7 @@ void mafVMEMuscleWrapping::UpdateLinks()
 	if (Q0 && Q0->IsMAFType(mafVMELandmark))
 	{
 		sub_id = GetLinkSubId(_R("Q0Landmark"));
-		m_Q0LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)Q0->GetParent())->GetLandmarkName(sub_id) : _R("none");
+		m_Q0LandmarkName = (sub_id != -1) ? mafVMELandmarkCloud::StaticDownCast(Q0->GetParent())->GetLandmarkName(sub_id) : _R("none");
 	}
 	else
 		m_Q0LandmarkName = Q0 ? Q0->GetName() : _R("none");
@@ -2076,7 +2052,7 @@ void mafVMEMuscleWrapping::UpdateLinks()
 	if (P0 && P0->IsMAFType(mafVMELandmark))
 	{
 		sub_id = GetLinkSubId(_R("P0Landmark"));
-		m_P0LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)P0->GetParent())->GetLandmarkName(sub_id) : _R("none");
+		m_P0LandmarkName = (sub_id != -1) ? mafVMELandmarkCloud::StaticDownCast(P0->GetParent())->GetLandmarkName(sub_id) : _R("none");
 	}
 	else
 		m_P0LandmarkName = P0 ? P0->GetName() : _R("none");
@@ -2085,7 +2061,7 @@ void mafVMEMuscleWrapping::UpdateLinks()
 	if (insert1 && insert1->IsMAFType(mafVMELandmark))
 	{
 		sub_id = GetLinkSubId(_R("insert1"));
-		m_insert1LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)insert1->GetParent())->GetLandmarkName(sub_id) : _R("none");
+		m_insert1LandmarkName = (sub_id != -1) ? mafVMELandmarkCloud::StaticDownCast(insert1->GetParent())->GetLandmarkName(sub_id) : _R("none");
 	}
 	else
 		m_insert1LandmarkName = insert1 ? insert1->GetName() : _R("none");
@@ -2095,7 +2071,7 @@ void mafVMEMuscleWrapping::UpdateLinks()
 	if (insert2 && insert2->IsMAFType(mafVMELandmark))
 	{
 		sub_id = GetLinkSubId(_R("insert2"));
-		m_insert2LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)insert2->GetParent())->GetLandmarkName(sub_id) : _R("none");
+		m_insert2LandmarkName = (sub_id != -1) ? mafVMELandmarkCloud::StaticDownCast(insert2->GetParent())->GetLandmarkName(sub_id) : _R("none");
 	}
 	else
 		m_insert2LandmarkName = insert2 ? insert2->GetName() : _R("none");

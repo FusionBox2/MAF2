@@ -1288,25 +1288,25 @@ vtkPolyData* medVMEStent::GetSimplexPolyData()
 mafNode* medVMEStent::FindTaggedCenterLineVME(mafNode* inputNode)
 {
   // Go up one level in the tree
-  mafNode* parentNode = inputNode->GetParent() ;
+  auto parentNode = inputNode->GetParent() ;
 
   // search tree for tagged item
   if (parentNode->GetTagArray()->GetTag(_R("RT3S_CENTER_LINE")))
-    return parentNode ;
+    return parentNode.get();
 
   for (int i = 0 ;  i < parentNode->GetNumberOfChildren() ;  i++){
-    mafNode* childNode = parentNode->GetChild(i) ;
+    auto childNode = parentNode->GetChild(i) ;
     if (childNode->GetTagArray()->GetTag(_R("RT3S_CENTER_LINE")))
-      return childNode ;
+      return childNode.get();
 
     for (int j = 0 ;  j < childNode->GetNumberOfChildren() ;  j++){
-      mafNode* grandChildNode = childNode->GetChild(j) ;
+      auto grandChildNode = childNode->GetChild(j) ;
       if (grandChildNode->GetTagArray()->GetTag(_R("RT3S_CENTER_LINE")))
-        return grandChildNode ;
+        return grandChildNode.get();
     }
   }
 
-  return NULL ;
+  return nullptr;
 }
 
 
@@ -1317,25 +1317,25 @@ mafNode* medVMEStent::FindTaggedCenterLineVME(mafNode* inputNode)
 mafNode* medVMEStent::FindTaggedVesselVME(mafNode* inputNode)
 {
   // Go up one level in the tree
-  mafNode* parentNode = inputNode->GetParent() ;
+  auto parentNode = inputNode->GetParent() ;
 
   // search tree for tagged item
   if (parentNode->GetTagArray()->GetTag(_R("RT3S_VESSEL")))
-    return parentNode ;
+    return parentNode.get();
 
   for (int i = 0 ;  i < parentNode->GetNumberOfChildren() ;  i++){
-    mafNode* childNode = parentNode->GetChild(i) ;
+    auto childNode = parentNode->GetChild(i) ;
     if (childNode->GetTagArray()->GetTag(_R("RT3S_VESSEL")))
-      return childNode ;
+      return childNode.get();
 
     for (int j = 0 ;  j < childNode->GetNumberOfChildren() ;  j++){
-      mafNode* grandChildNode = childNode->GetChild(j) ;
+      auto grandChildNode = childNode->GetChild(j) ;
       if (grandChildNode->GetTagArray()->GetTag(_R("RT3S_VESSEL")))
-        return grandChildNode ;
+        return grandChildNode.get();
     }
   }
 
-  return NULL ;
+  return nullptr;
 }
 
 
@@ -1365,15 +1365,15 @@ mafNode* medVMEStent::FindOrSelectCenterLineVME(mafNode* inputNode)
   mafString title = _L("Select centerline vme");
   e.SetString(&title);
   ForwardUpEvent(e);
-  node = e.GetVme();
+  node = e.GetVme().get();
 
-  if (node != NULL){
+  if (node){
     mafLogMessage(_M("Adding tag to centerline vme...\n")) ;
     mafVME* vme = mafVME::SafeDownCast(node) ;
     vme->GetTagArray()->SetTag(mafTagItem(_R("RT3S_CENTER_LINE"),_R("Polyline")));
   }
 
-  if (node == NULL){
+  if (node == nullptr){
     // can't find so invalidate flags
     m_CenterLineDefined = false ;
     m_CenterLineVMEDefined = false ;
@@ -1408,15 +1408,15 @@ mafNode* medVMEStent::FindOrSelectVesselVME(mafNode* inputNode)
   mafString title = _L("Select vessel vme");
   e.SetString(&title);
   ForwardUpEvent(e);
-  node = e.GetVme();
+  node = e.GetVme().get();
 
-  if (node != NULL){
+  if (node){
     mafLogMessage(_M("Adding tag to vessel vme...\n")) ;
     mafVME* vme = mafVME::SafeDownCast(node) ;
     vme->GetTagArray()->SetTag(mafTagItem(_R("RT3S_VESSEL"),_R("Surface")));
   }
 
-  if (node == NULL){
+  if (node == nullptr){
     // can't find so invalidate flags
     m_VesselSurfaceDefined = false ;
     m_VesselVMEDefined = false ;
@@ -2033,25 +2033,25 @@ void medVMEStent::CrimpStent(double crimpedDiameter)
 mafNode* medVMEStent::FindNodeWithId(mafID id)
 {
   if (id == -1)
-    return NULL ;
+    return nullptr;
 
-  mafNode* parent = this->GetParent() ;
+  auto parent = this->GetParent() ;
   if (parent->GetId() == id)
-    return parent ;
+    return parent.get();
 
   for (int i = 0 ;  i < parent->GetNumberOfChildren() ;  i++){
-    mafNode* child = parent->GetChild(i) ;
+    auto child = parent->GetChild(i) ;
     if (child->GetId() == id)
-      return child ;
+      return child.get();
 
     for (int j = 0 ;  j < child->GetNumberOfChildren() ;  j++){
-      mafNode* grChild = child->GetChild(j) ;
+      auto grChild = child->GetChild(j) ;
       if (grChild->GetId() == id)
-        return grChild ;
+        return grChild.get();
     }
   }
 
-  return NULL ;
+  return nullptr;
 }
 
 

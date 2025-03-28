@@ -87,11 +87,11 @@ mafVMECenterLine::mafVMECenterLine()
   
   rotationMat = Eigen::Matrix3d::Identity();
 
-  mafNEW(chord);
+  chord = mafVMEMeter::NewSPtr();
   chord->SetName(_R("chord"));
   chord->ReparentTo(this);
 
-  mafNEW(chordP);
+  chordP = mafVMEMeter::NewSPtr();
   chordP->SetName(_R("chordP"));
   chordP->ReparentTo(this);
   chordP->SetMeterMode(1);
@@ -115,7 +115,7 @@ mafVMECenterLine::mafVMECenterLine()
 	SetDataPipe(dpipe);
 
 
-	mafNEW(m_CloudPath1);
+	m_CloudPath1 = mafVMELandmarkCloud::NewSPtr();
 	m_CloudPath1->Open();
 	m_CloudPath1->SetName(_R("path1"));
 	m_CloudPath1->SetRadius(1.5);
@@ -1843,13 +1843,12 @@ void mafVMECenterLine::OnEvent(mafEventBase *maf_event)
 						  e->SetArg((intptr_t)&mafVMEPlane::VMEAccept);
 						  e->SetString(&title);
 						  ForwardUpEvent(e);
-						  mafNode *n = e->GetVme();
-						  if (n != NULL)
+						  if (auto n = e->GetVme())
 						  {
 
-							  SetSurfaceLink(_R("SurfaceVME"), n);
+							  SetSurfaceLink(_R("SurfaceVME"), n.get());
 							  m_SurfaceName = n->GetName();
-							  surface = (mafVMESurface*)n;
+							  surface = mafVMESurface::StaticDownCast(n).get();
 
 							  m_Gui->Update();
 
@@ -3404,26 +3403,26 @@ if (Lst_Path_Yes)
 			}
 
 		
-		if ((mafNode*)m_CloudPath1->GetLandmark(_R("first")) != NULL)
+		if (mafNode::StaticDownCast(m_CloudPath1->GetLandmark(_R("first"))))
 		{
-			chord->SetMeterLink("StartVME", (mafNode*)m_CloudPath1->GetLandmark(_R("first")));
+			chord->SetMeterLink("StartVME", mafNode::StaticDownCast(m_CloudPath1->GetLandmark(_R("first"))).get());
 		}
-		if ((mafNode*)m_CloudPath1->GetLandmark(_R("last")) != NULL)
+		if (mafNode::StaticDownCast(m_CloudPath1->GetLandmark(_R("last"))))
 		{
-			chord->SetMeterLink("EndVME1", (mafNode*)m_CloudPath1->GetLandmark(_R("last")));
+			chord->SetMeterLink("EndVME1", mafNode::StaticDownCast(m_CloudPath1->GetLandmark(_R("last"))).get());
 
 		}
 		chord->Update();
 
 		double val = 0;
 
-		if ((mafNode*)m_CloudPath1->GetLandmark(_R("first")) != NULL)
+		if (mafNode::StaticDownCast(m_CloudPath1->GetLandmark(_R("first"))))
 		{
-			chordP->SetMeterLink(_R("EndVME2"), (mafNode*)m_CloudPath1->GetLandmark(_R("first")));
+			chordP->SetMeterLink(_R("EndVME2"), mafNode::StaticDownCast(m_CloudPath1->GetLandmark(_R("first"))).get());
 		}
-		if ((mafNode*)m_CloudPath1->GetLandmark(_R("last")) != NULL)
+		if (mafNode::StaticDownCast(m_CloudPath1->GetLandmark(_R("last"))))
 		{
-			chordP->SetMeterLink(_R("EndVME1"), (mafNode*)m_CloudPath1->GetLandmark(_R("last")));
+			chordP->SetMeterLink(_R("EndVME1"), mafNode::StaticDownCast(m_CloudPath1->GetLandmark(_R("last"))).get());
 
 		}
 

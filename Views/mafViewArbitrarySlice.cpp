@@ -218,7 +218,7 @@ void mafViewArbitrarySlice::VmeShow(mafNode *node, bool show)
 			m_MatrixReset->SetVTKMatrix(TransformReset->GetMatrix());
 
 			//Create VME slicer
-			mafNEW(m_Slicer);
+			m_Slicer = mafVMESlicer::NewSPtr();
 			m_Slicer->GetTagArray()->SetTag(mafTagItem(_R("VISIBLE_IN_THE_TREE"), 0.0));
 			m_Slicer->ReparentTo(mafVME::SafeDownCast(node));
 			m_Slicer->SetPose(m_SliceCenterSurfaceReset,m_SliceAngleReset,0);
@@ -228,8 +228,8 @@ void mafViewArbitrarySlice::VmeShow(mafNode *node, bool show)
 			m_Slicer->Update();
 
 			//Show Slicer
-			m_ChildViewList[ARBITRARY_VIEW]->VmeShow(m_Slicer, show);
-			m_ChildViewList[SLICE_VIEW]->VmeShow(m_Slicer, show);
+			m_ChildViewList[ARBITRARY_VIEW]->VmeShow(m_Slicer.get(), show);
+			m_ChildViewList[SLICE_VIEW]->VmeShow(m_Slicer.get(), show);
 
 			auto pArb=mafPipeSurfaceTextured::StaticDownCast((m_ChildViewList[ARBITRARY_VIEW])->GetNodePipe(m_Slicer));
 			pArb->SetActorPicking(false);
@@ -244,14 +244,14 @@ void mafViewArbitrarySlice::VmeShow(mafNode *node, bool show)
 			if(!m_AttachCamera)
 				m_AttachCamera=new mafAttachCamera(m_Gui,((mafViewVTK*)m_ChildViewList[SLICE_VIEW])->m_Rwi,this);
 			m_AttachCamera->SetStartingMatrix(m_Slicer->GetOutput()->GetAbsMatrix());
-			m_AttachCamera->SetVme(m_Slicer);
+			m_AttachCamera->SetVme(m_Slicer.get());
 			m_AttachCamera->EnableAttachCamera();
-			((mafViewVTK*)m_ChildViewList[SLICE_VIEW])->CameraReset(m_Slicer);
+			((mafViewVTK*)m_ChildViewList[SLICE_VIEW])->CameraReset(m_Slicer.get());
 
 			// create the gizmos
 			m_GizmoTranslate = new mafGizmoTranslate(m_Slicer, this);
 			m_GizmoTranslate->SetInput(m_Slicer);
-			m_GizmoTranslate->SetRefSys(m_Slicer);
+			m_GizmoTranslate->SetRefSys(m_Slicer.get());
 			m_GizmoTranslate->SetAbsPose(m_MatrixReset);
 			m_GizmoTranslate->SetStep(X_AXIS,1.0);
 			m_GizmoTranslate->SetStep(Y_AXIS,1.0);
@@ -260,7 +260,7 @@ void mafViewArbitrarySlice::VmeShow(mafNode *node, bool show)
 
 			m_GizmoRotate = new mafGizmoRotate(m_Slicer, this);
 			m_GizmoRotate->SetInput(m_Slicer);
-			m_GizmoRotate->SetRefSys(m_Slicer);
+			m_GizmoRotate->SetRefSys(m_Slicer.get());
 			m_GizmoRotate->SetAbsPose(m_MatrixReset);
 			m_GizmoRotate->Show(false);
 
@@ -379,7 +379,7 @@ void mafViewArbitrarySlice::VmeShow(mafNode *node, bool show)
 			m_GizmoTranslate->Show(false);
 			m_GizmoRotate->Show(false);
 
-			mafDEL(m_Slicer);
+			m_Slicer.reset();
 			cppDEL(m_GizmoTranslate);
 			cppDEL(m_GizmoRotate);
 			cppDEL(m_GuiGizmos);
@@ -468,7 +468,7 @@ void mafViewArbitrarySlice::OnEventGizmoTranslate(mafEventBase *maf_event)
 			//for each surface visualized change the center of the cut plane
 			mafNode *root=m_CurrentVolume->GetRoot();
 			auto iter = root->NewIterator();
-			for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+			for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
 			{
 				if(node->IsA("mafVMESurface") || node->IsA("mafVMESurfaceParametric") || node->IsA("mafVMELandmark") || node->IsA("mafVMELandmarkCloud"))
 				{
@@ -554,7 +554,7 @@ void mafViewArbitrarySlice::OnEventGizmoRotate(mafEventBase *maf_event)
 			//update the normal of the cutter plane of the surface
 			mafNode *root=m_CurrentVolume->GetRoot();
 			auto iter = root->NewIterator();
-			for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+			for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
 			{
 				if(node->IsA("mafVMESurface") || node->IsA("mafVMESurfaceParametric") || node->IsA("mafVMELandmark") || node->IsA("mafVMELandmarkCloud"))
 				{
@@ -698,7 +698,7 @@ void mafViewArbitrarySlice::OnEventThis(mafEventBase *maf_event)
 				//update the normal of the cutter plane of the surface
 				mafNode *root=m_CurrentVolume->GetRoot();
 				auto iter = root->NewIterator();
-				for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+				for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
 				{
 					if(node->IsA("mafVMESurface") || node->IsA("mafVMESurfaceParametric") || node->IsA("mafVMELandmark") || node->IsA("mafVMELandmarkCloud"))
 					{
@@ -858,7 +858,7 @@ void mafViewArbitrarySlice::PostMultiplyEventMatrix(mafEventBase *maf_event)
 		// handle incoming transform events
 		vtkTransform *tr = vtkTransform::New();
 		tr->PostMultiply();
-		tr->SetMatrix(((mafVME *)m_Slicer)->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
+		tr->SetMatrix(mafVME::StaticDownCast(m_Slicer)->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
 		tr->Concatenate(e->GetMatrix()->GetVTKMatrix());
 		tr->Update();
 
@@ -869,7 +869,7 @@ void mafViewArbitrarySlice::PostMultiplyEventMatrix(mafEventBase *maf_event)
 		if (arg == mafInteractorGenericMouse::MOUSE_MOVE)
 		{
 			// move vme
-			((mafVME *)m_Slicer)->SetAbsMatrix(absPose);
+			mafVME::StaticDownCast(m_Slicer)->SetAbsMatrix(absPose);
 		} 
 
 		// clean up

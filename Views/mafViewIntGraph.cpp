@@ -144,7 +144,7 @@ void mafViewIntGraph::Create()
 }
 
 //----------------------------------------------------------------------------
-void mafViewIntGraph::VmeAdd(mafNode *vme)
+void mafViewIntGraph::VmeAdd(std::shared_ptr<mafNode> vme)
 //----------------------------------------------------------------------------
 {
   m_Sg->VmeAdd(vme);
@@ -165,7 +165,7 @@ void mafViewIntGraph::VmeUpdateProperty(mafNode *vme, bool fromTag)
   m_Sg->VmeUpdateProperty(vme,fromTag);
 }
 //----------------------------------------------------------------------------
-int mafViewIntGraph::GetNodeStatus(mafNode *vme)
+int mafViewIntGraph::GetNodeStatusI(mafNode *vme)
 //----------------------------------------------------------------------------
 {
   int status = m_Sg ? m_Sg->GetNodeStatus(vme) : NODE_NON_VISIBLE;
@@ -213,7 +213,7 @@ void mafViewIntGraph::CameraUpdate()
     m_RenderWindow->Update();
 }
 //----------------------------------------------------------------------------
-std::shared_ptr<mafPipe>mafViewIntGraph::GetNodePipe(mafNode *vme)
+std::shared_ptr<mafPipe>mafViewIntGraph::GetNodePipeI(mafNode *vme)
 //----------------------------------------------------------------------------
 {
   assert(m_Sg);
@@ -474,7 +474,7 @@ void mafViewIntGraph::savePlot(void)
     mafNode *curr = trav.front();
     trav.pop();
     for (unsigned long i = 0, ie = curr->GetNumberOfChildren(); i != ie; ++i)
-      trav.push(curr->GetChild(i));
+      trav.push(curr->GetChild(i).get());
     indexator[curr] = idx++;
   }
 
@@ -486,7 +486,7 @@ void mafViewIntGraph::savePlot(void)
     mafNode *curr = trav.front();
     trav.pop();
     for (unsigned long i = 0, ie = curr->GetNumberOfChildren(); i != ie; ++i)
-      trav.push(curr->GetChild(i));
+      trav.push(curr->GetChild(i).get());
     auto pipe = lhpPipeIntGraphAbstract::SafeDownCast(GetNodePipe(curr));
     m_shown_flags.push_back(pipe != nullptr);
     if (pipe)
@@ -530,8 +530,7 @@ void mafViewIntGraph::savePlotGen(void)
 
   for(mafSceneNode *n = m_Sg->GetNodeList(); n != NULL; n = n->m_Next)
   {
-    mafVME *vme = mafVME::SafeDownCast(n->m_Vme);
-    if(vme)
+    if (auto vme = mafVME::SafeDownCast(n->m_Vme))
     {
       vme->GetTagArray()->SetTag(mafTagItem(_R(mafINTGG_SAVEINFO_TAG), strv));
       {mafEvent evUnq(this,VME_MODIFIED); evUnq.SetVme(vme); InvokeEvent(evUnq);}
@@ -545,8 +544,7 @@ void mafViewIntGraph::loadPlotGen(void)
   //load general settings
   for(mafSceneNode *n = m_Sg->GetNodeList(); n != NULL; n = n->m_Next)
   {
-    mafVME *vme = mafVME::SafeDownCast(n->m_Vme);
-    if(vme)
+    if (auto vme = mafVME::SafeDownCast(n->m_Vme))
     {
       if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R(mafINTGG_SAVEINFO_TAG)))
       {
@@ -603,7 +601,7 @@ void mafViewIntGraph::loadPlot(bool readfile)
     mafNode *curr = trav.front();
     trav.pop();
     for (unsigned long i = 0, ie = curr->GetNumberOfChildren(); i != ie; ++i)
-      trav.push(curr->GetChild(i));
+      trav.push(curr->GetChild(i).get());
     indexator.push_back(curr);
   }
 
@@ -615,12 +613,12 @@ void mafViewIntGraph::loadPlot(bool readfile)
     mafNode *curr = trav.front();
     trav.pop();
     for (unsigned long i = 0, ie = curr->GetNumberOfChildren(); i != ie; ++i)
-      trav.push(curr->GetChild(i));
+      trav.push(curr->GetChild(i).get());
     bool show = false;
     if (it != m_shown_flags.cend())
       show = *it++;
     if (readfile)
-      {mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(curr); evUnq.SetBool(show); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(m_Sg->Vme2Node(curr)->m_Vme); evUnq.SetBool(show); InvokeEvent(evUnq);}
     else
     {
       if (show)

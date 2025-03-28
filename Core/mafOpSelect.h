@@ -7,7 +7,7 @@
 #include "mafEvent.h"
 #include "mafOp.h"
 #include "mafNodeIterator.h"
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
@@ -29,9 +29,9 @@ public:
     /** check if node can be input of the operation. */
     bool Accept(mafNode* vme) override;
     /** selection of another node. */
-    void SetNewSel(mafNode* vme);
+    void SetNewSel(std::shared_ptr<mafNode> vme);
     /** retrieve new selected node. */
-    mafNode* GetNewSel(){return m_NewNodeSelected.get();}
+    std::shared_ptr<mafNode> GetNewSel(){return m_NewNodeSelected;}
     /** execute the operation.  */
     void OpDo() override;
     /** undo the operation. */
@@ -39,8 +39,8 @@ public:
     /** return a instance of current object. */
     mafOp* Copy() override;
 protected:
-    mafAutoPointer<mafNode> m_OldNodeSelected;
-    mafAutoPointer<mafNode> m_NewNodeSelected;
+  std::shared_ptr<mafNode> m_OldNodeSelected;
+  std::shared_ptr<mafNode> m_NewNodeSelected;
 };
 /**
     class name: mafOpEdit
@@ -65,14 +65,14 @@ public:
     /** restore clipboard from backup */
 		void     ClipboardRestore();
     /** return the mafNode that is in the clipboard */
-    mafNode* GetClipboard();
+    std::shared_ptr<mafNode> GetClipboard();
     /** set the clipboard */
-    void SetClipboard(mafNode *node);
+    void SetClipboard(std::shared_ptr<mafNode> node);
 protected:
-  // static   mafAutoPointer<mafNode> m_Clipboard;
+  // static   std::shared_ptr<mafNode> m_Clipboard;
   static   int m_NumOperations;
-  mafAutoPointer<mafNode> m_Backup;
-  mafAutoPointer<mafNode> m_Selection;
+  std::shared_ptr<mafNode> m_Backup;
+  std::shared_ptr<mafNode> m_Selection;
 };
 /**
     class name: mafOpCut
@@ -98,7 +98,7 @@ public:
     void LoadVTKData(mafNode *vme);
 
 protected:
-    mafAutoPointer<mafNode> m_SelectionParent;
+  std::shared_ptr<mafNode> m_SelectionParent;
     /** Load all children in the tree (Added by Di Cosmo on 24.05.2012) */
     void LoadChild(mafNode *vme);
 };
@@ -123,7 +123,7 @@ public:
   /** return a instance of current object. */
   mafOp* Copy() override; 
 protected:
-    mafAutoPointer<mafNode> m_SelectionParent;
+  std::shared_ptr<mafNode> m_SelectionParent;
 };
 /**
     class name: mafOpCopy
@@ -165,5 +165,5 @@ public:
     /** return a instance of current object. */
     mafOp* Copy() override; 
 protected:
-    mafAutoPointer<mafNode> m_PastedVme;
+  std::shared_ptr<mafNode> m_PastedVme;
 };

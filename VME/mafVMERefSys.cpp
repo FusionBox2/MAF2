@@ -176,22 +176,21 @@ void mafVMERefSys::OnEvent(mafEventBase *maf_event)
         e->SetArg((intptr_t)&mafVMERefSys::LandmarkAccept);
         e->SetString(&title);
         ForwardUpEvent(e);
-        mafNode *n = e->GetVme();
-        if (n != NULL)
+        if (auto n = e->GetVme())
         {
           if (button_id == ID_REF_SYS_ORIGIN)
           {
-            SetRefSysLink("OriginVME", n);
+            SetRefSysLink("OriginVME", n.get());
             m_OriginVmeName = n->GetName();
           }
           else if (button_id == ID_POINT1)
           {
-            SetRefSysLink("Point1VME", n);
+            SetRefSysLink("Point1VME", n.get());
             m_Point1VmeName = n->GetName();
           }
           else
           {
-            SetRefSysLink("Point2VME", n);
+            SetRefSysLink("Point2VME", n.get());
             m_Point2VmeName = n->GetName();
           }
           InternalUpdate();

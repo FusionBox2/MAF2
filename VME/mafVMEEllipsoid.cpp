@@ -168,8 +168,7 @@ void mafVMEEllipsoid::OnEvent(mafEventBase *maf_event)
 								  
 				  e->SetString(&title);
 				  ForwardUpEvent(e);
-				  mafNode *n = e->GetVme();
-				  if (n != NULL)
+				  if (auto n = e->GetVme())
 					  {
 
 					  mafTimeStamp currTs = GetTimeStamp();
@@ -178,7 +177,7 @@ void mafVMEEllipsoid::OnEvent(mafEventBase *maf_event)
 					 
 					
 				    
-					  SetCenterLink(_R("centerLandmark"), n);
+					  SetCenterLink(_R("centerLandmark"), n.get());
 					  m_LandmarkName = n->GetName();
 								  
 					  center_vme = GetCenterVME();
@@ -640,7 +639,7 @@ void mafVMEEllipsoid::SetCenterLink(const mafString& link_name, mafNode *n)
 
 	if (n->IsMAFType(mafVMELandmark))
 	{
-		SetLink(link_name, n->GetParent(), ((mafVMELandmarkCloud *)n->GetParent())->FindLandmarkIndex(n->GetName()));
+		SetLink(link_name, n->GetParent().get(), mafVMELandmarkCloud::StaticDownCast(n->GetParent())->FindLandmarkIndex(n->GetName()));
 	
 	}
 	else

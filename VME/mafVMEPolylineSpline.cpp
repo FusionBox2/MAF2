@@ -292,10 +292,9 @@ void mafVMEPolylineSpline::OnEvent(mafEventBase *maf_event)
         e->SetArg((intptr_t)&mafVMEPolylineSpline::PolylineAccept);
         e->SetString(&title);
         ForwardUpEvent(e);
-        mafNode *n = e->GetVme();
-        if (n != NULL)
+        if (auto n = e->GetVme())
         {
-					SetPolylineLink(n);
+					SetPolylineLink(n.get());
 					m_PolylineLinkName = n->GetName();
 					InternalUpdate();
           GetPolylineOutput()->Update();

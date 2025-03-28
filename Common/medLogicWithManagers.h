@@ -38,7 +38,7 @@ protected:
 
   virtual void CreateWizardToolbar();
   
-  virtual void VmeSelected(mafNode *vme);
+  virtual void VmeSelected(std::shared_ptr<mafNode> vme);
 
   virtual void WizardRunStarting();
 

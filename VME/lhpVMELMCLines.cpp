@@ -350,7 +350,6 @@ void lhpVMELMCLines::OnEvent(mafEventBase *maf_event)
     {
       case ID_PNTS_CLOUD_LINK:
         {
-          mafVMELandmarkCloud *vme = NULL;
           {
             mafID button_id = e->GetId();
             mafString title = _L("Choose vme");
@@ -358,10 +357,9 @@ void lhpVMELMCLines::OnEvent(mafEventBase *maf_event)
             e->SetArg((intptr_t)&lhpVMELMCLines::PolylineAccept);
             e->SetString(&title);
             ForwardUpEvent(e);
-            vme = mafVMELandmarkCloud::SafeDownCast(e->GetVme());
-            if(vme != NULL)
+            if (auto vme = mafVMELandmarkCloud::SafeDownCast(e->GetVme()))
             {
-              SetCloud(vme);
+              SetCloud(vme.get());
             }
           }
           break;

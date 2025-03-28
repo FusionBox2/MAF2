@@ -49,7 +49,7 @@
 #include "vtkProperty.h"
 
 //----------------------------------------------------------------------------
-mafGizmoTranslateAxis::mafGizmoTranslateAxis(mafVME *input, mafBaseEventHandler *listener, mafString name)
+mafGizmoTranslateAxis::mafGizmoTranslateAxis(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener, mafString name)
 //----------------------------------------------------------------------------
 {
   m_ConeLength = 0.5;
@@ -484,7 +484,7 @@ std::shared_ptr<mafMatrix> mafGizmoTranslateAxis::GetAbsPose()
   return m_CylGizmo->GetOutput()->GetAbsMatrix();
 }
 //----------------------------------------------------------------------------
-void mafGizmoTranslateAxis::SetInput(mafVME *vme)
+void mafGizmoTranslateAxis::SetInput(std::shared_ptr<mafVME> vme)
 //----------------------------------------------------------------------------
 {
   this->m_InputVme = vme; 

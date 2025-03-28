@@ -124,8 +124,7 @@ private:
   mafGUI *m_GuiFrames;
   mafGUI *m_GuiInterval; 
   mafGUI *m_GuiPeriodicity; 
-  mafVMEGroup         *m_Group;
-  mafVMELandmarkCloud *m_Cloud;
+  std::shared_ptr<mafVMEGroup>         m_Group;
 
   int m_InsertMode;
   int m_Periodicity;
@@ -135,8 +134,8 @@ private:
   double m_IntervalTo;
   double m_Frame;
 
-  std::vector<mafVME*> m_VectorVME;
-  std::vector<mafVMELandmarkCloud*> m_VectorCloud;
+  std::vector<std::shared_ptr<mafVME> > m_VectorVME;
+  std::vector<std::shared_ptr<mafVMELandmarkCloud> > m_VectorCloud;
   std::vector<mafString> m_FrameLabel;
 
   wxListBox *m_FramesListBox; 

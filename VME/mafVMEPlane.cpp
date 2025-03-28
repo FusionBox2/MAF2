@@ -451,11 +451,10 @@ void mafVMEPlane::OnEvent(mafEventBase *maf_event)
 
 						   e->SetString(&title);
 						   ForwardUpEvent(e);
-						   mafNode *n = e->GetVme();
-						   if (n != NULL)
+						   if (auto n = e->GetVme())
 						   {
 
-							   SetPlaneLink(_R("Plan_intersect"), n);
+							   SetPlaneLink(_R("Plan_intersect"), n.get());
 							   m_plan1Name = n->GetName();
 							   m_Gui->Update();
 
@@ -475,11 +474,10 @@ void mafVMEPlane::OnEvent(mafEventBase *maf_event)
 
 						   e->SetString(&title);
 						   ForwardUpEvent(e);
-						   mafNode *n = e->GetVme();
-						   if (n != NULL)
+						   if (auto n = e->GetVme())
 						   {
 
-							   SetLandmarkLink(_R("first_Point"), n);
+							   SetLandmarkLink(_R("first_Point"), n.get());
 							   m_p1LandmarkName = n->GetName();
 							   m_Gui->Update();
 							   //pts_change = true;
@@ -500,12 +498,11 @@ void mafVMEPlane::OnEvent(mafEventBase *maf_event)
 
 						   e->SetString(&title);
 						   ForwardUpEvent(e);
-						   mafNode *n = e->GetVme();
-						   if (n != NULL)
+						   if (auto n = e->GetVme())
 						   {
 
 							   
-							   SetLandmarkLink(_R("second_Point"), n);
+							   SetLandmarkLink(_R("second_Point"), n.get());
 							   m_p2LandmarkName = n->GetName();
 
 							   m_Gui->Update();
@@ -526,12 +523,11 @@ void mafVMEPlane::OnEvent(mafEventBase *maf_event)
 
 						   e->SetString(&title);
 						   ForwardUpEvent(e);
-						   mafNode *n = e->GetVme();
-						   if (n != NULL)
+						   if (auto n = e->GetVme())
 						   {
 
 							   
-							   SetLandmarkLink(_R("third_Point"), n);
+							   SetLandmarkLink(_R("third_Point"), n.get());
 							   m_p3LandmarkName = n->GetName();
 
 							   m_Gui->Update();
@@ -560,7 +556,7 @@ void mafVMEPlane::SetLandmarkLink(const mafString& link_name, mafNode *n)
 	//pts_change = true;
 	if (n->IsMAFType(mafVMELandmark))
 	{
-		SetLink(link_name, n, ((mafVMELandmarkCloud *)(n->GetParent()))->FindLandmarkIndex(n->GetName()));
+		SetLink(link_name, n, mafVMELandmarkCloud::StaticDownCast(n->GetParent())->FindLandmarkIndex(n->GetName()));
 	
 	}
 	else
@@ -624,8 +620,8 @@ void mafVMEPlane::InternalUpdate()
 				{
 
 
-					((mafVMELandmark *)p1)->GetPoint(m_PlaneOrigin, currTs);
-					((mafVMELandmarkCloud *)((mafVMELandmark *)p1)->GetParent())->GetOutput()->GetAbsMatrix(tm, currTs);
+					mafVMELandmark::StaticDownCast(p1)->GetPoint(m_PlaneOrigin, currTs);
+					mafVMELandmarkCloud::StaticDownCast(mafVMELandmark::StaticDownCast(p1)->GetParent())->GetOutput()->GetAbsMatrix(tm, currTs);
 
 					m_TmpTransform->SetMatrix(tm);
 					m_TmpTransform->TransformPoint(m_PlaneOrigin, m_PlaneOrigin);
@@ -650,9 +646,9 @@ void mafVMEPlane::InternalUpdate()
 			if ((p2 != NULL) )
 				{
 					//p2->GetOutput()->GetAbsPose(m_PlanePoint1, xyzr, currTs);
-					((mafVMELandmark *)p2)->GetPoint(m_PlanePoint1, currTs);
+				mafVMELandmark::StaticDownCast(p2)->GetPoint(m_PlanePoint1, currTs);
 					//this->GetOutput()->GetAbsMatrix(tm, currTs);
-					((mafVMELandmarkCloud *)((mafVMELandmark *)p2)->GetParent())->GetOutput()->GetAbsMatrix(tm, currTs);
+					mafVMELandmarkCloud::StaticDownCast(mafVMELandmark::StaticDownCast(p2)->GetParent())->GetOutput()->GetAbsMatrix(tm, currTs);
 
 					m_TmpTransform->SetMatrix(tm);
 					m_TmpTransform->TransformPoint(m_PlanePoint1, m_PlanePoint1);
@@ -683,8 +679,8 @@ void mafVMEPlane::InternalUpdate()
 			//	wxBusyInfo wait52("p3 not null");
 			//	Sleep(1500);
 					//p3->GetOutput()->GetAbsPose(m_PlanePoint2, xyzr, currTs);
-					((mafVMELandmark *)p3)->GetPoint(m_PlanePoint2, currTs);
-					((mafVMELandmarkCloud *)((mafVMELandmark *)p3)->GetParent())->GetOutput()->GetAbsMatrix(tm, currTs);
+				mafVMELandmark::StaticDownCast(p3)->GetPoint(m_PlanePoint2, currTs);
+					mafVMELandmarkCloud::SafeDownCast(mafVMELandmark::StaticDownCast(p1)->GetParent())->GetOutput()->GetAbsMatrix(tm, currTs);
 
 					m_TmpTransform->SetMatrix(tm);
 					m_TmpTransform->TransformPoint(m_PlanePoint2, m_PlanePoint2);
@@ -911,7 +907,7 @@ void mafVMEPlane::UpdateLinks()
 		if (p1 && p1->IsMAFType(mafVMELandmark))
 		{
 			sub_id = GetLinkSubId(_R("first_Point"));
-			m_p1LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)p1->GetParent())->GetLandmarkName(sub_id) : _L("none");
+			m_p1LandmarkName = (sub_id != -1) ? mafVMELandmarkCloud::StaticDownCast(p1->GetParent())->GetLandmarkName(sub_id) : _L("none");
 			p1->GetOutput()->GetAbsPose(m_PlaneOrigin, xyzr, currTs);
 		}
 		else
@@ -924,7 +920,7 @@ void mafVMEPlane::UpdateLinks()
 		if (p2 && p2->IsMAFType(mafVMELandmark))
 		{
 			sub_id = GetLinkSubId(_R("second_Point"));
-			m_p2LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)p2->GetParent())->GetLandmarkName(sub_id) : _L("none");
+			m_p2LandmarkName = (sub_id != -1) ? mafVMELandmarkCloud::StaticDownCast(p2->GetParent())->GetLandmarkName(sub_id) : _L("none");
 		}
 		else
 			m_p2LandmarkName = p2 ? p2->GetName() : _L("none");
@@ -936,7 +932,7 @@ void mafVMEPlane::UpdateLinks()
 		if (p3 && p3->IsMAFType(mafVMELandmark))
 		{
 			sub_id = GetLinkSubId(_R("third_Point"));
-			m_p3LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)p3->GetParent())->GetLandmarkName(sub_id) : _L("none");
+			m_p3LandmarkName = (sub_id != -1) ? mafVMELandmarkCloud::StaticDownCast(p3->GetParent())->GetLandmarkName(sub_id) : _L("none");
 		}
 		else
 		{

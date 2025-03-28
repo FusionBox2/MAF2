@@ -59,7 +59,7 @@ class MAF_EXPORT mafGUITransformTextEntries : public mafGUITransformInterface
 {
 public:
 
-  mafGUITransformTextEntries(mafVME *input, mafBaseEventHandler *listener = NULL, bool enableScaling = true, bool testMode = false);
+  mafGUITransformTextEntries(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener = NULL, bool enableScaling = true, bool testMode = false);
 	~mafGUITransformTextEntries() override; 
 
   void OnEvent(mafEventBase *maf_event) override;

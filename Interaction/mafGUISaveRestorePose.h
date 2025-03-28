@@ -51,7 +51,7 @@ public:
     ID_SCALE_GUI, 
   };
 
-  mafGUISaveRestorePose(mafVME *input, mafBaseEventHandler *listener = NULL , int typeGui = ID_POSE_GUI, bool testMode = false);
+  mafGUISaveRestorePose(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener = NULL , int typeGui = ID_POSE_GUI, bool testMode = false);
 	~mafGUISaveRestorePose() override; 
 
   /** Events handling */

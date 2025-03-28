@@ -55,13 +55,13 @@ class vtkAppendPolyData;
 class medGizmoCrossTranslateAxis: public mafGizmoInterface 
 {
 public:
-           medGizmoCrossTranslateAxis(mafVME *input, mafBaseEventHandler *listener = NULL);
+           medGizmoCrossTranslateAxis(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener = NULL);
            ~medGizmoCrossTranslateAxis() override; 
   
   /** 
   Set the gizmo generating vme; the gizmo will be centered on this vme*/
-  void SetInput(mafVME *vme) override; 
-  mafVME *GetInput() {return this->m_InputVme;};
+  void SetInput(std::shared_ptr<mafVME> vme) override;
+  mafVME *GetInput() {return this->m_InputVme.get();};
 
   //----------------------------------------------------------------------------
   // events handling 
@@ -128,7 +128,7 @@ protected:
   double m_LastColor[3];
 
   /** Translation feedback arrows gizmo*/
-  mafVMEGizmo *m_TranslationFeedbackGizmo;
+  std::shared_ptr<mafVMEGizmo> m_TranslationFeedbackGizmo;
 
   vtkConeSource *m_FeedbackConeSource;
 
@@ -157,7 +157,7 @@ protected:
   void SetRefSysMatrix(std::shared_ptr<mafMatrix> constrain);
   
   /** Register input vme*/
-  mafVME *m_InputVme;
+  std::shared_ptr<mafVME> m_InputVme;
 
   /** Register the gizmo axis */
   int m_Axis;

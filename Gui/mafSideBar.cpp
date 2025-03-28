@@ -195,7 +195,7 @@ void mafSideBar::VmeExpandVisible(mafNode *vme)
 }
 
 //----------------------------------------------------------------------------
-void mafSideBar::VmeAdd(mafNode *vme)
+void mafSideBar::VmeAdd(std::shared_ptr<mafNode> vme)
 //----------------------------------------------------------------------------
 {
 	m_Tree->VmeAdd(vme);

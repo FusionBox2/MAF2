@@ -93,7 +93,7 @@ protected:
   /** Create the Gui for the visual pipe that allow the user to change the pipe's parameters.*/
 	mafGUI  *CreateGui() override;
 
-	mafVMESurface            *m_IsosurfaceVme;
+	std::shared_ptr<mafVMESurface>            m_IsosurfaceVme;
 
   vtkMAFContourVolumeMapperGPU   *m_ContourMapper; 
 	vtkVolume                *m_Volume;

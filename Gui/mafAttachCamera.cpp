@@ -102,8 +102,8 @@ void mafAttachCamera::OnEvent(mafEventBase *maf_event)
       case ID_CAMERA_ATTACH:
         if(m_EnableAttachCamera)
         {
-          mafVME *sel_vme = mafVME::SafeDownCast(m_RenderWindow->m_Sg->GetSelectedVme());
-          if(sel_vme == NULL) 
+          auto sel_vme = mafVME::SafeDownCast(m_RenderWindow->m_Sg->GetSelectedVme());
+          if(!sel_vme) 
           {
             m_EnableAttachCamera = 0;
             m_Gui->Update();
@@ -113,7 +113,7 @@ void mafAttachCamera::OnEvent(mafEventBase *maf_event)
         }
         else
         {
-          SetVme(NULL);
+          SetVme(nullptr);
         }
       break;
     }

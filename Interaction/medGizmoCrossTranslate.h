@@ -56,12 +56,12 @@ public:
 
   enum NORMAL {X = 0, Y, Z};
 
-           medGizmoCrossTranslate(mafVME *input, mafBaseEventHandler* listener = NULL, bool BuildGUI = true, int normal = X);
+           medGizmoCrossTranslate(std::shared_ptr<mafVME> input, mafBaseEventHandler* listener = NULL, bool BuildGUI = true, int normal = X);
   ~medGizmoCrossTranslate() override; 
 
   /** 
   Set input vme for the gizmo*/
-  void SetInput(mafVME *vme) override; 
+  void SetInput(std::shared_ptr<mafVME> vme) override;
 
   /** Superclass override */
   void SetRenderWindowHeightPercentage(double percentage);

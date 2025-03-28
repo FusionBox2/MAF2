@@ -42,7 +42,7 @@ class MED_COMMON_EXPORT mafGizmoSlice : public mafGizmoInterface
 {
 public:
 
-	mafGizmoSlice(mafNode* inputVme, mafBaseEventHandler *Listener = NULL, const char *name = "GizmoSlice", bool inverseHandle = false, double centralClipfactor = 0);
+	mafGizmoSlice(std::shared_ptr<mafNode> inputVme, mafBaseEventHandler *Listener = NULL, const char *name = "GizmoSlice", bool inverseHandle = false, double centralClipfactor = 0);
 
 	~mafGizmoSlice() override;
 
@@ -51,7 +51,7 @@ public:
   void Show(bool show) override;
 
   /** This method is used to change the input vme */
-  void SetInput(mafVME *vme) override;
+  void SetInput(std::shared_ptr<mafVME> vme) override;
 
   /** Set the gizmo color */
   void SetColor(double col[3]);
@@ -96,7 +96,7 @@ public:
 
 protected:
 
-  void CreateGizmoSlice(mafNode *imputVme, mafBaseEventHandler *listener, const char *name, bool inverseHandle, double centralClipfactor);
+  void CreateGizmoSlice(std::shared_ptr<mafNode> imputVme, mafBaseEventHandler *listener, const char *name, bool inverseHandle, double centralClipfactor);
 
   void DestroyGizmoSlice();
 
@@ -108,7 +108,7 @@ protected:
 
   mafString           m_Name;
   long                m_Id;
-  mafVMEGizmo        *m_VmeGizmo;
+  std::shared_ptr<mafVMEGizmo> m_VmeGizmo;
   std::shared_ptr<mafInteractorCompositorMouse> m_GizmoBehavior;
 	vtkDoubleArray     *m_SnapArray;
 

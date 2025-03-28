@@ -166,14 +166,15 @@ void mafGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
       {
         bool pipe_created = false;
         bool mutex = false;
-			  mafVME *vme = (mafVME *)((mafViewVTK *)m_ViewActive)->GetSceneGraph()->GetSelectedVme();
+        auto graph = ((mafViewVTK*)m_ViewActive)->GetSceneGraph();
+        auto vme = mafVME::StaticDownCast(graph->Vme2Node(graph->GetSelectedVme())->m_Vme);
 			  if(vme->IsMAFType(mafVMELandmark))
 				  vme = vme->GetParent();
 
         mafSceneGraph *sg = ((mafViewVTK *)m_ViewActive)->GetSceneGraph();
         if(sg)
         {
-          mafSceneNode *sn = sg->Vme2Node(vme);
+          mafSceneNode *sn = sg->Vme2Node(vme.get());
           if(sn)
           {
             pipe_created = (sn->m_Pipe != NULL);
@@ -181,7 +182,7 @@ void mafGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
           }
         } 
         if(pipe_created && mutex) 
-          m_ViewActive->VmeDeletePipe(vme);
+          m_ViewActive->VmeDeletePipe(vme.get());
         {mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(vme); evUnq.SetBool(false); InvokeEvent(evUnq);}
 			}
 		}
@@ -189,10 +190,9 @@ void mafGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
     case CONTEXTUAL_MENU_VME_PIPE:
     {
       mafSceneGraph *sg = m_ViewActive->GetSceneGraph();
-      mafVME *vme = NULL;
       if(sg)
       {
-        vme = (mafVME *)sg->GetSelectedVme();
+        auto vme = mafVME::StaticDownCast(sg->GetSelectedVme());
         mafSceneNode *sn = sg->Vme2Node(vme);
         if (sn)
         {

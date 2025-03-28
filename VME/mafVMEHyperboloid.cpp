@@ -181,8 +181,7 @@ void mafVMEHyperboloid::OnEvent(mafEventBase *maf_event)
 								  
 				  e->SetString(&title);
 				  ForwardUpEvent(e);
-				  mafNode *n = e->GetVme();
-				  if (n != NULL)
+				  if (auto n = e->GetVme())
 					  {
 
 					  mafTimeStamp currTs = GetTimeStamp();
@@ -191,7 +190,7 @@ void mafVMEHyperboloid::OnEvent(mafEventBase *maf_event)
 
 					  initvme = 1;
 
-					  SetCenterLink(_R("centerLandmark"), n);
+					  SetCenterLink(_R("centerLandmark"), n.get());
 					  m_LandmarkName = n->GetName();
 
 					  center_vme = GetCenterVME();
@@ -650,7 +649,7 @@ void mafVMEHyperboloid::SetCenterLink(const mafString& link_name, mafNode *n)
 	//Sleep(1500);
 	if (n->IsMAFType(mafVMELandmark))
 	{
-		SetLink(link_name, n->GetParent(), ((mafVMELandmarkCloud *)n->GetParent())->FindLandmarkIndex(n->GetName()));
+		SetLink(link_name, n->GetParent().get(), mafVMELandmarkCloud::StaticDownCast(n->GetParent())->FindLandmarkIndex(n->GetName()));
 	
 	}
 	else

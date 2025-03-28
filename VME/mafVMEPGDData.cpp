@@ -64,7 +64,7 @@ mafVMEPGDData::mafVMEPGDData()
 //----------------------------------------------------------------------------
 {
   m_DefaultRadius = 15;
-  mafNEW(m_PGD_DLCloud);
+  m_PGD_DLCloud = mafVMELandmarkCloud::NewSPtr();
   m_PGD_DLCloud->SetRadius(m_DefaultRadius);
   m_PGD_DLCloud->SetDefaultVisibility(0);  //modified by Marco. 3-10-2003
 
@@ -74,7 +74,7 @@ mafVMEPGDData::mafVMEPGDData()
 mafVMEPGDData::~mafVMEPGDData()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_PGD_DLCloud);
+  m_PGD_DLCloud.reset();
 }
 
 //----------------------------------------------------------------------------
@@ -213,11 +213,11 @@ int mafVMEPGDData::Read()
         sprintf(tmpstring, "%s", SegmentName);
 
         //Search for segment [Side|SegmentName] in VME
-        if	(NULL == (TmpVMEFound =  mafVME::SafeDownCast(FindInTreeByName(_R(tmpstring)))))
+        if	(NULL == (TmpVMEFound =  mafVME::SafeDownCast(FindInTreeByName(_R(tmpstring))).get()))
         {	
           //if the segment does not exist then create its VME	
 
-          mafVMELandmarkCloud * TmpVME = mafVMELandmarkCloud::New();
+          auto TmpVME = mafVMELandmarkCloud::NewSPtr();
 
           //modified by Vladik: 8-03-2005
           //TmpVME->Open();
@@ -242,7 +242,7 @@ int mafVMEPGDData::Read()
         else 
           //If the segment already exists append points
         {
-          if (mafVMELandmarkCloud * TmpVME = mafVMELandmarkCloud::SafeDownCast(TmpVMEFound))
+          if (auto TmpVME = mafVMELandmarkCloud::SafeDownCast(TmpVMEFound))
           {
             //modified by Vladik: 8-03-2005
             TmpVME->AppendLandmark(X,Y,Z,_R(LandmarkName));
@@ -286,23 +286,22 @@ int mafVMEPGDData::Read()
     ///// End workaround /////
 
     //find the segment in VMETree
-    TmpVMEFound =  mafVME::SafeDownCast(FindInTreeByName(_R(CurrentSegmentName)));
+    TmpVMEFound =  mafVME::SafeDownCast(FindInTreeByName(_R(CurrentSegmentName))).get();
 
     // check if TmpVMEFound is NULL, and in that case create a new one
-    if (TmpVMEFound == NULL) 
+    if (TmpVMEFound == nullptr) 
     {
 
-      mafVMELandmarkCloud *TmpVME = mafVMELandmarkCloud::New();
+      auto TmpVME = mafVMELandmarkCloud::NewSPtr();
       TmpVME->SetName(_R(CurrentSegmentName));
 
       mafTagItem *v_ti = new mafTagItem(_R("visible"), 0.0);
       TmpVME->GetTagArray()->SetTag(*v_ti);
-      TmpVMEFound=TmpVME;       
+      TmpVMEFound=TmpVME.get();       
       AddChild(TmpVME);
 
-      TmpVMEFound=TmpVME;
+      TmpVMEFound=TmpVME.get();
 
-      TmpVME->Delete();
       delete v_ti;
     }
     vtkTransform * tmpTransform = vtkTransform::New();

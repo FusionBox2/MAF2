@@ -111,7 +111,7 @@ protected:
 
   mafNode* m_CurrentVolume;           //<currently selected volume	
   mafNode* m_CurrentPolyLine;         //<currently selected polyline
-  mafNode* m_CurrentPolyLineGizmo;    //<VME accepted by gizmo
+  std::shared_ptr<mafNode> m_CurrentPolyLineGizmo;    //<VME accepted by gizmo
 
   double   m_OldPos[3];				//<Old Pose for 3D navigation
 
@@ -144,12 +144,12 @@ public:
   /*virtual*/ void VmeShow(mafNode *node, bool show) override;
 
   /** return the current pipe for the specified vme (if any exist at this moment) */
-  /*virtual*/ std::shared_ptr<mafPipe> GetNodePipe(mafNode *vme) override;
+  /*virtual*/ std::shared_ptr<mafPipe> GetNodePipeI(mafNode *vme) override;
 
   /** 
   return the status of the node within this view. es: NON_VISIBLE,VISIBLE_ON, ... 
   having mafViewCompound::GetNodeStatus allow mafGUICheckTree to not know about mafSceneGraph */
-  /*virtual*/ int  GetNodeStatus(mafNode *vme) override;
+  /*virtual*/ int  GetNodeStatusI(mafNode *vme) override;
 
   /** 
   Create visual pipe and initialize them to build an SliceOnCurve visualization */
@@ -233,7 +233,7 @@ protected:
   virtual void PlugPolylinePipe();
 
   /** creates the gizmo path for the given node */
-  virtual void CreateGizmo(mafNode* node);
+  virtual void CreateGizmo(std::shared_ptr<mafNode> node);
 
   /** destroys the gizmo */
   virtual void DestroyGizmo();	

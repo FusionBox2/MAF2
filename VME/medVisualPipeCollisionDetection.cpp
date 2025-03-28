@@ -220,13 +220,13 @@ void medVisualPipeCollisionDetection::OnEvent(mafEventBase *maf_event)
         e->SetString(&title);
         e->SetId(VME_CHOOSE);
         InvokeEvent(*e);
-        mafVME *surfaceTMP = mafVME::SafeDownCast(e->GetVme());
+        auto surfaceTMP = mafVME::SafeDownCast(e->GetVme());
         //if not surface has been selected
-        if (surfaceTMP == NULL)
+        if (surfaceTMP == nullptr)
         {
           return;
         }
-        AddSurfaceToCollide(surfaceTMP);
+        AddSurfaceToCollide(surfaceTMP.get());
         return;
       }
       break;
@@ -238,13 +238,13 @@ void medVisualPipeCollisionDetection::OnEvent(mafEventBase *maf_event)
         e->SetString(&title);
         e->SetId(VME_CHOOSE);
         InvokeEvent(*e);
-        mafVME *surfaceTMP = mafVME::SafeDownCast(e->GetVme());
+        auto surfaceTMP = mafVME::SafeDownCast(e->GetVme());
         //if not surface has been selected
-        if (surfaceTMP == NULL)
+        if (surfaceTMP == nullptr)
         {
           return;
         }
-        SetSurfaceToCollide(surfaceTMP);
+        SetSurfaceToCollide(surfaceTMP.get());
         return;
       }
       break;

@@ -84,7 +84,7 @@ public:
   virtual void SetDevice(mafDevice *);
 
   /** Set the node to be transformed */
-  virtual void SetVME(mafVME *vme);
+  virtual void SetVME(std::shared_ptr<mafVME> vme);
 
   /** Set the prop to be transformed (optional and to be removed!!!)*/
   void SetProp(vtkProp3D *prop);
