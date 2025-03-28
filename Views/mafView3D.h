@@ -89,7 +89,7 @@ public:
 
 	/** 
 	Set the visualization status for the node (visible, not visible, mutex, ...) \sa mafSceneGraph mafView*/
-  int GetNodeStatus(mafNode *vme) override;
+  int GetNodeStatusI(mafNode *vme) override;
 
   double GetContourValue(){return m_ContourValueIso;};
   void SetContourValue(double value){m_ContourValueIso = value; mafEvent ev(this,ID_CONTOUR_VALUE_ISO);OnEvent(&ev);};

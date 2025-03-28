@@ -109,10 +109,10 @@ void mafInteractor::SetRenderer(vtkRenderer *ren)
   m_Renderer = ren;
 }
 //------------------------------------------------------------------------------
-void mafInteractor::SetVME(mafVME *vme)
+void mafInteractor::SetVME(std::shared_ptr<mafVME> vme)
 //------------------------------------------------------------------------------
 {
-  m_VME=vme;
+  m_VME=vme.get();
 }
 
 //------------------------------------------------------------------------------

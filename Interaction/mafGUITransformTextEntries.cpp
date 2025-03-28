@@ -26,7 +26,7 @@
 
 #include "mafGUITransformTextEntries.h"
 #include "mafDecl.h"
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 #include "mafTransformFrame.h"
 
 #include "mafGUI.h"
@@ -43,7 +43,7 @@
 #include "vtkMatrix4x4.h"
 
 //----------------------------------------------------------------------------
-mafGUITransformTextEntries::mafGUITransformTextEntries(mafVME *input, mafBaseEventHandler *listener, bool enableScaling, bool testMode)
+mafGUITransformTextEntries::mafGUITransformTextEntries(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener, bool enableScaling, bool testMode)
 //----------------------------------------------------------------------------
 {
   assert(input);
@@ -54,7 +54,7 @@ mafGUITransformTextEntries::mafGUITransformTextEntries(mafVME *input, mafBaseEve
   m_InputVME = input;
   m_Gui = NULL;
   
-  m_RefSysVME = m_InputVME;
+  m_RefSysVME = m_InputVME.get();
 
   m_Position[0] = m_Position[1] = m_Position[2] = 0;
   m_Orientation[0] = m_Orientation[1] = m_Orientation[2] = 0;
@@ -158,7 +158,7 @@ void mafGUITransformTextEntries::EnableWidgets(bool enable)
 void mafGUITransformTextEntries::Reset()
 //----------------------------------------------------------------------------
 {
-  SetRefSys(m_InputVME);
+  SetRefSys(m_InputVME.get());
   SetAbsPose(*m_InputVME->GetOutput()->GetAbsMatrix());
   m_Scaling[0] = m_Scaling[1] = m_Scaling[2] = 1;
   m_Gui->Update();

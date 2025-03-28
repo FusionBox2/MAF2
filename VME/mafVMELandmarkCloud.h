@@ -99,10 +99,10 @@ public:
   int GetLandmarksPosVis(const int* idx, int numpnts, double* pnts, int *vis, mafTimeStamp t = -1);
 
   /** Find the index of a landmark given its name. This only works when cloud is OPEN*/
-  mafVMELandmark *GetLandmark(const mafString& name);
+  std::shared_ptr<mafVMELandmark> GetLandmark(const mafString& name);
 
   /** Get the landmark by index. This only works when cloud is OPEN*/
-  mafVMELandmark *GetLandmark(int idx);
+  std::shared_ptr<mafVMELandmark> GetLandmark(int idx);
 
   /** Return the position of the landmark number 'idx' at the timestamp t.*/
   void GetLandmarkPosition(int idx, double pos[3], mafTimeStamp t=-1);

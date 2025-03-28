@@ -94,7 +94,7 @@ mafVMEGravityLine::mafVMEGravityLine()
 	m_PlaneVmeName = _R("");
 	mafString gLength = _R("");
 
-	mafNEW(parallelPlane);
+	parallelPlane = mafVMEPlane::NewSPtr();
 	parallelPlane->SetName(_R("parallelPlane"));
 	
 	parallelPlane->ReparentTo(this);
@@ -104,7 +104,7 @@ mafVMEGravityLine::mafVMEGravityLine()
 
 
 
-  mafNEW(m_Cloud2);
+  m_Cloud2 = mafVMELandmarkCloud::NewSPtr();
 
   m_Cloud2->Open();
   m_Cloud2->SetName(_L("computed_points"));
@@ -401,15 +401,14 @@ void mafVMEGravityLine::OnEvent(mafEventBase *maf_event)
 						  //e->SetArg((long)&mafVMEPlane::VMEAccept);
 						  e->SetString(&title);
 						  ForwardUpEvent(e);
-						  mafNode *n = e->GetVme();
-						  if (n != NULL)
+						  if (auto n = e->GetVme())
 						  {
 
-							  SetPlaneLink(_R("PlaneVME"), n);
+							  SetPlaneLink(_R("PlaneVME"), n.get());
 							  m_PlaneVmeName = n->GetName();
 							  
 							  if (n->IsMAFType(mafVMEPlane))
-								  plan = (mafVMEPlane*)n;
+								  plan = mafVMEPlane::StaticDownCast(n).get();
 
 							  m_Gui->Update();
 
@@ -427,14 +426,13 @@ void mafVMEGravityLine::OnEvent(mafEventBase *maf_event)
 								// e->SetArg((long)&mafVMESurface::VMEAccept);
 								 e->SetString(&title);
 								 ForwardUpEvent(e);
-								 mafNode *n = e->GetVme();
-								 if (n != NULL)
+								 if (auto n = e->GetVme())
 								 {
 									
-										 SetSurfaceLink(_R("SurfaceVME"), n);
+										 SetSurfaceLink(_R("SurfaceVME"), n.get());
 										 m_SurfaceName = n->GetName();
 										 if (n->IsMAFType(mafVMESurface))
-											 surface = (mafVMESurface*)n;
+											 surface = mafVMESurface::StaticDownCast(n).get();
 										 
 					
 									 	 
@@ -457,12 +455,11 @@ void mafVMEGravityLine::OnEvent(mafEventBase *maf_event)
 
 	  e->SetString(&title);
 	 ForwardUpEvent(e);
-	  mafNode *n = e->GetVme();
-	  if (n != NULL)
+	  if (auto n = e->GetVme())
 	  {
 
 		  //p0 = (mafVMELandmark*)n;
-		  SetLandmarkLink(_R("P0Landmark"), n);
+		  SetLandmarkLink(_R("P0Landmark"), n.get());
 		  m_P0LandmarkName = n->GetName();
 
 		  m_Gui->Update();
@@ -578,8 +575,8 @@ void mafVMEGravityLine::InternalUpdate()
 
 		mafMatrix tm;
 		auto m_TmpTransform = mafTransform::NewSPtr();
-		((mafVMELandmark*) P0)->GetPoint(m_Point1, currTs);
-		((mafVMELandmarkCloud *)P0->GetParent())->GetOutput()->GetAbsMatrix(tm, currTs);
+		mafVMELandmark::StaticDownCast(P0)->GetPoint(m_Point1, currTs);
+		mafVMELandmarkCloud::StaticDownCast(P0->GetParent())->GetOutput()->GetAbsMatrix(tm, currTs);
 		m_TmpTransform->SetMatrix(tm);
 		m_TmpTransform->TransformPoint(m_Point1, m_Point1);
 		
@@ -701,7 +698,7 @@ void mafVMEGravityLine::InternalUpdate()
 		
 		m_Cloud2->SetLandmark(_R("parallelPlanePt1"), point[0] + vectAdded[0], point[01] + vectAdded[01], point[02] + vectAdded[02], currTs);
 		parallelPlane->setPoint1(point[0], point[01], point[2]);
-		parallelPlane->SetLandmarkLink(_R("first_Point"), m_Cloud2->GetLandmark(_R("parallelPlanePt1")));
+		parallelPlane->SetLandmarkLink(_R("first_Point"), m_Cloud2->GetLandmark(_R("parallelPlanePt1")).get());
 		parallelPlane->Setm_p1LName(_R("parallelPlanePt1"));
 
 		plan->getPoint2(point);
@@ -709,7 +706,7 @@ void mafVMEGravityLine::InternalUpdate()
 				
 		m_Cloud2->SetLandmark(_R("parallelPlanePt2"), point[0] + vectAdded[0], point[01] + vectAdded[01], point[02] + vectAdded[02], currTs);
 		parallelPlane->setPoint2(point[0],point[1],point[2]);
-		parallelPlane->SetLandmarkLink(_R("second_Point"), m_Cloud2->GetLandmark(_R("parallelPlanePt2")));
+		parallelPlane->SetLandmarkLink(_R("second_Point"), m_Cloud2->GetLandmark(_R("parallelPlanePt2")).get());
 		parallelPlane->Setm_p2LName(_R("parallelPlanePt2"));
 
 
@@ -718,7 +715,7 @@ void mafVMEGravityLine::InternalUpdate()
 		
 		m_Cloud2->SetLandmark(_R("parallelPlanePt3"), point[0] + vectAdded[0], point[01] + vectAdded[1], point[02] + vectAdded[02], currTs);
 		parallelPlane->setPoint3(point[0],point[1],point[2]);
-		parallelPlane->SetLandmarkLink(_R("third_Point"), m_Cloud2->GetLandmark(_R("parallelPlanePt3")));
+		parallelPlane->SetLandmarkLink(_R("third_Point"), m_Cloud2->GetLandmark(_R("parallelPlanePt3")).get());
 		parallelPlane->Setm_p3LName(_R("parallelPlanePt3"));
 
 		parallelPlane->UpdateLinks();
@@ -877,7 +874,7 @@ void mafVMEGravityLine::InternalUpdate()
 			parallelPlane->setPoint1(point[0], point[1], point[2]);
 
 			
-				parallelPlane->SetLandmarkLink(_R("first_Point"), m_Cloud2->GetLandmark(_R("parallelPlanePt1")));
+				parallelPlane->SetLandmarkLink(_R("first_Point"), m_Cloud2->GetLandmark(_R("parallelPlanePt1")).get());
 				parallelPlane->Setm_p1LName(_R("parallelPlanePt1"));
 
 				
@@ -886,7 +883,7 @@ void mafVMEGravityLine::InternalUpdate()
 				
 				m_Cloud2->SetLandmark(_R("parallelPlanePt2"), point[0] + vectAdded[0], point[01] + vectAdded[1], point[02] + vectAdded[2], currTs);
 			parallelPlane->setPoint2(point[0], point[01], point[02]);
-				parallelPlane->SetLandmarkLink(_R("second_Point"), m_Cloud2->GetLandmark(_R("parallelPlanePt2")));
+				parallelPlane->SetLandmarkLink(_R("second_Point"), m_Cloud2->GetLandmark(_R("parallelPlanePt2")).get());
 				parallelPlane->Setm_p2LName(_R("parallelPlanePt2"));
 			
 
@@ -895,7 +892,7 @@ void mafVMEGravityLine::InternalUpdate()
 			
 				m_Cloud2->SetLandmark(_R("parallelPlanePt3"), point[0] + vectAdded[0], point[01] + vectAdded[1], point[02] + vectAdded[2], currTs);
 				parallelPlane->setPoint3(point[0], point[01], point[02]);
-				parallelPlane->SetLandmarkLink(_R("third_Point"), m_Cloud2->GetLandmark(_R("parallelPlanePt3")));
+				parallelPlane->SetLandmarkLink(_R("third_Point"), m_Cloud2->GetLandmark(_R("parallelPlanePt3")).get());
 				parallelPlane->Setm_p3LName(_R("parallelPlanePt3"));
 				m_Cloud2->Update();
 
@@ -1023,7 +1020,7 @@ void mafVMEGravityLine::SetLandmarkLink(const mafString& link_name, mafNode *n)
 	
 	if (n->IsMAFType(mafVMELandmark))
 	{
-		SetLink(link_name, n, ((mafVMELandmarkCloud *)(n->GetParent()))->FindLandmarkIndex(n->GetName()));
+		SetLink(link_name, n, mafVMELandmarkCloud::StaticDownCast(n->GetParent())->FindLandmarkIndex(n->GetName()));
 	}
 	else
 		SetLink(link_name, NULL);
@@ -1088,7 +1085,7 @@ void mafVMEGravityLine::UpdateLinks()
 	if (P0 && P0->IsMAFType(mafVMELandmark))
 	{
 		sub_id = GetLinkSubId(_R("P0Landmark"));
-		m_P0LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)P0->GetParent())->GetLandmarkName(sub_id) : _L("none");
+		m_P0LandmarkName = (sub_id != -1) ? mafVMELandmarkCloud::StaticDownCast(P0->GetParent())->GetLandmarkName(sub_id) : _L("none");
 		//wxBusyInfo wait0012("landmark link  ok");
 		//Sleep(1500);
 	}

@@ -69,21 +69,21 @@ void mafNodeManager::OnEvent(mafEventBase *maf_event)
 }
 
 //----------------------------------------------------------------------------
-mafNode *mafNodeManager::GetRoot()
+std::shared_ptr<mafNode> mafNodeManager::GetRoot()
 //----------------------------------------------------------------------------
 {
-  return m_Root.get();
+  return m_Root;
 }
 
 //----------------------------------------------------------------------------
-bool mafNodeManager::SetRoot(mafNode *root)
+bool mafNodeManager::SetRoot(std::shared_ptr<mafNode> root)
 //----------------------------------------------------------------------------
 {
   NotifyRemove(m_Root.get());
-  if(mafRoot *rt = mafRoot::SafeDownCast(GetRoot()))
-    rt->SetListener(NULL);
+  if(mafRoot *rt = mafRoot::SafeDownCast(GetRoot().get()))
+    rt->SetListener(nullptr);
   m_Root = root;
-  if(mafRoot *rt = mafRoot::SafeDownCast(GetRoot()))
+  if(mafRoot *rt = mafRoot::SafeDownCast(GetRoot().get()))
     rt->SetListener(this);
   NotifyAdd(m_Root.get());
   return true;
@@ -92,16 +92,16 @@ bool mafNodeManager::SetRoot(mafNode *root)
 void mafNodeManager::VmeAdd(mafNode *n)
 //----------------------------------------------------------------------------
 {
-  if(n == NULL)
+  if(n == nullptr)
     return ;
   // check the node's parent
-  mafNode *vp = n->GetParent();  
-  if(vp != NULL && !m_Root->IsInTree(vp))
+  auto vp = n->GetParent();  
+  if(vp && !m_Root->IsInTree(vp.get()))
   {
     assert(false);
     return;
   }
-  if(vp == NULL) 
+  if(vp == nullptr) 
     n->ReparentTo(m_Root.get()); // reparent the node to the root
   m_Modified = true;
 }
@@ -109,7 +109,7 @@ void mafNodeManager::VmeAdd(mafNode *n)
 void mafNodeManager::VmeRemove(mafNode *n)
 //----------------------------------------------------------------------------
 {
-  if(n == NULL)
+  if(n == nullptr)
     return ;
   if(!m_Root.get() || !m_Root->IsInTree(n))
   {
@@ -126,7 +126,7 @@ void mafNodeManager::NotifyRemove(mafNode *n)
   auto iter = n->NewIterator();
   iter->IgnoreVisibleToTraverse(true); // ignore visible to traverse flag and visits all nodes
   iter->SetTraversalModeToPostOrder(); // traverse is: first the subtree left to right, then the root
-  for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+  for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
 		{mafEvent evUnq(this,VME_REMOVING); evUnq.SetVme(node); InvokeEvent(evUnq);} // raise notification event (to logic)
 }
 //----------------------------------------------------------------------------
@@ -135,7 +135,7 @@ void mafNodeManager::NotifyAdd(mafNode *n)
 {
   auto iter = n->NewIterator();
   iter->IgnoreVisibleToTraverse(true); // ignore visible to traverse flag and visits all nodes
-  for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+  for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {
     {mafEvent evUnq(this,VME_ADDED); evUnq.SetVme(node); InvokeEvent(evUnq);} // raise notification event (to logic)
   }
@@ -158,23 +158,12 @@ void mafNodeManager::InternalRestore(const mafStorageElement& node)
 //-------------------------------------------------------
 {
   // here should restore elements specific for the document
-  SetRoot(NULL);
-  mafNode* obj = node[_R("Root")].As<mafNode>();
-  if(obj == nullptr)//(node[_R("Root")].RestoreObject(obj) != MAF_OK)
-    return; 
-  mafReferenceCounted *rc = mafReferenceCounted::SafeDownCast(obj);
-  if(!rc)
+  SetRoot(nullptr);
+  if (auto root = node[_R("Root")].As<mafNode>())
   {
-    obj->Delete();
-    return;
-  }
-  mafAutoPointer<mafReferenceCounted> arc = rc;
-  mafNode *root = mafNode::SafeDownCast(obj);
-  if(root)
-  {
-    if(root->Initialize() == MAF_ERROR)
+    if (root->Initialize() == MAF_ERROR)
       return;
+    SetRoot(root);
   }
-  SetRoot(root);
 }
 

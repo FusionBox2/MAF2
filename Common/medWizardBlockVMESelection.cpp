@@ -67,7 +67,7 @@ void medWizardBlockVMESelection::ExcutionBegin()
   e.SetArg((intptr_t)(&VMEAccept)); 
   // accept only Specified VME
   InvokeEvent(e);
-  selVME=e.GetVme();
+  selVME=e.GetVme().get();
 
   if(selVME)
   {

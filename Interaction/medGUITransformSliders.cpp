@@ -26,7 +26,7 @@
 
 #include "medGUITransformSliders.h"
 #include "mafDecl.h"
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 #include "mafTransformFrame.h"
 
 #include "mafGUI.h"
@@ -44,7 +44,7 @@
 #include "vtkMatrix4x4.h"
 
 //----------------------------------------------------------------------------
-medGUITransformSliders::medGUITransformSliders(mafVME *input, double translationRange[6], mafBaseEventHandler *listener /* = NULL */, bool enableScaling /* = true */,bool testMode /* = false */)
+medGUITransformSliders::medGUITransformSliders(std::shared_ptr<mafVME> input, double translationRange[6], mafBaseEventHandler *listener /* = NULL */, bool enableScaling /* = true */,bool testMode /* = false */)
 //----------------------------------------------------------------------------
 {
   assert(input);
@@ -56,7 +56,7 @@ medGUITransformSliders::medGUITransformSliders(mafVME *input, double translation
   m_Gui = NULL;
   m_TestMode = testMode;
 
-  m_RefSysVME = m_InputVME;
+  m_RefSysVME = m_InputVME.get();
 
   m_Position[0] = m_Position[1] = m_Position[2] = 0;
   m_Orientation[0] = m_Orientation[1] = m_Orientation[2] = 0;

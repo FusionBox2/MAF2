@@ -43,7 +43,7 @@ public:
 	//virtual void	OnEvent(mafEvent& e);
 
 	/** Add a vme to the scene graph. */
-	virtual void VmeAdd(mafNode *vme);
+	virtual void VmeAdd(std::shared_ptr<mafNode> vme);
 
 	/** Remove a vme from the scene graph. */
 	virtual void VmeRemove(mafNode *vme);
@@ -71,7 +71,7 @@ public:
 	virtual mafSceneNode *Vme2Node(mafNode *vme);
 
   /** Return the list of node that are added to the view.*/
-  mafSceneNode *GetNodeList() {return m_List;};
+  mafSceneNode *GetNodeList() {return m_List;}
 
   vtkRenderer   *m_RenFront;  ///< pointer to the front renderer
   vtkRenderer   *m_RenBack;   ///< pointer to the back renderer
@@ -123,7 +123,7 @@ protected:
 	mafNode  *m_shown_mutex_vme[NUM_OF_BASETYPE];
 */
 
-	mafSceneNode *NodeAdd(mafNode *vme);
+	mafSceneNode *NodeAdd(std::shared_ptr<mafNode> vme);
 
   mafSceneNode *m_List;      ///< list of visualized node
 	mafGUI			 *m_Gui;

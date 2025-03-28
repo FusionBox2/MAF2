@@ -22,7 +22,7 @@
 //----------------------------------------------------------------------------
 #include "mafEvent.h"
 #include "mafGizmoInterface.h"
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 
 //----------------------------------------------------------------------------
 // forward references :
@@ -47,12 +47,12 @@ class vtkTransform;
 class MAF_EXPORT mafGizmoRotateCircle: public mafGizmoInterface
 {
 public:
-           mafGizmoRotateCircle(mafVME *input, mafBaseEventHandler *listener = NULL, mafString name = _R("Circle"));
+           mafGizmoRotateCircle(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener = NULL, mafString name = _R("Circle"));
            ~mafGizmoRotateCircle() override; 
   
    /** 
   Set the gizmo generating vme; the gizmo will be centered on this vme*/
-  void SetInput(mafVME *vme) override; 
+  void SetInput(std::shared_ptr<mafVME> vme) override;
   mafVME *GetInput();
 
   //----------------------------------------------------------------------------
@@ -127,7 +127,7 @@ protected:
   mafVMEGizmo *m_GizmoCircle;
 
   /** Register input vme*/
-  mafVME *m_InputVme;
+  std::shared_ptr<mafVME> m_InputVme;
 
   /**
 

@@ -63,7 +63,7 @@ public:
   /** 
   Set the visualization status for the node (visible, not visible, mutex, ...) 
   \sa mafSceneGraph mafView*/
-  int GetNodeStatus(mafNode *vme) override;
+  int GetNodeStatusI(mafNode *vme) override;
 
 	/** Create visual pipe and initialize them to build an OrthoSlice visualization */
   void PackageView() override;

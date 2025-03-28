@@ -26,7 +26,7 @@
 #include "mafVMELandmark.h"
 #include "mafVMELandmarkCloud.h"
 #include "mafVMEOutputPointSet.h"
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 #include "mafDataPipeCustom.h"
 #include "mafOBB.h"
 #include "mafIndent.h"
@@ -168,8 +168,7 @@ bool mafVMELandmark::CanReparentTo(mafNode *parent)
 void mafVMELandmark::SetRadius(double rad)
 //-------------------------------------------------------------------------
 {
-  mafVMELandmarkCloud *parent = mafVMELandmarkCloud::SafeDownCast(this->GetParent());
-  if (parent)
+  if (auto parent = mafVMELandmarkCloud::SafeDownCast(this->GetParent()))
   {
     parent->SetRadius(rad);
   }
@@ -179,23 +178,18 @@ void mafVMELandmark::SetRadius(double rad)
 double mafVMELandmark::GetRadius()
 //-------------------------------------------------------------------------
 {
-  mafVMELandmarkCloud *parent = mafVMELandmarkCloud::SafeDownCast(this->GetParent());
-  if (parent)
+  if (auto parent = mafVMELandmarkCloud::SafeDownCast(this->GetParent()))
   {
     return parent->GetRadius();
   }
-  else
-  {
-    return -1;
-  }
+	return -1;
 }
 
 //-------------------------------------------------------------------------
 void mafVMELandmark::SetSphereResolution(int res)
 //-------------------------------------------------------------------------
 {
-  mafVMELandmarkCloud *parent = mafVMELandmarkCloud::SafeDownCast(this->GetParent());
-  if (parent)
+  if (auto parent = mafVMELandmarkCloud::SafeDownCast(this->GetParent()))
   {
     parent->SetSphereResolution(res);
   }
@@ -205,15 +199,11 @@ void mafVMELandmark::SetSphereResolution(int res)
 int mafVMELandmark::GetSphereResolution()
 //-------------------------------------------------------------------------
 {
-  mafVMELandmarkCloud *parent = mafVMELandmarkCloud::SafeDownCast(this->GetParent());
-  if (parent)
+  if (auto parent = mafVMELandmarkCloud::SafeDownCast(this->GetParent()))
   {
     return parent->GetSphereResolution();
   }
-  else
-  {
-    return -1;
-  }
+	return -1;
 }
 
 //-------------------------------------------------------------------------

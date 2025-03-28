@@ -80,12 +80,12 @@ class mafMatrix;
 class MAF_EXPORT mafGizmoTranslate : public mafGizmoInterface 
 {
 public:
-           mafGizmoTranslate(mafVME *input, mafBaseEventHandler* listener = NULL, bool BuildGUI = true);
+           mafGizmoTranslate(std::shared_ptr<mafVME> input, mafBaseEventHandler* listener = NULL, bool BuildGUI = true);
            ~mafGizmoTranslate() override; 
 
   /** 
   Set input vme for the gizmo*/
-  void SetInput(mafVME *vme) override; 
+  void SetInput(std::shared_ptr<mafVME> vme) override;
 
   /** Superclass override */
   void SetRenderWindowHeightPercentage(double percentage);

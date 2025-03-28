@@ -19,7 +19,7 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafMatrixPipe.h"
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 
 //----------------------------------------------------------------------------
 // forward declarations

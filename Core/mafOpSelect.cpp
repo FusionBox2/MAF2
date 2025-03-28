@@ -16,7 +16,7 @@
 //initialize the Clipboard
 // mafAutoPointer<mafNode>  mafOpEdit::m_Clipboard(NULL);
 
-static mafAutoPointer<mafNode> m_Clipboard = NULL;
+static std::shared_ptr<mafNode> m_Clipboard;
 int  mafOpEdit::m_NumOperations(0); 
 
 //////////////////
@@ -28,8 +28,6 @@ mafOpSelect::mafOpSelect(const mafString& label) : Superclass(label)
 {
   m_Canundo = true; 
   m_OpType  = OPTYPE_EDIT; 
-  m_NewNodeSelected = NULL;
-  m_OldNodeSelected = NULL;
 }
 //----------------------------------------------------------------------------
 mafOpSelect::~mafOpSelect()
@@ -52,7 +50,7 @@ bool mafOpSelect::Accept(mafNode* vme)
   return true;
 }
 //----------------------------------------------------------------------------
-void mafOpSelect::SetNewSel(mafNode* vme)  
+void mafOpSelect::SetNewSel(std::shared_ptr<mafNode> vme)
 //----------------------------------------------------------------------------
 {
   m_NewNodeSelected = vme;
@@ -63,13 +61,13 @@ void mafOpSelect::OpDo()
 {
   if (m_OldNodeSelected == nullptr)
     m_OldNodeSelected = GetInput();
-  {mafEvent evUnq(this,VME_SELECTED); evUnq.SetVme(m_NewNodeSelected.get()); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SELECTED); evUnq.SetVme(m_NewNodeSelected); InvokeEvent(evUnq);}
 };
 //----------------------------------------------------------------------------
 void mafOpSelect::OpUndo()
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this,VME_SELECTED); evUnq.SetVme(m_OldNodeSelected.get()); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SELECTED); evUnq.SetVme(m_OldNodeSelected); InvokeEvent(evUnq);}
 };
 
 
@@ -77,12 +75,11 @@ void mafOpSelect::OpUndo()
 // mafOpEdit: //
 ////////////////
 //----------------------------------------------------------------------------
-mafOpEdit::mafOpEdit(const mafString& label): Superclass(label), m_Backup(NULL)
+mafOpEdit::mafOpEdit(const mafString& label): Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_Canundo = true; 
   m_OpType = OPTYPE_EDIT; 
-  m_Selection = NULL; 
   m_NumOperations++;
 }
 //----------------------------------------------------------------------------
@@ -97,38 +94,38 @@ mafOpEdit::~mafOpEdit()
 bool mafOpEdit::ClipboardIsEmpty()
 //----------------------------------------------------------------------------
 {
-  return GetClipboard() == NULL;
+  return GetClipboard() == nullptr;
 }
 //----------------------------------------------------------------------------
 void mafOpEdit::ClipboardClear()
 //----------------------------------------------------------------------------
 {
-  SetClipboard(NULL);
+  SetClipboard(nullptr);
 }
 //----------------------------------------------------------------------------
 void mafOpEdit::ClipboardBackup()
 //----------------------------------------------------------------------------
 {
-  assert(!m_Backup.get());
+  assert(!m_Backup);
   m_Backup = GetClipboard();
-  SetClipboard(NULL);
+  SetClipboard(nullptr);
 }
 //----------------------------------------------------------------------------
 void mafOpEdit::ClipboardRestore()
 //----------------------------------------------------------------------------
 {
   //assert(m_Backup.GetPointer() ); - //SIL. 6-11-2003: assert removed, I may make a backup of an empy clipboard
-  SetClipboard(m_Backup.get());
-  m_Backup = NULL;
+  SetClipboard(m_Backup);
+  m_Backup = nullptr;
 }
 //----------------------------------------------------------------------------
-mafNode* mafOpEdit::GetClipboard()
+std::shared_ptr<mafNode> mafOpEdit::GetClipboard()
 //----------------------------------------------------------------------------
 {
-  return m_Clipboard.get();
+  return m_Clipboard;
 }
 //----------------------------------------------------------------------------
-void mafOpEdit::SetClipboard(mafNode *node)
+void mafOpEdit::SetClipboard(std::shared_ptr<mafNode> node)
 //----------------------------------------------------------------------------
 {
   m_Clipboard = node;
@@ -149,7 +146,7 @@ void mafOpEdit::OpRun()
 mafOpCut::mafOpCut(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
-  m_SelectionParent = NULL; 
+  m_SelectionParent = nullptr; 
 }
 //----------------------------------------------------------------------------
 mafOpCut::~mafOpCut() 
@@ -166,7 +163,7 @@ mafOp* mafOpCut::Copy()
 bool mafOpCut::Accept(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-  return ((vme!=NULL) && (!vme->IsMAFType(mafVMERoot)));
+  return (vme && !vme->IsMAFType(mafVMERoot));
 }
 //----------------------------------------------------------------------------
 void mafOpCut::OpDo()
@@ -180,7 +177,7 @@ Select the vme parent
 {
   ClipboardBackup();
   m_SelectionParent = m_Selection->GetParent();
-  SetClipboard(m_Selection.get());
+  SetClipboard(m_Selection);
 
   //////////////////////////////////////////////////////////////////////////
   // It is necessary load all vtk data of the vme time varying otherwise paste or undo cause an application crash
@@ -196,11 +193,11 @@ Select the vme parent
     LoadChild(m_SelectionVme);
   //////////////////////////////////////////////////////////////////////////
 
-  {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_Selection.get()); InvokeEvent(evUnq);}
-  {mafEvent evUnq(this,VME_SELECTED); evUnq.SetVme(m_SelectionParent.get()); InvokeEvent(evUnq);}
-  if (mafVME::SafeDownCast(m_SelectionParent.get()))
+  {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_Selection); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SELECTED); evUnq.SetVme(m_SelectionParent); InvokeEvent(evUnq);}
+  if (mafVME::SafeDownCast(m_SelectionParent))
   {
-    ((mafVME *)m_SelectionParent.get())->GetOutput()->Update();
+    mafVME::StaticDownCast(m_SelectionParent)->GetOutput()->Update();
   }
 }
 //----------------------------------------------------------------------------
@@ -255,9 +252,9 @@ Restore the Selection
 #ifdef MAF_USE_VTK
   if (m_SelectionParent->IsMAFType(mafVMELandmarkCloud) && !((mafVMELandmarkCloud *)m_SelectionParent.get())->IsOpen())
   {
-    ((mafVMELandmarkCloud *)m_SelectionParent.get())->Open();
+    mafVMELandmarkCloud::StaticDownCast(m_SelectionParent)->Open();
     m_Selection->ReparentTo(m_SelectionParent.get());
-    ((mafVMELandmarkCloud *)m_SelectionParent.get())->Close();
+    mafVMELandmarkCloud::StaticDownCast(m_SelectionParent)->Close();
   }
   else
   {
@@ -269,9 +266,9 @@ Restore the Selection
 
   if (mafVME::SafeDownCast(m_SelectionParent.get()))
   {
-    ((mafVME *)m_SelectionParent.get())->GetOutput()->Update();
+    mafVME::StaticDownCast(m_SelectionParent)->GetOutput()->Update();
   }
-  {mafEvent evUnq(this,VME_SELECTED); evUnq.SetVme(m_Selection.get()); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SELECTED); evUnq.SetVme(m_Selection); InvokeEvent(evUnq);}
   ClipboardRestore();
 }
 
@@ -284,7 +281,6 @@ Restore the Selection
 mafOpDelete::mafOpDelete(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
-  m_SelectionParent = NULL; 
   m_Canundo         = false;
 }
 //----------------------------------------------------------------------------
@@ -302,7 +298,7 @@ mafOp* mafOpDelete::Copy()
 bool mafOpDelete::Accept(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-  return ((vme!=NULL) && (!vme->IsMAFType(mafVMERoot)));
+  return (vme && !vme->IsMAFType(mafVMERoot));
 }
 //----------------------------------------------------------------------------
 void mafOpDelete::OpDo()
@@ -320,13 +316,12 @@ Select the vme parent
   mafStorage *storage = e.GetStorage();
   auto iter = m_Selection->NewIterator();
   mafString data_filename;
-  for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+  for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {
     if(mafVMEGenericAbstract::SafeDownCast(node))
     {
-      mafVMEGenericAbstract *vme = mafVMEGenericAbstract::SafeDownCast(node);
-      mafDataVector *dv = vme->GetDataVector();
-      if (dv != NULL)
+      auto vme = mafVMEGenericAbstract::SafeDownCast(node);
+      if (mafDataVector *dv = vme->GetDataVector())
       {
         if (dv->GetSingleFileMode())
         {
@@ -350,8 +345,8 @@ Select the vme parent
     }
   }
   m_SelectionParent = m_Selection->GetParent(); 
-  {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_Selection.get()); InvokeEvent(evUnq);}
-  {mafEvent evUnq(this,VME_SELECTED); evUnq.SetVme(m_SelectionParent.get()); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_Selection); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SELECTED); evUnq.SetVme(m_SelectionParent); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpDelete::OpUndo()
@@ -384,8 +379,8 @@ mafOp* mafOpCopy::Copy()
 bool mafOpCopy::Accept(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-  bool res = (vme!=NULL) && (!vme->IsMAFType(mafVMERoot));
-  if(GetClipboard() != NULL)
+  bool res = vme && !vme->IsMAFType(mafVMERoot);
+  if(GetClipboard())
     res = res && GetClipboard()->CanCopy(vme);
   return res;
 }
@@ -424,7 +419,6 @@ restore previous clipboard
 mafOpPaste::mafOpPaste(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
-  m_PastedVme = NULL; 
 }
 //----------------------------------------------------------------------------
 mafOp* mafOpPaste::Copy() 
@@ -443,8 +437,8 @@ bool mafOpPaste::Accept(mafNode* vme)
   // - (this cover also restrictions imposed on Landmarks)
 
   if(ClipboardIsEmpty()) return false;
-  if(vme == NULL) return false;
-  mafNode *cv = GetClipboard();
+  if(vme == nullptr) return false;
+  auto cv = GetClipboard();
   return cv->CanReparentTo(vme);
 };
 //----------------------------------------------------------------------------
@@ -472,70 +466,6 @@ Remove the pasted vme from the scene and place it in the clipboard.
 The copy in the clipboard will be automatically deleted
 */
 {
-  SetClipboard(m_PastedVme.get());
-  {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_PastedVme.get()); InvokeEvent(evUnq);}
+  SetClipboard(m_PastedVme);
+  {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_PastedVme); InvokeEvent(evUnq);}
 }
-
-/*
-/////////////////////
-// mafOpTransform ://
-/////////////////////
-//----------------------------------------------------------------------------
-mafOpTransform::mafOpTransform(wxString label) 
-{
-  assert(false); //SIL. 9-4-2005: 
-  m_canundo = true; 
-  m_optype = OPTYPE_EDIT;       
-  m_label=label;
-  m_vme = NULL;
-  m_old_matrix = vtkMatrix4x4::New();
-  m_new_matrix = vtkMatrix4x4::New();
-}
-//----------------------------------------------------------------------------
-mafOpTransform::~mafOpTransform() 
-{
-  m_old_matrix->Delete();
-  m_new_matrix->Delete();
-}
-//----------------------------------------------------------------------------
-mafOp* mafOpTransform::Copy() 
-{                    
-  mafOpTransform *cp  = new mafOpTransform();
-  cp->m_Listener = m_Listener;
-  cp->m_new_matrix->DeepCopy(m_new_matrix);
-  cp->m_old_matrix->DeepCopy(m_old_matrix);
-  return cp;
-}
-//----------------------------------------------------------------------------
-bool mafOpTransform::Accept(mafNode* vme)       
-{
-  return vme!=NULL && !vme->IsA("mafNodeRoot");
-}
-//----------------------------------------------------------------------------
-void mafOpTransform::SetInput(mafNode* vme)       
-{
-  m_vme = vme;
-}
-//----------------------------------------------------------------------------
-void mafOpTransform::SetOldMatrix(vtkMatrix4x4* matrix)
-{
-  m_old_matrix->DeepCopy(matrix);
-}
-//----------------------------------------------------------------------------
-void mafOpTransform::SetNewMatrix(vtkMatrix4x4* matrix)
-{
-  m_new_matrix->DeepCopy(matrix);
-}
-//----------------------------------------------------------------------------
-void mafOpTransform::OpDo()                    
-{
-  assert(false); //temporary commented out - m_vme->SetPose(m_new_matrix,-1);
-  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-}
-//----------------------------------------------------------------------------
-void mafOpTransform::OpUndo()                  
-{
-  assert(false); //temporary commented out -m_vme->SetPose(m_old_matrix,-1);
-  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-}
-*/

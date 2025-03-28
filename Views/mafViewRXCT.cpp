@@ -286,21 +286,21 @@ void mafViewRXCT::VmeShow(mafNode *node, bool show)
         p->SetColorLookupTable(m_Lut);
         m_Pos[i] = b[5]-step*(i+1);
       }
-      m_CurrentVolume = mafVME::SafeDownCast(node);
+      m_CurrentVolume = mafVME::SafeDownCast(GetSceneGraph()->Vme2Node(node)->m_Vme);
       GizmoCreate();
 
       //BEGIN cycle for remove old surface and redraw the right slice
       
       auto iter = node->GetRoot()->NewIterator();
-      for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+      for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
       {
         if(node->IsA("mafVMESurface"))
         {
           auto p=(m_ChildViewList[RX_FRONT_VIEW])->GetNodePipe(node);
           if(p)
           {
-            this->VmeShow(node,false);
-            this->VmeShow(node,true);
+            this->VmeShow(node.get(),false);
+            this->VmeShow(node.get(),true);
           }
         } 
       }
@@ -376,9 +376,9 @@ void mafViewRXCT::VmeShow(mafNode *node, bool show)
 void mafViewRXCT::VmeRemove(mafNode *node)
 //----------------------------------------------------------------------------
 {
-  if (m_CurrentVolume && node == m_CurrentVolume) 
+  if (m_CurrentVolume && node == m_CurrentVolume.get()) 
   {
-    m_CurrentVolume = NULL;
+    m_CurrentVolume.reset();
     GizmoDelete();
   }
   Superclass::VmeRemove(node);
@@ -654,7 +654,7 @@ void mafViewRXCT::OnEvent(mafEventBase *maf_event)
       case ID_RESET_SLICES:
         {
           assert(m_CurrentVolume);
-          this->ResetSlicesPosition(m_CurrentVolume);
+          this->ResetSlicesPosition(m_CurrentVolume.get());
         }
         break;
       // Added by Losi 11.25.2009
@@ -1001,7 +1001,7 @@ void mafViewRXCT::SetThicknessForAllSurfaceSlices(mafNode *root)
 //----------------------------------------------------------------------------
 {
   auto iter = root->NewIterator();
-  for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+  for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {
     if(node->IsA("mafVMESurface"))
     {

@@ -5436,41 +5436,40 @@ void medVMEComputeWrapping::EventWraped(mafEvent *e){
 
 	ForwardUpEvent(e);
 
-	mafNode *n = e->GetVme();
-	if (n != NULL)
+	if (auto n = e->GetVme())
 	{
 		if (button_id == ID_START_METER_LINK)
 		{
-			SetMeterLink(_R("StartVME"), n);
+			SetMeterLink(_R("StartVME"), n.get());
 			m_StartVmeName = n->GetName();
 		}
 		else if (button_id == ID_END1_METER_LINK)
 		{
-			SetMeterLink(_R("EndVME1"), n);
+			SetMeterLink(_R("EndVME1"), n.get());
 			m_EndVme1Name = n->GetName();
 		}
 		else if (button_id == ID_WRAPPED_METER_LINK1)
 		{
-			SetMeterLink(_R("WrappedVME1"), n);
+			SetMeterLink(_R("WrappedVME1"), n.get());
 			//n->SetName("wrapped1");
 			m_WrappedVmeName1 = n->GetName();
 		}
 		else if (button_id == ID_WRAPPED_METER_LINK2)
 		{
-			SetMeterLink(_R("WrappedVME2"), n);
+			SetMeterLink(_R("WrappedVME2"), n.get());
 			//n->SetName("wrapped2");
 			m_WrappedVmeName2 = n->GetName();
 		}
 		else if (button_id == ID_WRAPPED_METER_LINK)
 		{
-			SetMeterLink(_R("WrappedVME"),n);
+			SetMeterLink(_R("WrappedVME"),n.get());
 			m_WrappedVmeName = n->GetName();
 
 
 		}
 		else if (button_id == ID_VIA_POINT)
 		{
-			SetMeterLink(_R("viaPoint"), n);
+			SetMeterLink(_R("viaPoint"), n.get());
 			//n->SetName("wrapped2");
 			m_ViaPointName = n->GetName();
 		}
@@ -5648,9 +5647,9 @@ void medVMEComputeWrapping::OnEvent(mafEventBase *maf_event)
 				e->SetArg((intptr_t)&medVMEComputeWrapping::VMEAccept);
 				e->SetString(&title);
 				ForwardUpEvent(e);
-				mafNode *n = e->GetVme();
+				auto n = e->GetVme();
 
-				if (n == NULL) return;
+				if (n == nullptr) return;
 
 				wxString nameProfile ="";
 				//mafString idNumber = wxString::Format(_("%d"),id);
@@ -5675,7 +5674,7 @@ void medVMEComputeWrapping::OnEvent(mafEventBase *maf_event)
 
 
 
-				SetMeterLink(n->GetName().GetCStr(),n);
+				SetMeterLink(n->GetName().GetCStr(),n.get());
 				mafString t;
 				t = n->GetName();
 				//m_ListBox->Append(_(t));
@@ -5793,9 +5792,9 @@ void medVMEComputeWrapping::SetMeterLink(const mafString& link_name, mafNode *n)
 	if (n->IsMAFType(mafVMELandmark))
 	{
     nid = n->GetParent()->GetId();
-    idx = ((mafVMELandmarkCloud *)n->GetParent())->FindLandmarkIndex(n->GetName());
+    idx = mafVMELandmarkCloud::StaticDownCast(n->GetParent())->FindLandmarkIndex(n->GetName());
     lm = true;
-		SetLink(link_name,n->GetParent(),idx);
+		SetLink(link_name,n->GetParent().get(),idx);
 	}
   else
   {

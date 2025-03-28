@@ -128,21 +128,14 @@ medGUILandmark::~medGUILandmark()
   {
     for (int i = 0; i < m_LMCloud->GetNumberOfLandmarks(); i++)
     {
-      mafNode *lm = m_LMCloud->GetChild(i);
+      auto lm = m_LMCloud->GetChild(i);
       {mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(lm); evUnq.SetBool(false); InvokeEvent(evUnq);}
       {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(lm); InvokeEvent(evUnq);}
-      mafDEL(lm);
-      //vtkDEL(lm);
     }
 
     {mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(m_LMCloud); evUnq.SetBool(false); InvokeEvent(evUnq);}
     {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_LMCloud); InvokeEvent(evUnq);}
-    mafDEL(m_LMCloud);
-    //vtkDEL(m_LMCloud);
   }
-
-
-  // delete child landmarks 
 
   // m_Gui already destroyed?
 } 
@@ -221,7 +214,7 @@ void medGUILandmark::OnEvent(mafEventBase *maf_event)
         mafString title = _L("Choose VME ref sys");
         mafEvent e(this,VME_CHOOSE); e.SetString(&title); e.SetArg((intptr_t)&medGUILandmark::VmeAccept);
         InvokeEvent(e); 
-        SetRefSysVME(mafVME::SafeDownCast(e.GetVme())); 			
+        SetRefSysVME(mafVME::SafeDownCast(e.GetVme().get())); 			
       }
       break;
 
@@ -325,8 +318,7 @@ void medGUILandmark::OnVmePicked(mafEvent& e)
 
   if (m_LMCloud == NULL)
   {
-    //m_LMCloud = mafVMELandmarkCloud::New();//we have a reference on the vme (we can call vtkDEL in the UNDO)
-    mafNEW(m_LMCloud);
+    m_LMCloud = mafVMELandmarkCloud::NewSPtr();
     m_LMCloud->Open();
 		m_LMCloud->SetName(m_LMCloudName);
     double b[6];
@@ -356,10 +348,9 @@ void medGUILandmark::OnVmePicked(mafEvent& e)
     mafString  name(_R(m_LandmarkName));
     name += mafToString(lmNumber); 
 
-    //m_Landmark = mafVMELandmark::New();//we have a reference on the vme (we can call vtkDEL in the UNDO)
-    mafNEW(m_Landmark);
+    m_Landmark = mafVMELandmark::NewSPtr();
     m_Landmark->SetName(name);
-    m_Landmark->ReparentTo(m_LMCloud);
+    m_Landmark->ReparentTo(m_LMCloud.get());
 
     m_Landmark->Update(); 
     m_Landmark->SetAbsPose(absPosition[0],absPosition[1],absPosition[2],0,0,0);
@@ -372,7 +363,7 @@ void medGUILandmark::OnVmePicked(mafEvent& e)
     CreateTranslateISACompositor(); 
 
     //AttachInteractor(m_InputVME, m_OldInputVMEBehavior); 
-    AttachInteractor(m_Landmark, m_IsaCompositor.get());
+    AttachInteractor(m_Landmark.get(), m_IsaCompositor.get());
 
     SetGUIStatusToEnabled(); 
     SetGuiAbsPosition(m_Landmark->GetAbsMatrixPipe()->GetMatrixPointer()->GetVTKMatrix());     
@@ -408,7 +399,7 @@ void medGUILandmark::SetGUIStatusToDisabled()
 {
   if (m_Landmark)
   { 
-    AttachInteractor(m_Landmark, NULL);
+    AttachInteractor(m_Landmark.get(), NULL);
     m_Landmark->SetLandmarkVisibility(false);
     m_Landmark = NULL;
   }
@@ -566,9 +557,9 @@ void medGUILandmark::SpawnLandmark()
   GetSpawnPointCoordinates(position);
 
   //m_Landmark = mafVMELandmark::New();//we have a reference on the vme (we can call vtkDEL in the UNDO)
-  mafNEW(m_Landmark);
+  m_Landmark = mafVMELandmark::NewSPtr();
   m_Landmark->SetName(name);
-  m_Landmark->ReparentTo(m_LMCloud);
+  m_Landmark->ReparentTo(m_LMCloud.get());
   m_Landmark->Update(); 
 
   //m_Landmark->SetPose(position[0],position[1],position[2],-1);
@@ -580,7 +571,7 @@ void medGUILandmark::SpawnLandmark()
   {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Landmark); evUnq.SetBool(true); InvokeEvent(evUnq);}
 	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);} 
   
-  AttachInteractor(m_Landmark, m_IsaCompositor.get());
+  AttachInteractor(m_Landmark.get(), m_IsaCompositor.get());
 
   SetGUIStatusToEnabled(); 
   SetGuiAbsPosition(m_Landmark->GetAbsMatrixPipe()->GetMatrixPointer()->GetVTKMatrix());     

@@ -73,7 +73,6 @@ void mafEvent::DeepCopy(const mafEventBase *maf_base_event)
   m_Op         = maf_event->GetOp();
   m_Matrix     = maf_event->GetMatrix();
   m_Matrix2    = maf_event->GetMatrix2();
-  m_MafObject  = maf_event->GetMafObject();
   m_VmeVector  = maf_event->GetVmeVector();
   m_x          = maf_event->GetX();
   m_y          = maf_event->GetY();
@@ -140,14 +139,14 @@ void mafEvent::SetWidgetData(WidgetDataType &widget_data)
   m_WidgetData = widget_data;
 }
 //------------------------------------------------------------------------------
-void mafEvent::SetVmeVector(std::vector<mafNode*> vmeVector)
+void mafEvent::SetVmeVector(std::vector<std::shared_ptr<mafNode> > vmeVector)
 //------------------------------------------------------------------------------
 {
   m_VmeVector.swap(vmeVector);
 }
 
 //------------------------------------------------------------------------------
-std::vector<mafNode*> mafEvent::GetVmeVector() const
+std::vector<std::shared_ptr<mafNode> > mafEvent::GetVmeVector() const
 //------------------------------------------------------------------------------
 {
   return m_VmeVector;

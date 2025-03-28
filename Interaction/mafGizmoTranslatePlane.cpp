@@ -49,7 +49,7 @@
 #include "vtkProperty.h"
 
 //----------------------------------------------------------------------------
-mafGizmoTranslatePlane::mafGizmoTranslatePlane(mafVME *input, mafBaseEventHandler *listener)
+mafGizmoTranslatePlane::mafGizmoTranslatePlane(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener)
 //----------------------------------------------------------------------------
 {
   this->SetIsActive(false);
@@ -464,7 +464,7 @@ std::shared_ptr<mafMatrix> mafGizmoTranslatePlane::GetAbsPose()
   return m_Gizmo[S1]->GetOutput()->GetAbsMatrix();
 }
 //----------------------------------------------------------------------------
-void mafGizmoTranslatePlane::SetInput(mafVME *vme)
+void mafGizmoTranslatePlane::SetInput(std::shared_ptr<mafVME> vme)
 //----------------------------------------------------------------------------
 {
   this->m_InputVme = vme; 

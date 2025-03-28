@@ -67,12 +67,12 @@ class mafGUI;
 class MAF_EXPORT mafGizmoScale: public mafGizmoInterface 
 {
 public:
-  mafGizmoScale(mafVME *input, mafBaseEventHandler* listener = NULL , bool buildGUI = true);
+  mafGizmoScale(std::shared_ptr<mafVME> input, mafBaseEventHandler* listener = NULL , bool buildGUI = true);
   ~mafGizmoScale() override; 
 
   /** 
   Set input vme for the gizmo*/
-  void SetInput(mafVME *vme) override; 
+  void SetInput(std::shared_ptr<mafVME> vme) override;
 
   /** Superclass override */
   void SetRenderWindowHeightPercentage(double percentage);

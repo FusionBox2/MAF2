@@ -29,7 +29,7 @@
 #include "mafGUIMaterialButton.h"
 #include "mafInteractorCompositorMouse.h"
 #include "mafInteractorGenericMouse.h"
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 #include "mafVME.h"
 #include "mafVMEGizmo.h"
 #include "mafVMEPolyline.h"
@@ -57,7 +57,7 @@
 
 #include "mafMemDbg.h"
 
-medGizmoPolylineGraph::medGizmoPolylineGraph(mafNode* imputVme, mafBaseEventHandler *listener, const char* name, bool showOnlyDirectionAxis, bool testMode) 
+medGizmoPolylineGraph::medGizmoPolylineGraph(std::shared_ptr<mafNode> imputVme, mafBaseEventHandler *listener, const char* name, bool showOnlyDirectionAxis, bool testMode)
 { 
   m_Name = _R(name);
   m_InputVME = mafVME::SafeDownCast(imputVme);
@@ -86,7 +86,7 @@ medGizmoPolylineGraph::medGizmoPolylineGraph(mafNode* imputVme, mafBaseEventHand
   CreateVMEGizmo();
   CreateInteractor();
 
-  m_CurvilinearAbscissaHelper = new medCurvilinearAbscissaOnSkeletonHelper( m_VmeGizmo, NULL, m_TestMode);
+  m_CurvilinearAbscissaHelper = new medCurvilinearAbscissaOnSkeletonHelper( m_VmeGizmo.get(), NULL, m_TestMode);
 }
 
 //------------------------------------------------------------------------
@@ -108,7 +108,7 @@ medGizmoPolylineGraph::medGizmoPolylineGraph(mafNode* imputVme, mafBaseEventHand
   mafVMERoot *root = mafVMERoot::SafeDownCast(m_InputVME->GetRoot());
   assert(root);
 
-  assert(m_VmeGizmo == NULL);
+  assert(m_VmeGizmo == nullptr);
   CreateGizmoVTKData();
 
   //determine the default size of the gizmo
@@ -125,7 +125,7 @@ medGizmoPolylineGraph::medGizmoPolylineGraph(mafNode* imputVme, mafBaseEventHand
 
   SetGizmoLength(0.2*max);
 
-  mafNEW(m_VmeGizmo);
+  m_VmeGizmo = mafVMEGizmo::NewSPtr();
   m_VmeGizmo->SetName(m_Name);
   m_VmeGizmo->ReparentTo(root); 
   m_VmeGizmo->SetInputConnection(m_AppendPolyData->GetOutputPort());  
@@ -138,7 +138,7 @@ void medGizmoPolylineGraph::DestroyVMEGizmo()
 //------------------------------------------------------------------------
 {  
   m_VmeGizmo->ReparentTo(NULL);
-  mafDEL(m_VmeGizmo);
+  m_VmeGizmo.reset();
 
   DestroyGizmoVTKData();  
 }
@@ -255,7 +255,7 @@ void medGizmoPolylineGraph::DestroyVMEGizmo()
 /*virtual*/ void medGizmoPolylineGraph::CreateInteractor()
 //------------------------------------------------------------------------
 {  
-  m_RefSysVME = m_InputVME;
+  m_RefSysVME = m_InputVME.get();
 
   auto absMatrix = m_RefSysVME->GetOutput()->GetAbsMatrix();
 

@@ -55,7 +55,7 @@ public:
 
   /** 
   Set the visualization status for the node (visible, not visible, mutex, ...) \sa mafSceneGraph mafView*/
-  int GetNodeStatus(mafNode *vme) override;
+  int GetNodeStatusI(mafNode *vme) override;
 
   /** 
   Set tolerance of the Picker*/

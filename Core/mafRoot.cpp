@@ -1,48 +1,21 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafRoot
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
 #include "mafRoot.h"
-#include "ftk/Base/Object.h"
+#include "mafNode.h"
 #include "ftk/IO/StorageElement.h"
 #include "mafIndent.h"
 
 //-------------------------------------------------------------------------
-mafRoot::mafRoot()
+mafRoot::mafRoot() = default;
 //-------------------------------------------------------------------------
-{
-  m_MaxNodeId = 0;
-}
 
 //-------------------------------------------------------------------------
-mafRoot::~mafRoot()
+mafRoot::~mafRoot() = default;
+//-------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------
+mafRoot* mafRoot::SafeDownCast(mafNode *o)
 //-------------------------------------------------------------------------
 {
-}
-//-------------------------------------------------------------------------
-mafRoot* mafRoot::SafeDownCast(mafObject *o)
-//-------------------------------------------------------------------------
-{
-  try 
-  { 
-    return dynamic_cast<mafRoot *>(o);
-  } 
-  catch (std::bad_cast) 
-  { 
-    return NULL;
-  }
+  return dynamic_cast<mafRoot *>(o);
 }
 
 //-------------------------------------------------------------------------

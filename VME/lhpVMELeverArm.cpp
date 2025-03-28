@@ -601,17 +601,17 @@ void lhpVMELeverArm::OnEvent(mafEventBase *maf_event)
           e->SetArg((intptr_t)&lhpVMELeverArm::LineAccept);
         e->SetString(&title);
         ForwardUpEvent(e);
-        mafNode *n = e->GetVme();
-        if (n != NULL && n != this)
+        auto n = e->GetVme();
+        if (n != nullptr && n.get() != this)
         {
           if (button_id == ID_AXIS_LINK)
           {
-            SetMeterLink("HAxisVME", n);
+            SetMeterLink("HAxisVME", n.get());
             m_HAxisVmeName = n->GetName();
           }
           else //if (button_id == ID_LINE_LINK)
           {
-            SetMeterLink("LineVME", n);
+            SetMeterLink("LineVME", n.get());
             m_LineVmeName = n->GetName();
           }
           m_Gui->Update();
@@ -634,7 +634,7 @@ void lhpVMELeverArm::SetMeterLink(const char *link_name, mafNode *n)
 {
   if (n->IsMAFType(mafVMELandmark))
   {
-    SetLink(_R(link_name),n->GetParent(),((mafVMELandmarkCloud *)n->GetParent())->FindLandmarkIndex(n->GetName()));
+    SetLink(_R(link_name),n->GetParent().get(),mafVMELandmarkCloud::StaticDownCast(n->GetParent())->FindLandmarkIndex(n->GetName()));
   }
   else
     SetLink(_R(link_name), n);

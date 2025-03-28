@@ -179,7 +179,7 @@ void mafPipeSurfaceTextured::Create(mafNode *node, mafView *view/*, bool use_axe
     }
 	else if (!m_SurfaceMaterial->GetMaterialTextureName().empty())
 	{
-		mafVME *texture_vme = mafVME::SafeDownCast(m_Vme->GetRoot()->FindInTreeByName(m_SurfaceMaterial->GetMaterialTextureName()));
+		auto texture_vme = mafVME::SafeDownCast(m_Vme->GetRoot()->FindInTreeByName(m_SurfaceMaterial->GetMaterialTextureName()));
 		texture_vme->GetOutput()->Update();
 		vtkImageData *image1 = (vtkImageData *)texture_vme->GetOutput()->GetVTKData();
 		m_Texture->SetInputConnection(texture_vme->GetOutput()->GetVTKOutputPort());
@@ -189,7 +189,7 @@ void mafPipeSurfaceTextured::Create(mafNode *node, mafView *view/*, bool use_axe
     {
 		int id = m_SurfaceMaterial->GetMaterialTextureID();
 
-      mafVME *texture_vme = mafVME::SafeDownCast(m_Vme->GetRoot()->FindInTreeById(m_SurfaceMaterial->GetMaterialTextureID()));
+      auto texture_vme = mafVME::SafeDownCast(m_Vme->GetRoot()->FindInTreeById(m_SurfaceMaterial->GetMaterialTextureID()));
 	  texture_vme->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
 	  vtkImageData* image1 = (vtkImageData*)texture_vme->GetOutput()->GetVTKData();
 	  m_Texture->SetInputConnection(texture_vme->GetOutput()->GetVTKOutputPort());
@@ -484,25 +484,24 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
         e->SetArg((intptr_t)&mafPipeSurfaceTextured::ImageAccept);
         e->SetString(&title);
         InvokeEvent(*e);
-        mafNode *n = e->GetVme();
-        if (n != NULL)
+        if (auto n = e->GetVme())
         {
 			//SetImageLink("image", n);
 			m_VmeImageName = n->GetName();
 			m_Gui->Update();
 			//UpdateLinks();
-          vtkImageData* image1 = vtkImageData::SafeDownCast(((mafVME *)n)->GetOutput()->GetVTKData());
+          vtkImageData* image1 = vtkImageData::SafeDownCast(mafVME::StaticDownCast(n)->GetOutput()->GetVTKData());
 		  
           m_Gui->Enable(ID_USE_TEXTURE,image1 != NULL);
           if (image1)
           {
-			  ((mafVME*)n)->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
+            mafVME::StaticDownCast(n)->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
            // m_SurfaceMaterial->SetMaterialTexture(n->GetId());
 			mafString na = n->GetName();
 			
-			m_SurfaceMaterial->SetMaterialTextureConnection(((mafVME*)n)->GetOutput()->GetVTKOutputPort(),na);
+			m_SurfaceMaterial->SetMaterialTextureConnection(mafVME::StaticDownCast(n)->GetOutput()->GetVTKOutputPort(),na);
 			m_SurfaceMaterial->m_MaterialType =  mmaMaterial::USE_TEXTURE;
-            m_Texture->SetInputConnection(((mafVME*)n)->GetOutput()->GetVTKOutputPort());
+            m_Texture->SetInputConnection(mafVME::StaticDownCast(n)->GetOutput()->GetVTKOutputPort());
             m_Actor->SetTexture(m_Texture);
             m_Gui->Enable(ID_TEXTURE_MAPPING_MODE,true);
 			m_UseTexture = 1;

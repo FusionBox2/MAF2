@@ -48,11 +48,10 @@ medGizmoCrossRotateTranslate::~medGizmoCrossRotateTranslate()
 
 }
 
-void medGizmoCrossRotateTranslate::Create(mafVME *input, mafBaseEventHandler* listener, bool BuildGUI, int normal)
+void medGizmoCrossRotateTranslate::Create(std::shared_ptr<mafVME> input, mafBaseEventHandler* listener, bool BuildGUI, int normal)
 {
 	// input should be a mafVMESlicer slicing a mafVMEVolumeGray
-	mafVMESlicer *slicer = NULL;
-	slicer = mafVMESlicer::SafeDownCast(input);
+	auto slicer = mafVMESlicer::SafeDownCast(input);
 
 	assert(slicer);
 
@@ -77,7 +76,7 @@ void medGizmoCrossRotateTranslate::Create(mafVME *input, mafBaseEventHandler* li
 
 /** 
 Set input vme for the gizmo*/
-void medGizmoCrossRotateTranslate::SetInput(mafVME *vme)
+void medGizmoCrossRotateTranslate::SetInput(std::shared_ptr<mafVME> vme)
 {
 	m_GizmoCrossTranslate->SetInput(vme);
 	m_GizmoCrossRotate->SetInput(vme);

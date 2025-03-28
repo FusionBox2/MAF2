@@ -45,13 +45,13 @@ class vtkTubeFilter;
 class MAF_EXPORT mafGizmoTranslatePlane: public mafGizmoInterface 
 {
 public:
-           mafGizmoTranslatePlane(mafVME *input, mafBaseEventHandler *listener = NULL);
+           mafGizmoTranslatePlane(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener = NULL);
            ~mafGizmoTranslatePlane() override; 
   
   /** 
   Set the gizmo generating vme; the gizmo will be centered on this vme*/
-  void SetInput(mafVME *vme) override; 
-  mafVME *GetInput() {return this->m_InputVme;};
+  void SetInput(std::shared_ptr<mafVME> vme) override;
+  mafVME *GetInput() {return this->m_InputVme.get();}
   
   //----------------------------------------------------------------------------
   // events handling 
@@ -124,7 +124,7 @@ protected:
   mafVMEGizmo *m_Gizmo[3];
 
   /** Register input vme*/
-  mafVME *m_InputVme;
+  std::shared_ptr<mafVME> m_InputVme;
 
   /**
 

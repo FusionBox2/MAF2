@@ -110,7 +110,7 @@ public:
   the MatrixVector creates a new KeyMatrix on the fly. When getting, the matrix vector
   interpolates on the fly according to the matrix interpolator.*/
 
-  mafVMEPlane* parallelPlane;
+  std::shared_ptr<mafVMEPlane> parallelPlane;
 	void SetMatrix(const mafMatrix &mat) override;
 	void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes) override;
   /*
@@ -187,7 +187,7 @@ protected:
 
   Eigen::Matrix3d rotationMat;
  
-  mafVMELandmarkCloud	*m_Cloud2;
+  std::shared_ptr<mafVMELandmarkCloud> m_Cloud2;
   
   mafVMEPlane* plan;
   mafVMESurface* surface;

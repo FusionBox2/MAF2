@@ -60,19 +60,14 @@ mafGUIVMEChooser::~mafGUIVMEChooser()
   delete m_ChooserTree;
 }
 //----------------------------------------------------------------------------
-std::vector<mafNode*> mafGUIVMEChooser::ShowChooserDialog()
+std::vector<std::shared_ptr<mafNode> > mafGUIVMEChooser::ShowChooserDialog()
 //----------------------------------------------------------------------------
 {
   if(ShowModal() == wxID_OK)
   {
 		return m_ChooserTree->GetChoosedNode();
   }
-	else
-  {
-     std::vector<mafNode*> nodeVector;
-     nodeVector.clear();
-     return nodeVector;
-  }
+  return {};
 }
 //----------------------------------------------------------------------------
 void mafGUIVMEChooser::OnEvent(mafEventBase *maf_event)

@@ -118,16 +118,16 @@ medViewSliceOnCurveCompound::~medViewSliceOnCurveCompound()
 
     // find the root
     mafBaseEventHandler* listener = NULL;
-    mafVMERoot* root = mafVMERoot::SafeDownCast(m_Gizmo->GetOutput()->GetParent());
-    if (root != NULL)
+    auto root = mafVMERoot::SafeDownCast(m_Gizmo->GetOutput()->GetParent());
+    if (root)
     {
       listener = root->GetListener();
-      root->SetListener(NULL);
+      root->SetListener(nullptr);
     }
 
     DestroyGizmo();  
 
-    if (root != NULL)
+    if (root)
       root->SetListener(listener);
   }
 
@@ -183,7 +183,7 @@ void medViewSliceOnCurveCompound::VmeShow(mafNode *node, bool show)
 
     //create or destroy gizmo
     if (show)
-      CreateGizmo(node);
+      CreateGizmo(GetSceneGraph()->Vme2Node(node)->m_Vme);
     else
       DestroyGizmo();    
   }
@@ -244,11 +244,11 @@ void medViewSliceOnCurveCompound::HideSameVMEs(mafView* pView, mafNode* pNode)
   {
     mafVMEOutput* pOutput = NULL;
     if (mafVME::SafeDownCast(pScNode->m_Vme) != NULL)
-      pOutput = ((mafVME *)pScNode->m_Vme)->GetOutput();
+      pOutput = mafVME::StaticDownCast(pScNode->m_Vme)->GetOutput();
 
     if (pOutput != NULL && pOutput->IsA(typeId))
     {
-      if (pScNode->m_Pipe != NULL && pScNode->m_Vme != pNode)
+      if (pScNode->m_Pipe && pScNode->m_Vme.get() != pNode)
       {            
         {mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(pScNode->m_Vme); evUnq.SetBool(false); InvokeEvent(evUnq);}
       }
@@ -261,7 +261,7 @@ void medViewSliceOnCurveCompound::HideSameVMEs(mafView* pView, mafNode* pNode)
 //----------------------------------------------------------------------------
 //return the status of the node within this view. es: NON_VISIBLE,VISIBLE_ON, ... 
 //having mafViewCompound::GetNodeStatus allow mafGUICheckTree to not know about mafSceneGraph
-int medViewSliceOnCurveCompound::GetNodeStatus(mafNode *node)
+int medViewSliceOnCurveCompound::GetNodeStatusI(mafNode *node)
 //----------------------------------------------------------------------------
 {
   if (((mafVME*)node)->GetOutput()->IsA("mafVMEOutputPolyline"))
@@ -282,7 +282,7 @@ int medViewSliceOnCurveCompound::GetNodeStatus(mafNode *node)
 
 //------------------------------------------------------------------------
 //return the current pipe for the specified vme (if any exist at this moment) */
-/*virtual*/ std::shared_ptr<mafPipe> medViewSliceOnCurveCompound::GetNodePipe(mafNode *vme)
+/*virtual*/ std::shared_ptr<mafPipe> medViewSliceOnCurveCompound::GetNodePipeI(mafNode *vme)
 //------------------------------------------------------------------------
 {
   return m_ChildViewList[MAIN_VIEW]->GetNodePipe(vme);
@@ -515,17 +515,17 @@ void medViewSliceOnCurveCompound::OnEvent(mafEventBase *maf_event)
 #pragma region Gizmo stuff
 //------------------------------------------------------------------------
 //creates the gizmo path
-/*virtual*/ void medViewSliceOnCurveCompound::CreateGizmo(mafNode* node)
+/*virtual*/ void medViewSliceOnCurveCompound::CreateGizmo(std::shared_ptr<mafNode> node)
 //------------------------------------------------------------------------
 {
   assert(m_Gizmo == NULL);
   if (m_Gizmo != NULL)    
     return; //already constructed  
 
-  mafVMEPolyline* polyline = mafVMEPolyline::SafeDownCast(node);
-  medVMEPolylineGraph* polyline_gr = medVMEPolylineGraph::SafeDownCast(node);
+  auto polyline = mafVMEPolyline::SafeDownCast(node);
+  auto polyline_gr = medVMEPolylineGraph::SafeDownCast(node);
 
-  if (polyline == NULL && polyline_gr == NULL)
+  if (polyline == nullptr && polyline_gr == nullptr)
   {
     mafLogMessage(_M("Unsupported VME for medViewSliceOnCurveCompound::CreateGizmo"));
     return;
@@ -537,7 +537,7 @@ void medViewSliceOnCurveCompound::OnEvent(mafEventBase *maf_event)
   assert(outputLine != NULL);
 #endif // GIZMO_PATH
 
-  m_CurrentPolyLine = node;
+  m_CurrentPolyLine = node.get();
 
   //construct new gizmo
 #ifdef GIZMO_PATH
@@ -558,11 +558,9 @@ void medViewSliceOnCurveCompound::OnEvent(mafEventBase *maf_event)
 #else
   //Stefano's gizmo
   //gizmo path works with polylines graphs only
-  if (polyline_gr != NULL)
-    polyline_gr->Register(this);  
-  else
+  if (polyline_gr == nullptr)
   {
-    mafNEW(polyline_gr);
+    polyline_gr = medVMEPolylineGraph::NewSPtr();
 
     vtkPolyData* pdata = vtkPolyData::SafeDownCast(polyline->GetOutput()->GetVTKData());
     polyline_gr->SetData(pdata, 0);
@@ -580,8 +578,8 @@ void medViewSliceOnCurveCompound::OnEvent(mafEventBase *maf_event)
   m_Gizmo->SetColor(clr);
   m_Gizmo->SetConstraintPolyline((mafVME*)m_CurrentPolyLineGizmo);    
 #else
-  m_Gizmo = medGizmoPolylineGraph::New((mafVME*)m_CurrentPolyLine, this);
-  m_Gizmo->SetConstraintPolylineGraph((medVMEPolylineGraph*)m_CurrentPolyLineGizmo);
+  m_Gizmo = medGizmoPolylineGraph::New(mafVME::StaticDownCast(node), this);
+  m_Gizmo->SetConstraintPolylineGraph(medVMEPolylineGraph::StaticDownCast(m_CurrentPolyLineGizmo).get());
 #endif
 
   m_ChildViewList[POLYLINE_VIEW]->VmeShow(m_Gizmo->GetOutput(), true);
@@ -615,14 +613,14 @@ void medViewSliceOnCurveCompound::OnEvent(mafEventBase *maf_event)
 /*virtual*/ void medViewSliceOnCurveCompound::DestroyGizmo()
 //------------------------------------------------------------------------
 {
-  if (m_Gizmo != NULL)
+  if (m_Gizmo)
   {
     //destroy the current gizmo
     //BES: 3.2.2009 - gizmo output is destroyed during m_Gizmo destruction, 
     //however, it is still referenced in scenegraphs (probably some openMAF bug)
     //which leads into crash when a scene graph is being destroyed (close)
     //=> we need to remove vme from the graph (it calls also vmeshow(false))
-    mafVMEGizmo* g = m_Gizmo->GetOutput(); 
+    auto g = m_Gizmo->GetOutput(); 
     int nCount = (int)m_ChildViewList.size();
     for (int i = 0; i < nCount; i++){
       m_ChildViewList[i]->VmeRemove(g);
@@ -631,7 +629,7 @@ void medViewSliceOnCurveCompound::OnEvent(mafEventBase *maf_event)
     //{mafEvent evUnq(this, VME_REMOVING, g); InvokeEvent(evUnq);}
 
     mafDEL(m_Gizmo); //unfortunately this must not be done because of crash if you close the view frame    
-    mafDEL(m_CurrentPolyLineGizmo);    
+    m_CurrentPolyLineGizmo.reset();    
     m_CurrentPolyLine = NULL;
   }  
 }
@@ -858,7 +856,7 @@ void medViewSliceOnCurveCompound::SetSlicePosition(double abscisa, vtkIdType bra
     m_ChildViewList[MAIN_VIEW]->VmeShow(m_CurrentVolume, true);	
 
     //force GUI construction for new pipe
-    {mafEvent evUnq( this, VME_SELECTED); evUnq.SetVme(m_CurrentVolume); InvokeEvent(evUnq);}
+    {mafEvent evUnq( this, VME_SELECTED); evUnq.SetVme(GetSceneGraph()->Vme2Node(m_CurrentVolume)->m_Vme); InvokeEvent(evUnq);}
   }
 }
 #pragma endregion

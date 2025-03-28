@@ -166,7 +166,7 @@ void medViewVTKCompound::CameraUpdate()
     if (node->m_Vme)
     {
   
-      mafVME* vme = (mafVME*) node->m_Vme;
+      auto vme = mafVME::StaticDownCast(node->m_Vme);
 
       assert(vme);
       auto maf_pipe = GetNodePipe(vme);

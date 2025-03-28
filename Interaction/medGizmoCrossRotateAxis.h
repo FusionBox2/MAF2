@@ -33,7 +33,7 @@
 //----------------------------------------------------------------------------
 #include "mafEvent.h"
 #include "mafGizmoInterface.h"
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 #include "vtkConeSource.h"
 #include "vtkTransform.h"
 #include "vtkTransformPolyDataFilter.h"
@@ -63,12 +63,12 @@ class vtkAppendPolyData;
 class medGizmoCrossRotateAxis: public mafGizmoInterface
 {
 public:
-           medGizmoCrossRotateAxis(mafVME *input, mafBaseEventHandler *listener = NULL);
+           medGizmoCrossRotateAxis(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener = NULL);
            ~medGizmoCrossRotateAxis() override; 
   
   /** 
   Set the gizmo generating vme; the gizmo will be centered on this vme*/
-  void SetInput(mafVME *vme) override; 
+  void SetInput(std::shared_ptr<mafVME> vme) override;
   mafVME *GetInput();
 
   //----------------------------------------------------------------------------
@@ -166,7 +166,7 @@ protected:
   mafVMEGizmo *m_GizmoCross;
 
   /** Register input vme*/
-  mafVME *m_InputVme;
+  std::shared_ptr<mafVME> m_InputVme;
 
   /**
 

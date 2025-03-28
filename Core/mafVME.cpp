@@ -94,11 +94,11 @@ int mafVME::InternalInitialize()
 }
 
 //-------------------------------------------------------------------------
-mafVME *mafVME::GetParent() const
+std::shared_ptr<mafVME> mafVME::GetParent()
 //-------------------------------------------------------------------------
 {
-  assert(m_Parent==NULL||m_Parent->IsA(typeid(mafVME)));
-  return (mafVME *)Superclass::GetParent();
+  assert(m_Parent == NULL || m_Parent->IsA(typeid(mafVME)));
+  return mafVME::StaticDownCast(Superclass::GetParent());
 }
 
 //-------------------------------------------------------------------------
@@ -295,7 +295,7 @@ void mafVME::GetTimeStamps(std::vector<mafTimeStamp> &kframes)
 
   for (int i=0;i<GetNumberOfChildren();i++)
   {
-    if (mafVME *vme=mafVME::SafeDownCast(GetChild(i)))
+    if (auto vme=mafVME::SafeDownCast(GetChild(i)))
     {
       vme->GetTimeStamps(subKFrames);
     }
@@ -312,7 +312,7 @@ void mafVME::GetAbsTimeStamps(std::vector<mafTimeStamp> &kframes)
   
   std::vector<mafTimeStamp> parentKFrames;
 
-  for (mafVME *parent=mafVME::SafeDownCast(GetParent());parent;parent=mafVME::SafeDownCast(parent->GetParent()))
+  for (auto parent=mafVME::SafeDownCast(GetParent());parent;parent=mafVME::SafeDownCast(parent->GetParent()))
   {
     parent->GetLocalTimeStamps(parentKFrames);
 
@@ -719,7 +719,7 @@ void mafVME::Update()
 
   m_VisualMode = IsDataAvailable() ? DEFAULT_VISUAL_MODE : NO_DATA_VISUAL_MODE;
 }
-
+#ifdef kjljlkjlkjlkjlkjl
 //-------------------------------------------------------------------------
 void mafVME::SetCrypting(int crypting)
 //-------------------------------------------------------------------------
@@ -738,7 +738,7 @@ void mafVME::SetCrypting(int crypting)
   mafEvent ev(this,VME_MODIFIED); ev.SetVme(this);
   ForwardUpEvent(ev);
 }
-
+#endif
 //-------------------------------------------------------------------------
 int mafVME::GetCrypting()
 //-------------------------------------------------------------------------
@@ -841,7 +841,7 @@ void mafVME::OnEvent(mafEventBase *maf_event)
 
 				for (int i = 0; i < this->GetNumberOfChildren(); i++)
 				{
-					((mafVME*)GetChild(i))->InvokeEvent(&absEvent);
+					mafVME::StaticDownCast(GetChild(i))->InvokeEvent(&absEvent);
 				}
 			}
       break;
@@ -890,6 +890,7 @@ mafGUI *mafVME::CreateGui()
 
   return m_Gui;
 }
+#ifdef jlkjkljlkj
 //-------------------------------------------------------------------------
 void mafVME::SetVisualMode(int mode)
 //-------------------------------------------------------------------------
@@ -901,3 +902,4 @@ void mafVME::SetVisualMode(int mode)
     Superclass::OnEvent(&updateModalityEvent);
   }
 }
+#endif

@@ -118,7 +118,7 @@ medPipeTensorFieldGlyphs::~medPipeTensorFieldGlyphs()
   vtkDEL(m_GlyphAxes);
   
   vtkDEL(m_ColorMappingLUT);
-  mafDEL(m_GlyphMaterial);   
+  m_GlyphMaterial.reset();   
 
   vtkDEL(m_DataScale_Copy);
 }
@@ -1418,7 +1418,7 @@ void medPipeTensorFieldGlyphs::OnEvent(mafEventBase *maf_event)
 //------------------------------------------------------------------------
 {    
   mafGUIMaterialChooser dlg;
-  if (dlg.ShowChooserDialog(m_GlyphMaterial))
+  if (dlg.ShowChooserDialog(m_GlyphMaterial.get()))
   {
     //set new material label
     auto mat = m_GlyphMaterial->GetMaterial();     
@@ -1439,7 +1439,7 @@ void medPipeTensorFieldGlyphs::OnEvent(mafEventBase *maf_event)
 //------------------------------------------------------------------------
 {
   //build materials  
-  mafNEW(m_GlyphMaterial);
+  m_GlyphMaterial = mafVMESurface::NewSPtr();
 
   //build LUT
   m_ColorMappingLUT = vtkLookupTable::New();

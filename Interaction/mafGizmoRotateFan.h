@@ -58,13 +58,13 @@ class mafRefSys;
 class MAF_EXPORT mafGizmoRotateFan : public mafGizmoInterface 
 {
 public:
-           mafGizmoRotateFan(mafVME *input, mafBaseEventHandler *listener = NULL);
+           mafGizmoRotateFan(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener = NULL);
            ~mafGizmoRotateFan() override; 
   
   /** 
   Set the gizmo generating vme; the gizmo will be centered on this vme*/
-  void SetInput(mafVME *vme) override;
-  mafVME *GetInput() {return this->m_InputVme;};
+  void SetInput(std::shared_ptr<mafVME> vme) override;
+  mafVME *GetInput() {return this->m_InputVme.get();};
 
   //----------------------------------------------------------------------------
   // events handling 
@@ -112,7 +112,7 @@ protected:
   
  
   /** Register input vme*/
-  mafVME *m_InputVme;
+  std::shared_ptr<mafVME> m_InputVme;
 
   /** Register the gizmo axis */
   int m_ActiveAxis;

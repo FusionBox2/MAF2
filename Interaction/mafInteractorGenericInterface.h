@@ -161,7 +161,7 @@ public:
   void SetRenderer(vtkRenderer *ren) override;
 
   /** Set the node to be transformed */
-  void SetVME(mafVME *vme) override;
+  void SetVME(std::shared_ptr<mafVME> vme) override;
 
   /** If Surface Snap modifier is on translation and rotation will be constrained to picked surfaces if possible*/
   void SetSurfaceSnap(bool flag) {m_SurfaceSnap=flag;}

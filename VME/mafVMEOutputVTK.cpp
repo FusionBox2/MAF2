@@ -28,7 +28,7 @@
 #include "mafVMEOutputVTK.h"
 #include "mafVME.h"
 #include "mafDataPipe.h"
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 #include "mafTransform.h"
 #include "mafIndent.h"
 

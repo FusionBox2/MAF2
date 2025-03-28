@@ -608,7 +608,7 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 	case PARENT_POINTS:
 	{
 						  points->Reset();
-						  mafNode* parent = this->GetParent();
+						  auto parent = this->GetParent();
 						  
 						  
 						  vtkPolyData* data;
@@ -619,23 +619,23 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 
 							  if (parent->IsMAFType(mafVMESurfaceParametric))
 							  {
-								  data = ((mafVMESurfaceParametric*)parent)->GetSurfaceOutput()->GetSurfaceData();
-								  ((mafVMESurfaceParametric*)parent)->GetSurfaceOutput()->Update();
+								  data = mafVMESurfaceParametric::StaticDownCast(parent)->GetSurfaceOutput()->GetSurfaceData();
+									mafVMESurfaceParametric::StaticDownCast(parent)->GetSurfaceOutput()->Update();
 
 								  fitEllipsoid(data->GetPoints(), &m_PointsXRes, &m_PointsYRes, &m_PointsZRes, &m_PointsR1, &m_PointsR2, &m_PointsR3, &rotationMat);
 							  
 							  }
 							  if (parent->IsMAFType(mafVMESurface))
 							  {
-								  data = ((mafVMESurface*)parent)->GetSurfaceOutput()->GetSurfaceData();
-								  ((mafVMESurface*)parent)->GetSurfaceOutput()->Update();
+								  data = mafVMESurface::StaticDownCast(parent)->GetSurfaceOutput()->GetSurfaceData();
+									mafVMESurface::StaticDownCast(parent)->GetSurfaceOutput()->Update();
 								  fitEllipsoid(data->GetPoints(), &m_PointsXRes, &m_PointsYRes, &m_PointsZRes, &m_PointsR1, &m_PointsR2, &m_PointsR3, &rotationMat);
 							  }
 							  if (parent->IsMAFType(mafVMELandmarkCloud))
 							  {
 								 
 								  
-								 int nbrLndMarks = ((mafVMELandmarkCloud*)parent)->GetNumberOfLandmarks();
+								 int nbrLndMarks = mafVMELandmarkCloud::StaticDownCast(parent)->GetNumberOfLandmarks();
 								  for (int i = 0; i<nbrLndMarks; i++)
 								  { 
 									  /*std::string str2 = "loop " + boost::lexical_cast<std::string>(i)+"//"+str20;
@@ -643,7 +643,7 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 									  wxBusyInfo wait00(mafs2);
 									  Sleep(0500);*/
 									  double posPt[3];
-									  ((mafVMELandmarkCloud*)parent)->GetLandmarkPosition(i, posPt, -1);
+										mafVMELandmarkCloud::StaticDownCast(parent)->GetLandmarkPosition(i, posPt, -1);
 									  
 									  pts->InsertNextPoint(posPt);
 									  
@@ -654,11 +654,11 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 								//  data->SetPoints(pts);
 								  
 								  
-								  if (((mafVMELandmarkCloud*)parent)->GetPointSetOutput()->GetPointSetData())
+								  if (mafVMELandmarkCloud::StaticDownCast(parent)->GetPointSetOutput()->GetPointSetData())
 								  {
 									  
-									  data = ((mafVMELandmarkCloud*)parent)->GetPointSetOutput()->GetPointSetData();
-									  ((mafVMELandmarkCloud*)parent)->GetPointSetOutput()->Update();
+									  data = mafVMELandmarkCloud::StaticDownCast(parent)->GetPointSetOutput()->GetPointSetData();
+										mafVMELandmarkCloud::StaticDownCast(parent)->GetPointSetOutput()->Update();
 									  fitEllipsoid(data->GetPoints(), &m_PointsXRes, &m_PointsYRes, &m_PointsZRes, &m_PointsR1, &m_PointsR2, &m_PointsR3, &rotationMat);
 								  }
 								  else

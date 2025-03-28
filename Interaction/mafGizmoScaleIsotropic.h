@@ -42,13 +42,13 @@ class vtkTransform;
 class MAF_EXPORT mafGizmoScaleIsotropic: public mafGizmoInterface 
 {
 public:
-           mafGizmoScaleIsotropic(mafVME *input, mafBaseEventHandler *listener = NULL);
+           mafGizmoScaleIsotropic(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener = NULL);
            ~mafGizmoScaleIsotropic() override; 
   
   /** 
   Set the gizmo generating vme; the gizmo will be centered on this vme*/
-  void SetInput(mafVME *vme) override; 
-  mafVME *GetInput() {return this->m_InputVme;};
+  void SetInput(std::shared_ptr<mafVME> vme) override;
+  mafVME *GetInput() {return this->m_InputVme.get();}
 
   //----------------------------------------------------------------------------
   // events handling 
@@ -89,7 +89,7 @@ protected:
   mafVMEGizmo *m_CubeGizmo;
 
   /** Register input vme*/
-  mafVME *m_InputVme;
+  std::shared_ptr<mafVME> m_InputVme;
   
   /** Cube source*/
   vtkCubeSource *m_Cube;

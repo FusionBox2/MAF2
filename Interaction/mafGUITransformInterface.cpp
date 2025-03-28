@@ -44,9 +44,9 @@ mafGUITransformInterface::mafGUITransformInterface()
 //----------------------------------------------------------------------------
 {
   m_CurrentTime = -1;
-  m_InputVME = NULL;
-  m_Gui = NULL;
-  m_RefSysVME = m_InputVME;
+  m_InputVME = nullptr;
+  m_Gui = nullptr;
+  m_RefSysVME = m_InputVME.get();
   m_TestMode = false;
 }
 //----------------------------------------------------------------------------
@@ -60,7 +60,7 @@ mafGUITransformInterface::~mafGUITransformInterface()
 void mafGUITransformInterface::SetRefSys(mafVME* refSysVme)
 //----------------------------------------------------------------------------
 { 
-  if (refSysVme == NULL)
+  if (refSysVme == nullptr)
   return;
 
   m_RefSysVME = refSysVme;

@@ -1,21 +1,4 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafRoot
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
- 
-#ifndef __mafRoot_h
-#define __mafRoot_h
+#pragma once
 
 //----------------------------------------------------------------------------
 // includes :
@@ -25,7 +8,7 @@
 //----------------------------------------------------------------------------
 // forward declarations
 //----------------------------------------------------------------------------
-class mafObject;
+class mafNode;
 class mafStorageElement;
 class mafStorageElementBuilder;
 
@@ -58,7 +41,7 @@ public:
   void SetMaxNodeId(mafID id) { m_MaxNodeId=id;}
   void ResetMaxNodeId() { this->SetMaxNodeId(0);}
 
-  static mafRoot* SafeDownCast(mafObject *o);
+  static mafRoot* SafeDownCast(mafNode *o);
 
 protected:
   mafRoot();
@@ -67,12 +50,10 @@ protected:
   virtual void StoreRoot(mafStorageElementBuilder& parent);
   virtual void RestoreRoot(const mafStorageElement& node);
 
-  mafID       m_MaxNodeId; ///< Counter for node Ids
+  mafID       m_MaxNodeId = 0; ///< Counter for node Ids
 
 private:
   mafRoot(const mafRoot&); // Not implemented
   void operator=(const mafRoot&); // Not implemented
   
 };
-
-#endif

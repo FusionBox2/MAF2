@@ -59,19 +59,17 @@ public:
   {
     m_OpType  = OPTYPE_OP;
     m_Canundo = true;
-    m_Created = NULL;
   }
  ~lhpOpCreateObject() override
  {
-   mafDEL(m_Created);
  }
 
   mafOp* Copy() override {return new lhpOpCreateObject(m_CreatedName, GetLabel());}
 
-  bool Accept(mafNode *node) override {return (node != NULL);}
+  bool Accept(mafNode *node) override {return (node != nullptr);}
   void OpRun() override
   {
-    mafNEW(m_Created);
+    m_Created = O::NewSPtr();
     m_Created->SetName(m_CreatedName);
     SetOutput(m_Created);
     {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
@@ -79,7 +77,7 @@ public:
 
 
 protected: 
-  O         *m_Created;
+  std::shared_ptr<O> m_Created;
   mafString  m_CreatedName;
 };
 

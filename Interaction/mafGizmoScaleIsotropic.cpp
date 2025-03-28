@@ -50,7 +50,7 @@
 #include "vtkProperty.h"
 
 //----------------------------------------------------------------------------
-mafGizmoScaleIsotropic::mafGizmoScaleIsotropic(mafVME *input, mafBaseEventHandler *listener)
+mafGizmoScaleIsotropic::mafGizmoScaleIsotropic(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener)
 //----------------------------------------------------------------------------
 {
   m_IsaComp = NULL;
@@ -236,7 +236,7 @@ std::shared_ptr<mafMatrix> mafGizmoScaleIsotropic::GetAbsPose()
 }
 
 //----------------------------------------------------------------------------
-void mafGizmoScaleIsotropic::SetInput(mafVME *vme)
+void mafGizmoScaleIsotropic::SetInput(std::shared_ptr<mafVME> vme)
 //----------------------------------------------------------------------------
 {
   this->m_InputVme = vme; 

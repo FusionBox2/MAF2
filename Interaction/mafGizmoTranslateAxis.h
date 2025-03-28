@@ -43,13 +43,13 @@ class vtkTransform;
 class MAF_EXPORT mafGizmoTranslateAxis: public mafGizmoInterface 
 {
 public:
-           mafGizmoTranslateAxis(mafVME *input, mafBaseEventHandler *listener = NULL, mafString name = _R(""));
+           mafGizmoTranslateAxis(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener = NULL, mafString name = _R(""));
            ~mafGizmoTranslateAxis() override; 
   
   /** 
   Set the gizmo generating vme; the gizmo will be centered on this vme*/
-  void SetInput(mafVME *vme) override; 
-  mafVME *GetInput() {return this->m_InputVme;};
+  void SetInput(std::shared_ptr<mafVME> vme) override;
+  mafVME *GetInput() {return this->m_InputVme.get();}
 
   //----------------------------------------------------------------------------
   // events handling 
@@ -120,7 +120,7 @@ protected:
   mafVMEGizmo *m_CylGizmo;
 
   /** Register input vme*/
-  mafVME *m_InputVme;
+  std::shared_ptr<mafVME> m_InputVme;
 
   enum GIZMOPARTS {CYLINDER = 0, CONE};
   

@@ -26,12 +26,12 @@ int mafGUITree::mafTreeCtrlSortable::OnCompareItems(const wxTreeItemId& item1, c
       return 0;
     if(n1 == n2 || n1->GetParent() != n2->GetParent())
       return 0;
-    mafNode *p = n1->GetParent();
+    auto p = n1->GetParent();
     for(unsigned j = 0; j < p->GetNumberOfChildren(); j++)
     {
-      if(n1 == p->GetChild(j))
+      if(n1 == p->GetChild(j).get())
         return -1;
-      else if(n2 == p->GetChild(j))
+      else if(n2 == p->GetChild(j).get())
         return  1;
     }
   }
@@ -98,7 +98,7 @@ void mafGUITree::Reset()
   m_NodeRoot  = 0;
 }
 //----------------------------------------------------------------------------
-bool mafGUITree::AddNode (intptr_t node_id, intptr_t parent_id , wxString label, int icon)
+bool mafGUITree::AddNode (intptr_t node_id, intptr_t parent_id , wxString label, int icon, mafGUITree::mafGUITreeItemData* data)
 //----------------------------------------------------------------------------
 {
 	/*
@@ -116,9 +116,11 @@ bool mafGUITree::AddNode (intptr_t node_id, intptr_t parent_id , wxString label,
   // check if already inserted
   if( NodeExist(node_id) ) return false;
 
+  if (data == nullptr)
+    data = new mafGUITreeItemData(node_id);
 	if( parent_id == 0 && m_NodeRoot == 0 ) 
 	{
-		item = m_NodeTree->AddRoot(label, icon, icon, new mafGUITreeItemData(node_id));
+		item = m_NodeTree->AddRoot(label, icon, icon, data);
 		m_NodeRoot = node_id;
 	}
   else
@@ -126,7 +128,7 @@ bool mafGUITree::AddNode (intptr_t node_id, intptr_t parent_id , wxString label,
     if(!NodeExist(parent_id) ) return false;
     parent_item = ItemFromNode(parent_id);
     //insert normally
-    item = m_NodeTree->AppendItem(parent_item,label,icon,icon,new mafGUITreeItemData(node_id));
+    item = m_NodeTree->AppendItem(parent_item,label,icon,icon,data);
     // expand parent node
     if (m_Autosort)
     {

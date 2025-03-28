@@ -9,11 +9,11 @@
 #include <string>
 
 #define mafPlugNodeMacro(node_type,descr) \
-  NodeFactory::RegisterNewNode(node_type::GetStaticTypeName(), descr, node_type::NewObject);\
+  NodeFactory::RegisterNewNode(node_type::GetStaticTypeName(), descr, node_type::NewObjectS);\
   if (mafPictureFactory::GetPicsInitialized()) \
     mafPictureFactory::GetPictureFactory()->AddVmePic(_R(node_type::GetStaticTypeName()),node_type::GetIcon());
 
-using NodeCreateType = mafObject*;
+using NodeCreateType = std::shared_ptr<mafNode>;
 using CreateNodeFunction = NodeCreateType(*)();
 
 BEGIN_FTK_NAMESPACE
@@ -53,7 +53,7 @@ public:
 template <class T>
 mafPlugNode<T>::mafPlugNode(const char *description)
 { 
-  NodeFactory::RegisterNewNode(T::GetStaticTypeName(), description, T::NewObject);
+  NodeFactory::RegisterNewNode(T::GetStaticTypeName(), description, T::NewObjectS);
   {
     // here plug node's icon inside picture factory
     if (mafPictureFactory::GetPicsInitialized())

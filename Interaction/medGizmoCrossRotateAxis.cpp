@@ -57,7 +57,7 @@
 #include "medGizmoCrossRotateFan.h"
 
 //----------------------------------------------------------------------------
-medGizmoCrossRotateAxis::medGizmoCrossRotateAxis(mafVME *input, mafBaseEventHandler *listener)
+medGizmoCrossRotateAxis::medGizmoCrossRotateAxis(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener)
 //----------------------------------------------------------------------------
 {
 	m_GizmoDirection =NS;
@@ -414,7 +414,7 @@ std::shared_ptr<mafMatrix> medGizmoCrossRotateAxis::GetAbsPose()
 	return m_GizmoCross->GetOutput()->GetAbsMatrix();
 }
 //----------------------------------------------------------------------------
-void medGizmoCrossRotateAxis::SetInput(mafVME *vme)
+void medGizmoCrossRotateAxis::SetInput(std::shared_ptr<mafVME> vme)
 //----------------------------------------------------------------------------
 {
 	this->m_InputVme = vme; 
@@ -449,7 +449,7 @@ bool medGizmoCrossRotateAxis::GetIsActive()
 
 mafVME * medGizmoCrossRotateAxis::GetInput()
 {
-	return this->m_InputVme;
+	return this->m_InputVme.get();
 }
 
 

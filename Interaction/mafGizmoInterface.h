@@ -56,7 +56,7 @@ public:
   /** 
   Set input vme for the gizmo: gizmo are tools used to manipulate VMEs and this variable holds a reference to the controlled VME.
   Can be used also to initialize gizmo dimensions and position*/
-  virtual void SetInput(mafVME *vme);
+  virtual void SetInput(std::shared_ptr<mafVME> vme);
   mafVME *GetInput();
   
   /** 
@@ -149,7 +149,7 @@ protected:
 
   /** 
   The input vme*/
-  mafVME *m_InputVME;
+  std::shared_ptr<mafVME> m_InputVME;
 
   /** 
   The gizmo interaction mode*/

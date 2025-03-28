@@ -106,7 +106,7 @@ void mafViewImage::Create()
 
 }
 //-------------------------------------------------------------------------
-int mafViewImage::GetNodeStatus(mafNode *vme)
+int mafViewImage::GetNodeStatusI(mafNode *vme)
 //-------------------------------------------------------------------------
 {
   mafSceneNode *n = NULL;

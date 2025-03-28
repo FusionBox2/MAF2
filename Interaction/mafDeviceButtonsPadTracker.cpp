@@ -21,7 +21,7 @@
 #include "mafGUI.h"
 
 // general
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 #include "mafEventInteraction.h"
 #include "mmuIdFactory.h"
 

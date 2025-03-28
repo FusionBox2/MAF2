@@ -202,7 +202,7 @@ void mafViewOrthoSlice::VmeShow(mafNode *node, bool show)
 void mafViewOrthoSlice::VmeRemove(mafNode *node)
 //----------------------------------------------------------------------------
 {
-  if (m_CurrentVolume && node == m_CurrentVolume) 
+  if (m_CurrentVolume && node == m_CurrentVolume.get()) 
   {
     // Disable ChildViews
     for(int j=1; j<m_NumOfChildView; j++) 
@@ -334,7 +334,7 @@ void mafViewOrthoSlice::OnEvent(mafEventBase *maf_event)
       case ID_RESET_SLICES:
       {
         assert(m_CurrentVolume);
-        this->ResetSlicesPosition(m_CurrentVolume);
+        this->ResetSlicesPosition(m_CurrentVolume.get());
       }
       break;
       // Added by Losi 11.25.2009
@@ -714,14 +714,14 @@ void mafViewOrthoSlice::Print(std::ostream& os, const int tabs)// const
 void mafViewOrthoSlice::CreateOrthoslicesAndGizmos( mafNode * node )
 //-------------------------------------------------------------------------
 {
-  if (node == NULL)
+  if (node == nullptr)
   {
     mafLogMessage(_M("node = NULL"));
     return;
   }
 
-  m_CurrentVolume = mafVME::SafeDownCast(node);
-  if (m_CurrentVolume == NULL)
+  m_CurrentVolume = mafVME::SafeDownCast(GetSceneGraph()->Vme2Node(node)->m_Vme);
+  if (m_CurrentVolume == nullptr)
   {
     mafLogMessage(_M("current volume = NULL"));
     return;
@@ -785,9 +785,9 @@ void mafViewOrthoSlice::SetThicknessForAllSurfaceSlices(mafNode *root)
 //----------------------------------------------------------------------------
 {
 	auto iter = root->NewIterator();
-	for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+	for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
 	{
-		if (((mafVME *)node)->GetOutput()->IsA("mafVMEOutputSurface")) //if(node->IsA("mafVMESurface"))
+		if (mafVME::StaticDownCast(node)->GetOutput()->IsA("mafVMEOutputSurface")) //if(node->IsA("mafVMESurface"))
 		{
 			if(auto pipe = mafPipeSurfaceSlice::SafeDownCast(m_ChildViewList[CHILD_XN_VIEW]->GetNodePipe(node)))
 			{

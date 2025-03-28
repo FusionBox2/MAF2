@@ -88,7 +88,7 @@ void medPipeTrajectories::Create(mafNode *node, mafView *view)
   m_Vme->AddObserver(this);
 
   double radius;
-  if(mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(m_Vme->GetParent()))
+  if(auto cloud = mafVMELandmarkCloud::SafeDownCast(m_Vme->GetParent()))
   {
     radius = cloud->GetRadius();
   }

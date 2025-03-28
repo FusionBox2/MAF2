@@ -102,8 +102,10 @@ void mafGUICheckTree::ShowContextualMenu(wxMouseEvent& event)
   e.SetId(SHOW_CONTEXTUAL_MENU);
   e.SetBool(vmeMenu);
   e.SetArg(m_Autosort);
-  if(vmeMenu)
-    e.SetVme((mafNode *) (NodeFromItem(i)));
+  if (vmeMenu)
+  {
+    e.SetVme(static_cast<mafGUICheckTreeItemData*>(m_NodeTree->GetItemData(i))->GetSharedNode());
+  }
   InvokeEvent(e);
 }
 //----------------------------------------------------------------------------
@@ -163,13 +165,13 @@ void mafGUICheckTree::OnMouseEvent( wxMouseEvent& event )
 void mafGUICheckTree::OnIconClick(wxTreeItemId item)
 //----------------------------------------------------------------------------
 {
-  mafNode* vme = (mafNode*) (NodeFromItem(item));
-  int status = GetVmeStatus(vme); 
+  auto vme = static_cast<mafGUICheckTreeItemData*>(m_NodeTree->GetItemData(item))->GetSharedNode();
+  int status = GetVmeStatus(vme.get()); 
 
   if(status != NODE_NON_VISIBLE)		
   {
     bool show = !(status == NODE_VISIBLE_ON || status == NODE_MUTEX_ON ); 
-    if (!show && !this->m_CanSelect && m_SelectedNode && m_SelectedNode == vme)
+    if (!show && !this->m_CanSelect && m_SelectedNode && m_SelectedNode == vme.get())
     {
       return;
     }
@@ -186,11 +188,11 @@ bool mafGUICheckTree::IsIconChecked(wxTreeItemId item)
   return checked;
 }
 //----------------------------------------------------------------------------
-void mafGUICheckTree::VmeAdd(mafNode *vme)   
+void mafGUICheckTree::VmeAdd(std::shared_ptr<mafNode> vme)
 //----------------------------------------------------------------------------
 {
-  AddNode((intptr_t)vme,(intptr_t)vme->GetParent(), vme->GetName().toWx(), 0);
-	VmeUpdateIcon(vme);
+  AddNode((intptr_t)vme.get(), (intptr_t)vme->GetParent().get(), vme->GetName().toWx(), 0, new mafGUICheckTreeItemData((intptr_t)vme.get(), vme));
+	VmeUpdateIcon(vme.get());
 }
 //----------------------------------------------------------------------------
 void mafGUICheckTree::VmeRemove(mafNode *vme)   
@@ -257,14 +259,14 @@ void mafGUICheckTree::VmeUpdateIcon(mafNode *vme)
 //----------------------------------------------------------------------------
 {
   auto iter = vme->NewIterator();
-  for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+  for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {
     int dataStatus = 1;
     int icon_index;
 
-    dataStatus = ((mafVME *)node)->IsDataAvailable() ? 0 : 1;
-    icon_index = ClassNameToIcon(_R(node->GetTypeName())) + (GetVmeStatus(node)*2) + dataStatus;
-    SetNodeIcon( (intptr_t)node, icon_index );
+    dataStatus = mafVME::StaticDownCast(node)->IsDataAvailable() ? 0 : 1;
+    icon_index = ClassNameToIcon(_R(node->GetTypeName())) + (GetVmeStatus(node.get())*2) + dataStatus;
+    SetNodeIcon( (intptr_t)node.get(), icon_index );
 
     if (node->GetNumberOfLinks() != 0)
     {
@@ -299,7 +301,7 @@ void mafGUICheckTree::ViewSelected(mafView *view)
 void mafGUICheckTree::TreeUpdateIcon()
 //----------------------------------------------------------------------------
 {
-  if (m_SelectedNode != NULL)
+  if (m_SelectedNode)
   {
   	VmeUpdateIcon(m_SelectedNode->GetRoot());
   }
@@ -435,6 +437,6 @@ void mafGUICheckTree::OnSelectionChanged(wxTreeEvent& event)
 
   i = event.GetItem();
   if(i.IsOk())
-    {mafEvent evUnq(this, VME_SELECT); evUnq.SetArg(NodeFromItem(i)); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_SELECT); evUnq.SetVme(static_cast<mafGUICheckTreeItemData*>(m_NodeTree->GetItemData(i))->GetSharedNode()); InvokeEvent(evUnq);}
   event.Skip();
 }

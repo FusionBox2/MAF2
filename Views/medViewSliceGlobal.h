@@ -53,7 +53,7 @@ public:
 
   /** 
   Set the visualization status for the node (visible, not visible, mutex, ...) \sa mafSceneGraph mafView*/
-  int GetNodeStatus(mafNode *vme) override;
+  int GetNodeStatusI(mafNode *vme) override;
 
   /** IDs for the view GUI */
   enum VIEW_NEW_GLOBAL_SLICE_WIDGET_ID

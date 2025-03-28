@@ -150,7 +150,7 @@ void mafInteractorGenericInterface::SetScaleConstraint(mafInteractorConstraint *
 }
  
 //------------------------------------------------------------------------------
-void mafInteractorGenericInterface::SetVME(mafVME *vme)
+void mafInteractorGenericInterface::SetVME(std::shared_ptr<mafVME> vme)
 //------------------------------------------------------------------------------
 {
   Superclass::SetVME(vme);

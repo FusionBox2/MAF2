@@ -63,7 +63,7 @@ void mafGizmoInterface::SendTransformMatrix(std::shared_ptr<mafMatrix> matrix, i
   InvokeEvent(e2s);
 }
 
-void mafGizmoInterface::SetInput( mafVME *vme )
+void mafGizmoInterface::SetInput(std::shared_ptr<mafVME> vme )
 {
   m_InputVME = vme;
 }
@@ -80,7 +80,7 @@ void mafGizmoInterface::Show( bool show )
 
 mafVME * mafGizmoInterface::GetInput()
 {
-  return this->m_InputVME;
+  return this->m_InputVME.get();
 }
 
 void mafGizmoInterface::SetModalityToLocal()

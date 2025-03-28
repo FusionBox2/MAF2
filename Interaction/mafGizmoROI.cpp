@@ -35,7 +35,7 @@
 #include "mafTransform.h"
 #include "mafVME.h"
 #include "mafVMEOutput.h"
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 
 #include "vtkTransform.h"
 #include "vtkCubeSource.h"
@@ -49,7 +49,7 @@ using namespace std;
 
 
 //----------------------------------------------------------------------------
-mafGizmoROI::mafGizmoROI(mafVME *input, mafBaseEventHandler* listener /* = NULL  */, int constraintModality/* =mafGizmoHandle::BOUNDS */,mafVME* parent/* =NULL */,bool showShadingPlane/* =false */)
+mafGizmoROI::mafGizmoROI(std::shared_ptr<mafVME> input, mafBaseEventHandler* listener /* = NULL  */, int constraintModality/* =mafGizmoHandle::BOUNDS */,mafVME* parent/* =NULL */,bool showShadingPlane/* =false */)
 //----------------------------------------------------------------------------
 {
   assert(input);
@@ -73,7 +73,7 @@ mafGizmoROI::mafGizmoROI(mafVME *input, mafBaseEventHandler* listener /* = NULL 
     m_GHandle[i]->GetHandleCenter(i,m_Center[i]);
   } 
 	// create the outline gizmo
-	m_OutlineGizmo = new mafGizmoBoundingBox(input, this,parent);
+	m_OutlineGizmo = new mafGizmoBoundingBox(input.get(), this,parent);
 
   UpdateOutlineBounds();
 
@@ -408,7 +408,7 @@ void mafGizmoROI::SetConstrainRefSys(std::shared_ptr<mafMatrix> constrain)
 }
 
 //----------------------------------------------------------------------------  
-void mafGizmoROI::SetInput(mafVME *input)
+void mafGizmoROI::SetInput(std::shared_ptr<mafVME> input)
 //----------------------------------------------------------------------------
 {
   this->m_InputVME = input;
@@ -417,7 +417,7 @@ void mafGizmoROI::SetInput(mafVME *input)
     m_GHandle[i]->SetInput(input);
   }
 
-  m_OutlineGizmo->SetInput(input);
+  m_OutlineGizmo->SetInput(input.get());
 }
 
 //----------------------------------------------------------------------------  

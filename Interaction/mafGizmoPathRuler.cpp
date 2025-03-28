@@ -27,14 +27,14 @@
 #include "mafGizmoPathRuler.h"
 #include "mafDecl.h"
 #include "mafInteractorGenericMouse.h"
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 #include "mafVMEGizmo.h"
 
 #include "mafMatrix.h"
 #include "mafVME.h"
 
 //----------------------------------------------------------------------------
-mafGizmoPathRuler::mafGizmoPathRuler(mafVME *input, mafBaseEventHandler* listener, \
+mafGizmoPathRuler::mafGizmoPathRuler(std::shared_ptr<mafVME> input, mafBaseEventHandler* listener, \
                  int ticksNumber, int originTickID, double ticksHeigth,double ticksDistance, bool enableShorterTicks)
 {
   assert(input);
@@ -233,7 +233,7 @@ void mafGizmoPathRuler::SetConstraintPolyline( mafVME* constraintPolyline )
   }
 }
 
-void mafGizmoPathRuler::SetInput( mafVME *vme )
+void mafGizmoPathRuler::SetInput(std::shared_ptr<mafVME> vme )
 {
   // register the input vme
   m_InputVME = mafVME::SafeDownCast(vme);

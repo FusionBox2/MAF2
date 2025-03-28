@@ -178,7 +178,7 @@ protected:
 
   double m_GizmoHandlePosition[3];
 
-  mafVME *m_CurrentVolume; ///< Current visualized volume
+  std::shared_ptr<mafVME> m_CurrentVolume; ///< Current visualized volume
   
   mafGUILutSlider *m_LutSlider; ///< Double slider used to change brightness and contrast of the image
   mafGUILutSwatch *m_LutWidget; ///< LUT widget in view side panel 

@@ -80,7 +80,7 @@ protected:
   mafVMELandmarkCloud    *m_CurrentDlc;
 	mafVMELandmarkCloud    *m_Dlc;
 
-  mafVMELandmarkCloud    *m_PGD_DLCloud;
+  std::shared_ptr<mafVMELandmarkCloud>    m_PGD_DLCloud;
   std::vector<mafString> *m_PGDLMNamesTagArray;
   FILE                   * m_pPGDFile;
   double                  m_DefaultRadius;

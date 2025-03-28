@@ -43,7 +43,7 @@
 #include "vtkRenderer.h"
 
 //----------------------------------------------------------------------------
-mafGUITransformMouse::mafGUITransformMouse(mafVME *input, mafBaseEventHandler *listener /* = NULL */, bool testMode /* = false */)
+mafGUITransformMouse::mafGUITransformMouse(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener /* = NULL */, bool testMode /* = false */)
 //----------------------------------------------------------------------------
 {
   assert(input);
@@ -60,7 +60,7 @@ mafGUITransformMouse::mafGUITransformMouse(mafVME *input, mafBaseEventHandler *l
   m_RotationConstraintId = VIEW_PLANE;
   m_TranslationConstraintId = VIEW_PLANE;
   
-  m_RefSysVME = m_InputVME;
+  m_RefSysVME = m_InputVME.get();
   m_OldInteractor = NULL;
 
   CreateISA();
@@ -285,7 +285,7 @@ void mafGUITransformMouse::CreateISA()
   m_IsaCompositor = mafInteractorCompositorMouse::NewSPtr();
 
   // default aux ref sys is the vme ref sys
-  m_RefSysVME = m_InputVME;
+  m_RefSysVME = m_InputVME.get();
 
   auto absMatrix = m_RefSysVME->GetOutput()->GetAbsMatrix();
   //----------------------------------------------------------------------------

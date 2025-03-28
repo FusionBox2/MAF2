@@ -77,11 +77,11 @@ class mafVME;
 class MAF_EXPORT mafGizmoROI: public mafGizmoInterface
 {
 public:
-	mafGizmoROI(mafVME *input, mafBaseEventHandler* listener = NULL , int constraintModality=mafGizmoHandle::BOUNDS,mafVME* parent=NULL,bool showShadingPlane=false);
+	mafGizmoROI(std::shared_ptr<mafVME> input, mafBaseEventHandler* listener = NULL , int constraintModality=mafGizmoHandle::BOUNDS,mafVME* parent=NULL,bool showShadingPlane=false);
 	~mafGizmoROI() override; 
 
   /** Set input vme for the gizmo*/
-	void SetInput(mafVME *vme) override; 
+	void SetInput(std::shared_ptr<mafVME> vme) override;
   
   /** Events handling*/
 	void OnEvent(mafEventBase *maf_event) override;

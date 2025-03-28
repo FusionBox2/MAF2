@@ -61,7 +61,7 @@
 
 #include "mafTagArray.h"
 //----------------------------------------------------------------------------
-medGizmoCrossTranslatePlane::medGizmoCrossTranslatePlane(mafVME *input, mafBaseEventHandler *listener)
+medGizmoCrossTranslatePlane::medGizmoCrossTranslatePlane(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener)
 //----------------------------------------------------------------------------
 {
 	m_LastColor[0][S0] = -1;
@@ -184,7 +184,7 @@ medGizmoCrossTranslatePlane::~medGizmoCrossTranslatePlane()
 		m_Gizmo[i]->ReparentTo(nullptr);
 	}
 
-	vtkDEL(m_TranslationFeedbackGizmo);
+	m_TranslationFeedbackGizmo.reset();
 
 	vtkDEL(m_FeedbackConeSource);
 
@@ -498,7 +498,7 @@ std::shared_ptr<mafMatrix> medGizmoCrossTranslatePlane::GetAbsPose()
 	return m_Gizmo[S0]->GetOutput()->GetAbsMatrix();
 }
 //----------------------------------------------------------------------------
-void medGizmoCrossTranslatePlane::SetInput(mafVME *vme)
+void medGizmoCrossTranslatePlane::SetInput(std::shared_ptr<mafVME> vme)
 //----------------------------------------------------------------------------
 {
 	// set gizmo pose and refsys from an input vme
@@ -581,7 +581,7 @@ void medGizmoCrossTranslatePlane::CreateFeedbackGizmoPipeline()
 	m_DownFeedbackConeTransform->RotateZ(-90);
 	m_DownFeedbackConeTransform->Translate(0, -x, 0);
 
-	m_TranslationFeedbackGizmo = mafVMEGizmo::New();
+	m_TranslationFeedbackGizmo = mafVMEGizmo::NewSPtr();
 
 	m_FeedbackConeSource->SetResolution(coneResolution);
 	m_FeedbackConeSource->SetHeight(coneHeight);

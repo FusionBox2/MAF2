@@ -1,20 +1,4 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafGUITreeContextualMenu
- Authors: Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafGUITreeContextualMenu_H__
-#define __mafGUITreeContextualMenu_H__
+#pragma once
 
 #include "mafEventSender.h"
 //----------------------------------------------------------------------------
@@ -40,15 +24,15 @@ public:
   ~mafGUITreeContextualMenu() override;
 
   /** Create a contextual menu*/
-  virtual void CreateContextualMenu(mafGUICheckTree *tree, mafView *view, mafNode *vme, bool vme_menu);
+  virtual void CreateContextualMenu(mafGUICheckTree *tree, mafView *view, std::shared_ptr<mafNode> vme, bool vme_menu);
 
   /** Visualize contextual men for the MDI child and selected view. */
   void ShowContextualMenu();
 
 protected:
   mafView       *m_ViewActive;
-  mafVME        *m_VmeActive;
-  mafNode       *m_NodeActive;
+  std::shared_ptr<mafVME> m_VmeActive;
+  std::shared_ptr<mafNode> m_NodeActive;
   mafGUICheckTree  *m_NodeTree;
 
   mafSceneGraph *m_SceneGraph;
@@ -63,4 +47,3 @@ protected:
 	virtual void OnContextualMenu(wxCommandEvent& event);
   DECLARE_EVENT_TABLE()
 };
-#endif

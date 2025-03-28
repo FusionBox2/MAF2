@@ -89,7 +89,7 @@ public:
 	void SetMatrix(const mafMatrix &mat) override;
 	static bool VMEAccept(mafNode *node) { return(node != NULL && node->IsMAFType(mafVME)); };
 
-	mafVMEGravityLine *gline1,*gline2,*gline3;
+	std::shared_ptr<mafVMEGravityLine> gline1,gline2,gline3;
 
 	vtkPlaneSource* surf;
 
@@ -136,7 +136,7 @@ protected:
 	mafString angleBPlanes;
 	double angPlanes;
 	//mafString m_p4LandmarkName;
-	mafVMELandmarkCloud	*m_Cloud1;
+	std::shared_ptr<mafVMELandmarkCloud>	m_Cloud1;
 	//mafVMELandmarkCloud	*m_Cloud2;
 	//mafVMELandmarkCloud	*m_Cloud3;
 //	mafVME *p1,*p2,*p3,*p4,*p5,*p6;

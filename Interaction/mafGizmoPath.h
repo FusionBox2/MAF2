@@ -46,7 +46,7 @@ class MAF_EXPORT mafGizmoPath : public mafGizmoInterface
 {
 public:
 
-	mafGizmoPath(mafNode* inputVme, mafBaseEventHandler *Listener = NULL, const char *name = "GizmoPath", int textVisibility = 0);
+	mafGizmoPath(std::shared_ptr<mafVME> inputVme, mafBaseEventHandler *Listener = NULL, const char *name = "GizmoPath", int textVisibility = 0);
 
 	~mafGizmoPath() override;
   
@@ -75,10 +75,10 @@ public:
   
   /** This method is used to change the input: this VME is used only to reparent the gizmo
   to the root*/
-  void SetInput(mafVME *vme) override;
+  void SetInput(std::shared_ptr<mafVME> vme) override;
 
   /** return the gizmo object*/
-  mafVMEGizmo *GetOutput() {return m_VmeGizmoPath;}; 
+  mafVMEGizmo *GetOutput() {return m_VmeGizmoPath.get();}; 
 
   std::shared_ptr<mafMatrix> GetAbsPose() override;
   
@@ -119,13 +119,13 @@ protected:
 
   static void AddVectors(double p0[3],double p1[3],double sum[3]);
 
-  void Constructor(mafNode *imputVme, mafBaseEventHandler *listener, const char *name);
+  void Constructor(std::shared_ptr<mafVME> imputVme, mafBaseEventHandler *listener, const char *name);
   void Destructor();
 
   void CreateInteractor();
 
   mafString           m_Name;
-  mafVMEGizmo        *m_VmeGizmoPath;
+  std::shared_ptr<mafVMEGizmo>        m_VmeGizmoPath;
   std::shared_ptr<mafInteractorCompositorMouse> m_GizmoInteractor;
   mafInteractorGenericMouse    *m_LeftMouseInteractor;
   mafGUI             *m_GizmoGui;

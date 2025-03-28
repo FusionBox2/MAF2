@@ -44,7 +44,7 @@ class mafVME;
 class MAF_EXPORT mafGUITransformMouse : public mafGUITransformInterface
 {
 public:
-  mafGUITransformMouse(mafVME *input, mafBaseEventHandler *listener = NULL, bool testMode = false);
+  mafGUITransformMouse(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener = NULL, bool testMode = false);
 	~mafGUITransformMouse() override; 
 
   // constraints enum

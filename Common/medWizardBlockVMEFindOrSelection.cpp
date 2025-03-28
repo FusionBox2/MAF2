@@ -62,7 +62,7 @@ void medWizardBlockVMEFindOrSelection::ExcutionBegin()
   globalVMEAccept=m_AcceptedVME;
 
   if (m_SelectedVME)
-	  m_SelectedVME=m_SelectedVME->GetByPath(mafWxToString(m_VmeParentSelect));
+	  m_SelectedVME=m_SelectedVME->GetByPath(mafWxToString(m_VmeParentSelect)).get();
 
   if (m_SelectedVME)
   {
@@ -91,7 +91,7 @@ void medWizardBlockVMEFindOrSelection::ExcutionBegin()
 		  e.SetArg((intptr_t)(&VMEAccept)); 
 		  // accept only Specified VME
 		  InvokeEvent(e);
-		  selVME=e.GetVme();
+		  selVME=e.GetVme().get();
 
 		  if(selVME)
 		  {

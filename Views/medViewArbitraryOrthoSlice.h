@@ -348,11 +348,11 @@ protected:
 
 	void UpdateYnViewZPlanes();
 
-	void ShowRulerVMEVector(vector<mafVMESurface *> &rulerVector, 
+	void ShowRulerVMEVector(vector<std::shared_ptr<mafVMESurface> > &rulerVector,
   vector<vtkCaptionActor2D *> &captionActorVector,
   int fromDirection, int guestView);
 
-	void HideRulerVMEVector(vector<mafVMESurface *> &rulerVector, 
+	void HideRulerVMEVector(vector<std::shared_ptr<mafVMESurface> > &rulerVector,
   vector<vtkCaptionActor2D *> &captionActorVector, 
   int guestView);
 
@@ -400,7 +400,7 @@ protected:
 	void UpdateXCutPlanes();
 	void ShowXCutPlanes( bool show );
 
-	void ShowVMESurfacesVector( vector<mafVMESurface *> &inVector, int view, bool show );
+	void ShowVMESurfacesVector( vector<std::shared_ptr<mafVMESurface> > &inVector, int view, bool show );
 
 	void UpdateZCutPlanes();
 	void ShowZCutPlanes(bool show);
@@ -450,9 +450,9 @@ protected:
 	mafVME          	*m_CurrentVolume;
 	mafVME				    *m_CurrentImage;
 
-	mafVMESlicer			*m_SlicerX;
-	mafVMESlicer			*m_SlicerY;
-	mafVMESlicer			*m_SlicerZ;
+	std::shared_ptr<mafVMESlicer> m_SlicerX;
+	std::shared_ptr<mafVMESlicer> m_SlicerY;
+	std::shared_ptr<mafVMESlicer> m_SlicerZ;
 
 	std::shared_ptr<mafMatrix> m_SlicerXResetMatrix;
 	std::shared_ptr<mafMatrix> m_SlicerYResetMatrix;
@@ -471,9 +471,9 @@ protected:
 	mafGUI				*m_GuiGizmos;
 
 	medVMEPolylineEditor *m_CurrentPolylineGraphEditor;
-	mafVMESurface *m_XCameraConeVME;
-	mafVMESurface *m_YCameraConeVME;
-	mafVMESurface *m_ZCameraConeVME;
+	std::shared_ptr<mafVMESurface> m_XCameraConeVME;
+	std::shared_ptr<mafVMESurface> m_YCameraConeVME;
+	std::shared_ptr<mafVMESurface> m_ZCameraConeVME;
 
 	double m_XCameraPositionForReset[3];
 	double m_YCameraPositionForReset[3];
@@ -496,30 +496,30 @@ protected:
 	mafVMEVolumeGray *m_InputVolume;
 
 	// Xn view cut feedback gizmos
-	vector<mafVMESurface *> m_ViewXnSliceYBoundsVMEVector;
-  vector<mafVMESurface *> m_ViewXnSliceYRulerVMEVector;
+	vector<std::shared_ptr<mafVMESurface> > m_ViewXnSliceYBoundsVMEVector;
+  vector<std::shared_ptr<mafVMESurface> > m_ViewXnSliceYRulerVMEVector;
   vector<vtkCaptionActor2D *> m_ViewXnSliceYRulerTextActorsVector;
   
-	vector<mafVMESurface *> m_ViewXnSliceZBoundsVMEVector;
-	vector<mafVMESurface *> m_ViewXnSliceZRulerVMEVector;
+	vector<std::shared_ptr<mafVMESurface> > m_ViewXnSliceZBoundsVMEVector;
+	vector<std::shared_ptr<mafVMESurface> > m_ViewXnSliceZRulerVMEVector;
   vector<vtkCaptionActor2D *> m_ViewXnSliceZRulerTextActorsVector;
 
 	// Yn view cut feedback gizmos
-	vector<mafVMESurface *> m_ViewYnSliceZBoundsVMEVector;
-  vector<mafVMESurface *> m_ViewYnSliceZRulerVMEVector;
+	vector<std::shared_ptr<mafVMESurface> > m_ViewYnSliceZBoundsVMEVector;
+  vector<std::shared_ptr<mafVMESurface> > m_ViewYnSliceZRulerVMEVector;
   vector<vtkCaptionActor2D *> m_ViewYnSliceZRulerTextActorsVector;
 
-	vector<mafVMESurface *> m_ViewYnSliceXBoundsVMEVector;
-	vector<mafVMESurface *> m_ViewYnSliceXRulerVMEVector;
+	vector<std::shared_ptr<mafVMESurface> > m_ViewYnSliceXBoundsVMEVector;
+	vector<std::shared_ptr<mafVMESurface> > m_ViewYnSliceXRulerVMEVector;
   vector<vtkCaptionActor2D *> m_ViewYnSliceXRulerTextActorsVector;
 
 	// Zn view cut feedback gizmos
-	vector<mafVMESurface *> m_ViewZnSliceXBoundsVMEVector;
-	vector<mafVMESurface *> m_ViewZnSliceXRulerVMEVector;
+	vector<std::shared_ptr<mafVMESurface> > m_ViewZnSliceXBoundsVMEVector;
+	vector<std::shared_ptr<mafVMESurface> > m_ViewZnSliceXRulerVMEVector;
   vector<vtkCaptionActor2D *> m_ViewZnSliceXRulerTextActorsVector;
 
-	vector<mafVMESurface *> m_ViewZnSliceYBoundsVMEVector;
-	vector<mafVMESurface *> m_ViewZnSliceYRulerVMEVector;
+	vector<std::shared_ptr<mafVMESurface> > m_ViewZnSliceYBoundsVMEVector;
+	vector<std::shared_ptr<mafVMESurface> > m_ViewZnSliceYRulerVMEVector;
   vector<vtkCaptionActor2D *> m_ViewZnSliceYRulerTextActorsVector;
 
 	int m_FeedbackLineHeight[3];

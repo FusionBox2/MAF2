@@ -532,10 +532,9 @@ void lhpVMESurfaceScalarVarying::OnEvent(mafEventBase *maf_event)
         e->SetArg((intptr_t)&lhpVMESurfaceScalarVarying::OutputSurfaceAccept);
         e->SetString(&title);
         ForwardUpEvent(e);
-        mafVME *n = mafVME::SafeDownCast(e->GetVme());
-        if (n != NULL)
+        if (auto n = mafVME::SafeDownCast(e->GetVme()))
         {
-          SetSurfaceLink(n);
+          SetSurfaceLink(n.get());
           m_Gui->Update();
         }
         e->SetArg(0);
@@ -550,10 +549,9 @@ void lhpVMESurfaceScalarVarying::OnEvent(mafEventBase *maf_event)
           e->SetArg((intptr_t)&lhpVMESurfaceScalarVarying::VmeScalarAccept);
           e->SetString(&title);
           ForwardUpEvent(e);
-          mafVME *n = mafVME::SafeDownCast(e->GetVme());
-          if (n != NULL)
+          if (auto n = mafVME::SafeDownCast(e->GetVme()))
           {
-            SetScalarLink(n);
+            SetScalarLink(n.get());
           }
         }
       break;

@@ -131,7 +131,7 @@ void lhpViewInfo::Create()
 }
 
 //----------------------------------------------------------------------------
-void lhpViewInfo::VmeAdd(mafNode *vme)
+void lhpViewInfo::VmeAdd(std::shared_ptr<mafNode> vme)
 //----------------------------------------------------------------------------
 {
   m_Sg->VmeAdd(vme);
@@ -152,7 +152,7 @@ void lhpViewInfo::VmeUpdateProperty(mafNode *vme, bool fromTag)
   m_Sg->VmeUpdateProperty(vme,fromTag);
 }
 //----------------------------------------------------------------------------
-int lhpViewInfo::GetNodeStatus(mafNode *vme)
+int lhpViewInfo::GetNodeStatusI(mafNode *vme)
 //----------------------------------------------------------------------------
 {
   int status = m_Sg ? m_Sg->GetNodeStatus(vme) : NODE_NON_VISIBLE;
@@ -204,7 +204,7 @@ void lhpViewInfo::CameraReset(mafNode *node)
 }
 
 //----------------------------------------------------------------------------
-std::shared_ptr<mafPipe> lhpViewInfo::GetNodePipe(mafNode *vme)
+std::shared_ptr<mafPipe> lhpViewInfo::GetNodePipeI(mafNode *vme)
 //----------------------------------------------------------------------------
 {
   assert(m_Sg);

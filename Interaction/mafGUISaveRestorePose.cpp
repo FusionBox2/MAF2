@@ -27,7 +27,7 @@
 #include "mafGUISaveRestorePose.h"
 #include "mafDecl.h"
 #include "mafGUI.h"
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 
 #include "mafMatrix.h"
 #include "mafTransform.h"
@@ -41,7 +41,7 @@
 mafString dummyPoseNameUsedForTesting = _R("dummyPoseNameUsedForTesting");
 
 //----------------------------------------------------------------------------
-mafGUISaveRestorePose::mafGUISaveRestorePose(mafVME *input, mafBaseEventHandler *listener, int typeGui, bool testMode)
+mafGUISaveRestorePose::mafGUISaveRestorePose(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener, int typeGui, bool testMode)
 //----------------------------------------------------------------------------
 {
   assert(input);

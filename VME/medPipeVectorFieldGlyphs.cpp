@@ -131,7 +131,7 @@ medPipeVectorFieldGlyphs::~medPipeVectorFieldGlyphs()
   vtkDEL(m_GlyphLine);
   
   vtkDEL(m_ColorMappingLUT);
-  mafDEL(m_GlyphMaterial);    
+  m_GlyphMaterial.reset();    
 }
 
 
@@ -1101,7 +1101,7 @@ void medPipeVectorFieldGlyphs::CreateAddItemDlg(int idx)
 {
   // Handles change of material.
   mafGUIMaterialChooser dlg;
-  if (dlg.ShowChooserDialog(m_GlyphMaterial))
+  if (dlg.ShowChooserDialog(m_GlyphMaterial.get()))
   {
     //set new material label
     auto mat = m_GlyphMaterial->GetMaterial();     
@@ -1438,7 +1438,7 @@ bool medPipeVectorFieldGlyphs::DetectSpacing(vtkFloatArray* pCoords, double* pOu
 {
   //Constructs VTK pipeline.
   //build materials  
-  mafNEW(m_GlyphMaterial);
+  m_GlyphMaterial = mafVMESurface::NewSPtr();
 
   //build LUT
   m_ColorMappingLUT = vtkLookupTable::New();

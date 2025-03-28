@@ -3,8 +3,7 @@
 //----------------------------------------------------------------------------
 // includes :
 //----------------------------------------------------------------------------
-#include "mafReferenceCounted.h"
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 #include "mafBaseEventHandler.h"
 #include "mafTagItem.h"
 #include "ftk/Base/String.h"
@@ -77,17 +76,17 @@ public:
 
   @sa mafNodeRoot
 */
-class MAF_EXPORT mafNode : public mafReferenceCounted, public mafEventSource, public mafBaseEventHandler, public mafTimeStamped, public mafObjectWithGUI
+class MAF_EXPORT mafNode : public mafEventSource, public mafBaseEventHandler, public mafTimeStamped, public mafObjectWithGUI
 {
 public:
-  mafTypeMacroN(mafNode);
+  mafBaseTypeMacro(mafNode);
 
   enum
   {
 	  INVALID_ID = -1
   };
 
-  static mafNode* Create(const char* NodeType);
+  static std::shared_ptr<mafNode> Create(const char* NodeType);
   /** print a dump of this object */
   virtual void Print(std::ostream& os, const int tabs=0);// const;
 
@@ -132,27 +131,27 @@ public:
   virtual bool CanCopy(mafNode *vme);
   
   /** Create a copy of this node (do not copy the sub tree,just the node) */
-  static mafNode *MakeCopy(mafNode *a);
-  mafNode *MakeCopy() {return MakeCopy(this);}
+  static std::shared_ptr<mafNode> MakeCopy(mafNode *a);
+  std::shared_ptr<mafNode> MakeCopy() {return MakeCopy(this);}
   
   /** Copy the given VME tree into a new tree. In case a parent is provided, link the new
     root node to it. Return the root of the new tree.*/
-  static mafNode *CopyTree(mafNode *vme, mafNode *parent=NULL);
+  static std::shared_ptr<mafNode> CopyTree(mafNode *vme, mafNode *parent=NULL);
 
   virtual void UpdateLinks(std::vector<std::pair<mafNode*, mafNode*> >& nodes);
   
   /** Make a copy of the whole subtree and return its pointer */
-  mafNode *CopyTree();
+  std::shared_ptr<mafNode> CopyTree();
   
   /** Return a the pointer to a child given its index. 
       If only visible is true return the idx-th visible to traverse node */
-  mafNode *GetChild(mafID idx, bool onlyVisible=false);
+  std::shared_ptr<mafNode> GetChild(mafID idx, bool onlyVisible=false);
   /** Get the First child in the list.
       If only visible is true return the first visible to traverse node */
-  mafNode *GetFirstChild(bool onlyVisible=false);
+  std::shared_ptr<mafNode> GetFirstChild(bool onlyVisible=false);
   /** Get the Lase child in the list.
       If only visible is true return the last visible to traverse node */
-  mafNode *GetLastChild(bool onlyVisible=false);
+  std::shared_ptr<mafNode> GetLastChild(bool onlyVisible=false);
 
   /** Get A child by path.
   The pats are generated from a series of keyword divided by '\'
@@ -175,10 +174,10 @@ public:
 
   By default this function search only on visible to traverse nodes
   */
-  mafNode *GetByPath(const mafString& path, bool onlyVisible=true);
+  std::shared_ptr<mafNode> GetByPath(const mafString& path, bool onlyVisible=true);
   
   /** Add a child to this node. Return MAF_OK if success.*/
-  virtual int AddChild(mafNode *node);
+  virtual int AddChild(std::shared_ptr<mafNode> node);
 
   /** Remove a child node*/
   virtual void RemoveChild(const mafID idx, bool onlyVisible=false);
@@ -195,13 +194,13 @@ public:
   int FindNodeIdx(const mafString& name, bool onlyVisible=false);
 
   /** Find a node in all the subtrees matching the given TagName/TagValue pair.*/
-  mafNode *FindInTreeByTag(const mafTagItem& tag); 
+  std::shared_ptr<mafNode> FindInTreeByTag(const mafTagItem& tag);
   
   /** Find a node in all the subtrees matching the given VME Name.*/
-  mafNode *FindInTreeByName(const mafString& name, bool match_case = true, bool whole_word = true);
+  std::shared_ptr<mafNode> FindInTreeByName(const mafString& name, bool match_case = true, bool whole_word = true);
 
   /** Find a node in all the subtrees matching the given VME Name.*/
-  mafNode *FindInTreeById(const mafID id);
+  std::shared_ptr<mafNode> FindInTreeById(const mafID id);
 
   /**
     Reparent this Node into a different place of the same tree. 
@@ -253,7 +252,7 @@ public:
   
   /**
   Return the pointer to the parent node (if present)*/
-  mafNode *GetParent() const {return m_Parent;}
+  std::shared_ptr<mafNode> GetParent();
 
   /**
     Remove recursively all nodes from this tree, forcing all subnodes
@@ -296,7 +295,7 @@ public:
   /** Precess events coming from other objects */
   void OnEvent(mafEventBase *e) override;
 
-  typedef std::vector<mafAutoPointer<mafNode> > mafChildrenVector;
+  typedef std::vector<std::shared_ptr<mafNode> > mafChildrenVector;
 
   /**
     return list of children. The returned list is a const, since it can be
@@ -406,10 +405,12 @@ public:
   void Store(mafStorageElementBuilder& element) { InternalStore(element); }
   void Restore(const mafStorageElement& element) { InternalRestore(element); }
 
+  ~mafNode() override;
+  std::shared_ptr<mafNode> SharedFromThis();
+
 protected:
 
   mafNode();
-  ~mafNode() override;
 
   /** internally used to set the node ID */
   void SetId(mafID id);
@@ -445,7 +446,6 @@ protected:
   void OnNodeDestroyed(mafNode *node);
   void OnPrint();
 
-
   mafChildrenVector m_Children;     ///< list of children
   mafNode           *m_Parent = nullptr;      ///< parent node
 
@@ -464,7 +464,7 @@ protected:
 namespace parser
 {
 	template<class Value>
-	mafNode* Parse(const Value& value, parser::To<mafNode>)
+  std::shared_ptr<mafNode> Parse(const Value& value, parser::To<mafNode>)
   {
     mafString type_name = value(_R("Type")).template As<mafString>();
     if(auto node = mafNode::Create(type_name.GetCStr()))

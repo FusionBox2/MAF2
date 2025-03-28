@@ -295,7 +295,7 @@ void mafViewSlice::VmeCreatePipe(mafNode *vme)
         m_CurrentVolume = n;
 
         if (m_AttachCamera)
-          m_AttachCamera->SetVme(m_CurrentVolume->m_Vme);
+          m_AttachCamera->SetVme(m_CurrentVolume->m_Vme.get());
         int slice_mode;
         vtkDataSet *data = ((mafVME *)vme)->GetOutput()->GetVTKData();
         assert(data);
@@ -539,7 +539,7 @@ void mafViewSlice::VmeDeletePipe(mafNode *vme)
     UpdateSurfacesList(vme);
 }
 //-------------------------------------------------------------------------
-int mafViewSlice::GetNodeStatus(mafNode *vme)
+int mafViewSlice::GetNodeStatusI(mafNode *vme)
 //-------------------------------------------------------------------------
 {
   mafSceneNode *n = NULL;
@@ -948,7 +948,7 @@ void mafViewSlice::MultiplyPointByInputVolumeABSMatrix(double *point)
 {
   if(m_CurrentVolume && m_CurrentVolume->m_Vme)
   {
-    auto mat = ((mafVME *)m_CurrentVolume->m_Vme)->GetAbsMatrixPipe()->GetMatrixPointer();
+    auto mat = mafVME::StaticDownCast(m_CurrentVolume->m_Vme)->GetAbsMatrixPipe()->GetMatrixPointer();
     double coord[4];
     coord[0] = point[0];
     coord[1] = point[1];
@@ -972,7 +972,7 @@ void mafViewSlice::CameraUpdate()
   
   if (m_CurrentVolume)
   {
-    mafVME *volume = mafVME::SafeDownCast(m_CurrentVolume->m_Vme);
+    auto volume = mafVME::SafeDownCast(m_CurrentVolume->m_Vme);
     
     std::ostringstream stringStream;
     stringStream << "VME " << volume->GetName().GetCStr() << " ABS matrix:" << std::endl;
@@ -1028,7 +1028,7 @@ void mafViewSlice::SetCameraParallelToDataSetLocalAxis( int axis )
   this->GetRWI()->GetCamera()->GetPosition(oldCameraPosition);
   oldCameraOrientation = this->GetRWI()->GetCamera()->GetOrientation();
 
-  mafVME *currentVMEVolume = mafVME::SafeDownCast(m_CurrentVolume->m_Vme);
+  auto currentVMEVolume = mafVME::SafeDownCast(m_CurrentVolume->m_Vme);
   assert(currentVMEVolume);
 
   vtkDataSet *vmeVTKData = currentVMEVolume->GetOutput()->GetVTKData();
@@ -1102,7 +1102,7 @@ void mafViewSlice::CameraUpdateForRotatedVolumes()
         SetSlice(m_LastSliceOrigin, NULL);    
       }
 
-      this->CameraReset(m_CurrentVolume->m_Vme);
+      this->CameraReset(m_CurrentVolume->m_Vme.get());
     }    
   }
   else if (m_CameraPositionId == CAMERA_OS_Y)
@@ -1117,7 +1117,7 @@ void mafViewSlice::CameraUpdateForRotatedVolumes()
         SetSlice(m_LastSliceOrigin, NULL);    
       }
       
-      this->CameraReset(m_CurrentVolume->m_Vme);
+      this->CameraReset(m_CurrentVolume->m_Vme.get());
     }    
   }
   else if (m_CameraPositionId == CAMERA_OS_Z  || m_CameraPositionId == CAMERA_CT)
@@ -1132,7 +1132,7 @@ void mafViewSlice::CameraUpdateForRotatedVolumes()
         SetSlice(m_LastSliceOrigin, NULL);    
       }
 
-      this->CameraReset(m_CurrentVolume->m_Vme);
+      this->CameraReset(m_CurrentVolume->m_Vme.get());
     }    
   }
   

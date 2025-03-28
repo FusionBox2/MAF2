@@ -60,7 +60,7 @@ class MAF_EXPORT mafGizmoPathRuler : public mafGizmoInterface
 {
 public:
   
-  mafGizmoPathRuler(mafVME *input, mafBaseEventHandler* listener = NULL, int ticksNumber = 1, \
+  mafGizmoPathRuler(std::shared_ptr<mafVME> input, mafBaseEventHandler* listener = NULL, int ticksNumber = 1, \
       int originTickId = 0, double ticksHeigth = 50, double ticksDistance = 20, bool enableShorterTicks = true);
   ~mafGizmoPathRuler() override; 
 
@@ -100,7 +100,7 @@ public:
 
   /** This method is used to change the input: this VME is used only to reparent the gizmo
   to the root*/
-  void SetInput(mafVME *vme) override;
+  void SetInput(std::shared_ptr<mafVME> vme) override;
 
   /**
   Events handling*/        

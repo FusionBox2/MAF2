@@ -51,7 +51,7 @@
 #include "vtkProperty.h"
 
 //----------------------------------------------------------------------------
-medGizmoCrossRotateFan::medGizmoCrossRotateFan(mafVME *input, mafBaseEventHandler *listener)
+medGizmoCrossRotateFan::medGizmoCrossRotateFan(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener)
 //----------------------------------------------------------------------------
 {
   m_StartTheta = m_EndTheta = 0;
@@ -418,7 +418,7 @@ void medGizmoCrossRotateFan::SetAbsPose(std::shared_ptr<mafMatrix> absPose )
   SetRefSysMatrix(absPose);
 }
 //----------------------------------------------------------------------------
-void medGizmoCrossRotateFan::SetInput(mafVME *vme)
+void medGizmoCrossRotateFan::SetInput(std::shared_ptr<mafVME> vme)
 //----------------------------------------------------------------------------
 {
  this->m_InputVme = vme;

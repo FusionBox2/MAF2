@@ -34,9 +34,9 @@ namespace
   template <class T>
   bool Pop(std::vector<T>& vec, T &obj)
   {
-    if(vec.size() > 0)
+    if(!vec.empty())
     {
-      obj = vec[vec.size() - 1];
+      obj = vec.back();
       vec.pop_back();
       return true;
     }
@@ -45,17 +45,10 @@ namespace
 }
 
 //----------------------------------------------------------------------------
-mafNodeIterator::mafNodeIterator(mafNode *root)
+mafNodeIterator::mafNodeIterator(std::shared_ptr<mafNode> root)
 //----------------------------------------------------------------------------
 { 
-  m_CurrentNode = NULL;
-  m_RootNode    = NULL; // initialize
-  
   SetRootNode(root);
-  
-  m_TraversalMode = 0;
-  m_TraversalDone = 0;
-  m_IgnoreVisibleToTraverse = false;
 }
 
 //----------------------------------------------------------------------------
@@ -102,7 +95,7 @@ int mafNodeIterator::GoToNextNode()
             if (m_CurrentNode)
             {
               m_CurrentIdx.push_back(0);
-              DeeperExecute(m_CurrentNode); //call the deeper-callback
+              DeeperExecute(m_CurrentNode.get()); //call the deeper-callback
 
               // before doing anything else call the pre-execute
               PreExecute();
@@ -114,20 +107,20 @@ int mafNodeIterator::GoToNextNode()
           }
           else
           { 
-						if (m_CurrentNode!=m_RootNode.get())
+						if (m_CurrentNode != m_RootNode)
             {
 							mafID idx=0;
-							mafNode *parent=m_CurrentNode->GetParent();
+							auto parent=m_CurrentNode->GetParent();
 							if (parent) 
 							{ 
 								Pop(m_CurrentIdx, idx);
-								UpperExecute(parent); //call the upper-callback
+								UpperExecute(parent.get()); //call the upper-callback
 
-								while (parent&&parent!=m_RootNode.get() &&idx>=(parent->GetNumberOfChildren()-1))
+								while (parent && parent != m_RootNode && idx >= (parent->GetNumberOfChildren() - 1))
 								{
 									parent=parent->GetParent();
 									Pop(m_CurrentIdx, idx);
-									UpperExecute(parent); //call the upper-callback
+									UpperExecute(parent.get()); //call the upper-callback
 								}
 							}
 
@@ -141,9 +134,9 @@ int mafNodeIterator::GoToNextNode()
 
 								// go to root of next brother subtree
 								idx++;
-								m_CurrentNode=parent->GetChild(idx);
+								m_CurrentNode = parent->GetChild(idx);
 								m_CurrentIdx.push_back(idx);
-								DeeperExecute(m_CurrentNode); //call the deeper-callback
+								DeeperExecute(m_CurrentNode.get()); //call the deeper-callback
 
 								// before doing anything else call the pre-execute
 								PreExecute();
@@ -167,9 +160,9 @@ int mafNodeIterator::GoToNextNode()
       }
     case PostOrder:
       {
-        if ((m_CurrentNode)&&(m_CurrentNode!=m_RootNode.get()))
+        if (m_CurrentNode && m_CurrentNode != m_RootNode)
         {
-          mafNode *parent=m_CurrentNode->GetParent();
+          auto parent=m_CurrentNode->GetParent();
 
           if (parent)
           {
@@ -184,13 +177,13 @@ int mafNodeIterator::GoToNextNode()
             else if (idx<(parent->GetNumberOfChildren()-1))
             {
               m_TraversalDone=0; //reset the traversal flag
-              UpperExecute(parent); //call the upper-callback
+              UpperExecute(parent.get()); //call the upper-callback
 
               PostExecute(); // call the post-execute
 
               idx++;
               m_CurrentIdx.push_back(idx);
-              m_CurrentNode=FindLeftMostLeaf(parent->GetChild(idx));
+              m_CurrentNode = FindLeftMostLeaf(parent->GetChild(idx));
               // the call to the deeper-callback is inside FindLeftMostLeaf
 
               // before doing anything else call the pre-execute
@@ -199,11 +192,11 @@ int mafNodeIterator::GoToNextNode()
             else
             {
               m_TraversalDone=0; //reset the traversal flag
-              UpperExecute(parent); //call the upper-callback
+              UpperExecute(parent.get()); //call the upper-callback
               // before changing node call the post-execute
               PostExecute();
 
-              m_CurrentNode=parent;
+              m_CurrentNode = parent;
 
               // before doing anything else call the pre-execute
               PreExecute();
@@ -249,9 +242,9 @@ int mafNodeIterator::GoToPreviousNode()
   {
     case PreOrder:
       {
-        if ((m_CurrentNode)&&(m_CurrentNode!=m_RootNode.get()))
+        if (m_CurrentNode && m_CurrentNode != m_RootNode)
         {
-          mafNode *parent=m_CurrentNode->GetParent();
+          auto parent=m_CurrentNode->GetParent();
 
           if (parent)
           {
@@ -266,7 +259,7 @@ int mafNodeIterator::GoToPreviousNode()
             else if (idx>0)
             {
               m_TraversalDone=0;
-              UpperExecute(parent); //call the upper-execute
+              UpperExecute(parent.get()); //call the upper-execute
               PostExecute(); // call the post-execute
 
               idx--;
@@ -279,7 +272,7 @@ int mafNodeIterator::GoToPreviousNode()
             else
             {
               m_TraversalDone=0;
-              UpperExecute(parent); //call the upper-callback
+              UpperExecute(parent.get()); //call the upper-callback
               PostExecute(); // call the post-execute
 
               m_CurrentNode=parent;
@@ -314,21 +307,21 @@ int mafNodeIterator::GoToPreviousNode()
             // go to root of last subtree
             mafID idx=m_CurrentNode->GetNumberOfChildren()-1;
             m_CurrentIdx.push_back(idx);
-            m_CurrentNode=m_CurrentNode->GetChild(idx);
+            m_CurrentNode = m_CurrentNode->GetChild(idx);
 
-            DeeperExecute(m_CurrentNode);
+            DeeperExecute(m_CurrentNode.get());
             PreExecute();
           }
           else
           {
-            mafNode *parent=m_CurrentNode->GetParent();
+            auto parent = m_CurrentNode->GetParent();
 
             mafID idx;
             if (Pop(m_CurrentIdx, idx))
             {
-              UpperExecute(parent); 
+              UpperExecute(parent.get()); 
 
-              while (parent && parent!=m_RootNode.get() && idx<=0) // search for the first root where we still have children to be visited
+              while (parent && parent != m_RootNode && idx<=0) // search for the first root where we still have children to be visited
               {
                 parent=parent->GetParent();
 
@@ -341,7 +334,7 @@ int mafNodeIterator::GoToPreviousNode()
                   return MAF_ERROR;
                 }
 
-                UpperExecute(parent); //call the upper-callback
+                UpperExecute(parent.get()); //call the upper-callback
               }
             }
             else
@@ -362,8 +355,8 @@ int mafNodeIterator::GoToPreviousNode()
                 idx--;
                 m_CurrentIdx.push_back(idx);
                 // go to root of prevoius brother subtree
-                m_CurrentNode=parent->GetChild(idx);
-                DeeperExecute(m_CurrentNode); //call the deeper-callback
+                m_CurrentNode = parent->GetChild(idx);
+                DeeperExecute(m_CurrentNode.get()); //call the deeper-callback
 
                 // before doing anything else call the pre-execute
                 PreExecute();
@@ -402,34 +395,34 @@ int mafNodeIterator::GoToPreviousNode()
 }
 
 //----------------------------------------------------------------------------
-mafNode *mafNodeIterator::FindLeftMostLeaf(mafNode *node)
+std::shared_ptr<mafNode> mafNodeIterator::FindLeftMostLeaf(std::shared_ptr<mafNode> node)
 //----------------------------------------------------------------------------
 {
   if (node)
-    DeeperExecute(node);
-  while (node&&node->GetNumberOfChildren()>0) 
+    DeeperExecute(node.get());
+  while (node && node->GetNumberOfChildren()>0) 
   {
-    node=node->GetChild(0);
+    node = node->GetChild(0);
     m_CurrentIdx.push_back(0);
     if (node)
-      DeeperExecute(node);
+      DeeperExecute(node.get());
   }
 
   return node;
 }
 
 //----------------------------------------------------------------------------
-mafNode *mafNodeIterator::FindRightMostLeaf(mafNode *node)
+std::shared_ptr<mafNode> mafNodeIterator::FindRightMostLeaf(std::shared_ptr<mafNode> node)
 //----------------------------------------------------------------------------
 {
   if (node)
-    DeeperExecute(node);
+    DeeperExecute(node.get());
   while (node&&node->GetNumberOfChildren()>0) 
   {
     m_CurrentIdx.push_back(node->GetNumberOfChildren()-1); // store index of the currently visited node
     node=node->GetChild(node->GetNumberOfChildren()-1);
     if (node)
-      DeeperExecute(node);
+      DeeperExecute(node.get());
   }
 
   return node;
@@ -443,11 +436,11 @@ int mafNodeIterator::GoToFirstNode()
   switch (m_TraversalMode)
   {
     case PreOrder:
-      m_CurrentNode=m_RootNode.get();
-      DeeperExecute(m_CurrentNode);
+      m_CurrentNode=m_RootNode;
+      DeeperExecute(m_CurrentNode.get());
       break;
     case PostOrder:
-      m_CurrentNode=FindLeftMostLeaf(m_RootNode.get());
+      m_CurrentNode=FindLeftMostLeaf(m_RootNode);
       break;
     default:
       mafErrorMacro("Unsupported Traversal Mode");
@@ -482,11 +475,11 @@ int mafNodeIterator::GoToLastNode()
   switch (m_TraversalMode)
   {
     case PreOrder:
-      m_CurrentNode=FindRightMostLeaf(m_RootNode.get());
+      m_CurrentNode = FindRightMostLeaf(m_RootNode);
       break;
     case PostOrder:
-      m_CurrentNode=m_RootNode.get();
-      DeeperExecute(m_CurrentNode);
+      m_CurrentNode=m_RootNode;
+      DeeperExecute(m_CurrentNode.get());
       break;
     default:
       mafErrorMacro("Unsupported Traversal Mode");
@@ -511,7 +504,7 @@ int mafNodeIterator::GoToLastNode()
 }
 
 //----------------------------------------------------------------------------
-void mafNodeIterator::SetRootNode(mafNode *root)
+void mafNodeIterator::SetRootNode(std::shared_ptr<mafNode> root)
 //----------------------------------------------------------------------------
 {
   m_RootNode = root;
@@ -522,47 +515,47 @@ void mafNodeIterator::SetRootNode(mafNode *root)
 void mafNodeIterator::PreExecute()
 //----------------------------------------------------------------------------
 {
-  InvokeEvent(this,ID_PreTraversal,m_CurrentNode);
+  InvokeEvent(this,ID_PreTraversal,m_CurrentNode.get());
 }
 //----------------------------------------------------------------------------
 // executed after traversing a node
 void mafNodeIterator::PostExecute()
 //----------------------------------------------------------------------------
 {
-  InvokeEvent(this,ID_PostTraversal,m_CurrentNode);
+  InvokeEvent(this,ID_PostTraversal,m_CurrentNode.get());
 }
 //----------------------------------------------------------------------------
 // executed when going down in the tree
 void mafNodeIterator::DeeperExecute(mafNode *node)
 //----------------------------------------------------------------------------
 {
-  InvokeEvent(this,ID_Deeper,m_CurrentNode);
+  InvokeEvent(this,ID_Deeper,m_CurrentNode.get());
 }
 //----------------------------------------------------------------------------
 // executed when going up in the tree
 void mafNodeIterator::UpperExecute(mafNode *node)
 //----------------------------------------------------------------------------
 {
-  InvokeEvent(this,ID_Upper,m_CurrentNode);
+  InvokeEvent(this,ID_Upper,m_CurrentNode.get());
 }
 //----------------------------------------------------------------------------
 // executed when GoToFirstNode is executed
 void mafNodeIterator::FirstExecute()
 //----------------------------------------------------------------------------
 {
-  InvokeEvent(this,ID_FirstNode,m_CurrentNode);
+  InvokeEvent(this,ID_FirstNode,m_CurrentNode.get());
 }
 //----------------------------------------------------------------------------
 // executed when last node is traversed
 void mafNodeIterator::LastExecute()
 //----------------------------------------------------------------------------
 {
-  InvokeEvent(this,ID_LastNode,m_CurrentNode);
+  InvokeEvent(this,ID_LastNode,m_CurrentNode.get());
 }
 //----------------------------------------------------------------------------
 // executed when IsDoneWithTraversal return "true"
 void mafNodeIterator::DoneExecute()
 //----------------------------------------------------------------------------
 {
-  InvokeEvent(this,ID_Done,m_CurrentNode);
+  InvokeEvent(this,ID_Done,m_CurrentNode.get());
 }

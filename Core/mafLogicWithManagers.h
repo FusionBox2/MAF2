@@ -202,7 +202,7 @@ protected:
   virtual void ImportExternalFile(mafString &filename);
 
 	virtual void VmeSelect(mafEvent &e);
-	virtual void VmeSelected(mafNode *vme, bool remote = true);
+	virtual void VmeSelected(std::shared_ptr<mafNode> vme, bool remote = true);
   virtual void VmeDoubleClicked(mafEvent &e);
 	virtual void VmeShow(mafNode *vme, bool visibility);
 	virtual void VmeModified(mafNode *vme);
@@ -215,10 +215,10 @@ protected:
   virtual void VmeCollapseSubTree(mafNode *vme);
   virtual void VmeExpandVisible(mafNode *vme);
 
-	virtual void VmeAdded(mafNode *vme);
+	virtual void VmeAdded(std::shared_ptr<mafNode> vme);
 	virtual void VmeRemove(mafNode *vme);
 	virtual void VmeRemoving(mafNode *vme);
-	virtual std::vector<mafNode*> VmeChoose(intptr_t vme_accept_function = 0, long style = REPRESENTATION_AS_TREE, mafString title = _R("Choose Node"), bool multiSelect = false);
+	virtual std::vector<std::shared_ptr<mafNode> > VmeChoose(intptr_t vme_accept_function = 0, long style = REPRESENTATION_AS_TREE, mafString title = _R("Choose Node"), bool multiSelect = false);
 
   virtual void VmeChooseMaterial(mafVME *vme, bool updateProperty);
   virtual void VmeUpdateProperties(mafVME *vme, bool updatePropertyFromTag);

@@ -89,10 +89,11 @@ public:
   /** Clears all items in the tree. */
 	void Reset();
   
-	/** Create a new tree item with the specified parent,label and icon. 
+  class mafGUITreeItemData;
+  /** Create a new tree item with the specified parent,label and icon.
       Set parent = 0 to create the root. 0 is not a valid node_id.
   */
-	bool AddNode(intptr_t node_id, intptr_t parent_id , wxString label, int icon = 0);
+	bool AddNode(intptr_t node_id, intptr_t parent_id , wxString label, int icon = 0, mafGUITreeItemData *data = nullptr);
   
 	/** Delete the specified node, and its subtree. */
 	bool DeleteNode(intptr_t node_id);

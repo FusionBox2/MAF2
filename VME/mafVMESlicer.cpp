@@ -202,10 +202,9 @@ void mafVMESlicer::OnEvent(mafEventBase *maf_event)
         e->SetArg((intptr_t)&mafVMESlicer::VolumeAccept);
         e->SetString(&title);
         ForwardUpEvent(e);
-        mafNode *n = e->GetVme();
-        if (n != NULL)
+        if (auto n = e->GetVme())
         {
-          SetSlicedVMELink(n);
+          SetSlicedVMELink(n.get());
           m_SlicedName = n->GetName();
           m_Gui->Update();
           e->SetId(CAMERA_UPDATE);
@@ -298,7 +297,7 @@ void mafVMESlicer::InternalPreUpdate()
 			slicedVMETransform->Update();
 
 			auto parentTransform = mafTransform::NewSPtr();
-			parentTransform->SetMatrix(((mafVME *)GetParent())->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
+			parentTransform->SetMatrix(mafVME::StaticDownCast(GetParent())->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
 			parentTransform->Update();
 
 			parentTransform->Concatenate(slicedVMETransform.get(),0);

@@ -49,7 +49,7 @@
 #include "vtkProperty.h"
 
 //----------------------------------------------------------------------------
-mafGizmoScaleAxis::mafGizmoScaleAxis(mafVME *input, mafBaseEventHandler *listener)
+mafGizmoScaleAxis::mafGizmoScaleAxis(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener)
 //----------------------------------------------------------------------------
 {
   m_IsaComp[0] = m_IsaComp[1] = NULL;
@@ -512,7 +512,7 @@ std::shared_ptr<mafMatrix> mafGizmoScaleAxis::GetAbsPose()
 }
 
 //----------------------------------------------------------------------------
-void mafGizmoScaleAxis::SetInput(mafVME *vme)
+void mafGizmoScaleAxis::SetInput(std::shared_ptr<mafVME> vme)
 //----------------------------------------------------------------------------
 {
   this->m_InputVme = vme; 

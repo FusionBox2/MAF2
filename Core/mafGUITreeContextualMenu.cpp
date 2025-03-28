@@ -1,31 +1,3 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafGUITreeContextualMenu
- Authors: Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-
-
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
@@ -99,7 +71,7 @@ mafGUITreeContextualMenu::~mafGUITreeContextualMenu()
 {
 }
 //----------------------------------------------------------------------------
-void mafGUITreeContextualMenu::CreateContextualMenu(mafGUICheckTree *tree, mafView *view, mafNode *vme, bool vme_menu)
+void mafGUITreeContextualMenu::CreateContextualMenu(mafGUICheckTree *tree, mafView *view, std::shared_ptr<mafNode> vme, bool vme_menu)
 //----------------------------------------------------------------------------
 {
   m_ViewActive  = view;
@@ -113,7 +85,7 @@ void mafGUITreeContextualMenu::CreateContextualMenu(mafGUICheckTree *tree, mafVi
     this->Append(RMENU_ADD_TREE_LAYOUT,  "Save MSF Layout");
     this->AppendSeparator();
 
-    if(m_ViewActive != NULL && (mafViewVTK::SafeDownCast(m_ViewActive) || mafViewCompound::SafeDownCast(m_ViewActive)))
+    if(m_ViewActive && (mafViewVTK::SafeDownCast(m_ViewActive) || mafViewCompound::SafeDownCast(m_ViewActive)))
     {
       //mafSceneGraph *sg = NULL;
 
@@ -137,9 +109,9 @@ void mafGUITreeContextualMenu::CreateContextualMenu(mafGUICheckTree *tree, mafVi
 				m_SceneGraph = ((mafViewVTK *)m_ViewActive)->GetSceneGraph();
 			}
 
-      if (m_SceneGraph != NULL)
+      if (m_SceneGraph)
       {
-        mafSceneNode *n = m_SceneGraph->Vme2Node(m_VmeActive);
+        mafSceneNode *n = m_SceneGraph->Vme2Node(m_VmeActive.get());
 
         
         this->Append(RMENU_SHOW_VME, "Hide/Show","");
@@ -225,9 +197,9 @@ void mafGUITreeContextualMenu::OnContextualMenu(wxCommandEvent &event)
 	{
 	  case RMENU_SHOW_VME:
 		{
-      mafSceneNode *n = NULL;
+      mafSceneNode *n = nullptr;
       if(m_SceneGraph)
-        n = m_SceneGraph->Vme2Node(m_VmeActive);
+        n = m_SceneGraph->Vme2Node(m_VmeActive.get());
       bool show = true;
       if(n)
         show = !n->IsVisible();
@@ -238,16 +210,16 @@ void mafGUITreeContextualMenu::OnContextualMenu(wxCommandEvent &event)
       {mafEvent evUnq(this, mafGUIApplicationLayoutSettings::SAVE_TREE_LAYOUT_ID); InvokeEvent(evUnq);}
     break;
 		case RMENU_SHOW_SUBTREE:
-			m_SceneGraph->VmeShowSubTree(m_VmeActive, true);
+			m_SceneGraph->VmeShowSubTree(m_VmeActive.get(), true);
 		break;
 		case RMENU_HIDE_SUBTREE:
-			m_SceneGraph->VmeShowSubTree(m_VmeActive, false);
+			m_SceneGraph->VmeShowSubTree(m_VmeActive.get(), false);
 		break;
 		case RMENU_SHOW_SAMETYPE:
-			m_SceneGraph->VmeShowByType(m_VmeActive, true);
+			m_SceneGraph->VmeShowByType(m_VmeActive.get(), true);
 		break;
 		case RMENU_HIDE_SAMETYPE:
-			m_SceneGraph->VmeShowByType(m_VmeActive, false);
+			m_SceneGraph->VmeShowByType(m_VmeActive.get(), false);
 		break;
     case RMENU_CRYPT_VME:
     {
@@ -280,10 +252,10 @@ void mafGUITreeContextualMenu::CryptSubTree(bool crypt)
 {
   auto iter = m_NodeActive->NewIterator();
 
-	for(mafNode *v=iter->GetFirstNode();v;v=iter->GetNextNode())
+	for(auto v=iter->GetFirstNode();v;v=iter->GetNextNode())
 	{
     if(!v->IsA("mafVME"))
       continue;
-    ((mafVME *)v)->SetCrypting(crypt);
+    mafVME::StaticDownCast(v)->SetCrypting(crypt);
 	}
 }

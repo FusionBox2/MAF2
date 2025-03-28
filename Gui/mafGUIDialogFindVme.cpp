@@ -169,7 +169,7 @@ mafNode *mafGUIDialogFindVme::FindInTreeByName(mafNode *node, const char *name, 
 
   for (int i = 0; i < node->GetNumberOfChildren(); i++)
   {
-    if (mafNode *n = FindInTreeByName(node->GetChild(i), name, match_case, whole_word))
+    if (mafNode *n = FindInTreeByName(node->GetChild(i).get(), name, match_case, whole_word))
       return n;
   }
   return NULL;

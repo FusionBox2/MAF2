@@ -54,7 +54,7 @@ class MED_INTERACTION_EXPORT medGizmoPolylineGraph : public mafGizmoInterface
 {
 public:
   /** The only way to construct correctly the instance */
-  inline static medGizmoPolylineGraph* New(mafNode* inputVme, 
+  inline static medGizmoPolylineGraph* New(std::shared_ptr<mafNode> inputVme,
     mafBaseEventHandler *Listener = NULL, const char *name = "GizmoPath", bool showOnlyDirectionAxis = false, bool testMode = false)
   {
     medGizmoPolylineGraph* pThis = new medGizmoPolylineGraph(inputVme,Listener, name, showOnlyDirectionAxis, testMode);
@@ -73,7 +73,7 @@ public:
   }
 
 protected:
-  medGizmoPolylineGraph(mafNode* inputVme, mafBaseEventHandler *Listener = NULL, const char *name = "GizmoPath", bool showOnlyDirectionAxis = false, bool testMode = false);
+  medGizmoPolylineGraph(std::shared_ptr<mafNode> inputVme, mafBaseEventHandler *Listener = NULL, const char *name = "GizmoPath", bool showOnlyDirectionAxis = false, bool testMode = false);
   
   /** Initializes the object. May not be called twice (unless Done method was called).  */
   virtual void InternalInitInstance();
@@ -105,13 +105,13 @@ public:
   /*virtual*/ void OnEvent(mafEventBase *maf_event) override; 
 
   /** Not used since this gizmo is not moving anything*/
-  void SetInput(mafVME *vme) override {return;};
+  void SetInput(std::shared_ptr<mafVME> vme) override {return;};
 
   /** Set the gizmo color */
   virtual void SetColor(double col[3]);
 
   inline mafVMEGizmo* GetOutput() {
-    return m_VmeGizmo; 
+    return m_VmeGizmo.get(); 
   }
 
 protected:
@@ -139,7 +139,7 @@ protected:
   void LogTransformEvent(mafEvent  *e) ;
 
   mafString           m_Name;
-  mafVMEGizmo        *m_VmeGizmo;     //<VME gizmo (this is used by medCurvilinearAbscisaHelper)
+  std::shared_ptr<mafVMEGizmo>        m_VmeGizmo;     //<VME gizmo (this is used by medCurvilinearAbscisaHelper)
 
   std::shared_ptr<mafInteractorCompositorMouse> m_GizmoInteractor;
   mafInteractorGenericMouse *m_LeftMouseInteractor;

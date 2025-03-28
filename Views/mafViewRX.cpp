@@ -127,7 +127,7 @@ void mafViewRX::VmeCreatePipe(mafNode *vme)
         m_CurrentVolume = n;
         if (m_AttachCamera)
         {
-          m_AttachCamera->SetVme(m_CurrentVolume->m_Vme);
+          m_AttachCamera->SetVme(m_CurrentVolume->m_Vme.get());
           CameraUpdate();
         }
       }
@@ -199,10 +199,7 @@ void mafViewRX::VmeCreatePipe(mafNode *vme)
         double positionSlice1[3],positionSlice2[3];
         double b[6];
 
-        //mafSmartPointer<mafVMEVolumeGray> volume;
-        mafVME *volume;
-
-        volume = mafVME::SafeDownCast(m_CurrentVolume->m_Vme);
+        auto volume = mafVME::SafeDownCast(m_CurrentVolume->m_Vme);
         volume->GetOutput()->GetBounds(b);
  
         double value1; 
@@ -267,7 +264,7 @@ void mafViewRX::VmeDeletePipe(mafNode *vme)
   n->m_Pipe.reset();
 }
 //-------------------------------------------------------------------------
-int mafViewRX::GetNodeStatus(mafNode *vme)
+int mafViewRX::GetNodeStatusI(mafNode *vme)
 //-------------------------------------------------------------------------
 {
   mafSceneNode *n = NULL;
@@ -361,7 +358,7 @@ void mafViewRX::CameraUpdate()
 {
   if (m_CurrentVolume)
   {
-    mafVME *volume = mafVME::SafeDownCast(m_CurrentVolume->m_Vme);
+    auto volume = mafVME::SafeDownCast(m_CurrentVolume->m_Vme);
 
     std::ostringstream stringStream;
     stringStream << "VME " << volume->GetName().GetCStr() << " ABS matrix:" << std::endl;
@@ -410,7 +407,7 @@ void mafViewRX::SetCameraParallelToDataSetLocalAxis( int axis )
   this->GetRWI()->GetCamera()->GetPosition(oldCameraPosition);
   oldCameraOrientation = this->GetRWI()->GetCamera()->GetOrientation();
 
-  mafVME *currentVMEVolume = mafVME::SafeDownCast(m_CurrentVolume->m_Vme);
+  auto currentVMEVolume = mafVME::SafeDownCast(m_CurrentVolume->m_Vme);
   assert(currentVMEVolume);
 
   assert(m_CurrentVolume);

@@ -45,7 +45,7 @@ public:
 	mafSceneGraph *GetSceneGraph() override;
   wxVTKWindow    *GetDefaultRWI();
 
-  void VmeAdd   (mafNode *vme) override;
+  void VmeAdd   (std::shared_ptr<mafNode> vme) override;
 	void VmeRemove(mafNode *vme) override;
 	void VmeSelect(mafNode *vme, bool select) override;
 	void VmeShow  (mafNode *vme, bool show) override;

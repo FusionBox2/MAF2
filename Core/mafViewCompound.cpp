@@ -139,7 +139,7 @@ void mafViewCompound::CreateGuiView()
   m_GuiView->Reparent(m_Win);*/
 }
 //----------------------------------------------------------------------------
-void mafViewCompound::VmeAdd(mafNode *node)
+void mafViewCompound::VmeAdd(std::shared_ptr<mafNode> node)
 //----------------------------------------------------------------------------
 {
   for(int i=0; i<m_NumOfChildView; i++)
@@ -167,7 +167,7 @@ void mafViewCompound::VmeShow(mafNode *node, bool show)
     m_ChildViewList[i]->VmeShow(node, show);
 }
 //----------------------------------------------------------------------------
-int mafViewCompound::GetNodeStatus(mafNode *node)
+int mafViewCompound::GetNodeStatusI(mafNode *node)
 //----------------------------------------------------------------------------
 {
   // should be redefined for compounded views
@@ -257,7 +257,7 @@ void mafViewCompound::OnEvent(mafEventBase *maf_event)
         mafNode *vme = sg->GetSelectedVme();
         if (vme)
         {
-          {mafEvent evUnq(this,VME_MODIFIED); evUnq.SetVme(vme); InvokeEvent(evUnq);}
+          {mafEvent evUnq(this,VME_MODIFIED); evUnq.SetVme(sg->Vme2Node(vme)->m_Vme); InvokeEvent(evUnq);}
         }
       }
     }

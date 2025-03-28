@@ -49,7 +49,7 @@ public:
                  ~mafGUIVMEChooserTree() override;
 
   /** Return the choosed node*/
-  std::vector<mafNode*> GetChoosedNode();
+  std::vector<std::shared_ptr<mafNode> > GetChoosedNode();
 
   /** Called by the Custom-Tree-Event-Handler - via OnMouseDown*/
                  void OnIconClick(wxTreeItemId item) override;
@@ -64,7 +64,7 @@ protected:
   void InitializeImageListMulti();
 
   /** Update the vme nodes icon. */
-  void VmeUpdateIcon(mafNode *n);
+  void VmeUpdateIcon(std::shared_ptr<mafNode> n);
 
   /** clone in tree a subtree of source_item */
   void CloneSubTree(mafGUICheckTree *tree, wxTreeItemId *source_item, wxTreeItemId *dest_parent_item);
@@ -77,9 +77,9 @@ protected:
 
   ValidateCallBackType m_ValidateFunction;
 
-  mafNode   *m_ChoosedNode; ///< Pointer to the selected node in single selection.
+  std::shared_ptr<mafNode> m_ChoosedNode; ///< Pointer to the selected node in single selection.
   long       m_ChooserTreeStyle;
-  std::vector<mafNode*> m_CheckedNode; ///< Vector of checked node (used in multi-selection)
+  std::vector<std::shared_ptr<mafNode> > m_CheckedNode; ///< Vector of checked node (used in multi-selection)
   bool m_MultipleSelection; ///< Flag that manage the single or multi selection of the nodes inside the tree.
 
   DECLARE_EVENT_TABLE()

@@ -102,31 +102,30 @@ mafVMERefSysAbstract *GetRefSys(mafVME *vme)
 {
   for(int i = 0; i < vme->GetNumberOfChildren(); i++)
   {
-    mafVMERefSysAbstract *refsys =mafVMERefSysAbstract::SafeDownCast(vme->GetChild(i));
-    if(refsys != NULL)
+    if (auto refsys =mafVMERefSysAbstract::SafeDownCast(vme->GetChild(i)))
     {
-      return refsys;
+      return refsys.get();
     }
   }
-  return NULL;
+  return nullptr;
 }
 mafVMEAFRefSys *GetAFRefSys(mafVME *vme)
 {
-  mafVMEAFRefSys *afs = mafVMEAFRefSys::SafeDownCast(vme);
+  auto afs = mafVMEAFRefSys::SafeDownCast(vme);
   if (afs)
     return afs;
-  mafVMELandmarkCloud *lmc = mafVMELandmarkCloud::SafeDownCast(vme);
-  if(lmc == NULL)
-    return NULL;
+  auto lmc = mafVMELandmarkCloud::SafeDownCast(vme);
+  if(lmc == nullptr)
+    return nullptr;
   for(int i = 0; i < lmc->GetNumberOfChildren(); i++)
   {
-    mafNode *child = vme->GetChild(i);
+    auto child = vme->GetChild(i);
     if(child->IsA("mafVMEAFRefSys"))
     {
-      mafVMEAFRefSys *rs = mafVMEAFRefSys::SafeDownCast(child);
+      auto rs = mafVMEAFRefSys::SafeDownCast(child);
       if(rs->GetActive())
       {
-        afs = rs;
+        afs = rs.get();
         break;
       }
     }
@@ -180,11 +179,11 @@ void GetLocalMatrix(mafVME *vme, mafTimeStamp ts, mafMatrix& matrix, mafVME *par
   mafMatrix cmatrix;
 
   matrix.Identity();
-  if(vme == NULL)
+  if(vme == nullptr)
     return;
 
-  if(parent == NULL)
-    parent = vme->GetParent();
+  if(parent == nullptr)
+    parent = vme->GetParent().get();
 
   GetGlobalMatrix(parent, ts, pmatrix, useRefSys);//in case of GetParent == NULL Global matrix is filled as identity
   GetGlobalMatrix(vme,    ts, cmatrix, useRefSys);
@@ -249,12 +248,12 @@ void OVP_GES(mafVME *vme, mafTimeStamp ts, mafTimeStamp tsRef, DiV4d *vOVPPos, D
     DiV4dCopy(vOVPPosOut, vGESPosOut);
     return;
   }
-  if(parent == NULL)
-    parent = vme->GetParent();
-  if(parent == NULL)
+  if(parent == nullptr)
+    parent = vme->GetParent().get();
+  if(parent == nullptr)
     return;
   mafVMEAFRefSys *parentSys = GetAFRefSys(parent);
-  if(parentSys == NULL || parentSys->GetBoneID() == mafVMEAFRefSys::ID_AFS_NOTDEFINED || parentSys->GetBoneID() != FindParentID(vmeSys->GetBoneID()))
+  if(parentSys == nullptr || parentSys->GetBoneID() == mafVMEAFRefSys::ID_AFS_NOTDEFINED || parentSys->GetBoneID() != FindParentID(vmeSys->GetBoneID()))
     return;
 
   mafMatrix vmeMatr;
@@ -444,11 +443,11 @@ void SetOVP(mafVME *vme, mafTimeStamp ts, mafTimeStamp tsRef, DiV4d *vOVPPos, Di
   {
     return;
   }
-  mafVME *parent = vme->GetParent();
-  if(parent == NULL)
+  auto parent = vme->GetParent();
+  if(parent == nullptr)
     return;
-  mafVMEAFRefSys *parentSys = GetAFRefSys(parent);
-  if(parentSys == NULL || parentSys->GetBoneID() == mafVMEAFRefSys::ID_AFS_NOTDEFINED || parentSys->GetBoneID() != FindParentID(vmeSys->GetBoneID()))
+  mafVMEAFRefSys *parentSys = GetAFRefSys(parent.get());
+  if(parentSys == nullptr || parentSys->GetBoneID() == mafVMEAFRefSys::ID_AFS_NOTDEFINED || parentSys->GetBoneID() != FindParentID(vmeSys->GetBoneID()))
     return;
 
   mafMatrix parNodeLMatr;
@@ -1295,32 +1294,32 @@ mafVME *AutoSelectProximal(mafVME *distal)
 {
   if(!distal)
     return NULL;
-  mafVME *parent = distal->GetParent();
+  auto parent = distal->GetParent();
   if(!parent)
-    return NULL;
-  if(mafVMELandmarkCloud *lm = mafVMELandmarkCloud::SafeDownCast(parent))
-    return lm;
-  mafVME *grandparent = parent->GetParent();
+    return nullptr;
+  if(auto lm = mafVMELandmarkCloud::SafeDownCast(parent))
+    return lm.get();
+  auto grandparent = parent->GetParent();
   if(!grandparent)
-    return parent;
+    return parent.get();
   for(unsigned i = 0; i < grandparent->GetNumberOfChildren(); i++)
   {
-    mafVMELandmarkCloud *lmc = mafVMELandmarkCloud::SafeDownCast(grandparent->GetChild(i));
+    auto lmc = mafVMELandmarkCloud::SafeDownCast(grandparent->GetChild(i));
     if(!lmc)
       continue;
     for(unsigned j = 0; j < lmc->GetNumberOfChildren(); j++)
     {
-      if(mafVMEAFRefSys *afs = mafVMEAFRefSys::SafeDownCast(lmc->GetChild(j)))
+      if(auto afs = mafVMEAFRefSys::SafeDownCast(lmc->GetChild(j)))
       {
         if(afs->GetActive())
-          return lmc;
+          return lmc.get();
       }
     }
   }
   for(unsigned i = 0; i < grandparent->GetNumberOfChildren(); i++)
   {
-    if(mafVMELandmarkCloud *lmc = mafVMELandmarkCloud::SafeDownCast(grandparent->GetChild(i)))
-      return lmc;
+    if(auto lmc = mafVMELandmarkCloud::SafeDownCast(grandparent->GetChild(i)))
+      return lmc.get();
   }
-  return parent;
+  return parent.get();
 }

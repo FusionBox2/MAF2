@@ -76,7 +76,7 @@ private:
   virtual void WizardContinue(int opSuccess);
 
   /** Record the selected vme and enable the menu_entries relative to the compatible wizard. */
-  virtual void VmeSelected(mafNode* node);
+  virtual void VmeSelected(std::shared_ptr<mafNode>  node);
 
   /** Enable/Disable the men items operation. */
   virtual void EnableWizardMenus(bool CanEnable = true);
@@ -118,7 +118,7 @@ private:
   medWizardSettings *m_Settings;
   wxMenuBar         *m_MenuBar; ///< Pointer to the Application's main menu
   wxToolBar         *m_ToolBar; ///< Pointer to the application's Toolbal
-  mafNode						*m_Selected; ///< Pointer to the current selected node.
+  std::shared_ptr<mafNode> m_Selected; ///< Pointer to the current selected node.
   bool               m_Warn; ///< Flag to warn the user when an operation that can not undo is starting.
   medWizardWaitOp   *m_WaitOp;
 

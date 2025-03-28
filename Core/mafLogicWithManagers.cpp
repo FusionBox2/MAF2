@@ -568,8 +568,8 @@ void mafLogicWithManagers::EnableOperations(bool enable)
     if(m_logic->m_MenuElems[i].m_op)
     {
       bool enableOp = enable;
-      mafNode *node = m_logic->m_OpManager->GetSelectedVme();
-      enableOp = enableOp && node && m_logic->m_OpManager->GetOperationById(m_logic->m_MenuElems[i].m_id)->Accept(node);
+      auto node = m_logic->m_OpManager->GetSelectedVme();
+      enableOp = enableOp && node && m_logic->m_OpManager->GetOperationById(m_logic->m_MenuElems[i].m_id)->Accept(node.get());
       EnableItem(i + MENU_USER_START, enableOp); 
     }
   }
@@ -759,7 +759,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
     if(!m_logic->m_OpManager)
       break;
     EnableOperations(false);
-    m_logic->m_OpManager->OpRun(m_logic->m_MenuElems[i].m_id, m_logic->m_OpManager->GetSelectedVme());
+    m_logic->m_OpManager->OpRun(m_logic->m_MenuElems[i].m_id, m_logic->m_OpManager->GetSelectedVme().get());
     EnableOperations(true);
     return;
   }
@@ -865,7 +865,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   }
   if(VME_SHOW == eventId)
   {
-    VmeShow(e->GetVme(), e->GetBool());
+    VmeShow(e->GetVme().get(), e->GetBool());
 #ifdef MAF_USE_CURL
     if(m_RemoteLogic && (e->GetSender() != m_RemoteLogic.get()) && m_RemoteLogic->IsSocketConnected())
     {
@@ -876,39 +876,39 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   }
   if(VME_MODIFIED == eventId)
   {
-    VmeModified(e->GetVme());
-    if(!m_logic->m_PlugTimebar && ((mafVME*)e->GetVme())->IsAnimated())
+    VmeModified(e->GetVme().get());
+    if(!m_logic->m_PlugTimebar && mafVME::StaticDownCast(e->GetVme())->IsAnimated())
       m_logic->m_frame->ShowPane("timebar",!m_logic->m_frame->IsPaneShown("timebar") );
     return; 
   }
   if(VME_EXPAND == eventId)
   {
-    VmeExpand(e->GetVme());
+    VmeExpand(e->GetVme().get());
     return; 
   }
   if(VME_COLLAPSE == eventId)
   {
-    VmeCollapse(e->GetVme());
+    VmeCollapse(e->GetVme().get());
     return; 
   }
   if(VME_EXPANDSUBTREE == eventId)
   {
-    VmeExpandSubTree(e->GetVme());
+    VmeExpandSubTree(e->GetVme().get());
     return; 
   }
   if(VME_COLLAPSESUBTREE == eventId)
   {
-    VmeCollapseSubTree(e->GetVme());
+    VmeCollapseSubTree(e->GetVme().get());
     return; 
   }
   if(VME_EXPANDVISIBLE == eventId)
   {
-    VmeExpandVisible(e->GetVme());
+    VmeExpandVisible(e->GetVme().get());
     return; 
   }
   if(VME_ADD == eventId)
   {
-    VmeAdd(e->GetVme());
+    VmeAdd(e->GetVme().get());
     return; 
   }
   if(VME_ADDED == eventId)
@@ -918,29 +918,28 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   }
   if(VME_REMOVE == eventId)
   {
-    VmeRemove(e->GetVme());
+    VmeRemove(e->GetVme().get());
     return; 
   }
   if(VME_REMOVING == eventId)
   {
-    VmeRemoving(e->GetVme());
+    VmeRemoving(e->GetVme().get());
     return; 
   }
   if(VME_CHOOSE == eventId)
   {
-    mafString *s = e->GetString();
-    if(s != NULL)
+    if (mafString *s = e->GetString())
     {
-      std::vector<mafNode*> nodeVector = VmeChoose(e->GetArg(), REPRESENTATION_AS_TREE, *s, e->GetBool());
+      auto nodeVector = VmeChoose(e->GetArg(), REPRESENTATION_AS_TREE, *s, e->GetBool());
       if (!e->GetBool())
       {
-        if (nodeVector.size() != 0)
+        if (!nodeVector.empty())
         {
           e->SetVme(nodeVector[0]);
         }
         else
         {
-          e->SetVme(NULL);
+          e->SetVme(nullptr);
         }
       }
       else
@@ -950,7 +949,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
     }
     else
     {
-      std::vector<mafNode*> nodeVector = VmeChoose(e->GetArg(), REPRESENTATION_AS_TREE, _R("Choose Node"), e->GetBool());
+      auto nodeVector = VmeChoose(e->GetArg(), REPRESENTATION_AS_TREE, _R("Choose Node"), e->GetBool());
       if (!e->GetBool())
       {
         if (nodeVector.size() != 0)
@@ -971,19 +970,19 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   }
   if(VME_CHOOSE_MATERIAL == eventId)
   {
-    VmeChooseMaterial((mafVME *)e->GetVme(), e->GetBool());
+    VmeChooseMaterial(mafVME::StaticDownCast(e->GetVme()).get(), e->GetBool());
     return;
   }
   if(VME_VISUAL_MODE_CHANGED == eventId)
   {
-    mafVME *vme = (mafVME *)e->GetVme();
-    VmeShow(vme, false);
-    VmeShow(vme, true);
+    auto vme = mafVME::StaticDownCast(e->GetVme());
+    VmeShow(vme.get(), false);
+    VmeShow(vme.get(), true);
     return;
   }
   if(UPDATE_PROPERTY == eventId)
   {
-    VmeUpdateProperties((mafVME *)e->GetVme(), e->GetBool());
+    VmeUpdateProperties(mafVME::StaticDownCast(e->GetVme()).get(), e->GetBool());
     return;
   }
   if(SHOW_CONTEXTUAL_MENU == eventId)
@@ -1432,18 +1431,16 @@ void mafLogicWithManagers::OnFileNew()
     return;
   if(!OnFileClose())
     return;
-  mafVMERoot *root;
-  mafNEW(root);
+  auto root = mafVMERoot::NewSPtr();
   root->SetName(_R("root"));
   root->Initialize();
   //Add the application stamps
-  SetAppTag(root);
-  AddCreationDate(root);
+  SetAppTag(root.get());
+  AddCreationDate(root.get());
   m_logic->m_NodeManager->SetRoot(root);
   VmeSelected(root);
   root->SetTreeTime(0.0); // set the tree time
   UpdateFrameTitle();
-  mafDEL(root);
   m_logic->m_NodeManager->MSFModified(false);
 }
 bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
@@ -1577,9 +1574,9 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
   {
     mafErrorMessage(_M(mafString(_L("Errors during file parsing! Look the log area for error messages."))));
   }
-  mafVMERoot *root = mafVMERoot::SafeDownCast(m_logic->m_NodeManager->GetRoot());
-  SetAppTag(root);
-  if(!CheckAppTag(root))
+  auto root = mafVMERoot::SafeDownCast(m_logic->m_NodeManager->GetRoot());
+  SetAppTag(root.get());
+  if(!CheckAppTag(root.get()))
   {
     //Application stamp not valid
     mafMessage(_M(mafString(_L("File not valid for this application!"))));
@@ -1624,7 +1621,7 @@ void mafLogicWithManagers::Save()
 	mafString save_default_folder = m_logic->m_StorageSettings->GetDefaultSaveFolder();
 	ParsePathName(save_default_folder);
   m_logic->m_StorageData->m_MSFDir = save_default_folder;
-  mafVMERoot *root = mafVMERoot::SafeDownCast(m_logic->m_NodeManager->GetRoot());
+  auto root = mafVMERoot::SafeDownCast(m_logic->m_NodeManager->GetRoot());
   if(!root)
     return;
   if(m_logic->m_StorageData->m_MSFFile.empty())
@@ -1659,9 +1656,9 @@ bool mafLogicWithManagers::OnFileSave()
 	mafString save_default_folder = m_logic->m_StorageSettings->GetDefaultSaveFolder();
 	ParsePathName(save_default_folder);
   m_logic->m_StorageData->m_MSFDir = save_default_folder;
-  mafVMERoot *root = mafVMERoot::SafeDownCast(m_logic->m_NodeManager->GetRoot());
+  auto root = mafVMERoot::SafeDownCast(m_logic->m_NodeManager->GetRoot());
   if(!root)
-    return true;;
+    return true;
 
   if(m_logic->m_Storage && m_logic->m_Storage->GetURL() != m_logic->m_StorageData->m_MSFFile)
   {
@@ -1676,7 +1673,7 @@ bool mafLogicWithManagers::OnFileSaveAs()
 {
   if(!m_logic->m_NodeManager)
     return true;
-  mafVMERoot *root = mafVMERoot::SafeDownCast(m_logic->m_NodeManager->GetRoot());
+  auto root = mafVMERoot::SafeDownCast(m_logic->m_NodeManager->GetRoot());
   if(!root)
     return true;
 
@@ -1722,9 +1719,9 @@ bool mafLogicWithManagers::OnFileSaveAs()
   if(m_logic->m_Storage && m_logic->m_StorageData->m_MSFFile != m_logic->m_Storage->GetURL())
   {
     auto iter = root->NewIterator();
-    for(mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+    for(auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
     {
-      if(mafVMEGenericAbstract *vga = mafVMEGenericAbstract::SafeDownCast(node))
+      if(auto vga = mafVMEGenericAbstract::SafeDownCast(node))
       {
         if (mafDataVector *dv = vga->GetDataVector())
         {
@@ -1808,29 +1805,22 @@ void mafLogicWithManagers::OnQuit()
 }
 void mafLogicWithManagers::VmeDoubleClicked(mafEvent &e)
 {
-  mafNode *node = e.GetVme();
-  if (node)
+  if (auto node = e.GetVme())
   {
     mafLogMessage(_M(_R("Double click on ") + node->GetName()));
   }
 }
 void mafLogicWithManagers::VmeSelect(mafEvent& e)	//modified by Paolo 10-9-2003
 {
-  mafNode *node = NULL;
+  auto node = e.GetVme();
 
-	if(m_logic->m_PlugSidebar && (e.GetSender() == m_logic->m_SideBar->GetTree()))
-    node = (mafNode*)e.GetArg();//sender == tree => the node is in e.arg
-  else
-    node = e.GetVme();          //sender == PER  => the node is in e.node  
-
-  if(node == NULL)
+  if(node == nullptr)
   {
     //node can be selected by its ID
     if(m_logic->m_NodeManager)
     {
 		  long vme_id = e.GetArg();
-		  mafVMERoot *root = mafVMERoot::SafeDownCast(m_logic->m_NodeManager->GetRoot());
-		  if (root)
+		  if (auto root = mafVMERoot::SafeDownCast(m_logic->m_NodeManager->GetRoot()))
 		  {
 			  node = root->FindInTreeById(vme_id);
 			  e.SetVme(node);
@@ -1855,15 +1845,15 @@ void mafLogicWithManagers::VmeSelect(mafEvent& e)	//modified by Paolo 10-9-2003
   }
 #endif
 }
-void mafLogicWithManagers::VmeSelected(mafNode *vme, bool remote)
+void mafLogicWithManagers::VmeSelected(std::shared_ptr<mafNode> vme, bool remote)
 {
-  if(m_logic->m_ViewManager) m_logic->m_ViewManager->VmeSelect(vme);
+  if(m_logic->m_ViewManager) m_logic->m_ViewManager->VmeSelect(vme.get());
   if(m_logic->m_OpManager)   { m_logic->m_OpManager->VmeSelected(vme);    EnableOperations(true);}
-	if(m_logic->m_SideBar)     m_logic->m_SideBar->VmeSelected(vme);
+	if(m_logic->m_SideBar)     m_logic->m_SideBar->VmeSelected(vme.get());
 // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
   if (m_logic->m_InteractionManager)
-    m_logic->m_InteractionManager->VmeSelected(vme);
+    m_logic->m_InteractionManager->VmeSelected(vme.get());
 #endif
 
 #ifdef MAF_USE_CURL
@@ -1894,13 +1884,13 @@ void mafLogicWithManagers::VmeAdd(mafNode *vme)
   if(m_logic->m_NodeManager)
     m_logic->m_NodeManager->VmeAdd(vme);
 }
-void mafLogicWithManagers::VmeAdded(mafNode *vme)
+void mafLogicWithManagers::VmeAdded(std::shared_ptr<mafNode> vme)
 {
   if(m_logic->m_NodeManager)
   {
-    if (mafVMERoot *root = mafVMERoot::SafeDownCast(m_logic->m_NodeManager->GetRoot()))
+    if (auto root = mafVMERoot::SafeDownCast(m_logic->m_NodeManager->GetRoot()))
     {
-      if (mafVME *vmenode = mafVME::SafeDownCast(vme))
+      if (auto vmenode = mafVME::SafeDownCast(vme))
       {
         // Update the new VME added to the tree with the current time-stamp
         // present in the tree.
@@ -1921,7 +1911,7 @@ void mafLogicWithManagers::VmeAdded(mafNode *vme)
 void mafLogicWithManagers::RestoreLayout()
 {
   // Retrieve the saved layout.
-  mafNode *vme = m_logic->m_NodeManager->GetRoot();
+  auto vme = m_logic->m_NodeManager->GetRoot();
   auto app_layout = mmaApplicationLayout::SafeDownCast(vme->GetAttribute(_R("ApplicationLayout")));
   if (app_layout)
   {
@@ -2111,7 +2101,7 @@ void mafLogicWithManagers::TimeSet(double t)
 {
   if(m_logic->m_NodeManager)
   {
-    if(mafVMERoot *root = mafVMERoot::SafeDownCast(m_logic->m_NodeManager->GetRoot()))
+    if(auto root = mafVMERoot::SafeDownCast(m_logic->m_NodeManager->GetRoot()))
       root->SetTreeTime(t);
   }
   if(m_logic->m_ViewManager)
@@ -2125,7 +2115,7 @@ void mafLogicWithManagers::UpdateTimeBounds()
   if(m_logic->m_NodeManager)
   {
     mafTimeStamp b[2] = {0, 0};
-    if(mafVMERoot *root = mafVMERoot::SafeDownCast(m_logic->m_NodeManager->GetRoot()))
+    if(auto root = mafVMERoot::SafeDownCast(m_logic->m_NodeManager->GetRoot()))
       root->GetOutput()->GetTimeBounds(b);
     min = b[0];
     max = b[1];
@@ -2136,7 +2126,7 @@ void mafLogicWithManagers::UpdateTimeBounds()
     m_logic->m_frame->ShowPane("timebar", min<max);
   }
 }
-std::vector<mafNode*> mafLogicWithManagers::VmeChoose(intptr_t vme_accept_function, long style, mafString title, bool multiSelect)
+std::vector<std::shared_ptr<mafNode> > mafLogicWithManagers::VmeChoose(intptr_t vme_accept_function, long style, mafString title, bool multiSelect)
 {
   mafGUIVMEChooser vc(m_logic->m_SideBar->GetTree(),title, vme_accept_function, style, multiSelect);
   return vc.ShowChooserDialog();
@@ -2181,7 +2171,7 @@ void mafLogicWithManagers::TreeContextualMenu(mafEvent &e)
   auto contextMenu = std::make_unique<mafGUITreeContextualMenu>();
   contextMenu->SetListener(m_logic->m_ApplicationLayoutSettings.get());
   mafView *v = m_logic->m_ViewManager->GetSelectedView();
-  mafVME  *vme = (mafVME *)e.GetVme();
+  auto vme = mafVME::StaticDownCast(e.GetVme());
   bool vme_menu = e.GetBool();
   bool autosort = e.GetArg() != 0;
   contextMenu->CreateContextualMenu((mafGUICheckTree *)e.GetSender(),v,vme,vme_menu);

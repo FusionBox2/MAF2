@@ -103,7 +103,7 @@ protected:
   void ContinueExecution(int opSuccess);
 
   /** Set the selected VME, this function must be called before execution begin*/
-  void SetSelectedVME(mafNode *node);
+  void SetSelectedVME(std::shared_ptr<mafNode> node);
 
 private:
 
@@ -127,7 +127,7 @@ private:
   int							m_Id; ///< Index of the wizard referring to the wizard list.
   wxString				m_Label; ///< Label of the wizard that will appear on menu.
   wxString				m_Name; ///< Label of the wizard that will appear on menu.
-  mafNode        *m_SelectedVME;
+  std::shared_ptr<mafNode> m_SelectedVME;
   bool            m_ShowProgressBar;
 
   friend class medWizardManager; // class medWizardManager can now access data directly

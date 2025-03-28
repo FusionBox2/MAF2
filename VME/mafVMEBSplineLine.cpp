@@ -549,7 +549,7 @@ void mafVMEBSplineLine::OnEvent(mafEventBase *maf_event)
             e->SetArg((intptr_t)&mafVMEBSplineLine::PolylineAccept);
             e->SetString(&title);
             ForwardUpEvent(e);
-            vme = mafVMELandmarkCloud::SafeDownCast(e->GetVme());
+            vme = mafVMELandmarkCloud::SafeDownCast(e->GetVme()).get();
             if(vme != NULL)
             {
               SetPointsCloudLink(vme);

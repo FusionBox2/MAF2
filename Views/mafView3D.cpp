@@ -398,7 +398,7 @@ mafGUI *mafView3D::CreateGui()
   return m_Gui;
 }
 //-------------------------------------------------------------------------
-int mafView3D::GetNodeStatus(mafNode *vme)
+int mafView3D::GetNodeStatusI(mafNode *vme)
 //-------------------------------------------------------------------------
 {
 	mafSceneNode *n = NULL;

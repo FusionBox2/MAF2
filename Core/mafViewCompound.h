@@ -86,7 +86,7 @@ public:
 
   /** 
   Add VME into plugged sub-views*/
-  void VmeAdd(mafNode *node) override;
+  void VmeAdd(std::shared_ptr<mafNode> node) override;
 
   /** 
   Remove VME into plugged sub-views*/
@@ -103,7 +103,7 @@ public:
   /** 
   return the status of the node within this view. es: NON_VISIBLE,VISIBLE_ON, ... 
   having mafViewCompound::GetNodeStatus allow mafGUICheckTree to not know about mafSceneGraph */
-  int  GetNodeStatus(mafNode *vme) override;
+  int  GetNodeStatusI(mafNode *vme) override;
 
   void OnSize(wxSizeEvent &event) override;
 

@@ -30,7 +30,7 @@
 #include "mafGizmoTranslateAxis.h"
 #include "mafGizmoTranslatePlane.h"
 #include "mafGUIGizmoTranslate.h"
-#include "ftk/Base/RegisteringPointer.h"
+#include "ftk/Base/Object.h"
 
 #include "mafInteractorGenericMouse.h"
 
@@ -43,7 +43,7 @@
 #include "vtkMatrix4x4.h"
 
 //----------------------------------------------------------------------------
-mafGizmoTranslate::mafGizmoTranslate(mafVME* input, mafBaseEventHandler *listener, bool buildGUI)
+mafGizmoTranslate::mafGizmoTranslate(std::shared_ptr<mafVME> input, mafBaseEventHandler *listener, bool buildGUI)
 //----------------------------------------------------------------------------
 {
   assert(input);
@@ -355,7 +355,7 @@ void mafGizmoTranslate::Show(bool show)
   {
     // if auxiliary ref sys is different from vme its orientation cannot be changed
     // so gui must not be keyable. Otherwise set gui keyability to show.
-    if (m_RefSysVME == m_InputVME)
+    if (m_RefSysVME == m_InputVME.get())
     {
       m_GuiGizmoTranslate->EnableWidgets(show);
     }
@@ -383,7 +383,7 @@ void mafGizmoTranslate::Show( bool showX,bool showY,bool showZ )
   {
     // if auxiliary ref sys is different from vme its orientation cannot be changed
     // so gui must not be keyable. Otherwise set gui keyability to show.
-    if (m_RefSysVME == m_InputVME)
+    if (m_RefSysVME == m_InputVME.get())
     {
       m_GuiGizmoTranslate->EnableWidgets(m_Visibility);
     }
@@ -401,7 +401,7 @@ std::shared_ptr<mafMatrix> mafGizmoTranslate::GetAbsPose()
 }
 
 //----------------------------------------------------------------------------  
-void mafGizmoTranslate::SetInput(mafVME *input)
+void mafGizmoTranslate::SetInput(std::shared_ptr<mafVME> input)
 //----------------------------------------------------------------------------
 {
   this->m_InputVME = input;
@@ -471,7 +471,7 @@ void mafGizmoTranslate::SetRefSys(mafVME *refSys)
 
   m_RefSysVME = refSys;
   SetAbsPose(m_RefSysVME->GetOutput()->GetAbsMatrix());
-  if (m_RefSysVME == m_InputVME)
+  if (m_RefSysVME == m_InputVME.get())
   {
     SetModalityToLocal();
     // if the gizmo is visible set the widgets visibility to true

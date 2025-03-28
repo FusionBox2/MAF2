@@ -55,7 +55,7 @@ class MED_COMMON_EXPORT medGizmoInteractionDebugger : public mafGizmoInterface
 public:
 
   /** inputVME is used just to put the gizmo on the vme tree: this gizmo is not moving anything but itself */
-	medGizmoInteractionDebugger(mafNode* inputVme, mafBaseEventHandler *Listener = NULL, const char *name = "GizmoPath", bool testMode = false);
+	medGizmoInteractionDebugger(std::shared_ptr<mafNode> inputVme, mafBaseEventHandler *Listener = NULL, const char *name = "GizmoPath", bool testMode = false);
 
   ~medGizmoInteractionDebugger() override;
 
@@ -82,7 +82,7 @@ public:
   void OnEvent(mafEventBase *maf_event) override; 
 
   /** Not used since this gizmo is not moving anything*/
-  void SetInput(mafVME *vme) override {return;};
+  void SetInput(std::shared_ptr<mafVME> vme) override {}
 
   /** Set the gizmo color */
   void SetColor(double col[3]);
@@ -94,7 +94,7 @@ protected:
 
   
 
-  void Constructor(mafNode *imputVme, mafBaseEventHandler *listener, const char *name, bool testMode = false);
+  void Constructor(std::shared_ptr<mafNode> imputVme, mafBaseEventHandler *listener, const char *name, bool testMode = false);
   void Destructor();
 
   void CreateVMEGizmo();
@@ -105,7 +105,7 @@ protected:
   void LogTransformEvent(mafEvent  *e) ;
 
   mafString           m_Name;
-  mafVMEGizmo        *m_VmeGizmo;
+  std::shared_ptr<mafVMEGizmo> m_VmeGizmo;
   std::shared_ptr<mafInteractorCompositorMouse> m_GizmoInteractor;
   mafInteractorGenericMouse *m_LeftMouseInteractor;
   

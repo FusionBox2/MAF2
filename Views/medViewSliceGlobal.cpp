@@ -173,8 +173,7 @@ void medViewSliceGlobal::UpdateText(int ID)
     if(m_ViewIndex == 2)
       numberOfSlices = m_NumberOfSlices[0];
 
-    mafVME *vme = mafVME::SafeDownCast(m_CurrentVolume->m_Vme);
-    if(vme)
+    if (auto vme = mafVME::SafeDownCast(m_CurrentVolume->m_Vme))
     {
       if(m_TextMode == SLICES_AND_FRAMES_LABEL)
       {
@@ -589,7 +588,7 @@ void medViewSliceGlobal::CameraUpdate()
 {  
   if (m_CurrentVolume &&  mafVMEVolumeGray::SafeDownCast(m_CurrentVolume->m_Vme))
   {
-    mafVMEVolumeGray *volume = mafVMEVolumeGray::SafeDownCast(m_CurrentVolume->m_Vme);
+    auto volume = mafVMEVolumeGray::SafeDownCast(m_CurrentVolume->m_Vme);
 
     std::ostringstream stringStream;
     stringStream << "VME " << volume->GetName().GetCStr() << " ABS matrix:" << std::endl;
@@ -708,7 +707,7 @@ void medViewSliceGlobal::UpdateBounds()
     if(n->m_Pipe)
     {
       double b[6];
-      ((mafVME *)n->m_Vme)->GetOutput()->GetVTKData()->GetBounds(b);
+      mafVME::StaticDownCast(n->m_Vme)->GetOutput()->GetVTKData()->GetBounds(b);
       {mafOBB obb(b); globalBounds.MergeBounds(obb);}
     }
   }
@@ -749,7 +748,7 @@ void medViewSliceGlobal::SetSlice(double origin[3], float xVect[3], float yVect[
 }
 
 //-------------------------------------------------------------------------
-int medViewSliceGlobal::GetNodeStatus(mafNode *vme)
+int medViewSliceGlobal::GetNodeStatusI(mafNode *vme)
 //-------------------------------------------------------------------------
 {
  

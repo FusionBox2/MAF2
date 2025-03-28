@@ -476,7 +476,7 @@ void medLogicWithManagers::OnQuit()
 
 
 //----------------------------------------------------------------------------
-void medLogicWithManagers::VmeSelected( mafNode *vme )
+void medLogicWithManagers::VmeSelected(std::shared_ptr<mafNode> vme )
 //----------------------------------------------------------------------------
 {
   //if a wizard manager was plugged we tell it about vme selection
