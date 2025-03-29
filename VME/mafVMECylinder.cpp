@@ -171,7 +171,7 @@ void mafVMECylinder::OnEvent(mafEventBase *maf_event)
 					  mafTimeStamp currTs = GetTimeStamp();
 						auto m_TmpTransform = mafTransform::NewSPtr();
 
-					  SetCenterLink(_R("centerLandmark"), n.get());
+					  SetCenterLink(_R("centerLandmark"), n);
 					  m_LandmarkName = n->GetName();
 								  
 					  center_vme = GetCenterVME();

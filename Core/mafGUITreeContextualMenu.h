@@ -24,15 +24,15 @@ public:
   ~mafGUITreeContextualMenu() override;
 
   /** Create a contextual menu*/
-  virtual void CreateContextualMenu(mafGUICheckTree *tree, mafView *view, std::shared_ptr<mafNode> vme, bool vme_menu);
+  virtual void CreateContextualMenu(mafGUICheckTree *tree, mafView *view, mafNode* vme, bool vme_menu);
 
   /** Visualize contextual men for the MDI child and selected view. */
   void ShowContextualMenu();
 
 protected:
   mafView       *m_ViewActive;
-  std::shared_ptr<mafVME> m_VmeActive;
-  std::shared_ptr<mafNode> m_NodeActive;
+  mafVME *m_VmeActive;
+  mafNode *m_NodeActive;
   mafGUICheckTree  *m_NodeTree;
 
   mafSceneGraph *m_SceneGraph;

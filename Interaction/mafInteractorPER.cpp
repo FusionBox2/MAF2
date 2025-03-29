@@ -160,7 +160,7 @@ void mafInteractorPER::SetPickedVME(mafDevice *device,mafVME *vme)
 {
   if (device)
   {
-    std::map<mafID,DeviceItem>::iterator iter = m_Devices.find(device->GetID());
+    auto iter = m_Devices.find(device->GetID());
     //assert(iter != m_Devices.end()); // check the device has started an interaction
     if (iter != m_Devices.end())
       (*iter).second.m_VME = vme;
@@ -177,9 +177,9 @@ mafVME *mafInteractorPER::GetPickedVME(mafDevice *device)
 {
   if (device)
   {
-    std::map<mafID,DeviceItem>::iterator iter = m_Devices.find(device->GetID());
+    auto iter = m_Devices.find(device->GetID());
     //assert(iter != m_Devices.end()); // check the device has started an interaction
-    return (iter != m_Devices.end()) ? (*iter).second.m_VME : NULL;
+    return (iter != m_Devices.end()) ? (*iter).second.m_VME : nullptr;
   }
   else
   {
@@ -196,7 +196,7 @@ void mafInteractorPER::OnChar(mafEventInteraction *e)
     case 'r' :      
     case 'R' :
     {
-      mafDeviceButtonsPadMouse *mouse = mafDeviceButtonsPadMouse::SafeDownCast((mafDevice *)e->GetSender());
+      auto mouse = mafDeviceButtonsPadMouse::SafeDownCast((mafDevice *)e->GetSender());
       if (mouse)
       {
         mafView *view = mouse->GetView();

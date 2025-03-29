@@ -226,7 +226,7 @@ void medVisualPipeCollisionDetection::OnEvent(mafEventBase *maf_event)
         {
           return;
         }
-        AddSurfaceToCollide(surfaceTMP.get());
+        AddSurfaceToCollide(surfaceTMP);
         return;
       }
       break;
@@ -244,7 +244,7 @@ void medVisualPipeCollisionDetection::OnEvent(mafEventBase *maf_event)
         {
           return;
         }
-        SetSurfaceToCollide(surfaceTMP.get());
+        SetSurfaceToCollide(surfaceTMP);
         return;
       }
       break;

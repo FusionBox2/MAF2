@@ -435,7 +435,7 @@ void mafVMEProber::OnEvent(mafEventBase *maf_event)
         ForwardUpEvent(e);
         if (auto n = e->GetVme())
         {
-          SetVolumeLink(n.get());
+          SetVolumeLink(n);
           m_VolumeName = n->GetName();
           m_Gui->Update();
         }
@@ -450,7 +450,7 @@ void mafVMEProber::OnEvent(mafEventBase *maf_event)
         ForwardUpEvent(e);
         if (auto n = e->GetVme())
         {
-          SetSurfaceLink(n.get());
+          SetSurfaceLink(n);
           m_SurfaceName = n->GetName();
           m_Gui->Update();
         }

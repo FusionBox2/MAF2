@@ -116,7 +116,7 @@ mafGizmoHandle::mafGizmoHandle(std::shared_ptr<mafVME> input, mafBaseEventHandle
   this->Show(false);
 
   // ask the manager to create the pipeline
-  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_BoxGizmo); evUnq.SetBool(true); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_BoxGizmo.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
 
   {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_ShadingPlaneGizmo); evUnq.SetBool(m_ShowShadingPlane); InvokeEvent(evUnq);}
   

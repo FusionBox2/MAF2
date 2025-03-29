@@ -183,7 +183,7 @@ void mafGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
         } 
         if(pipe_created && mutex) 
           m_ViewActive->VmeDeletePipe(vme.get());
-        {mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(vme); evUnq.SetBool(false); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(vme.get()); evUnq.SetBool(false); InvokeEvent(evUnq);}
 			}
 		}
 		break;

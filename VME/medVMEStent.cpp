@@ -1365,7 +1365,7 @@ mafNode* medVMEStent::FindOrSelectCenterLineVME(mafNode* inputNode)
   mafString title = _L("Select centerline vme");
   e.SetString(&title);
   ForwardUpEvent(e);
-  node = e.GetVme().get();
+  node = e.GetVme();
 
   if (node){
     mafLogMessage(_M("Adding tag to centerline vme...\n")) ;
@@ -1408,7 +1408,7 @@ mafNode* medVMEStent::FindOrSelectVesselVME(mafNode* inputNode)
   mafString title = _L("Select vessel vme");
   e.SetString(&title);
   ForwardUpEvent(e);
-  node = e.GetVme().get();
+  node = e.GetVme();
 
   if (node){
     mafLogMessage(_M("Adding tag to vessel vme...\n")) ;

@@ -177,7 +177,7 @@ void mafVMEEllipsoid::OnEvent(mafEventBase *maf_event)
 					 
 					
 				    
-					  SetCenterLink(_R("centerLandmark"), n.get());
+					  SetCenterLink(_R("centerLandmark"), n);
 					  m_LandmarkName = n->GetName();
 								  
 					  center_vme = GetCenterVME();

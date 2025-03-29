@@ -257,7 +257,7 @@ void mafViewCompound::OnEvent(mafEventBase *maf_event)
         mafNode *vme = sg->GetSelectedVme();
         if (vme)
         {
-          {mafEvent evUnq(this,VME_MODIFIED); evUnq.SetVme(sg->Vme2Node(vme)->m_Vme); InvokeEvent(evUnq);}
+          {mafEvent evUnq(this,VME_MODIFIED); evUnq.SetVme(sg->Vme2Node(vme)->m_Vme.get()); InvokeEvent(evUnq);}
         }
       }
     }

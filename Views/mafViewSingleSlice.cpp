@@ -836,11 +836,11 @@ void mafViewSingleSlice::VmeShow(mafNode *node, bool show)
 				{
 					if(Inode->IsA("mafVMESurface"))
 					{
-						{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(Inode); evUnq.SetBool(false); InvokeEvent(evUnq);}
+						{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(Inode.get()); evUnq.SetBool(false); InvokeEvent(evUnq);}
 					}
 					if(Inode->IsA("mafVMEPolyline"))
 					{
-						{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(Inode); evUnq.SetBool(false); InvokeEvent(evUnq);}
+						{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(Inode.get()); evUnq.SetBool(false); InvokeEvent(evUnq);}
 					}
 				}
 			}

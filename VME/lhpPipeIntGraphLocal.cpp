@@ -116,7 +116,7 @@ void lhpPipeIntGraphLocal::OnEvent(mafEventBase *maf_event)
       mafEvent e(this,VME_CHOOSE); e.SetString(&s); e.SetArg(NULL/*, (long)&lhpOpRegisterLMScripted::ClosedCloudAccept*/);
       InvokeEvent(e);
       auto vme = mafVME::SafeDownCast(e.GetVme());
-      SetProximal(vme.get());
+      SetProximal(vme);
       return;
     }
     if(ID_RESETPARENT == e->GetId())

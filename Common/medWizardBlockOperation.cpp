@@ -211,7 +211,7 @@ void medWizardBlockOperation::ExcutionBegin()
     {
       //detecting all other vme starting on selected vme and show it
       if (auto toShow=m_SelectedVME->GetByPath(mafWxToString(m_VmeShow[i])))
-        {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(toShow); evUnq.SetBool(true); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(toShow.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
     }
   }
   
@@ -235,7 +235,7 @@ void medWizardBlockOperation::ExcutionEnd()
   for(int i=0;i<m_VmeHide.size();i++)
   {
     auto toHide=m_SelectedVME->GetByPath(mafWxToString(m_VmeHide[i]));
-    {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(toHide); evUnq.SetBool(false); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(toHide.get()); evUnq.SetBool(false); InvokeEvent(evUnq);}
   }
 
   if(m_viewhastobedeleted) 

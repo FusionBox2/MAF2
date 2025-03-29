@@ -106,7 +106,7 @@ void mafPipeLandmarkCloud::Create(mafNode *node, mafView *view)
     for (int i = 0; i < num_lm; i++)
     {
       auto child_lm = m_Cloud->GetLandmark(i);
-      mafEvent e(this,VME_SHOW); e.SetVme(child_lm); e.SetBool(true);
+      mafEvent e(this,VME_SHOW); e.SetVme(child_lm.get()); e.SetBool(true);
       m_Cloud->ForwardUpEvent(&e);
     }
   }
@@ -137,7 +137,7 @@ mafPipeLandmarkCloud::~mafPipeLandmarkCloud()
     for (int i = 0; i < num_lm; i++)
     {
       auto child_lm = m_Cloud->GetLandmark(i);
-      mafEvent e(this,VME_SHOW); e.SetVme(child_lm); e.SetBool(false);
+      mafEvent e(this,VME_SHOW); e.SetVme(child_lm.get()); e.SetBool(false);
       m_Cloud->ForwardUpEvent(&e);
     }
   }
@@ -268,7 +268,7 @@ void mafPipeLandmarkCloud::OnEvent(mafEventBase *maf_event)
       for (int i = 0; i < num_lm; i++)
       {
         auto child_lm = m_Cloud->GetLandmark(i);
-        mafEvent e(this,VME_SHOW); e.SetVme(child_lm); e.SetBool(true);
+        mafEvent e(this,VME_SHOW); e.SetVme(child_lm.get()); e.SetBool(true);
         //m_Cloud->ForwardUpEvent(&e);
         InvokeEvent(e);
       }

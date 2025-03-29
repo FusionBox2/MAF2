@@ -358,9 +358,9 @@ void mafVMEOsteometricBoard::OnEvent(mafEventBase *maf_event)
 								if (auto n = e->GetVme())
 								{
 
-									SetSurfaceLink(_R("SurfaceVME"), n.get());
+									SetSurfaceLink(_R("SurfaceVME"), n);
 									m_SurfaceName = n->GetName();
-									surface = mafVMESurface::StaticDownCast(n).get();
+									surface = mafVMESurface::StaticDownCast(n);
 
 									m_Gui->Update();
 
@@ -384,7 +384,7 @@ void mafVMEOsteometricBoard::OnEvent(mafEventBase *maf_event)
 							 if (auto n = e->GetVme())
 							 {
 
-							   SetLandmarkLink(_R("first_Point"), n.get());
+							   SetLandmarkLink(_R("first_Point"), n);
 							   m_p1LandmarkName = n->GetName();
 							   m_Gui->Update();
 							   pts_change = true;
@@ -408,7 +408,7 @@ void mafVMEOsteometricBoard::OnEvent(mafEventBase *maf_event)
 							 {
 
 							   
-							   SetLandmarkLink(_R("second_Point"), n.get());
+							   SetLandmarkLink(_R("second_Point"), n);
 							   m_p2LandmarkName = n->GetName();
 
 							   m_Gui->Update();
@@ -433,7 +433,7 @@ void mafVMEOsteometricBoard::OnEvent(mafEventBase *maf_event)
 							 {
 
 							   
-							   SetLandmarkLink(_R("third_Point"), n.get());
+							   SetLandmarkLink(_R("third_Point"), n);
 							   m_p3LandmarkName = n->GetName();
 
 							   m_Gui->Update();
@@ -456,7 +456,7 @@ void mafVMEOsteometricBoard::OnEvent(mafEventBase *maf_event)
 						   ForwardUpEvent(e);
 							 if (auto n = e->GetVme())
 							 {
-							   SetLandmarkLink(_R("4th_Point"), n.get());
+							   SetLandmarkLink(_R("4th_Point"), n);
 							   m_p4LandmarkName = n->GetName();
 
 							   m_Gui->Update();
@@ -482,7 +482,7 @@ void mafVMEOsteometricBoard::OnEvent(mafEventBase *maf_event)
 							 {
 
 
-							   SetLandmarkLink(_R("5th_Point"), n.get());
+							   SetLandmarkLink(_R("5th_Point"), n);
 							   m_p5LandmarkName = n->GetName();
 
 							   m_Gui->Update();
@@ -508,7 +508,7 @@ void mafVMEOsteometricBoard::OnEvent(mafEventBase *maf_event)
 						   {
 
 
-							   SetLandmarkLink(_R("6th_Point"), n.get());
+							   SetLandmarkLink(_R("6th_Point"), n);
 							   m_p6LandmarkName = n->GetName();
 
 							   m_Gui->Update();

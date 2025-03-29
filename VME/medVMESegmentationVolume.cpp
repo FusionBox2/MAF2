@@ -244,7 +244,7 @@ void medVMESegmentationVolume::OnEvent(mafEventBase *maf_event)
         auto n = e->GetVme();
         if (n)
         {
-          SetVolumeLink(n.get());
+          SetVolumeLink(n);
           m_VolumeName = n->GetName();
           m_Gui->Update();
         }

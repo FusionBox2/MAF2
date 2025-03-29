@@ -450,10 +450,10 @@ void mafVMEMuscleWrapping::OnEvent(mafEventBase *maf_event)
 								 if (auto n = e->GetVme())
 								 {
 									
-										 SetEllipsoidLink(_R("EllipVME"), n.get());
+										 SetEllipsoidLink(_R("EllipVME"), n);
 										 m_EllipsoidVmeName = n->GetName();
 										 
-										 ellip = mafQuadraticSurface::StaticDownCast(n).get();
+										 ellip = mafQuadraticSurface::StaticDownCast(n);
 									 	 length = std::max(length,std::max(std::max(ellip->getSzZ(), ellip->getSzY()), ellip->getSzX()));
 									 m_Gui->Update();
 									
@@ -475,9 +475,9 @@ void mafVMEMuscleWrapping::OnEvent(mafEventBase *maf_event)
 								if (auto n = e->GetVme())
 								{
 
-									SetEllipsoidLink(_R("EllipVME2"), n.get());
+									SetEllipsoidLink(_R("EllipVME2"), n);
 									m_EllipsoidVmeName2 = n->GetName();
-									ellip2 = mafQuadraticSurface::StaticDownCast(n).get();
+									ellip2 = mafQuadraticSurface::StaticDownCast(n);
 									length = std::max(length,std::max(std::max(ellip2->getSzZ(), ellip2->getSzY()), ellip2->getSzX()));
 									m_Gui->Update();
 									
@@ -499,7 +499,7 @@ void mafVMEMuscleWrapping::OnEvent(mafEventBase *maf_event)
 			if (auto n = e->GetVme())
 			{							 
 				//q0 = (mafVMELandmark*)n;
-				SetLandmarkLink(_R("Q0Landmark"), n.get());
+				SetLandmarkLink(_R("Q0Landmark"), n);
 				m_Q0LandmarkName = n->GetName();
 				m_Gui->Update();							 
 			}
@@ -521,7 +521,7 @@ void mafVMEMuscleWrapping::OnEvent(mafEventBase *maf_event)
 			if (auto n = e->GetVme())
 			{
 				//p0 = (mafVMELandmark*)n;
-				SetLandmarkLink(_R("P0Landmark"), n.get());
+				SetLandmarkLink(_R("P0Landmark"), n);
 				m_P0LandmarkName = n->GetName();
 				m_Gui->Update();		  
 			}
@@ -545,7 +545,7 @@ void mafVMEMuscleWrapping::OnEvent(mafEventBase *maf_event)
 						 if (auto n = e->GetVme())
 						 {
 							 //p0 = (mafVMELandmark*)n;
-							 SetLandmarkLink(_R("insert1"), n.get());
+							 SetLandmarkLink(_R("insert1"), n);
 							 m_insert1LandmarkName = n->GetName();
 							 m_Gui->Update();
 						 }
@@ -569,7 +569,7 @@ void mafVMEMuscleWrapping::OnEvent(mafEventBase *maf_event)
 						 if (auto n = e->GetVme())
 						 {
 							 
-							 SetLandmarkLink(_R("insert2"), n.get());
+							 SetLandmarkLink(_R("insert2"), n);
 							 m_insert2LandmarkName = n->GetName();
 							 m_Gui->Update();
 						 }

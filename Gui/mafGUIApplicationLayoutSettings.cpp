@@ -514,7 +514,7 @@ void mafGUIApplicationLayoutSettings::ApplyTreeLayout()
         {
           if (auto node_restored = m_ViewManager->GetCurrentRoot()->FindInTreeById((*iter).m_VisibleVmes[i]))
           {
-            {mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(node_restored); evUnq.SetBool(true); InvokeEvent(evUnq);}
+            {mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(node_restored.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
           }
         }
 

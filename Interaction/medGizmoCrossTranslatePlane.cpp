@@ -637,5 +637,5 @@ void medGizmoCrossTranslatePlane::CreateFeedbackGizmoPipeline()
 void medGizmoCrossTranslatePlane::ShowTranslationFeedbackArrows(bool show)
 //----------------------------------------------------------------------------
 {
-	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_TranslationFeedbackGizmo); evUnq.SetBool(show); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_TranslationFeedbackGizmo.get()); evUnq.SetBool(show); InvokeEvent(evUnq);}
 }

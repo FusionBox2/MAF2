@@ -602,16 +602,16 @@ void lhpVMELeverArm::OnEvent(mafEventBase *maf_event)
         e->SetString(&title);
         ForwardUpEvent(e);
         auto n = e->GetVme();
-        if (n != nullptr && n.get() != this)
+        if (n != nullptr && n != this)
         {
           if (button_id == ID_AXIS_LINK)
           {
-            SetMeterLink("HAxisVME", n.get());
+            SetMeterLink("HAxisVME", n);
             m_HAxisVmeName = n->GetName();
           }
           else //if (button_id == ID_LINE_LINK)
           {
-            SetMeterLink("LineVME", n.get());
+            SetMeterLink("LineVME", n);
             m_LineVmeName = n->GetName();
           }
           m_Gui->Update();

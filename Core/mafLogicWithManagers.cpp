@@ -855,7 +855,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   }
   if(VME_SELECTED == eventId)
   {
-    VmeSelected(e->GetVme(), false);
+    VmeSelected(e->GetVme()->SharedFromThis(), false);
     return;
   }
   if(VME_DCLICKED == eventId)
@@ -865,7 +865,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   }
   if(VME_SHOW == eventId)
   {
-    VmeShow(e->GetVme().get(), e->GetBool());
+    VmeShow(e->GetVme(), e->GetBool());
 #ifdef MAF_USE_CURL
     if(m_RemoteLogic && (e->GetSender() != m_RemoteLogic.get()) && m_RemoteLogic->IsSocketConnected())
     {
@@ -876,54 +876,54 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   }
   if(VME_MODIFIED == eventId)
   {
-    VmeModified(e->GetVme().get());
+    VmeModified(e->GetVme());
     if(!m_logic->m_PlugTimebar && mafVME::StaticDownCast(e->GetVme())->IsAnimated())
       m_logic->m_frame->ShowPane("timebar",!m_logic->m_frame->IsPaneShown("timebar") );
     return; 
   }
   if(VME_EXPAND == eventId)
   {
-    VmeExpand(e->GetVme().get());
+    VmeExpand(e->GetVme());
     return; 
   }
   if(VME_COLLAPSE == eventId)
   {
-    VmeCollapse(e->GetVme().get());
+    VmeCollapse(e->GetVme());
     return; 
   }
   if(VME_EXPANDSUBTREE == eventId)
   {
-    VmeExpandSubTree(e->GetVme().get());
+    VmeExpandSubTree(e->GetVme());
     return; 
   }
   if(VME_COLLAPSESUBTREE == eventId)
   {
-    VmeCollapseSubTree(e->GetVme().get());
+    VmeCollapseSubTree(e->GetVme());
     return; 
   }
   if(VME_EXPANDVISIBLE == eventId)
   {
-    VmeExpandVisible(e->GetVme().get());
+    VmeExpandVisible(e->GetVme());
     return; 
   }
   if(VME_ADD == eventId)
   {
-    VmeAdd(e->GetVme().get());
+    VmeAdd(e->GetVme());
     return; 
   }
   if(VME_ADDED == eventId)
   {
-    VmeAdded(e->GetVme());
+    VmeAdded(e->GetVme()->SharedFromThis());
     return; 
   }
   if(VME_REMOVE == eventId)
   {
-    VmeRemove(e->GetVme().get());
+    VmeRemove(e->GetVme());
     return; 
   }
   if(VME_REMOVING == eventId)
   {
-    VmeRemoving(e->GetVme().get());
+    VmeRemoving(e->GetVme());
     return; 
   }
   if(VME_CHOOSE == eventId)
@@ -970,19 +970,19 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   }
   if(VME_CHOOSE_MATERIAL == eventId)
   {
-    VmeChooseMaterial(mafVME::StaticDownCast(e->GetVme()).get(), e->GetBool());
+    VmeChooseMaterial(mafVME::StaticDownCast(e->GetVme()), e->GetBool());
     return;
   }
   if(VME_VISUAL_MODE_CHANGED == eventId)
   {
     auto vme = mafVME::StaticDownCast(e->GetVme());
-    VmeShow(vme.get(), false);
-    VmeShow(vme.get(), true);
+    VmeShow(vme, false);
+    VmeShow(vme, true);
     return;
   }
   if(UPDATE_PROPERTY == eventId)
   {
-    VmeUpdateProperties(mafVME::StaticDownCast(e->GetVme()).get(), e->GetBool());
+    VmeUpdateProperties(mafVME::StaticDownCast(e->GetVme()), e->GetBool());
     return;
   }
   if(SHOW_CONTEXTUAL_MENU == eventId)
@@ -1822,16 +1822,16 @@ void mafLogicWithManagers::VmeSelect(mafEvent& e)	//modified by Paolo 10-9-2003
 		  long vme_id = e.GetArg();
 		  if (auto root = mafVMERoot::SafeDownCast(m_logic->m_NodeManager->GetRoot()))
 		  {
-			  node = root->FindInTreeById(vme_id);
+			  node = root->FindInTreeById(vme_id).get();
 			  e.SetVme(node);
       }
     }
   }
 
-  if(node && m_logic->m_OpManager && node != m_logic->m_OpManager->GetSelectedVme())
+  if(node && m_logic->m_OpManager && node != m_logic->m_OpManager->GetSelectedVme().get())
   {
     mafOpSelect opsel;
-    opsel.SetNewSel(node);
+    opsel.SetNewSel(node->SharedFromThis());
     m_logic->m_OpManager->OpExec(&opsel);
 
     //OnEvent(&mafEvent(this,VME_SELECTED,node));
@@ -2126,7 +2126,7 @@ void mafLogicWithManagers::UpdateTimeBounds()
     m_logic->m_frame->ShowPane("timebar", min<max);
   }
 }
-std::vector<std::shared_ptr<mafNode> > mafLogicWithManagers::VmeChoose(intptr_t vme_accept_function, long style, mafString title, bool multiSelect)
+std::vector<mafNode* > mafLogicWithManagers::VmeChoose(intptr_t vme_accept_function, long style, mafString title, bool multiSelect)
 {
   mafGUIVMEChooser vc(m_logic->m_SideBar->GetTree(),title, vme_accept_function, style, multiSelect);
   return vc.ShowChooserDialog();
@@ -2212,27 +2212,25 @@ void mafLogicWithManagers::ImportExternalFile(mafString &filename)
   mafString path, name, ext;
   mafSplitPath(filename,&path,&name,&ext);
   ext.MakeLower();
-  if (ext == _R("vtk"))
+  /*if (ext == _R("vtk"))
   {
-    mafOpImporterVTK *vtkImporter = new mafOpImporterVTK(_R("importer"));
+    auto vtkImporter = std::make_unique<mafOpImporterVTK>(_R("importer"));
     vtkImporter->SetInput(m_logic->m_NodeManager->GetRoot());
     vtkImporter->SetListener(m_logic->m_OpManager.get());
     vtkImporter->SetFileName(filename);
     vtkImporter->ImportVTK();
     vtkImporter->OpDo();
-    cppDEL(vtkImporter);
   }
   else if (ext == _R("stl"))
   {
-    mafOpImporterSTL *stlImporter = new mafOpImporterSTL(_R("importer"));
+    auto stlImporter = std::make_unique<mafOpImporterSTL>(_R("importer"));
     stlImporter->SetInput(m_logic->m_NodeManager->GetRoot());
     stlImporter->SetListener(m_logic->m_OpManager.get());
     stlImporter->SetFileName(filename.GetCStr());
     stlImporter->ImportSTL();
     stlImporter->OpDo();
-    cppDEL(stlImporter);
   }
-  else
+  else*/
     mafWarningMessage(_M("Can not import this type of file!"));
 }
 

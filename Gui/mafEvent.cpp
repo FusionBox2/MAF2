@@ -139,14 +139,14 @@ void mafEvent::SetWidgetData(WidgetDataType &widget_data)
   m_WidgetData = widget_data;
 }
 //------------------------------------------------------------------------------
-void mafEvent::SetVmeVector(std::vector<std::shared_ptr<mafNode> > vmeVector)
+void mafEvent::SetVmeVector(std::vector<mafNode* > vmeVector)
 //------------------------------------------------------------------------------
 {
   m_VmeVector.swap(vmeVector);
 }
 
 //------------------------------------------------------------------------------
-std::vector<std::shared_ptr<mafNode> > mafEvent::GetVmeVector() const
+std::vector<mafNode* > mafEvent::GetVmeVector() const
 //------------------------------------------------------------------------------
 {
   return m_VmeVector;

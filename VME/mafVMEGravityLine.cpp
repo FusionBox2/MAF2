@@ -404,11 +404,11 @@ void mafVMEGravityLine::OnEvent(mafEventBase *maf_event)
 						  if (auto n = e->GetVme())
 						  {
 
-							  SetPlaneLink(_R("PlaneVME"), n.get());
+							  SetPlaneLink(_R("PlaneVME"), n);
 							  m_PlaneVmeName = n->GetName();
 							  
 							  if (n->IsMAFType(mafVMEPlane))
-								  plan = mafVMEPlane::StaticDownCast(n).get();
+								  plan = mafVMEPlane::StaticDownCast(n);
 
 							  m_Gui->Update();
 
@@ -429,10 +429,10 @@ void mafVMEGravityLine::OnEvent(mafEventBase *maf_event)
 								 if (auto n = e->GetVme())
 								 {
 									
-										 SetSurfaceLink(_R("SurfaceVME"), n.get());
+										 SetSurfaceLink(_R("SurfaceVME"), n);
 										 m_SurfaceName = n->GetName();
 										 if (n->IsMAFType(mafVMESurface))
-											 surface = mafVMESurface::StaticDownCast(n).get();
+											 surface = mafVMESurface::StaticDownCast(n);
 										 
 					
 									 	 
@@ -459,7 +459,7 @@ void mafVMEGravityLine::OnEvent(mafEventBase *maf_event)
 	  {
 
 		  //p0 = (mafVMELandmark*)n;
-		  SetLandmarkLink(_R("P0Landmark"), n.get());
+		  SetLandmarkLink(_R("P0Landmark"), n);
 		  m_P0LandmarkName = n->GetName();
 
 		  m_Gui->Update();

@@ -104,7 +104,7 @@ void mafGUICheckTree::ShowContextualMenu(wxMouseEvent& event)
   e.SetArg(m_Autosort);
   if (vmeMenu)
   {
-    e.SetVme(static_cast<mafGUICheckTreeItemData*>(m_NodeTree->GetItemData(i))->GetSharedNode());
+    e.SetVme(static_cast<mafGUICheckTreeItemData*>(m_NodeTree->GetItemData(i))->GetSharedNode().get());
   }
   InvokeEvent(e);
 }
@@ -175,7 +175,7 @@ void mafGUICheckTree::OnIconClick(wxTreeItemId item)
     {
       return;
     }
-    {mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(vme); evUnq.SetBool(show); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(vme.get()); evUnq.SetBool(show); InvokeEvent(evUnq);}
     {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
 }
@@ -437,6 +437,6 @@ void mafGUICheckTree::OnSelectionChanged(wxTreeEvent& event)
 
   i = event.GetItem();
   if(i.IsOk())
-    {mafEvent evUnq(this, VME_SELECT); evUnq.SetVme(static_cast<mafGUICheckTreeItemData*>(m_NodeTree->GetItemData(i))->GetSharedNode()); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_SELECT); evUnq.SetVme(static_cast<mafGUICheckTreeItemData*>(m_NodeTree->GetItemData(i))->GetSharedNode().get()); InvokeEvent(evUnq);}
   event.Skip();
 }
