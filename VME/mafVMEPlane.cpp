@@ -454,7 +454,7 @@ void mafVMEPlane::OnEvent(mafEventBase *maf_event)
 						   if (auto n = e->GetVme())
 						   {
 
-							   SetPlaneLink(_R("Plan_intersect"), n.get());
+							   SetPlaneLink(_R("Plan_intersect"), n);
 							   m_plan1Name = n->GetName();
 							   m_Gui->Update();
 
@@ -477,7 +477,7 @@ void mafVMEPlane::OnEvent(mafEventBase *maf_event)
 						   if (auto n = e->GetVme())
 						   {
 
-							   SetLandmarkLink(_R("first_Point"), n.get());
+							   SetLandmarkLink(_R("first_Point"), n);
 							   m_p1LandmarkName = n->GetName();
 							   m_Gui->Update();
 							   //pts_change = true;
@@ -502,7 +502,7 @@ void mafVMEPlane::OnEvent(mafEventBase *maf_event)
 						   {
 
 							   
-							   SetLandmarkLink(_R("second_Point"), n.get());
+							   SetLandmarkLink(_R("second_Point"), n);
 							   m_p2LandmarkName = n->GetName();
 
 							   m_Gui->Update();
@@ -527,7 +527,7 @@ void mafVMEPlane::OnEvent(mafEventBase *maf_event)
 						   {
 
 							   
-							   SetLandmarkLink(_R("third_Point"), n.get());
+							   SetLandmarkLink(_R("third_Point"), n);
 							   m_p3LandmarkName = n->GetName();
 
 							   m_Gui->Update();

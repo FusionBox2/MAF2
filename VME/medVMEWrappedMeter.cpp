@@ -2193,12 +2193,12 @@ void medVMEWrappedMeter::OnEvent(mafEventBase *maf_event)
         {
           if (button_id == ID_START_METER_LINK)
           {
-            SetMeterLink(_R("StartVME"), n.get());
+            SetMeterLink(_R("StartVME"), n);
             m_StartVmeName = n->GetName();
           }
           else if (button_id == ID_END1_METER_LINK)
           {
-            SetMeterLink(_R("EndVME1"), n.get());
+            SetMeterLink(_R("EndVME1"), n);
             m_EndVme1Name = n->GetName();
           }
     /*      else if (button_id == ID_END2_METER_LINK)
@@ -2208,7 +2208,7 @@ void medVMEWrappedMeter::OnEvent(mafEventBase *maf_event)
           }*/
           else if (button_id == ID_WRAPPED_METER_LINK)
           {
-            SetMeterLink(_R("WrappedVME"), n.get());
+            SetMeterLink(_R("WrappedVME"), n);
             m_WrappedVmeName = n->GetName();
           }
           m_Gui->Update();
@@ -2321,7 +2321,7 @@ void medVMEWrappedMeter::OnEvent(mafEventBase *maf_event)
         m_IdListBox.push_back(id);*/
 
         
-        SetMeterLink(n->GetName().GetCStr(),n.get());
+        SetMeterLink(n->GetName().GetCStr(),n);
 
         //nameProfile += idNumber;
         //m_ProfilesNameList.push_back(nameProfile);

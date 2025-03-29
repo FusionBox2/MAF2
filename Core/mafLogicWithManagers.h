@@ -218,7 +218,7 @@ protected:
 	virtual void VmeAdded(std::shared_ptr<mafNode> vme);
 	virtual void VmeRemove(mafNode *vme);
 	virtual void VmeRemoving(mafNode *vme);
-	virtual std::vector<std::shared_ptr<mafNode> > VmeChoose(intptr_t vme_accept_function = 0, long style = REPRESENTATION_AS_TREE, mafString title = _R("Choose Node"), bool multiSelect = false);
+	virtual std::vector<mafNode* > VmeChoose(intptr_t vme_accept_function = 0, long style = REPRESENTATION_AS_TREE, mafString title = _R("Choose Node"), bool multiSelect = false);
 
   virtual void VmeChooseMaterial(mafVME *vme, bool updateProperty);
   virtual void VmeUpdateProperties(mafVME *vme, bool updatePropertyFromTag);

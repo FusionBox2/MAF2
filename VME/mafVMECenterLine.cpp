@@ -1846,9 +1846,9 @@ void mafVMECenterLine::OnEvent(mafEventBase *maf_event)
 						  if (auto n = e->GetVme())
 						  {
 
-							  SetSurfaceLink(_R("SurfaceVME"), n.get());
+							  SetSurfaceLink(_R("SurfaceVME"), n);
 							  m_SurfaceName = n->GetName();
-							  surface = mafVMESurface::StaticDownCast(n).get();
+							  surface = mafVMESurface::StaticDownCast(n);
 
 							  m_Gui->Update();
 

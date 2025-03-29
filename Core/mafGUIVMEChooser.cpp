@@ -60,7 +60,7 @@ mafGUIVMEChooser::~mafGUIVMEChooser()
   delete m_ChooserTree;
 }
 //----------------------------------------------------------------------------
-std::vector<std::shared_ptr<mafNode> > mafGUIVMEChooser::ShowChooserDialog()
+std::vector<mafNode* > mafGUIVMEChooser::ShowChooserDialog()
 //----------------------------------------------------------------------------
 {
   if(ShowModal() == wxID_OK)

@@ -190,7 +190,7 @@ void mafVMEHyperboloid::OnEvent(mafEventBase *maf_event)
 
 					  initvme = 1;
 
-					  SetCenterLink(_R("centerLandmark"), n.get());
+					  SetCenterLink(_R("centerLandmark"), n);
 					  m_LandmarkName = n->GetName();
 
 					  center_vme = GetCenterVME();

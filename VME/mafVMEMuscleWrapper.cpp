@@ -1172,22 +1172,22 @@ void mafVMEMuscleWrapperAQ::OnEvent(mafEventBase *maf_event)
         {
           if (button_id == ID_START_METER_LINK)
           {
-            SetMeterLink(_R("StartVME"), n.get());
+            SetMeterLink(_R("StartVME"), n);
             m_StartVmeName = n->GetName();
           }
           else if (button_id == ID_START2_METER_LINK)
           {
-            SetMeterLink(_R("StartVME2"), n.get());
+            SetMeterLink(_R("StartVME2"), n);
             m_StartVme2Name = n->GetName();
           }
           else if (button_id == ID_END1_METER_LINK)
           {
-            SetMeterLink(_R("EndVME1"), n.get());
+            SetMeterLink(_R("EndVME1"), n);
             m_EndVme1Name = n->GetName();
           }
           else
           {
-            SetMeterLink(_R("EndVME2"), n.get());
+            SetMeterLink(_R("EndVME2"), n);
             m_EndVme2Name = n->GetName();
           }
           m_Gui->Update();
@@ -1205,8 +1205,8 @@ void mafVMEMuscleWrapperAQ::OnEvent(mafEventBase *maf_event)
           ForwardUpEvent(ev);
           if (auto n = ev->GetVme())
           {
-            SetMeterLink(_R("PlottedVME"),n.get());
-            m_ProbedVME = mafVMEVolumeGray::SafeDownCast(n).get();
+            SetMeterLink(_R("PlottedVME"),n);
+            m_ProbedVME = mafVMEVolumeGray::SafeDownCast(n);
             m_ProbeVmeName = n->GetName();
             CreateHistogram();
           }

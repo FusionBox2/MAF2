@@ -533,7 +533,7 @@ void mafViewIntGraph::savePlotGen(void)
     if (auto vme = mafVME::SafeDownCast(n->m_Vme))
     {
       vme->GetTagArray()->SetTag(mafTagItem(_R(mafINTGG_SAVEINFO_TAG), strv));
-      {mafEvent evUnq(this,VME_MODIFIED); evUnq.SetVme(vme); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,VME_MODIFIED); evUnq.SetVme(vme.get()); InvokeEvent(evUnq);}
     }
   }
 }
@@ -542,7 +542,7 @@ void mafViewIntGraph::loadPlotGen(void)
 //----------------------------------------------------------------------------
 {
   //load general settings
-  for(mafSceneNode *n = m_Sg->GetNodeList(); n != NULL; n = n->m_Next)
+  for(mafSceneNode *n = m_Sg->GetNodeList(); n; n = n->m_Next)
   {
     if (auto vme = mafVME::SafeDownCast(n->m_Vme))
     {
@@ -618,7 +618,7 @@ void mafViewIntGraph::loadPlot(bool readfile)
     if (it != m_shown_flags.cend())
       show = *it++;
     if (readfile)
-      {mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(m_Sg->Vme2Node(curr)->m_Vme); evUnq.SetBool(show); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(m_Sg->Vme2Node(curr)->m_Vme.get()); evUnq.SetBool(show); InvokeEvent(evUnq);}
     else
     {
       if (show)

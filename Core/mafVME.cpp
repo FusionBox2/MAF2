@@ -719,7 +719,6 @@ void mafVME::Update()
 
   m_VisualMode = IsDataAvailable() ? DEFAULT_VISUAL_MODE : NO_DATA_VISUAL_MODE;
 }
-#ifdef kjljlkjlkjlkjlkjl
 //-------------------------------------------------------------------------
 void mafVME::SetCrypting(int crypting)
 //-------------------------------------------------------------------------
@@ -738,7 +737,6 @@ void mafVME::SetCrypting(int crypting)
   mafEvent ev(this,VME_MODIFIED); ev.SetVme(this);
   ForwardUpEvent(ev);
 }
-#endif
 //-------------------------------------------------------------------------
 int mafVME::GetCrypting()
 //-------------------------------------------------------------------------
@@ -890,7 +888,6 @@ mafGUI *mafVME::CreateGui()
 
   return m_Gui;
 }
-#ifdef jlkjkljlkj
 //-------------------------------------------------------------------------
 void mafVME::SetVisualMode(int mode)
 //-------------------------------------------------------------------------
@@ -902,4 +899,3 @@ void mafVME::SetVisualMode(int mode)
     Superclass::OnEvent(&updateModalityEvent);
   }
 }
-#endif

@@ -359,7 +359,7 @@ void lhpVMELMCLines::OnEvent(mafEventBase *maf_event)
             ForwardUpEvent(e);
             if (auto vme = mafVMELandmarkCloud::SafeDownCast(e->GetVme()))
             {
-              SetCloud(vme.get());
+              SetCloud(vme);
             }
           }
           break;

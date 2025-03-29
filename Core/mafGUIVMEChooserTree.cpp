@@ -117,7 +117,7 @@ int mafGUIVMEChooserTree::GetVmeStatus(mafNode *node)
 }
 
 //----------------------------------------------------------------------------
-std::vector<std::shared_ptr<mafNode> > mafGUIVMEChooserTree::GetChoosedNode()
+std::vector<mafNode* > mafGUIVMEChooserTree::GetChoosedNode()
 //----------------------------------------------------------------------------
 {
   if (!m_MultipleSelection)
@@ -263,13 +263,13 @@ void mafGUIVMEChooserTree::OnSelectionChanged(wxTreeEvent& event)
   i = event.GetItem();
   if(i.IsOk())
   {
-    m_ChoosedNode = static_cast<mafGUICheckTreeItemData*>(m_NodeTree->GetItemData(i))->GetSharedNode();
+    m_ChoosedNode = static_cast<mafGUICheckTreeItemData*>(m_NodeTree->GetItemData(i))->GetSharedNode().get();
   }
   event.Skip();
 
   if (m_ChoosedNode)
   {
-     status = GetVmeStatus(m_ChoosedNode.get());
+     status = GetVmeStatus(m_ChoosedNode);
   }
   
   bool enable_ok = false;
@@ -277,7 +277,7 @@ void mafGUIVMEChooserTree::OnSelectionChanged(wxTreeEvent& event)
   {
     if (m_ValidateFunction && m_ChoosedNode)
     {
-      enable_ok = m_ValidateFunction(m_ChoosedNode.get());
+      enable_ok = m_ValidateFunction(m_ChoosedNode);
     }
     else
     {
@@ -377,13 +377,13 @@ void mafGUIVMEChooserTree::VmeUpdateIcon(std::shared_ptr<mafNode> vme)
       {
         nodeSatus = NODE_VISIBLE_ON*2;
         icon_index = ClassNameToIcon(_R(node->GetTypeName())) + nodeSatus;
-        m_CheckedNode.push_back(node);
+        m_CheckedNode.push_back(node.get());
       }
       else
       {
         nodeSatus = NODE_VISIBLE_ON;
         icon_index = ClassNameToIcon(_R(node->GetTypeName())) + nodeSatus;
-        auto found = std::find(m_CheckedNode.begin(), m_CheckedNode.end(), node);
+        auto found = std::find(m_CheckedNode.begin(), m_CheckedNode.end(), node.get());
         if (found != m_CheckedNode.end())
         {
           m_CheckedNode.erase(found);
@@ -399,13 +399,13 @@ void mafGUIVMEChooserTree::VmeUpdateIcon(std::shared_ptr<mafNode> vme)
     {
       nodeSatus = NODE_VISIBLE_ON*2;
       icon_index = ClassNameToIcon(_R(vme->GetTypeName())) + nodeSatus;
-      m_CheckedNode.push_back(vme);
+      m_CheckedNode.push_back(vme.get());
     }
     else
     {
       nodeSatus = NODE_VISIBLE_ON;
       icon_index = ClassNameToIcon(_R(vme->GetTypeName())) + nodeSatus;
-      auto found = std::find(m_CheckedNode.begin(), m_CheckedNode.end(), vme);
+      auto found = std::find(m_CheckedNode.begin(), m_CheckedNode.end(), vme.get());
       if (found != m_CheckedNode.end())
       {
         m_CheckedNode.erase(found);

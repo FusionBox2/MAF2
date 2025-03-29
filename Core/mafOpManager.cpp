@@ -268,10 +268,10 @@ void mafOpManager::OpRun(mafOp *op, void *op_param)
       	ti->SetValue(_R("SYNTHETIC"));
       else
         synthetic_vme->GetTagArray()->SetTag(mafTagItem(_R("VME_NATURE"), _R("SYNTHETIC")));
-      {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Selected); evUnq.SetBool(false); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Selected.get()); evUnq.SetBool(false); InvokeEvent(evUnq);}
       m_NaturalNode = m_Selected;
-      {mafEvent evUnq(this,VME_SELECT); evUnq.SetVme(synthetic_vme); evUnq.SetBool(true); InvokeEvent(evUnq);}
-      {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(synthetic_vme); evUnq.SetBool(true); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,VME_SELECT); evUnq.SetVme(synthetic_vme.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(synthetic_vme.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
     }
     else
     {
@@ -326,8 +326,8 @@ void mafOpManager::OpRunCancel(mafOp *op)
   if (m_NaturalNode != NULL)
   {
     m_Selected->ReparentTo(NULL);
-    {mafEvent evUnq(this,VME_SELECT); evUnq.SetVme(m_NaturalNode); InvokeEvent(evUnq);}
-    {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_NaturalNode); evUnq.SetBool(true); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,VME_SELECT); evUnq.SetVme(m_NaturalNode.get()); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_NaturalNode.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
     m_NaturalNode = NULL;
   }
 

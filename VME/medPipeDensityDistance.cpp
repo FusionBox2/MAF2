@@ -496,15 +496,15 @@ void medPipeDensityDistance::OnEvent(mafEventBase *maf_event)
         e->SetId(VME_CHOOSE);
         InvokeEvent(*e);
         auto NewVolume = e->GetVme();
-        if(NewVolume == NULL)
+        if(NewVolume == nullptr)
           return;
         else
         {
-          m_Volume=NewVolume.get();
+          m_Volume=NewVolume;
 
           mafVMEOutputSurface *surface_output = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
 
-          m_DistanceFilter->SetSourceConnection(((mafVME*)m_Volume)->GetOutput()->GetVTKOutputPort());
+          m_DistanceFilter->SetSourceConnection(mafVME::StaticDownCast(m_Volume)->GetOutput()->GetVTKOutputPort());
 	        m_DistanceFilter->SetInputConnection(m_Normals->GetOutputPort());
           m_DistanceFilter->SetMaxDistance(m_MaxDistance);
 	        m_DistanceFilter->SetThreshold(m_FirstThreshold);

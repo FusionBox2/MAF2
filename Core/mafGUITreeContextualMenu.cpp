@@ -71,7 +71,7 @@ mafGUITreeContextualMenu::~mafGUITreeContextualMenu()
 {
 }
 //----------------------------------------------------------------------------
-void mafGUITreeContextualMenu::CreateContextualMenu(mafGUICheckTree *tree, mafView *view, std::shared_ptr<mafNode> vme, bool vme_menu)
+void mafGUITreeContextualMenu::CreateContextualMenu(mafGUICheckTree *tree, mafView *view, mafNode* vme, bool vme_menu)
 //----------------------------------------------------------------------------
 {
   m_ViewActive  = view;
@@ -111,7 +111,7 @@ void mafGUITreeContextualMenu::CreateContextualMenu(mafGUICheckTree *tree, mafVi
 
       if (m_SceneGraph)
       {
-        mafSceneNode *n = m_SceneGraph->Vme2Node(m_VmeActive.get());
+        mafSceneNode *n = m_SceneGraph->Vme2Node(m_VmeActive);
 
         
         this->Append(RMENU_SHOW_VME, "Hide/Show","");
@@ -199,7 +199,7 @@ void mafGUITreeContextualMenu::OnContextualMenu(wxCommandEvent &event)
 		{
       mafSceneNode *n = nullptr;
       if(m_SceneGraph)
-        n = m_SceneGraph->Vme2Node(m_VmeActive.get());
+        n = m_SceneGraph->Vme2Node(m_VmeActive);
       bool show = true;
       if(n)
         show = !n->IsVisible();
@@ -210,16 +210,16 @@ void mafGUITreeContextualMenu::OnContextualMenu(wxCommandEvent &event)
       {mafEvent evUnq(this, mafGUIApplicationLayoutSettings::SAVE_TREE_LAYOUT_ID); InvokeEvent(evUnq);}
     break;
 		case RMENU_SHOW_SUBTREE:
-			m_SceneGraph->VmeShowSubTree(m_VmeActive.get(), true);
+			m_SceneGraph->VmeShowSubTree(m_VmeActive, true);
 		break;
 		case RMENU_HIDE_SUBTREE:
-			m_SceneGraph->VmeShowSubTree(m_VmeActive.get(), false);
+			m_SceneGraph->VmeShowSubTree(m_VmeActive, false);
 		break;
 		case RMENU_SHOW_SAMETYPE:
-			m_SceneGraph->VmeShowByType(m_VmeActive.get(), true);
+			m_SceneGraph->VmeShowByType(m_VmeActive, true);
 		break;
 		case RMENU_HIDE_SAMETYPE:
-			m_SceneGraph->VmeShowByType(m_VmeActive.get(), false);
+			m_SceneGraph->VmeShowByType(m_VmeActive, false);
 		break;
     case RMENU_CRYPT_VME:
     {

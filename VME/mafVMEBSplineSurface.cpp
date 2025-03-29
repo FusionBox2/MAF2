@@ -620,7 +620,7 @@ void mafVMEBSplineSurface::OnEvent(mafEventBase *maf_event)
           e->SetArg((intptr_t)&mafVMEBSplineSurface::PolylineAccept);
           e->SetString(&title);
           ForwardUpEvent(e);
-          vme = mafVMEGroup::SafeDownCast(e->GetVme()).get();
+          vme = mafVMEGroup::SafeDownCast(e->GetVme());
           if(vme != nullptr)
           {
             SetPointsGroupLink(vme);

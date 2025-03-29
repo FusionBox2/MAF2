@@ -34,7 +34,7 @@ public:
   double                     GetDouble() const {return m_Double;};
   mafString*                 GetString() const;
   mafView*                   GetView() const {return m_View;};
-  std::shared_ptr<mafNode>   GetVme() const {return m_Vme;};
+  mafNode* GetVme() const {return m_Vme;};
   mafOp*                     GetOp() const {return m_Op;};
   std::shared_ptr<mafMatrix> GetMatrix() const {return m_Matrix;};
   std::shared_ptr<mafMatrix> GetMatrix2() const {return m_Matrix2;};
@@ -51,10 +51,10 @@ public:
   void SetHeight(int height);
   /** set call data, data sent by sender (event's invoker) to all observers. 
   Be aware that the vmeVector argument will be empty after the Set */
-  void SetVmeVector(std::vector<std::shared_ptr<mafNode> > vmeVector);
+  void SetVmeVector(std::vector<mafNode* > vmeVector);
 
   /** return call data, data sent by sender (event's invoker) to all observers */
-  std::vector<std::shared_ptr<mafNode> > GetVmeVector() const;
+  std::vector<mafNode* > GetVmeVector() const;
 
   void GetWidgetData(WidgetDataType &widget_data) const;
 
@@ -63,7 +63,7 @@ public:
   void SetDouble(double f)      { m_Double = f;};
   void SetString(mafString *s);
   void SetView(mafView* view)   { m_View = view;};
-  void SetVme(std::shared_ptr<mafNode> vme)     { m_Vme = vme;};
+  void SetVme(mafNode* vme)     { m_Vme = vme;};
   void SetOp(mafOp* op)         { m_Op = op;};
   void SetMatrix(std::shared_ptr<mafMatrix> mat)       { m_Matrix = mat;};
   void SetMatrix2(std::shared_ptr<mafMatrix> mat2)   { m_Matrix2 =mat2;};
@@ -76,12 +76,12 @@ protected:
   double           m_Double = 0.0;
   mafString       *m_MAFString = nullptr;
 
-  std::shared_ptr<mafNode> m_Vme;
+  mafNode* m_Vme;
   mafView         *m_View = nullptr;
   mafOp						*m_Op = nullptr;
   std::shared_ptr<mafMatrix> m_Matrix;
   std::shared_ptr<mafMatrix> m_Matrix2;
-  std::vector<std::shared_ptr<mafNode> > m_VmeVector;
+  std::vector<mafNode*> m_VmeVector;
   WidgetDataType   m_WidgetData;
   std::shared_ptr<mafAgent> m_Agent;
 

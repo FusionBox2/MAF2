@@ -180,17 +180,17 @@ void mafVMERefSys::OnEvent(mafEventBase *maf_event)
         {
           if (button_id == ID_REF_SYS_ORIGIN)
           {
-            SetRefSysLink("OriginVME", n.get());
+            SetRefSysLink("OriginVME", n);
             m_OriginVmeName = n->GetName();
           }
           else if (button_id == ID_POINT1)
           {
-            SetRefSysLink("Point1VME", n.get());
+            SetRefSysLink("Point1VME", n);
             m_Point1VmeName = n->GetName();
           }
           else
           {
-            SetRefSysLink("Point2VME", n.get());
+            SetRefSysLink("Point2VME", n);
             m_Point2VmeName = n->GetName();
           }
           InternalUpdate();

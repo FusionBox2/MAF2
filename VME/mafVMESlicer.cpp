@@ -204,7 +204,7 @@ void mafVMESlicer::OnEvent(mafEventBase *maf_event)
         ForwardUpEvent(e);
         if (auto n = e->GetVme())
         {
-          SetSlicedVMELink(n.get());
+          SetSlicedVMELink(n);
           m_SlicedName = n->GetName();
           m_Gui->Update();
           e->SetId(CAMERA_UPDATE);

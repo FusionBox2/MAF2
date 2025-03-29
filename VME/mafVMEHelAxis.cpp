@@ -630,7 +630,7 @@ void mafVMEHelAxis::OnEvent(mafEventBase *maf_event)
       mafEvent e(this,VME_CHOOSE); e.SetString(&s); e.SetArg(NULL/*, (long)&lhpOpRegisterLMScripted::ClosedCloudAccept*/);
       this->ForwardUpEvent(e);
       auto vme = mafVME::SafeDownCast(e.GetVme());
-      SetProximal(vme.get());
+      SetProximal(vme);
       break;
     }
   case ID_DISTAL:
@@ -639,7 +639,7 @@ void mafVMEHelAxis::OnEvent(mafEventBase *maf_event)
     mafEvent e(this,VME_CHOOSE); e.SetString(&s); e.SetArg(NULL/*, (long)&lhpOpRegisterLMScripted::ClosedCloudAccept*/);
     this->ForwardUpEvent(e);
     auto vme = mafVME::SafeDownCast(e.GetVme());
-    SetDistal(vme.get());
+    SetDistal(vme);
     break;
   }
   case ID_RESETPROXIMAL:

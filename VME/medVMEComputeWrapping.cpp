@@ -5440,36 +5440,36 @@ void medVMEComputeWrapping::EventWraped(mafEvent *e){
 	{
 		if (button_id == ID_START_METER_LINK)
 		{
-			SetMeterLink(_R("StartVME"), n.get());
+			SetMeterLink(_R("StartVME"), n);
 			m_StartVmeName = n->GetName();
 		}
 		else if (button_id == ID_END1_METER_LINK)
 		{
-			SetMeterLink(_R("EndVME1"), n.get());
+			SetMeterLink(_R("EndVME1"), n);
 			m_EndVme1Name = n->GetName();
 		}
 		else if (button_id == ID_WRAPPED_METER_LINK1)
 		{
-			SetMeterLink(_R("WrappedVME1"), n.get());
+			SetMeterLink(_R("WrappedVME1"), n);
 			//n->SetName("wrapped1");
 			m_WrappedVmeName1 = n->GetName();
 		}
 		else if (button_id == ID_WRAPPED_METER_LINK2)
 		{
-			SetMeterLink(_R("WrappedVME2"), n.get());
+			SetMeterLink(_R("WrappedVME2"), n);
 			//n->SetName("wrapped2");
 			m_WrappedVmeName2 = n->GetName();
 		}
 		else if (button_id == ID_WRAPPED_METER_LINK)
 		{
-			SetMeterLink(_R("WrappedVME"),n.get());
+			SetMeterLink(_R("WrappedVME"),n);
 			m_WrappedVmeName = n->GetName();
 
 
 		}
 		else if (button_id == ID_VIA_POINT)
 		{
-			SetMeterLink(_R("viaPoint"), n.get());
+			SetMeterLink(_R("viaPoint"), n);
 			//n->SetName("wrapped2");
 			m_ViaPointName = n->GetName();
 		}
@@ -5674,7 +5674,7 @@ void medVMEComputeWrapping::OnEvent(mafEventBase *maf_event)
 
 
 
-				SetMeterLink(n->GetName().GetCStr(),n.get());
+				SetMeterLink(n->GetName().GetCStr(),n);
 				mafString t;
 				t = n->GetName();
 				//m_ListBox->Append(_(t));

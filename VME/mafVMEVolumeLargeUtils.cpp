@@ -63,7 +63,7 @@
   auto pTempVME = mafVMEVolumeGray::NewSPtr();  
   if (m_Listener) 
   {
-    mafEvent e(sender, VME_ADD); e.SetVme(pTempVME);
+    mafEvent e(sender, VME_ADD); e.SetVme(pTempVME.get());
     m_Listener->OnEvent(&e);
   }
 
@@ -72,7 +72,7 @@
 
   if (m_Listener) 
   {
-    mafEvent e(sender, VME_REMOVE); e.SetVme(pTempVME);
+    mafEvent e(sender, VME_REMOVE); e.SetVme(pTempVME.get());
     m_Listener->OnEvent(&e);
   }
 
