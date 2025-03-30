@@ -39,7 +39,7 @@ public:
   std::shared_ptr<mafMatrix> GetMatrix() const {return m_Matrix;};
   std::shared_ptr<mafMatrix> GetMatrix2() const {return m_Matrix2;};
   mafObject*                 GetMafObject() const {return m_MafObject;}
-  std::shared_ptr<mafAgent>  GetAgent() const { return m_Agent; }
+  mafAgent*  GetAgent() const { return m_Agent; }
 
   int GetX() const {return m_x;};
   int GetY() const {return m_y;};
@@ -69,7 +69,7 @@ public:
   void SetMatrix(std::shared_ptr<mafMatrix> mat)       { m_Matrix = mat;};
   void SetMatrix2(std::shared_ptr<mafMatrix> mat2)   { m_Matrix2 =mat2;};
   void SetMafObject(mafObject* obj)    { m_MafObject = obj;}
-  void SetAgent(std::shared_ptr<mafAgent> agent) { m_Agent = agent; }
+  void SetAgent(mafAgent* agent) { m_Agent = agent; }
   void SetWidgetData(WidgetDataType &widget_data);
 
 protected:
@@ -86,7 +86,7 @@ protected:
   mafObject       *m_MafObject = nullptr;
   std::vector<mafNode*> m_VmeVector;
   WidgetDataType   m_WidgetData;
-  std::shared_ptr<mafAgent> m_Agent;
+  mafAgent* m_Agent;
 
   int m_x = 0;
   int m_y = 0;
