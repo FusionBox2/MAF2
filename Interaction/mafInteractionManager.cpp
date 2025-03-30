@@ -177,7 +177,7 @@ void mafInteractionManager::SetPER(std::shared_ptr<mafInteractorPER> per)
   if (m_PositionalEventRouter)
   {
     pointing_action->UnBindInteractor(m_PositionalEventRouter.get());
-    m_PositionalEventRouter->SetListener(NULL);
+    m_PositionalEventRouter->SetListener(nullptr);
   }
 
   m_PositionalEventRouter = per;
@@ -513,8 +513,8 @@ void mafInteractionManager::OnBindDeviceToAction(mafEvent *e)
   // binding of a device to an action. Device is specified by its ID.
   if (auto device=m_DeviceManager->GetDevice(e->GetArg()))
   {
-    mafAction *action=mafAction::SafeDownCast((mafObject *)e->GetSender());
-    m_StaticEventRouter->BindDeviceToAction(device,action);
+    //mafAction *action=mafAction::SafeDownCast((mafObject *)e->GetSender());
+    //m_StaticEventRouter->BindDeviceToAction(device,action);
   }
   else
   {
@@ -526,7 +526,7 @@ void mafInteractionManager::OnBindDeviceToAction(mafEvent *e)
 void mafInteractionManager::OnAddAvatar(mafEventBase *event)
 //------------------------------------------------------------------------------
 {
-  AddAvatar((mafAvatar *)event->GetData());
+  //AddAvatar((mafAvatar *)event->GetData());
 }
 //------------------------------------------------------------------------------
 void mafInteractionManager::OnRemoveAvatar(mafEventBase *event)

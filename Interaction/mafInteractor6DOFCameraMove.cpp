@@ -63,7 +63,7 @@ void mafInteractor6DOFCameraMove::OnEvent(mafEventBase *event)
     
     if (tracker==nullptr)
     {
-      tracker=mafDeviceButtonsPadTracker::SafeDownCast((mafObject *)event->GetSender());
+      tracker=mafDeviceButtonsPadTracker::SafeDownCast((mafAgent *)event->GetSender());
       SetTracker(tracker);
       
     }  

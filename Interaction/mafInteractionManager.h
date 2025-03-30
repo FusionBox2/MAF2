@@ -91,7 +91,7 @@ public:
   void OnEvent(mafEventBase *event) override;
 
   /** Get the device manager object */
-  mafDeviceManager *GetDeviceManager() {return m_DeviceManager;}
+  mafDeviceManager *GetDeviceManager() {return m_DeviceManager.get();}
 
   /** return the mouse device */
   mafDeviceButtonsPadMouse *GetMouseDevice();
@@ -106,7 +106,7 @@ public:
   //mafAction *GetMouseAction();
 
   /** Define a new action router.*/
-  mafAction *AddAction(const char *name, float priority = 0.0);
+  std::shared_ptr<mafAction> AddAction(const char *name, float priority = 0.0);
 
   /** 
     Bind an agent to the specified action. 
@@ -119,7 +119,7 @@ public:
   int UnBindAction(const char *action,mafInteractor *agent);
 
   /** Define a new avatar */
-  void AddAvatar(mafAvatar *avatar);
+  void AddAvatar(std::shared_ptr<mafAvatar>avatar);
 
   /** Remove an avatar */
   int RemoveAvatar(mafAvatar *avatar);
@@ -127,7 +127,7 @@ public:
   /** Get an avatar given its name.*/
   mafAvatar *GetAvatar(const char *name);
 
-  typedef std::map<mafString,mafAutoPointer<mafAvatar> > mmuAvatarsMap;
+  typedef std::map<mafString,std::shared_ptr<mafAvatar> > mmuAvatarsMap;
   typedef std::vector<mafAvatar *> mmuAvatarsVector;
 
   /** Return the avatars container */
@@ -137,7 +137,7 @@ public:
   void GetAvatars(mmuAvatarsVector &avatars);
 
   /** Get an action router.*/
-  mafAction *GetAction(const char *name);
+  std::shared_ptr<mafAction> GetAction(const char *name);
 
   /** Set the selected view. This makes all dynamic avatars
     and interactors to be informed of the current renderer. */
@@ -179,19 +179,19 @@ public:
 
 
   /** return the positional event router */
-  mafInteractorPER *GetPER() {return m_PositionalEventRouter;}
+  std::shared_ptr<mafInteractorPER> GetPER() {return m_PositionalEventRouter;}
 
   /** used to override the default PER. To be called before initializations */
-  void SetPER(mafInteractorPER *per);
+  void SetPER(std::shared_ptr<mafInteractorPER> per);
 
   /** set a new PER and keep the old one in a list */
-  void PushPER(mafInteractorPER *per);
+  void PushPER(std::shared_ptr<mafInteractorPER> per);
   
   /** restore previous PER instance */
   bool PopPER();
 
   /** return the static event router */
-  mafInteractorSER *GetSER() {return m_StaticEventRouter;}
+  std::shared_ptr<mafInteractorSER> GetSER() {return m_StaticEventRouter;}
 
   /** Set the FlyTo mode for the selected view. */
   void CameraFlyToMode();
@@ -205,7 +205,7 @@ public:
   int DeviceChooser(mafString &dev_name,mafString &dev_type);
 
   /** This is used to allow also external objects to add devices */
-  void AddDeviceToTree(mafDevice *device,mafDeviceSet *parent=NULL);
+  void AddDeviceToTree(mafDevice *device,mafDeviceSet *parent=nullptr);
   void RemoveDeviceFromTree(mafDevice *device);
 
   /** Update names in device list */
@@ -221,7 +221,7 @@ public:
   //bool ShowModal(); //SIL. 07-jun-2006 : 
   mafGUI* GetGui();  //SIL. 07-jun-2006 : 
 
-  mafInteractorSER *GetStaticEventRouter() {return m_StaticEventRouter;}
+  mafInteractorSER *GetStaticEventRouter() {return m_StaticEventRouter.get();}
 
 protected:
   virtual void InternalStore(mafStorageElementBuilder& node);
@@ -251,17 +251,17 @@ protected:
   //mafGUINamedPanel*          m_BindingsPanel;
   mafGUI*                 m_Bindings;
 
-  mafDevice*              m_CurrentDevice;
+  std::shared_ptr<mafDevice>              m_CurrentDevice;
   mafString			          m_SettingFileName;
   
-  mafDeviceManager*       m_DeviceManager; 
-  mafInteractorPER*                 m_PositionalEventRouter;
-  mafInteractorSER*                 m_StaticEventRouter;
+  std::shared_ptr<mafDeviceManager>       m_DeviceManager; 
+  std::shared_ptr<mafInteractorPER>       m_PositionalEventRouter;
+  std::shared_ptr<mafInteractorSER>       m_StaticEventRouter;
   
   mafDeviceClientMAF           *m_ClientDevice;
   
   mmuAvatarsMap                       m_Avatars; ///< keeps a list of visible avatars
-  std::list<mafAutoPointer<mafInteractorPER> >  m_PERList; ///< the interactor devoted to Positional Event Routing
+  std::list<std::shared_ptr<mafInteractorPER> >  m_PERList; ///< the interactor devoted to Positional Event Routing
 
   std::set<mafView *>                 m_CameraUpdateRequests; ///< requests for Camera update of single views
   

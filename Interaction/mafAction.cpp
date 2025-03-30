@@ -176,7 +176,7 @@ void mafAction::OnEvent(mafEventBase *event)
       if (device->IsInitialized())
       {
         // send an event only to the inquiring object about all plugged devices
-        {mafEventBase evUnq(this,DEVICE_PLUGGED,dev,MCH_INPUT); sender->OnEvent(&evUnq);}
+        {mafEventBase evUnq(this,DEVICE_PLUGGED,device.get(),MCH_INPUT); sender->OnEvent(&evUnq);}
       }      
     }
   }
