@@ -88,7 +88,7 @@ void mafOp2DMeasure::OpRun()
 //----------------------------------------------------------------------------
 {
   m_DistanceInteractor2D = mafInteractor2DDistance::NewSPtr();
-  {mafEvent evUnq(this,PER_PUSH); evUnq.SetAgent(m_DistanceInteractor2D); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,PER_PUSH); evUnq.SetAgent(m_DistanceInteractor2D.get()); InvokeEvent(evUnq);}
   m_DistanceInteractor2D->SetListener(this);
 
 	m_AngleInteractor2D = mafInteractor2DAngle::NewSPtr();
@@ -199,7 +199,7 @@ void mafOp2DMeasure::OnEvent(mafEventBase *maf_event)
 					if(m_MeasureType == 0 || m_MeasureType == 1)
 					{
 						{mafEvent evUnq(this,PER_POP); InvokeEvent(evUnq);}	
-						{mafEvent evUnq(this,PER_PUSH); evUnq.SetAgent(m_DistanceInteractor2D); InvokeEvent(evUnq);}
+						{mafEvent evUnq(this,PER_PUSH); evUnq.SetAgent(m_DistanceInteractor2D.get()); InvokeEvent(evUnq);}
 						m_DistanceInteractor2D->SetListener(this);
 
 						if(m_DistanceInteractor2D->SizeMeasureVector() != 0)
@@ -226,7 +226,7 @@ void mafOp2DMeasure::OnEvent(mafEventBase *maf_event)
 					else if(m_MeasureType == 2 || m_MeasureType == 3)
 					{
 						{mafEvent evUnq(this,PER_POP); InvokeEvent(evUnq);}	
-						{mafEvent evUnq(this,PER_PUSH); evUnq.SetAgent(m_AngleInteractor2D); InvokeEvent(evUnq);}
+						{mafEvent evUnq(this,PER_PUSH); evUnq.SetAgent(m_AngleInteractor2D.get()); InvokeEvent(evUnq);}
 						m_AngleInteractor2D->SetListener(this);
 
 						if(m_AngleInteractor2D->SizeMeasureVector() != 0)
@@ -253,7 +253,7 @@ void mafOp2DMeasure::OnEvent(mafEventBase *maf_event)
           else if(m_MeasureType == 4)
           {
             {mafEvent evUnq(this,PER_POP); InvokeEvent(evUnq);}	
-						{mafEvent evUnq(this,PER_PUSH); evUnq.SetAgent(m_IndicatorInteractor2D); InvokeEvent(evUnq);}
+						{mafEvent evUnq(this,PER_PUSH); evUnq.SetAgent(m_IndicatorInteractor2D.get()); InvokeEvent(evUnq);}
 						m_IndicatorInteractor2D->SetListener(this);
             m_Gui->Enable(ID_PLOT_PROFILE, false);
             m_Gui->Update();
