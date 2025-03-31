@@ -314,7 +314,7 @@ Select the vme parent
   mafEventIO e(this,NODE_GET_STORAGE);
   m_Selection->ForwardUpEvent(e);
   mafStorage *storage = e.GetStorage();
-  auto iter = m_Selection->NewIterator();
+  auto iter = std::make_unique<mafNodeIterator>(m_Selection);
   mafString data_filename;
   for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {

@@ -371,7 +371,7 @@ void mafOpManager::OpDo(mafOp *op)
   }
 
   if (op->GetType() != OPTYPE_EDIT)
-      FillTraceabilityAttribute(op, in_node.get(), out_node.get());
+      FillTraceabilityAttribute(op, in_node, out_node);
 
   if(op->CanUndo()) 
   {
@@ -392,7 +392,7 @@ void mafOpManager::SetMafUser(mafUser *user)
 }
 
 //----------------------------------------------------------------------------
-void mafOpManager::FillTraceabilityAttribute(mafOp *op, mafNode *in_node, mafNode *out_node)
+void mafOpManager::FillTraceabilityAttribute(mafOp *op, std::shared_ptr<mafNode> in_node, std::shared_ptr<mafNode> out_node)
 //----------------------------------------------------------------------------
 {
   mafString trialEvent = _R("Modify");
@@ -455,7 +455,7 @@ void mafOpManager::FillTraceabilityAttribute(mafOp *op, mafNode *in_node, mafNod
   {
     int c = 0; //counter not to write single parameter on first VME which is a group
     wxString singleParameter = parameters.toWx();
-    auto iter = out_node->NewIterator();
+    auto iter = std::make_unique<mafNodeIterator>(out_node);
     for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
     {
       c++;
@@ -536,7 +536,7 @@ void mafOpManager::OpUndo()
 
   if (out_node)
   {
-    auto iter = out_node->NewIterator();
+    auto iter = std::make_unique<mafNodeIterator>(out_node);
     for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
     {
       auto traceability = mafAttributeTraceability::SafeDownCast(node->GetAttribute(_R("TrialAttribute")));
@@ -577,7 +577,7 @@ void mafOpManager::OpRedo()
   
 	m_Context.Undo_Push(op);
 
-  FillTraceabilityAttribute(op, in_node.get(), out_node.get());
+  FillTraceabilityAttribute(op, in_node, out_node);
 
 }
 //----------------------------------------------------------------------------
