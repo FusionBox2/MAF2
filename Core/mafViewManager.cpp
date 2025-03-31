@@ -1,29 +1,3 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafViewManager
- Authors: Silvano Imboden
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-
 #include "mafViewManager.h"
 #include <wx/config.h>
 #include "mafDecl.h"
@@ -56,7 +30,6 @@ mafViewManager::mafViewManager()
   m_RemoteListener    = NULL;
   m_SelectedVme       = NULL;
   m_SelectedView      = NULL;
-	m_RootVme           = NULL;
   m_ViewBeingCreated  = NULL; 
   m_CollaborateStatus = false;
   m_FromRemote        = false;
@@ -161,7 +134,7 @@ void mafViewManager::VmeAdd(std::shared_ptr<mafNode> n)
   s = n->GetTypeName();
   if(s == "mafVMERoot") // Add a root means add a new tree
   {
-    m_RootVme     = mafVMERoot::StaticDownCast(n).get();
+    m_RootVme     = mafVMERoot::StaticDownCast(n);
     m_SelectedVme = n.get(); // Adding new tree, selected vme must be initialized at the root.
   }
 }
@@ -355,11 +328,11 @@ void mafViewManager::ViewInsert(mafView *view)
 //----------------------------------------------------------------------------
 {
 	view->SetListener(this);
-  if(m_RootVme != NULL)
+  if(m_RootVme)
   {
-    auto iter = m_RootVme->NewIterator(); // iterate over inserted vme
+    auto iter = std::make_unique<mafNodeIterator>(m_RootVme.get()); // iterate over inserted vme
     for(auto vme = iter->GetFirstNode(); vme; vme = iter->GetNextNode())
-			view->VmeAdd(vme); // Add them in the specified view
+			view->VmeAdd(vme->SharedFromThis()); // Add them in the specified view
   }
 
   if(m_SelectedVme)

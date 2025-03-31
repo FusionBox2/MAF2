@@ -202,13 +202,6 @@ void mafNode::SetName(const mafString& name)
 } 
 
 //-------------------------------------------------------------------------
-std::unique_ptr<mafNodeIterator> mafNode::NewIterator()
-//-------------------------------------------------------------------------
-{
-  return std::make_unique<mafNodeIterator>(this->SharedFromThis());
-}
-
-//-------------------------------------------------------------------------
 size_t mafNode::GetNumberOfChildren() const
 //-------------------------------------------------------------------------
 {
@@ -572,7 +565,7 @@ int mafNode::SetParent(mafNode *parent)
 
   m_Parent = parent;
 
-  auto iter = NewIterator();
+  auto iter = std::make_unique<mafNodeIterator>(this);
   for (auto n = iter->GetFirstNode(); n; n = iter->GetNextNode())
   {
     n->UpdateId();
@@ -754,25 +747,25 @@ std::shared_ptr<mafNode> mafNode::CopyTree()
 {
   std::vector<std::pair<mafNode*, mafNode*> > nodes;
   {
-    auto iter = NewIterator();
+    auto iter = std::make_unique<mafNodeIterator>(this);
     for (auto n = iter->GetFirstNode(); n; n = iter->GetNextNode())
     {
-      nodes.push_back(std::make_pair(n.get(), nullptr));
+      nodes.push_back(std::make_pair(n, nullptr));
     }
   }
   auto res = CopyTree(this);
   if(res == nullptr)
     return nullptr;
   {
-    auto iter = res->NewIterator();
+    auto iter = std::make_unique<mafNodeIterator>(res.get());
     unsigned i = 0;
     for(auto n = iter->GetFirstNode(); n; n = iter->GetNextNode(), i++)
     {
-      nodes[i].second = n.get();
+      nodes[i].second = n;
     }
   }
   {
-    auto iter = res->NewIterator();
+    auto iter = std::make_unique<mafNodeIterator>(res.get());
     for(auto n = iter->GetFirstNode(); n; n = iter->GetNextNode())
     {
       n->UpdateLinks(nodes);

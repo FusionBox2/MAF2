@@ -128,10 +128,10 @@ int mafOpImporterMSF::ImportMSF()
       
   mafString group_name = _R("imported from ") + name + _R(".") + ext;
 
-  auto iter = std::make_unique<mafNodeIterator>(root);
+  auto iter = std::make_unique<mafNodeIterator>(root.get());
   for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {
-    if(node == root)
+    if(node == root.get())
       continue;
     auto vmeWithDataVector = mafVMEGenericAbstract::SafeDownCast(node);
     if (vmeWithDataVector)
@@ -141,7 +141,7 @@ int mafOpImporterMSF::ImportMSF()
       {
         for(auto& elem : *dataVector)
         {
-          if(mafVMEItemVTK *vitem = mafVMEItemVTK::SafeDownCast(elem.second.get()))
+          if(auto vitem = mafVMEItemVTK::SafeDownCast(elem.second.get()))
             vitem->GetData();
         }
       }

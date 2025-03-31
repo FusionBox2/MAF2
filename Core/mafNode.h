@@ -23,7 +23,6 @@
 //----------------------------------------------------------------------------
 class mafStorageElement;
 class mafStorageElementBuilder;
-class mafNodeIterator;
 class mafNode;
 
 /** data structure used to store a link VME and its Id */
@@ -265,11 +264,6 @@ public:
     the removal will recurse.*/
   void RemoveAllChildren();
   
-  /**
-    Return a new Tree iterator already set to traverse 
-    the sub tree starting a this node. Remember to delete the iterator after use it.*/
-  std::unique_ptr<mafNodeIterator> NewIterator();
-
   /**
     Set/Get the flag to make this VME visible to tree traversal. mafVMEIterator,
     GetSpaceBounds and Get4DBounds will skip this VME if the flag is OFF.*/

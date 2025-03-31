@@ -784,7 +784,7 @@ void mafViewOrthoSlice::ResetSlicesPosition( mafNode *node )
 void mafViewOrthoSlice::SetThicknessForAllSurfaceSlices(mafNode *root)
 //----------------------------------------------------------------------------
 {
-	auto iter = root->NewIterator();
+	auto iter = std::make_unique<mafNodeIterator>(root);
 	for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
 	{
 		if (mafVME::StaticDownCast(node)->GetOutput()->IsA("mafVMEOutputSurface")) //if(node->IsA("mafVMESurface"))

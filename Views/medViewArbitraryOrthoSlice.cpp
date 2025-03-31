@@ -600,7 +600,7 @@ void medViewArbitraryOrthoSlice::OnEventGizmoCrossTranslateZNormalView(mafEventB
 			//for each surface visualized change the center of the cut plane
 			assert(m_CurrentVolume);
 			mafNode *root=m_CurrentVolume->GetRoot();
-			auto iter = root->NewIterator();
+			auto iter = std::make_unique<mafNodeIterator>(root);
 			for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
 			{
 				if(node->IsA("mafVMESurface") || node->IsA("mafVMESurfaceParametric") || node->IsA("mafVMELandmark") || node->IsA("mafVMELandmarkCloud"))
@@ -715,7 +715,7 @@ void medViewArbitraryOrthoSlice::OnEventGizmoCrossRotateZNormalView(mafEventBase
 
 			//update the normal of the cutter plane of the surface
 			mafNode *root=m_CurrentVolume->GetRoot();
-			auto iter = root->NewIterator();
+			auto iter = std::make_unique<mafNodeIterator>(root);
 			for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
 			{
 				if(node->IsA("mafVMESurface") || node->IsA("mafVMESurfaceParametric") || node->IsA("mafVMELandmark") || node->IsA("mafVMELandmarkCloud"))
@@ -826,7 +826,7 @@ void medViewArbitraryOrthoSlice::OnEventGizmoCrossRotateYNormalView(mafEventBase
 
 			//update the normal of the cutter plane of the surface
 			mafNode *root=m_CurrentVolume->GetRoot();
-			auto iter = root->NewIterator();
+			auto iter = std::make_unique<mafNodeIterator>(root);
 			for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
 			{
 				if(node->IsA("mafVMESurface") || node->IsA("mafVMESurfaceParametric") || node->IsA("mafVMELandmark") || node->IsA("mafVMELandmarkCloud"))
@@ -947,7 +947,7 @@ void medViewArbitraryOrthoSlice::OnEventGizmoCrossTranslateYNormalView(mafEventB
 			//for each surface visualized change the center of the cut plane
 			assert(m_CurrentVolume);
 			mafNode *root=m_CurrentVolume->GetRoot();
-			auto iter = root->NewIterator();
+			auto iter = std::make_unique<mafNodeIterator>(root);
 			for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
 			{
 				if(node->IsA("mafVMESurface") || node->IsA("mafVMESurfaceParametric") || node->IsA("mafVMELandmark") || node->IsA("mafVMELandmarkCloud"))
@@ -1050,7 +1050,7 @@ void medViewArbitraryOrthoSlice::OnEventGizmoCrossRotateXNormalView(mafEventBase
 
 			//update the normal of the cutter plane of the surface
 			mafNode *root=m_CurrentVolume->GetRoot();
-			auto iter = root->NewIterator();
+			auto iter = std::make_unique<mafNodeIterator>(root);
 			for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
 			{
 				if(node->IsA("mafVMESurface") || node->IsA("mafVMESurfaceParametric") || node->IsA("mafVMELandmark") || node->IsA("mafVMELandmarkCloud"))
@@ -1166,7 +1166,7 @@ void medViewArbitraryOrthoSlice::OnEventGizmoCrossTranslateXNormalView(mafEventB
 			//for each surface visualized change the center of the cut plane
 			assert(m_CurrentVolume);
 			mafNode *root=m_CurrentVolume->GetRoot();
-			auto iter = root->NewIterator();
+			auto iter = std::make_unique<mafNodeIterator>(root);
 			for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
 			{
 				if(node->IsA("mafVMESurface") || node->IsA("mafVMESurfaceParametric") || node->IsA("mafVMELandmark") || node->IsA("mafVMELandmarkCloud"))

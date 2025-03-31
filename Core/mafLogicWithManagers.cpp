@@ -1720,7 +1720,7 @@ bool mafLogicWithManagers::OnFileSaveAs()
 
   if(m_logic->m_Storage && m_logic->m_StorageData->m_MSFFile != m_logic->m_Storage->GetURL())
   {
-    auto iter = root->NewIterator();
+    auto iter = std::make_unique<mafNodeIterator>(root.get());
     for(auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
     {
       if(auto vga = mafVMEGenericAbstract::SafeDownCast(node))

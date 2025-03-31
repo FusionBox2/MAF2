@@ -467,7 +467,7 @@ void mafViewArbitrarySlice::OnEventGizmoTranslate(mafEventBase *maf_event)
 
 			//for each surface visualized change the center of the cut plane
 			mafNode *root=m_CurrentVolume->GetRoot();
-			auto iter = root->NewIterator();
+			auto iter = std::make_unique<mafNodeIterator>(root);
 			for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
 			{
 				if(node->IsA("mafVMESurface") || node->IsA("mafVMESurfaceParametric") || node->IsA("mafVMELandmark") || node->IsA("mafVMELandmarkCloud"))
@@ -553,7 +553,7 @@ void mafViewArbitrarySlice::OnEventGizmoRotate(mafEventBase *maf_event)
 
 			//update the normal of the cutter plane of the surface
 			mafNode *root=m_CurrentVolume->GetRoot();
-			auto iter = root->NewIterator();
+			auto iter = std::make_unique<mafNodeIterator>(root);
 			for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
 			{
 				if(node->IsA("mafVMESurface") || node->IsA("mafVMESurfaceParametric") || node->IsA("mafVMELandmark") || node->IsA("mafVMELandmarkCloud"))
@@ -697,7 +697,7 @@ void mafViewArbitrarySlice::OnEventThis(mafEventBase *maf_event)
 				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 				//update the normal of the cutter plane of the surface
 				mafNode *root=m_CurrentVolume->GetRoot();
-				auto iter = root->NewIterator();
+				auto iter = std::make_unique<mafNodeIterator>(root);
 				for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
 				{
 					if(node->IsA("mafVMESurface") || node->IsA("mafVMESurfaceParametric") || node->IsA("mafVMELandmark") || node->IsA("mafVMELandmarkCloud"))
