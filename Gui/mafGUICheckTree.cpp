@@ -258,7 +258,8 @@ int mafGUICheckTree::GetVmeStatus(mafNode *vme)
 void mafGUICheckTree::VmeUpdateIcon(mafNode *vme)
 //----------------------------------------------------------------------------
 {
-  auto iter = vme->NewIterator();
+  auto item = ItemFromNode((intptr_t)vme);
+  auto iter = std::make_unique<mafNodeIterator>(static_cast<mafGUICheckTreeItemData*>(m_NodeTree->GetItemData(item))->GetSharedNode());
   for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {
     int dataStatus = 1;

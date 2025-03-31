@@ -128,7 +128,7 @@ int mafOpImporterMSF::ImportMSF()
       
   mafString group_name = _R("imported from ") + name + _R(".") + ext;
 
-  auto iter = root->NewIterator();
+  auto iter = std::make_unique<mafNodeIterator>(root);
   for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {
     if(node == root)

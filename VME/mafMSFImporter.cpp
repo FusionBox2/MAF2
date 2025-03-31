@@ -132,7 +132,7 @@ void mafMSFImporter::InternalRestore(const mafStorageElement& node)
     }    
   }
   std::vector<mafNode *> link_list;
-  auto iter = root->NewIterator();
+  auto iter = std::make_unique<mafNodeIterator>(root);
   // iteration for updating VME's ID
   for (auto n = iter->GetFirstNode(); n; n=iter->GetNextNode())
   {

@@ -379,7 +379,7 @@ void mafSceneGraph::VmeShowByType(mafNode *vme,  bool show)
 void mafSceneGraph::VmeShowSubTree(mafNode *vme,  bool show)
 //----------------------------------------------------------------------------
 {
-  auto iter = vme->NewIterator();
+  auto iter = std::make_unique<mafNodeIterator>(Vme2Node(vme)->m_Vme);
 	for(auto v = iter->GetFirstNode(); v; v = iter->GetNextNode())
 	{
     mafSceneNode *n = Vme2Node(v.get());

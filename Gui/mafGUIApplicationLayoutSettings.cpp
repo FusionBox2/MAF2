@@ -353,7 +353,7 @@ void mafGUIApplicationLayoutSettings::LoadLayout(bool fileDefault)
     m_XMLRoot->Restore(reader.GetRoot());
 
     //fill listbox
-    auto iter = m_XMLRoot->NewIterator();
+    auto iter = std::make_unique<mafNodeIterator>(m_XMLRoot);
     for(auto vme = iter->GetFirstNode(); vme; vme = iter->GetNextNode())
     {
       if(!vme->IsMAFType(mafVMERoot))
@@ -559,7 +559,7 @@ void mafGUIApplicationLayoutSettings::SetLayoutAsDefault()
   if(m_SelectedItem != -1)
   {   
     m_ModifiedLayouts = true;
-    auto iter = m_XMLRoot->NewIterator();
+    auto iter = std::make_unique<mafNodeIterator>(m_XMLRoot);
     for(auto vme = iter->GetFirstNode(); vme; vme = iter->GetNextNode())
     {
       if(!vme->IsMAFType(mafVMERoot))

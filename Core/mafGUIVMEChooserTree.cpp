@@ -370,7 +370,7 @@ void mafGUIVMEChooserTree::VmeUpdateIcon(std::shared_ptr<mafNode> vme)
   if (vme->IsA("mafVMERoot"))
   {
     bool checked = IsIconChecked(ItemFromNode((intptr_t)vme.get()));
-    auto iter = vme->NewIterator();
+    auto iter = std::make_unique<mafNodeIterator>(vme);
     for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
     {
       if (!checked)

@@ -117,7 +117,7 @@ protected:
   virtual void Notify(int msg, long arg=0L);
 
   /** Fill the attribute for traceability events*/
-  void FillTraceabilityAttribute(mafOp *op, mafNode *in_node, mafNode *out_node);
+  void FillTraceabilityAttribute(mafOp *op, std::shared_ptr<mafNode> in_node, std::shared_ptr<mafNode> out_node);
 
 
   bool               m_Warn; ///< Flag to warn the user when an operation that can not undo is starting.
