@@ -408,6 +408,8 @@ bool mafLogicWithManagers::Configure()
     );
   }
 
+  m_logic->m_frame->GetDockManager().Update();
+
   {
     m_logic->m_NodeManager = std::make_unique<mafNodeManager>();
     m_logic->m_NodeManager->SetListener(this);
