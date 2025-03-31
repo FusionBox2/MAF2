@@ -259,15 +259,15 @@ void mafGUICheckTree::VmeUpdateIcon(mafNode *vme)
 //----------------------------------------------------------------------------
 {
   auto item = ItemFromNode((intptr_t)vme);
-  auto iter = std::make_unique<mafNodeIterator>(static_cast<mafGUICheckTreeItemData*>(m_NodeTree->GetItemData(item))->GetSharedNode());
+  auto iter = std::make_unique<mafNodeIterator>(static_cast<mafGUICheckTreeItemData*>(m_NodeTree->GetItemData(item))->GetSharedNode().get());
   for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {
     int dataStatus = 1;
     int icon_index;
 
     dataStatus = mafVME::StaticDownCast(node)->IsDataAvailable() ? 0 : 1;
-    icon_index = ClassNameToIcon(_R(node->GetTypeName())) + (GetVmeStatus(node.get())*2) + dataStatus;
-    SetNodeIcon( (intptr_t)node.get(), icon_index );
+    icon_index = ClassNameToIcon(_R(node->GetTypeName())) + (GetVmeStatus(node)*2) + dataStatus;
+    SetNodeIcon( (intptr_t)node, icon_index );
 
     if (node->GetNumberOfLinks() != 0)
     {

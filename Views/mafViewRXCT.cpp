@@ -291,7 +291,7 @@ void mafViewRXCT::VmeShow(mafNode *node, bool show)
 
       //BEGIN cycle for remove old surface and redraw the right slice
       
-      auto iter = node->GetRoot()->NewIterator();
+      auto iter = std::make_unique<mafNodeIterator>(node->GetRoot());
       for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
       {
         if(node->IsA("mafVMESurface"))
@@ -299,8 +299,8 @@ void mafViewRXCT::VmeShow(mafNode *node, bool show)
           auto p=(m_ChildViewList[RX_FRONT_VIEW])->GetNodePipe(node);
           if(p)
           {
-            this->VmeShow(node.get(),false);
-            this->VmeShow(node.get(),true);
+            this->VmeShow(node,false);
+            this->VmeShow(node,true);
           }
         } 
       }
@@ -1000,7 +1000,7 @@ void mafViewRXCT::SortSlices()
 void mafViewRXCT::SetThicknessForAllSurfaceSlices(mafNode *root)
 //----------------------------------------------------------------------------
 {
-  auto iter = root->NewIterator();
+  auto iter = std::make_unique<mafNodeIterator>(root);
   for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {
     if(node->IsA("mafVMESurface"))

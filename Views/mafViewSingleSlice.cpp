@@ -520,7 +520,7 @@ void mafViewSingleSlice::OnEvent(mafEventBase *maf_event)
 				}
 				else
 					return;
-				auto iter = m_CurrentVolume->m_Vme->GetRoot()->NewIterator();
+				auto iter = std::make_unique<mafNodeIterator>(m_CurrentVolume->m_Vme->GetRoot());
 				for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
 				{
 					if(node->IsA("mafVMESurface"))
@@ -577,16 +577,16 @@ void mafViewSingleSlice::OnEvent(mafEventBase *maf_event)
 			m_Gui->Update();
 
 
-			auto iter = m_CurrentVolume->m_Vme->GetRoot()->NewIterator();
+			auto iter = std::make_unique<mafNodeIterator>(m_CurrentVolume->m_Vme->GetRoot());
 			for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
 			{
 			  if(node->IsA("mafVMESurface") || (mafVME::StaticDownCast(node)->GetOutput()->IsA("mafVMEOutputVolume")) || node->IsA("mafVMEPolyline"))
 				{
-					mafSceneNode *n = m_Sg->Vme2Node(node.get());
+					mafSceneNode *n = m_Sg->Vme2Node(node);
 					if(n && n->IsVisible())
 					{
-						VmeDeletePipe(node.get());
-						VmeCreatePipe(node.get());
+						VmeDeletePipe(node);
+						VmeCreatePipe(node);
 					}
 				}
 			}
@@ -829,18 +829,18 @@ void mafViewSingleSlice::VmeShow(mafNode *node, bool show)
       for(int i=0; i<m_NumOfChildView; i++)
         ((mafViewSingleSliceLHPBuilder *)m_ChildViewList[i])->UpdateText(0);
 	*/  
-			auto iter = node->GetRoot()->NewIterator();
+			auto iter = std::make_unique<mafNodeIterator>(node->GetRoot());
 			for (auto Inode = iter->GetFirstNode(); Inode; Inode = iter->GetNextNode())
 			{
 				if(this->GetNodePipe(Inode))
 				{
 					if(Inode->IsA("mafVMESurface"))
 					{
-						{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(Inode.get()); evUnq.SetBool(false); InvokeEvent(evUnq);}
+						{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(Inode); evUnq.SetBool(false); InvokeEvent(evUnq);}
 					}
 					if(Inode->IsA("mafVMEPolyline"))
 					{
-						{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(Inode.get()); evUnq.SetBool(false); InvokeEvent(evUnq);}
+						{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(Inode); evUnq.SetBool(false); InvokeEvent(evUnq);}
 					}
 				}
 			}

@@ -1,21 +1,4 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafViewManager
- Authors: Silvano Imboden
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __mafViewManager_H__
-#define __mafViewManager_H__
+#pragma once
 
 //----------------------------------------------------------------------------
 // includes :
@@ -29,16 +12,10 @@
 // forward references :
 //----------------------------------------------------------------------------
 class mafNode;
-class mafVMERoot;
 class mafView;
 class mafGUIViewPanel;
 class wxVTKWindow;
 class mafDeviceButtonsPadMouse;
-
-#ifdef MAF_EXPORTS
-#include "mafDllMacros.h"
-EXPORT_STL_VECTOR(MAF_EXPORT,long);
-#endif
 
 //----------------------------------------------------------------------------
 // mafViewManager :
@@ -111,7 +88,7 @@ public:
 	mafView *GetSelectedView();
 
   /** Return the root of the vme tree. */
-  mafNode *GetCurrentRoot() {return (mafNode*)m_RootVme;};
+  mafNode* GetCurrentRoot() { return m_RootVme.get(); }
 
   /** Return the created view-list. */
   const std::list<mafView*>& GetList() {return m_ViewList;}
@@ -143,7 +120,7 @@ protected:
   std::vector<mafView*>       m_ViewTemplate;   // view template vector
 
   mafBaseEventHandler   *m_RemoteListener;
-  mafVMERoot    *m_RootVme;
+  std::shared_ptr<mafNode> m_RootVme;
   mafNode       *m_SelectedVme;
   mafView       *m_SelectedView;
   wxVTKWindow    *m_SelectedRWI;
@@ -154,4 +131,3 @@ protected:
   /** test friend */
   friend class mafViewManagerTest;
 };
-#endif

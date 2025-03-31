@@ -455,7 +455,7 @@ void mafOpManager::FillTraceabilityAttribute(mafOp *op, std::shared_ptr<mafNode>
   {
     int c = 0; //counter not to write single parameter on first VME which is a group
     wxString singleParameter = parameters.toWx();
-    auto iter = std::make_unique<mafNodeIterator>(out_node);
+    auto iter = std::make_unique<mafNodeIterator>(out_node.get());
     for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
     {
       c++;
@@ -536,7 +536,7 @@ void mafOpManager::OpUndo()
 
   if (out_node)
   {
-    auto iter = std::make_unique<mafNodeIterator>(out_node);
+    auto iter = std::make_unique<mafNodeIterator>(out_node.get());
     for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
     {
       auto traceability = mafAttributeTraceability::SafeDownCast(node->GetAttribute(_R("TrialAttribute")));

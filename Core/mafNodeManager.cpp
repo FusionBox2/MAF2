@@ -123,21 +123,21 @@ void mafNodeManager::VmeRemove(mafNode *n)
 void mafNodeManager::NotifyRemove(mafNode *n)
 //----------------------------------------------------------------------------
 {
-  auto iter = n->NewIterator();
+  auto iter = std::make_unique<mafNodeIterator>(n);
   iter->IgnoreVisibleToTraverse(true); // ignore visible to traverse flag and visits all nodes
   iter->SetTraversalModeToPostOrder(); // traverse is: first the subtree left to right, then the root
   for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
-		{mafEvent evUnq(this,VME_REMOVING); evUnq.SetVme(node.get()); InvokeEvent(evUnq);} // raise notification event (to logic)
+		{mafEvent evUnq(this,VME_REMOVING); evUnq.SetVme(node); InvokeEvent(evUnq);} // raise notification event (to logic)
 }
 //----------------------------------------------------------------------------
 void mafNodeManager::NotifyAdd(mafNode *n)
 //----------------------------------------------------------------------------
 {
-  auto iter = n->NewIterator();
+  auto iter = std::make_unique<mafNodeIterator>(n);
   iter->IgnoreVisibleToTraverse(true); // ignore visible to traverse flag and visits all nodes
   for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {
-    {mafEvent evUnq(this,VME_ADDED); evUnq.SetVme(node.get()); InvokeEvent(evUnq);} // raise notification event (to logic)
+    {mafEvent evUnq(this,VME_ADDED); evUnq.SetVme(node); InvokeEvent(evUnq);} // raise notification event (to logic)
   }
   m_Modified = true;
 }

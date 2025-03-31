@@ -250,7 +250,7 @@ void mafGUITreeContextualMenu::OnContextualMenu(wxCommandEvent &event)
 void mafGUITreeContextualMenu::CryptSubTree(bool crypt)
 //----------------------------------------------------------------------------
 {
-  auto iter = m_NodeActive->NewIterator();
+  auto iter = std::make_unique<mafNodeIterator>(m_NodeActive);
 
 	for(auto v=iter->GetFirstNode();v;v=iter->GetNextNode())
 	{

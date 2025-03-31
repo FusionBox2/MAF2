@@ -132,7 +132,7 @@ void mafMSFImporter::InternalRestore(const mafStorageElement& node)
     }    
   }
   std::vector<mafNode *> link_list;
-  auto iter = std::make_unique<mafNodeIterator>(root);
+  auto iter = std::make_unique<mafNodeIterator>(root.get());
   // iteration for updating VME's ID
   for (auto n = iter->GetFirstNode(); n; n=iter->GetNextNode())
   {
@@ -143,7 +143,7 @@ void mafMSFImporter::InternalRestore(const mafStorageElement& node)
   {
     if (n->IsMAFType(mafVMEGeneric) && n->GetTagArray()->GetTag(_R("mflVMELink")))
     {
-      link_list.push_back(n.get());
+      link_list.push_back(n);
       mafTagItem *tag = n->GetTagArray()->GetTag(_R("VME_ALIAS_PATH"));
       mafNode *linkedVME = this->ParsePath(root.get(), tag->GetValue().GetCStr());
       if (linkedVME != nullptr)
