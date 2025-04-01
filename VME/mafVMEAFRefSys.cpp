@@ -108,10 +108,10 @@ int mafVMEAFRefSys::DeepCopy(mafNode *a)
 }
 
 //-------------------------------------------------------------------------
-int mafVMEAFRefSys::SetParent(mafNode *newparent)
+int mafVMEAFRefSys::OnSetParent(mafNode *newparent)
 //-------------------------------------------------------------------------
 {
-  int rep = Superclass::SetParent(newparent);
+  int rep = Superclass::OnSetParent(newparent);
   if(rep != MAF_OK || newparent == NULL || !m_Active)
     return rep;
   for(unsigned j = 0; j < newparent->GetNumberOfChildren(); j++)
@@ -304,7 +304,7 @@ bool mafVMEAFRefSys::ConvertTextToVM(bool buildMapping)
       if(buildMapping)
       {
         m_lmMapping[_R(m_vm->getInputs()[i].first.c_str())] = _R(m_vm->getInputs()[i].first.c_str());
-        SetRefSysLink(m_vm->getInputs()[i].first.c_str(), GetParent().get());
+        SetRefSysLink(m_vm->getInputs()[i].first.c_str(), GetParent());
       }
     }
     else
@@ -395,7 +395,7 @@ void mafVMEAFRefSys::OnEvent(mafEventBase *maf_event)
             if (auto n = e.GetVme())
             {
               itlm->second = n->GetName();
-              SetRefSysLink(itlm->first.GetCStr(), n->GetParent().get());
+              SetRefSysLink(itlm->first.GetCStr(), n->GetParent());
             }
           }
         }
@@ -461,7 +461,7 @@ bool mafVMEAFRefSys::UpdateVM(mafTimeStamp ts)
         if (it == m_lmMapping.end())
           continue;
         mafVMELandmarkCloud* tmpLink = mafVMELandmarkCloud::SafeDownCast(GetLink(_R(m_vm->getInputs()[i].first.c_str())));
-        lmcLink = (tmpLink != NULL) ? tmpLink : parentLMC.get();
+        lmcLink = (tmpLink != NULL) ? tmpLink : parentLMC;
         if (lmcLink != NULL)
         {
           SetRefSysLink(m_vm->getInputs()[i].first.c_str(), lmcLink);

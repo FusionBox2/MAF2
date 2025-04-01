@@ -194,7 +194,7 @@ Select the vme parent
   //////////////////////////////////////////////////////////////////////////
 
   {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_Selection.get()); InvokeEvent(evUnq);}
-  {mafEvent evUnq(this,VME_SELECTED); evUnq.SetVme(m_SelectionParent.get()); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SELECTED); evUnq.SetVme(m_SelectionParent); InvokeEvent(evUnq);}
   if (mafVME::SafeDownCast(m_SelectionParent))
   {
     mafVME::StaticDownCast(m_SelectionParent)->GetOutput()->Update();
@@ -250,21 +250,21 @@ Restore the Selection
   m_Selection = GetClipboard();
 
 #ifdef MAF_USE_VTK
-  if (m_SelectionParent->IsMAFType(mafVMELandmarkCloud) && !((mafVMELandmarkCloud *)m_SelectionParent.get())->IsOpen())
+  if (m_SelectionParent->IsMAFType(mafVMELandmarkCloud) && !((mafVMELandmarkCloud *)m_SelectionParent)->IsOpen())
   {
     mafVMELandmarkCloud::StaticDownCast(m_SelectionParent)->Open();
-    m_Selection->ReparentTo(m_SelectionParent.get());
+    mafNode::ReparentTo(m_Selection, m_SelectionParent);
     mafVMELandmarkCloud::StaticDownCast(m_SelectionParent)->Close();
   }
   else
   {
-    m_Selection->ReparentTo(m_SelectionParent.get());
+    mafNode::ReparentTo(m_Selection, m_SelectionParent);
   }
 #else
     m_Selection->ReparentTo(m_SelectionParent);
 #endif
 
-  if (mafVME::SafeDownCast(m_SelectionParent.get()))
+  if (mafVME::SafeDownCast(m_SelectionParent))
   {
     mafVME::StaticDownCast(m_SelectionParent)->GetOutput()->Update();
   }
@@ -346,7 +346,7 @@ Select the vme parent
   }
   m_SelectionParent = m_Selection->GetParent(); 
   {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_Selection.get()); InvokeEvent(evUnq);}
-  {mafEvent evUnq(this,VME_SELECTED); evUnq.SetVme(m_SelectionParent.get()); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SELECTED); evUnq.SetVme(m_SelectionParent); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafOpDelete::OpUndo()
@@ -455,7 +455,7 @@ Them a VME_ADD is sent, selection is not changed
 */
 {
   m_PastedVme = GetClipboard(); 
-  m_PastedVme->ReparentTo(m_Selection.get());
+  mafNode::ReparentTo(m_PastedVme, m_Selection.get());
   SetClipboard(m_PastedVme->CopyTree());
 }
 //----------------------------------------------------------------------------

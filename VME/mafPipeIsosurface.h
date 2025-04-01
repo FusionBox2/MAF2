@@ -71,7 +71,7 @@ public:
   /** return the contour value. */
   void  EnableBoundingBoxVisibility(bool enable = true);
 
-	void ExctractIsosurface(mafVMESurface *isoSurface = NULL);
+	void ExctractIsosurface(std::shared_ptr<mafVMESurface> isoSurface = nullptr);
 
   void UpdateFromData();
 

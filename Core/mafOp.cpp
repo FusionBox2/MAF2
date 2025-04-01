@@ -42,7 +42,7 @@ void mafOp::OpDo()
 {
   if (m_Output)
   {
-    m_Output->ReparentTo(m_Input.get());
+    m_Input->AddChild(m_Output);
     //{mafEvent evUnq(this, VME_ADD, m_Output); InvokeEvent(evUnq);}
     {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   }

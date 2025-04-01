@@ -261,7 +261,7 @@ void mafOpManager::OpRun(mafOp *op, void *op_param)
     {
       mafString synthetic_name = _R("Copied ");
       auto synthetic_vme = m_Selected->MakeCopy();
-      synthetic_vme->ReparentTo(m_Selected->GetParent().get());
+      mafNode::ReparentTo(synthetic_vme, m_Selected->GetParent());
       synthetic_name.append(m_Selected->GetName());
       synthetic_vme->SetName(synthetic_name);
       if(mafTagItem *ti = synthetic_vme->GetTagArray()->GetTag(_R("VME_NATURE")))
@@ -325,7 +325,7 @@ void mafOpManager::OpRunCancel(mafOp *op)
 
   if (m_NaturalNode != NULL)
   {
-    m_Selected->ReparentTo(NULL);
+    mafNode::ReparentTo(m_Selected, nullptr);
     {mafEvent evUnq(this,VME_SELECT); evUnq.SetVme(m_NaturalNode.get()); InvokeEvent(evUnq);}
     {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_NaturalNode.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
     m_NaturalNode = NULL;

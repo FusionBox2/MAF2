@@ -158,7 +158,7 @@ mafSceneNode *mafSceneGraph::NodeAdd(std::shared_ptr<mafNode> vme)
   }
   else
   {
-    parent = Vme2Node(vme->GetParent().get()); 
+    parent = Vme2Node(vme->GetParent()); 
     assert(parent);
   }
   // create node

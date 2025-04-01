@@ -190,7 +190,7 @@ protected:
   vtkCubeSource *m_Cube;///<Cube source
 
   std::shared_ptr<mafVMEGizmo> m_BoxGizmo; 
-  mafVMEGizmo *m_ShadingPlaneGizmo;
+  std::shared_ptr<mafVMEGizmo> m_ShadingPlaneGizmo;
 
   vtkTransformPolyDataFilter *m_TranslateBoxPolyDataFilter;///<translate PDF for box
   vtkTransformPolyDataFilter *m_TranslateShadingPlanePolyDataFilter;///<translate PDF for box

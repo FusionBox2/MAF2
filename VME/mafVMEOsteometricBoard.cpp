@@ -82,17 +82,17 @@ mafVMEOsteometricBoard::mafVMEOsteometricBoard()
 	pos2[0] = 0; pos2[1] = 0;  pos2[2] = 0;
 	pos3[0] = 0; pos3[1] = 0;  pos3[2] = 0;
 
-	plan1 = mafVMEPlane::New();
+	plan1 = mafVMEPlane::NewSPtr();
 	plan1->SetName(_R("prinicipal_plane"));
-	plan1->ReparentTo(this);
+	mafNode::ReparentTo(plan1, this);
 	
-	plan2 = mafVMEPlane::New();
+	plan2 = mafVMEPlane::NewSPtr();
 	plan2->SetName(_R("2nd_plane"));
-	plan2->ReparentTo(this);
+	mafNode::ReparentTo(plan2, this);
 
-	plan3 = mafVMEPlane::New();
+	plan3 = mafVMEPlane::NewSPtr();
 	plan3->SetName(_R("3rd_plane"));
-	plan3->ReparentTo(this);
+	mafNode::ReparentTo(plan3, this);
 
 
 	pts_change = true;
@@ -122,7 +122,7 @@ mafVMEOsteometricBoard::mafVMEOsteometricBoard()
 	m_Cloud1->Open();
 	m_Cloud1->SetName(_L("computed OB points"));
 	m_Cloud1->SetRadius(1.5);
-	m_Cloud1->ReparentTo(this);
+	mafNode::ReparentTo(m_Cloud1, this);
 	m_Cloud1->AppendLandmark(m_PlaneOrigin[0], m_PlaneOrigin[1], m_PlaneOrigin[2], _R("Pl2Pt3"), false);
 	m_Cloud1->AppendLandmark(m_PlanePoint1[0], m_PlanePoint1[1], m_PlanePoint1[2], _R("Pl3Pt2"), false);
 	m_Cloud1->AppendLandmark(m_PlanePoint2[0], m_PlanePoint2[1], m_PlanePoint2[2], _R("Pl3Pt3"), false);
@@ -138,16 +138,16 @@ mafVMEOsteometricBoard::mafVMEOsteometricBoard()
 	//surface = NULL;
 	gline1 = mafVMEGravityLine::NewSPtr();
 	//gline1->ReparentTo(plan1);
-	gline1->ReparentTo(this);
+	mafNode::ReparentTo(gline1, this);
 	gline1->SetName(_R("gline1"));
 	
 	gline2 = mafVMEGravityLine::NewSPtr();
 	//gline2->ReparentTo(plan2);
-	gline2->ReparentTo(this);
+	mafNode::ReparentTo(gline2, this);
 	gline2->SetName(_R("gline2"));
 
 	gline3 = mafVMEGravityLine::NewSPtr();
-	gline3->ReparentTo(this);
+	mafNode::ReparentTo(gline3, this);
 	//gline3->ReparentTo(plan3);
 	gline3->SetName(_R("gline3"));
 	
@@ -697,8 +697,8 @@ void mafVMEOsteometricBoard::InternalUpdate()
 		//	((mafVMEPlane*)plan1)->setPoint1(m_PlaneOrigin);
 		//	((mafVMEPlane*)plan1)->setPoint2(m_PlanePoint1);
 		//	((mafVMEPlane*)plan1)->setPoint3(m_PlanePoint2);
-			((mafVMEPlane*)plan1)->Update();
-			double* normal1 = ((mafVMEPlane*)plan1)->getNormalVector();
+			plan1->Update();
+			double* normal1 = plan1->getNormalVector();
 			
 			
 			
@@ -707,7 +707,7 @@ void mafVMEOsteometricBoard::InternalUpdate()
 			//vtkNew<vtkTriangleFilter> triangle;
 			//triangle->SetInput(surf->GetOutput());
 			//triangle->Update();
-			if (plan2 != NULL)
+			if (plan2)
 			{
 				plan2->getPoint1(m_PlaneOrigin);
 			}

@@ -857,7 +857,19 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
   }
   if(VME_SELECTED == eventId)
   {
-    VmeSelected(e->GetVme()->SharedFromThis(), false);
+    auto v = e->GetVme();
+    if (v == nullptr)
+    {
+	    VmeSelected(nullptr, false);
+    }
+    else if (v == m_logic->m_NodeManager->GetRoot().get())
+    {
+      VmeSelected(m_logic->m_NodeManager->GetRoot(), false);
+    }
+    else
+    {
+      VmeSelected(v->GetParent()->GetChild(v->GetParent()->FindNodeIdx(v)), false);
+    }
     return;
   }
   if(VME_DCLICKED == eventId)
@@ -908,14 +920,9 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
     VmeExpandVisible(e->GetVme());
     return; 
   }
-  if(VME_ADD == eventId)
-  {
-    VmeAdd(e->GetVme());
-    return; 
-  }
   if(VME_ADDED == eventId)
   {
-    VmeAdded(e->GetVme()->SharedFromThis());
+    VmeAdded(e->GetVme());
     return; 
   }
   if(VME_REMOVE == eventId)
@@ -1880,18 +1887,24 @@ void mafLogicWithManagers::VmeModified(mafNode *vme)
     m_logic->m_SideBar->VmeModified(vme);
 	if(m_logic->m_NodeManager) m_logic->m_NodeManager->MSFModified(true);
 }
-void mafLogicWithManagers::VmeAdd(mafNode *vme)
-//----------------------------------------------------------------------------
+void mafLogicWithManagers::VmeAdded(mafNode *vme)
 {
-  if(m_logic->m_NodeManager)
-    m_logic->m_NodeManager->VmeAdd(vme);
-}
-void mafLogicWithManagers::VmeAdded(std::shared_ptr<mafNode> vme)
-{
+  std::shared_ptr<mafNode> sv;
   if(m_logic->m_NodeManager)
   {
     if (auto root = mafVMERoot::SafeDownCast(m_logic->m_NodeManager->GetRoot()))
     {
+      if (root.get() == vme)
+      {
+	      sv = root;
+      }
+      else
+      {
+        if (auto parent = vme->GetParent())
+        {
+          sv =  parent->GetChild(parent->FindNodeIdx(vme));
+        }
+      }
       if (auto vmenode = mafVME::SafeDownCast(vme))
       {
         // Update the new VME added to the tree with the current time-stamp
@@ -1901,12 +1914,12 @@ void mafLogicWithManagers::VmeAdded(std::shared_ptr<mafNode> vme)
     }
   }
   if(m_logic->m_ViewManager)
-    m_logic->m_ViewManager->VmeAdd(vme);
+    m_logic->m_ViewManager->VmeAdd(sv);
   bool vme_in_tree = true;
   vme_in_tree = !vme->GetTagArray()->GetTag(_R("VISIBLE_IN_THE_TREE")) || 
     (vme->GetTagArray()->GetTag(_R("VISIBLE_IN_THE_TREE")) && vme->GetTagArray()->GetTag(_R("VISIBLE_IN_THE_TREE"))->GetValueAsDouble() != 0);
   if(m_logic->m_SideBar && vme_in_tree)
-    m_logic->m_SideBar->VmeAdd(vme);
+    m_logic->m_SideBar->VmeAdd(sv);
   if(m_logic->m_PlugTimebar)
     UpdateTimeBounds();
 }

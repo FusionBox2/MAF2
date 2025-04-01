@@ -79,7 +79,7 @@ mafGizmoRotateCircle::mafGizmoRotateCircle(std::shared_ptr<mafVME> input, mafBas
   // create vme gizmo stuff
   //-----------------
   // build the circle gizmo
-  m_GizmoCircle = mafVMEGizmo::New();
+  m_GizmoCircle = mafVMEGizmo::NewSPtr();
   m_GizmoCircle->SetName(name);
   m_GizmoCircle->SetInputConnection(m_RotatePDF->GetOutputPort());
   m_GizmoCircle->SetMediator(GetListener());
@@ -101,7 +101,7 @@ mafGizmoRotateCircle::mafGizmoRotateCircle(std::shared_ptr<mafVME> input, mafBas
   SetRefSysMatrix(m_AbsInputMatrix);
 
   // add the gizmo to the tree, this should increase reference count  
-  m_GizmoCircle->ReparentTo(mafVME::SafeDownCast(m_InputVme->GetRoot()));
+  mafNode::ReparentTo(m_GizmoCircle, mafVME::SafeDownCast(m_InputVme->GetRoot()));
 
 }
 //----------------------------------------------------------------------------
@@ -120,7 +120,7 @@ mafGizmoRotateCircle::~mafGizmoRotateCircle()
 	//----------------------
   m_IsaComp.reset(); 
   
-	m_GizmoCircle->ReparentTo(nullptr);
+	mafNode::ReparentTo(m_GizmoCircle, nullptr);
 }
 //----------------------------------------------------------------------------
 void mafGizmoRotateCircle::CreatePipeline() 
@@ -315,7 +315,7 @@ void mafGizmoRotateCircle::SetColor(double colR, double colG, double colB)
 void mafGizmoRotateCircle::Show(bool show)
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_GizmoCircle); evUnq.SetBool(show); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_GizmoCircle.get()); evUnq.SetBool(show); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGizmoRotateCircle::SetAbsPose(std::shared_ptr<mafMatrix> absPose)

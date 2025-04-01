@@ -41,9 +41,8 @@ public:
 
   bool Accept(mafNode *node) override;
   void OpRun() override;
-  void OpDo() override;
 
 protected: 
-  mafVMESurfaceParametric *m_SurfaceParametric;
+  std::shared_ptr<mafVMESurfaceParametric> m_SurfaceParametric;
 };
 #endif

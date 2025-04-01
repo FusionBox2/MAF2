@@ -649,7 +649,7 @@ void mafVMEHyperboloid::SetCenterLink(const mafString& link_name, mafNode *n)
 	//Sleep(1500);
 	if (n->IsMAFType(mafVMELandmark))
 	{
-		SetLink(link_name, n->GetParent().get(), mafVMELandmarkCloud::StaticDownCast(n->GetParent())->FindLandmarkIndex(n->GetName()));
+		SetLink(link_name, n->GetParent(), mafVMELandmarkCloud::StaticDownCast(n->GetParent())->FindLandmarkIndex(n->GetName()));
 	
 	}
 	else

@@ -153,11 +153,11 @@ int mafOpImporterMSF::ImportMSF()
 
   m_Group = mafVMEGroup::NewSPtr();
   m_Group->SetName(group_name);
-  m_Group->ReparentTo(GetInput().get());
+  mafNode::ReparentTo(m_Group, GetInput().get());
   
   while (auto node = root->GetFirstChild())
   {
-    node->ReparentTo(m_Group.get());
+    mafNode::ReparentTo(node, m_Group.get());
 
     // Losi 03/16/2010 Bug #2049 fix
     auto vme = mafVMEGeneric::SafeDownCast(node);

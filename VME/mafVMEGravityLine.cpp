@@ -97,7 +97,7 @@ mafVMEGravityLine::mafVMEGravityLine()
 	parallelPlane = mafVMEPlane::NewSPtr();
 	parallelPlane->SetName(_R("parallelPlane"));
 	
-	parallelPlane->ReparentTo(this);
+	mafNode::ReparentTo(parallelPlane, this);
 	//parallelPlane->DisableGuiPlane();
     P0 = mafVMELandmark::New();
     P0->SetName(_R("P0"));
@@ -109,7 +109,7 @@ mafVMEGravityLine::mafVMEGravityLine()
   m_Cloud2->Open();
   m_Cloud2->SetName(_L("computed_points"));
   m_Cloud2->SetRadius(5);
-  m_Cloud2->ReparentTo(this);
+  mafNode::ReparentTo(m_Cloud2, this);
 //  m_Cloud2->AppendLandmark(1, 0, 0, _R("projectedPt"), false);
   m_Cloud2->AppendLandmark(1, 0, 0, _R("parallelPlanePt1"), false);
   m_Cloud2->AppendLandmark(1, 0, 0, _R("parallelPlanePt2"), false);

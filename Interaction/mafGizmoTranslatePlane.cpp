@@ -82,7 +82,7 @@ mafGizmoTranslatePlane::mafGizmoTranslatePlane(std::shared_ptr<mafVME> input, ma
   for (i = 0; i < 3; i++)
   {
     // the ith gizmo
-    m_Gizmo[i] = mafVMEGizmo::New();
+    m_Gizmo[i] = mafVMEGizmo::NewSPtr();
     vmeName = _R("part");
     vmeName += mafToString(i);
     m_Gizmo[i]->SetName(vmeName);
@@ -117,7 +117,7 @@ mafGizmoTranslatePlane::mafGizmoTranslatePlane(std::shared_ptr<mafVME> input, ma
   // add the gizmo to the tree, this should increase reference count 
   for (i = 0; i < 3; i++)
   {
-    m_Gizmo[i]->ReparentTo(mafVME::SafeDownCast(m_InputVme->GetRoot()));
+    mafNode::ReparentTo(m_Gizmo[i], mafVME::SafeDownCast(m_InputVme->GetRoot()));
   }
 }
 //----------------------------------------------------------------------------
@@ -146,7 +146,7 @@ mafGizmoTranslatePlane::~mafGizmoTranslatePlane()
   for (i = 0; i < 3; i++)
   {
     vtkDEL(m_RotatePDF[i]);
-		m_Gizmo[i]->ReparentTo(nullptr);
+		mafNode::ReparentTo(m_Gizmo[i], nullptr);
   }
 }
 
@@ -428,7 +428,7 @@ void mafGizmoTranslatePlane::Show(bool show)
 //----------------------------------------------------------------------------
 {
   for (int i = 0; i < 3; i++)
-		{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Gizmo[i]); evUnq.SetBool(show); InvokeEvent(evUnq);}
+		{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Gizmo[i].get()); evUnq.SetBool(show); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGizmoTranslatePlane::ShowSquare(bool show)

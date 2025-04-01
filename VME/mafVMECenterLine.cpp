@@ -89,11 +89,11 @@ mafVMECenterLine::mafVMECenterLine()
 
   chord = mafVMEMeter::NewSPtr();
   chord->SetName(_R("chord"));
-  chord->ReparentTo(this);
+  mafNode::ReparentTo(chord, this);
 
   chordP = mafVMEMeter::NewSPtr();
   chordP->SetName(_R("chordP"));
-  chordP->ReparentTo(this);
+  mafNode::ReparentTo(chordP, this);
   chordP->SetMeterMode(1);
 
 	m_Transform = mafTransform::NewSPtr();
@@ -119,7 +119,7 @@ mafVMECenterLine::mafVMECenterLine()
 	m_CloudPath1->Open();
 	m_CloudPath1->SetName(_R("path1"));
 	m_CloudPath1->SetRadius(1.5);
-	m_CloudPath1->ReparentTo(this);
+	mafNode::ReparentTo(m_CloudPath1, this);
 	m_CloudPath1->AppendLandmark(0, 0, 0, _R("first"), false);
 	m_CloudPath1->AppendLandmark(0, 0, 0, _R("last"), false);
 	m_CloudPath1->AppendLandmark(0, 0, 0, _R("PointC"), false);

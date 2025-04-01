@@ -59,16 +59,16 @@ mafGizmoBoundingBox::mafGizmoBoundingBox(mafVME *input, mafBaseEventHandler *lis
   m_BoxOutline->SetBounds(m_InputVme->GetOutput()->GetVTKData()->GetBounds());
 
   // create the gizmo
-  m_BoxGizmo = mafVMEGizmo::New();  
+  m_BoxGizmo = mafVMEGizmo::NewSPtr();  
   m_BoxGizmo->SetName(_R("BoxGizmo"));
   
   // since i'm working in local mode i reparent to input vme the gizmo
   m_BoxGizmo->SetInputConnection(m_BoxOutline->GetOutputPort());
 	m_BoxGizmo->GetOutput()->GetVTKData()->ComputeBounds();
 	if(parent)
-		m_BoxGizmo->ReparentTo(parent);
+		mafNode::ReparentTo(m_BoxGizmo, parent);
 	else
-		m_BoxGizmo->ReparentTo(m_InputVme);
+		mafNode::ReparentTo(m_BoxGizmo, m_InputVme);
   
   // set cone gizmo material property and initial color to red
   this->SetColor(1, 0, 0);
@@ -77,15 +77,15 @@ mafGizmoBoundingBox::mafGizmoBoundingBox(mafVME *input, mafBaseEventHandler *lis
   this->Show(false);
 
   // ask the manager to create the pipeline
-  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_BoxGizmo); evUnq.SetBool(true); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_BoxGizmo.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 mafGizmoBoundingBox::~mafGizmoBoundingBox() 
 //----------------------------------------------------------------------------
 {
-  m_BoxGizmo->SetBehavior(NULL);
+  m_BoxGizmo->SetBehavior(nullptr);
   	
-  m_BoxGizmo->ReparentTo(NULL);
+  mafNode::ReparentTo(m_BoxGizmo, nullptr);
   m_BoxOutline->Delete();
 }
 

@@ -163,7 +163,7 @@ protected:
   std::shared_ptr<mafMatrix> m_AbsInputMatrix;
   
   /** Circle gizmo */
-  mafVMEGizmo *m_GizmoCross;
+  std::shared_ptr<mafVMEGizmo> m_GizmoCross;
 
   /** Register input vme*/
   std::shared_ptr<mafVME> m_InputVme;
@@ -246,7 +246,7 @@ protected:
   vtkTransform *m_FGRotationTr;
 
   vtkAppendPolyData *m_FeedbackStuffAppendPolydata;
-  mafVMEGizmo *m_RotationFeedbackGizmo;
+  std::shared_ptr<mafVMEGizmo> m_RotationFeedbackGizmo;
 
 };
 #endif

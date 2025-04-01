@@ -86,7 +86,7 @@ protected:
   void SetRefSysMatrix(std::shared_ptr<mafMatrix> constrain);
 
   /** Cube gizmo */
-  mafVMEGizmo *m_CubeGizmo;
+  std::shared_ptr<mafVMEGizmo> m_CubeGizmo;
 
   /** Register input vme*/
   std::shared_ptr<mafVME> m_InputVme;

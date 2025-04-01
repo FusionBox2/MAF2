@@ -98,7 +98,7 @@ public:
     void LoadVTKData(mafNode *vme);
 
 protected:
-  std::shared_ptr<mafNode> m_SelectionParent;
+  mafNode *m_SelectionParent = nullptr;
     /** Load all children in the tree (Added by Di Cosmo on 24.05.2012) */
     void LoadChild(mafNode *vme);
 };
@@ -123,7 +123,7 @@ public:
   /** return a instance of current object. */
   mafOp* Copy() override; 
 protected:
-  std::shared_ptr<mafNode> m_SelectionParent;
+  mafNode *m_SelectionParent = nullptr;
 };
 /**
     class name: mafOpCopy

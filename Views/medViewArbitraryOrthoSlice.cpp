@@ -2069,28 +2069,28 @@ void medViewArbitraryOrthoSlice::HideMafVMEVolume()
 
 	EnableWidgets(false);
 
-	m_XCameraConeVME->ReparentTo(NULL);
+	mafNode::ReparentTo(m_XCameraConeVME, nullptr);
 	m_XCameraConeVME.reset();
 
-	m_AttachCameraToSlicerXInXView->SetVme(NULL);
-	m_SlicerX->SetBehavior(NULL);
-	m_SlicerX->ReparentTo(NULL);
+	m_AttachCameraToSlicerXInXView->SetVme(nullptr);
+	m_SlicerX->SetBehavior(nullptr);
+	mafNode::ReparentTo(m_SlicerX, nullptr);
 	m_SlicerX.reset();
 
-	m_YCameraConeVME->ReparentTo(NULL);
+	mafNode::ReparentTo(m_YCameraConeVME, nullptr);
 	m_YCameraConeVME.reset();
 
-	m_AttachCameraToSlicerYInYView->SetVme(NULL);
-	m_SlicerY->SetBehavior(NULL);
-	m_SlicerY->ReparentTo(NULL);
+	m_AttachCameraToSlicerYInYView->SetVme(nullptr);
+	m_SlicerY->SetBehavior(nullptr);
+	mafNode::ReparentTo(m_SlicerY, nullptr);
 	m_SlicerY.reset();
 
-	m_ZCameraConeVME->ReparentTo(NULL);
+	mafNode::ReparentTo(m_ZCameraConeVME, nullptr);
 	m_ZCameraConeVME.reset();
 
-	m_AttachCameraToSlicerZInZView->SetVme(NULL);
-	m_SlicerZ->SetBehavior(NULL);
-	m_SlicerZ->ReparentTo(NULL);
+	m_AttachCameraToSlicerZInZView->SetVme(nullptr);
+	m_SlicerZ->SetBehavior(nullptr);
+	mafNode::ReparentTo(m_SlicerZ, nullptr);
 	m_SlicerZ.reset();
 
 	//remove gizmos
@@ -2287,7 +2287,7 @@ void medViewArbitraryOrthoSlice::ShowSlicers( mafVME * vmeVolume, bool show )
 	m_SlicerX = mafVMESlicer::NewSPtr();
 	m_SlicerX->GetTagArray()->SetTag(mafTagItem(_R("VISIBLE_IN_THE_TREE"), 0.0));
 	m_SlicerX->SetName(_R("m_SlicerX"));
-	m_SlicerX->ReparentTo(vmeVolume);
+	mafNode::ReparentTo(m_SlicerX, vmeVolume);
 	m_SlicerX->SetAbsMatrix(mafMatrix(slicerXTransform->GetMatrix()));
 	m_SlicerX->SetSlicedVMELink(vmeVolume);
 	m_SlicerX->GetMaterial()->m_ColorLut->DeepCopy(mafVMEVolumeGray::SafeDownCast(m_CurrentVolume)->GetMaterial()->m_ColorLut);
@@ -2310,7 +2310,7 @@ void medViewArbitraryOrthoSlice::ShowSlicers( mafVME * vmeVolume, bool show )
 	m_SlicerY = mafVMESlicer::NewSPtr();
 	m_SlicerY->SetName(_R("m_SlicerY"));
 	m_SlicerY->GetTagArray()->SetTag(mafTagItem(_R("VISIBLE_IN_THE_TREE"), 0.0));
-	m_SlicerY->ReparentTo(vmeVolume);
+	mafNode::ReparentTo(m_SlicerY, vmeVolume);
 	m_SlicerY->SetAbsMatrix(mafMatrix(slicerYTransform->GetMatrix()));
 	m_SlicerY->SetSlicedVMELink(vmeVolume);
 	m_SlicerY->GetMaterial()->m_ColorLut->DeepCopy(mafVMEVolumeGray::SafeDownCast(m_CurrentVolume)->GetMaterial()->m_ColorLut);
@@ -2324,7 +2324,7 @@ void medViewArbitraryOrthoSlice::ShowSlicers( mafVME * vmeVolume, bool show )
 	m_SlicerZ = mafVMESlicer::NewSPtr();
 	m_SlicerZ->GetTagArray()->SetTag(mafTagItem(_R("VISIBLE_IN_THE_TREE"), 0.0));
 	m_SlicerZ->SetName(_R("m_SlicerZ"));
-	m_SlicerZ->ReparentTo(vmeVolume);
+	mafNode::ReparentTo(m_SlicerZ, vmeVolume);
 	m_SlicerZ->SetAbsMatrix(*m_SlicerZResetMatrix);
 	m_SlicerZ->SetSlicedVMELink(vmeVolume);
 	m_SlicerZ->GetMaterial()->m_ColorLut->DeepCopy(mafVMEVolumeGray::SafeDownCast(m_CurrentVolume)->GetMaterial()->m_ColorLut);
@@ -2557,7 +2557,7 @@ void medViewArbitraryOrthoSlice::BuildXCameraConeVME()
 	assert(m_SlicerX);
 
 	// default slicer matrix rotation component is identity when the input volume has identity pose matrix
-	m_XCameraConeVME->ReparentTo(m_SlicerX.get());
+	mafNode::ReparentTo(m_XCameraConeVME, m_SlicerX.get());
 
 
 	// DEBUG
@@ -2630,7 +2630,7 @@ void medViewArbitraryOrthoSlice::BuildYCameraConeVME()
 
 	*/
 
-	m_YCameraConeVME->ReparentTo(m_SlicerY.get());
+	mafNode::ReparentTo(m_YCameraConeVME, m_SlicerY.get());
 
 	// DEBUG
 	m_ChildViewList[PERSPECTIVE_VIEW]->VmeShow(m_YCameraConeVME.get(), true);
@@ -2692,7 +2692,7 @@ void medViewArbitraryOrthoSlice::BuildZCameraConeVME()
 	m_ZCameraConeVME->GetMaterial()->m_Prop->SetOpacity(0.2);
 
 	assert(m_SlicerY);
-	m_ZCameraConeVME->ReparentTo(m_SlicerZ.get());
+	mafNode::ReparentTo(m_ZCameraConeVME, m_SlicerZ.get());
 
 	// DEBUG
 	m_ChildViewList[PERSPECTIVE_VIEW]->VmeShow(m_ZCameraConeVME.get(), true);
@@ -3723,7 +3723,8 @@ void medViewArbitraryOrthoSlice::AddVMEToMSFTree(mafVMESurface *vme)
 {
 	assert(vme != NULL);
 	vme->GetTagArray()->SetTag(mafTagItem(_R("VISIBLE_IN_THE_TREE"), 0.0));
-	{mafEvent evUnq(this, VME_ADD); evUnq.SetVme(GetSceneGraph()->Vme2Node(vme)->m_Vme.get()); InvokeEvent(evUnq);}
+#pragma message("VME_ADD being eliminated")
+	//{mafEvent evUnq(this, VME_ADD); evUnq.SetVme(GetSceneGraph()->Vme2Node(vme)->m_Vme.get()); InvokeEvent(evUnq);}
 	assert(vme);
 }
 
@@ -5017,8 +5018,8 @@ void medViewArbitraryOrthoSlice::HideRulerVMEVector(vector<std::shared_ptr<mafVM
 
 	for (int i = 0; i < size; i++)
 	{
-		rulerVector[i]->ReparentTo(NULL);
-		rulerVector[i] = NULL;
+		mafNode::ReparentTo(rulerVector[i], nullptr);
+		rulerVector[i].reset();
 
 		vtkRenderer *currentRenderer = ((mafViewVTK*)(m_ChildViewList[guestView]))->m_Rwi->m_RenFront;
 		currentRenderer->RemoveActor2D(captionActorVector[i]);

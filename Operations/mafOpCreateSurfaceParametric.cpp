@@ -43,13 +43,11 @@ mafOpCreateSurfaceParametric::mafOpCreateSurfaceParametric(const mafString& labe
 {
   m_OpType	= OPTYPE_OP;
   m_Canundo = true;
-  m_SurfaceParametric = NULL;
 }
 //----------------------------------------------------------------------------
 mafOpCreateSurfaceParametric::~mafOpCreateSurfaceParametric( ) 
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_SurfaceParametric);
 }
 //----------------------------------------------------------------------------
 mafOp* mafOpCreateSurfaceParametric::Copy()   
@@ -67,14 +65,8 @@ bool mafOpCreateSurfaceParametric::Accept(mafNode *node)
 void mafOpCreateSurfaceParametric::OpRun()   
 //----------------------------------------------------------------------------
 {
-  mafNEW(m_SurfaceParametric);
+  m_SurfaceParametric = mafVMESurfaceParametric::NewSPtr();
   m_SurfaceParametric->SetName(_R("Surface Parametric"));
   SetOutput(m_SurfaceParametric);
   {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
-}
-//----------------------------------------------------------------------------
-void mafOpCreateSurfaceParametric::OpDo()
-//----------------------------------------------------------------------------
-{
-  m_SurfaceParametric->ReparentTo(GetInput());
 }

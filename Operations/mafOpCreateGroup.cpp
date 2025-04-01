@@ -40,13 +40,11 @@ mafOpCreateGroup::mafOpCreateGroup(const mafString& label) : Superclass(label)
 {
   m_OpType	= OPTYPE_OP;
   m_Canundo = true;
-  m_Group   = NULL;
 }
 //----------------------------------------------------------------------------
 mafOpCreateGroup::~mafOpCreateGroup()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_Group);
 }
 //----------------------------------------------------------------------------
 mafOp* mafOpCreateGroup::Copy()   
@@ -64,14 +62,8 @@ bool mafOpCreateGroup::Accept(mafNode *node)
 void mafOpCreateGroup::OpRun()
 //----------------------------------------------------------------------------
 {
-  mafNEW(m_Group);
+  m_Group = mafVMEGroup::NewSPtr();
   m_Group->SetName(_R("group"));
   SetOutput(m_Group);
   {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
-}
-//----------------------------------------------------------------------------
-void mafOpCreateGroup::OpDo()
-//----------------------------------------------------------------------------
-{
-  m_Group->ReparentTo(GetInput());
 }

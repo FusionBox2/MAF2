@@ -54,9 +54,6 @@ public:
 	/** Set the modify flag. */
   void MSFModified(bool modified) {m_Modified = modified;};
 
-	/** Add the vme to the tree. */
-  void VmeAdd(mafNode *n);
-
 	/** Remove the vme from the tree. */
   void VmeRemove(mafNode *n);
 

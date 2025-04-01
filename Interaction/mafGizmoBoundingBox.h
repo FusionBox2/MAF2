@@ -101,7 +101,7 @@ protected:
 
   vtkOutlineSource *m_BoxOutline;
 
-  mafVMEGizmo *m_BoxGizmo;
+  std::shared_ptr<mafVMEGizmo> m_BoxGizmo;
 
   /** test friends */
   friend class mafGizmoBoundingBoxTest;

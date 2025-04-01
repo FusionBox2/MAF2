@@ -71,13 +71,13 @@ mafGizmoScaleAxis::mafGizmoScaleAxis(std::shared_ptr<mafVME> input, mafBaseEvent
   //-----------------
 
   // cylinder gizmo
-  m_CylGizmo = mafVMEGizmo::New();
+  m_CylGizmo = mafVMEGizmo::NewSPtr();
   m_CylGizmo->SetName(_R("CylGizmo"));
   m_CylGizmo->SetInputConnection(m_RotatePDF[CYLINDER]->GetOutputPort());
   m_CylGizmo->SetMediator(GetListener());
 
   // cube gizmo
-  m_CubeGizmo = mafVMEGizmo::New();  
+  m_CubeGizmo = mafVMEGizmo::NewSPtr();  
   m_CubeGizmo->SetName(_R("CubeGizmo"));
   m_CubeGizmo->SetInputConnection(m_RotatePDF[CUBE]->GetOutputPort());
   m_CubeGizmo->SetMediator(GetListener());
@@ -92,8 +92,8 @@ mafGizmoScaleAxis::mafGizmoScaleAxis(std::shared_ptr<mafVME> input, mafBaseEvent
   // set come gizmo material property and initial color to red
   this->SetColor(1, 0, 0, 1, 0, 0);
 
-  m_CylGizmo->ReparentTo(mafVME::SafeDownCast(m_InputVme->GetRoot()));
-  m_CubeGizmo->ReparentTo(mafVME::SafeDownCast(m_InputVme->GetRoot()));
+  mafNode::ReparentTo(m_CylGizmo, mafVME::SafeDownCast(m_InputVme->GetRoot()));
+  mafNode::ReparentTo(m_CubeGizmo, mafVME::SafeDownCast(m_InputVme->GetRoot()));
 
   m_Highlight = false;
   m_Show = false;
@@ -121,8 +121,8 @@ mafGizmoScaleAxis::~mafGizmoScaleAxis()
 	//----------------------
     m_IsaComp[i].reset(); 
   }
-	m_CylGizmo->ReparentTo(nullptr);
-	m_CubeGizmo->ReparentTo(nullptr);
+	mafNode::ReparentTo(m_CylGizmo, nullptr);
+	mafNode::ReparentTo(m_CubeGizmo, nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -480,8 +480,8 @@ void mafGizmoScaleAxis::Show(bool show)
 //----------------------------------------------------------------------------
 {
   m_Show = show;
-  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_CylGizmo); evUnq.SetBool(show); InvokeEvent(evUnq);}
-  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_CubeGizmo); evUnq.SetBool(show); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_CylGizmo.get()); evUnq.SetBool(show); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_CubeGizmo.get()); evUnq.SetBool(show); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------

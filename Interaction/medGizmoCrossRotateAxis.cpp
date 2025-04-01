@@ -114,7 +114,7 @@ medGizmoCrossRotateAxis::medGizmoCrossRotateAxis(std::shared_ptr<mafVME> input, 
 	//-----------------
 
 	// the circle gizmo
-	m_GizmoCross = mafVMEGizmo::New();
+	m_GizmoCross = mafVMEGizmo::NewSPtr();
 	m_GizmoCross->SetName(_R("rotate cross"));
 	m_GizmoCross->SetInputConnection(m_LinesRotatePDF->GetOutputPort());
 
@@ -137,7 +137,7 @@ medGizmoCrossRotateAxis::medGizmoCrossRotateAxis(std::shared_ptr<mafVME> input, 
 	SetRefSysMatrix(m_AbsInputMatrix);
 
 	// add the gizmo to the tree, this should increase reference count  
-	m_GizmoCross->ReparentTo(mafVME::SafeDownCast(m_InputVme->GetRoot()));
+	mafNode::ReparentTo(m_GizmoCross, mafVME::SafeDownCast(m_InputVme->GetRoot()));
 
 	CreateFeedbackGizmoPipeline();
 }
@@ -161,7 +161,7 @@ medGizmoCrossRotateAxis::~medGizmoCrossRotateAxis()
 	//----------------------
 	m_IsaComp.reset(); 
 
-	m_GizmoCross->ReparentTo(nullptr);
+	mafNode::ReparentTo(m_GizmoCross, nullptr);
 
 	vtkDEL(m_FGCircle);
 	vtkDEL(m_FGCleanCircle);
@@ -391,7 +391,7 @@ void medGizmoCrossRotateAxis::SetColor(double colR, double colG, double colB)
 void medGizmoCrossRotateAxis::Show(bool show)
 //----------------------------------------------------------------------------
 {
-	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_GizmoCross); evUnq.SetBool(show); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_GizmoCross.get()); evUnq.SetBool(show); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medGizmoCrossRotateAxis::SetAbsPose(std::shared_ptr<mafMatrix> absPose)
@@ -546,7 +546,7 @@ void medGizmoCrossRotateAxis::CreateFeedbackGizmoPipeline()
 	m_FeedbackStuffAppendPolydata->AddInputConnection(m_FGRotatePDF->GetOutputPort());
 	m_FeedbackStuffAppendPolydata->Update();
 
-	m_RotationFeedbackGizmo = mafVMEGizmo::New();
+	m_RotationFeedbackGizmo = mafVMEGizmo::NewSPtr();
 	m_RotationFeedbackGizmo->SetName(_R("AxisRotationFeedbackGizmo"));
 
 	medGizmoCrossRotateFan *rotateFan = NULL;
@@ -564,13 +564,13 @@ void medGizmoCrossRotateAxis::CreateFeedbackGizmoPipeline()
 	m_RotationFeedbackGizmo->GetMaterial()->m_Prop->SetOpacity(0.1);
 
 	// ReparentTo will add also the gizmos to the tree
-	m_RotationFeedbackGizmo->ReparentTo(m_GizmoCross);
+	mafNode::ReparentTo(m_RotationFeedbackGizmo, m_GizmoCross.get());
 
 }
 
 void medGizmoCrossRotateAxis::ShowTranslationFeedbackArrows(bool show)
 {
-	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_RotationFeedbackGizmo); evUnq.SetBool(show); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_RotationFeedbackGizmo.get()); evUnq.SetBool(show); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------

@@ -131,37 +131,53 @@ void mafMSFImporter::InternalRestore(const mafStorageElement& node)
       }
     }    
   }
-  std::vector<mafNode *> link_list;
-  auto iter = std::make_unique<mafNodeIterator>(root.get());
-  // iteration for updating VME's ID
-  for (auto n = iter->GetFirstNode(); n; n=iter->GetNextNode())
-  {
-    n->UpdateId();
-  }
+  std::vector<std::shared_ptr<mafNode> > link_list;
+
+	{
+		std::vector<std::shared_ptr<mafNode> > stack(1, root);
+  	while (!stack.empty())
+  	{
+  		auto n = stack.back();
+      n->UpdateId();
+      stack.pop_back();
+  		for (size_t i = 0; i < n->GetNumberOfChildren(); i++)
+  		{
+  			stack.push_back(n->GetChild(i));
+  		}
+  	}
+	}
   // iteration for setting up linked vme
-  for (auto n = iter->GetFirstNode(); n;n=iter->GetNextNode())
   {
-    if (n->IsMAFType(mafVMEGeneric) && n->GetTagArray()->GetTag(_R("mflVMELink")))
+    std::vector<std::shared_ptr<mafNode> > stack(1, root);
+    while (!stack.empty())
     {
-      link_list.push_back(n);
-      mafTagItem *tag = n->GetTagArray()->GetTag(_R("VME_ALIAS_PATH"));
-      mafNode *linkedVME = this->ParsePath(root.get(), tag->GetValue().GetCStr());
-      if (linkedVME != nullptr)
+      auto n = stack.back();
+      if (n->IsMAFType(mafVMEGeneric) && n->GetTagArray()->GetTag(_R("mflVMELink")))
       {
-        mafID sub_id = -1;
-        if (mafTagItem *ti = n->GetTagArray()->GetTag(_R("SUBLINK_ID")))
+        link_list.push_back(n);
+        mafTagItem* tag = n->GetTagArray()->GetTag(_R("VME_ALIAS_PATH"));
+        mafNode* linkedVME = this->ParsePath(root.get(), tag->GetValue().GetCStr());
+        if (linkedVME != nullptr)
         {
-          sub_id = (mafID)ti->GetValueAsDouble();
+          mafID sub_id = -1;
+          if (mafTagItem* ti = n->GetTagArray()->GetTag(_R("SUBLINK_ID")))
+          {
+            sub_id = (mafID)ti->GetValueAsDouble();
+          }
+          n->GetParent()->SetLink(n->GetName(), linkedVME, sub_id);
         }
-        n->GetParent()->SetLink(n->GetName(), linkedVME, sub_id);
+      }
+      stack.pop_back();
+      for (size_t i = 0; i < n->GetNumberOfChildren(); i++)
+      {
+        stack.push_back(n->GetChild(i));
       }
     }
   }
-  iter.reset();
   // remove all mafVMEGeneric representing links
   for (int l=0;l<link_list.size();l++)
   {
-    link_list[l]->ReparentTo(NULL);
+    mafNode::ReparentTo(link_list[l], nullptr);
   }
   link_list.clear();
   if(root->Initialize() == MAF_ERROR)

@@ -73,7 +73,7 @@ mafGizmoTranslateAxis::mafGizmoTranslateAxis(std::shared_ptr<mafVME> input, mafB
   // create vme gizmos stuff
   //-----------------
   // cylinder gizmo
-  m_CylGizmo = mafVMEGizmo::New();
+  m_CylGizmo = mafVMEGizmo::NewSPtr();
   if(name.empty()) {
       m_CylGizmo->SetName(_R("CylGizmo"));
   } else {
@@ -83,7 +83,7 @@ mafGizmoTranslateAxis::mafGizmoTranslateAxis(std::shared_ptr<mafVME> input, mafB
   m_CylGizmo->SetMediator(GetListener());
 
   // cone gizmo
-  m_ConeGizmo = mafVMEGizmo::New();
+  m_ConeGizmo = mafVMEGizmo::NewSPtr();
   if(name.empty()) {
       m_ConeGizmo->SetName(_R("ConeGizmo"));
   } else {
@@ -104,8 +104,8 @@ mafGizmoTranslateAxis::mafGizmoTranslateAxis(std::shared_ptr<mafVME> input, mafB
   //-----------------
   // ReparentTo will add also the gizmos to the tree!!
   // add the gizmo to the tree, this should increase reference count 
-  m_CylGizmo->ReparentTo(mafVME::SafeDownCast(m_InputVme->GetRoot()));
-  m_ConeGizmo->ReparentTo(mafVME::SafeDownCast(m_InputVme->GetRoot()));
+  mafNode::ReparentTo(m_CylGizmo, mafVME::SafeDownCast(m_InputVme->GetRoot()));
+  mafNode::ReparentTo(m_ConeGizmo, mafVME::SafeDownCast(m_InputVme->GetRoot()));
 }
 //----------------------------------------------------------------------------
 mafGizmoTranslateAxis::~mafGizmoTranslateAxis() 
@@ -130,8 +130,8 @@ mafGizmoTranslateAxis::~mafGizmoTranslateAxis()
 	//----------------------
     m_IsaComp[i].reset(); 
   }
-	m_CylGizmo->ReparentTo(nullptr);
-	m_ConeGizmo->ReparentTo(nullptr);
+	mafNode::ReparentTo(m_CylGizmo, nullptr);
+	mafNode::ReparentTo(m_ConeGizmo, nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -456,8 +456,8 @@ void mafGizmoTranslateAxis::SetColor(double cylR, double cylG, double cylB, doub
 void mafGizmoTranslateAxis::Show(bool show)
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_CylGizmo); evUnq.SetBool(show); InvokeEvent(evUnq);}
-	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_ConeGizmo); evUnq.SetBool(show); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_CylGizmo.get()); evUnq.SetBool(show); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_ConeGizmo.get()); evUnq.SetBool(show); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void mafGizmoTranslateAxis::SetAbsPose(std::shared_ptr<mafMatrix> absPose)

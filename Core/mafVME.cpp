@@ -94,7 +94,7 @@ int mafVME::InternalInitialize()
 }
 
 //-------------------------------------------------------------------------
-std::shared_ptr<mafVME> mafVME::GetParent()
+mafVME *mafVME::GetParent() const
 //-------------------------------------------------------------------------
 {
   assert(m_Parent == NULL || m_Parent->IsA(typeid(mafVME)));
@@ -183,10 +183,10 @@ bool mafVME::Equals(mafNode *node)
 }
 
 //-------------------------------------------------------------------------
-int mafVME::SetParent(mafNode *parent)
+int mafVME::OnSetParent(mafNode *parent)
 //-------------------------------------------------------------------------
 {
-  if (Superclass::SetParent(parent)==MAF_OK)
+  if (Superclass::OnSetParent(parent)==MAF_OK)
   {
     // this forces the pipe to Update its input and input frame
     m_AbsMatrixPipe->SetVME(this);

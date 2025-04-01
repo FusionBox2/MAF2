@@ -84,7 +84,7 @@ mafGizmoHandle::mafGizmoHandle(std::shared_ptr<mafVME> input, mafBaseEventHandle
   // create vme gizmos stuff
   //-----------------
   // plane
-  m_ShadingPlaneGizmo = mafVMEGizmo::New();
+  m_ShadingPlaneGizmo = mafVMEGizmo::NewSPtr();
   m_ShadingPlaneGizmo->SetName(_R("ShadingPlaneGizmo"));
   // cone gizmo
   m_BoxGizmo = mafVMEGizmo::NewSPtr();  
@@ -93,15 +93,15 @@ mafGizmoHandle::mafGizmoHandle(std::shared_ptr<mafVME> input, mafBaseEventHandle
   // since i'm working in local mode i reparent to input vme the gizmo
   m_BoxGizmo->SetInputConnection(m_TranslateBoxPolyDataFilterEnd->GetOutputPort());
 	if(parent)
-		m_BoxGizmo->ReparentTo(parent);
+		mafNode::ReparentTo(m_BoxGizmo, parent);
 	else
-		m_BoxGizmo->ReparentTo(m_InputVme.get());
+		mafNode::ReparentTo(m_BoxGizmo, m_InputVme.get());
 
   m_ShadingPlaneGizmo->SetInputConnection(m_TranslateShadingPlanePolyDataFilterEnd->GetOutputPort());
   if(parent)
-    m_ShadingPlaneGizmo->ReparentTo(parent);
+    mafNode::ReparentTo(m_ShadingPlaneGizmo, parent);
   else
-    m_ShadingPlaneGizmo->ReparentTo(m_InputVme.get());
+    mafNode::ReparentTo(m_ShadingPlaneGizmo, m_InputVme.get());
 
   auto material = m_ShadingPlaneGizmo->GetMaterial();
   material->m_Prop->SetOpacity(0.5);
@@ -118,7 +118,7 @@ mafGizmoHandle::mafGizmoHandle(std::shared_ptr<mafVME> input, mafBaseEventHandle
   // ask the manager to create the pipeline
   {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_BoxGizmo.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
 
-  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_ShadingPlaneGizmo); evUnq.SetBool(m_ShowShadingPlane); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_ShadingPlaneGizmo.get()); evUnq.SetBool(m_ShowShadingPlane); InvokeEvent(evUnq);}
   
   //-----------------
   // create isa stuff
@@ -183,8 +183,8 @@ mafGizmoHandle::~mafGizmoHandle()
 	
   m_IsaComp.reset();	//m_IsaGen is released automatically
 
-  m_BoxGizmo->ReparentTo(NULL);
-  m_ShadingPlaneGizmo->ReparentTo(NULL);
+  mafNode::ReparentTo(m_BoxGizmo, nullptr);
+  mafNode::ReparentTo(m_ShadingPlaneGizmo, nullptr);
 
   vtkDEL(m_Cube);
 }

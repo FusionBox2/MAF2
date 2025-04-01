@@ -95,7 +95,7 @@ void mafGizmoSlice::CreateGizmoSlice(std::shared_ptr<mafNode> imputVme, mafBaseE
 
   m_VmeGizmo = mafVMEGizmo::NewSPtr();
   m_VmeGizmo->SetName(m_Name);
-  m_VmeGizmo->ReparentTo(imputVme.get());
+  mafNode::ReparentTo(m_VmeGizmo, imputVme.get());
 
   m_GizmoBehavior = mafInteractorCompositorMouse::NewSPtr();
   m_MouseBH = m_GizmoBehavior->CreateBehavior(MOUSE_LEFT).get();
@@ -132,7 +132,7 @@ void mafGizmoSlice::DestroyGizmoSlice()
   m_VmeGizmo->SetBehavior(nullptr);
   m_GizmoBehavior.reset();
 
-  m_VmeGizmo->ReparentTo(nullptr);
+  mafNode::ReparentTo(m_VmeGizmo, nullptr);
   m_VmeGizmo.reset();
   vtkDEL(m_SnapArray);
   vtkDEL(m_Point);

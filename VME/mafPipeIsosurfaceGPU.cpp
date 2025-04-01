@@ -263,7 +263,7 @@ void mafPipeIsosurfaceGPU::ExctractIsosurface()
 	m_IsosurfaceVme->SetName(name);
 	m_IsosurfaceVme->SetDataByDetaching(surface,0);
 
-	m_IsosurfaceVme->ReparentTo(m_Vme);
+	mafNode::ReparentTo(m_IsosurfaceVme, m_Vme);
 
 	surface->Delete(); 
 	m_IsosurfaceVme.reset();

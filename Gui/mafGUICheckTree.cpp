@@ -191,7 +191,7 @@ bool mafGUICheckTree::IsIconChecked(wxTreeItemId item)
 void mafGUICheckTree::VmeAdd(std::shared_ptr<mafNode> vme)
 //----------------------------------------------------------------------------
 {
-  AddNode((intptr_t)vme.get(), (intptr_t)vme->GetParent().get(), vme->GetName().toWx(), 0, new mafGUICheckTreeItemData((intptr_t)vme.get(), vme));
+  AddNode((intptr_t)vme.get(), (intptr_t)vme->GetParent(), vme->GetName().toWx(), 0, new mafGUICheckTreeItemData((intptr_t)vme.get(), vme));
 	VmeUpdateIcon(vme.get());
 }
 //----------------------------------------------------------------------------
@@ -258,8 +258,9 @@ int mafGUICheckTree::GetVmeStatus(mafNode *vme)
 void mafGUICheckTree::VmeUpdateIcon(mafNode *vme)
 //----------------------------------------------------------------------------
 {
-  auto item = ItemFromNode((intptr_t)vme);
-  auto iter = std::make_unique<mafNodeIterator>(static_cast<mafGUICheckTreeItemData*>(m_NodeTree->GetItemData(item))->GetSharedNode().get());
+  //auto item = ItemFromNode((intptr_t)vme);
+  auto iter = std::make_unique<mafNodeIterator>(vme);// static_cast<mafGUICheckTreeItemData*>(m_NodeTree->GetItemData(item))->GetSharedNode().get());
+  //auto iter = std::make_unique<mafNodeIterator>(static_cast<mafGUICheckTreeItemData*>(m_NodeTree->GetItemData(item))->GetSharedNode().get());
   for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {
     int dataStatus = 1;
