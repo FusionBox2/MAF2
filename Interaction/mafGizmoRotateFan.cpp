@@ -75,7 +75,7 @@ mafGizmoRotateFan::mafGizmoRotateFan(std::shared_ptr<mafVME> input, mafBaseEvent
   // create vme gizmo stuff
   //-----------------
   // the circle gizmo
-  m_GizmoFan = mafVMEGizmo::New();
+  m_GizmoFan = mafVMEGizmo::NewSPtr();
   m_GizmoFan->SetName(_R("fan"));
   m_GizmoFan->SetInputConnection(m_ChangeFanAxisTPDF->GetOutputPort());
   
@@ -89,7 +89,7 @@ mafGizmoRotateFan::mafGizmoRotateFan(std::shared_ptr<mafVME> input, mafBaseEvent
   SetAbsPose(absInputMatrix);
 
   // add the gizmo to the tree, this should increase reference count  
-  m_GizmoFan->ReparentTo(mafVME::SafeDownCast(m_InputVme->GetRoot()));
+  mafNode::ReparentTo(m_GizmoFan, mafVME::SafeDownCast(m_InputVme->GetRoot()));
 }
 //----------------------------------------------------------------------------
 mafGizmoRotateFan::~mafGizmoRotateFan() 
@@ -107,7 +107,7 @@ mafGizmoRotateFan::~mafGizmoRotateFan()
   vtkDEL(m_ChangeFanAxisTransform);
   vtkDEL(m_ChangeFanAxisTPDF);
   
-  m_GizmoFan->ReparentTo(NULL);
+  mafNode::ReparentTo(m_GizmoFan, nullptr);
 }
 //----------------------------------------------------------------------------
 void mafGizmoRotateFan::CreatePipeline() 
@@ -371,7 +371,7 @@ void mafGizmoRotateFan::SetColor(double colR, double colG, double colB)
 void mafGizmoRotateFan::Show(bool show)
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_GizmoFan); evUnq.SetBool(show); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_GizmoFan.get()); evUnq.SetBool(show); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 double mafGizmoRotateFan::PointPickedToStartTheta(double xp, double yp, double zp)

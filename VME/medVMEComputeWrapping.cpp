@@ -5794,7 +5794,7 @@ void medVMEComputeWrapping::SetMeterLink(const mafString& link_name, mafNode *n)
     nid = n->GetParent()->GetId();
     idx = mafVMELandmarkCloud::StaticDownCast(n->GetParent())->FindLandmarkIndex(n->GetName());
     lm = true;
-		SetLink(link_name,n->GetParent().get(),idx);
+		SetLink(link_name,n->GetParent(),idx);
 	}
   else
   {

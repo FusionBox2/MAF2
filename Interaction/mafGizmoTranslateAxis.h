@@ -114,10 +114,10 @@ protected:
   void SetRefSysMatrix(std::shared_ptr<mafMatrix> constrain);
 
   /** Cone gizmo */
-  mafVMEGizmo *m_ConeGizmo;
+  std::shared_ptr<mafVMEGizmo> m_ConeGizmo;
 
   /** cylinder gizmo*/
-  mafVMEGizmo *m_CylGizmo;
+  std::shared_ptr<mafVMEGizmo> m_CylGizmo;
 
   /** Register input vme*/
   std::shared_ptr<mafVME> m_InputVme;

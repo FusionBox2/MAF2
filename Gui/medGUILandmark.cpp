@@ -330,13 +330,13 @@ void medGUILandmark::OnVmePicked(mafEvent& e)
 
     double maxBound = diffX > diffY ? (diffX > diffZ ? diffX : diffZ ) : (diffY > diffZ ? diffY : diffZ );
     m_LMCloud->SetRadius(maxBound/m_BoundsFraction);
-		m_LMCloud->ReparentTo(m_InputVME);
+		mafNode::ReparentTo(m_LMCloud, m_InputVME);
  
      /** 
     Force vme data creation since this is required by mafPipePointSet
     */
 //    {mafEvent evUnq(this,VME_CREATE_CLIENT_DATA,m_LMCloud); InvokeEvent(evUnq);}
-		{mafEvent evUnq(this,VME_ADD); evUnq.SetVme(m_LMCloud.get()); InvokeEvent(evUnq);}
+		//{mafEvent evUnq(this,VME_ADD); evUnq.SetVme(m_LMCloud.get()); InvokeEvent(evUnq);}
 		{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_LMCloud.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
     
   }
@@ -350,13 +350,13 @@ void medGUILandmark::OnVmePicked(mafEvent& e)
 
     m_Landmark = mafVMELandmark::NewSPtr();
     m_Landmark->SetName(name);
-    m_Landmark->ReparentTo(m_LMCloud.get());
+    mafNode::ReparentTo(m_Landmark, m_LMCloud.get());
 
     m_Landmark->Update(); 
     m_Landmark->SetAbsPose(absPosition[0],absPosition[1],absPosition[2],0,0,0);
     
     //{mafEvent evUnq(this,VME_CREATE_CLIENT_DATA,m_Landmark); InvokeEvent(evUnq);}
-	  {mafEvent evUnq(this,VME_ADD); evUnq.SetVme(m_Landmark.get()); InvokeEvent(evUnq);}
+	  //{mafEvent evUnq(this,VME_ADD); evUnq.SetVme(m_Landmark.get()); InvokeEvent(evUnq);}
     {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Landmark.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
 	  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);} 
 
@@ -559,7 +559,7 @@ void medGUILandmark::SpawnLandmark()
   //m_Landmark = mafVMELandmark::New();//we have a reference on the vme (we can call vtkDEL in the UNDO)
   m_Landmark = mafVMELandmark::NewSPtr();
   m_Landmark->SetName(name);
-  m_Landmark->ReparentTo(m_LMCloud.get());
+  mafNode::ReparentTo(m_Landmark, m_LMCloud.get());
   m_Landmark->Update(); 
 
   //m_Landmark->SetPose(position[0],position[1],position[2],-1);
@@ -567,7 +567,7 @@ void medGUILandmark::SpawnLandmark()
   m_Landmark->SetPose(position[0],position[1],position[2],rot[0], rot[1], rot[2],-1);
   
   //{mafEvent evUnq(this,VME_CREATE_CLIENT_DATA,m_Landmark); InvokeEvent(evUnq);}
-	{mafEvent evUnq(this,VME_ADD); evUnq.SetVme(m_Landmark.get()); InvokeEvent(evUnq);}
+	//{mafEvent evUnq(this,VME_ADD); evUnq.SetVme(m_Landmark.get()); InvokeEvent(evUnq);}
   {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Landmark.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
 	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);} 
   

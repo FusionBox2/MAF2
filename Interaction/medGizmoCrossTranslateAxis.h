@@ -121,7 +121,7 @@ public:
 protected:
 
   /** Pickable translation cylinder gizmo*/
-  mafVMEGizmo *m_TranslationCylinderGizmo;
+  std::shared_ptr<mafVMEGizmo> m_TranslationCylinderGizmo;
 
   
   double m_Color[3];

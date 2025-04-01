@@ -2475,7 +2475,7 @@ void medVMEWrappedMeter::SetMeterLink(const mafString& link_name, mafNode *n)
 {
   if (n->IsMAFType(mafVMELandmark))
   {
-    SetLink(link_name,n->GetParent().get(),mafVMELandmarkCloud::StaticDownCast(n->GetParent())->FindLandmarkIndex(n->GetName()));
+    SetLink(link_name,n->GetParent(),mafVMELandmarkCloud::StaticDownCast(n->GetParent())->FindLandmarkIndex(n->GetName()));
   }
   else
 	{

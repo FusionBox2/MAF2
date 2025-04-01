@@ -89,34 +89,21 @@ bool mafNodeManager::SetRoot(std::shared_ptr<mafNode> root)
   return true;
 }
 //----------------------------------------------------------------------------
-void mafNodeManager::VmeAdd(mafNode *n)
-//----------------------------------------------------------------------------
-{
-  if(n == nullptr)
-    return ;
-  // check the node's parent
-  auto vp = n->GetParent();  
-  if(vp && !m_Root->IsInTree(vp.get()))
-  {
-    assert(false);
-    return;
-  }
-  if(vp == nullptr) 
-    n->ReparentTo(m_Root.get()); // reparent the node to the root
-  m_Modified = true;
-}
-//----------------------------------------------------------------------------
 void mafNodeManager::VmeRemove(mafNode *n)
 //----------------------------------------------------------------------------
 {
   if(n == nullptr)
     return ;
-  if(!m_Root.get() || !m_Root->IsInTree(n))
+  if(!m_Root || !m_Root->IsInTree(n))
   {
     assert(false);
     return;
   }
-  n->ReparentTo(NULL);
+  if (m_Root.get() != n)
+  {
+    auto parent = n->GetParent();
+    mafNode::ReparentTo(parent->GetChild(parent->FindNodeIdx(n)), nullptr);
+  }
   m_Modified = true;
 }
 //----------------------------------------------------------------------------

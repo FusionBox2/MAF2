@@ -233,7 +233,7 @@ size_t mafNode::GetNumberOfChildren(bool onlyVisible /*=false*/)
 bool mafNode::IsAChild(mafNode *a)
 //-------------------------------------------------------------------------
 {
-  return a->GetParent().get() == this;
+  return a->GetParent() == this;
 }
 
 //-------------------------------------------------------------------------
@@ -405,7 +405,10 @@ std::shared_ptr<mafNode> mafNode::FindInTreeById(const mafID id)
 int mafNode::AddChild(std::shared_ptr<mafNode> node)
 //-------------------------------------------------------------------------
 {
-  return node->ReparentTo(this);
+  // We cannot reparent to a subnode!!!
+  if (node->IsInTree(this))
+    return MAF_ERROR;
+  return ReparentTo(node, this);
 }  
 
 //-------------------------------------------------------------------------
@@ -422,7 +425,7 @@ void mafNode::RemoveChild(mafNode *node)
     mafWarningMacro("Trying to remove node that is not a child of this node");
   }
   auto  pntr = node->SharedFromThis();
-  node->SetParent(nullptr);
+  SetParentNew(GetChild(FindNodeIdx(node)), nullptr);
 }
 
 //-------------------------------------------------------------------------
@@ -438,12 +441,9 @@ void mafNode::RemoveChild(mafID idx,bool onlyVisible)
 }
 
 //-------------------------------------------------------------------------
-int mafNode::ReparentTo(mafNode *newparent)
+int mafNode::ReparentTo(std::shared_ptr<mafNode> sharedThis, mafNode *newparent)
 //-------------------------------------------------------------------------
 {
-  // We cannot reparent to a subnode!!!
-  if (IsInTree(newparent))
-    return MAF_ERROR;
   // Add this node to the new parent children list and
   // remove it from old parent children list.
   // We first add it to the new parent, thus it is registered
@@ -451,8 +451,8 @@ int mafNode::ReparentTo(mafNode *newparent)
   // We must keep the oldparent pointer somewhere since it is overwritten
   // by AddChild.
   // self register to preserve from distruction
-  auto pntr = SharedFromThis();
-  if((SetParent(nullptr) == MAF_OK) && (SetParent(newparent) == MAF_OK))
+  auto pntr = sharedThis;
+  if((SetParentNew(sharedThis, nullptr) == MAF_OK) && (SetParentNew(sharedThis, newparent) == MAF_OK))
     return MAF_OK;
   return MAF_ERROR;
 }
@@ -461,7 +461,7 @@ int mafNode::ReparentTo(mafNode *newparent)
 mafNode *mafNode::GetRoot()
 //-------------------------------------------------------------------------
 {
-  for (auto node = SharedFromThis(); node; node = node->GetParent())
+  for (auto node = this; node; node = node->GetParent())
   {
     if (node->GetParent() == nullptr)
     {
@@ -482,11 +482,11 @@ bool mafNode::IsEmpty() const
 bool mafNode::IsInTree(mafNode *a) const
 //-------------------------------------------------------------------------
 {
-  for (auto node = a->SharedFromThis(); node; node = node->GetParent())
+  /*for (auto node = this; node; node = node->GetParent())
   {
-    if (this == node.get())
+    if (this == node)
       return true;
-  }
+  }*/
   return false;
 }
 
@@ -514,28 +514,33 @@ void mafNode::RemoveAllChildren()
   {
     auto curr = this->GetLastChild();
     if(curr.get())
-      curr->SetParent(nullptr);
+      SetParentNew(curr, nullptr);
   }
   m_Children.clear();
 }
 
 //------------------------------------------------------------------------------
-int mafNode::SetParent(mafNode *parent)
+int mafNode::OnSetParent(mafNode* parent) { return MAF_OK; }
+//-------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+int mafNode::SetParentNew(std::shared_ptr<mafNode> sharedThis, mafNode *parent)
 //-------------------------------------------------------------------------
 {
+  auto _Parent = sharedThis->GetParent();
   // reparenting to NULL is admitted in any case
-  if((parent != nullptr && !this->CanReparentTo(parent)) || IsInTree(parent))
+  if((parent != nullptr && !sharedThis->CanReparentTo(parent)) || sharedThis->IsInTree(parent))
   {
     // modified by Stefano 27-10-2004: Changed the error macro to give feedback about node names 
-    mafErrorMacro("Cannot reparent the VME: " << GetName().GetCStr() << " under the " << parent->GetTypeName() << " named " << parent->GetName().GetCStr());
+    mafErrorMacro("Cannot reparent the VME: " << sharedThis->GetName().GetCStr() << " under the " << parent->GetTypeName() << " named " << parent->GetName().GetCStr());
     return MAF_ERROR;
   }
-  if(m_Parent == parent)
+  if(_Parent == parent)
   {
     return MAF_OK;
   }
-  auto pntr = SharedFromThis();//self protection from destruction
-  mafNode *old_root = (m_Parent ? m_Parent->GetRoot() : nullptr);
+  auto pntr = sharedThis;//self protection from destruction
+  mafNode *old_root = (_Parent ? _Parent->GetRoot() : nullptr);
   mafNode *new_root = (parent ? parent->GetRoot() : nullptr);
 
   // if the Node was attached to another tree, first send detaching event
@@ -543,29 +548,30 @@ int mafNode::SetParent(mafNode *parent)
   {
     if(new_root != old_root)
     {
-      {mafEventBase evUnq(this, NODE_DETACHED_FROM_TREE); InvokeEvent(&evUnq);}
-      {mafEventBase evUnq(this, NODE_DETACHED_FROM_TREE); ForwardUpEvent(&evUnq);}
-      {mafEventBase evUnq(this, NODE_DETACHED_FROM_TREE, NULL, MCH_DOWN); OnEvent(&evUnq);}
+      {mafEventBase evUnq(sharedThis.get(), NODE_DETACHED_FROM_TREE); sharedThis->InvokeEvent(&evUnq); }
+      {mafEventBase evUnq(sharedThis.get(), NODE_DETACHED_FROM_TREE); sharedThis->ForwardUpEvent(&evUnq); }
+      {mafEventBase evUnq(sharedThis.get(), NODE_DETACHED_FROM_TREE, NULL, MCH_DOWN); sharedThis->OnEvent(&evUnq); }
     }
-    int idx = m_Parent->FindNodeIdx(this);
+    int idx = _Parent->FindNodeIdx(sharedThis.get());
     if(idx == -1)
     {
       mafWarningMacro("Child index could not be found");
     }
     else
     {
-      mafNode *prev = (idx > 0) ? m_Parent->m_Children[idx - 1].get() : NULL;
-      mafNode *next = (idx < m_Parent->m_Children.size() - 1) ? m_Parent->m_Children[idx + 1].get() : NULL;
-      m_Parent->m_Children.erase(m_Parent->m_Children.begin() + idx);
+      mafNode *prev = (idx > 0) ? _Parent->m_Children[idx - 1].get() : nullptr;
+      mafNode *next = (idx < _Parent->m_Children.size() - 1) ? _Parent->m_Children[idx + 1].get() : nullptr;
+      _Parent->m_Children.erase(_Parent->m_Children.begin() + idx);
       UpdateUpDownAvailability(prev);
       UpdateUpDownAvailability(next);
-      m_Parent->Modified();
+      _Parent->Modified();
     }
   }
 
-  m_Parent = parent;
+  sharedThis->m_Parent = parent;
+  _Parent = parent;
 
-  auto iter = std::make_unique<mafNodeIterator>(this);
+  auto iter = std::make_unique<mafNodeIterator>(sharedThis.get());
   for (auto n = iter->GetFirstNode(); n; n = iter->GetNextNode())
   {
     n->UpdateId();
@@ -574,21 +580,21 @@ int mafNode::SetParent(mafNode *parent)
 
   if(new_root != nullptr)
   {
-    if(m_Parent->IsInitialized() && (Initialize() == MAF_ERROR))
+    if(_Parent->IsInitialized() && (sharedThis->Initialize() == MAF_ERROR))
       return MAF_ERROR;
-    mafNode *prev = (m_Parent->m_Children.size() > 0) ? m_Parent->m_Children[m_Parent->m_Children.size() - 1].get() : nullptr;
-    m_Parent->m_Children.push_back(SharedFromThis());
+    mafNode *prev = (_Parent->m_Children.size() > 0) ? _Parent->m_Children[_Parent->m_Children.size() - 1].get() : nullptr;
+    _Parent->m_Children.push_back(sharedThis);
     UpdateUpDownAvailability(prev);
-    m_Parent->Modified();
+    _Parent->Modified();
     if(new_root != old_root)
     {
-      {mafEventBase evUnq(this, NODE_ATTACHED_TO_TREE); InvokeEvent(&evUnq);}
-      {mafEventBase evUnq(this, NODE_ATTACHED_TO_TREE); ForwardUpEvent(&evUnq);}
-      {mafEventBase evUnq(this, NODE_ATTACHED_TO_TREE, nullptr, MCH_DOWN); OnEvent(&evUnq);}
+      {mafEventBase evUnq(sharedThis.get(), NODE_ATTACHED_TO_TREE); sharedThis->InvokeEvent(&evUnq);}
+      {mafEventBase evUnq(sharedThis.get(), NODE_ATTACHED_TO_TREE); sharedThis->ForwardUpEvent(&evUnq);}
+      {mafEventBase evUnq(sharedThis.get(), NODE_ATTACHED_TO_TREE, nullptr, MCH_DOWN); sharedThis->OnEvent(&evUnq);}
     }
   }
-  UpdateUpDownAvailability(this);
-  Modified();
+  UpdateUpDownAvailability(sharedThis.get());
+  sharedThis->Modified();
   return MAF_OK;
 }
 //-------------------------------------------------------------------------
@@ -779,7 +785,7 @@ std::shared_ptr<mafNode> mafNode::CopyTree(mafNode *vme, mafNode *parent)
 //-------------------------------------------------------------------------
 {
   auto v = vme->MakeCopy();
-  v->ReparentTo(parent);
+  ReparentTo(v, parent);
 
   for(unsigned long i=0; i<vme->GetNumberOfChildren(); i++)
   {
@@ -1082,7 +1088,7 @@ void mafNode::OnEvent(mafEventBase *e)
           {
             if(this != parent->GetFirstChild().get())
             {
-              ReparentTo(parent->GetChild(parent->FindNodeIdx(this) - 1).get());
+              ReparentTo(parent->GetChild(parent->FindNodeIdx(this)), parent->GetChild(parent->FindNodeIdx(this) - 1).get());
               {mafEvent evUnq(this, VME_SELECT); evUnq.SetVme(this); ForwardUpEvent(evUnq);}
             }
           }
@@ -1095,8 +1101,8 @@ void mafNode::OnEvent(mafEventBase *e)
             if(auto grandparent = parent->GetParent())
             {
               int numChildren = grandparent->GetNumberOfChildren();
-              int parentidx   = grandparent->FindNodeIdx(parent.get());
-              ReparentTo(grandparent.get());
+              int parentidx   = grandparent->FindNodeIdx(parent);
+              ReparentTo(parent->GetChild(parent->FindNodeIdx(this)), grandparent);
               {mafEvent evUnq(this, VME_SELECT); evUnq.SetVme(this); ForwardUpEvent(evUnq);}
               for(int i = 0; i < (numChildren - parentidx - 1); i++)
                 grandparent->MoveChildUp(this);
@@ -1469,6 +1475,8 @@ void mafNode::SwapChildren(int idx1, int idx2)
 std::shared_ptr<mafNode> mafNode::GetByPath(const mafString& path,  bool onlyVisible /*=true*/)
 //-------------------------------------------------------------------------
 {
+  return nullptr;
+#ifdef KJHKJHKJHKJ
   wxStringTokenizer tkz(path.toWx(), wxT("/"));
 
   std::shared_ptr<mafNode> currentNode=SharedFromThis();
@@ -1749,6 +1757,7 @@ std::shared_ptr<mafNode> mafNode::GetByPath(const mafString& path,  bool onlyVis
   } 
   //While end
   return currentNode;
+#endif
 }
 std::shared_ptr<mafNode> mafNode::SharedFromThis()
 {
@@ -1759,11 +1768,9 @@ std::shared_ptr<mafNode> mafNode::SharedFromThis()
   return nullptr;
 }
 
-std::shared_ptr<mafNode> mafNode::GetParent()
+mafNode *mafNode::GetParent() const
 {
-  if (m_Parent)
-    return m_Parent->SharedFromThis();
-  return nullptr;
+  return m_Parent;
 }
 
 

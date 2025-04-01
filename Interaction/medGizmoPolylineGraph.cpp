@@ -127,7 +127,7 @@ medGizmoPolylineGraph::medGizmoPolylineGraph(std::shared_ptr<mafNode> imputVme, 
 
   m_VmeGizmo = mafVMEGizmo::NewSPtr();
   m_VmeGizmo->SetName(m_Name);
-  m_VmeGizmo->ReparentTo(root); 
+  mafNode::ReparentTo(m_VmeGizmo, root); 
   m_VmeGizmo->SetInputConnection(m_AppendPolyData->GetOutputPort());  
   //assert(m_VmeGizmo->GetData()->GetNumberOfPoints());  
 }
@@ -137,7 +137,7 @@ medGizmoPolylineGraph::medGizmoPolylineGraph(std::shared_ptr<mafNode> imputVme, 
 void medGizmoPolylineGraph::DestroyVMEGizmo()
 //------------------------------------------------------------------------
 {  
-  m_VmeGizmo->ReparentTo(NULL);
+  mafNode::ReparentTo(m_VmeGizmo, nullptr);
   m_VmeGizmo.reset();
 
   DestroyGizmoVTKData();  

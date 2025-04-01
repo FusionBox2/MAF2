@@ -114,7 +114,7 @@ medGizmoCrossTranslateAxis::medGizmoCrossTranslateAxis(std::shared_ptr<mafVME> i
 	// create vme gizmos stuff
 	//-----------------
 	// cylinder gizmo
-	m_TranslationCylinderGizmo = mafVMEGizmo::New();
+	m_TranslationCylinderGizmo = mafVMEGizmo::NewSPtr();
 	//  m_TranslationCylinderGizmo->GetTagArray()->SetTag(mafTagItem("VISIBLE_IN_THE_TREE", 1));
 	m_TranslationCylinderGizmo->SetName(_R("AxisTranslationGizmo"));
 	m_TranslationCylinderGizmo->SetInputConnection(m_Append->GetOutputPort());
@@ -129,7 +129,7 @@ medGizmoCrossTranslateAxis::medGizmoCrossTranslateAxis(std::shared_ptr<mafVME> i
 
 	// ReparentTo will add the gizmos to the tree
 	// and increse reference count
-	m_TranslationCylinderGizmo->ReparentTo(mafVME::SafeDownCast(m_InputVme->GetRoot()));
+	mafNode::ReparentTo(m_TranslationCylinderGizmo, mafVME::SafeDownCast(m_InputVme->GetRoot()));
 
 	// build translation feedback gizmo stuff
 	CreateFeedbackGizmoPipeline();
@@ -180,7 +180,7 @@ medGizmoCrossTranslateAxis::~medGizmoCrossTranslateAxis()
 	//----------------------
 	m_IsaComp.reset(); 
 
-	m_TranslationCylinderGizmo->ReparentTo(NULL);
+	mafNode::ReparentTo(m_TranslationCylinderGizmo, nullptr);
 
 	// clean up translation feedback stuff
 	m_TranslationFeedbackGizmo.reset();
@@ -442,7 +442,7 @@ void medGizmoCrossTranslateAxis::SetColor(double cylR, double cylG, double cylB)
 void medGizmoCrossTranslateAxis::Show(bool show)
 //----------------------------------------------------------------------------
 {
-	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_TranslationCylinderGizmo); evUnq.SetBool(show); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_TranslationCylinderGizmo.get()); evUnq.SetBool(show); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -606,6 +606,6 @@ void medGizmoCrossTranslateAxis::CreateFeedbackGizmoPipeline()
 	m_TranslationFeedbackGizmo->GetMaterial()->m_Prop->SetSpecular(0);
 	m_TranslationFeedbackGizmo->GetMaterial()->m_Prop->SetOpacity(0.1);
 	// ReparentTo will add also the gizmos to the tree
-	m_TranslationFeedbackGizmo->ReparentTo(m_TranslationCylinderGizmo);
+	mafNode::ReparentTo(m_TranslationFeedbackGizmo, m_TranslationCylinderGizmo.get());
 	// m_TranslationFeedbackArrowGizmo->ReparentTo(m_TranslationCylinderGizmo->GetRoot());
 }

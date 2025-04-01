@@ -206,7 +206,6 @@ protected:
   virtual void VmeDoubleClicked(mafEvent &e);
 	virtual void VmeShow(mafNode *vme, bool visibility);
 	virtual void VmeModified(mafNode *vme);
-	virtual void VmeAdd(mafNode *vme);
 
 
   virtual void VmeExpand(mafNode *vme);
@@ -215,7 +214,7 @@ protected:
   virtual void VmeCollapseSubTree(mafNode *vme);
   virtual void VmeExpandVisible(mafNode *vme);
 
-	virtual void VmeAdded(std::shared_ptr<mafNode> vme);
+	virtual void VmeAdded(mafNode *vme);
 	virtual void VmeRemove(mafNode *vme);
 	virtual void VmeRemoving(mafNode *vme);
 	virtual std::vector<mafNode* > VmeChoose(intptr_t vme_accept_function = 0, long style = REPRESENTATION_AS_TREE, mafString title = _R("Choose Node"), bool multiSelect = false);

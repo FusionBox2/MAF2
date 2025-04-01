@@ -133,7 +133,7 @@ protected:
   vtkTransformPolyDataFilter *m_ChangeFanAxisTPDF;
   
    /** Fan gizmo */
-  mafVMEGizmo *m_GizmoFan;
+  std::shared_ptr<mafVMEGizmo> m_GizmoFan;
 
   /** gizmo data */
   //mafVmeData *GizmoData;

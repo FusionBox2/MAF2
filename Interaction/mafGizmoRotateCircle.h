@@ -124,7 +124,7 @@ protected:
   std::shared_ptr<mafMatrix> m_AbsInputMatrix;
   
   /** Circle gizmo */
-  mafVMEGizmo *m_GizmoCircle;
+  std::shared_ptr<mafVMEGizmo> m_GizmoCircle;
 
   /** Register input vme*/
   std::shared_ptr<mafVME> m_InputVme;

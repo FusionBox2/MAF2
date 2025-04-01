@@ -1292,7 +1292,7 @@ mafNode* medVMEStent::FindTaggedCenterLineVME(mafNode* inputNode)
 
   // search tree for tagged item
   if (parentNode->GetTagArray()->GetTag(_R("RT3S_CENTER_LINE")))
-    return parentNode.get();
+    return parentNode;
 
   for (int i = 0 ;  i < parentNode->GetNumberOfChildren() ;  i++){
     auto childNode = parentNode->GetChild(i) ;
@@ -1321,7 +1321,7 @@ mafNode* medVMEStent::FindTaggedVesselVME(mafNode* inputNode)
 
   // search tree for tagged item
   if (parentNode->GetTagArray()->GetTag(_R("RT3S_VESSEL")))
-    return parentNode.get();
+    return parentNode;
 
   for (int i = 0 ;  i < parentNode->GetNumberOfChildren() ;  i++){
     auto childNode = parentNode->GetChild(i) ;
@@ -2037,7 +2037,7 @@ mafNode* medVMEStent::FindNodeWithId(mafID id)
 
   auto parent = this->GetParent() ;
   if (parent->GetId() == id)
-    return parent.get();
+    return parent;
 
   for (int i = 0 ;  i < parent->GetNumberOfChildren() ;  i++){
     auto child = parent->GetChild(i) ;

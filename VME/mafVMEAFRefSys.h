@@ -113,7 +113,7 @@ public:
   void CalculateMatrix(mafMatrix& mat, mafTimeStamp ts = -1) override;
 
 protected:
-  int SetParent(mafNode *parent) override;
+  int OnSetParent(mafNode *parent) override;
 
   /** 
   Update vector virtual machine with given timestamp*/

@@ -175,7 +175,6 @@ EVT_START,
   VME_EXPANDSUBTREE,       // from a generic mafOp to mafLogic  (to be removed Marco)
   VME_COLLAPSESUBTREE,       // from a generic mafOp to mafLogic  (to be removed Marco)
   VME_EXPANDVISIBLE,       // from a generic mafOp to mafLogic  (to be removed Marco)
-  VME_ADD,       // from a generic mafOp to mafLogic  (to be removed Marco)
   VME_ADDED,     // from mafVmeManager to mafLogic (to be removed Marco)
   VME_REMOVE,    // from a generic mafOp to mafLogic (to be removed Marco)
   VME_REMOVING,  // from mafVmeManager to mafLogic 

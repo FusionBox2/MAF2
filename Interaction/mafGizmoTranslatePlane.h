@@ -121,7 +121,7 @@ public:
 
 protected:
   /** Segments gizmo */
-  mafVMEGizmo *m_Gizmo[3];
+  std::shared_ptr<mafVMEGizmo> m_Gizmo[3];
 
   /** Register input vme*/
   std::shared_ptr<mafVME> m_InputVme;

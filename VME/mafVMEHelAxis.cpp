@@ -563,7 +563,7 @@ void mafVMEHelAxis::SetDistal(mafVME *vme)
 
 mafVME *mafVMEHelAxis::GetProximal()
 {
-  return GetParent().get();
+  return GetParent();
   if(mafVME *vme = mafVME::SafeDownCast(GetLink(_R("ProximalSegment"))))
     return vme;
   return NULL;

@@ -405,7 +405,7 @@ void mafVMERefSysAbstract::SetRefSysLink(const char *link_name, mafNode *n)
       mafString lm_name = cloud->GetLandmarkName(i).Lower();
       if(lm_name == refname)
       {
-        SetLink(_R(link_name),n->GetParent().get(), i);
+        SetLink(_R(link_name),n->GetParent(), i);
         break;
       }
     }

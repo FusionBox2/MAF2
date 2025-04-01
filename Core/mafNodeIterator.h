@@ -129,11 +129,11 @@ protected:
   /** Callback function. By default send an event through the m_EventSource source. */
   void DoneExecute();  
 
-	mafNode         *m_RootNode;
-  mafNode         *m_CurrentNode;
-  int             m_TraversalMode;
-  int             m_TraversalDone;
-  bool            m_IgnoreVisibleToTraverse;
+	mafNode         *m_RootNode = nullptr;
+  mafNode         *m_CurrentNode = nullptr;
+  int             m_TraversalMode = 0;
+  int             m_TraversalDone = 0;
+  bool            m_IgnoreVisibleToTraverse = false;
 
   std::vector<mafID> m_CurrentIdx;
 };

@@ -40,9 +40,8 @@ public:
 
   bool Accept(mafNode *node) override;
   void OpRun() override;
-  void OpDo() override;
 
 protected: 
-  mafVMEGroup *m_Group;
+  std::shared_ptr<mafVMEGroup> m_Group;
 };
 #endif

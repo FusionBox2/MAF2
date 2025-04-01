@@ -176,12 +176,12 @@ public:
   std::shared_ptr<mafNode> GetByPath(const mafString& path, bool onlyVisible=true);
   
   /** Add a child to this node. Return MAF_OK if success.*/
-  virtual int AddChild(std::shared_ptr<mafNode> node);
+  int AddChild(std::shared_ptr<mafNode> node);
 
   /** Remove a child node*/
-  virtual void RemoveChild(const mafID idx, bool onlyVisible=false);
+  void RemoveChild(mafID idx, bool onlyVisible=false);
   /** Remove a child node*/
-  virtual void RemoveChild(mafNode *node);
+  void RemoveChild(mafNode *node);
 
   /** Find a child given its pointer and return its index. Return -1 in case of not found or failure.
       If only visible is true return the idx of visible to traverse nodes subset */
@@ -208,7 +208,7 @@ public:
     function to avoid these problems when reparenting to different trees.
     To move a node into a different tree you better use DeepCopy to copy 
     it into a Node of that tree.*/
-  int ReparentTo(mafNode *parent);
+  static int ReparentTo(std::shared_ptr<mafNode> sharedThis, mafNode *parent);
 
   /** Import all children of another tree into this tree */
   void Import(mafNode *tree);
@@ -251,7 +251,7 @@ public:
   
   /**
   Return the pointer to the parent node (if present)*/
-  std::shared_ptr<mafNode> GetParent();
+  mafNode *GetParent() const;
 
   /**
     Remove recursively all nodes from this tree, forcing all subnodes
@@ -421,7 +421,8 @@ protected:
   /**
     This function set the parent for this Node. It returns a value
     to allow subclasses to implement selective reparenting.*/
-  virtual int SetParent(mafNode *parent);
+  static int SetParentNew(std::shared_ptr<mafNode> sharedThis, mafNode* parent);
+  virtual int OnSetParent(mafNode *parent);
   
   /** Swaps children in given positions.*/
   void SwapChildren(int idx1, int idx2);

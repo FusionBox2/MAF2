@@ -141,9 +141,9 @@ protected:
 	//mafVMELandmarkCloud	*m_Cloud3;
 //	mafVME *p1,*p2,*p3,*p4,*p5,*p6;
 
-	mafVMEPlane* plan1;
-	mafVMEPlane* plan2;
-	mafVMEPlane* plan3;
+	std::shared_ptr<mafVMEPlane> plan1;
+	std::shared_ptr<mafVMEPlane> plan2;
+	std::shared_ptr<mafVMEPlane> plan3;
 
 	mafVMESurface* surface;
 	//mafVME* p4;

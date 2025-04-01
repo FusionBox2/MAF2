@@ -94,7 +94,7 @@ void lhpVMEKMInfo::OnEvent(mafEventBase *maf_event)
       if (n)
       {
         auto parent = n->GetParent();
-        if (parent.get() == this)
+        if (parent == this)
         {
           //mafMessage("Ask for shared GUI!!");
         }
@@ -106,7 +106,7 @@ void lhpVMEKMInfo::OnEvent(mafEventBase *maf_event)
       if (n)
       {
         auto parent = n->GetParent();
-        if (parent.get() == this)
+        if (parent == this)
         {
           //mafMessage("Remove shared GUI!!");
         }

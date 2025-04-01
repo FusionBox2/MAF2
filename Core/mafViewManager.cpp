@@ -330,9 +330,17 @@ void mafViewManager::ViewInsert(mafView *view)
 	view->SetListener(this);
   if(m_RootVme)
   {
-    auto iter = std::make_unique<mafNodeIterator>(m_RootVme.get()); // iterate over inserted vme
-    for(auto vme = iter->GetFirstNode(); vme; vme = iter->GetNextNode())
-			view->VmeAdd(vme->SharedFromThis()); // Add them in the specified view
+    std::vector<std::shared_ptr<mafNode> > stack(1, m_RootVme);
+    while (!stack.empty())
+    {
+      auto vme = stack.back();
+      view->VmeAdd(vme); // Add them in the specified view
+      stack.pop_back();
+      for (size_t i = 0; i < vme->GetNumberOfChildren(); i++)
+      {
+        stack.push_back(vme->GetChild(i));
+      }
+    }
   }
 
   if(m_SelectedVme)

@@ -220,7 +220,7 @@ void mafViewArbitrarySlice::VmeShow(mafNode *node, bool show)
 			//Create VME slicer
 			m_Slicer = mafVMESlicer::NewSPtr();
 			m_Slicer->GetTagArray()->SetTag(mafTagItem(_R("VISIBLE_IN_THE_TREE"), 0.0));
-			m_Slicer->ReparentTo(mafVME::SafeDownCast(node));
+			mafNode::ReparentTo(m_Slicer, mafVME::SafeDownCast(node));
 			m_Slicer->SetPose(m_SliceCenterSurfaceReset,m_SliceAngleReset,0);
 			m_Slicer->SetAbsMatrix(*m_MatrixReset);
 			m_Slicer->SetSlicedVMELink(mafVME::SafeDownCast(node));
@@ -364,14 +364,14 @@ void mafViewArbitrarySlice::VmeShow(mafNode *node, bool show)
 	{
 		if(Vme->IsA("medVMEPolylineGraphEditor"))
 		{
-			m_CurrentPolylineGraphEditor = NULL;
+			m_CurrentPolylineGraphEditor = nullptr;
 		}
 
 		if(((mafVME *)Vme)->GetOutput()->IsA("mafVMEOutputVolume"))
 		{
-			m_AttachCamera->SetVme(NULL);
-			m_Slicer->SetBehavior(NULL);
-			m_Slicer->ReparentTo(NULL);
+			m_AttachCamera->SetVme(nullptr);
+			m_Slicer->SetBehavior(nullptr);
+			mafNode::ReparentTo(m_Slicer, nullptr);
 
 			//remove gizmos
 			m_Gui->Remove(m_GuiGizmos);

@@ -34,9 +34,9 @@ namespace
   template <class T>
   bool Pop(std::vector<T>& vec, T &obj)
   {
-    if(vec.size() > 0)
+    if(!vec.empty())
     {
-      obj = vec[vec.size() - 1];
+      obj = vec.back();
       vec.pop_back();
       return true;
     }
@@ -48,14 +48,7 @@ namespace
 mafNodeIterator::mafNodeIterator(mafNode *root)
 //----------------------------------------------------------------------------
 { 
-  m_CurrentNode = NULL;
-  m_RootNode    = NULL; // initialize
-  
   SetRootNode(root);
-  
-  m_TraversalMode = 0;
-  m_TraversalDone = 0;
-  m_IgnoreVisibleToTraverse = false;
 }
 
 //----------------------------------------------------------------------------
@@ -117,7 +110,7 @@ int mafNodeIterator::GoToNextNode()
 						if (m_CurrentNode!=m_RootNode)
             {
 							mafID idx=0;
-							mafNode *parent=m_CurrentNode->GetParent().get();
+							mafNode *parent=m_CurrentNode->GetParent();
 							if (parent) 
 							{ 
 								Pop(m_CurrentIdx, idx);
@@ -125,7 +118,7 @@ int mafNodeIterator::GoToNextNode()
 
 								while (parent&&parent!=m_RootNode &&idx>=(parent->GetNumberOfChildren()-1))
 								{
-									parent=parent->GetParent().get();
+									parent=parent->GetParent();
 									Pop(m_CurrentIdx, idx);
 									UpperExecute(parent); //call the upper-callback
 								}
@@ -169,7 +162,7 @@ int mafNodeIterator::GoToNextNode()
       {
         if ((m_CurrentNode)&&(m_CurrentNode!=m_RootNode))
         {
-          mafNode *parent=m_CurrentNode->GetParent().get();
+          mafNode *parent=m_CurrentNode->GetParent();
 
           if (parent)
           {
@@ -251,7 +244,7 @@ int mafNodeIterator::GoToPreviousNode()
       {
         if ((m_CurrentNode)&&(m_CurrentNode!=m_RootNode))
         {
-          mafNode *parent=m_CurrentNode->GetParent().get();
+          mafNode *parent=m_CurrentNode->GetParent();
 
           if (parent)
           {
@@ -321,7 +314,7 @@ int mafNodeIterator::GoToPreviousNode()
           }
           else
           {
-            mafNode *parent=m_CurrentNode->GetParent().get();
+            mafNode *parent=m_CurrentNode->GetParent();
 
             mafID idx;
             if (Pop(m_CurrentIdx, idx))
@@ -330,7 +323,7 @@ int mafNodeIterator::GoToPreviousNode()
 
               while (parent && parent!=m_RootNode && idx<=0) // search for the first root where we still have children to be visited
               {
-                parent=parent->GetParent().get();
+                parent=parent->GetParent();
 
                 if (!Pop(m_CurrentIdx, idx))
                 {

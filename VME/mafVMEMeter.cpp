@@ -1201,7 +1201,7 @@ void mafVMEMeter::SetMeterLink(const char *link_name, mafNode *n)
 {
   if (n->IsMAFType(mafVMELandmark))
   {
-    SetLink(_R(link_name),n->GetParent().get(),mafVMELandmarkCloud::StaticDownCast(n->GetParent())->FindLandmarkIndex(n->GetName()));
+    SetLink(_R(link_name),n->GetParent(),mafVMELandmarkCloud::StaticDownCast(n->GetParent())->FindLandmarkIndex(n->GetName()));
   }
   else
     SetLink(_R(link_name), n);

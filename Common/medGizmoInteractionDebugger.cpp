@@ -110,7 +110,7 @@ void medGizmoInteractionDebugger::Destructor()
   m_VmeGizmo->SetBehavior(nullptr);
   m_GizmoInteractor.reset();
 
-  m_VmeGizmo->ReparentTo(nullptr);
+  mafNode::ReparentTo(m_VmeGizmo, nullptr);
   m_VmeGizmo.reset();
 
   cppDEL(m_CurvilinearAbscissaHelper);
@@ -231,7 +231,7 @@ void medGizmoInteractionDebugger::CreateVMEGizmo()
 
   m_VmeGizmo = mafVMEGizmo::NewSPtr();
   m_VmeGizmo->SetName(m_Name);
-  m_VmeGizmo->ReparentTo(root); 
+  mafNode::ReparentTo(m_VmeGizmo, root);
   m_VmeGizmo->SetInputConnection(m_AppendPolyData->GetOutputPort());  
   //assert(m_VmeGizmo->GetData()->GetNumberOfPoints());
 
@@ -245,7 +245,7 @@ void medGizmoInteractionDebugger::DestroyVMEGizmo()
   m_VmeGizmo->SetBehavior(nullptr);
   m_GizmoInteractor.reset();
 
-  m_VmeGizmo->ReparentTo(nullptr);
+  mafNode::ReparentTo(m_VmeGizmo, nullptr);
   m_VmeGizmo.reset();
 }
 

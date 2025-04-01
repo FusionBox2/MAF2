@@ -821,8 +821,8 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
     m_VOI[0], m_VOI[2], m_VOI[4], m_LargeDataReader->GetSampleRate()));
   newVME->GetTagArray()->SetTag(tag_Nature);
     
-  mafEvent ev(this, VME_ADD); ev.SetVme(newVME.get());
-  this->ForwardUpEvent(&ev);
+#pragma message("VME_ADD being eliminated")
+	//{mafEvent ev(this, VME_ADD); ev.SetVme(newVME.get());this->ForwardUpEvent(&ev);}
 
   newVME.reset();   //VME_ADD increased reference
 #else

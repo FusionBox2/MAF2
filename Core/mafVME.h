@@ -68,7 +68,7 @@ public:
   /** 
     return the parent VME Node. Notice that a VME can only reparented 
     under another VME, not to other kind of nodes! */
-  std::shared_ptr<mafVME> GetParent();
+  mafVME *GetParent() const;
 
   /**
     Copy the contents of another VME into this one. Notice that subtrees
@@ -266,7 +266,7 @@ protected:
   /**
   This function set the parent for this Node. It has been redefined to update 
   AbsMatrixPipe input frame. */
-  int SetParent(mafNode *parent) override;
+  int OnSetParent(mafNode *parent) override;
 
   /** 
     Set the output and connect it to the VME. This is automatically called

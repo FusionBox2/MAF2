@@ -372,7 +372,6 @@ mafString  mafIdString(int id)
      case UPDATE_UI:	          s=_R("UPDATE_UI"); break; 
      case UPDATE_PROPERTY:      s=_R("UPDATE_PROPERTY"); break; 
 
-     case VME_ADD:	            s=_R("VME_ADD"); break; 
      case VME_ADDED:	          s=_R("VME_ADDED"); break; 
      case VME_REMOVE:	          s=_R("VME_REMOVE"); break; 
      case VME_REMOVING:	        s=_R("VME_REMOVING"); break; 

@@ -132,7 +132,7 @@ medGizmoCrossTranslatePlane::medGizmoCrossTranslatePlane(std::shared_ptr<mafVME>
 	for (i = 0; i < NUM_GIZMO_PARTS; i++)
 	{
 		// the ith gizmo
-		m_Gizmo[i] = mafVMEGizmo::New();
+		m_Gizmo[i] = mafVMEGizmo::NewSPtr();
 		vmeName = _R("part");
 		vmeName += mafToString(i);
 		m_Gizmo[i]->SetName(vmeName);
@@ -150,7 +150,7 @@ medGizmoCrossTranslatePlane::medGizmoCrossTranslatePlane(std::shared_ptr<mafVME>
 	// add the gizmo to the tree, this should increase reference count 
 	for (i = 0; i < NUM_GIZMO_PARTS; i++)
 	{
-		m_Gizmo[i]->ReparentTo(mafVME::SafeDownCast(m_InputVme->GetRoot()));
+		mafNode::ReparentTo(m_Gizmo[i], mafVME::SafeDownCast(m_InputVme->GetRoot()));
 	}
 
 	CreateFeedbackGizmoPipeline();
@@ -181,7 +181,7 @@ medGizmoCrossTranslatePlane::~medGizmoCrossTranslatePlane()
 	for (i = 0; i < NUM_GIZMO_PARTS; i++)
 	{
 		vtkDEL(m_RotatePDF[i]);
-		m_Gizmo[i]->ReparentTo(nullptr);
+		mafNode::ReparentTo(m_Gizmo[i], nullptr);
 	}
 
 	m_TranslationFeedbackGizmo.reset();
@@ -465,7 +465,7 @@ void medGizmoCrossTranslatePlane::Show(bool show)
 {
 	// show gizmo components by issuing events
 	for (int i = 0; i < NUM_GIZMO_PARTS; i++)
-		{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Gizmo[i]); evUnq.SetBool(show); InvokeEvent(evUnq);}
+		{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Gizmo[i].get()); evUnq.SetBool(show); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------
@@ -630,7 +630,7 @@ void medGizmoCrossTranslatePlane::CreateFeedbackGizmoPipeline()
 	m_TranslationFeedbackGizmo->GetMaterial()->m_Prop->SetOpacity(0.1);
 
 	// ReparentTo will add also the gizmos to the tree
-	m_TranslationFeedbackGizmo->ReparentTo(m_Gizmo[0]);
+	mafNode::ReparentTo(m_TranslationFeedbackGizmo, m_Gizmo[0].get());
 }
 
 //----------------------------------------------------------------------------

@@ -103,7 +103,7 @@ void mafGizmoPath::Destructor()
   m_VmeGizmoPath->SetBehavior(nullptr);
   m_GizmoInteractor.reset();
 
-  m_VmeGizmoPath->ReparentTo(nullptr);
+  mafNode::ReparentTo(m_VmeGizmoPath, nullptr);
   m_VmeGizmoPath.reset();
 }
 //----------------------------------------------------------------------------
@@ -420,7 +420,7 @@ void mafGizmoPath::CreateVMEGizmo()
 
   assert(root);
 
-  m_VmeGizmoPath->ReparentTo(root);
+  mafNode::ReparentTo(m_VmeGizmoPath, root);
 
   // ask the manager to create the pipelines
   // this his giving problems... amounted for the moment
@@ -435,7 +435,7 @@ void mafGizmoPath::DestroyVMEGizmo()
   m_VmeGizmoPath->SetBehavior(nullptr);
   m_GizmoInteractor.reset();
 
-  m_VmeGizmoPath->ReparentTo(nullptr);
+  mafNode::ReparentTo(m_VmeGizmoPath, nullptr);
   m_VmeGizmoPath.reset();
 }
 

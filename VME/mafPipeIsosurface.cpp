@@ -241,7 +241,7 @@ void mafPipeIsosurface::UpdateFromData()
   }
 }
 //----------------------------------------------------------------------------
-void mafPipeIsosurface::ExctractIsosurface(mafVMESurface *isoSurface /* = NULL */)
+void mafPipeIsosurface::ExctractIsosurface(std::shared_ptr<mafVMESurface> isoSurface /* = NULL */)
 //----------------------------------------------------------------------------
 {
 	vtkPolyData *surface = vtkPolyData::New();
@@ -259,7 +259,7 @@ void mafPipeIsosurface::ExctractIsosurface(mafVMESurface *isoSurface /* = NULL *
 		isoSurface->SetName(m_ExtractIsosurfaceName);
 		isoSurface->SetData(surface,0);
 	
-		isoSurface->ReparentTo(m_Vme);
+		mafNode::ReparentTo(isoSurface, m_Vme);
 	}
 
 	surface->Delete();

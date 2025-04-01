@@ -63,8 +63,8 @@
   auto pTempVME = mafVMEVolumeGray::NewSPtr();  
   if (m_Listener) 
   {
-    mafEvent e(sender, VME_ADD); e.SetVme(pTempVME.get());
-    m_Listener->OnEvent(&e);
+#pragma message("VME_ADD being eliminated")
+	  //{mafEvent e(sender, VME_ADD); e.SetVme(pTempVME.get());m_Listener->OnEvent(&e);}
   }
 
   mafEventIO e(sender, NODE_GET_STORAGE);  

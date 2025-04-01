@@ -76,7 +76,7 @@ mafOpDecomposeTimeVarVME::~mafOpDecomposeTimeVarVME()
     {
       m_VectorVME[i].reset();
     }
-    m_Group->ReparentTo(nullptr);
+    mafNode::ReparentTo(m_Group, nullptr);
     m_Group.reset();
   }
 }
@@ -540,7 +540,7 @@ void mafOpDecomposeTimeVarVME::CreateStaticVME(mafTimeStamp timeSt)
     cloudName += newName;
     m_Cloud->SetName(cloudName);
     m_Cloud->AddChild(newVme);
-    m_Cloud->ReparentTo(m_Group.get());
+    mafNode::ReparentTo(m_Cloud, m_Group.get());
     m_Group->Update();
   }
   else
