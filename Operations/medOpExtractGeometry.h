@@ -138,9 +138,9 @@ protected:
   double m_SurfaceContourValue;
   int m_AutoSurfaceContourValue;
 
-  mafVMEVolumeGray *m_VolumeInput;
-  mafVMEVolumeGray *m_ResampledVolume;
-  mafVMESurface *m_SurfaceOutput;
+  std::shared_ptr<mafVMEVolumeGray> m_VolumeInput;
+  std::shared_ptr<mafVMEVolumeGray> m_ResampledVolume;
+  std::shared_ptr<mafVMESurface> m_SurfaceOutput;
   vtkImageData *m_OriginalData;
   vtkPolyData *m_SurfaceData;
 

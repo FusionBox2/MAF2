@@ -1175,9 +1175,6 @@ lhpOpSolidify::lhpOpSolidify(const mafString& label) : Superclass(label)
 lhpOpSolidify::~lhpOpSolidify()
 //----------------------------------------------------------------------------
 {
-  if (GetOutput())
-    GetOutput()->Delete();
-  SetOutput(nullptr);
 }
 //----------------------------------------------------------------------------
 mafOp* lhpOpSolidify::Copy()
@@ -1224,28 +1221,6 @@ void lhpOpSolidify::OpRun()
   {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
-void lhpOpSolidify::OpDo()
-//----------------------------------------------------------------------------
-{
-  if (GetOutput())
-  {
-    GetOutput()->ReparentTo(GetInput()->GetParent());
-    //{mafEvent evUnq(this, VME_ADD, GetOutput()); InvokeEvent(evUnq);}
-    {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-  }
-}
-//----------------------------------------------------------------------------
-void lhpOpSolidify::OpUndo()
-//----------------------------------------------------------------------------
-{
-  if (GetOutput())
-  {
-    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(GetOutput()); InvokeEvent(evUnq);}
-    {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-  }
-}
-
-//----------------------------------------------------------------------------
 void lhpOpSolidify::OpStop(int result)
 //----------------------------------------------------------------------------
 {
@@ -1257,13 +1232,12 @@ void lhpOpSolidify::OpStop(int result)
   }
 
   std::vector<mafTimeStamp> stmps;
-  mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(GetInput());
-  mafVMELandmarkCloud *newcloud;// = mafVMELandmarkCloud::New();
+  auto cloud = mafVMELandmarkCloud::SafeDownCast(GetInput());
+  auto newcloud= mafVMELandmarkCloud::NewSPtr();
   mafString           ncname;
   ncname.append(cloud->GetName());
   ncname.append(_R("_solidified_with_"));
   ncname.append(m_SourceName);
-  mafNEW(newcloud);
   newcloud->SetName(ncname);
   //newcloud->DeepCopy(cloud);
   cloud->GetTimeStamps(stmps);

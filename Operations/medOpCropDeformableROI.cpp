@@ -53,7 +53,6 @@ medOpCropDeformableROI::medOpCropDeformableROI(const mafString& label) : Supercl
 	m_Canundo	= true;
 
 	m_MaskPolydataFilter = NULL;
-	m_ResultVme = NULL;
 
 	m_Distance = 0.0;
 	m_InsideOut = 0;
@@ -65,7 +64,7 @@ medOpCropDeformableROI::~medOpCropDeformableROI()
 //----------------------------------------------------------------------------
 {
 	vtkDEL(m_MaskPolydataFilter);
-	mafDEL(m_ResultVme);
+	m_ResultVme.reset();
 
 }
 //----------------------------------------------------------------------------
@@ -111,13 +110,13 @@ void medOpCropDeformableROI::OpRun()
 void medOpCropDeformableROI::OpDo()
 //----------------------------------------------------------------------------
 {
-	m_ResultVme->ReparentTo(GetInput()->GetRoot());
+	mafNode::ReparentTo(m_ResultVme, GetInput()->GetRoot());
 }
 //----------------------------------------------------------------------------
 void medOpCropDeformableROI::OpUndo()
 //----------------------------------------------------------------------------
 {
-	{mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_ResultVme); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_ResultVme.get()); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpCropDeformableROI::OnEvent(mafEventBase *maf_event)
@@ -179,8 +178,8 @@ void medOpCropDeformableROI::Algorithm(mafVME *vme)
 
 
 		
-		mafNEW(m_ResultVme);
-		m_ResultVme->DeepCopy(GetInput());
+		m_ResultVme = mafVMEVolumeGray::NewSPtr();
+		m_ResultVme->DeepCopy(GetInput().get());
 		mafString resultName = _R("Masked ");
 		resultName+=GetInput()->GetName();
 		m_ResultVme->SetName(resultName);
@@ -221,7 +220,7 @@ void medOpCropDeformableROI::Algorithm(mafVME *vme)
 
 
 		vtkNEW(m_MaskPolydataFilter);
-		mafVMEVolumeGray *volume = mafVMEVolumeGray::SafeDownCast(GetInput());
+		auto volume = mafVMEVolumeGray::SafeDownCast(GetInput());
 		m_MaskPolydataFilter->SetInputConnection(volume->GetOutput()->GetVTKOutputPort());
 		m_MaskPolydataFilter->SetDistance(m_Distance);
 		m_MaskPolydataFilter->SetFillValue(m_FillValue);
@@ -231,9 +230,9 @@ void medOpCropDeformableROI::Algorithm(mafVME *vme)
 		m_MaskPolydataFilter->Update();
 
 		if(vtkRectilinearGrid::SafeDownCast(m_MaskPolydataFilter->GetOutput()))
-			m_ResultVme->SetData(((vtkRectilinearGrid*)m_MaskPolydataFilter->GetOutput()),((mafVME*)GetInput())->GetTimeStamp());
+			m_ResultVme->SetData(((vtkRectilinearGrid*)m_MaskPolydataFilter->GetOutput()),mafVME::StaticDownCast(GetInput())->GetTimeStamp());
 		else if(vtkImageData::SafeDownCast(m_MaskPolydataFilter->GetOutput()))
-			m_ResultVme->SetData(((vtkImageData*)m_MaskPolydataFilter->GetOutput()),((mafVME*)GetInput())->GetTimeStamp());
+			m_ResultVme->SetData(((vtkImageData*)m_MaskPolydataFilter->GetOutput()),mafVME::StaticDownCast(GetInput())->GetTimeStamp());
 	
 		m_ResultVme->Modified();
 		m_ResultVme->Update();

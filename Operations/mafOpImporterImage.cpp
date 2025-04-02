@@ -80,17 +80,14 @@ mafOpImporterImage::mafOpImporterImage(const mafString& label) : Superclass(labe
   m_FileSpacing = 1;
   m_ImageZSpacing = 1.0;
 
-  m_ImportedImage = NULL;
-  m_ImportedImageAsVolume = NULL;
-
   m_FileDirectory = _R("");//mafGetApplicationDirectory().c_str();
 }
 //----------------------------------------------------------------------------
 mafOpImporterImage::~mafOpImporterImage()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_ImportedImage);
-  mafDEL(m_ImportedImageAsVolume);
+  m_ImportedImage.reset();
+  m_ImportedImageAsVolume.reset();
 }
 //----------------------------------------------------------------------------
 // constant ID
@@ -232,7 +229,7 @@ void mafOpImporterImage::BuildImageSequence()
 	long time;
   mafString path, name, ext;
 
-	mafNEW(m_ImportedImage);
+	m_ImportedImage = mafVMEImage::NewSPtr();
   
   mafSplitPath(m_Files[0],&path,&name,&ext);
   if(wxString(name.GetCStr()).IsNumber())
@@ -240,7 +237,7 @@ void mafOpImporterImage::BuildImageSequence()
   else
     std::sort(m_Files.begin(),m_Files.end());
 
-	mafTimeStamp start_time = ((mafVME *)GetInput()->GetRoot())->GetTimeStamp();
+	mafTimeStamp start_time = mafVME::StaticDownCast(GetInput()->GetRoot())->GetTimeStamp();
   long progress_value = 0;
   {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
   for(int i=0; i<m_NumFiles; i++)
@@ -297,7 +294,7 @@ void mafOpImporterImage::BuildImageSequence()
   {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 
   m_ImportedImage->SetTimeStamp(start_time);
-  m_ImportedImage->ReparentTo(GetInput());
+  mafNode::ReparentTo(m_ImportedImage, GetInput().get());
   SetOutput(m_ImportedImage);
 }
 //----------------------------------------------------------------------------
@@ -309,7 +306,7 @@ void mafOpImporterImage::BuildVolume()
   mafString pattern = m_FilePattern  + _R(".")  + m_FileExtension;
   int extent[6];
 
-  mafNEW(m_ImportedImageAsVolume);
+  m_ImportedImageAsVolume = mafVMEVolumeRGB::NewSPtr();
   m_ImportedImageAsVolume->SetName(_R("Imported Volume"));
 
   if(m_FileExtension == _R("bmp"))
@@ -332,7 +329,7 @@ void mafOpImporterImage::BuildVolume()
     r->SetDataSpacing(1.0,1.0,m_ImageZSpacing);
     r->Update();
     
-    m_ImportedImageAsVolume->SetData(r->GetOutput(),((mafVME *)GetInput())->GetTimeStamp());
+    m_ImportedImageAsVolume->SetData(r->GetOutput(),mafVME::StaticDownCast(GetInput())->GetTimeStamp());
     
     r->Delete();
 	} 
@@ -355,7 +352,7 @@ void mafOpImporterImage::BuildVolume()
     r->SetDataSpacing(1.0,1.0,m_ImageZSpacing);
     r->Update();
     
-    m_ImportedImageAsVolume->SetData(r->GetOutput(),((mafVME *)GetInput())->GetTimeStamp());
+    m_ImportedImageAsVolume->SetData(r->GetOutput(),mafVME::StaticDownCast(GetInput())->GetTimeStamp());
     
     r->Delete();
 	}
@@ -378,7 +375,7 @@ void mafOpImporterImage::BuildVolume()
     r->SetDataSpacing(1.0,1.0,m_ImageZSpacing);
     r->Update();
 
-    m_ImportedImageAsVolume->SetData(r->GetOutput(),((mafVME *)GetInput())->GetTimeStamp());
+    m_ImportedImageAsVolume->SetData(r->GetOutput(),mafVME::StaticDownCast(GetInput())->GetTimeStamp());
     
     r->Delete();
 	}
@@ -401,14 +398,14 @@ void mafOpImporterImage::BuildVolume()
     r->SetDataSpacing(1.0,1.0,m_ImageZSpacing);
     r->Update();
     
-    m_ImportedImageAsVolume->SetData(r->GetOutput(),((mafVME *)GetInput())->GetTimeStamp());
+    m_ImportedImageAsVolume->SetData(r->GetOutput(),mafVME::StaticDownCast(GetInput())->GetTimeStamp());
 
     r->Delete();
 	}
 	else
   {
 		mafLogMessage(_M(_R("unable to import ") + m_Files[0] + _R(", unrecognized type")));
-    mafDEL(m_ImportedImageAsVolume);
+    m_ImportedImageAsVolume.reset();
   }
   
   SetOutput(m_ImportedImageAsVolume);

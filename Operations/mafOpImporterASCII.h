@@ -83,7 +83,7 @@ protected:
   std::vector<mafString> m_Files; ///< List of files representing the scalar data.
   mafString m_FileDir; ///< Directory where are located the files.
 
-  mafVMEScalarMatrix *m_ScalarData;
+  std::shared_ptr<mafVMEScalarMatrix> m_ScalarData;
   int m_ScalarOrder; ///< Indicates if the scalar arrays are in rows (0) or columns (1).
   bool m_ReadyToExecute; ///< Flag used when the operation runs by passing parameter's list. If it is true in the OpRun it ends without showing the gui.
 };

@@ -123,7 +123,7 @@ int mafOpExporterMesh::Write()
 	
   // Create the writer and pass the file name
   mafVMEMeshAnsysTextExporter *writer = new mafVMEMeshAnsysTextExporter;
-  writer->SetInput((vtkUnstructuredGrid*)((mafVME*)(GetInput()))->GetOutput()->GetVTKData());
+  writer->SetInput((vtkUnstructuredGrid*)(mafVME::StaticDownCast(GetInput()))->GetOutput()->GetVTKData());
   writer->SetOutputNodesFileName(m_NodesFileName.GetCStr());
   writer->SetOutputElementsFileName(m_ElementsFileName.GetCStr());
   writer->SetOutputMaterialsFileName(m_MaterialsFileName.GetCStr());

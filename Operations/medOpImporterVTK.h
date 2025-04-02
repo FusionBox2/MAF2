@@ -52,6 +52,6 @@ public:
 
 protected:
 
-  medVMEPolylineGraph   *m_VmePolyLine;
+  std::shared_ptr<medVMEPolylineGraph> m_VmePolyLine;
 };
 #endif

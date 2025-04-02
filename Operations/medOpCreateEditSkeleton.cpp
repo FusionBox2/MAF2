@@ -48,7 +48,6 @@ medOpCreateEditSkeleton::medOpCreateEditSkeleton(const mafString& label) : Super
 	m_InputPreserving = true;
 
 	m_Editor  = NULL;
-	m_Skeleton = NULL;
 	m_ResultPolydata = NULL;
 }
 //----------------------------------------------------------------------------
@@ -56,7 +55,7 @@ medOpCreateEditSkeleton::~medOpCreateEditSkeleton()
 //----------------------------------------------------------------------------
 {
 	cppDEL(m_Editor);
-	mafDEL(m_Skeleton);
+	m_Skeleton.reset();
 	vtkDEL(m_ResultPolydata);
 }
 //----------------------------------------------------------------------------
@@ -76,12 +75,12 @@ bool medOpCreateEditSkeleton::Accept(mafNode* vme)
 void medOpCreateEditSkeleton::OpRun()
 //----------------------------------------------------------------------------
 {
-	mafNEW(m_Skeleton);
+	m_Skeleton = medVMEPolylineGraph::NewSPtr();
 
 	if(GetInput()->IsMAFType(mafVMEVolumeGray))
-    m_Editor = new medGeometryEditorPolylineGraph(mafVME::SafeDownCast(GetInput()), this, 0, this->m_TestMode);
+    m_Editor = new medGeometryEditorPolylineGraph(mafVME::SafeDownCast(GetInput()).get(), this, 0, this->m_TestMode);
 	else if(GetInput()->IsMAFType(medVMEPolylineGraph) && GetInput()->GetParent()->IsMAFType(mafVMEVolumeGray))
-    m_Editor = new medGeometryEditorPolylineGraph(mafVME::SafeDownCast(GetInput()->GetParent()), this,medVMEPolylineGraph::SafeDownCast(GetInput()),this->m_TestMode);
+    m_Editor = new medGeometryEditorPolylineGraph(mafVME::SafeDownCast(GetInput()->GetParent()), this,medVMEPolylineGraph::SafeDownCast(GetInput()).get(), this->m_TestMode);
 	else
     OpStop(OP_RUN_CANCEL);
 
@@ -106,7 +105,7 @@ void medOpCreateEditSkeleton::OpDo()
 {
 	if(GetInput()->IsMAFType(mafVMEVolumeGray))
 	{
-		m_Skeleton->SetData(m_ResultPolydata,((mafVME*)GetInput())->GetTimeStamp());
+		m_Skeleton->SetData(m_ResultPolydata, mafVME::StaticDownCast(GetInput())->GetTimeStamp());
 		m_Skeleton->SetName(_R("VME Skeleton"));
 
     mafTagItem tag_Nature;
@@ -115,11 +114,11 @@ void medOpCreateEditSkeleton::OpDo()
 
     m_Skeleton->GetTagArray()->SetTag(tag_Nature);
 
-		m_Skeleton->ReparentTo(GetInput());
+		mafNode::ReparentTo(m_Skeleton, GetInput().get());
 	}
 	else if(GetInput()->IsMAFType(medVMEPolylineGraph))
 	{
-		medVMEPolylineGraph::SafeDownCast(GetInput())->SetData(m_ResultPolydata,((mafVME*)GetInput())->GetTimeStamp());
+		medVMEPolylineGraph::SafeDownCast(GetInput())->SetData(m_ResultPolydata,mafVME::StaticDownCast(GetInput())->GetTimeStamp());
 	}
 	
 	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
@@ -128,7 +127,7 @@ void medOpCreateEditSkeleton::OpDo()
 void medOpCreateEditSkeleton::OpUndo()
 //----------------------------------------------------------------------------
 {
-	m_Skeleton->ReparentTo(NULL);
+	mafNode::ReparentTo(m_Skeleton, nullptr);
 }
 //----------------------------------------------------------------------------
 void medOpCreateEditSkeleton::CreateGui()

@@ -82,8 +82,6 @@ medOpVolumeResample::medOpVolumeResample(const mafString& label /* =  */,bool sh
 
   m_ShowShadingPlane = showShadingPlane;
 
-  m_ResampledVme = NULL;
-
   m_InputPreserving = true;
 	
   // initialize Crop OBB parameters
@@ -107,7 +105,6 @@ medOpVolumeResample::medOpVolumeResample(const mafString& label /* =  */,bool sh
 	m_GizmoTranslate	= NULL;
 	m_GizmoRotate			= NULL;
 	m_GizmoROI				= NULL;
-	m_VMEDummy				= NULL;
 
 	m_ShowHandle					= 1;
 	m_ShowGizmoTransform	= 1;
@@ -124,10 +121,10 @@ medOpVolumeResample::~medOpVolumeResample()
 
   if (m_VMEDummy)
   {
-  	m_VMEDummy->ReparentTo(NULL);
+  	mafNode::ReparentTo(m_VMEDummy, nullptr);
   }
-  mafDEL(m_VMEDummy);
-	mafDEL(m_ResampledVme);
+  m_VMEDummy.reset();
+	m_ResampledVme.reset();
 }
 //----------------------------------------------------------------------------
 bool medOpVolumeResample::Accept(mafNode* vme) 
@@ -182,7 +179,7 @@ void medOpVolumeResample::CreateGizmos()
   InvokeEvent(e);
   m_ViewSelectedMessage = e.GetBool();
 
-	m_GizmoROI = new mafGizmoROI(mafVME::SafeDownCast(GetInput()), this, mafGizmoHandle::FREE,m_VMEDummy,m_ShowShadingPlane);
+	m_GizmoROI = new mafGizmoROI(mafVME::SafeDownCast(GetInput()), this, mafGizmoHandle::FREE,m_VMEDummy.get(),m_ShowShadingPlane);
   m_GizmoROI->ShowShadingPlane(true);
 	m_GizmoROI->Show(true && m_ViewSelectedMessage);
 	
@@ -194,9 +191,9 @@ void medOpVolumeResample::CreateGizmos()
 
 	SetBoundsToVMELocalBounds();
 
-	mafTransform::GetOrientation(*(((mafVME*)GetInput())->GetOutput()->GetAbsMatrix()),m_VolumeOrientation);
+	mafTransform::GetOrientation(*(mafVME::StaticDownCast(GetInput())->GetOutput()->GetAbsMatrix()),m_VolumeOrientation);
 
-	mafVMEVolumeGray *inputVolume = mafVMEVolumeGray::SafeDownCast(GetInput());
+	auto inputVolume = mafVMEVolumeGray::SafeDownCast(GetInput());
 	inputVolume->GetOutput()->GetVTKData()->GetCenter(m_VolumeCenterPosition);
 
 	//Compute the center of Volume in absolute coordinate to center gizmo
@@ -230,11 +227,11 @@ void medOpVolumeResample::CreateGizmos()
 	if(!m_TestMode)
 	{
 		m_GizmoTranslate = new mafGizmoTranslate(mafVME::SafeDownCast(GetInput()), this);
-		m_GizmoTranslate->SetRefSys(mafVME::SafeDownCast(GetInput()));
+		m_GizmoTranslate->SetRefSys(mafVME::SafeDownCast(GetInput()).get());
 		m_GizmoTranslate->SetAbsPose(m_CenterVolumeRefSysMatrix);
 		m_GizmoTranslate->Show(true && e.GetBool());
 		m_GizmoRotate = new mafGizmoRotate(mafVME::SafeDownCast(GetInput()), this);
-		m_GizmoRotate->SetRefSys(mafVME::SafeDownCast(GetInput()));
+		m_GizmoRotate->SetRefSys(mafVME::SafeDownCast(GetInput()).get());
 		m_GizmoRotate->SetAbsPose(m_CenterVolumeRefSysMatrix);
 		m_GizmoRotate->Show(false);
 		{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
@@ -244,7 +241,7 @@ void medOpVolumeResample::CreateGizmos()
 void medOpVolumeResample::AutoSpacing()
 //----------------------------------------------------------------------------
 {
-  vtkDataSet *vme_data = ((mafVME *)GetInput())->GetOutput()->GetVTKData();
+  vtkDataSet *vme_data = mafVME::StaticDownCast(GetInput())->GetOutput()->GetVTKData();
 
   m_VolumeSpacing[0] = VTK_DOUBLE_MAX;
   m_VolumeSpacing[1] = VTK_DOUBLE_MAX;
@@ -298,7 +295,7 @@ void medOpVolumeResample::SetBoundsToVMEBounds()
 //----------------------------------------------------------------------------
 {
   double bounds[6];
-  ((mafVME *)GetInput())->GetOutput()->GetVMEBounds(bounds);
+  mafVME::StaticDownCast(GetInput())->GetOutput()->GetVMEBounds(bounds);
 
   InternalUpdateBounds(bounds,true);
   m_VolumeOrientation[0] = m_VolumeOrientation[1] = m_VolumeOrientation[2] = 0;
@@ -308,7 +305,7 @@ void medOpVolumeResample::SetBoundsToVME4DBounds()
 //----------------------------------------------------------------------------
 {
   double bounds[6];
-  ((mafVME *)GetInput())->GetOutput()->GetVME4DBounds(bounds);
+  mafVME::StaticDownCast(GetInput())->GetOutput()->GetVME4DBounds(bounds);
 
   InternalUpdateBounds(bounds,true);
   m_VolumeOrientation[0] = m_VolumeOrientation[1] = m_VolumeOrientation[2] = 0;
@@ -318,10 +315,10 @@ void medOpVolumeResample::SetBoundsToVMELocalBounds()
 //----------------------------------------------------------------------------
 {
   double bounds[6];
-  ((mafVME *)GetInput())->GetOutput()->GetVMELocalBounds(bounds);
+  mafVME::StaticDownCast(GetInput())->GetOutput()->GetVMELocalBounds(bounds);
 
   InternalUpdateBounds(bounds,false);
-  ((mafVME *)GetInput())->GetOutput()->GetAbsPose(m_VolumePosition,m_VolumeOrientation);
+  mafVME::StaticDownCast(GetInput())->GetOutput()->GetAbsPose(m_VolumePosition,m_VolumeOrientation);
 	
 	m_ROIOrientation[0] = m_ROIOrientation[1] = m_ROIOrientation[2] = 0;
 	m_ROIPosition[0] = m_ROIPosition[1] = m_ROIPosition[2] = 0;
@@ -360,13 +357,13 @@ mafOp *medOpVolumeResample::Copy()
 void medOpVolumeResample::InizializeVMEDummy()   
 //----------------------------------------------------------------------------
 {
-	mafNEW(m_VMEDummy);
+	m_VMEDummy = mafVMESurface::NewSPtr();
 	vtkNew<vtkCubeSource> cube;
 	m_VMEDummy->SetData(vtkPolyData::SafeDownCast(cube->GetOutput()),0.0);
 	m_VMEDummy->SetVisibleToTraverse(false);
 	m_VMEDummy->GetTagArray()->SetTag(mafTagItem(_R("VISIBLE_IN_THE_TREE"), 0.0));
-	m_VMEDummy->ReparentTo(GetInput()->GetRoot());
-	m_VMEDummy->SetAbsMatrix(*(((mafVME*)GetInput())->GetOutput()->GetAbsMatrix()));
+	mafNode::ReparentTo(m_VMEDummy, GetInput()->GetRoot());
+	m_VMEDummy->SetAbsMatrix(*(mafVME::StaticDownCast(GetInput())->GetOutput()->GetAbsMatrix()));
   m_VMEDummy->SetName(_R("Dummy"));
 }
 //----------------------------------------------------------------------------
@@ -384,7 +381,7 @@ void medOpVolumeResample::OpRun()
 void medOpVolumeResample::OpDo()
 //----------------------------------------------------------------------------
 {
-	m_ResampledVme->ReparentTo(GetInput()->GetParent());
+	mafNode::ReparentTo(m_ResampledVme, GetInput()->GetParent());
 }
 //----------------------------------------------------------------------------
 void medOpVolumeResample::Resample()
@@ -402,8 +399,7 @@ void medOpVolumeResample::Resample()
   mafString outputVmeName = _R("resampled_");
 	outputVmeName += GetInput()->GetName();
 
-  m_ResampledVme = (mafVMEVolumeGray *)GetInput()->NewInstance();
-  m_ResampledVme->Register(m_ResampledVme);
+  m_ResampledVme = mafVMEVolumeGray::NewSPtr();
   m_ResampledVme->GetTagArray()->DeepCopy(GetInput()->GetTagArray().get());
   
   mafTagItem *ti = NULL;
@@ -422,7 +418,7 @@ void medOpVolumeResample::Resample()
   }
 
   m_ResampledVme->SetName(outputVmeName);
-  m_ResampledVme->ReparentTo(GetInput()->GetParent());
+  mafNode::ReparentTo(m_ResampledVme, GetInput()->GetParent());
   m_ResampledVme->SetMatrix(resamplingBoxPose->GetMatrix());
 
   int outputSPExtent[6];
@@ -434,7 +430,7 @@ void medOpVolumeResample::Resample()
   outputSPExtent[5] = round((m_VolumeBounds[5] - m_VolumeBounds[4]) / m_VolumeSpacing[2]);
 
   double w,l,sr[2];
-  for (auto& entry : *((mafVMEGenericAbstract *)GetInput())->GetDataVector())
+  for (auto& entry : *mafVMEGenericAbstract::StaticDownCast(GetInput())->GetDataVector())
   {
     if (mafVMEItemVTK *input_item = mafVMEItemVTK::SafeDownCast(entry.second.get()))
     {
@@ -525,7 +521,7 @@ void medOpVolumeResample::Resample()
 	SetOutput(m_ResampledVme);
 
   std::ostringstream stringStream;
-  PrintVolume(stringStream, GetOutput(),"Output Volume");
+  PrintVolume(stringStream, GetOutput().get(),"Output Volume");
   mafLogMessage(_M(stringStream.str().c_str()));
 }
 //----------------------------------------------------------------------------
@@ -533,7 +529,7 @@ void medOpVolumeResample::OpUndo()
 //----------------------------------------------------------------------------
 {   
 	assert(m_ResampledVme);
-	m_ResampledVme->ReparentTo(NULL);
+	mafNode::ReparentTo(m_ResampledVme, nullptr);
 }
 //----------------------------------------------------------------------------
 // Constants :
@@ -857,7 +853,7 @@ void medOpVolumeResample::OnEventThis(mafEventBase *maf_event)
       case ID_VOLUME_DIR_Z:
 				{
 					double inputVolumeBBCentre[3];
-					mafVMEVolumeGray *volume = mafVMEVolumeGray::SafeDownCast(GetInput());
+					auto volume = mafVMEVolumeGray::SafeDownCast(GetInput());
 					volume->GetOutput()->GetVTKData()->GetCenter(inputVolumeBBCentre);
 
 					m_VolumeBounds[0] = inputVolumeBBCentre[0] - (m_MaxBoundX/2);
@@ -1141,7 +1137,7 @@ void medOpVolumeResample::ShiftCenterResampled()
 
 	double inputVolumeLocalVTKBBCenter[3];
 
-	((mafVME *)GetInput())->GetOutput()->GetVTKData()->GetCenter(inputVolumeLocalVTKBBCenter);
+  mafVME::StaticDownCast(GetInput())->GetOutput()->GetVTKData()->GetCenter(inputVolumeLocalVTKBBCenter);
 
 	vtkNew<vtkPoints> points;
 	points->InsertNextPoint(inputVolumeLocalVTKBBCenter);
@@ -1191,7 +1187,7 @@ void medOpVolumeResample::PrintSelf(ostream& os)
   os << "-------------------------------------------------------" << std::endl;
   os << "medOpVolumeResample PrintSelf:" << std::endl;
 
-  PrintVolume(os, GetInput(), "Input Volume");
+  PrintVolume(os, GetInput().get(), "Input Volume");
   
   mafString parameter;
   

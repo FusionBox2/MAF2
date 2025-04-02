@@ -121,15 +121,15 @@ medOpSegmentationRegionGrowingLocalAndGlobalThreshold::medOpSegmentationRegionGr
 medOpSegmentationRegionGrowingLocalAndGlobalThreshold::~medOpSegmentationRegionGrowingLocalAndGlobalThreshold()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_VolumeOutputMorpho);
-  mafDEL(m_VolumeOutputRegionGrowing);
-  mafDEL(m_SurfaceOutput);
+  m_VolumeOutputMorpho.reset();
+  m_VolumeOutputRegionGrowing.reset();
+  m_SurfaceOutput.reset();
   vtkDEL(m_SegmentedImage);
   vtkDEL(m_MorphoImage);
 
   if (m_ComputedMedianFilter)
   {
-    mafDEL(m_VolumeInput);
+    m_VolumeInput.reset();
   }
 
   cppDEL(m_Dialog);
@@ -170,7 +170,7 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::OpRun()
     op->OpRun();
     op->AutoSpacing();
     op->Resample();
-    mafVMEVolumeGray *volOut=mafVMEVolumeGray::SafeDownCast(op->GetOutput());
+    auto volOut=mafVMEVolumeGray::SafeDownCast(op->GetOutput());
     volOut->GetOutput()->Update();
     volOut->Update();
 
@@ -189,8 +189,7 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::OpRun()
     median->SetKernelSize(3,3,3);
     median->Update();
 
-    mafVMEVolumeGray *volMediano;
-    mafNEW(volMediano);
+    auto volMediano = mafVMEVolumeGray::NewSPtr();
     vtkDataSet *d = median->GetOutput();
     //d->Update();
     int k = d->GetNumberOfPoints();
@@ -203,15 +202,15 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::OpRun()
     f->SetInputConnection(median->GetOutputPort());
     f->Update();
     volMediano->SetData(f->GetOutput(),m_VolumeInput->GetTimeStamp());
-    volMediano->ReparentTo(m_VolumeInput);
+    mafNode::ReparentTo(volMediano, m_VolumeInput.get());
     volMediano->Update();
 
     m_VolumeInput = volMediano;
   }
 
-  mafNEW(m_VolumeOutputMorpho);
-  mafNEW(m_VolumeOutputRegionGrowing);
-  mafNEW(m_SurfaceOutput);
+  m_VolumeOutputMorpho = mafVMEVolumeGray::NewSPtr();
+  m_VolumeOutputRegionGrowing = mafVMEVolumeGray::NewSPtr();
+  m_SurfaceOutput = mafVMESurface::NewSPtr();
 
   vtkNEW(m_SegmentedImage);
   vtkNEW(m_MorphoImage);
@@ -441,10 +440,9 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::HistogramEqualizatio
   imout->DeepCopy(itkTOvtk->GetOutput());
   //imout->Update();
 
-  mafVMEVolumeGray *v;
-  mafNEW(v);
+  auto v = mafVMEVolumeGray::NewSPtr();
   v->SetData(imout,0.0);
-  v->ReparentTo(m_VolumeInput);
+  mafNode::ReparentTo(v , m_VolumeInput.get());
   v->Update();
 
 //   m_VolumeInput->SetData(itkTOvtk->GetOutput(),0.0);
@@ -746,12 +744,12 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::OnEvent(mafEventBase
         //Generate the vme output of the region growing
         m_VolumeOutputRegionGrowing->SetData(filter->GetOutput(),m_VolumeInput->GetTimeStamp());
         m_VolumeOutputRegionGrowing->SetName(_L("Segmentation Output - first step"));
-        m_VolumeOutputRegionGrowing->ReparentTo(m_VolumeInput);
+        mafNode::ReparentTo(m_VolumeOutputRegionGrowing, m_VolumeInput.get());
         m_VolumeOutputRegionGrowing->Update();
 
-        {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VolumeOutputRegionGrowing); evUnq.SetBool(true); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VolumeOutputRegionGrowing.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
 
-        if (m_SegmentedImage != NULL)
+        if (m_SegmentedImage)
         {
           m_Gui->Enable(ID_SPHERE_RADIUS,true);
           m_Gui->Enable(ID_APPLY_CONNECTIVITY_FILTER,true);
@@ -772,7 +770,7 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::OnEvent(mafEventBase
         //Generate the vme output of the morphological closing
         m_VolumeOutputMorpho->SetData(filter->GetOutput(),m_VolumeInput->GetTimeStamp());
         m_VolumeOutputMorpho->SetName(_L("Segmentation Output - second step"));
-        m_VolumeOutputMorpho->ReparentTo(m_VolumeInput);
+        mafNode::ReparentTo(m_VolumeOutputMorpho, m_VolumeInput.get());
         m_VolumeOutputMorpho->Update();
 
         vtkNew<vtkMAFContourVolumeMapper> extractIsosurface;
@@ -803,10 +801,10 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::OnEvent(mafEventBase
         else
         {
         	m_SurfaceOutput->SetName(_L("Segmentation Output - extract isosurface"));
-        	m_SurfaceOutput->ReparentTo(m_VolumeInput);
+        	mafNode::ReparentTo(m_SurfaceOutput, m_VolumeInput.get());
         	m_SurfaceOutput->Update();
   
-        	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VolumeOutputMorpho); evUnq.SetBool(true); InvokeEvent(evUnq);}
+        	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VolumeOutputMorpho.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
           m_Gui->Enable(wxOK,true);
         }
 
@@ -848,15 +846,15 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::OpStop(int result)
   {
 	  if (m_VolumeOutputRegionGrowing)
 	  {
-	    m_VolumeOutputRegionGrowing->ReparentTo(NULL);
+      mafNode::ReparentTo(m_VolumeOutputRegionGrowing, nullptr);
 	  }
 	  if (m_VolumeOutputMorpho)
 	  {
-	    m_VolumeOutputMorpho->ReparentTo(NULL);
+      mafNode::ReparentTo(m_VolumeOutputMorpho, nullptr);
 	  }
 	  if (m_SurfaceOutput)
 	  {
-	    m_SurfaceOutput->ReparentTo(NULL);
+      mafNode::ReparentTo(m_SurfaceOutput, nullptr);
 	  }
 
     {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
@@ -874,18 +872,18 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::OpDo()
 {
   if (m_VolumeOutputRegionGrowing )
   {
-    m_VolumeOutputRegionGrowing->ReparentTo(GetInput());
+    mafNode::ReparentTo(m_VolumeOutputRegionGrowing, GetInput().get());
   }
   if (m_VolumeOutputMorpho)
   {
-    m_VolumeOutputMorpho->ReparentTo(GetInput());
+    mafNode::ReparentTo(m_VolumeOutputMorpho, GetInput().get());
   }
   if (m_SurfaceOutput)
   {
-    m_SurfaceOutput->ReparentTo(GetInput());
+    mafNode::ReparentTo(m_SurfaceOutput, GetInput().get());
   }
 
-  if (m_VolumeOutputMorpho == NULL && m_VolumeOutputRegionGrowing == NULL && m_SurfaceOutput == NULL)
+  if (m_VolumeOutputMorpho == nullptr && m_VolumeOutputRegionGrowing == nullptr && m_SurfaceOutput == nullptr)
   {
     return;
   }
@@ -897,18 +895,18 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::OpUndo()
 {
   if (m_VolumeOutputRegionGrowing)
   {
-    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_VolumeOutputRegionGrowing); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_VolumeOutputRegionGrowing.get()); InvokeEvent(evUnq);}
   }
   if (m_VolumeOutputMorpho)
   {
-    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_VolumeOutputMorpho); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_VolumeOutputMorpho.get()); InvokeEvent(evUnq);}
   }
   if (m_SurfaceOutput)
   {
-    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_SurfaceOutput); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_SurfaceOutput.get()); InvokeEvent(evUnq);}
   }
 
-  if (m_VolumeOutputMorpho == NULL && m_VolumeOutputRegionGrowing == NULL && m_SurfaceOutput == NULL)
+  if (m_VolumeOutputMorpho == nullptr && m_VolumeOutputRegionGrowing == nullptr && m_SurfaceOutput == nullptr)
   {
     return;
   }

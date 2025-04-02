@@ -157,7 +157,7 @@ void mafOpExporterSTL::OpStop(int result)
 void mafOpExporterSTL::ExportSurface()
 //----------------------------------------------------------------------------
 {
-  mafVMEOutputSurface *out_surface = mafVMEOutputSurface::SafeDownCast(((mafVME *)GetInput())->GetOutput());
+  auto out_surface = mafVMEOutputSurface::SafeDownCast(mafVME::StaticDownCast(GetInput())->GetOutput());
   out_surface->Update();
 
   vtkNew<vtkTriangleFilter>triangles;

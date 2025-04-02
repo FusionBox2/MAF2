@@ -59,7 +59,7 @@ protected:
   double                         m_Scale1;
   double                         m_Scale2;
   double                         m_Scale3;
-  std::vector<mafVME*>           m_Imported;
+  std::vector<std::shared_ptr<mafVME> >           m_Imported;
 private:
 };
 #endif

@@ -29,7 +29,6 @@
 #include "mafDecl.h"
 #include "mafGUI.h"
 
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafTagItem.h"
 #include "mafTagArray.h"
 #include "mafVME.h"
@@ -41,17 +40,12 @@
 #include <fstream>
 
 //----------------------------------------------------------------------------
-mafCxxTypeMacro(mafOpImporterMesh);
-//----------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------
 mafOpImporterMesh::mafOpImporterMesh(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_IMPORTER;
   m_Canundo = true;
   m_ImporterType = 0;
-  m_ImportedVmeMesh = NULL;
   m_NodesFileName = _R("");
   m_ElementsFileName = _R("");
   m_MaterialsFileName = _R("");
@@ -61,7 +55,6 @@ mafOpImporterMesh::mafOpImporterMesh(const mafString& label) : Superclass(label)
 mafOpImporterMesh::~mafOpImporterMesh()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_ImportedVmeMesh);
 }
 //----------------------------------------------------------------------------
 bool mafOpImporterMesh::Accept(mafNode *node)
@@ -107,16 +100,16 @@ int mafOpImporterMesh::Read()
   } 
   else if (returnValue == MAF_OK)
   {
-    mafNEW(m_ImportedVmeMesh);
-    m_ImportedVmeMesh->SetName(_R("Imported Mesh"));
-	  m_ImportedVmeMesh->SetDataByDetaching(reader->GetOutput()->GetUnstructuredGridOutput()->GetVTKData(),0);
+    auto importedVmeMesh = mafVMEMesh::NewSPtr();
+    importedVmeMesh->SetName(_R("Imported Mesh"));
+	  importedVmeMesh->SetDataByDetaching(reader->GetOutput()->GetUnstructuredGridOutput()->GetVTKData(),0);
 
     mafTagItem tag_Nature;
     tag_Nature.SetName(_R("VME_NATURE"));
     tag_Nature.SetValue(_R("NATURAL"));
-    m_ImportedVmeMesh->GetTagArray()->SetTag(tag_Nature);
+    importedVmeMesh->GetTagArray()->SetTag(tag_Nature);
 
-    SetOutput(m_ImportedVmeMesh);
+    SetOutput(importedVmeMesh);
   }
 
   delete reader;

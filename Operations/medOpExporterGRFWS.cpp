@@ -1,26 +1,3 @@
-/*=========================================================================
-
- Program: MAF2Medical
- Module: medOpExporterGRFWS
- Authors: Simone Brazzale
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
 #include "medOpExporterGRFWS.h"
 
 #include <wx/busyinfo.h>
@@ -49,7 +26,6 @@ using namespace std;
 #define FREQ 1.00
 #define DELTA 5.0
 
-mafCxxTypeMacro(medOpExporterGRFWS)
 //----------------------------------------------------------------------------
 medOpExporterGRFWS::medOpExporterGRFWS(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
@@ -120,11 +96,11 @@ void medOpExporterGRFWS::OpRun()
   // Load inputs
   if (GetInput()->IsA("mafVMEVector"))
   {
-    m_ForceLeft = mafVMEVector::SafeDownCast(GetInput()); 
+    m_ForceLeft = mafVMEVector::SafeDownCast(GetInput()).get(); 
   }
   else
   {
-    LoadVMEs(GetInput());
+    LoadVMEs(GetInput().get());
   }
   // Create GUI
   if (!m_TestMode)

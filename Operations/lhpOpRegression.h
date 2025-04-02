@@ -84,7 +84,7 @@ private:
   wxInt32                                 m_BoneType;
   wxInt32                                 m_Level;
   wxInt32                                 m_Approximate[10];
-  std::vector<mafVME*>                    m_Added;
+  std::vector<std::shared_ptr<mafVME> >                    m_Added;
   double                                  m_Length;
   struct LMAdding
   {

@@ -1,24 +1,3 @@
-/*=========================================================================
-  Program:   Multimod Application Framework
-  Module:    $RCSfile: lhpOpExporterCSVGraph.cpp,v $
-  Language:  C++
-  Date:      $Date: 2009/05/19 14:29:53 $
-  Version:   $Revision: 1.1.1.1 $
-  Authors:   Matteo Giacomoni
-==========================================================================
-  Copyright (c) 2009
-  CINECA - Interuniversity Consortium (www.cineca.it)
-=========================================================================*/
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-
 #include "lhpOpExporterCSVGraph.h"
 
 #include "wx/busyinfo.h"
@@ -27,7 +6,6 @@
 #include "mafGUI.h"
 
 #include "mmuTimeSet.h"
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafVME.h"
 #include "vtkSmartPointer.h"
 #include "mafVMEGroup.h"
@@ -55,9 +33,6 @@
 #include <iostream>
 #include <fstream>
 
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(lhpOpExporterCSVGraph);
-//----------------------------------------------------------------------------
 mafViewIntGraph          *lhpOpExporterCSVGraph::m_ViewIntGraph;
 
 //----------------------------------------------------------------------------
@@ -187,13 +162,20 @@ void lhpOpExporterCSVGraph::ExportGraphs()
   vgraph->m_shown_flags = m_shown_flags;
   vgraph->m_pipe_config = m_pipe_config;
 
-  if (mafNode * root = GetInput()->GetRoot())
   {
-    auto iter = root->NewIterator(); // iterate over inserted vme
-    for (mafNode *vme = iter->GetFirstNode(); vme; vme = iter->GetNextNode())
+    std::vector<std::shared_ptr<mafNode> > stack(1, GetInput()->GetRoot()->SharedFromThis());
+    while (!stack.empty())
+    {
+      auto vme = stack.back();
       vgraph->VmeAdd(vme); // Add them in the specified view
+      stack.pop_back();
+      for (size_t i = 0; i < vme->GetNumberOfChildren(); i++)
+      {
+        stack.push_back(vme->GetChild(i));
+      }
+    }
   }
-  vgraph->VmeSelect(GetInput(), true);
+  vgraph->VmeSelect(GetInput().get(), true);
   vgraph->loadPlot(false);
   vgraph->GetRenderWindow()->SaveGraphAsCSV(m_File.toWx());
   if(!m_TestMode)

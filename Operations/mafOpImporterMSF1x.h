@@ -60,6 +60,6 @@ protected:
   mafString m_File;
   mafString m_FileDir;
   
-  mafVMEGroup      *m_Group;
+  std::shared_ptr<mafVMEGroup>      m_Group;
 };
 #endif

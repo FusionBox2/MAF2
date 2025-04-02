@@ -131,7 +131,7 @@ int mafOpGarbageCollectMSFDir::GetFilesToRemove(std::set<std::string> &filesToRe
     std::set<std::string> msfDirFiles = this->GetMSFDirABSFileNamesSet();
 
     // add the msf file name:
-    mafString msfXMLFileABSFileName = GetMSFXMLFileAbsFileName(GetInput());
+    mafString msfXMLFileABSFileName = GetMSFXMLFileAbsFileName(GetInput().get());
 
     assert(mafFileExists(msfXMLFileABSFileName));
     msfTreeFiles.insert(msfXMLFileABSFileName.toStd());
@@ -179,7 +179,7 @@ void mafOpGarbageCollectMSFDir::PrintSet( std::set<std::string> inputSet )
 std::set<std::string> mafOpGarbageCollectMSFDir::GetMSFDirABSFileNamesSet()
 {
   assert(GetInput());
-  mafString msfABSPath = GetMSFDirAbsPath(GetInput());
+  mafString msfABSPath = GetMSFDirAbsPath(GetInput().get());
   
   assert(msfABSPath.empty() == false);
   assert(mafDirExists(msfABSPath));

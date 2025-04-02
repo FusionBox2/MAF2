@@ -1,24 +1,3 @@
-/*=========================================================================
-  Program:   Multimod Application Framework
-  Module:    $RCSfile: lhpOpExporterC3DBTK.cpp,v $
-  Language:  C++
-  Date:      $Date: 2009/05/19 14:29:53 $
-  Version:   $Revision: 1.1.1.1 $
-  Authors:   Matteo Giacomoni
-==========================================================================
-  Copyright (c) 2009
-  CINECA - Interuniversity Consortium (www.cineca.it)
-=========================================================================*/
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-
 #include "lhpOpExporterC3DBTK.h"
 
 #include "wx/busyinfo.h"
@@ -27,7 +6,6 @@
 #include "mafGUI.h"
 
 #include "mmuTimeSet.h"
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafVME.h"
 #include "vtkSmartPointer.h"
 #include "mafVMEGroup.h"
@@ -52,10 +30,6 @@
 
 #include <iostream>
 #include <fstream>
-
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(lhpOpExporterC3DBTK);
-//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 lhpOpExporterC3DBTK::lhpOpExporterC3DBTK(const mafString& label) : Superclass(label)
@@ -96,9 +70,9 @@ void lhpOpExporterC3DBTK::OpRun()
   m_Gui = new mafGUI(this);
   m_Gui->Label(_R("absolute matrix"),true);
   m_Gui->Bool(ID_ABS_POSITION,_R("apply"),&m_GlobalPos,0);
-  if(mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(GetInput()))
+  if(auto cloud = mafVMELandmarkCloud::SafeDownCast(GetInput()))
     m_Gui->Bool(ID_SUBTREE,_R("Subtree"),&m_Subtree,0);
-  else if(medVMEAnalog *analog = medVMEAnalog::SafeDownCast(GetInput()))
+  else if(auto analog = medVMEAnalog::SafeDownCast(GetInput()))
     m_Gui->Bool(ID_SUBTREE,_R("Subtree"),&m_Subtree,0);
   m_Gui->OkCancel();
   m_Gui->Divider();
@@ -532,13 +506,13 @@ bool lhpOpExporterC3DBTK::ExportClouds(btk::Acquisition::Pointer target, std::ve
 
 void lhpOpExporterC3DBTK::ExportingTraverse(mafNode *node, std::vector<mafVMELandmarkCloud*>& clouds, std::vector<medVMEAnalog*>& analogs)
 {
-  if(node == NULL)
+  if(node == nullptr)
     return;
-  if(mafVMELandmarkCloud *lmc = mafVMELandmarkCloud::SafeDownCast(node))
+  if(auto lmc = mafVMELandmarkCloud::SafeDownCast(node))
   {
     clouds.push_back(lmc);
   }
-  if(medVMEAnalog *an = medVMEAnalog::SafeDownCast(node))
+  if(auto an = medVMEAnalog::SafeDownCast(node))
   {
     analogs.push_back(an);
   }
@@ -546,7 +520,7 @@ void lhpOpExporterC3DBTK::ExportingTraverse(mafNode *node, std::vector<mafVMELan
   for (int i= 0; i< numberChildren; i++)
   {
     //mafNode *child = node->GetChild(i);
-    ExportingTraverse(node->GetChild(i), clouds, analogs);
+    ExportingTraverse(node->GetChild(i).get(), clouds, analogs);
   }
 }
 //----------------------------------------------------------------------------
@@ -563,15 +537,15 @@ void lhpOpExporterC3DBTK::ExportLandmark()
   std::vector<medVMEAnalog*>        analogs;
   if(GetInput()->IsMAFType(mafVMELandmarkCloud) && !m_Subtree)
   {
-    clouds.push_back(mafVMELandmarkCloud::SafeDownCast(GetInput()));
+    clouds.push_back(mafVMELandmarkCloud::SafeDownCast(GetInput()).get());
   }
   else if(GetInput()->IsMAFType(medVMEAnalog) && !m_Subtree)
   {
-    analogs.push_back(medVMEAnalog::SafeDownCast(GetInput()));
+    analogs.push_back(medVMEAnalog::SafeDownCast(GetInput()).get());
   }
   else
   {
-    ExportingTraverse(GetInput(), clouds, analogs);
+    ExportingTraverse(GetInput().get(), clouds, analogs);
   }
   if(!clouds.empty() || !analogs.empty())
   {

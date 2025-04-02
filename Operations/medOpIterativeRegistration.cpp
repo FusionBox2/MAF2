@@ -116,7 +116,7 @@ void medOpIterativeRegistration::OpRun()
   m_UndoSourceAbsPose = vtkMatrix4x4::New();
   m_RegistrationMatrix = vtkMatrix4x4::New();
 
-  m_SourceVME = mafVME::SafeDownCast(GetInput());
+  m_SourceVME = mafVME::SafeDownCast(GetInput().get());
   m_RegistrationMatrix->DeepCopy(m_SourceVME->GetAbsMatrixPipe()->GetMatrixPointer()->GetVTKMatrix());
 
   // store source abs pose for undo
@@ -378,8 +378,8 @@ int medOpIterativeRegistration::Register()
 	sourcePoints->Reset();
 	targetPoints->Reset();
   
-  mafVMELandmarkCloud *sourceLC = m_GuiLandmark[SOURCE]->GetLandmarkCLoud();
-  mafVMELandmarkCloud *targetLC = m_GuiLandmark[TARGET]->GetLandmarkCLoud();
+  auto sourceLC = m_GuiLandmark[SOURCE]->GetLandmarkCLoud();
+  auto targetLC = m_GuiLandmark[TARGET]->GetLandmarkCLoud();
     
   sourceLC->Update();
   targetLC->Update();

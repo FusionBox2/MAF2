@@ -1,27 +1,3 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafOpImporterVTK
- Authors: Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
 #include "mafOpImporterVTK.h"
 #include <wx/busyinfo.h>
 #include "mafEvent.h"
@@ -49,42 +25,18 @@
 #include "vtkUnstructuredGridReader.h"
 
 //----------------------------------------------------------------------------
-mafCxxTypeMacro(mafOpImporterVTK);
-//----------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------
 mafOpImporterVTK::mafOpImporterVTK(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType  = OPTYPE_IMPORTER;
 	m_Canundo = true;
 	m_File    = _R("");
-
-  //m_VmePointSet = NULL;
-  m_VmeLandmarkCloud = NULL;
-  m_VmePolyLine = NULL;
-  m_VmeSurface  = NULL;
-  m_VmeImage    = NULL;
-  m_VmeGrayVol  = NULL;
-  m_VmeRGBVol  = NULL;
-  m_VmeMesh     = NULL;
-  m_VmeGeneric  = NULL;
-
   m_FileDir = _R("");//mafGetApplicationDirectory().c_str();
 }
 //----------------------------------------------------------------------------
 mafOpImporterVTK::~mafOpImporterVTK()
 //----------------------------------------------------------------------------
 {
-  //mafDEL(m_VmePointSet);
-  mafDEL(m_VmeLandmarkCloud);
-  mafDEL(m_VmePolyLine);
-  mafDEL(m_VmeSurface);
-  mafDEL(m_VmeImage);
-  mafDEL(m_VmeGrayVol);
-  mafDEL(m_VmeRGBVol);
-  mafDEL(m_VmeMesh);
-  mafDEL(m_VmeGeneric);
 }
 //----------------------------------------------------------------------------
 mafOp* mafOpImporterVTK::Copy()   
@@ -166,58 +118,58 @@ int mafOpImporterVTK::ImportVTK()
     vtkDataSet *data = vtkDataSet::SafeDownCast(preader->GetOutputDataObject(0));
     if (data)
     {
-	  mafNEW(m_VmeLandmarkCloud);
-      //mafNEW(m_VmePointSet);
-      mafNEW(m_VmePolyLine);
-      mafNEW(m_VmeSurface);
-	  mafNEW(m_VmeImage);
-      mafNEW(m_VmeGrayVol);
-      mafNEW(m_VmeRGBVol);
-      mafNEW(m_VmeMesh);
-      mafNEW(m_VmeGeneric);
+      auto vmeLandmarkCloud = mafVMELandmarkCloud::NewSPtr();
+      //auto vmePointSet = mafVMEPointSet::NewSPtr();
+      auto vmePolyLine = mafVMEPolyline::NewSPtr(); 
+      auto vmeSurface =mafVMESurface::NewSPtr(); 
+      auto vmeImage =mafVMEImage::NewSPtr(); 
+      auto vmeGrayVol =mafVMEVolumeGray::NewSPtr(); 
+      auto vmeRGBVol =mafVMEVolumeRGB::NewSPtr(); 
+      auto vmeMesh =mafVMEMesh::NewSPtr(); 
+      auto vmeGeneric =mafVMEGeneric::NewSPtr(); 
       //if (m_VmePointSet->SetDataByDetaching(data,0) == MAF_OK)
       //{
       //  SetOutput(m_VmePointSet);
       //}
-	  if (m_VmeLandmarkCloud->SetDataByDetaching(data,0) == MAF_OK)
+	  if (vmeLandmarkCloud->SetDataByDetaching(data,0) == MAF_OK)
       {
-        SetOutput(m_VmeLandmarkCloud);
+        SetOutput(vmeLandmarkCloud);
       }
-      else if (m_VmePolyLine->SetDataByDetaching(data,0) == MAF_OK)
+      else if (vmePolyLine->SetDataByDetaching(data,0) == MAF_OK)
       {
-        SetOutput(m_VmePolyLine);
+        SetOutput(vmePolyLine);
       }
-      else if (m_VmeSurface->SetDataByDetaching(data,0) == MAF_OK)
+      else if (vmeSurface->SetDataByDetaching(data,0) == MAF_OK)
       {
-        SetOutput(m_VmeSurface);
+        SetOutput(vmeSurface);
       }
-	  else if (m_VmeImage->SetDataByDetaching(data,0) == MAF_OK)
+	  else if (vmeImage->SetDataByDetaching(data,0) == MAF_OK)
 	  {
-		  SetOutput(m_VmeImage);
+		  SetOutput(vmeImage);
 	  }
-      else if (m_VmeGrayVol->SetDataByDetaching(data,0) == MAF_OK)
+      else if (vmeGrayVol->SetDataByDetaching(data,0) == MAF_OK)
       {
-        SetOutput(m_VmeGrayVol);
+        SetOutput(vmeGrayVol);
       }
-      else if (m_VmeRGBVol->SetDataByDetaching(data,0) == MAF_OK)
+      else if (vmeRGBVol->SetDataByDetaching(data,0) == MAF_OK)
       {
-        SetOutput(m_VmeRGBVol);
+        SetOutput(vmeRGBVol);
       }
-      else if (m_VmeMesh->SetDataByDetaching(data,0) == MAF_OK)
+      else if (vmeMesh->SetDataByDetaching(data,0) == MAF_OK)
       {
-        SetOutput(m_VmeMesh);
+        SetOutput(vmeMesh);
       }
       else
       {
-        m_VmeGeneric->SetDataByDetaching(data,0);
-        SetOutput(m_VmeGeneric);
+        vmeGeneric->SetDataByDetaching(data,0);
+        SetOutput(vmeGeneric);
       }
 
       mafTagItem tag_Nature;
       tag_Nature.SetName(_R("VME_NATURE"));
       tag_Nature.SetValue(_R("NATURAL"));
       GetOutput()->GetTagArray()->SetTag(tag_Nature);
-      GetOutput()->ReparentTo(GetInput());
+      mafNode::ReparentTo(GetOutput(), GetInput().get());
       GetOutput()->SetName(name);
 
       success = true;

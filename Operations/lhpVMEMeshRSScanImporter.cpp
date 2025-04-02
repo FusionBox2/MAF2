@@ -66,12 +66,11 @@ lhpVMEMeshRSScanImporter::lhpVMEMeshRSScanImporter()
   m_SizeY        = 1.0;
   m_Scale        = 1.0;
   m_TimeShift    = 0.0;
-  m_Output = NULL;
 }
 //----------------------------------------------------------------------------
 lhpVMEMeshRSScanImporter::~lhpVMEMeshRSScanImporter()
 {
-  mafDEL(m_Output);
+  m_Output.reset();
 }
 
 //----------------------------------------------------------------------------
@@ -105,8 +104,8 @@ int lhpVMEMeshRSScanImporter::Read()
 
 
   mafString RSValuesArrayName(_R("RSValues"));
-  mafVMEMesh    *mesh = NULL;
-  mafVMESurface *surf = NULL;
+  std::shared_ptr<mafVMEMesh>    mesh;
+  std::shared_ptr<mafVMESurface> surf;
 
   if(fstr.is_open() == 0)
     return MAF_ERROR;
@@ -144,21 +143,21 @@ int lhpVMEMeshRSScanImporter::Read()
     }
     AddIntArrayToUnstructuredGridCellData(grid, DataFileMatrix, 0, RSValuesArrayName, true);
 
-    if (m_Output == NULL)
+    if (m_Output == nullptr)
     {
-      mafNEW(m_Output);
+      m_Output = mafVMEGroup::NewSPtr();
       mafTagItem tag_Nature;
       tag_Nature.SetName(_R("VME_NATURE"));
       tag_Nature.SetValue(_R("NATURAL"));
       m_Output->GetTagArray()->SetTag(tag_Nature);
       m_Output->SetName(_R("RSScan"));
-      mafNEW(mesh);
+      mesh = mafVMEMesh::NewSPtr();
       mafTagItem tagNature;
       tagNature.SetName(_R("VME_NATURE"));
       tagNature.SetValue(_R("NATURAL"));
       mesh->GetTagArray()->SetTag(tag_Nature);
       mesh->SetName(_R("RSScan"));
-      mesh->ReparentTo(m_Output);
+      mafNode::ReparentTo(mesh, m_Output.get());
       vtkPoints *src, *trg;
       src = vtkPoints::New();
       trg = vtkPoints::New();
@@ -221,7 +220,7 @@ int lhpVMEMeshRSScanImporter::Read()
       newPts->Delete();
       newPolys->Delete();
 
-      mafNEW(surf);
+      surf = mafVMESurface::NewSPtr();
 
       mafTagItem tagN;
       tagN.SetName(_R("VME_NATURE"));
@@ -229,7 +228,7 @@ int lhpVMEMeshRSScanImporter::Read()
       surf->GetTagArray()->SetTag(tagN);
       surf->SetName(_R("RSScan"));
       surf->SetData(output, ts * 0.001);
-      surf->ReparentTo(m_Output);
+      mafNode::ReparentTo(surf, m_Output.get());
       vtkDEL(output);
 
       mafMatrix m;
@@ -252,8 +251,8 @@ int lhpVMEMeshRSScanImporter::Read()
     }
     mesh->SetDataByDetaching(grid, ts * 0.001);
   }
-  mafDEL(mesh);
-  mafDEL(surf);
+  mesh.reset();
+  surf.reset();
   return MAF_OK;
 }
 

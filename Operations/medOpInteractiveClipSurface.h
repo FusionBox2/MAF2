@@ -153,9 +153,9 @@ protected:
 	void ClipBoundingBox();
   
   mafVMESurface   *m_ClipperVME;
-	mafVMESurface   *m_ClippedVME;
+	std::shared_ptr<mafVMESurface>   m_ClippedVME;
 
-  mafVMEGizmo     *m_ImplicitPlaneVMEGizmo;
+  std::shared_ptr<mafVMEGizmo>     m_ImplicitPlaneVMEGizmo;
   vtkPlane        *m_ClipperPlane;
   vtkClipPolyData *m_Clipper;
 	vtkMAFClipSurfaceBoundingBox	*m_ClipperBoundingBox;

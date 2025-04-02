@@ -95,7 +95,7 @@ public:
   void GetSeed(int *seed);
 
   /** Returns the output Volume*/
-  mafVMEVolumeGray *GetOutputVolume(){return m_VolumeOut;};
+  mafVMEVolumeGray *GetOutputVolume(){return m_VolumeOut.get();};
     
 protected:
   /** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
@@ -126,9 +126,9 @@ protected:
   std::shared_ptr<mafInteractorPicker>           m_Picker;
   mafInteractor       *m_OldBehavior;
 
-  mafVMEVolumeGray *m_VolumeOut;
-  mafVMESurface *m_SurfaceOut;
-  mafVMESurface *m_Sphere;
+  std::shared_ptr<mafVMEVolumeGray> m_VolumeOut;
+  std::shared_ptr<mafVMESurface> m_SurfaceOut;
+  std::shared_ptr<mafVMESurface> m_Sphere;
   
 
   vtkSphereSource *m_SphereVTK;
@@ -136,7 +136,7 @@ protected:
   mafString m_SeedScalarValue;
   std::unique_ptr<medOpVolumeResample> m_Resample;
 
-  mafVMEVolumeGray *m_ResampleInput;
+  std::shared_ptr<mafVMEVolumeGray> m_ResampleInput;
   double m_VolumeSpacing[3];
   double m_VolumeBounds[6];
 

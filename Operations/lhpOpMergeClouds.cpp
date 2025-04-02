@@ -143,7 +143,7 @@ void lhpOpMergeClouds::OnEvent(mafEventBase *maf_event)
         mafWarningMessage(_M("Selected VME is not acceptable."));
         return;
       }
-      if(sel == GetInput())
+      if(sel == GetInput().get())
       {
         mafWarningMessage(_M("Selected VME should not be the same as Input."));
         return;
@@ -312,8 +312,8 @@ void lhpOpMergeClouds::OpDo()
 {
   for(int i = 0; i < m_MergeClouds.size(); i++)
   {
-    auto iter1 = GetInput()->NewIterator();
-    auto iter2 = m_MergeClouds[i]->NewIterator();
+    auto iter1 = std::make_unique<mafNodeIterator>(GetInput().get());
+    auto iter2 = std::make_unique<mafNodeIterator>(m_MergeClouds[i]);
     mafMatrix m;
     mafNode *node1, *node2;
     for (node1 = iter1->GetFirstNode(), node2 = iter2->GetFirstNode(); node1 && node2; node1 = iter1->GetNextNode(), node2 = iter2->GetNextNode())
@@ -324,7 +324,7 @@ void lhpOpMergeClouds::OpDo()
     //m_OutSurface->ReparentTo(GetInput()->GetRoot());
     //{mafEvent evUnq(this, VME_ADD, m_OutSurface); InvokeEvent(evUnq);}
   }
-  {mafEvent evUnq(this, VME_MODIFIED); evUnq.SetVme(GetInput()); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this, VME_MODIFIED); evUnq.SetVme(GetInput().get()); InvokeEvent(evUnq);}
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 

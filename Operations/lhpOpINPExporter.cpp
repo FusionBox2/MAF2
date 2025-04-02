@@ -197,8 +197,8 @@ void lhpOpINPExporter::ExportingTraverse(const char *dirName, mafNode* node)
     mafDirMake(fn);
   for (int i= 0; i< numberChildren; i++)
   {
-    mafNode *child = node->GetChild(i);
-    ExportingTraverse(fn.GetCStr(), child);
+    auto child = node->GetChild(i);
+    ExportingTraverse(fn.GetCStr(), child.get());
   }
 }
 //----------------------------------------------------------------------------
@@ -211,7 +211,7 @@ void lhpOpINPExporter::ExportSurface()
   }
   else
   {
-    ExportingTraverse(m_FileDir.GetCStr(), GetInput());
+    ExportingTraverse(m_FileDir.GetCStr(), GetInput().get());
   }
 }
 //----------------------------------------------------------------------------

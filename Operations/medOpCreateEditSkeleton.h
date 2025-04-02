@@ -71,7 +71,7 @@ protected:
   /** Internally used to create a new instance of the GUI.*/
 	void CreateGui();
 
-	medVMEPolylineGraph	*m_Skeleton;
+	std::shared_ptr<medVMEPolylineGraph>	m_Skeleton;
 	vtkPolyData					*m_ResultPolydata;
 
 	medGeometryEditorPolylineGraph *m_Editor;

@@ -186,10 +186,10 @@ protected:
   int     m_NumberOfScalarComponents;   //<1 for grey scale, 3 for RGB
   int     m_UseLookupTable;
 
-  mafVMEVolumeGray  *m_VolumeGray;
-  mafVMEVolumeRGB   *m_VolumeRGB;
+  std::shared_ptr<mafVMEVolumeGray>  m_VolumeGray;
+  std::shared_ptr<mafVMEVolumeRGB>   m_VolumeRGB;
 #ifdef VME_VOLUME_LARGE
-  mafVMEVolumeLarge* m_VolumeLarge;
+  std::shared_ptr<mafVMEVolumeLarge> m_VolumeLarge;
 #endif // VME_VOLUME_LARGE
 
   //preview pipeline

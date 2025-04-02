@@ -173,7 +173,7 @@ void lhpOpMTRExporter::OnEvent(mafEventBase *maf_event)
 void lhpOpMTRExporter::ExportOneCloud(std::ostream &out, mafVMELandmarkCloud* cloud)
 {
   std::vector<mafTimeStamp> timeStamps;
-  mafVME *vmeTemp = mafVME::SafeDownCast(GetInput());
+  auto vmeTemp = mafVME::SafeDownCast(GetInput());
   cloud->GetLocalTimeStamps(timeStamps);
 
   int numberLandmark = cloud->GetNumberOfLandmarks();
@@ -287,8 +287,8 @@ void lhpOpMTRExporter::ExportingTraverse(std::ostream &out, const char *dirName,
   int numberChildren = node->GetNumberOfChildren();
   for (int i= 0; i< numberChildren; i++)
   {
-    mafNode *child = node->GetChild(i);
-    ExportingTraverse(out, dirName, child);
+    auto child = node->GetChild(i);
+    ExportingTraverse(out, dirName, child.get());
   }
 }
 //----------------------------------------------------------------------------
@@ -306,7 +306,7 @@ void lhpOpMTRExporter::ExportLandmark()
   {
     f_Out.open(m_File.GetCStr());
     f_Out<<"Index     Xmm        Ymm        Zmm     A(deg)     B(deg)     C(deg)\n";
-    ExportOneCloud(f_Out, mafVMELandmarkCloud::SafeDownCast(GetInput()));
+    ExportOneCloud(f_Out, mafVMELandmarkCloud::SafeDownCast(GetInput()).get());
     f_Out.close();
   }
   else
@@ -315,12 +315,12 @@ void lhpOpMTRExporter::ExportLandmark()
     {
       f_Out.open(m_File.GetCStr());
       f_Out<<"Index     Xmm        Ymm        Zmm     A(deg)     B(deg)     C(deg)\n";
-      ExportingTraverse(f_Out, NULL, GetInput());
+      ExportingTraverse(f_Out, NULL, GetInput().get());
       f_Out.close();
     }
     else
     {
-      ExportingTraverse(f_Out, m_FileDir.GetCStr(), GetInput());
+      ExportingTraverse(f_Out, m_FileDir.GetCStr(), GetInput().get());
     }
   }
 }

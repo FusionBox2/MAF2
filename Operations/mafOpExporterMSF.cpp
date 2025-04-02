@@ -1,27 +1,3 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafOpExporterMSF
- Authors: Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
 #include "mafOpExporterMSF.h"
 #include "wx/busyinfo.h"
 
@@ -36,10 +12,6 @@
 #include "mafNodeManager.h"
 
 #include <vector>
-
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(mafOpExporterMSF);
-//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 mafOpExporterMSF::mafOpExporterMSF(const mafString& label) : Superclass(label)
@@ -108,15 +80,14 @@ int mafOpExporterMSF::ExportMSF()
   mafStorage storage;
   storage.SetManager(&manager);
   storage.SetURL(m_MSFFile);
-  mafVMERoot *root;
-  mafNEW(root);
+  auto root = mafVMERoot::NewSPtr();
   root->SetName(_R("root"));
   root->Initialize();
   manager.SetRoot(root);
 
   std::vector<idValues> values;
 
-  auto iter = GetInput()->NewIterator();
+  auto iter = std::make_unique<mafNodeIterator>(GetInput().get());
   for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {
     idValues value;
@@ -126,9 +97,9 @@ int mafOpExporterMSF::ExportMSF()
   iter.reset();
 //  mafVME *parent = (mafVME *)GetInput()->GetParent();
 //  GetInput()->ReparentTo(storage.GetRoot());
-  mafNode::CopyTree(GetInput(),root);
+  mafNode::CopyTree(GetInput().get(),root.get());
 
-  iter = root->GetFirstChild()->NewIterator();
+  iter = std::make_unique<mafNodeIterator>(root->GetFirstChild().get());
   int index = 0;
   for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {
@@ -142,12 +113,12 @@ int mafOpExporterMSF::ExportMSF()
   iter.reset();
 
   std::vector<mafString> linkToEliminate;
-  iter = root->GetFirstChild()->NewIterator();
+  iter = std::make_unique<mafNodeIterator>(root->GetFirstChild().get());
   for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {
     linkToEliminate.clear();
 
-    for (mafNode::mafLinksMap::iterator it=node->GetLinks()->begin();it!=node->GetLinks()->end();it++)
+    for (auto it=node->GetLinks()->begin();it!=node->GetLinks()->end();++it)
     {
       bool foundID = false;
       for (int i=0;i<values.size();i++)
@@ -177,8 +148,8 @@ int mafOpExporterMSF::ExportMSF()
 //   n->Register(NULL);
 //   n->ReparentTo(storage.GetRoot());
 	//mafNode::CopyTree(GetInput(), storage.GetRoot());
-  ((mafVME *)root->GetFirstChild())->SetAbsMatrix(*((mafVME *)GetInput())->GetOutput()->GetAbsMatrix());  //Paolo 5-5-2004
-  mafDEL(root);
+  mafVME::StaticDownCast(root->GetFirstChild())->SetAbsMatrix(*mafVME::StaticDownCast(GetInput())->GetOutput()->GetAbsMatrix());  //Paolo 5-5-2004
+  root.reset();
   if (storage.Store() != MAF_OK)
   {
     if (!m_TestMode)

@@ -79,7 +79,7 @@ protected:
 
   mafVME*      m_Source;
   mafVME*      m_Target;
-  mafVME*      m_Registered;
+  std::shared_ptr<mafVME>      m_Registered;
 
   mafString   m_SourceName;
   mafString   m_TargetName;

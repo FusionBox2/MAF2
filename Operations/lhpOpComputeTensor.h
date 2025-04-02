@@ -141,7 +141,7 @@ public:
 protected:
   mafVMEVolumeGray *m_VmeData;           // VME that contains the input scalar dataset
   mafVMEVolume *m_VmeDisplacements;   // VME that contains the displacement vectors for the dataset 
-  mafVMEVolumeGray *m_VmeTensors;        // VME that contains calculated tensor field
+  std::shared_ptr<mafVMEVolumeGray> m_VmeTensors;        // VME that contains calculated tensor field
   
 
   

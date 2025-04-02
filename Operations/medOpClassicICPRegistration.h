@@ -76,7 +76,7 @@ protected:
 	void OpStop(int result) override;
 
 	mafVME*					m_Target;				// m_input, inherited from mafOp, is used as source
-	mafVMESurface*					m_Registered;   // the output: a copy of m_input registered on m_target
+	std::shared_ptr<mafVMESurface>					m_Registered;   // the output: a copy of m_input registered on m_target
 	mafString					m_InputName;
 	mafString					m_TargetName;
 	mafString					m_ReportFilename;

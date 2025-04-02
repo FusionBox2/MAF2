@@ -71,6 +71,6 @@ protected:
 
   wxListBox *m_ListBox;
   std::vector<mafVME*> m_JoinSurf;
-  mafVMESurface        *m_OutSurface;
+  std::shared_ptr<mafVMESurface>        m_OutSurface;
 };
 #endif

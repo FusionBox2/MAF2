@@ -1,28 +1,3 @@
-/*=========================================================================
-
- Program: MAF2Medical
- Module: medOpInteractionDebugger
- Authors: Stefano Perticoni
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
 #include "medOpInteractionDebugger.h"
 
 #include "wx/busyinfo.h"
@@ -30,7 +5,6 @@
 #include "mafDecl.h"
 #include "mafGUI.h"
 
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafTagItem.h"
 #include "mafTagArray.h"
 #include "mafVME.h"
@@ -317,16 +291,15 @@ void medOpInteractionDebugger::BuildPolyline3(vtkPoints *in_points)
 void medOpInteractionDebugger::AddMAFVMEPolylineTestConstrain1ToTree()
 {
   vtkNew<vtkPoints> in_points;
-  mafVMEPolyline *polyline;
-  mafNEW(polyline);
+  auto polyline = mafVMEPolyline::NewSPtr();
 
   BuildPolyline1(in_points);
-  BuildVMEPolyline(in_points, polyline);
+  BuildVMEPolyline(in_points, polyline.get());
 
   polyline->SetName(_R("pippo constrain"));
-  polyline->ReparentTo(GetInput());
+  mafNode::ReparentTo(polyline, GetInput().get());
   
-  mafDEL(polyline);
+  polyline.reset();
 
 }
 
@@ -335,17 +308,16 @@ void medOpInteractionDebugger::AddMEDVMEPolylineGraphTestConstrain1ToTree()
   vtkNew<vtkPolyData> pd;
   BuildGraph1(pd);
 
-  medVMEPolylineGraph *polyline;
-  mafNEW(polyline);
+  auto polyline = medVMEPolylineGraph::NewSPtr();
   
   polyline->SetData(pd, -1);
   polyline->GetOutput()->Update();
   polyline->Update();
 
   polyline->SetName(_R("test graph"));
-  polyline->ReparentTo(GetInput());
+  mafNode::ReparentTo(polyline, GetInput().get());
 
-  mafDEL(polyline);
+  polyline.reset();
 }
 
 
@@ -354,40 +326,38 @@ void medOpInteractionDebugger::RemoveTestConstraintGraph1FromTree()
 
   mafVME *vmeRoot = mafVME::SafeDownCast(GetInput()->GetRoot());
 
-  mafVME *constraint = mafVME::SafeDownCast(vmeRoot->FindInTreeByName(_R("test graph")));
+  auto constraint = mafVME::SafeDownCast(vmeRoot->FindInTreeByName(_R("test graph")));
   assert(constraint != NULL);
   
-  constraint->ReparentTo(NULL);
+  mafNode::ReparentTo(constraint, nullptr);
 }
 
 void medOpInteractionDebugger::AddMAFVMEPolylineTestConstrain2ToTree()
 {
   vtkNew<vtkPoints> in_points;
-  mafVMEPolyline *polyline;
-  mafNEW(polyline);
+  auto polyline = mafVMEPolyline::NewSPtr();
 
   BuildPolyline2(in_points);
-  BuildVMEPolyline(in_points, polyline);
+  BuildVMEPolyline(in_points, polyline.get());
 
   polyline->SetName(_R("test constrain"));
-  polyline->ReparentTo(GetInput());
+  mafNode::ReparentTo(polyline, GetInput().get());
 
-  mafDEL(polyline);
+  polyline.reset();
 }
 
 void medOpInteractionDebugger::AddMAFVMEPolylineTestConstrain3ToTree()
 {
   vtkNew<vtkPoints> in_points;
-  mafVMEPolyline *polyline;
-  mafNEW(polyline);
+  auto polyline = mafVMEPolyline::NewSPtr();
 
   BuildPolyline3(in_points);
-  BuildVMEPolyline(in_points, polyline);
+  BuildVMEPolyline(in_points, polyline.get());
 
   polyline->SetName(_R("pluto constrain"));
-  polyline->ReparentTo(GetInput());
+  mafNode::ReparentTo(polyline, GetInput().get());
 
-  mafDEL(polyline);
+  polyline.reset();
 
 }
 
@@ -396,22 +366,22 @@ void medOpInteractionDebugger::AddMEDGizmoDebuggerToTree()
 
   mafVME *vmeRoot = mafVME::SafeDownCast(GetInput()->GetRoot());
 
-  mafVME *constraint = mafVME::SafeDownCast(vmeRoot->FindInTreeByName(_R("test graph")));
-  assert(constraint != NULL);
+  auto constraint = mafVME::SafeDownCast(vmeRoot->FindInTreeByName(_R("test graph")));
+  assert(constraint != nullptr);
   
   // Create the output vtk data...
-  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(constraint); evUnq.SetBool(true); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(constraint.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 
   // build constrained gizmo
-  m_GizmoDebugger = new medGizmoInteractionDebugger(vmeRoot, this, "test gizmo path");
+  m_GizmoDebugger = new medGizmoInteractionDebugger(vmeRoot->SharedFromThis(), this, "test gizmo path");
 
   m_GizmoDebugger->SetGizmoLength(2);
 
   if (constraint->IsA("medVMEPolylineGraph"))
   {
-    medVMEPolylineGraph *polylineGraph = medVMEPolylineGraph::SafeDownCast(constraint);
-    m_GizmoDebugger->SetConstraintPolylineGraph(polylineGraph);
+    auto polylineGraph = medVMEPolylineGraph::SafeDownCast(constraint);
+    m_GizmoDebugger->SetConstraintPolylineGraph(polylineGraph.get());
   } 
   else
   {

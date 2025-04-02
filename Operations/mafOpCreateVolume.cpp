@@ -1,28 +1,3 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafOpCreateVolume
- Authors: Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-
 #include "mafOpCreateVolume.h"
 #include "mafDecl.h"
 #include "mafEvent.h"
@@ -31,14 +6,9 @@
 #include "mafVMERoot.h"
 #include "mafVMEVolumeGray.h"
 
-#include "vtkSmartPointer.h"
 #include "vtkStructuredPoints.h"
 #include "vtkPointData.h"
 #include "vtkDoubleArray.h"
-
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(mafOpCreateVolume);
-//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 mafOpCreateVolume::mafOpCreateVolume(const mafString& label) : Superclass(label)
@@ -46,7 +16,6 @@ mafOpCreateVolume::mafOpCreateVolume(const mafString& label) : Superclass(label)
 {
   m_OpType	= OPTYPE_OP;
   m_Canundo = true;
-  m_Volume  = NULL;
   m_Spacing[0] = m_Spacing[1] = m_Spacing[2] = 1.0;
   m_Dimensions[0] = m_Dimensions[1] = m_Dimensions[2] = 10.0;
   m_Density = 0.0;
@@ -55,7 +24,6 @@ mafOpCreateVolume::mafOpCreateVolume(const mafString& label) : Superclass(label)
 mafOpCreateVolume::~mafOpCreateVolume()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_Volume);
 }
 //----------------------------------------------------------------------------
 mafOp* mafOpCreateVolume::Copy()   
@@ -150,10 +118,10 @@ void mafOpCreateVolume::CreateVolume()
   //vol->Update();
   sca->Delete();
 
-  mafNEW(m_Volume);
-  m_Volume->SetName(_R("volume"));
-  m_Volume->SetData(vol, -1);
-  SetOutput(m_Volume);
+  auto volume = mafVMEVolumeGray::NewSPtr();
+  volume->SetName(_R("volume"));
+  volume->SetData(vol, -1);
+  SetOutput(volume);
 }
 
 //----------------------------------------------------------------------------

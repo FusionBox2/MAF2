@@ -79,15 +79,6 @@ protected:
 
   mafString m_File;
   mafString m_FileDir;
-
-  mafVMEPointSet *m_VmePointSet;
-  medVMEPolylineGraph *m_VmePolyLine;
-  mafVMESurface *m_VmeSurface;
-  mafVMEVolumeGray *m_VmeGrayVol;
-  mafVMEVolumeRGB *m_VmeRGBVol;
-  mafVMEMesh *m_VmeMesh;  
-  mafVMEGeneric *m_VmeGeneric;
-
   vtkCallbackCommand *m_EventRouter;
 
 };

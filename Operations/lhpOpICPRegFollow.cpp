@@ -50,7 +50,6 @@ lhpOpICPRegFollow::lhpOpICPRegFollow(const mafString& label) : Superclass(label)
 
 	m_Source						= NULL; 
   m_Target						= NULL; 
-	m_Registered				= NULL; 
 
 	m_Convergence				= 0.0001;
 
@@ -63,7 +62,7 @@ lhpOpICPRegFollow::lhpOpICPRegFollow(const mafString& label) : Superclass(label)
 lhpOpICPRegFollow::~lhpOpICPRegFollow( ) 
 //----------------------------------------------------------------------------
 {
-	mafDEL(m_Registered);
+	m_Registered.reset();
 }
 //----------------------------------------------------------------------------
 mafOp* lhpOpICPRegFollow::Copy()   
@@ -173,7 +172,7 @@ void lhpOpICPRegFollow::OpDo()
   assert( m_Target);
 	assert(!m_Registered);
 
-	((mafVME*)GetInput())->GetOutput()->Update();
+	mafVME::StaticDownCast(GetInput())->GetOutput()->Update();
   
 
 	auto icp_matrix = mafMatrix::NewSPtr();  
@@ -200,27 +199,27 @@ void lhpOpICPRegFollow::OpDo()
 
   mafString name = GetInput()->GetName() + mafString::Format(_L(" registered as ")) + m_Target->GetName() + mafString::Format(_L(" on ")) + m_Target->GetName();
 
-  mafNEW(m_Registered);
+  m_Registered = mafVMESurface::NewSPtr();
 
   if(GetInput()->IsMAFType(mafVMESurface))
    {
-     m_Registered->DeepCopy(GetInput()); //not to be deleted, - delete it in the Undo or in destructor
+     m_Registered->DeepCopy(GetInput().get()); //not to be deleted, - delete it in the Undo or in destructor
      m_Registered->GetOutput()->Update();
    }
   else
    {
-     m_Registered->SetData((vtkPolyData*)(((mafVME*)GetInput())->GetOutput()->GetVTKData()),0.0);
+     m_Registered->SetData((vtkPolyData*)(mafVME::StaticDownCast(GetInput())->GetOutput()->GetVTKData()),0.0);
      m_Registered->Update();
    }
   m_Registered->SetName(name);
-  m_Registered->ReparentTo(m_Target->GetParent());
+  mafNode::ReparentTo(m_Registered, m_Target->GetParent());
   m_Registered->SetMatrix(*final_matrix);
 
   SetOutput(m_Registered);
 
-  m_Registered->ReparentTo(GetInput());
+  mafNode::ReparentTo(m_Registered, GetInput().get());
 
-  mafVME *sourceVME = mafVME::SafeDownCast(GetInput());
+  auto sourceVME = mafVME::SafeDownCast(GetInput());
 
   vtkNew<vtkTransform> sourceABSPoseInverseTr;
   sourceABSPoseInverseTr->PostMultiply();

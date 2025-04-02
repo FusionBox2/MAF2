@@ -98,7 +98,7 @@ protected:
   std::vector<std::pair<mafString, mafString> >  m_LMDict;
   mafString                                    m_ScriptFName;
 
-  mafVMELandmarkCloud*                         m_Registered;
+  std::shared_ptr<mafVMELandmarkCloud>                         m_Registered;
   double*                                      m_weight;       
   int                                          m_RegistrationMode; 
 

@@ -34,8 +34,6 @@
 #include "mafOpExplodeCollapse.h"
 #include "lhpOpImporterC3DBTK.h"
 
-#include "ftk/Base/RegisteringPointer.h"
-
 #include "mafVME.h"
 #include "mafVMEC3DData.h"
 #include "mafVMESurface.h"
@@ -72,7 +70,6 @@ enum
 //----------------------------------------------------------------------------
 // Forward Refs
 //----------------------------------------------------------------------------
-mafCxxTypeMacro(lhpOpStickPalpation)
 
 namespace {
   typedef mafVME *(MatchName)(mafVME *pVME, const char *name);
@@ -188,7 +185,7 @@ namespace {
 
     for(nI = 0; nI < pRoot->GetNumberOfChildren() && pRetVME == NULL; nI++)
     {
-      pRetVME = MatchCriterion(mafVME::SafeDownCast(pRoot->GetChild(nI)), pCritFunc, name);
+      pRetVME = MatchCriterion(mafVME::SafeDownCast(pRoot->GetChild(nI)).get(), pCritFunc, name);
     }
 
     return pRetVME;
@@ -270,7 +267,6 @@ lhpOpStickPalpation::lhpOpStickPalpation(const mafString& label) : Superclass(la
 
   m_WarnNamesNotMatched  = false;
   //m_NewIndex             = 0;
-  m_Registered           = NULL;
   m_pointsSource         = NULL;
   m_pointsTarget         = NULL;
   m_RegistrationMode     = SIMILARITY;
@@ -281,7 +277,7 @@ lhpOpStickPalpation::lhpOpStickPalpation(const mafString& label) : Superclass(la
 lhpOpStickPalpation::~lhpOpStickPalpation() 
 //----------------------------------------------------------------------------
 {
-  vtkDEL(m_Registered);
+  m_Registered.reset();
   vtkDEL(m_pointsSource);
   vtkDEL(m_pointsTarget);
 
@@ -319,15 +315,15 @@ bool lhpOpStickPalpation::Accept(mafNode* vme)
 void lhpOpStickPalpation::OpRun()
 //----------------------------------------------------------------------------
 {
-  m_LimbCloud     = mafVMELandmarkCloud::SafeDownCast(GetInput());
+  m_LimbCloud     = mafVMELandmarkCloud::SafeDownCast(GetInput()).get();
   SetNodeName(m_LimbCloud, &m_LimbCloudName);
 
   m_TrgMotion     = mafVME::SafeDownCast(GetInput()->GetParent());
   SetNodeName(m_TrgMotion, &m_TrgMotionName);
 
-  if(m_StickDefinition == NULL)
+  if(m_StickDefinition == nullptr)
   {
-    m_StickDefinition = (mafVMELandmarkCloud *)MatchCriterion((mafVME *)GetInput()->GetRoot(), MatchStickDefinition, NULL);
+    m_StickDefinition = mafVMELandmarkCloud::StaticDownCast(MatchCriterion(mafVME::StaticDownCast(GetInput()->GetRoot()), MatchStickDefinition, nullptr));
     if(m_StickDefinition)
       SetNodeName(m_StickDefinition, &m_StickDefinitionName);
   }
@@ -581,7 +577,7 @@ void lhpOpStickPalpation::OpDo()
 //----------------------------------------------------------------------------
 {
   wxInt32 nL;
-  mafVME  *vme;
+  std::shared_ptr<mafVME>  vme;
   
   //modified by Stefano. 18-9-2003
   wxBusyInfo wait("Please wait, working...");
@@ -629,8 +625,7 @@ void lhpOpStickPalpation::OpDo()
     importer->SetImportPlatform(false);
     importer->SetImportEvent(false);
     importer->Import();
-    mafVMEGroup *c3dImported = importer->GetGroup();
-    c3dImported->Register(this);
+    auto c3dImported = importer->GetGroup();
     vme = c3dImported;
     delete importer;
 #else
@@ -649,11 +644,12 @@ void lhpOpStickPalpation::OpDo()
     mafString path, name, ext;
     mafSplitPath(file,&path,&name,&ext);
     vme->SetName(name);
-    {mafEvent evUnq(this,VME_ADD); evUnq.SetVme(vme); InvokeEvent(evUnq);}
+    mafNode::ReparentTo(vme, GetInput()->GetRoot());
+    //{mafEvent evUnq(this,VME_ADD); evUnq.SetVme(vme); InvokeEvent(evUnq);}
 
     m_LimbCloud        = mafVMELandmarkCloud::SafeDownCast(MatchCriterion(m_TrgMotion, MatchWithName, m_LMDict[nL].second.GetCStr()));
-    m_LimbCalibration  = mafVMELandmarkCloud::SafeDownCast(MatchCriterion(vme, MatchWithName, m_LMDict[nL].second.GetCStr()));
-    m_StickCalibration = mafVMELandmarkCloud::SafeDownCast(MatchCriterion(vme, MatchStick, NULL));
+    m_LimbCalibration  = mafVMELandmarkCloud::SafeDownCast(MatchCriterion(vme.get(), MatchWithName, m_LMDict[nL].second.GetCStr()));
+    m_StickCalibration = mafVMELandmarkCloud::SafeDownCast(MatchCriterion(vme.get(), MatchStick, NULL));
 
     if(m_LimbCloud == NULL)
       wxLogMessage("Target cloud is not found");
@@ -663,8 +659,9 @@ void lhpOpStickPalpation::OpDo()
       wxLogMessage("Wand calibration cloud is not found");
     if(m_LimbCloud != NULL && m_LimbCalibration != NULL && m_StickCalibration != NULL)
       ProcessSingleLM();
-    {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(vme); InvokeEvent(evUnq);}
-    mafDEL(vme);
+    //{mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(vme); InvokeEvent(evUnq);}
+    mafNode::ReparentTo(vme, nullptr);
+    vme.reset();
   }
 }
 
@@ -695,23 +692,23 @@ void lhpOpStickPalpation::ProcessSingleLM()
     return;
   }
 
-  mafVME *vmlc = NULL;
+  mafVME *vmlc = nullptr;
   if(m_LimbCalibration->IsOpen())
-    vmlc = m_LimbCalibration->GetLandmark(0);
+    vmlc = m_LimbCalibration->GetLandmark(0).get();
   else
     vmlc = m_LimbCalibration;
-  mafVME *vmsc = NULL;
+  mafVME *vmsc = nullptr;
   if(m_StickCalibration->IsOpen())
-    vmsc = m_StickCalibration->GetLandmark(0);
+    vmsc = m_StickCalibration->GetLandmark(0).get();
   else
     vmsc = m_StickCalibration;
 
-  if(vmlc != NULL)
+  if(vmlc)
     vmlc->GetAbsTimeStamps(kframes1);
-  if(vmsc != NULL)
+  if(vmsc)
     vmsc->GetAbsTimeStamps(kframes2);
 
-  if(kframes1.size() == 0)
+  if(kframes1.empty())
   {
     wxLogMessage("Target calibration has no frames.");
     return;
@@ -880,8 +877,7 @@ void lhpOpStickPalpation::ProcessSingleLM()
   localTip /= numberRegistered;
 
   //create cloud for averaged positions
-  mafVMELandmarkCloud *averagedCalibr;
-  mafNEW(averagedCalibr);
+  auto averagedCalibr = mafVMELandmarkCloud::NewSPtr();
   averagedCalibr->Open();
   averagedCalibr->SetName(_R("averaged landmark cloud"));
   averagedCalibr->SetRadius(15);
@@ -901,8 +897,7 @@ void lhpOpStickPalpation::ProcessSingleLM()
 
   if(m_LimbCloud->IsOpen())
   {
-    mafVMELandmark *lm = m_LimbCloud->GetLandmark(0);
-    if(lm != NULL)
+    if (auto lm = m_LimbCloud->GetLandmark(0))
       lm->GetMatrixTimeStamps(kframes1);
   }
   else
@@ -920,7 +915,7 @@ void lhpOpStickPalpation::ProcessSingleLM()
     V4d<double>  palpatedLM;
 
     //calculate registration transform
-    if(ExtractMatchingPoints(averagedCalibr, m_LimbCloud, limbCalibData, -1, currTime) >= 3)
+    if(ExtractMatchingPoints(averagedCalibr.get(), m_LimbCloud, limbCalibData, -1, currTime) >= 3)
       deviation = RegisterPoints(regMatrix.GetVTKMatrix());
     else
     {
@@ -955,7 +950,7 @@ void lhpOpStickPalpation::ProcessSingleLM()
   }
   m_UndoList.push_back(std::make_pair(m_LimbCloud, newIndex));
 
-  mafDEL(averagedCalibr);
+  averagedCalibr.reset();
 }
 
 

@@ -87,8 +87,6 @@ medOpSegmentationRegionGrowingConnectedThreshold::medOpSegmentationRegionGrowing
 
   m_Sphere = NULL;
   m_SphereVTK = NULL;
-  m_VolumeOut = NULL;
-  m_SurfaceOut = NULL;
   m_Resample=NULL;
   m_ResampleInput= NULL;
 
@@ -104,8 +102,8 @@ medOpSegmentationRegionGrowingConnectedThreshold::~medOpSegmentationRegionGrowin
 //----------------------------------------------------------------------------
 {
   delete []m_Seed;
-  mafDEL(m_VolumeOut);
-  mafDEL(m_SurfaceOut);
+  m_VolumeOut.reset();
+  m_SurfaceOut.reset();
   m_Picker.reset();
   vtkDEL(m_SphereVTK);
 }
@@ -136,10 +134,10 @@ void medOpSegmentationRegionGrowingConnectedThreshold::OpRun()
 	  m_Picker->SetListener(this);
 	  mafVME::SafeDownCast(m_ResampleInput)->SetBehavior(m_Picker.get());
 
-	  mafNEW(m_Sphere);
+	  m_Sphere = mafVMESurface::NewSPtr();
 	  m_Sphere->GetTagArray()->SetTag(mafTagItem(_R("VISIBLE_IN_THE_TREE"), 0.0));
 	  m_Sphere->SetVisibleToTraverse(false);
-	  m_Sphere->ReparentTo(m_ResampleInput->GetParent());
+	  mafNode::ReparentTo(m_Sphere, m_ResampleInput->GetParent());
 
 	  vtkNEW(m_SphereVTK);
     double bounds[6];mafVME::SafeDownCast(m_ResampleInput)->GetOutput()->GetBounds(bounds);
@@ -159,8 +157,8 @@ void medOpSegmentationRegionGrowingConnectedThreshold::OpDo()
 {
   if(GetOutput())
   {
-    GetOutput()->ReparentTo(m_ResampleInput);
-    {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetOutput()); evUnq.SetBool(true); InvokeEvent(evUnq);}
+    mafNode::ReparentTo(GetOutput(), m_ResampleInput.get());
+    {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetOutput().get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
     {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
 }
@@ -193,8 +191,8 @@ void medOpSegmentationRegionGrowingConnectedThreshold::OpStop(int result)
 {  
   if (result==OP_RUN_OK)
   {
-    {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Sphere); evUnq.SetBool(false); InvokeEvent(evUnq);}
-    m_Sphere->ReparentTo(NULL);
+    {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Sphere.get()); evUnq.SetBool(false); InvokeEvent(evUnq);}
+    mafNode::ReparentTo(m_Sphere, nullptr);
 
     mafVME::SafeDownCast(m_ResampleInput)->SetBehavior(m_OldBehavior);
     mafVME::SafeDownCast(m_ResampleInput)->Update();
@@ -204,22 +202,22 @@ void medOpSegmentationRegionGrowingConnectedThreshold::OpStop(int result)
   } 
   else if (result==OP_RUN_CANCEL)
   { 
-    if(m_Sphere!=NULL )
+    if(m_Sphere)
     {
-      {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Sphere); evUnq.SetBool(false); InvokeEvent(evUnq);}
-      m_Sphere->ReparentTo(NULL);
+      {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Sphere.get()); evUnq.SetBool(false); InvokeEvent(evUnq);}
+      mafNode::ReparentTo(m_Sphere, nullptr);
   
       mafVME::SafeDownCast(m_ResampleInput)->SetBehavior(m_OldBehavior);
       mafVME::SafeDownCast(m_ResampleInput)->Update();
     }
     
-    if(m_ResampleInput!=NULL && m_ResampleInput!=GetInput())
+    if(m_ResampleInput && m_ResampleInput!=GetInput())
     {
-      {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_ResampleInput); evUnq.SetBool(false); InvokeEvent(evUnq);}
-      {mafEvent evUnq(this,VME_SELECT); evUnq.SetVme(m_ResampleInput); evUnq.SetBool(false); InvokeEvent(evUnq);}
-      {mafEvent evUnq(this, VME_SELECT); evUnq.SetVme(GetInput()); evUnq.SetBool(true); InvokeEvent(evUnq);}
-      {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetInput()); evUnq.SetBool(true); InvokeEvent(evUnq);}
-      m_ResampleInput->ReparentTo(NULL);
+      {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_ResampleInput.get()); evUnq.SetBool(false); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,VME_SELECT); evUnq.SetVme(m_ResampleInput.get()); evUnq.SetBool(false); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this, VME_SELECT); evUnq.SetVme(GetInput().get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetInput().get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
+      mafNode::ReparentTo(m_ResampleInput, nullptr);
       m_ResampleInput->Update();
     }
     m_Resample.reset(); 
@@ -303,7 +301,7 @@ void medOpSegmentationRegionGrowingConnectedThreshold::Algorithm()
   itkTOvtk->SetInput( connectedThreshold->GetOutput() );
   itkTOvtk->Update();
 
-  mafNEW(m_VolumeOut);
+  m_VolumeOut = mafVMEVolumeGray::NewSPtr();
   m_VolumeOut->SetName(_R("Connected Threshold"));
 
   vtkImageData *image = ((vtkImageData*)itkTOvtk->GetOutput());
@@ -333,10 +331,10 @@ void medOpSegmentationRegionGrowingConnectedThreshold::Algorithm()
   vtkPolyData *surface=volToSurface->GetOutput();
 
   //Generating Surface VME
-  mafNEW(m_SurfaceOut);
+  m_SurfaceOut = mafVMESurface::NewSPtr();
   m_SurfaceOut->SetName(_R("Connected Threshold Surface"));
   m_SurfaceOut->SetData(surface,mafVMEVolumeGray::SafeDownCast(m_ResampleInput)->GetTimeStamp());
-  m_SurfaceOut->ReparentTo(m_ResampleInput);
+  mafNode::ReparentTo(m_SurfaceOut, m_ResampleInput.get());
   m_SurfaceOut->Modified();
   m_SurfaceOut->Update();
 
@@ -346,7 +344,7 @@ void medOpSegmentationRegionGrowingConnectedThreshold::Algorithm()
   //The result tree is Input
   //                     |-Surface
   //                          |-Binary volume
-  m_VolumeOut->ReparentTo(m_SurfaceOut);
+  mafNode::ReparentTo(m_VolumeOut, m_SurfaceOut.get());
 
   SetOutput(m_SurfaceOut);
 
@@ -406,7 +404,7 @@ void medOpSegmentationRegionGrowingConnectedThreshold::OnEvent(mafEventBase *maf
           m_Sphere->SetData(m_SphereVTK->GetOutput(),0.0);
           m_Sphere->Update();
 
-          {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Sphere); evUnq.SetBool(true); InvokeEvent(evUnq);}
+          {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Sphere.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
           {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 
           vtkStructuredPoints *sp = vtkStructuredPoints::SafeDownCast(mafVMEVolumeGray::SafeDownCast(m_ResampleInput)->GetOutput()->GetVTKData());
@@ -477,7 +475,7 @@ int medOpSegmentationRegionGrowingConnectedThreshold::CreateResample()
 {
  
   // if the volume is a rectilinear grid we resample it 
-  if(((mafVME*)GetInput())->GetOutput()->GetVTKData()->IsA("vtkRectilinearGrid"))
+  if(mafVME::StaticDownCast(GetInput())->GetOutput()->GetVTKData()->IsA("vtkRectilinearGrid"))
   { 
     wxBusyInfo *info;
     wxBusyCursor *wait;
@@ -488,7 +486,7 @@ int medOpSegmentationRegionGrowingConnectedThreshold::CreateResample()
     m_Resample->AutoSpacing();
     m_Resample->GetSpacing(m_VolumeSpacing);
       
-    ((mafVME*)GetInput())->GetOutput()->GetVMELocalBounds(m_VolumeBounds);
+    mafVME::StaticDownCast(GetInput())->GetOutput()->GetVMELocalBounds(m_VolumeBounds);
     m_Resample->SetBounds(m_VolumeBounds,medOpVolumeResample::CUSTOMBOUNDS);
           
     if (!CheckSpacing())
@@ -507,14 +505,14 @@ int medOpSegmentationRegionGrowingConnectedThreshold::CreateResample()
     
     m_Resample->Resample();
      
-    mafVME *Output = mafVME::SafeDownCast(m_Resample->GetOutput());
+    auto Output = mafVME::SafeDownCast(m_Resample->GetOutput());
     //Output->GetOutput()->GetOutputDataSet()->Update();
     m_ResampleInput=mafVMEVolumeGray::SafeDownCast(Output);
     m_ResampleInput->Update();
 
     // show volume resampled
-    {mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(m_ResampleInput); evUnq.SetBool(true); InvokeEvent(evUnq);}
-    {mafEvent evUnq(this, VME_SELECT); evUnq.SetVme(m_ResampleInput); evUnq.SetBool(true); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(m_ResampleInput.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_SELECT); evUnq.SetVme(m_ResampleInput.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
     {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
      
     if(!m_TestMode)

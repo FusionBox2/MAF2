@@ -1,32 +1,6 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafOpImporterVRML
- Authors: Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __mafOpImporterVRML_H__
-#define __mafOpImporterVRML_H__
-
-//----------------------------------------------------------------------------
-// Include :
-//----------------------------------------------------------------------------
 #include "mafOp.h"
-
-//----------------------------------------------------------------------------
-// forward references :
-//----------------------------------------------------------------------------
-class mafNode;
-class mafVMEGroup;
 
 //----------------------------------------------------------------------------
 //mafOpImporterVRML :
@@ -44,7 +18,7 @@ public:
            mafOpImporterVRML(const mafString& label = _R("VRMLImporter"));
            ~mafOpImporterVRML() override;
 	
-  mafTypeMacro(mafOpImporterVRML, mafOp);
+  mafTypeMacroN(mafOpImporterVRML);
 
   mafOp* Copy() override;
 
@@ -63,7 +37,4 @@ public:
 protected:
 	mafString m_File;
 	mafString m_FileDir;
-  
-	mafVMEGroup *m_Group;
 };
-#endif

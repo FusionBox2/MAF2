@@ -62,7 +62,7 @@ protected:
 
   //mafVMELandmarkCloud*                         m_Source;
   mafVME*                                      m_Source;
-  mafVME                                       *m_Resultat;
+  std::shared_ptr<mafVME>                                       m_Resultat;
   mafString                                    m_SourceName;
   int                                          m_MultiTime;
   std::vector<std::pair<mafString, mafString> >  m_LMDict;

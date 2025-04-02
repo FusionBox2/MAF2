@@ -1,27 +1,3 @@
-/*=========================================================================
-
- Program: MAF2
- Module: lhpOpImporterPLY
- Authors: Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
 #include "lhpOpImporterPLY.h"
 #include "wx/busyinfo.h"
 
@@ -30,7 +6,6 @@
 #include "mafTagArray.h"
 #include "mafVME.h"
 #include "mafVMESurface.h"
-#include "ftk/Base/RegisteringPointer.h"
 #include "vtkSmartPointer.h"
 #include "mafFilesDirs.h"
 
@@ -38,10 +13,6 @@
 #include "vtkPolyData.h"
 
 #include <fstream>
-
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(lhpOpImporterPLY);
-//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 lhpOpImporterPLY::lhpOpImporterPLY(const mafString& label) : Superclass(label)
@@ -57,7 +28,7 @@ lhpOpImporterPLY::~lhpOpImporterPLY()
 //----------------------------------------------------------------------------
 {
   for(unsigned i = 0; i < m_ImportedPLYs.size(); i++)
-    mafDEL(m_ImportedPLYs[i]);
+    m_ImportedPLYs[i].reset();
 }
 //----------------------------------------------------------------------------
 bool lhpOpImporterPLY::Accept(mafNode *node)
@@ -104,7 +75,7 @@ void lhpOpImporterPLY::OpDo()
   {
     if (m_ImportedPLYs[i])
     {
-      m_ImportedPLYs[i]->ReparentTo(GetInput());
+      mafNode::ReparentTo(m_ImportedPLYs[i], GetInput().get());
     }
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
@@ -118,7 +89,7 @@ void lhpOpImporterPLY::OpUndo()
   {
     if (m_ImportedPLYs[i])
     {
-      m_ImportedPLYs[i]->ReparentTo(NULL);
+      mafNode::ReparentTo(m_ImportedPLYs[i], nullptr);
     }
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
@@ -135,7 +106,7 @@ void lhpOpImporterPLY::ImportPLY()
 
   unsigned int i;
   for(i = 0; i < m_ImportedPLYs.size(); i++)
-    mafDEL(m_ImportedPLYs[i]);
+    m_ImportedPLYs[i].reset();
   m_ImportedPLYs.clear();
 
   for(unsigned kk = 0; kk < m_Files.size(); kk++)
@@ -151,8 +122,7 @@ void lhpOpImporterPLY::ImportPLY()
     mafString path, name, ext;
     mafSplitPath(fn.GetCStr(),&path,&name,&ext);
 
-    mafVMESurface *importedPLY;
-    mafNEW(importedPLY);
+    auto importedPLY = mafVMESurface::NewSPtr();
     importedPLY->SetName(name);
 	  importedPLY->SetDataByDetaching(reader->GetOutput(),0);
 
@@ -174,7 +144,7 @@ void lhpOpImporterPLY::SetFileName(const mafString& file_name)
   m_Files[0] = file_name;
 }
 //----------------------------------------------------------------------------
-void lhpOpImporterPLY::GetImportedPLY(std::vector<mafVMESurface*> &importedPLY)
+void lhpOpImporterPLY::GetImportedPLY(std::vector<std::shared_ptr<mafVMESurface> > &importedPLY)
 //----------------------------------------------------------------------------
 {
   importedPLY.clear();

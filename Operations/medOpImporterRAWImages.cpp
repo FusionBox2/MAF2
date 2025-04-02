@@ -141,21 +141,15 @@ medOpImporterRAWImages::medOpImporterRAWImages(const mafString& label) : Supercl
 #ifdef VME_VOLUME_LARGE
   m_MemLimit = 16;	//memory limit in MB, default is 16 MB
 #endif // VME_VOLUME_LARGE
-
-  m_VolumeGray = NULL;
-  m_VolumeRGB = NULL;
-#ifdef VME_VOLUME_LARGE
-  m_VolumeLarge = NULL;
-#endif	
 }
 //----------------------------------------------------------------------------
 medOpImporterRAWImages::~medOpImporterRAWImages()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_VolumeGray);
-  mafDEL(m_VolumeRGB);
+  m_VolumeGray.reset();
+  m_VolumeRGB.reset();
 #ifdef VME_VOLUME_LARGE
-  mafDEL(m_VolumeLarge);
+  m_VolumeLarge.reset();
 #endif	
 }
 //----------------------------------------------------------------------------
@@ -459,20 +453,6 @@ void medOpImporterRAWImages::OpStop(int result)
 
   if(!this->m_TestMode)
     {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
-}
-//----------------------------------------------------------------------------
-void medOpImporterRAWImages::OpDo()
-//----------------------------------------------------------------------------
-{
-  assert(GetOutput());
-  {mafEvent evUnq(this,VME_ADD); evUnq.SetVme(GetOutput()); InvokeEvent(evUnq);}
-}
-//----------------------------------------------------------------------------
-void medOpImporterRAWImages::OpUndo()
-//----------------------------------------------------------------------------
-{
-  assert(GetOutput());
-  {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(GetOutput()); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpImporterRAWImages::EnableWidgets(bool enable)
@@ -1215,8 +1195,8 @@ bool medOpImporterRAWImages::Import()
     vtkDEL(ZDoubleArray);
 
     //create VME
-    mafNEW(m_VolumeGray);
-    mafNEW(m_VolumeRGB);
+    m_VolumeGray = mafVMEVolumeGray::NewSPtr();
+    m_VolumeRGB = mafVMEVolumeRGB::NewSPtr();
     if (m_VolumeGray->SetDataByDetaching((vtkDataSet *)rectilinear_data,0) == MAF_OK)
     {
       SetOutput(m_VolumeGray);
@@ -1238,8 +1218,8 @@ bool medOpImporterRAWImages::Import()
   {
     assert(ZDoubleArray == NULL);
 
-    mafNEW(m_VolumeGray);
-    mafNEW(m_VolumeRGB);
+    m_VolumeGray = mafVMEVolumeGray::NewSPtr();
+    m_VolumeRGB = mafVMEVolumeRGB::NewSPtr();
     if (m_VolumeGray->SetDataByDetaching((vtkDataSet *)convert->GetOutput(),0) == MAF_OK)
     {
       SetOutput(m_VolumeGray);
@@ -1282,7 +1262,7 @@ bool medOpImporterRAWImages::Import()
       rd->SetVOI(VOI);
       rd->Update();
 
-      mafNEW(m_VolumeLarge);
+      m_VolumeLarge = mafVMEVolumeLarge::NewSPtr();
       m_VolumeLarge->SetFileName(this->m_RawDirectory.GetCStr());
       if (m_VolumeLarge->SetLargeData(rd) == MAF_OK)
         SetOutput(m_VolumeLarge);
@@ -1313,7 +1293,7 @@ bool medOpImporterRAWImages::Import()
    tag_Nature.SetValue(_R("NATURAL"));
 
    GetOutput()->SetName(name);
-   GetOutput()->ReparentTo(GetInput());
+  mafNode::ReparentTo(GetOutput(), GetInput().get());
 
    GetOutput()->GetTagArray()->SetTag(tag_Nature);
    //GetOutput()->Register(GetOutput()); //increment reference count so that the vme can't die

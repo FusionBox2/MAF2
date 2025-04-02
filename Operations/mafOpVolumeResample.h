@@ -62,7 +62,7 @@ public:
 	void Resample();
 
 protected:
-  mafVMEVolumeGray *m_ResampledVme;
+  std::shared_ptr<mafVMEVolumeGray> m_ResampledVme;
 
 	double m_OldVolumePosition[3];
 	double m_NewVolumePosition[3];
@@ -94,6 +94,6 @@ protected:
 
 	vtkOutlineSource *m_ResampleBox;
 
-	mafVMEGizmo *m_ResampleBoxVme;
+	std::shared_ptr<mafVMEGizmo> m_ResampleBoxVme;
 };
 #endif

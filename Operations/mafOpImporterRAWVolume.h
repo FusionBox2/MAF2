@@ -111,8 +111,8 @@ protected:
 	mafString	m_CoordFile;
   mafGUI *m_GuiSlider;
 
-  mafVMEVolumeGray  *m_VolumeGray;
-  mafVMEVolumeRGB   *m_VolumeRGB;
+  std::shared_ptr<mafVMEVolumeGray> m_VolumeGray;
+  std::shared_ptr<mafVMEVolumeRGB> m_VolumeRGB;
 
 	//preview pipeline
   vtkWindowLevelLookupTable *m_LookupTable;

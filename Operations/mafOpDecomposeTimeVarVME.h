@@ -1,21 +1,4 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafOpDecomposeTimeVarVME
- Authors: Roberto Mucci
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __mafOpDecomposeTimeVarVME_H__
-#define __mafOpDecomposeTimeVarVME_H__
+#pragma once
 
 //----------------------------------------------------------------------------
 // Includes:
@@ -33,13 +16,6 @@ class mafVMELandmarkCloud;
 class mafGUI;
 class mafEvent;
 
-#ifdef MAF_EXPORTS
-#include "mafDllMacros.h"
-EXPORT_STL_VECTOR(MAF_EXPORT,mafString);
-EXPORT_STL_VECTOR(MAF_EXPORT,mafVMELandmarkCloud*);
-EXPORT_STL_VECTOR(MAF_EXPORT,mafVME*);
-#endif
-
 //----------------------------------------------------------------------------
 // mafOpRefSys :
 //----------------------------------------------------------------------------
@@ -50,7 +26,7 @@ class MAF_EXPORT mafOpDecomposeTimeVarVME: public mafOp
 public:
   mafOpDecomposeTimeVarVME(const mafString& label = _R("Decompose time varying VME"));
  ~mafOpDecomposeTimeVarVME() override; 
-  mafTypeMacro(mafOpDecomposeTimeVarVME, mafOp)
+  mafTypeMacroN(mafOpDecomposeTimeVarVME)
 
   void OnEvent(mafEventBase *maf_event) override;
   mafOp* Copy() override;
@@ -141,4 +117,3 @@ private:
   wxListBox *m_FramesListBox; 
   long m_ItemId;
 };
-#endif

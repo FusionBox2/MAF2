@@ -66,13 +66,13 @@ void mafOpOpenExternalFile::OpRun()
 {
 	wxString file, ext, mime, command2execute;
 
-	file = ((mafVMEExternalData *)(this->GetInput()))->GetAbsoluteFileName().GetCStr();
+	file = mafVMEExternalData::StaticDownCast(GetInput())->GetAbsoluteFileName().GetCStr();
   
-  ext = ((mafVMEExternalData *)(this->GetInput()))->GetExtension();
+  ext = mafVMEExternalData::StaticDownCast(GetInput())->GetExtension();
 
 	wxFileType *filetype;
 	filetype = wxTheMimeTypesManager->GetFileTypeFromExtension(ext);
-	if (filetype == NULL)
+	if (filetype == nullptr)
   {
 		wxMessageBox("Don't know how to handle this type of file");
 		{mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);}

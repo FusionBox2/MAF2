@@ -17,7 +17,6 @@
 #include "mafDefines.h"
 
 #include "medOpMMLModelView.h"
-#include "ftk/Base/RegisteringPointer.h"
 #include "vtkPolyData.h"
 #include "vtkPoints.h"
 

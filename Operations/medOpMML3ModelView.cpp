@@ -15,7 +15,6 @@
 =========================================================================*/
 
 #include "mafDefines.h"
-#include "ftk/Base/RegisteringPointer.h"
 
 #include "medOpMML3ModelView.h"
 #include "medOpMML3ModelView2DPipe.h"

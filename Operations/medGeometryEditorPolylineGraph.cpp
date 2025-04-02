@@ -64,10 +64,10 @@ medGeometryEditorPolylineGraph::medGeometryEditorPolylineGraph(mafVME *input, ma
 	vtkNew<vtkPolyData> data;
 	m_PolylineGraph->CopyToPolydata(data);
 
-	mafNEW(m_VMEPolylineEditor);
+	m_VMEPolylineEditor = medVMEPolylineEditor::NewSPtr();
 	m_VMEPolylineEditor->SetName(_R("VME Editor"));
 	if(input)
-		m_VMEPolylineEditor->ReparentTo(mafVME::SafeDownCast(input->GetRoot()));
+		mafNode::ReparentTo(m_VMEPolylineEditor, mafVME::SafeDownCast(input->GetRoot()));
 
 	m_InputVME	=	input;
 	SetListener(listener);
@@ -98,9 +98,9 @@ medGeometryEditorPolylineGraph::medGeometryEditorPolylineGraph(mafVME *input, ma
 	UpdateVMEEditorData(data);
 	//m_VMEPolylineEditor->SetData(m_AppendPolydata->GetOutput(),0.0);
 
-	mafNEW(m_VMEPolylineSelection);
+	m_VMEPolylineSelection = medVMEPolylineEditor::NewSPtr();
 	if(input)
-		m_VMEPolylineSelection->ReparentTo(mafVME::SafeDownCast(input->GetRoot()));
+		mafNode::ReparentTo(m_VMEPolylineSelection, mafVME::SafeDownCast(input->GetRoot()));
 
 	m_SelectedPoint1ForInserting = UNDEFINED_POINT_ID;
 	m_SelectedPoint2ForInserting = UNDEFINED_POINT_ID; 
@@ -144,15 +144,15 @@ medGeometryEditorPolylineGraph::~medGeometryEditorPolylineGraph()
 	if(m_InputVME)
 		m_InputVME->SetBehavior(m_OldBehavior);
 
-	m_VMEPolylineEditor->SetBehavior(NULL);
-	m_VMEPolylineEditor->ReparentTo(NULL);
+	m_VMEPolylineEditor->SetBehavior(nullptr);
+	mafNode::ReparentTo(m_VMEPolylineEditor, nullptr);
 
-	m_VMEPolylineSelection->SetBehavior(NULL);
-	m_VMEPolylineSelection->ReparentTo(NULL);
+	m_VMEPolylineSelection->SetBehavior(nullptr);
+	mafNode::ReparentTo(m_VMEPolylineSelection, nullptr);
 
 
-	mafDEL(m_VMEPolylineSelection);
-	mafDEL(m_VMEPolylineEditor);
+	m_VMEPolylineSelection.reset();
+	m_VMEPolylineEditor.reset();
 	
 	m_Picker.reset();
 
@@ -167,9 +167,9 @@ medGeometryEditorPolylineGraph::~medGeometryEditorPolylineGraph()
 void medGeometryEditorPolylineGraph::Show(bool show)
 //----------------------------------------------------------------------------
 {
-	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineEditor); evUnq.SetBool(show); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineEditor.get()); evUnq.SetBool(show); InvokeEvent(evUnq);}
 	if(show==false)
-		{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineSelection); evUnq.SetBool(show); InvokeEvent(evUnq);}
+		{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineSelection.get()); evUnq.SetBool(show); InvokeEvent(evUnq);}
 
 	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
@@ -223,7 +223,7 @@ void medGeometryEditorPolylineGraph::OnEvent(mafEventBase *maf_event)
 						m_SelectedPoint = UNDEFINED_POINT_ID;
 						
 						if(!m_TestMode)
-							{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineSelection); evUnq.SetBool(false); InvokeEvent(evUnq);}
+							{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineSelection.get()); evUnq.SetBool(false); InvokeEvent(evUnq);}
 
 						{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 					}
@@ -241,10 +241,10 @@ void medGeometryEditorPolylineGraph::OnEvent(mafEventBase *maf_event)
 					m_PolylineGraph->CopyToPolydata(poly_new);
 					UpdateVMEEditorData(poly_new);
 
-					{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineSelection); evUnq.SetBool(false); InvokeEvent(evUnq);}
+					{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineSelection.get()); evUnq.SetBool(false); InvokeEvent(evUnq);}
 
-					{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineEditor); evUnq.SetBool(false); InvokeEvent(evUnq);}
-					{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineEditor); evUnq.SetBool(true); InvokeEvent(evUnq);}
+					{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineEditor.get()); evUnq.SetBool(false); InvokeEvent(evUnq);}
+					{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineEditor.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
 
 					{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 
@@ -449,7 +449,7 @@ void medGeometryEditorPolylineGraph::VmePicked(mafEvent *e)
 				AddNewVertex(pos);
 
 				if(!m_TestMode)
-					{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineSelection); evUnq.SetBool(false); InvokeEvent(evUnq);}
+					{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineSelection.get()); evUnq.SetBool(false); InvokeEvent(evUnq);}
 			}
 			else if(m_PointTool==ID_MOVE_POINT)
 			{
@@ -466,8 +466,8 @@ void medGeometryEditorPolylineGraph::VmePicked(mafEvent *e)
           SelectPoint(vertexCoord);
           if(!m_TestMode)
           {
-            {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineSelection); evUnq.SetBool(false); InvokeEvent(evUnq);}
-            {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineSelection); evUnq.SetBool(true); InvokeEvent(evUnq);}
+            {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineSelection.get()); evUnq.SetBool(false); InvokeEvent(evUnq);}
+            {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineSelection.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
           }
         }
         MovePoint(vertexCoord);
@@ -488,8 +488,8 @@ void medGeometryEditorPolylineGraph::VmePicked(mafEvent *e)
 
 				if(!m_TestMode)
 				{
-					{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineSelection); evUnq.SetBool(false); InvokeEvent(evUnq);}
-					{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineSelection); evUnq.SetBool(true); InvokeEvent(evUnq);}
+					{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineSelection.get()); evUnq.SetBool(false); InvokeEvent(evUnq);}
+					{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineSelection.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
 				}
 
 				m_Gui->Enable(ID_BUTTON_POINT_DELETE,m_Action==ID_POINT_ACTION && m_SelectedPoint!=UNDEFINED_POINT_ID);
@@ -505,8 +505,8 @@ void medGeometryEditorPolylineGraph::VmePicked(mafEvent *e)
 
         if(!m_TestMode)
         {
-          {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineSelection); evUnq.SetBool(false); InvokeEvent(evUnq);}
-          {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineSelection); evUnq.SetBool(true); InvokeEvent(evUnq);}
+          {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineSelection.get()); evUnq.SetBool(false); InvokeEvent(evUnq);}
+          {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineSelection.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
         }
 
 				//m_Picker->EnableContinuousPicking(true);
@@ -557,7 +557,7 @@ void medGeometryEditorPolylineGraph::VmePicked(mafEvent *e)
 						m_Gui->Update();
 
 						if(!m_TestMode)
-							{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineSelection); evUnq.SetBool(false); InvokeEvent(evUnq);}
+							{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineSelection.get()); evUnq.SetBool(false); InvokeEvent(evUnq);}
 					}
 					else
 					{
@@ -977,8 +977,8 @@ void medGeometryEditorPolylineGraph::SelectBranch(double position[3])
 
 	m_SelectedBranch = m_CurrentBranch;
   
-	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineSelection); evUnq.SetBool(false); InvokeEvent(evUnq);}
-	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineSelection); evUnq.SetBool(true); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineSelection.get()); evUnq.SetBool(false); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VMEPolylineSelection.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 int medGeometryEditorPolylineGraph::AddBranch(double position[3])

@@ -40,7 +40,7 @@ public:
   {
   protected:
     /// actual VME it points to
-    mafVME   *m_vme;
+    std::shared_ptr<mafVME>   m_vme;
     mafVME   *m_parentVME;
     /// name of frame in hierarchy file
     mafString m_name; 
@@ -55,8 +55,8 @@ public:
   public:
     mafFrame();
     ~mafFrame();
-    mafVME *GetVME() {return m_vme;}
-    void SetVME(mafVME *cloud) {m_vme = cloud;}
+    std::shared_ptr<mafVME> GetVME() {return m_vme;}
+    void SetVME(std::shared_ptr<mafVME> cloud) {m_vme = cloud;}
     mafVME *GetParentVME() {return m_parentVME;}
     void SetParentVME(mafVME *cloud) {m_parentVME = cloud;}
     mafFrame *GetParent() {return m_parent;}
@@ -100,7 +100,7 @@ private:
   /** Destroy entire tree */
   void  Destroy(mafFrame **root);
   /** Destroy entire tree */
-  void  BindToVME(mafVME *pvme, mafFrame *pStart = NULL);
+  void  BindToVME(std::shared_ptr<mafVME> pvme, mafFrame *pStart = NULL);
   /** just see name */
   //static void  ExtractTwoWordsFromString(wxString &str, wxString &one, wxString &two); 
   /** Find frame with given name */

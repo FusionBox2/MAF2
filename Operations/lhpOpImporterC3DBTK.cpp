@@ -1,24 +1,3 @@
-/*=========================================================================
-  Program:   Multimod Application Framework
-  Module:    $RCSfile: lhpOpImporterC3DBTK-BTK.cpp,v $
-  Language:  C++
-  Date:      $Date: 2009/05/19 14:29:53 $
-  Version:   $Revision: 1.1.1.1 $
-  Authors:   Matteo Giacomoni
-==========================================================================
-  Copyright (c) 2009
-  CINECA - Interuniversity Consortium (www.cineca.it)
-=========================================================================*/
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-
 #include "lhpOpImporterC3DBTK.h"
 
 #include "wx/busyinfo.h"
@@ -26,7 +5,6 @@
 #include "mafDecl.h"
 #include "mafGUI.h"
 
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafVME.h"
 #include "vtkSmartPointer.h"
 #include "mafVMEGroup.h"
@@ -54,10 +32,6 @@
 #define PLATFORM_THICKNESS 5.0
 #define mafMax(a, b) (((a) >= (b)) ? (a) : (b))
 #define mafMin(a, b) (((a) <= (b)) ? (a) : (b))
-
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(lhpOpImporterC3DBTK);
-//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 lhpOpImporterC3DBTK::_InternalC3DData::_InternalC3DData()
@@ -150,19 +124,19 @@ void lhpOpImporterC3DBTK::Clear()
 {
   for(unsigned i = 0; i < m_intData.size(); i++)
   {
-    mafDEL(m_intData[i].m_VmeGroup);
-    for(std::map<mafString, mafVMELandmarkCloud*>::iterator it = m_intData[i].m_Clouds.begin(); it != m_intData[i].m_Clouds.end(); ++it)
+    m_intData[i].m_VmeGroup.reset();
+    for(auto it = m_intData[i].m_Clouds.begin(); it != m_intData[i].m_Clouds.end(); ++it)
     {
-      mafDEL(it->second);
+      it->second.reset();
     }
     m_intData[i].m_Clouds.clear();
     //mafDEL(m_intData[i].m_VmeCloud);
-    mafDEL(m_intData[i].m_VmeAnalog);
+    m_intData[i].m_VmeAnalog.reset();
     for(int currentPlatForm=0; currentPlatForm< m_intData[i].m_PlatformList.size();currentPlatForm++)
     {
-      mafDEL(m_intData[i].m_PlatformList[currentPlatForm]);
-      mafDEL(m_intData[i].m_ForceList[currentPlatForm]);
-      mafDEL(m_intData[i].m_MomentList[currentPlatForm]);
+      m_intData[i].m_PlatformList[currentPlatForm].reset();
+      m_intData[i].m_ForceList[currentPlatForm].reset();
+      m_intData[i].m_MomentList[currentPlatForm].reset();
     }
     m_intData[i].m_PlatformList.clear();
     m_intData[i].m_ForceList.clear();
@@ -345,7 +319,7 @@ mafVMEGroup *lhpOpImporterC3DBTK::ImportSingleFile(const mafString &fullFileName
 		//fill data structures
 		if(m_ImportTrajectoriesFlag || m_ImportAnalogFlag || m_ImportPlatformFlag || m_ImportEventFlag) 
     {
-      mafNEW(intData.m_VmeGroup);
+      intData.m_VmeGroup = mafVMEGroup::NewSPtr();
       mafString resultName;
       resultName.append(intData.m_FileName);
       resultName.append(_R("_C3D"));
@@ -355,9 +329,9 @@ mafVMEGroup *lhpOpImporterC3DBTK::ImportSingleFile(const mafString &fullFileName
     if(m_ImportTrajectoriesFlag) 
     {
       ImportTrajectories(intData);
-      for(std::map<mafString, mafVMELandmarkCloud*>::iterator it = intData.m_Clouds.begin(); it != intData.m_Clouds.end(); ++it)
+      for(auto it = intData.m_Clouds.begin(); it != intData.m_Clouds.end(); ++it)
       {
-        it->second->ReparentTo(intData.m_VmeGroup);
+        mafNode::ReparentTo(it->second, intData.m_VmeGroup.get());
       }
       //intData.m_VmeCloud->ReparentTo(intData.m_VmeGroup);
     }
@@ -365,7 +339,7 @@ mafVMEGroup *lhpOpImporterC3DBTK::ImportSingleFile(const mafString &fullFileName
 		if(m_ImportAnalogFlag) 
     {
       ImportAnalog(intData);	
-      intData.m_VmeAnalog->ReparentTo(intData.m_VmeGroup);
+      mafNode::ReparentTo(intData.m_VmeAnalog, intData.m_VmeGroup.get());
     }
     
 		if(m_ImportPlatformFlag) 
@@ -373,9 +347,9 @@ mafVMEGroup *lhpOpImporterC3DBTK::ImportSingleFile(const mafString &fullFileName
       ImportPlatform(intData);
       for(int currentPlatform = 0; currentPlatform<intData.m_PlatformList.size(); currentPlatform++)
       {
-        intData.m_PlatformList[currentPlatform]->ReparentTo(intData.m_VmeGroup);
-        intData.m_ForceList[currentPlatform]->ReparentTo(intData.m_PlatformList[currentPlatform]);
-        intData.m_MomentList[currentPlatform]->ReparentTo(intData.m_PlatformList[currentPlatform]);
+        mafNode::ReparentTo(intData.m_PlatformList[currentPlatform], intData.m_VmeGroup.get());
+        mafNode::ReparentTo(intData.m_ForceList[currentPlatform], intData.m_PlatformList[currentPlatform].get());
+        mafNode::ReparentTo(intData.m_MomentList[currentPlatform], intData.m_PlatformList[currentPlatform].get());
       }
     }
     
@@ -384,7 +358,7 @@ mafVMEGroup *lhpOpImporterC3DBTK::ImportSingleFile(const mafString &fullFileName
       ImportEvent(intData);
     }
 	}
-  return intData.m_VmeGroup;
+  return intData.m_VmeGroup.get();
 }
 
 //----------------------------------------------------------------------------
@@ -397,7 +371,7 @@ bool lhpOpImporterC3DBTK::Import()
   {
     _InternalC3DData intData;
     mafVMEGroup *imported = ImportSingleFile(m_C3DInputFileNameFullPaths[fileIndex], intData);
-    if(imported != NULL)
+    if(imported)
     {
       result = true;
       //m_VmeGroups.push_back(imported);
@@ -419,14 +393,14 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
   intData.m_Clouds.clear();
 
   bool usingDictionary = (!m_DictionaryFileName.empty());
-  mafVMELandmarkCloud *specCloud = NULL;//the only cloud if read without dictionary and NOT_IN_DICTIONARY with
+  std::shared_ptr<mafVMELandmarkCloud> specCloud;//the only cloud if read without dictionary and NOT_IN_DICTIONARY with
   mafString specCloudName;//name of specCloud
 
   //specCloudName.Append(intData.m_FileName);
   if(!usingDictionary)//without dictionary create cloud and set its name
   {
-    mafNEW(specCloud);
-    if(specCloud == NULL)
+    specCloud = mafVMELandmarkCloud::NewSPtr();
+    if(specCloud == nullptr)
       return;
 	specCloud->SetRadius(m_DefaultRadius);
     specCloudName.append(_R("TRAJECTORIES"));
@@ -466,40 +440,39 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
           //control if m_Trajectory is not a phantom landmark(camera reflexes)
           if(intData.m_TrajectoryName[0] != '*')
           {
-            mafVMELandmarkCloud *addTo = specCloud;//by default add to this specific cloud
+            mafVMELandmarkCloud *addTo = specCloud.get();//by default add to this specific cloud
             if(usingDictionary)
             {
               //find current trajectory name in dictionary
-              std::map<mafString, mafString>::iterator nmIt = m_dictionaryStruct.find(intData.m_TrajectoryName);
+              auto nmIt = m_dictionaryStruct.find(intData.m_TrajectoryName);
               //trajectory name found
               if(nmIt != m_dictionaryStruct.end())
               {
                 //find corresponding cloud if already exists
-                std::map<mafString, mafVMELandmarkCloud*>::iterator clIt = intData.m_Clouds.find(nmIt->second);
+                auto clIt = intData.m_Clouds.find(nmIt->second);
                 //not created yet
-                if(clIt == intData.m_Clouds.end() || clIt->second == NULL)
+                if(clIt == intData.m_Clouds.end() || clIt->second == nullptr)
                 {
-                  mafVMELandmarkCloud *cld = NULL;
+                  auto cld = mafVMELandmarkCloud::NewSPtr();
                   mafString cldName;
                   //create cloud
-                  mafNEW(cld);
                   //if created successfully use it
-                  if(cld != NULL)
+                  if(cld != nullptr)
                   {
                     /*cldName.Append(intData.m_FileName);
                     cldName.Append("_");*/
                     cldName.append(nmIt->second);
                     cld->SetName(cldName);
-					cld->SetRadius(m_DefaultRadius);
+                  	cld->SetRadius(m_DefaultRadius);
                     intData.m_Clouds[nmIt->second] = cld;
-                    addTo = cld;
+                    addTo = cld.get();
                   }
                   //clear and exit in case of problems in cloud creation, as we have not correct one, we cannot create new
-                  if(addTo == NULL)
+                  if(addTo == nullptr)
                   {
-                    for(std::map<mafString, mafVMELandmarkCloud*>::iterator it = intData.m_Clouds.begin(); it != intData.m_Clouds.end(); ++it)
+                    for(auto it = intData.m_Clouds.begin(); it != intData.m_Clouds.end(); ++it)
                     {
-                      mafDEL(it->second);
+                      it->second.reset();
                     }
                     intData.m_Clouds.clear();
                     return;
@@ -508,30 +481,30 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
                 //cloud is already created, just select it to use
                 else
                 {
-                  addTo = clIt->second;
+                  addTo = clIt->second.get();
                 }
               }
               //trajectory name not in dictionary
               else
               {
                 //if NOT_IN_DICTIONARY is not created yet, create it and use. in case of problems exit
-                if(specCloud == NULL)
+                if(specCloud == nullptr)
                 {
-                  mafNEW(specCloud);
+                  specCloud = mafVMELandmarkCloud::NewSPtr();
                   //clear and exit in case of problems in cloud creation, as we have not correct one, we cannot create new
                   if(specCloud == NULL)
                   {
-                    for(std::map<mafString, mafVMELandmarkCloud*>::iterator it = intData.m_Clouds.begin(); it != intData.m_Clouds.end(); ++it)
+                    for(auto it = intData.m_Clouds.begin(); it != intData.m_Clouds.end(); ++it)
                     {
-                      mafDEL(it->second);
+                      it->second.reset();
                     }
                     intData.m_Clouds.clear();
                     return;
                   }
                   //select this cloud for using
                   specCloud->SetName(specCloudName);
-				  specCloud->SetRadius(m_DefaultRadius);
-                  addTo = specCloud;
+                	specCloud->SetRadius(m_DefaultRadius);
+                  addTo = specCloud.get();
                 }
               }
             }
@@ -615,7 +588,7 @@ void lhpOpImporterC3DBTK::ImportTrajectories(lhpOpImporterC3DBTK::_InternalC3DDa
     intData.m_Clouds[specCloudName] = specCloud;
 
 
-  for(std::map<mafString, mafVMELandmarkCloud*>::iterator it = intData.m_Clouds.begin(); it != intData.m_Clouds.end(); ++it)
+  for(auto it = intData.m_Clouds.begin(); it != intData.m_Clouds.end(); ++it)
   {
     it->second->Modified();
     it->second->Update();
@@ -642,7 +615,7 @@ void lhpOpImporterC3DBTK::ImportAnalog(lhpOpImporterC3DBTK::_InternalC3DData &in
   {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
 
   //name analog vme
-  mafNEW(intData.m_VmeAnalog);
+  intData.m_VmeAnalog = medVMEAnalog::NewSPtr();
   mafString analogVmeName;
   //analogVmeName.Append(intData.m_FileName);
   analogVmeName.append(_R("ANALOG"));
@@ -762,8 +735,7 @@ void lhpOpImporterC3DBTK::ImportPlatform(lhpOpImporterC3DBTK::_InternalC3DData &
 
     vtkNew<vtkCubeSource> cube;
 
-    mafVMESurface *platform;
-    mafNEW(platform);
+    auto platform = mafVMESurface::NewSPtr();
     intData.m_PlatformList.push_back(platform);
     mafString platformNumber;
     platformNumber += mafToString(currentPlatform + 1) ;
@@ -783,8 +755,7 @@ void lhpOpImporterC3DBTK::ImportPlatform(lhpOpImporterC3DBTK::_InternalC3DData &
     intData.m_PlatformList[currentPlatform]->SetData(cube->GetOutput(), 0);
 
     //force vector
-    mafVMEVector *force;
-    mafNEW(force);
+    auto force = mafVMEVector::NewSPtr();
     intData.m_ForceList.push_back(force);
     mafString forceName;
     //forceName.Append(intData.m_FileName);
@@ -793,8 +764,7 @@ void lhpOpImporterC3DBTK::ImportPlatform(lhpOpImporterC3DBTK::_InternalC3DData &
     intData.m_ForceList[currentPlatform]->SetName(forceName);
 
     //moment vector
-    mafVMEVector *moment;
-    mafNEW(moment);
+    auto moment = mafVMEVector::NewSPtr();
     intData.m_MomentList.push_back(moment);
     mafString momentName;
     //momentName.Append(intData.m_FileName);
@@ -1033,7 +1003,6 @@ void lhpOpImporterC3DBTK::OpDo()
 
   for(unsigned i = 0; i < m_intData.size(); i++)
   {
-    m_intData[i].m_VmeGroup->ReparentTo(GetInput());
   }
 }
 //----------------------------------------------------------------------------
@@ -1042,6 +1011,6 @@ void lhpOpImporterC3DBTK::OpUndo()
 {   
   for(unsigned i = 0; i < m_intData.size(); i++)
   {
-    m_intData[i].m_VmeGroup->ReparentTo(NULL);
+    mafNode::ReparentTo(m_intData[i].m_VmeGroup, nullptr);
   }
 }

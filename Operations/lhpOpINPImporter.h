@@ -63,6 +63,6 @@ public:
 protected:
   std::vector<mafString>      m_Files;
   mafString                   m_FileDir;
-  std::vector<mafVMESurface*> m_Surfaces;
+  std::vector<std::shared_ptr<mafVMESurface> > m_Surfaces;
 };
 #endif

@@ -1,30 +1,7 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafOpCreateSurfaceParametric
- Authors: Daniele Giunchi
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __mafOpCreateSurfaceParametric_H__
-#define __mafOpCreateSurfaceParametric_H__
+#pragma once
 
 #include "mafOp.h"
 
-//----------------------------------------------------------------------------
-// forward references :
-//----------------------------------------------------------------------------
-class mafVMESurfaceParametric;
-class mafGUI;
-class mafEvent;
 //----------------------------------------------------------------------------
 // mafOpCreateSurfaceParametric :
 //----------------------------------------------------------------------------
@@ -35,14 +12,10 @@ public:
   mafOpCreateSurfaceParametric(const mafString& label = _R("Create Parametric Surface"));
   ~mafOpCreateSurfaceParametric() override; 
 
-  mafTypeMacro(mafOpCreateSurfaceParametric, mafOp);
+  mafTypeMacroN(mafOpCreateSurfaceParametric);
 
   mafOp* Copy() override;
 
   bool Accept(mafNode *node) override;
   void OpRun() override;
-
-protected: 
-  std::shared_ptr<mafVMESurfaceParametric> m_SurfaceParametric;
 };
-#endif

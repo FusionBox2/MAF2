@@ -93,7 +93,7 @@ protected:
 
   vtkStructuredPoints *m_OutputData;
   vtkDataSet          *m_Ds;
-	mafVMESurface       *m_Vme;
+	std::shared_ptr<mafVMESurface>       m_Vme;
   mafGUICheckListBox     *m_LabelCheckBox;
 
 };

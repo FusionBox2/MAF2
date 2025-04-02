@@ -1,34 +1,6 @@
-/*=========================================================================
-
- Program: MAF2Medical
- Module: medOpCreateWrappedMeter
- Authors: Daniele Giunchi
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __medOpCreateWrappedMeter_H__
-#define __medOpCreateWrappedMeter_H__
-
-//----------------------------------------------------------------------------
-// Include:
-//----------------------------------------------------------------------------
+#pragma once
 
 #include "mafOp.h"
-
-//----------------------------------------------------------------------------
-// forward references :
-//----------------------------------------------------------------------------
-class medVMEWrappedMeter;
-class mafGui;
-class mafEvent;
 
 /** 
   class name: medOpCreateWrappedMeter
@@ -43,7 +15,7 @@ public:
   ~medOpCreateWrappedMeter() override; 
 
   /** RTTI macro*/
-  mafTypeMacro(medOpCreateWrappedMeter, mafOp);
+  mafTypeMacroN(medOpCreateWrappedMeter);
 
   /** clone the object and retrieve a copy*/
   mafOp* Copy() override;
@@ -52,10 +24,4 @@ public:
   bool Accept(mafNode *node) override;
   /** Builds operation's interface. */
   void OpRun() override;
-  /** Execute the operation. */
-  void OpDo() override;
-
-protected: 
-  medVMEWrappedMeter *m_Meter;
 };
-#endif

@@ -111,9 +111,8 @@ mafOp(label)
 medOpExtractGeometry::~medOpExtractGeometry()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_SurfaceOutput);
-  if(m_ResampledVolume)
-    mafDEL(m_ResampledVolume);
+  m_SurfaceOutput.reset();
+  m_ResampledVolume.reset();
   vtkDEL(m_SurfaceExtractor);
 }
 //----------------------------------------------------------------------------
@@ -372,18 +371,18 @@ void medOpExtractGeometry::OpUndo()
 {
   if (m_SurfaceOutput != NULL)
   {
-    m_SurfaceOutput->ReparentTo(NULL);
+    mafNode::ReparentTo(m_SurfaceOutput, nullptr);
   }
 }
 //----------------------------------------------------------------------------
 void medOpExtractGeometry::OpDo()
 //----------------------------------------------------------------------------
 {
-  m_VolumeInput->ReparentTo(GetInput()->GetParent());
+  mafNode::ReparentTo(m_VolumeInput, GetInput()->GetParent());
 
-  if (m_SurfaceOutput != NULL)
+  if (m_SurfaceOutput)
   {
-    m_SurfaceOutput->ReparentTo(GetInput());
+    mafNode::ReparentTo(m_SurfaceOutput, GetInput().get());
   }
 }
 //----------------------------------------------------------------------------
@@ -568,8 +567,7 @@ int medOpExtractGeometry::GenerateIsosurface()
     mafString smoothedVolumeName = _R("smoothed_");
     smoothedVolumeName += GetInput()->GetName();
 
-    m_ResampledVolume = (mafVMEVolumeGray *)m_VolumeInput->NewInstance();
-    m_ResampledVolume->Register(m_ResampledVolume);
+    m_ResampledVolume = mafVMEVolumeGray::NewSPtr();
     m_ResampledVolume->GetTagArray()->DeepCopy(m_VolumeInput->GetTagArray().get());
 
     mafTagItem *ti = NULL;
@@ -588,8 +586,8 @@ int medOpExtractGeometry::GenerateIsosurface()
     }
 
     m_ResampledVolume->SetName(smoothedVolumeName);
-    m_ResampledVolume->ReparentTo(m_VolumeInput->GetParent());
-    m_ResampledVolume->ReparentTo(m_VolumeInput);
+    mafNode::ReparentTo(m_ResampledVolume, m_VolumeInput->GetParent());
+    mafNode::ReparentTo(m_ResampledVolume, m_VolumeInput.get());
 
 
     VolumeSmoothing();
@@ -678,7 +676,7 @@ int medOpExtractGeometry::GenerateIsosurface()
   }
 
 
-  mafNEW(m_SurfaceOutput);
+  m_SurfaceOutput = mafVMESurface::NewSPtr();
   m_SurfaceOutput->SetData(m_SurfaceData,mafVMEVolumeGray::SafeDownCast(GetInput())->GetTimeStamp());
 
   mafTagItem tag_Nature;
@@ -688,7 +686,7 @@ int medOpExtractGeometry::GenerateIsosurface()
   m_SurfaceOutput->GetTagArray()->SetTag(tag_Nature);
 
   m_SurfaceOutput->SetName(_R("Surface"));
-  m_SurfaceOutput->ReparentTo(GetInput());
+  mafNode::ReparentTo(m_SurfaceOutput, GetInput().get());
   m_SurfaceOutput->Update();
 
   SetOutput(m_SurfaceOutput);
@@ -723,7 +721,7 @@ int medOpExtractGeometry::Resample()
   bool checkSpacing = true;
   double m_VolumeBounds[6];
 
-  vtkDataSet *vme_data = ((mafVME *)m_VolumeInput)->GetOutput()->GetVTKData();
+  vtkDataSet *vme_data = m_VolumeInput->GetOutput()->GetVTKData();
   m_VolumeInput->GetOutput()->GetBounds(m_VolumeBounds);
 
   m_VolumeSpacing[0] = VTK_DOUBLE_MAX;
@@ -782,7 +780,7 @@ int medOpExtractGeometry::Resample()
   //////////////////////////////////////////////////////////////////////////
 
   op->Resample();
-  mafVMEVolumeGray *volOut=mafVMEVolumeGray::SafeDownCast(op->GetOutput());
+  auto volOut=mafVMEVolumeGray::SafeDownCast(op->GetOutput());
   volOut->GetOutput()->Update();
   volOut->Update();
 

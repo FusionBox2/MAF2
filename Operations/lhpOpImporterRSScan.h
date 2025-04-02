@@ -66,7 +66,7 @@ protected:
   /** Create the dialog interface for the importer. */
   virtual void CreateGui();
 
-  mafVMEGroup *m_ImportedVmeMesh;
+  std::shared_ptr<mafVMEGroup> m_ImportedVmeMesh;
   mafString   m_FileDir;
   double      m_Scale;
   double      m_TimeShift;

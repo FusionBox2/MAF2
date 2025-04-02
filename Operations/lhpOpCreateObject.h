@@ -1,37 +1,9 @@
-/*=========================================================================
-  Program:   Multimod Application Framework
-  Module:    $RCSfile: lhpOpCreateObject.h,v $
-  Language:  C++
-  Date:      $Date: 2007-03-15 14:22:25 $
-  Version:   $Revision: 1.4 $
-  Authors:   Paolo Quadrani
-==========================================================================
-Copyright (c) 2002/2004
-CINECA - Interuniversity Consortium (www.cineca.it) 
-=========================================================================*/
+#pragma once
 
-#ifndef __lhpOpCreateObject_H__
-#define __lhpOpCreateObject_H__
-
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
 #include "mafDecl.h"
 #include "mafEvent.h"
-#include "mafVMEVolume.h"
-#include "mafVMEProber.h"
 #include "mafOp.h"
 
-//----------------------------------------------------------------------------
-// forward references :
-//----------------------------------------------------------------------------
-class mafGui;
-class mafEvent;
 //----------------------------------------------------------------------------
 // lhpOpCreateObject :
 //----------------------------------------------------------------------------
@@ -69,16 +41,11 @@ public:
   bool Accept(mafNode *node) override {return (node != nullptr);}
   void OpRun() override
   {
-    m_Created = O::NewSPtr();
-    m_Created->SetName(m_CreatedName);
-    SetOutput(m_Created);
+    auto created = O::NewSPtr();
+    created->SetName(m_CreatedName);
+    SetOutput(created);
     {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
   }
-
-
 protected: 
-  std::shared_ptr<O> m_Created;
   mafString  m_CreatedName;
 };
-
-#endif

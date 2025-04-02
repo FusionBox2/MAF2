@@ -33,7 +33,6 @@
 
 #include "mafOpExplodeCollapse.h"
 
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafVMELandmarkCloud.h"
 #include "mafVME.h"
 #include "mafVMESurface.h"
@@ -72,16 +71,15 @@ bool lhpOpSoftReg::BonesSetAccept(mafNode* vme)
 
   for(int i=0; i < vme->GetNumberOfChildren(); i++)
   {
-    mafVME *childVme = mafVME::SafeDownCast(vme->GetChild(i));
-    if(childVme == NULL)
+    auto childVme = mafVME::SafeDownCast(vme->GetChild(i));
+    if(childVme == nullptr)
       continue;
-    if(mafVMEOutputSurface::SafeDownCast(childVme->GetOutput()) != NULL)
+    if(mafVMEOutputSurface::SafeDownCast(childVme->GetOutput()))
       return true;
   }
 
   return false;
 }
-mafCxxTypeMacro(lhpOpSoftReg)
 
 //----------------------------------------------------------------------------
 lhpOpSoftReg::lhpOpSoftReg(const mafString& label) : Superclass(label)
@@ -331,8 +329,8 @@ void lhpOpSoftReg::OpDo()
   std::vector<mafTimeStamp> frames;
   for(unsigned k = 0; k < m_Bones->GetNumberOfChildren(); k++)
   {
-    mafVME *childVme = mafVME::SafeDownCast(m_Bones->GetChild(k));
-    if(childVme == NULL)
+    auto childVme = mafVME::SafeDownCast(m_Bones->GetChild(k));
+    if(childVme == nullptr)
       continue;
     childVme->GetTimeStamps(frames);
   }
@@ -371,7 +369,7 @@ void lhpOpSoftReg::OpDo()
       double sumdist = 0.0;
       for(unsigned k = 0; k < m_Bones->GetNumberOfChildren(); k++)
       {
-        mafVME *childVme = mafVME::SafeDownCast(m_Bones->GetChild(k));
+        auto childVme = mafVME::SafeDownCast(m_Bones->GetChild(k));
         if(childVme == NULL)
           continue;
 
@@ -389,8 +387,8 @@ void lhpOpSoftReg::OpDo()
       V3d<double> lmCurTS(0.0, 0.0, 0.0);
       for(unsigned k = 0; k < m_Bones->GetNumberOfChildren(); k++)
       {
-        mafVME *childVme = mafVME::SafeDownCast(m_Bones->GetChild(k));
-        if(childVme == NULL)
+        auto childVme = mafVME::SafeDownCast(m_Bones->GetChild(k));
+        if(childVme == nullptr)
           continue;
         mafVMEOutputSurface *out_surface = mafVMEOutputSurface::SafeDownCast(childVme->GetOutput());
         if(out_surface == NULL)
@@ -442,9 +440,8 @@ void lhpOpSoftReg::OpDo()
     newPolys->Delete();
 
     mafTimeStamp t;
-    t = ((mafVME *)GetInput())->GetTimeStamp();
-    mafVMESurface *outSurface;
-    mafNEW(outSurface);
+    t = mafVME::StaticDownCast(GetInput())->GetTimeStamp();
+    auto outSurface = mafVMESurface::NewSPtr();
     outSurface->SetName(_R("cutted"));
     outSurface->SetData(output,t);
 
@@ -458,10 +455,10 @@ void lhpOpSoftReg::OpDo()
 
     if(outSurface)
     {
-      outSurface->ReparentTo(GetInput()->GetRoot());
-      {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(outSurface); InvokeEvent(evUnq);}
+      mafNode::ReparentTo(outSurface, GetInput()->GetRoot());
+      //{mafEvent evUnq(this, VME_ADD); evUnq.SetVme(outSurface); InvokeEvent(evUnq);}
     }
-    mafDEL(outSurface);
+    outSurface.reset();
 
   }
 

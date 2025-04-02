@@ -35,7 +35,6 @@
 
 #include "mafNodeIterator.h"
 #include "mafVME.h"
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafVMELandmark.h"
 
 #include "vtkSmartPointer.h"
@@ -47,10 +46,6 @@
 #include "vtkWeightedLandmarkTransform.h"
 #include "vtkTransform.h"
 #include "vtkTransformPolyDataFilter.h"
-
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(lhpOpRegisterLMScripted);
-//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 // Constants :
@@ -70,7 +65,6 @@ lhpOpRegisterLMScripted::lhpOpRegisterLMScripted(const mafString& label) : Super
   
   m_Source           = NULL;
   m_Target           = NULL;
-  m_Registered       = NULL;
   m_PointsSource     = NULL;
   m_PointsTarget     = NULL;
   m_SourceName       =_R("none");
@@ -85,7 +79,7 @@ lhpOpRegisterLMScripted::~lhpOpRegisterLMScripted( )
 {
   vtkDEL(m_PointsSource);
   vtkDEL(m_PointsTarget);
-  mafDEL(m_Registered);
+  m_Registered.reset();
 }
 //----------------------------------------------------------------------------
 mafOp* lhpOpRegisterLMScripted::Copy()   
@@ -114,7 +108,7 @@ enum
 void lhpOpRegisterLMScripted::OpRun()   
 //----------------------------------------------------------------------------
 {
-  m_Source = (mafVME*)GetInput();
+  m_Source = mafVME::StaticDownCast(GetInput()).get();
   m_SourceName = GetInput()->GetName();
   
   int num_choices = 3;
@@ -308,19 +302,19 @@ namespace
         continue;
       traverse.push_back(x);
       for(int i = 0; i < x->GetNumberOfChildren(); i++)
-        tmp.push_back(x->GetChild(i));
+        tmp.push_back(x->GetChild(i).get());
     }
   }
 
-  mafNode *CopyTreeTimeStamp(mafNode *src)
+  std::shared_ptr<mafNode> CopyTreeTimeStamp(mafNode *src)
   {
-    if(src == NULL)
-      return NULL;
+    if(src == nullptr)
+      return nullptr;
 
-    mafNode *result = src->CopyTree();
+    auto result = src->CopyTree();
 
     std::list<mafNode*> tmp;
-    tmp.push_back(result);
+    tmp.push_back(result.get());
     while(!tmp.empty())
     {
       mafNode *x = *(tmp.begin());
@@ -354,7 +348,7 @@ namespace
       }*/
 
       for(int i = 0; i < x->GetNumberOfChildren(); i++)
-        tmp.push_back(x->GetChild(i));
+        tmp.push_back(x->GetChild(i).get());
     }
     return result;
   }
@@ -372,7 +366,6 @@ bool lhpOpRegisterLMScripted::RegistrationProcedure()
   {
     mafString name = m_Source->GetName() + _R(" registered on ") + m_Target->GetName();
     m_Registered= mafVME::SafeDownCast(CopyTreeTimeStamp(m_Source));
-    m_Registered->Register(this);
     m_Registered->SetName(name);
   }
 
@@ -385,7 +378,7 @@ bool lhpOpRegisterLMScripted::RegistrationProcedure()
   std::list<mafNode*> srcTrav;
   std::list<mafNode*> regTrav;
   FillTraverseList(m_Source, srcTrav);
-  FillTraverseList(m_Registered, regTrav);
+  FillTraverseList(m_Registered.get(), regTrav);
 
   std::list<mafNode*>::iterator itsrc, itreg;
   for(itsrc = srcTrav.begin(), itreg = regTrav.begin(); itsrc != srcTrav.end() && itreg != regTrav.end(); ++itsrc, ++itreg)
@@ -414,11 +407,11 @@ bool lhpOpRegisterLMScripted::RegistrationProcedure()
     }
     if(search_name)
     {
-      auto lmitert = m_Target->NewIterator();
+      auto lmitert = std::make_unique<mafNodeIterator>(m_Target);
       for(mafNode *lmt = lmitert->GetFirstNode(); lmt; lmt = lmitert->GetNextNode())
       {
-        mafVMELandmarkCloud *lmtmp = mafVMELandmarkCloud::SafeDownCast(lmt);
-        if(lmtmp == NULL)
+        auto lmtmp = mafVMELandmarkCloud::SafeDownCast(lmt);
+        if(lmtmp == nullptr)
           continue;
         if(strstr(lmtmp->GetName().GetCStr(), search_name) != NULL)
         {
@@ -442,8 +435,7 @@ bool lhpOpRegisterLMScripted::RegistrationProcedure()
 
 bool lhpOpRegisterLMScripted::ProcessNode(mafVMELandmarkCloud *src, mafVMELandmarkCloud *trg, mafVMELandmarkCloud *registered)
 {
-  mafVMEInfoText *info;
-  mafNEW(info);
+  auto info = mafVMEInfoText::NewSPtr();
   mafString name = _R("Info for registration ") + m_Source->GetName() + _R(" into ") + m_Target->GetName();
   info->SetName(name);
   info->SetPosLabel(_R("Registration residual: "), 0);
@@ -481,7 +473,7 @@ bool lhpOpRegisterLMScripted::ProcessNode(mafVMELandmarkCloud *src, mafVMELandma
       if(ExtractMatchingPoints(src, trg, currTime))
       {
         if(!infoAdded)
-          info->ReparentTo(registered);
+          mafNode::ReparentTo(info, registered);
         infoAdded = true;
         double tr = RegisterPoints(src, trg, registered, currTime);
         info->SetAbsPose(tr, 0.0, 0.0, 0.0, 0.0, 0.0, currTime);
@@ -497,13 +489,13 @@ bool lhpOpRegisterLMScripted::ProcessNode(mafVMELandmarkCloud *src, mafVMELandma
     if(ExtractMatchingPoints(src, trg))
     {
       if(!infoAdded)
-        info->ReparentTo(registered);
+        mafNode::ReparentTo(info, registered);
       infoAdded = true;
       double tr = RegisterPoints(src, trg, registered);
       info->SetAbsPose(tr, 0.0, 0.0, 0.0, 0.0, 0.0);
     }
   }
-  mafDEL(info);
+  info.reset();
   if(lmcsOpened)
     src->Open();
   if(lmctOpened)
@@ -517,13 +509,13 @@ bool lhpOpRegisterLMScripted::ProcessNode(mafVMELandmarkCloud *src, mafVMELandma
 void lhpOpRegisterLMScripted::OpDo()
 //----------------------------------------------------------------------------
 {
-  m_Registered->ReparentTo(GetInput()->GetRoot());
+  mafNode::ReparentTo(m_Registered, GetInput()->GetRoot());
 }
 //----------------------------------------------------------------------------
 void lhpOpRegisterLMScripted::OpUndo()
 //----------------------------------------------------------------------------
 {
-  m_Registered->ReparentTo(NULL);
+  mafNode::ReparentTo(m_Registered, nullptr);
 }
 //----------------------------------------------------------------------------
 int lhpOpRegisterLMScripted::ExtractMatchingPoints(mafVMELandmarkCloud *src, mafVMELandmarkCloud *trg, double time)

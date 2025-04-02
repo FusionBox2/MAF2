@@ -26,7 +26,6 @@
 #include "mafEvent.h"
 
 #include "mafVME.h"
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafVMELandmark.h"
 #include "mafGUI.h"
 #include "mafJointAnalysis.h"
@@ -152,7 +151,7 @@ void lhpOpRepresentInAF::OpDo()
 //----------------------------------------------------------------------------
 {
   wxBusyInfo wait(_("Please wait, working..."));
-  mafVMELandmarkCloud *inputCloud = mafVMELandmarkCloud::SafeDownCast(GetInput());
+  auto inputCloud = mafVMELandmarkCloud::SafeDownCast(GetInput());
   mafVMERefSysAbstract *refAF     = m_RefSys;
 
   std::vector<mafTimeStamp> timeStamps;
@@ -223,7 +222,7 @@ void lhpOpRepresentInAF::OpDo()
   }
   for(unsigned j = 0; j < inputCloud->GetNumberOfChildren(); j++)
   {
-    mafVME *child = mafVME::SafeDownCast(inputCloud->GetChild(j));
+    auto child = mafVME::SafeDownCast(inputCloud->GetChild(j));
     child->Modified();
     child->Update();
   }

@@ -69,13 +69,12 @@ medOpEqualizeHistogram::medOpEqualizeHistogram(const mafString& label) : Supercl
   m_Radius[0] = m_Radius[1] = m_Radius[2] = 5;
 
   m_VolumeInput = NULL;
-  m_VolumeOutput = NULL;
 }
 //----------------------------------------------------------------------------
 medOpEqualizeHistogram::~medOpEqualizeHistogram()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_VolumeOutput);
+  m_VolumeOutput.reset();
 }
 //----------------------------------------------------------------------------
 bool medOpEqualizeHistogram::Accept(mafNode *node)
@@ -126,7 +125,7 @@ void medOpEqualizeHistogram::OpRun()
     op->OpRun();
     op->AutoSpacing();
     op->Resample();
-    mafVMEVolumeGray *volOut=mafVMEVolumeGray::SafeDownCast(op->GetOutput());
+    auto volOut=mafVMEVolumeGray::SafeDownCast(op->GetOutput());
     volOut->GetOutput()->Update();
     volOut->Update();
 
@@ -135,12 +134,12 @@ void medOpEqualizeHistogram::OpRun()
 
   m_VolumeInput->Update();
 
-  mafNEW(m_VolumeOutput);
+  m_VolumeOutput = mafVMEVolumeGray::NewSPtr();
   m_VolumeOutput->SetData(vtkStructuredPoints::SafeDownCast(m_VolumeInput->GetOutput()->GetVTKData()),m_VolumeInput->GetTimeStamp());
   mafString name = m_VolumeInput->GetName();
   name+=_R(" - Equalized Histogram");
   m_VolumeOutput->SetName(name);
-  m_VolumeOutput->ReparentTo(GetInput());
+  mafNode::ReparentTo(m_VolumeOutput, GetInput().get());
   m_VolumeOutput->Update();
 
   CreateGui();
@@ -242,7 +241,7 @@ void medOpEqualizeHistogram::OpUndo()
 {
   if (m_VolumeOutput != NULL)
   {
-    m_VolumeOutput->ReparentTo(NULL);
+    mafNode::ReparentTo(m_VolumeOutput, nullptr);
   }
 }
 //----------------------------------------------------------------------------
@@ -251,7 +250,7 @@ void medOpEqualizeHistogram::OpDo()
 {
   if (m_VolumeOutput != NULL)
   {
-    m_VolumeOutput->ReparentTo(GetInput());
+    mafNode::ReparentTo(m_VolumeOutput, GetInput().get());
   }
 }
 //----------------------------------------------------------------------------

@@ -1,28 +1,3 @@
-/*=========================================================================
-
- Program: MAF2
- Module: lhpOpCreateMetersScripted
- Authors: Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-
 #include "lhpOpCreateMetersScripted.h"
 #include "mafDecl.h"
 #include "mafEvent.h"
@@ -56,22 +31,16 @@ namespace
 }
 
 //----------------------------------------------------------------------------
-mafCxxTypeMacro(lhpOpCreateMetersScripted);
-//----------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------
 lhpOpCreateMetersScripted::lhpOpCreateMetersScripted(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType	= OPTYPE_OP;
   m_Canundo = true;
-  m_Group   = NULL;
 }
 //----------------------------------------------------------------------------
 lhpOpCreateMetersScripted::~lhpOpCreateMetersScripted()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_Group);
 }
 //----------------------------------------------------------------------------
 mafOp* lhpOpCreateMetersScripted::Copy()   
@@ -89,10 +58,10 @@ bool lhpOpCreateMetersScripted::Accept(mafNode *node)
 void lhpOpCreateMetersScripted::OpRun()
 //----------------------------------------------------------------------------
 {
-  mafNEW(m_Group);
+  auto group = mafVMEGroup::NewSPtr();
   auto inputLMC = mafVMELandmarkCloud::SafeDownCast(GetInput());
-  m_Group->SetName(inputLMC->GetName() + _R("_scripted_meters"));
-  SetOutput(m_Group);
+  group->SetName(inputLMC->GetName() + _R("_scripted_meters"));
+  SetOutput(group);
 
   mafString filename = mafGetOpenFile(mafGetApplicationDirectory(), _R("dic files (*.dic)|*.dic"), _R("Choose dictionary"));
   if (filename.empty())
@@ -103,8 +72,7 @@ void lhpOpCreateMetersScripted::OpRun()
   std::vector<std::vector<std::string> > dictionary = ReadDictionary(filename);
   for (const auto& entry : dictionary)
   {
-	  mafVMEMeter *meter;
-	  mafNEW(meter);
+	  auto meter = mafVMEMeter::NewSPtr();
 	  mafString name = _R("meter");
 	  for (const auto& el : entry)
 	  {
@@ -132,28 +100,18 @@ void lhpOpCreateMetersScripted::OpRun()
 	  int idx3 = entry.size() > 3 ? inputLMC->FindLandmarkIndex(_R(entry[2].c_str())) : -1;
 	  int idx4 = entry.size() > 4 ? inputLMC->FindLandmarkIndex(_R(entry[3].c_str())) : -1;
 	  if (idx1 >= 0)
-		  meter->SetLink(_R("StartVME"), inputLMC, idx1);
+		  meter->SetLink(_R("StartVME"), inputLMC.get(), idx1);
 	  if (idx2 >= 0)
-		  meter->SetLink(_R("EndVME1"), inputLMC, idx2);
+		  meter->SetLink(_R("EndVME1"), inputLMC.get(), idx2);
 	  if (idx3 >= 0)
-		  meter->SetLink(_R("EndVME2"), inputLMC, idx3);
+		  meter->SetLink(_R("EndVME2"), inputLMC.get(), idx3);
 	  if (idx4 >= 0)
 	  {
 		  
-		  meter->SetLink(_R("StartVME2"), inputLMC, idx4);
+		  meter->SetLink(_R("StartVME2"), inputLMC.get(), idx4);
 		  
 	  }
-	  meter->ReparentTo(m_Group);
-	  mafDEL(meter);
+	  mafNode::ReparentTo(meter, group.get());
   }
-
-  //inputLMC->GetLandmarkName()
-	  //inputLMC->GetNumberOfLandmarks()
   {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
-}
-//----------------------------------------------------------------------------
-void lhpOpCreateMetersScripted::OpDo()
-//----------------------------------------------------------------------------
-{
-  m_Group->ReparentTo(GetInput()->GetParent());
 }

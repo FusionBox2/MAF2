@@ -35,7 +35,6 @@
 #include "mmuTimeSet.h"
 #include "mafVMELandmarkCloud.h"
 #include "mafAbsMatrixPipe.h"
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafVMESurface.h"
 #include "mafVMELandmark.h"
 
@@ -188,7 +187,7 @@ void lhpOpBuildHierarchy::OnEvent(mafEventBase *maf_event)
 
 #define OLDVERSION
 //----------------------------------------------------------------------------
-static void makeReparent(mafVME *child, mafVME *newParent)
+static void makeReparent(std::shared_ptr<mafVME> child, mafVME *newParent)
 //----------------------------------------------------------------------------
 {
   int num, t;
@@ -248,7 +247,7 @@ static void makeReparent(mafVME *child, mafVME *newParent)
     child->SetMatrix(*new_input_pose[t]);
   }
 #endif
-  if (child->ReparentTo(newParent) == MAF_OK)
+  if (mafNode::ReparentTo(child, newParent) == MAF_OK)
   {
     //{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
@@ -269,9 +268,9 @@ static void reparentAll(lhpOpBuildHierarchy::mafFrame *pRoot, mafVME *root)
 //----------------------------------------------------------------------------
 {
   lhpOpBuildHierarchy::mafFrame *pNext;
-  if(pRoot == NULL)
+  if(pRoot == nullptr)
     return;
-  if(pRoot->GetVME() != NULL)
+  if(pRoot->GetVME())
     makeReparent(pRoot->GetVME(), root);
 
   reparentAll(pRoot->GetChild(), root);
@@ -290,7 +289,7 @@ static bool searchVMEInTree(lhpOpBuildHierarchy::mafFrame *pRoot, mafVME *search
   lhpOpBuildHierarchy::mafFrame *pNext;
   if(pRoot == NULL)
     return false;
-  if(pRoot->GetVME() == search)
+  if(pRoot->GetVME().get() == search)
     return true;
   if(searchVMEInTree(pRoot->GetChild(), search))
     return true;
@@ -334,13 +333,13 @@ static bool checkPossibility(lhpOpBuildHierarchy::mafFrame *pRoot)
     return true;
   if(pRoot->GetVME() == NULL)
   {
-    if(pRoot->GetParent() != NULL && pRoot->GetParent()->GetVME() != NULL && !pRoot->GetVME()->CanReparentTo(pRoot->GetParent()->GetVME()))
+    if(pRoot->GetParent() && pRoot->GetParent()->GetVME() && !pRoot->GetVME()->CanReparentTo(pRoot->GetParent()->GetVME().get()))
       return false;
   }
   if(!checkPossibility(pRoot->GetChild()))
     return false;
 
-  for(pNext = pRoot->GetNext(); pNext != NULL; pNext = pNext->GetNext())
+  for(pNext = pRoot->GetNext(); pNext; pNext = pNext->GetNext())
   {
     if(!checkPossibility(pNext))
       return false;
@@ -353,14 +352,14 @@ static void hierarchyReparent(lhpOpBuildHierarchy::mafFrame *pRoot, mafVME *pare
 //----------------------------------------------------------------------------
 {
   lhpOpBuildHierarchy::mafFrame *pNext;
-  if(pRoot == NULL)
+  if(pRoot == nullptr)
     return;
 
-  if(parent != NULL)
-  if(pRoot->GetVME() != NULL)
+  if(parent)
+  if(pRoot->GetVME())
     makeReparent(pRoot->GetVME(), parent);
 
-  hierarchyReparent(pRoot->GetChild(), pRoot->GetVME());
+  hierarchyReparent(pRoot->GetChild(), pRoot->GetVME().get());
 
   for(pNext = pRoot->GetNext(); pNext != NULL; pNext = pNext->GetNext())
   {
@@ -373,7 +372,7 @@ static void hierarchyReparent(lhpOpBuildHierarchy::mafFrame *pRoot, mafVME *pare
 void lhpOpBuildHierarchy::OpDo()
 //----------------------------------------------------------------------------
 {
-  BindToVME((mafVME*)GetInput(), m_root);
+  BindToVME(mafVME::StaticDownCast(GetInput()), m_root);
 
   mafVME *pVMERoot = (mafVME *)GetInput()->GetRoot();
 
@@ -385,7 +384,7 @@ void lhpOpBuildHierarchy::OpDo()
 
   reparentAll(m_root, pVMERoot);
   hierarchyReparent(m_root, NULL);
-  restoreRootPlaces(m_root, (mafVME*)GetInput());
+  restoreRootPlaces(m_root, mafVME::StaticDownCast(GetInput()).get());
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   return;
 }
@@ -489,26 +488,26 @@ void  lhpOpBuildHierarchy::Destroy(mafFrame **root)
 {
   mafFrame *pCurrent;
 
-  if(*root == NULL)
+  if(*root == nullptr)
   {
     cppDEL(m_root);
   }
   else
   {
-    if((*root)->GetParent() != NULL)
+    if((*root)->GetParent())
     {
       if((*root)->GetParent()->GetChild() == (*root))
       {
-        (*root)->GetParent()->SetChild(NULL);
+        (*root)->GetParent()->SetChild(nullptr);
       }
       else
       {
-        for(pCurrent = (*root)->GetParent()->GetChild(); pCurrent != NULL; pCurrent = pCurrent->GetNext())
+        for(pCurrent = (*root)->GetParent()->GetChild(); pCurrent; pCurrent = pCurrent->GetNext())
         {
           if(pCurrent->GetNext() == (*root))
           {
             //fount it
-            pCurrent->SetNext(NULL);
+            pCurrent->SetNext(nullptr);
             break;
           }
         }
@@ -518,12 +517,12 @@ void  lhpOpBuildHierarchy::Destroy(mafFrame **root)
   }
 }
 //----------------------------------------------------------------------------
-void lhpOpBuildHierarchy::BindToVME(mafVME *pvme, lhpOpBuildHierarchy::mafFrame *pStart)
+void lhpOpBuildHierarchy::BindToVME(std::shared_ptr<mafVME> pvme, lhpOpBuildHierarchy::mafFrame *pStart)
 //----------------------------------------------------------------------------
 {
   //ensure we have root
-  mafVME *pVMERoot = pvme;//(mafVME *)pvme->GetRoot();
-  mafVME *pFoundVME;
+  auto pVMERoot = pvme;//(mafVME *)pvme->GetRoot();
+  std::shared_ptr<mafVME> pFoundVME;
   mafFrame *pCur;
 
   if (pStart == NULL)
@@ -537,29 +536,28 @@ void lhpOpBuildHierarchy::BindToVME(mafVME *pvme, lhpOpBuildHierarchy::mafFrame 
     return;
   }
 
-  pFoundVME = NULL;
   auto pVMENameStr = LookupUserName(pStart->GetName(), m_dictionary);
-  if(pVMENameStr != NULL)
+  if(pVMENameStr)
   {
-    pFoundVME = (mafVME*)pVMERoot->FindInTreeByName(*pVMENameStr);
+    pFoundVME = mafVME::StaticDownCast(pVMERoot->FindInTreeByName(*pVMENameStr));
   }
   //and again ^_^
-  if(pFoundVME == NULL)
+  if(pFoundVME == nullptr)
   {
     pVMENameStr = LookupStdName(pStart->GetName(), m_dictionary);
-    if(pVMENameStr != NULL)
-      pFoundVME = (mafVME*)pVMERoot->FindInTreeByName(*pVMENameStr);
+    if(pVMENameStr)
+      pFoundVME = mafVME::StaticDownCast(pVMERoot->FindInTreeByName(*pVMENameStr));
   }
   //try again in case of failure
-  if(pFoundVME == NULL)
+  if(pFoundVME == nullptr)
   {
-    pFoundVME = (mafVME*)pVMERoot->FindInTreeByName(pStart->GetName());
+    pFoundVME = mafVME::StaticDownCast(pVMERoot->FindInTreeByName(pStart->GetName()));
   }
 
   pStart->SetVME(pFoundVME);
-  if(pFoundVME != NULL)
+  if(pFoundVME)
     pStart->SetParentVME(pFoundVME->GetParent());
-  if(LookupStdName(pStart->GetName(), m_dictionary) != NULL)
+  if(LookupStdName(pStart->GetName(), m_dictionary))
   {
     //pStart->SetID(GetBoneIDByName(*LookupStdName(pStart->GetName())));
   }
@@ -568,9 +566,9 @@ void lhpOpBuildHierarchy::BindToVME(mafVME *pvme, lhpOpBuildHierarchy::mafFrame 
     //pStart->SetID(GetBoneIDByName(wxString(pStart->GetName()->GetData())));
   }
   //to all children
-  if(pStart->GetChild() != NULL)
+  if(pStart->GetChild())
     BindToVME(pvme, pStart->GetChild());
-  for(pCur = pStart->GetNext(); pCur != NULL; pCur = pCur->GetNext())
+  for(pCur = pStart->GetNext(); pCur; pCur = pCur->GetNext())
   {
     BindToVME(pvme, pCur);
   }

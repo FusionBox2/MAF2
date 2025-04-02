@@ -77,7 +77,7 @@ protected:
   int               m_Primary;
   int               m_Advanced;
   int               m_Regression;
-  mafVME            *m_Result;
+  std::shared_ptr<mafVME>            m_Result;
   mafVME            *m_RegTarget;
   mafString         m_RegTrgName;
   mafTimeStamp      m_RefStampSrc;

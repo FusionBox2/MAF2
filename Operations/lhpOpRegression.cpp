@@ -31,7 +31,6 @@
 
 #include "mafOpExplodeCollapse.h"
 
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafVMELandmarkCloud.h"
 #include "mafVME.h"
 #include "mafVMESurface.h"
@@ -641,7 +640,7 @@ lhpOpRegression::~lhpOpRegression()
 //----------------------------------------------------------------------------
 {
   for(unsigned i = 0; i < m_Added.size(); i++)
-    mafDEL(m_Added[i]);
+    m_Added[i].reset();
   m_Added.clear();
 }
 
@@ -673,7 +672,7 @@ bool lhpOpRegression::Accept(mafNode* vme)
 void lhpOpRegression::OpRun()   
 //----------------------------------------------------------------------------
 {
-  m_Cloud     = (mafVMELandmarkCloud *)GetInput();
+  m_Cloud     = mafVMELandmarkCloud::StaticDownCast(GetInput()).get();
   CreateGui();
   //{mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);} 
 }
@@ -1877,7 +1876,7 @@ bool lhpOpRegression::RegressionPelvis(bool right)
 
 bool lhpOpRegression::RegressionHumerus(bool right)
 {
-  mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(GetInput());
+  auto cloud = mafVMELandmarkCloud::SafeDownCast(GetInput()).get();
 
   mafString name2 = right ? _R("RHLT") : _R("LHLT");
   mafString name5 = right ? _R("RHME") : _R("LHME");
@@ -2166,7 +2165,7 @@ bool lhpOpRegression::RegressionHumerus(bool right)
 }
 bool lhpOpRegression::RegressionScapula(bool right)
 {
-  mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(GetInput());
+  auto cloud = mafVMELandmarkCloud::SafeDownCast(GetInput()).get();
   mafString name1 = right ? _R("RSIA") : _R("LSIA");
   mafString name2 = right ? _R("RSRS") : _R("LSRS");
   mafString name4 = right ? _R("RSAA") : _R("LSAA");
@@ -2416,7 +2415,7 @@ bool lhpOpRegression::RegressionScapula(bool right)
 }
 bool lhpOpRegression::RegressionClavicle(bool right)
 {
-  mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(GetInput());
+  auto cloud = mafVMELandmarkCloud::SafeDownCast(GetInput()).get();
   mafString name1 = right ? _R("RCSJ") : _R("LCSJ");
   mafString name2 = right ? _R("RCAS") : _R("LCAS");
   mafString name5 = right ? _R("RCAJ") : _R("LCAJ");
@@ -2698,18 +2697,17 @@ bool lhpOpRegression::Regression()
 }
 void lhpOpRegression::AddSphere(const mafString& name, double *center, double radius)
 {
-  mafVMEGroup *grp = NULL;
   mafMatrix mtr;
   mafString parName;
   mtr.Identity();
   mtr.SetElement(0, 3, center[0]);
   mtr.SetElement(1, 3, center[1]);
   mtr.SetElement(2, 3, center[2]);
-  mafNEW(grp);
+  auto grp = mafVMEGroup::NewSPtr();
   parName  = name;
   parName += _R("_group");
   grp->SetName(name);
-  grp->ReparentTo(GetInput());
+  mafNode::ReparentTo(grp, GetInput().get());
   grp->SetAbsMatrix(mtr);
   m_Added.push_back(grp);
   /*{
@@ -2726,26 +2724,24 @@ void lhpOpRegression::AddSphere(const mafString& name, double *center, double ra
     m_Added.push_back(srf);
   }*/
   {
-    mafVMESurfaceParametric *srf = NULL;
-    mafNEW(srf);
+    auto srf = mafVMESurfaceParametric::NewSPtr();
     srf->SetName(name);
-    srf->ReparentTo(grp);
+    mafNode::ReparentTo(srf, grp.get());
     srf->SetGeometryType(mafVMESurfaceParametric::PARAMETRIC_SPHERE);
     srf->SetSphereRadius(radius);
-    mafDEL(srf);
+    srf.reset();
     //m_Added.push_back(srf);
   }
 }
 void lhpOpRegression::AddEllipsoid(const mafString& name, const mafMatrix &mtr, const double *radius)
 {
-  mafVMEGroup *grp = NULL;
   mafString parName;
 
-  mafNEW(grp);
+  auto grp = mafVMEGroup::NewSPtr();
   parName  = name;
   parName += _R("_group");
   grp->SetName(name);
-  grp->ReparentTo(GetInput());
+  mafNode::ReparentTo(grp, GetInput().get());
   grp->SetAbsMatrix(mtr);
   m_Added.push_back(grp);
   /*{
@@ -2762,26 +2758,24 @@ void lhpOpRegression::AddEllipsoid(const mafString& name, const mafMatrix &mtr, 
   m_Added.push_back(srf);
   }*/
   {
-    mafVMESurfaceRegParam *srf = NULL;
-    mafNEW(srf);
+    auto srf = mafVMESurfaceRegParam::NewSPtr();
     srf->SetName(name);
-    srf->ReparentTo(grp);
+    mafNode::ReparentTo(srf, grp.get());
     srf->SetGeometryType(mafVMESurfaceRegParam::PARAMETRIC_ELLIPSOID);
     srf->SetEllipsoidXSemiAxis(radius[0]);
     srf->SetEllipsoidYSemiAxis(radius[1]);
     srf->SetEllipsoidZSemiAxis(radius[2]);
-    mafDEL(srf);
+    srf.reset();
     //m_Added.push_back(srf);
   }
 }
 void lhpOpRegression::AddPlane(const mafString& name, double *center, double *normal)
 {
-  mafVMESurfaceRegParam *srf = NULL;
+  auto srf = mafVMESurfaceRegParam::NewSPtr();
   mafMatrix mtr;
   mtr.Identity();
-  mafNEW(srf);
   srf->SetName(name);
-  srf->ReparentTo(GetInput()->GetParent());
+  mafNode::ReparentTo(srf, GetInput()->GetParent());
   srf->SetGeometryType(mafVMESurfaceRegParam::PARAMETRIC_PLANE);
   srf->SetPlaneNormal(normal);
   srf->SetPlaneCenter(center);
@@ -2791,12 +2785,11 @@ void lhpOpRegression::AddPlane(const mafString& name, double *center, double *no
 
 void lhpOpRegression::AddArrow(const mafString& name, double *center, double *normal)
 {
-  mafVMEArrow *srf = NULL;
+  auto srf = mafVMEArrow::NewSPtr();
   mafMatrix mtr;
   mtr.Identity();
-  mafNEW(srf);
   srf->SetName(name);
-  srf->ReparentTo(GetInput()->GetParent());
+  mafNode::ReparentTo(srf, GetInput()->GetParent());
 
   V3d<double> norm(normal);
   V3d<double> dir1(1.0, 1.0, 1.0);
@@ -2846,7 +2839,9 @@ void lhpOpRegression::OpDo()
 //----------------------------------------------------------------------------
 {
   for(unsigned i = 0; i < m_Added.size(); i++)
-    {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_Added[i]); InvokeEvent(evUnq);}
+  {
+    mafNode::ReparentTo(m_Added[i], GetInput()->GetParent());
+  }
   for(unsigned i = 0; i < m_LMAdd.size(); i++)
   {
     if(!m_LMAdd[i].m_Pelvic)
@@ -2868,7 +2863,7 @@ void lhpOpRegression::OpUndo()
 //----------------------------------------------------------------------------
 {
   for(unsigned i = 0; i < m_Added.size(); i++)
-    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Added[i]); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Added[i].get()); InvokeEvent(evUnq);}
   for(unsigned i = m_LMAdd.size(); i > 0; i--)
   {
     if(m_LMAdd[i - 1].m_Index != -1)

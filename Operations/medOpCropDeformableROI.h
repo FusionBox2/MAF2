@@ -90,7 +90,7 @@ protected:
 	int		m_InsideOut;
 	mafNode *m_PNode;
 
-	mafVMEVolumeGray *m_ResultVme;
+	std::shared_ptr<mafVMEVolumeGray> m_ResultVme;
 
 };
 #endif

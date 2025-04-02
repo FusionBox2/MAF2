@@ -27,8 +27,6 @@
 #include "mafGUI.h"
 #include "mafDictionary.h"
 
-#include "ftk/Base/RegisteringPointer.h"
-
 #include "mafVMEAFRefSys.h"
 #include "mafVMELandmarkCloud.h"
 
@@ -201,9 +199,9 @@ lhpOpKinectAFs::lhpOpKinectAFs(const mafString& label) : Superclass(label)
 lhpOpKinectAFs::~lhpOpKinectAFs()
 //----------------------------------------------------------------------------
 {
-  for(std::vector<mafVMEAFRefSys*>::iterator it = m_RefSys.begin(); it != m_RefSys.end(); ++it)
+  for(auto it = m_RefSys.begin(); it != m_RefSys.end(); ++it)
   {
-    mafDEL(*it);
+    it->reset();
   }
 }
 
@@ -250,8 +248,7 @@ void lhpOpKinectAFs::OpRun()
   std::vector<PredefinedScripts>& predefinedScripts = m_predefinedScripts[m_TypeOfRefs];
   for(unsigned nm = 0; nm < predefinedScripts.size(); nm++)
   {
-    mafVMEAFRefSys *refsys;
-    mafNEW(refsys);
+    auto refsys = mafVMEAFRefSys::NewSPtr();
     mafString str(GetInput()->GetName());
     str += _R("_");
     str += predefinedScripts[nm].m_Name;
@@ -287,7 +284,7 @@ void lhpOpKinectAFs::SetTypeOfRefs(int i)
   std::vector<PredefinedScripts>& predefinedScripts = m_predefinedScripts[m_TypeOfRefs];
   for(unsigned nm = 0; nm < predefinedScripts.size(); nm++)
   {
-    mafVMEAFRefSys *refsys = m_RefSys[nm];
+    auto refsys = m_RefSys[nm];
     mafString str(GetInput()->GetName());
     str += _R("_");
     str += predefinedScripts[nm].m_Name;
@@ -328,10 +325,10 @@ void lhpOpKinectAFs::OpDo()
 {
   wxBusyInfo wait("Please wait, working...");
 
-  for(std::vector<mafVMEAFRefSys*>::iterator it = m_RefSys.begin(); it != m_RefSys.end(); ++it)
+  for(auto it = m_RefSys.begin(); it != m_RefSys.end(); ++it)
   {
     assert(*it);
-    (*it)->ReparentTo(GetInput());
+    mafNode::ReparentTo(*it, GetInput().get());
     (*it)->SetScaleFactor(100.0);
     (*it)->SetActive(1);
   }
@@ -340,10 +337,10 @@ void lhpOpKinectAFs::OpDo()
 void lhpOpKinectAFs::OpUndo()
 //----------------------------------------------------------------------------
 {
-  for(std::vector<mafVMEAFRefSys*>::iterator it = m_RefSys.begin(); it != m_RefSys.end(); ++it)
+  for(auto it = m_RefSys.begin(); it != m_RefSys.end(); ++it)
   {
     assert(*it);
-    (*it)->ReparentTo(NULL);
+    mafNode::ReparentTo(*it, nullptr);
     (*it)->SetScaleFactor(100.0);
     (*it)->SetActive(1);
   }

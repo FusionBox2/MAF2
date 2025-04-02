@@ -363,7 +363,7 @@ void medOpExporterLandmark::ExportingTraverse(std::ostream &out, const char *dir
           intpath = tmp;
         }
       }
-      while(nd != NULL && nd!= GetInput());
+      while(nd != NULL && nd!= GetInput().get());
       fn += _R("\\");
       fn += intpath;//node->GetName();
       /*if(node->GetParent() != NULL)
@@ -381,7 +381,7 @@ void medOpExporterLandmark::ExportingTraverse(std::ostream &out, const char *dir
   int numberChildren = node->GetNumberOfChildren();
   for (int i= 0; i< numberChildren; i++)
   {
-    mafNode *child = node->GetChild(i);
+    mafNode *child = node->GetChild(i).get();
     ExportingTraverse(out, dirName, child);
   }
 }
@@ -400,7 +400,7 @@ void medOpExporterLandmark::ExportLandmark()
   if(GetInput()->IsMAFType(mafVMELandmarkCloud))
   {
     f_Out.open(m_File.GetCStr());
-    ExportOneCloud(f_Out, mafVMELandmarkCloud::SafeDownCast(GetInput()));
+    ExportOneCloud(f_Out, mafVMELandmarkCloud::SafeDownCast(GetInput()).get());
     f_Out.close();
   }
   else
@@ -413,7 +413,7 @@ void medOpExporterLandmark::ExportLandmark()
     }
     else*/
     {
-      ExportingTraverse(f_Out, m_FileDir.GetCStr(), GetInput());
+      ExportingTraverse(f_Out, m_FileDir.GetCStr(), GetInput().get());
     }
   }
   if(!m_TestMode)

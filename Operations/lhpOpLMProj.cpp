@@ -163,8 +163,6 @@ lhpOpLMProj::lhpOpLMProj(bool internalproj, const mafString& label) : Superclass
 lhpOpLMProj::~lhpOpLMProj()
 //----------------------------------------------------------------------------
 {
-  if (GetOutput())
-    GetOutput()->Delete();
   SetOutput(nullptr);
 }
 //----------------------------------------------------------------------------
@@ -219,20 +217,16 @@ void lhpOpLMProj::OpDo()
 {
 
   std::vector<mafTimeStamp> stmps;
-  mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(GetInput());
-  mafVMELandmarkCloud *newcloud;// = mafVMELandmarkCloud::New();
+  auto cloud = mafVMELandmarkCloud::SafeDownCast(GetInput());
   mafString           ncname;
 
 	{
-		if (GetOutput())
-			GetOutput()->Delete();
   	SetOutput(nullptr);
 	}
   stmps.clear();
   if(cloud->IsOpen())
   {
-    mafVMELandmark *lm = cloud->GetLandmark(0);
-    if(lm != NULL)
+    if (auto lm = cloud->GetLandmark(0))
       lm->GetAbsTimeStamps(stmps);
   }
   else
@@ -248,7 +242,7 @@ void lhpOpLMProj::OpDo()
   ncname.append(cloud->GetName());
   ncname.append(_R("_projected_on_"));
   ncname.append(m_SourceName);
-  mafNEW(newcloud);
+  auto newcloud = mafVMELandmarkCloud::NewSPtr();
   SetOutput(newcloud);
   newcloud->SetName(ncname);
   newcloud->SetNumberOfLandmarks(cloud->GetNumberOfLandmarks());
@@ -256,7 +250,7 @@ void lhpOpLMProj::OpDo()
   {
     newcloud->SetLandmarkName(i, cloud->GetLandmarkName(i));
   }
-  newcloud->ReparentTo(GetInput()->GetParent());
+  mafNode::ReparentTo(newcloud, GetInput()->GetParent());
 
   mafVMEOutputSurface *surface = NULL;
   vtkNew<vtkTriangleFilter> triangles;
@@ -363,7 +357,7 @@ void lhpOpLMProj::OpUndo()
 {
   if (GetOutput())
   {
-    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(GetOutput()); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(GetOutput().get()); InvokeEvent(evUnq);}
     {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
 }

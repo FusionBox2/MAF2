@@ -27,7 +27,6 @@
 #include "mafTransform.h"
 #include "mafTransformFrame.h"
 
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafMatrix3x3.h"
 #include "mafDataVector.h"
 #include "mafMatrixVector.h"
@@ -495,14 +494,13 @@ lhpOpRegistration::lhpOpRegistration(const mafString& label) : Superclass(label)
   m_Primary     = true;
   m_Advanced    = true;
   m_Regression  = true;
-  m_Result      = NULL;
 }
 
 //----------------------------------------------------------------------------
 lhpOpRegistration::~lhpOpRegistration()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_Result);
+  m_Result.reset();
 }
 
 //----------------------------------------------------------------------------
@@ -535,13 +533,13 @@ static bool fillMap(mafVMELandmarkCloud *lmc, int ID, std::map<int, mafVMELandma
   {
     for(unsigned i = 0; i < lmc->GetNumberOfChildren(); i++)
     {
-      mafVMELandmarkCloud *lmcChild = mafVMELandmarkCloud::SafeDownCast(lmc->GetChild(i));
-      if(lmcChild == NULL)
+      auto lmcChild = mafVMELandmarkCloud::SafeDownCast(lmc->GetChild(i));
+      if(lmcChild == nullptr)
         continue;
-      mafVMEAFRefSys *childSys = GetAFRefSys(lmcChild);
-      if(childSys == NULL || childSys->GetBoneID() != childrenIDs[j])
+      mafVMEAFRefSys *childSys = GetAFRefSys(lmcChild.get());
+      if(childSys == nullptr || childSys->GetBoneID() != childrenIDs[j])
         continue;
-      if(!fillMap(lmcChild, childrenIDs[j], clouds))
+      if(!fillMap(lmcChild.get(), childrenIDs[j], clouds))
         return false;
     }
   }
@@ -1470,11 +1468,10 @@ bool lhpOpRegistration::ScaleLMC(mafVMELandmarkCloud *lmc, double scale)
 bool lhpOpRegistration::RegistrationProcedure()
 //----------------------------------------------------------------------------
 {
-  mafNode *inputCopy = GetInput()->CopyTree();
-  inputCopy->Register(this);
+  auto inputCopy = GetInput()->CopyTree();
   //{mafEvent evUnq(this, VME_ADD, inputCopy); InvokeEvent(evUnq);}
-  mafVMELandmarkCloud *src = mafVMELandmarkCloud::SafeDownCast(inputCopy);
-  mafVMELandmarkCloud *trg = mafVMELandmarkCloud::SafeDownCast(m_RegTarget);
+  auto src = mafVMELandmarkCloud::SafeDownCast(inputCopy).get();
+  auto trg = mafVMELandmarkCloud::SafeDownCast(m_RegTarget);
   if(!src || !trg)
     return false;
 
@@ -1557,24 +1554,22 @@ bool lhpOpRegistration::RegistrationProcedure()
         ScaleLMC(it->second, sc[j]);
     }
   }
-  mafVMEGroup *grp;
-  mafNEW(grp);
-  mafNode *trgCopy = NULL;
+  auto grp = mafVMEGroup::NewSPtr();
+  std::shared_ptr<mafNode> trgCopy;
   grp->SetName(_R("DSRegistration_result"));
   m_Result = grp;
   if(m_Primary)
   {
     trgCopy = m_RegTarget->CopyTree();
-    trgCopy->Register(this);
 
-    mafVMELandmarkCloud *trgCopyLMC = mafVMELandmarkCloud::SafeDownCast(trgCopy);
+    auto trgCopyLMC = mafVMELandmarkCloud::SafeDownCast(trgCopy);
     if(trgCopyLMC == NULL)
       return true;
 
     std::map<int, mafVMELandmarkCloud*> mpt;
-    fillMap(mafVMELandmarkCloud::SafeDownCast(trgCopy), mafVMEAFRefSys::ID_AFS_PELVIS, mpt);
+    fillMap(mafVMELandmarkCloud::SafeDownCast(trgCopy).get(), mafVMEAFRefSys::ID_AFS_PELVIS, mpt);
 
-    for(std::map<int, mafVMELandmarkCloud*>::iterator it_mpt = mpt.begin(); it_mpt != mpt.end(); ++it_mpt)
+    for(auto it_mpt = mpt.begin(); it_mpt != mpt.end(); ++it_mpt)
     {
       mafMatrixVector *mv = it_mpt->second->GetMatrixVector();
       mafDataVector   *dv = it_mpt->second->GetDataVector();
@@ -1593,7 +1588,7 @@ bool lhpOpRegistration::RegistrationProcedure()
         }
       }
       mafVMEAFRefSys *sysIt = GetAFRefSys(it_mpt->second);
-      if(sysIt == NULL)
+      if(sysIt == nullptr)
         continue;
       mafMatrix sysItMtr;
       DiMatrix  sysItMatrix;
@@ -1624,8 +1619,8 @@ bool lhpOpRegistration::RegistrationProcedure()
       it_mpt->second->SetAbsMatrix(sysItMtr, m_RefStampTrg);
       for(unsigned chi = 0; chi < it_mpt->second->GetNumberOfChildren(); chi++)
       {
-        mafVME *chld = mafVME::SafeDownCast(it_mpt->second->GetChild(chi));
-        if(chld == NULL)
+        auto chld = mafVME::SafeDownCast(it_mpt->second->GetChild(chi));
+        if(chld == nullptr)
           continue;
         mafMatrix curMtr;
         mafMatrix newMtr;
@@ -1641,12 +1636,12 @@ bool lhpOpRegistration::RegistrationProcedure()
       AdvancedRegistration(mpt, m_RefStampTrg, rpos, rori, lpos, lori, regData);
   }
   if(trgCopy)
-    trgCopy->ReparentTo(m_Result);
+    mafNode::ReparentTo(trgCopy, m_Result.get());
   else
-    inputCopy->ReparentTo(m_Result);
+    mafNode::ReparentTo(inputCopy, m_Result.get());
   delete regData;
-  mafDEL(inputCopy);
-  mafDEL(trgCopy);
+  inputCopy.reset();
+  trgCopy.reset();
   return true;
 }
 
@@ -1726,7 +1721,7 @@ void lhpOpRegistration::OnEvent(mafEventBase *maf_event)
         if(lmc) 
         {
           mafVMEAFRefSys *sys    = GetAFRefSys(lmc);
-          mafVMEAFRefSys *sysInp = GetAFRefSys((mafVME*)GetInput());
+          mafVMEAFRefSys *sysInp = GetAFRefSys(mafVME::StaticDownCast(GetInput()).get());
           if(sys    != NULL && sys->GetBoneID()    != mafVMEAFRefSys::ID_AFS_NOTDEFINED &&
              sysInp != NULL && sysInp->GetBoneID() != mafVMEAFRefSys::ID_AFS_NOTDEFINED &&
              sys->GetBoneID() == sysInp->GetBoneID())
@@ -1762,11 +1757,12 @@ void lhpOpRegistration::OnEvent(mafEventBase *maf_event)
 void lhpOpRegistration::OpDo()
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_Result); InvokeEvent(evUnq);}
+  mafNode::ReparentTo(m_Result, GetInput()->GetRoot());
+  //{mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_Result); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void lhpOpRegistration::OpUndo()
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Result); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Result.get()); InvokeEvent(evUnq);}
 }

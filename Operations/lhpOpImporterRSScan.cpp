@@ -25,7 +25,6 @@
 #include "mafDecl.h"
 #include "mafGUI.h"
 
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafTagItem.h"
 #include "mafTagArray.h"
 #include "mafVME.h"
@@ -46,7 +45,6 @@ lhpOpImporterRSScan::lhpOpImporterRSScan(const mafString& label) : Superclass(la
 {
   m_OpType  = OPTYPE_IMPORTER;
   m_Canundo = true;
-  m_ImportedVmeMesh = NULL;
   m_PlateParamsFileName = _R("");
   m_DataFileName = _R("");
   m_Scale        = 1.0;
@@ -57,14 +55,14 @@ lhpOpImporterRSScan::lhpOpImporterRSScan(const mafString& label) : Superclass(la
 lhpOpImporterRSScan::~lhpOpImporterRSScan()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_ImportedVmeMesh);
+  m_ImportedVmeMesh.reset();
 }
 //----------------------------------------------------------------------------
 bool lhpOpImporterRSScan::Accept(mafNode *node)
 //----------------------------------------------------------------------------
 {
-  mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(node);
-  if(cloud == NULL)
+  auto cloud = mafVMELandmarkCloud::SafeDownCast(node);
+  if(cloud == nullptr)
     return false;
   if(cloud->FindLandmarkIndex(_R("SNS1")) == -1 || cloud->FindLandmarkIndex(_R("SNS2")) == -1 || cloud->FindLandmarkIndex(_R("SNS3")) == -1)
     return false;
@@ -98,7 +96,7 @@ int lhpOpImporterRSScan::Read()
   reader->SetDataFileName(m_DataFileName.GetCStr());
   reader->SetScale(m_Scale);
   reader->SetTimeShift(m_TimeShift);
-  reader->SetSensors(mafVMELandmarkCloud::SafeDownCast(GetInput()));
+  reader->SetSensors(mafVMELandmarkCloud::SafeDownCast(GetInput()).get());
   int returnValue = reader->Read();
 
   if (returnValue == MAF_ERROR)
@@ -111,7 +109,6 @@ int lhpOpImporterRSScan::Read()
   else if (returnValue == MAF_OK)
   {
     m_ImportedVmeMesh = reader->GetOutput();
-    m_ImportedVmeMesh->Register(this);
     SetOutput(m_ImportedVmeMesh);
   }
 

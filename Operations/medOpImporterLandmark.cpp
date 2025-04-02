@@ -34,15 +34,12 @@
 #include "mafVMELandmarkCloud.h"
 #include "mafVMELandmark.h"
 #include "mafTagArray.h"
-#include "ftk/Base/RegisteringPointer.h"
 
 #include <string>
 
 #include <fstream>
 
 const bool DEBUG_MODE = true;
-
-mafCxxTypeMacro(medOpImporterLandmark)
 
 //----------------------------------------------------------------------------
 medOpImporterLandmark::medOpImporterLandmark(const mafString& label) : Superclass(label)
@@ -66,7 +63,7 @@ medOpImporterLandmark::~medOpImporterLandmark( )
 //----------------------------------------------------------------------------
 {
   for(unsigned i = 0; i < m_Results.size(); i++)
-    mafDEL(m_Results[i]);
+    m_Results[i].reset();
 }
 //----------------------------------------------------------------------------
 mafOp* medOpImporterLandmark::Copy()   
@@ -242,7 +239,7 @@ void medOpImporterLandmark::OpDo()
   {
     if (m_Results[i])
     {
-      m_Results[i]->ReparentTo(GetInput());
+      mafNode::ReparentTo(m_Results[i], GetInput().get());
       //{mafEvent evUnq(this, VME_ADD, m_Clouds[i]); InvokeEvent(evUnq);}
     }
   }
@@ -257,7 +254,7 @@ void medOpImporterLandmark::OpUndo()
   {
     if (m_Results[i])
     {
-      {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Results[i]); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Results[i].get()); InvokeEvent(evUnq);}
     }
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
@@ -271,7 +268,7 @@ bool medOpImporterLandmark::Read()
   wxBusyInfo wait("Please wait, working...");
 
   for(unsigned i = 0; i < m_Results.size(); i++)
-    mafDEL(m_Results[i]);
+    m_Results[i].reset();
   m_Results.clear();
 
   for(unsigned i = 0; i < m_Files.size(); i++)
@@ -280,12 +277,11 @@ bool medOpImporterLandmark::Read()
       continue;
     mafString path, name, ext;
     mafSplitPath(m_Files[i],&path,&name,&ext);
-    mafVME *imported;
-    imported = (m_TagFileFlag) ? ReadFile(m_Files[i]) : ReadFileWithoutTag(m_Files[i]);
-    if(imported == NULL)
+    auto imported = (m_TagFileFlag) ? ReadFile(m_Files[i]) : ReadFileWithoutTag(m_Files[i]);
+    if(imported == nullptr)
     {
       for(unsigned i = 0; i < m_Results.size(); i++)
-        mafDEL(m_Results[i]);
+        m_Results[i].reset();
       m_Results.clear();
       return false;
     }
@@ -310,7 +306,7 @@ void medOpImporterLandmark::OpStop(int result)
 	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
-mafVME *medOpImporterLandmark::ReadFile(mafString& fname)   
+std::shared_ptr<mafVME> medOpImporterLandmark::ReadFile(mafString& fname)   
 //----------------------------------------------------------------------------
 {
   // need the number of landmarks for the progress bar
@@ -331,25 +327,25 @@ mafVME *medOpImporterLandmark::ReadFile(mafString& fname)
     mafLogMessage(_M(stringStream.str().c_str()));
   }
 
-  mafVME *result = NULL;
+  std::shared_ptr<mafVME> result;
   bool usingDictionary = (!m_DictionaryFileName.empty());
-  mafVMEGroup         *group     = NULL;
-  mafVMELandmarkCloud *specCloud = NULL;//the only cloud if read without dictionary and NOT_IN_DICTIONARY with
+  std::shared_ptr<mafVMEGroup>         group;
+  std::shared_ptr<mafVMELandmarkCloud> specCloud;//the only cloud if read without dictionary and NOT_IN_DICTIONARY with
   mafString specCloudName;//name of specCloud
 
   if(!usingDictionary)//without dictionary create cloud and set its name
   {
-    mafNEW(specCloud);
-    if(specCloud == NULL)
-      return NULL;
+    specCloud = mafVMELandmarkCloud::NewSPtr();
+    if(specCloud == nullptr)
+      return nullptr;
 	specCloud->SetRadius(m_DefaultRadius);
     result = specCloud;
   }
   else//with dictionary just prepare name, creation only if needed
   {
-    mafNEW(group);
-    if(group == NULL)
-      return NULL;
+    group = mafVMEGroup::NewSPtr();
+    if(group == nullptr)
+      return nullptr;
     result = group;
     specCloudName.append(_R("NOT_IN_DICTIONARY"));
   }
@@ -365,8 +361,8 @@ mafVME *medOpImporterLandmark::ReadFile(mafString& fname)
   char tx[30];
   char ty[30];
   char tz[30];
-  std::map<mafString, std::pair<mafVMELandmarkCloud*, int> > lms;
-  std::map<mafString, mafVMELandmarkCloud*>                  clouds;
+  std::map<mafString, std::pair<std::shared_ptr<mafVMELandmarkCloud>, int> > lms;
+  std::map<mafString, std::shared_ptr<mafVMELandmarkCloud> >                  clouds;
 
   double x = 0;
   double y = 0;
@@ -411,35 +407,34 @@ mafVME *medOpImporterLandmark::ReadFile(mafString& fname)
       z = atof(tz);
       t = atof(time);
 
-	  std::map<mafString, mafString>::iterator renIt = m_LMRenameStruct.find(nameStr);
+	  auto renIt = m_LMRenameStruct.find(nameStr);
 	  //trajectory name found
 	  if(renIt != m_LMRenameStruct.end())
 		  nameStr = renIt->second;
 
 
-      std::map<mafString, std::pair<mafVMELandmarkCloud*, int> >::iterator it = lms.find(nameStr);
+      auto it = lms.find(nameStr);
       if(it == lms.end())
       {
-        mafVMELandmarkCloud *addTo = specCloud;//by default add to this specific cloud
+        auto addTo = specCloud;//by default add to this specific cloud
 
         if(usingDictionary)
         {
           //find current trajectory name in dictionary
-          std::map<mafString, mafString>::iterator nmIt = m_dictionaryStruct.find(nameStr);
+          auto nmIt = m_dictionaryStruct.find(nameStr);
           //trajectory name found
           if(nmIt != m_dictionaryStruct.end())
           {
             //find corresponding cloud if already exists
-            std::map<mafString, mafVMELandmarkCloud*>::iterator clIt = clouds.find(nmIt->second);
+            auto clIt = clouds.find(nmIt->second);
             //not created yet
             if(clIt == clouds.end() || clIt->second == NULL)
             {
-              mafVMELandmarkCloud *cld = NULL;
               mafString cldName;
               //create cloud
-              mafNEW(cld);
+              auto cld = mafVMELandmarkCloud::NewSPtr();
               //if created successfully use it
-              if(cld != NULL)
+              if(cld)
               {
                 cldName.append(nmIt->second);
                 cld->SetName(cldName);
@@ -448,18 +443,18 @@ mafVME *medOpImporterLandmark::ReadFile(mafString& fname)
                 addTo = cld;
               }
               //clear and exit in case of problems in cloud creation, as we have not correct one, we cannot create new
-              if(addTo == NULL)
+              if(addTo == nullptr)
               {
                 for(auto it = clouds.begin(); it != clouds.end(); ++it)
                 {
-                  mafDEL(it->second);
+                  it->second.reset();
                 }
                 clouds.clear();
-                mafDEL(group);
-                return NULL;
+                group.reset();
+                return nullptr;
               }
-              addTo->ReparentTo(group);
-              addTo->UnRegister(this);
+              mafNode::ReparentTo(addTo, group.get());
+              addTo.reset();
             }
             //cloud is already created, just select it to use
             else
@@ -471,26 +466,26 @@ mafVME *medOpImporterLandmark::ReadFile(mafString& fname)
           else
           {
             //if NOT_IN_DICTIONARY is not created yet, create it and use. in case of problems exit
-            if(specCloud == NULL)
+            if(specCloud == nullptr)
             {
-              mafNEW(specCloud);
+              specCloud = mafVMELandmarkCloud::NewSPtr();
               //clear and exit in case of problems in cloud creation, as we have not correct one, we cannot create new
-              if(specCloud == NULL)
+              if(specCloud == nullptr)
               {
-                for(std::map<mafString, mafVMELandmarkCloud*>::iterator it = clouds.begin(); it != clouds.end(); ++it)
+                for(auto it = clouds.begin(); it != clouds.end(); ++it)
                 {
-                  mafDEL(it->second);
+                  it->second.reset();
                 }
                 clouds.clear();
-                mafDEL(group);
-                return NULL;
+                group.reset();
+                return nullptr;
               }
               //select this cloud for using
               specCloud->SetName(specCloudName);
 			  specCloud->SetRadius(m_DefaultRadius);
               addTo = specCloud;
-              specCloud->ReparentTo(group);
-              addTo->UnRegister(this);
+              mafNode::ReparentTo(specCloud, group.get());
+              addTo.reset();
             }
           }
         }
@@ -518,11 +513,10 @@ mafVME *medOpImporterLandmark::ReadFile(mafString& fname)
   return result;
 }
 //----------------------------------------------------------------------------
-mafVME *medOpImporterLandmark::ReadFileWithoutTag(mafString& fname)   
+std::shared_ptr<mafVME> medOpImporterLandmark::ReadFileWithoutTag(mafString& fname)
 //----------------------------------------------------------------------------
 {
-  mafVMELandmarkCloud *cloud;
-   mafNEW(cloud);
+  auto cloud = mafVMELandmarkCloud::NewSPtr();
    cloud->SetRadius(m_DefaultRadius);
   //cloud->Open();
 

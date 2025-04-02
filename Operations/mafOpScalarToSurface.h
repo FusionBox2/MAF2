@@ -49,8 +49,5 @@ public:
 
   /** Builds the output surface. */
   void OpRun() override;
-
-protected: 
-  mafVMESurface *m_Surface;
 };
 #endif

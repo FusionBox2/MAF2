@@ -448,8 +448,8 @@ void lhpOpBonemat::CreateGui()
   m_Gui->Label(_R(""));
   m_Gui->Label(_R(""));
 
-  mafNEW(m_OriginalVMEMesh);
-  m_OriginalVMEMesh->DeepCopy(mafVMEMesh::SafeDownCast(GetInput()));
+  m_OriginalVMEMesh = mafVMEMesh::NewSPtr();
+  m_OriginalVMEMesh->DeepCopy(mafVMEMesh::SafeDownCast(GetInput()).get());
   m_OriginalVMEMesh->Update();
 
 }
@@ -490,14 +490,14 @@ void lhpOpBonemat::OnEvent(mafEventBase *maf_event)
         {
           //WORKAROUND CODE 
           //referred to bug 933
-          {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetInput()); evUnq.SetBool(false); InvokeEvent(evUnq);}
-          {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetInput()); evUnq.SetBool(true); InvokeEvent(evUnq);}
+          {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetInput().get()); evUnq.SetBool(false); InvokeEvent(evUnq);}
+          {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetInput().get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
           //END WORKAROUND CODE
           OpStop(OP_RUN_OK);
         }
       break;
       case wxCANCEL:
-        mafVMEMesh::SafeDownCast(GetInput())->DeepCopy(m_OriginalVMEMesh);
+        mafVMEMesh::SafeDownCast(GetInput())->DeepCopy(m_OriginalVMEMesh.get());
         OpStop(OP_RUN_CANCEL);
       break;
   
@@ -604,14 +604,14 @@ void lhpOpBonemat::OnEvent(mafEventBase *maf_event)
           }
         }
         break;
-      case VME_ADD:
-        {
+      //case VME_ADD:
+      //  {
           //trap the VME_ADD of the mmoCollapse and mmoExplode to update the
           //GetInput(), then forward the message to mafDMLlogicMDI
-          this->SetInput(e->GetVme());
-          {mafEvent evUnq(this,VME_ADD); evUnq.SetVme(this->GetInput()); InvokeEvent(evUnq);}
-        }
-        break;
+      //    this->SetInput(e->GetVme());
+      //    {mafEvent evUnq(this,VME_ADD); evUnq.SetVme(this->GetInput()); InvokeEvent(evUnq);}
+      //  }
+      //  break;
       case ID_PRINT_DEBUG_INFO:
       {
         std::ostringstream stringStream;
@@ -629,7 +629,7 @@ void lhpOpBonemat::OnEvent(mafEventBase *maf_event)
 void lhpOpBonemat::OpStop(int result)
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_OriginalVMEMesh);
+  m_OriginalVMEMesh.reset();
 	HideGui();
 	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}        
 }
@@ -718,7 +718,7 @@ int lhpOpBonemat::HUIntegration()
     return MAF_ERROR;
   }
   
-  mafVMEMesh *inMesh =  mafVMEMesh::SafeDownCast(GetInput());
+  auto inMesh =  mafVMEMesh::SafeDownCast(GetInput());
   assert(inMesh);
 
   mafMatrix identityMatrix;
@@ -1331,7 +1331,7 @@ int lhpOpBonemat::YoungModuleIntegration()
     return MAF_ERROR;
   }
   
-  mafVMEMesh *inMesh =  mafVMEMesh::SafeDownCast(GetInput());
+  auto inMesh =  mafVMEMesh::SafeDownCast(GetInput());
   assert(inMesh);
 
   mafMatrix identityMatrix;

@@ -71,7 +71,7 @@ public:
 	void ImportSTL();
 
   /** Used to retrieve imported data. It is useful when the operation is executed from code.*/
-  void GetImportedSTL(std::vector<mafVMESurface*> &importedSTL);
+  void GetImportedSTL(std::vector<std::shared_ptr<mafVMESurface> > &importedSTL);
 
 protected:
   /** Check if the STL file is binary */
@@ -83,7 +83,7 @@ protected:
   /** Check if the binary stl needs to be swapped. */
   void CheckSwap(const char *file_name, int &swapFlag);
 
-  std::vector<mafVMESurface*> m_ImportedSTLs;
+  std::vector<std::shared_ptr<mafVMESurface> > m_ImportedSTLs;
   std::vector<mafString>	    m_Files;
 	mafString	                  m_FileDir;
   std::vector<int>            m_Swaps;

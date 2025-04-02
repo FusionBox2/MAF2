@@ -486,7 +486,7 @@ IF (MAF_USE_VTK)
 	lhpOpFindCentroid.h
 	lhpOpComputeTensor.cpp
 	lhpOpComputeTensor.h
-	lhpCOmputeTensor.cpp
+	lhpComputeTensor.cpp
 	lhpComputeTensor.h
 	lhpOpKinectUtil.cpp
 	lhpOpKinectUtil.h

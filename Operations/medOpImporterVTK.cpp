@@ -35,21 +35,17 @@
 #include "vtkPolyDataReader.h"
 #include "vtkSmartPointer.h"
 
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(medOpImporterVTK);
-//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 medOpImporterVTK::medOpImporterVTK(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
-  m_VmePolyLine = NULL;
 }
 //----------------------------------------------------------------------------
 medOpImporterVTK::~medOpImporterVTK()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_VmePolyLine);
+  m_VmePolyLine.reset();
 }
 //----------------------------------------------------------------------------
 mafOp* medOpImporterVTK::Copy()   
@@ -94,7 +90,7 @@ int medOpImporterVTK::ImportVTK()
     vtkDataSet *data = vtkDataSet::SafeDownCast(preader->GetOutputDataObject(0));
     if (data)
     {
-      mafNEW(m_VmePolyLine);
+      m_VmePolyLine = medVMEPolylineGraph::NewSPtr();
       if (m_VmePolyLine->SetDataByDetaching(data,0) == MAF_OK)
       {
         SetOutput(m_VmePolyLine);

@@ -1,22 +1,4 @@
-/*=========================================================================
-
- Program: MAF2Medical
- Module: medOpExporterGRFWS
- Authors: Simone Brazzale
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __medOpExporterGRFWS_H__
-#define __medOpExporterGRFWS_H__
-
+#pragma once
 //----------------------------------------------------------------------------
 // Include :
 //----------------------------------------------------------------------------
@@ -55,7 +37,7 @@ Exporterr for ground reactions force, used in motion analysis
 class MED_OPERATION_EXPORT medOpExporterGRFWS : public mafOp
 {
 public:
-  mafTypeMacro(medOpExporterGRFWS,mafOp)
+  mafTypeMacroN(medOpExporterGRFWS)
 	medOpExporterGRFWS(const mafString& label = _R("GRF Exporter"));
 	~medOpExporterGRFWS() override; 
 	
@@ -190,4 +172,3 @@ protected:
   mafString m_File_temp3;
   mafString m_File_temp4;
 };
-#endif

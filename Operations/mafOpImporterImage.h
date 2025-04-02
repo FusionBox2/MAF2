@@ -78,8 +78,8 @@ protected:
   void BuildImageSequence();
   void BuildVolume();
 
-  mafVMEImage     *m_ImportedImage;
-  mafVMEVolumeRGB *m_ImportedImageAsVolume;
+  std::shared_ptr<mafVMEImage>     m_ImportedImage;
+  std::shared_ptr<mafVMEVolumeRGB> m_ImportedImageAsVolume;
 
   std::vector<mafString>	m_Files;
 	mafString      m_FileDirectory;

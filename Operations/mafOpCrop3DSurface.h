@@ -98,7 +98,7 @@ protected:
 	vtkRectilinearGrid	*m_OutputRG; ///< Pointer for Rectilinear Grid cropped volume
 	vtkStructuredPoints *m_OutputSP; ///< Pointer for Structured Points cropped volume
 	vtkPolyData *m_OutputPolyData;
-	mafVMELandmarkCloud	*m_Cloud;
+	std::shared_ptr<mafVMELandmarkCloud>	m_Cloud;
 
 
   bool  m_ShowShadingPlane;

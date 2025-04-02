@@ -41,7 +41,6 @@
 #include "mafOpExplodeCollapse.h"
 #include "lhpOpKinectAFs.h"
 
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafMatrixVector.h"
 #include "mafDataVector.h"
 #include "mafVME.h"
@@ -103,7 +102,7 @@ class medOpImporterLandmarkAccU : public medOpImporterLandmark
 public:
   mafTypeMacro(medOpImporterLandmarkAccU, medOpImporterLandmark);
   medOpImporterLandmarkAccU(const mafString& label = _R("")) : medOpImporterLandmark(label){}
-  std::vector<mafVME*>& GetResults(){return m_Results;}
+  std::vector<std::shared_ptr<mafVME> >& GetResults(){return m_Results;}
 };
 
 mafCxxTypeMacro(medOpImporterLandmarkAccU)
@@ -181,7 +180,7 @@ namespace
     return true;
   }
 
-  mafVMEGroup *ImportMSFFile(mafString& m_File)
+  std::shared_ptr<mafVMEGroup> ImportMSFFile(mafString& m_File)
   {
     mafString unixname = m_File;
     mafString path, name, ext;
@@ -215,16 +214,16 @@ namespace
       //  mafErrorMessage(_("Errors during file parsing! Look the log area for error messages."));
       //return MAF_ERROR;
     }
-    mafVMERoot *root = mafVMERoot::SafeDownCast(manager.GetRoot());
+    auto root = mafVMERoot::SafeDownCast(manager.GetRoot());
 
     mafString group_name = _R("Skeletal model");
 
-    auto iter = root->NewIterator();
+    auto iter = std::make_unique<mafNodeIterator>(root.get());
     for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
     {
-      if(node == root)
+      if(node == root.get())
         continue;
-      mafVMEGenericAbstract *vmeWithDataVector = mafVMEGenericAbstract::SafeDownCast(node);
+      auto vmeWithDataVector = mafVMEGenericAbstract::SafeDownCast(node);
       if (vmeWithDataVector)
       {
         mafDataVector *dataVector = vmeWithDataVector->GetDataVector();
@@ -241,17 +240,14 @@ namespace
     iter.reset();
 
 
-    mafVMEGroup *m_Group;
-
-    m_Group = mafVMEGroup::New();
-    m_Group->Register(NULL);
+    auto m_Group = mafVMEGroup::NewSPtr();
     m_Group->Initialize();
     m_Group->SetName(group_name);
     //m_Group->ReparentTo(GetInput());
 
-    while (mafNode *node = root->GetFirstChild())
+    while (auto node = root->GetFirstChild())
     {
-      node->ReparentTo(m_Group);
+      mafNode::ReparentTo(node, m_Group.get());
 
       // Losi 03/16/2010 Bug #2049 fix
       /*mafVMEGeneric *vme = mafVMEGeneric::SafeDownCast(node);
@@ -835,7 +831,7 @@ namespace
       strm << "" << endl; 
       strm.close();
   }
-  mafVMEGroup *ModelImport(const mafString& path, mafVME *target)
+  std::shared_ptr<mafVMEGroup> ModelImport(const mafString& path, mafVME *target)
   {
     mafString files[] = {
       _R("L_Foot.txt"),
@@ -870,7 +866,7 @@ namespace
       _R("UpThor.txt"),
     };
 
-    mafVMEGroup *grp = NULL;
+    std::shared_ptr<mafVMEGroup> grp;
     for(int i = 0; i < DIM(files); i++)
     {
       mafString fpath;
@@ -882,21 +878,20 @@ namespace
       medOpImporterLandmarkAccU *imp = new medOpImporterLandmarkAccU();
       imp->SetFileName(fpath.GetCStr());
       imp->Read();
-      std::vector<mafVME*>& res = imp->GetResults();
-      if(grp == NULL && !res.empty())
+      auto& res = imp->GetResults();
+      if(grp == nullptr && !res.empty())
       {
-        grp = mafVMEGroup::New();
-        grp->Register(NULL);
+        grp = mafVMEGroup::NewSPtr();
         grp->SetName(_R("KinectModel"));
       }
       for(auto it = res.begin(); it != res.end(); ++it)
       {
-        (*it)->ReparentTo(grp);
+        mafNode::ReparentTo((*it), grp.get());
       }
       delete imp;
     }
     if(!grp)
-      return NULL;
+      return nullptr;
 
 
     mafString plot_files[] = {
@@ -971,13 +966,11 @@ namespace
       if(!readMatrix(fpath, rmatrix))
         continue;
 
-      lhpVMEKMInfo *kmi = lhpVMEKMInfo::New();
-      kmi->Register(NULL);
+      auto kmi = lhpVMEKMInfo::NewSPtr();
       kmi->SetName(target->GetName());// + "_GeneralInfo");
-      kmi->ReparentTo(target);
+      mafNode::ReparentTo(kmi, target);
 
-      medVMEAnalog *analog = medVMEAnalog::New();
-      analog->Register(NULL);
+      auto analog = medVMEAnalog::NewSPtr();
 
       //mafString analogVmeName;
       //analogVmeName.Append(plot_files[i]);
@@ -1184,13 +1177,11 @@ namespace
       {
         tag_Signals->SetValue(channelsNameList[n], n);
       }
-      analog->ReparentTo(target);
-      mafDEL(analog);
-      mafDEL(kmi);
+      mafNode::ReparentTo(analog, target);
+      analog.reset();
+      kmi.reset();
     }
-    grp->ReparentTo(target);
-    grp->Delete();
-
+    mafNode::ReparentTo(grp, target);
     return grp;
   }
 }
@@ -1345,9 +1336,9 @@ void lhpOpKinectUtil::OpDo()
 
   for(unsigned i = 0; i < m_Imported.size(); i++)
   {
-    m_Imported[i]->ReparentTo(GetInput());
-    {mafEvent evUnq(this, VME_COLLAPSESUBTREE); evUnq.SetVme(m_Imported[i]); InvokeEvent(evUnq);}
-    {mafEvent evUnq(this, VME_EXPAND); evUnq.SetVme(m_Imported[i]); InvokeEvent(evUnq);}
+    mafNode::ReparentTo(m_Imported[i], GetInput().get());
+    {mafEvent evUnq(this, VME_COLLAPSESUBTREE); evUnq.SetVme(m_Imported[i].get()); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_EXPAND); evUnq.SetVme(m_Imported[i].get()); InvokeEvent(evUnq);}
   }
 }
 
@@ -1357,7 +1348,7 @@ void lhpOpKinectUtil::OpUndo()
 {
   for(unsigned i = 0; i < m_Imported.size(); i++)
   {
-    m_Imported[i]->ReparentTo(NULL);
+    mafNode::ReparentTo(m_Imported[i], nullptr);
   }
 }
 //----------------------------------------------------------------------------
@@ -1399,20 +1390,20 @@ namespace
         continue;
       traverse.push_back(x);
       for(int i = 0; i < x->GetNumberOfChildren(); i++)
-        tmp.push_back(x->GetChild(i));
+        tmp.push_back(x->GetChild(i).get());
     }
   }
 
 
-  mafNode *CopyTreeTimeStamp(mafNode *src)
+  std::shared_ptr<mafNode> CopyTreeTimeStamp(mafNode *src)
   {
-    if(src == NULL)
-      return NULL;
+    if(src == nullptr)
+      return nullptr;
 
-    mafNode *result = src->CopyTree();
+    auto result = src->CopyTree();
 
     std::list<mafNode*> tmp;
-    tmp.push_back(result);
+    tmp.push_back(result.get());
     while(!tmp.empty())
     {
       mafNode *x = *(tmp.begin());
@@ -1446,7 +1437,7 @@ namespace
       }*/
 
       for(int i = 0; i < x->GetNumberOfChildren(); i++)
-        tmp.push_back(x->GetChild(i));
+        tmp.push_back(x->GetChild(i).get());
     }
     return result;
   }
@@ -1619,8 +1610,7 @@ namespace
 
   bool ProcessNode(mafVMELandmarkCloud *src, mafVMELandmarkCloud *trg, mafVMELandmarkCloud *registered, vtkPoints *m_PointsSource, vtkPoints *m_PointsTarget)
   {
-    mafVMEInfoText *info = mafVMEInfoText::New();
-    info->Register(NULL);
+    auto info = mafVMEInfoText::NewSPtr();
     mafString name = _R("Info for registration");// %s into %s",m_Source->GetName().GetCStr(), m_Target->GetName().GetCStr());
     info->SetName(name);
     info->SetPosLabel(_R("Registration residual: "), 0);
@@ -1654,7 +1644,7 @@ namespace
         if(ExtractMatchingPoints(src, trg, currTime, m_PointsSource, m_PointsTarget))
         {
           if(!infoAdded)
-            info->ReparentTo(registered);
+            mafNode::ReparentTo(info, registered);
           infoAdded = true;
           double tr = RegisterPoints(src, trg, registered, currTime, m_PointsSource, m_PointsTarget);
           info->SetAbsPose(tr, 0.0, 0.0, 0.0, 0.0, 0.0, currTime);
@@ -1664,7 +1654,7 @@ namespace
 
     }
 
-    mafDEL(info);
+    info.reset();
     if(lmcsOpened)
       src->Open();
     if(lmctOpened)
@@ -1674,14 +1664,14 @@ namespace
     return true;
   }
 
-  mafVME *RegScripted(mafVME* m_Source, mafVME* m_Target)
+  std::shared_ptr<mafVME> RegScripted(mafVME* m_Source, mafVME* m_Target)
   {
-    if(m_Source == NULL || m_Target == NULL)
-      return NULL;
+    if(m_Source == nullptr || m_Target == nullptr)
+      return nullptr;
     vtkPoints *m_PointsSource = vtkPoints::New();
     vtkPoints *m_PointsTarget = vtkPoints::New();
 
-    mafVME* m_Registered = NULL;
+    std::shared_ptr<mafVME> m_Registered;
     std::vector<std::pair<wxString, wxString> >  m_LMDict;
     m_LMDict.push_back(std::make_pair<wxString, wxString>("UpPelvisALs","UpPelv"));
     m_LMDict.push_back(std::make_pair<wxString, wxString>("UpLumbarALs","UpLumb"));
@@ -1715,11 +1705,10 @@ namespace
     m_LMDict.push_back(std::make_pair<wxString, wxString>("RightPatellaALs","R_Pate"));
 
 
-    if(m_Registered == NULL)
+    if(m_Registered == nullptr)
     {
       mafString name = _R("Registered model");
       m_Registered= mafVME::SafeDownCast(CopyTreeTimeStamp(m_Source));
-      m_Registered->Register(NULL);
       m_Registered->SetName(name);
     }
 
@@ -1732,7 +1721,7 @@ namespace
     std::list<mafNode*> srcTrav;
     std::list<mafNode*> regTrav;
     FillTraverseList(m_Source, srcTrav);
-    FillTraverseList(m_Registered, regTrav);
+    FillTraverseList(m_Registered.get(), regTrav);
 
 
     std::list<mafNode*>::iterator itsrc, itreg;
@@ -1744,13 +1733,13 @@ namespace
       //  nreg = iterreg->GetNextNode();
       mafVMELandmarkCloud *lmcs = mafVMELandmarkCloud::SafeDownCast(nsrc);
       mafVMELandmarkCloud *lmcr = mafVMELandmarkCloud::SafeDownCast(nreg);
-      mafVMELandmarkCloud *lmct = NULL;
-      if(lmcs == NULL)//lmcr is of the same type as lmcs
+      mafVMELandmarkCloud *lmct = nullptr;
+      if(lmcs == nullptr)//lmcr is of the same type as lmcs
         continue;
       const char *search_name = nsrc->GetName().GetCStr();
       for(int i = 0; i < m_LMDict.size(); i++)
       {
-        search_name = NULL;
+        search_name = nullptr;
         if(usedEntries[i])
           continue;
         if(nsrc->GetName() == mafWxToString(m_LMDict[i].first))
@@ -1762,20 +1751,20 @@ namespace
       }
       if(search_name)
       {
-        auto lmitert = m_Target->NewIterator();
+        auto lmitert = std::make_unique<mafNodeIterator>(m_Target);
         for(mafNode *lmt = lmitert->GetFirstNode(); lmt; lmt = lmitert->GetNextNode())
         {
           mafVMELandmarkCloud *lmtmp = mafVMELandmarkCloud::SafeDownCast(lmt);
-          if(lmtmp == NULL)
+          if(lmtmp == nullptr)
             continue;
-          if(strstr(lmtmp->GetName().GetCStr(), search_name) != NULL)
+          if(strstr(lmtmp->GetName().GetCStr(), search_name) != nullptr)
           {
             lmct = lmtmp;
             break;
           }
         }
       }
-      if(lmct == NULL)
+      if(lmct == nullptr)
         continue;
       bool res = ProcessNode(lmcs, lmct, lmcr, m_PointsSource, m_PointsTarget);
       processed = processed || res;
@@ -1785,7 +1774,7 @@ namespace
     vtkDEL(m_PointsTarget);
 
     if(!processed)
-      mafDEL(m_Registered);
+      m_Registered.reset();
 
     return m_Registered;
   }
@@ -1802,9 +1791,9 @@ bool lhpOpKinectUtil::Import()
   Clear();
 
   mafString filestxt, sessionstxt, filetoprd, apppath;
-  std::vector<std::pair<mafString, mafVME*> > sessionsList;
+  std::vector<std::pair<mafString, std::shared_ptr<mafVME> > > sessionsList;
   bool storageExists = false;
-  mafVMEGroup *skeletalGroup;
+  std::shared_ptr<mafVMEGroup> skeletalGroup;
   {
     mafString zmsfPlacement;
     mafString zmsfName;
@@ -1905,7 +1894,7 @@ bool lhpOpKinectUtil::Import()
         }
         mafString fName;
         fName = mafString(_R(string));
-        sessionsList.push_back(std::make_pair(fName, (mafVME*)nullptr));
+        sessionsList.push_back(std::make_pair(fName, nullptr));
       }
       fclose(fp);
     }
@@ -1939,8 +1928,8 @@ bool lhpOpKinectUtil::Import()
     }
     if(!mafFileExists(importName))
       continue;
-    mafVME *imported = ImportSingleFile(importName);
-    if(imported != NULL)
+    auto imported = ImportSingleFile(importName);
+    if(imported)
     {
       imported->SetName(name);
       if(m_ExtApp)
@@ -1956,15 +1945,12 @@ bool lhpOpKinectUtil::Import()
               mafString spath, sname, sext;
               mafSplitPath(it->first, &spath, &sname, &sext);
               //pref = sname + "_";
-              mafVMEGroup *grp;
-              mafNEW(grp);
+              auto grp = mafVMEGroup::NewSPtr();
               it->second = grp;
               grp->SetName(sname);
               m_Imported.push_back(grp);
             }
-            imported->ReparentTo(it->second);
-            mafVME *tmp = imported;
-            mafDEL(tmp);
+            mafNode::ReparentTo(imported, it->second.get());
             break;
           }
         }
@@ -2015,15 +2001,15 @@ bool lhpOpKinectUtil::Import()
           //if(wxExecute(commandline.GetCStr(), wxEXEC_SYNC) == 0)
           if(RunProgram(mtlbTmp.GetCStr(), commandline.GetCStr(), tmpOut.GetCStr()))
           {
-            if(mafVMEGroup *grp = ModelImport(modelPath, imported))
+            if(auto grp = ModelImport(modelPath, imported.get()))
             {
               if(m_Simple)
               {
-                mafNode *finReg = RegScripted(skeletalGroup, grp);
+               auto finReg = RegScripted(skeletalGroup.get(), grp.get());
                 if(finReg)
                 {
-                  finReg->ReparentTo(imported);
-                  mafDEL(finReg);
+                  mafNode::ReparentTo(finReg, imported.get());
+                  finReg.reset();
                 }
               }
             }
@@ -2061,14 +2047,14 @@ bool lhpOpKinectUtil::Import()
   {
     mafRemoveDirectory(mtlbTmp);
   }
-  mafDEL(skeletalGroup);
+  skeletalGroup.reset();
   //{mafEvent evUnq(this,VIEW_CREATE, (long)12399); InvokeEvent(evUnq);}
   //{mafEvent evUnq(this,VIEW_CREATE, (long)12400); InvokeEvent(evUnq);}
   return result;
 }
 
 //----------------------------------------------------------------------------
-mafVME *lhpOpKinectUtil::ImportSingleFile(const mafString &fullFileName)
+std::shared_ptr<mafVME> lhpOpKinectUtil::ImportSingleFile(const mafString &fullFileName)
 //----------------------------------------------------------------------------
 {
   std::vector<std::vector<double> > rmatrix;
@@ -2076,8 +2062,7 @@ mafVME *lhpOpKinectUtil::ImportSingleFile(const mafString &fullFileName)
     return NULL;
 
 
-  mafVMELandmarkCloud *cloud;
-  mafNEW(cloud);
+  auto cloud = mafVMELandmarkCloud::NewSPtr();
   std::vector<mafTimeStamp> timeStamps;
 
   cloud->SetName(mafFileNameFromPath(fullFileName));
@@ -2266,7 +2251,7 @@ void lhpOpKinectUtil::Clear()
 {
   for(unsigned i = 0; i < m_Imported.size(); i++)
   {
-    mafDEL(m_Imported[i]);
+    m_Imported[i].reset();
   }
   m_Imported.clear();
 }

@@ -74,7 +74,6 @@ protected:
   virtual void CreateGui();  
 
   int m_ImporterType;
-	mafVMEMesh *m_ImportedVmeMesh;
   mafString	m_FileDir;
 
   /** Nodes file name*/

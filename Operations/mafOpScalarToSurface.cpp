@@ -42,24 +42,17 @@
 #include <vector>
 
 //----------------------------------------------------------------------------
-mafCxxTypeMacro(mafOpScalarToSurface);
-//----------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------
 mafOpScalarToSurface::mafOpScalarToSurface(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType	= OPTYPE_OP;
   m_Canundo = true;
-
-  m_Surface = NULL;
 }
 
 //----------------------------------------------------------------------------
 mafOpScalarToSurface::~mafOpScalarToSurface()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_Surface);
 }
 
 //----------------------------------------------------------------------------
@@ -87,8 +80,8 @@ void mafOpScalarToSurface::OpRun()
 
   mafString surface_name = GetInput()->GetName();
   surface_name += _R(" surface");
-  mafNEW(m_Surface);
-  m_Surface->SetName(surface_name);
+  auto surface = mafVMESurface::NewSPtr();
+  surface->SetName(surface_name);
   
   vtkNew<vtkAppendPolyData> scalar_surface;
   vtkNew<vtkDelaunay2D> delaunay;
@@ -96,7 +89,7 @@ void mafOpScalarToSurface::OpRun()
   std::vector<vtkPolyData *> items;
   vtkPolyData *scalar_item;
   vtkPolyData *current_item;
-  mafVMEScalar *scalar = mafVMEScalar::SafeDownCast(GetInput());
+  auto scalar = mafVMEScalar::SafeDownCast(GetInput());
   double ts = scalar->GetTimeStamp();
   std::vector<mafTimeStamp> kframes;
   scalar->GetTimeStamps(kframes);
@@ -117,8 +110,8 @@ void mafOpScalarToSurface::OpRun()
   }
   delaunay->SetInputConnection(scalar_surface->GetOutputPort());
   delaunay->Update();
-  m_Surface->SetData(delaunay->GetOutput(),ts);
-  SetOutput(m_Surface);
+  surface->SetData(delaunay->GetOutput(),ts);
+  SetOutput(surface);
 
   for (int i = 0; i < kframes.size(); i++)
     items[i]->Delete();

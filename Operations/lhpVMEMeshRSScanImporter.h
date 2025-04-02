@@ -77,7 +77,7 @@ public:
 
   /**
   Get the vme created by the reader*/
-  mafVMEGroup *GetOutput() {return m_Output;};
+  std::shared_ptr<mafVMEGroup> GetOutput() {return m_Output;}
   
   // supported elements 
   enum
@@ -115,7 +115,7 @@ protected:
   const char *m_DataFileName;
 
   // The output vme fem
-  mafVMEGroup *m_Output;
+  std::shared_ptr<mafVMEGroup> m_Output;
 
   mafVMELandmarkCloud *m_Sensors;
 

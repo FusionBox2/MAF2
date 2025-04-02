@@ -44,7 +44,6 @@ PURPOSE.  See the above copyright notice for more information.
 #include "mafDataVector.h"
 #include "mafTransform.h"
 #include "mafTransformFrame.h"
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafVMEMesh.h"
 #include "mafVMEGroup.h"
 #include "mafMatrixPipe.h"
@@ -98,6 +97,7 @@ PURPOSE.  See the above copyright notice for more information.
 
 #include "windows.h"
 #include <algorithm>
+#include <string>
 
 
 
@@ -149,9 +149,6 @@ void medOpImporterDicomOffis::PrintDicomList(medDicomSeriesSliceList *dicomList)
 
     mafLogMessage(_M(stringStream.str().c_str()));
 }
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(medOpImporterDicomOffis);
-//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 // constants :
@@ -314,11 +311,11 @@ medOpImporterDicomOffis::~medOpImporterDicomOffis()
 {
 	vtkDEL(m_SliceActor);
 
-	mafDEL(m_Image);
-	mafDEL(m_Mesh);
-	mafDEL(m_Volume);
+	m_Image.reset();
+	m_Mesh.reset();
+	m_Volume.reset();
 
-	m_ImagesGroup = NULL;
+	m_ImagesGroup = nullptr;
 
 }
 //----------------------------------------------------------------------------
@@ -565,15 +562,6 @@ int medOpImporterDicomOffis::RunWizard()
 }
 
 //----------------------------------------------------------------------------
-void medOpImporterDicomOffis::OpDo()
-	//----------------------------------------------------------------------------
-{
-	if(GetOutput() != nullptr)
-	{
-		GetOutput()->ReparentTo(GetInput());
-	}
-}
-//----------------------------------------------------------------------------
 void medOpImporterDicomOffis::OpStop(int result)
 	//----------------------------------------------------------------------------
 {
@@ -711,10 +699,10 @@ int medOpImporterDicomOffis::BuildOutputVMEImagesFromDicom()
 	ImportDicomTags();
 	long progress = 0;
 	int count,s_count;
-	mafNEW(m_ImagesGroup);
+	m_ImagesGroup = mafVMEGroup::NewSPtr();
 
 	m_ImagesGroup->SetName(m_VolumeName + _R(" images"));
-	m_ImagesGroup->ReparentTo(GetInput());
+	mafNode::ReparentTo(m_ImagesGroup, GetInput().get());
 
 	for (count = m_ZCropBounds[0], s_count = 0; count < m_ZCropBounds[1]+1; count += step)
 	{
@@ -745,7 +733,7 @@ int medOpImporterDicomOffis::BuildOutputVMEImagesFromDicom()
 			//im->Update();
 		}
 
-		mafAutoPointer<mafVMEImage> image = mafVMEImage::New();
+		auto image = mafVMEImage::NewSPtr();
 		mafString name = m_VolumeName;
 		name.append(mafString::Format(_R("_%d"), count));
 		image->SetName(name);
@@ -779,7 +767,7 @@ int medOpImporterDicomOffis::BuildOutputVMEImagesFromDicom()
 			}
 		}
 
-		m_ImagesGroup->AddChild(image.get());
+		m_ImagesGroup->AddChild(image);
 		s_count++;
 
 		if(!this->m_TestMode)
@@ -793,7 +781,7 @@ int medOpImporterDicomOffis::BuildOutputVMEImagesFromDicom()
 		{mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 	}
 
-	if(m_ImagesGroup != NULL)
+	if(m_ImagesGroup)
 	{
 		SetOutput(m_ImagesGroup);
 	}
@@ -829,19 +817,19 @@ int medOpImporterDicomOffis::BuildOutputVMEImagesFromDicomCineMRI()
 	}
 	ImportDicomTags();
 
-	mafNEW(m_ImagesGroup);
+	m_ImagesGroup = mafVMEGroup::NewSPtr();
 
 	m_ImagesGroup->SetName(m_VolumeName + _R(" images"));
-	m_ImagesGroup->ReparentTo(GetInput());
+	mafNode::ReparentTo(m_ImagesGroup, GetInput().get());
 
 	//create all the animated images
 	for (int i = m_ZCropBounds[0]; i < m_ZCropBounds[1]+1;i += step)
 	{
-		mafAutoPointer<mafVMEImage> image = mafVMEImage::New();
+		auto image = mafVMEImage::NewSPtr();
 		mafString name = m_VolumeName;
 		name.append(mafString::Format(_R("_%d_%d"), i, m_NumberOfTimeFrames));
 		image->SetName(name);
-		m_ImagesGroup->AddChild(image.get());
+		m_ImagesGroup->AddChild(image);
 	}
 
 	long progress = 0;
@@ -913,17 +901,14 @@ int medOpImporterDicomOffis::BuildOutputVMEImagesFromDicomCineMRI()
 				//im->Update();
 			}
 
-			mafVMEImage *image = NULL;
-			image = mafVMEImage::SafeDownCast(m_ImagesGroup->GetChild(targetVolumeSliceId));
+			auto image = mafVMEImage::SafeDownCast(m_ImagesGroup->GetChild(targetVolumeSliceId));
 			assert(image);	
 
 			image->SetData(im,dcmTriggerTime);
 
 			if (m_SeriesIDContainsRotationsMap[m_SelectedSeriesID] == true  && m_ApplyRotation)
 			{
-				medDicomSlice* slice = NULL;
-
-				slice = m_SelectedSeriesSlicesList->Item(currImageId)->GetData();
+				medDicomSlice* slice = m_SelectedSeriesSlicesList->Item(currImageId)->GetData();
 
 				assert(slice);
 
@@ -1278,7 +1263,7 @@ int medOpImporterDicomOffis::BuildOutputVMEGrayVolumeFromDicom()
 		{mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 	}
 
-	mafNEW(m_Volume);
+	m_Volume = mafVMEVolumeGray::NewSPtr();
 
 	accumulate->Update();
 
@@ -1431,7 +1416,7 @@ int medOpImporterDicomOffis::BuildOutputVMEGrayVolumeFromDicomCineMRI()
 	}
 
 	// create the time varying vme
-	mafNEW(m_Volume);
+	m_Volume = mafVMEVolumeGray::NewSPtr();
 	int currImageId = 0;
 	long progress = 0;
 	int totalNumberOfImages = (m_ZCropBounds[1]+1)*m_NumberOfTimeFrames;
@@ -1857,7 +1842,7 @@ int medOpImporterDicomOffis::BuildOutputVMEMeshFromDicom()
 		{mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
 	}
 
-	mafNEW(m_Mesh);
+	m_Mesh = mafVMEMesh::NewSPtr();
 	vtkCellArray *Cells = vtkCellArray::New();
 	vtkUnstructuredGrid *grid = vtkUnstructuredGrid::New();
 	vtkPoints *points = vtkPoints::New();
@@ -1976,7 +1961,7 @@ int medOpImporterDicomOffis::BuildOutputVMEMeshFromDicomCineMRI()
 		wxBusyInfo wait_info("Building mesh: please wait");
 		{mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
 	}
-	mafNEW(m_Mesh);
+	m_Mesh = mafVMEMesh::NewSPtr();
 
 	long progress = 0;
 	int totalNumberOfImages = (m_ZCropBounds[1]+1)*m_NumberOfTimeFrames;
@@ -5117,8 +5102,7 @@ void medOpImporterDicomOffis::ResampleVolume()
 	m_VolumePosition[0]    = m_VolumePosition[1]    = m_VolumePosition[2]    = 0;
 	m_VolumeOrientation[0] = m_VolumeOrientation[1] = m_VolumeOrientation[2] = 0;
 
-	mafVMEVolumeGray *tmpVmeVolumeGray;
-	mafNEW(tmpVmeVolumeGray);
+	auto tmpVmeVolumeGray = mafVMEVolumeGray::NewSPtr();
 
 	auto box_pose = mafTransform::NewSPtr();
 	box_pose->SetOrientation(m_VolumeOrientation);
@@ -5254,10 +5238,8 @@ void medOpImporterDicomOffis::ResampleVolume()
 			}
 		}
 	}
-	m_Volume->DeepCopy(tmpVmeVolumeGray);
+	m_Volume->DeepCopy(tmpVmeVolumeGray.get());
 	m_Volume->Update();
-
-	mafDEL(tmpVmeVolumeGray);
 }
 //----------------------------------------------------------------------------
 void medOpImporterDicomOffis::RescaleTo16Bit(vtkImageData *dataSet)
@@ -6275,8 +6257,8 @@ void medOpImporterDicomOffis::ApplyReferenceSystem()
 		// Get the swap variable
 		int swap = currSlice->GetSwapReferenceSystem() || m_SwapAllReferenceSystem;
 
-		mafVMEImage* image = mafVMEImage::SafeDownCast(m_ImagesGroup->GetChild(s));
-		if((refSys != medDicomSlice::ID_RS_XY || swap) && (image != NULL))
+		auto image = mafVMEImage::SafeDownCast(m_ImagesGroup->GetChild(s));
+		if((refSys != medDicomSlice::ID_RS_XY || swap) && (image != nullptr))
 		{
 			mafTimeStamp dcmTriggerTime = (mafTimeStamp)(currSlice->GetDcmTriggerTime());
 

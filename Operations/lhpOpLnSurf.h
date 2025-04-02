@@ -67,8 +67,8 @@ private:
   int             m_yDim;
   int             m_generateLinesSurfaces;
   int             m_parseNames;
-  mafVMESurface   *m_Surface;
-  mafVMEPolyline  *m_Muscles;
-  mafVMEPolyline  *m_Tendons;
+  std::shared_ptr<mafVMESurface>   m_Surface;
+  std::shared_ptr<mafVMEPolyline>  m_Muscles;
+  std::shared_ptr<mafVMEPolyline>  m_Tendons;
 };
 #endif

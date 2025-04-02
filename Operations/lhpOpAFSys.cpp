@@ -1,23 +1,3 @@
-/*=========================================================================
-  Program:   Multimod Application Framework
-  Module:    $RCSfile: lhpOpAFSys.cpp,v $
-  Language:  C++
-  Date:      $Date: 2008-07-25 12:19:11 $
-  Version:   $Revision: 1.6 $
-  Authors:   Fedor Moiseev / Vladik Aranov
-==========================================================================
-  Copyright (c) 2001/2007 
-  ULB - Universite Libre de Bruxelles (www.ulb.ac.be)
-=========================================================================*/
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
 #include "lhpOpAFSys.h"
 #include "wx/busyinfo.h"
 #include "wx/textfile.h"
@@ -26,8 +6,6 @@
 #include "mafEvent.h"
 #include "mafGUI.h"
 #include "mafDictionary.h"
-
-#include "ftk/Base/RegisteringPointer.h"
 
 #include "mafVMEAFRefSys.h"
 #include "mafVMELandmarkCloud.h"
@@ -125,7 +103,6 @@ lhpOpAFSys::lhpOpAFSys(const mafString& label) : Superclass(label)
 {
   m_OpType   = OPTYPE_OP;
   m_Canundo  = true;
-  m_RefSys   = NULL;
   InitPredefined();
   m_Radio    = m_predefinedScripts.size();
 }
@@ -134,7 +111,7 @@ lhpOpAFSys::lhpOpAFSys(const mafString& label) : Superclass(label)
 lhpOpAFSys::~lhpOpAFSys()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_RefSys);
+  m_RefSys.reset();
 }
 
 //----------------------------------------------------------------------------
@@ -179,7 +156,7 @@ void lhpOpAFSys::OpRun()
 //----------------------------------------------------------------------------
 {
   mafString strBase(GetInput()->GetName());
-  mafNEW(m_RefSys);
+  m_RefSys = mafVMEAFRefSys::NewSPtr();
   strBase += _R("_AF_Frame");
   mafString str = strBase;
   unsigned ind = 0;
@@ -188,7 +165,7 @@ void lhpOpAFSys::OpRun()
   {
     for(i = 0; i < GetInput()->GetNumberOfChildren(); i++)
     {
-      mafNode *node = GetInput()->GetChild(i);
+      auto node = GetInput()->GetChild(i);
       if(node->GetName() == str)
       {
         str = strBase + mafString::Format(_R("_%u"), ind);
@@ -243,7 +220,7 @@ void lhpOpAFSys::OpStop(int result)
     HideGui();
     if(m_RefSys->GetParent())
     {
-      m_RefSys->ReparentTo(NULL);
+      mafNode::ReparentTo(m_RefSys, nullptr);
     }
     {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
   }
@@ -338,7 +315,7 @@ void lhpOpAFSys::OpDo()
   wxBusyInfo wait("Please wait, working...");
 
   assert(m_RefSys);
-  m_RefSys->ReparentTo(GetInput());
+  mafNode::ReparentTo(m_RefSys, GetInput().get());
   m_RefSys->SetScaleFactor(100.0);
   m_RefSys->SetActive(1);
 }
@@ -347,6 +324,6 @@ void lhpOpAFSys::OpUndo()
 //----------------------------------------------------------------------------
 {
   assert(m_RefSys);
-  m_RefSys->ReparentTo(NULL);
+  mafNode::ReparentTo(m_RefSys, nullptr);
 }
 

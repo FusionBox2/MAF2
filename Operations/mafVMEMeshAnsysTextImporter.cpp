@@ -85,12 +85,11 @@ mafVMEMeshAnsysTextImporter::mafVMEMeshAnsysTextImporter()
   m_NodesPerElement = -1;
   m_MeshType = UNKNOWN;
   
-  m_Output = NULL;
 }
 //----------------------------------------------------------------------------
 mafVMEMeshAnsysTextImporter::~mafVMEMeshAnsysTextImporter()
 {
-  mafDEL(m_Output);
+  m_Output.reset();
 }
 
 //----------------------------------------------------------------------------
@@ -105,9 +104,9 @@ int mafVMEMeshAnsysTextImporter::Read()
   int ret = this->ParseMaterialsFile(grid, m_MaterialsFileName);
 
   // allocate the output if not yet allocated...
-  if (m_Output == NULL)
+  if (m_Output == nullptr)
   {
-    mafNEW(m_Output);
+    m_Output = mafVMEMesh::NewSPtr();
 
     mafTagItem tag_Nature;
     tag_Nature.SetName(_R("VME_NATURE"));

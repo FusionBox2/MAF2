@@ -71,11 +71,11 @@ public:
 	void ImportOBJ();
 
   /** Used to retrieve imported data. It is useful when the operation is executed from code.*/
-  void GetImportedOBJ(std::vector<mafVMESurface*> &importedOBJ);
+  void GetImportedOBJ(std::vector<std::shared_ptr<mafVMESurface> > &importedOBJ);
 
 protected:
 
-  std::vector<mafVMESurface*> m_ImportedOBJs;
+  std::vector<std::shared_ptr<mafVMESurface> > m_ImportedOBJs;
   std::vector<mafString>	    m_Files;
 	mafString	                  m_FileDir;
 };

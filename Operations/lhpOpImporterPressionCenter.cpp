@@ -21,7 +21,6 @@
 #include "mafDecl.h"
 #include "mafGUI.h"
 
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafVME.h"
 #include "vtkSmartPointer.h"
 #include "mafVMEGroup.h"
@@ -146,19 +145,19 @@ void lhpOpImporterPressionCenter::Clear()
 {
   for(unsigned i = 0; i < m_intData.size(); i++)
   {
-    mafDEL(m_intData[i].m_VmeGroup);
-    for(std::map<mafString, mafVMELandmarkCloud*>::iterator it = m_intData[i].m_Clouds.begin(); it != m_intData[i].m_Clouds.end(); ++it)
+    m_intData[i].m_VmeGroup.reset();
+    for(auto it = m_intData[i].m_Clouds.begin(); it != m_intData[i].m_Clouds.end(); ++it)
     {
-      mafDEL(it->second);
+      it->second.reset();
     }
     m_intData[i].m_Clouds.clear();
     //mafDEL(m_intData[i].m_VmeCloud);
-    mafDEL(m_intData[i].m_VmeAnalog);
+    m_intData[i].m_VmeAnalog.reset();
     for(int currentPlatForm=0; currentPlatForm< m_intData[i].m_PlatformList.size();currentPlatForm++)
     {
-      mafDEL(m_intData[i].m_PlatformList[currentPlatForm]);
-      mafDEL(m_intData[i].m_ForceList[currentPlatForm]);
-      mafDEL(m_intData[i].m_MomentList[currentPlatForm]);
+      m_intData[i].m_PlatformList[currentPlatForm].reset();
+      m_intData[i].m_ForceList[currentPlatForm].reset();
+      m_intData[i].m_MomentList[currentPlatForm].reset();
     }
     m_intData[i].m_PlatformList.clear();
     m_intData[i].m_ForceList.clear();
@@ -326,7 +325,7 @@ void lhpOpImporterPressionCenter::Initialize(const mafString &fullFileName, _Int
   intData.m_FileName = mafWxToString(fileName);
 }
 //----------------------------------------------------------------------------
-mafVMEGroup *lhpOpImporterPressionCenter::ImportSingleFile(const mafString &fullFileName)//, _InternalPCData &intData)
+std::shared_ptr<mafVMEGroup> lhpOpImporterPressionCenter::ImportSingleFile(const mafString &fullFileName)//, _InternalPCData &intData)
 //----------------------------------------------------------------------------
 {
 	int idx = -1;
@@ -335,7 +334,7 @@ mafVMEGroup *lhpOpImporterPressionCenter::ImportSingleFile(const mafString &full
 	if (OpenPC(fullFileName) == 0)
 	{
 
-		mafNEW(intData.m_VmeGroup);
+		intData.m_VmeGroup = mafVMEGroup::NewSPtr();
 		Initialize(fullFileName, intData);
 		mafString resultName;
 		resultName.append(fullFileName);
@@ -437,8 +436,8 @@ bool lhpOpImporterPressionCenter::Import()
  for(unsigned fileIndex = 0; fileIndex < m_PCInputFileNameFullPaths.size(); fileIndex++)
   {
     //_InternalPCData intData;
-	 mafVMEGroup *imported = ImportSingleFile(m_PCInputFileNameFullPaths[fileIndex]);//, intData);
-    if(imported != NULL)
+	 auto imported = ImportSingleFile(m_PCInputFileNameFullPaths[fileIndex]);//, intData);
+    if(imported)
     {
       result = true;
       //m_VmeGroups.push_back(imported);
@@ -1132,7 +1131,7 @@ void lhpOpImporterPressionCenter::OpDo()
 	  //wxBusyInfo wait((m_intData[i].m_VmeGroup)->GetName().GetCStr());
 	  //Sleep(1000);
 
-    m_intData[i].m_VmeGroup->ReparentTo(GetInput()->GetRoot());
+    mafNode::ReparentTo(m_intData[i].m_VmeGroup, GetInput()->GetRoot());
 	  
   }
   //wxBusyInfo wait1("opDo ok");
@@ -1145,6 +1144,6 @@ void lhpOpImporterPressionCenter::OpUndo()
 {   
   for(unsigned i = 0; i < m_intData.size(); i++)
   {
-    m_intData[i].m_VmeGroup->ReparentTo(NULL);
+    mafNode::ReparentTo(m_intData[i].m_VmeGroup, nullptr);
   }
 }

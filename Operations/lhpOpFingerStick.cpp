@@ -72,8 +72,6 @@ enum
 #define min(a,b)            (((a) < (b)) ? (a) : (b))
 #endif
 
-mafCxxTypeMacro(lhpOpFingerStick)
-
 //----------------------------------------------------------------------------
 // static persistent data:
 //----------------------------------------------------------------------------
@@ -192,16 +190,13 @@ lhpOpFingerStick::lhpOpFingerStick(const mafString& label) : Superclass(label), 
   m_Canundo = true;
 
   
-  m_PlateCalibration = NULL;
   m_PlateCalibrationName = _R("");
   
   m_BallsCalibration = NULL;
   m_BallsCalibrationName = _R("");
   
-  m_PalpatorCalibration = NULL;
   m_PalpatorCalibrationName = _R("");
   
-  m_PlateCloud = NULL;
   m_PlateCloudName = _R("");
   
   m_PalpatorCloud = NULL;
@@ -209,7 +204,6 @@ lhpOpFingerStick::lhpOpFingerStick(const mafString& label) : Superclass(label), 
 
   m_Method               = 0;
 
-  m_Registered      = NULL;
   m_pointsSource    = NULL;
   m_pointsTarget    = NULL;
   
@@ -226,18 +220,16 @@ lhpOpFingerStick::~lhpOpFingerStick( )
 //----------------------------------------------------------------------------
 {
 	{
-    if (GetOutput())
-      GetOutput()->Delete();
     SetOutput(nullptr);
   }
-  vtkDEL(m_Registered);
+  m_Registered.reset();
   vtkDEL(m_pointsSource);
   vtkDEL(m_pointsTarget);
 
   if(m_weight)
   {
     delete[] m_weight;
-    m_weight = NULL;
+    m_weight = nullptr;
   }
 
 }
@@ -405,8 +397,8 @@ void lhpOpFingerStick::OnEvent(mafEventBase *e)
         wxMessageBox("Selected VME should be of mafVMELandmarkCloud type.","Warning", wxOK|wxICON_WARNING , NULL);
         return;
       }
-      m_PlateCalibration = (mafVMELandmarkCloud *)e.GetVme();
-      SetNodeName(m_PlateCalibration, &m_PlateCalibrationName);
+      m_PlateCalibration = mafVMELandmarkCloud::StaticDownCast(e.GetVme()->SharedFromThis());
+      SetNodeName(m_PlateCalibration.get(), &m_PlateCalibrationName);
       m_Gui->Update();
       break;
     }
@@ -443,19 +435,19 @@ void lhpOpFingerStick::OnEvent(mafEventBase *e)
         wxMessageBox("Selected VME should be of mafVMELandmarkCloud type.","Warning", wxOK|wxICON_WARNING , NULL);
         return;
       }
-      m_PalpatorCalibration = (mafVMELandmarkCloud *)e.GetVme();
-      SetNodeName(m_PalpatorCalibration, &m_PalpatorCalibrationName);
+      m_PalpatorCalibration = mafVMELandmarkCloud::StaticDownCast(e.GetVme()->SharedFromThis());
+      SetNodeName(m_PalpatorCalibration.get(), &m_PalpatorCalibrationName);
 
-      mafVME *parent = m_PalpatorCalibration->GetParent();
-      if(parent != NULL)
+      auto parent = m_PalpatorCalibration->GetParent();
+      if(parent)
       {
         for(nI = 0; nI < parent->GetNumberOfChildren(); nI++)
         {
-          mafVME *child = (mafVME *)parent->GetChild(nI);
+          auto child = mafVME::StaticDownCast(parent->GetChild(nI));
           if(child->IsA("mafVMELandmarkCloud") && strcmp(child->GetName().GetCStr(), "Plate") == 0)
           {
-            m_PlateCalibration = (mafVMELandmarkCloud *)child;
-            SetNodeName(m_PlateCalibration, &m_PlateCalibrationName);
+            m_PlateCalibration = mafVMELandmarkCloud::StaticDownCast(child);
+            SetNodeName(m_PlateCalibration.get(), &m_PlateCalibrationName);
             break;
           }
         }
@@ -468,7 +460,7 @@ void lhpOpFingerStick::OnEvent(mafEventBase *e)
       mafString s(_R("Choose target cloud"));
       mafEvent e(this,VME_CHOOSE); e.SetString(&s);
       InvokeEvent(e);
-      if(e.GetVme() == NULL)
+      if(e.GetVme() == nullptr)
       {
         return;
       }
@@ -477,8 +469,8 @@ void lhpOpFingerStick::OnEvent(mafEventBase *e)
         wxMessageBox("Selected VME should be of mafVMELandmarkCloud type.","Warning", wxOK|wxICON_WARNING , NULL);
         return;
       }
-      m_PlateCloud = (mafVMELandmarkCloud *)e.GetVme();
-      SetNodeName(m_PlateCloud, &m_PlateCloudName);
+      m_PlateCloud = mafVMELandmarkCloud::StaticDownCast(e.GetVme()->SharedFromThis());
+      SetNodeName(m_PlateCloud.get(), &m_PlateCloudName);
       m_Gui->Update();
       break;
     }
@@ -487,7 +479,7 @@ void lhpOpFingerStick::OnEvent(mafEventBase *e)
       mafString s(_R("Choose target cloud"));
       mafEvent e(this,VME_CHOOSE); e.SetString(&s);
       InvokeEvent(e);
-      if(e.GetVme() == NULL)
+      if(e.GetVme() == nullptr)
       {
         return;
       }
@@ -518,7 +510,7 @@ void lhpOpFingerStick::OpDo()
   double         res[3];
   double         tipPoint[3];
   const char     *PointsName = (m_Method) ? "HOLES" : "BALLS";
-  mafVME         *vme;
+  std::shared_ptr<mafVME>         vme;
   int            calculated = 0;
   const unsigned StrLim = 2000;
   char           strinst[StrLim];
@@ -529,18 +521,16 @@ void lhpOpFingerStick::OpDo()
 
 
 	{
-    if (GetOutput())
-      GetOutput()->Delete();
     SetOutput(nullptr);
   }
-  if(m_BallsCalibration == NULL)
+  if(m_BallsCalibration == nullptr)
   {
-    mafVME *parent = m_PalpatorCalibration->GetParent();
-    if(parent != NULL)
+    auto parent = m_PalpatorCalibration->GetParent();
+    if(parent)
     {
       for(nI = 0; nI < parent->GetNumberOfChildren(); nI++)
       {
-        mafVME *child = (mafVME *)parent->GetChild(nI);
+        auto child = mafVME::StaticDownCast(parent->GetChild(nI));
         if(child->IsA("mafVMELandmarkCloud"))
         {
           strncpy(strinst, child->GetName().GetCStr(), StrLim);
@@ -552,14 +542,14 @@ void lhpOpFingerStick::OpDo()
 
           if(strstr(strinst, PointsName) != NULL)
           {
-            m_BallsCalibration = (mafVMELandmarkCloud *)child;
+            m_BallsCalibration = mafVMELandmarkCloud::StaticDownCast(child).get();
             SetNodeName(m_BallsCalibration, &m_BallsCalibrationName);
             break;
           }
         }
       }
     }
-    if(m_BallsCalibration == NULL)
+    if(m_BallsCalibration == nullptr)
     {
       wxMessageBox("Predefined points not found","Alert", wxOK , NULL);
       return;
@@ -574,11 +564,10 @@ void lhpOpFingerStick::OpDo()
   tipPoint[1] = 0;
   tipPoint[2] = 0;
 
-  mafVMEGroup *group;
-  mafNEW(group); //We got a Reference on it
+  auto group = mafVMEGroup::NewSPtr();
   group->SetName(_R("Finger palpator"));
-  group->ReparentTo(GetInput());
-  {mafEvent evUnq(this,VME_ADD); evUnq.SetVme(group); InvokeEvent(evUnq);}
+  mafNode::ReparentTo(group, GetInput().get());
+  //{mafEvent evUnq(this,VME_ADD); evUnq.SetVme(group); InvokeEvent(evUnq);}
 
   for(nI = 0; nI < ((!m_ListFName.empty()) ? m_LMDict.size() : m_BallsCalibration->GetNumberOfLandmarks()); nI++)
   {
@@ -601,19 +590,17 @@ void lhpOpFingerStick::OpDo()
     importer->SetImportPlatform(false);
     importer->SetImportEvent(false);
     importer->Import();
-    mafVMEGroup *c3dImported = importer->GetGroup();
-    if(c3dImported != NULL)
-      c3dImported->Register(this);
+    auto c3dImported = importer->GetGroup();
     vme = c3dImported;
     delete importer;
 
-    {mafEvent evUnq(this,VME_ADD); evUnq.SetVme(vme); InvokeEvent(evUnq);}
+    //{mafEvent evUnq(this,VME_ADD); evUnq.SetVme(vme); InvokeEvent(evUnq);}
 
-    if(vme != NULL)
+    if(vme)
     {
       for(nJ = 0; nJ < vme->GetNumberOfChildren(); nJ++)
       {
-        mafVME *child = (mafVME *)vme->GetChild(nJ);
+        auto child = mafVME::StaticDownCast(vme->GetChild(nJ));
         if(child->IsA("mafVMELandmarkCloud"))
         {
           strncpy(strinst, child->GetName().GetCStr(), StrLim);
@@ -625,13 +612,13 @@ void lhpOpFingerStick::OpDo()
 
           if(strstr(strinst, "palpator") != 0)
           {
-            m_PalpatorCloud = (mafVMELandmarkCloud *)child;
+            m_PalpatorCloud = mafVMELandmarkCloud::StaticDownCast(child).get();
             SetNodeName(m_PalpatorCloud, &m_PalpatorCloudName);
           }
           else if(strstr(strinst, "plate") != 0)
           {
-            m_PlateCloud = (mafVMELandmarkCloud *)child;
-            SetNodeName(m_PlateCloud, &m_PlateCloudName);
+            m_PlateCloud = mafVMELandmarkCloud::StaticDownCast(child);
+            SetNodeName(m_PlateCloud.get(), &m_PlateCloudName);
           }
         }
       }
@@ -641,8 +628,7 @@ void lhpOpFingerStick::OpDo()
          tipPoint[nJ] += res[nJ];
         calculated++;
 
-        mafVMELandmarkCloud *locCalibr;
-        mafNEW(locCalibr);
+        auto locCalibr = mafVMELandmarkCloud::NewSPtr();
         mafString nmLC = _R("Finger palpator based on ") + name;
         locCalibr->SetName(nmLC);
         locCalibr->SetRadius(15);
@@ -656,18 +642,17 @@ void lhpOpFingerStick::OpDo()
         }
 
         locCalibr->AppendLandmark(res[0], res[1], res[2], _R("TIP"));
-        locCalibr->ReparentTo(group);
-        {mafEvent evUnq(this,VME_ADD); evUnq.SetVme(locCalibr); InvokeEvent(evUnq);}
-        mafDEL(locCalibr);
+        mafNode::ReparentTo(locCalibr, group.get());
+        //{mafEvent evUnq(this,VME_ADD); evUnq.SetVme(locCalibr); InvokeEvent(evUnq);}
+        locCalibr.reset();
       }
-      {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(vme); InvokeEvent(evUnq);}
-      mafDEL(vme);
+      {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(vme.get()); InvokeEvent(evUnq);}
     }
   }
   if(calculated == 0)
   {
-    {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(group); InvokeEvent(evUnq);}
-    mafDEL(group);
+    {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(group.get()); InvokeEvent(evUnq);}
+    group.reset();
     return;
   }
 
@@ -675,8 +660,7 @@ void lhpOpFingerStick::OpDo()
    tipPoint[nJ] /= calculated;
 
 
-  mafVMELandmarkCloud *averagedCalibr;
-  mafNEW(averagedCalibr);
+  auto averagedCalibr = mafVMELandmarkCloud::NewSPtr();
   averagedCalibr->SetName(_R("Finger palpator wand definition"));
   averagedCalibr->SetRadius(15);
   averagedCalibr->Close();
@@ -689,9 +673,9 @@ void lhpOpFingerStick::OpDo()
   }
 
   averagedCalibr->AppendLandmark(tipPoint[0], tipPoint[1], tipPoint[2], _R("TIP"));
-  averagedCalibr->ReparentTo(group);
-  {mafEvent evUnq(this,VME_ADD); evUnq.SetVme(averagedCalibr); InvokeEvent(evUnq);}
-  mafDEL(averagedCalibr);
+  mafNode::ReparentTo(averagedCalibr, group.get());
+  //{mafEvent evUnq(this,VME_ADD); evUnq.SetVme(averagedCalibr); InvokeEvent(evUnq);}
+  averagedCalibr.reset();
   SetOutput(group);
 }
 
@@ -753,7 +737,7 @@ bool lhpOpFingerStick::ProcessSingleLM(int lmIndex, double result[3])
     m_RegisterTransform = vtkWeightedLandmarkTransform::New();
 
     devs[nI].clear();
-    if(ExtractMatchingPoints(m_PlateCalibration, m_PlateCloud, -1, currTime) >= 3)
+    if(ExtractMatchingPoints(m_PlateCalibration.get(), m_PlateCloud.get(), -1, currTime) >= 3)
       RegisterPoints(t_matrixPlate, devs[nI]);
     else
       continue;
@@ -767,7 +751,7 @@ bool lhpOpFingerStick::ProcessSingleLM(int lmIndex, double result[3])
 
     m_RegisterTransform = vtkWeightedLandmarkTransform::New();
 
-    if(ExtractMatchingPoints(m_PalpatorCloud, m_PalpatorCalibration, currTime, -1) >= 3)
+    if(ExtractMatchingPoints(m_PalpatorCloud, m_PalpatorCalibration.get(), currTime, -1) >= 3)
       RegisterPoints(t_matrixPalpator, devs[nI]);
     else
       continue;

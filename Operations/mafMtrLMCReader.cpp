@@ -51,7 +51,7 @@ mafMTRLMCReader::~mafMTRLMCReader()
     this->m_FileName = NULL;
   }
   for(int i = 0; i < m_PointSet.size(); i++)
-    mafDEL(m_PointSet[i].first);
+    m_PointSet[i].first.reset();
 }
 
 
@@ -143,7 +143,7 @@ int mafMTRLMCReader::ReadASCIIMTR(FILE *fp)
   }
 
   m_PointSet.resize(1);
-  mafNEW(m_PointSet[0].first);
+  m_PointSet[0].first = mafVMELandmarkCloud::NewSPtr();
   m_PointSet[0].first->Open();
   m_PointSet[0].first->SetName(_R("Tempora memorie"));
   m_PointSet[0].first->SetRadius(m_Radius);
@@ -211,7 +211,7 @@ int mafMTRLMCReader::ReadASCIIMTR(FILE *fp)
       if(m_Set != mafMTRLMCReader::SetNotDefined)
         break;
       m_PointSet.resize(m_PointSet.size() + 1);
-      mafNEW(m_PointSet[m_PointSet.size() - 1].first);
+      m_PointSet[m_PointSet.size() - 1].first = mafVMELandmarkCloud::NewSPtr();
       m_PointSet[m_PointSet.size() - 1].first->Open();
       m_PointSet[m_PointSet.size() - 1].first->SetName(_R("Tempora memorie"));
       m_PointSet[m_PointSet.size() - 1].first->SetRadius(3);

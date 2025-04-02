@@ -219,7 +219,7 @@ public:
   static bool SegmentedVolumeAccept(mafNode* node);
 
   /** Returns the output Volume*/
-  mafVMEVolumeGray *GetOutputVolume(){return m_OutputVolume;};
+  mafVMEVolumeGray *GetOutputVolume(){return m_OutputVolume.get();};
 
 protected:
 
@@ -346,7 +346,7 @@ protected:
   /** Perform the initializations when the user press previous button */
   void OnPreviousStep();
 
-  mafVMEVolumeGray* m_Volume;         //<Input volume
+  std::shared_ptr<mafVMEVolumeGray> m_Volume;         //<Input volume
   double m_SliceOrigin[3];            //<Origin of the slice plane
   int m_VolumeDimensions[3];          //<Dimensions of the volumes (number of slices)
   double m_VolumeSpacing[3];          //<Volume spacing
@@ -380,13 +380,13 @@ protected:
   std::shared_ptr<mafDeviceManager> m_DeviceManager;    //<Device manager
   std::shared_ptr<mafInteractorSER> m_SER;              //<Static event router                        
   mafMatrix m_Matrix;                   //<Volume initial matrix
-  mafVMEVolumeGray *m_LoadedVolume;     //<Loaded volume
+  std::shared_ptr<mafVMEVolumeGray> m_LoadedVolume;     //<Loaded volume
   mafString m_LoadedVolumeName;        //<Loaded volume name
-  mafVMEVolumeGray *m_ThresholdVolume;  //<Volume mask for thresholding
-  mafVMEVolumeGray *m_ThresholdVolumeSlice; //<Single slice volume mask for real-time thresholding preview
-  mafVMEVolumeGray *m_EmptyVolumeSlice; //<Single slice volume that represent current slice (for real-time thresholding preview)
-  mafVMEVolumeGray *m_OutputVolume;     //<Output volume
-  mafVMESurface *m_OutputSurface;          //<Output Surface
+  std::shared_ptr<mafVMEVolumeGray> m_ThresholdVolume;  //<Volume mask for thresholding
+  std::shared_ptr<mafVMEVolumeGray> m_ThresholdVolumeSlice; //<Single slice volume mask for real-time thresholding preview
+  std::shared_ptr<mafVMEVolumeGray> m_EmptyVolumeSlice; //<Single slice volume that represent current slice (for real-time thresholding preview)
+  std::shared_ptr<mafVMEVolumeGray> m_OutputVolume;     //<Output volume
+  std::shared_ptr<mafVMESurface> m_OutputSurface;          //<Output Surface
   wxStaticText *m_SnippetsLabel;        //<Suggestion labels - GUI
   std::shared_ptr<medInteractorSegmentationPicker> m_SegmentationPicker; //<Segmentation picker for interaction
 
@@ -436,8 +436,8 @@ protected:
   /** Create the real drawn image */
   void CreateRealDrawnImage();
 
-  mafVMEVolumeGray *m_ManualVolumeMask;         //< Manual volume mask
-  mafVMEVolumeGray *m_ManualVolumeSlice;        //< Single slice manual volume mask
+  std::shared_ptr<mafVMEVolumeGray> m_ManualVolumeMask;         //< Manual volume mask
+  std::shared_ptr<mafVMEVolumeGray> m_ManualVolumeSlice;        //< Single slice manual volume mask
   mafGUIFloatSlider *m_ManualBrushSizeSlider;   //<Brush size slider - GUI
   wxTextCtrl *m_ManualBrushSizeText;            //<Brush size text box - GUI
   wxRadioBox *m_ManualBrushShapeRadioBox;       //<Brush shape radio - GUI
@@ -514,7 +514,7 @@ protected:
   /** Update threshold real-time preview*/
   void UpdateThresholdRealTimePreview();
 
-  medVMESegmentationVolume *m_SegmentatedVolume; //<Segmentation volume
+  std::shared_ptr<medVMESegmentationVolume> m_SegmentatedVolume; //<Segmentation volume
   int m_AutomaticGlobalThreshold;   //<Global threshold range lower bound
   double m_AutomaticThreshold;      //<Global threshold range lower bound
   double m_AutomaticUpperThreshold; //<Global threshold range upper bound
@@ -574,7 +574,7 @@ protected:
   /** Update threshold volume data  for preview or output */
   void UpdateThresholdVolumeData();
 
-  mafVMEVolumeGray *m_RefinementVolumeMask; //<Refinement volume mask
+  std::shared_ptr<mafVMEVolumeGray> m_RefinementVolumeMask; //<Refinement volume mask
   int m_RefinementSegmentationAction;       //<Refinement action fill holes or remove islands
   int m_RefinementRegionsSize;              //<Size for region recognition
   int m_RefinementMajorityThreshold;        //<Used in itk algorithm (not yet exposed and used)

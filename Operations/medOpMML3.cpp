@@ -1050,7 +1050,7 @@ void medOpMML3::GetVtkInputs()
 //------------------------------------------------------------------------------
 {
   // get maf gray volume 
-  m_VolumeVME = mafVMEVolumeGray::SafeDownCast(GetInput());
+  m_VolumeVME = mafVMEVolumeGray::SafeDownCast(GetInput()).get();
   assert(!(m_VolumeVME == NULL));
 
   // get vtk rectilinear grid 
@@ -1374,7 +1374,7 @@ void medOpMML3::OnRegistrationOK()
 
 
   // create vme and set data
-  mafAutoPointer<mafVMESurface> vme = mafVMESurface::New();
+  auto vme = mafVMESurface::NewSPtr();
   vme->SetData(m_MuscleOutput, m_OutputTimeStamp) ;
 
 
@@ -1493,7 +1493,8 @@ void medOpMML3::OnRegistrationOK()
 
   // add to tree (save now)
   //OurMuscleVME->AddChild(vme);
-  {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(vme.get()); InvokeEvent(evUnq);}
+  //{mafEvent evUnq(this, VME_ADD); evUnq.SetVme(vme.get()); InvokeEvent(evUnq);}
+  mafNode::ReparentTo(vme, RootVME);
 }
 
 
@@ -1804,10 +1805,10 @@ void medOpMML3::OnMuscleSelection()
     RootVME = mafVME::SafeDownCast(GetInput()->GetRoot());
 
     // atlas section vme
-    AtlasSectionVME = (mafVME*)(RootVME->FindInTreeByName(mafWxToString(m_AtlasMSFSectionName)));
+    AtlasSectionVME = mafVME::StaticDownCast(RootVME->FindInTreeByName(mafWxToString(m_AtlasMSFSectionName))).get();
     assert (!(AtlasSectionVME == NULL));
 
-    MuscleInAtlasSectionVME = (mafVME*)(AtlasSectionVME->FindInTreeByName(m_SurfaceName));
+    MuscleInAtlasSectionVME = mafVME::StaticDownCast(AtlasSectionVME->FindInTreeByName(m_SurfaceName)).get();
     assert (!(MuscleInAtlasSectionVME == NULL));
 
     //
@@ -2458,8 +2459,8 @@ void medOpMML3::OnLandmark1AtlasPatientSelection()
 
   // patient - landmark 1
   // get parent node
-  mafVME *L1PatientParentVME = (mafVME*)(root->FindInTreeByName(mafWxToString(m_PatientMSFSectionName)));
-  if(L1PatientParentVME == NULL)
+  auto L1PatientParentVME = mafVME::StaticDownCast(root->FindInTreeByName(mafWxToString(m_PatientMSFSectionName)));
+  if(L1PatientParentVME == nullptr)
   {
     wxMessageBox("No " + m_PatientMSFSectionName + " section", "alert", wxICON_WARNING);
     return;
@@ -2474,16 +2475,16 @@ void medOpMML3::OnLandmark1AtlasPatientSelection()
   }
 
   // get landmark node
-  mafVME *L1PatientVME = (mafVME*)(L1PatientParentVME->FindInTreeByName(vme->GetName()));
-  if(L1PatientVME == NULL)
+  auto L1PatientVME = mafVME::StaticDownCast(L1PatientParentVME->FindInTreeByName(vme->GetName()));
+  if(L1PatientVME == nullptr)
   {
     wxMessageBox("Landmark missing from " + m_PatientMSFSectionName + " section","alert",wxICON_WARNING);
     return;
   }
 
   // get landmark
-  mafVMELandmark *L1PatientVMELandmark = mafVMELandmark::SafeDownCast(L1PatientVME);
-  if(L1PatientVMELandmark == NULL)
+  auto L1PatientVMELandmark = mafVMELandmark::SafeDownCast(L1PatientVME);
+  if(L1PatientVMELandmark == nullptr)
   {
     wxMessageBox("wrong type of vme, a landmark vme is required","alert",wxICON_WARNING);
     return;
@@ -2526,7 +2527,7 @@ void medOpMML3::OnLandmark2AtlasPatientSelection()
 //----------------------------------------------------------------------------
 {
   //
-  if(m_SurfaceVME == NULL)
+  if(m_SurfaceVME == nullptr)
   {
     wxMessageBox("No muscle selected","alert",wxICON_WARNING);
     return;
@@ -2541,7 +2542,7 @@ void medOpMML3::OnLandmark2AtlasPatientSelection()
   if(!vme) return;
 
   mafVMELandmark *lm = mafVMELandmark::SafeDownCast(vme);
-  if(lm == NULL)
+  if(lm == nullptr)
   {
     mafWarningMessage(_M("wrong type of vme, a Landmark VME is required"));
     return;
@@ -2577,8 +2578,8 @@ void medOpMML3::OnLandmark2AtlasPatientSelection()
 
   // patient - landmark 2
   // get parent node
-  mafVME *L2PatientParentVME = (mafVME*)(root->FindInTreeByName(mafWxToString(m_PatientMSFSectionName)));
-  if(L2PatientParentVME == NULL)
+  auto L2PatientParentVME = mafVME::StaticDownCast(root->FindInTreeByName(mafWxToString(m_PatientMSFSectionName)));
+  if(L2PatientParentVME == nullptr)
   {
     wxMessageBox("No " + m_PatientMSFSectionName + " section", "alert", wxICON_WARNING);
     return;
@@ -2593,16 +2594,16 @@ void medOpMML3::OnLandmark2AtlasPatientSelection()
   }
 
   // get landmark node
-  mafVME *L2PatientVME = (mafVME*)(L2PatientParentVME->FindInTreeByName(vme->GetName()));
-  if(L2PatientVME == NULL)
+  auto L2PatientVME = mafVME::StaticDownCast(L2PatientParentVME->FindInTreeByName(vme->GetName()));
+  if(L2PatientVME == nullptr)
   {
     wxMessageBox("Landmark missing from " + m_PatientMSFSectionName + " section","alert",wxICON_WARNING);
     return;
   }
 
   // get landmark
-  mafVMELandmark *L2PatientVMELandmark = mafVMELandmark::SafeDownCast(L2PatientVME);
-  if(L2PatientVMELandmark == NULL)
+  auto L2PatientVMELandmark = mafVMELandmark::SafeDownCast(L2PatientVME);
+  if(L2PatientVMELandmark == nullptr)
   {
     wxMessageBox("wrong type of vme, a landmark vme is required","alert",wxICON_WARNING);
     return;
@@ -2644,7 +2645,7 @@ void medOpMML3::OnLandmark3AtlasPatientSelection()
 //----------------------------------------------------------------------------
 {
   //
-  if(m_SurfaceVME == NULL)
+  if(m_SurfaceVME == nullptr)
   {
     wxMessageBox("No muscle selected","alert",wxICON_WARNING);
     return;
@@ -2659,7 +2660,7 @@ void medOpMML3::OnLandmark3AtlasPatientSelection()
   if(!vme) return;
 
   mafVMELandmark *lm = mafVMELandmark::SafeDownCast(vme);
-  if(lm == NULL)
+  if(lm == nullptr)
   {
     wxMessageBox("wrong type of vme, a Landmark VME is required","alert",wxICON_WARNING);
     return;
@@ -2695,8 +2696,8 @@ void medOpMML3::OnLandmark3AtlasPatientSelection()
 
   // patient - landmark 3
   // get parent node
-  mafVME *L3PatientParentVME = (mafVME*)(root->FindInTreeByName(mafWxToString(m_PatientMSFSectionName)));
-  if(L3PatientParentVME == NULL)
+  auto L3PatientParentVME = mafVME::StaticDownCast(root->FindInTreeByName(mafWxToString(m_PatientMSFSectionName)));
+  if(L3PatientParentVME == nullptr)
   {
     wxMessageBox("No " + m_PatientMSFSectionName + " section", "alert", wxICON_WARNING);
     return;
@@ -2711,16 +2712,16 @@ void medOpMML3::OnLandmark3AtlasPatientSelection()
   }
 
   // get landmark node
-  mafVME *L3PatientVME = (mafVME*)(L3PatientParentVME->FindInTreeByName(vme->GetName()));
-  if(L3PatientVME == NULL)
+  auto L3PatientVME = mafVME::StaticDownCast(L3PatientParentVME->FindInTreeByName(vme->GetName()));
+  if(L3PatientVME == nullptr)
   {
     wxMessageBox("Landmark missing from " + m_PatientMSFSectionName + " section","alert",wxICON_WARNING);
     return;
   }
 
   // get landmark
-  mafVMELandmark *L3PatientVMELandmark = mafVMELandmark::SafeDownCast(L3PatientVME);
-  if(L3PatientVMELandmark == NULL)
+  auto L3PatientVMELandmark = mafVMELandmark::SafeDownCast(L3PatientVME);
+  if(L3PatientVMELandmark == nullptr)
   {
     wxMessageBox("wrong type of vme, a landmark vme is required","alert",wxICON_WARNING);
     return;
@@ -2762,7 +2763,7 @@ void medOpMML3::OnLandmark4AtlasPatientSelection()
 //----------------------------------------------------------------------------
 {
   //
-  if(m_SurfaceVME == NULL)
+  if(m_SurfaceVME == nullptr)
   {
     wxMessageBox("No muscle selected","alert",wxICON_WARNING);
     return;
@@ -2777,7 +2778,7 @@ void medOpMML3::OnLandmark4AtlasPatientSelection()
   if(!vme) return;
 
   mafVMELandmark *lm = mafVMELandmark::SafeDownCast(vme);
-  if(lm == NULL)
+  if(lm == nullptr)
   {
     wxMessageBox("wrong type of vme, a Landmark VME is required","alert",wxICON_WARNING);
     return;
@@ -2813,8 +2814,8 @@ void medOpMML3::OnLandmark4AtlasPatientSelection()
 
   // patient - landmark 3
   // get parent node
-  mafVME *L3PatientParentVME = (mafVME*)(root->FindInTreeByName(mafWxToString(m_PatientMSFSectionName)));
-  if(L3PatientParentVME == NULL)
+  auto L3PatientParentVME = mafVME::StaticDownCast(root->FindInTreeByName(mafWxToString(m_PatientMSFSectionName)));
+  if(L3PatientParentVME == nullptr)
   {
     wxMessageBox("No " + m_PatientMSFSectionName + " section", "alert", wxICON_WARNING);
     return;
@@ -2829,16 +2830,16 @@ void medOpMML3::OnLandmark4AtlasPatientSelection()
   }
 
   // get landmark node
-  mafVME *L3PatientVME = (mafVME*)(L3PatientParentVME->FindInTreeByName(vme->GetName()));
-  if(L3PatientVME == NULL)
+  auto L3PatientVME = mafVME::StaticDownCast(L3PatientParentVME->FindInTreeByName(vme->GetName()));
+  if(L3PatientVME == nullptr)
   {
     wxMessageBox("Landmark missing from " + m_PatientMSFSectionName + " section","alert",wxICON_WARNING);
     return;
   }
 
   // get landmark
-  mafVMELandmark *L3PatientVMELandmark = mafVMELandmark::SafeDownCast(L3PatientVME);
-  if(L3PatientVMELandmark == NULL)
+  auto L3PatientVMELandmark = mafVMELandmark::SafeDownCast(L3PatientVME);
+  if(L3PatientVMELandmark == nullptr)
   {
     wxMessageBox("wrong type of vme, a landmark vme is required","alert",wxICON_WARNING);
     return;
@@ -2880,7 +2881,7 @@ void medOpMML3::OnLandmarkAxis1AtlasSelection()
 //----------------------------------------------------------------------------
 {
   //
-  if(m_SurfaceVME == NULL)
+  if(m_SurfaceVME == nullptr)
   {
     wxMessageBox("No muscle selected","alert",wxICON_WARNING);
     return;
@@ -2895,7 +2896,7 @@ void medOpMML3::OnLandmarkAxis1AtlasSelection()
   if(!vme) return;
 
   mafVMELandmark *lm = mafVMELandmark::SafeDownCast(vme);
-  if(lm == NULL)
+  if(lm == nullptr)
   {
     wxMessageBox("wrong type of vme, a Landmark VME is required","alert",wxICON_WARNING);
     return;
@@ -2977,7 +2978,7 @@ void medOpMML3::OnLandmarkAxis2AtlasSelection()
 //----------------------------------------------------------------------------
 {
   //
-  if(m_SurfaceVME == NULL)
+  if(m_SurfaceVME == nullptr)
   {
     wxMessageBox("No muscle selected","alert",wxICON_WARNING);
     return;
@@ -2992,7 +2993,7 @@ void medOpMML3::OnLandmarkAxis2AtlasSelection()
   if(!vme) return;
 
   mafVMELandmark *lm = mafVMELandmark::SafeDownCast(vme);
-  if(lm == NULL)
+  if(lm == nullptr)
   {
     wxMessageBox("wrong type of vme, a Landmark VME is required","alert",wxICON_WARNING);
     return;
@@ -3074,7 +3075,7 @@ void medOpMML3::OnLandmarkAxis3AtlasSelection()
 //----------------------------------------------------------------------------
 {
   //
-  if(m_SurfaceVME == NULL)
+  if(m_SurfaceVME == nullptr)
   {
     wxMessageBox("No muscle selected","alert",wxICON_WARNING);
     return;
@@ -3089,7 +3090,7 @@ void medOpMML3::OnLandmarkAxis3AtlasSelection()
   if(!vme) return;
 
   mafVMELandmark *lm = mafVMELandmark::SafeDownCast(vme);
-  if(lm == NULL)
+  if(lm == nullptr)
   {
     wxMessageBox("wrong type of vme, a Landmark VME is required","alert",wxICON_WARNING);
     return;
@@ -3175,7 +3176,7 @@ void medOpMML3::CreateDefaultRegistrationLandmarks()
   assert(GetInput());
 
   double inputBounds[6]; 
-  ((mafVME*)GetInput())->GetOutput()->GetBounds(inputBounds);
+  mafVME::StaticDownCast(GetInput())->GetOutput()->GetBounds(inputBounds);
   double xmed = (inputBounds[0] + inputBounds[1]) / 2.0;
   double ymed = (inputBounds[2] + inputBounds[3]) / 2.0;
 
@@ -3216,7 +3217,7 @@ void medOpMML3::CreateDefaultAxisLandmarks()
   assert(GetInput());
 
   double bnds[6]; 
-  ((mafVME*)GetInput())->GetOutput()->GetBounds(bnds);
+  mafVME::StaticDownCast(GetInput())->GetOutput()->GetBounds(bnds);
   double xmed = (bnds[0] + bnds[1]) / 2.0 ;
   double ymed = (bnds[2] + bnds[3]) / 2.0 ;
   double zmed = (bnds[4] + bnds[5]) / 2.0 ;
@@ -3733,7 +3734,7 @@ mafRWI* medOpMML3::CreateParameterViewmafRWI(vtkTextSource *ts, wxString lab, fl
 { 
   mafRWI *rwi = new mafRWI(m_OpDlg);
   rwi->SetListener(this);
-  rwi->m_RwiBase->GetInteractor()->SetInteractorStyle(NULL);
+  rwi->m_RwiBase->GetInteractor()->SetInteractorStyle(nullptr);
 
   // width/height
   rwi->SetSize(0, 0, 250, 65);
@@ -4063,16 +4064,16 @@ void medOpMML3::SetUpLandmarks1(wxString AtlasSectionVMEName, wxString PatientSe
   mafVME *RootVME = mafVME::SafeDownCast(GetInput()->GetRoot());
 
   // get atlas section node
-  mafVME *AtlasSectionVME = (mafVME*)(RootVME->FindInTreeByName(mafWxToString(AtlasSectionVMEName)));
-  if(AtlasSectionVME == NULL)
+  auto AtlasSectionVME = mafVME::StaticDownCast(RootVME->FindInTreeByName(mafWxToString(AtlasSectionVMEName)));
+  if(AtlasSectionVME == nullptr)
   {
     wxMessageBox("No section" + AtlasSectionVMEName,"alert",wxICON_WARNING);
     return;
   }
 
   // get patient section node
-  mafVME *PatientSectionVME = (mafVME*)(RootVME->FindInTreeByName(mafWxToString(PatientSectionVMEName)));
-  if(PatientSectionVME == NULL)
+  auto PatientSectionVME = mafVME::StaticDownCast(RootVME->FindInTreeByName(mafWxToString(PatientSectionVMEName)));
+  if(PatientSectionVME == nullptr)
   {
     wxMessageBox("No section" + PatientSectionVMEName,"alert",wxICON_WARNING);
     return;
@@ -4080,18 +4081,18 @@ void medOpMML3::SetUpLandmarks1(wxString AtlasSectionVMEName, wxString PatientSe
 
   // atlas - landmark 1
   // get landmark node
-  mafVME *Landmark1AtlasVME = (mafVME*)(AtlasSectionVME->FindInTreeByName(mafWxToString(Landmark1VMEName)));
-  if(Landmark1AtlasVME == NULL)
+  auto Landmark1AtlasVME = mafVME::StaticDownCast(AtlasSectionVME->FindInTreeByName(mafWxToString(Landmark1VMEName)));
+  if(Landmark1AtlasVME == nullptr)
   {
     wxMessageBox("Expected " + Landmark1VMEName + " in section " + AtlasSectionVMEName + " is missing!","alert",wxICON_WARNING);
   }
   else
   {
     // get landmark
-    mafVMELandmark *Landmark1AtlasVMELandmark = mafVMELandmark::SafeDownCast(Landmark1AtlasVME);
+    auto Landmark1AtlasVMELandmark = mafVMELandmark::SafeDownCast(Landmark1AtlasVME);
 
     // get coordinates
-    GetAbsPosOfLandmark(Landmark1AtlasVMELandmark, a1) ;
+    GetAbsPosOfLandmark(Landmark1AtlasVMELandmark.get(), a1) ;
 
     // set name
     m_L1Name = Landmark1AtlasVMELandmark->GetName().toWx();
@@ -4100,18 +4101,18 @@ void medOpMML3::SetUpLandmarks1(wxString AtlasSectionVMEName, wxString PatientSe
 
   // atlas - landmark 2
   // get landmark node
-  mafVME *Landmark2AtlasVME = (mafVME*)(AtlasSectionVME->FindInTreeByName(mafWxToString(Landmark2VMEName)));
-  if(Landmark2AtlasVME == NULL)
+  auto Landmark2AtlasVME = mafVME::StaticDownCast(AtlasSectionVME->FindInTreeByName(mafWxToString(Landmark2VMEName)));
+  if(Landmark2AtlasVME == nullptr)
   {
     wxMessageBox("Expected " + Landmark2VMEName + " in section " + AtlasSectionVMEName + " is missing!","alert",wxICON_WARNING);
   }
   else
   {
     // get landmark
-    mafVMELandmark *Landmark2AtlasVMELandmark = mafVMELandmark::SafeDownCast(Landmark2AtlasVME);
+    auto Landmark2AtlasVMELandmark = mafVMELandmark::SafeDownCast(Landmark2AtlasVME);
 
     // get coordinates
-    GetAbsPosOfLandmark(Landmark2AtlasVMELandmark, a2) ;
+    GetAbsPosOfLandmark(Landmark2AtlasVMELandmark.get(), a2) ;
 
     // set name
     m_L2Name = Landmark2AtlasVMELandmark->GetName().toWx();
@@ -4121,18 +4122,18 @@ void medOpMML3::SetUpLandmarks1(wxString AtlasSectionVMEName, wxString PatientSe
 
   // atlas - landmark 3
   // get landmark node
-  mafVME *Landmark3AtlasVME = (mafVME*)(AtlasSectionVME->FindInTreeByName(mafWxToString(Landmark3VMEName)));
-  if(Landmark3AtlasVME == NULL)
+  auto Landmark3AtlasVME = mafVME::StaticDownCast(AtlasSectionVME->FindInTreeByName(mafWxToString(Landmark3VMEName)));
+  if(Landmark3AtlasVME == nullptr)
   {
     wxMessageBox("Expected " + Landmark3VMEName + " in section " + AtlasSectionVMEName + " is missing!","alert",wxICON_WARNING);
   }
   else
   {
     // get landmark
-    mafVMELandmark *Landmark3AtlasVMELandmark = mafVMELandmark::SafeDownCast(Landmark3AtlasVME);
+    auto Landmark3AtlasVMELandmark = mafVMELandmark::SafeDownCast(Landmark3AtlasVME);
 
     // get coordinates
-    GetAbsPosOfLandmark(Landmark3AtlasVMELandmark, a3) ;
+    GetAbsPosOfLandmark(Landmark3AtlasVMELandmark.get(), a3) ;
 
     // set name
     m_L3Name = Landmark3AtlasVMELandmark->GetName().toWx();
@@ -4141,15 +4142,15 @@ void medOpMML3::SetUpLandmarks1(wxString AtlasSectionVMEName, wxString PatientSe
 
   // atlas - landmark 4
   // get landmark node
-  mafVME *Landmark4AtlasVME = (mafVME*)(AtlasSectionVME->FindInTreeByName(mafWxToString(Landmark4VMEName)));
-  if(Landmark4AtlasVME == NULL)
+  auto Landmark4AtlasVME = mafVME::StaticDownCast(AtlasSectionVME->FindInTreeByName(mafWxToString(Landmark4VMEName)));
+  if(Landmark4AtlasVME == nullptr)
   {
     wxMessageBox("Expected " + Landmark4VMEName + " in section " + AtlasSectionVMEName + " is missing!","alert",wxICON_WARNING);
   }
   else
   {
     // get landmark
-    mafVMELandmark *Landmark4AtlasVMELandmark = mafVMELandmark::SafeDownCast(Landmark4AtlasVME);
+    auto Landmark4AtlasVMELandmark = mafVMELandmark::SafeDownCast(Landmark4AtlasVME);
 
     // get coordinates
     Landmark4AtlasVMELandmark->GetPoint(a4);
@@ -4161,15 +4162,15 @@ void medOpMML3::SetUpLandmarks1(wxString AtlasSectionVMEName, wxString PatientSe
 
   // patient - landmark 1
   // get landmark node
-  mafVME *Landmark1PatientVME = (mafVME*)(PatientSectionVME->FindInTreeByName(mafWxToString(Landmark1VMEName)));
-  if(Landmark1PatientVME == NULL)
+  auto Landmark1PatientVME = mafVME::StaticDownCast(PatientSectionVME->FindInTreeByName(mafWxToString(Landmark1VMEName)));
+  if(Landmark1PatientVME == nullptr)
   {
     wxMessageBox("Expected " + Landmark1VMEName + " in section " + PatientSectionVMEName + " is missing!","alert",wxICON_WARNING);
   }
   else
   {
     // get landmark
-    mafVMELandmark *Landmark1PatientVMELandmark = mafVMELandmark::SafeDownCast(Landmark1PatientVME);
+    auto Landmark1PatientVMELandmark = mafVMELandmark::SafeDownCast(Landmark1PatientVME);
 
     // get coordinates
     Landmark1PatientVMELandmark->GetPoint(p1);
@@ -4180,15 +4181,15 @@ void medOpMML3::SetUpLandmarks1(wxString AtlasSectionVMEName, wxString PatientSe
 
   // patient - landmark 2
   // get landmark node
-  mafVME *Landmark2PatientVME = (mafVME*)(PatientSectionVME->FindInTreeByName(mafWxToString(Landmark2VMEName)));
-  if(Landmark2PatientVME == NULL)
+  auto Landmark2PatientVME = mafVME::StaticDownCast(PatientSectionVME->FindInTreeByName(mafWxToString(Landmark2VMEName)));
+  if(Landmark2PatientVME == nullptr)
   {
     wxMessageBox("Expected " + Landmark2VMEName + " in section " + PatientSectionVMEName + " is missing!","alert",wxICON_WARNING);
   }
   else
   {
     // get landmark
-    mafVMELandmark *Landmark2PatientVMELandmark = mafVMELandmark::SafeDownCast(Landmark2PatientVME);
+    auto Landmark2PatientVMELandmark = mafVMELandmark::SafeDownCast(Landmark2PatientVME);
 
     // get coordinates
     Landmark2PatientVMELandmark->GetPoint(p2);
@@ -4199,15 +4200,15 @@ void medOpMML3::SetUpLandmarks1(wxString AtlasSectionVMEName, wxString PatientSe
 
   // patient - landmark 3
   // get landmark node
-  mafVME *Landmark3PatientVME = (mafVME*)(PatientSectionVME->FindInTreeByName(mafWxToString(Landmark3VMEName)));
-  if(Landmark3PatientVME == NULL)
+  auto Landmark3PatientVME = mafVME::StaticDownCast(PatientSectionVME->FindInTreeByName(mafWxToString(Landmark3VMEName)));
+  if(Landmark3PatientVME == nullptr)
   {
     wxMessageBox("Expected " + Landmark3VMEName + " in section " + PatientSectionVMEName + " is missing!","alert",wxICON_WARNING);
   }
   else
   {
     // get landmark
-    mafVMELandmark *Landmark3PatientVMELandmark = mafVMELandmark::SafeDownCast(Landmark3PatientVME);
+    auto Landmark3PatientVMELandmark = mafVMELandmark::SafeDownCast(Landmark3PatientVME);
 
     // get coordinates
     Landmark3PatientVMELandmark->GetPoint(p3);
@@ -4218,15 +4219,15 @@ void medOpMML3::SetUpLandmarks1(wxString AtlasSectionVMEName, wxString PatientSe
 
   // patient - landmark 4
   // get landmark node
-  mafVME *Landmark4PatientVME = (mafVME*)(PatientSectionVME->FindInTreeByName(mafWxToString(Landmark4VMEName)));
-  if(Landmark4PatientVME == NULL)
+  auto Landmark4PatientVME = mafVME::StaticDownCast(PatientSectionVME->FindInTreeByName(mafWxToString(Landmark4VMEName)));
+  if(Landmark4PatientVME == nullptr)
   {
     wxMessageBox("Expected " + Landmark4VMEName + " in section " + PatientSectionVMEName + " is missing!","alert",wxICON_WARNING);
   }
   else
   {
     // get landmark
-    mafVMELandmark *Landmark4PatientVMELandmark = mafVMELandmark::SafeDownCast(Landmark4PatientVME);
+    auto Landmark4PatientVMELandmark = mafVMELandmark::SafeDownCast(Landmark4PatientVME);
 
     // get coordinates
     Landmark4PatientVMELandmark->GetPoint(p4);
@@ -4276,19 +4277,19 @@ void medOpMML3::SetUpLandmarks2(wxString AtlasSectionVMEName, wxString PatientSe
   m_L4Name = "none";
 
   // get root node
-  mafVME *RootVME = mafVME::SafeDownCast(GetInput()->GetRoot());
+  auto RootVME = mafVME::SafeDownCast(GetInput()->GetRoot());
 
   // get atlas section node
-  mafVME *AtlasSectionVME = (mafVME*)(RootVME->FindInTreeByName(mafWxToString(AtlasSectionVMEName)));
-  if(AtlasSectionVME == NULL)
+  auto AtlasSectionVME = mafVME::StaticDownCast(RootVME->FindInTreeByName(mafWxToString(AtlasSectionVMEName)));
+  if(AtlasSectionVME == nullptr)
   {
     wxMessageBox("Can't find atlas section" + AtlasSectionVMEName,"alert",wxICON_WARNING);
     return;
   }
 
   // get patient section node
-  mafVME *PatientSectionVME = (mafVME*)(RootVME->FindInTreeByName(mafWxToString(PatientSectionVMEName)));
-  if(PatientSectionVME == NULL)
+  auto PatientSectionVME = mafVME::StaticDownCast(RootVME->FindInTreeByName(mafWxToString(PatientSectionVMEName)));
+  if(PatientSectionVME == nullptr)
   {
     wxMessageBox("Can't find patient section" + PatientSectionVMEName,"alert",wxICON_WARNING);
     return;
@@ -4297,42 +4298,42 @@ void medOpMML3::SetUpLandmarks2(wxString AtlasSectionVMEName, wxString PatientSe
 
   // atlas - landmark 1
   // get landmark node
-  mafVME *Landmark1AtlasVME = (mafVME*)(AtlasSectionVME->FindInTreeByName(mafWxToString(Landmark1VMEName)));
-  if(Landmark1AtlasVME == NULL){
+  auto Landmark1AtlasVME = mafVME::StaticDownCast(AtlasSectionVME->FindInTreeByName(mafWxToString(Landmark1VMEName)));
+  if(Landmark1AtlasVME == nullptr){
     wxMessageBox("Expected " + Landmark1VMEName + " in section " + AtlasSectionVMEName + " is missing!","alert",wxICON_WARNING);
   }
   else{
     // get landmark
-    mafVMELandmark *Landmark1AtlasVMELandmark = mafVMELandmark::SafeDownCast(Landmark1AtlasVME);
-    GetAbsPosOfLandmark(Landmark1AtlasVMELandmark, m_L1Point) ;
+    auto Landmark1AtlasVMELandmark = mafVMELandmark::SafeDownCast(Landmark1AtlasVME);
+    GetAbsPosOfLandmark(Landmark1AtlasVMELandmark.get(), m_L1Point) ;
     m_L1Name = Landmark1AtlasVMELandmark->GetName().toWx();
     m_L1Defined = true ;
   }
 
   // atlas - landmark 2
   // get landmark node
-  mafVME *Landmark2AtlasVME = (mafVME*)(AtlasSectionVME->FindInTreeByName(mafWxToString(Landmark2VMEName)));
-  if(Landmark2AtlasVME == NULL){
+  auto Landmark2AtlasVME = mafVME::StaticDownCast(AtlasSectionVME->FindInTreeByName(mafWxToString(Landmark2VMEName)));
+  if(Landmark2AtlasVME == nullptr){
     wxMessageBox("Expected " + Landmark2VMEName + " in section " + AtlasSectionVMEName + " is missing!","alert",wxICON_WARNING);
   }
   else{
     // get landmark
-    mafVMELandmark *Landmark2AtlasVMELandmark = mafVMELandmark::SafeDownCast(Landmark2AtlasVME);
-    GetAbsPosOfLandmark(Landmark2AtlasVMELandmark, m_L2Point) ;
+    auto Landmark2AtlasVMELandmark = mafVMELandmark::SafeDownCast(Landmark2AtlasVME);
+    GetAbsPosOfLandmark(Landmark2AtlasVMELandmark.get(), m_L2Point) ;
     m_L2Name = Landmark2AtlasVMELandmark->GetName().toWx();
     m_L2Defined = true ;
   }
 
   // atlas - landmark 3
   // get landmark node
-  mafVME *Landmark3AtlasVME = (mafVME*)(AtlasSectionVME->FindInTreeByName(mafWxToString(Landmark3VMEName)));
-  if(Landmark3AtlasVME == NULL){
+  auto Landmark3AtlasVME = mafVME::StaticDownCast(AtlasSectionVME->FindInTreeByName(mafWxToString(Landmark3VMEName)));
+  if(Landmark3AtlasVME == nullptr){
     wxMessageBox("Expected " + Landmark3VMEName + " in section " + AtlasSectionVMEName + " is missing!","alert",wxICON_WARNING);
   }
   else{
     // get landmark
-    mafVMELandmark *Landmark3AtlasVMELandmark = mafVMELandmark::SafeDownCast(Landmark3AtlasVME);
-    GetAbsPosOfLandmark(Landmark3AtlasVMELandmark, m_L3Point) ;
+    auto Landmark3AtlasVMELandmark = mafVMELandmark::SafeDownCast(Landmark3AtlasVME);
+    GetAbsPosOfLandmark(Landmark3AtlasVMELandmark.get(), m_L3Point) ;
     m_L3Name = Landmark3AtlasVMELandmark->GetName().toWx();
     m_L3Defined = true ;
   }
@@ -4340,39 +4341,39 @@ void medOpMML3::SetUpLandmarks2(wxString AtlasSectionVMEName, wxString PatientSe
 
   // patient - landmark 1
   // get landmark node
-  mafVME *Landmark1PatientVME = (mafVME*)(PatientSectionVME->FindInTreeByName(mafWxToString(Landmark1VMEName)));
-  if(Landmark1PatientVME == NULL){
+  auto Landmark1PatientVME = mafVME::StaticDownCast(PatientSectionVME->FindInTreeByName(mafWxToString(Landmark1VMEName)));
+  if(Landmark1PatientVME == nullptr){
     wxMessageBox("Expected " + Landmark1VMEName + " in section " + PatientSectionVMEName + " is missing!","alert",wxICON_WARNING);
   }
   else{
     // get landmark
-    mafVMELandmark *Landmark1PatientVMELandmark = mafVMELandmark::SafeDownCast(Landmark1PatientVME);
+    auto Landmark1PatientVMELandmark = mafVMELandmark::SafeDownCast(Landmark1PatientVME);
     Landmark1PatientVMELandmark->GetPoint(m_P1Point);
     m_P1Name = Landmark1PatientVMELandmark->GetName().toWx();
   }
 
   // patient - landmark 2
   // get landmark node
-  mafVME *Landmark2PatientVME = (mafVME*)(PatientSectionVME->FindInTreeByName(mafWxToString(Landmark2VMEName)));
-  if(Landmark2PatientVME == NULL){
+  auto Landmark2PatientVME = mafVME::StaticDownCast(PatientSectionVME->FindInTreeByName(mafWxToString(Landmark2VMEName)));
+  if(Landmark2PatientVME == nullptr){
     wxMessageBox("Expected " + Landmark2VMEName + " in section " + PatientSectionVMEName + " is missing!","alert",wxICON_WARNING);
   }
   else{
     // get landmark
-    mafVMELandmark *Landmark2PatientVMELandmark = mafVMELandmark::SafeDownCast(Landmark2PatientVME);
+    auto Landmark2PatientVMELandmark = mafVMELandmark::SafeDownCast(Landmark2PatientVME);
     Landmark2PatientVMELandmark->GetPoint(m_P2Point);
     m_P2Name = Landmark2PatientVMELandmark->GetName().toWx();
   }
 
   // patient - landmark 3
   // get landmark node
-  mafVME *Landmark3PatientVME = (mafVME*)(PatientSectionVME->FindInTreeByName(mafWxToString(Landmark3VMEName)));
-  if(Landmark3PatientVME == NULL){
+  auto Landmark3PatientVME = mafVME::StaticDownCast(PatientSectionVME->FindInTreeByName(mafWxToString(Landmark3VMEName)));
+  if(Landmark3PatientVME == nullptr){
     wxMessageBox("Expected " + Landmark3VMEName + " in section " + PatientSectionVMEName + " is missing!","alert",wxICON_WARNING);
   }
   else{
     // get landmark
-    mafVMELandmark *Landmark3PatientVMELandmark = mafVMELandmark::SafeDownCast(Landmark3PatientVME);
+    auto Landmark3PatientVMELandmark = mafVMELandmark::SafeDownCast(Landmark3PatientVME);
     Landmark3PatientVMELandmark->GetPoint(m_P3Point);
     m_P3Name = Landmark3PatientVMELandmark->GetName().toWx();
   }

@@ -33,7 +33,6 @@
 #include "mafGUIDialog.h"
 
 #include "mafVME.h"
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafVMELandmark.h"
 
 #include "vtkSmartPointer.h"
@@ -46,10 +45,6 @@
 #include "vtkTransform.h"
 #include "vtkTransformPolyDataFilter.h"
 #include "vtkAlgorithmOutput.h"
-
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(medOpRegisterClusters);
-//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 // Constants :
@@ -67,12 +62,6 @@ medOpRegisterClusters::medOpRegisterClusters(const mafString& label) : Superclas
   m_OpType	= OPTYPE_OP;
   m_Canundo = true;
   
-	m_Source					= NULL;
-  m_Target					= NULL;
-  m_Registered			= NULL;
-	m_Follower				= NULL;
-  m_Result          = NULL;
-  m_Info            = NULL;
   m_PointsSource		= NULL;
   m_PointsTarget		= NULL;
 
@@ -84,7 +73,6 @@ medOpRegisterClusters::medOpRegisterClusters(const mafString& label) : Superclas
 	m_MultiTime				= 0;
 	m_RegistrationMode = RIGID;
 
-	m_CommonPoints = NULL;
 	m_Weight		   = NULL;
 
   m_SettingsGuiFlag = false;
@@ -98,14 +86,13 @@ medOpRegisterClusters::medOpRegisterClusters(const mafString& label) : Superclas
 medOpRegisterClusters::~medOpRegisterClusters( ) 
 //----------------------------------------------------------------------------
 {
-	vtkDEL(m_Follower);
 	vtkDEL(m_PointsSource);
 	vtkDEL(m_PointsTarget);
-  mafDEL(m_Result);
-  mafDEL(m_Info);
-  mafDEL(m_Registered);
-  mafDEL(m_Follower);
-  mafDEL(m_CommonPoints);
+  m_Result.reset();
+  m_Info.reset();
+  m_Registered.reset();
+  m_Follower.reset();
+  m_CommonPoints.reset();
 
   if(m_Weight)
 	{
@@ -149,7 +136,7 @@ enum
 void medOpRegisterClusters::OpRun()   
 //----------------------------------------------------------------------------
 {
-  m_Source = (mafVMELandmarkCloud*)GetInput();
+  m_Source = mafVMELandmarkCloud::StaticDownCast(GetInput()).get();
   m_SourceName = GetInput()->GetName();
 	
   if(!m_TestMode)
@@ -247,7 +234,6 @@ void medOpRegisterClusters::OnEvent(mafEventBase *maf_event)
 				  /////////////////////////////////////////////////////
 				  if(m_CommonPoints)
 				  {
-					  mafVMELandmark *lmk;
 					  m_CommonPoints->Open();
 					  int number = m_CommonPoints->GetNumberOfLandmarks();
 
@@ -261,7 +247,7 @@ void medOpRegisterClusters::OnEvent(mafEventBase *maf_event)
   					
 					  for (int i=0; i <number; i++)
 					  {
-						  lmk = m_CommonPoints->GetLandmark(i);
+						  auto lmk = m_CommonPoints->GetLandmark(i);
 						  mafString name_lmk = lmk->GetName();
 						  m_GuiSetWeights->Label(name_lmk);
 						  m_GuiSetWeights->Double(-1, _R(""),&m_Weight[i]);
@@ -318,12 +304,12 @@ void medOpRegisterClusters::OpDo()
   if(!m_TestMode)
 	  wxBusyInfo wait(_("Please wait, working..."));
 
-  mafNEW(m_Info);
+  m_Info = mafVMEInfoText::NewSPtr();
   mafString name = _R("Info for registration ") + m_Source->GetName() + _R(" into ") + m_Target->GetName();
   m_Info->SetName(name);
   m_Info->SetPosLabel(_R("Registration residual: "), 0);
   m_Info->SetPosShow(true, 0);
-  {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_Info); InvokeEvent(evUnq);}
+  mafNode::ReparentTo(m_Info, GetInput()->GetRoot());
 
   //check for the multi-time registration
 	if(m_MultiTime)
@@ -367,16 +353,16 @@ void medOpRegisterClusters::OpDo()
 
   if(m_Registered || m_Follower)
   {
-    mafNEW(m_Result);
+    m_Result = mafVMEGroup::NewSPtr();
     mafString name = m_Source->GetName() + _R(" registered into ") + m_Target->GetName();
     m_Result->SetName(name);
-    {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_Result); InvokeEvent(evUnq);}
-    m_Info->ReparentTo(m_Result);
+    mafNode::ReparentTo(m_Result, GetInput()->GetRoot());
+    mafNode::ReparentTo(m_Info, m_Result.get());
   }
   else
   {
-    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Info); InvokeEvent(evUnq);}
-    mafDEL(m_Info);
+    mafNode::ReparentTo(m_Info, nullptr);
+    m_Info.reset();
   }
 
   if(m_Registered)
@@ -491,10 +477,8 @@ void medOpRegisterClusters::OpDo()
       m_Target->GetLocalTimeStamps(timeStamps);
       int numTimeStamps = timeStamps.size();
 
-      mafVMELandmarkCloud *landmarkCloudWithTimeVariantLandmarks;
-      mafNEW(landmarkCloudWithTimeVariantLandmarks);
-      {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(landmarkCloudWithTimeVariantLandmarks); InvokeEvent(evUnq);}
-      landmarkCloudWithTimeVariantLandmarks->ReparentTo(m_Result);
+      auto landmarkCloudWithTimeVariantLandmarks = mafVMELandmarkCloud::NewSPtr();
+      mafNode::ReparentTo(landmarkCloudWithTimeVariantLandmarks, m_Result.get());
 
       landmarkCloudWithTimeVariantLandmarks->SetName(m_Registered->GetName());
       landmarkCloudWithTimeVariantLandmarks->Open();
@@ -508,18 +492,12 @@ void medOpRegisterClusters::OpDo()
 
         for(int i=0; i< m_Registered->GetNumberOfLandmarks(); i++)
         {
-          mafVMELandmark *landmark;
-          landmark = mafVMELandmark::SafeDownCast(landmarkCloudWithTimeVariantLandmarks->GetLandmark(i));
-          if(landmark == NULL)
+          auto landmark = mafVMELandmark::SafeDownCast(landmarkCloudWithTimeVariantLandmarks->GetLandmark(i));
+          if(landmark == nullptr)
           {
-            mafNEW(landmark);
-            {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(landmark); InvokeEvent(evUnq);}
+            landmark = mafVMELandmark::NewSPtr();
             landmark->SetName(m_Registered->GetLandmark(i)->GetName());
-            landmark->ReparentTo(landmarkCloudWithTimeVariantLandmarks);
-          }
-          else
-          {
-            landmark->Register(this);
+            mafNode::ReparentTo(landmark, landmarkCloudWithTimeVariantLandmarks.get());
           }
 
           double pos[3], rot[3];
@@ -537,14 +515,11 @@ void medOpRegisterClusters::OpDo()
 
           landmark->Modified();
           landmark->Update();
-          mafDEL(landmark);
         }
       }
 
       landmarkCloudWithTimeVariantLandmarks->Update();
       landmarkCloudWithTimeVariantLandmarks->Close();
-
-      mafDEL(landmarkCloudWithTimeVariantLandmarks);
 
       m_Registered->Close();
       timeStamps.clear();
@@ -552,7 +527,7 @@ void medOpRegisterClusters::OpDo()
     else
     {
       //m_Registered->SetAbsMatrix(((mafVMELandmarkCloud *)m_Target)->GetAbsMatrixPipe()->GetMatrix());
-      {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_Registered); InvokeEvent(evUnq);}
+      //{mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_Registered); InvokeEvent(evUnq);}
       /*std::vector<mafTimeStamp> timeStamps;
       m_Registered->GetTimeStamps(timeStamps);
       for(int i=0; i<timeStamps.size();i++)
@@ -568,7 +543,7 @@ void medOpRegisterClusters::OpDo()
         value = timeStamps[i];
         value = value;
       }*/
-      m_Registered->ReparentTo(m_Result);
+      mafNode::ReparentTo(m_Registered, m_Result.get());
     }
     
 	}
@@ -577,8 +552,8 @@ void medOpRegisterClusters::OpDo()
 	{
 		mafString name = m_Follower->GetName() + _R(" registered on ") + m_Target->GetName();
 		m_Follower->SetName(name);
-		{mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_Follower); InvokeEvent(evUnq);}
-    m_Follower->ReparentTo(m_Result);
+		//{mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_Follower); InvokeEvent(evUnq);}
+    mafNode::ReparentTo(m_Follower, m_Result.get());
 	}
 
   {mafEvent evUnq(this,TIME_SET); evUnq.SetDouble(-1.0); InvokeEvent(evUnq);}
@@ -588,12 +563,12 @@ void medOpRegisterClusters::OpUndo()
 //----------------------------------------------------------------------------
 {
   assert(m_Result);
-  {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Result); InvokeEvent(evUnq);}
-	mafDEL(m_Result);
-  mafDEL(m_Registered);
-  mafDEL(m_Follower);
-  mafDEL(m_CommonPoints);
-  mafDEL(m_Info);
+  {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Result.get()); InvokeEvent(evUnq);}
+	m_Result.reset();
+  m_Registered.reset();
+  m_Follower.reset();
+  m_CommonPoints.reset();
+  m_Info.reset();
 }
 //----------------------------------------------------------------------------
 int medOpRegisterClusters::ExtractMatchingPoints(double time)
@@ -623,8 +598,7 @@ int medOpRegisterClusters::ExtractMatchingPoints(double time)
 	//number of common points between m_Source and m_Target
 	int ncp = 0;
 
-  mafDEL(m_CommonPoints);
-	mafNEW(m_CommonPoints);
+  m_CommonPoints = mafVMELandmarkCloud::NewSPtr();
 
 	bool found_one = false;
 
@@ -712,10 +686,10 @@ double medOpRegisterClusters::RegisterPoints(double currTime)
   vtkMatrix4x4 *t_matrix = vtkMatrix4x4::New();
 	t_matrix->Identity();
 
-  if(m_Registered == NULL )
+  if(m_Registered == nullptr )
 	{
 		mafString name = m_Source->GetName() + _R(" registered on ") + m_Target->GetName();
-		mafNEW(m_Registered);
+		m_Registered = mafVMELandmarkCloud::NewSPtr();
 		m_Registered->DeepCopy(m_Source);
 		m_Registered->SetName(name);
 	}
@@ -835,20 +809,19 @@ void medOpRegisterClusters::OnChooseSurfaceVme(mafNode *vme)
   if(!vme) // user choose cancel - keep everything as before
     return;
 
-  if(m_Follower == NULL)
+  if(m_Follower == nullptr)
   {
     if(vme->IsA("mafVMESurface"))
-      m_Follower = mafVMESurface::New();
+      m_Follower = mafVMESurface::NewSPtr();
     else
-      m_Follower = mafVMELandmarkCloud::New();
-    m_Follower->Register(this); 
+      m_Follower = mafVMELandmarkCloud::NewSPtr();
   }
   if(m_Follower->CanCopy(vme))
     m_Follower->DeepCopy(vme);
   else
   {
     wxMessageBox(_("Bad follower!"), _("Alert"), wxOK, NULL);
-    vtkDEL(m_Follower);
+    m_Follower.reset();
     return;
   }
   mafVME::SafeDownCast(vme)->GetOutput()->GetAbsMatrix(m_FollowerMatrix);
@@ -877,10 +850,9 @@ void medOpRegisterClusters::SetFollower(mafVMESurface *follower)
   // added by Losi on 31/01/2011 to allow test OpDo method
   if(SurfaceAccept(follower))
   {
-    if(m_Follower == NULL)
+    if(m_Follower == nullptr)
     {
-      m_Follower = mafVMESurface::New();
-      m_Follower->Register(this); 
+      m_Follower = mafVMESurface::NewSPtr();
     }
     if(m_Follower->CanCopy(follower))
       m_Follower->DeepCopy(follower);

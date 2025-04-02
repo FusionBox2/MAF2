@@ -29,7 +29,6 @@
 #include "mafGUIDialog.h"
 
 #include "mafVME.h"
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafVMELandmark.h"
 #include "mafDictionary.h"
 
@@ -60,7 +59,6 @@ lhpOpRegSurfWithCloud::lhpOpRegSurfWithCloud(const mafString& label) : Superclas
   m_OpType      = OPTYPE_OP;
   m_Canundo     = true;
   m_Source      = NULL;
-  m_Resultat    = NULL;
   m_SourceName  = _R("none");
   m_MultiTime   = true;
   m_ScriptFName = _R("");
@@ -69,7 +67,7 @@ lhpOpRegSurfWithCloud::lhpOpRegSurfWithCloud(const mafString& label) : Superclas
 lhpOpRegSurfWithCloud::~lhpOpRegSurfWithCloud( ) 
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_Resultat);
+  m_Resultat.reset();
 }
 //----------------------------------------------------------------------------
 mafOp* lhpOpRegSurfWithCloud::Copy()   
@@ -164,11 +162,9 @@ void lhpOpRegSurfWithCloud::OpStop(int result)
 
   wxBusyInfo wait(_("Please wait, working..."));
 
-  if(m_Resultat)
-    mafDEL(m_Resultat);
+  m_Resultat.reset();
   
-  mafVMEGroup *grp;
-  mafNEW(grp);
+  auto grp = mafVMEGroup::NewSPtr();
   m_Resultat = grp;
   
   /*if(m_Resultat->CanCopy(GetInput()))
@@ -182,29 +178,29 @@ void lhpOpRegSurfWithCloud::OpStop(int result)
 
   for(unsigned s = 0; s < m_LMDict.size(); s++)
   {
-    mafVMESurface       *surf  = NULL;
-    mafVMELandmarkCloud *cloud = NULL;
+    std::shared_ptr<mafVMESurface> surf;
+    mafVMELandmarkCloud *cloud = nullptr;
 
     for(unsigned i = 0; i < GetInput()->GetNumberOfChildren(); i++)
     {
-      mafVMESurface *surfChild = mafVMESurface::SafeDownCast(GetInput()->GetChild(i));
-      if(surfChild == NULL || surfChild->GetName() != m_LMDict[s].first)
+      auto surfChild = mafVMESurface::SafeDownCast(GetInput()->GetChild(i));
+      if(surfChild == nullptr || surfChild->GetName() != m_LMDict[s].first)
         continue;
-      mafNEW(surf);
-      if(surf->CanCopy(surfChild))
-        surf->DeepCopy(surfChild);
+      surf = mafVMESurface::NewSPtr();
+      if(surf->CanCopy(surfChild.get()))
+        surf->DeepCopy(surfChild.get());
       else
-        mafDEL(surf);
+        surf.reset();
       break;
     }
-    if(surf == NULL)
+    if(surf == nullptr)
       continue;
 
-    auto iter = m_Source->NewIterator();
-    for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+    auto iter = std::make_unique<mafNodeIterator>(m_Source);
+    for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
     {
-      mafVMELandmarkCloud *cloudChild = mafVMELandmarkCloud::SafeDownCast(node);
-      if(cloudChild != NULL && cloudChild->GetName() == m_LMDict[s].second)
+      auto cloudChild = mafVMELandmarkCloud::SafeDownCast(node);
+      if(cloudChild && cloudChild->GetName() == m_LMDict[s].second)
       {
         cloud = cloudChild;
         break;
@@ -221,9 +217,9 @@ void lhpOpRegSurfWithCloud::OpStop(int result)
         break;
       }
     }*/
-    if(cloud == NULL)
+    if(cloud == nullptr)
     {
-      mafDEL(surf);
+      surf.reset();
       continue;
     }
     if(m_MultiTime)
@@ -253,13 +249,13 @@ void lhpOpRegSurfWithCloud::OpStop(int result)
       surf->Modified();
       surf->Update();
     }
-    surf->ReparentTo(m_Resultat);
-    mafDEL(surf);
+    mafNode::ReparentTo(surf, m_Resultat.get());
+    surf.reset();
   }
 
   mafString name = m_Resultat->GetName() + _R(" registered on ") + m_Source->GetName();
   m_Resultat->SetName(name);
-  m_Resultat->ReparentTo(GetInput()->GetParent());
+  mafNode::ReparentTo(m_Resultat, GetInput()->GetParent());
 
   HideGui();
   {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
@@ -270,13 +266,14 @@ void lhpOpRegSurfWithCloud::OpStop(int result)
 void lhpOpRegSurfWithCloud::OpDo()
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_Resultat); InvokeEvent(evUnq);}
+  mafNode::ReparentTo(m_Resultat, GetInput()->GetParent());
+  //{mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_Resultat); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void lhpOpRegSurfWithCloud::OpUndo()
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Resultat); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Resultat.get()); InvokeEvent(evUnq);}
 }
 
 //----------------------------------------------------------------------------

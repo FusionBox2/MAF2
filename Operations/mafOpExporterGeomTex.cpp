@@ -161,7 +161,7 @@ void mafOpExporterGeomTex::ExportTexture()
 //----------------------------------------------------------------------------
 {
 	
-	mafVMEOutputSurface *out_surface = mafVMEOutputSurface::SafeDownCast(((mafVME *)GetInput())->GetOutput());
+	auto out_surface = mafVMEOutputSurface::SafeDownCast(mafVME::StaticDownCast(GetInput())->GetOutput());
 	out_surface->Update();
 	
 	vtkNew<vtkBMPWriter> exporter;
@@ -175,7 +175,7 @@ void mafOpExporterGeomTex::ExportTexture()
 void mafOpExporterGeomTex::ExportSurface()
 //----------------------------------------------------------------------------
 {
-	mafVMEOutputSurface *out_surface = mafVMEOutputSurface::SafeDownCast(((mafVME *)GetInput())->GetOutput());
+	auto out_surface = mafVMEOutputSurface::SafeDownCast(mafVME::StaticDownCast(GetInput())->GetOutput());
 	out_surface->Update();
 	
 	vtkNew<vtkTriangleFilter>triangles;

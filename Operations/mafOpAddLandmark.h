@@ -73,10 +73,10 @@ public:
   void SetPickingActiveFlag(bool picking){m_PickingActiveFlag = picking;}
   bool GetPickingActiveFlag(){return m_PickingActiveFlag;}
 
-  mafVME* GetPickedVme(){return m_PickedVme;};
-  mafVMELandmarkCloud* GetCloud(){return m_Cloud;};
+  mafVME* GetPickedVme(){return m_PickedVme;}
+  mafVMELandmarkCloud* GetCloud(){return m_Cloud;}
 
-  void SetLandmarkName(mafString name){m_LandmarkName = name;};
+  void SetLandmarkName(mafString name){m_LandmarkName = name;}
 
 protected:
 	/** Create the AddLandmarks interface. */
@@ -102,11 +102,11 @@ protected:
 	int m_AddToCurrentTime;
   int m_LocalCoords;
 
-  mafVMELandmarkCloud	*m_Cloud;
+  std::shared_ptr<mafVMELandmarkCloud> m_CreatedCloud;
+	mafVMELandmarkCloud *m_Cloud;
 	mafVME      				*m_PickedVme;
-  std::vector<mafVMELandmark *> m_LandmarkAdded;
+  std::vector<std::shared_ptr<mafVMELandmark> > m_LandmarkAdded;
 	 
-	bool                 m_CloudCreatedFlag;
 	bool                 m_PickingActiveFlag;
 	mafString						 m_LandmarkName;
 	std::shared_ptr<mafInteractorPicker>           m_LandmarkPicker;

@@ -55,7 +55,7 @@ mafCxxTypeMacro(lhpOpINPImporter);
 //----------------------------------------------------------------------------
 {
   for(unsigned i = 0; i < m_Surfaces.size(); i++)
-    mafDEL(m_Surfaces[i]);
+    m_Surfaces[i].reset();
 }
 //----------------------------------------------------------------------------
 mafOp * lhpOpINPImporter::Copy()
@@ -93,14 +93,13 @@ void  lhpOpINPImporter::ImportData()
 //----------------------------------------------------------------------------
 {
   for(unsigned i = 0; i < m_Surfaces.size(); i++)
-    mafDEL(m_Surfaces[i]);
+    m_Surfaces[i].reset();
   m_Surfaces.clear();
   for(unsigned i = 0; i < m_Files.size(); i++)
   {
     if(m_Files[i].empty())
       continue;
     mafINPReader  *reader = mafINPReader::New();
-    mafVMESurface *surface;
 
     reader->SetFileName(m_Files[i].GetCStr());
     mafString path, name, ext;
@@ -110,8 +109,8 @@ void  lhpOpINPImporter::ImportData()
     reader->Update();
 
     mafTimeStamp t;
-    t = ((mafVME *)GetInput())->GetTimeStamp();
-    mafNEW(surface);
+    t = mafVME::StaticDownCast(GetInput())->GetTimeStamp();
+    auto surface = mafVMESurface::NewSPtr();
     surface->SetName(name);
     vtkPolyData *data = reader->GetOutput();
     surface->SetData(data,t);
@@ -135,8 +134,7 @@ void lhpOpINPImporter::OpDo()
   {
     if (m_Surfaces[i])
     {
-      m_Surfaces[i]->ReparentTo(GetInput());
-      {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_Surfaces[i]); InvokeEvent(evUnq);}
+      mafNode::ReparentTo(m_Surfaces[i], GetInput().get());
     }
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
@@ -150,7 +148,7 @@ void lhpOpINPImporter::OpUndo()
   {
     if (m_Surfaces[i])
     {
-      {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Surfaces[i]); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Surfaces[i].get()); InvokeEvent(evUnq);}
     }
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}

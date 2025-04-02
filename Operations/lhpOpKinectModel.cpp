@@ -35,7 +35,6 @@
 #include "medOpImporterLandmark.h"
 #include "lhpOpKinectAFs.h"
 
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafMatrixVector.h"
 #include "mafDataVector.h"
 #include "mafVME.h"
@@ -72,7 +71,7 @@ class medOpImporterLandmarkAcc : public medOpImporterLandmark
 public:
   mafTypeMacro(medOpImporterLandmarkAcc, medOpImporterLandmark);
   medOpImporterLandmarkAcc(const mafString& label = _R("")) : medOpImporterLandmark(label){}
-  std::vector<mafVME*>& GetResults(){return m_Results;}
+  std::vector<std::shared_ptr<mafVME> >& GetResults(){return m_Results;}
 };
 
 mafCxxTypeMacro(medOpImporterLandmarkAcc)
@@ -224,7 +223,7 @@ void lhpOpKinectModel::OpDo()
 
   for(unsigned i = 0; i < m_Imported.size(); i++)
   {
-    m_Imported[i]->ReparentTo(GetInput()->GetParent());
+    mafNode::ReparentTo(m_Imported[i], GetInput()->GetParent());
   }
 }
 
@@ -234,7 +233,7 @@ void lhpOpKinectModel::OpUndo()
 {
   for(unsigned i = 0; i < m_Imported.size(); i++)
   {
-    m_Imported[i]->ReparentTo(NULL);
+    mafNode::ReparentTo(m_Imported[i], nullptr);
   }
 }
 //----------------------------------------------------------------------------
@@ -261,7 +260,7 @@ bool lhpOpKinectModel::Import()
     return false;
 
   std::vector<mafTimeStamp> timeStamps;
-  mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(GetInput());
+  auto cloud = mafVMELandmarkCloud::SafeDownCast(GetInput());
   cloud->GetTimeStamps(timeStamps);
   int    numframes = timeStamps.size();
 
@@ -404,7 +403,7 @@ bool lhpOpKinectModel::Import()
                        _R("R_Thg2.txt"),
                        _R("R_Thg3.txt"),
                        _R("Pelvis.txt")};
-  mafVMEGroup *grp = NULL;
+  std::shared_ptr<mafVMEGroup> grp;
   for(int i = 0; i < DIM(files); i++)
   {
     mafString fpath;
@@ -415,15 +414,15 @@ bool lhpOpKinectModel::Import()
     medOpImporterLandmarkAcc *imp = new medOpImporterLandmarkAcc();
     imp->SetFileName(fpath.GetCStr());
     imp->Read();
-    std::vector<mafVME*>& res = imp->GetResults();
-    if(grp == NULL && !res.empty())
+    auto& res = imp->GetResults();
+    if(grp == nullptr && !res.empty())
     {
-      mafNEW(grp);
+      grp = mafVMEGroup::NewSPtr();
       grp->SetName(_R("KinectModel"));
     }
     for(auto it = res.begin(); it != res.end(); ++it)
     {
-      (*it)->ReparentTo(grp);
+      mafNode::ReparentTo((*it), grp.get());
     }
     delete imp;
   }
@@ -438,7 +437,7 @@ void lhpOpKinectModel::Clear()
 {
   for(unsigned i = 0; i < m_Imported.size(); i++)
   {
-    mafDEL(m_Imported[i]);
+    m_Imported[i].reset();
   }
   m_Imported.clear();
 }

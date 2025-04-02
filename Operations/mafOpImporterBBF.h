@@ -51,6 +51,6 @@ protected:
   mafString m_File;
   mafString m_FileDir;
   
-  mafVMEVolumeLarge *m_VmeLarge;
+  std::shared_ptr<mafVMEVolumeLarge> m_VmeLarge;
 };
 #endif

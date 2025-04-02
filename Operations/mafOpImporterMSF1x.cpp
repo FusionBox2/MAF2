@@ -46,7 +46,6 @@ mafOpImporterMSF1x::mafOpImporterMSF1x(const mafString& label) : Superclass(labe
   m_OpType  = OPTYPE_IMPORTER;
 	m_Canundo = true;
 	m_File    = _R("");
-  m_Group   = NULL;
 
   m_FileDir = _R("");//mafGetApplicationDirectory().c_str();
 }
@@ -54,7 +53,7 @@ mafOpImporterMSF1x::mafOpImporterMSF1x(const mafString& label) : Superclass(labe
 mafOpImporterMSF1x::~mafOpImporterMSF1x( ) 
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_Group);
+  m_Group.reset();
 }
 //----------------------------------------------------------------------------
 mafOp* mafOpImporterMSF1x::Copy()   
@@ -105,22 +104,22 @@ void mafOpImporterMSF1x::ImportMSF()
   if(!success)
     mafErrorMessage(_M("I/O Error importing MSF file."));
 
-  mafVMERoot *root = mafVMERoot::SafeDownCast(manager.GetRoot());
+  auto root = mafVMERoot::SafeDownCast(manager.GetRoot());
 
   mafString path, name, ext;
   mafSplitPath(m_File,&path,&name,&ext);
   mafString group_name = _R("imported from ") + name + _R(".") + ext;
 
-  mafNEW(m_Group);
+  m_Group = mafVMEGroup::NewSPtr();
   m_Group->SetName(group_name);
-  m_Group->ReparentTo(GetInput());
+  mafNode::ReparentTo(m_Group, GetInput().get());
 
-  while (mafNode *node = root->GetFirstChild())
+  while (auto node = root->GetFirstChild())
   {
-    node->ReparentTo(m_Group);
+    mafNode::ReparentTo(node, m_Group.get());
 
     // Losi 03/16/2010 Bug #2049 fix
-    mafVMEGeneric *vme = mafVMEGeneric::SafeDownCast(node);
+    auto vme = mafVMEGeneric::SafeDownCast(node);
     if(vme)
     {
       // Update data vector id to avoid duplicates

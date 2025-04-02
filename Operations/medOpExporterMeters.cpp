@@ -223,14 +223,14 @@ void medOpExporterMeters::ExportTypeOfMeters()
   std::unique_ptr<mafNodeIterator> iter;
   if(m_SubTreeExportMeter == TRUE)
   {
-    iter = GetInput()->NewIterator();
+    iter = std::make_unique<mafNodeIterator>(GetInput().get());
   }
   else
   {
-    iter = GetInput()->GetRoot()->NewIterator();
+    iter = std::make_unique<mafNodeIterator>(GetInput()->GetRoot());
   }
   
-  for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+  for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {
     m_CurrentVme = node;
     if((m_ExportRadio == VME_CLASSIC_METERS || m_ExportRadio == VME_ALL_METERS) && node->IsA("mafVMEMeter"))
@@ -255,7 +255,7 @@ void medOpExporterMeters::ExportTypeOfMeters()
 void medOpExporterMeters::ExportSelectedMeter()
 //----------------------------------------------------------------------------
 {
-  m_Meters.push_back(GetInput());
+  m_Meters.push_back(GetInput().get());
   ExportMeter();
   m_Meters.clear();
 }
@@ -269,7 +269,7 @@ void medOpExporterMeters::ExportMeter()
     wait = new wxBusyInfo("Please wait, Exporting...");
   }
 
-  mafVMERoot *root = ((mafVMERoot*)m_Meters[0]->GetRoot());
+  mafVMERoot *root = mafVMERoot::StaticDownCast(m_Meters[0]->GetRoot());
   root->GetTimeStamps(m_Times);
 
   for(int j=0; j< m_Times.size(); j++)
@@ -305,7 +305,7 @@ void medOpExporterMeters::ExportClassicMeterCoordinates(int index, int indexTime
 //----------------------------------------------------------------------------
 {
   //classic meter
-  mafVMEMeter *vmeMeter =  mafVMEMeter::SafeDownCast(m_CurrentVme);
+  auto vmeMeter =  mafVMEMeter::SafeDownCast(m_CurrentVme);
   //vmeMeter->GetOutput()->GetVTKData()->Modified();
   //vmeMeter->GetOutput()->GetVTKData()->Update();
   vmeMeter->Modified();

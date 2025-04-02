@@ -37,7 +37,6 @@
 
 #include "mafInteractorGenericMouse.h"
 
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafTransform.h"
 #include "mafMatrix.h"
 #include "mafVME.h"
@@ -102,10 +101,10 @@ void medOpScaleDataset::OpRun()
   }
 
   assert(GetInput());
-  m_CurrentTime = ((mafVME *)GetInput())->GetTimeStamp();
+  m_CurrentTime = mafVME::StaticDownCast(GetInput())->GetTimeStamp();
 
-  m_NewAbsMatrix = *((mafVME *)GetInput())->GetOutput()->GetAbsMatrix();
-  m_OldAbsMatrix = *((mafVME *)GetInput())->GetOutput()->GetAbsMatrix();
+  m_NewAbsMatrix = *mafVME::StaticDownCast(GetInput())->GetOutput()->GetAbsMatrix();
+  m_OldAbsMatrix = *mafVME::StaticDownCast(GetInput())->GetOutput()->GetAbsMatrix();
 
   if (!m_TestMode)
   {
@@ -147,7 +146,7 @@ void medOpScaleDataset::OpDo()
 void medOpScaleDataset::OpUndo()
 //----------------------------------------------------------------------------
 {  
-	((mafVME *)GetInput())->SetAbsMatrix(m_OldAbsMatrix);
+  mafVME::StaticDownCast(GetInput())->SetAbsMatrix(m_OldAbsMatrix);
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);} 
 }
 //----------------------------------------------------------------------------
@@ -227,7 +226,7 @@ void medOpScaleDataset::OnEventGizmoScale(mafEventBase *maf_event)
 	{
     case ID_TRANSFORM:
   	{ 
-      m_NewAbsMatrix = *((mafVME *)GetInput())->GetOutput()->GetAbsMatrix();
+      m_NewAbsMatrix = *mafVME::StaticDownCast(GetInput())->GetOutput()->GetAbsMatrix();
       {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 	  }
     break;
@@ -302,7 +301,7 @@ void medOpScaleDataset::CreateGui()
 
   if(this->m_RefSysVME == NULL)
   {
-    SetRefSysVME(mafVME::SafeDownCast(GetInput()));
+    SetRefSysVME(mafVME::SafeDownCast(GetInput()).get());
     m_RefSysVMEName = GetInput()->GetName();
   }
   m_Gui->Label(_R("refsys name: "),&m_RefSysVMEName);
@@ -327,8 +326,8 @@ void medOpScaleDataset::CreateGui()
 void medOpScaleDataset::Reset()
 //----------------------------------------------------------------------------
 {
-  ((mafVME *)GetInput())->SetAbsMatrix(m_OldAbsMatrix);  
-  SetRefSysVME(mafVME::SafeDownCast(GetInput())); 
+  mafVME::StaticDownCast(GetInput())->SetAbsMatrix(m_OldAbsMatrix);
+  SetRefSysVME(mafVME::SafeDownCast(GetInput()).get()); 
   {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 

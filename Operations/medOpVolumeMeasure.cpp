@@ -27,7 +27,6 @@
 #include "mafEvent.h"
 #include "mafGUI.h"
 
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafVME.h"
 #include "mafVMESurface.h"
 #include "mafTagItem.h"
@@ -97,7 +96,7 @@ enum ID_VOLUME_MEASURE
 void medOpVolumeMeasure::OpRun()   
 //----------------------------------------------------------------------------
 {
-  m_VmeSurface = (mafVME*)GetInput();
+  m_VmeSurface = mafVME::StaticDownCast(GetInput()).get();
 
 	wxString measure[3] = {_("points"), _("lines"), _("angle")};
 

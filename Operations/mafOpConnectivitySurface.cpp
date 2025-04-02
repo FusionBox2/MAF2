@@ -68,7 +68,7 @@ mafOpConnectivitySurface::~mafOpConnectivitySurface()
 	vtkDEL(m_OriginalPolydata);
 	for(int numVmes=0;numVmes<m_ExtractedVmes.size();numVmes++)
 	{
-		mafDEL(m_ExtractedVmes[numVmes]);
+		m_ExtractedVmes[numVmes].reset();
 	}
 	m_ExtractedVmes.clear();
 }
@@ -172,7 +172,7 @@ void mafOpConnectivitySurface::OpRun()
 //----------------------------------------------------------------------------
 {  	
 	vtkNEW(m_OriginalPolydata);
-	m_OriginalPolydata->DeepCopy((vtkPolyData*)((mafVME *)GetInput())->GetOutput()->GetVTKData());
+	m_OriginalPolydata->DeepCopy((vtkPolyData*)mafVME::StaticDownCast(GetInput())->GetOutput()->GetVTKData());
 	
 	// interface:
   if(!m_TestMode)
@@ -185,14 +185,14 @@ void mafOpConnectivitySurface::OpDo()
 //----------------------------------------------------------------------------
 {
 	for(int vmeShowed = 0; vmeShowed < m_ExtractedVmes.size(); vmeShowed++)
-		m_ExtractedVmes[vmeShowed]->ReparentTo(GetInput());
+		mafNode::ReparentTo(m_ExtractedVmes[vmeShowed], GetInput().get());
 }
 //----------------------------------------------------------------------------
 void mafOpConnectivitySurface::OpUndo()
 //----------------------------------------------------------------------------
 {
 	for(int vmeShowed = 0; vmeShowed < m_ExtractedVmes.size(); vmeShowed++)
-		m_ExtractedVmes[vmeShowed]->ReparentTo(NULL);
+		mafNode::ReparentTo(m_ExtractedVmes[vmeShowed], nullptr);
 }
 //----------------------------------------------------------------------------
 void mafOpConnectivitySurface::OnEvent(mafEventBase *maf_event)
@@ -241,7 +241,7 @@ void mafOpConnectivitySurface::OpStop(int result)
 	{
 		for(int numVmes = 0; numVmes < m_ExtractedVmes.size(); numVmes++)
 		{
-			mafDEL(m_ExtractedVmes[numVmes]);
+			m_ExtractedVmes[numVmes].reset();
 		}
 		m_ExtractedVmes.clear();
 	}
@@ -261,7 +261,7 @@ void mafOpConnectivitySurface::OnVtkConnect()
 
 	for(int numVmes = 0; numVmes < m_ExtractedVmes.size(); numVmes++)
 	{
-    mafDEL(m_ExtractedVmes[numVmes]);
+    m_ExtractedVmes[numVmes].reset();
 	}
 	m_ExtractedVmes.clear();
 
@@ -322,8 +322,7 @@ void mafOpConnectivitySurface::OnVtkConnect()
       clean->SetInputConnection(connectivityFilter->GetOutputPort());
       clean->Update();
 
-			mafVMESurface *surf;
-			mafNEW(surf);
+			auto surf = mafVMESurface::NewSPtr();
 			surf->SetData(clean->GetOutput(),surf->GetTimeStamp());
 			surf->SetName(mafString::Format(_R("%d_extr"),region));
 			m_ExtractedVmes.push_back(surf);

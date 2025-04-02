@@ -50,22 +50,21 @@ mafCxxTypeMacro(lhpOpCutSurface);
 {
   m_OpType     = OPTYPE_OP;
   m_Canundo    = true;
-  m_OutSurface = NULL;
 }
 //----------------------------------------------------------------------------
  lhpOpCutSurface::~lhpOpCutSurface()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_OutSurface);
+  m_OutSurface.reset();
 }  
 
 //----------------------------------------------------------------------------
 bool lhpOpCutSurface::Accept(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-  if(vme == NULL)
+  if(vme == nullptr)
     return false;
-  if(mafVME::SafeDownCast(vme)== NULL)
+  if(mafVME::SafeDownCast(vme)== nullptr)
     return false;
   return mafVME::SafeDownCast(vme)->GetOutput()->IsMAFType(mafVMEOutputSurface);
 }
@@ -334,8 +333,8 @@ void lhpOpCutSurface::OpStop(int result)
   newPolys->Delete();
 
   mafTimeStamp t;
-  t = ((mafVME *)GetInput())->GetTimeStamp();
-  mafNEW(m_OutSurface);
+  t = mafVME::StaticDownCast(GetInput())->GetTimeStamp();
+  m_OutSurface = mafVMESurface::NewSPtr();
   m_OutSurface->SetName(_R("cutted"));
   m_OutSurface->SetData(output,t);
 
@@ -379,7 +378,7 @@ void lhpOpCutSurface::OpDo()
 {
   if(m_OutSurface)
   {
-    m_OutSurface->ReparentTo(GetInput()->GetRoot());
+    mafNode::ReparentTo(m_OutSurface, GetInput()->GetRoot());
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
@@ -390,7 +389,7 @@ void lhpOpCutSurface::OpUndo()
 {
   if(m_OutSurface)
   {
-    m_OutSurface->ReparentTo(NULL);
+    mafNode::ReparentTo(m_OutSurface, nullptr);
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }

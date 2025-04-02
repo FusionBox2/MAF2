@@ -1,21 +1,4 @@
-/*=========================================================================
-
- Program: MAF2Medical
- Module: medOpSplitSurface
- Authors: Paolo Quadrani , Stefano Perticoni
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __medOpSplitSurface_H__
-#define __medOpSplitSurface_H__
+#pragma once
 
 //----------------------------------------------------------------------------
 // Include :
@@ -135,9 +118,9 @@ protected:
 	void ClipBoundingBox();
 
   mafVMESurface   *m_ClipperVME;
-	mafVMESurface   *m_ClippedVME;
+	std::shared_ptr<mafVMESurface> m_ClippedVME;
 
-  mafVMEGizmo     *m_ImplicitPlaneGizmo;
+  std::shared_ptr<mafVMEGizmo>     m_ImplicitPlaneGizmo;
   vtkPlane        *m_ClipperPlane;
   vtkClipPolyData *m_Clipper;
 	vtkMAFClipSurfaceBoundingBox	*m_ClipperBoundingBox;
@@ -170,4 +153,3 @@ protected:
 	mafGizmoRotate			*m_GizmoRotate;
 	mafGizmoScale				*m_GizmoScale;
 };
-#endif

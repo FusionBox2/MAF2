@@ -63,7 +63,7 @@ protected:
   void OpStop(int result) override;
 
   int                            m_Radio;
-  mafVMEAFRefSys                 *m_RefSys;
+  std::shared_ptr<mafVMEAFRefSys>                 m_RefSys;
   mafString                       m_ScriptFName;
   std::vector<PredefinedScripts>  m_predefinedScripts;
 };

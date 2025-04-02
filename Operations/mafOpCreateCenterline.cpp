@@ -1,28 +1,3 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafOpCreateCenterLine
- Authors: Taha Jerbi
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-
 #include "mafOpCreateCenterline.h"
 #include "mafDecl.h"
 #include "mafEvent.h"
@@ -30,26 +5,16 @@
 #include "mafVMECenterLine.h"
 
 //----------------------------------------------------------------------------
-// Constants :
-//----------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(mafOpCreateCenterLine);
-//----------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------
 mafOpCreateCenterLine::mafOpCreateCenterLine(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType	= OPTYPE_OP;
   m_Canundo = true;
-  m_Meter   = NULL;
 }
 //----------------------------------------------------------------------------
 mafOpCreateCenterLine::~mafOpCreateCenterLine()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_Meter);
 }
 //----------------------------------------------------------------------------
 mafOp* mafOpCreateCenterLine::Copy()
@@ -68,14 +33,8 @@ bool mafOpCreateCenterLine::Accept(mafNode *node)
 void mafOpCreateCenterLine::OpRun()
 //----------------------------------------------------------------------------
 {
-  mafNEW(m_Meter);
-  m_Meter->SetName(_R("center_line"));
-  SetOutput(m_Meter);
+  auto centerLine = mafVMECenterLine::NewSPtr();
+  centerLine->SetName(_R("center_line"));
+  SetOutput(centerLine);
   {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
-}
-//----------------------------------------------------------------------------
-void mafOpCreateCenterLine::OpDo()
-//----------------------------------------------------------------------------
-{
-  m_Meter->ReparentTo(GetInput());
 }

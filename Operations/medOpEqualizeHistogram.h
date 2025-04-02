@@ -80,8 +80,8 @@ protected:
   double m_Beta;
   int m_Radius[3];
 
-  mafVMEVolumeGray *m_VolumeInput;
-  mafVMEVolumeGray *m_VolumeOutput;
+  std::shared_ptr<mafVMEVolumeGray> m_VolumeInput;
+  std::shared_ptr<mafVMEVolumeGray> m_VolumeOutput;
 
   mafGUIDialog *m_Dialog;
   mafGUIHistogramWidget *m_Histogram;

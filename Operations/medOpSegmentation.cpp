@@ -102,6 +102,7 @@
 #include "medViewSliceNotInterpolated.h"
 #include "mafTagItem.h"
 #include "mafNode.h"
+#include "medAttributeSegmentationVolume.h"
 
 
 #include "vtkMEDVolumeToClosedSmoothSurface.h"
@@ -182,8 +183,6 @@ medOpSegmentation::medOpSegmentation(const mafString &label) : mafOp(label)
   m_OldVolumeParent = NULL;
 
   m_ThresholdVolume           = NULL;
-  m_OutputVolume              = NULL;
-  m_OutputSurface      =NULL;
 
   m_SER = NULL;
   m_DeviceManager = NULL;
@@ -194,8 +193,6 @@ medOpSegmentation::medOpSegmentation(const mafString &label) : mafOp(label)
     m_SegmentationOperationsRollOut[i] = NULL;
     m_SegmentationOperationsGui[i] = NULL;
   }
-
-  m_SegmentatedVolume = NULL;
 
   //////////////////////////////////////////////////////////////////////////
   //Manual initializations
@@ -212,13 +209,6 @@ medOpSegmentation::medOpSegmentation(const mafString &label) : mafOp(label)
   m_ManualRefinementComboBox = NULL;
   m_ManualRefinementRegionSizeText = NULL;
 
-  m_SegmentationPicker = NULL;
-
-  m_ManualVolumeMask = NULL;
-  m_ManualVolumeSlice = NULL;
-
-  m_ManualPER = NULL;
-  
   m_ManualUndoList.clear();
   m_ManualRedoList.clear();
 
@@ -238,13 +228,11 @@ medOpSegmentation::medOpSegmentation(const mafString &label) : mafOp(label)
   m_AutomaticScalarTextActor = NULL;
   m_AutomaticScalarTextMapper = NULL;
   m_AutomaticRangeSlider = NULL;
-  m_AutomaticPER = NULL;
   m_AutomaticGlobalThreshold = GLOBAL;
 
   //////////////////////////////////////////////////////////////////////////
   //Refinement initializations
   //////////////////////////////////////////////////////////////////////////
-  m_RefinementVolumeMask = NULL;
 
   m_RefinementUndoList.clear();
   m_RefinementRedoList.clear();
@@ -260,10 +248,6 @@ medOpSegmentation::medOpSegmentation(const mafString &label) : mafOp(label)
   m_RealDrawnImage = NULL;
   m_CurrentBrushMoveEventCount = 0;
 
-  m_ThresholdVolumeSlice = NULL;
-  m_EmptyVolumeSlice = NULL;
-
-  m_LoadedVolume = NULL;
   m_LastMouseMovePointID = 0;
 
   m_LoadedVolumeName = _R("[Select input volume]");
@@ -289,9 +273,9 @@ medOpSegmentation::~medOpSegmentation()
 
   RemoveVMEs();
 
-  mafDEL(m_OutputVolume);
-  mafDEL(m_OutputSurface);
-  mafDEL(m_SegmentatedVolume);
+  m_OutputVolume.reset();
+  m_OutputSurface.reset();
+  m_SegmentatedVolume.reset();
 
   Superclass;
 }
@@ -353,10 +337,10 @@ void medOpSegmentation::OpRun()
   InitGui();
 
   m_OldVolumeParent = m_Volume->GetParent();
-  m_Volume->ReparentTo(m_Volume->GetRoot());
+  mafNode::ReparentTo(m_Volume, m_Volume->GetRoot());
 
   m_View->VmeAdd(m_Volume);
-  m_View->VmeShow(m_Volume, true);
+  m_View->VmeShow(m_Volume.get(), true);
   //m_View->VmeCreatePipe(m_Volume);
   //m_View->UpdateSlicePos(0.0);
   m_View->CameraReset();
@@ -376,7 +360,7 @@ void medOpSegmentation::OpRun()
 void medOpSegmentation::OpDo()
 //----------------------------------------------------------------------------
 {
-  mafVMEVolumeGray *targetVolume = NULL;
+  std::shared_ptr<mafVMEVolumeGray> targetVolume;
   switch (m_CurrentOperation)
   {
     case  AUTOMATIC_SEGMENTATION:
@@ -407,9 +391,9 @@ void medOpSegmentation::OpDo()
   { 
     if (!m_OutputVolume)
     {
-      mafNEW(m_OutputVolume);
+      m_OutputVolume = mafVMEVolumeGray::NewSPtr();
     }
-    m_OutputVolume->DeepCopy(targetVolume);
+    m_OutputVolume->DeepCopy(targetVolume.get());
 // 
 //     if(m_LoadedVolume)
 //     {
@@ -424,14 +408,14 @@ void medOpSegmentation::OpDo()
   //Eliminate previous outputs
   //DeleteOutputs(GetInput()->GetRoot());
   //Replace the loaded output
-  if(m_LoadedVolume != NULL)
+  if(m_LoadedVolume)
   {
-    mafNode *previousSurface = m_LoadedVolume->GetParent();
-    m_LoadedVolume->ReparentTo(NULL);
-    m_LoadedVolume = NULL;
+    auto previousSurface = m_LoadedVolume->GetParent()->SharedFromThis();
+    mafNode::ReparentTo(m_LoadedVolume, nullptr);
+    m_LoadedVolume = nullptr;
 
-    if(previousSurface != NULL)
-      previousSurface->ReparentTo(NULL);
+    if(previousSurface)
+      mafNode::ReparentTo(previousSurface, nullptr);
   }
 
   m_OutputVolume->SetName(_R("Segmentation Output (") + m_Volume->GetName() + _R(")"));
@@ -473,10 +457,10 @@ void medOpSegmentation::OpDo()
   surface=volToSurface->GetOutput();
 
   //Generating Surface VME
-  mafNEW(m_OutputSurface);
+  m_OutputSurface = mafVMESurface::NewSPtr();
   m_OutputSurface->SetName(_R("Segmentation Surface (") + m_Volume->GetName() + _R(")"));
   m_OutputSurface->SetData(surface,mafVMEVolumeGray::SafeDownCast(GetInput())->GetTimeStamp());
-  m_OutputSurface->ReparentTo(GetInput());
+  mafNode::ReparentTo(m_OutputSurface, GetInput().get());
   m_OutputSurface->Modified();
   
   vtkDEL(surface);
@@ -501,7 +485,7 @@ void medOpSegmentation::OpDo()
   //The result tree is Input
   //                     |-Surface
   //                          |-Binary volume
-  m_OutputVolume->ReparentTo(m_OutputSurface);
+  mafNode::ReparentTo(m_OutputVolume, m_OutputSurface.get());
 
   SetOutput(m_OutputSurface);
 
@@ -514,14 +498,14 @@ void medOpSegmentation::OpDo()
 void medOpSegmentation::DeleteOutputs(mafNode* vme)
   //----------------------------------------------------------------------------
 {
-  const  mafNode::mafChildrenVector *children = vme->GetChildren();
+  auto children = vme->GetChildren();
   for(int i = 0; i < children->size(); i++)
   {
-    mafNode *child = children->at(i).get();
-    DeleteOutputs(child);
-    if(IsOutput(child))
+    auto child = children->at(i);
+    DeleteOutputs(child.get());
+    if(IsOutput(child.get()))
     {
-      child->ReparentTo(NULL);
+      mafNode::ReparentTo(child, nullptr);
     }
   }
 }
@@ -547,13 +531,13 @@ void medOpSegmentation::OpUndo()
 {
   if (m_OutputVolume)
   {
-    m_OutputVolume->ReparentTo(NULL);
-    mafDEL(m_OutputVolume);
+    mafNode::ReparentTo(m_OutputVolume, nullptr);
+    m_OutputVolume.reset();
   }
   if (m_OutputSurface)
   {
-    m_OutputSurface->ReparentTo(NULL);
-    mafDEL(m_OutputVolume);
+    mafNode::ReparentTo(m_OutputSurface, nullptr);
+    m_OutputVolume.reset();
   }
 //   if (m_SegmentatedVolume)
 //   {
@@ -569,37 +553,37 @@ void medOpSegmentation::RemoveVMEs()
 
   if(m_ManualVolumeSlice)
   {
-    m_ManualVolumeSlice->ReparentTo(NULL);
-    mafDEL(m_ManualVolumeSlice);
+    mafNode::ReparentTo(m_ManualVolumeSlice, nullptr);
+    m_ManualVolumeSlice.reset();
   }
 
   if(m_ThresholdVolume)
   {
-    m_ThresholdVolume->ReparentTo(NULL);
-    mafDEL(m_ThresholdVolume);
+    mafNode::ReparentTo(m_ThresholdVolume, nullptr);
+    m_ThresholdVolume.reset();
   }
   
   if(m_ManualVolumeMask)
   {
-    m_ManualVolumeMask->ReparentTo(NULL);
-    mafDEL(m_ManualVolumeMask);
+    mafNode::ReparentTo(m_ManualVolumeMask, nullptr);
+    m_ManualVolumeMask.reset();
   }
 
   if(m_RefinementVolumeMask)
   {
-    m_RefinementVolumeMask->ReparentTo(NULL);
-    mafDEL(m_RefinementVolumeMask);
+    mafNode::ReparentTo(m_RefinementVolumeMask, nullptr);
+    m_RefinementVolumeMask.reset();
   }
 
   if(m_ThresholdVolumeSlice)
   {
-    m_ThresholdVolumeSlice->ReparentTo(NULL);
-    mafDEL(m_ThresholdVolumeSlice);
+    mafNode::ReparentTo(m_ThresholdVolumeSlice, nullptr);
+    m_ThresholdVolumeSlice.reset();
   }
   if(m_EmptyVolumeSlice)
   {
-    m_EmptyVolumeSlice->ReparentTo(NULL);
-    mafDEL(m_EmptyVolumeSlice);
+    mafNode::ReparentTo(m_EmptyVolumeSlice, nullptr);
+    m_EmptyVolumeSlice.reset();
   }
 }
 //----------------------------------------------------------------------------
@@ -615,8 +599,8 @@ void medOpSegmentation::OpStop(int result)
     RemoveVMEs();
     if (m_SegmentatedVolume)
     {
-      m_SegmentatedVolume->ReparentTo(NULL);
-      mafDEL(m_SegmentatedVolume);
+      mafNode::ReparentTo(m_SegmentatedVolume, nullptr);
+      m_SegmentatedVolume.reset();
     }
   }
 
@@ -650,7 +634,7 @@ void medOpSegmentation::CreateOpDialog()
   m_View->Create();
   m_View->GetGui();
 
-  m_View->VmeAdd(GetInput()->GetRoot()); //add Root
+  m_View->VmeAdd(GetInput()->GetRoot()->SharedFromThis()); //add Root
 
   //////////////////////////////////////////////////////////////////////////
   //Label to indicate the threshold of the slice
@@ -845,29 +829,29 @@ void medOpSegmentation::DeleteOpDialog()
   
   if (m_ThresholdVolume)
   {
-    m_View->VmeShow(m_ThresholdVolume,false);
-    m_View->VmeRemove(m_ThresholdVolume);
+    m_View->VmeShow(m_ThresholdVolume.get(),false);
+    m_View->VmeRemove(m_ThresholdVolume.get());
   }
   if(m_ManualVolumeSlice)
   {
-    m_View->VmeShow(m_ManualVolumeSlice,false);
-    m_View->VmeRemove(m_ManualVolumeSlice);
+    m_View->VmeShow(m_ManualVolumeSlice.get(),false);
+    m_View->VmeRemove(m_ManualVolumeSlice.get());
   }
   if(m_ThresholdVolumeSlice)
   {
-    m_View->VmeShow(m_ThresholdVolumeSlice,false);
-    m_View->VmeRemove(m_ThresholdVolumeSlice);
+    m_View->VmeShow(m_ThresholdVolumeSlice.get(),false);
+    m_View->VmeRemove(m_ThresholdVolumeSlice.get());
   }
   if(m_EmptyVolumeSlice)
   {
-    m_View->VmeShow(m_EmptyVolumeSlice,false);
-    m_View->VmeRemove(m_EmptyVolumeSlice);
+    m_View->VmeShow(m_EmptyVolumeSlice.get(),false);
+    m_View->VmeRemove(m_EmptyVolumeSlice.get());
   }
   if(m_LoadedVolume)
   {
-    mafNode *parent = m_LoadedVolume;
+    mafVME *parent = m_LoadedVolume.get();
 
-    while(parent != m_Volume)
+    while(parent != m_Volume.get())
     {
       m_View->VmeShow(parent,false);
       m_View->VmeRemove(parent);
@@ -878,8 +862,8 @@ void medOpSegmentation::DeleteOpDialog()
   //m_Volume->ReparentTo(m_OldVolumeParent);
   m_Volume->SetBehavior(m_OldBehavior);
   m_Volume->Update();
-  m_View->VmeShow(m_Volume,false);
-  m_View->VmeRemove(m_Volume);
+  m_View->VmeShow(m_Volume.get(),false);
+  m_View->VmeRemove(m_Volume.get());
 
   //////////////////////////////////////////////////////////////////////////
   //Remove the threshold label
@@ -1034,7 +1018,7 @@ void medOpSegmentation::FloodFill(vtkIdType seed)
     m_ManualVolumeMask->Update();
 
     UpdateSlice();
-    m_View->VmeShow(m_ManualVolumeSlice,true);
+    m_View->VmeShow(m_ManualVolumeSlice.get(),true);
 
     CreateRealDrawnImage();
     OnEventUpdateManualSlice();
@@ -1097,7 +1081,7 @@ void medOpSegmentation::FloodFill(vtkIdType seed)
     m_ManualVolumeSlice->GetOutput()->GetVTKData()->GetPointData()->SetScalars(output->GetPointData()->GetScalars());
     m_ManualVolumeSlice->Update();
 
-    m_View->VmeShow(m_ManualVolumeSlice,true);
+    m_View->VmeShow(m_ManualVolumeSlice.get(),true);
 
     CreateRealDrawnImage();
     OnEventUpdateManualSlice();
@@ -1273,7 +1257,7 @@ bool medOpSegmentation::Refinement()
     m_ProgressBar->Update();
 
     UpdateSlice();
-    m_View->VmeShow(m_RefinementVolumeMask, true);
+    m_View->VmeShow(m_RefinementVolumeMask.get(), true);
     m_View->CameraUpdate();
     m_GuiDialog->Update();
   }
@@ -1822,11 +1806,11 @@ void medOpSegmentation::InitGui()
 void medOpSegmentation::InitSegmentedVolume()
 //------------------------------------------------------------------------
 {
-  mafNEW(m_SegmentatedVolume);
-  m_SegmentatedVolume->SetVolumeLink(m_Volume);
+  m_SegmentatedVolume = medVMESegmentationVolume::NewSPtr();
+  m_SegmentatedVolume->SetVolumeLink(m_Volume.get());
   m_SegmentatedVolume->SetName(_R("Segmented Volume"));
   m_SegmentatedVolume->GetTagArray()->SetTag(mafTagItem(_R("VISIBLE_IN_THE_TREE"), 0.0));
-  m_SegmentatedVolume->ReparentTo(m_Volume->GetParent());
+  mafNode::ReparentTo(m_SegmentatedVolume, m_Volume->GetParent());
   m_SegmentatedVolume->SetDoubleThresholdModality(true);
   m_SegmentatedVolume->Update();
 }
@@ -1834,10 +1818,10 @@ void medOpSegmentation::InitSegmentedVolume()
 void medOpSegmentation::InitThresholdVolume()
 //------------------------------------------------------------------------
 {
-  mafNEW(m_ThresholdVolume);
-  m_ThresholdVolume->DeepCopy(m_Volume);
+  m_ThresholdVolume = mafVMEVolumeGray::NewSPtr();
+  m_ThresholdVolume->DeepCopy(m_Volume.get());
   m_ThresholdVolume->SetName(_R("Threshold Volume"));
-  m_ThresholdVolume->ReparentTo(m_Volume->GetParent());
+  mafNode::ReparentTo(m_ThresholdVolume, m_Volume->GetParent());
   m_ThresholdVolume->Update();
 
   m_View->VmeAdd(m_ThresholdVolume);
@@ -1850,18 +1834,18 @@ void medOpSegmentation::InitManualVolumeMask()
 //------------------------------------------------------------------------
 {
   if (!m_ManualVolumeMask)
-    mafNEW(m_ManualVolumeMask);
+    m_ManualVolumeMask = mafVMEVolumeGray::NewSPtr();
   if(m_LoadedVolume)
   {
-    m_ManualVolumeMask->DeepCopy(m_LoadedVolume);
+    m_ManualVolumeMask->DeepCopy(m_LoadedVolume.get());
   }
   else
   {
-    m_ManualVolumeMask->DeepCopy(m_ThresholdVolume);
+    m_ManualVolumeMask->DeepCopy(m_ThresholdVolume.get());
   }
   
   m_ManualVolumeMask->SetName(_R("Manual Volume Mask"));
-  m_ManualVolumeMask->ReparentTo(m_Volume->GetParent());
+  mafNode::ReparentTo(m_ManualVolumeMask, m_Volume->GetParent());
   m_ManualVolumeMask->Update();
 }
 
@@ -1871,17 +1855,17 @@ void medOpSegmentation::InitRefinementVolumeMask()
 {
   if (m_RefinementVolumeMask)
   {
-    m_View->VmeRemove(m_RefinementVolumeMask);
-    m_RefinementVolumeMask->ReparentTo(NULL);
-    mafDEL(m_RefinementVolumeMask);
+    m_View->VmeRemove(m_RefinementVolumeMask.get());
+    mafNode::ReparentTo(m_RefinementVolumeMask, nullptr);
+    m_RefinementVolumeMask.reset();
   }
 
-  mafNEW(m_RefinementVolumeMask);
+  m_RefinementVolumeMask = mafVMEVolumeGray::NewSPtr();;
 
-  m_RefinementVolumeMask->DeepCopy(m_ManualVolumeMask);
+  m_RefinementVolumeMask->DeepCopy(m_ManualVolumeMask.get());
   m_RefinementVolumeMask->SetName(_R("Refinement Volume Mask"));
   
-  m_RefinementVolumeMask->ReparentTo(m_Volume->GetParent());
+  mafNode::ReparentTo(m_RefinementVolumeMask, m_Volume->GetParent());
   vtkLookupTable *lut = m_RefinementVolumeMask->GetMaterial()->m_ColorLut;
   InitMaskColorLut(lut);
   lut->SetTableRange(0,255);
@@ -1908,7 +1892,7 @@ void medOpSegmentation::OnAutomaticStep()
   UpdateThresholdLabel();
   m_GuiDialog->Enable(ID_AUTO_SEGMENTATION,true);
   m_GuiDialog->Enable(ID_BUTTON_PREV,true);
-  if(m_LoadedVolume == NULL)
+  if(m_LoadedVolume == nullptr)
   {
     m_GuiDialog->Enable(ID_BUTTON_NEXT,true);
     m_OldAutomaticThreshold = MAXINT;
@@ -1921,7 +1905,7 @@ void medOpSegmentation::OnAutomaticStep()
   }
   else
   {
-    m_View->VmeShow(m_ThresholdVolume,false);
+    m_View->VmeShow(m_ThresholdVolume.get(),false);
 
     m_GuiDialog->Enable(ID_BUTTON_NEXT,true);
    
@@ -2023,7 +2007,7 @@ void medOpSegmentation::OnManualStep()
   //logic stuff
   UpdateVolumeSlice();
 
-  m_View->VmeShow(m_ManualVolumeSlice, true);
+  m_View->VmeShow(m_ManualVolumeSlice.get(), true);
   m_GuiDialog->Enable(ID_BUTTON_NEXT,true);
   m_CurrentBrushMoveEventCount = 0;
 
@@ -2052,12 +2036,12 @@ void medOpSegmentation::OnAutomaticStepExit()
 {
   if(m_ThresholdVolumeSlice)
   {
-    m_View->VmeShow(m_ThresholdVolumeSlice,false);
+    m_View->VmeShow(m_ThresholdVolumeSlice.get(),false);
   }
   if(m_EmptyVolumeSlice)
   {
-    m_EmptyVolumeSlice->ReparentTo(NULL);
-    mafDEL(m_EmptyVolumeSlice);
+    mafNode::ReparentTo(m_EmptyVolumeSlice, nullptr);
+    m_EmptyVolumeSlice.reset();
   }
 
   m_GuiDialog->Enable(ID_AUTO_SEGMENTATION,false);
@@ -2086,7 +2070,7 @@ void medOpSegmentation::OnManualStepExit()
   //apply residual changes
   ApplyVolumeSliceChanges(); 
   
-  m_View->VmeShow(m_ManualVolumeSlice, false);
+  m_View->VmeShow(m_ManualVolumeSlice.get(), false);
   m_GuiDialog->Enable(ID_MANUAL_SEGMENTATION,false);
 
   m_SnippetsLabel->SetLabel( _(""));
@@ -2108,7 +2092,7 @@ void medOpSegmentation::OnRefinementStep()
   InitRefinementVolumeMask();
   
   UpdateSlice();
-  m_View->VmeShow(m_RefinementVolumeMask, true);
+  m_View->VmeShow(m_RefinementVolumeMask.get(), true);
   m_View->CameraUpdate();
   m_GuiDialog->Update();
 }
@@ -2157,7 +2141,7 @@ void medOpSegmentation::OnNextStep()
         {
           InitManualVolumeMask();
           InitManualVolumeSlice();
-          m_View->VmeShow(m_LoadedVolume,false);
+          m_View->VmeShow(m_LoadedVolume.get(),false);
           UpdateSlice();
           m_View->CameraUpdate();
           m_GuiDialog->Update();
@@ -2174,7 +2158,7 @@ void medOpSegmentation::OnNextStep()
           //next step -> AUTOMATIC_SEGMENTATION 
           OnAutomaticStep();
           UpdateThresholdRealTimePreview();
-          m_View->VmeShow(m_ThresholdVolumeSlice,true);
+          m_View->VmeShow(m_ThresholdVolumeSlice.get(),true);
           m_View->CameraUpdate();
         }
       }
@@ -2187,7 +2171,7 @@ void medOpSegmentation::OnNextStep()
       m_GuiDialog->Enable(ID_AUTO_SEGMENTATION,false);
       InitManualVolumeMask();
       InitManualVolumeSlice();
-      m_View->VmeShow(m_ThresholdVolume,false);
+      m_View->VmeShow(m_ThresholdVolume.get(),false);
       UpdateSlice();
       m_View->CameraUpdate();
       m_GuiDialog->Update();
@@ -2207,7 +2191,7 @@ void medOpSegmentation::OnNextStep()
     {
       SaveRefinementVolumeMask();
       m_GuiDialog->Enable(ID_REFINEMENT,false);
-      m_View->VmeShow(m_RefinementVolumeMask,false);
+      m_View->VmeShow(m_RefinementVolumeMask.get(),false);
 
       //next step -> none
       //OnLoadSegmentationStep();
@@ -2259,7 +2243,7 @@ void medOpSegmentation::OnPreviousStep()
         m_SegmentationOperationsRollOut[m_CurrentOperation]->RollOut(false);
         m_CurrentOperation = AUTOMATIC_SEGMENTATION;
         //prev step -> LOAD_SEGMENTATION
-        m_View->VmeShow(m_LoadedVolume,true);
+        m_View->VmeShow(m_LoadedVolume.get(),true);
         OnLoadStep();
         m_View->CameraUpdate();
       }
@@ -2271,7 +2255,7 @@ void medOpSegmentation::OnPreviousStep()
         InitThresholdVolumeSlice();
         OnAutomaticStep();
         UpdateThresholdRealTimePreview();
-        m_View->VmeShow(m_ThresholdVolumeSlice,true);
+        m_View->VmeShow(m_ThresholdVolumeSlice.get(),true);
         m_View->CameraUpdate();
       }
     }
@@ -2279,7 +2263,7 @@ void medOpSegmentation::OnPreviousStep()
     case REFINEMENT_SEGMENTATION:
     {
       m_GuiDialog->Enable(ID_REFINEMENT,false);
-      m_View->VmeShow(m_RefinementVolumeMask,false);
+      m_View->VmeShow(m_RefinementVolumeMask.get(),false);
       OnManualStep();
     }
     break;
@@ -2450,14 +2434,14 @@ void medOpSegmentation::OnEvent(mafEventBase *maf_event)
           else if(m_CurrentOperation==LOAD_SEGMENTATION)
           {
             UpdateSlice();
-            m_View->VmeShow(m_LoadedVolume, true);
+            m_View->VmeShow(m_LoadedVolume.get(), true);
             m_View->CameraUpdate();
             m_GuiDialog->Update();
           }
           else if(m_CurrentOperation==REFINEMENT_SEGMENTATION)
           {
             UpdateSlice();
-            m_View->VmeShow(m_RefinementVolumeMask, true);
+            m_View->VmeShow(m_RefinementVolumeMask.get(), true);
             m_View->CameraUpdate();
             m_GuiDialog->Update();
           }
@@ -2509,14 +2493,14 @@ void medOpSegmentation::OnEvent(mafEventBase *maf_event)
         else if(m_CurrentOperation==LOAD_SEGMENTATION)
         {
           UpdateSlice();
-          m_View->VmeShow(m_LoadedVolume, true);
+          m_View->VmeShow(m_LoadedVolume.get(), true);
           m_View->CameraUpdate();
           m_GuiDialog->Update();
         }
         else if(m_CurrentOperation==REFINEMENT_SEGMENTATION)
         {
           UpdateSlice();
-          m_View->VmeShow(m_RefinementVolumeMask, true);
+          m_View->VmeShow(m_RefinementVolumeMask.get(), true);
           m_View->CameraUpdate();
           m_GuiDialog->Update();
         }
@@ -2562,14 +2546,14 @@ void medOpSegmentation::OnEvent(mafEventBase *maf_event)
         else if(m_CurrentOperation==LOAD_SEGMENTATION)
         {
           UpdateSlice();
-          m_View->VmeShow(m_LoadedVolume, true);
+          m_View->VmeShow(m_LoadedVolume.get(), true);
           m_View->CameraUpdate();
           m_GuiDialog->Update();
         }
         else if(m_CurrentOperation==REFINEMENT_SEGMENTATION)
         {
           UpdateSlice();
-          m_View->VmeShow(m_RefinementVolumeMask, true);
+          m_View->VmeShow(m_RefinementVolumeMask.get(), true);
           m_View->CameraUpdate();
           m_GuiDialog->Update();
         }
@@ -2613,14 +2597,14 @@ void medOpSegmentation::OnEvent(mafEventBase *maf_event)
         else if(m_CurrentOperation==LOAD_SEGMENTATION)
         {
           UpdateSlice();
-          m_View->VmeShow(m_LoadedVolume, true);
+          m_View->VmeShow(m_LoadedVolume.get(), true);
           m_View->CameraUpdate();
           m_GuiDialog->Update();
         }
         else if(m_CurrentOperation==REFINEMENT_SEGMENTATION)
         {
           UpdateSlice();
-          m_View->VmeShow(m_RefinementVolumeMask, true);
+          m_View->VmeShow(m_RefinementVolumeMask.get(), true);
           m_View->CameraUpdate();
           m_GuiDialog->Update();
         }
@@ -2669,14 +2653,14 @@ void medOpSegmentation::OnEvent(mafEventBase *maf_event)
         else if(m_CurrentOperation==LOAD_SEGMENTATION)
         {
           UpdateSlice();
-          m_View->VmeShow(m_LoadedVolume, true);
+          m_View->VmeShow(m_LoadedVolume.get(), true);
           m_View->CameraUpdate();
           m_GuiDialog->Update();
         }
         else if(m_CurrentOperation==REFINEMENT_SEGMENTATION)
         {
           UpdateSlice();
-          m_View->VmeShow(m_RefinementVolumeMask, true);
+          m_View->VmeShow(m_RefinementVolumeMask.get(), true);
           m_View->CameraUpdate();
           m_GuiDialog->Update();
         }
@@ -2757,7 +2741,7 @@ void medOpSegmentation::OnEvent(mafEventBase *maf_event)
           UpdateThresholdLabel();
           //UpdateSlice();
           UpdateThresholdRealTimePreview();
-          m_View->VmeShow(m_ThresholdVolumeSlice,true);
+          m_View->VmeShow(m_ThresholdVolumeSlice.get(),true);
           m_View->CameraUpdate();
         }
         //Windowing
@@ -2766,7 +2750,7 @@ void medOpSegmentation::OnEvent(mafEventBase *maf_event)
           double low, hi;
           m_LutSlider->GetSubRange(&low,&hi);
           m_ColorLUT->SetTableRange(low,hi);
-          m_View->SetLut(GetInput(),m_ColorLUT);
+          m_View->SetLut(GetInput().get(),m_ColorLUT);
           m_View->CameraUpdate();
           //{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
         }
@@ -2813,7 +2797,7 @@ void medOpSegmentation::OnEvent(mafEventBase *maf_event)
         double *sr;
         sr = m_ColorLUT->GetRange();
         m_LutSlider->SetSubRange((long)sr[0],(long)sr[1]);
-        m_View->SetLut(GetInput(),m_ColorLUT);
+        m_View->SetLut(GetInput().get(),m_ColorLUT);
         m_View->CameraUpdate();
         break;
       }
@@ -2865,7 +2849,7 @@ void medOpSegmentation::OnEventUpdateThresholdSlice()
   InitEmptyVolumeSlice();
   UpdateThresholdRealTimePreview();
   UpdateSlice();
-  m_View->VmeShow(m_ThresholdVolumeSlice, true);
+  m_View->VmeShow(m_ThresholdVolumeSlice.get(), true);
   m_View->CameraUpdate();
   m_GuiDialog->Update();
 }
@@ -2878,7 +2862,7 @@ void medOpSegmentation::OnEventUpdateManualSlice()
   ApplyVolumeSliceChanges();  
   UpdateVolumeSlice();
   UpdateSlice();
-  m_View->VmeShow(m_ManualVolumeSlice, true);
+  m_View->VmeShow(m_ManualVolumeSlice.get(), true);
   m_View->CameraUpdate();
   m_GuiDialog->Update();
 }
@@ -2912,7 +2896,7 @@ void medOpSegmentation::OnBrushEvent(mafEvent *e)
 void medOpSegmentation::SaveRefinementVolumeMask()
 //------------------------------------------------------------------------
 {
-  m_SegmentatedVolume->SetRefinementVolumeMask(m_RefinementVolumeMask);
+  m_SegmentatedVolume->SetRefinementVolumeMask(m_RefinementVolumeMask.get());
   m_SegmentatedVolume->GetOutput()->Update();
   m_SegmentatedVolume->Update();
 }
@@ -3091,10 +3075,10 @@ void medOpSegmentation::OnAutomaticPreview()
   InitMaskColorLut(m_SegmentationColorLUT);
 
   m_ThresholdVolume->GetMaterial()->m_ColorLut->SetTableRange(0,255);
-  auto currentVolumeMaterial = ((mafVMEOutputVolume *)m_ThresholdVolume->GetOutput())->GetMaterial();
+  auto currentVolumeMaterial = mafVMEOutputVolume::StaticDownCast(m_ThresholdVolume->GetOutput())->GetMaterial();
   currentVolumeMaterial->UpdateFromTables();
 
-  m_View->VmeShow(m_ThresholdVolume,true);
+  m_View->VmeShow(m_ThresholdVolume.get(),true);
 
   m_View->CameraUpdate();
   //////////////////////////////////////////////////////////////////////////
@@ -3341,7 +3325,7 @@ void medOpSegmentation::ReloadUndoRedoState(vtkDataSet *dataSet,UndoRedoState st
     m_ManualVolumeMask->Update();
 
     UpdateSlice();
-    m_View->VmeShow(m_ManualVolumeSlice,true);
+    m_View->VmeShow(m_ManualVolumeSlice.get(),true);
 
     CreateRealDrawnImage();
     OnEventUpdateManualSlice();
@@ -3380,7 +3364,7 @@ void medOpSegmentation::ReloadUndoRedoState(vtkDataSet *dataSet,UndoRedoState st
     dataSet->GetPointData()->SetScalars(state.dataArray);
     //Show changes
     m_ManualVolumeSlice->Update();
-    m_View->VmeShow(m_ManualVolumeSlice, true);
+    m_View->VmeShow(m_ManualVolumeSlice.get(), true);
 
     //   if(ResetZoom(undoRedoData,bounds))
     //   {
@@ -3596,17 +3580,17 @@ void medOpSegmentation::OnLoadSegmentationEvent(mafEvent *e)
       e.SetString(&title);
       e.SetArg((intptr_t)(&medOpSegmentation::SegmentedVolumeAccept));
       InvokeEvent(e);
-      mafVME *vme = (mafVME *)e.GetVme();
-      mafVMEVolumeGray *newVolume = mafVMEVolumeGray::SafeDownCast(vme);
+      auto vme = mafVME::StaticDownCast(e.GetVme());
+      auto newVolume = mafVMEVolumeGray::SafeDownCast(vme);
 
       if(newVolume)
       {
         if(m_LoadedVolume)
         {
-          m_View->VmeShow(m_LoadedVolume,false);
-          m_View->VmeRemove(m_LoadedVolume);
+          m_View->VmeShow(m_LoadedVolume.get(),false);
+          m_View->VmeRemove(m_LoadedVolume.get());
         }
-        m_LoadedVolume = newVolume;
+        m_LoadedVolume = mafVMEVolumeGray::SafeDownCast(newVolume->SharedFromThis());
         m_LoadedVolume->Update();
         m_SegmentationColorLUT = m_LoadedVolume->GetMaterial()->m_ColorLut;
         InitMaskColorLut(m_SegmentationColorLUT);
@@ -3618,7 +3602,7 @@ void medOpSegmentation::OnLoadSegmentationEvent(mafEvent *e)
 
         // add vme parents to the view
 
-        mafVME* parent = m_LoadedVolume;
+        mafVME* parent = m_LoadedVolume.get();
         std::vector<mafVME*> parents;
         do 
         {
@@ -3629,11 +3613,11 @@ void medOpSegmentation::OnLoadSegmentationEvent(mafEvent *e)
 
         for(int p = 0; p < parents.size(); p++)
         {
-          m_View->VmeAdd(parents.at(parents.size() - (p + 1)));
+          m_View->VmeAdd(parents.at(parents.size() - (p + 1))->SharedFromThis());
         }
         
         UpdateSlice();
-        m_View->VmeShow(m_LoadedVolume, true);
+        m_View->VmeShow(m_LoadedVolume.get(), true);
         m_View->CameraUpdate();
         m_GuiDialog->Update();
       }
@@ -3643,11 +3627,11 @@ void medOpSegmentation::OnLoadSegmentationEvent(mafEvent *e)
     {
       if(m_LoadedVolume)
       {
-        m_View->VmeShow(m_LoadedVolume,false);
+        m_View->VmeShow(m_LoadedVolume.get(),false);
       }
       //m_View->VmeRemove(m_LoadedVolume);
       m_View->CameraUpdate();
-      m_LoadedVolume = NULL;
+      m_LoadedVolume = nullptr;
       m_LoadedVolumeName = _R("[Select input volume]");
       m_SegmentationOperationsGui[LOAD_SEGMENTATION]->Update();
     }
@@ -3698,7 +3682,7 @@ void medOpSegmentation::OnRefinementSegmentationEvent(mafEvent *e)
 
         m_RefinementVolumeMask->SetData(newDataSet, m_Volume->GetTimeStamp());
         
-        m_View->VmeShow(m_RefinementVolumeMask, true);        
+        m_View->VmeShow(m_RefinementVolumeMask.get(), true);        
 
         vtkDEL(m_RefinementUndoList[numOfChanges-1]);
         m_RefinementUndoList.pop_back();
@@ -3734,7 +3718,7 @@ void medOpSegmentation::OnRefinementSegmentationEvent(mafEvent *e)
         newDataSet->DeepCopy(dataSet);
 
         m_RefinementVolumeMask->SetData(newDataSet, m_Volume->GetTimeStamp());
-        m_View->VmeShow(m_RefinementVolumeMask, true);
+        m_View->VmeShow(m_RefinementVolumeMask.get(), true);
 
         vtkDEL(m_RefinementRedoList[numOfChanges-1]);
         m_RefinementRedoList.pop_back();
@@ -3783,7 +3767,7 @@ void medOpSegmentation::InitializeViewSlice()
 //  m_View->SetTextureInterpolate(true);
 
   // slicing the volume
-  vtkDataSet *dataSet = ((mafVME *)m_Volume)->GetOutput()->GetVTKData();
+  vtkDataSet *dataSet = m_Volume->GetOutput()->GetVTKData();
   m_View->PlugVisualPipe(_R("mafVMEVolumeGray"),_R("medPipeVolumeSliceNotInterpolated"));
   m_View->PlugVisualPipe(_R("medVMESegmentationVolume"),_R("medPipeVolumeSliceNotInterpolated"));
   m_View->PlugVisualPipe(_R("mafVMEImage"),_R("mafPipeImage3D"));
@@ -3848,7 +3832,7 @@ void medOpSegmentation::SelectBrushImage(double x, double y, double z, bool sele
     break;
   }
   
-  vtkDataSet *dataset = ((mafVME *)m_ManualVolumeSlice)->GetOutput()->GetVTKData();
+  vtkDataSet *dataset = m_ManualVolumeSlice->GetOutput()->GetVTKData();
 
   if(!dataset || !(dataset->GetPointData()->GetScalars()))
     return;
@@ -4006,11 +3990,11 @@ void medOpSegmentation::SelectBrushImage(double x, double y, double z, bool sele
   newImage->DeepCopy(dataset);
   //newImage->Update();
   m_ManualVolumeSlice->SetData(newImage,mafVME::SafeDownCast(m_ThresholdVolume)->GetTimeStamp(), 2);
-  m_ManualVolumeSlice->InvokeEvent(m_ManualVolumeSlice, VME_OUTPUT_DATA_UPDATE);
+  m_ManualVolumeSlice->InvokeEvent(m_ManualVolumeSlice.get(), VME_OUTPUT_DATA_UPDATE);
   //m_ManualVolumeSlice->GetOutput()->GetVTKData()->Update();
   m_ManualVolumeSlice->GetOutput()->Update();
   m_ManualVolumeSlice->Update();
-  m_View->VmeShow(m_ManualVolumeSlice, true);
+  m_View->VmeShow(m_ManualVolumeSlice.get(), true);
   
   m_ManualBrushSize = oldBrushSize;
 }
@@ -4375,7 +4359,7 @@ void medOpSegmentation::InitVolumeDimensions()
 void medOpSegmentation::InitVolumeSpacing()
 //----------------------------------------------------------------------------
 {
-  vtkDataSet *vme_data = ((mafVME *)m_Volume)->GetOutput()->GetVTKData();
+  vtkDataSet *vme_data = m_Volume->GetOutput()->GetVTKData();
 
   m_VolumeSpacing[0] = 0;
   m_VolumeSpacing[1] = 0;
@@ -4503,14 +4487,14 @@ void medOpSegmentation::InitManualVolumeSlice()
 //----------------------------------------------------------------------------
 {
 
-  if(m_ManualVolumeSlice == NULL)
+  if(m_ManualVolumeSlice == nullptr)
   {
-    mafNEW(m_ManualVolumeSlice);
-    m_ManualVolumeSlice->ReparentTo(m_Volume->GetParent());
+    m_ManualVolumeSlice = mafVMEVolumeGray::NewSPtr();
+    mafNode::ReparentTo(m_ManualVolumeSlice, m_Volume->GetParent());
     m_ManualVolumeSlice->SetName(_R("Manual Volume Slice"));
     m_View->VmeAdd(m_ManualVolumeSlice);
     //m_View->VmeCreatePipe(m_ManualVolumeSlice);
-    InitDataVolumeSlice<vtkUnsignedCharArray>(m_ManualVolumeSlice);
+    InitDataVolumeSlice<vtkUnsignedCharArray>(m_ManualVolumeSlice.get());
 
     m_View->CameraUpdate();
   }
@@ -4523,16 +4507,16 @@ void medOpSegmentation::InitEmptyVolumeSlice()
 {
   if(!m_EmptyVolumeSlice)
   {
-    mafNEW(m_EmptyVolumeSlice);
+    m_EmptyVolumeSlice = mafVMEVolumeGray::NewSPtr();
   }
   
-  m_EmptyVolumeSlice->ReparentTo(m_Volume->GetParent());
+  mafNode::ReparentTo(m_EmptyVolumeSlice, m_Volume->GetParent());
   m_EmptyVolumeSlice->SetName(_R("Empty Volume Slice"));
   //m_View->VmeAdd(m_EmptyVolumeSlice);
   //m_View->VmeCreatePipe(m_EmptyVolumeSlice);
   //m_View->CameraUpdate();
 
-  InitDataVolumeSlice<vtkDoubleArray>(m_EmptyVolumeSlice);
+  InitDataVolumeSlice<vtkDoubleArray>(m_EmptyVolumeSlice.get());
 }
 
 //----------------------------------------------------------------------------
@@ -4701,17 +4685,17 @@ void medOpSegmentation::InitThresholdVolumeSlice()
 {
   if(m_ThresholdVolumeSlice)
   {
-    m_View->VmeShow(m_ThresholdVolumeSlice,false);
-    m_View->VmeRemove(m_ThresholdVolumeSlice);
-    m_ThresholdVolumeSlice->ReparentTo(NULL);
-    mafDEL(m_ThresholdVolumeSlice);
+    m_View->VmeShow(m_ThresholdVolumeSlice.get(),false);
+    m_View->VmeRemove(m_ThresholdVolumeSlice.get());
+    mafNode::ReparentTo(m_ThresholdVolumeSlice, nullptr);
+    m_ThresholdVolumeSlice.reset();
   }
-  mafNEW(m_ThresholdVolumeSlice);
+  m_ThresholdVolumeSlice = mafVMEVolumeGray::NewSPtr();
 
-  m_ThresholdVolumeSlice->ReparentTo(m_Volume->GetParent());
+  mafNode::ReparentTo(m_ThresholdVolumeSlice, m_Volume->GetParent());
   m_ThresholdVolumeSlice->SetName(_R("Threshold Volume Slice"));
 
-  InitDataVolumeSlice<vtkUnsignedCharArray>(m_ThresholdVolumeSlice);
+  InitDataVolumeSlice<vtkUnsignedCharArray>(m_ThresholdVolumeSlice.get());
 
   m_SegmentationColorLUT = m_ThresholdVolumeSlice->GetMaterial()->m_ColorLut;
   InitMaskColorLut(m_SegmentationColorLUT);
@@ -4719,7 +4703,7 @@ void medOpSegmentation::InitThresholdVolumeSlice()
   m_ThresholdVolumeSlice->Update();
 
   m_View->VmeAdd(m_ThresholdVolumeSlice);
-  m_View->VmeShow(m_ThresholdVolumeSlice,false);
+  m_View->VmeShow(m_ThresholdVolumeSlice.get(),false);
   m_OldSliceIndex = -1;
   UpdateThresholdRealTimePreview();
   m_View->CameraUpdate();
@@ -5086,12 +5070,11 @@ void medOpSegmentation::UpdateThresholdRealTimePreview()
 //   m_OldAutomaticThreshold = m_AutomaticThreshold;
 //   m_OldAutomaticUpperThreshold = m_AutomaticUpperThreshold;
   
-  medVMESegmentationVolume *tVol;
-  mafNEW(tVol);
+  auto tVol = medVMESegmentationVolume::NewSPtr();
 
-  tVol->SetVolumeLink(m_EmptyVolumeSlice);
+  tVol->SetVolumeLink(m_EmptyVolumeSlice.get());
   tVol->SetName(_R("Threshold Volume"));
-  tVol->ReparentTo(tVol->GetParent());
+  mafNode::ReparentTo(tVol, tVol->GetParent());
   tVol->SetDoubleThresholdModality(true);
   tVol->Update();
 
@@ -5155,7 +5138,7 @@ void medOpSegmentation::UpdateThresholdRealTimePreview()
   //m_View->VmeShow(m_ThresholdVolumeSlice,true);
 
   //m_View->CameraUpdate();
-  mafDEL(tVol);
+  tVol.reset();
 }
 
 //----------------------------------------------------------------------------

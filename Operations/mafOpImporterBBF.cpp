@@ -45,14 +45,13 @@ mafOpImporterBBF::mafOpImporterBBF(const mafString& label) : Superclass(label)
   m_OpType  = OPTYPE_IMPORTER;
 	m_Canundo = true;
 	m_File    = _R("");
-  m_VmeLarge = NULL;
   m_FileDir = mafGetApplicationDirectory();
 }
 //----------------------------------------------------------------------------
 mafOpImporterBBF::~mafOpImporterBBF()
 //----------------------------------------------------------------------------
 {  
-  mafDEL(m_VmeLarge);
+  m_VmeLarge.reset();
 }
 //----------------------------------------------------------------------------
 mafOp* mafOpImporterBBF::Copy()   
@@ -108,12 +107,12 @@ int mafOpImporterBBF::ImportBBF()
   reader->SetFileName(mafWxToString(nFileName).GetCStr());
   reader->Update();
 	
-	mafNEW(m_VmeLarge); 
+	m_VmeLarge = mafVMEVolumeLarge::NewSPtr(); 
   m_VmeLarge->SetFileName("");
   if (m_VmeLarge->SetLargeData(reader) == MAF_OK)
   {
 	  SetOutput(m_VmeLarge);
-    GetOutput()->ReparentTo(GetInput());
+    mafNode::ReparentTo(GetOutput(), GetInput().get());
     GetOutput()->SetName(mafWxToString(showName));
     return MAF_OK;
   }

@@ -55,9 +55,6 @@ lhpOpFindCentroid::lhpOpFindCentroid(const mafString& label) : Superclass(label)
 lhpOpFindCentroid::~lhpOpFindCentroid( ) 
 //----------------------------------------------------------------------------
 {
-  if (GetOutput())
-    GetOutput()->Delete();
-  SetOutput(nullptr);
 }
 //----------------------------------------------------------------------------
 mafOp* lhpOpFindCentroid::Copy()   
@@ -79,14 +76,14 @@ bool lhpOpFindCentroid::Accept(mafNode *node)
 void lhpOpFindCentroid::OpRun()
 //----------------------------------------------------------------------------
 {
-  mafVMEGenericAbstract *gabs = mafVMEGenericAbstract::SafeDownCast(GetInput());
+  auto gabs = mafVMEGenericAbstract::SafeDownCast(GetInput());
   if(!gabs)
     {mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);}
   mafDataVector * dvect = gabs->GetDataVector();
   if(!dvect)
     {mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);}
 
-  mafVMELandmarkCloud *cloud = NULL;
+  std::shared_ptr<mafVMELandmarkCloud> cloud;
 
   for(auto& elem : *dvect)
   {
@@ -109,7 +106,7 @@ void lhpOpFindCentroid::OpRun()
       centroid /= npnts;
     if(!cloud)
     {
-      mafNEW(cloud);
+      cloud = mafVMELandmarkCloud::NewSPtr();
       if(!cloud)
         {mafEvent evUnq(this,OP_RUN_CANCEL); InvokeEvent(evUnq);}
       cloud->SetName(_R("Centroid"));

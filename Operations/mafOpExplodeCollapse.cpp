@@ -68,7 +68,7 @@ void mafOpExplodeCollapse::OpRun()
 void mafOpExplodeCollapse::OpDo()
 //----------------------------------------------------------------------------
 {
-  mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(GetInput());
+  auto cloud = mafVMELandmarkCloud::SafeDownCast(GetInput());
 
   if (cloud->IsOpen())
   {
@@ -78,7 +78,7 @@ void mafOpExplodeCollapse::OpDo()
   {
     cloud->Open();  
   }
-	{mafEvent evUnq(this,VME_MODIFIED); evUnq.SetVme(cloud); InvokeEvent(evUnq);} //update the icon in the tree
+	{mafEvent evUnq(this,VME_MODIFIED); evUnq.SetVme(cloud.get()); InvokeEvent(evUnq);} //update the icon in the tree
 	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------

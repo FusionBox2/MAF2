@@ -120,7 +120,7 @@ protected:
   /** Check the spacing and if is too little and could create some memory problems return false */
   bool CheckSpacing();
 
-  mafVMEVolumeGray *m_ResampledVme;
+  std::shared_ptr<mafVMEVolumeGray> m_ResampledVme;
 
 	double m_NewVolumePosition[3];
 	double m_PrecedentPosition[3];
@@ -158,7 +158,7 @@ protected:
 	mafGizmoTranslate	*m_GizmoTranslate;
 	mafGizmoRotate		*m_GizmoRotate;
 	mafGizmoROI				*m_GizmoROI;
-	mafVMESurface			*m_VMEDummy;
+	std::shared_ptr<mafVMESurface>			m_VMEDummy;
 	std::shared_ptr<mafMatrix> m_CenterVolumeRefSysMatrix;
 
 	int	m_ShowHandle;

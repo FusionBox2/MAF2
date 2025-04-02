@@ -76,11 +76,6 @@ mafOpImporterRAWVolume_BES::mafOpImporterRAWVolume_BES(const mafString& label) :
 	m_OutputFileName = m_RawFile;
 #endif // VME_VOLUME_LARGE
 
-	m_VolumeGray	= NULL;
-	m_VolumeRGB   = NULL;
-#ifdef VME_VOLUME_LARGE
-	m_VolumeLarge = NULL;
-#endif // VME_VOLUME_LARGE
 	m_GuiSlider   = NULL;
 
 	m_Endian		 = 1;
@@ -125,10 +120,10 @@ mafOpImporterRAWVolume_BES::mafOpImporterRAWVolume_BES(const mafString& label) :
 mafOpImporterRAWVolume_BES::~mafOpImporterRAWVolume_BES()
 //----------------------------------------------------------------------------
 {
-	mafDEL(m_VolumeGray);
-	mafDEL(m_VolumeRGB);
+	m_VolumeGray.reset();
+	m_VolumeRGB.reset();
 #ifdef VME_VOLUME_LARGE
-	mafDEL(m_VolumeLarge);
+	m_VolumeLarge.reset();
 #endif // VME_VOLUME_LARGE
 }
 //----------------------------------------------------------------------------
@@ -683,7 +678,7 @@ bool mafOpImporterRAWVolume_BES::Import()
 			ppc->Delete();
 		}
 	
-		mafNEW(m_VolumeLarge);
+		m_VolumeLarge = mafVMEVolumeLarge::NewSPtr();
 		m_VolumeLarge->SetFileName(this->m_RawFile.GetCStr());
 		mafVolumeLargeReader* rd = NULL;
 		mafVolumeLargeWriter wr;
@@ -829,8 +824,8 @@ bool mafOpImporterRAWVolume_BES::Import()
 			rectilinear_data->SetDimensions(dim);
 			rectilinear_data->GetPointData()->SetScalars(scalars);
 
-			mafNEW(m_VolumeGray);
-			mafNEW(m_VolumeRGB);
+			m_VolumeGray = mafVMEVolumeGray::NewSPtr();
+			m_VolumeRGB = mafVMEVolumeRGB::NewSPtr();
 			if (m_VolumeGray->SetDataByDetaching((vtkDataSet *)rectilinear_data,0) == MAF_OK) {
 				SetOutput(m_VolumeGray);
 			}
@@ -845,8 +840,8 @@ bool mafOpImporterRAWVolume_BES::Import()
 		} 
 		else //if (m_BuildRectilinearGrid)
 		{
-			mafNEW(m_VolumeGray);
-			mafNEW(m_VolumeRGB);
+			m_VolumeGray = mafVMEVolumeGray::NewSPtr();
+			m_VolumeRGB = mafVMEVolumeRGB::NewSPtr();
 
 			vtkDataSet* volume = (vtkDataSet *)image_to_sp->GetOutput();
 			if (m_VolumeGray->SetDataByDetaching(volume, 0) == MAF_OK){

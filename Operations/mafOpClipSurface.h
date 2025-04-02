@@ -1,22 +1,4 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafOpClipSurface
- Authors: Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __mafOpClipSurface_H__
-#define __mafOpClipSurface_H__
-
+#pragma once
 //----------------------------------------------------------------------------
 // Include :
 //----------------------------------------------------------------------------
@@ -55,7 +37,7 @@ public:
   ~mafOpClipSurface() override;
   void OnEvent(mafEventBase *maf_event) override;
 
-  mafTypeMacro(mafOpClipSurface, mafOp);
+  mafTypeMacroN(mafOpClipSurface);
 
   mafOp* Copy() override;
 
@@ -132,9 +114,9 @@ protected:
 	void ClipBoundingBox();
 
   mafVMESurface   *m_ClipperVME;
-	mafVMESurface   *m_ClippedVME;
+	std::shared_ptr<mafVMESurface>   m_ClippedVME;
 
-  mafVMEGizmo     *m_ImplicitPlaneGizmo;
+  std::shared_ptr<mafVMEGizmo>     m_ImplicitPlaneGizmo;
   vtkPlane        *m_ClipperPlane;
   vtkClipPolyData *m_Clipper;
 	vtkMAFClipSurfaceBoundingBox	*m_ClipperBoundingBox;
@@ -167,4 +149,3 @@ protected:
 	mafGizmoRotate			*m_GizmoRotate;
 	mafGizmoScale				*m_GizmoScale;
 };
-#endif

@@ -1,31 +1,6 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafOpCreateSurfaceParametric
- Authors: Taha Jerbi
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __mafOpCreateEllipsoid_H__
-#define __mafOpCreateEllipsoid_H__
-
+#pragma once
 #include "mafOp.h"
 
-//----------------------------------------------------------------------------
-// forward references :
-//----------------------------------------------------------------------------
-class mafVMESurfaceParametric;
-class mafGUI;
-class mafEvent;
-class mafVMEEllipsoid;
 //----------------------------------------------------------------------------
 // mafOpCreateSurfaceParametric :
 //----------------------------------------------------------------------------
@@ -36,15 +11,10 @@ public:
   mafOpCreateEllipsoid(const mafString& label = _R("Create Ellipsoid"));
   ~mafOpCreateEllipsoid() override; 
 
-  mafTypeMacro(mafOpCreateEllipsoid, mafOp);
+  mafTypeMacroN(mafOpCreateEllipsoid);
 
   mafOp* Copy() override;
 
   bool Accept(mafNode *node) override;
   void OpRun() override;
-  void OpDo() override;
-
-protected: 
-  mafVMEEllipsoid *m_Ellipsoid;
 };
-#endif

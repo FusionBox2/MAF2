@@ -80,10 +80,10 @@ public:
  /* const char * GetLMRenameFileName() {return m_LMRenameFileName;}*/
 
   /* Get Group representing result of import */
-  mafVMEGroup *GetGroup(){if(m_intData.empty()) return NULL; return m_intData[0].m_VmeGroup;}
+  mafVMEGroup *GetGroup(){if(m_intData.empty()) return nullptr; return m_intData[0].m_VmeGroup.get();}
 
   /* Get Landmark Cloud */
-  mafVMELandmarkCloud *GetLandmarkCloudVME(){if(m_intData.empty()) return NULL; if(m_intData[0].m_Clouds.empty()) return NULL; return m_intData[0].m_Clouds.begin()->second;}
+  mafVMELandmarkCloud *GetLandmarkCloudVME(){if(m_intData.empty()) return nullptr; if(m_intData[0].m_Clouds.empty()) return nullptr; return m_intData[0].m_Clouds.begin()->second.get();}
 
   /* Get Analog VME */
  /* medVMEAnalog *GetAnalogVME(){return m_intData.empty() ? NULL : m_intData[0].m_VmeAnalog;}*/
@@ -142,7 +142,7 @@ protected:
 	void Clear();
 
   /** Import the c3d events*/
-	mafVMEGroup* ImportSingleFile(const mafString &fullFileName);// , _InternalPCData &intData);
+	std::shared_ptr<mafVMEGroup> ImportSingleFile(const mafString &fullFileName);// , _InternalPCData &intData);
 
   /** Do actions necessary on dictionary name changing*/
 //  void DictionaryUpdate();
@@ -186,15 +186,15 @@ protected:
 
     mafString m_FileName;
 
-    mafVMEGroup                               *m_VmeGroup;
-    std::map<mafString, mafVMELandmarkCloud*> m_Clouds;
+    std::shared_ptr<mafVMEGroup>                               m_VmeGroup;
+    std::map<mafString, std::shared_ptr<mafVMELandmarkCloud> > m_Clouds;
 
-    medVMEAnalog *m_VmeAnalog;
+    std::shared_ptr<medVMEAnalog> m_VmeAnalog;
 
-    std::vector<mafVMESurface *> m_PlatformList;
+    std::vector<std::shared_ptr<mafVMESurface> > m_PlatformList;
 
-    std::vector<mafVMEVector *> m_ForceList;
-    std::vector<mafVMEVector *> m_MomentList;
+    std::vector<std::shared_ptr<mafVMEVector> > m_ForceList;
+    std::vector<std::shared_ptr<mafVMEVector> > m_MomentList;
 
 	  //data filled by Aurion importer
 	  //int m_Errcode;

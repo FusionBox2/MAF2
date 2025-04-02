@@ -1,27 +1,3 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafOpCrop
- Authors: Matteo Giacomoni & Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
 #include "mafOpCrop3DSurface.h"
 #include <wx/busyinfo.h>
 #include "mafEvent.h"
@@ -44,16 +20,12 @@
 #include "vtkDoubleArray.h"
 #include "vtkIdList.h"
 #include "vtkCleanPolyData.h"
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(mafOpCrop3DSurface);
-//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 mafOpCrop3DSurface::mafOpCrop3DSurface(const mafString& label, bool showShadingPlane) : Superclass(label)
 //----------------------------------------------------------------------------
 {
-
-	mafNEW(m_Cloud);
+	m_Cloud = mafVMELandmarkCloud::NewSPtr();
 	m_OpType	= OPTYPE_OP;
 	m_InputPreserving = false;
 	m_Canundo	= true;
@@ -80,7 +52,7 @@ mafOpCrop3DSurface::~mafOpCrop3DSurface()
 	vtkDEL(m_OutputRG);
 	vtkDEL(m_OutputSP);
 	vtkDEL(m_OutputPolyData);
-	mafDEL(m_Cloud);
+	m_Cloud.reset();
 }
 
 //----------------------------------------------------------------------------
@@ -105,7 +77,7 @@ void mafOpCrop3DSurface::OpRun()
   mafEvent e(this,VIEW_SELECTED);
   InvokeEvent(e);
 
-	mafVME* volume = mafVME::SafeDownCast(GetInput());
+	auto volume = mafVME::SafeDownCast(GetInput());
 	volume->Update();
 	// create gizmo roi
 	if(!m_TestMode)
@@ -117,8 +89,8 @@ void mafOpCrop3DSurface::OpRun()
 	if (volume->IsA("mafVMESurfaceParametric"))
 	{
 		vtkNEW(m_InputPolyData);
-		m_InputPolyData->DeepCopy(((mafVMESurfaceParametric*)volume)->GetSurfaceOutput()->GetSurfaceData());
-		vtkPolyData*	data = ((mafVMESurfaceParametric*)volume)->GetSurfaceOutput()->GetSurfaceData();
+		m_InputPolyData->DeepCopy(mafVMESurfaceParametric::StaticDownCast(volume)->GetSurfaceOutput()->GetSurfaceData());
+		vtkPolyData*	data = mafVMESurfaceParametric::StaticDownCast(volume)->GetSurfaceOutput()->GetSurfaceData();
 		data->GetBounds(m_InputBounds);
 		if (!m_TestMode)
 			m_GizmoROI->SetBounds(m_InputBounds);
@@ -133,8 +105,8 @@ void mafOpCrop3DSurface::OpRun()
 	{
 		vtkNEW(m_InputPolyData);
 		
-		m_InputPolyData->DeepCopy(((mafVMESurface*)volume)->GetSurfaceOutput()->GetSurfaceData());
-		vtkPolyData*	data = ((mafVMESurface*)volume)->GetSurfaceOutput()->GetSurfaceData();
+		m_InputPolyData->DeepCopy(mafVMESurface::StaticDownCast(volume)->GetSurfaceOutput()->GetSurfaceData());
+		vtkPolyData*	data = mafVMESurface::StaticDownCast(volume)->GetSurfaceOutput()->GetSurfaceData();
 		data->GetBounds(m_InputBounds);
 		if (!m_TestMode)
 			m_GizmoROI->SetBounds(m_InputBounds);
@@ -191,7 +163,7 @@ void mafOpCrop3DSurface::Crop()
 		m_GizmoROI->GetBounds(m_CroppingBoxBounds);
 
 	//GetInput()->Modified();
-	mafVME *volume = mafVME::SafeDownCast(GetInput());
+	auto volume = mafVME::SafeDownCast(GetInput());
 
 	mafVMEOutput *output = volume->GetOutput();
 
@@ -373,7 +345,7 @@ void mafOpCrop3DSurface::Crop()
 		m_Cloud->Open();
 		m_Cloud->SetName(_L("SelectedPoints"));
 		m_Cloud->SetRadius(0.2);
-		m_Cloud->ReparentTo(GetInput());
+		mafNode::ReparentTo(m_Cloud, GetInput().get());
 		m_Cloud->Open();
 		//m_Cloud->RemoveAllChildren();
 		m_Cloud->Update();
@@ -413,16 +385,16 @@ void mafOpCrop3DSurface::OpDo()
 	{
 
 		
-		((mafVMEVolume*)GetInput())->SetData(m_OutputSP, ((mafVME*)GetInput())->GetTimeStamp());
-		((mafVMEVolume*)GetInput())->GetOutput()->Update();
-		((mafVMEVolume*)GetInput())->Update();
+		mafVMEVolume::StaticDownCast(GetInput())->SetData(m_OutputSP, mafVME::StaticDownCast(GetInput())->GetTimeStamp());
+		mafVMEVolume::StaticDownCast(GetInput())->GetOutput()->Update();
+		mafVMEVolume::StaticDownCast(GetInput())->Update();
 	}
 	else if (m_OutputRG)
 	{
 		
-		((mafVMEVolume*)GetInput())->SetData(m_OutputRG, ((mafVME*)GetInput())->GetTimeStamp());
-		((mafVMEVolume*)GetInput())->GetOutput()->Update();
-		((mafVMEVolume*)GetInput())->Update();
+		mafVMEVolume::StaticDownCast(GetInput())->SetData(m_OutputRG, mafVME::StaticDownCast(GetInput())->GetTimeStamp());
+		mafVMEVolume::StaticDownCast(GetInput())->GetOutput()->Update();
+		mafVMEVolume::StaticDownCast(GetInput())->Update();
 	}
 		
 
@@ -454,28 +426,28 @@ void mafOpCrop3DSurface::OpUndo()
 {
 	if (m_InputSP)
 	{
-		((mafVMEVolume*)GetInput())->SetData(m_InputSP, ((mafVME*)GetInput())->GetTimeStamp());
-		((mafVMEVolume*)GetInput())->GetOutput()->Update();
-		((mafVMEVolume*)GetInput())->Update();
+		mafVMEVolume::StaticDownCast(GetInput())->SetData(m_InputSP, mafVME::StaticDownCast(GetInput())->GetTimeStamp());
+		mafVMEVolume::StaticDownCast(GetInput())->GetOutput()->Update();
+		mafVMEVolume::StaticDownCast(GetInput())->Update();
 
 	}
 	else if (m_InputRG)
 	{
-		((mafVMEVolume*)GetInput())->SetData(m_InputRG, ((mafVME*)GetInput())->GetTimeStamp());
-		((mafVMEVolume*)GetInput())->GetOutput()->Update();
-		((mafVMEVolume*)GetInput())->Update();
+		mafVMEVolume::StaticDownCast(GetInput())->SetData(m_InputRG, mafVME::StaticDownCast(GetInput())->GetTimeStamp());
+		mafVMEVolume::StaticDownCast(GetInput())->GetOutput()->Update();
+		mafVMEVolume::StaticDownCast(GetInput())->Update();
 	}
 	if (m_InputPolyData)
 	{
-		((mafVMESurface*)GetInput())->SetData(m_OutputPolyData, ((mafVME*)GetInput())->GetTimeStamp());
-		((mafVMESurface*)GetInput())->GetOutput()->Update();
-		((mafVMESurface*)GetInput())->Update();
+		mafVMEVolume::StaticDownCast(GetInput())->SetData(m_OutputPolyData, mafVME::StaticDownCast(GetInput())->GetTimeStamp());
+		mafVMEVolume::StaticDownCast(GetInput())->GetOutput()->Update();
+		mafVMEVolume::StaticDownCast(GetInput())->Update();
 	}
 	
 
 	// bug# 2628: gizmos do not update after cropping (workaround code)
-	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetInput()); evUnq.SetBool(false); InvokeEvent(evUnq);}
-	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetInput()); evUnq.SetBool(true); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetInput().get()); evUnq.SetBool(false); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetInput().get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
 	///////
 
 	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
@@ -515,7 +487,7 @@ void mafOpCrop3DSurface::CreateGui()
 //----------------------------------------------------------------------------
 {
 	double bounds[6];
-	mafVME *volume = mafVME::SafeDownCast(GetInput());
+	auto volume = mafVME::SafeDownCast(GetInput());
 	volume->GetOutput()->GetVTKData()->GetBounds(bounds);
 	m_XminXmax[0] = bounds[0];
 	m_XminXmax[1] = bounds[1];

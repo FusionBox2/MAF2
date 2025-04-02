@@ -127,10 +127,10 @@ protected:
   mafGUIHistogramWidget *m_Histogram;
   mafGUIDialog *m_Dialog;
 
-  mafVMEVolumeGray *m_VolumeInput; //<<<Input volume
-  mafVMEVolumeGray *m_VolumeOutputMorpho; //<<<Output volume after morphological mathematics operation
-  mafVMEVolumeGray *m_VolumeOutputRegionGrowing; //<<<Output volume after region growing operation
-  mafVMESurface *m_SurfaceOutput; //<<<Output surface extracted from m_VolumeOutputMorpho
+  std::shared_ptr<mafVMEVolumeGray> m_VolumeInput; //<<<Input volume
+  std::shared_ptr<mafVMEVolumeGray> m_VolumeOutputMorpho; //<<<Output volume after morphological mathematics operation
+  std::shared_ptr<mafVMEVolumeGray> m_VolumeOutputRegionGrowing; //<<<Output volume after region growing operation
+  std::shared_ptr<mafVMESurface> m_SurfaceOutput; //<<<Output surface extracted from m_VolumeOutputMorpho
 
   vtkImageData *m_SegmentedImage;
   vtkImageData *m_MorphoImage;

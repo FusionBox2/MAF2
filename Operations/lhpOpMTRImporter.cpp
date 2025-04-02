@@ -45,7 +45,7 @@ mafCxxTypeMacro(lhpOpMTRImporter);
 //----------------------------------------------------------------------------
 {
   for(unsigned i = 0; i < m_Groups.size(); i++)
-    mafDEL(m_Groups[i]);
+    m_Groups[i].reset();
 }  
 //----------------------------------------------------------------------------
 mafOp * lhpOpMTRImporter::Copy()
@@ -86,7 +86,7 @@ void  lhpOpMTRImporter::ImportData()
 {
 
   for(unsigned i = 0; i < m_Groups.size(); i++)
-    mafDEL(m_Groups[i]);
+    m_Groups[i].reset();
   m_Groups.clear();
 
   for(unsigned fi = 0; fi < m_Files.size(); fi++)
@@ -99,17 +99,16 @@ void  lhpOpMTRImporter::ImportData()
     //wxBusyInfo wait("Loading file: ...");  
     mafString path;
     mafString grpName, extension;
-    mafVMEGroup *grp;
 
     mafSplitPath(m_Files[fi],&path,&grpName,&extension);
 
-    mafNEW(grp);
+    auto grp = mafVMEGroup::NewSPtr();
     grp->SetName(grpName);
     m_Groups.push_back(grp);
 
     while(TRUE)
     {
-      mafMTRLMCReader *LMCReader = mafMTRLMCReader::New();
+      auto LMCReader = mafMTRLMCReader::New();
       LMCReader->SetFileName(m_Files[fi].GetCStr());
       mafString name, ext;
 
@@ -124,7 +123,7 @@ void  lhpOpMTRImporter::ImportData()
         break;
       }
 
-      const std::vector<std::pair<mafVMELandmarkCloud*, int> >& clouds = LMCReader->GetClouds();
+      auto& clouds = LMCReader->GetClouds();
       for(int i = 0; i < clouds.size(); i++)
       {
         vmeName = name + _R("_");
@@ -134,18 +133,18 @@ void  lhpOpMTRImporter::ImportData()
         tag_Nature.SetName(_R("VME_NATURE"));
         tag_Nature.SetValue(_R("NATURAL"));
 
-        mafVMELandmarkCloud *cloud;
-        cloud = clouds[i].first;
+        auto cloud = clouds[i].first;
         cloud->SetName(vmeName);
         cloud->GetTagArray()->SetTag(tag_Nature);
         cloud->Close();
-        cloud->ReparentTo(grp);
+        mafNode::ReparentTo(cloud, grp.get());
       }
       cppDEL(LMCReader);
       break;
     }
 
-    {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(grp); InvokeEvent(evUnq);}
+    mafNode::ReparentTo(grp, GetInput()->GetRoot());
+    //{mafEvent evUnq(this, VME_ADD); evUnq.SetVme(grp); InvokeEvent(evUnq);}
     {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
 }
@@ -158,8 +157,8 @@ void lhpOpMTRImporter::OpDo()
   {
     if (m_Groups[i])
     {
-      m_Groups[i]->ReparentTo(GetInput());
-      {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_Groups[i]); InvokeEvent(evUnq);}
+      mafNode::ReparentTo(m_Groups[i], GetInput().get());
+      //{mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_Groups[i]); InvokeEvent(evUnq);}
     }
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
@@ -173,7 +172,7 @@ void lhpOpMTRImporter::OpUndo()
   {
     if (m_Groups[i])
     {
-      {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Groups[i]); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Groups[i].get()); InvokeEvent(evUnq);}
     }
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}

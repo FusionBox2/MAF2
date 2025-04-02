@@ -62,16 +62,16 @@ protected:
   void OpStop(int result) override;
 
   ///
-  mafVMELandmarkCloud  *m_PlateCalibration;
+  std::shared_ptr<mafVMELandmarkCloud>  m_PlateCalibration;
   mafString            m_PlateCalibrationName;
   ///
   mafVMELandmarkCloud  *m_BallsCalibration;
   mafString             m_BallsCalibrationName;
   ///
-  mafVMELandmarkCloud  *m_PalpatorCalibration;
+  std::shared_ptr<mafVMELandmarkCloud>  m_PalpatorCalibration;
   mafString             m_PalpatorCalibrationName;
   ///
-  mafVMELandmarkCloud  *m_PlateCloud;
+  std::shared_ptr<mafVMELandmarkCloud>  m_PlateCloud;
   mafString             m_PlateCloudName;
   ///
   mafVMELandmarkCloud  *m_PalpatorCloud;
@@ -83,7 +83,7 @@ protected:
   mafString             m_ListFName;
 
 
-  mafVMELandmarkCloud*  m_Registered;
+  std::shared_ptr<mafVMELandmarkCloud>  m_Registered;
   double*               m_weight;
 
   int                   m_registration_mode; 
