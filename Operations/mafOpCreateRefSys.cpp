@@ -1,29 +1,3 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafOpCreateRefSys
- Authors: Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-
 #include "mafOpCreateRefSys.h"
 #include "mafDecl.h"
 
@@ -32,24 +6,17 @@
 #include "mafVMERefSys.h"
 
 //----------------------------------------------------------------------------
-mafCxxTypeMacro(mafOpCreateRefSys);
-//----------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------
 mafOpCreateRefSys::mafOpCreateRefSys(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType	= OPTYPE_OP;
   m_Canundo = true;
-  
-  m_RefSys     = NULL;
 }
 
 //----------------------------------------------------------------------------
 mafOpCreateRefSys::~mafOpCreateRefSys()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_RefSys);
 }
 
 //----------------------------------------------------------------------------
@@ -70,9 +37,9 @@ bool mafOpCreateRefSys::Accept(mafNode *node)
 void mafOpCreateRefSys::OpRun()   
 //----------------------------------------------------------------------------
 {
-  mafNEW(m_RefSys);
-  m_RefSys->SetName(_R("ref_sys"));
-  SetOutput(m_RefSys);
+  auto refSys = mafVMERefSys::NewSPtr();
+  refSys->SetName(_R("ref_sys"));
+  SetOutput(refSys);
   {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
 }
 
@@ -80,7 +47,7 @@ void mafOpCreateRefSys::OpRun()
 void mafOpCreateRefSys::OpDo()
 //----------------------------------------------------------------------------
 {
-  m_RefSys->ReparentTo(GetInput());
+  Superclass::OpDo();
   if (!GetInput()->IsMAFType(mafVMERoot))
-    m_RefSys->SetAbsMatrix(*((mafVME *)GetInput())->GetOutput()->GetAbsMatrix());
+    mafVMERefSys::StaticDownCast(GetOutput())->SetAbsMatrix(*mafVME::StaticDownCast(GetInput())->GetOutput()->GetAbsMatrix());
 }

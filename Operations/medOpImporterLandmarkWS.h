@@ -65,6 +65,5 @@ public:
 protected:
   mafString m_FileDir;
 	mafString m_File;
-	mafVMELandmarkCloud  *m_VmeCloud;
 };
 #endif

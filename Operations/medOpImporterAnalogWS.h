@@ -71,7 +71,6 @@ public:
 
 
 protected:
-  medVMEAnalog *m_EmgScalar;
   vnl_matrix<double> m_EmgMatrix;
   mafString m_FileDir;
 	mafString m_File;

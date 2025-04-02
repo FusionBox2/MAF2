@@ -44,14 +44,11 @@ medOpImporterAnalogWS::medOpImporterAnalogWS(const mafString& label) : Superclas
 	m_Canundo	= true;
 	m_File		= _R("");
 	m_FileDir = mafGetApplicationDirectory() + _R("/Data/External/");
-
-  m_EmgScalar = NULL;
 }
 //----------------------------------------------------------------------------
 medOpImporterAnalogWS::~medOpImporterAnalogWS()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_EmgScalar);
 }
 //----------------------------------------------------------------------------
 mafOp* medOpImporterAnalogWS::Copy()   
@@ -90,16 +87,16 @@ void medOpImporterAnalogWS::Read()
 	  {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
   }
   
-  mafNEW(m_EmgScalar);
+  auto emgScalar = medVMEAnalog::NewSPtr();
   mafString path, name, ext;
   mafSplitPath(m_File,&path,&name,&ext);
-  m_EmgScalar->SetName(name);
+  emgScalar->SetName(name);
 
   mafTagItem tag_Nature;
   tag_Nature.SetName(_R("VME_NATURE"));
   tag_Nature.SetValue(_R("NATURAL"));
 
-  m_EmgScalar->GetTagArray()->SetTag(tag_Nature);
+  emgScalar->GetTagArray()->SetTag(tag_Nature);
 
   mafString time, scalar;
   wxFileInputStream inputFile( m_File.toWx() );
@@ -192,14 +189,14 @@ void medOpImporterAnalogWS::Read()
 
   vnl_matrix<double> emgMatrixTranspose = emgMatrix.transpose();
 
-  m_EmgScalar->SetData(emgMatrixTranspose, 0);
+  emgScalar->SetData(emgMatrixTranspose, 0);
 
   mafTagItem tag_Sig;
   tag_Sig.SetName(_R("SIGNALS_NAME"));
   tag_Sig.SetNumberOfComponents(num_tk - 1);
-  m_EmgScalar->GetTagArray()->SetTag(tag_Sig);
+  emgScalar->GetTagArray()->SetTag(tag_Sig);
 
-  mafTagItem *tag_Signals = m_EmgScalar->GetTagArray()->GetTag(_R("SIGNALS_NAME"));
+  mafTagItem *tag_Signals = emgScalar->GetTagArray()->GetTag(_R("SIGNALS_NAME"));
   for (int n = 0; n < stringVec.size(); n++)
   {
     tag_Signals->SetValue(stringVec[n], n);
@@ -211,6 +208,6 @@ void medOpImporterAnalogWS::Read()
     wxSetCursor(wxCursor(wxCURSOR_DEFAULT));
   }
 
-  SetOutput(m_EmgScalar);
-  GetOutput()->ReparentTo(GetInput());
+  SetOutput(emgScalar);
+  mafNode::ReparentTo(GetOutput(), GetInput().get());
 }

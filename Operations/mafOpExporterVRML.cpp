@@ -188,7 +188,7 @@ void mafOpExporterVRML::ExportVRML()
 //----------------------------------------------------------------------------
 {
 	
-	mafVMEOutputSurface *out_surface = mafVMEOutputSurface::SafeDownCast(((mafVME *)GetInput())->GetOutput());
+	auto out_surface = mafVMEOutputSurface::SafeDownCast(mafVME::StaticDownCast(GetInput())->GetOutput());
   out_surface->Update();
    
 	mafNode::mafAttributesMap* attributes = nullptr;// GetInput()->GetAttributes();
@@ -200,7 +200,7 @@ void mafOpExporterVRML::ExportVRML()
   vtkDataArray *scalars=ptData->GetScalars() ;
   double sr[2] = { 0, 1 };
   int m_ScalarVisibility=0;
-  if (scalars != NULL)
+  if (scalars)
   {
 
 	  m_ScalarVisibility = 1;
@@ -273,7 +273,7 @@ void mafOpExporterVRML::ExportVRML()
 		}
 		else if (m_SurfaceMaterial->GetMaterialTextureID() != -1)
 		{
-			mafVME *texture_vme = mafVME::SafeDownCast(GetInput()->GetRoot()->FindInTreeById(m_SurfaceMaterial->GetMaterialTextureID()));
+			auto texture_vme = mafVME::SafeDownCast(GetInput()->GetRoot()->FindInTreeById(m_SurfaceMaterial->GetMaterialTextureID()));
 			texture_vme->GetOutput()->Update();
 			vtkImageData *image = (vtkImageData *)texture_vme->GetOutput()->GetVTKData();
 			m_Texture->SetInputConnection(texture_vme->GetOutput()->GetVTKOutputPort());

@@ -1,24 +1,3 @@
-/*=========================================================================
-  Program:   Multimod Application Framework
-  Module:    $RCSfile: lhpOpExporterCSVGraph.cpp,v $
-  Language:  C++
-  Date:      $Date: 2009/05/19 14:29:53 $
-  Version:   $Revision: 1.1.1.1 $
-  Authors:   Matteo Giacomoni
-==========================================================================
-  Copyright (c) 2009
-  CINECA - Interuniversity Consortium (www.cineca.it)
-=========================================================================*/
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-
 #include "lhpOpExporterCSVGraph.h"
 
 #include "wx/busyinfo.h"
@@ -27,7 +6,6 @@
 #include "mafGUI.h"
 
 #include "mmuTimeSet.h"
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafVME.h"
 #include "vtkSmartPointer.h"
 #include "mafVMEGroup.h"
@@ -55,9 +33,6 @@
 #include <iostream>
 #include <fstream>
 
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(lhpOpExporterCSVGraph);
-//----------------------------------------------------------------------------
 mafViewIntGraph          *lhpOpExporterCSVGraph::m_ViewIntGraph;
 
 //----------------------------------------------------------------------------
@@ -193,7 +168,7 @@ void lhpOpExporterCSVGraph::ExportGraphs()
     for (mafNode *vme = iter->GetFirstNode(); vme; vme = iter->GetNextNode())
       vgraph->VmeAdd(vme); // Add them in the specified view
   }
-  vgraph->VmeSelect(GetInput(), true);
+  vgraph->VmeSelect(GetInput().get(), true);
   vgraph->loadPlot(false);
   vgraph->GetRenderWindow()->SaveGraphAsCSV(m_File.toWx());
   if(!m_TestMode)

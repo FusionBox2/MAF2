@@ -37,7 +37,6 @@
 #include "mafVMELandmarkCloud.h"
 #include "mafVMELandmark.h"
 #include "mafTagArray.h"
-#include "ftk/Base/RegisteringPointer.h"
 
 #include <iostream>
 #include <fstream>
@@ -52,8 +51,6 @@ enum ID_LANDMARK_IMPORTER
 };
 //----------------------------------------------------------------------------
 
-mafCxxTypeMacro(medOpImporterLandmarkTXT)
-
 //----------------------------------------------------------------------------
 medOpImporterLandmarkTXT::medOpImporterLandmarkTXT(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
@@ -63,14 +60,12 @@ medOpImporterLandmarkTXT::medOpImporterLandmarkTXT(const mafString& label) : Sup
 	m_File		= _R("");
 	m_FileDir = mafGetApplicationDirectory() + _R("/Data/External/");
 	
-	m_VmeCloud		= NULL;
   m_Start = 1;
 }
 //----------------------------------------------------------------------------
 medOpImporterLandmarkTXT::~medOpImporterLandmarkTXT()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_VmeCloud);
 }
 //----------------------------------------------------------------------------
 mafOp* medOpImporterLandmarkTXT::Copy()   
@@ -83,7 +78,6 @@ mafOp* medOpImporterLandmarkTXT::Copy()
 	cp->m_Next = NULL;
 
 	cp->m_File = m_File;
-	cp->m_VmeCloud = m_VmeCloud;
 	return cp;
 }
 
@@ -155,25 +149,25 @@ void medOpImporterLandmarkTXT::Read()
   {
     wxBusyInfo wait("Please wait, working...");
   }
-  mafNEW(m_VmeCloud);
+  auto vmeCloud = mafVMELandmarkCloud::NewSPtr();
 
   mafString path, name, ext;
   mafSplitPath(m_File,&path,&name,&ext);
-  m_VmeCloud->SetName(name);
+  vmeCloud->SetName(name);
 
   mafTagItem tag_Nature;
   tag_Nature.SetName(_R("VME_NATURE"));
   tag_Nature.SetValue(_R("NATURAL"));
 
-  m_VmeCloud->GetTagArray()->SetTag(tag_Nature);
+  vmeCloud->GetTagArray()->SetTag(tag_Nature);
 
   if (m_TestMode == true)
   {
-    m_VmeCloud->TestModeOn();
+    vmeCloud->TestModeOn();
   }
 
-  m_VmeCloud->Open();
-  m_VmeCloud->SetRadius(10);
+  vmeCloud->Open();
+  vmeCloud->SetRadius(10);
 
   wxString skipc;
   mafString time, x, y, z;
@@ -195,7 +189,7 @@ void medOpImporterLandmarkTXT::Read()
   for (int i=0;i<numland;i++)
   {
     lm_name = _R("lm_") + mafToString(i);
-    lm_idx.push_back(m_VmeCloud->AppendLandmark(lm_name));
+    lm_idx.push_back(vmeCloud->AppendLandmark(lm_name));
   }
 
   do 
@@ -221,12 +215,12 @@ void medOpImporterLandmarkTXT::Read()
 
       if(x.empty() && y.empty() && z.empty() )
       {
-        m_VmeCloud->SetLandmark(lm_idx[counter],0,0,0,tval);
-        m_VmeCloud->SetLandmarkVisibility(lm_idx[counter], 0,tval);
+        vmeCloud->SetLandmark(lm_idx[counter],0,0,0,tval);
+        vmeCloud->SetLandmarkVisibility(lm_idx[counter], 0,tval);
       }
       else
       {
-        m_VmeCloud->SetLandmark(lm_idx[counter],xval,yval,zval,tval);
+        vmeCloud->SetLandmark(lm_idx[counter],xval,yval,zval,tval);
       }
       counter++;
     }
@@ -234,7 +228,7 @@ void medOpImporterLandmarkTXT::Read()
     line.Replace(" ","\t");
   } while (!inputFile.Eof());
 
-  m_VmeCloud->Modified();
+  vmeCloud->Modified();
 
-  SetOutput(m_VmeCloud);
+  SetOutput(vmeCloud);
 }

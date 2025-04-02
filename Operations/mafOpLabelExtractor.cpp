@@ -85,9 +85,9 @@ mafOpLabelExtractor::mafOpLabelExtractor(const mafString& label) : Superclass(la
 mafOpLabelExtractor::~mafOpLabelExtractor()
 //----------------------------------------------------------------------------
 {
-	mafDEL(m_Vme);
+	m_Vme.reset();
 
-  if (m_OutputData != NULL)
+  if (m_OutputData)
   {
     vtkDEL(m_OutputData);
   }
@@ -240,7 +240,7 @@ void mafOpLabelExtractor::OnEvent(mafEventBase *maf_event)
 
 		  case wxOK:
 			  ExtractLabel();
-			  if(((mafVME *)GetInput())->GetOutput()->GetVTKData() != NULL)
+			  if(mafVME::StaticDownCast(GetInput())->GetOutput()->GetVTKData())
 				  OpStop(OP_RUN_OK);
 			  else
 			  {
@@ -281,8 +281,8 @@ void mafOpLabelExtractor::OnEvent(mafEventBase *maf_event)
 void mafOpLabelExtractor::UpdateDataLabel()
 //----------------------------------------------------------------------------
 {
-  mafNode *linkedNode = GetInput()->GetLink(_R("VolumeLink"));
-  mafAutoPointer<mafVME> linkedVolume = mafVME::SafeDownCast(linkedNode);
+  auto linkedNode = GetInput()->GetLink(_R("VolumeLink"));
+  auto linkedVolume = mafVME::SafeDownCast(linkedNode);
 
   //Get dataset from volume linked to
   vtkDataSet *data = linkedVolume->GetOutput()->GetVTKData();
@@ -371,7 +371,7 @@ void mafOpLabelExtractor::ExtractLabel()
   }
   else
   {
-    mafAutoPointer<mafVME> vmeLabeled = (mafVME *)GetInput();
+    auto vmeLabeled = mafVME::StaticDownCast(GetInput());
     m_Ds = vmeLabeled->GetOutput()->GetVTKData();
     vmeLabeled->GetOutput()->Update();
   }
@@ -467,7 +467,7 @@ void mafOpLabelExtractor::ExtractLabel()
 
     resampler->SetWindow(w);
     resampler->SetLevel(l);
-    resampler->SetInputConnection(((mafVME*)GetInput())->GetOutput()->GetVTKOutputPort());
+    resampler->SetInputConnection(mafVME::StaticDownCast(GetInput())->GetOutput()->GetVTKOutputPort());
     resampler->SetOutput(sp);
     resampler->AutoSpacingOff();
     resampler->Update();
@@ -562,7 +562,7 @@ void mafOpLabelExtractor::ExtractLabel()
   contourMapper->GetOutput(0, surface);	
 	contourMapper->Update();
 
-  mafNEW(m_Vme);
+  m_Vme = mafVMESurface::NewSPtr();
 	m_Vme->SetData(surface, 0.0);
   m_Vme->SetName(m_SurfaceName);
   m_Vme->Update();

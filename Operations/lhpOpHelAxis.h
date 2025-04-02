@@ -42,6 +42,6 @@ public:
   void OpDo() override;
 
 protected: 
-  mafVMEHelAxis   *m_HelicalSys;
+  std::shared_ptr<mafVMEHelAxis>   m_HelicalSys;
 };
 #endif

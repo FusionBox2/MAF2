@@ -393,10 +393,10 @@ void medOpMML::OnRegistrationOK()
   deformedpd->Update();
 
   // vme
-  mafAutoPointer<mafVMESurface> vme = mafVMESurface::New();
+  auto vme = mafVMESurface::NewSPtr();
 
   // vme item
-  vme->SetData(deformedpd->GetOutput(), ((mafVME *)GetInput())->GetTimeStamp()) ;
+  vme->SetData(deformedpd->GetOutput(), mafVME::StaticDownCast(GetInput())->GetTimeStamp()) ;
 
 
   // tag 1: status

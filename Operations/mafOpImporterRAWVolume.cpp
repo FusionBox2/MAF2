@@ -60,8 +60,6 @@ mafOpImporterRAWVolume::mafOpImporterRAWVolume(const mafString& label) : Supercl
 	m_OpType			= OPTYPE_IMPORTER;
 	m_Canundo			= true;
 	m_RawFile			= mafGetApplicationDirectory();
-	m_VolumeGray	= NULL;
-  m_VolumeRGB   = NULL;
   m_GuiSlider   = NULL;
 
 	m_Endian		 = 1;
@@ -94,8 +92,8 @@ mafOpImporterRAWVolume::mafOpImporterRAWVolume(const mafString& label) : Supercl
 mafOpImporterRAWVolume::~mafOpImporterRAWVolume()
 //----------------------------------------------------------------------------
 {
-	mafDEL(m_VolumeGray);
-  mafDEL(m_VolumeRGB);
+	m_VolumeGray.reset();
+  m_VolumeRGB.reset();
 }
 //----------------------------------------------------------------------------
 mafOp *mafOpImporterRAWVolume::Copy()
@@ -534,8 +532,8 @@ bool mafOpImporterRAWVolume::Import()
 		rectilinear_data->SetDimensions(dim);
 		rectilinear_data->GetPointData()->SetScalars(scalars);
 
-		mafNEW(m_VolumeGray);
-		mafNEW(m_VolumeRGB);
+		m_VolumeGray = mafVMEVolumeGray::NewSPtr();
+		m_VolumeRGB = mafVMEVolumeRGB::NewSPtr();
 		if (m_VolumeGray->SetDataByDetaching((vtkDataSet *)rectilinear_data,0) == MAF_OK)
 		{
 			SetOutput(m_VolumeGray);
@@ -553,8 +551,8 @@ bool mafOpImporterRAWVolume::Import()
 	} 
 	else
 	{
-		mafNEW(m_VolumeGray);
-		mafNEW(m_VolumeRGB);
+		m_VolumeGray = mafVMEVolumeGray::NewSPtr();
+		m_VolumeRGB = mafVMEVolumeRGB::NewSPtr();
 		if (m_VolumeGray->SetDataByDetaching((vtkDataSet *)image_to_sp->GetOutput(),0) == MAF_OK)
 		{
 			SetOutput(m_VolumeGray);
@@ -578,7 +576,7 @@ bool mafOpImporterRAWVolume::Import()
   mafSplitPath(m_RawFile,&path,&name,&ext);
 	GetOutput()->SetName(name);
 	GetOutput()->GetTagArray()->SetTag(tag_Nature);
-	GetOutput()->ReparentTo(GetInput());
+	mafNode::ReparentTo(GetOutput(), GetInput().get());
 	if(!m_TestMode)
 		{mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 	return true;

@@ -1,24 +1,5 @@
-/*=========================================================================
-  Program:   Multimod Application Framework
-  Module:    $RCSfile: lhpOpCreateSurfaceScalar.h,v $
-  Language:  C++
-  Date:      $Date: 2008-02-08 12:34:08 $
-  Version:   $Revision: 1.1 $
-  Authors:   Paolo Quadrani
-==========================================================================
-Copyright (c) 2002/2004
-CINECA - Interuniversity Consortium (www.cineca.it) 
-=========================================================================*/
-
-#ifndef __lhpOpCreateSurfaceScalar_H__
-#define __lhpOpCreateSurfaceScalar_H__
-
+#pragma once
 #include "mafOp.h"
-
-//----------------------------------------------------------------------------
-// forward references :
-//----------------------------------------------------------------------------
-class lhpVMESurfaceScalarVarying;
 
 //----------------------------------------------------------------------------
 // lhpOpCreateSurfaceScalar :
@@ -31,14 +12,10 @@ public:
   lhpOpCreateSurfaceScalar(const mafString& label = _R("Create surface scalar"));
   ~lhpOpCreateSurfaceScalar() override; 
 
-  mafTypeMacro(lhpOpCreateSurfaceScalar, mafOp);
+  mafTypeMacroN(lhpOpCreateSurfaceScalar);
 
   mafOp* Copy() override;
 
   bool Accept(mafNode *node) override;
   void OpRun() override;
-
-protected: 
-  lhpVMESurfaceScalarVarying *m_SurfaceScalar;
 };
-#endif

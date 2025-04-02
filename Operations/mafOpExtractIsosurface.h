@@ -100,7 +100,7 @@ public:
   void SetClean(bool clean);
 
 protected:
-  mafVMEGroup *m_OutputGroup; 
+  std::shared_ptr<mafVMEGroup> m_OutputGroup; 
   mafGUIDialog		*m_Dialog;
 	mafRWI      *m_Rwi;
   vtkRenderer *m_PIPRen;

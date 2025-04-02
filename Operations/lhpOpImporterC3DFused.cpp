@@ -37,7 +37,6 @@
 
 #include "mafNodeIterator.h"
 #include "mafVME.h"
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafVMELandmark.h"
 
 #include "vtkSmartPointer.h"
@@ -89,11 +88,11 @@ lhpOpImporterC3DFused::~lhpOpImporterC3DFused( )
   vtkDEL(m_PointsTarget);
   for (auto& p : m_Imported)
   {
-    mafDEL(p);
+    p.reset();
   }
   for (auto& p : m_Registered)
   {
-    mafDEL(p);
+    p.reset();
   }
 }
 //----------------------------------------------------------------------------
@@ -141,7 +140,7 @@ void lhpOpImporterC3DFused::OpRun()
   }
   else if (!m_TestMode)
   {
-    m_Source = (mafVME*)GetInput();
+    m_Source = mafVME::StaticDownCast(GetInput()).get();
     m_SourceName = GetInput()->GetName();
 
     m_Gui = new mafGUI(this);
@@ -372,19 +371,19 @@ namespace
         continue;
       traverse.push_back(x);
       for(int i = 0; i < x->GetNumberOfChildren(); i++)
-        tmp.push_back(x->GetChild(i));
+        tmp.push_back(x->GetChild(i).get());
     }
   }
 
-  mafNode *CopyTreeTimeStamp(mafNode *src)
+  std::shared_ptr<mafNode> CopyTreeTimeStamp(mafNode *src)
   {
     if(src == NULL)
       return NULL;
 
-    mafNode *result = src->CopyTree();
+    auto result = src->CopyTree();
 
     std::list<mafNode*> tmp;
-    tmp.push_back(result);
+    tmp.push_back(result.get());
     while(!tmp.empty())
     {
       mafNode *x = *(tmp.begin());
@@ -418,7 +417,7 @@ namespace
       }*/
 
       for(int i = 0; i < x->GetNumberOfChildren(); i++)
-        tmp.push_back(x->GetChild(i));
+        tmp.push_back(x->GetChild(i).get());
     }
     return result;
   }
@@ -444,8 +443,7 @@ bool lhpOpImporterC3DFused::RegistrationProcedure()
     importer->SetImportPlatform(false);
     importer->SetImportEvent(false);
     importer->Import();
-    mafVMEGroup *c3dImported = importer->GetGroup();
-    c3dImported->Register(this);
+    auto c3dImported = importer->GetGroup();
     m_Imported.push_back(c3dImported);
     //vme = c3dImported;
     delete importer;
@@ -454,13 +452,12 @@ bool lhpOpImporterC3DFused::RegistrationProcedure()
   bool processed = false;
   for (auto Target : m_Imported)
   {
-    bool multiTime = CheckMultiTime(Target);
-    mafVME *Registered = NULL;
-    if (Registered == NULL)
+    bool multiTime = CheckMultiTime(Target.get());
+    std::shared_ptr<mafVME> Registered;
+    if (Registered == nullptr)
     {
       mafString name = m_Source->GetName() + _R(" registered on ") + Target->GetName();
       Registered = mafVME::SafeDownCast(m_Source->CopyTree());
-      Registered->Register(this);
       Registered->SetName(name);
     }
 
@@ -472,7 +469,7 @@ bool lhpOpImporterC3DFused::RegistrationProcedure()
     std::list<mafNode*> srcTrav;
     std::list<mafNode*> regTrav;
     FillTraverseList(m_Source, srcTrav);
-    FillTraverseList(Registered, regTrav);
+    FillTraverseList(Registered.get(), regTrav);
 
     std::list<mafNode*>::iterator itsrc, itreg;
     for (itsrc = srcTrav.begin(), itreg = regTrav.begin(); itsrc != srcTrav.end() && itreg != regTrav.end(); ++itsrc, ++itreg)
@@ -481,15 +478,15 @@ bool lhpOpImporterC3DFused::RegistrationProcedure()
       mafNode *nreg = *itreg;
       //while(mafVMEInfoText *vit = mafVMEInfoText::SafeDownCast(nreg))
       //  nreg = iterreg->GetNextNode();
-      mafVMELandmarkCloud *lmcs = mafVMELandmarkCloud::SafeDownCast(nsrc);
-      mafVMELandmarkCloud *lmcr = mafVMELandmarkCloud::SafeDownCast(nreg);
-      mafVMELandmarkCloud *lmct = NULL;
-      if (lmcs == NULL)//lmcr is of the same type as lmcs
+      auto lmcs = mafVMELandmarkCloud::SafeDownCast(nsrc);
+      auto lmcr = mafVMELandmarkCloud::SafeDownCast(nreg);
+      mafVMELandmarkCloud *lmct = nullptr;
+      if (lmcs == nullptr)//lmcr is of the same type as lmcs
         continue;
       const char *search_name = nsrc->GetName().GetCStr();
       for (int i = 0; i < m_LMDict.size(); i++)
       {
-        search_name = NULL;
+        search_name = nullptr;
         if (usedEntries[i])
           continue;
         if (nsrc->GetName() == mafWxToString(m_LMDict[i].first))
@@ -501,25 +498,25 @@ bool lhpOpImporterC3DFused::RegistrationProcedure()
       }
       if (search_name)
       {
-        auto lmitert = Target->NewIterator();
-        for (mafNode *lmt = lmitert->GetFirstNode(); lmt; lmt = lmitert->GetNextNode())
+        auto lmitert = std::make_unique<mafNodeIterator>(Target.get());
+        for (auto lmt = lmitert->GetFirstNode(); lmt; lmt = lmitert->GetNextNode())
         {
-          mafVMELandmarkCloud *lmtmp = mafVMELandmarkCloud::SafeDownCast(lmt);
-          if (lmtmp == NULL)
+          auto lmtmp = mafVMELandmarkCloud::SafeDownCast(lmt);
+          if (lmtmp == nullptr)
             continue;
-          if (strstr(lmtmp->GetName().GetCStr(), search_name) != NULL)
+          if (strstr(lmtmp->GetName().GetCStr(), search_name) != nullptr)
           {
             lmct = lmtmp;
             break;
           }
         }
       }
-      if (lmct == NULL)
+      if (lmct == nullptr)
         continue;
       bool res = ProcessNode(lmcs, lmct, lmcr, multiTime);
       processed = processed || res;
     }
-    if (Registered != NULL)
+    if (Registered)
       m_Registered.push_back(Registered);
   }
   if(!m_TestMode)
@@ -599,8 +596,7 @@ bool lhpOpImporterC3DFused::ProcessNode(mafVMELandmarkCloud *src, mafVMELandmark
 #endif
 bool lhpOpImporterC3DFused::ProcessNode(mafVMELandmarkCloud *src, mafVMELandmarkCloud *trg, mafVMELandmarkCloud *registered, bool multiTime)
 {
-   mafVMEInfoText *info;
-   mafNEW(info);
+   auto info = mafVMEInfoText::NewSPtr();
    mafString name = _R("Info for registration ") + src->GetName() + _R(" into ") + trg->GetName();
    info->SetName(name);
    info->SetPosLabel(_R("Registration residual: "), 0);
@@ -638,7 +634,7 @@ bool lhpOpImporterC3DFused::ProcessNode(mafVMELandmarkCloud *src, mafVMELandmark
       if(ExtractMatchingPoints(src, trg, currTime))
       {
          if(!infoAdded)
-           info->ReparentTo(registered);
+           mafNode::ReparentTo(info, registered);
          infoAdded = true;
          double tr = RegisterPoints(src, trg, registered, currTime);
          info->SetAbsPose(tr, 0.0, 0.0, 0.0, 0.0, 0.0, currTime);
@@ -654,13 +650,13 @@ bool lhpOpImporterC3DFused::ProcessNode(mafVMELandmarkCloud *src, mafVMELandmark
     if(ExtractMatchingPoints(src, trg))
     {
        if(!infoAdded)
-         info->ReparentTo(registered);
+         mafNode::ReparentTo(info, registered);
        infoAdded = true;
        double tr = RegisterPoints(src, trg, registered);
        info->SetAbsPose(tr, 0.0, 0.0, 0.0, 0.0, 0.0);
     }
   }
-  mafDEL(info);
+  info.reset();
   if(lmcsOpened)
     src->Open();
   if(lmctOpened)
@@ -675,9 +671,9 @@ void lhpOpImporterC3DFused::OpDo()
 //----------------------------------------------------------------------------
 {
   for (auto p : m_Imported)
-    p->ReparentTo(GetInput()->GetRoot());
+    mafNode::ReparentTo(p, GetInput()->GetRoot());
   for (auto p : m_Registered)
-    p->ReparentTo(GetInput()->GetRoot());
+    mafNode::ReparentTo(p, GetInput()->GetRoot());
   if (!m_CSVExported && !m_PscScriptFileName.empty())
   {
     m_CSVExported = true;
@@ -698,9 +694,9 @@ void lhpOpImporterC3DFused::OpUndo()
 //----------------------------------------------------------------------------
 {
   for (auto p : m_Imported)
-    p->ReparentTo(NULL);
+    mafNode::ReparentTo(p, nullptr);
   for (auto p : m_Registered)
-    p->ReparentTo(NULL);
+    mafNode::ReparentTo(p, nullptr);
 }
 //----------------------------------------------------------------------------
 int lhpOpImporterC3DFused::ExtractMatchingPoints(mafVMELandmarkCloud *src, mafVMELandmarkCloud *trg, double time)

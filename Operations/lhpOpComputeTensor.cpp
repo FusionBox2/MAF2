@@ -79,7 +79,6 @@ lhpOpComputeTensor::lhpOpComputeTensor(const mafString& label) : Superclass(labe
   // VMEs
   m_VmeData = NULL;
   m_VmeDisplacements = NULL;
-  m_VmeTensors = NULL;
   
   // vtkComponents
   m_ArrayForVolumeRendering = NULL;
@@ -125,7 +124,7 @@ lhpOpComputeTensor::lhpOpComputeTensor(const mafString& label) : Superclass(labe
 lhpOpComputeTensor::~lhpOpComputeTensor()
 //----------------------------------------------------------------------------
 {  
-  mafDEL(m_VmeTensors);
+  m_VmeTensors.reset();
 }
 //----------------------------------------------------------------------------
 mafOp* lhpOpComputeTensor::Copy()   
@@ -148,11 +147,11 @@ void lhpOpComputeTensor::OpRun()
 //----------------------------------------------------------------------------
 {
   // Get the type of the input dataset
-  mafVMEVolumeGray* vmeData = mafVMEVolumeGray::SafeDownCast(GetInput()) ;
+  auto vmeData = mafVMEVolumeGray::SafeDownCast(GetInput()) ;
   
   // Look for a dataset containing displacement vectors
-  mafVMEVolume* vmeDisplacements= NULL;
-  for (int i=0; i< vmeData->GetNumberOfChildren() && vmeDisplacements == NULL; )
+  std::shared_ptr<mafVMEVolume> vmeDisplacements;
+  for (int i=0; i< vmeData->GetNumberOfChildren() && vmeDisplacements == nullptr; )
     if (vmeData->GetChild(i)->IsMAFType(mafVMEVolumeRGB))
        vmeDisplacements = mafVMEVolumeRGB::SafeDownCast(vmeData->GetChild(i));
     else if (vmeData->GetChild(i)->IsMAFType(mafVMEVolumeGray))
@@ -161,9 +160,9 @@ void lhpOpComputeTensor::OpRun()
   
   // check the validity of attributes and report error message
   // TODO: use wxWidgets instead of windows message boxes
-  if (vmeData == NULL)  
+  if (vmeData == nullptr)  
     mafMessage(_M("The original dataset is not of the correct type"));
-  if (vmeDisplacements == NULL)
+  if (vmeDisplacements == nullptr)
     mafMessage(_M("Could not find displacement vectors"));
   
   if (!vmeData || !vmeDisplacements )
@@ -173,8 +172,8 @@ void lhpOpComputeTensor::OpRun()
     }
 
   // fill in the data and check if the datasets match
-  m_VmeData = vmeData;
-  m_VmeDisplacements = vmeDisplacements;
+  m_VmeData = vmeData.get();
+  m_VmeDisplacements = vmeDisplacements.get();
 
   if (!DatasetsMatch())
     {
@@ -203,7 +202,7 @@ void lhpOpComputeTensor::OpRun()
   }
 
   DeleteOpDialog();
-  mafDEL(m_VmeTensors);
+  m_VmeTensors.reset();
 
   {mafEvent evUnq(this,result); InvokeEvent(evUnq);}
 }
@@ -245,7 +244,7 @@ int lhpOpComputeTensor::ComputeTensors()
 {  
   wxBusyInfo wait(_("Caclulating tensors"));
 
-  mafNEW(m_VmeTensors);  
+  m_VmeTensors = mafVMEVolumeGray::NewSPtr();  
   m_VmeTensors->Update();
   m_VmeTensors->DeepCopy(m_VmeData); // this is the quickest solution, but is it the best?
 
@@ -316,7 +315,7 @@ void lhpOpComputeTensor::CreateOutputDataset()
 
     // Get the tensor output and redirect it to output
     SetOutput(m_VmeTensors);
-    m_VmeTensors->ReparentTo(GetInput());
+    mafNode::ReparentTo(m_VmeTensors, GetInput().get());
     // Set the name of the dataset
     mafString name = GetInput()->GetName() + _R(" - tensors");
     m_VmeTensors->SetName(name);

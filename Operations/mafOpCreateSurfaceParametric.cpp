@@ -1,41 +1,8 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafOpCreateSurfaceParametric
- Authors: Daniele Giunchi
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-
 #include "mafOpCreateSurfaceParametric.h"
 #include "mafDecl.h"
 #include "mafEvent.h"
 
 #include "mafVMESurfaceParametric.h"
-
-//----------------------------------------------------------------------------
-// Constants :
-//----------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(mafOpCreateSurfaceParametric);
-//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 mafOpCreateSurfaceParametric::mafOpCreateSurfaceParametric(const mafString& label) : Superclass(label)
@@ -65,8 +32,8 @@ bool mafOpCreateSurfaceParametric::Accept(mafNode *node)
 void mafOpCreateSurfaceParametric::OpRun()   
 //----------------------------------------------------------------------------
 {
-  m_SurfaceParametric = mafVMESurfaceParametric::NewSPtr();
-  m_SurfaceParametric->SetName(_R("Surface Parametric"));
-  SetOutput(m_SurfaceParametric);
+  auto surfaceParametric = mafVMESurfaceParametric::NewSPtr();
+  surfaceParametric->SetName(_R("Surface Parametric"));
+  SetOutput(surfaceParametric);
   {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
 }

@@ -71,11 +71,11 @@ public:
 	void ImportPLY();
 
   /** Used to retrieve imported data. It is useful when the operation is executed from code.*/
-  void GetImportedPLY(std::vector<mafVMESurface*> &importedPLY);
+  void GetImportedPLY(std::vector<std::shared_ptr<mafVMESurface> > &importedPLY);
 
 protected:
 
-  std::vector<mafVMESurface*> m_ImportedPLYs;
+  std::vector<std::shared_ptr<mafVMESurface> > m_ImportedPLYs;
   std::vector<mafString>	    m_Files;
 	mafString	                  m_FileDir;
 };

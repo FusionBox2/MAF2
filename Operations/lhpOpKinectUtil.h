@@ -52,7 +52,7 @@ protected:
   /** Create the dialog interface for the importer. */
   virtual void CreateGui();
   /** Import the c3d events*/
-  mafVME* ImportSingleFile(const mafString &fullFileName);
+  std::shared_ptr<mafVME> ImportSingleFile(const mafString &fullFileName);
   void Clear();
 
   void DictionaryUpdate();
@@ -74,7 +74,7 @@ protected:
   int                            m_AFs;
   int                            m_Model;
   int                            m_TypeOfRefs;
-  std::vector<mafVME*>           m_Imported;
+  std::vector<std::shared_ptr<mafVME> >           m_Imported;
 private:
 };
 #endif

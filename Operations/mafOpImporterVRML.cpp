@@ -137,7 +137,6 @@ mafCxxTypeMacro(mafOpImporterVRML);
 	m_OpType	= OPTYPE_IMPORTER;
 	m_File		= _R("");
 	m_Canundo	= true;
-	m_Group		= NULL;
 
  	m_FileDir = _R("");//mafGetApplicationDirectory().c_str();
 }
@@ -145,7 +144,6 @@ mafCxxTypeMacro(mafOpImporterVRML);
  mafOpImporterVRML::~ mafOpImporterVRML()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_Group);
 }	
 //----------------------------------------------------------------------------
 mafOp * mafOpImporterVRML::Copy()
@@ -188,8 +186,8 @@ void  mafOpImporterVRML::ImportVRML()
   mafString path, name, ext;
   mafSplitPath(m_File,&path,&name,&ext);
 
-  mafNEW(m_Group);
-  m_Group->SetName(name);
+  auto group = mafVMEGroup::NewSPtr();
+  group->SetName(name);
 
   vtkNew<vtkRenderWindow> rw;
 
@@ -225,8 +223,8 @@ void  mafOpImporterVRML::ImportVRML()
       name = mafString::Format(_R("surface_%d"), i);
 
       mafTimeStamp t;
-      t = ((mafVME *)GetInput())->GetTimeStamp();
-      mafAutoPointer<mafVMESurface> surface = mafVMESurface::New();
+      t = mafVME::StaticDownCast(GetInput())->GetTimeStamp();
+      auto surface = mafVMESurface::NewSPtr();
       surface->SetName(name);
       vtkPolyData *data = (vtkPolyData *)actor->GetMapper()->GetInput();
 	  actor->GetMapper()->Update();
@@ -243,7 +241,7 @@ void  mafOpImporterVRML::ImportVRML()
         m->UpdateProp();
 
         surface->GetMatrixVector()->AppendKeyMatrix(matrix);
-        surface->ReparentTo(m_Group);
+        mafNode::ReparentTo(surface, group.get());
         mafTagItem tag_Nature;
         tag_Nature.SetName(_R("VME_NATURE"));
         tag_Nature.SetValue(_R("NATURAL"));
@@ -252,5 +250,5 @@ void  mafOpImporterVRML::ImportVRML()
       
     }
   }
-  SetOutput(m_Group);
+  SetOutput(group);
 }

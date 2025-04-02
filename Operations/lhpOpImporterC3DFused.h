@@ -79,8 +79,8 @@ protected:
 
   mafVME*      m_Source;
 
-  std::vector<mafVME*> m_Imported;
-  std::vector<mafVME*> m_Registered;
+  std::vector<std::shared_ptr<mafVME> > m_Imported;
+  std::vector<std::shared_ptr<mafVME> > m_Registered;
 
   mafString   m_SourceName;
   

@@ -47,12 +47,6 @@ public:
   /** Builds operation's interface. */
   void OpRun() override;
 
-  /** Execute the operation. */
-  void OpDo() override;
-
-  /** Makes the undo for the operation. */
-  void OpUndo() override;
-
   static bool RigidBodyAccept(mafNode* node) {if(node != NULL && node->IsA("mafVMELandmarkCloud") && !((mafVMELandmarkCloud*)node)->IsOpen() && !((mafVMELandmarkCloud*)node)->IsAnimated())return true; return false;}
 
 protected:

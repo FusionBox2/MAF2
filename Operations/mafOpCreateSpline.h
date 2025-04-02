@@ -1,22 +1,4 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafOpCreateSpline
- Authors: Daniele Giunchi & Matteo Giacomoni
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __mafOpCreateSpline_H__
-#define __mafOpCreateSpline_H__
-
+#pragma once
 #include "mafOp.h"
 
 //----------------------------------------------------------------------------
@@ -35,15 +17,10 @@ public:
   mafOpCreateSpline(const mafString& label = _R("Create Parametric Surface"));
   ~mafOpCreateSpline() override; 
 
-  mafTypeMacro(mafOpCreateSpline, mafOp);
+  mafTypeMacroN(mafOpCreateSpline);
 
   mafOp* Copy() override;
 
   bool Accept(mafNode *node) override;
   void OpRun() override;
-  void OpDo() override;
-
-protected: 
-  mafVMEPolylineSpline *m_PolylineSpline;
 };
-#endif

@@ -83,12 +83,6 @@ public:
   /** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
   void OpStop	(int result) override;
 
-  /** Execute the operation. */
-  void OpDo() override;
-
-  /** Undo the operation. */
-  void OpUndo() override;
-
   void OnStringPrefix();
   void OnOpenDir();
 
@@ -217,10 +211,10 @@ protected:
 
   std::shared_ptr<medInteractorDICOMImporter> m_DicomInteractor;
 
-  mafVMEVolumeGray  *m_VolumeGray;
-  mafVMEVolumeRGB   *m_VolumeRGB;
+  std::shared_ptr<mafVMEVolumeGray>  m_VolumeGray;
+  std::shared_ptr<mafVMEVolumeRGB>   m_VolumeRGB;
 #ifdef VME_VOLUME_LARGE
-  mafVMEVolumeLarge* m_VolumeLarge;
+  std::shared_ptr<mafVMEVolumeLarge> m_VolumeLarge;
 #endif // VME_VOLUME_LARGE
 
   mafString m_DimXCrop;

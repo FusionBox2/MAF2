@@ -1,28 +1,3 @@
-/*=========================================================================
-
- Program: MAF2Medical
- Module: medOpSplitSurface
- Authors: Paolo Quadrani ,  Stefano Perticoni
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-
 #include "medOpSplitSurface.h"
 #include "wx/busyinfo.h"
 
@@ -34,7 +9,6 @@
 #include "mafInteractorCompositorMouse.h"
 #include "mafInteractorGenericMouse.h"
 
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafVMEGizmo.h"
 #include "mafGizmoTranslate.h"
 #include "mafGizmoRotate.h"
@@ -56,10 +30,6 @@
 #include "vtkAppendPolyData.h"
 #include "vtkMAFClipSurfaceBoundingBox.h"
 
-
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(medOpSplitSurface);
-//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 medOpSplitSurface::medOpSplitSurface(const mafString& label) : Superclass(label)
@@ -114,7 +84,7 @@ medOpSplitSurface::~medOpSplitSurface()
 	vtkDEL(m_ResultPolyData);
 	vtkDEL(m_ClippedPolyData);
   m_IsaCompositor.reset();
-	mafDEL(m_ClippedVME);
+	m_ClippedVME.reset();
   vtkDEL(m_ClipperPlane);
   vtkDEL(m_Clipper);
 	vtkDEL(m_ClipperBoundingBox);
@@ -158,7 +128,7 @@ void medOpSplitSurface::OpRun()
 	vtkNEW(m_ClipperBoundingBox);
   vtkNEW(m_OldSurface);
 
-  m_OldSurface->DeepCopy((vtkPolyData*)((mafVME *)GetInput())->GetOutput()->GetVTKData());
+  m_OldSurface->DeepCopy((vtkPolyData*)mafVME::StaticDownCast(GetInput())->GetOutput()->GetVTKData());
  
 	vtkNEW(m_ClippedPolyData);
 	vtkNEW(m_ResultPolyData);
@@ -184,13 +154,13 @@ void medOpSplitSurface::CreateGizmos()
 	m_ImplicitPlaneGizmo->Update();
 
 	m_GizmoTranslate = new mafGizmoTranslate(mafVME::SafeDownCast(m_ImplicitPlaneGizmo), this);
-	m_GizmoTranslate->SetRefSys(m_ImplicitPlaneGizmo);
+	m_GizmoTranslate->SetRefSys(m_ImplicitPlaneGizmo.get());
 	m_GizmoTranslate->Show(false);
 	m_GizmoRotate = new mafGizmoRotate(mafVME::SafeDownCast(m_ImplicitPlaneGizmo), this);
-	m_GizmoRotate->SetRefSys(m_ImplicitPlaneGizmo);
+	m_GizmoRotate->SetRefSys(m_ImplicitPlaneGizmo.get());
 	m_GizmoRotate->Show(false);
 	m_GizmoScale = new mafGizmoScale(mafVME::SafeDownCast(m_ImplicitPlaneGizmo), this);
-	m_GizmoScale->SetRefSys(m_ImplicitPlaneGizmo);
+	m_GizmoScale->SetRefSys(m_ImplicitPlaneGizmo.get());
 	m_GizmoScale->Show(false);
 }
 //----------------------------------------------------------------------------
@@ -207,7 +177,7 @@ void medOpSplitSurface::CreateGui()
 	m_Gui->Button(ID_CHOOSE_SURFACE,_L("clipper surface"));
 	m_Gui->Bool(ID_CLIP_INSIDE,_L("reverse clipping"),&m_ClipInside,1);
 	double b[6];
-	((mafVME *)GetInput())->GetOutput()->GetVMEBounds(b);
+	mafVME::StaticDownCast(GetInput())->GetOutput()->GetVMEBounds(b);
 	// bounding box dim
 	m_PlaneWidth = b[1] - b[0];
 	m_PlaneHeight = b[3] - b[2];
@@ -326,7 +296,7 @@ void medOpSplitSurface::ClipBoundingBox()
 	transform_plane->Update();
 
 	vtkNew<vtkTransformPolyDataFilter> transform_data_input;
-	transform_data_input->SetTransform(((mafVME*)GetInput())->GetAbsMatrixPipe()->GetVTKTransform());
+	transform_data_input->SetTransform(mafVME::StaticDownCast(GetInput())->GetAbsMatrixPipe()->GetVTKTransform());
 	transform_data_input->SetInputData(m_OldSurface);
 	transform_data_input->Update();
 
@@ -338,7 +308,7 @@ void medOpSplitSurface::ClipBoundingBox()
 	m_ResultPolyData->DeepCopy(m_ClipperBoundingBox->GetOutput());
 	//m_ResultPolyData->Update();
 
-	int result=((mafVMESurface*)GetInput())->SetData(m_ResultPolyData,((mafVME*)GetInput())->GetTimeStamp());
+	int result= mafVMESurface::StaticDownCast(GetInput())->SetData(m_ResultPolyData, mafVME::StaticDownCast(GetInput())->GetTimeStamp());
 
 	if(m_GenerateClippedOutput)
 	{
@@ -485,13 +455,13 @@ void medOpSplitSurface::ChangeGizmo()
 			switch(m_GizmoType)
 			{
 			case GIZMO_TRANSLATE:
-				m_GizmoTranslate->SetRefSys(m_ImplicitPlaneGizmo);
+				m_GizmoTranslate->SetRefSys(m_ImplicitPlaneGizmo.get());
 				break;
 			case GIZMO_ROTATE:
-				m_GizmoRotate->SetRefSys(m_ImplicitPlaneGizmo);
+				m_GizmoRotate->SetRefSys(m_ImplicitPlaneGizmo.get());
 				break;
 			case GIZMO_SCALE:
-				m_GizmoScale->SetRefSys(m_ImplicitPlaneGizmo);
+				m_GizmoScale->SetRefSys(m_ImplicitPlaneGizmo.get());
 				break;
 			}
 		}
@@ -510,10 +480,10 @@ void medOpSplitSurface::OpStop(int result)
 {
   if(m_ImplicitPlaneGizmo)
   {
-    m_ImplicitPlaneGizmo->SetBehavior(NULL);
-    m_ImplicitPlaneGizmo->ReparentTo(NULL);
+    m_ImplicitPlaneGizmo->SetBehavior(nullptr);
+    mafNode::ReparentTo(m_ImplicitPlaneGizmo, nullptr);
   }
-  mafDEL(m_ImplicitPlaneGizmo);
+  m_ImplicitPlaneGizmo.reset();
 	vtkDEL(m_Gizmo);
 	vtkDEL(m_ArrowShape);
 	vtkDEL(m_PlaneSource);
@@ -533,25 +503,25 @@ void medOpSplitSurface::OpDo()
 //----------------------------------------------------------------------------
 {
 	vtkNew<vtkTransformPolyDataFilter> transform_output;
-	transform_output->SetTransform((vtkAbstractTransform *)((mafVME *)GetInput())->GetAbsMatrixPipe()->GetVTKTransform()->GetInverse());
+	transform_output->SetTransform((vtkAbstractTransform *)mafVME::StaticDownCast(GetInput())->GetAbsMatrixPipe()->GetVTKTransform()->GetInverse());
 	transform_output->SetInputData(m_ResultPolyData);
 	transform_output->Update();
 
-	((mafVMESurface *)GetInput())->SetData(transform_output->GetOutput(),((mafVME *)GetInput())->GetTimeStamp());
+	mafVMESurface::StaticDownCast(GetInput())->SetData(transform_output->GetOutput(),mafVME::StaticDownCast(GetInput())->GetTimeStamp());
 	if(m_GenerateClippedOutput)
 	{
 		vtkNew<vtkTransformPolyDataFilter> transform_clipped_output;
-		transform_clipped_output->SetTransform((vtkAbstractTransform *)((mafVME *)GetInput())->GetAbsMatrixPipe()->GetVTKTransform()->GetInverse());
+		transform_clipped_output->SetTransform((vtkAbstractTransform *)mafVME::StaticDownCast(GetInput())->GetAbsMatrixPipe()->GetVTKTransform()->GetInverse());
 		transform_clipped_output->SetInputData(m_ClippedPolyData);
 		transform_clipped_output->Update();
 
-		mafNEW(m_ClippedVME);
-		m_ClippedVME->DeepCopy(GetInput());
-		m_ClippedVME->SetData(transform_clipped_output->GetOutput(),((mafVME *)GetInput())->GetTimeStamp());
+		m_ClippedVME = mafVMESurface::NewSPtr();
+		m_ClippedVME->DeepCopy(GetInput().get());
+		m_ClippedVME->SetData(transform_clipped_output->GetOutput(),mafVME::StaticDownCast(GetInput())->GetTimeStamp());
 		m_ClippedVME->SetName(_R("clipped"));
 		m_ClippedVME->Update();
 
-		m_ClippedVME->ReparentTo(GetInput()->GetParent());
+		mafNode::ReparentTo(m_ClippedVME, GetInput()->GetParent());
 	}
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
@@ -559,11 +529,11 @@ void medOpSplitSurface::OpDo()
 void medOpSplitSurface::OpUndo()
 //----------------------------------------------------------------------------
 {
-  ((mafVMESurface *)GetInput())->SetData(m_OldSurface,((mafVME *)GetInput())->GetTimeStamp());
+  mafVMESurface::StaticDownCast(GetInput())->SetData(m_OldSurface,mafVME::StaticDownCast(GetInput())->GetTimeStamp());
 	if(m_GenerateClippedOutput)
 	{
-		m_ClippedVME->ReparentTo(NULL);
-		mafDEL(m_ClippedVME);
+		mafNode::ReparentTo(m_ClippedVME, nullptr);
+		m_ClippedVME.reset();
 	}
 	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
@@ -582,8 +552,8 @@ int medOpSplitSurface::Clip()
       return MAF_ERROR;
 
     vtkNew<vtkTransformPolyDataFilter> transform_data_input;
-    transform_data_input->SetTransform((vtkAbstractTransform *)((mafVME *)GetInput())->GetAbsMatrixPipe()->GetVTKTransform());
-    transform_data_input->SetInputConnection(((mafVME *)GetInput())->GetOutput()->GetVTKOutputPort());
+    transform_data_input->SetTransform((vtkAbstractTransform *)mafVME::StaticDownCast(GetInput())->GetAbsMatrixPipe()->GetVTKTransform());
+    transform_data_input->SetInputConnection(mafVME::StaticDownCast(GetInput())->GetOutput()->GetVTKOutputPort());
     transform_data_input->Update();
 
     // clip input surface by another surface
@@ -613,7 +583,7 @@ int medOpSplitSurface::Clip()
 		else
 		{
 			vtkMatrix4x4 *mat = vtkMatrix4x4::New();
-			mat->DeepCopy(((mafVME *)GetInput())->GetAbsMatrixPipe()->GetMatrixPointer()->GetVTKMatrix());
+			mat->DeepCopy(mafVME::StaticDownCast(GetInput())->GetAbsMatrixPipe()->GetMatrixPointer()->GetVTKMatrix());
 			mat->Invert();
 			mat->Modified();
 
@@ -625,7 +595,7 @@ int medOpSplitSurface::Clip()
 			tr->Update();
 
 			m_ClipperPlane->SetTransform(tr);
-			m_Clipper->SetInputConnection(((mafVME *)GetInput())->GetOutput()->GetVTKOutputPort());
+			m_Clipper->SetInputConnection(mafVME::StaticDownCast(GetInput())->GetOutput()->GetVTKOutputPort());
 			m_Clipper->SetClipFunction(m_ClipperPlane);
 			tr->Delete();
 			mat->Delete();
@@ -667,7 +637,7 @@ void medOpSplitSurface::PostMultiplyEventMatrix(mafEventBase *maf_event)
 		// handle incoming transform events
 		vtkTransform *tr = vtkTransform::New();
 		tr->PostMultiply();
-		tr->SetMatrix(((mafVME *)m_ImplicitPlaneGizmo)->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
+		tr->SetMatrix(mafVME::StaticDownCast(m_ImplicitPlaneGizmo)->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
 		tr->Concatenate(e->GetMatrix()->GetVTKMatrix());
 		tr->Update();
 
@@ -678,7 +648,7 @@ void medOpSplitSurface::PostMultiplyEventMatrix(mafEventBase *maf_event)
 		if (arg == mafInteractorGenericMouse::MOUSE_MOVE)
 		{
 			// move vme
-			((mafVME *)m_ImplicitPlaneGizmo)->SetAbsMatrix(absPose);
+			mafVME::StaticDownCast(m_ImplicitPlaneGizmo)->SetAbsMatrix(absPose);
 			// update matrix for OpDo()
 			//m_NewAbsMatrix = absPose;
 		} 
@@ -694,10 +664,10 @@ void medOpSplitSurface::ShowClipPlane(bool show)
 {
   if(show)
   {
-    if(m_ClipperPlane == NULL)
+    if(m_ClipperPlane == nullptr)
     {
       double b[6];
-      ((mafVME *)GetInput())->GetOutput()->GetVMEBounds(b);
+      mafVME::StaticDownCast(GetInput())->GetOutput()->GetVMEBounds(b);
 
       // bounding box dim
       double xdim = b[1] - b[0];
@@ -733,10 +703,10 @@ void medOpSplitSurface::ShowClipPlane(bool show)
       m_Gizmo->AddInputConnection(m_Arrow->GetOutputPort());
       m_Gizmo->Update();
 
-      mafNEW(m_ImplicitPlaneGizmo);
+      m_ImplicitPlaneGizmo = mafVMEGizmo::NewSPtr();
       m_ImplicitPlaneGizmo->SetInputConnection(m_Gizmo->GetOutputPort());
       m_ImplicitPlaneGizmo->SetName(_R("implicit plane gizmo"));
-      m_ImplicitPlaneGizmo->ReparentTo(mafVME::SafeDownCast(GetInput()->GetRoot()));
+      mafNode::ReparentTo(m_ImplicitPlaneGizmo, mafVME::SafeDownCast(GetInput()->GetRoot()));
 
       // position the plane
       auto currTr = mafTransform::NewSPtr();
@@ -745,11 +715,11 @@ void medOpSplitSurface::ShowClipPlane(bool show)
 
       mafMatrix mat;
       mat.DeepCopy(currTr->GetMatrix());
-      mat.SetTimeStamp(((mafVME *)GetInput())->GetTimeStamp());
+      mat.SetTimeStamp(mafVME::StaticDownCast(GetInput())->GetTimeStamp());
 
       m_ImplicitPlaneGizmo->SetAbsMatrix(mat);
 
-      {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_ImplicitPlaneGizmo); evUnq.SetBool(true); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_ImplicitPlaneGizmo.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
     }
     auto material = m_ImplicitPlaneGizmo->GetMaterial();
     material->m_Prop->SetOpacity(0.5);
@@ -765,7 +735,7 @@ void medOpSplitSurface::ShowClipPlane(bool show)
   }
   else
   {
-    if(m_ImplicitPlaneGizmo != NULL)
+    if(m_ImplicitPlaneGizmo)
     {
       auto material = m_ImplicitPlaneGizmo->GetMaterial();
       material->m_Prop->SetOpacity(0);

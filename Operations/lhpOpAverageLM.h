@@ -53,7 +53,7 @@ protected:
   void OpStop(int result) override;
 
   /// limb cloud from motion: animated, we will insert stick tip here
-  mafVMELandmarkCloud  *m_LimbCloud;
+  std::shared_ptr<mafVMELandmarkCloud>  m_LimbCloud;
 
 private:
   /// index of new landmark for undo operation 

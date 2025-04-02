@@ -1,22 +1,4 @@
-/*=========================================================================
-
-Program: MAF2Medical
-Module: medOpImporterDicomOffis
-Authors: Matteo Giacomoni, Roberto Mucci , Stefano Perticoni, Gianluigi Crimi
-
-Copyright (c) B3C
-All rights reserved. See Copyright.txt or
-http://www.scsitaly.com/Copyright.htm for details.
-
-This software is distributed WITHOUT ANY WARRANTY; without even
-the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __medOpImporterDicomOffis_H__
-#define __medOpImporterDicomOffis_H__
-
+#pragma once
 //----------------------------------------------------------------------------
 // Include :
 //----------------------------------------------------------------------------
@@ -68,7 +50,7 @@ public:
 	/** constructor */
 	medOpImporterDicomOffis(const mafString& label = _R("Importer DICOM"));
 	/** RTTI macro */
-	mafTypeMacro(medOpImporterDicomOffis, mafOp);
+	mafTypeMacroN(medOpImporterDicomOffis);
 
 	/** Copy. */
 	mafOp* Copy() override;
@@ -81,12 +63,6 @@ public:
 
 	/** This method is called at the end of the operation and result contain the wxOK or wxCANCEL. */
 	void OpStop	(int result) override;
-
-	/** Execute the operation. */
-	void OpDo() override;
-
-	/** Makes the undo for the operation. */
-	void OpUndo() override {};
 
 	/** Create the dialog interface for the importer. */
 	virtual void CreateGui();
@@ -305,8 +281,8 @@ protected:
 	medGUIWizardPageNew	*m_CropPage;
 	medGUIWizardPageNew	*m_BuildPage;
 	medGUIWizardPageNew	*m_ReferenceSystemPage; ///< Wizard step to choose reference system
-	mafVMEMesh        *m_Mesh;
-	mafVMEGroup       *m_ImagesGroup;
+	std::shared_ptr<mafVMEMesh>        m_Mesh;
+	std::shared_ptr<mafVMEGroup>       m_ImagesGroup;
 
 	mafGUI	*m_LoadGuiLeft;
 	mafGUI	*m_LoadGuiUnderLeft;
@@ -405,8 +381,8 @@ protected:
 	int m_ApplyToAllReferenceSystem;///< Specify if the current refernce system is applyed to all images
 	int m_GlobalReferenceSystem;    ///< Global reference system if apply to all is selected
 
-	mafVMEImage				*m_Image;
-	mafVMEVolumeGray	*m_Volume;
+	std::shared_ptr<mafVMEImage>				m_Image;
+	std::shared_ptr<mafVMEVolumeGray>	m_Volume;
 
 	mafGUICheckListBox *m_DicomModalityListBox;
 	int m_CurrentImageID;
@@ -667,4 +643,3 @@ protected:
 	int m_ReferenceSystem;  ///< Store information about the selected reference system (xy, xz, yx). see ID_REFERENCE_SYSTEM enum
 	int m_SwapReferenceSystem;
 };
-#endif

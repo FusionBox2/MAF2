@@ -226,7 +226,7 @@ void lhpOpMultiscaleExplore::CreateOpWithoutDialog(vtkRenderer *renderer)
   //----------------------------------------------------------------------------
   // get input vme
   //----------------------------------------------------------------------------
-  mafVME* vme = mafVME::SafeDownCast(GetInput()) ;
+  auto vme = mafVME::SafeDownCast(GetInput()) ;
 
 
   //----------------------------------------------------------------------------
@@ -251,7 +251,7 @@ void lhpOpMultiscaleExplore::CreateOpWithoutDialog(vtkRenderer *renderer)
   // Create visual pipe for selected vme.
   // Additional vme's must be added later from the dialog, because this is an op - not a view.
   //----------------------------------------------------------------------------
-  AddVmeToScene(vme) ;
+  AddVmeToScene(vme.get()) ;
   UpdateCamera() ;
 
 
@@ -295,7 +295,7 @@ void lhpOpMultiscaleExplore::CreateOpDialog()
   //----------------------------------------------------------------------------
   // get input vme
   //----------------------------------------------------------------------------
-  mafVME* vme = mafVME::SafeDownCast(GetInput()) ;
+  auto vme = mafVME::SafeDownCast(GetInput()) ;
 
 
 
@@ -471,7 +471,7 @@ void lhpOpMultiscaleExplore::CreateOpDialog()
   // Create visual pipe for selected vme.
   // Additional vme's must be added later from the dialog, because this is an op - not a view.
   //----------------------------------------------------------------------------
-  AddVmeToScene(vme) ;
+  AddVmeToScene(vme.get()) ;
   UpdateCamera() ;
 
 

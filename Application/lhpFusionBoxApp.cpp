@@ -327,7 +327,7 @@ mafCxxTypeMacro(lhpOpCreateLMCLines);
 
 void lhpOpCreateLMCLines::OpDo()
 {
-  GetOutput()->ReparentTo(GetInput().get());
+  mafNode::ReparentTo(GetOutput(), GetInput().get());
   auto lmc = mafVMELandmarkCloud::SafeDownCast(GetInput());
   if(m_Created && lmc)
   {
@@ -338,7 +338,7 @@ void lhpOpCreateLMCLines::OpUndo()
 {
   if(m_Created)
     m_Created->SetCloud(nullptr);
-  GetOutput()->ReparentTo(nullptr);
+  mafNode::ReparentTo(GetOutput(), nullptr);
 }
 //----------------------------------------------------------------------------
 void lhpOpMoveSeq::TransfMatr(mafMatrix& convMatrix, mafTimeStamp tsSkip)

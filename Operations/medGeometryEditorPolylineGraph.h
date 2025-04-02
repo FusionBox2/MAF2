@@ -166,8 +166,8 @@ protected:
 	std::shared_ptr<mafInteractorPicker> m_Picker;
 	mafInteractor *m_OldBehavior;
 
-	medVMEPolylineEditor			*m_VMEPolylineEditor;
-	medVMEPolylineEditor			*m_VMEPolylineSelection;///<VME that show the selection
+	std::shared_ptr<medVMEPolylineEditor>			m_VMEPolylineEditor;
+	std::shared_ptr<medVMEPolylineEditor>			m_VMEPolylineSelection;///<VME that show the selection
 	mafPolylineGraph					*m_PolylineGraph;
 
 	mafGUI	*m_Gui;

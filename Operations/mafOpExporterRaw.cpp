@@ -134,7 +134,7 @@ void mafOpExporterRAW::SaveVolume()
 	if(!m_TestMode)
 		wxBusyInfo wait("Please wait, working...");
 	
-	mafVMEVolumeGray *volume=mafVMEVolumeGray::SafeDownCast(GetInput());
+	auto volume=mafVMEVolumeGray::SafeDownCast(GetInput());
 	volume->Modified();
 	
 	//if it is a vtkStructuredPoints

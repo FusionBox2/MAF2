@@ -1,28 +1,5 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafOpCreateVolume
- Authors: Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __mafOpCreateVolume_H__
-#define __mafOpCreateVolume_H__
-
+#pragma once
 #include "mafOp.h"
-
-//----------------------------------------------------------------------------
-// forward references :
-//----------------------------------------------------------------------------
-class mafVMEVolumeGray;
 
 //----------------------------------------------------------------------------
 // mafOpCreateVolume :
@@ -35,7 +12,7 @@ public:
   mafOpCreateVolume(const mafString& label = _R("Create Volume"));
   ~mafOpCreateVolume() override; 
 
-  mafTypeMacro(mafOpCreateVolume, mafOp);
+  mafTypeMacroN(mafOpCreateVolume);
 
   /** Receive events coming from the user interface.*/
   void OnEvent(mafEventBase *maf_event) override;
@@ -71,9 +48,7 @@ public:
   void CreateVolume();
 
 private:
-  mafVMEVolumeGray *m_Volume;
   double m_Spacing[3]; ///< Voxel spacing of the created volume
   double m_Dimensions[3]; ///< Dimensions of created volume
   double m_Density; ///< Constant density value that fill the created volume
 };
-#endif

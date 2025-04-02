@@ -1,21 +1,4 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafOpImporterExternalFile
- Authors: Paolo Quadrani     Stefano Perticoni    Roberto Mucci
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __mafOpImporterExternalFile_H__
-#define __mafOpImporterExternalFile_H__
+#pragma once
 
 #include "mafOp.h"
 //----------------------------------------------------------------------------
@@ -36,7 +19,7 @@ public:
   mafOpImporterExternalFile(const mafString &label = _R("ExternalFileImporter"));
  ~mafOpImporterExternalFile() override; 
 
-  mafTypeMacro(mafOpImporterExternalFile, mafOp);
+  mafTypeMacroN(mafOpImporterExternalFile);
 
   mafOp* Copy() override;
 
@@ -53,14 +36,9 @@ public:
 	/** Execute the operation. */
   void ImportExternalFile();
 
-	/** Makes the undo for the operation. */
-  void OpUndo() override;
-
-
 protected:
   mafString m_FileDir;
 	mafString m_File;
 
-	mafVMEExternalData *m_Vme; 
+	std::shared_ptr<mafVMEExternalData> m_Vme; 
 };
-#endif

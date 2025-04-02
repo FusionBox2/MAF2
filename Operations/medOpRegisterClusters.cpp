@@ -33,7 +33,6 @@
 #include "mafGUIDialog.h"
 
 #include "mafVME.h"
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafVMELandmark.h"
 
 #include "vtkSmartPointer.h"
@@ -98,14 +97,13 @@ medOpRegisterClusters::medOpRegisterClusters(const mafString& label) : Superclas
 medOpRegisterClusters::~medOpRegisterClusters( ) 
 //----------------------------------------------------------------------------
 {
-	vtkDEL(m_Follower);
 	vtkDEL(m_PointsSource);
 	vtkDEL(m_PointsTarget);
-  mafDEL(m_Result);
-  mafDEL(m_Info);
-  mafDEL(m_Registered);
-  mafDEL(m_Follower);
-  mafDEL(m_CommonPoints);
+  m_Result.reset();
+  m_Info.reset();
+  m_Registered.reset();
+  m_Follower.reset();
+  m_CommonPoints.reset();
 
   if(m_Weight)
 	{
@@ -149,7 +147,7 @@ enum
 void medOpRegisterClusters::OpRun()   
 //----------------------------------------------------------------------------
 {
-  m_Source = (mafVMELandmarkCloud*)GetInput();
+  m_Source = mafVMELandmarkCloud::StaticDownCast(GetInput()).get();
   m_SourceName = GetInput()->GetName();
 	
   if(!m_TestMode)
@@ -247,7 +245,6 @@ void medOpRegisterClusters::OnEvent(mafEventBase *maf_event)
 				  /////////////////////////////////////////////////////
 				  if(m_CommonPoints)
 				  {
-					  mafVMELandmark *lmk;
 					  m_CommonPoints->Open();
 					  int number = m_CommonPoints->GetNumberOfLandmarks();
 
@@ -261,7 +258,7 @@ void medOpRegisterClusters::OnEvent(mafEventBase *maf_event)
   					
 					  for (int i=0; i <number; i++)
 					  {
-						  lmk = m_CommonPoints->GetLandmark(i);
+						  auto lmk = m_CommonPoints->GetLandmark(i);
 						  mafString name_lmk = lmk->GetName();
 						  m_GuiSetWeights->Label(name_lmk);
 						  m_GuiSetWeights->Double(-1, _R(""),&m_Weight[i]);
@@ -318,7 +315,7 @@ void medOpRegisterClusters::OpDo()
   if(!m_TestMode)
 	  wxBusyInfo wait(_("Please wait, working..."));
 
-  mafNEW(m_Info);
+  m_Info = mafVMEInfoText::NewSPtr();
   mafString name = _R("Info for registration ") + m_Source->GetName() + _R(" into ") + m_Target->GetName();
   m_Info->SetName(name);
   m_Info->SetPosLabel(_R("Registration residual: "), 0);
@@ -367,7 +364,7 @@ void medOpRegisterClusters::OpDo()
 
   if(m_Registered || m_Follower)
   {
-    mafNEW(m_Result);
+    m_Result = mafVMEGroup::NewSPtr();
     mafString name = m_Source->GetName() + _R(" registered into ") + m_Target->GetName();
     m_Result->SetName(name);
     {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_Result); InvokeEvent(evUnq);}

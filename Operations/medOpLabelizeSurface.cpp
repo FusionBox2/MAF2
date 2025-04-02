@@ -93,8 +93,6 @@ medOpLabelizeSurface::medOpLabelizeSurface(const mafString& label) : Superclass(
 	m_PlaneWidth = 0.0;
 	m_PlaneHeight = 0.0;
 
-	m_VmeEditor = NULL;
-
 	m_GizmoTranslate=NULL;
 	m_GizmoRotate=NULL;
 	m_GizmoScale=NULL;
@@ -112,7 +110,7 @@ medOpLabelizeSurface::~medOpLabelizeSurface()
 	}
 	m_ResultPolyData.clear();
 
-	mafDEL(m_VmeEditor);
+	m_VmeEditor.reset();
 	vtkDEL(m_OriginalPolydata);
 }
 //----------------------------------------------------------------------------
@@ -132,16 +130,16 @@ bool medOpLabelizeSurface::Accept(mafNode *node)
 void medOpLabelizeSurface::OpRun()   
 //----------------------------------------------------------------------------
 {
-	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetInput()); evUnq.SetBool(false); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetInput().get()); evUnq.SetBool(false); InvokeEvent(evUnq);}
 
-	mafNEW(m_VmeEditor);
+	m_VmeEditor = medVMESurfaceEditor::NewSPtr();
 	vtkNew<vtkPolyData> inputOriginalPolydata;
 	inputOriginalPolydata->DeepCopy(vtkPolyData::SafeDownCast(mafVMESurface::SafeDownCast(GetInput())->GetOutput()->GetVTKData()));
 	int prova=inputOriginalPolydata->GetNumberOfPoints();
 	m_VmeEditor->SetData(inputOriginalPolydata,0.0);
 	m_VmeEditor->Modified();
 	m_VmeEditor->Update();
-	m_VmeEditor->ReparentTo(mafVME::SafeDownCast(GetInput()));
+	mafNode::ReparentTo(m_VmeEditor, GetInput().get());
 
 	m_PlaneCreated = false;
 
@@ -185,7 +183,7 @@ void medOpLabelizeSurface::OpRun()
 	m_VmeEditor->Modified();
 	m_VmeEditor->Update();
 
-	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VmeEditor); evUnq.SetBool(true); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VmeEditor.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
 
 	vtkPolyData *initialData;
 	vtkNEW(initialData);
@@ -233,7 +231,7 @@ void medOpLabelizeSurface::CreateGui()
 	m_Gui->Double(ID_LABEL_VALUE,_L("Label"),&m_LabelValue);
 	m_Gui->Lut(ID_LUT,_R("lut"),m_VmeEditor->GetMaterial()->m_ColorLut);
 	double b[6];
-	((mafVME *)GetInput())->GetOutput()->GetVMEBounds(b);
+	mafVME::StaticDownCast(GetInput())->GetOutput()->GetVMEBounds(b);
 	// bounding box dim
 	m_PlaneWidth = b[1] - b[0];
 	m_PlaneHeight = b[3] - b[2];
@@ -256,13 +254,13 @@ void medOpLabelizeSurface::CreateGizmos()
 	//m_ImplicitPlaneGizmo->Update();
 
 	m_GizmoTranslate = new mafGizmoTranslate(mafVME::SafeDownCast(m_ImplicitPlaneGizmo), this);
-	m_GizmoTranslate->SetRefSys(m_ImplicitPlaneGizmo);
+	m_GizmoTranslate->SetRefSys(m_ImplicitPlaneGizmo.get());
 	m_GizmoTranslate->Show(false);
 	m_GizmoRotate = new mafGizmoRotate(mafVME::SafeDownCast(m_ImplicitPlaneGizmo), this);
-	m_GizmoRotate->SetRefSys(m_ImplicitPlaneGizmo);
+	m_GizmoRotate->SetRefSys(m_ImplicitPlaneGizmo.get());
 	m_GizmoRotate->Show(false);
 	m_GizmoScale = new mafGizmoScale(mafVME::SafeDownCast(m_ImplicitPlaneGizmo), this);
-	m_GizmoScale->SetRefSys(m_ImplicitPlaneGizmo);
+	m_GizmoScale->SetRefSys(m_ImplicitPlaneGizmo.get());
 	m_GizmoScale->Show(false);
 }
 //----------------------------------------------------------------------------
@@ -323,7 +321,7 @@ void medOpLabelizeSurface::ShowClipPlane(bool show)
 		if(m_ClipperPlane == NULL)
 		{
 			double b[6];
-			((mafVME *)GetInput())->GetOutput()->GetBounds(b);
+			mafVME::StaticDownCast(GetInput())->GetOutput()->GetBounds(b);
 
 			// bounding box dim
 			double xdim = b[1] - b[0];
@@ -333,7 +331,7 @@ void medOpLabelizeSurface::ShowClipPlane(bool show)
 			//m_PlaneWidth = xdim;
 			//m_PlaneHeight = ydim;
 
-			((mafVME *)GetInput())->GetOutput()->GetBounds(b);
+			mafVME::StaticDownCast(GetInput())->GetOutput()->GetBounds(b);
 			// bounding box dim
 			m_PlaneWidth = b[1] - b[0];
 			m_PlaneHeight = b[3] - b[2];
@@ -367,10 +365,10 @@ void medOpLabelizeSurface::ShowClipPlane(bool show)
 			m_Gizmo->AddInputConnection(m_Arrow->GetOutputPort());
 			m_Gizmo->Update();
 
-			mafNEW(m_ImplicitPlaneGizmo);
+			m_ImplicitPlaneGizmo = mafVMEGizmo::NewSPtr();
 			m_ImplicitPlaneGizmo->SetInputConnection(m_Gizmo->GetOutputPort());
 			m_ImplicitPlaneGizmo->SetName(_R("implicit plane gizmo"));
-			m_ImplicitPlaneGizmo->ReparentTo(mafVME::SafeDownCast(GetInput()->GetRoot()));
+			mafNode::ReparentTo(m_ImplicitPlaneGizmo, mafVME::SafeDownCast(GetInput()->GetRoot()));
 
 			// position the plane
 			auto currTr = mafTransform::NewSPtr();
@@ -379,11 +377,11 @@ void medOpLabelizeSurface::ShowClipPlane(bool show)
 
 			mafMatrix mat;
 			mat.DeepCopy(currTr->GetMatrix());
-			mat.SetTimeStamp(((mafVME *)GetInput())->GetTimeStamp());
+			mat.SetTimeStamp(mafVME::StaticDownCast(GetInput())->GetTimeStamp());
 
 			m_ImplicitPlaneGizmo->SetAbsMatrix(mat);
 
-			{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_ImplicitPlaneGizmo); evUnq.SetBool(true); InvokeEvent(evUnq);}
+			{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_ImplicitPlaneGizmo.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
 		}
 		auto material = m_ImplicitPlaneGizmo->GetMaterial();
 		material->m_Prop->SetOpacity(0.5);
@@ -574,9 +572,9 @@ void medOpLabelizeSurface::Undo()
 	{
 		vtkDEL(m_ResultPolyData[m_ResultPolyData.size()-1]);
 		m_ResultPolyData.pop_back();
-		((mafVMESurface*)m_VmeEditor)->SetData((vtkPolyData*)m_ResultPolyData[m_ResultPolyData.size()-1],((mafVME*)GetInput())->GetTimeStamp());
+		mafVMESurface::StaticDownCast(m_VmeEditor)->SetData((vtkPolyData*)m_ResultPolyData[m_ResultPolyData.size()-1], mafVME::StaticDownCast(GetInput())->GetTimeStamp());
 		
-		((mafVMESurface*)m_VmeEditor)->InvokeEvent(m_VmeEditor,VME_OUTPUT_DATA_UPDATE);
+		mafVMESurface::StaticDownCast(m_VmeEditor)->InvokeEvent(m_VmeEditor.get(),VME_OUTPUT_DATA_UPDATE);
 	}
 }
 //----------------------------------------------------------------------------
@@ -593,15 +591,15 @@ void medOpLabelizeSurface::UpdateISARefSys()
 void medOpLabelizeSurface::OpStop(int result)
 //----------------------------------------------------------------------------
 {
-	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VmeEditor); evUnq.SetBool(false); InvokeEvent(evUnq);}
-	m_VmeEditor->ReparentTo(NULL);
+	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_VmeEditor.get()); evUnq.SetBool(false); InvokeEvent(evUnq);}
+	mafNode::ReparentTo(m_VmeEditor, nullptr);
 
 	if(m_ImplicitPlaneGizmo)
 	{
 		m_ImplicitPlaneGizmo->SetBehavior(NULL);
-		{mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_ImplicitPlaneGizmo); InvokeEvent(evUnq);}
+		{mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_ImplicitPlaneGizmo.get()); InvokeEvent(evUnq);}
 	}
-	mafDEL(m_ImplicitPlaneGizmo);
+	m_ImplicitPlaneGizmo.reset();
 
 	vtkDEL(m_Gizmo);
 	vtkDEL(m_ArrowShape);
@@ -623,7 +621,7 @@ void medOpLabelizeSurface::OpStop(int result)
 	cppDEL(m_GizmoRotate);
 	cppDEL(m_GizmoScale);
 
-	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetInput()); evUnq.SetBool(true); InvokeEvent(evUnq);}
+	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetInput().get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
 
 	if(!m_TestMode)
 		HideGui();
@@ -636,14 +634,14 @@ void medOpLabelizeSurface::OpDo()
 {
 	if(m_VmeEditor)
 	{
-		mafVMESurface::SafeDownCast(GetInput())->SetData(vtkPolyData::SafeDownCast(m_VmeEditor->GetOutput()->GetVTKData()),((mafVMESurface*)GetInput())->GetTimeStamp());
+		mafVMESurface::SafeDownCast(GetInput())->SetData(vtkPolyData::SafeDownCast(m_VmeEditor->GetOutput()->GetVTKData()), mafVMESurface::StaticDownCast(GetInput())->GetTimeStamp());
 		auto mat = mmaMaterial::NewSPtr();
 		mat->DeepCopy(m_VmeEditor->GetMaterial().get());
 		mafVMESurface::SafeDownCast(GetInput())->GetSurfaceOutput()->SetMaterial(mat);
 		mafVMESurface::SafeDownCast(GetInput())->GetSurfaceOutput()->Update();
 		mafVMESurface::SafeDownCast(GetInput())->GetOutput()->Update();
-		{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetInput()); evUnq.SetBool(false); InvokeEvent(evUnq);}
-		{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetInput()); evUnq.SetBool(true); InvokeEvent(evUnq);}
+		{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetInput().get()); evUnq.SetBool(false); InvokeEvent(evUnq);}
+		{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetInput().get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
 		{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 	}
 }
@@ -651,7 +649,7 @@ void medOpLabelizeSurface::OpDo()
 void medOpLabelizeSurface::OpUndo()
 //----------------------------------------------------------------------------
 {
-	mafVMESurface::SafeDownCast(GetInput())->SetData(m_OriginalPolydata,((mafVMESurface*)GetInput())->GetTimeStamp());
+	mafVMESurface::SafeDownCast(GetInput())->SetData(m_OriginalPolydata, mafVMESurface::StaticDownCast(GetInput())->GetTimeStamp());
 	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
@@ -679,8 +677,8 @@ void medOpLabelizeSurface::Labelize()
 	transform_plane->Update();
 
 	vtkNew<vtkTransformPolyDataFilter> transform_data_input;
-	transform_data_input->SetTransform(((mafVME*)m_VmeEditor)->GetAbsMatrixPipe()->GetVTKTransform());
-	transform_data_input->SetInputConnection(((mafVME *)m_VmeEditor)->GetOutput()->GetVTKOutputPort());
+	transform_data_input->SetTransform(mafVME::StaticDownCast(m_VmeEditor)->GetAbsMatrixPipe()->GetVTKTransform());
+	transform_data_input->SetInputConnection(mafVME::StaticDownCast(m_VmeEditor)->GetOutput()->GetVTKOutputPort());
 	transform_data_input->Update();
 
 	m_ClipperBoundingBox->SetInputConnection(transform_data_input->GetOutputPort());
@@ -724,7 +722,7 @@ void medOpLabelizeSurface::Labelize()
 	clean->Update();
 
 	vtkNew<vtkTransformPolyDataFilter> transform_data_output;
-	transform_data_output->SetTransform(((mafVME*)m_VmeEditor)->GetAbsMatrixPipe()->GetVTKTransform()->GetInverse());
+	transform_data_output->SetTransform(mafVME::StaticDownCast(m_VmeEditor)->GetAbsMatrixPipe()->GetVTKTransform()->GetInverse());
 	transform_data_output->SetInputConnection(clean->GetOutputPort());
 	transform_data_output->Update();
 
@@ -739,10 +737,10 @@ void medOpLabelizeSurface::Labelize()
 		m_ResultPolyData.push_back(poly);
 	}
 
-	((mafVMESurface*)m_VmeEditor)->Modified();
-	((mafVMESurface*)m_VmeEditor)->Update();
+	mafVMESurface::StaticDownCast(m_VmeEditor)->Modified();
+	mafVMESurface::StaticDownCast(m_VmeEditor)->Update();
 
-	((mafVMESurface*)m_VmeEditor)->InvokeEvent(m_VmeEditor,VME_OUTPUT_DATA_UPDATE);
+	mafVMESurface::StaticDownCast(m_VmeEditor)->InvokeEvent(m_VmeEditor.get(),VME_OUTPUT_DATA_UPDATE);
 
 	/*m_Gui->Enable(ID_UNDO,m_ResultPolyData.size()>1);
 	m_Gui->Enable(wxOK,m_ResultPolyData.size()>1);*/
@@ -760,13 +758,13 @@ void medOpLabelizeSurface::ChangeGizmo()
 		switch(m_GizmoType)
 		{
 		case GIZMO_TRANSLATE:
-			m_GizmoTranslate->SetRefSys(m_ImplicitPlaneGizmo);
+			m_GizmoTranslate->SetRefSys(m_ImplicitPlaneGizmo.get());
 			break;
 		case GIZMO_ROTATE:
-			m_GizmoRotate->SetRefSys(m_ImplicitPlaneGizmo);
+			m_GizmoRotate->SetRefSys(m_ImplicitPlaneGizmo.get());
 			break;
 		case GIZMO_SCALE:
-			m_GizmoScale->SetRefSys(m_ImplicitPlaneGizmo);
+			m_GizmoScale->SetRefSys(m_ImplicitPlaneGizmo.get());
 			break;
 		}
 	}
@@ -783,7 +781,7 @@ void medOpLabelizeSurface::PostMultiplyEventMatrix(mafEventBase *maf_event)
 		// handle incoming transform events
 		vtkTransform *tr = vtkTransform::New();
 		tr->PostMultiply();
-		tr->SetMatrix(((mafVME *)m_ImplicitPlaneGizmo)->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
+		tr->SetMatrix(mafVME::StaticDownCast(m_ImplicitPlaneGizmo)->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
 		tr->Concatenate(e->GetMatrix()->GetVTKMatrix());
 		tr->Update();
 
@@ -794,7 +792,7 @@ void medOpLabelizeSurface::PostMultiplyEventMatrix(mafEventBase *maf_event)
 		if (arg == mafInteractorGenericMouse::MOUSE_MOVE)
 		{
 			// move vme
-			((mafVME *)m_ImplicitPlaneGizmo)->SetAbsMatrix(absPose);
+			mafVME::StaticDownCast(m_ImplicitPlaneGizmo)->SetAbsMatrix(absPose);
 			// update matrix for OpDo()
 			//m_NewAbsMatrix = absPose;
 		} 

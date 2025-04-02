@@ -53,14 +53,13 @@ mafOpImporterASCII::mafOpImporterASCII(const mafString& label) : Superclass(labe
   m_ScalarOrder = 1;
 
   m_FileDir = _R("");//mafGetApplicationDirectory().c_str();
-  m_ScalarData = NULL;
   m_ReadyToExecute = false;
 }
 //----------------------------------------------------------------------------
 mafOpImporterASCII::~mafOpImporterASCII()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_ScalarData);
+  m_ScalarData.reset();
 }
 //----------------------------------------------------------------------------
 mafOp* mafOpImporterASCII::Copy()
@@ -196,7 +195,7 @@ int mafOpImporterASCII::ImportASCII()
 {
   if(!this->m_TestMode)
 	  wxBusyInfo wait(_("Loading file/s: ..."));
-  mafNEW(m_ScalarData);
+  m_ScalarData = mafVMEScalarMatrix::NewSPtr();
   m_ScalarData->SetName(_R("scalar"));
 
   int import_result = MAF_ERROR;

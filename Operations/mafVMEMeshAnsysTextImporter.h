@@ -68,7 +68,7 @@ public:
 
   /**
   Get the vme created by the reader*/
-  mafVMEMesh *GetOutput() {return m_Output;};
+  mafVMEMesh *GetOutput() {return m_Output.get();};
   
   // supported elements 
   enum
@@ -151,7 +151,7 @@ protected:
   const char *m_MaterialsFileName;
 
   // The output vme fem
-  mafVMEMesh *m_Output;
+  std::shared_ptr<mafVMEMesh> m_Output;
 
   std::map<int, int> m_NodeIdNodeNumberMap;
   

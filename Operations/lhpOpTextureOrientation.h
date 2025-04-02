@@ -122,7 +122,7 @@ protected:
   lhpTextureOrientationSlicePipe *m_slicePipe ;
   lhpTextureOrientationVectorGlyphPipe *m_vectorGlyphPipe ;
   vtkPolyData *m_polydata ;
-  mafVMESurface *m_polydataVME ;
+  std::shared_ptr<mafVMESurface> m_polydataVME ;
 };
 
 

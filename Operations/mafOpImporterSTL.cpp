@@ -1,27 +1,3 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafOpImporterSTL
- Authors: Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
 #include "mafOpImporterSTL.h"
 #include "wx/busyinfo.h"
 
@@ -30,7 +6,6 @@
 #include "mafTagArray.h"
 #include "mafVME.h"
 #include "mafVMESurface.h"
-#include "ftk/Base/RegisteringPointer.h"
 #include "vtkSmartPointer.h"
 
 #include "vtkSTLReader.h"
@@ -57,7 +32,7 @@ mafOpImporterSTL::~mafOpImporterSTL()
 //----------------------------------------------------------------------------
 {
   for(unsigned i = 0; i < m_ImportedSTLs.size(); i++)
-    mafDEL(m_ImportedSTLs[i]);
+    m_ImportedSTLs[i].reset();
 }
 //----------------------------------------------------------------------------
 bool mafOpImporterSTL::Accept(mafNode *node)
@@ -157,7 +132,7 @@ void mafOpImporterSTL::OpDo()
   {
     if (m_ImportedSTLs[i])
     {
-      m_ImportedSTLs[i]->ReparentTo(GetInput());
+      mafNode::ReparentTo(m_ImportedSTLs[i], GetInput().get());
     }
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
@@ -171,7 +146,7 @@ void mafOpImporterSTL::OpUndo()
   {
     if (m_ImportedSTLs[i])
     {
-      m_ImportedSTLs[i]->ReparentTo(NULL);
+      mafNode::ReparentTo(m_ImportedSTLs[i], nullptr);
     }
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
@@ -188,7 +163,7 @@ void mafOpImporterSTL::ImportSTL()
 
   unsigned int i;
   for(i = 0; i < m_ImportedSTLs.size(); i++)
-    mafDEL(m_ImportedSTLs[i]);
+    m_ImportedSTLs[i].reset();
   m_ImportedSTLs.clear();
 
   for(unsigned kk = 0; kk < m_Files.size(); kk++)
@@ -256,8 +231,7 @@ void mafOpImporterSTL::ImportSTL()
     mafString path, name, ext;
     mafSplitPath(fn,&path,&name,&ext);
 
-    mafVMESurface *importedSTL;
-    mafNEW(importedSTL);
+    auto importedSTL = mafVMESurface::NewSPtr();
     importedSTL->SetName(name);
 	  importedSTL->SetDataByDetaching(reader->GetOutput(),0);
 
@@ -332,7 +306,7 @@ void mafOpImporterSTL::SetFileName(const char *file_name)
   }
 }
 //----------------------------------------------------------------------------
-void mafOpImporterSTL::GetImportedSTL(std::vector<mafVMESurface*> &importedSTL)
+void mafOpImporterSTL::GetImportedSTL(std::vector<std::shared_ptr<mafVMESurface> > &importedSTL)
 //----------------------------------------------------------------------------
 {
   importedSTL.clear();

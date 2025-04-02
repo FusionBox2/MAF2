@@ -1,34 +1,9 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafOpReparentTo
- Authors: Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
 #include "mafOpReparentTo.h"
 #include "mafDecl.h"
 #include "mafEvent.h"
 #include "mafVMERoot.h"
 #include "mmuTimeSet.h"
 #include "mafTransformFrame.h"
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafVMELandmarkCloud.h"
 #include "mafAbsMatrixPipe.h"
 
@@ -37,10 +12,6 @@
 #include "vtkTransformPolyDataFilter.h"
 
 #include <vector>
-
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(mafOpReparentTo);
-//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 mafOpReparentTo::mafOpReparentTo(const mafString& label, bool keepGlobal) : Superclass(label)
@@ -118,7 +89,7 @@ void mafOpReparentTo::OpDo()
   {
     mmuTimeVector input_time;
     mmuTimeVector target_time;
-    ((mafVME *)GetInput())->GetAbsTimeStamps(input_time);
+    mafVME::StaticDownCast(GetInput())->GetAbsTimeStamps(input_time);
     m_TargetVme->GetAbsTimeStamps(target_time);
     mmuTimeVector time = mmuTimeSet::Merge(input_time,target_time);
     num = time.size();
@@ -168,7 +139,7 @@ void mafOpReparentTo::OpDo()
       cTime = time[t];
       mafMatrix vmeMatr, parMatr, parMatrInv;
 
-      ((mafVME *)GetInput())->GetOutput()->GetAbsMatrix(vmeMatr, cTime);
+      mafVME::StaticDownCast(GetInput())->GetOutput()->GetAbsMatrix(vmeMatr, cTime);
       m_TargetVme->GetOutput()->GetAbsMatrix(parMatr, cTime);
       mafMatrix::Invert(parMatr,  parMatrInv);
       mafMatrix::Multiply4x4(parMatrInv, vmeMatr, *(new_input_pose[t]));
@@ -176,22 +147,22 @@ void mafOpReparentTo::OpDo()
     }
     for (t = 0; t < num; t++)
     {
-      ((mafVME *)GetInput())->SetMatrix(*new_input_pose[t]);
+      mafVME::StaticDownCast(GetInput())->SetMatrix(*new_input_pose[t]);
     }
   }
   else
   {
     mafMatrix vmeMatr, parMatr, parMatrInv, new_input_pose;
-    ((mafVME *)GetInput())->GetOutput()->GetAbsMatrix(vmeMatr, startTime);
+    mafVME::StaticDownCast(GetInput())->GetOutput()->GetAbsMatrix(vmeMatr, startTime);
     m_TargetVme->GetOutput()->GetAbsMatrix(parMatr, startTime);
     mafMatrix::Invert(parMatr,  parMatrInv);
     mafMatrix::Multiply4x4(parMatrInv, vmeMatr, new_input_pose);
     new_input_pose.SetTimeStamp(startTime);
-    ((mafVME *)GetInput())->SetMatrix(new_input_pose);
+    mafVME::StaticDownCast(GetInput())->SetMatrix(new_input_pose);
   }
   
 
-  if (GetInput()->ReparentTo(m_TargetVme) == MAF_OK)
+  if (mafNode::ReparentTo(GetInput(), m_TargetVme) == MAF_OK)
   {
     {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   }

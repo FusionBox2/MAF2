@@ -228,7 +228,7 @@ void lhpOpTextureOrientation::CreateOpDialog()
   //----------------------------------------------------------------------------
   // get input vme
   //----------------------------------------------------------------------------
-  mafVME* vme = mafVME::SafeDownCast(GetInput()) ;
+  auto vme = mafVME::SafeDownCast(GetInput()) ;
 
 
 
@@ -439,7 +439,7 @@ void lhpOpTextureOrientation::OnEvent(mafEventBase *maf_event)
       {
         // change the axes of the slice
         double bounds[6] ;
-        mafVME* vme = mafVME::SafeDownCast(GetInput()) ;
+        auto vme = mafVME::SafeDownCast(GetInput()) ;
         vme->GetOutput()->GetBounds(bounds) ;
         UpdateViewAxis(bounds) ;
         UpdateCamera() ;
@@ -526,11 +526,11 @@ void lhpOpTextureOrientation::OnEvent(mafEventBase *maf_event)
 void lhpOpTextureOrientation::CreateOutputVME()
 //----------------------------------------------------------------------------
 {
-  mafNEW(m_polydataVME) ;
+  m_polydataVME =  mafVMESurface::NewSPtr();
   m_polydataVME->SetName(_R("orientation")) ;
   m_polydataVME->SetData(m_polydata, 0) ;
   SetOutput(m_polydataVME );
-  GetOutput()->ReparentTo(GetInput()) ;
+  mafNode::ReparentTo(GetOutput(), GetInput().get()) ;
 }
 
 
@@ -556,8 +556,8 @@ vtkRenderer* lhpOpTextureOrientation::GetRenderer()
 void lhpOpTextureOrientation::CreateVisualPipe()
 //----------------------------------------------------------------------------
 {
-  vtkImageData *inputData = (vtkImageData*)(((mafVMEVolumeGray*)GetInput())->GetVTKOutput()->GetVTKData()) ;
-  ((mafVMEVolumeGray*)GetInput())->GetOutput()->Update() ;
+  vtkImageData *inputData = (vtkImageData*)(mafVMEVolumeGray::StaticDownCast(GetInput())->GetVTKOutput()->GetVTKData()) ;
+  mafVMEVolumeGray::StaticDownCast(GetInput())->GetOutput()->Update() ;
 
   //--------------------------------------------------------------
   // Visualize the input data
@@ -571,7 +571,7 @@ void lhpOpTextureOrientation::CreateVisualPipe()
     slicepos[0] = (bounds[1] + bounds[0]) / 2.0 ;
     slicepos[1] = (bounds[3] + bounds[2]) / 2.0 ;
     slicepos[2] = (bounds[5] + bounds[4]) / 2.0 ;
-    m_slicePipe = new lhpTextureOrientationSlicePipe((mafVME*)GetInput(), lhpTextureOrientation::ID_XY, slicepos, GetRenderer()) ;
+    m_slicePipe = new lhpTextureOrientationSlicePipe(mafVME::StaticDownCast(GetInput()).get(), lhpTextureOrientation::ID_XY, slicepos, GetRenderer()) ;
   }
 
   // Construct the glyph pipe
@@ -585,7 +585,7 @@ void lhpOpTextureOrientation::CreateVisualPipe()
     minSize = std::min(minSize, size[2]) ;
     m_texWinSize = minSize / 10.0 ;
     m_texWinStepSize = minSize / 2.0 ;
-    m_vectorGlyphPipe = new lhpTextureOrientationVectorGlyphPipe((mafVME*)GetInput(), GetRenderer()) ;
+    m_vectorGlyphPipe = new lhpTextureOrientationVectorGlyphPipe(mafVME::StaticDownCast(GetInput()).get(), GetRenderer()) ;
     m_vectorGlyphPipe->SetTexWinSize(m_texWinSize) ;
     m_vectorGlyphPipe->SetTexWinStepSize(m_texWinStepSize) ;
     m_vectorGlyphPipe->AddProgressObserver(ProgressEventId, m_progressCallback) ;

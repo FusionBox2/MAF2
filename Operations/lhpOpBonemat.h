@@ -208,7 +208,7 @@ protected:
   // my inclusions SUBSTITUTION
   mafVMEVolumeGray *m_InputVolume;
   mafVME   *m_Vme; 
-  mafVMEMesh *m_OriginalVMEMesh;
+  std::shared_ptr<mafVMEMesh> m_OriginalVMEMesh;
 
   // friend test
   friend class lhpOpBonematTest;

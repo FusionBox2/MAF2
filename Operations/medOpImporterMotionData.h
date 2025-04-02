@@ -40,12 +40,6 @@ public:
   ~medOpImporterMotionData( ) override
   //----------------------------------------------------------------------------
   {
-    // Must unregister in order to avoid leaks or data loss
-    if (GetOutput())
-    {
-      m_Vme.reset();
-      SetOutput(nullptr);
-    }
   }
   //----------------------------------------------------------------------------
   mafOp* Copy() override
@@ -61,7 +55,6 @@ public:
 
     cp->m_File = m_File;
     cp->m_Dict = m_Dict;
-    cp->m_Vme = m_Vme;
     return cp;
   }
 
@@ -121,20 +114,18 @@ public:
 
     reader->Read();
 
-    m_Vme = reader;
-
     mafString path, name, ext;
     mafSplitPath(m_File,&path,&name,&ext);
-    m_Vme->SetName(name);
+    reader->SetName(name);
 
     mafTagItem tag_Nature;
     tag_Nature.SetName(_R("VME_NATURE"));
     tag_Nature.SetValue(_R("NATURAL"));
 
-    m_Vme->GetTagArray()->SetTag(tag_Nature); 
+    reader->GetTagArray()->SetTag(tag_Nature); 
 
     // Must register in order to preserve output for do/undo operation (since it is a smart pointer)
-    SetOutput(m_Vme);
+    SetOutput(reader);
   }
   //----------------------------------------------------------------------------
   /** Set file name. */
@@ -171,21 +162,6 @@ public:
   {
     return this->m_DictionaryAvailable;
   }
-  //----------------------------------------------------------------------------
-  //** Makes the undo for the operation.
-  void OpDo() override
-    //----------------------------------------------------------------------------
-  {
-    m_Vme->ReparentTo(GetInput().get());
-  }
-	//----------------------------------------------------------------------------
-  //** Makes the undo for the operation.
-  void OpUndo() override
-  //----------------------------------------------------------------------------
-  {
-    m_Vme->ReparentTo(nullptr);
-  }
-  
 
 protected:
   mafString m_FileDir;
@@ -194,6 +170,5 @@ protected:
 	mafString m_Dict;
   mafString m_PgdWildc;
   mafString m_DicWildc;
-	std::shared_ptr<mafVME> m_Vme;
 	int m_DictionaryAvailable = 0;
 };

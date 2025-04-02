@@ -1,22 +1,4 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafOpExporterMSF
- Authors: Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __mafOpExporterMSF_H__
-#define __mafOpExporterMSF_H__
-
+#pragma once
 //----------------------------------------------------------------------------
 // Include :
 //----------------------------------------------------------------------------
@@ -39,7 +21,7 @@ public:
   mafOpExporterMSF(const mafString& label = _R("MSFExporter"));
  ~mafOpExporterMSF() override; 
   
-  mafTypeMacro(mafOpExporterMSF, mafOp);
+  mafTypeMacroN(mafOpExporterMSF);
 
   mafOp* Copy() override;
 
@@ -68,4 +50,3 @@ protected:
   mafString m_MSFFile;
 	mafString m_MSFFileDir;
 };
-#endif

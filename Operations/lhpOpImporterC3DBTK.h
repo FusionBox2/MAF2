@@ -1,17 +1,4 @@
-/*=========================================================================
-  Program:   Multimod Application Framework
-  Module:    $RCSfile: lhpOpImporterC3DBTK.h,v $
-  Language:  C++
-  Date:      $Date: 2009/05/19 14:29:53 $
-  Version:   $Revision: 1.1.1.1 $
-  Authors:   Matteo Giacomoni
-==========================================================================
-  Copyright (c) 2002/2004
-  CINECA - Interuniversity Consortium (www.cineca.it) 
-=========================================================================*/
-
-#ifndef __lhpOpImporterC3DBTK_H__
-#define __lhpOpImporterC3DBTK_H__
+#pragma once
 
 //----------------------------------------------------------------------------
 // Include :
@@ -44,7 +31,7 @@ public:
 	lhpOpImporterC3DBTK(const mafString& label = _R("C3D Importer"));
 	~lhpOpImporterC3DBTK() override; 
 	
-  mafTypeMacro(lhpOpImporterC3DBTK, mafOp);
+  mafTypeMacroN(lhpOpImporterC3DBTK);
 
 	void OnEvent(mafEventBase *maf_event) override;
 
@@ -79,22 +66,22 @@ public:
   const char * GetLMRenameFileName() {return m_LMRenameFileName.GetCStr();}
 
   /* Get Group representing result of import */
-  mafVMEGroup *GetGroup(){if(m_intData.empty()) return NULL; return m_intData[0].m_VmeGroup;}
+  std::shared_ptr<mafVMEGroup> GetGroup(){if(m_intData.empty()) return nullptr; return m_intData[0].m_VmeGroup;}
 
   /* Get Landmark Cloud */
-  mafVMELandmarkCloud *GetLandmarkCloudVME(){if(m_intData.empty()) return NULL; if(m_intData[0].m_Clouds.empty()) return NULL; return m_intData[0].m_Clouds.begin()->second;}
+  mafVMELandmarkCloud *GetLandmarkCloudVME(){if(m_intData.empty()) return nullptr; if(m_intData[0].m_Clouds.empty()) return nullptr; return m_intData[0].m_Clouds.begin()->second.get();}
 
   /* Get Analog VME */
-  medVMEAnalog *GetAnalogVME(){return m_intData.empty() ? NULL : m_intData[0].m_VmeAnalog;}
+  medVMEAnalog *GetAnalogVME(){return m_intData.empty() ? nullptr : m_intData[0].m_VmeAnalog.get();}
   
   /* Get Platform vmes from a std list*/
-  mafVMESurface *GetPlatformVME(int index=0){if(m_intData.empty()) return NULL; return(index>=0 && index<m_intData[0].m_PlatformList.size())?m_intData[0].m_PlatformList[index]:NULL;}
+  mafVMESurface *GetPlatformVME(int index=0){if(m_intData.empty()) return nullptr; return(index>=0 && index<m_intData[0].m_PlatformList.size())?m_intData[0].m_PlatformList[index].get():nullptr;}
 
   /* Get force vmes from a std list*/
-  mafVMEVector *GetForceVME(int index=0){if(m_intData.empty()) return NULL; return(index>=0 && index<m_intData[0].m_ForceList.size())?m_intData[0].m_ForceList[index]:NULL;}
+  mafVMEVector *GetForceVME(int index=0){if(m_intData.empty()) return nullptr; return(index>=0 && index<m_intData[0].m_ForceList.size())?m_intData[0].m_ForceList[index].get():nullptr;}
 
   /* Get moment vmes from a std list*/
-  mafVMEVector *GetMomentVME(int index=0){if(m_intData.empty()) return NULL; return(index>=0 && index<m_intData[0].m_MomentList.size())?m_intData[0].m_MomentList[index]:NULL;}
+  mafVMEVector *GetMomentVME(int index=0){if(m_intData.empty()) return nullptr; return(index>=0 && index<m_intData[0].m_MomentList.size())?m_intData[0].m_MomentList[index].get():nullptr;}
 
   /* Set/Get Trajectory import flag*/
   void SetImportTrajectories(int flag){m_ImportTrajectoriesFlag = flag;}
@@ -185,15 +172,15 @@ protected:
 
     mafString m_FileName;
 
-    mafVMEGroup                               *m_VmeGroup;
-    std::map<mafString, mafVMELandmarkCloud*> m_Clouds;
+    std::shared_ptr<mafVMEGroup>                               m_VmeGroup;
+    std::map<mafString, std::shared_ptr<mafVMELandmarkCloud> > m_Clouds;
 
-    medVMEAnalog *m_VmeAnalog;
+    std::shared_ptr<medVMEAnalog> m_VmeAnalog;
 
-    std::vector<mafVMESurface *> m_PlatformList;
+    std::vector<std::shared_ptr<mafVMESurface> > m_PlatformList;
 
-    std::vector<mafVMEVector *> m_ForceList;
-    std::vector<mafVMEVector *> m_MomentList;
+    std::vector<std::shared_ptr<mafVMEVector> > m_ForceList;
+    std::vector<std::shared_ptr<mafVMEVector> > m_MomentList;
 
 	  //data filled by Aurion importer
 	  //int m_Errcode;
@@ -260,4 +247,3 @@ protected:
   std::vector<_InternalC3DData> m_intData;
 	
 };
-#endif

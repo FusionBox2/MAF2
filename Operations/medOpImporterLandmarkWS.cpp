@@ -35,7 +35,6 @@
 #include "mafVMELandmarkCloud.h"
 #include "mafVMELandmark.h"
 #include "mafTagArray.h"
-#include "ftk/Base/RegisteringPointer.h"
 
 #include <iostream>
 
@@ -49,13 +48,11 @@ medOpImporterLandmarkWS::medOpImporterLandmarkWS(const mafString& label) : Super
 	m_Canundo	= true;
 	m_File		= _R("");
 	m_FileDir = mafGetApplicationDirectory() + _R("/Data/External/");
-	m_VmeCloud		= NULL;
 }
 //----------------------------------------------------------------------------
 medOpImporterLandmarkWS::~medOpImporterLandmarkWS()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_VmeCloud);
 }
 //----------------------------------------------------------------------------
 mafOp* medOpImporterLandmarkWS::Copy()   
@@ -68,7 +65,6 @@ mafOp* medOpImporterLandmarkWS::Copy()
 	cp->m_Next = NULL;
 
 	cp->m_File = m_File;
-	cp->m_VmeCloud = m_VmeCloud;
 	return cp;
 }
 //----------------------------------------------------------------------------
@@ -100,24 +96,24 @@ void medOpImporterLandmarkWS::Read()
   {
     wxBusyInfo wait("Please wait, working...");
   }
-  mafNEW(m_VmeCloud);
+  auto vmeCloud = mafVMELandmarkCloud::NewSPtr();
   mafString path, name, ext;
   mafSplitPath(m_File,&path,&name,&ext);
-  m_VmeCloud->SetName(name);
+  vmeCloud->SetName(name);
 
   mafTagItem tag_Nature;
   tag_Nature.SetName(_R("VME_NATURE"));
   tag_Nature.SetValue(_R("NATURAL"));
 
-  m_VmeCloud->GetTagArray()->SetTag(tag_Nature);
+  vmeCloud->GetTagArray()->SetTag(tag_Nature);
 
   if (m_TestMode == true)
   {
-	m_VmeCloud->TestModeOn();
+	vmeCloud->TestModeOn();
   }
 
-  m_VmeCloud->Open();
-  m_VmeCloud->SetRadius(10);
+  vmeCloud->Open();
+  vmeCloud->SetRadius(10);
 
   wxString skipc, line;
   mafString time, first_time, x, y, z;
@@ -171,10 +167,10 @@ void medOpImporterLandmarkWS::Read()
   for (int i=0;i<numland;i++)
   {
     lm_name = stringVec.at(i);
-    index = m_VmeCloud->FindLandmarkIndex(lm_name);
+    index = vmeCloud->FindLandmarkIndex(lm_name);
     if (index == -1)
     {
-      lm_idx.push_back(m_VmeCloud->AppendLandmark(lm_name));
+      lm_idx.push_back(vmeCloud->AppendLandmark(lm_name));
     }
     else
     {
@@ -210,7 +206,7 @@ void medOpImporterLandmarkWS::Read()
           if(!x.empty() && !y.empty() && !z.empty() )
           {
             //Insert the values in the AL with the same name (idx)
-            m_VmeCloud->SetLandmark(lm_idx[indexSPlitOriginal[indexCounter]],xval,yval,zval,tval);
+            vmeCloud->SetLandmark(lm_idx[indexSPlitOriginal[indexCounter]],xval,yval,zval,tval);
           }
           indexCounter++;
           counter++;
@@ -219,12 +215,12 @@ void medOpImporterLandmarkWS::Read()
         {
           if(x.empty() && y.empty() && z.empty() )
           {
-            m_VmeCloud->SetLandmark(lm_idx[counterAL],0,0,0,tval);
-            m_VmeCloud->SetLandmarkVisibility(lm_idx[counterAL], 0,tval);
+            vmeCloud->SetLandmark(lm_idx[counterAL],0,0,0,tval);
+            vmeCloud->SetLandmarkVisibility(lm_idx[counterAL], 0,tval);
           }
           else
           {
-            m_VmeCloud->SetLandmark(lm_idx[counterAL],xval,yval,zval,tval);
+            vmeCloud->SetLandmark(lm_idx[counterAL],xval,yval,zval,tval);
           }
           counter++;
           counterAL++;
@@ -234,12 +230,12 @@ void medOpImporterLandmarkWS::Read()
       {
         if(x.empty() && y.empty() && z.empty() )
         {
-          m_VmeCloud->SetLandmark(lm_idx[counterAL],0,0,0,tval);
-          m_VmeCloud->SetLandmarkVisibility(lm_idx[counterAL], 0,tval);
+          vmeCloud->SetLandmark(lm_idx[counterAL],0,0,0,tval);
+          vmeCloud->SetLandmarkVisibility(lm_idx[counterAL], 0,tval);
         }
         else
         {
-          m_VmeCloud->SetLandmark(lm_idx[counterAL],xval,yval,zval,tval);
+          vmeCloud->SetLandmark(lm_idx[counterAL],xval,yval,zval,tval);
         }
         counter++;
         counterAL++;
@@ -250,7 +246,7 @@ void medOpImporterLandmarkWS::Read()
 
   } while (!inputFile.Eof());
 
-  m_VmeCloud->Modified();
-  m_VmeCloud->ReparentTo(GetInput());  
-  SetOutput(m_VmeCloud);
+  vmeCloud->Modified();
+  mafNode::ReparentTo(vmeCloud, GetInput().get());  
+  SetOutput(vmeCloud);
 }

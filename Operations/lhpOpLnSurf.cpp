@@ -33,7 +33,6 @@
 
 #include "mafOpExplodeCollapse.h"
 
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafVMELandmarkCloud.h"
 #include "mafVME.h"
 #include "mafVMESurface.h"
@@ -83,9 +82,9 @@ lhpOpLnSurf::lhpOpLnSurf(const mafString& label) : Superclass(label)
 lhpOpLnSurf::~lhpOpLnSurf()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_Surface);
-  mafDEL(m_Muscles);
-  mafDEL(m_Tendons);
+  m_Surface.reset();
+  m_Muscles.reset();
+  m_Tendons.reset();
 }
 
 //----------------------------------------------------------------------------
@@ -198,9 +197,9 @@ void lhpOpLnSurf::OpDo()
   std::vector<V3d<double> >            coords;
   std::vector<V3d<double> >            smoothed;
 
-  mafDEL(m_Surface);
-  mafDEL(m_Muscles);
-  mafDEL(m_Tendons);
+  m_Surface.reset();
+  m_Muscles.reset();
+  m_Tendons.reset();
 
   newPtsSurf = vtkPoints::New();
   newPtsSurf->Allocate(5000,10000);
@@ -222,7 +221,7 @@ void lhpOpLnSurf::OpDo()
   {
     if(GetInput()->GetChild(i)->IsMAFType(mafVMELandmarkCloud)) 
     {
-      mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(GetInput()->GetChild(i));
+      auto cloud = mafVMELandmarkCloud::SafeDownCast(GetInput()->GetChild(i));
       unsigned            from   = 0;
       bool                tendon = true;
       bool                OriIns = (cloudCounter < 2);
@@ -300,9 +299,9 @@ void lhpOpLnSurf::OpDo()
     mafTimeStamp t;
     mafString     muscnm(_R("MscFbr_"));
     mafString     tendnm(_R("TndFbr_"));
-    t = ((mafVME *)GetInput())->GetTimeStamp();
-    mafNEW(m_Muscles);
-    mafNEW(m_Tendons);
+    t = mafVME::StaticDownCast(GetInput())->GetTimeStamp();
+    m_Muscles = mafVMEPolyline::NewSPtr();
+    m_Tendons = mafVMEPolyline::NewSPtr();
     muscnm += GetInput()->GetName();
     tendnm += GetInput()->GetName();
     m_Muscles->SetName(muscnm);
@@ -317,8 +316,8 @@ void lhpOpLnSurf::OpDo()
     m_Muscles->GetTagArray()->SetTag(tag_Nature);
     m_Tendons->GetTagArray()->SetTag(tag_Nature);
 
-    m_Muscles->ReparentTo(GetInput());
-    m_Tendons->ReparentTo(GetInput());
+    mafNode::ReparentTo(m_Muscles, GetInput().get());
+    mafNode::ReparentTo(m_Tendons, GetInput().get());
     //{mafEvent evUnq(this,VME_ADD,m_Muscles); InvokeEvent(evUnq);}
     //{mafEvent evUnq(this,VME_ADD,m_Tendons); InvokeEvent(evUnq);}
   }
@@ -326,8 +325,8 @@ void lhpOpLnSurf::OpDo()
   {
     mafTimeStamp t;
     mafString     sfnm(_R("Surf_"));
-    t = ((mafVME *)GetInput())->GetTimeStamp();
-    mafNEW(m_Surface);
+    t = mafVME::StaticDownCast(GetInput())->GetTimeStamp();
+    m_Surface = mafVMESurface::NewSPtr();
     sfnm += GetInput()->GetName();
     m_Surface->SetName(sfnm);
     m_Surface->SetData(surf, t);
@@ -338,7 +337,7 @@ void lhpOpLnSurf::OpDo()
 
     m_Surface->GetTagArray()->SetTag(tag_Nature);
 
-    m_Surface->ReparentTo(GetInput());
+    mafNode::ReparentTo(m_Surface, GetInput().get());
     //{mafEvent evUnq(this,VME_ADD,m_Surface); InvokeEvent(evUnq);}
   }
   musc->Delete();
@@ -353,7 +352,7 @@ void lhpOpLnSurf::OpDo()
 void lhpOpLnSurf::OpUndo()
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_Surface); InvokeEvent(evUnq);}
-  {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_Muscles); InvokeEvent(evUnq);}
-  {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_Tendons); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_Surface.get()); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_Muscles.get()); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_Tendons.get()); InvokeEvent(evUnq);}
 }

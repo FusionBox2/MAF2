@@ -175,7 +175,7 @@ void medOpExporterWrappedMeter::Export()
 	iter->Delete();
 	*/
 	
-	m_Meters.push_back(GetInput());
+	m_Meters.push_back(GetInput().get());
 
 	if(m_Meters.size() != 0)
 	{
@@ -462,7 +462,7 @@ void medOpExporterWrappedMeter::Test()
 
 */
 	//create landmarks and relative landmark cloud
-	medOpImporterLandmark *importer=new medOpImporterLandmark(_R("importer"));
+	auto importer = std::make_unique<medOpImporterLandmark>(_R("importer"));
 	importer->TestModeOn();
 	//importer->SetInput(storage->GetRoot());
 	//mafString filename=MED_DATA_ROOT;
@@ -472,26 +472,25 @@ void medOpExporterWrappedMeter::Test()
 	importer->SetFileName(filename.GetCStr());
 	importer->Read();
 	
-	mafVMELandmarkCloud *cloud=(mafVMELandmarkCloud *)importer->GetOutput();
+	auto cloud=mafVMELandmarkCloud::StaticDownCast(importer->GetOutput());
 	cloud->Open();
 
 
-	medVMEComputeWrapping *wrappedMeter;
-	mafNEW(wrappedMeter);
+	auto wrappedMeter = medVMEComputeWrapping::NewSPtr();
 	//mafNode *n = mafNode::SafeDownCast(cloud);
 //wrappedMeter->SetMeterLink(wrappedMeter,);
 
-	wrappedMeter->SetMeterLink(_R("StartVME"),cloud->GetLandmark(0));
-	wrappedMeter->SetMeterLink(_R("EndVME1"),cloud->GetLandmark(1));
+	wrappedMeter->SetMeterLink(_R("StartVME"),cloud->GetLandmark(0).get());
+	wrappedMeter->SetMeterLink(_R("EndVME1"),cloud->GetLandmark(1).get());
 
-	wrappedMeter->SetMeterLink(cloud->GetLandmark(2)->GetName().GetCStr(),cloud->GetLandmark(2));
-	wrappedMeter->SetMeterLink(cloud->GetLandmark(3)->GetName().GetCStr(),cloud->GetLandmark(3));
-	wrappedMeter->SetMeterLink(cloud->GetLandmark(4)->GetName().GetCStr(),cloud->GetLandmark(4));
+	wrappedMeter->SetMeterLink(cloud->GetLandmark(2)->GetName().GetCStr(),cloud->GetLandmark(2).get());
+	wrappedMeter->SetMeterLink(cloud->GetLandmark(3)->GetName().GetCStr(),cloud->GetLandmark(3).get());
+	wrappedMeter->SetMeterLink(cloud->GetLandmark(4)->GetName().GetCStr(),cloud->GetLandmark(4).get());
 	//wrappedMeter->PushIdVector(cloud->GetId()); // for landmark middlepoint is memorized as sequence of cloud id and interal id of the landmark
 	//wrappedMeter->PushIdVector(2); //this is for the vector syncronized with the gui widget, that is not used in gui test
 
 
-	wrappedMeter->ReparentTo(cloud);
+	mafNode::ReparentTo(wrappedMeter, cloud.get());
 	//wrappedMeter->GetOutput()->GetVTKData()->Update();
 	wrappedMeter->Modified();
 	wrappedMeter->Update();
@@ -545,10 +544,9 @@ void medOpExporterWrappedMeter::Test()
 	}
 	control.close();
 
-	wrappedMeter->ReparentTo(NULL);
+	mafNode::ReparentTo(wrappedMeter, nullptr);
 
-	mafDEL(wrappedMeter);
-	cppDEL(importer);
+	wrappedMeter.reset();
 
 	//mafDEL(storage);
 

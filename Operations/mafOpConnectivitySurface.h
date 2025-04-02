@@ -74,7 +74,7 @@ protected:
   void CreateGui();
 
 	int m_Thresold;
-	std::vector<mafVME*> m_ExtractedVmes;
+	std::vector<std::shared_ptr<mafVME> > m_ExtractedVmes;
 	vtkPolyData		*m_OriginalPolydata;
 	mafString m_NumberOfExtractedSurfaces;
   mafString m_Alert;

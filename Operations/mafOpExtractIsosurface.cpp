@@ -130,18 +130,7 @@ mafOpExtractIsosurface::mafOpExtractIsosurface(const mafString& label) : Supercl
 mafOpExtractIsosurface::~mafOpExtractIsosurface()
 //----------------------------------------------------------------------------
 {
-  if (m_OutputGroup != NULL)
-  {
-    auto iter = m_OutputGroup->NewIterator();
-    for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
-    {
-      if (node != NULL)
-      {
-        mafDEL(node);
-      }
-    }
-  }
-
+  m_OutputGroup.reset();
   m_IsoValueVector.clear();
   vtkDEL(m_ContourVolumeMapper);
   SetOutput(NULL);
@@ -159,9 +148,9 @@ bool mafOpExtractIsosurface::Accept(mafNode* vme)
 {  
   bool is3DData = false;
   double bounds[6];
-  ((mafVME *)vme)->GetOutput()->GetVMEBounds(bounds);
+  mafVME::StaticDownCast(vme)->GetOutput()->GetVMEBounds(bounds);
   is3DData = (bounds[0] != bounds[1] && bounds[2] != bounds[3] && bounds[4] != bounds[5]);
-  return vme != NULL && ((mafVME *)vme)->GetOutput()->IsA("mafVMEOutputVolume") && is3DData;
+  return vme && mafVME::StaticDownCast(vme)->GetOutput()->IsA("mafVMEOutputVolume") && is3DData;
 }
 //----------------------------------------------------------------------------
 void mafOpExtractIsosurface::OpRun()
@@ -221,7 +210,7 @@ void mafOpExtractIsosurface::CreateOpDialog()
 {
   wxBusyCursor wait;
  
-  vtkDataSet *dataset = ((mafVME *)GetInput())->GetOutput()->GetVTKData();
+  vtkDataSet *dataset = mafVME::StaticDownCast(GetInput())->GetOutput()->GetVTKData();
   double sr[2];
   dataset->GetScalarRange(sr);
   m_MinDensity = sr[0];
@@ -422,9 +411,9 @@ void mafOpExtractIsosurface::CreateOpDialog()
 void mafOpExtractIsosurface::CreateVolumePipeline()
 //----------------------------------------------------------------------------
 {
-  vtkDataSet *dataset = ((mafVME *)GetInput())->GetOutput()->GetVTKData();
+  vtkDataSet *dataset = mafVME::StaticDownCast(GetInput())->GetOutput()->GetVTKData();
   m_ContourVolumeMapper = vtkMAFContourVolumeMapper::New();
-  m_ContourVolumeMapper->SetInputConnection(((mafVME*)GetInput())->GetOutput()->GetVTKOutputPort());
+  m_ContourVolumeMapper->SetInputConnection(mafVME::StaticDownCast(GetInput())->GetOutput()->GetVTKOutputPort());
   m_ContourVolumeMapper->AutoLODRenderOn();
   m_ContourVolumeMapper->AutoLODCreateOn();
 
@@ -463,7 +452,7 @@ void mafOpExtractIsosurface::CreateVolumePipeline()
 
     // bounding box actor
     m_OutlineFilter = vtkOutlineCornerFilter::New();
-    m_OutlineFilter->SetInputConnection(((mafVME*)GetInput())->GetOutput()->GetVTKOutputPort());
+    m_OutlineFilter->SetInputConnection(mafVME::StaticDownCast(GetInput())->GetOutput()->GetVTKOutputPort());
 
     m_OutlineMapper = vtkPolyDataMapper::New();
     m_OutlineMapper->SetInputConnection(m_OutlineFilter->GetOutputPort());
@@ -493,7 +482,7 @@ void mafOpExtractIsosurface::CreateSlicePipeline()
   // slicing the volume
   double srange[2],w,l, xspc = 0.33, yspc = 0.33, ext[6];
 
-  vtkDataSet *dataset = ((mafVME *)GetInput())->GetOutput()->GetVTKData();
+  vtkDataSet *dataset = mafVME::StaticDownCast(GetInput())->GetOutput()->GetVTKData();
   dataset->GetBounds(ext);
   dataset->GetScalarRange(srange);
   w = srange[1] - srange[0];
@@ -516,8 +505,8 @@ void mafOpExtractIsosurface::CreateSlicePipeline()
   m_VolumeSlicer->SetPlaneAxisY(m_SliceYVect);
   m_PolydataSlicer->SetPlaneAxisX(m_SliceXVect);
   m_PolydataSlicer->SetPlaneAxisY(m_SliceYVect);
-  m_VolumeSlicer->SetInputConnection(((mafVME*)GetInput())->GetOutput()->GetVTKOutputPort());
-  m_PolydataSlicer->SetInputConnection(((mafVME*)GetInput())->GetOutput()->GetVTKOutputPort());
+  m_VolumeSlicer->SetInputConnection(mafVME::StaticDownCast(GetInput())->GetOutput()->GetVTKOutputPort());
+  m_PolydataSlicer->SetInputConnection(mafVME::StaticDownCast(GetInput())->GetOutput()->GetVTKOutputPort());
 
 
   m_SliceImage = vtkImageData::New();
@@ -532,9 +521,9 @@ void mafOpExtractIsosurface::CreateSlicePipeline()
   m_VolumeSlicer->SetOutput(m_SliceImage);
   m_VolumeSlicer->Update();
 
-  auto material = ((mafVMEVolume *)GetInput())->GetMaterial();
+  auto material = mafVMEVolume::StaticDownCast(GetInput())->GetMaterial();
   double sr[2];
-  ((mafVMEVolume*)GetInput())->GetOutput()->GetVTKData()->GetScalarRange(sr);
+  mafVMEVolume::StaticDownCast(GetInput())->GetOutput()->GetVTKData()->GetScalarRange(sr);
   material->m_ColorLut->SetRange(sr[0],sr[1]);
   material->UpdateFromTables();
 
@@ -761,13 +750,13 @@ void mafOpExtractIsosurface::OnEvent(mafEventBase *maf_event)
       break ;
     case VME_PICKED:
       {
-        vtkDataSet *vol = ((mafVME *)GetInput())->GetOutput()->GetVTKData();
+        vtkDataSet *vol = mafVMEVolume::StaticDownCast(GetInput())->GetOutput()->GetVTKData();
         double pos[3];
         vtkPoints *pts = NULL; 
         pts = (vtkPoints *)e->GetVtkObj();
         pts->GetPoint(0,pos);
         //vol->SetUpdateExtentToWholeExtent();
-        ((mafVME*)GetInput())->GetOutput()->Update();
+        mafVMEVolume::StaticDownCast(GetInput())->GetOutput()->Update();
         int pid = vol->FindPoint(pos);
         vtkDataArray *scalars = vol->GetPointData()->GetScalars();
         if (scalars && pid != -1)
@@ -910,7 +899,7 @@ void mafOpExtractIsosurface::ExtractSurface(bool clean)
 
   if (m_NumberOfContours > 1)
   {
-    mafNEW(m_OutputGroup);
+    m_OutputGroup = mafVMEGroup::NewSPtr();
     m_OutputGroup->SetName(_R("Extract isosurface output"));
   }
 
@@ -961,8 +950,7 @@ void mafOpExtractIsosurface::ExtractSurface(bool clean)
 
     mafString name = GetInput()->GetName() + mafString::Format( _R(" Isosurface %g"),m_IsoValue );
 
-    mafVMESurface *vme_surf;
-    mafNEW(vme_surf);
+    auto vme_surf = mafVMESurface::NewSPtr();
     vme_surf->SetName(name);
     //vme_surf->SetDataByDetaching(surface,0);
     vme_surf->SetData(surface,0);
@@ -971,16 +959,16 @@ void mafOpExtractIsosurface::ExtractSurface(bool clean)
       surface->Delete();
     }
 
-    if (m_OutputGroup != NULL)
+    if (m_OutputGroup)
     {
-      vme_surf->ReparentTo(m_OutputGroup);
+      mafNode::ReparentTo(vme_surf, m_OutputGroup.get());
     }
     else
     {
       SetOutput(vme_surf);      
     }
   }
-  if (m_OutputGroup != NULL)
+  if (m_OutputGroup)
   {
     SetOutput(m_OutputGroup);
   }
@@ -1007,7 +995,7 @@ mafString mafOpExtractIsosurface::GetParameters()
 void mafOpExtractIsosurface::SetIsoValue(double isoValue)
 //----------------------------------------------------------------------------
 {
-  vtkDataSet *dataset = ((mafVME *)GetInput())->GetOutput()->GetVTKData();
+  vtkDataSet *dataset = mafVMEVolume::StaticDownCast(GetInput())->GetOutput()->GetVTKData();
   double sr[2];
   dataset->GetScalarRange(sr);
   m_MinDensity = sr[0];

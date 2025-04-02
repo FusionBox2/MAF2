@@ -1,28 +1,3 @@
-/*=========================================================================
-
- Program: MAF2Medical
- Module: medOpComputeWrapping
- Authors: Anupam Agrawal and Hui Wei
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-
 #include "medOpComputeWrapping.h"
 #include "mafDecl.h"
 #include "mafEvent.h"
@@ -30,26 +5,16 @@
 #include "medVMEComputeWrapping.h"
 
 //----------------------------------------------------------------------------
-// Constants :
-//----------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(medOpComputeWrapping);
-//----------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------
 medOpComputeWrapping::medOpComputeWrapping(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType	= OPTYPE_OP;
   m_Canundo = true;
-  m_Meter   = NULL;
 }
 //----------------------------------------------------------------------------
 medOpComputeWrapping::~medOpComputeWrapping( ) 
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_Meter);
 }
 //----------------------------------------------------------------------------
 mafOp* medOpComputeWrapping::Copy()   
@@ -67,14 +32,8 @@ bool medOpComputeWrapping::Accept(mafNode *node)
 void medOpComputeWrapping::OpRun()   
 //----------------------------------------------------------------------------
 {
-  mafNEW(m_Meter);
-  m_Meter->SetName(_R("Wrapped Action Line"));
-  SetOutput(m_Meter);
+  auto meter = medVMEComputeWrapping::NewSPtr();
+  meter->SetName(_R("Wrapped Action Line"));
+  SetOutput(meter);
   {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
-}
-//----------------------------------------------------------------------------
-void medOpComputeWrapping::OpDo()
-//----------------------------------------------------------------------------
-{
-  m_Meter->ReparentTo(GetInput());
 }

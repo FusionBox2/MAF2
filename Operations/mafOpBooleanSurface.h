@@ -96,7 +96,7 @@ protected:
 	vtkPlane				*m_ClipperPlane;
 	vtkGlyph3D			*m_Arrow;
 	vtkPlaneSource	*m_PlaneSource;
-	mafVMEGizmo			*m_ImplicitPlaneGizmo;
+	std::shared_ptr<mafVMEGizmo>			m_ImplicitPlaneGizmo;
 	bool						m_PlaneCreated;
 
 	std::shared_ptr<mafInteractorCompositorMouse> m_IsaCompositor;
@@ -106,9 +106,9 @@ protected:
 	mafVMESurface *m_SecondOperatorVME;
 	mafVMESurface *m_FirstOperatorVME;
 
-  mafVMESurface *m_ResultVME; //<the vme result of operation
+  std::shared_ptr<mafVMESurface> m_ResultVME; //<the vme result of operation
 
-  mafVMESurface *m_SecondOperatorFromParametric;
+  std::shared_ptr<mafVMESurface> m_SecondOperatorFromParametric;
 
 	std::vector<vtkPolyData*> m_VTKResult;
 

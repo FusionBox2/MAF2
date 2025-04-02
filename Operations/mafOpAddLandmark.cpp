@@ -28,7 +28,6 @@
 #include "mafGUINamedPanel.h"
 #include "mafGUIDictionaryWidget.h"
 #include "mafOpExplodeCollapse.h"
-#include "ftk/Base/RegisteringPointer.h"
 
 #include "mafVME.h"
 #include "mafVMELandmarkCloud.h"
@@ -63,7 +62,6 @@ mafOpAddLandmark::mafOpAddLandmark(const mafString& label) : Superclass(label)
   m_LandmarkAdded.clear();
 
   m_LandmarkName        = _R("new_landmark");
-	m_CloudCreatedFlag    = false;
 	m_PickingActiveFlag   = false;
 	m_LandmarkPosition[0] = m_LandmarkPosition[1] = m_LandmarkPosition[2] = 0;
 	m_AddToCurrentTime    = 0;
@@ -75,12 +73,11 @@ mafOpAddLandmark::~mafOpAddLandmark()
 {
   for (int i=0;i<m_LandmarkAdded.size();i++)
   {
-    mafDEL(m_LandmarkAdded[i]);
+    m_LandmarkAdded[i].reset();
   }
 	m_LandmarkAdded.clear();
   m_LandmarkPicker.reset();
-	if(m_CloudCreatedFlag) 
-    mafDEL(m_Cloud);
+  m_CreatedCloud.reset();
 }
 //----------------------------------------------------------------------------
 mafOp* mafOpAddLandmark::Copy()   
@@ -166,7 +163,7 @@ void mafOpAddLandmark::SetLandmarkPos(mafVMELandmark* lm, double x, double y, do
 void mafOpAddLandmark::OpRun()
 //----------------------------------------------------------------------------
 {
-  if(mafVME *vm = mafVME::SafeDownCast(GetInput()))
+  if(auto vm = mafVME::SafeDownCast(GetInput()))
   {
     if(vm->GetTimeStamp() != 0)
     {
@@ -195,9 +192,9 @@ void mafOpAddLandmark::OpRun()
 		   GetInput()->IsMAFType(mafVMEHyperboloid2S) ||
 		   GetInput()->IsMAFType(mafVMECylinder))
 		{
-			m_PickedVme = mafVME::SafeDownCast(GetInput());
-			mafNEW(m_Cloud);
-
+			m_PickedVme = mafVME::SafeDownCast(GetInput()).get();
+			m_CreatedCloud = mafVMELandmarkCloud::NewSPtr();
+			m_Cloud = m_CreatedCloud.get();
 			if (m_TestMode == true)
 			{
 				m_Cloud->TestModeOn();
@@ -206,19 +203,18 @@ void mafOpAddLandmark::OpRun()
 			m_Cloud->Open();
 			m_Cloud->SetName(_L("new landmark cloud"));
 			m_Cloud->SetRadius(m_PickedVme->GetOutput()->GetVTKData()->GetLength()/60.0);
-			m_Cloud->ReparentTo(m_PickedVme);
+			mafNode::ReparentTo(m_CreatedCloud, m_PickedVme);
 			{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Cloud); evUnq.SetBool(true); InvokeEvent(evUnq);}
-			m_CloudCreatedFlag = true;
 		}
 		else if(GetInput()->IsMAFType(mafVMELandmark))
 		{
 			// add a new landmark as brother of this one
-			m_Cloud   = (mafVMELandmarkCloud *) GetInput()->GetParent();
+			m_Cloud   = mafVMELandmarkCloud::StaticDownCast(GetInput()->GetParent());
 			m_PickedVme = mafVME::SafeDownCast(GetInput()->GetParent()->GetParent());
 		}
 		else if(GetInput()->IsMAFType(mafVMELandmarkCloud))
 		{
-			m_Cloud   = (mafVMELandmarkCloud*)GetInput();
+			m_Cloud   = mafVMELandmarkCloud::StaticDownCast(GetInput().get());
 			m_PickedVme = mafVME::SafeDownCast(GetInput()->GetParent());
 		}
 		else
@@ -239,20 +235,20 @@ void mafOpAddLandmark::OpRun()
 		if(GetInput()->IsMAFType(mafVMELandmark))
 		{
 			// add a new landmark as brother of this one
-			m_Cloud = (mafVMELandmarkCloud *) GetInput()->GetParent();
+			m_Cloud = mafVMELandmarkCloud::StaticDownCast(GetInput()->GetParent());
 		}
 		else if(GetInput()->IsMAFType(mafVMELandmarkCloud))
 		{
-			m_Cloud = (mafVMELandmarkCloud*) GetInput();
+			m_Cloud = mafVMELandmarkCloud::StaticDownCast(GetInput().get());
 		}
 		else
 		{
-			mafNEW(m_Cloud);
+			m_CreatedCloud = mafVMELandmarkCloud::NewSPtr();
+			m_Cloud = m_CreatedCloud.get();
 			m_Cloud->Open();
 			m_Cloud->SetName(_L("new landmark cloud"));
-			m_Cloud->ReparentTo(GetInput());
+			mafNode::ReparentTo(m_CreatedCloud, GetInput().get());
 			{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Cloud); evUnq.SetBool(true); InvokeEvent(evUnq);}
-			m_CloudCreatedFlag = true;
 		}
 	}
   
@@ -369,10 +365,10 @@ void mafOpAddLandmark::OnEvent(mafEventBase *maf_event)
       break;
       case ID_CHANGE_POSITION:
       {
-        mafVMELandmark *landmark = mafVMELandmark::SafeDownCast(this->m_Cloud->FindInTreeByName(m_LandmarkName));
+        auto landmark = mafVMELandmark::SafeDownCast(this->m_Cloud->FindInTreeByName(m_LandmarkName));
 		    if(this->m_Cloud && landmark)
 		    {
-			    SetLandmarkPos(landmark, m_LandmarkPosition[0], m_LandmarkPosition[1], m_LandmarkPosition[2], 0, 0, 0);
+			    SetLandmarkPos(landmark.get(), m_LandmarkPosition[0], m_LandmarkPosition[1], m_LandmarkPosition[2], 0, 0, 0);
 			    m_Gui->Update();
 			    {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 		    }
@@ -459,9 +455,9 @@ void mafOpAddLandmark::AddLandmark(double pos[3])
     m_Cloud->Open();
   }
   
-  mafAutoPointer<mafVMELandmark> landmark = mafVMELandmark::New();
+  auto landmark = mafVMELandmark::NewSPtr();
   landmark->SetName(m_LandmarkName);
-  landmark->ReparentTo(m_Cloud);
+  mafNode::ReparentTo(landmark, m_Cloud);
   if(NULL != m_PickedVme)
      landmark->SetTimeStamp(m_PickedVme->GetTimeStamp());
   landmark->Update();
@@ -473,8 +469,7 @@ void mafOpAddLandmark::AddLandmark(double pos[3])
   {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(landmark.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 
-  m_LandmarkAdded.push_back(landmark.get());
-  m_LandmarkAdded[m_LandmarkAdded.size()-1]->Register(NULL);
+  m_LandmarkAdded.push_back(landmark);
 
   if (!cloud_was_open)
   {
@@ -491,15 +486,15 @@ void mafOpAddLandmark::AddLandmark()
 //----------------------------------------------------------------------------
 {
   int reparent_result = MAF_OK;
-  if(m_CloudCreatedFlag)
+  if(m_CreatedCloud)
   {
 		if(m_PickingActiveFlag == true)
-			reparent_result = m_Cloud->ReparentTo(m_PickedVme);
+			reparent_result = mafNode::ReparentTo(m_CreatedCloud, m_PickedVme);
 		else
-		  reparent_result = m_Cloud->ReparentTo(GetInput());
+		  reparent_result = mafNode::ReparentTo(m_CreatedCloud, GetInput().get());
     if (reparent_result == MAF_OK)
     {
-      {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_Cloud); evUnq.SetBool(true); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_CreatedCloud.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
     }
   }
   else
@@ -511,10 +506,10 @@ void mafOpAddLandmark::AddLandmark()
     }
     for (int l=0; l < m_LandmarkAdded.size(); l++)
     {
-      reparent_result = m_LandmarkAdded[l]->ReparentTo(m_Cloud);
+      reparent_result = mafNode::ReparentTo(m_LandmarkAdded[l], m_Cloud);
       if (reparent_result == MAF_OK)
       {
-        {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_LandmarkAdded[l]); evUnq.SetBool(true); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_LandmarkAdded[l].get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
       }
     }
     if (!cloud_was_open)
@@ -528,15 +523,15 @@ void mafOpAddLandmark::AddLandmark()
 void mafOpAddLandmark::RemoveLandmark()
 //----------------------------------------------------------------------------
 {
-  if(m_CloudCreatedFlag)
+  if(m_CreatedCloud)
   {
-    {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_Cloud); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_CreatedCloud.get()); InvokeEvent(evUnq);}
   }
   else
   {
     for (int l=0; l < m_LandmarkAdded.size(); l++)
     {
-      {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_LandmarkAdded[l]); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_LandmarkAdded[l].get()); InvokeEvent(evUnq);}
     }
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}

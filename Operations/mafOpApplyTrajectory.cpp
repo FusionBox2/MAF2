@@ -35,19 +35,10 @@
 #include "mafTransform.h"
 #include "mafMatrix.h"
 #include "mafMatrixVector.h"
-#include "ftk/Base/RegisteringPointer.h"
 
 #include <iostream>
 #include <fstream>
 using namespace std;
-
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(mafOpApplyTrajectory);
-//----------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------
-// Constants :
-//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 
@@ -83,7 +74,7 @@ mafOp* mafOpApplyTrajectory::Copy()
 bool mafOpApplyTrajectory::Accept(mafNode* vme)
 //----------------------------------------------------------------------------
 {  
-  return !((mafVME *)vme)->IsAnimated() && !vme->IsA("mafVMERoot") 
+  return !mafVME::StaticDownCast(vme)->IsAnimated() && !vme->IsA("mafVMERoot") 
     && !vme->IsA("mafVMEExternalData") && !vme->IsA("mafVMERefSysAbstract");
 }
 //----------------------------------------------------------------------------
@@ -91,7 +82,7 @@ bool mafOpApplyTrajectory::AcceptInputVME(mafNode* node)
 //----------------------------------------------------------------------------
 {
   mafVME *vme = mafVME::SafeDownCast(node);
-  if ( ((mafVME *)vme)->IsAnimated() && !vme->IsA("mafVMERoot") 
+  if (mafVME::StaticDownCast(vme)->IsAnimated() && !vme->IsA("mafVMERoot")
     && !vme->IsA("mafVMEExternalData") && !vme->IsA("mafVMERefSys") )
   {
     return true;
@@ -183,7 +174,7 @@ void mafOpApplyTrajectory::OpUndo()
 //----------------------------------------------------------------------------
 { 
   std::vector<mafTimeStamp> timestamps;
-  mafVMEGenericAbstract *oldVme = mafVMEGenericAbstract::SafeDownCast(GetInput());
+  auto oldVme = mafVMEGenericAbstract::SafeDownCast(GetInput());
 
   oldVme->SetTimeStamp(m_OriginalMatrix->GetTimeStamp());
 
@@ -195,7 +186,7 @@ void mafOpApplyTrajectory::OpUndo()
   }
 
   oldVme->Modified();
-  {mafEvent evUnq(this, VME_MODIFIED); evUnq.SetVme(GetInput()); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this, VME_MODIFIED); evUnq.SetVme(GetInput().get()); InvokeEvent(evUnq);}
   {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
@@ -281,7 +272,7 @@ int mafOpApplyTrajectory::Read()
   }
 
   m_OriginalMatrix = mafMatrix::NewSPtr();
-  m_OriginalMatrix->DeepCopy(*((mafVME *)GetInput())->GetOutput()->GetAbsMatrix());
+  m_OriginalMatrix->DeepCopy(*mafVME::StaticDownCast(GetInput())->GetOutput()->GetAbsMatrix());
 
   mafString path, name, ext;
   mafSplitPath(m_File,&path,&name,&ext);
@@ -324,11 +315,11 @@ int mafOpApplyTrajectory::Read()
     boxPose->RotateZ(newOrientation[2], POST_MULTIPLY);
     boxPose->SetPosition(newPosition);
 
-    ((mafVME *)GetInput())->SetAbsMatrix(boxPose->GetMatrix(), time);
+    mafVME::StaticDownCast(GetInput())->SetAbsMatrix(boxPose->GetMatrix(), time);
 
   } while (!inputFile.Eof());
 
-  {mafEvent evUnq(this, VME_MODIFIED); evUnq.SetVme(GetInput()); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this, VME_MODIFIED); evUnq.SetVme(GetInput().get()); InvokeEvent(evUnq);}
   {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 
   return MAF_OK;
@@ -345,7 +336,7 @@ int mafOpApplyTrajectory::ApplyTrajectoriesFromVME()
   }
 
   m_OriginalMatrix = mafMatrix::NewSPtr();
-  m_OriginalMatrix->DeepCopy(*((mafVME *)GetInput())->GetOutput()->GetAbsMatrix());
+  m_OriginalMatrix->DeepCopy(*mafVME::StaticDownCast(GetInput())->GetOutput()->GetAbsMatrix());
 
   std::vector<mafTimeStamp> time_stamps;
   m_VME->GetTimeStamps(time_stamps);
@@ -358,10 +349,10 @@ int mafOpApplyTrajectory::ApplyTrajectoriesFromVME()
 
     mafMatrix boxPose;
     m_VME->GetOutput()->GetAbsMatrix(boxPose,time);
-    ((mafVME *)GetInput())->SetAbsMatrix(boxPose, time);
+    mafVME::StaticDownCast(GetInput())->SetAbsMatrix(boxPose, time);
   }
 
-  {mafEvent evUnq(this, VME_MODIFIED); evUnq.SetVme(GetInput()); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this, VME_MODIFIED); evUnq.SetVme(GetInput().get()); InvokeEvent(evUnq);}
   {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
   return MAF_OK;
 }

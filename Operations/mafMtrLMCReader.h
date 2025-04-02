@@ -57,7 +57,7 @@ public:
   void SetSet(int set) {m_Set = set;}
   void SetRadius(double radius){m_Radius = radius;}
   int  GetPointsRead() {return m_PointsRead;}
-  const std::vector<std::pair<mafVMELandmarkCloud*, int> > &GetClouds() {return m_PointSet;}
+  const std::vector<std::pair<std::shared_ptr<mafVMELandmarkCloud>, int> > &GetClouds() {return m_PointSet;}
 
   void Execute();
 
@@ -71,7 +71,7 @@ protected:
   int                                m_PointsRead;
   double                             m_PointShift;
   double                             m_Radius;
-  std::vector<std::pair<mafVMELandmarkCloud*, int> >  m_PointSet;
+  std::vector<std::pair<std::shared_ptr<mafVMELandmarkCloud>, int> >  m_PointSet;
   int ReadASCIIMTR(FILE *fp);
 private:
   mafMTRLMCReader(const mafMTRLMCReader&);  // Not implemented.

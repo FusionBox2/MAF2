@@ -32,7 +32,6 @@
 
 #include "mafOpExplodeCollapse.h"
 
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafMatrixVector.h"
 #include "mafDataVector.h"
 #include "mafVME.h"
@@ -178,7 +177,7 @@ void lhpOpTimeShift::OpDo()
   //modified by Stefano. 18-9-2003
   wxBusyInfo wait("Please wait, working...");
   std::vector<mafTimeStamp> kframes;
-  mafVMEGenericAbstract *vme = mafVMEGenericAbstract::SafeDownCast(GetInput());
+  auto vme = mafVMEGenericAbstract::SafeDownCast(GetInput());
 
   mafMatrixVector *mv = vme->GetMatrixVector();
   mafDataVector   *dv = vme->GetDataVector();
@@ -193,8 +192,6 @@ void lhpOpTimeShift::OpDo()
     //elem.first += m_Shift;
     //elem.second->SetTimeStamp(elem.second->GetTimeStamp() + m_Shift);
   }
-
-  return;
 }
 
 //----------------------------------------------------------------------------

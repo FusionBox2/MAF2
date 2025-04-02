@@ -35,7 +35,6 @@
 
 #include "mafNodeIterator.h"
 #include "mafVME.h"
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafVMELandmark.h"
 
 #include "vtkSmartPointer.h"
@@ -45,10 +44,6 @@
 #include "vtkPolyData.h"
 #include "vtkTransform.h"
 #include "vtkTransformPolyDataFilter.h"
-
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(lhpOpFuseLMScripted);
-//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 // Constants :
@@ -78,7 +73,7 @@ lhpOpFuseLMScripted::lhpOpFuseLMScripted(const mafString& label) : Superclass(la
 lhpOpFuseLMScripted::~lhpOpFuseLMScripted( ) 
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_Registered);
+  m_Registered.reset();
 }
 //----------------------------------------------------------------------------
 mafOp* lhpOpFuseLMScripted::Copy()   
@@ -106,7 +101,7 @@ enum
 void lhpOpFuseLMScripted::OpRun()   
 //----------------------------------------------------------------------------
 {
-  m_Source = (mafVMELandmarkCloud*)GetInput();
+  m_Source = mafVMELandmarkCloud::StaticDownCast(GetInput()).get();
   m_SourceName = GetInput()->GetName();
   
   m_Gui = new mafGUI(this);
@@ -289,7 +284,7 @@ namespace
         continue;
       traverse.push_back(x);
       for(int i = 0; i < x->GetNumberOfChildren(); i++)
-        tmp.push_back(x->GetChild(i));
+        tmp.push_back(x->GetChild(i).get());
     }
   }
 }
@@ -302,11 +297,10 @@ bool lhpOpFuseLMScripted::RegistrationProcedure()
     wait = new wxBusyInfo("Please wait, working...");
   }
 
-  if(m_Registered == NULL)
+  if(m_Registered == nullptr)
   {
     mafString name = m_Source->GetName() + _R(" registered on ") + m_Target->GetName();
     m_Registered= mafVME::SafeDownCast(m_Source->CopyTree());
-    m_Registered->Register(this);
     m_Registered->SetName(name);
   }
 
@@ -319,7 +313,7 @@ bool lhpOpFuseLMScripted::RegistrationProcedure()
   std::list<mafNode*> srcTrav;
   std::list<mafNode*> regTrav;
   FillTraverseList(m_Source, srcTrav);
-  FillTraverseList(m_Registered, regTrav);
+  FillTraverseList(m_Registered.get(), regTrav);
 
   std::list<mafNode*>::iterator itsrc, itreg;
   for(itsrc = srcTrav.begin(), itreg = regTrav.begin(); itsrc != srcTrav.end() && itreg != regTrav.end(); ++itsrc, ++itreg)
@@ -348,20 +342,20 @@ bool lhpOpFuseLMScripted::RegistrationProcedure()
     }
     if(search_name)
     {
-      auto lmitert = m_Target->NewIterator();
-      for(mafNode *lmt = lmitert->GetFirstNode(); lmt; lmt = lmitert->GetNextNode())
+      auto lmitert = std::make_unique<mafNodeIterator>(m_Target);
+      for(auto lmt = lmitert->GetFirstNode(); lmt; lmt = lmitert->GetNextNode())
       {
-        mafVMELandmarkCloud *lmtmp = mafVMELandmarkCloud::SafeDownCast(lmt);
-        if(lmtmp == NULL)
+        auto lmtmp = mafVMELandmarkCloud::SafeDownCast(lmt);
+        if(lmtmp == nullptr)
           continue;
-        if(strstr(lmtmp->GetName().GetCStr(), search_name) != NULL)
+        if(strstr(lmtmp->GetName().GetCStr(), search_name) != nullptr)
         {
           lmct = lmtmp;
           break;
         }
       }
     }
-    if(lmct == NULL)
+    if(lmct == nullptr)
       continue;
     bool res = ProcessNode(lmcs, lmct, lmcr);
     processed = processed || res;
@@ -405,8 +399,8 @@ bool lhpOpFuseLMScripted::ProcessNode(mafVMELandmarkCloud *src, mafVMELandmarkCl
     {
       if(mapping[i] == trg->GetNumberOfLandmarks())
         continue;
-      mafVMELandmark *lmtrg = trg->GetLandmark(mapping[i]);
-      mafVMELandmark *lmreg = registered->GetLandmark(i);
+      auto lmtrg = trg->GetLandmark(mapping[i]);
+      auto lmreg = registered->GetLandmark(i);
       std::vector<mafTimeStamp> timeStamps;
       lmtrg->GetAbsTimeStamps(timeStamps);
       int numTimeStamps = timeStamps.size();
@@ -426,8 +420,8 @@ bool lhpOpFuseLMScripted::ProcessNode(mafVMELandmarkCloud *src, mafVMELandmarkCl
     {
       if(mapping[i] == trg->GetNumberOfLandmarks())
         continue;
-      mafVMELandmark *lmtrg = trg->GetLandmark(mapping[i]);
-      mafVMELandmark *lmreg = registered->GetLandmark(i);
+      auto lmtrg = trg->GetLandmark(mapping[i]);
+      auto lmreg = registered->GetLandmark(i);
       double pos[3], rot[3];
       lmtrg->GetOutput()->GetAbsPose(pos, rot);
       lmreg->SetAbsPose(pos, rot);
@@ -445,13 +439,13 @@ bool lhpOpFuseLMScripted::ProcessNode(mafVMELandmarkCloud *src, mafVMELandmarkCl
 void lhpOpFuseLMScripted::OpDo()
 //----------------------------------------------------------------------------
 {
-  m_Registered->ReparentTo(GetInput()->GetRoot());
+  mafNode::ReparentTo(m_Registered, GetInput()->GetRoot());
 }
 //----------------------------------------------------------------------------
 void lhpOpFuseLMScripted::OpUndo()
 //----------------------------------------------------------------------------
 {
-  m_Registered->ReparentTo(NULL);
+  mafNode::ReparentTo(m_Registered, nullptr);
 }
 //----------------------------------------------------------------------------
 void lhpOpFuseLMScripted::OnChooseTargetVme(mafNode *vme)

@@ -56,7 +56,7 @@ mafCxxTypeMacro(lhpOpJoinSurf);
  lhpOpJoinSurf::~lhpOpJoinSurf()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_OutSurface);
+  m_OutSurface.reset();
 }  
 
 //----------------------------------------------------------------------------
@@ -142,7 +142,7 @@ void lhpOpJoinSurf::OnEvent(mafEventBase *maf_event)
         mafWarningMessage(_M("Selected VME should have mafVMEOutputSurface as Output."));
         return;
       }
-      if(sel == GetInput())
+      if(sel == GetInput().get())
       {
         mafWarningMessage(_M("Selected VME should not be the same as Input."));
         return;
@@ -346,8 +346,8 @@ void lhpOpJoinSurf::OpStop(int result)
   newPolys->Delete();
 
   mafTimeStamp t;
-  t = ((mafVME *)GetInput())->GetTimeStamp();
-  mafNEW(m_OutSurface);
+  t = mafVME::StaticDownCast(GetInput())->GetTimeStamp();
+  m_OutSurface = mafVMESurface::NewSPtr();
   mafString nm;
   nm = GetInput()->GetName();
   nm += _R("_merged");
@@ -395,8 +395,7 @@ void lhpOpJoinSurf::OpDo()
 {
   if(m_OutSurface)
   {
-    m_OutSurface->ReparentTo(GetInput()->GetRoot());
-    {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_OutSurface); InvokeEvent(evUnq);}
+    mafNode::ReparentTo(m_OutSurface, GetInput()->GetRoot());
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
@@ -407,7 +406,7 @@ void lhpOpJoinSurf::OpUndo()
 {
   if(m_OutSurface)
   {
-    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_OutSurface); InvokeEvent(evUnq);}
+    {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_OutSurface.get()); InvokeEvent(evUnq);}
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }

@@ -139,7 +139,7 @@ void mafOpExporterBmp::SaveBmp()
 #endif TEST_MODE
     */
 
-  mafVMEVolumeGray *volume=mafVMEVolumeGray::SafeDownCast(GetInput());
+  auto volume=mafVMEVolumeGray::SafeDownCast(GetInput());
   volume->Update();
 
   vtkDataSet *ds = volume->GetVolumeOutput()->GetVTKData();

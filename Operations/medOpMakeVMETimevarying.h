@@ -92,7 +92,7 @@ protected:
   /** Create the resulting timevariyng VME */
   void Execute();
 
-  mafVMEGeneric * m_VMETimevarying;               //< Resulting timevariyng VME
+  std::shared_ptr<mafVMEGeneric>  m_VMETimevarying;               //< Resulting timevariyng VME
   mafVME * m_CurrentVME;                          //< Current VME
   mafString m_CurrentVMEName;
   mafString m_VMETimevaryingName;                 //< Resulting timevariyng VME name

@@ -1,28 +1,3 @@
-/*=========================================================================
-
- Program: MAF2
- Module: lhpOpCreateRefSysLM
- Authors: Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-
 #include "lhpOpCreateRefSysLM.h"
 #include "mafDecl.h"
 #include "mafEvent.h"
@@ -31,22 +6,16 @@
 #include "mafVMELandmarkCloud.h"
 
 //----------------------------------------------------------------------------
-mafCxxTypeMacro(lhpOpCreateRefSysLM);
-//----------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------
 lhpOpCreateRefSysLM::lhpOpCreateRefSysLM(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
 {
   m_OpType	= OPTYPE_OP;
   m_Canundo = true;
-  m_Cloud   = NULL;
 }
 //----------------------------------------------------------------------------
 lhpOpCreateRefSysLM::~lhpOpCreateRefSysLM()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_Cloud);
 }
 //----------------------------------------------------------------------------
 mafOp* lhpOpCreateRefSysLM::Copy()   
@@ -64,23 +33,17 @@ bool lhpOpCreateRefSysLM::Accept(mafNode *node)
 void lhpOpCreateRefSysLM::OpRun()
 //----------------------------------------------------------------------------
 {
-  mafNEW(m_Cloud);
-  m_Cloud->SetName(_R("points"));
-  m_Cloud->SetRadius(5.0);
-  m_Cloud->AppendLandmark(_R("O"));
-  m_Cloud->SetLandmark(_R("O"), 0.0, 0.0, 0.0);
-  m_Cloud->AppendLandmark(_R("X"));
-  m_Cloud->SetLandmark(_R("X"), 20.0, 0.0, 0.0);
-  m_Cloud->AppendLandmark(_R("Y"));
-  m_Cloud->SetLandmark(_R("Y"), 0.0, 20.0, 0.0);
-  m_Cloud->AppendLandmark(_R("Z"));
-  m_Cloud->SetLandmark(_R("Z"), 0.5, 0.0, 20.0);
-  SetOutput(m_Cloud);
+  auto cloud = mafVMELandmarkCloud::NewSPtr();
+  cloud->SetName(_R("points"));
+  cloud->SetRadius(5.0);
+  cloud->AppendLandmark(_R("O"));
+  cloud->SetLandmark(_R("O"), 0.0, 0.0, 0.0);
+  cloud->AppendLandmark(_R("X"));
+  cloud->SetLandmark(_R("X"), 20.0, 0.0, 0.0);
+  cloud->AppendLandmark(_R("Y"));
+  cloud->SetLandmark(_R("Y"), 0.0, 20.0, 0.0);
+  cloud->AppendLandmark(_R("Z"));
+  cloud->SetLandmark(_R("Z"), 0.5, 0.0, 20.0);
+  SetOutput(cloud);
   {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);}
-}
-//----------------------------------------------------------------------------
-void lhpOpCreateRefSysLM::OpDo()
-//----------------------------------------------------------------------------
-{
-  m_Cloud->ReparentTo(GetInput());
 }

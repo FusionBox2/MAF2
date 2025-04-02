@@ -148,7 +148,7 @@ void medOpComputeInertialTensor::OpRun()
 void medOpComputeInertialTensor::OpDo()
 //----------------------------------------------------------------------------
 {
-  mafVME* vme = (mafVME*) GetInput();
+  auto vme = mafVME::StaticDownCast(GetInput());
 
 
   if (!vme->GetTagArray()->GetTag(_R("LOCAL_CENTER_OF_MASS_COMPONENTS")))
@@ -188,7 +188,7 @@ void medOpComputeInertialTensor::OpDo()
 void medOpComputeInertialTensor::OpUndo()
 //----------------------------------------------------------------------------
 {
-  mafVME* vme = (mafVME*) GetInput();
+  auto vme = mafVME::StaticDownCast(GetInput());
   vme->GetTagArray()->GetTag(_R("LOCAL_CENTER_OF_MASS_COMPONENTS"),m_LocalCenterOfMassTag);
   vme->GetTagArray()->GetTag(_R("PRINCIPAL_INERTIAL_TENSOR_COMPONENTS"),m_PrincipalInertialTensorTag);
   vme->GetTagArray()->GetTag(_R("INERTIAL_TENSOR_COMPONENTS"),m_InertialTensorTag);
@@ -225,7 +225,7 @@ void medOpComputeInertialTensor::OnEvent(mafEventBase *maf_event)
 
         if (GetInput()->IsMAFType(mafVMESurface))
         {
-          result = ComputeInertialTensor(GetInput());
+          result = ComputeInertialTensor(GetInput().get());
         }
         else if (GetInput()->IsMAFType(mafVMEGroup))
         {
@@ -643,7 +643,7 @@ void medOpComputeInertialTensor::ComputeGlobalInertiaTensor()
 int medOpComputeInertialTensor::ComputeInertialTensorFromGroup()
 //----------------------------------------------------------------------------
 {
-  mafVMEGroup* group = (mafVMEGroup*) GetInput();
+  auto group = mafVMEGroup::StaticDownCast(GetInput());
 
   int result = OP_RUN_CANCEL;
 
@@ -674,15 +674,15 @@ int medOpComputeInertialTensor::ComputeInertialTensorFromGroup()
   // compute inertial tensor fro each children (results will be summed)
   for (int i=0;i<n_of_children;i++)
   {
-	mafVMESurface *childSurface = mafVMESurface::SafeDownCast(group->GetChild(i));
+	auto childSurface = mafVMESurface::SafeDownCast(group->GetChild(i));
 
-    if (childSurface != NULL)
+    if (childSurface)
     {
 	  
 	  mafString s;
 	  s += _R("Computing Inertial tensor for: ") + childSurface->GetName();
 	  mafLogMessage(_M(s));
-	  ComputeLocalInertialTensor(childSurface,i+1,n_of_surfaces);
+	  ComputeLocalInertialTensor(childSurface.get(),i+1,n_of_surfaces);
     }
   }
 

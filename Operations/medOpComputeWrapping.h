@@ -1,34 +1,9 @@
-/*=========================================================================
-
- Program: MAF2Medical
- Module: medOpComputeWrapping
- Authors: Anupam Agrawal and Hui Wei
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __medOpComputeWrapping_H__
-#define __medOpComputeWrapping_H__
-
+#pragma once
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
 
 #include "mafOp.h"
-
-//----------------------------------------------------------------------------
-// forward references :
-//----------------------------------------------------------------------------
-class medVMEComputeWrapping;
-class mafGui;
-class mafEvent;
 
 /** 
   class name: medOpComputeWrapping
@@ -43,7 +18,7 @@ public:
   ~medOpComputeWrapping() override;
 
   /** RTTI macro*/
-  mafTypeMacro(medOpComputeWrapping, mafOp);
+  mafTypeMacroN(medOpComputeWrapping);
 
   /** clone the object and retrieve a copy*/
   mafOp* Copy() override;
@@ -52,10 +27,4 @@ public:
   bool Accept(mafNode *node) override;
   /** Builds operation's interface. */
   void OpRun() override;
-  /** Execute the operation. */
-  void OpDo() override;
-
-protected: 
-  medVMEComputeWrapping *m_Meter;
 };
-#endif

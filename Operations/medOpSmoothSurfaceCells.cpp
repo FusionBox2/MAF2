@@ -138,15 +138,15 @@ void medOpSmoothSurfaceCells::OpRun()
 //----------------------------------------------------------------------------
 {
 	vtkNEW(m_ResultPolydata);
-	m_ResultPolydata->DeepCopy((vtkPolyData*)((mafVME *)GetInput())->GetOutput()->GetVTKData());
+	m_ResultPolydata->DeepCopy((vtkPolyData*)mafVME::StaticDownCast(GetInput())->GetOutput()->GetVTKData());
 
 	vtkNEW(m_OriginalPolydata);
-	m_OriginalPolydata->DeepCopy((vtkPolyData*)((mafVME *)GetInput())->GetOutput()->GetVTKData());
+	m_OriginalPolydata->DeepCopy((vtkPolyData*)mafVME::StaticDownCast(GetInput())->GetOutput()->GetVTKData());
  
 	int result = OP_RUN_CANCEL;
      // default size for the brush (depends on the input dimensions)
    double bounds[6]= {0.,0.,0.,0.,0.,0.};
-   ((mafVME *)GetInput())->GetOutput()->GetVTKData()->GetBounds(bounds);
+	 mafVME::StaticDownCast(GetInput())->GetOutput()->GetVTKData()->GetBounds(bounds);
    // bounds x0 x1 y0 y1 z0 z1
    m_Diameter = sqrt((bounds[1]-bounds[0])*(bounds[1]-bounds[0])+(bounds[3]-bounds[2])*(bounds[3]-bounds[2])+(bounds[5]-bounds[4])*(bounds[5]-bounds[4]))/10.0;
 	CreateSurfacePipeline();
@@ -183,14 +183,14 @@ void medOpSmoothSurfaceCells::OpRun()
 void medOpSmoothSurfaceCells::OpDo()
 //----------------------------------------------------------------------------
 {
-	((mafVMESurface *)GetInput())->SetData(m_ResultPolydata,((mafVME *)GetInput())->GetTimeStamp());
+	mafVMESurface::StaticDownCast(GetInput())->SetData(m_ResultPolydata, mafVME::StaticDownCast(GetInput())->GetTimeStamp());
 	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 void medOpSmoothSurfaceCells::OpUndo()
 //----------------------------------------------------------------------------
 {
-	((mafVMESurface *)GetInput())->SetData(m_OriginalPolydata,((mafVME *)GetInput())->GetTimeStamp());
+	mafVMESurface::StaticDownCast(GetInput())->SetData(m_OriginalPolydata, mafVME::StaticDownCast(GetInput())->GetTimeStamp());
 	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------

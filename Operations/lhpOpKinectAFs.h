@@ -63,7 +63,7 @@ protected:
   void InitPredefined();
 
   int                             m_TypeOfRefs;
-  std::vector<mafVMEAFRefSys*>    m_RefSys;
+  std::vector<std::shared_ptr<mafVMEAFRefSys>>    m_RefSys;
   std::vector<std::vector<PredefinedScripts> > m_predefinedScripts;
 };
 #endif

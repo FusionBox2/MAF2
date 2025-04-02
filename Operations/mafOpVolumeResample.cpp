@@ -85,8 +85,8 @@ mafOpVolumeResample::mafOpVolumeResample(const mafString& label) : Superclass(la
 mafOpVolumeResample::~mafOpVolumeResample()
 //----------------------------------------------------------------------------
 {
-	mafDEL(m_ResampledVme);
-	mafDEL(m_ResampleBoxVme);
+	m_ResampledVme.reset();
+	m_ResampleBoxVme.reset();
 	vtkDEL(m_ResampleBox);
 }
 //----------------------------------------------------------------------------
@@ -135,7 +135,7 @@ void mafOpVolumeResample::InternalUpdateBounds(double bounds[6], bool center)
 void mafOpVolumeResample::AutoSpacing()
 //----------------------------------------------------------------------------
 {
-  vtkDataSet *vme_data = ((mafVME *)GetInput())->GetOutput()->GetVTKData();
+  vtkDataSet *vme_data = mafVME::StaticDownCast(GetInput())->GetOutput()->GetVTKData();
 
   m_VolumeSpacing[0] = VTK_DOUBLE_MAX;
   m_VolumeSpacing[1] = VTK_DOUBLE_MAX;
@@ -173,7 +173,7 @@ void mafOpVolumeResample::AutoSpacing()
   // Note: TransformVector ignores the translation column!
   auto input_to_output = mafTransformFrame::NewSPtr();
   input_to_output->SetInputFrame(*m_ResampleBoxVme->GetOutput()->GetAbsMatrix());
-  input_to_output->SetTargetFrame(*((mafVME *)GetInput())->GetOutput()->GetAbsMatrix());
+  input_to_output->SetTargetFrame(*mafVME::StaticDownCast(GetInput())->GetOutput()->GetAbsMatrix());
   input_to_output->Update();
   input_to_output->TransformPoint(m_VolumeSpacing,m_VolumeSpacing);
 
@@ -213,15 +213,15 @@ void mafOpVolumeResample::CreateGizmoCube()
 	//SetBoundsToVMEBounds();
   SetBoundsToVMELocalBounds();
 
-  mafNEW(m_ResampleBoxVme);
+  m_ResampleBoxVme = mafVMEGizmo::NewSPtr();
   m_ResampleBoxVme->SetName(_R("GizmoCube"));
   m_ResampleBoxVme->SetInputConnection(m_ResampleBox->GetOutputPort());
   m_ResampleBoxVme->GetMaterial()->m_Diffuse[0] = 1;
   m_ResampleBoxVme->GetMaterial()->m_Diffuse[1] = 0;
   m_ResampleBoxVme->GetMaterial()->m_Diffuse[2] = 0;
   m_ResampleBoxVme->GetMaterial()->UpdateProp();
-  m_ResampleBoxVme->ReparentTo((mafVME *)GetInput()->GetRoot());
-	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_ResampleBoxVme); evUnq.SetBool(true); InvokeEvent(evUnq);}
+  mafNode::ReparentTo(m_ResampleBoxVme, GetInput()->GetRoot());
+	{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_ResampleBoxVme.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
   
   UpdateGizmoData();
   AutoSpacing();
@@ -232,7 +232,7 @@ void mafOpVolumeResample::SetBoundsToVMEBounds()
 //----------------------------------------------------------------------------
 {
   double bounds[6];
-  ((mafVME *)GetInput())->GetOutput()->GetVMEBounds(bounds);
+  mafVME::StaticDownCast(GetInput())->GetOutput()->GetVMEBounds(bounds);
 
   InternalUpdateBounds(bounds,true);
   m_VolumeOrientation[0] = m_VolumeOrientation[1] = m_VolumeOrientation[2] = 0;
@@ -242,7 +242,7 @@ void mafOpVolumeResample::SetBoundsToVME4DBounds()
 //----------------------------------------------------------------------------
 {
   double bounds[6];
-  ((mafVME *)GetInput())->GetOutput()->GetVME4DBounds(bounds);
+  mafVME::StaticDownCast(GetInput())->GetOutput()->GetVME4DBounds(bounds);
 
   InternalUpdateBounds(bounds,true);
   m_VolumeOrientation[0]=m_VolumeOrientation[1]=m_VolumeOrientation[2]=0;
@@ -252,10 +252,10 @@ void mafOpVolumeResample::SetBoundsToVMELocalBounds()
 //----------------------------------------------------------------------------
 {
   double bounds[6];
-  ((mafVME *)GetInput())->GetOutput()->GetVMELocalBounds(bounds);
+  mafVME::StaticDownCast(GetInput())->GetOutput()->GetVMELocalBounds(bounds);
 
   InternalUpdateBounds(bounds,false);
-  ((mafVME *)GetInput())->GetOutput()->GetAbsPose(m_VolumePosition,m_VolumeOrientation);
+  mafVME::StaticDownCast(GetInput())->GetOutput()->GetAbsPose(m_VolumePosition,m_VolumeOrientation);
 
 	m_OldVolumePosition[0] = m_VolumePosition[0];
 	m_OldVolumePosition[1] = m_VolumePosition[1];
@@ -266,9 +266,9 @@ void mafOpVolumeResample::GizmoDelete()
 //----------------------------------------------------------------------------
 {	
 	//add the gizmo to the views
-  m_ResampleBoxVme->ReparentTo(NULL);
+  mafNode::ReparentTo(m_ResampleBoxVme, nullptr);
   vtkDEL(m_ResampleBox);
-  mafDEL(m_ResampleBoxVme);
+  m_ResampleBoxVme.reset();
 	{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
@@ -291,7 +291,7 @@ void mafOpVolumeResample::OpRun()
 void mafOpVolumeResample::OpDo()
 //----------------------------------------------------------------------------
 {
-	m_ResampledVme->ReparentTo(GetInput()->GetParent());
+	mafNode::ReparentTo(m_ResampledVme, GetInput()->GetParent());
 }
 //----------------------------------------------------------------------------
 void mafOpVolumeResample::Resample()
@@ -316,12 +316,11 @@ void mafOpVolumeResample::Resample()
 
 	GetInput()->Modified();
 	mafVME *Node = mafVME::SafeDownCast(GetInput());*/
-  m_ResampledVme = (mafVMEVolumeGray *)GetInput()->NewInstance();
-  m_ResampledVme->Register(m_ResampledVme);
+  m_ResampledVme = mafVMEVolumeGray::NewSPtr();
   m_ResampledVme->GetTagArray()->DeepCopy(GetInput()->GetTagArray().get()); // copy tags
   m_ResampledVme->SetName(new_vme_name);
 
-  m_ResampledVme->ReparentTo(GetInput()->GetParent());
+  mafNode::ReparentTo(m_ResampledVme, GetInput()->GetParent());
   m_ResampledVme->SetMatrix(box_pose->GetMatrix());
 
   int output_extent[6];
@@ -333,7 +332,7 @@ void mafOpVolumeResample::Resample()
   output_extent[5] = (m_VolumeBounds[5] - m_VolumeBounds[4]) / m_VolumeSpacing[2];
 
   double w,l,sr[2];
-  for (auto& entry : *((mafVMEGenericAbstract *)GetInput())->GetDataVector())
+  for (auto& entry : *mafVMEGenericAbstract::StaticDownCast(GetInput())->GetDataVector())
   {
     if (mafVMEItemVTK *input_item = mafVMEItemVTK::SafeDownCast(entry.second.get()))
     {
@@ -351,7 +350,7 @@ void mafOpVolumeResample::Resample()
         local_pose->SetInputFrame(*output_parent_abs_pose);
 
         auto input_parent_abs_pose = mafMatrix::NewSPtr();
-        ((mafVME *)GetInput()->GetParent())->GetOutput()->GetAbsMatrix(*input_parent_abs_pose,input_item->GetTimeStamp());
+        mafVME::StaticDownCast(GetInput()->GetParent())->GetOutput()->GetAbsMatrix(*input_parent_abs_pose,input_item->GetTimeStamp());
         local_pose->SetTargetFrame(*input_parent_abs_pose);
         local_pose->Update();
 
@@ -360,7 +359,7 @@ void mafOpVolumeResample::Resample()
         output_to_input->SetInputFrame(*output_abs_pose);
 
         auto input_abs_pose = mafMatrix::NewSPtr();
-        ((mafVME *)GetInput())->GetOutput()->GetAbsMatrix(*input_abs_pose,input_item->GetTimeStamp());
+        mafVME::StaticDownCast(GetInput())->GetOutput()->GetAbsMatrix(*input_abs_pose,input_item->GetTimeStamp());
         output_to_input->SetTargetFrame(*input_abs_pose);
         output_to_input->Update();
 
@@ -430,7 +429,7 @@ void mafOpVolumeResample::OpUndo()
 //----------------------------------------------------------------------------
 {   
 	assert(m_ResampledVme);
-  m_ResampledVme->ReparentTo(NULL);
+  mafNode::ReparentTo(m_ResampledVme, nullptr);
 }
 //----------------------------------------------------------------------------
 // Constants :
@@ -643,7 +642,7 @@ void mafOpVolumeResample::ShiftCenterResampled()
 
 	double centerVolume[3];
 
-	((mafVME *)GetInput())->GetOutput()->GetVTKData()->GetCenter(centerVolume);
+  mafVME::StaticDownCast(GetInput())->GetOutput()->GetVTKData()->GetCenter(centerVolume);
 
 	vtkNew<vtkPoints> points;
 	points->InsertNextPoint(centerVolume);

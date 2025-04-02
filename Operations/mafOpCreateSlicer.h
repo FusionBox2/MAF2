@@ -1,21 +1,4 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafOpCreateSlicer
- Authors: Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __mafOpCreateSlicer_H__
-#define __mafOpCreateSlicer_H__
+#pragma once
 
 #include "mafOp.h"
 #include "mafVMEVolume.h"
@@ -34,7 +17,7 @@ public:
   mafOpCreateSlicer(const mafString& label = _R("CreateSlicer"));
  ~mafOpCreateSlicer() override; 
 
-  mafTypeMacro(mafOpCreateSlicer, mafOp);
+  mafTypeMacroN(mafOpCreateSlicer);
 
   mafOp* Copy() override;
 
@@ -42,10 +25,8 @@ public:
   void OpRun() override;
   void OpDo() override;
 
-  static bool VolumeAccept(mafNode* node) {return(node != NULL  && node->IsMAFType(mafVMEVolume));};
+  static bool VolumeAccept(mafNode* node) {return(node != nullptr  && node->IsMAFType(mafVMEVolume));};
 
 protected: 
-  mafVMESlicer *m_Slicer;
-  mafNode      *m_SlicedVME;
+  mafNode      *m_SlicedVME = nullptr;
 };
-#endif

@@ -121,7 +121,7 @@ mafOp *medOpFillHoles::Copy()
 void medOpFillHoles::OpRun()   
 //----------------------------------------------------------------------------
 {	
-	mafVMESurface *surface=mafVMESurface::SafeDownCast(GetInput());
+	auto surface=mafVMESurface::SafeDownCast(GetInput());
 	vtkNEW(m_OriginalPolydata);
 	m_OriginalPolydata->DeepCopy(vtkPolyData::SafeDownCast(surface->GetOutput()->GetVTKData()));
 	//m_OriginalPolydata->Update();
@@ -153,11 +153,11 @@ void medOpFillHoles::OpRun()
 void medOpFillHoles::OpDo()
 //----------------------------------------------------------------------------
 {
-	/*((mafVMESurface*)GetInput())->SetData(m_ResultPolydata,((mafVME*)GetInput())->GetTimeStamp());
-	((mafVMESurface*)GetInput())->Modified();*/
+	/*mafVMESurface::StaticDownCast(GetInput())->SetData(m_ResultPolydata,mafVME::StaticDownCast(GetInput())->GetTimeStamp());
+	mafVMESurface::StaticDownCast(GetInput())->Modified();*/
 
-  ((mafVMESurface*)GetInput())->SetData(m_VTKResult[m_VTKResult.size()-1],((mafVME*)GetInput())->GetTimeStamp());
-  ((mafVMESurface*)GetInput())->Modified();
+	mafVMESurface::StaticDownCast(GetInput())->SetData(m_VTKResult[m_VTKResult.size()-1],mafVME::StaticDownCast(GetInput())->GetTimeStamp());
+  mafVMESurface::StaticDownCast(GetInput())->Modified();
 
 	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
@@ -165,8 +165,8 @@ void medOpFillHoles::OpDo()
 void medOpFillHoles::OpUndo()
 //----------------------------------------------------------------------------
 {
-	((mafVMESurface*)GetInput())->SetData(m_OriginalPolydata,((mafVME*)GetInput())->GetTimeStamp());
-	((mafVMESurface*)GetInput())->Modified();
+	mafVMESurface::StaticDownCast(GetInput())->SetData(m_OriginalPolydata,mafVME::StaticDownCast(GetInput())->GetTimeStamp());
+	mafVMESurface::StaticDownCast(GetInput())->Modified();
 
 	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }

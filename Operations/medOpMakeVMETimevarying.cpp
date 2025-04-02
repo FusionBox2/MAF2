@@ -92,7 +92,6 @@ medOpMakeVMETimevarying::medOpMakeVMETimevarying(const mafString& label /* = "Ma
   m_OpType	= OPTYPE_OP;
   m_Canundo	= true;  
 
-  m_VMETimevarying = NULL;
   m_CurrentVME = NULL;
   m_CurrentVMEName = _L("");
   m_VMETimevaryingName = _L("New Timevariyng VME");
@@ -117,7 +116,7 @@ medOpMakeVMETimevarying::~medOpMakeVMETimevarying()
     free(m_AddedVMEs.at(i)); // Remove leaks (with free: space allocated with malloc)
   }
   m_AddedVMEs.clear();
-  mafDEL(m_VMETimevarying);
+  m_VMETimevarying.reset();
 }
 //----------------------------------------------------------------------------
 bool medOpMakeVMETimevarying::Accept(mafNode* vme) 
@@ -149,9 +148,7 @@ void medOpMakeVMETimevarying::OpDo()
 void medOpMakeVMETimevarying::OpUndo()
 //----------------------------------------------------------------------------
 {
-  {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(GetOutput()); InvokeEvent(evUnq);}
-  if (GetOutput())
-    GetOutput()->Delete();
+  {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(GetOutput().get()); InvokeEvent(evUnq);}
   SetOutput(nullptr);
 }
 //----------------------------------------------------------------------------
@@ -564,70 +561,48 @@ void medOpMakeVMETimevarying::Execute()
   //Assign the correct type to the resulting timevarying VME
   if(m_VMEsType == _L("mafVMEImage"))
   {
-    mafVMEImage * tmpVME;
-    mafNEW(tmpVME);
-    m_VMETimevarying = tmpVME;
+    m_VMETimevarying = mafVMEImage::NewSPtr();
   }
   else if(m_VMEsType == _L("mafVMEMesh"))//OK
   {
-    mafVMEMesh * tmpVME;
-    mafNEW(tmpVME);
-    m_VMETimevarying = tmpVME;
+    m_VMETimevarying = mafVMEMesh::NewSPtr();
   }
   else if(m_VMEsType == _L("mafVMEPointSet"))
   {
-    mafVMEPointSet * tmpVME;
-    mafNEW(tmpVME);
-    m_VMETimevarying = tmpVME;
+    m_VMETimevarying = mafVMEPointSet::NewSPtr();
   }
   else if(m_VMEsType == _L("mafVMELandmarkCloud"))//OK
   {
-    mafVMELandmarkCloud * tmpVME;
-    mafNEW(tmpVME);
-    m_VMETimevarying = tmpVME;
+    m_VMETimevarying = mafVMELandmarkCloud::NewSPtr();
   }
   else if(m_VMEsType == _L("mafVMEVector"))
   {
-    mafVMEVector * tmpVME;
-    mafNEW(tmpVME);
-    m_VMETimevarying = tmpVME;
+    m_VMETimevarying = mafVMEVector::NewSPtr();
   }
   else if(m_VMEsType == _L("mafVMESurface"))//OK
   {
-    mafVMESurface * tmpVME;
-    mafNEW(tmpVME);
-    m_VMETimevarying = tmpVME;
+    m_VMETimevarying = mafVMESurface::NewSPtr();
   }
   else if(m_VMEsType == _L("mafVMESurfaceParametric"))//OK
   {
     //A timevarying VME created from a set of parametric surface (mafVMESurfaceParametric) is treated as a surface (mafVMESurface)
-    mafVMESurface * tmpVME;
-    mafNEW(tmpVME);
-    m_VMETimevarying = tmpVME;
+    m_VMETimevarying = mafVMESurface::NewSPtr();
   }
   else if(m_VMEsType == _L("mafVMEVolumeGray"))
   {
-    mafVMEVolumeGray * tmpVME;
-    mafNEW(tmpVME);
-    m_VMETimevarying = tmpVME;
+    m_VMETimevarying = mafVMEVolumeGray::NewSPtr();
   }
   else if(m_VMEsType == _L("mafVMEVolumeRGB"))
   {
-    mafVMEVolumeRGB * tmpVME;
-    mafNEW(tmpVME);
-    m_VMETimevarying = tmpVME;
+    m_VMETimevarying = mafVMEVolumeRGB::NewSPtr();
   }
   else if(m_VMEsType == _L("mafVMEPolyline"))//OK
   {
-    mafVMEPolyline * tmpVME;
-    mafNEW(tmpVME);
-    m_VMETimevarying = tmpVME;
+    m_VMETimevarying = mafVMEPolyline::NewSPtr();
   }
   else //Default
   {
-    mafVMEGeneric * tmpVME;
-    mafNEW(tmpVME);
-    m_VMETimevarying = tmpVME;
+    m_VMETimevarying = mafVMEGeneric::NewSPtr();
   }
 
   std::shared_ptr<mafVMEItemVTK> lastVmeItem;
@@ -635,7 +610,7 @@ void medOpMakeVMETimevarying::Execute()
 
   //Fill VME's DataVector and MatrixVector
   for(auto& AddedVME : m_AddedVMEs)
-  {
+	  {
     //Data changes
     auto vmeItem = mafVMEItemVTK::NewSPtr();
     vmeItem->SetData(AddedVME->m_VME->GetOutput()->GetVTKData());
@@ -686,8 +661,6 @@ void medOpMakeVMETimevarying::Execute()
   m_VMETimevarying->GetAbsMatrixPipe()->Update();
   m_VMETimevarying->GetMatrixPipe()->Update();
   m_VMETimevarying->GetDataPipe()->Update();
-
-  {mafEvent evUnq(this,VME_ADD); evUnq.SetVme(m_VMETimevarying); InvokeEvent(evUnq);}
 
   SetOutput(m_VMETimevarying);
 

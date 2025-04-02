@@ -102,7 +102,7 @@ int mafOpValidateTree::ValidateTree()
   int max_item_id = root->GetMaxItemId();
   int max_node_id = root->GetMaxNodeId();
 
-  auto iter = root->NewIterator();
+  auto iter = std::make_unique<mafNodeIterator>(root);
   try
   {
     for (node = iter->GetFirstNode(); node; node = iter->GetNextNode())

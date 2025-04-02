@@ -27,7 +27,6 @@ PURPOSE.  See the above copyright notice for more information.
 
 #include "mafDecl.h"
 #include "mafVME.h"
-#include "ftk/Base/RegisteringPointer.h"
 
 #include "mafVMEGenericAbstract.h"
 #include "mafVMERoot.h"
@@ -103,18 +102,18 @@ void medOpFreezeVME::OpRun()
 	}
 
 	//control the output and create the right vme
-	mafVME *vme = mafVME::SafeDownCast(GetInput());
+	auto vme = mafVME::SafeDownCast(GetInput());
 	vme->Update();
 	mafVMEOutput *output = vme->GetOutput();
 	output->Update();
 
 	if(vtkImageData *imageData = vtkImageData::SafeDownCast(output->GetVTKData()))
 	{
-		if(medVMELabeledVolume *labeledVolume = medVMELabeledVolume::SafeDownCast(vme))
+		if(auto labeledVolume = medVMELabeledVolume::SafeDownCast(vme))
 		{
 			auto material = labeledVolume->GetMaterial();
 
-			mafAutoPointer<mafVMEVolumeGray> newVolume = mafVMEVolumeGray::New();
+			auto newVolume = mafVMEVolumeGray::NewSPtr();
 			newVolume->SetName(labeledVolume->GetName());
 			newVolume->SetData(imageData,labeledVolume->GetTimeStamp());
 			newVolume->Update();
@@ -126,10 +125,10 @@ void medOpFreezeVME::OpRun()
 			}
 
 			newVolume->SetMatrix(*labeledVolume->GetOutput()->GetMatrix());
-			SetOutput(newVolume.get());
+			SetOutput(newVolume);
 			if (GetOutput())
 			{
-				GetOutput()->ReparentTo(GetInput()->GetParent());
+				mafNode::ReparentTo(GetOutput(), GetInput()->GetParent());
 				if(!m_TestMode)
 					OpStop(OP_RUN_OK);
 			}
@@ -138,11 +137,11 @@ void medOpFreezeVME::OpRun()
 	else
 		if(vtkRectilinearGrid *rectilinearGrid = vtkRectilinearGrid::SafeDownCast(output->GetVTKData()))
 		{
-			if(medVMELabeledVolume *labeledVolume = medVMELabeledVolume::SafeDownCast(vme))
+			if(auto labeledVolume = medVMELabeledVolume::SafeDownCast(vme))
 			{
 				auto material = labeledVolume->GetMaterial();
 
-				mafAutoPointer<mafVMEVolumeGray> newVolume = mafVMEVolumeGray::New();
+				auto newVolume = mafVMEVolumeGray::NewSPtr();
 				newVolume->SetName(labeledVolume->GetName());
 				newVolume->SetData(rectilinearGrid,labeledVolume->GetTimeStamp());
 				newVolume->Update();
@@ -154,10 +153,10 @@ void medOpFreezeVME::OpRun()
 				}
 
 				newVolume->SetMatrix(*labeledVolume->GetOutput()->GetMatrix());
-				SetOutput(newVolume.get());
+				SetOutput(newVolume);
 				if (GetOutput())
 				{
-					GetOutput()->ReparentTo(GetInput()->GetParent());
+					mafNode::ReparentTo(GetOutput(), GetInput()->GetParent());
 					if(!m_TestMode)
 						OpStop(OP_RUN_OK);
 				}
@@ -166,11 +165,11 @@ void medOpFreezeVME::OpRun()
 		else
 			if(vtkPolyData *polyData = vtkPolyData::SafeDownCast(output->GetVTKData()))
 			{
-				if(mafVMEPolylineSpline *vmeSpline = mafVMEPolylineSpline::SafeDownCast(vme))
+				if(auto vmeSpline = mafVMEPolylineSpline::SafeDownCast(vme))
 				{
 					auto material = vmeSpline->GetMaterial();
 
-					mafAutoPointer<mafVMEPolyline> newPolyline = mafVMEPolyline::New();
+					auto newPolyline = mafVMEPolyline::NewSPtr();
 					newPolyline->SetName(vmeSpline->GetName());
 					newPolyline->SetData(polyData,vmeSpline->GetTimeStamp());
 					newPolyline->Update();
@@ -181,19 +180,19 @@ void medOpFreezeVME::OpRun()
 						newPolyline->GetMaterial()->UpdateProp();
 					}
 					newPolyline->SetMatrix(*vmeSpline->GetOutput()->GetMatrix());
-					SetOutput(newPolyline.get());
+					SetOutput(newPolyline);
 					if (GetOutput())
 					{
-						GetOutput()->ReparentTo(GetInput()->GetParent());
+						mafNode::ReparentTo(GetOutput(), GetInput()->GetParent());
 						if(!m_TestMode)
 							OpStop(OP_RUN_OK);
 					}
 				}
-				else if(mafVMESurfaceParametric *vmeSurface = mafVMESurfaceParametric::SafeDownCast(vme))
+				else if(auto vmeSurface = mafVMESurfaceParametric::SafeDownCast(vme))
 				{
 					auto material = vmeSurface->GetMaterial();
 
-					mafAutoPointer<mafVMESurface> newSurface = mafVMESurface::New();
+					auto newSurface = mafVMESurface::NewSPtr();
 					newSurface->SetName(vmeSurface->GetName());
 					newSurface->SetData(polyData,vmeSurface->GetTimeStamp());
 					newSurface->Update();
@@ -205,19 +204,19 @@ void medOpFreezeVME::OpRun()
 					}
 
 					newSurface->SetMatrix(*vmeSurface->GetOutput()->GetMatrix());
-					SetOutput(newSurface.get());
+					SetOutput(newSurface);
 					if (GetOutput())
 					{
-						GetOutput()->ReparentTo(GetInput()->GetParent());
+						mafNode::ReparentTo(GetOutput(), GetInput()->GetParent());
 						if(!m_TestMode)
 							OpStop(OP_RUN_OK);
 					}
 				}
-				else if(mafVMEMeter *meter = mafVMEMeter::SafeDownCast(vme))
+				else if(auto meter = mafVMEMeter::SafeDownCast(vme))
 				{
 					auto material = meter->GetMaterial();
 
-					mafAutoPointer<mafVMEPolyline> newPolyline = mafVMEPolyline::New();
+					auto  newPolyline = mafVMEPolyline::NewSPtr();
 					newPolyline->SetName(meter->GetName());
 					newPolyline->SetData(polyData,meter->GetTimeStamp());
 					newPolyline->Update();
@@ -229,19 +228,19 @@ void medOpFreezeVME::OpRun()
 					}
 
 					newPolyline->SetMatrix(*meter->GetOutput()->GetMatrix());
-					SetOutput(newPolyline.get());
+					SetOutput(newPolyline);
 					if (GetOutput())
 					{
-						GetOutput()->ReparentTo(GetInput()->GetParent());
+						mafNode::ReparentTo(GetOutput(), GetInput()->GetParent());
 						if(!m_TestMode)
 							OpStop(OP_RUN_OK);
 					}
 				}
-				else if(mafVMERefSys *refsys = mafVMERefSys::SafeDownCast(vme))
+				else if(auto refsys = mafVMERefSys::SafeDownCast(vme))
 				{
 					auto material = refsys->GetMaterial();
 
-					mafAutoPointer<mafVMESurface> surface = mafVMESurface::New();
+					auto surface = mafVMESurface::NewSPtr();
 					surface->SetName(refsys->GetName());
 					surface->SetData(polyData,refsys->GetTimeStamp());
 					surface->Update();
@@ -253,19 +252,19 @@ void medOpFreezeVME::OpRun()
 					}
 
 					surface->SetMatrix(*refsys->GetOutput()->GetMatrix());
-					SetOutput(surface.get());
+					SetOutput(surface);
 					if (GetOutput())
 					{
-						GetOutput()->ReparentTo(GetInput()->GetParent());
+						mafNode::ReparentTo(GetOutput(), GetInput()->GetParent());
 						if(!m_TestMode)
 							OpStop(OP_RUN_OK);
 					}
 				}
-				else if(mafVMESlicer *slicer = mafVMESlicer::SafeDownCast(vme))
+				else if(auto slicer = mafVMESlicer::SafeDownCast(vme))
 				{
 					auto material = slicer->GetMaterial();
 
-					mafAutoPointer<mafVMESurface> newSurface = mafVMESurface::New();
+					auto  newSurface = mafVMESurface::NewSPtr();
 					newSurface->SetName(slicer->GetName());
 					newSurface->SetData(polyData,slicer->GetTimeStamp());
 					vtkNew<vtkImageData> text;
@@ -281,20 +280,20 @@ void medOpFreezeVME::OpRun()
 					}
 
 					newSurface->SetMatrix(*slicer->GetOutput()->GetMatrix());
-					SetOutput(newSurface.get());
+					SetOutput(newSurface);
 					if (GetOutput())
 					{
-						GetOutput()->ReparentTo(GetInput()->GetParent());
+						mafNode::ReparentTo(GetOutput(), GetInput()->GetParent());
 						if(!m_TestMode)
 							OpStop(OP_RUN_OK);
 					}
 
 				}
-				else if(mafVMEProber *prober = mafVMEProber::SafeDownCast(vme))
+				else if(auto prober = mafVMEProber::SafeDownCast(vme))
 				{
 					auto material = prober->GetMaterial();
 
-					mafAutoPointer<mafVMESurface> newSurface = mafVMESurface::New();
+					auto newSurface = mafVMESurface::NewSPtr();
 					newSurface->SetName(prober->GetName());
 					newSurface->SetData(polyData,prober->GetTimeStamp());
 					newSurface->Update();
@@ -306,19 +305,19 @@ void medOpFreezeVME::OpRun()
 					}
 
 					newSurface->SetMatrix(*prober->GetOutput()->GetMatrix());
-					SetOutput(newSurface.get());
+					SetOutput(newSurface);
 					if (GetOutput())
 					{
-						GetOutput()->ReparentTo(GetInput()->GetParent());
+						mafNode::ReparentTo(GetOutput(), GetInput()->GetParent());
 						if(!m_TestMode)
 							OpStop(OP_RUN_OK);
 					}
 				}
-				else if(medVMEWrappedMeter *wrappedMeter = medVMEWrappedMeter::SafeDownCast(vme))
+				else if(auto wrappedMeter = medVMEWrappedMeter::SafeDownCast(vme))
 				{
 					auto material = wrappedMeter->GetMaterial();
 
-					mafAutoPointer<mafVMEPolyline> newPolyline = mafVMEPolyline::New();
+					auto newPolyline = mafVMEPolyline::NewSPtr();
 					newPolyline->SetName(wrappedMeter->GetName());
 					newPolyline->SetData(polyData,wrappedMeter->GetTimeStamp());
 					newPolyline->Update();
@@ -330,19 +329,19 @@ void medOpFreezeVME::OpRun()
 					}
 
 					newPolyline->SetMatrix(*wrappedMeter->GetOutput()->GetMatrix());
-					SetOutput(newPolyline.get());
+					SetOutput(newPolyline);
 					if (GetOutput())
 					{
-						GetOutput()->ReparentTo(GetInput()->GetParent());
+						mafNode::ReparentTo(GetOutput(), GetInput()->GetParent());
 						if(!m_TestMode)
 							OpStop(OP_RUN_OK);
 					}
 				}
-				else if(medVMEComputeWrapping *wrappedMeter = medVMEComputeWrapping::SafeDownCast(vme))
+				else if(auto wrappedMeter = medVMEComputeWrapping::SafeDownCast(vme))
 				{
 					auto material = wrappedMeter->GetMaterial();
 
-					mafAutoPointer<mafVMEPolyline> newPolyline = mafVMEPolyline::New();
+					auto newPolyline = mafVMEPolyline::NewSPtr();
 					newPolyline->SetName(wrappedMeter->GetName());
 					newPolyline->SetData(polyData,wrappedMeter->GetTimeStamp());
 					newPolyline->Update();
@@ -354,10 +353,10 @@ void medOpFreezeVME::OpRun()
 					}
 
 					newPolyline->SetMatrix(*wrappedMeter->GetOutput()->GetMatrix());
-					SetOutput(newPolyline.get());
+					SetOutput(newPolyline);
 					if (GetOutput())
 					{
-						GetOutput()->ReparentTo(GetInput()->GetParent());
+						mafNode::ReparentTo(GetOutput(), GetInput()->GetParent());
 						if(!m_TestMode)
 							OpStop(OP_RUN_OK);
 					}

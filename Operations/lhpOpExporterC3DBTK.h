@@ -1,17 +1,4 @@
-/*=========================================================================
-  Program:   Multimod Application Framework
-  Module:    $RCSfile: lhpOpExporterC3DBTK.h,v $
-  Language:  C++
-  Date:      $Date: 2009/05/19 14:29:53 $
-  Version:   $Revision: 1.1.1.1 $
-  Authors:   Matteo Giacomoni
-==========================================================================
-  Copyright (c) 2002/2004
-  CINECA - Interuniversity Consortium (www.cineca.it) 
-=========================================================================*/
-
-#ifndef __lhpOpExporterC3DBTK_H__
-#define __lhpOpExporterC3DBTK_H__
+#pragma once
 
 //----------------------------------------------------------------------------
 // Include :
@@ -268,5 +255,4 @@ protected:
   std::vector<_InternalC3DData> m_intData;
 	
 };
-#endif
 #endif

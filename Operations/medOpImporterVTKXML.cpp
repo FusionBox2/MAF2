@@ -64,14 +64,6 @@ mafOp(label)
   m_OpType  = OPTYPE_IMPORTER;
   m_Canundo = true;
 
-  m_VmePointSet = NULL;
-  m_VmePolyLine = NULL;
-  m_VmeSurface  = NULL;
-  m_VmeGrayVol  = NULL;
-  m_VmeRGBVol  = NULL;
-  m_VmeMesh     = NULL;
-  m_VmeGeneric  = NULL;
-
   m_EventRouter = NULL;
   vtkNEW(m_EventRouter);
   m_EventRouter->SetCallback(ErrorProcessEvents);
@@ -86,13 +78,6 @@ mafOp(label)
 medOpImporterVTKXML::~medOpImporterVTKXML()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_VmePointSet);
-  mafDEL(m_VmePolyLine);
-  mafDEL(m_VmeSurface);
-  mafDEL(m_VmeGrayVol);
-  mafDEL(m_VmeRGBVol);
-  mafDEL(m_VmeMesh);
-  mafDEL(m_VmeGeneric);
 
   vtkDEL(m_EventRouter);
 }
@@ -138,7 +123,7 @@ void medOpImporterVTKXML::OpRun()
       tag_Nature.SetName(_R("VME_NATURE"));
       tag_Nature.SetValue(_R("NATURAL"));
       GetOutput()->GetTagArray()->SetTag(tag_Nature);
-      GetOutput()->ReparentTo(GetInput());
+      mafNode::ReparentTo(GetOutput(), GetInput().get());
       GetOutput()->SetName(name);
 
       result = OP_RUN_OK;
@@ -175,13 +160,13 @@ int medOpImporterVTKXML::ImportVTKXML()
 {
   vtkDataSet *data = NULL;
 
-  mafNEW(m_VmePointSet);
-  mafNEW(m_VmePolyLine);
-  mafNEW(m_VmeSurface);
-  mafNEW(m_VmeGrayVol);
-  mafNEW(m_VmeRGBVol);
-  mafNEW(m_VmeMesh);
-  mafNEW(m_VmeGeneric);
+  auto vmePointSet = mafVMEPointSet::NewSPtr();
+  auto vmePolyLine = medVMEPolylineGraph::NewSPtr();
+  auto vmeSurface = mafVMESurface::NewSPtr();
+  auto vmeGrayVol = mafVMEVolumeGray::NewSPtr();
+  auto vmeRGBVol = mafVMEVolumeRGB::NewSPtr();
+  auto vmeMesh = mafVMEMesh::NewSPtr();
+  auto vmeGeneric = mafVMEGeneric::NewSPtr();
 
   vtkNew<vtkXMLImageDataReader> imageReader;
   imageReader->AddObserver(vtkCommand::ErrorEvent,m_EventRouter);
@@ -192,18 +177,18 @@ int medOpImporterVTKXML::ImportVTKXML()
   {
     data = imageReader->GetOutput();
 
-    if (m_VmeGrayVol->SetDataByDetaching(data,0) == MAF_OK)
+    if (vmeGrayVol->SetDataByDetaching(data,0) == MAF_OK)
     {
-      SetOutput(m_VmeGrayVol);
+      SetOutput(vmeGrayVol);
     }
-    else if (m_VmeRGBVol->SetDataByDetaching(data,0) == MAF_OK)
+    else if (vmeRGBVol->SetDataByDetaching(data,0) == MAF_OK)
     {
-      SetOutput(m_VmeRGBVol);
+      SetOutput(vmeRGBVol);
     }
     else
     {
-      m_VmeGeneric->SetDataByDetaching(data,0);
-      SetOutput(m_VmeGeneric);
+      vmeGeneric->SetDataByDetaching(data,0);
+      SetOutput(vmeGeneric);
     }
 
     return MAF_OK;   
@@ -220,22 +205,22 @@ int medOpImporterVTKXML::ImportVTKXML()
 	{
 	  data = polydataReader->GetOutput();
 
-    if (m_VmePointSet->SetDataByDetaching(data,0) == MAF_OK)
+    if (vmePointSet->SetDataByDetaching(data,0) == MAF_OK)
     {
-      SetOutput(m_VmePointSet);
+      SetOutput(vmePointSet);
     }
-    else if (m_VmePolyLine->SetDataByDetaching(data,0) == MAF_OK)
+    else if (vmePolyLine->SetDataByDetaching(data,0) == MAF_OK)
     {
-      SetOutput(m_VmePolyLine);
+      SetOutput(vmePolyLine);
     }
-    else if (m_VmeSurface->SetDataByDetaching(data,0) == MAF_OK)
+    else if (vmeSurface->SetDataByDetaching(data,0) == MAF_OK)
     {
-      SetOutput(m_VmeSurface);
+      SetOutput(vmeSurface);
     }
     else
     {
-      m_VmeGeneric->SetDataByDetaching(data,0);
-      SetOutput(m_VmeGeneric);
+      vmeGeneric->SetDataByDetaching(data,0);
+      SetOutput(vmeGeneric);
     }
 
     return MAF_OK;
@@ -252,18 +237,18 @@ int medOpImporterVTKXML::ImportVTKXML()
   {
     data = rgReader->GetOutput();
 
-    if (m_VmeGrayVol->SetDataByDetaching(data,0) == MAF_OK)
+    if (vmeGrayVol->SetDataByDetaching(data,0) == MAF_OK)
     {
-      SetOutput(m_VmeGrayVol);
+      SetOutput(vmeGrayVol);
     }
-    else if (m_VmeRGBVol->SetDataByDetaching(data,0) == MAF_OK)
+    else if (vmeRGBVol->SetDataByDetaching(data,0) == MAF_OK)
     {
-      SetOutput(m_VmeRGBVol);
+      SetOutput(vmeRGBVol);
     }
     else
     {
-      m_VmeGeneric->SetDataByDetaching(data,0);
-      SetOutput(m_VmeGeneric);
+      vmeGeneric->SetDataByDetaching(data,0);
+      SetOutput(vmeGeneric);
     }
 
     return MAF_OK;   
@@ -280,14 +265,14 @@ int medOpImporterVTKXML::ImportVTKXML()
   {
     data = ugReader->GetOutput();
 
-    if (m_VmeMesh->SetDataByDetaching(data,0) == MAF_OK)
+    if (vmeMesh->SetDataByDetaching(data,0) == MAF_OK)
     {
-      SetOutput(m_VmeMesh);
+      SetOutput(vmeMesh);
     }
     else
     {
-      m_VmeGeneric->SetDataByDetaching(data,0);
-      SetOutput(m_VmeGeneric);
+      vmeGeneric->SetDataByDetaching(data,0);
+      SetOutput(vmeGeneric);
     }
 
     return MAF_OK;   
@@ -304,8 +289,8 @@ int medOpImporterVTKXML::ImportVTKXML()
   {
     data = sgReader->GetOutput();
 
-    m_VmeGeneric->SetDataByDetaching(data,0);
-    SetOutput(m_VmeGeneric);
+    vmeGeneric->SetDataByDetaching(data,0);
+    SetOutput(vmeGeneric);
 
     return MAF_OK;   
   }

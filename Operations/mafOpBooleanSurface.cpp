@@ -98,10 +98,10 @@ mafOpBooleanSurface::~mafOpBooleanSurface()
 	vtkDEL(m_Arrow);
 	vtkDEL(m_PlaneSource);
 
-  mafDEL(m_ImplicitPlaneGizmo);
+  m_ImplicitPlaneGizmo.reset();
 
-  mafDEL(m_SecondOperatorFromParametric);
-  mafDEL(m_ResultVME);
+  m_SecondOperatorFromParametric.reset();
+  m_ResultVME.reset();
 }
 //----------------------------------------------------------------------------
 bool mafOpBooleanSurface::Accept(mafNode *node)
@@ -136,22 +136,22 @@ void mafOpBooleanSurface::OpRun()
 	m_Gui = new mafGUI(this);
 
   //creation of vme result
-  mafNEW(m_ResultVME);
+  m_ResultVME = mafVMESurface::NewSPtr();
 	vtkNew<vtkPolyData> poly;
-	poly->DeepCopy((vtkPolyData*)((mafVME*)GetInput())->GetOutput()->GetVTKData());
-  m_ResultVME->SetData(poly,((mafVME*)GetInput())->GetTimeStamp());
+	poly->DeepCopy((vtkPolyData*)mafVME::StaticDownCast(GetInput())->GetOutput()->GetVTKData());
+  m_ResultVME->SetData(poly, mafVME::StaticDownCast(GetInput())->GetTimeStamp());
   mafString name = _L("bool_");
   name += GetInput()->GetName();
-  m_ResultVME->SetAbsMatrix(*((mafVME*)GetInput())->GetOutput()->GetAbsMatrix());
+  m_ResultVME->SetAbsMatrix(*mafVME::StaticDownCast(GetInput())->GetOutput()->GetAbsMatrix());
   m_ResultVME->SetName(name);
   m_ResultVME->Modified();
   m_ResultVME->Update();
 
-  m_ResultVME->ReparentTo(GetInput()->GetRoot());
+  mafNode::ReparentTo(m_ResultVME, GetInput()->GetRoot());
 
-  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_ResultVME); evUnq.SetBool(true); InvokeEvent(evUnq);}
+  {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_ResultVME.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
 
-	m_FirstOperatorVME = m_ResultVME;
+	m_FirstOperatorVME = m_ResultVME.get();
 	vtkPolyData *initialData;
 	vtkNEW(initialData);
 	initialData->DeepCopy((vtkPolyData*)m_FirstOperatorVME->GetOutput()->GetVTKData());
@@ -187,13 +187,13 @@ void mafOpBooleanSurface::OpRun()
 void mafOpBooleanSurface::OpDo()
 //----------------------------------------------------------------------------
 {
-	m_ResultVME->ReparentTo(GetInput()->GetRoot());
+	mafNode::ReparentTo(m_ResultVME, GetInput()->GetRoot());
 }
 //----------------------------------------------------------------------------
 void mafOpBooleanSurface::OpUndo()
 //----------------------------------------------------------------------------
 {
-  m_ResultVME->ReparentTo(NULL);
+  mafNode::ReparentTo(m_ResultVME, nullptr);
 }
 //----------------------------------------------------------------------------
 void mafOpBooleanSurface::OnEvent(mafEventBase *maf_event)
@@ -213,7 +213,7 @@ void mafOpBooleanSurface::OnEvent(mafEventBase *maf_event)
 			{
 				mafString title = _R("Choose Union Surface");
 				VmeChoose(title,e);
-        if(m_FirstOperatorVME == m_SecondOperatorVME || GetInput() == m_SecondOperatorVME)
+        if(m_FirstOperatorVME == m_SecondOperatorVME || GetInput().get() == m_SecondOperatorVME)
         {
           mafMessage(_M(mafString(_L("Can't operate over the same VME"))));
           return;
@@ -226,7 +226,7 @@ void mafOpBooleanSurface::OnEvent(mafEventBase *maf_event)
 			{
 				mafString title = _L("Choose Intersect Surface");
 				VmeChoose(title,e);
-        if(m_FirstOperatorVME == m_SecondOperatorVME || GetInput() == m_SecondOperatorVME)
+        if(m_FirstOperatorVME == m_SecondOperatorVME || GetInput().get() == m_SecondOperatorVME)
         {
           mafMessage(_M(mafString(_L("Can't operate over the same VME"))));
           return;
@@ -240,7 +240,7 @@ void mafOpBooleanSurface::OnEvent(mafEventBase *maf_event)
 			{
 				mafString title = _L("Choose Difference Surface");
 				VmeChoose(title,e);
-        if(m_FirstOperatorVME == m_SecondOperatorVME || GetInput() == m_SecondOperatorVME)
+        if(m_FirstOperatorVME == m_SecondOperatorVME || GetInput().get() == m_SecondOperatorVME)
         {
           mafMessage(_M(mafString(_L("Can't operate over the same VME"))));
           return;
@@ -314,7 +314,7 @@ void mafOpBooleanSurface::Clip()
 //----------------------------------------------------------------------------
 {
 	vtkMatrix4x4 *mat = vtkMatrix4x4::New();
-	mat->DeepCopy(((mafVME *)GetInput())->GetAbsMatrixPipe()->GetMatrixPointer()->GetVTKMatrix());
+	mat->DeepCopy(mafVME::StaticDownCast(GetInput())->GetAbsMatrixPipe()->GetMatrixPointer()->GetVTKMatrix());
 	mat->Invert();
 	mat->Modified();
 
@@ -375,7 +375,7 @@ void mafOpBooleanSurface::Undo()
 	{
 		vtkDEL(m_VTKResult[m_VTKResult.size()-1]);
 		m_VTKResult.pop_back();
-		m_FirstOperatorVME->SetData((vtkPolyData*)m_VTKResult[m_VTKResult.size()-1],((mafVME*)GetInput())->GetTimeStamp());
+		m_FirstOperatorVME->SetData((vtkPolyData*)m_VTKResult[m_VTKResult.size()-1], mafVME::StaticDownCast(GetInput())->GetTimeStamp());
 	}
 	m_Gui->Enable(ID_UNDO,m_VTKResult.size()>1);
 	m_Gui->Enable(wxOK,m_VTKResult.size()>1);
@@ -422,7 +422,7 @@ void mafOpBooleanSurface::Union()
 		{
 			return;
 		}
-		m_FirstOperatorVME->SetData((vtkPolyData*)m_VTKResult[m_VTKResult.size()-1],((mafVME*)GetInput())->GetTimeStamp());
+		m_FirstOperatorVME->SetData((vtkPolyData*)m_VTKResult[m_VTKResult.size()-1], mafVME::StaticDownCast(GetInput())->GetTimeStamp());
 		if(!m_TestMode)
 		{
 			m_Gui->Enable(ID_UNDO,true);
@@ -496,7 +496,7 @@ void mafOpBooleanSurface::Intersection()
 			resultPolydata->DeepCopy(transformResultDataInput->GetOutput());
 			//resultPolydata->Update();
 
-			int result=m_FirstOperatorVME->SetData(resultPolydata,((mafVME*)GetInput())->GetTimeStamp());
+			int result=m_FirstOperatorVME->SetData(resultPolydata, mafVME::StaticDownCast(GetInput())->GetTimeStamp());
 
 			if(result == MAF_ERROR)
 			{
@@ -537,11 +537,11 @@ void mafOpBooleanSurface::ShowClipPlane(bool show)
 			vtkNEW(m_ClipperPlane);
 			vtkNEW(m_Arrow);
 			vtkNEW(m_PlaneSource);
-			mafNEW(m_ImplicitPlaneGizmo);
+			m_ImplicitPlaneGizmo = mafVMEGizmo::NewSPtr();
 		}
 			double b[6];
-			((mafVME *)GetInput())->Update();
-			((mafVME *)GetInput())->GetOutput()->GetVMEBounds(b);
+			mafVME::StaticDownCast(GetInput())->Update();
+			mafVME::StaticDownCast(GetInput())->GetOutput()->GetVMEBounds(b);
 
 			// bounding box dim
 			double xdim = (b[1] - b[0])*3/2;
@@ -580,7 +580,7 @@ void mafOpBooleanSurface::ShowClipPlane(bool show)
 			//mafNEW(m_ImplicitPlaneGizmo);
 			m_ImplicitPlaneGizmo->SetInputConnection(gizmo->GetOutputPort());
 			m_ImplicitPlaneGizmo->SetName(_R("implicit plane gizmo"));
-			m_ImplicitPlaneGizmo->ReparentTo(mafVME::SafeDownCast(GetInput()->GetRoot()));
+			mafNode::ReparentTo(m_ImplicitPlaneGizmo, mafVME::SafeDownCast(GetInput()->GetRoot()));
 
 			// position the plane
 			auto currTr = mafTransform::NewSPtr();
@@ -589,13 +589,13 @@ void mafOpBooleanSurface::ShowClipPlane(bool show)
 
 			mafMatrix mat;
 			mat.DeepCopy(currTr->GetMatrix());
-			mat.SetTimeStamp(((mafVME *)GetInput())->GetTimeStamp());
+			mat.SetTimeStamp(mafVME::StaticDownCast(GetInput())->GetTimeStamp());
 
 			m_ImplicitPlaneGizmo->SetAbsMatrix(mat);
 			m_ImplicitPlaneGizmo->Modified();
 			m_ImplicitPlaneGizmo->Update();
 
-			{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_ImplicitPlaneGizmo); evUnq.SetBool(true); InvokeEvent(evUnq);}
+			{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(m_ImplicitPlaneGizmo.get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
 		/*}
 		else
 		{
@@ -715,7 +715,7 @@ void mafOpBooleanSurface::Difference()
 			vtkNEW(resultPolydata);
 			resultPolydata->DeepCopy(transformResultDataInput->GetOutput());
 
-			int result=m_FirstOperatorVME->SetData(resultPolydata,((mafVME*)GetInput())->GetTimeStamp());
+			int result=m_FirstOperatorVME->SetData(resultPolydata, mafVME::StaticDownCast(GetInput())->GetTimeStamp());
 			if(result == MAF_ERROR)
 			{
 				mafWarningMessage(_M(mafString(_L("The result surface hasn't any points"))));
@@ -753,18 +753,18 @@ void mafOpBooleanSurface::VmeChoose(mafString title,mafEvent *e)
 	e->SetId(VME_CHOOSE);
 	InvokeEvent(*e);
 	m_SecondOperatorVME = mafVMESurface::SafeDownCast(e->GetVme());
-	if(m_SecondOperatorVME == NULL && mafVMESurfaceParametric::SafeDownCast(e->GetVme()) != NULL)
+	if(m_SecondOperatorVME == nullptr && mafVMESurfaceParametric::SafeDownCast(e->GetVme()) != nullptr)
   {
     vtkNew<vtkTransformPolyDataFilter> transformSecondDataInput;
     transformSecondDataInput->SetTransform((vtkAbstractTransform *)((mafVME *)e->GetVme())->GetAbsMatrixPipe()->GetVTKTransform());
     transformSecondDataInput->SetInputConnection(((mafVME *)e->GetVme())->GetOutput()->GetVTKOutputPort());
     transformSecondDataInput->Update();
 
-    mafNEW(m_SecondOperatorFromParametric);
-    m_SecondOperatorFromParametric->SetData(transformSecondDataInput->GetOutput(), ((mafVME*)GetInput())->GetTimeStamp());
+    m_SecondOperatorFromParametric = mafVMESurface::NewSPtr();
+    m_SecondOperatorFromParametric->SetData(transformSecondDataInput->GetOutput(), mafVME::StaticDownCast(GetInput())->GetTimeStamp());
     m_SecondOperatorFromParametric->Update();
 
-    m_SecondOperatorVME = m_SecondOperatorFromParametric;
+    m_SecondOperatorVME = m_SecondOperatorFromParametric.get();
   }
 }
 //----------------------------------------------------------------------------
@@ -773,14 +773,14 @@ void mafOpBooleanSurface::OpStop(int result)
 {
 	if(m_ImplicitPlaneGizmo)
 	{
-		m_ImplicitPlaneGizmo->SetBehavior(NULL);
-    m_ImplicitPlaneGizmo->ReparentTo(NULL);
+		m_ImplicitPlaneGizmo->SetBehavior(nullptr);
+    mafNode::ReparentTo(m_ImplicitPlaneGizmo, nullptr);
 	}
-	mafDEL(m_ImplicitPlaneGizmo);
+	m_ImplicitPlaneGizmo.reset();
 
   if(result == OP_RUN_CANCEL)
 	{
-    m_ResultVME->ReparentTo(NULL);
+    mafNode::ReparentTo(m_ResultVME, nullptr);
 	}
 
 	HideGui();

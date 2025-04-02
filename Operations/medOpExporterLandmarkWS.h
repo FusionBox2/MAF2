@@ -1,22 +1,4 @@
-/*=========================================================================
-
- Program: MAF2Medical
- Module: medOpExporterLandmarkWS
- Authors: Simone Brazzale
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __medOpExporterLandmarkWS_H__
-#define __medOpExporterLandmarkWS_H__
-
+#pragma once
 //----------------------------------------------------------------------------
 // Include :
 //----------------------------------------------------------------------------
@@ -80,4 +62,3 @@ protected:
 	mafString m_File;
 	mafVMELandmarkCloud  *m_Cloud;
 };
-#endif

@@ -77,13 +77,13 @@ protected:
   3) the line with landmark data are:
      nameOfLandmark x y z
   */
-  mafVME *ReadFile(mafString& fname);
+  std::shared_ptr<mafVME> ReadFile(mafString& fname);
 
   /** Read the file.
   the format of the file admits some speficics.
   The line with landmark pose can be with any type of char separation (provided it has been selected by the user)
   */
-  mafVME *ReadFileWithoutTag(mafString& fname);
+  std::shared_ptr<mafVME> ReadFileWithoutTag(mafString& fname);
   /** Create the dialog interface for the importer. */
   virtual void CreateGui();
   bool LoadDictionary();
@@ -113,7 +113,7 @@ protected:
   mafString m_StringSeparation;
   std::vector<mafString>            m_Files;
   mafString                         m_FileDir;
-  std::vector<mafVME*>              m_Results;
+  std::vector<std::shared_ptr<mafVME> >              m_Results;
   int                               m_TagFileFlag;
   mafString                         m_DictionaryFileName;
   std::map<mafString, mafString>    m_dictionaryStruct;

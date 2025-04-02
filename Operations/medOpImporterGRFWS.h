@@ -81,13 +81,13 @@ protected:
   /* Read a single vector */
   void ReadSingleVector();
 
-  mafVMESurface       *m_PlatformLeft;
-  mafVMESurface       *m_PlatformRight;
-  mafVMEVector        *m_ForceLeft;
-  mafVMEVector        *m_ForceRight;
-  mafVMEVector        *m_MomentLeft;
-  mafVMEVector        *m_MomentRight;
-  mafVMEGroup         *m_Group;
+  std::shared_ptr<mafVMESurface>       m_PlatformLeft;
+  std::shared_ptr<mafVMESurface>       m_PlatformRight;
+  std::shared_ptr<mafVMEVector>        m_ForceLeft;
+  std::shared_ptr<mafVMEVector>        m_ForceRight;
+  std::shared_ptr<mafVMEVector>        m_MomentLeft;
+  std::shared_ptr<mafVMEVector>        m_MomentRight;
+  std::shared_ptr<mafVMEGroup>         m_Group;
 
   mafString             m_FileDir;
 	mafString             m_File;

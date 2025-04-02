@@ -137,8 +137,8 @@ medOpMeshDeformation::~medOpMeshDeformation()
 {  
   for (int i = 0; i < m_NumberOfCurves; i++)
   {
-    mafDEL(m_OriginalCurves[i]);
-    mafDEL(m_DeformedCurves[i]);
+    m_OriginalCurves[i].reset();
+    m_DeformedCurves[i].reset();
     vtkDEL(m_CurvesCorrespondence[i]);
   }
 
@@ -149,12 +149,6 @@ medOpMeshDeformation::~medOpMeshDeformation()
   m_DeformedCurves = NULL;
   m_OriginalCurves = NULL;
   m_CurvesCorrespondence = NULL;
-
-	{
-		if (GetOutput())
-			GetOutput()->Delete();
-  	SetOutput(nullptr);
-	}
 }
 //----------------------------------------------------------------------------
 bool medOpMeshDeformation::Accept(mafNode *node)
@@ -198,9 +192,9 @@ void medOpMeshDeformation::OpDo()
 //----------------------------------------------------------------------------
 {
   if (GetOutput() != nullptr)
-    GetOutput()->ReparentTo(GetInput());
+    mafNode::ReparentTo(GetOutput(), GetInput().get());
 
-  mafVME** pCVMEs[2] = { m_OriginalCurves, m_DeformedCurves };
+  std::shared_ptr<mafVME>* pCVMEs[2] = { m_OriginalCurves, m_DeformedCurves };
   for (int i = 0; i < 2; i++)
   {
     if (m_SaveODC[i] == 0)
@@ -209,7 +203,7 @@ void medOpMeshDeformation::OpDo()
     for (int j = 0; j < m_NumberOfCurves; j++) 
     {
       if (pCVMEs[i][j] != nullptr)
-        pCVMEs[i][j]->ReparentTo(GetOutput());
+        mafNode::ReparentTo(pCVMEs[i][j], GetOutput().get());
     }
   }
   
@@ -222,15 +216,13 @@ void medOpMeshDeformation::OpUndo()
 {
   if (GetOutput() != nullptr)
   {
-    GetOutput()->ReparentTo(nullptr);
+    mafNode::ReparentTo(GetOutput(), nullptr);
 	  {
-      if (GetOutput())
-        GetOutput()->Delete();
       SetOutput(nullptr);
     }
   }
 
-  mafVME** pCVMEs[2] = { m_OriginalCurves, m_DeformedCurves };
+  std::shared_ptr<mafVME>* pCVMEs[2] = { m_OriginalCurves, m_DeformedCurves };
   for (int i = 0; i < 2; i++)
   {
     if (m_SaveODC[i] == 0)
@@ -238,10 +230,10 @@ void medOpMeshDeformation::OpUndo()
 
     for (int j = 0; j < m_NumberOfCurves; j++) 
     {
-      if (pCVMEs[i][j] != NULL)
+      if (pCVMEs[i][j])
       {
-        pCVMEs[i][j]->ReparentTo(NULL);
-        mafDEL(pCVMEs[i][j]);
+        mafNode::ReparentTo(pCVMEs[i][j], nullptr);
+        pCVMEs[i][j].reset();
       }
     }
   }
@@ -1471,15 +1463,12 @@ void medOpMeshDeformation::OnEvent(mafEventBase *maf_event)
   DeformMesh();
 
   //create VME  
-  mafVMESurface* surface;
+  auto surface = mafVMESurface::NewSPtr();
 
-  mafNEW(surface);
   surface->SetName(mafString::Format(_R("Deformed ")) + GetInput()->GetName());
   surface->SetData(m_Meshes[1]->pPoly, 0, mafVMEGeneric::MAF_VME_REFERENCE_DATA);
 
 	{
-    if (GetOutput())
-      GetOutput()->Delete();
     SetOutput(nullptr);
   }
   SetOutput(surface);
@@ -1492,7 +1481,7 @@ void medOpMeshDeformation::OnEvent(mafEventBase *maf_event)
     SetNumberOfControlCurves(nCount);
 
     wxChar chLabels[2] = { wxT('O'), wxT('D') };
-    mafVME** pCVMEs[2] = { m_OriginalCurves, m_DeformedCurves };
+    std::shared_ptr<mafVME>* pCVMEs[2] = { m_OriginalCurves, m_DeformedCurves };
     for (int i = 0; i < 2; i++)
     {
       if (m_SaveODC[i] == 0)
@@ -1500,11 +1489,10 @@ void medOpMeshDeformation::OnEvent(mafEventBase *maf_event)
 
       for (int j = 0; j < nCount; j++)
       {
-        medVMEPolylineGraph* vme;
-        mafNEW(vme);
+        auto vme = medVMEPolylineGraph::NewSPtr();
 
         wxString szOldName;
-        if (pCVMEs[i][j] == NULL) //if the curve was not generated, it must have name
+        if (pCVMEs[i][j] == nullptr) //if the curve was not generated, it must have name
           szOldName = wxT("generated");
         else
         {
@@ -1523,7 +1511,7 @@ void medOpMeshDeformation::OnEvent(mafEventBase *maf_event)
         vme->SetName(mafWxToString(szOldName) + mafString::Format(_R("_%cC#%d"), chLabels[i], j));
         vme->SetData(m_Curves[j]->pPolys[i], 0, mafVMEGeneric::MAF_VME_REFERENCE_DATA);
 
-        mafDEL(pCVMEs[i][j]);    //remove the previous VME
+        pCVMEs[i][j].reset();    //remove the previous VME
         pCVMEs[i][j] = vme;
       }//end for j
     } //end for i
@@ -2263,7 +2251,7 @@ void medOpMeshDeformation::DeformMeshT()
 /*virtual*/ bool medOpMeshDeformation::CreateInternalStructures()
 //------------------------------------------------------------------------
 {
-  mafVMESurface* surface = mafVMESurface::SafeDownCast(GetInput()); 
+  auto surface = mafVMESurface::SafeDownCast(GetInput()); 
   _VERIFY_RETVAL(surface != NULL, false);  
 
   vtkPolyData* pPoly = vtkPolyData::SafeDownCast(surface->GetOutput()->GetVTKData());
@@ -2307,11 +2295,11 @@ void medOpMeshDeformation::DeformMeshT()
 
   for (int i = 0; i < m_NumberOfCurves; i++)
   {
-    mafPolylineGraph* pOC = CreatePolylineGraph(m_OriginalCurves[i]);
+    auto pOC = CreatePolylineGraph(m_OriginalCurves[i].get());
     _VERIFY_CMD(pOC != NULL, continue);           //it should be compatible
 
-    CONTROL_CURVE* pCurve = CreateControlCurve(pOC, CreatePolylineGraph(
-      m_DeformedCurves[i]), m_CurvesCorrespondence[i]);
+    auto pCurve = CreateControlCurve(pOC, CreatePolylineGraph(
+      m_DeformedCurves[i].get()), m_CurvesCorrespondence[i]);
     m_Curves.push_back(pCurve);
   }
 
@@ -2766,19 +2754,19 @@ void medOpMeshDeformation::RemoveAllActors()
   while (m_NumberOfCurves > nCount)
   {
     --m_NumberOfCurves;
-    mafDEL(m_OriginalCurves[m_NumberOfCurves]);
-    mafDEL(m_DeformedCurves[m_NumberOfCurves]);
+    m_OriginalCurves[m_NumberOfCurves].reset();
+    m_DeformedCurves[m_NumberOfCurves].reset();
     vtkDEL(m_CurvesCorrespondence[m_NumberOfCurves]);
   }
 
-  mafVME** pNewOC = NULL;
-  mafVME** pNewDC = NULL;
+  std::shared_ptr<mafVME>* pNewOC = nullptr;
+  std::shared_ptr<mafVME>* pNewDC = nullptr;
   vtkIdList** pNewCC = NULL;
 
   if (nCount > 0)
   {    
-    pNewOC = new mafVME*[nCount];
-    pNewDC = new mafVME*[nCount];
+    pNewOC = new std::shared_ptr<mafVME>[nCount];
+    pNewDC = new std::shared_ptr<mafVME>[nCount];
     pNewCC = new vtkIdList*[nCount];
 
     //copy existing curves
@@ -2792,9 +2780,9 @@ void medOpMeshDeformation::RemoveAllActors()
     //and reset others
     while (m_NumberOfCurves != nCount)
     {
-      pNewOC[m_NumberOfCurves] = NULL;
-      pNewDC[m_NumberOfCurves] = NULL;
-      pNewCC[m_NumberOfCurves] = NULL;
+      pNewOC[m_NumberOfCurves] = nullptr;
+      pNewDC[m_NumberOfCurves] = nullptr;
+      pNewCC[m_NumberOfCurves] = nullptr;
 
       m_NumberOfCurves++;
     }    
@@ -2811,7 +2799,7 @@ void medOpMeshDeformation::RemoveAllActors()
 
 //------------------------------------------------------------------------
 //Specifies the n-th control curve in its original (undeformed) state. 
-/*virtual*/ void medOpMeshDeformation::SetNthOriginalControlCurve(int num, mafVME* input)
+/*virtual*/ void medOpMeshDeformation::SetNthOriginalControlCurve(int num, std::shared_ptr<mafVME> input)
 //------------------------------------------------------------------------
 {
   _VERIFY_RET(num >= 0);
@@ -2824,17 +2812,16 @@ void medOpMeshDeformation::RemoveAllActors()
     _VERIFY_RET(input == NULL || 
       input->GetOutput()->IsA("mafVMEOutputPolyline"));  
 
-    if (NULL != m_OriginalCurves[num])
-      m_OriginalCurves[num]->Delete();
+    if (m_OriginalCurves[num])
+      m_OriginalCurves[num].reset();
 
-    if (NULL != (m_OriginalCurves[num] = input))
-      m_OriginalCurves[num]->Register(this);
+    m_OriginalCurves[num] = input;
   }  
 }
 
 //------------------------------------------------------------------------
 //Specifies the n-th control curve in its deformed state. 
-/*virtual*/ void medOpMeshDeformation::SetNthDeformedControlCurve(int num, mafVME* input)
+/*virtual*/ void medOpMeshDeformation::SetNthDeformedControlCurve(int num, std::shared_ptr<mafVME> input)
 //------------------------------------------------------------------------
 {
   _VERIFY_RET(num >= 0);
@@ -2847,10 +2834,9 @@ void medOpMeshDeformation::RemoveAllActors()
       input->GetOutput()->IsA("mafVMEOutputPolyline"));  
 
     if (NULL != m_DeformedCurves[num])
-      m_DeformedCurves[num]->Delete();
+      m_DeformedCurves[num].reset();
 
-    if (NULL != (m_DeformedCurves[num] = input))
-      m_DeformedCurves[num]->Register(this);
+    m_DeformedCurves[num] = input;
   } 
 }
 

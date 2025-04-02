@@ -62,6 +62,6 @@ protected:
   mafVMESurfaceParametric     *m_CutSurf;
   mafString                   m_CutSurfName;
 
-  mafVMESurface *m_OutSurface;
+  std::shared_ptr<mafVMESurface> m_OutSurface;
 };
 #endif

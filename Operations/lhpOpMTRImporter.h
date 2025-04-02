@@ -55,6 +55,6 @@ public:
 protected:
   std::vector<mafString>    m_Files;
   mafString                 m_FileDir;
-  std::vector<mafVMEGroup*> m_Groups;
+  std::vector<std::shared_ptr<mafVMEGroup> > m_Groups;
 };
 #endif

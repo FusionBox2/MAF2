@@ -121,9 +121,9 @@ protected:
 	int   m_UseGizmo;
 
 	mafVMESurface				*m_InputSurface;
-	medVMESurfaceEditor *m_VmeEditor;
+	std::shared_ptr<medVMESurfaceEditor> m_VmeEditor;
 
-	mafVMEGizmo				*m_ImplicitPlaneGizmo;
+	std::shared_ptr<mafVMEGizmo>				m_ImplicitPlaneGizmo;
 	vtkPlane					*m_ClipperPlane;
 	vtkPlaneSource		*m_PlaneSource;
 	vtkArrowSource		*m_ArrowShape;

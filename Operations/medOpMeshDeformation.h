@@ -174,14 +174,14 @@ public:
   /** Specifies the n-th control curve. 
   See: SetNthOriginalControlCurve, SetNthDeformedControlCurve and
   SetNthControlCurveCorrespondence for detailed information */
-  inline virtual void SetNthControlCurve(int num,  mafVME* original,
-    mafVME* modified, vtkIdList* correspondence);
+  inline virtual void SetNthControlCurve(int num, std::shared_ptr<mafVME> original,
+    std::shared_ptr<mafVME> modified, vtkIdList* correspondence);
 
   /** Specifies the n-th control curve in its original (undeformed) state. */
-  virtual void SetNthOriginalControlCurve(int num, mafVME* input);
+  virtual void SetNthOriginalControlCurve(int num, std::shared_ptr<mafVME> input);
 
   /** Specifies the n-th control curve in its deformed state. */
-  virtual void SetNthDeformedControlCurve(int num, mafVME* input);
+  virtual void SetNthDeformedControlCurve(int num, std::shared_ptr<mafVME> input);
 
   /** Sets the correspondence between the n-th original and deformed curve.
   The list contains pairs of indices of vertices of original-deformed 
@@ -190,12 +190,12 @@ public:
   virtual void SetNthControlCurveCorrespondence(int num, vtkIdList* matchlist);
 
   /** Returns an array with all control curves in their original state. */
-  inline virtual mafVME** GetOriginalControlCurves() {
+  inline virtual std::shared_ptr<mafVME>* GetOriginalControlCurves() {
     return m_OriginalCurves;
   }
 
   /** Returns an array with all control curves in their deformed state. */
-  inline virtual mafVME** GetDeformedControlCurves() {
+  inline virtual std::shared_ptr<mafVME>* GetDeformedControlCurves() {
     return m_DeformedCurves;
   }
 
@@ -396,8 +396,8 @@ protected:
 protected:  
 #pragma region //Input Control Curves
   int m_NumberOfCurves;                   //<the number of control curves
-  mafVME** m_OriginalCurves;             //<original curves that correspond to the input mesh (GetInput())
-  mafVME** m_DeformedCurves;             //<deformed curves that correspond to the output mesh
+  std::shared_ptr<mafVME>* m_OriginalCurves;             //<original curves that correspond to the input mesh (GetInput())
+  std::shared_ptr<mafVME>* m_DeformedCurves;             //<deformed curves that correspond to the output mesh
   vtkIdList** m_CurvesCorrespondence;    //<correspondence between vertices of original and deformed curves
 #pragma endregion
 
@@ -463,8 +463,8 @@ protected:
 //Specifies the n-th control curve. 
 //See: SetNthOriginalControlCurve, SetNthDeformedControlCurve and
 //SetNthControlCurveCorrespondence for detailed information
-inline /*virtual*/ void medOpMeshDeformation::SetNthControlCurve(int num,  mafVME* original,
-                                       mafVME* modified, vtkIdList* correspondence)
+inline /*virtual*/ void medOpMeshDeformation::SetNthControlCurve(int num, std::shared_ptr<mafVME> original,
+                                       std::shared_ptr<mafVME> modified, vtkIdList* correspondence)
 //------------------------------------------------------------------------
 {
   SetNthOriginalControlCurve(num, original);

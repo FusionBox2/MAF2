@@ -39,12 +39,12 @@ public:
   
   /**
   Set the input vme; BEWARE: this filter works in place! */
-  void SetInput(mafVMEGeneric *input) {m_Input = input;};
-  mafVMEGeneric *GetInput() {return m_Input;};
+  void SetInput(std::shared_ptr<mafVMEGeneric> input) {m_Input = input;};
+  std::shared_ptr<mafVMEGeneric>GetInput() {return m_Input;}
 
   /**
   Get the output after calling Read(); BEWARE: this filter works in place! */
-  mafVMEGeneric *GetOutput() {return m_Input;};
+  std::shared_ptr<mafVMEGeneric> GetOutput() {return m_Input;}
 
   /** Set the dataset attribute filename. If attributes are time varying 
   the filename will be used to find the directory containing attribute files*/
@@ -150,7 +150,7 @@ protected:
   mafString m_TSFileName;
   
   /** the input vme */
-  mafVMEGeneric *m_Input;
+  std::shared_ptr<mafVMEGeneric> m_Input;
 
   /** use timestamp file*/
   bool m_UseTSFile;

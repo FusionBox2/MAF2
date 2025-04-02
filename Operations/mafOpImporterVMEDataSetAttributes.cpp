@@ -30,7 +30,6 @@
 #include "mafTagItem.h"
 #include "mafTagArray.h"
 #include "mafVME.h"
-#include "ftk/Base/RegisteringPointer.h"
 #include "vtkSmartPointer.h"
 #include "mafVMEDataSetAttributesImporter.h"
 #include "mafVMEGeneric.h"
@@ -98,7 +97,7 @@ int mafOpImporterVMEDataSetAttributes::Read()
     wxBusyInfo wait("Reading file: ...");  
   }
 
-  mafVMEGeneric *input = mafVMEGeneric::SafeDownCast(GetInput());
+  auto input = mafVMEGeneric::SafeDownCast(GetInput());
 
   mafVMEDataSetAttributesImporter* attributesImporter = NULL;
   
@@ -271,8 +270,8 @@ void mafOpImporterVMEDataSetAttributes::OnEvent(mafEventBase *maf_event)
       //referred to bug 933
       if (GetOutput() != nullptr)
       {
-        {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetOutput()); evUnq.SetBool(false); InvokeEvent(evUnq);}
-        {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetOutput()); evUnq.SetBool(true); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetOutput().get()); evUnq.SetBool(false); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(GetOutput().get()); evUnq.SetBool(true); InvokeEvent(evUnq);}
       }
       //END WORKAROUND CODE 
 

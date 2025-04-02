@@ -68,7 +68,7 @@ public:
   // added by Losi on 31/01/2011 to allow test OpDo method
   void SetTarget(mafVMELandmarkCloud *target);
   void SetFollower(mafVMESurface *follower);
-  inline mafVMEGroup *GetResult(){return m_Result;};
+  inline mafVMEGroup *GetResult(){return m_Result.get();}
 
 protected:
   /** Method called to extract matching point between source and target.*/
@@ -90,14 +90,14 @@ protected:
 
 	mafVMELandmarkCloud*    m_Source;
 	mafVMELandmarkCloud*    m_Target;
-	mafVMELandmarkCloud*    m_Registered;
-  mafVMEGroup        *    m_Result;
-  mafVMEInfoText     *    m_Info;
+	std::shared_ptr<mafVMELandmarkCloud>    m_Registered;
+  std::shared_ptr<mafVMEGroup>            m_Result;
+  std::shared_ptr<mafVMEInfoText>         m_Info;
 
-	mafVMELandmarkCloud*    m_CommonPoints;
+	std::shared_ptr<mafVMELandmarkCloud>    m_CommonPoints;
 	double*					m_Weight;			 
 
-	mafVME *m_Follower;
+	std::shared_ptr<mafVME> m_Follower;
   mafGUI *m_GuiSetWeights;
   mafGUIDialog *m_Dialog;
   

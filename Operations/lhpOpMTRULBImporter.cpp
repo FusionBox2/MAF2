@@ -56,7 +56,7 @@ mafCxxTypeMacro(lhpOpMTRULBImporter);
 //----------------------------------------------------------------------------
 {
   for(unsigned i = 0; i < m_Groups.size(); i++)
-    mafDEL(m_Groups[i]);
+    m_Groups[i].reset();
 }  
 //----------------------------------------------------------------------------
 mafOp * lhpOpMTRULBImporter::Copy()
@@ -132,11 +132,10 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
   mafString path;
   wxInt32  nI = 0;
   mafString grpName, extension;
-  mafVMEGroup *grp;
 
   mafSplitPath(fileName,&path,&grpName,&extension);
 
-  mafNEW(grp);
+  auto grp = mafVMEGroup::NewSPtr();
   grp->SetName(grpName);
   m_Groups.push_back(grp);
 
@@ -177,15 +176,14 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
       break;
     }
 
-    const std::vector<std::pair<mafVMELandmarkCloud*, int> >& clouds = LMCReader->GetClouds();
+    auto& clouds = LMCReader->GetClouds();
     int ori = 0;
     int ins = 0;
     int fib = 0;
     for(int i = 0; i < clouds.size(); i++)
     {
       int curnumber;
-      mafVMELandmarkCloud *cloud;
-      cloud = clouds[i].first;
+      auto cloud = clouds[i].first;
       if(clouds[i].second == 0)
       {
         vmeName   = _R("Fbr_");
@@ -215,18 +213,17 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
       cloud->SetName(vmeName);
       cloud->GetTagArray()->SetTag(tag_Nature);
       cloud->Close();
-      cloud->ReparentTo(grp);
+      mafNode::ReparentTo(cloud, grp.get());
     }
     cppDEL(LMCReader);
     {
-      mafVMEPolyline *lines;
       mafTimeStamp t;
       vtkPolyData *data = readertn->GetOutput();
       //data->Update();
       if(data->GetNumberOfPoints() != 0 && data->GetNumberOfCells() != 0)
       {
-        t = ((mafVME *)GetInput())->GetTimeStamp();
-        mafNEW(lines);
+        t = mafVME::StaticDownCast(GetInput())->GetTimeStamp();
+        auto lines = mafVMEPolyline::NewSPtr();
         lines->SetName(_R("TndFbr_") + name);
         lines->SetData(data,t);
 
@@ -237,21 +234,20 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
 
         lines->GetTagArray()->SetTag(tag_Nature);
 
-        lines->ReparentTo(grp);
+        mafNode::ReparentTo(lines, grp.get());
 
-        mafDEL(lines);
+        lines.reset();
       }
       vtkDEL(readertn);
     }
     {
-      mafVMEPolyline *lines;
       mafTimeStamp t;
       vtkPolyData *data = readermc->GetOutput();
       //data->Update();
       if(data->GetNumberOfPoints() != 0 && data->GetNumberOfCells() != 0)
       {
-        t = ((mafVME *)GetInput())->GetTimeStamp();
-        mafNEW(lines);
+        t = mafVME::StaticDownCast(GetInput())->GetTimeStamp();
+        auto lines = mafVMEPolyline::NewSPtr();
         lines->SetName(_R("MscFbr_") + name);
         lines->SetData(data,t);
 
@@ -262,21 +258,20 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
 
         lines->GetTagArray()->SetTag(tag_Nature);
 
-        lines->ReparentTo(grp);
+        mafNode::ReparentTo(lines, grp.get());
 
-        mafDEL(lines);
+        lines.reset();
       }
       vtkDEL(readermc);
     }
     {
-      mafVMESurface *surf;
       mafTimeStamp t;
       vtkPolyData *data = readerSf->GetOutput();
       //data->Update();
       if(data->GetNumberOfPoints() != 0 && data->GetNumberOfCells() != 0)
       {
-        t = ((mafVME *)GetInput())->GetTimeStamp();
-        mafNEW(surf);
+        t = mafVME::StaticDownCast(GetInput())->GetTimeStamp();
+        auto surf = mafVMESurface::NewSPtr();
         surf->SetName(_R("Surf_") + name);
         surf->SetData(data,t);
 
@@ -287,9 +282,9 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
 
         surf->GetTagArray()->SetTag(tag_Nature);
 
-        surf->ReparentTo(grp);
+        mafNode::ReparentTo(surf, grp.get());
 
-        mafDEL(surf);
+        surf.reset();
       }
       vtkDEL(readerSf);
     }
@@ -352,10 +347,9 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
 
     reader->Update();
 
-    mafVMESurface *surface;
     mafTimeStamp t;
-    t = ((mafVME *)GetInput())->GetTimeStamp();
-    mafNEW(surface);
+    t = mafVME::StaticDownCast(GetInput())->GetTimeStamp();
+    auto surface = mafVMESurface::NewSPtr();
     surface->SetName(name);
     vtkPolyData *data = reader->GetOutput();
     surface->SetData(data,t);
@@ -367,7 +361,7 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
 
     surface->GetTagArray()->SetTag(tag_Nature);
 
-    surface->ReparentTo(grp);
+    mafNode::ReparentTo(surface, grp.get());
 
     vtkDEL(reader);
 
@@ -383,7 +377,7 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
     ReadMatrix(sLinedMatrix.c_str(), idvtkMat);
     surface->SetAbsMatrix(idvtkMat, t);
     vtkDEL(idvtkMat);
-    mafDEL(surface);
+    surface.reset();
   }
   fclose(fp);
   {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(grp); InvokeEvent(evUnq);}
@@ -394,7 +388,7 @@ void  lhpOpMTRULBImporter::ImportData()
 //----------------------------------------------------------------------------
 {
   for(unsigned i = 0; i < m_Groups.size(); i++)
-    mafDEL(m_Groups[i]);
+    m_Groups[i].reset();
   m_Groups.clear();
 
   for(unsigned i = 0; i < m_Files.size(); i++)
@@ -450,8 +444,7 @@ void lhpOpMTRULBImporter::OpDo()
   {
     if (m_Groups[i])
     {
-      m_Groups[i]->ReparentTo(GetInput());
-      {mafEvent evUnq(this, VME_ADD); evUnq.SetVme(m_Groups[i]); InvokeEvent(evUnq);}
+      mafNode::ReparentTo(m_Groups[i], GetInput().get());
     }
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
@@ -465,7 +458,7 @@ void lhpOpMTRULBImporter::OpUndo()
   {
     if (m_Groups[i])
     {
-      {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Groups[i]); InvokeEvent(evUnq);}
+      {mafEvent evUnq(this, VME_REMOVE); evUnq.SetVme(m_Groups[i].get()); InvokeEvent(evUnq);}
     }
   }
   {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}

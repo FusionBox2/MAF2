@@ -57,35 +57,28 @@ medOpImporterGRFWS::medOpImporterGRFWS(const mafString& label) : Superclass(labe
 	m_Canundo	      = true;
 	m_File		      = _R("");
 	m_FileDir       = mafGetApplicationDirectory() + _R("/Data/External/");
-  m_PlatformLeft  = NULL;
-  m_PlatformRight = NULL;
-  m_ForceLeft    = NULL;
-  m_ForceRight   = NULL;
-  m_MomentLeft    = NULL;
-  m_MomentRight   = NULL;
-  m_Group         = NULL;
 }
 //----------------------------------------------------------------------------
 medOpImporterGRFWS::~medOpImporterGRFWS()
 //----------------------------------------------------------------------------
 {
-  mafDEL(m_PlatformLeft);
-  mafDEL(m_PlatformRight);
-  mafDEL(m_ForceLeft);
-  mafDEL(m_ForceRight);
-  mafDEL(m_MomentLeft);
-  mafDEL(m_MomentRight);
-  mafDEL(m_Group);
+  m_PlatformLeft.reset();
+  m_PlatformRight.reset();
+  m_ForceLeft.reset();
+  m_ForceRight.reset();
+  m_MomentLeft.reset();
+  m_MomentRight.reset();
+  m_Group.reset();
 }
 
 //----------------------------------------------------------------------------
 void medOpImporterGRFWS::OpUndo()
 //----------------------------------------------------------------------------
 {   
-  if(m_PlatformLeft != NULL)
-    {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_PlatformLeft); InvokeEvent(evUnq);}
-  if(m_PlatformRight != NULL)
-    {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_PlatformRight); InvokeEvent(evUnq);}
+  if(m_PlatformLeft)
+    {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_PlatformLeft.get()); InvokeEvent(evUnq);}
+  if(m_PlatformRight)
+    {mafEvent evUnq(this,VME_REMOVE); evUnq.SetVme(m_PlatformRight.get()); InvokeEvent(evUnq);}
 }
 //----------------------------------------------------------------------------
 mafOp* medOpImporterGRFWS::Copy()   
@@ -213,8 +206,8 @@ void medOpImporterGRFWS::ReadForcePlates()
   vtkNew<vtkCubeSource> platformRight;
 
   //Get values for platforms
-   mafNEW(m_PlatformLeft);
-   mafNEW(m_PlatformRight);
+   m_PlatformLeft = mafVMESurface::NewSPtr();
+   m_PlatformRight = mafVMESurface::NewSPtr();
 
    mafString PlatNameLeft = name;
    mafString platNameRight = name;
@@ -224,7 +217,7 @@ void medOpImporterGRFWS::ReadForcePlates()
    m_PlatformLeft->SetName(PlatNameLeft);
    m_PlatformRight->SetName(platNameRight);
 
-   mafNEW(m_Group);
+   m_Group = mafVMEGroup::NewSPtr();
    m_Group->SetName(name);
   
   double thickness1 = platform1[2]-DELTA;
@@ -261,10 +254,10 @@ void medOpImporterGRFWS::ReadForcePlates()
   vtkIdType pointId1[2];
   vtkIdType pointId2[2];
 
-  mafNEW(m_ForceLeft);
-  mafNEW(m_ForceRight);
-  mafNEW(m_MomentLeft);
-  mafNEW(m_MomentRight);
+  m_ForceLeft = mafVMEVector::NewSPtr();
+  m_ForceRight = mafVMEVector::NewSPtr();
+  m_MomentLeft = mafVMEVector::NewSPtr();
+  m_MomentRight = mafVMEVector::NewSPtr();
 
   mafString alLeft = name;
   mafString alRight = name;
@@ -460,18 +453,18 @@ void medOpImporterGRFWS::ReadForcePlates()
   m_PlatformLeft->SetData(platformLeft->GetOutput(), 0);
   m_PlatformRight->SetData(platformRight->GetOutput(), 0);
 
-  if(m_PlatformLeft != NULL)
+  if(m_PlatformLeft)
   {
-    m_PlatformLeft->ReparentTo(m_Group);
-    m_ForceLeft->ReparentTo(m_PlatformLeft);
-    m_MomentLeft->ReparentTo(m_PlatformLeft);
+    mafNode::ReparentTo(m_PlatformLeft, m_Group.get());
+    mafNode::ReparentTo(m_ForceLeft, m_PlatformLeft.get());
+    mafNode::ReparentTo(m_MomentLeft, m_PlatformLeft.get());
   }
 
-  if(m_PlatformRight != NULL)
+  if(m_PlatformRight)
   {
-    m_PlatformRight->ReparentTo(m_Group);
-    m_ForceRight->ReparentTo(m_PlatformRight);
-    m_MomentRight->ReparentTo(m_PlatformRight);
+    mafNode::ReparentTo(m_PlatformRight, m_Group.get());
+    mafNode::ReparentTo(m_ForceRight, m_PlatformRight.get());
+    mafNode::ReparentTo(m_MomentRight, m_PlatformRight.get());
   }
 
   if (!m_TestMode)
@@ -481,7 +474,7 @@ void medOpImporterGRFWS::ReadForcePlates()
   }
 
   SetOutput(m_Group);
-  GetOutput()->ReparentTo(GetInput());
+  mafNode::ReparentTo(GetOutput(), GetInput().get());
 }
 //----------------------------------------------------------------------------
 void medOpImporterGRFWS::ReadSingleVector()   
@@ -539,7 +532,7 @@ void medOpImporterGRFWS::ReadSingleVector()
   vtkNew<vtkCellArray> cellArrayf1;
   vtkIdType pointId1[2];
 
-  mafNEW(m_ForceLeft);
+  m_ForceLeft = mafVMEVector::NewSPtr();
 
   mafString alLeft = name;
   alLeft += _R("_VECTOR");
@@ -618,5 +611,5 @@ void medOpImporterGRFWS::ReadSingleVector()
   }
 
   SetOutput(m_ForceLeft);
-  GetOutput()->ReparentTo(GetInput());
+  mafNode::ReparentTo(GetOutput(), GetInput().get());
 }

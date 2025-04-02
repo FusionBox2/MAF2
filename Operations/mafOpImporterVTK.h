@@ -1,25 +1,5 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafOpImporterVTK
- Authors: Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __mafOpImporterVTK_H__
-#define __mafOpImporterVTK_H__
-
-//----------------------------------------------------------------------------
-// Include :
-//----------------------------------------------------------------------------
 #include "mafOp.h"
 
 //----------------------------------------------------------------------------
@@ -68,15 +48,4 @@ public:
 protected:
   mafString m_File;
   mafString m_FileDir;
-  
-  mafVMELandmarkCloud *m_VmeLandmarkCloud;
-  //mafVMEPointSet   *m_VmePointSet;
-  mafVMEPolyline   *m_VmePolyLine;
-  mafVMESurface    *m_VmeSurface;
-  mafVMEImage      *m_VmeImage;
-  mafVMEVolumeGray *m_VmeGrayVol;
-  mafVMEVolumeRGB *m_VmeRGBVol;
-  mafVMEMesh       *m_VmeMesh;  
-  mafVMEGeneric    *m_VmeGeneric;
 };
-#endif

@@ -32,7 +32,6 @@
 
 #include "mafOpExplodeCollapse.h"
 
-#include "ftk/Base/RegisteringPointer.h"
 #include "mafVMELandmarkCloud.h"
 #include "mafVME.h"
 #include "mafVMESurface.h"
@@ -45,11 +44,6 @@
 #pragma warning (disable: 4786)
 #endif
 
-//----------------------------------------------------------------------------
-// Constants :
-//----------------------------------------------------------------------------
-
-mafCxxTypeMacro(lhpOpAverageLM)
 
 //----------------------------------------------------------------------------
 lhpOpAverageLM::lhpOpAverageLM(const mafString& label) : Superclass(label)
@@ -57,7 +51,6 @@ lhpOpAverageLM::lhpOpAverageLM(const mafString& label) : Superclass(label)
 {
   m_OpType    = OPTYPE_OP;
   m_Canundo   = true;
-  m_LimbCloud = NULL;
   m_NewIndex  = 0;
 }
 
@@ -92,7 +85,7 @@ bool lhpOpAverageLM::Accept(mafNode* vme)
 void lhpOpAverageLM::OpRun()   
 //----------------------------------------------------------------------------
 {
-  m_LimbCloud     = (mafVMELandmarkCloud *)GetInput();
+  m_LimbCloud     = mafVMELandmarkCloud::StaticDownCast(GetInput());
   //CreateGui();
   {mafEvent evUnq(this,OP_RUN_OK); InvokeEvent(evUnq);} 
 }
@@ -101,7 +94,7 @@ void lhpOpAverageLM::OpRun()
 void lhpOpAverageLM::CreateGui()
 //----------------------------------------------------------------------------
 {
-  if(m_Gui == NULL)
+  if(m_Gui == nullptr)
   {
     m_Gui = new mafGUI(this);
     m_Gui->SetListener(this);

@@ -105,14 +105,14 @@ void lhpOpLMMirror::OpRun()
 void lhpOpLMMirror::OpDo()
 //----------------------------------------------------------------------------
 {
-  mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(GetInput());
-  if(cloud != NULL)
+  auto cloud = mafVMELandmarkCloud::SafeDownCast(GetInput());
+  if(cloud != nullptr)
   {
 	  mafString synthetic_name = _R("Copied ");
-	  mafAutoPointer<mafNode> node = GetInput()->MakeCopy();
+	  auto node = GetInput()->MakeCopy();
 	  synthetic_name.append(GetInput()->GetName());
 	  node->SetName(synthetic_name);
-	  node->ReparentTo(GetInput()->GetParent());
+	  mafNode::ReparentTo(node, GetInput()->GetParent());
 
     std::vector<mafTimeStamp> stamps;
     cloud->GetLocalTimeStamps(stamps);
@@ -138,8 +138,8 @@ void lhpOpLMMirror::OpDo()
 void lhpOpLMMirror::OpUndo()
 //----------------------------------------------------------------------------
 {
-  mafVMELandmarkCloud *cloud = mafVMELandmarkCloud::SafeDownCast(GetInput());
-  if(cloud != NULL)
+  auto cloud = mafVMELandmarkCloud::SafeDownCast(GetInput());
+  if(cloud != nullptr)
   {
     std::vector<mafTimeStamp> stamps;
     cloud->GetLocalTimeStamps(stamps);

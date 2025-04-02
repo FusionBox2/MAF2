@@ -233,8 +233,8 @@ void mafOpVOIDensityEditor::EditVolumeScalars()
   implicitBox->SetBounds(b);
 	implicitBox->Modified();
 
-  vtkDataSet *volumeData = ((mafVME*)GetInput())->GetOutput()->GetVTKData();
-  ((mafVME*)GetInput())->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
+  vtkDataSet *volumeData = mafVME::StaticDownCast(GetInput())->GetOutput()->GetVTKData();
+	mafVME::StaticDownCast(GetInput())->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
   
   if (volumeData->IsA("vtkStructuredPoints"))
   {
@@ -245,7 +245,7 @@ void mafOpVOIDensityEditor::EditVolumeScalars()
     m_OldData = vtkRectilinearGrid::New();
   }
   m_OldData->DeepCopy(volumeData);
-  m_CurrentTimestamp = ((mafVME *)GetInput())->GetTimeStamp();
+  m_CurrentTimestamp = mafVME::StaticDownCast(GetInput())->GetTimeStamp();
   
 	numberVoxels = volumeData->GetNumberOfPoints();
   
@@ -272,8 +272,8 @@ void mafOpVOIDensityEditor::EditVolumeScalars()
     cppDEL(wait);
   }
 
-  ((mafVME *)GetInput())->GetOutput()->Update();
-  {mafEvent evUnq(this, VME_MODIFIED); evUnq.SetVme(GetInput()); InvokeEvent(evUnq);}
+	mafVME::StaticDownCast(GetInput())->GetOutput()->Update();
+  {mafEvent evUnq(this, VME_MODIFIED); evUnq.SetVme(GetInput().get()); InvokeEvent(evUnq);}
   {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 }
 
@@ -293,18 +293,18 @@ void mafOpVOIDensityEditor::OpUndo()
     int result = MAF_ERROR;
     if (m_OldData->IsA("vtkStructuredPoints"))
     {
-      result = ((mafVMEVolumeGray *)GetInput())->SetData((vtkStructuredPoints *)m_OldData, m_CurrentTimestamp);
+      result = mafVMEVolumeGray::StaticDownCast(GetInput())->SetData((vtkStructuredPoints *)m_OldData, m_CurrentTimestamp);
     }
     else if (m_OldData->IsA("vtkRectilinearGrid"))
     {
-      result = ((mafVMEVolumeGray *)GetInput())->SetData((vtkRectilinearGrid *)m_OldData, m_CurrentTimestamp);
+      result = mafVMEVolumeGray::StaticDownCast(GetInput())->SetData((vtkRectilinearGrid *)m_OldData, m_CurrentTimestamp);
     }
     if (result != MAF_OK)
     {
       mafLogMessage(_M(_R("Error assigning the old dataset to ") + GetInput()->GetName()));
       return;
     }
-    ((mafVMEVolumeGray *)GetInput())->Update();
+		mafVMEVolumeGray::StaticDownCast(GetInput())->Update();
     vtkDEL(m_OldData);
     {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
