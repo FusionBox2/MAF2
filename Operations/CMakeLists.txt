@@ -114,8 +114,8 @@ IF (MAF_USE_VTK)
     mafOpExporterSTL.h
     mafOpImporterSTL.cpp
     mafOpImporterSTL.h
-    mafOpTransformInterface.cpp
-    mafOpTransformInterface.h
+#    mafOpTransformInterface.cpp
+#    mafOpTransformInterface.h
     mafOpValidateTree.cpp
     mafOpValidateTree.h
     mafOpVolumeResample.cpp
@@ -126,7 +126,7 @@ IF (MAF_USE_VTK)
     mafOpVOIDensityEditor.h
     mafOpImporterVRML.cpp
     mafOpImporterVRML.h
-    mafOpExporterVTK.cpp
+#    mafOpExporterVTK.cpp
     mafOpExporterVTK.h
     mafOpImporterVTK.cpp
     mafOpImporterVTK.h
@@ -171,70 +171,69 @@ IF (MAF_USE_VTK)
   medOpMatrixVectorMath.cpp
   medOpMatrixVectorMath.h
 
-  medOpMML.cpp
+#  medOpMML.cpp
   medOpMML.h
-  medOpMMLContourWidget.cpp
-  medOpMMLContourWidget.h
-  medOpMMLModelView.cpp
-  medOpMMLModelView.h
-  medOpMMLParameterView.cpp
-  medOpMMLParameterView.h
+#  medOpMMLContourWidget.cpp
+#  medOpMMLContourWidget.h
+#  medOpMMLModelView.cpp
+#  medOpMMLModelView.h
+#  medOpMMLParameterView.cpp
+#  medOpMMLParameterView.h
 
-  medOpMML3.cpp
-  medOpMML3.h
-  medOpMML3ContourWidget.cpp
-  medOpMML3ContourWidget.h
-  medOpMML3GlobalRegistration.cpp
-  medOpMML3GlobalRegistration.h
-  medOpMML3ModelView.cpp
-  medOpMML3ModelView.h
-  medOpMML3ModelView2DPipe.cpp
-  medOpMML3ModelView2DPipe.h
-  medOpMML3ModelView3DPipe.cpp
-  medOpMML3ModelView3DPipe.h
-  medOpMML3NonUniformSlicePipe.cpp
-  medOpMML3NonUniformSlicePipe.h
-  medOpMML3ParameterView.cpp
-  medOpMML3ParameterView.h
+#  medOpMML3.cpp
+#  medOpMML3.h
+#  medOpMML3ContourWidget.cpp
+#  medOpMML3ContourWidget.h
+#  medOpMML3GlobalRegistration.cpp
+#  medOpMML3GlobalRegistration.h
+#  medOpMML3ModelView.cpp
+#  medOpMML3ModelView.h
+#  medOpMML3ModelView2DPipe.cpp
+#  medOpMML3ModelView2DPipe.h
+#  medOpMML3ModelView3DPipe.cpp
+#  medOpMML3ModelView3DPipe.h
+#  medOpMML3NonUniformSlicePipe.cpp
+#  medOpMML3NonUniformSlicePipe.h
+#  medOpMML3ParameterView.cpp
+#  medOpMML3ParameterView.h
 
 
 
-  medOpRegisterClusters.cpp
-  medOpRegisterClusters.h
-  medOpRegisterClusters2.cpp
-  medOpRegisterClusters2.h
-  medOpVolumeMeasure.cpp
-  medOpVolumeMeasure.h
+#  medOpRegisterClusters.cpp
+#  medOpRegisterClusters.h
+#  medOpRegisterClusters2.cpp
+#  medOpRegisterClusters2.h
+#  medOpVolumeMeasure.cpp
+#  medOpVolumeMeasure.h
   medOpImporterRAWImages.cpp
   medOpImporterRAWImages.h
-  medOpMeshQuality.cpp
-  medOpMeshQuality.h
-  medOpCropDeformableROI.cpp
-  medOpCropDeformableROI.h
+#  medOpMeshQuality.cpp
+#  medOpMeshQuality.h
+#  medOpCropDeformableROI.cpp
+#  medOpCropDeformableROI.h
   medOpFlipNormals.cpp
   medOpFlipNormals.h
   medOpExtrusionHoles.cpp
   medOpExtrusionHoles.h
-  medOpVolumeResample.cpp
-  medOpVolumeResample.h
+#  medOpVolumeResample.cpp
+#  medOpVolumeResample.h
   medOpSplitSurface.cpp
   medOpSplitSurface.h
-  medOpInteractiveClipSurface.cpp
-  medOpInteractiveClipSurface.h
-  medOpCreateEditSkeleton.cpp
-  medOpCreateEditSkeleton.h
+#  medOpInteractiveClipSurface.cpp
+#  medOpInteractiveClipSurface.h
+#  medOpCreateEditSkeleton.cpp
+#  medOpCreateEditSkeleton.h
   medOpCreateSurface.cpp
   medOpCreateSurface.h
-  medOpMove.cpp
-  medOpMove.h
-  medOpScaleDataset.cpp
-  medOpScaleDataset.h
+#  medOpMove.cpp
+#  medOpMove.h
+#  medOpScaleDataset.cpp
+#  medOpScaleDataset.h
 
-  medOpCreateWrappedMeter.cpp
-  medOpSegmentation.cpp
-  medOpSegmentation.h
-  medOpExtractGeometry.cpp
-  medOpExtractGeometry.h
+#  medOpSegmentation.cpp
+#  medOpSegmentation.h
+#  medOpExtractGeometry.cpp
+#  medOpExtractGeometry.h
   
   medOpCreateWrappedMeter.cpp
   medOpCreateWrappedMeter.h
@@ -250,14 +249,14 @@ IF (MAF_USE_VTK)
 
   medOpLabelizeSurface.cpp
   medOpLabelizeSurface.h
-  medOp2DMeasure.cpp
-  medOp2DMeasure.h
+#  medOp2DMeasure.cpp
+#  medOp2DMeasure.h
   
   medOpFreezeVME.cpp
   medOpFreezeVME.h
   
-  medOpIterativeRegistration.cpp
-  medOpIterativeRegistration.h
+#  medOpIterativeRegistration.cpp
+#  medOpIterativeRegistration.h
   
   medOpSmoothSurface.cpp
   medOpSmoothSurface.h
@@ -277,7 +276,7 @@ IF (MAF_USE_VTK)
   medOpImporterVTKXML.cpp
   medOpImporterVTKXML.h
   
-  medOpExporterVTKXML.cpp
+#  medOpExporterVTKXML.cpp
   medOpExporterVTKXML.h
 
   medOpSubdivide.cpp
@@ -290,19 +289,19 @@ IF (MAF_USE_VTK)
   
   medOpMakeVMETimevarying.cpp
   medOpMakeVMETimevarying.h
-  medOpSegmentationRegionGrowingConnectedThreshold.cpp
-  medOpSegmentationRegionGrowingConnectedThreshold.h
-  #### VolumeLarge - TO BE COMMITTED DOWN    ####
-  mafOpImporterBBF.cpp
-  mafOpImporterBBF.h
-  mafOpImporterRAWVolume_BES.cpp
-  mafOpImporterRAWVolume_BES.h  
-  ###############################################
-  medOpSegmentationRegionGrowingLocalAndGlobalThreshold.cpp
-  medOpSegmentationRegionGrowingLocalAndGlobalThreshold.h
+#  medOpSegmentationRegionGrowingConnectedThreshold.cpp
+#  medOpSegmentationRegionGrowingConnectedThreshold.h
+#  #### VolumeLarge - TO BE COMMITTED DOWN    ####
+#  mafOpImporterBBF.cpp
+#  mafOpImporterBBF.h
+#  mafOpImporterRAWVolume_BES.cpp
+#  mafOpImporterRAWVolume_BES.h  
+#  ###############################################
+#  medOpSegmentationRegionGrowingLocalAndGlobalThreshold.cpp
+#  medOpSegmentationRegionGrowingLocalAndGlobalThreshold.h
   
-  medOpEqualizeHistogram.cpp
-  medOpEqualizeHistogram.h
+#  medOpEqualizeHistogram.cpp
+#  medOpEqualizeHistogram.h
   
   medOpExporterAnalogWS.cpp
   medOpExporterAnalogWS.h
@@ -335,7 +334,7 @@ IF (MAF_USE_VTK)
 	#######################################
 	
 	#
-	lhpOpBonemat.cpp
+#	lhpOpBonemat.cpp
 	lhpOpBonemat.h
 	
 	# multiscale files
@@ -401,8 +400,8 @@ IF (MAF_USE_VTK)
 	lhpOpAFSys.h
 	lhpOpAverageLM.cpp
 	lhpOpAverageLM.h
-	lhpOpBuildHierarchy.cpp
-	lhpOpBuildHierarchy.h
+#	lhpOpBuildHierarchy.cpp
+#	lhpOpBuildHierarchy.h
 	lhpOpHelAxis.cpp
 	lhpOpHelAxis.h
 	lhpOpINPExporter.cpp
@@ -413,10 +412,10 @@ IF (MAF_USE_VTK)
 	lhpOpINPImporter.h
 	lhpOpMTRExporter.cpp
 	lhpOpMTRExporter.h
-	lhpOpMTRImporter.cpp
+#	lhpOpMTRImporter.cpp
 	lhpOpMTRImporter.h
-	lhpOpStickPalpation.cpp
-	lhpOpStickPalpation.h
+#	lhpOpStickPalpation.cpp
+#	lhpOpStickPalpation.h
 	lhpOpTimeReduce.cpp
 	lhpOpTimeReduce.h
 	lhpOpLnSurf.cpp
@@ -427,22 +426,22 @@ IF (MAF_USE_VTK)
 	lhpOpExporterC3DBTK.cpp
 	lhpOpExporterC3DBTK.h
 
-	lhpOpExporterCSVGraph.cpp
-	lhpOpExporterCSVGraph.h
+#	lhpOpExporterCSVGraph.cpp
+#	lhpOpExporterCSVGraph.h
 	lhpOpImporterC3DFused.cpp
 	lhpOpImporterC3DFused.h
-	lhpOpImporterPressionCenter.cpp
-	lhpOpImporterPressionCenter.h
+#	lhpOpImporterPressionCenter.cpp
+#	lhpOpImporterPressionCenter.h
 	lhpOpImporterOBJ.cpp
 	lhpOpImporterOBJ.h
 
 	lhpOpImporterPLY.cpp
 	lhpOpImporterPLY.h
 
-	lhpOpICPRegFollow.cpp
-	lhpOpICPRegFollow.h
-	lhpOpImporterRSScan.cpp
-	lhpOpImporterRSScan.h
+#	lhpOpICPRegFollow.cpp
+#	lhpOpICPRegFollow.h
+#	lhpOpImporterRSScan.cpp
+#	lhpOpImporterRSScan.h
 	lhpOpCreateMetersScripted.cpp
 	lhpOpCreateMetersScripted.h
 	lhpOpJoinSurf.cpp
@@ -455,8 +454,8 @@ IF (MAF_USE_VTK)
 	lhpOpMergeClouds.h        
 	lhpOpSolidify.cpp
 	lhpOpSolidify.h
-	lhpVMEMeshRSScanImporter.cpp
-	lhpVMEMeshRSScanImporter.h
+#	lhpVMEMeshRSScanImporter.cpp
+#	lhpVMEMeshRSScanImporter.h
 	mafMtrReader.cpp
 	mafMtrReader.h
 	lhpOpCreateObject.h	
@@ -464,29 +463,29 @@ IF (MAF_USE_VTK)
 	lhpOpCreateRefSysLM.h	
 	lhpOpCutSurface.cpp
 	lhpOpCutSurface.h
-	lhpOpFingerStick.cpp
-	lhpOpFingerStick.h
-	lhpOpMTRULBImporter.cpp
-	lhpOpMTRULBImporter.h
-	lhpOpRegistration.cpp
-	lhpOpRegistration.h
-	lhpOpRegression.cpp
-	lhpOpRegression.h	
-	lhpOpRegSurfWithCloud.cpp
-	lhpOpRegSurfWithCloud.h
+#	lhpOpFingerStick.cpp
+#	lhpOpFingerStick.h
+#	lhpOpMTRULBImporter.cpp
+#	lhpOpMTRULBImporter.h
+#	lhpOpRegistration.cpp
+#	lhpOpRegistration.h
+#	lhpOpRegression.cpp
+#	lhpOpRegression.h	
+#	lhpOpRegSurfWithCloud.cpp
+#	lhpOpRegSurfWithCloud.h
 	lhpOpRepresentInAF.cpp
 	lhpOpRepresentInAF.h
-	lhpOpSoftReg.cpp
-	lhpOpSoftReg.h
-	lhpOpRegisterLMScripted.cpp
-	lhpOpRegisterLMScripted.h
+#	lhpOpSoftReg.cpp
+#	lhpOpSoftReg.h
+#	lhpOpRegisterLMScripted.cpp
+#	lhpOpRegisterLMScripted.h
 	lhpOpFuseLMScripted.cpp
 	lhpOpFuseLMScripted.h
 	lhpOpFindCentroid.cpp
 	lhpOpFindCentroid.h
 	lhpOpComputeTensor.cpp
 	lhpOpComputeTensor.h
-	lhpCOmputeTensor.cpp
+	lhpComputeTensor.cpp
 	lhpComputeTensor.h
 	lhpOpKinectUtil.cpp
 	lhpOpKinectUtil.h
@@ -548,7 +547,7 @@ IF (MAF_USE_ITK)
   medOpSmoothSurfaceCells.h
   medOpExporterMeters.cpp
   medOpExporterMeters.h
-  medOpInteractionDebugger.cpp
+#  medOpInteractionDebugger.cpp
   medOpInteractionDebugger.h
 
 
