@@ -153,12 +153,6 @@ MAF_EXPORT void mafSleep(int msec);
 /** Allocate a new VTK object: don't worry, New is a static member function! */
 #define vtkNEW(a) a=(a)->New()
 
-/** Allocate a new MAF object: don't worry, New is a static member function! */
-#define mafNEW(a) do{a=(a)->New();(a)->Register(this);}while(0)
-
-/** Delete a MAF object */
-#define mafDEL(a) do{if (a != nullptr) { (a)->Delete(); a = NULL;}}while(0)
-
 /** delete a new() allocated object */
 #define cppDEL(a) do{if (a) { delete a; a = NULL;}}while(0)
 

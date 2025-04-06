@@ -641,7 +641,8 @@ void medViewSliceOnCurve::OnEvent(mafEventBase *maf_event)
 
     //{mafEvent evUnq(this, VME_REMOVING, g); InvokeEvent(evUnq);}
 
-    mafDEL(m_Gizmo); //unfortunately this must not be done because of crash if you close the view frame    
+    m_Gizmo->Delete(); //unfortunately this must not be done because of crash if you close the view frame
+    m_Gizmo = nullptr;
     m_CurrentPolyLineGizmo.reset();
     m_CurrentPolyLine = NULL;
   }  

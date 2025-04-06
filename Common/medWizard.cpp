@@ -54,7 +54,7 @@ medWizard::~medWizard()
 {
   //Deleting all blocks added to the wizard
   for (int i=0;i<m_Blocks.size();i++)
-    mafDEL(m_Blocks[i]);
+    m_Blocks[i]->Delete();
   //Clearing blocks array
   m_Blocks.clear();
 }

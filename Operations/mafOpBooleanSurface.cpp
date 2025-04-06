@@ -501,7 +501,7 @@ void mafOpBooleanSurface::Intersection()
 			if(result == MAF_ERROR)
 			{
 				mafWarningMessage(_M(mafString(_L("The result surface hasn't any points"))));
-				mafDEL(resultPolydata);
+				vtkDEL(resultPolydata);
 			}
 			else
 			{
@@ -719,7 +719,7 @@ void mafOpBooleanSurface::Difference()
 			if(result == MAF_ERROR)
 			{
 				mafWarningMessage(_M(mafString(_L("The result surface hasn't any points"))));
-				mafDEL(resultPolydata);
+				vtkDEL(resultPolydata);
 			}
 			else
 			{

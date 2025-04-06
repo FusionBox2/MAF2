@@ -143,7 +143,7 @@ medGUILutHistogramEditor::~medGUILutHistogramEditor()
   
   //Deleting Lut
   if(m_Lut) 
-    mafDEL(m_Lut);
+    vtkDEL(m_Lut);
 
 // Already deleted by the histogram
 //   if (m_ResampledData)

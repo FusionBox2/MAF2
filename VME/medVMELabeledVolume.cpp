@@ -127,7 +127,7 @@ medVMELabeledVolume::~medVMELabeledVolume()
 //------------------------------------------------------------------------------
 {
   if (m_DataCopied)
-    mafDEL(m_Dataset);
+    vtkDEL(m_Dataset);
   m_VolumeLink = NULL;
   m_CheckedVector.clear();
   m_LabelNameVector.clear();
