@@ -101,7 +101,7 @@ protected:
   
   // slice preview
   wxNotebook            *m_PreviewBook;
-  wxVTKWindow    				*m_SliceRwi;
+  std::unique_ptr<wxVTKWindow>    				m_SliceRwi;
   vtkRenderWindow       *m_SliceWindow;
   vtkTextActor          *m_WaitActor;
   vtkRenderer           *m_SliceRenderer;
@@ -111,14 +111,14 @@ protected:
   vtkActor2D            *m_SliceActor;
 
   // 3d preview
-  wxVTKWindow    				  *m_Rwi3D;
+  std::unique_ptr<wxVTKWindow>    				  m_Rwi3D;
   vtkRenderer             *m_Renderer3D;
   vtkRenderWindow         *m_Window3D;
   vtkMAFAdaptiveVolumeMapper *m_Mapper3D;
   vtkVolume               *m_Volume3D;
 
   // graph/widget window
-  wxVTKWindow  		*m_GraphRwi;
+  std::unique_ptr<wxVTKWindow> m_GraphRwi;
   vtkRenderer     *m_GraphRenderer;
   vtkRenderWindow *m_GraphWindow;
   vtkWidgetActor  *m_WidgetActor;

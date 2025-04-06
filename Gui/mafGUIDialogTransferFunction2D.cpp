@@ -223,9 +223,9 @@ void mafGUIDialogTransferFunction2D::ShowModal(mafVME *vme)
   m_Rwi3D->SetRenderWindow(NULL);
   m_GraphRwi->SetRenderWindow(NULL);
 
-  cppDEL(this->m_SliceRwi); 
-  cppDEL(this->m_Rwi3D);
-  cppDEL(this->m_GraphRwi);
+  this->m_SliceRwi.reset(); 
+  this->m_Rwi3D.reset();
+  this->m_GraphRwi.reset();
 
   delete this->m_CriticalSection;
   threader->Delete();
@@ -282,7 +282,7 @@ void mafGUIDialogTransferFunction2D::CreateGUI()
   c->SetValue(0.35, 0.5f);
   this->m_SliceRenderer->AddActor(this->m_WaitActor);
 
-  this->m_SliceRwi = new wxVTKWindow(previewPage, -1);
+  this->m_SliceRwi = std::make_unique<wxVTKWindow>(previewPage, -1);
 	this->m_SliceRwi->SetRenderWindow(m_SliceWindow);
   vtkInteractorStylePreviewImage *pstyle = vtkInteractorStylePreviewImage::New();
   pstyle->SetDialog(this);
@@ -291,8 +291,8 @@ void mafGUIDialogTransferFunction2D::CreateGUI()
   m_SliceWindow->SetInteractor(NULL);
   vtkDEL(m_SliceWindow);
   this->m_SliceRwi->Show(true);
-	((wxWindow *)this->m_SliceRwi)->SetSize(0, 0, 350, 320);
-  gridSizer->Add(this->m_SliceRwi, 1, wxEXPAND, 0);
+	this->m_SliceRwi->SetSize(0, 0, 350, 320);
+  gridSizer->Add(this->m_SliceRwi.get(), 1, wxEXPAND, 0);
 
   // slice slider
   this->m_SliceNumber = 0;
@@ -317,13 +317,13 @@ void mafGUIDialogTransferFunction2D::CreateGUI()
   this->m_Renderer3D	= vtkRenderer::New();
   m_Window3D->AddRenderer(this->m_Renderer3D);
   this->m_Renderer3D->SetBackground(0.f,0.f,0.f);
-  this->m_Rwi3D = new wxVTKWindow(previewPage, -1);
+  this->m_Rwi3D = std::make_unique<wxVTKWindow>(previewPage, -1);
 	this->m_Rwi3D->SetRenderWindow(m_Window3D);
   m_Window3D->SetInteractor(NULL);
   vtkDEL(m_Window3D);
   this->m_Rwi3D->Show(true);
-	((wxWindow *)this->m_Rwi3D)->SetSize(0, 0, 350, 350);
-  tabSizer->Add(this->m_Rwi3D, 1, wxEXPAND, 0);
+	this->m_Rwi3D->SetSize(0, 0, 350, 350);
+  tabSizer->Add(this->m_Rwi3D.get(), 1, wxEXPAND, 0);
 
   // graph window
  	m_GraphWindow = vtkRenderWindow::New();
@@ -332,7 +332,7 @@ void mafGUIDialogTransferFunction2D::CreateGUI()
   this->m_GraphRenderer->SetBackground(0.f,0.f,0.f);
   this->m_GraphRenderer->LightFollowCameraOff();
   this->m_GraphRenderer->GetActiveCamera()->ParallelProjectionOn();
-  this->m_GraphRwi = new wxVTKWindow(this, -1);
+  this->m_GraphRwi = std::make_unique<wxVTKWindow>(this, -1);
 	this->m_GraphRwi->SetRenderWindow(m_GraphWindow);
   vtkInteractorStyleWidget *wstyle = vtkInteractorStyleWidget::New();
   wstyle->SetDialog(this);
@@ -341,9 +341,9 @@ void mafGUIDialogTransferFunction2D::CreateGUI()
   m_GraphWindow->SetInteractor(NULL);
   vtkDEL(m_GraphWindow);
   this->m_GraphRwi->Show(true);
-	((wxWindow *)this->m_GraphRwi)->SetSize(0, 0, 350, 180);
+	((wxWindow *)this->m_GraphRwi.get())->SetSize(0, 0, 350, 180);
   wxStaticBoxSizer *tmpSizer = new wxStaticBoxSizer(new wxStaticBox(this, -1, "Value / Gradient graph"), wxVERTICAL);
-  tmpSizer->Add(this->m_GraphRwi, 1, wxEXPAND, 0);
+  tmpSizer->Add(this->m_GraphRwi.get(), 1, wxEXPAND, 0);
   leftPane->Add(tmpSizer, 1, wxEXPAND, 0);
 
   // create right pane

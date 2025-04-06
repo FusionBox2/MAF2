@@ -229,11 +229,10 @@ void mafGUIApplicationLayoutSettings::AddLayout()
 {
   mafString name;
   
-  wxTextEntryDialog *dlg = new wxTextEntryDialog(NULL,_("please enter a name"), _("New Layout"), name.toWx());
+  auto dlg = std::make_unique<wxTextEntryDialog>(nullptr,_("please enter a name"), _("New Layout"), name.toWx());
   dlg->SetValue(_("new layout"));
   int result = dlg->ShowModal(); 
   name = mafWxToString(dlg->GetValue());
-  cppDEL(dlg);
   if(result != wxID_OK) return;
 
   //check for equal names

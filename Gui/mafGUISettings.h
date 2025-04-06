@@ -58,6 +58,6 @@ protected:
   mafGUI *m_Gui;
   mafString m_Label;
 
-  wxConfig *m_Config;
+  std::unique_ptr<wxConfig> m_Config;
 };
 #endif

@@ -49,7 +49,7 @@ static bool mafPics_Initialized = false;
 mafPictureFactory::mafPictureFactory()
 //----------------------------------------------------------------------------
 {
-  m_PictureMaps = new mafPictureFactory_Pimpl();
+  m_PictureMaps = std::make_unique<mafPictureFactory_Pimpl>();
 }
 //----------------------------------------------------------------------------
 void mafPictureFactory::Initialize()
@@ -154,7 +154,6 @@ void mafPictureFactory::Initialize()
 mafPictureFactory::~mafPictureFactory()
 //----------------------------------------------------------------------------
 {
-  cppDEL(m_PictureMaps);
 }
 //----------------------------------------------------------------------------
 void mafPictureFactory::Add(const mafString& id,const char** xpm)

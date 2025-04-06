@@ -34,7 +34,7 @@ mafTransformBase::mafTransformBase()
 //----------------------------------------------------------------------------
 {
   m_Matrix = mafMatrix::NewSPtr(); // dynamic allocation to allow reference counting
-  m_EventSource = new mafEventSource;
+  m_EventSource = std::make_unique<mafEventSource>();
 #ifdef MAF_USE_VTK
   m_VTKTransform = NULL;
 #endif
@@ -45,7 +45,7 @@ mafTransformBase::mafTransformBase()
 mafTransformBase::~mafTransformBase()
 //----------------------------------------------------------------------------
 {
-  cppDEL(m_EventSource);
+	m_EventSource.reset();
 #ifdef MAF_USE_VTK
   vtkDEL(m_VTKTransform);
 #endif
@@ -56,8 +56,8 @@ mafTransformBase::mafTransformBase(const mafTransformBase& copy)
 //----------------------------------------------------------------------------
 {
 	m_Matrix = mafMatrix::NewSPtr(); // dynamic allocation to allow reference counting
-	m_EventSource = new mafEventSource;
-	m_TimeStamp = 0;
+  m_EventSource = std::make_unique<mafEventSource>();
+  m_TimeStamp = 0;
 
   m_Matrix->DeepCopy(*copy.m_Matrix);
 #ifdef MAF_USE_VTK

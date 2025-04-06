@@ -120,7 +120,7 @@ public:
 
   /** 
     return the event source object: the transform can send events through this event source */
-  mafEventSource *GetEventSource() {return m_EventSource;}
+  mafEventSource *GetEventSource() {return m_EventSource.get();}
 
 #ifdef MAF_USE_VTK
   /** Return a VTK transform connected to this transform */
@@ -138,7 +138,7 @@ protected:
 
   mafTimeStamp    m_TimeStamp;   ///< the timestamp to assign to the output matrix (default=0)
 
-  mafEventSource  *m_EventSource;
+  std::unique_ptr<mafEventSource>  m_EventSource;
 
   #ifdef MAF_USE_VTK
   vtkMAFToLinearTransform *m_VTKTransform; ///< VTK transform used to link to VTK process objects

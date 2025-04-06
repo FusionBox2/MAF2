@@ -39,13 +39,12 @@ mafGUISettings::mafGUISettings(mafBaseEventHandler *Listener, const mafString &l
 
   m_Gui = NULL;
 
-  m_Config = new wxConfig(wxEmptyString);
+  m_Config = std::make_unique<wxConfig>(wxEmptyString);
 }
 //----------------------------------------------------------------------------
 mafGUISettings::~mafGUISettings()
 //----------------------------------------------------------------------------
 {
-  cppDEL(m_Config);
 }
 //----------------------------------------------------------------------------
 void mafGUISettings::CreateGui()

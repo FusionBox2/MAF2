@@ -96,7 +96,7 @@ public:
 
 
 protected:
-  mafPictureFactory_Pimpl *m_PictureMaps;
+  std::unique_ptr<mafPictureFactory_Pimpl> m_PictureMaps;
 };
 //----------------------------------------------------------------------------
 // macro
