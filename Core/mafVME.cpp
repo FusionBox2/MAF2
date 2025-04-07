@@ -97,7 +97,6 @@ int mafVME::InternalInitialize()
 mafVME *mafVME::GetParent() const
 //-------------------------------------------------------------------------
 {
-  assert(m_Parent == NULL || m_Parent->IsA(typeid(mafVME)));
   return mafVME::StaticDownCast(Superclass::GetParent());
 }
 

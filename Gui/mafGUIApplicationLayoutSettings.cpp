@@ -344,7 +344,8 @@ void mafGUIApplicationLayoutSettings::LoadLayout(bool fileDefault)
   if(mafFileExists(file))
   {
     //clear tree
-    m_XMLRoot->CleanTree();
+    m_XMLRoot->RemoveAllChildren();
+    m_XMLRoot->RemoveAllAttributes();
     m_List->Clear();
 
 	mafXMLReader reader(_R("MLY"), _R("2.0"));

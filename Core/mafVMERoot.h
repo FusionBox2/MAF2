@@ -64,12 +64,6 @@ public:
   void SetMaxItemId(mafID id) { m_MaxItemId=id; Modified();}
   void ResetMaxItemId() { this->SetMaxItemId(0);}
 
-  /** Clean the tree and all the data structures of this root*/
-  void CleanTree() { \
-    mafNode::CleanTree(); \
-    m_Attributes.clear(); \
-  };
-
   /** set the tree reference system */
   void SetMatrix(const mafMatrix &mat) override;
 

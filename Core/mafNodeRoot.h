@@ -30,12 +30,6 @@ class MAF_EXPORT mafNodeRoot : public mafNode, public mafRoot
 public:
   mafTypeMacro(mafNodeRoot,mafNode);
 
-  /** Clean the tree and all the data structures of this root*/
-  void CleanTree() { \
-    mafNode::CleanTree(); \
-    m_Attributes.clear(); \
-  };
-
   /** print a dump of this object */
   void Print(std::ostream& os, const int tabs=0) override;// const;
 

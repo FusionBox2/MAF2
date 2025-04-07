@@ -355,9 +355,9 @@ std::shared_ptr<mmaMaterial> mafVMELandmark::GetMaterial()
 //-------------------------------------------------------------------------
 {
   std::shared_ptr<mmaMaterial> material;
-  if (m_Parent)
+  if (GetParent())
   {
-    material = mmaMaterial::SafeDownCast(m_Parent->GetAttribute(_R("MaterialAttributes")));
+    material = mmaMaterial::SafeDownCast(GetParent()->GetAttribute(_R("MaterialAttributes")));
   }
   else
   {
