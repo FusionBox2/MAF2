@@ -444,7 +444,7 @@ void medOpVolumeResample::Resample()
         // set at each iteration since I'm using the SetMatrix, which doesn't support
         // transform pipelines.
         auto outputParentAbsPose = mafMatrix::NewSPtr();
-        m_ResampledVme->GetParent()->GetOutput()->GetAbsMatrix(*outputParentAbsPose,input_item->GetTimeStamp());
+        mafVME::StaticDownCast(m_ResampledVme->GetParent())->GetOutput()->GetAbsMatrix(*outputParentAbsPose,input_item->GetTimeStamp());
         localPoseTransformFrame->SetInputFrame(*outputParentAbsPose);
 
         auto inputParentAbsPose = mafMatrix::NewSPtr();

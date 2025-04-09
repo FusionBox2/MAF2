@@ -642,8 +642,8 @@ void GetOVPSpecial(mafVME *vme, mafTimeStamp ts, mafTimeStamp tsRef,
     DiV4dCopy(&vTm, vOVPPosOut);
     return;
   }
-  mafVME *parent = vme->GetParent();
-  if(parent == NULL)
+  auto parent = mafVME::StaticDownCast(vme->GetParent());
+  if(parent == nullptr)
     return;
   mafVMEAFRefSys *parentSys = GetAFRefSys(parent);
   if(parentSys == NULL || parentSys->GetBoneID() == mafVMEAFRefSys::ID_AFS_NOTDEFINED || parentSys->GetBoneID() != FindParentID(vmeSys->GetBoneID()))
@@ -741,8 +741,8 @@ void SetOVPSpecial(mafVME *vme, mafTimeStamp ts, mafTimeStamp tsRef,
     return;
   if(vmeSys->GetBoneID() == mafVMEAFRefSys::ID_AFS_PELVIS)
     return;
-  mafVME *parent = vme->GetParent();
-  if(parent == NULL)
+  auto parent = mafVME::StaticDownCast(vme->GetParent());
+  if(parent == nullptr)
     return;
   mafVMEAFRefSys *parentSys = GetAFRefSys(parent);
   if(parentSys == NULL || parentSys->GetBoneID() == mafVMEAFRefSys::ID_AFS_NOTDEFINED || parentSys->GetBoneID() != FindParentID(vmeSys->GetBoneID()))

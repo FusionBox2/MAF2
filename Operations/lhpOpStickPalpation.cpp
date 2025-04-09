@@ -91,7 +91,7 @@ namespace {
     }
     //this cloud is supposed to have words "stick, "wand and "definitions" somewhere in it's or it's parent name
     paDetArray[0] = pVME;
-    paDetArray[1] = pVME->GetParent();
+    paDetArray[1] = mafVME::StaticDownCast(pVME->GetParent());
     for(nI = 0; nI < DIM(paDetArray); nI++)
     {
       if(paDetArray[nI] == NULL)

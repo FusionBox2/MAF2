@@ -855,7 +855,7 @@ void medOpSegmentation::DeleteOpDialog()
     {
       m_View->VmeShow(parent,false);
       m_View->VmeRemove(parent);
-      parent = parent->GetParent();
+      parent = mafVME::StaticDownCast(parent->GetParent());
     }
   }
 
@@ -3607,7 +3607,7 @@ void medOpSegmentation::OnLoadSegmentationEvent(mafEvent *e)
         do 
         {
           parents.push_back(parent);
-          parent = parent->GetParent();
+          parent = mafVME::StaticDownCast(parent->GetParent());
         }
         while(!parent->IsA("mafVMERoot"));
 

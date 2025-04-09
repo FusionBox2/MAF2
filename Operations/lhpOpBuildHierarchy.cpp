@@ -556,7 +556,7 @@ void lhpOpBuildHierarchy::BindToVME(std::shared_ptr<mafVME> pvme, lhpOpBuildHier
 
   pStart->SetVME(pFoundVME);
   if(pFoundVME)
-    pStart->SetParentVME(pFoundVME->GetParent());
+    pStart->SetParentVME(mafVME::StaticDownCast(pFoundVME->GetParent()));
   if(LookupStdName(pStart->GetName(), m_dictionary))
   {
     //pStart->SetID(GetBoneIDByName(*LookupStdName(pStart->GetName())));

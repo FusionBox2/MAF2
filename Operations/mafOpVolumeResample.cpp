@@ -346,7 +346,7 @@ void mafOpVolumeResample::Resample()
         // set at each iteration since I'm using the SetMatrix, which doesn't support
         // transform pipelines.
         auto output_parent_abs_pose = mafMatrix::NewSPtr();
-        m_ResampledVme->GetParent()->GetOutput()->GetAbsMatrix(*output_parent_abs_pose,input_item->GetTimeStamp());
+        mafVME::StaticDownCast(m_ResampledVme->GetParent())->GetOutput()->GetAbsMatrix(*output_parent_abs_pose,input_item->GetTimeStamp());
         local_pose->SetInputFrame(*output_parent_abs_pose);
 
         auto input_parent_abs_pose = mafMatrix::NewSPtr();

@@ -1627,7 +1627,7 @@ void medOpMML::OnLandmark2AtlasPatientSelection()
   mafVME *root = mafVME::SafeDownCast(GetInput()->GetRoot());
 
   // get landmarks parent node
-  mafVME* parentvme = vme->GetParent();
+  mafVME* parentvme = mafVME::StaticDownCast(vme->GetParent());
 
   // search vme tree upwards
   wxString   parentvmename;
@@ -1635,7 +1635,7 @@ void medOpMML::OnLandmark2AtlasPatientSelection()
 
   while (parentvme != root)
   {
-    parentvme = parentvme->GetParent();
+    parentvme = mafVME::StaticDownCast(parentvme->GetParent());
     parentvmename = parentvme->GetName().toWx();
 
     if (parentvmename.compare(m_AtlasMSFSectionName) == 0)
@@ -1737,7 +1737,7 @@ void medOpMML::OnLandmark3AtlasPatientSelection()
   mafVME *root = mafVME::SafeDownCast(GetInput()->GetRoot());
 
   // get landmarks parent node
-  mafVME* parentvme = vme->GetParent();
+  mafVME* parentvme = mafVME::StaticDownCast(vme->GetParent());
 
   // search vme tree upwards
   wxString   parentvmename;
@@ -1745,7 +1745,7 @@ void medOpMML::OnLandmark3AtlasPatientSelection()
 
   while (parentvme != root)
   {
-    parentvme = parentvme->GetParent();
+    parentvme = mafVME::StaticDownCast(parentvme->GetParent());
     parentvmename = parentvme->GetName().toWx();
 
     if (parentvmename.compare(m_AtlasMSFSectionName) == 0)

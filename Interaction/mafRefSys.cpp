@@ -136,7 +136,7 @@ std::shared_ptr<mafTransformBase> mafRefSys::GetTransform()
   case PARENT: 
     if (m_VME.get() && m_VME->GetParent())
     {
-      return m_VME->GetParent()->GetAbsMatrixPipe();
+      return mafVME::StaticDownCast(m_VME->GetParent())->GetAbsMatrixPipe();
     }
     return m_Identity;
   case LOCAL:

@@ -94,13 +94,6 @@ int mafVME::InternalInitialize()
 }
 
 //-------------------------------------------------------------------------
-mafVME *mafVME::GetParent() const
-//-------------------------------------------------------------------------
-{
-  return mafVME::StaticDownCast(Superclass::GetParent());
-}
-
-//-------------------------------------------------------------------------
 int mafVME::DeepCopy(mafNode *a)
 //-------------------------------------------------------------------------
 { 
@@ -417,7 +410,7 @@ void mafVME::SetAbsMatrix(const mafMatrix &matrix)
   if (GetParent())
   {
     mafMatrix pmat;
-    GetParent()->GetOutput()->GetAbsMatrix(pmat,matrix.GetTimeStamp());
+    mafVME::StaticDownCast(GetParent())->GetOutput()->GetAbsMatrix(pmat,matrix.GetTimeStamp());
 
     pmat.Invert();
 

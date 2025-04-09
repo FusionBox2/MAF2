@@ -169,7 +169,7 @@ void mafGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
         auto graph = ((mafViewVTK*)m_ViewActive)->GetSceneGraph();
         auto vme = mafVME::StaticDownCast(graph->Vme2Node(graph->GetSelectedVme())->m_Vme.get());
 			  if(vme->IsMAFType(mafVMELandmark))
-				  vme = vme->GetParent();
+				  vme = mafVME::StaticDownCast(vme->GetParent());
 
         mafSceneGraph *sg = ((mafViewVTK *)m_ViewActive)->GetSceneGraph();
         if(sg)

@@ -65,11 +65,6 @@ public:
   /** print a dump of this object */
   void Print(std::ostream& os, const int tabs=0) override;// const;
 
-  /** 
-    return the parent VME Node. Notice that a VME can only reparented 
-    under another VME, not to other kind of nodes! */
-  mafVME *GetParent() const;
-
   /**
     Copy the contents of another VME into this one. Notice that subtrees
     are not copied, i.e. copy is not recursive!

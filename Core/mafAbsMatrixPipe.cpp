@@ -75,7 +75,7 @@ int mafAbsMatrixPipe::SetVME(mafVME *vme)
       
       if (vme->GetParent())
       {
-        m_Transform->SetInputFrame(vme->GetParent()->GetAbsMatrixPipe());
+        m_Transform->SetInputFrame(mafVME::StaticDownCast(vme->GetParent())->GetAbsMatrixPipe());
       }
       else
       {

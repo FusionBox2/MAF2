@@ -183,7 +183,7 @@ void GetLocalMatrix(mafVME *vme, mafTimeStamp ts, mafMatrix& matrix, mafVME *par
     return;
 
   if(parent == nullptr)
-    parent = vme->GetParent();
+    parent = mafVME::StaticDownCast(vme->GetParent());
 
   GetGlobalMatrix(parent, ts, pmatrix, useRefSys);//in case of GetParent == NULL Global matrix is filled as identity
   GetGlobalMatrix(vme,    ts, cmatrix, useRefSys);
@@ -249,7 +249,7 @@ void OVP_GES(mafVME *vme, mafTimeStamp ts, mafTimeStamp tsRef, DiV4d *vOVPPos, D
     return;
   }
   if(parent == nullptr)
-    parent = vme->GetParent();
+    parent = mafVME::StaticDownCast(vme->GetParent());
   if(parent == nullptr)
     return;
   mafVMEAFRefSys *parentSys = GetAFRefSys(parent);
@@ -443,7 +443,7 @@ void SetOVP(mafVME *vme, mafTimeStamp ts, mafTimeStamp tsRef, DiV4d *vOVPPos, Di
   {
     return;
   }
-  auto parent = vme->GetParent();
+  auto parent = mafVME::StaticDownCast(vme->GetParent());
   if(parent == nullptr)
     return;
   mafVMEAFRefSys *parentSys = GetAFRefSys(parent);
@@ -1301,7 +1301,7 @@ mafVME *AutoSelectProximal(mafVME *distal)
     return lm;
   auto grandparent = parent->GetParent();
   if(!grandparent)
-    return parent;
+    return mafVME::StaticDownCast(parent);
   for(unsigned i = 0; i < grandparent->GetNumberOfChildren(); i++)
   {
     auto lmc = mafVMELandmarkCloud::SafeDownCast(grandparent->GetChild(i));
@@ -1321,5 +1321,5 @@ mafVME *AutoSelectProximal(mafVME *distal)
     if(auto lmc = mafVMELandmarkCloud::SafeDownCast(grandparent->GetChild(i)))
       return lmc.get();
   }
-  return parent;
+  return mafVME::StaticDownCast(parent);
 }
