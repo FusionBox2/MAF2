@@ -271,10 +271,10 @@ void wxVTKRenderWindowInteractor::OnLButtonDown(wxMouseEvent& event)
     return;
   }
 
+  this->Window->SetFocus();
+  this->Window->CaptureMouse();
   if (false)
   {
-    this->Window->SetFocus();
-    this->Window->CaptureMouse();
     this->SetEventInformationFlipY(event.GetX(), event.GetY(), event.ControlDown(), event.ShiftDown(), 0, event.GetClickCount());
     this->SetAltKey(event.AltDown());
     event.Skip(this->InvokeEvent(vtkCommand::LeftButtonPressEvent, nullptr) == 0);
@@ -303,10 +303,10 @@ void wxVTKRenderWindowInteractor::OnLButtonDoubleClick(wxMouseEvent& event)
     return;
   }
 
+  this->Window->SetFocus();
+  this->Window->CaptureMouse();
   if (false)
   {
-		this->Window->SetFocus();
-  	this->Window->CaptureMouse();
   	this->SetEventInformationFlipY(event.GetX(), event.GetY(), event.ControlDown(), event.ShiftDown(), 0, event.GetClickCount());
   	this->SetAltKey(event.AltDown());
   	event.Skip(this->InvokeEvent(vtkCommand::LeftButtonPressEvent, nullptr) == 0);
@@ -334,12 +334,12 @@ void wxVTKRenderWindowInteractor::OnLButtonUp(wxMouseEvent& event)
     return;
   }
 
+  this->Window->ReleaseMouse();
   if (false)
   {
     this->SetEventInformationFlipY(event.GetX(), event.GetY(), event.ControlDown(), event.ShiftDown(), 0, event.GetClickCount());
     this->SetAltKey(event.AltDown());
     event.Skip(this->InvokeEvent(vtkCommand::LeftButtonReleaseEvent, nullptr) == 0);
-    this->Window->ReleaseMouse();
     event.Skip(false);
   }
   else
@@ -365,10 +365,10 @@ void wxVTKRenderWindowInteractor::OnMButtonDown(wxMouseEvent& event)
     return;
   }
 
+  this->Window->SetFocus();
+  this->Window->CaptureMouse();
   if (false)
   {
-		this->Window->SetFocus();
-  	this->Window->CaptureMouse();
   	this->SetEventInformationFlipY(event.GetX(), event.GetY(), event.ControlDown(), event.ShiftDown(), 0, event.GetClickCount());
   	this->SetAltKey(event.AltDown());
   	event.Skip(this->InvokeEvent(vtkCommand::MiddleButtonPressEvent, nullptr) == 0);
@@ -396,10 +396,10 @@ void wxVTKRenderWindowInteractor::OnMButtonDoubleClick(wxMouseEvent& event)
     return;
   }
 
+  this->Window->SetFocus();
+  this->Window->CaptureMouse();
   if (false)
   {
-		this->Window->SetFocus();
-  	this->Window->CaptureMouse();
   	this->SetEventInformationFlipY(event.GetX(), event.GetY(), event.ControlDown(), event.ShiftDown(), 0, event.GetClickCount());
   	this->SetAltKey(event.AltDown());
   	event.Skip(this->InvokeEvent(vtkCommand::MiddleButtonPressEvent, nullptr) == 0);
@@ -427,12 +427,12 @@ void wxVTKRenderWindowInteractor::OnMButtonUp(wxMouseEvent& event)
     return;
   }
 
+  this->Window->ReleaseMouse();
   if (false)
   {
 		this->SetEventInformationFlipY(event.GetX(), event.GetY(), event.ControlDown(), event.ShiftDown(), 0, event.GetClickCount());
   	this->SetAltKey(event.AltDown());
   	event.Skip(this->InvokeEvent(vtkCommand::MiddleButtonReleaseEvent, nullptr) == 0);
-  	this->Window->ReleaseMouse();
 	}
   else
   {
@@ -457,10 +457,10 @@ void wxVTKRenderWindowInteractor::OnRButtonDown(wxMouseEvent& event)
     return;
   }
 
+  this->Window->SetFocus();
+  this->Window->CaptureMouse();
   if (false)
   {
-		this->Window->SetFocus();
-  	this->Window->CaptureMouse();
   	this->SetEventInformationFlipY(event.GetX(), event.GetY(), event.ControlDown(), event.ShiftDown(), 0, event.GetClickCount());
   	this->SetAltKey(event.AltDown());
   	event.Skip(this->InvokeEvent(vtkCommand::RightButtonPressEvent, nullptr) == 0);
@@ -488,10 +488,10 @@ void wxVTKRenderWindowInteractor::OnRButtonDoubleClick(wxMouseEvent& event)
     return;
   }
 
+  this->Window->SetFocus();
+  this->Window->CaptureMouse();
   if (false)
   {
-		this->Window->SetFocus();
-  	this->Window->CaptureMouse();
   	this->SetEventInformationFlipY(event.GetX(), event.GetY(), event.ControlDown(), event.ShiftDown(), 0, event.GetClickCount());
   	this->SetAltKey(event.AltDown());
   	event.Skip(this->InvokeEvent(vtkCommand::RightButtonPressEvent, nullptr) == 0);
@@ -519,12 +519,12 @@ void wxVTKRenderWindowInteractor::OnRButtonUp(wxMouseEvent& event)
     return;
   }
 
+  this->Window->ReleaseMouse();
   if (false)
   {
 		this->SetEventInformationFlipY(event.GetX(), event.GetY(), event.ControlDown(), event.ShiftDown(), 0, event.GetClickCount());
   	this->SetAltKey(event.AltDown());
   	event.Skip(this->InvokeEvent(vtkCommand::RightButtonReleaseEvent, nullptr) == 0);
-  	this->Window->ReleaseMouse();
 	}
   else
   {
