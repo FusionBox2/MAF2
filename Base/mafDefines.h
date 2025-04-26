@@ -1,20 +1,4 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafDefines
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafDefines_h
-#define __mafDefines_h
+#pragma once
 
 /** Standard macros and constants for the MAF library.
   This file include all the standard macros and constants used inside the MAF
@@ -81,20 +65,6 @@ enum MAF_EXPORT MAF_RETURN_VALUES_ID
 class mafDeviceButtonsPadMouse;
 MAF_EXPORT mafDeviceButtonsPadMouse *GetGlobalMouse();
 MAF_EXPORT void SetGlobalMouse(mafDeviceButtonsPadMouse *);
-
-typedef char                   mafChar;
-typedef wchar_t                mafWChar;
-typedef signed char            mafInt8;
-typedef short int              mafInt16;
-typedef long int               mafInt32;
-typedef long long int          mafInt64;
-typedef unsigned char          mafUInt8;
-typedef unsigned short         mafUInt16;
-typedef unsigned long int      mafUInt32;
-typedef unsigned long long int mafUInt64;
-typedef float                  mafFloat;
-typedef double                 mafDouble;
-typedef double                 mafReal;
 
 class MAF_EXPORT mafMessageBuf
 {
@@ -238,5 +208,3 @@ MAF_EXPORT void mafSleep(int msec);
   msg << x << "\n"; \
   mafMessage(_M(msg.str().c_str()));\
 }
-
-#endif
