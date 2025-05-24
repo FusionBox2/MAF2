@@ -144,7 +144,7 @@ public:
   void SetAutoSort(bool enable);
 
   /** Get the autosort flag. */
-  bool GetAutoSort() {return m_Autosort;};
+  bool GetAutoSort() {return m_Autosort;}
 
   /** collapse the children of node_id */
   void CollapseNode(intptr_t node_id);
@@ -167,8 +167,8 @@ public:
   intptr_t NodeFromItem(wxTreeItemId& item);
   
   
-  void SetTreeStyle(long style) {m_NodeTree->SetWindowStyle(style);};
-  long GetTreeStyle()           {return m_NodeTree->GetWindowStyle();};
+  void SetTreeStyle(long style) {m_NodeTree->SetWindowStyle(style);}
+  long GetTreeStyle()           {return m_NodeTree->GetWindowStyle();}
 
 protected:
   /** Private function that notify the Listener of node selection and deselection. */
@@ -189,13 +189,13 @@ protected:
   /** Check that id is a valid index in the imagelist - return the (eventually clamped) value */
   int CheckIconId(int icon);
 
-  bool IsRootHidden() {return (GetTreeStyle() & wxTR_HIDE_ROOT) != 0; };
+  bool IsRootHidden() {return (GetTreeStyle() & wxTR_HIDE_ROOT) != 0; }
 
   bool               m_PreventNotify;
   bool               m_Autosort;
   intptr_t           m_NodeRoot;
-  wxImageList       *m_NodeImages;       
-  wxHashTable       *m_NodeTable;        
+  wxImageList       *m_NodeImages;
+  wxHashTable       *m_NodeTable;
 
 	//----------------------------------------------------------------------------
 	// mafGUITreeItemData :
@@ -203,8 +203,8 @@ protected:
 	//----------------------------------------------------------------------------
 	class mafGUITreeItemData: public wxTreeItemData{
 	public:
-			mafGUITreeItemData(intptr_t node_id) {m_NodeId = node_id; };
-			intptr_t GetNode()                {return m_NodeId;};
+			mafGUITreeItemData(intptr_t node_id) {m_NodeId = node_id; }
+			intptr_t GetNode()                {return m_NodeId;}
 	protected:
 			intptr_t m_NodeId;
 	};
@@ -229,7 +229,7 @@ protected:
   private:
     bool m_Alphabetical;
   };
-  mafTreeCtrlSortable        *m_NodeTree;         
+  mafTreeCtrlSortable *m_NodeTree;
 
 	//----------------------------------------------------------------------------
 	// mafGUITreeTableElement:

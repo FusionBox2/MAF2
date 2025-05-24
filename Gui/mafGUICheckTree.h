@@ -85,7 +85,7 @@ public:
   void EnableSelect(bool enable);
 
   /** Retrieve wxwindows widget pointer of the tree.*/
-  wxTreeCtrl *GetTree() {return m_NodeTree;};
+  wxTreeCtrl *GetTree() {return m_NodeTree;}
   
 protected:
   /** Update the vme nodes icon. */

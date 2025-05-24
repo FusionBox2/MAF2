@@ -45,8 +45,8 @@ Another feature of the widget is to show also a checkbox near the VME's icon to 
 class mafGUIVMEChooserTree: public mafGUICheckTree
 {
 public:
-                 mafGUIVMEChooserTree (wxWindow *parent, mafGUICheckTree *tree, ValidateCallBackType vme_accept_function = 0, wxWindowID id=-1, bool CloseButton = false, bool HideTitle = false, long style = REPRESENTATION_AS_TREE, bool multiSelect = false);
-                 ~mafGUIVMEChooserTree() override;
+  mafGUIVMEChooserTree (wxWindow *parent, mafGUICheckTree *tree, ValidateCallBackType vme_accept_function = 0, wxWindowID id=-1, bool CloseButton = false, bool HideTitle = false, long style = REPRESENTATION_AS_TREE, bool multiSelect = false);
+  ~mafGUIVMEChooserTree() override;
 
   /** Return the choosed node*/
   std::vector<mafNode* > GetChoosedNode();

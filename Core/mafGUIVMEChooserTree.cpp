@@ -1,30 +1,5 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafGUIVMEChooserTree
- Authors: Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-
 #include "mafGUIVMEChooserTree.h" 
+
 #include "mafDecl.h"
 #include "mafGUIDialog.h"
 #include "mafPics.h" 
@@ -50,14 +25,12 @@ mafGUIVMEChooserTree::mafGUIVMEChooserTree( wxWindow *parent, mafGUICheckTree *t
 :mafGUICheckTree(parent, id, CloseButton, HideTitle)
 //----------------------------------------------------------------------------
 {
-  m_ChoosedNode       = NULL;
   m_ChooserTreeStyle  = style;
-  m_CheckedNode.clear();
 
   m_MultipleSelection = multiSelect;
  
   if(vme_accept_function == 0)
-    m_ValidateFunction = NULL;
+    m_ValidateFunction = nullptr;
   else
     m_ValidateFunction = vme_accept_function;
   
@@ -67,19 +40,18 @@ mafGUIVMEChooserTree::mafGUIVMEChooserTree( wxWindow *parent, mafGUICheckTree *t
     InitializeImageListMulti();
   
 
-  {auto rootItem = tree->GetTree()->GetRootItem(); CloneSubTree(tree, &rootItem, (wxTreeItemId *)NULL);}
+  {auto rootItem = tree->GetTree()->GetRootItem(); CloneSubTree(tree, &rootItem, (wxTreeItemId *)nullptr);}
 }
 //----------------------------------------------------------------------------
-mafGUIVMEChooserTree::~mafGUIVMEChooserTree()
+mafGUIVMEChooserTree::~mafGUIVMEChooserTree() = default;
 //----------------------------------------------------------------------------
-{
-}
+
 //----------------------------------------------------------------------------
 int mafGUIVMEChooserTree::GetVmeStatus(mafNode *node)
 //----------------------------------------------------------------------------
 {
   int image_id;
-  if(m_ValidateFunction == NULL)
+  if(m_ValidateFunction == nullptr)
   {
     if (m_MultipleSelection)
     {
@@ -312,23 +284,25 @@ void mafGUIVMEChooserTree::CloneSubTree(mafGUICheckTree *source_tree, wxTreeItem
   wxTreeItemId current_item;
   bool         expanded = source_tree->GetTree()->IsExpanded(*source_item);
 
-  if (dest_parent_item == NULL)
+  auto sourceVME = static_cast<mafGUICheckTreeItemData*>(m_NodeTree->GetItemData(*source_item))->GetSharedNode();
+
+  if (dest_parent_item == nullptr)
   {
     m_NodeTree->DeleteAllItems();
-    current_item = m_NodeTree->AddRoot(text,image,image, new mafGUITreeItemData(node));
+    current_item = m_NodeTree->AddRoot(text,image,image, new mafGUICheckTreeItemData(node, sourceVME));
   }
   else
   {
     if (m_ChooserTreeStyle == REPRESENTATION_AS_TREE)
     {
-      current_item = m_NodeTree->AppendItem(*dest_parent_item,text,image,image, new mafGUITreeItemData(node));
+      current_item = m_NodeTree->AppendItem(*dest_parent_item,text,image,image, new mafGUICheckTreeItemData(node, sourceVME));
     }
     else 
     {
       // Flat tree of acceptable VMEs
       if (image == NODE_VISIBLE_ON)
       {
-        m_NodeTree->AppendItem(m_NodeTree->GetRootItem(),text,image,image, new mafGUITreeItemData(node));
+        m_NodeTree->AppendItem(m_NodeTree->GetRootItem(),text,image,image, new mafGUICheckTreeItemData(node, sourceVME));
       }
       current_item = m_NodeTree->GetRootItem();
     }
