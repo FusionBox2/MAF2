@@ -2,6 +2,7 @@
 
 #include "ftkConfigure.h"
 
+#include "ftk/Base/Meta.h"
 #include "ftk/Base/String.h"
 #include "ftk/IO/To.h"
 
@@ -50,9 +51,33 @@ auto mafStorageElement::As() const
 
 namespace parser
 {
-  mafString Parse(const mafStorageElement& value, To<mafString>);
-  int Parse(const mafStorageElement& value, To<int>);
-  mafID Parse(const mafStorageElement& value, To<mafID>);
+  template <typename T>
+  void CheckInBounds(T x, T min, T max) {
+    if (x < min || x > max) {
+      throw std::exception("Out of range");
+    }
+  }
+  template <typename Dst, typename Src>
+  Dst NarrowToInt(Src x) {
+    static_assert(
+      std::numeric_limits<Src>::min() <= std::numeric_limits<Dst>::min() &&
+      std::numeric_limits<Src>::max() >= std::numeric_limits<Dst>::max(),
+      "expanding cast requested"
+      );
+    CheckInBounds<Src>(x, std::numeric_limits<Dst>::min(), std::numeric_limits<Dst>::max());
+    return static_cast<Dst>(x);
+  }
+
+	mafString Parse(const mafStorageElement& value, To<mafString>);
+  
+  template <typename Value, typename T>
+  std::enable_if_t<kIsInteger<T>, T> Parse(const Value& value, To<T>) {
+    using IntT = std::conditional_t<std::is_signed_v<T>, intmax_t, uintmax_t>;
+    return NarrowToInt<T>(value.template As<IntT>());
+  }
+
+  intmax_t Parse(const mafStorageElement& value, To<intmax_t>);
+  uintmax_t Parse(const mafStorageElement& value, To<uintmax_t>);
   double Parse(const mafStorageElement& value, To<double>);
   template <typename T, typename Value>
   std::optional<decltype(Parse(std::declval<Value>(), To<T>{})) >
@@ -118,11 +143,15 @@ protected:
 namespace serializer
 {
   void Serialize(mafStorageElementBuilder& value, const mafString&);
-  void Serialize(mafStorageElementBuilder& value, const unsigned int&);
-  void Serialize(mafStorageElementBuilder& value, const int&);
-  void Serialize(mafStorageElementBuilder& value, const int64_t&);
-  void Serialize(mafStorageElementBuilder& value, const uint64_t&);
+  void Serialize(mafStorageElementBuilder& value, const intmax_t&);
+  void Serialize(mafStorageElementBuilder& value, const uintmax_t&);
   void Serialize(mafStorageElementBuilder& value, const double&);
+  template <typename W, typename T>
+  std::enable_if_t<kIsInteger<T> && !std::is_same_v<T, intmax_t> && !std::is_same_v<T, intmax_t>, void> Serialize(W& w, T value) {
+    using IntT = std::conditional_t<std::is_signed_v<T>, intmax_t, uintmax_t>;
+    Serialize(w, static_cast<IntT>(value));
+  }
+
 }
 
 template<typename T>

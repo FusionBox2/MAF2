@@ -203,13 +203,13 @@ namespace parser
 		return {};
 	}
 
-	int Parse(const mafStorageElement& value, To<int>)
-    {
-		return std::stoi(value.As<mafString>().toStd());
-    }
-	mafID Parse(const mafStorageElement& value, To<mafID>)
+	intmax_t Parse(const mafStorageElement& value, To<intmax_t>)
 	{
 		return std::stoll(value.As<mafString>().toStd());
+	}
+	uintmax_t Parse(const mafStorageElement& value, To<uintmax_t>)
+	{
+		return std::stoull(value.As<mafString>().toStd());
 	}
 	double Parse(const mafStorageElement& value, To<double>)
 	{
@@ -232,15 +232,11 @@ namespace serializer
 			node->appendChild(text_node);
 		}
 	}
- 	void Serialize(mafStorageElementBuilder& value, const int& val)
+	void Serialize(mafStorageElementBuilder& value, const intmax_t& val)
 	{
 		value.SetValue(mafToString(val));
 	}
-	void Serialize(mafStorageElementBuilder& value, const int64_t& val)
-	{
-		value.SetValue(mafToString(val));
-	}
-	void Serialize(mafStorageElementBuilder& value, const uint64_t& val)
+	void Serialize(mafStorageElementBuilder& value, const uintmax_t& val)
 	{
 		value.SetValue(mafToString((long long)val));
 	}
