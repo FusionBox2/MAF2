@@ -30,10 +30,10 @@ do\
   bool left = false;\
   if(node->m_Parent != nullptr)\
   {\
-    up    = (node != node->m_Parent->GetFirstChild());\
-    down  = (node != node->m_Parent->GetLastChild());\
-    left  = (node == node->m_Parent->GetFirstChild() && node->m_Parent->m_Parent != nullptr);\
-    right = (node != node->m_Parent->GetFirstChild());\
+    up    = (node != node->m_Parent->GetFirstChild().get());\
+    down  = (node != node->m_Parent->GetLastChild().get());\
+    left  = (node == node->m_Parent->GetFirstChild().get() && node->m_Parent->m_Parent != nullptr);\
+    right = (node != node->m_Parent->GetFirstChild().get());\
   }\
   node->m_Gui->Enable(ID_MOVEUP, up);\
   node->m_Gui->Enable(ID_MOVEDN, down);\
@@ -129,7 +129,7 @@ int mafNode::InternalInitialize()
       if (node)
       {
         // attach linked node to this one
-        link.m_Node = node;
+        link.m_Node = node.get();
         node->AddObserver(this);
       }
     }    
@@ -202,13 +202,6 @@ void mafNode::SetName(const mafString& name)
 } 
 
 //-------------------------------------------------------------------------
-std::unique_ptr<mafNodeIterator> mafNode::NewIterator()
-//-------------------------------------------------------------------------
-{
-  return std::make_unique<mafNodeIterator>(this);
-}
-
-//-------------------------------------------------------------------------
 size_t mafNode::GetNumberOfChildren() const
 //-------------------------------------------------------------------------
 {
@@ -244,31 +237,31 @@ bool mafNode::IsAChild(mafNode *a)
 }
 
 //-------------------------------------------------------------------------
-mafNode *mafNode::GetFirstChild(bool onlyVisible /*=false*/)
+std::shared_ptr<mafNode> mafNode::GetFirstChild(bool onlyVisible /*=false*/)
 //-------------------------------------------------------------------------
 {
   for (auto& child : m_Children)
   {
     if (!onlyVisible || child->IsVisible())
-      return child.get();
+      return child;
   }
   return nullptr;
 }
 
 //-------------------------------------------------------------------------
-mafNode *mafNode::GetLastChild(bool onlyVisible /*=false*/)
+std::shared_ptr<mafNode> mafNode::GetLastChild(bool onlyVisible /*=false*/)
 //-------------------------------------------------------------------------
 {
   for (auto it = rbegin(m_Children); it != rend(m_Children); ++it)
   {
     if (!onlyVisible || (*it)->IsVisible())
-      return it->get();
+      return *it;
   }
   return nullptr;
 }
 
 //-------------------------------------------------------------------------
-mafNode * mafNode::GetChild(mafID idx, bool onlyVisible)
+std::shared_ptr<mafNode> mafNode::GetChild(mafID idx, bool onlyVisible)
 //-------------------------------------------------------------------------
 {
   if (onlyVisible)
@@ -280,7 +273,7 @@ mafNode * mafNode::GetChild(mafID idx, bool onlyVisible)
       {
         if (idx == count)
         {
-          return child.get();
+          return child;
         }
         ++count;
       }
@@ -289,7 +282,7 @@ mafNode * mafNode::GetChild(mafID idx, bool onlyVisible)
   }
   if (idx >= 0 && idx < m_Children.size())
   {
-    return m_Children[idx].get();
+    return m_Children[idx];
   }
   return nullptr;
 }
@@ -332,13 +325,13 @@ int mafNode::FindNodeIdx(const mafString& name, bool onlyVisible)
   return -1;
 }
 //-------------------------------------------------------------------------
-mafNode *mafNode::FindInTreeByTag(const mafTagItem& tag)
+std::shared_ptr<mafNode> mafNode::FindInTreeByTag(const mafTagItem& tag)
 //-------------------------------------------------------------------------
 {
   if (auto titem = GetTagArray()->GetTag(tag.GetName()))
   {
 	  if (tag == *titem)
-	  	return this;
+	  	return SharedFromThis();
   }
 
   for (auto& child : m_Children)
@@ -351,15 +344,15 @@ mafNode *mafNode::FindInTreeByTag(const mafTagItem& tag)
   return nullptr;
 }
 //-------------------------------------------------------------------------
-mafNode *mafNode::FindInTreeByName(const mafString& name, bool match_case, bool whole_word)
+std::shared_ptr<mafNode> mafNode::FindInTreeByName(const mafString& name, bool match_case, bool whole_word)
 //-------------------------------------------------------------------------
 {
   if(match_case)
   {
     if(whole_word && GetName() == name)
-      return this;
+      return SharedFromThis();
     if(!whole_word && GetName().find(name) != mafString::npos)
-      return this;
+      return SharedFromThis();
   }
   else
   {
@@ -377,9 +370,9 @@ mafNode *mafNode::FindInTreeByName(const mafString& name, bool match_case, bool 
     }
 
     if(whole_word && myName == word_to_search)
-      return this;
+      return SharedFromThis();
     if(!whole_word && myName.find(word_to_search) != mafString::npos)
-      return this;
+      return SharedFromThis();
 
   }
   for (auto& child : m_Children)
@@ -392,12 +385,12 @@ mafNode *mafNode::FindInTreeByName(const mafString& name, bool match_case, bool 
   return nullptr;
 }
 //-------------------------------------------------------------------------
-mafNode *mafNode::FindInTreeById(const mafID id)
+std::shared_ptr<mafNode> mafNode::FindInTreeById(const mafID id)
 //-------------------------------------------------------------------------
 {
   if (GetId()==id)
   {
-	  return this;
+	  return SharedFromThis();
   }
   for (auto& child : m_Children)
   {
@@ -409,10 +402,13 @@ mafNode *mafNode::FindInTreeById(const mafID id)
   return nullptr;
 }
 //-------------------------------------------------------------------------
-int mafNode::AddChild(mafNode *node)
+int mafNode::AddChild(std::shared_ptr<mafNode> node)
 //-------------------------------------------------------------------------
 {
-  return node->ReparentTo(this);
+  // We cannot reparent to a subnode!!!
+  if (node->IsInTree(this))
+    return MAF_ERROR;
+  return ReparentTo(node, this);
 }  
 
 //-------------------------------------------------------------------------
@@ -428,8 +424,8 @@ void mafNode::RemoveChild(mafNode *node)
   {
     mafWarningMacro("Trying to remove node that is not a child of this node");
   }
-  mafAutoPointer<mafNode> pntr(node);
-  node->SetParent(nullptr);
+  auto pntr = node->SharedFromThis();
+  SetParentNew(pntr, nullptr);
 }
 
 //-------------------------------------------------------------------------
@@ -438,19 +434,16 @@ void mafNode::RemoveChild(mafID idx,bool onlyVisible)
 {  
   if (auto oldnode = GetChild(idx, onlyVisible))
   {
-    RemoveChild(oldnode);
+    RemoveChild(oldnode.get());
     return;
   }
 	mafWarningMacro("Trying to remove a child node with wrong index: " << idx);
 }
 
 //-------------------------------------------------------------------------
-int mafNode::ReparentTo(mafNode *newparent)
+int mafNode::ReparentTo(std::shared_ptr<mafNode> sharedThis, mafNode *newparent)
 //-------------------------------------------------------------------------
 {
-  // We cannot reparent to a subnode!!!
-  if (IsInTree(newparent))
-    return MAF_ERROR;
   // Add this node to the new parent children list and
   // remove it from old parent children list.
   // We first add it to the new parent, thus it is registered
@@ -458,8 +451,8 @@ int mafNode::ReparentTo(mafNode *newparent)
   // We must keep the oldparent pointer somewhere since it is overwritten
   // by AddChild.
   // self register to preserve from distruction
-  mafAutoPointer<mafNode> pntr(this);
-  if((SetParent(nullptr) == MAF_OK) && (SetParent(newparent) == MAF_OK))
+  auto pntr = sharedThis;
+  if((SetParentNew(sharedThis, nullptr) == MAF_OK) && (SetParentNew(sharedThis, newparent) == MAF_OK))
     return MAF_OK;
   return MAF_ERROR;
 }
@@ -472,7 +465,7 @@ mafNode *mafNode::GetRoot()
   {
     if (node->GetParent() == nullptr)
     {
-      return this;
+      return node;
     }
   }
   return nullptr;
@@ -498,51 +491,41 @@ bool mafNode::IsInTree(mafNode *a) const
 }
 
 //-------------------------------------------------------------------------
-void mafNode::CleanTree()
-//-------------------------------------------------------------------------
-{
-  for (auto& child : m_Children)
-  {
-    if(child != nullptr)
-    {
-	    child->CleanTree();
-    }
-  }
-  this->RemoveAllChildren();
-  
-}
-
-//-------------------------------------------------------------------------
 void mafNode::RemoveAllChildren()
 //-------------------------------------------------------------------------
 {
   size_t num = this->GetNumberOfChildren();
   for (size_t i = 0; i < num; i++)
   {
-    mafAutoPointer<mafNode> curr = this->GetLastChild();
+    auto curr = this->GetLastChild();
     if(curr.get())
-      curr->SetParent(nullptr);
+      SetParentNew(curr, nullptr);
   }
   m_Children.clear();
 }
 
 //------------------------------------------------------------------------------
-int mafNode::SetParent(mafNode *parent)
+int mafNode::OnSetParent(mafNode* parent) { return MAF_OK; }
+//-------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+int mafNode::SetParentNew(std::shared_ptr<mafNode> sharedThis, mafNode *parent)
 //-------------------------------------------------------------------------
 {
+  auto _Parent = sharedThis->GetParent();
   // reparenting to NULL is admitted in any case
-  if((parent != nullptr && !this->CanReparentTo(parent)) || IsInTree(parent))
+  if((parent != nullptr && !sharedThis->CanReparentTo(parent)) || sharedThis->IsInTree(parent))
   {
     // modified by Stefano 27-10-2004: Changed the error macro to give feedback about node names 
-    mafErrorMacro("Cannot reparent the VME: " << GetName().GetCStr() << " under the " << parent->GetTypeName() << " named " << parent->GetName().GetCStr());
+    mafErrorMacro("Cannot reparent the VME: " << sharedThis->GetName().GetCStr() << " under the " << parent->GetTypeName() << " named " << parent->GetName().GetCStr());
     return MAF_ERROR;
   }
-  if(m_Parent == parent)
+  if(_Parent == parent)
   {
     return MAF_OK;
   }
-  mafAutoPointer<mafNode> pntr(this);//self protection from destruction
-  mafNode *old_root = (m_Parent ? m_Parent->GetRoot() : nullptr);
+  auto pntr = sharedThis;//self protection from destruction
+  mafNode *old_root = (_Parent ? _Parent->GetRoot() : nullptr);
   mafNode *new_root = (parent ? parent->GetRoot() : nullptr);
 
   // if the Node was attached to another tree, first send detaching event
@@ -550,29 +533,30 @@ int mafNode::SetParent(mafNode *parent)
   {
     if(new_root != old_root)
     {
-      {mafEventBase evUnq(this, NODE_DETACHED_FROM_TREE); InvokeEvent(&evUnq);}
-      {mafEventBase evUnq(this, NODE_DETACHED_FROM_TREE); ForwardUpEvent(&evUnq);}
-      {mafEventBase evUnq(this, NODE_DETACHED_FROM_TREE, NULL, MCH_DOWN); OnEvent(&evUnq);}
+      {mafEventBase evUnq(sharedThis.get(), NODE_DETACHED_FROM_TREE); sharedThis->InvokeEvent(&evUnq); }
+      {mafEventBase evUnq(sharedThis.get(), NODE_DETACHED_FROM_TREE); sharedThis->ForwardUpEvent(&evUnq); }
+      {mafEventBase evUnq(sharedThis.get(), NODE_DETACHED_FROM_TREE, NULL, MCH_DOWN); sharedThis->OnEvent(&evUnq); }
     }
-    int idx = m_Parent->FindNodeIdx(this);
+    int idx = _Parent->FindNodeIdx(sharedThis.get());
     if(idx == -1)
     {
       mafWarningMacro("Child index could not be found");
     }
     else
     {
-      mafNode *prev = (idx > 0) ? m_Parent->m_Children[idx - 1].get() : NULL;
-      mafNode *next = (idx < m_Parent->m_Children.size() - 1) ? m_Parent->m_Children[idx + 1].get() : NULL;
-      m_Parent->m_Children.erase(m_Parent->m_Children.begin() + idx);
+      mafNode *prev = (idx > 0) ? _Parent->m_Children[idx - 1].get() : nullptr;
+      mafNode *next = (idx < _Parent->m_Children.size() - 1) ? _Parent->m_Children[idx + 1].get() : nullptr;
+      _Parent->m_Children.erase(_Parent->m_Children.begin() + idx);
       UpdateUpDownAvailability(prev);
       UpdateUpDownAvailability(next);
-      m_Parent->Modified();
+      _Parent->Modified();
     }
   }
 
-  m_Parent = parent;
+  sharedThis->m_Parent = parent;
+  _Parent = parent;
 
-  auto iter = NewIterator();
+  auto iter = std::make_unique<mafNodeIterator>(sharedThis.get());
   for (auto n = iter->GetFirstNode(); n; n = iter->GetNextNode())
   {
     n->UpdateId();
@@ -581,28 +565,28 @@ int mafNode::SetParent(mafNode *parent)
 
   if(new_root != nullptr)
   {
-    if(m_Parent->IsInitialized() && (Initialize() == MAF_ERROR))
+    if(_Parent->IsInitialized() && (sharedThis->Initialize() == MAF_ERROR))
       return MAF_ERROR;
-    mafNode *prev = (m_Parent->m_Children.size() > 0) ? m_Parent->m_Children[m_Parent->m_Children.size() - 1].get() : nullptr;
-    m_Parent->m_Children.push_back(this);
+    mafNode *prev = (_Parent->m_Children.size() > 0) ? _Parent->m_Children[_Parent->m_Children.size() - 1].get() : nullptr;
+    _Parent->m_Children.push_back(sharedThis);
     UpdateUpDownAvailability(prev);
-    m_Parent->Modified();
+    _Parent->Modified();
     if(new_root != old_root)
     {
-      {mafEventBase evUnq(this, NODE_ATTACHED_TO_TREE); InvokeEvent(&evUnq);}
-      {mafEventBase evUnq(this, NODE_ATTACHED_TO_TREE); ForwardUpEvent(&evUnq);}
-      {mafEventBase evUnq(this, NODE_ATTACHED_TO_TREE, nullptr, MCH_DOWN); OnEvent(&evUnq);}
+      {mafEventBase evUnq(sharedThis.get(), NODE_ATTACHED_TO_TREE); sharedThis->InvokeEvent(&evUnq);}
+      {mafEventBase evUnq(sharedThis.get(), NODE_ATTACHED_TO_TREE); sharedThis->ForwardUpEvent(&evUnq);}
+      {mafEventBase evUnq(sharedThis.get(), NODE_ATTACHED_TO_TREE, nullptr, MCH_DOWN); sharedThis->OnEvent(&evUnq);}
     }
   }
-  UpdateUpDownAvailability(this);
-  Modified();
-  return MAF_OK;
+  UpdateUpDownAvailability(sharedThis.get());
+  sharedThis->Modified();
+  return sharedThis->OnSetParent(parent);
 }
 //-------------------------------------------------------------------------
-mafNode *mafNode::MakeCopy(mafNode *a)
+std::shared_ptr<mafNode> mafNode::MakeCopy(mafNode *a)
 //-------------------------------------------------------------------------
 {
-  mafNode* newnode=a->NewInstance();
+  std::shared_ptr<mafNode> newnode(a->NewInstance());
   if (newnode)
     newnode->DeepCopy(a);
   return newnode;
@@ -720,7 +704,7 @@ bool mafNode::CompareTree(mafNode *vme)
 
   for (unsigned long i=0;i<this->GetNumberOfChildren();i++)
   {
-    if (!this->GetChild(i)->CompareTree(vme->GetChild(i)))
+    if (!this->GetChild(i)->CompareTree(vme->GetChild(i).get()))
     {
       return false;
     }
@@ -749,56 +733,51 @@ void mafNode::UpdateLinks(std::vector<std::pair<mafNode*, mafNode*> >& nodes)
 
 }
 //----------------------------------------------------------------------------
-mafNode *mafNode::CopyTree()
+std::shared_ptr<mafNode> mafNode::CopyTree()
 //-------------------------------------------------------------------------
 {
   std::vector<std::pair<mafNode*, mafNode*> > nodes;
   {
-    auto iter = NewIterator();
-    for (mafNode *n = iter->GetFirstNode(); n; n = iter->GetNextNode())
+    auto iter = std::make_unique<mafNodeIterator>(this);
+    for (auto n = iter->GetFirstNode(); n; n = iter->GetNextNode())
     {
-      nodes.push_back(std::make_pair(n, (mafNode*)NULL));
+      nodes.push_back(std::make_pair(n, nullptr));
     }
   }
-  mafNode *res = CopyTree(this);
-  if(res == NULL)
-    return NULL;
-  res->Register(NULL);
+  auto res = CopyTree(this);
+  if(res == nullptr)
+    return nullptr;
   {
-    auto iter = res->NewIterator();
+    auto iter = std::make_unique<mafNodeIterator>(res.get());
     unsigned i = 0;
-    for(mafNode *n = iter->GetFirstNode(); n; n = iter->GetNextNode(), i++)
+    for(auto n = iter->GetFirstNode(); n; n = iter->GetNextNode(), i++)
     {
       nodes[i].second = n;
     }
   }
   {
-    auto iter = res->NewIterator();
-    for(mafNode *n = iter->GetFirstNode(); n; n = iter->GetNextNode())
+    auto iter = std::make_unique<mafNodeIterator>(res.get());
+    for(auto n = iter->GetFirstNode(); n; n = iter->GetNextNode())
     {
       n->UpdateLinks(nodes);
     }
   }
-  res->m_ReferenceCount--; // this hack avoid that 'v' node die when return
   return res;
 }
 
 //----------------------------------------------------------------------------
-mafNode *mafNode::CopyTree(mafNode *vme, mafNode *parent)
+std::shared_ptr<mafNode> mafNode::CopyTree(mafNode *vme, mafNode *parent)
 //-------------------------------------------------------------------------
 {
-  
-  mafNode *v = vme->MakeCopy();
-  v->Register(NULL);
-  v->ReparentTo(parent);
+  auto v = vme->MakeCopy();
+  ReparentTo(v, parent);
 
   for(unsigned long i=0; i<vme->GetNumberOfChildren(); i++)
   {
-    if (mafNode *child=vme->GetChild(i))
+    if (auto child=vme->GetChild(i))
       if (child->IsVisible())
-        mafNode::CopyTree(child,v);
+        mafNode::CopyTree(child.get(),v.get());
   }
-  v->m_ReferenceCount--; // this hack avoid that 'v' node die when return
   return v;
 }
 
@@ -1078,23 +1057,23 @@ void mafNode::OnEvent(mafEventBase *e)
 			break;
       case ID_MOVEUP:
         {
-          if(mafNode *parent = GetParent())
+          if(auto parent = GetParent())
             parent->MoveChildUp(this);
         }
           break;
       case ID_MOVEDN:
         {
-          if(mafNode *parent = GetParent())
+          if(auto parent = GetParent())
             parent->MoveChildDown(this);
         }
         break;
       case ID_MOVERIGHT:
         {
-          if(mafNode *parent = GetParent())
+          if(auto parent = GetParent())
           {
-            if(this != parent->GetFirstChild())
+            if(this != parent->GetFirstChild().get())
             {
-              ReparentTo(parent->GetChild(parent->FindNodeIdx(this) - 1));
+              ReparentTo(parent->GetChild(parent->FindNodeIdx(this)), parent->GetChild(parent->FindNodeIdx(this) - 1).get());
               {mafEvent evUnq(this, VME_SELECT); evUnq.SetVme(this); ForwardUpEvent(evUnq);}
             }
           }
@@ -1102,13 +1081,13 @@ void mafNode::OnEvent(mafEventBase *e)
         break;
       case ID_MOVELEFT:
         {
-          if(mafNode *parent = GetParent())
+          if(auto parent = GetParent())
           {
-            if(mafNode *grandparent = parent->GetParent())
+            if(auto grandparent = parent->GetParent())
             {
               int numChildren = grandparent->GetNumberOfChildren();
               int parentidx   = grandparent->FindNodeIdx(parent);
-              ReparentTo(grandparent);
+              ReparentTo(parent->GetChild(parent->FindNodeIdx(this)), grandparent);
               {mafEvent evUnq(this, VME_SELECT); evUnq.SetVme(this); ForwardUpEvent(evUnq);}
               for(int i = 0; i < (numChildren - parentidx - 1); i++)
                 grandparent->MoveChildUp(this);
@@ -1186,10 +1165,10 @@ void mafNode::InternalStore(mafStorageElementBuilder& parent)
       auto entry = children[_R("Node")];
 	  for (unsigned int i = 0; i < GetNumberOfChildren(); i++)
 	  {
-		  mafNode* node = GetChild(i);
+		  auto node = GetChild(i);
 		  if (node->IsVisible())
 		  {
-			  entry[i].SetValue(node);
+			  entry[i].SetValue(node.get());
 		  }
 	  }
   }
@@ -1268,7 +1247,7 @@ void mafNode::InternalRestore(const mafStorageElement& node)
 
   for (size_t i =0 ; i < child_items.GetNumItems(); i++)
   {
-	  mafNode* node = child_items[i].As<mafNode>();
+	  auto node = child_items[i].As<mafNode>();
 	  assert(node);
 	  if (node)
 	  {
@@ -1285,7 +1264,6 @@ void mafNode::Print(std::ostream& os, const int tabs)
   mafIndent indent(tabs);
   mafIndent next_indent(indent.GetNextIndent());
 
-  Superclass::Print(os,indent);
   os << indent << "Name: \"" << m_Name.GetCStr() << "\"" << std::endl;
   os << indent << "Initialized: " << m_Initialized << std::endl;
   os << indent << "VisibleToTraverse: " << m_VisibleToTraverse << std::endl;
@@ -1468,7 +1446,7 @@ void mafNode::SwapChildren(int idx1, int idx2)
   //if(m_Children.size() <= 1)
   //  return;
 
-  mafAutoPointer<mafNode> tmp = m_Children[idx1];
+  auto tmp = m_Children[idx1];
   m_Children[idx1] = m_Children[idx2];
   m_Children[idx2] = tmp;
   UpdateUpDownAvailability(m_Children[idx1].get());
@@ -1479,17 +1457,17 @@ void mafNode::SwapChildren(int idx1, int idx2)
   OnEvent(&e);
 }
 //-------------------------------------------------------------------------
-mafNode * mafNode::GetByPath(const mafString& path,  bool onlyVisible /*=true*/)
+std::shared_ptr<mafNode> mafNode::GetByPath(const mafString& path,  bool onlyVisible /*=true*/)
 //-------------------------------------------------------------------------
 {
   wxStringTokenizer tkz(path.toWx(), wxT("/"));
 
   mafNode *currentNode=this;
-  mafNode *tmpParent;
+  mafNode *tmpParent = nullptr;
   wxString tmpString;
   long tmpIndex;
 
-  while ( tkz.HasMoreTokens() && currentNode!=NULL )
+  while ( tkz.HasMoreTokens() && currentNode!=nullptr )
   {
     wxString token = tkz.GetNextToken();
 
@@ -1497,10 +1475,10 @@ mafNode * mafNode::GetByPath(const mafString& path,  bool onlyVisible /*=true*/)
     {
       tmpParent=currentNode->GetParent();
       //Root case: root does not ave next
-      if (tmpParent==NULL) 
+      if (tmpParent== nullptr)
       {
         mafLogMessage(_M("Node path error: root does not have next"));
-        currentNode=NULL;
+        currentNode= nullptr;
         break;
       }
       //getting node index
@@ -1509,21 +1487,21 @@ mafNode * mafNode::GetByPath(const mafString& path,  bool onlyVisible /*=true*/)
       if (tmpIndex==tmpParent->GetNumberOfChildren(onlyVisible)-1)
       {
         mafLogMessage(_M("Node path error: asked 'next' on last node"));
-        currentNode=NULL;
+        currentNode= nullptr;
         break;
       }
       //updating current node
-      currentNode=tmpParent->GetChild(tmpIndex+1,onlyVisible);
+      currentNode=tmpParent->GetChild(tmpIndex+1,onlyVisible).get();
     }
     
     else if (token=="prev")
 	  {
       tmpParent=currentNode->GetParent();
       //Root case: root does not ave next
-      if (tmpParent==NULL) 
+      if (tmpParent== nullptr)
       {
         mafLogMessage(_M("Node path error: root does not have next"));
-        currentNode=NULL;
+        currentNode= nullptr;
         break;
       }
       //getting node index
@@ -1532,40 +1510,40 @@ mafNode * mafNode::GetByPath(const mafString& path,  bool onlyVisible /*=true*/)
       if (tmpIndex==0)
       {
         mafLogMessage(_M("Node path error: asked 'prec' on first node"));
-        currentNode=NULL;
+        currentNode= nullptr;
         break;
       }
       //updating current node
-      currentNode=tmpParent->GetChild(tmpIndex-1,onlyVisible);
+      currentNode=tmpParent->GetChild(tmpIndex-1,onlyVisible).get();
     }
 
     else if (token=="firstPair")
 	  {
       tmpParent=currentNode->GetParent();
       //Root case: root does not ave next
-      if (tmpParent==NULL) 
+      if (tmpParent== nullptr)
       {
         mafLogMessage(_M("Node path error: root does not have next"));
-        currentNode=NULL;
+        currentNode= nullptr;
         break;
       }
       
       //updating current node
-      currentNode=tmpParent->GetFirstChild(onlyVisible);
+      currentNode=tmpParent->GetFirstChild(onlyVisible).get();
   	}
 
     else if (token=="lastPair")
 	  {
       tmpParent=currentNode->GetParent();
       //Root case: root does not ave next
-      if (tmpParent==NULL) 
+      if (tmpParent== nullptr)
       {
         mafLogMessage(_M("Node path error: root does not have next"));
-        currentNode=NULL;
+        currentNode= nullptr;
         break;
       }
       //updating current node
-      currentNode=tmpParent->GetLastChild(onlyVisible);
+      currentNode=tmpParent->GetLastChild(onlyVisible).get();
 	  }
     
     else if (token=="firstChild")
@@ -1574,11 +1552,11 @@ mafNode * mafNode::GetByPath(const mafString& path,  bool onlyVisible /*=true*/)
       if (currentNode->GetNumberOfChildren(onlyVisible)==0) 
       {
         mafLogMessage(_M("Node path error: asked 'firstChild' on no child node"));
-        currentNode=NULL;
+        currentNode=nullptr;
         break;
       }
       //updating current node
-      currentNode=currentNode->GetFirstChild(onlyVisible);
+      currentNode=currentNode->GetFirstChild(onlyVisible).get();
 	  }
     
     else if (token=="lastChild")
@@ -1587,11 +1565,11 @@ mafNode * mafNode::GetByPath(const mafString& path,  bool onlyVisible /*=true*/)
       if (currentNode->GetNumberOfChildren(onlyVisible)==0) 
       {
         mafLogMessage(_M("Node path error: asked 'lastChild' on no child node"));
-        currentNode=NULL;
+        currentNode= nullptr;
         break;
       }
       //updating current node
-      currentNode=currentNode->GetLastChild(onlyVisible);
+      currentNode=currentNode->GetLastChild(onlyVisible).get();
     }
     
     else if (token.StartsWith("pair["))
@@ -1600,7 +1578,7 @@ mafNode * mafNode::GetByPath(const mafString& path,  bool onlyVisible /*=true*/)
       if (token[token.size()-1] != ']')
       {
         mafLogMessage(_M("Node path error: pair[] wrong format"));
-        currentNode=NULL;
+        currentNode= nullptr;
         break;
       }
 
@@ -1609,10 +1587,10 @@ mafNode * mafNode::GetByPath(const mafString& path,  bool onlyVisible /*=true*/)
       
       tmpParent=currentNode->GetParent();
       //Root case: root does not ave next
-      if (tmpParent==NULL) 
+      if (tmpParent== nullptr)
       {
         mafLogMessage(_M("Node path error: root does not have pairs"));
-        currentNode=NULL;
+        currentNode= nullptr;
         break;
       }
 
@@ -1620,7 +1598,7 @@ mafNode * mafNode::GetByPath(const mafString& path,  bool onlyVisible /*=true*/)
       if (!tmpString.IsNumber())
       {
         mafLogMessage(_M("Node path error: wrong pair[] argument"));
-        currentNode=NULL;
+        currentNode= nullptr;
         break;
       }
 
@@ -1630,11 +1608,11 @@ mafNode * mafNode::GetByPath(const mafString& path,  bool onlyVisible /*=true*/)
       if(tmpIndex < 0 || tmpIndex > tmpParent->GetNumberOfChildren(onlyVisible)-1)
       {
         mafLogMessage(_M("Node path error: pair[] value outside bounds"));
-        currentNode=NULL;
+        currentNode= nullptr;
         break;
       }
 
-      currentNode=tmpParent->GetChild(tmpIndex,onlyVisible);
+      currentNode=tmpParent->GetChild(tmpIndex,onlyVisible).get();
   	}
     
     else if (token.StartsWith("pair{"))
@@ -1643,7 +1621,7 @@ mafNode * mafNode::GetByPath(const mafString& path,  bool onlyVisible /*=true*/)
       if (token[token.size()-1] != '}')
       {
         mafLogMessage(_M("Node path error: pair{} wrong format"));
-        currentNode=NULL;
+        currentNode= nullptr;
         break;
       }
 
@@ -1652,10 +1630,10 @@ mafNode * mafNode::GetByPath(const mafString& path,  bool onlyVisible /*=true*/)
 
       tmpParent=currentNode->GetParent();
       //Root case: root does not ave next
-      if (tmpParent==NULL) 
+      if (tmpParent== nullptr)
       {
         mafLogMessage(_M("Node path error: root does not have pairs"));
-        currentNode=NULL;
+        currentNode= nullptr;
         break;
       }
 
@@ -1664,11 +1642,11 @@ mafNode * mafNode::GetByPath(const mafString& path,  bool onlyVisible /*=true*/)
       if (tmpIndex==-1)
       {
         mafLogMessage(_M(_R("Node path error: pair{") + mafWxToString(tmpString) + _R("}, not found")));
-        currentNode=NULL;
+        currentNode= nullptr;
         break;
       }
 
-      currentNode=tmpParent->GetChild(tmpIndex,onlyVisible);
+      currentNode=tmpParent->GetChild(tmpIndex,onlyVisible).get();
 	  }
     
     else if (token.StartsWith("child["))
@@ -1677,7 +1655,7 @@ mafNode * mafNode::GetByPath(const mafString& path,  bool onlyVisible /*=true*/)
       if (token[token.size()-1] != ']')
       {
         mafLogMessage(_M("Node path error: child[] wrong format"));
-        currentNode=NULL;
+        currentNode= nullptr;
         break;
       }
 
@@ -1688,7 +1666,7 @@ mafNode * mafNode::GetByPath(const mafString& path,  bool onlyVisible /*=true*/)
       if (!tmpString.IsNumber())
       {
         mafLogMessage(_M("Node path error: wrong child[] argument"));
-        currentNode=NULL;
+        currentNode= nullptr;
         break;
       }
 
@@ -1698,11 +1676,11 @@ mafNode * mafNode::GetByPath(const mafString& path,  bool onlyVisible /*=true*/)
       if(tmpIndex < 0 || tmpIndex > currentNode->GetNumberOfChildren(onlyVisible)-1)
       {
         mafLogMessage(_M("Node path error: child[] value outside bounds"));
-        currentNode=NULL;
+        currentNode= nullptr;
         break;
       }
 
-      currentNode=currentNode->GetChild(tmpIndex,onlyVisible);
+      currentNode=currentNode->GetChild(tmpIndex,onlyVisible).get();
 
   	}
     
@@ -1712,7 +1690,7 @@ mafNode * mafNode::GetByPath(const mafString& path,  bool onlyVisible /*=true*/)
       if (token[token.size()-1] != '}')
       {
         mafLogMessage(_M("Node path error: child{} wrong format"));
-        currentNode=NULL;
+        currentNode= nullptr;
         break;
       }
 
@@ -1724,11 +1702,11 @@ mafNode * mafNode::GetByPath(const mafString& path,  bool onlyVisible /*=true*/)
       if (tmpIndex==-1)
       {
         mafLogMessage(_M(_R("Node path error: pair{") + mafWxToString(tmpString) + _R("}, not found")));
-        currentNode=NULL;
+        currentNode= nullptr;
         break;
       }
 
-      currentNode=currentNode->GetChild(tmpIndex,onlyVisible);
+      currentNode=currentNode->GetChild(tmpIndex,onlyVisible).get();
 	  }
     
     else if (token=="root")
@@ -1739,7 +1717,7 @@ mafNode * mafNode::GetByPath(const mafString& path,  bool onlyVisible /*=true*/)
     else if (token=="..")
     {
       currentNode=currentNode->GetParent();
-      if (currentNode==NULL)
+      if (currentNode== nullptr)
       {
         mafLogMessage(_M("Node path error: root does not have parent"));
         break;
@@ -1753,7 +1731,7 @@ mafNode * mafNode::GetByPath(const mafString& path,  bool onlyVisible /*=true*/)
 
     else 
     {
-      currentNode=NULL;
+      currentNode= nullptr;
       mafLogMessage(_M(_R("Node path error: unknown token:") + mafWxToString(token)));
       break;
     }
@@ -1761,19 +1739,22 @@ mafNode * mafNode::GetByPath(const mafString& path,  bool onlyVisible /*=true*/)
 
   } 
   //While end
-  return currentNode;
+  if (currentNode == nullptr)
+    return nullptr;
+  return currentNode->SharedFromThis();
+}
+std::shared_ptr<mafNode> mafNode::SharedFromThis()
+{
+  return shared_from_this();
 }
 
-mafNode* mafNode::Create(const char* NodeType)
+mafNode *mafNode::GetParent() const
 {
-  if(auto object = NodeFactory::CreateNode(NodeType))
-  {
-    if(auto node = mafNode::SafeDownCast(object))
-    {
-      return node;
-    }
-    delete object;
-    return nullptr;
-  }
-  return nullptr;
+  return m_Parent;
+}
+
+
+std::shared_ptr<mafNode>  mafNode::Create(const char* NodeType)
+{
+  return NodeFactory::CreateNode(NodeType);
 }
