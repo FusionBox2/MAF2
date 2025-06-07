@@ -391,7 +391,7 @@ void mafPipeMeter::UpdateProperty(bool fromTag)
   }
   else
   {
-    m_Tube->Update();
+    //m_Tube->Update();
     m_DataMapper->SetInputConnection(m_Tube->GetOutputPort());
   }
 
