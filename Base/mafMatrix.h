@@ -5,7 +5,7 @@
 #include "ftk/Base/Object.h"
 #include "ftk/Base/MTime.h"
 #include "ftk/Base/String.h"
-#include "ftk/IO/To.h"
+#include "ftk/IO/Parse.h"
 
 typedef double (*mafMatrixElements)[4];
 
@@ -182,7 +182,7 @@ protected:
   
 };
 template<class Value>
-mafMatrix Parse(const Value& value, parser::To<mafMatrix>)
+mafMatrix Parse(const Value& value, io::parse::To<mafMatrix>)
 {
   mafMatrix matrix;
   matrix.Zero();

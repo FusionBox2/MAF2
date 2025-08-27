@@ -24,7 +24,6 @@
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"
 #include "mafDefines.h"
-#include "ftk/IO/To.h"
 //----------------------------------------------------------------------------
 // Forward Refs:
 //----------------------------------------------------------------------------

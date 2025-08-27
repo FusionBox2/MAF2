@@ -18,7 +18,7 @@
 #include "mafOBB.h"
 #include "mafBaseEventHandler.h"
 #include "mafEventBase.h"
-#include "ftk/IO/To.h"
+#include "ftk/IO/Parse.h"
 
 //----------------------------------------------------------------------------
 // forward declarations :
@@ -338,7 +338,7 @@ protected:
 };
 
 template<class Value>
-std::shared_ptr<mafVMEItem> Parse(const Value& value, parser::To<mafVMEItem>)
+std::shared_ptr<mafVMEItem> Parse(const Value& value, io::parse::To<mafVMEItem>)
 {
   mafString type_name = value(_R("Type")).template As<mafString>();
   if (auto item = mafVMEItem::Create(type_name.GetCStr()))

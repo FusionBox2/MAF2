@@ -18,7 +18,7 @@
 
 #include "mafInteractor.h"
 #include "mafAction.h"
-#include "ftk/IO/To.h"
+#include "ftk/IO/Parse.h"
 #include <map>
 
 //----------------------------------------------------------------------------
@@ -99,10 +99,10 @@ private:
   void operator=(const mafInteractorSER&);  // Not implemented.
 };
 
-namespace parser
+namespace io::parse
 {
   template<class Value>
-  std::shared_ptr<mafInteractorSER> Parse(const Value& value, parser::To<mafInteractorSER>)
+  std::shared_ptr<mafInteractorSER> Parse(const Value& value, io::parse::To<mafInteractorSER>)
   {
     mafString type_name = value(_R("Type")).template As<mafString>();
     if (auto interactor = mafInteractorSER::Create(type_name.GetCStr()))

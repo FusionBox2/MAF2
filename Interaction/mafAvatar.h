@@ -18,7 +18,7 @@
 #define __mafAvatar_h
 
 #include "mafInteractor.h"
-#include "ftk/IO/To.h"
+#include "ftk/IO/Parse.h"
 #include "vtkProp3D.h"
 #include "vtkActor2D.h"
 
@@ -215,10 +215,10 @@ private:
   void operator=(const mafAvatar&);  // Not implemented.
 };
 
-namespace parser
+namespace io::parse
 {
   template<class Value>
-  std::shared_ptr<mafAvatar> Parse(const Value& value, parser::To<mafAvatar>)
+  std::shared_ptr<mafAvatar> Parse(const Value& value, io::parse::To<mafAvatar>)
   {
     mafString type_name = value(_R("Type")).template As<mafString>();
     if (auto avatar = mafAvatar::Create(type_name.GetCStr()))

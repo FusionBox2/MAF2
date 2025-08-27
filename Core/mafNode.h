@@ -4,7 +4,7 @@
 
 #include "ftk/Base/Object.h"
 #include "ftk/Base/String.h"
-#include "ftk/IO/To.h"
+#include "ftk/IO/Parse.h"
 
 #include "mafBaseEventHandler.h"
 #include "mafTagItem.h"
@@ -456,10 +456,10 @@ private:
   bool m_DependsOnLinkedNode = false;       ///< enable/disable calculation of MTime considering links
 };
 
-namespace parser
+namespace io::parse
 {
 	template<class Value>
-  std::shared_ptr<mafNode> Parse(const Value& value, parser::To<mafNode>)
+  std::shared_ptr<mafNode> Parse(const Value& value, io::parse::To<mafNode>)
   {
     mafString type_name = value(_R("Type")).template As<mafString>();
     if(auto node = mafNode::Create(type_name.GetCStr()))

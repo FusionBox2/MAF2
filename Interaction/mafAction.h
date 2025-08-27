@@ -19,7 +19,7 @@
 
 #include "mafAgent.h"
 #include "ftk/Base/Object.h"
-#include "ftk/IO/To.h"
+#include "ftk/IO/Parse.h"
 #include <list>
 
 //----------------------------------------------------------------------------
@@ -93,10 +93,10 @@ private:
   void operator=(const mafAction&);  // Not implemented.
 };
 
-namespace parser
+namespace io::parse
 {
   template<class Value>
-  mafAction* Parse(const Value& value, parser::To<mafAction>)
+  mafAction* Parse(const Value& value, io::parse::To<mafAction>)
   {
     mafString type_name = value(_R("Type")).template As<mafString>();
     if (auto action = mafAction::Create(type_name.GetCStr()))

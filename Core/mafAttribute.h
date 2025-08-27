@@ -2,7 +2,7 @@
 
 #include "ftk/Base/Object.h"
 #include "ftk/Base/String.h"
-#include "ftk/IO/To.h"
+#include "ftk/IO/Parse.h"
 
 class mafStorageElement;
 class mafStorageElementBuilder;
@@ -46,10 +46,10 @@ protected:
   mafString m_Name;
 };
 
-namespace parser
+namespace io::parse
 {
   template<class Value>
-  std::shared_ptr<mafAttribute> Parse(const Value& value, parser::To<mafAttribute>)
+  std::shared_ptr<mafAttribute> Parse(const Value& value, io::parse::To<mafAttribute>)
   {
     mafString type_name = value(_R("Type")).template As<mafString>();
     if (auto attr = mafAttribute::Create(type_name.GetCStr()))

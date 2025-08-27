@@ -17,7 +17,7 @@
 #define __mafDevice_h
 
 #include "mafAgentThreaded.h"
-#include "ftk/IO/To.h"
+#include "ftk/IO/Parse.h"
 
 //----------------------------------------------------------------------------
 // forward declarations :
@@ -172,10 +172,10 @@ private:
   void Shutdown() {Superclass::Shutdown();} 
 };
 
-namespace parser
+namespace io::parse
 {
   template<class Value>
-  std::shared_ptr<mafDevice>  Parse(const Value& value, parser::To<mafDevice>)
+  std::shared_ptr<mafDevice>  Parse(const Value& value, io::parse::To<mafDevice>)
   {
     mafString type_name = value(_R("Type")).template As<mafString>();
     if (auto device = mafDevice::Create(type_name.GetCStr()))
