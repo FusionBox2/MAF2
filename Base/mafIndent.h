@@ -1,44 +1,30 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafIndent
- Authors: originally based on vtkIndent (www.vtk.org), rewritten by Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
+#include "ftkConfigure.h"
 
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __mafIndent_h
-#define __mafIndent_h
-
-#include "mafConfigure.h"
 #include <ostream>
 
+BEGIN_FTK_NAMESPACE
 
-/** mafIndent - a simple class to control print indentation.
-  mafIndent is used to control indentation during the chaining print 
-  process. This way nested objects can correctly indent themselves.*/
-class MAF_EXPORT mafIndent
+namespace utilities
 {
-public:
-  mafIndent(int ind=0);
-  /**
-    Determine the next indentation level. Keep indenting by two until the 
-    max of forty. */
-  mafIndent GetNextIndent();
-  int       GetIndent() const {return m_Indent;}
-  operator int() const {return m_Indent;}
-protected:
-  int m_Indent;  
-};
+	class FTK_BASE_EXPORT Indent final
+	{
+	public:
+		Indent(int indent = 0);
 
-MAF_EXPORT std::ostream& operator<<(std::ostream& os, const mafIndent& o);
+		Indent GetNextIndent() const;
 
-#endif
+		int GetIndent() const { return m_Indent; }
 
+		operator int() const { return GetIndent(); }
+	private:
+		int m_Indent = 0;
+	};
+
+	FTK_BASE_EXPORT std::ostream& operator<<(std::ostream& os, const Indent& indent);
+}
+
+using mafIndent = utilities::Indent;
+
+END_FTK_NAMESPACE
