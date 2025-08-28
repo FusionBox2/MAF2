@@ -8,35 +8,39 @@
 #include <string>
 
 #define mafPlugAttributeMacro(node_type,descr) \
-  AttributeFactory::RegisterNewAttribute(node_type::GetStaticTypeName(), descr, node_type::NewObjectS);
+	AttributeFactory::RegisterNewAttribute(node_type::GetStaticTypeName(), descr, node_type::NewObjectS);
 
-using AttributeCreateType = std::shared_ptr<mafAttribute>;
-using CreateAttributeFunction = AttributeCreateType(*)();
 
 BEGIN_FTK_NAMESPACE
 
-class FTK_CORE_EXPORT AttributeFactory
+namespace model::data
 {
-public:
-  static int Initialize();
+	using AttributeCreateType = std::shared_ptr<Attribute>;
+	using CreateAttributeFunction = AttributeCreateType(*)();
 
-  static AttributeCreateType CreateAttribute(const char* ClassName);
+	class FTK_CORE_EXPORT AttributeFactory
+	{
+	public:
+		static int Initialize();
 
-  static const char* GetDescription(const char* ClassName);
+		static AttributeCreateType CreateAttribute(const char* ClassName);
 
-  static void RegisterNewAttribute(const char* ClassName, const char* description, CreateAttributeFunction createFunction);
+		static const char* GetDescription(const char* ClassName);
 
-private:
-  AttributeFactory() = default;
+		static void RegisterNewAttribute(const char* ClassName, const char* description, CreateAttributeFunction createFunction);
 
-  static AttributeFactory& GetFactory();
+	private:
+		AttributeFactory() = default;
 
-  struct CreateInformation
-  {
-    std::string             m_Description;
-    CreateAttributeFunction m_CreateObject;
-  };
-	std::map<std::string, CreateInformation, std::less<> > m_creatorsMap;
-};
+		static AttributeFactory& GetFactory();
+
+		struct CreateInformation
+		{
+			std::string             m_Description;
+			CreateAttributeFunction m_CreateObject;
+		};
+		std::map<std::string, CreateInformation, std::less<> > m_creatorsMap;
+	};
+}
 
 END_FTK_NAMESPACE

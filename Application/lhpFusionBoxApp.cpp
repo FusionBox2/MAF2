@@ -521,7 +521,7 @@ bool lhpFusionBoxApp::OnInit()
 
   int result;
  
-  result = AttributeFactory::Initialize();
+  result = model::data::AttributeFactory::Initialize();
   assert(result == MAF_OK);
 
   result = ItemFactory::Initialize();

@@ -8,86 +8,70 @@
 #include "assert.h"
 
 #include <ostream>
-
-//-------------------------------------------------------------------------
-mafAttribute& mafAttribute::operator=(const mafAttribute &a)
-//-------------------------------------------------------------------------
+namespace model::data
 {
-  DeepCopy(&a);
-  return *this;
-}
+	Attribute& Attribute::operator=(const Attribute& a)
+	{
+		DeepCopy(&a);
+		return *this;
+	}
 
-//-------------------------------------------------------------------------
-bool mafAttribute::operator==(const mafAttribute &a) const
-//-------------------------------------------------------------------------
-{
-  return Equals(&a);
-}
+	bool Attribute::operator==(const Attribute& a) const
+	{
+		return Equals(&a);
+	}
 
-//-------------------------------------------------------------------------
-void mafAttribute::DeepCopy(const mafAttribute *a)
-//-------------------------------------------------------------------------
-{
-  assert(a);
-  assert(a->IsA(GetTypeId()));
-  m_Name=a->GetName();
-}
+	void Attribute::DeepCopy(const Attribute* a)
+	{
+		assert(a);
+		assert(a->IsA(GetTypeId()));
+		m_Name = a->GetName();
+	}
 
-//-------------------------------------------------------------------------
-std::shared_ptr<mafAttribute> mafAttribute::MakeCopy()
-//-------------------------------------------------------------------------
-{
-  std::shared_ptr<mafAttribute> new_attr(NewInstance());
-  assert(new_attr);
-  new_attr->DeepCopy(this);
-  return new_attr;
-}
+	std::shared_ptr<Attribute> Attribute::MakeCopy()
+	{
+		std::shared_ptr<Attribute> new_attr(NewInstance());
+		assert(new_attr);
+		new_attr->DeepCopy(this);
+		return new_attr;
+	}
 
-//-------------------------------------------------------------------------
-bool mafAttribute::Equals(const mafAttribute *a) const
-//-------------------------------------------------------------------------
-{
-  return a->IsA(GetTypeId()) && m_Name==a->GetName();
-}
+	bool Attribute::Equals(const Attribute* a) const
+	{
+		return a->IsA(GetTypeId()) && m_Name == a->GetName();
+	}
 
-//-------------------------------------------------------------------------
-void mafAttribute::SetName(const mafString& name)
-//-------------------------------------------------------------------------
-{
-  m_Name=name;
-}
-//-------------------------------------------------------------------------
-const mafString& mafAttribute::GetName() const
-//-------------------------------------------------------------------------
-{
-  return m_Name;
-}
+	void Attribute::SetName(const mafString& name)
+	{
+		m_Name = name;
+	}
 
-//-------------------------------------------------------------------------
-void mafAttribute::InternalStore(mafStorageElementBuilder& parent)
-//-------------------------------------------------------------------------
-{
-  parent[_R("Name")].SetValue(m_Name);
-}
+	const mafString& Attribute::GetName() const
+	{
+		return m_Name;
+	}
 
-//-------------------------------------------------------------------------
-void mafAttribute::InternalRestore(const mafStorageElement& node)
-//-------------------------------------------------------------------------
-{
-  m_Name = node[_R("Name")].As<mafString>();
-}
-//-------------------------------------------------------------------------
-void mafAttribute::Print(std::ostream& os, const int tabs) const
-//-------------------------------------------------------------------------
-{
-  mafIndent indent(tabs);
+	void Attribute::InternalStore(mafStorageElementBuilder& parent)
+	{
+		parent[_R("Name")].SetValue(m_Name);
+	}
 
-  os << indent << "Attribute Type Name: " << GetTypeName() << std::endl;
+	void Attribute::InternalRestore(const mafStorageElement& node)
+	{
+		m_Name = node[_R("Name")].As<mafString>();
+	}
 
-  os << indent << "Name: " << m_Name.GetCStr() << std::endl;
-}
+	void Attribute::Print(std::ostream& os, const int tabs) const
+	{
+		utilities::Indent indent(tabs);
 
-std::shared_ptr<mafAttribute> mafAttribute::Create(const char* AttributeType)
-{
-  return AttributeFactory::CreateAttribute(AttributeType);
+		os << indent << "Attribute Type Name: " << GetTypeName() << "\n";
+
+		os << indent << "Name: " << m_Name.GetCStr() << "\n";
+	}
+
+	std::shared_ptr<Attribute> Attribute::Create(const char* AttributeType)
+	{
+		return AttributeFactory::CreateAttribute(AttributeType);
+	}
 }
