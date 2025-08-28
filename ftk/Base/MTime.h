@@ -6,25 +6,29 @@
 
 BEGIN_FTK_NAMESPACE
 
-using MTimeType = uint64_t;
-class FTK_BASE_EXPORT MTime
+namespace utilities
 {
-public:
-  MTime() : m_ModifiedTime(0) {} 
+  using MTimeType = uint64_t;
+  class FTK_BASE_EXPORT MTime
+  {
+  public:
+    MTime() : m_ModifiedTime(0) {}
 
-	void Modified();
+    void Modified();
 
-  MTimeType GetMTime() const;
+    MTimeType GetMTime() const;
 
-  bool operator>(const MTime& ts) const {return (GetMTime() > ts.GetMTime());}
-  bool operator<(const MTime& ts) const {return (GetMTime() < ts.GetMTime());}
+    bool operator>(const MTime& ts) const { return (GetMTime() > ts.GetMTime()); }
+    bool operator<(const MTime& ts) const { return (GetMTime() < ts.GetMTime()); }
 
-  operator MTimeType() const {return GetMTime();}
+    operator MTimeType() const { return GetMTime(); }
 
-private:
-  MTimeType m_ModifiedTime;
-};
+  private:
+    MTimeType m_ModifiedTime;
+  };
+}
 
-using mafMTime = MTime;
+using MTimeType = utilities::MTimeType;
+using mafMTime = utilities::MTime;
 
 END_FTK_NAMESPACE
