@@ -15,7 +15,7 @@
 =========================================================================*/
 
 #include "mafStorage.h"
-#include "mafNodeManager.h"
+#include "ftk/Core/NodeManager.h"
 #include "ftk/IO/StorageElement.h"
 #include "mmuIdFactory.h"
 #include "mafEventIO.h"

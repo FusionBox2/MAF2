@@ -17,7 +17,7 @@
 #define __mafMSFImporter_h__
 
 #include "mafStorage.h"
-#include "mafNodeManager.h"
+#include "ftk/Core/NodeManager.h"
 
 //----------------------------------------------------------------------------
 // forward declarations :

@@ -6,7 +6,7 @@
 #include "mafDecl.h"
 #include "mafEvent.h"
 #include "mafGUIVMEChooser.h"
-#include "mafNodeManager.h"
+#include "ftk/Core/NodeManager.h"
 #include "mafStorage.h"
 #include "wx/filehistory.h"
 #include <memory>

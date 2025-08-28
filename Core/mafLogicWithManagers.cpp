@@ -545,7 +545,7 @@ void mafLogicWithManagers::Plug(mafOp* op, const mafString& menuPath, bool canUn
 
 bool mafLogicWithManagers::AskConfirmAndSave()
 {
-  if (m_logic->m_NodeManager&& m_logic->m_NodeManager->MSFIsModified()) // check if the msf has been modified
+  if (m_logic->m_NodeManager&& m_logic->m_NodeManager->IsModified()) // check if the msf has been modified
   {
     int answer = wxMessageBox(_("your work is modified, would you like to save it?"),_("Confirm"),wxYES_NO|wxCANCEL|wxICON_QUESTION,mafGetFrame()); // ask user if will save msf before closing
     if(answer == wxCANCEL)
@@ -1425,7 +1425,7 @@ bool mafLogicWithManagers::OnFileClose(bool force)
     m_logic->m_Storage->m_TmpDir.clear();
   }
   m_logic->m_NodeManager->SetRoot(NULL);
-  m_logic->m_NodeManager->MSFModified(false);
+  m_logic->m_NodeManager->Modified(false);
   m_logic->m_Storage.reset();
   m_logic->m_NodeManager->SetListener(this);
   VmeSelected(NULL);
@@ -1450,7 +1450,7 @@ void mafLogicWithManagers::OnFileNew()
   VmeSelected(root);
   root->SetTreeTime(0.0); // set the tree time
   UpdateFrameTitle();
-  m_logic->m_NodeManager->MSFModified(false);
+  m_logic->m_NodeManager->Modified(false);
 }
 bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
 {
@@ -1655,7 +1655,7 @@ void mafLogicWithManagers::Save()
 
   m_logic->m_StorageData->m_MakeBakFile = true;
   UpdateFrameTitle();
-  m_logic->m_NodeManager->MSFModified(false);
+  m_logic->m_NodeManager->Modified(false);
   m_logic->m_FileHistory.Save(*m_logic->m_Config);
 }
 bool mafLogicWithManagers::OnFileSave()
@@ -1885,7 +1885,7 @@ void mafLogicWithManagers::VmeModified(mafNode *vme)
   bool vme_in_tree = vme->IsVisible();
   if(m_logic->m_SideBar && vme_in_tree)
     m_logic->m_SideBar->VmeModified(vme);
-	if(m_logic->m_NodeManager) m_logic->m_NodeManager->MSFModified(true);
+	if(m_logic->m_NodeManager) m_logic->m_NodeManager->Modified(true);
 }
 void mafLogicWithManagers::VmeAdded(mafNode *vme)
 {
@@ -2156,14 +2156,14 @@ void mafLogicWithManagers::VmeChooseMaterial(mafVME *vme, bool updateProperty)
   {
     m_logic->m_ViewManager->PropertyUpdate(updateProperty);
     m_logic->m_ViewManager->CameraUpdate();
-    m_logic->m_NodeManager->MSFModified(true);
+    m_logic->m_NodeManager->Modified(true);
   }
 }
 void mafLogicWithManagers::VmeUpdateProperties(mafVME *vme, bool updatePropertyFromTag)
 {
   m_logic->m_ViewManager->PropertyUpdate(updatePropertyFromTag);
   m_logic->m_ViewManager->CameraUpdate();
-  m_logic->m_NodeManager->MSFModified(true);
+  m_logic->m_NodeManager->Modified(true);
 }
 void mafLogicWithManagers::FindVME()
 {

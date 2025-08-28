@@ -22,7 +22,10 @@
 //----------------------------------------------------------------------------
 // forward declarations :
 //----------------------------------------------------------------------------
-class mafNodeManager;
+namespace model::data
+{
+  class NodeManager;
+}
 
 class MAF_EXPORT mafStorage : public mafBaseEventHandler, public mafEventSender
 {
@@ -35,7 +38,7 @@ public:
   //mafStorage(const mafString& filetype, const mafString& version);
   //virtual ~mafStorage();
 
-  void SetManager(mafNodeManager* manager);
+  void SetManager(model::data::NodeManager* manager);
 
   /** Set the URL of the document to be read or written */
   virtual void SetURL(const mafString& name);
@@ -133,6 +136,6 @@ protected:
   std::set<mafString> m_TmpFileNames; ///< name of tmp files in the MSF dir
   std::set<mafString> m_FilesDictionary; ///< list of files in the storage folder: to be populated by OpenDirectory()
   int                 m_ErrorCode;    ///< the error code 0==OK
-  mafNodeManager* m_Document;        ///< document object to be stored, or being restored
+  model::data::NodeManager* m_Document;        ///< document object to be stored, or being restored
 };
 #endif // _mafStorage_h_

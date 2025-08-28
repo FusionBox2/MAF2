@@ -9,7 +9,7 @@
 #include "mafStorage.h"
 #include "mafVMERoot.h"
 #include "mafNodeIterator.h"
-#include "mafNodeManager.h"
+#include "ftk/Core/NodeManager.h"
 
 #include <vector>
 

@@ -36,7 +36,7 @@
 #include "mafVMEGeneric.h"
 #include "mafVMEItemVTK.h"
 #include "mafDataVector.h"
-#include "mafNodeManager.h"
+#include "ftk/Core/NodeManager.h"
 
 #include "vtkSmartPointer.h"
 
