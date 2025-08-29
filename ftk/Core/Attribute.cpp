@@ -1,4 +1,4 @@
-#include "mafAttribute.h"
+#include "ftk/Core/Attribute.h"
 
 #include "mafDefines.h" 
 

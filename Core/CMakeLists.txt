@@ -7,6 +7,8 @@ PROJECT(mafCore)
 
 # Set your list of sources here.
 SET(PROJECT_SRCS
+	../ftk/Core/Attribute.cpp
+	../ftk/Core/Attribute.h
 	../ftk/Core/AttributeFactory.cpp
 	../ftk/Core/AttributeFactory.h
 	../ftk/Core/NodeFactory.cpp
@@ -21,7 +23,6 @@ SET(PROJECT_SRCS
 SET(PROJECT_SRCS ${PROJECT_SRCS}
   mafAbsMatrixPipe.cpp
   mafAbsMatrixPipe.h
-  mafAttribute.cpp
   mafAttribute.h
   mafAttributeTraceability.cpp
   mafAttributeTraceability.h
