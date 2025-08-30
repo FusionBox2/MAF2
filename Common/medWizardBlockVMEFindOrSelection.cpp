@@ -66,15 +66,13 @@ void medWizardBlockVMEFindOrSelection::ExcutionBegin()
 
   if (m_SelectedVME)
   {
-	  const mafNode::mafChildrenVector *childs;
-	  childs=m_SelectedVME->GetChildren();
 	  int nnodes=m_SelectedVME->GetNumberOfChildren();
 	  int VMENumber=0;
 	  int VMEIndex;
 
 	  for (int i=0;i<nnodes;i++)
 	  {
-		  mafNode *child=(*childs)[i].get();
+		  auto child=m_SelectedVME->GetChild(i).get();
 		  if (VMEAccept(child))
 		  {
 			  VMENumber++;
@@ -103,7 +101,7 @@ void medWizardBlockVMEFindOrSelection::ExcutionBegin()
 	  // if there is only one acceptable volume we select it
 	  else if (VMENumber == 1)
 	  {
-		  selVME = (*childs)[VMEIndex].get();
+		  selVME = m_SelectedVME->GetChild(VMEIndex).get();
 		  if (VMEAccept(selVME))
 		  {
 			  //Select vme 

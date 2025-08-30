@@ -498,10 +498,9 @@ void medOpSegmentation::OpDo()
 void medOpSegmentation::DeleteOutputs(mafNode* vme)
   //----------------------------------------------------------------------------
 {
-  auto children = vme->GetChildren();
-  for(int i = 0; i < children->size(); i++)
+  for(int i = 0; i < vme->GetNumberOfChildren(); i++)
   {
-    auto child = children->at(i);
+    auto child = vme->GetChild(i);
     DeleteOutputs(child.get());
     if(IsOutput(child.get()))
     {

@@ -224,17 +224,11 @@ void mafOpCut::LoadVTKData(mafNode *vme)
 void mafOpCut::LoadChild(mafNode *vme)
 //----------------------------------------------------------------------------
 {
-  // Added by Di Cosmo on 24.05.2012
-  // it needs load vtk data for all objects in the tree
-  const mafNode::mafChildrenVector *children = vme->GetChildren();
-  if (children)
+  for(int c = 0; c < vme->GetNumberOfChildren(); c++)
   {
-    for(int c = 0; c < children->size(); c++)
-    {
-      mafNode *child = children->at(c).get();
-      LoadVTKData(child);
-      LoadChild(child);
-    }
+    auto child = vme->GetChild(c).get();
+    LoadVTKData(child);
+    LoadChild(child);
   }
 }
 //----------------------------------------------------------------------------

@@ -292,10 +292,9 @@ int medOpExporterGRFWS::LoadVMEs(mafNode* node)
 {
   int result = 0;
   // Get input
-  const mafNode::mafChildrenVector* children = node->GetChildren();
-  for(int i = 0; i < children->size(); i++)
+  for(int i = 0; i < node->GetNumberOfChildren(); i++)
   {
-    mafNode *child = children->at(i).get();
+    mafNode *child = node->GetChild(i).get();
     if (child->IsA("mafVMESurface"))
     {
       if (m_PlatformLeft==NULL)

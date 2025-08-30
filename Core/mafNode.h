@@ -290,11 +290,6 @@ public:
 
   typedef std::vector<std::shared_ptr<mafNode> > mafChildrenVector;
 
-  /**
-    return list of children. The returned list is a const, since it can be
-    modified by means of nodes APIs */
-  const mafChildrenVector *GetChildren() {return &m_Children;}
-
   typedef std::map<mafString,std::shared_ptr<mafAttribute> > mafAttributesMap;
 
   /** Set a new attribute. The given attribute is */
