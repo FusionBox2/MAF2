@@ -146,12 +146,6 @@ public:
   /** Return a the pointer to a child given its index. 
       If only visible is true return the idx-th visible to traverse node */
   std::shared_ptr<mafNode> GetChild(mafID idx, bool onlyVisible=false);
-  /** Get the First child in the list.
-      If only visible is true return the first visible to traverse node */
-  std::shared_ptr<mafNode> GetFirstChild(bool onlyVisible=false);
-  /** Get the Lase child in the list.
-      If only visible is true return the last visible to traverse node */
-  std::shared_ptr<mafNode> GetLastChild(bool onlyVisible=false);
 
   /** Get A child by path.
   The pats are generated from a series of keyword divided by '\'

@@ -245,7 +245,7 @@ namespace
     m_Group->SetName(group_name);
     //m_Group->ReparentTo(GetInput());
 
-    while (auto node = root->GetFirstChild())
+    while (auto node = root->GetChild(0))
     {
       mafNode::ReparentTo(node, m_Group.get());
 

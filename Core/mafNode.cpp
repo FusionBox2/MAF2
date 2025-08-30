@@ -30,10 +30,10 @@ do\
   bool left = false;\
   if(node->m_Parent != nullptr)\
   {\
-    up    = (node != node->m_Parent->GetFirstChild().get());\
-    down  = (node != node->m_Parent->GetLastChild().get());\
-    left  = (node == node->m_Parent->GetFirstChild().get() && node->m_Parent->m_Parent != nullptr);\
-    right = (node != node->m_Parent->GetFirstChild().get());\
+    up    = (node != node->m_Parent->GetChild(0).get());\
+    down  = (node != node->m_Parent->GetChild(node->m_Parent->GetNumberOfChildren() - 1).get());\
+    left  = (node == node->m_Parent->GetChild(0).get() && node->m_Parent->m_Parent != nullptr);\
+    right = (node != node->m_Parent->GetChild(0).get());\
   }\
   node->m_Gui->Enable(ID_MOVEUP, up);\
   node->m_Gui->Enable(ID_MOVEDN, down);\
@@ -234,30 +234,6 @@ bool mafNode::IsAChild(mafNode *a)
 //-------------------------------------------------------------------------
 {
   return a->GetParent() == this;
-}
-
-//-------------------------------------------------------------------------
-std::shared_ptr<mafNode> mafNode::GetFirstChild(bool onlyVisible /*=false*/)
-//-------------------------------------------------------------------------
-{
-  for (auto& child : m_Children)
-  {
-    if (!onlyVisible || child->IsVisible())
-      return child;
-  }
-  return nullptr;
-}
-
-//-------------------------------------------------------------------------
-std::shared_ptr<mafNode> mafNode::GetLastChild(bool onlyVisible /*=false*/)
-//-------------------------------------------------------------------------
-{
-  for (auto it = rbegin(m_Children); it != rend(m_Children); ++it)
-  {
-    if (!onlyVisible || (*it)->IsVisible())
-      return *it;
-  }
-  return nullptr;
 }
 
 //-------------------------------------------------------------------------
@@ -497,7 +473,7 @@ void mafNode::RemoveAllChildren()
   size_t num = this->GetNumberOfChildren();
   for (size_t i = 0; i < num; i++)
   {
-    auto curr = this->GetLastChild();
+    auto curr = this->GetChild(num - i - 1);
     if(curr.get())
       SetParentNew(curr, nullptr);
   }
@@ -1068,7 +1044,7 @@ void mafNode::OnEvent(mafEventBase *e)
         {
           if(auto parent = GetParent())
           {
-            if(this != parent->GetFirstChild().get())
+            if(this != parent->GetChild(0).get())
             {
               ReparentTo(parent->GetChild(parent->FindNodeIdx(this)), parent->GetChild(parent->FindNodeIdx(this) - 1).get());
               {mafEvent evUnq(this, VME_SELECT); evUnq.SetVme(this); ForwardUpEvent(evUnq);}
@@ -1526,7 +1502,7 @@ std::shared_ptr<mafNode> mafNode::GetByPath(const mafString& path,  bool onlyVis
       }
       
       //updating current node
-      currentNode=tmpParent->GetFirstChild(onlyVisible).get();
+      currentNode=tmpParent->GetChild(0, onlyVisible).get();
   	}
 
     else if (token=="lastPair")
@@ -1540,7 +1516,7 @@ std::shared_ptr<mafNode> mafNode::GetByPath(const mafString& path,  bool onlyVis
         break;
       }
       //updating current node
-      currentNode=tmpParent->GetLastChild(onlyVisible).get();
+      currentNode=tmpParent->GetChild(currentNode->GetNumberOfChildren(onlyVisible) - 1, onlyVisible).get();
 	  }
     
     else if (token=="firstChild")
@@ -1553,20 +1529,21 @@ std::shared_ptr<mafNode> mafNode::GetByPath(const mafString& path,  bool onlyVis
         break;
       }
       //updating current node
-      currentNode=currentNode->GetFirstChild(onlyVisible).get();
+      currentNode=currentNode->GetChild(0, onlyVisible).get();
 	  }
     
     else if (token=="lastChild")
     {
       //Root case: root does not ave next
-      if (currentNode->GetNumberOfChildren(onlyVisible)==0) 
+      auto num = currentNode->GetNumberOfChildren(onlyVisible);
+    	if (num == 0)
       {
         mafLogMessage(_M("Node path error: asked 'lastChild' on no child node"));
         currentNode= nullptr;
         break;
       }
       //updating current node
-      currentNode=currentNode->GetLastChild(onlyVisible).get();
+      currentNode=currentNode->GetChild(num - 1, onlyVisible).get();
     }
     
     else if (token.StartsWith("pair["))

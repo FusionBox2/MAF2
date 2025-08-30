@@ -99,7 +99,7 @@ int mafOpExporterMSF::ExportMSF()
 //  GetInput()->ReparentTo(storage.GetRoot());
   mafNode::CopyTree(GetInput().get(),root.get());
 
-  iter = std::make_unique<mafNodeIterator>(root->GetFirstChild().get());
+  iter = std::make_unique<mafNodeIterator>(root->GetChild(0).get());
   int index = 0;
   for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {
@@ -113,7 +113,7 @@ int mafOpExporterMSF::ExportMSF()
   iter.reset();
 
   std::vector<mafString> linkToEliminate;
-  iter = std::make_unique<mafNodeIterator>(root->GetFirstChild().get());
+  iter = std::make_unique<mafNodeIterator>(root->GetChild(0).get());
   for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
   {
     linkToEliminate.clear();
@@ -148,7 +148,7 @@ int mafOpExporterMSF::ExportMSF()
 //   n->Register(NULL);
 //   n->ReparentTo(storage.GetRoot());
 	//mafNode::CopyTree(GetInput(), storage.GetRoot());
-  mafVME::StaticDownCast(root->GetFirstChild())->SetAbsMatrix(*mafVME::StaticDownCast(GetInput())->GetOutput()->GetAbsMatrix());  //Paolo 5-5-2004
+  mafVME::StaticDownCast(root->GetChild(0))->SetAbsMatrix(*mafVME::StaticDownCast(GetInput())->GetOutput()->GetAbsMatrix());  //Paolo 5-5-2004
   root.reset();
   if (storage.Store() != MAF_OK)
   {
