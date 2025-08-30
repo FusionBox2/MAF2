@@ -309,25 +309,24 @@ void medVMEMuscleWrapper::StoreMeterLinks()
     return; //no link to be stored
 
   //we need to remove all existing links first
-  mafLinksMap* pLinks = GetLinks(); 
   bool bNeedRestart;   
 
   do
   {
     bNeedRestart = false;
-    for (mafLinksMap::iterator i = pLinks->begin(); i != pLinks->end(); i++)
+    for (auto & link : GetLinks())
     {
       if (
-        i->first == _R(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_MUSCLE]) ||
-        i->first == _R(MUSCLEWRAPPER_LINK_NAMES[LNK_FIBERS_ORIGIN]) ||
-        i->first == _R(MUSCLEWRAPPER_LINK_NAMES[LNK_FIBERS_INSERTION]) ||        
-        i->first.starts_with(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_WRAPPERx])) ||
-        i->first.starts_with(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_DYNPOSE_WRAPPERx])) ||
-        i->first.starts_with(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_REFSYSx])) ||
-        i->first.starts_with(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_DYNPOSE_REFSYSx]))
+        link.first == _R(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_MUSCLE]) ||
+        link.first == _R(MUSCLEWRAPPER_LINK_NAMES[LNK_FIBERS_ORIGIN]) ||
+        link.first == _R(MUSCLEWRAPPER_LINK_NAMES[LNK_FIBERS_INSERTION]) ||        
+        link.first.starts_with(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_WRAPPERx])) ||
+        link.first.starts_with(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_DYNPOSE_WRAPPERx])) ||
+        link.first.starts_with(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_REFSYSx])) ||
+        link.first.starts_with(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_DYNPOSE_REFSYSx]))
         )
       {
-        RemoveLink(i->first);
+        RemoveLink(link.first);
         bNeedRestart = true;
         break;
       }
@@ -341,7 +340,7 @@ void medVMEMuscleWrapper::StoreMeterLinks()
 
   int nId = 0;
   WRAPPER_ITEM* pItem = m_pWrappers;
-  while (pItem != NULL)
+  while (pItem)
   {
     StoreMeterLink(pItem->pVmeRP_CP[0], LNK_RESTPOSE_WRAPPERx, nId);
     StoreMeterLink(pItem->pVmeRP_CP[1], LNK_DYNPOSE_WRAPPERx, nId);  
@@ -684,12 +683,10 @@ void medVMEMuscleWrapper::SetVmeTimeStamp(mafVME* vme, double t)
 //------------------------------------------------------------------------
 {
   vme->SetTimeStamp(t);
-  mafLinksMap* pLinks = vme->GetLinks();   
 
-  for (mafLinksMap::iterator i = pLinks->begin(); i != pLinks->end(); i++)
+  for (auto& link : vme->GetLinks())
   {
-    mafVME* n = mafVME::SafeDownCast(i->second.m_Node);
-    if (n != NULL)
+    if (auto n = mafVME::SafeDownCast(link.second.m_Node))
       n->SetTimeStamp(t);
   }
 }

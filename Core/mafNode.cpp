@@ -618,7 +618,7 @@ int mafNode::DeepCopy(mafNode *a)
   SetName(a->GetName());
 
   RemoveAllLinks();
-  for (auto& lnk : *(a->GetLinks()))
+  for (auto& lnk : a->GetLinks())
   {
     SetLink(lnk.first, lnk.second.m_Node, lnk.second.m_NodeSubId);
   }
@@ -671,14 +671,12 @@ bool mafNode::Equals(mafNode *node)
   }
 
   // check links (poor links checking, only linked VME name)
-  if (m_Links.size()!=node->GetLinks()->size())
+  if (m_Links.size()!=node->GetLinks().size())
     return false;
 
-  mafLinksMap::iterator lnk_it;
-  mafLinksMap::iterator lnk_it2;
-  for (lnk_it=m_Links.begin(),lnk_it2=node->GetLinks()->begin();lnk_it!=m_Links.end();lnk_it++,lnk_it2++)
+  for (auto lnk_it=m_Links.begin(),lnk_it2=node->GetLinks().begin();lnk_it!=m_Links.end();++lnk_it,++lnk_it2)
   {
-    if (lnk_it2 == node->GetLinks()->end())
+    if (lnk_it2 == node->GetLinks().end())
       return false;
     if (lnk_it->first != lnk_it2->first)
       return false;
@@ -716,17 +714,16 @@ void mafNode::UpdateLinks(std::vector<std::pair<mafNode*, mafNode*> >& nodes)
 //----------------------------------------------------------------------------
 {
   // Copy links
-  mafLinksMap::iterator lnk_it;
-  for (lnk_it = GetLinks()->begin(); lnk_it != GetLinks()->end(); ++lnk_it)
+  for (auto& link : GetLinks())
   {
     for(unsigned i = 0; i < nodes.size(); i++)
     {
-      if(lnk_it->second.m_Node == nodes[i].first)
+      if(link.second.m_Node == nodes[i].first)
       {
         //n->SetLink(lnk_it->first, mp_it->second, lnk_it->second.m_NodeSubId);
-        lnk_it->second.m_Node->RemoveObserver(this);
-        lnk_it->second.m_Node = nodes[i].second;
-        lnk_it->second.m_Node->AddObserver(this);
+        link.second.m_Node->RemoveObserver(this);
+        link.second.m_Node = nodes[i].second;
+        link.second.m_Node->AddObserver(this);
       }
     }
   }

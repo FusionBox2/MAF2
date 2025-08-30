@@ -118,22 +118,22 @@ int mafOpExporterMSF::ExportMSF()
   {
     linkToEliminate.clear();
 
-    for (auto it=node->GetLinks()->begin();it!=node->GetLinks()->end();++it)
+    for (auto& link : node->GetLinks())
     {
       bool foundID = false;
       for (int i=0;i<values.size();i++)
       {
-        //int id = it->second.m_NodeId;
-        if (it->second.m_Node/*Id*/ == values[i].oldID)
+        //int id = link.second.m_NodeId;
+        if (link.second.m_Node/*Id*/ == values[i].oldID)
         {
-          it->second.m_Node/*Id*/ = values[i].newID;
+          link.second.m_Node/*Id*/ = values[i].newID;
           foundID = true;
         }
       }
 
       if (!foundID)
       {
-        linkToEliminate.push_back(it->first);
+        linkToEliminate.push_back(link.first);
       }
     }
 

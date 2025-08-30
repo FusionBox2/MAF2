@@ -334,13 +334,16 @@ public:
   void RemoveLink(const mafString& name);
 
   /** return the number of links stored in this Node */
-  size_t GetNumberOfLinks() {return m_Links.size();}
+  size_t GetNumberOfLinks() const {return m_Links.size();}
 
   /** remove all links */
   void RemoveAllLinks();
   
   /** return links array: links from this node to other arrays */
-  mafLinksMap *GetLinks() {return &m_Links;}
+  auto& GetLinks() {return m_Links;}
+
+  /** return links array: links from this node to other arrays */
+  auto& GetLinks() const { return m_Links; }
 
   /** used to send an event up in the tree */
   void ForwardUpEvent(mafEventBase *maf_event);

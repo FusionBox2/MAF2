@@ -327,7 +327,8 @@ public:
 
 
 	/** Get the link to the surface.*/
-	mafNode::mafLinksMap *GetMidPointsLinks();
+	auto GetMidPointsLinks() const { return GetLinks(); }
+	auto GetMidPointsLinks()  { return GetLinks(); }
 
 	/** 
 	Set links for the meter*/

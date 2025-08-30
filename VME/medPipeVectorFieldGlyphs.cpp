@@ -495,13 +495,12 @@ void medPipeVectorFieldGlyphs::InitFilterList(int nScalars)
 		}
 		
 	}
-	mafNode::mafLinksMap* pLinks =  m_Vme->GetLinks();
 	wxString itemName,itemValue1,itemValue2,displayValue;
 	double dValue1,dValue2;
 	int idx1 =0,idx2=0;
-	for (mafNode::mafLinksMap::iterator i = pLinks->begin(); i != pLinks->end(); i++)
+	for (auto& link : m_Vme->GetLinks())
 	{
-		mafString linkName = i->first;
+		mafString linkName = link.first;
 		if (linkName.starts_with(_R(FILTER_LINK_NAME)))
 		{
 			//------insert item----
@@ -721,17 +720,16 @@ void medPipeVectorFieldGlyphs::StoreFilterLinks()
 //-----------------------------------------------------------------------
 {
   //Store Filter values into link 
-	mafNode::mafLinksMap* pLinks = m_Vme->GetLinks(); 
 	//remove old filter of this link
 	bool bNeedRestart;  
 	do
 	{
 		bNeedRestart = false;
-		for (mafNode::mafLinksMap::iterator i = pLinks->begin(); i != pLinks->end(); i++)
+		for (auto& link : m_Vme->GetLinks())
 		{
-			if (i->first.starts_with(_R(FILTER_LINK_NAME)))
+			if (link.first.starts_with(_R(FILTER_LINK_NAME)))
 			{
-				m_Vme->RemoveLink(i->first);
+				m_Vme->RemoveLink(link.first);
 				bNeedRestart = true;
 				break;
 			}
@@ -767,17 +765,16 @@ void medPipeVectorFieldGlyphs::StoreFilterLinks2()
 //-----------------------------------------------------------------------
 {
   //Store Filter values into link 
-	mafNode::mafLinksMap* pLinks = m_Vme->GetLinks(); 
 	//remove old filter of this link
 	bool bNeedRestart;  
 	do
 	{
 		bNeedRestart = false;
-		for (auto i = pLinks->begin(); i != pLinks->end(); i++)
+		for (auto& link : m_Vme->GetLinks())
 		{
-			if (i->first.starts_with(_R(FILTER_LINK_NAME2)))
+			if (link.first.starts_with(_R(FILTER_LINK_NAME2)))
 			{
-				m_Vme->RemoveLink(i->first);
+				m_Vme->RemoveLink(link.first);
 				bNeedRestart = true;
 				break;
 			}

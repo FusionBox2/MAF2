@@ -118,29 +118,26 @@ int mafOpValidateTree::ValidateTree()
           result = mafOpValidateTree::VALIDATE_WARNING;
         }
       }
-      int numLinks = node->GetNumberOfLinks();
-      if (numLinks > 0)
       {
         // check node links
-        mafNode::mafLinksMap::iterator lnk_it;
-        for (lnk_it = node->GetLinks()->begin(); lnk_it != node->GetLinks()->end(); lnk_it++)
+        for (auto& link : node->GetLinks())
         {
-          if (lnk_it->second.m_Node == NULL)
+          if (link.second.m_Node == NULL)
           {
-            ErrorLog(mafOpValidateTree::LINK_NULL, node->GetName().GetCStr(), lnk_it->first.GetCStr());
+            ErrorLog(mafOpValidateTree::LINK_NULL, node->GetName().GetCStr(), link.first.GetCStr());
             result = mafOpValidateTree::VALIDATE_ERROR;
             continue;
           }
-          valid = root->IsInTree(lnk_it->second.m_Node);
+          valid = root->IsInTree(link.second.m_Node);
           if (!valid)
           {
-            ErrorLog(mafOpValidateTree::LINK_NOT_PRESENT, lnk_it->second.m_Node->GetName().GetCStr());
+            ErrorLog(mafOpValidateTree::LINK_NOT_PRESENT, link.second.m_Node->GetName().GetCStr());
             result = mafOpValidateTree::VALIDATE_ERROR;
           }
-          valid = lnk_it->second.m_Node->IsValid();
-          if (!valid && !lnk_it->second.m_Node->IsMAFType(mafVMERoot))
+          valid = link.second.m_Node->IsValid();
+          if (!valid && !link.second.m_Node->IsMAFType(mafVMERoot))
           {
-            ErrorLog(mafOpValidateTree::INVALID_NODE, lnk_it->second.m_Node->GetName().GetCStr());
+            ErrorLog(mafOpValidateTree::INVALID_NODE, link.second.m_Node->GetName().GetCStr());
             result = mafOpValidateTree::VALIDATE_ERROR;
           }
         }
@@ -150,11 +147,11 @@ int mafOpValidateTree::ValidateTree()
       mafString urlString = _R("");
       mafString archiveFilename = _R("");
       wxString absFilename = "";
-      mafVMEItem *item = NULL;
+      mafVMEItem *item = nullptr;
       bool singleFileMode = false;
       mafVMEGenericAbstract *vme = mafVMEGenericAbstract::SafeDownCast(node);
 
-      if (vme != NULL && vme->IsA("mafVMEExternalData"))
+      if (vme && vme->IsA("mafVMEExternalData"))
       {
         mafVMEExternalData *ed = mafVMEExternalData::SafeDownCast(vme);
         mafString fileName = _R(ed->GetFileName());

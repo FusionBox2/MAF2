@@ -272,13 +272,12 @@ void mafGUICheckTree::VmeUpdateIcon(mafNode *vme)
 
     if (node->GetNumberOfLinks() != 0)
     {
-      mafNode::mafLinksMap *links = node->GetLinks();
-      mafVME *linkedVME = NULL;
-      for (mafNode::mafLinksMap::iterator it = links->begin(); it != links->end(); it++)
+      mafVME *linkedVME = nullptr;
+      for (auto& link : node->GetLinks())
       {
-        if(it->second.m_Node)
+        if(link.second.m_Node)
         {
-          linkedVME = mafVME::SafeDownCast(it->second.m_Node);
+          linkedVME = mafVME::SafeDownCast(link.second.m_Node);
           if (linkedVME)
           {
             dataStatus = linkedVME->IsDataAvailable() ? 0 : 1;

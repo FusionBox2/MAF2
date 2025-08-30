@@ -247,7 +247,8 @@ public:
   mafVME *GetWrappedVME();
 
   /** Get the link to the surface.*/
-  mafNode::mafLinksMap *GetMidPointsLinks();
+  auto GetMidPointsLinks() { return GetLinks(); }
+  auto GetMidPointsLinks() const { return GetLinks(); }
 
   /** 
   Set links for the meter*/
