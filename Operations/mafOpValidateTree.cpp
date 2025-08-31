@@ -122,22 +122,22 @@ int mafOpValidateTree::ValidateTree()
         // check node links
         for (auto& link : node->GetLinks())
         {
-          if (link.second.m_Node == NULL)
+          if (link.second.GetNode() == nullptr)
           {
             ErrorLog(mafOpValidateTree::LINK_NULL, node->GetName().GetCStr(), link.first.GetCStr());
             result = mafOpValidateTree::VALIDATE_ERROR;
             continue;
           }
-          valid = root->IsInTree(link.second.m_Node);
+          valid = root->IsInTree(link.second.GetNode());
           if (!valid)
           {
-            ErrorLog(mafOpValidateTree::LINK_NOT_PRESENT, link.second.m_Node->GetName().GetCStr());
+            ErrorLog(mafOpValidateTree::LINK_NOT_PRESENT, link.second.GetNode()->GetName().GetCStr());
             result = mafOpValidateTree::VALIDATE_ERROR;
           }
-          valid = link.second.m_Node->IsValid();
-          if (!valid && !link.second.m_Node->IsMAFType(mafVMERoot))
+          valid = link.second.GetNode()->IsValid();
+          if (!valid && !link.second.GetNode()->IsMAFType(mafVMERoot))
           {
-            ErrorLog(mafOpValidateTree::INVALID_NODE, link.second.m_Node->GetName().GetCStr());
+            ErrorLog(mafOpValidateTree::INVALID_NODE, link.second.GetNode()->GetName().GetCStr());
             result = mafOpValidateTree::VALIDATE_ERROR;
           }
         }

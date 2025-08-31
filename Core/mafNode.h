@@ -27,16 +27,20 @@ class mafStorageElementBuilder;
 class mafNode;
 
 /** data structure used to store a link VME and its Id */
-class MAF_EXPORT mmuNodeLink
+class MAF_EXPORT mmuNodeLink final
 {
 public:
-  mmuNodeLink(/*mafID id=-1,*/mafNode *node=NULL, mafID sub_id=-1):m_NodeId(-1),m_Node(node),m_NodeSubId(sub_id) {}
-  mafID GetId(){return m_NodeId;}
-  mmuNodeLink &SetId(mafID id){m_NodeId = id;return (*this);}
-  mafNode *m_Node;
+  mmuNodeLink(/*mafID id=-1,*/mafNode *node=nullptr, mafID sub_id=-1):m_NodeId(-1),m_Node(node),m_NodeSubId(sub_id) {}
+  mafNode* GetNode() const { return m_Node; }
+  mmuNodeLink& SetNode(mafNode *node) { m_Node = node; return (*this); }
+  mafID GetId() const { return m_NodeId; }
+  mmuNodeLink& SetId(mafID id) { m_NodeId = id; return (*this); }
+  mafID GetSubId() const { return m_NodeSubId; }
+  mmuNodeLink& SetSubId(mafID subId) { m_NodeSubId = subId; return (*this); }
+private:
+  mafNode* m_Node;
   mafID   m_NodeSubId;
-  private:
-    mafID   m_NodeId;
+  mafID   m_NodeId;
 };
 
 //----------------------------------------------------------------------------
@@ -85,6 +89,7 @@ public:
   {
 	  INVALID_ID = -1
   };
+  using Links = std::map<mafString, mmuNodeLink>;
 
   static std::shared_ptr<mafNode> Create(const char* NodeType);
   /** print a dump of this object */
@@ -310,34 +315,14 @@ public:
     (e.g. @sa mmaMaterial). */
   virtual std::shared_ptr<mafTagArray> GetTagArray();
 
-  typedef std::map<mafString,mmuNodeLink> mafLinksMap;
-
-  /** 
-    return the value of a link to another node in the tree. If no link with
-    such a name exists return NULL. */
-  mafNode *GetLink(const mafString& name);
-
-  /** 
-  Return the subId associated with the link (used for mafVMELandmark)*/
-  mafID GetLinkSubId(const mafString& name);
-
-  /** set a link to another node in the tree */
-  void SetLink(const mafString& , mafNode *node, mafID sub_id = -1);
-
-  /** remove a link */
-  void RemoveLink(const mafString& name);
-
-  /** return the number of links stored in this Node */
-  size_t GetNumberOfLinks() const {return m_Links.size();}
-
-  /** remove all links */
-  void RemoveAllLinks();
-  
-  /** return links array: links from this node to other arrays */
-  auto& GetLinks() {return m_Links;}
-
-  /** return links array: links from this node to other arrays */
+  auto& GetLinks() { return m_Links; }
   auto& GetLinks() const { return m_Links; }
+  size_t GetNumberOfLinks() const { return m_Links.size(); }
+  mafNode *GetLink(const mafString& name);
+  mafID GetLinkSubId(const mafString& name);
+  void SetLink(const mafString& , mafNode *node, mafID sub_id = -1);
+  void RemoveLink(const mafString& name);
+  void RemoveAllLinks();
 
   /** used to send an event up in the tree */
   void ForwardUpEvent(mafEventBase *maf_event);
@@ -438,7 +423,7 @@ private:
 
   mafAttributesMap  m_Attributes;   ///< attributes attached to this node
 
-  mafLinksMap       m_Links;        ///< links to other nodes in the tree
+  Links       m_Links;        ///< links to other nodes in the tree
 
   mafString         m_Name;         ///< name of this node
   mafID             m_Id = INVALID_ID;           ///< ID of this node

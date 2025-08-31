@@ -5245,9 +5245,9 @@ void medVMEComputeWrapping::UpdateLinks(std::vector<std::pair<mafNode*, mafNode*
     m_lmcs[k] = false;
 		for (auto& link : GetLinks())
 		{
-      if(link.second.m_Node->GetId() == m_OrderMiddlePointsVMEList[j])
+      if(link.second.GetNode()->GetId() == m_OrderMiddlePointsVMEList[j])
       {
-        nd = link.second.m_Node;
+        nd = link.second.GetNode();
         break;
       }
     }
@@ -5334,9 +5334,9 @@ mafGUI* medVMEComputeWrapping::CreateGuiForOldMeter( mafGUI *gui ){
 			else if(link.first == _R("EndVME1")) continue;
 			else if(link.first == _R("EndVME2")) continue;
 			else if(link.first == _R("WrappedVME")) continue;
-			else if(link.second.m_Node->GetId() == m_OrderMiddlePointsVMEList[j])
+			else if(link.second.GetNode()->GetId() == m_OrderMiddlePointsVMEList[j])
 			{
-				if(mafVMELandmarkCloud *lc = mafVMELandmarkCloud::SafeDownCast(link.second.m_Node))
+				if(mafVMELandmarkCloud *lc = mafVMELandmarkCloud::SafeDownCast(link.second.GetNode()))
 				{
 					int idx = m_OrderMiddlePointsVMEList[++j];
 					mafString landmarkNm  = lc->GetLandmarkName(idx);
@@ -5348,8 +5348,8 @@ mafGUI* medVMEComputeWrapping::CreateGuiForOldMeter( mafGUI *gui ){
 				}
 				else
 				{
-					m_ListBox->Append(link.second.m_Node->GetName().toWx());
-					m_OrderMiddlePointsNameVMEList.push_back(link.second.m_Node->GetName());
+					m_ListBox->Append(link.second.GetNode()->GetName().toWx());
+					m_OrderMiddlePointsNameVMEList.push_back(link.second.GetNode()->GetName());
 				}
 			}
 		}
@@ -5925,9 +5925,9 @@ void medVMEComputeWrapping::SyncronizeList()
 			else if(link.first == _R("EndVME1")) continue;
 			else if(link.first == _R("EndVME2")) continue;
 			else if(link.first == _R("WrappedVME")) continue;
-			else if(link.second.m_Node->GetId() == m_OrderMiddlePointsVMEList[j])
+			else if(link.second.GetNode()->GetId() == m_OrderMiddlePointsVMEList[j])
 			{
-				if(mafVMELandmarkCloud *lc = mafVMELandmarkCloud::SafeDownCast(link.second.m_Node))
+				if(mafVMELandmarkCloud *lc = mafVMELandmarkCloud::SafeDownCast(link.second.GetNode()))
 				{
 					int idx = m_OrderMiddlePointsVMEList[++j];
 					mafString landmarkNm  = lc->GetLandmarkName(idx);
@@ -5938,7 +5938,7 @@ void medVMEComputeWrapping::SyncronizeList()
 				}
 				else
 				{
-					m_OrderMiddlePointsNameVMEList.push_back(link.second.m_Node->GetName());
+					m_OrderMiddlePointsNameVMEList.push_back(link.second.GetNode()->GetName());
 				}
 			}
 		}
@@ -7338,7 +7338,7 @@ bool medVMEComputeWrapping::MiddlePointsControl()
 		else if(link.first == _R("WrappedVME")) continue;
 		else if(link.first == _R("WrappedVME1")) continue;
 		else if(link.first == _R("WrappedVME2")) continue;
-		else if(link.second.m_Node == NULL)
+		else if(link.second.GetNode() == nullptr)
 		{
 			mafString message;
 			message = link.first;
@@ -7393,7 +7393,7 @@ mafNode* medVMEComputeWrapping::IndexToMiddlePointVME(int index)
 	mafNode *returnNode = nullptr;
 	for (auto& link : GetLinks())
 	{
-		if(link.first == name) returnNode =  link.second.m_Node;
+		if(link.first == name) returnNode =  link.second.GetNode();
 	}
 
 	return returnNode;

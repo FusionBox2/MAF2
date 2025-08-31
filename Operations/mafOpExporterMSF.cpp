@@ -124,9 +124,9 @@ int mafOpExporterMSF::ExportMSF()
       for (int i=0;i<values.size();i++)
       {
         //int id = link.second.m_NodeId;
-        if (link.second.m_Node/*Id*/ == values[i].oldID)
+        if (link.second.GetNode()/*Id*/ == values[i].oldID)
         {
-          link.second.m_Node/*Id*/ = values[i].newID;
+          link.second.SetNode(values[i].newID);
           foundID = true;
         }
       }

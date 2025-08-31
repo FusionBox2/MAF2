@@ -687,7 +687,7 @@ void medVMEMuscleWrapper::SetVmeTimeStamp(mafVME* vme, double t)
 
   for (auto& link : vme->GetLinks())
   {
-    if (auto n = mafVME::SafeDownCast(link.second.m_Node))
+    if (auto n = mafVME::SafeDownCast(link.second.GetNode()))
       n->SetTimeStamp(t);
   }
 }

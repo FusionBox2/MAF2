@@ -122,14 +122,14 @@ int mafNode::InternalInitialize()
 	for (auto& entry : m_Links)
   {
     mmuNodeLink& link = entry.second;
-    if (link.m_Node == nullptr && link.GetId() >= 0)
+    if (link.GetNode() == nullptr && link.GetId() >= 0)
     {
       auto node = root->FindInTreeById(link.GetId());
       assert(node);
       if (node)
       {
         // attach linked node to this one
-        link.m_Node = node.get();
+        link.SetNode(node.get());
         node->AddObserver(this);
       }
     }    
@@ -596,7 +596,7 @@ int mafNode::DeepCopy(mafNode *a)
   RemoveAllLinks();
   for (auto& lnk : a->GetLinks())
   {
-    SetLink(lnk.first, lnk.second.m_Node, lnk.second.m_NodeSubId);
+    SetLink(lnk.first, lnk.second.GetNode(), lnk.second.GetSubId());
   }
 
   return MAF_OK;
@@ -656,9 +656,9 @@ bool mafNode::Equals(mafNode *node)
       return false;
     if (lnk_it->first != lnk_it2->first)
       return false;
-    if (lnk_it->second.m_Node != lnk_it2->second.m_Node)
+    if (lnk_it->second.GetNode() != lnk_it2->second.GetNode())
       return false;
-    if (lnk_it->second.m_NodeSubId != lnk_it2->second.m_NodeSubId)
+    if (lnk_it->second.GetSubId() != lnk_it2->second.GetSubId())
       return false;
   }
 
@@ -694,12 +694,12 @@ void mafNode::UpdateLinks(std::vector<std::pair<mafNode*, mafNode*> >& nodes)
   {
     for(unsigned i = 0; i < nodes.size(); i++)
     {
-      if(link.second.m_Node == nodes[i].first)
+      if(link.second.GetNode() == nodes[i].first)
       {
         //n->SetLink(lnk_it->first, mp_it->second, lnk_it->second.m_NodeSubId);
-        link.second.m_Node->RemoveObserver(this);
-        link.second.m_Node = nodes[i].second;
-        link.second.m_Node->AddObserver(this);
+        link.second.GetNode()->RemoveObserver(this);
+        link.second.SetNode(nodes[i].second);
+        link.second.GetNode()->AddObserver(this);
       }
     }
   }
@@ -813,17 +813,16 @@ std::shared_ptr<mafTagArray> mafNode::GetTagArray()
 mafNode *mafNode::GetLink(const mafString& name)
 //-------------------------------------------------------------------------
 {
-  mafLinksMap::iterator it = m_Links.find(name);
-  if (it != m_Links.end())
+  if (auto it = m_Links.find(name); it != m_Links.end())
   {
     // if the link is still valid return its pointer
     // Check node validity instead of checking 'm_NodeId'
     // then if m_NodeId is different from m_Id, the link will
     // be updated.
     //if (it->second.m_Node != NULL && it->second.m_Node->IsInitialized() && it->second.m_Node->GetIdManager() == GetIdManager())
-    if (it->second.m_Node != NULL && it->second.m_Node->IsValid() && it->second.m_Node->GetRoot() == GetRoot())
+    if (it->second.GetNode() && it->second.GetNode()->IsValid() && it->second.GetNode()->GetRoot() == GetRoot())
     {
-      return it->second.m_Node;
+      return it->second.GetNode();
     }
   }
 
@@ -833,10 +832,9 @@ mafNode *mafNode::GetLink(const mafString& name)
 mafID mafNode::GetLinkSubId(const mafString& name)
 //-------------------------------------------------------------------------
 {
-  mafLinksMap::iterator it = m_Links.find(name);
-  if (it != m_Links.end())
+  if (auto it = m_Links.find(name); it != m_Links.end())
   {
-    return it->second.m_NodeSubId;
+    return it->second.GetSubId();
   }
   return -1;
 }
@@ -854,17 +852,15 @@ void mafNode::SetLink(const mafString& name, mafNode *node, mafID sub_id)
 
   mmuNodeLink newlink;
 
-  mafLinksMap::iterator it = m_Links.find(name);
-
-  if (it != m_Links.end())
+  if (auto it = m_Links.find(name); it != m_Links.end())
   {
     // if already linked simply return
-    if (it->second.m_Node == node && it->second.m_NodeSubId == sub_id)
+    if (it->second.GetNode() == node && it->second.GetSubId() == sub_id)
       return;
    
     // detach old linked node, if present
-    if (it->second.m_Node)
-      it->second.m_Node->RemoveObserver(this);
+    if (it->second.GetNode())
+      it->second.GetNode()->RemoveObserver(this);
   }
 
   // set the link to the new node
@@ -879,14 +875,13 @@ void mafNode::SetLink(const mafString& name, mafNode *node, mafID sub_id)
 void mafNode::RemoveLink(const mafString& name)
 //-------------------------------------------------------------------------
 {
-  mafLinksMap::iterator it=m_Links.find(name);
-  if (it!=m_Links.end())
+  if (auto it = m_Links.find(name); it!=m_Links.end())
   {
-    assert(it->second.m_Node);
+    assert(it->second.GetNode());
     // detach as observer from the linked node
-	if (it->second.m_Node != NULL)
+	if (it->second.GetNode())
 	{
-		it->second.m_Node->RemoveObserver(this);
+		it->second.GetNode()->RemoveObserver(this);
 	}
     
     m_Links.erase(it); // remove linked node from links container
@@ -898,11 +893,11 @@ void mafNode::RemoveLink(const mafString& name)
 void mafNode::RemoveAllLinks()
 //-------------------------------------------------------------------------
 {
-  for (mafLinksMap::iterator it=m_Links.begin();it!=m_Links.end();it++)
+  for (auto it=m_Links.begin();it!=m_Links.end();it++)
   {
     // detach as observer from the linked node
-    if(it->second.m_Node)
-      it->second.m_Node->RemoveObserver(this);
+    if(it->second.GetNode())
+      it->second.GetNode()->RemoveObserver(this);
   }
   m_Links.clear();
   Modified();
@@ -917,9 +912,9 @@ MTimeType mafNode::GetMTime()
     for (auto& link : m_Links)
     {
       // check linked node timestamp
-      if(link.second.m_Node)
+      if(link.second.GetNode())
       {
-        mtime = (std::max)(mtime, link.second.m_Node->GetMTime());
+        mtime = (std::max)(mtime, link.second.GetNode()->GetMTime());
       }
     }
   }
@@ -930,9 +925,9 @@ MTimeType mafNode::GetMTime()
 void mafNode::OnNodeDetachedFromTree(mafNode *node)
 //-------------------------------------------------------------------------
 {
-  for (mafLinksMap::iterator it=m_Links.begin();it!=m_Links.end();it++)
+  for (auto it=m_Links.begin();it!=m_Links.end();it++)
   {
-    if (it->second.m_Node == node)
+    if (it->second.GetNode() == node)
     {
     }
   }
@@ -942,9 +937,9 @@ void mafNode::OnNodeDetachedFromTree(mafNode *node)
 void mafNode::OnNodeAttachedToTree(mafNode *node)
 //-------------------------------------------------------------------------
 {
-  for (mafLinksMap::iterator it=m_Links.begin();it!=m_Links.end();it++)
+  for (auto it=m_Links.begin();it!=m_Links.end();it++)
   {
-    if (it->second.m_Node == node)
+    if (it->second.GetNode() == node)
     {
     }
   }
@@ -953,9 +948,9 @@ void mafNode::OnNodeAttachedToTree(mafNode *node)
 void mafNode::OnNodeDestroyed(mafNode *node)
 //-------------------------------------------------------------------------
 {
-  for (mafLinksMap::iterator it=m_Links.begin();it!=m_Links.end();it++)
+  for (auto it=m_Links.begin();it!=m_Links.end();it++)
   {
-    if (it->second.m_Node == node)
+    if (it->second.GetNode() == node)
     {
       //it->second.m_Node->GetEventSource()->RemoveObserver(this);
       m_Links.erase(it); // remove linked node from links container
@@ -1112,7 +1107,7 @@ void mafNode::InternalStore(mafStorageElementBuilder& parent)
   for (auto links_it=m_Links.begin();links_it!=m_Links.end();++links_it)
   {
     mmuNodeLink &link=links_it->second;
-    if (links_it->second.m_Node != NULL && links_it->second.m_Node->IsValid() && links_it->second.m_Node->GetRoot() == GetRoot())
+    if (links_it->second.GetNode() && links_it->second.GetNode()->IsValid() && links_it->second.GetNode()->GetRoot() == GetRoot())
       numberOfLinks++;
   }
 
@@ -1121,12 +1116,12 @@ void mafNode::InternalStore(mafStorageElementBuilder& parent)
   for (auto links_it=m_Links.begin();links_it!=m_Links.end();++links_it)
   {
     mmuNodeLink &link=links_it->second;
-    if (links_it->second.m_Node != NULL && links_it->second.m_Node->IsValid() && links_it->second.m_Node->GetRoot() == GetRoot())
+    if (links_it->second.GetNode() && links_it->second.GetNode()->IsValid() && links_it->second.GetNode()->GetRoot() == GetRoot())
     {
       auto link_item_element=links_element[_R("Link")];
       link_item_element(_R("Name")).SetValue(links_it->first);
-      link_item_element(_R("NodeId")).SetValue(link.m_Node->GetId());
-      link_item_element(_R("NodeSubId")).SetValue(link.m_NodeSubId);
+      link_item_element(_R("NodeId")).SetValue(link.GetNode()->GetId());
+      link_item_element(_R("NodeSubId")).SetValue(link.GetSubId());
     }
   }
 
@@ -1251,10 +1246,10 @@ void mafNode::Print(std::ostream& os, const int tabs)
 
   os << indent << "Links:" << std::endl;
   os << indent << "Number of links:" << m_Links.size() << std::endl;
-  for (mafLinksMap::const_iterator lnk_it = m_Links.begin(); lnk_it != m_Links.end(); lnk_it++)
+  for (auto& link : m_Links)
   {
-    os << next_indent << "Name: " << lnk_it->first.GetCStr() << "\tNodeId: " << (lnk_it->second.m_Node ? lnk_it->second.m_Node->GetId() : -1);
-    os << "\tNodeSubId: " << lnk_it->second.m_NodeSubId << std::endl;
+    os << next_indent << "Name: " << link.first.GetCStr() << "\tNodeId: " << (link.second.GetNode() ? link.second.GetNode()->GetId() : -1);
+    os << "\tNodeSubId: " << link.second.GetSubId() << std::endl;
   }
 }
 //-------------------------------------------------------------------------
