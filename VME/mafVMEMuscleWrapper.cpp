@@ -228,11 +228,11 @@ int mafVMEMuscleWrapperAQ::InternalInitialize()
 std::shared_ptr<mmaMaterial> mafVMEMuscleWrapperAQ::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  auto material = mmaMaterial::SafeDownCast(GetAttribute(_R("MaterialAttributes")));
+  auto material = mmaMaterial::SafeDownCast(GetAttribute(mmaMaterial::GetAttributeName()));
   if (!material)
   {
     material = mmaMaterial::NewSPtr();
-    SetAttribute(_R("MaterialAttributes"), material);
+    SetAttribute(material);
   }
   return material;
 }
@@ -863,7 +863,7 @@ std::shared_ptr<mmaMuscleWrapperAQ> mafVMEMuscleWrapperAQ::GetMeterAttributes()
   if (!meter_attributes)
   {
     meter_attributes = mmaMuscleWrapperAQ::NewSPtr();
-    SetAttribute(_R("MeterAttributes"), meter_attributes);
+    SetAttribute(meter_attributes);
   }
 	return meter_attributes;
 }

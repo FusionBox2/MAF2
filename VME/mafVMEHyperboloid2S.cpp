@@ -624,11 +624,11 @@ void mafVMEHyperboloid2S::setSize(double a, double b, double c)
 std::shared_ptr<mmaMaterial> mafVMEHyperboloid2S::GetMaterial()
 //-------------------------------------------------------------------------
 {
-	auto material = mmaMaterial::SafeDownCast(GetAttribute(_R("MaterialAttributes")));
+	auto material = mmaMaterial::SafeDownCast(GetAttribute(mmaMaterial::GetAttributeName()));
 	if (!material)
 	{
 		material = mmaMaterial::NewSPtr();
-		SetAttribute(_R("MaterialAttributes"), material);
+		SetAttribute(material);
 	}
 	return material;
 }

@@ -81,7 +81,7 @@ mafVMEOutput *mafVMEVolume::GetOutput()
 std::shared_ptr<mmaVolumeMaterial> mafVMEVolume::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  auto material = mmaVolumeMaterial::SafeDownCast(GetAttribute(_R("VolumeMaterialAttributes")));
+  auto material = mmaVolumeMaterial::SafeDownCast(GetAttribute(mmaVolumeMaterial::GetAttributeName()));
   if (!material)
   {
     material = mmaVolumeMaterial::NewSPtr();
@@ -97,7 +97,7 @@ std::shared_ptr<mmaVolumeMaterial> mafVMEVolume::GetMaterial()
       material->UpdateFromTables();
     }*/
     
-    SetAttribute(_R("VolumeMaterialAttributes"), material);
+    SetAttribute(material);
     if (m_Output)
     {
       ((mafVMEOutputVolume *)m_Output)->SetMaterial(material);

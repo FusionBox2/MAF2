@@ -116,7 +116,7 @@ bool mafGUIMaterialChooser::ShowChooserDialog(mafVME *vme, bool remember_last_ma
 	}
 
   m_Vme = vme;
-  m_VmeMaterial = mmaMaterial::SafeDownCast(m_Vme->GetAttribute(_R("MaterialAttributes")));
+  m_VmeMaterial = mmaMaterial::SafeDownCast(m_Vme->GetAttribute(mmaMaterial::GetAttributeName()));
   assert(m_VmeMaterial);
 
   if (!remember_last_material)

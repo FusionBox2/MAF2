@@ -56,9 +56,10 @@
 #include "vtkAlgorithmOutput.h"
 #include "vtkTrivialProducer.h"
 
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(mmaMaterial)
-//----------------------------------------------------------------------------
+mafString mmaMaterial::GetAttributeName()
+{
+  return _R("MaterialAttributes");
+}
 
 //----------------------------------------------------------------------------
 mmaMaterial::mmaMaterial()

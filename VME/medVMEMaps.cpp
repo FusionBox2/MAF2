@@ -375,11 +375,11 @@ void medVMEMaps::InternalRestore(const mafStorageElement& node)
 std::shared_ptr<mmaMaterial> medVMEMaps::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  auto material = mmaMaterial::SafeDownCast(GetAttribute(_R("MaterialAttributes")));
+  auto material = mmaMaterial::SafeDownCast(GetAttribute(mmaMaterial::GetAttributeName()));
   if (!material)
   {
     material = mmaMaterial::NewSPtr();
-    SetAttribute(_R("MaterialAttributes"), material);
+    SetAttribute(material);
     lutPreset(14,GetMaterial()->m_ColorLut);
     //material->m_ColorLut = CreateTable();
     material->UpdateFromLut();

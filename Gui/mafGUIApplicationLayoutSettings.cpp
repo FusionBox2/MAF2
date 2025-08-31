@@ -174,7 +174,7 @@ void mafGUIApplicationLayoutSettings::SaveTreeLayout()
     if (!layout)
     {
       layout = mmaApplicationLayout::NewSPtr();
-      root->SetAttribute(layout->GetName(), layout);
+      root->SetAttribute(layout);
     }
     else
     {
@@ -262,11 +262,12 @@ void mafGUIApplicationLayoutSettings::AddLayout()
     m_XMLRoot->AddChild(child);
 
     auto layout = child->GetLayout();
-    if(layout);
+    if(layout)
+    {}
     else
     {
       layout = mmaApplicationLayout::NewSPtr();
-      child->SetAttribute(_R("ApplicationLayout"), layout); //mettere application layout
+      child->SetAttribute(layout); //mettere application layout
     }
     layout->SetName(_R("ApplicationLayout"));
     child->SetName(name);

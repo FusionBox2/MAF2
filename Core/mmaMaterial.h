@@ -57,7 +57,7 @@ public:
     CYLINDER_MAPPING,
     SPHERE_MAPPING
   };
-
+  static mafString GetAttributeName();
 	/** Build the material icon. */
   wxBitmap *MakeIcon();
   

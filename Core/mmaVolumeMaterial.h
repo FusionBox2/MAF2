@@ -42,7 +42,8 @@ public:
 	         ~mmaVolumeMaterial() override;
 
   mafTypeMacro(mmaVolumeMaterial, mafAttribute);
-  
+  static mafString GetAttributeName();
+
   /** Print a dump of this object */
 	         void Print(std::ostream& os, const int tabs=0) const override;
 

@@ -282,11 +282,11 @@ int medVMEComputeWrapping::InternalInitialize()
 std::shared_ptr<mmaMaterial> medVMEComputeWrapping::GetMaterial()
 //-------------------------------------------------------------------------
 {
-	auto material = mmaMaterial::SafeDownCast(GetAttribute(_R("MaterialAttributes")));
+	auto material = mmaMaterial::SafeDownCast(GetAttribute(mmaMaterial::GetAttributeName()));
 	if (!material)
 	{
 		material = mmaMaterial::NewSPtr();
-		SetAttribute(_R("MaterialAttributes"), material);
+		SetAttribute(material);
 	}
 	return material;
 }
@@ -5039,7 +5039,7 @@ std::shared_ptr<mmaMeter> medVMEComputeWrapping::GetMeterAttributes()
 	if (!meter_attributes)
 	{
 		meter_attributes = mmaMeter::NewSPtr();
-		SetAttribute(_R("MeterAttributes"), meter_attributes);
+		SetAttribute(meter_attributes);
 	}
 	return meter_attributes;
 }

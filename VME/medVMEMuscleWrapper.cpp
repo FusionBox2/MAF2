@@ -259,11 +259,11 @@ int medVMEMuscleWrapper::InternalInitialize()
 std::shared_ptr<mmaMaterial> medVMEMuscleWrapper::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  auto material = mmaMaterial::SafeDownCast(GetAttribute(_R("MaterialAttributes")));
+  auto material = mmaMaterial::SafeDownCast(GetAttribute(mmaMaterial::GetAttributeName()));
   if (!material)
   {
     material = mmaMaterial::NewSPtr();
-    SetAttribute(_R("MaterialAttributes"), material);
+    SetAttribute(material);
   }
   return material;
 }

@@ -131,11 +131,11 @@ const char** mafVMEMesh::GetIcon()
 std::shared_ptr<mmaMaterial> mafVMEMesh::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  auto material = mmaMaterial::SafeDownCast(GetAttribute(_R("MaterialAttributes")));
+  auto material = mmaMaterial::SafeDownCast(GetAttribute(mmaMaterial::GetAttributeName()));
   if (!material)
   {
     material = mmaMaterial::NewSPtr();
-    SetAttribute(_R("MaterialAttributes"), material);
+    SetAttribute(material);
     if (m_Output)
     {
       ((mafVMEOutputMesh*)m_Output)->SetMaterial(material);

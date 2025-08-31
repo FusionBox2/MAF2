@@ -70,11 +70,11 @@ medVMESegmentationVolume::~medVMESegmentationVolume()
 std::shared_ptr<mmaVolumeMaterial> medVMESegmentationVolume::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  auto material = mmaVolumeMaterial::SafeDownCast(GetAttribute(_R("VolumeMaterialAttributes")));
+  auto material = mmaVolumeMaterial::SafeDownCast(GetAttribute(mmaVolumeMaterial::GetAttributeName()));
   if (!material)
   {
     material = mmaVolumeMaterial::NewSPtr();
-    SetAttribute(_R("VolumeMaterialAttributes"), material);
+    SetAttribute(material);
   }
   return material;
 }
@@ -86,7 +86,7 @@ std::shared_ptr<medAttributeSegmentationVolume> medVMESegmentationVolume::GetVol
   if (!volumeAttribute)
   {
     volumeAttribute = medAttributeSegmentationVolume::NewSPtr();
-    this->SetAttribute(_R("SegmentationVolumeData"),volumeAttribute);
+    this->SetAttribute(volumeAttribute);
   }
   return volumeAttribute;
 

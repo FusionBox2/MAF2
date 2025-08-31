@@ -40,9 +40,10 @@
 #include "vtkVolumeProperty.h"
 #include "vtkMAFTransferFunction2D.h"
 
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(mmaVolumeMaterial)
-//----------------------------------------------------------------------------
+mafString mmaVolumeMaterial::GetAttributeName()
+{
+  return _R("VolumeMaterialAttributes");
+}
 
 //----------------------------------------------------------------------------
 mmaVolumeMaterial::mmaVolumeMaterial()

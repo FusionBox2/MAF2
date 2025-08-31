@@ -587,9 +587,9 @@ int mafNode::DeepCopy(mafNode *a)
   RemoveAllAttributes();
   for (auto& elem : a->m_Attributes)
   {
-    auto attr = elem.second.get();
+    auto attr = elem.get();
     assert(attr);
-    m_Attributes[attr->GetName()]=attr->MakeCopy();
+    m_Attributes.insert(attr->MakeCopy());
   }
   SetName(a->GetName());
 
@@ -635,11 +635,9 @@ bool mafNode::Equals(mafNode *node)
   if (m_Attributes.size()!=node->m_Attributes.size())
     return false;
 
-  mafAttributesMap::iterator att_it;
-  mafAttributesMap::iterator att_it2;
-  for (att_it=m_Attributes.begin(),att_it2=node->m_Attributes.begin();att_it!=m_Attributes.end();att_it++,att_it2++)
+  for (auto att_it=m_Attributes.begin(),att_it2=node->m_Attributes.begin();att_it!=m_Attributes.end();att_it++,att_it2++)
   {
-    if (!att_it->second->Equals(att_it2->second.get()))
+    if (!(*att_it)->Equals(att_it2->get()))
       return false;
 
     if (att_it2==node->m_Attributes.end())
@@ -755,19 +753,20 @@ std::shared_ptr<mafNode> mafNode::CopyTree(mafNode *vme, mafNode *parent)
 }
 
 //-------------------------------------------------------------------------
-void mafNode::SetAttribute(const mafString& name,std::shared_ptr<mafAttribute> a)
+void mafNode::SetAttribute(std::shared_ptr<mafAttribute> a)
 //-------------------------------------------------------------------------
 {
-  m_Attributes[name]=a;
+	if (auto it = m_Attributes.find(a->GetName()); it != end(m_Attributes))
+		m_Attributes.erase(it);
+	m_Attributes.insert(a);
 }
 
 //-------------------------------------------------------------------------
 std::shared_ptr<mafAttribute> mafNode::GetAttribute(const mafString& name)
 //-------------------------------------------------------------------------
 {
-  auto it = m_Attributes.find(name);
-  if (it != end(m_Attributes))
-    return it->second;
+  if (auto it = m_Attributes.find(name); it != end(m_Attributes))
+    return *it;
   return nullptr;
 }
 
@@ -775,9 +774,8 @@ std::shared_ptr<mafAttribute> mafNode::GetAttribute(const mafString& name)
 std::shared_ptr<const mafAttribute> mafNode::GetAttribute(const mafString& name) const
 //-------------------------------------------------------------------------
 {
-  auto it = m_Attributes.find(name);
-  if (it != end(m_Attributes))
-    return it->second;
+  if (auto it = m_Attributes.find(name); it != end(m_Attributes))
+    return *it;
   return nullptr;
 }
 
@@ -804,7 +802,7 @@ std::shared_ptr<mafTagArray> mafNode::GetTagArray()
   {
     tarray = mafTagArray::NewSPtr();
     tarray->SetName(_R("TagArray"));
-    SetAttribute(_R("TagArray"), tarray);
+    SetAttribute(tarray);
   }
   return tarray;
 }
@@ -1098,7 +1096,7 @@ void mafNode::InternalStore(mafStorageElementBuilder& parent)
       size_t idx = 0;
 	  for (auto it = m_Attributes.begin(); it != m_Attributes.end(); ++it)
 	  {
-		  entry[idx++].SetValue(it->second.get());
+		  entry[idx++].SetValue(it->get());
 	  }
   }
 
@@ -1177,7 +1175,7 @@ void mafNode::InternalRestore(const mafStorageElement& node)
 	  assert(item);
 	  if (item)
 	  {
-		  m_Attributes[item->GetName()] = item;
+		  m_Attributes.insert(item);
 	  }
   }
 
@@ -1239,9 +1237,9 @@ void mafNode::Print(std::ostream& os, const int tabs)
   os << indent << "Number of Children: " << GetNumberOfChildren() << std::endl;
   os << indent << "Id: " << GetId() << std::endl;
   os << indent << "Attributes:\n";
-  for (mafAttributesMap::const_iterator att_it=m_Attributes.begin();att_it!=m_Attributes.end();att_it++)
+  for (auto& attr : m_Attributes)
   {
-    att_it->second->Print(os,next_indent);
+    attr->Print(os,next_indent);
   }
 
   os << indent << "Links:" << std::endl;

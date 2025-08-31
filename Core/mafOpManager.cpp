@@ -417,7 +417,7 @@ void mafOpManager::FillTraceabilityAttribute(mafOp *op, std::shared_ptr<mafNode>
     {
       traceability = mafAttributeTraceability::NewSPtr();
       traceability->SetName(_R("TrialAttribute"));
-      in_node->SetAttribute(_R("TrialAttribute"), traceability);
+      in_node->SetAttribute(traceability);
     }
 
     if(mafTagItem *ti = in_node->GetRoot()->GetTagArray()->GetTag(_R("APP_STAMP")))
@@ -465,7 +465,7 @@ void mafOpManager::FillTraceabilityAttribute(mafOp *op, std::shared_ptr<mafNode>
         trialEvent = _R("Create");
         traceability = mafAttributeTraceability::NewSPtr();
         traceability->SetName(_R("TrialAttribute"));
-        node->SetAttribute(_R("TrialAttribute"), traceability);
+        node->SetAttribute(traceability);
       }
       else
       {

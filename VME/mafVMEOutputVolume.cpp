@@ -85,7 +85,7 @@ std::shared_ptr<mmaVolumeMaterial> mafVMEOutputVolume::GetMaterial()
     return  m_Material;
 
   // search for a material attribute in the VME connected to this output
-  return GetVME() ? mmaVolumeMaterial::SafeDownCast(GetVME()->GetAttribute(_R("VolumeMaterialAttributes"))) : nullptr;
+  return GetVME() ? mmaVolumeMaterial::SafeDownCast(GetVME()->GetAttribute(mmaVolumeMaterial::GetAttributeName())) : nullptr;
 }
 //-------------------------------------------------------------------------
 void mafVMEOutputVolume::SetMaterial(std::shared_ptr<mmaVolumeMaterial> material)

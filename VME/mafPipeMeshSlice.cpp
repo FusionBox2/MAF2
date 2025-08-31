@@ -168,7 +168,7 @@ void mafPipeMeshSlice::ExecutePipe()
     data = vtkUnstructuredGrid::SafeDownCast(mesh_output->GetVTKData());
 	port = mesh_output->GetVTKOutputPort();
 	port->GetProducer()->Update();
-    m_MeshMaterial = mmaMaterial::SafeDownCast(m_Vme->GetAttribute(_R("MaterialAttributes")));
+    m_MeshMaterial = mmaMaterial::SafeDownCast(m_Vme->GetAttribute(mmaMaterial::GetAttributeName()));
   }
 
   CreateFieldDataControlArrays();
@@ -270,7 +270,7 @@ void mafPipeMeshSlice::ExecutePipe()
   m_ActorWired->SetMapper(m_MapperWired);
   m_ActorWired->GetProperty()->SetRepresentationToWireframe();
 
-	auto material = mmaMaterial::SafeDownCast(m_Vme->GetAttribute(_R("MaterialAttributes")));
+	auto material = mmaMaterial::SafeDownCast(m_Vme->GetAttribute(mmaMaterial::GetAttributeName()));
 
 	if(material && material->m_Prop )
 		m_Wireframe=(material->m_Prop->GetRepresentation() == VTK_WIREFRAME);
@@ -514,7 +514,7 @@ void mafPipeMeshSlice::OnEvent(mafEventBase *maf_event)
 			case VME_CHOOSE_MATERIAL:
 				{
 					InvokeEvent(*e);
-					auto material = mmaMaterial::SafeDownCast(m_Vme->GetAttribute(_R("MaterialAttributes")));
+					auto material = mmaMaterial::SafeDownCast(m_Vme->GetAttribute(mmaMaterial::GetAttributeName()));
 					if(material && material->m_Prop )
 					{
 						bool newWireframe=(material->m_Prop->GetRepresentation() == VTK_WIREFRAME);

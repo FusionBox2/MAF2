@@ -90,11 +90,11 @@ mafVMEProber::~mafVMEProber()
 std::shared_ptr<mmaMaterial> mafVMEProber::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  auto material = mmaMaterial::SafeDownCast(GetAttribute(_R("MaterialAttributes")));
+  auto material = mmaMaterial::SafeDownCast(GetAttribute(mmaMaterial::GetAttributeName()));
   if (!material)
   {
     material = mmaMaterial::NewSPtr();
-    SetAttribute(_R("MaterialAttributes"), material);
+    SetAttribute(material);
   }
   return material;
 }

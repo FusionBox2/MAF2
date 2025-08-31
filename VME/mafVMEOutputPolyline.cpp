@@ -100,7 +100,7 @@ std::shared_ptr<mmaMaterial> mafVMEOutputPolyline::GetMaterial()
     return  m_Material;
 
   // search for a material attribute in the VME connected to this output
-  return GetVME() ? mmaMaterial::SafeDownCast(GetVME()->GetAttribute(_R("MaterialAttributes"))) : nullptr;
+  return GetVME() ? mmaMaterial::SafeDownCast(GetVME()->GetAttribute(mmaMaterial::GetAttributeName())) : nullptr;
 }
 //-------------------------------------------------------------------------
 void mafVMEOutputPolyline::Update()

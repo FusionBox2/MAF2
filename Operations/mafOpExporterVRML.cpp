@@ -191,8 +191,6 @@ void mafOpExporterVRML::ExportVRML()
 	auto out_surface = mafVMEOutputSurface::SafeDownCast(mafVME::StaticDownCast(GetInput())->GetOutput());
   out_surface->Update();
    
-	mafNode::mafAttributesMap* attributes = nullptr;// GetInput()->GetAttributes();
-
   vtkPolyData *data = vtkPolyData::SafeDownCast(out_surface->GetVTKData());
   assert(data);
   //data->Update();

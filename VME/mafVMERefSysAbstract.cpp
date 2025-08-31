@@ -292,11 +292,11 @@ void mafVMERefSysAbstract::InternalRestore(const mafStorageElement& node)
 std::shared_ptr<mmaMaterial> mafVMERefSysAbstract::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  auto material = mmaMaterial::SafeDownCast(GetAttribute(_R("MaterialAttributes")));
+  auto material = mmaMaterial::SafeDownCast(GetAttribute(mmaMaterial::GetAttributeName()));
   if (!material)
   {
     material = mmaMaterial::NewSPtr();
-    SetAttribute(_R("MaterialAttributes"), material);
+    SetAttribute(material);
     if (m_Output)
     {
       ((mafVMEOutputSurface *)m_Output)->SetMaterial(material);

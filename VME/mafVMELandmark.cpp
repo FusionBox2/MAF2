@@ -357,16 +357,16 @@ std::shared_ptr<mmaMaterial> mafVMELandmark::GetMaterial()
   std::shared_ptr<mmaMaterial> material;
   if (GetParent())
   {
-    material = mmaMaterial::SafeDownCast(GetParent()->GetAttribute(_R("MaterialAttributes")));
+    material = mmaMaterial::SafeDownCast(GetParent()->GetAttribute(mmaMaterial::GetAttributeName()));
   }
   else
   {
-    material = mmaMaterial::SafeDownCast(GetAttribute(_R("MaterialAttributes")));
+    material = mmaMaterial::SafeDownCast(GetAttribute(mmaMaterial::GetAttributeName()));
   }
   if (!material)
   {
     material = mmaMaterial::NewSPtr();
-    SetAttribute(_R("MaterialAttributes"), material);
+    SetAttribute(material);
   }
   if (m_Output)
   {

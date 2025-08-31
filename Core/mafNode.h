@@ -17,6 +17,7 @@
 
 #include <vector>
 #include <map>
+#include <set>
 #include <string>
 
 //----------------------------------------------------------------------------
@@ -89,7 +90,26 @@ public:
   {
 	  INVALID_ID = -1
   };
+  template<typename T>
+  struct NameComparePtr
+  {
+    bool operator()(const std::shared_ptr<T>& t1, const std::shared_ptr<T>& t2) const { return t1->GetName() < t2->GetName(); }
+    bool operator()(const mafString& s, const std::shared_ptr<T>& t) const { return s < t->GetName(); }
+    bool operator()(const std::shared_ptr<T>& t, const mafString& s) const { return t->GetName() < s; }
+    using is_transparent = std::true_type;
+  };
+  template<typename T>
+  struct NameCompare
+  {
+    bool operator()(const T& t1, const T& t2) const { return t1.GetName() < t2.GetName(); }
+    bool operator()(const mafString& s, const T& t) const { return s < t.GetName(); }
+    bool operator()(const T& t, const mafString& s) const { return t.GetName() < s; }
+    using is_transparent = std::true_type;
+  };
+
+  using Children = std::vector<std::shared_ptr<mafNode> >;
   using Links = std::map<mafString, mmuNodeLink>;
+  using Attributes = std::set<std::shared_ptr<model::data::Attribute>, NameComparePtr<model::data::Attribute> >;
 
   static std::shared_ptr<mafNode> Create(const char* NodeType);
   /** print a dump of this object */
@@ -287,23 +307,10 @@ public:
   /** Precess events coming from other objects */
   void OnEvent(mafEventBase *e) override;
 
-  typedef std::vector<std::shared_ptr<mafNode> > mafChildrenVector;
-
-  typedef std::map<mafString,std::shared_ptr<mafAttribute> > mafAttributesMap;
-
-  /** Set a new attribute. The given attribute is */
-  void SetAttribute(const mafString& name, std::shared_ptr<mafAttribute> a);
-
-  /** return an attribute given the name */
+  void SetAttribute(std::shared_ptr<mafAttribute> a);
   std::shared_ptr<mafAttribute> GetAttribute(const mafString& name);
-
-  /** return an attribute given the name */
   std::shared_ptr<const mafAttribute> GetAttribute(const mafString& name) const;
-
-  /** remove an attibute */
   void RemoveAttribute(const mafString& name);
-
-  /** remove all the attributes of this node */
   void RemoveAllAttributes();
 
   /** 
@@ -418,10 +425,10 @@ protected:
 
 private:
   static int SetParentNew(std::shared_ptr<mafNode> sharedThis, mafNode* parent);
-  mafChildrenVector m_Children;     ///< list of children
+  Children m_Children;     ///< list of children
   mafNode           *m_Parent = nullptr;      ///< parent node
 
-  mafAttributesMap  m_Attributes;   ///< attributes attached to this node
+  Attributes  m_Attributes;   ///< attributes attached to this node
 
   Links       m_Links;        ///< links to other nodes in the tree
 

@@ -120,11 +120,11 @@ mafVMESlicer::~mafVMESlicer()
 std::shared_ptr<mmaMaterial> mafVMESlicer::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  auto material = mmaMaterial::SafeDownCast(GetAttribute(_R("MaterialAttributes")));
+  auto material = mmaMaterial::SafeDownCast(GetAttribute(mmaMaterial::GetAttributeName()));
   if (!material)
   {
     material = mmaMaterial::NewSPtr();
-    SetAttribute(_R("MaterialAttributes"), material);
+    SetAttribute(material);
     lutPreset(4,material->m_ColorLut);
   }
   return material;

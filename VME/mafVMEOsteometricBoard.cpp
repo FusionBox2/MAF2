@@ -186,11 +186,11 @@ mafVMEOsteometricBoard::~mafVMEOsteometricBoard()
 std::shared_ptr<mmaMaterial> mafVMEOsteometricBoard::GetMaterial()
 //-------------------------------------------------------------------------
 {
-	auto material = mmaMaterial::SafeDownCast(GetAttribute(_R("MaterialAttributes")));
+	auto material = mmaMaterial::SafeDownCast(GetAttribute(mmaMaterial::GetAttributeName()));
 	if (!material)
 	{
 		material = mmaMaterial::NewSPtr();
-		SetAttribute(_R("MaterialAttributes"), material);
+		SetAttribute(material);
 	}
 	return material;
 }

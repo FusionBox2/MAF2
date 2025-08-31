@@ -421,11 +421,11 @@ void mafVMEPolylineSpline::OptimizeMinimumSpacingSpline()
 std::shared_ptr<mmaMaterial> mafVMEPolylineSpline::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  auto material = mmaMaterial::SafeDownCast(GetAttribute(_R("MaterialAttributes")));
+  auto material = mmaMaterial::SafeDownCast(GetAttribute(mmaMaterial::GetAttributeName()));
   if (!material)
   {
     material = mmaMaterial::NewSPtr();
-    SetAttribute(_R("MaterialAttributes"), material);
+    SetAttribute(material);
     if (m_Output)
     {
       ((mafVMEOutputPolyline *)m_Output)->SetMaterial(material);
