@@ -5,7 +5,6 @@
 
 #include "mafNode.h"
 #include "mafVME.h"
-#include "mafNodeIterator.h"
 #include <vector>
 
 //=========================================================================================
@@ -259,17 +258,17 @@ void mafGUICheckTree::VmeUpdateIcon(mafNode *vme)
 //----------------------------------------------------------------------------
 {
   //auto item = ItemFromNode((intptr_t)vme);
-  auto iter = std::make_unique<mafNodeIterator>(vme);// static_cast<mafGUICheckTreeItemData*>(m_NodeTree->GetItemData(item))->GetSharedNode().get());
+  //auto iter = std::make_unique<mafNodeIterator>(vme);// static_cast<mafGUICheckTreeItemData*>(m_NodeTree->GetItemData(item))->GetSharedNode().get());
   //auto iter = std::make_unique<mafNodeIterator>(static_cast<mafGUICheckTreeItemData*>(m_NodeTree->GetItemData(item))->GetSharedNode().get());
-  for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+  for (auto& node : *vme)
   {
-    int dataStatus = mafVME::StaticDownCast(node)->IsDataAvailable() ? 0 : 1;
-    int icon_index = ClassNameToIcon(_R(node->GetTypeName())) + (GetVmeStatus(node)*2) + dataStatus;
-    SetNodeIcon( (intptr_t)node, icon_index );
+    int dataStatus = mafVME::StaticDownCast(&node)->IsDataAvailable() ? 0 : 1;
+    int icon_index = ClassNameToIcon(_R(node.GetTypeName())) + (GetVmeStatus(&node)*2) + dataStatus;
+    SetNodeIcon( (intptr_t)&node, icon_index );
 
-    if (node->GetNumberOfLinks() != 0)
+    if (node.GetNumberOfLinks() != 0)
     {
-      for (auto& link : node->GetLinks())
+      for (auto& link : node.GetLinks())
       {
         if(link.second.GetNode())
         {

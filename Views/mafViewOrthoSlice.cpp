@@ -33,7 +33,6 @@
 #include "mafGUILutSlider.h"
 #include "mafEventInteraction.h"
 #include "mafEventSender.h"
-#include "mafNodeIterator.h"
 
 #include "mmaVolumeMaterial.h"
 #include "mafVMESurface.h"
@@ -784,20 +783,19 @@ void mafViewOrthoSlice::ResetSlicesPosition( mafNode *node )
 void mafViewOrthoSlice::SetThicknessForAllSurfaceSlices(mafNode *root)
 //----------------------------------------------------------------------------
 {
-	auto iter = std::make_unique<mafNodeIterator>(root);
-	for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+	for (auto& node : *root)
 	{
-		if (mafVME::StaticDownCast(node)->GetOutput()->IsA("mafVMEOutputSurface")) //if(node->IsA("mafVMESurface"))
+		if (mafVME::StaticDownCast(&node)->GetOutput()->IsA("mafVMEOutputSurface")) //if(node->IsA("mafVMESurface"))
 		{
-			if(auto pipe = mafPipeSurfaceSlice::SafeDownCast(m_ChildViewList[CHILD_XN_VIEW]->GetNodePipe(node)))
+			if(auto pipe = mafPipeSurfaceSlice::SafeDownCast(m_ChildViewList[CHILD_XN_VIEW]->GetNodePipe(&node)))
 			{
 				pipe->SetThickness(m_Border);
 			}
-			if(auto pipe = mafPipeSurfaceSlice::SafeDownCast(m_ChildViewList[CHILD_YN_VIEW]->GetNodePipe(node)))
+			if(auto pipe = mafPipeSurfaceSlice::SafeDownCast(m_ChildViewList[CHILD_YN_VIEW]->GetNodePipe(&node)))
 			{
 				pipe->SetThickness(m_Border);
 			}
-			if(auto pipe = mafPipeSurfaceSlice::SafeDownCast(m_ChildViewList[CHILD_ZN_VIEW]->GetNodePipe(node)))
+			if(auto pipe = mafPipeSurfaceSlice::SafeDownCast(m_ChildViewList[CHILD_ZN_VIEW]->GetNodePipe(&node)))
 			{
 				pipe->SetThickness(m_Border);
 			}

@@ -16,7 +16,6 @@
 #include "medVMEAnalog.h"
 #include "mafVMEOutputScalarMatrix.h"
 #include "mafTagArray.h"
-#include "mafNodeIterator.h"
 
 #include <vtkCubeSource.h>
 #include <vtkTransformPolyDataFilter.h>

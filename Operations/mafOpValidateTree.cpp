@@ -34,7 +34,6 @@
 #include "mafVMEItem.h"
 #include "mafVMEGenericAbstract.h"
 #include "mafVMERoot.h"
-#include "mafNodeIterator.h"
 #include "mafVMEExternalData.h"
 #include "vtkDirectory.h"
 
@@ -96,23 +95,21 @@ int mafOpValidateTree::ValidateTree()
 
   int result = mafOpValidateTree::VALIDATE_SUCCESS;
 
-  mafNode *node;
   mafVMERoot *root = mafVMERoot::SafeDownCast(GetInput()->GetRoot());
   assert(root != NULL);
   int max_item_id = root->GetMaxItemId();
   int max_node_id = root->GetMaxNodeId();
 
-  auto iter = std::make_unique<mafNodeIterator>(root);
   try
   {
-    for (node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+    for (auto& node : *root)
     {
       // check node ID
-      bool valid = node->IsValid();
-      if (!valid && !node->IsMAFType(mafVMERoot))
+      bool valid = node.IsValid();
+      if (!valid && !node.IsMAFType(mafVMERoot))
       {
-        ErrorLog(mafOpValidateTree::INVALID_NODE, node->GetName().GetCStr());
-        node->UpdateId();
+        ErrorLog(mafOpValidateTree::INVALID_NODE, node.GetName().GetCStr());
+        node.UpdateId();
         if (result != mafOpValidateTree::VALIDATE_ERROR)
         {
           result = mafOpValidateTree::VALIDATE_WARNING;
@@ -120,11 +117,11 @@ int mafOpValidateTree::ValidateTree()
       }
       {
         // check node links
-        for (auto& link : node->GetLinks())
+        for (auto& link : node.GetLinks())
         {
           if (link.second.GetNode() == nullptr)
           {
-            ErrorLog(mafOpValidateTree::LINK_NULL, node->GetName().GetCStr(), link.first.GetCStr());
+            ErrorLog(mafOpValidateTree::LINK_NULL, node.GetName().GetCStr(), link.first.GetCStr());
             result = mafOpValidateTree::VALIDATE_ERROR;
             continue;
           }
@@ -149,7 +146,7 @@ int mafOpValidateTree::ValidateTree()
       wxString absFilename = "";
       mafVMEItem *item = nullptr;
       bool singleFileMode = false;
-      mafVMEGenericAbstract *vme = mafVMEGenericAbstract::SafeDownCast(node);
+      mafVMEGenericAbstract *vme = mafVMEGenericAbstract::SafeDownCast(&node);
 
       if (vme && vme->IsA("mafVMEExternalData"))
       {
@@ -264,7 +261,7 @@ int mafOpValidateTree::ValidateTree()
   } // try
   catch (...)
   {
-    ErrorLog(mafOpValidateTree::EXCEPTION_ON_ITERATOR, iter->GetCurrentNode()->GetName().GetCStr());
+    ErrorLog(mafOpValidateTree::EXCEPTION_ON_ITERATOR, "");
   }
  
   return result;

@@ -49,7 +49,6 @@
 #include "mafTagArray.h"
 #include "mmaMaterial.h"
 #include "mmaVolumeMaterial.h"
-#include "mafNodeIterator.h"
 #include "mafGUILutPreset.h"
 #include "mafVMEOutputSurface.h"
 #include "mafAttribute.h"
@@ -374,12 +373,11 @@ void medViewSlicer::CameraUpdate()
     ((mafViewVTK*)m_ChildViewList[SLICE_VIEW])->GetRWI()->GetCamera()->GetViewPlaneNormal(normal);
 
     mafNode *root=m_CurrentSlicer->GetRoot();
-    auto iter = std::make_unique<mafNodeIterator>(root);
-    for (auto Inode = iter->GetFirstNode(); Inode; Inode = iter->GetNextNode())
+    for (auto& Inode : *root)
     {
-      if(Inode->IsA("mafVMESurface") || Inode->IsA("mafVMESurfaceParametric"))
+      if(Inode.IsA("mafVMESurface") || Inode.IsA("mafVMESurfaceParametric"))
       {
-        auto PipeSliceViewSurface = mafPipeSurfaceSlice::SafeDownCast(((mafViewVTK *)m_ChildViewList[SLICE_VIEW])->GetNodePipe(Inode));
+        auto PipeSliceViewSurface = mafPipeSurfaceSlice::SafeDownCast(((mafViewVTK *)m_ChildViewList[SLICE_VIEW])->GetNodePipe(&Inode));
         if(PipeSliceViewSurface)
         {
           double center[3], surfaceOriginTranslated[3];

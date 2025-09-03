@@ -8,7 +8,6 @@
 #include "mafVME.h"
 #include "mafStorage.h"
 #include "mafVMERoot.h"
-#include "mafNodeIterator.h"
 #include "ftk/Core/NodeManager.h"
 
 #include <vector>
@@ -87,38 +86,33 @@ int mafOpExporterMSF::ExportMSF()
 
   std::vector<idValues> values;
 
-  auto iter = std::make_unique<mafNodeIterator>(GetInput().get());
-  for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+  for (auto& node: *GetInput())
   {
     idValues value;
-    value.oldID = node;//->GetId();
+    value.oldID = &node;//->GetId();
     values.push_back(value);
   }
-  iter.reset();
 //  mafVME *parent = (mafVME *)GetInput()->GetParent();
 //  GetInput()->ReparentTo(storage.GetRoot());
   mafNode::CopyTree(GetInput().get(),root.get());
 
-  iter = std::make_unique<mafNodeIterator>(root->GetChild(0).get());
   int index = 0;
-  for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+  for (auto& node : *root->GetChild(0))
   {
     //idValues value;
-    values[index].newID = node;//->GetId();
+    values[index].newID = &node;//->GetId();
 
     index++;
 
     
   }
-  iter.reset();
 
   std::vector<mafString> linkToEliminate;
-  iter = std::make_unique<mafNodeIterator>(root->GetChild(0).get());
-  for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+  for (auto& node : *root->GetChild(0))
   {
     linkToEliminate.clear();
 
-    for (auto& link : node->GetLinks())
+    for (auto& link : node.GetLinks())
     {
       bool foundID = false;
       for (int i=0;i<values.size();i++)
@@ -139,10 +133,9 @@ int mafOpExporterMSF::ExportMSF()
 
     for (int i=0;i<linkToEliminate.size();i++)
     {
-      node->RemoveLink(linkToEliminate[i]);
+      node.RemoveLink(linkToEliminate[i]);
     }
   }
-  iter.reset();
 
 //   mafNode *n = GetInput()->CopyTree();
 //   n->Register(NULL);

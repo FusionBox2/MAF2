@@ -31,7 +31,6 @@
 #include "mafVME.h"
 #include "mafMatrixPipe.h"
 #include "vtkMAFAssembly.h"
-#include "mafNodeIterator.h" 
 #include "vtkRenderer.h"
 //#include "vtkTransform.h"
 #include "vtkLinearTransform.h"

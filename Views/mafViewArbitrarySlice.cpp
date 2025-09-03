@@ -48,7 +48,6 @@ PURPOSE.  See the above copyright notice for more information.
 #include "mafTagArray.h"
 #include "mmaMaterial.h"
 #include "mmaVolumeMaterial.h"
-#include "mafNodeIterator.h"
 #include "mafGUILutPreset.h"
 #include "mafVMEOutputSurface.h"
 #include "mafAttribute.h"
@@ -467,10 +466,9 @@ void mafViewArbitrarySlice::OnEventGizmoTranslate(mafEventBase *maf_event)
 
 			//for each surface visualized change the center of the cut plane
 			mafNode *root=m_CurrentVolume->GetRoot();
-			auto iter = std::make_unique<mafNodeIterator>(root);
-			for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+			for (auto& node : *root)
 			{
-				if(node->IsA("mafVMESurface") || node->IsA("mafVMESurfaceParametric") || node->IsA("mafVMELandmark") || node->IsA("mafVMELandmarkCloud"))
+				if(node.IsA("mafVMESurface") || node.IsA("mafVMESurfaceParametric") || node.IsA("mafVMELandmark") || node.IsA("mafVMELandmarkCloud"))
 				{
 					double surfaceOriginTranslated[3];
 					double normal[3];
@@ -479,14 +477,14 @@ void mafViewArbitrarySlice::OnEventGizmoTranslate(mafEventBase *maf_event)
 					surfaceOriginTranslated[1] = m_SliceCenterSurface[1] + normal[1] * 0.1;
 					surfaceOriginTranslated[2] = m_SliceCenterSurface[2] + normal[2] * 0.1;
 
-					auto PipeArbitraryViewSurface = mafPipeSurface::SafeDownCast(((mafViewSlice *)m_ChildViewList[ARBITRARY_VIEW])->GetNodePipe(node));
-					auto PipeSliceViewSurface = mafPipeSurfaceSlice::SafeDownCast(((mafViewSlice *)m_ChildViewList[SLICE_VIEW])->GetNodePipe(node));
+					auto PipeArbitraryViewSurface = mafPipeSurface::SafeDownCast(((mafViewSlice *)m_ChildViewList[ARBITRARY_VIEW])->GetNodePipe(&node));
+					auto PipeSliceViewSurface = mafPipeSurfaceSlice::SafeDownCast(((mafViewSlice *)m_ChildViewList[SLICE_VIEW])->GetNodePipe(&node));
 					if(PipeSliceViewSurface)
 					{
 						PipeSliceViewSurface->SetSlice(surfaceOriginTranslated);
 					}
 				}
-				if(node->IsA("mafVMEMesh"))
+				if(node.IsA("mafVMEMesh"))
 				{
 					double surfaceOriginTranslated[3];
 					double normal[3];
@@ -495,15 +493,14 @@ void mafViewArbitrarySlice::OnEventGizmoTranslate(mafEventBase *maf_event)
 					surfaceOriginTranslated[1] = m_SliceCenterSurface[1] + normal[1] * 0.1;
 					surfaceOriginTranslated[2] = m_SliceCenterSurface[2] + normal[2] * 0.1;
 
-					auto PipeArbitraryViewMesh = mafPipeMesh::SafeDownCast(((mafViewSlice *)m_ChildViewList[ARBITRARY_VIEW])->GetNodePipe(node));
-					auto PipeSliceViewMesh = mafPipeMeshSlice::SafeDownCast(((mafViewSlice *)m_ChildViewList[SLICE_VIEW])->GetNodePipe(node));
+					auto PipeArbitraryViewMesh = mafPipeMesh::SafeDownCast(((mafViewSlice *)m_ChildViewList[ARBITRARY_VIEW])->GetNodePipe(&node));
+					auto PipeSliceViewMesh = mafPipeMeshSlice::SafeDownCast(((mafViewSlice *)m_ChildViewList[SLICE_VIEW])->GetNodePipe(&node));
 					if(PipeArbitraryViewMesh && PipeSliceViewMesh)
 					{
 						PipeSliceViewMesh->SetSlice(surfaceOriginTranslated);
 					}
 				}
 			}
-			iter.reset();
 			if(m_CurrentPolylineGraphEditor)
 			{
 				//a surface is visible only if there is a volume in the view
@@ -553,10 +550,9 @@ void mafViewArbitrarySlice::OnEventGizmoRotate(mafEventBase *maf_event)
 
 			//update the normal of the cutter plane of the surface
 			mafNode *root=m_CurrentVolume->GetRoot();
-			auto iter = std::make_unique<mafNodeIterator>(root);
-			for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+			for (auto& node : *root)
 			{
-				if(node->IsA("mafVMESurface") || node->IsA("mafVMESurfaceParametric") || node->IsA("mafVMELandmark") || node->IsA("mafVMELandmarkCloud"))
+				if(node.IsA("mafVMESurface") || node.IsA("mafVMESurfaceParametric") || node.IsA("mafVMELandmark") || node.IsA("mafVMELandmarkCloud"))
 				{
 					double surfaceOriginTranslated[3];
 					double normal[3];
@@ -565,8 +561,8 @@ void mafViewArbitrarySlice::OnEventGizmoRotate(mafEventBase *maf_event)
 					surfaceOriginTranslated[1] = m_SliceCenterSurface[1] + normal[1] * 0.1;
 					surfaceOriginTranslated[2] = m_SliceCenterSurface[2] + normal[2] * 0.1;
 
-					auto PipeArbitraryViewSurface = mafPipeSurface::SafeDownCast(((mafViewSlice *)m_ChildViewList[ARBITRARY_VIEW])->GetNodePipe(node));
-					auto PipeSliceViewSurface = mafPipeSurfaceSlice::SafeDownCast(((mafViewSlice *)m_ChildViewList[SLICE_VIEW])->GetNodePipe(node));
+					auto PipeArbitraryViewSurface = mafPipeSurface::SafeDownCast(((mafViewSlice *)m_ChildViewList[ARBITRARY_VIEW])->GetNodePipe(&node));
+					auto PipeSliceViewSurface = mafPipeSurfaceSlice::SafeDownCast(((mafViewSlice *)m_ChildViewList[SLICE_VIEW])->GetNodePipe(&node));
 					if(PipeSliceViewSurface)
 					{
 
@@ -575,7 +571,7 @@ void mafViewArbitrarySlice::OnEventGizmoRotate(mafEventBase *maf_event)
 						PipeSliceViewSurface->SetSlice(surfaceOriginTranslated);
 					}
 				}
-				if(node->IsA("mafVMEMesh"))
+				if(node.IsA("mafVMEMesh"))
 				{
 					double surfaceOriginTranslated[3];
 					double normal[3];
@@ -584,8 +580,8 @@ void mafViewArbitrarySlice::OnEventGizmoRotate(mafEventBase *maf_event)
 					surfaceOriginTranslated[1] = m_SliceCenterSurface[1] + normal[1] * 0.1;
 					surfaceOriginTranslated[2] = m_SliceCenterSurface[2] + normal[2] * 0.1;
 
-					auto PipeArbitraryViewMesh = mafPipeMesh::SafeDownCast(((mafViewSlice *)m_ChildViewList[ARBITRARY_VIEW])->GetNodePipe(node));
-					auto PipeSliceViewMesh = mafPipeMeshSlice::SafeDownCast(((mafViewSlice *)m_ChildViewList[SLICE_VIEW])->GetNodePipe(node));
+					auto PipeArbitraryViewMesh = mafPipeMesh::SafeDownCast(((mafViewSlice *)m_ChildViewList[ARBITRARY_VIEW])->GetNodePipe(&node));
+					auto PipeSliceViewMesh = mafPipeMeshSlice::SafeDownCast(((mafViewSlice *)m_ChildViewList[SLICE_VIEW])->GetNodePipe(&node));
 					if(PipeSliceViewMesh)
 					{
 
@@ -595,7 +591,6 @@ void mafViewArbitrarySlice::OnEventGizmoRotate(mafEventBase *maf_event)
 					}
 				}
 			}
-			iter.reset();
 			if(m_CurrentPolylineGraphEditor)
 			{
 				//a surface is visible only if there is a volume in the view
@@ -697,13 +692,12 @@ void mafViewArbitrarySlice::OnEventThis(mafEventBase *maf_event)
 				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 				//update the normal of the cutter plane of the surface
 				mafNode *root=m_CurrentVolume->GetRoot();
-				auto iter = std::make_unique<mafNodeIterator>(root);
-				for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+				for (auto& node : *root)
 				{
-					if(node->IsA("mafVMESurface") || node->IsA("mafVMESurfaceParametric") || node->IsA("mafVMELandmark") || node->IsA("mafVMELandmarkCloud"))
+					if(node.IsA("mafVMESurface") || node.IsA("mafVMESurfaceParametric") || node.IsA("mafVMELandmark") || node.IsA("mafVMELandmarkCloud"))
 					{
-						auto PipeArbitraryViewSurface = mafPipeSurface::SafeDownCast(((mafViewSlice *)m_ChildViewList[ARBITRARY_VIEW])->GetNodePipe(node));
-						auto PipeSliceViewSurface = mafPipeSurfaceSlice::SafeDownCast(((mafViewSlice *)m_ChildViewList[SLICE_VIEW])->GetNodePipe(node));
+						auto PipeArbitraryViewSurface = mafPipeSurface::SafeDownCast(((mafViewSlice *)m_ChildViewList[ARBITRARY_VIEW])->GetNodePipe(&node));
+						auto PipeSliceViewSurface = mafPipeSurfaceSlice::SafeDownCast(((mafViewSlice *)m_ChildViewList[SLICE_VIEW])->GetNodePipe(&node));
 						if(PipeArbitraryViewSurface)
 						{
 							double normal[3];
@@ -718,10 +712,10 @@ void mafViewArbitrarySlice::OnEventThis(mafEventBase *maf_event)
 							PipeSliceViewSurface->SetSlice(surfaceOriginTranslated);
 						}
 					}
-					if(node->IsA("mafVMEMesh"))
+					if(node.IsA("mafVMEMesh"))
 					{
-						auto PipeArbitraryViewMesh = mafPipeMesh::SafeDownCast(((mafViewSlice *)m_ChildViewList[ARBITRARY_VIEW])->GetNodePipe(node));
-						auto PipeSliceViewMesh = mafPipeMeshSlice::SafeDownCast(((mafViewSlice *)m_ChildViewList[SLICE_VIEW])->GetNodePipe(node));
+						auto PipeArbitraryViewMesh = mafPipeMesh::SafeDownCast(((mafViewSlice *)m_ChildViewList[ARBITRARY_VIEW])->GetNodePipe(&node));
+						auto PipeSliceViewMesh = mafPipeMeshSlice::SafeDownCast(((mafViewSlice *)m_ChildViewList[SLICE_VIEW])->GetNodePipe(&node));
 						if(PipeSliceViewMesh && PipeArbitraryViewMesh)
 						{
 							double normal[3];
@@ -737,7 +731,6 @@ void mafViewArbitrarySlice::OnEventThis(mafEventBase *maf_event)
 						}
 					}
 				}
-				iter.reset();
 				if(m_CurrentPolylineGraphEditor)
 				{
 					//a surface is visible only if there is a volume in the view

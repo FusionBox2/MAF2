@@ -23,7 +23,6 @@
 
 #include "mafVME.h"
 #include "mafNode.h"
-#include "mafNodeIterator.h"
 
 //----------------------------------------------------------------------------
 // const
@@ -250,12 +249,10 @@ void mafGUITreeContextualMenu::OnContextualMenu(wxCommandEvent &event)
 void mafGUITreeContextualMenu::CryptSubTree(bool crypt)
 //----------------------------------------------------------------------------
 {
-  auto iter = std::make_unique<mafNodeIterator>(m_NodeActive);
-
-	for(auto v=iter->GetFirstNode();v;v=iter->GetNextNode())
+	for(auto& v: *m_NodeActive)
 	{
-    if(!v->IsA("mafVME"))
+    if(!v.IsA("mafVME"))
       continue;
-    mafVME::StaticDownCast(v)->SetCrypting(crypt);
+    mafVME::StaticDownCast(&v)->SetCrypting(crypt);
 	}
 }

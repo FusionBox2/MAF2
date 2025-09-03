@@ -32,7 +32,6 @@
 #include "mafVMELandmarkCloud.h"
 #include "mafVMELandmark.h"
 #include "mafVMEGroup.h"
-#include "mafNodeIterator.h"
 #include "mafVMERawMotionData.h"
 
 #include "vtkDataSetReader.h"

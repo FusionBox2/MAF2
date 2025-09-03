@@ -35,7 +35,6 @@
 
 #include "mafGUIDialog.h"
 
-#include "mafNodeIterator.h"
 #include "mafVME.h"
 #include "mafVMELandmark.h"
 
@@ -498,10 +497,9 @@ bool lhpOpImporterC3DFused::RegistrationProcedure()
       }
       if (search_name)
       {
-        auto lmitert = std::make_unique<mafNodeIterator>(Target.get());
-        for (auto lmt = lmitert->GetFirstNode(); lmt; lmt = lmitert->GetNextNode())
+        for (auto& lmt : *Target)
         {
-          auto lmtmp = mafVMELandmarkCloud::SafeDownCast(lmt);
+          auto lmtmp = mafVMELandmarkCloud::SafeDownCast(&lmt);
           if (lmtmp == nullptr)
             continue;
           if (strstr(lmtmp->GetName().GetCStr(), search_name) != nullptr)

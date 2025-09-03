@@ -27,7 +27,6 @@
 
 #include "mafVMEOutput.h"
 #include "mafVME.h"
-#include "mafNodeIterator.h"
 #include "mafAbsMatrixPipe.h"
 #include "mafDataPipe.h"
 #include "ftk/Base/Object.h"
@@ -216,7 +215,7 @@ void mafVMEOutput::GetVMEBounds(double bounds[6]) const
 }
 
 //-------------------------------------------------------------------------
-void mafVMEOutput::GetVMEBounds(mafOBB &bounds,mafTimeStamp t, mafNodeIterator *iter) const
+void mafVMEOutput::GetVMEBounds(mafOBB &bounds,mafTimeStamp t) const
 //-------------------------------------------------------------------------
 {
   assert(m_VME);
@@ -226,7 +225,7 @@ void mafVMEOutput::GetVMEBounds(mafOBB &bounds,mafTimeStamp t, mafNodeIterator *
     
     GetAbsMatrix(itemPose,t);
     
-    GetVMELocalBounds(bounds,t,iter);  
+    GetVMELocalBounds(bounds,t);  
 
     bounds.ApplyTransform(itemPose);
   }
@@ -242,7 +241,7 @@ void mafVMEOutput::GetVMELocalBounds(double bounds[6]) const
 }
 
 //-------------------------------------------------------------------------
-void mafVMEOutput::GetVMELocalBounds(mafOBB &bounds,mafTimeStamp t, mafNodeIterator *iter) const
+void mafVMEOutput::GetVMELocalBounds(mafOBB &bounds,mafTimeStamp t) const
 //-------------------------------------------------------------------------
 {
   if (t<0)
@@ -301,7 +300,7 @@ void mafVMEOutput::GetBounds(double bounds[6]) const
 }
 
 //-------------------------------------------------------------------------
-void mafVMEOutput::GetBounds(mafOBB &bounds,mafTimeStamp t, mafNodeIterator *iter) const
+void mafVMEOutput::GetBounds(mafOBB &bounds,mafTimeStamp t) const
 //-------------------------------------------------------------------------
 {
   assert(m_VME);
@@ -309,7 +308,7 @@ void mafVMEOutput::GetBounds(mafOBB &bounds,mafTimeStamp t, mafNodeIterator *ite
   if (t<0)
     t=m_VME->GetTimeStamp();
 
-  GetVMEBounds(bounds,t,iter);
+  GetVMEBounds(bounds,t);
   
   for (int i=0;i<m_VME->GetNumberOfChildren();i++)
   {

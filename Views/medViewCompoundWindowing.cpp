@@ -33,7 +33,6 @@
 #include "mafGUILutSlider.h"
 #include "mafGUILutSwatch.h"
 #include "mafNode.h"
-#include "mafNodeIterator.h"
 #include "mafPipeImage3D.h"
 #include "mafPipeVolumeSlice.h"
 #include "mafPipeSurfaceSlice.h"

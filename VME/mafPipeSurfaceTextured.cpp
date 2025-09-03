@@ -35,7 +35,6 @@
 #include "mafVMEGenericAbstract.h"
 #include "mafEventSender.h"
 #include "mafGUIValidator.h"
-#include "mafNodeIterator.h"
 #include "wx/busyinfo.h"
 
 #include <ctime>

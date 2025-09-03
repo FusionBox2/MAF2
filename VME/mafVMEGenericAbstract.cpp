@@ -33,7 +33,6 @@
 #include "mafMatrixVector.h"
 #include "mafMatrixInterpolator.h"
 #include "mmuTimeSet.h"
-#include "mafNodeIterator.h"
 #include "mafStorage.h"
 #include "mafDataPipeInterpolatorVTK.h"
 #include "mafVMEItemVTK.h"

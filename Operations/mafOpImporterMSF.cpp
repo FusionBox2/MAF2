@@ -29,7 +29,6 @@
 #include <wx/fs_zip.h>
 
 #include "mafEvent.h"
-#include "mafNodeIterator.h"
 #include "mafStorage.h"
 #include "mafVMERoot.h"
 #include "mafVMEGroup.h"
@@ -128,12 +127,11 @@ int mafOpImporterMSF::ImportMSF()
       
   mafString group_name = _R("imported from ") + name + _R(".") + ext;
 
-  auto iter = std::make_unique<mafNodeIterator>(root.get());
-  for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+  for (auto& node : *root)
   {
-    if(node == root.get())
+    if(&node == root.get())
       continue;
-    auto vmeWithDataVector = mafVMEGenericAbstract::SafeDownCast(node);
+    auto vmeWithDataVector = mafVMEGenericAbstract::SafeDownCast(&node);
     if (vmeWithDataVector)
     {
       mafDataVector *dataVector = vmeWithDataVector->GetDataVector();
@@ -147,7 +145,6 @@ int mafOpImporterMSF::ImportMSF()
       }
     }
   }
-  iter.reset();
  
 
 

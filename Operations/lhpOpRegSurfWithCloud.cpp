@@ -35,7 +35,6 @@
 #include "vtkSmartPointer.h"
 #include "mafMatrixVector.h"
 #include "mafAbsMatrixPipe.h"
-#include "mafNodeIterator.h"
 
 
 #include "vtkPolyData.h"
@@ -196,17 +195,15 @@ void lhpOpRegSurfWithCloud::OpStop(int result)
     if(surf == nullptr)
       continue;
 
-    auto iter = std::make_unique<mafNodeIterator>(m_Source);
-    for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+    for (auto& node : *m_Source)
     {
-      auto cloudChild = mafVMELandmarkCloud::SafeDownCast(node);
+      auto cloudChild = mafVMELandmarkCloud::SafeDownCast(&node);
       if(cloudChild && cloudChild->GetName() == m_LMDict[s].second)
       {
         cloud = cloudChild;
         break;
       }
     }
-    iter.reset();
 
     /*for(unsigned i = 0; i < m_Source->GetNumberOfChildren(); i++)
     {

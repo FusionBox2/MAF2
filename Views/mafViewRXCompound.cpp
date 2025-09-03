@@ -29,7 +29,6 @@
 #include "mafViewSlice.h"
 #include "mafPipeVolumeSlice.h"
 #include "mafPipeSurfaceSlice.h"
-#include "mafNodeIterator.h"
 #include "mafGUILutPreset.h"
 #include "mafGUI.h"
 #include "mafGUILutSwatch.h"

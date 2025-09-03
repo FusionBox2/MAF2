@@ -41,8 +41,6 @@
 #include "mafVMEVolumeRGB.h"
 #include "mafVMEExternalData.h"
 
-#include "mafNodeIterator.h"
-
 #include <vector>
 
 //------------------------------------------------------------------------------

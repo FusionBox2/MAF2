@@ -2,7 +2,7 @@
 
 #include "mafDecl.h"
 
-#include "mafNodeIterator.h"
+#include "ftk/Core/NodeIterator.h"
 #include "ftk/Core/NodeFactory.h"
 #include "mafIndent.h"
 #include "mafEventIO.h"
@@ -532,12 +532,10 @@ int mafNode::SetParentNew(std::shared_ptr<mafNode> sharedThis, mafNode *parent)
   sharedThis->m_Parent = parent;
   _Parent = parent;
 
-  auto iter = std::make_unique<mafNodeIterator>(sharedThis.get());
-  for (auto n = iter->GetFirstNode(); n; n = iter->GetNextNode())
+    for (auto& n : *sharedThis)
   {
-    n->UpdateId();
+    n.UpdateId();
   }
-  iter.reset();
 
   if(new_root != nullptr)
   {
@@ -709,28 +707,25 @@ std::shared_ptr<mafNode> mafNode::CopyTree()
 {
   std::vector<std::pair<mafNode*, mafNode*> > nodes;
   {
-    auto iter = std::make_unique<mafNodeIterator>(this);
-    for (auto n = iter->GetFirstNode(); n; n = iter->GetNextNode())
+    for (auto& n : *this)
     {
-      nodes.push_back(std::make_pair(n, nullptr));
+      nodes.push_back(std::make_pair(&n, nullptr));
     }
   }
   auto res = CopyTree(this);
   if(res == nullptr)
     return nullptr;
   {
-    auto iter = std::make_unique<mafNodeIterator>(res.get());
     unsigned i = 0;
-    for(auto n = iter->GetFirstNode(); n; n = iter->GetNextNode(), i++)
+    for(auto& n : *res)
     {
-      nodes[i].second = n;
+      nodes[i].second = &n;
     }
   }
   {
-    auto iter = std::make_unique<mafNodeIterator>(res.get());
-    for(auto n = iter->GetFirstNode(); n; n = iter->GetNextNode())
+    for(auto& n : *res)
     {
-      n->UpdateLinks(nodes);
+      n.UpdateLinks(nodes);
     }
   }
   return res;
@@ -756,7 +751,7 @@ std::shared_ptr<mafNode> mafNode::CopyTree(mafNode *vme, mafNode *parent)
 void mafNode::SetAttribute(std::shared_ptr<mafAttribute> a)
 //-------------------------------------------------------------------------
 {
-	if (auto it = m_Attributes.find(a->GetName()); it != end(m_Attributes))
+	if (auto it = m_Attributes.find(a->GetName()); it != m_Attributes.end())
 		m_Attributes.erase(it);
 	m_Attributes.insert(a);
 }
@@ -765,7 +760,7 @@ void mafNode::SetAttribute(std::shared_ptr<mafAttribute> a)
 std::shared_ptr<mafAttribute> mafNode::GetAttribute(const mafString& name)
 //-------------------------------------------------------------------------
 {
-  if (auto it = m_Attributes.find(name); it != end(m_Attributes))
+  if (auto it = m_Attributes.find(name); it != m_Attributes.end())
     return *it;
   return nullptr;
 }
@@ -774,7 +769,7 @@ std::shared_ptr<mafAttribute> mafNode::GetAttribute(const mafString& name)
 std::shared_ptr<const mafAttribute> mafNode::GetAttribute(const mafString& name) const
 //-------------------------------------------------------------------------
 {
-  if (auto it = m_Attributes.find(name); it != end(m_Attributes))
+  if (auto it = m_Attributes.find(name); it != m_Attributes.end())
     return *it;
   return nullptr;
 }
@@ -826,6 +821,21 @@ mafNode *mafNode::GetLink(const mafString& name)
 
   return NULL;
 }
+
+mafNode::Iterator mafNode::begin()
+{
+    Iterator iter(this);
+    iter.GoToFirstNode();
+    return iter;
+}
+
+mafNode::Iterator mafNode::end()
+{
+    return Iterator(this);
+}
+
+
+
 //-------------------------------------------------------------------------
 mafID mafNode::GetLinkSubId(const mafString& name)
 //-------------------------------------------------------------------------

@@ -58,7 +58,6 @@
 #include <string>
 #include <vnl/vnl_matrix.h>
 
-#include "mafNodeIterator.h"
 #include "mafVMEInfoText.h"
 
 
@@ -218,12 +217,11 @@ namespace
 
     mafString group_name = _R("Skeletal model");
 
-    auto iter = std::make_unique<mafNodeIterator>(root.get());
-    for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+    for (auto& node : *root)
     {
-      if(node == root.get())
+      if(&node == root.get())
         continue;
-      auto vmeWithDataVector = mafVMEGenericAbstract::SafeDownCast(node);
+      auto vmeWithDataVector = mafVMEGenericAbstract::SafeDownCast(&node);
       if (vmeWithDataVector)
       {
         mafDataVector *dataVector = vmeWithDataVector->GetDataVector();
@@ -237,8 +235,6 @@ namespace
         }
       }
     }
-    iter.reset();
-
 
     auto m_Group = mafVMEGroup::NewSPtr();
     m_Group->Initialize();
@@ -1751,10 +1747,9 @@ namespace
       }
       if(search_name)
       {
-        auto lmitert = std::make_unique<mafNodeIterator>(m_Target);
-        for(mafNode *lmt = lmitert->GetFirstNode(); lmt; lmt = lmitert->GetNextNode())
+        for(auto& lmt : *m_Target)
         {
-          mafVMELandmarkCloud *lmtmp = mafVMELandmarkCloud::SafeDownCast(lmt);
+          auto lmtmp = mafVMELandmarkCloud::SafeDownCast(&lmt);
           if(lmtmp == nullptr)
             continue;
           if(strstr(lmtmp->GetName().GetCStr(), search_name) != nullptr)

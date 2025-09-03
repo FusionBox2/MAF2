@@ -42,7 +42,6 @@
 #include "mafSceneGraph.h"
 #include "mafAttachCamera.h"
 #include "mafGUIFloatSlider.h"
-#include "mafNodeIterator.h"
 #include "mafVMEGizmo.h"
 #include "mafPipeMeshSlice.h"
 #include "mafGUI.h"
@@ -520,24 +519,24 @@ void mafViewSingleSlice::OnEvent(mafEventBase *maf_event)
 				}
 				else
 					return;
-				auto iter = std::make_unique<mafNodeIterator>(m_CurrentVolume->m_Vme->GetRoot());
-				for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+				auto rt = m_CurrentVolume->m_Vme->GetRoot();
+				for (auto& node : *rt)
 				{
-					if(node->IsA("mafVMESurface"))
+					if(node.IsA("mafVMESurface"))
 					{
-						auto p= mafPipeSurfaceSlice::SafeDownCast(this->GetNodePipe(node));
+						auto p= mafPipeSurfaceSlice::SafeDownCast(this->GetNodePipe(&node));
 						if(p)
 							p->SetSlice(m_OriginVolume);
 					}
-					if(node->IsA("mafVMEPolyline"))
+					if(node.IsA("mafVMEPolyline"))
 					{
-						auto p= mafPipePolylineSlice::SafeDownCast(this->GetNodePipe(node));
+						auto p= mafPipePolylineSlice::SafeDownCast(this->GetNodePipe(&node));
 						if(p)
 							p->SetSlice(m_OriginVolume);
 					}
-					if(node->IsA("mafVMEMesh"))
+					if(node.IsA("mafVMEMesh"))
 					{
-						auto p= mafPipeMeshSlice::SafeDownCast(this->GetNodePipe(node));
+						auto p= mafPipeMeshSlice::SafeDownCast(this->GetNodePipe(&node));
 						if(p)
 							p->SetSlice(m_OriginVolume);
 					}
@@ -577,16 +576,16 @@ void mafViewSingleSlice::OnEvent(mafEventBase *maf_event)
 			m_Gui->Update();
 
 
-			auto iter = std::make_unique<mafNodeIterator>(m_CurrentVolume->m_Vme->GetRoot());
-			for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+			auto rt = m_CurrentVolume->m_Vme->GetRoot();
+			for (auto& node : *rt)
 			{
-			  if(node->IsA("mafVMESurface") || (mafVME::StaticDownCast(node)->GetOutput()->IsA("mafVMEOutputVolume")) || node->IsA("mafVMEPolyline"))
+			  if(node.IsA("mafVMESurface") || (mafVME::StaticDownCast(&node)->GetOutput()->IsA("mafVMEOutputVolume")) || node.IsA("mafVMEPolyline"))
 				{
-					mafSceneNode *n = m_Sg->Vme2Node(node);
+					mafSceneNode *n = m_Sg->Vme2Node(&node);
 					if(n && n->IsVisible())
 					{
-						VmeDeletePipe(node);
-						VmeCreatePipe(node);
+						VmeDeletePipe(&node);
+						VmeCreatePipe(&node);
 					}
 				}
 			}
@@ -829,18 +828,18 @@ void mafViewSingleSlice::VmeShow(mafNode *node, bool show)
       for(int i=0; i<m_NumOfChildView; i++)
         ((mafViewSingleSliceLHPBuilder *)m_ChildViewList[i])->UpdateText(0);
 	*/  
-			auto iter = std::make_unique<mafNodeIterator>(node->GetRoot());
-			for (auto Inode = iter->GetFirstNode(); Inode; Inode = iter->GetNextNode())
+			auto rt = node->GetRoot();
+			for (auto& Inode : *rt)
 			{
-				if(this->GetNodePipe(Inode))
+				if(this->GetNodePipe(&Inode))
 				{
-					if(Inode->IsA("mafVMESurface"))
+					if(Inode.IsA("mafVMESurface"))
 					{
-						{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(Inode); evUnq.SetBool(false); InvokeEvent(evUnq);}
+						{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(&Inode); evUnq.SetBool(false); InvokeEvent(evUnq);}
 					}
-					if(Inode->IsA("mafVMEPolyline"))
+					if(Inode.IsA("mafVMEPolyline"))
 					{
-						{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(Inode); evUnq.SetBool(false); InvokeEvent(evUnq);}
+						{mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(&Inode); evUnq.SetBool(false); InvokeEvent(evUnq);}
 					}
 				}
 			}

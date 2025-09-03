@@ -30,7 +30,6 @@
 #include "mafVMESurface.h"
 #include "mafVMEOutputSurface.h"
 #include "mafTransformBase.h"
-#include "mafNodeIterator.h"
 #include "mafVMELandmarkCloud.h"
 
 #include "vtkSmartPointer.h"
@@ -312,12 +311,13 @@ void lhpOpMergeClouds::OpDo()
 {
   for(int i = 0; i < m_MergeClouds.size(); i++)
   {
-    auto iter1 = std::make_unique<mafNodeIterator>(GetInput().get());
-    auto iter2 = std::make_unique<mafNodeIterator>(m_MergeClouds[i]);
     mafMatrix m;
-    mafNode *node1, *node2;
-    for (node1 = iter1->GetFirstNode(), node2 = iter2->GetFirstNode(); node1 && node2; node1 = iter1->GetNextNode(), node2 = iter2->GetNextNode())
-      MergeNodes(mafVME::SafeDownCast(node1), mafVME::SafeDownCast(node2), m);
+    for (auto iter1 = GetInput()->begin(), iter2 = m_MergeClouds[i]->begin(); iter1 != GetInput()->end(), iter2 != m_MergeClouds[i]->end(); ++iter1, ++iter2)
+    {
+        auto& node1 = *iter1;
+        auto& node2 = *iter2;
+        MergeNodes(mafVME::SafeDownCast(&node1), mafVME::SafeDownCast(&node2), m);
+    }
   }
   //if(m_OutSurface)
   {

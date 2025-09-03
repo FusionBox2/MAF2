@@ -32,7 +32,6 @@
 #include "mafGUI.h"
 #include "mafIndent.h"
 #include "mafNode.h"
-#include "mafNodeIterator.h"
 #include "mafVME.h"
 #include "mafVMERoot.h"
 #include "mafVMEGizmo.h"
@@ -379,16 +378,16 @@ void mafSceneGraph::VmeShowByType(mafNode *vme,  bool show)
 void mafSceneGraph::VmeShowSubTree(mafNode *vme,  bool show)
 //----------------------------------------------------------------------------
 {
-  auto iter = std::make_unique<mafNodeIterator>(Vme2Node(vme)->m_Vme.get());
-	for(auto v = iter->GetFirstNode(); v; v = iter->GetNextNode())
+  auto vv = Vme2Node(vme)->m_Vme.get();
+	for(auto& v : *vv)
 	{
-    mafSceneNode *n = Vme2Node(v);
+    mafSceneNode *n = Vme2Node(&v);
 		if(n && n->m_PipeCreatable && n->IsVisible() != show )
 		{
 			// Mutex vme may be shown only is no other vme of the same type is currently shown.
 			// Mutex vme may always be hidden.
 			if(!show || !n->m_Mutex)
-        {mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(v); evUnq.SetBool(show); InvokeEvent(evUnq);}
+        {mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(&v); evUnq.SetBool(show); InvokeEvent(evUnq);}
 		} 
 	}
 }

@@ -4,6 +4,7 @@
 
 #include "ftk/Base/Object.h"
 #include "ftk/Base/String.h"
+#include "ftk/Core/NodeIterator.h"
 #include "ftk/IO/Parse.h"
 
 #include "mafBaseEventHandler.h"
@@ -110,6 +111,7 @@ public:
   using Children = std::vector<std::shared_ptr<mafNode> >;
   using Links = std::map<mafString, mmuNodeLink>;
   using Attributes = std::set<std::shared_ptr<model::data::Attribute>, NameComparePtr<model::data::Attribute> >;
+  using Iterator = model::data::NodeIterator<mafNode>;
 
   static std::shared_ptr<mafNode> Create(const char* NodeType);
   /** print a dump of this object */
@@ -151,6 +153,10 @@ public:
     do not support such a function! */  
   //virtual int ShallowCopy(mafNode *a);
   
+  Iterator begin();
+
+  Iterator end();
+
   /** Test if the given node instance can be copied into this. This function should
     be reimplemented into subclasses classes*/
   virtual bool CanCopy(mafNode *vme);

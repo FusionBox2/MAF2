@@ -33,7 +33,6 @@
 #include "mafVMEOutputMeter.h"
 #include "medVMEWrappedMeter.h"
 #include "medVMEOutputWrappedMeter.h"
-#include "mafNodeIterator.h"
 
 #include "vtkDataSet.h"
 
@@ -220,29 +219,28 @@ void medOpExporterMeters::ExportTypeOfMeters()
 //----------------------------------------------------------------------------
 {
   //must be a cicle in all vme of a msf
-  std::unique_ptr<mafNodeIterator> iter;
+  mafNode* iterRoot = nullptr;
   if(m_SubTreeExportMeter == TRUE)
   {
-    iter = std::make_unique<mafNodeIterator>(GetInput().get());
+    iterRoot = GetInput().get();
   }
   else
   {
-    iter = std::make_unique<mafNodeIterator>(GetInput()->GetRoot());
+    iterRoot = GetInput()->GetRoot();
   }
   
-  for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+  for (auto& node : *iterRoot)
   {
-    m_CurrentVme = node;
-    if((m_ExportRadio == VME_CLASSIC_METERS || m_ExportRadio == VME_ALL_METERS) && node->IsA("mafVMEMeter"))
+    m_CurrentVme = &node;
+    if((m_ExportRadio == VME_CLASSIC_METERS || m_ExportRadio == VME_ALL_METERS) && node.IsA("mafVMEMeter"))
     {
-      m_Meters.push_back(node);
+      m_Meters.push_back(&node);
     }
-    else if((m_ExportRadio == VME_WRAPPED_METERS || m_ExportRadio == VME_ALL_METERS) && node->IsA("medVMEWrappedMeter"))
+    else if((m_ExportRadio == VME_WRAPPED_METERS || m_ExportRadio == VME_ALL_METERS) && node.IsA("medVMEWrappedMeter"))
     {
-      m_Meters.push_back(node);
+      m_Meters.push_back(&node);
     }
   }
-  iter.reset();
 
   if(m_Meters.size() != 0)
   {

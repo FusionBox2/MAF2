@@ -455,17 +455,16 @@ void mafOpManager::FillTraceabilityAttribute(mafOp *op, std::shared_ptr<mafNode>
   {
     int c = 0; //counter not to write single parameter on first VME which is a group
     wxString singleParameter = parameters.toWx();
-    auto iter = std::make_unique<mafNodeIterator>(out_node.get());
-    for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+    for (auto& node : *out_node)
     {
       c++;
-      auto traceability = mafAttributeTraceability::SafeDownCast(node->GetAttribute(_R("TrialAttribute")));
+      auto traceability = mafAttributeTraceability::SafeDownCast(node.GetAttribute(_R("TrialAttribute")));
       if (!traceability)
       {
         trialEvent = _R("Create");
         traceability = mafAttributeTraceability::NewSPtr();
         traceability->SetName(_R("TrialAttribute"));
-        node->SetAttribute(traceability);
+        node.SetAttribute(traceability);
       }
       else
       {
@@ -536,10 +535,9 @@ void mafOpManager::OpUndo()
 
   if (out_node)
   {
-    auto iter = std::make_unique<mafNodeIterator>(out_node.get());
-    for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+    for (auto& node : *out_node)
     {
-      auto traceability = mafAttributeTraceability::SafeDownCast(node->GetAttribute(_R("TrialAttribute")));
+      auto traceability = mafAttributeTraceability::SafeDownCast(node.GetAttribute(_R("TrialAttribute")));
       if (traceability)
       {
         traceability->RemoveTraceabilityEvent();

@@ -21,7 +21,6 @@
 #include "mafOp.h"
 #include <vnl/vnl_matrix.h>
 #include "wx/busyinfo.h"
-#include "mafNodeIterator.h"
 #include <fstream>
 //----------------------------------------------------------------------------
 // forward references :

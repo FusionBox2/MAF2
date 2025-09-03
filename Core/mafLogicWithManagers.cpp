@@ -73,7 +73,6 @@
 #include "mafOpSelect.h"
 
 #include "mafEventIO.h"
-#include "mafNodeIterator.h"
 #include "mafVMEGenericAbstract.h"
 #include "mafVMERoot.h"
 #include <wx/aboutdlg.h>
@@ -1727,10 +1726,9 @@ bool mafLogicWithManagers::OnFileSaveAs()
 
   if(m_logic->m_Storage && m_logic->m_StorageData->m_MSFFile != m_logic->m_Storage->GetURL())
   {
-    auto iter = std::make_unique<mafNodeIterator>(root.get());
-    for(auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+    for(auto& node : *root)
     {
-      if(auto vga = mafVMEGenericAbstract::SafeDownCast(node))
+      if(auto vga = mafVMEGenericAbstract::SafeDownCast(&node))
       {
         if (mafDataVector *dv = vga->GetDataVector())
         {

@@ -6,7 +6,6 @@
 #include "mafGUIRollOut.h"
 #include "mafGUIListBox.h"
 
-#include "mafNodeIterator.h"
 #include "mafTagArray.h"
 
 #include "ftk/Base/Object.h"

@@ -29,7 +29,6 @@
 #include "mafViewSlice.h"
 #include "mafPipeVolumeSlice_BES.h"
 #include "mafPipeSurfaceSlice.h"
-#include "mafNodeIterator.h"
 #include "mafGUILutPreset.h"
 #include "mafGUI.h"
 #include "mafGUILutSwatch.h"
@@ -291,16 +290,16 @@ void mafViewRXCT::VmeShow(mafNode *node, bool show)
 
       //BEGIN cycle for remove old surface and redraw the right slice
       
-      auto iter = std::make_unique<mafNodeIterator>(node->GetRoot());
-      for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+      auto rt = node->GetRoot();
+      for (auto& node : *rt)
       {
-        if(node->IsA("mafVMESurface"))
+        if(node.IsA("mafVMESurface"))
         {
-          auto p=(m_ChildViewList[RX_FRONT_VIEW])->GetNodePipe(node);
+          auto p=(m_ChildViewList[RX_FRONT_VIEW])->GetNodePipe(&node);
           if(p)
           {
-            this->VmeShow(node,false);
-            this->VmeShow(node,true);
+            this->VmeShow(&node,false);
+            this->VmeShow(&node,true);
           }
         } 
       }
@@ -1000,12 +999,11 @@ void mafViewRXCT::SortSlices()
 void mafViewRXCT::SetThicknessForAllSurfaceSlices(mafNode *root)
 //----------------------------------------------------------------------------
 {
-  auto iter = std::make_unique<mafNodeIterator>(root);
-  for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+  for (auto& node : * root)
   {
-    if(node->IsA("mafVMESurface"))
+    if(node.IsA("mafVMESurface"))
     {
-      auto p=((mafViewSlice *)((mafViewCompound *)m_ChildViewList[CT_COMPOUND_VIEW])->GetSubView(0))->GetNodePipe(node);
+      auto p=((mafViewSlice *)((mafViewCompound *)m_ChildViewList[CT_COMPOUND_VIEW])->GetSubView(0))->GetNodePipe(&node);
       if(p)
         mafPipeSurfaceSlice::StaticDownCast(p)->SetThickness(m_Border);
     }

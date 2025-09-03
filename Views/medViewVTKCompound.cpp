@@ -35,7 +35,6 @@
 #include "mafGUILutSlider.h"
 #include "mafGUILutSwatch.h"
 #include "mafNode.h"
-#include "mafNodeIterator.h"
 #include "mafVMEImage.h"
 #include "mafVMEOutputVolume.h"
 #include "mafGUIFloatSlider.h"

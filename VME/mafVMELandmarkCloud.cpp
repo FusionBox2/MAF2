@@ -37,7 +37,6 @@ const bool DEBUG_MODE = false;
 #include "mafVMEOutputLandmarkCloud.h"
 #include "mafGUI.h"
 #include "mmaMaterial.h"
-#include "mafNodeIterator.h"
 
 #include "vtkSmartPointer.h"
 #include "vtkPolyData.h"

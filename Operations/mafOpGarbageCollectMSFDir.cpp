@@ -34,7 +34,6 @@
 #include "mafVMEItem.h"
 #include "mafVMEGenericAbstract.h"
 #include "mafVMERoot.h"
-#include "mafNodeIterator.h"
 #include "mafVMEExternalData.h"
 #include "vtkDirectory.h"
 #include <algorithm>

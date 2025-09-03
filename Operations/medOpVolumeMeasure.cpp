@@ -31,7 +31,6 @@
 #include "mafVMESurface.h"
 #include "mafTagItem.h"
 #include "mafTagArray.h"
-#include "mafNodeIterator.h"
 
 #include "vtkTriangleFilter.h"
 #include "vtkMassProperties.h"

@@ -36,7 +36,6 @@
 #include "ftk/IO/StorageElement.h"
 #include "mafVMERoot.h"
 #include "mafNodeLayout.h"
-#include "mafNodeIterator.h"
 #include "mafTagArray.h"
 #include "mafNode.h"
 
@@ -355,17 +354,15 @@ void mafGUIApplicationLayoutSettings::LoadLayout(bool fileDefault)
     m_XMLRoot->Restore(reader.GetRoot());
 
     //fill listbox
-    auto iter = std::make_unique<mafNodeIterator>(m_XMLRoot.get());
-    for(auto vme = iter->GetFirstNode(); vme; vme = iter->GetNextNode())
+    for(auto& vme : *m_XMLRoot)
     {
-      if(!vme->IsMAFType(mafVMERoot))
+      if(!vme.IsMAFType(mafVMERoot))
       {
-        m_List->Append(vme->GetName().toWx());
-        if(mafNodeLayout::StaticDownCast(vme)->GetLayout()->GetLayoutName() == _R("Default"))
-          m_DefaultLayoutName = mafNodeLayout::StaticDownCast(vme)->GetName();
+        m_List->Append(vme.GetName().toWx());
+        if(mafNodeLayout::StaticDownCast(&vme)->GetLayout()->GetLayoutName() == _R("Default"))
+          m_DefaultLayoutName = mafNodeLayout::StaticDownCast(&vme)->GetName();
       }
     }
-    iter.reset();
 
     m_LayoutFileSave = file;
     
@@ -561,13 +558,11 @@ void mafGUIApplicationLayoutSettings::SetLayoutAsDefault()
   if(m_SelectedItem != -1)
   {   
     m_ModifiedLayouts = true;
-    auto iter = std::make_unique<mafNodeIterator>(m_XMLRoot.get());
-    for(auto vme = iter->GetFirstNode(); vme; vme = iter->GetNextNode())
+    for(auto& vme : *m_XMLRoot)
     {
-      if(!vme->IsMAFType(mafVMERoot))
-        mafNodeLayout::StaticDownCast(vme)->GetLayout()->SetLayoutName(_R("Layout"));
+      if(!vme.IsMAFType(mafVMERoot))
+        mafNodeLayout::StaticDownCast(&vme)->GetLayout()->SetLayoutName(_R("Layout"));
     }
-    iter.reset();
 
     if(m_DefaultFlag != 0)
       m_DefaultLayoutName = mafWxToString(m_List->GetString(m_SelectedItem));

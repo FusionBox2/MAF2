@@ -5,7 +5,6 @@
 #include "mafPics.h" 
 #include "mafEvent.h"
 #include "mafNode.h"
-#include "mafNodeIterator.h"
 #include "mafView.h"
 #include "mafVMERoot.h"
 #include "mafVMELandmarkCloud.h"
@@ -344,26 +343,25 @@ void mafGUIVMEChooserTree::VmeUpdateIcon(mafNode *vme)
   if (vme->IsA("mafVMERoot"))
   {
     bool checked = IsIconChecked(ItemFromNode((intptr_t)vme));
-    auto iter = std::make_unique<mafNodeIterator>(vme);
-    for (auto node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+    for (auto& node : *vme)
     {
       if (!checked)
       {
         nodeSatus = NODE_VISIBLE_ON*2;
-        icon_index = ClassNameToIcon(_R(node->GetTypeName())) + nodeSatus;
-        m_CheckedNode.push_back(node);
+        icon_index = ClassNameToIcon(_R(node.GetTypeName())) + nodeSatus;
+        m_CheckedNode.push_back(&node);
       }
       else
       {
         nodeSatus = NODE_VISIBLE_ON;
-        icon_index = ClassNameToIcon(_R(node->GetTypeName())) + nodeSatus;
-        auto found = std::find(m_CheckedNode.begin(), m_CheckedNode.end(), node);
+        icon_index = ClassNameToIcon(_R(node.GetTypeName())) + nodeSatus;
+        auto found = std::find(m_CheckedNode.begin(), m_CheckedNode.end(), &node);
         if (found != m_CheckedNode.end())
         {
           m_CheckedNode.erase(found);
         }
       }
-      SetNodeIcon( (intptr_t)node, icon_index);
+      SetNodeIcon( (intptr_t)&node, icon_index);
     }
   }
   else

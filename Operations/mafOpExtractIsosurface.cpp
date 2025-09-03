@@ -38,7 +38,6 @@
 #include "mafGUIPicButton.h"
 #include "mafGUIFloatSlider.h"
 
-#include "mafNodeIterator.h"
 #include "mafVME.h"
 #include "mafVMESurface.h"
 #include "mafVMEGroup.h"

@@ -3,7 +3,6 @@
 #include "mafDecl.h"
 #include "mafView.h"
 #include "mafNode.h"
-#include "mafNodeIterator.h"
 #include "mafVMERoot.h"
 
 #include "ftk/Gui/MainFrame.h"

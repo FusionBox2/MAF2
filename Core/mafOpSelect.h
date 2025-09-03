@@ -6,7 +6,6 @@
 #include "mafDecl.h"
 #include "mafEvent.h"
 #include "mafOp.h"
-#include "mafNodeIterator.h"
 #include "ftk/Base/Object.h"
 //----------------------------------------------------------------------------
 // forward references :

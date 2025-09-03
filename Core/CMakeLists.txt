@@ -13,6 +13,7 @@ SET(PROJECT_SRCS
 	../ftk/Core/AttributeFactory.h
 	../ftk/Core/NodeFactory.cpp
 	../ftk/Core/NodeFactory.h
+	../ftk/Core/NodeIterator.h
 	../ftk/Core/NodeManager.cpp
 	../ftk/Core/NodeManager.h
 	../ftk/Core/PipeFactory.cpp
