@@ -28,25 +28,6 @@ class mafStorageElementBuilder;
 
 namespace model::data
 {
-    class Node;
-
-    /** data structure used to store a link VME and its Id */
-    class MAF_EXPORT NodeLink final
-    {
-    public:
-        NodeLink(/*mafID id=-1,*/Node* node = nullptr, mafID sub_id = -1) :m_NodeId(-1), m_Node(node), m_NodeSubId(sub_id) {}
-        Node* GetNode() const { return m_Node; }
-        NodeLink& SetNode(Node* node) { m_Node = node; return (*this); }
-        mafID GetId() const { return m_NodeId; }
-        NodeLink& SetId(mafID id) { m_NodeId = id; return (*this); }
-        mafID GetSubId() const { return m_NodeSubId; }
-        NodeLink& SetSubId(mafID subId) { m_NodeSubId = subId; return (*this); }
-    private:
-        Node* m_Node;
-        mafID   m_NodeSubId;
-        mafID   m_NodeId;
-    };
-
     //----------------------------------------------------------------------------
     // mafNode
     //----------------------------------------------------------------------------
@@ -89,7 +70,7 @@ namespace model::data
     public:
         mafBaseTypeMacro(Node)
 
-            enum
+        enum
         {
             INVALID_ID = -1
         };
@@ -108,6 +89,23 @@ namespace model::data
             bool operator()(const mafString& s, const T& t) const { return s < t.GetName(); }
             bool operator()(const T& t, const mafString& s) const { return t.GetName() < s; }
             using is_transparent = std::true_type;
+        };
+
+        /** data structure used to store a link VME and its Id */
+        class NodeLink final
+        {
+        public:
+            NodeLink(/*mafID id=-1,*/Node* node = nullptr, mafID sub_id = -1) :m_NodeId(-1), m_Node(node), m_NodeSubId(sub_id) {}
+            Node* GetNode() const { return m_Node; }
+            NodeLink& SetNode(Node* node) { m_Node = node; return (*this); }
+            mafID GetId() const { return m_NodeId; }
+            NodeLink& SetId(mafID id) { m_NodeId = id; return (*this); }
+            mafID GetSubId() const { return m_NodeSubId; }
+            NodeLink& SetSubId(mafID subId) { m_NodeSubId = subId; return (*this); }
+        private:
+            Node* m_Node;
+            mafID   m_NodeSubId;
+            mafID   m_NodeId;
         };
 
         using Children = std::vector<std::shared_ptr<Node> >;
