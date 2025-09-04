@@ -1,15 +1,20 @@
 #include "ftk/Core/Attribute.h"
 
-#include "mafDefines.h" 
-
 #include "ftk/Core/AttributeFactory.h"
 #include "ftk/IO/StorageElement.h"
+
 #include "mafIndent.h"
+
 #include "assert.h"
 
 #include <ostream>
 namespace model::data
 {
+	std::shared_ptr<Attribute> Attribute::Create(const char* AttributeType)
+	{
+		return AttributeFactory::CreateAttribute(AttributeType);
+	}
+
 	Attribute& Attribute::operator=(const Attribute& a)
 	{
 		DeepCopy(&a);
@@ -28,7 +33,7 @@ namespace model::data
 		m_Name = a->GetName();
 	}
 
-	std::shared_ptr<Attribute> Attribute::MakeCopy()
+	std::shared_ptr<Attribute> Attribute::MakeCopy() const
 	{
 		std::shared_ptr<Attribute> new_attr(NewInstance());
 		assert(new_attr);
@@ -41,14 +46,33 @@ namespace model::data
 		return a->IsA(GetTypeId()) && m_Name == a->GetName();
 	}
 
-	void Attribute::SetName(const mafString& name)
+	void Attribute::Print(std::ostream& os, const int tabs) const
 	{
-		m_Name = name;
+		utilities::Indent indent(tabs);
+
+		os << indent << "Attribute Type Name: " << GetTypeName() << "\n";
+
+		os << indent << "Name: " << m_Name.GetCStr() << "\n";
+	}
+
+	void Attribute::Store(mafStorageElementBuilder& element)
+	{
+		InternalStore(element);
+	}
+
+	void Attribute::Restore(const mafStorageElement& element)
+	{
+		InternalRestore(element);
 	}
 
 	const mafString& Attribute::GetName() const
 	{
 		return m_Name;
+	}
+
+	void Attribute::SetName(const mafString& name)
+	{
+		m_Name = name;
 	}
 
 	void Attribute::InternalStore(mafStorageElementBuilder& parent)
@@ -59,19 +83,5 @@ namespace model::data
 	void Attribute::InternalRestore(const mafStorageElement& node)
 	{
 		m_Name = node[_R("Name")].As<mafString>();
-	}
-
-	void Attribute::Print(std::ostream& os, const int tabs) const
-	{
-		utilities::Indent indent(tabs);
-
-		os << indent << "Attribute Type Name: " << GetTypeName() << "\n";
-
-		os << indent << "Name: " << m_Name.GetCStr() << "\n";
-	}
-
-	std::shared_ptr<Attribute> Attribute::Create(const char* AttributeType)
-	{
-		return AttributeFactory::CreateAttribute(AttributeType);
 	}
 }
