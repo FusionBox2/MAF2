@@ -4,7 +4,6 @@ cmake_minimum_required(VERSION 3.27)
 #
 
 PROJECT(mafGui)
-MESSAGE(STATUS "Configuring project ${PROJECT_NAME}")
 
 CONFIGURE_FILE("${FTK_SOURCE_DIR}/Gui/manifest.in" "${FTK_BINARY_DIR}/Gui/manifest.in" COPYONLY)
 
