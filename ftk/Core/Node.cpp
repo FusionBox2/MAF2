@@ -1260,6 +1260,28 @@ namespace model::data
             os << "\tNodeSubId: " << link.second.GetSubId() << std::endl;
         }
     }
+
+    bool Node::IsValid() const
+    {
+	    return m_Id >= 0;
+    }
+
+	void Node::SetVisibleToTraverse(bool flag)
+    {
+	    m_VisibleToTraverse = flag;
+    }
+
+    bool Node::GetVisibleToTraverse() const
+    {
+	    return m_VisibleToTraverse;
+    }
+
+    bool Node::IsVisible() const
+    {
+	    return m_VisibleToTraverse;
+    }
+
+
     //-------------------------------------------------------------------------
     const char** Node::GetIcon()
         //-------------------------------------------------------------------------
