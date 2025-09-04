@@ -41,7 +41,6 @@ class vtkScalarBarActor;
 
 class mafAxes;
 class mafGUIMaterialButton;
-class mafNode;
 class mafVMEVolume;
 
 //----------------------------------------------------------------------------

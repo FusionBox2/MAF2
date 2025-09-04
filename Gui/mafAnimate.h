@@ -20,7 +20,11 @@
 #include "mafEventSender.h"
 #include "mafBaseEventHandler.h"
 
-class mafNode;
+namespace model::data
+{
+	class Node;
+}
+using mafNode = model::data::Node;
 class mafVME;
 class mafTagArray;
 class mafGUIButton;

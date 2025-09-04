@@ -37,7 +37,7 @@
 // forward references :
 //----------------------------------------------------------------------------
 class mafOp;
-class mafNode;
+
 class vtkImageReader;
 class vtkImageImport;
 class vtkImageAppendComponents;

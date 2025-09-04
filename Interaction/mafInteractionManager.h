@@ -52,7 +52,11 @@ class vtkXMLDataElement;
 class vtkXMLDataParser;
 class mafInteractorSER;
 class mafInteractorPER;
-class mafNode;
+namespace model::data
+{
+    class Node;
+}
+using mafNode = model::data::Node;
 class mafGUIDialog;
 class mafGUI;
 class mafGUITree;

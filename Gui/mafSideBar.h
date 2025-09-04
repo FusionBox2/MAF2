@@ -32,7 +32,11 @@
 class mafGUIHolder;
 class mafGUI;
 class mafGUIPanelStack;
-class mafNode;
+namespace model::data
+{
+	class Node;
+}
+using mafNode = model::data::Node;
 class mafView;
 class mafGUINamedPanel;
 class mafGUISplittedPanel;

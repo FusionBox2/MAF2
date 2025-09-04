@@ -32,7 +32,7 @@ class mafGizmoScale;
 class mafGUITransformMouse;
 class mafGUISaveRestorePose;
 class mafGUITransformTextEntries;
-class mafNode;
+
 
 //----------------------------------------------------------------------------
 // medOpMove :

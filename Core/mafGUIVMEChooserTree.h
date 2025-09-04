@@ -31,7 +31,7 @@ enum VME_CHOOSER_STYLES
 //----------------------------------------------------------------------------
 // Forward refs:
 //----------------------------------------------------------------------------
-class mafNode;
+
 
 typedef bool (*ValidateCallBackType) (mafNode *);
 

@@ -24,7 +24,6 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 //----------------------------------------------------------------------------
 // forward declarations :
 //----------------------------------------------------------------------------
-class mafNode;
 class mmaMaterial;
 class mafVMEOutputSurface;
 class vtkPolyData;

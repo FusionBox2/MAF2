@@ -25,7 +25,11 @@
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
-class mafNode;
+namespace model::data
+{
+	class Node;
+}
+using mafNode = model::data::Node;
 class mafPipe;
 class mafSceneGraph;
 class mafVME;

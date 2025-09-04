@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 class mafGUI;
 class mafEvent;
-class mafNode;
+
 class mafVME;
 class mafVMESurface;
 class mafString;

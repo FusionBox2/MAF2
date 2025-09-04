@@ -50,7 +50,7 @@ class mafMatrix;
 class mafVMEVolumeGray;
 class mafVME;
 class mafVMEImage;
-class mafNode;
+
 
 class mmiSelectPoint;
 

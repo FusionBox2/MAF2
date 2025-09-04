@@ -7,7 +7,11 @@
 //----------------------------------------------------------------------------
 class vtkMAFDistanceFilter;
 class vtkPolyDataNormals;
-class mafNode;
+namespace model::data
+{
+    class Node;
+}
+using mafNode = model::data::Node;
 
 /** a data pipe which calculate new data depending on parameters given by the VME.
   This data pipe creates an internal vtkSource objects and links to it to 

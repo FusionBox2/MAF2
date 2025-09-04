@@ -11,6 +11,8 @@ SET(PROJECT_SRCS
 	../ftk/Core/Attribute.h
 	../ftk/Core/AttributeFactory.cpp
 	../ftk/Core/AttributeFactory.h
+	../ftk/Core/Node.cpp
+	../ftk/Core/Node.h
 	../ftk/Core/NodeFactory.cpp
 	../ftk/Core/NodeFactory.h
 	../ftk/Core/NodeIterator.h
@@ -33,10 +35,7 @@ SET(PROJECT_SRCS ${PROJECT_SRCS}
   mafEventIO.h
   mafMatrixPipe.cpp
   mafMatrixPipe.h
-  mafNode.cpp
   mafNode.h
-  mafNodeIterator.cpp
-  mafNodeIterator.h
   mafNodeLayout.cpp
   mafNodeLayout.h
   mafNodeRoot.cpp

@@ -25,7 +25,6 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 //----------------------------------------------------------------------------
 class vtkVolumeSlicer;
 class vtkPolyData;
-class mafNode;
 class vtkPoints;
 class mmaMaterial;
 

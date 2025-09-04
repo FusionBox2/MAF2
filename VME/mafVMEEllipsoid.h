@@ -19,7 +19,6 @@
 #include "vtkSmartPointer.h"
 #include "mafVMELandmarkCloud.h"
 class mmaMaterial;
-class mafNode;
 class mafVMEOutputSurface;
 class vtkPolyData;
 

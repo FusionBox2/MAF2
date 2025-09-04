@@ -29,7 +29,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 // forward references :
 //----------------------------------------------------------------------------
 // TODO: remove comments when moved to lhpBuilder directory
-//class mafNode;
+//
 
 //----------------------------------------------------------------------------
 // lhpOpComputeTensors :

@@ -13,7 +13,11 @@
 // forward references :
 //----------------------------------------------------------------------------
 class mafView;
-class mafNode;
+namespace model::data
+{
+	class Node;
+}
+using mafNode = model::data::Node;
 
 BEGIN_FTK_NAMESPACE
 //----------------------------------------------------------------------------

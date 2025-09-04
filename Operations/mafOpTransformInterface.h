@@ -34,7 +34,7 @@ class mafInteractor;
 class mafInteractorCompositorMouse;
 class mafInteractorGenericMouse;
 class mafVME;
-class mafNode;
+
 
 //----------------------------------------------------------------------------
 // mafOpTransformInterface :

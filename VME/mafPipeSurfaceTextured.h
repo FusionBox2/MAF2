@@ -34,7 +34,6 @@ class mafLODActor;
 class mafGUIMaterialButton;
 class mmaMaterial;
 class vtkActor;
-class mafNode;
 //----------------------------------------------------------------------------
 // mafPipeSurfaceTextured :
 //----------------------------------------------------------------------------

@@ -7,8 +7,12 @@
 //------------------------------------------------------------------------------
 // Forward declarations
 //------------------------------------------------------------------------------
+namespace model::data
+{
+	class Node;
+}
+using mafNode = model::data::Node;
 class mafStorage;
-class mafNode;
 class mafRoot;
 //------------------------------------------------------------------------------
 // mafEventIO

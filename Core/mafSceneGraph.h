@@ -26,7 +26,11 @@
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
-class mafNode;
+namespace model::data
+{
+	class Node;
+}
+using mafNode = model::data::Node;
 class mafGUI;
 class mafView;
 class mafSceneNode;

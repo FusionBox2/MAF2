@@ -29,7 +29,7 @@
 class mafGUIDialog;
 class mafGUIFloatSlider;
 class mafVMESurface;
-class mafNode;
+
 class mafRWI;
 
 class vtkActor;

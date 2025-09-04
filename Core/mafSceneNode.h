@@ -2,7 +2,11 @@
 //----------------------------------------------------------------------------
 // forward declarations:
 //----------------------------------------------------------------------------
-class mafNode;
+namespace model::data
+{
+	class Node;
+}
+using mafNode = model::data::Node;
 class vtkMAFAssembly;
 class mafPipe;
 class vtkRenderer;

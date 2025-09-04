@@ -3,7 +3,11 @@
 #include "mafDataPipeCustom.h"
 #include <vector>
 
-class mafNode;
+namespace model::data
+{
+	class Node;
+}
+using mafNode = model::data::Node;
 //----------------------------------------------------------------------------
 // forward declarations
 //----------------------------------------------------------------------------

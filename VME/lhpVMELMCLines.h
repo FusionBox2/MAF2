@@ -26,7 +26,6 @@
 //----------------------------------------------------------------------------
 class vtkVolumeSlicer;
 class vtkPolyData;
-class mafNode;
 class vtkPoints;
 class mmaMaterial;
 

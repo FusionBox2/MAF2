@@ -8,7 +8,11 @@
 //----------------------------------------------------------------------------
 // forward declarations
 //----------------------------------------------------------------------------
-class mafNode;
+namespace model::data
+{
+    class Node;
+}
+using mafNode = model::data::Node;
 class mafStorageElement;
 class mafStorageElementBuilder;
 

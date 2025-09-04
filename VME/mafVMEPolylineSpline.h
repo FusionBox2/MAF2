@@ -25,7 +25,6 @@
 // forward declarations :
 //----------------------------------------------------------------------------
 class vtkPolyData;
-class mafNode;
 class vtkPoints;
 class mmaMaterial;
 

@@ -29,7 +29,7 @@
 //----------------------------------------------------------------------------
 
 class mafRWI;
-class mafNode;
+
 class mafGUIDialog;
 class mafInteractorSelectCell;
 

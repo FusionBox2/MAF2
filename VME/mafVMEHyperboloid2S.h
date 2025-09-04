@@ -19,7 +19,6 @@
 #include "mafVMEOutputSurface.h"
 #include "vtkSmartPointer.h"
 class mmaMaterial;
-class mafNode;
 class mmaMaterial;
 class mafVMEOutputSurface;
 class vtkPolyData;

@@ -26,7 +26,6 @@
 //----------------------------------------------------------------------------
 class vtkMAFVolumeSlicer;
 class vtkTransformPolyDataFilter;
-class mafNode;
 class mmaMaterial;
 class mafVMEOutputSurface;
 

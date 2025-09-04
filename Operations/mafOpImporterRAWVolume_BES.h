@@ -34,7 +34,7 @@
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
-class mafNode;
+
 class vtkImageReader;
 #ifdef VME_VOLUME_LARGE
 class vtkMAFLargeImageReader;

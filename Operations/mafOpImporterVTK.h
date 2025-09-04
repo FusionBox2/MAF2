@@ -5,7 +5,7 @@
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
-class mafNode;
+
 class mafVMELandmarkCloud;
 //class mafVMEPointSet;
 class mafVMEPolyline;

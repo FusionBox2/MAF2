@@ -7,9 +7,13 @@
 #include "mafEventBase.h" // base class for mafEvent
 #include "mafBaseEventHandler.h"
 
+namespace model::data
+{
+	class Node;
+}
+using mafNode = model::data::Node;
 class mafView;
 class mafOp;
-class mafNode;
 class mafMatrix;
 class mafString;
 class mafAgent;

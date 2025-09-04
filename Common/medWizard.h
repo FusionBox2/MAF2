@@ -29,7 +29,7 @@
 //----------------------------------------------------------------------------
 
 class mafObserver;
-class mafNode;
+
 
 #ifdef MED_COMMON_EXPORTS
 #include "mafDllMacros.h"

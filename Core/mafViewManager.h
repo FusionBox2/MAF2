@@ -11,7 +11,11 @@
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
-class mafNode;
+namespace model::data
+{
+	class Node;
+}
+using mafNode = model::data::Node;
 class mafView;
 class mafGUIViewPanel;
 class wxVTKWindow;

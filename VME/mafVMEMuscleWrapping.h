@@ -47,7 +47,6 @@ using Eigen::VectorXcd;
 //----------------------------------------------------------------------------
 // forward declarations :
 //----------------------------------------------------------------------------
-class mafNode;
 class mmaMaterial;
 class mafVMEOutputSurface;
 class vtkPolyData;

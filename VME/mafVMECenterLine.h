@@ -42,7 +42,6 @@ using namespace Eigen;
 //----------------------------------------------------------------------------
 // forward declarations :
 //----------------------------------------------------------------------------
-class mafNode;
 class mmaMaterial;
 
 class vtkPolyData;

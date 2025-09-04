@@ -22,7 +22,11 @@
 //----------------------------------------------------------------------------
 // forward declarations
 //----------------------------------------------------------------------------
-class mafNode;
+namespace model::data
+{
+	class Node;
+}
+using mafNode = model::data::Node;
 
 /** create hierarchies of vtkProp3Ds (transformable props)
   vtkMAFAssembly same as vtkAssembly, but has an extra link 

@@ -40,7 +40,6 @@ cloud
 //----------------------------------------------------------------------------
 // forward declarations :
 //----------------------------------------------------------------------------
-class mafNode;
 class mmaMaterial;
 class mafVMEOutputSurface;
 class vtkPolyData;

@@ -10,7 +10,7 @@
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
-class mafNode;
+
 class mafOp;
 class mafGUISettings;
 class mafGUISettingsDialog;

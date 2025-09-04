@@ -24,7 +24,6 @@
 //----------------------------------------------------------------------------
 class mafDataVector;
 class mafMatrixVector;
-class mafNode;
 class mafGUI;
 
 /** mafVMEGenericAbstract - a VME featuring an internal array for matrices and data.

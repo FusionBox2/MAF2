@@ -21,7 +21,6 @@
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
-class mafNode;
 class mafVME;
 class mafVMESurfaceParametric;
 class vtkMatrix4x4;

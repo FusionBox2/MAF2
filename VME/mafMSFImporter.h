@@ -24,7 +24,6 @@
 //----------------------------------------------------------------------------
 class mafVMERoot;
 class mafVME;
-class mafNode;
 class mafTagArray;
 class mafMatrixVector;
 

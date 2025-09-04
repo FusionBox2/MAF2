@@ -26,7 +26,7 @@
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
-class mafNode;
+
 class vtkImageReader;
 class vtkActor;
 class mafGUIDialogPreview;
