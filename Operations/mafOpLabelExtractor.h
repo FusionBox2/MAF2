@@ -25,7 +25,6 @@
 // forward references :
 //----------------------------------------------------------------------------
 class mafGUICheckListBox;
-class mafTagItem;
 class mafVME;
 class mafVMESurface;
 class mafOp;

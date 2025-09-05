@@ -27,7 +27,11 @@
 //----------------------------------------------------------------------------
 class mafEvent;
 class mafTagArray;
-class mafTagItem;
+namespace model::data
+{
+    class TagItem;
+}
+using mafTagItem = model::data::TagItem;
 
 //----------------------------------------------------------------------------
 // mafOpEditMetadata :

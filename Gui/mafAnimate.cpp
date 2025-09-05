@@ -640,51 +640,46 @@ void mafAnimate::ResetKit()
 void mafAnimate::RetrieveStoredPositions(bool update_listbox /*= true*/)
 //----------------------------------------------------------------------------
 {
-  if(!m_Tags) return;
-  m_StoredPositions = mafTagArray::NewUPtr();
+	if (!m_Tags) return;
+	m_StoredPositions = mafTagArray::NewUPtr();
 
-  std::vector<mafString> tag_list;
-  m_Tags->GetTagList(tag_list);
-
-  for(int t=0; t<tag_list.size(); t++)
-  {
-    mafTagItem *item = m_Tags->GetTag(tag_list[t]);
-    if(item && ((item->GetNumberOfComponents() == 9) || (item->GetNumberOfComponents() == 10)))
-    {
-      wxString name = item->GetName().toWx();
-      if(name.Find("FLY_TO_") != -1)
-      {
-        m_StoredPositions->SetTag(*item);
-        if (update_listbox)
-        {
-	        name = name.Remove(0,7);
-	        m_PositionList->Append(name);
-        }
-      }
-    }
-  }
+	for (auto& entry : m_Tags->GetTagsContainer())
+	//for (size_t t = 0; t < tag_list.size(); t++)
+	{
+		mafTagItem* item = &entry.second;
+		if (item && ((item->GetNumberOfComponents() == 9) || (item->GetNumberOfComponents() == 10)))
+		{
+			wxString name = item->GetName().toWx();
+			if (name.Find("FLY_TO_") != -1)
+			{
+				m_StoredPositions->SetTag(*item);
+				if (update_listbox)
+				{
+					name = name.Remove(0, 7);
+					m_PositionList->Append(name);
+				}
+			}
+		}
+	}
 }
 //----------------------------------------------------------------------------
 void mafAnimate::SetStoredPositions(mafTagArray *positions)
 //----------------------------------------------------------------------------
 {
-  ResetKit();
-  std::vector<mafString> tag_list;
-  positions->GetTagList(tag_list);
+	ResetKit();
 
-  for(int t=0; t<tag_list.size(); t++)
-  {
-    mafTagItem *item = positions->GetTag(tag_list[t]);
-    m_Tags->SetTag(*item);
-  }
-  
-  if (tag_list.size() > 0)
-  {
-    RetrieveStoredPositions();
-    SetCurrentSelection(0);
-    m_SelectedPosition = mafWxToString(m_PositionList->GetStringSelection());
-    FlyTo();
-  }
+	for (auto& entry : positions->GetTagsContainer())
+	{
+		m_Tags->SetTag(entry.second);
+	}
+
+	if (positions->GetNumberOfTags() > 0)
+	{
+		RetrieveStoredPositions();
+		SetCurrentSelection(0);
+		m_SelectedPosition = mafWxToString(m_PositionList->GetStringSelection());
+		FlyTo();
+	}
 }
 //----------------------------------------------------------------------------
 void mafAnimate::SetCurrentSelection( int pos )

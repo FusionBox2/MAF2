@@ -1,172 +1,83 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafTagArray
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-
 #include "mafTagArray.h"
+
 #include "ftk/IO/StorageElement.h"
+#include "ftk/IO/ParseContainers.h"
 #include "mafIndent.h"
 #include <assert.h>
 
-mafCxxTypeMacro(mafTagArray)
+mafTagArray::mafTagArray() = default;
 
-//-------------------------------------------------------------------------
-mafTagArray::mafTagArray()
-//-------------------------------------------------------------------------
+mafTagArray::~mafTagArray() = default;
+
+mafTagArray& mafTagArray::operator=(const mafTagArray& a)
 {
+    Superclass::operator=(a);
+    return *this;
 }
 
-//-------------------------------------------------------------------------
-mafTagArray::~mafTagArray()
-//-------------------------------------------------------------------------
+void mafTagArray::DeepCopy(const mafTagArray* a)
 {
+    Superclass::DeepCopy(a);
+    m_Tags = a->m_Tags;
 }
 
-//-------------------------------------------------------------------------
-void mafTagArray::operator=(const mafTagArray &a)
-//-------------------------------------------------------------------------
+void mafTagArray::DeepCopy(const mafAttribute* a)
 {
-  Superclass::operator =(a);
+    if (a->IsMAFType(mafTagArray))
+    {
+        DeepCopy(static_cast<const mafTagArray*>(a));
+    }
 }
 
-//-------------------------------------------------------------------------
-void mafTagArray::DeepCopy(const mafTagArray *a)
-//-------------------------------------------------------------------------
+const mafTagItem* mafTagArray::GetTag(const mafString& name) const
 {
-  Superclass::DeepCopy(a);
-  mmuTagsMap::const_iterator it;
-  for (it=a->m_Tags.begin();it!=a->m_Tags.end();it++)
-  {
-    const mafTagItem &titem=it->second;
-    SetTag(titem);
-  }
+    if (auto  it = m_Tags.find(name); it != end(m_Tags))
+        return &it->second;
+    return nullptr;
 }
 
-//-------------------------------------------------------------------------
-void mafTagArray::DeepCopy(const mafAttribute *a)
-//-------------------------------------------------------------------------
+mafTagItem* mafTagArray::GetTag(const mafString& name)
 {
-  if (a->IsMAFType(mafTagArray))
-  {
-    DeepCopy((const mafTagArray *)a);
-  }
+    if (auto  it = m_Tags.find(name); it != end(m_Tags))
+        return &it->second;
+    return nullptr;
 }
 
-//-------------------------------------------------------------------------
-const mafTagItem *mafTagArray::GetTag(const mafString& name) const
-//-------------------------------------------------------------------------
+void mafTagArray::SetTag(const mafTagItem& value)
 {
-  mmuTagsMap::const_iterator it=m_Tags.find(name);
-  if (it!=m_Tags.end())
-    return &(it->second);
-  return NULL;
+    m_Tags[value.GetName()] = value;
 }
 
-//-------------------------------------------------------------------------
-mafTagItem *mafTagArray::GetTag(const mafString& name)
-//-------------------------------------------------------------------------
-{
-  mmuTagsMap::iterator it=m_Tags.find(name);
-  if (it!=m_Tags.end())
-    return &(it->second);
-  return NULL;
-}
-
-//-------------------------------------------------------------------------
-bool mafTagArray::GetTag(const mafString& name,mafTagItem &item) const
-//-------------------------------------------------------------------------
-{
-  const mafTagItem *tmp_item=GetTag(name);
-  if (tmp_item)
-  {
-    item=*tmp_item;
-
-    return true;
-  }
-
-  return false;
-}
-
-//-------------------------------------------------------------------------
-void mafTagArray::SetTag(const mafTagItem &value)
-//-------------------------------------------------------------------------
-{
-  m_Tags[value.GetName()] = value;
-}
-
-//-------------------------------------------------------------------------
 void mafTagArray::DeleteTag(const mafString& name)
-//-------------------------------------------------------------------------
 {
-  mmuTagsMap::iterator it=m_Tags.find(name);
-  if (it!=m_Tags.end())
-    m_Tags.erase(it);
+    if (auto  it = m_Tags.find(name); it != end(m_Tags))
+        m_Tags.erase(it);
 }
 
-//-------------------------------------------------------------------------
-void mafTagArray::GetTagList(std::vector<mafString> &list) const
-//-------------------------------------------------------------------------
+std::vector<mafString> mafTagArray::GetTagList() const
 {
-  list.clear();
-  list.resize(GetNumberOfTags());
-  int i = 0;
-  for (mmuTagsMap::const_iterator it=m_Tags.begin();it!=m_Tags.end();it++)
-  {
-    list[i++] = it->second.GetName();
-  }
+    std::vector<mafString> res;
+    res.reserve(m_Tags.size());
+    for (auto& entry : m_Tags)
+    {
+        res.push_back(entry.second.GetName());
+    }
+    return res;
 }
 
-//-------------------------------------------------------------------------
-bool mafTagArray::operator==(const mafTagArray &a) const
-//-------------------------------------------------------------------------
+bool mafTagArray::operator==(const mafTagArray& a) const
 {
-  return Equals(&a);
+    return Equals(&a);
 }
 
-//-------------------------------------------------------------------------
-bool mafTagArray::Equals(const mafTagArray *array) const
-//-------------------------------------------------------------------------
+bool mafTagArray::Equals(const mafTagArray* array) const
 {
-  assert(array);
-  if (GetNumberOfTags()!=array->GetNumberOfTags())
-    return false;
-
-  mmuTagsMap::const_iterator it=m_Tags.begin();
-  mmuTagsMap::const_iterator it2=array->m_Tags.begin();
-  int i=0;
-  for (;it!=m_Tags.end();it++,it2++,i++)
-  {
-    if (it->second!=it2->second)
-      return false;
-  }
-
-  return true;
+    if (!array)
+        return false;
+    return m_Tags == array->m_Tags;
 }
 
-//-------------------------------------------------------------------------
 /*void mafTagArray::GetTagsByType(int type, std::vector<mafTagItem *> &array)
-//-------------------------------------------------------------------------
 {
   array.clear();
   mmuTagsMap::iterator it=m_Tags.begin();
@@ -178,61 +89,43 @@ bool mafTagArray::Equals(const mafTagArray *array) const
     }
   }
 }*/
-//-------------------------------------------------------------------------
-int mafTagArray::GetNumberOfTags() const
-//-------------------------------------------------------------------------
+size_t mafTagArray::GetNumberOfTags() const
 {
-  return m_Tags.size();
+    return m_Tags.size();
 }
 
-//-------------------------------------------------------------------------
 void mafTagArray::InternalStore(mafStorageElementBuilder& parent)
-//-------------------------------------------------------------------------
 {
-  Superclass::InternalStore(parent);
-  parent(_R("NumberOfTags")).SetValue(GetNumberOfTags());
-  for (auto& item : m_Tags)
-  {
-	{auto titem = parent[_R("TItem")]; item.second.Store(titem);}
-  }
+    Superclass::InternalStore(parent);
+    parent(_R("NumberOfTags")).SetValue(GetNumberOfTags());
+    for (auto& item : m_Tags)
+    {
+        parent[_R("TItem")].SetValue(item.second);
+    }
 }
 
-//-------------------------------------------------------------------------
 void mafTagArray::InternalRestore(const mafStorageElement& node)
-//-------------------------------------------------------------------------
 {
-  Superclass::InternalRestore(node);// == MAF_OK)
-  mafID numAttrs = node(_R("NumberOfTags")).As<mafID>();
+    Superclass::InternalRestore(node);// == MAF_OK)
+    mafID numAttrs = node(_R("NumberOfTags")).As<mafID>();
 
-  auto children = node[_R("TItem")];
-  int idx = 0;
-  for (int i = 0; (idx < numAttrs) && (i < children.size()); i++)
-  {
-    mafTagItem new_titem;
-    new_titem.Restore(children[i]);
-    SetTag(new_titem);
-    idx++;
-  }
-  if (idx < numAttrs)
-  {
-    mafErrorMacro("Error Restoring TagArray: wrong number of restored items, should be " << numAttrs << ", found " << children.size());
-  }
+    auto children = node[_R("TItem")].As<std::vector<mafTagItem>>();
+    for (auto& item : children)
+    {
+        SetTag(item);
+    }
 }
 
-//-------------------------------------------------------------------------
 void mafTagArray::Print(std::ostream& os, const int tabs) const
-//-------------------------------------------------------------------------
 {
-  Superclass::Print(os,tabs);
-  
-  mafIndent indent(tabs);
-  os << indent << "Tags:"<<std::endl;
-  mafIndent next_indent(indent.GetNextIndent());
+    Superclass::Print(os, tabs);
 
-  mafTagItem item;
-  for (mmuTagsMap::const_iterator it=m_Tags.begin();it!=m_Tags.end();it++)
-  {
-    item = it->second;
-    item.Print(os,next_indent);
-  }
+    mafIndent indent(tabs);
+    os << indent << "Tags:" << std::endl;
+    mafIndent next_indent(indent.GetNextIndent());
+
+    for (auto& entry : m_Tags)
+    {
+        entry.second.Print(os, next_indent);
+    }
 }

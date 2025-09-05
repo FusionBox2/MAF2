@@ -188,16 +188,28 @@ void medOpComputeInertialTensor::OpDo()
 void medOpComputeInertialTensor::OpUndo()
 //----------------------------------------------------------------------------
 {
-  auto vme = mafVME::StaticDownCast(GetInput());
-  vme->GetTagArray()->GetTag(_R("LOCAL_CENTER_OF_MASS_COMPONENTS"),m_LocalCenterOfMassTag);
-  vme->GetTagArray()->GetTag(_R("PRINCIPAL_INERTIAL_TENSOR_COMPONENTS"),m_PrincipalInertialTensorTag);
-  vme->GetTagArray()->GetTag(_R("INERTIAL_TENSOR_COMPONENTS"),m_InertialTensorTag);
-  vme->GetTagArray()->GetTag(_R("SURFACE_MASS"),m_TagMass);
+	auto vme = mafVME::StaticDownCast(GetInput());
+	if (auto tag = vme->GetTagArray()->GetTag(_R("LOCAL_CENTER_OF_MASS_COMPONENTS")))
+	{
+		m_LocalCenterOfMassTag = *tag;
+	}
+	if (auto tag = vme->GetTagArray()->GetTag(_R("PRINCIPAL_INERTIAL_TENSOR_COMPONENTS")))
+	{
+		m_PrincipalInertialTensorTag = *tag;
+	}
+	if (auto tag = vme->GetTagArray()->GetTag(_R("INERTIAL_TENSOR_COMPONENTS")))
+	{
+		m_InertialTensorTag = *tag;
+	}
+	if (auto tag = vme->GetTagArray()->GetTag(_R("SURFACE_MASS")))
+	{
+		m_TagMass = *tag;
+	}
 
-  vme->GetTagArray()->DeleteTag(_R("LOCAL_CENTER_OF_MASS_COMPONENTS"));
-  vme->GetTagArray()->DeleteTag(_R("PRINCIPAL_INERTIAL_TENSOR_COMPONENTS"));
-  vme->GetTagArray()->DeleteTag(_R("INERTIAL_TENSOR_COMPONENTS"));
-  vme->GetTagArray()->DeleteTag(_R("SURFACE_MASS"));
+	vme->GetTagArray()->DeleteTag(_R("LOCAL_CENTER_OF_MASS_COMPONENTS"));
+	vme->GetTagArray()->DeleteTag(_R("PRINCIPAL_INERTIAL_TENSOR_COMPONENTS"));
+	vme->GetTagArray()->DeleteTag(_R("INERTIAL_TENSOR_COMPONENTS"));
+	vme->GetTagArray()->DeleteTag(_R("SURFACE_MASS"));
 }
 //----------------------------------------------------------------------------
 void medOpComputeInertialTensor::OnEvent(mafEventBase *maf_event)

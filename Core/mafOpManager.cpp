@@ -13,11 +13,9 @@
 
 #include "mafStorage.h"
 #include "mafEventIO.h"
-#include "mafDataVector.h"
 #include "mafTagArray.h"
 #include "mafTagItem.h"
 #include "mafNode.h"
-#include "mafVMEGenericAbstract.h"
 
 //------------------------------------------------------------------------------
 // Events

@@ -188,8 +188,7 @@ int mafVMELandmarkCloud::GetNumberOfLandmarks()
         // old MSF files
         auto tarray=GetTagArray();
         m_NumberOfLandmarks=0;
-        std::vector<mafString> tag_list;
-        tarray->GetTagList(tag_list);
+        std::vector<mafString> tag_list = tarray->GetTagList();
         for (int i = 0; i < tag_list.size(); i++)
         {
           if (tag_list[i].starts_with(_R("LM_NAME_")))

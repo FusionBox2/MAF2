@@ -95,8 +95,7 @@ void mafOpEditMetadata::OpRun()
   m_TagArray = GetInput()->GetTagArray();
   m_OldTagArray = mafTagArray::NewSPtr();
   m_OldTagArray->DeepCopy(m_TagArray.get());
-  std::vector<mafString> tag_list;
-  m_TagArray->GetTagList(tag_list);
+  std::vector<mafString> tag_list = m_TagArray->GetTagList();
 
   if(!m_TestMode)
   {
@@ -375,8 +374,7 @@ void mafOpEditMetadata::OpUndo()
   // Paolo 22/11/2006: DeepCopy copy the tags coming from the m_OldTagArray but
   // if in m_TagArray there are other tags they will be present also after the DeepCopy
   // => DeepCopy do not produce equals tag array in this case! Perhaps the 
-  std::vector<mafString> tag_list;
-  m_TagArray->GetTagList(tag_list);
+  std::vector<mafString> tag_list = m_TagArray->GetTagList();
   for (int t=0; t<tag_list.size();t++)
     m_TagArray->DeleteTag(tag_list[t]);
   

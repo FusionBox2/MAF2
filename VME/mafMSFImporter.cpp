@@ -495,8 +495,7 @@ void mafMSFImporter::RestoreMeterAttribute(mafVME *vme)
     auto meter_attrib = meter->GetMeterAttributes();
     auto meter_ta  = meter->GetTagArray();
     int num_tags = meter_ta->GetNumberOfTags();
-    std::vector<mafString> tag_list;
-    meter_ta->GetTagList(tag_list);
+    std::vector<mafString> tag_list = meter_ta->GetTagList();
     mafTagItem *ti = NULL;
     double component;
     for (int t=0; t<num_tags; t++)

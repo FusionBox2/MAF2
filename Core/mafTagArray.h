@@ -1,154 +1,108 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafTagArray
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafTagArray_h
-#define __mafTagArray_h
-//----------------------------------------------------------------------------
-// includes :
-//----------------------------------------------------------------------------
 #include "mafAttribute.h"
 #include "mafTagItem.h"
 #include <map>
 
-#ifdef MAF_EXPORTS
-#include "mafDllMacros.h"
-EXPORT_STL_MAP(MAF_EXPORT,std::string,mafTagItem);
-#endif
+BEGIN_FTK_NAMESPACE
 
-/** An attribute used to store an associtive array of <key,value> pairs, where value is multi component.
-  mafTagArray is an attribute storing an associative array of <key,value> pairs (a map), where values are
-  objects of type mafTagItem. A mafTagItem is a simple objet used to store an array of textual values.
-  @sa mafAttribute mafTagItem
-*/
-class MAF_EXPORT mafTagArray : public mafAttribute
+class FTK_CORE_EXPORT mafTagArray : public mafAttribute
 {
 public:
-  mafTagArray();
-  ~mafTagArray() override;
+    using Tags = std::map<mafString, mafTagItem>;
 
-  mafTypeMacro(mafTagArray,mafAttribute)
+    mafTagArray();
 
-  /** attributes must define a copy rule */
-  void operator=(const mafTagArray &a);
+    ~mafTagArray() override;
 
-  bool operator==(const mafTagArray &a) const;
+    mafTypeMacro(mafTagArray, mafAttribute)
 
-  /** provide access to vector items. If idx is outside the result is invalid */
-  //mafTagItem &operator [](const char *name);
-  
-  /** provide access to vector items. If idx is outside the result is invalid */
-  //const mafTagItem &operator [](const char *name) const;
+        mafTagArray& operator=(const mafTagArray& a);
 
-  /**
-    Get a particular tag item. The returned object is returned by reference. */
-  const mafTagItem *GetTag(const mafString& name) const;
+    bool operator==(const mafTagArray& a) const;
 
-  /**
-  Get a particular tag item. The returned object is returned by reference. */
-  mafTagItem *GetTag(const mafString& name);
+    /** provide access to vector items. If idx is outside the result is invalid */
+    //mafTagItem &operator [](const char *name);
 
-  /**
-    Get a particular tag item. The object value is copied in the given item argument. */
-  bool GetTag(const mafString& name,mafTagItem &item) const;
+    /** provide access to vector items. If idx is outside the result is invalid */
+    //const mafTagItem &operator [](const char *name) const;
 
-  /**
-    This function searches for an item with same Tag name of the given one and 
-    if it doesn't exist append a new one to the Array. The given tag is copied
-    and not referenced. */
-  void SetTag(const mafTagItem &value);
+    const mafTagItem* GetTag(const mafString& name) const;
 
-  /** Remove an item from the array */
-  void DeleteTag(const mafString& name);
-  
-  /**
-    Return the list of Tag names as an array of strings. */
-  void GetTagList(std::vector<mafString> &list) const;
-  
-  /**
-  Compare two tag arrays. Order of items is significative for
-  the comparison*/
-  bool Equals(const mafTagArray *array) const;
+    mafTagItem* GetTag(const mafString& name);
 
-  /** copy the content of another array */
-  void DeepCopy(const mafTagArray *a);
+    void SetTag(const mafTagItem& value);
 
-  void DeepCopy(const mafAttribute *a) override;
-	
-	/**
-	Search the tag array for tags of a given type and 
-	put in the array pointers to them   */
-	//void GetTagsByType(int type, std::vector<mafTagItem *> &array);
+    void DeleteTag(const mafString& name);
 
-  /** return the number of tags stored in this object */
-  int GetNumberOfTags() const;
+    std::vector<mafString> GetTagList() const;
 
-  typedef std::map<mafString,mafTagItem> mmuTagsMap;
+    bool Equals(const mafTagArray* array) const;
 
-  /** return the container of the tags stored in this attribute */
-  mmuTagsMap *GetTagsContainer() {return &m_Tags;}
+    void DeepCopy(const mafTagArray* a);
 
-  /** dump tags stored into this array */
-  void Print(std::ostream& os, const int tabs=0) const override;
+    void DeepCopy(const mafAttribute* a) override;
+
+    /**
+    Search the tag array for tags of a given type and
+    put in the array pointers to them   */
+    //void GetTagsByType(int type, std::vector<mafTagItem *> &array);
+
+    size_t GetNumberOfTags() const;
+
+    const Tags& GetTagsContainer() const { return m_Tags; }
+
+    Tags& GetTagsContainer() { return m_Tags; }
+
+    /** dump tags stored into this array */
+    void Print(std::ostream& os, const int tabs = 0) const override;
 
 protected:
-  void InternalStore(mafStorageElementBuilder& parent) override;
-  void InternalRestore(const mafStorageElement& node) override;
+    void InternalStore(mafStorageElementBuilder& parent) override;
+    void InternalRestore(const mafStorageElement& node) override;
 
-  mmuTagsMap m_Tags;
+    Tags m_Tags;
 };
 
 //-------------------------------------------------------------------------
 template <class ArrayPtr, class TType>
-inline TType mafRestoreNumericFromTag(ArrayPtr array,const mafString& name, TType &variable, TType unset_value, TType default_value)
+inline TType mafRestoreNumericFromTag(ArrayPtr array, const mafString& name, TType& variable, TType unset_value, TType default_value)
 //-------------------------------------------------------------------------
 {
-  if (variable==unset_value)
-  {
-    if (auto item=array->GetTag(name))
+    if (variable == unset_value)
     {
-      variable = item->GetValueAsDouble();
+        if (auto item = array->GetTag(name))
+        {
+            variable = item->GetValueAsDouble();
+        }
+        else
+        {
+            variable = default_value;
+        }
     }
-    else 
-    {
-      variable = default_value;
-    }
-  }
 
-  return variable;
+    return variable;
 }
 
 //-------------------------------------------------------------------------
 template <class ArrayPtr, class TType>
-inline TType mafRestoreStringFromTag(ArrayPtr array,const mafString& name, TType &variable, const mafString& unset_value, const mafString& default_value)
+inline TType mafRestoreStringFromTag(ArrayPtr array, const mafString& name, TType& variable, const mafString& unset_value, const mafString& default_value)
 //-------------------------------------------------------------------------
 {
-  if (variable==unset_value)
-  {
-    if (auto item=array->GetTag(name))
+    if (variable == unset_value)
     {
-      variable = item->GetValue();
+        if (auto item = array->GetTag(name))
+        {
+            variable = item->GetValue();
+        }
+        else
+        {
+            variable = default_value;
+        }
     }
-    else 
-    {
-      variable = default_value;
-    }
-  }
 
-  return variable;
+    return variable;
 }
 
 
-#endif 
-
+END_FTK_NAMESPACE

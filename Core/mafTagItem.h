@@ -1,173 +1,145 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafTagItem
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
+#include "ftkConfigure.h"
 
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafTagItem_h
-#define __mafTagItem_h
-//----------------------------------------------------------------------------
-// includes :
-//----------------------------------------------------------------------------
-#include "mafConfigure.h"
 #include "ftk/Base/String.h"
+#include "ftk/IO/Parse.h"
+
 #include <vector>
 #include <iosfwd>
 
-//----------------------------------------------------------------------------
-// constants
-//----------------------------------------------------------------------------
+BEGIN_FTK_NAMESPACE
 
-//----------------------------------------------------------------------------
-// forward declarations
-//----------------------------------------------------------------------------
-class mafStorageElement;
-class mafStorageElementBuilder;
-
-/** an utility class for storing <key-type-array of values> information.
-  an utility class for storing <key-type-array of values> information.
-  @sa mafTagArray
-*/
-class MAF_EXPORT mafTagItem
+namespace model::data
 {
-public:
-  mafTagItem();
-  ~mafTagItem();
+    class FTK_CORE_EXPORT TagItem final
+    {
+    public:
+        TagItem();
+        ~TagItem();
 
-  enum MAF_TAG_IDS {MAF_MISSING_TAG=0,MAF_NUMERIC_TAG,MAF_STRING_TAG};
-  /** Constructors for with implicit Tag type...*/
-  mafTagItem(const mafString& name, const mafString& value, int t=MAF_STRING_TAG);
-  mafTagItem(const mafString& name, const mafString *values, int numcomp, int t=MAF_STRING_TAG);
-  mafTagItem(const mafString& name, const std::vector<mafString>& values, int t=MAF_STRING_TAG);
-  mafTagItem(const mafString& name, double value);
-  mafTagItem(const mafString& name, const double *value, int numcomp);
-  mafTagItem(const mafString& name, const std::vector<double>& values);
+        enum TAG_IDS { MAF_MISSING_TAG = 0, MAF_NUMERIC_TAG, MAF_STRING_TAG };
+        /** Constructors for with implicit Tag type...*/
+        TagItem(const mafString& name, const mafString& value, int t = MAF_STRING_TAG);
+        TagItem(const mafString& name, const mafString* values, int numcomp, int t = MAF_STRING_TAG);
+        TagItem(const mafString& name, const std::vector<mafString>& values, int t = MAF_STRING_TAG);
+        TagItem(const mafString& name, double value);
+        TagItem(const mafString& name, const double* value, int numcomp);
+        TagItem(const mafString& name, const std::vector<double>& values);
 
-  mafTagItem(const mafTagItem& p);
-  void operator=(const mafTagItem& p);
+        TagItem(const TagItem& p);
+        TagItem& operator=(const TagItem& p);
 
-  bool operator==(const mafTagItem& p) const;
-  bool operator!=(const mafTagItem& p) const;
+        bool operator==(const TagItem& p) const;
+        bool operator!=(const TagItem& p) const;
 
-  virtual void Print(std::ostream& os, const int indent=0) const;
+        bool Equals(const TagItem* item) const;
 
-  /** Set/Get the name of this Tag*/
-  void SetName(const mafString& name);
-  const mafString& GetName() const;
+        void DeepCopy(const TagItem* item);
 
-  /**
-    Set the Value of this Tag. In case the component is specified the function operates
-    on that component, otherwise it works on component 0. */
-  void SetValue(const mafString& value,int component=0);
-  /** same as SetValue() */
-  void SetComponent(const mafString& value,int component=0);
+        const mafString& GetName() const;
 
-  /** Set Tag value converting automatically to string and setting the type to NUMERIC. */
-  void SetValue(double value , int component=0);
-  /** Set Tag value converting automatically to string and setting the type to NUMERIC. */
-  void SetComponent(double value , int component=0);
-  
-  /** Set array of components at a once */
-  void SetComponents(const mafString *values, int numcomp);
-  /** Set array of components at a once */
-  void SetComponents(const std::vector<mafString>& components);
+        void SetName(const mafString& name);
 
-  /** same as SetComponents() */
-  void SetValues(const std::vector<mafString>& values);
-  /** same as SetComponents() */
-  void SetValues(const mafString *values, int numcomp);
+        void SetValue(const mafString& value, int component = 0);
 
-  /** Remove a value  */
-  void RemoveValue(int component); //Added by Mucci 22/10/2007
-  
-  /** Set array of components at a once, specifying an array of numeric values. */
-  void SetValues(const double *values, int numcomp);
-  /** Set array of components at a once, specifying an array of numeric values. */
-  void SetValues(const std::vector<double>& values);
-  
-  /** Set array of components at a once, specifying an array of numeric values. */
-  void SetComponents(const double *components, int numcomp);
+        void SetComponent(const mafString& value, int component = 0);
 
-  /** Set array of components at a once, specifying an array of numeric values. */
-  void SetComponents(const std::vector<double>& components);
+        void SetValue(double value, int component = 0);
 
-  /**
-    return the value stored in this item. By default the function 
-    work on the first component, but specifying the component number
-    it's possible to retain the specific component.*/
-  const mafString& GetValue(int component=0) const;
+    	void SetComponent(double value, int component = 0);
 
-  /** same as GetValue() */
-  const mafString& GetComponent(int comp) const;
+        void SetComponents(const mafString* values, int numcomp);
 
-  /** return the value stored in this item converting to a double. */
-  double GetValueAsDouble(int component=0) const;
-  double GetComponentAsDouble(int comp) const;
+        void SetComponents(const std::vector<mafString>& components);
 
-  /** return all the array of values */
-  const std::vector<mafString>& GetComponents() const {return m_Components;};
+        void SetValues(const std::vector<mafString>& values);
 
-  /**
-    return the array of values as a single string, representing
-    the array of components as a tuple of the form:
-    "( <component1>, <component2>,...)" */
-  void GetValueAsSingleString(mafString &str) const;
-  
+        void SetValues(const mafString* values, int numcomp);
 
-  /** 
-    Set the type of this Tag. Default available types are MAF_MISSING_TAG=0,
-    , MAF_NUMERIC_TAG=1, MAF_STRING_TAG=2 where the first one means a NULL value 
-    (no component) is present. Custom ids can be defined by applications. */
-  void SetType (int t) {m_Type=t;};
+        void RemoveValue(int component);
 
-  /** 
-    return the type of this tag. Default available types are MAF_MISSING_TAG=0,
-    MAF_NUMERIC_TAG=1, MAF_STRING_TAG=2 where the first one means a NULL value 
-    (no component) is present. Custom ids can be defined by applications. */
-  int GetType() const {return m_Type;};
+        void SetValues(const double* values, int numcomp);
 
-  /** 
-    return the type of this tag item as a string. Default available types
-    are "MIS", "NUM", "STR" where the first means a NULL value (no component)
-    is present. Custom ids can be defined by applications and a reported by this
-    functions as numerical strings. */
-  void GetTypeAsString(mafString &value) const;
+        void SetValues(const std::vector<double>& values);
 
-  /**
-    Set the NumberOfComponents of the value corresponding to this Tag.
-    When a new NumberOfComponents is specified, where possible old value are
-    preserved.*/
-  void SetNumberOfComponents(int n);
-  int GetNumberOfComponents() const;
-  
-  /** Compare two Tag items*/
-  bool Equals(const mafTagItem *item) const;
+        void SetComponents(const double* components, int numcomp);
 
-  /** copy contents of the given tag item */
-  void DeepCopy(const mafTagItem *item);
+        void SetComponents(const std::vector<double>& components);
 
-  void Store(mafStorageElementBuilder& element) { InternalStore(element); }
-  void Restore(const mafStorageElement& element) { InternalRestore(element); }
+        const mafString& GetValue(int component = 0) const;
 
-protected:
-  virtual void InternalStore(mafStorageElementBuilder& parent);
-  virtual void InternalRestore(const mafStorageElement& node);
+        const mafString& GetComponent(int comp) const;
 
-  void Initialize();
-  
-  mafString m_Name;
-  int m_Type;
-  std::vector<mafString> m_Components;
-};
+        double GetValueAsDouble(int component = 0) const;
 
-#endif 
+    	double GetComponentAsDouble(int comp) const;
 
+        const std::vector<mafString>& GetComponents() const { return m_Components; }
+
+        mafString GetValueAsSingleString() const;
+
+        int GetType() const { return m_Type; }
+
+        void SetType(int t) { m_Type = t; }
+
+        mafString GetTypeAsString() const;
+
+        int GetNumberOfComponents() const;
+
+    	void SetNumberOfComponents(int n);
+
+        void Print(std::ostream& os, int tabs = 0) const;
+
+    protected:
+
+        void Initialize();
+
+        mafString m_Name;
+        int m_Type;
+        std::vector<mafString> m_Components;
+    };
+
+    template<class Value>
+    TagItem Parse(const Value& value, io::parse::To<TagItem>)
+    {
+        mafString type = value(_R("Type")).As<mafString>();
+
+        int typeValue = 0;
+        if (type == _R("NUM"))
+        {
+          typeValue = TagItem::MAF_NUMERIC_TAG;
+        }
+        else if (type == _R("STR"))
+        {
+            typeValue = TagItem::MAF_STRING_TAG;
+        }
+        else if (type == _R("MIS"))
+        {
+            typeValue = TagItem::MAF_MISSING_TAG;
+        }
+        else
+        {
+        }
+        mafID num = value(_R("Mult")).As<mafID>();
+        return TagItem(value(_R("Name")).As<mafString>(), value[_R("TItem")][_R("TC")].As<std::vector<mafString>>(), typeValue);
+    }
+
+    template<class Value>
+    void Serialize(Value& value, const TagItem& item)
+    {
+        value(_R("Name")).SetValue(item.GetName());
+        value(_R("Mult")).SetValue(item.GetNumberOfComponents());
+        value(_R("Type")).SetValue(item.GetTypeAsString());
+    	auto TItem = value[_R("TItem")];
+        for (auto& comp : item.GetComponents())
+        {
+            TItem[_R("TC")][Value::npos].SetValue(comp);
+        }
+    }
+
+}
+
+using mafTagItem = model::data::TagItem;
+
+END_FTK_NAMESPACE

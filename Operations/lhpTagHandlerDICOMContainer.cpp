@@ -62,7 +62,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("StudyDate")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -89,7 +89,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("Modality")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -115,7 +115,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("Manufacturer")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -141,7 +141,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("InstitutionName")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -167,7 +167,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("StationName")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -193,7 +193,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("ManufacturerModelName")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -219,7 +219,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("PatientID")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -245,7 +245,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("PatientSex")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -271,7 +271,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("ScanOptions")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -297,7 +297,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("KVP")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -323,7 +323,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("DataCollectionDiameter")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -349,7 +349,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("ReconstructionDiameter")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -375,7 +375,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("DistanceSourceToDetector")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -401,7 +401,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("DistanceSourceToPatient")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -427,7 +427,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("GantryDetectorTilt")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -453,7 +453,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("TableHeight")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -479,7 +479,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("RotationDirection")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -505,7 +505,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("ExposureTime")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -531,7 +531,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("XRayTubeCurrent")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -557,7 +557,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("Exposure")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -583,7 +583,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("FilterType")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -609,7 +609,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("FocalSpot")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -635,7 +635,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("ConvolutionKernel")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -661,7 +661,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("PatientPosition")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -687,7 +687,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("StudyID")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -713,7 +713,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("ImagePositionPatient")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -739,7 +739,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("PixelSpacing")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -765,7 +765,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("PixelPaddingValue")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -791,7 +791,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("WindowCenter")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -817,7 +817,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("WindowWidth")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -843,7 +843,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("RescaleIntercept")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {
@@ -869,7 +869,7 @@ void lhpTagHandler_L0000_resource_data_Attributes_SourceAttributes_SourceType_So
   mafString value;
   if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("RescaleSlope")))
   {
-    ti->GetValueAsSingleString(value);
+    value = ti->GetValueAsSingleString();
   }
   else
   {

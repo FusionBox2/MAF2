@@ -149,23 +149,20 @@ void mafGUISaveRestorePose::EnableWidgets(bool enable)
 void mafGUISaveRestorePose::FillListBoxWithABSPosesStoredInInputVME()
 //----------------------------------------------------------------------------
 {
-	auto tag_array = m_InputVME->GetTagArray();
-  int n = tag_array->GetNumberOfTags();
-  std::vector<mafString> tag_list;
-  tag_array->GetTagList(tag_list);
-	for(int t=0; t<n; t++)
-	{
-	  mafTagItem *item = tag_array->GetTag(tag_list[t]);
-		if(item->GetNumberOfComponents() == 16)
-		{
-			wxString name = item->GetName().toWx();
-      if(name.Find("STORED_ABS_POS_") != -1)
-      {
-			  name = name.Remove(0,15);
-			  m_PositionsList->Append(name);
-      }
-		}
-	}
+    auto tag_array = m_InputVME->GetTagArray();
+    for (auto& entry : tag_array->GetTagsContainer())
+    {
+        auto item = &entry.second;
+        if (item->GetNumberOfComponents() == 16)
+        {
+            wxString name = item->GetName().toWx();
+            if (name.Find("STORED_ABS_POS_") != -1)
+            {
+                name = name.Remove(0, 15);
+                m_PositionsList->Append(name);
+            }
+        }
+    }
 }
 //----------------------------------------------------------------------------
 void mafGUISaveRestorePose::StorePose()
