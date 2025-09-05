@@ -475,8 +475,7 @@ namespace model::data
         size_t num = this->GetNumberOfChildren();
         for (size_t i = 0; i < num; i++)
         {
-            auto curr = this->GetChild(num - i - 1);
-            if (curr.get())
+            if (auto curr = this->GetChild(num - i - 1))
                 SetParentNew(curr, nullptr);
         }
         m_Children.clear();

@@ -996,9 +996,9 @@ void mafVMELandmarkCloud::Open()
 		for (auto& elem : *m_DataVector)
 		{
       double xyz[3];
-      mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(elem.second.get());
+      auto item = mafVMEItemVTK::SafeDownCast(elem.second.get());
       assert(item);
-      if (vtkPolyData *polydata = (vtkPolyData *)item->GetData())
+      if (auto polydata = static_cast<vtkPolyData*>(item->GetData()))
       {
         bool vis = GetLandmarkVisibility(polydata,i);
         mafMatrix mat;
