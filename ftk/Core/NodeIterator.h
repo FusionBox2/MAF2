@@ -36,8 +36,6 @@ namespace model::data
 
         NodePtr GetCurrentNode() const;
 
-        void IgnoreVisibleToTraverse(bool ignore) { m_IgnoreVisibleToTraverse = ignore; }
-
         NodeIterator& GoToNextNode();
 
         NodeIterator& GoToPreviousNode();
@@ -50,11 +48,13 @@ namespace model::data
 
     	TraversalMode GetTraversalMode() const { return m_TraversalMode; }
 
-        void SetTraversalMode(TraversalMode mode);
+        NodeIterator& SetTraversalMode(TraversalMode mode);
 
-        void SetTraversalModeToPreOrder() { SetTraversalMode(TraversalMode::PreOrder); }
+        NodeIterator& SetTraversalModeToPreOrder() { return SetTraversalMode(TraversalMode::PreOrder); }
 
-        void SetTraversalModeToPostOrder() { SetTraversalMode(TraversalMode::PostOrder); }
+        NodeIterator& SetTraversalModeToPostOrder() { return SetTraversalMode(TraversalMode::PostOrder); }
+
+        NodeIterator& IgnoreVisibleToTraverse(bool ignore = true) { m_IgnoreVisibleToTraverse = ignore; return *this; }
 
     private:
 
@@ -374,10 +374,10 @@ namespace model::data
     }
 
     template<typename Node>
-    void NodeIterator<Node>::SetTraversalMode(TraversalMode mode)
+    NodeIterator<Node>& NodeIterator<Node>::SetTraversalMode(TraversalMode mode)
     {
         m_TraversalMode = mode;
-        GoToFirstNode();
+        return GoToFirstNode();
     }
 }
 
