@@ -113,7 +113,7 @@ void mafDeviceSet::InternalRestore(const mafStorageElement& node)
   Superclass::InternalRestore(node);
 
   auto devices = node[_R("Device")];
-  for (size_t i = 0; i < devices.GetNumItems(); i++)
+  for (size_t i = 0; i < devices.size(); i++)
   {
     if (auto device = devices[i].As<mafDevice>())
     {

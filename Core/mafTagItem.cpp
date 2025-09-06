@@ -510,11 +510,11 @@ void mafTagItem::InternalRestore(const mafStorageElement& node)
   SetNumberOfComponents(num);
   m_Components.clear();
   auto items = node[_R("TItem")][_R("TC")];
-  if (items.GetNumItems() != num)
+  if (items.size() != num)
   {
     return;
   }
-  for (size_t i = 0; i < items.GetNumItems(); i++)
+  for (size_t i = 0; i < items.size(); i++)
   {
     m_Components.push_back(items[i].As<mafString>());
   }

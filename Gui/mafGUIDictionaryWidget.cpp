@@ -104,7 +104,7 @@ void mafGUIDictionaryWidget::LoadDictionary(const mafString& file)
   m_File = file;
   
   // XML storage to restore
-  mafXMLReader restore(_R("DIC"), _R("2.0"));
+  io::Reader restore(_R("DIC"), _R("2.0"));
   restore.Load(m_File);
 
   // create a new object to restore into
@@ -191,9 +191,5 @@ void mafStorableDictionary::InternalRestore(const mafStorageElement& node)
 //------------------------------------------------------------------------------
 {
   auto items = node[_R("Dictionary")][_R("DItem")];
-  m_StrVector.clear();
-  for (size_t i = 0; i < items.GetNumItems(); i++)
-  {
-	  m_StrVector.push_back(items[i].As<mafString>());
-  }
+  m_StrVector = items.As<std::vector<mafString> >();
 }

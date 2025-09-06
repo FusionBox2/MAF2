@@ -322,8 +322,9 @@ void mafGUIApplicationLayoutSettings::RemoveLayout()
 void mafGUIApplicationLayoutSettings::SaveApplicationLayout()
 //----------------------------------------------------------------------------
 {
-	mafXMLWriter writer(_R("MLY"), _R("2.0"));
-	m_XMLRoot->Store(writer.GetRoot());
+	io::Writer writer(_R("MLY"), _R("2.0"));
+	auto root = writer.GetRoot();
+	m_XMLRoot->Store(root);
     writer.Save(m_LayoutFileSave);
 	m_ModifiedLayouts = false;
 }
@@ -348,7 +349,7 @@ void mafGUIApplicationLayoutSettings::LoadLayout(bool fileDefault)
     m_XMLRoot->RemoveAllAttributes();
     m_List->Clear();
 
-	mafXMLReader reader(_R("MLY"), _R("2.0"));
+  	io::Reader reader(_R("MLY"), _R("2.0"));
     reader.Load(m_LayoutFileSave);
     m_XMLRoot->Restore(reader.GetRoot());
 

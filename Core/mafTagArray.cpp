@@ -206,7 +206,7 @@ void mafTagArray::InternalRestore(const mafStorageElement& node)
 
   auto children = node[_R("TItem")];
   int idx = 0;
-  for (int i = 0; (idx < numAttrs) && (i < children.GetNumItems()); i++)
+  for (int i = 0; (idx < numAttrs) && (i < children.size()); i++)
   {
     mafTagItem new_titem;
     new_titem.Restore(children[i]);
@@ -215,7 +215,7 @@ void mafTagArray::InternalRestore(const mafStorageElement& node)
   }
   if (idx < numAttrs)
   {
-    mafErrorMacro("Error Restoring TagArray: wrong number of restored items, should be " << numAttrs << ", found " << children.GetNumItems());
+    mafErrorMacro("Error Restoring TagArray: wrong number of restored items, should be " << numAttrs << ", found " << children.size());
   }
 }
 

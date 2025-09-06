@@ -1197,13 +1197,13 @@ void mafNode::InternalRestore(const mafStorageElement& node)
   RemoveAllAttributes();
   auto attr_items = node[_R("Attributes")][_R("Item")];
   mafID numItemsAttr = node[_R("Attributes")](_R("NumberOfItems")).As<mafID>();
-  if (numItemsAttr != attr_items.GetNumItems())
+  if (numItemsAttr != attr_items.size())
   {
 	  mafErrorMacro("Number of attributes differs from number of entries");// << GetName());
 	  return;
   }
 
-  for (size_t i = 0; i < attr_items.GetNumItems(); i++)
+  for (size_t i = 0; i < attr_items.size(); i++)
   {
       auto item = attr_items[i].As<mafAttribute>();
 	  assert(item);
@@ -1220,8 +1220,8 @@ void mafNode::InternalRestore(const mafStorageElement& node)
   //links_element->GetAttribute(_R("NumberOfLinks"), num_links);
   //int n=(int)atof(num_links.GetCStr());
   auto links_vector = links_element[_R("Link")];
-  assert(links_vector.GetNumItems() == n);
-  for (size_t i = 0; i < links_vector.GetNumItems(); i++)
+  assert(links_vector.size() == n);
+  for (size_t i = 0; i < links_vector.size(); i++)
   {
     mafString link_name = links_vector[i](_R("Name")).As<mafString>();
     //links_vector[i].GetAttribute(_R("Name"),link_name);
@@ -1239,13 +1239,13 @@ void mafNode::InternalRestore(const mafStorageElement& node)
   RemoveAllChildren();
   auto child_items = node[_R("Children")][_R("Node")];
   mafID numItemsChild = node[_R("Children")](_R("NumberOfItems")).As<mafID>();
-  if (numItemsChild != child_items.GetNumItems())
+  if (numItemsChild != child_items.size())
   {
 	  mafErrorMacro("Number of children differs from number of entries");// << GetName());
 	  return;
   }
 
-  for (size_t i =0 ; i < child_items.GetNumItems(); i++)
+  for (size_t i =0 ; i < child_items.size(); i++)
   {
 	  auto node = child_items[i].As<mafNode>();
 	  assert(node);

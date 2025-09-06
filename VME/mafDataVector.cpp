@@ -468,9 +468,9 @@ void mafDataVector::InternalRestore(const mafStorageElement& node)
   // restore items meta-data
   auto elements = node[_R("VItem")];
 
-  assert(num_items == elements.GetNumItems()); // check the number of elements
+  assert(num_items == elements.size()); // check the number of elements
 
-  for (size_t i = 0; i < elements.GetNumItems(); i++)
+  for (size_t i = 0; i < elements.size(); i++)
   {
     auto obj = elements[i].As<mafVMEItem>();
     auto item = mafVMEItem::SafeDownCast(obj);

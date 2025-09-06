@@ -833,8 +833,9 @@ void mafInteractionManager::OnEvent(mafEventBase *event)
 void mafInteractionManager::Store(const mafString& filename)
 //------------------------------------------------------------------------------
 {
-  mafXMLWriter writer(_R("MIS"), MIS_VERSION);
-  InternalStore(writer.GetRoot());
+  io::Writer writer(_R("MIS"), MIS_VERSION);
+  auto root = writer.GetRoot();
+  InternalStore(root);
   writer.Save(filename);
 }
 
@@ -842,7 +843,7 @@ void mafInteractionManager::Store(const mafString& filename)
 void mafInteractionManager::Restore(const mafString& filename)
 //------------------------------------------------------------------------------
 {
-  mafXMLReader reader(_R("MIS"), MIS_VERSION);
+  io::Reader reader(_R("MIS"), MIS_VERSION);
   reader.Load(filename);
   InternalRestore(reader.GetRoot());
 }

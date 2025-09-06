@@ -133,7 +133,7 @@ void mafAction::InternalRestore(const mafStorageElement& node)
   SetName(name);
 
   auto children=node[_R("Device")];
-  for (int i=0;i<children.GetNumItems();i++)
+  for (int i=0;i<children.size();i++)
   {
     //if (subnode->GetName() == _R("Device"))
     {

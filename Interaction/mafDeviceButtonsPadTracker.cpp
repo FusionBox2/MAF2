@@ -110,7 +110,7 @@ void mafDeviceButtonsPadTracker::InternalRestore(const mafStorageElement& node)
   m_TrackedBounds.Modified();
   mafParseVector(node[_R("TrackedBoxOrientation")].As<mafString>(), m_TrackedBoxOrientation, 3);
   auto avatarNode = node[_R("Avatar")];
-  if(avatarNode.IsValid())
+  if(avatarNode.isValid())
   {
     if (auto avatar = avatarNode.As<mafAvatar>())
     {

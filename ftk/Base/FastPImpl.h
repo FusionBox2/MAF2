@@ -10,16 +10,17 @@
 
 BEGIN_FTK_NAMESPACE
 
-namespace utils
+namespace utilities
 {
 	template <class T, std::size_t size, std::size_t align, bool strict = false>
-	class FastPimpl final {
+	class FastPImpl final
+	{
 	public:
-		FastPimpl(FastPimpl&& v) noexcept(noexcept(T(std::declval<T>()))) : FastPimpl(std::move(*v)) {}
+		FastPImpl(FastPImpl&& v) noexcept(noexcept(T(std::declval<T>()))) : FastPImpl(std::move(*v)) {}
 
-		FastPimpl(const FastPimpl& v) noexcept(noexcept(T(std::declval<const T&>()))) : FastPimpl(*v) {}
+		FastPImpl(const FastPImpl& v) noexcept(noexcept(T(std::declval<const T&>()))) : FastPImpl(*v) {}
 
-		FastPimpl& operator=(const FastPimpl& rhs) noexcept(noexcept(std::declval<T&>() = std::declval<const T&>()))
+		FastPImpl& operator=(const FastPImpl& rhs) noexcept(noexcept(std::declval<T&>() = std::declval<const T&>()))
 		{
 			if (&rhs != this)
 			{
@@ -28,14 +29,14 @@ namespace utils
 			return *this;
 		}
 
-		FastPimpl& operator=(FastPimpl&& rhs) noexcept(noexcept(std::declval<T&>() = std::declval<T>()))
+		FastPImpl& operator=(FastPImpl&& rhs) noexcept(noexcept(std::declval<T&>() = std::declval<T>()))
 		{
 			*holder() = std::move(*rhs);
 			return *this;
 		}
 
 		template <typename... Args>
-		explicit FastPimpl(Args&&... args) noexcept(noexcept(T(std::declval<Args>()...)))
+		explicit FastPImpl(Args&&... args) noexcept(noexcept(T(std::declval<Args>()...)))
 		{
 			::new (holder()) T(std::forward<Args>(args)...);
 		}
@@ -48,21 +49,23 @@ namespace utils
 
 		const T& operator*() const noexcept { return *holder(); }
 
-		~FastPimpl() noexcept {
+		~FastPImpl() noexcept
+		{
 			Validate<sizeof(T), alignof(T), noexcept(std::declval<T*>()->~T())>();
 			std::destroy_at(holder());
 		}
 
 	private:
 		template <std::size_t actualSize, std::size_t actualAlign, bool actualNoexcept>
-		static void Validate() noexcept {
+		static void Validate() noexcept
+		{
 			static_assert(!strict || size == actualSize, "invalid size: size == sizeof(T) failed");
 			static_assert(size >= actualSize, "invalid size: size >= sizeof(T) failed");
 
 			static_assert(!strict || align == actualAlign, "invalid align: align == alignof(T) failed");
 			static_assert(align % actualAlign == 0, "invalid align: align % alignof(T) == 0 failed");
 
-			static_assert(actualNoexcept, "Destructor of FastPimpl is marked as noexcept, the ~T() is not");
+			static_assert(actualNoexcept, "Destructor of FastPImpl is marked as noexcept, the ~T() is not");
 		}
 
 		T* holder() noexcept { return reinterpret_cast<T*>(&storage_); }

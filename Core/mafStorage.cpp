@@ -74,15 +74,16 @@ void mafStorage::OnEvent(mafEventBase *e)
 int mafStorage::InternalStore(const mafString& filename)
 //------------------------------------------------------------------------------
 {
-    mafXMLWriter writer(m_FileType, m_Version);
-    m_Document->Store(writer.GetRoot());
+    io::Writer writer(m_FileType, m_Version);
+    auto root = writer.GetRoot();
+    m_Document->Store(root);
     return writer.Save(filename);
 }
 //------------------------------------------------------------------------------
 int mafStorage::InternalRestore(const mafString& filename)
 //------------------------------------------------------------------------------
 {
-    mafXMLReader reader(m_FileType, m_Version);
+    io::Reader reader(m_FileType, m_Version);
     reader.Load(filename);
     m_Document->Restore(reader.GetRoot());
     return MAF_OK;

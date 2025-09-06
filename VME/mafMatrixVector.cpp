@@ -87,12 +87,12 @@ void mafMatrixVector::InternalRestore(const mafStorageElement& node)
   mafID num_items = node(_R("NumberOfItems")).As<mafID>();
   auto vector_elements = node[_R("Matrix")];
 
-  assert(vector_elements.GetNumItems() == num_items);
+  assert(vector_elements.size() == num_items);
 
-  if (vector_elements.GetNumItems() != num_items)
+  if (vector_elements.size() != num_items)
     mafWarningMacro("Restore I/O error: found wrong number of matrices in restored MatrixVector.");
 
-  for (int i = 0; i < vector_elements.GetNumItems(); i++)
+  for (int i = 0; i < vector_elements.size(); i++)
   {
     auto mat = mafMatrix::NewSPtr();
     *mat = vector_elements[i].As<mafMatrix>();

@@ -52,7 +52,7 @@ void mafInteractorSER::InternalRestore(const mafStorageElement& node)
 //------------------------------------------------------------------------------
 {
   auto children = node[_R("Action")];
-  for (int i=0;i<children.GetNumItems();i++)
+  for (int i=0;i<children.size();i++)
   {
     // create the object to be restored mannualy since mafAction is not in the factory
     mafString action_name = children[i](_R("Name")).As<mafString>();

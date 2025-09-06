@@ -591,7 +591,7 @@ void mafGUIMaterialChooser::LoadLibraryFromFile()
   ClearList();
 
   // XML storage to restore
-  mafXMLReader reader(_R("MAP"), _R("1.0"));
+  io::Reader reader(_R("MAP"), _R("1.0"));
   reader.Load(m_Filename);
 
   auto mat_lib = std::make_unique<mafStorableMaterialLibrary>(&m_List);
@@ -610,10 +610,11 @@ void mafGUIMaterialChooser::StoreLibraryToFile()
 	if(m_List.empty()) return;
 
   // XML storage to restore
-  mafXMLWriter writer(_R("MAP"), _R("1.0"));
+  io::Writer writer(_R("MAP"), _R("1.0"));
 
   auto mat_lib = std::make_unique<mafStorableMaterialLibrary>(&m_List);
-  mat_lib->Store(writer.GetRoot());
+	auto root = writer.GetRoot();
+  mat_lib->Store(root);
   writer.Save(m_Filename);
 }
 //----------------------------------------------------------------------------
@@ -884,13 +885,13 @@ void mafStorableMaterialLibrary::InternalRestore(const mafStorageElement& node)
 {
 	auto mat_items = node[_R("MaterialLib")][_R("Node")];
 	mafID numItemsMat = node[_R("MaterialLib")](_R("NumberOfItems")).As<mafID>();
-	if (numItemsMat != mat_items.GetNumItems())
+	if (numItemsMat != mat_items.size())
 	{
 		mafErrorMacro("Number of children differs from number of entries");
 		return;
 	}
 
-	for (size_t i = 0; i < mat_items.GetNumItems(); i++)
+	for (size_t i = 0; i < mat_items.size(); i++)
 	{
 		auto obj = mat_items[i].As<mafAttribute>();
 		auto item = std::static_pointer_cast<mmaMaterial>(obj);
