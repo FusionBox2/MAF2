@@ -25,6 +25,7 @@
 
 #include "mafAttributeTraceability.h"
 #include "ftk/IO/StorageElement.h"
+#include "ftk/IO/ParseContainers.h"
 #include "mafIndent.h"
 
 #include <ostream>

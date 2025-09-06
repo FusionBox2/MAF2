@@ -34,6 +34,7 @@
 #include "mafGUILutPreset.h"
 
 #include "ftk/IO/StorageElement.h"
+#include "ftk/IO/ParseContainers.h"
 #include "mafIndent.h"
 #include "mafNode.h"
 

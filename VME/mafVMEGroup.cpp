@@ -31,6 +31,7 @@
 #include "mafMatrixVector.h"
 #include "mafNode.h"
 #include "mafVMEOutputNULL.h"
+#include "ftk/IO/ParseContainers.h"
 
 const int DEBUG_MODE = true;
 

@@ -3,19 +3,15 @@
 #include "ftkConfigure.h"
 
 #include <ftk/Base/Meta.h>
+#include "ftk/IO/ParseTo.h"
 
 #include <exception>
 #include <limits>
-#include <optional>
-#include <vector>
 
 BEGIN_FTK_NAMESPACE
 
 namespace io::parse
 {
-	template <class T>
-	struct To {};
-
 	template <typename T>
 	void CheckInBounds(T x, T min, T max) {
 		if (x < min || x > max) {
@@ -48,27 +44,6 @@ namespace io::parse
 	template <typename Value>
 	float Parse(const Value& value, io::parse::To<float>) {
 		return NarrowToFloat(value.template As<double>(), value);
-	}
-
-	template <typename T, typename Value>
-	std::optional<decltype(Parse(std::declval<Value>(), To<T>{})) >
-		Parse(const Value& value, To<std::optional<T>>)
-	{
-		if (!value.isValid())
-		{
-			return std::nullopt;
-		}
-		return value.template As<T>();
-	}
-	template <typename T, typename Value>
-	auto Parse(const Value& value, To<std::vector<T> >)
-	{
-		std::vector<decltype(Parse(std::declval<Value>(), To<T>{})) > result;
-		for (size_t i = 0; i < value.size(); i++)
-		{
-			result.push_back(value[i].template As<T>());
-		}
-		return result;
 	}
 
 	template <typename Value, typename T>

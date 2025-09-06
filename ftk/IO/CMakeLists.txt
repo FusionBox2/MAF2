@@ -4,7 +4,11 @@ project(IO)
 
 set(PROJECT_HEADERS
     Parse.h
+    ParseContainers.h
+    ParseTo.h
     Serialize.h
+    SerializeContainers.h
+    SerializeTo.h
     JsonRapid.h
     XmlRapid.h
     XmlXerces.h

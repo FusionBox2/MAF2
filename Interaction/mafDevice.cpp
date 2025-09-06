@@ -26,6 +26,7 @@
 
 // serialization
 #include "ftk/IO/StorageElement.h"
+#include "ftk/IO/ParseContainers.h"
 #include <optional>
 
 //------------------------------------------------------------------------------
