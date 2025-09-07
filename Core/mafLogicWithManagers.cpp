@@ -1440,6 +1440,7 @@ void mafLogicWithManagers::OnFileNew()
   if(!OnFileClose())
     return;
   auto root = mafVMERoot::NewSPtr();
+  root->RenewIds(root.get());
   root->SetName(_R("root"));
   root->Initialize();
   //Add the application stamps

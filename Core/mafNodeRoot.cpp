@@ -40,7 +40,7 @@ void mafNodeRoot::OnEvent(mafEventBase *e)
 {
   if (e->GetChannel()==MCH_UP)
   {
-    mafRoot::InvokeEvent(e);
+    Root::InvokeEvent(e);
   }
   else
   {
@@ -48,12 +48,18 @@ void mafNodeRoot::OnEvent(mafEventBase *e)
   }
 }
 
+void mafNodeRoot::RenewIds(model::data::Node* node)
+{
+    SetMaxNodeId(node->BuildIds(GetMaxNodeId()));
+}
+
+
 //-------------------------------------------------------------------------
 void mafNodeRoot::Print(std::ostream& os, const int tabs)// const
 //-------------------------------------------------------------------------
 {
   mafNode::Print(os,tabs);
-  mafRoot::Print(os,tabs);
+  Root::Print(os,tabs);
 }
 
 //-------------------------------------------------------------------------

@@ -18,14 +18,14 @@
 #define __mafNodeRoot_h
 
 #include "mafNode.h"
-#include "mafRoot.h"
+#include "ftk/Core/Root.h"
 
 /** mafNodeRoot - a VME is the root of a tree of VME nodes. 
   This node is a specialized VME acting as root of the tree. It inherits
   root behavior from mafNodeRoot and also is responsible for generating 
   Ids fore VME items added to the tree.
   @sa mafNodeRoot mafNode */
-class MAF_EXPORT mafNodeRoot : public mafNode, public mafRoot
+class MAF_EXPORT mafNodeRoot : public mafNode, public model::data::Root
 {
 public:
   mafTypeMacro(mafNodeRoot,mafNode);
@@ -34,11 +34,11 @@ public:
   void Print(std::ostream& os, const int tabs=0) override;// const;
 
   /** allow only a NULL parent */
-  bool CanReparentTo(mafNode *parent) override {return parent==NULL;}
+  bool CanReparentTo(mafNode *parent) override {return parent == nullptr;}
 
   void OnEvent(mafEventBase *e) override;
 
-  mafID GetNewNodeId() override {return GetNextNodeId();}
+  void RenewIds(Node *node) override;
 
   /** return an xpm-icon that can be used to represent this node */
   static const char ** GetIcon();   //SIL. 11-4-2005:  

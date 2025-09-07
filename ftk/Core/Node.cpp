@@ -3,6 +3,8 @@
 #include "mafDecl.h"
 
 #include "ftk/Core/NodeFactory.h"
+#include "ftk/Core/Attribute.h"
+#include "mafTagArray.h"
 #include "mafIndent.h"
 #include "mafEventIO.h"
 #include "ftk/IO/StorageElement.h"
@@ -16,31 +18,6 @@
 #endif
 #include <strstream>
 
-#define UpdateUpDownAvailability(node)\
-do\
-{\
-  if(node == nullptr)\
-    break;\
-  if(node->m_Gui == nullptr)\
-    break;\
-  bool up = false;\
-  bool down = false;\
-  bool right = false;\
-  bool left = false;\
-  if(node->m_Parent != nullptr)\
-  {\
-    up    = (node != node->m_Parent->GetChild(0).get());\
-    down  = (node != node->m_Parent->GetChild(node->m_Parent->GetNumberOfChildren() - 1).get());\
-    left  = (node == node->m_Parent->GetChild(0).get() && node->m_Parent->m_Parent != nullptr);\
-    right = (node != node->m_Parent->GetChild(0).get());\
-  }\
-  node->m_Gui->Enable(ID_MOVEUP, up);\
-  node->m_Gui->Enable(ID_MOVEDN, down);\
-  node->m_Gui->Enable(ID_MOVERIGHT, right);\
-  node->m_Gui->Enable(ID_MOVELEFT, left);\
-}\
-while(0)
-
 BEGIN_FTK_NAMESPACE
 
 namespace model::data
@@ -52,44 +29,125 @@ namespace model::data
         ID_LAST
     };
 
-    //-------------------------------------------------------------------------
+    std::shared_ptr<Node>  Node::Create(const char* NodeType)
+    {
+        return NodeFactory::CreateNode(NodeType);
+    }
+
     Node::Node()
-        //-------------------------------------------------------------------------
     {
         SetChannel(MCH_NODE);
     }
 
-    //-------------------------------------------------------------------------
     Node::~Node()
-        //-------------------------------------------------------------------------
     {
-        // advise observers this is being destroyed
         InvokeEvent(this, NODE_DESTROYED);
         RemoveAllChildren();
         RemoveAllLinks();
         RemoveAllAttributes();
         Shutdown();
-        //SetParent(NULL);//at this point parent should be already NULL, as the pointer from their is destroyed (referencecount == 0, calling destructor)
     }
 
-    //------------------------------------------------------------------------------
-    void Node::SetId(mafID id)
-        //------------------------------------------------------------------------------
+    bool Node::Equals(Node* node)
     {
-        m_Id = id;
-        Modified();
+        if (!node || !node->IsA(GetTypeName()))
+            return false;
+
+        // do not check the ID!!!
+
+        if (m_Name != node->m_Name)
+            return false;
+
+        // check attributes
+        if (m_Attributes.size() != node->m_Attributes.size())
+            return false;
+
+        for (auto att_it = m_Attributes.begin(), att_it2 = node->m_Attributes.begin(); att_it != m_Attributes.end(); ++att_it, ++att_it2)
+        {
+            if (!(*att_it)->Equals(att_it2->get()))
+                return false;
+
+            if (att_it2 == node->m_Attributes.end())
+                return false;
+        }
+
+        if (m_Links.size() != node->GetLinks().size())
+            return false;
+
+        for (auto lnk_it = m_Links.begin(), lnk_it2 = node->GetLinks().begin(); lnk_it != m_Links.end(); ++lnk_it, ++lnk_it2)
+        {
+            if (lnk_it2 == node->GetLinks().end())
+                return false;
+            if (lnk_it->first != lnk_it2->first)
+                return false;
+            if (lnk_it->second.GetNode() != lnk_it2->second.GetNode())
+                return false;
+            if (lnk_it->second.GetSubId() != lnk_it2->second.GetSubId())
+                return false;
+        }
+
+        return true;
     }
 
-    //------------------------------------------------------------------------------
-    mafID Node::GetId() const
-        //------------------------------------------------------------------------------
+    bool Node::CanCopy(Node* node)
     {
-        return m_Id;
+        if (node == nullptr)
+        {
+            return false;
+        }
+
+        if (node->IsA(GetStaticTypeId()))
+        {
+            return true;
+        }
+
+        return false;
     }
 
-    //------------------------------------------------------------------------------
+    int Node::DeepCopy(Node* node)
+    {
+        assert(node);
+        if (!node)
+        {
+            mafErrorMacro("Cannot copy NULL into Node");
+            return MAF_ERROR;
+        }
+        if (!CanCopy(node))
+        {
+            mafErrorMacro("Cannot copy Node of type " << node->GetTypeName() << " into a Node of type " << GetTypeName());
+            return MAF_ERROR;
+        }
+        // Copy attributes
+        RemoveAllAttributes();
+        for (auto& attr : node->m_Attributes)
+        {
+            assert(attr);
+            m_Attributes.insert(attr->MakeCopy());
+        }
+        SetName(node->GetName());
+
+        RemoveAllLinks();
+        for (auto& lnk : node->GetLinks())
+        {
+            SetLink(lnk.first, lnk.second.GetNode().get(), lnk.second.GetSubId());
+        }
+
+        return MAF_OK;
+    }
+
+    std::shared_ptr<Node> Node::MakeCopy()
+    {
+        std::shared_ptr<Node> newNode(NewInstance());
+    	newNode->DeepCopy(this);
+        return newNode;
+    }
+
+    bool Node::IsInitialized() const
+    {
+	    return m_Initialized;
+    }
+
     int Node::Initialize()
-        //------------------------------------------------------------------------------
     {
         if (m_Initialized)
             return MAF_OK;
@@ -104,9 +162,7 @@ namespace model::data
 
     }
 
-    //------------------------------------------------------------------------------
     void Node::Shutdown()
-        //------------------------------------------------------------------------------
     {
         if (m_Initialized)
         {
@@ -115,25 +171,14 @@ namespace model::data
         }
     }
 
-    //-------------------------------------------------------------------------
     int Node::InternalInitialize()
-        //-------------------------------------------------------------------------
     {
-        auto root = GetRoot();
-
         for (auto& entry : m_Links)
         {
             auto& link = entry.second;
-            if (link.GetNode() == nullptr && link.GetId() >= 0)
+            if (auto node = link.GetNode())
             {
-                auto node = root->FindInTreeById(link.GetId());
-                assert(node);
-                if (node)
-                {
-                    // attach linked node to this one
-                    link.SetNode(node.get());
-                    node->AddObserver(this);
-                }
+                node->AddObserver(this);
             }
         }
 
@@ -144,25 +189,349 @@ namespace model::data
         }
         return MAF_OK;
     }
-    //-------------------------------------------------------------------------
+
     void Node::InternalShutdown()
-        //-------------------------------------------------------------------------
     {
         // shutdown children
         for (auto& child : m_Children)
             child->Shutdown();
     }
 
-    //-------------------------------------------------------------------------
+    const mafString& Node::GetName() const
+    {
+	    return m_Name;
+    }
+
+    void Node::SetName(const mafString& name)
+    {
+        m_Name = name;
+        Modified();
+        mafEvent ev(this, VME_MODIFIED); ev.SetVme(this);
+        InvokeEvent(ev);
+        ForwardUpEvent(ev);
+        ForwardDownEvent(ev);
+    }
+
+    mafID Node::GetId() const
+    {
+        return m_Id;
+    }
+
+    void Node::SetId(mafID id)
+    {
+        m_Id = id;
+    }
+
+    mafID Node::BuildIds(mafID id)
+    {
+        for (auto& node : *this)
+        {
+            node.m_Id = id++;
+        }
+        return id;
+    }
+
+    void Node::RenewIds(Node *node)
+    {
+        if(auto root = GetRoot(); this != root)
+            root->RenewIds(node);
+    }
+
+    void Node::RestoreLinks()
+    {
+        std::unordered_map<mafID, Node*> nodes;
+        for (auto& node : *this)
+        {
+            nodes[node.m_Id] = &node;
+        }
+        for (auto& node : *this)
+        {
+            for (auto& link : node.GetLinks())
+            {
+                if (auto it = nodes.find(link.second.GetId()); it != nodes.end())
+                {
+                    link.second.SetNode(it->second->shared_from_this());
+                }
+            }
+        }
+    }
+
+    void Node::Store(mafStorageElementBuilder& builder)
+    {
+        InternalStore(builder);
+    }
+
+    void Node::Restore(const mafStorageElement& value)
+    {
+        InternalRestore(value);
+    }
+
+    void Node::InternalStore(mafStorageElementBuilder& builder)
+    {
+        builder(_R("Name")).SetValue(m_Name);
+        builder(_R("Id")).SetValue(mafToString(m_Id));
+
+        auto attributes = builder[_R("Attributes")];
+        attributes(_R("NumberOfItems")).SetValue(m_Attributes.size());
+        if (!m_Attributes.empty())
+        {
+            auto entry = attributes[_R("Item")];
+            size_t idx = 0;
+            for (auto it = m_Attributes.begin(); it != m_Attributes.end(); ++it)
+            {
+                entry[idx++].SetValue(it->get());
+            }
+        }
+
+        // store Links
+        unsigned numberOfLinks = 0;
+        auto links_element = builder[_R("Links")];
+        for (auto& entry : m_Links)
+        {
+            auto& link = entry.second;
+            if (auto node = link.GetNode(); node && node->GetRoot() == GetRoot())
+            {
+                auto link_item_element = links_element[_R("Link")];
+                link_item_element(_R("Name")).SetValue(entry.first);
+                link_item_element(_R("NodeId")).SetValue(node->GetId());
+                link_item_element(_R("NodeSubId")).SetValue(link.GetSubId());
+                ++numberOfLinks;
+            }
+        }
+        links_element(_R("NumberOfLinks")).SetValue(mafToString((long)numberOfLinks));
+
+        // store the visible children into a tmp array
+        auto children = builder[_R("Children")];
+        children(_R("NumberOfItems")).SetValue((uint64_t)GetNumberOfChildren());
+        if (GetNumberOfChildren() != 0)
+        {
+            auto entry = children[_R("Node")];
+            for (unsigned int i = 0; i < GetNumberOfChildren(); i++)
+            {
+                auto node = GetChild(i);
+                if (node->IsVisible())
+                {
+                    entry[i].SetValue(node.get());
+                }
+            }
+        }
+    }
+
+    void Node::InternalRestore(const mafStorageElement& value)
+    {
+        m_Name = value(_R("Name")).As<mafString>();
+        //   if (value.GetAttribute(_R("Name"), m_Name) != MAF_OK)
+        //   {
+        //     mafErrorMacro("I/O error restoring value of type "<<GetTypeName()<<" : cannot found Name attribute.");
+        //     return MAF_ERROR;
+        //   }
+          // restore Id
+        m_Id = value(_R("Id")).As<mafID>();
+        //   if (value.GetAttribute(_R("Id"), id) != MAF_OK)
+        //   {
+        //     mafErrorMacro("I/O error restoring value "<<GetName().GetCStr() <<" of type "<<GetTypeName()<<" : cannot found Id attribute.");
+        //     return MAF_ERROR;
+        //   }
+
+        // restore attributes
+        RemoveAllAttributes();
+        auto attr_items = value[_R("Attributes")][_R("Item")];
+        mafID numItemsAttr = value[_R("Attributes")](_R("NumberOfItems")).As<mafID>();
+        if (numItemsAttr != attr_items.size())
+        {
+            mafErrorMacro("Number of attributes differs from number of entries");// << GetName());
+            return;
+        }
+
+        for (size_t i = 0; i < attr_items.size(); i++)
+        {
+            auto item = attr_items[i].As<mafAttribute>();
+            assert(item);
+            if (item)
+            {
+                m_Attributes.insert(item);
+            }
+        }
+
+        // restore Links
+        RemoveAllLinks();
+        mafStorageElement links_element = value[_R("Links")];
+        int n = links_element(_R("NumberOfLinks")).As<int>();
+        //links_element->GetAttribute(_R("NumberOfLinks"), num_links);
+        //int n=(int)atof(num_links.GetCStr());
+        auto links_vector = links_element[_R("Link")];
+        assert(links_vector.size() == n);
+        for (size_t i = 0; i < links_vector.size(); i++)
+        {
+            mafString link_name = links_vector[i](_R("Name")).As<mafString>();
+            //links_vector[i].GetAttribute(_R("Name"),link_name);
+            mafID link_node_id = links_vector[i](_R("NodeId")).As<mafID>();
+            mafID link_node_subid = links_vector[i](_R("NodeSubId")).As<mafID>();
+            //links_vector[i].GetAttributeAsInteger(_R("NodeId"),link_node_id);
+            //links_vector[i].GetAttributeAsInteger(_R("NodeSubId"),link_node_subid);
+            if (!(link_node_id == -1 && link_node_subid == -1))
+            {
+                m_Links[link_name] = NodeLink({}, link_node_subid).SetId(link_node_id);
+            }
+        }
+
+        // restore children
+        RemoveAllChildren();
+        auto child_items = value[_R("Children")][_R("Node")];
+        mafID numItemsChild = value[_R("Children")](_R("NumberOfItems")).As<mafID>();
+        if (numItemsChild != child_items.size())
+        {
+            mafErrorMacro("Number of children differs from number of entries");// << GetName());
+            return;
+        }
+
+        for (size_t i = 0; i < child_items.size(); i++)
+        {
+            auto node = child_items[i].As<Node>();
+            assert(node);
+            if (node)
+            {
+                node->m_Parent = this;
+                m_Children.push_back(node);
+            }
+        }
+    }
+
+	std::shared_ptr<mafAttribute> Node::GetAttribute(const mafString& name)
+    {
+        if (auto it = m_Attributes.find(name); it != m_Attributes.end())
+            return *it;
+        return nullptr;
+    }
+
+    std::shared_ptr<const mafAttribute> Node::GetAttribute(const mafString& name) const
+    {
+        if (auto it = m_Attributes.find(name); it != m_Attributes.end())
+            return *it;
+        return nullptr;
+    }
+
+    void Node::SetAttribute(std::shared_ptr<mafAttribute> a)
+    {
+        if (auto it = m_Attributes.find(a->GetName()); it != m_Attributes.end())
+            m_Attributes.erase(it);
+        m_Attributes.insert(a);
+    }
+
+    void Node::RemoveAttribute(const mafString& name)
+    {
+        m_Attributes.erase(m_Attributes.find(name));
+    }
+
+    void Node::RemoveAllAttributes()
+    {
+        m_Attributes.clear();
+    }
+
+    bool Node::IsEmpty() const
+    {
+        return m_Children.empty();
+    }
+
+    size_t Node::GetNumberOfChildren(bool onlyVisible) const
+    {
+        if (onlyVisible)
+        {
+            return std::count_if(m_Children.begin(), m_Children.end(), [](auto& child) {return child->IsVisible(); });
+        }
+        else
+        {
+            return m_Children.size();
+        }
+    }
+
+    bool Node::IsAChild(Node* a) const
+    {
+        return a->GetParent() == this;
+    }
+
+    std::shared_ptr<Node> Node::GetChild(mafID idx, bool onlyVisible)
+    {
+        if (idx >= 0 && idx < m_Children.size())
+        {
+            if (onlyVisible)
+            {
+                for (auto& child : m_Children)
+                {
+                    if (child->IsVisible())
+                    {
+                        if (idx == 0)
+                        {
+                            return child;
+                        }
+                        --idx;
+                    }
+                }
+                return nullptr;
+            }
+            return m_Children[idx];
+        }
+        return nullptr;
+    }
+
+    int Node::AddChild(std::shared_ptr<Node> node)
+    {
+        // We cannot reparent to a subnode!!!
+        if (node->IsInTree(this))
+            return MAF_ERROR;
+        return ReparentTo(node, this);
+    }
+
+    void Node::RemoveChild(Node* node)
+    {
+        if (!node)
+        {
+            mafWarningMacro("Trying to remove NULL child node");
+            return;
+        }
+        if (auto idx = FindNodeIdx(node); idx != -1)
+        {
+            RemoveChild(idx);
+        }
+        mafWarningMacro("Trying to remove node that is not a child of this node");
+    }
+
+    void Node::RemoveChild(mafID idx, bool onlyVisible)
+    {
+        if (auto oldnode = GetChild(idx, onlyVisible))
+        {
+            SetParentNew(oldnode, nullptr);
+            return;
+        }
+        mafWarningMacro("Trying to remove a child node with wrong index: " << idx);
+    }
+
+    void Node::RemoveAllChildren()
+    {
+        while (GetNumberOfChildren() > 0)
+        {
+            auto leaf = &m_Children;
+            while (leaf->back()->GetNumberOfChildren() > 0)
+                leaf = &leaf->back()->m_Children;
+            auto curr = leaf->back();
+            SetParentNew(curr, nullptr);
+        }
+        return;
+        size_t num = this->GetNumberOfChildren();
+        for (size_t i = 0; i < num; i++)
+        {
+            if (auto curr = this->GetChild(num - i - 1))
+                SetParentNew(curr, nullptr);
+        }
+        m_Children.clear();
+    }
+
     void Node::ForwardUpEvent(mafEventBase& maf_event)
-        //-------------------------------------------------------------------------
     {
         ForwardUpEvent(&maf_event);
     }
 
-    //-------------------------------------------------------------------------
     void Node::ForwardUpEvent(mafEventBase* maf_event)
-        //-------------------------------------------------------------------------
     {
         if (m_Parent)
         {
@@ -170,16 +539,13 @@ namespace model::data
             m_Parent->OnEvent(maf_event);
         }
     }
-    //-------------------------------------------------------------------------
+
     void Node::ForwardDownEvent(mafEventBase& maf_event)
-        //-------------------------------------------------------------------------
     {
         ForwardDownEvent(&maf_event);
     }
 
-    //-------------------------------------------------------------------------
     void Node::ForwardDownEvent(mafEventBase* maf_event)
-        //-------------------------------------------------------------------------
     {
         if (GetNumberOfChildren() > 0)
         {
@@ -191,83 +557,7 @@ namespace model::data
         }
     }
 
-    //-------------------------------------------------------------------------
-    void Node::SetName(const mafString& name)
-        //-------------------------------------------------------------------------
-    {
-        m_Name = name; // force string copy
-        Modified();
-        mafEvent ev(this, VME_MODIFIED); ev.SetVme(this);
-        InvokeEvent(ev);
-        ForwardUpEvent(ev);
-        ForwardDownEvent(ev);
-    }
-
-    //-------------------------------------------------------------------------
-    size_t Node::GetNumberOfChildren() const
-        //-------------------------------------------------------------------------
-    {
-        return m_Children.size();
-    }
-
-    //-------------------------------------------------------------------------
-    size_t Node::GetNumberOfChildren(bool onlyVisible /*=false*/)
-        //-------------------------------------------------------------------------
-    {
-        //This function is redefined because the original is defined const and 
-        //here we call non-const functions
-        if (onlyVisible)
-        {
-            size_t visibleNodes = 0;
-            //counting visible nodes
-            for (auto& child : m_Children)
-                if (child->IsVisible())
-                    visibleNodes++;
-            return visibleNodes;
-        }
-        else
-        {
-            return m_Children.size();
-        }
-    }
-
-    //-------------------------------------------------------------------------
-    bool Node::IsAChild(Node* a)
-        //-------------------------------------------------------------------------
-    {
-        return a->GetParent() == this;
-    }
-
-    //-------------------------------------------------------------------------
-    std::shared_ptr<Node> Node::GetChild(mafID idx, bool onlyVisible)
-        //-------------------------------------------------------------------------
-    {
-        if (onlyVisible)
-        {
-            size_t count = 0;
-            for (auto& child : m_Children)
-            {
-                if (child->IsVisible())
-                {
-                    if (idx == count)
-                    {
-                        return child;
-                    }
-                    ++count;
-                }
-            }
-            return nullptr;
-        }
-        if (idx >= 0 && idx < m_Children.size())
-        {
-            return m_Children[idx];
-        }
-        return nullptr;
-    }
-
-    //-------------------------------------------------------------------------
     int Node::FindNodeIdx(Node* a, bool onlyVisible)
-        //-------------------------------------------------------------------------
     {
         int nChild = 0;
         for (auto& child : m_Children)
@@ -284,9 +574,7 @@ namespace model::data
         return -1;
     }
 
-    //-------------------------------------------------------------------------
     int Node::FindNodeIdx(const mafString& name, bool onlyVisible)
-        //-------------------------------------------------------------------------
     {
         int nChild = 0;
         for (auto& child : m_Children)
@@ -302,9 +590,8 @@ namespace model::data
         }
         return -1;
     }
-    //-------------------------------------------------------------------------
+
     std::shared_ptr<Node> Node::FindInTreeByTag(const mafTagItem& tag)
-        //-------------------------------------------------------------------------
     {
         if (auto titem = GetTagArray()->GetTag(tag.GetName()))
         {
@@ -321,9 +608,8 @@ namespace model::data
         }
         return nullptr;
     }
-    //-------------------------------------------------------------------------
+
     std::shared_ptr<Node> Node::FindInTreeByName(const mafString& name, bool match_case, bool whole_word)
-        //-------------------------------------------------------------------------
     {
         if (match_case)
         {
@@ -362,9 +648,8 @@ namespace model::data
         }
         return nullptr;
     }
-    //-------------------------------------------------------------------------
+
     std::shared_ptr<Node> Node::FindInTreeById(const mafID id)
-        //-------------------------------------------------------------------------
     {
         if (GetId() == id)
         {
@@ -379,48 +664,82 @@ namespace model::data
         }
         return nullptr;
     }
-    //-------------------------------------------------------------------------
-    int Node::AddChild(std::shared_ptr<Node> node)
-        //-------------------------------------------------------------------------
+    
+    std::shared_ptr<Node> Node::FindInTreeByTag(std::shared_ptr<Node> sharedThis, const mafTagItem& tag)
     {
-        // We cannot reparent to a subnode!!!
-        if (node->IsInTree(this))
-            return MAF_ERROR;
-        return ReparentTo(node, this);
+        if (auto titem = sharedThis->GetTagArray()->GetTag(tag.GetName()))
+        {
+            if (tag == *titem)
+                return sharedThis;
+        }
+
+        for (auto& child : sharedThis->m_Children)
+        {
+            if (auto node = FindInTreeByTag(child, tag))
+            {
+                return node;
+            }
+        }
+        return nullptr;
     }
 
-    //-------------------------------------------------------------------------
-    void Node::RemoveChild(Node* node)
-        //-------------------------------------------------------------------------
+	std::shared_ptr<Node> Node::FindInTreeByName(std::shared_ptr<Node> sharedThis, const mafString& name, bool match_case, bool whole_word)
     {
-        if (!node)
+        if (match_case)
         {
-            mafWarningMacro("Trying to remove NULL child node");
-            return;
+            if (whole_word && sharedThis->GetName() == name)
+                return sharedThis;
+            if (!whole_word && sharedThis->GetName().find(name) != mafString::npos)
+                return sharedThis;
         }
-        if (!IsAChild(node))
+        else
         {
-            mafWarningMacro("Trying to remove node that is not a child of this node");
+            mafString word_to_search;
+            mafString myName;
+            if (match_case)
+            {
+                word_to_search = name;
+                myName = sharedThis->GetName();
+            }
+            else
+            {
+                word_to_search = name.Lower();
+                myName = sharedThis->GetName().Lower();
+            }
+
+            if (whole_word && myName == word_to_search)
+                return sharedThis;
+            if (!whole_word && myName.find(word_to_search) != mafString::npos)
+                return sharedThis;
+
         }
-        auto pntr = node->SharedFromThis();
-        SetParentNew(pntr, nullptr);
+        for (auto& child : sharedThis->m_Children)
+        {
+            if (auto node = FindInTreeByName(child, name, match_case, whole_word))
+            {
+                return node;
+            }
+        }
+        return nullptr;
     }
 
-    //-------------------------------------------------------------------------
-    void Node::RemoveChild(mafID idx, bool onlyVisible)
-        //-------------------------------------------------------------------------
+    std::shared_ptr<Node> Node::FindInTreeById(std::shared_ptr<Node> sharedThis, mafID id)
     {
-        if (auto oldnode = GetChild(idx, onlyVisible))
+        if (sharedThis->GetId() == id)
         {
-            RemoveChild(oldnode.get());
-            return;
+            return sharedThis;
         }
-        mafWarningMacro("Trying to remove a child node with wrong index: " << idx);
+        for (auto& child : sharedThis->m_Children)
+        {
+            if (auto node = FindInTreeById(child, id))
+            {
+                return node;
+            }
+        }
+        return nullptr;
     }
 
-    //-------------------------------------------------------------------------
     int Node::ReparentTo(std::shared_ptr<Node> sharedThis, Node* newparent)
-        //-------------------------------------------------------------------------
     {
         // Add this node to the new parent children list and
         // remove it from old parent children list.
@@ -435,9 +754,7 @@ namespace model::data
         return MAF_ERROR;
     }
 
-    //-------------------------------------------------------------------------
     Node* Node::GetRoot()
-        //-------------------------------------------------------------------------
     {
         for (auto node = this; node; node = node->GetParent())
         {
@@ -449,16 +766,7 @@ namespace model::data
         return nullptr;
     }
 
-    //-------------------------------------------------------------------------
-    bool Node::IsEmpty() const
-        //-------------------------------------------------------------------------
-    {
-        return m_Children.empty();
-    }
-
-    //-------------------------------------------------------------------------
     bool Node::IsInTree(Node* a) const
-        //-------------------------------------------------------------------------
     {
         for (auto node = a; node; node = node->GetParent())
         {
@@ -468,26 +776,13 @@ namespace model::data
         return false;
     }
 
-    //-------------------------------------------------------------------------
-    void Node::RemoveAllChildren()
-        //-------------------------------------------------------------------------
-    {
-        size_t num = this->GetNumberOfChildren();
-        for (size_t i = 0; i < num; i++)
-        {
-            if (auto curr = this->GetChild(num - i - 1))
-                SetParentNew(curr, nullptr);
-        }
-        m_Children.clear();
-    }
+    bool Node::CanReparentTo(Node* parent) { return !parent || !IsInTree(parent); }
 
-    //------------------------------------------------------------------------------
+
+
     int Node::OnSetParent(Node* parent) { return MAF_OK; }
-    //-------------------------------------------------------------------------
 
-    //------------------------------------------------------------------------------
     int Node::SetParentNew(std::shared_ptr<Node> sharedThis, Node* parent)
-        //-------------------------------------------------------------------------
     {
         auto _Parent = sharedThis->GetParent();
         // reparenting to NULL is admitted in any case
@@ -524,8 +819,6 @@ namespace model::data
                 Node* prev = (idx > 0) ? _Parent->m_Children[idx - 1].get() : nullptr;
                 Node* next = (idx < _Parent->m_Children.size() - 1) ? _Parent->m_Children[idx + 1].get() : nullptr;
                 _Parent->m_Children.erase(_Parent->m_Children.begin() + idx);
-                UpdateUpDownAvailability(prev);
-                UpdateUpDownAvailability(next);
                 _Parent->Modified();
             }
         }
@@ -533,10 +826,7 @@ namespace model::data
         sharedThis->m_Parent = parent;
         _Parent = parent;
 
-        for (auto& n : *sharedThis)
-        {
-            n.UpdateId();
-        }
+        sharedThis->RenewIds(sharedThis.get());
 
         if (new_root != nullptr)
         {
@@ -544,7 +834,6 @@ namespace model::data
                 return MAF_ERROR;
             Node* prev = (_Parent->m_Children.size() > 0) ? _Parent->m_Children[_Parent->m_Children.size() - 1].get() : nullptr;
             _Parent->m_Children.push_back(sharedThis);
-            UpdateUpDownAvailability(prev);
             _Parent->Modified();
             if (new_root != old_root)
             {
@@ -553,158 +842,52 @@ namespace model::data
                 { mafEventBase evUnq(sharedThis.get(), NODE_ATTACHED_TO_TREE, nullptr, MCH_DOWN); sharedThis->OnEvent(&evUnq); }
             }
         }
-        UpdateUpDownAvailability(sharedThis.get());
         sharedThis->Modified();
         return sharedThis->OnSetParent(parent);
     }
-    //-------------------------------------------------------------------------
-    std::shared_ptr<Node> Node::MakeCopy(Node* a)
-        //-------------------------------------------------------------------------
+
+    bool Node::CompareTree(Node* node)
     {
-        std::shared_ptr<Node> newnode(a->NewInstance());
-        if (newnode)
-            newnode->DeepCopy(a);
-        return newnode;
-    }
-
-    //-------------------------------------------------------------------------
-    int Node::DeepCopy(Node* a)
-        //-------------------------------------------------------------------------
-    {
-        assert(a);
-        if (!a)
-        {
-            mafErrorMacro("Cannot copy NULL into Node");
-            return MAF_ERROR;
-        }
-        if (!CanCopy(a))
-        {
-            mafErrorMacro("Cannot copy Node of type " << a->GetTypeName() << " into a Node of type " << GetTypeName());
-            return MAF_ERROR;
-        }
-        // Copy attributes
-        RemoveAllAttributes();
-        for (auto& elem : a->m_Attributes)
-        {
-            auto attr = elem.get();
-            assert(attr);
-            m_Attributes.insert(attr->MakeCopy());
-        }
-        SetName(a->GetName());
-
-        RemoveAllLinks();
-        for (auto& lnk : a->GetLinks())
-        {
-            SetLink(lnk.first, lnk.second.GetNode(), lnk.second.GetSubId());
-        }
-
-        return MAF_OK;
-    }
-
-    //-------------------------------------------------------------------------
-    bool Node::CanCopy(Node* node)
-        //-------------------------------------------------------------------------
-    {
-        if (node == nullptr)
-        {
-            return false;
-        }
-
-        if (node->IsA(GetStaticTypeId()))
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    //-------------------------------------------------------------------------
-    bool Node::Equals(Node* node)
-        //-------------------------------------------------------------------------
-    {
-        if (!node || !node->IsA(GetTypeName()))
+        if (!this->Equals(node))
             return false;
 
-        // do not check the ID!!!
-
-        if (m_Name != node->m_Name)
-            return false;
-
-        // check attributes
-        if (m_Attributes.size() != node->m_Attributes.size())
-            return false;
-
-        for (auto att_it = m_Attributes.begin(), att_it2 = node->m_Attributes.begin(); att_it != m_Attributes.end(); att_it++, att_it2++)
-        {
-            if (!(*att_it)->Equals(att_it2->get()))
-                return false;
-
-            if (att_it2 == node->m_Attributes.end())
-                return false;
-        }
-
-        // check links (poor links checking, only linked VME name)
-        if (m_Links.size() != node->GetLinks().size())
-            return false;
-
-        for (auto lnk_it = m_Links.begin(), lnk_it2 = node->GetLinks().begin(); lnk_it != m_Links.end(); ++lnk_it, ++lnk_it2)
-        {
-            if (lnk_it2 == node->GetLinks().end())
-                return false;
-            if (lnk_it->first != lnk_it2->first)
-                return false;
-            if (lnk_it->second.GetNode() != lnk_it2->second.GetNode())
-                return false;
-            if (lnk_it->second.GetSubId() != lnk_it2->second.GetSubId())
-                return false;
-        }
-
-        return true;
-    }
-    //-------------------------------------------------------------------------
-    bool Node::CompareTree(Node* vme)
-        //-------------------------------------------------------------------------
-    {
-        if (!this->Equals(vme))
-            return false;
-
-        if (vme->GetNumberOfChildren() != this->GetNumberOfChildren())
+        if (node->GetNumberOfChildren() != this->GetNumberOfChildren())
         {
             return false;
         }
 
         for (unsigned long i = 0; i < this->GetNumberOfChildren(); i++)
         {
-            if (!this->GetChild(i)->CompareTree(vme->GetChild(i).get()))
+            if (!this->GetChild(i)->CompareTree(node->GetChild(i).get()))
             {
                 return false;
             }
         }
         return true;
     }
-    //----------------------------------------------------------------------------
+
     void Node::UpdateLinks(std::vector<std::pair<Node*, Node*> >& nodes)
-        //----------------------------------------------------------------------------
     {
         // Copy links
         for (auto& link : GetLinks())
         {
             for (unsigned i = 0; i < nodes.size(); i++)
             {
-                if (link.second.GetNode() == nodes[i].first)
+                auto currentLink = link.second.GetNode();
+                if (currentLink.get() == nodes[i].first)
                 {
                     //n->SetLink(lnk_it->first, mp_it->second, lnk_it->second.m_NodeSubId);
-                    link.second.GetNode()->RemoveObserver(this);
-                    link.second.SetNode(nodes[i].second);
-                    link.second.GetNode()->AddObserver(this);
+                    currentLink->RemoveObserver(this);
+                    auto newLink = nodes[i].second->shared_from_this();
+                    link.second.SetNode(newLink);
+                    newLink->AddObserver(this);
                 }
             }
         }
 
     }
-    //----------------------------------------------------------------------------
+
     std::shared_ptr<Node> Node::CopyTree()
-        //-------------------------------------------------------------------------
     {
         std::vector<std::pair<Node*, Node*> > nodes;
         {
@@ -732,9 +915,7 @@ namespace model::data
         return res;
     }
 
-    //----------------------------------------------------------------------------
     std::shared_ptr<Node> Node::CopyTree(Node* vme, Node* parent)
-        //-------------------------------------------------------------------------
     {
         auto v = vme->MakeCopy();
         ReparentTo(v, parent);
@@ -748,50 +929,7 @@ namespace model::data
         return v;
     }
 
-    //-------------------------------------------------------------------------
-    void Node::SetAttribute(std::shared_ptr<mafAttribute> a)
-        //-------------------------------------------------------------------------
-    {
-        if (auto it = m_Attributes.find(a->GetName()); it != m_Attributes.end())
-            m_Attributes.erase(it);
-        m_Attributes.insert(a);
-    }
-
-    //-------------------------------------------------------------------------
-    std::shared_ptr<mafAttribute> Node::GetAttribute(const mafString& name)
-        //-------------------------------------------------------------------------
-    {
-        if (auto it = m_Attributes.find(name); it != m_Attributes.end())
-            return *it;
-        return nullptr;
-    }
-
-    //-------------------------------------------------------------------------
-    std::shared_ptr<const mafAttribute> Node::GetAttribute(const mafString& name) const
-        //-------------------------------------------------------------------------
-    {
-        if (auto it = m_Attributes.find(name); it != m_Attributes.end())
-            return *it;
-        return nullptr;
-    }
-
-    //-------------------------------------------------------------------------
-    void Node::RemoveAttribute(const mafString& name)
-        //-------------------------------------------------------------------------
-    {
-        m_Attributes.erase(m_Attributes.find(name));
-    }
-
-    //-------------------------------------------------------------------------
-    void Node::RemoveAllAttributes()
-        //-------------------------------------------------------------------------
-    {
-        m_Attributes.clear();
-    }
-
-    //-------------------------------------------------------------------------
     std::shared_ptr<mafTagArray> Node::GetTagArray()
-        //-------------------------------------------------------------------------
     {
         auto tarray = mafTagArray::SafeDownCast(GetAttribute(_R("TagArray")));
         if (!tarray)
@@ -803,24 +941,17 @@ namespace model::data
         return tarray;
     }
 
-    //-------------------------------------------------------------------------
     Node* Node::GetLink(const mafString& name)
-        //-------------------------------------------------------------------------
     {
         if (auto it = m_Links.find(name); it != m_Links.end())
         {
-            // if the link is still valid return its pointer
-            // Check node validity instead of checking 'm_NodeId'
-            // then if m_NodeId is different from m_Id, the link will
-            // be updated.
-            //if (it->second.m_Node != NULL && it->second.m_Node->IsInitialized() && it->second.m_Node->GetIdManager() == GetIdManager())
-            if (it->second.GetNode() && it->second.GetNode()->IsValid() && it->second.GetNode()->GetRoot() == GetRoot())
+            if (auto node = it->second.GetNode(); node && node->GetRoot() == GetRoot())
             {
-                return it->second.GetNode();
+                return node.get();
             }
         }
 
-        return NULL;
+        return nullptr;
     }
 
     Node::Iterator Node::begin()
@@ -835,11 +966,7 @@ namespace model::data
         return Iterator(this);
     }
 
-
-
-    //-------------------------------------------------------------------------
     mafID Node::GetLinkSubId(const mafString& name)
-        //-------------------------------------------------------------------------
     {
         if (auto it = m_Links.find(name); it != m_Links.end())
         {
@@ -847,13 +974,12 @@ namespace model::data
         }
         return -1;
     }
-    //-------------------------------------------------------------------------
+
     void Node::SetLink(const mafString& name, Node* node, mafID sub_id)
-        //-------------------------------------------------------------------------
     {
         assert(node);
 
-        if (node == NULL)
+        if (!node)
         {
             mafLogMessage(_M(mafString(_L("Warning!! NULL node can not be set as link."))));
             return;
@@ -862,7 +988,7 @@ namespace model::data
         if (auto it = m_Links.find(name); it != m_Links.end())
         {
             // if already linked simply return
-            if (it->second.GetNode() == node && it->second.GetSubId() == sub_id)
+            if (it->second.GetNode().get() == node && it->second.GetSubId() == sub_id)
                 return;
 
             // detach old linked node, if present
@@ -871,16 +997,15 @@ namespace model::data
         }
 
         // set the link to the new node
-        m_Links[name] = NodeLink(node, sub_id);
+        m_Links[name] = NodeLink(node->shared_from_this(), sub_id);
 
         // attach as observer of the linked node to catch events
         // of de/attachment to the tree and destroy event.
         node->AddObserver(this);
         Modified();
     }
-    //-------------------------------------------------------------------------
+
     void Node::RemoveLink(const mafString& name)
-        //-------------------------------------------------------------------------
     {
         if (auto it = m_Links.find(name); it != m_Links.end())
         {
@@ -896,9 +1021,7 @@ namespace model::data
         }
     }
 
-    //-------------------------------------------------------------------------
     void Node::RemoveAllLinks()
-        //-------------------------------------------------------------------------
     {
         for (auto it = m_Links.begin(); it != m_Links.end(); it++)
         {
@@ -909,9 +1032,8 @@ namespace model::data
         m_Links.clear();
         Modified();
     }
-    //-------------------------------------------------------------------------
+
     MTimeType Node::GetMTime()
-        //-------------------------------------------------------------------------
     {
         auto mtime = this->mafTimeStamped::GetMTime();
         if (m_DependsOnLinkedNode)
@@ -928,56 +1050,50 @@ namespace model::data
         return mtime;
     }
 
-    //-------------------------------------------------------------------------
     void Node::OnNodeDetachedFromTree(Node* node)
-        //-------------------------------------------------------------------------
     {
         for (auto it = m_Links.begin(); it != m_Links.end(); it++)
         {
-            if (it->second.GetNode() == node)
+            if (it->second.GetNode().get() == node)
             {
             }
         }
     }
 
-    //-------------------------------------------------------------------------
     void Node::OnNodeAttachedToTree(Node* node)
-        //-------------------------------------------------------------------------
     {
         for (auto it = m_Links.begin(); it != m_Links.end(); it++)
         {
-            if (it->second.GetNode() == node)
+            if (it->second.GetNode().get() == node)
             {
             }
         }
     }
-    //-------------------------------------------------------------------------
+
     void Node::OnNodeDestroyed(Node* node)
-        //-------------------------------------------------------------------------
     {
-        for (auto it = m_Links.begin(); it != m_Links.end(); it++)
+        for (auto it = m_Links.begin(); it != m_Links.end(); ++it)
         {
-            if (it->second.GetNode() == node)
+            if (it->second.GetNode().get() == node)
             {
                 //it->second.m_Node->GetEventSource()->RemoveObserver(this);
-                m_Links.erase(it); // remove linked node from links container
+                it = m_Links.erase(it); // remove linked node from links container
                 Modified();
-                it = m_Links.begin();
-                if (it == m_Links.end())
-                    break;
+            }
+            else
+            {
+                ++it;
             }
         }
     }
-    //-------------------------------------------------------------------------
+
     void Node::OnEvent(mafEventBase* e)
-        //-------------------------------------------------------------------------
     {
         if (e->GetChannel() == MCH_DOWN)
         {
             switch (e->GetId())
             {
             case NODE_DETACHED_FROM_TREE:
-                ReleaseNodeId(GetId());
                 { mafEventBase evUnq(this, NODE_DETACHED_FROM_TREE); InvokeEvent(&evUnq); }
                 break;
             case NODE_ATTACHED_TO_TREE:
@@ -1030,46 +1146,6 @@ namespace model::data
                     ForwardUpEvent(helpEvent);
                 }
                 break;
-                case ID_MOVEUP:
-                {
-                    if (auto parent = GetParent())
-                        parent->MoveChildUp(this);
-                }
-                break;
-                case ID_MOVEDN:
-                {
-                    if (auto parent = GetParent())
-                        parent->MoveChildDown(this);
-                }
-                break;
-                case ID_MOVERIGHT:
-                {
-                    if (auto parent = GetParent())
-                    {
-                        if (this != parent->GetChild(0).get())
-                        {
-                            ReparentTo(parent->GetChild(parent->FindNodeIdx(this)), parent->GetChild(parent->FindNodeIdx(this) - 1).get());
-                            { mafEvent evUnq(this, VME_SELECT); evUnq.SetVme(this); ForwardUpEvent(evUnq); }
-                        }
-                    }
-                }
-                break;
-                case ID_MOVELEFT:
-                {
-                    if (auto parent = GetParent())
-                    {
-                        if (auto grandparent = parent->GetParent())
-                        {
-                            int numChildren = grandparent->GetNumberOfChildren();
-                            int parentidx = grandparent->FindNodeIdx(parent);
-                            ReparentTo(parent->GetChild(parent->FindNodeIdx(this)), grandparent);
-                            { mafEvent evUnq(this, VME_SELECT); evUnq.SetVme(this); ForwardUpEvent(evUnq); }
-                            for (int i = 0; i < (numChildren - parentidx - 1); i++)
-                                grandparent->MoveChildUp(this);
-                        }
-                    }
-                }
-                break;
                 }
                 return;
             }
@@ -1090,151 +1166,8 @@ namespace model::data
             return;
         }
     }
-    //-------------------------------------------------------------------------
-    void Node::InternalStore(mafStorageElementBuilder& parent)
-        //-------------------------------------------------------------------------
-    {
-        parent(_R("Name")).SetValue(m_Name);
-        parent(_R("Id")).SetValue(mafToString(m_Id));
 
-        auto attributes = parent[_R("Attributes")];
-        attributes(_R("NumberOfItems")).SetValue(m_Attributes.size());
-        if (!m_Attributes.empty())
-        {
-            auto entry = attributes[_R("Item")];
-            size_t idx = 0;
-            for (auto it = m_Attributes.begin(); it != m_Attributes.end(); ++it)
-            {
-                entry[idx++].SetValue(it->get());
-            }
-        }
-
-        // store Links
-        unsigned numberOfLinks = 0;
-        for (auto links_it = m_Links.begin(); links_it != m_Links.end(); ++links_it)
-        {
-            auto& link = links_it->second;
-            if (links_it->second.GetNode() && links_it->second.GetNode()->IsValid() && links_it->second.GetNode()->GetRoot() == GetRoot())
-                numberOfLinks++;
-        }
-
-        auto links_element = parent[_R("Links")];
-        links_element(_R("NumberOfLinks")).SetValue(mafToString((long)numberOfLinks));
-        for (auto links_it = m_Links.begin(); links_it != m_Links.end(); ++links_it)
-        {
-            auto& link = links_it->second;
-            if (links_it->second.GetNode() && links_it->second.GetNode()->IsValid() && links_it->second.GetNode()->GetRoot() == GetRoot())
-            {
-                auto link_item_element = links_element[_R("Link")];
-                link_item_element(_R("Name")).SetValue(links_it->first);
-                link_item_element(_R("NodeId")).SetValue(link.GetNode()->GetId());
-                link_item_element(_R("NodeSubId")).SetValue(link.GetSubId());
-            }
-        }
-
-        // store the visible children into a tmp array
-        auto children = parent[_R("Children")];
-        children(_R("NumberOfItems")).SetValue((uint64_t)GetNumberOfChildren());
-        if (GetNumberOfChildren() != 0)
-        {
-            auto entry = children[_R("Node")];
-            for (unsigned int i = 0; i < GetNumberOfChildren(); i++)
-            {
-                auto node = GetChild(i);
-                if (node->IsVisible())
-                {
-                    entry[i].SetValue(node.get());
-                }
-            }
-        }
-    }
-
-    //-------------------------------------------------------------------------
-    void Node::InternalRestore(const mafStorageElement& node)
-        //-------------------------------------------------------------------------
-    {
-        m_Name = node(_R("Name")).As<mafString>();
-        //   if (node.GetAttribute(_R("Name"), m_Name) != MAF_OK)
-        //   {
-        //     mafErrorMacro("I/O error restoring node of type "<<GetTypeName()<<" : cannot found Name attribute.");
-        //     return MAF_ERROR;
-        //   }
-          // restore Id
-        mafID id = node(_R("Id")).As<mafID>();
-        //   if (node.GetAttribute(_R("Id"), id) != MAF_OK)
-        //   {
-        //     mafErrorMacro("I/O error restoring node "<<GetName().GetCStr() <<" of type "<<GetTypeName()<<" : cannot found Id attribute.");
-        //     return MAF_ERROR;
-        //   }
-        SetId(id);
-
-        // restore attributes
-        RemoveAllAttributes();
-        auto attr_items = node[_R("Attributes")][_R("Item")];
-        mafID numItemsAttr = node[_R("Attributes")](_R("NumberOfItems")).As<mafID>();
-        if (numItemsAttr != attr_items.size())
-        {
-            mafErrorMacro("Number of attributes differs from number of entries");// << GetName());
-            return;
-        }
-
-        for (size_t i = 0; i < attr_items.size(); i++)
-        {
-            auto item = attr_items[i].As<mafAttribute>();
-            assert(item);
-            if (item)
-            {
-                m_Attributes.insert(item);
-            }
-        }
-
-        // restore Links
-        RemoveAllLinks();
-        mafStorageElement links_element = node[_R("Links")];
-        int n = links_element(_R("NumberOfLinks")).As<int>();
-        //links_element->GetAttribute(_R("NumberOfLinks"), num_links);
-        //int n=(int)atof(num_links.GetCStr());
-        auto links_vector = links_element[_R("Link")];
-        assert(links_vector.size() == n);
-        for (size_t i = 0; i < links_vector.size(); i++)
-        {
-            mafString link_name = links_vector[i](_R("Name")).As<mafString>();
-            //links_vector[i].GetAttribute(_R("Name"),link_name);
-            mafID link_node_id = links_vector[i](_R("NodeId")).As<mafID>();
-            mafID link_node_subid = links_vector[i](_R("NodeSubId")).As<mafID>();
-            //links_vector[i].GetAttributeAsInteger(_R("NodeId"),link_node_id);
-            //links_vector[i].GetAttributeAsInteger(_R("NodeSubId"),link_node_subid);
-            if (!(link_node_id == -1 && link_node_subid == -1))
-            {
-                m_Links[link_name] = NodeLink(NULL, link_node_subid).SetId(link_node_id);
-            }
-        }
-
-        // restore children
-        RemoveAllChildren();
-        auto child_items = node[_R("Children")][_R("Node")];
-        mafID numItemsChild = node[_R("Children")](_R("NumberOfItems")).As<mafID>();
-        if (numItemsChild != child_items.size())
-        {
-            mafErrorMacro("Number of children differs from number of entries");// << GetName());
-            return;
-        }
-
-        for (size_t i = 0; i < child_items.size(); i++)
-        {
-            auto node = child_items[i].As<Node>();
-            assert(node);
-            if (node)
-            {
-                node->m_Parent = this;
-                m_Children.push_back(node);
-            }
-        }
-    }
-
-    //-------------------------------------------------------------------------
     void Node::Print(std::ostream& os, const int tabs)
-        //-------------------------------------------------------------------------
     {
         mafIndent indent(tabs);
         mafIndent next_indent(indent.GetNextIndent());
@@ -1244,7 +1177,6 @@ namespace model::data
         os << indent << "VisibleToTraverse: " << m_VisibleToTraverse << std::endl;
         os << indent << "Parent: \"" << (m_Parent ? m_Parent->m_Name.GetCStr() : _R("NULL")) << "\"" << std::endl;
         os << indent << "Number of Children: " << GetNumberOfChildren() << std::endl;
-        os << indent << "Id: " << GetId() << std::endl;
         os << indent << "Attributes:\n";
         for (auto& attr : m_Attributes)
         {
@@ -1255,14 +1187,13 @@ namespace model::data
         os << indent << "Number of links:" << m_Links.size() << std::endl;
         for (auto& link : m_Links)
         {
-            os << next_indent << "Name: " << link.first.GetCStr() << "\tNodeId: " << (link.second.GetNode() ? link.second.GetNode()->GetId() : -1);
-            os << "\tNodeSubId: " << link.second.GetSubId() << std::endl;
+            os << next_indent << "Name: " << link.first.GetCStr();
+            if (auto node = link.second.GetNode())
+            {
+	            os << "\tNodeName: " << node->GetName().GetCStr();
+            	os << "\tNodeSubId: " << link.second.GetSubId() << std::endl;
+            }
         }
-    }
-
-    bool Node::IsValid() const
-    {
-	    return m_Id >= 0;
     }
 
 	void Node::SetVisibleToTraverse(bool flag)
@@ -1280,30 +1211,24 @@ namespace model::data
 	    return m_VisibleToTraverse;
     }
 
-
-    //-------------------------------------------------------------------------
     const char** Node::GetIcon()
-        //-------------------------------------------------------------------------
     {
 #include "Node.xpm"
         return Node_xpm;
     }
-    //-------------------------------------------------------------------------
+
     /*mafGUI *Node::GetGui()
-    //-------------------------------------------------------------------------
     {
       if (m_Gui == NULL)
         CreateGui();
       assert(m_Gui);
       return m_Gui;
     }
-    //-------------------------------------------------------------------------
     void Node::DeleteGui()
-    //-------------------------------------------------------------------------
     {
       cppDEL(m_Gui);
     }*/
-    //-------------------------------------------------------------------------
+
     mafGUI* Node::CreateGui()
         //-------------------------------------------------------------------------
     {
@@ -1328,24 +1253,10 @@ namespace model::data
 
         m_Gui->Divider();
 
-        m_Gui->Button(ID_MOVEUP, _L("UP"), _L("Up"), _L("Move up in parent list"));
-        m_Gui->TwoButtons(ID_MOVELEFT, ID_MOVERIGHT, _L("Move left in tree"), _L("Move right in tree"));
-        m_Gui->Button(ID_MOVEDN, _L("DN"), _L("Down"), _L("Move down in parent list"));
-        m_Gui->Divider();
-
-        UpdateUpDownAvailability(this);
         return m_Gui;
     }
-    //-------------------------------------------------------------------------
-    void Node::UpdateId()
-        //-------------------------------------------------------------------------
-    {
-        SetId(GetNewNodeId());
-    }
 
-    //-------------------------------------------------------------------------
     void Node::OnPrint()
-        //-------------------------------------------------------------------------
     {
 #ifdef VTK_USE_ANSI_STDLIB
         std::stringstream ss1;
@@ -1371,91 +1282,7 @@ namespace model::data
 #endif
     }
 
-
-    //-------------------------------------------------------------------------
-    mafID Node::GetNewNodeId()
-        //-------------------------------------------------------------------------
-    {
-        return (m_Parent) ? m_Parent->GetNewNodeId() : -1;
-    }
-
-    //-------------------------------------------------------------------------
-    void Node::ReleaseNodeId(mafID id)
-        //-------------------------------------------------------------------------
-    {
-        if (id == -1)
-            return;
-        if (m_Parent)
-            m_Parent->ReleaseNodeId(id);
-    }
-
-
-    //-------------------------------------------------------------------------
-    void Node::MoveChildUp(Node* child)
-        //-------------------------------------------------------------------------
-    {
-        if (child == NULL)
-            return;
-        int idx = FindNodeIdx(child);
-        if (idx < 0)
-            return;
-        MoveChildUp(idx);
-    }
-    //-------------------------------------------------------------------------
-    void Node::MoveChildDown(Node* child)
-        //-------------------------------------------------------------------------
-    {
-        if (child == NULL)
-            return;
-        int idx = FindNodeIdx(child);
-        if (idx < 0)
-            return;
-        MoveChildDown(idx);
-    }
-
-    //-------------------------------------------------------------------------
-    void Node::MoveChildUp(int idx)
-        //-------------------------------------------------------------------------
-    {
-        if (idx <= 0 || idx >= m_Children.size())
-            return;
-        SwapChildren(idx - 1, idx);
-    }
-    //-------------------------------------------------------------------------
-    void Node::MoveChildDown(int idx)
-        //-------------------------------------------------------------------------
-    {
-        if (idx < 0 || m_Children.size() <= 1)
-            return;
-        SwapChildren(idx, idx + 1);
-    }
-
-    //-------------------------------------------------------------------------
-    void Node::SwapChildren(int idx1, int idx2)
-        //-------------------------------------------------------------------------
-    {
-        if (idx1 == idx2)
-            return;
-        if (idx1 < 0 || idx1 >= m_Children.size())
-            return;
-        if (idx2 < 0 || idx2 >= m_Children.size())
-            return;
-        //if(m_Children.size() <= 1)
-        //  return;
-
-        auto tmp = m_Children[idx1];
-        m_Children[idx1] = m_Children[idx2];
-        m_Children[idx2] = tmp;
-        UpdateUpDownAvailability(m_Children[idx1].get());
-        UpdateUpDownAvailability(m_Children[idx2].get());
-        Modified();
-        mafEvent e(this, VME_MODIFIED); e.SetVme(this);
-        e.SetChannel(MCH_UP);
-        OnEvent(&e);
-    }
-    //-------------------------------------------------------------------------
     std::shared_ptr<Node> Node::GetByPath(const mafString& path, bool onlyVisible /*=true*/)
-        //-------------------------------------------------------------------------
     {
         wxStringTokenizer tkz(path.toWx(), wxT("/"));
 
@@ -1749,12 +1576,6 @@ namespace model::data
     Node* Node::GetParent() const
     {
         return m_Parent;
-    }
-
-
-    std::shared_ptr<Node>  Node::Create(const char* NodeType)
-    {
-        return NodeFactory::CreateNode(NodeType);
     }
 }
 

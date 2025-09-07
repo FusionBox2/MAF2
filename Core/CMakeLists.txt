@@ -20,6 +20,8 @@ SET(PROJECT_SRCS
 	../ftk/Core/NodeManager.h
 	../ftk/Core/PipeFactory.cpp
 	../ftk/Core/PipeFactory.h
+	../ftk/Core/Root.cpp
+	../ftk/Core/Root.h
 )
 
 # Set your list of sources here.
@@ -52,8 +54,6 @@ SET(PROJECT_SRCS ${PROJECT_SRCS}
   mafOpStack.h
   mafPrintSupport.cpp
   mafPrintSupport.h
-  mafRoot.cpp
-  mafRoot.h
   mafTagArray.cpp
   mafTagArray.h
   mafTagItem.cpp

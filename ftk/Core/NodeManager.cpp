@@ -1,7 +1,7 @@
 #include "ftk/Core/NodeManager.h"
 #include "mafDecl.h"
 #include "mafNode.h"
-#include "mafRoot.h"
+#include "ftk/Core/Root.h"
 #include "ftk/IO/StorageElement.h"
 #include "mafEvent.h"
 
@@ -43,10 +43,10 @@ namespace model::data
 	bool NodeManager::SetRoot(std::shared_ptr<mafNode> root)
 	{
 		NotifyRemove(m_Root.get());
-		if (mafRoot* rt = mafRoot::SafeDownCast(GetRoot().get()))
+		if (auto rt = Root::SafeDownCast(GetRoot().get()))
 			rt->SetListener(nullptr);
 		m_Root = std::move(root);
-		if (mafRoot* rt = mafRoot::SafeDownCast(GetRoot().get()))
+		if (auto rt = Root::SafeDownCast(GetRoot().get()))
 			rt->SetListener(this);
 		NotifyAdd(m_Root.get());
 		return true;
@@ -95,7 +95,7 @@ namespace model::data
 	{
 		if (!m_Root)
 			return;
-		//return 
+		m_Root->BuildIds();
 		node[_R("Root")].SetValue(m_Root.get());// != MAF_OK ? MAF_ERROR : MAF_OK;
 	}
 
@@ -104,6 +104,7 @@ namespace model::data
 		SetRoot(nullptr);
 		if (auto root = node[_R("Root")].As<mafNode>())
 		{
+			root->RestoreLinks();
 			if (root->Initialize() == MAF_ERROR)
 				return;
 			SetRoot(root);

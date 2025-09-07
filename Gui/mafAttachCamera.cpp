@@ -65,13 +65,13 @@ mafAttachCamera::~mafAttachCamera()
 {
   vtkDEL(m_AttachedVmeMatrix);
   vtkDEL(m_StartingMatrix);
-  if (m_AttachedVme && m_AttachedVme->IsValid())
+  if (m_AttachedVme)
   {
     m_AttachedVme->RemoveObserver(this);
   }
 
   if(m_Gui)	
-	  m_Gui->SetListener(NULL);
+	  m_Gui->SetListener(nullptr);
 	cppDEL(m_Gui);
 }
 //----------------------------------------------------------------------------

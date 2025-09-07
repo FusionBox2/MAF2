@@ -137,11 +137,11 @@ void mafVMERoot::OnEvent(mafEventBase *maf_event)
         Superclass::OnEvent(maf_event);
       }
       mafEvent ev(this,VME_MODIFIED); ev.SetVme(this);
-      mafRoot::InvokeEvent(&ev);
+      Root::InvokeEvent(&ev);
     }
     else
     {
-      mafRoot::InvokeEvent(maf_event);
+      Root::InvokeEvent(maf_event);
     }
   }
   else if (maf_event->GetChannel()==MCH_UP)
@@ -149,7 +149,7 @@ void mafVMERoot::OnEvent(mafEventBase *maf_event)
     switch (maf_event->GetId())
     {
       default:
-        mafRoot::InvokeEvent(maf_event);
+        Root::InvokeEvent(maf_event);
     }
   }
   else
@@ -158,12 +158,17 @@ void mafVMERoot::OnEvent(mafEventBase *maf_event)
   }
 }
 
+void mafVMERoot::RenewIds(model::data::Node* node)
+{
+    SetMaxNodeId(node->BuildIds(GetMaxNodeId()));
+}
+
 //-------------------------------------------------------------------------
 void mafVMERoot::Print(std::ostream& os, const int tabs)// const
 //-------------------------------------------------------------------------
 {
   mafNode::Print(os,tabs);
-  mafRoot::Print(os,tabs);
+  Root::Print(os,tabs);
   os << mafIndent(tabs) << "MaxItemId: " << m_MaxItemId << "\n";
 }
 //-------------------------------------------------------------------------

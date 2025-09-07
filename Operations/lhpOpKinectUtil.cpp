@@ -37,6 +37,7 @@
 #include "mafEvent.h"
 #include "mafGUI.h"
 #include "mafPlotMath.h"
+#include "mafTagArray.h"
 
 #include "mafOpExplodeCollapse.h"
 #include "lhpOpKinectAFs.h"

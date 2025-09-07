@@ -131,19 +131,8 @@ void mafMSFImporter::InternalRestore(const mafStorageElement& node)
   }
   std::vector<std::shared_ptr<mafNode> > link_list;
 
-	{
-		std::vector<std::shared_ptr<mafNode> > stack(1, root);
-  	while (!stack.empty())
-  	{
-  		auto n = stack.back();
-      n->UpdateId();
-      stack.pop_back();
-  		for (size_t i = 0; i < n->GetNumberOfChildren(); i++)
-  		{
-  			stack.push_back(n->GetChild(i));
-  		}
-  	}
-	}
+  root->BuildIds();
+
   // iteration for setting up linked vme
   {
     std::vector<std::shared_ptr<mafNode> > stack(1, root);

@@ -105,16 +105,7 @@ int mafOpValidateTree::ValidateTree()
     for (auto& node : *root)
     {
       // check node ID
-      bool valid = node.IsValid();
-      if (!valid && !node.IsMAFType(mafVMERoot))
-      {
-        ErrorLog(mafOpValidateTree::INVALID_NODE, node.GetName().GetCStr());
-        node.UpdateId();
-        if (result != mafOpValidateTree::VALIDATE_ERROR)
-        {
-          result = mafOpValidateTree::VALIDATE_WARNING;
-        }
-      }
+      bool valid = true;
       {
         // check node links
         for (auto& link : node.GetLinks())
@@ -125,16 +116,10 @@ int mafOpValidateTree::ValidateTree()
             result = mafOpValidateTree::VALIDATE_ERROR;
             continue;
           }
-          valid = root->IsInTree(link.second.GetNode());
+          valid = root->IsInTree(link.second.GetNode().get());
           if (!valid)
           {
             ErrorLog(mafOpValidateTree::LINK_NOT_PRESENT, link.second.GetNode()->GetName().GetCStr());
-            result = mafOpValidateTree::VALIDATE_ERROR;
-          }
-          valid = link.second.GetNode()->IsValid();
-          if (!valid && !link.second.GetNode()->IsMAFType(mafVMERoot))
-          {
-            ErrorLog(mafOpValidateTree::INVALID_NODE, link.second.GetNode()->GetName().GetCStr());
             result = mafOpValidateTree::VALIDATE_ERROR;
           }
         }

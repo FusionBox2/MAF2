@@ -275,8 +275,8 @@ void mafGUICheckTree::VmeUpdateIcon(mafNode *vme)
           if (auto linkedVME = mafVME::SafeDownCast(link.second.GetNode()))
           {
             dataStatus = linkedVME->IsDataAvailable() ? 0 : 1;
-            icon_index = ClassNameToIcon(_R(linkedVME->GetTypeName())) + (GetVmeStatus(linkedVME)*2) + dataStatus;
-            SetNodeIcon( (intptr_t)linkedVME, icon_index );
+            icon_index = ClassNameToIcon(_R(linkedVME->GetTypeName())) + (GetVmeStatus(linkedVME.get())*2) + dataStatus;
+            SetNodeIcon( (intptr_t)linkedVME.get(), icon_index );
           }
         }
       }

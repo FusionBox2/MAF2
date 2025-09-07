@@ -18,7 +18,6 @@
 #define __mafNodeLayout_h
 
 #include "mafNode.h"
-#include "mafRoot.h"
 
 //----------------------------------------------------------------------------
 // forward reference

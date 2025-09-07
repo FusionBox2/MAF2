@@ -2623,7 +2623,7 @@ mafNode* medVMEWrappedMeter::IndexToMiddlePointVME(int index)
 	mafNode *returnNode = nullptr;
   for (auto& link : GetLinks())
   {
-    if(link.first == name) returnNode =  link.second.GetNode();
+    if(link.first == name) returnNode =  link.second.GetNode().get();
   }
 
   return returnNode;

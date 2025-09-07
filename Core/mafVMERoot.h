@@ -19,7 +19,7 @@
 // includes :
 //----------------------------------------------------------------------------
 #include "mafVME.h"
-#include "mafRoot.h"
+#include "ftk/Core/Root.h"
 
 //----------------------------------------------------------------------------
 // forward declarations :
@@ -34,7 +34,7 @@
   @todo
   - 
   */
-class MAF_EXPORT mafVMERoot : public mafVME, public mafRoot
+class MAF_EXPORT mafVMERoot : public mafVME, public model::data::Root
 {
 public:
   mafTypeMacro(mafVMERoot,mafVME);
@@ -74,11 +74,11 @@ public:
   void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes) override;
 
   /** allow only a NULL parent */
-  bool CanReparentTo(mafNode *parent) override {return parent==NULL;}
+  bool CanReparentTo(mafNode *parent) override {return parent==nullptr;}
 
   void OnEvent(mafEventBase *maf_event) override;
 
-  mafID GetNewNodeId() override {return GetNextNodeId();}
+  void RenewIds(Node *node) override;
 
   /** Redefined to update the gui. */
   void Update() override;

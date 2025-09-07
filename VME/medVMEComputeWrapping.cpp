@@ -5247,7 +5247,7 @@ void medVMEComputeWrapping::UpdateLinks(std::vector<std::pair<mafNode*, mafNode*
 		{
       if(link.second.GetNode()->GetId() == m_OrderMiddlePointsVMEList[j])
       {
-        nd = link.second.GetNode();
+        nd = link.second.GetNode().get();
         break;
       }
     }
@@ -5336,7 +5336,7 @@ mafGUI* medVMEComputeWrapping::CreateGuiForOldMeter( mafGUI *gui ){
 			else if(link.first == _R("WrappedVME")) continue;
 			else if(link.second.GetNode()->GetId() == m_OrderMiddlePointsVMEList[j])
 			{
-				if(mafVMELandmarkCloud *lc = mafVMELandmarkCloud::SafeDownCast(link.second.GetNode()))
+				if(auto lc = mafVMELandmarkCloud::SafeDownCast(link.second.GetNode()))
 				{
 					int idx = m_OrderMiddlePointsVMEList[++j];
 					mafString landmarkNm  = lc->GetLandmarkName(idx);
@@ -5927,7 +5927,7 @@ void medVMEComputeWrapping::SyncronizeList()
 			else if(link.first == _R("WrappedVME")) continue;
 			else if(link.second.GetNode()->GetId() == m_OrderMiddlePointsVMEList[j])
 			{
-				if(mafVMELandmarkCloud *lc = mafVMELandmarkCloud::SafeDownCast(link.second.GetNode()))
+				if(auto lc = mafVMELandmarkCloud::SafeDownCast(link.second.GetNode()))
 				{
 					int idx = m_OrderMiddlePointsVMEList[++j];
 					mafString landmarkNm  = lc->GetLandmarkName(idx);
@@ -7393,7 +7393,7 @@ mafNode* medVMEComputeWrapping::IndexToMiddlePointVME(int index)
 	mafNode *returnNode = nullptr;
 	for (auto& link : GetLinks())
 	{
-		if(link.first == name) returnNode =  link.second.GetNode();
+		if(link.first == name) returnNode =  link.second.GetNode().get();
 	}
 
 	return returnNode;
