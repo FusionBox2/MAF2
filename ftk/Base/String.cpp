@@ -471,6 +471,7 @@ mafString operator+(const mafString& s1, const mafString& s2)
     return res += s2;
 }
 
+#ifdef MAF_USE_WX
 //----------------------------------------------------------------------------
 mafString mafWxToString(const wxString& str)
 //----------------------------------------------------------------------------
@@ -481,6 +482,22 @@ mafString mafWxToString(const wxString& str)
     return mafStrBuf::MakeBuf(str.c_str());
 #endif
 }
+
+//----------------------------------------------------------------------------
+wxString mafStringToWx(const mafString& str)
+//----------------------------------------------------------------------------
+{
+    return str.toWx();
+}
+
+#endif
+//----------------------------------------------------------------------------
+std::string mafStringToStd(const mafString& str)
+//----------------------------------------------------------------------------
+{
+    return str.toStd();
+}
+
 
 //----------------------------------------------------------------------------
 mafString mafToString(int d)

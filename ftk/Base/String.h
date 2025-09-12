@@ -202,7 +202,11 @@ FTK_BASE_EXPORT mafString operator+(const mafString& s1, mafStrBuf s2);
 FTK_BASE_EXPORT mafString operator+(mafStrBuf s1, const mafString& s2);
 FTK_BASE_EXPORT mafString operator+(const mafString& s1, const mafString& s2);
 
+#ifdef MAF_USE_WX
 FTK_BASE_EXPORT mafString mafWxToString(const wxString& str);
+FTK_BASE_EXPORT wxString mafStringToWx(const mafString& str);
+#endif
+std::string mafStringToStd(const mafString& str);
 
 FTK_BASE_EXPORT mafString mafToString(int        d);
 FTK_BASE_EXPORT mafString mafToString(long       d);
