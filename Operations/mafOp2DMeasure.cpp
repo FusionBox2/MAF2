@@ -473,7 +473,7 @@ void mafOp2DMeasure::OnEvent(mafEventBase *maf_event)
         break;
         case ID_STORE_MEASURE:
         {         
-          m_MeasureText = mafWxToString(wxGetTextFromUser("",_("Insert measure description"), m_MeasureText.toWx()));
+          m_MeasureText = mafWxToString(wxGetTextFromUser("",_("Insert measure description"), mafStringToWx(m_MeasureText)));
           if(m_MeasureText.empty()) break;
           mafString t;
           if(m_MeasureType == 0 || m_MeasureType == 1)
@@ -490,7 +490,7 @@ void mafOp2DMeasure::OnEvent(mafEventBase *maf_event)
 #pragma message("degree sign")
             t += m_MeasureText;
           }
-          m_MeasureList->Append(t.toWx());
+          m_MeasureList->Append(mafStringToWx(t));
           m_MeasureText = _R("");
           m_Gui->Enable(ID_REMOVE_MEASURE,true);
         }

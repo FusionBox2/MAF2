@@ -466,11 +466,11 @@ bool mafVMEAFRefSys::UpdateVM(mafTimeStamp ts)
         {
           SetRefSysLink(m_vm->getInputs()[i].first.c_str(), lmcLink);
           mafString refname;
-          refname = it->second.Lower();
+          refname = ToLower(it->second);
           int numberOfLandmarks = lmcLink->GetNumberOfLandmarks();
           for (int i = 0; i < numberOfLandmarks; i++)
           {
-            mafString lm_name = lmcLink->GetLandmarkName(i).Lower();
+            mafString lm_name = ToLower(lmcLink->GetLandmarkName(i));
             if (lm_name == refname)
             {
               ind = i;

@@ -27,41 +27,41 @@
 
 mafString mafStripMenuCodes(const mafString& com)
 {
-  return mafWxToString(wxStripMenuCodes(com.toWx()));
+  return mafWxToString(wxStripMenuCodes(mafStringToWx(com)));
 }
 
 
 bool mafDirMake(const mafString& directory)
 {
-  return wxMkdir(directory.toWx());
+  return wxMkdir(mafStringToWx(directory));
 }
 bool mafDirRemove(const mafString& directory)
 {
-  return ::wxRmdir(directory.toWx());
+  return ::wxRmdir(mafStringToWx(directory));
 }
 bool mafDirExists(const mafString& directory)
 {
-  return ::wxDirExists(directory.toWx());
+  return ::wxDirExists(mafStringToWx(directory));
 }
 bool mafFileRemove(const mafString& file)
 {
-  return ::wxRemoveFile(file.toWx());
+  return ::wxRemoveFile(mafStringToWx(file));
 }
 bool mafFileRename(const mafString& files, const mafString& filet)
 {
-  return wxRenameFile(files.toWx(), filet.toWx());
+  return wxRenameFile(mafStringToWx(files), mafStringToWx(filet));
 }
 bool mafFileCopy(const mafString& files, const mafString& filet, bool overwrite)
 {
-  return wxCopyFile(files.toWx(), filet.toWx(), overwrite);
+  return wxCopyFile(mafStringToWx(files), mafStringToWx(filet), overwrite);
 }
 bool mafFileExists(const mafString& file)
 {
-  return ::wxFileExists(file.toWx());
+  return ::wxFileExists(mafStringToWx(file));
 }
 mafString mafFindFirstFile(const mafString& spec, bool dir)
 {
-  return mafWxToString(wxFindFirstFile(spec.toWx(), dir ? wxDIR : wxFILE));
+  return mafWxToString(wxFindFirstFile(mafStringToWx(spec), dir ? wxDIR : wxFILE));
 }
 mafString mafFindNextFile()
 {
@@ -69,18 +69,18 @@ mafString mafFindNextFile()
 }
 mafString mafPathOnly(const mafString& fullname)
 {
-  return mafWxToString(wxPathOnly(fullname.toWx()));
+  return mafWxToString(wxPathOnly(mafStringToWx(fullname)));
 }
 mafString mafFileNameFromPath(const mafString& fullname)
 {
-  return mafWxToString(wxFileNameFromPath(fullname.toWx()));
+  return mafWxToString(wxFileNameFromPath(mafStringToWx(fullname)));
 }
 
 
 mafString mafCreateTempFileName(const mafString& base)
 {
   mafString name;
-  name = mafWxToString(wxFileName::CreateTempFileName(base.toWx())); // used to get a valid temporary name for cache directory
+  name = mafWxToString(wxFileName::CreateTempFileName(mafStringToWx(base))); // used to get a valid temporary name for cache directory
   mafFileRemove(name);
   ParsePathName(name);
   return name;
@@ -88,7 +88,7 @@ mafString mafCreateTempFileName(const mafString& base)
 void mafSplitPath(const mafString& fullname, mafString* path, mafString* name, mafString* ext)
 {
   wxString wpath, wname, wext;
-  wxFileName::SplitPath(fullname.toWx(),&wpath,&wname,&wext);
+  wxFileName::SplitPath(mafStringToWx(fullname),&wpath,&wname,&wext);
   if(path)
     *path = mafWxToString(wpath);
   if(name)
@@ -111,7 +111,7 @@ void mafRemoveDirectory(const mafString& directory)
 {
   if(directory.empty())
     return;
-  wxSetWorkingDirectory(mafGetApplicationDirectory().toWx());
+  wxSetWorkingDirectory(mafStringToWx(mafGetApplicationDirectory()));
   if(!mafDirExists(directory))
     return;
   mafString file_match = directory + _R("/*.*");
@@ -161,14 +161,14 @@ mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafSt
   auto fileSystem = std::make_unique<wxFileSystem>();///< File system manager
   auto zipHandler = std::make_unique<wxZipFSHandler>();///< Handler for zip archive (used to open zmsf files)
   fileSystem->AddHandler(zipHandler.get());
-  fileSystem->ChangePathTo(filename.toWx());
+  fileSystem->ChangePathTo(mafStringToWx(filename));
   // extract filename from the zip archive
-  zfile = mafWxToString(fileSystem->FindFirst((complete_name+pkg+name+_R("\\*.*")).toWx()));
+  zfile = mafWxToString(fileSystem->FindFirst(mafStringToWx(complete_name+pkg+name+_R("\\*.*"))));
   if (zfile.empty())
   {
     enable_mid = true;
     // no files found: try to search inside the archive without filename
-    zfile = mafWxToString(fileSystem->FindFirst((complete_name+pkg+_R("\\*.*")).toWx()));
+    zfile = mafWxToString(fileSystem->FindFirst(mafStringToWx(complete_name+pkg+_R("\\*.*"))));
   }
   if (zfile.empty())
   {
@@ -180,7 +180,7 @@ mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafSt
 
   for (;!zfile.empty(); zfile = mafWxToString(fileSystem->FindNext()))
   {
-    zfileStream = fileSystem->OpenFile(zfile.toWx());
+    zfileStream = fileSystem->OpenFile(mafStringToWx(zfile));
     if (zfileStream == NULL) // unable to open the file
     {
       fileSystem->RemoveHandler(zipHandler.get());
@@ -191,7 +191,7 @@ mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafSt
     mafSplitPath(zfile,&path,&name,&ext);
     complete_name = name + _R(".") + ext;
     if (enable_mid)
-      complete_name = mafWxToString(complete_name.toWx().Mid(length_header_name));
+      complete_name = mafWxToString(mafStringToWx(complete_name).Mid(length_header_name));
     out_file = tmpDir + _R("\\") + complete_name;
     if(ext == _R("msf"))
     {
@@ -206,7 +206,7 @@ mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafSt
     delete zfileStream;
   }
 
-  fileSystem->ChangePathTo(tmpDir.toWx(), TRUE);
+  fileSystem->ChangePathTo(mafStringToWx(tmpDir), TRUE);
 
   if (MSFFile.empty()) // msf file not extracted
   {
@@ -220,13 +220,13 @@ mafString mafOpenZIP(const mafString& filename, const mafString& stor_tmp, mafSt
 }
 bool mafExtractZIP(const mafString& filename, const mafString& entry_name, void *& buffer, size_t& size)
 {
-  wxFileInputStream in(filename.toWx());
+  wxFileInputStream in(mafStringToWx(filename));
   wxZipInputStream zip(in);
   if (!in || !zip)
     return false;
   wxZipEntry *entry = NULL;
   // convert the local name we are looking for into the internal format
-  wxString name = wxZipEntry::GetInternalName(entry_name.toWx());
+  wxString name = wxZipEntry::GetInternalName(mafStringToWx(entry_name));
 
   // call GetNextEntry() until the required internal name is found
   // to be re-factored for efficiency reasons.
@@ -255,13 +255,13 @@ bool mafExtractZIP(const mafString& filename, const mafString& entry_name, void 
 void mafExtractZIP(const mafString& filename, const mafString& temp_directory, const mafString& entry_name)
 //----------------------------------------------------------------------------
 {
-  wxFileInputStream in(filename.toWx());
+  wxFileInputStream in(mafStringToWx(filename));
   wxZipInputStream zip(in);
   if (!in || !zip)
     return;
   wxZipEntry *entry = NULL;
   // convert the local name we are looking for into the internal format
-  wxString name = wxZipEntry::GetInternalName(entry_name.toWx());
+  wxString name = wxZipEntry::GetInternalName(mafStringToWx(entry_name));
 
   // call GetNextEntry() until the required internal name is found
   // to be re-factored for efficiency reasons.
@@ -293,7 +293,7 @@ bool mafMakeZip(const mafString &zipname, const std::vector<mafString>& files)
 //----------------------------------------------------------------------------
 {
   mafString name, path, short_name, ext;
-  wxFileOutputStream out(zipname.toWx());
+  wxFileOutputStream out(mafStringToWx(zipname));
   wxZipOutputStream zip(out);
 
   if (!out || !zip)
@@ -308,18 +308,18 @@ bool mafMakeZip(const mafString &zipname, const std::vector<mafString>& files)
 
     if (mafDirExists(name)) 
     {
-      if (!zip.PutNextDirEntry(name.toWx())) // put the file inside the archive
+      if (!zip.PutNextDirEntry(mafStringToWx(name))) // put the file inside the archive
         return false;
     }
     else 
     {
-      wxFFileInputStream in(name.toWx());
+      wxFFileInputStream in(mafStringToWx(name));
 
       if (in.Ok()) 
       {
-        wxDateTime dt(wxFileModificationTime(name.toWx())); // get the file modification time
+        wxDateTime dt(wxFileModificationTime(mafStringToWx(name))); // get the file modification time
 
-        if (!zip.PutNextEntry(short_name.toWx(), dt, in.GetLength()) || !zip.Write(in) || !in.Eof()) // put the file inside the archive
+        if (!zip.PutNextEntry(mafStringToWx(short_name), dt, in.GetLength()) || !zip.Write(in) || !in.Eof()) // put the file inside the archive
           return false;
       }
     }
@@ -336,7 +336,7 @@ void mafZIPSave(const mafString& filename, const mafString& dir)
     return;
 
   wxArrayString files;
-  wxDir::GetAllFiles(dir.toWx(), &files);
+  wxDir::GetAllFiles(mafStringToWx(dir), &files);
 
   std::vector<mafString> directory;
   for (size_t i = 0; i < files.GetCount(); i++)
@@ -376,7 +376,7 @@ void ExtractPathName(mafString& str)
 //----------------------------------------------------------------------------
 {
     //wxString path, s;
-    str = mafWxToString(wxPathOnly(str.toWx()));
+    str = mafWxToString(wxPathOnly(mafStringToWx(str)));
     //Set(path.c_str());
 
   /*  int idx=FindLastChr('/');
@@ -441,7 +441,7 @@ std::vector<mafString> mafZIPOpen(const mafString& file)
 
   std::unique_ptr<wxZipEntry> entry;
 
-  wxFFileInputStream in(file.toWx());
+  wxFFileInputStream in(mafStringToWx(file));
   wxZipInputStream zip(in);
 
   while (entry.reset(zip.GetNextEntry()), entry.get() != NULL)

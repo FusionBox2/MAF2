@@ -2225,7 +2225,7 @@ void mafLogicWithManagers::ImportExternalFile(mafString &filename)
 {
   mafString path, name, ext;
   mafSplitPath(filename,&path,&name,&ext);
-  ext.MakeLower();
+  ext = ToLower(ext);
   /*if (ext == _R("vtk"))
   {
     auto vtkImporter = std::make_unique<mafOpImporterVTK>(_R("importer"));

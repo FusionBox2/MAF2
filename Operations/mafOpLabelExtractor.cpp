@@ -183,8 +183,8 @@ void mafOpLabelExtractor::OpRun()
               mafString labelName = *myListIter;
               if ( component == labelName )
               {
-                m_LabelCheckBox->AddItem(checkListId, component.toWx(), false);
-                FillLabelVector(component.toWx(), false);
+                m_LabelCheckBox->AddItem(checkListId, mafStringToWx(component), false);
+                FillLabelVector(mafStringToWx(component), false);
                 checkListId++;
               }
             }

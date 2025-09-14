@@ -764,7 +764,7 @@ void mafVMEItemVTK::GetOutputMemory(const char *&out_str, int &size)
 bool mafVMEItemVTK::StoreToArchive(wxZipOutputStream &zip)
 //-------------------------------------------------------------------------
 {
-  if (!zip.PutNextEntry(m_URL.toWx(), wxDateTime::Now(), m_OutputMemorySize) || !zip.Write(m_OutputMemory, m_OutputMemorySize))
+  if (!zip.PutNextEntry(mafStringToWx(m_URL), wxDateTime::Now(), m_OutputMemorySize) || !zip.Write(m_OutputMemory, m_OutputMemorySize))
     return false;
   bool write_res = zip.LastWrite() == m_OutputMemorySize;
   return write_res;

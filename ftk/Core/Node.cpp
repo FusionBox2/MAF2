@@ -629,8 +629,8 @@ namespace model::data
             }
             else
             {
-                word_to_search = name.Lower();
-                myName = GetName().Lower();
+                word_to_search = ToLower(name);
+                myName = ToLower(GetName());
             }
 
             if (whole_word && myName == word_to_search)
@@ -703,8 +703,8 @@ namespace model::data
             }
             else
             {
-                word_to_search = name.Lower();
-                myName = sharedThis->GetName().Lower();
+                word_to_search = ToLower(name);
+                myName = ToLower(sharedThis->GetName());
             }
 
             if (whole_word && myName == word_to_search)

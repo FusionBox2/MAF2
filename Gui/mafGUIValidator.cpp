@@ -627,7 +627,7 @@ bool mafGUIValidator::TransferToWindow(void)
 	{
     case VAL_LABEL:
 			if(m_MafStringVar)
-        m_StaticText->SetLabel(m_MafStringVar->toWx());
+        m_StaticText->SetLabel(mafStringToWx(*m_MafStringVar));
       if(m_StringVar)
         m_StaticText->SetLabel(*m_StringVar);
     break;
@@ -712,10 +712,10 @@ bool mafGUIValidator::TransferToWindow(void)
     case VAL_DIROPEN:
 			path = *m_MafStringVar;
 			if( ! mafDirExists(path) ) mafSplitPath(*m_MafStringVar, &path, &name, &ext); // it is a filename
-			m_TextCtrl->SetValue(path.toWx());
+			m_TextCtrl->SetValue(mafStringToWx(path));
 			if(!path.empty())
 			{ 
-				m_TextCtrl->SetToolTip(path.toWx());
+				m_TextCtrl->SetToolTip(mafStringToWx(path));
 			}
   	break;
     case VAL_FILEOPEN:
@@ -726,11 +726,11 @@ bool mafGUIValidator::TransferToWindow(void)
 				name += _R(".");
 				name += ext;
 			}
-			m_TextCtrl->SetValue(name.toWx());
+			m_TextCtrl->SetValue(mafStringToWx(name));
 			path = *m_MafStringVar;
 			if(!path.empty())
 			{ 
-				m_TextCtrl->SetToolTip(path.toWx());
+				m_TextCtrl->SetToolTip(mafStringToWx(path));
 			}
   	break;
     case VAL_COLOR:
@@ -1021,14 +1021,14 @@ void mafGUIValidator::OnButton(wxCommandEvent& event)
       case VAL_DIROPEN:
       {
         mafSplitPath(*m_MafStringVar, &path, &name, &ext);
-        wxDirDialog dialog(m_Button,"", path.toWx(), 0, m_Button->GetPosition());
+        wxDirDialog dialog(m_Button,"", mafStringToWx(path), 0, m_Button->GetPosition());
 				dialog.SetReturnCode(wxID_OK);
 				ret_code = dialog.ShowModal();
         if (ret_code == wxID_OK)
         {
           path = mafWxToString(dialog.GetPath());
           *m_MafStringVar = path;
-          m_TextCtrl->SetLabel(path.toWx());
+          m_TextCtrl->SetLabel(mafStringToWx(path));
         }
 				else
         {
@@ -1044,7 +1044,7 @@ void mafGUIValidator::OnButton(wxCommandEvent& event)
 					name += _R(".");
 					name += ext;
 				}
-        wxFileDialog dialog(m_Button,"Open File", path.toWx(), name.toWx(), m_Wildcard.toWx(), wxFD_OPEN|wxFD_FILE_MUST_EXIST , m_Button->GetPosition());
+        wxFileDialog dialog(m_Button,"Open File", mafStringToWx(path), mafStringToWx(name), mafStringToWx(m_Wildcard), wxFD_OPEN|wxFD_FILE_MUST_EXIST , m_Button->GetPosition());
         dialog.SetReturnCode(wxID_OK);
 				ret_code = dialog.ShowModal();
 				if (ret_code == wxID_OK)
@@ -1052,7 +1052,7 @@ void mafGUIValidator::OnButton(wxCommandEvent& event)
           path = mafWxToString(dialog.GetPath());
           name = mafWxToString(dialog.GetFilename());
           *m_MafStringVar = path;
-          m_TextCtrl->SetLabel(name.toWx());
+          m_TextCtrl->SetLabel(mafStringToWx(name));
         }
 				else
         {
@@ -1068,7 +1068,7 @@ void mafGUIValidator::OnButton(wxCommandEvent& event)
 					name += _R(".");
 					name += ext;
 				}
-        wxFileDialog dialog(m_Button,"Save File", path.toWx(), name.toWx(), m_Wildcard.toWx(), wxFD_SAVE|wxFD_OVERWRITE_PROMPT , m_Button->GetPosition());
+        wxFileDialog dialog(m_Button,"Save File", mafStringToWx(path), mafStringToWx(name), mafStringToWx(m_Wildcard), wxFD_SAVE|wxFD_OVERWRITE_PROMPT , m_Button->GetPosition());
         dialog.SetReturnCode(wxID_OK);
 				ret_code = dialog.ShowModal();
 				if (ret_code == wxID_OK)
@@ -1156,7 +1156,7 @@ void mafGUIValidator::SetWidgetData(WidgetDataType &widget_data)
     case STRING_DATA:
       if (m_StringVar)
       {
-        *m_StringVar = widget_data.sValue.toWx();
+        *m_StringVar = mafStringToWx(widget_data.sValue);
       }
       if (m_MafStringVar)
       {

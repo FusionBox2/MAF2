@@ -233,41 +233,27 @@ mafString::size_type mafString::rfind(const mafString& str) const
 
 
 //----------------------------------------------------------------------------
-mafString mafString::Upper()const
+mafString ToUpper(const mafString& str)
 //----------------------------------------------------------------------------
 {
-  mafString res(*this);
-  return res.MakeUpper();
-}
-
-//----------------------------------------------------------------------------
-mafString mafString::Lower()const
-//----------------------------------------------------------------------------
-{
-  mafString res(*this);
-  return res.MakeLower();
-}
-
-//----------------------------------------------------------------------------
-mafString& mafString::MakeUpper()
-//----------------------------------------------------------------------------
-{
-  for (auto& c : m_str)
+  mafString res(str);
+  for (size_t i = 0; i < res.size(); i++)
   {
-    c = toupper(c);
+      res[i] = toupper(res[i]);
   }
-  return *this;
+  return res;
 }
 
 //----------------------------------------------------------------------------
-mafString& mafString::MakeLower()
+mafString ToLower(const mafString& str)
 //----------------------------------------------------------------------------
 {
-  for (auto& c : m_str)
+  mafString res(str);
+  for (size_t i = 0; i < res.size(); i++)
   {
-    c = tolower(c);
+      res[i] = tolower(res[i]);
   }
-  return *this;
+  return res;
 }
 
 //----------------------------------------------------------------------------
@@ -604,7 +590,7 @@ size_t InternalParseData(const mafString& text, T* vector, size_t size)
 //------------------------------------------------------------------------------
 {
 #pragma message ("potentially hacky")
-	std::istringstream instr(text.toStd());
+	std::istringstream instr(mafStringToStd(text));
 
 	for (size_t i = 0; i < size; i++)
 	{

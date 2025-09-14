@@ -397,11 +397,11 @@ void mafVMERefSysAbstract::SetRefSysLink(const char *link_name, mafNode *n)
   {
     auto cloud = mafVMELandmarkCloud::SafeDownCast(n->GetParent());
     mafString refname(_R(link_name));
-    refname = refname.Lower();
+    refname = ToLower(refname);
     int numberOfLandmarks = cloud->GetNumberOfLandmarks();
     for(int i = 0; i < numberOfLandmarks; i++)
     {
-      mafString lm_name = cloud->GetLandmarkName(i).Lower();
+      mafString lm_name = ToLower(cloud->GetLandmarkName(i));
       if(lm_name == refname)
       {
         SetLink(_R(link_name),n->GetParent(), i);

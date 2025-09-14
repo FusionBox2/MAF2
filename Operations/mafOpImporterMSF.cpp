@@ -104,7 +104,7 @@ int mafOpImporterMSF::ImportMSF()
         mafMessage(_M(mafString(_L("Bad or corrupted zmsf file!"))));
       return MAF_ERROR;
     }
-    wxSetWorkingDirectory(m_TmpDir.toWx());
+    wxSetWorkingDirectory(mafStringToWx(m_TmpDir));
   }
 
   ParsePathName(unixname); // convert to unix format

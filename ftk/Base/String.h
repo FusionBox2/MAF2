@@ -151,11 +151,6 @@ public:
   /** Find last occurrence of a substring */
   size_type rfind(mafStrBuf str) const;
 
-  mafString Upper()const;
-  mafString Lower()const;
-
-  mafString& MakeUpper();
-  mafString& MakeLower();
   void clear();
 
   /** Return the pointer to the internal c-string */
@@ -207,6 +202,9 @@ FTK_BASE_EXPORT mafString mafWxToString(const wxString& str);
 FTK_BASE_EXPORT wxString mafStringToWx(const mafString& str);
 #endif
 std::string mafStringToStd(const mafString& str);
+
+mafString ToUpper(const mafString& str);
+mafString ToLower(const mafString& str);
 
 FTK_BASE_EXPORT mafString mafToString(int        d);
 FTK_BASE_EXPORT mafString mafToString(long       d);

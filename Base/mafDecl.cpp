@@ -83,7 +83,7 @@ mafVmeBaseTypes mafGetBaseType(mafVME* vme)
 mafString  mafGetDirName(const mafString& initial, const mafString& title, wxWindow *parent)
 //----------------------------------------------------------------------------
 {
-  wxDirDialog dialog(parent, title.toWx(), initial.toWx(), wxDD_DEFAULT_STYLE | wxDD_NEW_DIR_BUTTON);
+  wxDirDialog dialog(parent, mafStringToWx(title), mafStringToWx(initial), wxDD_DEFAULT_STYLE | wxDD_NEW_DIR_BUTTON);
 
   dialog.SetReturnCode(wxID_OK);
   int result = dialog.ShowModal();
@@ -100,14 +100,14 @@ mafString mafGetOpenFile(const mafString& initial, const mafString& wild, const 
 //----------------------------------------------------------------------------
 {
   wxString path, name, ext;
-  wxFileName::SplitPath(initial.toWx(),&path,&name,&ext);
+  wxFileName::SplitPath(mafStringToWx(initial),&path,&name,&ext);
 
   if (!name.IsEmpty() && !ext.IsEmpty()) name.Append(".").Append(ext);
 
   mafString wildcard=wild;
   wildcard+=_R("|All Files (*.*)|*.*");
  
-  wxFileDialog dialog(parent, title.toWx(), path, name, wildcard.toWx(), wxFD_OPEN|wxFD_FILE_MUST_EXIST);
+  wxFileDialog dialog(parent, mafStringToWx(title), path, name, mafStringToWx(wildcard), wxFD_OPEN|wxFD_FILE_MUST_EXIST);
 
   dialog.SetReturnCode(wxID_OK);
 	int result = dialog.ShowModal();
@@ -124,12 +124,12 @@ void mafGetOpenMultiFiles(const mafString& initial, const mafString& wild, std::
 //----------------------------------------------------------------------------
 {
   wxString path, name, ext;
-  wxFileName::SplitPath(initial.toWx(),&path,&name,&ext);
+  wxFileName::SplitPath(mafStringToWx(initial),&path,&name,&ext);
   if (!name.IsEmpty() && !ext.IsEmpty()) name.Append(".").Append(ext);
   mafString wildcard = wild;
   wildcard += _R("|All Files (*.*)|*.*");
  
-  wxFileDialog dialog(parent, title.toWx(), path, name, wildcard.toWx(), wxFD_OPEN|wxFD_FILE_MUST_EXIST|wxFD_MULTIPLE);
+  wxFileDialog dialog(parent, mafStringToWx(title), path, name, mafStringToWx(wildcard), wxFD_OPEN|wxFD_FILE_MUST_EXIST|wxFD_MULTIPLE);
 
   dialog.SetReturnCode(wxID_OK);
 	int result = dialog.ShowModal();
@@ -148,13 +148,13 @@ mafString mafGetSaveFile(const mafString& initial, const mafString& wild, const 
 //----------------------------------------------------------------------------
 {
   wxString path, name, ext;
-  wxFileName::SplitPath(initial.toWx(),&path,&name,&ext);
+  wxFileName::SplitPath(mafStringToWx(initial),&path,&name,&ext);
   if (!name.IsEmpty() && !ext.IsEmpty()) name.Append(".").Append(ext);
   mafString wildcard = wild;
   mafString defaultname = _R("newMAFfile");
   wildcard += _R("|All Files (*.*)|*.*");
   //wxFileDialog dialog(parent,title.GetCStr(), path, name, wildcard.GetCStr(), wxSAVE|wxOVERWRITE_PROMPT|wxHIDE_READONLY);
-  wxFileDialog dialog(parent,title.toWx(), initial.toWx(), defaultname.toWx(), wildcard.toWx(), wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
+  wxFileDialog dialog(parent, mafStringToWx(title), mafStringToWx(initial), mafStringToWx(defaultname), mafStringToWx(wildcard), wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
   dialog.SetReturnCode(wxID_OK);
 	int result = dialog.ShowModal();
   mafYield(); // wait for the dialog to disappear
@@ -185,7 +185,7 @@ bool IsRemote(const mafString& filename, mafString &protocol_used)
 //----------------------------------------------------------------------------
 {
   bool is_remote = false;
-  wxURI data_uri(filename.toWx());
+  wxURI data_uri(mafStringToWx(filename));
   if(data_uri.HasScheme())
     protocol_used = mafWxToString(data_uri.GetScheme());
   else
