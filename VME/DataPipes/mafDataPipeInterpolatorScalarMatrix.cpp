@@ -35,7 +35,7 @@ void mafDataPipeInterpolatorScalarMatrix::Execute()
   // if the current item is changed set the data inside new item as input for the interpolator
   // more specialized interpolators could redefine this to have more inputs (e.g. when 
   // interpolating different items)
-  if ( m_CurrentItem && (m_CurrentItem != m_OldItem || \
+  if ( m_CurrentItem && (m_CurrentItem.get() != m_OldItem || \
     mtime > m_UpdateTime.GetMTime() ||
     !m_CurrentItem->IsDataPresent() ))
   {

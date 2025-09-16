@@ -20,7 +20,7 @@ if(MAF_USE_WX)
 endif(MAF_USE_WX)
 
 if(MAF_USE_QT)
-  find_package(Qt6 COMPONENTS Core Widgets)
+  find_package(Qt6 COMPONENTS Core Widgets REQUIRED)
 endif(MAF_USE_QT)
 
 if(MAF_USE_VTK)

@@ -10,9 +10,7 @@
 mafDataPipeInterpolator::mafDataPipeInterpolator()
 //------------------------------------------------------------------------------
 {
-  m_CurrentItem     = NULL;
   m_OldTimeStamp    = -1;
-  m_OldItem         = NULL;
   m_ReleaseDataFlag = false;
   m_DependOnVMETime = 0;
 }
@@ -21,7 +19,7 @@ mafDataPipeInterpolator::mafDataPipeInterpolator()
 mafDataPipeInterpolator::~mafDataPipeInterpolator()
 //------------------------------------------------------------------------------
 {
-  SetCurrentItem(NULL);
+  SetCurrentItem(nullptr);
 }
 
 //----------------------------------------------------------------------------
@@ -139,7 +137,7 @@ void mafDataPipeInterpolator::UpdateCurrentItem(std::shared_ptr<mafVMEItem> item
       SetCurrentItem(item);
       //m_UpdateTime.Modified();
     }
-    m_OldItem=m_CurrentItem;
+    m_OldItem=m_CurrentItem.get();
   }
   else
   {

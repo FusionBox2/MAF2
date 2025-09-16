@@ -39,7 +39,6 @@ MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 =========================================================================*/
 #include <math.h>
-#include "mafDefines.h"
 #include "vtkMaskPolyDataFilter.h"
 #include "vtkPointData.h"
 #include "vtkCellData.h"
@@ -67,7 +66,11 @@ vtkMaskPolyDataFilter::vtkMaskPolyDataFilter(vtkPolyData *mask)
 
 vtkMaskPolyDataFilter::~vtkMaskPolyDataFilter()
 {
-	vtkDEL(this->CurrentSliceMask);
+	if (this->CurrentSliceMask)
+	{
+		this->CurrentSliceMask->Delete();
+		this->CurrentSliceMask = nullptr;
+	}
 	delete [] IdConversionTable;
   this->SetMask(NULL);  
 }
@@ -288,7 +291,7 @@ void vtkMaskPolyDataFilter::PrintSelf(ostream& os, vtkIndent indent)
 void vtkMaskPolyDataFilter::InitCurrentSliceMask()
 {
 	//Creating current slice mask
-	vtkNEW(CurrentSliceMask);
+	CurrentSliceMask = vtkPolyData::New();
 	//init data by coping mask data
 	CurrentSliceMask->DeepCopy(Mask);
 	//CurrentSliceMask->Update();
@@ -306,11 +309,9 @@ void vtkMaskPolyDataFilter::UpdateCurrentSliceMask(double z)
 #endif
 
 	//generate points
-	vtkPoints *new_points;
-	vtkNEW(new_points);
+	vtkNew<vtkPoints> new_points;
 	//generate polydata structure
-	vtkCellArray * new_cells;
-	vtkNEW(new_cells);
+	vtkNew<vtkCellArray> new_cells;
 
 
 	//reset conversion table values
@@ -376,9 +377,7 @@ void vtkMaskPolyDataFilter::UpdateCurrentSliceMask(double z)
 	CurrentSliceMask->DeleteLinks();
 
 	CurrentSliceMask->SetPolys(new_cells);
-	vtkDEL(new_cells);
 	CurrentSliceMask->SetPoints(new_points);
-	vtkDEL(new_points);
 
 	//CurrentSliceMask->Update();
 }

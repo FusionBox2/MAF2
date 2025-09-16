@@ -2,11 +2,15 @@
 
 #include "ftkConfigure.h"
 
-#include <ftk/Base/FastPImpl.h>
 #include "ftk/Base/Meta.h"
 #include "ftk/Base/String.h"
 #include "ftk/IO/Parse.h"
+#include "ftk/IO/ParseTo.h"
 #include "ftk/IO/Serialize.h"
+
+#include <vector>
+#include <map>
+#include <optional>
 
 BEGIN_FTK_NAMESPACE
 
@@ -18,44 +22,34 @@ namespace io
 class FTK_IO_EXPORT mafStorageElement
 {
 public:
-  struct DefaultConstructed {};
-
-	mafStorageElement();
-  mafStorageElement(const mafStorageElement&);
-  mafStorageElement(mafStorageElement&&) noexcept;
-  mafStorageElement& operator=(const mafStorageElement&);
-  mafStorageElement& operator=(mafStorageElement&&) noexcept;
+  mafStorageElement(void* element, io::Reader* storage);
+  mafStorageElement(void* const * elements, size_t numElems, io::Reader* storage);
   ~mafStorageElement();
 
-	mafStorageElement operator[](const mafString& name) const;
+  mafString GetName() const;
+
+  mafStorageElement operator[](const mafString& name) const;
   mafStorageElement operator()(const mafString& name) const;
-  mafStorageElement operator[](std::string_view name) const;
-  mafStorageElement operator()(std::string_view name) const;
   mafStorageElement operator[](size_t idx) const;
 
-	template<typename T>
+  template<typename T>
   auto As() const;
 
-	template <typename T, typename First, typename... Rest>
-  auto As(First&& default_arg, Rest&&... more_default_args) const;
+  io::Reader* GetStorage()  const {return m_Storage;}
 
-  /// @brief Returns value of *this converted to T or T() if this->IsMissing().
-  /// @throw Anything derived from std::exception.
-  /// @note Use as `value.As<T>({})`
-  template <typename T>
-  auto As(DefaultConstructed) const;
+  mafString UpgradeAttribute(const mafString& attribute) const;
 
-  bool      isValid()     const;
-
+  bool      IsValid()     const;
+  bool      isValid() const;
+  void*     GetImpl()     const;
+  size_t    GetNumItems() const;
   size_t    size() const;
 
-  io::Reader* GetStorage() const;
-
-//private:
-  class StorageElemImpl;
-  utilities::FastPImpl<StorageElemImpl, 80, 8> m_impl;
-
-	friend class mafXMLReader;
+protected:
+  void*                                     m_DOMElement;
+  size_t                                    m_NumItems;
+  io::Reader*                             m_Storage;
+  std::map<mafString, std::vector<void*> >  m_Children;
 };
 
 template<typename T>
@@ -64,29 +58,12 @@ auto mafStorageElement::As() const
   return Parse(*this, io::parse::To<T>{});
 }
 
-template <typename T, typename First, typename... Rest>
-auto mafStorageElement::As(First&& default_arg, Rest&&... more_default_args) const {
-  if (isValid())
-  {
-    // intended raw ctor call, sometimes casts
-    // NOLINTNEXTLINE(google-readability-casting)
-    return decltype(As<T>())(std::forward<First>(default_arg), std::forward<Rest>(more_default_args)...);
-  }
-  return As<T>();
-}
-
-template <typename T>
-auto mafStorageElement::As(mafStorageElement::DefaultConstructed) const {
-  return isValid() ? decltype(As<T>())() : As<T>();
-}
-
 namespace io::parse
 {
-  std::string Parse(const mafStorageElement& value, To<std::string>);
-  mafString Parse(const mafStorageElement& value, To<mafString>);
-  intmax_t Parse(const mafStorageElement& value, To<intmax_t>);
-  uintmax_t Parse(const mafStorageElement& value, To<uintmax_t>);
-  double Parse(const mafStorageElement& value, To<double>);
+	mafString Parse(const mafStorageElement& value, io::parse::To<mafString>);
+	intmax_t Parse(const mafStorageElement& value, io::parse::To<intmax_t>);
+	uintmax_t Parse(const mafStorageElement& value, io::parse::To<uintmax_t>);
+	double Parse(const mafStorageElement& value, io::parse::To<double>);
 }
 
 namespace io
@@ -122,28 +99,24 @@ class FTK_IO_EXPORT mafStorageElementBuilder
 public:
   static const size_t npos = size_t(-1);
 
-  mafStorageElementBuilder();
-  mafStorageElementBuilder(const mafStorageElementBuilder&);
-  mafStorageElementBuilder(mafStorageElementBuilder&&) noexcept;
-  mafStorageElementBuilder& operator=(const mafStorageElementBuilder&);
-  mafStorageElementBuilder& operator=(mafStorageElementBuilder&&) noexcept;
+  mafStorageElementBuilder(void* element);
   ~mafStorageElementBuilder();
 
   mafStorageElementBuilder operator[](const mafString& name);
   mafStorageElementBuilder operator()(const mafString& name);
-  mafStorageElementBuilder operator[](std::string_view name);
-  mafStorageElementBuilder operator()(std::string_view name);
   mafStorageElementBuilder operator[](size_t idx);
 
   template<class T>
   int SetValue(const T&);
 
-  bool      isValid()     const;
+  bool      IsValid()     const;
+  void*     GetImpl()     const;
+  size_t    GetNumItems() const;
   size_t    size() const;
 
-//protected:
-  class StorageElemBuildImpl;
-  utilities::FastPImpl<StorageElemBuildImpl, 72, 8> m_impl;
+protected:
+  size_t m_NumItems;
+  void* m_DOMElement;
 };
 
 namespace serializer

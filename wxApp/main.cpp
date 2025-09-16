@@ -9,10 +9,51 @@
 #include <memory>
 #include <fstream>
 #include <libjson/json.h>
+#include <optional>
 
+#include "ftk/Base/FastBimap.h"
+#include "ftk/Base/Log.h"
+#include "ftk/Core/AttributeFactory.h"
+#include "ftk/Core/Node.h"
+#include "ftk/Core/Node0.h"
+#include "ftk/Core/Node1.h"
 #include "ftk/IO/StorageElement.h"
-#include "mafDefines.h" 
+#include "mafDefines.h"
 
+#include "parse.h"
+#include "serialize.h"
+#include "jsonrapid.h"
+#include "xmlxerces.h"
+#include "xmlrapid.h"
+
+
+#include "tree.hpp"
+
+#include <fstream>
+#include <iostream>
+
+
+using namespace Tree_AG;
+
+//
+// FOR SERIALIZATION:
+//   I NEED TO MANUALLY REGISTER THE INSTANTATION OF TEMPLATE
+//   INCLUDE THE NEEDED #include 
+//
+using namespace std;
+BOOST_CLASS_EXPORT_GUID(Node, "node");
+BOOST_CLASS_EXPORT_GUID(Inner< string >, "inner_string");
+BOOST_CLASS_EXPORT_GUID(Inner< int >, "inner_int");
+BOOST_CLASS_EXPORT_GUID(Inner< double >, "inner_double");
+BOOST_CLASS_EXPORT_GUID(Leaf< int >, "leaf_int");
+BOOST_CLASS_EXPORT_GUID(Leaf< string >, "leaf_string");
+BOOST_CLASS_EXPORT_GUID(Leaf< double >, "leaf_double");
+
+//
+
+
+
+#ifdef OLD_IO_TEST
 namespace utils {
 
 #if (__cpp_lib_void_t >= 201411 && !defined(__clang__)) || defined(DOXYGEN)
@@ -346,6 +387,7 @@ namespace Structure
 	}
 
 }
+#endif
 
 class App : public wxApp
 {
@@ -364,7 +406,108 @@ public:
 
     bool OnInit() override
     {
-// 		auto p = new uint8_t[1024];
+		{
+			LOG_DEBUG() << "bla";
+			constexpr utilities::TrivialBiMap colors = [](auto selector)
+				{
+					return selector()
+						.Case("red", 1 )
+						.Case("green", 2);
+				};
+			auto s1 = colors.TryFind(2);
+			auto s2 = colors.TryFind("red");
+		}
+		if (0)
+			{
+				Inner<std::string> root("root");
+
+				Leaf<std::string>* l = new Leaf<std::string>("leaf test son of root");
+				root.add_child(l);
+
+				Inner<std::string>* is = new Inner<std::string>("inner test son of root");
+				root.add_child(is);
+
+				Leaf<int>* li = new Leaf<int>(10);
+				is->add_child(li);
+
+				Inner<int>* n1 = new Inner<int>(1);
+				root.add_child(n1);
+
+				//std::cout << std::endl << "******** Depth first visit" << std::endl;
+				//depth_first(root);
+
+
+				std::cout << std::endl << "******** Serializing" << std::endl;
+
+				// create and open a character archive for output
+				std::ofstream ofs("D:\\Downloads\\cras\\cras.tst");
+				boost::archive::text_oarchive oa(ofs);
+				// write class instance to archive
+				oa << root;
+
+				std::cout << std::endl << "******** Done" << std::endl;
+
+			}
+			model::data::AttributeFactory::Initialize();
+			{
+		    //mafXMLWriter writer(_R("MSF"), _R("2.2"));
+				//writer.Save(_R("D:\\Downloads\\cras\\crash.msf"));
+	    }
+	    {
+				auto node = model::data0::Node::Create("");
+				io::Reader reader(_R("MSF"), _R("2.2"));
+				//reader.Load(_R("D:\\Downloads\\cras\\cras.msf"));
+				reader.Load(_R("D:\\Downloads\\Session 1\\sujet4LHP\\sujet4LHP.msf"));
+				auto nd = reader.GetRoot()[_R("Root")].As<model::data0::Node>();
+				std::unordered_map<model::data0::Node*, size_t> oid;
+			for (auto& node : *nd)
+			{
+				size_t id = oid.size();
+				oid.emplace(&node, id);
+			}
+				auto e1 = reader.GetRoot()[_R("Root")](_R("MaxNodeId")).As<int>();
+				auto vx = io::xmlrapid::Value::FromFile("D:\\Downloads\\cras\\cras.msf");
+	    	auto m1 = vx["MSF"]["Root"]("MaxNodeId").As<int>();
+	    	//auto m2 = vx["MSF"]["Root"]["Length"].As<std::string>();
+	    	vx.Store("D:\\Downloads\\cras\\crash.msf");
+	    }
+			/*io::jsonrapid::Value v;
+			auto v1 = v[1];
+			auto v2 = v["bla"];
+			auto e1 = v.As<int>();
+			auto e2 = v.As<unsigned>();
+			auto e3 = v.As<long>();
+			auto e4 = v.As<long long>();
+			auto e5 = v.As<unsigned long long>();
+			auto e6 = v.As<bool>();
+			auto e7 = v.As<double>();
+			auto e8 = v.As<float>();
+			auto e9 = v.As<std::string>();*/
+			//io::rapidjson::ValueBuilder b1(e1);
+			//io::rapidjson::ValueBuilder b6(e6);
+			//auto ea = v.as<std::exception>();
+
+			io::xmlxerces::ValueBuilder builder;
+			builder["MSF"]("Version") = "2.2";
+			builder["MSF"]["Root"]["v1"] = (unsigned long)5;
+			//builder["MSF"]("Flag") = true;
+			builder["MSF"]["Root"]["Length"] = "2.2";
+			builder["MSF"]["Root"]["Width"] = 2;
+			auto bb = builder["MSF"]["Root"];
+    	bb["W"][0] = "First";
+			builder["MSF"]["Root"]["W"][1] = "Second";
+			//builder["MSF"]["Root"] = 2;
+			//builder["MSF"]["Root3"] = 2;
+			//vx.Store("D:\\Downloads\\cras\\crash.msf");
+		  //auto b2 = builder["MSF"]["Root"]["Attributes"]["Item"][0] = "LHDL";
+			//builder.extractValue().Store("D:\\Downloads\\cras\\crash.msf");
+			builder.extractValue().Store("D:\\Downloads\\cras\\crash.json");
+			auto vv = builder.extractValue()["MSF"]("Version").As<std::string>();
+
+    	if (!wxApp::OnInit())
+				return false;
+
+			// 		auto p = new uint8_t[1024];
 // 		auto newCam = std::make_unique<Structure::Job>();
 
 		{
@@ -387,9 +530,6 @@ public:
 		//restore.SetURL(_R("sample_.xml"));
 		//restore.Store(&job);
 
-
-        if (!wxApp::OnInit())
-            return false;
 
         auto frame = ftk::CreateFrame();
         frame->Show();
