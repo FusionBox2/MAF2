@@ -1,9 +1,5 @@
 #pragma once
 
-/** Standard macros and constants for the MAF library.
-  This file include all the standard macros and constants used inside the MAF
-  library.
-*/
 //----------------------------------------------------------------------------
 // Pragmas: disable the "singned/unsigned mismatch" warning
 //----------------------------------------------------------------------------
@@ -22,24 +18,17 @@
 #endif
 #endif
 
+#include "ftk/Base/Log.h"
+
 #include <string.h>
 #include <typeinfo>
 #include <iosfwd>
 #include <sstream>
-//----------------------------------------------------------------------------
-// forward declarations :
-//----------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-// Typedefs
-//------------------------------------------------------------------------------
 typedef double mafTimeStamp; ///< type for time varying data timestamps (not for pipelines timestamps!)
 typedef intptr_t mafID; ///< type for IDs inside MAF @todo to be changed to support 64bit IDs
 typedef std::type_info mafTypeID; ///< type for mafObject's class type IDs
 
-//------------------------------------------------------------------------------
-// Constants
-//------------------------------------------------------------------------------
 enum MAF_EXPORT MAF_RETURN_VALUES_ID
 {
   MAF_OK = 0,
@@ -66,37 +55,10 @@ class mafDeviceButtonsPadMouse;
 MAF_EXPORT mafDeviceButtonsPadMouse *GetGlobalMouse();
 MAF_EXPORT void SetGlobalMouse(mafDeviceButtonsPadMouse *);
 
-class MAF_EXPORT mafMessageBuf
-{
-public:
-    explicit mafMessageBuf(const char *buf)
-        : m_buf(buf)
-    {}
-    const char* GetBuf() const { return m_buf; }
-    mafMessageBuf& operator=(const mafMessageBuf& other)
-    {
-        m_buf = other.m_buf;
-        return *this;
-    }
-private:
-    mafMessageBuf(const wxString& str);
-    mafMessageBuf& operator=(const wxString& str);
-    mafMessageBuf& operator=(const char* buf);
-    const char* m_buf;
-};
-MAF_EXPORT mafMessageBuf _M(const char* s);
 
 //------------------------------------------------------------------------------
 // Global Functions
 //------------------------------------------------------------------------------
-/** write a message in the log area */
-MAF_EXPORT void mafLogMessage(mafMessageBuf msg);
-/** open a warning dialog and write a message */
-MAF_EXPORT void mafWarningMessage(mafMessageBuf msg);
-/** open an error dialog and write a message */
-MAF_EXPORT void mafErrorMessage(mafMessageBuf msg);
-/** open a message dialog and write a message */
-MAF_EXPORT void mafMessage(mafMessageBuf msg);
 /** 
   reliable comparison test for floating point numbers. Extracted from article:
   "Work Around Floating-Point Accuracy/Comparison Problems" Article ID: Q69333
@@ -158,53 +120,4 @@ MAF_EXPORT void mafSleep(int msec);
   std::cerr << "Test failed at line " \
   << __LINE__ << " : " << #a << std::endl; \
   return MAF_ERROR; \
-}
-
-/** 
-  Macro for printing Warning messages in log area. This macro also
-  displays line at which error was printed. */
-#define mafWarningMacro(x) \
-{ \
-  std::stringstream msg; \
-  msg << "Warning in: " __FILE__ ", line " << __LINE__ << "\n" x \
-    << "\n"; \
-  mafLogMessage(_M(msg.str().c_str()));\
-}
-
-/** 
-  Macro for printing Error messages in log area. This macro also
-  displays line at which error was printed. */
-#define mafErrorMacro(x) \
-{ \
-  std::stringstream msg; \
-  msg << "Error in: " __FILE__ ", line " << __LINE__ << "\n" x \
-    << "\n"; \
-  mafLogMessage(_M(msg.str().c_str()));\
-}
-
-/** 
-  Macro for displaying Warning messages.*/
-#define mafWarningMessageMacro(x) \
-{ \
-  std::stringstream msg; \
-  msg << x << "\n"; \
-  mafWarningMessage(_M(msg.str().c_str()));\
-}
-
-/** 
-  Macro for displaying Error messages. */
-#define mafErrorMessageMacro(x) \
-{ \
-  std::stringstream msg; \
-  msg << x << "\n"; \
-  mafErrorMessage(_M(msg.str().c_str()));\
-}
-
-/** 
-  Macro for displaying messages. */
-#define mafMessageMacro(x) \
-{ \
-  std::stringstream msg; \
-  msg << x << "\n"; \
-  mafMessage(_M(msg.str().c_str()));\
 }

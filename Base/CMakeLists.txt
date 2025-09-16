@@ -8,6 +8,8 @@ PROJECT(mafBase)
 # Set your list of sources here.
 SET(PROJECT_SRCS
 	../ftk/Base/FastPImpl.h
+	../ftk/Base/Log.cpp
+	../ftk/Base/Log.h
 	../ftk/Base/Meta.h
 	../ftk/Base/MTime.cpp
 	../ftk/Base/MTime.h
