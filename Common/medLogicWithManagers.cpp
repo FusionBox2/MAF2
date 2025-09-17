@@ -1,7 +1,7 @@
 #include "medLogicWithManagers.h"
 
 #include "mafGUIContextualMenu.h"
-#include "ftk/Gui/ViewFrame.h"
+#include "ftk/Gui/wx/ViewFrame.h"
 #include "mafViewManager.h"
 #include "mafOpManager.h"
 #include "medWizardManager.h"

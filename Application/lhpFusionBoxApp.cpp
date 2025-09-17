@@ -21,14 +21,11 @@
 #include <wx/datetime.h>
 #include <wx/config.h>
 
-#include "mafDefines.h"
 #include "mafDecl.h"
-
-#include "mafDefines.h"
 
 #include "ftk/VME/VMEFactory.h"
 #include "mafPics.h"
-#include "ftk/Gui/MainFrame.h"
+#include "ftk/Gui/wx/MainFrame.h"
 #include "ftk/Interaction/InteractionFactory.h"
 
 #include "ftk/Core/AttributeFactory.h"

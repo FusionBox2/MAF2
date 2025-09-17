@@ -41,9 +41,9 @@
 #include "mafSideBar.h"
 
 #include "mafGUIDialogFindVme.h"
-#include "ftk/Gui/MainFrame.h"
-#include "ftk/Gui/ViewFrame.h"
-#include "mafGUICheckTree.h"
+#include "ftk/Gui/wx/MainFrame.h"
+#include "ftk/Gui/wx/ViewFrame.h"
+#include "ftk/Gui/wx/CheckTree.h"
 #include "mafGUITimeBar.h"
 #include "mafGUIMaterialChooser.h"
 #include "mafGUILocaleSettings.h"

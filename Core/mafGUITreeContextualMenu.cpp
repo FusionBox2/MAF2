@@ -13,7 +13,7 @@
 #include "mafViewVTK.h"
 #include "mafSceneNode.h"
 #include "mafSceneGraph.h"
-#include "mafGUICheckTree.h"
+#include "ftk/Gui/wx/CheckTree.h"
 #include "mafGUIApplicationLayoutSettings.h"
 
 //#include "mafGUIBitmaps.h"

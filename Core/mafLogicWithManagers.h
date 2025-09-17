@@ -15,7 +15,7 @@
 #include "mafSideBar.h"
 #include <wx/notebook.h>
 #include <wx/icon.h>
-#include "ftk/Gui/MainFrame.h"
+#include "ftk/Gui/wx/MainFrame.h"
 
 
 class mafView;

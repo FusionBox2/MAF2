@@ -1,4 +1,4 @@
-#include "mafGUITree.h"
+#include "ftk/Gui/wx/Tree.h"
 #include "mafDecl.h"
 #include "mafPics.h"
 #include "mafNode.h"

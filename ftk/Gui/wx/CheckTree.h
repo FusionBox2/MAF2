@@ -1,9 +1,9 @@
 #pragma once
-//----------------------------------------------------------------------------
-// Include:
-//----------------------------------------------------------------------------
+
 #include "ftkConfigure.h"
-#include "mafGUITree.h"
+
+#include "ftk/Gui/wx/Tree.h"
+
 #include "mafPics.h"
 #include <wx/imaglist.h>
 #include <wx/treectrl.h>

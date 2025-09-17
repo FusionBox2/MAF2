@@ -1,34 +1,17 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafSideBar
- Authors: Silvano Imboden
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
+#include "ftkConfigure.h"
 
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafSideBar_H__
-#define __mafSideBar_H__
-//----------------------------------------------------------------------------
-// Include:
-//----------------------------------------------------------------------------
 #include <wx/notebook.h>
 #include <wx/splitter.h>
-#include <wx/utils.h>
 
 #include "mafEvent.h"
 #include "mafEventSender.h"
 #include "mafBaseEventHandler.h"
-#include "mafGUICheckTree.h"
-//----------------------------------------------------------------------------
-// forward reference
-//----------------------------------------------------------------------------
+#include "ftk/Gui/wx/CheckTree.h"
+
+BEGIN_FTK_NAMESPACE
+
 class mafGUIHolder;
 class mafGUI;
 class mafGUIPanelStack;
@@ -40,11 +23,7 @@ using mafNode = model::data::Node;
 class mafView;
 class mafGUINamedPanel;
 class mafGUISplittedPanel;
-//----------------------------------------------------------------------------
-// mafSideBar :
-//----------------------------------------------------------------------------
-/**
-*/
+
 class MAF_EXPORT mafSideBar : public mafEventSender
 {
 public:
@@ -143,4 +122,5 @@ protected:
 
   int m_Style;
 };
-#endif
+
+END_FTK_NAMESPACE

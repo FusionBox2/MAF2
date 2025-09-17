@@ -9,7 +9,7 @@
 #include <wx/aui/aui.h>
 #include <wx/artprov.h>
 
-#include <ftk/Gui/ViewFrame.h>
+#include <ftk/Gui/wx/ViewFrame.h>
 
 BEGIN_FTK_NAMESPACE
 

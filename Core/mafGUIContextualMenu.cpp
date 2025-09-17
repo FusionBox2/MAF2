@@ -36,7 +36,7 @@
 #include "mafView.h"
 #include "mafViewVTK.h"
 #include "mafViewCompound.h"
-#include "ftk/Gui/ViewFrame.h"
+#include "ftk/Gui/wx/ViewFrame.h"
 #include "mafGUIDialog.h"
 #include "mafGUI.h"
 #include "mafPipe.h"

@@ -36,8 +36,8 @@ SET(PROJECT_SRCS
   mafGUIButton.h
   mafGUICheckListBox.cpp
   mafGUICheckListBox.h
-  mafGUICheckTree.cpp
-  mafGUICheckTree.h
+  ../ftk/Gui/wx/CheckTree.cpp
+  ../ftk/Gui/wx/CheckTree.h
   mafGUIColorSwatch.cpp
   mafGUIColorSwatch.h
   mafGUIColorWidget.cpp
@@ -64,8 +64,8 @@ SET(PROJECT_SRCS
   mafGUIMeasureUnitSettings.h
   mafGUIMovieCtrl.cpp
   mafGUIMovieCtrl.h
-  ../ftk/Gui/MainFrame.h
-  ../ftk/Gui/ViewFrame.h
+  ../ftk/Gui/wx/MainFrame.h
+  ../ftk/Gui/wx/ViewFrame.h
   mafGUIMutexPanel.cpp
   mafGUIMutexPanel.h
   mafGUINamedPanel.cpp
@@ -88,8 +88,8 @@ SET(PROJECT_SRCS
   mafGUISplittedPanel.h
   mafGUITimeBar.cpp
   mafGUITimeBar.h
-  mafGUITree.cpp
-  mafGUITree.h
+  ../ftk/Gui/wx/Tree.cpp
+  ../ftk/Gui/wx/Tree.h
   mafGUIValidator.cpp
   mafGUIValidator.h
   mafGUIViewWin.cpp

@@ -5,8 +5,8 @@
 #include "mafNode.h"
 #include "mafVMERoot.h"
 
-#include "ftk/Gui/MainFrame.h"
-#include "ftk/Gui/ViewFrame.h"
+#include "ftk/Gui/wx/MainFrame.h"
+#include "ftk/Gui/wx/ViewFrame.h"
 #include "mafViewVTK.h"
 #include "mafViewCompound.h"
 

@@ -34,7 +34,7 @@
 #include "mafGUIDialog.h"
 #include "mafGUIButton.h"
 #include "mafGUIHolder.h"
-#include "mafGUITree.h"
+#include "ftk/Gui/wx/Tree.h"
 #include "mafGUICheckListBox.h"
 
 #include "mafEvent.h"

@@ -1,4 +1,4 @@
-#include "mafGUICheckTree.h" 
+#include "ftk/Gui/wx/CheckTree.h" 
 #include "mafDecl.h"
 #include "mafView.h"
 #include "mafPics.h" 

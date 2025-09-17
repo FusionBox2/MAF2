@@ -26,7 +26,7 @@
 #include "mafGUIApplicationLayoutSettings.h"
 #include "mafDecl.h"
 #include "mafGUI.h"
-#include "ftk/Gui/MainFrame.h"
+#include "ftk/Gui/wx/MainFrame.h"
 #include "mafViewManager.h"
 #include "mafViewVTK.h"
 
