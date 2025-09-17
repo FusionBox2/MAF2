@@ -66,8 +66,6 @@ SET(PROJECT_SRCS
   mafGUIMovieCtrl.h
   ../ftk/Gui/wx/MainFrame.h
   ../ftk/Gui/wx/ViewFrame.h
-  mafGUIMutexPanel.cpp
-  mafGUIMutexPanel.h
   mafGUINamedPanel.cpp
   mafGUINamedPanel.h
   ../ftk/Gui/wx/Panel.h
