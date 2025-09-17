@@ -6,7 +6,11 @@
 //----------------------------------------------------------------------------
 class mafView;
 class mafEvent;
-class mafGUICheckTree;
+namespace gui::wx
+{
+	class CheckTree;
+}
+using mafGUICheckTree = gui::wx::CheckTree;
 namespace model::data
 {
 	class Node;
@@ -41,7 +45,6 @@ protected:
 
   mafSceneGraph *m_SceneGraph;
   
-  bool m_Autosort;
   bool m_CryptoCheck;
 
   /** Enable/disable crypto for a subtree. */

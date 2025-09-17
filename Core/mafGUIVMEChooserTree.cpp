@@ -15,10 +15,6 @@
 //----------------------------------------------------------------------------
 // EVENT_TABLE
 //----------------------------------------------------------------------------
-BEGIN_EVENT_TABLE(mafGUIVMEChooserTree,wxPanel)
-  EVT_TREE_SEL_CHANGED(ID_TREE, mafGUIVMEChooserTree::OnSelectionChanged)
-END_EVENT_TABLE()
-
 //----------------------------------------------------------------------------
 mafGUIVMEChooserTree::mafGUIVMEChooserTree( wxWindow *parent, mafGUICheckTree *tree, ValidateCallBackType vme_accept_function,wxWindowID id, bool CloseButton, bool HideTitle, long style, bool multiSelect)
 :mafGUICheckTree(parent, id, CloseButton, HideTitle)
@@ -234,7 +230,7 @@ void mafGUIVMEChooserTree::OnSelectionChanged(wxTreeEvent& event)
   i = event.GetItem();
   if(i.IsOk())
   {
-    m_ChoosedNode = static_cast<mafGUICheckTreeItemData*>(m_NodeTree->GetItemData(i))->GetSharedNode().get();
+    m_ChoosedNode = static_cast<CheckTreeItemData*>(m_NodeTree->GetItemData(i))->GetSharedNode().get();
   }
   event.Skip();
 
@@ -261,7 +257,7 @@ void mafGUIVMEChooserTree::OnSelectionChanged(wxTreeEvent& event)
 void mafGUIVMEChooserTree::OnIconClick(wxTreeItemId item)
 //----------------------------------------------------------------------------
 {
-  auto vme = static_cast<mafGUICheckTreeItemData*>(m_NodeTree->GetItemData(item))->GetSharedNode();
+  auto vme = static_cast<CheckTreeItemData*>(m_NodeTree->GetItemData(item))->GetSharedNode();
   VmeUpdateIcon(vme.get());
 
   bool enable_ok = GetChoosedNode().size() > 0;
@@ -283,25 +279,25 @@ void mafGUIVMEChooserTree::CloneSubTree(mafGUICheckTree *source_tree, wxTreeItem
   wxTreeItemId current_item;
   bool         expanded = source_tree->GetTree()->IsExpanded(*source_item);
 
-  auto sourceVME = static_cast<mafGUICheckTreeItemData*>(m_NodeTree->GetItemData(*source_item))->GetSharedNode();
+  auto sourceVME = static_cast<CheckTreeItemData*>(m_NodeTree->GetItemData(*source_item))->GetSharedNode();
 
   if (dest_parent_item == nullptr)
   {
     m_NodeTree->DeleteAllItems();
-    current_item = m_NodeTree->AddRoot(text,image,image, new mafGUICheckTreeItemData(node, sourceVME));
+    current_item = m_NodeTree->AddRoot(text,image,image, new CheckTreeItemData(node, sourceVME));
   }
   else
   {
     if (m_ChooserTreeStyle == REPRESENTATION_AS_TREE)
     {
-      current_item = m_NodeTree->AppendItem(*dest_parent_item,text,image,image, new mafGUICheckTreeItemData(node, sourceVME));
+      current_item = m_NodeTree->AppendItem(*dest_parent_item,text,image,image, new CheckTreeItemData(node, sourceVME));
     }
     else 
     {
       // Flat tree of acceptable VMEs
       if (image == NODE_VISIBLE_ON)
       {
-        m_NodeTree->AppendItem(m_NodeTree->GetRootItem(),text,image,image, new mafGUICheckTreeItemData(node, sourceVME));
+        m_NodeTree->AppendItem(m_NodeTree->GetRootItem(),text,image,image, new CheckTreeItemData(node, sourceVME));
       }
       current_item = m_NodeTree->GetRootItem();
     }
@@ -328,7 +324,7 @@ void mafGUIVMEChooserTree::CloneSubTree(mafGUICheckTree *source_tree, wxTreeItem
     m_NodeTree->Expand(current_item);
     m_NodeTree->SortChildren(current_item);
   }
-  mafGUITreeTableElement *el = new mafGUITreeTableElement( current_item );  
+  TreeTableElement *el = new TreeTableElement( current_item );  
   m_NodeTable->Put(node, el);
 }
 //----------------------------------------------------------------------------

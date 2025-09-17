@@ -59,7 +59,11 @@ namespace model::data
 using mafNode = model::data::Node;
 class mafGUIDialog;
 class mafGUI;
-class mafGUITree;
+namespace gui::wx
+{
+    class Tree;
+}
+using mafGUITree = gui::wx::Tree;
 class mafGUICheckListBox;
 class mafGUIHolder;
 class mafGUINamedPanel;

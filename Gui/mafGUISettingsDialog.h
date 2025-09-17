@@ -28,7 +28,11 @@
 //----------------------------------------------------------------------------
 // forward declarations :
 //----------------------------------------------------------------------------
-class mafGUITree;
+namespace gui::wx
+{
+	class Tree;
+}
+using mafGUITree = gui::wx::Tree;
 class mafGUI;
 class mafGUIHolder;
 class mafGUIBitmaps;

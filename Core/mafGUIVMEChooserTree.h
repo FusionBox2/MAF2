@@ -81,7 +81,5 @@ protected:
   long       m_ChooserTreeStyle;
   std::vector<mafNode* > m_CheckedNode; ///< Vector of checked node (used in multi-selection)
   bool m_MultipleSelection; ///< Flag that manage the single or multi selection of the nodes inside the tree.
-
-  DECLARE_EVENT_TABLE()
 };
 #endif

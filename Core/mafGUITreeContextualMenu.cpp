@@ -36,7 +36,6 @@ enum TREE_CONTEXTUAL_MENU_ID
 		RMENU_SHOW_SAMETYPE,
 		RMENU_HIDE_SUBTREE,
 		RMENU_HIDE_SAMETYPE,
-		RMENU_AUTO_SORT,
     RMENU_CRYPT_VME, 
     RMENU_ENABLE_CRYPT_SUBTREE, 
     RMENU_DISABLE_CRYPT_SUBTREE,
@@ -61,7 +60,6 @@ mafGUITreeContextualMenu::mafGUITreeContextualMenu()
   m_NodeTree    = NULL;
   m_SceneGraph  = NULL;
 
-  m_Autosort    = false;
   m_CryptoCheck = false;
 }
 //----------------------------------------------------------------------------
@@ -159,14 +157,6 @@ void mafGUITreeContextualMenu::CreateContextualMenu(mafGUICheckTree *tree, mafVi
 	}
 
   m_NodeTree = tree;
-  if (m_NodeTree != NULL)
-  {
-    // m_NodeTree == NULL should be only in test mode.
-	  m_Autosort = m_NodeTree->GetAutoSort();
-	
-		this->Append(RMENU_AUTO_SORT,	"Sort nodes alphabetically","",true);
-		this->FindItem(RMENU_AUTO_SORT)->Check(m_Autosort);
-  }
 }
 //----------------------------------------------------------------------------
 void mafGUITreeContextualMenu::ShowContextualMenu()
@@ -232,11 +222,6 @@ void mafGUITreeContextualMenu::OnContextualMenu(wxCommandEvent &event)
     case RMENU_DISABLE_CRYPT_SUBTREE:
       CryptSubTree(false);
     break;
-		case RMENU_AUTO_SORT:
- 			m_Autosort = !m_Autosort;
-      m_NodeTree->SetAutoSort(m_Autosort);
-      m_NodeTree->SortSubTree();
-		break;
 		default:
 			assert(false);
 		break;

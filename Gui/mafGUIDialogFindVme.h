@@ -24,7 +24,11 @@
 //----------------------------------------------------------------------------
 // forward declarations
 //----------------------------------------------------------------------------
-class mafGUICheckTree;
+namespace gui::wx
+{
+	class CheckTree;
+}
+using mafGUICheckTree = gui::wx::CheckTree;
 class mafVMERoot;
 
 /** mafGUIDialogFindVme - a dialog widget with a find VME GUI.
