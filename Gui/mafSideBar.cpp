@@ -5,7 +5,7 @@
 #include "mafGUI.h"
 #include "mafGUIHolder.h"
 #include "mafGUIPanelStack.h"
-#include "mafGUIPanel.h"
+#include "ftk/Gui/wx/Panel.h"
 #include "mafGUISplittedPanel.h"
 
 #include "mafVME.h"

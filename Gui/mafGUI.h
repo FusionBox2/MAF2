@@ -22,7 +22,7 @@
 #include "wx/grid.h"
 #include "wx/listctrl.h"
 #include "mafDecl.h"
-#include "mafGUIPanel.h"
+#include "ftk/Gui/wx/Panel.h"
 #include "mafEvent.h"
 #include "mafEventSender.h"
 #include "mafBaseEventHandler.h"

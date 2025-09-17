@@ -23,7 +23,7 @@
 #include "mafEvent.h"
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"
-#include "mafGUIPanel.h"
+#include "ftk/Gui/wx/Panel.h"
 
 //----------------------------------------------------------------------------
 // mafGUIListBox :

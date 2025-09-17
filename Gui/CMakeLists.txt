@@ -70,8 +70,7 @@ SET(PROJECT_SRCS
   mafGUIMutexPanel.h
   mafGUINamedPanel.cpp
   mafGUINamedPanel.h
-  mafGUIPanel.cpp
-  mafGUIPanel.h
+  ../ftk/Gui/wx/Panel.h
   mafGUIPanelStack.cpp
   mafGUIPanelStack.h
   mafGUIPicButton.cpp

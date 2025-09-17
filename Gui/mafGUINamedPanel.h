@@ -5,7 +5,7 @@
 #include "mafDefines.h"
 #include "ftk/Base/String.h"
 #include "mafGUILab.h"
-#include "mafGUIPanel.h"
+#include "ftk/Gui/wx/Panel.h"
 
 BEGIN_FTK_NAMESPACE
 

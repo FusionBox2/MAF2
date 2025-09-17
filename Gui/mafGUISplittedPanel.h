@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 #include <wx/laywin.h>
 #include "mafDefines.h"
-#include "mafGUIPanel.h"
+#include "ftk/Gui/wx/Panel.h"
 
 //----------------------------------------------------------------------------
 // mafGUISplittedPanel :

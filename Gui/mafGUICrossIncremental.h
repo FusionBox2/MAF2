@@ -20,7 +20,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "mafGUIPanel.h"
+#include "ftk/Gui/wx/Panel.h"
 #include "mafEventSender.h"
 #include "mafBaseEventHandler.h"
 #include "ftk/Base/String.h"

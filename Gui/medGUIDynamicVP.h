@@ -21,7 +21,7 @@
 #include "mafEvent.h"
 #include "mafEventSender.h"
 #include "mafBaseEventHandler.h"
-#include "mafGUIPanel.h"
+#include "ftk/Gui/wx/Panel.h"
 
 //----------------------------------------------------------------------------
 // forward references :

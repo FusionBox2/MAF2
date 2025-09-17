@@ -19,7 +19,7 @@
 // Include:
 //----------------------------------------------------------------------------
 #include <wx/laywin.h>
-#include "mafGUIPanel.h"
+#include "ftk/Gui/wx/Panel.h"
 #include <stack>
 /**
   class name:  mafGUIPanelStack

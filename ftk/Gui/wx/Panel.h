@@ -11,6 +11,11 @@
 
 BEGIN_FTK_NAMESPACE
 
-using mafGUIPanel = wxPanel;
+namespace gui::wx
+{
+	using Panel = wxPanel;
+}
+
+using mafGUIPanel = gui::wx::Panel;
 
 END_FTK_NAMESPACE
