@@ -1,27 +1,16 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafGUIPanel
- Authors: Silvano Imboden
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
+#include "ftkConfigure.h"
 
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafGUIPanel_H__
-#define __mafGUIPanel_H__
-//----------------------------------------------------------------------------
-// Include:
-//----------------------------------------------------------------------------
-#include "mafDecl.h"
-/** 
-  class name: mafGUIPanel
-   Inherits directly from wxPanel and adds the pointer to the next panel
-*/
-using mafGUIPanel = wxPanel;
+#ifdef MAF_USE_WX
+#include "wx/wxprec.h"
+#ifndef WX_PRECOMP
+#include "wx/wx.h"
 #endif
+#endif
+
+BEGIN_FTK_NAMESPACE
+
+using mafGUIPanel = wxPanel;
+
+END_FTK_NAMESPACE

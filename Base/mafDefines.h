@@ -10,11 +10,11 @@
 // Includes: mafConfigure should be first, mafIncludeWX second
 //----------------------------------------------------------------------------
 #include "mafConfigure.h"
+
 #ifdef MAF_USE_WX
-#ifdef WX_PRECOMP
-#include "wx/wxprec.h"  //originally was the first line of any lal cpp file 
-#else
-#include "wx/wx.h"      //originally was the first line of any lal header file 
+#include "wx/wxprec.h"
+#ifndef WX_PRECOMP
+#include "wx/wx.h"
 #endif
 #endif
 

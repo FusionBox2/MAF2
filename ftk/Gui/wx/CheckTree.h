@@ -20,7 +20,7 @@ class mafView;
 
 namespace gui::wx
 {
-    class MAF_EXPORT CheckTree : public Tree
+    class FTK_GUI_EXPORT CheckTree : public Tree
     {
     public:
         class CheckTreeItemData : public TreeItemData

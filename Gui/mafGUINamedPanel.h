@@ -1,26 +1,13 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafGUINamedPanel
- Authors: Silvano Imboden
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
+#include "ftkConfigure.h"
 
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafGUINamedPanel_H__
-#define __mafGUINamedPanel_H__
-//----------------------------------------------------------------------------
-// Include:
-//----------------------------------------------------------------------------
+#include "mafDefines.h"
+#include "ftk/Base/String.h"
 #include "mafGUILab.h"
 #include "mafGUIPanel.h"
-#include "mafDefines.h"
+
+BEGIN_FTK_NAMESPACE
 
 /**
  Class Name: mafGUINamedPanel.
@@ -69,4 +56,5 @@ protected:
   /** Event Table Declaration*/
   DECLARE_EVENT_TABLE()
 };
-#endif
+
+END_FTK_NAMESPACE
