@@ -2187,7 +2187,6 @@ void mafLogicWithManagers::TreeContextualMenu(mafEvent &e)
   mafView *v = m_logic->m_ViewManager->GetSelectedView();
   auto vme = mafVME::StaticDownCast(e.GetVme());
   bool vme_menu = e.GetBool();
-  bool autosort = e.GetArg() != 0;
   contextMenu->CreateContextualMenu((mafGUICheckTree *)e.GetSender(),v,vme,vme_menu);
   contextMenu->ShowContextualMenu();
 }

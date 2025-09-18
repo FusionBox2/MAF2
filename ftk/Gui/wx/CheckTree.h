@@ -4,8 +4,6 @@
 
 #include "ftk/Gui/wx/Tree.h"
 
-#include "mafPics.h"
-#include <wx/imaglist.h>
 #include <wx/treectrl.h>
 #include <map>
 
@@ -103,32 +101,23 @@ namespace gui::wx
         wxBitmap MergeIcons(wxBitmap state, wxBitmap vme);
 
     public:
-        /** Called by the Custom-Tree-Event-Handler */
+
         void OnMouseDown(wxMouseEvent& event);
 
-        /** Called by the Custom-Tree-Event-Handler */
-        void OnMouseUp(wxMouseEvent& event);
+    	void OnMouseUp(wxMouseEvent& event);
 
-        /** Called by the Custom-Tree-Event-Handler */
-        void OnMouseEvent(wxMouseEvent& event);
-
-        /** Called by the Custom-Tree-Event-Handler - via OnMouseDown*/
         virtual void OnIconClick(wxTreeItemId item);
 
-        /** Called by the Custom-Tree-Event-Handler */
         virtual void ShowContextualMenu(wxMouseEvent& event);
 
-        /** respond to Selection Changed */
         void OnSelectionChanged(wxTreeEvent& event) override;
 
     protected:
-        mafView* m_View;
-        mafNode* m_SelectedNode;
-        //bool      m_CheckCrypto;
-        bool     m_CanSelect;
-        wxMenu* m_RMenu;
+        mafView* m_View = nullptr;
+        mafNode* m_SelectedNode = nullptr;
+        bool     m_CanSelect = true;
 
-        typedef std::map<mafString, int> MapClassNameToIcon;
+        using MapClassNameToIcon = std::map<mafString, int> ;
         MapClassNameToIcon m_MapClassNameToIcon;
     };
 }

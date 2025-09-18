@@ -944,7 +944,7 @@ void mafInteractionManager::AddDeviceToTree(mafDevice *device,mafDeviceSet *pare
 {
   assert(device);
   mafID parent_id=(parent?parent->GetID():0);
-  m_DeviceTree->AddNode(device->GetID(),parent_id,device->GetName().toWx());
+  m_DeviceTree->AddNode(device->GetID(),parent_id,device->GetName());
   //m_DeviceTree->Update();
 }
 
@@ -975,7 +975,7 @@ void mafInteractionManager::UpdateDevice(mafDevice *device)
 //----------------------------------------------------------------------------
 {
   assert(device);
-  m_DeviceTree->SetNodeLabel(device->GetID(),device->GetName().toWx());
+  m_DeviceTree->SetNodeLabel(device->GetID(),device->GetName());
 }
 //SIL. 07-jun-2006 : -- heavily changed
 //----------------------------------------------------------------------------

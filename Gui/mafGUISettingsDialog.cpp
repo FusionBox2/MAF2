@@ -103,7 +103,7 @@ void mafGUISettingsDialog::AddRoot()
   page->ui = new mafGUI(this);
   m_List.push_back(page);
 
-  m_Tree->AddNode((intptr_t)page,0,page->label,0);
+  m_Tree->AddNode((intptr_t)page,0,mafWxToString(page->label),0);
 }
 //----------------------------------------------------------------------------
 void mafGUISettingsDialog::AddPage(mafGUI *ui, wxString label, wxString parent_label)
@@ -120,7 +120,7 @@ void mafGUISettingsDialog::AddPage(mafGUI *ui, wxString label, wxString parent_l
   page->ui = ui;
   m_List.push_back(page);
   
-  m_Tree->AddNode((intptr_t)page,(intptr_t)parent,label,0);
+  m_Tree->AddNode((intptr_t)page,(intptr_t)parent,mafWxToString(label),0);
 }
 //----------------------------------------------------------------------------
 void mafGUISettingsDialog::RemovePage(wxString label)

@@ -34,16 +34,16 @@ namespace gui::wx
 		/** Create a new tree item with the specified parent,label and icon.
 			Set parent = 0 to create the root. 0 is not a valid node_id.
 		*/
-		bool AddNode(NodeID node_id, NodeID parent_id, wxString label, int icon = 0, TreeItemData* data = nullptr);
+		bool AddNode(NodeID node_id, NodeID parent_id, const mafString& label, int icon = 0, TreeItemData* data = nullptr);
 
 		/** Delete the specified node, and its subtree. */
 		bool DeleteNode(NodeID node_id);
 
 		/** Set the label for the node. */
-		bool SetNodeLabel(NodeID node_id, wxString label);
+		bool SetNodeLabel(NodeID node_id, const mafString& label);
 
 		/** Get the label for the node. Add by Mucci 19/09/2007*/
-		wxString GetNodeLabel(NodeID node_id);
+		mafString GetNodeLabel(NodeID node_id);
 
 		/** Check if the node has children. Add by Mucci 19/09/2007*/
 		bool NodeHasChildren(NodeID node_id);
@@ -126,8 +126,8 @@ namespace gui::wx
 
 		bool IsRootHidden() { return (GetTreeStyle() & wxTR_HIDE_ROOT) != 0; }
 
-		bool               m_PreventNotify;
-		NodeID           m_NodeRoot;
+		bool m_PreventNotify;
+		NodeID m_NodeRoot;
 		wxImageList* m_NodeImages = nullptr;
 		wxHashTable* m_NodeTable = nullptr;
 

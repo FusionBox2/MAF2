@@ -59,7 +59,7 @@ namespace gui::wx
         m_NodeRoot = 0;
     }
     //----------------------------------------------------------------------------
-    bool Tree::AddNode(NodeID node_id, NodeID parent_id, wxString label, int icon, Tree::TreeItemData* data)
+    bool Tree::AddNode(NodeID node_id, NodeID parent_id, const mafString& label, int icon, Tree::TreeItemData* data)
         //----------------------------------------------------------------------------
     {
         /*
@@ -81,7 +81,7 @@ namespace gui::wx
             data = new TreeItemData(node_id);
         if (parent_id == 0 && m_NodeRoot == 0)
         {
-            item = m_NodeTree->AddRoot(label, icon, icon, data);
+            item = m_NodeTree->AddRoot(mafStringToWx(label), icon, icon, data);
             m_NodeRoot = node_id;
         }
         else
@@ -89,7 +89,7 @@ namespace gui::wx
             if (!NodeExist(parent_id)) return false;
             parent_item = ItemFromNode(parent_id);
             //insert normally
-            item = m_NodeTree->AppendItem(parent_item, label, icon, icon, data);
+            item = m_NodeTree->AppendItem(parent_item, mafStringToWx(label), icon, icon, data);
             // expand parent node
             m_NodeTree->SetItemHasChildren(parent_item, true);
             m_NodeTree->Expand(parent_item);
@@ -164,13 +164,13 @@ namespace gui::wx
             delete el;
     }
     //----------------------------------------------------------------------------
-    bool Tree::SetNodeLabel(NodeID node_id, wxString label)
+    bool Tree::SetNodeLabel(NodeID node_id, const mafString& label)
         //----------------------------------------------------------------------------
     {
         if (!NodeExist(node_id))
             return false;
         wxTreeItemId item = ItemFromNode(node_id);
-        m_NodeTree->SetItemText(item, label);
+        m_NodeTree->SetItemText(item, mafStringToWx(label));
 
         wxTreeItemId parent = m_NodeTree->GetItemParent(item);
         if (parent.IsOk())
@@ -179,13 +179,13 @@ namespace gui::wx
         return true;
     }
     //----------------------------------------------------------------------------
-    wxString Tree::GetNodeLabel(NodeID node_id)
+    mafString Tree::GetNodeLabel(NodeID node_id)
         //----------------------------------------------------------------------------
     {
         if (!NodeExist(node_id))
-            return "";
+            return _R("");
         wxTreeItemId item = ItemFromNode(node_id);
-        return m_NodeTree->GetItemText(item);
+        return mafWxToString(m_NodeTree->GetItemText(item));
     }
     //----------------------------------------------------------------------------
     bool Tree::NodeHasChildren(NodeID node_id)
