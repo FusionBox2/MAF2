@@ -52,8 +52,6 @@ SET(PROJECT_SRCS
   mafGUI.h
   mafGUIHolder.cpp
   mafGUIHolder.h
-  mafGUILab.cpp
-  mafGUILab.h
   mafGUIListBox.cpp
   mafGUIListBox.h
   mafGUIListCtrl.cpp

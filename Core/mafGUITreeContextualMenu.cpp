@@ -16,11 +16,6 @@
 #include "ftk/Gui/wx/CheckTree.h"
 #include "mafGUIApplicationLayoutSettings.h"
 
-//#include "mafGUIBitmaps.h"
-#include "mafGUILab.h"
-#include "mafGUIPicButton.h"
-//#include "mafPipe.h"
-
 #include "mafVME.h"
 #include "mafNode.h"
 

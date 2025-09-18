@@ -5,7 +5,6 @@
 #include "mafDefines.h"
 #include "ftk/Base/String.h"
 #include "ftk/Gui/wx/Panel.h"
-#include "mafGUILab.h"
 
 BEGIN_FTK_NAMESPACE
 
@@ -49,7 +48,7 @@ namespace gui::wx
 
 	protected:
 		wxPanel* m_Top = nullptr;
-		mafGUILab* m_Label = nullptr;
+		wxStaticText* m_Label = nullptr;
 		wxBoxSizer* m_Sizer = nullptr;
 		wxBoxSizer* m_TopSizer = nullptr;
 		wxColour m_Color;

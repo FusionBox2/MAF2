@@ -24,7 +24,7 @@ namespace gui::wx
 
 			m_TopSizer = new wxBoxSizer(wxHORIZONTAL);
 
-			m_Label = new mafGUILab(m_Top, ID_LABEL_CLICK, " Panel Title:");
+			m_Label = new wxStaticText(m_Top, ID_LABEL_CLICK, " Panel Title:");
 
 			wxFont font = wxFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
 #if WIN32
