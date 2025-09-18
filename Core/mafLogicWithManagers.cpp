@@ -1857,7 +1857,7 @@ void mafLogicWithManagers::VmeSelected(std::shared_ptr<mafNode> vme, bool remote
 {
   if(m_logic->m_ViewManager) m_logic->m_ViewManager->VmeSelect(vme.get());
   if(m_logic->m_OpManager)   { m_logic->m_OpManager->VmeSelected(vme);    EnableOperations(true);}
-	if(m_logic->m_SideBar)     m_logic->m_SideBar->VmeSelected(vme.get());
+	if(m_logic->m_SideBar)     m_logic->m_SideBar->NodeSelected(vme.get());
 // currently mafInteraction is strictly dependent on VTK (marco)
 #ifdef MAF_USE_VTK
   if (m_logic->m_InteractionManager)
@@ -1876,14 +1876,14 @@ void mafLogicWithManagers::VmeShow(mafNode *vme, bool visibility)
 	if(m_logic->m_ViewManager) m_logic->m_ViewManager->VmeShow(vme, visibility);
   bool vme_in_tree = vme->IsVisible(); //check VisibleToTraverse flag.
   if(m_logic->m_SideBar && vme_in_tree)
-    m_logic->m_SideBar->VmeShow(vme,visibility);
+    m_logic->m_SideBar->NodeShow(vme,visibility);
 }
 void mafLogicWithManagers::VmeModified(mafNode *vme)
 {
   if(m_logic->m_PlugTimebar) UpdateTimeBounds();
   bool vme_in_tree = vme->IsVisible();
   if(m_logic->m_SideBar && vme_in_tree)
-    m_logic->m_SideBar->VmeModified(vme);
+    m_logic->m_SideBar->NodeModified(vme);
 	if(m_logic->m_NodeManager) m_logic->m_NodeManager->Modified(true);
 }
 void mafLogicWithManagers::VmeAdded(mafNode *vme)
@@ -1918,7 +1918,7 @@ void mafLogicWithManagers::VmeAdded(mafNode *vme)
   vme_in_tree = !vme->GetTagArray()->GetTag(_R("VISIBLE_IN_THE_TREE")) || 
     (vme->GetTagArray()->GetTag(_R("VISIBLE_IN_THE_TREE")) && vme->GetTagArray()->GetTag(_R("VISIBLE_IN_THE_TREE"))->GetValueAsDouble() != 0);
   if(m_logic->m_SideBar && vme_in_tree)
-    m_logic->m_SideBar->VmeAdd(sv);
+    m_logic->m_SideBar->NodeAdd(sv);
   if(m_logic->m_PlugTimebar)
     UpdateTimeBounds();
 }
@@ -1944,23 +1944,23 @@ void mafLogicWithManagers::RestoreLayout()
 
 void mafLogicWithManagers::VmeExpand(mafNode *vme)
 {
-  m_logic->m_SideBar->VmeExpand(vme);
+  m_logic->m_SideBar->NodeExpand(vme);
 }
 void mafLogicWithManagers::VmeCollapse(mafNode *vme)
 {
-  m_logic->m_SideBar->VmeCollapse(vme);
+  m_logic->m_SideBar->NodeCollapse(vme);
 }
 void mafLogicWithManagers::VmeExpandSubTree(mafNode *vme)
 {
-  m_logic->m_SideBar->VmeExpandSubTree(vme);
+  m_logic->m_SideBar->NodeExpandSubTree(vme);
 }
 void mafLogicWithManagers::VmeCollapseSubTree(mafNode *vme)
 {
-  m_logic->m_SideBar->VmeCollapseSubTree(vme);
+  m_logic->m_SideBar->NodeCollapseSubTree(vme);
 }
 void mafLogicWithManagers::VmeExpandVisible(mafNode *vme)
 {
-  m_logic->m_SideBar->VmeExpandVisible(vme);
+  m_logic->m_SideBar->NodeExpandVisible(vme);
 }
 void mafLogicWithManagers::VmeRemove(mafNode *vme)
 {
@@ -1973,7 +1973,7 @@ void mafLogicWithManagers::VmeRemoving(mafNode *vme)
   vme_in_tree = !vme->GetTagArray()->GetTag(_R("VISIBLE_IN_THE_TREE")) || 
     (vme->GetTagArray()->GetTag(_R("VISIBLE_IN_THE_TREE")) && vme->GetTagArray()->GetTag(_R("VISIBLE_IN_THE_TREE"))->GetValueAsDouble() != 0);
   if(m_logic->m_SideBar && vme_in_tree)
-    m_logic->m_SideBar->VmeRemove(vme);
+    m_logic->m_SideBar->NodeRemove(vme);
 	if(m_logic->m_ViewManager)
     m_logic->m_ViewManager->VmeRemove(vme);
   if(m_logic->m_PlugTimebar)

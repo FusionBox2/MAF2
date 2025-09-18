@@ -35,7 +35,6 @@ class mafGUISettingsTimeBar;
 
 class mafViewManager;
 class mafOpManager;
-class mafSideBar;
 class mafGUIMaterialChooser;
 class mafVME;
 class mafInteractionManager;

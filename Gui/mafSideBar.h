@@ -15,116 +15,86 @@ BEGIN_FTK_NAMESPACE
 class mafGUIHolder;
 class mafGUI;
 class mafGUIPanelStack;
-namespace model::data
-{
-	class Node;
-}
-using mafNode = model::data::Node;
 class mafView;
-namespace gui::wx
-{
-	class NamedPanel;
-}
-using mafGUINamedPanel = gui::wx::NamedPanel;
 class mafGUISplittedPanel;
 
-class MAF_EXPORT mafSideBar : public mafEventSender
+namespace gui::wx
 {
-public:
-	mafSideBar(wxWindow* parent, int id, mafBaseEventHandler *Listener, long style = DOUBLE_NOTEBOOK);
-	~mafSideBar() override; 
+	class MAF_EXPORT SideBar : public mafEventSender
+	{
+	public:
+		SideBar(wxWindow* parent, int id, mafBaseEventHandler* Listener, long style = DOUBLE_NOTEBOOK);
+		~SideBar() override;
 
-  enum SIDEBAR_STYLE
-  {
-    SINGLE_NOTEBOOK,
-    DOUBLE_NOTEBOOK
-  };
+		enum SIDEBAR_STYLE
+		{
+			SINGLE_NOTEBOOK,
+			DOUBLE_NOTEBOOK
+		};
 
-  void VmeExpand(mafNode *vme);
-  void VmeCollapse(mafNode *vme);
-  void VmeExpandSubTree(mafNode *vme);
-  void VmeCollapseSubTree(mafNode *vme);
-  void VmeExpandVisible(mafNode *vme);
-  // Description:
-	// Add a new vme into the tree.
-	void VmeAdd(std::shared_ptr<mafNode> vme);
+		void NodeExpand(model::data::Node* node);
+		void NodeCollapse(model::data::Node* node);
+		void NodeExpandSubTree(model::data::Node* node);
+		void NodeCollapseSubTree(model::data::Node* node);
+		void NodeExpandVisible(model::data::Node* node);
 
-	// Description:
-	// Remove a vme from the tree.
-	void VmeRemove(mafNode *vme);
+		void NodeAdd(std::shared_ptr<model::data::Node> node);
 
-	// Description:
-	// Notify to the tree that a vme is modified.
-	void VmeModified(mafNode *vme);
+		void NodeRemove(model::data::Node* node);
 
-	// Description:
-	// Notify to the tree the visibility of the vme.
-	void VmeShow(mafNode *vme, bool visibility);
+		void NodeModified(model::data::Node* node);
 
-	// Description:
-	// Notify to the tree that the vme has been selected.
-	void VmeSelected(mafNode *vme);
+		void NodeShow(model::data::Node* node, bool visibility);
 
-	// Description:
-	// Remove the vme property gui from the panel.
-	void VmePropertyRemove(mafGUI *gui);
+		void NodeSelected(model::data::Node* node);
 
-	// Description:
-	// Show the operation's parameters gui on the tabbed panel.
-	void OpShowGui(bool push_gui, mafGUIPanel *panel);
+		void VmePropertyRemove(mafGUI* gui);
 
-	// Description:
-	// Hide the view/operation's gui from the tabbed panel.
-	void OpHideGui(bool view_closed);
+		void OpShowGui(bool push_gui, mafGUIPanel* panel);
 
-	// Description:
-	// Plug the view settings on the tabbed panel.
-	void ViewSelect(mafView *view);
+		void OpHideGui(bool view_closed);
 
-	// Description:
-	// Notify to the tree that a view has been deleted.
-	void ViewDeleted(mafView *view);
+		void ViewSelect(mafView* view);
 
-	// Description:
-	// Enable/Disable the vme selection when an operation ends/start.
-	void EnableSelect(bool enable);
+		void ViewDeleted(mafView* view);
 
-	// Description:
-	// Switch the visibility of the panel.
-	void Show();
+		void EnableSelect(bool enable);
 
-	// Description:
-	// Return the pointer to the tree.
-	mafGUICheckTree *GetTree() {return m_Tree;};
+		void Show();
 
-  bool IsShown() {return m_Notebook->IsShown();};
-  void Show( bool show) {m_Notebook->Show(show);};
+		mafGUICheckTree* GetTree() { return m_Tree; };
 
-  wxNotebook        *m_Notebook;
-  wxNotebook        *m_VmeNotebook;
-  //mafGUINamedPanel    *m_SideSplittedPanel;
-  wxSplitterWindow *m_SideSplittedPanel;
-protected:
-  void UpdateVmePanel();  
+		bool IsShown() { return m_Notebook->IsShown(); };
+		void Show(bool show) { m_Notebook->Show(show); };
 
-  mafGUIPanelStack	*m_OpPanel;
-	mafGUIHolder	*m_ViewPropertyPanel;
-  mafGUICheckTree  *m_Tree;
+		wxNotebook* m_Notebook;
+		wxNotebook* m_VmeNotebook;
+		//mafGUINamedPanel    *m_SideSplittedPanel;
+		wxSplitterWindow* m_SideSplittedPanel;
+	protected:
+		void UpdateVmePanel();
 
-  mafGUIHolder  *m_VmePanel;
-  mafGUIHolder  *m_VmeOutputPanel;
-  mafGUIHolder  *m_VmePipePanel;
+		mafGUIPanelStack* m_OpPanel;
+		mafGUIHolder* m_ViewPropertyPanel;
+		mafGUICheckTree* m_Tree;
 
-  mafNode     *m_SelectedVme;
-  mafView     *m_SelectedView;
+		mafGUIHolder* m_VmePanel;
+		mafGUIHolder* m_VmeOutputPanel;
+		mafGUIHolder* m_VmePipePanel;
 
-  mafGUI *m_NewAppendingGUI;
-  mafGUI *m_OldAppendingGUI;
+		model::data::Node* m_SelectedVme;
+		mafView* m_SelectedView;
 
-  mafGUI *m_CurrentVmeGui;
-  mafGUI *m_CurrentPipeGui;
+		mafGUI* m_NewAppendingGUI;
+		mafGUI* m_OldAppendingGUI;
 
-  int m_Style;
-};
+		mafGUI* m_CurrentVmeGui;
+		mafGUI* m_CurrentPipeGui;
+
+		int m_Style;
+	};
+}
+
+using mafSideBar = gui::wx::SideBar;
 
 END_FTK_NAMESPACE
