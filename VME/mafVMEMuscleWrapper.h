@@ -28,7 +28,6 @@
 //dictionary
 #include "mafGUIHolder.h"
 #include "mafGUISplittedPanel.h"
-#include "mafGUINamedPanel.h"
 #include "mafGUIDictionaryWidget.h"
 #include "mafVMEMeter.h"
 #include "unsupported/Eigen/LevenbergMarquardt"

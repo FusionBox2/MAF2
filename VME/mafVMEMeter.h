@@ -26,7 +26,6 @@
 //dictionary
 #include "mafGUIHolder.h"
 #include "mafGUISplittedPanel.h"
-#include "mafGUINamedPanel.h"
 #include "mafGUIDictionaryWidget.h"
 //#include "mafOpExplodeCollapse.h"
 //#include "mafSmartPointer.h"

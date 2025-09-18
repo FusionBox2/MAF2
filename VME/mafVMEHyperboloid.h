@@ -11,7 +11,6 @@
 #include "mafQuadraticSurface.hpp"
 #include "mafGUIHolder.h"
 #include "mafGUISplittedPanel.h"
-#include "mafGUINamedPanel.h"
 #include "mafGUIDictionaryWidget.h"
 #include "mafVME.h"
 #include "mafEvent.h"
