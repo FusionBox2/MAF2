@@ -32,40 +32,44 @@ namespace gui::wx
 			DOUBLE_NOTEBOOK
 		};
 
-		void NodeExpand(model::data::Node* node);
-		void NodeCollapse(model::data::Node* node);
-		void NodeExpandSubTree(model::data::Node* node);
-		void NodeCollapseSubTree(model::data::Node* node);
-		void NodeExpandVisible(model::data::Node* node);
-
 		void NodeAdd(std::shared_ptr<model::data::Node> node);
 
 		void NodeRemove(model::data::Node* node);
 
-		void NodeModified(model::data::Node* node);
+		void NodeSelected(model::data::Node* node);
+
+		void NodeCollapse(model::data::Node* node);
+
+		void NodeExpand(model::data::Node* node);
+
+		void NodeCollapseSubTree(model::data::Node* node);
+
+		void NodeExpandSubTree(model::data::Node* node);
+
+		void NodeExpandVisible(model::data::Node* node);
 
 		void NodeShow(model::data::Node* node, bool visibility);
 
-		void NodeSelected(model::data::Node* node);
+		void NodeModified(model::data::Node* node);
 
 		void VmePropertyRemove(mafGUI* gui);
-
-		void OpShowGui(bool push_gui, mafGUIPanel* panel);
-
-		void OpHideGui(bool view_closed);
 
 		void ViewSelect(mafView* view);
 
 		void ViewDeleted(mafView* view);
 
+		void OpShowGui(bool push_gui, mafGUIPanel* panel);
+
+		void OpHideGui(bool view_closed);
+
 		void EnableSelect(bool enable);
 
 		void Show();
 
-		mafGUICheckTree* GetTree() { return m_Tree; };
+		mafGUICheckTree* GetTree() { return m_Tree; }
 
-		bool IsShown() { return m_Notebook->IsShown(); };
-		void Show(bool show) { m_Notebook->Show(show); };
+		bool IsShown() const { return m_Notebook->IsShown(); }
+		void Show(bool show) { m_Notebook->Show(show); }
 
 		wxNotebook* m_Notebook;
 		wxNotebook* m_VmeNotebook;

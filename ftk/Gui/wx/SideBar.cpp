@@ -1,4 +1,4 @@
-#include "mafSideBar.h"
+#include "ftk/Gui/wx/SideBar.h"
 #include "mafView.h"
 #include "mafViewVTK.h"
 #include "mafPipe.h"
@@ -84,6 +84,65 @@ namespace gui::wx
 		cppDEL(m_Notebook);
 	}
 
+	void SideBar::NodeAdd(std::shared_ptr<mafNode> node)
+	{
+		m_Tree->NodeAdd(node);
+	}
+
+	void SideBar::NodeRemove(mafNode* node)
+	{
+		m_Tree->NodeRemove(node);
+		if (node == m_SelectedVme)
+		{
+			m_SelectedVme = nullptr;
+			UpdateVmePanel();
+		}
+	}
+
+	void SideBar::NodeSelected(mafNode* node)
+	{
+		m_SelectedVme = node;
+		UpdateVmePanel();
+		m_Tree->NodeSelected(node);
+	}
+
+	void SideBar::NodeCollapse(mafNode* node)
+	{
+		m_Tree->NodeCollapse(node);
+	}
+
+	void SideBar::NodeExpand(mafNode* node)
+	{
+		m_Tree->NodeExpand(node);
+	}
+
+	void SideBar::NodeCollapseSubTree(mafNode* node)
+	{
+		m_Tree->NodeCollapseSubTree(node);
+	}
+
+	void SideBar::NodeExpandSubTree(mafNode* node)
+	{
+		m_Tree->NodeExpandSubTree(node);
+	}
+
+	void SideBar::NodeExpandVisible(mafNode* node)
+	{
+		m_Tree->NodeExpandVisible(node);
+	}
+
+	void SideBar::NodeShow(mafNode* node, bool visibility)
+	{
+		m_Tree->NodeShow(node, visibility);
+		UpdateVmePanel();
+	}
+
+	void SideBar::NodeModified(mafNode* node)
+	{
+		m_Tree->NodeModified(node);
+		UpdateVmePanel();
+	}
+
 	void SideBar::OpShowGui(bool push_gui, mafGUIPanel* panel)
 	{
 		m_Notebook->Show(true);
@@ -142,65 +201,6 @@ namespace gui::wx
 	void SideBar::EnableSelect(bool enable)
 	{
 		m_Tree->EnableSelect(enable);
-	}
-
-	void SideBar::NodeExpand(mafNode* node)
-	{
-		m_Tree->NodeExpand(node);
-	}
-
-	void SideBar::NodeCollapse(mafNode* node)
-	{
-		m_Tree->NodeCollapse(node);
-	}
-
-	void SideBar::NodeExpandSubTree(mafNode* node)
-	{
-		m_Tree->NodeExpandSubTree(node);
-	}
-
-	void SideBar::NodeCollapseSubTree(mafNode* node)
-	{
-		m_Tree->NodeCollapseSubTree(node);
-	}
-
-	void SideBar::NodeExpandVisible(mafNode* node)
-	{
-		m_Tree->NodeExpandVisible(node);
-	}
-
-	void SideBar::NodeAdd(std::shared_ptr<mafNode> node)
-	{
-		m_Tree->NodeAdd(node);
-	}
-
-	void SideBar::NodeRemove(mafNode* node)
-	{
-		m_Tree->NodeRemove(node);
-		if (node == m_SelectedVme)
-		{
-			m_SelectedVme = nullptr;
-			UpdateVmePanel();
-		}
-	}
-
-	void SideBar::NodeModified(mafNode* node)
-	{
-		m_Tree->NodeModified(node);
-		UpdateVmePanel();
-	}
-
-	void SideBar::NodeShow(mafNode* node, bool visibility)
-	{
-		m_Tree->NodeShow(node, visibility);
-		UpdateVmePanel();
-	}
-
-	void SideBar::NodeSelected(mafNode* node)
-	{
-		m_SelectedVme = node;
-		UpdateVmePanel();
-		m_Tree->NodeSelected(node);
 	}
 
 	void SideBar::VmePropertyRemove(mafGUI* gui)

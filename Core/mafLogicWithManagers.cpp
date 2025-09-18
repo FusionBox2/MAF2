@@ -38,8 +38,6 @@
 #include <wx/busyinfo.h>
 #include "mafVME.h"
 
-#include "mafSideBar.h"
-
 #include "mafGUIDialogFindVme.h"
 #include "ftk/Gui/wx/MainFrame.h"
 #include "ftk/Gui/wx/ViewFrame.h"

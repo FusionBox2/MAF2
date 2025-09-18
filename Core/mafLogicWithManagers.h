@@ -12,7 +12,7 @@
 #include <memory>
 
 #include "mafBaseEventHandler.h"
-#include "mafSideBar.h"
+#include "ftk/Gui/wx/SideBar.h"
 #include <wx/notebook.h>
 #include <wx/icon.h>
 #include "ftk/Gui/wx/MainFrame.h"
