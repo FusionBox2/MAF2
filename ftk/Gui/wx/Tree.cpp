@@ -13,8 +13,6 @@ namespace gui::wx
 	Tree::Tree(wxWindow* parent, wxWindowID id, bool CloseButton, bool HideTitle)
 		:mafGUINamedPanel(parent, id, CloseButton, HideTitle)
 	{
-		m_PreventNotify = false;
-
 		m_NodeTree = new wxTreeCtrl(this, wxID_ANY, wxDefaultPosition, FromDIP(wxSize(100, 100)), wxNO_BORDER | wxTR_HAS_BUTTONS);
 		m_NodeTree->Bind(wxEVT_TREE_SEL_CHANGED, [this](wxTreeEvent& event) {OnSelectionChanged(event); });
 		Bind(wxEVT_SIZE, [this](wxSizeEvent& event) {OnSize(event); });
@@ -298,10 +296,9 @@ namespace gui::wx
 
 	void Tree::OnSelectionChanged(wxTreeEvent& event)
 	{
-		wxTreeItemId i;
 		if (m_PreventNotify) return;
 
-		i = event.GetItem();
+		wxTreeItemId i = event.GetItem();
 		if (i.IsOk())
 		{
 			mafEvent evUnq(this, VME_SELECT); evUnq.SetArg(NodeFromItem(i)); InvokeEvent(evUnq);

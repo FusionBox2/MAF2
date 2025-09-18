@@ -222,10 +222,9 @@ void mafGUIVMEChooserTree::OnSelectionChanged(wxTreeEvent& event)
 //----------------------------------------------------------------------------
 {
   int status = false;
-  wxTreeItemId i;
   if(m_PreventNotify) return;
 
-  i = event.GetItem();
+  wxTreeItemId i = event.GetItem();
   if(i.IsOk())
   {
     m_ChoosedNode = static_cast<CheckTreeItemData*>(m_NodeTree->GetItemData(i))->GetSharedNode().get();

@@ -97,7 +97,7 @@ namespace gui::wx
 
 		bool IsRootHidden() const { return (GetTreeStyle() & wxTR_HIDE_ROOT) != 0; }
 
-		bool m_PreventNotify;
+		bool m_PreventNotify = false;
 		wxTreeCtrl* m_NodeTree = nullptr;
 		NodeID m_NodeRoot = 0;
 		std::unique_ptr<wxImageList> m_NodeImages;
