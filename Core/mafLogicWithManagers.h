@@ -19,7 +19,11 @@
 
 
 class mafView;
-class mafGUINamedPanel;
+namespace gui::wx
+{
+	class NamedPanel;
+}
+using mafGUINamedPanel = gui::wx::NamedPanel;
 class mafGUITimeBar;
 class mafWXLog;
 class mafVTKLog;

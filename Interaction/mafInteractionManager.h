@@ -62,11 +62,12 @@ class mafGUI;
 namespace gui::wx
 {
     class Tree;
+    class NamedPanel;
 }
 using mafGUITree = gui::wx::Tree;
+using mafGUINamedPanel = gui::wx::NamedPanel;
 class mafGUICheckListBox;
 class mafGUIHolder;
-class mafGUINamedPanel;
 class mafDeviceClientMAF;
 class mafStorageElement;
 class mafStorageElementBuilder;

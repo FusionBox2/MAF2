@@ -21,7 +21,11 @@ namespace model::data
 }
 using mafNode = model::data::Node;
 class mafView;
-class mafGUINamedPanel;
+namespace gui::wx
+{
+	class NamedPanel;
+}
+using mafGUINamedPanel = gui::wx::NamedPanel;
 class mafGUISplittedPanel;
 
 class MAF_EXPORT mafSideBar : public mafEventSender

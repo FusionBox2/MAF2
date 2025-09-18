@@ -34,7 +34,11 @@ class mafVMELandmark;
 class mafVMELandmarkCloud;
 class mafInteractor;
 class mafInteractorPicker;
-class mafGUINamedPanel;
+namespace gui::wx
+{
+	class NamedPanel;
+}
+using mafGUINamedPanel = gui::wx::NamedPanel;
 class mafGUIDictionaryWidget;
 
 #ifdef MAF_EXPORTS

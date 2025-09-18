@@ -4,57 +4,59 @@
 
 #include "mafDefines.h"
 #include "ftk/Base/String.h"
-#include "mafGUILab.h"
 #include "ftk/Gui/wx/Panel.h"
+#include "mafGUILab.h"
 
 BEGIN_FTK_NAMESPACE
 
-/**
- Class Name: mafGUINamedPanel.
-- mafGUINamedPanel is a wxPanel with a title bar.
-- the title bar has a title and an optional close button.
-- mafGUINamedPanel provide a default BoxSizer making easy to place widgets on it,
-  just call Add(widget) or Remove(widget).
-
-\todo
-decide the ID to associate with the close button
-*/
-class MAF_EXPORT mafGUINamedPanel: public mafGUIPanel
+namespace gui::wx
 {
-public:
-  /** constructor.  set CloseButton to show the close button */
-  mafGUINamedPanel (wxWindow* parent,wxWindowID id = -1,bool CloseButton = false,bool HideTitle = false); 
-  /** destructor. */
-  ~mafGUINamedPanel() override;
-  
-  /** Add a widget to the panel. */
-  void Add(wxWindow* window,int option = 0, int flag = wxEXPAND, int border = 0)  {window->Reparent(this); m_Sizer->Add(window,option,flag,border);};
-  
-	/** Add a sizer to the panel. */
-  void Add(wxSizer*  sizer, int option = 0, int flag = wxEXPAND, int border = 0)  {m_Sizer->Add(sizer, option,flag,border);};
-  
-	/** Remove a widget from the panel. */
-  bool Remove(wxWindow* window) {return m_Sizer->Detach(window);};
-  
-	/** Remove a sizer from the panel. */
-  bool Remove(wxSizer*  sizer ) {return m_Sizer->Detach(sizer);};
+	/**
+	 Class Name: mafGUINamedPanel.
+	- mafGUINamedPanel is a wxPanel with a title bar.
+	- the title bar has a title and an optional close button.
+	- mafGUINamedPanel provide a default BoxSizer making easy to place widgets on it,
+	  just call Add(widget) or Remove(widget).
 
-  /** Set the text shown on the title-bar. */
-  void SetTitle(const mafString& label) {if(m_Label) m_Label->SetLabel(mafStringToWx(label));}
+	\todo
+	decide the ID to associate with the close button
+	*/
+	class FTK_GUI_EXPORT NamedPanel : public Panel
+	{
+	public:
+		/** constructor.  set CloseButton to show the close button */
+		NamedPanel(wxWindow* parent, wxWindowID id = -1, bool CloseButton = false, bool HideTitle = false);
+		/** destructor. */
+		~NamedPanel() override;
 
-  /** Change the background color of the title. */
-  void SetTitleColor(wxColour *color = NULL);
+		/** Add a widget to the panel. */
+		void Add(wxWindow* window, int option = 0, int flag = wxEXPAND, int border = 0) { window->Reparent(this); m_Sizer->Add(window, option, flag, border); }
 
-protected:
-  wxPanel         *m_Top;
-  mafGUILab          *m_Label;
-  wxBoxSizer      *m_Sizer;
-  wxBoxSizer      *m_TopSizer;
-  mafGUINamedPanel   *m_NextPanel;
-  wxColour         m_Color; 
-  
-  /** Event Table Declaration*/
-  DECLARE_EVENT_TABLE()
-};
+		/** Add a sizer to the panel. */
+		void Add(wxSizer* sizer, int option = 0, int flag = wxEXPAND, int border = 0) { m_Sizer->Add(sizer, option, flag, border); }
+
+		/** Remove a widget from the panel. */
+		bool Remove(wxWindow* window) { return m_Sizer->Detach(window); }
+
+		/** Remove a sizer from the panel. */
+		bool Remove(wxSizer* sizer) { return m_Sizer->Detach(sizer); }
+
+		/** Set the text shown on the title-bar. */
+		void SetTitle(const mafString& label) { if (m_Label) m_Label->SetLabel(mafStringToWx(label)); }
+
+		/** Change the background color of the title. */
+		void SetTitleColor(wxColour* color = nullptr);
+
+	protected:
+		wxPanel* m_Top = nullptr;
+		mafGUILab* m_Label = nullptr;
+		wxBoxSizer* m_Sizer = nullptr;
+		wxBoxSizer* m_TopSizer = nullptr;
+		wxColour m_Color;
+
+	};
+}
+
+using mafGUINamedPanel = gui::wx::NamedPanel;
 
 END_FTK_NAMESPACE
