@@ -984,7 +984,7 @@ void mafInteractionManager::CreateGUI()
 {
   m_Gui = new mafGUI(this);
 
-  m_DeviceTree = new mafGUITree(m_Gui,ID_DEVICE_TREE,false,true);
+  m_DeviceTree = new gui::wx::Tree(m_Gui,ID_DEVICE_TREE,false,true);
   m_DeviceTree->SetMinSize(wxSize(250,100));
   m_DeviceTree->SetListener(this);
 

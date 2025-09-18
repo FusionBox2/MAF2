@@ -64,7 +64,6 @@ namespace gui::wx
     class Tree;
     class NamedPanel;
 }
-using mafGUITree = gui::wx::Tree;
 using mafGUINamedPanel = gui::wx::NamedPanel;
 class mafGUICheckListBox;
 class mafGUIHolder;
@@ -254,7 +253,7 @@ protected:
   wxFrame*                m_Frame;
   //mafGUIDialog*              m_Dialog;
   mafGUI*                 m_Devices;
-  mafGUITree*                m_DeviceTree;
+  gui::wx::Tree*                m_DeviceTree;
   mafGUICheckListBox*        m_ActionsList;
   mafGUIHolder*           m_SettingsPanel;
   //mafGUINamedPanel*          m_BindingsPanel;

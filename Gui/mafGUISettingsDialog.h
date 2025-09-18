@@ -32,7 +32,6 @@ namespace gui::wx
 {
 	class Tree;
 }
-using mafGUITree = gui::wx::Tree;
 class mafGUI;
 class mafGUIHolder;
 class mafGUIBitmaps;
@@ -74,7 +73,7 @@ protected:
   
   std::vector<Page*> m_List;
   mafGUIDialog			*m_Dialog;
-	mafGUITree       *m_Tree;
+	gui::wx::Tree       *m_Tree;
 	mafGUIHolder	*m_Guih;
 
   /** add a root to  the gui setting tree  */

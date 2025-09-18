@@ -138,7 +138,7 @@ void mafGUIVMEChooserTree::InitializeImageList()
   // create the ImageList 
   //int mw = sw+w; 
   //int mh = (sh>h) ? sh : h;
-  wxImageList *imgs = new wxImageList(w,h,FALSE,num_icons);
+  auto imgs = std::make_unique<wxImageList>(w,h,FALSE,num_icons);
 
   for(size_t i=0; i<num_types; i++)
   {
@@ -151,7 +151,7 @@ void mafGUIVMEChooserTree::InitializeImageList()
       imgs->Add(vmeico);
     }
   }
-  SetImageList(imgs);
+  SetImageList(std::move(imgs));
 }
 //----------------------------------------------------------------------------
 void mafGUIVMEChooserTree::InitializeImageListMulti()
@@ -196,14 +196,12 @@ void mafGUIVMEChooserTree::InitializeImageListMulti()
   // create the ImageList 
   int mw = sw+w; 
   int mh = (sh>h) ? sh : h;
-  wxImageList *imgs = new wxImageList(mw,mh,FALSE,num_icons);
+  auto imgs = std::make_unique<wxImageList>(mw,mh,FALSE,num_icons);
 
   for(size_t i=0; i<num_types; i++)
   {
     m_MapClassNameToIcon[v[i]]=i*(num_of_status * 2); // Paolo 18/12/2006
-
-    size_t s;
-    for( s=0; s<num_of_status; s++)
+    for(size_t s=0; s<num_of_status; s++)
     {
       wxBitmap vmeico = mafPictureFactory::GetPictureFactory()->GetVmePic(v[i]);
       if(s==0) vmeico = mafGrayScale(vmeico);
@@ -217,7 +215,7 @@ void mafGUIVMEChooserTree::InitializeImageListMulti()
       imgs->Add(missingData);                                 // node with no data available.
     }
   }
-  SetImageList(imgs);
+  SetImageList(std::move(imgs));
 }
 //----------------------------------------------------------------------------
 void mafGUIVMEChooserTree::OnSelectionChanged(wxTreeEvent& event)
@@ -324,8 +322,7 @@ void mafGUIVMEChooserTree::CloneSubTree(mafGUICheckTree *source_tree, wxTreeItem
     m_NodeTree->Expand(current_item);
     m_NodeTree->SortChildren(current_item);
   }
-  TreeTableElement *el = new TreeTableElement( current_item );  
-  m_NodeTable->Put(node, el);
+  m_NodeTable[node] = current_item;
 }
 //----------------------------------------------------------------------------
 void mafGUIVMEChooserTree::VmeUpdateIcon(mafNode *vme)

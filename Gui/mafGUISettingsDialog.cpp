@@ -27,18 +27,18 @@ mafGUISettingsDialog::mafGUISettingsDialog(const mafString& dialog_title)
 {  
   #include <pic/FOLDER.xpm>
   mafPictureFactory::GetPictureFactory()->Add(_R("FOLDER"), FOLDER_xpm);
-  wxImageList *tree_images = new wxImageList(20,20,FALSE,1);
+  auto tree_images = std::make_unique<wxImageList>(20,20,FALSE,1);
   tree_images->Add(mafPictureFactory::GetPictureFactory()->GetBmp(_R("FOLDER")));
 
   m_Dialog = new mafGUIDialog(dialog_title);
-	m_Tree   = new mafGUITree(m_Dialog,ID_SELECT_PAGE,false,true);
+	m_Tree   = new gui::wx::Tree(m_Dialog,ID_SELECT_PAGE,false,true);
 	m_Guih   = new mafGUIHolder(m_Dialog,-1,false,true);
 
   m_Tree->SetListener(this);
 	//m_Tree->SetTreeStyle( wxSIMPLE_BORDER | wxTR_HAS_BUTTONS );//| wxTR_HIDE_ROOT );
 	m_Tree->SetSize(wxWindow::FromDIP(wxSize(270,400), nullptr));
 	m_Tree->SetMinSize(wxWindow::FromDIP(wxSize(270, 400), nullptr));
-  m_Tree->SetImageList(tree_images);
+  m_Tree->SetImageList(std::move(tree_images));
 
   m_Guih->SetSize(wxWindow::FromDIP(wxSize(270, 400), nullptr));
   m_Guih->SetMinSize(wxWindow::FromDIP(wxSize(270, 400), nullptr));

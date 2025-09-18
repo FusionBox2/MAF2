@@ -151,7 +151,6 @@ namespace gui::wx
 	{
 		this->SetNodeLabel((intptr_t)vme, vme->GetName());
 		VmeUpdateIcon(vme);
-		SortChildren((intptr_t)vme);
 	}
 
 	void CheckTree::VmeShow(mafNode* vme, bool show)
@@ -220,16 +219,12 @@ namespace gui::wx
 
 	int CheckTree::ClassNameToIcon(const mafString& classname)
 	{
-		MapClassNameToIcon::iterator it = m_MapClassNameToIcon.find(classname);
-		if (it != m_MapClassNameToIcon.end())
-			return int((*it).second);
-		else
-		{
-			// search superclass's icon
-			// if also this icon is not present, "Unknown" icon is used
-			mafLogMessage(_M(_R("mafPictureFactory::ClassNameToIcon: cant find = ") + classname));
-			return 0;
-		}
+		if (auto it = m_MapClassNameToIcon.find(classname); it != m_MapClassNameToIcon.end())
+			return it->second;
+		// search superclass's icon
+		// if also this icon is not present, "Unknown" icon is used
+		mafLogMessage(_M(_R("mafPictureFactory::ClassNameToIcon: cant find = ") + classname));
+		return 0;
 	}
 
 	void CheckTree::InitializeImageList()
@@ -273,15 +268,14 @@ namespace gui::wx
 		// create the ImageList 
 		int mw = sw + w;
 		int mh = (sh > h) ? sh : h;
-		wxImageList* imgs = new wxImageList(mw, mh, FALSE, num_icons);
+		auto imgs = std::make_unique<wxImageList>(mw, mh, FALSE, num_icons);
 
 		for (size_t i = 0; i < num_types; i++)
 		{
 			//m_MapClassNameToIcon[name]=i*num_of_status;
 			m_MapClassNameToIcon[v[i]] = i * (num_of_status * 2); // Paolo 18/12/2006
 
-			size_t s;
-			for (s = 0; s < num_of_status; s++)
+			for (size_t s = 0; s < num_of_status; s++)
 			{
 				wxBitmap vmeico = mafPictureFactory::GetPictureFactory()->GetVmePic(v[i]);
 				if (s == 0)
@@ -297,7 +291,7 @@ namespace gui::wx
 				imgs->Add(missingData);                                 // node with no data available.
 			}
 		}
-		SetImageList(imgs);
+		SetImageList(std::move(imgs));
 	}
 
 	wxBitmap CheckTree::MergeIcons(wxBitmap state, wxBitmap vme)
