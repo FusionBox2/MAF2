@@ -4,122 +4,109 @@
 
 #include "ftk/Gui/wx/Tree.h"
 
-#include <wx/treectrl.h>
 #include <map>
 
 BEGIN_FTK_NAMESPACE
 
 namespace model::data
 {
-    class Node;
+	class Node;
 }
 using mafNode = model::data::Node;
 class mafView;
 
 namespace gui::wx
 {
-    class FTK_GUI_EXPORT CheckTree : public Tree
-    {
-    public:
-        class CheckTreeItemData : public TreeItemData
-        {
-        public:
-            CheckTreeItemData(intptr_t node_id, std::shared_ptr<mafNode> n = nullptr) : TreeItemData(node_id), sharednode(n) {}
-            ~CheckTreeItemData() override = default;
-            void SetSharedNode(std::shared_ptr<mafNode> n) { sharednode = n; }
-            std::shared_ptr<mafNode> GetSharedNode() const { return sharednode; }
-        private:
-            std::shared_ptr<mafNode> sharednode;
-        };
-        /** constructor .*/
-        CheckTree(wxWindow* parent, wxWindowID id = -1, bool CloseButton = false, bool HideTitle = false);
-        /** destructor .*/
-        ~CheckTree() override;
+	class FTK_GUI_EXPORT CheckTree : public Tree
+	{
+	public:
 
-        void VmeExpand(mafNode* vme);
-        void VmeCollapse(mafNode* vme);
-        void VmeExpandSubTree(mafNode* vme);
-        void VmeCollapseSubTree(mafNode* vme);
-        void VmeExpandVisible(mafNode* vme);
-        /** Add the vme to the checked tree and create the related icon. */
-        void VmeAdd(std::shared_ptr<mafNode> n);
+		CheckTree(wxWindow* parent, wxWindowID id = wxID_ANY, bool CloseButton = false, bool HideTitle = false);
 
-        /** Remove the vme from the checked tree. */
-        void VmeRemove(mafNode* n);
+		~CheckTree() override;
 
-        /** Select the vme node of the checked tree. */
-        void VmeSelected(mafNode* n);
+		void NodeAdd(std::shared_ptr<mafNode> node);
 
-        /** Return the current selected node.*/
-        mafNode* GetSelectedNode() { return m_SelectedNode; };
+		void NodeRemove(mafNode* node);
 
-        /** Return true if the icon associated to the tree item is checked.*/
-        bool IsIconChecked(wxTreeItemId item);
+		mafNode* GetSelectedNode() const;
 
-        /** Update the vme node icon into the checked tree. */
-        void VmeShow(mafNode* n, bool show);
+		void NodeSelected(mafNode* n);
 
-        /** Update the vme node label with the new vme name. */
-        void VmeModified(mafNode* n);
+		void NodeCollapse(mafNode* node);
 
-        /** Update the vme tree nodes with the new vme visibility for the selected view. */
-        void ViewSelected(mafView* view);
+		void NodeExpand(mafNode* node);
 
-        /** Update the vme tree nodes when a view is deleted. */
-        void ViewDeleted(mafView* view);
+		void NodeCollapseSubTree(mafNode* node);
 
-        // todo: 
-        // setting m_enableSelect to false
-        // doesn't prevent to change the selection using the keyboard !!
-        //SIL. 7-4-2005: 
+		void NodeExpandSubTree(mafNode* node);
 
-          /** Enable the selection of a node tree.*/
-        void EnableSelect(bool enable);
+		void NodeExpandVisible(mafNode* node);
 
-        /** Retrieve wxwindows widget pointer of the tree.*/
-        wxTreeCtrl* GetTree() { return m_NodeTree; }
+		bool IsIconChecked(wxTreeItemId item);
 
-    protected:
-        /** Update the vme nodes icon. */
-        void VmeUpdateIcon(mafNode* n);
+		void NodeShow(mafNode* node, bool show);
 
-        /** Update all the vme nodes icon. */
-        void TreeUpdateIcon();
+		void NodeModified(mafNode* node);
 
-        /** Return the status of the node according to the vme visibility. */
-        virtual int GetVmeStatus(mafNode* vme);
+		void ViewSelected(mafView* view);
 
-        /** retrieve the icon-index for a vme given the classname */
-        int ClassNameToIcon(const mafString& classname);
+		void ViewDeleted(mafView* view);
 
-        /** Fill the image list considering the visibility vme type, and vme availability.
-                 The result is a list of images, and one image can be associated to the label that represent the node of the tree in the wxwidget.*/
-        virtual void InitializeImageList();
+		// todo: 
+		// setting m_enableSelect to false
+		// doesn't prevent to change the selection using the keyboard !!
+		//SIL. 7-4-2005: 
 
-        /** Given two bitmaps, it creates a third bitmap.
-                 The  result is a merge of the others with the right side of the first image that is the left side of the second one.*/
-        wxBitmap MergeIcons(wxBitmap state, wxBitmap vme);
+		  /** Enable the selection of a node tree.*/
+		void EnableSelect(bool enable);
 
-    public:
+		wxTreeCtrl* GetTree() { return m_NodeTree; }
 
-        void OnMouseDown(wxMouseEvent& event);
+	protected:
 
-    	void OnMouseUp(wxMouseEvent& event);
+		void NodeUpdateIcon(mafNode* n);
 
-        virtual void OnIconClick(wxTreeItemId item);
+		void TreeUpdateIcon();
 
-        virtual void ShowContextualMenu(wxMouseEvent& event);
+		virtual int GetVmeStatus(mafNode* vme);
 
-        void OnSelectionChanged(wxTreeEvent& event) override;
+		int ClassNameToIcon(const mafString& classname);
 
-    protected:
-        mafView* m_View = nullptr;
-        mafNode* m_SelectedNode = nullptr;
-        bool     m_CanSelect = true;
+		virtual void InitializeImageList();
 
-        using MapClassNameToIcon = std::map<mafString, int> ;
-        MapClassNameToIcon m_MapClassNameToIcon;
-    };
+		wxBitmap MergeIcons(wxBitmap state, wxBitmap vme);
+
+	public:
+
+		void OnMouseDown(wxMouseEvent& event);
+
+		void OnMouseUp(wxMouseEvent& event);
+
+		virtual void OnIconClick(wxTreeItemId item);
+
+		virtual void ShowContextualMenu(wxMouseEvent& event);
+
+		void OnSelectionChanged(wxTreeEvent& event) override;
+
+	protected:
+		mafView* m_View = nullptr;
+		bool     m_CanSelect = true;
+
+		class CheckTreeItemData : public TreeItemData
+		{
+		public:
+			CheckTreeItemData(intptr_t node_id, std::shared_ptr<mafNode> n = nullptr) : TreeItemData(node_id), sharednode(n) {}
+			~CheckTreeItemData() override = default;
+			void SetSharedNode(std::shared_ptr<mafNode> n) { sharednode = n; }
+			std::shared_ptr<mafNode> GetSharedNode() const { return sharednode; }
+		private:
+			std::shared_ptr<mafNode> sharednode;
+		};
+
+		using MapClassNameToIcon = std::map<mafString, int> ;
+		MapClassNameToIcon m_MapClassNameToIcon;
+	};
 }
 
 using mafGUICheckTree = gui::wx::CheckTree;

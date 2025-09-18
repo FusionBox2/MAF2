@@ -138,7 +138,7 @@ void mafGUIVMEChooserTree::InitializeImageList()
   // create the ImageList 
   //int mw = sw+w; 
   //int mh = (sh>h) ? sh : h;
-  auto imgs = std::make_unique<wxImageList>(w,h,FALSE,num_icons);
+  auto imgs = std::make_unique<wxImageList>(w,h,false,num_icons);
 
   for(size_t i=0; i<num_types; i++)
   {
@@ -196,7 +196,7 @@ void mafGUIVMEChooserTree::InitializeImageListMulti()
   // create the ImageList 
   int mw = sw+w; 
   int mh = (sh>h) ? sh : h;
-  auto imgs = std::make_unique<wxImageList>(mw,mh,FALSE,num_icons);
+  auto imgs = std::make_unique<wxImageList>(mw,mh,false,num_icons);
 
   for(size_t i=0; i<num_types; i++)
   {

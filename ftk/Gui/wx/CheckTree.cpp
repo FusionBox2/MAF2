@@ -15,11 +15,28 @@ namespace gui::wx
 	{
 		m_NodeTree->Bind(wxEVT_LEFT_DOWN, [this](wxMouseEvent& event) {OnMouseDown(event); });
 		m_NodeTree->Bind(wxEVT_LEFT_UP, [this](wxMouseEvent& event) {OnMouseUp(event); });
+		m_NodeTree->Bind(wxEVT_RIGHT_DOWN, [this](wxMouseEvent& event) {});
 		m_NodeTree->Bind(wxEVT_RIGHT_UP, [this](wxMouseEvent& event) {ShowContextualMenu(event); });
 		InitializeImageList();
 	}
 
 	CheckTree::~CheckTree() = default;
+
+	void CheckTree::NodeAdd(std::shared_ptr<mafNode> node)
+	{
+		AddNode(reinterpret_cast<intptr_t>(node.get()), reinterpret_cast<intptr_t>(node->GetParent()), node->GetName(), 0, 0, new CheckTreeItemData(reinterpret_cast<intptr_t>(node.get()), node));
+		NodeUpdateIcon(node.get());
+	}
+
+	void CheckTree::NodeRemove(mafNode* node)
+	{
+		DeleteNode(reinterpret_cast<intptr_t>(node));
+	}
+
+	mafNode* CheckTree::GetSelectedNode() const
+	{
+		return reinterpret_cast<mafNode*>(GetSelected());
+	}
 
 	void CheckTree::ShowContextualMenu(wxMouseEvent& event)
 	{
@@ -84,9 +101,12 @@ namespace gui::wx
 		if (status != NODE_NON_VISIBLE)
 		{
 			bool show = !(status == NODE_VISIBLE_ON || status == NODE_MUTEX_ON);
-			if (!show && !this->m_CanSelect && m_SelectedNode && m_SelectedNode == vme.get())
+			if (!show && !this->m_CanSelect)
 			{
-				return;
+				if (auto selectedNode = GetSelectedNode(); selectedNode && selectedNode == vme.get())
+				{
+					return;
+				}
 			}
 			{ mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(vme.get()); evUnq.SetBool(show); InvokeEvent(evUnq); }
 			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
@@ -95,82 +115,66 @@ namespace gui::wx
 
 	bool CheckTree::IsIconChecked(wxTreeItemId item)
 	{
-		mafNode* vme = (mafNode*)(NodeFromItem(item));
-		bool checked = GetNodeIcon((intptr_t)vme) == (ClassNameToIcon(_R(vme->GetTypeName())) + NODE_VISIBLE_ON * 2);
+		NodeID node = NodeFromItem(item);
+		bool checked = GetNodeIcon(node) == (ClassNameToIcon(_R(reinterpret_cast<mafNode*>(node)->GetTypeName())) + NODE_VISIBLE_ON * 2);
 		return checked;
 	}
 
-	void CheckTree::VmeAdd(std::shared_ptr<mafNode> vme)
+	void CheckTree::NodeExpand(mafNode* node)
 	{
-		AddNode((intptr_t)vme.get(), (intptr_t)vme->GetParent(), vme->GetName(), 0, new CheckTreeItemData((intptr_t)vme.get(), vme));
-		VmeUpdateIcon(vme.get());
+		ExpandNode(reinterpret_cast<intptr_t>(node));
 	}
 
-	void CheckTree::VmeRemove(mafNode* vme)
+	void CheckTree::NodeCollapse(mafNode* node)
 	{
-		this->DeleteNode((intptr_t)vme);
-		if (m_SelectedNode == vme)
-		{
-			m_SelectedNode = NULL;
-		}
+		CollapseNode(reinterpret_cast<intptr_t>(node));
 	}
 
-	void CheckTree::VmeExpand(mafNode* vme)
+	void CheckTree::NodeExpandSubTree(mafNode* node)
 	{
-		this->ExpandNode((intptr_t)vme);
+		ExpandNodeSubTree(reinterpret_cast<intptr_t>(node));
 	}
 
-	void CheckTree::VmeCollapse(mafNode* vme)
+	void CheckTree::NodeCollapseSubTree(mafNode* node)
 	{
-		this->CollapseNode((intptr_t)vme);
+		CollapseNodeSubTree(reinterpret_cast<intptr_t>(node));
 	}
 
-	void CheckTree::VmeExpandSubTree(mafNode* vme)
+	void CheckTree::NodeExpandVisible(mafNode* node)
 	{
-		this->ExpandNodeSubTree((intptr_t)vme);
+		ExpandNodeVisible(reinterpret_cast<intptr_t>(node));
 	}
 
-	void CheckTree::VmeCollapseSubTree(mafNode* vme)
+	void CheckTree::NodeSelected(mafNode* node)
 	{
-		this->CollapseNodeSubTree((intptr_t)vme);
+		SelectNode(reinterpret_cast<intptr_t>(node));
+		NodeUpdateIcon(node);
 	}
 
-	void CheckTree::VmeExpandVisible(mafNode* vme)
+	void CheckTree::NodeModified(mafNode* node)
 	{
-		this->ExpandNodeVisible((intptr_t)vme);
+		SetNodeLabel(reinterpret_cast<intptr_t>(node), node->GetName());
+		NodeUpdateIcon(node);
 	}
 
-	void CheckTree::VmeSelected(mafNode* vme)
+	void CheckTree::NodeShow(mafNode* node, bool show)
 	{
-		this->SelectNode((intptr_t)vme);
-		m_SelectedNode = vme;
-		VmeUpdateIcon(vme);
+		NodeUpdateIcon(node);
 	}
 
-	void CheckTree::VmeModified(mafNode* vme)
-	{
-		this->SetNodeLabel((intptr_t)vme, vme->GetName());
-		VmeUpdateIcon(vme);
-	}
-
-	void CheckTree::VmeShow(mafNode* vme, bool show)
-	{
-		VmeUpdateIcon(vme);
-	}
-
-	int CheckTree::GetVmeStatus(mafNode* vme)
+	int CheckTree::GetVmeStatus(mafNode* node)
 	{
 		if (!m_View)
 			return NODE_NON_VISIBLE;
-		return m_View->GetNodeStatus(vme);
+		return m_View->GetNodeStatus(node);
 	}
 
-	void CheckTree::VmeUpdateIcon(mafNode* vme)
+	void CheckTree::NodeUpdateIcon(mafNode* node)
 	{
 		//auto item = ItemFromNode((intptr_t)vme);
 		//auto iter = std::make_unique<mafNodeIterator>(vme);// static_cast<mafGUICheckTreeItemData*>(m_NodeTree->GetItemData(item))->GetSharedNode().get());
 		//auto iter = std::make_unique<mafNodeIterator>(static_cast<mafGUICheckTreeItemData*>(m_NodeTree->GetItemData(item))->GetSharedNode().get());
-		for (auto& node : *vme)
+		for (auto& node : *node)
 		{
 			int dataStatus = mafVME::StaticDownCast(&node)->IsDataAvailable() ? 0 : 1;
 			int icon_index = ClassNameToIcon(_R(node.GetTypeName())) + (GetVmeStatus(&node) * 2) + dataStatus;
@@ -204,9 +208,9 @@ namespace gui::wx
 
 	void CheckTree::TreeUpdateIcon()
 	{
-		if (m_SelectedNode)
+		if (auto selectedNode = GetSelectedNode())
 		{
-			VmeUpdateIcon(m_SelectedNode->GetRoot());
+			NodeUpdateIcon(selectedNode->GetRoot());
 		}
 	}
 
@@ -268,7 +272,7 @@ namespace gui::wx
 		// create the ImageList 
 		int mw = sw + w;
 		int mh = (sh > h) ? sh : h;
-		auto imgs = std::make_unique<wxImageList>(mw, mh, FALSE, num_icons);
+		auto imgs = std::make_unique<wxImageList>(mw, mh, false, num_icons);
 
 		for (size_t i = 0; i < num_types; i++)
 		{

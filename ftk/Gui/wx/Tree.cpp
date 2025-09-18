@@ -15,10 +15,9 @@ namespace gui::wx
 	{
 		m_NodeTree = new wxTreeCtrl(this, wxID_ANY, wxDefaultPosition, FromDIP(wxSize(100, 100)), wxNO_BORDER | wxTR_HAS_BUTTONS);
 		m_NodeTree->Bind(wxEVT_TREE_SEL_CHANGED, [this](wxTreeEvent& event) {OnSelectionChanged(event); });
+		Add(m_NodeTree, 1, wxEXPAND);
 		Bind(wxEVT_SIZE, [this](wxSizeEvent& event) {OnSize(event); });
-		m_Sizer->Add(m_NodeTree, 1, wxEXPAND);
 
-		//default image list
 		wxBitmap bmp = mafPictureFactory::GetPictureFactory()->GetBmp(_R("NODE_GRAY"));
 		int w = bmp.GetWidth();
 		int h = bmp.GetHeight();
@@ -37,10 +36,9 @@ namespace gui::wx
 	{
 		m_NodeTree->DeleteAllItems();
 		m_NodeTable.clear();
-		m_NodeRoot = 0;
 	}
 
-	bool Tree::AddNode(NodeID node_id, NodeID parent_id, const mafString& label, int icon, TreeItemData* data)
+	bool Tree::AddNode(NodeID node_id, NodeID parent_id, const mafString& label, int icon, int selectedIcon, TreeItemData* data)
 	{
 		/*
 		- se parent_id = 0 to create the root
@@ -51,32 +49,41 @@ namespace gui::wx
 		*/
 
 		icon = CheckIconId(icon);
+		if (selectedIcon != -1)
+		{
+			selectedIcon = CheckIconId(selectedIcon);
+		}
 
-		wxTreeItemId  item, parent_item;
-
-		// check if already inserted
-		if (NodeExist(node_id)) return false;
+		if (auto item = ItemFromNode(node_id); item.IsOk())
+		{
+			return false;
+		}
 
 		if (data == nullptr)
+		{
 			data = new TreeItemData(node_id);
-		if (parent_id == 0 && m_NodeRoot == 0)
-		{
-			item = m_NodeTree->AddRoot(mafStringToWx(label), icon, icon, data);
-			m_NodeRoot = node_id;
-		}
-		else
-		{
-			if (!NodeExist(parent_id)) return false;
-			parent_item = ItemFromNode(parent_id);
-			//insert normally
-			item = m_NodeTree->AppendItem(parent_item, mafStringToWx(label), icon, icon, data);
-			// expand parent node
-			m_NodeTree->SetItemHasChildren(parent_item, true);
-			m_NodeTree->Expand(parent_item);
 		}
 
-		m_NodeTable[node_id] = item;
-		return true;
+		if (m_NodeTree->IsEmpty())
+		{
+			if (auto item = m_NodeTree->AddRoot(mafStringToWx(label), icon, selectedIcon, data); item.IsOk())
+			{
+				m_NodeTable[node_id] = item;
+				return true;
+			}
+			return false;
+		}
+
+		if (auto parent_item = ItemFromNode(parent_id); parent_item.IsOk())
+		{
+			if (auto item = m_NodeTree->AppendItem(parent_item, mafStringToWx(label), icon, icon, data); item.IsOk())
+			{
+				m_NodeTable[node_id] = item;
+				m_NodeTree->Expand(parent_item);
+				return true;
+			}
+		}
+		return false;
 	}
 
 	bool Tree::DeleteNode(NodeID node_id)
@@ -90,297 +97,109 @@ namespace gui::wx
 		- if the item was selected, select the parent node (). [ to prevent the shown property-gui to become inconsistent ]
 		*/
 
-		if (!NodeExist(node_id)) return false;
+		auto item = ItemFromNode(node_id);
+		if (!item.IsOk())
+		{
+			return false;
+		}
 
-		wxTreeItemId item = ItemFromNode(node_id);
-		wxTreeItemId parent_item = m_NodeTree->GetItemParent(item);
-
-		// move the selection (if not deleting the root => parent=NULL)
-		if (parent_item && m_NodeTree->IsSelected(item))
+		auto parent_item = m_NodeTree->GetItemParent(item);
+		if (parent_item.IsOk() && m_NodeTree->IsSelected(item))
 		{
 			m_NodeTree->SelectItem(parent_item);
 		}
 
-		// if the old parent has no other children, set HasChildren to false => hide the widget to expand the subtree
-		// but skip if we are deleting the root => parent=NULL
-		if (parent_item && m_NodeTree->GetChildrenCount(parent_item, false) <= 1)
+		while (m_NodeTree->HasChildren(item))
 		{
-			m_NodeTree->SetItemHasChildren(parent_item, false);
-		}
-
-		DeleteNode2(node_id);
-
-		if (node_id == m_NodeRoot)
-			m_NodeRoot = 0; // if we deleted the root we can create a new one
-		return true;
-	}
-
-	void Tree::DeleteNode2(NodeID node_id)
-	{
-		/*
-		- private function called by DeleteNode. Delete recursively a node and its subtree
-		- doesn't check if node exist
-		- doesn't handle the selection
-		- keep m_NodeTable consistent
-		*/
-
-		wxTreeItemIdValue cookie;
-		wxTreeItemId item = ItemFromNode(node_id);
-		wxTreeItemId child = m_NodeTree->GetFirstChild(item, cookie);
-		while (child.IsOk())
-		{
-			DeleteNode2(NodeFromItem(child));
-			child = m_NodeTree->GetNextChild(item, cookie);
+			auto leaf = item;
+			while (m_NodeTree->HasChildren(leaf))
+				leaf = m_NodeTree->GetLastChild(leaf);
+			auto id = NodeFromItem(item);
+			m_NodeTree->Delete(leaf);
+			m_NodeTable.erase(id);
 		}
 		m_NodeTree->Delete(item);
-
 		m_NodeTable.erase(node_id);
-	}
-
-	bool Tree::SetNodeLabel(NodeID node_id, const mafString& label)
-	{
-		if (!NodeExist(node_id))
-			return false;
-		wxTreeItemId item = ItemFromNode(node_id);
-		m_NodeTree->SetItemText(item, mafStringToWx(label));
-
-		wxTreeItemId parent = m_NodeTree->GetItemParent(item);
-		if (parent.IsOk())
-		{
-		}
 		return true;
 	}
 
 	mafString Tree::GetNodeLabel(NodeID node_id) const
 	{
-		if (!NodeExist(node_id))
-			return _R("");
-		wxTreeItemId item = ItemFromNode(node_id);
-		return mafWxToString(m_NodeTree->GetItemText(item));
-	}
-
-	bool Tree::NodeHasChildren(NodeID node_id) const
-	{
-		if (!NodeExist(node_id))
-			return false;
-		wxTreeItemId item = ItemFromNode(node_id);
-		return m_NodeTree->ItemHasChildren(item);
-	}
-
-	Tree::NodeID Tree::GetNodeParent(NodeID node_id) const
-	{
-		if (!NodeExist(node_id))
-			return false;
-		wxTreeItemId  item = ItemFromNode(node_id);
-		item = m_NodeTree->GetItemParent(item);
-		if (node_id != 1)
+		if (auto item = ItemFromNode(node_id); item.IsOk())
 		{
-			return NodeFromItem(item);
+			return mafWxToString(m_NodeTree->GetItemText(item));
 		}
-		else
+		return _R("");
+	}
+
+	bool Tree::SetNodeLabel(NodeID node_id, const mafString& label)
+	{
+		if (auto item = ItemFromNode(node_id); item.IsOk())
 		{
-			return 0;
+			m_NodeTree->SetItemText(item, mafStringToWx(label));
+			return true;
 		}
-	}
-
-	bool Tree::SetNodeParent(NodeID node_id, NodeID parent_id)
-	{
-		/*
-		- node_id must exist
-		- fails if parent_id is a children of node_id
-		- return true on success
-		- check that node_id exist
-		- calls DeleteNode2 to delete all the item in the subtree keeping m_NodeTable consistent
-		- keep parent->HasChildren consistent
-		- if the item was selected, select the parent node. [ to prevent the shown property-gui to become inconsistent ]
-		*/
-
-		if (node_id == parent_id)  return false;
-
-		if (!NodeExist(node_id))   return false;
-		if (!NodeExist(parent_id)) return false;
-
-		// check that node_id is not an ancestor of parent_id
-		wxTreeItemId i = ItemFromNode(parent_id);;
-		while (i = m_NodeTree->GetItemParent(i))
-		{
-			if (NodeFromItem(i) == node_id) return false;
-		}
-
-		// if the old parent has no other children, set HasChildren to false => hide the widget to expand the subtree
-		i = ItemFromNode(node_id);;
-		wxTreeItemId old_parent_item = m_NodeTree->GetItemParent(i);
-		if (m_NodeTree->GetChildrenCount(old_parent_item, false) <= 1)
-		{
-			m_NodeTree->SetItemHasChildren(old_parent_item, false);
-		}
-
-		// Now the checks are made - start to move
-		SetNodeParent2(node_id, parent_id);
-
-		// Set hasChildren of the new parent and open it
-		i = ItemFromNode(parent_id);;
-		m_NodeTree->SetItemHasChildren(i, true);
-		m_NodeTree->SortChildren(i);
-
-		m_NodeTree->Expand(i);
-
-		return true;
-	}
-
-	void Tree::SetNodeParent2(NodeID node_id, NodeID parent_id)
-	{
-		/*
-		- private function called by SetNodeParent
-		- copy old_node under parent_id
-		- move recursively all the children under the new node
-		- delete old_node
-		- keep m_NodeTable,HasChildren,IsExpanded consistent
-		*/
-
-		wxTreeItemId item = ItemFromNode(node_id);
-		wxTreeItemId parent_item = ItemFromNode(parent_id);
-		int          icon = m_NodeTree->GetItemImage(item);
-		wxString     label = m_NodeTree->GetItemText(item);
-		wxTreeItemId new_item = m_NodeTree->AppendItem(parent_item, label, icon, icon, new TreeItemData(node_id));
-		bool         HasChildren = m_NodeTree->ItemHasChildren(item);
-		bool         IsExpanded = m_NodeTree->IsExpanded(item);
-
-		// update the table
-		m_NodeTable[node_id] = new_item;
-
-		// move recursively the sub tree under new_item
-		wxTreeItemIdValue cookie;
-		wxTreeItemId child = m_NodeTree->GetFirstChild(item, cookie);
-		while (child.IsOk())
-		{
-			SetNodeParent2(NodeFromItem(child), node_id);
-			child = m_NodeTree->GetNextChild(item, cookie);
-		}
-
-		//Synchronize HasChildren and Expanded
-		m_NodeTree->SetItemHasChildren(new_item, HasChildren);
-		if (IsExpanded) m_NodeTree->Expand(new_item); else m_NodeTree->Collapse(new_item);
-
-		m_NodeTree->Delete(item);
-	}
-
-	bool Tree::SetNodeIcon(NodeID node_id, int icon)
-	{
-		icon = CheckIconId(icon);
-		if (!NodeExist(node_id)) return false;
-		wxTreeItemId  item = ItemFromNode(node_id);
-		m_NodeTree->SetItemImage(item, icon);
-		m_NodeTree->SetItemImage(item, icon, wxTreeItemIcon_Selected);
-		return true;
-	}
-
-	bool Tree::NodeExist(NodeID node_id) const
-	{
-		return m_NodeTable.find(node_id) != end(m_NodeTable);
-	}
-
-	wxTreeItemId Tree::ItemFromNode(NodeID node_id) const
-	{
-		if (auto it = m_NodeTable.find(node_id); it != end(m_NodeTable))
-			return it->second;
-		return {};
-	}
-
-	Tree::NodeID Tree::NodeFromItem(wxTreeItemId& item) const
-	{
-		if (auto nd = static_cast<TreeItemData*>(m_NodeTree->GetItemData(item)))
-			return nd->GetNode();
-		return 0;
-	}
-
-	void Tree::OnSelectionChanged(wxTreeEvent& event)
-	{
-		if (m_PreventNotify) return;
-
-		wxTreeItemId i = event.GetItem();
-		if (i.IsOk())
-		{
-			mafEvent evUnq(this, VME_SELECT); evUnq.SetArg(NodeFromItem(i)); InvokeEvent(evUnq);
-		}
-		event.Skip();
-	}
-
-	bool Tree::SelectNode(NodeID node_id)
-	{
-		if (!NodeExist(node_id)) return false;
-		wxTreeItemId  item = ItemFromNode(node_id);
-		m_PreventNotify = true;
-		m_NodeTree->SelectItem(item);
-		m_PreventNotify = false;
-		return true;
-	}
-
-	void Tree::OnSize(wxSizeEvent& event)
-	{
-		event.Skip();
-		m_NodeTree->Refresh();
-	}
-
-	int Tree::CheckIconId(int icon) const
-	{
-		if (!m_NodeImages) return 0;
-		if (icon < 0)
-		{
-			mafLogMessage(_M(_R("Tree: icon id = ") + mafToString(icon) + _R(" out of range ")));
-			return 0;
-		}
-		if (icon >= m_NodeImages->GetImageCount())
-		{
-			mafLogMessage(_M(_R("Tree: icon id = ") + mafToString(icon) + _R(" out of range ")));
-			return m_NodeImages->GetImageCount() - 1;
-		}
-		return icon;
-	}
-
-	void Tree::SetImageList(std::unique_ptr<wxImageList> img)
-	{
-		if (m_NodeRoot != 0)
-		{
-			mafLogMessage(_M("warning: Tree::SetImageList must be called before adding any node"));
-			// if you replace the image-list with a shorter one 
-			// the icon-index actually in use by the existing nodes 
-			// can become inconsistent 
-
-			//return; //SIL. 7-4-2005: - commented 4 testing -- to be reinserted
-		}
-
-		if (img == m_NodeImages)
-			return;
-		m_NodeTree->SetImageList(img.get());
-		m_NodeImages = std::move(img);
+		return false;
 	}
 
 	int Tree::GetNodeIcon(NodeID node_id) const
 	{
-		if (!NodeExist(node_id))
-			return 0;
-		wxTreeItemId item = ItemFromNode(node_id);
-		if (!item.IsOk())
-			return 0;
-		return m_NodeTree->GetItemImage(item);
+		if (auto item = ItemFromNode(node_id); item.IsOk())
+		{
+			return m_NodeTree->GetItemImage(item);
+		}
+		return 0;
+	}
+
+	bool Tree::SetNodeIcon(NodeID node_id, int icon)
+	{
+		if (auto item = ItemFromNode(node_id); item.IsOk())
+		{
+			icon = CheckIconId(icon);
+			m_NodeTree->SetItemImage(item, icon);
+			m_NodeTree->SetItemImage(item, icon, wxTreeItemIcon_Selected);
+			return true;
+		}
+		return false;
+	}
+
+	Tree::NodeID Tree::GetSelected() const
+	{
+		if (auto item = m_NodeTree->GetSelection(); item.IsOk())
+		{
+			return NodeFromItem(item);
+		}
+		return 0;
+	}
+
+	bool Tree::SelectNode(NodeID node_id)
+	{
+		if (auto item = ItemFromNode(node_id); item.IsOk())
+		{
+			m_PreventNotify = true;
+			m_NodeTree->SelectItem(item);
+			m_PreventNotify = false;
+			return true;
+		}
+		return false;
 	}
 
 	void Tree::CollapseNode(NodeID node_id)
 	{
-		if (!NodeExist(node_id)) return;
-		wxTreeItemId  item = ItemFromNode(node_id);
-		if (!item.IsOk()) return;
-		m_NodeTree->Collapse(item);
+		if (auto item = ItemFromNode(node_id); item.IsOk())
+		{
+			m_NodeTree->Collapse(item);
+		}
 	}
 
 	void Tree::ExpandNode(NodeID node_id)
 	{
-		if (!NodeExist(node_id)) return;
-		wxTreeItemId item = ItemFromNode(node_id);
-		if (!item.IsOk()) return;
-		m_NodeTree->Expand(item);
+		if (auto item = ItemFromNode(node_id); item.IsOk())
+		{
+			m_NodeTree->Expand(item);
+		}
 	}
+
 	namespace
 	{
 		void CollapseAllChildren(wxTreeCtrl* tree, wxTreeItemId& item)
@@ -407,29 +226,111 @@ namespace gui::wx
 
 	void Tree::CollapseNodeSubTree(NodeID node_id)
 	{
-		if (!NodeExist(node_id)) return;
-		wxTreeItemId item = ItemFromNode(node_id);
-		if (!item.IsOk()) return;
-
-		wxWindowUpdateLocker noUpdates(m_NodeTree);
-		CollapseAllChildren(m_NodeTree, item);
+		if (auto item = ItemFromNode(node_id); item.IsOk())
+		{
+			wxWindowUpdateLocker noUpdates(m_NodeTree);
+			CollapseAllChildren(m_NodeTree, item);
+		}
 	}
 
 	void Tree::ExpandNodeSubTree(NodeID node_id)
 	{
-		if (!NodeExist(node_id)) return;
-		wxTreeItemId item = ItemFromNode(node_id);
-		if (!item.IsOk()) return;
-
-		wxWindowUpdateLocker noUpdates(m_NodeTree);
-		ExpandAllChildren(m_NodeTree, item);
+		if (auto item = ItemFromNode(node_id); item.IsOk())
+		{
+			wxWindowUpdateLocker noUpdates(m_NodeTree);
+			ExpandAllChildren(m_NodeTree, item);
+		}
 	}
 
 	void Tree::ExpandNodeVisible(NodeID node_id)
 	{
-		if (!NodeExist(node_id)) return;
-		wxTreeItemId item = ItemFromNode(node_id);
-		if (!item.IsOk()) return;
-		m_NodeTree->EnsureVisible(item);
+		if (auto item = ItemFromNode(node_id); item.IsOk())
+		{
+			m_NodeTree->EnsureVisible(item);
+		}
+	}
+
+	bool Tree::NodeHasChildren(NodeID node_id) const
+	{
+		if (auto item = ItemFromNode(node_id); item.IsOk())
+		{
+			return m_NodeTree->ItemHasChildren(item);
+		}
+		return false;
+	}
+
+	void Tree::SetImageList(std::unique_ptr<wxImageList> img)
+	{
+		if (!m_NodeTree->IsEmpty())
+		{
+			mafLogMessage(_M("warning: Tree::SetImageList must be called before adding any node"));
+			// if you replace the image-list with a shorter one 
+			// the icon-index actually in use by the existing nodes 
+			// can become inconsistent 
+
+			//return; //SIL. 7-4-2005: - commented 4 testing -- to be reinserted
+		}
+
+		if (img == m_NodeImages)
+			return;
+		m_NodeTree->SetImageList(img.get());
+		m_NodeImages = std::move(img);
+	}
+
+	wxTreeItemId Tree::ItemFromNode(NodeID node_id) const
+	{
+		if (auto it = m_NodeTable.find(node_id); it != end(m_NodeTable))
+		{
+			return it->second;
+		}
+		return {};
+	}
+
+	Tree::NodeID Tree::NodeFromItem(const wxTreeItemId& item) const
+	{
+		if (auto nd = static_cast<TreeItemData*>(m_NodeTree->GetItemData(item)))
+			return nd->GetNode();
+		return 0;
+	}
+
+	void Tree::OnSelectionChanged(wxTreeEvent& event)
+	{
+		if (m_PreventNotify)
+		{
+			return;
+		}
+
+		if (wxTreeItemId item = event.GetItem();item.IsOk())
+		{
+			mafEvent evUnq(this, VME_SELECT); evUnq.SetArg(NodeFromItem(item)); InvokeEvent(evUnq);
+		}
+		event.Skip();
+	}
+
+	void Tree::OnSize(wxSizeEvent& event)
+	{
+		event.Skip();
+		m_NodeTree->Refresh();
+	}
+
+	/*bool Tree::NodeExist(NodeID node_id) const
+	{
+		return m_NodeTable.find(node_id) != end(m_NodeTable);
+	}*/
+
+	int Tree::CheckIconId(int icon) const
+	{
+		if (!m_NodeImages) return 0;
+		if (icon < 0)
+		{
+			mafLogMessage(_M(_R("Tree: icon id = ") + mafToString(icon) + _R(" out of range ")));
+			return 0;
+		}
+		if (icon >= m_NodeImages->GetImageCount())
+		{
+			mafLogMessage(_M(_R("Tree: icon id = ") + mafToString(icon) + _R(" out of range ")));
+			return m_NodeImages->GetImageCount() - 1;
+		}
+		return icon;
 	}
 }

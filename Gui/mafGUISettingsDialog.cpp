@@ -27,7 +27,7 @@ mafGUISettingsDialog::mafGUISettingsDialog(const mafString& dialog_title)
 {  
   #include <pic/FOLDER.xpm>
   mafPictureFactory::GetPictureFactory()->Add(_R("FOLDER"), FOLDER_xpm);
-  auto tree_images = std::make_unique<wxImageList>(20,20,FALSE,1);
+  auto tree_images = std::make_unique<wxImageList>(20,20,false,1);
   tree_images->Add(mafPictureFactory::GetPictureFactory()->GetBmp(_R("FOLDER")));
 
   m_Dialog = new mafGUIDialog(dialog_title);

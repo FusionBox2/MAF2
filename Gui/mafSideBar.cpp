@@ -151,36 +151,36 @@ void mafSideBar::EnableSelect(bool enable)
 }
 void mafSideBar::VmeExpand(mafNode *vme)
 {
-	m_Tree->VmeExpand(vme);
+	m_Tree->NodeExpand(vme);
 }
 void mafSideBar::VmeCollapse(mafNode *vme)
 {
-	m_Tree->VmeCollapse(vme);
+	m_Tree->NodeCollapse(vme);
 }
 void mafSideBar::VmeExpandSubTree(mafNode *vme)
 {
-	m_Tree->VmeExpandSubTree(vme);
+	m_Tree->NodeExpandSubTree(vme);
 }
 void mafSideBar::VmeCollapseSubTree(mafNode *vme)
 {
-	m_Tree->VmeCollapseSubTree(vme);
+	m_Tree->NodeCollapseSubTree(vme);
 }
 void mafSideBar::VmeExpandVisible(mafNode *vme)
 {
-	m_Tree->VmeExpandVisible(vme);
+	m_Tree->NodeExpandVisible(vme);
 }
 
 //----------------------------------------------------------------------------
 void mafSideBar::VmeAdd(std::shared_ptr<mafNode> vme)
 //----------------------------------------------------------------------------
 {
-	m_Tree->VmeAdd(vme);
+	m_Tree->NodeAdd(vme);
 }
 //----------------------------------------------------------------------------
 void mafSideBar::VmeRemove(mafNode *vme)
 //----------------------------------------------------------------------------
 {
-	m_Tree->VmeRemove(vme);
+	m_Tree->NodeRemove(vme);
   if (vme == m_SelectedVme)
   {
     m_SelectedVme = NULL;
@@ -191,14 +191,14 @@ void mafSideBar::VmeRemove(mafNode *vme)
 void mafSideBar::VmeModified(mafNode *vme)
 //----------------------------------------------------------------------------
 {
-	m_Tree->VmeModified(vme);
+	m_Tree->NodeModified(vme);
   UpdateVmePanel();
 }
 //----------------------------------------------------------------------------
 void mafSideBar::VmeShow(mafNode *vme, bool visibility)
 //----------------------------------------------------------------------------
 {
-	m_Tree->VmeShow(vme,visibility);
+	m_Tree->NodeShow(vme,visibility);
   UpdateVmePanel();
 }
 //----------------------------------------------------------------------------
@@ -207,7 +207,7 @@ void mafSideBar::VmeSelected(mafNode *vme)
 {
   m_SelectedVme = vme;
   UpdateVmePanel();
-  m_Tree->VmeSelected(vme);
+  m_Tree->NodeSelected(vme);
 }
 //----------------------------------------------------------------------------
 void mafSideBar::VmePropertyRemove(mafGUI *gui)

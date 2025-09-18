@@ -33,35 +33,21 @@ namespace gui::wx
 
 		class TreeItemData;
 
-		bool AddNode(NodeID node_id, NodeID parent_id, const mafString& label, int icon = 0, TreeItemData* data = nullptr);
+		bool AddNode(NodeID node_id, NodeID parent_id, const mafString& label, int icon = 0, int selectedIcon = -1, TreeItemData* data = nullptr);
 
 		bool DeleteNode(NodeID node_id);
 
-		bool SetNodeLabel(NodeID node_id, const mafString& label);
-
 		mafString GetNodeLabel(NodeID node_id) const;
 
-		bool NodeHasChildren(NodeID node_id) const;
-
-		NodeID GetNodeParent(NodeID node_id) const;
-
-		bool SetNodeParent(NodeID node_id, NodeID parent_id);
-
-		bool SetNodeIcon(NodeID node_id, int icon);
+		bool SetNodeLabel(NodeID node_id, const mafString& label);
 
 		int  GetNodeIcon(NodeID node_id) const;
 
-		bool SelectNode(NodeID node_id);
+		bool SetNodeIcon(NodeID node_id, int icon);
 
-		/** Set the images to be used for the nodes.
-			Must be set before adding any node.
-			The default ImageList provide 4 icons :
-			-1 gray dot
-			-2 red dot
-			-3 blue dot
-			-4 yellow dot
-		*/
-		void SetImageList(std::unique_ptr<wxImageList> img);
+		NodeID GetSelected() const;
+
+		bool SelectNode(NodeID node_id);
 
 		void CollapseNode(NodeID node_id);
 
@@ -73,13 +59,21 @@ namespace gui::wx
 
 		void ExpandNodeVisible(NodeID node_id);
 
+		bool NodeHasChildren(NodeID node_id) const;
+
+		/** Set the images to be used for the nodes.
+			Must be set before adding any node.
+			The default ImageList provide 4 icons :
+			-1 gray dot
+			-2 red dot
+			-3 blue dot
+			-4 yellow dot
+		*/
+		void SetImageList(std::unique_ptr<wxImageList> img);
+
 		wxTreeItemId ItemFromNode(NodeID node_id) const;
 
-		NodeID NodeFromItem(wxTreeItemId& item) const;
-
-		void SetTreeStyle(long style) { m_NodeTree->SetWindowStyle(style); }
-
-		long GetTreeStyle() const { return m_NodeTree->GetWindowStyle(); }
+		NodeID NodeFromItem(const wxTreeItemId& item) const;
 
 	protected:
 
@@ -89,29 +83,22 @@ namespace gui::wx
 
 		bool NodeExist(NodeID node_id) const;
 
-		void DeleteNode2(NodeID node_id);
-
-		void SetNodeParent2(NodeID node_id, NodeID parent_id);
-
 		int CheckIconId(int icon) const;
-
-		bool IsRootHidden() const { return (GetTreeStyle() & wxTR_HIDE_ROOT) != 0; }
 
 		bool m_PreventNotify = false;
 		wxTreeCtrl* m_NodeTree = nullptr;
-		NodeID m_NodeRoot = 0;
 		std::unique_ptr<wxImageList> m_NodeImages;
 		std::unordered_map<NodeID, wxTreeItemId> m_NodeTable;
 
-		//----------------------------------------------------------------------------
-		// TreeItemData :
-		// Data to be attached to an item of Tree, holds the reference to a node_id 
-		//----------------------------------------------------------------------------
-		class TreeItemData : public wxTreeItemData {
+		class TreeItemData : public wxTreeItemData
+		{
 		public:
 			TreeItemData(NodeID node_id) { m_NodeId = node_id; }
+
 			NodeID GetNode() const { return m_NodeId; }
+
 		protected:
+
 			NodeID m_NodeId;
 		};
 	};
