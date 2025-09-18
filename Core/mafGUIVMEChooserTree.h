@@ -33,7 +33,7 @@ enum VME_CHOOSER_STYLES
 //----------------------------------------------------------------------------
 
 
-typedef bool (*ValidateCallBackType) (mafNode *);
+typedef bool (*ValidateCallBackType) (model::data::Node*);
 
 //----------------------------------------------------------------------------
 // mafGUIVMEChooserTree :
@@ -49,14 +49,14 @@ public:
   ~mafGUIVMEChooserTree() override;
 
   /** Return the choosed node*/
-  std::vector<mafNode* > GetChoosedNode();
+  std::vector<model::data::Node* > GetChoosedNode();
 
   /** Called by the Custom-Tree-Event-Handler - via OnMouseDown*/
                  void OnIconClick(wxTreeItemId item) override;
 
 protected:
   /** Return the status of the node according to the vme visibility. */
-  int GetVmeStatus(mafNode *node) override;
+  int GetVmeStatus(model::data::Node*node) override;
 
   void InitializeImageList() override;
 
@@ -64,7 +64,7 @@ protected:
   void InitializeImageListMulti();
 
   /** Update the vme nodes icon. */
-  void VmeUpdateIcon(mafNode *n);
+  void VmeUpdateIcon(model::data::Node*n);
 
   /** clone in tree a subtree of source_item */
   void CloneSubTree(mafGUICheckTree *tree, wxTreeItemId *source_item, wxTreeItemId *dest_parent_item);
@@ -77,9 +77,9 @@ protected:
 
   ValidateCallBackType m_ValidateFunction;
 
-  mafNode* m_ChoosedNode = nullptr; ///< Pointer to the selected node in single selection.
+  model::data::Node* m_ChoosedNode = nullptr; ///< Pointer to the selected node in single selection.
   long       m_ChooserTreeStyle;
-  std::vector<mafNode* > m_CheckedNode; ///< Vector of checked node (used in multi-selection)
+  std::vector<model::data::Node* > m_CheckedNode; ///< Vector of checked node (used in multi-selection)
   bool m_MultipleSelection; ///< Flag that manage the single or multi selection of the nodes inside the tree.
 };
 #endif

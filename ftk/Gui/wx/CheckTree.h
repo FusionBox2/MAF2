@@ -12,7 +12,6 @@ namespace model::data
 {
 	class Node;
 }
-using mafNode = model::data::Node;
 class mafView;
 
 namespace gui::wx
@@ -25,29 +24,29 @@ namespace gui::wx
 
 		~CheckTree() override;
 
-		void NodeAdd(std::shared_ptr<mafNode> node);
+		void NodeAdd(std::shared_ptr<model::data::Node> node);
 
-		void NodeRemove(mafNode* node);
+		void NodeRemove(model::data::Node* node);
 
-		mafNode* GetSelectedNode() const;
+		model::data::Node* GetSelectedNode() const;
 
-		void NodeSelected(mafNode* n);
+		void NodeSelected(model::data::Node* n);
 
-		void NodeCollapse(mafNode* node);
+		void NodeCollapse(model::data::Node* node);
 
-		void NodeExpand(mafNode* node);
+		void NodeExpand(model::data::Node* node);
 
-		void NodeCollapseSubTree(mafNode* node);
+		void NodeCollapseSubTree(model::data::Node* node);
 
-		void NodeExpandSubTree(mafNode* node);
+		void NodeExpandSubTree(model::data::Node* node);
 
-		void NodeExpandVisible(mafNode* node);
+		void NodeExpandVisible(model::data::Node* node);
 
 		bool IsIconChecked(wxTreeItemId item);
 
-		void NodeShow(mafNode* node, bool show);
+		void NodeShow(model::data::Node* node, bool show);
 
-		void NodeModified(mafNode* node);
+		void NodeModified(model::data::Node* node);
 
 		void ViewSelected(mafView* view);
 
@@ -65,11 +64,11 @@ namespace gui::wx
 
 	protected:
 
-		void NodeUpdateIcon(mafNode* n);
+		void NodeUpdateIcon(model::data::Node* n);
 
 		void TreeUpdateIcon();
 
-		virtual int GetVmeStatus(mafNode* vme);
+		virtual int GetVmeStatus(model::data::Node* vme);
 
 		int ClassNameToIcon(const mafString& classname);
 
@@ -96,12 +95,12 @@ namespace gui::wx
 		class CheckTreeItemData : public TreeItemData
 		{
 		public:
-			CheckTreeItemData(intptr_t node_id, std::shared_ptr<mafNode> n = nullptr) : TreeItemData(node_id), sharednode(n) {}
+			CheckTreeItemData(intptr_t node_id, std::shared_ptr<model::data::Node> n = nullptr) : TreeItemData(node_id), sharednode(n) {}
 			~CheckTreeItemData() override = default;
-			void SetSharedNode(std::shared_ptr<mafNode> n) { sharednode = n; }
-			std::shared_ptr<mafNode> GetSharedNode() const { return sharednode; }
+			void SetSharedNode(std::shared_ptr<model::data::Node> n) { sharednode = n; }
+			std::shared_ptr<model::data::Node> GetSharedNode() const { return sharednode; }
 		private:
-			std::shared_ptr<mafNode> sharednode;
+			std::shared_ptr<model::data::Node> sharednode;
 		};
 
 		using MapClassNameToIcon = std::map<mafString, int> ;
