@@ -18,10 +18,6 @@ namespace gui::wx
 {
 	SideBar::SideBar(wxWindow* parent, int id, mafBaseEventHandler* Listener, long style)
 	{
-		m_SelectedVme = NULL;
-		m_SelectedView = NULL;
-		m_CurrentVmeGui = NULL;
-		m_CurrentPipeGui = NULL;
 		SetListener(Listener);
 		m_Style = style;
 
@@ -92,18 +88,12 @@ namespace gui::wx
 	void SideBar::NodeRemove(mafNode* node)
 	{
 		m_Tree->NodeRemove(node);
-		if (node == m_SelectedVme)
-		{
-			m_SelectedVme = nullptr;
-			UpdateVmePanel();
-		}
 	}
 
 	void SideBar::NodeSelected(mafNode* node)
 	{
-		m_SelectedVme = node;
-		UpdateVmePanel();
 		m_Tree->NodeSelected(node);
+		UpdateVmePanel();
 	}
 
 	void SideBar::NodeCollapse(mafNode* node)
@@ -215,21 +205,21 @@ namespace gui::wx
 
 	void SideBar::UpdateVmePanel()
 	{
-		mafVMEOutput* vme_out = NULL;
+		mafVMEOutput* vme_out = nullptr;
 		std::shared_ptr<mafPipe> vme_pipe;
-		mafGUI* vme_gui = NULL;
-		mafGUI* vme_out_gui = NULL;
-		mafGUI* vme_pipe_gui = NULL;
+		mafGUI* vme_gui = nullptr;
+		mafGUI* vme_out_gui = nullptr;
+		mafGUI* vme_pipe_gui = nullptr;
 
 		if (m_Style == SINGLE_NOTEBOOK)
 		{
-			if (m_SelectedVme)
+			if (auto selectedVme= m_Tree->GetSelectedNode())
 			{
-				vme_gui = m_SelectedVme->GetGui();
+				vme_gui = selectedVme->GetGui();
 
-				if (m_SelectedVme->IsMAFType(mafVME))
+				if (selectedVme->IsMAFType(mafVME))
 				{
-					mafVME* v = (mafVME*)m_SelectedVme;
+					auto v = mafVME::StaticDownCast(selectedVme);
 					vme_out = v->GetOutput();
 					if (!vme_out->IsA("mafVMEOutputNULL")) // Paolo 2005-05-05
 					{
@@ -240,7 +230,7 @@ namespace gui::wx
 						}
 					}
 					else
-						vme_out = NULL;
+						vme_out = nullptr;
 				}
 
 				if (m_OldAppendingGUI)
@@ -257,7 +247,7 @@ namespace gui::wx
 
 				if (m_SelectedView)
 				{
-					vme_pipe = m_SelectedView->GetNodePipe(m_SelectedVme);
+					vme_pipe = m_SelectedView->GetNodePipe(selectedVme);
 
 					if (vme_pipe)
 					{
@@ -266,14 +256,14 @@ namespace gui::wx
 				}
 			}
 
-			m_NewAppendingGUI = NULL;
+			m_NewAppendingGUI = nullptr;
 
 			m_CurrentPipeGui = vme_pipe_gui;
 			m_CurrentVmeGui = vme_gui;
 
 			if (vme_gui || vme_pipe_gui)
 			{
-				m_NewAppendingGUI = new mafGUI(NULL);
+				m_NewAppendingGUI = new mafGUI(nullptr);
 
 				if (vme_gui)
 				{
@@ -299,13 +289,13 @@ namespace gui::wx
 		}
 		else if (m_Style == DOUBLE_NOTEBOOK)
 		{
-			if (m_SelectedVme)
+			if (auto selectedVme = m_Tree->GetSelectedNode())
 			{
-				vme_gui = m_SelectedVme->GetGui();
+				vme_gui = selectedVme->GetGui();
 
-				if (m_SelectedVme->IsMAFType(mafVME))
+				if (selectedVme->IsMAFType(mafVME))
 				{
-					mafVME* v = (mafVME*)m_SelectedVme;
+					auto v = mafVME::StaticDownCast(selectedVme);
 					vme_out = v->GetOutput();
 					if (!vme_out->IsA("mafVMEOutputNULL")) // Paolo 2005-05-05
 					{
@@ -316,12 +306,12 @@ namespace gui::wx
 						}
 					}
 					else
-						vme_out = NULL;
+						vme_out = nullptr;
 				}
 
 				if (m_SelectedView)
 				{
-					vme_pipe = m_SelectedView->GetNodePipe(m_SelectedVme);
+					vme_pipe = m_SelectedView->GetNodePipe(selectedVme);
 					if (vme_pipe)
 						vme_pipe_gui = vme_pipe->GetGui();
 				}

@@ -86,14 +86,13 @@ namespace gui::wx
 		mafGUIHolder* m_VmeOutputPanel;
 		mafGUIHolder* m_VmePipePanel;
 
-		model::data::Node* m_SelectedVme;
-		mafView* m_SelectedView;
+		mafView* m_SelectedView = nullptr;
 
 		mafGUI* m_NewAppendingGUI;
 		mafGUI* m_OldAppendingGUI;
 
-		mafGUI* m_CurrentVmeGui;
-		mafGUI* m_CurrentPipeGui;
+		mafGUI* m_CurrentVmeGui = nullptr;
+		mafGUI* m_CurrentPipeGui = nullptr;
 
 		int m_Style;
 	};
