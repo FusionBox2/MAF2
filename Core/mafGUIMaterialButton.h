@@ -46,7 +46,7 @@ public:
 	void OnEvent(mafEventBase *maf_event) override;
 
 	/** Return mafGUIMaterialButton User Interface */
-	mafGUI *GetGui() {return m_Gui;};
+	mafGUI *GetGui() {return m_Gui.get();}
 
   /** update material icon. */
 	void UpdateMaterialIcon();
@@ -54,7 +54,7 @@ public:
   /** Enable-Disable material button. */
   void Enable(bool enable);
 
-  std::shared_ptr<mmaMaterial> GetMaterial() {return m_Material;};
+  std::shared_ptr<mmaMaterial> GetMaterial() {return m_Material;}
 
 	void SetVME(mafVME *vme);
 
@@ -66,7 +66,7 @@ protected:
   wxStaticText *m_MaterialLabel;   // material name label
   std::shared_ptr<mmaMaterial>  m_Material;
 
-	mafGUI			*m_Gui;
+	std::unique_ptr<mafGUI> m_Gui;
   mafVME      *m_Vme;
 };
 #endif

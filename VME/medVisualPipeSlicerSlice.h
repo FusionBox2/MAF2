@@ -97,7 +97,7 @@ protected:
   vtkPolyDataMapper       *m_OutlineMapper;
   vtkProperty             *m_OutlineProperty;
   vtkActor                *m_OutlineActor;
-  mafAxes                 *m_Axes;
+  std::unique_ptr<mafAxes> m_Axes;
   vtkPlane				        *m_Plane1;
   vtkPlane				        *m_Plane2;
   vtkMAFFixedCutter		      *m_Cutter1;

@@ -75,25 +75,22 @@ mafGUIMaterialButton::~mafGUIMaterialButton()
 //----------------------------------------------------------------------------
 {
 	if(m_Gui)
-    m_Gui->SetListener(NULL);
-	cppDEL(m_Gui);
+    m_Gui->SetListener(nullptr);
 }
 
 //----------------------------------------------------------------------------
 void mafGUIMaterialButton::CreateGui()
 //----------------------------------------------------------------------------
 {
-	m_Gui = new mafGUI(this);
+	m_Gui = std::make_unique<mafGUI>(this);
 	m_Gui->Show(true);
 
-  wxStaticText *lab = new wxStaticText(m_Gui, -1, "material", wxDefaultPosition, wxSize(60,16), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+  wxStaticText *lab = new wxStaticText(m_Gui.get(), -1, "material", wxDefaultPosition, wxSize(60,16), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
   
-  m_Material->MakeIcon();
-  if(this)
-	m_MaterialButton = new mafGUIPicButton(m_Gui, m_Material->m_Icon, ID_MATERIAL, this);
+	m_MaterialButton = new mafGUIPicButton(m_Gui.get(), m_Material->MakeIcon(), ID_MATERIAL, this);
 
   //m_MaterialLabel = new wxStaticText(m_Gui,ID_MATERIAL,"",wxDefaultPosition, wxSize(100,16), wxST_NO_AUTORESIZE );
-  m_MaterialLabel = new wxStaticText(m_Gui,-1,"",wxDefaultPosition, wxSize(100,16), wxST_NO_AUTORESIZE );
+  m_MaterialLabel = new wxStaticText(m_Gui.get(),-1,"",wxDefaultPosition, wxSize(100,16), wxST_NO_AUTORESIZE );
   m_MaterialLabel->SetLabel(m_Material->m_MaterialName.toWx());
 
   wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -128,10 +125,7 @@ void mafGUIMaterialButton::OnEvent(mafEventBase *maf_event)
 void mafGUIMaterialButton::UpdateMaterialIcon() 
 //----------------------------------------------------------------------------
 {
-	cppDEL(m_Material->m_Icon);
-	
-	m_Material->MakeIcon();
-	m_MaterialButton->SetBitmapLabel(*m_Material->m_Icon);
+	m_MaterialButton->SetBitmapLabel(*m_Material->MakeIcon());
   m_MaterialButton->Refresh();
 
   m_Gui->Update();

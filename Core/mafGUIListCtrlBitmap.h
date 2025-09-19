@@ -89,7 +89,7 @@ protected:
 
   bool         m_PreventNotify;
   wxListCtrl  *m_List;         
-  wxImageList *m_Images;       
+  std::unique_ptr<wxImageList> m_Images;       
 
 DECLARE_EVENT_TABLE()
 }; // end of mafGUIListCtrlBitmap

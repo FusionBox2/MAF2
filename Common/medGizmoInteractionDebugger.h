@@ -94,9 +94,6 @@ protected:
 
   
 
-  void Constructor(std::shared_ptr<mafNode> imputVme, mafBaseEventHandler *listener, const char *name, bool testMode = false);
-  void Destructor();
-
   void CreateVMEGizmo();
   void DestroyVMEGizmo();
   void CreateGizmoVTKData();
@@ -114,7 +111,7 @@ protected:
   vtkPlaneSource *m_PlaneSource;
   vtkAppendPolyData *m_AppendPolyData;
   
-  medCurvilinearAbscissaOnSkeletonHelper *m_CurvilinearAbscissaHelper;
+  std::unique_ptr<medCurvilinearAbscissaOnSkeletonHelper> m_CurvilinearAbscissaHelper;
 
   enum CONSTRAINT_MODALITY_ID
   {

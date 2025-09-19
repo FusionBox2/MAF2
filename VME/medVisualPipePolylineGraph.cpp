@@ -118,7 +118,7 @@ void medVisualPipePolylineGraph::Create(mafNode *node, mafView *view)
   AddActorsToAssembly(m_AssemblyFront);
 
   if(m_RenFront)
-    m_Axes = new mafAxes(m_RenFront, m_Vme);
+    m_Axes = std::make_unique<mafAxes>(m_RenFront, m_Vme);
 }
 //----------------------------------------------------------------------------
 void medVisualPipePolylineGraph::ExecutePipe()
@@ -278,72 +278,59 @@ void medVisualPipePolylineGraph::ExecutePipe()
 void medVisualPipePolylineGraph::InitializeFromTag()
 //----------------------------------------------------------------------------
 {
-  mafTagItem *item = NULL;
   if (!m_Vme->GetTagArray()->GetTag(_R("REPRESENTATION")))
   {
-    item = new mafTagItem();
+    auto item = std::make_unique<mafTagItem>();
     item->SetName(_R("REPRESENTATION"));
     item->SetValue(0);
     m_Vme->GetTagArray()->SetTag(*item);
-    cppDEL(item);
   }
-  item = m_Vme->GetTagArray()->GetTag(_R("REPRESENTATION"));
-  m_Representation = (int)item->GetValueAsDouble();
+  m_Representation = (int)m_Vme->GetTagArray()->GetTag(_R("REPRESENTATION"))->GetValueAsDouble();
 
   if (!m_Vme->GetTagArray()->GetTag(_R("SPHERE_RADIUS")))
   {
-    item = new mafTagItem();
+    auto item = std::make_unique<mafTagItem>();
     item->SetName(_R("SPHERE_RADIUS"));
     item->SetValue(1.0);
     m_Vme->GetTagArray()->SetTag(*item);
-    cppDEL(item);
   }
-  item = m_Vme->GetTagArray()->GetTag(_R("SPHERE_RADIUS"));
-  m_SphereRadius = item->GetValueAsDouble();
+  m_SphereRadius = m_Vme->GetTagArray()->GetTag(_R("SPHERE_RADIUS"))->GetValueAsDouble();
 
   if (!m_Vme->GetTagArray()->GetTag(_R("SPHERE_RESOLUTION")))
   {
-    item = new mafTagItem();
+    auto item = std::make_unique<mafTagItem>();
     item->SetName(_R("SPHERE_RESOLUTION"));
     item->SetValue(10.0);
     m_Vme->GetTagArray()->SetTag(*item);
-    cppDEL(item);
   }
-  item = m_Vme->GetTagArray()->GetTag(_R("SPHERE_RESOLUTION"));
-  m_SphereResolution = item->GetValueAsDouble();
+  m_SphereResolution = m_Vme->GetTagArray()->GetTag(_R("SPHERE_RESOLUTION"))->GetValueAsDouble();
 
   if (!m_Vme->GetTagArray()->GetTag(_R("TUBE_RADIUS")))
   {
-    item = new mafTagItem();
+    auto item = std::make_unique<mafTagItem>();
     item->SetName(_R("TUBE_RADIUS"));
     item->SetValue(1.0);
     m_Vme->GetTagArray()->SetTag(*item);
-    cppDEL(item);
   }
-  item = m_Vme->GetTagArray()->GetTag(_R("TUBE_RADIUS"));
-  m_TubeRadius = item->GetValueAsDouble();
+  m_TubeRadius = m_Vme->GetTagArray()->GetTag(_R("TUBE_RADIUS"))->GetValueAsDouble();
 
   if (!m_Vme->GetTagArray()->GetTag(_R("TUBE_RESOLUTION")))
   {
-    item = new mafTagItem();
+    auto item = std::make_unique<mafTagItem>();
     item->SetName(_R("TUBE_RESOLUTION"));
     item->SetValue(10.0);
     m_Vme->GetTagArray()->SetTag(*item);
-    cppDEL(item);
   }
-  item = m_Vme->GetTagArray()->GetTag(_R("TUBE_RESOLUTION"));
-  m_TubeResolution = item->GetValueAsDouble();
+  m_TubeResolution = m_Vme->GetTagArray()->GetTag(_R("TUBE_RESOLUTION"))->GetValueAsDouble();
 
   if (!m_Vme->GetTagArray()->GetTag(_R("TUBE_CAPPING")))
   {
-    item = new mafTagItem();
+    auto item = std::make_unique<mafTagItem>();
     item->SetName(_R("TUBE_CAPPING"));
     item->SetValue(0);
     m_Vme->GetTagArray()->SetTag(*item);
-    cppDEL(item);
   }
-  item = m_Vme->GetTagArray()->GetTag(_R("TUBE_CAPPING"));
-  m_Capping = (int)item->GetValueAsDouble();
+  m_Capping = (int)m_Vme->GetTagArray()->GetTag(_R("TUBE_CAPPING"))->GetValueAsDouble();
 }
 //----------------------------------------------------------------------------
 void medVisualPipePolylineGraph::AddActorsToAssembly(vtkMAFAssembly *assembly)
@@ -422,7 +409,7 @@ medVisualPipePolylineGraph::~medVisualPipePolylineGraph()
   vtkDEL(m_OutlineMapper);
   vtkDEL(m_OutlineProperty);
   vtkDEL(m_OutlineActor);
-  cppDEL(m_Axes);
+  m_Axes.reset();
 
   delete []m_ScalarsName;
   delete []m_ScalarsVTKName;

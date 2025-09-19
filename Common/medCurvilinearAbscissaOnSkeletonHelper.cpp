@@ -360,11 +360,9 @@ vtkIdType &outputVertexId, vtkIdType &outputEdgeID, vtkIdType &outputBranchId)
 medCurvilinearAbscissaOnSkeletonHelper::medCurvilinearAbscissaOnSkeletonHelper( mafVME *inputVME, mafBaseEventHandler *listener, bool testMode)
 {
   m_InputVME = inputVME;
-  m_ConstraintVMEPolylineGraph = NULL;
   m_TestMode = testMode;
   
-  m_ConstraintPolylineGraph = NULL; 
-  m_ConstraintPolylineGraph = new mafPolylineGraph();
+  m_ConstraintPolylineGraph = std::make_unique<mafPolylineGraph>();
   
   m_ActiveBranchId = 0;
   m_GUIActiveBranchId = m_ActiveBranchId;
@@ -373,7 +371,6 @@ medCurvilinearAbscissaOnSkeletonHelper::medCurvilinearAbscissaOnSkeletonHelper( 
   m_GUICurvilinearAbscissa = m_CurvilinearAbscissa;
 
   SetListener(listener);
-  m_Gui = NULL;
 
   if (!m_TestMode)
   {
@@ -381,10 +378,7 @@ medCurvilinearAbscissaOnSkeletonHelper::medCurvilinearAbscissaOnSkeletonHelper( 
   }
 }
 
-medCurvilinearAbscissaOnSkeletonHelper::~medCurvilinearAbscissaOnSkeletonHelper()
-{
-  cppDEL(m_ConstraintPolylineGraph);
-}
+medCurvilinearAbscissaOnSkeletonHelper::~medCurvilinearAbscissaOnSkeletonHelper() = default;
 
 void medCurvilinearAbscissaOnSkeletonHelper::SetConstraintPolylineGraph( medVMEPolylineGraph* constraintPolylineGraph )
 {
@@ -681,7 +675,7 @@ void medCurvilinearAbscissaOnSkeletonHelper::MoveOnSkeletonInternal( vtkIdType i
   if (inMoveAbsVector_p0p1_ProjectionValue > 0  && inMoveAbsVector_p0p1_ProjectionValue > dist_S_P1)
   {
     mafLogMessage(_M("passed upper vertex!!! ################################################### "));
-    isBifurcationVertex = IsBifurcationVertex(m_ConstraintPolylineGraph, upperSVertexID);
+    isBifurcationVertex = IsBifurcationVertex(m_ConstraintPolylineGraph.get(), upperSVertexID);
     if (isBifurcationVertex)
     {
       bifurcationPoindID = upperSVertexID;
@@ -691,7 +685,7 @@ void medCurvilinearAbscissaOnSkeletonHelper::MoveOnSkeletonInternal( vtkIdType i
   else if (inMoveAbsVector_p0p1_ProjectionValue < 0 && abs(inMoveAbsVector_p0p1_ProjectionValue) > dist_P0_S )
   {
     mafLogMessage(_M("passed lower vertex!!! ################################################### "));
-    isBifurcationVertex = IsBifurcationVertex(m_ConstraintPolylineGraph, lowerSVertexID);
+    isBifurcationVertex = IsBifurcationVertex(m_ConstraintPolylineGraph.get(), lowerSVertexID);
     if (isBifurcationVertex)
     {
       bifurcationPoindID = lowerSVertexID;

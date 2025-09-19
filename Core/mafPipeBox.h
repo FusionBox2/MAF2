@@ -73,7 +73,7 @@ protected:
   vtkPolyDataMapper      *m_OutlineMapper;
   vtkProperty            *m_OutlineProperty;
   mafLODActor            *m_OutlineActor;
-  mafAxes                *m_Axes;
+  std::unique_ptr<mafAxes> m_Axes;
 
   int m_BoundsMode;
 

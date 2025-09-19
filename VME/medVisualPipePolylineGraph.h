@@ -118,7 +118,7 @@ protected:
   vtkPolyDataMapper       *m_OutlineMapper;
   vtkProperty             *m_OutlineProperty;
   vtkActor                *m_OutlineActor;
-  mafAxes                 *m_Axes;
+  std::unique_ptr<mafAxes> m_Axes;
   vtkColorTransferFunction *m_Table;
 
   vtkSphereSource        *m_Sphere;

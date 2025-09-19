@@ -72,8 +72,6 @@ mmaMaterial::mmaMaterial()
   vtkNEW(m_ColorLut);
   vtkNEW(m_Prop);
   lutPreset(4,m_ColorLut);
-  m_Icon        = NULL;
-  m_TexturePort = NULL;
   m_VmeImageName = _R("");
   m_TextureMappingMode = PLANE_MAPPING;
 
@@ -113,7 +111,6 @@ mmaMaterial::~mmaMaterial()
 {
   vtkDEL(m_ColorLut);
 	vtkDEL(m_Prop); 
-	cppDEL(m_Icon);
 }
 //----------------------------------------------------------------------------
 wxBitmap *mmaMaterial::MakeIcon()
@@ -209,14 +206,9 @@ wxBitmap *mmaMaterial::MakeIcon()
 	ie->Export();
 
 	//translate to a wxBitmap
-	wxImage  *img = new wxImage(dim[0],dim[1],buffer,TRUE);
-	wxBitmap *bmp = new wxBitmap(*img);
-  delete img;
-
-  cppDEL(m_Icon);
-
-	m_Icon = bmp;
-	return bmp;
+	auto img = std::make_unique<wxImage>(dim[0],dim[1],buffer,TRUE);
+	m_Icon = std::make_unique<wxBitmap>(*img);
+	return m_Icon.get();
 }
 //-------------------------------------------------------------------------
 void mmaMaterial::DeepCopy(const mafAttribute *a)
@@ -224,27 +216,28 @@ void mmaMaterial::DeepCopy(const mafAttribute *a)
 { 
   Superclass::DeepCopy(a);
   // property
-  m_MaterialName        = ((mmaMaterial *)a)->m_MaterialName;
-  m_Value               = ((mmaMaterial *)a)->m_Value;
-  m_Ambient[0]          = ((mmaMaterial *)a)->m_Ambient[0];
-  m_Ambient[1]          = ((mmaMaterial *)a)->m_Ambient[1];
-  m_Ambient[2]          = ((mmaMaterial *)a)->m_Ambient[2];
-  m_AmbientIntensity    = ((mmaMaterial *)a)->m_AmbientIntensity;
-  m_Diffuse[0]          = ((mmaMaterial *)a)->m_Diffuse[0];
-  m_Diffuse[1]          = ((mmaMaterial *)a)->m_Diffuse[1];
-  m_Diffuse[2]          = ((mmaMaterial *)a)->m_Diffuse[2];
-  m_DiffuseIntensity    = ((mmaMaterial *)a)->m_DiffuseIntensity;
-  m_Specular[0]         = ((mmaMaterial *)a)->m_Specular[0];
-  m_Specular[1]         = ((mmaMaterial *)a)->m_Specular[1];
-  m_Specular[2]         = ((mmaMaterial *)a)->m_Specular[2];
-  m_SpecularIntensity   = ((mmaMaterial *)a)->m_SpecularIntensity;
-  m_SpecularPower       = ((mmaMaterial *)a)->m_SpecularPower;
-  m_Opacity             = ((mmaMaterial *)a)->m_Opacity;
-  m_Representation      = ((mmaMaterial *)a)->m_Representation;
+  auto mat = mmaMaterial::StaticDownCast(a);
+  m_MaterialName        = mat->m_MaterialName;
+  m_Value               = mat->m_Value;
+  m_Ambient[0]          = mat->m_Ambient[0];
+  m_Ambient[1]          = mat->m_Ambient[1];
+  m_Ambient[2]          = mat->m_Ambient[2];
+  m_AmbientIntensity    = mat->m_AmbientIntensity;
+  m_Diffuse[0]          = mat->m_Diffuse[0];
+  m_Diffuse[1]          = mat->m_Diffuse[1];
+  m_Diffuse[2]          = mat->m_Diffuse[2];
+  m_DiffuseIntensity    = mat->m_DiffuseIntensity;
+  m_Specular[0]         = mat->m_Specular[0];
+  m_Specular[1]         = mat->m_Specular[1];
+  m_Specular[2]         = mat->m_Specular[2];
+  m_SpecularIntensity   = mat->m_SpecularIntensity;
+  m_SpecularPower       = mat->m_SpecularPower;
+  m_Opacity             = mat->m_Opacity;
+  m_Representation      = mat->m_Representation;
   // texture
-  m_TextureID           = ((mmaMaterial *)a)->m_TextureID;
-  m_TextureMappingMode  = ((mmaMaterial *)a)->m_TextureMappingMode;
-  m_TexturePort         = ((mmaMaterial *)a)->m_TexturePort;
+  m_TextureID           = mat->m_TextureID;
+  m_TextureMappingMode  = mat->m_TextureMappingMode;
+  m_TexturePort         = mat->m_TexturePort;
   vtkAlgorithm* alg = nullptr;
   if (m_TexturePort)
   {
@@ -252,15 +245,15 @@ void mmaMaterial::DeepCopy(const mafAttribute *a)
   }
   m_TextureAlgorithm = alg;
   // lut
-  m_HueRange[0]         = ((mmaMaterial *)a)->m_HueRange[0];
-  m_HueRange[1]         = ((mmaMaterial *)a)->m_HueRange[1];
-  m_SaturationRange[0]  = ((mmaMaterial *)a)->m_SaturationRange[0];
-  m_SaturationRange[1]  = ((mmaMaterial *)a)->m_SaturationRange[1];
-  m_TableRange[0]       = ((mmaMaterial *)a)->m_TableRange[0];
-  m_TableRange[1]       = ((mmaMaterial *)a)->m_TableRange[1];
-  m_NumValues           = ((mmaMaterial *)a)->m_NumValues;
+  m_HueRange[0]         = mat->m_HueRange[0];
+  m_HueRange[1]         = mat->m_HueRange[1];
+  m_SaturationRange[0]  = mat->m_SaturationRange[0];
+  m_SaturationRange[1]  = mat->m_SaturationRange[1];
+  m_TableRange[0]       = mat->m_TableRange[0];
+  m_TableRange[1]       = mat->m_TableRange[1];
+  m_NumValues           = mat->m_NumValues;
   
-  m_MaterialType        = ((mmaMaterial *)a)->m_MaterialType;
+  m_MaterialType        = mat->m_MaterialType;
   UpdateProp();
 }
 //----------------------------------------------------------------------------
@@ -269,34 +262,35 @@ bool mmaMaterial::Equals(const mafAttribute *a)
 {
   if (Superclass::Equals(a))
   {
-    return (m_MaterialName  == ((mmaMaterial *)a)->m_MaterialName       &&
-      m_Value               == ((mmaMaterial *)a)->m_Value              &&
-      m_Ambient[0]          == ((mmaMaterial *)a)->m_Ambient[0]         &&
-      m_Ambient[1]          == ((mmaMaterial *)a)->m_Ambient[1]         &&
-      m_Ambient[2]          == ((mmaMaterial *)a)->m_Ambient[2]         &&
-      m_AmbientIntensity    == ((mmaMaterial *)a)->m_AmbientIntensity   &&
-      m_Diffuse[0]          == ((mmaMaterial *)a)->m_Diffuse[0]         &&
-      m_Diffuse[1]          == ((mmaMaterial *)a)->m_Diffuse[1]         &&
-      m_Diffuse[2]          == ((mmaMaterial *)a)->m_Diffuse[2]         &&
-      m_DiffuseIntensity    == ((mmaMaterial *)a)->m_DiffuseIntensity   &&
-      m_Specular[0]         == ((mmaMaterial *)a)->m_Specular[0]        &&
-      m_Specular[1]         == ((mmaMaterial *)a)->m_Specular[1]        &&
-      m_Specular[2]         == ((mmaMaterial *)a)->m_Specular[2]        &&
-      m_SpecularIntensity   == ((mmaMaterial *)a)->m_SpecularIntensity  &&
-      m_SpecularPower       == ((mmaMaterial *)a)->m_SpecularPower      &&
-      m_Opacity             == ((mmaMaterial *)a)->m_Opacity            &&
-      m_TextureID           == ((mmaMaterial *)a)->m_TextureID          &&
-      m_TexturePort         == ((mmaMaterial *)a)->m_TexturePort        &&
-      m_HueRange[0]         == ((mmaMaterial *)a)->m_HueRange[0]        &&
-      m_HueRange[1]         == ((mmaMaterial *)a)->m_HueRange[1]        &&
-      m_SaturationRange[0]  == ((mmaMaterial *)a)->m_SaturationRange[0] &&
-      m_SaturationRange[1]  == ((mmaMaterial *)a)->m_SaturationRange[1] &&
-      m_TableRange[0]       == ((mmaMaterial *)a)->m_TableRange[0]      &&
-      m_TableRange[1]       == ((mmaMaterial *)a)->m_TableRange[1]      &&
-      m_NumValues           == ((mmaMaterial *)a)->m_NumValues          &&
-      m_Representation      == ((mmaMaterial *)a)->m_Representation     &&
-      m_MaterialType        == ((mmaMaterial *)a)->m_MaterialType       &&
-      m_TextureMappingMode  == ((mmaMaterial *)a)->m_TextureMappingMode);
+      auto mat = mmaMaterial::StaticDownCast(a);
+      return (m_MaterialName  == mat->m_MaterialName       &&
+      m_Value               == mat->m_Value              &&
+      m_Ambient[0]          == mat->m_Ambient[0]         &&
+      m_Ambient[1]          == mat->m_Ambient[1]         &&
+      m_Ambient[2]          == mat->m_Ambient[2]         &&
+      m_AmbientIntensity    == mat->m_AmbientIntensity   &&
+      m_Diffuse[0]          == mat->m_Diffuse[0]         &&
+      m_Diffuse[1]          == mat->m_Diffuse[1]         &&
+      m_Diffuse[2]          == mat->m_Diffuse[2]         &&
+      m_DiffuseIntensity    == mat->m_DiffuseIntensity   &&
+      m_Specular[0]         == mat->m_Specular[0]        &&
+      m_Specular[1]         == mat->m_Specular[1]        &&
+      m_Specular[2]         == mat->m_Specular[2]        &&
+      m_SpecularIntensity   == mat->m_SpecularIntensity  &&
+      m_SpecularPower       == mat->m_SpecularPower      &&
+      m_Opacity             == mat->m_Opacity            &&
+      m_TextureID           == mat->m_TextureID          &&
+      m_TexturePort         == mat->m_TexturePort        &&
+      m_HueRange[0]         == mat->m_HueRange[0]        &&
+      m_HueRange[1]         == mat->m_HueRange[1]        &&
+      m_SaturationRange[0]  == mat->m_SaturationRange[0] &&
+      m_SaturationRange[1]  == mat->m_SaturationRange[1] &&
+      m_TableRange[0]       == mat->m_TableRange[0]      &&
+      m_TableRange[1]       == mat->m_TableRange[1]      &&
+      m_NumValues           == mat->m_NumValues          &&
+      m_Representation      == mat->m_Representation     &&
+      m_MaterialType        == mat->m_MaterialType       &&
+      m_TextureMappingMode  == mat->m_TextureMappingMode);
   }
   return false;
 }

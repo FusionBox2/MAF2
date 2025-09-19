@@ -407,9 +407,8 @@ mafGUI *medPipeVectorFieldGlyphs::CreateGui()
     bSizer4311->Add( new wxStaticText( m_Gui, wxID_ANY, _("Material:"), 
       wxDefaultPosition, wxSize( 60,-1 ), 0 ), 0, wxALL, 5 );
 
-    m_GlyphMaterial->GetMaterial()->MakeIcon();
     m_GlyphMaterialButton = new mafGUIPicButton(m_Gui, 
-      m_GlyphMaterial->GetMaterial()->m_Icon, ID_GLYPH_MATERIAL, this);
+      m_GlyphMaterial->GetMaterial()->MakeIcon(), ID_GLYPH_MATERIAL, this);
     bSizer4311->Add( m_GlyphMaterialButton, 0, wxALL, 0 );
 
     m_GlyphMaterialLabel = new wxStaticText( m_Gui, ID_GLYPH_MATERIAL_LABEL, 
@@ -1104,9 +1103,7 @@ void medPipeVectorFieldGlyphs::CreateAddItemDlg(int idx)
     auto mat = m_GlyphMaterial->GetMaterial();     
     m_GlyphMaterialLabel->SetLabel(mat->m_MaterialName.toWx());
 
-    //and set a new material icon
-    cppDEL(mat->m_Icon); mat->MakeIcon();
-    m_GlyphMaterialButton->SetBitmapLabel(*mat->m_Icon);
+    m_GlyphMaterialButton->SetBitmapLabel(*mat->MakeIcon());
     m_GlyphMaterialButton->Refresh();
 
     m_Gui->Update();

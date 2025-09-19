@@ -96,9 +96,9 @@ private:
   bool IsBifurcationVertex( mafPolylineGraph *inPG, int inVertexID );
   void FindPerpendicularVersorsToSegment( int idP0, int idP1, double viewUp[3], double normal[3] );
   
-  mafVME *m_InputVME;
-  medVMEPolylineGraph *m_ConstraintVMEPolylineGraph; 
-  mafPolylineGraph *m_ConstraintPolylineGraph;
+  mafVME *m_InputVME ;
+  medVMEPolylineGraph *m_ConstraintVMEPolylineGraph = nullptr; 
+  std::unique_ptr<mafPolylineGraph> m_ConstraintPolylineGraph;
   vtkIdType m_ActiveBranchId;
   double m_CurvilinearAbscissa;    
 
@@ -113,7 +113,7 @@ private:
   double m_GUICurvilinearAbscissa;
   bool m_TestMode;
 
-  mafGUI      *m_Gui;    
+  mafGUI      *m_Gui = nullptr;    
 
 };
  

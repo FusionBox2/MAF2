@@ -59,7 +59,6 @@ mafOpManager::mafOpManager()
   m_RunningOp      = NULL;
 	m_Selected	     = NULL;
   m_NaturalNode    = NULL;
-  m_User           = NULL;
   m_Warn           = true;
   m_FromRemote     = false;
 
@@ -87,8 +86,6 @@ mafOpManager::~mafOpManager()
     delete m_OpList[i];
   }
   m_OpList.clear();
-
-  cppDEL(m_User);
 }
 //----------------------------------------------------------------------------
 void mafOpManager::OnEvent(mafEventBase *maf_event)
@@ -380,13 +377,6 @@ void mafOpManager::OpDo(mafOp *op)
 	  m_Context.Undo_Clear();
     delete op;  
   }
-}
-
-//----------------------------------------------------------------------------
-void mafOpManager::SetMafUser(mafUser *user)
-//----------------------------------------------------------------------------
-{
-  m_User = user;
 }
 
 //----------------------------------------------------------------------------

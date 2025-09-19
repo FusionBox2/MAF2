@@ -42,8 +42,8 @@ protected:
 
 protected:
 	//output data set
-	vtkImageData* m_DataSet;
-  vtkRectilinearGrid* m_DataSetRLG;   //rectilinear data set
+	vtkImageData* m_DataSet = nullptr;
+  vtkRectilinearGrid* m_DataSetRLG = nullptr;   //rectilinear data set
 
 	//requested VOI (in the highest resolution units)
 	int m_VOI[6];		
@@ -59,7 +59,7 @@ protected:
 	mafString m_LUBrickFileName;
 
 	//small cache for one brick
-	char* m_PBrickDataCache;
+	std::vector<char> m_PBrickDataCache;
 
 public:
 	mafBrickedFileReader();

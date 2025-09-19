@@ -261,7 +261,7 @@ void medVisualPipeSlicerSlice::Create(mafNode *node, mafView *view/*, bool use_a
 
   m_AssemblyFront->AddPart(m_OutlineActor);
 
-  m_Axes = new mafAxes(m_RenFront, m_Vme);
+  m_Axes = std::make_unique<mafAxes>(m_RenFront, m_Vme);
   m_Axes->SetVisibility(0);
 
   
@@ -292,7 +292,7 @@ medVisualPipeSlicerSlice::~medVisualPipeSlicerSlice()
   vtkDEL(m_Cutter1);
   vtkDEL(m_Plane2);
   vtkDEL(m_Cutter2);
-  cppDEL(m_Axes);
+  m_Axes.reset();
 }
 //----------------------------------------------------------------------------
 void medVisualPipeSlicerSlice::Select(bool sel)

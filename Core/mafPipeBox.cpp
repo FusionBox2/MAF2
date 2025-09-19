@@ -74,7 +74,6 @@ void mafPipeBox::Create(mafNode *node, mafView *view/*, bool use_axes*/)
   m_OutlineMapper   = NULL;
   m_OutlineProperty = NULL;
   m_OutlineActor    = NULL;
-  m_Axes            = NULL;
 
   m_BoundsMode = 0;
 
@@ -126,7 +125,7 @@ void mafPipeBox::Create(mafNode *node, mafView *view/*, bool use_axes*/)
 
   if(m_RenFront)
   {
-    m_Axes = new mafAxes(m_RenFront, m_Vme);
+    m_Axes = std::make_unique<mafAxes>(m_RenFront, m_Vme);
     m_Axes->SetVisibility(0);
   }
 }
@@ -146,7 +145,7 @@ mafPipeBox::~mafPipeBox()
   vtkDEL(m_OutlineMapper);
   vtkDEL(m_OutlineProperty);
   vtkDEL(m_OutlineActor);
-	cppDEL(m_Axes);
+	m_Axes.reset();
 }
 //----------------------------------------------------------------------------
 void mafPipeBox::Select(bool sel)

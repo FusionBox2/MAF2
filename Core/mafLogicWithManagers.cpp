@@ -356,8 +356,10 @@ bool mafLogicWithManagers::Configure()
     }
     m_logic->m_Logger->SetVerbose(m_logic->m_LogAllEvents);
 
-    wxLog* old_log = wxLog::SetActiveTarget(m_logic->m_Logger);
-    cppDEL(old_log);
+    {
+        wxLog* old_log = wxLog::SetActiveTarget(m_logic->m_Logger);
+        delete old_log;
+    }
 
     m_logic->m_frame->AddPane(log, wxAuiPaneInfo()
       .Name("logbar")
@@ -379,8 +381,10 @@ bool mafLogicWithManagers::Configure()
     wxTextCtrl* log = new wxTextCtrl(m_logic->m_frame, -1, "", wxPoint(0, 0), wxSize(100, 300), wxNO_BORDER | wxTE_MULTILINE);
     m_logic->m_Logger = new mafWXLog(log);
     log->Show(false);
-    wxLog* old_log = wxLog::SetActiveTarget(m_logic->m_Logger);
-    cppDEL(old_log);
+		{
+			wxLog* old_log = wxLog::SetActiveTarget(m_logic->m_Logger);
+    	delete old_log;
+		}
   }
 
   EnableItem(CAMERA_RESET, false);
@@ -2201,22 +2205,19 @@ void mafLogicWithManagers::HandleException()
 void mafLogicWithManagers::SetExternalViewFlag(bool external)
 {
   m_logic->m_ExternalViewFlag = external;
-  wxConfig *config = new wxConfig(wxEmptyString);
+  auto config = std::make_unique<wxConfig>(wxEmptyString);
   config->Write("ExternalViewFlag", m_logic->m_ExternalViewFlag);
-  cppDEL(config);
 }
 bool mafLogicWithManagers::GetExternalViewFlag()
 {
-  wxConfig *config = new wxConfig(wxEmptyString);
+    auto config = std::make_unique<wxConfig>(wxEmptyString);
   config->Read("ExternalViewFlag", &m_logic->m_ExternalViewFlag, false);
-  cppDEL(config);
   return m_logic->m_ExternalViewFlag;
 }
 void mafLogicWithManagers::UpdateMeasureUnit()
 {
-  const std::list<mafView *>& v = m_logic->m_ViewManager->GetList();
-  for(std::list<mafView*>::const_iterator it = v.begin(); it != v.end(); ++it)
-    (*it)->OptionsUpdate();
+  for(auto& view : m_logic->m_ViewManager->GetList())
+    view->OptionsUpdate();
 }
 void mafLogicWithManagers::ImportExternalFile(mafString &filename)
 {

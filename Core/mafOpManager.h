@@ -14,8 +14,6 @@
 class mafOp;
 class mafGUISettings;
 class mafGUISettingsDialog;
-class mafUser;
-
 //----------------------------------------------------------------------------
 // mafOpManager :
 //----------------------------------------------------------------------------
@@ -60,10 +58,10 @@ public:
   virtual void OpExec(mafOp *op, void *op_param = nullptr);
 
 	/** Set the flag for warning the user if the operation is undoable. */
-  virtual void WarningIfCantUndo (bool warn) {m_Warn = warn;};
+  virtual void WarningIfCantUndo (bool warn) {m_Warn = warn;}
 
 	/** return true if there is a running operation. */
-  virtual bool Running()								 {return m_Context.Caller() != nullptr;};
+  virtual bool Running()								 {return m_Context.Caller() != nullptr;}
 
 	/** Clear the stack of executed operation. */
   virtual void ClearUndoStack(); 
@@ -94,12 +92,6 @@ public:
 	/** Execute the 'Do' method of the operation. */
 	virtual void OpRedo();
 
-  /** Set MafUser */
-  void SetMafUser(mafUser *user);
-
-  /** Return the current maf user */
-  mafUser* GetMafUser(){return m_User;};
-
 protected:
 	/** Execute the current operation. */
   virtual void OpDo(mafOp *op);
@@ -125,8 +117,6 @@ protected:
   mafOp             *m_RunningOp; ///< Pointer to the current running operation.
   std::shared_ptr<mafNode> m_Selected; ///< Pointer to the current selected node.
   std::shared_ptr<mafNode> m_NaturalNode; ///< Pointer to the NATURAL node on which is running a non-input preserving operation.
-
-  mafUser           *m_User; ///<User credentials
 
   std::vector<mafOp *> m_OpList; ///< List of pointer of plugged operations.
 

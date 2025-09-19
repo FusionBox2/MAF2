@@ -96,7 +96,6 @@ public:
   vtkLookupTable     *m_ColorLut;
 
   mafString m_MaterialName;
-  wxBitmap *m_Icon;
   double    m_Value;
   double    m_Ambient[3];
   double    m_AmbientIntensity;
@@ -116,8 +115,9 @@ public:
   int       m_TextureMappingMode;
 
 protected:
-  vtkSmartPointer<vtkAlgorithm> m_TextureAlgorithm;
-  vtkAlgorithmOutput* m_TexturePort;
+	std::unique_ptr<wxBitmap> m_Icon;
+	vtkSmartPointer<vtkAlgorithm> m_TextureAlgorithm;
+  vtkAlgorithmOutput* m_TexturePort = nullptr;
   int           m_TextureID;
   mafString m_VmeImageName;
 	         void InternalStore(mafStorageElementBuilder& parent) override;

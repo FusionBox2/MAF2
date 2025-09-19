@@ -1,18 +1,6 @@
-/**=======================================================================
-  
-  File:    	 BrickedFile.h
-  Language:  C++
-  Date:      11:2:2008   11:49
-  Version:   $Revision: 1.1.2.3 $
-  Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
-  
-  Copyright (c) 2008
-  University of Bedfordshire
-=========================================================================
-This abstract class contains the stuff common to both, the reader and writer
-=========================================================================*/
-#ifndef __mafBrickedFile__
-#define __mafBrickedFile__
+#pragma once
+
+#include "ftkConfigure.h"
 
 #pragma warning (disable: 4068) //unknown pragma
 
@@ -80,19 +68,19 @@ protected:
 	mafString m_BrickFileName;
 	
 	//File handle	
-	vtkMAFFile2* m_BrickFile;
+	vtkMAFFile2* m_BrickFile = nullptr;
 
 	//File header
 	BBF_HEADER m_FileHeader;
 
 	//brick maps
-	BBF_IDX_MAINITEM* m_PMainIdxTable;
-	BBF_IDX_EXITEM* m_PExIdxTable;
+	std::vector<BBF_IDX_MAINITEM> m_PMainIdxTable;
+	std::vector<BBF_IDX_EXITEM> m_PExIdxTable;
 
 	//low resolution level (brick map)
-	char* m_PLowResLevel;
+	std::vector<char> m_PLowResLevel;
 
-  vtkDoubleArray* m_PXYZCoords[3];   //<X,Y,Z-coordinates for rectilinear grids  
+  vtkDoubleArray* m_PXYZCoords[3] = {nullptr, nullptr, nullptr};   //<X,Y,Z-coordinates for rectilinear grids  
 
 #pragma region Values Precomputed to Speed Up Operations
 	//number of bytes per one voxel = element size*number of components
@@ -257,10 +245,8 @@ protected:
 	virtual void ExecuteInformation()  = 0;
 
 	//allocates the required buffers
-	virtual void AllocateBuffers()   {};
+	virtual void AllocateBuffers()   {}
 
 	//deallocates the buffers created in AllocateBuffers
-	virtual void DeallocateBuffers()   {};
+	virtual void DeallocateBuffers()   {}
 };
-
-#endif //__mafBrickedFile__

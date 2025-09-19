@@ -42,7 +42,7 @@ mafGUIListCtrlBitmap::mafGUIListCtrlBitmap( wxWindow* parent,wxWindowID id, bool
   SetWindowStyle(wxNO_BORDER);
   SetBackgroundColour(wxColour(255,255,255));
    
-  m_Images = new wxImageList(25,25,FALSE,4);
+  m_Images = std::make_unique<wxImageList>(25,25,FALSE,4);
   m_List = new wxListCtrl(this,ID_LIST,wxDefaultPosition,wxSize(100,100) ,wxLC_SMALL_ICON | wxLC_SINGLE_SEL | wxLC_AUTOARRANGE);
 
   m_Sizer->Add(m_List,1,wxEXPAND);
@@ -51,20 +51,15 @@ mafGUIListCtrlBitmap::mafGUIListCtrlBitmap( wxWindow* parent,wxWindowID id, bool
   m_List->SetColumnWidth(0,200);
   m_List->SetColumnWidth(1,200);
 }
-//----------------------------------------------------------------------------
-mafGUIListCtrlBitmap::~mafGUIListCtrlBitmap()
-//----------------------------------------------------------------------------
-{
-	cppDEL(m_Images);
-}
+mafGUIListCtrlBitmap::~mafGUIListCtrlBitmap() = default;
 //----------------------------------------------------------------------------
 void mafGUIListCtrlBitmap::Reset()
 //----------------------------------------------------------------------------
 {
   m_Images->RemoveAll();
   m_List->ClearAll();
-  m_List->SetImageList(m_Images,wxIMAGE_LIST_SMALL);
-  m_List->SetImageList(m_Images,wxIMAGE_LIST_NORMAL);
+  m_List->SetImageList(m_Images.get(),wxIMAGE_LIST_SMALL);
+  m_List->SetImageList(m_Images.get(),wxIMAGE_LIST_NORMAL);
   m_List->InsertColumn(0, "");
   m_List->SetColumnWidth(0, 1000);
 }

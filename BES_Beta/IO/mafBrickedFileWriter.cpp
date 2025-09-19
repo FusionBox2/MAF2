@@ -197,7 +197,7 @@ void mafBrickedFileWriter::SetInputZCoordinates(vtkDoubleArray* pCoords)
 	m_PDataBuffer = new char[m_NBricksDimSizeInB[1]];
 	m_PBricksBuffer = new char[m_NBricksDimSizeInB[1]];	
 	m_PBricksValidity = new bool[m_NBricksDimSize[1]];
-	m_PLowResLevel = new char[m_NBricksDimSize[2]*m_NVoxelSizeInB];
+	m_PLowResLevel.resize(m_NBricksDimSize[2]*m_NVoxelSizeInB);
 
 	memset(m_PDataBuffer, 0, m_NBricksDimSizeInB[1]);	//to ensure we have zeros
 
@@ -205,8 +205,8 @@ void mafBrickedFileWriter::SetInputZCoordinates(vtkDoubleArray* pCoords)
 	m_PTuplesBuffer = new char[16*m_NVoxelSizeInB];
 	m_PSumTuplesBuffer = new double[16*this->GetNumberOfComponents()];
 
-	m_PMainIdxTable = new BBF_IDX_MAINITEM[m_NBricksDim[1]*m_NBricksDim[2]];
-	memset(m_PMainIdxTable, 0, m_NBricksDim[1]*m_NBricksDim[2]*sizeof(BBF_IDX_MAINITEM));
+	m_PMainIdxTable.resize(m_NBricksDim[1]*m_NBricksDim[2]);
+	memset(m_PMainIdxTable.data(), 0, m_NBricksDim[1]*m_NBricksDim[2]*sizeof(BBF_IDX_MAINITEM));
 	
 	m_ExtraBrckMAP.clear();	
 
@@ -224,8 +224,8 @@ void mafBrickedFileWriter::SetInputZCoordinates(vtkDoubleArray* pCoords)
 //allocates the required buffers
 /*virtual*/ void mafBrickedFileWriter::DeallocateBuffers() 
 {
-	cppDEL(m_PLowResLevel);
-	cppDEL(m_PMainIdxTable);	
+	m_PLowResLevel.clear();
+	m_PMainIdxTable.clear();	
 	cppDEL(m_PDataBuffer);
 	cppDEL(m_PBricksBuffer);
 	cppDEL(m_PBricksValidity);
@@ -499,7 +499,7 @@ void mafBrickedFileWriter::CreateBricksLowResolution(int nCurBrickPlane)
 
 	//compute the current index
 	int index = nCurBrickPlane*m_NBricksDimSize[1];
-	T_VAL* pLevelBuf = (T_VAL*)m_PLowResLevel;
+	T_VAL* pLevelBuf = (T_VAL*)m_PLowResLevel.data();
 	pLevelBuf += index*comps;
 
 	//process every brick
@@ -642,7 +642,7 @@ void mafBrickedFileWriter::CreateBricksIndexTable(int nCurBrickPlane)
 		szMsg = _L("Writing LOW Resolution map ...");
 		{mafEvent evUnq(this, PROGRESSBAR_SET_TEXT); evUnq.SetString(&szMsg); InvokeEvent(evUnq);}
 		
-		m_BrickFile->Write( m_PLowResLevel, m_NBricksDimSize[2]*m_NVoxelSizeInB);
+		m_BrickFile->Write( m_PLowResLevel.data(), m_NBricksDimSize[2]*m_NVoxelSizeInB);
 
 //		int f = IOFileUtils::CreateFile(wxString::Format("g:\\brckmap_%d_%d_%d.raw",
 //			m_nBricksDim[0], m_nBricksDim[1], m_nBricksDim[2]));
@@ -663,7 +663,7 @@ void mafBrickedFileWriter::CreateBricksIndexTable(int nCurBrickPlane)
 		
 
 		m_FileHeader.idxtblofs = m_BrickFile->GetCurrentPos();
-    m_BrickFile->Write(m_PMainIdxTable, nCount*sizeof(BBF_IDX_MAINITEM));
+    m_BrickFile->Write(m_PMainIdxTable.data(), nCount*sizeof(BBF_IDX_MAINITEM));
 
 		m_FileHeader.extra_idx_items = (unsigned long)m_ExtraBrckMAP.size();
 		for (int i = 0; i < (int)m_ExtraBrckMAP.size(); i++) {

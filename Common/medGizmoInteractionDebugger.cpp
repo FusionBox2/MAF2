@@ -59,11 +59,6 @@ const bool DEBUG_MODE = true;
 const double defaultLineLength = 50;
  
 
-medGizmoInteractionDebugger::medGizmoInteractionDebugger(std::shared_ptr<mafNode>  imputVme, mafBaseEventHandler *listener, const char* name, bool testMode)
-{
-  Constructor(imputVme, listener, name, testMode);
-}
-
 void medGizmoInteractionDebugger::CreateInteractor()
 {  
   m_RefSysVME = m_InputVME.get();
@@ -84,7 +79,7 @@ void medGizmoInteractionDebugger::CreateInteractor()
   m_VmeGizmo->SetBehavior(m_GizmoInteractor.get());
 }
 
-void medGizmoInteractionDebugger::Constructor(std::shared_ptr<mafNode> imputVme, mafBaseEventHandler *listener, const char* name, bool testMode)
+medGizmoInteractionDebugger::medGizmoInteractionDebugger(std::shared_ptr<mafNode>  imputVme, mafBaseEventHandler* listener, const char* name, bool testMode)
 {
   m_CurvilinearAbscissaHelper = NULL;
   m_VmeGizmo = nullptr;
@@ -96,10 +91,10 @@ void medGizmoInteractionDebugger::Constructor(std::shared_ptr<mafNode> imputVme,
 
   CreateVMEGizmo();
 
-  m_CurvilinearAbscissaHelper = new medCurvilinearAbscissaOnSkeletonHelper( m_VmeGizmo.get(), this , testMode);
+  m_CurvilinearAbscissaHelper = std::make_unique<medCurvilinearAbscissaOnSkeletonHelper>( m_VmeGizmo.get(), this , testMode);
 }
 //----------------------------------------------------------------------------
-void medGizmoInteractionDebugger::Destructor()
+medGizmoInteractionDebugger::~medGizmoInteractionDebugger()
 //----------------------------------------------------------------------------
 {
   m_LineSource->Delete();
@@ -113,14 +108,9 @@ void medGizmoInteractionDebugger::Destructor()
   mafNode::ReparentTo(m_VmeGizmo, nullptr);
   m_VmeGizmo.reset();
 
-  cppDEL(m_CurvilinearAbscissaHelper);
+  m_CurvilinearAbscissaHelper.reset();
 }
 //----------------------------------------------------------------------------
-medGizmoInteractionDebugger::~medGizmoInteractionDebugger()
-//----------------------------------------------------------------------------
-{
-  Destructor();
-}
 void medGizmoInteractionDebugger::SetColor(double col[3])
 //----------------------------------------------------------------------------
 {

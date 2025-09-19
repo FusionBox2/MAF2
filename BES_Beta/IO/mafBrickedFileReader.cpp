@@ -35,11 +35,7 @@ mafCxxTypeMacro(mafBrickedFileReader);
 
 mafBrickedFileReader::mafBrickedFileReader()
 {				 
-	m_DataSet = NULL;
-  m_DataSetRLG = NULL;
 	m_BROIValid = false;
-	
-	m_PBrickDataCache = NULL;
 	
 	m_VOI[0] = m_VOI[2] = m_VOI[4] = 0;
 	m_VOI[1] = m_VOI[3] = m_VOI[5] = 0xFFFF;	//short max
@@ -148,15 +144,15 @@ void mafBrickedFileReader::SetOutputRLGDataSet(vtkRectilinearGrid* ds)
 	int nLRSize = m_NBricksDimSize[2]*m_NVoxelSizeInB;
 	m_BrickFile->Seek( m_FileHeader.idxtblofs - nLRSize);
 
-	m_PLowResLevel = new char[nLRSize];
-	m_BrickFile->Read( m_PLowResLevel, nLRSize);
+	m_PLowResLevel.resize(nLRSize);
+	m_BrickFile->Read( m_PLowResLevel.data(), nLRSize);
 
 	int nBrickLines = m_NBricksDim[1]*m_NBricksDim[2];
-	m_PMainIdxTable = new BBF_IDX_MAINITEM[nBrickLines];
-	m_BrickFile->Read( m_PMainIdxTable, nBrickLines*sizeof(BBF_IDX_MAINITEM));
+	m_PMainIdxTable.resize(nBrickLines);
+	m_BrickFile->Read( m_PMainIdxTable.data(), nBrickLines*sizeof(BBF_IDX_MAINITEM));
 
-	m_PExIdxTable = new BBF_IDX_EXITEM[m_FileHeader.extra_idx_items];
-	m_BrickFile->Read( m_PExIdxTable, m_FileHeader.extra_idx_items*sizeof(BBF_IDX_EXITEM));
+	m_PExIdxTable.resize(m_FileHeader.extra_idx_items);
+	m_BrickFile->Read( m_PExIdxTable.data(), m_FileHeader.extra_idx_items*sizeof(BBF_IDX_EXITEM));
 
   if (this->IsRectilinearGrid())
   {
@@ -171,7 +167,7 @@ void mafBrickedFileReader::SetOutputRLGDataSet(vtkRectilinearGrid* ds)
     }
   }
 
-	m_PBrickDataCache = new char[m_NBrickSizeInB[2]];	
+	m_PBrickDataCache.resize(m_NBrickSizeInB[2]);	
 
 
 
@@ -187,10 +183,10 @@ void mafBrickedFileReader::SetOutputRLGDataSet(vtkRectilinearGrid* ds)
 //deallocates the buffers created in AllocateBuffers
 /*virtual*/ void mafBrickedFileReader::DeallocateBuffers()
 {
-	cppDEL(m_PBrickDataCache);
-	cppDEL(m_PLowResLevel);
-	cppDEL(m_PMainIdxTable);
-  cppDEL(m_PExIdxTable);
+	m_PBrickDataCache.clear();
+	m_PLowResLevel.clear();
+	m_PMainIdxTable.clear();
+  m_PExIdxTable.clear();
 
   for (int i = 0; i < 3; i++) {    
     vtkDEL(m_PXYZCoords[i]);
@@ -498,12 +494,12 @@ void mafBrickedFileReader::GetBricksExtent(int VOI[6], int inBExt[6], int bndBEx
 					//unfortunately, this brick has to be processed
 					//compute index of this current cell					 
 					if (bUniform)
-						FillBrick(m_PBrickDataCache, &m_PLowResLevel[nLRIdx]);						
+						FillBrick(m_PBrickDataCache.data(), &m_PLowResLevel[nLRIdx]);						
 					else					
-						LoadBrick(nBrickIndex - nSkippedBricks, m_PBrickDataCache);					
+						LoadBrick(nBrickIndex - nSkippedBricks, m_PBrickDataCache.data());					
 
 					//having the data in pBrickData, copy its bytes													
-					CopyBrickData(m_PBrickDataCache, brckExt, pOutPtrX, outIncrInB);
+					CopyBrickData(m_PBrickDataCache.data(), brckExt, pOutPtrX, outIncrInB);
 				} //end if - check of validity
 
 				//advance addresses
