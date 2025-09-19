@@ -1,29 +1,3 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafVMEScalarMatrix
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-
 #include "mafVMEScalarMatrix.h"
 #include "mafGUI.h"
 
@@ -36,14 +10,10 @@
 #include "mafVMEItemScalarMatrix.h"
 
 //-------------------------------------------------------------------------
-mafCxxTypeMacro(mafVMEScalarMatrix)
-//-------------------------------------------------------------------------
-
-//-------------------------------------------------------------------------
 mafVMEScalarMatrix::mafVMEScalarMatrix()
 //-------------------------------------------------------------------------
 {
-  m_DataVector = mafDataVector::New();
+  m_DataVector = std::unique_ptr<mafDataVector>();
   m_DataVector->SetItemTypeName(mafVMEItemScalarMatrix::GetStaticTypeName());  
   m_DataVector->SetListener(this);
   SetDataPipe(mafDataPipeInterpolatorScalarMatrix::NewSPtr()); // interpolator data pipe
@@ -58,18 +28,15 @@ mafVMEScalarMatrix::mafVMEScalarMatrix()
   m_ActiveScalar = -1;
 }
 
-//-------------------------------------------------------------------------
-mafVMEScalarMatrix::~mafVMEScalarMatrix()
-//-------------------------------------------------------------------------
-{
-}
+mafVMEScalarMatrix::~mafVMEScalarMatrix() = default;
+
 //-------------------------------------------------------------------------
 int mafVMEScalarMatrix::DeepCopy(mafNode *a)
 //-------------------------------------------------------------------------
 {
   if (Superclass::DeepCopy(a)==MAF_OK)
   {
-    mafVMEScalarMatrix *scalar = mafVMEScalarMatrix::SafeDownCast(a);
+    auto scalar = mafVMEScalarMatrix::SafeDownCast(a);
     this->SetTypeForXCoordinates(scalar->GetTypeForXCoordinates());
     this->SetTypeForYCoordinates(scalar->GetTypeForYCoordinates());
     this->SetTypeForZCoordinates(scalar->GetTypeForZCoordinates());

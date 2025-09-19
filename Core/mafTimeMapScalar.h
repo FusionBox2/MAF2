@@ -31,19 +31,19 @@ Some utility functions are also provided.
 */
 
 template <class T>
-class mafTimeMapScalar : public mafObject, public mafTimeStamped
+class mafTimeMapScalar : public mafTimeStamped
 {
 public:
 	using TimeMapScalars = std::map<mafTimeStamp, T >;
 	using mmuTimePairScalars = std::pair<mafTimeStamp, T >;
 
-	mafTimeMapScalar();
+	mafTimeMapScalar() = default;
 
 	mafTimeMapScalar(const mafTimeMapScalar<T>&) = delete;
 	mafTimeMapScalar& operator=(const mafTimeMapScalar<T>&);
 
 
-	~mafTimeMapScalar() override;
+	virtual ~mafTimeMapScalar() = default;
 
 	/** set the TypeName of the kind of item accepted by this container */
 	  /** set the TypeName of the kind of item accepted by this container */
@@ -133,7 +133,7 @@ public:
 	/** return  the item with given its order index. NULL is returned if not found. */
 	T GetItemByIndex(int idx);
 
-	void Print(std::ostream& os, const int tabs = 0) const override;
+	void Print(std::ostream& os, const int tabs = 0) const;
 
 	typename mafTimeMapScalar<T>::TimeMapScalars::iterator BeginScalarVector() { return m_TimeMap.begin(); }
 	typename mafTimeMapScalar<T>::TimeMapScalars::iterator EndScalarVector() { return m_TimeMap.end(); }
@@ -144,27 +144,6 @@ protected:
 	mafString       m_ItemTypeName;   ///< the name of the item type accepted by this container
 };
 
-
-
-
-//-----------------------------------------------------------------------
-//template <class T>
-//mafCxxAbstractTypeMacro( mafTimeMapScalar<T> )
-//-----------------------------------------------------------------------
-
-//-----------------------------------------------------------------------
-template <class T>
-mafTimeMapScalar<T>::mafTimeMapScalar()
-//-----------------------------------------------------------------------
-{
-}
-
-//-----------------------------------------------------------------------
-template <class T>
-mafTimeMapScalar<T>::~mafTimeMapScalar()
-//-----------------------------------------------------------------------
-{
-}
 
 //-----------------------------------------------------------------------
 template <class T>

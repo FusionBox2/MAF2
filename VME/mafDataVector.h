@@ -28,8 +28,6 @@ public:
   mafDataVector();
   ~mafDataVector() override;
 
-  mafTypeMacroN(mafDataVector);
-
   /** copy another vector referencing the data */
   void ShallowCopy(mafDataVector *a);
 

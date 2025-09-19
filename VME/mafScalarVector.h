@@ -1,31 +1,12 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafScalarVector
- Authors: Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
+#include "ftkConfigure.h"
 
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __mafScalarVector_h
-#define __mafScalarVector_h
-
-//----------------------------------------------------------------------------
-// Include:
-//----------------------------------------------------------------------------
 #include "mafTimeMapScalar.h"
 #include "ftk/IO/StorageElement.h"
 
-//------------------------------------------------------------------------------
-// Forward declarations
-//------------------------------------------------------------------------------
+BEGIN_FTK_NAMESPACE
+
 class mafStorageElement;
 class mafStorageElementBuilder;
 
@@ -38,9 +19,6 @@ public:
   mafScalarVector();
   ~mafScalarVector() override;
 
-  // set as parent mafObject since type macro does not work for template classes
-  mafTypeMacro(mafScalarVector, mafObject); 
-  
   /**
   Append a scalar to the vector setting its timestamp to the highest one + 1
   The scalar value is <U>referenced</U> and <B>NOT</B> <U>copied</U>. same effect of AppendItem(). */
@@ -80,4 +58,5 @@ protected:
   virtual void InternalStore(mafStorageElementBuilder& node);
   virtual void InternalRestore(const mafStorageElement& node);
 };
-#endif
+
+END_FTK_NAMESPACE

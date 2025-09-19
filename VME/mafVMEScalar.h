@@ -1,37 +1,20 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafVMEScalar
- Authors: Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
+#include "ftkConfigure.h"
 
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafVMEScalar_h
-#define __mafVMEScalar_h
-//----------------------------------------------------------------------------
-// Include:
-//----------------------------------------------------------------------------
 #include "mafVMEGenericAbstract.h"
 
-//----------------------------------------------------------------------------
-// forward declarations :
-//----------------------------------------------------------------------------
+BEGIN_FTK_NAMESPACE
+
 class mafVMEOutputScalar;
 class mafScalarVector;
 class vtkDataSet;
 
 /** mafVMEScalar */
-class MAF_EXPORT mafVMEScalar : public mafVMEGenericAbstract
+class FTK_VME_EXPORT mafVMEScalar : public mafVMEGenericAbstract
 {
 public:
-  mafTypeMacro(mafVMEScalar,mafVMEGenericAbstract);
+  mafTypeMacroN(mafVMEScalar);
 
   /** Set the data for the given timestamp. 
   This function automatically creates a VMEItem for the data to be stored.
@@ -47,7 +30,7 @@ public:
   bool IsAnimated() override;
 
   /** Get the pointer to the array of Scalar's*/
-  mafScalarVector *GetScalarVector() {return m_ScalarVector;}
+  mafScalarVector *GetScalarVector() {return m_ScalarVector.get();}
 
   /** Return the list of time stamps of the data scalar array stored in this VME. */
   void GetDataTimeStamps(std::vector<mafTimeStamp> &kframes) override;
@@ -90,10 +73,11 @@ protected:
   void InternalStore(mafStorageElementBuilder& parent) override;
   void InternalRestore(const mafStorageElement& node) override;
 
-  mafScalarVector *m_ScalarVector;
+  std::unique_ptr<mafScalarVector> m_ScalarVector;
 
 private:
   mafVMEScalar(const mafVMEScalar&); // Not implemented
   void operator=(const mafVMEScalar&); // Not implemented
 };
-#endif
+
+END_FTK_NAMESPACE

@@ -25,9 +25,6 @@ public:
   mafMatrixVector();
   ~mafMatrixVector() override;
 
-  // set as parent mafObject since type macro does not work for template classes
-  mafTypeMacroN(mafMatrixVector); 
-  
   /**
     Append a matrix to the vector setting its timestamp to the highest one + 1
     The matrix content is copied and not referenced.*/

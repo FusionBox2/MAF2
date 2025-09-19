@@ -1,29 +1,3 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafVMEScalar
- Authors: Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-
 #include "mafVMEScalar.h"
 #include "mafGUI.h"
 
@@ -35,49 +9,34 @@
 //#include "mafDataPipeCustom.h"
 #include "mafScalarVector.h"
 
-//-------------------------------------------------------------------------
-mafCxxTypeMacro(mafVMEScalar)
-//-------------------------------------------------------------------------
-
-//-------------------------------------------------------------------------
 mafVMEScalar::mafVMEScalar()
-//-------------------------------------------------------------------------
 {
-  m_ScalarVector = new mafScalarVector();
-  SetDataPipe(NULL);
+  m_ScalarVector = std::make_unique<mafScalarVector>();
+  SetDataPipe(nullptr);
 }
 
-//-------------------------------------------------------------------------
-mafVMEScalar::~mafVMEScalar()
-//-------------------------------------------------------------------------
-{
-  cppDEL(m_ScalarVector);
-}
-//-------------------------------------------------------------------------
+mafVMEScalar::~mafVMEScalar() = default;
+
 int mafVMEScalar::DeepCopy(mafNode *a)
-//-------------------------------------------------------------------------
 {
   if (Superclass::DeepCopy(a) == MAF_OK)
   {
-    mafVMEScalar *scalar = mafVMEScalar::SafeDownCast(a);
+    auto scalar = mafVMEScalar::SafeDownCast(a);
     if (scalar->GetScalarVector())
     {
-      if(m_ScalarVector == nullptr)
-        m_ScalarVector = scalar->GetScalarVector()->NewInstance(); // create a new instance of the same type
       m_ScalarVector->DeepCopy(scalar->GetScalarVector()); // copy data
     }
     return MAF_OK;
   }
   return MAF_ERROR;
 }
-//-------------------------------------------------------------------------
+
 bool mafVMEScalar::Equals(mafVME *vme)
-//-------------------------------------------------------------------------
 {
   bool ret = false;
   if (Superclass::Equals(vme))
   {
-    mafVMEScalar *scalar = mafVMEScalar::SafeDownCast(vme);
+    auto scalar = mafVMEScalar::SafeDownCast(vme);
     if (m_ScalarVector)
     {
       ret = m_ScalarVector->Equals(scalar->GetScalarVector());
@@ -88,38 +47,30 @@ bool mafVMEScalar::Equals(mafVME *vme)
   return ret;
 }
 
-//-------------------------------------------------------------------------
 bool mafVMEScalar::IsAnimated()
-//-------------------------------------------------------------------------
 {
   bool anim = Superclass::IsAnimated();
   return anim || (m_ScalarVector->GetNumberOfItems() > 1);
 }
 
-//-------------------------------------------------------------------------
 mafVMEOutput *mafVMEScalar::GetOutput()
-//-------------------------------------------------------------------------
 {
   // allocate the right type of output on demand
-  if (m_Output == NULL)
+  if (!m_Output)
   {
     SetOutput(mafVMEOutputScalar::New()); // create the output
   }
   return m_Output;
 }
 
-//-------------------------------------------------------------------------
 int mafVMEScalar::SetData(double data, mafTimeStamp t)
-//-------------------------------------------------------------------------
 {
   m_ScalarVector->SetScalar(t, data);
 
   return MAF_OK;
 }
 
-//-------------------------------------------------------------------------
 void mafVMEScalar::GetDataTimeStamps(std::vector<mafTimeStamp> &kframes)
-//-------------------------------------------------------------------------
 {
   if (m_ScalarVector)
   {
@@ -127,9 +78,7 @@ void mafVMEScalar::GetDataTimeStamps(std::vector<mafTimeStamp> &kframes)
   }
 }
 
-//-------------------------------------------------------------------------
 void mafVMEScalar::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)
-//-------------------------------------------------------------------------
 {
   std::vector<mafTimeStamp> datatimestamps;
   std::vector<mafTimeStamp> matrixtimestamps;
@@ -143,9 +92,7 @@ void mafVMEScalar::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)
   kframes = mmuTimeSet::Merge(datatimestamps,matrixtimestamps);
 }
 
-//-------------------------------------------------------------------------
 void mafVMEScalar::GetLocalTimeBounds(mafTimeStamp tbounds[2])
-//-------------------------------------------------------------------------
 {
   Superclass::GetLocalTimeBounds(tbounds);
 
@@ -162,9 +109,7 @@ void mafVMEScalar::GetLocalTimeBounds(mafTimeStamp tbounds[2])
     tbounds[1]=tmp[1];
 }
 
-//-----------------------------------------------------------------------
 void mafVMEScalar::InternalStore(mafStorageElementBuilder& parent)
-//-----------------------------------------------------------------------
 {  
   Superclass::InternalStore(parent);
   if (m_ScalarVector)
@@ -172,9 +117,8 @@ void mafVMEScalar::InternalStore(mafStorageElementBuilder& parent)
     {auto scalVec = parent[_R("ScalarVector")]; m_ScalarVector->Store(scalVec);}
   }
 }
-//-----------------------------------------------------------------------
+
 void mafVMEScalar::InternalRestore(const mafStorageElement& node)
-//-----------------------------------------------------------------------
 {
   Superclass::InternalRestore(node);
   if (m_ScalarVector)
@@ -182,17 +126,15 @@ void mafVMEScalar::InternalRestore(const mafStorageElement& node)
     m_ScalarVector->Restore(node[_R("ScalarVector")]);
   }
 }
-//-----------------------------------------------------------------------
+
 void mafVMEScalar::InternalPreUpdate()
-//-----------------------------------------------------------------------
 {
 #ifdef MAF_USE_VTK
   GetScalarOutput()->UpdateVTKRepresentation();
 #endif
 }
-//-----------------------------------------------------------------------
+
 void mafVMEScalar::SetTimeStamp(mafTimeStamp t)
-//-----------------------------------------------------------------------
 {
   t = t < 0 ? 0 : t;
   bool update_vtk_data = t != m_CurrentTime;
@@ -205,16 +147,14 @@ void mafVMEScalar::SetTimeStamp(mafTimeStamp t)
 #endif
   }
 }
-//-----------------------------------------------------------------------
+
 void mafVMEScalar::Print(std::ostream& os, const int tabs)
-//-----------------------------------------------------------------------
 {
   Superclass::Print(os,tabs);
   mafIndent indent(tabs);
 }
-//-------------------------------------------------------------------------
+
 const char** mafVMEScalar::GetIcon() 
-//-------------------------------------------------------------------------
 {
   #include "mafVMEScalar.xpm"
   return mafVMEScalar_xpm;

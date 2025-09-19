@@ -80,7 +80,7 @@ public:
     for metadata).
     This array can be NULL for VMEs generating the output matrix procedurally starting from from
     different sources. */
-  mafMatrixVector *GetMatrixVector() {return m_MatrixVector;}
+  mafMatrixVector *GetMatrixVector() {return m_MatrixVector.get();}
 
   /**
     Set the Pose matrix of the VME. This function modifies the MatrixVector. You can
@@ -90,7 +90,7 @@ public:
   void SetMatrix(const mafMatrix &mat) override;
 
   /** Get the pointer to the array of VMEItem's*/
-  mafDataVector *GetDataVector() {return m_DataVector;}
+  mafDataVector *GetDataVector() {return m_DataVector.get();}
 
   /** Return the list of time stamps of the VMEItemArray stored in this VME. */
   virtual void GetDataTimeStamps(std::vector<mafTimeStamp> &kframes);
@@ -130,8 +130,8 @@ protected:
   /** Create GUI for the VME */
   mafGUI *CreateGui() override;
 
-  mafMatrixVector *m_MatrixVector;
-  mafDataVector   *m_DataVector;
+  std::unique_ptr<mafMatrixVector> m_MatrixVector;
+  std::unique_ptr<mafDataVector>   m_DataVector;
 private:
   mafVMEGenericAbstract(const mafVMEGenericAbstract&); // Not implemented
   void operator=(const mafVMEGenericAbstract&); // Not implemented

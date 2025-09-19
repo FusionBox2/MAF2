@@ -19,7 +19,7 @@ BEGIN_FTK_NAMESPACE
 using mmuTimeVector = std::vector<mafTimeStamp>;
 
 template <class T, template<typename> typename Ptr = std::shared_ptr, typename ArgPtr = std::shared_ptr<T> >
-class mafTimeMap : public mafObject, public mafTimeStamped
+class mafTimeMap : public mafTimeStamped
 {
 public:
 	using TimeMap = std::map<mafTimeStamp, Ptr<T> >;
@@ -30,7 +30,7 @@ public:
 	mafTimeMap(const mafTimeMap<T>&) = delete;
 	mafTimeMap& operator=(const mafTimeMap<T>&) = delete;
 
-	~mafTimeMap() override = default;
+	virtual ~mafTimeMap() = default;
 
 	/** set the TypeName of the kind of item accepted by this container */
 	void SetItemTypeName(const char* tname) { m_ItemTypeName = _R(tname); }
@@ -113,7 +113,7 @@ public:
 	  is returned if not found.*/
 	ArgPtr GetItemBefore(mafTimeStamp t);
 
-	void Print(std::ostream& os, const int tabs = 0) const override;
+	void Print(std::ostream& os, const int tabs = 0) const;
 
 	auto begin() { return m_TimeMap.begin(); }
 	auto end() { return m_TimeMap.end(); }
