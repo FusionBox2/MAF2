@@ -1,30 +1,13 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafMatrixVector
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
+#include "ftkConfigure.h"
 
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafMatrixVector_h
-#define __mafMatrixVector_h
-//----------------------------------------------------------------------------
-// Include:
-//----------------------------------------------------------------------------
-#include "mafTimeMap.txx"
+#include "mafTimeMap.h"
 #include "ftk/IO/StorageElement.h"
 #include "mafMatrix.h"
 
-//------------------------------------------------------------------------------
-// Forward declarations
-//------------------------------------------------------------------------------
+BEGIN_FTK_NAMESPACE
+
 class mafStorageElement;
 class mafStorageElementBuilder;
 
@@ -89,4 +72,4 @@ protected:
   virtual void InternalRestore(const mafStorageElement& node);
 };
 
-#endif
+END_FTK_NAMESPACE

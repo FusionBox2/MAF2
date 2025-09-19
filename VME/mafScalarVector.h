@@ -21,7 +21,6 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafTimeMapScalar.h"
-#include "mafTimeMapScalar.txx"
 #include "ftk/IO/StorageElement.h"
 
 //------------------------------------------------------------------------------

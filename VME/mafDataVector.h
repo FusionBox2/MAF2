@@ -1,33 +1,15 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafDataVector
- Authors: Marco Petrone - Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
+#include "ftkConfigure.h"
 
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafDataVector_h
-#define __mafDataVector_h
-//----------------------------------------------------------------------------
-// Include:
-//----------------------------------------------------------------------------
 #include "mmuIdFactory.h"
 #include "mafTimeMap.h"
-#include "mafTimeMap.txx"
 #include "mafTimeStamped.h"
 #include "mafEventSender.h"
 #include "mafVMEItem.h"
 
-//------------------------------------------------------------------------------
-// Forward declarations
-//------------------------------------------------------------------------------
+BEGIN_FTK_NAMESPACE
+
 class mafStorageElement;
 class mafStorageElementBuilder;
 
@@ -119,4 +101,4 @@ protected:
   bool  m_JustRestored;   ///< flag set when data has just been restored (to be used by InternalStore)
 };
 
-#endif
+END_FTK_NAMESPACE
