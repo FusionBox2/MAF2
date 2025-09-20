@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafPipeMeter
  Authors: Paolo Quadrani
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -60,94 +60,94 @@ mafCxxTypeMacro(mafPipeMeter);
 //#include "mafMemDbg.h"
 
 //----------------------------------------------------------------------------
-mafPipeMeter::mafPipeMeter() 
+mafPipeMeter::mafPipeMeter()
 //----------------------------------------------------------------------------
 {
-  m_DataMapper        = NULL;
-  m_DataActor         = NULL;
-  m_SelectionBox      = NULL;
-  m_SelectionMapper   = NULL;
-  m_SelectionProperty = NULL;
-  m_SelectionActor    = NULL;
-  m_Tube              = NULL;
-  m_MeterVME          = NULL;
-  m_Lut               = NULL;
-  m_Caption           = NULL;
-  m_MaterialButton    = NULL;
+	m_DataMapper = NULL;
+	m_DataActor = NULL;
+	m_SelectionBox = NULL;
+	m_SelectionMapper = NULL;
+	m_SelectionProperty = NULL;
+	m_SelectionActor = NULL;
+	m_Tube = NULL;
+	m_MeterVME = NULL;
+	m_Lut = NULL;
+	m_Caption = NULL;
+	m_MaterialButton = NULL;
 }
 //----------------------------------------------------------------------------
-void mafPipeMeter::Create(mafNode *node, mafView *view/*, bool use_axes*/)
+void mafPipeMeter::Create(mafNode* node, mafView* view/*, bool use_axes*/)
 //----------------------------------------------------------------------------
 {
-  Superclass::Create(node, view);
-  
-  m_Selected          = false;
-  m_DataMapper        = NULL;
-  m_DataActor         = NULL;
-  m_SelectionBox      = NULL;
-  m_SelectionMapper   = NULL;
-  m_SelectionProperty = NULL;
-  m_SelectionActor    = NULL;
-  m_Tube              = NULL;
-  m_MeterVME          = NULL;
-  m_Lut               = NULL;
-  m_Caption           = NULL;
+	Superclass::Create(node, view);
 
-  assert(m_Vme->IsA("mafVMEMeter"));
-  m_MeterVME = mafVMEMeter::SafeDownCast(m_Vme);
-  m_MeterVME->AddObserver(this);
-  assert(m_MeterVME->GetPolylineOutput());
-  m_MeterVME->GetPolylineOutput()->Update();
-  vtkAlgorithmOutput *port = m_MeterVME->GetPolylineOutput()->GetVTKOutputPort();
-  assert(port);
+	m_Selected = false;
+	m_DataMapper = NULL;
+	m_DataActor = NULL;
+	m_SelectionBox = NULL;
+	m_SelectionMapper = NULL;
+	m_SelectionProperty = NULL;
+	m_SelectionActor = NULL;
+	m_Tube = NULL;
+	m_MeterVME = NULL;
+	m_Lut = NULL;
+	m_Caption = NULL;
 
-  vtkNEW(m_Tube);
-  m_Tube->UseDefaultNormalOff();
-  m_Tube->SetInputConnection(port);
-  m_Tube->SetRadius(m_MeterVME->GetMeterRadius());
-  m_Tube->SetCapping(m_MeterVME->GetMeterCapping());
-  m_Tube->SetNumberOfSides(20);
-  m_Tube->UseDefaultNormalOff();
+	assert(m_Vme->IsA("mafVMEMeter"));
+	m_MeterVME = mafVMEMeter::SafeDownCast(m_Vme);
+	m_MeterVME->AddObserver(this);
+	assert(m_MeterVME->GetPolylineOutput());
+	m_MeterVME->GetPolylineOutput()->Update();
+	vtkAlgorithmOutput* port = m_MeterVME->GetPolylineOutput()->GetVTKOutputPort();
+	assert(port);
 
-  double *range;
-  range = m_MeterVME->GetDistanceRange();
+	vtkNEW(m_Tube);
+	m_Tube->UseDefaultNormalOff();
+	m_Tube->SetInputConnection(port);
+	m_Tube->SetRadius(m_MeterVME->GetMeterRadius());
+	m_Tube->SetCapping(m_MeterVME->GetMeterCapping());
+	m_Tube->SetNumberOfSides(20);
+	m_Tube->UseDefaultNormalOff();
 
-  vtkNEW(m_Lut);
-  m_Lut->SetTableRange(range[0],range[1]);
-  m_Lut->SetHueRange(0.7,0);
-  m_Lut->SetNumberOfTableValues(16);
-  m_Lut->Build();
+	double* range;
+	range = m_MeterVME->GetDistanceRange();
 
-  vtkNEW(m_DataMapper);
-  if (m_MeterVME->GetMeterRepresentation() == mafVMEMeter::LINE_REPRESENTATION)
-    m_DataMapper->SetInputConnection(port);
-  else
-  {
-    m_Tube->Update();
-    m_DataMapper->SetInputConnection(m_Tube->GetOutputPort());
-  }
-    
+	vtkNEW(m_Lut);
+	m_Lut->SetTableRange(range[0], range[1]);
+	m_Lut->SetHueRange(0.7, 0);
+	m_Lut->SetNumberOfTableValues(16);
+	m_Lut->Build();
+
+	vtkNEW(m_DataMapper);
+	if (m_MeterVME->GetMeterRepresentation() == mafVMEMeter::LINE_REPRESENTATION)
+		m_DataMapper->SetInputConnection(port);
+	else
+	{
+		m_Tube->Update();
+		m_DataMapper->SetInputConnection(m_Tube->GetOutputPort());
+	}
+
 #if VTK_MAJOR_VERSION <= 7
 	m_DataMapper->ImmediateModeRenderingOff();
 #endif
-  if(m_MeterVME->GetMeterColorMode() == mafVMEMeter::RANGE_COLOR)
-    m_DataMapper->SetLookupTable(m_Lut);
+	if (m_MeterVME->GetMeterColorMode() == mafVMEMeter::RANGE_COLOR)
+		m_DataMapper->SetLookupTable(m_Lut);
 
-  vtkNEW(m_DataActor);
+	vtkNEW(m_DataActor);
 	m_DataActor->SetProperty(m_MeterVME->GetMaterial()->m_Prop);
 	m_DataActor->SetMapper(m_DataMapper);
 
-  m_AssemblyFront->AddPart(m_DataActor);
+	m_AssemblyFront->AddPart(m_DataActor);
 
-  // selection hilight
+	// selection hilight
 	vtkNEW(m_SelectionBox);
-	m_SelectionBox->SetInputConnection(port);  
+	m_SelectionBox->SetInputConnection(port);
 
 	vtkNEW(m_SelectionMapper);
 	m_SelectionMapper->SetInputConnection(m_SelectionBox->GetOutputPort());
 
 	vtkNEW(m_SelectionProperty);
-	m_SelectionProperty->SetColor(1,1,1);
+	m_SelectionProperty->SetColor(1, 1, 1);
 	m_SelectionProperty->SetAmbient(1);
 	m_SelectionProperty->SetRepresentationToWireframe();
 	m_SelectionProperty->SetInterpolationToFlat();
@@ -158,312 +158,315 @@ void mafPipeMeter::Create(mafNode *node, mafView *view/*, bool use_axes*/)
 	m_SelectionActor->PickableOff();
 	m_SelectionActor->SetProperty(m_SelectionProperty);
 
-  m_AssemblyFront->AddPart(m_SelectionActor);
+	m_AssemblyFront->AddPart(m_SelectionActor);
 
-  vtkNEW(m_Caption);
-  m_Caption->SetPosition(25,10);
-  m_Caption->ThreeDimensionalLeaderOff();
-  if(m_MeterVME->GetMeterColorMode() != mafVMEMeter::RANGE_COLOR)
-  {
-    double c[3];
-    m_DataActor->GetProperty()->GetColor(c);
-    m_Caption->GetProperty()->SetColor(c);
-  }
-  else
-  {
-    m_DataActor->GetProperty()->SetColor(m_MeterVME->GetMaterial()->m_Diffuse);
-    m_Caption->GetProperty()->SetColor(m_MeterVME->GetMaterial()->m_Diffuse);
-  }
-//  else
-//    Caption->GetProperty()->SetColor(data->m_mat_gui->GetMaterial()->m_prop->GetColor());
-  m_Caption->SetHeight(0.05);
-  m_Caption->SetWidth(0.35);
-  m_Caption->BorderOff();
-  wxString dis;
-  dis = wxString::Format("%.2f",m_MeterVME->GetDistance());
-  m_Caption->SetCaption(dis.c_str());
+	vtkNEW(m_Caption);
+	m_Caption->SetPosition(25, 10);
+	m_Caption->ThreeDimensionalLeaderOff();
+	if (m_MeterVME->GetMeterColorMode() != mafVMEMeter::RANGE_COLOR)
+	{
+		double c[3];
+		m_DataActor->GetProperty()->GetColor(c);
+		m_Caption->GetProperty()->SetColor(c);
+	}
+	else
+	{
+		m_DataActor->GetProperty()->SetColor(m_MeterVME->GetMaterial()->m_Diffuse);
+		m_Caption->GetProperty()->SetColor(m_MeterVME->GetMaterial()->m_Diffuse);
+	}
+	//  else
+	//    Caption->GetProperty()->SetColor(data->m_mat_gui->GetMaterial()->m_prop->GetColor());
+	m_Caption->SetHeight(0.05);
+	m_Caption->SetWidth(0.35);
+	m_Caption->BorderOff();
+	wxString dis;
+	dis = wxString::Format("%.2f", m_MeterVME->GetDistance());
+	m_Caption->SetCaption(dis.c_str());
 
-  if(m_MeterVME->GetMeterMode() == mafVMEMeter::LINE_ANGLE)
-    m_Caption->SetVisibility((m_MeterVME->GetAngle() != 0) && m_MeterVME->GetMeterAttributes()->m_LabelVisibility);
-  else
-    m_Caption->SetVisibility((m_MeterVME->GetDistance() >= 0 || m_MeterVME->GetMeterMeasureType() == mafVMEMeter::RELATIVE_MEASURE) && m_MeterVME->GetMeterAttributes()->m_LabelVisibility);
-  
-  if(m_MeterVME->GetStartVME())
-  {
-    double pos[3], rot[3];
-    mafVME *linked_vme = m_MeterVME->GetStartVME();
-    auto TmpTransform = mafTransform::NewSPtr();
-    if(linked_vme && linked_vme->IsMAFType(mafVMELandmarkCloud) && m_MeterVME->GetLinkSubId(_R("StartVME")) != -1)
-    {
-      ((mafVMELandmarkCloud *)linked_vme)->GetLandmark(m_MeterVME->GetLinkSubId(_R("StartVME")),pos,-1);
-      TmpTransform->SetMatrix(*linked_vme->GetOutput()->GetAbsMatrix());
-      TmpTransform->TransformPoint(pos,pos);
-    }
-    else
-      m_MeterVME->GetStartVME()->GetOutput()->GetAbsPose(pos,rot);
-    m_Caption->SetAttachmentPoint(pos[0],pos[1],pos[2]);
-  } 
+	if (m_MeterVME->GetMeterMode() == mafVMEMeter::LINE_ANGLE)
+		m_Caption->SetVisibility((m_MeterVME->GetAngle() != 0) && m_MeterVME->GetMeterAttributes()->m_LabelVisibility);
+	else
+		m_Caption->SetVisibility((m_MeterVME->GetDistance() >= 0 || m_MeterVME->GetMeterMeasureType() == mafVMEMeter::RELATIVE_MEASURE) && m_MeterVME->GetMeterAttributes()->m_LabelVisibility);
 
-  m_RenFront->AddActor2D(m_Caption);
-  /*
-  m_axes = NULL;
-	if(m_use_axes) m_axes = new mafAxes(m_ren1,m_Vme);
-	if(m_use_axes) m_axes->SetVisibility(0);
-	*/
+	if (m_MeterVME->GetStartVME())
+	{
+		double pos[3], rot[3];
+		mafVME* linked_vme = m_MeterVME->GetStartVME();
+		auto TmpTransform = mafTransform::NewSPtr();
+		if (linked_vme && linked_vme->IsMAFType(mafVMELandmarkCloud) && m_MeterVME->GetLinkSubId(_R("StartVME")) != -1)
+		{
+			((mafVMELandmarkCloud*)linked_vme)->GetLandmark(m_MeterVME->GetLinkSubId(_R("StartVME")), pos, -1);
+			TmpTransform->SetMatrix(*linked_vme->GetOutput()->GetAbsMatrix());
+			TmpTransform->TransformPoint(pos, pos);
+		}
+		else
+			m_MeterVME->GetStartVME()->GetOutput()->GetAbsPose(pos, rot);
+		m_Caption->SetAttachmentPoint(pos[0], pos[1], pos[2]);
+	}
+
+	m_RenFront->AddActor2D(m_Caption);
+	/*
+	m_axes = NULL;
+	  if(m_use_axes) m_axes = new mafAxes(m_ren1,m_Vme);
+	  if(m_use_axes) m_axes->SetVisibility(0);
+	  */
 }
 //----------------------------------------------------------------------------
 mafPipeMeter::~mafPipeMeter()
 //----------------------------------------------------------------------------
 {
-  m_MeterVME->RemoveObserver(this);
+	m_MeterVME->RemoveObserver(this);
 
-  m_AssemblyFront->RemovePart(m_DataActor);
-  m_AssemblyFront->RemovePart(m_SelectionActor);
-  m_RenFront->RemoveActor2D(m_Caption);
+	m_AssemblyFront->RemovePart(m_DataActor);
+	m_AssemblyFront->RemovePart(m_SelectionActor);
+	m_RenFront->RemoveActor2D(m_Caption);
 
-  vtkDEL(m_Tube);
-  vtkDEL(m_Lut);
-  vtkDEL(m_Caption);
-  vtkDEL(m_DataMapper);
-  vtkDEL(m_DataActor);
-  vtkDEL(m_SelectionBox);
-  vtkDEL(m_SelectionMapper);
-  vtkDEL(m_SelectionProperty);
-  vtkDEL(m_SelectionActor);
+	vtkDEL(m_Tube);
+	vtkDEL(m_Lut);
+	vtkDEL(m_Caption);
+	vtkDEL(m_DataMapper);
+	vtkDEL(m_DataActor);
+	vtkDEL(m_SelectionBox);
+	vtkDEL(m_SelectionMapper);
+	vtkDEL(m_SelectionProperty);
+	vtkDEL(m_SelectionActor);
 
-  cppDEL(m_MaterialButton);
+	cppDEL(m_MaterialButton);
 	//@@@ if(m_use_axes) wxDEL(m_axes);  
 }
 //----------------------------------------------------------------------------
-mafGUI *mafPipeMeter::CreateGui()
+mafGUI* mafPipeMeter::CreateGui()
 //----------------------------------------------------------------------------
 {
-  const mafString type_measure_string[] = {_R("absolute"), _R("relative")};
-  const mafString representation_string[] = {_R("line"), _R("tube")};
-  const mafString color_string[] = {_R("one"), _R("range")};
-  int num_choices = 2;
+	const mafString type_measure_string[] = { _R("absolute"), _R("relative") };
+	const mafString representation_string[] = { _R("line"), _R("tube") };
+	const mafString color_string[] = { _R("one"), _R("range") };
+	int num_choices = 2;
 
-  auto meter_attrib = m_MeterVME->GetMeterAttributes();
+	auto meter_attrib = m_MeterVME->GetMeterAttributes();
 
-  assert(m_Gui == NULL);
-  m_Gui = new mafGUI(this);
-  m_Gui->Bool(ID_SHOW_LABEL,_R("label"), &meter_attrib->m_LabelVisibility);
-  m_Gui->Combo(ID_COLOR_MODE,_R("color"), &meter_attrib->m_ColorMode,num_choices,color_string);
-  m_MaterialButton = new mafGUIMaterialButton(m_Vme,this);
-  m_Gui->AddGui(m_MaterialButton->GetGui());
-  m_Gui->VectorN(ID_DISTANCE_RANGE,_R("range"),meter_attrib->m_DistanceRange,2,0);
-  m_Gui->Combo(ID_METER_REPRESENTATION,_R(""),&meter_attrib->m_Representation,num_choices,representation_string);
-  m_Gui->Double(ID_TUBE_RADIUS,_R("radius"),&meter_attrib->m_TubeRadius,0);
-  m_Gui->Bool(ID_TUBE_CAPPING,_R("capping"),&meter_attrib->m_Capping);
-  m_Gui->Combo(ID_METER_MEASURE_TYPE,_R(""),&meter_attrib->m_MeasureType,num_choices,type_measure_string);
-  m_Gui->Double(ID_INIT_MEASURE,_R("abs. init"),&meter_attrib->m_InitMeasure,0); 
-  //Kewei Duan: 
-  //This is the solution to bug raised by Danielle Ascani.
-  //"init" is updated by "absolute init" to avoid misunderstanding from users from GUI design perspective.
-  //because there are two measure modes, users will get confused what to fill here under different modes
-  //It is nonsense to fill in a 0 in relative mode as initial value. 
-  //13/12/2013
-  m_Gui->Bool(ID_GENERATE_EVENT,_R("gen. event"),&meter_attrib->m_GenerateEvent);
-  m_Gui->Double(ID_DELTA_PERCENT,_R("delta %"),&meter_attrib->m_DeltaPercent,0);
+	assert(!AccessGUI());
+	auto gui = new mafGUI(this);
+	gui->Bool(ID_SHOW_LABEL, _R("label"), &meter_attrib->m_LabelVisibility);
+	gui->Combo(ID_COLOR_MODE, _R("color"), &meter_attrib->m_ColorMode, num_choices, color_string);
+	m_MaterialButton = new mafGUIMaterialButton(m_Vme, this);
+	gui->AddGui(m_MaterialButton->GetGui());
+	gui->VectorN(ID_DISTANCE_RANGE, _R("range"), meter_attrib->m_DistanceRange, 2, 0);
+	gui->Combo(ID_METER_REPRESENTATION, _R(""), &meter_attrib->m_Representation, num_choices, representation_string);
+	gui->Double(ID_TUBE_RADIUS, _R("radius"), &meter_attrib->m_TubeRadius, 0);
+	gui->Bool(ID_TUBE_CAPPING, _R("capping"), &meter_attrib->m_Capping);
+	gui->Combo(ID_METER_MEASURE_TYPE, _R(""), &meter_attrib->m_MeasureType, num_choices, type_measure_string);
+	gui->Double(ID_INIT_MEASURE, _R("abs. init"), &meter_attrib->m_InitMeasure, 0);
+	//Kewei Duan: 
+	//This is the solution to bug raised by Danielle Ascani.
+	//"init" is updated by "absolute init" to avoid misunderstanding from users from GUI design perspective.
+	//because there are two measure modes, users will get confused what to fill here under different modes
+	//It is nonsense to fill in a 0 in relative mode as initial value. 
+	//13/12/2013
+	gui->Bool(ID_GENERATE_EVENT, _R("gen. event"), &meter_attrib->m_GenerateEvent);
+	gui->Double(ID_DELTA_PERCENT, _R("delta %"), &meter_attrib->m_DeltaPercent, 0);
 
-  m_MaterialButton->Enable(meter_attrib->m_ColorMode == mafVMEMeter::ONE_COLOR);
-  m_Gui->Enable(ID_DISTANCE_RANGE,meter_attrib->m_ColorMode == mafVMEMeter::RANGE_COLOR);
-  m_Gui->Enable(ID_TUBE_RADIUS, meter_attrib->m_Representation == mafVMEMeter::TUBE_REPRESENTATION);
-  m_Gui->Enable(ID_TUBE_CAPPING, meter_attrib->m_Representation == mafVMEMeter::TUBE_REPRESENTATION);
-	m_Gui->Divider();
+	m_MaterialButton->Enable(meter_attrib->m_ColorMode == mafVMEMeter::ONE_COLOR);
+	gui->Enable(ID_DISTANCE_RANGE, meter_attrib->m_ColorMode == mafVMEMeter::RANGE_COLOR);
+	gui->Enable(ID_TUBE_RADIUS, meter_attrib->m_Representation == mafVMEMeter::TUBE_REPRESENTATION);
+	gui->Enable(ID_TUBE_CAPPING, meter_attrib->m_Representation == mafVMEMeter::TUBE_REPRESENTATION);
+	gui->Divider();
 
-  return m_Gui;
+	return gui;
 }
 //----------------------------------------------------------------------------
-void mafPipeMeter::OnEvent(mafEventBase *maf_event)
+void mafPipeMeter::OnEvent(mafEventBase* maf_event)
 //----------------------------------------------------------------------------
 {
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    auto meter_attrib = m_MeterVME->GetMeterAttributes();
-    switch(e->GetId()) 
-    {
-      case ID_SHOW_LABEL:
-        UpdateProperty();
-      break;
-      case ID_COLOR_MODE:
-        m_Gui->Enable(ID_DISTANCE_RANGE,meter_attrib->m_ColorMode == mafVMEMeter::RANGE_COLOR);
-        m_MaterialButton->Enable(meter_attrib->m_ColorMode == mafVMEMeter::ONE_COLOR);
-        UpdateProperty();
-      break;
-      case ID_METER_REPRESENTATION:
-        m_Gui->Enable(ID_TUBE_RADIUS, meter_attrib->m_Representation == mafVMEMeter::TUBE_REPRESENTATION);
-        m_Gui->Enable(ID_TUBE_CAPPING, meter_attrib->m_Representation == mafVMEMeter::TUBE_REPRESENTATION);
-        UpdateProperty();
-      break;
-      case ID_TUBE_RADIUS:
-        m_Tube->SetRadius(meter_attrib->m_TubeRadius);
-      break;
-      case ID_TUBE_CAPPING:
-        m_Tube->SetCapping(meter_attrib->m_Capping);
-      break;
-      case ID_DISTANCE_RANGE:
-        m_MeterVME->Modified();
-        m_MeterVME->Update();
-      break;
-      case ID_METER_MEASURE_TYPE:
-        m_MeterVME->GetDataPipe()->Update();
-      case ID_INIT_MEASURE:
-      {
-		  if(meter_attrib->m_MeasureType == mafVMEMeter::ABSOLUTE_MEASURE){
-              meter_attrib->m_DistanceRange[0] = meter_attrib->m_InitMeasure;
-		      meter_attrib->m_DistanceRange[1] = meter_attrib->m_InitMeasure * (1.0 + meter_attrib->m_DeltaPercent / 100.0);
-		  }else if(meter_attrib->m_MeasureType == mafVMEMeter::RELATIVE_MEASURE){
-		      meter_attrib->m_DistanceRange[0] = 0;
-		      meter_attrib->m_DistanceRange[1] = meter_attrib->m_InitMeasure * (1.0 + meter_attrib->m_DeltaPercent / 100.0)-meter_attrib->m_InitMeasure;
-		  } 
-		  //Kewei Duan: Updated. 
-		  //This is the solution to bug raised by Danielle Ascani.
-		  //Absolute and relative modes should be considered seperately 
-		  //in this event.
-		  //13/12/2013 
-        m_Gui->Update();
-        m_MeterVME->Modified();
-        m_MeterVME->GetDataPipe()->Update();
-      }
-      break;
-      case ID_DELTA_PERCENT:
-      {
-		if(meter_attrib->m_MeasureType == mafVMEMeter::ABSOLUTE_MEASURE){
-              meter_attrib->m_DistanceRange[0] = meter_attrib->m_InitMeasure;
-		      meter_attrib->m_DistanceRange[1] = meter_attrib->m_InitMeasure * (1.0 + meter_attrib->m_DeltaPercent / 100.0);
-		  }else if(meter_attrib->m_MeasureType == mafVMEMeter::RELATIVE_MEASURE){
-		      meter_attrib->m_DistanceRange[0] = 0;
-		      meter_attrib->m_DistanceRange[1] = meter_attrib->m_InitMeasure * (1.0 + meter_attrib->m_DeltaPercent / 100.0)-meter_attrib->m_InitMeasure;
-		  } 
-		  //Kewei Duan: Updated. 
-		  //This is the solution to bug raised by Danielle Ascani.
-		  //Absolute and relative modes should be considered seperately 
-		  //in this event.
-		  //13/12/2013
-        m_Gui->Update();
-        m_MeterVME->Modified();
-        m_MeterVME->GetDataPipe()->Update();
-      }
-      break;
-      case ID_GENERATE_EVENT:
-        m_MeterVME->GetDataPipe()->Update();
-      break;
-      default:
-        m_MeterVME->ForwardUpEvent(*e);
-      break;
-    }
-    {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-  }
-  else if (maf_event->GetSender() == m_MeterVME)
-  {
-    if(maf_event->GetId() == VME_OUTPUT_DATA_UPDATE)
-    {
-      UpdateProperty();
-    }
-    else if(maf_event->GetId() == mafVMEMeter::LENGTH_THRESHOLD_EVENT) 
-    {
-    }
-  }
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
+	{
+		auto gui = AccessGUI();
+		auto meter_attrib = m_MeterVME->GetMeterAttributes();
+		switch (e->GetId())
+		{
+		case ID_SHOW_LABEL:
+			UpdateProperty();
+			break;
+		case ID_COLOR_MODE:
+			gui->Enable(ID_DISTANCE_RANGE, meter_attrib->m_ColorMode == mafVMEMeter::RANGE_COLOR);
+			m_MaterialButton->Enable(meter_attrib->m_ColorMode == mafVMEMeter::ONE_COLOR);
+			UpdateProperty();
+			break;
+		case ID_METER_REPRESENTATION:
+			gui->Enable(ID_TUBE_RADIUS, meter_attrib->m_Representation == mafVMEMeter::TUBE_REPRESENTATION);
+			gui->Enable(ID_TUBE_CAPPING, meter_attrib->m_Representation == mafVMEMeter::TUBE_REPRESENTATION);
+			UpdateProperty();
+			break;
+		case ID_TUBE_RADIUS:
+			m_Tube->SetRadius(meter_attrib->m_TubeRadius);
+			break;
+		case ID_TUBE_CAPPING:
+			m_Tube->SetCapping(meter_attrib->m_Capping);
+			break;
+		case ID_DISTANCE_RANGE:
+			m_MeterVME->Modified();
+			m_MeterVME->Update();
+			break;
+		case ID_METER_MEASURE_TYPE:
+			m_MeterVME->GetDataPipe()->Update();
+		case ID_INIT_MEASURE:
+		{
+			if (meter_attrib->m_MeasureType == mafVMEMeter::ABSOLUTE_MEASURE) {
+				meter_attrib->m_DistanceRange[0] = meter_attrib->m_InitMeasure;
+				meter_attrib->m_DistanceRange[1] = meter_attrib->m_InitMeasure * (1.0 + meter_attrib->m_DeltaPercent / 100.0);
+			}
+			else if (meter_attrib->m_MeasureType == mafVMEMeter::RELATIVE_MEASURE) {
+				meter_attrib->m_DistanceRange[0] = 0;
+				meter_attrib->m_DistanceRange[1] = meter_attrib->m_InitMeasure * (1.0 + meter_attrib->m_DeltaPercent / 100.0) - meter_attrib->m_InitMeasure;
+			}
+			//Kewei Duan: Updated. 
+			//This is the solution to bug raised by Danielle Ascani.
+			//Absolute and relative modes should be considered seperately 
+			//in this event.
+			//13/12/2013 
+			UpdateGUI();
+			m_MeterVME->Modified();
+			m_MeterVME->GetDataPipe()->Update();
+		}
+		break;
+		case ID_DELTA_PERCENT:
+		{
+			if (meter_attrib->m_MeasureType == mafVMEMeter::ABSOLUTE_MEASURE) {
+				meter_attrib->m_DistanceRange[0] = meter_attrib->m_InitMeasure;
+				meter_attrib->m_DistanceRange[1] = meter_attrib->m_InitMeasure * (1.0 + meter_attrib->m_DeltaPercent / 100.0);
+			}
+			else if (meter_attrib->m_MeasureType == mafVMEMeter::RELATIVE_MEASURE) {
+				meter_attrib->m_DistanceRange[0] = 0;
+				meter_attrib->m_DistanceRange[1] = meter_attrib->m_InitMeasure * (1.0 + meter_attrib->m_DeltaPercent / 100.0) - meter_attrib->m_InitMeasure;
+			}
+			//Kewei Duan: Updated. 
+			//This is the solution to bug raised by Danielle Ascani.
+			//Absolute and relative modes should be considered seperately 
+			//in this event.
+			//13/12/2013
+			UpdateGUI();
+			m_MeterVME->Modified();
+			m_MeterVME->GetDataPipe()->Update();
+		}
+		break;
+		case ID_GENERATE_EVENT:
+			m_MeterVME->GetDataPipe()->Update();
+			break;
+		default:
+			m_MeterVME->ForwardUpEvent(*e);
+			break;
+		}
+		{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+	}
+	else if (maf_event->GetSender() == m_MeterVME)
+	{
+		if (maf_event->GetId() == VME_OUTPUT_DATA_UPDATE)
+		{
+			UpdateProperty();
+		}
+		else if (maf_event->GetId() == mafVMEMeter::LENGTH_THRESHOLD_EVENT)
+		{
+		}
+	}
 }
 //----------------------------------------------------------------------------
 void mafPipeMeter::Select(bool sel)
 //----------------------------------------------------------------------------
 {
 	m_Selected = sel;
-	if(m_DataActor->GetVisibility()) 
+	if (m_DataActor->GetVisibility())
 	{
-			m_SelectionActor->SetVisibility(sel);
-			//@@@ if(m_use_axes) m_axes->SetVisibility(sel);
+		m_SelectionActor->SetVisibility(sel);
+		//@@@ if(m_use_axes) m_axes->SetVisibility(sel);
 	}
 }
 //----------------------------------------------------------------------------
 void mafPipeMeter::UpdateProperty(bool fromTag)
 //----------------------------------------------------------------------------
 {
-  if (NULL == m_DataMapper || NULL == m_DataActor || NULL == m_Caption)
-    return;
-  
-  vtkAlgorithmOutput *port = m_MeterVME->GetPolylineOutput()->GetVTKOutputPort();
-  if (m_MeterVME->GetMeterRepresentation() == mafVMEMeter::LINE_REPRESENTATION)
-  {
-    m_DataMapper->SetInputConnection(port);
-  }
-  else
-  {
-    //m_Tube->Update();
-    m_DataMapper->SetInputConnection(m_Tube->GetOutputPort());
-  }
+	if (NULL == m_DataMapper || NULL == m_DataActor || NULL == m_Caption)
+		return;
 
-  double distance_value = m_MeterVME->GetDistance();
-  if(m_MeterVME->GetMeterMode() == mafVMEMeter::LINE_ANGLE) distance_value = m_MeterVME->GetAngle();
-  distance_value = RoundValue(distance_value);
-  wxString dis;
-  dis = wxString::Format("%.2f",distance_value);
-  m_Caption->SetCaption(dis.c_str());
-  m_Caption->SetVisibility(m_MeterVME->GetMeterAttributes()->m_LabelVisibility);
+	vtkAlgorithmOutput* port = m_MeterVME->GetPolylineOutput()->GetVTKOutputPort();
+	if (m_MeterVME->GetMeterRepresentation() == mafVMEMeter::LINE_REPRESENTATION)
+	{
+		m_DataMapper->SetInputConnection(port);
+	}
+	else
+	{
+		//m_Tube->Update();
+		m_DataMapper->SetInputConnection(m_Tube->GetOutputPort());
+	}
 
-  double rgb[3];
-  double v = m_MeterVME->GetDistance();
-  int color_mode = m_MeterVME->GetMeterColorMode();
-  if(color_mode == mafVMEMeter::RANGE_COLOR)
-  {
-    double *range;
-    m_DataMapper->SetLookupTable(m_Lut);
-    range = m_MeterVME->GetDistanceRange();
-    m_Lut->SetTableRange(range[0],range[1]);
-    m_Lut->Build();
-    m_Lut->GetColor(v,rgb);
-    m_DataActor->GetProperty()->SetColor(rgb);
-    m_Caption->GetProperty()->SetColor(rgb);
-  }
-  else
-  {
-    m_DataMapper->SetColorModeToDefault();
-    m_DataActor->GetProperty()->SetColor(m_MeterVME->GetMaterial()->m_Diffuse);
-    m_Caption->GetProperty()->SetColor(m_MeterVME->GetMaterial()->m_Diffuse);
-  }
+	double distance_value = m_MeterVME->GetDistance();
+	if (m_MeterVME->GetMeterMode() == mafVMEMeter::LINE_ANGLE) distance_value = m_MeterVME->GetAngle();
+	distance_value = RoundValue(distance_value);
+	wxString dis;
+	dis = wxString::Format("%.2f", distance_value);
+	m_Caption->SetCaption(dis.c_str());
+	m_Caption->SetVisibility(m_MeterVME->GetMeterAttributes()->m_LabelVisibility);
 
-  double pos[3] = {0,0,0};
-  double rot[3] = {0,0,0};
-  mafVME *linked_vme = m_MeterVME->GetStartVME();
-  auto TmpTransform = mafTransform::NewSPtr();
-  if(linked_vme && linked_vme->IsMAFType(mafVMELandmarkCloud) && m_MeterVME->GetLinkSubId(_R("StartVME")) != -1)
-  {
-    ((mafVMELandmarkCloud *)linked_vme)->GetLandmark(m_MeterVME->GetLinkSubId(_R("StartVME")),pos,-1);
-    TmpTransform->SetMatrix(*linked_vme->GetOutput()->GetAbsMatrix());
-    TmpTransform->TransformPoint(pos,pos);
-  }
-  else if(linked_vme)
-  {
-    linked_vme->GetOutput()->GetAbsPose(pos,rot);
-  }
-  m_Caption->SetAttachmentPoint(pos[0],pos[1],pos[2]);
+	double rgb[3];
+	double v = m_MeterVME->GetDistance();
+	int color_mode = m_MeterVME->GetMeterColorMode();
+	if (color_mode == mafVMEMeter::RANGE_COLOR)
+	{
+		double* range;
+		m_DataMapper->SetLookupTable(m_Lut);
+		range = m_MeterVME->GetDistanceRange();
+		m_Lut->SetTableRange(range[0], range[1]);
+		m_Lut->Build();
+		m_Lut->GetColor(v, rgb);
+		m_DataActor->GetProperty()->SetColor(rgb);
+		m_Caption->GetProperty()->SetColor(rgb);
+	}
+	else
+	{
+		m_DataMapper->SetColorModeToDefault();
+		m_DataActor->GetProperty()->SetColor(m_MeterVME->GetMaterial()->m_Diffuse);
+		m_Caption->GetProperty()->SetColor(m_MeterVME->GetMaterial()->m_Diffuse);
+	}
 
-  GetGui()->Update();
-  
-  /*
-	if(fromTag)
-  {
-		((mafVmeData *)m_Vme->GetClientData())->UpdateFromTag();
-    int idx = m_Vme->GetTagArray()->FindTag("VME_CENTER_ROTATION_POSE");
-    vtkTagItem *item = NULL;
-    double vec[16];
-    if (idx != -1)
-    {
-      item = m_Vme->GetTagArray()->GetTag(idx);
-      mflSmartPointer<vtkMatrix4x4> pose;
-      for (int el=0;el<16;el++)
-      {
-        vec[el] = item->GetValueAsDouble(el);
-      }
-      pose->DeepCopy(vec);
-      m_axes->SetPose(pose);
-    }
-    else
-      m_axes->SetPose();
-  }
-  else
-	  m_DataMapper->SetScalarVisibility(((mafVmeData *)m_Vme->GetClientData())->GetColorByScalar());
-	*/
+	double pos[3] = { 0,0,0 };
+	double rot[3] = { 0,0,0 };
+	mafVME* linked_vme = m_MeterVME->GetStartVME();
+	auto TmpTransform = mafTransform::NewSPtr();
+	if (linked_vme && linked_vme->IsMAFType(mafVMELandmarkCloud) && m_MeterVME->GetLinkSubId(_R("StartVME")) != -1)
+	{
+		mafVMELandmarkCloud::StaticDownCast(linked_vme)->GetLandmark(m_MeterVME->GetLinkSubId(_R("StartVME")), pos, -1);
+		TmpTransform->SetMatrix(*linked_vme->GetOutput()->GetAbsMatrix());
+		TmpTransform->TransformPoint(pos, pos);
+	}
+	else if (linked_vme)
+	{
+		linked_vme->GetOutput()->GetAbsPose(pos, rot);
+	}
+	m_Caption->SetAttachmentPoint(pos[0], pos[1], pos[2]);
+
+	GetGui()->Update();
+
+	/*
+	  if(fromTag)
+	{
+		  ((mafVmeData *)m_Vme->GetClientData())->UpdateFromTag();
+	  int idx = m_Vme->GetTagArray()->FindTag("VME_CENTER_ROTATION_POSE");
+	  vtkTagItem *item = NULL;
+	  double vec[16];
+	  if (idx != -1)
+	  {
+		item = m_Vme->GetTagArray()->GetTag(idx);
+		mflSmartPointer<vtkMatrix4x4> pose;
+		for (int el=0;el<16;el++)
+		{
+		  vec[el] = item->GetValueAsDouble(el);
+		}
+		pose->DeepCopy(vec);
+		m_axes->SetPose(pose);
+	  }
+	  else
+		m_axes->SetPose();
+	}
+	else
+		m_DataMapper->SetScalarVisibility(((mafVmeData *)m_Vme->GetClientData())->GetColorByScalar());
+	  */
 }

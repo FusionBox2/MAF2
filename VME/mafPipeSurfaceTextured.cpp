@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafPipeSurfaceTextured
  Authors: Silvano Imboden - Paolo Quadrani
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -79,199 +79,195 @@ mafCxxTypeMacro(mafPipeSurfaceTextured);
 mafPipeSurfaceTextured::mafPipeSurfaceTextured()
 //----------------------------------------------------------------------------
 {
-  m_Texture         = NULL;
-  m_Mapper          = NULL;
-  m_Actor           = NULL;
-  m_OutlineActor    = NULL;
-  m_MaterialButton  = NULL;
-  m_SurfaceMaterial = NULL;
-  m_Gui             = NULL;
+	m_Texture = NULL;
+	m_Mapper = NULL;
+	m_Actor = NULL;
+	m_OutlineActor = NULL;
+	m_MaterialButton = NULL;
+	m_SurfaceMaterial = NULL;
 
-  m_ScalarVisibility = 0;
-  m_RenderingDisplayListFlag = 0;
+	m_ScalarVisibility = 0;
+	m_RenderingDisplayListFlag = 0;
 
-  m_UseVTKProperty  = 1;
-  m_UseTexture      = 1;
-  m_UseLookupTable  = 0;
+	m_UseVTKProperty = 1;
+	m_UseTexture = 1;
+	m_UseLookupTable = 0;
 
-  m_EnableActorLOD  = 0;
-  m_VmeImageName = _R("");
+	m_EnableActorLOD = 0;
+	m_VmeImageName = _R("");
 	m_ShowAxis = 1;
-  m_SelectionVisibility = 1;
-  m_File = _R("");
+	m_SelectionVisibility = 1;
+	m_File = _R("");
 }
 //----------------------------------------------------------------------------
-void mafPipeSurfaceTextured::Create(mafNode *node, mafView *view/*, bool use_axes*/)
+void mafPipeSurfaceTextured::Create(mafNode* node, mafView* view/*, bool use_axes*/)
 //----------------------------------------------------------------------------
 {
-  Superclass::Create(node, view);
-  int iterator = 0;
-  m_Selected = false;
-  m_Texture         = NULL;
-  m_Mapper          = NULL;
-  m_Actor           = NULL;
-  m_OutlineActor    = NULL;
-  m_Axes            = NULL;
-  m_File = _R("");
+	Superclass::Create(node, view);
+	int iterator = 0;
+	m_Selected = false;
+	m_Texture = NULL;
+	m_Mapper = NULL;
+	m_Actor = NULL;
+	m_OutlineActor = NULL;
+	m_Axes = NULL;
+	m_File = _R("");
 
-  m_Vme->Update();
-  assert(m_Vme->GetOutput()->IsMAFType(mafVMEOutputSurface));
-  mafVMEOutputSurface* surface_output = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
-  assert(surface_output);
-  surface_output->Update();
-  vtkPolyData* data = vtkPolyData::SafeDownCast(surface_output->GetVTKData());
-  vtkAlgorithmOutput* port = surface_output->GetVTKOutputPort();
-  assert(data);
-  port->GetProducer()->Update();
+	m_Vme->Update();
+	assert(m_Vme->GetOutput()->IsMAFType(mafVMEOutputSurface));
+	mafVMEOutputSurface* surface_output = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
+	assert(surface_output);
+	surface_output->Update();
+	vtkPolyData* data = vtkPolyData::SafeDownCast(surface_output->GetVTKData());
+	vtkAlgorithmOutput* port = surface_output->GetVTKOutputPort();
+	assert(data);
+	port->GetProducer()->Update();
 
-  m_Vme->AddObserver(this);
+	m_Vme->AddObserver(this);
 
-  vtkDataArray *scalars = data->GetPointData()->GetScalars();
-  double sr[2] = {0,1};
-  if(scalars != NULL)
-  {
-    m_ScalarVisibility = 1;
-    scalars->GetRange(sr);
-  }
-
-  m_SurfaceMaterial = surface_output->GetMaterial();
-  assert(m_SurfaceMaterial);  // all vme that use PipeSurface must have the material correctly set
-
-  vtkNEW(m_Mapper);
-
-  if (m_SurfaceMaterial->m_MaterialType == mmaMaterial::USE_TEXTURE)
-  {
-    m_UseTexture = 1;
-    m_UseVTKProperty = 0;
-    m_UseLookupTable = 0;
-    if (data->GetPointData()->GetTCoords() == NULL)
-    {
-      GenerateTextureMapCoordinate();
-    }
-    else
-    {
-      m_Mapper->SetInputConnection(port);
-    }
-  }
-  else
-  {
-    m_Mapper->SetInputConnection(port);
-  }
-  
-  m_RenderingDisplayListFlag = m_Vme->IsAnimated() ? 1 : 0;
-#if VTK_MAJOR_VERSION <= 7
-  m_Mapper->SetImmediateModeRendering(m_RenderingDisplayListFlag);
-#endif
-  m_Mapper->SetScalarVisibility(m_ScalarVisibility);
-
-  vtkNEW(m_Texture);
-  m_Texture->SetQualityTo32Bit();
-  m_Texture->InterpolateOn();
-  if (m_SurfaceMaterial->m_MaterialType == mmaMaterial::USE_TEXTURE)
-  {
-    if (m_SurfaceMaterial->GetMaterialTexturePort() != NULL)
-    {
-      vtkImageData *image1 = m_SurfaceMaterial->GetMaterialTextureData();
-	  m_SurfaceMaterial->GetMaterialTexturePort()->GetProducer()->Update();
-	  m_Texture->SetInputConnection(m_SurfaceMaterial->GetMaterialTexturePort());
-	  image1->GetScalarRange(sr);
-    }
-	else if (!m_SurfaceMaterial->GetMaterialTextureName().empty())
+	vtkDataArray* scalars = data->GetPointData()->GetScalars();
+	double sr[2] = { 0,1 };
+	if (scalars != NULL)
 	{
-		auto texture_vme = mafVME::SafeDownCast(m_Vme->GetRoot()->FindInTreeByName(m_SurfaceMaterial->GetMaterialTextureName()));
-		texture_vme->GetOutput()->Update();
-		vtkImageData *image1 = (vtkImageData *)texture_vme->GetOutput()->GetVTKData();
-		m_Texture->SetInputConnection(texture_vme->GetOutput()->GetVTKOutputPort());
-		image1->GetScalarRange(sr);
+		m_ScalarVisibility = 1;
+		scalars->GetRange(sr);
 	}
-    else if (m_SurfaceMaterial->GetMaterialTextureID() != -1)
-    {
-		int id = m_SurfaceMaterial->GetMaterialTextureID();
 
-      auto texture_vme = mafVME::SafeDownCast(m_Vme->GetRoot()->FindInTreeById(m_SurfaceMaterial->GetMaterialTextureID()));
-	  texture_vme->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
-	  vtkImageData* image1 = (vtkImageData*)texture_vme->GetOutput()->GetVTKData();
-	  m_Texture->SetInputConnection(texture_vme->GetOutput()->GetVTKOutputPort());
-	  image1->GetScalarRange(sr);
-    }
-    else
-    {
-      mafLogMessage(_M(mafString((_L("texture info not correctly stored inside material!!")))));
-    }
-  }
+	m_SurfaceMaterial = surface_output->GetMaterial();
+	assert(m_SurfaceMaterial);  // all vme that use PipeSurface must have the material correctly set
 
-  m_Mapper->SetScalarRange(sr);
+	vtkNEW(m_Mapper);
 
-  vtkNEW(m_Actor);
-  m_Actor->SetMapper(m_Mapper);
-  m_Actor->SetEnableHighThreshold(m_EnableActorLOD);
-  
-  if (m_EnableActorLOD == false)
-  {
-	  // bug 2454 fix
-	  // http://bugzilla.b3c.it/show_bug.cgi?id=2454
-	  // small LOD rectangle is activated even if LOD is disabled
-	  // Setting PixelThreshold to 1 will deactivate small square visualization 
-	  // ie entering
-	  /*
-	  
-	  if( sz < m_PixelThreshold)
-	  {
-		  // Assign the actor's transformation matrix to the m_FlagActor 
-		  // to put this one at the same position of the actor
-		  m_FlagActor->PokeMatrix(GetMatrix());
+	if (m_SurfaceMaterial->m_MaterialType == mmaMaterial::USE_TEXTURE)
+	{
+		m_UseTexture = 1;
+		m_UseVTKProperty = 0;
+		m_UseLookupTable = 0;
+		if (data->GetPointData()->GetTCoords() == NULL)
+		{
+			GenerateTextureMapCoordinate();
+		}
+		else
+		{
+			m_Mapper->SetInputConnection(port);
+		}
+	}
+	else
+	{
+		m_Mapper->SetInputConnection(port);
+	}
 
-		  glPointSize( m_FlagDimension );
-		  m_FlagActor->Render(ren,m_FlagMapper); 
-		  glPointSize( 1 );
-	  }
+	m_RenderingDisplayListFlag = m_Vme->IsAnimated() ? 1 : 0;
+#if VTK_MAJOR_VERSION <= 7
+	m_Mapper->SetImmediateModeRendering(m_RenderingDisplayListFlag);
+#endif
+	m_Mapper->SetScalarVisibility(m_ScalarVisibility);
 
-	  */
-	  //
-	  // code section in mafLODActor.cpp
-	  //
-	  m_Actor->SetPixelThreshold(1);
-  }
+	vtkNEW(m_Texture);
+	m_Texture->SetQualityTo32Bit();
+	m_Texture->InterpolateOn();
+	if (m_SurfaceMaterial->m_MaterialType == mmaMaterial::USE_TEXTURE)
+	{
+		if (m_SurfaceMaterial->GetMaterialTexturePort() != NULL)
+		{
+			vtkImageData* image1 = m_SurfaceMaterial->GetMaterialTextureData();
+			m_SurfaceMaterial->GetMaterialTexturePort()->GetProducer()->Update();
+			m_Texture->SetInputConnection(m_SurfaceMaterial->GetMaterialTexturePort());
+			image1->GetScalarRange(sr);
+		}
+		else if (!m_SurfaceMaterial->GetMaterialTextureName().empty())
+		{
+			auto texture_vme = mafVME::SafeDownCast(m_Vme->GetRoot()->FindInTreeByName(m_SurfaceMaterial->GetMaterialTextureName()));
+			texture_vme->GetOutput()->Update();
+			vtkImageData* image1 = (vtkImageData*)texture_vme->GetOutput()->GetVTKData();
+			m_Texture->SetInputConnection(texture_vme->GetOutput()->GetVTKOutputPort());
+			image1->GetScalarRange(sr);
+		}
+		else if (m_SurfaceMaterial->GetMaterialTextureID() != -1)
+		{
+			int id = m_SurfaceMaterial->GetMaterialTextureID();
 
-  if (m_SurfaceMaterial->m_MaterialType == mmaMaterial::USE_LOOKUPTABLE)
-  {
-    m_UseTexture = 0;
-    m_UseVTKProperty = 0;
-    m_UseLookupTable = 1;
-  }
-  if (m_SurfaceMaterial->m_MaterialType == mmaMaterial::USE_VTK_PROPERTY)
-  {
-    m_UseTexture = 0;
-    m_UseVTKProperty = 1;
-    m_UseLookupTable = 0;
-    m_Actor->SetProperty(m_SurfaceMaterial->m_Prop);
-  }
-  if (m_SurfaceMaterial->m_MaterialType == mmaMaterial::USE_TEXTURE)
-  {
-    m_UseLookupTable = 1;
-    m_Texture->SetLookupTable(m_SurfaceMaterial->m_ColorLut);
-    m_Actor->SetTexture(m_Texture);
-  }
+			auto texture_vme = mafVME::SafeDownCast(m_Vme->GetRoot()->FindInTreeById(m_SurfaceMaterial->GetMaterialTextureID()));
+			texture_vme->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
+			vtkImageData* image1 = (vtkImageData*)texture_vme->GetOutput()->GetVTKData();
+			m_Texture->SetInputConnection(texture_vme->GetOutput()->GetVTKOutputPort());
+			image1->GetScalarRange(sr);
+		}
+		else
+		{
+			mafLogMessage(_M(mafString((_L("texture info not correctly stored inside material!!")))));
+		}
+	}
 
-  if (m_Gui)
-  {
-    m_Gui->Update();
-  }
+	m_Mapper->SetScalarRange(sr);
 
-  if(m_AssemblyBack)
-    m_AssemblyBack->AddPart(m_Actor);
-  else
-    m_AssemblyFront->AddPart(m_Actor);
+	vtkNEW(m_Actor);
+	m_Actor->SetMapper(m_Mapper);
+	m_Actor->SetEnableHighThreshold(m_EnableActorLOD);
 
-  // selection highlight
-  vtkNew<vtkOutlineCornerFilter> corner;
-	corner->SetInputConnection(port);  
+	if (m_EnableActorLOD == false)
+	{
+		// bug 2454 fix
+		// http://bugzilla.b3c.it/show_bug.cgi?id=2454
+		// small LOD rectangle is activated even if LOD is disabled
+		// Setting PixelThreshold to 1 will deactivate small square visualization 
+		// ie entering
+		/*
 
-  vtkNew<vtkPolyDataMapper> corner_mapper;
+		if( sz < m_PixelThreshold)
+		{
+			// Assign the actor's transformation matrix to the m_FlagActor
+			// to put this one at the same position of the actor
+			m_FlagActor->PokeMatrix(GetMatrix());
+
+			glPointSize( m_FlagDimension );
+			m_FlagActor->Render(ren,m_FlagMapper);
+			glPointSize( 1 );
+		}
+
+		*/
+		//
+		// code section in mafLODActor.cpp
+		//
+		m_Actor->SetPixelThreshold(1);
+	}
+
+	if (m_SurfaceMaterial->m_MaterialType == mmaMaterial::USE_LOOKUPTABLE)
+	{
+		m_UseTexture = 0;
+		m_UseVTKProperty = 0;
+		m_UseLookupTable = 1;
+	}
+	if (m_SurfaceMaterial->m_MaterialType == mmaMaterial::USE_VTK_PROPERTY)
+	{
+		m_UseTexture = 0;
+		m_UseVTKProperty = 1;
+		m_UseLookupTable = 0;
+		m_Actor->SetProperty(m_SurfaceMaterial->m_Prop);
+	}
+	if (m_SurfaceMaterial->m_MaterialType == mmaMaterial::USE_TEXTURE)
+	{
+		m_UseLookupTable = 1;
+		m_Texture->SetLookupTable(m_SurfaceMaterial->m_ColorLut);
+		m_Actor->SetTexture(m_Texture);
+	}
+
+	UpdateGUI();
+
+	if (m_AssemblyBack)
+		m_AssemblyBack->AddPart(m_Actor);
+	else
+		m_AssemblyFront->AddPart(m_Actor);
+
+	// selection highlight
+	vtkNew<vtkOutlineCornerFilter> corner;
+	corner->SetInputConnection(port);
+
+	vtkNew<vtkPolyDataMapper> corner_mapper;
 	corner_mapper->SetInputConnection(corner->GetOutputPort());
 
-  vtkNew<vtkProperty> corner_props;
-	corner_props->SetColor(1,1,1);
+	vtkNew<vtkProperty> corner_props;
+	corner_props->SetColor(1, 1, 1);
 	corner_props->SetAmbient(1);
 	corner_props->SetRepresentationToWireframe();
 	corner_props->SetInterpolationToFlat();
@@ -282,584 +278,584 @@ void mafPipeSurfaceTextured::Create(mafNode *node, mafView *view/*, bool use_axe
 	m_OutlineActor->PickableOff();
 	m_OutlineActor->SetProperty(corner_props);
 
-  if(m_AssemblyBack)
-    m_AssemblyBack->AddPart(m_OutlineActor);
-  else
-    m_AssemblyFront->AddPart(m_OutlineActor);
+	if (m_AssemblyBack)
+		m_AssemblyBack->AddPart(m_OutlineActor);
+	else
+		m_AssemblyFront->AddPart(m_OutlineActor);
 
-	if(m_RenFront)
+	if (m_RenFront)
 	{
-      m_Axes = new mafAxes(m_RenFront, m_Vme);
-      m_Axes->SetVisibility(0);
+		m_Axes = new mafAxes(m_RenFront, m_Vme);
+		m_Axes->SetVisibility(0);
 	}
 
-  m_GhostActor = NULL;
-  if(m_AssemblyBack != NULL)
-  {
-    vtkNEW(m_GhostActor);
-    m_GhostActor->SetMapper(m_Mapper);
-    m_GhostActor->PickableOff();
-    m_GhostActor->GetProperty()->SetOpacity(0);
-    m_GhostActor->GetProperty()->SetRepresentationToPoints();
+	m_GhostActor = NULL;
+	if (m_AssemblyBack != NULL)
+	{
+		vtkNEW(m_GhostActor);
+		m_GhostActor->SetMapper(m_Mapper);
+		m_GhostActor->PickableOff();
+		m_GhostActor->GetProperty()->SetOpacity(0);
+		m_GhostActor->GetProperty()->SetRepresentationToPoints();
 
-	// Set to gouraud shading instead of flat to solve pixellation 
-	// look and feel in vertical application (medViewCrossCT in DP app) 
-    m_GhostActor->GetProperty()->SetInterpolationToGouraud();
-    m_AssemblyFront->AddPart(m_GhostActor);
-  }
+		// Set to gouraud shading instead of flat to solve pixellation 
+		// look and feel in vertical application (medViewCrossCT in DP app) 
+		m_GhostActor->GetProperty()->SetInterpolationToGouraud();
+		m_AssemblyFront->AddPart(m_GhostActor);
+	}
 }
 //----------------------------------------------------------------------------
 mafPipeSurfaceTextured::~mafPipeSurfaceTextured()
 //----------------------------------------------------------------------------
 {
-  m_Vme->RemoveObserver(this);
+	m_Vme->RemoveObserver(this);
 
-  if(m_AssemblyBack)
-  {
-    m_AssemblyBack->RemovePart(m_Actor);
-    m_AssemblyBack->RemovePart(m_OutlineActor);
-  }
-  else
-  {
-    m_AssemblyFront->RemovePart(m_Actor);
-    m_AssemblyFront->RemovePart(m_OutlineActor);
-  }
-  
+	if (m_AssemblyBack)
+	{
+		m_AssemblyBack->RemovePart(m_Actor);
+		m_AssemblyBack->RemovePart(m_OutlineActor);
+	}
+	else
+	{
+		m_AssemblyFront->RemovePart(m_Actor);
+		m_AssemblyFront->RemovePart(m_OutlineActor);
+	}
 
-  vtkDEL(m_Texture);
+
+	vtkDEL(m_Texture);
 	vtkDEL(m_Mapper);
-  vtkDEL(m_Actor);
-  vtkDEL(m_OutlineActor);
-  cppDEL(m_Axes);
-  cppDEL(m_MaterialButton);
+	vtkDEL(m_Actor);
+	vtkDEL(m_OutlineActor);
+	cppDEL(m_Axes);
+	cppDEL(m_MaterialButton);
 
-  if(m_GhostActor) 
-  {
-    m_AssemblyFront->RemovePart(m_GhostActor);
-  }
-  vtkDEL(m_GhostActor);
+	if (m_GhostActor)
+	{
+		m_AssemblyFront->RemovePart(m_GhostActor);
+	}
+	vtkDEL(m_GhostActor);
 }
 //----------------------------------------------------------------------------
 void mafPipeSurfaceTextured::Select(bool sel)
 //----------------------------------------------------------------------------
 {
 	m_Selected = sel;
-	if(m_Actor->GetVisibility()) 
+	if (m_Actor->GetVisibility())
 	{
 		m_OutlineActor->SetVisibility(sel && m_SelectionVisibility);
-    m_Axes->SetVisibility(sel&&m_ShowAxis);
+		m_Axes->SetVisibility(sel && m_ShowAxis);
 	}
 }
 //----------------------------------------------------------------------------
 void mafPipeSurfaceTextured::UpdateProperty(bool fromTag)
 //----------------------------------------------------------------------------
 {
-  if (m_SurfaceMaterial->m_MaterialType == mmaMaterial::USE_TEXTURE)
-  {
-    double sr[2];
-    sr[0] = m_SurfaceMaterial->m_TableRange[0];
-    sr[1] = m_SurfaceMaterial->m_TableRange[1];
-    m_Mapper->SetScalarRange(sr);
-  }
+	if (m_SurfaceMaterial->m_MaterialType == mmaMaterial::USE_TEXTURE)
+	{
+		double sr[2];
+		sr[0] = m_SurfaceMaterial->m_TableRange[0];
+		sr[1] = m_SurfaceMaterial->m_TableRange[1];
+		m_Mapper->SetScalarRange(sr);
+	}
 }
 //----------------------------------------------------------------------------
-mafGUI *mafPipeSurfaceTextured::CreateGui()
+mafGUI* mafPipeSurfaceTextured::CreateGui()
 //----------------------------------------------------------------------------
 {
-  mafString mapping_mode[3] = {_R("Plane"), _R("Cylinder"),_R("Sphere")};
+	mafString mapping_mode[3] = { _R("Plane"), _R("Cylinder"),_R("Sphere") };
 
-  assert(m_Gui == NULL);
-  m_Gui = new mafGUI(this);
-  m_Gui->Bool(ID_RENDERING_DISPLAY_LIST,_R("displaylist"),&m_RenderingDisplayListFlag,0,_R("turn on/off \nrendering displaylist calculation"));
-  m_Gui->Bool(ID_SCALAR_VISIBILITY,_R("scalar vis."), &m_ScalarVisibility,0,_R("turn on/off the scalar visibility"));
-  m_Gui->Divider();
-  m_Gui->Bool(ID_USE_VTK_PROPERTY,_R("property"),&m_UseVTKProperty);
-  
-  m_MaterialButton = new mafGUIMaterialButton(m_Vme,this);
-  m_Gui->AddGui(m_MaterialButton->GetGui());
-  m_MaterialButton->Enable(m_UseVTKProperty != 0);
-  
-  m_Gui->Divider();
-  m_Gui->Bool(ID_USE_TEXTURE,_R("texture"),&m_UseTexture);
-  m_Gui->Button(ID_CHOOSE_TEXTURE, &m_VmeImageName,_L("Select the texture image"),_L("texture"));
-  mafVMEOutputSurface *surface_output = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
-  //m_Gui->Combo(ID_TEXTURE_MAPPING_MODE,"mapping",&surface_output->GetMaterial()->m_TextureMappingMode,3,mapping_mode);
-  //m_Gui->Enable(ID_CHOOSE_TEXTURE,m_UseTexture != 0);
-  m_Gui->Enable(ID_TEXTURE_MAPPING_MODE,m_UseTexture != 0);
-  m_Gui->Enable(ID_TEXTURE_MAPPING_MODE,m_SurfaceMaterial->m_MaterialType == mmaMaterial::USE_TEXTURE && m_UseTexture != 0);
-  
-  mafString wildc1 = _R("vrml (*.wrl)|*.wrl");
-  m_Gui->FileSave(ID_CHOOSE_FILENAME1, _R("wrl file"), &m_File, wildc1, _R("Save As..."));
+	assert(!AccessGUI());
+	auto gui = new mafGUI(this);
+	gui->Bool(ID_RENDERING_DISPLAY_LIST, _R("displaylist"), &m_RenderingDisplayListFlag, 0, _R("turn on/off \nrendering displaylist calculation"));
+	gui->Bool(ID_SCALAR_VISIBILITY, _R("scalar vis."), &m_ScalarVisibility, 0, _R("turn on/off the scalar visibility"));
+	gui->Divider();
+	gui->Bool(ID_USE_VTK_PROPERTY, _R("property"), &m_UseVTKProperty);
 
-  mafString wildc2 = _R("obj (*.obj)|*.obj");
-  m_Gui->FileSave(ID_CHOOSE_FILENAME2, _R("obj file"), &m_File, wildc2, _R("Save As..."));
-  m_Gui->Divider();
-  m_Gui->Divider();
-  m_Gui->Bool(ID_USE_LOOKUP_TABLE,_R("lut"),&m_UseLookupTable);
-  m_Gui->Lut(ID_LUT,_R("lut"),m_SurfaceMaterial->m_ColorLut);
-  m_Gui->Enable(ID_LUT,m_UseLookupTable != 0);
-  m_Gui->Divider(2);
-  m_Gui->Bool(ID_ENABLE_LOD,_R("LOD"),&m_EnableActorLOD);
-  m_Gui->Label(_R(""));
+	m_MaterialButton = new mafGUIMaterialButton(m_Vme, this);
+	gui->AddGui(m_MaterialButton->GetGui());
+	m_MaterialButton->Enable(m_UseVTKProperty != 0);
 
-  if (!m_SurfaceMaterial)
-  {
-    mafVMEOutputSurface *surface_output = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
-    m_SurfaceMaterial = surface_output->GetMaterial();
-  }
-  bool texture_falg = m_SurfaceMaterial->GetMaterialTexturePort() != NULL || m_SurfaceMaterial->GetMaterialTextureID() != -1;
-  m_Gui->Enable(ID_USE_TEXTURE, texture_falg);
-  m_Gui->Enable(ID_USE_LOOKUP_TABLE, m_SurfaceMaterial->m_ColorLut != NULL);
-	m_Gui->Divider();
-  return m_Gui;
+	gui->Divider();
+	gui->Bool(ID_USE_TEXTURE, _R("texture"), &m_UseTexture);
+	gui->Button(ID_CHOOSE_TEXTURE, &m_VmeImageName, _L("Select the texture image"), _L("texture"));
+	mafVMEOutputSurface* surface_output = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
+	//m_Gui->Combo(ID_TEXTURE_MAPPING_MODE,"mapping",&surface_output->GetMaterial()->m_TextureMappingMode,3,mapping_mode);
+	//m_Gui->Enable(ID_CHOOSE_TEXTURE,m_UseTexture != 0);
+	gui->Enable(ID_TEXTURE_MAPPING_MODE, m_UseTexture != 0);
+	gui->Enable(ID_TEXTURE_MAPPING_MODE, m_SurfaceMaterial->m_MaterialType == mmaMaterial::USE_TEXTURE && m_UseTexture != 0);
+
+	mafString wildc1 = _R("vrml (*.wrl)|*.wrl");
+	gui->FileSave(ID_CHOOSE_FILENAME1, _R("wrl file"), &m_File, wildc1, _R("Save As..."));
+
+	mafString wildc2 = _R("obj (*.obj)|*.obj");
+	gui->FileSave(ID_CHOOSE_FILENAME2, _R("obj file"), &m_File, wildc2, _R("Save As..."));
+	gui->Divider();
+	gui->Divider();
+	gui->Bool(ID_USE_LOOKUP_TABLE, _R("lut"), &m_UseLookupTable);
+	gui->Lut(ID_LUT, _R("lut"), m_SurfaceMaterial->m_ColorLut);
+	gui->Enable(ID_LUT, m_UseLookupTable != 0);
+	gui->Divider(2);
+	gui->Bool(ID_ENABLE_LOD, _R("LOD"), &m_EnableActorLOD);
+	gui->Label(_R(""));
+
+	if (!m_SurfaceMaterial)
+	{
+		mafVMEOutputSurface* surface_output = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
+		m_SurfaceMaterial = surface_output->GetMaterial();
+	}
+	bool texture_falg = m_SurfaceMaterial->GetMaterialTexturePort() != NULL || m_SurfaceMaterial->GetMaterialTextureID() != -1;
+	gui->Enable(ID_USE_TEXTURE, texture_falg);
+	gui->Enable(ID_USE_LOOKUP_TABLE, m_SurfaceMaterial->m_ColorLut != NULL);
+	gui->Divider();
+	return gui;
 }
 //----------------------------------------------------------------------------
-void mafPipeSurfaceTextured::OnEvent(mafEventBase *maf_event)
+void mafPipeSurfaceTextured::OnEvent(mafEventBase* maf_event)
 //----------------------------------------------------------------------------
 {
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    switch(e->GetId()) 
-    {
-      case ID_SCALAR_VISIBILITY:
-      {
-        m_Mapper->SetScalarVisibility(m_ScalarVisibility);
-        if (m_ScalarVisibility)
-        {
-          vtkPolyData *data = (vtkPolyData *)m_Vme->GetOutput()->GetVTKData();
-          assert(data);
-          double range[2];
-          data->GetScalarRange(range);
-          m_Mapper->SetScalarRange(range);
-        }
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      }
-    	break;
-      case ID_LUT:
-        m_SurfaceMaterial->UpdateFromLut();
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      break;
-      case ID_ENABLE_LOD:
-        m_Actor->SetEnableHighThreshold(m_EnableActorLOD);
-        m_OutlineActor->SetEnableHighThreshold(m_EnableActorLOD);
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      break;
-      case ID_USE_VTK_PROPERTY:
-        if (m_UseVTKProperty != 0)
-        {
-          m_Actor->SetProperty(m_SurfaceMaterial->m_Prop);
-        }
-        else
-        {
-          m_Actor->SetProperty(NULL);
-        }
-		if (m_MaterialButton != NULL)
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
+	{
+		auto m_gui = AccessGUI();
+		switch (e->GetId())
 		{
-		  m_MaterialButton->Enable(m_UseVTKProperty != 0);
+		case ID_SCALAR_VISIBILITY:
+		{
+			m_Mapper->SetScalarVisibility(m_ScalarVisibility);
+			if (m_ScalarVisibility)
+			{
+				vtkPolyData* data = (vtkPolyData*)m_Vme->GetOutput()->GetVTKData();
+				assert(data);
+				double range[2];
+				data->GetScalarRange(range);
+				m_Mapper->SetScalarRange(range);
+			}
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
 		}
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      break;
-      case ID_USE_LOOKUP_TABLE:
-        m_Gui->Enable(ID_LUT,m_UseLookupTable != 0);
-      break;
-      case ID_USE_TEXTURE:
-        if (m_UseTexture)
-        {
-          m_Actor->SetTexture(m_Texture);
-        }
-        else
-        {
-          m_Actor->SetTexture(NULL);
-        }
-        m_Gui->Enable(ID_CHOOSE_TEXTURE,m_UseTexture != 0);
-        m_Gui->Enable(ID_TEXTURE_MAPPING_MODE,m_UseTexture != 0);
-        m_Gui->Enable(ID_TEXTURE_MAPPING_MODE,m_SurfaceMaterial->m_MaterialType == mmaMaterial::USE_TEXTURE && m_UseTexture != 0);
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      break;
-      case ID_CHOOSE_TEXTURE:
-      {
-        mafString title = _R("Choose texture");
-        e->SetId(VME_CHOOSE);
-        e->SetArg((intptr_t)&mafPipeSurfaceTextured::ImageAccept);
-        e->SetString(&title);
-        InvokeEvent(*e);
-        if (auto n = e->GetVme())
-        {
-			//SetImageLink("image", n);
-			m_VmeImageName = n->GetName();
-			m_Gui->Update();
-			//UpdateLinks();
-          vtkImageData* image1 = vtkImageData::SafeDownCast(mafVME::StaticDownCast(n)->GetOutput()->GetVTKData());
-		  
-          m_Gui->Enable(ID_USE_TEXTURE,image1 != NULL);
-          if (image1)
-          {
-            mafVME::StaticDownCast(n)->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
-           // m_SurfaceMaterial->SetMaterialTexture(n->GetId());
-			mafString na = n->GetName();
-			
-			m_SurfaceMaterial->SetMaterialTextureConnection(mafVME::StaticDownCast(n)->GetOutput()->GetVTKOutputPort(),na);
-			m_SurfaceMaterial->m_MaterialType =  mmaMaterial::USE_TEXTURE;
-            m_Texture->SetInputConnection(mafVME::StaticDownCast(n)->GetOutput()->GetVTKOutputPort());
-            m_Actor->SetTexture(m_Texture);
-            m_Gui->Enable(ID_TEXTURE_MAPPING_MODE,true);
-			m_UseTexture = 1;
-			m_Gui->Update();
-			{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
-          }
-        }
-      }
-      break;
-      case ID_TEXTURE_MAPPING_MODE:
-        GenerateTextureMapCoordinate();
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      break;
-      case ID_RENDERING_DISPLAY_LIST:
-        //m_Mapper->SetImmediateModeRendering(m_RenderingDisplayListFlag);
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      break;
-	 
-	  case ID_CHOOSE_FILENAME1:
-	  {
-								 mafString imageNameTemp = m_File;
-								 imageNameTemp.erase(imageNameTemp.length() - 4);
-								 imageNameTemp.append(_R("temp.wrl"));
-								 
-								 
-								 vtkNew<vtkVRMLExporter> writer;
-								 writer->SetFileName(imageNameTemp.GetCStr());
-								 vtkRenderer* renderer = vtkRenderer::New();
-								 renderer->AddActor(m_Actor);
-								 vtkRenderWindow* renderWindow = vtkRenderWindow::New();
-								 renderWindow->AddRenderer(renderer);
+		break;
+		case ID_LUT:
+			m_SurfaceMaterial->UpdateFromLut();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+			break;
+		case ID_ENABLE_LOD:
+			m_Actor->SetEnableHighThreshold(m_EnableActorLOD);
+			m_OutlineActor->SetEnableHighThreshold(m_EnableActorLOD);
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+			break;
+		case ID_USE_VTK_PROPERTY:
+			if (m_UseVTKProperty != 0)
+			{
+				m_Actor->SetProperty(m_SurfaceMaterial->m_Prop);
+			}
+			else
+			{
+				m_Actor->SetProperty(NULL);
+			}
+			if (m_MaterialButton != NULL)
+			{
+				m_MaterialButton->Enable(m_UseVTKProperty != 0);
+			}
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+			break;
+		case ID_USE_LOOKUP_TABLE:
+			m_gui->Enable(ID_LUT, m_UseLookupTable != 0);
+			break;
+		case ID_USE_TEXTURE:
+			if (m_UseTexture)
+			{
+				m_Actor->SetTexture(m_Texture);
+			}
+			else
+			{
+				m_Actor->SetTexture(NULL);
+			}
+			m_gui->Enable(ID_CHOOSE_TEXTURE, m_UseTexture != 0);
+			m_gui->Enable(ID_TEXTURE_MAPPING_MODE, m_UseTexture != 0);
+			m_gui->Enable(ID_TEXTURE_MAPPING_MODE, m_SurfaceMaterial->m_MaterialType == mmaMaterial::USE_TEXTURE && m_UseTexture != 0);
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+			break;
+		case ID_CHOOSE_TEXTURE:
+		{
+			mafString title = _R("Choose texture");
+			e->SetId(VME_CHOOSE);
+			e->SetArg((intptr_t)&mafPipeSurfaceTextured::ImageAccept);
+			e->SetString(&title);
+			InvokeEvent(*e);
+			if (auto n = e->GetVme())
+			{
+				//SetImageLink("image", n);
+				m_VmeImageName = n->GetName();
+				m_gui->Update();
+				//UpdateLinks();
+				vtkImageData* image1 = vtkImageData::SafeDownCast(mafVME::StaticDownCast(n)->GetOutput()->GetVTKData());
 
-								 wxBusyInfo wait("Writing temp file: ...");
-								 
-								 //{mafEvent evUnq(m_Gui, BIND_TO_PROGRESSBAR, writer); InvokeEvent(evUnq);}
-								 writer->SetRenderWindow(renderWindow);
-								 writer->Write();
-								 
-								
-								 // {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
-								 //long dummyProgressValue = 50;
-								 //{mafEvent evUnq(this, PROGRESSBAR_SET_VALUE, dummyProgressValue); InvokeEvent(evUnq);}
-								 //writer->SetFileName(m_File.GetCStr());
-								 //writer->Write();
-								 //{mafEvent evUnq(this, PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
-									
-									 vtkNew<vtkJPEGWriter> exporter;
-									 //{mafEvent evUnq(m_Actor->GetTexture()->GetInput(), BIND_TO_PROGRESSBAR, exporter); InvokeEvent(evUnq);}
-									 
-									 if (m_Actor->GetTexture()!= NULL)
-									 {
-										 exporter->SetInputConnection(m_Actor->GetTexture()->GetInputConnection(0, 0));
+				m_gui->Enable(ID_USE_TEXTURE, image1 != NULL);
+				if (image1)
+				{
+					mafVME::StaticDownCast(n)->GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
+					// m_SurfaceMaterial->SetMaterialTexture(n->GetId());
+					mafString na = n->GetName();
 
-										 mafString imageName = m_File;
-										 imageName.erase(imageName.length() - 3);
+					m_SurfaceMaterial->SetMaterialTextureConnection(mafVME::StaticDownCast(n)->GetOutput()->GetVTKOutputPort(), na);
+					m_SurfaceMaterial->m_MaterialType = mmaMaterial::USE_TEXTURE;
+					m_Texture->SetInputConnection(mafVME::StaticDownCast(n)->GetOutput()->GetVTKOutputPort());
+					m_Actor->SetTexture(m_Texture);
+					m_gui->Enable(ID_TEXTURE_MAPPING_MODE, true);
+					m_UseTexture = 1;
+					m_gui->Update();
+					{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+				}
+			}
+		}
+		break;
+		case ID_TEXTURE_MAPPING_MODE:
+			GenerateTextureMapCoordinate();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+			break;
+		case ID_RENDERING_DISPLAY_LIST:
+			//m_Mapper->SetImmediateModeRendering(m_RenderingDisplayListFlag);
+		{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		break;
+
+		case ID_CHOOSE_FILENAME1:
+		{
+			mafString imageNameTemp = m_File;
+			imageNameTemp.erase(imageNameTemp.length() - 4);
+			imageNameTemp.append(_R("temp.wrl"));
 
 
+			vtkNew<vtkVRMLExporter> writer;
+			writer->SetFileName(imageNameTemp.GetCStr());
+			vtkRenderer* renderer = vtkRenderer::New();
+			renderer->AddActor(m_Actor);
+			vtkRenderWindow* renderWindow = vtkRenderWindow::New();
+			renderWindow->AddRenderer(renderer);
 
-										 exporter->SetFileName(imageName.append(_R("jpg")).GetCStr());
-										 wxBusyInfo wait2("Writing texture file: ...");
-										 exporter->Write();
-										 string search1 = "            texture PixelTexture {";
-										 string search2 = "          geometry IndexedFaceSet {";
-										 string readLine;
-										 ifstream input;
-										 input.open(imageNameTemp.GetCStr());
-										 ofstream output;
-										 output.open(m_File.GetCStr());
+			wxBusyInfo wait("Writing temp file: ...");
 
-
-										 //converting vrml2 using temp file
-
-										 wxBusyInfo wait3("Writing vrml file: ...");
-
-										 //clock_t begin1 = clock();
-										 while (std::getline(input, readLine))
-										 {
+			//{mafEvent evUnq(m_Gui, BIND_TO_PROGRESSBAR, writer); InvokeEvent(evUnq);}
+			writer->SetRenderWindow(renderWindow);
+			writer->Write();
 
 
-											 if (readLine == search1)
-											 {
-												 output << (_R("texture ImageTexture{ url \"") + imageName + _R("\" repeatS TRUE repeatT TRUE }}")).toStd() << std::endl;
+			// {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
+			//long dummyProgressValue = 50;
+			//{mafEvent evUnq(this, PROGRESSBAR_SET_VALUE, dummyProgressValue); InvokeEvent(evUnq);}
+			//writer->SetFileName(m_File.GetCStr());
+			//writer->Write();
+			//{mafEvent evUnq(this, PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
 
-												 while (readLine != search2)
-												 {
-													 ;
-													 std::getline(input, readLine);
-												 }
-											 }
-											 output << readLine << std::endl;
+			vtkNew<vtkJPEGWriter> exporter;
+			//{mafEvent evUnq(m_Actor->GetTexture()->GetInput(), BIND_TO_PROGRESSBAR, exporter); InvokeEvent(evUnq);}
 
-										 }
-										 // clock_t end1 = clock();
-										 // clock_t begin2 = clock();
-										 /*while (input >> readLine)
-										 {
-										 if (readLine == search1){
-										 readLine = "texture ImageTexture{ url \"" + imageName + "\" repeatS TRUE repeatT TRUE }}";
-										 //found = true;
+			if (m_Actor->GetTexture() != NULL)
+			{
+				exporter->SetInputConnection(m_Actor->GetTexture()->GetInputConnection(0, 0));
 
-										 readLine += "\n";
-										 output << readLine;
-										 //if(found) break;
-										 while (readLine != search2)
-										 {
-
-										 input >> readLine;
-										 }
-										 }
-
-										 output << readLine << std::endl;
-										 }*/
-										 // clock_t end2 = clock();
-
-										 input.clear();
-										 input.close();
-										 output.close();
-										 mafSleep(1);
-
-										 remove(imageNameTemp.GetCStr());
-										 //clock_t time1 = end1 - begin1;
-										 //clock_t time2 = end2 - begin2;
-										 //ofstream timeFile;
-										 //timeFile.open("timeFile.txt");
-										 //timeFile << time1 << " " << time2 << std::endl;
-										 //timeFile.close();
-									 }
-	  }
-
-      break;
-	  case ID_CHOOSE_FILENAME2:
-	  {
-		  {
-			  vtkRenderer* renderer = vtkRenderer::New();
-			  m_Vme->GetOutput()->Update();
-			  m_Actor->PokeMatrix(m_Vme->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
-			  renderer->AddActor(m_Actor);
-
-			  vtkRenderWindow* renderWindow = vtkRenderWindow::New();
-			  renderWindow->AddRenderer(renderer);
-			  vtkOBJExporter* writer = vtkOBJExporter::New();
-			  writer->SetRenderWindow(renderWindow);
-			  mafString mtlName = m_File;
-			  mtlName.erase(mtlName.length() - 4);
-			  writer->SetFilePrefix(mtlName.GetCStr());
-			  writer->Update();
-			  writer->Delete();
-			  renderWindow->Delete();
-			  renderer->Delete();
-			  m_Actor->PokeMatrix(nullptr);
-			  break;
-		  }
-
-								  
-								  mafVMEOutputSurface *data = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
-								  data->Update();
-
-								  vtkAlgorithmOutput* portchild = data->GetVTKOutputPort();
-								  //assert(data);
-								  portchild->GetProducer()->Update();
-								 
-							
-								//  vtkNew<vtkTriangleFilter>triangles;
-								//  vtkNew<vtkTransformPolyDataFilter> v_tpdf;
-								//  triangles->SetInput(data->GetSurfaceData());
-								//  triangles->Update();
-
-							//	  v_tpdf->SetInput(triangles->GetOutput());
-								
-							//	  v_tpdf->Update();
-								  
-								//  vtkPolyData *data2 = v_tpdf->GetOutput();// stlreader->GetOutput();
-								//  vtkPolyDataMapper *mapper = vtkPolyDataMapper::New();
-								  						  
-								//  mapper->SetInput((vtkPolyData*)data->GetVTKData());
-								  
-
-								 // vtkActor *actor= vtkActor::New();
-								 // actor->SetMapper(mapper);
-								  m_Actor->SetUserTransform(data->GetAbsTransform()->GetVTKTransform());
-								 // actor->SetTexture(m_Texture);
-
-								  vtkCleanPolyData* vtkCleaner = vtkCleanPolyData::New();
-								  vtkCleaner->SetInputConnection(portchild);
-								  vtkCleaner->SetTolerance(0.0);
-								  vtkCleaner->ConvertStripsToPolysOn();
-								  vtkCleaner->ConvertPolysToLinesOn();
-								  vtkCleaner->PointMergingOn();
-								  vtkCleaner->Update();
-								  ;
-								  vtkPolyDataMapper* mapperchild = vtkPolyDataMapper::New();
-								  vtkActor* actorchild = vtkActor::New();
-								  mapperchild->SetInputConnection(vtkCleaner->GetOutputPort());
-								  actorchild->SetMapper(mapperchild);
-
-								 
-
-								  vtkRenderer* renderer = vtkRenderer::New();
-								  renderer->AddActor(actorchild);
-								  
-								  vtkRenderWindow* renderWindow = vtkRenderWindow::New();
-								  renderWindow->AddRenderer(renderer);
-
-								  mafString mtlName = m_File;
-								  mtlName.erase(mtlName.length() - 3);
-								  mtlName.append(_R("obj.mtl"));
-
-								  wxBusyInfo wait523(m_File.toWx());
-								  
-								  mafSleep(1500);
-								  
-
-								  vtkNew<vtkOBJExporter> writer;
-								  writer->SetRenderWindow(renderWindow);
-								  mafString name = m_File;
-								  writer->SetFilePrefix(name.GetCStr());
+				mafString imageName = m_File;
+				imageName.erase(imageName.length() - 3);
 
 
-								  
-								  wxBusyInfo wait("writing obj file ...");
-								  writer->Write();
-								  mafSleep(100);
-								  //open MTLfile and add the texture
-								  
-								  if (m_Actor->GetTexture() != NULL)
-								  {
-									  wxBusyInfo wait("texture file: ...");
-									  mafSleep(100);
-									  pathName = m_File;
-									  ExtractPathName(pathName);
 
-									  vtkNew<vtkJPEGWriter> exporter;
-									  exporter->SetInputConnection(m_Actor->GetTexture()->GetInputConnection(0, 0));
-									  mafString imageName = m_File;
-									  imageName.erase(imageName.length() - 3);
-
-									  exporter->SetFileName(imageName.append(_R("jpg")).GetCStr());
-									  exporter->Write();
-									  std::ofstream mtlfile;
-
-									  mtlfile.open(mtlName.GetCStr(), std::ios_base::app);
-									  mtlfile << (_R("map_Kd ") + imageName).toStd();
-								  }
-								  else
-								  {
-
-									  wxBusyInfo wait("texture not found ");
-									  mafSleep(100);
-								  }
+				exporter->SetFileName(imageName.append(_R("jpg")).GetCStr());
+				wxBusyInfo wait2("Writing texture file: ...");
+				exporter->Write();
+				string search1 = "            texture PixelTexture {";
+				string search2 = "          geometry IndexedFaceSet {";
+				string readLine;
+				ifstream input;
+				input.open(imageNameTemp.GetCStr());
+				ofstream output;
+				output.open(m_File.GetCStr());
 
 
-								  //if comboBox Child included
-								  /* int nbrChd = this->m_Node->GetNumberOfChildren();
-								   const mafNode::mafChildrenVector *children=this->m_Node->GetChildren();
-								   mafID  idx;
-								   for (int i = 0; i++; i < nbrChd)
-								   {
+				//converting vrml2 using temp file
 
-								   //const mafNode::mafChildrenVector *children=this->m_Node->GetChildren();
-								   //mafNode*  m_VMEChild = this->m_Node->GetFirstChild();
-								   mafVMEOutputSurface *surface_outputchild=mafVMEOutputSurface::SafeDownCast(this->m_Node->GetFirstChild());
-								   //vtkPolyData *data = vtkPolyData::SafeDownCast(surface_outputchild->GetVTKData());
-								   //data->Update();
+				wxBusyInfo wait3("Writing vrml file: ...");
 
-								   surface_outputchild->
-								   }*/
+				//clock_t begin1 = clock();
+				while (std::getline(input, readLine))
+				{
 
-							/*	  mafNodeIterator *iter = NULL;
-								  m_SubTreeExportOBJ = 1;
-								  if (m_SubTreeExportOBJ == TRUE)
-								  {
-									  iter = this->m_Node->NewIterator();
-								  }
-								  else
-								  {
-									  iter = this->m_Node->GetRoot()->NewIterator();
-								  }
 
-								  for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
-								  {
-									  //m_CurrentVme = node;
-				  
-									  if (node->IsA("mafVMESurface"))
-									  {
-										  m_OBJs.push_back(node);						  
-								 
-									  }
+					if (readLine == search1)
+					{
+						output << (_R("texture ImageTexture{ url \"") + imageName + _R("\" repeatS TRUE repeatT TRUE }}")).toStd() << std::endl;
 
-								  }
-								  iter->Delete();
-								  if (m_OBJs.size() != 0)
-								  {
-									  exportOBJs();
-								  }
-								 
-								  m_OBJs.clear();*/
-	  }
+						while (readLine != search2)
+						{
+							;
+							std::getline(input, readLine);
+						}
+					}
+					output << readLine << std::endl;
 
-		  break;
-      default:
-        InvokeEvent(*e);
-      break;
-    }
-  }
-  else if (maf_event->GetSender() == m_Vme)
-  {
-    if(maf_event->GetId() == VME_OUTPUT_DATA_UPDATE)
-    {
-      UpdateProperty();
-    }
-  }
+				}
+				// clock_t end1 = clock();
+				// clock_t begin2 = clock();
+				/*while (input >> readLine)
+				{
+				if (readLine == search1){
+				readLine = "texture ImageTexture{ url \"" + imageName + "\" repeatS TRUE repeatT TRUE }}";
+				//found = true;
+
+				readLine += "\n";
+				output << readLine;
+				//if(found) break;
+				while (readLine != search2)
+				{
+
+				input >> readLine;
+				}
+				}
+
+				output << readLine << std::endl;
+				}*/
+				// clock_t end2 = clock();
+
+				input.clear();
+				input.close();
+				output.close();
+				mafSleep(1);
+
+				remove(imageNameTemp.GetCStr());
+				//clock_t time1 = end1 - begin1;
+				//clock_t time2 = end2 - begin2;
+				//ofstream timeFile;
+				//timeFile.open("timeFile.txt");
+				//timeFile << time1 << " " << time2 << std::endl;
+				//timeFile.close();
+			}
+		}
+
+		break;
+		case ID_CHOOSE_FILENAME2:
+		{
+			{
+				vtkRenderer* renderer = vtkRenderer::New();
+				m_Vme->GetOutput()->Update();
+				m_Actor->PokeMatrix(m_Vme->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
+				renderer->AddActor(m_Actor);
+
+				vtkRenderWindow* renderWindow = vtkRenderWindow::New();
+				renderWindow->AddRenderer(renderer);
+				vtkOBJExporter* writer = vtkOBJExporter::New();
+				writer->SetRenderWindow(renderWindow);
+				mafString mtlName = m_File;
+				mtlName.erase(mtlName.length() - 4);
+				writer->SetFilePrefix(mtlName.GetCStr());
+				writer->Update();
+				writer->Delete();
+				renderWindow->Delete();
+				renderer->Delete();
+				m_Actor->PokeMatrix(nullptr);
+				break;
+			}
+
+
+			mafVMEOutputSurface* data = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
+			data->Update();
+
+			vtkAlgorithmOutput* portchild = data->GetVTKOutputPort();
+			//assert(data);
+			portchild->GetProducer()->Update();
+
+
+			//  vtkNew<vtkTriangleFilter>triangles;
+			//  vtkNew<vtkTransformPolyDataFilter> v_tpdf;
+			//  triangles->SetInput(data->GetSurfaceData());
+			//  triangles->Update();
+
+		//	  v_tpdf->SetInput(triangles->GetOutput());
+
+		//	  v_tpdf->Update();
+
+			//  vtkPolyData *data2 = v_tpdf->GetOutput();// stlreader->GetOutput();
+			//  vtkPolyDataMapper *mapper = vtkPolyDataMapper::New();
+
+			//  mapper->SetInput((vtkPolyData*)data->GetVTKData());
+
+
+			 // vtkActor *actor= vtkActor::New();
+			 // actor->SetMapper(mapper);
+			m_Actor->SetUserTransform(data->GetAbsTransform()->GetVTKTransform());
+			// actor->SetTexture(m_Texture);
+
+			vtkCleanPolyData* vtkCleaner = vtkCleanPolyData::New();
+			vtkCleaner->SetInputConnection(portchild);
+			vtkCleaner->SetTolerance(0.0);
+			vtkCleaner->ConvertStripsToPolysOn();
+			vtkCleaner->ConvertPolysToLinesOn();
+			vtkCleaner->PointMergingOn();
+			vtkCleaner->Update();
+			;
+			vtkPolyDataMapper* mapperchild = vtkPolyDataMapper::New();
+			vtkActor* actorchild = vtkActor::New();
+			mapperchild->SetInputConnection(vtkCleaner->GetOutputPort());
+			actorchild->SetMapper(mapperchild);
+
+
+
+			vtkRenderer* renderer = vtkRenderer::New();
+			renderer->AddActor(actorchild);
+
+			vtkRenderWindow* renderWindow = vtkRenderWindow::New();
+			renderWindow->AddRenderer(renderer);
+
+			mafString mtlName = m_File;
+			mtlName.erase(mtlName.length() - 3);
+			mtlName.append(_R("obj.mtl"));
+
+			wxBusyInfo wait523(m_File.toWx());
+
+			mafSleep(1500);
+
+
+			vtkNew<vtkOBJExporter> writer;
+			writer->SetRenderWindow(renderWindow);
+			mafString name = m_File;
+			writer->SetFilePrefix(name.GetCStr());
+
+
+
+			wxBusyInfo wait("writing obj file ...");
+			writer->Write();
+			mafSleep(100);
+			//open MTLfile and add the texture
+
+			if (m_Actor->GetTexture() != NULL)
+			{
+				wxBusyInfo wait("texture file: ...");
+				mafSleep(100);
+				pathName = m_File;
+				ExtractPathName(pathName);
+
+				vtkNew<vtkJPEGWriter> exporter;
+				exporter->SetInputConnection(m_Actor->GetTexture()->GetInputConnection(0, 0));
+				mafString imageName = m_File;
+				imageName.erase(imageName.length() - 3);
+
+				exporter->SetFileName(imageName.append(_R("jpg")).GetCStr());
+				exporter->Write();
+				std::ofstream mtlfile;
+
+				mtlfile.open(mtlName.GetCStr(), std::ios_base::app);
+				mtlfile << (_R("map_Kd ") + imageName).toStd();
+			}
+			else
+			{
+
+				wxBusyInfo wait("texture not found ");
+				mafSleep(100);
+			}
+
+
+			//if comboBox Child included
+			/* int nbrChd = this->m_Node->GetNumberOfChildren();
+			 const mafNode::mafChildrenVector *children=this->m_Node->GetChildren();
+			 mafID  idx;
+			 for (int i = 0; i++; i < nbrChd)
+			 {
+
+			 //const mafNode::mafChildrenVector *children=this->m_Node->GetChildren();
+			 //mafNode*  m_VMEChild = this->m_Node->GetFirstChild();
+			 mafVMEOutputSurface *surface_outputchild=mafVMEOutputSurface::SafeDownCast(this->m_Node->GetFirstChild());
+			 //vtkPolyData *data = vtkPolyData::SafeDownCast(surface_outputchild->GetVTKData());
+			 //data->Update();
+
+			 surface_outputchild->
+			 }*/
+
+			 /*	  mafNodeIterator *iter = NULL;
+				   m_SubTreeExportOBJ = 1;
+				   if (m_SubTreeExportOBJ == TRUE)
+				   {
+					   iter = this->m_Node->NewIterator();
+				   }
+				   else
+				   {
+					   iter = this->m_Node->GetRoot()->NewIterator();
+				   }
+
+				   for (mafNode *node = iter->GetFirstNode(); node; node = iter->GetNextNode())
+				   {
+					   //m_CurrentVme = node;
+
+					   if (node->IsA("mafVMESurface"))
+					   {
+						   m_OBJs.push_back(node);
+
+					   }
+
+				   }
+				   iter->Delete();
+				   if (m_OBJs.size() != 0)
+				   {
+					   exportOBJs();
+				   }
+
+				   m_OBJs.clear();*/
+		}
+
+		break;
+		default:
+			InvokeEvent(*e);
+			break;
+		}
+	}
+	else if (maf_event->GetSender() == m_Vme)
+	{
+		if (maf_event->GetId() == VME_OUTPUT_DATA_UPDATE)
+		{
+			UpdateProperty();
+		}
+	}
 }
 
 //----------------------------------------------------------------------------
 void mafPipeSurfaceTextured::GenerateTextureMapCoordinate()
 //----------------------------------------------------------------------------
 {
-  vtkAlgorithmOutput *port = m_Vme->GetOutput()->GetVTKOutputPort();
-  port->GetProducer()->Update();
+	vtkAlgorithmOutput* port = m_Vme->GetOutput()->GetVTKOutputPort();
+	port->GetProducer()->Update();
 
-  if (m_SurfaceMaterial->m_TextureMappingMode == mmaMaterial::PLANE_MAPPING)
-  {
-    vtkNew<vtkTextureMapToPlane> plane_texture_mapper;
-    plane_texture_mapper->SetInputConnection(port);
-    plane_texture_mapper->AutomaticPlaneGenerationOn();
-    m_Mapper->SetInputConnection(plane_texture_mapper->GetOutputPort());
-  }
-  else if (m_SurfaceMaterial->m_TextureMappingMode == mmaMaterial::CYLINDER_MAPPING)
-  {
-    vtkNew<vtkTextureMapToCylinder> cylinder_texture_mapper;
-    cylinder_texture_mapper->SetInputConnection(port);
-    cylinder_texture_mapper->PreventSeamOff();
-    m_Mapper->SetInputConnection(cylinder_texture_mapper->GetOutputPort());
-  }
-  else if (m_SurfaceMaterial->m_TextureMappingMode == mmaMaterial::SPHERE_MAPPING)
-  {
-    vtkNew<vtkTextureMapToSphere> sphere_texture_mapper;
-    sphere_texture_mapper->SetInputConnection(port);
-    sphere_texture_mapper->PreventSeamOff();
-    m_Mapper->SetInputConnection(sphere_texture_mapper->GetOutputPort());
-  }
-  else
-  {
-    m_Mapper->SetInputConnection(port);
-  }
+	if (m_SurfaceMaterial->m_TextureMappingMode == mmaMaterial::PLANE_MAPPING)
+	{
+		vtkNew<vtkTextureMapToPlane> plane_texture_mapper;
+		plane_texture_mapper->SetInputConnection(port);
+		plane_texture_mapper->AutomaticPlaneGenerationOn();
+		m_Mapper->SetInputConnection(plane_texture_mapper->GetOutputPort());
+	}
+	else if (m_SurfaceMaterial->m_TextureMappingMode == mmaMaterial::CYLINDER_MAPPING)
+	{
+		vtkNew<vtkTextureMapToCylinder> cylinder_texture_mapper;
+		cylinder_texture_mapper->SetInputConnection(port);
+		cylinder_texture_mapper->PreventSeamOff();
+		m_Mapper->SetInputConnection(cylinder_texture_mapper->GetOutputPort());
+	}
+	else if (m_SurfaceMaterial->m_TextureMappingMode == mmaMaterial::SPHERE_MAPPING)
+	{
+		vtkNew<vtkTextureMapToSphere> sphere_texture_mapper;
+		sphere_texture_mapper->SetInputConnection(port);
+		sphere_texture_mapper->PreventSeamOff();
+		m_Mapper->SetInputConnection(sphere_texture_mapper->GetOutputPort());
+	}
+	else
+	{
+		m_Mapper->SetInputConnection(port);
+	}
 }
 //----------------------------------------------------------------------------
 void mafPipeSurfaceTextured::SetEnableActorLOD(bool value)
 //----------------------------------------------------------------------------
 {
-  m_EnableActorLOD = (int) value;
-  if(m_Gui)
-    m_Gui->Update();
+	m_EnableActorLOD = (int)value;
+	UpdateGUI();
 }
 //----------------------------------------------------------------------------
 void mafPipeSurfaceTextured::SetActorPicking(int enable)
 //----------------------------------------------------------------------------
 {
 	m_Actor->SetPickable(enable);
-  m_Actor->Modified();
-	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
+	m_Actor->Modified();
+	{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
 }

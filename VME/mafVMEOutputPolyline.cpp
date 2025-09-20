@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafVMEOutputPolyline
  Authors: Marco Petrone
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -44,8 +44,8 @@ mafCxxTypeMacro(mafVMEOutputPolyline)
 mafVMEOutputPolyline::mafVMEOutputPolyline()
 //-------------------------------------------------------------------------
 {
-  m_Material = NULL;
-  m_NumberOfPoints = _R("0");
+	m_Material = NULL;
+	m_NumberOfPoints = _R("0");
 }
 
 //-------------------------------------------------------------------------
@@ -55,90 +55,87 @@ mafVMEOutputPolyline::~mafVMEOutputPolyline()
 }
 
 //-------------------------------------------------------------------------
-vtkPolyData *mafVMEOutputPolyline::GetPolylineData()
+vtkPolyData* mafVMEOutputPolyline::GetPolylineData()
 //-------------------------------------------------------------------------
 {
-  return (vtkPolyData *)GetVTKData();
+	return (vtkPolyData*)GetVTKData();
 }
 //-------------------------------------------------------------------------
 void mafVMEOutputPolyline::SetMaterial(std::shared_ptr<mmaMaterial> material)
 //-------------------------------------------------------------------------
 {
-  m_Material = material;
+	m_Material = material;
 }
 //-------------------------------------------------------------------------
 mafGUI* mafVMEOutputPolyline::CreateGui()
 //-------------------------------------------------------------------------
 {
-  assert(m_Gui == NULL);
-  m_Gui = mafVMEOutput::CreateGui();
+	assert(!AccessGUI());
+	auto gui = mafVMEOutput::CreateGui();
 
-  wxBusyCursor wait;
-  
-  if (GetVTKData())
-  {
-    this->Update();
-  }
-  mafString vtk_data_type;
-  vtk_data_type += _R(GetVTKData()->GetClassName());
-  m_Gui->Label(_L("vtk type: "), vtk_data_type, true);
-  
-  //m_Length = mafString(wxString::Format(_("%.2f"),CalculateLength()));
-  m_Gui->Label(_L(" Length: "), &m_Length ,true);
+	wxBusyCursor wait;
 
-  m_NumberOfPoints = mafToString(((vtkPolyData *)m_VME->GetOutput()->GetVTKData())->GetNumberOfPoints());
-  m_Gui->Label(_L("Points: "), &m_NumberOfPoints ,true);
+	if (GetVTKData())
+	{
+		this->Update();
+	}
+	mafString vtk_data_type;
+	vtk_data_type += _R(GetVTKData()->GetClassName());
+	gui->Label(_L("vtk type: "), vtk_data_type, true);
 
-  return m_Gui;
+	//m_Length = mafString(wxString::Format(_("%.2f"),CalculateLength()));
+	gui->Label(_L(" Length: "), &m_Length, true);
+
+	m_NumberOfPoints = mafToString(((vtkPolyData*)m_VME->GetOutput()->GetVTKData())->GetNumberOfPoints());
+	gui->Label(_L("Points: "), &m_NumberOfPoints, true);
+
+	return gui;
 }
 //-------------------------------------------------------------------------
 std::shared_ptr<mmaMaterial> mafVMEOutputPolyline::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  // if the VME set the material directly in the output return it
-  if (m_Material)
-    return  m_Material;
+	// if the VME set the material directly in the output return it
+	if (m_Material)
+		return  m_Material;
 
-  // search for a material attribute in the VME connected to this output
-  return GetVME() ? mmaMaterial::SafeDownCast(GetVME()->GetAttribute(mmaMaterial::GetAttributeName())) : nullptr;
+	// search for a material attribute in the VME connected to this output
+	return GetVME() ? mmaMaterial::SafeDownCast(GetVME()->GetAttribute(mmaMaterial::GetAttributeName())) : nullptr;
 }
 //-------------------------------------------------------------------------
 void mafVMEOutputPolyline::Update()
 //-------------------------------------------------------------------------
 {
-  assert(m_VME);
-  m_VME->Update();
-  if (GetVTKData())
-  {
-  	m_Length = mafString::Format(_L("%.2f"),CalculateLength());  
-    m_NumberOfPoints = mafToString(((vtkPolyData *)m_VME->GetOutput()->GetVTKData())->GetNumberOfPoints());
-  }
-  
-  if (m_Gui)
-  {
-    m_Gui->Update();
-  }
+	assert(m_VME);
+	m_VME->Update();
+	if (GetVTKData())
+	{
+		m_Length = mafString::Format(_L("%.2f"), CalculateLength());
+		m_NumberOfPoints = mafToString(((vtkPolyData*)m_VME->GetOutput()->GetVTKData())->GetNumberOfPoints());
+	}
+
+	UpdateGUI();
 }
 //----------------------------------------------------------------------------
 double mafVMEOutputPolyline::CalculateLength()
 //----------------------------------------------------------------------------
 {
-  double sum = 0;
-  vtkPoints *pts = ((vtkPolyData *)m_VME->GetOutput()->GetVTKData())->GetPoints();
-	if(pts == NULL) return 0.0;
-  for(int i=0; i< pts->GetNumberOfPoints(); i++)
-  { 
-    if (i > 0)
-    {
-      double pos1[3], pos2[3];
-      pts->GetPoint(i, pos1);
-      pts->GetPoint(i-1, pos2);
+	double sum = 0;
+	vtkPoints* pts = ((vtkPolyData*)m_VME->GetOutput()->GetVTKData())->GetPoints();
+	if (pts == NULL) return 0.0;
+	for (int i = 0; i < pts->GetNumberOfPoints(); i++)
+	{
+		if (i > 0)
+		{
+			double pos1[3], pos2[3];
+			pts->GetPoint(i, pos1);
+			pts->GetPoint(i - 1, pos2);
 
-      sum += sqrt(vtkMath::Distance2BetweenPoints(pos1, pos2));
+			sum += sqrt(vtkMath::Distance2BetweenPoints(pos1, pos2));
 
-    }
+		}
 
-  }
-  
-  return sum;
+	}
+
+	return sum;
 }

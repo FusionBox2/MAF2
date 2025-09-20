@@ -3,7 +3,7 @@
  Program: MAF2Medical
  Module: medPipeTrajectories
  Authors: Roberto Mucci
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -60,275 +60,275 @@ mafCxxTypeMacro(medPipeTrajectories);
 medPipeTrajectories::medPipeTrajectories()
 //----------------------------------------------------------------------------
 {
-  m_Traj            = NULL;
-  m_Sphere          = NULL;
-  m_Mapper          = NULL;
-  m_Actor           = NULL;
-  m_OutlineBox      = NULL;
-  m_OutlineMapper   = NULL;
-  m_OutlineProperty = NULL;
-  m_OutlineActor    = NULL;
-  m_Caption         = NULL;
-  m_Interval = 0;
-  m_Labels   = 0;
+	m_Traj = NULL;
+	m_Sphere = NULL;
+	m_Mapper = NULL;
+	m_Actor = NULL;
+	m_OutlineBox = NULL;
+	m_OutlineMapper = NULL;
+	m_OutlineProperty = NULL;
+	m_OutlineActor = NULL;
+	m_Caption = NULL;
+	m_Interval = 0;
+	m_Labels = 0;
 }
 //----------------------------------------------------------------------------
-void medPipeTrajectories::Create(mafNode *node, mafView *view)
+void medPipeTrajectories::Create(mafNode* node, mafView* view)
 //----------------------------------------------------------------------------
 {
-  Superclass::Create(node, view);
+	Superclass::Create(node, view);
 
-  m_Selected = false;
-  m_Landmark  = mafVMELandmark::SafeDownCast(m_Vme);
-  m_Landmark->GetLocalTimeStamps(m_TimeVector);
-  //mafVMEGenericAbstract *vmeGeneric = mafVMEGenericAbstract::SafeDownCast(m_Landmark->GetParent());
- // m_MatrixVector = vmeGeneric->GetMatrixVector();
-   m_MatrixVector = m_Landmark->GetMatrixVector();
+	m_Selected = false;
+	m_Landmark = mafVMELandmark::SafeDownCast(m_Vme);
+	m_Landmark->GetLocalTimeStamps(m_TimeVector);
+	//mafVMEGenericAbstract *vmeGeneric = mafVMEGenericAbstract::SafeDownCast(m_Landmark->GetParent());
+   // m_MatrixVector = vmeGeneric->GetMatrixVector();
+	m_MatrixVector = m_Landmark->GetMatrixVector();
 
-  m_Vme->AddObserver(this);
+	m_Vme->AddObserver(this);
 
-  double radius;
-  if(auto cloud = mafVMELandmarkCloud::SafeDownCast(m_Vme->GetParent()))
-  {
-    radius = cloud->GetRadius();
-  }
-  else
-  {
-    radius = 10;
-  }
-  
-  //Create a sphere in the center of the trajectory
-  vtkNEW(m_Sphere);
-  m_Sphere->SetRadius(radius);
-  m_Sphere->SetPhiResolution(20);
-  m_Sphere->SetThetaResolution(20);
+	double radius;
+	if (auto cloud = mafVMELandmarkCloud::SafeDownCast(m_Vme->GetParent()))
+	{
+		radius = cloud->GetRadius();
+	}
+	else
+	{
+		radius = 10;
+	}
 
- 
-  vtkNEW(m_Caption);
-  m_Caption->SetPosition(25,10);
-  m_Caption->ThreeDimensionalLeaderOff();
-  m_Caption->GetProperty()->SetColor(m_Landmark->GetMaterial()->m_Diffuse);
-  m_Caption->SetHeight(0.05);
-  m_Caption->SetWidth(0.35);
-  m_Caption->BorderOff();
-  mafString dis = m_Landmark->GetName();
-  m_Caption->SetCaption(dis.GetCStr());
+	//Create a sphere in the center of the trajectory
+	vtkNEW(m_Sphere);
+	m_Sphere->SetRadius(radius);
+	m_Sphere->SetPhiResolution(20);
+	m_Sphere->SetThetaResolution(20);
 
-  if(m_Labels && m_Landmark->GetLandmarkVisibility())
-    m_Caption->SetVisibility(1);
-  else
-    m_Caption->SetVisibility(0);
-  double pos[3], rot[3];
-  m_Landmark->GetOutput()->GetAbsPose(pos, rot);
-  m_Caption->SetAttachmentPoint(pos[0],pos[1],pos[2]);
-  m_RenFront->AddActor2D(m_Caption);
 
-  vtkNEW(m_Traj);
-  
-  UpdateProperty();
+	vtkNEW(m_Caption);
+	m_Caption->SetPosition(25, 10);
+	m_Caption->ThreeDimensionalLeaderOff();
+	m_Caption->GetProperty()->SetColor(m_Landmark->GetMaterial()->m_Diffuse);
+	m_Caption->SetHeight(0.05);
+	m_Caption->SetWidth(0.35);
+	m_Caption->BorderOff();
+	mafString dis = m_Landmark->GetName();
+	m_Caption->SetCaption(dis.GetCStr());
 
-  m_Mapper = vtkPolyDataMapper::New();
-  m_Mapper->SetInputConnection(m_Traj->GetOutputPort());
-  
-//   if(m_Vme->IsAnimated())				
-//     m_Mapper->ImmediateModeRenderingOn();	 //avoid Display-Lists for animated items.
-//   else
-//     m_Mapper->ImmediateModeRenderingOff();
+	if (m_Labels && m_Landmark->GetLandmarkVisibility())
+		m_Caption->SetVisibility(1);
+	else
+		m_Caption->SetVisibility(0);
+	double pos[3], rot[3];
+	m_Landmark->GetOutput()->GetAbsPose(pos, rot);
+	m_Caption->SetAttachmentPoint(pos[0], pos[1], pos[2]);
+	m_RenFront->AddActor2D(m_Caption);
 
-  m_Actor = vtkActor::New();
-  m_Actor->SetMapper(m_Mapper);
-  auto material = m_Landmark->GetMaterial();
-  if (material)
-    m_Actor->SetProperty(material->m_Prop);
- 
- m_AssemblyFront->AddPart(m_Actor);
+	vtkNEW(m_Traj);
 
-  // selection highlight
-  m_OutlineBox = vtkOutlineCornerFilter::New();
-  m_OutlineBox->SetInputConnection(m_Traj->GetOutputPort());  
+	UpdateProperty();
 
-  m_OutlineMapper = vtkPolyDataMapper::New();
-  m_OutlineMapper->SetInputConnection(m_OutlineBox->GetOutputPort());
+	m_Mapper = vtkPolyDataMapper::New();
+	m_Mapper->SetInputConnection(m_Traj->GetOutputPort());
 
-  m_OutlineProperty = vtkProperty::New();
-  m_OutlineProperty->SetColor(1,1,1);
-  m_OutlineProperty->SetAmbient(1);
-  m_OutlineProperty->SetRepresentationToWireframe();
-  m_OutlineProperty->SetInterpolationToFlat();
+	//   if(m_Vme->IsAnimated())				
+	//     m_Mapper->ImmediateModeRenderingOn();	 //avoid Display-Lists for animated items.
+	//   else
+	//     m_Mapper->ImmediateModeRenderingOff();
 
-  m_OutlineActor = vtkActor::New();
-  m_OutlineActor->SetMapper(m_OutlineMapper);
-  m_OutlineActor->VisibilityOff();
-  m_OutlineActor->PickableOff();
-  m_OutlineActor->SetProperty(m_OutlineProperty);
-  
-  m_AssemblyFront->AddPart(m_OutlineActor);
+	m_Actor = vtkActor::New();
+	m_Actor->SetMapper(m_Mapper);
+	auto material = m_Landmark->GetMaterial();
+	if (material)
+		m_Actor->SetProperty(material->m_Prop);
+
+	m_AssemblyFront->AddPart(m_Actor);
+
+	// selection highlight
+	m_OutlineBox = vtkOutlineCornerFilter::New();
+	m_OutlineBox->SetInputConnection(m_Traj->GetOutputPort());
+
+	m_OutlineMapper = vtkPolyDataMapper::New();
+	m_OutlineMapper->SetInputConnection(m_OutlineBox->GetOutputPort());
+
+	m_OutlineProperty = vtkProperty::New();
+	m_OutlineProperty->SetColor(1, 1, 1);
+	m_OutlineProperty->SetAmbient(1);
+	m_OutlineProperty->SetRepresentationToWireframe();
+	m_OutlineProperty->SetInterpolationToFlat();
+
+	m_OutlineActor = vtkActor::New();
+	m_OutlineActor->SetMapper(m_OutlineMapper);
+	m_OutlineActor->VisibilityOff();
+	m_OutlineActor->PickableOff();
+	m_OutlineActor->SetProperty(m_OutlineProperty);
+
+	m_AssemblyFront->AddPart(m_OutlineActor);
 }
 //----------------------------------------------------------------------------
 medPipeTrajectories::~medPipeTrajectories()
 //----------------------------------------------------------------------------
 {
-  m_RenFront->RemoveActor2D(m_Caption);
-  vtkDEL(m_Caption);
-  m_Landmark->RemoveObserver(this);
-  m_AssemblyFront->RemovePart(m_Actor);
-  m_AssemblyFront->RemovePart(m_OutlineActor);
+	m_RenFront->RemoveActor2D(m_Caption);
+	vtkDEL(m_Caption);
+	m_Landmark->RemoveObserver(this);
+	m_AssemblyFront->RemovePart(m_Actor);
+	m_AssemblyFront->RemovePart(m_OutlineActor);
 
-  vtkDEL(m_Traj);
-  vtkDEL(m_Sphere);
-  vtkDEL(m_Mapper);
-  vtkDEL(m_Actor);
-  vtkDEL(m_OutlineBox);
-  vtkDEL(m_OutlineMapper);
-  vtkDEL(m_OutlineProperty);
-  vtkDEL(m_OutlineActor);
+	vtkDEL(m_Traj);
+	vtkDEL(m_Sphere);
+	vtkDEL(m_Mapper);
+	vtkDEL(m_Actor);
+	vtkDEL(m_OutlineBox);
+	vtkDEL(m_OutlineMapper);
+	vtkDEL(m_OutlineProperty);
+	vtkDEL(m_OutlineActor);
 
 }
 //----------------------------------------------------------------------------
 void medPipeTrajectories::Select(bool sel)
 //----------------------------------------------------------------------------
 {
-  m_Selected = sel;
-  if(m_Actor->GetVisibility()) 
-  {
-    m_OutlineActor->SetVisibility(sel);
-  }
+	m_Selected = sel;
+	if (m_Actor->GetVisibility())
+	{
+		m_OutlineActor->SetVisibility(sel);
+	}
 }
 //----------------------------------------------------------------------------
-mafGUI *medPipeTrajectories::CreateGui()
+mafGUI* medPipeTrajectories::CreateGui()
 //----------------------------------------------------------------------------
 {
-  
-  m_Gui = new mafGUI(this);
-  m_Gui->Integer(ID_INTERVAL,_R("Interval:"),&m_Interval,0,(m_TimeVector.size()),_R("Interval of frames to visualize"));
 
-  if(m_Vme && m_Vme->IsMAFType(mafVMELandmark))
-  {
-      m_Gui->Bool(ID_LABELS, _L("label"), &m_Labels);
-  }
-   m_Gui->Divider();
+	auto gui = new mafGUI(this);
+	gui->Integer(ID_INTERVAL, _R("Interval:"), &m_Interval, 0, (m_TimeVector.size()), _R("Interval of frames to visualize"));
 
-  return m_Gui;
+	if (m_Vme && m_Vme->IsMAFType(mafVMELandmark))
+	{
+		gui->Bool(ID_LABELS, _L("label"), &m_Labels);
+	}
+	gui->Divider();
+
+	return gui;
 }
 //----------------------------------------------------------------------------
-void medPipeTrajectories::OnEvent(mafEventBase *maf_event)
+void medPipeTrajectories::OnEvent(mafEventBase* maf_event)
 //----------------------------------------------------------------------------
 {
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    switch(e->GetId())
-    {
-      case ID_INTERVAL:
-        UpdateProperty();
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-        break;
-      case ID_LABELS:
-        UpdateProperty();
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-        break;
-      default:
-        InvokeEvent(*e);
-    }
-  }
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
+	{
+		switch (e->GetId())
+		{
+		case ID_INTERVAL:
+			UpdateProperty();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+			break;
+		case ID_LABELS:
+			UpdateProperty();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+			break;
+		default:
+			InvokeEvent(*e);
+		}
+	}
 
-  if (maf_event->GetId() == VME_OUTPUT_DATA_UPDATE)
-  {
-    UpdateProperty();
-  }
+	if (maf_event->GetId() == VME_OUTPUT_DATA_UPDATE)
+	{
+		UpdateProperty();
+	}
 }
 
 //----------------------------------------------------------------------------
 void medPipeTrajectories::UpdateProperty(bool fromTag)
 //----------------------------------------------------------------------------
 {
-  double xyz[3];
-  double xyzTransform[3];
-  mafTimeStamp t0;
+	double xyz[3];
+	double xyzTransform[3];
+	mafTimeStamp t0;
 
-  if(m_Labels && m_Landmark->GetLandmarkVisibility())
-    m_Caption->SetVisibility(1);
-  else
-    m_Caption->SetVisibility(0);
-  double pos[3], rot[3];
-  m_Landmark->GetOutput()->GetAbsPose(pos, rot);
-  m_Caption->SetAttachmentPoint(pos[0],pos[1],pos[2]);
+	if (m_Labels && m_Landmark->GetLandmarkVisibility())
+		m_Caption->SetVisibility(1);
+	else
+		m_Caption->SetVisibility(0);
+	double pos[3], rot[3];
+	m_Landmark->GetOutput()->GetAbsPose(pos, rot);
+	m_Caption->SetAttachmentPoint(pos[0], pos[1], pos[2]);
 
-  t0 = m_Landmark->GetTimeStamp();
+	t0 = m_Landmark->GetTimeStamp();
 
-  m_Traj->RemoveAllInputs();
+	m_Traj->RemoveAllInputs();
 
-  vtkNew<vtkPolyData> line;
-  vtkNew<vtkPoints> points;
-  vtkNew<vtkCellArray> cellArray;
+	vtkNew<vtkPolyData> line;
+	vtkNew<vtkPoints> points;
+	vtkNew<vtkCellArray> cellArray;
 
-  vtkIdType pointId[2];
-  int counter = 0;
-  bool current, previous, sphere_visibility;
+	vtkIdType pointId[2];
+	int counter = 0;
+	bool current, previous, sphere_visibility;
 
-  if (m_MatrixVector)
-  {
-    int i;
-    for (i = 0; i< m_TimeVector.size(); i++)
-    { 
-      if (m_TimeVector[i] > t0)
-      {
-        break;
-      }
-    }
-    i--;
+	if (m_MatrixVector)
+	{
+		int i;
+		for (i = 0; i < m_TimeVector.size(); i++)
+		{
+			if (m_TimeVector[i] > t0)
+			{
+				break;
+			}
+		}
+		i--;
 
-    if (i<0)
-    {
-      i=0;
-    }
-    int minValue = (i-m_Interval) < 0 ? 0 : (i-m_Interval);
-    int maxValue = (i + m_Interval) >= m_TimeVector.size() ? m_TimeVector.size() - 1 : (i + m_Interval);
-    
-    //Get landmark position form the current transformation matrix
-    auto m = m_MatrixVector->GetMatrix(m_TimeVector[i]);
-    mafTransform::GetPosition(*m,xyzTransform);
+		if (i < 0)
+		{
+			i = 0;
+		}
+		int minValue = (i - m_Interval) < 0 ? 0 : (i - m_Interval);
+		int maxValue = (i + m_Interval) >= m_TimeVector.size() ? m_TimeVector.size() - 1 : (i + m_Interval);
 
-    //Landmark center position. Set to zero, because position is applied by the current transformation matrix
-    m_Sphere->SetCenter(0, 0, 0);
-    sphere_visibility = m_Landmark->GetLandmarkVisibility(m_TimeVector[i]);
+		//Get landmark position form the current transformation matrix
+		auto m = m_MatrixVector->GetMatrix(m_TimeVector[i]);
+		mafTransform::GetPosition(*m, xyzTransform);
 
-    //start construct the landmark trajectory
-    m = m_MatrixVector->GetMatrix(m_TimeVector[minValue]);
-    mafTransform::GetPosition(*m,xyz);
+		//Landmark center position. Set to zero, because position is applied by the current transformation matrix
+		m_Sphere->SetCenter(0, 0, 0);
+		sphere_visibility = m_Landmark->GetLandmarkVisibility(m_TimeVector[i]);
 
-    //Subtract the position of the current transformation matrix, from the position of the "minValue" transformation.
-    //It is necessary because current transformation matrix is applied in visualization.
-    points->InsertNextPoint(xyz[0] - xyzTransform[0], xyz[1] - xyzTransform[1], xyz[2] - xyzTransform[2]);
-   
-    for (int n = (minValue + 1); n <= maxValue; n++)
-    {
-      m = m_MatrixVector->GetMatrix(m_TimeVector[n]);
-      mafTransform::GetPosition(*m,xyz);
+		//start construct the landmark trajectory
+		m = m_MatrixVector->GetMatrix(m_TimeVector[minValue]);
+		mafTransform::GetPosition(*m, xyz);
 
-      //Subtract the position of the current transformation matrix, from the position of the "n" transformation: 
-      points->InsertNextPoint(xyz[0] - xyzTransform[0], xyz[1] - xyzTransform[1], xyz[2] - xyzTransform[2]); //transform
+		//Subtract the position of the current transformation matrix, from the position of the "minValue" transformation.
+		//It is necessary because current transformation matrix is applied in visualization.
+		points->InsertNextPoint(xyz[0] - xyzTransform[0], xyz[1] - xyzTransform[1], xyz[2] - xyzTransform[2]);
 
-      previous = m_Landmark->GetLandmarkVisibility(m_TimeVector[n-1]);
-      current = m_Landmark->GetLandmarkVisibility(m_TimeVector[n]);
+		for (int n = (minValue + 1); n <= maxValue; n++)
+		{
+			m = m_MatrixVector->GetMatrix(m_TimeVector[n]);
+			mafTransform::GetPosition(*m, xyz);
 
-      if (previous && current)
-      {
-        pointId[0] = counter;
-        pointId[1] = counter + 1;
-        cellArray->InsertNextCell(2, pointId);  
-      }
-      counter++;
-    }
-  } 
-  line->SetPoints(points);
-  line->SetLines(cellArray);
-  line->Modified();
+			//Subtract the position of the current transformation matrix, from the position of the "n" transformation: 
+			points->InsertNextPoint(xyz[0] - xyzTransform[0], xyz[1] - xyzTransform[1], xyz[2] - xyzTransform[2]); //transform
 
-  m_Traj->AddInputData(line);
-  if (sphere_visibility)
-  {
-    m_Traj->AddInputConnection(m_Sphere->GetOutputPort());
-  }
-  
-  m_Traj->Update();
+			previous = m_Landmark->GetLandmarkVisibility(m_TimeVector[n - 1]);
+			current = m_Landmark->GetLandmarkVisibility(m_TimeVector[n]);
+
+			if (previous && current)
+			{
+				pointId[0] = counter;
+				pointId[1] = counter + 1;
+				cellArray->InsertNextCell(2, pointId);
+			}
+			counter++;
+		}
+	}
+	line->SetPoints(points);
+	line->SetLines(cellArray);
+	line->Modified();
+
+	m_Traj->AddInputData(line);
+	if (sphere_visibility)
+	{
+		m_Traj->AddInputConnection(m_Sphere->GetOutputPort());
+	}
+
+	m_Traj->Update();
 }

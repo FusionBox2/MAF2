@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafVMEOutput
  Authors: Marco Petrone
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -48,39 +48,33 @@ mafCxxAbstractTypeMacro(mafVMEOutput)
 mafVMEOutput::mafVMEOutput()
 //-------------------------------------------------------------------------
 {
-  m_VME = NULL;
-  m_Transform = mafTransform::NewSPtr(); // Transform is created by VME 
-  m_Gui = NULL;
+	m_VME = NULL;
+	m_Transform = mafTransform::NewSPtr(); // Transform is created by VME 
 }
 
-//-------------------------------------------------------------------------
-mafVMEOutput::~mafVMEOutput()
-//-------------------------------------------------------------------------
-{
-  cppDEL(m_Gui);
-}
+mafVMEOutput::~mafVMEOutput() = default;
 
 #ifdef MAF_USE_VTK
 //-------------------------------------------------------------------------
-vtkAlgorithmOutput *mafVMEOutput::GetVTKOutputPort()
+vtkAlgorithmOutput* mafVMEOutput::GetVTKOutputPort()
 //-------------------------------------------------------------------------
 {
-  assert(m_VME);
-  return m_VME&&m_VME->GetDataPipe()?m_VME->GetDataPipe()->GetVTKOutputPort():nullptr;
+	assert(m_VME);
+	return m_VME && m_VME->GetDataPipe() ? m_VME->GetDataPipe()->GetVTKOutputPort() : nullptr;
 }
 
 //-------------------------------------------------------------------------
-vtkDataSet *mafVMEOutput::GetVTKData()
+vtkDataSet* mafVMEOutput::GetVTKData()
 //-------------------------------------------------------------------------
 {
-  assert(m_VME);
-  vtkAlgorithmOutput* port = GetVTKOutputPort();
-  if (port != nullptr)
-  {
-    port->GetProducer()->Update();
-    return vtkDataSet::SafeDownCast(port->GetProducer()->GetOutputDataObject(port->GetIndex()));
-  }
-  return nullptr;
+	assert(m_VME);
+	vtkAlgorithmOutput* port = GetVTKOutputPort();
+	if (port != nullptr)
+	{
+		port->GetProducer()->Update();
+		return vtkDataSet::SafeDownCast(port->GetProducer()->GetOutputDataObject(port->GetIndex()));
+	}
+	return nullptr;
 }
 #endif
 
@@ -88,266 +82,266 @@ vtkDataSet *mafVMEOutput::GetVTKData()
 void mafVMEOutput::Update()
 //-------------------------------------------------------------------------
 {
-  assert(m_VME);
+	assert(m_VME);
 
-  m_VME->Update();
+	m_VME->Update();
 }
 
 //-------------------------------------------------------------------------
 void mafVMEOutput::SetTransform(std::shared_ptr<mafTransformBase> trans)
 //-------------------------------------------------------------------------
 {
-  assert(trans);
-  m_Transform=trans;
+	assert(trans);
+	m_Transform = trans;
 }
 //-------------------------------------------------------------------------
-void mafVMEOutput::SetBounds(const mafOBB &bounds)
+void mafVMEOutput::SetBounds(const mafOBB& bounds)
 //-------------------------------------------------------------------------
 {
-  m_Bounds=bounds;
+	m_Bounds = bounds;
 }
 //-------------------------------------------------------------------------
 void mafVMEOutput::GetLocalTimeBounds(mafTimeStamp tbounds[2]) const
 //-------------------------------------------------------------------------
 {
-  // Paolo 09-01-2008: Commented and substituted by code below.
-  /*std::vector<mafTimeStamp> tstamps;
-  m_VME->GetLocalTimeStamps(tstamps);
-  if (tstamps.size()>0)
-  {
-    tbounds[0]=tstamps[0];
-    tbounds[1]=tstamps[tstamps.size()-1];
-  }
-  else
-  {
-    // set to invalid time bounds (i.e. infinite)
-    tbounds[0]=0;
-    tbounds[1]=-1;
-  }*/
+	// Paolo 09-01-2008: Commented and substituted by code below.
+	/*std::vector<mafTimeStamp> tstamps;
+	m_VME->GetLocalTimeStamps(tstamps);
+	if (tstamps.size()>0)
+	{
+	  tbounds[0]=tstamps[0];
+	  tbounds[1]=tstamps[tstamps.size()-1];
+	}
+	else
+	{
+	  // set to invalid time bounds (i.e. infinite)
+	  tbounds[0]=0;
+	  tbounds[1]=-1;
+	}*/
 
-  m_VME->GetLocalTimeBounds(tbounds);
-  
+	m_VME->GetLocalTimeBounds(tbounds);
+
 }
 //-------------------------------------------------------------------------
 void mafVMEOutput::GetTimeBounds(mafTimeStamp tbounds[2]) const
 //-------------------------------------------------------------------------
 {
-  assert(m_VME);
-  
-  //GetLocalTimeBounds(tbounds);
-  m_VME->GetLocalTimeBounds(tbounds);
-  
-  for (int i=0;i<m_VME->GetNumberOfChildren();i++)
-  {
-    mafTimeStamp tmp[2];
-    
-    if (auto child_vme=mafVME::SafeDownCast(m_VME->GetChild(i)))
-    {
-      child_vme->GetOutput()->GetTimeBounds(tmp);
-      if (tmp[0]<0 || tmp[1]<0)
-        continue;
+	assert(m_VME);
 
-      if (tmp[0]<tbounds[0]||tbounds[0]<0)
-        tbounds[0]=tmp[0];
+	//GetLocalTimeBounds(tbounds);
+	m_VME->GetLocalTimeBounds(tbounds);
 
-      if (tmp[1]>tbounds[1]||tbounds[1]<0)
-        tbounds[1]=tmp[1];
-    }    
-  }
+	for (int i = 0; i < m_VME->GetNumberOfChildren(); i++)
+	{
+		mafTimeStamp tmp[2];
+
+		if (auto child_vme = mafVME::SafeDownCast(m_VME->GetChild(i)))
+		{
+			child_vme->GetOutput()->GetTimeBounds(tmp);
+			if (tmp[0] < 0 || tmp[1] < 0)
+				continue;
+
+			if (tmp[0] < tbounds[0] || tbounds[0] < 0)
+				tbounds[0] = tmp[0];
+
+			if (tmp[1] > tbounds[1] || tbounds[1] < 0)
+				tbounds[1] = tmp[1];
+		}
+	}
 }
 
 //-------------------------------------------------------------------------
 void mafVMEOutput::GetVME4DBounds(double bounds[6]) const
 //-------------------------------------------------------------------------
 {
-  mafOBB myBounds;
-  GetVME4DBounds(myBounds);
-  myBounds.CopyTo(bounds);
+	mafOBB myBounds;
+	GetVME4DBounds(myBounds);
+	myBounds.CopyTo(bounds);
 }
 
 //-------------------------------------------------------------------------
-void mafVMEOutput::GetVME4DBounds(mafOBB &bounds) const
+void mafVMEOutput::GetVME4DBounds(mafOBB& bounds) const
 //-------------------------------------------------------------------------
 {
-  assert(m_VME);
+	assert(m_VME);
 
-  std::vector<mafTimeStamp> timestamps;
+	std::vector<mafTimeStamp> timestamps;
 
-  m_VME->GetTimeStamps(timestamps);
+	m_VME->GetTimeStamps(timestamps);
 
-  bounds.Reset();
+	bounds.Reset();
 
-  if (mafDataPipe *dpipe=m_VME->GetDataPipe()) // if a datapipe is present
-  {
-    mafMatrix itemAbsPose;
-    mafOBB transformed_bounds;
+	if (mafDataPipe* dpipe = m_VME->GetDataPipe()) // if a datapipe is present
+	{
+		mafMatrix itemAbsPose;
+		mafOBB transformed_bounds;
 
-    for (int i=0;i<timestamps.size();i++)
-    {
-      dpipe->SetTimeStamp(timestamps[i]);
-      dpipe->UpdateBounds();
+		for (int i = 0; i < timestamps.size(); i++)
+		{
+			dpipe->SetTimeStamp(timestamps[i]);
+			dpipe->UpdateBounds();
 
-      // must make a copy, otherwise I would transform the bounds inside the data pipe
-      transformed_bounds.DeepCopy(dpipe->GetBounds());
-      GetAbsMatrix(itemAbsPose,timestamps[i]);
-    
-      transformed_bounds.ApplyTransform(itemAbsPose);
+			// must make a copy, otherwise I would transform the bounds inside the data pipe
+			transformed_bounds.DeepCopy(dpipe->GetBounds());
+			GetAbsMatrix(itemAbsPose, timestamps[i]);
 
-      bounds.MergeBounds(transformed_bounds);
-    }
+			transformed_bounds.ApplyTransform(itemAbsPose);
 
-    dpipe->SetTimeStamp(m_VME->GetTimeStamp());
-    dpipe->UpdateBounds();
-  }
-  else
-  {
-    bounds=m_Bounds;
-  }
+			bounds.MergeBounds(transformed_bounds);
+		}
+
+		dpipe->SetTimeStamp(m_VME->GetTimeStamp());
+		dpipe->UpdateBounds();
+	}
+	else
+	{
+		bounds = m_Bounds;
+	}
 
 }
 //-------------------------------------------------------------------------
 void mafVMEOutput::GetVMEBounds(double bounds[6]) const
 //-------------------------------------------------------------------------
 {
-  mafOBB myBounds;
-  GetVMEBounds(myBounds);
-  myBounds.CopyTo(bounds);
+	mafOBB myBounds;
+	GetVMEBounds(myBounds);
+	myBounds.CopyTo(bounds);
 }
 
 //-------------------------------------------------------------------------
-void mafVMEOutput::GetVMEBounds(mafOBB &bounds,mafTimeStamp t) const
+void mafVMEOutput::GetVMEBounds(mafOBB& bounds, mafTimeStamp t) const
 //-------------------------------------------------------------------------
 {
-  assert(m_VME);
-  if (m_VME->IsVisible())
-  {
-    mafMatrix itemPose;
-    
-    GetAbsMatrix(itemPose,t);
-    
-    GetVMELocalBounds(bounds,t);  
+	assert(m_VME);
+	if (m_VME->IsVisible())
+	{
+		mafMatrix itemPose;
 
-    bounds.ApplyTransform(itemPose);
-  }
+		GetAbsMatrix(itemPose, t);
+
+		GetVMELocalBounds(bounds, t);
+
+		bounds.ApplyTransform(itemPose);
+	}
 }
 
 //-------------------------------------------------------------------------
 void mafVMEOutput::GetVMELocalBounds(double bounds[6]) const
 //-------------------------------------------------------------------------
 {
-  mafOBB myBounds;
-  GetVMELocalBounds(myBounds);
-  myBounds.CopyTo(bounds);
+	mafOBB myBounds;
+	GetVMELocalBounds(myBounds);
+	myBounds.CopyTo(bounds);
 }
 
 //-------------------------------------------------------------------------
-void mafVMEOutput::GetVMELocalBounds(mafOBB &bounds,mafTimeStamp t) const
+void mafVMEOutput::GetVMELocalBounds(mafOBB& bounds, mafTimeStamp t) const
 //-------------------------------------------------------------------------
 {
-  if (t<0)
-    t=m_VME->GetTimeStamp();
+	if (t < 0)
+		t = m_VME->GetTimeStamp();
 
-  bounds.Reset();
+	bounds.Reset();
 
-  if (m_VME->IsVisible())
-  {
-    GetDataBounds(bounds,t);
-  }
+	if (m_VME->IsVisible())
+	{
+		GetDataBounds(bounds, t);
+	}
 }
 
 //-------------------------------------------------------------------------
-void mafVMEOutput::GetDataBounds(mafOBB &bounds,mafTimeStamp t) const
+void mafVMEOutput::GetDataBounds(mafOBB& bounds, mafTimeStamp t) const
 //-------------------------------------------------------------------------
 {
-  assert(m_VME);
-  if (m_VME->GetDataPipe()) // allocate data pipe if not done yet
-  {
-    // We call directly the mafDataPipe::UpdateBounds() since this should simply update the
-    // DataPipe "bounds" structure but not the output data when not necessary.
-    // We must call explicitly UpdateBounds() method, since data pipes
-    // do not update automatically the bounds when time changes.
-    mafDataPipe *dpipe=m_VME->GetDataPipe();
-    mafTimeStamp old_time=dpipe->GetTimeStamp();
-    
-    //if (t!=old_time)
-    //{
-      dpipe->SetTimeStamp(t);
-      dpipe->UpdateBounds();
-    //}
+	assert(m_VME);
+	if (m_VME->GetDataPipe()) // allocate data pipe if not done yet
+	{
+		// We call directly the mafDataPipe::UpdateBounds() since this should simply update the
+		// DataPipe "bounds" structure but not the output data when not necessary.
+		// We must call explicitly UpdateBounds() method, since data pipes
+		// do not update automatically the bounds when time changes.
+		mafDataPipe* dpipe = m_VME->GetDataPipe();
+		mafTimeStamp old_time = dpipe->GetTimeStamp();
 
-    bounds.DeepCopy(dpipe->GetBounds());
+		//if (t!=old_time)
+		//{
+		dpipe->SetTimeStamp(t);
+		dpipe->UpdateBounds();
+		//}
 
-    if (t!=old_time)
-    {
-      // Restore the right bounds for current time... 
-      // TODO: modify the GetBounds to make it call UpdateCurentBounds explicitly!
-      dpipe->SetTimeStamp(m_VME->GetTimeStamp());
-      dpipe->UpdateBounds();
-    }
-  }
-  else
-  {
-    bounds=m_Bounds;
-  }
+		bounds.DeepCopy(dpipe->GetBounds());
+
+		if (t != old_time)
+		{
+			// Restore the right bounds for current time... 
+			// TODO: modify the GetBounds to make it call UpdateCurentBounds explicitly!
+			dpipe->SetTimeStamp(m_VME->GetTimeStamp());
+			dpipe->UpdateBounds();
+		}
+	}
+	else
+	{
+		bounds = m_Bounds;
+	}
 }
 //-------------------------------------------------------------------------
 void mafVMEOutput::GetBounds(double bounds[6]) const
 //-------------------------------------------------------------------------
 {
-  mafOBB myBounds;
-  GetBounds(myBounds);
-  myBounds.CopyTo(bounds);
+	mafOBB myBounds;
+	GetBounds(myBounds);
+	myBounds.CopyTo(bounds);
 }
 
 //-------------------------------------------------------------------------
-void mafVMEOutput::GetBounds(mafOBB &bounds,mafTimeStamp t) const
+void mafVMEOutput::GetBounds(mafOBB& bounds, mafTimeStamp t) const
 //-------------------------------------------------------------------------
 {
-  assert(m_VME);
+	assert(m_VME);
 
-  if (t<0)
-    t=m_VME->GetTimeStamp();
+	if (t < 0)
+		t = m_VME->GetTimeStamp();
 
-  GetVMEBounds(bounds,t);
-  
-  for (int i=0;i<m_VME->GetNumberOfChildren();i++)
-  {
-    if (auto child=mafVME::SafeDownCast(m_VME->GetChild(i)))
-    {
-      mafOBB childBounds;
-      child->GetOutput()->GetBounds(childBounds,t);
-      bounds.MergeBounds(childBounds);
-    }    
-  }
+	GetVMEBounds(bounds, t);
+
+	for (int i = 0; i < m_VME->GetNumberOfChildren(); i++)
+	{
+		if (auto child = mafVME::SafeDownCast(m_VME->GetChild(i)))
+		{
+			mafOBB childBounds;
+			child->GetOutput()->GetBounds(childBounds, t);
+			bounds.MergeBounds(childBounds);
+		}
+	}
 }
 
 //-------------------------------------------------------------------------
 void mafVMEOutput::Get4DBounds(double bounds[6]) const
 //-------------------------------------------------------------------------
 {
-  mafOBB myBounds;
-  Get4DBounds(myBounds);
-  myBounds.CopyTo(bounds);
+	mafOBB myBounds;
+	Get4DBounds(myBounds);
+	myBounds.CopyTo(bounds);
 }
 
 //-------------------------------------------------------------------------
-void mafVMEOutput::Get4DBounds(mafOBB &bounds) const
+void mafVMEOutput::Get4DBounds(mafOBB& bounds) const
 //-------------------------------------------------------------------------
 {
-  assert(m_VME);
+	assert(m_VME);
 
-  std::vector<mafTimeStamp> timestamps;
+	std::vector<mafTimeStamp> timestamps;
 
-  bounds.Reset();
+	bounds.Reset();
 
-  m_VME->GetTimeStamps(timestamps);
+	m_VME->GetTimeStamps(timestamps);
 
-  mafOBB frameBounds;
-  for (int i=0;i<timestamps.size();i++)
-  {
-    GetBounds(frameBounds,timestamps[i]);
-    bounds.MergeBounds(frameBounds); 
-  }
+	mafOBB frameBounds;
+	for (int i = 0; i < timestamps.size(); i++)
+	{
+		GetBounds(frameBounds, timestamps[i]);
+		bounds.MergeBounds(frameBounds);
+	}
 
 }
 
@@ -355,87 +349,87 @@ void mafVMEOutput::Get4DBounds(mafOBB &bounds) const
 std::shared_ptr<mafTransformBase> mafVMEOutput::GetTransform() const
 //-------------------------------------------------------------------------
 {
-  // if VME supports a matrix pipe return its pointer
-  if (m_VME)
-  {
-    if (auto mpipe=m_VME->GetMatrixPipe())
-    {
-      return mpipe;
-    }
-  }
+	// if VME supports a matrix pipe return its pointer
+	if (m_VME)
+	{
+		if (auto mpipe = m_VME->GetMatrixPipe())
+		{
+			return mpipe;
+		}
+	}
 
-  assert(m_Transform);
+	assert(m_Transform);
 
-  // return internal transform
-  return m_Transform;
+	// return internal transform
+	return m_Transform;
 }
 //-------------------------------------------------------------------------
 std::shared_ptr<mafMatrix> mafVMEOutput::GetMatrix() const
 //-------------------------------------------------------------------------
 {
-  return GetTransform()->GetMatrixPointer();
+	return GetTransform()->GetMatrixPointer();
 }
 
 //-------------------------------------------------------------------------
-void mafVMEOutput::GetMatrix(mafMatrix &matrix,mafTimeStamp t) const
+void mafVMEOutput::GetMatrix(mafMatrix& matrix, mafTimeStamp t) const
 //-------------------------------------------------------------------------
 {
-  assert(m_VME);
-  if (auto mpipe=m_VME->GetMatrixPipe()) // check if a matrix pipe is present
-  {
-    if (t<0||t==m_VME->GetTimeStamp())
-    {
-      matrix.DeepCopy(*GetMatrix());
-    }
-    else
-    {
-      // disable rising of update event since this is
-      // only a temporary change to the matrix
-      bool old_flag=mpipe->GetUpdateMatrixObserverFlag();
-      mpipe->UpdateMatrixObserverOff();
-      mpipe->SetTimeStamp(t);
-      matrix=mpipe->GetMatrix();
+	assert(m_VME);
+	if (auto mpipe = m_VME->GetMatrixPipe()) // check if a matrix pipe is present
+	{
+		if (t < 0 || t == m_VME->GetTimeStamp())
+		{
+			matrix.DeepCopy(*GetMatrix());
+		}
+		else
+		{
+			// disable rising of update event since this is
+			// only a temporary change to the matrix
+			bool old_flag = mpipe->GetUpdateMatrixObserverFlag();
+			mpipe->UpdateMatrixObserverOff();
+			mpipe->SetTimeStamp(t);
+			matrix = mpipe->GetMatrix();
 
-      // restore right time
-      mpipe->SetTimeStamp(m_VME->GetTimeStamp());
-      mpipe->SetUpdateMatrixObserverFlag(old_flag);
-    }
-  }
-  else
-  {
-    auto mat=GetMatrix();
-    matrix.DeepCopy(*mat);
-  }
+			// restore right time
+			mpipe->SetTimeStamp(m_VME->GetTimeStamp());
+			mpipe->SetUpdateMatrixObserverFlag(old_flag);
+		}
+	}
+	else
+	{
+		auto mat = GetMatrix();
+		matrix.DeepCopy(*mat);
+	}
 }
 
 //-------------------------------------------------------------------------
-void mafVMEOutput::GetPose(double xyz[3],double rxyz[3],mafTimeStamp t) const
+void mafVMEOutput::GetPose(double xyz[3], double rxyz[3], mafTimeStamp t) const
 //-------------------------------------------------------------------------
 {
-  mafMatrix mat;
-  
-  GetMatrix(mat,t);
-  
-  mafTransform::GetOrientation(mat,rxyz);
-  
-  mafTransform::GetPosition(mat,xyz);
+	mafMatrix mat;
+
+	GetMatrix(mat, t);
+
+	mafTransform::GetOrientation(mat, rxyz);
+
+	mafTransform::GetPosition(mat, xyz);
 }
 
 //-------------------------------------------------------------------------
-void mafVMEOutput::GetPose(double &x,double &y,double &z,double &rx,double &ry,double &rz,mafTimeStamp t) const
+void mafVMEOutput::GetPose(double& x, double& y, double& z, double& rx, double& ry, double& rz, mafTimeStamp t) const
 //-------------------------------------------------------------------------
 {
-  double xyz[3],rxyz[3];
+	double xyz[3], rxyz[3];
 
-  GetPose(xyz,rxyz,t);
+	GetPose(xyz, rxyz, t);
 
-  x=xyz[0];
-  y=xyz[1];
-  z=xyz[2];
+	x = xyz[0];
+	y = xyz[1];
+	z = xyz[2];
 
-  rx=rxyz[0];
-  ry=rxyz[1];
-  rz=rxyz[2];
+	rx = rxyz[0];
+	ry = rxyz[1];
+	rz = rxyz[2];
 }
 
 
@@ -443,74 +437,74 @@ void mafVMEOutput::GetPose(double &x,double &y,double &z,double &rx,double &ry,d
 std::shared_ptr<mafTransformBase> mafVMEOutput::GetAbsTransform() const
 //-------------------------------------------------------------------------
 {
-  assert(m_VME);
-  return m_VME->GetAbsMatrixPipe();
+	assert(m_VME);
+	return m_VME->GetAbsMatrixPipe();
 }
 
 //-------------------------------------------------------------------------
-void mafVMEOutput::GetAbsMatrix(mafMatrix &matrix,mafTimeStamp t) const
+void mafVMEOutput::GetAbsMatrix(mafMatrix& matrix, mafTimeStamp t) const
 //-------------------------------------------------------------------------
 {
-  assert(m_VME);
+	assert(m_VME);
 
 
-  if (t<0||t==m_VME->GetTimeStamp())
-  {
-    matrix.DeepCopy(*GetAbsMatrix());
-  }
-  else
-  {
-    auto abspipe=m_VME->GetAbsMatrixPipe();
-    // disable rising of update event since this is
-    // only a temporary change to the matrix
-    bool old_flag=abspipe->GetUpdateMatrixObserverFlag();
-    abspipe->UpdateMatrixObserverOff();
-    abspipe->SetTimeStamp(t);
-    matrix=abspipe->GetMatrix();
-    
-    // restore right time
-    abspipe->SetTimeStamp(m_VME->GetTimeStamp());
-    abspipe->SetUpdateMatrixObserverFlag(old_flag);
-  }
+	if (t < 0 || t == m_VME->GetTimeStamp())
+	{
+		matrix.DeepCopy(*GetAbsMatrix());
+	}
+	else
+	{
+		auto abspipe = m_VME->GetAbsMatrixPipe();
+		// disable rising of update event since this is
+		// only a temporary change to the matrix
+		bool old_flag = abspipe->GetUpdateMatrixObserverFlag();
+		abspipe->UpdateMatrixObserverOff();
+		abspipe->SetTimeStamp(t);
+		matrix = abspipe->GetMatrix();
+
+		// restore right time
+		abspipe->SetTimeStamp(m_VME->GetTimeStamp());
+		abspipe->SetUpdateMatrixObserverFlag(old_flag);
+	}
 }
 
 //-------------------------------------------------------------------------
 std::shared_ptr<mafMatrix> mafVMEOutput::GetAbsMatrix() const
 //-------------------------------------------------------------------------
 {
-  assert(m_VME);
-  m_VME->GetAbsMatrixPipe()->Update();
-  return m_VME->GetAbsMatrixPipe()->GetMatrixPointer();
+	assert(m_VME);
+	m_VME->GetAbsMatrixPipe()->Update();
+	return m_VME->GetAbsMatrixPipe()->GetMatrixPointer();
 }
 
 //-------------------------------------------------------------------------
-void mafVMEOutput::GetAbsPose(double xyz[3],double rxyz[3],mafTimeStamp t) const
+void mafVMEOutput::GetAbsPose(double xyz[3], double rxyz[3], mafTimeStamp t) const
 //-------------------------------------------------------------------------
 {
-  assert(m_VME);
-  mafMatrix mat;
-  GetAbsMatrix(mat,t);
+	assert(m_VME);
+	mafMatrix mat;
+	GetAbsMatrix(mat, t);
 
-  mafTransform::GetPosition(mat,xyz);
+	mafTransform::GetPosition(mat, xyz);
 
-  mafTransform::GetOrientation(mat,rxyz);
+	mafTransform::GetOrientation(mat, rxyz);
 }
 
 //-------------------------------------------------------------------------
-void mafVMEOutput::GetAbsPose(double &x,double &y,double &z,double &rx,double &ry,double &rz,mafTimeStamp t) const
+void mafVMEOutput::GetAbsPose(double& x, double& y, double& z, double& rx, double& ry, double& rz, mafTimeStamp t) const
 //-------------------------------------------------------------------------
 {
-  double xyz[3],rxyz[3];
+	double xyz[3], rxyz[3];
 
-  GetAbsPose(xyz,rxyz,t);
+	GetAbsPose(xyz, rxyz, t);
 
-  x=xyz[0];
-  y=xyz[1];
-  z=xyz[2];
+	x = xyz[0];
+	y = xyz[1];
+	z = xyz[2];
 
-  rx=rxyz[0];
-  ry=rxyz[1];
-  rz=rxyz[2];
+	rx = rxyz[0];
+	ry = rxyz[1];
+	rz = rxyz[2];
 }
 
 
@@ -518,49 +512,49 @@ void mafVMEOutput::GetAbsPose(double &x,double &y,double &z,double &rx,double &r
 mafTimeStamp mafVMEOutput::GetTimeStamp() const
 //-------------------------------------------------------------------------
 {
-  return m_VME->GetTimeStamp();
+	return m_VME->GetTimeStamp();
 }
 
 //-------------------------------------------------------------------------
 void mafVMEOutput::Print(std::ostream& os, const int tabs)// const
 //-------------------------------------------------------------------------
 {
-  mafIndent indent(tabs);
+	mafIndent indent(tabs);
 
-  os << indent << "Current Time: "<<m_VME->GetTimeStamp()<<"\n";
+	os << indent << "Current Time: " << m_VME->GetTimeStamp() << "\n";
 
-  os << indent << "Current Matrix:\n";
-  GetMatrix()->Print(os,indent.GetNextIndent());
+	os << indent << "Current Matrix:\n";
+	GetMatrix()->Print(os, indent.GetNextIndent());
 
-  os << indent << "Current Absolute Matrix:\n";
-  mafMatrix m = m_VME->GetAbsMatrixPipe()->GetMatrix();
-  m.Print(os,indent.GetNextIndent());
+	os << indent << "Current Absolute Matrix:\n";
+	mafMatrix m = m_VME->GetAbsMatrixPipe()->GetMatrix();
+	m.Print(os, indent.GetNextIndent());
 
-  mafTimeStamp tbounds[2];
-  GetLocalTimeBounds(tbounds);
-  os << indent << "Time Bounds: ("<<tbounds[0]<<","<<tbounds[1]<<"]"<<std::endl;
+	mafTimeStamp tbounds[2];
+	GetLocalTimeBounds(tbounds);
+	os << indent << "Time Bounds: (" << tbounds[0] << "," << tbounds[1] << "]" << std::endl;
 
-  mafOBB bounds;
-  GetVMEBounds(bounds);
-  os << indent << "VME 3D Bounds:"<<std::endl;
-  bounds.Print(os,indent.GetNextIndent());
+	mafOBB bounds;
+	GetVMEBounds(bounds);
+	os << indent << "VME 3D Bounds:" << std::endl;
+	bounds.Print(os, indent.GetNextIndent());
 
-  os << indent << "VME 4D Bounds:"<<std::endl;
-  Get4DBounds(bounds);
-  bounds.Print(os,indent.GetNextIndent());
+	os << indent << "VME 4D Bounds:" << std::endl;
+	Get4DBounds(bounds);
+	bounds.Print(os, indent.GetNextIndent());
 
-  os << indent << "DataType: "<<m_DataType.GetCStr()<<std::endl;
+	os << indent << "DataType: " << m_DataType.GetCStr() << std::endl;
 }
 
 //-------------------------------------------------------------------------
 mafGUI* mafVMEOutput::CreateGui()
 //-------------------------------------------------------------------------
 {
-  assert(m_Gui == NULL);
-  m_Gui = new mafGUI(m_VME);
+	assert(!AccessGUI());
+	auto gui = new mafGUI(m_VME);
 
-  mafString type = _R(GetTypeName()); 
-  m_Gui->Label(_R("type: "), type, true);
-	m_Gui->Divider();
-  return m_Gui;
+	mafString type = _R(GetTypeName());
+	gui->Label(_R("type: "), type, true);
+	gui->Divider();
+	return gui;
 }

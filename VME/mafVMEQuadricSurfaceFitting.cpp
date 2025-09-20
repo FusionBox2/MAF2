@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafVMEQuadricSurfaceFitting
  Authors: Taha Jerbi
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -87,130 +87,130 @@ mafVMEQuadricSurfaceFitting::mafVMEQuadricSurfaceFitting()
 {
 	m_GeometryType = PARAMETRIC_SPHERE;
 
-  ///suppose ellipsoid centred on (0,0,0) with a,b,c (5,3,1)
-  m_PointsZRes = 0.0;
-  m_PointsXRes = 0.0;
-  m_PointsYRes = 0.0;
-  //m_Points1Point1[0] = 5.0; m_Points1Point1[1] = 0.0; m_Points1Point1[2] = 0.0;
-  //m_Points1Point2[0] = 0.0; m_Points1Point2[1] = 3.0; m_Points1Point2[2] = 0.0;
-  //m_Points1Point3[0] = 0.0; m_Points1Point3[1] = 0.0; m_Points1Point3[2] = 1.0;
-  //m_Points1Point4[0] = -5.0; m_Points1Point4[1] = 0.0; m_Points1Point4[2] = 0.0;
-  //m_Points1Point5[0] = 0.0; m_Points1Point5[1] = -3.0; m_Points1Point5[2] = 0.0;
-  //m_Points1Point6[0] = 0.0; m_Points1Point6[1] = 0.0; m_Points1Point6[2] = -1.0;
-  ///suppose ellipsoid centred on (0,0,0) with semi size axes (7,4,2)
-  //m_Points2Point1[0] = 7.0; m_Points2Point1[1] = 0.0; m_Points2Point1[2] = 0.0;
-  //m_Points2Point2[0] = 0.0; m_Points2Point2[1] = 4.0; m_Points2Point2[2] = 0.0;
-  //m_Points2Point3[0] = 0.0; m_Points2Point3[1] = 0.0; m_Points2Point3[2] = 2.0;
-  //m_Points2Point4[0] = -7.0; m_Points2Point4[1] = 0.0; m_Points2Point4[2] = 0.0;
-  //m_Points2Point5[0] = 0.0; m_Points2Point5[1] = 0.0; m_Points2Point5[2] = -2.0;
-  //m_Points2Point6[0] = 0.0; m_Points2Point6[1] = -4.0; m_Points2Point6[2] = 0.0;
-  ///suppose ellipsoid centred on (0,0,0) with semi size axes (6,10,4)
-  //m_Points3Point1[0] = 6.0; m_Points3Point1[1] = 0.0; m_Points3Point1[2] = 0.0;
-  //m_Points3Point2[0] = 0.0; m_Points3Point2[1] = 10.0; m_Points3Point2[2] = 0.0;
-  //m_Points3Point3[0] = 0.0; m_Points3Point3[1] = 0.0; m_Points3Point3[2] = 4.0;
-  //m_Points3Point4[0] = -6.0; m_Points3Point4[1] = 0.0; m_Points3Point4[2] = 0.0;
-  //m_Points3Point5[0] = 0.0; m_Points3Point5[1] = 0.0; m_Points3Point5[2] = -4.0;
-  //m_Points3Point6[0] = 0.0; m_Points3Point6[1] = -10.0; m_Points3Point6[2] = 0.0;
-  ///suppose ellipsoid centred on (2,3,5) with semi size axes (5,3,1)
-  //m_Points4Point1[0] = -5.0+2; m_Points4Point1[1] = 0.0+3; m_Points4Point1[2] = 0.0+5;
-  //m_Points4Point2[0] = 0.0+2; m_Points4Point2[1] = -3.0+3; m_Points4Point2[2] = 0.0+5;
-  //m_Points4Point3[0] = 0.0+2; m_Points4Point3[1] = 0.0+3; m_Points4Point3[2] = -1.0+5;
-  //m_Points4Point4[0] = 5.0+2; m_Points4Point4[1] = 0.0+3; m_Points4Point4[2] = 0.0+5;
-  //m_Points4Point5[0] = 0.0+2; m_Points4Point5[1] = 3.0+3; m_Points4Point5[2] = 0.0+5;
-  //m_Points4Point6[0] = 0.0+2; m_Points4Point6[1] = 0.0+3; m_Points4Point6[2] = 1.0+5;
-  ///suppose ellipsoid centred on (4,4,2) with semi size axes (5,3,1)
-  //m_Points5Point1[0] = 5.0+4; m_Points5Point1[1] = 0.0+4; m_Points5Point1[2] = 0.0+2;
-  //m_Points5Point2[0] = 0.0+4; m_Points5Point2[1] =3.0+4; m_Points5Point2[2] = 0.0+2;
-  //m_Points5Point3[0] = 0.0+4; m_Points5Point3[1] = 0.0+4; m_Points5Point3[2] = 1.0+2;
-  //m_Points5Point4[0] = -5.0+4; m_Points5Point4[1] = 0.0+4; m_Points5Point4[2] = 0.0+2;
-  //m_Points5Point5[0] = 0.0+4; m_Points5Point5[1] = -3.0+4; m_Points5Point5[2] = 0.0+2;
-  //m_Points5Point6[0] = 0.0+4; m_Points5Point6[1] = 0.0+4; m_Points5Point6[2] = -1.0+2;
+	///suppose ellipsoid centred on (0,0,0) with a,b,c (5,3,1)
+	m_PointsZRes = 0.0;
+	m_PointsXRes = 0.0;
+	m_PointsYRes = 0.0;
+	//m_Points1Point1[0] = 5.0; m_Points1Point1[1] = 0.0; m_Points1Point1[2] = 0.0;
+	//m_Points1Point2[0] = 0.0; m_Points1Point2[1] = 3.0; m_Points1Point2[2] = 0.0;
+	//m_Points1Point3[0] = 0.0; m_Points1Point3[1] = 0.0; m_Points1Point3[2] = 1.0;
+	//m_Points1Point4[0] = -5.0; m_Points1Point4[1] = 0.0; m_Points1Point4[2] = 0.0;
+	//m_Points1Point5[0] = 0.0; m_Points1Point5[1] = -3.0; m_Points1Point5[2] = 0.0;
+	//m_Points1Point6[0] = 0.0; m_Points1Point6[1] = 0.0; m_Points1Point6[2] = -1.0;
+	///suppose ellipsoid centred on (0,0,0) with semi size axes (7,4,2)
+	//m_Points2Point1[0] = 7.0; m_Points2Point1[1] = 0.0; m_Points2Point1[2] = 0.0;
+	//m_Points2Point2[0] = 0.0; m_Points2Point2[1] = 4.0; m_Points2Point2[2] = 0.0;
+	//m_Points2Point3[0] = 0.0; m_Points2Point3[1] = 0.0; m_Points2Point3[2] = 2.0;
+	//m_Points2Point4[0] = -7.0; m_Points2Point4[1] = 0.0; m_Points2Point4[2] = 0.0;
+	//m_Points2Point5[0] = 0.0; m_Points2Point5[1] = 0.0; m_Points2Point5[2] = -2.0;
+	//m_Points2Point6[0] = 0.0; m_Points2Point6[1] = -4.0; m_Points2Point6[2] = 0.0;
+	///suppose ellipsoid centred on (0,0,0) with semi size axes (6,10,4)
+	//m_Points3Point1[0] = 6.0; m_Points3Point1[1] = 0.0; m_Points3Point1[2] = 0.0;
+	//m_Points3Point2[0] = 0.0; m_Points3Point2[1] = 10.0; m_Points3Point2[2] = 0.0;
+	//m_Points3Point3[0] = 0.0; m_Points3Point3[1] = 0.0; m_Points3Point3[2] = 4.0;
+	//m_Points3Point4[0] = -6.0; m_Points3Point4[1] = 0.0; m_Points3Point4[2] = 0.0;
+	//m_Points3Point5[0] = 0.0; m_Points3Point5[1] = 0.0; m_Points3Point5[2] = -4.0;
+	//m_Points3Point6[0] = 0.0; m_Points3Point6[1] = -10.0; m_Points3Point6[2] = 0.0;
+	///suppose ellipsoid centred on (2,3,5) with semi size axes (5,3,1)
+	//m_Points4Point1[0] = -5.0+2; m_Points4Point1[1] = 0.0+3; m_Points4Point1[2] = 0.0+5;
+	//m_Points4Point2[0] = 0.0+2; m_Points4Point2[1] = -3.0+3; m_Points4Point2[2] = 0.0+5;
+	//m_Points4Point3[0] = 0.0+2; m_Points4Point3[1] = 0.0+3; m_Points4Point3[2] = -1.0+5;
+	//m_Points4Point4[0] = 5.0+2; m_Points4Point4[1] = 0.0+3; m_Points4Point4[2] = 0.0+5;
+	//m_Points4Point5[0] = 0.0+2; m_Points4Point5[1] = 3.0+3; m_Points4Point5[2] = 0.0+5;
+	//m_Points4Point6[0] = 0.0+2; m_Points4Point6[1] = 0.0+3; m_Points4Point6[2] = 1.0+5;
+	///suppose ellipsoid centred on (4,4,2) with semi size axes (5,3,1)
+	//m_Points5Point1[0] = 5.0+4; m_Points5Point1[1] = 0.0+4; m_Points5Point1[2] = 0.0+2;
+	//m_Points5Point2[0] = 0.0+4; m_Points5Point2[1] =3.0+4; m_Points5Point2[2] = 0.0+2;
+	//m_Points5Point3[0] = 0.0+4; m_Points5Point3[1] = 0.0+4; m_Points5Point3[2] = 1.0+2;
+	//m_Points5Point4[0] = -5.0+4; m_Points5Point4[1] = 0.0+4; m_Points5Point4[2] = 0.0+2;
+	//m_Points5Point5[0] = 0.0+4; m_Points5Point5[1] = -3.0+4; m_Points5Point5[2] = 0.0+2;
+	//m_Points5Point6[0] = 0.0+4; m_Points5Point6[1] = 0.0+4; m_Points5Point6[2] = -1.0+2;
 
 
-  //m_Points6Point1[0] = 5.0*2.5; m_Points6Point1[1] = 0.0*2.5; m_Points6Point1[2] = 0.0*2.5;
-  //m_Points6Point2[0] = 0.0*2.5; m_Points6Point2[1] = 3.0*2.5; m_Points6Point2[2] = 0.0*2.5;
-  //m_Points6Point3[0] = 0.0*2.5; m_Points6Point3[1] = 0.0*2.5; m_Points6Point3[2] = 1.0*2.5;
-  //m_Points6Point4[0] = -5.0*2.5; m_Points6Point4[1] = 0.0*2.5; m_Points6Point4[2] = 0.0*2.5;
-  //m_Points6Point5[0] = 0.0*2.5; m_Points6Point5[1] = 3.0*2.5; m_Points6Point5[2] = 0.0*2.5;
-  //m_Points6Point6[0] = 0.0*2.5; m_Points6Point6[1] = 0.0*2.5; m_Points6Point6[2] = -1.0*2.5;
+	//m_Points6Point1[0] = 5.0*2.5; m_Points6Point1[1] = 0.0*2.5; m_Points6Point1[2] = 0.0*2.5;
+	//m_Points6Point2[0] = 0.0*2.5; m_Points6Point2[1] = 3.0*2.5; m_Points6Point2[2] = 0.0*2.5;
+	//m_Points6Point3[0] = 0.0*2.5; m_Points6Point3[1] = 0.0*2.5; m_Points6Point3[2] = 1.0*2.5;
+	//m_Points6Point4[0] = -5.0*2.5; m_Points6Point4[1] = 0.0*2.5; m_Points6Point4[2] = 0.0*2.5;
+	//m_Points6Point5[0] = 0.0*2.5; m_Points6Point5[1] = 3.0*2.5; m_Points6Point5[2] = 0.0*2.5;
+	//m_Points6Point6[0] = 0.0*2.5; m_Points6Point6[1] = 0.0*2.5; m_Points6Point6[2] = -1.0*2.5;
 
 
-  ///suppose ellipsoid centred on (1,5,0) with semi size axes (8,6,8)
-  //m_Points7Point1[0] = 8+1; m_Points7Point1[1] = 0.0+5; m_Points7Point1[2] = 0.0;
-  //m_Points7Point2[0] = 0.0+1; m_Points7Point2[1] = 6+5; m_Points7Point2[2] = 0.0;
-  //m_Points7Point3[0] = 0.0+1; m_Points7Point3[1] = 0.0+5; m_Points7Point3[2] = 8.0;
-  //m_Points7Point4[0] = -8+1; m_Points7Point4[1] = 0.0+5; m_Points7Point4[2] = 0.0;
-  //m_Points7Point5[0] = 0.0+1; m_Points7Point5[1] = -6.0+5; m_Points7Point5[2] = 0.0;
-  //m_Points7Point6[0] = 0+1; m_Points7Point6[1] = 0.0+5; m_Points7Point6[2] = -8.0;
+	///suppose ellipsoid centred on (1,5,0) with semi size axes (8,6,8)
+	//m_Points7Point1[0] = 8+1; m_Points7Point1[1] = 0.0+5; m_Points7Point1[2] = 0.0;
+	//m_Points7Point2[0] = 0.0+1; m_Points7Point2[1] = 6+5; m_Points7Point2[2] = 0.0;
+	//m_Points7Point3[0] = 0.0+1; m_Points7Point3[1] = 0.0+5; m_Points7Point3[2] = 8.0;
+	//m_Points7Point4[0] = -8+1; m_Points7Point4[1] = 0.0+5; m_Points7Point4[2] = 0.0;
+	//m_Points7Point5[0] = 0.0+1; m_Points7Point5[1] = -6.0+5; m_Points7Point5[2] = 0.0;
+	//m_Points7Point6[0] = 0+1; m_Points7Point6[1] = 0.0+5; m_Points7Point6[2] = -8.0;
 
- // mafNEW(m_Cloud3);
+   // mafNEW(m_Cloud3);
 
-  //m_Cloud3->Open();
-  //m_Cloud3->SetName(_L("parent vertices cloud"));
-  //m_Cloud3->SetRadius(0.1);
-  //m_Cloud3->ReparentTo(this);
+	//m_Cloud3->Open();
+	//m_Cloud3->SetName(_L("parent vertices cloud"));
+	//m_Cloud3->SetRadius(0.1);
+	//m_Cloud3->ReparentTo(this);
 
-  //mafNEW(m_Cloud);
+	//mafNEW(m_Cloud);
 
-  //m_Cloud->Open();
-  //m_Cloud->SetName(_L("new landmark cloud"));
-  //m_Cloud->SetRadius(1.5);
-  //m_Cloud->ReparentTo(this);
+	//m_Cloud->Open();
+	//m_Cloud->SetName(_L("new landmark cloud"));
+	//m_Cloud->SetRadius(1.5);
+	//m_Cloud->ReparentTo(this);
 
-  //m_Cloud->AppendLandmark(m_Points1Point1[0], m_Points1Point1[1], m_Points1Point1[2], _R("l1"), false);
-  //m_Cloud->AppendLandmark(m_Points1Point2[0], m_Points1Point2[1], m_Points1Point2[2], _R("l2"), false);
-  //m_Cloud->AppendLandmark(m_Points1Point3[0], m_Points1Point3[1], m_Points1Point3[2], _R("l3"), false);
-  //m_Cloud->AppendLandmark(m_Points1Point4[0], m_Points1Point4[1], m_Points1Point4[2], _R("l4"), false);
-  //m_Cloud->AppendLandmark(m_Points1Point5[0], m_Points1Point5[1], m_Points1Point5[2], _R("l5"), false);
-  //m_Cloud->AppendLandmark(m_Points1Point6[0], m_Points1Point6[1], m_Points1Point6[2], _R("l6"), false);
+	//m_Cloud->AppendLandmark(m_Points1Point1[0], m_Points1Point1[1], m_Points1Point1[2], _R("l1"), false);
+	//m_Cloud->AppendLandmark(m_Points1Point2[0], m_Points1Point2[1], m_Points1Point2[2], _R("l2"), false);
+	//m_Cloud->AppendLandmark(m_Points1Point3[0], m_Points1Point3[1], m_Points1Point3[2], _R("l3"), false);
+	//m_Cloud->AppendLandmark(m_Points1Point4[0], m_Points1Point4[1], m_Points1Point4[2], _R("l4"), false);
+	//m_Cloud->AppendLandmark(m_Points1Point5[0], m_Points1Point5[1], m_Points1Point5[2], _R("l5"), false);
+	//m_Cloud->AppendLandmark(m_Points1Point6[0], m_Points1Point6[1], m_Points1Point6[2], _R("l6"), false);
 
-  m_PointsR1 = 30.0;
-  m_PointsR2 = 30.0;
-  m_PointsR3 = 30.0;
-  m_PointsPhiRes = 10.0;
-  m_PointsThetaRes = 10.0;
+	m_PointsR1 = 30.0;
+	m_PointsR2 = 30.0;
+	m_PointsR3 = 30.0;
+	m_PointsPhiRes = 10.0;
+	m_PointsThetaRes = 10.0;
 
-//  ellipseQ = new mafdmEllipsoid(0,0,0,30,30,20);
+	//  ellipseQ = new mafdmEllipsoid(0,0,0,30,30,20);
 
 
 
-  rotationMat = Matrix3d::Identity();
+	rotationMat = Matrix3d::Identity();
 
-  m_SphereRadius = 2.0;
-  m_SpherePhiRes = 10.0;
-  m_SphereTheRes = 10.0;
-  m_ConeHeight = 5.0;
-  m_ConeRadius = 2.0;
-  m_ConeCapping = 0;
-  m_ConeRes = 20.0;
-  m_ConeOrientationAxis = ID_X_AXIS;
-  m_CylinderHeight = 5.0;
-  m_CylinderRadius = 2.0;
-  m_CylinderRes = 20.0;
-  m_CylinderOrientationAxis = ID_Y_AXIS;
-  m_CubeXLength = 2.0;
-  m_CubeYLength = 2.0;
-  m_CubeZLength = 2.0;
-  m_PlaneXRes = 2.0;
-  m_PlaneYRes = 2.0;
-  m_PlaneOrigin[0] = m_PlaneOrigin[1] = m_PlaneOrigin[2] = 0;
-  m_PlanePoint1[0] = 2.0;
-  m_PlanePoint1[1] = m_PlanePoint1[2] = 0.0;
-  m_PlanePoint2[1] = 3.0;
-  m_PlanePoint2[0] = m_PlanePoint2[2] = 0.0;
-  m_EllipsoidXLenght = 1.0;
-  m_EllipsoidYLenght = 2.0;
-  m_EllipsoidZLenght = 3.0;
-  m_EllipsoidPhiRes = 10.0;
-  m_EllipsoidTheRes = 10.0;
-  m_PointsR1 = 0;
-  m_PointsR2 = 0;
-  m_PointsR3 = 0;
-  
-  m_EllipsoidOrientationAxis = ID_X_AXIS;
+	m_SphereRadius = 2.0;
+	m_SpherePhiRes = 10.0;
+	m_SphereTheRes = 10.0;
+	m_ConeHeight = 5.0;
+	m_ConeRadius = 2.0;
+	m_ConeCapping = 0;
+	m_ConeRes = 20.0;
+	m_ConeOrientationAxis = ID_X_AXIS;
+	m_CylinderHeight = 5.0;
+	m_CylinderRadius = 2.0;
+	m_CylinderRes = 20.0;
+	m_CylinderOrientationAxis = ID_Y_AXIS;
+	m_CubeXLength = 2.0;
+	m_CubeYLength = 2.0;
+	m_CubeZLength = 2.0;
+	m_PlaneXRes = 2.0;
+	m_PlaneYRes = 2.0;
+	m_PlaneOrigin[0] = m_PlaneOrigin[1] = m_PlaneOrigin[2] = 0;
+	m_PlanePoint1[0] = 2.0;
+	m_PlanePoint1[1] = m_PlanePoint1[2] = 0.0;
+	m_PlanePoint2[1] = 3.0;
+	m_PlanePoint2[0] = m_PlanePoint2[2] = 0.0;
+	m_EllipsoidXLenght = 1.0;
+	m_EllipsoidYLenght = 2.0;
+	m_EllipsoidZLenght = 3.0;
+	m_EllipsoidPhiRes = 10.0;
+	m_EllipsoidTheRes = 10.0;
+	m_PointsR1 = 0;
+	m_PointsR2 = 0;
+	m_PointsR3 = 0;
+
+	m_EllipsoidOrientationAxis = ID_X_AXIS;
 
 	m_Transform = mafTransform::NewSPtr();
-	mafVMEOutputSurface *output = mafVMEOutputSurface::New(); // an output with no data
+	mafVMEOutputSurface* output = mafVMEOutputSurface::New(); // an output with no data
 	output->SetTransform(m_Transform); // force my transform in the output
 	SetOutput(output);
 
@@ -218,7 +218,7 @@ mafVMEQuadricSurfaceFitting::mafVMEQuadricSurfaceFitting()
 
 	vtkNEW(m_PolyData);
 
-  // attach a data pipe which creates a bridge between VTK and MAF
+	// attach a data pipe which creates a bridge between VTK and MAF
 	auto dpipe = mafDataPipeCustom::NewSPtr();
 	dpipe->SetInputData(m_PolyData);
 	SetDataPipe(dpipe);
@@ -246,152 +246,152 @@ std::shared_ptr<mmaMaterial> mafVMEQuadricSurfaceFitting::GetMaterial()
 }
 
 //-------------------------------------------------------------------------
-int mafVMEQuadricSurfaceFitting::DeepCopy(mafNode *a)
-//-------------------------------------------------------------------------
-{ 
-  if (Superclass::DeepCopy(a)==MAF_OK)
-  {
-	  mafVMEQuadricSurfaceFitting *vmeQuadricSurface = mafVMEQuadricSurfaceFitting::SafeDownCast(a);
-	  m_Transform->SetMatrix(vmeQuadricSurface->m_Transform->GetMatrix());
-	  this->m_GeometryType = vmeQuadricSurface->m_GeometryType;
-	  this->m_SphereRadius = vmeQuadricSurface->m_SphereRadius;
-	  this->m_SpherePhiRes = vmeQuadricSurface->m_SpherePhiRes;
-	  this->m_SphereTheRes = vmeQuadricSurface->m_SphereTheRes;
-	  this->m_ConeHeight = vmeQuadricSurface->m_ConeHeight;
-	  this->m_ConeRadius = vmeQuadricSurface->m_ConeRadius;
-	  this->m_ConeCapping = vmeQuadricSurface->m_ConeCapping;
-	  this->m_ConeRes = vmeQuadricSurface->m_ConeRes;
-	  this->m_ConeOrientationAxis = vmeQuadricSurface->m_ConeOrientationAxis;
-	  this->m_CylinderHeight = vmeQuadricSurface->m_CylinderHeight;
-	  this->m_CylinderRadius = vmeQuadricSurface->m_CylinderRadius;
-	  this->m_CylinderRes = vmeQuadricSurface->m_CylinderRes;
-	  this->m_CylinderOrientationAxis = vmeQuadricSurface->m_CylinderOrientationAxis;
-	  this->m_CubeXLength = vmeQuadricSurface->m_CubeXLength;
-	  this->m_CubeYLength = vmeQuadricSurface->m_CubeYLength;
-	  this->m_CubeZLength = vmeQuadricSurface->m_CubeZLength;
-	  this->m_PlaneXRes = vmeQuadricSurface->m_PlaneXRes;
-	  this->m_PlaneYRes = vmeQuadricSurface->m_PlaneYRes;
-
-	  this->m_PlaneOrigin[0] = vmeQuadricSurface->m_PlaneOrigin[0];
-	  this->m_PlaneOrigin[1] = vmeQuadricSurface->m_PlaneOrigin[1];
-	  this->m_PlaneOrigin[2] = vmeQuadricSurface->m_PlaneOrigin[2];
-
-	  this->m_PlanePoint1[0] = vmeQuadricSurface->m_PlanePoint1[0];
-	  this->m_PlanePoint1[1] = vmeQuadricSurface->m_PlanePoint1[1];
-	  this->m_PlanePoint1[2] = vmeQuadricSurface->m_PlanePoint1[2];
-
-	  this->m_PlanePoint2[0] = vmeQuadricSurface->m_PlanePoint2[0];
-	  this->m_PlanePoint2[1] = vmeQuadricSurface->m_PlanePoint2[1];
-	  this->m_PlanePoint2[2] = vmeQuadricSurface->m_PlanePoint2[2];
-
-	  this->m_EllipsoidXLenght = vmeQuadricSurface->m_EllipsoidXLenght;
-	  this->m_EllipsoidYLenght = vmeQuadricSurface->m_EllipsoidYLenght;
-	  this->m_EllipsoidZLenght = vmeQuadricSurface->m_EllipsoidZLenght;
-	  this->m_EllipsoidPhiRes = vmeQuadricSurface->m_EllipsoidPhiRes;
-	  this->m_EllipsoidTheRes = vmeQuadricSurface->m_EllipsoidTheRes;
-	  this->m_EllipsoidOrientationAxis = vmeQuadricSurface->m_EllipsoidOrientationAxis;
-
-	  //this->m_Points1Point1[0] = vmeQuadricSurface->m_Points1Point1[0]; this->m_Points1Point1[1] = vmeQuadricSurface->m_Points1Point1[1]; this->m_Points1Point1[2] = vmeQuadricSurface->m_Points1Point1[2];
-	  //this->m_Points1Point2[0] = vmeQuadricSurface->m_Points1Point2[0]; this->m_Points1Point2[1] = vmeQuadricSurface->m_Points1Point2[1]; this->m_Points1Point2[2] = vmeQuadricSurface->m_Points1Point2[2];
-	  //this->m_Points1Point3[0] = vmeQuadricSurface->m_Points1Point3[0]; this->m_Points1Point3[1] = vmeQuadricSurface->m_Points1Point3[1]; this->m_Points1Point3[2] = vmeQuadricSurface->m_Points1Point3[2];
-	  //this->m_Points1Point4[0] = vmeQuadricSurface->m_Points1Point4[0]; this->m_Points1Point4[1] = vmeQuadricSurface->m_Points1Point4[1]; this->m_Points1Point4[2] = vmeQuadricSurface->m_Points1Point4[2];
-	  //this->m_Points1Point5[0] = vmeQuadricSurface->m_Points1Point5[0]; this->m_Points1Point5[1] = vmeQuadricSurface->m_Points1Point5[1]; this->m_Points1Point5[2] = vmeQuadricSurface->m_Points1Point5[2];
-	  //this->m_Points1Point6[0] = vmeQuadricSurface->m_Points1Point6[0]; this->m_Points1Point6[1] = vmeQuadricSurface->m_Points1Point6[1]; this->m_Points1Point6[2] = vmeQuadricSurface->m_Points1Point6[2];
-
-	  this->m_PointsR1 = vmeQuadricSurface->m_PointsR1;
-	  this->m_PointsR2 = vmeQuadricSurface->m_PointsR2;
-	  this->m_PointsR3 = vmeQuadricSurface->m_PointsR3;
-	  this->m_PointsXRes = vmeQuadricSurface->m_PointsXRes;
-	  this->m_PointsYRes = vmeQuadricSurface->m_PointsYRes;
-	  this->m_PointsZRes = vmeQuadricSurface->m_PointsZRes;
-	  this->m_PointsPhiRes = vmeQuadricSurface->m_PointsPhiRes;
-	  this->m_PointsThetaRes = vmeQuadricSurface->m_PointsThetaRes;
-	  this->rotationMat = vmeQuadricSurface->rotationMat;
-
-    mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
-    if (dpipe)
-    {
-      dpipe->SetInputData(m_PolyData);
-    }
-    InternalUpdate();
-    return MAF_OK;
-  }  
-  return MAF_ERROR;
-}
-
-//-------------------------------------------------------------------------
-bool mafVMEQuadricSurfaceFitting::Equals(mafVME *vme)
+int mafVMEQuadricSurfaceFitting::DeepCopy(mafNode* a)
 //-------------------------------------------------------------------------
 {
-  bool ret = false;
-  if (Superclass::Equals(vme))
-  {
-    if (     
-		m_Transform->GetMatrix() == ((mafVMEQuadricSurfaceFitting *)vme)->m_Transform->GetMatrix() &&
-		this->m_GeometryType == ((mafVMEQuadricSurfaceFitting *)vme)->m_GeometryType &&
-		this->m_SphereRadius == ((mafVMEQuadricSurfaceFitting *)vme)->m_SphereRadius &&
-		this->m_SpherePhiRes == ((mafVMEQuadricSurfaceFitting *)vme)->m_SpherePhiRes &&
-		this->m_SphereTheRes == ((mafVMEQuadricSurfaceFitting *)vme)->m_SphereTheRes &&
-		this->m_ConeHeight == ((mafVMEQuadricSurfaceFitting *)vme)->m_ConeHeight  &&
-		this->m_ConeRadius == ((mafVMEQuadricSurfaceFitting *)vme)->m_ConeRadius  &&
-		this->m_ConeCapping == ((mafVMEQuadricSurfaceFitting *)vme)->m_ConeCapping  &&
-		this->m_ConeRes == ((mafVMEQuadricSurfaceFitting *)vme)->m_ConeRes &&
-		this->m_ConeOrientationAxis == ((mafVMEQuadricSurfaceFitting *)vme)->m_ConeOrientationAxis &&
-		this->m_CylinderHeight == ((mafVMEQuadricSurfaceFitting *)vme)->m_CylinderHeight  &&
-		this->m_CylinderRadius == ((mafVMEQuadricSurfaceFitting *)vme)->m_CylinderRadius  &&
-		this->m_CylinderRes == ((mafVMEQuadricSurfaceFitting *)vme)->m_CylinderRes  &&
-		this->m_CylinderOrientationAxis == ((mafVMEQuadricSurfaceFitting *)vme)->m_CylinderOrientationAxis  &&
-		this->m_CubeXLength == ((mafVMEQuadricSurfaceFitting *)vme)->m_CubeXLength  &&
-		this->m_CubeYLength == ((mafVMEQuadricSurfaceFitting *)vme)->m_CubeYLength  &&
-		this->m_CubeZLength == ((mafVMEQuadricSurfaceFitting *)vme)->m_CubeZLength  &&
-		this->m_PlaneXRes == ((mafVMEQuadricSurfaceFitting *)vme)->m_PlaneXRes  &&
-		this->m_PlaneYRes == ((mafVMEQuadricSurfaceFitting *)vme)->m_PlaneYRes  &&
+	if (Superclass::DeepCopy(a) == MAF_OK)
+	{
+		mafVMEQuadricSurfaceFitting* vmeQuadricSurface = mafVMEQuadricSurfaceFitting::SafeDownCast(a);
+		m_Transform->SetMatrix(vmeQuadricSurface->m_Transform->GetMatrix());
+		this->m_GeometryType = vmeQuadricSurface->m_GeometryType;
+		this->m_SphereRadius = vmeQuadricSurface->m_SphereRadius;
+		this->m_SpherePhiRes = vmeQuadricSurface->m_SpherePhiRes;
+		this->m_SphereTheRes = vmeQuadricSurface->m_SphereTheRes;
+		this->m_ConeHeight = vmeQuadricSurface->m_ConeHeight;
+		this->m_ConeRadius = vmeQuadricSurface->m_ConeRadius;
+		this->m_ConeCapping = vmeQuadricSurface->m_ConeCapping;
+		this->m_ConeRes = vmeQuadricSurface->m_ConeRes;
+		this->m_ConeOrientationAxis = vmeQuadricSurface->m_ConeOrientationAxis;
+		this->m_CylinderHeight = vmeQuadricSurface->m_CylinderHeight;
+		this->m_CylinderRadius = vmeQuadricSurface->m_CylinderRadius;
+		this->m_CylinderRes = vmeQuadricSurface->m_CylinderRes;
+		this->m_CylinderOrientationAxis = vmeQuadricSurface->m_CylinderOrientationAxis;
+		this->m_CubeXLength = vmeQuadricSurface->m_CubeXLength;
+		this->m_CubeYLength = vmeQuadricSurface->m_CubeYLength;
+		this->m_CubeZLength = vmeQuadricSurface->m_CubeZLength;
+		this->m_PlaneXRes = vmeQuadricSurface->m_PlaneXRes;
+		this->m_PlaneYRes = vmeQuadricSurface->m_PlaneYRes;
 
-		this->m_PlaneOrigin[0] == ((mafVMEQuadricSurfaceFitting *)vme)->m_PlaneOrigin[0] &&
-		this->m_PlaneOrigin[1] == ((mafVMEQuadricSurfaceFitting *)vme)->m_PlaneOrigin[1] &&
-		this->m_PlaneOrigin[2] == ((mafVMEQuadricSurfaceFitting *)vme)->m_PlaneOrigin[2] &&
+		this->m_PlaneOrigin[0] = vmeQuadricSurface->m_PlaneOrigin[0];
+		this->m_PlaneOrigin[1] = vmeQuadricSurface->m_PlaneOrigin[1];
+		this->m_PlaneOrigin[2] = vmeQuadricSurface->m_PlaneOrigin[2];
 
-		this->m_PlanePoint1[0] == ((mafVMEQuadricSurfaceFitting *)vme)->m_PlanePoint1[0] &&
-		this->m_PlanePoint1[1] == ((mafVMEQuadricSurfaceFitting *)vme)->m_PlanePoint1[1] &&
-		this->m_PlanePoint1[2] == ((mafVMEQuadricSurfaceFitting *)vme)->m_PlanePoint1[2] &&
+		this->m_PlanePoint1[0] = vmeQuadricSurface->m_PlanePoint1[0];
+		this->m_PlanePoint1[1] = vmeQuadricSurface->m_PlanePoint1[1];
+		this->m_PlanePoint1[2] = vmeQuadricSurface->m_PlanePoint1[2];
 
-		this->m_PlanePoint2[0] == ((mafVMEQuadricSurfaceFitting *)vme)->m_PlanePoint2[0] &&
-		this->m_PlanePoint2[1] == ((mafVMEQuadricSurfaceFitting *)vme)->m_PlanePoint2[1] &&
-		this->m_PlanePoint2[2] == ((mafVMEQuadricSurfaceFitting *)vme)->m_PlanePoint2[2] &&
+		this->m_PlanePoint2[0] = vmeQuadricSurface->m_PlanePoint2[0];
+		this->m_PlanePoint2[1] = vmeQuadricSurface->m_PlanePoint2[1];
+		this->m_PlanePoint2[2] = vmeQuadricSurface->m_PlanePoint2[2];
 
-		this->m_EllipsoidXLenght == ((mafVMEQuadricSurfaceFitting *)vme)->m_EllipsoidXLenght &&
-		this->m_EllipsoidYLenght == ((mafVMEQuadricSurfaceFitting *)vme)->m_EllipsoidYLenght &&
-		this->m_EllipsoidZLenght == ((mafVMEQuadricSurfaceFitting *)vme)->m_EllipsoidZLenght &&
-		this->m_EllipsoidPhiRes == ((mafVMEQuadricSurfaceFitting *)vme)->m_EllipsoidPhiRes &&
-		this->m_EllipsoidTheRes == ((mafVMEQuadricSurfaceFitting *)vme)->m_EllipsoidTheRes &&
-		this->m_EllipsoidOrientationAxis == ((mafVMEQuadricSurfaceFitting *)vme)->m_EllipsoidOrientationAxis &&
+		this->m_EllipsoidXLenght = vmeQuadricSurface->m_EllipsoidXLenght;
+		this->m_EllipsoidYLenght = vmeQuadricSurface->m_EllipsoidYLenght;
+		this->m_EllipsoidZLenght = vmeQuadricSurface->m_EllipsoidZLenght;
+		this->m_EllipsoidPhiRes = vmeQuadricSurface->m_EllipsoidPhiRes;
+		this->m_EllipsoidTheRes = vmeQuadricSurface->m_EllipsoidTheRes;
+		this->m_EllipsoidOrientationAxis = vmeQuadricSurface->m_EllipsoidOrientationAxis;
 
-		this->m_PointsR1 == ((mafVMEQuadricSurfaceFitting *)vme)->m_PointsR1	&&
-		this->m_PointsR2 == ((mafVMEQuadricSurfaceFitting *)vme)->m_PointsR2	&&
-		this->m_PointsR3 == ((mafVMEQuadricSurfaceFitting *)vme)->m_PointsR3	&&
-		this->m_PointsXRes == ((mafVMEQuadricSurfaceFitting *)vme)->m_PointsXRes	&&
-		this->m_PointsYRes == ((mafVMEQuadricSurfaceFitting *)vme)->m_PointsYRes	&&
-		this->m_PointsZRes == ((mafVMEQuadricSurfaceFitting *)vme)->m_PointsZRes	&&
-		this->m_PointsPhiRes == ((mafVMEQuadricSurfaceFitting *)vme)->m_PointsPhiRes &&
-		this->m_PointsThetaRes == ((mafVMEQuadricSurfaceFitting *)vme)->m_PointsThetaRes &&
-		this->rotationMat == ((mafVMEQuadricSurfaceFitting *)vme)->rotationMat
+		//this->m_Points1Point1[0] = vmeQuadricSurface->m_Points1Point1[0]; this->m_Points1Point1[1] = vmeQuadricSurface->m_Points1Point1[1]; this->m_Points1Point1[2] = vmeQuadricSurface->m_Points1Point1[2];
+		//this->m_Points1Point2[0] = vmeQuadricSurface->m_Points1Point2[0]; this->m_Points1Point2[1] = vmeQuadricSurface->m_Points1Point2[1]; this->m_Points1Point2[2] = vmeQuadricSurface->m_Points1Point2[2];
+		//this->m_Points1Point3[0] = vmeQuadricSurface->m_Points1Point3[0]; this->m_Points1Point3[1] = vmeQuadricSurface->m_Points1Point3[1]; this->m_Points1Point3[2] = vmeQuadricSurface->m_Points1Point3[2];
+		//this->m_Points1Point4[0] = vmeQuadricSurface->m_Points1Point4[0]; this->m_Points1Point4[1] = vmeQuadricSurface->m_Points1Point4[1]; this->m_Points1Point4[2] = vmeQuadricSurface->m_Points1Point4[2];
+		//this->m_Points1Point5[0] = vmeQuadricSurface->m_Points1Point5[0]; this->m_Points1Point5[1] = vmeQuadricSurface->m_Points1Point5[1]; this->m_Points1Point5[2] = vmeQuadricSurface->m_Points1Point5[2];
+		//this->m_Points1Point6[0] = vmeQuadricSurface->m_Points1Point6[0]; this->m_Points1Point6[1] = vmeQuadricSurface->m_Points1Point6[1]; this->m_Points1Point6[2] = vmeQuadricSurface->m_Points1Point6[2];
 
+		this->m_PointsR1 = vmeQuadricSurface->m_PointsR1;
+		this->m_PointsR2 = vmeQuadricSurface->m_PointsR2;
+		this->m_PointsR3 = vmeQuadricSurface->m_PointsR3;
+		this->m_PointsXRes = vmeQuadricSurface->m_PointsXRes;
+		this->m_PointsYRes = vmeQuadricSurface->m_PointsYRes;
+		this->m_PointsZRes = vmeQuadricSurface->m_PointsZRes;
+		this->m_PointsPhiRes = vmeQuadricSurface->m_PointsPhiRes;
+		this->m_PointsThetaRes = vmeQuadricSurface->m_PointsThetaRes;
+		this->rotationMat = vmeQuadricSurface->rotationMat;
 
-      )
-    {
-      ret = true;
-    }
-  }
- return ret;
+		mafDataPipeCustom* dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
+		if (dpipe)
+		{
+			dpipe->SetInputData(m_PolyData);
+		}
+		InternalUpdate();
+		return MAF_OK;
+	}
+	return MAF_ERROR;
 }
+
 //-------------------------------------------------------------------------
-mafVMEOutputSurface *mafVMEQuadricSurfaceFitting::GetSurfaceOutput()
+bool mafVMEQuadricSurfaceFitting::Equals(mafVME* vme)
 //-------------------------------------------------------------------------
 {
-	return (mafVMEOutputSurface *)GetOutput();
+	bool ret = false;
+	if (Superclass::Equals(vme))
+	{
+		if (
+			m_Transform->GetMatrix() == ((mafVMEQuadricSurfaceFitting*)vme)->m_Transform->GetMatrix() &&
+			this->m_GeometryType == ((mafVMEQuadricSurfaceFitting*)vme)->m_GeometryType &&
+			this->m_SphereRadius == ((mafVMEQuadricSurfaceFitting*)vme)->m_SphereRadius &&
+			this->m_SpherePhiRes == ((mafVMEQuadricSurfaceFitting*)vme)->m_SpherePhiRes &&
+			this->m_SphereTheRes == ((mafVMEQuadricSurfaceFitting*)vme)->m_SphereTheRes &&
+			this->m_ConeHeight == ((mafVMEQuadricSurfaceFitting*)vme)->m_ConeHeight &&
+			this->m_ConeRadius == ((mafVMEQuadricSurfaceFitting*)vme)->m_ConeRadius &&
+			this->m_ConeCapping == ((mafVMEQuadricSurfaceFitting*)vme)->m_ConeCapping &&
+			this->m_ConeRes == ((mafVMEQuadricSurfaceFitting*)vme)->m_ConeRes &&
+			this->m_ConeOrientationAxis == ((mafVMEQuadricSurfaceFitting*)vme)->m_ConeOrientationAxis &&
+			this->m_CylinderHeight == ((mafVMEQuadricSurfaceFitting*)vme)->m_CylinderHeight &&
+			this->m_CylinderRadius == ((mafVMEQuadricSurfaceFitting*)vme)->m_CylinderRadius &&
+			this->m_CylinderRes == ((mafVMEQuadricSurfaceFitting*)vme)->m_CylinderRes &&
+			this->m_CylinderOrientationAxis == ((mafVMEQuadricSurfaceFitting*)vme)->m_CylinderOrientationAxis &&
+			this->m_CubeXLength == ((mafVMEQuadricSurfaceFitting*)vme)->m_CubeXLength &&
+			this->m_CubeYLength == ((mafVMEQuadricSurfaceFitting*)vme)->m_CubeYLength &&
+			this->m_CubeZLength == ((mafVMEQuadricSurfaceFitting*)vme)->m_CubeZLength &&
+			this->m_PlaneXRes == ((mafVMEQuadricSurfaceFitting*)vme)->m_PlaneXRes &&
+			this->m_PlaneYRes == ((mafVMEQuadricSurfaceFitting*)vme)->m_PlaneYRes &&
+
+			this->m_PlaneOrigin[0] == ((mafVMEQuadricSurfaceFitting*)vme)->m_PlaneOrigin[0] &&
+			this->m_PlaneOrigin[1] == ((mafVMEQuadricSurfaceFitting*)vme)->m_PlaneOrigin[1] &&
+			this->m_PlaneOrigin[2] == ((mafVMEQuadricSurfaceFitting*)vme)->m_PlaneOrigin[2] &&
+
+			this->m_PlanePoint1[0] == ((mafVMEQuadricSurfaceFitting*)vme)->m_PlanePoint1[0] &&
+			this->m_PlanePoint1[1] == ((mafVMEQuadricSurfaceFitting*)vme)->m_PlanePoint1[1] &&
+			this->m_PlanePoint1[2] == ((mafVMEQuadricSurfaceFitting*)vme)->m_PlanePoint1[2] &&
+
+			this->m_PlanePoint2[0] == ((mafVMEQuadricSurfaceFitting*)vme)->m_PlanePoint2[0] &&
+			this->m_PlanePoint2[1] == ((mafVMEQuadricSurfaceFitting*)vme)->m_PlanePoint2[1] &&
+			this->m_PlanePoint2[2] == ((mafVMEQuadricSurfaceFitting*)vme)->m_PlanePoint2[2] &&
+
+			this->m_EllipsoidXLenght == ((mafVMEQuadricSurfaceFitting*)vme)->m_EllipsoidXLenght &&
+			this->m_EllipsoidYLenght == ((mafVMEQuadricSurfaceFitting*)vme)->m_EllipsoidYLenght &&
+			this->m_EllipsoidZLenght == ((mafVMEQuadricSurfaceFitting*)vme)->m_EllipsoidZLenght &&
+			this->m_EllipsoidPhiRes == ((mafVMEQuadricSurfaceFitting*)vme)->m_EllipsoidPhiRes &&
+			this->m_EllipsoidTheRes == ((mafVMEQuadricSurfaceFitting*)vme)->m_EllipsoidTheRes &&
+			this->m_EllipsoidOrientationAxis == ((mafVMEQuadricSurfaceFitting*)vme)->m_EllipsoidOrientationAxis &&
+
+			this->m_PointsR1 == ((mafVMEQuadricSurfaceFitting*)vme)->m_PointsR1 &&
+			this->m_PointsR2 == ((mafVMEQuadricSurfaceFitting*)vme)->m_PointsR2 &&
+			this->m_PointsR3 == ((mafVMEQuadricSurfaceFitting*)vme)->m_PointsR3 &&
+			this->m_PointsXRes == ((mafVMEQuadricSurfaceFitting*)vme)->m_PointsXRes &&
+			this->m_PointsYRes == ((mafVMEQuadricSurfaceFitting*)vme)->m_PointsYRes &&
+			this->m_PointsZRes == ((mafVMEQuadricSurfaceFitting*)vme)->m_PointsZRes &&
+			this->m_PointsPhiRes == ((mafVMEQuadricSurfaceFitting*)vme)->m_PointsPhiRes &&
+			this->m_PointsThetaRes == ((mafVMEQuadricSurfaceFitting*)vme)->m_PointsThetaRes &&
+			this->rotationMat == ((mafVMEQuadricSurfaceFitting*)vme)->rotationMat
+
+
+			)
+		{
+			ret = true;
+		}
+	}
+	return ret;
 }
 //-------------------------------------------------------------------------
-void mafVMEQuadricSurfaceFitting::SetMatrix(const mafMatrix &mat)
+mafVMEOutputSurface* mafVMEQuadricSurfaceFitting::GetSurfaceOutput()
+//-------------------------------------------------------------------------
+{
+	return (mafVMEOutputSurface*)GetOutput();
+}
+//-------------------------------------------------------------------------
+void mafVMEQuadricSurfaceFitting::SetMatrix(const mafMatrix& mat)
 //-------------------------------------------------------------------------
 {
 	m_Transform->SetMatrix(mat);
@@ -404,98 +404,99 @@ bool mafVMEQuadricSurfaceFitting::IsAnimated()
 	return false;
 }
 //-------------------------------------------------------------------------
-void mafVMEQuadricSurfaceFitting::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)
+void mafVMEQuadricSurfaceFitting::GetLocalTimeStamps(std::vector<mafTimeStamp>& kframes)
 //-------------------------------------------------------------------------
 {
 	kframes.clear(); // no timestamps
-  mafTimeStamp t = m_Transform->GetMatrix().GetTimeStamp();
-  kframes.push_back(t);
+	mafTimeStamp t = m_Transform->GetMatrix().GetTimeStamp();
+	kframes.push_back(t);
 }
 //-------------------------------------------------------------------------
 mafGUI* mafVMEQuadricSurfaceFitting::CreateGui()
 //-------------------------------------------------------------------------
 {
-  mafVME::CreateGui();
-  if(m_Gui)
-  {
-	  mafString geometryType[2] = { _R("chooose a quadric"),_R("ellipsoid") };
-	  m_Gui->Combo(ID_GEOMETRY_TYPE, _R(""), &m_GeometryType, 2, geometryType);
-	  m_Gui->Divider(2);
-	
-	//CreateGuiSelectPoints();
-    //m_Gui->Divider(2);  
-    //CreateGuiPlane();
-	//m_Gui->Divider(2);
-	//CreateGuiCube();
-	//m_Gui->Divider(2);
-	//CreateGuiCylinder();
-	//m_Gui->Divider(2);
-	//CreateGuiCone();
-	//m_Gui->Divider(2);
-	//CreateGuiSphere();
-    //m_Gui->Divider(2);
-    //CreateGuiEllipsoid();
-	//m_Gui->Divider(2);
-	CreateGuiParentVerticesResult();
+	auto gui = mafVME::CreateGui();
+	if (gui)
+	{
+		mafString geometryType[2] = { _R("chooose a quadric"),_R("ellipsoid") };
+		gui->Combo(ID_GEOMETRY_TYPE, _R(""), &m_GeometryType, 2, geometryType);
+		gui->Divider(2);
 
-    m_Gui->FitGui();
-    
-    EnableQuadricSurfaceGui(m_GeometryType);
-    m_Gui->Update();
-  }
+		//CreateGuiSelectPoints();
+		//m_Gui->Divider(2);  
+		//CreateGuiPlane();
+		//m_Gui->Divider(2);
+		//CreateGuiCube();
+		//m_Gui->Divider(2);
+		//CreateGuiCylinder();
+		//m_Gui->Divider(2);
+		//CreateGuiCone();
+		//m_Gui->Divider(2);
+		//CreateGuiSphere();
+		//m_Gui->Divider(2);
+		//CreateGuiEllipsoid();
+		//m_Gui->Divider(2);
+		CreateGuiParentVerticesResult(gui);
 
-  m_Gui->Divider();
+		gui->FitGui();
 
-  wxBusyInfo wait("GUI created...");
-  return m_Gui;
+		EnableQuadricSurfaceGui(m_GeometryType);
+		gui->Update();
+	}
+
+	gui->Divider();
+
+	wxBusyInfo wait("GUI created...");
+	return gui;
 }
 //-------------------------------------------------------------------------
-void mafVMEQuadricSurfaceFitting::OnEvent(mafEventBase *maf_event)
+void mafVMEQuadricSurfaceFitting::OnEvent(mafEventBase* maf_event)
 //-------------------------------------------------------------------------
 {
-  // events to be sent up or down in the tree are simply forwarded
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    switch(e->GetId())
-    {
-      case ID_GEOMETRY_TYPE:
-      {  
-        EnableQuadricSurfaceGui(m_GeometryType);
-        m_Gui->Update();
-        InternalUpdate();
-        m_Gui->FitGui();
-      }
-		  break;
-	  //case CHANGE_VALUE_POINTS2:
-	  //case CHANGE_VALUE_POINTS3:
-	  //case CHANGE_VALUE_POINTS4:
-	  //case CHANGE_VALUE_POINTS5:
-	  //case CHANGE_VALUE_POINTS6:
-	  //case CHANGE_VALUE_POINTS7:
-	  //case CHANGE_VALUE_POINTS1:
-	  case CHANGE_VALUE_POINTS10:
-	  /*case  CHANGE_VALUE_SPHERE:
-	  case CHANGE_VALUE_CUBE:
-	  case CHANGE_VALUE_CONE:
-	  case CHANGE_VALUE_CYLINDER:
-	  case CHANGE_VALUE_PLANE:
-	  case CHANGE_VALUE_ELLIPSOID:*/
-      {
-        InternalUpdate();
-        e->SetId(CAMERA_UPDATE);
-        ForwardUpEvent(e);
-      }
-      break;
-      
-      default:
-        mafVME::OnEvent(maf_event);
-    }
-  }
-  
-  else
-  {
-    Superclass::OnEvent(maf_event);
-  }
+	// events to be sent up or down in the tree are simply forwarded
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
+	{
+		auto gui = AccessGUI();
+		switch (e->GetId())
+		{
+		case ID_GEOMETRY_TYPE:
+		{
+			EnableQuadricSurfaceGui(m_GeometryType);
+			UpdateGUI();
+			InternalUpdate();
+			gui->FitGui();
+		}
+		break;
+		//case CHANGE_VALUE_POINTS2:
+		//case CHANGE_VALUE_POINTS3:
+		//case CHANGE_VALUE_POINTS4:
+		//case CHANGE_VALUE_POINTS5:
+		//case CHANGE_VALUE_POINTS6:
+		//case CHANGE_VALUE_POINTS7:
+		//case CHANGE_VALUE_POINTS1:
+		case CHANGE_VALUE_POINTS10:
+			/*case  CHANGE_VALUE_SPHERE:
+			case CHANGE_VALUE_CUBE:
+			case CHANGE_VALUE_CONE:
+			case CHANGE_VALUE_CYLINDER:
+			case CHANGE_VALUE_PLANE:
+			case CHANGE_VALUE_ELLIPSOID:*/
+		{
+			InternalUpdate();
+			e->SetId(CAMERA_UPDATE);
+			ForwardUpEvent(e);
+		}
+		break;
+
+		default:
+			mafVME::OnEvent(maf_event);
+		}
+	}
+
+	else
+	{
+		Superclass::OnEvent(maf_event);
+	}
 }
 
 //-----------------------------------------------------------------------
@@ -508,18 +509,18 @@ void mafVMEQuadricSurfaceFitting::InternalPreUpdate()
 void mafVMEQuadricSurfaceFitting::InternalUpdate()
 //-----------------------------------------------------------------------
 {
-	switch(m_GeometryType)
+	switch (m_GeometryType)
 	{
 	case PARAMETRIC_SPHERE://6
 	{
-							  vtkNew<vtkSphereSource> surf;
-							  surf->SetRadius(m_SphereRadius);
-							  surf->SetPhiResolution(m_SpherePhiRes);
-							  surf->SetThetaResolution(m_SphereTheRes);
-							  surf->Update();
-							  m_PolyData->DeepCopy(surf->GetOutput());
+		vtkNew<vtkSphereSource> surf;
+		surf->SetRadius(m_SphereRadius);
+		surf->SetPhiResolution(m_SpherePhiRes);
+		surf->SetThetaResolution(m_SphereTheRes);
+		surf->Update();
+		m_PolyData->DeepCopy(surf->GetOutput());
 	}
-		break;
+	break;
 	/*case POINTS_SELECTION_Ellipsoid5://cone
 		{
 										 points->Initialize();
@@ -607,122 +608,122 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 	break;*/
 	case PARENT_POINTS:
 	{
-						  points->Reset();
-						  auto parent = this->GetParent();
-						  
-						  
-						  vtkPolyData* data;
-						  //vtkPointSet *ptset = vtkPointSet::New();
-						  vtkPoints* pts=vtkPoints::New();
-						  if (parent->IsMAFType(mafVMESurfaceParametric) || parent->IsMAFType(mafVMESurface) || parent->IsMAFType(mafVMELandmarkCloud))
-						  {
-
-							  if (parent->IsMAFType(mafVMESurfaceParametric))
-							  {
-								  data = mafVMESurfaceParametric::StaticDownCast(parent)->GetSurfaceOutput()->GetSurfaceData();
-									mafVMESurfaceParametric::StaticDownCast(parent)->GetSurfaceOutput()->Update();
-
-								  fitEllipsoid(data->GetPoints(), &m_PointsXRes, &m_PointsYRes, &m_PointsZRes, &m_PointsR1, &m_PointsR2, &m_PointsR3, &rotationMat);
-							  
-							  }
-							  if (parent->IsMAFType(mafVMESurface))
-							  {
-								  data = mafVMESurface::StaticDownCast(parent)->GetSurfaceOutput()->GetSurfaceData();
-									mafVMESurface::StaticDownCast(parent)->GetSurfaceOutput()->Update();
-								  fitEllipsoid(data->GetPoints(), &m_PointsXRes, &m_PointsYRes, &m_PointsZRes, &m_PointsR1, &m_PointsR2, &m_PointsR3, &rotationMat);
-							  }
-							  if (parent->IsMAFType(mafVMELandmarkCloud))
-							  {
-								 
-								  
-								 int nbrLndMarks = mafVMELandmarkCloud::StaticDownCast(parent)->GetNumberOfLandmarks();
-								  for (int i = 0; i<nbrLndMarks; i++)
-								  { 
-									  /*std::string str2 = "loop " + boost::lexical_cast<std::string>(i)+"//"+str20;
-									  wxString mafs2 = str2.c_str();
-									  wxBusyInfo wait00(mafs2);
-									  Sleep(0500);*/
-									  double posPt[3];
-										mafVMELandmarkCloud::StaticDownCast(parent)->GetLandmarkPosition(i, posPt, -1);
-									  
-									  pts->InsertNextPoint(posPt);
-									  
-								  }
-
-								  
-
-								//  data->SetPoints(pts);
-								  
-								  
-								  if (mafVMELandmarkCloud::StaticDownCast(parent)->GetPointSetOutput()->GetPointSetData())
-								  {
-									  
-									  data = mafVMELandmarkCloud::StaticDownCast(parent)->GetPointSetOutput()->GetPointSetData();
-										mafVMELandmarkCloud::StaticDownCast(parent)->GetPointSetOutput()->Update();
-									  fitEllipsoid(data->GetPoints(), &m_PointsXRes, &m_PointsYRes, &m_PointsZRes, &m_PointsR1, &m_PointsR2, &m_PointsR3, &rotationMat);
-								  }
-								  else
-								  {
-									  
-									  if (pts->GetNumberOfPoints()>0)
-										fitEllipsoid(pts, &m_PointsXRes, &m_PointsYRes, &m_PointsZRes, &m_PointsR1, &m_PointsR2, &m_PointsR3, &rotationMat);
-									  else
-									  {
-										  wxBusyInfo wait1("pts pb ");
-										  mafSleep(2500);
-									  }
-								  }
+		points->Reset();
+		auto parent = this->GetParent();
 
 
-								  vtkDEL(pts);
+		vtkPolyData* data;
+		//vtkPointSet *ptset = vtkPointSet::New();
+		vtkPoints* pts = vtkPoints::New();
+		if (parent->IsMAFType(mafVMESurfaceParametric) || parent->IsMAFType(mafVMESurface) || parent->IsMAFType(mafVMELandmarkCloud))
+		{
 
-							  }
-							  else
-							  {
-								  wxBusyInfo wait("input error ");
-								  mafSleep(2500);
-							  }
-							 
-							 	  
-							  
-							
-								 
-							  
-							 
-							  m_GuiParentVerticesResult->Update();
-							  m_Gui->Update();
+			if (parent->IsMAFType(mafVMESurfaceParametric))
+			{
+				data = mafVMESurfaceParametric::StaticDownCast(parent)->GetSurfaceOutput()->GetSurfaceData();
+				mafVMESurfaceParametric::StaticDownCast(parent)->GetSurfaceOutput()->Update();
 
+				fitEllipsoid(data->GetPoints(), &m_PointsXRes, &m_PointsYRes, &m_PointsZRes, &m_PointsR1, &m_PointsR2, &m_PointsR3, &rotationMat);
 
-							  //std::string str = "ellipse computed param" + boost::lexical_cast<std::string>(m_PointsR1)+" " + boost::lexical_cast<std::string>(m_PointsR2)+" " + boost::lexical_cast<std::string>(m_PointsR3);
-							  //wxString mafs = str.c_str();
-							  //wxBusyInfo wait(mafs);
-							  //Sleep(2500);
-
-							  vtkNew<vtkSphereSource> surf;
-							  surf->SetCenter(m_PointsXRes * (m_PointsR2 / m_PointsR1), m_PointsYRes * 1, m_PointsZRes * (m_PointsR2 / m_PointsR3));
-							  surf->SetRadius(m_PointsR2);
-							  surf->SetPhiResolution(m_PointsPhiRes);
-							  surf->SetThetaResolution(m_PointsThetaRes);
-							  surf->Update();
-							  vtkNew<vtkTransform> t;
-							  t->Scale(m_PointsR1 / m_PointsR2, 1, m_PointsR3 / m_PointsR2);
-							  t->Update();
-							  vtkNew<vtkTransformPolyDataFilter> ptf;
-							  ptf->SetTransform(t);
-							  ptf->SetInputConnection(surf->GetOutputPort());
-							  ptf->Update();
-
-							  m_PolyData->DeepCopy(ptf->GetOutput());
-
-							  m_Gui->Update();
+			}
+			if (parent->IsMAFType(mafVMESurface))
+			{
+				data = mafVMESurface::StaticDownCast(parent)->GetSurfaceOutput()->GetSurfaceData();
+				mafVMESurface::StaticDownCast(parent)->GetSurfaceOutput()->Update();
+				fitEllipsoid(data->GetPoints(), &m_PointsXRes, &m_PointsYRes, &m_PointsZRes, &m_PointsR1, &m_PointsR2, &m_PointsR3, &rotationMat);
+			}
+			if (parent->IsMAFType(mafVMELandmarkCloud))
+			{
 
 
-						  }
+				int nbrLndMarks = mafVMELandmarkCloud::StaticDownCast(parent)->GetNumberOfLandmarks();
+				for (int i = 0; i < nbrLndMarks; i++)
+				{
+					/*std::string str2 = "loop " + boost::lexical_cast<std::string>(i)+"//"+str20;
+					wxString mafs2 = str2.c_str();
+					wxBusyInfo wait00(mafs2);
+					Sleep(0500);*/
+					double posPt[3];
+					mafVMELandmarkCloud::StaticDownCast(parent)->GetLandmarkPosition(i, posPt, -1);
+
+					pts->InsertNextPoint(posPt);
+
+				}
 
 
-						 
 
-	
+				//  data->SetPoints(pts);
+
+
+				if (mafVMELandmarkCloud::StaticDownCast(parent)->GetPointSetOutput()->GetPointSetData())
+				{
+
+					data = mafVMELandmarkCloud::StaticDownCast(parent)->GetPointSetOutput()->GetPointSetData();
+					mafVMELandmarkCloud::StaticDownCast(parent)->GetPointSetOutput()->Update();
+					fitEllipsoid(data->GetPoints(), &m_PointsXRes, &m_PointsYRes, &m_PointsZRes, &m_PointsR1, &m_PointsR2, &m_PointsR3, &rotationMat);
+				}
+				else
+				{
+
+					if (pts->GetNumberOfPoints() > 0)
+						fitEllipsoid(pts, &m_PointsXRes, &m_PointsYRes, &m_PointsZRes, &m_PointsR1, &m_PointsR2, &m_PointsR3, &rotationMat);
+					else
+					{
+						wxBusyInfo wait1("pts pb ");
+						mafSleep(2500);
+					}
+				}
+
+
+				vtkDEL(pts);
+
+			}
+			else
+			{
+				wxBusyInfo wait("input error ");
+				mafSleep(2500);
+			}
+
+
+
+
+
+
+
+			m_GuiParentVerticesResult->Update();
+			UpdateGUI();
+
+
+			//std::string str = "ellipse computed param" + boost::lexical_cast<std::string>(m_PointsR1)+" " + boost::lexical_cast<std::string>(m_PointsR2)+" " + boost::lexical_cast<std::string>(m_PointsR3);
+			//wxString mafs = str.c_str();
+			//wxBusyInfo wait(mafs);
+			//Sleep(2500);
+
+			vtkNew<vtkSphereSource> surf;
+			surf->SetCenter(m_PointsXRes * (m_PointsR2 / m_PointsR1), m_PointsYRes * 1, m_PointsZRes * (m_PointsR2 / m_PointsR3));
+			surf->SetRadius(m_PointsR2);
+			surf->SetPhiResolution(m_PointsPhiRes);
+			surf->SetThetaResolution(m_PointsThetaRes);
+			surf->Update();
+			vtkNew<vtkTransform> t;
+			t->Scale(m_PointsR1 / m_PointsR2, 1, m_PointsR3 / m_PointsR2);
+			t->Update();
+			vtkNew<vtkTransformPolyDataFilter> ptf;
+			ptf->SetTransform(t);
+			ptf->SetInputConnection(surf->GetOutputPort());
+			ptf->Update();
+
+			m_PolyData->DeepCopy(ptf->GetOutput());
+
+			UpdateGUI();
+
+
+		}
+
+
+
+
+
 	}
 	break;
 	/*case POINTS_SELECTION_Ellipsoid3://cube
@@ -810,7 +811,7 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 	}
 	break;*/
 	/*case POINTS_SELECTION_Ellipsoid7://ellipsoid
-    {
+	{
 										 points->Initialize();
 										points->InsertNextPoint(m_Points7Point1[0], m_Points7Point1[1], m_Points7Point1[2]);
 										m_Cloud->SetLandmark(_R("l1"), m_Points7Point1[0], m_Points7Point1[1], m_Points7Point1[2]);
@@ -833,7 +834,7 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 										//m_PolyData->DeepCopy(ellipseQ->getOutput());
 
 										vtkNew<vtkSphereSource> surf;
-										surf->SetCenter(m_PointsXRes * (m_PointsR2 / m_PointsR1), m_PointsYRes * 1, m_PointsZRes * (m_PointsR2 / m_PointsR3)); 
+										surf->SetCenter(m_PointsXRes * (m_PointsR2 / m_PointsR1), m_PointsYRes * 1, m_PointsZRes * (m_PointsR2 / m_PointsR3));
 										surf->SetRadius(m_PointsR2);
 										surf->SetPhiResolution(m_PointsPhiRes);
 										surf->SetThetaResolution(m_PointsThetaRes);
@@ -850,11 +851,11 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 
 										m_Gui->Update();
 
-    }
-    break;
+	}
+	break;
 	*/
 	/*case POINTS_SELECTION_Ellipsoid1://points
-    {
+	{
 										 points->Initialize();
 										points->InsertNextPoint(m_Points1Point1[0], m_Points1Point1[1], m_Points1Point1[2]);
 										m_Cloud->SetLandmark(_R("l1"), m_Points1Point1[0], m_Points1Point1[1], m_Points1Point1[2]);
@@ -875,7 +876,7 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 										//ellipseQ->setSize(m_PointsR1, m_PointsR2, m_PointsR3);
 										//ellipseQ->setResolution(m_PointsPhiRes, m_PointsThetaRes);
 										//m_PolyData->DeepCopy(ellipseQ->getOutput());
-										
+
 
 
 										vtkNew<vtkSphereSource> surf;
@@ -896,49 +897,49 @@ void mafVMEQuadricSurfaceFitting::InternalUpdate()
 
 										m_Gui->Update();
 
-	
-    }
-    break;*/
+
+	}
+	break;*/
 	}
 
-  /*mafEvent ev(this,CAMERA_UPDATE);
-  this->ForwardUpEvent(&ev);*/
+	/*mafEvent ev(this,CAMERA_UPDATE);
+	this->ForwardUpEvent(&ev);*/
 }
 //-----------------------------------------------------------------------
 void mafVMEQuadricSurfaceFitting::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
-{  
-  Superclass::InternalStore(parent);
-  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
+{
+	Superclass::InternalStore(parent);
+	parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
 }
 
 //-----------------------------------------------------------------------
 void mafVMEQuadricSurfaceFitting::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  Superclass::InternalRestore(node);
-  m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
+	Superclass::InternalRestore(node);
+	m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
 }
 //-------------------------------------------------------------------------
 void mafVMEQuadricSurfaceFitting::SetGeometryType(int parametricSurfaceTypeID)
 //-------------------------------------------------------------------------
 {
-  m_GeometryType = parametricSurfaceTypeID;
-  Modified();
+	m_GeometryType = parametricSurfaceTypeID;
+	Modified();
 }
 //-------------------------------------------------------------------------
 void mafVMEQuadricSurfaceFitting::SetSphereRadius(double radius)
 //-------------------------------------------------------------------------
 {
-  m_SphereRadius = radius;
-  Modified();
+	m_SphereRadius = radius;
+	Modified();
 }
 //-------------------------------------------------------------------------
 const char** mafVMEQuadricSurfaceFitting::GetIcon()
 //-------------------------------------------------------------------------
 {
-  #include "mafVMEProcedural.xpm"
-  return mafVMEProcedural_xpm;
+#include "mafVMEProcedural.xpm"
+	return mafVMEProcedural_xpm;
 }
 
 
@@ -947,16 +948,16 @@ const char** mafVMEQuadricSurfaceFitting::GetIcon()
 {
 	m_GuiSelectPoints = new mafGUI(this);
 	m_GuiSelectPoints->Label(_R("Points Selection1"));
-	
-			
-		
+
+
+
 	m_GuiSelectPoints->Vector(CHANGE_VALUE_POINTS1, _L("l1"), m_Points1Point1);
 	m_GuiSelectPoints->Vector(CHANGE_VALUE_POINTS1, _L("l2"), m_Points1Point2);
-	m_GuiSelectPoints->Vector(CHANGE_VALUE_POINTS1, _L("l3"), m_Points1Point3); 
+	m_GuiSelectPoints->Vector(CHANGE_VALUE_POINTS1, _L("l3"), m_Points1Point3);
 	m_GuiSelectPoints->Vector(CHANGE_VALUE_POINTS1, _L("l4"), m_Points1Point4);
 	m_GuiSelectPoints->Vector(CHANGE_VALUE_POINTS1, _L("l5"), m_Points1Point5);
 	m_GuiSelectPoints->Vector(CHANGE_VALUE_POINTS1, _L("l6"), m_Points1Point6);
-	
+
 	m_GuiSelectPoints->Double(CHANGE_VALUE_POINTS1, _L("Phi Res"), &m_PointsPhiRes);
 	m_GuiSelectPoints->Double(CHANGE_VALUE_POINTS1, _L("Theta Res"), &m_PointsThetaRes);
 	m_Cloud->Update();
@@ -967,7 +968,7 @@ const char** mafVMEQuadricSurfaceFitting::GetIcon()
 void mafVMEQuadricSurfaceFitting::CreateGuiPlane()
 {
 	m_GuiPlane = new mafGUI(this);
-	
+
 	m_GuiPlane->Label(_R("Points Selection2"));
 	m_GuiPlane->Vector(CHANGE_VALUE_POINTS2, _L("l1"), m_Points2Point1);
 	m_GuiPlane->Vector(CHANGE_VALUE_POINTS2, _L("l2"), m_Points2Point2);
@@ -1007,7 +1008,7 @@ void mafVMEQuadricSurfaceFitting::CreateGuiCube()
 void mafVMEQuadricSurfaceFitting::CreateGuiCylinder()
 {
 	m_GuiCylinder = new mafGUI(this);
-	
+
 	m_GuiCylinder->Label(_R("Points Selection4"));
 	m_GuiCylinder->Vector(CHANGE_VALUE_POINTS4, _L("l1"), m_Points4Point1);
 	m_GuiCylinder->Vector(CHANGE_VALUE_POINTS4, _L("l2"), m_Points4Point2);
@@ -1073,7 +1074,7 @@ void mafVMEQuadricSurfaceFitting::CreateGuiEllipsoid()
 	m_Gui->AddGui(m_GuiEllipsoid);
 	m_Gui->Update();
 }*/
-void mafVMEQuadricSurfaceFitting::CreateGuiParentVerticesResult()
+void mafVMEQuadricSurfaceFitting::CreateGuiParentVerticesResult(mafGUI* gui)
 {
 	m_GuiParentVerticesResult = new mafGUI(this);
 	m_GuiParentVerticesResult->Label(_R("Result parameters"));
@@ -1083,10 +1084,10 @@ void mafVMEQuadricSurfaceFitting::CreateGuiParentVerticesResult()
 
 	m_GuiParentVerticesResult->Double(CHANGE_VALUE_POINTS10, _L("Phi Res"), &m_PointsPhiRes);
 	m_GuiParentVerticesResult->Double(CHANGE_VALUE_POINTS10, _L("Theta Res"), &m_PointsThetaRes);
-	
-	assert(m_Gui);
-	m_Gui->AddGui(m_GuiParentVerticesResult);
-	m_Gui->Update();
+
+	assert(gui);
+	gui->AddGui(m_GuiParentVerticesResult);
+	gui->Update();
 }
 
 
@@ -1153,7 +1154,7 @@ void  mafVMEQuadricSurfaceFitting::EnableGuiSelectPoints()
 	m_GuiSphere->Enable(CHANGE_VALUE_SPHERE, false);
 	m_GuiEllipsoid->Enable(CHANGE_VALUE_POINTS7, false);
 	m_GuiParentVerticesResult->Enable(CHANGE_VALUE_POINTS10, false);
-	
+
 }
 
 void mafVMEQuadricSurfaceFitting::EnableGuiSphere()
@@ -1183,107 +1184,107 @@ void mafVMEQuadricSurfaceFitting::EnableGuiEllipsoid()
 }*/
 void mafVMEQuadricSurfaceFitting::EnableGuiParentVerticesResult()
 {
-//	m_GuiSelectPoints->Enable(CHANGE_VALUE_POINTS1, false);
-//	m_GuiPlane->Enable(CHANGE_VALUE_POINTS2, false);
-//	m_GuiCube->Enable(CHANGE_VALUE_POINTS3, false);
-//	m_GuiCylinder->Enable(CHANGE_VALUE_POINTS4, false);
-//	m_GuiCone->Enable(CHANGE_VALUE_POINTS5, false);
-	//  m_GuiSphere->Enable(CHANGE_VALUE_POINTS6, false);
-//	m_GuiSphere->Enable(CHANGE_VALUE_SPHERE, false);
-//	m_GuiEllipsoid->Enable(CHANGE_VALUE_POINTS7, false);
+	//	m_GuiSelectPoints->Enable(CHANGE_VALUE_POINTS1, false);
+	//	m_GuiPlane->Enable(CHANGE_VALUE_POINTS2, false);
+	//	m_GuiCube->Enable(CHANGE_VALUE_POINTS3, false);
+	//	m_GuiCylinder->Enable(CHANGE_VALUE_POINTS4, false);
+	//	m_GuiCone->Enable(CHANGE_VALUE_POINTS5, false);
+		//  m_GuiSphere->Enable(CHANGE_VALUE_POINTS6, false);
+	//	m_GuiSphere->Enable(CHANGE_VALUE_SPHERE, false);
+	//	m_GuiEllipsoid->Enable(CHANGE_VALUE_POINTS7, false);
 	m_GuiParentVerticesResult->Enable(CHANGE_VALUE_POINTS10, true);
 }
 void mafVMEQuadricSurfaceFitting::EnableQuadricSurfaceGui(int surfaceTypeID)
 {
-  /*switch (surfaceTypeID)
-  {
-
-  case POINTS_SELECTION_Ellipsoid1:
-	EnableGuiSelectPoints();
-	if (DEBUG_MODE)
+	/*switch (surfaceTypeID)
 	{
-		std::ostringstream stringStream;
-		stringStream << "enabling Points selection gui" << std::endl;
-		mafLogMessage(_M(stringStream.str().c_str()));
-	}
-	break;
-  case PARAMETRIC_SPHERE:
-       EnableGuiSphere();
-       
-       if (DEBUG_MODE)
-         {
-           std::ostringstream stringStream;
-           stringStream << "enabling Sphere gui" << std::endl;
-		   mafLogMessage(_M(stringStream.str().c_str()));
-         }
-    break;
-  
-  case POINTS_SELECTION_Ellipsoid5:
-      EnableGuiCone();
-      if (DEBUG_MODE)
-      {
-        std::ostringstream stringStream;
-        stringStream << "enabling Cone gui" << std::endl;
-		mafLogMessage(_M(stringStream.str().c_str()));
-      }
 
-    break;
-    
-  case POINTS_SELECTION_Ellipsoid4:
-      EnableGuiCylinder();
-      if (DEBUG_MODE)
-      {
-        std::ostringstream stringStream;
-        stringStream << "enabling Cylinder gui" << std::endl;
-		mafLogMessage(_M(stringStream.str().c_str()));
-      }
-
-    break;
-  
-  case POINTS_SELECTION_Ellipsoid3:
-      EnableGuiCube();
-      if (DEBUG_MODE)
-      {
-        std::ostringstream stringStream;
-        stringStream << "enabling Cube gui" << std::endl;
-		mafLogMessage(_M(stringStream.str().c_str()));
-      }
-
-    break;
-
-  case POINTS_SELECTION_Ellipsoid2:
-      EnableGuiPlane();
-      if (DEBUG_MODE)
-      {
-        std::ostringstream stringStream;
-        stringStream << "enabling Plane gui" << std::endl;
-		mafLogMessage(_M(stringStream.str().c_str()));
-      }
-
-    break;
-
-  case POINTS_SELECTION_Ellipsoid7:
-      EnableGuiEllipsoid();
-      if (DEBUG_MODE)
-      {
-        std::ostringstream stringStream;
-        stringStream << "enabling Ellipsoid gui" << std::endl;
-		mafLogMessage(_M(stringStream.str().c_str()));
-      }
-
-      break;
-  case PARENT_POINTS:
-	  this->EnableGuiParentVerticesResult();
-
+	case POINTS_SELECTION_Ellipsoid1:
+	  EnableGuiSelectPoints();
 	  if (DEBUG_MODE)
 	  {
 		  std::ostringstream stringStream;
-		  stringStream << "enabling parent points" << std::endl;
+		  stringStream << "enabling Points selection gui" << std::endl;
 		  mafLogMessage(_M(stringStream.str().c_str()));
 	  }
-    default:
-      break;
-  }*/
+	  break;
+	case PARAMETRIC_SPHERE:
+		 EnableGuiSphere();
+
+		 if (DEBUG_MODE)
+		   {
+			 std::ostringstream stringStream;
+			 stringStream << "enabling Sphere gui" << std::endl;
+			 mafLogMessage(_M(stringStream.str().c_str()));
+		   }
+	  break;
+
+	case POINTS_SELECTION_Ellipsoid5:
+		EnableGuiCone();
+		if (DEBUG_MODE)
+		{
+		  std::ostringstream stringStream;
+		  stringStream << "enabling Cone gui" << std::endl;
+		  mafLogMessage(_M(stringStream.str().c_str()));
+		}
+
+	  break;
+
+	case POINTS_SELECTION_Ellipsoid4:
+		EnableGuiCylinder();
+		if (DEBUG_MODE)
+		{
+		  std::ostringstream stringStream;
+		  stringStream << "enabling Cylinder gui" << std::endl;
+		  mafLogMessage(_M(stringStream.str().c_str()));
+		}
+
+	  break;
+
+	case POINTS_SELECTION_Ellipsoid3:
+		EnableGuiCube();
+		if (DEBUG_MODE)
+		{
+		  std::ostringstream stringStream;
+		  stringStream << "enabling Cube gui" << std::endl;
+		  mafLogMessage(_M(stringStream.str().c_str()));
+		}
+
+	  break;
+
+	case POINTS_SELECTION_Ellipsoid2:
+		EnableGuiPlane();
+		if (DEBUG_MODE)
+		{
+		  std::ostringstream stringStream;
+		  stringStream << "enabling Plane gui" << std::endl;
+		  mafLogMessage(_M(stringStream.str().c_str()));
+		}
+
+	  break;
+
+	case POINTS_SELECTION_Ellipsoid7:
+		EnableGuiEllipsoid();
+		if (DEBUG_MODE)
+		{
+		  std::ostringstream stringStream;
+		  stringStream << "enabling Ellipsoid gui" << std::endl;
+		  mafLogMessage(_M(stringStream.str().c_str()));
+		}
+
+		break;
+	case PARENT_POINTS:
+		this->EnableGuiParentVerticesResult();
+
+		if (DEBUG_MODE)
+		{
+			std::ostringstream stringStream;
+			stringStream << "enabling parent points" << std::endl;
+			mafLogMessage(_M(stringStream.str().c_str()));
+		}
+	  default:
+		break;
+	}*/
 
 	this->EnableGuiParentVerticesResult();
 
@@ -1297,7 +1298,7 @@ void mafVMEQuadricSurfaceFitting::EnableQuadricSurfaceGui(int surfaceTypeID)
 
 //void SetInputPointsCloud(vtkSmartPointer<vtkPoints> points)
 
-void mafVMEQuadricSurfaceFitting::fitEllipsoid(vtkSmartPointer<vtkPoints> points, double* xres, double* yres, double* zres, double*r1, double* r2, double* r3, Matrix3d* rotationMatrix)
+void mafVMEQuadricSurfaceFitting::fitEllipsoid(vtkSmartPointer<vtkPoints> points, double* xres, double* yres, double* zres, double* r1, double* r2, double* r3, Matrix3d* rotationMatrix)
 {
 
 	//%%% see "Turner, 1999. An algorithm for fitting an ellipsoid to data"  eq 4 & 5
@@ -1369,7 +1370,7 @@ void mafVMEQuadricSurfaceFitting::fitEllipsoid(vtkSmartPointer<vtkPoints> points
 		v[4], v[5], v[2], v[8],
 		v[6], v[7], v[8], v[9];
 
-	for (int i = 0; i<10; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		cout << v[i] << endl;
 	}

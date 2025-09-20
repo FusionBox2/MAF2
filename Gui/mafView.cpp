@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafView
  Authors: Silvano Imboden - Paolo Quadrani
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -43,83 +43,77 @@ mafCxxTypeMacro(mafView);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafView::mafView(const mafString& label):m_Label(label), m_Name(_R(""))
+mafView::mafView(const mafString& label) :m_Label(label), m_Name(_R(""))
 //----------------------------------------------------------------------------
 {
-	m_Win						= NULL;
-  m_Frame					= NULL;
-	m_Gui					 	= NULL;
-  m_Id            = 0;
-  m_Mult          = 0;
+	m_Win = NULL;
+	m_Frame = NULL;
+	m_Id = 0;
+	m_Mult = 0;
 
-  m_NumberOfVisibleVme = 0;
+	m_NumberOfVisibleVme = 0;
 
-  m_PrintData = (wxPrintData*) NULL ;
+	m_PrintData = (wxPrintData*)NULL;
 
-  m_Picker2D          = NULL;
-  m_Picker3D          = NULL;
-  m_PickedVME         = NULL;
-  m_PickedProp        = NULL;
-  m_PickedPosition[0] = m_PickedPosition[1] = m_PickedPosition[2] = 0.0;
+	m_Picker2D = NULL;
+	m_Picker3D = NULL;
+	m_PickedVME = NULL;
+	m_PickedProp = NULL;
+	m_PickedPosition[0] = m_PickedPosition[1] = m_PickedPosition[2] = 0.0;
 
-  //parameters
-  m_Slice[0] = m_Slice[1] = m_Slice[2] =  0.;
-  m_Normal[0] = m_Normal[1] = m_Normal[2] =  0.;
+	//parameters
+	m_Slice[0] = m_Slice[1] = m_Slice[2] = 0.;
+	m_Normal[0] = m_Normal[1] = m_Normal[2] = 0.;
 
-  m_HTMLText = _R("");
-  m_LightCopyEnabled = false;
-  m_AllowCloseFlag = true;
+	m_HTMLText = _R("");
+	m_LightCopyEnabled = false;
+	m_AllowCloseFlag = true;
 }
-//----------------------------------------------------------------------------
-mafView::~mafView()
-//----------------------------------------------------------------------------
-{
-  cppDEL(m_Gui);
-}
-//----------------------------------------------------------------------------
-void mafView::OnEvent(mafEventBase *maf_event)
-//----------------------------------------------------------------------------
-{
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    switch(e->GetId()) 
-    {
-      case ID_PRINT_INFO:
-      {
-        std::stringstream stringStream;
-        stringStream << "[VIEW PRINTOUT:]\n";
-        Print(stringStream);
-        stringStream << std::endl;  
-        mafLogMessage(_M(stringStream.str().c_str()));
-      }
-      break;
-		
-	  case ID_HELP:
-	  {
-		mafEvent helpEvent;
-		helpEvent.SetSender(this);
-		mafString viewLabel = this->m_Label;
-		helpEvent.SetString(&viewLabel);
-		helpEvent.SetId(OPEN_HELP_PAGE);
-		InvokeEvent(helpEvent);
-	  }
-	  break;
 
-      default:
-        InvokeEvent(*maf_event);
-    }
-  }
-  else
-  {
-    InvokeEvent(*maf_event);
-  }
+mafView::~mafView() = default;
+
+void mafView::OnEvent(mafEventBase* maf_event)
+{
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
+	{
+		switch (e->GetId())
+		{
+		case ID_PRINT_INFO:
+		{
+			std::stringstream stringStream;
+			stringStream << "[VIEW PRINTOUT:]\n";
+			Print(stringStream);
+			stringStream << std::endl;
+			mafLogMessage(_M(stringStream.str().c_str()));
+		}
+		break;
+
+		case ID_HELP:
+		{
+			mafEvent helpEvent;
+			helpEvent.SetSender(this);
+			mafString viewLabel = this->m_Label;
+			helpEvent.SetString(&viewLabel);
+			helpEvent.SetId(OPEN_HELP_PAGE);
+			InvokeEvent(helpEvent);
+		}
+		break;
+
+		default:
+			InvokeEvent(*maf_event);
+		}
+	}
+	else
+	{
+		InvokeEvent(*maf_event);
+	}
 }
 
 bool mafView::Close(bool destroyFrame)
 {
 	if (m_AllowCloseFlag)
 	{
-		if(destroyFrame)
+		if (destroyFrame)
 		{
 		}
 	}
@@ -130,153 +124,153 @@ bool mafView::Close(bool destroyFrame)
 mafGUI* mafView::CreateGui()
 //-------------------------------------------------------------------------
 {
-  assert(m_Gui == NULL);
-  m_Gui = new mafGUI(this);
+	assert(!AccessGUI());
+	auto gui = new mafGUI(this);
 
-  mafString type_name = _R(GetTypeName());
-  
-  if((*GetMAFExpertMode()) == TRUE) 
-    m_Gui->Button(ID_PRINT_INFO, type_name, _R(""), _R("Print view debug information"));
+	mafString type_name = _R(GetTypeName());
 
-  mafEvent buildHelpGui;
-  buildHelpGui.SetSender(this);
-  buildHelpGui.SetId(GET_BUILD_HELP_GUI);
-  InvokeEvent(buildHelpGui);
+	if ((*GetMAFExpertMode()) == TRUE)
+		gui->Button(ID_PRINT_INFO, type_name, _R(""), _R("Print view debug information"));
 
-  if (buildHelpGui.GetArg())
-  {
-	  m_Gui->Button(ID_HELP, _R("Help"),_R(""));	
-  }
+	mafEvent buildHelpGui;
+	buildHelpGui.SetSender(this);
+	buildHelpGui.SetId(GET_BUILD_HELP_GUI);
+	InvokeEvent(buildHelpGui);
 
-  return m_Gui;
+	if (buildHelpGui.GetArg())
+	{
+		gui->Button(ID_HELP, _R("Help"), _R(""));
+	}
+
+	return gui;
 }
 //-------------------------------------------------------------------------
 bool mafView::Pick(int x, int y)
 //-------------------------------------------------------------------------
 {
-  return false;
+	return false;
 }
 //-------------------------------------------------------------------------
-bool mafView::Pick(mafMatrix &m)
+bool mafView::Pick(mafMatrix& m)
 //-------------------------------------------------------------------------
 {
-  return false;
+	return false;
 }
 //----------------------------------------------------------------------------
 void mafView::GetPickedPosition(double pos[3])
 //----------------------------------------------------------------------------
 {
-  pos[0] = m_PickedPosition[0];
-  pos[1] = m_PickedPosition[1];
-  pos[2] = m_PickedPosition[2];
+	pos[0] = m_PickedPosition[0];
+	pos[1] = m_PickedPosition[1];
+	pos[2] = m_PickedPosition[2];
 }
 //----------------------------------------------------------------------------
-bool mafView::FindPickedVme(vtkAssemblyPath *ap)
+bool mafView::FindPickedVme(vtkAssemblyPath* ap)
 //----------------------------------------------------------------------------
 {
-  vtkMAFAssembly *as = NULL;
+	vtkMAFAssembly* as = NULL;
 
-  if(ap)
-  {
-    //scan the path from the leaf finding an assembly
-    //which know the related vme.
-    int pathlen = ap->GetNumberOfItems();
-    for (int i=pathlen-1; i>=0; i--)
-    {
-      vtkAssemblyNode *an = (vtkAssemblyNode*)ap->GetItemAsObject(i);
-      if (an)
-      {
-        vtkProp *p = an->GetViewProp();
-        if(p && p->IsA("vtkMAFAssembly"))
-        {
-          as = (vtkMAFAssembly*)p;
-          m_PickedVME = mafVME::SafeDownCast(as->GetVme());
-          m_PickedProp = vtkProp3D::SafeDownCast(p);
-          return true;
-          break;
-        }
-      }
-    }
-  }
-  return false;
+	if (ap)
+	{
+		//scan the path from the leaf finding an assembly
+		//which know the related vme.
+		int pathlen = ap->GetNumberOfItems();
+		for (int i = pathlen - 1; i >= 0; i--)
+		{
+			vtkAssemblyNode* an = (vtkAssemblyNode*)ap->GetItemAsObject(i);
+			if (an)
+			{
+				vtkProp* p = an->GetViewProp();
+				if (p && p->IsA("vtkMAFAssembly"))
+				{
+					as = (vtkMAFAssembly*)p;
+					m_PickedVME = mafVME::SafeDownCast(as->GetVme());
+					m_PickedProp = vtkProp3D::SafeDownCast(p);
+					return true;
+					break;
+				}
+			}
+		}
+	}
+	return false;
 }
 //----------------------------------------------------------------------------
-void mafView::PrintBitmap(wxDC *dc, wxRect margins, wxBitmap *bmp)
+void mafView::PrintBitmap(wxDC* dc, wxRect margins, wxBitmap* bmp)
 //----------------------------------------------------------------------------
 {
-  assert(dc);
-  assert(bmp);
-  float iw = bmp->GetWidth();
-  float ih = bmp->GetHeight();
-  float maxX = iw;
-  float maxY = ih;
+	assert(dc);
+	assert(bmp);
+	float iw = bmp->GetWidth();
+	float ih = bmp->GetHeight();
+	float maxX = iw;
+	float maxY = ih;
 
-  // Add the margin to the graphic size
-  maxX += (margins.GetLeft() + margins.GetRight());
-  maxY += (margins.GetTop() + margins.GetBottom());
+	// Add the margin to the graphic size
+	maxX += (margins.GetLeft() + margins.GetRight());
+	maxY += (margins.GetTop() + margins.GetBottom());
 
-  // Get the size of the DC in pixels
-  int w,h;
-  dc->GetSize(&w, &h);
+	// Get the size of the DC in pixels
+	int w, h;
+	dc->GetSize(&w, &h);
 
-  // Calculate a suitable scaling factor
-  float scaleX=(float)(w/maxX);
-  float scaleY=(float)(h/maxY);
+	// Calculate a suitable scaling factor
+	float scaleX = (float)(w / maxX);
+	float scaleY = (float)(h / maxY);
 
-  // Use x or y scaling factor, whichever fits on the DC
-  float actualScale = wxMin(scaleX,scaleY);
+	// Use x or y scaling factor, whichever fits on the DC
+	float actualScale = wxMin(scaleX, scaleY);
 
-  // Calculate the position on the DC for centering the graphic
-  float posX = (float)((w - (iw*actualScale))/2.0);
-  float posY = (float)((h - (ih*actualScale))/2.0);
+	// Calculate the position on the DC for centering the graphic
+	float posX = (float)((w - (iw * actualScale)) / 2.0);
+	float posY = (float)((h - (ih * actualScale)) / 2.0);
 
-  // Set the scale and origin
-  dc->SetUserScale(actualScale, actualScale);
-  dc->SetDeviceOrigin( (long)posX, (long)posY );
+	// Set the scale and origin
+	dc->SetUserScale(actualScale, actualScale);
+	dc->SetDeviceOrigin((long)posX, (long)posY);
 
-  wxMemoryDC mdc; 
-  mdc.SelectObject(*bmp);
-  dc->SetBackground(*wxWHITE_BRUSH);
-  dc->Clear();
-  dc->Blit(0, 0, maxX, maxY, &mdc, 0, 0);
+	wxMemoryDC mdc;
+	mdc.SelectObject(*bmp);
+	dc->SetBackground(*wxWHITE_BRUSH);
+	dc->Clear();
+	dc->Blit(0, 0, maxX, maxY, &mdc, 0, 0);
 }
 
 //-------------------------------------------------------------------------
 void mafView::Print(std::ostream& os, const int tabs)// const
 //-------------------------------------------------------------------------
 {
-  mafIndent indent(tabs);
-  os << indent << "mafView" << '\t' << this << "\n";
+	mafIndent indent(tabs);
+	os << indent << "mafView" << '\t' << this << "\n";
 }
 
 //-------------------------------------------------------------------------
-double *mafView::GetSlice()// const
+double* mafView::GetSlice()// const
 //-------------------------------------------------------------------------
 {
-  return m_Slice;
+	return m_Slice;
 }
 
 //-------------------------------------------------------------------------
 void mafView::SetSlice(double slice[3])// const
 //-------------------------------------------------------------------------
 {
-  m_Slice[0] = slice[0];
-  m_Slice[1] = slice[1];
-  m_Slice[2] = slice[2];
+	m_Slice[0] = slice[0];
+	m_Slice[1] = slice[1];
+	m_Slice[2] = slice[2];
 }
 
 //-------------------------------------------------------------------------
-double *mafView::GetNormal()// const
+double* mafView::GetNormal()// const
 //-------------------------------------------------------------------------
 {
-  return m_Normal;
+	return m_Normal;
 }
 
 //-------------------------------------------------------------------------
 void mafView::SetNormal(double normal[3])// const
 //-------------------------------------------------------------------------
 {
-  m_Normal[0] = normal[0];
-  m_Normal[1] = normal[1];
-  m_Normal[2] = normal[2];
+	m_Normal[0] = normal[0];
+	m_Normal[1] = normal[1];
+	m_Normal[2] = normal[2];
 }

@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafVMELandmark
  Authors: Marco Petrone, Paolo Quadrani
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -51,137 +51,137 @@ mafCxxTypeMacro(mafVMELandmark);
 mafVMELandmark::mafVMELandmark()
 //-------------------------------------------------------------------------
 {
-  SetOutput(mafVMEOutputPointSet::New()); // create the output
+	SetOutput(mafVMEOutputPointSet::New()); // create the output
 
-  vtkNEW(m_Polydata);
-  vtkNew<vtkPoints> points;
-  points->InsertNextPoint(0,0,0);
-  m_Polydata->SetPoints(points);
+	vtkNEW(m_Polydata);
+	vtkNew<vtkPoints> points;
+	points->InsertNextPoint(0, 0, 0);
+	m_Polydata->SetPoints(points);
 
-  // add cellarray for visibility
-  vtkNew<vtkCellArray> cells;
-  m_Polydata->SetVerts(cells);
+	// add cellarray for visibility
+	vtkNew<vtkCellArray> cells;
+	m_Polydata->SetVerts(cells);
 
-  // add scalars for visibility attribute
-  vtkPointData* point_data = m_Polydata->GetPointData();
-  vtkNew<vtkBitArray> scalars;
-  scalars->SetNumberOfValues(1);
-  point_data->SetScalars(scalars);
+	// add scalars for visibility attribute
+	vtkPointData* point_data = m_Polydata->GetPointData();
+	vtkNew<vtkBitArray> scalars;
+	scalars->SetNumberOfValues(1);
+	point_data->SetScalars(scalars);
 
-  // attach a datapipe which creates a bridge between VTK and MAF
-  auto dpipe = mafDataPipeCustom::NewSPtr();
-  dpipe->SetDependOnAbsPose(true);
-  SetDataPipe(dpipe);
+	// attach a datapipe which creates a bridge between VTK and MAF
+	auto dpipe = mafDataPipeCustom::NewSPtr();
+	dpipe->SetDependOnAbsPose(true);
+	SetDataPipe(dpipe);
 
-  dpipe->SetInputData(m_Polydata);
-  m_Position[0] = m_Position[1] = m_Position[2] = _R("0.0");
-  m_LocalPosition[0] = m_LocalPosition[1] = m_LocalPosition[2] = _R("0.0");
+	dpipe->SetInputData(m_Polydata);
+	m_Position[0] = m_Position[1] = m_Position[2] = _R("0.0");
+	m_LocalPosition[0] = m_LocalPosition[1] = m_LocalPosition[2] = _R("0.0");
 }
 
 //-------------------------------------------------------------------------
 mafVMELandmark::~mafVMELandmark()
 //-------------------------------------------------------------------------
 {
-  vtkDEL(m_Polydata);
+	vtkDEL(m_Polydata);
 }
 //-------------------------------------------------------------------------
-int mafVMELandmark::DeepCopy(mafNode *a)
-//-------------------------------------------------------------------------
-{ 
-  if (Superclass::DeepCopy(a)==MAF_OK)
-  {
-    mafVMELandmark *lm = mafVMELandmark::SafeDownCast(a);
-    SetRadius(lm->GetRadius());
-    SetSphereResolution(lm->GetSphereResolution());
-    SetLandmarkVisibility(lm->GetLandmarkVisibility());
-    //double p[3];
-    //lm->GetPoint(p);
-    //SetPoint(p);
-
-    mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
-    if (dpipe)
-    {
-      dpipe->SetInputData(m_Polydata);
-      //m_Polydata->Update();
-    }
-
-    return MAF_OK;
-  }  
-  return MAF_ERROR;
-}
-
-//-------------------------------------------------------------------------
-bool mafVMELandmark::Equals(mafVME *vme)
+int mafVMELandmark::DeepCopy(mafNode* a)
 //-------------------------------------------------------------------------
 {
-  bool ret = false;
-  if (Superclass::Equals(vme))
-  {
-    mafVMELandmark *lm = mafVMELandmark::SafeDownCast(vme);
-    ret = (GetRadius() == lm->GetRadius() &&
-           GetSphereResolution() == lm->GetSphereResolution() &&
-           GetLandmarkVisibility() == lm->GetLandmarkVisibility());
-  }
-  return ret;
+	if (Superclass::DeepCopy(a) == MAF_OK)
+	{
+		mafVMELandmark* lm = mafVMELandmark::SafeDownCast(a);
+		SetRadius(lm->GetRadius());
+		SetSphereResolution(lm->GetSphereResolution());
+		SetLandmarkVisibility(lm->GetLandmarkVisibility());
+		//double p[3];
+		//lm->GetPoint(p);
+		//SetPoint(p);
+
+		mafDataPipeCustom* dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
+		if (dpipe)
+		{
+			dpipe->SetInputData(m_Polydata);
+			//m_Polydata->Update();
+		}
+
+		return MAF_OK;
+	}
+	return MAF_ERROR;
+}
+
+//-------------------------------------------------------------------------
+bool mafVMELandmark::Equals(mafVME* vme)
+//-------------------------------------------------------------------------
+{
+	bool ret = false;
+	if (Superclass::Equals(vme))
+	{
+		mafVMELandmark* lm = mafVMELandmark::SafeDownCast(vme);
+		ret = (GetRadius() == lm->GetRadius() &&
+			GetSphereResolution() == lm->GetSphereResolution() &&
+			GetLandmarkVisibility() == lm->GetLandmarkVisibility());
+	}
+	return ret;
 }
 
 //-------------------------------------------------------------------------
 int mafVMELandmark::InternalInitialize()
 //-------------------------------------------------------------------------
 {
-  if (Superclass::InternalInitialize()==MAF_OK)
-  {
-    // force material allocation
-    GetMaterial();
-    return MAF_OK;
-  }
-  return MAF_ERROR;
+	if (Superclass::InternalInitialize() == MAF_OK)
+	{
+		// force material allocation
+		GetMaterial();
+		return MAF_OK;
+	}
+	return MAF_ERROR;
 }
 
 //-----------------------------------------------------------------------
 void mafVMELandmark::InternalPreUpdate()
 //-----------------------------------------------------------------------
 {
-  // update the scalar value according to landmark visibility
-  m_Polydata->GetPointData()->GetScalars()->SetTuple1(0,GetLandmarkVisibility()?1:0);
-  m_Polydata->Modified();
+	// update the scalar value according to landmark visibility
+	m_Polydata->GetPointData()->GetScalars()->SetTuple1(0, GetLandmarkVisibility() ? 1 : 0);
+	m_Polydata->Modified();
 }
 
 //-------------------------------------------------------------------------
-bool mafVMELandmark::CanReparentTo(mafNode *parent)
+bool mafVMELandmark::CanReparentTo(mafNode* parent)
 //-------------------------------------------------------------------------
 {
-  if (mafVMELandmarkCloud *vlmc = mafVMELandmarkCloud::SafeDownCast(parent))
-  {  
-    if ( vlmc->IsOpen() && vlmc->FindLandmarkIndex(this->GetName())<0  )
-      return true;
-  }
-  else if (parent == NULL)
-  {
-    return Superclass::CanReparentTo(parent);
-  }
+	if (mafVMELandmarkCloud* vlmc = mafVMELandmarkCloud::SafeDownCast(parent))
+	{
+		if (vlmc->IsOpen() && vlmc->FindLandmarkIndex(this->GetName()) < 0)
+			return true;
+	}
+	else if (parent == NULL)
+	{
+		return Superclass::CanReparentTo(parent);
+	}
 
-  return false;
+	return false;
 }
 
 //-------------------------------------------------------------------------
 void mafVMELandmark::SetRadius(double rad)
 //-------------------------------------------------------------------------
 {
-  if (auto parent = mafVMELandmarkCloud::SafeDownCast(this->GetParent()))
-  {
-    parent->SetRadius(rad);
-  }
+	if (auto parent = mafVMELandmarkCloud::SafeDownCast(this->GetParent()))
+	{
+		parent->SetRadius(rad);
+	}
 }
 
 //-------------------------------------------------------------------------
 double mafVMELandmark::GetRadius()
 //-------------------------------------------------------------------------
 {
-  if (auto parent = mafVMELandmarkCloud::SafeDownCast(this->GetParent()))
-  {
-    return parent->GetRadius();
-  }
+	if (auto parent = mafVMELandmarkCloud::SafeDownCast(this->GetParent()))
+	{
+		return parent->GetRadius();
+	}
 	return -1;
 }
 
@@ -189,232 +189,230 @@ double mafVMELandmark::GetRadius()
 void mafVMELandmark::SetSphereResolution(int res)
 //-------------------------------------------------------------------------
 {
-  if (auto parent = mafVMELandmarkCloud::SafeDownCast(this->GetParent()))
-  {
-    parent->SetSphereResolution(res);
-  }
+	if (auto parent = mafVMELandmarkCloud::SafeDownCast(this->GetParent()))
+	{
+		parent->SetSphereResolution(res);
+	}
 }
 
 //-------------------------------------------------------------------------
 int mafVMELandmark::GetSphereResolution()
 //-------------------------------------------------------------------------
 {
-  if (auto parent = mafVMELandmarkCloud::SafeDownCast(this->GetParent()))
-  {
-    return parent->GetSphereResolution();
-  }
+	if (auto parent = mafVMELandmarkCloud::SafeDownCast(this->GetParent()))
+	{
+		return parent->GetSphereResolution();
+	}
 	return -1;
 }
 
 //-------------------------------------------------------------------------
-void mafVMELandmark::SetMatrix(mafMatrix &mat)
+void mafVMELandmark::SetMatrix(mafMatrix& mat)
 //-------------------------------------------------------------------------
 {
-  bool a = this->GetLandmarkVisibility(mat.GetTimeStamp());
-  double pos[3];
-  mafTransform::GetPosition(mat,pos);
-  mat.Identity();
-  mat.GetElements()[0][0]=a;
-  mat.GetElements()[1][1]=a;
-  mat.GetElements()[2][2]=a;
-  mafTransform::SetPosition(mat,pos);
-  this->Superclass::SetMatrix(mat);
+	bool a = this->GetLandmarkVisibility(mat.GetTimeStamp());
+	double pos[3];
+	mafTransform::GetPosition(mat, pos);
+	mat.Identity();
+	mat.GetElements()[0][0] = a;
+	mat.GetElements()[1][1] = a;
+	mat.GetElements()[2][2] = a;
+	mafTransform::SetPosition(mat, pos);
+	this->Superclass::SetMatrix(mat);
 }
 
 //-------------------------------------------------------------------------
-int mafVMELandmark::SetPoint(double x,double y,double z,mafTimeStamp t)
+int mafVMELandmark::SetPoint(double x, double y, double z, mafTimeStamp t)
 //-------------------------------------------------------------------------
 {
-  t = t < 0 ? this->m_CurrentTime : t;
-  this->SetPose(x,y,z,0,0,0,t);
-  return MAF_OK;
+	t = t < 0 ? this->m_CurrentTime : t;
+	this->SetPose(x, y, z, 0, 0, 0, t);
+	return MAF_OK;
 }
 
 //-------------------------------------------------------------------------
-int mafVMELandmark::SetPoint(double xyz[3],mafTimeStamp t)
+int mafVMELandmark::SetPoint(double xyz[3], mafTimeStamp t)
 //-------------------------------------------------------------------------
 {
-  t = t < 0 ? this->m_CurrentTime : t;
-  this->SetPose(xyz[0],xyz[1],xyz[2],0,0,0,t);
-  return MAF_OK;
+	t = t < 0 ? this->m_CurrentTime : t;
+	this->SetPose(xyz[0], xyz[1], xyz[2], 0, 0, 0, t);
+	return MAF_OK;
 }
 
 //-------------------------------------------------------------------------
-int mafVMELandmark::GetPoint(double &x,double &y,double &z,mafTimeStamp t)
+int mafVMELandmark::GetPoint(double& x, double& y, double& z, mafTimeStamp t)
 //-------------------------------------------------------------------------
 {
-  t = t < 0 ? this->m_CurrentTime : t;
-  
-  double ori[3];
-  this->GetOutput()->GetPose(x,y,z,ori[0],ori[1],ori[2],t);
-  return MAF_OK;
+	t = t < 0 ? this->m_CurrentTime : t;
+
+	double ori[3];
+	this->GetOutput()->GetPose(x, y, z, ori[0], ori[1], ori[2], t);
+	return MAF_OK;
 }
 
 //-------------------------------------------------------------------------
-int mafVMELandmark::GetPoint(double xyz[3],mafTimeStamp t)
+int mafVMELandmark::GetPoint(double xyz[3], mafTimeStamp t)
 //-------------------------------------------------------------------------
 {
-  t=t<0?this->m_CurrentTime:t;
-  double ori[3];
-  this->GetOutput()->GetPose(xyz,ori,t);
-  return MAF_OK;
+	t = t < 0 ? this->m_CurrentTime : t;
+	double ori[3];
+	this->GetOutput()->GetPose(xyz, ori, t);
+	return MAF_OK;
 }
 
 //-------------------------------------------------------------------------
-int mafVMELandmark::SetLandmarkVisibility(bool a,mafTimeStamp t)
+int mafVMELandmark::SetLandmarkVisibility(bool a, mafTimeStamp t)
 //-------------------------------------------------------------------------
 {
-  if (this->GetLandmarkVisibility(t)!=a)
-  {
-    mafMatrix mat;
-    this->GetOutput()->GetMatrix(mat, t);
-    mat.GetElements()[0][0]=a;   // Paolo 04-04-05
-    mat.GetElements()[1][1]=a;   // added 'a' instead of '0'
-    mat.GetElements()[2][2]=a;
-    this->Superclass::SetMatrix(mat); // Call Superclass::SetMatrix(mat) instead SetMatrix(mat) to avoid visibility overwriting
-  }
-  return MAF_OK;
+	if (this->GetLandmarkVisibility(t) != a)
+	{
+		mafMatrix mat;
+		this->GetOutput()->GetMatrix(mat, t);
+		mat.GetElements()[0][0] = a;   // Paolo 04-04-05
+		mat.GetElements()[1][1] = a;   // added 'a' instead of '0'
+		mat.GetElements()[2][2] = a;
+		this->Superclass::SetMatrix(mat); // Call Superclass::SetMatrix(mat) instead SetMatrix(mat) to avoid visibility overwriting
+	}
+	return MAF_OK;
 }
 //-------------------------------------------------------------------------
 bool mafVMELandmark::GetLandmarkVisibility(mafTimeStamp t)
 //-------------------------------------------------------------------------
 {
-  mafMatrix mat;
-  this->GetOutput()->GetMatrix(mat,t);
+	mafMatrix mat;
+	this->GetOutput()->GetMatrix(mat, t);
 
-  //if (mat->GetElements()[0][0]!=mat->GetElements()[1][1]||mat->GetElements()[0][0]!=mat->GetElements()[2][2]) // DEBUG Test
-  //  vtkErrorMacro("GetLandmarkVisibility: corrupted visibility information for landmark "<<this->GetName()<<" a time "<<t);
+	//if (mat->GetElements()[0][0]!=mat->GetElements()[1][1]||mat->GetElements()[0][0]!=mat->GetElements()[2][2]) // DEBUG Test
+	//  vtkErrorMacro("GetLandmarkVisibility: corrupted visibility information for landmark "<<this->GetName()<<" a time "<<t);
 
-  bool ret = mat.GetElements()[0][0] != 0;
-  return ret;
+	bool ret = mat.GetElements()[0][0] != 0;
+	return ret;
 }
 /*//-------------------------------------------------------------------------
 void mafVMELandmark::GetVMELocalSpaceBounds(mflBounds &bounds,mafTimeStamp t, mflVMEIterator *iter)
 //-------------------------------------------------------------------------
 {
   if (t<0)
-    t=this->m_CurrentTime;
+	t=this->m_CurrentTime;
 
   if (this->GetLandmarkVisibility(t))
   {
-    double radius=this->GetRadius();
-    for (int i=0;i<3;i++)
-    {
-      bounds.Bounds[2*i]=-radius;
-      bounds.Bounds[2*i+1]=+radius;
-    }
+	double radius=this->GetRadius();
+	for (int i=0;i<3;i++)
+	{
+	  bounds.Bounds[2*i]=-radius;
+	  bounds.Bounds[2*i+1]=+radius;
+	}
   }
   else
   {
-    bounds.Reset();
+	bounds.Reset();
   }
 }
 */
 //-------------------------------------------------------------------------
-void mafVMELandmark::Print(std::ostream &os, const int tabs)
+void mafVMELandmark::Print(std::ostream& os, const int tabs)
 //-------------------------------------------------------------------------
 {
-  mafIndent indent(tabs);
-  this->Superclass::Print(os, indent);
-  
-  double x,y,z,rx,ry,rz;
-  this->GetOutput()->GetPose(x,y,z,rx,ry,rz,this->m_CurrentTime);
+	mafIndent indent(tabs);
+	this->Superclass::Print(os, indent);
 
-  os << indent << "Current Landmark State: (" \
-    << x <<", "<< y <<", "<< z <<") Visibility = " \
-    << this->GetLandmarkVisibility(this->m_CurrentTime)<<std::endl;
+	double x, y, z, rx, ry, rz;
+	this->GetOutput()->GetPose(x, y, z, rx, ry, rz, this->m_CurrentTime);
+
+	os << indent << "Current Landmark State: (" \
+		<< x << ", " << y << ", " << z << ") Visibility = " \
+		<< this->GetLandmarkVisibility(this->m_CurrentTime) << std::endl;
 }
 //-------------------------------------------------------------------------
 mafGUI* mafVMELandmark::CreateGui()
 //-------------------------------------------------------------------------
 {
-  m_Gui = mafVME::CreateGui(); // Called to show info about vmes' type and name
-  double xyz[3],rxyz[3];
-  this->GetOutput()->GetAbsPose(xyz,rxyz);
-  m_Gui->Label(_R("abs pose:"));
-  m_Position[0] = mafString::Format(_R("x: %f"),xyz[0]);
-  m_Position[1] = mafString::Format(_R("y: %f"),xyz[1]);
-  m_Position[2] = mafString::Format(_R("z: %f"),xyz[2]);
-  m_Gui->Label(_R(""), &m_Position[0]);
-  m_Gui->Label(_R(""), &m_Position[1]);
-  m_Gui->Label(_R(""), &m_Position[2]);
-  this->GetPoint(xyz);
-  m_Gui->Label(_R("local pose:"));
-  m_LocalPosition[0] = mafString::Format(_R("x: %f"),xyz[0]);
-  m_LocalPosition[1] = mafString::Format(_R("y: %f"),xyz[1]);
-  m_LocalPosition[2] = mafString::Format(_R("z: %f"),xyz[2]);
-  m_Gui->Label(_R(""), &m_LocalPosition[0]);
-  m_Gui->Label(_R(""), &m_LocalPosition[1]);
-  m_Gui->Label(_R(""), &m_LocalPosition[2]);
-  m_Gui->Divider();
-	return m_Gui;
+	auto gui = mafVME::CreateGui(); // Called to show info about vmes' type and name
+	double xyz[3], rxyz[3];
+	this->GetOutput()->GetAbsPose(xyz, rxyz);
+	gui->Label(_R("abs pose:"));
+	m_Position[0] = mafString::Format(_R("x: %f"), xyz[0]);
+	m_Position[1] = mafString::Format(_R("y: %f"), xyz[1]);
+	m_Position[2] = mafString::Format(_R("z: %f"), xyz[2]);
+	gui->Label(_R(""), &m_Position[0]);
+	gui->Label(_R(""), &m_Position[1]);
+	gui->Label(_R(""), &m_Position[2]);
+	this->GetPoint(xyz);
+	gui->Label(_R("local pose:"));
+	m_LocalPosition[0] = mafString::Format(_R("x: %f"), xyz[0]);
+	m_LocalPosition[1] = mafString::Format(_R("y: %f"), xyz[1]);
+	m_LocalPosition[2] = mafString::Format(_R("z: %f"), xyz[2]);
+	gui->Label(_R(""), &m_LocalPosition[0]);
+	gui->Label(_R(""), &m_LocalPosition[1]);
+	gui->Label(_R(""), &m_LocalPosition[2]);
+	gui->Divider();
+	return gui;
 }
 
 //-------------------------------------------------------------------------
 std::shared_ptr<mmaMaterial> mafVMELandmark::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  std::shared_ptr<mmaMaterial> material;
-  if (GetParent())
-  {
-    material = mmaMaterial::SafeDownCast(GetParent()->GetAttribute(mmaMaterial::GetAttributeName()));
-  }
-  else
-  {
-    material = mmaMaterial::SafeDownCast(GetAttribute(mmaMaterial::GetAttributeName()));
-  }
-  if (!material)
-  {
-    material = mmaMaterial::NewSPtr();
-    SetAttribute(material);
-  }
-  if (m_Output)
-  {
-    ((mafVMEOutputPointSet *)m_Output)->SetMaterial(material);
-  }
-  return material;
+	std::shared_ptr<mmaMaterial> material;
+	if (GetParent())
+	{
+		material = mmaMaterial::SafeDownCast(GetParent()->GetAttribute(mmaMaterial::GetAttributeName()));
+	}
+	else
+	{
+		material = mmaMaterial::SafeDownCast(GetAttribute(mmaMaterial::GetAttributeName()));
+	}
+	if (!material)
+	{
+		material = mmaMaterial::NewSPtr();
+		SetAttribute(material);
+	}
+	if (m_Output)
+	{
+		((mafVMEOutputPointSet*)m_Output)->SetMaterial(material);
+	}
+	return material;
 }
 //-------------------------------------------------------------------------
-const char** mafVMELandmark::GetIcon() 
+const char** mafVMELandmark::GetIcon()
 //-------------------------------------------------------------------------
 {
 #include "mafVMELandmark.xpm"
-  return mafVMELandmark_xpm;
+	return mafVMELandmark_xpm;
 }
 //-------------------------------------------------------------------------
 void mafVMELandmark::SetTimeStamp(mafTimeStamp t)
 //-------------------------------------------------------------------------
 {
-  Superclass::SetTimeStamp(t);
-  this->GetOutput()->Update();
-  double xyz[3],rxyz[3];
-  this->GetOutput()->GetAbsPose(xyz,rxyz);  
-  m_Position[0] = mafString::Format(_R("x: %f"),xyz[0]);
-  m_Position[1] = mafString::Format(_R("y: %f"),xyz[1]);
-  m_Position[2] = mafString::Format(_R("z: %f"),xyz[2]);
-  this->GetPoint(xyz);
-  m_LocalPosition[0] = mafString::Format(_R("x: %f"),xyz[0]);
-  m_LocalPosition[1] = mafString::Format(_R("y: %f"),xyz[1]);
-  m_LocalPosition[2] = mafString::Format(_R("z: %f"),xyz[2]);
-  if(m_Gui)
-    m_Gui->Update();
+	Superclass::SetTimeStamp(t);
+	this->GetOutput()->Update();
+	double xyz[3], rxyz[3];
+	this->GetOutput()->GetAbsPose(xyz, rxyz);
+	m_Position[0] = mafString::Format(_R("x: %f"), xyz[0]);
+	m_Position[1] = mafString::Format(_R("y: %f"), xyz[1]);
+	m_Position[2] = mafString::Format(_R("z: %f"), xyz[2]);
+	this->GetPoint(xyz);
+	m_LocalPosition[0] = mafString::Format(_R("x: %f"), xyz[0]);
+	m_LocalPosition[1] = mafString::Format(_R("y: %f"), xyz[1]);
+	m_LocalPosition[2] = mafString::Format(_R("z: %f"), xyz[2]);
+	UpdateGUI();
 }
 //-------------------------------------------------------------------------
 void mafVMELandmark::InternalUpdate()
 //-------------------------------------------------------------------------
 {
-  double xyz[3],rxyz[3];
-  this->GetOutput()->GetAbsPose(xyz,rxyz);
+	double xyz[3], rxyz[3];
+	this->GetOutput()->GetAbsPose(xyz, rxyz);
 
-  m_Position[0] = mafString::Format(_R("x: %f"),xyz[0]);
-  m_Position[1] = mafString::Format(_R("y: %f"),xyz[1]);
-  m_Position[2] = mafString::Format(_R("z: %f"),xyz[2]);
+	m_Position[0] = mafString::Format(_R("x: %f"), xyz[0]);
+	m_Position[1] = mafString::Format(_R("y: %f"), xyz[1]);
+	m_Position[2] = mafString::Format(_R("z: %f"), xyz[2]);
 
-  this->GetPoint(xyz);
-  m_LocalPosition[0] = mafString::Format(_R("x: %f"),xyz[0]);
-  m_LocalPosition[1] = mafString::Format(_R("y: %f"),xyz[1]);
-  m_LocalPosition[2] = mafString::Format(_R("z: %f"),xyz[2]);
+	this->GetPoint(xyz);
+	m_LocalPosition[0] = mafString::Format(_R("x: %f"), xyz[0]);
+	m_LocalPosition[1] = mafString::Format(_R("y: %f"), xyz[1]);
+	m_LocalPosition[2] = mafString::Format(_R("z: %f"), xyz[2]);
 
-  if(m_Gui)
-    m_Gui->Update();
+	UpdateGUI();
 }

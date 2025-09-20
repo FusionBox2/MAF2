@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafVMERoot
  Authors: Marco Petrone
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -46,116 +46,116 @@ mafCxxTypeMacro(mafVMERoot)
 mafVMERoot::mafVMERoot()
 //-------------------------------------------------------------------------
 {
-  m_ApplicationStamp = _R("");
-  m_MaxItemId=-1;
-  m_Transform = mafTransform::NewSPtr();
-  mafVMEOutputNULL *output=mafVMEOutputNULL::New(); // an output with no data
-  output->SetTransform(m_Transform); // force my transform in the output
-  SetOutput(output);
+    m_ApplicationStamp = _R("");
+    m_MaxItemId = -1;
+    m_Transform = mafTransform::NewSPtr();
+    mafVMEOutputNULL* output = mafVMEOutputNULL::New(); // an output with no data
+    output->SetTransform(m_Transform); // force my transform in the output
+    SetOutput(output);
 }
 
 //-------------------------------------------------------------------------
 mafVMERoot::~mafVMERoot()
 //-------------------------------------------------------------------------
 {
-  SetOutput(NULL);
+    SetOutput(NULL);
 }
 
 //-------------------------------------------------------------------------
-bool mafVMERoot::Equals(mafVME *vme)
+bool mafVMERoot::Equals(mafVME* vme)
 //-------------------------------------------------------------------------
 {
-  if (Superclass::Equals(vme))
-  { 
-    return m_Transform->GetMatrix()==((mafVMERoot *)vme)->m_Transform->GetMatrix();
-  }
-  return false;
-}
-
-//-------------------------------------------------------------------------
-int mafVMERoot::DeepCopy(mafNode *a)
-//-------------------------------------------------------------------------
-{ 
-  if (Superclass::DeepCopy(a)==MAF_OK)
-  {
-    mafVMERoot *vme_root=mafVMERoot::SafeDownCast(a);
-    m_Transform->SetMatrix(vme_root->m_Transform->GetMatrix());
-    return MAF_OK;
-  }
-  else
-  {
-    mafErrorMacro("Cannot copy VME of type "<<a->GetTypeName()<<" into a VME \
-    VME of type "<<GetTypeName());
-
-    return MAF_ERROR;
-  }
-}
-
-
-//-------------------------------------------------------------------------
-void mafVMERoot::SetMatrix(const mafMatrix &mat)
-//-------------------------------------------------------------------------
-{
-  m_Transform->SetMatrix(mat);
-  Modified();
-}
-
-//-------------------------------------------------------------------------
-void mafVMERoot::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)
-//-------------------------------------------------------------------------
-{
-  kframes.clear();
-  mafTimeStamp t = m_Transform->GetMatrix().GetTimeStamp();
-  kframes.push_back(t);
-}
-
-//-------------------------------------------------------------------------
-void mafVMERoot::OnEvent(mafEventBase *maf_event)
-//-------------------------------------------------------------------------
-{
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    if (e->GetSender() == m_Gui)
+    if (Superclass::Equals(vme))
     {
-      if (e->GetId() == ID_APPLICATION_STAMP)
-      {
-        if(mafTagItem *ti = GetTagArray()->GetTag(_R("APP_STAMP")))
-        {
-          ti->SetValue(m_ApplicationStamp);
-        }
-        else
-        {
-          mafTagItem app_stamp_item;
-          app_stamp_item.SetName(_R("APP_STAMP"));
-          app_stamp_item.SetValue(m_ApplicationStamp);
-          GetTagArray()->SetTag(app_stamp_item);
-        }
-      }
-      else
-      {
-        // Bug Fixing for the root GUI event management
-        Superclass::OnEvent(maf_event);
-      }
-      mafEvent ev(this,VME_MODIFIED); ev.SetVme(this);
-      Root::InvokeEvent(&ev);
+        return m_Transform->GetMatrix() == ((mafVMERoot*)vme)->m_Transform->GetMatrix();
+    }
+    return false;
+}
+
+//-------------------------------------------------------------------------
+int mafVMERoot::DeepCopy(mafNode* a)
+//-------------------------------------------------------------------------
+{
+    if (Superclass::DeepCopy(a) == MAF_OK)
+    {
+        mafVMERoot* vme_root = mafVMERoot::SafeDownCast(a);
+        m_Transform->SetMatrix(vme_root->m_Transform->GetMatrix());
+        return MAF_OK;
     }
     else
     {
-      Root::InvokeEvent(maf_event);
+        mafErrorMacro("Cannot copy VME of type " << a->GetTypeName() << " into a VME \
+    VME of type " << GetTypeName());
+
+        return MAF_ERROR;
     }
-  }
-  else if (maf_event->GetChannel()==MCH_UP)
-  {
-    switch (maf_event->GetId())
+}
+
+
+//-------------------------------------------------------------------------
+void mafVMERoot::SetMatrix(const mafMatrix& mat)
+//-------------------------------------------------------------------------
+{
+    m_Transform->SetMatrix(mat);
+    Modified();
+}
+
+//-------------------------------------------------------------------------
+void mafVMERoot::GetLocalTimeStamps(std::vector<mafTimeStamp>& kframes)
+//-------------------------------------------------------------------------
+{
+    kframes.clear();
+    mafTimeStamp t = m_Transform->GetMatrix().GetTimeStamp();
+    kframes.push_back(t);
+}
+
+//-------------------------------------------------------------------------
+void mafVMERoot::OnEvent(mafEventBase* maf_event)
+//-------------------------------------------------------------------------
+{
+    if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
     {
-      default:
-        Root::InvokeEvent(maf_event);
+        if (e->GetSender() == AccessGUI())
+        {
+            if (e->GetId() == ID_APPLICATION_STAMP)
+            {
+                if (mafTagItem* ti = GetTagArray()->GetTag(_R("APP_STAMP")))
+                {
+                    ti->SetValue(m_ApplicationStamp);
+                }
+                else
+                {
+                    mafTagItem app_stamp_item;
+                    app_stamp_item.SetName(_R("APP_STAMP"));
+                    app_stamp_item.SetValue(m_ApplicationStamp);
+                    GetTagArray()->SetTag(app_stamp_item);
+                }
+            }
+            else
+            {
+                // Bug Fixing for the root GUI event management
+                Superclass::OnEvent(maf_event);
+            }
+            mafEvent ev(this, VME_MODIFIED); ev.SetVme(this);
+            Root::InvokeEvent(&ev);
+        }
+        else
+        {
+            Root::InvokeEvent(maf_event);
+        }
     }
-  }
-  else
-  {
-    Superclass::OnEvent(maf_event);
-  }
+    else if (maf_event->GetChannel() == MCH_UP)
+    {
+        switch (maf_event->GetId())
+        {
+        default:
+            Root::InvokeEvent(maf_event);
+        }
+    }
+    else
+    {
+        Superclass::OnEvent(maf_event);
+    }
 }
 
 void mafVMERoot::RenewIds(model::data::Node* node)
@@ -167,64 +167,60 @@ void mafVMERoot::RenewIds(model::data::Node* node)
 void mafVMERoot::Print(std::ostream& os, const int tabs)// const
 //-------------------------------------------------------------------------
 {
-  mafNode::Print(os,tabs);
-  Root::Print(os,tabs);
-  os << mafIndent(tabs) << "MaxItemId: " << m_MaxItemId << "\n";
+    mafNode::Print(os, tabs);
+    Root::Print(os, tabs);
+    os << mafIndent(tabs) << "MaxItemId: " << m_MaxItemId << "\n";
 }
 //-------------------------------------------------------------------------
-const char** mafVMERoot::GetIcon() 
+const char** mafVMERoot::GetIcon()
 //-------------------------------------------------------------------------
 {
 #include "mafVMERoot.xpm"
-  return mafVMERoot_xpm;
+    return mafVMERoot_xpm;
 }
 
 //-------------------------------------------------------------------------
 void mafVMERoot::InternalStore(mafStorageElementBuilder& parent)
 //-------------------------------------------------------------------------
 {
-  Superclass::InternalStore(parent);
-  StoreRoot(parent);
-  parent[_R("MaxItemId")].SetValue(m_MaxItemId);
-  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
+    Superclass::InternalStore(parent);
+    StoreRoot(parent);
+    parent[_R("MaxItemId")].SetValue(m_MaxItemId);
+    parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
 }
 
 //-------------------------------------------------------------------------
 void mafVMERoot::InternalRestore(const mafStorageElement& node)
 //-------------------------------------------------------------------------
 {
-  RestoreRoot(node);
-  m_MaxItemId = node[_R("MaxItemId")].As<mafID>();
-  Superclass::InternalRestore(node);
-  m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
+    RestoreRoot(node);
+    m_MaxItemId = node[_R("MaxItemId")].As<mafID>();
+    Superclass::InternalRestore(node);
+    m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
 }
 //-------------------------------------------------------------------------
 void mafVMERoot::Update()
 //-------------------------------------------------------------------------
 {
-  mafVME::Update();
-  if(mafTagItem *ti = GetTagArray()->GetTag(_R("APP_STAMP")))
-  {
-    m_ApplicationStamp = ti->GetValue();
-    if (m_Gui)
+    mafVME::Update();
+    if (mafTagItem* ti = GetTagArray()->GetTag(_R("APP_STAMP")))
     {
-      m_Gui->Update();
+        m_ApplicationStamp = ti->GetValue();
+        UpdateGUI();
     }
-  }
 }
 
 //-------------------------------------------------------------------------
-mafGUI *mafVMERoot::CreateGui()
+mafGUI* mafVMERoot::CreateGui()
 //-------------------------------------------------------------------------
 {
-  assert(m_Gui == NULL);
-  mafNode::CreateGui();
+    auto gui = mafNode::CreateGui();
 
-  if(mafTagItem *ti = GetTagArray()->GetTag(_R("APP_STAMP")))
-  {
-    m_ApplicationStamp = ti->GetValue();
-  }
-  m_Gui->String(ID_APPLICATION_STAMP, _R("app stamp"), &m_ApplicationStamp, _R("Tag to associate a msf file \nto a particular application."));
-  m_Gui->Divider();
-	return m_Gui;
+    if (auto ti = GetTagArray()->GetTag(_R("APP_STAMP")))
+    {
+        m_ApplicationStamp = ti->GetValue();
+    }
+    gui->String(ID_APPLICATION_STAMP, _R("app stamp"), &m_ApplicationStamp, _R("Tag to associate a msf file \nto a particular application."));
+    gui->Divider();
+    return gui;
 }

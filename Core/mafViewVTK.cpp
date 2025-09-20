@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafViewVTK
  Authors: Silvano Imboden - Paolo Quadrani
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -62,321 +62,321 @@ mafCxxTypeMacro(mafViewVTK);
 
 //----------------------------------------------------------------------------
 mafViewVTK::mafViewVTK(const mafString& label, int camera_position, bool show_axes, bool show_grid, bool show_ruler, int stereo, bool show_orientator, int axesType)
-:mafView(label)
-//----------------------------------------------------------------------------
+	:mafView(label)
+	//----------------------------------------------------------------------------
 {
-  m_CameraPositionId= camera_position;
-  m_ShowAxes        = show_axes;
-  m_ShowGrid        = show_grid;
-  m_StereoType      = stereo;
-  m_ShowRuler       = show_ruler;
-  m_ShowOrientator  = show_orientator;
-  m_AxesType = axesType;
+	m_CameraPositionId = camera_position;
+	m_ShowAxes = show_axes;
+	m_ShowGrid = show_grid;
+	m_StereoType = stereo;
+	m_ShowRuler = show_ruler;
+	m_ShowOrientator = show_orientator;
+	m_AxesType = axesType;
 
-  m_Sg        = NULL;
-  m_Rwi       = NULL;
-  m_LightKit  = NULL;
-  m_TextKit   = NULL;
-  m_AttachCamera = NULL;
-  m_AnimateKit = NULL;
+	m_Sg = NULL;
+	m_Rwi = NULL;
+	m_LightKit = NULL;
+	m_TextKit = NULL;
+	m_AttachCamera = NULL;
+	m_AnimateKit = NULL;
 }
 //----------------------------------------------------------------------------
-mafViewVTK::~mafViewVTK() 
+mafViewVTK::~mafViewVTK()
 //----------------------------------------------------------------------------
 {
-  m_PipeMap.clear();
+	m_PipeMap.clear();
 
-  vtkDEL(m_Picker2D);
-  vtkDEL(m_Picker3D);
-  cppDEL(m_AttachCamera);
-  cppDEL(m_LightKit);
-  cppDEL(m_TextKit);
-  cppDEL(m_AnimateKit);
-  cppDEL(m_Sg);
-  cppDEL(m_Rwi);
+	vtkDEL(m_Picker2D);
+	vtkDEL(m_Picker3D);
+	cppDEL(m_AttachCamera);
+	cppDEL(m_LightKit);
+	cppDEL(m_TextKit);
+	cppDEL(m_AnimateKit);
+	cppDEL(m_Sg);
+	cppDEL(m_Rwi);
 }
 //----------------------------------------------------------------------------
 void mafViewVTK::PlugVisualPipe(const mafString& vme_type, const mafString& pipe_type, long visibility)
 //----------------------------------------------------------------------------
 {
-  mafVisualPipeInfo plugged_pipe;
-  plugged_pipe.m_PipeName=pipe_type;
-  plugged_pipe.m_Visibility=visibility;
-  m_PipeMap[vme_type] = plugged_pipe;
+	mafVisualPipeInfo plugged_pipe;
+	plugged_pipe.m_PipeName = pipe_type;
+	plugged_pipe.m_Visibility = visibility;
+	m_PipeMap[vme_type] = plugged_pipe;
 }
 //----------------------------------------------------------------------------
-mafView *mafViewVTK::Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled)
+mafView* mafViewVTK::Copy(mafBaseEventHandler* Listener, bool lightCopyEnabled)
 //----------------------------------------------------------------------------
 {
-  m_LightCopyEnabled = lightCopyEnabled;
-  mafViewVTK *v = new mafViewVTK(GetLabel(), m_CameraPositionId, m_ShowAxes, m_ShowGrid, m_ShowRuler, m_StereoType, m_ShowOrientator, m_AxesType);
-  v->SetListener(Listener);
-  v->m_Id = m_Id;
-  v->m_PipeMap = m_PipeMap;
-  v->Create();
-  return v;
+	m_LightCopyEnabled = lightCopyEnabled;
+	mafViewVTK* v = new mafViewVTK(GetLabel(), m_CameraPositionId, m_ShowAxes, m_ShowGrid, m_ShowRuler, m_StereoType, m_ShowOrientator, m_AxesType);
+	v->SetListener(Listener);
+	v->m_Id = m_Id;
+	v->m_PipeMap = m_PipeMap;
+	v->Create();
+	return v;
 }
 //----------------------------------------------------------------------------
 void mafViewVTK::Create()
 //----------------------------------------------------------------------------
 {
-  if(m_LightCopyEnabled == true) return;
-  m_Rwi = new mafRWI(mafGetFrame(), ONE_LAYER, m_ShowGrid, m_ShowAxes, m_ShowRuler, m_StereoType, m_ShowOrientator, m_AxesType);
-  m_Rwi->SetListener(this);
-  m_Rwi->CameraSet(m_CameraPositionId);
-  m_Win = m_Rwi->m_RwiBase;
+	if (m_LightCopyEnabled == true) return;
+	m_Rwi = new mafRWI(mafGetFrame(), ONE_LAYER, m_ShowGrid, m_ShowAxes, m_ShowRuler, m_StereoType, m_ShowOrientator, m_AxesType);
+	m_Rwi->SetListener(this);
+	m_Rwi->CameraSet(m_CameraPositionId);
+	m_Win = m_Rwi->m_RwiBase;
 
-  m_Sg  = new mafSceneGraph(this,m_Rwi->m_RenFront,m_Rwi->m_RenBack,m_Rwi->m_AlwaysVisibleRenderer);
-  m_Sg->SetListener(this);
-  m_Rwi->m_Sg = m_Sg;
+	m_Sg = new mafSceneGraph(this, m_Rwi->m_RenFront, m_Rwi->m_RenBack, m_Rwi->m_AlwaysVisibleRenderer);
+	m_Sg->SetListener(this);
+	m_Rwi->m_Sg = m_Sg;
 
-  vtkNEW(m_Picker3D);
-  vtkNEW(m_Picker2D);
-  m_Picker2D->SetTolerance(0.001);
-  //m_Picker2D->InitializePickList();
+	vtkNEW(m_Picker3D);
+	vtkNEW(m_Picker2D);
+	m_Picker2D->SetTolerance(0.001);
+	//m_Picker2D->InitializePickList();
 }
 //----------------------------------------------------------------------------
-vtkRenderWindow *mafViewVTK::GetRenderWindow()
-//----------------------------------------------------------------------------
-{ 
-  return m_Rwi->m_RenderWindow;
-}
-
-//----------------------------------------------------------------------------
-vtkRenderer *mafViewVTK::GetFrontRenderer()
+vtkRenderWindow* mafViewVTK::GetRenderWindow()
 //----------------------------------------------------------------------------
 {
-  return m_Rwi->m_RenFront;
+	return m_Rwi->m_RenderWindow;
 }
+
 //----------------------------------------------------------------------------
-vtkRenderer *mafViewVTK::GetBackRenderer()
+vtkRenderer* mafViewVTK::GetFrontRenderer()
 //----------------------------------------------------------------------------
 {
-  return m_Rwi->m_RenBack;
+	return m_Rwi->m_RenFront;
 }
 //----------------------------------------------------------------------------
-vtkRenderer *mafViewVTK::GetAlwaysVisibleRenderer()
+vtkRenderer* mafViewVTK::GetBackRenderer()
 //----------------------------------------------------------------------------
 {
-  return m_Rwi->m_AlwaysVisibleRenderer;
+	return m_Rwi->m_RenBack;
+}
+//----------------------------------------------------------------------------
+vtkRenderer* mafViewVTK::GetAlwaysVisibleRenderer()
+//----------------------------------------------------------------------------
+{
+	return m_Rwi->m_AlwaysVisibleRenderer;
 }
 
 //----------------------------------------------------------------------------
 void mafViewVTK::VmeAdd(std::shared_ptr<mafNode> vme)
 //----------------------------------------------------------------------------
 {
-  assert(m_Sg); 
-  m_Sg->VmeAdd(vme);
-  if (m_AnimateKit && vme->IsMAFType(mafVMERoot))
-  {
-    m_AnimateKit->SetInputVME(vme.get());
-  }
+	assert(m_Sg);
+	m_Sg->VmeAdd(vme);
+	if (m_AnimateKit && vme->IsMAFType(mafVMERoot))
+	{
+		m_AnimateKit->SetInputVME(vme.get());
+	}
 }
 //----------------------------------------------------------------------------
-void mafViewVTK::VmeShow(mafNode *vme, bool show)												{assert(m_Sg); m_Sg->VmeShow(vme,show);}
-void mafViewVTK::VmeUpdateProperty(mafNode *vme, bool fromTag)	        {assert(m_Sg); m_Sg->VmeUpdateProperty(vme,fromTag);}
+void mafViewVTK::VmeShow(mafNode* vme, bool show) { assert(m_Sg); m_Sg->VmeShow(vme, show); }
+void mafViewVTK::VmeUpdateProperty(mafNode* vme, bool fromTag) { assert(m_Sg); m_Sg->VmeUpdateProperty(vme, fromTag); }
 //----------------------------------------------------------------------------
-int  mafViewVTK::GetNodeStatusI(mafNode *vme)
+int  mafViewVTK::GetNodeStatusI(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-  int status = m_Sg ? m_Sg->GetNodeStatus(vme) : NODE_NON_VISIBLE;
-  if (!m_PipeMap.empty())
-  {
-    mafString vme_type = _R(vme->GetTypeName());
-    auto it = m_PipeMap.find(vme_type);
-    if(it == m_PipeMap.end())
-      return status;
-    if(it->second.m_Visibility == NON_VISIBLE)
-    {
-      status = NODE_NON_VISIBLE;
-    }
-    else if(it->second.m_Visibility == MUTEX)
-    {
-      mafSceneNode *n = m_Sg->Vme2Node(vme);
-      if (n != NULL)
-      {
-      	n->m_Mutex = true;
-      }
-      status = m_Sg->GetNodeStatus(vme);
-    }
-  }
-  return status;
+	int status = m_Sg ? m_Sg->GetNodeStatus(vme) : NODE_NON_VISIBLE;
+	if (!m_PipeMap.empty())
+	{
+		mafString vme_type = _R(vme->GetTypeName());
+		auto it = m_PipeMap.find(vme_type);
+		if (it == m_PipeMap.end())
+			return status;
+		if (it->second.m_Visibility == NON_VISIBLE)
+		{
+			status = NODE_NON_VISIBLE;
+		}
+		else if (it->second.m_Visibility == MUTEX)
+		{
+			mafSceneNode* n = m_Sg->Vme2Node(vme);
+			if (n != NULL)
+			{
+				n->m_Mutex = true;
+			}
+			status = m_Sg->GetNodeStatus(vme);
+		}
+	}
+	return status;
 }
 //----------------------------------------------------------------------------
-void mafViewVTK::VmeRemove(mafNode *vme)
+void mafViewVTK::VmeRemove(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-  assert(m_Sg); 
-  m_Sg->VmeRemove(vme);
-  if (m_AnimateKit && vme->IsMAFType(mafVMERoot))
-  {
-    m_AnimateKit->ResetKit();
-  }
+	assert(m_Sg);
+	m_Sg->VmeRemove(vme);
+	if (m_AnimateKit && vme->IsMAFType(mafVMERoot))
+	{
+		m_AnimateKit->ResetKit();
+	}
 }
 //----------------------------------------------------------------------------
-void mafViewVTK::VmeSelect(mafNode *vme, bool select)
+void mafViewVTK::VmeSelect(mafNode* vme, bool select)
 //----------------------------------------------------------------------------
 {
-  assert(m_Sg); 
-  m_Sg->VmeSelect(vme,select);
+	assert(m_Sg);
+	m_Sg->VmeSelect(vme, select);
 }
 //----------------------------------------------------------------------------
-void mafViewVTK::CameraSet(int camera_position) 
+void mafViewVTK::CameraSet(int camera_position)
 //----------------------------------------------------------------------------
 {
-  assert(m_Rwi);
-  m_CameraPositionId = camera_position; 
-  m_Rwi->CameraSet(camera_position);
+	assert(m_Rwi);
+	m_CameraPositionId = camera_position;
+	m_Rwi->CameraSet(camera_position);
 }
 //----------------------------------------------------------------------------
-void mafViewVTK::CameraReset(mafNode *node)
+void mafViewVTK::CameraReset(mafNode* node)
 //----------------------------------------------------------------------------
 {
-  assert(m_Rwi); 
-  m_Rwi->CameraReset(node);
+	assert(m_Rwi);
+	m_Rwi->CameraReset(node);
 }
 //----------------------------------------------------------------------------
-void mafViewVTK::CameraUpdate() 
+void mafViewVTK::CameraUpdate()
 //----------------------------------------------------------------------------
 {
-  assert(m_Rwi); 
-  m_Rwi->CameraUpdate();
+	assert(m_Rwi);
+	m_Rwi->CameraUpdate();
 }
 //----------------------------------------------------------------------------
-std::shared_ptr<mafPipe> mafViewVTK::GetNodePipeI(mafNode *vme)
+std::shared_ptr<mafPipe> mafViewVTK::GetNodePipeI(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-   assert(m_Sg);
-   mafSceneNode *n = m_Sg->Vme2Node(vme);
-   if(!n) return NULL;
-   return n->m_Pipe;
+	assert(m_Sg);
+	mafSceneNode* n = m_Sg->Vme2Node(vme);
+	if (!n) return NULL;
+	return n->m_Pipe;
 }
 //----------------------------------------------------------------------------
-void mafViewVTK::GetVisualPipeName(mafNode *node, mafString &pipe_name)
+void mafViewVTK::GetVisualPipeName(mafNode* node, mafString& pipe_name)
 //----------------------------------------------------------------------------
 {
-  mafVME *v = mafVME::SafeDownCast(node);
-  assert(v);
+	mafVME* v = mafVME::SafeDownCast(node);
+	assert(v);
 
-  /*v->Modified();
-  vtkDataSet *data = v->GetOutput()->GetVTKData();
-  mafVMELandmarkCloud *lmc = mafVMELandmarkCloud::SafeDownCast(v);
-  mafVMELandmark *lm = mafVMELandmark::SafeDownCast(v);
-  if (lmc == NULL && data == NULL && lm == NULL)
-  {
-    pipe_name = _R("mafPipeBox");
-  }
-  else*/
-  {
-    // custom visualization for the view should be considered only
-    // if we are not in editing mode.
-    mafString vme_type = _R(v->GetTypeName());
-    auto it = m_PipeMap.find(vme_type);
-    if (it != m_PipeMap.end())
-    {
-      // pick up the visual pipe from the view's visual pipe map
-      pipe_name = it->second.m_PipeName;
-    }
-  }
+	/*v->Modified();
+	vtkDataSet *data = v->GetOutput()->GetVTKData();
+	mafVMELandmarkCloud *lmc = mafVMELandmarkCloud::SafeDownCast(v);
+	mafVMELandmark *lm = mafVMELandmark::SafeDownCast(v);
+	if (lmc == NULL && data == NULL && lm == NULL)
+	{
+	  pipe_name = _R("mafPipeBox");
+	}
+	else*/
+	{
+		// custom visualization for the view should be considered only
+		// if we are not in editing mode.
+		mafString vme_type = _R(v->GetTypeName());
+		auto it = m_PipeMap.find(vme_type);
+		if (it != m_PipeMap.end())
+		{
+			// pick up the visual pipe from the view's visual pipe map
+			pipe_name = it->second.m_PipeName;
+		}
+	}
 
-  if(pipe_name.empty())
-  {
-    // pick up the default visual pipe from the vme
-    pipe_name = v->GetVisualPipe();
-  }
+	if (pipe_name.empty())
+	{
+		// pick up the default visual pipe from the vme
+		pipe_name = v->GetVisualPipe();
+	}
 }
 //----------------------------------------------------------------------------
-void mafViewVTK::VmeCreatePipe(mafNode *vme)
+void mafViewVTK::VmeCreatePipe(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-  mafString pipe_name;
-  GetVisualPipeName(vme, pipe_name);
+	mafString pipe_name;
+	GetVisualPipeName(vme, pipe_name);
 
-  if (!pipe_name.empty())
-  {
-    m_NumberOfVisibleVme++;
-    auto pipe = PipeFactory::CreatePipe(pipe_name.GetCStr());
-    if (pipe)
-    {
-      pipe->SetListener(this);
-      mafSceneNode *n = m_Sg->Vme2Node(vme);
-      assert(n && !n->m_Pipe);
-      pipe->Create(vme, this);
-      n->m_Pipe = pipe;
-    }
-    else
-    {
-      mafErrorMessage(_M(_L("Cannot create visual pipe object of type \"") + pipe_name + _L("\"!")));
-    }
-  }
+	if (!pipe_name.empty())
+	{
+		m_NumberOfVisibleVme++;
+		auto pipe = PipeFactory::CreatePipe(pipe_name.GetCStr());
+		if (pipe)
+		{
+			pipe->SetListener(this);
+			mafSceneNode* n = m_Sg->Vme2Node(vme);
+			assert(n && !n->m_Pipe);
+			pipe->Create(vme, this);
+			n->m_Pipe = pipe;
+		}
+		else
+		{
+			mafErrorMessage(_M(_L("Cannot create visual pipe object of type \"") + pipe_name + _L("\"!")));
+		}
+	}
 }
 //----------------------------------------------------------------------------
-void mafViewVTK::VmeDeletePipe(mafNode *vme)
+void mafViewVTK::VmeDeletePipe(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-  m_NumberOfVisibleVme--;
-  mafSceneNode *n = m_Sg->Vme2Node(vme);
-  assert(n && n->m_Pipe);
-  n->m_Pipe.reset();
+	m_NumberOfVisibleVme--;
+	mafSceneNode* n = m_Sg->Vme2Node(vme);
+	assert(n && n->m_Pipe);
+	n->m_Pipe.reset();
 }
 //-------------------------------------------------------------------------
-mafGUI *mafViewVTK::CreateGui()
+mafGUI* mafViewVTK::CreateGui()
 //-------------------------------------------------------------------------
 {
-  assert(m_Gui == NULL);
-  m_Gui = mafView::CreateGui(); //new mafGUI(this);
-  m_Gui->AddGui(m_Rwi->GetGui());
-  
-  /////////////////////////////////////////Attach Camera GUI
-  m_AttachCamera = new mafAttachCamera(m_Gui, m_Rwi, this);
-  m_Gui->RollOut(ID_ROLLOUT_ATTACH_CAMERA, _R(" Attach camera"), m_AttachCamera->GetGui(), false);
+	assert(!AccessGUI());
+	auto gui = mafView::CreateGui(); //new mafGUI(this);
+	gui->AddGui(m_Rwi->GetGui());
 
-  /////////////////////////////////////////Text GUI
-  m_TextKit = new mafTextKit(m_Gui, m_Rwi->m_RenFront, this);
-  m_Gui->RollOut(ID_ROLLOUT_TEXT_KIT, _R(" Text kit"), m_TextKit->GetGui(), false);
+	/////////////////////////////////////////Attach Camera GUI
+	m_AttachCamera = new mafAttachCamera(gui, m_Rwi, this);
+	gui->RollOut(ID_ROLLOUT_ATTACH_CAMERA, _R(" Attach camera"), m_AttachCamera->GetGui(), false);
 
-  /////////////////////////////////////////Light GUI
-  m_LightKit = new mafLightKit(m_Gui, m_Rwi->m_RenFront, this);
-  m_Gui->RollOut(ID_ROLLOUT_LIGHT_KIT, _R(" Light kit"), m_LightKit->GetGui(), false);
-  
-  // Animate kit
-  m_AnimateKit = new mafAnimate(m_Rwi->m_RenFront,m_Sg->GetSelectedVme()->GetRoot(),this);
-  m_Gui->RollOut(ID_ROLLOUT_ANIMATE_KIT, _R(" Animate kit"), m_AnimateKit->GetGui(), false);
+	/////////////////////////////////////////Text GUI
+	m_TextKit = new mafTextKit(gui, m_Rwi->m_RenFront, this);
+	gui->RollOut(ID_ROLLOUT_TEXT_KIT, _R(" Text kit"), m_TextKit->GetGui(), false);
 
-  m_Gui->Divider();
+	/////////////////////////////////////////Light GUI
+	m_LightKit = new mafLightKit(gui, m_Rwi->m_RenFront, this);
+	gui->RollOut(ID_ROLLOUT_LIGHT_KIT, _R(" Light kit"), m_LightKit->GetGui(), false);
 
-  return m_Gui;
+	// Animate kit
+	m_AnimateKit = new mafAnimate(m_Rwi->m_RenFront, m_Sg->GetSelectedVme()->GetRoot(), this);
+	gui->RollOut(ID_ROLLOUT_ANIMATE_KIT, _R(" Animate kit"), m_AnimateKit->GetGui(), false);
+
+	gui->Divider();
+
+	return gui;
 }
 //----------------------------------------------------------------------------
-void mafViewVTK::OnEvent(mafEventBase *maf_event)
+void mafViewVTK::OnEvent(mafEventBase* maf_event)
 //----------------------------------------------------------------------------
 {
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    switch(e->GetId()) 
-    {
-      case CAMERA_PRE_RESET:
-        OnPreResetCamera();
-        InvokeEvent(*maf_event);
-      break;
-      case CAMERA_POST_RESET:
-        OnPostResetCamera();
-        InvokeEvent(*maf_event);
-      break;
-      case ID_ROLLOUT_ATTACH_CAMERA:
-      case ID_ROLLOUT_TEXT_KIT:
-      case ID_ROLLOUT_LIGHT_KIT:
-      case ID_ROLLOUT_ANIMATE_KIT:
-      break;
-      default:
-        Superclass::OnEvent(maf_event);
-      break;
-    }
-  }
-  else
-  {
-    InvokeEvent(*maf_event);
-  }
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
+	{
+		switch (e->GetId())
+		{
+		case CAMERA_PRE_RESET:
+			OnPreResetCamera();
+			InvokeEvent(*maf_event);
+			break;
+		case CAMERA_POST_RESET:
+			OnPostResetCamera();
+			InvokeEvent(*maf_event);
+			break;
+		case ID_ROLLOUT_ATTACH_CAMERA:
+		case ID_ROLLOUT_TEXT_KIT:
+		case ID_ROLLOUT_LIGHT_KIT:
+		case ID_ROLLOUT_ANIMATE_KIT:
+			break;
+		default:
+			Superclass::OnEvent(maf_event);
+			break;
+		}
+	}
+	else
+	{
+		InvokeEvent(*maf_event);
+	}
 }
 //----------------------------------------------------------------------------
 void mafViewVTK::OnPreResetCamera()
@@ -392,136 +392,136 @@ void mafViewVTK::OnPostResetCamera()
 void mafViewVTK::SetWindowSize(int w, int h)
 //----------------------------------------------------------------------------
 {
-	GetRenderWindow()->SetSize(w,h);
+	GetRenderWindow()->SetSize(w, h);
 }
 //----------------------------------------------------------------------------
-bool mafViewVTK::FindPokedVme(mafDevice *device,mafMatrix &point_pose,vtkProp3D *&picked_prop,mafVME *&picked_vme,mafInteractor *&picked_behavior)
+bool mafViewVTK::FindPokedVme(mafDevice* device, mafMatrix& point_pose, vtkProp3D*& picked_prop, mafVME*& picked_vme, mafInteractor*& picked_behavior)
 //----------------------------------------------------------------------------
 {
-  mafDeviceButtonsPadTracker *tracker = mafDeviceButtonsPadTracker::SafeDownCast(device);
-  mafDeviceButtonsPadMouse   *mouse   = mafDeviceButtonsPadMouse::SafeDownCast(device);
-  int mouse_pos[2];
-  bool picked_something = false;
+	mafDeviceButtonsPadTracker* tracker = mafDeviceButtonsPadTracker::SafeDownCast(device);
+	mafDeviceButtonsPadMouse* mouse = mafDeviceButtonsPadMouse::SafeDownCast(device);
+	int mouse_pos[2];
+	bool picked_something = false;
 
-  if (tracker)
-  {
-    mafAvatar *avatar = tracker->GetAvatar();
-    mafMatrix world_pose;
-    if (avatar)
-    {
-      mafAvatar3D *avatar3D = mafAvatar3D::SafeDownCast(avatar);
-      if (avatar3D)
-        avatar3D->TrackerToWorld(point_pose,world_pose,mafAvatar3D::CANONICAL_TO_WORLD_SCALE);
-      else
-        world_pose = point_pose;
-      picked_something = Pick(world_pose);
-    }
-  }
-  else if (mouse)
-  { 
-    mouse_pos[1] = (int)point_pose.GetElement(1,3);
-    mouse_pos[0] = (int)point_pose.GetElement(0,3);
-    picked_something = Pick(mouse_pos[0], mouse_pos[1]);
-  }
-  if(picked_something)
-  {
-    picked_vme = GetPickedVme();
-    picked_prop = GetPickedProp();
-    picked_behavior = picked_vme->GetBehavior();
-    return true;
-  }
-  return false;
+	if (tracker)
+	{
+		mafAvatar* avatar = tracker->GetAvatar();
+		mafMatrix world_pose;
+		if (avatar)
+		{
+			mafAvatar3D* avatar3D = mafAvatar3D::SafeDownCast(avatar);
+			if (avatar3D)
+				avatar3D->TrackerToWorld(point_pose, world_pose, mafAvatar3D::CANONICAL_TO_WORLD_SCALE);
+			else
+				world_pose = point_pose;
+			picked_something = Pick(world_pose);
+		}
+	}
+	else if (mouse)
+	{
+		mouse_pos[1] = (int)point_pose.GetElement(1, 3);
+		mouse_pos[0] = (int)point_pose.GetElement(0, 3);
+		picked_something = Pick(mouse_pos[0], mouse_pos[1]);
+	}
+	if (picked_something)
+	{
+		picked_vme = GetPickedVme();
+		picked_prop = GetPickedProp();
+		picked_behavior = picked_vme->GetBehavior();
+		return true;
+	}
+	return false;
 }
 //----------------------------------------------------------------------------
 bool mafViewVTK::Pick(int x, int y)
 //----------------------------------------------------------------------------
 {
-  vtkRendererCollection *rc = m_Rwi->m_RwiBase->GetRenderWindow()->GetRenderers();
-  vtkRenderer *r = NULL;
-  rc->InitTraversal();
-  while(r = rc->GetNextItem())
-  {
-    if(m_Picker2D->Pick(x,y,0,r))
-    {
-      m_Picker2D->GetPickPosition(m_PickedPosition);
-      return FindPickedVme(m_Picker2D->GetPath());
-    }
-  }
-  return false;
+	vtkRendererCollection* rc = m_Rwi->m_RwiBase->GetRenderWindow()->GetRenderers();
+	vtkRenderer* r = NULL;
+	rc->InitTraversal();
+	while (r = rc->GetNextItem())
+	{
+		if (m_Picker2D->Pick(x, y, 0, r))
+		{
+			m_Picker2D->GetPickPosition(m_PickedPosition);
+			return FindPickedVme(m_Picker2D->GetPath());
+		}
+	}
+	return false;
 }
 //----------------------------------------------------------------------------
-bool mafViewVTK::Pick(mafMatrix &m)
+bool mafViewVTK::Pick(mafMatrix& m)
 //----------------------------------------------------------------------------
 {
-  // Compute intersection ray:
-  double p1[4]={0,0,0.05,1}; // from mafAvatar3DCone (to revise!!)
-  double p2[4]={0,0,-0.05,1};
+	// Compute intersection ray:
+	double p1[4] = { 0,0,0.05,1 }; // from mafAvatar3DCone (to revise!!)
+	double p2[4] = { 0,0,-0.05,1 };
 
-  // points in world coordinates
-  double world_p1[4],world_p2[4];
-  m.MultiplyPoint(p1,world_p1);
-  m.MultiplyPoint(p2,world_p2);
+	// points in world coordinates
+	double world_p1[4], world_p2[4];
+	m.MultiplyPoint(p1, world_p1);
+	m.MultiplyPoint(p2, world_p2);
 
-  vtkRendererCollection *rc = m_Rwi->m_RwiBase->GetRenderWindow()->GetRenderers();
-  vtkRenderer *r = NULL;
-  rc->InitTraversal();
-  while(r = rc->GetNextItem())
-  {
-    if( m_Picker3D->Pick(world_p1,world_p2,r) )
-    {
-      m_Picker3D->GetPickPosition(m_PickedPosition);
-      return FindPickedVme(m_Picker3D->GetPath());
-    }
-  }
-  return false;
+	vtkRendererCollection* rc = m_Rwi->m_RwiBase->GetRenderWindow()->GetRenderers();
+	vtkRenderer* r = NULL;
+	rc->InitTraversal();
+	while (r = rc->GetNextItem())
+	{
+		if (m_Picker3D->Pick(world_p1, world_p2, r))
+		{
+			m_Picker3D->GetPickPosition(m_PickedPosition);
+			return FindPickedVme(m_Picker3D->GetPath());
+		}
+	}
+	return false;
 }
 //----------------------------------------------------------------------------
-void mafViewVTK::Print(wxDC *dc, wxRect margins)
+void mafViewVTK::Print(wxDC* dc, wxRect margins)
 //----------------------------------------------------------------------------
 {
-  wxBitmap image;
-  GetImage(image/*, 2*/);
-  PrintBitmap(dc, margins, &image);
+	wxBitmap image;
+	GetImage(image/*, 2*/);
+	PrintBitmap(dc, margins, &image);
 }
 //----------------------------------------------------------------------------
-void mafViewVTK::GetImage(wxBitmap &bmp, int magnification)
+void mafViewVTK::GetImage(wxBitmap& bmp, int magnification)
 //----------------------------------------------------------------------------
 {
-  m_Rwi->m_RwiBase->GetImage(bmp, magnification);
+	m_Rwi->m_RwiBase->GetImage(bmp, magnification);
 }
 //----------------------------------------------------------------------------
 void mafViewVTK::LinkView(bool link_camera)
 //----------------------------------------------------------------------------
 {
-  m_Rwi->LinkCamera(link_camera);
+	m_Rwi->LinkCamera(link_camera);
 }
 //----------------------------------------------------------------------------
 void mafViewVTK::OptionsUpdate()
 //----------------------------------------------------------------------------
 {
-  m_Rwi->UpdateRulerUnit();
+	m_Rwi->UpdateRulerUnit();
 }
 
 //-------------------------------------------------------------------------
 void mafViewVTK::Print(std::ostream& os, const int tabs)// const
 //-------------------------------------------------------------------------
 {
-  Superclass::Print(os,tabs);
-  mafIndent indent(tabs);
+	Superclass::Print(os, tabs);
+	mafIndent indent(tabs);
 
-  os << indent << "mafViewVTK " << '\t' << this << "\n";
-  os << indent << "Name: " << '\t' << GetLabel().GetCStr() << "\n";
-  os << indent << "View ID: " << '\t' << m_Id << "\n";
-  os << indent << "View Mult: " << '\t' << m_Mult << "\n";
-  os << indent << "Visible VME counter: " << '\t' << m_NumberOfVisibleVme << "\n";
-  
-  m_Sg->Print(os, 1);
-  os << std::endl;
+	os << indent << "mafViewVTK " << '\t' << this << "\n";
+	os << indent << "Name: " << '\t' << GetLabel().GetCStr() << "\n";
+	os << indent << "View ID: " << '\t' << m_Id << "\n";
+	os << indent << "View Mult: " << '\t' << m_Mult << "\n";
+	os << indent << "Visible VME counter: " << '\t' << m_NumberOfVisibleVme << "\n";
+
+	m_Sg->Print(os, 1);
+	os << std::endl;
 }
 
 //-------------------------------------------------------------------------
 int mafViewVTK::GetCameraPosition()
 //-------------------------------------------------------------------------
 {
-   return m_CameraPositionId;
+	return m_CameraPositionId;
 }

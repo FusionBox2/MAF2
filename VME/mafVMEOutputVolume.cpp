@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafVMEOutputVolume
  Authors: Marco Petrone
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -48,7 +48,7 @@ mafCxxTypeMacro(mafVMEOutputVolume)
 mafVMEOutputVolume::mafVMEOutputVolume()
 //-------------------------------------------------------------------------
 {
-  m_Material = NULL;
+	m_Material = NULL;
 }
 
 //-------------------------------------------------------------------------
@@ -58,96 +58,93 @@ mafVMEOutputVolume::~mafVMEOutputVolume()
 }
 
 //-------------------------------------------------------------------------
-vtkImageData *mafVMEOutputVolume::GetStructuredData()
+vtkImageData* mafVMEOutputVolume::GetStructuredData()
 //-------------------------------------------------------------------------
 {
-  return vtkImageData::SafeDownCast(GetVTKData());
+	return vtkImageData::SafeDownCast(GetVTKData());
 }
 
 //-------------------------------------------------------------------------
-vtkRectilinearGrid *mafVMEOutputVolume::GetRectilinearData()
+vtkRectilinearGrid* mafVMEOutputVolume::GetRectilinearData()
 //-------------------------------------------------------------------------
 {
-  return vtkRectilinearGrid::SafeDownCast(GetVTKData());
+	return vtkRectilinearGrid::SafeDownCast(GetVTKData());
 }
 //-------------------------------------------------------------------------
-vtkUnstructuredGrid *mafVMEOutputVolume::GetUnstructuredData()
+vtkUnstructuredGrid* mafVMEOutputVolume::GetUnstructuredData()
 //-------------------------------------------------------------------------
 {
-  return vtkUnstructuredGrid::SafeDownCast(GetVTKData());
+	return vtkUnstructuredGrid::SafeDownCast(GetVTKData());
 }
 //-------------------------------------------------------------------------
 std::shared_ptr<mmaVolumeMaterial> mafVMEOutputVolume::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  // if the VME set the material directly in the output return it
-  if (m_Material)
-    return  m_Material;
+	// if the VME set the material directly in the output return it
+	if (m_Material)
+		return  m_Material;
 
-  // search for a material attribute in the VME connected to this output
-  return GetVME() ? mmaVolumeMaterial::SafeDownCast(GetVME()->GetAttribute(mmaVolumeMaterial::GetAttributeName())) : nullptr;
+	// search for a material attribute in the VME connected to this output
+	return GetVME() ? mmaVolumeMaterial::SafeDownCast(GetVME()->GetAttribute(mmaVolumeMaterial::GetAttributeName())) : nullptr;
 }
 //-------------------------------------------------------------------------
 void mafVMEOutputVolume::SetMaterial(std::shared_ptr<mmaVolumeMaterial> material)
 //-------------------------------------------------------------------------
 {
-  m_Material = material;
+	m_Material = material;
 }
 
 //-------------------------------------------------------------------------
 mafGUI* mafVMEOutputVolume::CreateGui()
 //-------------------------------------------------------------------------
 {
-  assert(m_Gui == NULL);
-  m_Gui = mafVMEOutput::CreateGui();
+	assert(!AccessGUI());
+	auto gui = mafVMEOutput::CreateGui();
 
-  if (GetVTKData())
-  {
-    this->Update();
-  }
-  m_VtkDataType += NULL_STRING_DATA;
+	if (GetVTKData())
+	{
+		this->Update();
+	}
+	m_VtkDataType += NULL_STRING_DATA;
 
-  vtkDataSet *data = this->GetVTKData();
-  if (data != NULL)
-  {
-    m_VtkDataType.clear();
-    m_VtkDataType += _R(this->GetVTKData()->GetClassName());
-  }
+	vtkDataSet* data = this->GetVTKData();
+	if (data != NULL)
+	{
+		m_VtkDataType.clear();
+		m_VtkDataType += _R(this->GetVTKData()->GetClassName());
+	}
 
-  m_Gui->Label(_L("vtk type: "), &m_VtkDataType);
-  m_Gui->Label(_L(" bounds: "),true);
-  m_Gui->Label(&m_VolumeBounds[0]);
-  m_Gui->Label(&m_VolumeBounds[1]);
-  m_Gui->Label(&m_VolumeBounds[2]);
-  m_Gui->Label(_L("scalar range:"),true);
-  m_Gui->Label(&m_ScaralRangeString);
-  m_Gui->Divider();
-	return m_Gui;
+	gui->Label(_L("vtk type: "), &m_VtkDataType);
+	gui->Label(_L(" bounds: "), true);
+	gui->Label(&m_VolumeBounds[0]);
+	gui->Label(&m_VolumeBounds[1]);
+	gui->Label(&m_VolumeBounds[2]);
+	gui->Label(_L("scalar range:"), true);
+	gui->Label(&m_ScaralRangeString);
+	gui->Divider();
+	return gui;
 }
 //-------------------------------------------------------------------------
 void mafVMEOutputVolume::Update()
 //-------------------------------------------------------------------------
 {
-  assert(m_VME);
-  m_VME->Update();
-  if (GetVTKData())
-  {
-    m_VtkDataType = _R("");
-    m_VtkDataType += _R(this->GetVTKData()->GetClassName());
-    double b[6];
-    m_VME->GetOutput()->GetVMELocalBounds(b);
-    m_VolumeBounds[0] = _R(" xmin: ") + mafString::Format(_R("%g"),RoundValue(b[0])) + _R("   xmax: ") + mafString::Format(_R("%g"),RoundValue(b[1]));
-    m_VolumeBounds[1] = _R(" ymin: ") + mafString::Format(_R("%g"),RoundValue(b[2])) + _R("   ymax: ") + mafString::Format(_R("%g"),RoundValue(b[3]));
-    m_VolumeBounds[2] = _R(" zmin: ") + mafString::Format(_R("%g"),RoundValue(b[4])) + _R("   zmax: ") + mafString::Format(_R("%g"),RoundValue(b[5]));
-    double srange[2];
-    //this->GetVTKData()->Update();
-    this->GetVTKData()->GetScalarRange(srange);
-    m_ScaralRangeString = mafString::Format(_R("min: %6.2f max: %6.2f"), srange[0], srange[1]);;
-    //m_ScaralRangeString << " min: " << srange[0] << "    max: " << srange[1];
-  }
-  
-  if (m_Gui)
-  {
-    m_Gui->Update();
-  }
+	assert(m_VME);
+	m_VME->Update();
+	if (GetVTKData())
+	{
+		m_VtkDataType = _R("");
+		m_VtkDataType += _R(this->GetVTKData()->GetClassName());
+		double b[6];
+		m_VME->GetOutput()->GetVMELocalBounds(b);
+		m_VolumeBounds[0] = _R(" xmin: ") + mafString::Format(_R("%g"), RoundValue(b[0])) + _R("   xmax: ") + mafString::Format(_R("%g"), RoundValue(b[1]));
+		m_VolumeBounds[1] = _R(" ymin: ") + mafString::Format(_R("%g"), RoundValue(b[2])) + _R("   ymax: ") + mafString::Format(_R("%g"), RoundValue(b[3]));
+		m_VolumeBounds[2] = _R(" zmin: ") + mafString::Format(_R("%g"), RoundValue(b[4])) + _R("   zmax: ") + mafString::Format(_R("%g"), RoundValue(b[5]));
+		double srange[2];
+		//this->GetVTKData()->Update();
+		this->GetVTKData()->GetScalarRange(srange);
+		m_ScaralRangeString = mafString::Format(_R("min: %6.2f max: %6.2f"), srange[0], srange[1]);;
+		//m_ScaralRangeString << " min: " << srange[0] << "    max: " << srange[1];
+	}
+
+	UpdateGUI();
 }

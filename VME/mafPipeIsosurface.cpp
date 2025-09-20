@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafPipeIsosurface
  Authors: Alexander Savenko  -  Paolo Quadrani
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -51,34 +51,34 @@ mafCxxTypeMacro(mafPipeIsosurface);
 //----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
-mafPipeIsosurface::mafPipeIsosurface() 
+mafPipeIsosurface::mafPipeIsosurface()
 //----------------------------------------------------------------------------
 {
-	m_Volume          = NULL;
-	m_OutlineActor    = NULL;
-	m_ContourMapper   = NULL; 
-	m_OutlineBox      = NULL;
-	m_OutlineMapper   = NULL;
-	m_ContourSlider   = NULL;
+	m_Volume = NULL;
+	m_OutlineActor = NULL;
+	m_ContourMapper = NULL;
+	m_OutlineBox = NULL;
+	m_OutlineMapper = NULL;
+	m_ContourSlider = NULL;
 
-	m_ContourValue    = 300.0;
+	m_ContourValue = 300.0;
 
-	m_AlphaValue			= 1.0;
+	m_AlphaValue = 1.0;
 
-  m_BoundingBoxVisibility = true;
+	m_BoundingBoxVisibility = true;
 }
 //----------------------------------------------------------------------------
-void mafPipeIsosurface::Create(mafNode *node, mafView *view)
+void mafPipeIsosurface::Create(mafNode* node, mafView* view)
 //----------------------------------------------------------------------------
 {
 	Superclass::Create(node, view);
 
 	assert(m_Vme->GetOutput()->IsA("mafVMEOutputVolume"));
 
-  m_Vme->AddObserver(this);
+	m_Vme->AddObserver(this);
 
-  m_Vme->GetOutput()->Update();
-	vtkDataSet *dataset = m_Vme->GetOutput()->GetVTKData();
+	m_Vme->GetOutput()->Update();
+	vtkDataSet* dataset = m_Vme->GetOutput()->GetVTKData();
 	vtkAlgorithmOutput* port = m_Vme->GetOutput()->GetVTKOutputPort();
 
 	// contour pipeline
@@ -87,7 +87,7 @@ void mafPipeIsosurface::Create(mafNode *node, mafView *view)
 	m_ContourMapper->AutoLODRenderOn();
 	m_ContourMapper->SetAlpha(m_AlphaValue);
 
-	double range[2] = {0, 0};
+	double range[2] = { 0, 0 };
 	dataset->GetScalarRange(range);
 
 	float value = 0.5f * (range[0] + range[1]);
@@ -97,10 +97,10 @@ void mafPipeIsosurface::Create(mafNode *node, mafView *view)
 
 	m_ContourValue = m_ContourMapper->GetContourValue();
 
-  vtkNEW(m_Volume);
-  m_Volume->SetMapper(m_ContourMapper);
-  m_Volume->PickableOff();
-  m_AssemblyFront->AddPart(m_Volume);
+	vtkNEW(m_Volume);
+	m_Volume->SetMapper(m_ContourMapper);
+	m_Volume->PickableOff();
+	m_AssemblyFront->AddPart(m_Volume);
 
 	// selection box
 	vtkNEW(m_OutlineBox);
@@ -115,25 +115,25 @@ void mafPipeIsosurface::Create(mafNode *node, mafView *view)
 	m_OutlineActor->PickableOff();
 
 	vtkNew<vtkProperty> property;
-	property->SetColor(1,1,1);
+	property->SetColor(1, 1, 1);
 	property->SetAmbient(1);
 	property->SetRepresentationToWireframe();
 	property->SetInterpolationToFlat();
 	m_OutlineActor->SetProperty(property);
 
-  if(m_BoundingBoxVisibility)
-	  m_AssemblyFront->AddPart(m_OutlineActor);
+	if (m_BoundingBoxVisibility)
+		m_AssemblyFront->AddPart(m_OutlineActor);
 }
 //----------------------------------------------------------------------------
 mafPipeIsosurface::~mafPipeIsosurface()
 //----------------------------------------------------------------------------
 {
-  m_Vme->RemoveObserver(this);
+	m_Vme->RemoveObserver(this);
 
 	m_AssemblyFront->RemovePart(m_Volume);
-	
-  if(m_BoundingBoxVisibility)
-    m_AssemblyFront->RemovePart(m_OutlineActor);
+
+	if (m_BoundingBoxVisibility)
+		m_AssemblyFront->RemovePart(m_OutlineActor);
 
 	vtkDEL(m_Volume);
 	vtkDEL(m_OutlineActor);
@@ -143,7 +143,7 @@ mafPipeIsosurface::~mafPipeIsosurface()
 }
 
 //----------------------------------------------------------------------------
-void mafPipeIsosurface::Select(bool sel) 
+void mafPipeIsosurface::Select(bool sel)
 //----------------------------------------------------------------------------
 {
 	m_Selected = sel;
@@ -154,19 +154,19 @@ void mafPipeIsosurface::Select(bool sel)
 }
 
 //----------------------------------------------------------------------------
-bool mafPipeIsosurface::SetContourValue(float value) 
+bool mafPipeIsosurface::SetContourValue(float value)
 //----------------------------------------------------------------------------
 {
 	if (m_ContourMapper == NULL)
 		return false;
-  m_ContourValue = value;
+	m_ContourValue = value;
 	m_ContourMapper->SetContourValue(m_ContourValue);
 	m_ContourMapper->Modified();
 	return true;
 }
 
 //----------------------------------------------------------------------------
-float mafPipeIsosurface::GetContourValue() 
+float mafPipeIsosurface::GetContourValue()
 //----------------------------------------------------------------------------
 {
 	if (m_ContourMapper == NULL)
@@ -174,96 +174,96 @@ float mafPipeIsosurface::GetContourValue()
 	return m_ContourMapper->GetContourValue();
 }
 //----------------------------------------------------------------------------
-mafGUI *mafPipeIsosurface::CreateGui()
+mafGUI* mafPipeIsosurface::CreateGui()
 //----------------------------------------------------------------------------
 {
-	double range[2] = {0, 0};
+	double range[2] = { 0, 0 };
 	m_Vme->GetOutput()->GetVTKData()->GetScalarRange(range);
 
-	assert(m_Gui == NULL);
-	m_Gui = new mafGUI(this);
-	m_ContourSlider = m_Gui->FloatSlider(ID_CONTOUR_VALUE,_L("contour"), &m_ContourValue,range[0],range[1]);
-	m_AlphaSlider = m_Gui->FloatSlider(ID_ALPHA_VALUE,_L("alpha"), &m_AlphaValue,0.0,1.0);
+	assert(!AccessGUI());
+	auto gui = new mafGUI(this);
+	m_ContourSlider = gui->FloatSlider(ID_CONTOUR_VALUE, _L("contour"), &m_ContourValue, range[0], range[1]);
+	m_AlphaSlider = gui->FloatSlider(ID_ALPHA_VALUE, _L("alpha"), &m_AlphaValue, 0.0, 1.0);
 	//m_Gui->Button(ID_GENERATE_ISOSURFACE,"generate iso");
-	return m_Gui;
+	return gui;
 }
 //----------------------------------------------------------------------------
-void mafPipeIsosurface::OnEvent(mafEventBase *maf_event)
+void mafPipeIsosurface::OnEvent(mafEventBase* maf_event)
 //----------------------------------------------------------------------------
 {
-	if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
 	{
-		switch(e->GetId()) 
+		switch (e->GetId())
 		{
-		  case ID_CONTOUR_VALUE:
-			{
-				SetContourValue((float)m_ContourValue);
-				{mafEvent evUnq(this,CAMERA_UPDATE); m_Vme->ForwardUpEvent(&evUnq);}
-				m_Gui->Update();
-			}
-			break;
-		  case ID_GENERATE_ISOSURFACE:
-			{
-				ExctractIsosurface();	
-			}
-			break;
-		  case ID_ALPHA_VALUE:
-			{
-				m_ContourMapper->SetAlpha(m_AlphaValue);
-				m_ContourMapper->Modified();
-				{mafEvent evUnq(this,CAMERA_UPDATE); m_Vme->ForwardUpEvent(&evUnq);}
-			}
-			break;
-		  default:
+		case ID_CONTOUR_VALUE:
+		{
+			SetContourValue((float)m_ContourValue);
+			{ mafEvent evUnq(this, CAMERA_UPDATE); m_Vme->ForwardUpEvent(&evUnq); }
+			UpdateGUI();
+		}
+		break;
+		case ID_GENERATE_ISOSURFACE:
+		{
+			ExctractIsosurface();
+		}
+		break;
+		case ID_ALPHA_VALUE:
+		{
+			m_ContourMapper->SetAlpha(m_AlphaValue);
+			m_ContourMapper->Modified();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); m_Vme->ForwardUpEvent(&evUnq); }
+		}
+		break;
+		default:
 			break;
 		}
 	}
-  if(maf_event->GetId() == VME_OUTPUT_DATA_UPDATE)
-  {
-    UpdateFromData();
-  }
+	if (maf_event->GetId() == VME_OUTPUT_DATA_UPDATE)
+	{
+		UpdateFromData();
+	}
 }
 //----------------------------------------------------------------------------
 void mafPipeIsosurface::UpdateFromData()
 //----------------------------------------------------------------------------
 {
-  vtkDataSet *dataset = m_Vme->GetOutput()->GetVTKData();
-  if(dataset)
-  {
-	vtkAlgorithmOutput* port = m_Vme->GetOutput()->GetVTKOutputPort();
-	m_Vme->GetOutput()->Update();
+	vtkDataSet* dataset = m_Vme->GetOutput()->GetVTKData();
+	if (dataset)
+	{
+		vtkAlgorithmOutput* port = m_Vme->GetOutput()->GetVTKOutputPort();
+		m_Vme->GetOutput()->Update();
 
-    if (m_ContourMapper != NULL)
-    {
-      m_ContourMapper->SetInputConnection(port);
-      m_ContourMapper->Update();
-    }
-  }
+		if (m_ContourMapper != NULL)
+		{
+			m_ContourMapper->SetInputConnection(port);
+			m_ContourMapper->Update();
+		}
+	}
 }
 //----------------------------------------------------------------------------
 void mafPipeIsosurface::ExctractIsosurface(std::shared_ptr<mafVMESurface> isoSurface /* = NULL */)
 //----------------------------------------------------------------------------
 {
-	vtkPolyData *surface = vtkPolyData::New();
+	vtkPolyData* surface = vtkPolyData::New();
 	m_ContourMapper->GetOutput(0, surface);
 	m_ContourMapper->Update();
 
-  if(m_ExtractIsosurfaceName.empty())
-  {
-    m_ExtractIsosurfaceName = mafString::Format(_L("Isosurface %g"), m_ContourValue);
-  }
-	
+	if (m_ExtractIsosurfaceName.empty())
+	{
+		m_ExtractIsosurfaceName = mafString::Format(_L("Isosurface %g"), m_ContourValue);
+	}
+
 
 	if (isoSurface)
 	{
 		isoSurface->SetName(m_ExtractIsosurfaceName);
-		isoSurface->SetData(surface,0);
-	
+		isoSurface->SetData(surface, 0);
+
 		mafNode::ReparentTo(isoSurface, m_Vme);
 	}
 
 	surface->Delete();
-  m_ExtractIsosurfaceName = _R("");
+	m_ExtractIsosurfaceName = _R("");
 }
 //----------------------------------------------------------------------------
 void mafPipeIsosurface::EnableBoundingBoxVisibility(bool enable)
@@ -275,25 +275,25 @@ void mafPipeIsosurface::EnableBoundingBoxVisibility(bool enable)
 void mafPipeIsosurface::SetAlphaValue(double value)
 //----------------------------------------------------------------------------
 {
-	m_AlphaValue=value;
+	m_AlphaValue = value;
 	m_ContourMapper->SetAlpha(m_AlphaValue);
 	m_ContourMapper->Modified();
-	{mafEvent evUnq(this,CAMERA_UPDATE); m_Vme->ForwardUpEvent(&evUnq);}
+	{ mafEvent evUnq(this, CAMERA_UPDATE); m_Vme->ForwardUpEvent(&evUnq); }
 }
 //----------------------------------------------------------------------------
 void mafPipeIsosurface::SetActorVisibility(int visibility)
 //----------------------------------------------------------------------------
 {
-  m_Volume->SetVisibility(visibility);
-  m_Volume->Modified();
+	m_Volume->SetVisibility(visibility);
+	m_Volume->Modified();
 }
 //----------------------------------------------------------------------------
-void mafPipeIsosurface::SetEnableContourAnalysis( bool clean )
+void mafPipeIsosurface::SetEnableContourAnalysis(bool clean)
 //----------------------------------------------------------------------------
 {
-  if (m_ContourMapper)
-  {
-	  m_ContourMapper->SetEnableContourAnalysis(clean);
-	  m_ContourMapper->Update();
-  }
+	if (m_ContourMapper)
+	{
+		m_ContourMapper->SetEnableContourAnalysis(clean);
+		m_ContourMapper->Update();
+	}
 }

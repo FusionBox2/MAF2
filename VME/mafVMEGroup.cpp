@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafVMEGroup
  Authors: Marco Petrone , Stefano Perticoni
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -43,188 +43,188 @@ mafCxxTypeMacro(mafVMEGroup)
 mafVMEGroup::mafVMEGroup()
 //-------------------------------------------------------------------------
 {
-  // The output is created on demand in GetOutput() to avoid
-  // subclasses to have to destroy base class output
-  m_Transform = mafTransform::NewSPtr();
-  m_MatrixVector->SetMatrix(m_Transform->GetMatrix());
+	// The output is created on demand in GetOutput() to avoid
+	// subclasses to have to destroy base class output
+	m_Transform = mafTransform::NewSPtr();
+	m_MatrixVector->SetMatrix(m_Transform->GetMatrix());
 
-  mafVMEOutputNULL *output=mafVMEOutputNULL::New(); // an output with no data
-  output->SetTransform(m_Transform); // force my transform in the output
-  SetOutput(output);
+	mafVMEOutputNULL* output = mafVMEOutputNULL::New(); // an output with no data
+	output->SetTransform(m_Transform); // force my transform in the output
+	SetOutput(output);
 }
 
 //-------------------------------------------------------------------------
 mafVMEGroup::~mafVMEGroup()
 //-------------------------------------------------------------------------
 {
-  SetOutput(NULL);
+	SetOutput(NULL);
 
-  // data pipe destroyed in mafVME
-  // data vector destroyed in mafVMEGenericAbstract
+	// data pipe destroyed in mafVME
+	// data vector destroyed in mafVMEGenericAbstract
 }
 
 //-------------------------------------------------------------------------
-mafVMEOutput *mafVMEGroup::GetOutput()
+mafVMEOutput* mafVMEGroup::GetOutput()
 //-------------------------------------------------------------------------
 {
-  // allocate the right type of output on demand
-  if (m_Output==NULL)
-  {
-    SetOutput(mafVMEOutputNULL::New()); // create the output
-  }
-  return m_Output;
+	// allocate the right type of output on demand
+	if (m_Output == NULL)
+	{
+		SetOutput(mafVMEOutputNULL::New()); // create the output
+	}
+	return m_Output;
 }
 
 //-------------------------------------------------------------------------
 mafGUI* mafVMEGroup::CreateGui()
 //-------------------------------------------------------------------------
 {
-  m_Gui = mafNode::CreateGui(); // Called to show info about vmes' type and name
-  m_Gui->Divider();
-	return m_Gui;
+	auto gui = mafNode::CreateGui(); // Called to show info about vmes' type and name
+	gui->Divider();
+	return gui;
 }
 
 //-------------------------------------------------------------------------
-void mafVMEGroup::OnEvent(mafEventBase *maf_event)
+void mafVMEGroup::OnEvent(mafEventBase* maf_event)
 //-------------------------------------------------------------------------
 {
-  if (maf_event->GetChannel()==MCH_UP)
-  {
-    mafID eid = maf_event->GetId();
-    if(eid == NODE_ATTACHED_TO_TREE)
-    {
-      mafNode *n = (mafNode*)maf_event->GetSender();
-      if (n)
-      {
-        auto parent = n->GetParent();
-        if (parent == this)
-        {
-          //mafMessage("Ask for shared GUI!!");
-        }
-      }
-    }
-    else if(eid == NODE_DETACHED_FROM_TREE)
-    {
-      mafNode *n = (mafNode*)maf_event->GetSender();
-      if (n)
-      {
-        auto parent = n->GetParent();
-        if (parent == this)
-        {
-          //mafMessage("Remove shared GUI!!");
-        }
-      }
-    }
-  }
-  Superclass::OnEvent(maf_event);
+	if (maf_event->GetChannel() == MCH_UP)
+	{
+		mafID eid = maf_event->GetId();
+		if (eid == NODE_ATTACHED_TO_TREE)
+		{
+			mafNode* n = (mafNode*)maf_event->GetSender();
+			if (n)
+			{
+				auto parent = n->GetParent();
+				if (parent == this)
+				{
+					//mafMessage("Ask for shared GUI!!");
+				}
+			}
+		}
+		else if (eid == NODE_DETACHED_FROM_TREE)
+		{
+			mafNode* n = (mafNode*)maf_event->GetSender();
+			if (n)
+			{
+				auto parent = n->GetParent();
+				if (parent == this)
+				{
+					//mafMessage("Remove shared GUI!!");
+				}
+			}
+		}
+	}
+	Superclass::OnEvent(maf_event);
 }
 
 //-------------------------------------------------------------------------
-const char** mafVMEGroup::GetIcon() 
+const char** mafVMEGroup::GetIcon()
 //-------------------------------------------------------------------------
 {
-  #include "mafVMEGroup.xpm"
-  return mafVMEGroup_xpm;
+#include "mafVMEGroup.xpm"
+	return mafVMEGroup_xpm;
 }
 
 //-------------------------------------------------------------------------
-void mafVMEGroup::SetMatrix(const mafMatrix &mat)
+void mafVMEGroup::SetMatrix(const mafMatrix& mat)
 //-------------------------------------------------------------------------
 {
-  Superclass::SetMatrix(mat);
-  m_Transform->SetMatrix(mat);
+	Superclass::SetMatrix(mat);
+	m_Transform->SetMatrix(mat);
 }
 
 //-----------------------------------------------------------------------
 void mafVMEGroup::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
-{ 
-  if (DEBUG_MODE)
-  {
-    std::ostringstream stringStream;
-    stringStream << "Storing matrix:"  << std::endl;
-    m_Transform->Print(stringStream);
-    mafLogMessage(_M(stringStream.str().c_str()));
-  }
+{
+	if (DEBUG_MODE)
+	{
+		std::ostringstream stringStream;
+		stringStream << "Storing matrix:" << std::endl;
+		m_Transform->Print(stringStream);
+		mafLogMessage(_M(stringStream.str().c_str()));
+	}
 
-  Superclass::InternalStore(parent);
-  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
+	Superclass::InternalStore(parent);
+	parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
 }
 
 //-----------------------------------------------------------------------
 void mafVMEGroup::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  Superclass::InternalRestore(node);
-  {
-	 if(auto optMatrix  = node[_R("Transform")].As<std::optional<mafMatrix> >())
-	  //if (node[_R("Transform")].ReSetValue(matrix) == MAF_OK)
-    {
+	Superclass::InternalRestore(node);
+	{
+		if (auto optMatrix = node[_R("Transform")].As<std::optional<mafMatrix> >())
+			//if (node[_R("Transform")].ReSetValue(matrix) == MAF_OK)
+		{
 
-      if (DEBUG_MODE)
-      {
-        std::ostringstream stringStream;
-        stringStream << "Restoring group matrix:"  << std::endl;
-        optMatrix->Print(stringStream);
-        mafLogMessage(_M(stringStream.str().c_str()));
-      }
+			if (DEBUG_MODE)
+			{
+				std::ostringstream stringStream;
+				stringStream << "Restoring group matrix:" << std::endl;
+				optMatrix->Print(stringStream);
+				mafLogMessage(_M(stringStream.str().c_str()));
+			}
 
-      this->SetMatrix(*optMatrix);
-    }
-    else
-    {
-         mafMatrix matrix;
-         matrix.Identity();
-      // code handling for old msf without group pose matrix serialization
-      this->SetMatrix(matrix);
-      if (DEBUG_MODE)
-        {
-          std::ostringstream stringStream;
-          stringStream << "BEWARE!!! Opening an old MSF without group matrix serialized:\
-restoring group matrix as:"  << std::endl;
-          matrix.Print(stringStream);
-          stringStream << "Please report any problem with old MSF containing groups!!!"  << std::endl;
-          mafLogMessage(_M(stringStream.str().c_str()));
-        }
-    }
-  }
+			this->SetMatrix(*optMatrix);
+		}
+		else
+		{
+			mafMatrix matrix;
+			matrix.Identity();
+			// code handling for old msf without group pose matrix serialization
+			this->SetMatrix(matrix);
+			if (DEBUG_MODE)
+			{
+				std::ostringstream stringStream;
+				stringStream << "BEWARE!!! Opening an old MSF without group matrix serialized:\
+restoring group matrix as:" << std::endl;
+				matrix.Print(stringStream);
+				stringStream << "Please report any problem with old MSF containing groups!!!" << std::endl;
+				mafLogMessage(_M(stringStream.str().c_str()));
+			}
+		}
+	}
 }
 
 //-----------------------------------------------------------------------
 void mafVMEGroup::Print(std::ostream& os, const int tabs)
 //-----------------------------------------------------------------------
 {
-  Superclass::Print(os,tabs);
-  mafIndent indent(tabs);
+	Superclass::Print(os, tabs);
+	mafIndent indent(tabs);
 
-  mafMatrix m = m_Transform->GetMatrix();
-  m.Print(os,indent.GetNextIndent());
+	mafMatrix m = m_Transform->GetMatrix();
+	m.Print(os, indent.GetNextIndent());
 }
 
 //-------------------------------------------------------------------------
-bool mafVMEGroup::Equals(mafVME *vme)
+bool mafVMEGroup::Equals(mafVME* vme)
 //-------------------------------------------------------------------------
 {
-  bool ret = false;
-  if (Superclass::Equals(vme))
-  {
-    return ret = (m_Transform->GetMatrix()==((mafVMEGroup *)vme)->m_Transform->GetMatrix());
-  }
-  return ret;
+	bool ret = false;
+	if (Superclass::Equals(vme))
+	{
+		return ret = (m_Transform->GetMatrix() == ((mafVMEGroup*)vme)->m_Transform->GetMatrix());
+	}
+	return ret;
 }
 
 //-------------------------------------------------------------------------
-int mafVMEGroup::DeepCopy(mafNode *a)
+int mafVMEGroup::DeepCopy(mafNode* a)
 //-------------------------------------------------------------------------
-{ 
-  if (Superclass::DeepCopy(a)==MAF_OK)
-  {
-    mafVMEGroup *group = mafVMEGroup::SafeDownCast(a);
-    
-    m_Transform->SetMatrix(group->m_Transform->GetMatrix());
-    
-    return MAF_OK;
-  }  
+{
+	if (Superclass::DeepCopy(a) == MAF_OK)
+	{
+		mafVMEGroup* group = mafVMEGroup::SafeDownCast(a);
 
-  return MAF_ERROR;
+		m_Transform->SetMatrix(group->m_Transform->GetMatrix());
+
+		return MAF_OK;
+	}
+
+	return MAF_ERROR;
 }

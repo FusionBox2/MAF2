@@ -146,22 +146,22 @@ protected:
   /** Internally used to create a new instance of the GUI.*/
   mafGUI *CreateGui() override;
 
-  void CreateGuiPlane();
+  void CreateGuiPlane(mafGUI* gui);
   void EnableGuiPlane();
 
-  void CreateGuiCube();
+  void CreateGuiCube(mafGUI* gui);
   void EnableGuiCube();
 
-  void CreateGuiCylinder();
+  void CreateGuiCylinder(mafGUI* gui);
   void EnableGuiCylinder();
 
-  void CreateGuiCone();
+  void CreateGuiCone(mafGUI* gui);
   void EnableGuiCone();
 
-  void CreateGuiSphere();
+  void CreateGuiSphere(mafGUI* gui);
   void EnableGuiSphere();
 
-  void CreateGuiEllipsoid();
+  void CreateGuiEllipsoid(mafGUI* gui);
   void EnableGuiEllipsoid();
   
   mafGUI *m_GuiSphere;

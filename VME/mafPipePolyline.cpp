@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafPipePolyline
  Authors: Matteo Giacomoni - Daniele Giunchi
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -75,53 +75,53 @@ mafCxxTypeMacro(mafPipePolyline);
 mafPipePolyline::mafPipePolyline()
 //----------------------------------------------------------------------------
 {
-	m_Representation  = -1; // line by default
-	m_TubeRadius      = 1.0;
-	m_SphereRadius      = 1.0;
-	m_Capping         = 0;
+	m_Representation = -1; // line by default
+	m_TubeRadius = 1.0;
+	m_SphereRadius = 1.0;
+	m_Capping = 0;
 
-	m_ScalarDim				= 1;
-	m_Scalar					= 0;
+	m_ScalarDim = 1;
+	m_Scalar = 0;
 
-	m_Sphere          = NULL;
-	m_Glyph           = NULL;
-	m_Tube            = NULL;
-	m_PolyFilteredLine= NULL;
-	m_Mapper          = NULL;
-	m_Actor           = NULL;
-	m_OutlineBox      = NULL;
-	m_OutlineMapper   = NULL;
+	m_Sphere = NULL;
+	m_Glyph = NULL;
+	m_Tube = NULL;
+	m_PolyFilteredLine = NULL;
+	m_Mapper = NULL;
+	m_Actor = NULL;
+	m_OutlineBox = NULL;
+	m_OutlineMapper = NULL;
 	m_OutlineProperty = NULL;
-	m_OutlineActor    = NULL;
+	m_OutlineActor = NULL;
 
-	m_Table						= NULL;
+	m_Table = NULL;
 
-  m_BorderData = NULL;
-  m_BorderMapper = NULL;
-  m_BorderProperty = NULL;
-  m_BorderActor = NULL;
+	m_BorderData = NULL;
+	m_BorderMapper = NULL;
+	m_BorderProperty = NULL;
+	m_BorderActor = NULL;
 
-  m_SplineMode      = -1;
-  m_SplineCoefficient = 10.0;
-  m_DistanceBorder = 0.0;
-  m_ScalarsName = NULL;
-  m_HalfNumberOfBorders = 0;
+	m_SplineMode = -1;
+	m_SplineCoefficient = 10.0;
+	m_DistanceBorder = 0.0;
+	m_ScalarsName = NULL;
+	m_HalfNumberOfBorders = 0;
 
-  m_TextIdentifierBorderVisibility = FALSE;
+	m_TextIdentifierBorderVisibility = FALSE;
 }
 //----------------------------------------------------------------------------
-void mafPipePolyline::Create(mafNode *node, mafView *view)
+void mafPipePolyline::Create(mafNode* node, mafView* view)
 //----------------------------------------------------------------------------
 {
 	Superclass::Create(node, view);
 
 	m_Selected = false;
 
-	mafVMEOutputPolyline *out_polyline = mafVMEOutputPolyline::SafeDownCast(m_Vme->GetOutput());
+	mafVMEOutputPolyline* out_polyline = mafVMEOutputPolyline::SafeDownCast(m_Vme->GetOutput());
 	assert(out_polyline);
 	out_polyline->Update();
-	vtkPolyData *data = vtkPolyData::SafeDownCast(out_polyline->GetVTKData());
-	vtkAlgorithmOutput *port = out_polyline->GetVTKOutputPort();
+	vtkPolyData* data = vtkPolyData::SafeDownCast(out_polyline->GetVTKData());
+	vtkAlgorithmOutput* port = out_polyline->GetVTKOutputPort();
 	assert(port);
 
 	m_PolylineMaterial = out_polyline->GetMaterial();
@@ -129,10 +129,10 @@ void mafPipePolyline::Create(mafNode *node, mafView *view)
 
 	InitializeFromTag();
 
-  double sr[2] = {0,1};
-  vtkDataArray *scalarArray = data->GetPointData()->GetScalars();
-  if(scalarArray)
-    scalarArray->GetRange(sr);
+	double sr[2] = { 0,1 };
+	vtkDataArray* scalarArray = data->GetPointData()->GetScalars();
+	if (scalarArray)
+		scalarArray->GetRange(sr);
 
 	vtkNEW(m_Sphere);
 	m_Sphere->SetRadius(m_SphereRadius);
@@ -144,14 +144,14 @@ void mafPipePolyline::Create(mafNode *node, mafView *view)
 	m_Glyph->SetSourceConnection(m_Sphere->GetOutputPort());
 	//m_Glyph->NomalizeScalingOn();
 	//m_Glyph->SetScaleModeToScaleByScalar();
-  m_Glyph->SetScaleModeToDataScalingOff();
-  m_Glyph->SetRange(sr);
+	m_Glyph->SetScaleModeToDataScalingOff();
+	m_Glyph->SetRange(sr);
 
 
-  if(m_SplineMode && m_Representation != GLYPH && m_Representation != GLYPH_UNCONNECTED)
-    data = SplineProcess(data);
-  else 
-    data = LineProcess(data);
+	if (m_SplineMode && m_Representation != GLYPH && m_Representation != GLYPH_UNCONNECTED)
+		data = SplineProcess(data);
+	else
+		data = LineProcess(data);
 
 	vtkNEW(m_Tube);
 	m_Tube->UseDefaultNormalOff();
@@ -171,27 +171,27 @@ void mafPipePolyline::Create(mafNode *node, mafView *view)
 	else if (m_Representation == GLYPH)
 	{
 		m_Glyph->Update();
-		vtkAppendPolyData *apd = vtkAppendPolyData::New();
-    
-    if(m_SplineMode)
-    {
-      vtkPolyData *splinedPolyData;
-      splinedPolyData = SplineProcess(data);
-      apd->AddInputData(splinedPolyData);
-    }
-    else
-      apd->AddInputConnection(port);
+		vtkAppendPolyData* apd = vtkAppendPolyData::New();
+
+		if (m_SplineMode)
+		{
+			vtkPolyData* splinedPolyData;
+			splinedPolyData = SplineProcess(data);
+			apd->AddInputData(splinedPolyData);
+		}
+		else
+			apd->AddInputConnection(port);
 
 		apd->AddInputConnection(m_Glyph->GetOutputPort());
 		apd->Update();
 		m_Mapper->SetInputConnection(apd->GetOutputPort());
 		apd->Delete();
-  
+
 	}
 	else if (m_Representation == GLYPH_UNCONNECTED)
 	{
 		m_Glyph->Update();
-		vtkAppendPolyData *apd = vtkAppendPolyData::New();
+		vtkAppendPolyData* apd = vtkAppendPolyData::New();
 		//apd->AddInput(data);
 		apd->AddInputConnection(m_Glyph->GetOutputPort());
 		apd->Update();
@@ -200,7 +200,7 @@ void mafPipePolyline::Create(mafNode *node, mafView *view)
 	}
 	else
 	{
-		vtkAppendPolyData *apd = vtkAppendPolyData::New();
+		vtkAppendPolyData* apd = vtkAppendPolyData::New();
 		apd->AddInputConnection(port);
 		apd->Update();
 		m_Mapper->SetInputConnection(apd->GetOutputPort());
@@ -208,43 +208,43 @@ void mafPipePolyline::Create(mafNode *node, mafView *view)
 	}
 
 #if VTK_MAJOR_VERSION <= 7
- 	if(m_Vme->IsAnimated())
- 		m_Mapper->ImmediateModeRenderingOn();
- 	else
- 		m_Mapper->ImmediateModeRenderingOff();
+	if (m_Vme->IsAnimated())
+		m_Mapper->ImmediateModeRenderingOn();
+	else
+		m_Mapper->ImmediateModeRenderingOff();
 #endif
 
 	vtkNEW(m_Table);
 
-	m_Table->AddRGBPoint(sr[0],0.0,0.0,1.0);
-	m_Table->AddRGBPoint((sr[0]+sr[1])/2,0.0,1.0,0.0);;
-	m_Table->AddRGBPoint(sr[1],1.0,0.0,0.0);
+	m_Table->AddRGBPoint(sr[0], 0.0, 0.0, 1.0);
+	m_Table->AddRGBPoint((sr[0] + sr[1]) / 2, 0.0, 1.0, 0.0);;
+	m_Table->AddRGBPoint(sr[1], 1.0, 0.0, 0.0);
 	m_Table->Build();
 
-// 	m_Glyph->Update();
+	// 	m_Glyph->Update();
 
 	m_Actor = vtkActor::New();
 	m_Actor->SetMapper(m_Mapper);
 	m_PolylineMaterial = out_polyline->GetMaterial();
-  if(m_PolylineMaterial)
-  {
-    if (m_PolylineMaterial->m_MaterialType == mmaMaterial::USE_LOOKUPTABLE)
-    {
-      /*m_UseVTKProperty = 0;
-      m_UseLookupTable = 1;*/
-      m_Mapper->SetScalarModeToUsePointData();
-      m_Mapper->ScalarVisibilityOn();
-      m_Mapper->SetLookupTable(m_Table);
-      m_Mapper->SetScalarRange(sr);
-    }
-    if (m_PolylineMaterial->m_MaterialType == mmaMaterial::USE_VTK_PROPERTY)
-    {
-      /*m_UseVTKProperty = 1;
-      m_UseLookupTable = 0;*/
-      m_Actor->SetProperty(m_PolylineMaterial->m_Prop);
-    }
-  }
-  m_Mapper->Modified();
+	if (m_PolylineMaterial)
+	{
+		if (m_PolylineMaterial->m_MaterialType == mmaMaterial::USE_LOOKUPTABLE)
+		{
+			/*m_UseVTKProperty = 0;
+			m_UseLookupTable = 1;*/
+			m_Mapper->SetScalarModeToUsePointData();
+			m_Mapper->ScalarVisibilityOn();
+			m_Mapper->SetLookupTable(m_Table);
+			m_Mapper->SetScalarRange(sr);
+		}
+		if (m_PolylineMaterial->m_MaterialType == mmaMaterial::USE_VTK_PROPERTY)
+		{
+			/*m_UseVTKProperty = 1;
+			m_UseLookupTable = 0;*/
+			m_Actor->SetProperty(m_PolylineMaterial->m_Prop);
+		}
+	}
+	m_Mapper->Modified();
 
 	m_AssemblyFront->AddPart(m_Actor);
 
@@ -256,7 +256,7 @@ void mafPipePolyline::Create(mafNode *node, mafView *view)
 	m_OutlineMapper->SetInputConnection(m_OutlineBox->GetOutputPort());
 
 	m_OutlineProperty = vtkProperty::New();
-	m_OutlineProperty->SetColor(1,1,1);
+	m_OutlineProperty->SetColor(1, 1, 1);
 	m_OutlineProperty->SetAmbient(1);
 	m_OutlineProperty->SetRepresentationToWireframe();
 	m_OutlineProperty->SetInterpolationToFlat();
@@ -268,35 +268,35 @@ void mafPipePolyline::Create(mafNode *node, mafView *view)
 	m_OutlineActor->SetProperty(m_OutlineProperty);
 
 
-  m_BorderMapper = vtkPolyDataMapper::New();
-  m_BorderMapper->SetInputData(BorderCreation());
+	m_BorderMapper = vtkPolyDataMapper::New();
+	m_BorderMapper->SetInputData(BorderCreation());
 
-  m_BorderProperty = vtkProperty::New();
-  m_BorderProperty->SetColor(1,1,1);
-  m_BorderProperty->SetAmbient(1);
-  m_BorderProperty->SetRepresentationToWireframe();
-  m_BorderProperty->SetInterpolationToFlat();
+	m_BorderProperty = vtkProperty::New();
+	m_BorderProperty->SetColor(1, 1, 1);
+	m_BorderProperty->SetAmbient(1);
+	m_BorderProperty->SetRepresentationToWireframe();
+	m_BorderProperty->SetInterpolationToFlat();
 
-  m_BorderActor = vtkActor::New();
-  m_BorderActor->SetMapper(m_BorderMapper);
-  m_BorderActor->SetProperty(m_BorderProperty);
-  m_BorderActor->PickableOff();
-  
-  if(m_HalfNumberOfBorders == 0)
-  {
-    m_BorderActor->VisibilityOff();
-    for(int j=0;j<m_CaptionActorList.size();j++)
-    {
-      m_CaptionActorList[j]->SetVisibility(false);
-    }
-  }
-  else
-  {
-    m_BorderActor->VisibilityOn();
-  }
-    
-  m_AssemblyFront->AddPart(m_BorderActor);
-  m_AssemblyFront->AddPart(m_OutlineActor);
+	m_BorderActor = vtkActor::New();
+	m_BorderActor->SetMapper(m_BorderMapper);
+	m_BorderActor->SetProperty(m_BorderProperty);
+	m_BorderActor->PickableOff();
+
+	if (m_HalfNumberOfBorders == 0)
+	{
+		m_BorderActor->VisibilityOff();
+		for (int j = 0; j < m_CaptionActorList.size(); j++)
+		{
+			m_CaptionActorList[j]->SetVisibility(false);
+		}
+	}
+	else
+	{
+		m_BorderActor->VisibilityOn();
+	}
+
+	m_AssemblyFront->AddPart(m_BorderActor);
+	m_AssemblyFront->AddPart(m_OutlineActor);
 }
 //----------------------------------------------------------------------------
 mafPipePolyline::~mafPipePolyline()
@@ -306,8 +306,8 @@ mafPipePolyline::~mafPipePolyline()
 
 	m_AssemblyFront->RemovePart(m_Actor);
 	m_AssemblyFront->RemovePart(m_OutlineActor);
-  m_AssemblyFront->RemovePart(m_BorderActor);
-  DeleteCaptionActorList();
+	m_AssemblyFront->RemovePart(m_BorderActor);
+	DeleteCaptionActorList();
 
 	vtkDEL(m_Sphere);
 	vtkDEL(m_Glyph);
@@ -320,10 +320,10 @@ mafPipePolyline::~mafPipePolyline()
 	vtkDEL(m_OutlineProperty);
 	vtkDEL(m_OutlineActor);
 
-  vtkDEL(m_BorderData);
-  vtkDEL(m_BorderMapper);
-  vtkDEL(m_BorderProperty);
-  vtkDEL(m_BorderActor);
+	vtkDEL(m_BorderData);
+	vtkDEL(m_BorderMapper);
+	vtkDEL(m_BorderProperty);
+	vtkDEL(m_BorderActor);
 
 	vtkDEL(m_Table);
 }
@@ -332,193 +332,193 @@ void mafPipePolyline::Select(bool sel)
 //----------------------------------------------------------------------------
 {
 	m_Selected = sel;
-	if(m_Actor && m_Actor->GetVisibility()) 
+	if (m_Actor && m_Actor->GetVisibility())
 	{
 		m_OutlineActor->SetVisibility(sel);
 	}
 }
 //----------------------------------------------------------------------------
-mafGUI *mafPipePolyline::CreateGui()
+mafGUI* mafPipePolyline::CreateGui()
 //----------------------------------------------------------------------------
 {
-    mafVMEOutputPolyline* out_polyline = mafVMEOutputPolyline::SafeDownCast(m_Vme->GetOutput());
-    int numberOfArrays = out_polyline->GetPolylineData()->GetPointData()->GetNumberOfArrays();
+	mafVMEOutputPolyline* out_polyline = mafVMEOutputPolyline::SafeDownCast(m_Vme->GetOutput());
+	int numberOfArrays = out_polyline->GetPolylineData()->GetPointData()->GetNumberOfArrays();
 
-  if(numberOfArrays)
-  {
-	  m_ScalarsName = new mafString[numberOfArrays];
+	if (numberOfArrays)
+	{
+		m_ScalarsName = new mafString[numberOfArrays];
 
-	  for (int i = 0; i < numberOfArrays; i++)
-		  m_ScalarsName[i] = _R(out_polyline->GetPolylineData()->GetPointData()->GetArrayName(i));
+		for (int i = 0; i < numberOfArrays; i++)
+			m_ScalarsName[i] = _R(out_polyline->GetPolylineData()->GetPointData()->GetArrayName(i));
 
-	  //m_Glyph->SelectInputScalars(m_ScalarsName[m_Scalar].GetCStr());
-	  m_Glyph->Modified();
-  }
+		//m_Glyph->SelectInputScalars(m_ScalarsName[m_Scalar].GetCStr());
+		m_Glyph->Modified();
+	}
 
-	const mafString representation_string[] = {_L("line"), _L("tube"), _L("sphere"), _L("unconnected sphere")};
+	const mafString representation_string[] = { _L("line"), _L("tube"), _L("sphere"), _L("unconnected sphere") };
 	int num_choices = 4;
-	m_Gui = new mafGUI(this);
-	m_Gui->Combo(ID_SCALAR, _R(""),&m_Scalar,numberOfArrays,m_ScalarsName);
-  m_Gui->Bool(ID_SPLINE,_L("spline"),&m_SplineMode);
-  m_Gui->Double(ID_DISTANCE_BORDER,_L("XY borders"),&m_DistanceBorder,0);
-	m_Gui->Combo(ID_POLYLINE_REPRESENTATION,_R(""),&m_Representation,num_choices,representation_string);
-	m_Gui->Label(_L("tube"));
-	m_Gui->Double(ID_TUBE_RADIUS,_L("radius"),&m_TubeRadius,0);
-	m_Gui->Double(ID_TUBE_RESOLUTION,_L("resolution"),&m_TubeResolution,0);
-	m_Gui->Bool(ID_TUBE_CAPPING,_L("capping"),&m_Capping);
-	m_Gui->Divider(2);
-	m_Gui->Label(_L("sphere"));
-	m_Gui->Bool(ID_SCALAR_DIMENSION,_L("scalar dim."),&m_ScalarDim,0,_L("Check to scale the sphere radius proportional to the selected scalars"));
-	m_Gui->Double(ID_SPHERE_RADIUS,_L("radius"),&m_SphereRadius,0);
-	m_Gui->Double(ID_SPHERE_RESOLUTION,_L("resolution"),&m_SphereResolution,0);
+	auto gui = new mafGUI(this);
+	gui->Combo(ID_SCALAR, _R(""), &m_Scalar, numberOfArrays, m_ScalarsName);
+	gui->Bool(ID_SPLINE, _L("spline"), &m_SplineMode);
+	gui->Double(ID_DISTANCE_BORDER, _L("XY borders"), &m_DistanceBorder, 0);
+	gui->Combo(ID_POLYLINE_REPRESENTATION, _R(""), &m_Representation, num_choices, representation_string);
+	gui->Label(_L("tube"));
+	gui->Double(ID_TUBE_RADIUS, _L("radius"), &m_TubeRadius, 0);
+	gui->Double(ID_TUBE_RESOLUTION, _L("resolution"), &m_TubeResolution, 0);
+	gui->Bool(ID_TUBE_CAPPING, _L("capping"), &m_Capping);
+	gui->Divider(2);
+	gui->Label(_L("sphere"));
+	gui->Bool(ID_SCALAR_DIMENSION, _L("scalar dim."), &m_ScalarDim, 0, _L("Check to scale the sphere radius proportional to the selected scalars"));
+	gui->Double(ID_SPHERE_RADIUS, _L("radius"), &m_SphereRadius, 0);
+	gui->Double(ID_SPHERE_RESOLUTION, _L("resolution"), &m_SphereResolution, 0);
 
-  m_Gui->Enable(ID_SCALAR, m_ScalarsName != NULL);
-	m_Gui->Enable(ID_TUBE_RADIUS, m_Representation == TUBE);
-	m_Gui->Enable(ID_TUBE_CAPPING, m_Representation == TUBE);
-	m_Gui->Enable(ID_TUBE_RESOLUTION, m_Representation == TUBE);
-	m_Gui->Enable(ID_SPHERE_RADIUS, m_Representation == GLYPH || m_Representation == GLYPH_UNCONNECTED);
-	m_Gui->Enable(ID_SPHERE_RESOLUTION, m_Representation == GLYPH || m_Representation == GLYPH_UNCONNECTED);
-	m_Gui->Divider();
-  m_MaterialButton = new mafGUIMaterialButton(m_Vme,this);
-  m_Gui->AddGui(m_MaterialButton->GetGui());
-  m_Gui->Divider();
+	gui->Enable(ID_SCALAR, m_ScalarsName != NULL);
+	gui->Enable(ID_TUBE_RADIUS, m_Representation == TUBE);
+	gui->Enable(ID_TUBE_CAPPING, m_Representation == TUBE);
+	gui->Enable(ID_TUBE_RESOLUTION, m_Representation == TUBE);
+	gui->Enable(ID_SPHERE_RADIUS, m_Representation == GLYPH || m_Representation == GLYPH_UNCONNECTED);
+	gui->Enable(ID_SPHERE_RESOLUTION, m_Representation == GLYPH || m_Representation == GLYPH_UNCONNECTED);
+	gui->Divider();
+	m_MaterialButton = new mafGUIMaterialButton(m_Vme, this);
+	gui->AddGui(m_MaterialButton->GetGui());
+	gui->Divider();
 
-	return m_Gui;
+	return gui;
 }
 //----------------------------------------------------------------------------
-void mafPipePolyline::OnEvent(mafEventBase *maf_event)
+void mafPipePolyline::OnEvent(mafEventBase* maf_event)
 //----------------------------------------------------------------------------
 {
-	if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
 	{
-		switch(e->GetId())
+		switch (e->GetId())
 		{
-		  case ID_POLYLINE_REPRESENTATION:
-			{
-				SetRepresentation(m_Representation);
-				mafTagItem *item = m_Vme->GetTagArray()->GetTag(_R("REPRESENTATION"));
-				item->SetValue(m_Representation);
-				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-			}
+		case ID_POLYLINE_REPRESENTATION:
+		{
+			SetRepresentation(m_Representation);
+			mafTagItem* item = m_Vme->GetTagArray()->GetTag(_R("REPRESENTATION"));
+			item->SetValue(m_Representation);
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		}
+		break;
+		case ID_TUBE_RADIUS:
+		{
+			m_Tube->SetRadius(m_TubeRadius);
+			mafTagItem* item = m_Vme->GetTagArray()->GetTag(_R("TUBE_RADIUS"));
+			item->SetValue(m_TubeRadius);
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		}
+		break;
+		case ID_TUBE_CAPPING:
+		{
+			m_Tube->SetCapping(m_Capping);
+			mafTagItem* item = m_Vme->GetTagArray()->GetTag(_R("TUBE_CAPPING"));
+			item->SetValue(m_Capping);
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		}
+		break;
+		case ID_TUBE_RESOLUTION:
+		{
+			m_Tube->SetNumberOfSides(m_TubeResolution);
+			mafTagItem* item = m_Vme->GetTagArray()->GetTag(_R("TUBE_RESOLUTION"));
+			item->SetValue(m_TubeResolution);
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		}
+		break;
+		case ID_SPHERE_RADIUS:
+		{
+			m_Sphere->SetRadius(m_SphereRadius);
+			mafTagItem* item = m_Vme->GetTagArray()->GetTag(_R("SPHERE_RADIUS"));
+			item->SetValue(m_SphereRadius);
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		}
+		break;
+		case ID_SPHERE_RESOLUTION:
+		{
+			m_Sphere->SetPhiResolution(m_SphereResolution);
+			m_Sphere->SetThetaResolution(m_SphereResolution);
+			mafTagItem* item = m_Vme->GetTagArray()->GetTag(_R("SPHERE_RESOLUTION"));
+			item->SetValue(m_SphereResolution);
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		}
+		break;
+		case ID_SCALAR_DIMENSION:
+			UpdateProperty();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
 			break;
-		  case ID_TUBE_RADIUS:
-			{
-				m_Tube->SetRadius(m_TubeRadius);
-				mafTagItem *item = m_Vme->GetTagArray()->GetTag(_R("TUBE_RADIUS"));
-				item->SetValue(m_TubeRadius);
-				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-			}
+		case ID_SCALAR:
+		{
+			UpdateScalars();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		}
+		break;
+		case ID_SPLINE:
+		{
+			mafTagItem* item = m_Vme->GetTagArray()->GetTag(_R("SPLINE_MODE"));
+			item->SetValue(m_SplineMode);
+			UpdateProperty();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
 			break;
-		  case ID_TUBE_CAPPING:
-			{
-				m_Tube->SetCapping(m_Capping);
-				mafTagItem *item = m_Vme->GetTagArray()->GetTag(_R("TUBE_CAPPING"));
-				item->SetValue(m_Capping);
-				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-			}
-			break;
-		  case ID_TUBE_RESOLUTION:
-			{
-				m_Tube->SetNumberOfSides(m_TubeResolution);
-				mafTagItem *item = m_Vme->GetTagArray()->GetTag(_R("TUBE_RESOLUTION"));
-				item->SetValue(m_TubeResolution);
-				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-			}
-			break;
-		  case ID_SPHERE_RADIUS:
-			{
-				m_Sphere->SetRadius(m_SphereRadius);
-				mafTagItem *item = m_Vme->GetTagArray()->GetTag(_R("SPHERE_RADIUS"));
-				item->SetValue(m_SphereRadius);
-				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-			}
-			break;
-		  case ID_SPHERE_RESOLUTION:
-			{
-				m_Sphere->SetPhiResolution(m_SphereResolution);
-				m_Sphere->SetThetaResolution(m_SphereResolution);
-				mafTagItem *item = m_Vme->GetTagArray()->GetTag(_R("SPHERE_RESOLUTION"));
-				item->SetValue(m_SphereResolution);
-				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-			}
-			break;
-		  case ID_SCALAR_DIMENSION:
-			  UpdateProperty();
-			  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-			break;
-		  case ID_SCALAR:
-			{
-				UpdateScalars();
-				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-			}
-			break;
-      case ID_SPLINE:
-      {
-        mafTagItem *item = m_Vme->GetTagArray()->GetTag(_R("SPLINE_MODE"));
-        item->SetValue(m_SplineMode);
-        UpdateProperty();
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-        break;
-      }
-      case ID_DISTANCE_BORDER:
-      {
-        UpdateProperty();
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      }
-      break;
-		  default:
-			  InvokeEvent(*e);
+		}
+		case ID_DISTANCE_BORDER:
+		{
+			UpdateProperty();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		}
+		break;
+		default:
+			InvokeEvent(*e);
 			break;
 		}
 	}
-	else if(maf_event->GetId() == VME_TIME_SET)
+	else if (maf_event->GetId() == VME_TIME_SET)
 	{
 		UpdateScalars();
-    UpdatePipeFromScalars();
-    UpdateProperty();
+		UpdatePipeFromScalars();
+		UpdateProperty();
 	}
-  else if (maf_event->GetSender() == m_Vme)
-  {
-    if(maf_event->GetId() == VME_OUTPUT_DATA_UPDATE)
-    {
-      UpdateData();
-      UpdateProperty();
-      UpdatePipeFromScalars();
-    }
-  }
-  
+	else if (maf_event->GetSender() == m_Vme)
+	{
+		if (maf_event->GetId() == VME_OUTPUT_DATA_UPDATE)
+		{
+			UpdateData();
+			UpdateProperty();
+			UpdatePipeFromScalars();
+		}
+	}
+
 }
 //----------------------------------------------------------------------------
 void mafPipePolyline::UpdateScalars()
 //----------------------------------------------------------------------------
 {
-  if(m_ScalarsName == NULL) 
-    return;
+	if (m_ScalarsName == NULL)
+		return;
 
-	mafVMEOutputPolyline *polyline_output = mafVMEOutputPolyline::SafeDownCast(m_Vme->GetOutput());
-	vtkDataSet *data = polyline_output->GetVTKData();
-  //data->Update();
+	mafVMEOutputPolyline* polyline_output = mafVMEOutputPolyline::SafeDownCast(m_Vme->GetOutput());
+	vtkDataSet* data = polyline_output->GetVTKData();
+	//data->Update();
 
 	data->GetPointData()->SetActiveScalars(m_ScalarsName[m_Scalar].GetCStr());
 	polyline_output->Update();
 	m_Vme->Modified();
 
-  mafVMEGenericAbstract *genAbst = mafVMEGenericAbstract::SafeDownCast(m_Vme);
-  if(NULL == genAbst)
-  {
-    m_Vme->Modified();
-    m_Vme->Update();
-    UpdatePipeFromScalars();
-    return;
-  }
+	mafVMEGenericAbstract* genAbst = mafVMEGenericAbstract::SafeDownCast(m_Vme);
+	if (NULL == genAbst)
+	{
+		m_Vme->Modified();
+		m_Vme->Update();
+		UpdatePipeFromScalars();
+		return;
+	}
 
 	for (auto& elem : *genAbst->GetDataVector())
 	{
-		mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(elem.second.get());
+		mafVMEItemVTK* item = mafVMEItemVTK::SafeDownCast(elem.second.get());
 		assert(item);
 
-		vtkPolyData *outputVTK = vtkPolyData::SafeDownCast(item->GetData());
-		if(outputVTK)
+		vtkPolyData* outputVTK = vtkPolyData::SafeDownCast(item->GetData());
+		if (outputVTK)
 		{
 			outputVTK->GetPointData()->SetActiveScalars(m_ScalarsName[m_Scalar].GetCStr());
 			//outputVTK->Update();
@@ -528,41 +528,41 @@ void mafPipePolyline::UpdateScalars()
 	m_Vme->Modified();
 	m_Vme->Update();
 
-  UpdatePipeFromScalars();	
+	UpdatePipeFromScalars();
 }
 //----------------------------------------------------------------------------
 void mafPipePolyline::UpdatePipeFromScalars()
 //----------------------------------------------------------------------------
 {
-  mafVMEOutputPolyline *polyline_output = mafVMEOutputPolyline::SafeDownCast(m_Vme->GetOutput());
-  //polyline_output->GetVTKData()->Update();
-  polyline_output->Update();
+	mafVMEOutputPolyline* polyline_output = mafVMEOutputPolyline::SafeDownCast(m_Vme->GetOutput());
+	//polyline_output->GetVTKData()->Update();
+	polyline_output->Update();
 
-  vtkPolyData *data = polyline_output->GetPolylineData();
-  double sr[2];
-  if(data->GetPointData()->GetScalars() == NULL) 
-    return; 
-  data->GetPointData()->GetScalars()->Modified();
-  data->GetPointData()->GetScalars()->GetRange(sr);
+	vtkPolyData* data = polyline_output->GetPolylineData();
+	double sr[2];
+	if (data->GetPointData()->GetScalars() == NULL)
+		return;
+	data->GetPointData()->GetScalars()->Modified();
+	data->GetPointData()->GetScalars()->GetRange(sr);
 
-  m_Table->RemoveAllPoints();
-  m_Table->AddRGBPoint(sr[0],0.0,0.0,1.0);
-  m_Table->AddRGBPoint((sr[0]+sr[1])/2,0.0,1.0,0.0);;
-  m_Table->AddRGBPoint(sr[1],1.0,0.0,0.0);
-  m_Table->Build();
+	m_Table->RemoveAllPoints();
+	m_Table->AddRGBPoint(sr[0], 0.0, 0.0, 1.0);
+	m_Table->AddRGBPoint((sr[0] + sr[1]) / 2, 0.0, 1.0, 0.0);;
+	m_Table->AddRGBPoint(sr[1], 1.0, 0.0, 0.0);
+	m_Table->Build();
 
-  //m_Glyph->SelectInputScalars(data->GetPointData()->GetScalars()->GetName());
-  m_Glyph->SetRange(sr);
-  m_Glyph->Update();
+	//m_Glyph->SelectInputScalars(data->GetPointData()->GetScalars()->GetName());
+	m_Glyph->SetRange(sr);
+	m_Glyph->Update();
 
-  m_Mapper->SetLookupTable(m_Table);
-  m_Mapper->SetScalarRange(data->GetPointData()->GetScalars()->GetRange());
-  m_Mapper->Update();
+	m_Mapper->SetLookupTable(m_Table);
+	m_Mapper->SetScalarRange(data->GetPointData()->GetScalars()->GetRange());
+	m_Mapper->Update();
 
-  m_Actor->Modified();
+	m_Actor->Modified();
 
-  UpdateProperty();
-  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
+	UpdateProperty();
+	{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
 
 }
 //----------------------------------------------------------------------------
@@ -571,9 +571,9 @@ void mafPipePolyline::UpdateData()
 {
 	//m_Vme->GetOutput()->GetVTKData()->Update();
 	m_Vme->Update();
-	mafVMEOutputPolyline *out_polyline = mafVMEOutputPolyline::SafeDownCast(m_Vme->GetOutput());
+	mafVMEOutputPolyline* out_polyline = mafVMEOutputPolyline::SafeDownCast(m_Vme->GetOutput());
 	out_polyline->Update();
-	vtkPolyData *data = out_polyline->GetPolylineData();
+	vtkPolyData* data = out_polyline->GetPolylineData();
 	//data->Modified();
 	//data->Update();
 
@@ -585,13 +585,13 @@ void mafPipePolyline::UpdateData()
 
 	m_OutlineActor->Modified();
 
-	if(m_Representation == TUBE || m_Representation == GLYPH || m_Representation == GLYPH_UNCONNECTED)
+	if (m_Representation == TUBE || m_Representation == GLYPH || m_Representation == GLYPH_UNCONNECTED)
 	{
-    if(m_Vme->GetTagArray()->GetTag(_R("TUBE_RADIUS")))
-    {
-      m_TubeRadius = m_Vme->GetTagArray()->GetTag(_R("TUBE_RADIUS"))->GetValueAsDouble();
-      m_Tube->SetRadius(m_TubeRadius);
-    }
+		if (m_Vme->GetTagArray()->GetTag(_R("TUBE_RADIUS")))
+		{
+			m_TubeRadius = m_Vme->GetTagArray()->GetTag(_R("TUBE_RADIUS"))->GetValueAsDouble();
+			m_Tube->SetRadius(m_TubeRadius);
+		}
 
 		m_Tube->SetInputConnection(out_polyline->GetVTKOutputPort());
 		m_Tube->Update();
@@ -605,113 +605,113 @@ void mafPipePolyline::UpdateData()
 void mafPipePolyline::UpdateProperty(bool fromTag)
 //----------------------------------------------------------------------------
 {
-  if(!m_Vme)
-    return;
+	if (!m_Vme)
+		return;
 
-	mafVMEOutputPolyline *out_polyline = mafVMEOutputPolyline::SafeDownCast(m_Vme->GetOutput());
+	mafVMEOutputPolyline* out_polyline = mafVMEOutputPolyline::SafeDownCast(m_Vme->GetOutput());
 	out_polyline->Update();
-	vtkPolyData *data = out_polyline->GetPolylineData();
-  //data->Update();
+	vtkPolyData* data = out_polyline->GetPolylineData();
+	//data->Update();
 
-  if(data->GetNumberOfPoints() <= 0) return;
+	if (data->GetNumberOfPoints() <= 0) return;
 
-  if(m_SplineMode && m_Representation != GLYPH && m_Representation != GLYPH_UNCONNECTED)
-    data = SplineProcess(data);
-  else 
-    data = LineProcess(data);
+	if (m_SplineMode && m_Representation != GLYPH && m_Representation != GLYPH_UNCONNECTED)
+		data = SplineProcess(data);
+	else
+		data = LineProcess(data);
 
 	data->Modified();
 	//data->Update();
 
-  if(m_Mapper)
-  {
-	  if (m_Representation == TUBE)
-	  {
-      m_Tube->SetInputData(data);
-      m_Tube->Update();
-      m_Mapper->SetInputConnection(m_Tube->GetOutputPort());
-	  }
-	  else if (m_Representation == GLYPH)
-	  {
-		  /*if(!m_ScalarDim)
-			  m_Glyph->SetScaleModeToDataScalingOff();
-		  else
-			  m_Glyph->SetScaleModeToScaleByScalar();*/
+	if (m_Mapper)
+	{
+		if (m_Representation == TUBE)
+		{
+			m_Tube->SetInputData(data);
+			m_Tube->Update();
+			m_Mapper->SetInputConnection(m_Tube->GetOutputPort());
+		}
+		else if (m_Representation == GLYPH)
+		{
+			/*if(!m_ScalarDim)
+				m_Glyph->SetScaleModeToDataScalingOff();
+			else
+				m_Glyph->SetScaleModeToScaleByScalar();*/
 
-		  //m_Glyph->SetScaleFactor(m_SphereRadius);
-  		
-      m_Glyph->Update();
-		  m_Glyph->Modified();
-		  vtkAppendPolyData *apd = vtkAppendPolyData::New();
-    	
-      if(m_SplineMode)
-      {
-        vtkPolyData *splinedPolyData;
-        splinedPolyData = SplineProcess(data);
-        apd->AddInputData(splinedPolyData);
-      }
-      else
-        apd->AddInputData(data);
+				//m_Glyph->SetScaleFactor(m_SphereRadius);
 
-      apd->AddInputData(m_Glyph->GetOutput());
-		  apd->Update();
-		  m_Mapper->SetInputConnection(apd->GetOutputPort());
-		  apd->Delete();
-	  }
-	  else if (m_Representation == GLYPH_UNCONNECTED)
-	  {
-		  /*if(!m_ScalarDim)
-			  m_Glyph->SetScaleModeToDataScalingOff();
-		  else
-			  m_Glyph->SetScaleModeToScaleByScalar();*/
-  		
-		  //m_Glyph->SetScaleFactor(m_SphereRadius);
-      
-      m_Glyph->SetInputData(data);
-		  m_Glyph->Update();
-		  m_Glyph->Modified();
-		  vtkAppendPolyData *apd = vtkAppendPolyData::New();
-		  //apd->AddInput(data);
-		  apd->AddInputConnection(m_Glyph->GetOutputPort());
-		  apd->Update();
-		  m_Mapper->SetInputConnection(apd->GetOutputPort());
-		  apd->Delete();
-	  }
-	  else
-	  {
-		  vtkAppendPolyData *apd = vtkAppendPolyData::New();
-		  apd->AddInputData(data);
-		  apd->Update();
-		  m_Mapper->SetInputConnection(apd->GetOutputPort());
-		  apd->Delete();
-	  }
-  }
+			m_Glyph->Update();
+			m_Glyph->Modified();
+			vtkAppendPolyData* apd = vtkAppendPolyData::New();
 
-  if(m_BorderMapper)
-  {
-    if(m_HalfNumberOfBorders == 0)
-    {
-      m_BorderActor->VisibilityOff();
-      for(int j=0;j<m_CaptionActorList.size();j++)
-      {
-        m_CaptionActorList[j]->SetVisibility(false);
-        m_CaptionActorList[j]->Modified();
-      }
-    }
-    else
-    {
-      m_BorderMapper->SetInputData(BorderCreation());
-      m_BorderMapper->Modified();
-      m_BorderActor->SetMapper(m_BorderMapper);
-      m_BorderActor->VisibilityOn();
-    }
-  }
+			if (m_SplineMode)
+			{
+				vtkPolyData* splinedPolyData;
+				splinedPolyData = SplineProcess(data);
+				apd->AddInputData(splinedPolyData);
+			}
+			else
+				apd->AddInputData(data);
+
+			apd->AddInputData(m_Glyph->GetOutput());
+			apd->Update();
+			m_Mapper->SetInputConnection(apd->GetOutputPort());
+			apd->Delete();
+		}
+		else if (m_Representation == GLYPH_UNCONNECTED)
+		{
+			/*if(!m_ScalarDim)
+				m_Glyph->SetScaleModeToDataScalingOff();
+			else
+				m_Glyph->SetScaleModeToScaleByScalar();*/
+
+				//m_Glyph->SetScaleFactor(m_SphereRadius);
+
+			m_Glyph->SetInputData(data);
+			m_Glyph->Update();
+			m_Glyph->Modified();
+			vtkAppendPolyData* apd = vtkAppendPolyData::New();
+			//apd->AddInput(data);
+			apd->AddInputConnection(m_Glyph->GetOutputPort());
+			apd->Update();
+			m_Mapper->SetInputConnection(apd->GetOutputPort());
+			apd->Delete();
+		}
+		else
+		{
+			vtkAppendPolyData* apd = vtkAppendPolyData::New();
+			apd->AddInputData(data);
+			apd->Update();
+			m_Mapper->SetInputConnection(apd->GetOutputPort());
+			apd->Delete();
+		}
+	}
+
+	if (m_BorderMapper)
+	{
+		if (m_HalfNumberOfBorders == 0)
+		{
+			m_BorderActor->VisibilityOff();
+			for (int j = 0; j < m_CaptionActorList.size(); j++)
+			{
+				m_CaptionActorList[j]->SetVisibility(false);
+				m_CaptionActorList[j]->Modified();
+			}
+		}
+		else
+		{
+			m_BorderMapper->SetInputData(BorderCreation());
+			m_BorderMapper->Modified();
+			m_BorderActor->SetMapper(m_BorderMapper);
+			m_BorderActor->VisibilityOn();
+		}
+	}
 }
 //----------------------------------------------------------------------------
 void mafPipePolyline::InitializeFromTag()
 //----------------------------------------------------------------------------
 {
-	mafTagItem *item = NULL;
+	mafTagItem* item = NULL;
 	if (!m_Vme->GetTagArray()->GetTag(_R("REPRESENTATION")))
 	{
 		item = new mafTagItem();
@@ -720,11 +720,11 @@ void mafPipePolyline::InitializeFromTag()
 		m_Vme->GetTagArray()->SetTag(*item);
 		cppDEL(item);
 	}
-  if(m_Representation==-1)
-  {
-	  item = m_Vme->GetTagArray()->GetTag(_R("REPRESENTATION"));
-	  m_Representation = (int)item->GetValueAsDouble();
-  }
+	if (m_Representation == -1)
+	{
+		item = m_Vme->GetTagArray()->GetTag(_R("REPRESENTATION"));
+		m_Representation = (int)item->GetValueAsDouble();
+	}
 
 	if (!m_Vme->GetTagArray()->GetTag(_R("SPHERE_RADIUS")))
 	{
@@ -781,19 +781,19 @@ void mafPipePolyline::InitializeFromTag()
 	item = m_Vme->GetTagArray()->GetTag(_R("TUBE_CAPPING"));
 	m_Capping = (int)item->GetValueAsDouble();
 
-  if (!m_Vme->GetTagArray()->GetTag(_R("SPLINE_MODE")))
-  {
-    item = new mafTagItem();
-    item->SetName(_R("SPLINE_MODE"));
-    item->SetValue(0);
-    m_Vme->GetTagArray()->SetTag(*item);
-    cppDEL(item);
-  }
-  if(m_SplineMode==-1)
-  {
-    item = m_Vme->GetTagArray()->GetTag(_R("SPLINE_MODE"));
-    m_SplineMode = (int)item->GetValueAsDouble();
-  }
+	if (!m_Vme->GetTagArray()->GetTag(_R("SPLINE_MODE")))
+	{
+		item = new mafTagItem();
+		item->SetName(_R("SPLINE_MODE"));
+		item->SetValue(0);
+		m_Vme->GetTagArray()->SetTag(*item);
+		cppDEL(item);
+	}
+	if (m_SplineMode == -1)
+	{
+		item = m_Vme->GetTagArray()->GetTag(_R("SPLINE_MODE"));
+		m_SplineMode = (int)item->GetValueAsDouble();
+	}
 }
 //----------------------------------------------------------------------------
 void mafPipePolyline::SetRepresentation(int representation)
@@ -810,14 +810,14 @@ void mafPipePolyline::SetRepresentation(int representation)
 	else
 		m_Representation = representation;
 
-	if (m_Gui)
+	if (auto gui = AccessGUI())
 	{
-		m_Gui->Enable(ID_TUBE_RADIUS, m_Representation == TUBE);
-		m_Gui->Enable(ID_TUBE_CAPPING, m_Representation == TUBE);
-		m_Gui->Enable(ID_TUBE_RESOLUTION, m_Representation == TUBE);
-		m_Gui->Enable(ID_SPHERE_RADIUS, m_Representation == GLYPH || m_Representation == GLYPH_UNCONNECTED);
-		m_Gui->Enable(ID_SPHERE_RESOLUTION, m_Representation == GLYPH || m_Representation == GLYPH_UNCONNECTED);
-    m_Gui->Enable(ID_SPLINE, m_Representation != GLYPH_UNCONNECTED);
+		gui->Enable(ID_TUBE_RADIUS, m_Representation == TUBE);
+		gui->Enable(ID_TUBE_CAPPING, m_Representation == TUBE);
+		gui->Enable(ID_TUBE_RESOLUTION, m_Representation == TUBE);
+		gui->Enable(ID_SPHERE_RADIUS, m_Representation == GLYPH || m_Representation == GLYPH_UNCONNECTED);
+		gui->Enable(ID_SPHERE_RESOLUTION, m_Representation == GLYPH || m_Representation == GLYPH_UNCONNECTED);
+		gui->Enable(ID_SPLINE, m_Representation != GLYPH_UNCONNECTED);
 	}
 	UpdateProperty();
 }
@@ -825,190 +825,190 @@ void mafPipePolyline::SetRepresentation(int representation)
 void mafPipePolyline::SetRadius(double radius)
 //----------------------------------------------------------------------------
 {
-	m_TubeRadius = radius; 
+	m_TubeRadius = radius;
 	m_SphereRadius = radius;
 
 	m_Sphere->SetRadius(m_SphereRadius);
-	mafTagItem *item = m_Vme->GetTagArray()->GetTag(_R("SPHERE_RADIUS"));
+	mafTagItem* item = m_Vme->GetTagArray()->GetTag(_R("SPHERE_RADIUS"));
 	item->SetValue(m_SphereRadius);
-  item = m_Vme->GetTagArray()->GetTag(_R("TUBE_RADIUS"));
-  item->SetValue(m_TubeRadius);
+	item = m_Vme->GetTagArray()->GetTag(_R("TUBE_RADIUS"));
+	item->SetValue(m_TubeRadius);
 
-	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
+	{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
 }
 //----------------------------------------------------------------------------
 void mafPipePolyline::SetColor(double color[3])
 //----------------------------------------------------------------------------
 {
-	if(m_Actor)
+	if (m_Actor)
 	{
 		m_Actor->GetProperty()->SetDiffuseColor(color);
 		m_Actor->Modified();
 	}
 }
 //----------------------------------------------------------------------------
-vtkPolyData *mafPipePolyline::SplineProcess(vtkPolyData *polyData)
+vtkPolyData* mafPipePolyline::SplineProcess(vtkPolyData* polyData)
 //----------------------------------------------------------------------------
 {
-  //cleaned point list
-  vtkPoints *pts;
-  vtkNew<vtkPoints> ptsSplined;
-  
-  //Clear old data
-  if (m_PolyFilteredLine!=NULL)
-    vtkDEL(m_PolyFilteredLine);
+	//cleaned point list
+	vtkPoints* pts;
+	vtkNew<vtkPoints> ptsSplined;
 
-  vtkNEW(m_PolyFilteredLine);
+	//Clear old data
+	if (m_PolyFilteredLine != NULL)
+		vtkDEL(m_PolyFilteredLine);
 
-  m_PolyFilteredLine->DeepCopy(polyData);
+	vtkNEW(m_PolyFilteredLine);
 
-  vtkCellArray *cellArray;
-  vtkNEW(cellArray);
+	m_PolyFilteredLine->DeepCopy(polyData);
 
-  vtkCellArray *lines=polyData->GetLines();
+	vtkCellArray* cellArray;
+	vtkNEW(cellArray);
+
+	vtkCellArray* lines = polyData->GetLines();
 #if VTK_MAJOR_VERSION > 8
-  const vtkIdType* linePoints;
+	const vtkIdType* linePoints;
 #else
-  vtkIdType* linePoints;
+	vtkIdType* linePoints;
 #endif
-  vtkIdType linePointsNum;
-  int evaluedPoints=0;
-  int cellID=0;
+	vtkIdType linePointsNum;
+	int evaluedPoints = 0;
+	int cellID = 0;
 
-  pts=polyData->GetPoints();
+	pts = polyData->GetPoints();
 
-  //generating one spline for each branch (cell) of input polyline
-  for(int lin=0;lin<polyData->GetNumberOfLines();lin++)
-  {
+	//generating one spline for each branch (cell) of input polyline
+	for (int lin = 0; lin < polyData->GetNumberOfLines(); lin++)
+	{
 
-    vtkNew<vtkCardinalSpline> splineX;
-    vtkNew<vtkCardinalSpline> splineY;
-    vtkNew<vtkCardinalSpline> splineZ;
-    int branchStart=evaluedPoints;
+		vtkNew<vtkCardinalSpline> splineX;
+		vtkNew<vtkCardinalSpline> splineY;
+		vtkNew<vtkCardinalSpline> splineZ;
+		int branchStart = evaluedPoints;
 
-    lines->GetCell(cellID,linePointsNum,linePoints);
-    cellID+=linePointsNum+1;
+		lines->GetCell(cellID, linePointsNum, linePoints);
+		cellID += linePointsNum + 1;
 
-    for(int i=0 ; i<linePointsNum; i++)
-    {
-      double *point=pts->GetPoint(linePoints[i]);
-      splineX->AddPoint(i, point[0]);
-      splineY->AddPoint(i, point[1]);
-      splineZ->AddPoint(i, point[2]);
-    }
+		for (int i = 0; i < linePointsNum; i++)
+		{
+			double* point = pts->GetPoint(linePoints[i]);
+			splineX->AddPoint(i, point[0]);
+			splineY->AddPoint(i, point[1]);
+			splineZ->AddPoint(i, point[2]);
+		}
 
-    for(int i=0 ; i<(linePointsNum * m_SplineCoefficient); i++)
-    {		 
-      double t;
-      t = ( linePointsNum - 1.0 ) / ( linePointsNum*m_SplineCoefficient - 1.0 ) * i;
-      ptsSplined->InsertPoint(evaluedPoints , splineX->Evaluate(t), splineY->Evaluate(t), splineZ->Evaluate(t));
-      evaluedPoints++;
-    }
+		for (int i = 0; i < (linePointsNum * m_SplineCoefficient); i++)
+		{
+			double t;
+			t = (linePointsNum - 1.0) / (linePointsNum * m_SplineCoefficient - 1.0) * i;
+			ptsSplined->InsertPoint(evaluedPoints, splineX->Evaluate(t), splineY->Evaluate(t), splineZ->Evaluate(t));
+			evaluedPoints++;
+		}
 
-    cellArray->InsertNextCell(evaluedPoints-branchStart);
-    for(int i = branchStart; i< evaluedPoints;i++)
-    {
-      cellArray->InsertCellPoint(i);
-    }
-  }
+		cellArray->InsertNextCell(evaluedPoints - branchStart);
+		for (int i = branchStart; i < evaluedPoints; i++)
+		{
+			cellArray->InsertCellPoint(i);
+		}
+	}
 
-  m_PolyFilteredLine->SetPoints(ptsSplined);
-  //m_PolyFilteredLine->Update();
+	m_PolyFilteredLine->SetPoints(ptsSplined);
+	//m_PolyFilteredLine->Update();
 
-  m_PolyFilteredLine->SetLines(cellArray);
-  m_PolyFilteredLine->Modified();
-  //m_PolyFilteredLine->Update();
+	m_PolyFilteredLine->SetLines(cellArray);
+	m_PolyFilteredLine->Modified();
+	//m_PolyFilteredLine->Update();
 
-  vtkDEL(cellArray);
+	vtkDEL(cellArray);
 
-  return m_PolyFilteredLine;
+	return m_PolyFilteredLine;
 }
 
 
-vtkPolyData * mafPipePolyline::LineProcess( vtkPolyData *polyData )
+vtkPolyData* mafPipePolyline::LineProcess(vtkPolyData* polyData)
 {
-  //cleaned point list
-  vtkPoints *pts;
+	//cleaned point list
+	vtkPoints* pts;
 
-  if (m_PolyFilteredLine==NULL)
-    vtkNEW(m_PolyFilteredLine);
+	if (m_PolyFilteredLine == NULL)
+		vtkNEW(m_PolyFilteredLine);
 
-  vtkCellArray *cellArray;
-  vtkNEW(cellArray);
+	vtkCellArray* cellArray;
+	vtkNEW(cellArray);
 
-  m_PolyFilteredLine->DeepCopy(polyData);
+	m_PolyFilteredLine->DeepCopy(polyData);
 
-  vtkCellArray *lines=polyData->GetLines();
+	vtkCellArray* lines = polyData->GetLines();
 #if VTK_MAJOR_VERSION > 8
-  const vtkIdType* linePoints;
+	const vtkIdType* linePoints;
 #else
-  vtkIdType* linePoints;
+	vtkIdType* linePoints;
 #endif
-  double oldPoint[3],currPoint[3];
-  vtkIdType linePointsNum;
-  int evaluedPoints=0;
-  int cellID=0;
-  //polyData->Update();
-  pts=polyData->GetPoints();
-  vtkPointData *pointData=polyData->GetPointData();
-  int nArray=pointData->GetNumberOfArrays();
-  
-  
-  //generating one branch for each branch (cell) of input polyline
-  for(int lin=0;lin<polyData->GetNumberOfLines();lin++)
-  {
+	double oldPoint[3], currPoint[3];
+	vtkIdType linePointsNum;
+	int evaluedPoints = 0;
+	int cellID = 0;
+	//polyData->Update();
+	pts = polyData->GetPoints();
+	vtkPointData* pointData = polyData->GetPointData();
+	int nArray = pointData->GetNumberOfArrays();
 
-    int branchStart=evaluedPoints;
-    int cellSize=1; //is 1 for the first point
 
-    lines->GetCell(cellID,linePointsNum,linePoints);
-    cellID+=linePointsNum+1;
+	//generating one branch for each branch (cell) of input polyline
+	for (int lin = 0; lin < polyData->GetNumberOfLines(); lin++)
+	{
 
-    pts->GetPoint(linePoints[0],oldPoint);
-    for(int i=1; i<linePointsNum; i++)
-    {
-      pts->GetPoint(linePoints[i],currPoint);
-      //adding points only if is not the same of the previsous;
-      if (currPoint[0]!=oldPoint[0] || currPoint[1]!=oldPoint[1] || currPoint[2]!=oldPoint[2]) 
-        cellSize++;
-      pts->GetPoint(linePoints[i],oldPoint);
-    }
+		int branchStart = evaluedPoints;
+		int cellSize = 1; //is 1 for the first point
 
-    if (cellSize>1)
-    {
-      cellArray->InsertNextCell(cellSize);
-      cellArray->InsertCellPoint(linePoints[0]);
+		lines->GetCell(cellID, linePointsNum, linePoints);
+		cellID += linePointsNum + 1;
 
-      pts->GetPoint(linePoints[0],oldPoint);
-      for(int i=1; i<linePointsNum; i++)
-      {
-        pts->GetPoint(linePoints[i],currPoint);
-        //adding points only if is not the same of the previsous;
-        if (currPoint[0]!=oldPoint[0] || currPoint[1]!=oldPoint[1] || currPoint[2]!=oldPoint[2]) 
-          cellArray->InsertCellPoint(linePoints[i]);
+		pts->GetPoint(linePoints[0], oldPoint);
+		for (int i = 1; i < linePointsNum; i++)
+		{
+			pts->GetPoint(linePoints[i], currPoint);
+			//adding points only if is not the same of the previsous;
+			if (currPoint[0] != oldPoint[0] || currPoint[1] != oldPoint[1] || currPoint[2] != oldPoint[2])
+				cellSize++;
+			pts->GetPoint(linePoints[i], oldPoint);
+		}
 
-        pts->GetPoint(linePoints[i],oldPoint);
-      }
-    }
-  }
+		if (cellSize > 1)
+		{
+			cellArray->InsertNextCell(cellSize);
+			cellArray->InsertCellPoint(linePoints[0]);
 
-  m_PolyFilteredLine->SetPoints(polyData->GetPoints());
-  //m_PolyFilteredLine->Update();
+			pts->GetPoint(linePoints[0], oldPoint);
+			for (int i = 1; i < linePointsNum; i++)
+			{
+				pts->GetPoint(linePoints[i], currPoint);
+				//adding points only if is not the same of the previsous;
+				if (currPoint[0] != oldPoint[0] || currPoint[1] != oldPoint[1] || currPoint[2] != oldPoint[2])
+					cellArray->InsertCellPoint(linePoints[i]);
 
-  m_PolyFilteredLine->SetLines(cellArray);
-  m_PolyFilteredLine->Modified();
-  //m_PolyFilteredLine->Update();
+				pts->GetPoint(linePoints[i], oldPoint);
+			}
+		}
+	}
 
-  vtkDEL(cellArray);
+	m_PolyFilteredLine->SetPoints(polyData->GetPoints());
+	//m_PolyFilteredLine->Update();
 
-  return m_PolyFilteredLine;
+	m_PolyFilteredLine->SetLines(cellArray);
+	m_PolyFilteredLine->Modified();
+	//m_PolyFilteredLine->Update();
+
+	vtkDEL(cellArray);
+
+	return m_PolyFilteredLine;
 }
 
 //----------------------------------------------------------------------------
 void mafPipePolyline::SetMapperScalarRange(double range[2])
 //----------------------------------------------------------------------------
 {
-  m_Mapper->SetScalarRange(range);
+	m_Mapper->SetScalarRange(range);
 	m_Mapper->Update();
 }
 //----------------------------------------------------------------------------
@@ -1016,8 +1016,8 @@ void mafPipePolyline::SetLookupTableColorRange(double range[2], double colorMin[
 //----------------------------------------------------------------------------
 {
 	m_Table->RemoveAllPoints();
-	m_Table->AddRGBPoint(range[0],colorMin[0],colorMin[1],colorMin[2]);	
-	m_Table->AddRGBPoint(range[1],colorMax[0],colorMax[1],colorMax[2]);
+	m_Table->AddRGBPoint(range[0], colorMin[0], colorMin[1], colorMin[2]);
+	m_Table->AddRGBPoint(range[1], colorMax[0], colorMax[1], colorMax[2]);
 	m_Table->Build();
 
 	m_Mapper->SetLookupTable(m_Table);
@@ -1025,264 +1025,263 @@ void mafPipePolyline::SetLookupTableColorRange(double range[2], double colorMin[
 }
 
 //----------------------------------------------------------------------------
-vtkPolyData *mafPipePolyline::BorderCreation()
+vtkPolyData* mafPipePolyline::BorderCreation()
 //----------------------------------------------------------------------------
 {
-  mafVMEOutputPolyline *out_polyline = mafVMEOutputPolyline::SafeDownCast(m_Vme->GetOutput());
-  assert(out_polyline);
-  vtkPolyData *data = out_polyline->GetPolylineData();
-  assert(data);
-  //data->Update();
+	mafVMEOutputPolyline* out_polyline = mafVMEOutputPolyline::SafeDownCast(m_Vme->GetOutput());
+	assert(out_polyline);
+	vtkPolyData* data = out_polyline->GetPolylineData();
+	assert(data);
+	//data->Update();
 
-  vtkNEW(m_BorderData);
-  if(m_BorderData->GetNumberOfInputConnections(0) !=0)
-    m_BorderData->RemoveAllInputs();
+	vtkNEW(m_BorderData);
+	if (m_BorderData->GetNumberOfInputConnections(0) != 0)
+		m_BorderData->RemoveAllInputs();
 
-  //calculate and create the two parallel lines
-  int s = 0;
- 
-  DeleteCaptionActorList();
+	//calculate and create the two parallel lines
+	int s = 0;
 
-  for(; s < m_HalfNumberOfBorders; s++)
-  {
-    vtkNew<vtkPolyData> polyUp;
-    polyUp->DeepCopy(data); //value original
+	DeleteCaptionActorList();
 
-    vtkPoints *points = polyUp->GetPoints();
-    vtkNew<vtkPoints> temporaryPointsUp;
+	for (; s < m_HalfNumberOfBorders; s++)
+	{
+		vtkNew<vtkPolyData> polyUp;
+		polyUp->DeepCopy(data); //value original
 
-    vtkNew<vtkPolyData> polyDown;
-    vtkNew<vtkPoints> temporaryPointsDown;
+		vtkPoints* points = polyUp->GetPoints();
+		vtkNew<vtkPoints> temporaryPointsUp;
 
-    if(polyUp->GetNumberOfPoints() == 0)
-    {
-      ;
-    }
-    else
-    {
+		vtkNew<vtkPolyData> polyDown;
+		vtkNew<vtkPoints> temporaryPointsDown;
 
-      temporaryPointsUp->DeepCopy(points);
-      temporaryPointsDown->DeepCopy(points);
+		if (polyUp->GetNumberOfPoints() == 0)
+		{
+			;
+		}
+		else
+		{
 
-      double preiousNormal[3]; //used only for last point
+			temporaryPointsUp->DeepCopy(points);
+			temporaryPointsDown->DeepCopy(points);
 
-      for(long int j = 0; j < temporaryPointsUp->GetNumberOfPoints(); j++)
-      {
-        
-        double tempPoint1[3];
-        double tempPoint2[3];
-        if(j != temporaryPointsUp->GetNumberOfPoints()-1)
-        {
-          temporaryPointsUp->GetPoint(j, tempPoint1);
-          temporaryPointsUp->GetPoint(j+1, tempPoint2);
-        }
-        else
-        {
-          temporaryPointsUp->GetPoint(j-1, tempPoint1);
-          temporaryPointsUp->GetPoint(j, tempPoint2);
-        }
+			double preiousNormal[3]; //used only for last point
 
+			for (long int j = 0; j < temporaryPointsUp->GetNumberOfPoints(); j++)
+			{
 
-        //search the versor
-        double versor[3];
-        versor[0] = (tempPoint2[0] - tempPoint1[0]);
-        versor[1] = (tempPoint2[1] - tempPoint1[1]);
-        versor[2] = (tempPoint2[2] - tempPoint1[2]);
-
-        double zAxis[3] = {0,0,1};
-
-        //vectorial product beetween my versor and zAxis
-        double perpendicular[3];
-        double *u , *v;
-        u = versor;
-        v = zAxis;
-
-        vtkMath::Cross(versor,zAxis,perpendicular);
-
-        if(j == temporaryPointsUp->GetNumberOfPoints()-2)
-        {
-          preiousNormal[0] = perpendicular[0];
-          preiousNormal[1] = perpendicular[1];
-          preiousNormal[2] = perpendicular[2];
-        }
-
-        double coord[3];
-        coord[0] = perpendicular[0];
-        coord[1] = perpendicular[1];
-        coord[2] = perpendicular[2];
+				double tempPoint1[3];
+				double tempPoint2[3];
+				if (j != temporaryPointsUp->GetNumberOfPoints() - 1)
+				{
+					temporaryPointsUp->GetPoint(j, tempPoint1);
+					temporaryPointsUp->GetPoint(j + 1, tempPoint2);
+				}
+				else
+				{
+					temporaryPointsUp->GetPoint(j - 1, tempPoint1);
+					temporaryPointsUp->GetPoint(j, tempPoint2);
+				}
 
 
-        if(j == temporaryPointsUp->GetNumberOfPoints()-1)
-        {
-          coord[0] = preiousNormal[0];
-          coord[1] = preiousNormal[1];
-          coord[2] = preiousNormal[2];
-        }
+				//search the versor
+				double versor[3];
+				versor[0] = (tempPoint2[0] - tempPoint1[0]);
+				versor[1] = (tempPoint2[1] - tempPoint1[1]);
+				versor[2] = (tempPoint2[2] - tempPoint1[2]);
 
-        vtkMath::Normalize(coord);
+				double zAxis[3] = { 0,0,1 };
 
-        //now I can calculate the the coordinate of the point, distanced by the step
-        double newPointUp[3], newPointDown[3];
+				//vectorial product beetween my versor and zAxis
+				double perpendicular[3];
+				double* u, * v;
+				u = versor;
+				v = zAxis;
 
-        if(j != temporaryPointsUp->GetNumberOfPoints()-1)
-        {
-          newPointDown[0] = ((m_DistanceBorder*(s+1))) * (coord[0]) + tempPoint1[0];
-          newPointDown[1] = ((m_DistanceBorder*(s+1))) * (coord[1]) + tempPoint1[1];
-          newPointDown[2] = ((m_DistanceBorder*(s+1))) * (coord[2]) + tempPoint1[2];
+				vtkMath::Cross(versor, zAxis, perpendicular);
 
-          newPointUp[0] = ((-m_DistanceBorder*(s+1))) * (coord[0]) + tempPoint1[0];
-          newPointUp[1] = ((-m_DistanceBorder*(s+1))) * (coord[1]) + tempPoint1[1];
-          newPointUp[2] = ((-m_DistanceBorder*(s+1))) * (coord[2]) + tempPoint1[2];
+				if (j == temporaryPointsUp->GetNumberOfPoints() - 2)
+				{
+					preiousNormal[0] = perpendicular[0];
+					preiousNormal[1] = perpendicular[1];
+					preiousNormal[2] = perpendicular[2];
+				}
+
+				double coord[3];
+				coord[0] = perpendicular[0];
+				coord[1] = perpendicular[1];
+				coord[2] = perpendicular[2];
 
 
-        }
-        else //the last point
-        {
-          newPointDown[0] = ((m_DistanceBorder*(s+1))) * (coord[0]) + tempPoint2[0];
-          newPointDown[1] = ((m_DistanceBorder*(s+1))) * (coord[1]) + tempPoint2[1];
-          newPointDown[2] = ((m_DistanceBorder*(s+1))) * (coord[2]) + tempPoint2[2];
+				if (j == temporaryPointsUp->GetNumberOfPoints() - 1)
+				{
+					coord[0] = preiousNormal[0];
+					coord[1] = preiousNormal[1];
+					coord[2] = preiousNormal[2];
+				}
 
-          newPointUp[0] = ((-m_DistanceBorder*(s+1))) * (coord[0]) + tempPoint2[0];
-          newPointUp[1] = ((-m_DistanceBorder*(s+1))) * (coord[1]) + tempPoint2[1];
-          newPointUp[2] = ((-m_DistanceBorder*(s+1))) * (coord[2]) + tempPoint2[2];
-        }
+				vtkMath::Normalize(coord);
 
-        if(j==0)
-        {
-          mafTransform t;
-          t.SetMatrix(*m_Vme->GetOutput()->GetAbsMatrix());
-          
-          if(s == 0)
-          {
-            double p0[3];
-            t.TransformPoint(tempPoint1, p0);
-            SetCaptionActorBorder(m_HalfNumberOfBorders, p0);
-          }
+				//now I can calculate the the coordinate of the point, distanced by the step
+				double newPointUp[3], newPointDown[3];
 
-          double pUp[3];
-          t.TransformPoint(newPointUp, pUp);
-          SetCaptionActorBorder(m_HalfNumberOfBorders-s-1,pUp);
+				if (j != temporaryPointsUp->GetNumberOfPoints() - 1)
+				{
+					newPointDown[0] = ((m_DistanceBorder * (s + 1))) * (coord[0]) + tempPoint1[0];
+					newPointDown[1] = ((m_DistanceBorder * (s + 1))) * (coord[1]) + tempPoint1[1];
+					newPointDown[2] = ((m_DistanceBorder * (s + 1))) * (coord[2]) + tempPoint1[2];
 
-          double pDown[3];
-          t.TransformPoint(newPointDown, pDown);
-          SetCaptionActorBorder(m_HalfNumberOfBorders+s+1,pDown);
-        }
+					newPointUp[0] = ((-m_DistanceBorder * (s + 1))) * (coord[0]) + tempPoint1[0];
+					newPointUp[1] = ((-m_DistanceBorder * (s + 1))) * (coord[1]) + tempPoint1[1];
+					newPointUp[2] = ((-m_DistanceBorder * (s + 1))) * (coord[2]) + tempPoint1[2];
 
-        temporaryPointsUp->SetPoint(j, newPointUp);
-        temporaryPointsDown->SetPoint(j, newPointDown);
 
-      }
+				}
+				else //the last point
+				{
+					newPointDown[0] = ((m_DistanceBorder * (s + 1))) * (coord[0]) + tempPoint2[0];
+					newPointDown[1] = ((m_DistanceBorder * (s + 1))) * (coord[1]) + tempPoint2[1];
+					newPointDown[2] = ((m_DistanceBorder * (s + 1))) * (coord[2]) + tempPoint2[2];
 
-    }
+					newPointUp[0] = ((-m_DistanceBorder * (s + 1))) * (coord[0]) + tempPoint2[0];
+					newPointUp[1] = ((-m_DistanceBorder * (s + 1))) * (coord[1]) + tempPoint2[1];
+					newPointUp[2] = ((-m_DistanceBorder * (s + 1))) * (coord[2]) + tempPoint2[2];
+				}
 
-    vtkNew<vtkCellArray> cellArrayUp;
-    vtkNew<vtkCellArray> cellArrayDown;
+				if (j == 0)
+				{
+					mafTransform t;
+					t.SetMatrix(*m_Vme->GetOutput()->GetAbsMatrix());
 
-    vtkIdType pointId[2];
-    for(int i = 0; i< temporaryPointsUp->GetNumberOfPoints();i++)
-    {
-      if (i > 0)
-      {             
-        pointId[0] = i - 1;
-        pointId[1] = i;
-        cellArrayUp->InsertNextCell(2 , pointId);  
-        cellArrayDown->InsertNextCell(2 , pointId);  
-      }
-    }
+					if (s == 0)
+					{
+						double p0[3];
+						t.TransformPoint(tempPoint1, p0);
+						SetCaptionActorBorder(m_HalfNumberOfBorders, p0);
+					}
 
-    polyUp->SetPoints(temporaryPointsUp);
-    polyUp->SetLines(cellArrayUp);
-    polyUp->Modified();
-    //polyUp->Update();
+					double pUp[3];
+					t.TransformPoint(newPointUp, pUp);
+					SetCaptionActorBorder(m_HalfNumberOfBorders - s - 1, pUp);
 
-    polyDown->SetPoints(temporaryPointsDown);
-    polyDown->SetLines(cellArrayDown);
-    polyDown->Modified();
-    //polyDown->Update();
+					double pDown[3];
+					t.TransformPoint(newPointDown, pDown);
+					SetCaptionActorBorder(m_HalfNumberOfBorders + s + 1, pDown);
+				}
 
-    m_BorderData->AddInputData(polyUp);
-    m_BorderData->AddInputData(polyDown);
-    m_BorderData->Update();
-  }
+				temporaryPointsUp->SetPoint(j, newPointUp);
+				temporaryPointsDown->SetPoint(j, newPointDown);
 
-  return m_BorderData->GetOutput();
+			}
+
+		}
+
+		vtkNew<vtkCellArray> cellArrayUp;
+		vtkNew<vtkCellArray> cellArrayDown;
+
+		vtkIdType pointId[2];
+		for (int i = 0; i < temporaryPointsUp->GetNumberOfPoints(); i++)
+		{
+			if (i > 0)
+			{
+				pointId[0] = i - 1;
+				pointId[1] = i;
+				cellArrayUp->InsertNextCell(2, pointId);
+				cellArrayDown->InsertNextCell(2, pointId);
+			}
+		}
+
+		polyUp->SetPoints(temporaryPointsUp);
+		polyUp->SetLines(cellArrayUp);
+		polyUp->Modified();
+		//polyUp->Update();
+
+		polyDown->SetPoints(temporaryPointsDown);
+		polyDown->SetLines(cellArrayDown);
+		polyDown->Modified();
+		//polyDown->Update();
+
+		m_BorderData->AddInputData(polyUp);
+		m_BorderData->AddInputData(polyDown);
+		m_BorderData->Update();
+	}
+
+	return m_BorderData->GetOutput();
 }
 //----------------------------------------------------------------------------
 void mafPipePolyline::SetOpacity(double opacity)
 //----------------------------------------------------------------------------
 {
-  m_Opacity = opacity;
+	m_Opacity = opacity;
 
-  if(m_Actor) m_Actor->GetProperty()->SetOpacity(m_Opacity);
-  if(m_OutlineActor) m_OutlineActor->GetProperty()->SetOpacity(m_Opacity);
-  if(m_BorderActor) m_BorderActor->GetProperty()->SetOpacity(m_Opacity);
+	if (m_Actor) m_Actor->GetProperty()->SetOpacity(m_Opacity);
+	if (m_OutlineActor) m_OutlineActor->GetProperty()->SetOpacity(m_Opacity);
+	if (m_BorderActor) m_BorderActor->GetProperty()->SetOpacity(m_Opacity);
 }
 //----------------------------------------------------------------------------
 void mafPipePolyline::SetActorPicking(int enable)
 //----------------------------------------------------------------------------
 {
-  m_Actor->SetPickable(enable);
-  m_Actor->Modified();
+	m_Actor->SetPickable(enable);
+	m_Actor->Modified();
 }
 
 //----------------------------------------------------------------------------
 void mafPipePolyline::SetCaptionActorBorder(int index, double position[3])
 //----------------------------------------------------------------------------
 {
-  //caption
-  vtkCaptionActor2D *caption = NULL;
-  if(m_CaptionActorList.size() != m_HalfNumberOfBorders * 2 + 1)
-  {
-    m_CaptionActorList.push_back(vtkCaptionActor2D::New());
-     caption = m_CaptionActorList[m_CaptionActorList.size()-1];
-    caption->SetPosition(-5,-10);
-    caption->GetCaptionTextProperty()->SetFontFamilyToArial();
-    caption->GetCaptionTextProperty()->BoldOn();
-    //caption->GetCaptionTextProperty()->AntiAliasingOn();
-    caption->GetCaptionTextProperty()->ItalicOff();
-    caption->GetCaptionTextProperty()->ShadowOn();
-    caption->SetPadding(0);
+	//caption
+	vtkCaptionActor2D* caption = NULL;
+	if (m_CaptionActorList.size() != m_HalfNumberOfBorders * 2 + 1)
+	{
+		m_CaptionActorList.push_back(vtkCaptionActor2D::New());
+		caption = m_CaptionActorList[m_CaptionActorList.size() - 1];
+		caption->SetPosition(-5, -10);
+		caption->GetCaptionTextProperty()->SetFontFamilyToArial();
+		caption->GetCaptionTextProperty()->BoldOn();
+		//caption->GetCaptionTextProperty()->AntiAliasingOn();
+		caption->GetCaptionTextProperty()->ItalicOff();
+		caption->GetCaptionTextProperty()->ShadowOn();
+		caption->SetPadding(0);
 
-    caption->LeaderOff();
-    caption->ThreeDimensionalLeaderOff();
-    
+		caption->LeaderOff();
+		caption->ThreeDimensionalLeaderOff();
 
-    caption->SetHeight(0.01);
-    //m_CaptionActor->SetWidth(0.05);
-    caption->BorderOff();
 
-    caption->GetCaptionTextProperty()->SetColor(1.0,1.0,1.0);
-  }
-  else
-  {
-    caption = m_CaptionActorList[index];
-  }
-  
-  if(caption)
-  {
-    if(m_RenFront)
-    {
-      m_RenFront->AddActor2D(caption);
-    }
-    
-    caption->SetVisibility(m_TextIdentifierBorderVisibility);
-    caption->SetCaption(mafString::Format(_R("%d"), index).GetCStr());
-    caption->SetAttachmentPoint(position[0],position[1],position[2]);
-  }
-  
+		caption->SetHeight(0.01);
+		//m_CaptionActor->SetWidth(0.05);
+		caption->BorderOff();
+
+		caption->GetCaptionTextProperty()->SetColor(1.0, 1.0, 1.0);
+	}
+	else
+	{
+		caption = m_CaptionActorList[index];
+	}
+
+	if (caption)
+	{
+		if (m_RenFront)
+		{
+			m_RenFront->AddActor2D(caption);
+		}
+
+		caption->SetVisibility(m_TextIdentifierBorderVisibility);
+		caption->SetCaption(mafString::Format(_R("%d"), index).GetCStr());
+		caption->SetAttachmentPoint(position[0], position[1], position[2]);
+	}
+
 }
 //----------------------------------------------------------------------------
 void mafPipePolyline::DeleteCaptionActorList()
 //----------------------------------------------------------------------------
 {
-  int i=0,size=m_CaptionActorList.size();
-  for(;i<size;i++)
-  {
-    if(m_RenFront)
-    {
-      m_RenFront->RemoveActor2D(m_CaptionActorList[i]);
-    }
-    vtkDEL(m_CaptionActorList[i]);
-  }
-  m_CaptionActorList.clear();
+	for (int i = 0, size = m_CaptionActorList.size(); i < size; i++)
+	{
+		if (m_RenFront)
+		{
+			m_RenFront->RemoveActor2D(m_CaptionActorList[i]);
+		}
+		vtkDEL(m_CaptionActorList[i]);
+	}
+	m_CaptionActorList.clear();
 }

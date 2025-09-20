@@ -3,7 +3,7 @@
  Program: MAF2Medical
  Module: medPipeSurfaceEditor
  Authors: Matteo Giacomoni
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -57,17 +57,17 @@ medPipeSurfaceEditor::medPipeSurfaceEditor()
 	m_Mapper = NULL;
 }
 //----------------------------------------------------------------------------
-void medPipeSurfaceEditor::Create(mafNode *node, mafView *view)
+void medPipeSurfaceEditor::Create(mafNode* node, mafView* view)
 //----------------------------------------------------------------------------
 {
 	Superclass::Create(node, view);
 
 	m_Selected = false;
 
-	medVMEOutputSurfaceEditor *out_polyline = medVMEOutputSurfaceEditor::SafeDownCast(m_Vme->GetOutput());
+	medVMEOutputSurfaceEditor* out_polyline = medVMEOutputSurfaceEditor::SafeDownCast(m_Vme->GetOutput());
 	assert(out_polyline);
 	m_Vme->AddObserver(this);
-	vtkPolyData *data = vtkPolyData::SafeDownCast(out_polyline->GetVTKData());
+	vtkPolyData* data = vtkPolyData::SafeDownCast(out_polyline->GetVTKData());
 	assert(data);
 	//data->Update();
 
@@ -84,9 +84,9 @@ void medPipeSurfaceEditor::Create(mafNode *node, mafView *view)
 	m_Mapper->SetLookupTable(out_polyline->GetMaterial()->m_ColorLut);
 	m_Mapper->SetScalarRange(range);
 	m_Mapper->ScalarVisibilityOn();
-	if(data->GetPointData()->GetScalars())
+	if (data->GetPointData()->GetScalars())
 		m_Mapper->SetScalarModeToUsePointData();
-	if(data->GetCellData()->GetScalars())
+	if (data->GetCellData()->GetScalars())
 		m_Mapper->SetScalarModeToUseCellData();
 	m_Mapper->Modified();
 
@@ -118,48 +118,48 @@ void medPipeSurfaceEditor::Select(bool sel)
 
 }
 //----------------------------------------------------------------------------
-mafGUI *medPipeSurfaceEditor::CreateGui()
+mafGUI* medPipeSurfaceEditor::CreateGui()
 //----------------------------------------------------------------------------
 {
-	assert(m_Gui == NULL);
-	m_Gui = new mafGUI(this);
+	assert(!AccessGUI());
+	auto gui = new mafGUI(this);
 
-	return m_Gui;
+	return gui;
 }
 //----------------------------------------------------------------------------
-void medPipeSurfaceEditor::OnEvent(mafEventBase *maf_event)
+void medPipeSurfaceEditor::OnEvent(mafEventBase* maf_event)
 //----------------------------------------------------------------------------
 {
-	if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
 	{
-		/*switch(e->GetId()) 
+		/*switch(e->GetId())
 		{
 		default:
 			{*/
-				InvokeEvent(*e);
-			//}
+		InvokeEvent(*e);
 		//}
+	//}
 	}
 	else if (maf_event->GetSender() == m_Vme)
 	{
-		if(maf_event->GetId() == VME_OUTPUT_DATA_UPDATE)
+		if (maf_event->GetId() == VME_OUTPUT_DATA_UPDATE)
 		{
-			vtkPolyData *data = (vtkPolyData *)m_Vme->GetOutput()->GetVTKData();
+			vtkPolyData* data = (vtkPolyData*)m_Vme->GetOutput()->GetVTKData();
 			assert(data);
 			double range[2];
 			data->GetScalarRange(range);
 			m_LUT->SetNumberOfColors(4);
-			double step=(range[1]-range[0])/3;
+			double step = (range[1] - range[0]) / 3;
 			//m_LUT->SetTableValue(range[0], 0.0, 0.0, 1.0, 1.0);
 			m_LUT->SetTableValue(range[0], 1.0, 1.0, 1.0, 1.0);
-			m_LUT->SetTableValue(range[0]+step, 0.0, 0.0, 1.0, 1.0);
-			m_LUT->SetTableValue(range[0]+2*step, 0.0, 1.0, 0.0, 1.0);
+			m_LUT->SetTableValue(range[0] + step, 0.0, 0.0, 1.0, 1.0);
+			m_LUT->SetTableValue(range[0] + 2 * step, 0.0, 1.0, 0.0, 1.0);
 			m_LUT->SetTableValue(range[1], 1.0, 0.0, 0.0, 1.0);
 			m_LUT->Build();
 			//m_Mapper->SetLookupTable(m_LUT);
 			m_Mapper->SetScalarRange(range);
 			m_Mapper->Update();
-			{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
 		}
 	}
 }

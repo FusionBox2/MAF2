@@ -1,13 +1,13 @@
-/*========================================================================= 
-Program: Multimod Application Framework RELOADED 
-Module: $RCSfile: medViewSliceOnCurveCompound.cpp,v $ 
-Language: C++ 
-Date: $Date: 2012-04-06 09:36:51 $ 
-Version: $Revision: 1.1.2.6 $ 
+/*=========================================================================
+Program: Multimod Application Framework RELOADED
+Module: $RCSfile: medViewSliceOnCurveCompound.cpp,v $
+Language: C++
+Date: $Date: 2012-04-06 09:36:51 $
+Version: $Revision: 1.1.2.6 $
 Authors: Eleonora Mambrini
-========================================================================== 
+==========================================================================
 Copyright (c) 2008 University of Bedfordshire (www.beds.ac.uk)
-See the COPYINGS file for license details 
+See the COPYINGS file for license details
 =========================================================================
 */
 
@@ -73,157 +73,157 @@ mafCxxTypeMacro(medViewSliceOnCurveCompound);
 //----------------------------------------------------------------------------
 medViewSliceOnCurveCompound::medViewSliceOnCurveCompound(const mafString& label) : medViewCompoundWindowing(label, 1, 3)
 //----------------------------------------------------------------------------
-{  
-  m_LayoutConfiguration = medViewSliceOnCurveCompound::LAYOUT_MPS_VERT; 
-  m_VolumePipeConfiguration = 0;		//DRR by the default
-  m_ShowPolylineInMainView = 0;     //Polyline is not visible in main view (by the default)
-  m_ShowGizmoCoords = 1;
+{
+	m_LayoutConfiguration = medViewSliceOnCurveCompound::LAYOUT_MPS_VERT;
+	m_VolumePipeConfiguration = 0;		//DRR by the default
+	m_ShowPolylineInMainView = 0;     //Polyline is not visible in main view (by the default)
+	m_ShowGizmoCoords = 1;
 
-  m_Gizmo = NULL;
+	m_Gizmo = NULL;
 #ifdef GIZMO_PATH
-  m_GizmoPos = 0;
-  m_GizmoLength = -1;
+	m_GizmoPos = 0;
+	m_GizmoLength = -1;
 #endif // GIZMO_PATH
 
-  m_SliceCameraAutoFocus = m_SliceCameraAutoRotate = 0;
-  m_SliceCameraNavigate3D = 0;
+	m_SliceCameraAutoFocus = m_SliceCameraAutoRotate = 0;
+	m_SliceCameraNavigate3D = 0;
 
-  m_CurrentVolume = NULL;
-  m_CurrentPolyLine = NULL;
-  m_CurrentPolyLineGizmo = NULL;
+	m_CurrentVolume = NULL;
+	m_CurrentPolyLine = NULL;
+	m_CurrentPolyLineGizmo = NULL;
 
-  m_TextMapper = NULL;
-  m_TextActor = NULL;
-  m_OldPos[0] = m_OldPos[1] = m_OldPos[2] = 0.;
+	m_TextMapper = NULL;
+	m_TextActor = NULL;
+	m_OldPos[0] = m_OldPos[1] = m_OldPos[2] = 0.;
 
-  // Added by Losi 11.25.2009
-  m_EnableGPU=FALSE;
+	// Added by Losi 11.25.2009
+	m_EnableGPU = FALSE;
 }
 
 #include "mafVMERoot.h"
 //----------------------------------------------------------------------------
 medViewSliceOnCurveCompound::~medViewSliceOnCurveCompound()
 //----------------------------------------------------------------------------
-{  
-  if (m_Gizmo != NULL)
-  {
-    //BES: 8.4.2008 - mafGizmoXXXX connects its VME gizmo to the VME tree,
-    //thus logically, it needs to disconnect it when it is being destroyed
-    //disconnection triggers an event at root node that is forwarded to 
-    //the listener. There is, however, somewhere a bug. When application
-    //terminates, listener is destroyed but reference on it is kept in node root,
-    //which means that the application crashes here.
-    //Probably the problem roots from multiple inheritance.
-    //This is hack to deal with it:
+{
+	if (m_Gizmo != NULL)
+	{
+		//BES: 8.4.2008 - mafGizmoXXXX connects its VME gizmo to the VME tree,
+		//thus logically, it needs to disconnect it when it is being destroyed
+		//disconnection triggers an event at root node that is forwarded to 
+		//the listener. There is, however, somewhere a bug. When application
+		//terminates, listener is destroyed but reference on it is kept in node root,
+		//which means that the application crashes here.
+		//Probably the problem roots from multiple inheritance.
+		//This is hack to deal with it:
 
-    // find the root
-    mafBaseEventHandler* listener = NULL;
-    auto root = mafVMERoot::SafeDownCast(m_Gizmo->GetOutput()->GetParent());
-    if (root)
-    {
-      listener = root->GetListener();
-      root->SetListener(nullptr);
-    }
+		// find the root
+		mafBaseEventHandler* listener = NULL;
+		auto root = mafVMERoot::SafeDownCast(m_Gizmo->GetOutput()->GetParent());
+		if (root)
+		{
+			listener = root->GetListener();
+			root->SetListener(nullptr);
+		}
 
-    DestroyGizmo();  
+		DestroyGizmo();
 
-    if (root)
-      root->SetListener(listener);
-  }
+		if (root)
+			root->SetListener(listener);
+	}
 
-  vtkDEL(m_TextMapper);
-  vtkDEL(m_TextActor);
+	vtkDEL(m_TextMapper);
+	vtkDEL(m_TextActor);
 }
 
 //----------------------------------------------------------------------------
-mafView *medViewSliceOnCurveCompound::Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled)
+mafView* medViewSliceOnCurveCompound::Copy(mafBaseEventHandler* Listener, bool lightCopyEnabled)
 //----------------------------------------------------------------------------
 {
-  m_LightCopyEnabled = lightCopyEnabled;
-  medViewSliceOnCurveCompound *v = this->NewInstance(); 
-  v->SetLabel(GetLabel());
-  v->SetListener(Listener);
-  v->m_Id = m_Id;
+	m_LightCopyEnabled = lightCopyEnabled;
+	medViewSliceOnCurveCompound* v = this->NewInstance();
+	v->SetLabel(GetLabel());
+	v->SetListener(Listener);
+	v->m_Id = m_Id;
 
-  for (int i = 0;i < m_PluggedChildViewList.size(); i++) {
-    v->m_PluggedChildViewList.push_back(m_PluggedChildViewList[i]->Copy(this));
-  }
+	for (int i = 0; i < m_PluggedChildViewList.size(); i++) {
+		v->m_PluggedChildViewList.push_back(m_PluggedChildViewList[i]->Copy(this));
+	}
 
-  v->m_NumOfPluggedChildren = m_NumOfPluggedChildren;
-  v->Create();
-  return v;
+	v->m_NumOfPluggedChildren = m_NumOfPluggedChildren;
+	v->Create();
+	return v;
 }
 
 //VME manipulation
 #pragma region VmeAdd, VmeRemove, VmeShow, GetNodeStatus
 
 //----------------------------------------------------------------------------
-void medViewSliceOnCurveCompound::VmeShow(mafNode *node, bool show)
+void medViewSliceOnCurveCompound::VmeShow(mafNode* node, bool show)
 //----------------------------------------------------------------------------
 {
-  wxWindowDisabler wait1;
-  wxBusyCursor wait2;
+	wxWindowDisabler wait1;
+	wxBusyCursor wait2;
 
-  if (((mafVME *)node)->GetOutput()->IsA("mafVMEOutputPolyline"))
-  {
-    //some polyline curve, e.g., mafVMEPolyLine or medVMEPolyLineGraph
-    if (show)
-    {
-      //we may have only one curve => we will need to hide them
-      HideSameVMEs(m_ChildViewList[POLYLINE_VIEW], node);     
+	if (((mafVME*)node)->GetOutput()->IsA("mafVMEOutputPolyline"))
+	{
+		//some polyline curve, e.g., mafVMEPolyLine or medVMEPolyLineGraph
+		if (show)
+		{
+			//we may have only one curve => we will need to hide them
+			HideSameVMEs(m_ChildViewList[POLYLINE_VIEW], node);
 
-      if (m_ShowPolylineInMainView)
-        HideSameVMEs(m_ChildViewList[MAIN_VIEW], node);
-    }
+			if (m_ShowPolylineInMainView)
+				HideSameVMEs(m_ChildViewList[MAIN_VIEW], node);
+		}
 
-    m_ChildViewList[POLYLINE_VIEW]->VmeShow(node, show);
+		m_ChildViewList[POLYLINE_VIEW]->VmeShow(node, show);
 
-    if (m_ShowPolylineInMainView)
-      m_ChildViewList[MAIN_VIEW]->VmeShow(node, show);
+		if (m_ShowPolylineInMainView)
+			m_ChildViewList[MAIN_VIEW]->VmeShow(node, show);
 
-    //create or destroy gizmo
-    if (show)
-      CreateGizmo(GetSceneGraph()->Vme2Node(node)->m_Vme);
-    else
-      DestroyGizmo();    
-  }
-  else
-  {	
-    //check if we have Volume on the output
-    if (((mafVME *)node)->GetOutput() != NULL && ((mafVME *)node)->GetOutput()->IsA("mafVMEOutputVolume"))
-    {
-      if (show)
-      {
-        //hide all other volumes, we may have only one volume
-        for (int i = 0; i < m_NumOfChildView; i++) 
-        {
-          if (i != POLYLINE_VIEW)
-            HideSameVMEs(m_ChildViewList[i], node);
-        }
+		//create or destroy gizmo
+		if (show)
+			CreateGizmo(GetSceneGraph()->Vme2Node(node)->m_Vme);
+		else
+			DestroyGizmo();
+	}
+	else
+	{
+		//check if we have Volume on the output
+		if (((mafVME*)node)->GetOutput() != NULL && ((mafVME*)node)->GetOutput()->IsA("mafVMEOutputVolume"))
+		{
+			if (show)
+			{
+				//hide all other volumes, we may have only one volume
+				for (int i = 0; i < m_NumOfChildView; i++)
+				{
+					if (i != POLYLINE_VIEW)
+						HideSameVMEs(m_ChildViewList[i], node);
+				}
 
-        m_CurrentVolume = node;
-      }
-      else
-      {
-        assert(m_CurrentVolume == node);
-        m_CurrentVolume = NULL;
-      }
-    }
+				m_CurrentVolume = node;
+			}
+			else
+			{
+				assert(m_CurrentVolume == node);
+				m_CurrentVolume = NULL;
+			}
+		}
 
 
-    for (int i = 0; i < m_NumOfChildView; i++) 
-    {
-      if (i != POLYLINE_VIEW)
-        m_ChildViewList[i]->VmeShow(node, show);
-    }	
-  }  
+		for (int i = 0; i < m_NumOfChildView; i++)
+		{
+			if (i != POLYLINE_VIEW)
+				m_ChildViewList[i]->VmeShow(node, show);
+		}
+	}
 
-  if(GetSceneGraph()->GetSelectedVme()==node)
-  {
-    UpdateWindowing( show && this->ActivateWindowing(node), node);
-  }
+	if (GetSceneGraph()->GetSelectedVme() == node)
+	{
+		UpdateWindowing(show && this->ActivateWindowing(node), node);
+	}
 
-  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
+	{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
 
 }
 
@@ -233,59 +233,59 @@ void medViewSliceOnCurveCompound::VmeShow(mafNode *node, bool show)
 void medViewSliceOnCurveCompound::HideSameVMEs(mafView* pView, mafNode* pNode)
 //------------------------------------------------------------------------
 {
-  if (pView == NULL || mafVME::SafeDownCast(pNode) == NULL ||
-    (((mafVME *)pNode)->GetOutput() == NULL))
-    return; //invalid call
+	if (pView == NULL || mafVME::SafeDownCast(pNode) == NULL ||
+		(((mafVME*)pNode)->GetOutput() == NULL))
+		return; //invalid call
 
-  mafSceneGraph* pSc = pView->GetSceneGraph();
-  mafSceneNode* pScNode = pSc->GetNodeList();  
-  const mafTypeID& typeId = ((mafVME *)pNode)->GetOutput()->GetTypeId();
-  while (pScNode != NULL)
-  {
-    mafVMEOutput* pOutput = NULL;
-    if (mafVME::SafeDownCast(pScNode->m_Vme) != NULL)
-      pOutput = mafVME::StaticDownCast(pScNode->m_Vme)->GetOutput();
+	mafSceneGraph* pSc = pView->GetSceneGraph();
+	mafSceneNode* pScNode = pSc->GetNodeList();
+	const mafTypeID& typeId = ((mafVME*)pNode)->GetOutput()->GetTypeId();
+	while (pScNode != NULL)
+	{
+		mafVMEOutput* pOutput = NULL;
+		if (mafVME::SafeDownCast(pScNode->m_Vme) != NULL)
+			pOutput = mafVME::StaticDownCast(pScNode->m_Vme)->GetOutput();
 
-    if (pOutput != NULL && pOutput->IsA(typeId))
-    {
-      if (pScNode->m_Pipe && pScNode->m_Vme.get() != pNode)
-      {            
-        {mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(pScNode->m_Vme.get()); evUnq.SetBool(false); InvokeEvent(evUnq);}
-      }
-    }
+		if (pOutput != NULL && pOutput->IsA(typeId))
+		{
+			if (pScNode->m_Pipe && pScNode->m_Vme.get() != pNode)
+			{
+				{ mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(pScNode->m_Vme.get()); evUnq.SetBool(false); InvokeEvent(evUnq); }
+			}
+		}
 
-    pScNode = pScNode->m_Next;
-  }      
+		pScNode = pScNode->m_Next;
+	}
 }
 
 //----------------------------------------------------------------------------
 //return the status of the node within this view. es: NON_VISIBLE,VISIBLE_ON, ... 
 //having mafViewCompound::GetNodeStatus allow mafGUICheckTree to not know about mafSceneGraph
-int medViewSliceOnCurveCompound::GetNodeStatusI(mafNode *node)
+int medViewSliceOnCurveCompound::GetNodeStatusI(mafNode* node)
 //----------------------------------------------------------------------------
 {
-  if (((mafVME*)node)->GetOutput()->IsA("mafVMEOutputPolyline"))
-  {
-    mafSceneGraph* pSc = m_ChildViewList[POLYLINE_VIEW]->GetSceneGraph();
-    if (pSc == NULL)
-      return NODE_NON_VISIBLE;
+	if (((mafVME*)node)->GetOutput()->IsA("mafVMEOutputPolyline"))
+	{
+		mafSceneGraph* pSc = m_ChildViewList[POLYLINE_VIEW]->GetSceneGraph();
+		if (pSc == NULL)
+			return NODE_NON_VISIBLE;
 
-    mafSceneNode* pNode = pSc->Vme2Node(node);
-    if (pNode != NULL)          //it may be NULL during the termination
-      pNode->m_Mutex = true;    //force it as MUTEX
+		mafSceneNode* pNode = pSc->Vme2Node(node);
+		if (pNode != NULL)          //it may be NULL during the termination
+			pNode->m_Mutex = true;    //force it as MUTEX
 
-    return pSc->GetNodeStatus(node);
-  }
+		return pSc->GetNodeStatus(node);
+	}
 
-  return m_ChildViewList[MAIN_VIEW]->GetNodeStatus(node);
+	return m_ChildViewList[MAIN_VIEW]->GetNodeStatus(node);
 }
 
 //------------------------------------------------------------------------
 //return the current pipe for the specified vme (if any exist at this moment) */
-/*virtual*/ std::shared_ptr<mafPipe> medViewSliceOnCurveCompound::GetNodePipeI(mafNode *vme)
+/*virtual*/ std::shared_ptr<mafPipe> medViewSliceOnCurveCompound::GetNodePipeI(mafNode* vme)
 //------------------------------------------------------------------------
 {
-  return m_ChildViewList[MAIN_VIEW]->GetNodePipe(vme);
+	return m_ChildViewList[MAIN_VIEW]->GetNodePipe(vme);
 }
 #pragma endregion //VME manipulation
 
@@ -297,95 +297,95 @@ int medViewSliceOnCurveCompound::GetNodeStatusI(mafNode *node)
 /*virtual*/ void medViewSliceOnCurveCompound::Create()
 //-------------------------------------------------------------------------
 {
-  Superclass::Create();
+	Superclass::Create();
 
-  // text stuff  
-  m_TextMapper = vtkTextMapper::New();
-  m_TextMapper->SetInput("");
-  //  m_TextMapper->GetTextProperty()->AntiAliasingOff();
+	// text stuff  
+	m_TextMapper = vtkTextMapper::New();
+	m_TextMapper->SetInput("");
+	//  m_TextMapper->GetTextProperty()->AntiAliasingOff();
 
-  m_TextActor = vtkActor2D::New();
-  m_TextActor->SetMapper(m_TextMapper);
-  m_TextActor->SetPosition(50,3); //20 because of coordinate symbols
-  m_TextActor->GetProperty()->SetColor(0.7, 0.7, 0.7);    //purple
+	m_TextActor = vtkActor2D::New();
+	m_TextActor->SetMapper(m_TextMapper);
+	m_TextActor->SetPosition(50, 3); //20 because of coordinate symbols
+	m_TextActor->GetProperty()->SetColor(0.7, 0.7, 0.7);    //purple
 
-  mafRWI* Rwi = ((mafViewVTK*)m_ChildViewList[POLYLINE_VIEW])->m_Rwi;
-  if (Rwi != NULL)
-    Rwi->m_RenFront->AddActor(m_TextActor);
+	mafRWI* Rwi = ((mafViewVTK*)m_ChildViewList[POLYLINE_VIEW])->m_Rwi;
+	if (Rwi != NULL)
+		Rwi->m_RenFront->AddActor(m_TextActor);
 
-  assert(Rwi != NULL);
-  //AACC 17.7.08 navigation stuff...
-  ((mafViewVTK*)m_ChildViewList[MAIN_VIEW])->GetRWI()->GetCamera()->GetPosition(m_OldPos);
-  //End AACC
+	assert(Rwi != NULL);
+	//AACC 17.7.08 navigation stuff...
+	((mafViewVTK*)m_ChildViewList[MAIN_VIEW])->GetRWI()->GetCamera()->GetPosition(m_OldPos);
+	//End AACC
 }
 
 //-------------------------------------------------------------------------
 mafGUI* medViewSliceOnCurveCompound::CreateGui()
 //-------------------------------------------------------------------------
-{	
-  assert(m_Gui == NULL);
-  mafView::CreateGui();  
+{
+	assert(!AccessGUI());
+	auto gui = mafView::CreateGui();
 
-  wxComboBox* combo = m_Gui->Combo(ID_LAYOUT_CHOOSER,_L("Layout"), &m_LayoutConfiguration);
-  const char** layouts = GetLayoutsNames();
-  while (*layouts != NULL)
-  {
-    combo->Append(*layouts);
-    layouts++;
-  }
+	wxComboBox* combo = gui->Combo(ID_LAYOUT_CHOOSER, _L("Layout"), &m_LayoutConfiguration);
+	const char** layouts = GetLayoutsNames();
+	while (*layouts != NULL)
+	{
+		combo->Append(*layouts);
+		layouts++;
+	}
 
-  m_Gui->Divider(2);
+	gui->Divider(2);
 
-  //setup volume pipes
-  combo = m_Gui->Combo(ID_VOL_PIPE,_L("Volume pipe"), &m_VolumePipeConfiguration);
-  const VPIPE_ENTRY* pVolPipes = GetVolumePipesDesc();
-  while (pVolPipes->szClassName != NULL)
-  {
-    combo->Append(pVolPipes->szUserFriendlyName);
-    pVolPipes++;
-  }
+	//setup volume pipes
+	combo = gui->Combo(ID_VOL_PIPE, _L("Volume pipe"), &m_VolumePipeConfiguration);
+	const VPIPE_ENTRY* pVolPipes = GetVolumePipesDesc();
+	while (pVolPipes->szClassName != NULL)
+	{
+		combo->Append(pVolPipes->szUserFriendlyName);
+		pVolPipes++;
+	}
 
-  combo->SetToolTip(_("Selects the visual pipe that should be used for volumes. "
-    "To modify the visual properties associated with the pipe (e.g., lookup table), "
-    "see Visual Properties tab in Data Tree."));
+	combo->SetToolTip(_("Selects the visual pipe that should be used for volumes. "
+		"To modify the visual properties associated with the pipe (e.g., lookup table), "
+		"see Visual Properties tab in Data Tree."));
 
-  m_Gui->Divider(1);  
-  m_Gui->Bool(ID_SHOW_POLYLINE_IN_MAINVIEW,_L("Show Gizmo in the main view"), &m_ShowPolylineInMainView, 1, 
-    _L("Selects whether the polyline (curve) and the gizmo should be displayed also in the main view"));
-  m_Gui->Bool(ID_SHOW_GIZMOCOORDS, _L("Show Gizmo coords"), &m_ShowGizmoCoords, 1,
-    _L("If checked, the gizmo coordinates are displayed."));
+	gui->Divider(1);
+	gui->Bool(ID_SHOW_POLYLINE_IN_MAINVIEW, _L("Show Gizmo in the main view"), &m_ShowPolylineInMainView, 1,
+		_L("Selects whether the polyline (curve) and the gizmo should be displayed also in the main view"));
+	gui->Bool(ID_SHOW_GIZMOCOORDS, _L("Show Gizmo coords"), &m_ShowGizmoCoords, 1,
+		_L("If checked, the gizmo coordinates are displayed."));
 
 #ifdef GIZMO_PATH
-  m_Gui->FloatSlider(ID_TRACKER, "Position", &m_GizmoPos, 0, 1);
+	gui->FloatSlider(ID_TRACKER, "Position", &m_GizmoPos, 0, 1);
 #endif
 
-  m_Gui->Divider(1);
+	gui->Divider(1);
 
-  m_Gui->Bool(ID_SLICECAMERA_AUTOFOCUS, _R("AutoFocus"), &m_SliceCameraAutoFocus, 1,
-    _L("Toggles automatic focus of the camera in the slice view"));
+	gui->Bool(ID_SLICECAMERA_AUTOFOCUS, _R("AutoFocus"), &m_SliceCameraAutoFocus, 1,
+		_L("Toggles automatic focus of the camera in the slice view"));
 
-  m_Gui->Bool(ID_SLICECAMERA_AUTOROTATE, _R("AutoRotate"), &m_SliceCameraAutoRotate, 1,
-    _L("Toggles automatic rotation of the camera in the slice view"));
+	gui->Bool(ID_SLICECAMERA_AUTOROTATE, _R("AutoRotate"), &m_SliceCameraAutoRotate, 1,
+		_L("Toggles automatic rotation of the camera in the slice view"));
 
-  m_Gui->Bool(ID_SLICECAMERA_NAVIGATE_3D, _L("Navigate 3D"), &m_SliceCameraNavigate3D, 1, 
-    _L("Toggles automatic navigation in the 3D view"));
+	gui->Bool(ID_SLICECAMERA_NAVIGATE_3D, _L("Navigate 3D"), &m_SliceCameraNavigate3D, 1,
+		_L("Toggles automatic navigation in the 3D view"));
 
-  m_Gui->Divider();
+	gui->Divider();
 
-  // Added by Losi 11.25.2009
-  if (m_CurrentVolume)
-  {
-    auto p = mafPipeVolumeSlice_BES::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
-    if (p) // Is this required?
-    {
-      p->SetEnableGPU(m_EnableGPU);
-    }
-  };
-  m_Gui->Divider(1);
-  //m_Gui->Bool(ID_ENABLE_GPU,"Enable GPU",&m_EnableGPU,1);
-  //m_Gui->Divider();
+	// Added by Losi 11.25.2009
+	if (m_CurrentVolume)
+	{
+		auto p = mafPipeVolumeSlice_BES::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
+		if (p) // Is this required?
+		{
+			p->SetEnableGPU(m_EnableGPU);
+		}
+	};
+	gui->Divider(1);
+	//m_Gui->Bool(ID_ENABLE_GPU,"Enable GPU",&m_EnableGPU,1);
+	//m_Gui->Divider();
 
-  return m_Gui;
+	return gui;
 }
 
 //------------------------------------------------------------------------
@@ -393,122 +393,122 @@ mafGUI* medViewSliceOnCurveCompound::CreateGui()
 /*virtual*/ void medViewSliceOnCurveCompound::LayoutSubViewCustom(int width, int height)
 //------------------------------------------------------------------------
 {
-  int border = 2;
-  int x_pos, y_pos;
+	int border = 2;
+	int x_pos, y_pos;
 
-  if (m_LayoutConfiguration == LAYOUT_SMP_HORZ)
-  {
-    int step_width  = (width-border)  / (m_NumOfChildView - 1);
-    int step_height = (height-2*border)/ 3*2;
-    m_ChildViewList[SLICE_VIEW]->GetWindow()->SetSize(0,0,width,step_height);
+	if (m_LayoutConfiguration == LAYOUT_SMP_HORZ)
+	{
+		int step_width = (width - border) / (m_NumOfChildView - 1);
+		int step_height = (height - 2 * border) / 3 * 2;
+		m_ChildViewList[SLICE_VIEW]->GetWindow()->SetSize(0, 0, width, step_height);
 #ifndef WIN32
-    m_ChildViewList[SLICE_VIEW]->SetWindowSize(width,step_height);
+		m_ChildViewList[SLICE_VIEW]->SetWindowSize(width, step_height);
 #endif
 
-    for (int r = 0; r < m_NumOfChildView; r++)
-    {
-      if (r == SLICE_VIEW)
-        continue;
+		for (int r = 0; r < m_NumOfChildView; r++)
+		{
+			if (r == SLICE_VIEW)
+				continue;
 
-      x_pos = r*(step_width + border);
-      y_pos = step_height;
-      m_ChildViewList[r]->GetWindow()->SetSize(x_pos,y_pos,step_width,height - step_height);
+			x_pos = r * (step_width + border);
+			y_pos = step_height;
+			m_ChildViewList[r]->GetWindow()->SetSize(x_pos, y_pos, step_width, height - step_height);
 #ifndef WIN32
-      m_ChildViewList[r]->SetWindowSize(step_width,height - step_height);
+			m_ChildViewList[r]->SetWindowSize(step_width, height - step_height);
 #endif    
-    }
-  }
-  else
-  {
-    assert(m_LayoutConfiguration == LAYOUT_SMP_VERT);
+		}
+	}
+	else
+	{
+		assert(m_LayoutConfiguration == LAYOUT_SMP_VERT);
 
-    int step_width  = (width-border)  / 3*2;
-    int step_height = (height-2*border)/ (m_NumOfChildView - 1);
-    m_ChildViewList[SLICE_VIEW]->GetWindow()->SetSize(0,0,step_width, height);
+		int step_width = (width - border) / 3 * 2;
+		int step_height = (height - 2 * border) / (m_NumOfChildView - 1);
+		m_ChildViewList[SLICE_VIEW]->GetWindow()->SetSize(0, 0, step_width, height);
 #ifndef WIN32
-    m_ChildViewList[SLICE_VIEW]->SetWindowSize(step_width,height);
+		m_ChildViewList[SLICE_VIEW]->SetWindowSize(step_width, height);
 #endif
 
-    for (int r = 0; r < m_NumOfChildView; r++)
-    {
-      if (r == SLICE_VIEW)
-        continue;
+		for (int r = 0; r < m_NumOfChildView; r++)
+		{
+			if (r == SLICE_VIEW)
+				continue;
 
-      x_pos = step_width;
-      y_pos = r*(step_height + border);
-      m_ChildViewList[r]->GetWindow()->SetSize(x_pos,y_pos,width - step_width,step_height);
+			x_pos = step_width;
+			y_pos = r * (step_height + border);
+			m_ChildViewList[r]->GetWindow()->SetSize(x_pos, y_pos, width - step_width, step_height);
 #ifndef WIN32
-      m_ChildViewList[r]->SetWindowSize(width - step_width,step_height);
+			m_ChildViewList[r]->SetWindowSize(width - step_width, step_height);
 #endif    
-    }
-  }
+		}
+	}
 }
 #pragma endregion	//GUI stuff
 
 //----------------------------------------------------------------------------
-void medViewSliceOnCurveCompound::OnEvent(mafEventBase *maf_event)
+void medViewSliceOnCurveCompound::OnEvent(mafEventBase* maf_event)
 //----------------------------------------------------------------------------
 {
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    switch(e->GetId()) 
-    {
-    case ID_VOL_PIPE:
-      ChangeVolumePipe(GetVolumePipesDesc()[m_VolumePipeConfiguration].szClassName);
-      break;
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
+	{
+		switch (e->GetId())
+		{
+		case ID_VOL_PIPE:
+			ChangeVolumePipe(GetVolumePipesDesc()[m_VolumePipeConfiguration].szClassName);
+			break;
 
-    case ID_SHOW_POLYLINE_IN_MAINVIEW:
-      OnShowPolylineInMainView();
-      break;
+		case ID_SHOW_POLYLINE_IN_MAINVIEW:
+			OnShowPolylineInMainView();
+			break;
 
 #ifdef GIZMO_PATH
-    case ID_TRACKER:
-      SetSlicePosition(m_GizmoPos*m_GizmoLength);			
-      break;  
+		case ID_TRACKER:
+			SetSlicePosition(m_GizmoPos * m_GizmoLength);
+			break;
 #else
-    case ID_TRANSFORM:      
-      OnGizmoMoved();
-      break;
+		case ID_TRANSFORM:
+			OnGizmoMoved();
+			break;
 #endif
 
-    case ID_SLICECAMERA_AUTOFOCUS:
-      if (m_SliceCameraAutoFocus && m_Gizmo != NULL)
-        OnGizmoMoved();
-      break;
+		case ID_SLICECAMERA_AUTOFOCUS:
+			if (m_SliceCameraAutoFocus && m_Gizmo != NULL)
+				OnGizmoMoved();
+			break;
 
-    case ID_SLICECAMERA_AUTOROTATE:
-      if (m_SliceCameraAutoRotate && m_Gizmo != NULL)
-        OnGizmoMoved();
-      break;
+		case ID_SLICECAMERA_AUTOROTATE:
+			if (m_SliceCameraAutoRotate && m_Gizmo != NULL)
+				OnGizmoMoved();
+			break;
 
-    case ID_SLICECAMERA_NAVIGATE_3D:
-      OnGizmoMoved();
-      break;
+		case ID_SLICECAMERA_NAVIGATE_3D:
+			OnGizmoMoved();
+			break;
 
-    case ID_SHOW_GIZMOCOORDS:
-      OnShowGizmoCoords();
-      m_ChildViewList[POLYLINE_VIEW]->CameraUpdate();
-      break;
-    
-    // Added by Losi 11.25.2009 
-    case ID_ENABLE_GPU:
-      {
-        if (m_CurrentVolume)
-        {
-          auto p = mafPipeVolumeSlice_BES::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
-          if(p)
-          {
-            p->SetEnableGPU(m_EnableGPU);
-            this->CameraUpdate();
-          }
-        }
-      }
-      break;
+		case ID_SHOW_GIZMOCOORDS:
+			OnShowGizmoCoords();
+			m_ChildViewList[POLYLINE_VIEW]->CameraUpdate();
+			break;
 
-    default:
-      Superclass::OnEvent(maf_event);
-    }
-  }
+			// Added by Losi 11.25.2009 
+		case ID_ENABLE_GPU:
+		{
+			if (m_CurrentVolume)
+			{
+				auto p = mafPipeVolumeSlice_BES::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
+				if (p)
+				{
+					p->SetEnableGPU(m_EnableGPU);
+					this->CameraUpdate();
+				}
+			}
+		}
+		break;
+
+		default:
+			Superclass::OnEvent(maf_event);
+		}
+	}
 }
 
 //Gizmo stuff
@@ -518,94 +518,94 @@ void medViewSliceOnCurveCompound::OnEvent(mafEventBase *maf_event)
 /*virtual*/ void medViewSliceOnCurveCompound::CreateGizmo(std::shared_ptr<mafNode> node)
 //------------------------------------------------------------------------
 {
-  assert(m_Gizmo == NULL);
-  if (m_Gizmo != NULL)    
-    return; //already constructed  
+	assert(m_Gizmo == NULL);
+	if (m_Gizmo != NULL)
+		return; //already constructed  
 
-  auto polyline = mafVMEPolyline::SafeDownCast(node);
-  auto polyline_gr = medVMEPolylineGraph::SafeDownCast(node);
+	auto polyline = mafVMEPolyline::SafeDownCast(node);
+	auto polyline_gr = medVMEPolylineGraph::SafeDownCast(node);
 
-  if (polyline == nullptr && polyline_gr == nullptr)
-  {
-    mafLogMessage(_M("Unsupported VME for medViewSliceOnCurveCompound::CreateGizmo"));
-    return;
-  }     
+	if (polyline == nullptr && polyline_gr == nullptr)
+	{
+		mafLogMessage(_M("Unsupported VME for medViewSliceOnCurveCompound::CreateGizmo"));
+		return;
+	}
 
 #ifdef GIZMO_PATH
-  mafVMEOutputPolyline* outputLine = mafVMEOutputPolyline::SafeDownCast(((mafVME*)node)->GetOutput());
-  m_GizmoLength = (outputLine != NULL ? outputLine->CalculateLength() : 0);
-  assert(outputLine != NULL);
+	mafVMEOutputPolyline* outputLine = mafVMEOutputPolyline::SafeDownCast(((mafVME*)node)->GetOutput());
+	m_GizmoLength = (outputLine != NULL ? outputLine->CalculateLength() : 0);
+	assert(outputLine != NULL);
 #endif // GIZMO_PATH
 
-  m_CurrentPolyLine = node.get();
+	m_CurrentPolyLine = node.get();
 
-  //construct new gizmo
+	//construct new gizmo
 #ifdef GIZMO_PATH
   //gizmo path works with polylines only
-  if (polyline != NULL)
-    polyline->Register(this);  
-  else
-  {
-    mafNEW(polyline);
+	if (polyline != NULL)
+		polyline->Register(this);
+	else
+	{
+		mafNEW(polyline);
 
-    vtkPolyData* pdata = vtkPolyData::SafeDownCast(polyline_gr->GetOutput()->GetVTKData());
-    polyline->SetData(pdata, 0);
-    polyline->GetOutput()->GetVTKData()->Update();  //to force construction of output
-    polyline->Update();                   //to confirm data, data now goes to output
-  }
+		vtkPolyData* pdata = vtkPolyData::SafeDownCast(polyline_gr->GetOutput()->GetVTKData());
+		polyline->SetData(pdata, 0);
+		polyline->GetOutput()->GetVTKData()->Update();  //to force construction of output
+		polyline->Update();                   //to confirm data, data now goes to output
+	}
 
-  m_CurrentPolyLineGizmo = polyline;
+	m_CurrentPolyLineGizmo = polyline;
 #else
   //Stefano's gizmo
   //gizmo path works with polylines graphs only
-  if (polyline_gr == nullptr)
-  {
-    polyline_gr = medVMEPolylineGraph::NewSPtr();
+	if (polyline_gr == nullptr)
+	{
+		polyline_gr = medVMEPolylineGraph::NewSPtr();
 
-    vtkPolyData* pdata = vtkPolyData::SafeDownCast(polyline->GetOutput()->GetVTKData());
-    polyline_gr->SetData(pdata, 0);
-    //polyline_gr->GetOutput()->GetVTKData()->Update();  //to force construction of output
-    //polyline_gr->Update();                   //to confirm data, data now goes to output
-  }
+		vtkPolyData* pdata = vtkPolyData::SafeDownCast(polyline->GetOutput()->GetVTKData());
+		polyline_gr->SetData(pdata, 0);
+		//polyline_gr->GetOutput()->GetVTKData()->Update();  //to force construction of output
+		//polyline_gr->Update();                   //to confirm data, data now goes to output
+	}
 
-  m_CurrentPolyLineGizmo = polyline_gr;
+	m_CurrentPolyLineGizmo = polyline_gr;
 #endif
 
 #ifdef GIZMO_PATH
-  m_Gizmo = new mafGizmoPath(m_CurrentPolyLine, this);
+	m_Gizmo = new mafGizmoPath(m_CurrentPolyLine, this);
 
-  double clr[3] = {1, 0, 0};
-  m_Gizmo->SetColor(clr);
-  m_Gizmo->SetConstraintPolyline((mafVME*)m_CurrentPolyLineGizmo);    
+	double clr[3] = { 1, 0, 0 };
+	m_Gizmo->SetColor(clr);
+	m_Gizmo->SetConstraintPolyline((mafVME*)m_CurrentPolyLineGizmo);
 #else
-  m_Gizmo = medGizmoPolylineGraph::New(mafVME::StaticDownCast(node), this);
-  m_Gizmo->SetConstraintPolylineGraph(medVMEPolylineGraph::StaticDownCast(m_CurrentPolyLineGizmo).get());
+	m_Gizmo = medGizmoPolylineGraph::New(mafVME::StaticDownCast(node), this);
+	m_Gizmo->SetConstraintPolylineGraph(medVMEPolylineGraph::StaticDownCast(m_CurrentPolyLineGizmo).get());
 #endif
 
-  m_ChildViewList[POLYLINE_VIEW]->VmeShow(m_Gizmo->GetOutput(), true);
-  if (m_ShowPolylineInMainView)
-    m_ChildViewList[MAIN_VIEW]->VmeShow(m_Gizmo->GetOutput(), true);
+	m_ChildViewList[POLYLINE_VIEW]->VmeShow(m_Gizmo->GetOutput(), true);
+	if (m_ShowPolylineInMainView)
+		m_ChildViewList[MAIN_VIEW]->VmeShow(m_Gizmo->GetOutput(), true);
 
-  //////TODO: remove this
-  //m_SliceCameraAutoFocus = m_SliceCameraAutoRotate = 1;
+	//////TODO: remove this
+	//m_SliceCameraAutoFocus = m_SliceCameraAutoRotate = 1;
 
-  //    LARGE_INTEGER liBegin;
-  //    ::QueryPerformanceCounter(&liBegin);
-  //
-  //    for (int x = 0; x <= 200; x++) {
-  //      SetSlicePosition(m_GizmoLength* x / 200.0);
-  //    }
-  //
-  //    LARGE_INTEGER liEnd, liFreq;
-  //    ::QueryPerformanceCounter(&liEnd);
-  //    ::QueryPerformanceFrequency(&liFreq);
-  //
-  //    wxMessageBox(wxString::Format("OnCurve in %d ms",
-  //      (int)(((liEnd.QuadPart - liBegin.QuadPart)*1000) / liFreq.QuadPart)));
-  //////END
+	//    LARGE_INTEGER liBegin;
+	//    ::QueryPerformanceCounter(&liBegin);
+	//
+	//    for (int x = 0; x <= 200; x++) {
+	//      SetSlicePosition(m_GizmoLength* x / 200.0);
+	//    }
+	//
+	//    LARGE_INTEGER liEnd, liFreq;
+	//    ::QueryPerformanceCounter(&liEnd);
+	//    ::QueryPerformanceFrequency(&liFreq);
+	//
+	//    wxMessageBox(wxString::Format("OnCurve in %d ms",
+	//      (int)(((liEnd.QuadPart - liBegin.QuadPart)*1000) / liFreq.QuadPart)));
+	//////END
 
 
-  ResetSlicePosition();  
+	ResetSlicePosition();
 }
 
 //------------------------------------------------------------------------
@@ -613,26 +613,26 @@ void medViewSliceOnCurveCompound::OnEvent(mafEventBase *maf_event)
 /*virtual*/ void medViewSliceOnCurveCompound::DestroyGizmo()
 //------------------------------------------------------------------------
 {
-  if (m_Gizmo)
-  {
-    //destroy the current gizmo
-    //BES: 3.2.2009 - gizmo output is destroyed during m_Gizmo destruction, 
-    //however, it is still referenced in scenegraphs (probably some openMAF bug)
-    //which leads into crash when a scene graph is being destroyed (close)
-    //=> we need to remove vme from the graph (it calls also vmeshow(false))
-    auto g = m_Gizmo->GetOutput(); 
-    int nCount = (int)m_ChildViewList.size();
-    for (int i = 0; i < nCount; i++){
-      m_ChildViewList[i]->VmeRemove(g);
-    }
+	if (m_Gizmo)
+	{
+		//destroy the current gizmo
+		//BES: 3.2.2009 - gizmo output is destroyed during m_Gizmo destruction, 
+		//however, it is still referenced in scenegraphs (probably some openMAF bug)
+		//which leads into crash when a scene graph is being destroyed (close)
+		//=> we need to remove vme from the graph (it calls also vmeshow(false))
+		auto g = m_Gizmo->GetOutput();
+		int nCount = (int)m_ChildViewList.size();
+		for (int i = 0; i < nCount; i++) {
+			m_ChildViewList[i]->VmeRemove(g);
+		}
 
-    //{mafEvent evUnq(this, VME_REMOVING, g); InvokeEvent(evUnq);}
+		//{mafEvent evUnq(this, VME_REMOVING, g); InvokeEvent(evUnq);}
 
-    m_Gizmo->Delete(); //unfortunately this must not be done because of crash if you close the view frame
-    m_Gizmo = nullptr;
-    m_CurrentPolyLineGizmo.reset();    
-    m_CurrentPolyLine = NULL;
-  }  
+		m_Gizmo->Delete(); //unfortunately this must not be done because of crash if you close the view frame
+		m_Gizmo = nullptr;
+		m_CurrentPolyLineGizmo.reset();
+		m_CurrentPolyLine = NULL;
+	}
 }
 
 //------------------------------------------------------------------------
@@ -640,9 +640,9 @@ void medViewSliceOnCurveCompound::OnEvent(mafEventBase *maf_event)
 /*virtual*/ void medViewSliceOnCurveCompound::SetSlice(double* Origin, double* Normal)
 //------------------------------------------------------------------------
 {
-  mafViewSlice* vs = mafViewSlice::SafeDownCast(m_ChildViewList[SLICE_VIEW]);
-  if (vs != NULL)
-    vs->SetSlice(Origin, Normal);    
+	mafViewSlice* vs = mafViewSlice::SafeDownCast(m_ChildViewList[SLICE_VIEW]);
+	if (vs != NULL)
+		vs->SetSlice(Origin, Normal);
 }
 
 //------------------------------------------------------------------------
@@ -650,100 +650,100 @@ void medViewSliceOnCurveCompound::OnEvent(mafEventBase *maf_event)
 /*virtual*/ void medViewSliceOnCurveCompound::OnGizmoMoved()
 //------------------------------------------------------------------------
 {
-  double pos[3], normal[3];
+	double pos[3], normal[3];
 
-  mafVME* g = mafVME::SafeDownCast(m_Gizmo->GetOutput());
-  auto gmat = g->GetOutput()->GetMatrix();
-  mafTransform::GetPosition(*gmat, pos);    //get the position
+	mafVME* g = mafVME::SafeDownCast(m_Gizmo->GetOutput());
+	auto gmat = g->GetOutput()->GetMatrix();
+	mafTransform::GetPosition(*gmat, pos);    //get the position
 
-  mafMatrix matrix;  
-  mafTransform::CopyRotation(*gmat, matrix);     
+	mafMatrix matrix;
+	mafTransform::CopyRotation(*gmat, matrix);
 
-  double tmp[3] = {0, 0, 1};  
-  matrix.MultiplyPoint(tmp, normal);
-  vtkMath::Normalize(normal);
+	double tmp[3] = { 0, 0, 1 };
+	matrix.MultiplyPoint(tmp, normal);
+	vtkMath::Normalize(normal);
 
-  //set slice  
-  SetSlice(pos, normal);  
+	//set slice  
+	SetSlice(pos, normal);
 
-  //and update camera
-  mafView* vs = m_ChildViewList[SLICE_VIEW];
-  if ((m_SliceCameraAutoFocus | m_SliceCameraAutoRotate) != 0)
-  {   
-    //modify the camera (see mafRWI.cpp)
-    vtkCamera* camera = vs->GetRWI()->GetCamera();
+	//and update camera
+	mafView* vs = m_ChildViewList[SLICE_VIEW];
+	if ((m_SliceCameraAutoFocus | m_SliceCameraAutoRotate) != 0)
+	{
+		//modify the camera (see mafRWI.cpp)
+		vtkCamera* camera = vs->GetRWI()->GetCamera();
 
-    double fp[3], cp[3];
-    camera->GetFocalPoint(fp);
-    camera->GetPosition(cp);
+		double fp[3], cp[3];
+		camera->GetFocalPoint(fp);
+		camera->GetPosition(cp);
 
-    double lvect[3] = {cp[0] - fp[0], cp[1] - fp[1], cp[2] - fp[2] };
-    double nsize = vtkMath::Norm(lvect);
+		double lvect[3] = { cp[0] - fp[0], cp[1] - fp[1], cp[2] - fp[2] };
+		double nsize = vtkMath::Norm(lvect);
 
-    if (m_SliceCameraAutoFocus)
-    {
-      //set the point of camera focus and reposition the camera so the FOV is preserved
-      camera->SetFocalPoint(pos);
-      camera->SetPosition(pos[0] + lvect[0], pos[1] + lvect[1], pos[2] + lvect[2]);      
-    }
+		if (m_SliceCameraAutoFocus)
+		{
+			//set the point of camera focus and reposition the camera so the FOV is preserved
+			camera->SetFocalPoint(pos);
+			camera->SetPosition(pos[0] + lvect[0], pos[1] + lvect[1], pos[2] + lvect[2]);
+		}
 
-    if (m_SliceCameraAutoRotate)
-    {
-      //reposition camera so it 
-      camera->GetFocalPoint(fp);
-      camera->SetPosition(fp[0] + normal[0]*nsize, 
-        fp[1] + normal[1]*nsize, fp[2] + normal[2]*nsize);
-    }
+		if (m_SliceCameraAutoRotate)
+		{
+			//reposition camera so it 
+			camera->GetFocalPoint(fp);
+			camera->SetPosition(fp[0] + normal[0] * nsize,
+				fp[1] + normal[1] * nsize, fp[2] + normal[2] * nsize);
+		}
 
-    vs->CameraReset();
-  }  
+		vs->CameraReset();
+	}
 
-  if (m_SliceCameraNavigate3D != 0)
-  {
-    mafViewVTK* mv = mafViewVTK::SafeDownCast(m_ChildViewList[MAIN_VIEW]);
-    if (mv!=NULL)
-    {
-      //modify the camera (see mafRWI.cpp)
-      vtkCamera* camera = mv->GetRWI()->GetCamera();
+	if (m_SliceCameraNavigate3D != 0)
+	{
+		mafViewVTK* mv = mafViewVTK::SafeDownCast(m_ChildViewList[MAIN_VIEW]);
+		if (mv != NULL)
+		{
+			//modify the camera (see mafRWI.cpp)
+			vtkCamera* camera = mv->GetRWI()->GetCamera();
 
-      double lvect[3] = {pos[0] - m_OldPos[0], pos[1] - m_OldPos[1], pos[2] - m_OldPos[2] };
+			double lvect[3] = { pos[0] - m_OldPos[0], pos[1] - m_OldPos[1], pos[2] - m_OldPos[2] };
 
-      //reposition camera so it 
+			//reposition camera so it 
 
-      if (vtkMath::Norm(lvect)>0.3)
-      {
-        camera->SetPosition(m_OldPos);
-        mafLogMessage(_M(mafString::Format(_R("Camera position: %f, %f, %f "),m_OldPos[0],m_OldPos[1],m_OldPos[2])));
-        mafLogMessage(_M(mafString::Format(_R("Focal position: %f, %f, %f "),pos[0],pos[1],pos[2])));
-        camera->SetFocalPoint(pos);
-        camera->SetViewAngle(90.);
-        mv->CameraUpdate();
-        m_OldPos[0] = pos[0];
-        m_OldPos[1] = pos[1];
-        m_OldPos[2] = pos[2];
-      }		 
-    }
-  }
+			if (vtkMath::Norm(lvect) > 0.3)
+			{
+				camera->SetPosition(m_OldPos);
+				mafLogMessage(_M(mafString::Format(_R("Camera position: %f, %f, %f "), m_OldPos[0], m_OldPos[1], m_OldPos[2])));
+				mafLogMessage(_M(mafString::Format(_R("Focal position: %f, %f, %f "), pos[0], pos[1], pos[2])));
+				camera->SetFocalPoint(pos);
+				camera->SetViewAngle(90.);
+				mv->CameraUpdate();
+				m_OldPos[0] = pos[0];
+				m_OldPos[1] = pos[1];
+				m_OldPos[2] = pos[2];
+			}
+		}
+	}
 
-  //update text
-  OnShowGizmoCoords();
-  this->CameraUpdate();
+	//update text
+	OnShowGizmoCoords();
+	this->CameraUpdate();
 }
 
 
 //Update the slice according to the new position.
 void medViewSliceOnCurveCompound::SetSlicePosition(double abscisa, vtkIdType branchId)
 {
-  if (m_Gizmo == NULL)
-    return;	//we have no polyline	
+	if (m_Gizmo == NULL)
+		return;	//we have no polyline	
 
-  m_Gizmo->SetCurvilinearAbscissa(
+	m_Gizmo->SetCurvilinearAbscissa(
 #ifndef GIZMO_PATH
-    branchId,
+		branchId,
 #endif
-    abscisa);
+		abscisa);
 
-  OnGizmoMoved();
+	OnGizmoMoved();
 }
 #pragma endregion
 
@@ -755,72 +755,72 @@ void medViewSliceOnCurveCompound::SetSlicePosition(double abscisa, vtkIdType bra
 /*virtual*/ void medViewSliceOnCurveCompound::PackageView()
 //----------------------------------------------------------------------------
 {
-  //create child views
-  PlugChildView(new mafViewVTK(_L("main"), CAMERA_PERSPECTIVE));		//main 3D view	
-  PlugChildView(new mafViewVTK(_L("main"), CAMERA_PERSPECTIVE));		//polyline curve view
-  PlugChildView(new mafViewSlice(_L("slice"), CAMERA_PERSPECTIVE, true /*CAMERA_OS_Z*/));			//slice view
+	//create child views
+	PlugChildView(new mafViewVTK(_L("main"), CAMERA_PERSPECTIVE));		//main 3D view	
+	PlugChildView(new mafViewVTK(_L("main"), CAMERA_PERSPECTIVE));		//polyline curve view
+	PlugChildView(new mafViewSlice(_L("slice"), CAMERA_PERSPECTIVE, true /*CAMERA_OS_Z*/));			//slice view
 
-  //Plug visualization pipes to all views
-  PlugVolumePipe();
-  PlugSurfacePipe();
-  PlugMeshPipe();  
-  PlugPolylinePipe();
+	//Plug visualization pipes to all views
+	PlugVolumePipe();
+	PlugSurfacePipe();
+	PlugMeshPipe();
+	PlugPolylinePipe();
 }
 
 //plugs a new volume visualization pipe
 /*virtual*/ void medViewSliceOnCurveCompound::PlugVolumePipe()
-{	
-  for (int i = 0; i < 2; i++)
-  {
-    std::vector< mafView* >& vws = i == 0 ? m_PluggedChildViewList : m_ChildViewList;
-    if (MAIN_VIEW < vws.size())
-    {
-      mafViewVTK* v = ((mafViewVTK*)vws[MAIN_VIEW]);
-      v->PlugVisualPipe(_R("mafVMEVolumeGray"), _R(GetVolumePipesDesc()[m_VolumePipeConfiguration].szClassName), MUTEX);	
-      v->PlugVisualPipe(_R("medVMELabeledVolume"), _R(GetVolumePipesDesc()[m_VolumePipeConfiguration].szClassName), MUTEX);
-      v->PlugVisualPipe(_R("mafVMEVolumeRGB"), _R(GetVolumePipesDesc()[m_VolumePipeConfiguration].szClassName), MUTEX);
-      v->PlugVisualPipe(_R("mafVMEVolumeLarge"), _R(GetVolumePipesDesc()[m_VolumePipeConfiguration].szClassName), MUTEX);
-    }
+{
+	for (int i = 0; i < 2; i++)
+	{
+		std::vector< mafView* >& vws = i == 0 ? m_PluggedChildViewList : m_ChildViewList;
+		if (MAIN_VIEW < vws.size())
+		{
+			mafViewVTK* v = ((mafViewVTK*)vws[MAIN_VIEW]);
+			v->PlugVisualPipe(_R("mafVMEVolumeGray"), _R(GetVolumePipesDesc()[m_VolumePipeConfiguration].szClassName), MUTEX);
+			v->PlugVisualPipe(_R("medVMELabeledVolume"), _R(GetVolumePipesDesc()[m_VolumePipeConfiguration].szClassName), MUTEX);
+			v->PlugVisualPipe(_R("mafVMEVolumeRGB"), _R(GetVolumePipesDesc()[m_VolumePipeConfiguration].szClassName), MUTEX);
+			v->PlugVisualPipe(_R("mafVMEVolumeLarge"), _R(GetVolumePipesDesc()[m_VolumePipeConfiguration].szClassName), MUTEX);
+		}
 
-    if (SLICE_VIEW < vws.size())
-    {	
-        mafViewVTK* vs = ((mafViewVTK*)vws[SLICE_VIEW]);
+		if (SLICE_VIEW < vws.size())
+		{
+			mafViewVTK* vs = ((mafViewVTK*)vws[SLICE_VIEW]);
 
-        vs->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("mafPipeVolumeSlice_BES"), MUTEX);
-        vs->PlugVisualPipe(_R("medVMELabeledVolume"), _R("mafPipeVolumeSlice_BES"), MUTEX);
-        vs->PlugVisualPipe(_R("mafVMEVolumeRGB"), _R("mafPipeVolumeSlice_BES"), MUTEX);
-        vs->PlugVisualPipe(_R("mafVMEVolumeLarge"), _R("mafPipeVolumeSlice_BES"), MUTEX);
-    }
-  }
+			vs->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("mafPipeVolumeSlice_BES"), MUTEX);
+			vs->PlugVisualPipe(_R("medVMELabeledVolume"), _R("mafPipeVolumeSlice_BES"), MUTEX);
+			vs->PlugVisualPipe(_R("mafVMEVolumeRGB"), _R("mafPipeVolumeSlice_BES"), MUTEX);
+			vs->PlugVisualPipe(_R("mafVMEVolumeLarge"), _R("mafPipeVolumeSlice_BES"), MUTEX);
+		}
+	}
 }
 
 //plugs a new surface visualization pipe
 /*virtual*/ void medViewSliceOnCurveCompound::PlugSurfacePipe()
 {
-  for (int i = 0; i < 2; i++)
-  {
-    std::vector< mafView* >& vws = i == 0 ? m_PluggedChildViewList : m_ChildViewList;
-    if (SLICE_VIEW < vws.size())
-    {	
-      mafViewVTK* vs = ((mafViewVTK*)vws[SLICE_VIEW]);
-      vs->PlugVisualPipe(_R("mafVMESurface"), _R("mafPipeSurfaceSlice_BES"));
-      vs->PlugVisualPipe(_R("mafVMESurfaceParametric"), _R("mafPipeSurfaceSlice_BES"));
-    }
-  }
+	for (int i = 0; i < 2; i++)
+	{
+		std::vector< mafView* >& vws = i == 0 ? m_PluggedChildViewList : m_ChildViewList;
+		if (SLICE_VIEW < vws.size())
+		{
+			mafViewVTK* vs = ((mafViewVTK*)vws[SLICE_VIEW]);
+			vs->PlugVisualPipe(_R("mafVMESurface"), _R("mafPipeSurfaceSlice_BES"));
+			vs->PlugVisualPipe(_R("mafVMESurfaceParametric"), _R("mafPipeSurfaceSlice_BES"));
+		}
+	}
 }
 
 //plugs a new mesh visualization pipe
 /*virtual*/ void medViewSliceOnCurveCompound::PlugMeshPipe()
 {
-  for (int i = 0; i < 2; i++)
-  {
-    std::vector< mafView* >& vws = i == 0 ? m_PluggedChildViewList : m_ChildViewList;
-    if (SLICE_VIEW < vws.size())
-    {	
-      mafViewVTK* vs = ((mafViewVTK*)vws[SLICE_VIEW]);
-      vs->PlugVisualPipe(_R("mafVMEMesh"), _R("mafPipeMeshSlice_BES"));
-    }
-  }
+	for (int i = 0; i < 2; i++)
+	{
+		std::vector< mafView* >& vws = i == 0 ? m_PluggedChildViewList : m_ChildViewList;
+		if (SLICE_VIEW < vws.size())
+		{
+			mafViewVTK* vs = ((mafViewVTK*)vws[SLICE_VIEW]);
+			vs->PlugVisualPipe(_R("mafVMEMesh"), _R("mafPipeMeshSlice_BES"));
+		}
+	}
 }
 
 //------------------------------------------------------------------------
@@ -828,37 +828,37 @@ void medViewSliceOnCurveCompound::SetSlicePosition(double abscisa, vtkIdType bra
 /*virtual*/ void medViewSliceOnCurveCompound::PlugPolylinePipe()
 //------------------------------------------------------------------------
 {
-  //Plug polyline pipe
-  for (int i = 0; i < 2; i++)
-  {
-    std::vector< mafView* >& vws = i == 0 ? m_PluggedChildViewList : m_ChildViewList;
-    if (POLYLINE_VIEW < vws.size())
-    {	
-      mafViewVTK* vs = ((mafViewVTK*)vws[POLYLINE_VIEW]);
-      vs->PlugVisualPipe(_R("mafVMEPolyline"), _R("mafPipePolyline"), MUTEX);	  
-      vs->PlugVisualPipe(_R("medVMEPolylineGraph"), _R("medVisualPipePolylineGraph"), MUTEX);	
-    }
-  }
+	//Plug polyline pipe
+	for (int i = 0; i < 2; i++)
+	{
+		std::vector< mafView* >& vws = i == 0 ? m_PluggedChildViewList : m_ChildViewList;
+		if (POLYLINE_VIEW < vws.size())
+		{
+			mafViewVTK* vs = ((mafViewVTK*)vws[POLYLINE_VIEW]);
+			vs->PlugVisualPipe(_R("mafVMEPolyline"), _R("mafPipePolyline"), MUTEX);
+			vs->PlugVisualPipe(_R("medVMEPolylineGraph"), _R("medVisualPipePolylineGraph"), MUTEX);
+		}
+	}
 }
 
 //change the visualization pipe for volumes
 /*virtual*/ void medViewSliceOnCurveCompound::ChangeVolumePipe(const char* pipename)
 {
-  //hide items forcing so the destruction of previous visualization pipeline
-  if (m_CurrentVolume != NULL)      
-    m_ChildViewList[MAIN_VIEW]->VmeShow(m_CurrentVolume, false);  
+	//hide items forcing so the destruction of previous visualization pipeline
+	if (m_CurrentVolume != NULL)
+		m_ChildViewList[MAIN_VIEW]->VmeShow(m_CurrentVolume, false);
 
-  //plug a new volume pipeline
-  PlugVolumePipe();
+	//plug a new volume pipeline
+	PlugVolumePipe();
 
-  //show volume VMEs once again
-  if (m_CurrentVolume != NULL)
-  {
-    m_ChildViewList[MAIN_VIEW]->VmeShow(m_CurrentVolume, true);	
+	//show volume VMEs once again
+	if (m_CurrentVolume != NULL)
+	{
+		m_ChildViewList[MAIN_VIEW]->VmeShow(m_CurrentVolume, true);
 
-    //force GUI construction for new pipe
-    {mafEvent evUnq( this, VME_SELECTED); evUnq.SetVme(GetSceneGraph()->Vme2Node(m_CurrentVolume)->m_Vme.get()); InvokeEvent(evUnq);}
-  }
+		//force GUI construction for new pipe
+		{ mafEvent evUnq(this, VME_SELECTED); evUnq.SetVme(GetSceneGraph()->Vme2Node(m_CurrentVolume)->m_Vme.get()); InvokeEvent(evUnq); }
+	}
 }
 #pragma endregion
 
@@ -868,16 +868,16 @@ void medViewSliceOnCurveCompound::SetSlicePosition(double abscisa, vtkIdType bra
 /*virtual*/ int medViewSliceOnCurveCompound::GetNumberOfVolumePipes()
 //------------------------------------------------------------------------
 {
-  int nRet = 0;
-  const VPIPE_ENTRY* pList = GetVolumePipesDesc();
-  if (pList != NULL)
-  {
-    while (pList->szClassName != NULL) {
-      pList++; nRet++; //increase the number
-    }
-  }
+	int nRet = 0;
+	const VPIPE_ENTRY* pList = GetVolumePipesDesc();
+	if (pList != NULL)
+	{
+		while (pList->szClassName != NULL) {
+			pList++; nRet++; //increase the number
+		}
+	}
 
-  return nRet;
+	return nRet;
 }
 
 //------------------------------------------------------------------------
@@ -885,23 +885,23 @@ void medViewSliceOnCurveCompound::SetSlicePosition(double abscisa, vtkIdType bra
 /*virtual*/ void medViewSliceOnCurveCompound::UpdateGizmoStatusText(const char* szText)
 //------------------------------------------------------------------------
 {
-  m_TextMapper->SetInput(szText);
-  m_TextMapper->Modified();
+	m_TextMapper->SetInput(szText);
+	m_TextMapper->Modified();
 }
 
 //-------------------------------------------------------------------------
 void medViewSliceOnCurveCompound::Print(std::ostream& os, const int tabs)// const
 //-------------------------------------------------------------------------
 {
-  mafIndent indent(tabs);
-  os << indent << "medViewSliceOnCurveCompound" << '\t' << this << std::endl;
+	mafIndent indent(tabs);
+	os << indent << "medViewSliceOnCurveCompound" << '\t' << this << std::endl;
 
-  //print components view information
+	//print components view information
 
-  for(int v = 0; v < m_NumOfChildView; v++)
-  {
-    m_ChildViewList[v]->Print(os, 1);
-  }
+	for (int v = 0; v < m_NumOfChildView; v++)
+	{
+		m_ChildViewList[v]->Print(os, 1);
+	}
 }
 #pragma endregion 
 
@@ -912,12 +912,12 @@ void medViewSliceOnCurveCompound::Print(std::ostream& os, const int tabs)// cons
 /*virtual*/ void medViewSliceOnCurveCompound::OnShowPolylineInMainView()
 //------------------------------------------------------------------------
 {
-  if (m_CurrentPolyLine != NULL)
-  {
-    m_ChildViewList[MAIN_VIEW]->VmeShow(m_CurrentPolyLine, m_ShowPolylineInMainView != 0);
-    m_ChildViewList[MAIN_VIEW]->VmeShow(m_Gizmo->GetOutput(), m_ShowPolylineInMainView != 0);
-    m_ChildViewList[MAIN_VIEW]->CameraUpdate();
-  }
+	if (m_CurrentPolyLine != NULL)
+	{
+		m_ChildViewList[MAIN_VIEW]->VmeShow(m_CurrentPolyLine, m_ShowPolylineInMainView != 0);
+		m_ChildViewList[MAIN_VIEW]->VmeShow(m_Gizmo->GetOutput(), m_ShowPolylineInMainView != 0);
+		m_ChildViewList[MAIN_VIEW]->CameraUpdate();
+	}
 }
 
 //------------------------------------------------------------------------
@@ -925,33 +925,33 @@ void medViewSliceOnCurveCompound::Print(std::ostream& os, const int tabs)// cons
 /*virtual*/ void medViewSliceOnCurveCompound::OnShowGizmoCoords()
 //------------------------------------------------------------------------
 {
-  if (!m_ShowGizmoCoords || m_Gizmo == NULL)
-    UpdateGizmoStatusText("");
-  else
-  {
-    double pos[3];
+	if (!m_ShowGizmoCoords || m_Gizmo == NULL)
+		UpdateGizmoStatusText("");
+	else
+	{
+		double pos[3];
 
-    mafVME* g = mafVME::SafeDownCast(m_Gizmo->GetOutput());
-    auto gmat = g->GetOutput()->GetMatrix();
-    mafTransform::GetPosition(*gmat, pos);    //get the position
+		mafVME* g = mafVME::SafeDownCast(m_Gizmo->GetOutput());
+		auto gmat = g->GetOutput()->GetMatrix();
+		mafTransform::GetPosition(*gmat, pos);    //get the position
 
-    //update text
-    mafString szText = mafString::Format(_R("X = %.2f, Y = %.2f, Z = %.2f"), pos[0], pos[1], pos[2]);
-    UpdateGizmoStatusText(szText.GetCStr());
-  }
+		//update text
+		mafString szText = mafString::Format(_R("X = %.2f, Y = %.2f, Z = %.2f"), pos[0], pos[1], pos[2]);
+		UpdateGizmoStatusText(szText.GetCStr());
+	}
 }
 
 const char** medViewSliceOnCurveCompound::GetLayoutsNames()
-{ 
+{
 
-  static const char* layoutNames[] = {"one row","Mps horz","Mps vert","Smp horz", "Smp vert",NULL,};
-  return layoutNames;  
+	static const char* layoutNames[] = { "one row","Mps horz","Mps vert","Smp horz", "Smp vert",NULL, };
+	return layoutNames;
 }
 
 const medViewSliceOnCurveCompound::VPIPE_ENTRY* medViewSliceOnCurveCompound::GetVolumePipesDesc()
 {
-  static const medViewSliceOnCurveCompound::VPIPE_ENTRY volumePipes[] = {{"medPipeVolumeDRR", "DRR"},{"medPipeVolumeMIP", "MIP"},{"medPipeVolumeVR", "VR"},{"mafPipeIsosurface", "ISO"},{NULL, NULL},};
-  return volumePipes;
+	static const medViewSliceOnCurveCompound::VPIPE_ENTRY volumePipes[] = { {"medPipeVolumeDRR", "DRR"},{"medPipeVolumeMIP", "MIP"},{"medPipeVolumeVR", "VR"},{"mafPipeIsosurface", "ISO"},{NULL, NULL}, };
+	return volumePipes;
 }
 
 #pragma  endregion

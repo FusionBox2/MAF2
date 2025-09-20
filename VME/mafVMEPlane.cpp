@@ -388,7 +388,7 @@ void mafVMEPlane::push(double t)
 mafGUI* mafVMEPlane::CreateGui()
 //-------------------------------------------------------------------------
 {
-	m_Gui = mafVME::CreateGui();
+	auto m_Gui = mafVME::CreateGui();
 	m_Gui->Label(_R("Plane Gui"));
 	
 
@@ -410,11 +410,7 @@ mafGUI* mafVMEPlane::CreateGui()
 
 void mafVMEPlane::Update()
 {
-	if (m_Gui)
-	{
-		m_Gui->Update();
-	
-	}
+	UpdateGUI();
 
 	this->InternalUpdate();
 	
@@ -456,7 +452,7 @@ void mafVMEPlane::OnEvent(mafEventBase *maf_event)
 
 							   SetPlaneLink(_R("Plan_intersect"), n);
 							   m_plan1Name = n->GetName();
-							   m_Gui->Update();
+							   UpdateGUI();
 
 							   InternalUpdate();
 
@@ -479,7 +475,7 @@ void mafVMEPlane::OnEvent(mafEventBase *maf_event)
 
 							   SetLandmarkLink(_R("first_Point"), n);
 							   m_p1LandmarkName = n->GetName();
-							   m_Gui->Update();
+							   UpdateGUI();
 							   //pts_change = true;
 							   InternalUpdate();
 
@@ -505,7 +501,7 @@ void mafVMEPlane::OnEvent(mafEventBase *maf_event)
 							   SetLandmarkLink(_R("second_Point"), n);
 							   m_p2LandmarkName = n->GetName();
 
-							   m_Gui->Update();
+							   UpdateGUI();
 							  // pts_change = true;
 							   InternalUpdate();
 
@@ -530,7 +526,7 @@ void mafVMEPlane::OnEvent(mafEventBase *maf_event)
 							   SetLandmarkLink(_R("third_Point"), n);
 							   m_p3LandmarkName = n->GetName();
 
-							   m_Gui->Update();
+							   UpdateGUI();
 							   //pts_change = true;
 							   InternalUpdate();
 
@@ -768,8 +764,7 @@ void mafVMEPlane::InternalUpdate()
 
 
 			
-				if (m_Gui)
-					m_Gui->Update();
+				UpdateGUI();
 			}
 			
 	

@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafVMEOutputLandmarkCloud
  Authors: Paolo Quadrani
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -35,59 +35,47 @@
 #include <assert.h>
 
 //-------------------------------------------------------------------------
-mafCxxTypeMacro(mafVMEOutputLandmarkCloud)
-//-------------------------------------------------------------------------
-
-//-------------------------------------------------------------------------
 mafVMEOutputLandmarkCloud::mafVMEOutputLandmarkCloud()
 //-------------------------------------------------------------------------
 {
-  m_NumLandmarks = _R("0");
-  m_Gui = NULL;
+	m_NumLandmarks = _R("0");
 }
 
-//-------------------------------------------------------------------------
-mafVMEOutputLandmarkCloud::~mafVMEOutputLandmarkCloud()
-//-------------------------------------------------------------------------
-{
-}
+mafVMEOutputLandmarkCloud::~mafVMEOutputLandmarkCloud() = default;
 
 //-------------------------------------------------------------------------
-vtkAlgorithmOutput *mafVMEOutputLandmarkCloud::GetVTKOutputPort()
+vtkAlgorithmOutput* mafVMEOutputLandmarkCloud::GetVTKOutputPort()
 //-------------------------------------------------------------------------
 {
-  assert(m_VME);
-  assert(mafVMELandmarkCloud::SafeDownCast(m_VME));
-  if (mafVMELandmarkCloud::SafeDownCast(m_VME)->IsOpen())
-  {
-    return NULL;
-  }
-  else
-  {
-    return Superclass::GetVTKOutputPort();
-  }
+	assert(m_VME);
+	assert(mafVMELandmarkCloud::SafeDownCast(m_VME));
+	if (mafVMELandmarkCloud::SafeDownCast(m_VME)->IsOpen())
+	{
+		return NULL;
+	}
+	else
+	{
+		return Superclass::GetVTKOutputPort();
+	}
 }
 
 //-------------------------------------------------------------------------
 mafGUI* mafVMEOutputLandmarkCloud::CreateGui()
 //-------------------------------------------------------------------------
 {
-  assert(m_Gui == NULL);
-  m_Gui = mafVMEOutput::CreateGui();
-  m_NumLandmarks = mafToString(mafVMELandmarkCloud::SafeDownCast(m_VME)->GetNumberOfLandmarks());
-  m_Gui->Label(_L("points: "), &m_NumLandmarks, true);
-  m_Gui->Divider();
-	return m_Gui;
+	assert(!AccessGUI());
+	auto gui = mafVMEOutput::CreateGui();
+	m_NumLandmarks = mafToString(mafVMELandmarkCloud::SafeDownCast(m_VME)->GetNumberOfLandmarks());
+	gui->Label(_L("points: "), &m_NumLandmarks, true);
+	gui->Divider();
+	return gui;
 }
 //-------------------------------------------------------------------------
 void mafVMEOutputLandmarkCloud::Update()
 //-------------------------------------------------------------------------
 {
-  assert(m_VME);
-  m_VME->Update();
-  m_NumLandmarks = mafToString(mafVMELandmarkCloud::SafeDownCast(m_VME)->GetNumberOfLandmarks());
-  if (m_Gui)
-  {
-    m_Gui->Update();
-  }
+	assert(m_VME);
+	m_VME->Update();
+	m_NumLandmarks = mafToString(mafVMELandmarkCloud::SafeDownCast(m_VME)->GetNumberOfLandmarks());
+	UpdateGUI();
 }

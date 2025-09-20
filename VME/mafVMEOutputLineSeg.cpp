@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafVMEOutputLineSeg
  Authors: TJ
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -45,40 +45,37 @@ mafVMEOutputLineSeg::~mafVMEOutputLineSeg()
 {
 }
 //-------------------------------------------------------------------------
-mafGUI *mafVMEOutputLineSeg::CreateGui()
+mafGUI* mafVMEOutputLineSeg::CreateGui()
 //-------------------------------------------------------------------------
 {
-  assert(m_Gui == NULL);
-  m_Gui = mafVMEOutput::CreateGui();
-  
- // m_Distance = ((mafVMEMeter *)m_VME)->GetDistance();
-  //m_Gui->Label(_("distance: "), &m_Distance, true);
+	assert(!AccessGUI());
+	auto gui = mafVMEOutput::CreateGui();
 
- // m_Angle = ((mafVMEMeter *)m_VME)->GetAngle();
-//  m_Gui->Label(_("angle: "), &m_Angle, true);
-//	m_Gui->Divider();
+	// m_Distance = ((mafVMEMeter *)m_VME)->GetDistance();
+	 //m_Gui->Label(_("distance: "), &m_Distance, true);
 
-  return m_Gui;
+	// m_Angle = ((mafVMEMeter *)m_VME)->GetAngle();
+   //  m_Gui->Label(_("angle: "), &m_Angle, true);
+   //	m_Gui->Divider();
+
+	return gui;
 }
 //-------------------------------------------------------------------------
 void mafVMEOutputLineSeg::Update()
 //-------------------------------------------------------------------------
 {
-  assert(m_VME);
-  m_VME->Update();
+	assert(m_VME);
+	m_VME->Update();
 
- /* if(((mafVMEMeter *)m_VME)->GetMeterMode() == mafVMEMeter::POINT_DISTANCE || ((mafVMEMeter *)m_VME)->GetMeterMode() == mafVMEMeter::LINE_DISTANCE)
-  {
-  m_Distance = ((mafVMEMeter *)m_VME)->GetDistance();
-  m_Angle ="";
-  }
-  else if(((mafVMEMeter *)m_VME)->GetMeterMode() == mafVMEMeter::LINE_ANGLE)
-  {
-    m_Distance ="";
-    m_Angle= ((mafVMEMeter *)m_VME)->GetAngle();
-  }*/
-  if (m_Gui)
-  {
-    m_Gui->Update();
-  }
+	/* if(((mafVMEMeter *)m_VME)->GetMeterMode() == mafVMEMeter::POINT_DISTANCE || ((mafVMEMeter *)m_VME)->GetMeterMode() == mafVMEMeter::LINE_DISTANCE)
+	 {
+	 m_Distance = ((mafVMEMeter *)m_VME)->GetDistance();
+	 m_Angle ="";
+	 }
+	 else if(((mafVMEMeter *)m_VME)->GetMeterMode() == mafVMEMeter::LINE_ANGLE)
+	 {
+	   m_Distance ="";
+	   m_Angle= ((mafVMEMeter *)m_VME)->GetAngle();
+	 }*/
+	UpdateGUI();
 }

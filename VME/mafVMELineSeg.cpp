@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafVMESurfaceParametric
  Authors: Roberto Mucci , Stefano Perticoni
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -80,15 +80,15 @@ mafVMELineSeg::mafVMELineSeg()
 //-------------------------------------------------------------------------
 {
 
-	
 
- // m_GeometryType = PARAMETRIC_LINE;
-	
+
+	// m_GeometryType = PARAMETRIC_LINE;
+
 
 
 	m_Transform = mafTransform::NewSPtr();
 	//mafVMEOutputPolyline *output=mafVMEOutputPolyline::New(); // an output with no data
-	mafVMEOutputLineSeg *output = mafVMEOutputLineSeg::New();
+	mafVMEOutputLineSeg* output = mafVMEOutputLineSeg::New();
 	output->SetTransform(m_Transform); // force my transform in the output
 	SetOutput(output);
 
@@ -96,24 +96,24 @@ mafVMELineSeg::mafVMELineSeg()
 	vtkNEW(pts);
 	//vtkNEW(gon);
 	//vtkNEW(lineSource1);
-	
+
 	//gon->AddInput(lineSource1->GetOutput());
-	
+
 	//vtkNEW(polyLine);
 	vtkNEW(m_PolyData);
 	vtkNEW(cellArray);
 
-	
+
 	//m_PolyData->DeepCopy(gon->GetOutput());
 
 
 
 
-	
+
   // attach a data pipe which creates a bridge between VTK and MAF
 	auto dpipe = mafDataPipeCustom::NewSPtr();
 	dpipe->SetInputData(m_PolyData);
-	
+
 	SetDataPipe(dpipe);
 }
 
@@ -121,8 +121,8 @@ mafVMELineSeg::mafVMELineSeg()
 mafVMELineSeg::~mafVMELineSeg()
 //-------------------------------------------------------------------------
 {
-  vtkDEL(m_PolyData);
-  vtkDEL(pts);
+	vtkDEL(m_PolyData);
+	vtkDEL(pts);
 	SetOutput(NULL);
 }
 
@@ -140,69 +140,69 @@ std::shared_ptr<mmaMaterial> mafVMELineSeg::GetMaterial()
 }
 
 //-------------------------------------------------------------------------
-int mafVMELineSeg::DeepCopy(mafNode *a)
-//-------------------------------------------------------------------------
-{ 
-  if (Superclass::DeepCopy(a)==MAF_OK)
-  {
-	  mafVMELineSeg *vmeParametricSurface = mafVMELineSeg::SafeDownCast(a);
-    m_Transform->SetMatrix(vmeParametricSurface->m_Transform->GetMatrix());
- 
-	
-	this->setPoints( vmeParametricSurface->getPoints());
-
-    mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
-    if (dpipe)
-    {
-      dpipe->SetInputData(m_PolyData);
-    }
-    InternalUpdate();
-    return MAF_OK;
-  }  
-  return MAF_ERROR;
-}
-
-//-------------------------------------------------------------------------
-bool mafVMELineSeg::Equals(mafVME *vme)
+int mafVMELineSeg::DeepCopy(mafNode* a)
 //-------------------------------------------------------------------------
 {
-  bool ret = false;
-  if (Superclass::Equals(vme))
-  {
-	  if (
-		  m_Transform->GetMatrix() == ((mafVMELineSeg *)vme)->m_Transform->GetMatrix() &&
+	if (Superclass::DeepCopy(a) == MAF_OK)
+	{
+		mafVMELineSeg* vmeParametricSurface = mafVMELineSeg::SafeDownCast(a);
+		m_Transform->SetMatrix(vmeParametricSurface->m_Transform->GetMatrix());
 
-		  pts->GetNumberOfPoints() == ((mafVMELineSeg *)vme)->getPoints()->GetNumberOfPoints()
-		 
 
-		  
-		   )
-	  {
-		  for (int i = 0; i < pts->GetNumberOfPoints(); i++)
-		  {
-			  if ((pts->GetPoint(i))[0] == ((mafVMELineSeg *)vme)->getPoints()->GetPoint(i)[0] &&
-				  (pts->GetPoint(i))[1] == ((mafVMELineSeg *)vme)->getPoints()->GetPoint(i)[1] &&
-				  (pts->GetPoint(i))[2] == ((mafVMELineSeg *)vme)->getPoints()->GetPoint(i)[2])
-				  ;
-			  else
-				  return false;
+		this->setPoints(vmeParametricSurface->getPoints());
 
-		  }
-		  
-		  
-		  ret = true;
-    }
-  }
- return ret;
+		mafDataPipeCustom* dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
+		if (dpipe)
+		{
+			dpipe->SetInputData(m_PolyData);
+		}
+		InternalUpdate();
+		return MAF_OK;
+	}
+	return MAF_ERROR;
 }
+
 //-------------------------------------------------------------------------
-mafVMEOutputPolyline *mafVMELineSeg::GetPolylineOutput()
+bool mafVMELineSeg::Equals(mafVME* vme)
 //-------------------------------------------------------------------------
 {
-	return (mafVMEOutputPolyline *)GetOutput();
+	bool ret = false;
+	if (Superclass::Equals(vme))
+	{
+		if (
+			m_Transform->GetMatrix() == ((mafVMELineSeg*)vme)->m_Transform->GetMatrix() &&
+
+			pts->GetNumberOfPoints() == ((mafVMELineSeg*)vme)->getPoints()->GetNumberOfPoints()
+
+
+
+			)
+		{
+			for (int i = 0; i < pts->GetNumberOfPoints(); i++)
+			{
+				if ((pts->GetPoint(i))[0] == ((mafVMELineSeg*)vme)->getPoints()->GetPoint(i)[0] &&
+					(pts->GetPoint(i))[1] == ((mafVMELineSeg*)vme)->getPoints()->GetPoint(i)[1] &&
+					(pts->GetPoint(i))[2] == ((mafVMELineSeg*)vme)->getPoints()->GetPoint(i)[2])
+					;
+				else
+					return false;
+
+			}
+
+
+			ret = true;
+		}
+	}
+	return ret;
 }
 //-------------------------------------------------------------------------
-void mafVMELineSeg::SetMatrix(const mafMatrix &mat)
+mafVMEOutputPolyline* mafVMELineSeg::GetPolylineOutput()
+//-------------------------------------------------------------------------
+{
+	return (mafVMEOutputPolyline*)GetOutput();
+}
+//-------------------------------------------------------------------------
+void mafVMELineSeg::SetMatrix(const mafMatrix& mat)
 //-------------------------------------------------------------------------
 {
 	m_Transform->SetMatrix(mat);
@@ -215,70 +215,71 @@ bool mafVMELineSeg::IsAnimated()
 	return false;
 }
 //-------------------------------------------------------------------------
-void mafVMELineSeg::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)
+void mafVMELineSeg::GetLocalTimeStamps(std::vector<mafTimeStamp>& kframes)
 //-------------------------------------------------------------------------
 {
 	kframes.clear(); // no timestamps
-  mafTimeStamp t = m_Transform->GetMatrix().GetTimeStamp();
-  kframes.push_back(t);
+	mafTimeStamp t = m_Transform->GetMatrix().GetTimeStamp();
+	kframes.push_back(t);
 }
 //-------------------------------------------------------------------------
 mafGUI* mafVMELineSeg::CreateGui()
 //-------------------------------------------------------------------------
 {
-  mafVME::CreateGui();
-  if(m_Gui)
-  {
-    CreateGuiLine();
-    m_Gui->Divider(2);
+	auto gui = mafVME::CreateGui();
+	if (gui)
+	{
+		CreateGuiLine(gui);
+		gui->Divider(2);
 
-   
-    m_Gui->FitGui();
-    
-	//EnableParametricSurfaceGui( m_GeometryType);
-    m_Gui->Update();
-  }
 
-  m_Gui->Divider();
-  return m_Gui;
+		gui->FitGui();
+
+		//EnableParametricSurfaceGui( m_GeometryType);
+		gui->Update();
+	}
+
+	gui->Divider();
+	return gui;
 }
 //-------------------------------------------------------------------------
-void mafVMELineSeg::OnEvent(mafEventBase *maf_event)
+void mafVMELineSeg::OnEvent(mafEventBase* maf_event)
 //-------------------------------------------------------------------------
 {
 
-  // events to be sent up or down in the tree are simply forwarded
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    switch(e->GetId())
-    {
-      case ID_GEOMETRY_TYPE:
-      {  
-       // EnableParametricSurfaceGui(m_GeometryType);
-        m_Gui->Update();
-        InternalUpdate();
-        m_Gui->FitGui();
-      }
+	// events to be sent up or down in the tree are simply forwarded
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
+	{
+		switch (e->GetId())
+		{
+		case ID_GEOMETRY_TYPE:
+		{
+			// EnableParametricSurfaceGui(m_GeometryType);
+			UpdateGUI();
+			InternalUpdate();
+			auto gui = AccessGUI();
+			gui->FitGui();
+		}
 
-      
-      case CHANGE_VALUE_LINE:
 
-      {
-        InternalUpdate();
-        e->SetId(CAMERA_UPDATE);
-        ForwardUpEvent(e);
-      }
-      break;
-      
-      default:
-        mafVME::OnEvent(maf_event);
-    }
-  }
-  
-  else
-  {
-    Superclass::OnEvent(maf_event);
-  }
+		case CHANGE_VALUE_LINE:
+
+		{
+			InternalUpdate();
+			e->SetId(CAMERA_UPDATE);
+			ForwardUpEvent(e);
+		}
+		break;
+
+		default:
+			mafVME::OnEvent(maf_event);
+		}
+	}
+
+	else
+	{
+		Superclass::OnEvent(maf_event);
+	}
 }
 
 //-----------------------------------------------------------------------
@@ -291,14 +292,14 @@ void mafVMELineSeg::InternalPreUpdate()
 void mafVMELineSeg::InternalUpdate()
 //-----------------------------------------------------------------------
 {
-	
+
 
 	int nbr = pts->GetNumberOfPoints();
 
 
 
 	vtkIdType pointId[2];
-	for (int i = 0; i< nbr; i++)
+	for (int i = 0; i < nbr; i++)
 	{
 		if (i > 0)
 		{
@@ -319,7 +320,7 @@ vtkPolyData* mafVMELineSeg::getVTKPolydata()
 {
 
 
-	
+
 	return m_PolyData;
 
 }
@@ -329,11 +330,11 @@ void mafVMELineSeg::Update()
 {
 
 	int nbr = pts->GetNumberOfPoints();
-	if (nbr>1)
+	if (nbr > 1)
 	{
 		SetPoint1(pts->GetPoint(0)[0], pts->GetPoint(0)[1], pts->GetPoint(0)[2]);
 		SetPoint2(pts->GetPoint(nbr - 1)[0], pts->GetPoint(nbr - 1)[1], pts->GetPoint(nbr - 1)[2]);
-	
+
 	}
 
 	InternalUpdate();
@@ -342,11 +343,11 @@ void mafVMELineSeg::Update()
 //-----------------------------------------------------------------------
 void mafVMELineSeg::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
-{  
-  Superclass::InternalStore(parent);
-  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
-  parent[_R("PosPt1")].SetValue(mafToString(PosPt1, 3));
-  parent[_R("PosPt2")].SetValue(mafToString(PosPt2, 3));
+{
+	Superclass::InternalStore(parent);
+	parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
+	parent[_R("PosPt1")].SetValue(mafToString(PosPt1, 3));
+	parent[_R("PosPt2")].SetValue(mafToString(PosPt2, 3));
 }
 
 //-----------------------------------------------------------------------
@@ -354,9 +355,9 @@ void mafVMELineSeg::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
 	Superclass::InternalRestore(node);
-  m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
-  mafParseVector(node[_R("PosPt1")].As<mafString>(), PosPt1, 3);
-  mafParseVector(node[_R("PosPt2")].As<mafString>(), PosPt2, 3);
+	m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
+	mafParseVector(node[_R("PosPt1")].As<mafString>(), PosPt1, 3);
+	mafParseVector(node[_R("PosPt2")].As<mafString>(), PosPt2, 3);
 }
 //-------------------------------------------------------------------------
 /*void mafVMELineSeg::SetGeometryType(int parametricSurfaceTypeID)
@@ -371,36 +372,36 @@ void mafVMELineSeg::InternalRestore(const mafStorageElement& node)
 const char** mafVMELineSeg::GetIcon()
 //-------------------------------------------------------------------------
 {
-  #include "mafVMEProcedural.xpm"
-  return mafVMEProcedural_xpm;
+#include "mafVMEProcedural.xpm"
+	return mafVMEProcedural_xpm;
 }
 
 
 
-void mafVMELineSeg::CreateGuiLine()
+void mafVMELineSeg::CreateGuiLine(mafGUI* gui)
 {
-  m_GuiLine = new mafGUI(this);
-  m_GuiLine->Label(_R("Line"));
-  m_GuiLine->Vector(CHANGE_VALUE_LINE, _L("Point 1"), PosPt1);
-  m_GuiLine->Vector(CHANGE_VALUE_LINE, _L("Point 2"), PosPt2);
-  
- /* m_Position1[0] = wxString::Format("pt1 x: %f", PosPt1[0]);
-  m_Position1[1] = wxString::Format("pt1 y: %f", PosPt1[1]);
-  m_Position1[2] = wxString::Format("pt1 z: %f", PosPt1[2]);
+	m_GuiLine = new mafGUI(this);
+	m_GuiLine->Label(_R("Line"));
+	m_GuiLine->Vector(CHANGE_VALUE_LINE, _L("Point 1"), PosPt1);
+	m_GuiLine->Vector(CHANGE_VALUE_LINE, _L("Point 2"), PosPt2);
 
-  m_GuiLine->Label("", &m_Position1[0]);
-  m_GuiLine->Label("", &m_Position1[1]);
-  m_GuiLine->Label("", &m_Position1[2]);
+	/* m_Position1[0] = wxString::Format("pt1 x: %f", PosPt1[0]);
+	 m_Position1[1] = wxString::Format("pt1 y: %f", PosPt1[1]);
+	 m_Position1[2] = wxString::Format("pt1 z: %f", PosPt1[2]);
 
-  m_Position2[0] = wxString::Format("pt2 : %f", PosPt2[0]);
-  m_Position2[1] = wxString::Format("pt2 : %f", PosPt2[1]);
-  m_Position2[2] = wxString::Format("pt2 : %f", PosPt2[2]);
+	 m_GuiLine->Label("", &m_Position1[0]);
+	 m_GuiLine->Label("", &m_Position1[1]);
+	 m_GuiLine->Label("", &m_Position1[2]);
 
-  m_GuiLine->Label("", &m_Position2[0]);
-  m_GuiLine->Label("", &m_Position2[1]);
-  m_GuiLine->Label("", &m_Position2[2]);*/
-  assert(m_Gui);
-  m_Gui->AddGui(m_GuiLine);
+	 m_Position2[0] = wxString::Format("pt2 : %f", PosPt2[0]);
+	 m_Position2[1] = wxString::Format("pt2 : %f", PosPt2[1]);
+	 m_Position2[2] = wxString::Format("pt2 : %f", PosPt2[2]);
+
+	 m_GuiLine->Label("", &m_Position2[0]);
+	 m_GuiLine->Label("", &m_Position2[1]);
+	 m_GuiLine->Label("", &m_Position2[2]);*/
+	assert(gui);
+	gui->AddGui(m_GuiLine);
 }
 
 
@@ -409,29 +410,29 @@ void mafVMELineSeg::CreateGuiLine()
 
 void mafVMELineSeg::EnableGuiLine()
 {
- 
-  m_GuiLine->Enable(CHANGE_VALUE_LINE, false);
-  
-  
+
+	m_GuiLine->Enable(CHANGE_VALUE_LINE, false);
+
+
 }
 
 
 
 
-void mafVMELineSeg::SetPoint1(double x1,double y1 ,double z1)
+void mafVMELineSeg::SetPoint1(double x1, double y1, double z1)
 {
 	PosPt1[0] = x1;
 	PosPt1[1] = y1;
 	PosPt1[2] = z1;
-	
-//	m_Position1[0] = wxString::Format("pt1 x: %f", PosPt1[0]);
-//	m_Position1[1] = wxString::Format("pt1 y: %f", PosPt1[1]);
-//	m_Position1[2] = wxString::Format("pt1 z: %f", PosPt1[2]);
 
-	if (m_Gui)
+	//	m_Position1[0] = wxString::Format("pt1 x: %f", PosPt1[0]);
+	//	m_Position1[1] = wxString::Format("pt1 y: %f", PosPt1[1]);
+	//	m_Position1[2] = wxString::Format("pt1 z: %f", PosPt1[2]);
+
+	if (auto gui = AccessGUI())
 	{
 		m_GuiLine->Update();
-		m_Gui->Update();
+		UpdateGUI();
 	}
 }
 void mafVMELineSeg::SetPoint2(double x1, double y1, double z1)
@@ -440,45 +441,45 @@ void mafVMELineSeg::SetPoint2(double x1, double y1, double z1)
 	PosPt2[0] = x1;
 	PosPt2[1] = y1;
 	PosPt2[2] = z1;
-	
-//	m_Position2[0] = wxString::Format("pt2 : %f", PosPt2[0]);
-//	m_Position2[1] = wxString::Format("pt2 : %f", PosPt2[1]);
-//	m_Position2[2] = wxString::Format("pt2 : %f", PosPt2[2]);
 
-	if (m_Gui)
+	//	m_Position2[0] = wxString::Format("pt2 : %f", PosPt2[0]);
+	//	m_Position2[1] = wxString::Format("pt2 : %f", PosPt2[1]);
+	//	m_Position2[2] = wxString::Format("pt2 : %f", PosPt2[2]);
+
+	if (auto gui = AccessGUI())
 	{
 		m_GuiLine->Update();
-		m_Gui->Update();
+		UpdateGUI();
 	}
 }
 
 /*void mafVMELineSeg::EnableParametricSurfaceGui(int surfaceTypeID)
 {
 
-      EnableGuiLine();
-      if (DEBUG_MODE)
-      {
-        std::ostringstream stringStream;
-        stringStream << "enabling Line gui" << std::endl;
-        mafLogMessage(stringStream.str().c_str());
-      }
+	  EnableGuiLine();
+	  if (DEBUG_MODE)
+	  {
+		std::ostringstream stringStream;
+		stringStream << "enabling Line gui" << std::endl;
+		mafLogMessage(stringStream.str().c_str());
+	  }
 
 
 }*/
 
 void mafVMELineSeg::setPoints(vtkPoints* points)
 {
-	
+
 	pts->Reset();
 	for (int i = 0; i < points->GetNumberOfPoints(); i++)
 	{
 		pts->InsertNextPoint(points->GetPoint(i));
 	}
 	int nbr = pts->GetNumberOfPoints();
-	if (nbr>1)
+	if (nbr > 1)
 	{
 		SetPoint1(pts->GetPoint(0)[0], pts->GetPoint(0)[1], pts->GetPoint(0)[2]);
-		SetPoint2(pts->GetPoint(nbr-1)[0], pts->GetPoint(nbr-1)[1], pts->GetPoint(nbr-1)[2]);
+		SetPoint2(pts->GetPoint(nbr - 1)[0], pts->GetPoint(nbr - 1)[1], pts->GetPoint(nbr - 1)[2]);
 	}
 	this->Update();
 }

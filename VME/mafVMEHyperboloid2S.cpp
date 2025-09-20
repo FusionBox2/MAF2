@@ -70,12 +70,12 @@ mafVMEHyperboloid2S::mafVMEHyperboloid2S()
 	this->name = _R("TwoSheetedHyperboloid");
 
 	m_Transform = mafTransform::NewSPtr();
-	mafVMEOutputSurface *output = mafVMEOutputSurface::New(); // an output with no data
+	mafVMEOutputSurface* output = mafVMEOutputSurface::New(); // an output with no data
 	output->SetTransform(m_Transform); // force my transform in the output
 	SetOutput(output);
 	GetMaterial();
 	vtkNEW(m_PolyData);
-	
+
 	/*vtkNew<vtkSphereSource> surf;
 	surf->SetRadius(b);
 	surf->SetPhiResolution(resPhi);
@@ -83,7 +83,7 @@ mafVMEHyperboloid2S::mafVMEHyperboloid2S()
 	surf->Update();*/
 
 	quadric = vtkQuadric::New();
-	
+
 
 
 
@@ -96,8 +96,8 @@ mafVMEHyperboloid2S::mafVMEHyperboloid2S()
 	ptf->SetTransform(t);
 	ptf->SetInputConnection(surfAlg->GetOutputPort());
 	ptf->Update();
-	
-	
+
+
 
 
 	//m_PolyData->DeepCopy(ptf->GetOutput());
@@ -123,42 +123,42 @@ mafVMEHyperboloid2S::~mafVMEHyperboloid2S()
 void mafVMEHyperboloid2S::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {
-  Superclass::InternalStore(parent);
-  parent[_R("name")].SetValue(name);
-  parent[_R("landmarkName")].SetValue(m_LandmarkName);
-  parent[_R("Centerx")].SetValue(center[0]);
-  parent[_R("Centery")].SetValue(center[1]);
-  parent[_R("Centerz")].SetValue(center[2]);
-  parent[_R("a")].SetValue(a);
-  parent[_R("b")].SetValue(b);
-  parent[_R("c")].SetValue(c);
-  parent[_R("Theta")].SetValue(resTheta);
-  parent[_R("Phi")].SetValue(resPhi);
-  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
+	Superclass::InternalStore(parent);
+	parent[_R("name")].SetValue(name);
+	parent[_R("landmarkName")].SetValue(m_LandmarkName);
+	parent[_R("Centerx")].SetValue(center[0]);
+	parent[_R("Centery")].SetValue(center[1]);
+	parent[_R("Centerz")].SetValue(center[2]);
+	parent[_R("a")].SetValue(a);
+	parent[_R("b")].SetValue(b);
+	parent[_R("c")].SetValue(c);
+	parent[_R("Theta")].SetValue(resTheta);
+	parent[_R("Phi")].SetValue(resPhi);
+	parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
 }
 
 void mafVMEHyperboloid2S::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  Superclass::InternalRestore(node);
-  name = node[_R("name")].As<mafString>();
-  m_LandmarkName = node[_R("landmarkName")].As<mafString>();
-  center[0] = node[_R("Centerx")].As<double>();
-  center[1] = node[_R("Centery")].As<double>();
-  center[2] = node[_R("Centerz")].As<double>();
-  a = node[_R("a")].As<double>();
-  b = node[_R("b")].As<double>();
-  c = node[_R("c")].As<double>();
-  resTheta = node[_R("Theta")].As<double>();
-  resPhi = node[_R("Phi")].As<double>();
-  m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
+	Superclass::InternalRestore(node);
+	name = node[_R("name")].As<mafString>();
+	m_LandmarkName = node[_R("landmarkName")].As<mafString>();
+	center[0] = node[_R("Centerx")].As<double>();
+	center[1] = node[_R("Centery")].As<double>();
+	center[2] = node[_R("Centerz")].As<double>();
+	a = node[_R("a")].As<double>();
+	b = node[_R("b")].As<double>();
+	c = node[_R("c")].As<double>();
+	resTheta = node[_R("Theta")].As<double>();
+	resPhi = node[_R("Phi")].As<double>();
+	m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
 }
-void mafVMEHyperboloid2S::OnEvent(mafEventBase *maf_event)
+void mafVMEHyperboloid2S::OnEvent(mafEventBase* maf_event)
 //-------------------------------------------------------------------------
 {
 
-	
-	if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
+
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
 	{
 		switch (e->GetId())
 		{
@@ -170,52 +170,52 @@ void mafVMEHyperboloid2S::OnEvent(mafEventBase *maf_event)
 			InternalUpdate();
 			e->SetId(CAMERA_UPDATE);
 			ForwardUpEvent(e);
-									 
+
 		}
-			break;
+		break;
 		case ID_HyperboloidCenter_LINK:
 		{
-				  mafID button_id = e->GetId();
-				  mafString title = _L("Choose Hyperboloid center vme link");
-				  e->SetId(VME_CHOOSE);
-								  
-				  e->SetString(&title);
-				  ForwardUpEvent(e);
-				  if (auto n = e->GetVme())
-					  {
+			mafID button_id = e->GetId();
+			mafString title = _L("Choose Hyperboloid center vme link");
+			e->SetId(VME_CHOOSE);
 
-					  mafTimeStamp currTs = GetTimeStamp();
-						auto m_TmpTransform = mafTransform::NewSPtr();
-						mafMatrix tm;
+			e->SetString(&title);
+			ForwardUpEvent(e);
+			if (auto n = e->GetVme())
+			{
 
-					  initvme = 1;
+				mafTimeStamp currTs = GetTimeStamp();
+				auto m_TmpTransform = mafTransform::NewSPtr();
+				mafMatrix tm;
 
-					  SetCenterLink(_R("centerLandmark"), n);
-					  m_LandmarkName = n->GetName();
+				initvme = 1;
 
-					  center_vme = GetCenterVME();
-					  double r[3]; double centerLocal[3];
-					  center_vme->GetOutput()->GetAbsPose(centerAbs, r, currTs);
+				SetCenterLink(_R("centerLandmark"), n);
+				m_LandmarkName = n->GetName();
 
-					  center_vme->GetOutput()->GetAbsMatrix(tm, currTs);
-					  m_TmpTransform->SetMatrix(tm);
-					  m_TmpTransform->TransformPoint(centerAbs, centerAbs);
+				center_vme = GetCenterVME();
+				double r[3]; double centerLocal[3];
+				center_vme->GetOutput()->GetAbsPose(centerAbs, r, currTs);
 
-
-					  center(0) = centerAbs[0];
-					  center(1) = centerAbs[1];
-					  center(2) = centerAbs[2];
+				center_vme->GetOutput()->GetAbsMatrix(tm, currTs);
+				m_TmpTransform->SetMatrix(tm);
+				m_TmpTransform->TransformPoint(centerAbs, centerAbs);
 
 
+				center(0) = centerAbs[0];
+				center(1) = centerAbs[1];
+				center(2) = centerAbs[2];
 
 
 
-					  m_Gui->Update();
-					  InternalUpdate();
-					  }
-								  
+
+
+				UpdateGUI();
+				InternalUpdate();
+			}
+
 		}
-			break;
+		break;
 
 		default:
 			mafVME::OnEvent(maf_event);
@@ -227,7 +227,7 @@ void mafVMEHyperboloid2S::OnEvent(mafEventBase *maf_event)
 		Superclass::OnEvent(maf_event);
 	}
 }
-mafVME *mafVMEHyperboloid2S::GetCenterVME()
+mafVME* mafVMEHyperboloid2S::GetCenterVME()
 //-------------------------------------------------------------------------
 {
 
@@ -238,31 +238,31 @@ mafGUI* mafVMEHyperboloid2S::CreateGui()
 //-------------------------------------------------------------------------
 {
 
-	m_Gui = mafVME::CreateGui();
-	m_Gui->Label(_R("Hyperboloid Gui"));
+	auto gui = mafVME::CreateGui();
+	gui->Label(_R("Hyperboloid Gui"));
 	//m_Gui->Double(CHANGE_VALUE_Hyperboloid, _("CenterX"), &center[0]);
 	//m_Gui->Double(CHANGE_VALUE_Hyperboloid, _("CenterY"), &center[1]);
 	//m_Gui->Double(CHANGE_VALUE_Hyperboloid, _("CenterZ"), &center[2]);
-	m_Gui->Double(CHANGE_VALUE_Hyperboloid, _L("RX"), &a);
-	m_Gui->Double(CHANGE_VALUE_Hyperboloid, _L("RY"), &b);
-	m_Gui->Double(CHANGE_VALUE_Hyperboloid, _L("RZ"), &c);
-	m_Gui->Double(CHANGE_VALUE_Hyperboloid, _L("resolution"), &resTheta);
-	m_Gui->Divider();
-	m_Gui->Button(ID_HyperboloidCenter_LINK, &m_LandmarkName, _L("centerLandmark"), _L("select the center"));
-	m_Gui->FitGui();
-	m_Gui->Update();
-	return m_Gui;
+	gui->Double(CHANGE_VALUE_Hyperboloid, _L("RX"), &a);
+	gui->Double(CHANGE_VALUE_Hyperboloid, _L("RY"), &b);
+	gui->Double(CHANGE_VALUE_Hyperboloid, _L("RZ"), &c);
+	gui->Double(CHANGE_VALUE_Hyperboloid, _L("resolution"), &resTheta);
+	gui->Divider();
+	gui->Button(ID_HyperboloidCenter_LINK, &m_LandmarkName, _L("centerLandmark"), _L("select the center"));
+	gui->FitGui();
+	gui->Update();
+	return gui;
 }
 
 
-mafVMEOutputSurface *mafVMEHyperboloid2S::GetSurfaceOutput()
+mafVMEOutputSurface* mafVMEHyperboloid2S::GetSurfaceOutput()
 //-------------------------------------------------------------------------
 {
 
-	return (mafVMEOutputSurface *)GetOutput();
+	return (mafVMEOutputSurface*)GetOutput();
 }
 //-------------------------------------------------------------------------
-void mafVMEHyperboloid2S::SetMatrix(const mafMatrix &mat)
+void mafVMEHyperboloid2S::SetMatrix(const mafMatrix& mat)
 //-------------------------------------------------------------------------
 {
 
@@ -277,7 +277,7 @@ bool mafVMEHyperboloid2S::IsAnimated()
 	return false;
 }
 //-------------------------------------------------------------------------
-void mafVMEHyperboloid2S::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)
+void mafVMEHyperboloid2S::GetLocalTimeStamps(std::vector<mafTimeStamp>& kframes)
 //-------------------------------------------------------------------------
 {
 
@@ -301,17 +301,16 @@ void mafVMEHyperboloid2S::SetTimeStamp(mafTimeStamp t)
 	centerTemp[0] = xyz[0];
 	centerTemp[1] = xyz[1];
 	centerTemp[2] = xyz[2];
-	
+
 
 	this->InternalUpdate();
-	if (m_Gui)
-		m_Gui->Update();
+	UpdateGUI();
 }
 
 
 // private methods
 
-double mafVMEHyperboloid2S::surf(const Vector3d &point) const
+double mafVMEHyperboloid2S::surf(const Vector3d& point) const
 {
 	double x = point(0);
 	double y = point(1);
@@ -322,7 +321,7 @@ double mafVMEHyperboloid2S::surf(const Vector3d &point) const
 	double z0 = center(2);
 	RowVector3d xyz_loc;
 	xyz_loc << x - x0, y - y0, z - z0;
-	Vector3d aa = xyz_loc*rotationMatrix;
+	Vector3d aa = xyz_loc * rotationMatrix;
 
 
 	//double dist = (((x - x0) * (x - x0)) / (a * a)) +
@@ -337,7 +336,7 @@ double mafVMEHyperboloid2S::surf(const Vector3d &point) const
 	return dist;
 }
 
-RowVector3d mafVMEHyperboloid2S::grad(const Vector3d &point) const
+RowVector3d mafVMEHyperboloid2S::grad(const Vector3d& point) const
 {
 	RowVector3d gradient;
 	RowVector3d gradient2;
@@ -357,30 +356,30 @@ RowVector3d mafVMEHyperboloid2S::grad(const Vector3d &point) const
 
 	RowVector3d xyz_loc;
 	xyz_loc << x - x0, y - y0, z - z0;
-	Vector3d aa = xyz_loc*rotationMatrix;
+	Vector3d aa = xyz_loc * rotationMatrix;
 
-	gradientLoc(0) = 2 * aa(0) / (a*a);
-	gradientLoc(1) = 2 * aa(1) / (b*b);
-	gradientLoc(2) = -2 * aa(2) / (c*c);
+	gradientLoc(0) = 2 * aa(0) / (a * a);
+	gradientLoc(1) = 2 * aa(1) / (b * b);
+	gradientLoc(2) = -2 * aa(2) / (c * c);
 
-	gradient2 = gradientLoc*rotationMatrix.transpose();
+	gradient2 = gradientLoc * rotationMatrix.transpose();
 	return gradient2;
 	return gradient2;
 }
 
-Matrix3d mafVMEHyperboloid2S::hess(const Vector3d &point) const
+Matrix3d mafVMEHyperboloid2S::hess(const Vector3d& point) const
 {
 	Matrix3d hess;
 	hess.setZero();
-	hess(0, 0) = 2 / (a*a);
-	hess(1, 1) = 2 / (b*b);
-	hess(2, 2) = -2 / (c*c);
+	hess(0, 0) = 2 / (a * a);
+	hess(1, 1) = 2 / (b * b);
+	hess(2, 2) = -2 / (c * c);
 	//return hess;
 
 	Matrix3d hess2;
 
 
-	hess2 = rotationMatrix*hess*rotationMatrix.transpose();
+	hess2 = rotationMatrix * hess * rotationMatrix.transpose();
 	return hess2;
 }
 
@@ -409,24 +408,24 @@ void mafVMEHyperboloid2S::UpdateLinks()
 
 	mafID sub_id = -1;
 	center_vme = GetCenterVME();
-	
+
 
 	if (center_vme && center_vme->IsMAFType(mafVMELandmarkCloud))
 	{
 		sub_id = GetLinkSubId(_R("centerLandmark"));
-		m_LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)center_vme)->GetLandmarkName(sub_id) : _L("none");
+		m_LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud*)center_vme)->GetLandmarkName(sub_id) : _L("none");
 	}
 	else
 	{
 		m_LandmarkName = center_vme ? center_vme->GetName() : _L("none");
 
-		
+
 	}
 
 
 
 
-	
+
 }
 void mafVMEHyperboloid2S::Update()
 {
@@ -441,21 +440,21 @@ void mafVMEHyperboloid2S::InternalUpdate()
 	UpdateLinks();
 	mafTimeStamp currTs = GetTimeStamp();
 
-	double r[3] = {1,1,1};
-	
+	double r[3] = { 1,1,1 };
+
 	center_vme = GetCenterVME();
 	auto m_TmpTransform = mafTransform::NewSPtr();
 	if (center_vme)
 	{
 		if (center_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId(_R("centerLandmark")) != -1)
 		{
-			((mafVMELandmarkCloud *)center_vme)->GetLandmark(GetLinkSubId(_R("centerLandmark")), centerAbs, currTs);
+			((mafVMELandmarkCloud*)center_vme)->GetLandmark(GetLinkSubId(_R("centerLandmark")), centerAbs, currTs);
 			mafMatrix tm;
 			center_vme->GetOutput()->GetAbsMatrix(tm, currTs);
 			m_TmpTransform->SetMatrix(tm);
 			m_TmpTransform->TransformPoint(centerAbs, centerAbs);
 
-		
+
 
 		}
 		else
@@ -464,12 +463,12 @@ void mafVMEHyperboloid2S::InternalUpdate()
 			center_vme->GetOutput()->GetAbsPose(centerAbs, r, currTs);
 		}
 	}
-	
+
 	m_TmpTransform->SetMatrix(GetOutput()->GetAbsTransform()->GetMatrix());
 	m_TmpTransform->Invert();
 	m_TmpTransform->TransformPoint(centerAbs, centerLocal);
 	center(0) = centerAbs[0];
-	center(1) = centerAbs[01]; 
+	center(1) = centerAbs[01];
 	center(02) = centerAbs[02];
 
 	vtkAlgorithm* surfAlg = plotFunction(quadric, resPhi);
@@ -484,7 +483,7 @@ void mafVMEHyperboloid2S::InternalUpdate()
 
 	m_PolyData->DeepCopy(ptf->GetOutput());
 	//m_PolyData->Update();
-	
+
 	//string ss;
 	//ss = "local position "+std::to_string(center[0]) + " " + std::to_string(center[1]) + " " + std::to_string(center[2]);
 	//wxBusyInfo wait12(ss.c_str());
@@ -503,22 +502,22 @@ void mafVMEHyperboloid2S::InternalUpdate()
 		r1 << 1, 0, 0, 0, cos(rRad[0]), sin(rRad[0]), 0, -sin(rRad[0]), cos(rRad[0]);
 		r2 << cos(rRad[1]), 0, -sin(rRad[1]), 0, 1, 0, sin(rRad[1]), 0, cos(rRad[1]);
 		r3 << cos(rRad[2]), sin(rRad[2]), 0, -sin(rRad[2]), cos(rRad[2]), 0, 0, 0, 1;
-		rotationMatrix = r3*r2*r1;
+		rotationMatrix = r3 * r2 * r1;
 	}
 }
-int mafVMEHyperboloid2S::DeepCopy(mafNode *a)
+int mafVMEHyperboloid2S::DeepCopy(mafNode* a)
 //-------------------------------------------------------------------------
 {
 	//wxBusyInfo wait12("deepcopy");
 	//Sleep(1500);
 	if (Superclass::DeepCopy(a) == MAF_OK)
 	{
-		mafVMEHyperboloid2S *vmeHyperboloid = mafVMEHyperboloid2S::SafeDownCast(a);
+		mafVMEHyperboloid2S* vmeHyperboloid = mafVMEHyperboloid2S::SafeDownCast(a);
 		m_Transform->SetMatrix(vmeHyperboloid->m_Transform->GetMatrix());
 		this->a = vmeHyperboloid->a;
 		this->b = vmeHyperboloid->b;
 		this->c = vmeHyperboloid->c;
-		
+
 
 		this->center[0] = vmeHyperboloid->center[0];
 		this->center[1] = vmeHyperboloid->center[1];
@@ -528,7 +527,7 @@ int mafVMEHyperboloid2S::DeepCopy(mafNode *a)
 
 		this->center_vme = vmeHyperboloid->center_vme;
 
-		mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
+		mafDataPipeCustom* dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
 		if (dpipe)
 		{
 			dpipe->SetInputData(m_PolyData);
@@ -551,13 +550,13 @@ double* mafVMEHyperboloid2S::GetCenter()
 {
 	//wxBusyInfo wait12("getcenter");
 	//Sleep(1500);
-	double* centerT=new double[3];
+	double* centerT = new double[3];
 
 	centerT[0] = center[0]; centerT[01] = center[01]; centerT[02] = center[02];
 	return centerT;
 
 }
-bool mafVMEHyperboloid2S::Equals(mafVME *vme)
+bool mafVMEHyperboloid2S::Equals(mafVME* vme)
 //-------------------------------------------------------------------------
 {
 	//wxBusyInfo wait12("equals");
@@ -565,14 +564,15 @@ bool mafVMEHyperboloid2S::Equals(mafVME *vme)
 	bool ret = false;
 	if (Superclass::Equals(vme))
 	{
+		auto hyperboloid = mafVMEHyperboloid2S::StaticDownCast(vme);
 		if (
-			m_Transform->GetMatrix() == ((mafVMEHyperboloid2S *)vme)->m_Transform->GetMatrix() &&
-			this->a == ((mafVMEHyperboloid2S *)vme)->a &&
-			this->b == ((mafVMEHyperboloid2S *)vme)->b &&
-			this->c == ((mafVMEHyperboloid2S *)vme)->c &&
-			this->center[0] == ((mafVMEHyperboloid2S *)vme)->center[0] &&
-			this->center[1] == ((mafVMEHyperboloid2S *)vme)->center[1] &&
-			this->center[2] == ((mafVMEHyperboloid2S *)vme)->center[2]
+			m_Transform->GetMatrix() == hyperboloid->m_Transform->GetMatrix() &&
+			this->a == hyperboloid->a &&
+			this->b == hyperboloid->b &&
+			this->c == hyperboloid->c &&
+			this->center[0] == hyperboloid->center[0] &&
+			this->center[1] == hyperboloid->center[1] &&
+			this->center[2] == hyperboloid->center[2]
 			)
 		{
 			ret = true;
@@ -584,7 +584,7 @@ vtkTransformPolyDataFilter* mafVMEHyperboloid2S::getTransformPDF()
 {
 	//wxBusyInfo wait12("gettransformpdf");
 	//Sleep(1500);
-	
+
 
 
 
@@ -642,7 +642,7 @@ const char** mafVMEHyperboloid2S::GetIcon()
 	return mafVMEProcedural_xpm;
 }
 
-void mafVMEHyperboloid2S::SetCenterLink(const mafString& link_name, mafNode *n)
+void mafVMEHyperboloid2S::SetCenterLink(const mafString& link_name, mafNode* n)
 //-------------------------------------------------------------------------
 {
 	//wxBusyInfo wait12("setcenterLink");
@@ -650,7 +650,7 @@ void mafVMEHyperboloid2S::SetCenterLink(const mafString& link_name, mafNode *n)
 	if (n->IsMAFType(mafVMELandmark))
 	{
 		SetLink(link_name, n->GetParent(), mafVMELandmarkCloud::StaticDownCast(n->GetParent())->FindLandmarkIndex(n->GetName()));
-	
+
 	}
 	else
 		SetLink(link_name, n);
@@ -659,8 +659,8 @@ void mafVMEHyperboloid2S::SetCenterLink(const mafString& link_name, mafNode *n)
 vtkAlgorithm* mafVMEHyperboloid2S::plotFunction(vtkQuadric* quadric, double value)
 {
 
-	
-	quadric->SetCoefficients(1 / (a*a), 1 / (b*b), -1 / (c*c), 0, 0, 0, -(2 * centerLocal[0]) / (a*a), -(2 * centerLocal[1]) / (b*b), (2 * centerLocal[2]) / (c*c), (centerLocal[0] * centerLocal[0]) / (a*a) + (centerLocal[1] * centerLocal[1]) / (b*b) - (centerLocal[2] * centerLocal[2]) / (c*c));
+
+	quadric->SetCoefficients(1 / (a * a), 1 / (b * b), -1 / (c * c), 0, 0, 0, -(2 * centerLocal[0]) / (a * a), -(2 * centerLocal[1]) / (b * b), (2 * centerLocal[2]) / (c * c), (centerLocal[0] * centerLocal[0]) / (a * a) + (centerLocal[1] * centerLocal[1]) / (b * b) - (centerLocal[2] * centerLocal[2]) / (c * c));
 
 	vtkSampleFunction* sample = vtkSampleFunction::New();
 	sample->SetSampleDimensions(50, 50, 50);

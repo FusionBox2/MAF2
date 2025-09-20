@@ -3,7 +3,7 @@
  Program: MAF2Medical
  Module: mafPipeMeshSlice_BES
  Authors: Daniele Giunchi
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -77,238 +77,237 @@ mafCxxTypeMacro(mafPipeMeshSlice_BES);
 
 //----------------------------------------------------------------------------
 mafPipeMeshSlice_BES::mafPipeMeshSlice_BES()
-:mafPipeSlice()
-//----------------------------------------------------------------------------
+	:mafPipeSlice()
+	//----------------------------------------------------------------------------
 {
-	m_Mapper          = NULL;
-	m_Actor           = NULL;
-	m_OutlineBox      = NULL;
-	m_OutlineMapper   = NULL;
+	m_Mapper = NULL;
+	m_Actor = NULL;
+	m_OutlineBox = NULL;
+	m_OutlineMapper = NULL;
 	m_OutlineProperty = NULL;
-	m_OutlineActor    = NULL;
-	m_Gui             = NULL;
-  m_Plane           = NULL;
-  m_Cutter          = NULL;
-  m_MaterialButton = NULL;  //BES: 27.5.2008
+	m_OutlineActor = NULL;
+	m_Plane = NULL;
+	m_Cutter = NULL;
+	m_MaterialButton = NULL;  //BES: 27.5.2008
 
-  m_Wireframe = 0;
-  m_ScalarIndex = 0;
-  m_NumberOfArrays = 0;
-  m_Table						= NULL;
+	m_Wireframe = 0;
+	m_ScalarIndex = 0;
+	m_NumberOfArrays = 0;
+	m_Table = NULL;
 
-  m_ActiveScalarType = POINT_TYPE;
-  m_PointCellArraySeparation = 0;
+	m_ActiveScalarType = POINT_TYPE;
+	m_PointCellArraySeparation = 0;
 
 	m_ScalarsName = NULL;
 	m_ScalarsVTKName = NULL;
 
-  m_ScalarMapActive = 0;
-  m_UseVTKProperty  = 1;
+	m_ScalarMapActive = 0;
+	m_UseVTKProperty = 1;
 
-  m_BorderElementsWiredActor = 1;
-    
-  m_Border = 1;
+	m_BorderElementsWiredActor = 1;
+
+	m_Border = 1;
 }
 //----------------------------------------------------------------------------
-void mafPipeMeshSlice_BES::Create(mafNode *node, mafView *view)
+void mafPipeMeshSlice_BES::Create(mafNode* node, mafView* view)
 //----------------------------------------------------------------------------
 {
 	Superclass::Create(node, view);
 
 	m_Selected = false;
-	m_Mapper          = NULL;
-	m_Actor           = NULL;
-	m_OutlineBox      = NULL;
-	m_OutlineMapper   = NULL;
+	m_Mapper = NULL;
+	m_Actor = NULL;
+	m_OutlineBox = NULL;
+	m_OutlineMapper = NULL;
 	m_OutlineProperty = NULL;
-	m_OutlineActor    = NULL;
-	m_Axes            = NULL;
-  m_ActorWired      = NULL;
-  m_MapperWired     = NULL;
+	m_OutlineActor = NULL;
+	m_Axes = NULL;
+	m_ActorWired = NULL;
+	m_MapperWired = NULL;
 
-  m_Vme->AddObserver(this);
+	m_Vme->AddObserver(this);
 
 	ExecutePipe();
 
 	AddActorsToAssembly(m_AssemblyFront);
 
-  /*if(m_RenFront)
-	  m_Axes = new mafAxes(m_RenFront, m_Vme);*/
+	/*if(m_RenFront)
+		m_Axes = new mafAxes(m_RenFront, m_Vme);*/
 }
 //----------------------------------------------------------------------------
 void mafPipeMeshSlice_BES::ExecutePipe()
 //----------------------------------------------------------------------------
 {
-  m_Vme->Update();
-  //m_Vme->GetOutput()->GetOutputDataSet()->Update();
+	m_Vme->Update();
+	//m_Vme->GetOutput()->GetOutputDataSet()->Update();
 
-  m_Selected = false;
-  m_Mapper          = NULL;
-  m_Actor           = NULL;
-  m_OutlineBox      = NULL;
-  m_OutlineMapper   = NULL;
-  m_OutlineProperty = NULL;
-  m_OutlineActor    = NULL;
-  m_Axes            = NULL;
+	m_Selected = false;
+	m_Mapper = NULL;
+	m_Actor = NULL;
+	m_OutlineBox = NULL;
+	m_OutlineMapper = NULL;
+	m_OutlineProperty = NULL;
+	m_OutlineActor = NULL;
+	m_Axes = NULL;
 
-  assert(m_Vme->GetOutput()->IsMAFType(mafVMEOutputMesh));
-  vtkUnstructuredGrid *data = NULL;
-  
-
-  if(m_Vme->GetOutput()->IsMAFType(mafVMEOutputMesh))
-  {
-    mafVMEOutputMesh *mesh_output = mafVMEOutputMesh::SafeDownCast(m_Vme->GetOutput());
-    assert(mesh_output);
-    mesh_output->Update();
-    data = vtkUnstructuredGrid::SafeDownCast(mesh_output->GetVTKData());
-    //data->Update();
-    m_MeshMaterial = mesh_output->GetMaterial();
-  }
-
-  CreateFieldDataControlArrays();
-
-  assert(data);
-  vtkDataArray *scalars = data->GetPointData()->GetScalars();
-  double sr[2] = {0,1};
-
-  if(scalars)
-  {
-    scalars->Modified();
-    scalars->GetRange(sr);
-    m_ActiveScalarType = POINT_TYPE;
-  }
-  else
-  {
-    scalars = data->GetCellData()->GetScalars();
-    if(scalars)
-    {
-      scalars->Modified();
-      scalars->GetRange(sr);
-      m_ActiveScalarType = CELL_TYPE;
-    }
-  }
-
-  m_PointCellArraySeparation = data->GetPointData()->GetNumberOfArrays();
-  m_NumberOfArrays = m_PointCellArraySeparation + data->GetCellData()->GetNumberOfArrays();
-
-  m_Plane = vtkPlane::New();
-  m_Cutter = vtkMAFMeshCutter_BES::New();
-
-  m_Plane->SetOrigin(m_Origin);
-  m_Plane->SetNormal(m_Normal);
-
-  vtkMAFToLinearTransform* m_VTKTransform = vtkMAFToLinearTransform::New();
-  m_VTKTransform->SetInputMatrix(m_Vme->GetAbsMatrixPipe()->GetMatrixPointer());
-  m_Plane->SetTransform(m_VTKTransform);
-
-  //m_Cutter->SetInput(data);
-  //m_Cutter->SetCutFunction(m_Plane);
-  //m_Cutter->GetOutput()->Update();
-  //m_Cutter->Update();
-
-  vtkNEW(m_NormalFilter);
-  //m_NormalFilter->SetInputConnection(m_Cutter->GetOutputPort());
-  m_NormalFilter->FlipNormalsOn(); //this is On because off slice of all views have camera position in the bottom 
-  m_NormalFilter->Update();
-
-  /*if(m_MeshMaterial->m_ColorLut)
-  {
-    m_Table = m_MeshMaterial->m_ColorLut;
-  }
-  else
-  {
-    vtkNEW(m_Table);
-    lutPreset(4,m_Table);
-
-    m_MeshMaterial->m_ColorLut = m_Table;
-  }*/
+	assert(m_Vme->GetOutput()->IsMAFType(mafVMEOutputMesh));
+	vtkUnstructuredGrid* data = NULL;
 
 
-  m_Table = vtkLookupTable::New();
-  m_Table->SetTableRange(sr[0], sr[1]);
-  m_Table->SetNumberOfColors(256);
-  m_Table->Build();
+	if (m_Vme->GetOutput()->IsMAFType(mafVMEOutputMesh))
+	{
+		mafVMEOutputMesh* mesh_output = mafVMEOutputMesh::SafeDownCast(m_Vme->GetOutput());
+		assert(mesh_output);
+		mesh_output->Update();
+		data = vtkUnstructuredGrid::SafeDownCast(mesh_output->GetVTKData());
+		//data->Update();
+		m_MeshMaterial = mesh_output->GetMaterial();
+	}
 
-  m_Mapper = vtkPolyDataMapper::New();
-  m_Mapper->SetInputConnection(m_NormalFilter->GetOutputPort());
-  m_Mapper->SetScalarVisibility(m_ScalarMapActive);
-  m_Mapper->SetScalarRange(sr);
+	CreateFieldDataControlArrays();
 
-  m_Mapper->SetColorModeToMapScalars() ;
+	assert(data);
+	vtkDataArray* scalars = data->GetPointData()->GetScalars();
+	double sr[2] = { 0,1 };
 
-  m_Mapper->SetScalarModeToUsePointFieldData() ;
-  m_Mapper->ColorByArrayComponent(0, 0) ;
-  m_Mapper->SetLookupTable(m_Table) ;
-  m_Mapper->SetUseLookupTableScalarRange(1) ;
+	if (scalars)
+	{
+		scalars->Modified();
+		scalars->GetRange(sr);
+		m_ActiveScalarType = POINT_TYPE;
+	}
+	else
+	{
+		scalars = data->GetCellData()->GetScalars();
+		if (scalars)
+		{
+			scalars->Modified();
+			scalars->GetRange(sr);
+			m_ActiveScalarType = CELL_TYPE;
+		}
+	}
+
+	m_PointCellArraySeparation = data->GetPointData()->GetNumberOfArrays();
+	m_NumberOfArrays = m_PointCellArraySeparation + data->GetCellData()->GetNumberOfArrays();
+
+	m_Plane = vtkPlane::New();
+	m_Cutter = vtkMAFMeshCutter_BES::New();
+
+	m_Plane->SetOrigin(m_Origin);
+	m_Plane->SetNormal(m_Normal);
+
+	vtkMAFToLinearTransform* m_VTKTransform = vtkMAFToLinearTransform::New();
+	m_VTKTransform->SetInputMatrix(m_Vme->GetAbsMatrixPipe()->GetMatrixPointer());
+	m_Plane->SetTransform(m_VTKTransform);
+
+	//m_Cutter->SetInput(data);
+	//m_Cutter->SetCutFunction(m_Plane);
+	//m_Cutter->GetOutput()->Update();
+	//m_Cutter->Update();
+
+	vtkNEW(m_NormalFilter);
+	//m_NormalFilter->SetInputConnection(m_Cutter->GetOutputPort());
+	m_NormalFilter->FlipNormalsOn(); //this is On because off slice of all views have camera position in the bottom 
+	m_NormalFilter->Update();
+
+	/*if(m_MeshMaterial->m_ColorLut)
+	{
+	  m_Table = m_MeshMaterial->m_ColorLut;
+	}
+	else
+	{
+	  vtkNEW(m_Table);
+	  lutPreset(4,m_Table);
+
+	  m_MeshMaterial->m_ColorLut = m_Table;
+	}*/
+
+
+	m_Table = vtkLookupTable::New();
+	m_Table->SetTableRange(sr[0], sr[1]);
+	m_Table->SetNumberOfColors(256);
+	m_Table->Build();
+
+	m_Mapper = vtkPolyDataMapper::New();
+	m_Mapper->SetInputConnection(m_NormalFilter->GetOutputPort());
+	m_Mapper->SetScalarVisibility(m_ScalarMapActive);
+	m_Mapper->SetScalarRange(sr);
+
+	m_Mapper->SetColorModeToMapScalars();
+
+	m_Mapper->SetScalarModeToUsePointFieldData();
+	m_Mapper->ColorByArrayComponent(0, 0);
+	m_Mapper->SetLookupTable(m_Table);
+	m_Mapper->SetUseLookupTableScalarRange(1);
 
 
 
-  if(m_Vme->IsAnimated())
-  {
-    m_RenderingDisplayListFlag = 1;
-    //m_Mapper->ImmediateModeRenderingOn();	 //avoid Display-Lists for animated items.
-  }
-  else
-  {
-    m_RenderingDisplayListFlag = 0;
-    //m_Mapper->ImmediateModeRenderingOff();
-  }
+	if (m_Vme->IsAnimated())
+	{
+		m_RenderingDisplayListFlag = 1;
+		//m_Mapper->ImmediateModeRenderingOn();	 //avoid Display-Lists for animated items.
+	}
+	else
+	{
+		m_RenderingDisplayListFlag = 0;
+		//m_Mapper->ImmediateModeRenderingOff();
+	}
 
-  m_Actor = vtkActor::New();
-  m_Actor->SetMapper(m_Mapper);
+	m_Actor = vtkActor::New();
+	m_Actor->SetMapper(m_Mapper);
 
-  if(m_MeshMaterial)
-    m_Actor->SetProperty(m_MeshMaterial->m_Prop);
+	if (m_MeshMaterial)
+		m_Actor->SetProperty(m_MeshMaterial->m_Prop);
 
-  vtkNEW(m_MapperWired);
-  m_MapperWired->SetInputConnection(m_NormalFilter->GetOutputPort());
-  m_MapperWired->SetScalarRange(0,0);
-  m_MapperWired->ScalarVisibilityOff();
+	vtkNEW(m_MapperWired);
+	m_MapperWired->SetInputConnection(m_NormalFilter->GetOutputPort());
+	m_MapperWired->SetScalarRange(0, 0);
+	m_MapperWired->ScalarVisibilityOff();
 
-  vtkNEW(m_ActorWired);
-  m_ActorWired->SetMapper(m_MapperWired);
-  m_ActorWired->GetProperty()->SetRepresentationToWireframe();
+	vtkNEW(m_ActorWired);
+	m_ActorWired->SetMapper(m_MapperWired);
+	m_ActorWired->GetProperty()->SetRepresentationToWireframe();
 
-  //m_Actor->GetProperty()->SetLineWidth (1);
-  
+	//m_Actor->GetProperty()->SetLineWidth (1);
 
-  // selection highlight
-  m_OutlineBox = vtkOutlineCornerFilter::New();
-  m_OutlineBox->SetInputData(data);  
 
-  m_OutlineMapper = vtkPolyDataMapper::New();
-  m_OutlineMapper->SetInputConnection(m_OutlineBox->GetOutputPort());
+	// selection highlight
+	m_OutlineBox = vtkOutlineCornerFilter::New();
+	m_OutlineBox->SetInputData(data);
 
-  m_OutlineProperty = vtkProperty::New();
-  m_OutlineProperty->SetColor(1,1,1);
-  m_OutlineProperty->SetAmbient(1);
-  m_OutlineProperty->SetRepresentationToWireframe();
-  m_OutlineProperty->SetInterpolationToFlat();
+	m_OutlineMapper = vtkPolyDataMapper::New();
+	m_OutlineMapper->SetInputConnection(m_OutlineBox->GetOutputPort());
 
-  m_OutlineActor = vtkActor::New();
-  m_OutlineActor->SetMapper(m_OutlineMapper);
-  m_OutlineActor->VisibilityOff();
-  m_OutlineActor->PickableOff();
-  m_OutlineActor->SetProperty(m_OutlineProperty);
+	m_OutlineProperty = vtkProperty::New();
+	m_OutlineProperty->SetColor(1, 1, 1);
+	m_OutlineProperty->SetAmbient(1);
+	m_OutlineProperty->SetRepresentationToWireframe();
+	m_OutlineProperty->SetInterpolationToFlat();
 
-  m_AssemblyFront->AddPart(m_OutlineActor);
+	m_OutlineActor = vtkActor::New();
+	m_OutlineActor->SetMapper(m_OutlineMapper);
+	m_OutlineActor->VisibilityOff();
+	m_OutlineActor->PickableOff();
+	m_OutlineActor->SetProperty(m_OutlineProperty);
 
-  m_VTKTransform->Delete();
+	m_AssemblyFront->AddPart(m_OutlineActor);
+
+	m_VTKTransform->Delete();
 }
 //----------------------------------------------------------------------------
-void mafPipeMeshSlice_BES::AddActorsToAssembly(vtkMAFAssembly *assembly)
+void mafPipeMeshSlice_BES::AddActorsToAssembly(vtkMAFAssembly* assembly)
 //----------------------------------------------------------------------------
 {
-  assembly->AddPart(m_Actor);
-  assembly->AddPart(m_ActorWired);
-	assembly->AddPart(m_OutlineActor);	
+	assembly->AddPart(m_Actor);
+	assembly->AddPart(m_ActorWired);
+	assembly->AddPart(m_OutlineActor);
 }
 //----------------------------------------------------------------------------
-void mafPipeMeshSlice_BES::RemoveActorsFromAssembly(vtkMAFAssembly *assembly)
+void mafPipeMeshSlice_BES::RemoveActorsFromAssembly(vtkMAFAssembly* assembly)
 //----------------------------------------------------------------------------
 {
 	assembly->RemovePart(m_Actor);
-  assembly->RemovePart(m_ActorWired);
+	assembly->RemovePart(m_ActorWired);
 	assembly->RemovePart(m_OutlineActor);
 }
 //----------------------------------------------------------------------------
@@ -318,34 +317,34 @@ mafPipeMeshSlice_BES::~mafPipeMeshSlice_BES()
 	m_Vme->RemoveObserver(this);
 	RemoveActorsFromAssembly(m_AssemblyFront);
 
-  vtkDEL(m_Plane);
-  vtkDEL(m_Cutter);
-  vtkDEL(m_NormalFilter);
+	vtkDEL(m_Plane);
+	vtkDEL(m_Cutter);
+	vtkDEL(m_NormalFilter);
 	vtkDEL(m_Mapper);
 	vtkDEL(m_Actor);
-  vtkDEL(m_Table);
+	vtkDEL(m_Table);
 	vtkDEL(m_OutlineBox);
 	vtkDEL(m_OutlineMapper);
 	vtkDEL(m_OutlineProperty);
 	vtkDEL(m_OutlineActor);
 	cppDEL(m_Axes);
-  vtkDEL(m_MapperWired);
-  vtkDEL(m_ActorWired);
-  /*cppDEL(m_ScalarsName);
-  cppDEL(m_ScalarsVTKName);*/
-  //vtkDEL(m_Table);
+	vtkDEL(m_MapperWired);
+	vtkDEL(m_ActorWired);
+	/*cppDEL(m_ScalarsName);
+	cppDEL(m_ScalarsVTKName);*/
+	//vtkDEL(m_Table);
 
-  delete []m_ScalarsName;
-  delete []m_ScalarsVTKName;
+	delete[]m_ScalarsName;
+	delete[]m_ScalarsVTKName;
 
-  delete m_MaterialButton;  //BES: 27.5.2008 - avoid memory leaks
+	delete m_MaterialButton;  //BES: 27.5.2008 - avoid memory leaks
 }
 //----------------------------------------------------------------------------
 void mafPipeMeshSlice_BES::Select(bool sel)
 //----------------------------------------------------------------------------
 {
 	m_Selected = sel;
-	if(m_Actor->GetVisibility()) 
+	if (m_Actor->GetVisibility())
 	{
 		m_OutlineActor->SetVisibility(sel);
 	}
@@ -356,167 +355,168 @@ void mafPipeMeshSlice_BES::UpdateProperty(bool fromTag)
 {
 }
 //----------------------------------------------------------------------------
-mafGUI *mafPipeMeshSlice_BES::CreateGui()
+mafGUI* mafPipeMeshSlice_BES::CreateGui()
 //----------------------------------------------------------------------------
 {
-	assert(m_Gui == NULL);
-	m_Gui = new mafGUI(this);
-  m_Gui->Bool(ID_WIREFRAME,_L("Wireframe"), &m_Wireframe, 1);
-  m_Gui->Bool(ID_WIRED_ACTOR_VISIBILITY,_L("Border Elem."), &m_BorderElementsWiredActor, 1);
-  
-  m_Gui->Bool(ID_USE_VTK_PROPERTY,_R("property"),&m_UseVTKProperty , 1);
-  m_MaterialButton = new mafGUIMaterialButton(m_Vme,this);
-  m_Gui->AddGui(m_MaterialButton->GetGui());
-  m_MaterialButton->Enable(m_UseVTKProperty != 0);
+	assert(!AccessGUI());
+	auto gui = new mafGUI(this);
+	gui->Bool(ID_WIREFRAME, _L("Wireframe"), &m_Wireframe, 1);
+	gui->Bool(ID_WIRED_ACTOR_VISIBILITY, _L("Border Elem."), &m_BorderElementsWiredActor, 1);
 
-  m_Gui->Combo(ID_SCALARS, _R(""),&m_ScalarIndex,m_NumberOfArrays,m_ScalarsName);
-  
+	gui->Bool(ID_USE_VTK_PROPERTY, _R("property"), &m_UseVTKProperty, 1);
+	m_MaterialButton = new mafGUIMaterialButton(m_Vme, this);
+	gui->AddGui(m_MaterialButton->GetGui());
+	m_MaterialButton->Enable(m_UseVTKProperty != 0);
 
-  m_Gui->Bool(ID_SCALAR_MAP_ACTIVE,_L("enable scalar field mapping"), &m_ScalarMapActive, 1);
-  m_Gui->Lut(ID_LUT,_R("lut"),m_Table);
+	gui->Combo(ID_SCALARS, _R(""), &m_ScalarIndex, m_NumberOfArrays, m_ScalarsName);
 
-  m_Gui->Enable(ID_SCALARS, m_ScalarMapActive != 0);
-  m_Gui->Enable(ID_LUT, m_ScalarMapActive != 0);
-  m_Gui->FloatSlider(ID_BORDER_CHANGE,_L("Border"),&m_Border,1.0,5.0);
-  m_Gui->Divider();
-  m_Gui->Update();
-	return m_Gui;
+
+	gui->Bool(ID_SCALAR_MAP_ACTIVE, _L("enable scalar field mapping"), &m_ScalarMapActive, 1);
+	gui->Lut(ID_LUT, _R("lut"), m_Table);
+
+	gui->Enable(ID_SCALARS, m_ScalarMapActive != 0);
+	gui->Enable(ID_LUT, m_ScalarMapActive != 0);
+	gui->FloatSlider(ID_BORDER_CHANGE, _L("Border"), &m_Border, 1.0, 5.0);
+	gui->Divider();
+	gui->Update();
+	return gui;
 }
 //----------------------------------------------------------------------------
-void mafPipeMeshSlice_BES::OnEvent(mafEventBase *maf_event)
+void mafPipeMeshSlice_BES::OnEvent(mafEventBase* maf_event)
 //----------------------------------------------------------------------------
 {
-	if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
 	{
-		switch(e->GetId()) 
+		auto gui = AccessGUI();
+		switch (e->GetId())
 		{
-      case ID_WIREFRAME:
-        {
-          if(m_Wireframe == 0) 
-            SetWireframeOff();
-          else
-            SetWireframeOn();
-        }
-        break;
-      case ID_WIRED_ACTOR_VISIBILITY:
-        {
-          if(m_BorderElementsWiredActor == 0) 
-            SetWiredActorVisibilityOff();
-          else
-            SetWiredActorVisibilityOn();
-        }
-        break;
-      case ID_SCALARS:
-        {
-          if(m_ScalarIndex < m_PointCellArraySeparation)
-          {
-            m_ActiveScalarType = POINT_TYPE;
-          }
-          else 
-          {
-            m_ActiveScalarType = CELL_TYPE;
-          }
-          UpdateScalars();
-          {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-        }
-        break;
-      case ID_LUT:
-        {
-          double sr[2];
-          m_Table->GetTableRange(sr);
-          m_Mapper->SetScalarRange(sr);
-        }
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-        break;
-      case ID_SCALAR_MAP_ACTIVE:
-        {
-          
-          m_Mapper->SetScalarVisibility(m_ScalarMapActive);
-          
-          m_Gui->Enable(ID_SCALARS, m_ScalarMapActive != 0);
-          m_Gui->Enable(ID_LUT, m_ScalarMapActive != 0);
-          m_Gui->Update();
+		case ID_WIREFRAME:
+		{
+			if (m_Wireframe == 0)
+				SetWireframeOff();
+			else
+				SetWireframeOn();
+		}
+		break;
+		case ID_WIRED_ACTOR_VISIBILITY:
+		{
+			if (m_BorderElementsWiredActor == 0)
+				SetWiredActorVisibilityOff();
+			else
+				SetWiredActorVisibilityOn();
+		}
+		break;
+		case ID_SCALARS:
+		{
+			if (m_ScalarIndex < m_PointCellArraySeparation)
+			{
+				m_ActiveScalarType = POINT_TYPE;
+			}
+			else
+			{
+				m_ActiveScalarType = CELL_TYPE;
+			}
+			UpdateScalars();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		}
+		break;
+		case ID_LUT:
+		{
+			double sr[2];
+			m_Table->GetTableRange(sr);
+			m_Mapper->SetScalarRange(sr);
+		}
+		{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		break;
+		case ID_SCALAR_MAP_ACTIVE:
+		{
 
-          UpdateScalars();
-          {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-        }
-        break;
-      case ID_USE_VTK_PROPERTY:
-        if (m_UseVTKProperty != 0)
-        {
-          m_Actor->SetProperty(m_MeshMaterial->m_Prop);
-        }
-        else
-        {
-          m_Actor->SetProperty(NULL);
-        }
-        m_MaterialButton->Enable(m_UseVTKProperty != 0);
-        m_MaterialButton->UpdateMaterialIcon();
-        
-        m_Gui->Update();
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-        break;
-      case ID_BORDER_CHANGE:
-		  {
-			  m_Actor->GetProperty()->SetLineWidth(m_Border);
-			  m_Actor->Modified();
-			  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-		  }
-	  break;
-			default:
-				InvokeEvent(*e);
-				break;
+			m_Mapper->SetScalarVisibility(m_ScalarMapActive);
+
+			gui->Enable(ID_SCALARS, m_ScalarMapActive != 0);
+			gui->Enable(ID_LUT, m_ScalarMapActive != 0);
+			UpdateGUI();
+
+			UpdateScalars();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		}
+		break;
+		case ID_USE_VTK_PROPERTY:
+			if (m_UseVTKProperty != 0)
+			{
+				m_Actor->SetProperty(m_MeshMaterial->m_Prop);
+			}
+			else
+			{
+				m_Actor->SetProperty(NULL);
+			}
+			m_MaterialButton->Enable(m_UseVTKProperty != 0);
+			m_MaterialButton->UpdateMaterialIcon();
+
+			UpdateGUI();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+			break;
+		case ID_BORDER_CHANGE:
+		{
+			m_Actor->GetProperty()->SetLineWidth(m_Border);
+			m_Actor->Modified();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		}
+		break;
+		default:
+			InvokeEvent(*e);
+			break;
 		}
 	}
-  else if(maf_event->GetId() == VME_TIME_SET)
-  {
-    UpdateScalars();
-    UpdateProperty();
-  }
+	else if (maf_event->GetId() == VME_TIME_SET)
+	{
+		UpdateScalars();
+		UpdateProperty();
+	}
 }
 
 //----------------------------------------------------------------------------
-/*virtual*/ void mafPipeMeshSlice_BES::SetSlice(double *Origin, double *Normal)
+/*virtual*/ void mafPipeMeshSlice_BES::SetSlice(double* Origin, double* Normal)
 //----------------------------------------------------------------------------
 {
-  if (Origin != NULL)
-  {
-    m_Origin[0] = Origin[0];
-    m_Origin[1] = Origin[1];
-    m_Origin[2] = Origin[2];
-  }
+	if (Origin != NULL)
+	{
+		m_Origin[0] = Origin[0];
+		m_Origin[1] = Origin[1];
+		m_Origin[2] = Origin[2];
+	}
 
-  if (Normal != NULL)
-  {
-    m_Normal[0] = Normal[0];
-    m_Normal[1] = Normal[1];
-    m_Normal[2] = Normal[2];
-  }
-	
+	if (Normal != NULL)
+	{
+		m_Normal[0] = Normal[0];
+		m_Normal[1] = Normal[1];
+		m_Normal[2] = Normal[2];
+	}
+
 	if (m_Plane != NULL && m_Cutter != NULL)
 	{
-    m_Plane->SetNormal(m_Normal);
+		m_Plane->SetNormal(m_Normal);
 		m_Plane->SetOrigin(m_Origin);
 		m_Cutter->SetCutFunction(m_Plane);
 		//m_Cutter->Update();
-	UpdateVtkPolyDataNormalFilterActiveScalar();
-    m_NormalFilter->Update();
+		UpdateVtkPolyDataNormalFilterActiveScalar();
+		m_NormalFilter->Update();
 	}
 
-  if (true == DEBUG_MODE && NULL != m_Mapper)
-  {
-    int scalarVisibility = m_Mapper->GetScalarVisibility();
-    m_Mapper->SetScalarVisibility(m_ScalarMapActive);
+	if (true == DEBUG_MODE && NULL != m_Mapper)
+	{
+		int scalarVisibility = m_Mapper->GetScalarVisibility();
+		m_Mapper->SetScalarVisibility(m_ScalarMapActive);
 
-    std::ostringstream stringStream;
-    stringStream << "scalar visibility:" << (scalarVisibility ? "true" : "false")  << std::endl;
-    
-    double tr[2];
-    m_Table->GetTableRange(tr);
-    stringStream << "LUT sr: " << "[" << tr[0] << " , " << tr[1] << "]"  << std::endl;
+		std::ostringstream stringStream;
+		stringStream << "scalar visibility:" << (scalarVisibility ? "true" : "false") << std::endl;
 
-    mafLogMessage(_M(stringStream.str().c_str()));
-  }
+		double tr[2];
+		m_Table->GetTableRange(tr);
+		stringStream << "LUT sr: " << "[" << tr[0] << " , " << tr[1] << "]" << std::endl;
+
+		mafLogMessage(_M(stringStream.str().c_str()));
+	}
 }
 
 //----------------------------------------------------------------------------
@@ -529,10 +529,10 @@ double mafPipeMeshSlice_BES::GetThickness()
 void mafPipeMeshSlice_BES::SetThickness(double thickness)
 //----------------------------------------------------------------------------
 {
-	m_Border=thickness;
+	m_Border = thickness;
 	m_Actor->GetProperty()->SetLineWidth(m_Border);
-  m_Actor->Modified();
-	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
+	m_Actor->Modified();
+	{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
 }
 //----------------------------------------------------------------------------
 void mafPipeMeshSlice_BES::SetActorPicking(int enable)
@@ -540,116 +540,116 @@ void mafPipeMeshSlice_BES::SetActorPicking(int enable)
 {
 	m_Actor->SetPickable(enable);
 	m_Actor->Modified();
-	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
+	{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
 }
 //----------------------------------------------------------------------------
 void mafPipeMeshSlice_BES::SetWireframeOn()
 //----------------------------------------------------------------------------
 {
-  m_Actor->GetProperty()->SetRepresentationToWireframe();
-  m_Actor->Modified();
-  m_ActorWired->SetVisibility(0);
-  m_ActorWired->Modified();
-  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
+	m_Actor->GetProperty()->SetRepresentationToWireframe();
+	m_Actor->Modified();
+	m_ActorWired->SetVisibility(0);
+	m_ActorWired->Modified();
+	{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
 }
 //----------------------------------------------------------------------------
 void mafPipeMeshSlice_BES::SetWireframeOff()
 //----------------------------------------------------------------------------
 {
-  m_Actor->GetProperty()->SetRepresentationToSurface();
-  m_Actor->Modified();
-  m_ActorWired->SetVisibility(1);
-  m_ActorWired->Modified();
-  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
+	m_Actor->GetProperty()->SetRepresentationToSurface();
+	m_Actor->Modified();
+	m_ActorWired->SetVisibility(1);
+	m_ActorWired->Modified();
+	{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
 }
 //----------------------------------------------------------------------------
 void mafPipeMeshSlice_BES::SetWiredActorVisibilityOn()
 //----------------------------------------------------------------------------
 {
-  m_ActorWired->SetVisibility(1);
-  m_ActorWired->Modified();
-  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
+	m_ActorWired->SetVisibility(1);
+	m_ActorWired->Modified();
+	{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
 }
 //----------------------------------------------------------------------------
 void mafPipeMeshSlice_BES::SetWiredActorVisibilityOff()
 //----------------------------------------------------------------------------
 {
-  m_ActorWired->SetVisibility(0);
-  m_ActorWired->Modified();
-  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
+	m_ActorWired->SetVisibility(0);
+	m_ActorWired->Modified();
+	{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
 }
 //----------------------------------------------------------------------------
 void mafPipeMeshSlice_BES::SetFlipNormalOn()
 //----------------------------------------------------------------------------
 {
-  m_NormalFilter->FlipNormalsOn();
-  m_NormalFilter->Update();
+	m_NormalFilter->FlipNormalsOn();
+	m_NormalFilter->Update();
 }
 //----------------------------------------------------------------------------
 void mafPipeMeshSlice_BES::SetFlipNormalOff()
 //----------------------------------------------------------------------------
 {
-  m_NormalFilter->FlipNormalsOff();
-  m_NormalFilter->Update();
+	m_NormalFilter->FlipNormalsOff();
+	m_NormalFilter->Update();
 }
 //----------------------------------------------------------------------------
 void mafPipeMeshSlice_BES::UpdateScalars()
 //----------------------------------------------------------------------------
 {
-  //m_Vme->GetOutput()->GetOutputDataSet()->Update();
-  m_Vme->Update();
-  
-  UpdateVtkPolyDataNormalFilterActiveScalar();
-  UpdateLUTAndMapperFromNewActiveScalars();
- 
+	//m_Vme->GetOutput()->GetOutputDataSet()->Update();
+	m_Vme->Update();
+
+	UpdateVtkPolyDataNormalFilterActiveScalar();
+	UpdateLUTAndMapperFromNewActiveScalars();
+
 }
 //----------------------------------------------------------------------------
 void mafPipeMeshSlice_BES::UpdateLUTAndMapperFromNewActiveScalars()
 //----------------------------------------------------------------------------
 {
-  vtkUnstructuredGrid *data = vtkUnstructuredGrid::SafeDownCast(m_Vme->GetOutput()->GetVTKData());
-  //data->Update();
-  double sr[2];
+	vtkUnstructuredGrid* data = vtkUnstructuredGrid::SafeDownCast(m_Vme->GetOutput()->GetVTKData());
+	//data->Update();
+	double sr[2];
 
-  mafString activeScalarName = m_ScalarsVTKName[m_ScalarIndex];
+	mafString activeScalarName = m_ScalarsVTKName[m_ScalarIndex];
 
-  if(m_ActiveScalarType == POINT_TYPE)
-    data->GetPointData()->GetScalars(activeScalarName.GetCStr())->GetRange(sr);
-  else if(m_ActiveScalarType == CELL_TYPE)
-    data->GetCellData()->GetScalars(activeScalarName.GetCStr())->GetRange(sr);
+	if (m_ActiveScalarType == POINT_TYPE)
+		data->GetPointData()->GetScalars(activeScalarName.GetCStr())->GetRange(sr);
+	else if (m_ActiveScalarType == CELL_TYPE)
+		data->GetCellData()->GetScalars(activeScalarName.GetCStr())->GetRange(sr);
 
-  if (DEBUG_MODE)
-    {
-      std::ostringstream stringStream;
-      stringStream << "Scalar Range: [" << sr[0] << " , " << sr[1] << "]"  << std::endl;
-      mafLogMessage(_M(stringStream.str().c_str()));
-  }
+	if (DEBUG_MODE)
+	{
+		std::ostringstream stringStream;
+		stringStream << "Scalar Range: [" << sr[0] << " , " << sr[1] << "]" << std::endl;
+		mafLogMessage(_M(stringStream.str().c_str()));
+	}
 
-  m_Table->SetTableRange(sr);
+	m_Table->SetTableRange(sr);
 
-  if(m_ActiveScalarType == POINT_TYPE)
-    m_Mapper->SetScalarModeToUsePointData();
-  if(m_ActiveScalarType == CELL_TYPE)
-    m_Mapper->SetScalarModeToUseCellData();
+	if (m_ActiveScalarType == POINT_TYPE)
+		m_Mapper->SetScalarModeToUsePointData();
+	if (m_ActiveScalarType == CELL_TYPE)
+		m_Mapper->SetScalarModeToUseCellData();
 
-  m_Mapper->SetInputConnection(m_NormalFilter->GetOutputPort());
-  m_Mapper->SetLookupTable(m_Table);
-  m_Mapper->UseLookupTableScalarRangeOn();
-  if (DEBUG_MODE)
-    {
-      double tr[2];
-      m_Table->GetTableRange(tr);
+	m_Mapper->SetInputConnection(m_NormalFilter->GetOutputPort());
+	m_Mapper->SetLookupTable(m_Table);
+	m_Mapper->UseLookupTableScalarRangeOn();
+	if (DEBUG_MODE)
+	{
+		double tr[2];
+		m_Table->GetTableRange(tr);
 
-      std::ostringstream stringStream;
-      stringStream << "LUT sr: " << "[" << tr[0] << " , " << tr[1] << "]"  << std::endl;
-      mafLogMessage(_M(stringStream.str().c_str()));
-  }
-  m_Mapper->Update();
+		std::ostringstream stringStream;
+		stringStream << "LUT sr: " << "[" << tr[0] << " , " << tr[1] << "]" << std::endl;
+		mafLogMessage(_M(stringStream.str().c_str()));
+	}
+	m_Mapper->Update();
 
-  m_Actor->Modified();
+	m_Actor->Modified();
 
-  UpdateProperty();
-  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
+	UpdateProperty();
+	{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
 
 }
 
@@ -657,104 +657,104 @@ void mafPipeMeshSlice_BES::UpdateLUTAndMapperFromNewActiveScalars()
 void mafPipeMeshSlice_BES::CreateFieldDataControlArrays()
 //----------------------------------------------------------------------------
 {
-  //String array allocation
-  int numPointScalars = m_Vme->GetOutput()->GetVTKData()->GetPointData()->GetNumberOfArrays();
-  int numCellScalars = m_Vme->GetOutput()->GetVTKData()->GetCellData()->GetNumberOfArrays();
+	//String array allocation
+	int numPointScalars = m_Vme->GetOutput()->GetVTKData()->GetPointData()->GetNumberOfArrays();
+	int numCellScalars = m_Vme->GetOutput()->GetVTKData()->GetCellData()->GetNumberOfArrays();
 
-  mafString *tempScalarsPointsName=new mafString[numPointScalars + numCellScalars];
-  int count=0;
+	mafString* tempScalarsPointsName = new mafString[numPointScalars + numCellScalars];
+	int count = 0;
 
-  int pointArrayNumber;
-  for(pointArrayNumber = 0;pointArrayNumber<numPointScalars;pointArrayNumber++)
-  {
-    if(strcmp(m_Vme->GetOutput()->GetVTKData()->GetPointData()->GetArrayName(pointArrayNumber),"")!=0)
-    {
-      count++;
-      tempScalarsPointsName[count-1]=_R(m_Vme->GetOutput()->GetVTKData()->GetPointData()->GetArrayName(pointArrayNumber));
-    }
-  }
-  for(int cellArrayNumber=0;cellArrayNumber<numCellScalars;cellArrayNumber++)
-  {
-    if(strcmp(m_Vme->GetOutput()->GetVTKData()->GetCellData()->GetArrayName(cellArrayNumber),"")!=0)
-    {
-      count++;
-      tempScalarsPointsName[count-1]=_R(m_Vme->GetOutput()->GetVTKData()->GetCellData()->GetArrayName(cellArrayNumber));
-    }
-  }
+	int pointArrayNumber;
+	for (pointArrayNumber = 0; pointArrayNumber < numPointScalars; pointArrayNumber++)
+	{
+		if (strcmp(m_Vme->GetOutput()->GetVTKData()->GetPointData()->GetArrayName(pointArrayNumber), "") != 0)
+		{
+			count++;
+			tempScalarsPointsName[count - 1] = _R(m_Vme->GetOutput()->GetVTKData()->GetPointData()->GetArrayName(pointArrayNumber));
+		}
+	}
+	for (int cellArrayNumber = 0; cellArrayNumber < numCellScalars; cellArrayNumber++)
+	{
+		if (strcmp(m_Vme->GetOutput()->GetVTKData()->GetCellData()->GetArrayName(cellArrayNumber), "") != 0)
+		{
+			count++;
+			tempScalarsPointsName[count - 1] = _R(m_Vme->GetOutput()->GetVTKData()->GetCellData()->GetArrayName(cellArrayNumber));
+		}
+	}
 
-  m_ScalarsName = new mafString[count];
-  m_ScalarsVTKName = new mafString[count];
+	m_ScalarsName = new mafString[count];
+	m_ScalarsVTKName = new mafString[count];
 
-  for(int j=0;j<count;j++)
-  {
-    m_ScalarsVTKName[j]=tempScalarsPointsName[j];
-    if(j<pointArrayNumber)
-      m_ScalarsName[j]=_R("[POINT] ") + tempScalarsPointsName[j];
-    else
-      m_ScalarsName[j]=_R("[CELL] ") + tempScalarsPointsName[j];
-  }
+	for (int j = 0; j < count; j++)
+	{
+		m_ScalarsVTKName[j] = tempScalarsPointsName[j];
+		if (j < pointArrayNumber)
+			m_ScalarsName[j] = _R("[POINT] ") + tempScalarsPointsName[j];
+		else
+			m_ScalarsName[j] = _R("[CELL] ") + tempScalarsPointsName[j];
+	}
 
-  m_PointCellArraySeparation = pointArrayNumber;
+	m_PointCellArraySeparation = pointArrayNumber;
 
-  delete []tempScalarsPointsName;
+	delete[]tempScalarsPointsName;
 
 }
 
 void mafPipeMeshSlice_BES::UpdateVtkPolyDataNormalFilterActiveScalar()
 {
 
-  vtkUnstructuredGrid *data = vtkUnstructuredGrid::SafeDownCast(m_Vme->GetOutput()->GetVTKData());
-  //data->Update();
+	vtkUnstructuredGrid* data = vtkUnstructuredGrid::SafeDownCast(m_Vme->GetOutput()->GetVTKData());
+	//data->Update();
 
-  m_NormalFilter->Update();
+	m_NormalFilter->Update();
 
-  vtkPolyData *pd = m_NormalFilter->GetOutput();
+	vtkPolyData* pd = m_NormalFilter->GetOutput();
 
-  if(m_ActiveScalarType == POINT_TYPE)
-  {
-    mafString activeScalarName = m_ScalarsVTKName[m_ScalarIndex];
-    data->GetPointData()->SetActiveScalars(activeScalarName.GetCStr());
-    //data->Update();
+	if (m_ActiveScalarType == POINT_TYPE)
+	{
+		mafString activeScalarName = m_ScalarsVTKName[m_ScalarIndex];
+		data->GetPointData()->SetActiveScalars(activeScalarName.GetCStr());
+		//data->Update();
 
-    int res = pd->GetPointData()->SetActiveScalars(activeScalarName.GetCStr());
-    
-    if (res == -1)
-    {
-      // the array is not in the list of active arrays
-      return;
-    }
-    pd->GetPointData()->GetScalars()->Modified();
+		int res = pd->GetPointData()->SetActiveScalars(activeScalarName.GetCStr());
 
-    if (DEBUG_MODE)
-    {
-      std::ostringstream stringStream;
-      stringStream << "Active Scalar: POINT TYPE, " << activeScalarName.GetCStr() << std::endl;
-      mafLogMessage(_M(stringStream.str().c_str()));
-    }
-  }
-  else if(m_ActiveScalarType == CELL_TYPE)
-  {
-    mafString activeScalarName = m_ScalarsVTKName[m_ScalarIndex];
-	data->GetPointData()->SetActiveScalars(activeScalarName.GetCStr());
-    //data->Update();
+		if (res == -1)
+		{
+			// the array is not in the list of active arrays
+			return;
+		}
+		pd->GetPointData()->GetScalars()->Modified();
 
-    int res = pd->GetCellData()->SetActiveScalars(activeScalarName.GetCStr());
+		if (DEBUG_MODE)
+		{
+			std::ostringstream stringStream;
+			stringStream << "Active Scalar: POINT TYPE, " << activeScalarName.GetCStr() << std::endl;
+			mafLogMessage(_M(stringStream.str().c_str()));
+		}
+	}
+	else if (m_ActiveScalarType == CELL_TYPE)
+	{
+		mafString activeScalarName = m_ScalarsVTKName[m_ScalarIndex];
+		data->GetPointData()->SetActiveScalars(activeScalarName.GetCStr());
+		//data->Update();
 
-    if (res == -1)
-    {
-      // the array is not in the list of active arrays
-      return;
-    }
+		int res = pd->GetCellData()->SetActiveScalars(activeScalarName.GetCStr());
 
-    pd->GetCellData()->GetScalars()->Modified();
+		if (res == -1)
+		{
+			// the array is not in the list of active arrays
+			return;
+		}
 
-    if (DEBUG_MODE)
-    {
-      std::ostringstream stringStream;
-      stringStream << "Active Scalar: CELL TYPE, " << activeScalarName.GetCStr() << std::endl;
-      mafLogMessage(_M(stringStream.str().c_str()));
-    }
-  }
-  //m_NormalFilter->GetOutput()->Update();
-  m_NormalFilter->Update();
+		pd->GetCellData()->GetScalars()->Modified();
+
+		if (DEBUG_MODE)
+		{
+			std::ostringstream stringStream;
+			stringStream << "Active Scalar: CELL TYPE, " << activeScalarName.GetCStr() << std::endl;
+			mafLogMessage(_M(stringStream.str().c_str()));
+		}
+	}
+	//m_NormalFilter->GetOutput()->Update();
+	m_NormalFilter->Update();
 }

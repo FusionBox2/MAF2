@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafPipeLandmarkCloud
  Authors: Paolo Quadrani
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -59,393 +59,393 @@ mafCxxTypeMacro(mafPipeLandmarkCloud);
 mafPipeLandmarkCloud::mafPipeLandmarkCloud()
 //----------------------------------------------------------------------------
 {
-  m_Landmark = NULL;
-  m_Cloud    = NULL;
-  m_MaterialButton  = NULL;
-  m_SphereSource  = NULL;
-  m_Normals       = NULL;
-  m_Glyph         = NULL;
-  m_CloudMapper   = NULL;
-  m_CloudActor    = NULL;
-  m_CloudSelectionActor     = NULL;
-  m_Caption           = NULL;
+	m_Landmark = NULL;
+	m_Cloud = NULL;
+	m_MaterialButton = NULL;
+	m_SphereSource = NULL;
+	m_Normals = NULL;
+	m_Glyph = NULL;
+	m_CloudMapper = NULL;
+	m_CloudActor = NULL;
+	m_CloudSelectionActor = NULL;
+	m_Caption = NULL;
 
-  m_Radius = 1.0;
-  m_ScalarVisibility = FALSE;
-  m_RenderingDisplayListFlag = 0;
-  m_Labels        = 0;
+	m_Radius = 1.0;
+	m_ScalarVisibility = FALSE;
+	m_RenderingDisplayListFlag = 0;
+	m_Labels = 0;
 }
 //----------------------------------------------------------------------------
-void mafPipeLandmarkCloud::Create(mafNode *node, mafView *view)
+void mafPipeLandmarkCloud::Create(mafNode* node, mafView* view)
 //----------------------------------------------------------------------------
 {
-  Superclass::Create(node, view);
+	Superclass::Create(node, view);
 
-  m_Selected = false;
-  m_SphereSource  = NULL;
-  m_Normals       = NULL;
-  m_Glyph         = NULL;
-  m_CloudMapper   = NULL;
-  m_CloudActor    = NULL;
-  m_CloudSelectionActor     = NULL;
-  m_Caption           = NULL;
+	m_Selected = false;
+	m_SphereSource = NULL;
+	m_Normals = NULL;
+	m_Glyph = NULL;
+	m_CloudMapper = NULL;
+	m_CloudActor = NULL;
+	m_CloudSelectionActor = NULL;
+	m_Caption = NULL;
 
-  double r = 0;
-  int resolution = 15;
+	double r = 0;
+	int resolution = 15;
 
-  m_Vme->AddObserver(this);
+	m_Vme->AddObserver(this);
 
-  assert(m_Vme->IsMAFType(mafVMELandmarkCloud) || m_Vme->IsMAFType(mafVMELandmark));
-  
-  m_Cloud     = mafVMELandmarkCloud::SafeDownCast(m_Vme);
-  m_Landmark  = mafVMELandmark::SafeDownCast(m_Vme);
-  
-  if (m_Cloud && m_Cloud->IsOpen())
-  {
-    int num_lm = m_Cloud->GetNumberOfLandmarks();
-    for (int i = 0; i < num_lm; i++)
-    {
-      auto child_lm = m_Cloud->GetLandmark(i);
-      mafEvent e(this,VME_SHOW); e.SetVme(child_lm.get()); e.SetBool(true);
-      m_Cloud->ForwardUpEvent(&e);
-    }
-  }
-  else
-  {
-    if (m_Cloud)
-    {
-      CreateClosedCloudPipe(m_Cloud->GetOutput()->GetVTKOutputPort(), m_Cloud->GetRadius(), m_Cloud->GetSphereResolution());
-    }
-    else
-    {
-      CreateClosedCloudPipe(m_Landmark->GetOutput()->GetVTKOutputPort(), m_Landmark->GetRadius(), m_Landmark->GetSphereResolution());
-    }
-  }
+	assert(m_Vme->IsMAFType(mafVMELandmarkCloud) || m_Vme->IsMAFType(mafVMELandmark));
+
+	m_Cloud = mafVMELandmarkCloud::SafeDownCast(m_Vme);
+	m_Landmark = mafVMELandmark::SafeDownCast(m_Vme);
+
+	if (m_Cloud && m_Cloud->IsOpen())
+	{
+		int num_lm = m_Cloud->GetNumberOfLandmarks();
+		for (int i = 0; i < num_lm; i++)
+		{
+			auto child_lm = m_Cloud->GetLandmark(i);
+			mafEvent e(this, VME_SHOW); e.SetVme(child_lm.get()); e.SetBool(true);
+			m_Cloud->ForwardUpEvent(&e);
+		}
+	}
+	else
+	{
+		if (m_Cloud)
+		{
+			CreateClosedCloudPipe(m_Cloud->GetOutput()->GetVTKOutputPort(), m_Cloud->GetRadius(), m_Cloud->GetSphereResolution());
+		}
+		else
+		{
+			CreateClosedCloudPipe(m_Landmark->GetOutput()->GetVTKOutputPort(), m_Landmark->GetRadius(), m_Landmark->GetSphereResolution());
+		}
+	}
 }
 //----------------------------------------------------------------------------
 mafPipeLandmarkCloud::~mafPipeLandmarkCloud()
 //----------------------------------------------------------------------------
 {
-  if (m_Vme)
-  {
-  	m_Vme->RemoveObserver(this);
-  }
+	if (m_Vme)
+	{
+		m_Vme->RemoveObserver(this);
+	}
 
-  if (m_Cloud && m_Cloud->IsOpen())
-  {
-    int num_lm = m_Cloud->GetNumberOfLandmarks();
-    for (int i = 0; i < num_lm; i++)
-    {
-      auto child_lm = m_Cloud->GetLandmark(i);
-      mafEvent e(this,VME_SHOW); e.SetVme(child_lm.get()); e.SetBool(false);
-      m_Cloud->ForwardUpEvent(&e);
-    }
-  }
-  else
-  {
-    RemoveClosedCloudPipe();
-  }
-  cppDEL(m_MaterialButton);
+	if (m_Cloud && m_Cloud->IsOpen())
+	{
+		int num_lm = m_Cloud->GetNumberOfLandmarks();
+		for (int i = 0; i < num_lm; i++)
+		{
+			auto child_lm = m_Cloud->GetLandmark(i);
+			mafEvent e(this, VME_SHOW); e.SetVme(child_lm.get()); e.SetBool(false);
+			m_Cloud->ForwardUpEvent(&e);
+		}
+	}
+	else
+	{
+		RemoveClosedCloudPipe();
+	}
+	cppDEL(m_MaterialButton);
 }
 //----------------------------------------------------------------------------
 void mafPipeLandmarkCloud::Select(bool sel)
 //----------------------------------------------------------------------------
 {
 	m_Selected = sel;
-	if(m_CloudActor && m_CloudActor->GetVisibility()) 
-    m_CloudSelectionActor->SetVisibility(sel);
+	if (m_CloudActor && m_CloudActor->GetVisibility())
+		m_CloudSelectionActor->SetVisibility(sel);
 }
 //----------------------------------------------------------------------------
-mafGUI *mafPipeLandmarkCloud::CreateGui()
+mafGUI* mafPipeLandmarkCloud::CreateGui()
 //----------------------------------------------------------------------------
 {
-	assert(m_Gui == NULL);
-	m_Gui = new mafGUI(this);
-	if(m_Vme)
+	assert(!AccessGUI());
+	auto gui = new mafGUI(this);
+	if (m_Vme)
 	{
 
-    if(m_Vme->IsMAFType(mafVMELandmarkCloud))
-    {
-      m_Gui->Bool(ID_SCALAR_VISIBILITY,_L("scalar vis."), &m_ScalarVisibility,0,_L("turn on/off the scalar visibility"));
-      m_Gui->Divider();
-      m_MaterialButton = new mafGUIMaterialButton(m_Vme,this);
-      m_Gui->AddGui(m_MaterialButton->GetGui());
-      m_Gui->Bool(ID_RENDERING_DISPLAY_LIST,_L("display list"),&m_RenderingDisplayListFlag,0,_L("turn on/off \nrendering displaylist calculation"));
-      m_Gui->Divider();
-    }
-    else
-    {
-      m_Gui->Bool(ID_LABELS, _L("label"), &m_Labels);
-    }
+		if (m_Vme->IsMAFType(mafVMELandmarkCloud))
+		{
+			gui->Bool(ID_SCALAR_VISIBILITY, _L("scalar vis."), &m_ScalarVisibility, 0, _L("turn on/off the scalar visibility"));
+			gui->Divider();
+			m_MaterialButton = new mafGUIMaterialButton(m_Vme, this);
+			gui->AddGui(m_MaterialButton->GetGui());
+			gui->Bool(ID_RENDERING_DISPLAY_LIST, _L("display list"), &m_RenderingDisplayListFlag, 0, _L("turn on/off \nrendering displaylist calculation"));
+			gui->Divider();
+		}
+		else
+		{
+			gui->Bool(ID_LABELS, _L("label"), &m_Labels);
+		}
 	}
 
-	return m_Gui;
+	return gui;
 }
 //----------------------------------------------------------------------------
 void mafPipeLandmarkCloud::UpdateProperty(bool fromTag)
 //----------------------------------------------------------------------------
 {
-  if(m_Landmark)
-  {
-    double pos[3], rot[3];
-    m_Landmark->GetOutput()->GetAbsPose(pos, rot);
-    if(m_Labels && m_Landmark->GetLandmarkVisibility())
-      m_Caption->SetVisibility(1);
-    else
-      m_Caption->SetVisibility(0);
-    m_Caption->SetAttachmentPoint(pos[0],pos[1],pos[2]);
-  }
-/*	double r = 10;
-  double resolution = 15;
+	if (m_Landmark)
+	{
+		double pos[3], rot[3];
+		m_Landmark->GetOutput()->GetAbsPose(pos, rot);
+		if (m_Labels && m_Landmark->GetLandmarkVisibility())
+			m_Caption->SetVisibility(1);
+		else
+			m_Caption->SetVisibility(0);
+		m_Caption->SetAttachmentPoint(pos[0], pos[1], pos[2]);
+	}
+	/*	double r = 10;
+	  double resolution = 15;
 
-  if(m_Cloud)
-  {
-    r = m_Cloud->GetRadius();
-    resolution = m_Cloud->GetSphereResolution();
-  }
-	else if(m_Landmark)
-  {
-    r = m_Landmark->GetRadius();
-    resolution = ((mafVMELandmarkCloud *)m_Landmark->GetParent())->GetSphereResolution();
-  }
+	  if(m_Cloud)
+	  {
+		r = m_Cloud->GetRadius();
+		resolution = m_Cloud->GetSphereResolution();
+	  }
+		else if(m_Landmark)
+	  {
+		r = m_Landmark->GetRadius();
+		resolution = ((mafVMELandmarkCloud *)m_Landmark->GetParent())->GetSphereResolution();
+	  }
 
-	m_SphereSource->SetRadius(r);
+		m_SphereSource->SetRadius(r);
+		m_SphereSource->SetThetaResolution(resolution);
+		m_SphereSource->SetPhiResolution(resolution);
+		m_SphereSource->Update();
+		m_Glyph->Update();*/
+}
+//----------------------------------------------------------------------------
+void mafPipeLandmarkCloud::OnEvent(mafEventBase* maf_event)
+//----------------------------------------------------------------------------
+{
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
+	{
+		switch (e->GetId())
+		{
+		case ID_SCALAR_VISIBILITY:
+		{
+			if (m_CloudMapper) m_CloudMapper->SetScalarVisibility(m_ScalarVisibility);
+			if (m_ScalarVisibility)
+			{
+				vtkPolyData* data = (vtkPolyData*)m_Vme->GetOutput()->GetVTKData();
+				if (data == NULL) return;
+				double range[2];
+				data->GetScalarRange(range);
+				m_CloudMapper->SetScalarRange(range);
+			}
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		}
+		break;
+		case ID_LABELS:
+		{
+			if (m_Landmark)
+			{
+				if (m_Landmark->GetLandmarkVisibility() && m_Labels)
+					m_Caption->SetVisibility(1);
+				else
+					m_Caption->SetVisibility(0);
+			}
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		}
+		case ID_RENDERING_DISPLAY_LIST:
+#if VTK_MAJOR_VERSION <= 7
+			m_CloudMapper->SetImmediateModeRendering(m_RenderingDisplayListFlag);
+#endif
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+			break;
+		default:
+			InvokeEvent(*e);
+			break;
+		}
+	}
+	else if (maf_event->GetId() == mafVMELandmarkCloud::CLOUD_OPEN_CLOSE)
+	{
+		if (m_Cloud->IsOpen())
+		{
+			RemoveClosedCloudPipe();
+			int num_lm = m_Cloud->GetNumberOfLandmarks();
+			for (int i = 0; i < num_lm; i++)
+			{
+				auto child_lm = m_Cloud->GetLandmark(i);
+				mafEvent e(this, VME_SHOW); e.SetVme(child_lm.get()); e.SetBool(true);
+				//m_Cloud->ForwardUpEvent(&e);
+				InvokeEvent(e);
+			}
+		}
+		else
+		{
+			/*int num_lm = m_Cloud->GetNumberOfLandmarks();
+			for (int i = 0; i < num_lm; i++)
+			{
+			  mafVME *child_lm = m_Cloud->GetLandmark(i);
+			  mafEvent e(this,VME_SHOW,child_lm,false);
+			  m_Cloud->ForwardUpEvent(&e);
+			}*/
+			CreateClosedCloudPipe(m_Cloud->GetOutput()->GetVTKOutputPort(), m_Cloud->GetRadius(), m_Cloud->GetSphereResolution());
+		}
+		{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+	}
+	else if (maf_event->GetId() == mafVMELandmarkCloud::CLOUD_RADIUS_MODIFIED)
+	{
+		if (m_SphereSource)
+		{
+			m_SphereSource->SetRadius(m_Cloud->GetRadius());
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		}
+	}
+	else if (maf_event->GetId() == mafVMELandmarkCloud::CLOUD_SPHERE_RES)
+	{
+		if (m_SphereSource)
+		{
+			m_SphereSource->SetThetaResolution(m_Cloud->GetSphereResolution());
+			m_SphereSource->SetPhiResolution(m_Cloud->GetSphereResolution());
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		}
+	}
+
+}
+//----------------------------------------------------------------------------
+void mafPipeLandmarkCloud::CreateClosedCloudPipe(vtkAlgorithmOutput* port, double radius, double resolution)
+//----------------------------------------------------------------------------
+{
+	vtkNEW(m_SphereSource);
+	m_SphereSource->SetRadius(radius);
 	m_SphereSource->SetThetaResolution(resolution);
 	m_SphereSource->SetPhiResolution(resolution);
 	m_SphereSource->Update();
-	m_Glyph->Update();*/
-}
-//----------------------------------------------------------------------------
-void mafPipeLandmarkCloud::OnEvent(mafEventBase *maf_event)
-//----------------------------------------------------------------------------
-{
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    switch(e->GetId()) 
-    {
-      case ID_SCALAR_VISIBILITY:
-      {
-        if(m_CloudMapper) m_CloudMapper->SetScalarVisibility(m_ScalarVisibility);
-        if (m_ScalarVisibility)
-        {
-          vtkPolyData *data = (vtkPolyData *)m_Vme->GetOutput()->GetVTKData();
-          if(data == NULL) return;
-          double range[2];
-          data->GetScalarRange(range);
-          m_CloudMapper->SetScalarRange(range);
-        }
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      }
-      break;
-      case ID_LABELS:
-        {
-          if(m_Landmark)
-          {
-            if(m_Landmark->GetLandmarkVisibility() && m_Labels)
-              m_Caption->SetVisibility(1);
-            else
-              m_Caption->SetVisibility(0);
-          }
-          {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-        }
-      case ID_RENDERING_DISPLAY_LIST:
+
+	vtkNEW(m_Normals);
+	m_Normals->SetInputConnection(m_SphereSource->GetOutputPort());
+	m_Normals->Update();
+
+	vtkNEW(m_Glyph);
+	m_Glyph->SetInputConnection(port);
+	m_Glyph->SetSourceConnection(m_Normals->GetOutputPort());
+	m_Glyph->OrientOff();
+	m_Glyph->ScalingOff();
+	m_Glyph->ScalarVisibilityOn();
+	m_Glyph->Update();
+
+	vtkNEW(m_CloudMapper);
+	m_CloudMapper->SetInputConnection(m_Glyph->GetOutputPort());
+	m_CloudMapper->ScalarVisibilityOff();
 #if VTK_MAJOR_VERSION <= 7
-        m_CloudMapper->SetImmediateModeRendering(m_RenderingDisplayListFlag);
-#endif
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      break;
-      default:
-        InvokeEvent(*e);
-      break;
-    }
-  }
-  else if (maf_event->GetId() == mafVMELandmarkCloud::CLOUD_OPEN_CLOSE)
-  {
-    if(m_Cloud->IsOpen())
-    {
-      RemoveClosedCloudPipe();
-      int num_lm = m_Cloud->GetNumberOfLandmarks();
-      for (int i = 0; i < num_lm; i++)
-      {
-        auto child_lm = m_Cloud->GetLandmark(i);
-        mafEvent e(this,VME_SHOW); e.SetVme(child_lm.get()); e.SetBool(true);
-        //m_Cloud->ForwardUpEvent(&e);
-        InvokeEvent(e);
-      }
-    }
-    else
-    {
-      /*int num_lm = m_Cloud->GetNumberOfLandmarks();
-      for (int i = 0; i < num_lm; i++)
-      {
-        mafVME *child_lm = m_Cloud->GetLandmark(i);
-        mafEvent e(this,VME_SHOW,child_lm,false);
-        m_Cloud->ForwardUpEvent(&e);
-      }*/
-      CreateClosedCloudPipe(m_Cloud->GetOutput()->GetVTKOutputPort(), m_Cloud->GetRadius(), m_Cloud->GetSphereResolution());
-    }
-    {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-  }
-  else if (maf_event->GetId() == mafVMELandmarkCloud::CLOUD_RADIUS_MODIFIED)
-  {
-    if (m_SphereSource)
-    {
-      m_SphereSource->SetRadius(m_Cloud->GetRadius());
-      {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-    }
-  }
-  else if (maf_event->GetId() == mafVMELandmarkCloud::CLOUD_SPHERE_RES)
-  {
-    if (m_SphereSource)
-    {
-      m_SphereSource->SetThetaResolution(m_Cloud->GetSphereResolution());
-      m_SphereSource->SetPhiResolution(m_Cloud->GetSphereResolution());
-      {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-    }
-  }
-  
-}
-//----------------------------------------------------------------------------
-void mafPipeLandmarkCloud::CreateClosedCloudPipe(vtkAlgorithmOutput *port, double radius, double resolution)
-//----------------------------------------------------------------------------
-{
-  vtkNEW(m_SphereSource);
-  m_SphereSource->SetRadius(radius);
-  m_SphereSource->SetThetaResolution(resolution);
-  m_SphereSource->SetPhiResolution(resolution);
-  m_SphereSource->Update();
-
-  vtkNEW(m_Normals);
-  m_Normals->SetInputConnection(m_SphereSource->GetOutputPort());
-  m_Normals->Update();
-
-  vtkNEW(m_Glyph);
-  m_Glyph->SetInputConnection(port);
-  m_Glyph->SetSourceConnection(m_Normals->GetOutputPort());
-  m_Glyph->OrientOff();
-  m_Glyph->ScalingOff();
-  m_Glyph->ScalarVisibilityOn();
-  m_Glyph->Update();
-
-  vtkNEW(m_CloudMapper);
-  m_CloudMapper->SetInputConnection(m_Glyph->GetOutputPort());
-  m_CloudMapper->ScalarVisibilityOff();
-#if VTK_MAJOR_VERSION <= 7
-  if(m_Vme->IsAnimated())				
-    m_CloudMapper->ImmediateModeRenderingOn();	 //avoid Display-Lists for animated items.
-  else
-    m_CloudMapper->ImmediateModeRenderingOff();
+	if (m_Vme->IsAnimated())
+		m_CloudMapper->ImmediateModeRenderingOn();	 //avoid Display-Lists for animated items.
+	else
+		m_CloudMapper->ImmediateModeRenderingOff();
 #endif
 
-  vtkNEW(m_CloudActor);
-  if (m_Cloud)
-  {
-    m_CloudActor->SetProperty(m_Cloud->GetMaterial()->m_Prop);
-  }
-  else
-  {
-    m_CloudActor->SetProperty(m_Landmark->GetMaterial()->m_Prop);
-  }
-  m_CloudActor->GetProperty()->SetInterpolationToGouraud();
-  m_CloudActor->SetMapper(m_CloudMapper);
+	vtkNEW(m_CloudActor);
+	if (m_Cloud)
+	{
+		m_CloudActor->SetProperty(m_Cloud->GetMaterial()->m_Prop);
+	}
+	else
+	{
+		m_CloudActor->SetProperty(m_Landmark->GetMaterial()->m_Prop);
+	}
+	m_CloudActor->GetProperty()->SetInterpolationToGouraud();
+	m_CloudActor->SetMapper(m_CloudMapper);
 
-  if (m_AssemblyFront)
-  {
-  	m_AssemblyFront->AddPart(m_CloudActor);
-  }
-  else if (m_RenFront)
-  {
-    m_RenFront->AddActor(m_CloudActor);
-  }
+	if (m_AssemblyFront)
+	{
+		m_AssemblyFront->AddPart(m_CloudActor);
+	}
+	else if (m_RenFront)
+	{
+		m_RenFront->AddActor(m_CloudActor);
+	}
 
-  // selection highlight
-  vtkNew<vtkOutlineCornerFilter> corner;
-  corner->SetInputConnection(m_Glyph->GetOutputPort());  
+	// selection highlight
+	vtkNew<vtkOutlineCornerFilter> corner;
+	corner->SetInputConnection(m_Glyph->GetOutputPort());
 
-  vtkNew<vtkPolyDataMapper> corner_mapper;
-  corner_mapper->SetInputConnection(corner->GetOutputPort());
+	vtkNew<vtkPolyDataMapper> corner_mapper;
+	corner_mapper->SetInputConnection(corner->GetOutputPort());
 
-  vtkNew<vtkProperty> corner_props;
-  corner_props->SetColor(1,1,1);
-  corner_props->SetAmbient(1);
-  corner_props->SetRepresentationToWireframe();
-  corner_props->SetInterpolationToFlat();
+	vtkNew<vtkProperty> corner_props;
+	corner_props->SetColor(1, 1, 1);
+	corner_props->SetAmbient(1);
+	corner_props->SetRepresentationToWireframe();
+	corner_props->SetInterpolationToFlat();
 
-  vtkNEW(m_CloudSelectionActor);
-  m_CloudSelectionActor->SetMapper(corner_mapper);
-  m_CloudSelectionActor->VisibilityOff();
-  m_CloudSelectionActor->PickableOff();
-  m_CloudSelectionActor->SetProperty(corner_props);
-  m_CloudSelectionActor->SetScale(1.01,1.01,1.01);
+	vtkNEW(m_CloudSelectionActor);
+	m_CloudSelectionActor->SetMapper(corner_mapper);
+	m_CloudSelectionActor->VisibilityOff();
+	m_CloudSelectionActor->PickableOff();
+	m_CloudSelectionActor->SetProperty(corner_props);
+	m_CloudSelectionActor->SetScale(1.01, 1.01, 1.01);
 
-  if (m_AssemblyFront)
-  {
-  	m_AssemblyFront->AddPart(m_CloudSelectionActor);
-  }
-  else if (m_RenFront)
-  {
-    m_RenFront->AddActor(m_CloudSelectionActor);
-  }
-  if(m_Landmark)
-  {
-    vtkNEW(m_Caption);
-    m_Caption->SetPosition(25,10);
-    m_Caption->ThreeDimensionalLeaderOff();
-    m_Caption->GetProperty()->SetColor(m_Landmark->GetMaterial()->m_Diffuse);
-    m_Caption->SetHeight(0.05);
-    m_Caption->SetWidth(0.35);
-    m_Caption->BorderOff();
-    m_Caption->SetCaption(m_Landmark->GetName().GetCStr());
+	if (m_AssemblyFront)
+	{
+		m_AssemblyFront->AddPart(m_CloudSelectionActor);
+	}
+	else if (m_RenFront)
+	{
+		m_RenFront->AddActor(m_CloudSelectionActor);
+	}
+	if (m_Landmark)
+	{
+		vtkNEW(m_Caption);
+		m_Caption->SetPosition(25, 10);
+		m_Caption->ThreeDimensionalLeaderOff();
+		m_Caption->GetProperty()->SetColor(m_Landmark->GetMaterial()->m_Diffuse);
+		m_Caption->SetHeight(0.05);
+		m_Caption->SetWidth(0.35);
+		m_Caption->BorderOff();
+		m_Caption->SetCaption(m_Landmark->GetName().GetCStr());
 
-    if(m_Labels && m_Landmark->GetLandmarkVisibility())
-      m_Caption->SetVisibility(1);
-    else
-      m_Caption->SetVisibility(0);
-    double pos[3], rot[3];
-    m_Landmark->GetOutput()->GetAbsPose(pos, rot);
-    m_Caption->SetAttachmentPoint(pos[0],pos[1],pos[2]);
-    if (m_RenFront)
-      m_RenFront->AddActor2D(m_Caption);
-  }
+		if (m_Labels && m_Landmark->GetLandmarkVisibility())
+			m_Caption->SetVisibility(1);
+		else
+			m_Caption->SetVisibility(0);
+		double pos[3], rot[3];
+		m_Landmark->GetOutput()->GetAbsPose(pos, rot);
+		m_Caption->SetAttachmentPoint(pos[0], pos[1], pos[2]);
+		if (m_RenFront)
+			m_RenFront->AddActor2D(m_Caption);
+	}
 }
 //----------------------------------------------------------------------------
 void mafPipeLandmarkCloud::RemoveClosedCloudPipe()
 //----------------------------------------------------------------------------
 {
-  if(m_Landmark)
-  {
-    if (m_RenFront)
-      m_RenFront->RemoveActor2D(m_Caption);
-    vtkDEL(m_Caption);
-  }
-  if(m_CloudActor)
-  {
-    if (m_AssemblyFront)
-    {
-      m_AssemblyFront->RemovePart(m_CloudActor);
-    }
-    else if (m_RenFront)
-    {
-      m_RenFront->RemoveActor(m_CloudActor);
-    }
-  }
-  if (m_CloudSelectionActor)
-  {
-    if (m_AssemblyFront)
-    {
-      m_AssemblyFront->RemovePart(m_CloudSelectionActor);
-    }
-    else if (m_RenFront)
-    {
-      m_RenFront->RemoveActor(m_CloudSelectionActor);
-    }
-  }
+	if (m_Landmark)
+	{
+		if (m_RenFront)
+			m_RenFront->RemoveActor2D(m_Caption);
+		vtkDEL(m_Caption);
+	}
+	if (m_CloudActor)
+	{
+		if (m_AssemblyFront)
+		{
+			m_AssemblyFront->RemovePart(m_CloudActor);
+		}
+		else if (m_RenFront)
+		{
+			m_RenFront->RemoveActor(m_CloudActor);
+		}
+	}
+	if (m_CloudSelectionActor)
+	{
+		if (m_AssemblyFront)
+		{
+			m_AssemblyFront->RemovePart(m_CloudSelectionActor);
+		}
+		else if (m_RenFront)
+		{
+			m_RenFront->RemoveActor(m_CloudSelectionActor);
+		}
+	}
 
-  vtkDEL(m_SphereSource);
-  vtkDEL(m_Normals);
-  vtkDEL(m_Glyph);
-  vtkDEL(m_CloudMapper);
-  vtkDEL(m_CloudActor);
+	vtkDEL(m_SphereSource);
+	vtkDEL(m_Normals);
+	vtkDEL(m_Glyph);
+	vtkDEL(m_CloudMapper);
+	vtkDEL(m_CloudActor);
 
-  vtkDEL(m_CloudSelectionActor);
+	vtkDEL(m_CloudSelectionActor);
 }

@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafVMEOutputMeter
  Authors: Paolo Quadrani
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -45,32 +45,29 @@ mafVMEOutputMuscleWrapping::~mafVMEOutputMuscleWrapping()
 {
 }
 //-------------------------------------------------------------------------
-mafGUI *mafVMEOutputMuscleWrapping::CreateGui()
+mafGUI* mafVMEOutputMuscleWrapping::CreateGui()
 //-------------------------------------------------------------------------
 {
-  assert(m_Gui == NULL);
-  m_Gui = mafVMEOutput::CreateGui();
-  
- // m_Distance = ((mafVMEMuscleWrapping *)m_VME)->GetDistance();
-  m_Gui->Label(_L("distance: "), &m_Distance, true);
+	assert(!AccessGUI());
+	auto gui = mafVMEOutput::CreateGui();
 
-  //m_Angle = ((mafVMEMeter *)m_VME)->GetAngle();
-  //m_Gui->Label(_("angle: "), &m_Angle, true);
-//	m_Gui->Divider();
+	// m_Distance = ((mafVMEMuscleWrapping *)m_VME)->GetDistance();
+	gui->Label(_L("distance: "), &m_Distance, true);
 
-  return m_Gui;
+	//m_Angle = ((mafVMEMeter *)m_VME)->GetAngle();
+	//m_Gui->Label(_("angle: "), &m_Angle, true);
+  //	m_Gui->Divider();
+
+	return gui;
 }
 //-------------------------------------------------------------------------
 void mafVMEOutputMuscleWrapping::Update()
 //-------------------------------------------------------------------------
 {
-  assert(m_VME);
-  m_VME->Update();
+	assert(m_VME);
+	m_VME->Update();
 
- // m_Distance = ((mafVMEMuscleWrapping *)m_VME)->GetDistance();
-  
-  if (m_Gui)
-  {
-    m_Gui->Update();
-  }
+	// m_Distance = ((mafVMEMuscleWrapping *)m_VME)->GetDistance();
+
+	UpdateGUI();
 }

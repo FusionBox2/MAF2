@@ -6,7 +6,7 @@
   Version:   $Revision: 1.2 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
-  Copyright (c) 2001/2007 
+  Copyright (c) 2001/2007
   ULB - Universite Libre de Bruxelles (www.ulb.ac.be)
 =========================================================================*/
 
@@ -68,35 +68,32 @@ mafCxxTypeMacro(mafVMEArrow)
 double mafVMEArrow::GetScaleFactor()
 //-------------------------------------------------------------------------
 {
-  return m_ScaleFactor;
+	return m_ScaleFactor;
 }
 //-------------------------------------------------------------------------
 void mafVMEArrow::SetScaleFactor(double scale)
 //-------------------------------------------------------------------------
 {
-  m_ScaleFactor = scale;
-  if (m_Gui)
-  {
-    m_Gui->Update();
-  }
-  UpdateScaleFactor();
+	m_ScaleFactor = scale;
+	UpdateGUI();
+	UpdateScaleFactor();
 }
 //-------------------------------------------------------------------------
 void mafVMEArrow::UpdateScaleFactor()
 //-------------------------------------------------------------------------
 {
-  m_ScaleAxisTransform->Identity();
-  m_ScaleAxisTransform->Scale(m_AngleFactor * m_ScaleFactor,m_AngleFactor * m_ScaleFactor,m_AngleFactor * m_ScaleFactor);
-  m_ScaleAxisTransform->Update();
-  m_ScaleAxis->Update();
-  Modified();
+	m_ScaleAxisTransform->Identity();
+	m_ScaleAxisTransform->Scale(m_AngleFactor * m_ScaleFactor, m_AngleFactor * m_ScaleFactor, m_AngleFactor * m_ScaleFactor);
+	m_ScaleAxisTransform->Update();
+	m_ScaleAxis->Update();
+	Modified();
 }
 //-------------------------------------------------------------------------
-const char **mafVMEArrow::GetIcon()
+const char** mafVMEArrow::GetIcon()
 //-------------------------------------------------------------------------
 {
 #include "mafVMESurface.xpm"
-  return mafVMESurface_xpm;
+	return mafVMESurface_xpm;
 }
 
 
@@ -104,120 +101,120 @@ const char **mafVMEArrow::GetIcon()
 mafVMEArrow::mafVMEArrow() : mafVMEGeneric()
 //-------------------------------------------------------------------------
 {
-  m_Transform = mafTransform::NewSPtr();
-  mafVMEOutputSurface *output=mafVMEOutputSurface::New(); // an output with no data
-  output->SetTransform(m_Transform); // force my transform in the output
-  SetOutput(output);
+	m_Transform = mafTransform::NewSPtr();
+	mafVMEOutputSurface* output = mafVMEOutputSurface::New(); // an output with no data
+	output->SetTransform(m_Transform); // force my transform in the output
+	SetOutput(output);
 
-  // attach a datapipe which creates a bridge between VTK and MAF
-  auto dpipe = mafDataPipeCustom::NewSPtr();
-  SetDataPipe(dpipe);
+	// attach a datapipe which creates a bridge between VTK and MAF
+	auto dpipe = mafDataPipeCustom::NewSPtr();
+	SetDataPipe(dpipe);
 
-  DependsOnLinkedNodeOn();
+	DependsOnLinkedNodeOn();
 
-  m_ScaleFactor = 1.0;
-  m_AngleFactor = 1.0;
-  m_StepToNext  = 1.0;
+	m_ScaleFactor = 1.0;
+	m_AngleFactor = 1.0;
+	m_StepToNext = 1.0;
 
-  vtkUnsignedCharArray *data;
-  float scalar_red[3]   = {255,0,0};
-  float scalar_green[3] = {0,255,0};
-  float scalar_blu[3]   = {0,0,255};
+	vtkUnsignedCharArray* data;
+	float scalar_red[3] = { 255,0,0 };
+	float scalar_green[3] = { 0,255,0 };
+	float scalar_blu[3] = { 0,0,255 };
 
-  m_ZArrow = vtkArrowSource::New();
-  m_ZArrow->SetShaftRadius(m_ZArrow->GetTipRadius() / 5);
-  m_ZArrow->SetTipResolution(40);
-  m_ZArrow->SetTipRadius(m_ZArrow->GetTipRadius() / 2);
-  m_ZArrow->Update();
+	m_ZArrow = vtkArrowSource::New();
+	m_ZArrow->SetShaftRadius(m_ZArrow->GetTipRadius() / 5);
+	m_ZArrow->SetTipResolution(40);
+	m_ZArrow->SetTipRadius(m_ZArrow->GetTipRadius() / 2);
+	m_ZArrow->Update();
 
-  m_ZAxisTransform = vtkTransform::New();
-  m_ZAxisTransform->PostMultiply();
-  m_ZAxisTransform->RotateY(-90);
-  m_ZAxisTransform->Update();
+	m_ZAxisTransform = vtkTransform::New();
+	m_ZAxisTransform->PostMultiply();
+	m_ZAxisTransform->RotateY(-90);
+	m_ZAxisTransform->Update();
 
-  m_ZAxis  = vtkTransformPolyDataFilter::New();
-  m_ZAxis->SetInputConnection(m_ZArrow->GetOutputPort());
-  m_ZAxis->SetTransform(m_ZAxisTransform);
-  m_ZAxis->Update();
+	m_ZAxis = vtkTransformPolyDataFilter::New();
+	m_ZAxis->SetInputConnection(m_ZArrow->GetOutputPort());
+	m_ZAxis->SetTransform(m_ZAxisTransform);
+	m_ZAxis->Update();
 
-  int points = m_ZArrow->GetOutput()->GetNumberOfPoints();
+	int points = m_ZArrow->GetOutput()->GetNumberOfPoints();
 
-  data = vtkUnsignedCharArray::New();
-  data->SetName("AXES");
-  data->SetNumberOfComponents(3);
-  data->SetNumberOfTuples(points * 3);
-  int i;
-  for (i = 0; i < points; i++)
-    data->SetTuple(i, scalar_red);
+	data = vtkUnsignedCharArray::New();
+	data->SetName("AXES");
+	data->SetNumberOfComponents(3);
+	data->SetNumberOfTuples(points * 3);
+	int i;
+	for (i = 0; i < points; i++)
+		data->SetTuple(i, scalar_red);
 
-  // this filter do not copy the scalars also if all input 
-  m_Axes = vtkAppendPolyData::New();    
-  m_Axes->AddInputConnection(m_ZAxis->GetOutputPort());
+	// this filter do not copy the scalars also if all input 
+	m_Axes = vtkAppendPolyData::New();
+	m_Axes->AddInputConnection(m_ZAxis->GetOutputPort());
 
-  m_Axes->Update();
+	m_Axes->Update();
 
-  m_ScaleAxisTransform = vtkTransform::New();
-  m_ScaleAxisTransform->Scale(m_ScaleFactor,m_ScaleFactor,m_ScaleFactor);
-  m_ScaleAxisTransform->Update();
+	m_ScaleAxisTransform = vtkTransform::New();
+	m_ScaleAxisTransform->Scale(m_ScaleFactor, m_ScaleFactor, m_ScaleFactor);
+	m_ScaleAxisTransform->Update();
 
-  vtkNew<vtkPolyData> axes_surface;
-  axes_surface->DeepCopy(m_Axes->GetOutput());
-  axes_surface->GetPointData()->SetScalars(data);
-  vtkDEL(data);
+	vtkNew<vtkPolyData> axes_surface;
+	axes_surface->DeepCopy(m_Axes->GetOutput());
+	axes_surface->GetPointData()->SetScalars(data);
+	vtkDEL(data);
 
-  m_ScaleAxis  = vtkTransformPolyDataFilter::New();
-  m_ScaleAxis->SetInputData(axes_surface);
-  m_ScaleAxis->SetTransform(m_ScaleAxisTransform);
-  m_ScaleAxis->Update();
+	m_ScaleAxis = vtkTransformPolyDataFilter::New();
+	m_ScaleAxis->SetInputData(axes_surface);
+	m_ScaleAxis->SetTransform(m_ScaleAxisTransform);
+	m_ScaleAxis->Update();
 
-  //SetData(m_ScaleAxis->GetOutput(), -1);
+	//SetData(m_ScaleAxis->GetOutput(), -1);
 
-  dpipe->SetInputConnection(m_ScaleAxis->GetOutputPort());
+	dpipe->SetInputConnection(m_ScaleAxis->GetOutputPort());
 }
 //-------------------------------------------------------------------------
 int mafVMEArrow::InternalInitialize()
 //-------------------------------------------------------------------------
 {
-  if (Superclass::InternalInitialize()==MAF_OK)
-  {
-    // force material allocation
-    GetMaterial();
-    return MAF_OK;
-  }
-  return MAF_ERROR;
+	if (Superclass::InternalInitialize() == MAF_OK)
+	{
+		// force material allocation
+		GetMaterial();
+		return MAF_OK;
+	}
+	return MAF_ERROR;
 }
 //-------------------------------------------------------------------------
 std::shared_ptr<mmaMaterial> mafVMEArrow::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  auto material = mmaMaterial::SafeDownCast(GetAttribute(mmaMaterial::GetAttributeName()));
-  if (!material)
-  {
-    material = mmaMaterial::NewSPtr();
-    SetAttribute(material);
-    if (m_Output)
-    {
-      ((mafVMEOutputSurface *)m_Output)->SetMaterial(material);
-    }
-  }
-  return material;
+	auto material = mmaMaterial::SafeDownCast(GetAttribute(mmaMaterial::GetAttributeName()));
+	if (!material)
+	{
+		material = mmaMaterial::NewSPtr();
+		SetAttribute(material);
+		if (m_Output)
+		{
+			((mafVMEOutputSurface*)m_Output)->SetMaterial(material);
+		}
+	}
+	return material;
 }
 
 //-------------------------------------------------------------------------
 mafVMEArrow::~mafVMEArrow()
 //-------------------------------------------------------------------------
 {
-  SetOutput(NULL);
+	SetOutput(NULL);
 
-  vtkDEL(m_ZArrow);
-  vtkDEL(m_ZAxisTransform);
-  m_ZAxis->SetTransform(NULL);
-  vtkDEL(m_ZAxis);
+	vtkDEL(m_ZArrow);
+	vtkDEL(m_ZAxisTransform);
+	m_ZAxis->SetTransform(NULL);
+	vtkDEL(m_ZAxis);
 
-  vtkDEL(m_Axes);
-  vtkDEL(m_ScaleAxisTransform);
-  m_ScaleAxis->SetTransform(NULL);
-  vtkDEL(m_ScaleAxis);
+	vtkDEL(m_Axes);
+	vtkDEL(m_ScaleAxisTransform);
+	m_ScaleAxis->SetTransform(NULL);
+	vtkDEL(m_ScaleAxis);
 }
 
 //----------------------------------------------------------------------------
@@ -230,62 +227,62 @@ void mafVMEArrow::InternalPreUpdate()
 //-----------------------------------------------------------------------
 void mafVMEArrow::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
-{  
-  Superclass::InternalStore(parent);
-  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
-  parent[_R("ScaleFactor")].SetValue(m_ScaleFactor);
+{
+	Superclass::InternalStore(parent);
+	parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
+	parent[_R("ScaleFactor")].SetValue(m_ScaleFactor);
 }
 
 //-----------------------------------------------------------------------
 void mafVMEArrow::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  Superclass::InternalRestore(node);
-  m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
-  m_ScaleFactor = node[_R("ScaleFactor")].As<double>();
-  SetScaleFactor(m_ScaleFactor);
+	Superclass::InternalRestore(node);
+	m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
+	m_ScaleFactor = node[_R("ScaleFactor")].As<double>();
+	SetScaleFactor(m_ScaleFactor);
 }
 
 
 //----------------------------------------------------------------------------
-void mafVMEArrow::OnEvent(mafEventBase *maf_event)
+void mafVMEArrow::OnEvent(mafEventBase* maf_event)
 //----------------------------------------------------------------------------
 {
-  switch (maf_event->GetId())
-  {
-  case ID_SCALE_FACTOR:
-    {
-      SetScaleFactor(m_ScaleFactor);
-      mafEvent cam_event(this,CAMERA_UPDATE);
-      this->ForwardUpEvent(cam_event);
-      break;
-    }
-  default:
-    {
-      Superclass::OnEvent(maf_event);
-      break; 
-    }
-  }
+	switch (maf_event->GetId())
+	{
+	case ID_SCALE_FACTOR:
+	{
+		SetScaleFactor(m_ScaleFactor);
+		mafEvent cam_event(this, CAMERA_UPDATE);
+		this->ForwardUpEvent(cam_event);
+		break;
+	}
+	default:
+	{
+		Superclass::OnEvent(maf_event);
+		break;
+	}
+	}
 }
 
 //----------------------------------------------------------------------------
-mafGUI *mafVMEArrow::CreateGui()
+mafGUI* mafVMEArrow::CreateGui()
 //----------------------------------------------------------------------------
 {
-  m_Gui = Superclass::CreateGui();
-  m_Gui->Show(false);
-  m_Gui->Double(ID_SCALE_FACTOR,_L("scale"),&m_ScaleFactor);
-  m_Gui->Divider();
-  m_Gui->Button(ID_PRINT, _R("print"), _R("debug info") );
-  m_Gui->Update();
-  return m_Gui;
+	auto gui = Superclass::CreateGui();
+	gui->Show(false);
+	gui->Double(ID_SCALE_FACTOR, _L("scale"), &m_ScaleFactor);
+	gui->Divider();
+	gui->Button(ID_PRINT, _R("print"), _R("debug info"));
+	gui->Update();
+	return gui;
 }
 
 //----------------------------------------------------------------------------
 void mafVMEArrow::Print(std::ostream& os, const int tabs)// const
 //-----------------------------------------------------------------------
 {
-  Superclass::Print(os,tabs);
-  mafIndent indent(tabs);
-  os<<indent<<"Scale: "<<indent<<m_ScaleFactor;
+	Superclass::Print(os, tabs);
+	mafIndent indent(tabs);
+	os << indent << "Scale: " << indent << m_ScaleFactor;
 }

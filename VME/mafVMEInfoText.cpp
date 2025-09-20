@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafVMEInfoText
  Authors: Fedor Moiseev
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -43,12 +43,12 @@ mafCxxTypeMacro(mafVMEInfoText)
 mafVMEInfoText::mafVMEInfoText()
 //-------------------------------------------------------------------------
 {
-  m_PosShow[0]   = false;
-  m_PosShow[1]   = false;
-  m_PosShow[2]   = false;
-  m_PosLabels[0] = _R("");
-  m_PosLabels[1] = _R("");
-  m_PosLabels[2] = _R("");
+	m_PosShow[0] = false;
+	m_PosShow[1] = false;
+	m_PosShow[2] = false;
+	m_PosLabels[0] = _R("");
+	m_PosLabels[1] = _R("");
+	m_PosLabels[2] = _R("");
 }
 
 //-------------------------------------------------------------------------
@@ -57,111 +57,111 @@ mafVMEInfoText::~mafVMEInfoText()
 {
 }
 //-------------------------------------------------------------------------
-int mafVMEInfoText::DeepCopy(mafNode *a)
-//-------------------------------------------------------------------------
-{ 
-  if (Superclass::DeepCopy(a) == MAF_OK)
-  {
-    mafVMEInfoText *it = mafVMEInfoText::SafeDownCast(a);
-    if(it == NULL)
-      return MAF_ERROR;
-    m_Strings = it->m_Strings;
-    return MAF_OK;
-  }  
-  return MAF_ERROR;
-}
-//-------------------------------------------------------------------------
-bool mafVMEInfoText::Equals(mafVME *vme)
+int mafVMEInfoText::DeepCopy(mafNode* a)
 //-------------------------------------------------------------------------
 {
-  if (Superclass::Equals(vme))
-  {
-    mafVMEInfoText *it = mafVMEInfoText::SafeDownCast(vme);
-    if(it == NULL)
-      return false;
-    return m_Strings == it->m_Strings;
-  }
-  return false;
+	if (Superclass::DeepCopy(a) == MAF_OK)
+	{
+		mafVMEInfoText* it = mafVMEInfoText::SafeDownCast(a);
+		if (it == NULL)
+			return MAF_ERROR;
+		m_Strings = it->m_Strings;
+		return MAF_OK;
+	}
+	return MAF_ERROR;
+}
+//-------------------------------------------------------------------------
+bool mafVMEInfoText::Equals(mafVME* vme)
+//-------------------------------------------------------------------------
+{
+	if (Superclass::Equals(vme))
+	{
+		mafVMEInfoText* it = mafVMEInfoText::SafeDownCast(vme);
+		if (it == NULL)
+			return false;
+		return m_Strings == it->m_Strings;
+	}
+	return false;
 }
 
 //-----------------------------------------------------------------------
 void mafVMEInfoText::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
-{  
-  Superclass::InternalStore(parent);
-  for (int i = 0; i < 3; i++)
-  {
-    mafString txtname = _R("Label") + mafToString(i);
-    parent[txtname].SetValue(m_PosLabels[i]);
-  }
-  for (int i = 0; i < 3; i++)
-  {
-    mafString txtname = _R("ShowLabel") + mafToString(i);
-    parent[txtname].SetValue(m_PosShow[i] ? 1 : 0);
-  }
-  int strSz = m_Strings.size();
-  parent[_R("NumberOfStrings")].SetValue(strSz);
-  for (int i = 0; i < m_Strings.size(); i++)
-  {
-    mafString txtname = _R("String") + mafToString(i);
-    parent[txtname].SetValue(m_Strings[i]);
-  }
+{
+	Superclass::InternalStore(parent);
+	for (int i = 0; i < 3; i++)
+	{
+		mafString txtname = _R("Label") + mafToString(i);
+		parent[txtname].SetValue(m_PosLabels[i]);
+	}
+	for (int i = 0; i < 3; i++)
+	{
+		mafString txtname = _R("ShowLabel") + mafToString(i);
+		parent[txtname].SetValue(m_PosShow[i] ? 1 : 0);
+	}
+	int strSz = m_Strings.size();
+	parent[_R("NumberOfStrings")].SetValue(strSz);
+	for (int i = 0; i < m_Strings.size(); i++)
+	{
+		mafString txtname = _R("String") + mafToString(i);
+		parent[txtname].SetValue(m_Strings[i]);
+	}
 }
 
 //-----------------------------------------------------------------------
 void mafVMEInfoText::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  Superclass::InternalRestore(node);
-  mafString txtname;
-  for (int j = 0; j < 3; j++)
-  {
-    txtname = _R("Label") + mafToString(j);
-    m_PosLabels[j] = node[txtname].As<mafString>();
-    //if(node[txtname].ReSetValue(m_PosLabels[j]) != MAF_OK)
-      //return MAF_ERROR;
-  }
-  for (int j = 0; j < 3; j++)
-  {
-    txtname = _R("ShowLabel") + mafToString(j);
-    int val = node[txtname].As<int>();
-    m_PosShow[j] = (val != 0);
-  }
+	Superclass::InternalRestore(node);
+	mafString txtname;
+	for (int j = 0; j < 3; j++)
+	{
+		txtname = _R("Label") + mafToString(j);
+		m_PosLabels[j] = node[txtname].As<mafString>();
+		//if(node[txtname].ReSetValue(m_PosLabels[j]) != MAF_OK)
+		  //return MAF_ERROR;
+	}
+	for (int j = 0; j < 3; j++)
+	{
+		txtname = _R("ShowLabel") + mafToString(j);
+		int val = node[txtname].As<int>();
+		m_PosShow[j] = (val != 0);
+	}
 
-  mafString ReadStr;
-  int       i = 0;
-  txtname = _R("String") + mafToString(i);
-  m_Strings.clear();
+	mafString ReadStr;
+	int       i = 0;
+	txtname = _R("String") + mafToString(i);
+	m_Strings.clear();
 
-  auto strSz = node[_R("NumberOfStrings")].As<std::optional<int> >();
-  if (strSz)
-  {
-    for (int k = 0; k < *strSz; k++)
-    {
-      ReadStr = node[txtname].As<mafString>();
-      //if(node[txtname].ReSetValue(ReadStr) == MAF_OK)
-      m_Strings.push_back(ReadStr);
-      i++;
-      txtname = _R("String") + mafToString(i);
-    }
-  }
-  else
-  {
-    try
-    {
-      for (;;)
-      {
-        ReadStr = node[txtname].As<mafString>();
-        m_Strings.push_back(ReadStr);
-        i++;
-        txtname = _R("String") + mafToString(i);
-      }
-    }
-    catch (...)
-    {
+	auto strSz = node[_R("NumberOfStrings")].As<std::optional<int> >();
+	if (strSz)
+	{
+		for (int k = 0; k < *strSz; k++)
+		{
+			ReadStr = node[txtname].As<mafString>();
+			//if(node[txtname].ReSetValue(ReadStr) == MAF_OK)
+			m_Strings.push_back(ReadStr);
+			i++;
+			txtname = _R("String") + mafToString(i);
+		}
+	}
+	else
+	{
+		try
+		{
+			for (;;)
+			{
+				ReadStr = node[txtname].As<mafString>();
+				m_Strings.push_back(ReadStr);
+				i++;
+				txtname = _R("String") + mafToString(i);
+			}
+		}
+		catch (...)
+		{
 
-    }
-  }
+		}
+	}
 }
 
 //-------------------------------------------------------------------------
@@ -169,146 +169,143 @@ mafGUI* mafVMEInfoText::CreateGui()
 //-------------------------------------------------------------------------
 {
 
-  mafID sub_id = -1;
+	mafID sub_id = -1;
 
-  m_Gui = mafNode::CreateGui(); // Called to show info about vmes' type and name
-  m_Gui->SetListener(this);
-  m_Gui->Divider();
-  for(int i = 0; i < m_Strings.size(); i++)
-  {
-    m_Gui->Label(&m_Strings[i]);
-    m_Gui->Divider();
-  }
+	auto gui = mafNode::CreateGui(); // Called to show info about vmes' type and name
+	gui->SetListener(this);
+	gui->Divider();
+	for (int i = 0; i < m_Strings.size(); i++)
+	{
+		gui->Label(&m_Strings[i]);
+		gui->Divider();
+	}
 
-  double xyz[3],rxyz[3];
-  this->GetOutput()->GetAbsPose(xyz,rxyz);
-  for(int i = 0; i < 3; i++)
-  {
-    if(m_PosShow[i])
-      m_PositionText[i] = m_PosLabels[i] + mafString::Format(_R("%f"), xyz[i]);
-    else
-      m_PositionText[i].clear();
-    m_Gui->Label(_R(""), &m_PositionText[i]);
-  }
+	double xyz[3], rxyz[3];
+	this->GetOutput()->GetAbsPose(xyz, rxyz);
+	for (int i = 0; i < 3; i++)
+	{
+		if (m_PosShow[i])
+			m_PositionText[i] = m_PosLabels[i] + mafString::Format(_R("%f"), xyz[i]);
+		else
+			m_PositionText[i].clear();
+		gui->Label(_R(""), &m_PositionText[i]);
+	}
 
-  m_Gui->Update();
+	gui->Update();
 
-  return m_Gui;
+	return gui;
 }
 //-----------------------------------------------------------------------
 void mafVMEInfoText::Print(std::ostream& os, const int tabs)
 //-----------------------------------------------------------------------
 {
-  Superclass::Print(os,tabs);
-  mafIndent indent(tabs);
+	Superclass::Print(os, tabs);
+	mafIndent indent(tabs);
 
-  for(int i = 0; i < m_Strings.size(); i++)
-    os << m_Strings[i].GetCStr() << endl;
+	for (int i = 0; i < m_Strings.size(); i++)
+		os << m_Strings[i].GetCStr() << endl;
 }
 
 //-------------------------------------------------------------------------
 void mafVMEInfoText::SetTimeStamp(mafTimeStamp t)
 //-------------------------------------------------------------------------
 {
-  Superclass::SetTimeStamp(t);
-  this->GetOutput()->Update();
-  double xyz[3],rxyz[3];
-  this->GetOutput()->GetAbsPose(xyz,rxyz);  
-  for(int i = 0; i < 3; i++)
-  {
-    if(m_PosShow[i])
-      m_PositionText[i] = m_PosLabels[i] + mafString::Format(_R("%f"), xyz[i]);
-    else
-      m_PositionText[i].clear();
-  }
-  if(m_Gui)
-    m_Gui->Update();
+	Superclass::SetTimeStamp(t);
+	this->GetOutput()->Update();
+	double xyz[3], rxyz[3];
+	this->GetOutput()->GetAbsPose(xyz, rxyz);
+	for (int i = 0; i < 3; i++)
+	{
+		if (m_PosShow[i])
+			m_PositionText[i] = m_PosLabels[i] + mafString::Format(_R("%f"), xyz[i]);
+		else
+			m_PositionText[i].clear();
+	}
+	UpdateGUI();
 }
 
 //-------------------------------------------------------------------------
-mafVMEOutput *mafVMEInfoText::GetOutput()
+mafVMEOutput* mafVMEInfoText::GetOutput()
 //-------------------------------------------------------------------------
 {
-  // allocate the right type of output on demand
-  if (m_Output==NULL)
-  {
-    SetOutput(mafVMEOutputNULL::New()); // create the output
-  }
-  return m_Output;
+	// allocate the right type of output on demand
+	if (m_Output == NULL)
+	{
+		SetOutput(mafVMEOutputNULL::New()); // create the output
+	}
+	return m_Output;
 }
 
 //-------------------------------------------------------------------------
 void mafVMEInfoText::SetPosShow(bool show, int index)
 //-------------------------------------------------------------------------
 {
-  assert(index >= 0 && index <= 2); 
-  if(index < 0 || index > 2)
-    return; 
-  m_PosShow[index] = show; 
+	assert(index >= 0 && index <= 2);
+	if (index < 0 || index > 2)
+		return;
+	m_PosShow[index] = show;
 
-  this->GetOutput()->Update();
-  double xyz[3],rxyz[3];
-  this->GetOutput()->GetAbsPose(xyz,rxyz);  
-  if(m_PosShow[index])
-    m_PositionText[index] = m_PosLabels[index] + mafString::Format(_R("%f"), xyz[index]);
-  else
-    m_PositionText[index].clear();
+	this->GetOutput()->Update();
+	double xyz[3], rxyz[3];
+	this->GetOutput()->GetAbsPose(xyz, rxyz);
+	if (m_PosShow[index])
+		m_PositionText[index] = m_PosLabels[index] + mafString::Format(_R("%f"), xyz[index]);
+	else
+		m_PositionText[index].clear();
 
-  if(m_Gui) 
-    m_Gui->Update();
+	UpdateGUI();
 }
 //-------------------------------------------------------------------------
 bool mafVMEInfoText::GetPosShow(int index)
 //-------------------------------------------------------------------------
 {
-  assert(index >= 0 && index <= 2); 
-  if(index < 0 || index > 2)
-    return false; 
-  return m_PosShow[index];
+	assert(index >= 0 && index <= 2);
+	if (index < 0 || index > 2)
+		return false;
+	return m_PosShow[index];
 }
 
 //-------------------------------------------------------------------------
 void mafVMEInfoText::SetPosLabel(const mafString& label, int index)
 //-------------------------------------------------------------------------
 {
-  assert(index >= 0 && index <= 2); 
-  if(index < 0 || index > 2)
-    return; 
-  m_PosLabels[index] = label; 
+	assert(index >= 0 && index <= 2);
+	if (index < 0 || index > 2)
+		return;
+	m_PosLabels[index] = label;
 
-  this->GetOutput()->Update();
-  double xyz[3],rxyz[3];
-  this->GetOutput()->GetAbsPose(xyz,rxyz);  
-  if(m_PosShow[index])
-    m_PositionText[index] = m_PosLabels[index] + mafString::Format(_R("%f"), xyz[index]);
-  else
-    m_PositionText[index].clear();
+	this->GetOutput()->Update();
+	double xyz[3], rxyz[3];
+	this->GetOutput()->GetAbsPose(xyz, rxyz);
+	if (m_PosShow[index])
+		m_PositionText[index] = m_PosLabels[index] + mafString::Format(_R("%f"), xyz[index]);
+	else
+		m_PositionText[index].clear();
 
-  if(m_Gui) 
-    m_Gui->Update();
+	UpdateGUI();
 }
 //-------------------------------------------------------------------------
-const char *mafVMEInfoText::GetPosLabel(int index)
+const char* mafVMEInfoText::GetPosLabel(int index)
 //-------------------------------------------------------------------------
 {
-  assert(index >= 0 && index <= 2); 
-  if(index < 0 || index > 2)
-    return NULL; 
-  return m_PosLabels[index].GetCStr();
+	assert(index >= 0 && index <= 2);
+	if (index < 0 || index > 2)
+		return NULL;
+	return m_PosLabels[index].GetCStr();
 }
 //-------------------------------------------------------------------------
-const char *mafVMEInfoText::GetPosText(int index)
+const char* mafVMEInfoText::GetPosText(int index)
 //-------------------------------------------------------------------------
 {
-  assert(index >= 0 && index <= 2); 
-  if(index < 0 || index > 2)
-    return NULL; 
-  return m_PositionText[index].GetCStr();
+	assert(index >= 0 && index <= 2);
+	if (index < 0 || index > 2)
+		return NULL;
+	return m_PositionText[index].GetCStr();
 }
 //-------------------------------------------------------------------------
-const char** mafVMEInfoText::GetIcon() 
+const char** mafVMEInfoText::GetIcon()
 //-------------------------------------------------------------------------
 {
 #include "mafVMELandmark.xpm"
-  return mafVMELandmark_xpm;
+	return mafVMELandmark_xpm;
 }

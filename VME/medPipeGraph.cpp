@@ -3,7 +3,7 @@
  Program: MAF2Medical
  Module: medPipeGraph
  Authors: Roberto Mucci
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -57,747 +57,748 @@ mafCxxTypeMacro(medPipeGraph);
 medPipeGraph::medPipeGraph()
 //----------------------------------------------------------------------------
 {
-  m_PlotActor	= NULL;
-  m_PlotTimeLineActor	= NULL;
-  m_CheckBox  = NULL;
-  m_CheckedVector.clear();
+	m_PlotActor = NULL;
+	m_PlotTimeLineActor = NULL;
+	m_CheckBox = NULL;
+	m_CheckedVector.clear();
 
-  m_Xlabel		= 50;
-  m_Ylabel		= 50;
-  m_NumberOfSignals = 0;
+	m_Xlabel = 50;
+	m_Ylabel = 50;
+	m_NumberOfSignals = 0;
 
-  m_TitileX		= _R("");
-  m_TitileY		= _R("");
-  m_Title     = _R("");
-  m_ItemName  = _R("analog_");
-  m_FitPlot = 1;
-  m_Legend = 0;
+	m_TitileX = _R("");
+	m_TitileY = _R("");
+	m_Title = _R("");
+	m_ItemName = _R("analog_");
+	m_FitPlot = 1;
+	m_Legend = 0;
 
-  m_DataMax = 0;
-  m_DataMin = 0;
-  m_TimeStampMax = 0;
+	m_DataMax = 0;
+	m_DataMin = 0;
+	m_TimeStampMax = 0;
 
-  m_TimeStamp = 0;
-  m_ItemId = 0;
+	m_TimeStamp = 0;
+	m_ItemId = 0;
 
-  m_TimeLine = NULL;
+	m_TimeLine = NULL;
 
-  m_VtkData.clear();
-  m_ScalarArray.clear();
+	m_VtkData.clear();
+	m_ScalarArray.clear();
 }
 //----------------------------------------------------------------------------
 medPipeGraph::~medPipeGraph()
 //----------------------------------------------------------------------------
 {
-  m_Vme->RemoveObserver(this);
+	m_Vme->RemoveObserver(this);
 
-  m_RenFront->RemoveActor2D(m_PlotActor);
-  m_RenFront->RemoveActor2D(m_PlotTimeLineActor);
-  m_RenFront->SetBackground(m_OldColour);
-  m_AlwaysVisibleRenderer->SetBackground(m_OldColour);
+	m_RenFront->RemoveActor2D(m_PlotActor);
+	m_RenFront->RemoveActor2D(m_PlotTimeLineActor);
+	m_RenFront->SetBackground(m_OldColour);
+	m_AlwaysVisibleRenderer->SetBackground(m_OldColour);
 
-  for(int i=0;i<m_VtkData.size();i++)
-  {
-    vtkDEL(m_VtkData[i]);
-  }
-  m_VtkData.clear();
+	for (int i = 0; i < m_VtkData.size(); i++)
+	{
+		vtkDEL(m_VtkData[i]);
+	}
+	m_VtkData.clear();
 
-  for(int i=0;i<m_ScalarArray.size();i++)
-  {
-    vtkDEL(m_ScalarArray[i]);
-  }
-  m_ScalarArray.clear();
-  m_CheckedVector.clear();
+	for (int i = 0; i < m_ScalarArray.size(); i++)
+	{
+		vtkDEL(m_ScalarArray[i]);
+	}
+	m_ScalarArray.clear();
+	m_CheckedVector.clear();
 
-  vtkDEL(m_TimeArray);
-  m_PlotActor->RemoveAllDataSetInputConnections();
-  m_PlotTimeLineActor->RemoveAllDataSetInputConnections();
-  vtkDEL(m_PlotActor);
-  vtkDEL(m_PlotTimeLineActor);
-  }
+	vtkDEL(m_TimeArray);
+	m_PlotActor->RemoveAllDataSetInputConnections();
+	m_PlotTimeLineActor->RemoveAllDataSetInputConnections();
+	vtkDEL(m_PlotActor);
+	vtkDEL(m_PlotTimeLineActor);
+}
 //----------------------------------------------------------------------------
-void medPipeGraph::Create(mafNode *node, mafView *view)
+void medPipeGraph::Create(mafNode* node, mafView* view)
 //----------------------------------------------------------------------------
 {
-  double timeData;
-  int counter = 0;
-  Superclass::Create(node, view);
+	double timeData;
+	int counter = 0;
+	Superclass::Create(node, view);
 
-  m_Vme->AddObserver(this);
+	m_Vme->AddObserver(this);
 
-  m_EmgPlot = medVMEAnalog::SafeDownCast(m_Vme);
-  m_NumberOfSignals = m_EmgPlot->GetScalarOutput()->GetScalarData().rows()-1; //1 row is for time information
-  m_DataMin = m_EmgPlot->GetScalarOutput()->GetScalarData().min_value();
-  m_DataMax = m_EmgPlot->GetScalarOutput()->GetScalarData().max_value();
-  m_TimeStamp = m_EmgPlot->GetScalarOutput()->GetScalarData().columns();
-  m_DataManualRange[0] = m_DataMin; //Initialize max data range 
-  m_DataManualRange[1] = m_DataMax;
+	m_EmgPlot = medVMEAnalog::SafeDownCast(m_Vme);
+	m_NumberOfSignals = m_EmgPlot->GetScalarOutput()->GetScalarData().rows() - 1; //1 row is for time information
+	m_DataMin = m_EmgPlot->GetScalarOutput()->GetScalarData().min_value();
+	m_DataMax = m_EmgPlot->GetScalarOutput()->GetScalarData().max_value();
+	m_TimeStamp = m_EmgPlot->GetScalarOutput()->GetScalarData().columns();
+	m_DataManualRange[0] = m_DataMin; //Initialize max data range 
+	m_DataManualRange[1] = m_DataMax;
 
-  m_CheckedVector.resize(m_NumberOfSignals,false);
-  
-  m_EmgPlot->Update();
-  m_TimeArray = vtkDoubleArray::New();
-  vnl_vector<double> rowTime = m_EmgPlot->GetScalarOutput()->GetScalarData().get_row(0);
+	m_CheckedVector.resize(m_NumberOfSignals, false);
 
-  for (int t = 0; t < m_TimeStamp; t++)
-  {
-   timeData = rowTime.get(t);
-   m_TimeArray->InsertValue(counter,timeData);
-   counter++;
-  } 
-  m_TimeStampMax = m_TimeArray->GetValue(counter-1);
-  m_TimeArray->GetRange(m_TimesManualRange); //Initialize time range at max
+	m_EmgPlot->Update();
+	m_TimeArray = vtkDoubleArray::New();
+	vnl_vector<double> rowTime = m_EmgPlot->GetScalarOutput()->GetScalarData().get_row(0);
 
-  //NB: I must create 2 vtkXYPlotActor in order to have a time line 
-  //on the plot but not on the legend. m_PlotTimeLineActor contains
-  //only the time line
-  vtkNEW(m_PlotTimeLineActor);
-  m_PlotTimeLineActor->GetProperty()->SetColor(0.02,0.06,0.62);	
-  m_PlotTimeLineActor->GetProperty()->SetLineWidth(1.4);
+	for (int t = 0; t < m_TimeStamp; t++)
+	{
+		timeData = rowTime.get(t);
+		m_TimeArray->InsertValue(counter, timeData);
+		counter++;
+	}
+	m_TimeStampMax = m_TimeArray->GetValue(counter - 1);
+	m_TimeArray->GetRange(m_TimesManualRange); //Initialize time range at max
 
-  vtkTextProperty* tProp = m_PlotTimeLineActor->GetTitleTextProperty();
-  tProp->SetColor(0.02,0.06,0.62);
-  tProp->SetFontFamilyToArial();
-  tProp->ItalicOff();
-  tProp->BoldOff();
-  tProp->SetFontSize(5);
- 
-  m_PlotTimeLineActor->SetAxisTitleTextProperty(tProp);
-  m_PlotTimeLineActor->SetAxisLabelTextProperty(tProp);
-  m_PlotTimeLineActor->SetTitleTextProperty(tProp);	
+	//NB: I must create 2 vtkXYPlotActor in order to have a time line 
+	//on the plot but not on the legend. m_PlotTimeLineActor contains
+	//only the time line
+	vtkNEW(m_PlotTimeLineActor);
+	m_PlotTimeLineActor->GetProperty()->SetColor(0.02, 0.06, 0.62);
+	m_PlotTimeLineActor->GetProperty()->SetLineWidth(1.4);
 
-  //m_LegendBoxTimeLine_Actor = m_PlotTimeLineActor->GetLegendBoxActor();
-  m_PlotTimeLineActor->SetLegendPosition(0.75, 0.85); //Set position and size of the Legend Box
-  m_PlotTimeLineActor->SetLegendPosition2(0.35, 0.25);
-  m_PlotTimeLineActor->SetPosition(0.01,0.01);
-  m_PlotTimeLineActor->SetPosition2(0.9,0.9);
-  m_PlotTimeLineActor->SetVisibility(1);
-  m_PlotTimeLineActor->SetXValuesToValue();
+	vtkTextProperty* tProp = m_PlotTimeLineActor->GetTitleTextProperty();
+	tProp->SetColor(0.02, 0.06, 0.62);
+	tProp->SetFontFamilyToArial();
+	tProp->ItalicOff();
+	tProp->BoldOff();
+	tProp->SetFontSize(5);
 
-  m_LegendBoxTimeLine_Actor->SetNumberOfEntries(1);
-  m_LegendBoxTimeLine_Actor->SetEntryString(0, "");
+	m_PlotTimeLineActor->SetAxisTitleTextProperty(tProp);
+	m_PlotTimeLineActor->SetAxisLabelTextProperty(tProp);
+	m_PlotTimeLineActor->SetTitleTextProperty(tProp);
 
-  m_ColorRGB[0] = 255;
-  m_ColorRGB[1] = 0;
-  m_ColorRGB[2] = 0;
+	//m_LegendBoxTimeLine_Actor = m_PlotTimeLineActor->GetLegendBoxActor();
+	m_PlotTimeLineActor->SetLegendPosition(0.75, 0.85); //Set position and size of the Legend Box
+	m_PlotTimeLineActor->SetLegendPosition2(0.35, 0.25);
+	m_PlotTimeLineActor->SetPosition(0.01, 0.01);
+	m_PlotTimeLineActor->SetPosition2(0.9, 0.9);
+	m_PlotTimeLineActor->SetVisibility(1);
+	m_PlotTimeLineActor->SetXValuesToValue();
 
-  m_LegendBoxTimeLine_Actor->SetEntryColor(0, m_ColorRGB);
+	m_LegendBoxTimeLine_Actor->SetNumberOfEntries(1);
+	m_LegendBoxTimeLine_Actor->SetEntryString(0, "");
 
-  vtkNEW(m_PlotActor);
-  m_PlotActor->GetProperty()->SetColor(0.02,0.06,0.62);	
-  m_PlotActor->GetProperty()->SetLineWidth(1.4);
+	m_ColorRGB[0] = 255;
+	m_ColorRGB[1] = 0;
+	m_ColorRGB[2] = 0;
 
-  vtkTextProperty* tPropB = m_PlotActor->GetTitleTextProperty();
-  tPropB->SetColor(0.02,0.06,0.62);
-  tPropB->SetFontFamilyToArial();
-  tPropB->ItalicOff();
-  tPropB->BoldOff();
-  tPropB->SetFontSize(5);
+	m_LegendBoxTimeLine_Actor->SetEntryColor(0, m_ColorRGB);
 
-  m_PlotActor->SetAxisTitleTextProperty(tProp);
-  m_PlotActor->SetAxisLabelTextProperty(tProp);
-  m_PlotActor->SetTitleTextProperty(tProp);	
+	vtkNEW(m_PlotActor);
+	m_PlotActor->GetProperty()->SetColor(0.02, 0.06, 0.62);
+	m_PlotActor->GetProperty()->SetLineWidth(1.4);
 
-  //m_LegendBox_Actor = m_PlotActor->GetLegendBoxActor();
-  m_PlotActor->SetLegendPosition(0.75, 0.85); //Set position and size of the Legend Box
-  m_PlotActor->SetLegendPosition2(0.35, 0.25);
-  m_PlotActor->SetPosition(0.01,0.01);
-  m_PlotActor->SetPosition2(0.9,0.9);
-  m_PlotActor->SetVisibility(1);
-  m_PlotActor->SetXValuesToValue();
+	vtkTextProperty* tPropB = m_PlotActor->GetTitleTextProperty();
+	tPropB->SetColor(0.02, 0.06, 0.62);
+	tPropB->SetFontFamilyToArial();
+	tPropB->ItalicOff();
+	tPropB->BoldOff();
+	tPropB->SetFontSize(5);
 
-  bool tagPresent = true;
-  mafTagItem *tag_Signals = m_Vme->GetTagArray()->GetTag(_R("SIGNALS_COLOR"));
-  if (!tag_Signals)
-  {
-    tagPresent = false;
-    mafTagItem tag_Sig;
-    tag_Sig.SetName(_R("SIGNALS_COLOR"));
-    tag_Sig.SetNumberOfComponents(m_NumberOfSignals*3); //3 color values each signal
-    m_Vme->GetTagArray()->SetTag(tag_Sig);
-    tag_Signals = m_Vme->GetTagArray()->GetTag(_R("SIGNALS_COLOR"));
-  }
+	m_PlotActor->SetAxisTitleTextProperty(tProp);
+	m_PlotActor->SetAxisLabelTextProperty(tProp);
+	m_PlotActor->SetTitleTextProperty(tProp);
 
-  for (long n = 0; n < m_NumberOfSignals; n++)
-  {
-    long id = n*3;
-    if (tagPresent) //Retrieve signals colors from tag
-    {
-      m_ColorRGB[0] = tag_Signals->GetValueAsDouble(id);
-      m_ColorRGB[1] = tag_Signals->GetValueAsDouble(id+1);
-      m_ColorRGB[2] = tag_Signals->GetValueAsDouble(id+2);
-      m_PlotActor->SetPlotColor(n, m_ColorRGB);
-    }
-    else //Create random colors
-    {
-      m_ColorRGB[0] = rand() % 255;
-      m_ColorRGB[1] = rand() % 255;
-      m_ColorRGB[2] = rand() % 255;
-      m_PlotActor->SetPlotColor(n, m_ColorRGB);
-      tag_Signals->SetValue(m_ColorRGB[0], id);
-      tag_Signals->SetValue(m_ColorRGB[1], id+1);
-      tag_Signals->SetValue(m_ColorRGB[2], id+2);
-    }
-  }
+	//m_LegendBox_Actor = m_PlotActor->GetLegendBoxActor();
+	m_PlotActor->SetLegendPosition(0.75, 0.85); //Set position and size of the Legend Box
+	m_PlotActor->SetLegendPosition2(0.35, 0.25);
+	m_PlotActor->SetPosition(0.01, 0.01);
+	m_PlotActor->SetPosition2(0.9, 0.9);
+	m_PlotActor->SetVisibility(1);
+	m_PlotActor->SetXValuesToValue();
 
-  tagPresent = true;
-  mafTagItem *tagAxisTile = m_Vme->GetTagArray()->GetTag(_R("AXIS_TITLE"));
-  if (!tagAxisTile)
-  {
-    tagPresent = false;
-    mafTagItem tag_Sig;
-    tag_Sig.SetName(_R("AXIS_TITLE"));
-    tag_Sig.SetNumberOfComponents(2);
-    m_Vme->GetTagArray()->SetTag(tag_Sig);
-    tagAxisTile = m_Vme->GetTagArray()->GetTag(_R("AXIS_TITLE"));
-  }
+	bool tagPresent = true;
+	mafTagItem* tag_Signals = m_Vme->GetTagArray()->GetTag(_R("SIGNALS_COLOR"));
+	if (!tag_Signals)
+	{
+		tagPresent = false;
+		mafTagItem tag_Sig;
+		tag_Sig.SetName(_R("SIGNALS_COLOR"));
+		tag_Sig.SetNumberOfComponents(m_NumberOfSignals * 3); //3 color values each signal
+		m_Vme->GetTagArray()->SetTag(tag_Sig);
+		tag_Signals = m_Vme->GetTagArray()->GetTag(_R("SIGNALS_COLOR"));
+	}
 
-  if (tagPresent) //Retrieve axis title from tag
-  {
-    m_TitileX = tagAxisTile->GetValue(0);
-    m_TitileY = tagAxisTile->GetValue(1);
-  }
-  else //set default axis title
-  {
-    tagAxisTile->SetValue(m_TitileX,0);
-    tagAxisTile->SetValue(m_TitileY,1);
-  }
-  m_PlotActor->SetXTitle(m_TitileX.GetCStr());
-  m_PlotActor->SetYTitle(m_TitileY.GetCStr());
+	for (long n = 0; n < m_NumberOfSignals; n++)
+	{
+		long id = n * 3;
+		if (tagPresent) //Retrieve signals colors from tag
+		{
+			m_ColorRGB[0] = tag_Signals->GetValueAsDouble(id);
+			m_ColorRGB[1] = tag_Signals->GetValueAsDouble(id + 1);
+			m_ColorRGB[2] = tag_Signals->GetValueAsDouble(id + 2);
+			m_PlotActor->SetPlotColor(n, m_ColorRGB);
+		}
+		else //Create random colors
+		{
+			m_ColorRGB[0] = rand() % 255;
+			m_ColorRGB[1] = rand() % 255;
+			m_ColorRGB[2] = rand() % 255;
+			m_PlotActor->SetPlotColor(n, m_ColorRGB);
+			tag_Signals->SetValue(m_ColorRGB[0], id);
+			tag_Signals->SetValue(m_ColorRGB[1], id + 1);
+			tag_Signals->SetValue(m_ColorRGB[2], id + 2);
+		}
+	}
 
-  m_PlotTimeLineActor->SetXTitle(m_TitileX.GetCStr());
-  m_PlotTimeLineActor->SetYTitle(m_TitileY.GetCStr());
+	tagPresent = true;
+	mafTagItem* tagAxisTile = m_Vme->GetTagArray()->GetTag(_R("AXIS_TITLE"));
+	if (!tagAxisTile)
+	{
+		tagPresent = false;
+		mafTagItem tag_Sig;
+		tag_Sig.SetName(_R("AXIS_TITLE"));
+		tag_Sig.SetNumberOfComponents(2);
+		m_Vme->GetTagArray()->SetTag(tag_Sig);
+		tagAxisTile = m_Vme->GetTagArray()->GetTag(_R("AXIS_TITLE"));
+	}
 
-  m_RenFront->GetBackground(m_OldColour); // Save the old Color so we can restore it
-  m_RenFront->SetBackground(1,1,1);  
-  m_AlwaysVisibleRenderer->SetBackground(1,1,1);
+	if (tagPresent) //Retrieve axis title from tag
+	{
+		m_TitileX = tagAxisTile->GetValue(0);
+		m_TitileY = tagAxisTile->GetValue(1);
+	}
+	else //set default axis title
+	{
+		tagAxisTile->SetValue(m_TitileX, 0);
+		tagAxisTile->SetValue(m_TitileY, 1);
+	}
+	m_PlotActor->SetXTitle(m_TitileX.GetCStr());
+	m_PlotActor->SetYTitle(m_TitileY.GetCStr());
+
+	m_PlotTimeLineActor->SetXTitle(m_TitileX.GetCStr());
+	m_PlotTimeLineActor->SetYTitle(m_TitileY.GetCStr());
+
+	m_RenFront->GetBackground(m_OldColour); // Save the old Color so we can restore it
+	m_RenFront->SetBackground(1, 1, 1);
+	m_AlwaysVisibleRenderer->SetBackground(1, 1, 1);
 }
 
 //----------------------------------------------------------------------------
 void medPipeGraph::UpdateGraph()
 //----------------------------------------------------------------------------
 {
-  double scalarData = 0;
-  int counter_array = 0;
-  vtkDoubleArray *scalar;
-  vnl_vector<double> row;
+	double scalarData = 0;
+	int counter_array = 0;
+	vtkDoubleArray* scalar;
+	vnl_vector<double> row;
 
-  for(int i=0;i<m_VtkData.size();i++)
-  {
-    vtkDEL(m_VtkData[i]);
-  }
-  m_VtkData.clear();
+	for (int i = 0; i < m_VtkData.size(); i++)
+	{
+		vtkDEL(m_VtkData[i]);
+	}
+	m_VtkData.clear();
 
-  for(int i=0;i<m_ScalarArray.size();i++)
-  {
-    vtkDEL(m_ScalarArray[i]);
-  }
-  m_ScalarArray.clear();
+	for (int i = 0; i < m_ScalarArray.size(); i++)
+	{
+		vtkDEL(m_ScalarArray[i]);
+	}
+	m_ScalarArray.clear();
 
-  m_RenFront->RemoveActor2D(m_PlotActor);
-  m_RenFront->RemoveActor2D(m_PlotTimeLineActor);
+	m_RenFront->RemoveActor2D(m_PlotActor);
+	m_RenFront->RemoveActor2D(m_PlotTimeLineActor);
 
-  m_EmgPlot = medVMEAnalog::SafeDownCast(m_Vme);
+	m_EmgPlot = medVMEAnalog::SafeDownCast(m_Vme);
 
-   vtkNew<vtkDoubleArray> newTimeArray;
-   vtkNew<vtkDoubleArray> fakeTimeArray;
+	vtkNew<vtkDoubleArray> newTimeArray;
+	vtkNew<vtkDoubleArray> fakeTimeArray;
 
-   //cycle to get a fake scalar value
-   for (int c = 0; c < m_NumberOfSignals ; c++)
-   {
-     if (m_CheckedVector.at(c)) //fill the vector with vtkDoubleArray of signals checked
-     {
-       scalar = vtkDoubleArray::New();
-       row = m_EmgPlot->GetScalarOutput()->GetScalarData().get_row(c+1); //skip first row with time information
+	//cycle to get a fake scalar value
+	for (int c = 0; c < m_NumberOfSignals; c++)
+	{
+		if (m_CheckedVector.at(c)) //fill the vector with vtkDoubleArray of signals checked
+		{
+			scalar = vtkDoubleArray::New();
+			row = m_EmgPlot->GetScalarOutput()->GetScalarData().get_row(c + 1); //skip first row with time information
 
-       if (m_FitPlot)
-       {
-         for (int t = 0; t < m_TimeStamp; t++) 
-         { 
-           scalarData = row.get(t);
-           break;
-         }
-       }
-       scalar->Delete();
-     }
-   }
+			if (m_FitPlot)
+			{
+				for (int t = 0; t < m_TimeStamp; t++)
+				{
+					scalarData = row.get(t);
+					break;
+				}
+			}
+			scalar->Delete();
+		}
+	}
 
-  for (int c = 0; c < m_NumberOfSignals ; c++)
-  {
-    if (m_CheckedVector.at(c)) //fill the vector with vtkDoubleArray of signals checked
-    {
-      int counter = 0;
-      scalar = vtkDoubleArray::New();
-      row = m_EmgPlot->GetScalarOutput()->GetScalarData().get_row(c+1); //skip first row with time information
-      
-      if (m_FitPlot)
-       {
-        for (int t = 0; t < m_TimeStamp; t++) 
-        { 
-          newTimeArray->InsertValue(counter, m_TimeArray->GetValue(t));
-          scalarData = row.get(t);
-          scalar->InsertValue(counter, scalarData);
-          counter++;
-        }
-     }
-     else //if not Autofit plot, get values inside m_TimeManualRange
-     {
-      for (int t = 0; t < m_TimeStamp; t++) 
-      { 
-        if (m_TimesManualRange[0] <= m_TimeArray->GetValue(t) && m_TimeArray->GetValue(t) <= m_TimesManualRange[1])
-        {
-          newTimeArray->InsertValue(counter, m_TimeArray->GetValue(t));
-          scalarData = row.get(t);
-          scalar->InsertValue(counter, scalarData);
-          counter++;
-        }
-      }
-     }
-      
-      m_ScalarArray.push_back(scalar);
-      vtkRectilinearGrid *rect_grid;
-      rect_grid = vtkRectilinearGrid::New();
-      rect_grid->SetDimensions(newTimeArray->GetNumberOfTuples(), 1, 1);
-      rect_grid->SetXCoordinates(newTimeArray); 
-      rect_grid->GetPointData()->SetScalars(m_ScalarArray.at(c)); 
-      m_VtkData.push_back(rect_grid);
-      m_PlotActor->AddDataSetInput(m_VtkData.at(c));
-    }
-    else
-    {
-      scalar = vtkDoubleArray::New();
-      fakeTimeArray->Resize(0);
-      scalar->InsertValue(0, scalarData);  //now scalarData is a fake value, already present in the plot
-      m_ScalarArray.push_back(scalar);
+	for (int c = 0; c < m_NumberOfSignals; c++)
+	{
+		if (m_CheckedVector.at(c)) //fill the vector with vtkDoubleArray of signals checked
+		{
+			int counter = 0;
+			scalar = vtkDoubleArray::New();
+			row = m_EmgPlot->GetScalarOutput()->GetScalarData().get_row(c + 1); //skip first row with time information
 
-      vtkRectilinearGrid *rect_grid;
-      rect_grid = vtkRectilinearGrid::New();
-      rect_grid->SetDimensions(fakeTimeArray->GetNumberOfTuples(), 1, 1);
-      rect_grid->SetXCoordinates(fakeTimeArray); 
-      rect_grid->GetPointData()->SetScalars(m_ScalarArray.at(c)); 
-      m_VtkData.push_back(rect_grid);
-      m_PlotActor->AddDataSetInput(m_VtkData.at(c));
-    }
-  }
+			if (m_FitPlot)
+			{
+				for (int t = 0; t < m_TimeStamp; t++)
+				{
+					newTimeArray->InsertValue(counter, m_TimeArray->GetValue(t));
+					scalarData = row.get(t);
+					scalar->InsertValue(counter, scalarData);
+					counter++;
+				}
+			}
+			else //if not Autofit plot, get values inside m_TimeManualRange
+			{
+				for (int t = 0; t < m_TimeStamp; t++)
+				{
+					if (m_TimesManualRange[0] <= m_TimeArray->GetValue(t) && m_TimeArray->GetValue(t) <= m_TimesManualRange[1])
+					{
+						newTimeArray->InsertValue(counter, m_TimeArray->GetValue(t));
+						scalarData = row.get(t);
+						scalar->InsertValue(counter, scalarData);
+						counter++;
+					}
+				}
+			}
 
-  row.clear();
-  newTimeArray->GetRange(m_TimesRange);
+			m_ScalarArray.push_back(scalar);
+			vtkRectilinearGrid* rect_grid;
+			rect_grid = vtkRectilinearGrid::New();
+			rect_grid->SetDimensions(newTimeArray->GetNumberOfTuples(), 1, 1);
+			rect_grid->SetXCoordinates(newTimeArray);
+			rect_grid->GetPointData()->SetScalars(m_ScalarArray.at(c));
+			m_VtkData.push_back(rect_grid);
+			m_PlotActor->AddDataSetInput(m_VtkData.at(c));
+		}
+		else
+		{
+			scalar = vtkDoubleArray::New();
+			fakeTimeArray->Resize(0);
+			scalar->InsertValue(0, scalarData);  //now scalarData is a fake value, already present in the plot
+			m_ScalarArray.push_back(scalar);
 
-  double minY = 0;
-  double maxY = 0;
+			vtkRectilinearGrid* rect_grid;
+			rect_grid = vtkRectilinearGrid::New();
+			rect_grid->SetDimensions(fakeTimeArray->GetNumberOfTuples(), 1, 1);
+			rect_grid->SetXCoordinates(fakeTimeArray);
+			rect_grid->GetPointData()->SetScalars(m_ScalarArray.at(c));
+			m_VtkData.push_back(rect_grid);
+			m_PlotActor->AddDataSetInput(m_VtkData.at(c));
+		}
+	}
 
-  for (int i = 0; i < m_ScalarArray.size(); i++)
-  {
-    double dataRange[2];
-    m_ScalarArray.at(i)->GetRange(dataRange);
+	row.clear();
+	newTimeArray->GetRange(m_TimesRange);
 
-    if(dataRange[0] < minY)
-      minY = dataRange[0];
+	double minY = 0;
+	double maxY = 0;
 
-    if(dataRange[1] > maxY)
-      maxY = dataRange[1];
-  }
+	for (int i = 0; i < m_ScalarArray.size(); i++)
+	{
+		double dataRange[2];
+		m_ScalarArray.at(i)->GetRange(dataRange);
 
-  if (m_FitPlot)
-  {
-    m_PlotActor->SetPlotRange(m_TimesRange[0], minY, m_TimesRange[1], maxY);
-    m_PlotTimeLineActor->SetPlotRange(m_TimesRange[0], minY, m_TimesRange[1], maxY);
-  }
-  else
-  {
-    m_PlotActor->SetPlotRange(m_TimesRange[0], m_DataManualRange[0], m_TimesRange[1], m_DataManualRange[1]);
-    m_PlotTimeLineActor->SetPlotRange(m_TimesRange[0], m_DataManualRange[0], m_TimesRange[1], m_DataManualRange[1]);
-  }
+		if (dataRange[0] < minY)
+			minY = dataRange[0];
 
-  m_PlotActor->SetNumberOfXLabels(m_TimesRange[1]-m_TimesRange[0]); 
-  m_PlotActor->SetNumberOfYLabels(m_DataMax - m_DataMin);
+		if (dataRange[1] > maxY)
+			maxY = dataRange[1];
+	}
 
-  m_PlotTimeLineActor->SetNumberOfXLabels(m_TimesRange[1]-m_TimesRange[0]); 
-  m_PlotTimeLineActor->SetNumberOfYLabels(m_DataMax - m_DataMin);
+	if (m_FitPlot)
+	{
+		m_PlotActor->SetPlotRange(m_TimesRange[0], minY, m_TimesRange[1], maxY);
+		m_PlotTimeLineActor->SetPlotRange(m_TimesRange[0], minY, m_TimesRange[1], maxY);
+	}
+	else
+	{
+		m_PlotActor->SetPlotRange(m_TimesRange[0], m_DataManualRange[0], m_TimesRange[1], m_DataManualRange[1]);
+		m_PlotTimeLineActor->SetPlotRange(m_TimesRange[0], m_DataManualRange[0], m_TimesRange[1], m_DataManualRange[1]);
+	}
 
-  vtkDoubleArray *lineArray;
-  vtkNEW(lineArray);
-  lineArray->InsertNextTuple1(m_EmgPlot->GetTimeStamp());
-  lineArray->InsertNextTuple1(m_EmgPlot->GetTimeStamp());
+	m_PlotActor->SetNumberOfXLabels(m_TimesRange[1] - m_TimesRange[0]);
+	m_PlotActor->SetNumberOfYLabels(m_DataMax - m_DataMin);
 
-  vtkDoubleArray *scalarArrayLine;
-  vtkNEW(scalarArrayLine);
-  double scalarRange[2];
-  if(m_FitPlot)
-  {
-    scalarRange[0]=minY+abs(minY*0.1);
-    scalarRange[1]=maxY-abs(maxY*0.1);
-  }
-  else
-  {
-    scalarRange[0]=m_DataManualRange[0]+abs(m_DataManualRange[0]*0.1);
-    scalarRange[1]=m_DataManualRange[1]-abs(m_DataManualRange[1]*0.1);
-  }
-  scalarArrayLine->InsertNextTuple1(scalarRange[0]);
-  scalarArrayLine->InsertNextTuple1(scalarRange[1]);
+	m_PlotTimeLineActor->SetNumberOfXLabels(m_TimesRange[1] - m_TimesRange[0]);
+	m_PlotTimeLineActor->SetNumberOfYLabels(m_DataMax - m_DataMin);
 
-  vtkNEW(m_TimeLine);
-  m_TimeLine->SetDimensions(2, 1, 1);
-  m_TimeLine->SetXCoordinates(lineArray);
-  m_TimeLine->GetPointData()->SetScalars(scalarArrayLine); 
-  //m_TimeLine->Update();
+	vtkDoubleArray* lineArray;
+	vtkNEW(lineArray);
+	lineArray->InsertNextTuple1(m_EmgPlot->GetTimeStamp());
+	lineArray->InsertNextTuple1(m_EmgPlot->GetTimeStamp());
 
-  vtkDEL(lineArray);
-  vtkDEL(scalarArrayLine);
+	vtkDoubleArray* scalarArrayLine;
+	vtkNEW(scalarArrayLine);
+	double scalarRange[2];
+	if (m_FitPlot)
+	{
+		scalarRange[0] = minY + abs(minY * 0.1);
+		scalarRange[1] = maxY - abs(maxY * 0.1);
+	}
+	else
+	{
+		scalarRange[0] = m_DataManualRange[0] + abs(m_DataManualRange[0] * 0.1);
+		scalarRange[1] = m_DataManualRange[1] - abs(m_DataManualRange[1] * 0.1);
+	}
+	scalarArrayLine->InsertNextTuple1(scalarRange[0]);
+	scalarArrayLine->InsertNextTuple1(scalarRange[1]);
 
-  m_VtkData.push_back(m_TimeLine);
-  m_PlotTimeLineActor->AddDataSetInput((vtkDataSet*)m_TimeLine);
+	vtkNEW(m_TimeLine);
+	m_TimeLine->SetDimensions(2, 1, 1);
+	m_TimeLine->SetXCoordinates(lineArray);
+	m_TimeLine->GetPointData()->SetScalars(scalarArrayLine);
+	//m_TimeLine->Update();
 
-  m_RenFront->AddActor2D(m_PlotActor);
-  //m_RenFront->AddActor2D(m_PlotTimeLineActor);
-   
+	vtkDEL(lineArray);
+	vtkDEL(scalarArrayLine);
+
+	m_VtkData.push_back(m_TimeLine);
+	m_PlotTimeLineActor->AddDataSetInput((vtkDataSet*)m_TimeLine);
+
+	m_RenFront->AddActor2D(m_PlotActor);
+	//m_RenFront->AddActor2D(m_PlotTimeLineActor);
+
 }
 //----------------------------------------------------------------------------
 void medPipeGraph::CreateLegend()
 //----------------------------------------------------------------------------
 {
-  int counter_legend = 0;
-  mafString name; 
-  mafTagItem *tag_Signals = m_Vme->GetTagArray()->GetTag(_R("SIGNALS_COLOR"));
-  m_PlotActor->RemoveAllDataSetInputConnections();
-  for (int c = 0; c < m_NumberOfSignals ; c++)
-  {
-    int idx = c*3;
-    if (m_CheckBox->IsItemChecked(c))
-    { 
-      m_PlotActor->AddDataSetInput(m_VtkData.at(c));
-      m_LegendBox_Actor->SetNumberOfEntries(counter_legend + 1);
-      name = m_CheckBox->GetItemLabel(c);
-      m_LegendBox_Actor->SetEntryString(counter_legend, name.GetCStr());
+	int counter_legend = 0;
+	mafString name;
+	mafTagItem* tag_Signals = m_Vme->GetTagArray()->GetTag(_R("SIGNALS_COLOR"));
+	m_PlotActor->RemoveAllDataSetInputConnections();
+	for (int c = 0; c < m_NumberOfSignals; c++)
+	{
+		int idx = c * 3;
+		if (m_CheckBox->IsItemChecked(c))
+		{
+			m_PlotActor->AddDataSetInput(m_VtkData.at(c));
+			m_LegendBox_Actor->SetNumberOfEntries(counter_legend + 1);
+			name = m_CheckBox->GetItemLabel(c);
+			m_LegendBox_Actor->SetEntryString(counter_legend, name.GetCStr());
 
-      if(tag_Signals)
-      {
-        m_ColorRGB[0] = tag_Signals->GetValueAsDouble(idx);
-        m_ColorRGB[1] = tag_Signals->GetValueAsDouble(idx+1);
-        m_ColorRGB[2] = tag_Signals->GetValueAsDouble(idx+2);
-      }
-      m_LegendBox_Actor->SetEntryColor(counter_legend, m_ColorRGB);
-      counter_legend++;
-    }
-  }
+			if (tag_Signals)
+			{
+				m_ColorRGB[0] = tag_Signals->GetValueAsDouble(idx);
+				m_ColorRGB[1] = tag_Signals->GetValueAsDouble(idx + 1);
+				m_ColorRGB[2] = tag_Signals->GetValueAsDouble(idx + 2);
+			}
+			m_LegendBox_Actor->SetEntryColor(counter_legend, m_ColorRGB);
+			counter_legend++;
+		}
+	}
 
-  m_PlotTimeLineActor->RemoveAllDataSetInputConnections();
+	m_PlotTimeLineActor->RemoveAllDataSetInputConnections();
 
-  m_PlotTimeLineActor->AddDataSetInput(m_VtkData.at(m_VtkData.size()-1));
+	m_PlotTimeLineActor->AddDataSetInput(m_VtkData.at(m_VtkData.size() - 1));
 
 }
 //----------------------------------------------------------------------------
 void medPipeGraph::ChangeItemName()
 //----------------------------------------------------------------------------
 {
-  m_CheckBox->SetItemLabel(m_ItemId, m_ItemName);
-  if(mafTagItem *t = m_Vme->GetTagArray()->GetTag(_R("SIGNALS_NAME")))
-    t->SetValue(m_ItemName, m_ItemId);
-  m_CheckBox->Update();
+	m_CheckBox->SetItemLabel(m_ItemId, m_ItemName);
+	if (mafTagItem* t = m_Vme->GetTagArray()->GetTag(_R("SIGNALS_NAME")))
+		t->SetValue(m_ItemName, m_ItemId);
+	m_CheckBox->Update();
 }
 
 //----------------------------------------------------------------------------
 void medPipeGraph::ChangeAxisTitle()
 //----------------------------------------------------------------------------
 {
-  if(mafTagItem *t = m_Vme->GetTagArray()->GetTag(_R("AXIS_TITLE")))
-  {
-    t->SetValue(m_TitileX, 0);
-    t->SetValue(m_TitileY, 1);
-  }
+	if (mafTagItem* t = m_Vme->GetTagArray()->GetTag(_R("AXIS_TITLE")))
+	{
+		t->SetValue(m_TitileX, 0);
+		t->SetValue(m_TitileY, 1);
+	}
 }
 
 //----------------------------------------------------------------------------
 void medPipeGraph::ChangeSignalColor()
 //----------------------------------------------------------------------------
 {
-  m_PlotActor->SetPlotColor(m_ItemId, m_ColorRGB);
-  if(mafTagItem *t = m_Vme->GetTagArray()->GetTag(_R("SIGNALS_COLOR")))
-  {
+	m_PlotActor->SetPlotColor(m_ItemId, m_ColorRGB);
+	if (mafTagItem* t = m_Vme->GetTagArray()->GetTag(_R("SIGNALS_COLOR")))
+	{
 
-    long colorId = m_ItemId*3;
-    t->SetValue(m_ColorRGB[0], colorId);
-    t->SetValue(m_ColorRGB[1], colorId+1);
-    t->SetValue(m_ColorRGB[2], colorId+2);
-  }
-  m_CheckBox->Update();
+		long colorId = m_ItemId * 3;
+		t->SetValue(m_ColorRGB[0], colorId);
+		t->SetValue(m_ColorRGB[1], colorId + 1);
+		t->SetValue(m_ColorRGB[2], colorId + 2);
+	}
+	m_CheckBox->Update();
 }
 
 //----------------------------------------------------------------------------
 mafGUI* medPipeGraph::CreateGui()
 //----------------------------------------------------------------------------
 {
-  if(m_Gui == NULL) 
-    m_Gui = new mafGUI(this);
+	assert(!AccessGUI());
+	auto gui = new mafGUI(this);
 
-  m_Gui->String(ID_ITEM_NAME,_L("Name :"), &m_ItemName, _R(""));
-  m_Gui->Color(ID_SIGNALS_COLOR, _L("Color"), &m_SignalColor, _L("Set signal color"));
-  m_Gui->Divider(1);
+	gui->String(ID_ITEM_NAME, _L("Name :"), &m_ItemName, _R(""));
+	gui->Color(ID_SIGNALS_COLOR, _L("Color"), &m_SignalColor, _L("Set signal color"));
+	gui->Divider(1);
 
-  m_Gui->String(ID_AXIS_NAME_X,_L("X Title"), &m_TitileX,_L("Set X axis name"));
-  m_Gui->String(ID_AXIS_NAME_Y,_L("Y Title"), &m_TitileY,_L("Set Y axis name"));
-  m_Gui->Divider(1);
+	gui->String(ID_AXIS_NAME_X, _L("X Title"), &m_TitileX, _L("Set X axis name"));
+	gui->String(ID_AXIS_NAME_Y, _L("Y Title"), &m_TitileY, _L("Set Y axis name"));
+	gui->Divider(1);
 
-  if (m_TimeStampMax == 0.0)
-  {
-    m_TimeStampMax = VTK_DOUBLE_MAX;
-  }
+	if (m_TimeStampMax == 0.0)
+	{
+		m_TimeStampMax = VTK_DOUBLE_MAX;
+	}
 
-  m_Gui->VectorN(ID_RANGE_X, _L("Range X"), m_TimesManualRange, 2, 0, m_TimeStampMax);
-  m_Gui->VectorN(ID_RANGE_Y, _L("Range Y"), m_DataManualRange, 2, m_DataMin, m_DataMax);
+	gui->VectorN(ID_RANGE_X, _L("Range X"), m_TimesManualRange, 2, 0, m_TimeStampMax);
+	gui->VectorN(ID_RANGE_Y, _L("Range Y"), m_DataManualRange, 2, m_DataMin, m_DataMax);
 
-  m_Gui->Enable(ID_RANGE_X, !m_FitPlot);
-  m_Gui->Enable(ID_RANGE_Y, !m_FitPlot);
+	gui->Enable(ID_RANGE_X, !m_FitPlot);
+	gui->Enable(ID_RANGE_Y, !m_FitPlot);
 
-  m_Gui->Bool(ID_FIT_PLOT,_L("Autofit plot"),&m_FitPlot,1,_L("Fit bounds to display all graph"));
-  m_Gui->Divider();
+	gui->Bool(ID_FIT_PLOT, _L("Autofit plot"), &m_FitPlot, 1, _L("Fit bounds to display all graph"));
+	gui->Divider();
 
-  m_Gui->Divider();
+	gui->Divider();
 
-  m_Gui->Bool(ID_LEGEND,_L("Legend"),&m_Legend,0,_L("Show legend"));
-  m_Gui->Divider(1);
+	gui->Bool(ID_LEGEND, _L("Legend"), &m_Legend, 0, _L("Show legend"));
+	gui->Divider(1);
 
-  mafString name;
-  bool checked = FALSE;
+	mafString name;
+	bool checked = FALSE;
 
-  m_Gui->Label(_R("Item"));
-	m_CheckBox = m_Gui->CheckList(ID_CHECK_BOX,_L(""),200,_L("Choose item to plot"));
-  m_Gui->Button(ID_DRAW,_L("Plot"), _R(""),_L("Draw selected items"));
-  m_Gui->Divider();
+	gui->Label(_R("Item"));
+	m_CheckBox = gui->CheckList(ID_CHECK_BOX, _L(""), 200, _L("Choose item to plot"));
+	gui->Button(ID_DRAW, _L("Plot"), _R(""), _L("Draw selected items"));
+	gui->Divider();
 
-  bool tagPresent = true;
-  mafTagItem *tag_Signals = m_Vme->GetTagArray()->GetTag(_R("SIGNALS_NAME"));
-  if (!tag_Signals)
-  {
-    tagPresent = false;
-    mafTagItem tag_Sig;
-    tag_Sig.SetName(_R("SIGNALS_NAME"));
-    tag_Sig.SetNumberOfComponents(m_NumberOfSignals);
-    m_Vme->GetTagArray()->SetTag(tag_Sig);
-    tag_Signals = m_Vme->GetTagArray()->GetTag(_R("SIGNALS_NAME"));
-  }
+	bool tagPresent = true;
+	mafTagItem* tag_Signals = m_Vme->GetTagArray()->GetTag(_R("SIGNALS_NAME"));
+	if (!tag_Signals)
+	{
+		tagPresent = false;
+		mafTagItem tag_Sig;
+		tag_Sig.SetName(_R("SIGNALS_NAME"));
+		tag_Sig.SetNumberOfComponents(m_NumberOfSignals);
+		m_Vme->GetTagArray()->SetTag(tag_Sig);
+		tag_Signals = m_Vme->GetTagArray()->GetTag(_R("SIGNALS_NAME"));
+	}
 
-  for (int n = 0; n < m_NumberOfSignals; n++)
-  {
-    if (tagPresent)
-    {
-      name = tag_Signals->GetValue(n);
-    }
-    else
-    {
-      name = m_ItemName + mafToString(n);
-      tag_Signals->SetValue(name, n);
-    }
-     m_CheckBox->AddItem(n , name.toWx(), checked);
-  }
-  return m_Gui;
+	for (int n = 0; n < m_NumberOfSignals; n++)
+	{
+		if (tagPresent)
+		{
+			name = tag_Signals->GetValue(n);
+		}
+		else
+		{
+			name = m_ItemName + mafToString(n);
+			tag_Signals->SetValue(name, n);
+		}
+		m_CheckBox->AddItem(n, name.toWx(), checked);
+	}
+	return gui;
 }
 
 //----------------------------------------------------------------------------
-void medPipeGraph::OnEvent(mafEventBase *maf_event)
+void medPipeGraph::OnEvent(mafEventBase* maf_event)
 //----------------------------------------------------------------------------
 {
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    switch(e->GetId())
-    {
-    case ID_RANGE_X:
-    case ID_RANGE_Y:
-      {
-        if (m_TimesManualRange[0] >= m_TimesManualRange[1] || m_DataManualRange[0] >= m_DataManualRange[1])
-        {
-          mafErrorMessage(_M("Invalid plot range!"));
-          return;
-        }
-        m_PlotActor->RemoveAllDataSetInputConnections();
-        UpdateGraph();
-        CreateLegend();
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      }
-      break;
-    case ID_FIT_PLOT:
-      {
-        m_Gui->Enable(ID_RANGE_X, !m_FitPlot);
-        m_Gui->Enable(ID_RANGE_Y, !m_FitPlot);
-        m_PlotActor->RemoveAllDataSetInputConnections();
-        UpdateGraph();
-        CreateLegend();
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      }
-      break;
-    case ID_SIGNALS_COLOR:
-      {
-        m_ColorRGB[0] = m_SignalColor.Red()/255.0;
-        m_ColorRGB[1] = m_SignalColor.Green()/255.0;
-        m_ColorRGB[2] = m_SignalColor.Blue()/255.0;
-        ChangeSignalColor();
-        m_PlotActor->RemoveAllDataSetInputConnections();
-        UpdateGraph();
-        CreateLegend();
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      }
-      break;
-    case ID_DRAW:
-      {
-        m_PlotActor->RemoveAllDataSetInputConnections();
-        UpdateGraph();
-        CreateLegend();
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      }
-      break;
-    case ID_LEGEND:
-      {
-        switch (m_Legend)
-        {
-        case TRUE:
-          {
-            m_PlotActor->LegendOn();
-          }
-          break;
-        case FALSE:
-          {
-            m_PlotActor->LegendOff();
-          } 
-          break;
-        }
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      }
-      break;
-    case ID_ITEM_NAME:
-      {
-        ChangeItemName();
-        CreateLegend();
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      }
-      break;
-    case ID_AXIS_NAME_X:
-        m_PlotActor->SetXTitle(m_TitileX.GetCStr());
-        m_PlotTimeLineActor->SetXTitle(m_TitileX.GetCStr());
-        ChangeAxisTitle();
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      break;
-    case ID_AXIS_NAME_Y:
-        m_PlotActor->SetYTitle(m_TitileY.GetCStr());
-        m_PlotTimeLineActor->SetYTitle(m_TitileY.GetCStr());
-        ChangeAxisTitle();
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      break;
-    case ID_CHECK_BOX:
-      {
-        m_ItemId = e->GetArg();
-        m_ItemName = m_CheckBox->GetItemLabel(m_ItemId);
-        m_Gui->Update();
-        for (int i = 0; i < m_CheckedVector.size(); i++)
-        {
-          if (m_CheckedVector.at(i) != m_CheckBox->IsItemChecked(i))
-          {
-            m_CheckedVector[i] = m_CheckBox->IsItemChecked(i);
-            break;
-          }
-        } 
-      }
-      break;
-    default:
-     InvokeEvent(*e);
-    }  
-  }
-  else if(maf_event->GetId() == VME_TIME_SET)
-  {
-    if(!m_TimeLine)
-      vtkNEW(m_TimeLine);
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
+	{
+		auto gui = AccessGUI();
+		switch (e->GetId())
+		{
+		case ID_RANGE_X:
+		case ID_RANGE_Y:
+		{
+			if (m_TimesManualRange[0] >= m_TimesManualRange[1] || m_DataManualRange[0] >= m_DataManualRange[1])
+			{
+				mafErrorMessage(_M("Invalid plot range!"));
+				return;
+			}
+			m_PlotActor->RemoveAllDataSetInputConnections();
+			UpdateGraph();
+			CreateLegend();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		}
+		break;
+		case ID_FIT_PLOT:
+		{
+			gui->Enable(ID_RANGE_X, !m_FitPlot);
+			gui->Enable(ID_RANGE_Y, !m_FitPlot);
+			m_PlotActor->RemoveAllDataSetInputConnections();
+			UpdateGraph();
+			CreateLegend();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		}
+		break;
+		case ID_SIGNALS_COLOR:
+		{
+			m_ColorRGB[0] = m_SignalColor.Red() / 255.0;
+			m_ColorRGB[1] = m_SignalColor.Green() / 255.0;
+			m_ColorRGB[2] = m_SignalColor.Blue() / 255.0;
+			ChangeSignalColor();
+			m_PlotActor->RemoveAllDataSetInputConnections();
+			UpdateGraph();
+			CreateLegend();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		}
+		break;
+		case ID_DRAW:
+		{
+			m_PlotActor->RemoveAllDataSetInputConnections();
+			UpdateGraph();
+			CreateLegend();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		}
+		break;
+		case ID_LEGEND:
+		{
+			switch (m_Legend)
+			{
+			case TRUE:
+			{
+				m_PlotActor->LegendOn();
+			}
+			break;
+			case FALSE:
+			{
+				m_PlotActor->LegendOff();
+			}
+			break;
+			}
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		}
+		break;
+		case ID_ITEM_NAME:
+		{
+			ChangeItemName();
+			CreateLegend();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		}
+		break;
+		case ID_AXIS_NAME_X:
+			m_PlotActor->SetXTitle(m_TitileX.GetCStr());
+			m_PlotTimeLineActor->SetXTitle(m_TitileX.GetCStr());
+			ChangeAxisTitle();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+			break;
+		case ID_AXIS_NAME_Y:
+			m_PlotActor->SetYTitle(m_TitileY.GetCStr());
+			m_PlotTimeLineActor->SetYTitle(m_TitileY.GetCStr());
+			ChangeAxisTitle();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+			break;
+		case ID_CHECK_BOX:
+		{
+			m_ItemId = e->GetArg();
+			m_ItemName = m_CheckBox->GetItemLabel(m_ItemId);
+			UpdateGUI();
+			for (int i = 0; i < m_CheckedVector.size(); i++)
+			{
+				if (m_CheckedVector.at(i) != m_CheckBox->IsItemChecked(i))
+				{
+					m_CheckedVector[i] = m_CheckBox->IsItemChecked(i);
+					break;
+				}
+			}
+		}
+		break;
+		default:
+			InvokeEvent(*e);
+		}
+	}
+	else if (maf_event->GetId() == VME_TIME_SET)
+	{
+		if (!m_TimeLine)
+			vtkNEW(m_TimeLine);
 
-    m_RenFront->RemoveActor2D(m_PlotTimeLineActor);
+		m_RenFront->RemoveActor2D(m_PlotTimeLineActor);
 
-    vtkDoubleArray *lineArray;
-    vtkNEW(lineArray);
-    lineArray->InsertNextTuple1(m_EmgPlot->GetTimeStamp());
-    lineArray->InsertNextTuple1(m_EmgPlot->GetTimeStamp());
+		vtkDoubleArray* lineArray;
+		vtkNEW(lineArray);
+		lineArray->InsertNextTuple1(m_EmgPlot->GetTimeStamp());
+		lineArray->InsertNextTuple1(m_EmgPlot->GetTimeStamp());
 
-    vtkDoubleArray *scalarArrayLine;
-    vtkNEW(scalarArrayLine);
-    double scalarRange[2];
-    
-    double minY = 0;
-    double maxY = 0;
+		vtkDoubleArray* scalarArrayLine;
+		vtkNEW(scalarArrayLine);
+		double scalarRange[2];
 
-    for (int i = 0; i < m_ScalarArray.size(); i++)
-    {
-      double dataRange[2];
-      m_ScalarArray.at(i)->GetRange(dataRange);
+		double minY = 0;
+		double maxY = 0;
 
-      if(dataRange[0] < minY)
-        minY = dataRange[0];
+		for (int i = 0; i < m_ScalarArray.size(); i++)
+		{
+			double dataRange[2];
+			m_ScalarArray.at(i)->GetRange(dataRange);
 
-      if(dataRange[1] > maxY)
-        maxY = dataRange[1];
-    }
+			if (dataRange[0] < minY)
+				minY = dataRange[0];
 
-    if(m_FitPlot)
-    {
-      scalarRange[0]=minY+abs(minY*0.1);
-      scalarRange[1]=maxY-abs(maxY*0.1);
-    }
-    else
-    {
-      scalarRange[0]=m_DataManualRange[0]+abs(m_DataManualRange[0]*0.1);
-      scalarRange[1]=m_DataManualRange[1]-abs(m_DataManualRange[1]*0.1);
-    }
-    scalarArrayLine->InsertNextTuple1(scalarRange[0]);
-    scalarArrayLine->InsertNextTuple1(scalarRange[1]);
+			if (dataRange[1] > maxY)
+				maxY = dataRange[1];
+		}
 
-    vtkDEL(m_TimeLine);
-    vtkNEW(m_TimeLine);
-    m_TimeLine->SetDimensions(2, 1, 1);
-    m_TimeLine->SetXCoordinates(lineArray);
-    m_TimeLine->GetPointData()->SetScalars(scalarArrayLine); 
-    //m_TimeLine->Update();
+		if (m_FitPlot)
+		{
+			scalarRange[0] = minY + abs(minY * 0.1);
+			scalarRange[1] = maxY - abs(maxY * 0.1);
+		}
+		else
+		{
+			scalarRange[0] = m_DataManualRange[0] + abs(m_DataManualRange[0] * 0.1);
+			scalarRange[1] = m_DataManualRange[1] - abs(m_DataManualRange[1] * 0.1);
+		}
+		scalarArrayLine->InsertNextTuple1(scalarRange[0]);
+		scalarArrayLine->InsertNextTuple1(scalarRange[1]);
 
-    vtkDEL(lineArray);
-    vtkDEL(scalarArrayLine);
+		vtkDEL(m_TimeLine);
+		vtkNEW(m_TimeLine);
+		m_TimeLine->SetDimensions(2, 1, 1);
+		m_TimeLine->SetXCoordinates(lineArray);
+		m_TimeLine->GetPointData()->SetScalars(scalarArrayLine);
+		//m_TimeLine->Update();
 
-    m_VtkData.pop_back();
-    m_VtkData.push_back(m_TimeLine);
+		vtkDEL(lineArray);
+		vtkDEL(scalarArrayLine);
 
-    m_PlotTimeLineActor->AddDataSetInput((vtkDataSet*)m_TimeLine);
-    m_RenFront->AddActor2D(m_PlotTimeLineActor);
-    
-    CreateLegend();
-  }
+		m_VtkData.pop_back();
+		m_VtkData.push_back(m_TimeLine);
+
+		m_PlotTimeLineActor->AddDataSetInput((vtkDataSet*)m_TimeLine);
+		m_RenFront->AddActor2D(m_PlotTimeLineActor);
+
+		CreateLegend();
+	}
 }
 //----------------------------------------------------------------------------
-void medPipeGraph::SetSignalToPlot(int index,bool plot)
+void medPipeGraph::SetSignalToPlot(int index, bool plot)
 //----------------------------------------------------------------------------
 {
-  //m_CheckBox->CheckItem(index,plot);
-  if (index < m_CheckedVector.size())
-  {
-    //m_CheckedVector.assign(index, plot);
-    m_CheckedVector.at(index) = plot;
-  }
+	//m_CheckBox->CheckItem(index,plot);
+	if (index < m_CheckedVector.size())
+	{
+		//m_CheckedVector.assign(index, plot);
+		m_CheckedVector.at(index) = plot;
+	}
 }
 //----------------------------------------------------------------------------
 void medPipeGraph::SetTitleX(mafString title)
 //----------------------------------------------------------------------------
 {
-  m_TitileX = title;
-  m_PlotActor->SetXTitle(m_TitileX.GetCStr());
-  m_PlotTimeLineActor->SetXTitle(m_TitileX.GetCStr());
-  ChangeAxisTitle();
+	m_TitileX = title;
+	m_PlotActor->SetXTitle(m_TitileX.GetCStr());
+	m_PlotTimeLineActor->SetXTitle(m_TitileX.GetCStr());
+	ChangeAxisTitle();
 }
 //----------------------------------------------------------------------------
 void medPipeGraph::SetTitleY(mafString title)
 //----------------------------------------------------------------------------
 {
-  m_TitileY = title;
-  m_PlotActor->SetYTitle(m_TitileY.GetCStr());
-  m_PlotTimeLineActor->SetYTitle(m_TitileY.GetCStr());
-  ChangeAxisTitle();
+	m_TitileY = title;
+	m_PlotActor->SetYTitle(m_TitileY.GetCStr());
+	m_PlotTimeLineActor->SetYTitle(m_TitileY.GetCStr());
+	ChangeAxisTitle();
 }
 //----------------------------------------------------------------------------
 void medPipeGraph::SetTitle(mafString title)
 //----------------------------------------------------------------------------
 {
-  m_Title = title;
-  m_PlotActor->SetTitle(m_Title.GetCStr());
-  m_PlotTimeLineActor->SetTitle(m_Title.GetCStr());
+	m_Title = title;
+	m_PlotActor->SetTitle(m_Title.GetCStr());
+	m_PlotTimeLineActor->SetTitle(m_Title.GetCStr());
 }

@@ -92,7 +92,6 @@ public:
   /** Show view settings into the tabbed sidebar. */
   //void	ShowSettings();
   /** Update all gui widgets*/
-  void      UpdateGui();
   /** Set the vtk RenderWindow size. Used only for Linux (not necessary for Windows) */
   void SetWindowSize(int w, int h) override;
 

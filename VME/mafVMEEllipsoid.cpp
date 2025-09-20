@@ -59,16 +59,16 @@ mafVMEEllipsoid::mafVMEEllipsoid()
 	this->c = 10;
 
 	this->rotationMatrix = Matrix3d::Identity();
-	
+
 	this->name = _R("ellipsoid");
 
 	m_Transform = mafTransform::NewSPtr();
-	mafVMEOutputSurface *output = mafVMEOutputSurface::New(); // an output with no data
+	mafVMEOutputSurface* output = mafVMEOutputSurface::New(); // an output with no data
 	output->SetTransform(m_Transform); // force my transform in the output
 	SetOutput(output);
 	GetMaterial();
 	vtkNEW(m_PolyData);
-	
+
 	vtkNew<vtkSphereSource> surf;
 	surf->SetRadius(b);
 	surf->SetPhiResolution(resPhi);
@@ -100,7 +100,7 @@ mafVMEEllipsoid::mafVMEEllipsoid()
 
 mafVMEEllipsoid::~mafVMEEllipsoid()
 {
-	
+
 	vtkDEL(m_PolyData);
 	SetOutput(NULL);
 
@@ -109,43 +109,43 @@ mafVMEEllipsoid::~mafVMEEllipsoid()
 void mafVMEEllipsoid::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
 {
-  Superclass::InternalStore(parent);
-  parent[_R("name")].SetValue(name);
-  parent[_R("landmarkName")].SetValue(m_LandmarkName);
-  parent[_R("Centerx")].SetValue(center(0));
-  parent[_R("Centery")].SetValue(center(1));
-  parent[_R("Centerz")].SetValue(center(2));
-  parent[_R("a")].SetValue(a);
-  parent[_R("b")].SetValue(b);
-  parent[_R("c")].SetValue(c);
-  parent[_R("Theta")].SetValue(resTheta);
-  parent[_R("Phi")].SetValue(resPhi);
-  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
+	Superclass::InternalStore(parent);
+	parent[_R("name")].SetValue(name);
+	parent[_R("landmarkName")].SetValue(m_LandmarkName);
+	parent[_R("Centerx")].SetValue(center(0));
+	parent[_R("Centery")].SetValue(center(1));
+	parent[_R("Centerz")].SetValue(center(2));
+	parent[_R("a")].SetValue(a);
+	parent[_R("b")].SetValue(b);
+	parent[_R("c")].SetValue(c);
+	parent[_R("Theta")].SetValue(resTheta);
+	parent[_R("Phi")].SetValue(resPhi);
+	parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
 }
 
 void mafVMEEllipsoid::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  Superclass::InternalRestore(node);
-  name = node[_R("name")].As<mafString>();
-  m_LandmarkName = node[_R("landmarkName")].As<mafString>();
-  center(0) = node[_R("Centerx")].As<double>();
-  center(1) = node[_R("Centery")].As<double>();
-  center(2) = node[_R("Centerz")].As<double>();
-  a = node[_R("a")].As<double>();
-  b = node[_R("b")].As<double>();
-  c = node[_R("c")].As<double>();
-  resTheta = node[_R("Theta")].As<double>();
-  resPhi = node[_R("Phi")].As<double>();
-  m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
+	Superclass::InternalRestore(node);
+	name = node[_R("name")].As<mafString>();
+	m_LandmarkName = node[_R("landmarkName")].As<mafString>();
+	center(0) = node[_R("Centerx")].As<double>();
+	center(1) = node[_R("Centery")].As<double>();
+	center(2) = node[_R("Centerz")].As<double>();
+	a = node[_R("a")].As<double>();
+	b = node[_R("b")].As<double>();
+	c = node[_R("c")].As<double>();
+	resTheta = node[_R("Theta")].As<double>();
+	resPhi = node[_R("Phi")].As<double>();
+	m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
 }
-void mafVMEEllipsoid::OnEvent(mafEventBase *maf_event)
+void mafVMEEllipsoid::OnEvent(mafEventBase* maf_event)
 //-------------------------------------------------------------------------
 {
 
 
 	// events to be sent up or down in the tree are simply forwarded
-	if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
 	{
 		switch (e->GetId())
 		{
@@ -157,51 +157,51 @@ void mafVMEEllipsoid::OnEvent(mafEventBase *maf_event)
 			InternalUpdate();
 			e->SetId(CAMERA_UPDATE);
 			ForwardUpEvent(e);
-									 
+
 		}
-			break;
+		break;
 		case ID_ELLIPSOIDCenter_LINK:
 		{
-				  mafID button_id = e->GetId();
-				  mafString title = _L("Choose ellipsoid center vme link");
-				  e->SetId(VME_CHOOSE);
-								  
-				  e->SetString(&title);
-				  ForwardUpEvent(e);
-				  if (auto n = e->GetVme())
-					  {
+			mafID button_id = e->GetId();
+			mafString title = _L("Choose ellipsoid center vme link");
+			e->SetId(VME_CHOOSE);
 
-					  mafTimeStamp currTs = GetTimeStamp();
-						auto m_TmpTransform = mafTransform::NewSPtr();
-						mafMatrix tm;
-					 
-					
-				    
-					  SetCenterLink(_R("centerLandmark"), n);
-					  m_LandmarkName = n->GetName();
-								  
-					  center_vme = GetCenterVME();
-					   double r[3]; double centerLocal[3];
-					   center_vme->GetOutput()->GetAbsPose(centerAbs, r, currTs);
+			e->SetString(&title);
+			ForwardUpEvent(e);
+			if (auto n = e->GetVme())
+			{
 
-					   center_vme->GetOutput()->GetAbsMatrix(tm, currTs);
-					   m_TmpTransform->SetMatrix(tm);
-					   m_TmpTransform->TransformPoint(centerAbs, centerAbs);
-				
-					  center(0) = centerAbs[0];
-					  center(1) = centerAbs[1];
-					  center(2) = centerAbs[2];
-					  
-				
-					  
+				mafTimeStamp currTs = GetTimeStamp();
+				auto m_TmpTransform = mafTransform::NewSPtr();
+				mafMatrix tm;
 
 
-					  m_Gui->Update();
-					  InternalUpdate();
-					  }
-								  
+
+				SetCenterLink(_R("centerLandmark"), n);
+				m_LandmarkName = n->GetName();
+
+				center_vme = GetCenterVME();
+				double r[3]; double centerLocal[3];
+				center_vme->GetOutput()->GetAbsPose(centerAbs, r, currTs);
+
+				center_vme->GetOutput()->GetAbsMatrix(tm, currTs);
+				m_TmpTransform->SetMatrix(tm);
+				m_TmpTransform->TransformPoint(centerAbs, centerAbs);
+
+				center(0) = centerAbs[0];
+				center(1) = centerAbs[1];
+				center(2) = centerAbs[2];
+
+
+
+
+
+				UpdateGUI();
+				InternalUpdate();
+			}
+
 		}
-			break;
+		break;
 
 		default:
 			mafVME::OnEvent(maf_event);
@@ -213,7 +213,7 @@ void mafVMEEllipsoid::OnEvent(mafEventBase *maf_event)
 		Superclass::OnEvent(maf_event);
 	}
 }
-mafVME *mafVMEEllipsoid::GetCenterVME()
+mafVME* mafVMEEllipsoid::GetCenterVME()
 //-------------------------------------------------------------------------
 {
 
@@ -226,34 +226,34 @@ mafVME *mafVMEEllipsoid::GetCenterVME()
 mafGUI* mafVMEEllipsoid::CreateGui()
 //-------------------------------------------------------------------------
 {
-	
-	m_Gui = mafVME::CreateGui();
-	m_Gui->Label(_R("Ellipsoid Gui"));
+
+	auto gui = mafVME::CreateGui();
+	gui->Label(_R("Ellipsoid Gui"));
 	//m_Gui->Double(CHANGE_VALUE_Ellipsoid, _("CenterX"), &center(0));
 //	m_Gui->Double(CHANGE_VALUE_Ellipsoid, _("CenterY"), &center(1));
 //	m_Gui->Double(CHANGE_VALUE_Ellipsoid, _("CenterZ"), &center(2));
-	m_Gui->Double(CHANGE_VALUE_Ellipsoid, _L("RX"), &a);
-	m_Gui->Double(CHANGE_VALUE_Ellipsoid, _L("RY"), &b);
-	m_Gui->Double(CHANGE_VALUE_Ellipsoid, _L("RZ"), &c);
+	gui->Double(CHANGE_VALUE_Ellipsoid, _L("RX"), &a);
+	gui->Double(CHANGE_VALUE_Ellipsoid, _L("RY"), &b);
+	gui->Double(CHANGE_VALUE_Ellipsoid, _L("RZ"), &c);
 
-	m_Gui->Double(CHANGE_VALUE_Ellipsoid, _L("Theta"), &resTheta);
-	m_Gui->Double(CHANGE_VALUE_Ellipsoid, _L("Phi"), &resPhi);
-	m_Gui->Divider();
-	m_Gui->Button(ID_ELLIPSOIDCenter_LINK, &m_LandmarkName, _L("centerLandmark"), _L("select the center"));
-	m_Gui->FitGui();
-	m_Gui->Update();
-	return m_Gui;
+	gui->Double(CHANGE_VALUE_Ellipsoid, _L("Theta"), &resTheta);
+	gui->Double(CHANGE_VALUE_Ellipsoid, _L("Phi"), &resPhi);
+	gui->Divider();
+	gui->Button(ID_ELLIPSOIDCenter_LINK, &m_LandmarkName, _L("centerLandmark"), _L("select the center"));
+	gui->FitGui();
+	gui->Update();
+	return gui;
 }
 
 
-mafVMEOutputSurface *mafVMEEllipsoid::GetSurfaceOutput()
+mafVMEOutputSurface* mafVMEEllipsoid::GetSurfaceOutput()
 //-------------------------------------------------------------------------
 {
 
-	return (mafVMEOutputSurface *)GetOutput();
+	return (mafVMEOutputSurface*)GetOutput();
 }
 //-------------------------------------------------------------------------
-void mafVMEEllipsoid::SetMatrix(const mafMatrix &mat)
+void mafVMEEllipsoid::SetMatrix(const mafMatrix& mat)
 //-------------------------------------------------------------------------
 {
 
@@ -268,7 +268,7 @@ bool mafVMEEllipsoid::IsAnimated()
 	return false;
 }
 //-------------------------------------------------------------------------
-void mafVMEEllipsoid::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)
+void mafVMEEllipsoid::GetLocalTimeStamps(std::vector<mafTimeStamp>& kframes)
 //-------------------------------------------------------------------------
 {
 
@@ -288,14 +288,13 @@ void mafVMEEllipsoid::SetTimeStamp(mafTimeStamp t)
 	Superclass::SetTimeStamp(t);
 
 	this->InternalUpdate();
-	if (m_Gui)
-		m_Gui->Update();
+	UpdateGUI();
 }
 
 
 // private methods
 
-double mafVMEEllipsoid::surf(const Vector3d &point) const
+double mafVMEEllipsoid::surf(const Vector3d& point) const
 {
 	double x = point(0);
 	double y = point(1);
@@ -309,11 +308,11 @@ double mafVMEEllipsoid::surf(const Vector3d &point) const
 		(((y - y0) * (y - y0)) / (b * b)) +
 		(((z - z0) * (z - z0)) / (c * c))
 		- 1;*/
-	//introducing rotation
+		//introducing rotation
 	RowVector3d xyz_loc;
 	xyz_loc << x - x0, y - y0, z - z0;
-	Vector3d aa=xyz_loc*rotationMatrix;
-	
+	Vector3d aa = xyz_loc * rotationMatrix;
+
 
 
 	double dist = ((aa[0] * aa[0]) / (a * a)) +
@@ -324,7 +323,7 @@ double mafVMEEllipsoid::surf(const Vector3d &point) const
 	return dist;
 }
 
-RowVector3d mafVMEEllipsoid::grad(const Vector3d &point) const
+RowVector3d mafVMEEllipsoid::grad(const Vector3d& point) const
 {
 	//RowVector3d gradient;
 	RowVector3d gradient2;
@@ -337,39 +336,39 @@ RowVector3d mafVMEEllipsoid::grad(const Vector3d &point) const
 	double y0 = center(1);
 	double z0 = center(2);
 
-//	gradient(0) = 2 * (x - x0) / (a*a);
-//	gradient(1) = 2 * (y - y0) / (b*b);
-//	gradient(2) = 2 * (z - z0) / (c*c);
+	//	gradient(0) = 2 * (x - x0) / (a*a);
+	//	gradient(1) = 2 * (y - y0) / (b*b);
+	//	gradient(2) = 2 * (z - z0) / (c*c);
 
-	//introducing Rotation
+		//introducing Rotation
 	RowVector3d xyz_loc;
 	xyz_loc << x - x0, y - y0, z - z0;
-	Vector3d aa = xyz_loc*rotationMatrix;
+	Vector3d aa = xyz_loc * rotationMatrix;
 
-	gradientLoc(0) = 2 * aa(0) / (a*a);
-	gradientLoc(1) = 2 * aa(1) / (b*b);
-	gradientLoc(2) = 2 * aa(2) / (c*c);
+	gradientLoc(0) = 2 * aa(0) / (a * a);
+	gradientLoc(1) = 2 * aa(1) / (b * b);
+	gradientLoc(2) = 2 * aa(2) / (c * c);
 
-	gradient2 = gradientLoc*rotationMatrix.transpose();
+	gradient2 = gradientLoc * rotationMatrix.transpose();
 	return gradient2;
 }
 
 
 
 
-Matrix3d mafVMEEllipsoid::hess(const Vector3d &point) const
+Matrix3d mafVMEEllipsoid::hess(const Vector3d& point) const
 {
 	Matrix3d hess;
 	hess.setZero();
-	hess(0, 0) = 2 / (a*a);
-	hess(1, 1) = 2 / (b*b);
-	hess(2, 2) = 2 / (c*c);
+	hess(0, 0) = 2 / (a * a);
+	hess(1, 1) = 2 / (b * b);
+	hess(2, 2) = 2 / (c * c);
 
 	//introducing rotation
 	Matrix3d hess2;
-	
 
-	hess2 = rotationMatrix*hess*rotationMatrix.transpose();
+
+	hess2 = rotationMatrix * hess * rotationMatrix.transpose();
 	return hess2;
 }
 
@@ -398,17 +397,17 @@ void mafVMEEllipsoid::UpdateLinks()
 
 	mafID sub_id = -1;
 	center_vme = GetCenterVME();
-	
+
 
 	if (center_vme && center_vme->IsMAFType(mafVMELandmarkCloud))
 	{
 		sub_id = GetLinkSubId(_R("centerLandmark"));
-		m_LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud *)center_vme)->GetLandmarkName(sub_id) : _L("none");
+		m_LandmarkName = (sub_id != -1) ? ((mafVMELandmarkCloud*)center_vme)->GetLandmarkName(sub_id) : _L("none");
 	}
 	else
 	{
 		m_LandmarkName = center_vme ? center_vme->GetName() : _L("none");
-	
+
 	}
 
 }
@@ -433,7 +432,7 @@ void mafVMEEllipsoid::InternalUpdate()
 	{
 		if (center_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId(_R("centerLandmark")) != -1)
 		{
-			((mafVMELandmarkCloud *)center_vme)->GetLandmark(GetLinkSubId(_R("centerLandmark")), centerAbs, currTs);
+			((mafVMELandmarkCloud*)center_vme)->GetLandmark(GetLinkSubId(_R("centerLandmark")), centerAbs, currTs);
 
 			//
 			mafMatrix tm;
@@ -499,23 +498,23 @@ void mafVMEEllipsoid::InternalUpdate()
 		r1 << 1, 0, 0, 0, cos(rRad[0]), sin(rRad[0]), 0, -sin(rRad[0]), cos(rRad[0]);
 		r2 << cos(rRad[1]), 0, -sin(rRad[1]), 0, 1, 0, sin(rRad[1]), 0, cos(rRad[1]);
 		r3 << cos(rRad[2]), sin(rRad[2]), 0, -sin(rRad[2]), cos(rRad[2]), 0, 0, 0, 1;
-		rotationMatrix = r3*r2*r1;
+		rotationMatrix = r3 * r2 * r1;
 	}
-	
-	
+
+
 }
-int mafVMEEllipsoid::DeepCopy(mafNode *a)
+int mafVMEEllipsoid::DeepCopy(mafNode* a)
 //-------------------------------------------------------------------------
 {
 
 	if (Superclass::DeepCopy(a) == MAF_OK)
 	{
-		mafVMEEllipsoid *vmeEllipsoid = mafVMEEllipsoid::SafeDownCast(a);
+		mafVMEEllipsoid* vmeEllipsoid = mafVMEEllipsoid::SafeDownCast(a);
 		m_Transform->SetMatrix(vmeEllipsoid->m_Transform->GetMatrix());
 		this->a = vmeEllipsoid->a;
 		this->b = vmeEllipsoid->b;
 		this->c = vmeEllipsoid->c;
-		
+
 
 		this->center(0) = vmeEllipsoid->center(0);
 		this->center(1) = vmeEllipsoid->center(1);
@@ -525,7 +524,7 @@ int mafVMEEllipsoid::DeepCopy(mafNode *a)
 
 		this->center_vme = vmeEllipsoid->center_vme;
 
-		mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
+		mafDataPipeCustom* dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
 		if (dpipe)
 		{
 			dpipe->SetInputData(m_PolyData);
@@ -546,13 +545,13 @@ double* mafVMEEllipsoid::GetCenterAbs()
 double* mafVMEEllipsoid::GetCenter()
 {
 
-	double* centerT=new double[3];
+	double* centerT = new double[3];
 
 	centerT[0] = center(0); centerT[01] = center(01); centerT[02] = center(02);
 	return centerT;
 
 }
-bool mafVMEEllipsoid::Equals(mafVME *vme)
+bool mafVMEEllipsoid::Equals(mafVME* vme)
 //-------------------------------------------------------------------------
 {
 
@@ -560,13 +559,13 @@ bool mafVMEEllipsoid::Equals(mafVME *vme)
 	if (Superclass::Equals(vme))
 	{
 		if (
-			m_Transform->GetMatrix() == ((mafVMEEllipsoid *)vme)->m_Transform->GetMatrix() &&
-			this->a == ((mafVMEEllipsoid *)vme)->a &&
-			this->b == ((mafVMEEllipsoid *)vme)->b &&
-			this->c == ((mafVMEEllipsoid *)vme)->c &&
-			this->center(0) == ((mafVMEEllipsoid *)vme)->center(0) &&
-			this->center(1) == ((mafVMEEllipsoid *)vme)->center(1) &&
-			this->center(2) == ((mafVMEEllipsoid *)vme)->center(2)
+			m_Transform->GetMatrix() == ((mafVMEEllipsoid*)vme)->m_Transform->GetMatrix() &&
+			this->a == ((mafVMEEllipsoid*)vme)->a &&
+			this->b == ((mafVMEEllipsoid*)vme)->b &&
+			this->c == ((mafVMEEllipsoid*)vme)->c &&
+			this->center(0) == ((mafVMEEllipsoid*)vme)->center(0) &&
+			this->center(1) == ((mafVMEEllipsoid*)vme)->center(1) &&
+			this->center(2) == ((mafVMEEllipsoid*)vme)->center(2)
 			)
 		{
 			ret = true;
@@ -633,14 +632,14 @@ const char** mafVMEEllipsoid::GetIcon()
 	return mafVMEProcedural_xpm;
 }
 
-void mafVMEEllipsoid::SetCenterLink(const mafString& link_name, mafNode *n)
+void mafVMEEllipsoid::SetCenterLink(const mafString& link_name, mafNode* n)
 //-------------------------------------------------------------------------
 {
 
 	if (n->IsMAFType(mafVMELandmark))
 	{
 		SetLink(link_name, n->GetParent(), mafVMELandmarkCloud::StaticDownCast(n->GetParent())->FindLandmarkIndex(n->GetName()));
-	
+
 	}
 	else
 		SetLink(link_name, n);

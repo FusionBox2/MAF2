@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafViewPlot
  Authors: Silvano Imboden - Paolo Quadrani
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -39,190 +39,190 @@ mafCxxTypeMacro(mafViewPlot);
 
 //----------------------------------------------------------------------------
 mafViewPlot::mafViewPlot(const mafString& label)
-:mafView(label)
-//----------------------------------------------------------------------------
+	:mafView(label)
+	//----------------------------------------------------------------------------
 {
-  m_Sg = NULL;
+	m_Sg = NULL;
 }
 //----------------------------------------------------------------------------
-mafViewPlot::~mafViewPlot() 
+mafViewPlot::~mafViewPlot()
 //----------------------------------------------------------------------------
 {
-  m_PipeMap.clear();
-  cppDEL(m_Sg);
+	m_PipeMap.clear();
+	cppDEL(m_Sg);
 }
 //----------------------------------------------------------------------------
 void mafViewPlot::PlugVisualPipe(mafString vme_type, mafString pipe_type, long visibility)
 //----------------------------------------------------------------------------
 {
-  mafVisualPipeInfo plugged_pipe;
-  plugged_pipe.m_PipeName = pipe_type;
-  plugged_pipe.m_Visibility = visibility;
-  m_PipeMap[vme_type] = plugged_pipe;
+	mafVisualPipeInfo plugged_pipe;
+	plugged_pipe.m_PipeName = pipe_type;
+	plugged_pipe.m_Visibility = visibility;
+	m_PipeMap[vme_type] = plugged_pipe;
 }
 //----------------------------------------------------------------------------
-mafView *mafViewPlot::Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled)
+mafView* mafViewPlot::Copy(mafBaseEventHandler* Listener, bool lightCopyEnabled)
 //----------------------------------------------------------------------------
 {
-  m_LightCopyEnabled = lightCopyEnabled;
-  mafViewPlot *v = new mafViewPlot(GetLabel());
-  v->SetListener(Listener);
-  v->m_Id = m_Id;
-  v->m_PipeMap = m_PipeMap;
-  v->Create();
-  return v;
+	m_LightCopyEnabled = lightCopyEnabled;
+	mafViewPlot* v = new mafViewPlot(GetLabel());
+	v->SetListener(Listener);
+	v->m_Id = m_Id;
+	v->m_PipeMap = m_PipeMap;
+	v->Create();
+	return v;
 }
 //----------------------------------------------------------------------------
 void mafViewPlot::Create()
 //----------------------------------------------------------------------------
 {
-  m_Sg  = new mafSceneGraph(this,NULL);
-  m_Sg->SetListener(this);
+	m_Sg = new mafSceneGraph(this, NULL);
+	m_Sg->SetListener(this);
 }
 //----------------------------------------------------------------------------
 void mafViewPlot::VmeAdd(std::shared_ptr<mafNode> vme)
 //----------------------------------------------------------------------------
 {
-  assert(m_Sg); 
-  m_Sg->VmeAdd(vme);
+	assert(m_Sg);
+	m_Sg->VmeAdd(vme);
 }
 //----------------------------------------------------------------------------
-void mafViewPlot::VmeShow(mafNode *vme, bool show)												{assert(m_Sg); m_Sg->VmeShow(vme,show);}
-void mafViewPlot::VmeUpdateProperty(mafNode *vme, bool fromTag)	        {assert(m_Sg); m_Sg->VmeUpdateProperty(vme,fromTag);}
+void mafViewPlot::VmeShow(mafNode* vme, bool show) { assert(m_Sg); m_Sg->VmeShow(vme, show); }
+void mafViewPlot::VmeUpdateProperty(mafNode* vme, bool fromTag) { assert(m_Sg); m_Sg->VmeUpdateProperty(vme, fromTag); }
 //----------------------------------------------------------------------------
-int  mafViewPlot::GetNodeStatusI(mafNode *vme)
+int  mafViewPlot::GetNodeStatusI(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-  int status = m_Sg ? m_Sg->GetNodeStatus(vme) : NODE_NON_VISIBLE;
-  if (!m_PipeMap.empty())
-  {
-    mafString vme_type = _R(vme->GetTypeName());
-    if(m_PipeMap[vme_type].m_Visibility == NON_VISIBLE)
-    {
-      status = NODE_NON_VISIBLE;
-    }
-    else if (m_PipeMap[vme_type].m_Visibility == MUTEX)
-    {
-      mafSceneNode *n = m_Sg->Vme2Node(vme);
-      n->m_Mutex = true;
-      status = m_Sg->GetNodeStatus(vme);
-    }
-  }
-  return status;
+	int status = m_Sg ? m_Sg->GetNodeStatus(vme) : NODE_NON_VISIBLE;
+	if (!m_PipeMap.empty())
+	{
+		mafString vme_type = _R(vme->GetTypeName());
+		if (m_PipeMap[vme_type].m_Visibility == NON_VISIBLE)
+		{
+			status = NODE_NON_VISIBLE;
+		}
+		else if (m_PipeMap[vme_type].m_Visibility == MUTEX)
+		{
+			mafSceneNode* n = m_Sg->Vme2Node(vme);
+			n->m_Mutex = true;
+			status = m_Sg->GetNodeStatus(vme);
+		}
+	}
+	return status;
 }
 //----------------------------------------------------------------------------
-void mafViewPlot::VmeRemove(mafNode *vme)
+void mafViewPlot::VmeRemove(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-  assert(m_Sg); 
-  m_Sg->VmeRemove(vme);
+	assert(m_Sg);
+	m_Sg->VmeRemove(vme);
 }
 //----------------------------------------------------------------------------
-void mafViewPlot::VmeSelect(mafNode *vme, bool select)
+void mafViewPlot::VmeSelect(mafNode* vme, bool select)
 //----------------------------------------------------------------------------
 {
-  assert(m_Sg); 
-  m_Sg->VmeSelect(vme,select);
+	assert(m_Sg);
+	m_Sg->VmeSelect(vme, select);
 }
 //----------------------------------------------------------------------------
-std::shared_ptr<mafPipe> mafViewPlot::GetNodePipeI(mafNode *vme)
+std::shared_ptr<mafPipe> mafViewPlot::GetNodePipeI(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-   assert(m_Sg);
-   mafSceneNode *n = m_Sg->Vme2Node(vme);
-   if(!n) return NULL;
-   return n->m_Pipe;
+	assert(m_Sg);
+	mafSceneNode* n = m_Sg->Vme2Node(vme);
+	if (!n) return NULL;
+	return n->m_Pipe;
 }
 //----------------------------------------------------------------------------
-void mafViewPlot::GetVisualPipeName(mafNode *node, mafString &pipe_name)
+void mafViewPlot::GetVisualPipeName(mafNode* node, mafString& pipe_name)
 //----------------------------------------------------------------------------
 {
-  assert(node->IsA("mafVME"));
-  mafVME *v = ((mafVME*)node);
+	assert(node->IsA("mafVME"));
+	mafVME* v = ((mafVME*)node);
 
-  mafString vme_type = _R(v->GetTypeName());
-  if (!m_PipeMap.empty())
-  {
-    // pick up the visual pipe from the view's visual pipe map
-    pipe_name = m_PipeMap[vme_type].m_PipeName;
-  }
-  if(pipe_name.empty())
-  {
-    // pick up the default visual pipe from the vme
-    pipe_name = v->GetVisualPipe();
-  }
+	mafString vme_type = _R(v->GetTypeName());
+	if (!m_PipeMap.empty())
+	{
+		// pick up the visual pipe from the view's visual pipe map
+		pipe_name = m_PipeMap[vme_type].m_PipeName;
+	}
+	if (pipe_name.empty())
+	{
+		// pick up the default visual pipe from the vme
+		pipe_name = v->GetVisualPipe();
+	}
 }
 //----------------------------------------------------------------------------
-void mafViewPlot::VmeCreatePipe(mafNode *vme)
+void mafViewPlot::VmeCreatePipe(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-  mafString pipe_name;
-  GetVisualPipeName(vme, pipe_name);
+	mafString pipe_name;
+	GetVisualPipeName(vme, pipe_name);
 
-  if (!pipe_name.empty())
-  {
-    auto pipe = PipeFactory::CreatePipe(pipe_name.GetCStr());
-    if (pipe)
-    {
-      pipe->SetListener(this);
-      mafSceneNode *n = m_Sg->Vme2Node(vme);
-      assert(n && !n->m_Pipe);
-      pipe->Create(vme, this);
-      n->m_Pipe = pipe;
-    }
-    else
-    {
-      mafErrorMessage(_M(_R("Cannot create visual pipe object of type \"") + pipe_name + _R("\"!")));
-    }
-  }
+	if (!pipe_name.empty())
+	{
+		auto pipe = PipeFactory::CreatePipe(pipe_name.GetCStr());
+		if (pipe)
+		{
+			pipe->SetListener(this);
+			mafSceneNode* n = m_Sg->Vme2Node(vme);
+			assert(n && !n->m_Pipe);
+			pipe->Create(vme, this);
+			n->m_Pipe = pipe;
+		}
+		else
+		{
+			mafErrorMessage(_M(_R("Cannot create visual pipe object of type \"") + pipe_name + _R("\"!")));
+		}
+	}
 }
 //----------------------------------------------------------------------------
-void mafViewPlot::VmeDeletePipe(mafNode *vme)
+void mafViewPlot::VmeDeletePipe(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-  mafSceneNode *n = m_Sg->Vme2Node(vme);
-  assert(n && n->m_Pipe);
-  n->m_Pipe.reset();
+	mafSceneNode* n = m_Sg->Vme2Node(vme);
+	assert(n && n->m_Pipe);
+	n->m_Pipe.reset();
 }
 //-------------------------------------------------------------------------
-mafGUI *mafViewPlot::CreateGui()
+mafGUI* mafViewPlot::CreateGui()
 //-------------------------------------------------------------------------
 {
-  assert(m_Gui == NULL);
-  m_Gui = new mafGUI(this);
-	m_Gui->Divider();
-  return m_Gui;
+	assert(!AccessGUI());
+	auto gui = new mafGUI(this);
+	gui->Divider();
+	return gui;
 }
 //----------------------------------------------------------------------------
-void mafViewPlot::OnEvent(mafEventBase *maf_event)
+void mafViewPlot::OnEvent(mafEventBase* maf_event)
 //----------------------------------------------------------------------------
 {
-  /*if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    switch(e->GetId()) 
-    {
-      default:
-        InvokeEvent(*maf_event);
-      break;
-    }
-  }
-  else
-  {
-    InvokeEvent(*maf_event);
-  }*/
-  InvokeEvent(*maf_event);
+	/*if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
+	{
+	  switch(e->GetId())
+	  {
+		default:
+		  InvokeEvent(*maf_event);
+		break;
+	  }
+	}
+	else
+	{
+	  InvokeEvent(*maf_event);
+	}*/
+	InvokeEvent(*maf_event);
 }
 //----------------------------------------------------------------------------
-void mafViewPlot::Print(wxDC *dc, wxRect margins)
+void mafViewPlot::Print(wxDC* dc, wxRect margins)
 //----------------------------------------------------------------------------
 {
-  wxBitmap image;
-  GetImage(image/*, 2*/);
-  PrintBitmap(dc, margins, &image);
+	wxBitmap image;
+	GetImage(image/*, 2*/);
+	PrintBitmap(dc, margins, &image);
 }
 //----------------------------------------------------------------------------
-void mafViewPlot::GetImage(wxBitmap &bmp, int magnification)
+void mafViewPlot::GetImage(wxBitmap& bmp, int magnification)
 //----------------------------------------------------------------------------
 {
-//  bmp = *m_Rwi->m_RwiBase->GetImage(magnification);
+	//  bmp = *m_Rwi->m_RwiBase->GetImage(magnification);
 }

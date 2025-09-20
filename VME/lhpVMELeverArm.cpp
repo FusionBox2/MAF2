@@ -6,7 +6,7 @@
   Version:   $Revision: 1.35 $
   Authors:   Marco Petrone, Paolo Quadrani
 ==========================================================================
-  Copyright (c) 2001/2005 
+  Copyright (c) 2001/2005
   CINECA - Interuniversity Consortium (www.cineca.it)
 =========================================================================*/
 
@@ -66,342 +66,342 @@ mafCxxTypeMacro(lhpVMELeverArm)
 lhpVMELeverArm::lhpVMELeverArm()
 //-------------------------------------------------------------------------
 {
-  m_Distance      = -1.0;
-  
-  m_HAxisVmeName  = _R("");
-  m_LineVmeName   = _R("");
-  
-  m_Transform = mafTransform::NewSPtr();
-  mafVMEOutputPolyline *output = mafVMEOutputPolyline::New(); // an output with no data
-  output->SetTransform(m_Transform); // force my transform in the output
-  SetOutput(output);
+	m_Distance = -1.0;
 
-  vtkNEW(m_LineSource);
-  vtkNEW(m_Goniometer);
-  vtkNEW(m_PolyData);
-  
-  m_StartPointGlobal[0] = 0;
-  m_StartPointGlobal[1] = 0;
-  m_StartPointGlobal[2] = 0;
+	m_HAxisVmeName = _R("");
+	m_LineVmeName = _R("");
 
-  m_Goniometer->AddInputConnection(m_LineSource->GetOutputPort());
+	m_Transform = mafTransform::NewSPtr();
+	mafVMEOutputPolyline* output = mafVMEOutputPolyline::New(); // an output with no data
+	output->SetTransform(m_Transform); // force my transform in the output
+	SetOutput(output);
 
-  m_PolyData->DeepCopy(m_Goniometer->GetOutput());
+	vtkNEW(m_LineSource);
+	vtkNEW(m_Goniometer);
+	vtkNEW(m_PolyData);
 
-  m_TmpTransform = mafTransform::NewSPtr();
+	m_StartPointGlobal[0] = 0;
+	m_StartPointGlobal[1] = 0;
+	m_StartPointGlobal[2] = 0;
 
-  DependsOnLinkedNodeOn();
+	m_Goniometer->AddInputConnection(m_LineSource->GetOutputPort());
 
-  // attach a data pipe which creates a bridge between VTK and MAF
-  auto dpipe = mafDataPipeCustom::NewSPtr();
-  dpipe->SetDependOnAbsPose(true);
-  SetDataPipe(dpipe);
-  dpipe->SetInputData(m_PolyData);
+	m_PolyData->DeepCopy(m_Goniometer->GetOutput());
+
+	m_TmpTransform = mafTransform::NewSPtr();
+
+	DependsOnLinkedNodeOn();
+
+	// attach a data pipe which creates a bridge between VTK and MAF
+	auto dpipe = mafDataPipeCustom::NewSPtr();
+	dpipe->SetDependOnAbsPose(true);
+	SetDataPipe(dpipe);
+	dpipe->SetInputData(m_PolyData);
 }
 //-------------------------------------------------------------------------
 lhpVMELeverArm::~lhpVMELeverArm()
 //-------------------------------------------------------------------------
 {
-  vtkDEL(m_LineSource);
-  vtkDEL(m_Goniometer);
-  vtkDEL(m_PolyData);
-  SetOutput(NULL);
+	vtkDEL(m_LineSource);
+	vtkDEL(m_Goniometer);
+	vtkDEL(m_PolyData);
+	SetOutput(NULL);
 }
 //-------------------------------------------------------------------------
-int lhpVMELeverArm::DeepCopy(mafNode *a)
-//-------------------------------------------------------------------------
-{ 
-  if (Superclass::DeepCopy(a)==MAF_OK)
-  {
-    lhpVMELeverArm *meter = lhpVMELeverArm::SafeDownCast(a);
-    mafNode *linked_node = mafNode::SafeDownCast(meter->GetLink(_R("HAxisVME")));
-    if (linked_node)
-    {
-      this->SetLink(_R("HAxisVME"), linked_node);
-    }
-    linked_node = mafNode::SafeDownCast(meter->GetLink(_R("LineVME")));
-    if (linked_node)
-    {
-      this->SetLink(_R("LineVME"), linked_node);
-    }
-    m_Transform->SetMatrix(meter->m_Transform->GetMatrix());
-
-    mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
-    if (dpipe)
-    {
-      dpipe->SetInputData(m_PolyData);
-      InternalUpdate();
-    }
-    return MAF_OK;
-  }  
-  return MAF_ERROR;
-}
-//-------------------------------------------------------------------------
-bool lhpVMELeverArm::Equals(mafVME *vme)
+int lhpVMELeverArm::DeepCopy(mafNode* a)
 //-------------------------------------------------------------------------
 {
-  bool ret = false;
-  if (Superclass::Equals(vme))
-  {
-    ret = m_Transform->GetMatrix() == ((lhpVMELeverArm *)vme)->m_Transform->GetMatrix() && \
-          GetLink(_R("HAxisVME")) == ((lhpVMELeverArm *)vme)->GetLink(_R("HAxisVME")) && \
-          GetLink(_R("LineVME")) == ((lhpVMELeverArm *)vme)->GetLink(_R("LineVME"));
-  }
-  return ret;
+	if (Superclass::DeepCopy(a) == MAF_OK)
+	{
+		lhpVMELeverArm* meter = lhpVMELeverArm::SafeDownCast(a);
+		mafNode* linked_node = mafNode::SafeDownCast(meter->GetLink(_R("HAxisVME")));
+		if (linked_node)
+		{
+			this->SetLink(_R("HAxisVME"), linked_node);
+		}
+		linked_node = mafNode::SafeDownCast(meter->GetLink(_R("LineVME")));
+		if (linked_node)
+		{
+			this->SetLink(_R("LineVME"), linked_node);
+		}
+		m_Transform->SetMatrix(meter->m_Transform->GetMatrix());
+
+		mafDataPipeCustom* dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
+		if (dpipe)
+		{
+			dpipe->SetInputData(m_PolyData);
+			InternalUpdate();
+		}
+		return MAF_OK;
+	}
+	return MAF_ERROR;
+}
+//-------------------------------------------------------------------------
+bool lhpVMELeverArm::Equals(mafVME* vme)
+//-------------------------------------------------------------------------
+{
+	bool ret = false;
+	if (Superclass::Equals(vme))
+	{
+		ret = m_Transform->GetMatrix() == ((lhpVMELeverArm*)vme)->m_Transform->GetMatrix() && \
+			GetLink(_R("HAxisVME")) == ((lhpVMELeverArm*)vme)->GetLink(_R("HAxisVME")) && \
+			GetLink(_R("LineVME")) == ((lhpVMELeverArm*)vme)->GetLink(_R("LineVME"));
+	}
+	return ret;
 }
 //-------------------------------------------------------------------------
 int lhpVMELeverArm::InternalInitialize()
 //-------------------------------------------------------------------------
 {
-  if (Superclass::InternalInitialize()==MAF_OK)
-  {
-    // force material allocation
-    GetMaterial();
+	if (Superclass::InternalInitialize() == MAF_OK)
+	{
+		// force material allocation
+		GetMaterial();
 
-    return MAF_OK;
-  }
+		return MAF_OK;
+	}
 
-  return MAF_ERROR;
+	return MAF_ERROR;
 }
 //-------------------------------------------------------------------------
 std::shared_ptr<mmaMaterial> lhpVMELeverArm::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  auto material = mmaMaterial::SafeDownCast(GetAttribute(mmaMaterial::GetAttributeName()));
-  if (!material)
-  {
-    material = mmaMaterial::NewSPtr();
-    SetAttribute(material);
-  }
-  return material;
+	auto material = mmaMaterial::SafeDownCast(GetAttribute(mmaMaterial::GetAttributeName()));
+	if (!material)
+	{
+		material = mmaMaterial::NewSPtr();
+		SetAttribute(material);
+	}
+	return material;
 }
 //-------------------------------------------------------------------------
-mafVMEOutputPolyline *lhpVMELeverArm::GetPolylineOutput()
+mafVMEOutputPolyline* lhpVMELeverArm::GetPolylineOutput()
 //-------------------------------------------------------------------------
 {
-  return (mafVMEOutputPolyline *)GetOutput();
+	return (mafVMEOutputPolyline*)GetOutput();
 }
 //-------------------------------------------------------------------------
-void lhpVMELeverArm::SetMatrix(const mafMatrix &mat)
+void lhpVMELeverArm::SetMatrix(const mafMatrix& mat)
 //-------------------------------------------------------------------------
 {
-  m_Transform->SetMatrix(mat);
-  Modified();
+	m_Transform->SetMatrix(mat);
+	Modified();
 }
 //-------------------------------------------------------------------------
 bool lhpVMELeverArm::IsAnimated()
 //-------------------------------------------------------------------------
 {
-  return false;
+	return false;
 }
 //-------------------------------------------------------------------------
-void lhpVMELeverArm::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)
+void lhpVMELeverArm::GetLocalTimeStamps(std::vector<mafTimeStamp>& kframes)
 //-------------------------------------------------------------------------
 {
-  kframes.clear(); // no timestamps
+	kframes.clear(); // no timestamps
 }
 //-----------------------------------------------------------------------
 void lhpVMELeverArm::InternalPreUpdate()
 //-----------------------------------------------------------------------
 {
-  GetMeterAttributes();
+	GetMeterAttributes();
 }
 //-----------------------------------------------------------------------
 void lhpVMELeverArm::InternalUpdate()
 //-----------------------------------------------------------------------
 {
-  GetMeterAttributes()->m_ThresholdEvent = GetGenerateEvent();
-  GetMeterAttributes()->m_DeltaPercent   = GetDeltaPercent();
-  GetMeterAttributes()->m_InitMeasure    = GetInitMeasure();
+	GetMeterAttributes()->m_ThresholdEvent = GetGenerateEvent();
+	GetMeterAttributes()->m_DeltaPercent = GetDeltaPercent();
+	GetMeterAttributes()->m_InitMeasure = GetInitMeasure();
 
-  double threshold = GetMeterAttributes()->m_InitMeasure * (1 + GetMeterAttributes()->m_DeltaPercent / 100.0);
+	double threshold = GetMeterAttributes()->m_InitMeasure * (1 + GetMeterAttributes()->m_DeltaPercent / 100.0);
 
-  UpdateLinks();
-  mafTimeStamp currTs = GetTimeStamp();
+	UpdateLinks();
+	mafTimeStamp currTs = GetTimeStamp();
 
-  //if (GetMeterMode() == lhpVMELeverArm::POINT_DISTANCE)
-  {
-    mafVME *haxis_vme = GetHAxisVME();
-    mafVME *line_vme  = GetLineVME();
+	//if (GetMeterMode() == lhpVMELeverArm::POINT_DISTANCE)
+	{
+		mafVME* haxis_vme = GetHAxisVME();
+		mafVME* line_vme = GetLineVME();
 
-    bool haxis_ok = true, line_ok = true;
+		bool haxis_ok = true, line_ok = true;
 
-    V3d<double> pivot;
-    V3d<double> haxis;
-    std::vector<std::pair<V3d<double>, V3d<double> > > segments;
-    if (haxis_vme && line_vme)
-    {
-      // start is a landmark, consider also visibility
-      mafMatrix tmAxis;
-      haxis_vme->GetOutput()->Update();
-      haxis_vme->GetOutput()->GetAbsMatrix(tmAxis, currTs);
-      pivot[0] = tmAxis.GetElement(0, 3);
-      pivot[1] = tmAxis.GetElement(1, 3);
-      pivot[2] = tmAxis.GetElement(2, 3);
-      haxis[0] = tmAxis.GetElement(0, 2);
-      haxis[1] = tmAxis.GetElement(1, 2);
-      haxis[2] = tmAxis.GetElement(2, 2);
+		V3d<double> pivot;
+		V3d<double> haxis;
+		std::vector<std::pair<V3d<double>, V3d<double> > > segments;
+		if (haxis_vme && line_vme)
+		{
+			// start is a landmark, consider also visibility
+			mafMatrix tmAxis;
+			haxis_vme->GetOutput()->Update();
+			haxis_vme->GetOutput()->GetAbsMatrix(tmAxis, currTs);
+			pivot[0] = tmAxis.GetElement(0, 3);
+			pivot[1] = tmAxis.GetElement(1, 3);
+			pivot[2] = tmAxis.GetElement(2, 3);
+			haxis[0] = tmAxis.GetElement(0, 2);
+			haxis[1] = tmAxis.GetElement(1, 2);
+			haxis[2] = tmAxis.GetElement(2, 2);
 
-      mafMatrix tmLine;
-      mafVMEOutputPolyline *line = mafVMEOutputPolyline::SafeDownCast(mafVME::SafeDownCast(line_vme)->GetOutput());
-      line->Update();
-      line->GetAbsMatrix(tmLine, currTs);
-      line->GetPolylineData();
+			mafMatrix tmLine;
+			mafVMEOutputPolyline* line = mafVMEOutputPolyline::SafeDownCast(mafVME::SafeDownCast(line_vme)->GetOutput());
+			line->Update();
+			line->GetAbsMatrix(tmLine, currTs);
+			line->GetPolylineData();
 
-      auto matr = mafTransform::NewSPtr();
-      vtkNew<vtkTransformPolyDataFilter> transf;
-      matr->SetMatrix(tmLine);
-      transf->SetInputConnection(line->GetVTKOutputPort());
-      transf->SetTransform(matr->GetVTKTransform());
-      transf->Update();
-
-
-      vtkPoints    *pts;
-      vtkCellArray *lines;
-      vtkPolyData  *polyline = transf->GetOutput();
-      lines = polyline->GetLines();
-      pts   = polyline->GetPoints();
-
-      vtkIdType npnts  = pts->GetNumberOfPoints();
-      vtkIdType nlines = lines->GetNumberOfCells();
+			auto matr = mafTransform::NewSPtr();
+			vtkNew<vtkTransformPolyDataFilter> transf;
+			matr->SetMatrix(tmLine);
+			transf->SetInputConnection(line->GetVTKOutputPort());
+			transf->SetTransform(matr->GetVTKTransform());
+			transf->Update();
 
 
+			vtkPoints* pts;
+			vtkCellArray* lines;
+			vtkPolyData* polyline = transf->GetOutput();
+			lines = polyline->GetLines();
+			pts = polyline->GetPoints();
 
-      std::vector<V3d<double> > coords;
-      coords.resize(npnts);
-      for(unsigned i = 0; i < npnts; i++)
-      {
-        pts->GetPoint(i, coords[i].components);
-      }
+			vtkIdType npnts = pts->GetNumberOfPoints();
+			vtkIdType nlines = lines->GetNumberOfCells();
 
-      vtkIdType npts = 0;
+
+
+			std::vector<V3d<double> > coords;
+			coords.resize(npnts);
+			for (unsigned i = 0; i < npnts; i++)
+			{
+				pts->GetPoint(i, coords[i].components);
+			}
+
+			vtkIdType npts = 0;
 #if VTK_MAJOR_VERSION > 8
-	  const vtkIdType* indx = 0;
+			const vtkIdType* indx = 0;
 #else
-	  vtkIdType* indx = 0;
+			vtkIdType* indx = 0;
 #endif
 
-      for (lines->InitTraversal(); lines->GetNextCell(npts, indx); )
-      {
-        if(npts == 2)
-        {
-          segments.push_back(std::make_pair(coords[indx[0]], coords[indx[1]]));
-        }
-      }
-    }
-    else
-    {
-      haxis_ok = false;
-      line_ok   = false;
-    }
+			for (lines->InitTraversal(); lines->GetNextCell(npts, indx); )
+			{
+				if (npts == 2)
+				{
+					segments.push_back(std::make_pair(coords[indx[0]], coords[indx[1]]));
+				}
+			}
+		}
+		else
+		{
+			haxis_ok = false;
+			line_ok = false;
+		}
 
-    if (haxis_ok && line_ok && segments.size() > 0)
-    {
-      V3d<double> origin = segments[0].first;
-      V3d<double> direct = segments[0].second - segments[0].first;
+		if (haxis_ok && line_ok && segments.size() > 0)
+		{
+			V3d<double> origin = segments[0].first;
+			V3d<double> direct = segments[0].second - segments[0].first;
 
 
-      double alph = 0.0;
-      double beta = 0.0;
+			double alph = 0.0;
+			double beta = 0.0;
 
-      double hal2 = haxis.length2();
-      double dil2 = direct.length2();
-      if(hal2 > 1e-6 && dil2 > 1e-6)
-      {
-        haxis  /= sqrt(hal2);
-        direct /= sqrt(dil2);
+			double hal2 = haxis.length2();
+			double dil2 = direct.length2();
+			if (hal2 > 1e-6 && dil2 > 1e-6)
+			{
+				haxis /= sqrt(hal2);
+				direct /= sqrt(dil2);
 
-        double dircos = haxis * direct;
-        if(fabs(dircos) < 1.0 - 1e-6)
-        {
-          beta  = (pivot - origin) * direct;
-          beta += ((origin - pivot) * haxis) * dircos;
-          beta /= 1 - dircos * dircos;
-        }
-        alph = (origin - pivot) * haxis + beta * dircos;
-      }
+				double dircos = haxis * direct;
+				if (fabs(dircos) < 1.0 - 1e-6)
+				{
+					beta = (pivot - origin) * direct;
+					beta += ((origin - pivot) * haxis) * dircos;
+					beta /= 1 - dircos * dircos;
+				}
+				alph = (origin - pivot) * haxis + beta * dircos;
+			}
 
-      m_StartPoint = pivot + alph * haxis;
-      m_EndPoint = origin + beta * direct;
+			m_StartPoint = pivot + alph * haxis;
+			m_EndPoint = origin + beta * direct;
 
-      // compute distance between points
-      m_Distance = sqrt(vtkMath::Distance2BetweenPoints(m_StartPoint.components, m_EndPoint.components));
+			// compute distance between points
+			m_Distance = sqrt(vtkMath::Distance2BetweenPoints(m_StartPoint.components, m_EndPoint.components));
 
-      if(GetMeterMeasureType() == lhpVMELeverArm::RELATIVE_MEASURE)
-        m_Distance -= GetMeterAttributes()->m_InitMeasure;
+			if (GetMeterMeasureType() == lhpVMELeverArm::RELATIVE_MEASURE)
+				m_Distance -= GetMeterAttributes()->m_InitMeasure;
 
-      // compute start point in local coordinate system
-      double local_start[3];
-      m_TmpTransform->SetMatrix(GetOutput()->GetAbsTransform()->GetMatrix());
-      m_TmpTransform->Invert();
-      m_TmpTransform->TransformPoint(m_StartPoint.components, local_start);  // m_TmpTransform needed to fix a memory leaks of GetInverse()
-      //GetAbsMatrixPipe()->GetInverse()->TransformPoint(StartPoint,local_start);
+			// compute start point in local coordinate system
+			double local_start[3];
+			m_TmpTransform->SetMatrix(GetOutput()->GetAbsTransform()->GetMatrix());
+			m_TmpTransform->Invert();
+			m_TmpTransform->TransformPoint(m_StartPoint.components, local_start);  // m_TmpTransform needed to fix a memory leaks of GetInverse()
+			//GetAbsMatrixPipe()->GetInverse()->TransformPoint(StartPoint,local_start);
 
-      // compute end point in local coordinate system
-      double local_end[3];
-      m_TmpTransform->TransformPoint(m_EndPoint.components,local_end);
+			// compute end point in local coordinate system
+			double local_end[3];
+			m_TmpTransform->TransformPoint(m_EndPoint.components, local_end);
 
-      m_StartPointGlobal[0] = local_start[0];
-      m_StartPointGlobal[1] = local_start[1];
-      m_StartPointGlobal[2] = local_start[2];
+			m_StartPointGlobal[0] = local_start[0];
+			m_StartPointGlobal[1] = local_start[1];
+			m_StartPointGlobal[2] = local_start[2];
 
-      m_LineSource->SetPoint1(local_start[0],local_start[1],local_start[2]);
-      m_LineSource->SetPoint2(local_end[0],local_end[1],local_end[2]);
-      m_LineSource->Update();
-      m_Goniometer->Modified();
-    }
-    else
-      m_Distance = -1;
+			m_LineSource->SetPoint1(local_start[0], local_start[1], local_start[2]);
+			m_LineSource->SetPoint2(local_end[0], local_end[1], local_end[2]);
+			m_LineSource->Update();
+			m_Goniometer->Modified();
+		}
+		else
+			m_Distance = -1;
 
-    GetOutput()->Update();
-    InvokeEvent(this, VME_OUTPUT_DATA_UPDATE);
+		GetOutput()->Update();
+		InvokeEvent(this, VME_OUTPUT_DATA_UPDATE);
 
-    if(GetMeterMeasureType() == lhpVMELeverArm::ABSOLUTE_MEASURE && GetMeterAttributes()->m_ThresholdEvent > 0 && m_Distance >= 0 && m_Distance >= threshold)
-      InvokeEvent(this,LENGTH_THRESHOLD_EVENT);
-  }
+		if (GetMeterMeasureType() == lhpVMELeverArm::ABSOLUTE_MEASURE && GetMeterAttributes()->m_ThresholdEvent > 0 && m_Distance >= 0 && m_Distance >= threshold)
+			InvokeEvent(this, LENGTH_THRESHOLD_EVENT);
+	}
 
-  m_Goniometer->Update();
-  vtkPolyData *polydata = m_Goniometer->GetOutput();
-  int num = m_Goniometer->GetOutput()->GetNumberOfPoints();
-  vtkIdType pointId[2];
-  vtkNew<vtkCellArray> cellArray;
-  for(int i = 0; i< num;i++)
-  {
-    if (i > 0)
-    {             
-      pointId[0] = i - 1;
-      pointId[1] = i;
-      cellArray->InsertNextCell(2 , pointId);  
-    }
-  }
+	m_Goniometer->Update();
+	vtkPolyData* polydata = m_Goniometer->GetOutput();
+	int num = m_Goniometer->GetOutput()->GetNumberOfPoints();
+	vtkIdType pointId[2];
+	vtkNew<vtkCellArray> cellArray;
+	for (int i = 0; i < num; i++)
+	{
+		if (i > 0)
+		{
+			pointId[0] = i - 1;
+			pointId[1] = i;
+			cellArray->InsertNextCell(2, pointId);
+		}
+	}
 
-  m_PolyData->SetPoints(m_Goniometer->GetOutput()->GetPoints());
-  m_PolyData->SetLines(cellArray);
+	m_PolyData->SetPoints(m_Goniometer->GetOutput()->GetPoints());
+	m_PolyData->SetLines(cellArray);
 
 }
 //-----------------------------------------------------------------------
 void lhpVMELeverArm::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
-{  
-  Superclass::InternalStore(parent);
-  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
+{
+	Superclass::InternalStore(parent);
+	parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
 }
 //-----------------------------------------------------------------------
 void lhpVMELeverArm::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  Superclass::InternalRestore(node);
-  m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
+	Superclass::InternalRestore(node);
+	m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
 }
 //-----------------------------------------------------------------------
 void lhpVMELeverArm::Print(std::ostream& os, const int tabs)
 //-----------------------------------------------------------------------
 {
-  Superclass::Print(os,tabs);
-  mafIndent indent(tabs);
+	Superclass::Print(os, tabs);
+	mafIndent indent(tabs);
 
-  mafMatrix m = m_Transform->GetMatrix();
-  m.Print(os,indent.GetNextIndent());
+	mafMatrix m = m_Transform->GetMatrix();
+	m.Print(os, indent.GetNextIndent());
 }
 //-------------------------------------------------------------------------
 //char** lhpVMELeverArm::GetIcon() 
@@ -414,240 +414,240 @@ void lhpVMELeverArm::Print(std::ostream& os, const int tabs)
 std::shared_ptr<mmaMeter> lhpVMELeverArm::GetMeterAttributes()
 //-------------------------------------------------------------------------
 {
-  auto meter_attributes = mmaMeter::SafeDownCast(GetAttribute(_R("MeterAttributes")));
-  if (!meter_attributes)
-  {
-    meter_attributes = mmaMeter::NewSPtr();
-    SetAttribute(meter_attributes);
-  }
-  return meter_attributes;
+	auto meter_attributes = mmaMeter::SafeDownCast(GetAttribute(_R("MeterAttributes")));
+	if (!meter_attributes)
+	{
+		meter_attributes = mmaMeter::NewSPtr();
+		SetAttribute(meter_attributes);
+	}
+	return meter_attributes;
 }
 //-------------------------------------------------------------------------
 void lhpVMELeverArm::SetDistanceRange(double min, double max)
 //-------------------------------------------------------------------------
 {
-  GetMeterAttributes()->m_DistanceRange[0] = min;
-  GetMeterAttributes()->m_DistanceRange[1] = max;
+	GetMeterAttributes()->m_DistanceRange[0] = min;
+	GetMeterAttributes()->m_DistanceRange[1] = max;
 }
 //-------------------------------------------------------------------------
-double *lhpVMELeverArm::GetDistanceRange() 
+double* lhpVMELeverArm::GetDistanceRange()
 //-------------------------------------------------------------------------
 {
-  return GetMeterAttributes()->m_DistanceRange;
+	return GetMeterAttributes()->m_DistanceRange;
 }
 //-------------------------------------------------------------------------
 void lhpVMELeverArm::SetMeterColorMode(int mode)
 //-------------------------------------------------------------------------
 {
-  GetMeterAttributes()->m_ColorMode = mode;
+	GetMeterAttributes()->m_ColorMode = mode;
 }
 //-------------------------------------------------------------------------
 int lhpVMELeverArm::GetMeterColorMode()
 //-------------------------------------------------------------------------
 {
-  return GetMeterAttributes()->m_ColorMode;
+	return GetMeterAttributes()->m_ColorMode;
 }
 //-------------------------------------------------------------------------
 void lhpVMELeverArm::SetMeterMeasureType(int type)
 //-------------------------------------------------------------------------
 {
-  GetMeterAttributes()->m_MeasureType = type;
+	GetMeterAttributes()->m_MeasureType = type;
 }
 //-------------------------------------------------------------------------
 int lhpVMELeverArm::GetMeterMeasureType()
 //-------------------------------------------------------------------------
 {
-  return GetMeterAttributes()->m_MeasureType;
+	return GetMeterAttributes()->m_MeasureType;
 }
 //-------------------------------------------------------------------------
 void lhpVMELeverArm::SetMeterRepresentation(int representation)
 //-------------------------------------------------------------------------
 {
-  GetMeterAttributes()->m_Representation = representation;
+	GetMeterAttributes()->m_Representation = representation;
 }
 //-------------------------------------------------------------------------
 int lhpVMELeverArm::GetMeterRepresentation()
 //-------------------------------------------------------------------------
 {
-  return GetMeterAttributes()->m_Representation;
+	return GetMeterAttributes()->m_Representation;
 }
 //-------------------------------------------------------------------------
 void lhpVMELeverArm::SetMeterCapping(int capping)
 //-------------------------------------------------------------------------
 {
-  GetMeterAttributes()->m_Capping = capping;
+	GetMeterAttributes()->m_Capping = capping;
 }
 //-------------------------------------------------------------------------
 int lhpVMELeverArm::GetMeterCapping()
 //-------------------------------------------------------------------------
 {
-  return GetMeterAttributes()->m_Capping;
+	return GetMeterAttributes()->m_Capping;
 }
 //-------------------------------------------------------------------------
 void lhpVMELeverArm::SetGenerateEvent(int generate)
 //-------------------------------------------------------------------------
 {
-  GetMeterAttributes()->m_GenerateEvent = generate;
+	GetMeterAttributes()->m_GenerateEvent = generate;
 }
 //-------------------------------------------------------------------------
 int lhpVMELeverArm::GetGenerateEvent()
 //-------------------------------------------------------------------------
 {
-  return GetMeterAttributes()->m_GenerateEvent;
+	return GetMeterAttributes()->m_GenerateEvent;
 }
 //-------------------------------------------------------------------------
 void lhpVMELeverArm::SetInitMeasure(double init_measure)
 //-------------------------------------------------------------------------
 {
-  GetMeterAttributes()->m_InitMeasure = init_measure;
+	GetMeterAttributes()->m_InitMeasure = init_measure;
 }
 //-------------------------------------------------------------------------
 double lhpVMELeverArm::GetInitMeasure()
 //-------------------------------------------------------------------------
 {
-  return GetMeterAttributes()->m_InitMeasure;
+	return GetMeterAttributes()->m_InitMeasure;
 }
 //-------------------------------------------------------------------------
 void lhpVMELeverArm::SetMeterRadius(double radius)
 //-------------------------------------------------------------------------
 {
-  GetMeterAttributes()->m_TubeRadius = radius;
+	GetMeterAttributes()->m_TubeRadius = radius;
 }
 //-------------------------------------------------------------------------
 double lhpVMELeverArm::GetMeterRadius()
 //-------------------------------------------------------------------------
 {
-  return GetMeterAttributes()->m_TubeRadius;
+	return GetMeterAttributes()->m_TubeRadius;
 }
 //-------------------------------------------------------------------------
 void lhpVMELeverArm::SetDeltaPercent(int delta_percent)
 //-------------------------------------------------------------------------
 {
-  GetMeterAttributes()->m_DeltaPercent = delta_percent;
+	GetMeterAttributes()->m_DeltaPercent = delta_percent;
 }
 //-------------------------------------------------------------------------
 int lhpVMELeverArm::GetDeltaPercent()
 //-------------------------------------------------------------------------
 {
-  return GetMeterAttributes()->m_DeltaPercent;
+	return GetMeterAttributes()->m_DeltaPercent;
 }
 //-------------------------------------------------------------------------
 double lhpVMELeverArm::GetDistance()
 //-------------------------------------------------------------------------
 {
-  return m_Distance;
+	return m_Distance;
 }
 //-------------------------------------------------------------------------
 mafGUI* lhpVMELeverArm::CreateGui()
 //-------------------------------------------------------------------------
 {
-  m_Gui = mafNode::CreateGui(); // Called to show info about vmes' type and name
-  m_Gui->SetListener(this);
-  m_Gui->Divider();
+	auto gui = mafNode::CreateGui(); // Called to show info about vmes' type and name
+	gui->SetListener(this);
+	gui->Divider();
 
-  UpdateLinks();
-  
-  m_Gui->Button(ID_AXIS_LINK,&m_HAxisVmeName,_L("Axis"), _L("Select the helical axis for the lever arm"));
-  m_Gui->Button(ID_LINE_LINK,&m_LineVmeName,_L("Line"), _L("Select the muscle curve for the lever arm"));
+	UpdateLinks();
 
-  m_Gui->Divider();
-  InternalUpdate();
-  GetPolylineOutput()->Update();
+	gui->Button(ID_AXIS_LINK, &m_HAxisVmeName, _L("Axis"), _L("Select the helical axis for the lever arm"));
+	gui->Button(ID_LINE_LINK, &m_LineVmeName, _L("Line"), _L("Select the muscle curve for the lever arm"));
 
-  return m_Gui;
+	gui->Divider();
+	InternalUpdate();
+	GetPolylineOutput()->Update();
+
+	return gui;
 }
 //-------------------------------------------------------------------------
 void lhpVMELeverArm::UpdateLinks()
 //-------------------------------------------------------------------------
 {
-  mafID sub_id = -1;
-  mafVME *haxis_vme = GetHAxisVME();
-  mafVME *line_vme = GetLineVME();
+	mafID sub_id = -1;
+	mafVME* haxis_vme = GetHAxisVME();
+	mafVME* line_vme = GetLineVME();
 
-  if (haxis_vme && haxis_vme->IsMAFType(mafVMELandmarkCloud))
-  {
-    sub_id = GetLinkSubId(_R("HAxisVME"));
-    m_HAxisVmeName = (sub_id != -1) ? ((mafVMELandmarkCloud *)haxis_vme)->GetLandmarkName(sub_id) : _L("none");
-  }
-  else
-    m_HAxisVmeName = haxis_vme ? haxis_vme->GetName() : _L("none");
+	if (haxis_vme && haxis_vme->IsMAFType(mafVMELandmarkCloud))
+	{
+		sub_id = GetLinkSubId(_R("HAxisVME"));
+		m_HAxisVmeName = (sub_id != -1) ? ((mafVMELandmarkCloud*)haxis_vme)->GetLandmarkName(sub_id) : _L("none");
+	}
+	else
+		m_HAxisVmeName = haxis_vme ? haxis_vme->GetName() : _L("none");
 
-  if (line_vme && line_vme->IsMAFType(mafVMELandmarkCloud))
-  {
-    sub_id = GetLinkSubId(_R("LineVME"));
-    m_LineVmeName = (sub_id != -1) ? ((mafVMELandmarkCloud *)line_vme)->GetLandmarkName(sub_id) : _L("none");
-  }
-  else
-    m_LineVmeName = line_vme ? line_vme->GetName() : _L("none");
+	if (line_vme && line_vme->IsMAFType(mafVMELandmarkCloud))
+	{
+		sub_id = GetLinkSubId(_R("LineVME"));
+		m_LineVmeName = (sub_id != -1) ? ((mafVMELandmarkCloud*)line_vme)->GetLandmarkName(sub_id) : _L("none");
+	}
+	else
+		m_LineVmeName = line_vme ? line_vme->GetName() : _L("none");
 }
 //-------------------------------------------------------------------------
-void lhpVMELeverArm::OnEvent(mafEventBase *maf_event)
+void lhpVMELeverArm::OnEvent(mafEventBase* maf_event)
 //-------------------------------------------------------------------------
 {
-  // events to be sent up or down in the tree are simply forwarded
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    switch(e->GetId())
-    {
-      case ID_AXIS_LINK:
-      case ID_LINE_LINK:
-      {
-        mafID button_id = e->GetId();
-        mafString title = _L("Choose lever arm vme link");
-        e->SetId(VME_CHOOSE);
-        if (button_id == ID_AXIS_LINK)
-          e->SetArg((intptr_t)&lhpVMELeverArm::AxisAccept);
-        else
-          e->SetArg((intptr_t)&lhpVMELeverArm::LineAccept);
-        e->SetString(&title);
-        ForwardUpEvent(e);
-        auto n = e->GetVme();
-        if (n != nullptr && n != this)
-        {
-          if (button_id == ID_AXIS_LINK)
-          {
-            SetMeterLink("HAxisVME", n);
-            m_HAxisVmeName = n->GetName();
-          }
-          else //if (button_id == ID_LINE_LINK)
-          {
-            SetMeterLink("LineVME", n);
-            m_LineVmeName = n->GetName();
-          }
-          m_Gui->Update();
-          //InternalUpdate();
-        }
-      }
-      break;
-      default:
-        mafNode::OnEvent(maf_event);
-    }
-  }
-  else
-  {
-    Superclass::OnEvent(maf_event);
-  }
+	// events to be sent up or down in the tree are simply forwarded
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
+	{
+		switch (e->GetId())
+		{
+		case ID_AXIS_LINK:
+		case ID_LINE_LINK:
+		{
+			mafID button_id = e->GetId();
+			mafString title = _L("Choose lever arm vme link");
+			e->SetId(VME_CHOOSE);
+			if (button_id == ID_AXIS_LINK)
+				e->SetArg((intptr_t)&lhpVMELeverArm::AxisAccept);
+			else
+				e->SetArg((intptr_t)&lhpVMELeverArm::LineAccept);
+			e->SetString(&title);
+			ForwardUpEvent(e);
+			auto n = e->GetVme();
+			if (n != nullptr && n != this)
+			{
+				if (button_id == ID_AXIS_LINK)
+				{
+					SetMeterLink("HAxisVME", n);
+					m_HAxisVmeName = n->GetName();
+				}
+				else //if (button_id == ID_LINE_LINK)
+				{
+					SetMeterLink("LineVME", n);
+					m_LineVmeName = n->GetName();
+				}
+				UpdateGUI();
+				//InternalUpdate();
+			}
+		}
+		break;
+		default:
+			mafNode::OnEvent(maf_event);
+		}
+	}
+	else
+	{
+		Superclass::OnEvent(maf_event);
+	}
 }
 //-------------------------------------------------------------------------
-void lhpVMELeverArm::SetMeterLink(const char *link_name, mafNode *n)
+void lhpVMELeverArm::SetMeterLink(const char* link_name, mafNode* n)
 //-------------------------------------------------------------------------
 {
-  if (n->IsMAFType(mafVMELandmark))
-  {
-    SetLink(_R(link_name),n->GetParent(),mafVMELandmarkCloud::StaticDownCast(n->GetParent())->FindLandmarkIndex(n->GetName()));
-  }
-  else
-    SetLink(_R(link_name), n);
+	if (n->IsMAFType(mafVMELandmark))
+	{
+		SetLink(_R(link_name), n->GetParent(), mafVMELandmarkCloud::StaticDownCast(n->GetParent())->FindLandmarkIndex(n->GetName()));
+	}
+	else
+		SetLink(_R(link_name), n);
 }
 //-------------------------------------------------------------------------
-mafVME *lhpVMELeverArm::GetHAxisVME()
+mafVME* lhpVMELeverArm::GetHAxisVME()
 //-------------------------------------------------------------------------
 {
-  return mafVME::SafeDownCast(GetLink(_R("HAxisVME")));
+	return mafVME::SafeDownCast(GetLink(_R("HAxisVME")));
 }
 //-------------------------------------------------------------------------
-mafVME *lhpVMELeverArm::GetLineVME()
+mafVME* lhpVMELeverArm::GetLineVME()
 //-------------------------------------------------------------------------
 {
-  return mafVME::SafeDownCast(GetLink(_R("LineVME")));
+	return mafVME::SafeDownCast(GetLink(_R("LineVME")));
 }

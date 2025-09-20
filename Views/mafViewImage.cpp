@@ -3,7 +3,7 @@
  Program: MAF2Medical
  Module: mafViewImage
  Authors: Daniele Giunchi
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -59,10 +59,10 @@ mafCxxTypeMacro(mafViewImage);
 
 //----------------------------------------------------------------------------
 mafViewImage::mafViewImage(const mafString& label, int camera_position, bool show_axes, bool show_grid, bool show_ruler, int stereo)
-:mafViewVTK(label,camera_position,show_axes,show_grid, show_ruler, stereo)
-//----------------------------------------------------------------------------
+	:mafViewVTK(label, camera_position, show_axes, show_grid, show_ruler, stereo)
+	//----------------------------------------------------------------------------
 {
-  m_CurrentImage = NULL;
+	m_CurrentImage = NULL;
 }
 //----------------------------------------------------------------------------
 mafViewImage::~mafViewImage()
@@ -71,124 +71,124 @@ mafViewImage::~mafViewImage()
 
 }
 //----------------------------------------------------------------------------
-mafView *mafViewImage::Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled)
+mafView* mafViewImage::Copy(mafBaseEventHandler* Listener, bool lightCopyEnabled)
 //----------------------------------------------------------------------------
 {
-  m_LightCopyEnabled = lightCopyEnabled;
-  mafViewImage *v = new mafViewImage(GetLabel(), m_CameraPositionId, m_ShowAxes,m_ShowGrid, m_ShowRuler, m_StereoType);
-  v->SetListener(Listener);
-  v->m_Id = m_Id;
-  v->m_PipeMap = m_PipeMap;
-  v->m_LightCopyEnabled = lightCopyEnabled;
-  v->Create();
-  return v;
+	m_LightCopyEnabled = lightCopyEnabled;
+	mafViewImage* v = new mafViewImage(GetLabel(), m_CameraPositionId, m_ShowAxes, m_ShowGrid, m_ShowRuler, m_StereoType);
+	v->SetListener(Listener);
+	v->m_Id = m_Id;
+	v->m_PipeMap = m_PipeMap;
+	v->m_LightCopyEnabled = lightCopyEnabled;
+	v->Create();
+	return v;
 }
 //----------------------------------------------------------------------------
 void mafViewImage::Create()
 //----------------------------------------------------------------------------
 {
-  if(m_LightCopyEnabled) return; //COPY_LIGHT
+	if (m_LightCopyEnabled) return; //COPY_LIGHT
 
-  RWI_LAYERS num_layers = ONE_LAYER;
-  
-  m_Rwi = new mafRWI(mafGetFrame(), num_layers, m_ShowGrid, m_ShowAxes, m_ShowRuler, m_StereoType);
-  m_Rwi->SetListener(this);
-  m_Rwi->CameraSet(m_CameraPositionId);
-  m_Win = m_Rwi->m_RwiBase;
+	RWI_LAYERS num_layers = ONE_LAYER;
 
-  m_Sg  = new mafSceneGraph(this,m_Rwi->m_RenFront,m_Rwi->m_RenBack);
-  m_Sg->SetListener(this);
-  m_Rwi->m_Sg = m_Sg;
+	m_Rwi = new mafRWI(mafGetFrame(), num_layers, m_ShowGrid, m_ShowAxes, m_ShowRuler, m_StereoType);
+	m_Rwi->SetListener(this);
+	m_Rwi->CameraSet(m_CameraPositionId);
+	m_Win = m_Rwi->m_RwiBase;
 
-  vtkNEW(m_Picker3D);
-  vtkNEW(m_Picker2D);
-  m_Picker2D->InitializePickList();
+	m_Sg = new mafSceneGraph(this, m_Rwi->m_RenFront, m_Rwi->m_RenBack);
+	m_Sg->SetListener(this);
+	m_Rwi->m_Sg = m_Sg;
+
+	vtkNEW(m_Picker3D);
+	vtkNEW(m_Picker2D);
+	m_Picker2D->InitializePickList();
 
 }
 //-------------------------------------------------------------------------
-int mafViewImage::GetNodeStatusI(mafNode *vme)
+int mafViewImage::GetNodeStatusI(mafNode* vme)
 //-------------------------------------------------------------------------
 {
-  mafSceneNode *n = NULL;
-  if (m_Sg != NULL)
-  {
-    n = m_Sg->Vme2Node(vme);
-    if (vme->IsMAFType(mafVMEImage) || vme->IsA("mafVMEAdvancedProber") || vme->IsMAFType(mafVMESurface))
-    {
-      if (n != NULL)
-      {
-      	n->m_Mutex = true;
-      }
-    }
-    else
-    {
-      if (n != NULL)
-      {
-      	n->m_PipeCreatable = false;
-      }
-    }
-  }
-
-  return m_Sg ? m_Sg->GetNodeStatus(vme) : NODE_NON_VISIBLE;
-}
-//-------------------------------------------------------------------------
-mafGUI *mafViewImage::CreateGui()
-//-------------------------------------------------------------------------
-{
-  assert(m_Gui == NULL);
-  m_Gui = new mafGUI(this);
-  m_AttachCamera = new mafAttachCamera(m_Gui, m_Rwi, this);
-  m_Gui->AddGui(m_AttachCamera->GetGui());
-	m_Gui->Divider();
-  return m_Gui;
-}
-//----------------------------------------------------------------------------
-void mafViewImage::OnEvent(mafEventBase *maf_event)
-//----------------------------------------------------------------------------
-{
-  /*if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    switch(e->GetId()) 
-    {
-      default:
-        InvokeEvent(*maf_event);
-      break;
-    }
-  }
-  else
-  {
-    InvokeEvent(*maf_event);
-  }*/
-  InvokeEvent(*maf_event);
-}
-//----------------------------------------------------------------------------
-void mafViewImage::VmeShow(mafNode *node, bool show)
-//----------------------------------------------------------------------------
-{
-  if (node->IsMAFType(mafVMEImage) || node->IsA("mafVMEAdvancedProber") || node->IsMAFType(mafVMESurface))
-  {
-    if (show)
-    {
-      m_AttachCamera->SetVme(node);
-      Superclass::VmeShow(node, show);
-    }
-    else
-    {
-      m_AttachCamera->SetVme(NULL);
-      Superclass::VmeShow(node, show);
-    }
-    CameraUpdate();
-    m_Rwi->CameraReset(node);
-    m_Rwi->CameraUpdate();
-  }
-  else
+	mafSceneNode* n = NULL;
+	if (m_Sg != NULL)
 	{
-    m_AttachCamera->SetVme(NULL);
+		n = m_Sg->Vme2Node(vme);
+		if (vme->IsMAFType(mafVMEImage) || vme->IsA("mafVMEAdvancedProber") || vme->IsMAFType(mafVMESurface))
+		{
+			if (n != NULL)
+			{
+				n->m_Mutex = true;
+			}
+		}
+		else
+		{
+			if (n != NULL)
+			{
+				n->m_PipeCreatable = false;
+			}
+		}
 	}
-  
+
+	return m_Sg ? m_Sg->GetNodeStatus(vme) : NODE_NON_VISIBLE;
+}
+//-------------------------------------------------------------------------
+mafGUI* mafViewImage::CreateGui()
+//-------------------------------------------------------------------------
+{
+	assert(!AccessGUI());
+	auto gui = new mafGUI(this);
+	m_AttachCamera = new mafAttachCamera(gui, m_Rwi, this);
+	gui->AddGui(m_AttachCamera->GetGui());
+	gui->Divider();
+	return gui;
 }
 //----------------------------------------------------------------------------
-void mafViewImage::VmeDeletePipe(mafNode *vme)
+void mafViewImage::OnEvent(mafEventBase* maf_event)
+//----------------------------------------------------------------------------
+{
+	/*if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
+	{
+	  switch(e->GetId())
+	  {
+		default:
+		  InvokeEvent(*maf_event);
+		break;
+	  }
+	}
+	else
+	{
+	  InvokeEvent(*maf_event);
+	}*/
+	InvokeEvent(*maf_event);
+}
+//----------------------------------------------------------------------------
+void mafViewImage::VmeShow(mafNode* node, bool show)
+//----------------------------------------------------------------------------
+{
+	if (node->IsMAFType(mafVMEImage) || node->IsA("mafVMEAdvancedProber") || node->IsMAFType(mafVMESurface))
+	{
+		if (show)
+		{
+			m_AttachCamera->SetVme(node);
+			Superclass::VmeShow(node, show);
+		}
+		else
+		{
+			m_AttachCamera->SetVme(NULL);
+			Superclass::VmeShow(node, show);
+		}
+		CameraUpdate();
+		m_Rwi->CameraReset(node);
+		m_Rwi->CameraUpdate();
+	}
+	else
+	{
+		m_AttachCamera->SetVme(NULL);
+	}
+
+}
+//----------------------------------------------------------------------------
+void mafViewImage::VmeDeletePipe(mafNode* vme)
 //----------------------------------------------------------------------------
 {
 	mafViewVTK::VmeDeletePipe(vme);

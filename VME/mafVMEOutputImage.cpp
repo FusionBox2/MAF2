@@ -101,8 +101,8 @@ mafGUI* mafVMEOutputImage::CreateGui()
 //-------------------------------------------------------------------------
 {
   //This method is used only to load data
-  assert(m_Gui == NULL);
-  m_Gui = mafVMEOutput::CreateGui();
+  assert(!AccessGUI());
+  auto gui = mafVMEOutput::CreateGui();
 
   wxBusyCursor wait;
 
@@ -110,5 +110,5 @@ mafGUI* mafVMEOutputImage::CreateGui()
   {
     this->Update();
   }
-   return m_Gui;
+   return gui;
 }

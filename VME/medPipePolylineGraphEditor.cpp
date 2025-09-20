@@ -3,7 +3,7 @@
  Program: MAF2Medical
  Module: medPipePolylineGraphEditor
  Authors: Matteo Giacomoni
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -55,8 +55,8 @@ mafCxxTypeMacro(medPipePolylineGraphEditor);
 
 //----------------------------------------------------------------------------
 medPipePolylineGraphEditor::medPipePolylineGraphEditor()
-:mafPipeSlice()
-//----------------------------------------------------------------------------
+	:mafPipeSlice()
+	//----------------------------------------------------------------------------
 {
 
 	m_Origin[0] = 0;
@@ -73,20 +73,20 @@ medPipePolylineGraphEditor::medPipePolylineGraphEditor()
 	m_Modality = ID_PERSPECTIVE;
 }
 //----------------------------------------------------------------------------
-void medPipePolylineGraphEditor::Create(mafNode *node, mafView *view)
+void medPipePolylineGraphEditor::Create(mafNode* node, mafView* view)
 //----------------------------------------------------------------------------
 {
 	Superclass::Create(node, view);
 
 	m_Selected = false;
 
-	medVMEOutputPolylineEditor *out_polyline = medVMEOutputPolylineEditor::SafeDownCast(m_Vme->GetOutput());
+	medVMEOutputPolylineEditor* out_polyline = medVMEOutputPolylineEditor::SafeDownCast(m_Vme->GetOutput());
 	assert(out_polyline);
-	vtkPolyData *data = vtkPolyData::SafeDownCast(out_polyline->GetVTKData());
+	vtkPolyData* data = vtkPolyData::SafeDownCast(out_polyline->GetVTKData());
 	assert(data);
 	//data->Update();
 
-	double range[2]={0.0,1.0};
+	double range[2] = { 0.0,1.0 };
 
 	vtkNEW(m_LUT);
 	m_LUT->SetNumberOfColors(2);
@@ -108,20 +108,20 @@ void medPipePolylineGraphEditor::Create(mafNode *node, mafView *view)
 	m_Cutter->Update();
 
 	vtkNEW(m_Mapper);
-	if(m_Modality==ID_SLICE)
+	if (m_Modality == ID_SLICE)
 		m_Mapper->SetInputConnection(m_Cutter->GetOutputPort());
-	else if(m_Modality==ID_PERSPECTIVE)
+	else if (m_Modality == ID_PERSPECTIVE)
 		m_Mapper->SetInputData(data);
 	m_Mapper->SetLookupTable(m_LUT);
 	m_Mapper->SetScalarRange(range);
-	if(data->GetPointData()->GetScalars())
+	if (data->GetPointData()->GetScalars())
 		m_Mapper->SetScalarModeToUsePointData();
-	else if(data->GetCellData()->GetScalars())
+	else if (data->GetCellData()->GetScalars())
 		m_Mapper->SetScalarModeToUseCellData();
 	m_Mapper->Modified();
 
 	vtkNEW(m_Actor);
-  //m_Actor->PickableOff();
+	//m_Actor->PickableOff();
 	m_Actor->SetMapper(m_Mapper);
 	m_AssemblyFront->AddPart(m_Actor);
 }
@@ -150,13 +150,13 @@ void medPipePolylineGraphEditor::Select(bool sel)
 
 }
 //----------------------------------------------------------------------------
-mafGUI *medPipePolylineGraphEditor::CreateGui()
+mafGUI* medPipePolylineGraphEditor::CreateGui()
 //----------------------------------------------------------------------------
 {
-	assert(m_Gui == NULL);
-	m_Gui = new mafGUI(this);
+	assert(!AccessGUI());
+	auto gui = new mafGUI(this);
 
-	return m_Gui;
+	return gui;
 }
 //----------------------------------------------------------------------------
 void medPipePolylineGraphEditor::SetModalityPerspective()
@@ -164,11 +164,11 @@ void medPipePolylineGraphEditor::SetModalityPerspective()
 {
 	m_Modality = ID_PERSPECTIVE;
 
-	if(m_Mapper)
-	{	
-		medVMEOutputPolylineEditor *out_polyline = medVMEOutputPolylineEditor::SafeDownCast(m_Vme->GetOutput());
+	if (m_Mapper)
+	{
+		medVMEOutputPolylineEditor* out_polyline = medVMEOutputPolylineEditor::SafeDownCast(m_Vme->GetOutput());
 		assert(out_polyline);
-		vtkPolyData *data = vtkPolyData::SafeDownCast(out_polyline->GetVTKData());
+		vtkPolyData* data = vtkPolyData::SafeDownCast(out_polyline->GetVTKData());
 		assert(data);
 		//data->Update();
 
@@ -182,7 +182,7 @@ void medPipePolylineGraphEditor::SetModalitySlice()
 {
 	m_Modality = ID_SLICE;
 
-	if(m_Mapper)
+	if (m_Mapper)
 	{
 		m_Mapper->SetInputConnection(m_Cutter->GetOutputPort());
 		m_Mapper->Update();
@@ -194,41 +194,41 @@ void medPipePolylineGraphEditor::SetModalitySlice()
 /*virtual*/ void medPipePolylineGraphEditor::SetSlice(double* Origin, double* Normal)
 //----------------------------------------------------------------------------
 {
-  if (Origin != NULL)
-  {
-    m_Origin[0] = Origin[0];
-    m_Origin[1] = Origin[1];
-    m_Origin[2] = Origin[2];
-  }
+	if (Origin != NULL)
+	{
+		m_Origin[0] = Origin[0];
+		m_Origin[1] = Origin[1];
+		m_Origin[2] = Origin[2];
+	}
 
-  if (Normal != NULL)
-  {
-    m_Normal[0] = Normal[0];
-    m_Normal[1] = Normal[1];
-    m_Normal[2] = Normal[2];
-  }
+	if (Normal != NULL)
+	{
+		m_Normal[0] = Normal[0];
+		m_Normal[1] = Normal[1];
+		m_Normal[2] = Normal[2];
+	}
 
-  if (m_Plane != NULL && m_Cutter != NULL)
-  {
-    m_Plane->SetNormal(m_Normal);
-    m_Plane->SetOrigin(m_Origin);
-    m_Cutter->SetCutFunction(m_Plane);
-    m_Cutter->Update();     
-  }
+	if (m_Plane != NULL && m_Cutter != NULL)
+	{
+		m_Plane->SetNormal(m_Normal);
+		m_Plane->SetOrigin(m_Origin);
+		m_Cutter->SetCutFunction(m_Plane);
+		m_Cutter->Update();
+	}
 }
 
 //----------------------------------------------------------------------------
-void medPipePolylineGraphEditor::OnEvent(mafEventBase *maf_event)
+void medPipePolylineGraphEditor::OnEvent(mafEventBase* maf_event)
 //----------------------------------------------------------------------------
 {
-	if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
 	{
-		/*switch(e->GetId()) 
+		/*switch(e->GetId())
 		{
 		default:
 			{*/
-				InvokeEvent(*e);
-			//}
+		InvokeEvent(*e);
 		//}
+	//}
 	}
 }

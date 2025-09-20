@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafVMEOutputPointSet
  Authors: Marco Petrone
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -42,8 +42,8 @@ mafCxxTypeMacro(mafVMEOutputPointSet)
 mafVMEOutputPointSet::mafVMEOutputPointSet()
 //-------------------------------------------------------------------------
 {
-  m_NumPoints = _R("0");
-  m_Material = NULL;
+	m_NumPoints = _R("0");
+	m_Material = NULL;
 }
 
 //-------------------------------------------------------------------------
@@ -53,64 +53,61 @@ mafVMEOutputPointSet::~mafVMEOutputPointSet()
 }
 
 //-------------------------------------------------------------------------
-vtkPolyData *mafVMEOutputPointSet::GetPointSetData()
+vtkPolyData* mafVMEOutputPointSet::GetPointSetData()
 //-------------------------------------------------------------------------
 {
-  return (vtkPolyData *)GetVTKData();
+	return (vtkPolyData*)GetVTKData();
 }
 
 //-------------------------------------------------------------------------
 std::shared_ptr<mmaMaterial> mafVMEOutputPointSet::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  // if the VME set the material directly in the output return it
-  if (m_Material)
-    return  m_Material;
+	// if the VME set the material directly in the output return it
+	if (m_Material)
+		return  m_Material;
 
-  // search for a material attribute in the VME connected to this output
-  return GetVME() ? mmaMaterial::SafeDownCast(GetVME()->GetAttribute(mmaMaterial::GetAttributeName())) : nullptr;
+	// search for a material attribute in the VME connected to this output
+	return GetVME() ? mmaMaterial::SafeDownCast(GetVME()->GetAttribute(mmaMaterial::GetAttributeName())) : nullptr;
 }
 
 //-------------------------------------------------------------------------
 void mafVMEOutputPointSet::SetMaterial(std::shared_ptr<mmaMaterial> material)
 //-------------------------------------------------------------------------
 {
-  m_Material = material;
+	m_Material = material;
 }
 
 //-------------------------------------------------------------------------
 mafGUI* mafVMEOutputPointSet::CreateGui()
 //-------------------------------------------------------------------------
 {
-  assert(m_Gui == NULL);
-  m_Gui = mafVMEOutput::CreateGui();
-  if (GetPointSetData())
-  {
-    this->Update();
-    int num = GetPointSetData()->GetNumberOfVerts();
-    m_NumPoints = mafToString(num);
-  }
-  m_Gui->Label(_L("points: "), &m_NumPoints, true);
-	m_Gui->Divider();
-  return m_Gui;
+	assert(!AccessGUI());
+	auto gui = mafVMEOutput::CreateGui();
+	if (GetPointSetData())
+	{
+		this->Update();
+		int num = GetPointSetData()->GetNumberOfVerts();
+		m_NumPoints = mafToString(num);
+	}
+	gui->Label(_L("points: "), &m_NumPoints, true);
+	gui->Divider();
+	return gui;
 }
 //-------------------------------------------------------------------------
 void mafVMEOutputPointSet::Update()
 //-------------------------------------------------------------------------
 {
-  assert(m_VME);
-  m_VME->Update();
-  if (GetPointSetData())
-  {
-    int num = GetPointSetData()->GetNumberOfVerts();
-    m_NumPoints = mafToString(num);
-  }
-  else
-  {
-    m_NumPoints = _R("0");
-  }
-  if (m_Gui)
-  {
-    m_Gui->Update();
-  }
+	assert(m_VME);
+	m_VME->Update();
+	if (GetPointSetData())
+	{
+		int num = GetPointSetData()->GetNumberOfVerts();
+		m_NumPoints = mafToString(num);
+	}
+	else
+	{
+		m_NumPoints = _R("0");
+	}
+	UpdateGUI();
 }

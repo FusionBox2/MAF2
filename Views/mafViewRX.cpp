@@ -3,7 +3,7 @@
  Program: MAF2Medical
  Module: mafViewRX
  Authors: Paolo Quadrani , Stefano Perticoni
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -54,10 +54,10 @@ mafCxxTypeMacro(mafViewRX);
 
 //----------------------------------------------------------------------------
 mafViewRX::mafViewRX(const mafString& label, int camera_position, bool show_axes, bool show_grid, bool show_ruler, int stereo)
-:mafViewVTK(label,camera_position,show_axes,show_grid,show_ruler,stereo)
-//----------------------------------------------------------------------------
+	:mafViewVTK(label, camera_position, show_axes, show_grid, show_ruler, stereo)
+	//----------------------------------------------------------------------------
 {
-  m_CurrentVolume = NULL;
+	m_CurrentVolume = NULL;
 }
 //----------------------------------------------------------------------------
 mafViewRX::~mafViewRX()
@@ -65,241 +65,241 @@ mafViewRX::~mafViewRX()
 {
 }
 //----------------------------------------------------------------------------
-mafView *mafViewRX::Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled)
+mafView* mafViewRX::Copy(mafBaseEventHandler* Listener, bool lightCopyEnabled)
 //----------------------------------------------------------------------------
 {
-  m_LightCopyEnabled = lightCopyEnabled;
-  mafViewRX *v = new mafViewRX(GetLabel(), m_CameraPositionId, m_ShowAxes,m_ShowGrid, m_ShowRuler, m_StereoType);
-  v->SetListener(Listener);
-  v->m_Id = m_Id;
-  v->m_PipeMap = m_PipeMap;
-  v->m_LightCopyEnabled = lightCopyEnabled;
-  v->Create();
-  return v;
+	m_LightCopyEnabled = lightCopyEnabled;
+	mafViewRX* v = new mafViewRX(GetLabel(), m_CameraPositionId, m_ShowAxes, m_ShowGrid, m_ShowRuler, m_StereoType);
+	v->SetListener(Listener);
+	v->m_Id = m_Id;
+	v->m_PipeMap = m_PipeMap;
+	v->m_LightCopyEnabled = lightCopyEnabled;
+	v->Create();
+	return v;
 }
 //----------------------------------------------------------------------------
 void mafViewRX::Create()
 //----------------------------------------------------------------------------
 {
-  if(m_LightCopyEnabled) return; //COPY_LIGHT
+	if (m_LightCopyEnabled) return; //COPY_LIGHT
 
-  m_Rwi = new mafRWI(mafGetFrame(), TWO_LAYER, m_ShowGrid, m_ShowAxes, m_ShowRuler, m_StereoType);
-  m_Rwi->SetListener(this);
-  m_Rwi->CameraSet(m_CameraPositionId);
-  m_Win = m_Rwi->m_RwiBase;
+	m_Rwi = new mafRWI(mafGetFrame(), TWO_LAYER, m_ShowGrid, m_ShowAxes, m_ShowRuler, m_StereoType);
+	m_Rwi->SetListener(this);
+	m_Rwi->CameraSet(m_CameraPositionId);
+	m_Win = m_Rwi->m_RwiBase;
 
-  m_Sg  = new mafSceneGraph(this,m_Rwi->m_RenFront,m_Rwi->m_RenBack);
-  m_Sg->SetListener(this);
-  m_Rwi->m_Sg = m_Sg;
+	m_Sg = new mafSceneGraph(this, m_Rwi->m_RenFront, m_Rwi->m_RenBack);
+	m_Sg->SetListener(this);
+	m_Rwi->m_Sg = m_Sg;
 
-  vtkNEW(m_Picker3D);
-  vtkNEW(m_Picker2D);
-  m_Picker2D->SetTolerance(0.005);
-  m_Picker2D->InitializePickList();
+	vtkNEW(m_Picker3D);
+	vtkNEW(m_Picker2D);
+	m_Picker2D->SetTolerance(0.005);
+	m_Picker2D->InitializePickList();
 }
 //----------------------------------------------------------------------------
-void mafViewRX::VmeCreatePipe(mafNode *vme)
+void mafViewRX::VmeCreatePipe(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-  mafString pipe_name = _R("");
-  GetVisualPipeName(vme, pipe_name);
+	mafString pipe_name = _R("");
+	GetVisualPipeName(vme, pipe_name);
 
-  mafSceneNode *n = m_Sg->Vme2Node(vme);
-  assert(n && !n->m_Pipe);
+	mafSceneNode* n = m_Sg->Vme2Node(vme);
+	assert(n && !n->m_Pipe);
 
-  if (!pipe_name.empty())
-  {
-    if((vme->IsMAFType(mafVMELandmarkCloud) && ((mafVMELandmarkCloud*)vme)->IsOpen()) || vme->IsMAFType(mafVMELandmark) && m_NumberOfVisibleVme == 1)
-    {
-      m_NumberOfVisibleVme = 1;
-    }
-    else
-    {
-      m_NumberOfVisibleVme++;
-    }
-    auto pipe = PipeFactory::CreatePipe(pipe_name.GetCStr());
-    if (pipe)
-    {
-      pipe->SetListener(this);
-      if (pipe_name == _R("mafPipeVolumeProjected"))
-      {
-        mafPipeVolumeProjected::StaticDownCast(pipe)->InitializeProjectParameters(m_CameraPositionId);
-        m_CurrentVolume = n;
-        if (m_AttachCamera)
-        {
-          m_AttachCamera->SetVme(m_CurrentVolume->m_Vme.get());
-          CameraUpdate();
-        }
-      }
-      else if(pipe_name == _R("mafPipeSurfaceSlice"))
-      {
-        double normal[3];
-        switch(m_CameraPositionId)
-        {
-        case CAMERA_RX_FRONT:
-          normal[0] = 0;
-          normal[1] = 1;
-          normal[2] = 0;
-          break;
-        case CAMERA_RX_LEFT:
-          normal[0] = 1;
-          normal[1] = 0;
-          normal[2] = 0;
-          break;
-        case CAMERA_OS_P:
-          break;
-          //case CAMERA_OS_REP:
-          //	this->GetRWI()->GetCamera()->GetViewPlaneNormal(normal);
-        case CAMERA_PERSPECTIVE:
-          break;
-        default:
-          normal[0] = 0;
-          normal[1] = 0;
-          normal[2] = 1;
-        }
-        
-        double positionSlice[3];
-        double b[6];
+	if (!pipe_name.empty())
+	{
+		if ((vme->IsMAFType(mafVMELandmarkCloud) && ((mafVMELandmarkCloud*)vme)->IsOpen()) || vme->IsMAFType(mafVMELandmark) && m_NumberOfVisibleVme == 1)
+		{
+			m_NumberOfVisibleVme = 1;
+		}
+		else
+		{
+			m_NumberOfVisibleVme++;
+		}
+		auto pipe = PipeFactory::CreatePipe(pipe_name.GetCStr());
+		if (pipe)
+		{
+			pipe->SetListener(this);
+			if (pipe_name == _R("mafPipeVolumeProjected"))
+			{
+				mafPipeVolumeProjected::StaticDownCast(pipe)->InitializeProjectParameters(m_CameraPositionId);
+				m_CurrentVolume = n;
+				if (m_AttachCamera)
+				{
+					m_AttachCamera->SetVme(m_CurrentVolume->m_Vme.get());
+					CameraUpdate();
+				}
+			}
+			else if (pipe_name == _R("mafPipeSurfaceSlice"))
+			{
+				double normal[3];
+				switch (m_CameraPositionId)
+				{
+				case CAMERA_RX_FRONT:
+					normal[0] = 0;
+					normal[1] = 1;
+					normal[2] = 0;
+					break;
+				case CAMERA_RX_LEFT:
+					normal[0] = 1;
+					normal[1] = 0;
+					normal[2] = 0;
+					break;
+				case CAMERA_OS_P:
+					break;
+					//case CAMERA_OS_REP:
+					//	this->GetRWI()->GetCamera()->GetViewPlaneNormal(normal);
+				case CAMERA_PERSPECTIVE:
+					break;
+				default:
+					normal[0] = 0;
+					normal[1] = 0;
+					normal[2] = 1;
+				}
 
-        mafVME::SafeDownCast(m_CurrentVolume->m_Vme)->GetOutput()->GetBounds(b);
-        positionSlice[0] = (b[1]+b[0])/2;
-        positionSlice[1] = (b[3]+b[2])/2;
-        positionSlice[2] = (b[5]+b[4])/2;
-        mafPipeSurfaceSlice::StaticDownCast(pipe)->SetSlice(positionSlice);
-        mafPipeSurfaceSlice::StaticDownCast(pipe)->SetNormal(normal);
+				double positionSlice[3];
+				double b[6];
 
-      }
-      else if(pipe_name == _R("medVisualPipeSlicerSlice"))
-      {
-        double normal[3];
-        switch(m_CameraPositionId)
-        {
-        case CAMERA_RX_FRONT:
-          normal[0] = 0;
-          normal[1] = 1;
-          normal[2] = 0;
-          break;
-        case CAMERA_RX_LEFT:
-          normal[0] = 1;
-          normal[1] = 0;
-          normal[2] = 0;
-          break;
-        case CAMERA_OS_P:
-          break;
-          //case CAMERA_OS_REP:
-          //	this->GetRWI()->GetCamera()->GetViewPlaneNormal(normal);
-        case CAMERA_PERSPECTIVE:
-          break;
-        default:
-          normal[0] = 0;
-          normal[1] = 0;
-          normal[2] = 1;
-        }
+				mafVME::SafeDownCast(m_CurrentVolume->m_Vme)->GetOutput()->GetBounds(b);
+				positionSlice[0] = (b[1] + b[0]) / 2;
+				positionSlice[1] = (b[3] + b[2]) / 2;
+				positionSlice[2] = (b[5] + b[4]) / 2;
+				mafPipeSurfaceSlice::StaticDownCast(pipe)->SetSlice(positionSlice);
+				mafPipeSurfaceSlice::StaticDownCast(pipe)->SetNormal(normal);
 
-        double positionSlice1[3],positionSlice2[3];
-        double b[6];
+			}
+			else if (pipe_name == _R("medVisualPipeSlicerSlice"))
+			{
+				double normal[3];
+				switch (m_CameraPositionId)
+				{
+				case CAMERA_RX_FRONT:
+					normal[0] = 0;
+					normal[1] = 1;
+					normal[2] = 0;
+					break;
+				case CAMERA_RX_LEFT:
+					normal[0] = 1;
+					normal[1] = 0;
+					normal[2] = 0;
+					break;
+				case CAMERA_OS_P:
+					break;
+					//case CAMERA_OS_REP:
+					//	this->GetRWI()->GetCamera()->GetViewPlaneNormal(normal);
+				case CAMERA_PERSPECTIVE:
+					break;
+				default:
+					normal[0] = 0;
+					normal[1] = 0;
+					normal[2] = 1;
+				}
 
-        auto volume = mafVME::SafeDownCast(m_CurrentVolume->m_Vme);
-        volume->GetOutput()->GetBounds(b);
- 
-        double value1; 
-        double value2; 
+				double positionSlice1[3], positionSlice2[3];
+				double b[6];
 
-        if(m_CameraPositionId == CAMERA_RX_FRONT)
-        {
-          value1= b[3] > b[2] ? b[3] : b[2];
-          value2= b[3] > b[2] ? b[2] : b[3];
-          positionSlice1[0] = (b[1]+b[0])/2;
-          positionSlice1[1] = value1 - 0.001;
-          positionSlice1[2] = (b[5]+b[4])/2;
+				auto volume = mafVME::SafeDownCast(m_CurrentVolume->m_Vme);
+				volume->GetOutput()->GetBounds(b);
 
-          positionSlice2[0] = (b[1]+b[0])/2;
-          positionSlice2[1] = value2 + 0.001;
-          positionSlice2[2] = (b[5]+b[4])/2;
-        }
-        else if(m_CameraPositionId == CAMERA_RX_LEFT)
-        {
-          value1= b[1] > b[0] ? b[1] : b[0];
-          value2= b[1] > b[0] ? b[0] : b[1];
-          positionSlice1[0] = value1 - 0.001;
-          positionSlice1[1] = (b[3]+b[2])/2;
-          positionSlice1[2] = (b[5]+b[4])/2;
-          
-          positionSlice2[0] = value2 + 0.001;
-          positionSlice2[1] = (b[3]+b[2])/2;
-          positionSlice2[2] = (b[5]+b[4])/2;
-        }
+				double value1;
+				double value2;
 
-        medVisualPipeSlicerSlice::StaticDownCast(pipe)->SetSlice1(positionSlice1);
-        medVisualPipeSlicerSlice::StaticDownCast(pipe)->SetSlice2(positionSlice2);
-        medVisualPipeSlicerSlice::StaticDownCast(pipe)->SetNormal(normal);
-        
+				if (m_CameraPositionId == CAMERA_RX_FRONT)
+				{
+					value1 = b[3] > b[2] ? b[3] : b[2];
+					value2 = b[3] > b[2] ? b[2] : b[3];
+					positionSlice1[0] = (b[1] + b[0]) / 2;
+					positionSlice1[1] = value1 - 0.001;
+					positionSlice1[2] = (b[5] + b[4]) / 2;
 
-      }
-      pipe->Create(vme, this);
-      n->m_Pipe = pipe;
-    }
-    else
-      mafErrorMessage(_M(_R("Cannot create visual pipe object of type \"") + pipe_name + _R("\"!")));
-  }
+					positionSlice2[0] = (b[1] + b[0]) / 2;
+					positionSlice2[1] = value2 + 0.001;
+					positionSlice2[2] = (b[5] + b[4]) / 2;
+				}
+				else if (m_CameraPositionId == CAMERA_RX_LEFT)
+				{
+					value1 = b[1] > b[0] ? b[1] : b[0];
+					value2 = b[1] > b[0] ? b[0] : b[1];
+					positionSlice1[0] = value1 - 0.001;
+					positionSlice1[1] = (b[3] + b[2]) / 2;
+					positionSlice1[2] = (b[5] + b[4]) / 2;
+
+					positionSlice2[0] = value2 + 0.001;
+					positionSlice2[1] = (b[3] + b[2]) / 2;
+					positionSlice2[2] = (b[5] + b[4]) / 2;
+				}
+
+				medVisualPipeSlicerSlice::StaticDownCast(pipe)->SetSlice1(positionSlice1);
+				medVisualPipeSlicerSlice::StaticDownCast(pipe)->SetSlice2(positionSlice2);
+				medVisualPipeSlicerSlice::StaticDownCast(pipe)->SetNormal(normal);
+
+
+			}
+			pipe->Create(vme, this);
+			n->m_Pipe = pipe;
+		}
+		else
+			mafErrorMessage(_M(_R("Cannot create visual pipe object of type \"") + pipe_name + _R("\"!")));
+	}
 }
 //----------------------------------------------------------------------------
-void mafViewRX::VmeDeletePipe(mafNode *vme)
+void mafViewRX::VmeDeletePipe(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-  mafSceneNode *n = m_Sg->Vme2Node(vme);
-  if((vme->IsMAFType(mafVMELandmarkCloud) && ((mafVMELandmarkCloud*)vme)->IsOpen()) || vme->IsMAFType(mafVMELandmark) && m_NumberOfVisibleVme == 0)
-    m_NumberOfVisibleVme = 0;
-  else
-    m_NumberOfVisibleVme--;
-  if (((mafVME *)vme)->GetOutput()->IsA("mafVMEOutputVolume"))
-  {
-    m_CurrentVolume = NULL;
-    if (m_AttachCamera)
-    {
-      m_AttachCamera->SetVme(NULL);
-    }
-  }
-  assert(n && n->m_Pipe);
-  n->m_Pipe.reset();
+	mafSceneNode* n = m_Sg->Vme2Node(vme);
+	if ((vme->IsMAFType(mafVMELandmarkCloud) && ((mafVMELandmarkCloud*)vme)->IsOpen()) || vme->IsMAFType(mafVMELandmark) && m_NumberOfVisibleVme == 0)
+		m_NumberOfVisibleVme = 0;
+	else
+		m_NumberOfVisibleVme--;
+	if (((mafVME*)vme)->GetOutput()->IsA("mafVMEOutputVolume"))
+	{
+		m_CurrentVolume = NULL;
+		if (m_AttachCamera)
+		{
+			m_AttachCamera->SetVme(NULL);
+		}
+	}
+	assert(n && n->m_Pipe);
+	n->m_Pipe.reset();
 }
 //-------------------------------------------------------------------------
-int mafViewRX::GetNodeStatusI(mafNode *vme)
+int mafViewRX::GetNodeStatusI(mafNode* vme)
 //-------------------------------------------------------------------------
 {
-  mafSceneNode *n = NULL;
-  if (m_Sg != NULL)
-  {
-    if (((mafVME *)vme)->GetOutput()->IsA("mafVMEOutputVolume"))
-    {
-      n = m_Sg->Vme2Node(vme);
-      if (n != NULL)
-      {
-        n->m_Mutex = true;
-      }
-    }
-    else if (vme->IsMAFType(mafVMESlicer))
-    {
-      n = m_Sg->Vme2Node(vme);
-      if (n != NULL)
-      {
-        n->m_PipeCreatable = true;
-        n->m_Mutex = true;
-      }
-    }
-  }
-  return m_Sg ? m_Sg->GetNodeStatus(vme) : NODE_NON_VISIBLE;
+	mafSceneNode* n = NULL;
+	if (m_Sg != NULL)
+	{
+		if (((mafVME*)vme)->GetOutput()->IsA("mafVMEOutputVolume"))
+		{
+			n = m_Sg->Vme2Node(vme);
+			if (n != NULL)
+			{
+				n->m_Mutex = true;
+			}
+		}
+		else if (vme->IsMAFType(mafVMESlicer))
+		{
+			n = m_Sg->Vme2Node(vme);
+			if (n != NULL)
+			{
+				n->m_PipeCreatable = true;
+				n->m_Mutex = true;
+			}
+		}
+	}
+	return m_Sg ? m_Sg->GetNodeStatus(vme) : NODE_NON_VISIBLE;
 }
 //-------------------------------------------------------------------------
-mafGUI *mafViewRX::CreateGui()
+mafGUI* mafViewRX::CreateGui()
 //-------------------------------------------------------------------------
 {
-  assert(m_Gui == NULL);
-  m_Gui = new mafGUI(this);
-  m_AttachCamera = new mafAttachCamera(m_Gui, m_Rwi, this);
-  m_Gui->AddGui(m_AttachCamera->GetGui());
-	m_Gui->Divider();
-  return m_Gui;
+	assert(!AccessGUI());
+	auto gui = new mafGUI(this);
+	m_AttachCamera = new mafAttachCamera(gui, m_Rwi, this);
+	gui->AddGui(m_AttachCamera->GetGui());
+	gui->Divider();
+	return gui;
 }
 /*//----------------------------------------------------------------------------
 void mafViewRX::VmeShow(mafNode *vme, bool show)
@@ -307,180 +307,180 @@ void mafViewRX::VmeShow(mafNode *vme, bool show)
 {
   mafViewVTK::VmeShow(vme,show);
   mafSceneNode *SN = this->GetSceneGraph()->Vme2Node(vme);
-  
+
   medVisualPipeSlicerSlice *pipeSlicer = medVisualPipeSlicerSlice::SafeDownCast(SN->m_Pipe);
   if(pipeSlicer)
   {
-    pipeSlicer->SetThickness(3);
+	pipeSlicer->SetThickness(3);
   }
   mafPipeSurfaceSlice *pipe = mafPipeSurfaceSlice ::SafeDownCast(SN->m_Pipe);
   if(pipe)
   {
-    pipe->SetThickness(3);
+	pipe->SetThickness(3);
   }
   CameraUpdate();
 }*/
 //----------------------------------------------------------------------------
-void mafViewRX::OnEvent(mafEventBase *maf_event)
+void mafViewRX::OnEvent(mafEventBase* maf_event)
 //----------------------------------------------------------------------------
 {
-  InvokeEvent(*maf_event);
+	InvokeEvent(*maf_event);
 }
 //----------------------------------------------------------------------------
 void mafViewRX::SetLutRange(double low_val, double high_val)
 //----------------------------------------------------------------------------
 {
-  if(!m_CurrentVolume) 
-    return;
-  mafString pipe_name = _R(m_CurrentVolume->m_Pipe->GetTypeName());
-  if (pipe_name == _R("mafPipeVolumeProjected"))
-  {
-    auto pipe = mafPipeVolumeProjected::StaticDownCast(m_CurrentVolume->m_Pipe);
-    pipe->SetLutRange(low_val, high_val); 
-  }
+	if (!m_CurrentVolume)
+		return;
+	mafString pipe_name = _R(m_CurrentVolume->m_Pipe->GetTypeName());
+	if (pipe_name == _R("mafPipeVolumeProjected"))
+	{
+		auto pipe = mafPipeVolumeProjected::StaticDownCast(m_CurrentVolume->m_Pipe);
+		pipe->SetLutRange(low_val, high_val);
+	}
 }
 //----------------------------------------------------------------------------
 void mafViewRX::GetLutRange(double minMax[2])
 //----------------------------------------------------------------------------
 {
-  if(!m_CurrentVolume) 
-    return;
-  mafString pipe_name = _R(m_CurrentVolume->m_Pipe->GetTypeName());
-  if (pipe_name == _R("mafPipeVolumeProjected"))
-  {
-    auto pipe = mafPipeVolumeProjected::StaticDownCast(m_CurrentVolume->m_Pipe);
-    pipe->GetLutRange(minMax); 
-  }
+	if (!m_CurrentVolume)
+		return;
+	mafString pipe_name = _R(m_CurrentVolume->m_Pipe->GetTypeName());
+	if (pipe_name == _R("mafPipeVolumeProjected"))
+	{
+		auto pipe = mafPipeVolumeProjected::StaticDownCast(m_CurrentVolume->m_Pipe);
+		pipe->GetLutRange(minMax);
+	}
 }
 
 
 void mafViewRX::CameraUpdate()
 {
-  if (m_CurrentVolume)
-  {
-    auto volume = mafVME::SafeDownCast(m_CurrentVolume->m_Vme);
+	if (m_CurrentVolume)
+	{
+		auto volume = mafVME::SafeDownCast(m_CurrentVolume->m_Vme);
 
-    std::ostringstream stringStream;
-    stringStream << "VME " << volume->GetName().GetCStr() << " ABS matrix:" << std::endl;
+		std::ostringstream stringStream;
+		stringStream << "VME " << volume->GetName().GetCStr() << " ABS matrix:" << std::endl;
 
-    volume->GetAbsMatrixPipe()->GetMatrixPointer()->Print(stringStream);
+		volume->GetAbsMatrixPipe()->GetMatrixPointer()->Print(stringStream);
 
-    m_NewABSPose = volume->GetAbsMatrixPipe()->GetMatrix();
+		m_NewABSPose = volume->GetAbsMatrixPipe()->GetMatrix();
 
-    if (DEBUG_MODE == true)
-        mafLogMessage(_M(stringStream.str().c_str()));
+		if (DEBUG_MODE == true)
+			mafLogMessage(_M(stringStream.str().c_str()));
 
-    if (m_NewABSPose.Equals(m_OldABSPose))
-    { 
-      if (DEBUG_MODE == true)
-        mafLogMessage(_M("Calling Superclass Camera Update "));
+		if (m_NewABSPose.Equals(m_OldABSPose))
+		{
+			if (DEBUG_MODE == true)
+				mafLogMessage(_M("Calling Superclass Camera Update "));
 
-      Superclass::CameraUpdate();
-    }
-    else
-    {
-      if (DEBUG_MODE == true)
-        mafLogMessage(_M("Calling Rotated Volumes Camera Update "));
-      m_OldABSPose = m_NewABSPose;
-      CameraUpdateForRotatedVolumes();
-    }
-  }
-  else
-  {
+			Superclass::CameraUpdate();
+		}
+		else
+		{
+			if (DEBUG_MODE == true)
+				mafLogMessage(_M("Calling Rotated Volumes Camera Update "));
+			m_OldABSPose = m_NewABSPose;
+			CameraUpdateForRotatedVolumes();
+		}
+	}
+	else
+	{
 
-    if (DEBUG_MODE == true)
-      mafLogMessage(_M("Calling Superclass Camera Update "));
-    
-    Superclass::CameraUpdate();
-  
-  }
+		if (DEBUG_MODE == true)
+			mafLogMessage(_M("Calling Superclass Camera Update "));
+
+		Superclass::CameraUpdate();
+
+	}
 }
 
-void mafViewRX::SetCameraParallelToDataSetLocalAxis( int axis )
+void mafViewRX::SetCameraParallelToDataSetLocalAxis(int axis)
 {
-  double oldCameraPosition[3] = {0,0,0};
-  double oldCameraFocalPoint[3] = {0,0,0};
-  double *oldCameraOrientation;
+	double oldCameraPosition[3] = { 0,0,0 };
+	double oldCameraFocalPoint[3] = { 0,0,0 };
+	double* oldCameraOrientation;
 
 
-  this->GetRWI()->GetCamera()->GetFocalPoint(oldCameraFocalPoint);
-  this->GetRWI()->GetCamera()->GetPosition(oldCameraPosition);
-  oldCameraOrientation = this->GetRWI()->GetCamera()->GetOrientation();
+	this->GetRWI()->GetCamera()->GetFocalPoint(oldCameraFocalPoint);
+	this->GetRWI()->GetCamera()->GetPosition(oldCameraPosition);
+	oldCameraOrientation = this->GetRWI()->GetCamera()->GetOrientation();
 
-  auto currentVMEVolume = mafVME::SafeDownCast(m_CurrentVolume->m_Vme);
-  assert(currentVMEVolume);
+	auto currentVMEVolume = mafVME::SafeDownCast(m_CurrentVolume->m_Vme);
+	assert(currentVMEVolume);
 
-  assert(m_CurrentVolume);
-  vtkDataSet *vmeVTKData = currentVMEVolume->GetOutput()->GetVTKData();
-  vtkMatrix4x4 *vmeABSMatrix = currentVMEVolume->GetAbsMatrixPipe()->GetMatrix().GetVTKMatrix();
+	assert(m_CurrentVolume);
+	vtkDataSet* vmeVTKData = currentVMEVolume->GetOutput()->GetVTKData();
+	vtkMatrix4x4* vmeABSMatrix = currentVMEVolume->GetAbsMatrixPipe()->GetMatrix().GetVTKMatrix();
 
-  double absDataBounds[6] = {0,0,0,0,0,0};
+	double absDataBounds[6] = { 0,0,0,0,0,0 };
 
-  currentVMEVolume->GetOutput()->GetBounds(absDataBounds);
+	currentVMEVolume->GetOutput()->GetBounds(absDataBounds);
 
-  double newCameraFocalPoint[3] = {0,0,0};
+	double newCameraFocalPoint[3] = { 0,0,0 };
 
-  newCameraFocalPoint[0] = (absDataBounds[0] + absDataBounds[1]) / 2;
-  newCameraFocalPoint[1] = (absDataBounds[2] + absDataBounds[3]) / 2;
-  newCameraFocalPoint[2] = (absDataBounds[4] + absDataBounds[5]) / 2;
+	newCameraFocalPoint[0] = (absDataBounds[0] + absDataBounds[1]) / 2;
+	newCameraFocalPoint[1] = (absDataBounds[2] + absDataBounds[3]) / 2;
+	newCameraFocalPoint[2] = (absDataBounds[4] + absDataBounds[5]) / 2;
 
-  double newCameraViewUp[3] = {0,0,0};
-  double newCameraPosition[3] = {0,0,0};
+	double newCameraViewUp[3] = { 0,0,0 };
+	double newCameraPosition[3] = { 0,0,0 };
 
-  if (axis  == mafTransform::X)
-  {
-    mafTransform::GetVersor(mafTransform::Z,mafMatrix(vmeABSMatrix),newCameraViewUp );
+	if (axis == mafTransform::X)
+	{
+		mafTransform::GetVersor(mafTransform::Z, mafMatrix(vmeABSMatrix), newCameraViewUp);
 
-    double xVersor[3] = {0,0,0};
+		double xVersor[3] = { 0,0,0 };
 
-    mafTransform::GetVersor(mafTransform::X,mafMatrix(vmeABSMatrix),xVersor );
-    mafTransform::MultiplyVectorByScalar(100, xVersor, xVersor);
-    mafTransform::AddVectors(newCameraFocalPoint, xVersor, newCameraPosition);
-  }
-  else if (axis == mafTransform::Y)
-  {
-    mafTransform::GetVersor(mafTransform::Z,mafMatrix(vmeABSMatrix),newCameraViewUp );
+		mafTransform::GetVersor(mafTransform::X, mafMatrix(vmeABSMatrix), xVersor);
+		mafTransform::MultiplyVectorByScalar(100, xVersor, xVersor);
+		mafTransform::AddVectors(newCameraFocalPoint, xVersor, newCameraPosition);
+	}
+	else if (axis == mafTransform::Y)
+	{
+		mafTransform::GetVersor(mafTransform::Z, mafMatrix(vmeABSMatrix), newCameraViewUp);
 
-    double yVersor[3] = {0,0,0};  
+		double yVersor[3] = { 0,0,0 };
 
-    mafTransform::GetVersor(mafTransform::Y,mafMatrix(vmeABSMatrix),yVersor );
-    mafTransform::MultiplyVectorByScalar(-100, yVersor, yVersor);
-    mafTransform::AddVectors(newCameraFocalPoint, yVersor, newCameraPosition);
-  }
-  else if (axis == mafTransform::Z)
-  {
-    mafTransform::GetVersor(mafTransform::Y,mafMatrix(vmeABSMatrix),newCameraViewUp );
-    mafTransform::MultiplyVectorByScalar(-1, newCameraViewUp, newCameraViewUp);
+		mafTransform::GetVersor(mafTransform::Y, mafMatrix(vmeABSMatrix), yVersor);
+		mafTransform::MultiplyVectorByScalar(-100, yVersor, yVersor);
+		mafTransform::AddVectors(newCameraFocalPoint, yVersor, newCameraPosition);
+	}
+	else if (axis == mafTransform::Z)
+	{
+		mafTransform::GetVersor(mafTransform::Y, mafMatrix(vmeABSMatrix), newCameraViewUp);
+		mafTransform::MultiplyVectorByScalar(-1, newCameraViewUp, newCameraViewUp);
 
-    double zVersor[3] = {0,0,0};
+		double zVersor[3] = { 0,0,0 };
 
-    mafTransform::GetVersor(mafTransform::Z,mafMatrix(vmeABSMatrix),zVersor );
-    mafTransform::MultiplyVectorByScalar(-100, zVersor, zVersor);
-    mafTransform::AddVectors(newCameraFocalPoint, zVersor, newCameraPosition);
-  }
+		mafTransform::GetVersor(mafTransform::Z, mafMatrix(vmeABSMatrix), zVersor);
+		mafTransform::MultiplyVectorByScalar(-100, zVersor, zVersor);
+		mafTransform::AddVectors(newCameraFocalPoint, zVersor, newCameraPosition);
+	}
 
-  vtkCamera *camera = this->GetRWI()->GetCamera();
-  camera->SetFocalPoint(newCameraFocalPoint);
-  camera->SetPosition(newCameraPosition);
-  camera->SetViewUp(newCameraViewUp);
-  camera->SetClippingRange(0.1,1000);
+	vtkCamera* camera = this->GetRWI()->GetCamera();
+	camera->SetFocalPoint(newCameraFocalPoint);
+	camera->SetPosition(newCameraPosition);
+	camera->SetViewUp(newCameraViewUp);
+	camera->SetClippingRange(0.1, 1000);
 
 }
 
 
 void mafViewRX::CameraUpdateForRotatedVolumes()
 {
-  if (m_CurrentVolume != NULL)
-  {
-    if (m_CameraPositionId == CAMERA_RX_FRONT)
-    {
-      SetCameraParallelToDataSetLocalAxis(mafTransform::Y);
-    } 
-    else if (m_CameraPositionId == CAMERA_RX_LEFT)
-    {
-      SetCameraParallelToDataSetLocalAxis(mafTransform::X);
-    }
-  }
+	if (m_CurrentVolume != NULL)
+	{
+		if (m_CameraPositionId == CAMERA_RX_FRONT)
+		{
+			SetCameraParallelToDataSetLocalAxis(mafTransform::Y);
+		}
+		else if (m_CameraPositionId == CAMERA_RX_LEFT)
+		{
+			SetCameraParallelToDataSetLocalAxis(mafTransform::X);
+		}
+	}
 
-  Superclass::CameraUpdate();
+	Superclass::CameraUpdate();
 }

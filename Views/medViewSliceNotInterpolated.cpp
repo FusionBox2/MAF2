@@ -78,14 +78,14 @@ mafGUI *medViewSliceNotInterpolated::CreateGui()
 //----------------------------------------------------------------------------
 {
   // Create the view gui
-  m_Gui = new mafGUI(this);
-  m_LutSwatch = m_Gui->Lut(ID_LUT,_R("LUT"),m_ColorLUT); // Lut widget
+  auto gui = new mafGUI(this);
+  m_LutSwatch = gui->Lut(ID_LUT,_R("LUT"),m_ColorLUT); // Lut widget
   mafString choices[3] = {_R("X"),_R("Y"),_R("Z")};
-  m_Gui->Combo(ID_AXIS,_R("Axis"),&m_SliceAxis,3,choices); // Slice Axis
-  m_SliceSlider = m_Gui->FloatSlider(ID_SLICE,_R("Slice"),&m_CurrentSlice,-std::numeric_limits<double>::max(), std::numeric_limits<double>::max()); // Current slice coordinate
-  m_Gui->Divider();
+  gui->Combo(ID_AXIS,_R("Axis"),&m_SliceAxis,3,choices); // Slice Axis
+  m_SliceSlider = gui->FloatSlider(ID_SLICE,_R("Slice"),&m_CurrentSlice,-std::numeric_limits<double>::max(), std::numeric_limits<double>::max()); // Current slice coordinate
+  gui->Divider();
   EnableGuiWidgets(false);
-  return m_Gui;
+  return gui;
 }
 
 //----------------------------------------------------------------------------
@@ -127,10 +127,11 @@ void medViewSliceNotInterpolated::EnableGuiWidgets(bool enable)
 //----------------------------------------------------------------------------
 {
   // Enable/disable gui widgets
-  m_Gui->Enable(ID_LUT,enable);
-  m_Gui->Enable(ID_AXIS,enable);
-  m_Gui->Enable(ID_SLICE,enable);
-  m_Gui->Update();
+  auto gui = AccessGUI();
+  gui->Enable(ID_LUT,enable);
+  gui->Enable(ID_AXIS,enable);
+  gui->Enable(ID_SLICE,enable);
+  UpdateGUI();
 }
 
 //----------------------------------------------------------------------------
@@ -224,7 +225,7 @@ void medViewSliceNotInterpolated::SetSliceAxis()
   // Update parameters
   m_CurrentSlice = m_Bounds[m_SliceAxis * 2];
   m_SliceSlider->SetRange(m_Bounds[m_SliceAxis * 2], m_Bounds[(m_SliceAxis * 2) + 1]);
-  m_Gui->Update();
+  UpdateGUI();
 
   switch(m_SliceAxis)
   {
@@ -254,7 +255,7 @@ void medViewSliceNotInterpolated::SetSlice(double position)
 
   // Update parameters
   m_CurrentSlice = position;
-  m_Gui->Update();
+  UpdateGUI();
 
   UpdateSlice();
 }
@@ -267,7 +268,7 @@ void medViewSliceNotInterpolated::SetSlice(double origin[3])
 
   // Update parameters
   m_CurrentSlice = origin[m_SliceAxis];
-  m_Gui->Update();
+  UpdateGUI();
 
   UpdateSlice();
 }

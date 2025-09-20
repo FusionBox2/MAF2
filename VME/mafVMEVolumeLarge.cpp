@@ -9,10 +9,10 @@ Authors:   Josef Kohout (Josef.Kohout@beds.ac.uk)
 Copyright (c) 2008
 University of Bedfordshire
 =========================================================================
-See: Agrawal A, Kohout J, Clapworthy GJ, McFarlane NJB, Dong F, Viceconti M, 
-Taddei F, Testi D. Interactive Out-of-Core Exploration of Large Volume 
-Datasets in VTK-Based Visualisation Systems. 
-In: Proceedings of EG UK Theory and Practice of Computer Graphics (TP.CG. 2008), 
+See: Agrawal A, Kohout J, Clapworthy GJ, McFarlane NJB, Dong F, Viceconti M,
+Taddei F, Testi D. Interactive Out-of-Core Exploration of Large Volume
+Datasets in VTK-Based Visualisation Systems.
+In: Proceedings of EG UK Theory and Practice of Computer Graphics (TP.CG. 2008),
 June 9-11, 2008, Manchester, UK, p. 1-8
 =========================================================================*/
 #include "mafDefines.h" 
@@ -67,37 +67,37 @@ mafVMEVolumeLarge::mafVMEVolumeLarge()
 //-------------------------------------------------------------------------
 {
 #ifdef VME_VOLUME_VER1
-  m_LargeData = NULL;
+	m_LargeData = NULL;
 #else
-  m_LargeDataReader = NULL;
+	m_LargeDataReader = NULL;
 #endif
 
-  for (int i = 0; i < 6; i++) 
-  {
-    m_FullExtent[i] = 0;
-    m_VOI[i] = 0;
-    m_ROI[i] = 0.0;
-  }
+	for (int i = 0; i < 6; i++)
+	{
+		m_FullExtent[i] = 0;
+		m_VOI[i] = 0;
+		m_ROI[i] = 0.0;
+	}
 
-  m_SampleInfoGui = m_ShowROIOpt = m_CropEdVxls = NULL;
-  m_CropEdMm = m_InfoGui = m_CropGui = NULL;
-  m_VOIUnits = 0;
+	m_SampleInfoGui = m_ShowROIOpt = m_CropEdVxls = NULL;
+	m_CropEdMm = m_InfoGui = m_CropGui = NULL;
+	m_VOIUnits = 0;
 
-  m_ShowHandles = 1;
-  m_ShowAxis = 1;
-  m_ShowPlanes = 1;
-  m_ShowROI = 0;
-  m_GizmoROI = NULL;		
+	m_ShowHandles = 1;
+	m_ShowAxis = 1;
+	m_ShowPlanes = 1;
+	m_ShowROI = 0;
+	m_GizmoROI = NULL;
 
-  m_SampleMemLimit = 16;	//16 MB
-  m_AutoProof = 0;
-  m_AutoProofZone = 32;   //16 voxels => 32 per side => (N+32)*(N+32)*(N + 32) increase
+	m_SampleMemLimit = 16;	//16 MB
+	m_AutoProof = 0;
+	m_AutoProofZone = 32;   //16 voxels => 32 per side => (N+32)*(N+32)*(N + 32) increase
 #ifdef VME_VOLUME_VER1
-  m_FEOutput = NULL;	
-  m_ShowFEOutput = true;
+	m_FEOutput = NULL;
+	m_ShowFEOutput = true;
 
-  m_ProgressCallback = vtkMAFLargeDataSetCallback::New();
-  m_ProgressCallback->SetListener(this);
+	m_ProgressCallback = vtkMAFLargeDataSetCallback::New();
+	m_ProgressCallback->SetListener(this);
 #endif
 }
 
@@ -123,37 +123,37 @@ mafVMEVolumeLarge::~mafVMEVolumeLarge()
 
 
 
-  // data pipe destroyed in mafVME
-  // data vector destroyed in mafVMEGeneric	
+	// data pipe destroyed in mafVME
+	// data vector destroyed in mafVMEGeneric	
 #ifdef VME_VOLUME_VER1
-  if (m_LargeData != NULL) {
-    m_LargeData->RemoveObserver(m_ProgressCallback);
-    vtkDEL(m_LargeData);
-  }
+	if (m_LargeData != NULL) {
+		m_LargeData->RemoveObserver(m_ProgressCallback);
+		vtkDEL(m_LargeData);
+	}
 
-  vtkDEL(m_ProgressCallback);
-  vtkDEL(m_FEOutput);
+	vtkDEL(m_ProgressCallback);
+	vtkDEL(m_FEOutput);
 #endif
 
-  cppDEL(m_GizmoROI);
-  cppDEL(m_SampleInfoGui);
-  cppDEL(m_InfoGui);
-  cppDEL(m_CropEdVxls);
-  cppDEL(m_CropEdMm);
-  cppDEL(m_ShowROIOpt);
-  cppDEL(m_CropGui);	
+	cppDEL(m_GizmoROI);
+	cppDEL(m_SampleInfoGui);
+	cppDEL(m_InfoGui);
+	cppDEL(m_CropEdVxls);
+	cppDEL(m_CropEdMm);
+	cppDEL(m_ShowROIOpt);
+	cppDEL(m_CropGui);
 
 #ifndef VME_VOLUME_VER1
-  cppDEL(m_LargeDataReader);
+	cppDEL(m_LargeDataReader);
 #endif
 }
 
 //-------------------------------------------------------------------------
-const char** mafVMEVolumeLarge::GetIcon() 
+const char** mafVMEVolumeLarge::GetIcon()
 //-------------------------------------------------------------------------
 {
 #include "mafVMEVolumeLarge.xpm"
-  return mafVMEVolumeLarge_xpm;
+	return mafVMEVolumeLarge_xpm;
 }
 
 #include "mmaVolumeMaterial.h"
@@ -163,101 +163,101 @@ const char** mafVMEVolumeLarge::GetIcon()
 int mafVMEVolumeLarge::InternalInitialize()
 //-------------------------------------------------------------------------
 {
-//BES: 11.7.2008 - THIS IS HERE BECAUSE OF PAOLO'S BUG IN mafVMEVolume
-//THAT PREVENT CORRECT MATERIAL CONSTRUCTION
-//WHEN IT IS FIXED, NEITHER InternalInitialize NOR GetMaterial
-//IS NEEDED TO BE IN mafVMEVolumeLarge
-  if (mafVMEGeneric::InternalInitialize()==MAF_OK)
-  {
-    // force material allocation   
-    GetMaterial();
-    return MAF_OK;
-  }
-  return MAF_ERROR;
+	//BES: 11.7.2008 - THIS IS HERE BECAUSE OF PAOLO'S BUG IN mafVMEVolume
+	//THAT PREVENT CORRECT MATERIAL CONSTRUCTION
+	//WHEN IT IS FIXED, NEITHER InternalInitialize NOR GetMaterial
+	//IS NEEDED TO BE IN mafVMEVolumeLarge
+	if (mafVMEGeneric::InternalInitialize() == MAF_OK)
+	{
+		// force material allocation   
+		GetMaterial();
+		return MAF_OK;
+	}
+	return MAF_ERROR;
 }
 
 //-------------------------------------------------------------------------
 std::shared_ptr<mmaVolumeMaterial> mafVMEVolumeLarge::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  auto material = mmaVolumeMaterial::SafeDownCast(GetAttribute(mmaVolumeMaterial::GetAttributeName()));
-  if (!material)
-  {
-    material = mmaVolumeMaterial::NewSPtr();
-    
-    if(GetOutput() && GetOutput()->GetVTKData())
-    {
-      GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
-      double sr[2];
-      GetOutput()->GetVTKData()->GetScalarRange(sr);
-      material->m_ColorLut->SetTableRange(sr);
-      material->m_ColorLut->SetRange(sr);
-      material->UpdateFromTables();
-    }
+	auto material = mmaVolumeMaterial::SafeDownCast(GetAttribute(mmaVolumeMaterial::GetAttributeName()));
+	if (!material)
+	{
+		material = mmaVolumeMaterial::NewSPtr();
 
-    SetAttribute(material);
-    if (m_Output)
-    {
-      ((mafVMEOutputVolume *)m_Output)->SetMaterial(material);
-    }
-  }
-  return material;
+		if (GetOutput() && GetOutput()->GetVTKData())
+		{
+			GetOutput()->GetVTKOutputPort()->GetProducer()->Update();
+			double sr[2];
+			GetOutput()->GetVTKData()->GetScalarRange(sr);
+			material->m_ColorLut->SetTableRange(sr);
+			material->m_ColorLut->SetRange(sr);
+			material->UpdateFromTables();
+		}
+
+		SetAttribute(material);
+		if (m_Output)
+		{
+			((mafVMEOutputVolume*)m_Output)->SetMaterial(material);
+		}
+	}
+	return material;
 }
 
 
 /** called to prepare the update of output */
 /*virtual*/ void mafVMEVolumeLarge::InternalPreUpdate()
 {
-  Superclass::InternalPreUpdate();	//call base
+	Superclass::InternalPreUpdate();	//call base
 
-  //This routine is called, when a new data is put into the data pipeline
-  //During VTK UpdateInformation - ExecuteInformation chain
-  //that propagates extents in the pipeline
-  //vtkImageClip, vtkStructuredGridClip and vtkRectilinearGridClip that
-  //may be present in the VTK pipeline remember previous WholeExtent 
-  //and ignores new values, thus we will need to force them to register
-  //the whole extent of new data
+	//This routine is called, when a new data is put into the data pipeline
+	//During VTK UpdateInformation - ExecuteInformation chain
+	//that propagates extents in the pipeline
+	//vtkImageClip, vtkStructuredGridClip and vtkRectilinearGridClip that
+	//may be present in the VTK pipeline remember previous WholeExtent 
+	//and ignores new values, thus we will need to force them to register
+	//the whole extent of new data
 
-  std::stack<vtkDataObject*> stck;
+	std::stack<vtkDataObject*> stck;
 #ifdef VME_VOLUME_VER1
-  vtkDataObject* pLargeData = m_LargeData->GetSnapshot();  
+	vtkDataObject* pLargeData = m_LargeData->GetSnapshot();
 #else
-  vtkDataObject* pLargeData = 
-    m_LargeDataReader->IsRectilinearGrid() ? 
-    (vtkDataObject*)m_LargeDataReader->GetOutputRLGDataSet() :
-    (vtkDataObject*)m_LargeDataReader->GetOutputDataSet();
+	vtkDataObject* pLargeData =
+		m_LargeDataReader->IsRectilinearGrid() ?
+		(vtkDataObject*)m_LargeDataReader->GetOutputRLGDataSet() :
+		(vtkDataObject*)m_LargeDataReader->GetOutputDataSet();
 #endif
-  
-  stck.push(pLargeData);
+
+	stck.push(pLargeData);
 #ifdef COMPLETED
-  while (!stck.empty())
-  {
-    vtkDataObject* pDataObj = stck.top();    
-    stck.pop(); //and remove it from the stack
+	while (!stck.empty())
+	{
+		vtkDataObject* pDataObj = stck.top();
+		stck.pop(); //and remove it from the stack
 
-    int nConsumers = pDataObj->GetNumberOfConsumers();
-    for (int i = 0; i < nConsumers; i++)
-    {
-      //get the vtkMAFDataPipe object that takes the data as the input  
-      vtkSource* pSource = vtkSource::SafeDownCast(pDataObj->GetConsumer(i));  
-      if (pSource == NULL)
-        continue; //it is not a source
+		int nConsumers = pDataObj->GetNumberOfConsumers();
+		for (int i = 0; i < nConsumers; i++)
+		{
+			//get the vtkMAFDataPipe object that takes the data as the input  
+			vtkSource* pSource = vtkSource::SafeDownCast(pDataObj->GetConsumer(i));
+			if (pSource == NULL)
+				continue; //it is not a source
 
-      //there is some source, push all its outputs
-      int nOutputs = pSource->GetNumberOfOutputs();
-      for (int j = 0; j < nOutputs; j++) {
-        stck.push(pSource->GetOutputs()[j]);
-      }
+			//there is some source, push all its outputs
+			int nOutputs = pSource->GetNumberOfOutputs();
+			for (int j = 0; j < nOutputs; j++) {
+				stck.push(pSource->GetOutputs()[j]);
+			}
 
-      vtkImageClip* pClip = vtkImageClip::SafeDownCast(pSource);
-      if (pClip != NULL) { //reset whole extent
-        pClip->SetOutputWholeExtent(pLargeData->GetWholeExtent());
-      }
+			vtkImageClip* pClip = vtkImageClip::SafeDownCast(pSource);
+			if (pClip != NULL) { //reset whole extent
+				pClip->SetOutputWholeExtent(pLargeData->GetWholeExtent());
+			}
 
-      //NB. vtkStructuredGridClip and vtkRectilinearGridClip are not supported
-      //in VTK 4.4 used currently by openMAF
-    } //end for   
-  } //end while
+			//NB. vtkStructuredGridClip and vtkRectilinearGridClip are not supported
+			//in VTK 4.4 used currently by openMAF
+		} //end for   
+	} //end while
 #endif
 }
 
@@ -270,7 +270,7 @@ std::shared_ptr<mmaVolumeMaterial> mafVMEVolumeLarge::GetMaterial()
 	if (mtime > (MTimeType)m_UpdateTime)
 	{
 		m_UpdateTime.Modified();
-	
+
 		UpdateGui();
 	}
 }
@@ -292,53 +292,53 @@ std::shared_ptr<mmaVolumeMaterial> mafVMEVolumeLarge::GetMaterial()
 #endif
 
 //-------------------------------------------------------------------------
-void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
+void mafVMEVolumeLarge::OnEvent(mafEventBase* maf_event)
 //-------------------------------------------------------------------------
 {
-	if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
 	{
 		switch (e->GetId())
 		{
 		case ID_COMBO_VOI_UNITS:
 			UpdateCropGui(m_CropGui);
-			m_Gui->Update();
+			UpdateGUI();
 			break;
 
 		case ID_SAMPLE_MEMLIMIT:
 			m_SampleInfoGui->Update();
 #ifndef VME_VOLUME_VER1
-      if (m_AutoProof)
-        OnAutoProofROIVolume();
+			if (m_AutoProof)
+				OnAutoProofROIVolume();
 #endif
 			break;
 
-		case ID_SHOW_HANDLES: 
-			{
-				m_GizmoROI->ShowHandles(m_ShowHandles != 0);
-				mafEvent ev(this, CAMERA_UPDATE);
-				this->ForwardUpEvent(&ev);
-			}
-			break;
+		case ID_SHOW_HANDLES:
+		{
+			m_GizmoROI->ShowHandles(m_ShowHandles != 0);
+			mafEvent ev(this, CAMERA_UPDATE);
+			this->ForwardUpEvent(&ev);
+		}
+		break;
 
-		case ID_SHOW_AXIS: 
-			{
-				m_GizmoROI->ShowAxis(m_ShowAxis != 0);
-				mafEvent ev(this, CAMERA_UPDATE);
-				this->ForwardUpEvent(&ev);
-			}
-			break;
+		case ID_SHOW_AXIS:
+		{
+			m_GizmoROI->ShowAxis(m_ShowAxis != 0);
+			mafEvent ev(this, CAMERA_UPDATE);
+			this->ForwardUpEvent(&ev);
+		}
+		break;
 
-		case ID_SHOW_PLANES: 
-			{
-				m_GizmoROI->ShowPlanes(m_ShowPlanes != 0);
-				mafEvent ev(this, CAMERA_UPDATE);
-				this->ForwardUpEvent(&ev);
-			}
-			break;
+		case ID_SHOW_PLANES:
+		{
+			m_GizmoROI->ShowPlanes(m_ShowPlanes != 0);
+			mafEvent ev(this, CAMERA_UPDATE);
+			this->ForwardUpEvent(&ev);
+		}
+		break;
 
 		case ID_SHOW_ROI:
 			OnToggleGizmo();
-			break;		
+			break;
 
 		case ID_CROP_DIR_X:
 		case ID_CROP_DIR_XMM:
@@ -346,40 +346,40 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 		case ID_CROP_DIR_YMM:
 		case ID_CROP_DIR_Z:
 		case ID_CROP_DIR_ZMM:
+		{
+			//update the gizmo to fit the specified coordinates
+			UpdateGizmo();
+
+			if (m_AutoProof)
+				OnAutoProofROIVolume();
+			else
 			{
-				//update the gizmo to fit the specified coordinates
-				UpdateGizmo();
-
-        if (m_AutoProof)
-          OnAutoProofROIVolume();
-        else
-        {
-				  mafEvent ev(this, CAMERA_UPDATE);
-				  this->ForwardUpEvent(&ev);
-        }
+				mafEvent ev(this, CAMERA_UPDATE);
+				this->ForwardUpEvent(&ev);
 			}
-			break;
+		}
+		break;
 
-		case ID_TRANSFORM:			
+		case ID_TRANSFORM:
 			//Gizmo -> variables -> GUI controls			
 			UpdateCropGui(m_CropGui);
-			m_Gui->Update();
+			UpdateGUI();
 
-      if (m_AutoProof)
-        OnAutoProofROIVolume();
-			break;			
-
-		case ID_RESET_CROPPING_AREA:
-			OnResetROI();			
+			if (m_AutoProof)
+				OnAutoProofROIVolume();
 			break;
 
-    case ID_AUTOPROOF:
-      if (m_AutoProof)
-        OnViewROIVolume();
-      break;
-      
+		case ID_RESET_CROPPING_AREA:
+			OnResetROI();
+			break;
+
+		case ID_AUTOPROOF:
+			if (m_AutoProof)
+				OnViewROIVolume();
+			break;
+
 		case ID_VIEW_ROI_VOLUME:
-			OnViewROIVolume();			
+			OnViewROIVolume();
 			break;
 
 		case ID_VIEW_ORIGVOI_VOLUME:
@@ -388,7 +388,7 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 
 #ifndef VME_VOLUME_LARGE_EXCLUDE_CROP
 		case ID_CROP:
-			OnCrop();			
+			OnCrop();
 			break;
 #endif // VME_VOLUME_LARGE_EXCLUDE_CROP
 
@@ -409,19 +409,19 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 //processes the ROI toggle command, creates or destroys gizmo
 /*virtual*/ void mafVMEVolumeLarge::OnToggleGizmo()
 {
-	if (m_ShowROI == 0) 
+	if (m_ShowROI == 0)
 	{
-		if ( m_GizmoROI != NULL)
-		{      
-      //N.B. both, Show method and the destructor, sends events 
-      //that may lead into the processing of destruction request
-      //and thus into calling of UnRegister function
-      //if m_GizmoROI is not NULL that time, the dtor will be called twice!
-      mafGizmoROI_BES* roi = m_GizmoROI;
-      m_GizmoROI = NULL;
+		if (m_GizmoROI != NULL)
+		{
+			//N.B. both, Show method and the destructor, sends events 
+			//that may lead into the processing of destruction request
+			//and thus into calling of UnRegister function
+			//if m_GizmoROI is not NULL that time, the dtor will be called twice!
+			mafGizmoROI_BES* roi = m_GizmoROI;
+			m_GizmoROI = NULL;
 
-      roi->Show(false);
-      cppDEL(roi);     
+			roi->Show(false);
+			cppDEL(roi);
 		}
 	}
 	else
@@ -436,20 +436,20 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 			m_ShowROI = 0;
 		}
 		else
-		{	
+		{
 			double usrBounds[6];
 			TransformExtent(m_FullExtent, usrBounds);
-			m_GizmoROI = new mafGizmoROI_BES(mafVME::StaticDownCast(this->SharedFromThis()), this, mafGizmoROI_BES::USER_BOUNDS, 
-        this, /*GetParent(),*/ usrBounds);			
+			m_GizmoROI = new mafGizmoROI_BES(mafVME::StaticDownCast(this->SharedFromThis()), this, mafGizmoROI_BES::USER_BOUNDS,
+				this, /*GetParent(),*/ usrBounds);
 			m_GizmoROI->SetBounds(m_ROI);
 			m_GizmoROI->Show(true);
 
 			//probably this is not necessary
 			ev.SetId(CAMERA_UPDATE);
-			this->ForwardUpEvent(&ev);		
+			this->ForwardUpEvent(&ev);
 		}
 	}
-	
+
 	m_ShowROIOpt->Enable(ID_SHOW_HANDLES, m_ShowROI != 0);
 	m_ShowROIOpt->Enable(ID_SHOW_AXIS, m_ShowROI != 0);
 	m_ShowROIOpt->Enable(ID_SHOW_PLANES, m_ShowROI != 0);
@@ -464,117 +464,117 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 //------------------------------------------------------------------------
 {
 #ifdef VME_VOLUME_VER1
-  OnViewROIVolume();
+	OnViewROIVolume();
 #else
-  //first, detect the movement of ROI
-  int nDirs = 0;
-  int* pCurVOI = m_LargeDataReader->GetVOI();
-  for (int i = 0; i < 6; i += 2)
-  {
-    if (m_VOI[i] < pCurVOI[i])
-      nDirs |= 1 << i;
+	//first, detect the movement of ROI
+	int nDirs = 0;
+	int* pCurVOI = m_LargeDataReader->GetVOI();
+	for (int i = 0; i < 6; i += 2)
+	{
+		if (m_VOI[i] < pCurVOI[i])
+			nDirs |= 1 << i;
 
-    if (m_VOI[i + 1] > pCurVOI[i + 1])
-      nDirs |= 1 << (i + 1);
-  }
-
-
-  //next, check whether the new ROI differs in the quality of current ROI    
-  int nCurrentLevel = m_LargeDataReader->GetSampleRate();
-  unsigned int nMemoryLimit = m_SampleMemLimit*1024;
-
-  int nNewLevel = m_LargeDataReader->ComputeSampleRate(m_VOI, nMemoryLimit);
-  if (nCurrentLevel == nNewLevel && nDirs == 0)
-    return; //no change in resolution and the new ROI is fully within the current ROI  
+		if (m_VOI[i + 1] > pCurVOI[i + 1])
+			nDirs |= 1 << (i + 1);
+	}
 
 
-  int FullVOI[6];  
-  for (int i = 0; i < 6; i++) { //align FullVOI
-      FullVOI[i] = (m_FullExtent[i] / nNewLevel) * nNewLevel;
-  }
-  
+	//next, check whether the new ROI differs in the quality of current ROI    
+	int nCurrentLevel = m_LargeDataReader->GetSampleRate();
+	unsigned int nMemoryLimit = m_SampleMemLimit * 1024;
 
-  int AutoProofVOI[6];
-  memcpy(AutoProofVOI, m_VOI, sizeof(AutoProofVOI));
+	int nNewLevel = m_LargeDataReader->ComputeSampleRate(m_VOI, nMemoryLimit);
+	if (nCurrentLevel == nNewLevel && nDirs == 0)
+		return; //no change in resolution and the new ROI is fully within the current ROI  
 
-  //compute new ProofVOI taking the user movement into the consideration
-  if (nDirs != 0)
-  {
-    int nAutoProofZone = m_AutoProofZone;
-    while (nAutoProofZone != 0)
-    {
-      int nExtent = nAutoProofZone*nNewLevel;
-      int nMask = 1, nMult = 1;
-      for (int i = 0; i < 6; i++)
-      {
-        //extend VOI in this direction
-        if ((nDirs & nMask) != 0)
-        {
-          AutoProofVOI[i] -= nMult*nExtent;
-          if (nMult*AutoProofVOI[i] < nMult*FullVOI[i])
-            AutoProofVOI[i] = FullVOI[i];
-        }
 
-        nMask *= 2; nMult = -nMult;
-      }
+	int FullVOI[6];
+	for (int i = 0; i < 6; i++) { //align FullVOI
+		FullVOI[i] = (m_FullExtent[i] / nNewLevel) * nNewLevel;
+	}
 
-      int nNewAPLevel = m_LargeDataReader->ComputeSampleRate(AutoProofVOI, nMemoryLimit);
-      if (nNewLevel == nNewAPLevel)
-        break;  //this AutoProofVOI is valid
 
-      nAutoProofZone /= 2;  //try smaller zone
-      memcpy(AutoProofVOI, m_VOI, sizeof(AutoProofVOI));
-    } //int 
-  } //endif nDirs
+	int AutoProofVOI[6];
+	memcpy(AutoProofVOI, m_VOI, sizeof(AutoProofVOI));
 
-  //and now process the data
-  //{ is here to avoid rapid cursor change
-  {
-    wxBusyCursor busyCursor;
+	//compute new ProofVOI taking the user movement into the consideration
+	if (nDirs != 0)
+	{
+		int nAutoProofZone = m_AutoProofZone;
+		while (nAutoProofZone != 0)
+		{
+			int nExtent = nAutoProofZone * nNewLevel;
+			int nMask = 1, nMult = 1;
+			for (int i = 0; i < 6; i++)
+			{
+				//extend VOI in this direction
+				if ((nDirs & nMask) != 0)
+				{
+					AutoProofVOI[i] -= nMult * nExtent;
+					if (nMult * AutoProofVOI[i] < nMult * FullVOI[i])
+						AutoProofVOI[i] = FullVOI[i];
+				}
 
-    //set a new VOI
-    m_LargeDataReader->SetVOI(AutoProofVOI);
-    m_LargeDataReader->SetMemoryLimit(m_SampleMemLimit*1024);
-    m_LargeDataReader->Update();
-    
-    //update VOI to fit the new AutoProofVOI
-    pCurVOI = m_LargeDataReader->GetVOI();
-    for (int i = 0; i < 3; i++)
-    {
-      if (m_VOI[i] < pCurVOI[i])
-        m_VOI[i] = pCurVOI[i];
+				nMask *= 2; nMult = -nMult;
+			}
 
-      i++;
-      if (m_VOI[i] > pCurVOI[i])
-        m_VOI[i] = pCurVOI[i];
-    }
+			int nNewAPLevel = m_LargeDataReader->ComputeSampleRate(AutoProofVOI, nMemoryLimit);
+			if (nNewLevel == nNewAPLevel)
+				break;  //this AutoProofVOI is valid
 
-    UpdateVOI(m_VOI);
+			nAutoProofZone /= 2;  //try smaller zone
+			memcpy(AutoProofVOI, m_VOI, sizeof(AutoProofVOI));
+		} //int 
+	} //endif nDirs
 
-    SetData((m_LargeDataReader->IsRectilinearGrid() ?
-      (vtkDataSet*)m_LargeDataReader->GetOutputRLGDataSet() :
-      (vtkDataSet*)m_LargeDataReader->GetOutputDataSet()), 0, MAF_VME_REFERENCE_DATA);
-    this->Modified();
-    //force redraw
-    mafEvent ev(this, VME_SELECTED); ev.SetVme(this);
-    this->ForwardUpEvent(&ev);
-    UpdateGui();
-  }
+	//and now process the data
+	//{ is here to avoid rapid cursor change
+	{
+		wxBusyCursor busyCursor;
+
+		//set a new VOI
+		m_LargeDataReader->SetVOI(AutoProofVOI);
+		m_LargeDataReader->SetMemoryLimit(m_SampleMemLimit * 1024);
+		m_LargeDataReader->Update();
+
+		//update VOI to fit the new AutoProofVOI
+		pCurVOI = m_LargeDataReader->GetVOI();
+		for (int i = 0; i < 3; i++)
+		{
+			if (m_VOI[i] < pCurVOI[i])
+				m_VOI[i] = pCurVOI[i];
+
+			i++;
+			if (m_VOI[i] > pCurVOI[i])
+				m_VOI[i] = pCurVOI[i];
+		}
+
+		UpdateVOI(m_VOI);
+
+		SetData((m_LargeDataReader->IsRectilinearGrid() ?
+			(vtkDataSet*)m_LargeDataReader->GetOutputRLGDataSet() :
+			(vtkDataSet*)m_LargeDataReader->GetOutputDataSet()), 0, MAF_VME_REFERENCE_DATA);
+		this->Modified();
+		//force redraw
+		mafEvent ev(this, VME_SELECTED); ev.SetVme(this);
+		this->ForwardUpEvent(&ev);
+		UpdateGui();
+	}
 #endif
 }
 
 
 //resets the VOI into the full VOI
 /*virtual*/ void mafVMEVolumeLarge::OnResetROI()
-{	
+{
 	memcpy(m_VOI, m_FullExtent, sizeof(m_VOI));
 	TransformExtent(m_VOI, m_ROI);
-	
+
 	if (m_GizmoROI != NULL)
 		m_GizmoROI->SetBounds(m_ROI);
 
 	UpdateCropGui(m_CropGui);
-	m_Gui->Update();
+	UpdateGUI();
 
 #ifdef VME_VOLUME_VER1
 	if (!m_ShowFEOutput)	//switch to the whole volume
@@ -601,14 +601,14 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 
 	unsigned long t1 = m_LargeData->GetSnapshot()->GetMTime();
 	CheckFEOutput();
-	
+
 	//set a new VOI
 	m_LargeData->SetVOI(m_VOI);
-	m_LargeData->SetMemoryLimit(m_SampleMemLimit*1024);
+	m_LargeData->SetMemoryLimit(m_SampleMemLimit * 1024);
 #else
 	//set a new VOI
 	m_LargeDataReader->SetVOI(m_VOI);
-	m_LargeDataReader->SetMemoryLimit(m_SampleMemLimit*1024);
+	m_LargeDataReader->SetMemoryLimit(m_SampleMemLimit * 1024);
 #endif
 
 #ifdef _PROFILE_LARGEDATA_UPDATE
@@ -628,7 +628,7 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 	::QueryPerformanceFrequency(&liFreq);
 
 	wxMessageBox(wxString::Format("m_LargeData->Update() in %d ms",
-		(int)(((liEnd.QuadPart - liBegin.QuadPart)*1000) / liFreq.QuadPart)));
+		(int)(((liEnd.QuadPart - liBegin.QuadPart) * 1000) / liFreq.QuadPart)));
 
 	//NOTE: Snapshot whole extent is destroyed now because of wxMessageBox
 #endif
@@ -637,30 +637,30 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 	SetData(m_LargeData->GetSnapshot(), 0, MAF_VME_REFERENCE_DATA);
 
 	unsigned long t2 = m_LargeData->GetSnapshot()->GetMTime();
-	if (t1 != t2) 
+	if (t1 != t2)
 	{
 		this->Modified();
-		UpdateOutput();	
+		UpdateOutput();
 	}
 #else
-  UpdateVOI();
+	UpdateVOI();
 	SetData((m_LargeDataReader->IsRectilinearGrid() ?
-    (vtkDataSet*)m_LargeDataReader->GetOutputRLGDataSet() :
-    (vtkDataSet*)m_LargeDataReader->GetOutputDataSet()), 0, MAF_VME_REFERENCE_DATA);
+		(vtkDataSet*)m_LargeDataReader->GetOutputRLGDataSet() :
+		(vtkDataSet*)m_LargeDataReader->GetOutputDataSet()), 0, MAF_VME_REFERENCE_DATA);
 	this->Modified();
-//	UpdateOutput();	
+	//	UpdateOutput();	
 
-  //force redraw
-  mafEvent ev(this, VME_SELECTED); ev.SetVme(this);
-  this->ForwardUpEvent(&ev);
-  UpdateGui();
+	  //force redraw
+	mafEvent ev(this, VME_SELECTED); ev.SetVme(this);
+	this->ForwardUpEvent(&ev);
+	UpdateGui();
 #endif
 }
 
 //returns back to the original ROI only
 /*virtual*/ void mafVMEVolumeLarge::OnViewOrigVOIVolume()
-{	
-	wxBusyCursor busyCursor;	
+{
+	wxBusyCursor busyCursor;
 
 #ifdef VME_VOLUME_VER1
 	m_ShowFEOutput = true;
@@ -669,8 +669,8 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 
 	CheckFEOutput();
 
-	if (m_FEOutput == NULL || 
-		m_LargeData->GetMemoryLimit() != m_SampleMemLimit*1024
+	if (m_FEOutput == NULL ||
+		m_LargeData->GetMemoryLimit() != m_SampleMemLimit * 1024
 		)
 	{
 		//we have to construct FE volume 
@@ -686,172 +686,172 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 		m_FEOutput = oldShot->NewInstance();
 		m_LargeData->SetSnapshot(m_FEOutput);
 		m_LargeData->SetVOI(m_FullExtent);
-		m_LargeData->SetMemoryLimit(m_SampleMemLimit*1024);
+		m_LargeData->SetMemoryLimit(m_SampleMemLimit * 1024);
 		m_LargeData->Update();
 
 		m_LargeData->GetSampleRate(m_FESampleRate);
 
 		m_LargeData->SetVOI(VOI);	//unfortunately, this makes snapshot obsolete
 		m_LargeData->SetSampleRate(sample_rate);
-		m_LargeData->SetSnapshot(oldShot);				
-		oldShot->UnRegister(NULL);		
+		m_LargeData->SetSnapshot(oldShot);
+		oldShot->UnRegister(NULL);
 	}
 
 	SetData(m_FEOutput, 0, MAF_VME_REFERENCE_DATA);
 #else
 	m_LargeDataReader->SetVOI(m_FullExtent);
-	m_LargeDataReader->SetMemoryLimit(m_SampleMemLimit*1024);
+	m_LargeDataReader->SetMemoryLimit(m_SampleMemLimit * 1024);
 	m_LargeDataReader->Update();
-  UpdateVOI();
+	UpdateVOI();
 
 	SetData((m_LargeDataReader->IsRectilinearGrid() ?
-    (vtkDataSet*)m_LargeDataReader->GetOutputRLGDataSet() :
-    (vtkDataSet*)m_LargeDataReader->GetOutputDataSet()), 0, MAF_VME_REFERENCE_DATA);
+		(vtkDataSet*)m_LargeDataReader->GetOutputRLGDataSet() :
+		(vtkDataSet*)m_LargeDataReader->GetOutputDataSet()), 0, MAF_VME_REFERENCE_DATA);
 #endif
-		
+
 	this->Modified();
-//	UpdateOutput();	
-    
-  //force redraw
-  mafEvent ev(this, VME_SELECTED); ev.SetVme(this);
-  this->ForwardUpEvent(&ev);
-  UpdateGui();
+	//	UpdateOutput();	
+
+	  //force redraw
+	mafEvent ev(this, VME_SELECTED); ev.SetVme(this);
+	this->ForwardUpEvent(&ev);
+	UpdateGui();
 }
 
 #ifndef VME_VOLUME_LARGE_EXCLUDE_CROP
 //performs the cropping
 /*virtual*/ void mafVMEVolumeLarge::OnCrop()
 {
-  ////TODO: remove
-  //static int iTest = 0;
-  //typedef int VOI_TYPE[6];
-  //VOI_TYPE VOIs[] = {
-  //  {0,2040,0,1200,0,5160 },
-  //  {0,2037,0,1197,0,3885 },
-  //  {0,2040,0,1200,0,3120 },
-  //  {0,2034,0,1206,0,2340 },
-  //  {0,2040,0,1200,1110,2340 },
-  //  {1056,2040,0,1200,1104,2340 },
-  //  {1053,2034,0,1206,1791,2340 },
-  //  {1050,2037,756,1204,1792,2338 },
-  //  {1050,1698,756,1206,1794,2340 },
-  //  {1308,1700,760,1208,2064,2340 },
-  //  {1308,1497,759,1209,2064,2343 },
-  //  {1308,1498,824,946,2064,2342 },
-  //  {1298,1412,858,946,2064,2342 },
-  //  {1298,1413,858,946,2207,2307 },
-  //  {-1, -1, -1, -1, -1, -1},
-  //};
-  //
-  //if (VOIs[iTest][0] >= 0)
-  //{
-  //  OnViewROIVolume();
+	////TODO: remove
+	//static int iTest = 0;
+	//typedef int VOI_TYPE[6];
+	//VOI_TYPE VOIs[] = {
+	//  {0,2040,0,1200,0,5160 },
+	//  {0,2037,0,1197,0,3885 },
+	//  {0,2040,0,1200,0,3120 },
+	//  {0,2034,0,1206,0,2340 },
+	//  {0,2040,0,1200,1110,2340 },
+	//  {1056,2040,0,1200,1104,2340 },
+	//  {1053,2034,0,1206,1791,2340 },
+	//  {1050,2037,756,1204,1792,2338 },
+	//  {1050,1698,756,1206,1794,2340 },
+	//  {1308,1700,760,1208,2064,2340 },
+	//  {1308,1497,759,1209,2064,2343 },
+	//  {1308,1498,824,946,2064,2342 },
+	//  {1298,1412,858,946,2064,2342 },
+	//  {1298,1413,858,946,2207,2307 },
+	//  {-1, -1, -1, -1, -1, -1},
+	//};
+	//
+	//if (VOIs[iTest][0] >= 0)
+	//{
+	//  OnViewROIVolume();
 
-  //  iTest++;
+	//  iTest++;
 
-  //  memcpy(m_VOI, VOIs[iTest], sizeof(VOI_TYPE));
-  //  UpdateGizmo();        
-  //}
-  //else iTest = 0;
+	//  memcpy(m_VOI, VOIs[iTest], sizeof(VOI_TYPE));
+	//  UpdateGizmo();        
+	//}
+	//else iTest = 0;
 
-  //return;
+	//return;
 
 #if 1
   //BES: 25.6.2008 - changed according to Fulvia's comments
   //the VME now creates a new small VME with the selected ROI
   //in the quality that is currently displayed
   //N.B. this operation may fail, if there is not enough memory!
-  if (m_LargeDataReader == NULL || 
-    m_LargeDataReader->GetOutputDataSet() == NULL)
-  {
-    wxMessageBox(wxString::Format(
-      _("This operation is invalid in the current context.\nError: %s [%d]"), 
-      __FILE__, __LINE__));
+	if (m_LargeDataReader == NULL ||
+		m_LargeDataReader->GetOutputDataSet() == NULL)
+	{
+		wxMessageBox(wxString::Format(
+			_("This operation is invalid in the current context.\nError: %s [%d]"),
+			__FILE__, __LINE__));
 
-    return;	//invalid state
-  }
+		return;	//invalid state
+	}
 
-  wxBusyInfo wait(_("Cropping the volume ..."));
+	wxBusyInfo wait(_("Cropping the volume ..."));
 
-  vtkImageData* pCopy = NULL;
-  vtkRectilinearGrid* pCopyRLG = NULL;
+	vtkImageData* pCopy = NULL;
+	vtkRectilinearGrid* pCopyRLG = NULL;
 
-  bool bRLG = m_LargeDataReader->IsRectilinearGrid();
-  try
-  {
-    if (!bRLG)
-    {
-      vtkImageData* pData = m_LargeDataReader->GetOutputDataSet();  
+	bool bRLG = m_LargeDataReader->IsRectilinearGrid();
+	try
+	{
+		if (!bRLG)
+		{
+			vtkImageData* pData = m_LargeDataReader->GetOutputDataSet();
 
-      pCopy = vtkImageData::New();    
-      pCopy->DeepCopy(pData);
-    }
-    else
-    {
-      //rectilinear grid
-      vtkRectilinearGrid* pData = m_LargeDataReader->GetOutputRLGDataSet();  
+			pCopy = vtkImageData::New();
+			pCopy->DeepCopy(pData);
+		}
+		else
+		{
+			//rectilinear grid
+			vtkRectilinearGrid* pData = m_LargeDataReader->GetOutputRLGDataSet();
 
-      pCopyRLG = vtkRectilinearGrid::New();
-      pCopyRLG->DeepCopy(pData);
-    }
-  }
-  catch (...)
-  {
-    vtkDEL(pCopy);
-    vtkDEL(pCopyRLG);
-  	
-    wxMessageBox(_("ERROR: Not enough memory to complete the operation."));
-    return;	//invalid state
-  }
-  
-  auto newVME = mafVMEVolumeGray::NewSPtr();
-  if (bRLG)
-    newVME->SetData(pCopyRLG, 0, MAF_VME_REFERENCE_DATA);
-  else
-    newVME->SetData(pCopy, 0, MAF_VME_REFERENCE_DATA);
-  vtkDEL(pCopy);
-  vtkDEL(pCopyRLG);
+			pCopyRLG = vtkRectilinearGrid::New();
+			pCopyRLG->DeepCopy(pData);
+		}
+	}
+	catch (...)
+	{
+		vtkDEL(pCopy);
+		vtkDEL(pCopyRLG);
 
-  mafTagItem tag_Nature;
-  tag_Nature.SetName(_R("VME_NATURE"));
-  tag_Nature.SetValue(_R("NATURAL"));
+		wxMessageBox(_("ERROR: Not enough memory to complete the operation."));
+		return;	//invalid state
+	}
 
-  mafString name = this->GetName();
-  newVME->SetName(name + mafString::Format(_R(" (OR[%d,%d,%d], SR[%d])"),
-    m_VOI[0], m_VOI[2], m_VOI[4], m_LargeDataReader->GetSampleRate()));
-  newVME->GetTagArray()->SetTag(tag_Nature);
-    
+	auto newVME = mafVMEVolumeGray::NewSPtr();
+	if (bRLG)
+		newVME->SetData(pCopyRLG, 0, MAF_VME_REFERENCE_DATA);
+	else
+		newVME->SetData(pCopy, 0, MAF_VME_REFERENCE_DATA);
+	vtkDEL(pCopy);
+	vtkDEL(pCopyRLG);
+
+	mafTagItem tag_Nature;
+	tag_Nature.SetName(_R("VME_NATURE"));
+	tag_Nature.SetValue(_R("NATURAL"));
+
+	mafString name = this->GetName();
+	newVME->SetName(name + mafString::Format(_R(" (OR[%d,%d,%d], SR[%d])"),
+		m_VOI[0], m_VOI[2], m_VOI[4], m_LargeDataReader->GetSampleRate()));
+	newVME->GetTagArray()->SetTag(tag_Nature);
+
 #pragma message("VME_ADD being eliminated")
 	//{mafEvent ev(this, VME_ADD); ev.SetVme(newVME.get());this->ForwardUpEvent(&ev);}
 
-  newVME.reset();   //VME_ADD increased reference
+	newVME.reset();   //VME_ADD increased reference
 #else
   //This code saves the highest resolution of the selected ROI
   //into the output ROI
 
 #ifdef VME_VOLUME_VER1
-	if (m_LargeData == NULL || 
+	if (m_LargeData == NULL ||
 		m_LargeData->GetPointDataProvider() == NULL ||
 		m_LargeData->GetPointDataProvider()->GetScalarsDescriptor() == NULL
-		) 
+		)
 #else
-	if (m_LargeDataReader == NULL || 
+	if (m_LargeDataReader == NULL ||
 		m_LargeDataReader->GetLevelFile(1) == NULL)
 #endif
 	{
 		wxMessageBox(wxString::Format(
-			_("This operation is invalid in the current context.\nError: %s [%d]"), 
+			_("This operation is invalid in the current context.\nError: %s [%d]"),
 			__FILE__, __LINE__));
 
 		return;	//invalid state
-	}	
+	}
 
-	std::string fname = mafGetSaveFile(mafGetApplicationDirectory().c_str(), 
+	std::string fname = mafGetSaveFile(mafGetApplicationDirectory().c_str(),
 		_("RAW files (*.raw)|*.raw"), _("Save Volume File"));
 
 	if (fname.c_str() == NULL || *fname.c_str() == '\0')
 		return;	//cancel pressed
-	
+
 	wxBusyInfo wait(_("Cropping the volume ..."));
 
 	vtkSmartPointer<vtkMAFFileDataProvider> dst = vtkMAFFileDataProvider::New();
@@ -859,8 +859,8 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 
 	wxString szFName = fname.c_str();
 	wxStripExtension(szFName);
-	szFName += wxString::Format("_%d_%d_%d.raw", 
-		(m_VOI[1] - m_VOI[0] + 1), 
+	szFName += wxString::Format("_%d_%d_%d.raw",
+		(m_VOI[1] - m_VOI[0] + 1),
 		(m_VOI[3] - m_VOI[2] + 1),
 		(m_VOI[5] - m_VOI[4] + 1));
 
@@ -869,16 +869,16 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 	else
 	{
 #ifdef VME_VOLUME_VER1
-		vtkMAFLargeDataProvider* src = m_LargeData->GetPointDataProvider();	
-		vtkMAFDataArrayDescriptor* srcDsc = src->GetScalarsDescriptor();	
+		vtkMAFLargeDataProvider* src = m_LargeData->GetPointDataProvider();
+		vtkMAFDataArrayDescriptor* srcDsc = src->GetScalarsDescriptor();
 #else
 		int OrigVOI[6];
 		mafBrickedFileReader* srcB = m_LargeDataReader->GetLevelFile(1);
 		srcB->GetVOI(OrigVOI);
 #endif // VME_VOLUME_VER1
-	
 
-		vtkSmartPointer<vtkMAFDataArrayDescriptor> dstDsc = vtkMAFDataArrayDescriptor::New();		
+
+		vtkSmartPointer<vtkMAFDataArrayDescriptor> dstDsc = vtkMAFDataArrayDescriptor::New();
 		dstDsc->Delete();	//vtkSmartPointer increased reference counter
 #ifdef VME_VOLUME_VER1
 		dstDsc->SetDataType(srcDsc->GetDataType());
@@ -889,10 +889,10 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 #endif // VME_VOLUME_VER1
 
 		//compute new number of tuples
-		vtkIdType64 numTup = ((vtkIdType64)(m_VOI[1] - m_VOI[0] + 1))* 
-			(m_VOI[3] - m_VOI[2] + 1)*(m_VOI[5] - m_VOI[4] + 1);
+		vtkIdType64 numTup = ((vtkIdType64)(m_VOI[1] - m_VOI[0] + 1)) *
+			(m_VOI[3] - m_VOI[2] + 1) * (m_VOI[5] - m_VOI[4] + 1);
 		dstDsc->SetNumberOfTuples(numTup);
-		
+
 #ifdef VME_VOLUME_VER1
 		dst->SetSwapBytes(src->GetSwapBytes());
 #else
@@ -900,28 +900,28 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 #endif // VME_VOLUME_VER1
 		dst->SetScalarsDescriptor(dstDsc.GetPointer());
 
-		vtkSmartPointer<vtkDataArray> buffer = 
+		vtkSmartPointer<vtkDataArray> buffer =
 			vtkDataArray::CreateDataArray(dstDsc->GetDataType());
 		buffer->Delete();	//NB: vtkSmartPointer increases ReferenceCount);
-						
+
 		mafEvent ev(this, PROGRESSBAR_SHOW, this);
 		this->ForwardUpEvent(&ev);
 
-		ev.SetId(PROGRESSBAR_SET_VALUE);	
-		
+		ev.SetId(PROGRESSBAR_SET_VALUE);
+
 		vtkIdType64 index = 0;
 		int pixelRead = m_VOI[1] - m_VOI[0] + 1;
 #ifdef VME_VOLUME_VER1
 		for (int zz = m_VOI[4]; zz <= m_VOI[5]; zz++)
 		{
-			ev.SetArg(100*(zz - m_VOI[4]) / (m_VOI[5] - m_VOI[4] + 1));
+			ev.SetArg(100 * (zz - m_VOI[4]) / (m_VOI[5] - m_VOI[4] + 1));
 			this->ForwardUpEvent(&ev);
 
 			for (int yy = m_VOI[2]; yy <= m_VOI[3]; yy++)
 			{
-				vtkIdType64 idxSeek	= ((vtkMAFLargeImageData*)m_LargeData)
+				vtkIdType64 idxSeek = ((vtkMAFLargeImageData*)m_LargeData)
 					->GetDataIndex(m_VOI[0], yy, zz) / srcDsc->GetNumberOfComponents();
-					
+
 				src->GetScalars(NULL, buffer.GetPointer(), idxSeek, pixelRead);
 				if (pixelRead != buffer->GetNumberOfTuples())
 				{
@@ -929,57 +929,57 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 					zz = m_VOI[5];	//terminates the outer loop
 					break;
 				}
-				
+
 				dst->SetScalars(NULL, buffer.GetPointer(), index);
-				index += pixelRead;				
+				index += pixelRead;
 			}
 		}
 #else
 		//break the VOI into smaller chunk we are able to process
-		int nSliceInVoxels = (m_VOI[1] - m_VOI[0] + 1)*(m_VOI[3] - m_VOI[2] + 1);
-		int nSliceInB = nSliceInVoxels*dstDsc->GetNumberOfComponents()*
+		int nSliceInVoxels = (m_VOI[1] - m_VOI[0] + 1) * (m_VOI[3] - m_VOI[2] + 1);
+		int nSliceInB = nSliceInVoxels * dstDsc->GetNumberOfComponents() *
 			dstDsc->GetDataTypeSize();
 
-		int nSlicesLim = m_SampleMemLimit*1024*1024 / nSliceInB;
+		int nSlicesLim = m_SampleMemLimit * 1024 * 1024 / nSliceInB;
 		if (nSlicesLim == 0)
 			nSlicesLim = 1;
 
 		//nSlicesLim is the maximal number of slices we can process at once
 		int VOI[6];
-		memcpy(VOI, m_VOI, sizeof(int)*6);
+		memcpy(VOI, m_VOI, sizeof(int) * 6);
 
 		mafBaseEventHandler* pOldListener = srcB->GetListener();
 		srcB->SetListener(NULL);
 
-		int nCurPass = 0, nPasses = ((m_VOI[5] - VOI[4] + nSlicesLim) / nSlicesLim) + 1;			
+		int nCurPass = 0, nPasses = ((m_VOI[5] - VOI[4] + nSlicesLim) / nSlicesLim) + 1;
 		for (VOI[4] = m_VOI[4]; VOI[4] <= m_VOI[5]; VOI[4] = VOI[5] + 1)
 		{
 			ev.SetId(PROGRESSBAR_SET_VALUE);
-			ev.SetArg(100*(VOI[4] - m_VOI[4]) / (m_VOI[5] - m_VOI[4] + 1));
+			ev.SetArg(100 * (VOI[4] - m_VOI[4]) / (m_VOI[5] - m_VOI[4] + 1));
 			this->ForwardUpEvent(&ev);
 
-			 if (m_VOI[5] - VOI[4] + 1 > nSlicesLim)
-				 VOI[5] = VOI[4] + nSlicesLim - 1;
-			 else
-				 VOI[5] = m_VOI[5];
+			if (m_VOI[5] - VOI[4] + 1 > nSlicesLim)
+				VOI[5] = VOI[4] + nSlicesLim - 1;
+			else
+				VOI[5] = m_VOI[5];
 
-			 mafString szMsg = wxString::Format(
-				 _("Reading data (pass %d / %d)..."), ++nCurPass, nPasses);
-			 ev.SetId(PROGRESSBAR_SET_TEXT);
-			 ev.SetString(&szMsg);
-			 this->ForwardUpEvent(&ev);
+			mafString szMsg = wxString::Format(
+				_("Reading data (pass %d / %d)..."), ++nCurPass, nPasses);
+			ev.SetId(PROGRESSBAR_SET_TEXT);
+			ev.SetString(&szMsg);
+			this->ForwardUpEvent(&ev);
 
-			 srcB->SetVOI(VOI);			 
-			 srcB->Update();
-			
-			 szMsg = wxString::Format(
-				 _("Writing data (pass %d / %d)..."), nCurPass, nPasses);			 
-			 ev.SetString(&szMsg);
-			 this->ForwardUpEvent(&ev);
-			
-			 dst->SetScalars(NULL, 
-				 srcB->GetOutputDataSet()->GetPointData()->GetScalars(), index);
-			 index += ((vtkIdType64)(VOI[5] - VOI[4] + 1))*nSliceInVoxels;
+			srcB->SetVOI(VOI);
+			srcB->Update();
+
+			szMsg = wxString::Format(
+				_("Writing data (pass %d / %d)..."), nCurPass, nPasses);
+			ev.SetString(&szMsg);
+			this->ForwardUpEvent(&ev);
+
+			dst->SetScalars(NULL,
+				srcB->GetOutputDataSet()->GetPointData()->GetScalars(), index);
+			index += ((vtkIdType64)(VOI[5] - VOI[4] + 1)) * nSliceInVoxels;
 		}
 
 
@@ -998,9 +998,9 @@ void mafVMEVolumeLarge::OnEvent(mafEventBase *maf_event)
 #pragma region LOADING / STORING
 //two methods for restoring/storing the content of large data set from MSF  
 void mafVMEVolumeLarge::InternalStore(mafStorageElementBuilder& parent)
-{	
+{
 #ifdef VME_VOLUME_VER1
-	vtkMAFLargeImageData* ds = vtkMAFLargeImageData::SafeDownCast(m_LargeData);	
+	vtkMAFLargeImageData* ds = vtkMAFLargeImageData::SafeDownCast(m_LargeData);
 	if (ds == NULL)
 	{
 		assert(false);
@@ -1026,7 +1026,7 @@ void mafVMEVolumeLarge::InternalStore(mafStorageElementBuilder& parent)
 	int MemoryLimit = ds->GetMemoryLimit();
 	int ScalarType = ds->GetScalarType();
 
-	int dims[3], samp[3], wext[6]; 		
+	int dims[3], samp[3], wext[6];
 	ds->GetDimensions(dims);
 	ds->GetSampleRate(samp);
 	ds->GetWholeExtent(wext);
@@ -1036,23 +1036,23 @@ void mafVMEVolumeLarge::InternalStore(mafStorageElementBuilder& parent)
 	ds->GetSpacing(sp);
 
 	ds_info.SetValue(_("ClassName"), ds->GetClassName());
-	ds_info[_("AutoSampleRate")].SetValue( AutoSampleRate);
-	ds_info[_("DataLowerLeft")].SetValue( DataLowerLeft);
-	ds_info[_("DataMask")].SetValue( DataMask);
-	ds_info[_("MemoryLimit")].SetValue( MemoryLimit);
-	ds_info[_("ScalarType")].SetValue( ScalarType);
-	ds_info[_("DimX")].SetValue( dims[0]);
-	ds_info[_("DimY")].SetValue( dims[1]);
-	ds_info[_("DimZ")].SetValue( dims[2]);
-	ds_info[_("SampX")].SetValue( samp[0]);
-	ds_info[_("SampY")].SetValue( samp[1]);
-	ds_info[_("SampZ")].SetValue( samp[2]);	
-	ds_info[_("WExtXMin")].SetValue( wext[0]);
-	ds_info[_("WExtXMax")].SetValue( wext[1]);
-	ds_info[_("WExtYMin")].SetValue( wext[2]);	
-	ds_info[_("WExtYMax")].SetValue( wext[3]);
-	ds_info[_("WExtZMin")].SetValue( wext[4]);
-	ds_info[_("WExtZMax")].SetValue( wext[5]);	
+	ds_info[_("AutoSampleRate")].SetValue(AutoSampleRate);
+	ds_info[_("DataLowerLeft")].SetValue(DataLowerLeft);
+	ds_info[_("DataMask")].SetValue(DataMask);
+	ds_info[_("MemoryLimit")].SetValue(MemoryLimit);
+	ds_info[_("ScalarType")].SetValue(ScalarType);
+	ds_info[_("DimX")].SetValue(dims[0]);
+	ds_info[_("DimY")].SetValue(dims[1]);
+	ds_info[_("DimZ")].SetValue(dims[2]);
+	ds_info[_("SampX")].SetValue(samp[0]);
+	ds_info[_("SampY")].SetValue(samp[1]);
+	ds_info[_("SampZ")].SetValue(samp[2]);
+	ds_info[_("WExtXMin")].SetValue(wext[0]);
+	ds_info[_("WExtXMax")].SetValue(wext[1]);
+	ds_info[_("WExtYMin")].SetValue(wext[2]);
+	ds_info[_("WExtYMax")].SetValue(wext[3]);
+	ds_info[_("WExtZMin")].SetValue(wext[4]);
+	ds_info[_("WExtZMax")].SetValue(wext[5]);
 
 	ds_info.SetValue(_("OrigX"), origin[0]);
 	ds_info.SetValue(_("OrigX"), origin[1]);
@@ -1061,36 +1061,36 @@ void mafVMEVolumeLarge::InternalStore(mafStorageElementBuilder& parent)
 	ds_info.SetValue(_("SpY"), sp[1]);
 	ds_info.SetValue(_("SpZ"), sp[2]);
 #else
-	int MemoryLimit = m_SampleMemLimit*1024;
+	int MemoryLimit = m_SampleMemLimit * 1024;
 	ds_info[_L("ClassName")].SetValue(_R(m_LargeDataReader->GetStaticTypeName()));
-	ds_info[_L("MemoryLimit")].SetValue( MemoryLimit);
+	ds_info[_L("MemoryLimit")].SetValue(MemoryLimit);
 #endif
 
-	ds_info[_L("FE0")].SetValue( m_FullExtent[0]);
-	ds_info[_L("FE1")].SetValue( m_FullExtent[1]);
-	ds_info[_L("FE2")].SetValue( m_FullExtent[2]);
-	ds_info[_L("FE3")].SetValue( m_FullExtent[3]);
-	ds_info[_L("FE4")].SetValue( m_FullExtent[4]);
-	ds_info[_L("FE5")].SetValue( m_FullExtent[5]);
+	ds_info[_L("FE0")].SetValue(m_FullExtent[0]);
+	ds_info[_L("FE1")].SetValue(m_FullExtent[1]);
+	ds_info[_L("FE2")].SetValue(m_FullExtent[2]);
+	ds_info[_L("FE3")].SetValue(m_FullExtent[3]);
+	ds_info[_L("FE4")].SetValue(m_FullExtent[4]);
+	ds_info[_L("FE5")].SetValue(m_FullExtent[5]);
 
 #ifndef VME_VOLUME_VER1
-	ds_info[_L("V0")].SetValue( m_VOI[0]);
-	ds_info[_L("V1")].SetValue( m_VOI[1]);
-	ds_info[_L("V2")].SetValue( m_VOI[2]);
-	ds_info[_L("V3")].SetValue( m_VOI[3]);
-	ds_info[_L("V4")].SetValue( m_VOI[4]);
-	ds_info[_L("V5")].SetValue( m_VOI[5]);	
+	ds_info[_L("V0")].SetValue(m_VOI[0]);
+	ds_info[_L("V1")].SetValue(m_VOI[1]);
+	ds_info[_L("V2")].SetValue(m_VOI[2]);
+	ds_info[_L("V3")].SetValue(m_VOI[3]);
+	ds_info[_L("V4")].SetValue(m_VOI[4]);
+	ds_info[_L("V5")].SetValue(m_VOI[5]);
 
 	ds_info[_L("FileName")].SetValue(m_LargeDataReader->GetFileName());
 #else
 	int VOI[6];
 	ds->GetVOI(VOI);
-	ds_info[_("V0")].SetValue( VOI[0]);
-	ds_info[_("V1")].SetValue( VOI[1]);
-	ds_info[_("V2")].SetValue( VOI[2]);
-	ds_info[_("V3")].SetValue( VOI[3]);
-	ds_info[_("V4")].SetValue( VOI[4]);
-	ds_info[_("V5")].SetValue( VOI[5]);		
+	ds_info[_("V0")].SetValue(VOI[0]);
+	ds_info[_("V1")].SetValue(VOI[1]);
+	ds_info[_("V2")].SetValue(VOI[2]);
+	ds_info[_("V3")].SetValue(VOI[3]);
+	ds_info[_("V4")].SetValue(VOI[4]);
+	ds_info[_("V5")].SetValue(VOI[5]);
 
 	vtkMAFLargeDataProvider* pp = ds->GetPointDataProvider();
 	assert(pp != NULL);
@@ -1111,18 +1111,18 @@ void mafVMEVolumeLarge::InternalStore(mafStorageElementBuilder& parent)
 		int swap = (int)pp->GetSwapBytes();
 
 		int hs_part = (int)(hs & 0xFFFFFFFF);
-		ds_info[_("HdrSz_Lo")].SetValue( hs_part);
+		ds_info[_("HdrSz_Lo")].SetValue(hs_part);
 		hs_part = (int)(hs >> 32);
-		ds_info[_("HdrSz_Hi")].SetValue( hs_part);
+		ds_info[_("HdrSz_Hi")].SetValue(hs_part);
 
-		ds_info[_("SwapBytes")].SetValue( swap);
-		ds_info[_("NumOfDescs")].SetValue( num_desc);
+		ds_info[_("SwapBytes")].SetValue(swap);
+		ds_info[_("NumOfDescs")].SetValue(num_desc);
 
 		for (int i = 0; i < num_desc; i++)
 		{
 			vtkMAFDataArrayDescriptor* desc = pp->GetDescriptor(i);
 
-			mafStorageElement* ds_di  = ds_info.AppendChild(
+			mafStorageElement* ds_di = ds_info.AppendChild(
 				wxString::Format(_("DSC_%d"), i));
 
 			int DataType = desc->GetDataType();
@@ -1130,14 +1130,14 @@ void mafVMEVolumeLarge::InternalStore(mafStorageElementBuilder& parent)
 			int NumberOfComponents = desc->GetNumberOfComponents();
 			vtkIdType64 NumberOfTuples = desc->GetNumberOfTuples();
 
-			ds_di->SetValue(_("Name"), Name == NULL ? _("(NULL)"): Name);
-			ds_di-[_("DType")].SetValue( DataType);
-			ds_di-[_("NumOfComps")].SetValue( NumberOfComponents);
+			ds_di->SetValue(_("Name"), Name == NULL ? _("(NULL)") : Name);
+			ds_di - [_("DType")].SetValue(DataType);
+			ds_di - [_("NumOfComps")].SetValue(NumberOfComponents);
 
 			int tup = (int)(NumberOfTuples & 0xFFFFFFFF);
-			ds_di-[_("NumOfTuples_Lo")].SetValue( tup);
+			ds_di - [_("NumOfTuples_Lo")].SetValue(tup);
 			tup = (int)(NumberOfTuples >> 32);
-			ds_di-[_("NumOfTuples_Hi")].SetValue( tup);
+			ds_di - [_("NumOfTuples_Hi")].SetValue(tup);
 		}
 
 		//store indices of special descriptors
@@ -1166,14 +1166,14 @@ void mafVMEVolumeLarge::InternalRestore(const mafStorageElement& node)
 		mafString clsname = ds_info[_L("ClassName")].As<mafString>();
 #ifdef VME_VOLUME_VER1
 		assert(m_LargeData == NULL);
-		if (clsname.compare(_("vtkMAFLargeImageData")) != 0) 
+		if (clsname.compare(_("vtkMAFLargeImageData")) != 0)
 #else
 		assert(m_LargeDataReader == NULL);
-		if (clsname.compare(_L("mafVolumeLargeReader")) != 0) 		
+		if (clsname.compare(_L("mafVolumeLargeReader")) != 0)
 #endif
 		{
 			wxMessageBox(wxString::Format(_("Class '%s' is unsupported in the current release."),
-				clsname.toWx()), _("Error while restoring Large Data"), 
+				clsname.toWx()), _("Error while restoring Large Data"),
 				wxOK | wxCENTER | wxICON_EXCLAMATION);
 
 			return;
@@ -1186,33 +1186,33 @@ void mafVMEVolumeLarge::InternalRestore(const mafStorageElement& node)
 		m_LargeData = vtkMAFLargeImageData::New();
 		m_LargeData->AddObserver(vtkCommand::ProgressEvent, m_ProgressCallback);
 		m_LargeData->AddObserver(vtkCommand::StartEvent, m_ProgressCallback);
-		m_LargeData->AddObserver(vtkCommand::EndEvent, m_ProgressCallback);		
+		m_LargeData->AddObserver(vtkCommand::EndEvent, m_ProgressCallback);
 
-		vtkMAFLargeImageData* ds = vtkMAFLargeImageData::SafeDownCast(m_LargeData);	
+		vtkMAFLargeImageData* ds = vtkMAFLargeImageData::SafeDownCast(m_LargeData);
 		assert(ds != NULL);
 
 		if (ds != NULL)
 		{
 			//restore vtkMAFLargeImageData settings
 			int AutoSampleRate, DataLowerLeft, DataMask, ScalarType;
-			int dims[3], samp[3], wext[6]; 		
+			int dims[3], samp[3], wext[6];
 			double origin[3], sp[3];
 
-			ds_info[_("AutoSampleRate")].As<int>( AutoSampleRate);
-			ds_info[_("DataLowerLeft")].As<int>( DataLowerLeft);
-			ds_info[_("DataMask")].As<int>( DataMask);
+			ds_info[_("AutoSampleRate")].As<int>(AutoSampleRate);
+			ds_info[_("DataLowerLeft")].As<int>(DataLowerLeft);
+			ds_info[_("DataMask")].As<int>(DataMask);
 #endif
 
-			int MemoryLimit=
-			ds_info[_L("MemoryLimit")].As<int>( );
+			int MemoryLimit =
+				ds_info[_L("MemoryLimit")].As<int>();
 #ifdef VME_VOLUME_VER1
-			ScalarType=ds_info[_("ScalarType")].As<int>( );
-			dims[0]=ds_info[_("DimX")].As<int>();
-			dims[1]=ds_info[_("DimY")].As<int>();
-			dims[2]=ds_info[_("DimZ")].As<int>( );
+			ScalarType = ds_info[_("ScalarType")].As<int>();
+			dims[0] = ds_info[_("DimX")].As<int>();
+			dims[1] = ds_info[_("DimY")].As<int>();
+			dims[2] = ds_info[_("DimZ")].As<int>();
 			samp[0] = ds_info[_("SampX")].As<int>();
 			samp[1] = ds_info[_("SampY")].As<int>();
-			samp[2] = ds_info[_("SampZ")].As<int>( );
+			samp[2] = ds_info[_("SampZ")].As<int>();
 			wext[0] = ds_info[_("WExtXMin")].As<int>();
 			wext[1] = ds_info[_("WExtXMax")].As<int>();
 			wext[2] = ds_info[_("WExtYMin")].As<int>();
@@ -1233,17 +1233,17 @@ void mafVMEVolumeLarge::InternalRestore(const mafStorageElement& node)
 			m_FullExtent[2] = ds_info[_L("FE2")].As<int>();
 			m_FullExtent[3] = ds_info[_L("FE3")].As<int>();
 			m_FullExtent[4] = ds_info[_L("FE4")].As<int>();
-			m_FullExtent[5] = ds_info[_L("FE5")].As<int>( );
+			m_FullExtent[5] = ds_info[_L("FE5")].As<int>();
 
 			m_VOI[0] = ds_info[_L("V0")].As<int>();
 			m_VOI[1] = ds_info[_L("V1")].As<int>();
 			m_VOI[2] = ds_info[_L("V2")].As<int>();
 			m_VOI[3] = ds_info[_L("V3")].As<int>();
 			m_VOI[4] = ds_info[_L("V4")].As<int>();
-			m_VOI[5] = ds_info[_L("V5")].As<int>( );
+			m_VOI[5] = ds_info[_L("V5")].As<int>();
 
 #ifdef VME_VOLUME_VER1		
-			ds->SetVOI(m_VOI);			
+			ds->SetVOI(m_VOI);
 			ds->SetAutoSampleRate(AutoSampleRate != 0);
 			ds->SetDataLowerLeft(DataLowerLeft != 0);
 			ds->SetDataMask(DataMask);
@@ -1259,9 +1259,9 @@ void mafVMEVolumeLarge::InternalRestore(const mafStorageElement& node)
 
 			mafString szStr = ds_info[_L("FileName")].As<mafString>();
 			m_LargeDataReader->SetFileName(szStr.GetCStr());
-			
-//			int emptyVOI[6];
-//			memset(emptyVOI, 0, sizeof(int)*6);
+
+			//			int emptyVOI[6];
+			//			memset(emptyVOI, 0, sizeof(int)*6);
 			m_LargeDataReader->SetVOI(m_VOI);
 			m_LargeDataReader->Update();	//force the connection to files
 #endif
@@ -1301,10 +1301,10 @@ void mafVMEVolumeLarge::InternalRestore(const mafStorageElement& node)
 				}
 
 				int hs_lo, hs_hi, num_desc, swap;
-				ds_info[_("HdrSz_Lo")].As<int>( hs_lo);
-				ds_info[_("HdrSz_Hi")].As<int>( hs_hi);
-				ds_info[_("SwapBytes")].As<int>( swap);
-				ds_info[_("NumOfDescs")].As<int>( num_desc);
+				ds_info[_("HdrSz_Lo")].As<int>(hs_lo);
+				ds_info[_("HdrSz_Hi")].As<int>(hs_hi);
+				ds_info[_("SwapBytes")].As<int>(swap);
+				ds_info[_("NumOfDescs")].As<int>(num_desc);
 
 				pp->SetHeaderSize(((vtkIdType64)hs_hi << 32) | (unsigned int)hs_lo);
 				pp->SetSwapBytes(swap != 0);
@@ -1314,22 +1314,22 @@ void mafVMEVolumeLarge::InternalRestore(const mafStorageElement& node)
 				{
 					vtkMAFDataArrayDescriptor* desc = vtkMAFDataArrayDescriptor::New();
 
-					mafStorageElement* ds_di  = ds_info.FindNestedElement(wxString::Format(_("DSC_%d"), i));
+					mafStorageElement* ds_di = ds_info.FindNestedElement(wxString::Format(_("DSC_%d"), i));
 					assert(ds_di != NULL);
 
 					int DataType, NumberOfComponents, NumTup_lo, NumTup_hi;
-					ds_di->ReSetValue(_("Name"), szStr); 
-					ds_di->R[_("DType")].SetValue( DataType);
-					ds_di->R[_("NumOfComps")].SetValue( NumberOfComponents);
-					ds_di->R[_("NumOfTuples_Lo")].SetValue( NumTup_lo);
-					ds_di->R[_("NumOfTuples_Hi")].SetValue( NumTup_hi);
+					ds_di->ReSetValue(_("Name"), szStr);
+					ds_di->R[_("DType")].SetValue(DataType);
+					ds_di->R[_("NumOfComps")].SetValue(NumberOfComponents);
+					ds_di->R[_("NumOfTuples_Lo")].SetValue(NumTup_lo);
+					ds_di->R[_("NumOfTuples_Hi")].SetValue(NumTup_hi);
 
-					if (szStr.Compare( _("(NULL)")) != 0)
+					if (szStr.Compare(_("(NULL)")) != 0)
 						desc->SetName(szStr);
 
 					desc->SetDataType(DataType);
 					desc->SetNumberOfComponents(NumberOfComponents);
-					desc->SetNumberOfTuples(((vtkIdType64)NumTup_hi << 32) | 
+					desc->SetNumberOfTuples(((vtkIdType64)NumTup_hi << 32) |
 						(unsigned int)NumTup_lo);
 
 					pp->AddDescriptor(desc);
@@ -1338,13 +1338,13 @@ void mafVMEVolumeLarge::InternalRestore(const mafStorageElement& node)
 
 				int idx;
 				ds_info.As<int>("IdxScalars", idx);
-				pp->SetIndexOfScalarsDescriptor(idx);				
+				pp->SetIndexOfScalarsDescriptor(idx);
 				ds_info.As<int>("IdxVectors", idx);
-				pp->SetIndexOfVectorsDescriptor(idx);				
+				pp->SetIndexOfVectorsDescriptor(idx);
 				ds_info.As<int>("IdxNormals", idx);
-				pp->SetIndexOfNormalsDescriptor(idx);				
+				pp->SetIndexOfNormalsDescriptor(idx);
 				ds_info.As<int>("IdxTCoords", idx);
-				pp->SetIndexOfTCoordsDescriptor(idx);				
+				pp->SetIndexOfTCoordsDescriptor(idx);
 				ds_info.As<int>("IdxTensors", idx);
 				pp->SetIndexOfTensorsDescriptor(idx);
 
@@ -1359,8 +1359,7 @@ void mafVMEVolumeLarge::InternalRestore(const mafStorageElement& node)
 #endif
 	}
 
-	if (m_Gui)
-		m_Gui->Update();
+	UpdateGUI();
 
 }
 
@@ -1371,13 +1370,13 @@ void mafVMEVolumeLarge::InternalRestore(const mafStorageElement& node)
 //it calls SetData to set it to the Snapshot of the give data
 //Note: SetData is still provided
 #ifdef VME_VOLUME_VER1
-/*virtual*/ int mafVMEVolumeLarge::SetLargeData(vtkMAFLargeDataSet *data, mafTimeStamp t, int mode)
+/*virtual*/ int mafVMEVolumeLarge::SetLargeData(vtkMAFLargeDataSet* data, mafTimeStamp t, int mode)
 {
 	assert(data);
 	assert(mode != MAF_VME_COPY_DATA);		//it would be too slow
 
 	if (data->IsA("vtkMAFLargeImageData"))
-	{		
+	{
 		if (m_LargeData != NULL) {
 			m_LargeData->RemoveObserver(m_ProgressCallback);
 			vtkDEL(m_LargeData);
@@ -1392,39 +1391,39 @@ void mafVMEVolumeLarge::InternalRestore(const mafStorageElement& node)
 		m_ShowFEOutput = true;
 
 		if (mode == MAF_VME_DETACH_DATA)
-			m_LargeData->SetSource(NULL);		
+			m_LargeData->SetSource(NULL);
 
 		m_LargeData->GetVOI(m_FullExtent);
 		memcpy(m_VOI, m_FullExtent, sizeof(m_FullExtent));
 		TransformExtent(m_VOI, m_ROI);
-				
+
 		return Superclass::SetData(m_LargeData->GetSnapshot(), t, MAF_VME_REFERENCE_DATA);
 	}
 
-	mafErrorMacro("Trying to set the wrong type of data inside a "<<
-		GetTypeName()<<" :"<< (data?data->GetClassName():"NULL"));
+	mafErrorMacro("Trying to set the wrong type of data inside a " <<
+		GetTypeName() << " :" << (data ? data->GetClassName() : "NULL"));
 	return MAF_ERROR;
 }
 #else
-/*virtual*/ int mafVMEVolumeLarge::SetLargeData(mafVolumeLargeReader *data)
+/*virtual*/ int mafVMEVolumeLarge::SetLargeData(mafVolumeLargeReader* data)
 {
 	assert(data);
-  if (data == NULL)
-    return MAF_ERROR;
-	
+	if (data == NULL)
+		return MAF_ERROR;
+
 	data->Update();	//make sure we have the current data
-	int ret = Superclass::SetData((data->IsRectilinearGrid() ? 
-    (vtkDataSet*)data->GetOutputRLGDataSet() : (vtkDataSet*)data->GetOutputDataSet()),
-    0, MAF_VME_REFERENCE_DATA);
+	int ret = Superclass::SetData((data->IsRectilinearGrid() ?
+		(vtkDataSet*)data->GetOutputRLGDataSet() : (vtkDataSet*)data->GetOutputDataSet()),
+		0, MAF_VME_REFERENCE_DATA);
 	if (ret != MAF_OK)
 		return ret;
 
 	cppDEL(m_LargeDataReader);
 	m_LargeDataReader = data;
-	
+
 	m_LargeDataReader->GetVOI(m_FullExtent);
 	memcpy(m_VOI, m_FullExtent, sizeof(m_FullExtent));
-	TransformExtent(m_VOI, m_ROI);	
+	TransformExtent(m_VOI, m_ROI);
 
 	m_SampleMemLimit = m_LargeDataReader->GetMemoryLimit() / 1024;
 	return MAF_OK;
@@ -1435,7 +1434,7 @@ void mafVMEVolumeLarge::InternalRestore(const mafStorageElement& node)
 #pragma region Getters / Setters
 
 //Set the pathname of the large data file (that is used)
-void mafVMEVolumeLarge::SetFileName(const char *filename)
+void mafVMEVolumeLarge::SetFileName(const char* filename)
 {
 	mafTagItem item;
 
@@ -1447,14 +1446,14 @@ void mafVMEVolumeLarge::SetFileName(const char *filename)
 //Get the pathname of the large data file (that is used)
 const char* mafVMEVolumeLarge::GetFileName()
 {
-	mafTagItem *item=this->GetTagArray()->GetTag(_R("EXTDATA_FILENAME"));
-  if (item != NULL)
-	  return item->GetValue().GetCStr();
-  else
-  {
-    assert(false);
-    return "";
-  }
+	mafTagItem* item = this->GetTagArray()->GetTag(_R("EXTDATA_FILENAME"));
+	if (item != NULL)
+		return item->GetValue().GetCStr();
+	else
+	{
+		assert(false);
+		return "";
+	}
 }
 
 #pragma endregion
@@ -1469,11 +1468,11 @@ void mafVMEVolumeLarge::CreateSnapshotObject()
 	assert(m_DataVector != NULL);
 
 	//force the loading of stored data
-	mafVMEItemVTK *item = mafVMEItemVTK::SafeDownCast(m_DataVector->GetItem(0));
+	mafVMEItemVTK* item = mafVMEItemVTK::SafeDownCast(m_DataVector->GetItem(0));
 	assert(item != NULL);
 
 	if (item != NULL)
-		m_LargeData->SetSnapshot(item->GetData());	
+		m_LargeData->SetSnapshot(item->GetData());
 	else if (m_LargeData->GetSnapshot() == NULL)
 		m_LargeData->SetSnapshot(vtkImageData::New());
 }
@@ -1492,17 +1491,17 @@ void mafVMEVolumeLarge::CheckFEOutput()
 	{
 		//check if the current output is our full volume				
 		bool bOutputIsFE = true;
-		for (int i = 0; i < 6; i++) 
+		for (int i = 0; i < 6; i++)
 		{
 			if (VOI[i] != m_FullExtent[i]) {
 				bOutputIsFE = false; break;
 			}
-		}		
+		}
 
 		if (bOutputIsFE)
-		{				
+		{
 			m_LargeData->GetSampleRate(m_FESampleRate);
-			m_FEOutput = m_LargeData->GetSnapshot();						
+			m_FEOutput = m_LargeData->GetSnapshot();
 			m_FEOutput->Register(NULL);
 
 			vtkDataSet* newSnapshot = m_FEOutput->NewInstance();
@@ -1522,7 +1521,7 @@ void mafVMEVolumeLarge::UpdateOutput()
 {
 	//BES: 1.2.2008 - trick to reverse propagate UpdateExtent
 	//GetOutput()->Update() otherwise propagates old UpdateExtent
-	//from output to input (VME), thus the subsampled data 
+	//from output to input (VME), thus the subsampled data
 	//is shown incorrectly
 	int wext[6];
 	vtkDataSet* ds = GetOutput()->GetVTKData();
@@ -1536,15 +1535,15 @@ void mafVMEVolumeLarge::UpdateOutput()
 #endif // VME_VOLUME_VER1
 	ds->SetWholeExtent(wext);
 	ds->SetUpdateExtentToWholeExtent();
-	//end BES	
+	//end BES
 
 	GetOutput()->Update();
 
-	//BES: this resets the currently opened view 
+	//BES: this resets the currently opened view
 	//unfortunately, MAF logic does not update all views
 	mafEvent ev(this, ds->GetNumberOfConsumers() == 0 ?
 			VME_SELECTED : VME_VISUAL_MODE_CHANGED,this);
-	this->ForwardUpEvent(&ev);		
+	this->ForwardUpEvent(&ev);
 }
 */
 
@@ -1555,56 +1554,56 @@ void mafVMEVolumeLarge::TransformExtent(int extUn[6], double outMm[6])
 #ifdef VME_VOLUME_VER1
 	vtkMAFLargeImageData* ds = vtkMAFLargeImageData::SafeDownCast(m_LargeData);
 #else
-	mafBrickedFileReader* ds = (m_LargeDataReader != NULL) ? 
+	mafBrickedFileReader* ds = (m_LargeDataReader != NULL) ?
 		m_LargeDataReader->GetLevelFile(1) : NULL;
 #endif
 	assert(ds != NULL);
 
 	if (ds == NULL) {
-		for (int i = 0; i < 6; i++){
+		for (int i = 0; i < 6; i++) {
 			outMm[i] = 0.0;
 		}
 	}
 	else
-	{		
+	{
 		double orig[3], sp[3];
 
 #ifdef VME_VOLUME_VER1
-    int wext[6];
+		int wext[6];
 		ds->GetWholeExtent(wext);
 		ds->GetOrigin(orig);
 		ds->GetSpacing(sp);
 
-    outMm[0] = orig[0] + (extUn[0] - wext[0])*sp[0];
-    outMm[1] = orig[0] + (extUn[1] - wext[0])*sp[0];
-    outMm[2] = orig[1] + (extUn[2] - wext[2])*sp[1];
-    outMm[3] = orig[1] + (extUn[3] - wext[2])*sp[1];
-    outMm[4] = orig[2] + (extUn[4] - wext[4])*sp[2];
-    outMm[5] = orig[2] + (extUn[5] - wext[4])*sp[2];
+		outMm[0] = orig[0] + (extUn[0] - wext[0]) * sp[0];
+		outMm[1] = orig[0] + (extUn[1] - wext[0]) * sp[0];
+		outMm[2] = orig[1] + (extUn[2] - wext[2]) * sp[1];
+		outMm[3] = orig[1] + (extUn[3] - wext[2]) * sp[1];
+		outMm[4] = orig[2] + (extUn[4] - wext[4]) * sp[2];
+		outMm[5] = orig[2] + (extUn[5] - wext[4]) * sp[2];
 #else
-    if (!ds->IsRectilinearGrid())
-    {
-      ds->GetDataOrigin(orig);
-		  ds->GetDataSpacing(sp);
+		if (!ds->IsRectilinearGrid())
+		{
+			ds->GetDataOrigin(orig);
+			ds->GetDataSpacing(sp);
 
-      for (int i = 0, j = 0; i < 3; i++, j += 2)
-      {
-        outMm[j] = orig[i] + extUn[j]*sp[i];
-        outMm[j+1] = orig[i] + extUn[j+1]*sp[i];
-      }		  
-    }
-    else
-    {
-      //rectilinear grid => it will be more interesting
-      double* pXYZ = ds->GetXCoordinates()->GetPointer(0);
-      outMm[0] = pXYZ[extUn[0]]; outMm[1] = pXYZ[extUn[1]];
+			for (int i = 0, j = 0; i < 3; i++, j += 2)
+			{
+				outMm[j] = orig[i] + extUn[j] * sp[i];
+				outMm[j + 1] = orig[i] + extUn[j + 1] * sp[i];
+			}
+		}
+		else
+		{
+			//rectilinear grid => it will be more interesting
+			double* pXYZ = ds->GetXCoordinates()->GetPointer(0);
+			outMm[0] = pXYZ[extUn[0]]; outMm[1] = pXYZ[extUn[1]];
 
-      pXYZ = ds->GetYCoordinates()->GetPointer(0);
-      outMm[2] = pXYZ[extUn[2]]; outMm[3] = pXYZ[extUn[3]];
+			pXYZ = ds->GetYCoordinates()->GetPointer(0);
+			outMm[2] = pXYZ[extUn[2]]; outMm[3] = pXYZ[extUn[3]];
 
-      pXYZ = ds->GetZCoordinates()->GetPointer(0);
-      outMm[4] = pXYZ[extUn[4]]; outMm[5] = pXYZ[extUn[5]];
-    }
+			pXYZ = ds->GetZCoordinates()->GetPointer(0);
+			outMm[4] = pXYZ[extUn[4]]; outMm[5] = pXYZ[extUn[5]];
+		}
 #endif //VME_VOLUME_VER1
 	}
 }
@@ -1615,76 +1614,76 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 #ifdef VME_VOLUME_VER1
 	vtkMAFLargeImageData* ds = vtkMAFLargeImageData::SafeDownCast(m_LargeData);
 #else
-	mafBrickedFileReader* ds = (m_LargeDataReader != NULL) ? 
+	mafBrickedFileReader* ds = (m_LargeDataReader != NULL) ?
 		m_LargeDataReader->GetLevelFile(1) : NULL;
 #endif // VME_VOLUME_VER1
 	assert(ds != NULL);
 
 	if (ds == NULL) {
-		for (int i = 0; i < 6; i++){
+		for (int i = 0; i < 6; i++) {
 			outUn[i] = 0;
 		}
 	}
 	else
-	{		
+	{
 		double orig[3], sp[3];
 
 #ifdef VME_VOLUME_VER1
-    int wext[6];
+		int wext[6];
 		ds->GetWholeExtent(wext);
 		ds->GetOrigin(orig);
 		ds->GetSpacing(sp);
 
-    outUn[0] = wext[0] + (extMm[0] - orig[0]) / sp[0];
-    outUn[1] = wext[0] + (extMm[1] - orig[0]) / sp[0];
-    outUn[2] = wext[2] + (extMm[2] - orig[1]) / sp[1];
-    outUn[3] = wext[2] + (extMm[3] - orig[1]) / sp[1];
-    outUn[4] = wext[4] + (extMm[4] - orig[2]) / sp[2];
-    outUn[5] = wext[4] + (extMm[5] - orig[2]) / sp[2];
+		outUn[0] = wext[0] + (extMm[0] - orig[0]) / sp[0];
+		outUn[1] = wext[0] + (extMm[1] - orig[0]) / sp[0];
+		outUn[2] = wext[2] + (extMm[2] - orig[1]) / sp[1];
+		outUn[3] = wext[2] + (extMm[3] - orig[1]) / sp[1];
+		outUn[4] = wext[4] + (extMm[4] - orig[2]) / sp[2];
+		outUn[5] = wext[4] + (extMm[5] - orig[2]) / sp[2];
 #else		
-    if (!ds->IsRectilinearGrid())
-    {
-		  ds->GetDataOrigin(orig);
-		  ds->GetDataSpacing(sp);
+		if (!ds->IsRectilinearGrid())
+		{
+			ds->GetDataOrigin(orig);
+			ds->GetDataSpacing(sp);
 
-      for (int i = 0, j = 0; i < 3; i++, j += 2)
-      {
-        outUn[j] = (extMm[j] - orig[i]) / sp[i];
-        outUn[j+1] = (extMm[j+1] - orig[i]) / sp[i];        
-      }	
-    }
-    else
-    {
-      //rectilinear grid => it will be more interesting
-      vtkDoubleArray* pXYZCoords[3];
-      pXYZCoords[0] = ds->GetXCoordinates();
-      pXYZCoords[1] = ds->GetYCoordinates();
-      pXYZCoords[2] = ds->GetZCoordinates();
-      for (int i = 0; i < 3; i++)
-      {         
-        double* pXYZ = pXYZCoords[i]->GetPointer(0);
-        for (int j = 0; j < 2; j++)
-        {
-          int a = 0, b = pXYZCoords[i]->GetMaxId();
-          bool bAsc = pXYZ[a] < pXYZ[b];
-          
-          //binary search
-          while (a < b)
-          {
-            int t = (a + b) / 2;
-            if (extMm[2*i + j] == pXYZ[t]) {
-              a = t; break;
-            }
-            else if (extMm[2*i + j] < pXYZ[t] == bAsc)            
-              b = t - 1;  //the value is in the area <a..t>            
-            else
-              a = t + 1;  //the value is in the area <t..b>            
-          }
+			for (int i = 0, j = 0; i < 3; i++, j += 2)
+			{
+				outUn[j] = (extMm[j] - orig[i]) / sp[i];
+				outUn[j + 1] = (extMm[j + 1] - orig[i]) / sp[i];
+			}
+		}
+		else
+		{
+			//rectilinear grid => it will be more interesting
+			vtkDoubleArray* pXYZCoords[3];
+			pXYZCoords[0] = ds->GetXCoordinates();
+			pXYZCoords[1] = ds->GetYCoordinates();
+			pXYZCoords[2] = ds->GetZCoordinates();
+			for (int i = 0; i < 3; i++)
+			{
+				double* pXYZ = pXYZCoords[i]->GetPointer(0);
+				for (int j = 0; j < 2; j++)
+				{
+					int a = 0, b = pXYZCoords[i]->GetMaxId();
+					bool bAsc = pXYZ[a] < pXYZ[b];
 
-          outUn[2*i + j] = a; //the nearest pos
-        }
-      }     
-    }
+					//binary search
+					while (a < b)
+					{
+						int t = (a + b) / 2;
+						if (extMm[2 * i + j] == pXYZ[t]) {
+							a = t; break;
+						}
+						else if (extMm[2 * i + j] < pXYZ[t] == bAsc)
+							b = t - 1;  //the value is in the area <a..t>            
+						else
+							a = t + 1;  //the value is in the area <t..b>            
+					}
+
+					outUn[2 * i + j] = a; //the nearest pos
+				}
+			}
+		}
 #endif // VME_VOLUME_VER1
 	}
 }
@@ -1695,39 +1694,39 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 //-------------------------------------------------------------------------
 /*virtual*/ mafGUI* mafVMEVolumeLarge::CreateGui()
 //-------------------------------------------------------------------------
-{	
-	assert(m_Gui == NULL);
-	m_Gui = Superclass::CreateGui();	// Called to show info about vmes' type and name
-	m_Gui->SetListener(this);			// Messages will be intercept by this VME
-	m_Gui->Divider(3);	//3 should be for sunken, no constants defined
+{
+	assert(!AccessGUI());
+	auto gui = Superclass::CreateGui();	// Called to show info about vmes' type and name
+	gui->SetListener(this);			// Messages will be intercept by this VME
+	gui->Divider(3);	//3 should be for sunken, no constants defined
 
 	m_InfoGui = CreateInfoGui();
-	m_Gui->RollOut(ID_ROLLOUT_INFO, _L("Original data info"), m_InfoGui, false);
+	gui->RollOut(ID_ROLLOUT_INFO, _L("Original data info"), m_InfoGui, false);
 
 	m_SampleInfoGui = CreateSampleInfoGui();
-	m_Gui->RollOut(ID_ROLLOUT_SAMPLE_INFO, _L("Sample data info"), m_SampleInfoGui, false);
+	gui->RollOut(ID_ROLLOUT_SAMPLE_INFO, _L("Sample data info"), m_SampleInfoGui, false);
 
 	m_CropGui = CreateCropGui();
-	m_Gui->RollOut(ID_ROLLOUT_CROP, _L("Cropping"), m_CropGui, false);
-	
+	gui->RollOut(ID_ROLLOUT_CROP, _L("Cropping"), m_CropGui, false);
+
 	//this trick is here to place both voxels and mm controls 
 	//at the same location (i.e., there is no gap in gui)	
 	//for (int i = 0; i < 2; i++) {
-		m_CropEdVxls->Show(false);
-		m_CropEdMm->Show(true);
-		m_CropGui->FitGui();
+	m_CropEdVxls->Show(false);
+	m_CropEdMm->Show(true);
+	m_CropGui->FitGui();
 	//}	
 
 #ifdef _TEMP_STUFF 
-		m_Gui->Button(ID_TEMP_FUNC, "", _("Temp"));
+	gui->Button(ID_TEMP_FUNC, "", _("Temp"));
 #endif	
 
-	m_Gui->Divider(0);
-	m_Gui->Label(_R(" "));
+	gui->Divider(0);
+	gui->Label(_R(" "));
 
 	OnViewROIVolume();
 	//UpdateGui();	//fill controls
-	return m_Gui;
+	return gui;
 }
 
 //creates the GUI with information about the large volume data
@@ -1745,12 +1744,12 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 	gui->Divider(0);
 
 	gui->Label(_L("original spacing: "), true);
-	gui->Label(&m_SourceSpacing);		
+	gui->Label(&m_SourceSpacing);
 	gui->Label(_L("original bounds: "), true);
 	gui->Label(&m_SourceBounds[0]);
 	gui->Label(&m_SourceBounds[1]);
 	gui->Label(&m_SourceBounds[2]);
-	
+
 	gui->Divider(0);
 	return gui;
 }
@@ -1790,62 +1789,62 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 	gui->Show(true);
 
 	gui->Divider(0);
-	gui->Bool(ID_SHOW_ROI, _R("show ROI"), &m_ShowROI, 0, 
+	gui->Bool(ID_SHOW_ROI, _R("show ROI"), &m_ShowROI, 0,
 		_L("toggle region of interest visibility"));
 
 	m_ShowROIOpt = new mafGUI(this);
 	m_ShowROIOpt->Divider(0);
 
-	m_ShowROIOpt->Bool(ID_SHOW_HANDLES, _L("show handles"), &m_ShowHandles, 1, 
+	m_ShowROIOpt->Bool(ID_SHOW_HANDLES, _L("show handles"), &m_ShowHandles, 1,
 		_L("toggle gizmo handles visibility"));
-	m_ShowROIOpt->Bool(ID_SHOW_AXIS, _L("show axis"), &m_ShowAxis, 1, 
+	m_ShowROIOpt->Bool(ID_SHOW_AXIS, _L("show axis"), &m_ShowAxis, 1,
 		_L("toggle gizmo translation axis visibility"));
-	m_ShowROIOpt->Bool(ID_SHOW_PLANES, _L("show planes"), &m_ShowPlanes, 1, 
+	m_ShowROIOpt->Bool(ID_SHOW_PLANES, _L("show planes"), &m_ShowPlanes, 1,
 		_L("toggle gizmo translation planes visibility"));
 
 	m_ShowROIOpt->Enable(ID_SHOW_HANDLES, false);
 	m_ShowROIOpt->Enable(ID_SHOW_AXIS, false);
 	m_ShowROIOpt->Enable(ID_SHOW_PLANES, false);
-		
+
 	gui->RollOut(ID_ROLLOUT_SHOW_ROI_OPT, _L("show ROI options"), m_ShowROIOpt, false);
 
 	gui->Divider(3);
 	gui->Label(_L("selected ROI:"), true);
 	AddVoxelsMmCombo(gui, ID_COMBO_VOI_UNITS, &m_VOIUnits);
 
-	m_CropEdVxls = new mafGUI(this);	
-//	m_CropEdVxls->Show(m_VOIUnits == 0);
+	m_CropEdVxls = new mafGUI(this);
+	//	m_CropEdVxls->Show(m_VOIUnits == 0);
 	m_CropEdVxls->Show(true);
 	m_CropEdVxls->VectorN(ID_CROP_DIR_X, _L("range x"), &m_VOI[0], 2, m_FullExtent[0], m_FullExtent[1]);
 	m_CropEdVxls->VectorN(ID_CROP_DIR_Y, _L("range y"), &m_VOI[2], 2, m_FullExtent[2], m_FullExtent[3]);
 	m_CropEdVxls->VectorN(ID_CROP_DIR_Z, _L("range z"), &m_VOI[4], 2, m_FullExtent[4], m_FullExtent[5]);
-	gui->AddGui(m_CropEdVxls);	
-	
+	gui->AddGui(m_CropEdVxls);
+
 	double bounds[6];
 #ifdef VME_VOLUME_VER1
-	m_LargeData->GetBounds(bounds);	
+	m_LargeData->GetBounds(bounds);
 #else
 	mafBrickedFileReader* ds = m_LargeDataReader->GetLevelFile(1);
-	if (ds == NULL) 
+	if (ds == NULL)
 	{
 		bounds[0] = bounds[2] = bounds[4] = -DBL_MAX;
 		bounds[1] = bounds[3] = bounds[5] = DBL_MAX;
 	}
 	else if (ds->IsRectilinearGrid())
-  {
-    vtkDoubleArray* pXYZCoords = ds->GetXCoordinates();
-    bounds[0] = *pXYZCoords->GetPointer(0);
-    bounds[1] = *pXYZCoords->GetPointer(pXYZCoords->GetMaxId());
+	{
+		vtkDoubleArray* pXYZCoords = ds->GetXCoordinates();
+		bounds[0] = *pXYZCoords->GetPointer(0);
+		bounds[1] = *pXYZCoords->GetPointer(pXYZCoords->GetMaxId());
 
-    pXYZCoords = ds->GetYCoordinates();
-    bounds[2] = *pXYZCoords->GetPointer(0);
-    bounds[3] = *pXYZCoords->GetPointer(pXYZCoords->GetMaxId());
+		pXYZCoords = ds->GetYCoordinates();
+		bounds[2] = *pXYZCoords->GetPointer(0);
+		bounds[3] = *pXYZCoords->GetPointer(pXYZCoords->GetMaxId());
 
-    pXYZCoords = ds->GetZCoordinates();
-    bounds[4] = *pXYZCoords->GetPointer(0);
-    bounds[5] = *pXYZCoords->GetPointer(pXYZCoords->GetMaxId());
-  }
-  else
+		pXYZCoords = ds->GetZCoordinates();
+		bounds[4] = *pXYZCoords->GetPointer(0);
+		bounds[5] = *pXYZCoords->GetPointer(pXYZCoords->GetMaxId());
+	}
+	else
 	{
 		ds->GetDataOrigin(bounds[0], bounds[2], bounds[4]);
 
@@ -1854,23 +1853,23 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 		ds->GetDataDimensions(dims);
 		ds->GetDataSpacing(sp);
 		for (int i = 0; i < 3; i++) {
-			bounds[2*i + 1] = bounds[2*i] + dims[i]*sp[i];
+			bounds[2 * i + 1] = bounds[2 * i] + dims[i] * sp[i];
 		}
 	}
 #endif // VME_VOLUME_VER1
 
-	m_CropEdMm = new mafGUI(this);	
-//	m_CropEdMm->Show(m_VOIUnits != 0);	
+	m_CropEdMm = new mafGUI(this);
+	//	m_CropEdMm->Show(m_VOIUnits != 0);	
 	m_CropEdMm->Show(true);
 	m_CropEdMm->VectorN(ID_CROP_DIR_XMM, _L("range x"), &m_ROI[0], 2, bounds[0], bounds[1]);
 	m_CropEdMm->VectorN(ID_CROP_DIR_YMM, _L("range y"), &m_ROI[2], 2, bounds[2], bounds[3]);
 	m_CropEdMm->VectorN(ID_CROP_DIR_ZMM, _L("range z"), &m_ROI[4], 2, bounds[4], bounds[5]);
 	gui->AddGui(m_CropEdMm);
-	
-  gui->Bool(ID_AUTOPROOF, _L("auto proof"), &m_AutoProof, 1, 
-    _L("if checked, the resolution of displayed volume increases progresivelly "
-     "without the necessity to press 'view ROI volume' button. N.B. the application may "
-     "display larger VOI than requested in this mode."));
+
+	gui->Bool(ID_AUTOPROOF, _L("auto proof"), &m_AutoProof, 1,
+		_L("if checked, the resolution of displayed volume increases progresivelly "
+			"without the necessity to press 'view ROI volume' button. N.B. the application may "
+			"display larger VOI than requested in this mode."));
 
 	gui->Button(ID_RESET_CROPPING_AREA, _L("reset ROI"), _R(""),
 		_L("reset the cropping area"));
@@ -1882,7 +1881,7 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 	gui->Button(ID_CROP, _L("crop ..."), _R(""),
 		_L("performs the cropping operation"));
 #endif // VME_VOLUME_LARGE_EXCLUDE_CROP
-	
+
 	//gui->Enable(ID_VIEW_ORIGVOI_VOLUME, !m_ShowFEOutput);
 	gui->Divider(0);
 	return gui;
@@ -1892,7 +1891,7 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 //updates all existing GUIs
 /*virtual*/ void mafVMEVolumeLarge::UpdateGui()
 {
-	if(m_Gui)
+	if (AccessGUI())
 	{
 		//update info
 		if (m_InfoGui != NULL)
@@ -1904,7 +1903,7 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 		if (m_CropGui != NULL)
 			UpdateCropGui(m_CropGui);
 
-		m_Gui->Update();
+		UpdateGUI();
 	}
 }
 
@@ -1913,22 +1912,22 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 /*virtual*/ void mafVMEVolumeLarge::UpdateInfoGui(mafGUI* gui)
 {
 	assert(gui != NULL);
-  if (gui == NULL)
-    return;
+	if (gui == NULL)
+		return;
 
 	//reset variables
-	m_SourceFile = m_SourcePath = m_SourceDimensions = 
+	m_SourceFile = m_SourcePath = m_SourceDimensions =
 		m_SourceSpacing = m_SourceSize = _R("");
-		
 
-	for (int i = 0; i < 3; i++){
+
+	for (int i = 0; i < 3; i++) {
 		m_SourceBounds[i] = _R("");
 	}
 
 
 	//and refill them
 #ifdef VME_VOLUME_VER1
-	if (m_LargeData != NULL)	
+	if (m_LargeData != NULL)
 	{
 		//name
 		wxString szPath, szFile, szExt;
@@ -1943,25 +1942,25 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 			wext[3] - wext[2] + 1, wext[5] - wext[4] + 1);
 
 		//size		
-    mafVMEVolumeLargeUtils::FormatDataSize(((vtkIdType64)wext[1] - wext[0] + 1)*
-			(wext[3] - wext[2] + 1)*(wext[5] - wext[4] + 1), m_SourceSize);		
+		mafVMEVolumeLargeUtils::FormatDataSize(((vtkIdType64)wext[1] - wext[0] + 1) *
+			(wext[3] - wext[2] + 1) * (wext[5] - wext[4] + 1), m_SourceSize);
 
 		//bounds
 		double b[6];
-		m_LargeData->GetBounds(b);		
+		m_LargeData->GetBounds(b);
 		m_SourceBounds[0] = wxString::Format("  xmin: %.2f  xmax: %.2f [mm]", b[0], b[1]);
 		m_SourceBounds[1] = wxString::Format("  ymin: %.2f  ymax: %.2f [mm]", b[2], b[3]);
 		m_SourceBounds[2] = wxString::Format("  zmin: %.2f  zmax: %.2f [mm]", b[4], b[5]);
-		
+
 		vtkMAFLargeImageData* ds = vtkMAFLargeImageData::SafeDownCast(m_LargeData);
-		if (ds != NULL)		
+		if (ds != NULL)
 		{
 			//spacing
 			double sp[3];
 			ds->GetSpacing(sp);
-			m_SourceSpacing = wxString::Format("  %.2f x %.2f x %.2f [mm]", 
-				sp[0], sp[1], sp[2]);			
-		}		
+			m_SourceSpacing = wxString::Format("  %.2f x %.2f x %.2f [mm]",
+				sp[0], sp[1], sp[2]);
+		}
 	}
 #else
 	if (m_LargeDataReader != NULL)
@@ -1983,44 +1982,44 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 			m_SourceDimensions = mafString::Format(_R("%d x %d x %d"), dims[0], dims[1], dims[2]);
 
 			//size		
-			mafFormatDataSize(((vtkIdType64)dims[0])*dims[1]*dims[2], m_SourceSize);		
+			mafFormatDataSize(((vtkIdType64)dims[0]) * dims[1] * dims[2], m_SourceSize);
 
-      double b[6];
-      if (ds->IsRectilinearGrid())
-      {
-        //spacing
-        m_SourceSpacing = _R("N/A (rectilinear grid)");
+			double b[6];
+			if (ds->IsRectilinearGrid())
+			{
+				//spacing
+				m_SourceSpacing = _R("N/A (rectilinear grid)");
 
-        vtkDoubleArray* pXYZCoords = ds->GetXCoordinates();
-        b[0] = *pXYZCoords->GetPointer(0);
-        b[1] = *pXYZCoords->GetPointer(pXYZCoords->GetMaxId());
+				vtkDoubleArray* pXYZCoords = ds->GetXCoordinates();
+				b[0] = *pXYZCoords->GetPointer(0);
+				b[1] = *pXYZCoords->GetPointer(pXYZCoords->GetMaxId());
 
-        pXYZCoords = ds->GetYCoordinates();
-        b[2] = *pXYZCoords->GetPointer(0);
-        b[3] = *pXYZCoords->GetPointer(pXYZCoords->GetMaxId());
+				pXYZCoords = ds->GetYCoordinates();
+				b[2] = *pXYZCoords->GetPointer(0);
+				b[3] = *pXYZCoords->GetPointer(pXYZCoords->GetMaxId());
 
-        pXYZCoords = ds->GetZCoordinates();
-        b[4] = *pXYZCoords->GetPointer(0);
-        b[5] = *pXYZCoords->GetPointer(pXYZCoords->GetMaxId());
-      }
-      else
-      {
-			  //spacing
-			  double sp[3];
-			  ds->GetDataSpacing(sp);
-			  m_SourceSpacing = mafString::Format(_R("  %.2f x %.2f x %.2f [mm]"), 
-				  sp[0], sp[1], sp[2]);
+				pXYZCoords = ds->GetZCoordinates();
+				b[4] = *pXYZCoords->GetPointer(0);
+				b[5] = *pXYZCoords->GetPointer(pXYZCoords->GetMaxId());
+			}
+			else
+			{
+				//spacing
+				double sp[3];
+				ds->GetDataSpacing(sp);
+				m_SourceSpacing = mafString::Format(_R("  %.2f x %.2f x %.2f [mm]"),
+					sp[0], sp[1], sp[2]);
 
-			  //bounds			  
-			  ds->GetDataOrigin(b[0], b[2], b[4]);
-			  for (int i = 0; i < 3; i++) {
-				  b[2*i + 1] = b[2*i] + dims[i]*sp[i];
-			  }
-      }
-			
-      m_SourceBounds[0] = mafString::Format(_R("  xmin: %.2f  xmax: %.2f [mm]"), b[0], b[1]);
+				//bounds			  
+				ds->GetDataOrigin(b[0], b[2], b[4]);
+				for (int i = 0; i < 3; i++) {
+					b[2 * i + 1] = b[2 * i] + dims[i] * sp[i];
+				}
+			}
+
+			m_SourceBounds[0] = mafString::Format(_R("  xmin: %.2f  xmax: %.2f [mm]"), b[0], b[1]);
 			m_SourceBounds[1] = mafString::Format(_R("  ymin: %.2f  ymax: %.2f [mm]"), b[2], b[3]);
-			m_SourceBounds[2] = mafString::Format(_R("  zmin: %.2f  zmax: %.2f [mm]"), b[4], b[5]);					      
+			m_SourceBounds[2] = mafString::Format(_R("  zmin: %.2f  zmax: %.2f [mm]"), b[4], b[5]);
 		}
 	}
 #endif
@@ -2032,11 +2031,11 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 /*virtual*/ void mafVMEVolumeLarge::UpdateSampleInfoGui(mafGUI* gui)
 {
 	assert(gui != NULL);
-  if (gui == NULL)
-    return;
+	if (gui == NULL)
+		return;
 
 	m_SampleDimensions = m_SampleSize = m_SampleRate = _R("");
-	for (int i = 0; i < 3; i++){
+	for (int i = 0; i < 3; i++) {
 		m_SampleBounds[i] = _R("");
 	}
 
@@ -2047,8 +2046,8 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 	m_SampleBounds[1] = mafString::Format(_R("  ymin: %.2f  ymax: %.2f [mm]"), b[2], b[3]);
 	m_SampleBounds[2] = mafString::Format(_R("  zmin: %.2f  zmax: %.2f [mm]"), b[4], b[5]);
 
-	vtkDataSet* ds = GetOutput()->GetVTKData();				
-	
+	vtkDataSet* ds = GetOutput()->GetVTKData();
+
 	//dims
 	int wext[6];
 	//ds->GetWholeExtent(wext);
@@ -2056,22 +2055,22 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 		wext[3] - wext[2] + 1, wext[5] - wext[4] + 1);
 
 	//size		
-  int nBytesPerVoxel = 0;
-  if (vtkImageData::SafeDownCast(ds) != NULL)
-    nBytesPerVoxel = ((vtkImageData*)ds)->GetScalarSize();
-  else if (ds->GetPointData()->GetScalars() != NULL)
-    nBytesPerVoxel = ds->GetPointData()->GetScalars()->GetDataTypeSize();
+	int nBytesPerVoxel = 0;
+	if (vtkImageData::SafeDownCast(ds) != NULL)
+		nBytesPerVoxel = ((vtkImageData*)ds)->GetScalarSize();
+	else if (ds->GetPointData()->GetScalars() != NULL)
+		nBytesPerVoxel = ds->GetPointData()->GetScalars()->GetDataTypeSize();
 	mafFormatDataSize(
-    ((vtkIdType64)wext[1] - wext[0] + 1)*
-		(wext[3] - wext[2] + 1)*(wext[5] - wext[4] + 1)*nBytesPerVoxel, m_SampleSize);	
-		
+		((vtkIdType64)wext[1] - wext[0] + 1) *
+		(wext[3] - wext[2] + 1) * (wext[5] - wext[4] + 1) * nBytesPerVoxel, m_SampleSize);
+
 #ifdef VME_VOLUME_VER1
 	//sample rate
-	int a[3];	
+	int a[3];
 	if (m_ShowFEOutput && m_FEOutput != NULL)
-		m_SampleRate = wxString::Format("%d : %d : %d", 
-		m_FESampleRate[0], m_FESampleRate[1], m_FESampleRate[2]);
-	else		
+		m_SampleRate = wxString::Format("%d : %d : %d",
+			m_FESampleRate[0], m_FESampleRate[1], m_FESampleRate[2]);
+	else
 	{
 		m_LargeData->GetSampleRate(a);
 		m_SampleRate = wxString::Format("%d : %d : %d", a[0], a[1], a[2]);
@@ -2105,9 +2104,9 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 /*virtual*/ void mafVMEVolumeLarge::UpdateCropGui(mafGUI* gui)
 {
 	assert(gui != NULL);
-  if (gui == NULL)
-    return;
-	
+	if (gui == NULL)
+		return;
+
 	m_CropEdVxls->Show(m_VOIUnits == 0);
 	m_CropEdMm->Show(m_VOIUnits != 0);
 
@@ -2117,7 +2116,7 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 	{
 		m_GizmoROI->GetBounds(m_ROI);
 		InverseTransformExtent(m_ROI, m_VOI);
-	}	
+	}
 
 	m_CropEdVxls->Update();
 	m_CropEdMm->Update();
@@ -2130,7 +2129,7 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 void mafVMEVolumeLarge::AddVoxelsMmCombo(mafGUI* gui, int id, int* pvar)
 {
 	const int UNITCHOISE_NUM = 2;
-	const mafString UNITCHOISE_STR[UNITCHOISE_NUM] = {_L("voxels"), _L("mm")};
+	const mafString UNITCHOISE_STR[UNITCHOISE_NUM] = { _L("voxels"), _L("mm") };
 
 	gui->Combo(id, _L("units:"), pvar, UNITCHOISE_NUM, UNITCHOISE_STR);
 }
@@ -2159,13 +2158,13 @@ void mafVMEVolumeLarge::UpdateGizmo()
 void mafVMEVolumeLarge::UpdateVOI(int VOI[6])
 //------------------------------------------------------------------------
 {
-  memcpy(m_VOI, VOI, sizeof(VOI));
-  TransformExtent(m_VOI, m_ROI);
-  m_CropEdMm->Update();
-  m_CropEdVxls->Update();
+	memcpy(m_VOI, VOI, sizeof(VOI));
+	TransformExtent(m_VOI, m_ROI);
+	m_CropEdMm->Update();
+	m_CropEdVxls->Update();
 
-  if (m_GizmoROI != NULL)
-    m_GizmoROI->SetBounds(m_ROI);
+	if (m_GizmoROI != NULL)
+		m_GizmoROI->SetBounds(m_ROI);
 }
 #endif
 
@@ -2180,29 +2179,29 @@ void mafVMEVolumeLarge::UpdateVOI(int VOI[6])
 //temporary function
 void mafVMEVolumeLarge::OnTempFunc()
 {
-/*if (wxMessageBox("Skip to recreate LODs?", "", wxYES_NO) == wxNO)
-{
-	mafVolumeLargeWriter bp;
-	bp.SetInputDataSet((vtkMAFLargeImageData*)m_LargeData);
-	bp.SetOutputFileName("g:\\bricks.vbf");	
-	bp.SetListener(this);
-	bp.Update();
-}*/	
+	/*if (wxMessageBox("Skip to recreate LODs?", "", wxYES_NO) == wxNO)
+	{
+		mafVolumeLargeWriter bp;
+		bp.SetInputDataSet((vtkMAFLargeImageData*)m_LargeData);
+		bp.SetOutputFileName("g:\\bricks.vbf");
+		bp.SetListener(this);
+		bp.Update();
+	}*/
 
 	wxBusyCursor busyCursor;
-		
+
 	if (m_LargeDataReader == NULL)
 	{
 		m_LargeDataReader = new mafVolumeLargeReader();
 		m_LargeDataReader->SetFileName("g:\\bricks.bbf");
 		m_LargeDataReader->SetListener(this);
 	}
-	 
-	
+
+
 
 	//set a new VOI
 	m_LargeDataReader->SetVOI(m_VOI);
-	m_LargeDataReader->SetMemoryLimit(m_SampleMemLimit*1024);	
+	m_LargeDataReader->SetMemoryLimit(m_SampleMemLimit * 1024);
 
 #ifdef _PROFILE_LARGEDATA_UPDATE
 	LARGE_INTEGER liBegin;
@@ -2217,7 +2216,7 @@ void mafVMEVolumeLarge::OnTempFunc()
 	::QueryPerformanceFrequency(&liFreq);
 
 	wxMessageBox(wxString::Format("m_LargeData->Update() in %d ms",
-		(int)(((liEnd.QuadPart - liBegin.QuadPart)*1000) / liFreq.QuadPart)));
+		(int)(((liEnd.QuadPart - liBegin.QuadPart) * 1000) / liFreq.QuadPart)));
 
 	//NOTE: Snapshot whole extent is destroyed now because of wxMessageBox
 #endif
@@ -2226,12 +2225,12 @@ void mafVMEVolumeLarge::OnTempFunc()
 	m_LargeDataReader->GetVOI(m_VOI);
 
 	this->Modified();
-	
+
 
 	int wext[6];
-	vtkDataSet* ds = GetOutput()->GetVTKData();	
+	vtkDataSet* ds = GetOutput()->GetVTKData();
 	m_LargeDataReader->GetOutputDataSet()->GetWholeExtent(wext);
-	
+
 	ds->SetWholeExtent(wext);
 	ds->SetUpdateExtentToWholeExtent();
 	//end BES	
@@ -2241,7 +2240,7 @@ void mafVMEVolumeLarge::OnTempFunc()
 	//BES: this resets the currently opened view 
 	//unfortunately, MAF logic does not update all views
 	mafEvent ev(this, ds->GetNumberOfConsumers() == 0 ?
-		VME_SELECTED : VME_VISUAL_MODE_CHANGED,this);
+		VME_SELECTED : VME_VISUAL_MODE_CHANGED, this);
 	this->ForwardUpEvent(&ev);
 }
 

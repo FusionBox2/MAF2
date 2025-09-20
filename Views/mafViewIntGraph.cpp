@@ -289,38 +289,38 @@ void mafViewIntGraph::VmeDeletePipe(mafNode *vme)
 mafGUI *mafViewIntGraph::CreateGui()
 //-------------------------------------------------------------------------
 {
-  assert(m_Gui == NULL);
-  m_Gui = mafView::CreateGui();
+  assert(!AccessGUI());
+  auto gui = mafView::CreateGui();
 
   //////////////////////////////////////////Plot gui
   //m_Gui = new mafGUI(this);
-  m_Gui->SetListener(this);
+  gui->SetListener(this);
 
-  m_Gui->Label(_R("General Features"),true);
+  gui->Label(_R("General Features"),true);
   //m_Gui->Integer(ID_REFERENCE_FRAME, "Reference frame", &(m_ReferenceFrame), 0, nMaxFrame, "This frame will be treated as upright(reference) for all representations that require it!");
   //m_Gui->Button(ID_FIND_REFERENCE, "Autofind reference", "", "Find best reference frames for all joints (hierarchially based or not) ");
 
-  m_Gui->Double(ID_SMOOTHING, _R("Smooth param"), &m_Smoothing, 0, 1000);
+  gui->Double(ID_SMOOTHING, _R("Smooth param"), &m_Smoothing, 0, 1000);
 
   //m_Gui->Bool(ID_FREEZE_GRAPH,"Freeze graph", &m_IsFrozen,0);
 
-  m_Gui->Divider(2);
+  gui->Divider(2);
 
-  m_Gui->Button(ID_SAVE_PLOT, _R("Save plot"), _R(""), _R("Save plot"));
-  m_Gui->Button(ID_LOAD_PLOT, _R("Load plot"), _R(""), _R("Restore plot"));
+  gui->Button(ID_SAVE_PLOT, _R("Save plot"), _R(""), _R("Save plot"));
+  gui->Button(ID_LOAD_PLOT, _R("Load plot"), _R(""), _R("Restore plot"));
 
 
-  m_Gui->Divider(2);
-  m_Gui->RollOut(ID_ROLLOUT_RENDER, _R("Plot appearance"), m_RenderWindow->GetGui(), false);
+  gui->Divider(2);
+  gui->RollOut(ID_ROLLOUT_RENDER, _R("Plot appearance"), m_RenderWindow->GetGui(), false);
 
   /////////////////////////////////////////DisplayList GUI
-  m_Gui->Divider(2);
+  gui->Divider(2);
   //m_Gui->AddGui(m_sg->GetGui());
 
   //ShowGui();
-  m_Gui->Update();
+  gui->Update();
 
-  return m_Gui;
+  return gui;
 }
 //----------------------------------------------------------------------------
 void mafViewIntGraph::OnEvent(mafEventBase *maf_event)
@@ -440,13 +440,6 @@ void mafViewIntGraph::Print(std::ostream& os, const int tabs)// const
   m_Sg->Print(os, 1);
   os << std::endl;
 }
-//----------------------------------------------------------------------------
-void mafViewIntGraph::UpdateGui() 
-//----------------------------------------------------------------------------
-{ 
-  if(m_Gui != NULL)
-    m_Gui->Update();
-}
 
 //----------------------------------------------------------------------------
 void mafViewIntGraph::savePlot(void)
@@ -549,7 +542,7 @@ void mafViewIntGraph::loadPlotGen(void)
       if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R(mafINTGG_SAVEINFO_TAG)))
       {
         m_RenderWindow->LoadSettings(ti->GetComponents());
-        UpdateGui();
+        UpdateGUI();
         break;
       }
     }

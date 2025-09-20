@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafViewHTML
  Authors: Paolo Quadrani    Silvano Imboden
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -49,161 +49,163 @@ mafCxxTypeMacro(mafViewHTML);
 
 //----------------------------------------------------------------------------
 mafViewHTML::mafViewHTML(const mafString& label, int camera_position, bool show_axes, bool show_grid, int stereo)
-:mafView(label)
-//----------------------------------------------------------------------------
+	:mafView(label)
+	//----------------------------------------------------------------------------
 {
-  m_Html  = NULL;
-  m_Url   = _R("http://www.cineca.it/index.html");
+	m_Html = NULL;
+	m_Url = _R("http://www.cineca.it/index.html");
 }
 //----------------------------------------------------------------------------
 mafViewHTML::~mafViewHTML()
 //----------------------------------------------------------------------------
-{	
- 	cppDEL(m_Html);
-  wxImage::RemoveHandler("JPEGHANDLER");
-  /*
-  m_Html -> WriteCustomization(wxConfig::Get());
-  delete wxConfig::Set(NULL);
-  */
+{
+	cppDEL(m_Html);
+	wxImage::RemoveHandler("JPEGHANDLER");
+	/*
+	m_Html -> WriteCustomization(wxConfig::Get());
+	delete wxConfig::Set(NULL);
+	*/
 }
 //----------------------------------------------------------------------------
-mafView *mafViewHTML::Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled)
+mafView* mafViewHTML::Copy(mafBaseEventHandler* Listener, bool lightCopyEnabled)
 //----------------------------------------------------------------------------
 {
-   m_LightCopyEnabled = lightCopyEnabled;
-   mafViewHTML *v = new mafViewHTML(GetLabel());
-   v->SetListener(Listener);
-   v->m_Id = m_Id;
-   v->Create();
-	 return v;
+	m_LightCopyEnabled = lightCopyEnabled;
+	mafViewHTML* v = new mafViewHTML(GetLabel());
+	v->SetListener(Listener);
+	v->m_Id = m_Id;
+	v->Create();
+	return v;
 }
 //----------------------------------------------------------------------------
 void mafViewHTML::Create()
 //----------------------------------------------------------------------------
 {
-  wxJPEGHandler *jpegHandler = new wxJPEGHandler();
-  jpegHandler->SetName("JPEGHANDLER");
-  wxImage::AddHandler(jpegHandler);
+	wxJPEGHandler* jpegHandler = new wxJPEGHandler();
+	jpegHandler->SetName("JPEGHANDLER");
+	wxImage::AddHandler(jpegHandler);
 
-	#if wxUSE_FS_INET && wxUSE_STREAMS && wxUSE_SOCKETS
-		wxFileSystem::AddHandler(new wxInternetFSHandler);
-	#endif
+#if wxUSE_FS_INET && wxUSE_STREAMS && wxUSE_SOCKETS
+	wxFileSystem::AddHandler(new wxInternetFSHandler);
+#endif
 
 	m_Html = new wxHtmlWindow(mafGetFrame());
-  
+
 	/*m_Html -> SetRelatedFrame(this, "HTML : %s");
 	m_Html -> SetRelatedStatusBar(0);
 	m_Html -> ReadCustomization(wxConfig::Get());
 	m_Html -> LoadPage("test.htm");*/
-  
+
 
 	m_Win = m_Html;
 
-  m_Rwi = new mafRWI(m_Win,ONE_LAYER);
-  m_Rwi->SetListener(this);//SIL. 16-6-2004: 
-  m_Sg  = new mafSceneGraph(this,m_Rwi->m_RenFront,m_Rwi->m_RenBack);
+	m_Rwi = new mafRWI(m_Win, ONE_LAYER);
+	m_Rwi->SetListener(this);//SIL. 16-6-2004: 
+	m_Sg = new mafSceneGraph(this, m_Rwi->m_RenFront, m_Rwi->m_RenBack);
 	m_Sg->SetListener(this);
-  m_Rwi->m_Sg = m_Sg;
+	m_Rwi->m_Sg = m_Sg;
 }
 //----------------------------------------------------------------------------
-mafSceneGraph *mafViewHTML::GetSceneGraph()									  {return m_Sg;}
+mafSceneGraph* mafViewHTML::GetSceneGraph() { return m_Sg; }
 //----------------------------------------------------------------------------
-wxVTKWindow *mafViewHTML::GetDefaultRWI()											{ return m_Rwi->m_RwiBase;}
+wxVTKWindow* mafViewHTML::GetDefaultRWI() { return m_Rwi->m_RwiBase; }
 //----------------------------------------------------------------------------
-void mafViewHTML::VmeSelect(mafNode *vme, bool select)					{ m_Sg->VmeSelect(vme, select);}
+void mafViewHTML::VmeSelect(mafNode* vme, bool select) { m_Sg->VmeSelect(vme, select); }
 //----------------------------------------------------------------------------
-void mafViewHTML::VmeAdd(std::shared_ptr<mafNode> vme)													{ m_Sg->VmeAdd(vme);}
+void mafViewHTML::VmeAdd(std::shared_ptr<mafNode> vme) { m_Sg->VmeAdd(vme); }
 //----------------------------------------------------------------------------
-void mafViewHTML::VmeRemove(mafNode *vme)
+void mafViewHTML::VmeRemove(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-  if(vme == m_ActiveNote)
-  {
-    m_Html->SetPage("");
-    m_ActiveNote = NULL;
-  }
-  
-  m_Sg->VmeRemove(vme); 
-}
-//----------------------------------------------------------------------------
-void mafViewHTML::VmeShow  (mafNode *vme, bool show)
-//----------------------------------------------------------------------------
-{ 
-  if(show)
-  {
-    for(mafSceneNode *node = m_Sg->GetNodeList(); node; node=node->m_Next)
-      {mafEvent evUnq(this,VME_SHOW); evUnq.SetVme(node->m_Vme.get()); evUnq.SetBool(false); InvokeEvent(evUnq);}
-  }
-  else
-    m_Html->SetPage("");
-  
-  m_Sg->VmeShow(vme, show); 
-}
-//----------------------------------------------------------------------------
-void mafViewHTML::VmeCreatePipe(mafNode *vme) 
-//----------------------------------------------------------------------------
-{
-  mafString body;
-  mafNode *ExternalNote = nullptr;
-  if(mafTagItem *ti = vme->GetTagArray()->GetTag(_R("HTML_INFO")))
-    body = ti->GetValue();
-  else
-    return;
-  for(int i = 0; i < vme->GetNumberOfChildren(); i++)
-  {
-    auto child = vme->GetChild(i);
-    if(child->GetTagArray()->GetTag(_R("HTML_INFO")))
-    {
-      ExternalNote = child.get();
-      break;
-    }
-  }
-  if(ExternalNote)
-    m_Html->LoadPage(mafVMEExternalData::StaticDownCast(ExternalNote)->GetAbsoluteFileName().toWx());
-  else
-    m_Html->SetPage(body.toWx());
-
-  m_ActiveNote = vme;
-}
-//----------------------------------------------------------------------------
-mafGUI *mafViewHTML::CreateGui()
-//----------------------------------------------------------------------------
-{
-	assert(m_Gui == NULL);
-	m_Gui = new mafGUI(this);
-  m_Gui->SetListener(this);
-	m_Gui->Label(_R(""));
-	m_Gui->Button(ID_LOAD,_R("load html file"));
-	m_Gui->Label(_R(""));
-  m_Gui->String(ID_URL,_R("url: "),&m_Url);
-	m_Gui->Button(ID_BACK,_R("go back"));
-	m_Gui->Button(ID_FORWARD,_R("go forward"));
-  m_Gui->Divider();
-
-  return m_Gui;
-}
-//----------------------------------------------------------------------------
-void mafViewHTML::OnEvent(mafEventBase *maf_event)
-//----------------------------------------------------------------------------
-{
-  switch(maf_event->GetId())
+	if (vme == m_ActiveNote)
 	{
-		case ID_LOAD:
-       OnLoad();
+		m_Html->SetPage("");
+		m_ActiveNote = NULL;
+	}
+
+	m_Sg->VmeRemove(vme);
+}
+//----------------------------------------------------------------------------
+void mafViewHTML::VmeShow(mafNode* vme, bool show)
+//----------------------------------------------------------------------------
+{
+	if (show)
+	{
+		for (mafSceneNode* node = m_Sg->GetNodeList(); node; node = node->m_Next)
+		{
+			mafEvent evUnq(this, VME_SHOW); evUnq.SetVme(node->m_Vme.get()); evUnq.SetBool(false); InvokeEvent(evUnq);
+		}
+	}
+	else
+		m_Html->SetPage("");
+
+	m_Sg->VmeShow(vme, show);
+}
+//----------------------------------------------------------------------------
+void mafViewHTML::VmeCreatePipe(mafNode* vme)
+//----------------------------------------------------------------------------
+{
+	mafString body;
+	mafNode* ExternalNote = nullptr;
+	if (mafTagItem* ti = vme->GetTagArray()->GetTag(_R("HTML_INFO")))
+		body = ti->GetValue();
+	else
+		return;
+	for (int i = 0; i < vme->GetNumberOfChildren(); i++)
+	{
+		auto child = vme->GetChild(i);
+		if (child->GetTagArray()->GetTag(_R("HTML_INFO")))
+		{
+			ExternalNote = child.get();
+			break;
+		}
+	}
+	if (ExternalNote)
+		m_Html->LoadPage(mafVMEExternalData::StaticDownCast(ExternalNote)->GetAbsoluteFileName().toWx());
+	else
+		m_Html->SetPage(body.toWx());
+
+	m_ActiveNote = vme;
+}
+//----------------------------------------------------------------------------
+mafGUI* mafViewHTML::CreateGui()
+//----------------------------------------------------------------------------
+{
+	assert(!AccessGUI());
+	auto gui = new mafGUI(this);
+	gui->SetListener(this);
+	gui->Label(_R(""));
+	gui->Button(ID_LOAD, _R("load html file"));
+	gui->Label(_R(""));
+	gui->String(ID_URL, _R("url: "), &m_Url);
+	gui->Button(ID_BACK, _R("go back"));
+	gui->Button(ID_FORWARD, _R("go forward"));
+	gui->Divider();
+
+	return gui;
+}
+//----------------------------------------------------------------------------
+void mafViewHTML::OnEvent(mafEventBase* maf_event)
+//----------------------------------------------------------------------------
+{
+	switch (maf_event->GetId())
+	{
+	case ID_LOAD:
+		OnLoad();
 		break;
-		case ID_BACK:
-       OnBack();
+	case ID_BACK:
+		OnBack();
 		break;
-		case ID_FORWARD:
-       OnForward();
+	case ID_FORWARD:
+		OnForward();
 		break;
-    case ID_URL:
-      if(!m_Url.empty())
-	      m_Html->LoadPage(m_Url.toWx());
-    break;
-    default:
-      InvokeEvent(*maf_event);
-    break;
+	case ID_URL:
+		if (!m_Url.empty())
+			m_Html->LoadPage(m_Url.toWx());
+		break;
+	default:
+		InvokeEvent(*maf_event);
+		break;
 	}
 }
 //----------------------------------------------------------------------------
@@ -213,19 +215,19 @@ void mafViewHTML::OnLoad()
 	wxString wildc = "HTML files (*.htm;*.html)| *.htm;*.html";		//Added by Paolo 12-11-2003
 	wxString p = wxFileSelector("Open HTML document", "", "", "", wildc);	//modified by Paolo 12-11-2003
 	if (p != wxEmptyString)
-	  m_Html->LoadPage(p);
+		m_Html->LoadPage(p);
 }
 //----------------------------------------------------------------------------
 void mafViewHTML::OnForward()
 //----------------------------------------------------------------------------
 {
-	if (!m_Html->HistoryForward()) 
-    wxLogMessage("mafViewHTML: - forward failed");
+	if (!m_Html->HistoryForward())
+		wxLogMessage("mafViewHTML: - forward failed");
 }
 //----------------------------------------------------------------------------
 void mafViewHTML::OnBack()
 //----------------------------------------------------------------------------
 {
-	if (!m_Html->HistoryBack()) 
-    wxLogMessage("mafViewHTML: - back failed");
+	if (!m_Html->HistoryBack())
+		wxLogMessage("mafViewHTML: - back failed");
 }

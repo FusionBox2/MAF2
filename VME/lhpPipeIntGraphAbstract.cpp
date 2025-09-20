@@ -6,7 +6,7 @@
   Version:   $Revision: 1.6 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
-  Copyright (c) 2001/2007 
+  Copyright (c) 2001/2007
   ULB - Universite Libre de Bruxelles (www.ulb.ac.be)
 =========================================================================*/
 
@@ -36,144 +36,144 @@ mafCxxAbstractTypeMacro(lhpPipeIntGraphAbstract);
 lhpPipeIntGraphAbstract::lhpPipeIntGraphAbstract()
 //----------------------------------------------------------------------------
 {
-  m_ForcedWholeRange = false;
-  m_WholeRange       = s_WholeRange;
-  m_Graph = new mafGraphDataImpl(this, 8888.8888, 50000);
-  m_Graph->AddXVar(0);
+	m_ForcedWholeRange = false;
+	m_WholeRange = s_WholeRange;
+	m_Graph = new mafGraphDataImpl(this, 8888.8888, 50000);
+	m_Graph->AddXVar(0);
 }
 //----------------------------------------------------------------------------
 lhpPipeIntGraphAbstract::~lhpPipeIntGraphAbstract()
 //----------------------------------------------------------------------------
 {
-  if (m_Node)
-  {
-    m_Node->RemoveObserver(this);
-  }
-  mafViewIntGraph *vgraph = mafViewIntGraph::SafeDownCast(m_View);
-  if(vgraph && vgraph->GetRenderWindow())
-  {
-    vgraph->GetRenderWindow()->RemGraphData(m_Graph);
-    vgraph->GetRenderWindow()->SetXParam(NULL);
-  }
-  cppDEL(m_Graph);
+	if (m_Node)
+	{
+		m_Node->RemoveObserver(this);
+	}
+	mafViewIntGraph* vgraph = mafViewIntGraph::SafeDownCast(m_View);
+	if (vgraph && vgraph->GetRenderWindow())
+	{
+		vgraph->GetRenderWindow()->RemGraphData(m_Graph);
+		vgraph->GetRenderWindow()->SetXParam(NULL);
+	}
+	cppDEL(m_Graph);
 }
 
 //----------------------------------------------------------------------------
-void lhpPipeIntGraphAbstract::Create(mafNode *node, mafView *view)
+void lhpPipeIntGraphAbstract::Create(mafNode* node, mafView* view)
 //----------------------------------------------------------------------------
 {
-  Superclass::Create(node, view);
-  mafViewIntGraph *vgraph = mafViewIntGraph::SafeDownCast(m_View);
-  if(vgraph)
-    vgraph->GetRenderWindow()->AddGraphData(m_Graph);
-  m_Node->AddObserver(this);
+	Superclass::Create(node, view);
+	mafViewIntGraph* vgraph = mafViewIntGraph::SafeDownCast(m_View);
+	if (vgraph)
+		vgraph->GetRenderWindow()->AddGraphData(m_Graph);
+	m_Node->AddObserver(this);
 }
 
 //----------------------------------------------------------------------------
-mafGUI *lhpPipeIntGraphAbstract::CreateGui()
+mafGUI* lhpPipeIntGraphAbstract::CreateGui()
 //----------------------------------------------------------------------------
 {
-  assert(m_Gui == NULL);
-  m_Gui = new mafGUI(this);
+	assert(!AccessGUI());
+	auto gui = new mafGUI(this);
 
-  m_Gui->Bool(ID_WHOLE_RANGE, _L("Whole range"), &m_WholeRange);
-  return m_Gui;
+	gui->Bool(ID_WHOLE_RANGE, _L("Whole range"), &m_WholeRange);
+	return gui;
 }
 
 //----------------------------------------------------------------------------
-void lhpPipeIntGraphAbstract::OnEvent(mafEventBase *maf_event)
+void lhpPipeIntGraphAbstract::OnEvent(mafEventBase* maf_event)
 //----------------------------------------------------------------------------
 {
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    switch(e->GetId()) 
-    {
-    case ID_WHOLE_RANGE:
-      {
-        if(m_WholeRange)
-        {
-          GrabData();
-          {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-        }
-      }
-      break;
-    default:
-      Superclass::OnEvent(maf_event);
-      break;
-    }
-  }
-  else if(maf_event->GetId() == VME_TIME_SET)
-  {
-    GrabData();
-  }
-  else
-  {
-    Superclass::OnEvent(maf_event);
-  }
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
+	{
+		switch (e->GetId())
+		{
+		case ID_WHOLE_RANGE:
+		{
+			if (m_WholeRange)
+			{
+				GrabData();
+				{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+			}
+		}
+		break;
+		default:
+			Superclass::OnEvent(maf_event);
+			break;
+		}
+	}
+	else if (maf_event->GetId() == VME_TIME_SET)
+	{
+		GrabData();
+	}
+	else
+	{
+		Superclass::OnEvent(maf_event);
+	}
 }
 
 void lhpPipeIntGraphAbstract::SetForcedWholeRange(int forced)
 {
-  m_ForcedWholeRange = forced;
-  if(m_ForcedWholeRange)
-  {
-    GrabData();
-    {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-  }
+	m_ForcedWholeRange = forced;
+	if (m_ForcedWholeRange)
+	{
+		GrabData();
+		{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+	}
 }
 
 void lhpPipeIntGraphAbstract::SetSmoothParam(double param)
 {
-  m_Graph->SetSmoothParam(param);
-  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
+	m_Graph->SetSmoothParam(param);
+	{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
 }
 
 //----------------------------------------------------------------------------
 std::istream& lhpPipeIntGraphAbstract::operator>>(std::istream& is)
 //----------------------------------------------------------------------------
 {
-  //mafTagItem        Tag;
-  //wxInt32           nI;
-  //wxChar const      *cpTagValue = NULL;
-  //wxInt32           nValue;
-  //unsigned int      der;
+	//mafTagItem        Tag;
+	//wxInt32           nI;
+	//wxChar const      *cpTagValue = NULL;
+	//wxInt32           nValue;
+	//unsigned int      der;
 
-  return is;
-/*
-  //if(!vme->GetTagArray()->IsTagPresent(mafINTG_SAVEINFO_TAG))
-  {
-    return;
-  }
-  // X Value have double value + GDT_LAST;
-  //read a values one by one and add them to plot
-  for(nI = 0; nI< Tag.GetNumberOfComponents(); nI++)
-  {
-    cpTagValue = Tag.GetValue(nI);
-    sscanf(cpTagValue, "%d %ud", &nValue, &der);
-    if(m_Descriptions == NULL)
-    {
-      return;
-    }
-    IDType setID;
-    setID[1] = mafGraphDescType(nValue % GDT_LAST);
-    {
-      m_LoadMode = true;
-      {mafEvent evUnq(this, VME_SHOW, vme, true); InvokeEvent(evUnq);}
-      {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
+	return is;
+	/*
+	  //if(!vme->GetTagArray()->IsTagPresent(mafINTG_SAVEINFO_TAG))
+	  {
+		return;
+	  }
+	  // X Value have double value + GDT_LAST;
+	  //read a values one by one and add them to plot
+	  for(nI = 0; nI< Tag.GetNumberOfComponents(); nI++)
+	  {
+		cpTagValue = Tag.GetValue(nI);
+		sscanf(cpTagValue, "%d %ud", &nValue, &der);
+		if(m_Descriptions == NULL)
+		{
+		  return;
+		}
+		IDType setID;
+		setID[1] = mafGraphDescType(nValue % GDT_LAST);
+		{
+		  m_LoadMode = true;
+		  {mafEvent evUnq(this, VME_SHOW, vme, true); InvokeEvent(evUnq);}
+		  {mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
 
-      if(nValue >  GDT_LAST)
-      {
-        setID[0] = m_Pipes->Count() - 1;
-        m_Graph->SetXVar(0, setID, der);
-      }
-      else// if(nValue <= GDT_LAST)
-      {
-        setID[0] = m_Pipes->Count() - 1;
-        m_Graph->AddYVar(setID, der);
-      }
-      m_LoadMode = false;
-    }
-  }*/
+		  if(nValue >  GDT_LAST)
+		  {
+			setID[0] = m_Pipes->Count() - 1;
+			m_Graph->SetXVar(0, setID, der);
+		  }
+		  else// if(nValue <= GDT_LAST)
+		  {
+			setID[0] = m_Pipes->Count() - 1;
+			m_Graph->AddYVar(setID, der);
+		  }
+		  m_LoadMode = false;
+		}
+	  }*/
 }
 //----------------------------------------------------------------------------
 std::ostream& lhpPipeIntGraphAbstract::operator<<(std::ostream& os) const
@@ -186,60 +186,60 @@ std::ostream& lhpPipeIntGraphAbstract::operator<<(std::ostream& os) const
   wxInt32           nNumComp= 0, nCount = 0;
   wxString          sString("");
   wxString          sNumString("");
-  wxChar     const  **pEntries = NULL; 
+  wxChar     const  **pEntries = NULL;
 
   //for all pipes
   for(nI = 0; nI< m_Pipes->GetCount(); nI++)
   {
-    if(m_Pipes->Item(nI)->m_Vme == vme)
-    {
-      nPipeIndex = nI;
-      break;
-    }
+	if(m_Pipes->Item(nI)->m_Vme == vme)
+	{
+	  nPipeIndex = nI;
+	  break;
+	}
   }
 
   if(nPipeIndex != -1)
   {
-    nNumComp = 0;
-    for(nI = m_Graph->GetYDim() - 1; nI >= 0; nI--)
-    {
-      if(nPipeIndex == m_Graph->GetYID(nI)[0] && m_Graph->GetYID(nI)[1] != 0)
-      {
-        //save Y var
-        nNumComp++;
-      }
-    }
-    for(nI = m_Graph->GetXDim() - 1; nI >= 0; nI--)
-    {
-      if(nPipeIndex == m_Graph->GetXID(nI)[0] && m_Graph->GetYID(nI)[1] != 0)
-      {
-        //save X var
-        nNumComp++;
-      }
-    }
-    //actually save
-    nCount = 0;
-    pEntries = (wxChar const **)malloc(sizeof(wxChar *) * nNumComp);
-    for(nI = m_Graph->GetYDim() - 1; nI >= 0; nI--)
-    {
-      if(nPipeIndex == m_Graph->GetYID(nI)[0] && m_Graph->GetYID(nI)[1] != 0)
-      {
-        //save Y var
-        sNumString.Printf("%d %ud", m_Graph->GetYID(nI)[1], m_Graph->GetYDeriv(nI));
-        pEntries[nCount] = _strdup(sNumString.GetData());
-        nCount ++;
-      }
-    }
-    for(nI = m_Graph->GetXDim() - 1; nI >= 0; nI--)
-    {
-      if(nPipeIndex == m_Graph->GetXID(nI)[0] && m_Graph->GetYID(nI)[1] != 0)
-      {
-        //save X var
-        sNumString.Printf("%d %ud", m_Graph->GetYID(nI)[1] + GDT_LAST, m_Graph->GetYDeriv(nI));
-        pEntries[nCount] = _strdup(sNumString.GetData());
-        nCount ++;
-      }
-    }
+	nNumComp = 0;
+	for(nI = m_Graph->GetYDim() - 1; nI >= 0; nI--)
+	{
+	  if(nPipeIndex == m_Graph->GetYID(nI)[0] && m_Graph->GetYID(nI)[1] != 0)
+	  {
+		//save Y var
+		nNumComp++;
+	  }
+	}
+	for(nI = m_Graph->GetXDim() - 1; nI >= 0; nI--)
+	{
+	  if(nPipeIndex == m_Graph->GetXID(nI)[0] && m_Graph->GetYID(nI)[1] != 0)
+	  {
+		//save X var
+		nNumComp++;
+	  }
+	}
+	//actually save
+	nCount = 0;
+	pEntries = (wxChar const **)malloc(sizeof(wxChar *) * nNumComp);
+	for(nI = m_Graph->GetYDim() - 1; nI >= 0; nI--)
+	{
+	  if(nPipeIndex == m_Graph->GetYID(nI)[0] && m_Graph->GetYID(nI)[1] != 0)
+	  {
+		//save Y var
+		sNumString.Printf("%d %ud", m_Graph->GetYID(nI)[1], m_Graph->GetYDeriv(nI));
+		pEntries[nCount] = _strdup(sNumString.GetData());
+		nCount ++;
+	  }
+	}
+	for(nI = m_Graph->GetXDim() - 1; nI >= 0; nI--)
+	{
+	  if(nPipeIndex == m_Graph->GetXID(nI)[0] && m_Graph->GetYID(nI)[1] != 0)
+	  {
+		//save X var
+		sNumString.Printf("%d %ud", m_Graph->GetYID(nI)[1] + GDT_LAST, m_Graph->GetYDeriv(nI));
+		pEntries[nCount] = _strdup(sNumString.GetData());
+		nCount ++;
+	  }
+	}
   }
 
   wxASSERT(nNumComp == nCount);
@@ -251,8 +251,8 @@ std::ostream& lhpPipeIntGraphAbstract::operator<<(std::ostream& os) const
   cppDEL(pTag);
   for(nI = nNumComp - 1; nI >= 0; nI--)
   {
-    free(const_cast<char *>(pEntries[nI]));
+	free(const_cast<char *>(pEntries[nI]));
   }
   free(pEntries);*/
-  return os;
+	return os;
 }

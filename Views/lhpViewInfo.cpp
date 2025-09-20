@@ -305,21 +305,21 @@ void lhpViewInfo::UpdatePage()
 mafGUI *lhpViewInfo::CreateGui()
 //-------------------------------------------------------------------------
 {
-  assert(m_Gui == NULL);
-  m_Gui = mafView::CreateGui();
+  assert(!AccessGUI());
+  auto gui = mafView::CreateGui();
 
-  m_Gui->SetListener(this);
+  gui->SetListener(this);
 
-  m_Gui->Label(_R("General Features"),true);
-  m_Gui->Divider(2);
+  gui->Label(_R("General Features"),true);
+  gui->Divider(2);
 
   //m_Gui->RollOut(ID_ROLLOUT_RENDER, "Plot appearance", m_RenderWindow->GetGui(), false);
 
-  m_Gui->Divider(2);
+  gui->Divider(2);
 
-  m_Gui->Update();
+  gui->Update();
 
-  return m_Gui;
+  return gui;
 }
 //----------------------------------------------------------------------------
 void lhpViewInfo::OnEvent(mafEventBase *maf_event)
@@ -383,11 +383,4 @@ void lhpViewInfo::Print(std::ostream& os, const int tabs)// const
 
   m_Sg->Print(os, 1);
   os << std::endl;
-}
-//----------------------------------------------------------------------------
-void lhpViewInfo::UpdateGui() 
-//----------------------------------------------------------------------------
-{ 
-  if(m_Gui != NULL)
-    m_Gui->Update();
 }

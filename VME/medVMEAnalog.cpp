@@ -3,7 +3,7 @@
  Program: MAF2Medical
  Module: medVMEAnalog
  Authors: Roberto Mucci
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -39,7 +39,7 @@ mafCxxTypeMacro(medVMEAnalog)
 medVMEAnalog::medVMEAnalog()
 //-------------------------------------------------------------------------
 {
-  m_CurrentTime   = 0.0;
+	m_CurrentTime = 0.0;
 }
 //-------------------------------------------------------------------------
 medVMEAnalog::~medVMEAnalog()
@@ -50,50 +50,50 @@ medVMEAnalog::~medVMEAnalog()
 mafGUI* medVMEAnalog::CreateGui()
 //-------------------------------------------------------------------------
 {
-  m_Gui = mafVME::CreateGui(); // Called to show info about vmes' type and name
-  m_Gui->Divider();
-  return m_Gui;
+	auto gui = mafVME::CreateGui(); // Called to show info about vmes' type and name
+	gui->Divider();
+	return gui;
 }
 
 //-----------------------------------------------------------------------
 void medVMEAnalog::Print(std::ostream& os, const int tabs)
 //-----------------------------------------------------------------------
 {
-  Superclass::Print(os,tabs);
-  mafIndent indent(tabs);
+	Superclass::Print(os, tabs);
+	mafIndent indent(tabs);
 }
 
 //-------------------------------------------------------------------------
 bool medVMEAnalog::IsAnimated()
 //-------------------------------------------------------------------------
 {
-  vnl_vector<double> timeVector = this->GetScalarOutput()->GetScalarData().get_row(0);
-  return (timeVector.size() > 0);  
+	vnl_vector<double> timeVector = this->GetScalarOutput()->GetScalarData().get_row(0);
+	return (timeVector.size() > 0);
 }
 
 //-------------------------------------------------------------------------
-void medVMEAnalog::GetTimeBounds(mafTimeStamp tbounds[2]) 
+void medVMEAnalog::GetTimeBounds(mafTimeStamp tbounds[2])
 //-------------------------------------------------------------------------
 {
-  vnl_vector<double> timeVector = this->GetScalarOutput()->GetScalarData().get_row(0);
-  tbounds[0] = timeVector[0];
-  tbounds[1] = timeVector[timeVector.size()-1];
+	vnl_vector<double> timeVector = this->GetScalarOutput()->GetScalarData().get_row(0);
+	tbounds[0] = timeVector[0];
+	tbounds[1] = timeVector[timeVector.size() - 1];
 }
 
 //-------------------------------------------------------------------------
-void medVMEAnalog::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)
+void medVMEAnalog::GetLocalTimeStamps(std::vector<mafTimeStamp>& kframes)
 //-------------------------------------------------------------------------
 {
-  kframes.clear();
-  vnl_vector<double> timeVector = this->GetScalarOutput()->GetScalarData().get_row(0);
-  for (int n = 0; n < timeVector.size(); n++)
-  {
-    kframes.push_back(timeVector.get(n));
-  }
+	kframes.clear();
+	vnl_vector<double> timeVector = this->GetScalarOutput()->GetScalarData().get_row(0);
+	for (int n = 0; n < timeVector.size(); n++)
+	{
+		kframes.push_back(timeVector.get(n));
+	}
 }
 //-------------------------------------------------------------------------
 void medVMEAnalog::GetLocalTimeBounds(mafTimeStamp tbounds[2])
 //-------------------------------------------------------------------------
 {
-  GetTimeBounds(tbounds);
+	GetTimeBounds(tbounds);
 }

@@ -3,7 +3,7 @@
  Program: MAF2Medical
  Module: medVMEMaps
  Authors: Eleonora Mambrini
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -60,267 +60,267 @@ mafCxxTypeMacro(medVMEMaps)
 medVMEMaps::medVMEMaps()
 //-------------------------------------------------------------------------
 {
-  m_Volume          = NULL;
-  m_Normals         = NULL;
-  m_Volume          = NULL;
-  m_PolyData        = NULL;
-  m_Table           = NULL;
+	m_Volume = NULL;
+	m_Normals = NULL;
+	m_Volume = NULL;
+	m_PolyData = NULL;
+	m_Table = NULL;
 
-  m_Transform = mafTransform::NewSPtr();
-  vtkNEW(m_Normals);
-  vtkNEW(m_DistanceFilter);
-  vtkNEW(m_PolyData);
+	m_Transform = mafTransform::NewSPtr();
+	vtkNEW(m_Normals);
+	vtkNEW(m_DistanceFilter);
+	vtkNEW(m_PolyData);
 
-  mafVMEOutputSurface *output = mafVMEOutputSurface::New(); // an output with no data
-  output->SetTransform(m_Transform); // force my transform in the output
-  SetOutput(output);
-  
-  DependsOnLinkedNodeOn();
+	mafVMEOutputSurface* output = mafVMEOutputSurface::New(); // an output with no data
+	output->SetTransform(m_Transform); // force my transform in the output
+	SetOutput(output);
 
-  auto dpipe = mafDataPipeCustom::NewSPtr();
-  dpipe->SetDependOnAbsPose(true);
-  SetDataPipe(dpipe);
-  dpipe->SetInputData(m_PolyData);
+	DependsOnLinkedNodeOn();
 
-  GetMaterial()->m_MaterialType = mmaMaterial::USE_LOOKUPTABLE;
+	auto dpipe = mafDataPipeCustom::NewSPtr();
+	dpipe->SetDependOnAbsPose(true);
+	SetDataPipe(dpipe);
+	dpipe->SetInputData(m_PolyData);
 
-  m_DensityDistance = 0;
-  m_FirstThreshold = 700;
-  m_SecondThreshold = 300;
-  m_MaxDistance = 2;
+	GetMaterial()->m_MaterialType = mmaMaterial::USE_LOOKUPTABLE;
+
+	m_DensityDistance = 0;
+	m_FirstThreshold = 700;
+	m_SecondThreshold = 300;
+	m_MaxDistance = 2;
 }
 
 //-------------------------------------------------------------------------
 medVMEMaps::~medVMEMaps()
 //-------------------------------------------------------------------------
 {
-  vtkDEL(m_Normals);
-  vtkDEL(m_DistanceFilter);
-  
-  vtkDEL(m_PolyData);
+	vtkDEL(m_Normals);
+	vtkDEL(m_DistanceFilter);
 
-  if(m_Table)
-    vtkDEL(m_Table);
+	vtkDEL(m_PolyData);
 
-  SetOutput(NULL);
+	if (m_Table)
+		vtkDEL(m_Table);
+
+	SetOutput(NULL);
 }
 
 //-------------------------------------------------------------------------
-int medVMEMaps::DeepCopy(mafNode *a)
-//-------------------------------------------------------------------------
-{ 
-  if (Superclass::DeepCopy(a)==MAF_OK)
-  {
-    medVMEMaps *maps = medVMEMaps::SafeDownCast(a);
-
-    m_Transform->SetMatrix(maps->m_Transform->GetMatrix());
-    mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
-    if (dpipe)
-    {
-      dpipe->SetDependOnAbsPose(true);
-      dpipe->SetInputData(m_PolyData);
-    }
-    m_MappedName      = maps->m_MappedName;
-    GetMaterial()->m_MaterialType = mmaMaterial::USE_LOOKUPTABLE;
-
-    m_FirstThreshold          = maps->GetFirstThreshold();
-    m_SecondThreshold         = maps->GetSecondThreshold();
-    m_MaxDistance             = maps->GetMaxDistance();
-
-    if(maps->GetSourceVMELink())
-      SetSourceVMELink(maps->GetSourceVMELink());
-    if(maps->GetMappedVMELink())
-      SetMappedVMELink(maps->GetMappedVMELink());
-
-    return MAF_OK;
-  }  
-  return MAF_ERROR;
-}
-
-//-------------------------------------------------------------------------
-bool medVMEMaps::Equals(mafVME *vme)
+int medVMEMaps::DeepCopy(mafNode* a)
 //-------------------------------------------------------------------------
 {
-  bool ret = false;
-  if (Superclass::Equals(vme))
-  {
-    return ret = (m_Transform->GetMatrix()  ==  ((medVMEMaps *)vme)->m_Transform->GetMatrix() &&
-                  //m_Volume                  ==  ((medVMEMaps *)vme)->GetVolume() &&
-                  m_FirstThreshold          ==  ((medVMEMaps *)vme)->GetFirstThreshold() &&
-                  m_SecondThreshold         ==  ((medVMEMaps *)vme)->GetSecondThreshold() &&
-                  m_MaxDistance             ==  ((medVMEMaps *)vme)->GetMaxDistance() &&
-                  m_MappedName              ==  ((medVMEMaps *)vme)->m_MappedName
-                 );
-  }
-  return ret;
+	if (Superclass::DeepCopy(a) == MAF_OK)
+	{
+		medVMEMaps* maps = medVMEMaps::SafeDownCast(a);
+
+		m_Transform->SetMatrix(maps->m_Transform->GetMatrix());
+		mafDataPipeCustom* dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
+		if (dpipe)
+		{
+			dpipe->SetDependOnAbsPose(true);
+			dpipe->SetInputData(m_PolyData);
+		}
+		m_MappedName = maps->m_MappedName;
+		GetMaterial()->m_MaterialType = mmaMaterial::USE_LOOKUPTABLE;
+
+		m_FirstThreshold = maps->GetFirstThreshold();
+		m_SecondThreshold = maps->GetSecondThreshold();
+		m_MaxDistance = maps->GetMaxDistance();
+
+		if (maps->GetSourceVMELink())
+			SetSourceVMELink(maps->GetSourceVMELink());
+		if (maps->GetMappedVMELink())
+			SetMappedVMELink(maps->GetMappedVMELink());
+
+		return MAF_OK;
+	}
+	return MAF_ERROR;
+}
+
+//-------------------------------------------------------------------------
+bool medVMEMaps::Equals(mafVME* vme)
+//-------------------------------------------------------------------------
+{
+	bool ret = false;
+	if (Superclass::Equals(vme))
+	{
+		return ret = (m_Transform->GetMatrix() == ((medVMEMaps*)vme)->m_Transform->GetMatrix() &&
+			//m_Volume                  ==  ((medVMEMaps *)vme)->GetVolume() &&
+			m_FirstThreshold == ((medVMEMaps*)vme)->GetFirstThreshold() &&
+			m_SecondThreshold == ((medVMEMaps*)vme)->GetSecondThreshold() &&
+			m_MaxDistance == ((medVMEMaps*)vme)->GetMaxDistance() &&
+			m_MappedName == ((medVMEMaps*)vme)->m_MappedName
+			);
+	}
+	return ret;
 }
 
 //-------------------------------------------------------------------------
 mafGUI* medVMEMaps::CreateGui()
 //-------------------------------------------------------------------------
 {
-  //return Superclass::CreateGui();
-  m_Gui = mafNode::CreateGui(); // Called to show info about vmes' type and name
-  m_Gui->SetListener(this);
-  m_Gui->Divider();
+	//return Superclass::CreateGui();
+	auto gui = mafNode::CreateGui(); // Called to show info about vmes' type and name
+	gui->SetListener(this);
+	gui->Divider();
 
-  mafString m_Choices[2];
-  m_Choices[0]=_R("Distance");
-  m_Choices[1]=_R("Density");
-  m_Gui->Radio(ID_DENSITY_DISTANCE, _R(""),&m_DensityDistance,2,m_Choices);
+	mafString m_Choices[2];
+	m_Choices[0] = _R("Distance");
+	m_Choices[1] = _R("Density");
+	gui->Radio(ID_DENSITY_DISTANCE, _R(""), &m_DensityDistance, 2, m_Choices);
 
-  if(!m_Volume)
-  {
-    m_Gui->Enable(ID_DENSITY_DISTANCE,false);
-  }
- 
-  m_Gui->Divider();
+	if (!m_Volume)
+	{
+		gui->Enable(ID_DENSITY_DISTANCE, false);
+	}
 
-  InternalUpdate();
- 
-  return m_Gui;
+	gui->Divider();
+
+	InternalUpdate();
+
+	return gui;
 }
 //-------------------------------------------------------------------------
-void medVMEMaps::OnEvent(mafEventBase *maf_event)
+void medVMEMaps::OnEvent(mafEventBase* maf_event)
 //-------------------------------------------------------------------------
 {
-  //Superclass::OnEvent(maf_event);
-  // events to be sent up or down in the tree are simply forwarded
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    switch(e->GetId())
-    {
-    case ID_DENSITY_DISTANCE:
-      {
-        SetDensityDistance(m_DensityDistance);
-      }
-      break;
-    default:
-      Superclass::OnEvent(maf_event);
-    }
-  }
-  else
-  {
-    Superclass::OnEvent(maf_event);
-  }
+	//Superclass::OnEvent(maf_event);
+	// events to be sent up or down in the tree are simply forwarded
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
+	{
+		switch (e->GetId())
+		{
+		case ID_DENSITY_DISTANCE:
+		{
+			SetDensityDistance(m_DensityDistance);
+		}
+		break;
+		default:
+			Superclass::OnEvent(maf_event);
+		}
+	}
+	else
+	{
+		Superclass::OnEvent(maf_event);
+	}
 }
 //-------------------------------------------------------------------------
-mafVMEOutputSurface *medVMEMaps::GetSurfaceOutput()
+mafVMEOutputSurface* medVMEMaps::GetSurfaceOutput()
 //-------------------------------------------------------------------------
 {
-  // allocate the right type of output on demand
-  if (m_Output==NULL)
-  {
-    SetOutput(mafVMEOutputSurface::New()); // create the output
-  }
-  return mafVMEOutputSurface::SafeDownCast(m_Output);
+	// allocate the right type of output on demand
+	if (m_Output == NULL)
+	{
+		SetOutput(mafVMEOutputSurface::New()); // create the output
+	}
+	return mafVMEOutputSurface::SafeDownCast(m_Output);
 }
 
- //-------------------------------------------------------------------------
- void medVMEMaps::SetMatrix(const mafMatrix &mat)
- //-------------------------------------------------------------------------
- {
-   m_Transform->SetMatrix(mat);
-   Modified();
- }
-
 //-------------------------------------------------------------------------
-void medVMEMaps::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)
+void medVMEMaps::SetMatrix(const mafMatrix& mat)
 //-------------------------------------------------------------------------
 {
-  kframes.clear(); // no timestamps
+	m_Transform->SetMatrix(mat);
+	Modified();
+}
+
+//-------------------------------------------------------------------------
+void medVMEMaps::GetLocalTimeStamps(std::vector<mafTimeStamp>& kframes)
+//-------------------------------------------------------------------------
+{
+	kframes.clear(); // no timestamps
 }
 
 //-----------------------------------------------------------------------
 void medVMEMaps::Print(std::ostream& os, const int tabs)
 //-----------------------------------------------------------------------
 {
-  Superclass::Print(os,tabs);
+	Superclass::Print(os, tabs);
 }
 
 //-------------------------------------------------------------------------
 void medVMEMaps::InternalPreUpdate()
 //-------------------------------------------------------------------------
 {
-  mafVME *vme = mafVME::SafeDownCast(GetMappedVMELink());
-  if(!vme)
-    return;
-  vtkPolyData *data = (vtkPolyData *)vme->GetOutput()->GetVTKData();
+	mafVME* vme = mafVME::SafeDownCast(GetMappedVMELink());
+	if (!vme)
+		return;
+	vtkPolyData* data = (vtkPolyData*)vme->GetOutput()->GetVTKData();
 
-  m_Normals->SetInputConnection(vme->GetOutput()->GetVTKOutputPort());
-  m_Normals->ComputePointNormalsOn();
-  m_Normals->SplittingOff();
-  m_Normals->Update();
+	m_Normals->SetInputConnection(vme->GetOutput()->GetVTKOutputPort());
+	m_Normals->ComputePointNormalsOn();
+	m_Normals->SplittingOff();
+	m_Normals->Update();
 
-  if(m_Volume==NULL)
-  {
-    SetVolume(mafVMEVolume::SafeDownCast(GetSourceVMELink()));
-  }
+	if (m_Volume == NULL)
+	{
+		SetVolume(mafVMEVolume::SafeDownCast(GetSourceVMELink()));
+	}
 
-  if (m_Volume)
-  {
-    if(m_DensityDistance == 0)
-    {
-      m_DistanceFilter->SetFilterModeToDistance();
-    }
-    if(m_DensityDistance == 1)
-    {
-      m_DistanceFilter->SetFilterModeToDensity();
-    }
+	if (m_Volume)
+	{
+		if (m_DensityDistance == 0)
+		{
+			m_DistanceFilter->SetFilterModeToDistance();
+		}
+		if (m_DensityDistance == 1)
+		{
+			m_DistanceFilter->SetFilterModeToDensity();
+		}
 
-    vtkDataSet *datasetvol = ((mafVME*)m_Volume)->GetOutput()->GetVTKData();
-    m_DistanceFilter->SetDistanceModeToScalar();
-    m_DistanceFilter->SetSourceConnection(((mafVME*)m_Volume)->GetOutput()->GetVTKOutputPort());
-    m_DistanceFilter->SetInputConnection(m_Normals->GetOutputPort());
-    m_DistanceFilter->SetMaxDistance(m_MaxDistance);
-    m_DistanceFilter->SetThreshold(m_FirstThreshold);
-    m_DistanceFilter->SetInputMatrix(vme->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
-    m_DistanceFilter->Update(); 
+		vtkDataSet* datasetvol = ((mafVME*)m_Volume)->GetOutput()->GetVTKData();
+		m_DistanceFilter->SetDistanceModeToScalar();
+		m_DistanceFilter->SetSourceConnection(((mafVME*)m_Volume)->GetOutput()->GetVTKOutputPort());
+		m_DistanceFilter->SetInputConnection(m_Normals->GetOutputPort());
+		m_DistanceFilter->SetMaxDistance(m_MaxDistance);
+		m_DistanceFilter->SetThreshold(m_FirstThreshold);
+		m_DistanceFilter->SetInputMatrix(vme->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
+		m_DistanceFilter->Update();
 
-    //GetMaterial()->m_ColorLut = CreateTable();
+		//GetMaterial()->m_ColorLut = CreateTable();
 
 
-    vtkPolyData *polyout;
-    vtkNew<vtkFloatArray> scalars;
+		vtkPolyData* polyout;
+		vtkNew<vtkFloatArray> scalars;
 
-    //m_PolyData = m_DistanceFilter->GetPolyDataOutput();
+		//m_PolyData = m_DistanceFilter->GetPolyDataOutput();
 
-    if(polyout = m_DistanceFilter->GetPolyDataOutput())
-    {
-      m_DistanceFilter->GetOutputPort()->GetProducer()->Update();
+		if (polyout = m_DistanceFilter->GetPolyDataOutput())
+		{
+			m_DistanceFilter->GetOutputPort()->GetProducer()->Update();
 
-      scalars->DeepCopy(polyout->GetPointData()->GetScalars());
+			scalars->DeepCopy(polyout->GetPointData()->GetScalars());
 
-      scalars->SetName("Distance_density");
-      scalars->Modified();
+			scalars->SetName("Distance_density");
+			scalars->Modified();
 
-      m_PolyData->DeepCopy(data);
-      m_PolyData->GetPointData()->AddArray(scalars);
-      m_PolyData->GetPointData()->SetActiveScalars("Distance_density");
+			m_PolyData->DeepCopy(data);
+			m_PolyData->GetPointData()->AddArray(scalars);
+			m_PolyData->GetPointData()->SetActiveScalars("Distance_density");
 
-      m_PolyData->Modified();
-    }
+			m_PolyData->Modified();
+		}
 
-//     if(polyout)
-//     {
-//       polyout->Update();
-// 
-//       scalars->DeepCopy(polyout->GetPointData()->GetScalars());
-// 
-//       scalars->SetName("Distance_density");
-//       scalars->Modified();
-// 
-//       vtkPolyData *polydata = vtkPolyData::SafeDownCast(this->GetOutput()->GetVTKData());
-//       polydata->GetPointData()->AddArray(scalars);
-//       polydata->GetPointData()->SetActiveScalars("Distance_density");
-// 
-//       polydata->Modified();
-//       polydata->Update();
-//     }
-  }
+		//     if(polyout)
+		//     {
+		//       polyout->Update();
+		// 
+		//       scalars->DeepCopy(polyout->GetPointData()->GetScalars());
+		// 
+		//       scalars->SetName("Distance_density");
+		//       scalars->Modified();
+		// 
+		//       vtkPolyData *polydata = vtkPolyData::SafeDownCast(this->GetOutput()->GetVTKData());
+		//       polydata->GetPointData()->AddArray(scalars);
+		//       polydata->GetPointData()->SetActiveScalars("Distance_density");
+		// 
+		//       polydata->Modified();
+		//       polydata->Update();
+		//     }
+	}
 
-  mafVME *vol = mafVME::SafeDownCast(GetMappedVMELink());
-  m_MappedName = vol ? vol->GetName() : _L("none");
+	mafVME* vol = mafVME::SafeDownCast(GetMappedVMELink());
+	m_MappedName = vol ? vol->GetName() : _L("none");
 }
 
 
@@ -328,64 +328,66 @@ void medVMEMaps::InternalPreUpdate()
 void medVMEMaps::InternalUpdate()
 //-------------------------------------------------------------------------
 {
-  if (m_PolyData)
-  {
-    //m_PolyData->Update();
-  }
+	if (m_PolyData)
+	{
+		//m_PolyData->Update();
+	}
 
 }
 
 //-------------------------------------------------------------------------
-void medVMEMaps::SetVolume(mafVMEVolume *volume)
+void medVMEMaps::SetVolume(mafVMEVolume* volume)
 //-------------------------------------------------------------------------
 {
-  m_Volume = volume;
-  if(m_Gui && m_Volume)
-    m_Gui->Enable(ID_DENSITY_DISTANCE, true);
+	m_Volume = volume;
+	if (auto gui = AccessGUI())
+	{
+		gui->Enable(ID_DENSITY_DISTANCE, m_Volume != nullptr);
+	}
 }
 
 //-------------------------------------------------------------------------
-mafVMEVolume *medVMEMaps::GetVolume()
+mafVMEVolume* medVMEMaps::GetVolume()
 //-------------------------------------------------------------------------
 {
-  if(m_Volume == NULL)
-  {
-    m_Volume = mafVMEVolume::SafeDownCast(GetSourceVMELink());
-  }
-  return m_Volume;
+	if (m_Volume == NULL)
+	{
+		m_Volume = mafVMEVolume::SafeDownCast(GetSourceVMELink());
+	}
+	return m_Volume;
 }
 
 //-----------------------------------------------------------------------
 void medVMEMaps::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
-{  
-  Superclass::InternalStore(parent);
-  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
+{
+	Superclass::InternalStore(parent);
+	parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
 }
 
 //-----------------------------------------------------------------------
 void medVMEMaps::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  Superclass::InternalRestore(node);
-  m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
+	Superclass::InternalRestore(node);
+	m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
 }
 
 //-------------------------------------------------------------------------
 std::shared_ptr<mmaMaterial> medVMEMaps::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  auto material = mmaMaterial::SafeDownCast(GetAttribute(mmaMaterial::GetAttributeName()));
-  if (!material)
-  {
-    material = mmaMaterial::NewSPtr();
-    SetAttribute(material);
-    lutPreset(14,GetMaterial()->m_ColorLut);
-    //material->m_ColorLut = CreateTable();
-    material->UpdateFromLut();
-    material->UpdateProp();
-  }
-  return material;
+	auto material = mmaMaterial::SafeDownCast(GetAttribute(mmaMaterial::GetAttributeName()));
+	if (!material)
+	{
+		material = mmaMaterial::NewSPtr();
+		SetAttribute(material);
+		lutPreset(14, GetMaterial()->m_ColorLut);
+		//material->m_ColorLut = CreateTable();
+		material->UpdateFromLut();
+		material->UpdateProp();
+	}
+	return material;
 }
 
 // //-------------------------------------------------------------------------
@@ -435,114 +437,114 @@ std::shared_ptr<mmaMaterial> medVMEMaps::GetMaterial()
 void medVMEMaps::SetDensityDistance(int densityDistance)
 //-------------------------------------------------------------------------
 {
-  m_DensityDistance = densityDistance;
-  GetOutput()->Update();
-  UpdateFilter();
+	m_DensityDistance = densityDistance;
+	GetOutput()->Update();
+	UpdateFilter();
 }
 
 //-------------------------------------------------------------------------
 void medVMEMaps::SetFirstThreshold(int firstThreshold)
 //-------------------------------------------------------------------------
 {
-  m_FirstThreshold = firstThreshold;
-  UpdateFilter();
-  //InternalPreUpdate();
-  //InternalUpdate();
+	m_FirstThreshold = firstThreshold;
+	UpdateFilter();
+	//InternalPreUpdate();
+	//InternalUpdate();
 }
 
 //-------------------------------------------------------------------------
 void medVMEMaps::SetSecondThreshold(int secondThreshold)
 //-------------------------------------------------------------------------
 {
-  m_SecondThreshold = secondThreshold;
-  UpdateFilter();
-  //InternalPreUpdate();
-  //InternalUpdate();
+	m_SecondThreshold = secondThreshold;
+	UpdateFilter();
+	//InternalPreUpdate();
+	//InternalUpdate();
 }
 
 //-------------------------------------------------------------------------
 void medVMEMaps::SetMaxDistance(int maxDistance)
 //-------------------------------------------------------------------------
 {
-  m_MaxDistance = maxDistance;
-  UpdateFilter();
-  //InternalPreUpdate();
-  //InternalUpdate();
+	m_MaxDistance = maxDistance;
+	UpdateFilter();
+	//InternalPreUpdate();
+	//InternalUpdate();
 
 }
 
 //-----------------------------------------------------------------------
-mafNode *medVMEMaps::GetMappedVMELink()
+mafNode* medVMEMaps::GetMappedVMELink()
 //-----------------------------------------------------------------------
 {
-  return mafNode::SafeDownCast(GetLink(_R("MappedVME")));
+	return mafNode::SafeDownCast(GetLink(_R("MappedVME")));
 }
 //-----------------------------------------------------------------------
-void medVMEMaps::SetMappedVMELink(mafNode *node)
+void medVMEMaps::SetMappedVMELink(mafNode* node)
 //-----------------------------------------------------------------------
 {
-  SetLink(_R("MappedVME"), node);
-  Modified();
-}
-
-//-----------------------------------------------------------------------
-mafNode *medVMEMaps::GetSourceVMELink()
-//-----------------------------------------------------------------------
-{
-  return mafNode::SafeDownCast(GetLink(_R("SourceVME")));
+	SetLink(_R("MappedVME"), node);
+	Modified();
 }
 
 //-----------------------------------------------------------------------
-void medVMEMaps::SetSourceVMELink(mafNode *node)
+mafNode* medVMEMaps::GetSourceVMELink()
 //-----------------------------------------------------------------------
 {
-  SetLink(_R("SourceVME"), node);
-  Modified();
+	return mafNode::SafeDownCast(GetLink(_R("SourceVME")));
 }
 
 //-----------------------------------------------------------------------
-vtkLookupTable *medVMEMaps::CreateTable()
+void medVMEMaps::SetSourceVMELink(mafNode* node)
 //-----------------------------------------------------------------------
 {
-  int m_NumSections =3;
-  wxColour m_LowColour, m_HiColour, m_MidColour, m_MidColour1, m_MidColour2;
+	SetLink(_R("SourceVME"), node);
+	Modified();
+}
 
-  vtkNEW(m_Table);
+//-----------------------------------------------------------------------
+vtkLookupTable* medVMEMaps::CreateTable()
+//-----------------------------------------------------------------------
+{
+	int m_NumSections = 3;
+	wxColour m_LowColour, m_HiColour, m_MidColour, m_MidColour1, m_MidColour2;
 
-  m_LowColour.Set(255,0,0);
-  m_MidColour.Set(0,255,0);
-  m_HiColour.Set(0,0,255);
-  m_MidColour1.Set(255,255,0);
-  m_MidColour2.Set(0,255,255);
+	vtkNEW(m_Table);
 
-  m_Table->SetNumberOfTableValues(m_NumSections);
+	m_LowColour.Set(255, 0, 0);
+	m_MidColour.Set(0, 255, 0);
+	m_HiColour.Set(0, 0, 255);
+	m_MidColour1.Set(255, 255, 0);
+	m_MidColour2.Set(0, 255, 255);
 
-  if(m_DensityDistance==0)
-  {
-    int i;
-    for (i=-4*m_MaxDistance;i<-m_MaxDistance;i++)
-      m_Table->SetTableValue(i,m_LowColour.Red()/255.0, m_LowColour.Green()/255.0,	m_LowColour.Blue()/255.0);
-    for (i=-m_MaxDistance;i<m_MaxDistance;i++)
-      m_Table->SetTableValue(i,1.0,1.0,1.0);
-    for (i=m_MaxDistance;i<=4*m_MaxDistance;i++)
-      m_Table->SetTableValue(i,m_HiColour.Red()/255.0, m_HiColour.Green()/255.0,	m_HiColour.Blue()/255.0);
-  }
+	m_Table->SetNumberOfTableValues(m_NumSections);
 
-  else if(m_DensityDistance==1)
-  {
+	if (m_DensityDistance == 0)
+	{
+		int i;
+		for (i = -4 * m_MaxDistance; i < -m_MaxDistance; i++)
+			m_Table->SetTableValue(i, m_LowColour.Red() / 255.0, m_LowColour.Green() / 255.0, m_LowColour.Blue() / 255.0);
+		for (i = -m_MaxDistance; i < m_MaxDistance; i++)
+			m_Table->SetTableValue(i, 1.0, 1.0, 1.0);
+		for (i = m_MaxDistance; i <= 4 * m_MaxDistance; i++)
+			m_Table->SetTableValue(i, m_HiColour.Red() / 255.0, m_HiColour.Green() / 255.0, m_HiColour.Blue() / 255.0);
+	}
 
-    double range[2];
-    ((mafVME*)m_Volume)->GetOutput()->GetVTKData()->GetScalarRange(range);
+	else if (m_DensityDistance == 1)
+	{
 
-    m_Table->SetTableValue(range[0],m_LowColour.Red()/255.0, m_LowColour.Green()/255.0,	m_LowColour.Blue()/255.0);
-    m_Table->SetTableValue(m_SecondThreshold,m_MidColour1.Red()/255.0, m_MidColour1.Green()/255.0,	m_MidColour1.Blue()/255.0);
-    m_Table->SetTableValue(m_FirstThreshold,m_MidColour2.Red()/255.0, m_MidColour2.Green()/255.0,	m_MidColour2.Blue()/255.0);
-    m_Table->SetTableValue(range[1],m_HiColour.Red()/255.0, m_HiColour.Green()/255.0,	m_HiColour.Blue()/255.0);
-  }
+		double range[2];
+		((mafVME*)m_Volume)->GetOutput()->GetVTKData()->GetScalarRange(range);
 
-  m_Table->Build();
+		m_Table->SetTableValue(range[0], m_LowColour.Red() / 255.0, m_LowColour.Green() / 255.0, m_LowColour.Blue() / 255.0);
+		m_Table->SetTableValue(m_SecondThreshold, m_MidColour1.Red() / 255.0, m_MidColour1.Green() / 255.0, m_MidColour1.Blue() / 255.0);
+		m_Table->SetTableValue(m_FirstThreshold, m_MidColour2.Red() / 255.0, m_MidColour2.Green() / 255.0, m_MidColour2.Blue() / 255.0);
+		m_Table->SetTableValue(range[1], m_HiColour.Red() / 255.0, m_HiColour.Green() / 255.0, m_HiColour.Blue() / 255.0);
+	}
 
-  return m_Table;
+	m_Table->Build();
+
+	return m_Table;
 
 }
 
@@ -550,10 +552,10 @@ vtkLookupTable *medVMEMaps::CreateTable()
 void medVMEMaps::GetScalarRange(double range[2])
 //-----------------------------------------------------------------------
 {
-  range[0] = 0;
-  range[1] = 1;
-  if(m_PolyData->GetPointData() && m_PolyData->GetPointData()->GetScalars())
-    m_PolyData->GetPointData()->GetScalars()->GetRange(range);
+	range[0] = 0;
+	range[1] = 1;
+	if (m_PolyData->GetPointData() && m_PolyData->GetPointData()->GetScalars())
+		m_PolyData->GetPointData()->GetScalars()->GetRange(range);
 
 }
 
@@ -562,64 +564,64 @@ void medVMEMaps::UpdateFilter()
 //-----------------------------------------------------------------------
 {
 
-  mafVME *vme = mafVME::SafeDownCast(GetMappedVMELink());
-  if(!vme)
-    return;
-  vtkPolyData *data = (vtkPolyData *)vme->GetOutput()->GetVTKData();
-  //data->Update();
+	mafVME* vme = mafVME::SafeDownCast(GetMappedVMELink());
+	if (!vme)
+		return;
+	vtkPolyData* data = (vtkPolyData*)vme->GetOutput()->GetVTKData();
+	//data->Update();
 
-  //m_Normals->SetInput(data);
-  //m_Normals->ComputePointNormalsOn();
-  //m_Normals->SplittingOff();
-  m_Normals->Update();
+	//m_Normals->SetInput(data);
+	//m_Normals->ComputePointNormalsOn();
+	//m_Normals->SplittingOff();
+	m_Normals->Update();
 
-  if(m_Volume==NULL)
-  {
-    SetVolume(mafVMEVolume::SafeDownCast(GetSourceVMELink()));
-  }
+	if (m_Volume == NULL)
+	{
+		SetVolume(mafVMEVolume::SafeDownCast(GetSourceVMELink()));
+	}
 
-  if (m_Volume)
-  {
-    if(m_DensityDistance == 0)
-    {
-      m_DistanceFilter->SetFilterModeToDistance();
-    }
-    if(m_DensityDistance == 1)
-    {
-      m_DistanceFilter->SetFilterModeToDensity();
-    }
+	if (m_Volume)
+	{
+		if (m_DensityDistance == 0)
+		{
+			m_DistanceFilter->SetFilterModeToDistance();
+		}
+		if (m_DensityDistance == 1)
+		{
+			m_DistanceFilter->SetFilterModeToDensity();
+		}
 
-    vtkDataSet *datasetvol = ((mafVME*)m_Volume)->GetOutput()->GetVTKData();
-    //datasetvol->Update();
-    m_DistanceFilter->SetDistanceModeToScalar();
-    m_DistanceFilter->SetSourceConnection(((mafVME*)m_Volume)->GetOutput()->GetVTKOutputPort());
-    m_DistanceFilter->SetInputConnection(m_Normals->GetOutputPort());
-    m_DistanceFilter->SetMaxDistance(m_MaxDistance);
-    m_DistanceFilter->SetThreshold(m_FirstThreshold);
-    m_DistanceFilter->SetInputMatrix(vme->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
-    m_DistanceFilter->Update(); 
+		vtkDataSet* datasetvol = ((mafVME*)m_Volume)->GetOutput()->GetVTKData();
+		//datasetvol->Update();
+		m_DistanceFilter->SetDistanceModeToScalar();
+		m_DistanceFilter->SetSourceConnection(((mafVME*)m_Volume)->GetOutput()->GetVTKOutputPort());
+		m_DistanceFilter->SetInputConnection(m_Normals->GetOutputPort());
+		m_DistanceFilter->SetMaxDistance(m_MaxDistance);
+		m_DistanceFilter->SetThreshold(m_FirstThreshold);
+		m_DistanceFilter->SetInputMatrix(vme->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
+		m_DistanceFilter->Update();
 
-    vtkPolyData *polyout;
-    vtkNew<vtkFloatArray> scalars;
+		vtkPolyData* polyout;
+		vtkNew<vtkFloatArray> scalars;
 
-    if(polyout = m_DistanceFilter->GetPolyDataOutput())
-    {
-      m_DistanceFilter->Update();
+		if (polyout = m_DistanceFilter->GetPolyDataOutput())
+		{
+			m_DistanceFilter->Update();
 
-      scalars->DeepCopy(polyout->GetPointData()->GetScalars());
+			scalars->DeepCopy(polyout->GetPointData()->GetScalars());
 
-      scalars->SetName("Distance_density");
-      scalars->Modified();
+			scalars->SetName("Distance_density");
+			scalars->Modified();
 
-      m_PolyData->DeepCopy(data);
-      m_PolyData->GetPointData()->AddArray(scalars);
-      m_PolyData->GetPointData()->SetActiveScalars("Distance_density");
+			m_PolyData->DeepCopy(data);
+			m_PolyData->GetPointData()->AddArray(scalars);
+			m_PolyData->GetPointData()->SetActiveScalars("Distance_density");
 
-      m_PolyData->Modified();
-    }
-  }
+			m_PolyData->Modified();
+		}
+	}
 
-  //mafVME *vol = mafVME::SafeDownCast(GetMappedVMELink());
-  //m_MappedName = vol ? vol->GetName() : _("none");
+	//mafVME *vol = mafVME::SafeDownCast(GetMappedVMELink());
+	//m_MappedName = vol ? vol->GetName() : _("none");
 
 }

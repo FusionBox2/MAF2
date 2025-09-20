@@ -6,7 +6,7 @@ Date:      $Date: 2009-05-14 14:25:17 $
 Version:   $Revision: 1.1.2.2 $
 Authors:   Josef Kohout
 ==========================================================================
-Copyright (c) 2001/2005 
+Copyright (c) 2001/2005
 CINECA - Interuniversity Consortium (www.cineca.it)
 =========================================================================*/
 
@@ -50,9 +50,9 @@ mafCxxTypeMacro(medVMEMuscleWrapper)
 //-------------------------------------------------------------------------
 
 const /*static*/ char* medVMEMuscleWrapper::MUSCLEWRAPPER_LINK_NAMES[] = {
-  "MuscleVME_RP", "WrapperVME_RP_", "WrapperVME_CP_", 
+  "MuscleVME_RP", "WrapperVME_RP_", "WrapperVME_CP_",
   "RefSysVME_RP_", "RefSysVME_CP_",
-  "OAreaVME", "IAreaVME", 
+  "OAreaVME", "IAreaVME",
 };
 
 #define DEFAULT_INPUT_MODE    1   //0 = simple, 1 = advanced
@@ -69,60 +69,60 @@ const /*static*/ char* medVMEMuscleWrapper::MUSCLEWRAPPER_LINK_NAMES[] = {
 //-------------------------------------------------------------------------
 medVMEMuscleWrapper::medVMEMuscleWrapper()
 //-------------------------------------------------------------------------
-{  
-  m_PolyData = vtkPolyData::New();
-  
-  m_MuscleVme = NULL;
-  for (int i = 0; i < 2; i++){
-    m_RefSysVme[i] = m_WrappersVme[i] = m_OIVME[i] = NULL;    
-  }
-  
-  m_nWrappers = 0;
-  m_pWrappers = NULL;
-    
-  m_InputMode = DEFAULT_INPUT_MODE;
-  m_VisMode = DEFAULT_OUTPUT_MODE;
-  m_UseRefSys = DEFAULT_USEREFSYSVAL;
-  m_FbResolution = DEFAULT_FIBERS_RES;
-  m_FbNumFib = DEFAULT_FIBERS_NUM;
-  m_FbTemplate = DEFAULT_FIBERS_TYPE; //FT_PENNATE
-  m_FbThickness = DEFAULT_FIBERS_THICKNESS;
-  m_FbSmooth = DEFAULT_FIBERS_SMOOTH;
-  m_FbSmoothSteps = DEFAULT_FIBERS_SMOOTHSTEPS;
-  m_FbSmoothWeight = DEFAULT_FIBERS_SMOOTHWEIGHT;
-  m_FbDebugShowTemplate = 0;
-  m_FbDebugShowFitting = 0;
-  m_FbDebugShowFittingRes = 0;
-  
-  m_bLinksRestored = false;
-  m_bNeedUpdate = false;
-  m_bDoNotUpdate = false;
+{
+	m_PolyData = vtkPolyData::New();
 
-  m_Transform = mafTransform::NewSPtr();
-  mafVMEOutputSurface *output = mafVMEOutputSurface::New(); // an output with no data  
-  output->SetTransform(m_Transform); // force my transform in the output
-  SetOutput(output);  
+	m_MuscleVme = NULL;
+	for (int i = 0; i < 2; i++) {
+		m_RefSysVme[i] = m_WrappersVme[i] = m_OIVME[i] = NULL;
+	}
 
-  DependsOnLinkedNodeOn();
+	m_nWrappers = 0;
+	m_pWrappers = NULL;
 
-  // attach a data pipe which creates a bridge between VTK and MAF
-  auto dpipe = mafDataPipeCustom::NewSPtr();
-  dpipe->SetDependOnAbsPose(true);
-  SetDataPipe(dpipe);
-  dpipe->SetInputData(m_PolyData); 
+	m_InputMode = DEFAULT_INPUT_MODE;
+	m_VisMode = DEFAULT_OUTPUT_MODE;
+	m_UseRefSys = DEFAULT_USEREFSYSVAL;
+	m_FbResolution = DEFAULT_FIBERS_RES;
+	m_FbNumFib = DEFAULT_FIBERS_NUM;
+	m_FbTemplate = DEFAULT_FIBERS_TYPE; //FT_PENNATE
+	m_FbThickness = DEFAULT_FIBERS_THICKNESS;
+	m_FbSmooth = DEFAULT_FIBERS_SMOOTH;
+	m_FbSmoothSteps = DEFAULT_FIBERS_SMOOTHSTEPS;
+	m_FbSmoothWeight = DEFAULT_FIBERS_SMOOTHWEIGHT;
+	m_FbDebugShowTemplate = 0;
+	m_FbDebugShowFitting = 0;
+	m_FbDebugShowFittingRes = 0;
+
+	m_bLinksRestored = false;
+	m_bNeedUpdate = false;
+	m_bDoNotUpdate = false;
+
+	m_Transform = mafTransform::NewSPtr();
+	mafVMEOutputSurface* output = mafVMEOutputSurface::New(); // an output with no data  
+	output->SetTransform(m_Transform); // force my transform in the output
+	SetOutput(output);
+
+	DependsOnLinkedNodeOn();
+
+	// attach a data pipe which creates a bridge between VTK and MAF
+	auto dpipe = mafDataPipeCustom::NewSPtr();
+	dpipe->SetDependOnAbsPose(true);
+	SetDataPipe(dpipe);
+	dpipe->SetInputData(m_PolyData);
 }
 //-------------------------------------------------------------------------
 medVMEMuscleWrapper::~medVMEMuscleWrapper()
 //-------------------------------------------------------------------------
 {
-  //_RPT2(_CRT_WARN, "medVMEMuscleWrapper dtor(%p) - m_pWrappers = %p\n",
-  //  this, m_pWrappers);
+	//_RPT2(_CRT_WARN, "medVMEMuscleWrapper dtor(%p) - m_pWrappers = %p\n",
+	//  this, m_pWrappers);
 
 
-  DeleteAllWrappers();  
+	DeleteAllWrappers();
 
-  vtkDEL(m_PolyData);
-  SetOutput(NULL);  
+	vtkDEL(m_PolyData);
+	SetOutput(NULL);
 }
 
 //------------------------------------------------------------------------
@@ -130,155 +130,155 @@ medVMEMuscleWrapper::~medVMEMuscleWrapper()
 void medVMEMuscleWrapper::DeleteAllWrappers()
 //------------------------------------------------------------------------
 {
-  while (m_pWrappers != NULL)
-  {
-    WRAPPER_ITEM* pItem = m_pWrappers;
-    m_pWrappers = m_pWrappers->pNext;
+	while (m_pWrappers != NULL)
+	{
+		WRAPPER_ITEM* pItem = m_pWrappers;
+		m_pWrappers = m_pWrappers->pNext;
 
-    for (int i = 0; i < 2; i++) {
-      vtkDEL(pItem->pCurves[i]);
-    }
+		for (int i = 0; i < 2; i++) {
+			vtkDEL(pItem->pCurves[i]);
+		}
 
-    delete pItem;
-  }
+		delete pItem;
+	}
 }
 
 //-------------------------------------------------------------------------
-int medVMEMuscleWrapper::DeepCopy(mafNode *a)
-//-------------------------------------------------------------------------
-{ 
-  if (Superclass::DeepCopy(a)==MAF_OK)
-  {
-    medVMEMuscleWrapper *wrapper = medVMEMuscleWrapper::SafeDownCast(a);
-    m_Transform->SetMatrix(wrapper->m_Transform->GetMatrix());
-
-    for (int i = 0; i < 2; i++){    
-      m_OIVMEName[i] = wrapper->m_OIVMEName[i];
-      m_RefSysVmeName[i] = wrapper->m_RefSysVmeName[i];
-    }
-
-    m_nWrappers = wrapper->m_nWrappers;        
-    m_InputMode = wrapper->m_InputMode;
-    m_VisMode = wrapper->m_VisMode;
-    m_UseRefSys = wrapper->m_UseRefSys;
-    m_FbTemplate = wrapper->m_FbTemplate;
-    m_FbNumFib = wrapper->m_FbNumFib;
-    m_FbResolution = wrapper->m_FbResolution;
-    m_FbSmooth = wrapper->m_FbSmooth;
-    m_FbSmoothSteps = wrapper->m_FbSmoothSteps;
-    m_FbSmoothWeight = wrapper->m_FbSmoothWeight;
-    m_FbDebugShowTemplate = wrapper->m_FbDebugShowTemplate;
-
-    m_bNeedUpdate = true;
-    
-    //DeepCopy copied links => restore internal data
-    RestoreMeterLinks();
-
-    //BES: 12.1.2009 - DataPipe has NULL input now (although it was set in ctor)
-    //=> we need to reassign input for the data pipe
-    mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
-    if (dpipe != NULL){
-      dpipe->SetInputData(m_PolyData);
-    }    
-    
-    return MAF_OK;
-  }  
-  return MAF_ERROR;
-}
-//-------------------------------------------------------------------------
-bool medVMEMuscleWrapper::Equals(mafVME *vme)
+int medVMEMuscleWrapper::DeepCopy(mafNode* a)
 //-------------------------------------------------------------------------
 {
-  if (!Superclass::Equals(vme))   //checks also Links
-    return false;
+	if (Superclass::DeepCopy(a) == MAF_OK)
+	{
+		medVMEMuscleWrapper* wrapper = medVMEMuscleWrapper::SafeDownCast(a);
+		m_Transform->SetMatrix(wrapper->m_Transform->GetMatrix());
 
-  medVMEMuscleWrapper *wrapper = medVMEMuscleWrapper::SafeDownCast(vme);
-  if (wrapper == NULL ||
-    m_MuscleVme != wrapper->m_MuscleVme  ||  
-    m_OIVME[0] != wrapper->m_OIVME[0] ||
-    m_OIVME[1] != wrapper->m_OIVME[1] ||
-    m_InputMode != wrapper->m_InputMode ||
-    m_UseRefSys != wrapper->m_UseRefSys ||
-    m_VisMode != wrapper->m_VisMode ||
-    m_FbTemplate != wrapper->m_FbTemplate ||
-    m_FbNumFib != wrapper->m_FbNumFib ||
-    m_FbResolution != wrapper->m_FbResolution ||
-    m_FbSmooth != wrapper->m_FbSmooth ||
-    m_FbSmoothSteps != wrapper->m_FbSmoothSteps ||
-    m_FbSmoothWeight != wrapper->m_FbSmoothWeight ||
-    m_FbDebugShowTemplate != wrapper->m_FbDebugShowTemplate ||
+		for (int i = 0; i < 2; i++) {
+			m_OIVMEName[i] = wrapper->m_OIVMEName[i];
+			m_RefSysVmeName[i] = wrapper->m_RefSysVmeName[i];
+		}
 
-    !(m_Transform->GetMatrix() == wrapper->m_Transform->GetMatrix())
-    )
-    return false;
+		m_nWrappers = wrapper->m_nWrappers;
+		m_InputMode = wrapper->m_InputMode;
+		m_VisMode = wrapper->m_VisMode;
+		m_UseRefSys = wrapper->m_UseRefSys;
+		m_FbTemplate = wrapper->m_FbTemplate;
+		m_FbNumFib = wrapper->m_FbNumFib;
+		m_FbResolution = wrapper->m_FbResolution;
+		m_FbSmooth = wrapper->m_FbSmooth;
+		m_FbSmoothSteps = wrapper->m_FbSmoothSteps;
+		m_FbSmoothWeight = wrapper->m_FbSmoothWeight;
+		m_FbDebugShowTemplate = wrapper->m_FbDebugShowTemplate;
 
-  WRAPPER_ITEM* pItem = m_pWrappers;
-  WRAPPER_ITEM* pSrcItem = wrapper->m_pWrappers;
-  while (pSrcItem != NULL && pItem != NULL)
-  {
-    for (int i = 0; i < 2; i++)
-    {
-      if (pSrcItem->pVmeRP_CP[i] != pItem->pVmeRP_CP[i])
-        return false;
+		m_bNeedUpdate = true;
 
-      if (pSrcItem->pVmeRefSys_RP_CP[i] != pItem->pVmeRefSys_RP_CP[i])
-        return false;
-    }
+		//DeepCopy copied links => restore internal data
+		RestoreMeterLinks();
 
-    pItem = pItem->pNext;
-    pSrcItem = pSrcItem->pNext;
-  }
-  
-  return pItem == pSrcItem; //both must be NULL, if everything was matched
+		//BES: 12.1.2009 - DataPipe has NULL input now (although it was set in ctor)
+		//=> we need to reassign input for the data pipe
+		mafDataPipeCustom* dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
+		if (dpipe != NULL) {
+			dpipe->SetInputData(m_PolyData);
+		}
+
+		return MAF_OK;
+	}
+	return MAF_ERROR;
+}
+//-------------------------------------------------------------------------
+bool medVMEMuscleWrapper::Equals(mafVME* vme)
+//-------------------------------------------------------------------------
+{
+	if (!Superclass::Equals(vme))   //checks also Links
+		return false;
+
+	medVMEMuscleWrapper* wrapper = medVMEMuscleWrapper::SafeDownCast(vme);
+	if (wrapper == NULL ||
+		m_MuscleVme != wrapper->m_MuscleVme ||
+		m_OIVME[0] != wrapper->m_OIVME[0] ||
+		m_OIVME[1] != wrapper->m_OIVME[1] ||
+		m_InputMode != wrapper->m_InputMode ||
+		m_UseRefSys != wrapper->m_UseRefSys ||
+		m_VisMode != wrapper->m_VisMode ||
+		m_FbTemplate != wrapper->m_FbTemplate ||
+		m_FbNumFib != wrapper->m_FbNumFib ||
+		m_FbResolution != wrapper->m_FbResolution ||
+		m_FbSmooth != wrapper->m_FbSmooth ||
+		m_FbSmoothSteps != wrapper->m_FbSmoothSteps ||
+		m_FbSmoothWeight != wrapper->m_FbSmoothWeight ||
+		m_FbDebugShowTemplate != wrapper->m_FbDebugShowTemplate ||
+
+		!(m_Transform->GetMatrix() == wrapper->m_Transform->GetMatrix())
+		)
+		return false;
+
+	WRAPPER_ITEM* pItem = m_pWrappers;
+	WRAPPER_ITEM* pSrcItem = wrapper->m_pWrappers;
+	while (pSrcItem != NULL && pItem != NULL)
+	{
+		for (int i = 0; i < 2; i++)
+		{
+			if (pSrcItem->pVmeRP_CP[i] != pItem->pVmeRP_CP[i])
+				return false;
+
+			if (pSrcItem->pVmeRefSys_RP_CP[i] != pItem->pVmeRefSys_RP_CP[i])
+				return false;
+		}
+
+		pItem = pItem->pNext;
+		pSrcItem = pSrcItem->pNext;
+	}
+
+	return pItem == pSrcItem; //both must be NULL, if everything was matched
 }
 
 //-------------------------------------------------------------------------
-void medVMEMuscleWrapper::SetMatrix(const mafMatrix &mat)
+void medVMEMuscleWrapper::SetMatrix(const mafMatrix& mat)
 //-------------------------------------------------------------------------
-{  
-  //ignored, nothing to do
-  m_Transform->SetMatrix(mat);
-  Modified();
+{
+	//ignored, nothing to do
+	m_Transform->SetMatrix(mat);
+	Modified();
 }
 
 //-------------------------------------------------------------------------
 int medVMEMuscleWrapper::InternalInitialize()
 //-------------------------------------------------------------------------
 {
-  if (Superclass::InternalInitialize()==MAF_OK)
-  {
-    // force material allocation
-    GetMaterial();
-    return MAF_OK;
-  }
+	if (Superclass::InternalInitialize() == MAF_OK)
+	{
+		// force material allocation
+		GetMaterial();
+		return MAF_OK;
+	}
 
-  return MAF_ERROR;
+	return MAF_ERROR;
 }
 
 //-------------------------------------------------------------------------
 std::shared_ptr<mmaMaterial> medVMEMuscleWrapper::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  auto material = mmaMaterial::SafeDownCast(GetAttribute(mmaMaterial::GetAttributeName()));
-  if (!material)
-  {
-    material = mmaMaterial::NewSPtr();
-    SetAttribute(material);
-  }
-  return material;
+	auto material = mmaMaterial::SafeDownCast(GetAttribute(mmaMaterial::GetAttributeName()));
+	if (!material)
+	{
+		material = mmaMaterial::NewSPtr();
+		SetAttribute(material);
+	}
+	return material;
 }
 
 //-------------------------------------------------------------------------
 bool medVMEMuscleWrapper::IsAnimated()
 //-------------------------------------------------------------------------
 {
-  return false;
+	return false;
 }
 //-------------------------------------------------------------------------
-void medVMEMuscleWrapper::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)
+void medVMEMuscleWrapper::GetLocalTimeStamps(std::vector<mafTimeStamp>& kframes)
 //-------------------------------------------------------------------------
 {
-  kframes.clear(); // no timestamps
+	kframes.clear(); // no timestamps
 }
 
 //------------------------------------------------------------------------
@@ -288,16 +288,16 @@ void medVMEMuscleWrapper::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)
 void medVMEMuscleWrapper::StoreMeterLink(mafVME* vme, int nLinkNameId, int nPosId)
 //------------------------------------------------------------------------
 {
-  if (vme != NULL)
-  {
-    mafString szName;
-    if (nPosId >= 0)
-      szName = _R(MUSCLEWRAPPER_LINK_NAMES[nLinkNameId]) + mafString::Format(_R("%d"), nPosId);
-    else
-      szName = _R(MUSCLEWRAPPER_LINK_NAMES[nLinkNameId]);
+	if (vme != NULL)
+	{
+		mafString szName;
+		if (nPosId >= 0)
+			szName = _R(MUSCLEWRAPPER_LINK_NAMES[nLinkNameId]) + mafString::Format(_R("%d"), nPosId);
+		else
+			szName = _R(MUSCLEWRAPPER_LINK_NAMES[nLinkNameId]);
 
-    SetLink(szName, vme);
-  }
+		SetLink(szName, vme);
+	}
 }
 
 //------------------------------------------------------------------------
@@ -306,51 +306,51 @@ void medVMEMuscleWrapper::StoreMeterLink(mafVME* vme, int nLinkNameId, int nPosI
 //------------------------------------------------------------------------
 void medVMEMuscleWrapper::StoreMeterLinks()
 {
-  if (!m_bLinksRestored)
-    return; //no link to be stored
+	if (!m_bLinksRestored)
+		return; //no link to be stored
 
-  //we need to remove all existing links first
-  bool bNeedRestart;   
+	//we need to remove all existing links first
+	bool bNeedRestart;
 
-  do
-  {
-    bNeedRestart = false;
-    for (auto & link : GetLinks())
-    {
-      if (
-        link.first == _R(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_MUSCLE]) ||
-        link.first == _R(MUSCLEWRAPPER_LINK_NAMES[LNK_FIBERS_ORIGIN]) ||
-        link.first == _R(MUSCLEWRAPPER_LINK_NAMES[LNK_FIBERS_INSERTION]) ||        
-        link.first.starts_with(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_WRAPPERx])) ||
-        link.first.starts_with(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_DYNPOSE_WRAPPERx])) ||
-        link.first.starts_with(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_REFSYSx])) ||
-        link.first.starts_with(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_DYNPOSE_REFSYSx]))
-        )
-      {
-        RemoveLink(link.first);
-        bNeedRestart = true;
-        break;
-      }
-    }
-  }while (bNeedRestart);
+	do
+	{
+		bNeedRestart = false;
+		for (auto& link : GetLinks())
+		{
+			if (
+				link.first == _R(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_MUSCLE]) ||
+				link.first == _R(MUSCLEWRAPPER_LINK_NAMES[LNK_FIBERS_ORIGIN]) ||
+				link.first == _R(MUSCLEWRAPPER_LINK_NAMES[LNK_FIBERS_INSERTION]) ||
+				link.first.starts_with(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_WRAPPERx])) ||
+				link.first.starts_with(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_DYNPOSE_WRAPPERx])) ||
+				link.first.starts_with(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_RESTPOSE_REFSYSx])) ||
+				link.first.starts_with(_R(MUSCLEWRAPPER_LINK_NAMES[LNK_DYNPOSE_REFSYSx]))
+				)
+			{
+				RemoveLink(link.first);
+				bNeedRestart = true;
+				break;
+			}
+		}
+	} while (bNeedRestart);
 
-  //create links, so they can be stored
-  StoreMeterLink(m_MuscleVme, LNK_RESTPOSE_MUSCLE);
-  StoreMeterLink(m_OIVME[0], LNK_FIBERS_ORIGIN);
-  StoreMeterLink(m_OIVME[1], LNK_FIBERS_INSERTION);  
+	//create links, so they can be stored
+	StoreMeterLink(m_MuscleVme, LNK_RESTPOSE_MUSCLE);
+	StoreMeterLink(m_OIVME[0], LNK_FIBERS_ORIGIN);
+	StoreMeterLink(m_OIVME[1], LNK_FIBERS_INSERTION);
 
-  int nId = 0;
-  WRAPPER_ITEM* pItem = m_pWrappers;
-  while (pItem)
-  {
-    StoreMeterLink(pItem->pVmeRP_CP[0], LNK_RESTPOSE_WRAPPERx, nId);
-    StoreMeterLink(pItem->pVmeRP_CP[1], LNK_DYNPOSE_WRAPPERx, nId);  
-    StoreMeterLink(pItem->pVmeRefSys_RP_CP[0], LNK_RESTPOSE_REFSYSx, nId);
-    StoreMeterLink(pItem->pVmeRefSys_RP_CP[1], LNK_DYNPOSE_REFSYSx, nId);
-    nId++;
+	int nId = 0;
+	WRAPPER_ITEM* pItem = m_pWrappers;
+	while (pItem)
+	{
+		StoreMeterLink(pItem->pVmeRP_CP[0], LNK_RESTPOSE_WRAPPERx, nId);
+		StoreMeterLink(pItem->pVmeRP_CP[1], LNK_DYNPOSE_WRAPPERx, nId);
+		StoreMeterLink(pItem->pVmeRefSys_RP_CP[0], LNK_RESTPOSE_REFSYSx, nId);
+		StoreMeterLink(pItem->pVmeRefSys_RP_CP[1], LNK_DYNPOSE_REFSYSx, nId);
+		nId++;
 
-    pItem = pItem->pNext;
-  }
+		pItem = pItem->pNext;
+	}
 }
 
 //------------------------------------------------------------------------
@@ -359,13 +359,13 @@ void medVMEMuscleWrapper::StoreMeterLinks()
 mafVME* medVMEMuscleWrapper::RestoreMeterLink(int nLinkNameId, int nPosId)
 //------------------------------------------------------------------------
 {
-  mafString szName;
-  if (nPosId >= 0)
-    szName = _R(MUSCLEWRAPPER_LINK_NAMES[nLinkNameId]) + mafString::Format(_R("%d"), nPosId);
-  else
-    szName = _R(MUSCLEWRAPPER_LINK_NAMES[nLinkNameId]);
-  
-  return mafVME::SafeDownCast(GetLink(szName));  
+	mafString szName;
+	if (nPosId >= 0)
+		szName = _R(MUSCLEWRAPPER_LINK_NAMES[nLinkNameId]) + mafString::Format(_R("%d"), nPosId);
+	else
+		szName = _R(MUSCLEWRAPPER_LINK_NAMES[nLinkNameId]);
+
+	return mafVME::SafeDownCast(GetLink(szName));
 }
 
 //------------------------------------------------------------------------
@@ -375,137 +375,137 @@ mafVME* medVMEMuscleWrapper::RestoreMeterLink(int nLinkNameId, int nPosId)
 void medVMEMuscleWrapper::RestoreMeterLinks()
 //------------------------------------------------------------------------
 {
-  //restore links (and remove them as well)  
-  m_MuscleVme = RestoreMeterLink(LNK_RESTPOSE_MUSCLE);
-  m_OIVME[0] = RestoreMeterLink(LNK_FIBERS_ORIGIN);
-  m_OIVME[1] = RestoreMeterLink(LNK_FIBERS_INSERTION);
-  
-  DeleteAllWrappers();  //delete wrappers, if they exist (should not be necessary)
+	//restore links (and remove them as well)  
+	m_MuscleVme = RestoreMeterLink(LNK_RESTPOSE_MUSCLE);
+	m_OIVME[0] = RestoreMeterLink(LNK_FIBERS_ORIGIN);
+	m_OIVME[1] = RestoreMeterLink(LNK_FIBERS_INSERTION);
 
-  WRAPPER_ITEM* pLastItem = NULL;
-  for (int nId = 0; nId < m_nWrappers; nId++)
-  {
-    WRAPPER_ITEM* pItem = new WRAPPER_ITEM;
-    memset(pItem, 0, sizeof(WRAPPER_ITEM));
+	DeleteAllWrappers();  //delete wrappers, if they exist (should not be necessary)
 
-    pItem->pVmeRP_CP[0] = RestoreMeterLink(LNK_RESTPOSE_WRAPPERx, nId);
-    pItem->pVmeRP_CP[1] = RestoreMeterLink(LNK_DYNPOSE_WRAPPERx, nId);      
-    pItem->pVmeRefSys_RP_CP[0] = RestoreMeterLink(LNK_RESTPOSE_REFSYSx, nId);
-    pItem->pVmeRefSys_RP_CP[1] = RestoreMeterLink(LNK_DYNPOSE_REFSYSx, nId);
+	WRAPPER_ITEM* pLastItem = NULL;
+	for (int nId = 0; nId < m_nWrappers; nId++)
+	{
+		WRAPPER_ITEM* pItem = new WRAPPER_ITEM;
+		memset(pItem, 0, sizeof(WRAPPER_ITEM));
 
-    if (NULL == (pItem->pLast = pLastItem))
-      m_pWrappers = pItem;
-    else
-      pLastItem->pNext = pItem;
+		pItem->pVmeRP_CP[0] = RestoreMeterLink(LNK_RESTPOSE_WRAPPERx, nId);
+		pItem->pVmeRP_CP[1] = RestoreMeterLink(LNK_DYNPOSE_WRAPPERx, nId);
+		pItem->pVmeRefSys_RP_CP[0] = RestoreMeterLink(LNK_RESTPOSE_REFSYSx, nId);
+		pItem->pVmeRefSys_RP_CP[1] = RestoreMeterLink(LNK_DYNPOSE_REFSYSx, nId);
 
-    pLastItem = pItem;
-  } //end for
+		if (NULL == (pItem->pLast = pLastItem))
+			m_pWrappers = pItem;
+		else
+			pLastItem->pNext = pItem;
 
-  m_bLinksRestored = true;
+		pLastItem = pItem;
+	} //end for
+
+	m_bLinksRestored = true;
 }
 
 //------------------------------------------------------------------------
 void medVMEMuscleWrapper::InternalStore(mafStorageElementBuilder& parent)
 //------------------------------------------------------------------------
-{ 
-  //store Links, so they can be saved by base clase  
-  StoreMeterLinks();
-  Superclass::InternalStore(parent);
-  parent[_R("Wrappers_Num")].SetValue(m_nWrappers);
-  parent[_R("InputMode")].SetValue(m_InputMode);
-  parent[_R("VisualMode")].SetValue(m_VisMode);
-  parent[_R("UseRefSys")].SetValue(m_UseRefSys);
-  parent[_R("Fibers_Type")].SetValue(m_FbTemplate);
-  parent[_R("Fibers_Num")].SetValue(m_FbNumFib);
-  parent[_R("Fibers_Res")].SetValue(m_FbResolution);
-  parent[_R("Fibers_Thickness")].SetValue(m_FbThickness);
-  parent[_R("Fibers_Smooth")].SetValue(m_FbSmooth);
-  parent[_R("Smooth_Steps")].SetValue(m_FbSmoothSteps);
-  parent[_R("Smooth_Weight")].SetValue(m_FbSmoothWeight);
-  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
+{
+	//store Links, so they can be saved by base clase  
+	StoreMeterLinks();
+	Superclass::InternalStore(parent);
+	parent[_R("Wrappers_Num")].SetValue(m_nWrappers);
+	parent[_R("InputMode")].SetValue(m_InputMode);
+	parent[_R("VisualMode")].SetValue(m_VisMode);
+	parent[_R("UseRefSys")].SetValue(m_UseRefSys);
+	parent[_R("Fibers_Type")].SetValue(m_FbTemplate);
+	parent[_R("Fibers_Num")].SetValue(m_FbNumFib);
+	parent[_R("Fibers_Res")].SetValue(m_FbResolution);
+	parent[_R("Fibers_Thickness")].SetValue(m_FbThickness);
+	parent[_R("Fibers_Smooth")].SetValue(m_FbSmooth);
+	parent[_R("Smooth_Steps")].SetValue(m_FbSmoothSteps);
+	parent[_R("Smooth_Weight")].SetValue(m_FbSmoothWeight);
+	parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
 }
 
 //------------------------------------------------------------------------
 void medVMEMuscleWrapper::InternalRestore(const mafStorageElement& node)
 //------------------------------------------------------------------------
 {
-  Superclass::InternalRestore(node);
-  m_nWrappers = node[_R("Wrappers_Num")].As<std::optional<int> >().value_or(0);
-  m_InputMode = node[_R("InputMode")].As<std::optional<int> >().value_or(DEFAULT_INPUT_MODE);
-  m_VisMode = node[_R("VisualMode")].As<std::optional<int> >().value_or(DEFAULT_VISUAL_MODE);
-  m_UseRefSys = node[_R("UseRefSys")].As<std::optional<int> >().value_or(DEFAULT_USEREFSYSVAL);
-  m_FbTemplate = node[_R("Fibers_Type")].As<std::optional<int> >().value_or(DEFAULT_FIBERS_TYPE);
-  m_FbNumFib = node[_R("Fibers_Num")].As<std::optional<int> >().value_or(DEFAULT_FIBERS_NUM);
-  m_FbResolution = node[_R("Fibers_Res")].As<std::optional<int> >().value_or(DEFAULT_FIBERS_RES);
-  m_FbThickness = node[_R("Fibers_Thickness")].As<std::optional<double> >().value_or(DEFAULT_FIBERS_THICKNESS);
-  m_FbSmooth = node[_R("Fibers_Smooth")].As<std::optional<int> >().value_or(DEFAULT_FIBERS_SMOOTH);
-  m_FbSmoothSteps = node[_R("Smooth_Steps")].As<std::optional<int> >().value_or(DEFAULT_FIBERS_SMOOTHSTEPS);
-  m_FbSmoothWeight = node[_R("Smooth_Weight")].As<std::optional<double> >().value_or(DEFAULT_FIBERS_SMOOTHWEIGHT);
-  m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
-  m_bNeedUpdate = true;
+	Superclass::InternalRestore(node);
+	m_nWrappers = node[_R("Wrappers_Num")].As<std::optional<int> >().value_or(0);
+	m_InputMode = node[_R("InputMode")].As<std::optional<int> >().value_or(DEFAULT_INPUT_MODE);
+	m_VisMode = node[_R("VisualMode")].As<std::optional<int> >().value_or(DEFAULT_VISUAL_MODE);
+	m_UseRefSys = node[_R("UseRefSys")].As<std::optional<int> >().value_or(DEFAULT_USEREFSYSVAL);
+	m_FbTemplate = node[_R("Fibers_Type")].As<std::optional<int> >().value_or(DEFAULT_FIBERS_TYPE);
+	m_FbNumFib = node[_R("Fibers_Num")].As<std::optional<int> >().value_or(DEFAULT_FIBERS_NUM);
+	m_FbResolution = node[_R("Fibers_Res")].As<std::optional<int> >().value_or(DEFAULT_FIBERS_RES);
+	m_FbThickness = node[_R("Fibers_Thickness")].As<std::optional<double> >().value_or(DEFAULT_FIBERS_THICKNESS);
+	m_FbSmooth = node[_R("Fibers_Smooth")].As<std::optional<int> >().value_or(DEFAULT_FIBERS_SMOOTH);
+	m_FbSmoothSteps = node[_R("Smooth_Steps")].As<std::optional<int> >().value_or(DEFAULT_FIBERS_SMOOTHSTEPS);
+	m_FbSmoothWeight = node[_R("Smooth_Weight")].As<std::optional<double> >().value_or(DEFAULT_FIBERS_SMOOTHWEIGHT);
+	m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
+	m_bNeedUpdate = true;
 }
 
 #pragma region GetVMEs
 //-------------------------------------------------------------------------
-mafVME *medVMEMuscleWrapper::GetMuscleVME_RP()
+mafVME* medVMEMuscleWrapper::GetMuscleVME_RP()
 //-------------------------------------------------------------------------
 {
-  return m_MuscleVme;
+	return m_MuscleVme;
 }
 //-------------------------------------------------------------------------
-mafVME *medVMEMuscleWrapper::GetWrapperVME_RP(int nIndex)
+mafVME* medVMEMuscleWrapper::GetWrapperVME_RP(int nIndex)
 //-------------------------------------------------------------------------
 {
-  WRAPPER_ITEM* pItem = m_pWrappers;
-  while (nIndex != 0 && pItem != NULL) 
-  {
-    pItem = pItem->pNext;
-    nIndex--;
-  }  
+	WRAPPER_ITEM* pItem = m_pWrappers;
+	while (nIndex != 0 && pItem != NULL)
+	{
+		pItem = pItem->pNext;
+		nIndex--;
+	}
 
-  return pItem == NULL ? NULL : pItem->pVmeRP_CP[0];
-}
-
-//-------------------------------------------------------------------------
-mafVME *medVMEMuscleWrapper::GetWrapperVME(int nIndex)
-//-------------------------------------------------------------------------
-{
-  WRAPPER_ITEM* pItem = m_pWrappers;
-  while (nIndex != 0 && pItem != NULL) 
-  {
-    pItem = pItem->pNext;
-    nIndex--;
-  }  
-
-  return pItem == NULL ? NULL : pItem->pVmeRP_CP[1];
+	return pItem == NULL ? NULL : pItem->pVmeRP_CP[0];
 }
 
 //-------------------------------------------------------------------------
-mafVME *medVMEMuscleWrapper::GetWrapperRefSysVME_RP(int nIndex)
+mafVME* medVMEMuscleWrapper::GetWrapperVME(int nIndex)
 //-------------------------------------------------------------------------
 {
-  WRAPPER_ITEM* pItem = m_pWrappers;
-  while (nIndex != 0 && pItem != NULL) 
-  {
-    pItem = pItem->pNext;
-    nIndex--;
-  }  
+	WRAPPER_ITEM* pItem = m_pWrappers;
+	while (nIndex != 0 && pItem != NULL)
+	{
+		pItem = pItem->pNext;
+		nIndex--;
+	}
 
-  return pItem == NULL ? NULL : pItem->pVmeRefSys_RP_CP[0];
+	return pItem == NULL ? NULL : pItem->pVmeRP_CP[1];
 }
 
 //-------------------------------------------------------------------------
-mafVME *medVMEMuscleWrapper::GetWrapperRefSysVME(int nIndex)
+mafVME* medVMEMuscleWrapper::GetWrapperRefSysVME_RP(int nIndex)
 //-------------------------------------------------------------------------
 {
-  WRAPPER_ITEM* pItem = m_pWrappers;
-  while (nIndex != 0 && pItem != NULL) 
-  {
-    pItem = pItem->pNext;
-    nIndex--;
-  }  
+	WRAPPER_ITEM* pItem = m_pWrappers;
+	while (nIndex != 0 && pItem != NULL)
+	{
+		pItem = pItem->pNext;
+		nIndex--;
+	}
 
-  return pItem == NULL ? NULL : pItem->pVmeRefSys_RP_CP[1];
+	return pItem == NULL ? NULL : pItem->pVmeRefSys_RP_CP[0];
+}
+
+//-------------------------------------------------------------------------
+mafVME* medVMEMuscleWrapper::GetWrapperRefSysVME(int nIndex)
+//-------------------------------------------------------------------------
+{
+	WRAPPER_ITEM* pItem = m_pWrappers;
+	while (nIndex != 0 && pItem != NULL)
+	{
+		pItem = pItem->pNext;
+		nIndex--;
+	}
+
+	return pItem == NULL ? NULL : pItem->pVmeRefSys_RP_CP[1];
 }
 
 //-------------------------------------------------------------------------
@@ -513,7 +513,7 @@ mafVME *medVMEMuscleWrapper::GetWrapperRefSysVME(int nIndex)
 mafVME* medVMEMuscleWrapper::GetFibersOriginVME()
 //-------------------------------------------------------------------------
 {
-  return m_OIVME[0];
+	return m_OIVME[0];
 }
 
 //-------------------------------------------------------------------------
@@ -521,7 +521,7 @@ mafVME* medVMEMuscleWrapper::GetFibersOriginVME()
 mafVME* medVMEMuscleWrapper::GetFibersInsertionVME()
 //-------------------------------------------------------------------------
 {
-  return m_OIVME[1];
+	return m_OIVME[1];
 }
 #pragma endregion
 
@@ -531,151 +531,151 @@ mafVME* medVMEMuscleWrapper::GetFibersInsertionVME()
 //we will need to avoid redundant deformation as much as possible
 void medVMEMuscleWrapper::InternalUpdate()
 //-----------------------------------------------------------------------
-{ 
-  if (m_bDoNotUpdate)
-    return;
+{
+	if (m_bDoNotUpdate)
+		return;
 
-  m_bDoNotUpdate = true;  //prevent recursion
+	m_bDoNotUpdate = true;  //prevent recursion
 
-  //this happens when the user just checks VME without its selection  
-  //or deletes some linked VME from VME tree
-  if (!m_bLinksRestored)
-    RestoreMeterLinks();  //so we restore links      
+	//this happens when the user just checks VME without its selection  
+	//or deletes some linked VME from VME tree
+	if (!m_bLinksRestored)
+		RestoreMeterLinks();  //so we restore links      
 
-  //update curves of every Wrapper, if needed
-  bool bCurvesUpdated = false;
+	//update curves of every Wrapper, if needed
+	bool bCurvesUpdated = false;
 
-  WRAPPER_ITEM* pItem = m_pWrappers;
-  while (pItem != NULL)
-  {
-    //in simple mode, we need CP vme only
-    //in advanced mode, both VMEs (RP and CP) must be present
-    if ((m_InputMode == 0 && pItem->pVmeRP_CP[1] != NULL) ||
-      (pItem->pVmeRP_CP[0] != NULL && pItem->pVmeRP_CP[1] != NULL))
-    {           
-      for (int i = 0; i < 2; i++)
-      {         
-        vtkPolyData* pPoly;
-        vtkDataSet* pRefSys = NULL;
-        
-        double t;
-        int iPos = i;        
-        if (m_InputMode == 0 && i == 0) 
-        {
-          //RP in simple mode => we need to get the data for time 0
-          t = pItem->pVmeRP_CP[iPos = 1]->GetTimeStamp();
-          SetVmeTimeStamp(pItem->pVmeRP_CP[1], 0);
-        }
+	WRAPPER_ITEM* pItem = m_pWrappers;
+	while (pItem != NULL)
+	{
+		//in simple mode, we need CP vme only
+		//in advanced mode, both VMEs (RP and CP) must be present
+		if ((m_InputMode == 0 && pItem->pVmeRP_CP[1] != NULL) ||
+			(pItem->pVmeRP_CP[0] != NULL && pItem->pVmeRP_CP[1] != NULL))
+		{
+			for (int i = 0; i < 2; i++)
+			{
+				vtkPolyData* pPoly;
+				vtkDataSet* pRefSys = NULL;
 
-        //get control curve from the associated VME
-        pPoly = vtkPolyData::SafeDownCast(pItem->pVmeRP_CP[iPos]->GetOutput()->GetVTKData());
-        pItem->pVmeRP_CP[iPos]->GetOutput()->Update();    //force update        
-          
-        unsigned long nNewCheckSum = ComputeCheckSum(pPoly);
-        if (nNewCheckSum != pItem->VMECheckSums[i])
-        {
-          //the curve has changed => we need to create a new refined curve
-          vtkDEL(pItem->pCurves[i]);
+				double t;
+				int iPos = i;
+				if (m_InputMode == 0 && i == 0)
+				{
+					//RP in simple mode => we need to get the data for time 0
+					t = pItem->pVmeRP_CP[iPos = 1]->GetTimeStamp();
+					SetVmeTimeStamp(pItem->pVmeRP_CP[1], 0);
+				}
 
-          //mafVMEMeter (version 20.10.2008) generates corrupted polylines, 
-          //they contain duplicated coordinates and edges, e.g.
-          //Pts: 0(318,305,-467), 1(379,292,-824), 2(388,310, -871), 3(379,292,-824)
-          //Edges: 0-1,1-2,2-3 => vertex 1 and 3 are redundant
-          pItem->pCurves[i] = FixPolyline(pPoly);
+				//get control curve from the associated VME
+				pPoly = vtkPolyData::SafeDownCast(pItem->pVmeRP_CP[iPos]->GetOutput()->GetVTKData());
+				pItem->pVmeRP_CP[iPos]->GetOutput()->Update();    //force update        
 
-          //transform coordinates into output reference system
-          TransformPoints(pItem->pCurves[i]->GetPoints(), *pItem->pVmeRP_CP[i]->GetOutput()->GetAbsMatrix());
-          pItem->VMECheckSums[i] = nNewCheckSum;
-          bCurvesUpdated = true;
-        }      
+				unsigned long nNewCheckSum = ComputeCheckSum(pPoly);
+				if (nNewCheckSum != pItem->VMECheckSums[i])
+				{
+					//the curve has changed => we need to create a new refined curve
+					vtkDEL(pItem->pCurves[i]);
 
-        //process ref.sys.
-        double RSO[3];
-        bool bRSOValid = GetRefSysVMEOrigin(pItem->pVmeRefSys_RP_CP[iPos], RSO);
-        if (!bRSOValid) 
-        {
-          //the current RefSys is not valid
-          if (pItem->RefSysOriginValid[i])
-          {
-            pItem->RefSysOriginValid[i] = false;
-            bCurvesUpdated = true;                                
-          }
-        }
-        else
-        {
-          //we have here valid RefSys, check if it is different from the existing one
-          if (!pItem->RefSysOriginValid[i] ||
-            pItem->RefSysOrigin[i][0] != RSO[0] ||
-            pItem->RefSysOrigin[i][1] != RSO[1] ||
-            pItem->RefSysOrigin[i][2] != RSO[2]
-          )
-          {            
-            pItem->RefSysOrigin[i][0] = RSO[0];
-            pItem->RefSysOrigin[i][1] = RSO[1];
-            pItem->RefSysOrigin[i][2] = RSO[2];
-            pItem->RefSysOriginValid[i] = true;
-          }
-        }
+					//mafVMEMeter (version 20.10.2008) generates corrupted polylines, 
+					//they contain duplicated coordinates and edges, e.g.
+					//Pts: 0(318,305,-467), 1(379,292,-824), 2(388,310, -871), 3(379,292,-824)
+					//Edges: 0-1,1-2,2-3 => vertex 1 and 3 are redundant
+					pItem->pCurves[i] = FixPolyline(pPoly);
 
-        if (m_InputMode == 0 && i == 0) { //restore timestamp
-          SetVmeTimeStamp(pItem->pVmeRP_CP[1], t);
-        }
-      } //end for
-    } //end if
+					//transform coordinates into output reference system
+					TransformPoints(pItem->pCurves[i]->GetPoints(), *pItem->pVmeRP_CP[i]->GetOutput()->GetAbsMatrix());
+					pItem->VMECheckSums[i] = nNewCheckSum;
+					bCurvesUpdated = true;
+				}
 
-    pItem = pItem->pNext;    
-  } //endwhile
-         
-  if (m_bNeedUpdate || bCurvesUpdated)
-  {    
-    //OK, we will need deform muscle
-    wxBusyCursor busy;    
-    if (m_MuscleVme == NULL)    
-    {
-      //if there is no valid associated muscle, output is empty
-      m_PolyData->SetPoints(NULL);
-      m_PolyData->SetPolys(NULL);    
-    }
-    else
-    {
-      //there is a valid associated muscle      
-      vtkPolyData* pPoly;
-      if (m_InputMode != 0)
-      {
-        pPoly = vtkPolyData::SafeDownCast(m_MuscleVme->GetOutput()->GetVTKData());
-        m_MuscleVme->GetOutput()->Update();
-      }
-      else
-      {
-        double t = m_MuscleVme->GetTimeStamp();
-        m_MuscleVme->SetTimeStamp(0);
+				//process ref.sys.
+				double RSO[3];
+				bool bRSOValid = GetRefSysVMEOrigin(pItem->pVmeRefSys_RP_CP[iPos], RSO);
+				if (!bRSOValid)
+				{
+					//the current RefSys is not valid
+					if (pItem->RefSysOriginValid[i])
+					{
+						pItem->RefSysOriginValid[i] = false;
+						bCurvesUpdated = true;
+					}
+				}
+				else
+				{
+					//we have here valid RefSys, check if it is different from the existing one
+					if (!pItem->RefSysOriginValid[i] ||
+						pItem->RefSysOrigin[i][0] != RSO[0] ||
+						pItem->RefSysOrigin[i][1] != RSO[1] ||
+						pItem->RefSysOrigin[i][2] != RSO[2]
+						)
+					{
+						pItem->RefSysOrigin[i][0] = RSO[0];
+						pItem->RefSysOrigin[i][1] = RSO[1];
+						pItem->RefSysOrigin[i][2] = RSO[2];
+						pItem->RefSysOriginValid[i] = true;
+					}
+				}
 
-        pPoly = vtkPolyData::SafeDownCast(m_MuscleVme->GetOutput()->GetVTKData());
-        m_MuscleVme->GetOutput()->Update();    //force update
+				if (m_InputMode == 0 && i == 0) { //restore timestamp
+					SetVmeTimeStamp(pItem->pVmeRP_CP[1], t);
+				}
+			} //end for
+		} //end if
 
-        m_MuscleVme->SetTimeStamp(t);      
-      }
+		pItem = pItem->pNext;
+	} //endwhile
 
-      //BES: 13.5.2009 - transform muscle points
-      vtkPoints* pTrPoints = pPoly->GetPoints()->NewInstance();
-      pTrPoints->DeepCopy(pPoly->GetPoints());
-      TransformPoints(pTrPoints, *m_MuscleVme->GetOutput()->GetAbsMatrix());
-     
-      vtkPolyData* pTransformedMuscle = vtkPolyData::New();
-      pTransformedMuscle->ShallowCopy(pPoly);
-      pTransformedMuscle->SetPoints(pTrPoints);
-      pTrPoints->Delete();
-      
-      DeformMuscle(pTransformedMuscle);
+	if (m_bNeedUpdate || bCurvesUpdated)
+	{
+		//OK, we will need deform muscle
+		wxBusyCursor busy;
+		if (m_MuscleVme == NULL)
+		{
+			//if there is no valid associated muscle, output is empty
+			m_PolyData->SetPoints(NULL);
+			m_PolyData->SetPolys(NULL);
+		}
+		else
+		{
+			//there is a valid associated muscle      
+			vtkPolyData* pPoly;
+			if (m_InputMode != 0)
+			{
+				pPoly = vtkPolyData::SafeDownCast(m_MuscleVme->GetOutput()->GetVTKData());
+				m_MuscleVme->GetOutput()->Update();
+			}
+			else
+			{
+				double t = m_MuscleVme->GetTimeStamp();
+				m_MuscleVme->SetTimeStamp(0);
 
-      pTransformedMuscle->Delete();
-    } //end if muscle exists
-    
-    GetOutput()->Update();  //this calls recursively our update        
-    m_bNeedUpdate = false;
-  } //if (m_bNeedUpdate)  
+				pPoly = vtkPolyData::SafeDownCast(m_MuscleVme->GetOutput()->GetVTKData());
+				m_MuscleVme->GetOutput()->Update();    //force update
 
-  m_bDoNotUpdate = false;
+				m_MuscleVme->SetTimeStamp(t);
+			}
+
+			//BES: 13.5.2009 - transform muscle points
+			vtkPoints* pTrPoints = pPoly->GetPoints()->NewInstance();
+			pTrPoints->DeepCopy(pPoly->GetPoints());
+			TransformPoints(pTrPoints, *m_MuscleVme->GetOutput()->GetAbsMatrix());
+
+			vtkPolyData* pTransformedMuscle = vtkPolyData::New();
+			pTransformedMuscle->ShallowCopy(pPoly);
+			pTransformedMuscle->SetPoints(pTrPoints);
+			pTrPoints->Delete();
+
+			DeformMuscle(pTransformedMuscle);
+
+			pTransformedMuscle->Delete();
+		} //end if muscle exists
+
+		GetOutput()->Update();  //this calls recursively our update        
+		m_bNeedUpdate = false;
+	} //if (m_bNeedUpdate)  
+
+	m_bDoNotUpdate = false;
 }
 
 //------------------------------------------------------------------------
@@ -683,13 +683,13 @@ void medVMEMuscleWrapper::InternalUpdate()
 void medVMEMuscleWrapper::SetVmeTimeStamp(mafVME* vme, double t)
 //------------------------------------------------------------------------
 {
-  vme->SetTimeStamp(t);
+	vme->SetTimeStamp(t);
 
-  for (auto& link : vme->GetLinks())
-  {
-    if (auto n = mafVME::SafeDownCast(link.second.GetNode()))
-      n->SetTimeStamp(t);
-  }
+	for (auto& link : vme->GetLinks())
+	{
+		if (auto n = mafVME::SafeDownCast(link.second.GetNode()))
+			n->SetTimeStamp(t);
+	}
 }
 
 //------------------------------------------------------------------------
@@ -698,59 +698,59 @@ void medVMEMuscleWrapper::SetVmeTimeStamp(mafVME* vme, double t)
 void medVMEMuscleWrapper::DeformMuscle(vtkPolyData* pMuscle)
 //------------------------------------------------------------------------
 {
-  vtkNew< vtkMEDPolyDataDeformation > pDeformer;
-  
-  int nCurves = 0;
-  pDeformer->SetNumberOfSkeletons(0);
+	vtkNew< vtkMEDPolyDataDeformation > pDeformer;
 
-  //BES: 14.1.2009 - added correspondence to avoid problems when rest pose is 
-  //very different from the current pose
-  vtkIdList* pCorrespondence = vtkIdList::New();
-  pCorrespondence->InsertNextId(0);
-  pCorrespondence->InsertNextId(0);
+	int nCurves = 0;
+	pDeformer->SetNumberOfSkeletons(0);
 
-  WRAPPER_ITEM* pItem = m_pWrappers;
-  while (pItem != NULL)
-  {    
-    if (pItem->pCurves[0] != NULL && pItem->pCurves[1] != NULL) {
-      pDeformer->SetNthSkeleton(nCurves++, 
-        pItem->pCurves[0], pItem->pCurves[1], pCorrespondence,
-        (pItem->RefSysOriginValid[0] ? pItem->RefSysOrigin[0] : NULL),
-        (pItem->RefSysOriginValid[1] ? pItem->RefSysOrigin[1] : NULL)
-        );          
-    }
-    
-    pItem = pItem->pNext;
-  }
+	//BES: 14.1.2009 - added correspondence to avoid problems when rest pose is 
+	//very different from the current pose
+	vtkIdList* pCorrespondence = vtkIdList::New();
+	pCorrespondence->InsertNextId(0);
+	pCorrespondence->InsertNextId(0);
 
-  pCorrespondence->Delete();
-  
-  //if we have no valid pair of curves, just pass original muscle data
-  if (nCurves == 0)
-  {
-    if (m_VisMode == 0)
-      m_PolyData->DeepCopy(pMuscle);
-    else
-      GenerateFibers(pMuscle);    //we want to generate muscles
-  }
-  else
-  {
-    //otherwise perform the deformation
-    pDeformer->SetInputData(pMuscle);
+	WRAPPER_ITEM* pItem = m_pWrappers;
+	while (pItem != NULL)
+	{
+		if (pItem->pCurves[0] != NULL && pItem->pCurves[1] != NULL) {
+			pDeformer->SetNthSkeleton(nCurves++,
+				pItem->pCurves[0], pItem->pCurves[1], pCorrespondence,
+				(pItem->RefSysOriginValid[0] ? pItem->RefSysOrigin[0] : NULL),
+				(pItem->RefSysOriginValid[1] ? pItem->RefSysOrigin[1] : NULL)
+			);
+		}
 
-    if (m_VisMode == 0)  //we do not want to generate fibers    
-    {
-      pDeformer->SetOutput(m_PolyData);    
-      pDeformer->Update();
-      m_PolyData->DeepCopy(pDeformer->GetOutput());
-    }
-    else
-    {
-      //generate fibers
-      pDeformer->Update();
-      GenerateFibers(pDeformer->GetOutput());    
-    }
-  }
+		pItem = pItem->pNext;
+	}
+
+	pCorrespondence->Delete();
+
+	//if we have no valid pair of curves, just pass original muscle data
+	if (nCurves == 0)
+	{
+		if (m_VisMode == 0)
+			m_PolyData->DeepCopy(pMuscle);
+		else
+			GenerateFibers(pMuscle);    //we want to generate muscles
+	}
+	else
+	{
+		//otherwise perform the deformation
+		pDeformer->SetInputData(pMuscle);
+
+		if (m_VisMode == 0)  //we do not want to generate fibers    
+		{
+			pDeformer->SetOutput(m_PolyData);
+			pDeformer->Update();
+			m_PolyData->DeepCopy(pDeformer->GetOutput());
+		}
+		else
+		{
+			//generate fibers
+			pDeformer->Update();
+			GenerateFibers(pDeformer->GetOutput());
+		}
+	}
 }
 
 //#define _DEBUG_SAVE_VME
@@ -762,74 +762,74 @@ void medVMEMuscleWrapper::DeformMuscle(vtkPolyData* pMuscle)
 void medVMEMuscleWrapper::GenerateFibers(vtkPolyData* pMuscle)
 //------------------------------------------------------------------------
 {
-  vtkMAFMuscleFibers* pFibres = NULL;
-  switch (m_FbTemplate)
-  {
-  case FT_PARALLEL: pFibres = vtkMAFParallelMuscleFibers::New(); break;
-  case FT_PENNATE: pFibres = vtkMAFPennateMuscleFibers::New(); break;
-  case FT_CURVED: pFibres = vtkMAFCurvedMuscleFibers::New(); break;
-  case FT_FANNED: pFibres = vtkMAFFannedMuscleFibers::New(); break;
-  case FT_RECTUS: pFibres = vtkMAFRectusMuscleFibers::New(); break;
-  }
+	vtkMAFMuscleFibers* pFibres = NULL;
+	switch (m_FbTemplate)
+	{
+	case FT_PARALLEL: pFibres = vtkMAFParallelMuscleFibers::New(); break;
+	case FT_PENNATE: pFibres = vtkMAFPennateMuscleFibers::New(); break;
+	case FT_CURVED: pFibres = vtkMAFCurvedMuscleFibers::New(); break;
+	case FT_FANNED: pFibres = vtkMAFFannedMuscleFibers::New(); break;
+	case FT_RECTUS: pFibres = vtkMAFRectusMuscleFibers::New(); break;
+	}
 
-  if (pFibres == NULL)
-    return;
+	if (pFibres == NULL)
+		return;
 
-  vtkPoints* ori_points = CreatePointsFromVME(m_OIVME[0]);
-  vtkPoints* ins_points = CreatePointsFromVME(m_OIVME[1]);
+	vtkPoints* ori_points = CreatePointsFromVME(m_OIVME[0]);
+	vtkPoints* ins_points = CreatePointsFromVME(m_OIVME[1]);
 
-  vtkMAFMuscleDecomposition* pMD = vtkMAFMuscleDecomposition::New();
-  pMD->SetInputData(pMuscle);
-  pMD->SetFibersTemplate(pFibres);
-  pMD->SetNumberOfFibres(m_FbNumFib);
-  pMD->SetResolution(m_FbResolution);
-  pMD->SetOriginArea(ori_points);
-  pMD->SetInsertionArea(ins_points);
-  pMD->SetSmoothFibers(m_FbSmooth);
-  pMD->SetSmoothSteps(m_FbSmoothSteps);
-  pMD->SetSmoothFactor(m_FbSmoothWeight);
-  pMD->SetDebugMode(
-    m_FbDebugShowTemplate*vtkMAFMuscleDecomposition::dbgDoNotProjectFibres |
-    m_FbDebugShowFitting*vtkMAFMuscleDecomposition::dbgVisualizeFitting |
-    m_FbDebugShowFittingRes*vtkMAFMuscleDecomposition::dbgVisualizeFittingResult
-    );
+	vtkMAFMuscleDecomposition* pMD = vtkMAFMuscleDecomposition::New();
+	pMD->SetInputData(pMuscle);
+	pMD->SetFibersTemplate(pFibres);
+	pMD->SetNumberOfFibres(m_FbNumFib);
+	pMD->SetResolution(m_FbResolution);
+	pMD->SetOriginArea(ori_points);
+	pMD->SetInsertionArea(ins_points);
+	pMD->SetSmoothFibers(m_FbSmooth);
+	pMD->SetSmoothSteps(m_FbSmoothSteps);
+	pMD->SetSmoothFactor(m_FbSmoothWeight);
+	pMD->SetDebugMode(
+		m_FbDebugShowTemplate * vtkMAFMuscleDecomposition::dbgDoNotProjectFibres |
+		m_FbDebugShowFitting * vtkMAFMuscleDecomposition::dbgVisualizeFitting |
+		m_FbDebugShowFittingRes * vtkMAFMuscleDecomposition::dbgVisualizeFittingResult
+	);
 
-  if (m_FbThickness == 0.0)
-    pMD->SetOutput(m_PolyData);
+	if (m_FbThickness == 0.0)
+		pMD->SetOutput(m_PolyData);
 
-  pMD->Update();
+	pMD->Update();
 
-  vtkDEL(ori_points);
-  vtkDEL(ins_points);
+	vtkDEL(ori_points);
+	vtkDEL(ins_points);
 
-  if (m_FbThickness == 0.0)
-    pMD->SetOutput(NULL); //disconnect output
-  else
-  {
-    vtkTubeFilter* pTube = vtkTubeFilter::New();
-    pTube->SetInputConnection(pMD->GetOutputPort());
-    //pTube->UseDefaultNormalOff();        
-    //pTube->SetCapping(true);
-    pTube->SetNumberOfSides(8);
-    pTube->SetRadius(m_FbThickness); //0.01);
-    pTube->Update();
-    m_PolyData->DeepCopy(pTube->GetOutput());
+	if (m_FbThickness == 0.0)
+		pMD->SetOutput(NULL); //disconnect output
+	else
+	{
+		vtkTubeFilter* pTube = vtkTubeFilter::New();
+		pTube->SetInputConnection(pMD->GetOutputPort());
+		//pTube->UseDefaultNormalOff();        
+		//pTube->SetCapping(true);
+		pTube->SetNumberOfSides(8);
+		pTube->SetRadius(m_FbThickness); //0.01);
+		pTube->Update();
+		m_PolyData->DeepCopy(pTube->GetOutput());
 
-    pTube->Delete();
-  }
-  pMD->Delete();
-  pFibres->Delete();
+		pTube->Delete();
+	}
+	pMD->Delete();
+	pFibres->Delete();
 
 #ifdef _DEBUG_SAVE_VME
-  //this code saves the output as a new VME
-  mafVMESurface* VME;
-  mafNEW(VME);
-  VME->ReparentTo(this);
-  VME->SetData(m_PolyData, 0);
-  VME->SetName(wxString::Format("CONTOURS_%d", m_FbResolution));  
-  
-  mafEvent ev(this, VME_ADD, VME);
-  this->ForwardUpEvent(ev);
+	//this code saves the output as a new VME
+	mafVMESurface* VME;
+	mafNEW(VME);
+	VME->ReparentTo(this);
+	VME->SetData(m_PolyData, 0);
+	VME->SetName(wxString::Format("CONTOURS_%d", m_FbResolution));
+
+	mafEvent ev(this, VME_ADD, VME);
+	this->ForwardUpEvent(ev);
 #endif
 }
 
@@ -839,17 +839,17 @@ void medVMEMuscleWrapper::GenerateFibers(vtkPolyData* pMuscle)
 unsigned long medVMEMuscleWrapper::ComputeCheckSum(vtkPolyData* pPoly)
 //------------------------------------------------------------------------
 {
-  vtkDataArray* pDA = pPoly->GetPoints()->GetData();
-  
-  unsigned long nChecksum = pDA->GetSize();
-  unsigned long* pData = (unsigned long*)pDA->GetVoidPointer(0);
-  int nSize = nChecksum / sizeof(unsigned long);  //points are written as floats (4B) or doubles (8B); sizeof(unsigned long) = 4B
+	vtkDataArray* pDA = pPoly->GetPoints()->GetData();
 
-  for (int i = 0; i < nSize; i++){
-    nChecksum = nChecksum ^ pData[i];     //very simple checksum
-  }
+	unsigned long nChecksum = pDA->GetSize();
+	unsigned long* pData = (unsigned long*)pDA->GetVoidPointer(0);
+	int nSize = nChecksum / sizeof(unsigned long);  //points are written as floats (4B) or doubles (8B); sizeof(unsigned long) = 4B
 
-  return nChecksum | 1; //checksum may not be zero (because 0 is used as Checksum not computed)
+	for (int i = 0; i < nSize; i++) {
+		nChecksum = nChecksum ^ pData[i];     //very simple checksum
+	}
+
+	return nChecksum | 1; //checksum may not be zero (because 0 is used as Checksum not computed)
 }
 
 //------------------------------------------------------------------------
@@ -858,64 +858,64 @@ unsigned long medVMEMuscleWrapper::ComputeCheckSum(vtkPolyData* pPoly)
 vtkPoints* medVMEMuscleWrapper::CreatePointsFromVME(mafVME* vme)
 //------------------------------------------------------------------------
 {
-  vtkPoints* pRet = NULL;
+	vtkPoints* pRet = NULL;
 
-  mafVMELandmarkCloud* cloud = mafVMELandmarkCloud::SafeDownCast(vme);
-  if (cloud != NULL)
-  {
-    int N = cloud->GetNumberOfLandmarks();
-    if (N != 0)
-    {
-      pRet = vtkPoints::New();
-      pRet->SetNumberOfPoints(N);
-      for (int i = 0; i < N; i++) 
-      {
-        double x[3];
-        cloud->GetLandmarkPosition(i, x);
+	mafVMELandmarkCloud* cloud = mafVMELandmarkCloud::SafeDownCast(vme);
+	if (cloud != NULL)
+	{
+		int N = cloud->GetNumberOfLandmarks();
+		if (N != 0)
+		{
+			pRet = vtkPoints::New();
+			pRet->SetNumberOfPoints(N);
+			for (int i = 0; i < N; i++)
+			{
+				double x[3];
+				cloud->GetLandmarkPosition(i, x);
 
-        pRet->SetPoint(i, x);
-      }
-    }
-  }
-  else
-  {
-    mafVMELandmark* landmark = mafVMELandmark::SafeDownCast(vme);
-    if (landmark != NULL)
-    {
-      double x[3];
-      landmark->GetPoint(x);
+				pRet->SetPoint(i, x);
+			}
+		}
+	}
+	else
+	{
+		mafVMELandmark* landmark = mafVMELandmark::SafeDownCast(vme);
+		if (landmark != NULL)
+		{
+			double x[3];
+			landmark->GetPoint(x);
 
-      pRet = vtkPoints::New();
-      pRet->InsertNextPoint(x);
-    }
-    else if (vme != NULL)
-    {
-      //general data
-      vtkDataSet* ds = vme->GetOutput()->GetVTKData();
-      if (ds != NULL)
-      {
-        int N = ds->GetNumberOfPoints();
-        if (N != 0)
-        {
-          pRet = vtkPoints::New();
-          pRet->SetNumberOfPoints(N);
-          for (int i = 0; i < N; i++) {
-            pRet->SetPoint(i, ds->GetPoint(i));
-          }
-        }
-      }      
-    }
-  }
+			pRet = vtkPoints::New();
+			pRet->InsertNextPoint(x);
+		}
+		else if (vme != NULL)
+		{
+			//general data
+			vtkDataSet* ds = vme->GetOutput()->GetVTKData();
+			if (ds != NULL)
+			{
+				int N = ds->GetNumberOfPoints();
+				if (N != 0)
+				{
+					pRet = vtkPoints::New();
+					pRet->SetNumberOfPoints(N);
+					for (int i = 0; i < N; i++) {
+						pRet->SetPoint(i, ds->GetPoint(i));
+					}
+				}
+			}
+		}
+	}
 
-  if (pRet != NULL)
-  {
-    //returned coordinates are local, so we will need to convert them to 
-    //absolute (world coordinates) and from them to local coordinates 
-    //of our output (corresponds to the coordinate system of input muscle)
-    TransformPoints(pRet, *vme->GetOutput()->GetAbsMatrix());   
-  }
+	if (pRet != NULL)
+	{
+		//returned coordinates are local, so we will need to convert them to 
+		//absolute (world coordinates) and from them to local coordinates 
+		//of our output (corresponds to the coordinate system of input muscle)
+		TransformPoints(pRet, *vme->GetOutput()->GetAbsMatrix());
+	}
 
-  return pRet;
+	return pRet;
 }
 
 //------------------------------------------------------------------------
@@ -923,103 +923,103 @@ vtkPoints* medVMEMuscleWrapper::CreatePointsFromVME(mafVME* vme)
 vtkPolyData* medVMEMuscleWrapper::FixPolyline(vtkPolyData* input)
 //------------------------------------------------------------------------
 {
-  int nInputPoints = input->GetNumberOfPoints();
-  int nOutputPoints = 0;
+	int nInputPoints = input->GetNumberOfPoints();
+	int nOutputPoints = 0;
 
-  typedef double VCoord[3];
-  VCoord* pPtCoords = new VCoord[nInputPoints];
-  vtkIdType* pPtIdMap = new vtkIdType[nInputPoints];
+	typedef double VCoord[3];
+	VCoord* pPtCoords = new VCoord[nInputPoints];
+	vtkIdType* pPtIdMap = new vtkIdType[nInputPoints];
 
-  //we need the same data type
-  vtkPoints* out_points = vtkPoints::New(input->GetPoints()->GetDataType());
+	//we need the same data type
+	vtkPoints* out_points = vtkPoints::New(input->GetPoints()->GetDataType());
 
-  for (int i = 0; i < nInputPoints; i++)
-  {
-    input->GetPoint(i, pPtCoords[i]);
+	for (int i = 0; i < nInputPoints; i++)
+	{
+		input->GetPoint(i, pPtCoords[i]);
 
-    bool bFound = false;
-    for (int j = 0; j < i; j++)
-    {
-      if (
-        pPtCoords[j][0] == pPtCoords[i][0] &&
-        pPtCoords[j][1] == pPtCoords[i][1] &&
-        pPtCoords[j][2] == pPtCoords[i][2]
-      )
-      {
-        pPtIdMap[i] = pPtIdMap[j];
-        bFound = true;
-        break;
-      }
-    } //end for
+		bool bFound = false;
+		for (int j = 0; j < i; j++)
+		{
+			if (
+				pPtCoords[j][0] == pPtCoords[i][0] &&
+				pPtCoords[j][1] == pPtCoords[i][1] &&
+				pPtCoords[j][2] == pPtCoords[i][2]
+				)
+			{
+				pPtIdMap[i] = pPtIdMap[j];
+				bFound = true;
+				break;
+			}
+		} //end for
 
-    if (!bFound)
-    {
-      out_points->InsertNextPoint(pPtCoords[i]);
-      pPtIdMap[i] = nOutputPoints;
-      nOutputPoints++;
-    }
-  } //end for i
+		if (!bFound)
+		{
+			out_points->InsertNextPoint(pPtCoords[i]);
+			pPtIdMap[i] = nOutputPoints;
+			nOutputPoints++;
+		}
+	} //end for i
 
-  delete[] pPtCoords;   //no longer needed
+	delete[] pPtCoords;   //no longer needed
 
-  //process edges
-  input->BuildCells();
-  int nInEdges = input->GetNumberOfCells();
-  int nOutEdges = 0;
+	//process edges
+	input->BuildCells();
+	int nInEdges = input->GetNumberOfCells();
+	int nOutEdges = 0;
 
-  typedef vtkIdType Edge[2];
-  Edge* pEdges = new Edge[nInEdges];
-  for (int i = 0; i < nInEdges; i++)
-  {
-    vtkIdType nPts;
+	typedef vtkIdType Edge[2];
+	Edge* pEdges = new Edge[nInEdges];
+	for (int i = 0; i < nInEdges; i++)
+	{
+		vtkIdType nPts;
 #if VTK_MAJOR_VERSION > 8
-	const vtkIdType* pPtIds;
+		const vtkIdType* pPtIds;
 #else
-	vtkIdType* pPtIds;
+		vtkIdType* pPtIds;
 #endif
-    input->GetCellPoints(i, nPts, pPtIds);
+		input->GetCellPoints(i, nPts, pPtIds);
 
-    pEdges[nOutEdges][0] = pPtIdMap[pPtIds[0]];
-    pEdges[nOutEdges][1] = pPtIdMap[pPtIds[1]];
-    if (pEdges[nOutEdges][0] == pEdges[nOutEdges][1])
-      continue; //invalid edge
+		pEdges[nOutEdges][0] = pPtIdMap[pPtIds[0]];
+		pEdges[nOutEdges][1] = pPtIdMap[pPtIds[1]];
+		if (pEdges[nOutEdges][0] == pEdges[nOutEdges][1])
+			continue; //invalid edge
 
-    bool bFound = false;
-    for (int j = 0; j < nOutEdges; j++)
-    {
-      if (
-        (pEdges[nOutEdges][0] == pEdges[j][0] &&
-        pEdges[nOutEdges][1] == pEdges[j][1]) ||
-        (pEdges[nOutEdges][0] == pEdges[j][1] &&
-        pEdges[nOutEdges][1] == pEdges[j][0])
-        )
-      {
-        bFound = true;
-        break;
-      }
-    }
+		bool bFound = false;
+		for (int j = 0; j < nOutEdges; j++)
+		{
+			if (
+				(pEdges[nOutEdges][0] == pEdges[j][0] &&
+					pEdges[nOutEdges][1] == pEdges[j][1]) ||
+				(pEdges[nOutEdges][0] == pEdges[j][1] &&
+					pEdges[nOutEdges][1] == pEdges[j][0])
+				)
+			{
+				bFound = true;
+				break;
+			}
+		}
 
-    if (!bFound)
-      nOutEdges++;
-  }
+		if (!bFound)
+			nOutEdges++;
+	}
 
-  delete[] pPtIdMap;  //no longer needed
+	delete[] pPtIdMap;  //no longer needed
 
-  //save edges
-  vtkCellArray* out_lines = vtkCellArray::New();
-  for (int i = 0; i < nOutEdges; i++) {
-    out_lines->InsertNextCell(2, pEdges[i]);
-  }
+	//save edges
+	vtkCellArray* out_lines = vtkCellArray::New();
+	for (int i = 0; i < nOutEdges; i++) {
+		out_lines->InsertNextCell(2, pEdges[i]);
+	}
 
-  delete[] pEdges; //no longer needed
+	delete[] pEdges; //no longer needed
 
-  vtkPolyData* pRet = vtkPolyData::New();
-  pRet->SetPoints(out_points);
-  pRet->SetLines(out_lines);
+	vtkPolyData* pRet = vtkPolyData::New();
+	pRet->SetPoints(out_points);
+	pRet->SetLines(out_lines);
 
-  out_points->Delete();  //no longer needed
-  out_lines->Delete();  //no longer needed
-  return pRet;
+	out_points->Delete();  //no longer needed
+	out_lines->Delete();  //no longer needed
+	return pRet;
 }
 
 //------------------------------------------------------------------------
@@ -1028,27 +1028,27 @@ vtkPolyData* medVMEMuscleWrapper::FixPolyline(vtkPolyData* input)
 bool medVMEMuscleWrapper::GetRefSysVMEOrigin(mafVME* vme, double* origin)
 //------------------------------------------------------------------------
 {
-  if (vme == NULL || vme->GetOutput() == NULL)
-    return false;
+	if (vme == NULL || vme->GetOutput() == NULL)
+		return false;
 
-  vtkDataSet* ds = vme->GetOutput()->GetVTKData();
-  if (ds == NULL)
-    return false;
+	vtkDataSet* ds = vme->GetOutput()->GetVTKData();
+	if (ds == NULL)
+		return false;
 
-  vme->GetOutput()->Update();
-  ds->GetCenter(origin);
+	vme->GetOutput()->Update();
+	ds->GetCenter(origin);
 
-  //returned coordinates are local, so we will need to convert them to 
-  //absolute (world coordinates) and from them to local coordinates 
-  //of our output (corresponds to the coordinate system of input muscle)  
-  mafTransform transform;  
-  transform.SetMatrix(*vme->GetOutput()->GetAbsMatrix());  
-  transform.TransformPoint(origin, origin);
+	//returned coordinates are local, so we will need to convert them to 
+	//absolute (world coordinates) and from them to local coordinates 
+	//of our output (corresponds to the coordinate system of input muscle)  
+	mafTransform transform;
+	transform.SetMatrix(*vme->GetOutput()->GetAbsMatrix());
+	transform.TransformPoint(origin, origin);
 
-  transform.SetMatrix(GetOutput()->GetAbsTransform()->GetMatrix());
-  transform.Invert();
-  transform.TransformPoint(origin, origin);  
-  return true;
+	transform.SetMatrix(GetOutput()->GetAbsTransform()->GetMatrix());
+	transform.Invert();
+	transform.TransformPoint(origin, origin);
+	return true;
 }
 
 //------------------------------------------------------------------------
@@ -1056,24 +1056,24 @@ bool medVMEMuscleWrapper::GetRefSysVMEOrigin(mafVME* vme, double* origin)
 //outPoints that have outTransform matrix (i.e., transforms coordinates
 //from one reference system into another one.
 void medVMEMuscleWrapper::TransformPoints(
-  vtkPoints* inPoints, vtkPoints* outPoints, 
-  const mafMatrix& inTransform, const mafMatrix& outTransform)
-//------------------------------------------------------------------------
+	vtkPoints* inPoints, vtkPoints* outPoints,
+	const mafMatrix& inTransform, const mafMatrix& outTransform)
+	//------------------------------------------------------------------------
 {
-  mafTransform transform;
-  transform.SetMatrix(outTransform);  
-  transform.Invert();
+	mafTransform transform;
+	transform.SetMatrix(outTransform);
+	transform.Invert();
 
-  transform.Concatenate(inTransform, 0);
+	transform.Concatenate(inTransform, 0);
 
-  double x[3];
-  int N = inPoints->GetNumberOfPoints();
-  outPoints->SetNumberOfPoints(N);
-  for (int i = 0; i < N; i++)
-  {      
-    transform.TransformPoint(inPoints->GetPoint(i), x);
-    outPoints->SetPoint(i, x);
-  }
+	double x[3];
+	int N = inPoints->GetNumberOfPoints();
+	outPoints->SetNumberOfPoints(N);
+	for (int i = 0; i < N; i++)
+	{
+		transform.TransformPoint(inPoints->GetPoint(i), x);
+		outPoints->SetPoint(i, x);
+	}
 }
 
 #pragma region GUI and Events Handling
@@ -1082,587 +1082,587 @@ void medVMEMuscleWrapper::TransformPoints(
 //-------------------------------------------------------------------------
 mafGUI* medVMEMuscleWrapper::CreateGui()
 //-------------------------------------------------------------------------
-{  
-  m_Gui = mafNode::CreateGui(); // Called to show info about vmes' type and name
-  m_Gui->SetListener(this);
-  
-  RestoreMeterLinks();
-  m_MuscleVmeName = m_MuscleVme == NULL ? _R("") : m_MuscleVme->GetName();
-  for (int i = 0; i < 2; i++){
-    m_OIVMEName[i] = m_OIVME[i] == NULL ? _R("") : m_OIVME[i]->GetName();    
-  }
+{
+	auto gui = mafNode::CreateGui(); // Called to show info about vmes' type and name
+	gui->SetListener(this);
+
+	RestoreMeterLinks();
+	m_MuscleVmeName = m_MuscleVme == NULL ? _R("") : m_MuscleVme->GetName();
+	for (int i = 0; i < 2; i++) {
+		m_OIVMEName[i] = m_OIVME[i] == NULL ? _R("") : m_OIVME[i]->GetName();
+	}
 
 #pragma region Generated Code from wxFormBuilder  
-  wxBoxSizer* bSizer18 = new wxBoxSizer( wxVERTICAL );
-  wxStaticBoxSizer* sbSizer14 = new wxStaticBoxSizer( 
-    new wxStaticBox( m_Gui, wxID_ANY, wxT("Operational Mode") ), wxVERTICAL );
+	wxBoxSizer* bSizer18 = new wxBoxSizer(wxVERTICAL);
+	wxStaticBoxSizer* sbSizer14 = new wxStaticBoxSizer(
+		new wxStaticBox(gui, wxID_ANY, wxT("Operational Mode")), wxVERTICAL);
 
-  wxString radioBox1Choices[] = { wxT("Simple"), wxT("Advanced") };
-  int radioBox1NChoices = sizeof( radioBox1Choices ) / sizeof( wxString );
-  wxRadioBox* radioBox1 = new wxRadioBox( m_Gui, ID_INPUTMODE, 
-    wxEmptyString, wxDefaultPosition, wxDefaultSize, radioBox1NChoices, 
-    radioBox1Choices, 1, wxRA_SPECIFY_ROWS );  
-  radioBox1->SetToolTip( 
-    wxT("Specify the mode that will be used for the wrapping. In the simple mode, "
-    "the input muscle VME at the time 0 is deformed according to the differences "
-    "between outputs from wrappers at the time 0 and outputs from wrappers at the "
-    "current time. In the advanced mode, the user needs to specify different wrappers "
-    "for the rest pose (they may not change in the time) and for the current pose.") );
+	wxString radioBox1Choices[] = { wxT("Simple"), wxT("Advanced") };
+	int radioBox1NChoices = sizeof(radioBox1Choices) / sizeof(wxString);
+	wxRadioBox* radioBox1 = new wxRadioBox(gui, ID_INPUTMODE,
+		wxEmptyString, wxDefaultPosition, wxDefaultSize, radioBox1NChoices,
+		radioBox1Choices, 1, wxRA_SPECIFY_ROWS);
+	radioBox1->SetToolTip(
+		wxT("Specify the mode that will be used for the wrapping. In the simple mode, "
+			"the input muscle VME at the time 0 is deformed according to the differences "
+			"between outputs from wrappers at the time 0 and outputs from wrappers at the "
+			"current time. In the advanced mode, the user needs to specify different wrappers "
+			"for the rest pose (they may not change in the time) and for the current pose."));
 
-  sbSizer14->Add( radioBox1, 0, wxALL|wxEXPAND, 1 );
-  
-  wxBoxSizer* bSizer30;
-  bSizer30 = new wxBoxSizer( wxHORIZONTAL );
-  wxCheckBox* chckUseRefSys = new wxCheckBox( m_Gui, ID_USE_REFSYS, wxT("Use RS"), 
-    wxDefaultPosition, wxDefaultSize, 0 );
-  chckUseRefSys->SetToolTip( wxT("If checked the deformation algorithm will use the origin "
-    "of RS VME specified for wrappers whenever it is available. It allows handing of cases "
-    "when objects in the scene (e.g. bones) rotated around the axis given by the rest "
-    "wrapper (assuming simple edge wrapper). In these cases, the deformed muscle is "
-    "unrealistically rotated. Note that the same problem (but in a smaller scope) might "
-    "appear even in cases when objects are rotated around an arbitrary axis. "
-    "Hence, it is recommended to specify RS always (it should be the muscle underlaying bone).") );
-  bSizer30->Add( chckUseRefSys, 1, wxALL, 5 );
+	sbSizer14->Add(radioBox1, 0, wxALL | wxEXPAND, 1);
 
-  wxCheckBox* checkBox9 = new wxCheckBox( m_Gui, ID_GENERATE_FIBERS, 
-    wxT("Generate fibers"), wxDefaultPosition, wxDefaultSize, 0 );
-  checkBox9->SetToolTip( 
-    wxT("If checked, the output are muscle fibers instead of deformed surface.") );
+	wxBoxSizer* bSizer30;
+	bSizer30 = new wxBoxSizer(wxHORIZONTAL);
+	wxCheckBox* chckUseRefSys = new wxCheckBox(gui, ID_USE_REFSYS, wxT("Use RS"),
+		wxDefaultPosition, wxDefaultSize, 0);
+	chckUseRefSys->SetToolTip(wxT("If checked the deformation algorithm will use the origin "
+		"of RS VME specified for wrappers whenever it is available. It allows handing of cases "
+		"when objects in the scene (e.g. bones) rotated around the axis given by the rest "
+		"wrapper (assuming simple edge wrapper). In these cases, the deformed muscle is "
+		"unrealistically rotated. Note that the same problem (but in a smaller scope) might "
+		"appear even in cases when objects are rotated around an arbitrary axis. "
+		"Hence, it is recommended to specify RS always (it should be the muscle underlaying bone)."));
+	bSizer30->Add(chckUseRefSys, 1, wxALL, 5);
 
-  bSizer30->Add( checkBox9, 0, wxALL, 5 );
-  sbSizer14->Add( bSizer30, 1, wxEXPAND, 1 );
-  bSizer18->Add( sbSizer14, 0, wxEXPAND, 1 );
+	wxCheckBox* checkBox9 = new wxCheckBox(gui, ID_GENERATE_FIBERS,
+		wxT("Generate fibers"), wxDefaultPosition, wxDefaultSize, 0);
+	checkBox9->SetToolTip(
+		wxT("If checked, the output are muscle fibers instead of deformed surface."));
 
-  wxStaticBoxSizer* sbSizer8 = new wxStaticBoxSizer( 
-    new wxStaticBox( m_Gui, wxID_ANY, wxT("Muscle Surface") ), wxVERTICAL );
+	bSizer30->Add(checkBox9, 0, wxALL, 5);
+	sbSizer14->Add(bSizer30, 1, wxEXPAND, 1);
+	bSizer18->Add(sbSizer14, 0, wxEXPAND, 1);
 
-  wxBoxSizer* bSizer19 = new wxBoxSizer( wxHORIZONTAL );
-  wxTextCtrl* MuscleCtrl = new wxTextCtrl( m_Gui, wxID_ANY, 
-    wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
-  bSizer19->Add( MuscleCtrl, 1, wxALL, 1 );
+	wxStaticBoxSizer* sbSizer8 = new wxStaticBoxSizer(
+		new wxStaticBox(gui, wxID_ANY, wxT("Muscle Surface")), wxVERTICAL);
 
-  wxButton* bttnSelectMuscle = new wxButton( m_Gui, 
-    ID_RESTPOSE_MUSCLE_LINK, wxT("Select"), wxDefaultPosition, wxSize( 50,-1 ), 0 );
-  bttnSelectMuscle->SetToolTip( wxT("Selects the VME representing the muscle surface to be wrapped.") );
+	wxBoxSizer* bSizer19 = new wxBoxSizer(wxHORIZONTAL);
+	wxTextCtrl* MuscleCtrl = new wxTextCtrl(gui, wxID_ANY,
+		wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
+	bSizer19->Add(MuscleCtrl, 1, wxALL, 1);
 
-  bSizer19->Add( bttnSelectMuscle, 0, wxALL, 1 );
-  sbSizer8->Add( bSizer19, 1, wxEXPAND, 1 );
-  bSizer18->Add( sbSizer8, 0, wxEXPAND, 1 );
+	wxButton* bttnSelectMuscle = new wxButton(gui,
+		ID_RESTPOSE_MUSCLE_LINK, wxT("Select"), wxDefaultPosition, wxSize(50, -1), 0);
+	bttnSelectMuscle->SetToolTip(wxT("Selects the VME representing the muscle surface to be wrapped."));
 
-  wxStaticBoxSizer* sbSizer9 = new wxStaticBoxSizer( 
-    new wxStaticBox( m_Gui, wxID_ANY, wxT("Wrappers") ), wxVERTICAL );
+	bSizer19->Add(bttnSelectMuscle, 0, wxALL, 1);
+	sbSizer8->Add(bSizer19, 1, wxEXPAND, 1);
+	bSizer18->Add(sbSizer8, 0, wxEXPAND, 1);
 
-  m_WrappersCtrl = new wxListCtrl( m_Gui, ID_LIST_WRAPPERS, wxDefaultPosition, 
-    wxDefaultSize, wxLC_NO_SORT_HEADER|wxLC_REPORT|wxLC_SINGLE_SEL );
-  sbSizer9->Add( m_WrappersCtrl, 1, wxALL|wxEXPAND, 1 );
+	wxStaticBoxSizer* sbSizer9 = new wxStaticBoxSizer(
+		new wxStaticBox(gui, wxID_ANY, wxT("Wrappers")), wxVERTICAL);
 
-  wxBoxSizer* bSizer121 = new wxBoxSizer( wxHORIZONTAL );  
-  bSizer121->Add( new wxPanel( m_Gui, wxID_ANY, wxDefaultPosition, 
-    wxDefaultSize, wxTAB_TRAVERSAL ), 1, wxALL, 5 );
+	m_WrappersCtrl = new wxListCtrl(gui, ID_LIST_WRAPPERS, wxDefaultPosition,
+		wxDefaultSize, wxLC_NO_SORT_HEADER | wxLC_REPORT | wxLC_SINGLE_SEL);
+	sbSizer9->Add(m_WrappersCtrl, 1, wxALL | wxEXPAND, 1);
 
-  m_BttnRemoveWrapper = new wxButton( m_Gui, ID_REMOVEWRAPPER, wxT("Remove"), 
-    wxDefaultPosition, wxSize( 50,-1 ), 0 );
-  m_BttnRemoveWrapper->Enable( false );
-  m_BttnRemoveWrapper->SetToolTip( wxT("Removes selected wrapper.") );
-  bSizer121->Add( m_BttnRemoveWrapper, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	wxBoxSizer* bSizer121 = new wxBoxSizer(wxHORIZONTAL);
+	bSizer121->Add(new wxPanel(gui, wxID_ANY, wxDefaultPosition,
+		wxDefaultSize, wxTAB_TRAVERSAL), 1, wxALL, 5);
 
-  sbSizer9->Add( bSizer121, 0, wxEXPAND, 1 );
+	m_BttnRemoveWrapper = new wxButton(gui, ID_REMOVEWRAPPER, wxT("Remove"),
+		wxDefaultPosition, wxSize(50, -1), 0);
+	m_BttnRemoveWrapper->Enable(false);
+	m_BttnRemoveWrapper->SetToolTip(wxT("Removes selected wrapper."));
+	bSizer121->Add(m_BttnRemoveWrapper, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
+
+	sbSizer9->Add(bSizer121, 0, wxEXPAND, 1);
 
 #pragma region Add Wrapper
-  wxStaticBoxSizer* sbSizer13 = new wxStaticBoxSizer( 
-    new wxStaticBox( m_Gui, wxID_ANY, wxT("Add New Wrapper") ), wxVERTICAL );
+	wxStaticBoxSizer* sbSizer13 = new wxStaticBoxSizer(
+		new wxStaticBox(gui, wxID_ANY, wxT("Add New Wrapper")), wxVERTICAL);
 
-  wxBoxSizer* bSizer5 = new wxBoxSizer( wxHORIZONTAL );
-  m_LabelRP = new wxStaticText( m_Gui, wxID_ANY, wxT("RP:"), wxDefaultPosition, 
-    wxSize( 25,-1 ), wxALIGN_RIGHT );  
-  m_LabelRP->Enable( false );
+	wxBoxSizer* bSizer5 = new wxBoxSizer(wxHORIZONTAL);
+	m_LabelRP = new wxStaticText(gui, wxID_ANY, wxT("RP:"), wxDefaultPosition,
+		wxSize(25, -1), wxALIGN_RIGHT);
+	m_LabelRP->Enable(false);
 
-  bSizer5->Add( m_LabelRP, 0, wxALL|wxALIGN_CENTER_VERTICAL, 1 );
+	bSizer5->Add(m_LabelRP, 0, wxALL | wxALIGN_CENTER_VERTICAL, 1);
 
-  m_RPNameCtrl = new wxTextCtrl( m_Gui, ID_RESTPOSE_WRAPPER_LINK, wxEmptyString, 
-    wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
-  m_RPNameCtrl->Enable( false );
+	m_RPNameCtrl = new wxTextCtrl(gui, ID_RESTPOSE_WRAPPER_LINK, wxEmptyString,
+		wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
+	m_RPNameCtrl->Enable(false);
 
-  bSizer5->Add( m_RPNameCtrl, 1, wxALL, 1 );
+	bSizer5->Add(m_RPNameCtrl, 1, wxALL, 1);
 
-  m_BttnSelRP = new wxButton( m_Gui, ID_SELECT_RP, wxT("Select"), 
-    wxDefaultPosition, wxSize( 50,-1 ), 0 );
-  m_BttnSelRP->Enable( false );
-  m_BttnSelRP->SetToolTip( 
-    wxT("Selects VME with the wrapper (in the rest pose). \n\n"
-        "Note: the mesh deformation is governed by the difference between the output "
-        "from wrappers in the rest pose and the current pose.") );
+	m_BttnSelRP = new wxButton(gui, ID_SELECT_RP, wxT("Select"),
+		wxDefaultPosition, wxSize(50, -1), 0);
+	m_BttnSelRP->Enable(false);
+	m_BttnSelRP->SetToolTip(
+		wxT("Selects VME with the wrapper (in the rest pose). \n\n"
+			"Note: the mesh deformation is governed by the difference between the output "
+			"from wrappers in the rest pose and the current pose."));
 
-  bSizer5->Add( m_BttnSelRP, 0, wxALL|wxALIGN_CENTER_VERTICAL, 1 );
-  sbSizer13->Add( bSizer5, 0, wxEXPAND, 1 );
+	bSizer5->Add(m_BttnSelRP, 0, wxALL | wxALIGN_CENTER_VERTICAL, 1);
+	sbSizer13->Add(bSizer5, 0, wxEXPAND, 1);
 
-  wxBoxSizer* bSizer51 = new wxBoxSizer( wxHORIZONTAL );  
-  bSizer51->Add( new wxStaticText( m_Gui, wxID_ANY, wxT("CP:"), wxDefaultPosition, 
-    wxSize( 25,-1 ), wxALIGN_RIGHT ), 0, wxALL|wxALIGN_CENTER_VERTICAL, 1 );
+	wxBoxSizer* bSizer51 = new wxBoxSizer(wxHORIZONTAL);
+	bSizer51->Add(new wxStaticText(gui, wxID_ANY, wxT("CP:"), wxDefaultPosition,
+		wxSize(25, -1), wxALIGN_RIGHT), 0, wxALL | wxALIGN_CENTER_VERTICAL, 1);
 
-  wxTextCtrl* CPNameCtrl = new wxTextCtrl( m_Gui, ID_CURRENTPOSE_WRAPPER_LINK, wxEmptyString, 
-    wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
-  bSizer51->Add( CPNameCtrl, 1, wxALL, 1 );
+	wxTextCtrl* CPNameCtrl = new wxTextCtrl(gui, ID_CURRENTPOSE_WRAPPER_LINK, wxEmptyString,
+		wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
+	bSizer51->Add(CPNameCtrl, 1, wxALL, 1);
 
-  wxButton* bttnSelCP = new wxButton( m_Gui, ID_SELECT_CP, wxT("Select"), 
-    wxDefaultPosition, wxSize( 50,-1 ), 0 );
-  bttnSelCP->SetToolTip( 
-    wxT("Selects VME with the wrapper (in the current pose). \n\n"
-        "Note: the mesh deformation is governed by the difference between the output "
-        "from wrappers in the rest pose and the current pose.") );
+	wxButton* bttnSelCP = new wxButton(gui, ID_SELECT_CP, wxT("Select"),
+		wxDefaultPosition, wxSize(50, -1), 0);
+	bttnSelCP->SetToolTip(
+		wxT("Selects VME with the wrapper (in the current pose). \n\n"
+			"Note: the mesh deformation is governed by the difference between the output "
+			"from wrappers in the rest pose and the current pose."));
 
-  bSizer51->Add( bttnSelCP, 0, wxALL|wxALIGN_CENTER_VERTICAL, 1 );
-  sbSizer13->Add( bSizer51, 0, wxEXPAND, 1 );
+	bSizer51->Add(bttnSelCP, 0, wxALL | wxALIGN_CENTER_VERTICAL, 1);
+	sbSizer13->Add(bSizer51, 0, wxEXPAND, 1);
 
-  wxBoxSizer* bSizer29 = new wxBoxSizer( wxHORIZONTAL );
-  m_LabelRP_RS = new wxStaticText( m_Gui, wxID_ANY, wxT("RP RS:"), 
-    wxDefaultPosition, wxSize( 35,-1 ), wxALIGN_RIGHT );  
-  m_LabelRP_RS->Enable( false );
-  bSizer29->Add( m_LabelRP_RS, 0, wxALL|wxALIGN_CENTER_VERTICAL, 1 );
+	wxBoxSizer* bSizer29 = new wxBoxSizer(wxHORIZONTAL);
+	m_LabelRP_RS = new wxStaticText(gui, wxID_ANY, wxT("RP RS:"),
+		wxDefaultPosition, wxSize(35, -1), wxALIGN_RIGHT);
+	m_LabelRP_RS->Enable(false);
+	bSizer29->Add(m_LabelRP_RS, 0, wxALL | wxALIGN_CENTER_VERTICAL, 1);
 
-  m_RPRefSysVmeCtrl = new wxTextCtrl( m_Gui, ID_RESTPOSE_REFSYS_LINK, 
-    wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
-  m_RPRefSysVmeCtrl->Enable( false );
-  bSizer29->Add( m_RPRefSysVmeCtrl, 1, wxALL, 1 );
+	m_RPRefSysVmeCtrl = new wxTextCtrl(gui, ID_RESTPOSE_REFSYS_LINK,
+		wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
+	m_RPRefSysVmeCtrl->Enable(false);
+	bSizer29->Add(m_RPRefSysVmeCtrl, 1, wxALL, 1);
 
-  m_BttnSelectRPRefSys = new wxButton( m_Gui, ID_SELECT_RP_REFSYS_LINK, 
-    wxT("Select"), wxDefaultPosition, wxSize( 50,-1 ), 0 );
-  m_BttnSelectRPRefSys->Enable( false );
-  m_BttnSelectRPRefSys->SetToolTip( 
-    wxT("[OPTIONAL] Selects a VME that serves as a reference coordinate system for "
-    "deformation (see Use RS option).") );
-  bSizer29->Add( m_BttnSelectRPRefSys, 0, wxALL, 1 );
-  sbSizer13->Add( bSizer29, 1, wxEXPAND, 1 );
+	m_BttnSelectRPRefSys = new wxButton(gui, ID_SELECT_RP_REFSYS_LINK,
+		wxT("Select"), wxDefaultPosition, wxSize(50, -1), 0);
+	m_BttnSelectRPRefSys->Enable(false);
+	m_BttnSelectRPRefSys->SetToolTip(
+		wxT("[OPTIONAL] Selects a VME that serves as a reference coordinate system for "
+			"deformation (see Use RS option)."));
+	bSizer29->Add(m_BttnSelectRPRefSys, 0, wxALL, 1);
+	sbSizer13->Add(bSizer29, 1, wxEXPAND, 1);
 
-  wxBoxSizer* bSizer291 = new wxBoxSizer( wxHORIZONTAL );
-  bSizer291->Add( new wxStaticText( m_Gui, wxID_ANY, wxT("CP RS:"), wxDefaultPosition, 
-    wxSize( 35,-1 ), wxALIGN_RIGHT ), 0, wxALL|wxALIGN_CENTER_VERTICAL, 1 );
+	wxBoxSizer* bSizer291 = new wxBoxSizer(wxHORIZONTAL);
+	bSizer291->Add(new wxStaticText(gui, wxID_ANY, wxT("CP RS:"), wxDefaultPosition,
+		wxSize(35, -1), wxALIGN_RIGHT), 0, wxALL | wxALIGN_CENTER_VERTICAL, 1);
 
-  wxTextCtrl* CPRefSysVmeCtrl = new wxTextCtrl( m_Gui, ID_CURRENTPOSE_REFSYS_LINK, 
-    wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
-  bSizer291->Add( CPRefSysVmeCtrl, 1, wxALL, 1 );
+	wxTextCtrl* CPRefSysVmeCtrl = new wxTextCtrl(gui, ID_CURRENTPOSE_REFSYS_LINK,
+		wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
+	bSizer291->Add(CPRefSysVmeCtrl, 1, wxALL, 1);
 
-  wxButton* bttnSelectCPRefSys = new wxButton( m_Gui, ID_SELECT_CP_REFSYS_LINK, 
-    wxT("Select"), wxDefaultPosition, wxSize( 50,-1 ), 0 );
-  bttnSelectCPRefSys->SetToolTip( 
-    wxT("[OPTIONAL] Selects a VME that serves as a reference coordinate system for "
-    "deformation (see Use RS option).") );
+	wxButton* bttnSelectCPRefSys = new wxButton(gui, ID_SELECT_CP_REFSYS_LINK,
+		wxT("Select"), wxDefaultPosition, wxSize(50, -1), 0);
+	bttnSelectCPRefSys->SetToolTip(
+		wxT("[OPTIONAL] Selects a VME that serves as a reference coordinate system for "
+			"deformation (see Use RS option)."));
 
-  bSizer291->Add( bttnSelectCPRefSys, 0, wxALL, 1 );
-  sbSizer13->Add( bSizer291, 1, wxEXPAND, 1 );
+	bSizer291->Add(bttnSelectCPRefSys, 0, wxALL, 1);
+	sbSizer13->Add(bSizer291, 1, wxEXPAND, 1);
 
-  wxBoxSizer* bSizer12 = new wxBoxSizer( wxHORIZONTAL );  
-  bSizer12->Add( new wxPanel( m_Gui, wxID_ANY, wxDefaultPosition, wxDefaultSize, 
-    wxTAB_TRAVERSAL ), 1, wxALL, 1 );
+	wxBoxSizer* bSizer12 = new wxBoxSizer(wxHORIZONTAL);
+	bSizer12->Add(new wxPanel(gui, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+		wxTAB_TRAVERSAL), 1, wxALL, 1);
 
-  m_BttnAddWrapper = new wxButton( m_Gui, ID_ADDWRAPPER, wxT("Add"), 
-    wxDefaultPosition, wxSize( 50,-1 ), 0 );
-  m_BttnAddWrapper->Enable( false );
-  m_BttnAddWrapper->SetToolTip( wxT("Adds a new wrapper") );
+	m_BttnAddWrapper = new wxButton(gui, ID_ADDWRAPPER, wxT("Add"),
+		wxDefaultPosition, wxSize(50, -1), 0);
+	m_BttnAddWrapper->Enable(false);
+	m_BttnAddWrapper->SetToolTip(wxT("Adds a new wrapper"));
 
-  bSizer12->Add( m_BttnAddWrapper, 0, wxALIGN_CENTER_VERTICAL|wxALL, 1 );
-  sbSizer13->Add( bSizer12, 1, wxEXPAND, 1 );
-  sbSizer9->Add( sbSizer13, 0, wxEXPAND, 1 );
-  bSizer18->Add( sbSizer9, 1, wxEXPAND, 1 );
+	bSizer12->Add(m_BttnAddWrapper, 0, wxALIGN_CENTER_VERTICAL | wxALL, 1);
+	sbSizer13->Add(bSizer12, 1, wxEXPAND, 1);
+	sbSizer9->Add(sbSizer13, 0, wxEXPAND, 1);
+	bSizer18->Add(sbSizer9, 1, wxEXPAND, 1);
 #pragma endregion Add Wrapper
 
 #pragma region Fibers Options
-  wxStaticBoxSizer* sbSizer15 = new wxStaticBoxSizer( 
-    new wxStaticBox( m_Gui, wxID_ANY, wxT("Fibers Options") ), wxVERTICAL );
+	wxStaticBoxSizer* sbSizer15 = new wxStaticBoxSizer(
+		new wxStaticBox(gui, wxID_ANY, wxT("Fibers Options")), wxVERTICAL);
 
-  wxBoxSizer* bSizer511 = new wxBoxSizer( wxHORIZONTAL );  
-  bSizer511->Add( new wxStaticText( m_Gui, wxID_ANY, wxT("O:"), wxDefaultPosition, 
-    wxSize( 30,-1 ), wxALIGN_RIGHT ), 0, wxALL|wxALIGN_CENTER_VERTICAL, 1 );
+	wxBoxSizer* bSizer511 = new wxBoxSizer(wxHORIZONTAL);
+	bSizer511->Add(new wxStaticText(gui, wxID_ANY, wxT("O:"), wxDefaultPosition,
+		wxSize(30, -1), wxALIGN_RIGHT), 0, wxALL | wxALIGN_CENTER_VERTICAL, 1);
 
-  wxTextCtrl* OAreaName = new wxTextCtrl( m_Gui, wxID_ANY, wxEmptyString, 
-    wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
-  bSizer511->Add( OAreaName, 1, wxALL, 1 );
+	wxTextCtrl* OAreaName = new wxTextCtrl(gui, wxID_ANY, wxEmptyString,
+		wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
+	bSizer511->Add(OAreaName, 1, wxALL, 1);
 
-  wxButton* bttnSelOA = new wxButton( m_Gui, ID_FIBERS_ORIGIN_LINK, wxT("Select"), 
-    wxDefaultPosition, wxSize( 50,-1 ), 0 );
-  bttnSelOA->SetToolTip( 
-    wxT("[OPTIONAL] Select the VME (a single landmark or a landmark cloud) representing "
-    "the origin area.\n\nN.B. This information (together with I) is used to determine "
-    "the direction of fibers. If neither O nor I is specified, the generated "
-    "fibers might be incorrect.") );
-  bSizer511->Add( bttnSelOA, 0, wxALL|wxALIGN_CENTER_VERTICAL, 1 );
-  sbSizer15->Add( bSizer511, 0, wxEXPAND, 1 );
+	wxButton* bttnSelOA = new wxButton(gui, ID_FIBERS_ORIGIN_LINK, wxT("Select"),
+		wxDefaultPosition, wxSize(50, -1), 0);
+	bttnSelOA->SetToolTip(
+		wxT("[OPTIONAL] Select the VME (a single landmark or a landmark cloud) representing "
+			"the origin area.\n\nN.B. This information (together with I) is used to determine "
+			"the direction of fibers. If neither O nor I is specified, the generated "
+			"fibers might be incorrect."));
+	bSizer511->Add(bttnSelOA, 0, wxALL | wxALIGN_CENTER_VERTICAL, 1);
+	sbSizer15->Add(bSizer511, 0, wxEXPAND, 1);
 
-  wxBoxSizer* bSizer5111 = new wxBoxSizer( wxHORIZONTAL );  
-  bSizer5111->Add( new wxStaticText( m_Gui, wxID_ANY, wxT("I:"), wxDefaultPosition, 
-    wxSize( 30,-1 ), wxALIGN_RIGHT ), 0, wxALL|wxALIGN_CENTER_VERTICAL, 1 );
+	wxBoxSizer* bSizer5111 = new wxBoxSizer(wxHORIZONTAL);
+	bSizer5111->Add(new wxStaticText(gui, wxID_ANY, wxT("I:"), wxDefaultPosition,
+		wxSize(30, -1), wxALIGN_RIGHT), 0, wxALL | wxALIGN_CENTER_VERTICAL, 1);
 
-  wxTextCtrl* IAreaName = new wxTextCtrl( m_Gui, wxID_ANY, wxEmptyString, 
-    wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
-  bSizer5111->Add( IAreaName, 1, wxALL, 1 );
+	wxTextCtrl* IAreaName = new wxTextCtrl(gui, wxID_ANY, wxEmptyString,
+		wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
+	bSizer5111->Add(IAreaName, 1, wxALL, 1);
 
-  wxButton* bttnSelIA = new wxButton( m_Gui, ID_FIBERS_INSERTION_LINK, wxT("Select"), 
-    wxDefaultPosition, wxSize( 50,-1 ), 0 );
-  bttnSelIA->SetToolTip( 
-    wxT("Select the VME (a single landmark or a landmark cloud) representing the "
-    "insertion area.\n\nN.B. This information (together with O) is used to determine "
-    "the direction of fibers. If neither O nor I is specified, the generated "
-    "fibers might be incorrect.") );
-  bSizer5111->Add( bttnSelIA, 0, wxALL|wxALIGN_CENTER_VERTICAL, 1 );
-  sbSizer15->Add( bSizer5111, 0, wxEXPAND, 1 );
-   
-  wxBoxSizer* bSizer51111 = new wxBoxSizer( wxHORIZONTAL );  
-  bSizer51111->Add( new wxStaticText( m_Gui, wxID_ANY, wxT("Type:"), wxDefaultPosition, 
-    wxSize( 30,-1 ), wxALIGN_RIGHT ), 0, wxALL|wxALIGN_CENTER_VERTICAL, 1 );
+	wxButton* bttnSelIA = new wxButton(gui, ID_FIBERS_INSERTION_LINK, wxT("Select"),
+		wxDefaultPosition, wxSize(50, -1), 0);
+	bttnSelIA->SetToolTip(
+		wxT("Select the VME (a single landmark or a landmark cloud) representing the "
+			"insertion area.\n\nN.B. This information (together with O) is used to determine "
+			"the direction of fibers. If neither O nor I is specified, the generated "
+			"fibers might be incorrect."));
+	bSizer5111->Add(bttnSelIA, 0, wxALL | wxALIGN_CENTER_VERTICAL, 1);
+	sbSizer15->Add(bSizer5111, 0, wxEXPAND, 1);
 
-  wxString choice1Choices[] = { wxT("parallel"), wxT("pennate"), wxT("curved"), 
-    wxT("fanned"), wxT("rectus") };
+	wxBoxSizer* bSizer51111 = new wxBoxSizer(wxHORIZONTAL);
+	bSizer51111->Add(new wxStaticText(gui, wxID_ANY, wxT("Type:"), wxDefaultPosition,
+		wxSize(30, -1), wxALIGN_RIGHT), 0, wxALL | wxALIGN_CENTER_VERTICAL, 1);
 
-  int choice1NChoices = sizeof( choice1Choices ) / sizeof( wxString );
-  wxComboBox* choice1 = new wxComboBox( m_Gui, ID_FIBERS_TEMPLATE, wxEmptyString, 
-    wxDefaultPosition, wxDefaultSize, choice1NChoices, choice1Choices, wxCB_READONLY );  
-  choice1->SetToolTip( wxT("Selects the geometry type of fibers for the current muscle.") );
-  bSizer51111->Add( choice1, 1, wxALL, 1 );
-  
-  bSizer51111->Add( new wxStaticText( m_Gui, wxID_ANY, wxT("Num.:"), wxDefaultPosition, 
-    wxSize( 35,-1 ), wxALIGN_RIGHT ), 0, wxALL|wxALIGN_CENTER_VERTICAL, 1 );
+	wxString choice1Choices[] = { wxT("parallel"), wxT("pennate"), wxT("curved"),
+	  wxT("fanned"), wxT("rectus") };
 
-  wxTextCtrl* textCtrl20 = new wxTextCtrl( m_Gui, ID_FIBERS_NUMFIB, wxEmptyString, 
-    wxDefaultPosition, wxDefaultSize, 0 );
-  textCtrl20->SetToolTip( wxT("Specifies the number of fibers to be created within muscle volume.") );
-  bSizer51111->Add( textCtrl20, 1, wxALL, 1 );  
-  sbSizer15->Add( bSizer51111, 0, wxEXPAND, 1 );
+	int choice1NChoices = sizeof(choice1Choices) / sizeof(wxString);
+	wxComboBox* choice1 = new wxComboBox(gui, ID_FIBERS_TEMPLATE, wxEmptyString,
+		wxDefaultPosition, wxDefaultSize, choice1NChoices, choice1Choices, wxCB_READONLY);
+	choice1->SetToolTip(wxT("Selects the geometry type of fibers for the current muscle."));
+	bSizer51111->Add(choice1, 1, wxALL, 1);
+
+	bSizer51111->Add(new wxStaticText(gui, wxID_ANY, wxT("Num.:"), wxDefaultPosition,
+		wxSize(35, -1), wxALIGN_RIGHT), 0, wxALL | wxALIGN_CENTER_VERTICAL, 1);
+
+	wxTextCtrl* textCtrl20 = new wxTextCtrl(gui, ID_FIBERS_NUMFIB, wxEmptyString,
+		wxDefaultPosition, wxDefaultSize, 0);
+	textCtrl20->SetToolTip(wxT("Specifies the number of fibers to be created within muscle volume."));
+	bSizer51111->Add(textCtrl20, 1, wxALL, 1);
+	sbSizer15->Add(bSizer51111, 0, wxEXPAND, 1);
 
 
-  wxBoxSizer* bSizer58 = new wxBoxSizer( wxHORIZONTAL );  
-  bSizer58->Add( new wxStaticText( m_Gui, wxID_ANY, wxT("Res.:"), wxDefaultPosition, 
-    wxSize( 30,-1 ), wxALIGN_RIGHT ), 1, wxALL|wxALIGN_CENTER_VERTICAL, 1 );
+	wxBoxSizer* bSizer58 = new wxBoxSizer(wxHORIZONTAL);
+	bSizer58->Add(new wxStaticText(gui, wxID_ANY, wxT("Res.:"), wxDefaultPosition,
+		wxSize(30, -1), wxALIGN_RIGHT), 1, wxALL | wxALIGN_CENTER_VERTICAL, 1);
 
-  wxTextCtrl* textCtrl201 = new wxTextCtrl( m_Gui, ID_FIBERS_RESOLUTION, wxEmptyString, 
-    wxDefaultPosition, wxDefaultSize, 0 );
-  textCtrl201->SetToolTip( wxT("Specifies the resolution of fiber.") );
-  bSizer58->Add( textCtrl201, 1, wxALL, 1 );
-  
-  bSizer58->Add( new wxStaticText( m_Gui, wxID_ANY, wxT("Thick.:"), 
-    wxDefaultPosition, wxSize( 35,-1 ), wxALIGN_RIGHT ), 0, wxALL|wxALIGN_CENTER_VERTICAL, 1 );
+	wxTextCtrl* textCtrl201 = new wxTextCtrl(gui, ID_FIBERS_RESOLUTION, wxEmptyString,
+		wxDefaultPosition, wxDefaultSize, 0);
+	textCtrl201->SetToolTip(wxT("Specifies the resolution of fiber."));
+	bSizer58->Add(textCtrl201, 1, wxALL, 1);
 
-  wxTextCtrl* textCtrl2011 = new wxTextCtrl( m_Gui, ID_FIBERS_THICKNESS, 
-    wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-  textCtrl2011->SetToolTip( 
-    wxT("Specifies the thickness of fibers. If the thickness is 0, fibers are "
-    "represented by polylines, otherwise they are represented by cylinders with "
-    "radius equaled to the given thickness.") );
+	bSizer58->Add(new wxStaticText(gui, wxID_ANY, wxT("Thick.:"),
+		wxDefaultPosition, wxSize(35, -1), wxALIGN_RIGHT), 0, wxALL | wxALIGN_CENTER_VERTICAL, 1);
 
-  bSizer58->Add( textCtrl2011, 1, wxALL|wxALIGN_CENTER_VERTICAL, 1 );
+	wxTextCtrl* textCtrl2011 = new wxTextCtrl(gui, ID_FIBERS_THICKNESS,
+		wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
+	textCtrl2011->SetToolTip(
+		wxT("Specifies the thickness of fibers. If the thickness is 0, fibers are "
+			"represented by polylines, otherwise they are represented by cylinders with "
+			"radius equaled to the given thickness."));
 
-  sbSizer15->Add( bSizer58, 0, wxEXPAND, 1 );
+	bSizer58->Add(textCtrl2011, 1, wxALL | wxALIGN_CENTER_VERTICAL, 1);
 
-  wxCheckBox* checkBox10 = new wxCheckBox( m_Gui, ID_FIBERS_SMOOTH, wxT("Smooth fibers"), 
-    wxDefaultPosition, wxDefaultSize, 0 );  
-  checkBox10->SetToolTip( wxT("If checked, a smoothing process is applied on the generated fibers") );
+	sbSizer15->Add(bSizer58, 0, wxEXPAND, 1);
 
-  sbSizer15->Add( checkBox10, 0, wxALL, 5 );
+	wxCheckBox* checkBox10 = new wxCheckBox(gui, ID_FIBERS_SMOOTH, wxT("Smooth fibers"),
+		wxDefaultPosition, wxDefaultSize, 0);
+	checkBox10->SetToolTip(wxT("If checked, a smoothing process is applied on the generated fibers"));
+
+	sbSizer15->Add(checkBox10, 0, wxALL, 5);
 
 
 #pragma region Smoothing Options
-  wxStaticBoxSizer* sbSizer16;
-  sbSizer16 = new wxStaticBoxSizer( new wxStaticBox( m_Gui, wxID_ANY, wxT("Smoothing Options") ), wxVERTICAL );
+	wxStaticBoxSizer* sbSizer16;
+	sbSizer16 = new wxStaticBoxSizer(new wxStaticBox(gui, wxID_ANY, wxT("Smoothing Options")), wxVERTICAL);
 
-  wxBoxSizer* bSizer6;
-  bSizer6 = new wxBoxSizer( wxHORIZONTAL );
+	wxBoxSizer* bSizer6;
+	bSizer6 = new wxBoxSizer(wxHORIZONTAL);
 
-  m_SmLabel1 = new wxStaticText( m_Gui, wxID_ANY, wxT("Steps:"), wxDefaultPosition, wxSize( 30,-1 ), wxALIGN_RIGHT );  
-  bSizer6->Add( m_SmLabel1, 1, wxALL|wxALIGN_CENTER_VERTICAL, 1 );
+	m_SmLabel1 = new wxStaticText(gui, wxID_ANY, wxT("Steps:"), wxDefaultPosition, wxSize(30, -1), wxALIGN_RIGHT);
+	bSizer6->Add(m_SmLabel1, 1, wxALL | wxALIGN_CENTER_VERTICAL, 1);
 
-  m_SmStepsCtrl = new wxTextCtrl( m_Gui, ID_FIBERS_SMOOTH_STEPS, wxEmptyString, wxDefaultPosition, wxSize( 30,-1 ), 0 );
-  m_SmStepsCtrl->SetToolTip( wxT("Specifies the number of smoothing iterations (higher value means more smoothed fibres)") );
+	m_SmStepsCtrl = new wxTextCtrl(gui, ID_FIBERS_SMOOTH_STEPS, wxEmptyString, wxDefaultPosition, wxSize(30, -1), 0);
+	m_SmStepsCtrl->SetToolTip(wxT("Specifies the number of smoothing iterations (higher value means more smoothed fibres)"));
 
-  bSizer6->Add( m_SmStepsCtrl, 1, wxALL|wxALIGN_CENTER_VERTICAL, 1 );
+	bSizer6->Add(m_SmStepsCtrl, 1, wxALL | wxALIGN_CENTER_VERTICAL, 1);
 
-  m_SmLabel2 = new wxStaticText( m_Gui, wxID_ANY, wxT("Weight:"), wxDefaultPosition, wxSize( 45,-1 ), wxALIGN_RIGHT );  
-  bSizer6->Add( m_SmLabel2, 1, wxALL|wxALIGN_CENTER_VERTICAL, 1 );
+	m_SmLabel2 = new wxStaticText(gui, wxID_ANY, wxT("Weight:"), wxDefaultPosition, wxSize(45, -1), wxALIGN_RIGHT);
+	bSizer6->Add(m_SmLabel2, 1, wxALL | wxALIGN_CENTER_VERTICAL, 1);
 
-  m_SmWeightCtrl = new wxTextCtrl( m_Gui, ID_FIBERS_SMOOTH_STEPS, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-  m_SmWeightCtrl->SetToolTip( wxT("Specifies the number of smoothing iterations (higher value means more smoothed fibres)") );
+	m_SmWeightCtrl = new wxTextCtrl(gui, ID_FIBERS_SMOOTH_STEPS, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
+	m_SmWeightCtrl->SetToolTip(wxT("Specifies the number of smoothing iterations (higher value means more smoothed fibres)"));
 
-  bSizer6->Add( m_SmWeightCtrl, 1, wxALL|wxALIGN_CENTER_VERTICAL, 1 );
-  sbSizer16->Add( bSizer6, 0, wxEXPAND, 5 );
-  sbSizer15->Add( sbSizer16, 0, wxEXPAND, 5 );
+	bSizer6->Add(m_SmWeightCtrl, 1, wxALL | wxALIGN_CENTER_VERTICAL, 1);
+	sbSizer16->Add(bSizer6, 0, wxEXPAND, 5);
+	sbSizer15->Add(sbSizer16, 0, wxEXPAND, 5);
 #pragma endregion Smoothing Options
 
-  wxCheckBox* checkBox11 = new wxCheckBox( m_Gui, ID_FIBERS_DEBUG_SHOWTEMPLATE, wxT("Show template"), wxDefaultPosition, wxDefaultSize, 0 );
-  checkBox11->SetToolTip( wxT("If checked, the output is a set of fibres with a cube - target cube") );
-  sbSizer15->Add( checkBox11, 0, wxALL, 5 );
+	wxCheckBox* checkBox11 = new wxCheckBox(gui, ID_FIBERS_DEBUG_SHOWTEMPLATE, wxT("Show template"), wxDefaultPosition, wxDefaultSize, 0);
+	checkBox11->SetToolTip(wxT("If checked, the output is a set of fibres with a cube - target cube"));
+	sbSizer15->Add(checkBox11, 0, wxALL, 5);
 
-  wxCheckBox* chckDebug2 = new wxCheckBox( m_Gui, ID_FIBERS_DEBUG_SHOWFITTING, wxT("Show fitting"), wxDefaultPosition, wxDefaultSize, 0 );
-  chckDebug2->SetToolTip( wxT("If checked, the fitting process is visualized") );
-  sbSizer15->Add( chckDebug2, 0, wxALL, 5 );
+	wxCheckBox* chckDebug2 = new wxCheckBox(gui, ID_FIBERS_DEBUG_SHOWFITTING, wxT("Show fitting"), wxDefaultPosition, wxDefaultSize, 0);
+	chckDebug2->SetToolTip(wxT("If checked, the fitting process is visualized"));
+	sbSizer15->Add(chckDebug2, 0, wxALL, 5);
 
-  wxCheckBox* chckDebug3 = new wxCheckBox( m_Gui, ID_FIBERS_DEBUG_SHOWFITTINGRES, wxT("Show fitting result"), wxDefaultPosition, wxDefaultSize, 0 );
-  chckDebug3->SetToolTip( wxT("If checked, the fitting process is visualized") );
-  sbSizer15->Add( chckDebug3, 0, wxALL, 5 );
+	wxCheckBox* chckDebug3 = new wxCheckBox(gui, ID_FIBERS_DEBUG_SHOWFITTINGRES, wxT("Show fitting result"), wxDefaultPosition, wxDefaultSize, 0);
+	chckDebug3->SetToolTip(wxT("If checked, the fitting process is visualized"));
+	sbSizer15->Add(chckDebug3, 0, wxALL, 5);
 #pragma endregion Fibers Options
 
-  bSizer18->Add( sbSizer15, 0, wxEXPAND, 1 );
+	bSizer18->Add(sbSizer15, 0, wxEXPAND, 1);
 
 #pragma endregion
 
-  //create headers for the listctrl
-  wxString cols[4] = { wxT("RP"), wxT("CP"), wxT("RP_RS"), wxT("CP_RS") };
-  for (int i = 0; i < 4; i++){
-    m_WrappersCtrl->InsertColumn(i, cols[i]);
-  }
+	//create headers for the listctrl
+	wxString cols[4] = { wxT("RP"), wxT("CP"), wxT("RP_RS"), wxT("CP_RS") };
+	for (int i = 0; i < 4; i++) {
+		m_WrappersCtrl->InsertColumn(i, cols[i]);
+	}
 
-  //populate list
-  WRAPPER_ITEM* pItem = m_pWrappers;
-  while (pItem != NULL)
-  {
-    AddWrapper(pItem);
-    pItem = pItem->pNext;
-  }
+	//populate list
+	WRAPPER_ITEM* pItem = m_pWrappers;
+	while (pItem != NULL)
+	{
+		AddWrapper(pItem);
+		pItem = pItem->pNext;
+	}
 
-  m_BttnRemoveWrapper->Enable(m_nWrappers > 0);
+	m_BttnRemoveWrapper->Enable(m_nWrappers > 0);
 
-  //validators for the first part
-  radioBox1->SetValidator(mafGUIValidator(this, ID_INPUTMODE, radioBox1, &m_InputMode));
-  checkBox9->SetValidator(mafGUIValidator(this, ID_GENERATE_FIBERS, checkBox9, &m_VisMode));
-  chckUseRefSys->SetValidator(mafGUIValidator(this, ID_USE_REFSYS, chckUseRefSys, &m_UseRefSys));
-  MuscleCtrl->SetValidator(mafGUIValidator(this, wxID_ANY, MuscleCtrl, &m_MuscleVmeName));
-  bttnSelectMuscle->SetValidator(mafGUIValidator(this, ID_RESTPOSE_MUSCLE_LINK, bttnSelectMuscle));
+	//validators for the first part
+	radioBox1->SetValidator(mafGUIValidator(this, ID_INPUTMODE, radioBox1, &m_InputMode));
+	checkBox9->SetValidator(mafGUIValidator(this, ID_GENERATE_FIBERS, checkBox9, &m_VisMode));
+	chckUseRefSys->SetValidator(mafGUIValidator(this, ID_USE_REFSYS, chckUseRefSys, &m_UseRefSys));
+	MuscleCtrl->SetValidator(mafGUIValidator(this, wxID_ANY, MuscleCtrl, &m_MuscleVmeName));
+	bttnSelectMuscle->SetValidator(mafGUIValidator(this, ID_RESTPOSE_MUSCLE_LINK, bttnSelectMuscle));
 
-  //validators for Wrappers
-  m_BttnSelRP->SetValidator(mafGUIValidator(this, ID_SELECT_RP, m_BttnSelRP));
-  bttnSelCP->SetValidator(mafGUIValidator(this, ID_SELECT_CP, bttnSelCP));
-  m_BttnSelectRPRefSys->SetValidator(mafGUIValidator(this, ID_SELECT_RP_REFSYS_LINK, m_BttnSelectRPRefSys));
-  bttnSelectCPRefSys->SetValidator(mafGUIValidator(this, ID_SELECT_CP_REFSYS_LINK, bttnSelectCPRefSys));  
-  m_BttnAddWrapper->SetValidator(mafGUIValidator(this, ID_ADDWRAPPER, m_BttnAddWrapper));
-  m_BttnRemoveWrapper->SetValidator(mafGUIValidator(this, ID_REMOVEWRAPPER, m_BttnRemoveWrapper));
-  m_RPNameCtrl->SetValidator(mafGUIValidator(this, ID_RESTPOSE_WRAPPER_LINK, m_RPNameCtrl, &m_WrappersVmeName[0]));
-  CPNameCtrl->SetValidator(mafGUIValidator(this, ID_CURRENTPOSE_WRAPPER_LINK, CPNameCtrl, &m_WrappersVmeName[1]));
-  m_RPRefSysVmeCtrl->SetValidator(mafGUIValidator(this, ID_RESTPOSE_REFSYS_LINK, m_RPRefSysVmeCtrl, &m_RefSysVmeName[0]));
-  CPRefSysVmeCtrl->SetValidator(mafGUIValidator(this, ID_CURRENTPOSE_REFSYS_LINK, CPRefSysVmeCtrl, &m_RefSysVmeName[1]));
+	//validators for Wrappers
+	m_BttnSelRP->SetValidator(mafGUIValidator(this, ID_SELECT_RP, m_BttnSelRP));
+	bttnSelCP->SetValidator(mafGUIValidator(this, ID_SELECT_CP, bttnSelCP));
+	m_BttnSelectRPRefSys->SetValidator(mafGUIValidator(this, ID_SELECT_RP_REFSYS_LINK, m_BttnSelectRPRefSys));
+	bttnSelectCPRefSys->SetValidator(mafGUIValidator(this, ID_SELECT_CP_REFSYS_LINK, bttnSelectCPRefSys));
+	m_BttnAddWrapper->SetValidator(mafGUIValidator(this, ID_ADDWRAPPER, m_BttnAddWrapper));
+	m_BttnRemoveWrapper->SetValidator(mafGUIValidator(this, ID_REMOVEWRAPPER, m_BttnRemoveWrapper));
+	m_RPNameCtrl->SetValidator(mafGUIValidator(this, ID_RESTPOSE_WRAPPER_LINK, m_RPNameCtrl, &m_WrappersVmeName[0]));
+	CPNameCtrl->SetValidator(mafGUIValidator(this, ID_CURRENTPOSE_WRAPPER_LINK, CPNameCtrl, &m_WrappersVmeName[1]));
+	m_RPRefSysVmeCtrl->SetValidator(mafGUIValidator(this, ID_RESTPOSE_REFSYS_LINK, m_RPRefSysVmeCtrl, &m_RefSysVmeName[0]));
+	CPRefSysVmeCtrl->SetValidator(mafGUIValidator(this, ID_CURRENTPOSE_REFSYS_LINK, CPRefSysVmeCtrl, &m_RefSysVmeName[1]));
 
-  //validators for Fiber Options
-  OAreaName->SetValidator(mafGUIValidator(this, wxID_ANY, OAreaName, &m_OIVMEName[0]));
-  IAreaName->SetValidator(mafGUIValidator(this, wxID_ANY, IAreaName, &m_OIVMEName[1]));
-  bttnSelOA->SetValidator(mafGUIValidator(this, ID_FIBERS_ORIGIN_LINK, bttnSelOA));
-  bttnSelIA->SetValidator(mafGUIValidator(this, ID_FIBERS_INSERTION_LINK, bttnSelIA));
-  choice1->SetValidator(mafGUIValidator(this, ID_FIBERS_TEMPLATE, choice1, &m_FbTemplate));
-  textCtrl20->SetValidator(mafGUIValidator(this, ID_FIBERS_NUMFIB, textCtrl20, &m_FbNumFib, 1, 10000));
-  textCtrl201->SetValidator(mafGUIValidator(this, ID_FIBERS_RESOLUTION, textCtrl201, &m_FbResolution, 1, 499));     
-  textCtrl2011->SetValidator(mafGUIValidator(this, ID_FIBERS_THICKNESS, textCtrl2011, &m_FbThickness, 0.0, std::numeric_limits<double>::max(), -1));
-  checkBox10->SetValidator(mafGUIValidator(this, ID_FIBERS_SMOOTH, checkBox10, &m_FbSmooth));
-  m_SmStepsCtrl->SetValidator(mafGUIValidator(this, ID_FIBERS_SMOOTH_STEPS, m_SmStepsCtrl, &m_FbSmoothSteps, 1, 100));
-  m_SmWeightCtrl->SetValidator(mafGUIValidator(this, ID_FIBERS_SMOOTH_WEIGHT, m_SmWeightCtrl, &m_FbSmoothWeight, 0.0, std::numeric_limits<double>::max(), -1));
-  checkBox11->SetValidator(mafGUIValidator(this, ID_FIBERS_DEBUG_SHOWTEMPLATE, checkBox11, &m_FbDebugShowTemplate));  
-  chckDebug2->SetValidator(mafGUIValidator(this, ID_FIBERS_DEBUG_SHOWFITTING, chckDebug2, &m_FbDebugShowFitting));  
-  chckDebug3->SetValidator(mafGUIValidator(this, ID_FIBERS_DEBUG_SHOWFITTINGRES, chckDebug3, &m_FbDebugShowFittingRes));  
+	//validators for Fiber Options
+	OAreaName->SetValidator(mafGUIValidator(this, wxID_ANY, OAreaName, &m_OIVMEName[0]));
+	IAreaName->SetValidator(mafGUIValidator(this, wxID_ANY, IAreaName, &m_OIVMEName[1]));
+	bttnSelOA->SetValidator(mafGUIValidator(this, ID_FIBERS_ORIGIN_LINK, bttnSelOA));
+	bttnSelIA->SetValidator(mafGUIValidator(this, ID_FIBERS_INSERTION_LINK, bttnSelIA));
+	choice1->SetValidator(mafGUIValidator(this, ID_FIBERS_TEMPLATE, choice1, &m_FbTemplate));
+	textCtrl20->SetValidator(mafGUIValidator(this, ID_FIBERS_NUMFIB, textCtrl20, &m_FbNumFib, 1, 10000));
+	textCtrl201->SetValidator(mafGUIValidator(this, ID_FIBERS_RESOLUTION, textCtrl201, &m_FbResolution, 1, 499));
+	textCtrl2011->SetValidator(mafGUIValidator(this, ID_FIBERS_THICKNESS, textCtrl2011, &m_FbThickness, 0.0, std::numeric_limits<double>::max(), -1));
+	checkBox10->SetValidator(mafGUIValidator(this, ID_FIBERS_SMOOTH, checkBox10, &m_FbSmooth));
+	m_SmStepsCtrl->SetValidator(mafGUIValidator(this, ID_FIBERS_SMOOTH_STEPS, m_SmStepsCtrl, &m_FbSmoothSteps, 1, 100));
+	m_SmWeightCtrl->SetValidator(mafGUIValidator(this, ID_FIBERS_SMOOTH_WEIGHT, m_SmWeightCtrl, &m_FbSmoothWeight, 0.0, std::numeric_limits<double>::max(), -1));
+	checkBox11->SetValidator(mafGUIValidator(this, ID_FIBERS_DEBUG_SHOWTEMPLATE, checkBox11, &m_FbDebugShowTemplate));
+	chckDebug2->SetValidator(mafGUIValidator(this, ID_FIBERS_DEBUG_SHOWFITTING, chckDebug2, &m_FbDebugShowFitting));
+	chckDebug3->SetValidator(mafGUIValidator(this, ID_FIBERS_DEBUG_SHOWFITTINGRES, chckDebug3, &m_FbDebugShowFittingRes));
 
-  radioBox1->GetToolTip()->GetWindow()->SetMaxSize(wxSize(1600, 75));
+	radioBox1->GetToolTip()->GetWindow()->SetMaxSize(wxSize(1600, 75));
 
-  m_Gui->Add(bSizer18);
-  m_Gui->FitGui();
+	gui->Add(bSizer18);
+	gui->FitGui();
 
-  UpdateControls();
-  InternalUpdate();  
-  return m_Gui;
+	UpdateControls();
+	InternalUpdate();
+	return gui;
 }
 
 //-------------------------------------------------------------------------
-void medVMEMuscleWrapper::OnEvent(mafEventBase *maf_event)
+void medVMEMuscleWrapper::OnEvent(mafEventBase* maf_event)
 //-------------------------------------------------------------------------
-{  
-  // events to be sent up or down in the tree are simply forwarded
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    bool bNeedUpdate = false;
-    bool bEventHandled = true;
+{
+	// events to be sent up or down in the tree are simply forwarded
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
+	{
+		bool bNeedUpdate = false;
+		bool bEventHandled = true;
 
-    int nId = e->GetId();
-    switch (nId)
-    {
-    //input mode has changed from simple to advanced or vice versa
-    case ID_INPUTMODE:
-      if (m_InputMode == 1 && m_pWrappers != NULL)
-      {
-        wxMessageBox(_("Wrappers inserted in simple mode might not work in advanced mode."),
-           _("Warning"), wxCENTRE | wxOK | wxICON_INFORMATION);
-      }
+		int nId = e->GetId();
+		switch (nId)
+		{
+			//input mode has changed from simple to advanced or vice versa
+		case ID_INPUTMODE:
+			if (m_InputMode == 1 && m_pWrappers != NULL)
+			{
+				wxMessageBox(_("Wrappers inserted in simple mode might not work in advanced mode."),
+					_("Warning"), wxCENTRE | wxOK | wxICON_INFORMATION);
+			}
 
-      UpdateControls();      
-      bNeedUpdate = true;
-      break;
-    
+			UpdateControls();
+			bNeedUpdate = true;
+			break;
 
-    case ID_RESTPOSE_MUSCLE_LINK:
-      {
-        if (bNeedUpdate = SelectVme(_L("Choose muscle vme link (in the rest pose)"),
-          (intptr_t)&medVMEMuscleWrapper::VMEAcceptMuscle, m_MuscleVme, m_MuscleVmeName))
-        {
-          //new muscle is here => we need to pass its matrix to our output
-          this->SetMatrix(*m_MuscleVme->GetOutput()->GetMatrix());
-        }
-      }
-      break;
 
-    case ID_SELECT_RP_REFSYS_LINK:
-      SelectVme(_L("Choose the reference system for the rest pose wrapper"),
-        (intptr_t)&medVMEMuscleWrapper::VMEAcceptRefSys, m_RefSysVme[0], m_RefSysVmeName[0]);
-      break;
+		case ID_RESTPOSE_MUSCLE_LINK:
+		{
+			if (bNeedUpdate = SelectVme(_L("Choose muscle vme link (in the rest pose)"),
+				(intptr_t)&medVMEMuscleWrapper::VMEAcceptMuscle, m_MuscleVme, m_MuscleVmeName))
+			{
+				//new muscle is here => we need to pass its matrix to our output
+				this->SetMatrix(*m_MuscleVme->GetOutput()->GetMatrix());
+			}
+		}
+		break;
 
-    case ID_SELECT_CP_REFSYS_LINK:
-      SelectVme(_L("Choose the reference system for the rest pose wrapper"),
-        (intptr_t)&medVMEMuscleWrapper::VMEAcceptRefSys, m_RefSysVme[1], m_RefSysVmeName[1]);
-      break;
+		case ID_SELECT_RP_REFSYS_LINK:
+			SelectVme(_L("Choose the reference system for the rest pose wrapper"),
+				(intptr_t)&medVMEMuscleWrapper::VMEAcceptRefSys, m_RefSysVme[0], m_RefSysVmeName[0]);
+			break;
 
-    case ID_SELECT_RP:
-      if (SelectVme(_L("Choose wrapper vme link (in the rest pose)"),
-        (intptr_t)&medVMEMuscleWrapper::VMEAcceptWrapper, m_WrappersVme[0], m_WrappersVmeName[0])
-        )        
-        m_BttnAddWrapper->Enable(m_WrappersVme[1] != NULL);
-      break;
+		case ID_SELECT_CP_REFSYS_LINK:
+			SelectVme(_L("Choose the reference system for the rest pose wrapper"),
+				(intptr_t)&medVMEMuscleWrapper::VMEAcceptRefSys, m_RefSysVme[1], m_RefSysVmeName[1]);
+			break;
 
-    case ID_SELECT_CP:
-      if (SelectVme(_L("Choose wrapper vme link (in the current pose)"),
-        (intptr_t)&medVMEMuscleWrapper::VMEAcceptWrapper, m_WrappersVme[1], m_WrappersVmeName[1])
-        )
-          m_BttnAddWrapper->Enable(m_InputMode == 0 || m_WrappersVme[0] != NULL);      
-      break;    
+		case ID_SELECT_RP:
+			if (SelectVme(_L("Choose wrapper vme link (in the rest pose)"),
+				(intptr_t)&medVMEMuscleWrapper::VMEAcceptWrapper, m_WrappersVme[0], m_WrappersVmeName[0])
+				)
+				m_BttnAddWrapper->Enable(m_WrappersVme[1] != NULL);
+			break;
 
-    case ID_ADDWRAPPER:
-      AddWrapper(m_WrappersVme[0], m_WrappersVme[1], m_RefSysVme[0], m_RefSysVme[1]);
-      for (int i = 0; i < 2; i++)
-      {
-        m_RefSysVme[i] = m_WrappersVme[i] = NULL;
-        m_RefSysVmeName[i] = m_WrappersVmeName[i] = _R("");
-      }
-            
-      m_BttnAddWrapper->Enable(FALSE);
-      m_Gui->Update();
+		case ID_SELECT_CP:
+			if (SelectVme(_L("Choose wrapper vme link (in the current pose)"),
+				(intptr_t)&medVMEMuscleWrapper::VMEAcceptWrapper, m_WrappersVme[1], m_WrappersVmeName[1])
+				)
+				m_BttnAddWrapper->Enable(m_InputMode == 0 || m_WrappersVme[0] != NULL);
+			break;
 
-      m_nWrappers++;
-      m_BttnRemoveWrapper->Enable();
-      bNeedUpdate = true;
-      break;
+		case ID_ADDWRAPPER:
+			AddWrapper(m_WrappersVme[0], m_WrappersVme[1], m_RefSysVme[0], m_RefSysVme[1]);
+			for (int i = 0; i < 2; i++)
+			{
+				m_RefSysVme[i] = m_WrappersVme[i] = NULL;
+				m_RefSysVmeName[i] = m_WrappersVmeName[i] = _R("");
+			}
 
-    case ID_REMOVEWRAPPER:
-      {
-        //find the selected item
-        int nIndex = m_WrappersCtrl->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED); 
-        if (nIndex >= 0)
-        {
-          RemoveWrapper(nIndex);
+			m_BttnAddWrapper->Enable(FALSE);
+			UpdateGUI();
 
-          m_BttnRemoveWrapper->Enable((--m_nWrappers) != 0);
-          bNeedUpdate = true;
-        }
+			m_nWrappers++;
+			m_BttnRemoveWrapper->Enable();
+			bNeedUpdate = true;
+			break;
 
-        break;
-      }
+		case ID_REMOVEWRAPPER:
+		{
+			//find the selected item
+			int nIndex = m_WrappersCtrl->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+			if (nIndex >= 0)
+			{
+				RemoveWrapper(nIndex);
 
-    case ID_FIBERS_ORIGIN_LINK:
-      bNeedUpdate = SelectVme(_L("Choose a landmark cloud (or a landmark) that represent the origin area of muscle."),
-        (intptr_t)&medVMEMuscleWrapper::VMEAcceptOIAreas, m_OIVME[0], m_OIVMEName[0]);
+				m_BttnRemoveWrapper->Enable((--m_nWrappers) != 0);
+				bNeedUpdate = true;
+			}
 
-      bNeedUpdate &= m_VisMode != 0;
-      break;
+			break;
+		}
 
-    case ID_FIBERS_INSERTION_LINK:
-      bNeedUpdate = SelectVme(_L("Choose a landmark cloud (or a landmark) that represent the insertion area of muscle."),
-        (intptr_t)&medVMEMuscleWrapper::VMEAcceptOIAreas, m_OIVME[1], m_OIVMEName[1]);
+		case ID_FIBERS_ORIGIN_LINK:
+			bNeedUpdate = SelectVme(_L("Choose a landmark cloud (or a landmark) that represent the origin area of muscle."),
+				(intptr_t)&medVMEMuscleWrapper::VMEAcceptOIAreas, m_OIVME[0], m_OIVMEName[0]);
 
-      bNeedUpdate &= m_VisMode != 0;
-      break;
+			bNeedUpdate &= m_VisMode != 0;
+			break;
 
-    default:
-      if (nId >= ID_GENERATE_FIBERS && nId <= ID_FIBERS_DEBUG_SHOWFITTINGRES)
-      {
-        bNeedUpdate = nId == ID_GENERATE_FIBERS || m_VisMode != 0;      
+		case ID_FIBERS_INSERTION_LINK:
+			bNeedUpdate = SelectVme(_L("Choose a landmark cloud (or a landmark) that represent the insertion area of muscle."),
+				(intptr_t)&medVMEMuscleWrapper::VMEAcceptOIAreas, m_OIVME[1], m_OIVMEName[1]);
 
-        if (nId == ID_FIBERS_SMOOTH)
-          UpdateControls();
-      }
-      else             
-        bEventHandled = false;      
-      
-      break;
-    } //end switch
+			bNeedUpdate &= m_VisMode != 0;
+			break;
 
-    if (bNeedUpdate)
-    {
-      m_bNeedUpdate = true;
-      InternalUpdate();
-      
-      //force redrawing
-      mafEvent ev(this, VME_SELECTED); ev.SetVme(this);
-      this->ForwardUpEvent(&ev);
-      return;
-    }
+		default:
+			if (nId >= ID_GENERATE_FIBERS && nId <= ID_FIBERS_DEBUG_SHOWFITTINGRES)
+			{
+				bNeedUpdate = nId == ID_GENERATE_FIBERS || m_VisMode != 0;
 
-    if (bEventHandled)
-      return;    
-  }
-  
-  Superclass::OnEvent(maf_event);
+				if (nId == ID_FIBERS_SMOOTH)
+					UpdateControls();
+			}
+			else
+				bEventHandled = false;
 
-  if (maf_event->GetId() == NODE_DETACHED_FROM_TREE)
-  {
-    m_bNeedUpdate = true;
-    m_bLinksRestored = false; 
+			break;
+		} //end switch
 
-    Modified();
-  }
+		if (bNeedUpdate)
+		{
+			m_bNeedUpdate = true;
+			InternalUpdate();
+
+			//force redrawing
+			mafEvent ev(this, VME_SELECTED); ev.SetVme(this);
+			this->ForwardUpEvent(&ev);
+			return;
+		}
+
+		if (bEventHandled)
+			return;
+	}
+
+	Superclass::OnEvent(maf_event);
+
+	if (maf_event->GetId() == NODE_DETACHED_FROM_TREE)
+	{
+		m_bNeedUpdate = true;
+		m_bLinksRestored = false;
+
+		Modified();
+	}
 }
 
 //------------------------------------------------------------------------
 //Adds a new wrapper into the list of wrappers and GUI list
 //pxP_RS denotes reference systems used for corresponding wrappers (optional). 
 void medVMEMuscleWrapper::AddWrapper(mafVME* pRP, mafVME* pCP,
-                                     mafVME* pRP_RS, mafVME* pCP_RS)
-//------------------------------------------------------------------------
+	mafVME* pRP_RS, mafVME* pCP_RS)
+	//------------------------------------------------------------------------
 {
-  WRAPPER_ITEM* pItem = new WRAPPER_ITEM;
-  memset(pItem, 0, sizeof(WRAPPER_ITEM));
-  
-  pItem->pVmeRP_CP[0] = pRP;
-  pItem->pVmeRP_CP[1] = pCP;
-  pItem->pVmeRefSys_RP_CP[0] = pRP_RS;
-  pItem->pVmeRefSys_RP_CP[1] = pCP_RS;
+	WRAPPER_ITEM* pItem = new WRAPPER_ITEM;
+	memset(pItem, 0, sizeof(WRAPPER_ITEM));
 
-  AddWrapper(pItem);
+	pItem->pVmeRP_CP[0] = pRP;
+	pItem->pVmeRP_CP[1] = pCP;
+	pItem->pVmeRefSys_RP_CP[0] = pRP_RS;
+	pItem->pVmeRefSys_RP_CP[1] = pCP_RS;
+
+	AddWrapper(pItem);
 }
 //------------------------------------------------------------------------
 //Adds a new wrapper into the list of wrappers and GUI list
 void medVMEMuscleWrapper::AddWrapper(WRAPPER_ITEM* pItem)
 //------------------------------------------------------------------------
 {
-  int nCount = m_WrappersCtrl->GetItemCount();
-  if (nCount == 0)
-    m_pWrappers = pItem;
-  else
-  {
-    WRAPPER_ITEM* pPrev = (WRAPPER_ITEM*)m_WrappersCtrl->GetItemData(nCount - 1);
-    pItem->pLast = pPrev;
-    pPrev->pNext = pItem;
-  }
-  
-  wxString szName[4];
-  for (int i = 0; i < 2; i++)
-  {
-    if (pItem->pVmeRP_CP[i] != NULL)
-      szName[i] = pItem->pVmeRP_CP[i]->GetName().toWx();
+	int nCount = m_WrappersCtrl->GetItemCount();
+	if (nCount == 0)
+		m_pWrappers = pItem;
+	else
+	{
+		WRAPPER_ITEM* pPrev = (WRAPPER_ITEM*)m_WrappersCtrl->GetItemData(nCount - 1);
+		pItem->pLast = pPrev;
+		pPrev->pNext = pItem;
+	}
 
-    if (pItem->pVmeRefSys_RP_CP[i] != NULL)
-      szName[2+i] = pItem->pVmeRefSys_RP_CP[i]->GetName().toWx();
-  }  
+	wxString szName[4];
+	for (int i = 0; i < 2; i++)
+	{
+		if (pItem->pVmeRP_CP[i] != NULL)
+			szName[i] = pItem->pVmeRP_CP[i]->GetName().toWx();
 
-  m_WrappersCtrl->InsertItem(nCount, szName[0]);
-  for (int i = 1; i <= 3; i++){
-    m_WrappersCtrl->SetItem(nCount, i, szName[i]);
-  }  
-  
-  m_WrappersCtrl->SetItemPtrData(nCount, (wxUIntPtr)pItem);
-  m_WrappersCtrl->SetItemState(nCount, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED,
-    wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
-  m_WrappersCtrl->EnsureVisible(nCount);
+		if (pItem->pVmeRefSys_RP_CP[i] != NULL)
+			szName[2 + i] = pItem->pVmeRefSys_RP_CP[i]->GetName().toWx();
+	}
 
-  //and save changes into Links
-  StoreMeterLinks(); 
+	m_WrappersCtrl->InsertItem(nCount, szName[0]);
+	for (int i = 1; i <= 3; i++) {
+		m_WrappersCtrl->SetItem(nCount, i, szName[i]);
+	}
+
+	m_WrappersCtrl->SetItemPtrData(nCount, (wxUIntPtr)pItem);
+	m_WrappersCtrl->SetItemState(nCount, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED,
+		wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+	m_WrappersCtrl->EnsureVisible(nCount);
+
+	//and save changes into Links
+	StoreMeterLinks();
 }
 
 //------------------------------------------------------------------------
@@ -1670,32 +1670,32 @@ void medVMEMuscleWrapper::AddWrapper(WRAPPER_ITEM* pItem)
 void medVMEMuscleWrapper::RemoveWrapper(int nIndex)
 //------------------------------------------------------------------------
 {
-  WRAPPER_ITEM* pItem = (WRAPPER_ITEM*)m_WrappersCtrl->GetItemData(nIndex);
-  if (pItem->pLast != NULL)
-    pItem->pLast->pNext = pItem->pNext;
-  else
-    m_pWrappers = pItem->pNext;
+	WRAPPER_ITEM* pItem = (WRAPPER_ITEM*)m_WrappersCtrl->GetItemData(nIndex);
+	if (pItem->pLast != NULL)
+		pItem->pLast->pNext = pItem->pNext;
+	else
+		m_pWrappers = pItem->pNext;
 
-  if (pItem->pNext != NULL)
-    pItem->pNext->pLast = pItem->pLast;
-  
-  vtkDEL(pItem->pCurves[0]);
-  vtkDEL(pItem->pCurves[1]);
-  delete pItem;
+	if (pItem->pNext != NULL)
+		pItem->pNext->pLast = pItem->pLast;
 
-  m_WrappersCtrl->DeleteItem(nIndex);
-  if (nIndex == m_WrappersCtrl->GetItemCount())
-    nIndex--;
+	vtkDEL(pItem->pCurves[0]);
+	vtkDEL(pItem->pCurves[1]);
+	delete pItem;
 
-  if (nIndex >= 0)
-  {
-    m_WrappersCtrl->SetItemState(nIndex, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED,
-      wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
-    m_WrappersCtrl->EnsureVisible(nIndex);
-  }
+	m_WrappersCtrl->DeleteItem(nIndex);
+	if (nIndex == m_WrappersCtrl->GetItemCount())
+		nIndex--;
 
-  //and save changes into Links
-  StoreMeterLinks();
+	if (nIndex >= 0)
+	{
+		m_WrappersCtrl->SetItemState(nIndex, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED,
+			wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+		m_WrappersCtrl->EnsureVisible(nIndex);
+	}
+
+	//and save changes into Links
+	StoreMeterLinks();
 }
 
 //------------------------------------------------------------------------
@@ -1703,20 +1703,20 @@ void medVMEMuscleWrapper::RemoveWrapper(int nIndex)
 void medVMEMuscleWrapper::UpdateControls()
 //------------------------------------------------------------------------
 {
-  m_LabelRP->Enable(m_InputMode != 0);
-  m_RPNameCtrl->Enable(m_InputMode != 0);
-  m_BttnSelRP->Enable(m_InputMode != 0);
-  m_BttnAddWrapper->Enable(m_WrappersVme[1] != NULL &&
-                           (m_InputMode == 0 || m_WrappersVme[0] != NULL));
+	m_LabelRP->Enable(m_InputMode != 0);
+	m_RPNameCtrl->Enable(m_InputMode != 0);
+	m_BttnSelRP->Enable(m_InputMode != 0);
+	m_BttnAddWrapper->Enable(m_WrappersVme[1] != NULL &&
+		(m_InputMode == 0 || m_WrappersVme[0] != NULL));
 
-  m_LabelRP_RS->Enable(m_InputMode != 0);
-  m_RPRefSysVmeCtrl->Enable(m_InputMode != 0);
-  m_BttnSelectRPRefSys->Enable(m_InputMode != 0);
+	m_LabelRP_RS->Enable(m_InputMode != 0);
+	m_RPRefSysVmeCtrl->Enable(m_InputMode != 0);
+	m_BttnSelectRPRefSys->Enable(m_InputMode != 0);
 
-  m_SmLabel1->Enable(m_FbSmooth != 0);
-  m_SmLabel2->Enable(m_FbSmooth != 0);
-  m_SmStepsCtrl->Enable(m_FbSmooth != 0);
-  m_SmWeightCtrl->Enable(m_FbSmooth != 0);
+	m_SmLabel1->Enable(m_FbSmooth != 0);
+	m_SmLabel2->Enable(m_FbSmooth != 0);
+	m_SmStepsCtrl->Enable(m_FbSmooth != 0);
+	m_SmWeightCtrl->Enable(m_FbSmooth != 0);
 }
 
 //------------------------------------------------------------------------
@@ -1724,71 +1724,71 @@ void medVMEMuscleWrapper::UpdateControls()
 //The VME that can be selected are defined by accept_callback.
 //If no VME is selected, the routine returns false, otherwise it returns
 //reference to the VME, its name and updates GUI
-bool medVMEMuscleWrapper::SelectVme(mafString title, 
-    intptr_t accept_callback, mafVME*& pOutVME, mafString& szOutVmeName)
-//------------------------------------------------------------------------
+bool medVMEMuscleWrapper::SelectVme(mafString title,
+	intptr_t accept_callback, mafVME*& pOutVME, mafString& szOutVmeName)
+	//------------------------------------------------------------------------
 {
-  mafEvent ev(this, VME_CHOOSE); ev.SetArg(accept_callback);
-  ev.SetString(&title);
-  ForwardUpEvent(ev);
+	mafEvent ev(this, VME_CHOOSE); ev.SetArg(accept_callback);
+	ev.SetString(&title);
+	ForwardUpEvent(ev);
 
-  auto vme = mafVME::SafeDownCast(ev.GetVme());
-  if (vme == nullptr)
-    return false;
-  
-  szOutVmeName = (pOutVME = vme)->GetName();  
-  m_Gui->Update();       
-  return true;
+	auto vme = mafVME::SafeDownCast(ev.GetVme());
+	if (vme == nullptr)
+		return false;
+
+	szOutVmeName = (pOutVME = vme)->GetName();
+	UpdateGUI();
+	return true;
 }
 
 #pragma region Accept VME Routines
 //------------------------------------------------------------------------
-/*static*/ bool medVMEMuscleWrapper::VMEAcceptMuscle(mafNode *node) 
+/*static*/ bool medVMEMuscleWrapper::VMEAcceptMuscle(mafNode* node)
 //------------------------------------------------------------------------
 {
-  mafVME* vme = mafVME::SafeDownCast(node);
-  if (vme != NULL)
-  {    
-    if (vme->GetOutput()->IsA("mafVMEOutputSurface"))
-      //|| vme->GetOutput()->IsA("mafVMEOutputMesh")
-      return true;
-  }
+	mafVME* vme = mafVME::SafeDownCast(node);
+	if (vme != NULL)
+	{
+		if (vme->GetOutput()->IsA("mafVMEOutputSurface"))
+			//|| vme->GetOutput()->IsA("mafVMEOutputMesh")
+			return true;
+	}
 
-  return false;
+	return false;
 }
 
 //------------------------------------------------------------------------
-/*static*/ bool medVMEMuscleWrapper::VMEAcceptWrapper(mafNode *node) 
+/*static*/ bool medVMEMuscleWrapper::VMEAcceptWrapper(mafNode* node)
 //------------------------------------------------------------------------
 {
-  mafVME* vme = mafVME::SafeDownCast(node);
-  if (vme != NULL)
-  {    
-    if (
-      vme->GetOutput()->IsA("mafVMEOutputMeter") ||
-      vme->GetOutput()->IsA("medVMEOutputWrappedMeter") ||
-      vme->GetOutput()->IsA("medVMEOutputComputeWrapping")  //TODO: why we cannot live with medVMEOutputWrappedMeter only?
-      )      
-      return true;
-  }
+	mafVME* vme = mafVME::SafeDownCast(node);
+	if (vme != NULL)
+	{
+		if (
+			vme->GetOutput()->IsA("mafVMEOutputMeter") ||
+			vme->GetOutput()->IsA("medVMEOutputWrappedMeter") ||
+			vme->GetOutput()->IsA("medVMEOutputComputeWrapping")  //TODO: why we cannot live with medVMEOutputWrappedMeter only?
+			)
+			return true;
+	}
 
-  return false;
+	return false;
 }
 
 //------------------------------------------------------------------------
-/*static*/ bool medVMEMuscleWrapper::VMEAcceptOIAreas(mafNode *node) 
+/*static*/ bool medVMEMuscleWrapper::VMEAcceptOIAreas(mafNode* node)
 //------------------------------------------------------------------------
 {
-  mafVME* vme = mafVME::SafeDownCast(node);
-  return vme != NULL && 
-    (vme->IsA("mafVMELandmarkCloud") || vme->IsA("mafVMELandmark"));    
+	mafVME* vme = mafVME::SafeDownCast(node);
+	return vme != NULL &&
+		(vme->IsA("mafVMELandmarkCloud") || vme->IsA("mafVMELandmark"));
 }
 
 //------------------------------------------------------------------------
-/*static*/ bool medVMEMuscleWrapper::VMEAcceptRefSys(mafNode *node) 
+/*static*/ bool medVMEMuscleWrapper::VMEAcceptRefSys(mafNode* node)
 //------------------------------------------------------------------------
-{  
-  return mafVME::SafeDownCast(node) != NULL;
+{
+	return mafVME::SafeDownCast(node) != NULL;
 }
 #pragma endregion Accept VME Routines
 #pragma endregion GUI and Events Handling

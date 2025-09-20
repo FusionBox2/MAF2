@@ -3,7 +3,7 @@
  Program: MAF2Medical
  Module: mafView3D
  Authors: Matteo Giacomoni - Daniele Giunchi
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -51,8 +51,8 @@
 
 enum ID_PIPE
 {
-  ID_PIPE_ISO = 0,
-	ID_PIPE_MIP ,
+	ID_PIPE_ISO = 0,
+	ID_PIPE_MIP,
 	ID_PIPE_DRR,
 	ID_PIPE_VR,
 	ID_PIPE_ALL,
@@ -64,8 +64,8 @@ mafCxxTypeMacro(mafView3D);
 
 //----------------------------------------------------------------------------
 mafView3D::mafView3D(const mafString& label, int camera_position, bool show_axes, bool show_grid, bool show_ruler, int stereo)
-:mafViewVTK(label,camera_position,show_axes,show_grid,show_ruler,stereo)
-//----------------------------------------------------------------------------
+	:mafViewVTK(label, camera_position, show_axes, show_grid, show_ruler, stereo)
+	//----------------------------------------------------------------------------
 {
 	m_Choose = ID_PIPE_ISO;
 	m_CurrentVolume = NULL;
@@ -82,264 +82,264 @@ mafView3D::~mafView3D()
 	m_CurrentSurface = NULL;
 }
 //----------------------------------------------------------------------------
-mafView *mafView3D::Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled)
+mafView* mafView3D::Copy(mafBaseEventHandler* Listener, bool lightCopyEnabled)
 //----------------------------------------------------------------------------
 {
-  m_LightCopyEnabled = lightCopyEnabled;
-  mafView3D *v = new mafView3D(GetLabel(), m_CameraPositionId, m_ShowAxes,m_ShowGrid, m_ShowRuler, m_StereoType);
-  v->SetListener(Listener);
-  v->m_Id = m_Id;
-  v->m_PipeMap = m_PipeMap;
-  v->m_LightCopyEnabled = lightCopyEnabled;
-  v->Create();
-  return v;
+	m_LightCopyEnabled = lightCopyEnabled;
+	mafView3D* v = new mafView3D(GetLabel(), m_CameraPositionId, m_ShowAxes, m_ShowGrid, m_ShowRuler, m_StereoType);
+	v->SetListener(Listener);
+	v->m_Id = m_Id;
+	v->m_PipeMap = m_PipeMap;
+	v->m_LightCopyEnabled = lightCopyEnabled;
+	v->Create();
+	return v;
 }
 //----------------------------------------------------------------------------
-void mafView3D::OnEvent(mafEventBase *maf_event)
+void mafView3D::OnEvent(mafEventBase* maf_event)
 //----------------------------------------------------------------------------
 {
-	if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    switch(e->GetId()) 
-    {
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
+	{
+		switch (e->GetId())
+		{
 		case ID_RESAMPLE_FACTOR:
+		{
+			auto pipeDDR = medPipeVolumeDRR::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
+			if (pipeDDR)
 			{
-				auto pipeDDR=medPipeVolumeDRR::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
-				if(pipeDDR)
-				{
-					pipeDDR->SetResampleFactor(m_ResampleFactor);
-				}
-				auto pipeVR=medPipeVolumeVR::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
-				if(pipeVR)
-				{
-					pipeVR->SetResampleFactor(m_ResampleFactor);
-				}
-				auto pipeMIP=medPipeVolumeMIP::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
-				if(pipeMIP)
-				{
-					pipeMIP->SetResampleFactor(m_ResampleFactor);
-				}
-				//CameraReset();
+				pipeDDR->SetResampleFactor(m_ResampleFactor);
+			}
+			auto pipeVR = medPipeVolumeVR::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
+			if (pipeVR)
+			{
+				pipeVR->SetResampleFactor(m_ResampleFactor);
+			}
+			auto pipeMIP = medPipeVolumeMIP::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
+			if (pipeMIP)
+			{
+				pipeMIP->SetResampleFactor(m_ResampleFactor);
+			}
+			//CameraReset();
+			CameraUpdate();
+		}
+		break;
+		case ID_CONTOUR_VALUE_ISO:
+		{
+			auto pipe = mafPipeIsosurface::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
+			if (pipe)
+			{
+				pipe->SetContourValue((float)m_ContourValueIso);
 				CameraUpdate();
 			}
-			break;
-		case ID_CONTOUR_VALUE_ISO:
-			{
-				auto pipe=mafPipeIsosurface::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
-				if(pipe)
-				{
-					pipe->SetContourValue((float)m_ContourValueIso);
-					CameraUpdate();
-				}
-			}
-			break;
+		}
+		break;
 		case ID_ALPHA_VALUE_ISO:
+		{
+			auto pipe = mafPipeIsosurface::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
+			if (pipe)
 			{
-				auto pipe=mafPipeIsosurface::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
-				if(pipe)
-				{
-					pipe->SetAlphaValue(m_AlphaValueIso);
-					CameraUpdate();
-				}
+				pipe->SetAlphaValue(m_AlphaValueIso);
+				CameraUpdate();
 			}
-			break;
+		}
+		break;
 		case ID_EXTRACT_ISO:
+		{
+			auto pipe = mafPipeIsosurface::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
+			if (pipe)
 			{
-				auto pipe=mafPipeIsosurface::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
-				if(pipe)
-				{
-					pipe->ExctractIsosurface();
-					CameraUpdate();
-				}
+				pipe->ExctractIsosurface();
+				CameraUpdate();
 			}
-			break;
+		}
+		break;
 		case ID_VOLUME_COLOR:
+		{
+			auto pipe = medPipeVolumeDRR::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
+			if (pipe)
 			{
-				auto pipe=medPipeVolumeDRR::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
-				if(pipe)
-				{
-          pipe->SetColor(m_VolumeColor);
-					CameraUpdate();
-				}
+				pipe->SetColor(m_VolumeColor);
+				CameraUpdate();
 			}
-			break;
+		}
+		break;
 		case ID_EXPOSURE_CORRECTION_L:
 		case ID_EXPOSURE_CORRECTION_H:
+		{
+			auto pipe = medPipeVolumeDRR::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
+			if (pipe)
 			{
-				auto pipe=medPipeVolumeDRR::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
-				if(pipe)
-				{
-					pipe->SetExposureCorrection(m_ExposureCorrection);
-					CameraUpdate();
-				}
+				pipe->SetExposureCorrection(m_ExposureCorrection);
+				CameraUpdate();
 			}
-			break;
+		}
+		break;
 		case ID_GAMMA:
+		{
+			auto pipe = medPipeVolumeDRR::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
+			if (pipe)
 			{
-				auto pipe=medPipeVolumeDRR::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
-				if(pipe)
-				{
-					pipe->SetGamma(m_Gamma);
-					CameraUpdate();
-				}
+				pipe->SetGamma(m_Gamma);
+				CameraUpdate();
 			}
-			break;
+		}
+		break;
 		case ID_CAMERA_ANGLE:
+		{
+			auto pipe = medPipeVolumeDRR::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
+			if (pipe)
 			{
-				auto pipe=medPipeVolumeDRR::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
-				if(pipe)
-				{
-					pipe->SetCameraAngle(m_CameraAngle);
-					CameraUpdate();
-				}
+				pipe->SetCameraAngle(m_CameraAngle);
+				CameraUpdate();
 			}
-			break;
+		}
+		break;
 		case ID_CAMERA_POSITION:
+		{
+			auto pipe = medPipeVolumeDRR::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
+			if (pipe)
 			{
-				auto pipe=medPipeVolumeDRR::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
-				if(pipe)
-				{
-					pipe->SetCameraPosition(m_CameraPositionDRR);
-					CameraUpdate();
-				}
+				pipe->SetCameraPosition(m_CameraPositionDRR);
+				CameraUpdate();
 			}
-			break;
+		}
+		break;
 		case ID_CAMERA_FOCUS:
+		{
+			auto pipe = medPipeVolumeDRR::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
+			if (pipe)
 			{
-				auto pipe=medPipeVolumeDRR::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
-				if(pipe)
-				{
-					pipe->SetCameraFocus(m_CameraFocus);
-					CameraUpdate();
-				}
+				pipe->SetCameraFocus(m_CameraFocus);
+				CameraUpdate();
 			}
-			break;
+		}
+		break;
 		case ID_CAMERA_ROLL:
+		{
+			auto pipe = medPipeVolumeDRR::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
+			if (pipe)
 			{
-				auto pipe=medPipeVolumeDRR::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
-				if(pipe)
+				pipe->SetCameraRoll(m_CameraRoll);
+				CameraUpdate();
+			}
+		}
+		break;
+		case ID_COMBO_PIPE:
+		{
+			if (((mafVME*)m_CurrentVolume)->GetVisualPipe().GetCStr())
+			{
+				mafVME* TempVolume = m_CurrentVolume;
+				if (m_CurrentSurface)
 				{
-					pipe->SetCameraRoll(m_CameraRoll);
+					if (!(m_Choose == ID_PIPE_ISO))
+					{
+						//{mafEvent evUnq(this,VME_SHOW,m_CurrentSurface,false); InvokeEvent(evUnq);}
+						VmeShow(m_CurrentSurface, false);
+					}
 					CameraUpdate();
 				}
-			}
-			break;
-		case ID_COMBO_PIPE:
-			{
-				if(((mafVME*)m_CurrentVolume)->GetVisualPipe().GetCStr())
+				this->VmeShow(m_CurrentVolume, false);
+				wxBusyCursor wait;
+				if (m_Choose == ID_PIPE_ISO)
 				{
-					mafVME *TempVolume=m_CurrentVolume;
-					if(m_CurrentSurface)
-					{
-						if(!(m_Choose == ID_PIPE_ISO))
-						{
-							//{mafEvent evUnq(this,VME_SHOW,m_CurrentSurface,false); InvokeEvent(evUnq);}
-							VmeShow(m_CurrentSurface,false);
-						}
-						CameraUpdate();
-					}
-					this->VmeShow(m_CurrentVolume,false);
-					wxBusyCursor wait;
-					if(m_Choose == ID_PIPE_ISO)
-					{
-						this->PlugVisualPipe(_R("mafVMEVolumeGray"),_R("mafPipeIsosurface"));
-					}
-          else if(m_Choose == ID_PIPE_MIP)
-          {
-            this->PlugVisualPipe(_R("mafVMEVolumeGray"),_R("medPipeVolumeMIP"));
-          }
-					else if(m_Choose == ID_PIPE_DRR)
-          {
-						this->PlugVisualPipe(_R("mafVMEVolumeGray"),_R("medPipeVolumeDRR"));
-          }
-          else if(m_Choose == ID_PIPE_VR)
-          {
-            this->PlugVisualPipe(_R("mafVMEVolumeGray"),_R("medPipeVolumeVR"));
-          }
-					this->VmeShow(TempVolume,true);
+					this->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("mafPipeIsosurface"));
 				}
+				else if (m_Choose == ID_PIPE_MIP)
+				{
+					this->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("medPipeVolumeMIP"));
+				}
+				else if (m_Choose == ID_PIPE_DRR)
+				{
+					this->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("medPipeVolumeDRR"));
+				}
+				else if (m_Choose == ID_PIPE_VR)
+				{
+					this->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("medPipeVolumeVR"));
+				}
+				this->VmeShow(TempVolume, true);
 			}
+		}
+		break;
+		default:
+			InvokeEvent(*maf_event);
 			break;
-    default:
-      InvokeEvent(*maf_event);
-    break;
-    }
-  }
-  else
-  {
-    InvokeEvent(*maf_event);
-  }
+		}
+	}
+	else
+	{
+		InvokeEvent(*maf_event);
+	}
 }
 //----------------------------------------------------------------------------
 void mafView3D::Create()
 //----------------------------------------------------------------------------
 {
-  if(m_LightCopyEnabled) return; //COPY_LIGHT
+	if (m_LightCopyEnabled) return; //COPY_LIGHT
 
-  m_Rwi = new mafRWI(mafGetFrame(), TWO_LAYER, m_ShowGrid, m_ShowAxes, m_ShowRuler, m_StereoType);
-  m_Rwi->SetListener(this);
-  m_Rwi->CameraSet(m_CameraPositionId);
-  m_Win = m_Rwi->m_RwiBase;
+	m_Rwi = new mafRWI(mafGetFrame(), TWO_LAYER, m_ShowGrid, m_ShowAxes, m_ShowRuler, m_StereoType);
+	m_Rwi->SetListener(this);
+	m_Rwi->CameraSet(m_CameraPositionId);
+	m_Win = m_Rwi->m_RwiBase;
 
-  m_Sg  = new mafSceneGraph(this,m_Rwi->m_RenFront,m_Rwi->m_RenBack);
-  m_Sg->SetListener(this);
-  m_Rwi->m_Sg = m_Sg;
+	m_Sg = new mafSceneGraph(this, m_Rwi->m_RenFront, m_Rwi->m_RenBack);
+	m_Sg->SetListener(this);
+	m_Rwi->m_Sg = m_Sg;
 
-  vtkNEW(m_Picker3D);
-  vtkNEW(m_Picker2D);
-  m_Picker2D->SetTolerance(0.005);
-  m_Picker2D->InitializePickList();
+	vtkNEW(m_Picker3D);
+	vtkNEW(m_Picker2D);
+	m_Picker2D->SetTolerance(0.005);
+	m_Picker2D->InitializePickList();
 
-	this->PlugVisualPipe(_R("mafVMEVolumeGray"),_R("mafPipeIsosurface"));
+	this->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("mafPipeIsosurface"));
 }
 //----------------------------------------------------------------------------
-void mafView3D::VmeCreatePipe(mafNode *vme)
+void mafView3D::VmeCreatePipe(mafNode* vme)
 //----------------------------------------------------------------------------
 {
-  mafString pipe_name = _R("");
-  GetVisualPipeName(vme, pipe_name);
+	mafString pipe_name = _R("");
+	GetVisualPipeName(vme, pipe_name);
 
-  if (!pipe_name.empty())
-  {
-    m_NumberOfVisibleVme++;
-    auto pipe  = PipeFactory::CreatePipe(pipe_name.GetCStr());
-    if (pipe)
-    {
-      pipe->SetListener(this);
-      mafSceneNode *n = m_Sg->Vme2Node(vme);
-      assert(n && !n->m_Pipe);
-			if(pipe_name == _R("medPipeVolumeDRR"))
+	if (!pipe_name.empty())
+	{
+		m_NumberOfVisibleVme++;
+		auto pipe = PipeFactory::CreatePipe(pipe_name.GetCStr());
+		if (pipe)
+		{
+			pipe->SetListener(this);
+			mafSceneNode* n = m_Sg->Vme2Node(vme);
+			assert(n && !n->m_Pipe);
+			if (pipe_name == _R("medPipeVolumeDRR"))
 			{
 				medPipeVolumeDRR::StaticDownCast(pipe)->SetResampleFactor(m_ResampleFactor);
 			}
-			if(pipe_name == _R("medPipeVolumeVR"))
+			if (pipe_name == _R("medPipeVolumeVR"))
 			{
 				medPipeVolumeVR::StaticDownCast(pipe)->SetResampleFactor(m_ResampleFactor);
 			}
-      if(pipe_name == _R("mafPipeIsosurface"))
-      {
-        mafPipeIsosurface::StaticDownCast(pipe)->EnableBoundingBoxVisibility(false);
-      }
-			if(pipe_name == _R("medPipeVolumeMIP"))
+			if (pipe_name == _R("mafPipeIsosurface"))
+			{
+				mafPipeIsosurface::StaticDownCast(pipe)->EnableBoundingBoxVisibility(false);
+			}
+			if (pipe_name == _R("medPipeVolumeMIP"))
 			{
 				medPipeVolumeMIP::StaticDownCast(pipe)->SetResampleFactor(m_ResampleFactor);
 			}
-      pipe->Create(vme, this);
-      n->m_Pipe = pipe;
-      if (m_NumberOfVisibleVme == 1)
-      {
-        //CameraReset();
-      }
-      else
-      {
-        CameraUpdate();
-      }
-    }
-    else
-    {
-      mafErrorMessage(_M(_L("Cannot create visual pipe object of type \"") + pipe_name + _L("\"!")));
-    }
-  }
+			pipe->Create(vme, this);
+			n->m_Pipe = pipe;
+			if (m_NumberOfVisibleVme == 1)
+			{
+				//CameraReset();
+			}
+			else
+			{
+				CameraUpdate();
+			}
+		}
+		else
+		{
+			mafErrorMessage(_M(_L("Cannot create visual pipe object of type \"") + pipe_name + _L("\"!")));
+		}
+	}
 }
 /*
 //----------------------------------------------------------------------------
@@ -352,78 +352,77 @@ void mafView3D::VmeDeletePipe(mafNode *vme)
   cppDEL(n->m_Pipe);
 }*/
 //-------------------------------------------------------------------------
-mafGUI *mafView3D::CreateGui()
+mafGUI* mafView3D::CreateGui()
 //-------------------------------------------------------------------------
 {
-  assert(m_Gui == NULL);
-  m_Gui = new mafGUI(this);
-	mafString choices[4] = {_L("ISO"),_L("MIP"),_L("DRR"),_L("VR")};
-	m_Gui->Combo(ID_COMBO_PIPE,_L("Choose pipe"),&m_Choose,4,choices);
-	m_Gui->Enable(ID_COMBO_PIPE,m_CurrentVolume!=NULL);
-	m_Gui->Double(ID_RESAMPLE_FACTOR,_L("Resample"),&m_ResampleFactor,0.000001,1);
-	m_Gui->Enable(ID_RESAMPLE_FACTOR,m_CurrentVolume!=NULL);
-	m_Gui->Label(_R(""));
+	assert(!AccessGUI());
+	auto gui = new mafGUI(this);
+	mafString choices[4] = { _L("ISO"),_L("MIP"),_L("DRR"),_L("VR") };
+	gui->Combo(ID_COMBO_PIPE, _L("Choose pipe"), &m_Choose, 4, choices);
+	gui->Enable(ID_COMBO_PIPE, m_CurrentVolume != NULL);
+	gui->Double(ID_RESAMPLE_FACTOR, _L("Resample"), &m_ResampleFactor, 0.000001, 1);
+	gui->Enable(ID_RESAMPLE_FACTOR, m_CurrentVolume != NULL);
+	gui->Label(_R(""));
 
 	//Isosurface GUI
-	m_Gui->Label(_L("Isosurface settings:"));
-	double range[2] = {VTK_DOUBLE_MIN, VTK_DOUBLE_MAX};
+	gui->Label(_L("Isosurface settings:"));
+	double range[2] = { VTK_DOUBLE_MIN, VTK_DOUBLE_MAX };
 	m_ContourValueIso = 0.0;
-	m_SliderContourIso = m_Gui->FloatSlider(ID_CONTOUR_VALUE_ISO,_L("contour"), &m_ContourValueIso,range[0],range[1]);
-	m_SliderAlphaIso = m_Gui->FloatSlider(ID_ALPHA_VALUE_ISO,_L("alpha"), &m_AlphaValueIso,0.0,1.0);
-	m_Gui->Button(ID_EXTRACT_ISO,_L("Extract Iso"));
+	m_SliderContourIso = gui->FloatSlider(ID_CONTOUR_VALUE_ISO, _L("contour"), &m_ContourValueIso, range[0], range[1]);
+	m_SliderAlphaIso = gui->FloatSlider(ID_ALPHA_VALUE_ISO, _L("alpha"), &m_AlphaValueIso, 0.0, 1.0);
+	gui->Button(ID_EXTRACT_ISO, _L("Extract Iso"));
 
 	//DDR GUI
-	m_Gui->Label(_L("DRR settings:"));
-	m_Gui->Color(ID_VOLUME_COLOR, _L("Color"), &m_VolumeColor);
+	gui->Label(_L("DRR settings:"));
+	gui->Color(ID_VOLUME_COLOR, _L("Color"), &m_VolumeColor);
 	vtkXRayVolumeMapper::GetExposureCorrection(m_ExposureCorrection);
-	m_Gui->FloatSlider(ID_EXPOSURE_CORRECTION_L,	_L("Min"), &m_ExposureCorrection[0], -1.f, 1.f);
-	m_Gui->FloatSlider(ID_EXPOSURE_CORRECTION_H,	_L("Max"), &m_ExposureCorrection[1], -1.f, 1.f);
-	m_Gui->FloatSlider(ID_GAMMA,	_L("Gamma"), &m_Gamma, 0.1f, 3.f);
-	m_Gui->Label(_L("Camera settings:"));
-	vtkCamera *camera = m_Sg->m_RenFront->GetActiveCamera();
+	gui->FloatSlider(ID_EXPOSURE_CORRECTION_L, _L("Min"), &m_ExposureCorrection[0], -1.f, 1.f);
+	gui->FloatSlider(ID_EXPOSURE_CORRECTION_H, _L("Max"), &m_ExposureCorrection[1], -1.f, 1.f);
+	gui->FloatSlider(ID_GAMMA, _L("Gamma"), &m_Gamma, 0.1f, 3.f);
+	gui->Label(_L("Camera settings:"));
+	vtkCamera* camera = m_Sg->m_RenFront->GetActiveCamera();
 	this->m_CameraAngle = camera->GetViewAngle();
-	m_Gui->FloatSlider(ID_CAMERA_ANGLE, _L("View angle"), &m_CameraAngle, 0.5, 45.0);
+	gui->FloatSlider(ID_CAMERA_ANGLE, _L("View angle"), &m_CameraAngle, 0.5, 45.0);
 	camera->GetPosition(m_CameraPositionDRR);
-	m_Gui->Vector(ID_CAMERA_POSITION, _L("Position"),	m_CameraPositionDRR);
+	gui->Vector(ID_CAMERA_POSITION, _L("Position"), m_CameraPositionDRR);
 	camera->GetFocalPoint(m_CameraFocus);
-	m_Gui->Vector(ID_CAMERA_FOCUS, _L("Focal point"),	m_CameraFocus);
+	gui->Vector(ID_CAMERA_FOCUS, _L("Focal point"), m_CameraFocus);
 	this->m_CameraRoll = camera->GetRoll();
-	m_Gui->FloatSlider(ID_CAMERA_ROLL, _L("Roll angle"), &m_CameraRoll, -180., 180.0);
+	gui->FloatSlider(ID_CAMERA_ROLL, _L("Roll angle"), &m_CameraRoll, -180., 180.0);
 
-	m_Gui->Label(_R(""));
+	gui->Label(_R(""));
 
-	EnableSubGui(ID_PIPE_ALL,false);
+	EnableSubGui(ID_PIPE_ALL, false);
 
-	m_Gui->Update();
-  return m_Gui;
+	gui->Update();
+	return gui;
 }
 //-------------------------------------------------------------------------
-int mafView3D::GetNodeStatusI(mafNode *vme)
+int mafView3D::GetNodeStatusI(mafNode* vme)
 //-------------------------------------------------------------------------
 {
-	mafSceneNode *n = NULL;
-	if (m_Sg != NULL)
+	if (m_Sg)
 	{
-    n = m_Sg->Vme2Node(vme);
-		if (((mafVME *)vme)->GetOutput()->IsA("mafVMEOutputVolume"))
+		auto n = m_Sg->Vme2Node(vme);
+		if (mafVME::StaticDownCast(vme)->GetOutput()->IsA("mafVMEOutputVolume"))
 		{
-			if (n != NULL)
+			if (n)
 			{
 				n->m_Mutex = true;
 			}
 		}
-    else if(vme->IsMAFType(mafVMEPolyline) || 
-      vme->IsMAFType(mafVMESurface) ||
-      vme->IsMAFType(mafVMESurfaceParametric))
-    {
-      if (n != NULL)
-      {
-      	n->m_Mutex = false;
-      }
-    }
+		else if (vme->IsMAFType(mafVMEPolyline) ||
+			vme->IsMAFType(mafVMESurface) ||
+			vme->IsMAFType(mafVMESurfaceParametric))
+		{
+			if (n)
+			{
+				n->m_Mutex = false;
+			}
+		}
 		else
 		{
-			if (n != NULL)
+			if (n)
 			{
 				n->m_PipeCreatable = false;
 			}
@@ -433,71 +432,74 @@ int mafView3D::GetNodeStatusI(mafNode *vme)
 	return m_Sg ? m_Sg->GetNodeStatus(vme) : NODE_NON_VISIBLE;
 }
 //-------------------------------------------------------------------------
-void mafView3D::EnableSubGui(int idSubPipe,bool enable)
+void mafView3D::EnableSubGui(int idSubPipe, bool enable)
 //-------------------------------------------------------------------------
 {
-	switch(idSubPipe)
+	switch (idSubPipe)
 	{
-		case ID_PIPE_ISO:
-			{
-				m_Gui->Enable(ID_ALPHA_VALUE_ISO,enable);
-				m_Gui->Enable(ID_CONTOUR_VALUE_ISO,enable);
-				m_Gui->Enable(ID_EXTRACT_ISO,enable);
+	case ID_PIPE_ISO:
+	{
+		auto gui = AccessGUI();
+		gui->Enable(ID_ALPHA_VALUE_ISO, enable);
+		gui->Enable(ID_CONTOUR_VALUE_ISO, enable);
+		gui->Enable(ID_EXTRACT_ISO, enable);
 
-				m_Gui->Enable(ID_VOLUME_COLOR,!enable);
-				m_Gui->Enable(ID_EXPOSURE_CORRECTION_L,!enable);
-				m_Gui->Enable(ID_EXPOSURE_CORRECTION_H,!enable);
-				m_Gui->Enable(ID_GAMMA,!enable);
-				m_Gui->Enable(ID_CAMERA_ANGLE,!enable);
-				m_Gui->Enable(ID_CAMERA_POSITION,!enable);
-				m_Gui->Enable(ID_CAMERA_FOCUS,!enable);
-				m_Gui->Enable(ID_CAMERA_ROLL,!enable);
-				m_Gui->Enable(ID_IMAGE_COLOR,!enable);
-				m_Gui->Enable(ID_IMAGE_OFFSET_X,!enable);
-				m_Gui->Enable(ID_IMAGE_OFFSET_Y,!enable);
-				m_Gui->Enable(ID_IMAGE_ANGLE,!enable);
-			}
-			break;
-		case ID_PIPE_DRR:
-			{
-				m_Gui->Enable(ID_ALPHA_VALUE_ISO,!enable);
-				m_Gui->Enable(ID_CONTOUR_VALUE_ISO,!enable);
-				m_Gui->Enable(ID_EXTRACT_ISO,!enable);
+		gui->Enable(ID_VOLUME_COLOR, !enable);
+		gui->Enable(ID_EXPOSURE_CORRECTION_L, !enable);
+		gui->Enable(ID_EXPOSURE_CORRECTION_H, !enable);
+		gui->Enable(ID_GAMMA, !enable);
+		gui->Enable(ID_CAMERA_ANGLE, !enable);
+		gui->Enable(ID_CAMERA_POSITION, !enable);
+		gui->Enable(ID_CAMERA_FOCUS, !enable);
+		gui->Enable(ID_CAMERA_ROLL, !enable);
+		gui->Enable(ID_IMAGE_COLOR, !enable);
+		gui->Enable(ID_IMAGE_OFFSET_X, !enable);
+		gui->Enable(ID_IMAGE_OFFSET_Y, !enable);
+		gui->Enable(ID_IMAGE_ANGLE, !enable);
+	}
+	break;
+	case ID_PIPE_DRR:
+	{
+		auto gui = AccessGUI();
+		gui->Enable(ID_ALPHA_VALUE_ISO, !enable);
+		gui->Enable(ID_CONTOUR_VALUE_ISO, !enable);
+		gui->Enable(ID_EXTRACT_ISO, !enable);
 
-				m_Gui->Enable(ID_VOLUME_COLOR,enable);
-				m_Gui->Enable(ID_EXPOSURE_CORRECTION_L,enable);
-				m_Gui->Enable(ID_EXPOSURE_CORRECTION_H,enable);
-				m_Gui->Enable(ID_GAMMA,enable);
-				m_Gui->Enable(ID_CAMERA_ANGLE,enable);
-				m_Gui->Enable(ID_CAMERA_POSITION,enable);
-				m_Gui->Enable(ID_CAMERA_FOCUS,enable);
-				m_Gui->Enable(ID_CAMERA_ROLL,enable);
-				m_Gui->Enable(ID_IMAGE_COLOR,enable);
-				m_Gui->Enable(ID_IMAGE_OFFSET_X,enable);
-				m_Gui->Enable(ID_IMAGE_OFFSET_Y,enable);
-				m_Gui->Enable(ID_IMAGE_ANGLE,enable);
-			}
-			break;
-		case ID_PIPE_ALL:
-			{
-				m_Gui->Enable(ID_ALPHA_VALUE_ISO,enable);
-				m_Gui->Enable(ID_CONTOUR_VALUE_ISO,enable);
-				m_Gui->Enable(ID_EXTRACT_ISO,enable);
+		gui->Enable(ID_VOLUME_COLOR, enable);
+		gui->Enable(ID_EXPOSURE_CORRECTION_L, enable);
+		gui->Enable(ID_EXPOSURE_CORRECTION_H, enable);
+		gui->Enable(ID_GAMMA, enable);
+		gui->Enable(ID_CAMERA_ANGLE, enable);
+		gui->Enable(ID_CAMERA_POSITION, enable);
+		gui->Enable(ID_CAMERA_FOCUS, enable);
+		gui->Enable(ID_CAMERA_ROLL, enable);
+		gui->Enable(ID_IMAGE_COLOR, enable);
+		gui->Enable(ID_IMAGE_OFFSET_X, enable);
+		gui->Enable(ID_IMAGE_OFFSET_Y, enable);
+		gui->Enable(ID_IMAGE_ANGLE, enable);
+	}
+	break;
+	case ID_PIPE_ALL:
+	{
+		auto gui = AccessGUI();
+		gui->Enable(ID_ALPHA_VALUE_ISO, enable);
+		gui->Enable(ID_CONTOUR_VALUE_ISO, enable);
+		gui->Enable(ID_EXTRACT_ISO, enable);
 
-				m_Gui->Enable(ID_VOLUME_COLOR,enable);
-				m_Gui->Enable(ID_EXPOSURE_CORRECTION_L,enable);
-				m_Gui->Enable(ID_EXPOSURE_CORRECTION_H,enable);
-				m_Gui->Enable(ID_GAMMA,enable);
-				m_Gui->Enable(ID_CAMERA_ANGLE,enable);
-				m_Gui->Enable(ID_CAMERA_POSITION,enable);
-				m_Gui->Enable(ID_CAMERA_FOCUS,enable);
-				m_Gui->Enable(ID_CAMERA_ROLL,enable);
-				m_Gui->Enable(ID_IMAGE_COLOR,enable);
-				m_Gui->Enable(ID_IMAGE_OFFSET_X,enable);
-				m_Gui->Enable(ID_IMAGE_OFFSET_Y,enable);
-				m_Gui->Enable(ID_IMAGE_ANGLE,enable);
-			}
-			break;
+		gui->Enable(ID_VOLUME_COLOR, enable);
+		gui->Enable(ID_EXPOSURE_CORRECTION_L, enable);
+		gui->Enable(ID_EXPOSURE_CORRECTION_H, enable);
+		gui->Enable(ID_GAMMA, enable);
+		gui->Enable(ID_CAMERA_ANGLE, enable);
+		gui->Enable(ID_CAMERA_POSITION, enable);
+		gui->Enable(ID_CAMERA_FOCUS, enable);
+		gui->Enable(ID_CAMERA_ROLL, enable);
+		gui->Enable(ID_IMAGE_COLOR, enable);
+		gui->Enable(ID_IMAGE_OFFSET_X, enable);
+		gui->Enable(ID_IMAGE_OFFSET_Y, enable);
+		gui->Enable(ID_IMAGE_ANGLE, enable);
+	}
+	break;
 
 	}
 }
@@ -505,60 +507,62 @@ void mafView3D::EnableSubGui(int idSubPipe,bool enable)
 void mafView3D::InizializeSubGui()
 //-------------------------------------------------------------------------
 {
-	switch(m_Choose)
+	switch (m_Choose)
 	{
 	case ID_PIPE_ISO:
+	{
+		auto pipe = mafPipeIsosurface::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
+		if (pipe)
 		{
-			auto pipe=mafPipeIsosurface::SafeDownCast(this->GetNodePipe(m_CurrentVolume));
-			if(pipe)
-			{
-				double sr[2];
-				((mafVMEOutputVolume *)m_CurrentVolume->GetOutput())->GetVTKData()->GetScalarRange(sr);
-				m_ContourValueIso=pipe->GetContourValue();
-				m_SliderContourIso->SetRange(sr[0],sr[1],m_ContourValueIso);
-				m_SliderContourIso->Update();
-				m_SliderContourIso->SetValue(m_ContourValueIso);
-				m_SliderContourIso->Update();
-				m_AlphaValueIso=pipe->GetAlphaValue();
-				m_SliderAlphaIso->SetValue(m_AlphaValueIso);
-				m_Gui->Update();
-			}
+			double sr[2];
+			((mafVMEOutputVolume*)m_CurrentVolume->GetOutput())->GetVTKData()->GetScalarRange(sr);
+			m_ContourValueIso = pipe->GetContourValue();
+			m_SliderContourIso->SetRange(sr[0], sr[1], m_ContourValueIso);
+			m_SliderContourIso->Update();
+			m_SliderContourIso->SetValue(m_ContourValueIso);
+			m_SliderContourIso->Update();
+			m_AlphaValueIso = pipe->GetAlphaValue();
+			m_SliderAlphaIso->SetValue(m_AlphaValueIso);
+			UpdateGUI();
 		}
-		break;
+	}
+	break;
 	case ID_PIPE_DRR:
-		{
-	
-		}
-		break;
+	{
+
+	}
+	break;
 	}
 }
 //-------------------------------------------------------------------------
-void mafView3D::VmeShow(mafNode *vme,bool show)
+void mafView3D::VmeShow(mafNode* vme, bool show)
 //-------------------------------------------------------------------------
 {
-	Superclass::VmeShow(vme,show);
+	Superclass::VmeShow(vme, show);
 
-	if(((mafVME *)vme)->GetOutput()->IsA("mafVMEOutputVolume"))
+	if (mafVME::StaticDownCast(vme)->GetOutput()->IsA("mafVMEOutputVolume"))
 	{
-		if(show)
+		if (show)
 		{
+			auto gui = AccessGUI();
 			m_CurrentVolume = mafVME::SafeDownCast(vme);
 			InizializeSubGui();
 			EnableSubGui(m_Choose);
-			m_Gui->Enable(ID_COMBO_PIPE,m_CurrentVolume!=NULL);
-			m_Gui->Enable(ID_RESAMPLE_FACTOR,m_CurrentVolume!=NULL);
+			gui->Enable(ID_COMBO_PIPE, m_CurrentVolume != NULL);
+			gui->Enable(ID_RESAMPLE_FACTOR, m_CurrentVolume != NULL);
 		}
 		else
 		{
+			auto gui = AccessGUI();
 			m_CurrentVolume = NULL;
-			EnableSubGui(ID_PIPE_ALL,false);
-			m_Gui->Enable(ID_COMBO_PIPE,m_CurrentVolume!=NULL);
-			m_Gui->Enable(ID_RESAMPLE_FACTOR,m_CurrentVolume!=NULL);
+			EnableSubGui(ID_PIPE_ALL, false);
+			gui->Enable(ID_COMBO_PIPE, m_CurrentVolume != NULL);
+			gui->Enable(ID_RESAMPLE_FACTOR, m_CurrentVolume != NULL);
 		}
 	}
-	if(vme->IsA("mafVMESurface"))
+	if (vme->IsA("mafVMESurface"))
 	{
-		if(show)
+		if (show)
 		{
 			m_CurrentSurface = mafVMESurface::SafeDownCast(vme);
 		}
@@ -567,7 +571,7 @@ void mafView3D::VmeShow(mafNode *vme,bool show)
 			m_CurrentSurface = NULL;
 		}
 	}
-	else if((vme->IsMAFType(mafVMEPolyline)) && show)
+	else if ((vme->IsMAFType(mafVMEPolyline)) && show)
 	{
 		mafPipePolyline::StaticDownCast(GetNodePipe(vme))->SetRepresentationToTube();
 	}

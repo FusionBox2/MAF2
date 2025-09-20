@@ -9,9 +9,6 @@
 #include "mafEventSender.h"
 #include "mafObjectWithGUI.h"
 
-//----------------------------------------------------------------------------
-// forward references :
-//----------------------------------------------------------------------------
 class mafView;
 namespace model::data
 {
@@ -32,43 +29,43 @@ BEGIN_FTK_NAMESPACE
 class FTK_CORE_EXPORT mafPipe : public mafBaseEventHandler, public mafEventSender, public mafObjectWithGUI
 {
 public:
-  mafBaseTypeMacro(mafPipe);
-  
-  mafPipe();
-  ~mafPipe() override;
+	mafBaseTypeMacro(mafPipe);
 
-  /** process events coming from gui */
-  void OnEvent(mafEventBase *maf_event) override {};
+	mafPipe();
+	~mafPipe() override;
 
-  /** The real setup must be performed here - not in the ctor */
-  virtual void Create(mafNode *node, mafView *view);
+	/** process events coming from gui */
+	void OnEvent(mafEventBase* maf_event) override {};
+
+	/** The real setup must be performed here - not in the ctor */
+	virtual void Create(mafNode* node, mafView* view);
 
 	/** Change the visibility of the bounding box actor representing the selection for the vme. */
-	virtual	void Select(bool select)										{};
+	virtual	void Select(bool select) {}
 
 	/** Update the properties according to the vme's tags. */
-	virtual	void UpdateProperty(bool fromTag = false)		{};
+	virtual	void UpdateProperty(bool fromTag = false) {}
 
-  /** IDs for the GUI */
-  enum VISUAL_PIPE_WIDGET_ID
-  {
-    ID_FIRST = MINID,
-    ID_LAST
-  };
+	/** IDs for the GUI */
+	enum VISUAL_PIPE_WIDGET_ID
+	{
+		ID_FIRST = MINID,
+		ID_LAST
+	};
 
-  mafNode        *m_Node;      ///< VME used as input for the visual pipe
-  mafView        *m_View;
-  bool            m_Selected; ///< Flag used to say if the rendered VME is selected.
+	mafNode* m_Node = nullptr;      ///< VME used as input for the visual pipe
+	mafView* m_View = nullptr;
+	bool            m_Selected = false; ///< Flag used to say if the rendered VME is selected.
 
 protected:
-  /**
-  Internally used to create a new instance of the GUI. This function should be
-  overridden by subclasses to create specialized GUIs. Each subclass should append
-  its own widgets and define the enum of IDs for the widgets as an extension of
-  the superclass enum. The last id value must be defined as "LAST_ID" to allow the 
-  subclass to continue the ID enumeration from it. For appending the widgets in the
-  same panel GUI, each CreateGUI() function should first call the superclass' one.*/
-  mafGUI  *CreateGui() override;
+	/**
+	Internally used to create a new instance of the GUI. This function should be
+	overridden by subclasses to create specialized GUIs. Each subclass should append
+	its own widgets and define the enum of IDs for the widgets as an extension of
+	the superclass enum. The last id value must be defined as "LAST_ID" to allow the
+	subclass to continue the ID enumeration from it. For appending the widgets in the
+	same panel GUI, each CreateGUI() function should first call the superclass' one.*/
+	mafGUI* CreateGui() override;
 };
 
 END_FTK_NAMESPACE

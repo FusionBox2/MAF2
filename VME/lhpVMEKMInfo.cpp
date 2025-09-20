@@ -6,7 +6,7 @@
   Version:   $Revision: 1.13 $
   Authors:   Marco Petrone , Stefano Perticoni
 ==========================================================================
-  Copyright (c) 2001/2005 
+  Copyright (c) 2001/2005
   CINECA - Interuniversity Consortium (www.cineca.it)
 =========================================================================*/
 
@@ -38,151 +38,151 @@ mafCxxTypeMacro(lhpVMEKMInfo)
 lhpVMEKMInfo::lhpVMEKMInfo()
 //-------------------------------------------------------------------------
 {
-  for(int i = 0; i < 200; i++)
-    m_values[i] = 0.;
-  // The output is created on demand in GetOutput() to avoid
-  // subclasses to have to destroy base class output
-  m_Transform = mafTransform::NewSPtr();
-  m_MatrixVector->SetMatrix(m_Transform->GetMatrix());
+	for (int i = 0; i < 200; i++)
+		m_values[i] = 0.;
+	// The output is created on demand in GetOutput() to avoid
+	// subclasses to have to destroy base class output
+	m_Transform = mafTransform::NewSPtr();
+	m_MatrixVector->SetMatrix(m_Transform->GetMatrix());
 
-  mafVMEOutputNULL *output=mafVMEOutputNULL::New(); // an output with no data
-  output->SetTransform(m_Transform); // force my transform in the output
-  SetOutput(output);
+	mafVMEOutputNULL* output = mafVMEOutputNULL::New(); // an output with no data
+	output->SetTransform(m_Transform); // force my transform in the output
+	SetOutput(output);
 }
 
 //-------------------------------------------------------------------------
 lhpVMEKMInfo::~lhpVMEKMInfo()
 //-------------------------------------------------------------------------
 {
-  SetOutput(NULL);
+	SetOutput(NULL);
 
-  // data pipe destroyed in mafVME
-  // data vector destroyed in mafVMEGenericAbstract
+	// data pipe destroyed in mafVME
+	// data vector destroyed in mafVMEGenericAbstract
 }
 
 //-------------------------------------------------------------------------
-mafVMEOutput *lhpVMEKMInfo::GetOutput()
+mafVMEOutput* lhpVMEKMInfo::GetOutput()
 //-------------------------------------------------------------------------
 {
-  // allocate the right type of output on demand
-  if (m_Output==NULL)
-  {
-    SetOutput(mafVMEOutputNULL::New()); // create the output
-  }
-  return m_Output;
+	// allocate the right type of output on demand
+	if (m_Output == NULL)
+	{
+		SetOutput(mafVMEOutputNULL::New()); // create the output
+	}
+	return m_Output;
 }
 
 //-------------------------------------------------------------------------
 mafGUI* lhpVMEKMInfo::CreateGui()
 //-------------------------------------------------------------------------
 {
-  m_Gui = mafNode::CreateGui(); // Called to show info about vmes' type and name
-  m_Gui->Divider();
-	return m_Gui;
+	auto gui = mafNode::CreateGui(); // Called to show info about vmes' type and name
+	gui->Divider();
+	return gui;
 }
 
 //-------------------------------------------------------------------------
-void lhpVMEKMInfo::OnEvent(mafEventBase *maf_event)
+void lhpVMEKMInfo::OnEvent(mafEventBase* maf_event)
 //-------------------------------------------------------------------------
 {
-  if (maf_event->GetChannel()==MCH_UP)
-  {
-    mafID eid = maf_event->GetId();
-    if(eid == NODE_ATTACHED_TO_TREE)
-    {
-      mafNode *n = (mafNode*)maf_event->GetSender();
-      if (n)
-      {
-        auto parent = n->GetParent();
-        if (parent == this)
-        {
-          //mafMessage("Ask for shared GUI!!");
-        }
-      }
-    }
-    else if(eid == NODE_DETACHED_FROM_TREE)
-    {
-      auto n = (mafNode*)maf_event->GetSender();
-      if (n)
-      {
-        auto parent = n->GetParent();
-        if (parent == this)
-        {
-          //mafMessage("Remove shared GUI!!");
-        }
-      }
-    }
-  }
-  Superclass::OnEvent(maf_event);
+	if (maf_event->GetChannel() == MCH_UP)
+	{
+		mafID eid = maf_event->GetId();
+		if (eid == NODE_ATTACHED_TO_TREE)
+		{
+			mafNode* n = (mafNode*)maf_event->GetSender();
+			if (n)
+			{
+				auto parent = n->GetParent();
+				if (parent == this)
+				{
+					//mafMessage("Ask for shared GUI!!");
+				}
+			}
+		}
+		else if (eid == NODE_DETACHED_FROM_TREE)
+		{
+			auto n = (mafNode*)maf_event->GetSender();
+			if (n)
+			{
+				auto parent = n->GetParent();
+				if (parent == this)
+				{
+					//mafMessage("Remove shared GUI!!");
+				}
+			}
+		}
+	}
+	Superclass::OnEvent(maf_event);
 }
 
 //-------------------------------------------------------------------------
-const char** lhpVMEKMInfo::GetIcon() 
+const char** lhpVMEKMInfo::GetIcon()
 //-------------------------------------------------------------------------
 {
-  #include "mafVMEGroup.xpm"
-  return mafVMEGroup_xpm;
+#include "mafVMEGroup.xpm"
+	return mafVMEGroup_xpm;
 }
 
 //-------------------------------------------------------------------------
-void lhpVMEKMInfo::SetMatrix(const mafMatrix &mat)
+void lhpVMEKMInfo::SetMatrix(const mafMatrix& mat)
 //-------------------------------------------------------------------------
 {
-  Superclass::SetMatrix(mat);
-  m_Transform->SetMatrix(mat);
+	Superclass::SetMatrix(mat);
+	m_Transform->SetMatrix(mat);
 }
 
 //-----------------------------------------------------------------------
 void lhpVMEKMInfo::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
-{ 
-  Superclass::InternalStore(parent);
-  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
+{
+	Superclass::InternalStore(parent);
+	parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
 }
 
 //-----------------------------------------------------------------------
 void lhpVMEKMInfo::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  Superclass::InternalRestore(node);
-  SetMatrix(node[_R("Transform")].As<mafMatrix>());
+	Superclass::InternalRestore(node);
+	SetMatrix(node[_R("Transform")].As<mafMatrix>());
 }
 
 //-----------------------------------------------------------------------
 void lhpVMEKMInfo::Print(std::ostream& os, const int tabs)
 //-----------------------------------------------------------------------
 {
-  Superclass::Print(os,tabs);
-  mafIndent indent(tabs);
+	Superclass::Print(os, tabs);
+	mafIndent indent(tabs);
 
-  mafMatrix m = m_Transform->GetMatrix();
-  m.Print(os,indent.GetNextIndent());
+	mafMatrix m = m_Transform->GetMatrix();
+	m.Print(os, indent.GetNextIndent());
 }
 
 //-------------------------------------------------------------------------
-bool lhpVMEKMInfo::Equals(mafVME *vme)
+bool lhpVMEKMInfo::Equals(mafVME* vme)
 //-------------------------------------------------------------------------
 {
-  bool ret = false;
-  if (Superclass::Equals(vme))
-  {
-    return ret = (m_Transform->GetMatrix()==((lhpVMEKMInfo *)vme)->m_Transform->GetMatrix());
-  }
-  return ret;
+	bool ret = false;
+	if (Superclass::Equals(vme))
+	{
+		return ret = (m_Transform->GetMatrix() == ((lhpVMEKMInfo*)vme)->m_Transform->GetMatrix());
+	}
+	return ret;
 }
 
 //-------------------------------------------------------------------------
-int lhpVMEKMInfo::DeepCopy(mafNode *a)
+int lhpVMEKMInfo::DeepCopy(mafNode* a)
 //-------------------------------------------------------------------------
-{ 
-  if (Superclass::DeepCopy(a)==MAF_OK)
-  {
-    lhpVMEKMInfo *group = lhpVMEKMInfo::SafeDownCast(a);
-    
-    m_Transform->SetMatrix(group->m_Transform->GetMatrix());
-    
-    return MAF_OK;
-  }  
+{
+	if (Superclass::DeepCopy(a) == MAF_OK)
+	{
+		lhpVMEKMInfo* group = lhpVMEKMInfo::SafeDownCast(a);
 
-  return MAF_ERROR;
+		m_Transform->SetMatrix(group->m_Transform->GetMatrix());
+
+		return MAF_OK;
+	}
+
+	return MAF_ERROR;
 }

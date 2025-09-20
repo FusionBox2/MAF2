@@ -23,347 +23,347 @@ mafVMEGenericAbstract::mafVMEGenericAbstract()
 //-------------------------------------------------------------------------
 {
 	m_MatrixVector = std::make_unique<mafMatrixVector>();
-  SetMatrixPipe(mafMatrixInterpolator::NewSPtr()); // matrix interpolator pipe  
+	SetMatrixPipe(mafMatrixInterpolator::NewSPtr()); // matrix interpolator pipe  
 }
 
 //-------------------------------------------------------------------------
 mafVMEGenericAbstract::~mafVMEGenericAbstract()
 //-------------------------------------------------------------------------
 {
-  SetMatrixPipe(nullptr); // destroy matrix pipe
+	SetMatrixPipe(nullptr); // destroy matrix pipe
 }
 
 //-------------------------------------------------------------------------
-int mafVMEGenericAbstract::DeepCopy(mafNode *a)
-//-------------------------------------------------------------------------
-{ 
-  if(auto vme=mafVMEGenericAbstract::SafeDownCast(a))
-  {
-    m_MatrixVector->DeepCopy(vme->GetMatrixVector());
-
-    if (vme->GetDataVector())
-    {
-      m_DataVector->DeepCopy(vme->GetDataVector()); // copy data
-      m_DataVector->SetListener(this);
-    }
-  }
-  if (Superclass::DeepCopy(a)==MAF_OK)
-  {
-    return MAF_OK;
-  }
-  return MAF_ERROR;
-}
-//-------------------------------------------------------------------------
-int mafVMEGenericAbstract::DeepCopyVmeLarge(mafNode *a)
-//-------------------------------------------------------------------------
-{ 
-  if (Superclass::DeepCopy(a)==MAF_OK)
-  {
-      auto vme = mafVMEGenericAbstract::SafeDownCast(a);
-    m_MatrixVector->DeepCopy(vme->GetMatrixVector());
-
-    if (vme->GetDataVector())
-    {
-      //////////////////////////////////////////////////////////////////////////
-      //mafDataPipeInterpolatorVTK::SafeDownCast(vme->GetDataPipe())->GetVTKDataPipe()->RemoveAllInputs();
-      //mafDataPipeInterpolatorVTK::SafeDownCast(vme->GetDataPipe())->GetVTKDataPipe()->UnRegisterAllOutputs();
-      //////////////////////////////////////////////////////////////////////////
-
-      m_DataVector->DeepCopyVmeLarge(vme->GetDataVector()); // copy data
-      m_DataVector->SetListener(this);
-    }
-    return MAF_OK;
-  }
-  return MAF_ERROR;
-}
-
-//-------------------------------------------------------------------------
-int mafVMEGenericAbstract::ShallowCopy(mafVME *a)
-//-------------------------------------------------------------------------
-{  
-  if(mafVMEGenericAbstract *vme=mafVMEGenericAbstract::SafeDownCast(a))
-  {
-    m_MatrixVector->DeepCopy(vme->GetMatrixVector());    
-    
-    // shallow copy data array
-    if (vme->GetDataVector())
-    {
-      m_DataVector->ShallowCopy(vme->GetDataVector());
-    }
-  }
-  if (Superclass::ShallowCopy(a)==MAF_OK)
-  {
-    return MAF_OK;
-  }
-  return MAF_ERROR;
-}
-
-//-------------------------------------------------------------------------
-bool mafVMEGenericAbstract::Equals(mafVME *vme)
+int mafVMEGenericAbstract::DeepCopy(mafNode* a)
 //-------------------------------------------------------------------------
 {
-  if (Superclass::Equals(vme))
-  {
-    auto gvme=mafVMEGenericAbstract::SafeDownCast(vme);
-    if (m_DataVector)
-    {
-      if (m_MatrixVector->Equals(gvme->GetMatrixVector()) && 
-        m_DataVector->Equals(gvme->GetDataVector()))
-        return true;
-    }
-    else
-    {
-      if (m_MatrixVector->Equals(gvme->GetMatrixVector()))
-        return true;
-    }
-  }
-  return false;
+	if (auto vme = mafVMEGenericAbstract::SafeDownCast(a))
+	{
+		m_MatrixVector->DeepCopy(vme->GetMatrixVector());
+
+		if (vme->GetDataVector())
+		{
+			m_DataVector->DeepCopy(vme->GetDataVector()); // copy data
+			m_DataVector->SetListener(this);
+		}
+	}
+	if (Superclass::DeepCopy(a) == MAF_OK)
+	{
+		return MAF_OK;
+	}
+	return MAF_ERROR;
+}
+//-------------------------------------------------------------------------
+int mafVMEGenericAbstract::DeepCopyVmeLarge(mafNode* a)
+//-------------------------------------------------------------------------
+{
+	if (Superclass::DeepCopy(a) == MAF_OK)
+	{
+		auto vme = mafVMEGenericAbstract::SafeDownCast(a);
+		m_MatrixVector->DeepCopy(vme->GetMatrixVector());
+
+		if (vme->GetDataVector())
+		{
+			//////////////////////////////////////////////////////////////////////////
+			//mafDataPipeInterpolatorVTK::SafeDownCast(vme->GetDataPipe())->GetVTKDataPipe()->RemoveAllInputs();
+			//mafDataPipeInterpolatorVTK::SafeDownCast(vme->GetDataPipe())->GetVTKDataPipe()->UnRegisterAllOutputs();
+			//////////////////////////////////////////////////////////////////////////
+
+			m_DataVector->DeepCopyVmeLarge(vme->GetDataVector()); // copy data
+			m_DataVector->SetListener(this);
+		}
+		return MAF_OK;
+	}
+	return MAF_ERROR;
 }
 
 //-------------------------------------------------------------------------
-void mafVMEGenericAbstract::SetMatrix(const mafMatrix &mat)
+int mafVMEGenericAbstract::ShallowCopy(mafVME* a)
 //-------------------------------------------------------------------------
 {
-  m_MatrixVector->SetMatrix(mat);
-  Modified();
+	if (mafVMEGenericAbstract* vme = mafVMEGenericAbstract::SafeDownCast(a))
+	{
+		m_MatrixVector->DeepCopy(vme->GetMatrixVector());
+
+		// shallow copy data array
+		if (vme->GetDataVector())
+		{
+			m_DataVector->ShallowCopy(vme->GetDataVector());
+		}
+	}
+	if (Superclass::ShallowCopy(a) == MAF_OK)
+	{
+		return MAF_OK;
+	}
+	return MAF_ERROR;
+}
+
+//-------------------------------------------------------------------------
+bool mafVMEGenericAbstract::Equals(mafVME* vme)
+//-------------------------------------------------------------------------
+{
+	if (Superclass::Equals(vme))
+	{
+		auto gvme = mafVMEGenericAbstract::SafeDownCast(vme);
+		if (m_DataVector)
+		{
+			if (m_MatrixVector->Equals(gvme->GetMatrixVector()) &&
+				m_DataVector->Equals(gvme->GetDataVector()))
+				return true;
+		}
+		else
+		{
+			if (m_MatrixVector->Equals(gvme->GetMatrixVector()))
+				return true;
+		}
+	}
+	return false;
+}
+
+//-------------------------------------------------------------------------
+void mafVMEGenericAbstract::SetMatrix(const mafMatrix& mat)
+//-------------------------------------------------------------------------
+{
+	m_MatrixVector->SetMatrix(mat);
+	Modified();
 }
 
 //-------------------------------------------------------------------------
 bool mafVMEGenericAbstract::IsAnimated()
 //-------------------------------------------------------------------------
 {
-  if (m_DataVector)
-  {
-    return ((m_DataVector->GetNumberOfItems()>1)||(m_MatrixVector->GetNumberOfItems()>1));
-  }
-  else
-  {
-    return (m_MatrixVector->GetNumberOfItems()>1);
-  }
+	if (m_DataVector)
+	{
+		return ((m_DataVector->GetNumberOfItems() > 1) || (m_MatrixVector->GetNumberOfItems() > 1));
+	}
+	else
+	{
+		return (m_MatrixVector->GetNumberOfItems() > 1);
+	}
 }
 
 //-------------------------------------------------------------------------
 bool mafVMEGenericAbstract::IsDataAvailable()
 //-------------------------------------------------------------------------
 {
-  if (m_DataVector)
-  {
-    mafTimeStamp t = this->GetTimeStamp();
-    auto item = m_DataVector->GetItem(t);
-    if (IsAnimated() && !item && m_DataVector->GetNumberOfItems() > 0)
-    {
-      mafTimeStamp tbounds[2];
-      m_DataVector->GetTimeBounds(tbounds);
-      if (t < tbounds[0])
-      {
-        item = m_DataVector->begin()->second;
-      }
-      else
-      {
-        auto it = --m_DataVector->end();
-        item = it->second;
-      }
-    }
-    return item ? item->IsDataPresent() : true; // If item is NULL -> the data is generated by code
-                                                // or is into its child as for the mafVMELandmarkCloud
-  }
-  else
-    return Superclass::IsDataAvailable();
+	if (m_DataVector)
+	{
+		mafTimeStamp t = this->GetTimeStamp();
+		auto item = m_DataVector->GetItem(t);
+		if (IsAnimated() && !item && m_DataVector->GetNumberOfItems() > 0)
+		{
+			mafTimeStamp tbounds[2];
+			m_DataVector->GetTimeBounds(tbounds);
+			if (t < tbounds[0])
+			{
+				item = m_DataVector->begin()->second;
+			}
+			else
+			{
+				auto it = --m_DataVector->end();
+				item = it->second;
+			}
+		}
+		return item ? item->IsDataPresent() : true; // If item is NULL -> the data is generated by code
+		// or is into its child as for the mafVMELandmarkCloud
+	}
+	else
+		return Superclass::IsDataAvailable();
 }
 
 //-------------------------------------------------------------------------
-void mafVMEGenericAbstract::GetDataTimeStamps(std::vector<mafTimeStamp> &kframes)
+void mafVMEGenericAbstract::GetDataTimeStamps(std::vector<mafTimeStamp>& kframes)
 //-------------------------------------------------------------------------
 {
-  if (m_DataVector)
-  {
-    m_DataVector->GetTimeStamps(kframes);
-  }
+	if (m_DataVector)
+	{
+		m_DataVector->GetTimeStamps(kframes);
+	}
 }
 
 //-------------------------------------------------------------------------
-void mafVMEGenericAbstract::GetMatrixTimeStamps(std::vector<mafTimeStamp> &kframes)
+void mafVMEGenericAbstract::GetMatrixTimeStamps(std::vector<mafTimeStamp>& kframes)
 //-------------------------------------------------------------------------
 {
-  m_MatrixVector->GetTimeStamps(kframes);
+	m_MatrixVector->GetTimeStamps(kframes);
 }
 
 //-------------------------------------------------------------------------
-void mafVMEGenericAbstract::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)
+void mafVMEGenericAbstract::GetLocalTimeStamps(std::vector<mafTimeStamp>& kframes)
 //-------------------------------------------------------------------------
 {
-  std::vector<mafTimeStamp> datatimestamps;
-  std::vector<mafTimeStamp> matrixtimestamps;
-  
-  if (m_DataVector)
-  {
-    m_DataVector->GetTimeStamps(datatimestamps);
-  }
-  m_MatrixVector->GetTimeStamps(matrixtimestamps);
+	std::vector<mafTimeStamp> datatimestamps;
+	std::vector<mafTimeStamp> matrixtimestamps;
 
-  kframes = mmuTimeSet::Merge(datatimestamps,matrixtimestamps);
+	if (m_DataVector)
+	{
+		m_DataVector->GetTimeStamps(datatimestamps);
+	}
+	m_MatrixVector->GetTimeStamps(matrixtimestamps);
+
+	kframes = mmuTimeSet::Merge(datatimestamps, matrixtimestamps);
 }
 
 //-------------------------------------------------------------------------
 void mafVMEGenericAbstract::GetLocalTimeBounds(mafTimeStamp tbounds[2])
 //-------------------------------------------------------------------------
 {
-  tbounds[0]=0.0;
-  tbounds[1]=0.0;
-  if (m_DataVector)
-  {
-    m_DataVector->GetTimeBounds(tbounds);
-  }
+	tbounds[0] = 0.0;
+	tbounds[1] = 0.0;
+	if (m_DataVector)
+	{
+		m_DataVector->GetTimeBounds(tbounds);
+	}
 
-  mafTimeStamp tmp[2];
-  m_MatrixVector->GetTimeBounds(tmp);
+	mafTimeStamp tmp[2];
+	m_MatrixVector->GetTimeBounds(tmp);
 
-  tmp[0] = tmp[0] < 0 ? 0 : tmp[0];
-  tmp[1] = tmp[1] < 0 ? 0 : tmp[1];
+	tmp[0] = tmp[0] < 0 ? 0 : tmp[0];
+	tmp[1] = tmp[1] < 0 ? 0 : tmp[1];
 
-  if (tmp[0]<tbounds[0]||tbounds[0]<0)
-    tbounds[0]=tmp[0];
+	if (tmp[0] < tbounds[0] || tbounds[0] < 0)
+		tbounds[0] = tmp[0];
 
-  if (tmp[1]>tbounds[1]||tbounds[1]<0)
-    tbounds[1]=tmp[1];
+	if (tmp[1] > tbounds[1] || tbounds[1] < 0)
+		tbounds[1] = tmp[1];
 }
 
 //-----------------------------------------------------------------------
 void mafVMEGenericAbstract::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
-{  
-  Superclass::InternalStore(parent);
+{
+	Superclass::InternalStore(parent);
 
-  // sub-element for storing the data vector
-  if (m_DataVector)
-  {
-    m_DataVector->SetCrypting(this->m_Crypting != 0);
-    {auto dataVector = parent[_R("DataVector")]; m_DataVector->Store(dataVector);}
-  }
+	// sub-element for storing the data vector
+	if (m_DataVector)
+	{
+		m_DataVector->SetCrypting(this->m_Crypting != 0);
+		{ auto dataVector = parent[_R("DataVector")]; m_DataVector->Store(dataVector); }
+	}
 
-  // sub-element for storing the matrix vector
-  {auto matrixVector = parent[_R("MatrixVector")]; m_MatrixVector->Store(matrixVector);}
+	// sub-element for storing the matrix vector
+	{ auto matrixVector = parent[_R("MatrixVector")]; m_MatrixVector->Store(matrixVector); }
 }
 
 //-----------------------------------------------------------------------
 void mafVMEGenericAbstract::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  Superclass::InternalRestore(node);
-  
-  // restore Data Vector
-  if (m_DataVector)
-  {
-    m_DataVector->Restore(node[_R("DataVector")]);
-  }
-  // restore Matrix Vector  
-  if (m_MatrixVector)
-  {
-    m_MatrixVector->Restore(node[_R("MatrixVector")]);
-  }
+	Superclass::InternalRestore(node);
+
+	// restore Data Vector
+	if (m_DataVector)
+	{
+		m_DataVector->Restore(node[_R("DataVector")]);
+	}
+	// restore Matrix Vector  
+	if (m_MatrixVector)
+	{
+		m_MatrixVector->Restore(node[_R("MatrixVector")]);
+	}
 }
 //-------------------------------------------------------------------------
-mafGUI *mafVMEGenericAbstract::CreateGui()
+mafGUI* mafVMEGenericAbstract::CreateGui()
 //-------------------------------------------------------------------------
 {
-  m_Gui = mafVME::CreateGui(); // Called to show info about vmes' type and name
-  m_Gui->SetListener(this);
+	auto gui = mafVME::CreateGui(); // Called to show info about vmes' type and name
+	gui->SetListener(this);
 #ifdef MAF_USE_CRYPTO
-  m_Gui->Bool(ID_VME_CRYPTING,_R("crypt"),&m_Crypting);
+	gui->Bool(ID_VME_CRYPTING, _R("crypt"), &m_Crypting);
 #endif
-	m_Gui->Divider();
-  return m_Gui;
+	gui->Divider();
+	return gui;
 }
 
 //-------------------------------------------------------------------------
-void mafVMEGenericAbstract::OnEvent(mafEventBase *maf_event)
+void mafVMEGenericAbstract::OnEvent(mafEventBase* maf_event)
 //-------------------------------------------------------------------------
 {
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    switch (e->GetId())
-    {
-      case ID_VME_CRYPTING:
-        SetCrypting(m_Crypting);
-      break;
-      //default:
-        //Superclass::OnEvent(maf_event);
-    }
-  }
-  if(maf_event->GetChannel() == MCH_DOWN)
-  {
-    if(maf_event->GetId() == NODE_ATTACHED_TO_TREE)
-    {
-      mafDataVector *dvector = GetDataVector();
-      if(!dvector)
-      {
-        Superclass::OnEvent(maf_event);
-        return;
-      }
-      for(auto& elem : *dvector)
-      //for (int i = 0; i < dvector->GetNumberOfItems(); i++)
-      {
-        mafVMEItem* item = elem.second.get();// dvector->GetItemByIndex(i);
-        assert(item);
-        if(!item)
-        {
-          mafErrorMacro("found a NULL item in the node!!!!");
-          continue;
-        }
-        // read the data from disk and if data is present 
-        // set the Id to -1 to advise the reader to write
-        // it again on disk. Also remove the old file name...
-        item->UpdateData();
-        if (item->IsDataPresent())
-        {
-          item->SetId(-1);
-          item->SetURL("");
-          dvector->Modified(); // Alert the data vector that the item is changed.
-        }
-      }
-    }
-  }
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
+	{
+		switch (e->GetId())
+		{
+		case ID_VME_CRYPTING:
+			SetCrypting(m_Crypting);
+			break;
+			//default:
+			  //Superclass::OnEvent(maf_event);
+		}
+	}
+	if (maf_event->GetChannel() == MCH_DOWN)
+	{
+		if (maf_event->GetId() == NODE_ATTACHED_TO_TREE)
+		{
+			mafDataVector* dvector = GetDataVector();
+			if (!dvector)
+			{
+				Superclass::OnEvent(maf_event);
+				return;
+			}
+			for (auto& elem : *dvector)
+				//for (int i = 0; i < dvector->GetNumberOfItems(); i++)
+			{
+				mafVMEItem* item = elem.second.get();// dvector->GetItemByIndex(i);
+				assert(item);
+				if (!item)
+				{
+					mafErrorMacro("found a NULL item in the node!!!!");
+					continue;
+				}
+				// read the data from disk and if data is present 
+				// set the Id to -1 to advise the reader to write
+				// it again on disk. Also remove the old file name...
+				item->UpdateData();
+				if (item->IsDataPresent())
+				{
+					item->SetId(-1);
+					item->SetURL("");
+					dvector->Modified(); // Alert the data vector that the item is changed.
+				}
+			}
+		}
+	}
 
-  Superclass::OnEvent(maf_event);
+	Superclass::OnEvent(maf_event);
 }
 
 //-----------------------------------------------------------------------
 void mafVMEGenericAbstract::Print(std::ostream& os, const int tabs)// const
 //-----------------------------------------------------------------------
 {
-  Superclass::Print(os,tabs);
-  mafIndent indent(tabs);
+	Superclass::Print(os, tabs);
+	mafIndent indent(tabs);
 
-  os << indent << "Encryption: ";
-  os << (m_Crypting != 0) ? "On" : "Off";
-  os << "\n";
+	os << indent << "Encryption: ";
+	os << (m_Crypting != 0) ? "On" : "Off";
+	os << "\n";
 
-  os << indent << "DataVector:"; 
-  if (m_DataVector)
-  {
-    os << "\n";
-    m_DataVector->Print(os,indent.GetNextIndent());
-  }
-  else
-  {
-    os << "(NULL)\n";
-  }
+	os << indent << "DataVector:";
+	if (m_DataVector)
+	{
+		os << "\n";
+		m_DataVector->Print(os, indent.GetNextIndent());
+	}
+	else
+	{
+		os << "(NULL)\n";
+	}
 
-  os << indent << "MatrixVector:"; 
-  if (m_MatrixVector)
-  {
-    os << "\n";
-    m_MatrixVector->Print(os,indent.GetNextIndent());
-  }
-  else
-  {
-    os << "(NULL)\n";
-  }
+	os << indent << "MatrixVector:";
+	if (m_MatrixVector)
+	{
+		os << "\n";
+		m_MatrixVector->Print(os, indent.GetNextIndent());
+	}
+	else
+	{
+		os << "(NULL)\n";
+	}
 }
 //-------------------------------------------------------------------------
-const char** mafVMEGenericAbstract::GetIcon() 
+const char** mafVMEGenericAbstract::GetIcon()
 //-------------------------------------------------------------------------
 {
-  #include "mafVMEGeneric.xpm"
-  return mafVMEGeneric_xpm;
+#include "mafVMEGeneric.xpm"
+	return mafVMEGeneric_xpm;
 }

@@ -143,7 +143,7 @@ protected:
   static bool VMEAccept(mafNode *node) { return(node != NULL && node->IsMAFType(mafVME)); };
   static bool VolumeAccept(mafNode *node) { return(node != NULL && node->IsMAFType(mafVMEVolumeGray)); };
   
-  void CreateGuiLine();
+  void CreateGuiLine(mafGUI *gui);
   void EnableGuiLine();
   
   

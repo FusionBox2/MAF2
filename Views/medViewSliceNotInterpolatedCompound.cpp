@@ -81,9 +81,9 @@ mafGUI *medViewSliceNotInterpolatedCompound::CreateGui()
 //----------------------------------------------------------------------------
 {
   // Create the view gui
-  m_Gui = new mafGUI(this);
-  m_Gui->AddGui(m_ChildViewList[0]->GetGui());
-  return m_Gui;
+  auto gui = new mafGUI(this);
+  gui->AddGui(m_ChildViewList[0]->GetGui());
+  return gui;
 }
 
 //----------------------------------------------------------------------------

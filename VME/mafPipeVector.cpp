@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafPipeVector
  Authors: Roberto Mucci
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -61,357 +61,358 @@ mafCxxTypeMacro(mafPipeVector);
 mafPipeVector::mafPipeVector()
 //----------------------------------------------------------------------------
 {
-  m_Data            = NULL;
-  m_Sphere          = NULL;
-  m_ArrowTip        = NULL;
-  m_Apd             = NULL;
-  m_Data            = NULL;
-  m_Mapper          = NULL;
-  m_Actor           = NULL;
-  m_OutlineActor    = NULL;
+	m_Data = NULL;
+	m_Sphere = NULL;
+	m_ArrowTip = NULL;
+	m_Apd = NULL;
+	m_Data = NULL;
+	m_Mapper = NULL;
+	m_Actor = NULL;
+	m_OutlineActor = NULL;
 
-  m_UseArrow = 1;
-  m_UseSphere = 1;
-  m_UseVTKProperty = 1;
-  m_Interval = 0;
-  m_Step = 20;
-  m_UseBunch = 0;
+	m_UseArrow = 1;
+	m_UseSphere = 1;
+	m_UseVTKProperty = 1;
+	m_Interval = 0;
+	m_Step = 20;
+	m_UseBunch = 0;
 
-  m_UseArrow = 1;
-  m_UseSphere = 1;
-  m_UseVTKProperty  = 1;
-  m_AllBunch = 0;
+	m_UseArrow = 1;
+	m_UseSphere = 1;
+	m_UseVTKProperty = 1;
+	m_AllBunch = 0;
 }
 //----------------------------------------------------------------------------
-void mafPipeVector::Create(mafNode *node, mafView *view)
+void mafPipeVector::Create(mafNode* node, mafView* view)
 //----------------------------------------------------------------------------
-{  
-  Superclass::Create(node, view);
-  m_Selected = false;
+{
+	Superclass::Create(node, view);
+	m_Selected = false;
 
-  mafVMEOutputPolyline *out_polyline = mafVMEOutputPolyline::SafeDownCast(m_Vme->GetOutput());
-  assert(out_polyline);
-  m_Data = out_polyline->GetPolylineData();
-  assert(m_Data);
-  //m_Data->Update(); 
+	mafVMEOutputPolyline* out_polyline = mafVMEOutputPolyline::SafeDownCast(m_Vme->GetOutput());
+	assert(out_polyline);
+	m_Data = out_polyline->GetPolylineData();
+	assert(m_Data);
+	//m_Data->Update(); 
 
-  m_Vector = mafVMEVector::SafeDownCast(m_Vme);
-  m_Vector->GetTimeStamps(m_TimeVector);
- 
-  m_Vme->AddObserver(this);
+	m_Vector = mafVMEVector::SafeDownCast(m_Vme);
+	m_Vector->GetTimeStamps(m_TimeVector);
 
-  vtkNEW(m_ArrowTip);  //Create the arrow 
-  m_ArrowTip->SetResolution(20);
+	m_Vme->AddObserver(this);
 
-  vtkNEW(m_Sphere);   //Create the sphere on the Cop
-  m_Sphere->SetRadius(10);
-  m_Sphere->SetPhiResolution(20);
-  m_Sphere->SetThetaResolution(20);
-  
-  m_Mapper = vtkPolyDataMapper::New();
-  m_MapperBunch = vtkPolyDataMapper::New();
- 
-  UpdateProperty(); 
+	vtkNEW(m_ArrowTip);  //Create the arrow 
+	m_ArrowTip->SetResolution(20);
 
-  m_Sphere->Update();
-  m_Apd = vtkAppendPolyData::New();
-  m_Apd->AddInputConnection(out_polyline->GetVTKOutputPort());
-  m_Apd->AddInputConnection(m_Sphere->GetOutputPort());
-  m_Apd->AddInputConnection(m_ArrowTip->GetOutputPort());
-  m_Apd->Update();
-  m_Mapper->SetInputConnection(m_Apd->GetOutputPort());
- 
+	vtkNEW(m_Sphere);   //Create the sphere on the Cop
+	m_Sphere->SetRadius(10);
+	m_Sphere->SetPhiResolution(20);
+	m_Sphere->SetThetaResolution(20);
 
-  int renderingDisplayListFlag = m_Vme->IsAnimated() ? 1 : 0;
+	m_Mapper = vtkPolyDataMapper::New();
+	m_MapperBunch = vtkPolyDataMapper::New();
+
+	UpdateProperty();
+
+	m_Sphere->Update();
+	m_Apd = vtkAppendPolyData::New();
+	m_Apd->AddInputConnection(out_polyline->GetVTKOutputPort());
+	m_Apd->AddInputConnection(m_Sphere->GetOutputPort());
+	m_Apd->AddInputConnection(m_ArrowTip->GetOutputPort());
+	m_Apd->Update();
+	m_Mapper->SetInputConnection(m_Apd->GetOutputPort());
+
+
+	int renderingDisplayListFlag = m_Vme->IsAnimated() ? 1 : 0;
 #if VTK_MAJOR_VERSION <= 7
-  m_Mapper->SetImmediateModeRendering(renderingDisplayListFlag);
+	m_Mapper->SetImmediateModeRendering(renderingDisplayListFlag);
 #endif
 
-  m_Actor = vtkActor::New();
-  m_Actor->SetMapper(m_Mapper);
-  m_Material = out_polyline->GetMaterial();
-  if (m_Material)
-  m_Actor->SetProperty(m_Material->m_Prop);
+	m_Actor = vtkActor::New();
+	m_Actor->SetMapper(m_Mapper);
+	m_Material = out_polyline->GetMaterial();
+	if (m_Material)
+		m_Actor->SetProperty(m_Material->m_Prop);
 
-  vtkNEW(m_Bunch);
-  m_ActorBunch = vtkActor::New();
-  m_ActorBunch->GetProperty()->SetColor(0, 255, 0); //Color of bunch of vectors (Green)
-  m_ActorBunch->SetMapper(m_MapperBunch);
+	vtkNEW(m_Bunch);
+	m_ActorBunch = vtkActor::New();
+	m_ActorBunch->GetProperty()->SetColor(0, 255, 0); //Color of bunch of vectors (Green)
+	m_ActorBunch->SetMapper(m_MapperBunch);
 
-  m_AssemblyFront->AddPart(m_Actor);
-  m_AssemblyFront->AddPart(m_ActorBunch);
+	m_AssemblyFront->AddPart(m_Actor);
+	m_AssemblyFront->AddPart(m_ActorBunch);
 
-  vtkNew<vtkOutlineCornerFilter> corner;
-  corner->SetInputConnection(out_polyline->GetVTKOutputPort());
+	vtkNew<vtkOutlineCornerFilter> corner;
+	corner->SetInputConnection(out_polyline->GetVTKOutputPort());
 
-  vtkNew<vtkPolyDataMapper> corner_mapper;
-  corner_mapper->SetInputConnection(corner->GetOutputPort());
+	vtkNew<vtkPolyDataMapper> corner_mapper;
+	corner_mapper->SetInputConnection(corner->GetOutputPort());
 
-  vtkNew<vtkProperty> corner_props;
-  corner_props->SetColor(1,1,1);
-  corner_props->SetAmbient(1);
-  corner_props->SetRepresentationToWireframe();
-  corner_props->SetInterpolationToFlat();
+	vtkNew<vtkProperty> corner_props;
+	corner_props->SetColor(1, 1, 1);
+	corner_props->SetAmbient(1);
+	corner_props->SetRepresentationToWireframe();
+	corner_props->SetInterpolationToFlat();
 
-  m_OutlineActor = vtkActor::New();
-  m_OutlineActor->SetMapper(corner_mapper);
-  m_OutlineActor->VisibilityOff();
-  m_OutlineActor->PickableOff();
-  m_OutlineActor->SetProperty(corner_props);
+	m_OutlineActor = vtkActor::New();
+	m_OutlineActor->SetMapper(corner_mapper);
+	m_OutlineActor->VisibilityOff();
+	m_OutlineActor->PickableOff();
+	m_OutlineActor->SetProperty(corner_props);
 
-  m_AssemblyFront->AddPart(m_OutlineActor);
+	m_AssemblyFront->AddPart(m_OutlineActor);
 }
 
 //----------------------------------------------------------------------------
 mafPipeVector::~mafPipeVector()
 //----------------------------------------------------------------------------
 {
-  m_Vme->RemoveObserver(this);
-  m_AssemblyFront->RemovePart(m_Actor);
-  m_AssemblyFront->RemovePart(m_ActorBunch);
-  m_AssemblyFront->RemovePart(m_OutlineActor);
+	m_Vme->RemoveObserver(this);
+	m_AssemblyFront->RemovePart(m_Actor);
+	m_AssemblyFront->RemovePart(m_ActorBunch);
+	m_AssemblyFront->RemovePart(m_OutlineActor);
 
-  vtkDEL(m_Sphere);
-  vtkDEL(m_ArrowTip);
-  vtkDEL(m_Apd);
-  vtkDEL(m_Bunch);
-  vtkDEL(m_Mapper);
-  vtkDEL(m_MapperBunch);
-  vtkDEL(m_Actor);
-  vtkDEL(m_ActorBunch);
-  vtkDEL(m_OutlineActor);
+	vtkDEL(m_Sphere);
+	vtkDEL(m_ArrowTip);
+	vtkDEL(m_Apd);
+	vtkDEL(m_Bunch);
+	vtkDEL(m_Mapper);
+	vtkDEL(m_MapperBunch);
+	vtkDEL(m_Actor);
+	vtkDEL(m_ActorBunch);
+	vtkDEL(m_OutlineActor);
 }
 //----------------------------------------------------------------------------
 void mafPipeVector::Select(bool sel)
 //----------------------------------------------------------------------------
 {
-  m_Selected = sel;
-  if(m_Actor->GetVisibility()) 
-  {
-    m_OutlineActor->SetVisibility(sel);
-  }
+	m_Selected = sel;
+	if (m_Actor->GetVisibility())
+	{
+		m_OutlineActor->SetVisibility(sel);
+	}
 }
 //----------------------------------------------------------------------------
 void mafPipeVector::UpdateProperty(bool fromTag)
 //----------------------------------------------------------------------------
-{ 
-  //m_Data->Update();
+{
+	//m_Data->Update();
 
-  double pointCop[3];
-  m_Data->GetPoint(0,pointCop);
+	double pointCop[3];
+	m_Data->GetPoint(0, pointCop);
 
-  if (m_UseSphere == TRUE)
-  {
-    m_Sphere->SetCenter(pointCop);
-  }
-  
-  if (m_UseArrow == TRUE)
-  {
-    double pointForce[3];
-    m_Data->GetPoint(1,pointForce);
-    double length = sqrt(vtkMath::Distance2BetweenPoints(pointCop, pointForce));
-    
-    m_ArrowTip->SetCenter(pointForce[0],pointForce[1],pointForce[2]);
-    m_ArrowTip->SetRadius(length/35.0);
-    m_ArrowTip->SetHeight(length/15.0);
-    double direction[3];
-    direction[0] = pointForce[0] - pointCop[0];
-    direction[1] = pointForce[1] - pointCop[1];
-    direction[2] = pointForce[2] - pointCop[2];
-    m_ArrowTip->SetDirection(direction);
-  }
+	if (m_UseSphere == TRUE)
+	{
+		m_Sphere->SetCenter(pointCop);
+	}
+
+	if (m_UseArrow == TRUE)
+	{
+		double pointForce[3];
+		m_Data->GetPoint(1, pointForce);
+		double length = sqrt(vtkMath::Distance2BetweenPoints(pointCop, pointForce));
+
+		m_ArrowTip->SetCenter(pointForce[0], pointForce[1], pointForce[2]);
+		m_ArrowTip->SetRadius(length / 35.0);
+		m_ArrowTip->SetHeight(length / 15.0);
+		double direction[3];
+		direction[0] = pointForce[0] - pointCop[0];
+		direction[1] = pointForce[1] - pointCop[1];
+		direction[2] = pointForce[2] - pointCop[2];
+		m_ArrowTip->SetDirection(direction);
+	}
 }
 //----------------------------------------------------------------------------
 void mafPipeVector::AllVector(bool fromTag)
 //----------------------------------------------------------------------------
 {
-//  if(!m_TestMode)
-    wxBusyInfo wait(_("Creating Vectogram, please wait..."));
- 
-  m_MatrixVector = m_Vector->GetMatrixVector();
+	//  if(!m_TestMode)
+	wxBusyInfo wait(_("Creating Vectogram, please wait..."));
 
-  mafTimeStamp t0;
-  t0 = m_Vector->GetTimeStamp();
+	m_MatrixVector = m_Vector->GetMatrixVector();
 
-  if (m_MatrixVector)
-  {
-    int i;
-    for (i = 0; i< m_TimeVector.size(); i++)
-    {
-      if (m_TimeVector[i] > t0)
-      {
-        break;
-      }
-    }
-    i--;
+	mafTimeStamp t0;
+	t0 = m_Vector->GetTimeStamp();
 
-    if (i<0)
-    {
-      i=0;
-    }
-    int minValue = (i-m_Interval) < 0 ? 0 : (i-m_Interval);
-    int maxValue = (i + m_Interval) >= m_TimeVector.size() ? m_TimeVector.size() - 1 : (i + m_Interval);
+	if (m_MatrixVector)
+	{
+		int i;
+		for (i = 0; i < m_TimeVector.size(); i++)
+		{
+			if (m_TimeVector[i] > t0)
+			{
+				break;
+			}
+		}
+		i--;
 
-    for (mafTimeStamp n = (minValue + 1); n <= maxValue; n= n + m_Step) //Cicle to draw vectors
-    {
-      vtkNew<vtkLineSource> line;
-     
-      double point1[3];
-      double point2[3];
+		if (i < 0)
+		{
+			i = 0;
+		}
+		int minValue = (i - m_Interval) < 0 ? 0 : (i - m_Interval);
+		int maxValue = (i + m_Interval) >= m_TimeVector.size() ? m_TimeVector.size() - 1 : (i + m_Interval);
 
-      m_Vector->SetTimeStamp(m_TimeVector[n]);
-      //m_Vector->GetOutput()->GetVTKData()->GetPoint(0, point1);
-      //m_Vector->GetOutput()->GetVTKData()->GetPoint(1, point2);
+		for (mafTimeStamp n = (minValue + 1); n <= maxValue; n = n + m_Step) //Cicle to draw vectors
+		{
+			vtkNew<vtkLineSource> line;
 
-      line->SetPoint1(point1);
-      line->SetPoint2(point2);
- 
-      m_Bunch->AddInputConnection(line->GetOutputPort());
-    } 
+			double point1[3];
+			double point2[3];
 
-    if (m_Bunch->GetNumberOfInputConnections(0) == 0)
-    {
-      m_MapperBunch->SetInputConnection(m_Bunch->GetOutputPort());
-    }
-  }
+			m_Vector->SetTimeStamp(m_TimeVector[n]);
+			//m_Vector->GetOutput()->GetVTKData()->GetPoint(0, point1);
+			//m_Vector->GetOutput()->GetVTKData()->GetPoint(1, point2);
+
+			line->SetPoint1(point1);
+			line->SetPoint2(point2);
+
+			m_Bunch->AddInputConnection(line->GetOutputPort());
+		}
+
+		if (m_Bunch->GetNumberOfInputConnections(0) == 0)
+		{
+			m_MapperBunch->SetInputConnection(m_Bunch->GetOutputPort());
+		}
+	}
 }
 //----------------------------------------------------------------------------
-mafGUI *mafPipeVector::CreateGui()
+mafGUI* mafPipeVector::CreateGui()
 //----------------------------------------------------------------------------
 {
-  assert(m_Gui == NULL);
-  m_Gui = new mafGUI(this);
-  m_Gui->Divider();
-  m_Gui->Bool(ID_USE_VTK_PROPERTY,_L("property"),&m_UseVTKProperty);
-  m_MaterialButton = new mafGUIMaterialButton(m_Vme,this);
-  m_Gui->AddGui(m_MaterialButton->GetGui());
-  m_MaterialButton->Enable(m_UseVTKProperty != 0);
-  m_Gui->Divider();
-  m_Gui->Bool(ID_USE_ARROW,_L("Arrow"),&m_UseArrow,1,_L("To visualize the arrow tip"));
-  m_Gui->Bool(ID_USE_SPHERE,_L("COP"),&m_UseSphere,1,_L("To visualize sphere on COP"));
-  m_Gui->Divider();
-  m_Gui->Bool(ID_USE_BUNCH,_L("Vectogram"),&m_UseBunch,0,_L("To visualize the Vectogram"));
-  m_Gui->Divider();
-  m_Gui->Integer(ID_STEP,_L("Step:"),&m_Step,0,(m_TimeVector.size()),_L("1 To visualize every vector"));
-  m_Gui->Divider();
-  m_Gui->Integer(ID_INTERVAL,_L("Interval:"),&m_Interval,0,(m_TimeVector.size()),_L("Interval of frames to visualize"));
-  m_Gui->Divider();
-  m_Gui->Bool(ID_ALL_BUNCH,_L("Complete"),&m_AllBunch,0,_L("To visualize the whole bunch"));
+	assert(!AccessGUI());
+	auto gui = new mafGUI(this);
+	gui->Divider();
+	gui->Bool(ID_USE_VTK_PROPERTY, _L("property"), &m_UseVTKProperty);
+	m_MaterialButton = new mafGUIMaterialButton(m_Vme, this);
+	gui->AddGui(m_MaterialButton->GetGui());
+	m_MaterialButton->Enable(m_UseVTKProperty != 0);
+	gui->Divider();
+	gui->Bool(ID_USE_ARROW, _L("Arrow"), &m_UseArrow, 1, _L("To visualize the arrow tip"));
+	gui->Bool(ID_USE_SPHERE, _L("COP"), &m_UseSphere, 1, _L("To visualize sphere on COP"));
+	gui->Divider();
+	gui->Bool(ID_USE_BUNCH, _L("Vectogram"), &m_UseBunch, 0, _L("To visualize the Vectogram"));
+	gui->Divider();
+	gui->Integer(ID_STEP, _L("Step:"), &m_Step, 0, (m_TimeVector.size()), _L("1 To visualize every vector"));
+	gui->Divider();
+	gui->Integer(ID_INTERVAL, _L("Interval:"), &m_Interval, 0, (m_TimeVector.size()), _L("Interval of frames to visualize"));
+	gui->Divider();
+	gui->Bool(ID_ALL_BUNCH, _L("Complete"), &m_AllBunch, 0, _L("To visualize the whole bunch"));
 
-  m_Gui->Enable(ID_ALL_BUNCH, m_UseBunch == 1);
-  m_Gui->Enable(ID_INTERVAL, m_UseBunch == 1 && m_AllBunch == 0);
-  m_Gui->Enable(ID_STEP, m_UseBunch == 1);
-  m_Gui->Divider();
-	return m_Gui;
+	gui->Enable(ID_ALL_BUNCH, m_UseBunch == 1);
+	gui->Enable(ID_INTERVAL, m_UseBunch == 1 && m_AllBunch == 0);
+	gui->Enable(ID_STEP, m_UseBunch == 1);
+	gui->Divider();
+	return gui;
 }
 //----------------------------------------------------------------------------
-void mafPipeVector::OnEvent(mafEventBase *maf_event)
+void mafPipeVector::OnEvent(mafEventBase* maf_event)
 //----------------------------------------------------------------------------
 {
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    switch(e->GetId()) 
-    {
-      case ID_USE_VTK_PROPERTY:
-        if (m_UseVTKProperty != 0)
-        {
-          m_Actor->SetProperty(m_Material->m_Prop);
-        }
-        else
-        {
-          m_Actor->SetProperty(NULL);
-        }
-        m_MaterialButton->Enable(m_UseVTKProperty != 0);
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      break;
-      case ID_USE_ARROW:
-        if (m_UseArrow == FALSE)
-        {
-          m_Apd->RemoveInputConnection(0, m_ArrowTip->GetOutputPort());
-          m_Apd->Update();
-        }
-        else
-        {
-          UpdateProperty();
-          m_Apd->AddInputConnection(m_ArrowTip->GetOutputPort());
-          m_Apd->Update();
-        }
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      break;
-      case ID_USE_SPHERE:
-        if (m_UseSphere == FALSE)
-        {
-          m_Apd->RemoveInputConnection(0, m_Sphere->GetOutputPort());
-          m_Apd->Update();
-        }
-        else
-        {
-          UpdateProperty();
-          m_Apd->AddInputConnection(m_Sphere->GetOutputPort());
-          m_Apd->Update();
-        }
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      break;
-      case ID_USE_BUNCH:
-        if (m_UseBunch == TRUE)
-        {
-          m_Gui->Update();
-          AllVector();
-        }
-        else
-        {
-          m_Interval = 0;
-          m_AllBunch = 0;
-          m_Gui->Update();
-          m_Bunch->RemoveAllInputs();
-        }
-        EnableWidget();
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      break;
-      case ID_INTERVAL:
-        m_Bunch->RemoveAllInputs();
-        AllVector();
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      break;
-      case ID_STEP:
-        m_Bunch->RemoveAllInputs();
-        AllVector();
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      break;
-      case ID_ALL_BUNCH:
-        if (m_AllBunch == TRUE)
-        {
-          m_Bunch->RemoveAllInputs();
-          m_Interval = m_TimeVector.size();
-          m_Gui->Update();
-          AllVector();
-        }
-        else
-        {
-          m_Interval = 0;
-          m_Gui->Update();
-          m_Bunch->RemoveAllInputs();
-        }
-        EnableWidget();
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      break;
-      default:
-        InvokeEvent(*e);
-      break;
-    }
-  }
-  
-  if (maf_event->GetId() == VME_TIME_SET)
-  {
-    UpdateProperty();
-  }
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
+	{
+		switch (e->GetId())
+		{
+		case ID_USE_VTK_PROPERTY:
+			if (m_UseVTKProperty != 0)
+			{
+				m_Actor->SetProperty(m_Material->m_Prop);
+			}
+			else
+			{
+				m_Actor->SetProperty(NULL);
+			}
+			m_MaterialButton->Enable(m_UseVTKProperty != 0);
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+			break;
+		case ID_USE_ARROW:
+			if (m_UseArrow == FALSE)
+			{
+				m_Apd->RemoveInputConnection(0, m_ArrowTip->GetOutputPort());
+				m_Apd->Update();
+			}
+			else
+			{
+				UpdateProperty();
+				m_Apd->AddInputConnection(m_ArrowTip->GetOutputPort());
+				m_Apd->Update();
+			}
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+			break;
+		case ID_USE_SPHERE:
+			if (m_UseSphere == FALSE)
+			{
+				m_Apd->RemoveInputConnection(0, m_Sphere->GetOutputPort());
+				m_Apd->Update();
+			}
+			else
+			{
+				UpdateProperty();
+				m_Apd->AddInputConnection(m_Sphere->GetOutputPort());
+				m_Apd->Update();
+			}
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+			break;
+		case ID_USE_BUNCH:
+			if (m_UseBunch == TRUE)
+			{
+				UpdateGUI();
+				AllVector();
+			}
+			else
+			{
+				m_Interval = 0;
+				m_AllBunch = 0;
+				UpdateGUI();
+				m_Bunch->RemoveAllInputs();
+			}
+			EnableWidget();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+			break;
+		case ID_INTERVAL:
+			m_Bunch->RemoveAllInputs();
+			AllVector();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+			break;
+		case ID_STEP:
+			m_Bunch->RemoveAllInputs();
+			AllVector();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+			break;
+		case ID_ALL_BUNCH:
+			if (m_AllBunch == TRUE)
+			{
+				m_Bunch->RemoveAllInputs();
+				m_Interval = m_TimeVector.size();
+				UpdateGUI();
+				AllVector();
+			}
+			else
+			{
+				m_Interval = 0;
+				UpdateGUI();
+				m_Bunch->RemoveAllInputs();
+			}
+			EnableWidget();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+			break;
+		default:
+			InvokeEvent(*e);
+			break;
+		}
+	}
+
+	if (maf_event->GetId() == VME_TIME_SET)
+	{
+		UpdateProperty();
+	}
 }
 //----------------------------------------------------------------------------
 void mafPipeVector::EnableWidget()
 //----------------------------------------------------------------------------
 {
-  m_Gui->Enable(ID_INTERVAL, m_UseBunch == 1 && m_AllBunch == 0);
-  m_Gui->Enable(ID_STEP, m_UseBunch == 1);
-  m_Gui->Enable(ID_ALL_BUNCH, m_UseBunch == 1);
+	auto gui = AccessGUI();
+	gui->Enable(ID_INTERVAL, m_UseBunch == 1 && m_AllBunch == 0);
+	gui->Enable(ID_STEP, m_UseBunch == 1);
+	gui->Enable(ID_ALL_BUNCH, m_UseBunch == 1);
 }
 

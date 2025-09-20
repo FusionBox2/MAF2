@@ -147,13 +147,13 @@ void mafViewCT::OnEvent(mafEventBase *maf_event)
 mafGUI* mafViewCT::CreateGui()
 //-------------------------------------------------------------------------
 {
-	assert(m_Gui == NULL);
-	m_Gui = new mafGUI(this);
+	assert(!AccessGUI());
+	auto gui = new mafGUI(this);
 
-	m_Gui->Integer(ID_LAYOUT_WIDTH,_R("Layout Width"),&m_LayoutWidth);
-	m_Gui->Integer(ID_LAYOUT_HEIGHT,_R("Layout Height"),&m_LayoutHeight);
+	gui->Integer(ID_LAYOUT_WIDTH,_R("Layout Width"),&m_LayoutWidth);
+	gui->Integer(ID_LAYOUT_HEIGHT,_R("Layout Height"),&m_LayoutHeight);
 
-	return m_Gui;
+	return gui;
 }
 //----------------------------------------------------------------------------
 void mafViewCT::CreateGuiView()

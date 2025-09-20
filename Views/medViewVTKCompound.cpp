@@ -3,7 +3,7 @@
  Program: MAF2Medical
  Module: medViewVTKCompound
  Authors: Eleonora Mambrini
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -58,7 +58,7 @@
 
 enum SUBVIEW_ID
 {
-  ID_VIEW_VTK = 0,
+	ID_VIEW_VTK = 0,
 };
 
 //----------------------------------------------------------------------------
@@ -67,10 +67,10 @@ mafCxxTypeMacro(medViewVTKCompound);
 
 //----------------------------------------------------------------------------
 medViewVTKCompound::medViewVTKCompound(const mafString& label, int num_row, int num_col)
-: medViewCompoundWindowing(label,num_row,num_col)
-//----------------------------------------------------------------------------
+	: medViewCompoundWindowing(label, num_row, num_col)
+	//----------------------------------------------------------------------------
 {
-  m_ViewVTK = NULL;
+	m_ViewVTK = NULL;
 }
 //----------------------------------------------------------------------------
 medViewVTKCompound::~medViewVTKCompound()
@@ -81,103 +81,103 @@ medViewVTKCompound::~medViewVTKCompound()
 	cppDEL(m_LutSlider);*/
 }
 //----------------------------------------------------------------------------
-mafView *medViewVTKCompound::Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled)
+mafView* medViewVTKCompound::Copy(mafBaseEventHandler* Listener, bool lightCopyEnabled)
 //----------------------------------------------------------------------------
 {
-  m_LightCopyEnabled = lightCopyEnabled;
-  medViewVTKCompound *v = new medViewVTKCompound(GetLabel(), m_ViewRowNum, m_ViewColNum);
-  v->SetListener(Listener);
-  v->m_Id = m_Id;
-  for (int i=0;i<m_PluggedChildViewList.size();i++)
-  {
-    v->m_PluggedChildViewList.push_back(m_PluggedChildViewList[i]->Copy(this));
-  }
-  v->m_NumOfPluggedChildren = m_NumOfPluggedChildren;
-  v->Create();
-  return v;
+	m_LightCopyEnabled = lightCopyEnabled;
+	medViewVTKCompound* v = new medViewVTKCompound(GetLabel(), m_ViewRowNum, m_ViewColNum);
+	v->SetListener(Listener);
+	v->m_Id = m_Id;
+	for (int i = 0; i < m_PluggedChildViewList.size(); i++)
+	{
+		v->m_PluggedChildViewList.push_back(m_PluggedChildViewList[i]->Copy(this));
+	}
+	v->m_NumOfPluggedChildren = m_NumOfPluggedChildren;
+	v->Create();
+	return v;
 }
 
 //-------------------------------------------------------------------------
 mafGUI* medViewVTKCompound::CreateGui()
 //-------------------------------------------------------------------------
 {
-	assert(m_Gui == NULL);
-	m_Gui = new mafGUI(this);
-  if( mafViewVTK::SafeDownCast(m_ChildViewList[ID_VIEW_VTK]) && mafViewVTK::SafeDownCast(m_ChildViewList[ID_VIEW_VTK])->GetGui())
-  {
-     m_Gui->AddGui(((mafViewVTK*)m_ChildViewList[ID_VIEW_VTK])->GetGui());
-  }
-	m_LutWidget = m_Gui->Lut(ID_LUT_CHOOSER,_R("lut"),m_ColorLUT);
+	assert(!AccessGUI());
+	auto gui = new mafGUI(this);
+	if (mafViewVTK::SafeDownCast(m_ChildViewList[ID_VIEW_VTK]) && mafViewVTK::SafeDownCast(m_ChildViewList[ID_VIEW_VTK])->GetGui())
+	{
+		gui->AddGui(((mafViewVTK*)m_ChildViewList[ID_VIEW_VTK])->GetGui());
+	}
+	m_LutWidget = gui->Lut(ID_LUT_CHOOSER, _R("lut"), m_ColorLUT);
 	m_LutWidget->Enable(false);
-	m_Gui->Divider();
-	m_Gui->FitGui();
-	m_Gui->Update();
-	return m_Gui;
+	gui->Divider();
+	gui->FitGui();
+	gui->Update();
+	return gui;
 }
 //-------------------------------------------------------------------------
 void medViewVTKCompound::PackageView()
 //-------------------------------------------------------------------------
 {
-  assert(m_ViewVTK);
+	assert(m_ViewVTK);
 	PlugChildView(m_ViewVTK);
 }
 
 //-------------------------------------------------------------------------
-bool medViewVTKCompound::ActivateWindowing(mafNode *node)
+bool medViewVTKCompound::ActivateWindowing(mafNode* node)
 //-------------------------------------------------------------------------
 {
-  bool conditions     = false;
-  
-  if(((mafVME *)node)->IsA("mafVMEImage")){
-    
-    conditions = true;
+	bool conditions = false;
 
-    for(int i=0; i<m_NumOfChildView; i++) {
-      //m_ChildViewList[i]->VmeSelect(node, select);
+	if (((mafVME*)node)->IsA("mafVMEImage")) {
 
-      auto pipe = mafPipeImage3D::StaticDownCast(m_ChildViewList[i]->GetNodePipe(node));
-      conditions = (conditions && (pipe && pipe->IsGrayImage()));
-    }
-  }
+		conditions = true;
 
-  return conditions;
+		for (int i = 0; i < m_NumOfChildView; i++) {
+			//m_ChildViewList[i]->VmeSelect(node, select);
+
+			auto pipe = mafPipeImage3D::StaticDownCast(m_ChildViewList[i]->GetNodePipe(node));
+			conditions = (conditions && (pipe && pipe->IsGrayImage()));
+		}
+	}
+
+	return conditions;
 }
 
 //-------------------------------------------------------------------------
-void medViewVTKCompound::SetExternalView(mafViewVTK *childView)
+void medViewVTKCompound::SetExternalView(mafViewVTK* childView)
 //-------------------------------------------------------------------------
 {
-  if(m_ViewVTK == NULL) {
-    m_ViewVTK = childView;
-  }
+	if (m_ViewVTK == NULL) {
+		m_ViewVTK = childView;
+	}
 }
 //-------------------------------------------------------------------------
 void medViewVTKCompound::CameraUpdate()
 //-------------------------------------------------------------------------
 {
-  // Added patch to update scalar and vector attributes while changing timeframe with the timebar 
-  // (valid only for medPipeVectorFieldMapWithArrows).
-  mafSceneGraph* sg = GetSceneGraph();
+	// Added patch to update scalar and vector attributes while changing timeframe with the timebar 
+	// (valid only for medPipeVectorFieldMapWithArrows).
+	mafSceneGraph* sg = GetSceneGraph();
 
-  // Do it for each node attached to the view
-  for(mafSceneNode *node = sg->GetNodeList(); node; node=node->m_Next)
-	{ 
-    if (node->m_Vme)
-    {
-  
-      auto vme = mafVME::StaticDownCast(node->m_Vme);
+	// Do it for each node attached to the view
+	for (mafSceneNode* node = sg->GetNodeList(); node; node = node->m_Next)
+	{
+		if (node->m_Vme)
+		{
 
-      assert(vme);
-      auto maf_pipe = GetNodePipe(vme);
-      if (maf_pipe && strcmp(maf_pipe->GetTypeName(),"medPipeVectorFieldMapWithArrows")==0)
-      {
-        auto pipe = medPipeVectorFieldMapWithArrows::StaticDownCast(maf_pipe);
-        if (pipe) {
-          pipe->UpdateVTKPipe();
-        }
-      }
-    }
-  }
+			auto vme = mafVME::StaticDownCast(node->m_Vme);
 
-  Superclass::CameraUpdate();
+			assert(vme);
+			auto maf_pipe = GetNodePipe(vme);
+			if (maf_pipe && strcmp(maf_pipe->GetTypeName(), "medPipeVectorFieldMapWithArrows") == 0)
+			{
+				auto pipe = medPipeVectorFieldMapWithArrows::StaticDownCast(maf_pipe);
+				if (pipe) {
+					pipe->UpdateVTKPipe();
+				}
+			}
+		}
+	}
+
+	Superclass::CameraUpdate();
 }

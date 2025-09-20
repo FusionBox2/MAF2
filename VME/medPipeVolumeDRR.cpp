@@ -3,7 +3,7 @@
  Program: MAF2Medical
  Module: medPipeVolumeDRR
  Authors: Paolo Quadrani - porting Daniele Giunchi
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -68,134 +68,134 @@ mafCxxTypeMacro(medPipeVolumeDRR);
 medPipeVolumeDRR::medPipeVolumeDRR()
 //----------------------------------------------------------------------------
 {
-  m_OpacityTransferFunction = NULL;
-  m_VolumeProperty    = NULL;
-  m_Volume            = NULL;
-  //m_MIPFunction       = NULL;
-  m_VolumeMapper      = NULL;
-  //m_VolumeMapperLow   = NULL;
-//  m_VolumeLOD         = NULL;
-  m_SelectionActor    = NULL;
-  m_ColorLUT          = NULL;
-	m_ResampleFilter		= NULL;
-  m_VolumeBounds[0] = m_VolumeBounds[1] = m_VolumeBounds[2] \
-    = m_VolumeBounds[3] = m_VolumeBounds[4] = m_VolumeBounds[5] = 0;
+	m_OpacityTransferFunction = NULL;
+	m_VolumeProperty = NULL;
+	m_Volume = NULL;
+	//m_MIPFunction       = NULL;
+	m_VolumeMapper = NULL;
+	//m_VolumeMapperLow   = NULL;
+  //  m_VolumeLOD         = NULL;
+	m_SelectionActor = NULL;
+	m_ColorLUT = NULL;
+	m_ResampleFilter = NULL;
+	m_VolumeBounds[0] = m_VolumeBounds[1] = m_VolumeBounds[2] \
+		= m_VolumeBounds[3] = m_VolumeBounds[4] = m_VolumeBounds[5] = 0;
 
-  m_VolumeOrientation[0] = m_VolumeOrientation[1] = m_VolumeOrientation[2] = 0;
+	m_VolumeOrientation[0] = m_VolumeOrientation[1] = m_VolumeOrientation[2] = 0;
 
 	m_ResampleFactor = 1.0;
 }
 //----------------------------------------------------------------------------
-void medPipeVolumeDRR::Create(mafNode *node, mafView *view)
+void medPipeVolumeDRR::Create(mafNode* node, mafView* view)
 //----------------------------------------------------------------------------
 {
-  Superclass::Create(node, view);
+	Superclass::Create(node, view);
 
-  m_Selected = false;
+	m_Selected = false;
 
-  //wxBusyCursor wait;
+	//wxBusyCursor wait;
 
-  // image pipeline
-  m_Vme->GetOutput()->Update();
-  vtkDataSet* data = m_Vme->GetOutput()->GetVTKData();
+	// image pipeline
+	m_Vme->GetOutput()->Update();
+	vtkDataSet* data = m_Vme->GetOutput()->GetVTKData();
 
-  double sr[2];
+	double sr[2];
 	data->GetScalarRange(sr);
 
-  vtkNEW(m_ColorLUT);
-  m_ColorLUT->SetTableRange(sr);
+	vtkNEW(m_ColorLUT);
+	m_ColorLUT->SetTableRange(sr);
 
-  //vtkNEW(m_OpacityTransferFunction);
-  auto material = ((mafVMEVolume *)m_Vme)->GetMaterial();
-  m_OpacityTransferFunction = material->m_OpacityTransferFunction;
+	//vtkNEW(m_OpacityTransferFunction);
+	auto material = ((mafVMEVolume*)m_Vme)->GetMaterial();
+	m_OpacityTransferFunction = material->m_OpacityTransferFunction;
 
-  vtkNEW(m_VolumeProperty);
-  m_VolumeProperty->SetScalarOpacity(m_OpacityTransferFunction);
-  m_VolumeProperty->SetInterpolationTypeToLinear();
+	vtkNEW(m_VolumeProperty);
+	m_VolumeProperty->SetScalarOpacity(m_OpacityTransferFunction);
+	m_VolumeProperty->SetInterpolationTypeToLinear();
 
-  /*vtkNEW(m_MIPFunction);
-  m_MIPFunction->SetMaximizeMethodToOpacity();*/
+	/*vtkNEW(m_MIPFunction);
+	m_MIPFunction->SetMaximizeMethodToOpacity();*/
 
 	vtkNEW(m_ResampleFilter);
 	vtkNEW(m_VolumeMapper);
-	if(vtkImageData::SafeDownCast(data))
+	if (vtkImageData::SafeDownCast(data))
 	{
 		m_ResampleFilter->SetInputData((vtkImageData*)data);
-		for(int i=0;i<3;i++)
-			m_ResampleFilter->SetAxisMagnificationFactor(i,m_ResampleFactor);
+		for (int i = 0; i < 3; i++)
+			m_ResampleFilter->SetAxisMagnificationFactor(i, m_ResampleFactor);
 		m_ResampleFilter->Update();
 		m_VolumeMapper->SetInput(m_ResampleFilter->GetOutput());
 	}
 	else
 		m_VolumeMapper->SetInput(data);
 
-  //m_VolumeMapper->SetVolumeRayCastFunction(m_MIPFunction);
-  m_VolumeMapper->SetCroppingRegionPlanes(0, 1, 0, 1, 0, 1);
-//  m_VolumeMapper->SetImageSampleDistance(1);
-//  m_VolumeMapper->SetMaximumImageSampleDistance(10);
-//  m_VolumeMapper->SetMinimumImageSampleDistance(1);
-//  m_VolumeMapper->SetNumberOfThreads(1);
-//  m_VolumeMapper->SetSampleDistance(1);
+	//m_VolumeMapper->SetVolumeRayCastFunction(m_MIPFunction);
+	m_VolumeMapper->SetCroppingRegionPlanes(0, 1, 0, 1, 0, 1);
+	//  m_VolumeMapper->SetImageSampleDistance(1);
+	//  m_VolumeMapper->SetMaximumImageSampleDistance(10);
+	//  m_VolumeMapper->SetMinimumImageSampleDistance(1);
+	//  m_VolumeMapper->SetNumberOfThreads(1);
+	//  m_VolumeMapper->SetSampleDistance(1);
 
-  /*vtkNEW(m_VolumeMapperLow);
-  m_VolumeMapperLow->SetInput(m_Caster->GetOutput());
-  m_VolumeMapperLow->SetVolumeRayCastFunction(m_MIPFunction);
-  m_VolumeMapperLow->SetCroppingRegionPlanes(0, 1, 0, 1, 0, 1);
-  m_VolumeMapperLow->SetImageSampleDistance(5);
-  m_VolumeMapperLow->SetMaximumImageSampleDistance(10);
-  m_VolumeMapperLow->SetMinimumImageSampleDistance(5);
-  m_VolumeMapperLow->SetNumberOfThreads(1);
-  m_VolumeMapperLow->SetSampleDistance(5);
+	  /*vtkNEW(m_VolumeMapperLow);
+	  m_VolumeMapperLow->SetInput(m_Caster->GetOutput());
+	  m_VolumeMapperLow->SetVolumeRayCastFunction(m_MIPFunction);
+	  m_VolumeMapperLow->SetCroppingRegionPlanes(0, 1, 0, 1, 0, 1);
+	  m_VolumeMapperLow->SetImageSampleDistance(5);
+	  m_VolumeMapperLow->SetMaximumImageSampleDistance(10);
+	  m_VolumeMapperLow->SetMinimumImageSampleDistance(5);
+	  m_VolumeMapperLow->SetNumberOfThreads(1);
+	  m_VolumeMapperLow->SetSampleDistance(5);
 
-  vtkNEW(m_VolumeLOD);
-  m_VolumeLOD->AddLOD(m_VolumeMapperLow, m_VolumeProperty,0);
-  m_VolumeLOD->AddLOD(m_VolumeMapper, m_VolumeProperty,0);
-  m_VolumeLOD->PickableOff();
+	  vtkNEW(m_VolumeLOD);
+	  m_VolumeLOD->AddLOD(m_VolumeMapperLow, m_VolumeProperty,0);
+	  m_VolumeLOD->AddLOD(m_VolumeMapper, m_VolumeProperty,0);
+	  m_VolumeLOD->PickableOff();
 
-  m_AssemblyFront->AddPart(m_VolumeLOD);
-  */
-  vtkNEW(m_Volume);
-  m_Volume->SetMapper(m_VolumeMapper);
-  m_Volume->PickableOff();
-  
-  m_AssemblyFront->AddPart(m_Volume);
-  
-  vtkNew<vtkOutlineCornerFilter> selection_filter;
-  selection_filter->SetInputData(data);  
+	  m_AssemblyFront->AddPart(m_VolumeLOD);
+	  */
+	vtkNEW(m_Volume);
+	m_Volume->SetMapper(m_VolumeMapper);
+	m_Volume->PickableOff();
 
-  vtkNew<vtkPolyDataMapper> selection_papper;
-  selection_papper->SetInputConnection(selection_filter->GetOutputPort());
+	m_AssemblyFront->AddPart(m_Volume);
 
-  vtkNew<vtkProperty> selection_property;
-  selection_property->SetColor(1,1,1);
-  selection_property->SetAmbient(1);
-  selection_property->SetRepresentationToWireframe();
-  selection_property->SetInterpolationToFlat();
+	vtkNew<vtkOutlineCornerFilter> selection_filter;
+	selection_filter->SetInputData(data);
 
-  vtkNEW(m_SelectionActor);
-  m_SelectionActor->SetMapper(selection_papper);
-  m_SelectionActor->VisibilityOff();
-  m_SelectionActor->PickableOff();
-  m_SelectionActor->SetProperty(selection_property);
-  m_SelectionActor->SetScale(1.01,1.01,1.01);
+	vtkNew<vtkPolyDataMapper> selection_papper;
+	selection_papper->SetInputConnection(selection_filter->GetOutputPort());
 
-  //m_AssemblyFront->AddPart(m_SelectionActor); // commented to avoid problems on ray cast volume rendering
+	vtkNew<vtkProperty> selection_property;
+	selection_property->SetColor(1, 1, 1);
+	selection_property->SetAmbient(1);
+	selection_property->SetRepresentationToWireframe();
+	selection_property->SetInterpolationToFlat();
+
+	vtkNEW(m_SelectionActor);
+	m_SelectionActor->SetMapper(selection_papper);
+	m_SelectionActor->VisibilityOff();
+	m_SelectionActor->PickableOff();
+	m_SelectionActor->SetProperty(selection_property);
+	m_SelectionActor->SetScale(1.01, 1.01, 1.01);
+
+	//m_AssemblyFront->AddPart(m_SelectionActor); // commented to avoid problems on ray cast volume rendering
 }
 //----------------------------------------------------------------------------
 medPipeVolumeDRR::~medPipeVolumeDRR()
 //----------------------------------------------------------------------------
 {
-  m_AssemblyFront->RemovePart(m_Volume);
-  //m_AssemblyFront->RemovePart(m_SelectionActor);
+	m_AssemblyFront->RemovePart(m_Volume);
+	//m_AssemblyFront->RemovePart(m_SelectionActor);
 
-  vtkDEL(m_ColorLUT);
-//  vtkDEL(m_OpacityTransferFunction);
-  vtkDEL(m_VolumeProperty);
-  //vtkDEL(m_MIPFunction);
-  vtkDEL(m_VolumeMapper);
-  //vtkDEL(m_VolumeMapperLow);
-  vtkDEL(m_Volume);
-  vtkDEL(m_SelectionActor);
+	vtkDEL(m_ColorLUT);
+	//  vtkDEL(m_OpacityTransferFunction);
+	vtkDEL(m_VolumeProperty);
+	//vtkDEL(m_MIPFunction);
+	vtkDEL(m_VolumeMapper);
+	//vtkDEL(m_VolumeMapperLow);
+	vtkDEL(m_Volume);
+	vtkDEL(m_SelectionActor);
 	vtkDEL(m_ResampleFilter);
 }
 //----------------------------------------------------------------------------
@@ -203,74 +203,73 @@ void medPipeVolumeDRR::Select(bool sel)
 //----------------------------------------------------------------------------
 {
 	m_Selected = sel;
-  if(m_Volume == NULL) return;
-	if(m_Volume->GetVisibility())
-			m_SelectionActor->SetVisibility(sel);
+	if (m_Volume == NULL) return;
+	if (m_Volume->GetVisibility())
+		m_SelectionActor->SetVisibility(sel);
 }
 //----------------------------------------------------------------------------
-mafGUI *medPipeVolumeDRR::CreateGui()
+mafGUI* medPipeVolumeDRR::CreateGui()
 //----------------------------------------------------------------------------
 {
-  assert(m_Gui == NULL);
-  m_Gui = new mafGUI(this);
-  //lutPreset(15,m_ColorLUT);
-  //m_Gui->Lut(ID_LUT_CHOOSER,"lut",m_ColorLUT);
-  //UpdateMIPFromLUT();
+	auto gui = new mafGUI(this);
+	//lutPreset(15,m_ColorLUT);
+	//m_Gui->Lut(ID_LUT_CHOOSER,"lut",m_ColorLUT);
+	//UpdateMIPFromLUT();
 
-	//Gui
+	  //Gui
 
-	this->m_Gui->SetListener(this);
+	gui->SetListener(this);
 
-	m_Gui->Double(ID_RESAMPLE_FACTOR,_R("Resample"),&m_ResampleFactor,0.00001,1);
+	gui->Double(ID_RESAMPLE_FACTOR, _R("Resample"), &m_ResampleFactor, 0.00001, 1);
 
-	this->m_Gui->Label(_R("DRR settings:"), true);
-	m_Gui->Color(ID_VOLUME_COLOR, _R("Color"), &this->m_VolumeColor);
+	gui->Label(_R("DRR settings:"), true);
+	gui->Color(ID_VOLUME_COLOR, _R("Color"), &this->m_VolumeColor);
 	vtkXRayVolumeMapper::GetExposureCorrection(this->m_ExposureCorrection);
-	m_Gui->FloatSlider(ID_EXPOSURE_CORRECTION_L,	_R("Min"), &this->m_ExposureCorrection[0], -1.f, 1.f);
-	m_Gui->FloatSlider(ID_EXPOSURE_CORRECTION_H,	_R("Max"), &this->m_ExposureCorrection[1], -1.f, 1.f);
-	m_Gui->FloatSlider(ID_GAMMA,	_R("Gamma"), &this->m_Gamma, 0.1f, 3.f);
-/*
-	this->m_Gui->Divider(0);
-	this->m_Gui->Label("Image settings:", true);
-	m_Gui->Color(ID_IMAGE_COLOR, "Color", &this->m_ImageColor);
-	m_Gui->FloatSlider(ID_IMAGE_ANGLE, "View angle", &m_ImageAngle, 0.5, 45.0);
-	m_Gui->FloatSlider(ID_IMAGE_OFFSET_X, "Offset X", &(m_Offset[0]), -1.0, 1.0);
-	m_Gui->FloatSlider(ID_IMAGE_OFFSET_Y, "Offset Y", &(m_Offset[1]), -1.0, 1.0);
-*/
-	this->m_Gui->Divider(0);
-	this->m_Gui->Label(_R("Camera settings:"), true);
-	vtkCamera *camera = m_RenFront->GetActiveCamera();
+	gui->FloatSlider(ID_EXPOSURE_CORRECTION_L, _R("Min"), &this->m_ExposureCorrection[0], -1.f, 1.f);
+	gui->FloatSlider(ID_EXPOSURE_CORRECTION_H, _R("Max"), &this->m_ExposureCorrection[1], -1.f, 1.f);
+	gui->FloatSlider(ID_GAMMA, _R("Gamma"), &this->m_Gamma, 0.1f, 3.f);
+	/*
+		this->m_Gui->Divider(0);
+		this->m_Gui->Label("Image settings:", true);
+		m_Gui->Color(ID_IMAGE_COLOR, "Color", &this->m_ImageColor);
+		m_Gui->FloatSlider(ID_IMAGE_ANGLE, "View angle", &m_ImageAngle, 0.5, 45.0);
+		m_Gui->FloatSlider(ID_IMAGE_OFFSET_X, "Offset X", &(m_Offset[0]), -1.0, 1.0);
+		m_Gui->FloatSlider(ID_IMAGE_OFFSET_Y, "Offset Y", &(m_Offset[1]), -1.0, 1.0);
+	*/
+	gui->Divider(0);
+	gui->Label(_R("Camera settings:"), true);
+	vtkCamera* camera = m_RenFront->GetActiveCamera();
 	this->m_CameraAngle = camera->GetViewAngle();
-	m_Gui->FloatSlider(ID_CAMERA_ANGLE, _R("View angle"), &m_CameraAngle, 0.5, 45.0);
+	gui->FloatSlider(ID_CAMERA_ANGLE, _R("View angle"), &m_CameraAngle, 0.5, 45.0);
 	camera->GetPosition(this->m_CameraPosition);
-	m_Gui->Vector(ID_CAMERA_POSITION, _R("Position"),	m_CameraPosition);
+	gui->Vector(ID_CAMERA_POSITION, _R("Position"), m_CameraPosition);
 	camera->GetFocalPoint(this->m_CameraFocus);
-	m_Gui->Vector(ID_CAMERA_FOCUS, _R("Focal point"),	m_CameraFocus);
+	gui->Vector(ID_CAMERA_FOCUS, _R("Focal point"), m_CameraFocus);
 	this->m_CameraRoll = camera->GetRoll();
-	m_Gui->FloatSlider(ID_CAMERA_ROLL, _R("Roll angle"), &m_CameraRoll, -180., 180.0);
+	gui->FloatSlider(ID_CAMERA_ROLL, _R("Roll angle"), &m_CameraRoll, -180., 180.0);
 
-	this->m_Gui->Divider(0);
-	//this->m_Gui->Button(ID_EXPORT, "Export Registration Settings");
+	gui->Divider(0);
+	//m_Gui->Button(ID_EXPORT, "Export Registration Settings");
 
-	this->m_Gui->Update();
+	gui->Update();
 
 	//end Gui
 
-  return m_Gui;
+	return gui;
 }
 //----------------------------------------------------------------------------
-void medPipeVolumeDRR::OnEvent(mafEventBase *maf_event)
+void medPipeVolumeDRR::OnEvent(mafEventBase* maf_event)
 //----------------------------------------------------------------------------
 {
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-		mafSceneNode *node = NULL;
-		vtkCamera *camera = m_RenFront->GetActiveCamera();
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
+	{
+		mafSceneNode* node = NULL;
+		vtkCamera* camera = m_RenFront->GetActiveCamera();
 
-    switch(e->GetId()) 
-    {
-      case ID_LUT_CHOOSER:
-      break;
+		switch (e->GetId())
+		{
+		case ID_LUT_CHOOSER:
+			break;
 
 			/////
 			/*case ID_EXPORT:
@@ -278,36 +277,36 @@ void medPipeVolumeDRR::OnEvent(mafEventBase *maf_event)
 				return;
 				break;*/
 
-			case ID_VOLUME_COLOR:
-				vtkXRayVolumeMapper::SetColor(this->m_VolumeColor.Red() / 255.f, this->m_VolumeColor.Green() / 255.f, this->m_VolumeColor.Blue() / 255.f);
-				{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
-				{mafEvent evUnq(this,MOUSE_MOVE); InvokeEvent(evUnq);}
-				break;
-			case ID_EXPOSURE_CORRECTION_L:
-			case ID_EXPOSURE_CORRECTION_H:
-				if (!vtkXRayVolumeMapper::SetExposureCorrection(this->m_ExposureCorrection))
-					vtkXRayVolumeMapper::GetExposureCorrection(this->m_ExposureCorrection);
-				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-				break;
+		case ID_VOLUME_COLOR:
+			vtkXRayVolumeMapper::SetColor(this->m_VolumeColor.Red() / 255.f, this->m_VolumeColor.Green() / 255.f, this->m_VolumeColor.Blue() / 255.f);
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+			{ mafEvent evUnq(this, MOUSE_MOVE); InvokeEvent(evUnq); }
+			break;
+		case ID_EXPOSURE_CORRECTION_L:
+		case ID_EXPOSURE_CORRECTION_H:
+			if (!vtkXRayVolumeMapper::SetExposureCorrection(this->m_ExposureCorrection))
+				vtkXRayVolumeMapper::GetExposureCorrection(this->m_ExposureCorrection);
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+			break;
 
-			case ID_GAMMA:
-				if (!vtkXRayVolumeMapper::SetGamma(this->m_Gamma))
-					this->m_Gamma = vtkXRayVolumeMapper::GetGamma();
-				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-				break;
+		case ID_GAMMA:
+			if (!vtkXRayVolumeMapper::SetGamma(this->m_Gamma))
+				this->m_Gamma = vtkXRayVolumeMapper::GetGamma();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+			break;
 
-			case ID_RESAMPLE_FACTOR:
-				{
-					for(int i=0;i<3;i++)
-						m_ResampleFilter->SetAxisMagnificationFactor(i,m_ResampleFactor);
+		case ID_RESAMPLE_FACTOR:
+		{
+			for (int i = 0; i < 3; i++)
+				m_ResampleFilter->SetAxisMagnificationFactor(i, m_ResampleFactor);
 
-					m_ResampleFilter->Update();
-					{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-				}
-				break;
-			case ID_IMAGE_COLOR:
-			case ID_IMAGE_ANGLE:
-			case ID_IMAGE_OFFSET_X:
+			m_ResampleFilter->Update();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		}
+		break;
+		case ID_IMAGE_COLOR:
+		case ID_IMAGE_ANGLE:
+		case ID_IMAGE_OFFSET_X:
 			/*case ID_IMAGE_OFFSET_Y:
 				// update pipes
 				for (node = this->m_Sg->m_list; node != NULL; node = node->m_next) {
@@ -324,128 +323,121 @@ void medPipeVolumeDRR::OnEvent(mafEventBase *maf_event)
 				}
 				this->CameraUpdate();
 				break;
-      */
-			case CAMERA_UPDATE:
-			case CAMERA_RESET:
-			case CAMERA_FIT:
-			case MOUSE_MOVE:
-				this->m_CameraAngle = camera->GetViewAngle();
-				camera->GetPosition(this->m_CameraPosition);
-				camera->GetFocalPoint(this->m_CameraFocus);
-				this->m_CameraRoll = camera->GetRoll();
-				break;
-			case ID_CAMERA_ANGLE:
-				camera->SetViewAngle(this->m_CameraAngle);
-				{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
-				break;
-			case ID_CAMERA_POSITION:
-				camera->SetPosition(this->m_CameraPosition);
-				{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
-				break;
-			case ID_CAMERA_FOCUS:
-				camera->SetFocalPoint(this->m_CameraFocus);
-				{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
-				break;
-			case ID_CAMERA_ROLL:
-				camera->SetRoll(this->m_CameraRoll);
-				{mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq);}
-				break;
-			default:
-				InvokeEvent(*e);
-				return;
+	  */
+		case CAMERA_UPDATE:
+		case CAMERA_RESET:
+		case CAMERA_FIT:
+		case MOUSE_MOVE:
+			this->m_CameraAngle = camera->GetViewAngle();
+			camera->GetPosition(this->m_CameraPosition);
+			camera->GetFocalPoint(this->m_CameraFocus);
+			this->m_CameraRoll = camera->GetRoll();
+			break;
+		case ID_CAMERA_ANGLE:
+			camera->SetViewAngle(this->m_CameraAngle);
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+			break;
+		case ID_CAMERA_POSITION:
+			camera->SetPosition(this->m_CameraPosition);
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+			break;
+		case ID_CAMERA_FOCUS:
+			camera->SetFocalPoint(this->m_CameraFocus);
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+			break;
+		case ID_CAMERA_ROLL:
+			camera->SetRoll(this->m_CameraRoll);
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+			break;
+		default:
+			InvokeEvent(*e);
+			return;
 			/////
-    }
+		}
 
-		this->m_Gui->Update();
-  }
+		UpdateGUI();
+	}
 }
 //----------------------------------------------------------------------------
 void medPipeVolumeDRR::SetColor(wxColor color)
 //----------------------------------------------------------------------------
 {
-	m_VolumeColor=color;
-	
+	m_VolumeColor = color;
+
 	vtkXRayVolumeMapper::SetColor(this->m_VolumeColor.Red() / 255.f, this->m_VolumeColor.Green() / 255.f, this->m_VolumeColor.Blue() / 255.f);
-	
-	if(m_Gui)
-		m_Gui->Update();
+
+	UpdateGUI();
 }
 //----------------------------------------------------------------------------
 void medPipeVolumeDRR::SetExposureCorrection(double value[2])
 //----------------------------------------------------------------------------
 {
-	m_ExposureCorrection[0]=value[0];
-	m_ExposureCorrection[1]=value[1];
-	
+	m_ExposureCorrection[0] = value[0];
+	m_ExposureCorrection[1] = value[1];
+
 	if (!vtkXRayVolumeMapper::SetExposureCorrection(this->m_ExposureCorrection))
 		vtkXRayVolumeMapper::GetExposureCorrection(this->m_ExposureCorrection);
-	
-	if(m_Gui)
-		m_Gui->Update();
+
+	UpdateGUI();
 }
 //----------------------------------------------------------------------------
 void medPipeVolumeDRR::SetGamma(double value)
 //----------------------------------------------------------------------------
 {
-	m_Gamma=value;
+	m_Gamma = value;
 
 	if (!vtkXRayVolumeMapper::SetGamma(this->m_Gamma))
 		this->m_Gamma = vtkXRayVolumeMapper::GetGamma();
 
-	if(m_Gui)
-		m_Gui->Update();
+	UpdateGUI();
 }
 //----------------------------------------------------------------------------
 void medPipeVolumeDRR::SetCameraAngle(double value)
 //----------------------------------------------------------------------------
 {
-	m_CameraAngle=value;
+	m_CameraAngle = value;
 
-	vtkCamera *camera = this->m_RenFront->GetActiveCamera();
+	vtkCamera* camera = this->m_RenFront->GetActiveCamera();
 	camera->SetViewAngle(this->m_CameraAngle);
 
-	if(m_Gui)
-		m_Gui->Update();
+	UpdateGUI();
 }
 //----------------------------------------------------------------------------
 void medPipeVolumeDRR::SetCameraPosition(double value[3])
 //----------------------------------------------------------------------------
 {
-	m_CameraPosition[0]=value[0];
-	m_CameraPosition[1]=value[1];
-	m_CameraPosition[2]=value[2];
+	m_CameraPosition[0] = value[0];
+	m_CameraPosition[1] = value[1];
+	m_CameraPosition[2] = value[2];
 
-	vtkCamera *camera = this->m_RenFront->GetActiveCamera();
+	vtkCamera* camera = this->m_RenFront->GetActiveCamera();
 	camera->SetPosition(this->m_CameraPosition);
 
-	if(m_Gui)
-		m_Gui->Update();
+	UpdateGUI();
 }
 //----------------------------------------------------------------------------
 void medPipeVolumeDRR::SetCameraFocus(double value[3])
 //----------------------------------------------------------------------------
 {
-	m_CameraFocus[0]=value[0];
-	m_CameraFocus[1]=value[1];
-	m_CameraFocus[2]=value[2];
+	m_CameraFocus[0] = value[0];
+	m_CameraFocus[1] = value[1];
+	m_CameraFocus[2] = value[2];
 
-	vtkCamera *camera = this->m_RenFront->GetActiveCamera();
+	vtkCamera* camera = this->m_RenFront->GetActiveCamera();
 	camera->SetFocalPoint(this->m_CameraFocus);
 
-	if (m_Gui)
-		m_Gui->Update();
+	UpdateGUI();
 }
 //----------------------------------------------------------------------------
 void medPipeVolumeDRR::SetCameraRoll(double value)
 //----------------------------------------------------------------------------
 {
-	m_CameraRoll=value;
-	
-	vtkCamera *camera = this->m_RenFront->GetActiveCamera();
+	m_CameraRoll = value;
+
+	vtkCamera* camera = this->m_RenFront->GetActiveCamera();
 	camera->SetRoll(this->m_CameraRoll);
 
-	if(m_Gui)
-		m_Gui->Update();
+	UpdateGUI();
 }
 //----------------------------------------------------------------------------
 double medPipeVolumeDRR::GetResampleFactor()
@@ -459,14 +451,13 @@ void medPipeVolumeDRR::SetResampleFactor(double value)
 {
 	m_ResampleFactor = value;
 
-	if(m_ResampleFilter)
+	if (m_ResampleFilter)
 	{
-		for(int i=0;i<3;i++)
-			m_ResampleFilter->SetAxisMagnificationFactor(i,m_ResampleFactor);
+		for (int i = 0; i < 3; i++)
+			m_ResampleFilter->SetAxisMagnificationFactor(i, m_ResampleFactor);
 
 		m_ResampleFilter->Update();
 	}
 
-	if(m_Gui)
-		m_Gui->Update();
+	UpdateGUI();
 }

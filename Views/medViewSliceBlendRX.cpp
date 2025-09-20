@@ -205,17 +205,17 @@ void medViewSliceBlendRX::OnEvent(mafEventBase *maf_event)
 mafGUI* medViewSliceBlendRX::CreateGui()
 //-------------------------------------------------------------------------
 {
-  assert(m_Gui == NULL);
-  m_Gui = new mafGUI(this);
+  assert(!AccessGUI());
+  auto gui = new mafGUI(this);
 
-  m_Gui->Label(_L("Blend View"),true);
+  gui->Label(_L("Blend View"),true);
   m_BlendGui = m_ChildViewList[BLEND_VIEW]->GetGui();
   // m_BlendGui->SetListener(this);
-  m_Gui->AddGui(m_ChildViewList[BLEND_VIEW]->GetGui());
-  m_Gui->FitInside();
-  m_Gui->Update();
-  m_Gui->Divider(1);
-  m_Gui->Divider(1);
+  gui->AddGui(m_ChildViewList[BLEND_VIEW]->GetGui());
+  gui->FitInside();
+  gui->Update();
+  gui->Divider(1);
+  gui->Divider(1);
   
   //Enable/disable gui componets depending from volume
   EnableWidgets(m_CurrentVolume != NULL);
@@ -224,8 +224,8 @@ mafGUI* medViewSliceBlendRX::CreateGui()
     //Generate gui for the subviews
 		((mafViewRX*)m_ChildViewList[i])->GetGui();
   }
-	m_Gui->Divider();
-  return m_Gui;
+	gui->Divider();
+  return gui;
 }
 //----------------------------------------------------------------------------
 void medViewSliceBlendRX::CreateGuiView()
@@ -266,9 +266,9 @@ void medViewSliceBlendRX::PackageView()
 void medViewSliceBlendRX::EnableWidgets(bool enable)
 //----------------------------------------------------------------------------
 {
-  if (m_Gui)
+  if (auto gui = AccessGUI())
   {
-    m_Gui->Enable(ID_LUT_WIDGET,enable);
+    gui->Enable(ID_LUT_WIDGET,enable);
   }
 }
 //----------------------------------------------------------------------------

@@ -258,8 +258,7 @@ void mafVMERefSysAbstract::SetScaleFactor(double scale)
 //-------------------------------------------------------------------------
 {
   m_ScaleFactor = scale;
-  if (m_Gui)
-    m_Gui->Update();
+  UpdateGUI();
   m_ScaleAxisTransform->Identity();
   m_ScaleAxisTransform->Scale(m_ScaleFactor,m_ScaleFactor,m_ScaleFactor);
   m_ScaleAxisTransform->Update();
@@ -308,7 +307,7 @@ std::shared_ptr<mmaMaterial> mafVMERefSysAbstract::GetMaterial()
 mafGUI* mafVMERefSysAbstract::CreateGui()
 //-------------------------------------------------------------------------
 {
-  m_Gui = mafNode::CreateGui(); // Called to show info about vmes' type and name
+  auto m_Gui = mafNode::CreateGui(); // Called to show info about vmes' type and name
   m_Gui->SetListener(this);
   m_Gui->Divider();
 

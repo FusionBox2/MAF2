@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafVMEOutputMesh
  Authors: Stefano Perticoni
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -37,66 +37,53 @@
 
 #include <assert.h>
 
-//-------------------------------------------------------------------------
-mafCxxTypeMacro(mafVMEOutputMesh)
-//-------------------------------------------------------------------------
-
-//-------------------------------------------------------------------------
 mafVMEOutputMesh::mafVMEOutputMesh()
-//-------------------------------------------------------------------------
 {
-  m_NumCells  = _R("0");
+	m_NumCells = _R("0");
 	m_Material = NULL;
 }
 
-//-------------------------------------------------------------------------
-mafVMEOutputMesh::~mafVMEOutputMesh()
-//-------------------------------------------------------------------------
-{
-}
+mafVMEOutputMesh::~mafVMEOutputMesh() = default;
 
 //-------------------------------------------------------------------------
-vtkUnstructuredGrid *mafVMEOutputMesh::GetUnstructuredGridData()
+vtkUnstructuredGrid* mafVMEOutputMesh::GetUnstructuredGridData()
 //-------------------------------------------------------------------------
 {
-  return vtkUnstructuredGrid::SafeDownCast(GetVTKData());
+	return vtkUnstructuredGrid::SafeDownCast(GetVTKData());
 }
 
 //-------------------------------------------------------------------------
 mafGUI* mafVMEOutputMesh::CreateGui()
 //-------------------------------------------------------------------------
 {
-  assert(m_Gui == NULL);
-  m_Gui = mafVMEOutput::CreateGui();
-  if (GetUnstructuredGridData())
-  {
-    this->Update();
-    int num = GetUnstructuredGridData()->GetNumberOfCells();
-    m_NumCells = mafToString(num);
-  }
-  m_Gui->Label(_L("cells: "), &m_NumCells, true);
-  m_Gui->Divider();
-	return m_Gui;
+	assert(!AccessGUI());
+	auto gui = mafVMEOutput::CreateGui();
+	if (GetUnstructuredGridData())
+	{
+		this->Update();
+		int num = GetUnstructuredGridData()->GetNumberOfCells();
+		m_NumCells = mafToString(num);
+	}
+	gui->Label(_L("cells: "), &m_NumCells, true);
+	gui->Divider();
+	return gui;
 }
 //-------------------------------------------------------------------------
 void mafVMEOutputMesh::Update()
 //-------------------------------------------------------------------------
 {
-  assert(m_VME);
-  m_VME->Update();
-  if (GetUnstructuredGridData())
-  {
-    int num = GetUnstructuredGridData()->GetNumberOfCells();
-    m_NumCells = mafToString(num);
-  }
-  else
-  {
-    m_NumCells = _L("0");
-  }
-  if (m_Gui)
-  {
-    m_Gui->Update();
-  }
+	assert(m_VME);
+	m_VME->Update();
+	if (GetUnstructuredGridData())
+	{
+		int num = GetUnstructuredGridData()->GetNumberOfCells();
+		m_NumCells = mafToString(num);
+	}
+	else
+	{
+		m_NumCells = _L("0");
+	}
+	UpdateGUI();
 }
 //-------------------------------------------------------------------------
 std::shared_ptr<mmaMaterial> mafVMEOutputMesh::GetMaterial()

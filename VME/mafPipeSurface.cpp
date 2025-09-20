@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafPipeSurface
  Authors: Silvano Imboden - Paolo Quadrani
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -65,88 +65,87 @@ mafCxxTypeMacro(mafPipeSurface);
 mafPipeSurface::mafPipeSurface()
 //----------------------------------------------------------------------------
 {
-  m_Mapper          = NULL;
-  m_Actor           = NULL;
-  m_OutlineActor    = NULL;
-  m_MaterialButton  = NULL;
-  m_SurfaceMaterial = NULL;
-  m_Gui             = NULL;
+	m_Mapper = NULL;
+	m_Actor = NULL;
+	m_OutlineActor = NULL;
+	m_MaterialButton = NULL;
+	m_SurfaceMaterial = NULL;
 
-	m_Normal							= NULL;
-	m_NormalGlyph					= NULL;
-	m_NormalMapper				= NULL;
-	m_NormalActor					= NULL;
-	m_CenterPointsFilter	= NULL;
-	m_NormalArrow					= NULL;
+	m_Normal = NULL;
+	m_NormalGlyph = NULL;
+	m_NormalMapper = NULL;
+	m_NormalActor = NULL;
+	m_CenterPointsFilter = NULL;
+	m_NormalArrow = NULL;
 
-  m_EdgesActor          = NULL;
-  m_EdgesMapper         = NULL;
-  m_ExtractEdges        = NULL;
+	m_EdgesActor = NULL;
+	m_EdgesMapper = NULL;
+	m_ExtractEdges = NULL;
 
-  m_ScalarVisibility = 0;
+	m_ScalarVisibility = 0;
 	m_NormalVisibility = 0;
-	m_EdgeVisibility	 = 0;
-  m_RenderingDisplayListFlag = 0;
+	m_EdgeVisibility = 0;
+	m_RenderingDisplayListFlag = 0;
 
-  m_UseVTKProperty  = 1;
-  m_UseLookupTable  = 0;
+	m_UseVTKProperty = 1;
+	m_UseLookupTable = 0;
 
-  m_EnableActorLOD  = 0;
+	m_EnableActorLOD = 0;
 
-  m_SelectedScalarsArray = 0;     // (added by Losi 2011/04/08 to allow scalars array selection)
-  m_SelectedDataAttribute = 0;  // (added by Losi 2011/04/08 to allow scalars array selection)
+	m_SelectedScalarsArray = 0;     // (added by Losi 2011/04/08 to allow scalars array selection)
+	m_SelectedDataAttribute = 0;  // (added by Losi 2011/04/08 to allow scalars array selection)
 }
 //----------------------------------------------------------------------------
-void mafPipeSurface::Create(mafNode *node, mafView *view)
+void mafPipeSurface::Create(mafNode* node, mafView* view)
 //----------------------------------------------------------------------------
 {
-  Superclass::Create(node, view);
-  
-  m_Selected = false;
-  m_Mapper          = NULL;
-  m_Actor           = NULL;
-  m_OutlineActor    = NULL;
-  m_Axes            = NULL;
+	Superclass::Create(node, view);
 
-  m_Vme->Update();
-  assert(m_Vme->GetOutput()->IsMAFType(mafVMEOutputSurface));
-  mafVMEOutputSurface *surface_output = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
-  assert(surface_output);
-  surface_output->Update();
-  vtkPolyData *data = vtkPolyData::SafeDownCast(surface_output->GetVTKData());
-  vtkAlgorithmOutput* port = surface_output->GetVTKOutputPort();
-  assert(port);
-  //data->Update();
+	m_Selected = false;
+	m_Mapper = NULL;
+	m_Actor = NULL;
+	m_OutlineActor = NULL;
+	m_Axes = NULL;
 
-  m_Vme->AddObserver(this);
+	m_Vme->Update();
+	assert(m_Vme->GetOutput()->IsMAFType(mafVMEOutputSurface));
+	mafVMEOutputSurface* surface_output = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
+	assert(surface_output);
+	surface_output->Update();
+	vtkPolyData* data = vtkPolyData::SafeDownCast(surface_output->GetVTKData());
+	vtkAlgorithmOutput* port = surface_output->GetVTKOutputPort();
+	assert(port);
+	//data->Update();
 
-  vtkDataSetAttributes *dataAttribute = NULL;
-  if(m_SelectedDataAttribute == 0) // Point data
-  {
-    dataAttribute = data->GetPointData();
-  }
-  else if(m_SelectedDataAttribute == 1) // Cell data
-  {
-    dataAttribute =  data->GetCellData();
-  }
+	m_Vme->AddObserver(this);
 
-  vtkDataArray *scalars = dataAttribute->GetScalars();
+	vtkDataSetAttributes* dataAttribute = NULL;
+	if (m_SelectedDataAttribute == 0) // Point data
+	{
+		dataAttribute = data->GetPointData();
+	}
+	else if (m_SelectedDataAttribute == 1) // Cell data
+	{
+		dataAttribute = data->GetCellData();
+	}
 
-  double sr[2] = {0,1};
-  if(scalars != NULL)
-  {
-    //m_ScalarVisibility = 1;
-    scalars->GetRange(sr);
-  }
+	vtkDataArray* scalars = dataAttribute->GetScalars();
 
-  m_SurfaceMaterial = surface_output->GetMaterial();
-  assert(m_SurfaceMaterial);  // all vme that use PipeSurface must have the material correctly set
+	double sr[2] = { 0,1 };
+	if (scalars != NULL)
+	{
+		//m_ScalarVisibility = 1;
+		scalars->GetRange(sr);
+	}
 
-  vtkNEW(m_Mapper);
+	m_SurfaceMaterial = surface_output->GetMaterial();
+	assert(m_SurfaceMaterial);  // all vme that use PipeSurface must have the material correctly set
+
+	vtkNEW(m_Mapper);
 
 	//BES: 11.9.2012 - VTK rendering core is stupid to calculate normal vectors all the time unless they are specified in the input data
 	//to speed up rendering in time-variant situations (in static, display lists make this problem negligible), we calculate normal vectors here
-	if (data->GetPointData() == NULL || data->GetPointData()->GetNormals() != NULL) 
+	if (data->GetPointData() == NULL || data->GetPointData()->GetNormals() != NULL)
 		m_Mapper->SetInputConnection(port);
 	else
 	{
@@ -154,61 +153,58 @@ void mafPipeSurface::Create(mafNode *node, mafView *view)
 		normals->SetInputConnection(port);
 		normals->SetComputePointNormals(1);
 		normals->SetComputeCellNormals(0);
-		m_Mapper->SetInputConnection(normals->GetOutputPort());	
-	}			
-  
-  //m_RenderingDisplayListFlag = m_Vme->IsAnimated() ? 0 : 1;
-  m_RenderingDisplayListFlag = m_Vme->IsAnimated() ? 1 : 0;
-#if VTK_MAJOR_VERSION <= 7
-  m_Mapper->SetImmediateModeRendering(m_RenderingDisplayListFlag);
-#endif
-  
-  // TODO: REFACTOR THIS 
-  // workaround code to show RefSys colors by default... RefSys could have a different pipe
-  // inheriting from this one...
-  if (m_Vme->IsA("mafVMERefSysAbstract"))
-  {
-    m_ScalarVisibility = 1;
-  }
-  // END TODO: REFACTOR THIS 
+		m_Mapper->SetInputConnection(normals->GetOutputPort());
+	}
 
-  m_Mapper->SetScalarVisibility(m_ScalarVisibility);
+	//m_RenderingDisplayListFlag = m_Vme->IsAnimated() ? 0 : 1;
+	m_RenderingDisplayListFlag = m_Vme->IsAnimated() ? 1 : 0;
+#if VTK_MAJOR_VERSION <= 7
+	m_Mapper->SetImmediateModeRendering(m_RenderingDisplayListFlag);
+#endif
+
+	// TODO: REFACTOR THIS 
+	// workaround code to show RefSys colors by default... RefSys could have a different pipe
+	// inheriting from this one...
+	if (m_Vme->IsA("mafVMERefSysAbstract"))
+	{
+		m_ScalarVisibility = 1;
+	}
+	// END TODO: REFACTOR THIS 
+
+	m_Mapper->SetScalarVisibility(m_ScalarVisibility);
 
 	m_Mapper->SetLookupTable(m_SurfaceMaterial->m_ColorLut);
-  m_Mapper->SetScalarRange(sr);
+	m_Mapper->SetScalarRange(sr);
 
-  vtkNEW(m_Actor);
+	vtkNEW(m_Actor);
 
 	m_Actor->SetMapper(m_Mapper);
-  //m_Actor->SetEnableHighThreshold(m_EnableActorLOD);
-  if (m_SurfaceMaterial->m_MaterialType == mmaMaterial::USE_LOOKUPTABLE)
-  {
-    m_UseVTKProperty = 0;
-    m_UseLookupTable = 1;
-  }
-  if (m_SurfaceMaterial->m_MaterialType == mmaMaterial::USE_VTK_PROPERTY)
-  {
-    m_UseVTKProperty = 1;
-    m_UseLookupTable = 0;
-    m_Actor->SetProperty(m_SurfaceMaterial->m_Prop);
-  }
+	//m_Actor->SetEnableHighThreshold(m_EnableActorLOD);
+	if (m_SurfaceMaterial->m_MaterialType == mmaMaterial::USE_LOOKUPTABLE)
+	{
+		m_UseVTKProperty = 0;
+		m_UseLookupTable = 1;
+	}
+	if (m_SurfaceMaterial->m_MaterialType == mmaMaterial::USE_VTK_PROPERTY)
+	{
+		m_UseVTKProperty = 1;
+		m_UseLookupTable = 0;
+		m_Actor->SetProperty(m_SurfaceMaterial->m_Prop);
+	}
 
-  if (m_Gui)
-  {
-    m_Gui->Update();
-  }
+	UpdateGUI();
 
-  m_AssemblyFront->AddPart(m_Actor);
+	m_AssemblyFront->AddPart(m_Actor);
 
-  // selection highlight
-  vtkNew<vtkOutlineCornerFilter> corner;
+	// selection highlight
+	vtkNew<vtkOutlineCornerFilter> corner;
 	corner->SetInputConnection(port);
 
-  vtkNew<vtkPolyDataMapper> corner_mapper;
+	vtkNew<vtkPolyDataMapper> corner_mapper;
 	corner_mapper->SetInputConnection(corner->GetOutputPort());
 
-  vtkNew<vtkProperty> corner_props;
-	corner_props->SetColor(1,1,1);
+	vtkNew<vtkProperty> corner_props;
+	corner_props->SetColor(1, 1, 1);
 	corner_props->SetAmbient(1);
 	corner_props->SetRepresentationToWireframe();
 	corner_props->SetInterpolationToFlat();
@@ -219,28 +215,28 @@ void mafPipeSurface::Create(mafNode *node, mafView *view)
 	m_OutlineActor->PickableOff();
 	m_OutlineActor->SetProperty(corner_props);
 
-  m_AssemblyFront->AddPart(m_OutlineActor);
+	m_AssemblyFront->AddPart(m_OutlineActor);
 
-  if(m_RenFront)
-	  m_Axes = new mafAxes(m_RenFront, m_Vme);
+	if (m_RenFront)
+		m_Axes = new mafAxes(m_RenFront, m_Vme);
 
-	if(m_Vme->IsA("mafVMERefSysAbstract"))
+	if (m_Vme->IsA("mafVMERefSysAbstract"))
 		m_Axes->SetVisibility(false);
-  	
-/*	
-	if(data->GetCellData()->GetNormals())
-	{
-		CreateNormalsPipe();
-	}
 
-	CreateEdgesPipe();
-*/
+	/*
+		if(data->GetCellData()->GetNormals())
+		{
+			CreateNormalsPipe();
+		}
+
+		CreateEdgesPipe();
+	*/
 }
 //----------------------------------------------------------------------------
 void mafPipeSurface::CreateEdgesPipe()
 //----------------------------------------------------------------------------
 {
-	mafVMEOutputSurface *surface_output = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
+	mafVMEOutputSurface* surface_output = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
 	surface_output->Update();
 
 	vtkNEW(m_ExtractEdges);
@@ -259,7 +255,7 @@ void mafPipeSurface::CreateEdgesPipe()
 	vtkNEW(m_EdgesActor);
 	m_EdgesActor->SetMapper(m_EdgesMapper);
 	m_EdgesActor->PickableOff();
-	m_EdgesActor->GetProperty()->SetColor(1-m_Actor->GetProperty()->GetColor()[0],1-m_Actor->GetProperty()->GetColor()[1],1-m_Actor->GetProperty()->GetColor()[2]);
+	m_EdgesActor->GetProperty()->SetColor(1 - m_Actor->GetProperty()->GetColor()[0], 1 - m_Actor->GetProperty()->GetColor()[1], 1 - m_Actor->GetProperty()->GetColor()[2]);
 	m_EdgesActor->SetVisibility(m_EdgeVisibility);
 	m_EdgesActor->Modified();
 
@@ -269,28 +265,28 @@ void mafPipeSurface::CreateEdgesPipe()
 void mafPipeSurface::CreateNormalsPipe()
 //----------------------------------------------------------------------------
 {
-    mafVMEOutputSurface *surface_output = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
-    surface_output->Update();
-	vtkPolyData *data = vtkPolyData::SafeDownCast(surface_output->GetVTKData());
+	mafVMEOutputSurface* surface_output = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
+	surface_output->Update();
+	vtkPolyData* data = vtkPolyData::SafeDownCast(surface_output->GetVTKData());
 
 	vtkNEW(m_CenterPointsFilter);
 	m_CenterPointsFilter->SetInputConnection(surface_output->GetVTKOutputPort());
 	m_CenterPointsFilter->Update();
 
-	vtkPolyData *centers = m_CenterPointsFilter->GetOutput();
+	vtkPolyData* centers = m_CenterPointsFilter->GetOutput();
 	m_CenterPointsFilter->Update();
 	//centers->GetPointData()->SetNormals(data->GetCellData()->GetNormals());
 	//m_CenterPointsFilter->Update();
 
 	double bounds[6];
 	data->GetBounds(bounds);
-	double maxBounds = (bounds[1]-bounds[0] < bounds[3]-bounds[2])?bounds[1]-bounds[0]:bounds[3]-bounds[2];
-	maxBounds = (maxBounds<bounds[5]-bounds[4])?maxBounds:bounds[5]-bounds[4];
+	double maxBounds = (bounds[1] - bounds[0] < bounds[3] - bounds[2]) ? bounds[1] - bounds[0] : bounds[3] - bounds[2];
+	maxBounds = (maxBounds < bounds[5] - bounds[4]) ? maxBounds : bounds[5] - bounds[4];
 
 	vtkNEW(m_NormalArrow);
 	m_NormalArrow->SetTipLength(0.0);
 	m_NormalArrow->SetTipRadius(0.0);
-	m_NormalArrow->SetShaftRadius(0.005*maxBounds);
+	m_NormalArrow->SetShaftRadius(0.005 * maxBounds);
 	m_NormalArrow->SetTipResolution(16);
 	m_NormalArrow->SetShaftResolution(16);
 	m_NormalArrow->Update();
@@ -317,42 +313,42 @@ void mafPipeSurface::CreateNormalsPipe()
 mafPipeSurface::~mafPipeSurface()
 //----------------------------------------------------------------------------
 {
-  m_Vme->RemoveObserver(this);
+	m_Vme->RemoveObserver(this);
 
-	if(m_Actor)
+	if (m_Actor)
 		m_AssemblyFront->RemovePart(m_Actor);
-	if(m_OutlineActor)
+	if (m_OutlineActor)
 		m_AssemblyFront->RemovePart(m_OutlineActor);
-	if(m_NormalActor)
+	if (m_NormalActor)
 		m_AssemblyFront->RemovePart(m_NormalActor);
-	if(m_EdgesActor)
+	if (m_EdgesActor)
 		m_AssemblyFront->RemovePart(m_EdgesActor);
 
-  cppDEL(m_Axes);
-  cppDEL(m_MaterialButton);
+	cppDEL(m_Axes);
+	cppDEL(m_MaterialButton);
 
-  vtkDEL(m_Mapper);
-  vtkDEL(m_Actor);
-  vtkDEL(m_OutlineActor);
-  vtkDEL(m_NormalActor);
-  vtkDEL(m_NormalMapper);
-  vtkDEL(m_CenterPointsFilter);
-  vtkDEL(m_NormalGlyph);
-  vtkDEL(m_NormalArrow);
-  vtkDEL(m_Normal);
-  vtkDEL(m_EdgesActor);
-  vtkDEL(m_EdgesMapper);
-  vtkDEL(m_ExtractEdges);
+	vtkDEL(m_Mapper);
+	vtkDEL(m_Actor);
+	vtkDEL(m_OutlineActor);
+	vtkDEL(m_NormalActor);
+	vtkDEL(m_NormalMapper);
+	vtkDEL(m_CenterPointsFilter);
+	vtkDEL(m_NormalGlyph);
+	vtkDEL(m_NormalArrow);
+	vtkDEL(m_Normal);
+	vtkDEL(m_EdgesActor);
+	vtkDEL(m_EdgesMapper);
+	vtkDEL(m_ExtractEdges);
 }
 //----------------------------------------------------------------------------
 void mafPipeSurface::Select(bool sel)
 //----------------------------------------------------------------------------
 {
 	m_Selected = sel;
-	if(m_Actor->GetVisibility()) 
+	if (m_Actor->GetVisibility())
 	{
 		m_OutlineActor->SetVisibility(sel);
-		if(!m_Vme->IsA("mafVMERefSysAbstract"))
+		if (!m_Vme->IsA("mafVMERefSysAbstract"))
 			m_Axes->SetVisibility(sel);
 	}
 }
@@ -362,259 +358,259 @@ void mafPipeSurface::Select(bool sel)
 {
 }*/
 //----------------------------------------------------------------------------
-mafGUI *mafPipeSurface::CreateGui()
+mafGUI* mafPipeSurface::CreateGui()
 //----------------------------------------------------------------------------
 {
-  assert(m_Gui == NULL);
-  m_Gui = new mafGUI(this);
-  m_Gui->Bool(ID_RENDERING_DISPLAY_LIST,_R("displaylist"),&m_RenderingDisplayListFlag,0,_R("turn on/off \nrendering displaylist calculation"));
+	assert(!AccessGUI());
+	auto gui = new mafGUI(this);
+	gui->Bool(ID_RENDERING_DISPLAY_LIST, _R("displaylist"), &m_RenderingDisplayListFlag, 0, _R("turn on/off \nrendering displaylist calculation"));
 	//m_Gui->Bool(ID_SCALAR_VISIBILITY,"scalar vis.", &m_ScalarVisibility,0,"turn on/off the scalar visibility");
-	m_Gui->Bool(ID_NORMAL_VISIBILITY,_R("norm. vis."),&m_NormalVisibility);
-	m_Gui->Bool(ID_EDGE_VISIBILITY,_R("edge vis."),&m_EdgeVisibility);
-  m_Gui->Divider();
-  m_Gui->Bool(ID_USE_VTK_PROPERTY,_R("property"),&m_UseVTKProperty);
-  m_MaterialButton = new mafGUIMaterialButton(m_Vme,this);
-  m_Gui->AddGui(m_MaterialButton->GetGui());
-  m_MaterialButton->Enable(m_UseVTKProperty != 0);
-  m_Gui->Divider();
-  m_Gui->Bool(ID_USE_LOOKUP_TABLE,_R("lut"),&m_UseLookupTable);
-  double sr[2];
-  m_Mapper->GetScalarRange(sr);
-  m_SurfaceMaterial->m_ColorLut->SetTableRange(sr);
-	m_Gui->Lut(ID_LUT,_R("lut"),m_SurfaceMaterial->m_ColorLut);
-  //m_Gui->Bool(ID_LUT, "new lut", &m_UseLookupTable);
-  m_Gui->Bool(ID_SCALAR_VISIBILITY,_R("scalar vis."), &m_ScalarVisibility,0,_R("turn on/off the scalar visibility"));
-	m_Gui->Enable(ID_LUT,m_UseLookupTable != 0);
-  //m_Gui->Divider(2);
-  //m_Gui->Bool(ID_ENABLE_LOD,"LOD",&m_EnableActorLOD);
+	gui->Bool(ID_NORMAL_VISIBILITY, _R("norm. vis."), &m_NormalVisibility);
+	gui->Bool(ID_EDGE_VISIBILITY, _R("edge vis."), &m_EdgeVisibility);
+	gui->Divider();
+	gui->Bool(ID_USE_VTK_PROPERTY, _R("property"), &m_UseVTKProperty);
+	m_MaterialButton = new mafGUIMaterialButton(m_Vme, this);
+	gui->AddGui(m_MaterialButton->GetGui());
+	m_MaterialButton->Enable(m_UseVTKProperty != 0);
+	gui->Divider();
+	gui->Bool(ID_USE_LOOKUP_TABLE, _R("lut"), &m_UseLookupTable);
+	double sr[2];
+	m_Mapper->GetScalarRange(sr);
+	m_SurfaceMaterial->m_ColorLut->SetTableRange(sr);
+	gui->Lut(ID_LUT, _R("lut"), m_SurfaceMaterial->m_ColorLut);
+	//m_Gui->Bool(ID_LUT, "new lut", &m_UseLookupTable);
+	gui->Bool(ID_SCALAR_VISIBILITY, _R("scalar vis."), &m_ScalarVisibility, 0, _R("turn on/off the scalar visibility"));
+	gui->Enable(ID_LUT, m_UseLookupTable != 0);
+	//m_Gui->Divider(2);
+	//m_Gui->Bool(ID_ENABLE_LOD,"LOD",&m_EnableActorLOD);
 
-  //// (added by Losi 2011/04/08 to allow scalars array selection)
-  // Get the surface's scalars array
-  // Scalars data type selection (point data or cell data)
-  mafString scalarsDataTypes[2];
-  scalarsDataTypes[0] = _R("points");
-  scalarsDataTypes[1] = _R("cells");
-  m_Gui->Combo(ID_SCALARS_DATA_TYPE_SELECTION,_R("scalars ty."),&m_SelectedDataAttribute,2,scalarsDataTypes,_R("Determine the visible scalars data type (points data or cell data)"));
-  m_Gui->Enable(ID_SCALARS_DATA_TYPE_SELECTION, m_ScalarVisibility != 0);
+	//// (added by Losi 2011/04/08 to allow scalars array selection)
+	// Get the surface's scalars array
+	// Scalars data type selection (point data or cell data)
+	mafString scalarsDataTypes[2];
+	scalarsDataTypes[0] = _R("points");
+	scalarsDataTypes[1] = _R("cells");
+	gui->Combo(ID_SCALARS_DATA_TYPE_SELECTION, _R("scalars ty."), &m_SelectedDataAttribute, 2, scalarsDataTypes, _R("Determine the visible scalars data type (points data or cell data)"));
+	gui->Enable(ID_SCALARS_DATA_TYPE_SELECTION, m_ScalarVisibility != 0);
 
-  vtkDataSetAttributes *dataAttribute = GetSelectedDataAttribute();
+	vtkDataSetAttributes* dataAttribute = GetSelectedDataAttribute();
 
-  // Scalars array selection
-  // if(data->GetPointData()->GetNumberOfArrays()>0)
-  // {
-  std::vector<mafString> scalarsArrayNames;
-  for(int i = 0; i < dataAttribute->GetNumberOfArrays(); i++)
-  {
-    mafString tmp;
-    tmp = _R(dataAttribute->GetArrayName(i));
-    scalarsArrayNames.push_back(tmp);
-  }
-  m_ScalarsArraySelection = m_Gui->Combo(ID_SCALARS_ARRAY_SELECTION,_R("scalars ar."),&m_SelectedScalarsArray,scalarsArrayNames.size(), scalarsArrayNames.data(),_R("Determine the visible scalars array"));
-  m_Gui->Enable(ID_SCALARS_ARRAY_SELECTION, m_ScalarVisibility != 0 && dataAttribute->GetNumberOfArrays() > 0);
-  // }
-  ////
+	// Scalars array selection
+	// if(data->GetPointData()->GetNumberOfArrays()>0)
+	// {
+	std::vector<mafString> scalarsArrayNames;
+	for (int i = 0; i < dataAttribute->GetNumberOfArrays(); i++)
+	{
+		mafString tmp;
+		tmp = _R(dataAttribute->GetArrayName(i));
+		scalarsArrayNames.push_back(tmp);
+	}
+	m_ScalarsArraySelection = gui->Combo(ID_SCALARS_ARRAY_SELECTION, _R("scalars ar."), &m_SelectedScalarsArray, scalarsArrayNames.size(), scalarsArrayNames.data(), _R("Determine the visible scalars array"));
+	gui->Enable(ID_SCALARS_ARRAY_SELECTION, m_ScalarVisibility != 0 && dataAttribute->GetNumberOfArrays() > 0);
+	// }
+	////
 
-  m_Gui->Label(_R(""));
+	gui->Label(_R(""));
 
-  if (m_SurfaceMaterial == NULL)
-  {
-    mafVMEOutputSurface *surface_output = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
-    m_SurfaceMaterial = surface_output->GetMaterial();
-  }
-  m_Gui->Enable(ID_USE_LOOKUP_TABLE, m_SurfaceMaterial->m_ColorLut != NULL);
-  m_Gui->Divider();
-	return m_Gui;
+	if (m_SurfaceMaterial == NULL)
+	{
+		mafVMEOutputSurface* surface_output = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
+		m_SurfaceMaterial = surface_output->GetMaterial();
+	}
+	gui->Enable(ID_USE_LOOKUP_TABLE, m_SurfaceMaterial->m_ColorLut != NULL);
+	gui->Divider();
+	return gui;
 }
 //----------------------------------------------------------------------------
-void mafPipeSurface::OnEvent(mafEventBase *maf_event)
+void mafPipeSurface::OnEvent(mafEventBase* maf_event)
 //----------------------------------------------------------------------------
 {
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    switch(e->GetId()) 
-    {
-      case ID_SCALAR_VISIBILITY:
-      {
-        vtkDataSetAttributes *dataAttribute = GetSelectedDataAttribute();
-				if (m_Gui != NULL)
-				{ 
-					m_Gui->Enable(ID_LUT,m_ScalarVisibility != 0);
-          m_Gui->Enable(ID_SCALARS_DATA_TYPE_SELECTION, m_ScalarVisibility != 0);
-          m_Gui->Enable(ID_SCALARS_ARRAY_SELECTION, m_ScalarVisibility != 0 && dataAttribute->GetNumberOfArrays() > 0);
-				  m_Gui->Update();
-        }
-        UpdateScalarsArrayVisualization(dataAttribute);
-				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);} //BES 12.9.2012
-      }
-    	break;
-      case ID_LUT:
-      {
-        m_SurfaceMaterial->UpdateFromLut();
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      }
-      break;
-      case ID_ENABLE_LOD:
-      {
-        //m_Actor->SetEnableHighThreshold(m_EnableActorLOD);
-        m_OutlineActor->SetEnableHighThreshold(m_EnableActorLOD);
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      }
-      break;
-      case ID_USE_VTK_PROPERTY:
-      {
-        if (m_UseVTKProperty != 0)
-        {
-          m_Actor->SetProperty(m_SurfaceMaterial->m_Prop);
-        }
-        else
-        {
-          m_Actor->SetProperty(NULL);
-        }
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
+	{
+		auto gui = AccessGUI();
+		switch (e->GetId())
+		{
+		case ID_SCALAR_VISIBILITY:
+		{
+			vtkDataSetAttributes* dataAttribute = GetSelectedDataAttribute();
+			if (gui)
+			{
+				gui->Enable(ID_LUT, m_ScalarVisibility != 0);
+				gui->Enable(ID_SCALARS_DATA_TYPE_SELECTION, m_ScalarVisibility != 0);
+				gui->Enable(ID_SCALARS_ARRAY_SELECTION, m_ScalarVisibility != 0 && dataAttribute->GetNumberOfArrays() > 0);
+				UpdateGUI();
+			}
+			UpdateScalarsArrayVisualization(dataAttribute);
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); } //BES 12.9.2012
+		}
+		break;
+		case ID_LUT:
+		{
+			m_SurfaceMaterial->UpdateFromLut();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		}
+		break;
+		case ID_ENABLE_LOD:
+		{
+			//m_Actor->SetEnableHighThreshold(m_EnableActorLOD);
+			m_OutlineActor->SetEnableHighThreshold(m_EnableActorLOD);
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		}
+		break;
+		case ID_USE_VTK_PROPERTY:
+		{
+			if (m_UseVTKProperty != 0)
+			{
+				m_Actor->SetProperty(m_SurfaceMaterial->m_Prop);
+			}
+			else
+			{
+				m_Actor->SetProperty(NULL);
+			}
 
-        if (m_MaterialButton != NULL)
-        {
-          m_MaterialButton->Enable(m_UseVTKProperty != 0);
-        }
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      };
-      break;
-      case ID_RENDERING_DISPLAY_LIST:
-      {
-        //m_Mapper->SetImmediateModeRendering(m_RenderingDisplayListFlag);
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      }
-      break;
-			case ID_NORMAL_VISIBILITY:
-      {
-        if(m_NormalActor)
-        {
-          m_NormalActor->SetVisibility(m_NormalVisibility);
-        }
-        else if(m_Vme->GetOutput()->GetVTKData()->GetCellData()->GetNormals())
-        {
-          CreateNormalsPipe();
-        }
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      }
+			if (m_MaterialButton != NULL)
+			{
+				m_MaterialButton->Enable(m_UseVTKProperty != 0);
+			}
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		};
+		break;
+		case ID_RENDERING_DISPLAY_LIST:
+		{
+			//m_Mapper->SetImmediateModeRendering(m_RenderingDisplayListFlag);
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		}
+		break;
+		case ID_NORMAL_VISIBILITY:
+		{
+			if (m_NormalActor)
+			{
+				m_NormalActor->SetVisibility(m_NormalVisibility);
+			}
+			else if (m_Vme->GetOutput()->GetVTKData()->GetCellData()->GetNormals())
+			{
+				CreateNormalsPipe();
+			}
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		}
+		break;
+		case ID_EDGE_VISIBILITY:
+		{
+			if (m_EdgesActor)
+			{
+				m_EdgesActor->GetProperty()->SetColor(1 - m_Actor->GetProperty()->GetColor()[0], 1 - m_Actor->GetProperty()->GetColor()[1], 1 - m_Actor->GetProperty()->GetColor()[2]);
+				m_EdgesActor->SetVisibility(m_EdgeVisibility);
+			}
+			else
+			{
+				CreateEdgesPipe();
+			}
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		}
+		break;
+		case ID_USE_LOOKUP_TABLE:
+		{
+			gui->Enable(ID_LUT, m_UseLookupTable != 0);
+		}
+		break;
+		//// (added by Losi 2011/04/08 to allow scalars array selection)
+		case ID_SCALARS_DATA_TYPE_SELECTION:
+		{
+			vtkDataSetAttributes* dataAttribute = GetSelectedDataAttribute();
+
+			// Update the scalars array selection combo m_ScalarsArraySelection
+			// Clear the combo list
+			m_ScalarsArraySelection->Clear();
+
+			// Get the scalars arrays names and append them to the combo list
+			m_SelectedScalarsArray = 0;
+			gui->Enable(ID_SCALARS_ARRAY_SELECTION, m_ScalarVisibility != 0 && dataAttribute->GetNumberOfArrays() > 0);
+			for (int sa = 0; sa < dataAttribute->GetNumberOfArrays(); sa++)
+			{
+				m_ScalarsArraySelection->Append(mafString(_R(dataAttribute->GetArrayName(sa))).toWx());
+			}
+			m_ScalarsArraySelection->SetSelection(0);
+			UpdateGUI();
+
+			UpdateScalarsArrayVisualization(dataAttribute);
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); } //BES 12.9.2012
+		}
+		case ID_SCALARS_ARRAY_SELECTION:
+		{
+			vtkDataSetAttributes* dataAttribute = GetSelectedDataAttribute();
+			UpdateScalarsArrayVisualization(dataAttribute);
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); } //BES 12.9.2012
+		}
+		break;
+		////
+		default:
+			InvokeEvent(*e);
 			break;
-			case ID_EDGE_VISIBILITY:
-      {
-        if(m_EdgesActor)
-        {
-          m_EdgesActor->GetProperty()->SetColor(1-m_Actor->GetProperty()->GetColor()[0],1-m_Actor->GetProperty()->GetColor()[1],1-m_Actor->GetProperty()->GetColor()[2]);
-          m_EdgesActor->SetVisibility(m_EdgeVisibility);
-        }
-        else
-        {
-          CreateEdgesPipe();
-        }
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      }
-      break;
-      case ID_USE_LOOKUP_TABLE:
-      {
-        m_Gui->Enable(ID_LUT,m_UseLookupTable != 0);
-      }
-      break;
-      //// (added by Losi 2011/04/08 to allow scalars array selection)
-      case ID_SCALARS_DATA_TYPE_SELECTION:
-      {
-        vtkDataSetAttributes *dataAttribute = GetSelectedDataAttribute(); 
-
-        // Update the scalars array selection combo m_ScalarsArraySelection
-        // Clear the combo list
-        m_ScalarsArraySelection->Clear();
-
-        // Get the scalars arrays names and append them to the combo list
-        m_SelectedScalarsArray = 0;
-        m_Gui->Enable(ID_SCALARS_ARRAY_SELECTION, m_ScalarVisibility != 0 && dataAttribute->GetNumberOfArrays() > 0);
-        for(int sa = 0; sa < dataAttribute->GetNumberOfArrays(); sa++)
-        {
-          m_ScalarsArraySelection->Append(mafString(_R(dataAttribute->GetArrayName(sa))).toWx());
-        }
-        m_ScalarsArraySelection->SetSelection(0);
-        m_Gui->Update();
-
-        UpdateScalarsArrayVisualization(dataAttribute);
-				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);} //BES 12.9.2012
-      }
-      case ID_SCALARS_ARRAY_SELECTION:
-      {
-        vtkDataSetAttributes *dataAttribute = GetSelectedDataAttribute(); 
-        UpdateScalarsArrayVisualization(dataAttribute);
-				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);} //BES 12.9.2012
-      }
-      break;
-      ////
-      default:
-        InvokeEvent(*e);
-      break;
-    }
-  }
-  else if (maf_event->GetSender() == m_Vme)
-  {
-    if(maf_event->GetId() == VME_TIME_SET)
-    {
-      vtkDataSetAttributes *dataAttribute = GetSelectedDataAttribute(); 
-      UpdateScalarsArrayVisualization(dataAttribute);
+		}
+	}
+	else if (maf_event->GetSender() == m_Vme)
+	{
+		if (maf_event->GetId() == VME_TIME_SET)
+		{
+			vtkDataSetAttributes* dataAttribute = GetSelectedDataAttribute();
+			UpdateScalarsArrayVisualization(dataAttribute);
 			//the caller will cause CAMERA_UPDATE, so not necessary (and even undesirable) to do so here
-    }
-  }
+		}
+	}
 }
 //----------------------------------------------------------------------------
 void mafPipeSurface::SetEnableActorLOD(bool value)
 //----------------------------------------------------------------------------
 {
-  m_EnableActorLOD = (int) value;
-  if(m_Gui)
-    m_Gui->Update();
+	m_EnableActorLOD = (int)value;
+	UpdateGUI();
 }
 //----------------------------------------------------------------------------
 void mafPipeSurface::SetActorPicking(int enable)
 //----------------------------------------------------------------------------
 {
 	m_Actor->SetPickable(enable);
-  m_Actor->Modified();
-	{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
+	m_Actor->Modified();
+	{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
 }
 //----------------------------------------------------------------------------
-void mafPipeSurface::UpdateScalarsArrayVisualization(vtkDataSetAttributes *dataAttribute) // (added by Losi 2011/04/08 to allow scalars array selection)
+void mafPipeSurface::UpdateScalarsArrayVisualization(vtkDataSetAttributes* dataAttribute) // (added by Losi 2011/04/08 to allow scalars array selection)
 //----------------------------------------------------------------------------
 {
-  // Update the scalars array visualization
-  m_Mapper->SetScalarVisibility(m_ScalarVisibility != 0 && dataAttribute->GetNumberOfArrays() > 0);
-  if(m_ScalarVisibility != 0 && dataAttribute->GetNumberOfArrays() > 0)
-  {
-    dataAttribute->SetActiveScalars(dataAttribute->GetArrayName(m_SelectedScalarsArray));
-    dataAttribute->Update();
-    double range[2];
-    dataAttribute->GetArray(dataAttribute->GetArrayName(m_SelectedScalarsArray))->GetRange(range);
-    m_Mapper->SetScalarRange(range);
-  }
+	// Update the scalars array visualization
+	m_Mapper->SetScalarVisibility(m_ScalarVisibility != 0 && dataAttribute->GetNumberOfArrays() > 0);
+	if (m_ScalarVisibility != 0 && dataAttribute->GetNumberOfArrays() > 0)
+	{
+		dataAttribute->SetActiveScalars(dataAttribute->GetArrayName(m_SelectedScalarsArray));
+		dataAttribute->Update();
+		double range[2];
+		dataAttribute->GetArray(dataAttribute->GetArrayName(m_SelectedScalarsArray))->GetRange(range);
+		m_Mapper->SetScalarRange(range);
+	}
 
-  //{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);} //BES 12.9.2012 - do not call it here since this method is called on VME_TIME_SET  and, thus, this would cause repetitive rendering
+	//{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);} //BES 12.9.2012 - do not call it here since this method is called on VME_TIME_SET  and, thus, this would cause repetitive rendering
 }
 //----------------------------------------------------------------------------
-vtkDataSetAttributes *mafPipeSurface::GetSelectedDataAttribute() // (added by Losi 2011/04/08 to allow scalars array selection)
+vtkDataSetAttributes* mafPipeSurface::GetSelectedDataAttribute() // (added by Losi 2011/04/08 to allow scalars array selection)
 //----------------------------------------------------------------------------
 {
-  // Return the selected data attribute (point or cell data)
-  m_Vme->Update();
-  // assert(m_Vme->GetOutput()->IsMAFType(mafVMEOutputSurface)); Already verified in the Create() method
-  mafVMEOutputSurface *surface_output = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
-  // assert(surface_output); Already verified in the Create() method
-  surface_output->Update();
-  vtkPolyData *data = vtkPolyData::SafeDownCast(surface_output->GetVTKData());
+	// Return the selected data attribute (point or cell data)
+	m_Vme->Update();
+	// assert(m_Vme->GetOutput()->IsMAFType(mafVMEOutputSurface)); Already verified in the Create() method
+	mafVMEOutputSurface* surface_output = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
+	// assert(surface_output); Already verified in the Create() method
+	surface_output->Update();
+	vtkPolyData* data = vtkPolyData::SafeDownCast(surface_output->GetVTKData());
 
-  vtkDataSetAttributes *dataAttribute = NULL;
-  if(m_SelectedDataAttribute == 0) // Point data
-  {
-    dataAttribute = data->GetPointData();
-  }
-  else if(m_SelectedDataAttribute == 1) // Cell data
-  {
-    dataAttribute =  data->GetCellData();
-  }
-  return dataAttribute;
+	vtkDataSetAttributes* dataAttribute = NULL;
+	if (m_SelectedDataAttribute == 0) // Point data
+	{
+		dataAttribute = data->GetPointData();
+	}
+	else if (m_SelectedDataAttribute == 1) // Cell data
+	{
+		dataAttribute = data->GetCellData();
+	}
+	return dataAttribute;
 }
 

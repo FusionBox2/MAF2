@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafPipeVolumeSlice
  Authors: Paolo Quadrani
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -65,27 +65,27 @@ mafCxxTypeMacro(mafPipeVolumeSlice);
 //----------------------------------------------------------------------------
 mafPipeVolumeSlice::mafPipeVolumeSlice()
 //----------------------------------------------------------------------------
-{ 
-  for(int i = 0; i<3; i++)
-  {
-    m_SlicerPolygonal[i]	= NULL;
-    m_SlicerImage[i]			= NULL;
-    m_Image[i]            = NULL;
-    m_Texture[i]		      = NULL;
-    m_SlicePolydata[i]		= NULL;
-    m_SliceMapper[i]		  = NULL;
-    m_SliceActor[i]	      = NULL;
-    m_SliceSlider[i]      = NULL;
-  }
-  m_SliceParametersInitialized  = false;
-  m_ShowVolumeBox               = false;
-	m_ShowBounds									= false;
-  
-  m_AssemblyUsed = NULL;
-  m_ColorLUT  = NULL;
-  m_CustomColorLUT = NULL;
+{
+	for (int i = 0; i < 3; i++)
+	{
+		m_SlicerPolygonal[i] = NULL;
+		m_SlicerImage[i] = NULL;
+		m_Image[i] = NULL;
+		m_Texture[i] = NULL;
+		m_SlicePolydata[i] = NULL;
+		m_SliceMapper[i] = NULL;
+		m_SliceActor[i] = NULL;
+		m_SliceSlider[i] = NULL;
+	}
+	m_SliceParametersInitialized = false;
+	m_ShowVolumeBox = false;
+	m_ShowBounds = false;
 
-  m_VolumeOutput = NULL;
+	m_AssemblyUsed = NULL;
+	m_ColorLUT = NULL;
+	m_CustomColorLUT = NULL;
+
+	m_VolumeOutput = NULL;
 
 	m_Box = NULL;
 	m_Mapper = NULL;
@@ -93,152 +93,152 @@ mafPipeVolumeSlice::mafPipeVolumeSlice()
 
 	m_TickActor = NULL;
 
-  m_SliceDirection  = SLICE_Z;
-  m_SliceOpacity  = 1.0;
-  m_TextureRes    = 512;
+	m_SliceDirection = SLICE_Z;
+	m_SliceOpacity = 1.0;
+	m_TextureRes = 512;
 
-  m_XVector[0][0] = 0.0001;	//should be 0 !!! but there is a bug into vtkMAFVolumeSlicer filter
-  m_XVector[0][1] = 1;
-  m_XVector[0][2] = 0;
-  m_YVector[0][0] = 0;
-  m_YVector[0][1] = 0;
-  m_YVector[0][2] = 1;
+	m_XVector[0][0] = 0.0001;	//should be 0 !!! but there is a bug into vtkMAFVolumeSlicer filter
+	m_XVector[0][1] = 1;
+	m_XVector[0][2] = 0;
+	m_YVector[0][0] = 0;
+	m_YVector[0][1] = 0;
+	m_YVector[0][2] = 1;
 
-  m_XVector[1][0] = 0;
-  m_XVector[1][1] = 0;
-  m_XVector[1][2] = 1;
-  m_YVector[1][0] = 1;
-  m_YVector[1][1] = 0;
-  m_YVector[1][2] = 0;
+	m_XVector[1][0] = 0;
+	m_XVector[1][1] = 0;
+	m_XVector[1][2] = 1;
+	m_YVector[1][0] = 1;
+	m_YVector[1][1] = 0;
+	m_YVector[1][2] = 0;
 
-  m_XVector[2][0] = 1;
-  m_XVector[2][1] = 0;
-  m_XVector[2][2] = 0;
-  m_YVector[2][0] = 0;
-  m_YVector[2][1] = 1;
-  m_YVector[2][2] = 0;
+	m_XVector[2][0] = 1;
+	m_XVector[2][1] = 0;
+	m_XVector[2][2] = 0;
+	m_YVector[2][0] = 0;
+	m_YVector[2][1] = 1;
+	m_YVector[2][2] = 0;
 
 	m_ShowSlider = true;
-	m_ShowTICKs	 = false;
-  m_TrilinearInterpolationOn = FALSE;
+	m_ShowTICKs = false;
+	m_TrilinearInterpolationOn = FALSE;
 }
 //----------------------------------------------------------------------------
 void mafPipeVolumeSlice::InitializeSliceParameters(int direction, bool show_vol_bbox, bool show_bounds)
 //----------------------------------------------------------------------------
 {
-  m_SliceDirection= direction;
-  m_ShowVolumeBox = show_vol_bbox;
+	m_SliceDirection = direction;
+	m_ShowVolumeBox = show_vol_bbox;
 	m_ShowBounds = show_bounds;
 }
 //----------------------------------------------------------------------------
-void mafPipeVolumeSlice::InitializeSliceParameters(int direction, double slice_origin[3], bool show_vol_bbox,bool show_bounds)
+void mafPipeVolumeSlice::InitializeSliceParameters(int direction, double slice_origin[3], bool show_vol_bbox, bool show_bounds)
 //----------------------------------------------------------------------------
 {
-  m_SliceParametersInitialized = true;
-  m_SliceDirection= direction;
-  m_ShowVolumeBox = show_vol_bbox;
+	m_SliceParametersInitialized = true;
+	m_SliceDirection = direction;
+	m_ShowVolumeBox = show_vol_bbox;
 	m_ShowBounds = show_bounds;
 
-  m_Origin[0] = slice_origin[0];
-  m_Origin[1] = slice_origin[1];
-  m_Origin[2] = slice_origin[2];
+	m_Origin[0] = slice_origin[0];
+	m_Origin[1] = slice_origin[1];
+	m_Origin[2] = slice_origin[2];
 }
 //----------------------------------------------------------------------------
-void mafPipeVolumeSlice::InitializeSliceParameters(int direction, double slice_origin[3], float slice_xVect[3], float slice_yVect[3], bool show_vol_bbox,bool show_bounds)
+void mafPipeVolumeSlice::InitializeSliceParameters(int direction, double slice_origin[3], float slice_xVect[3], float slice_yVect[3], bool show_vol_bbox, bool show_bounds)
 //----------------------------------------------------------------------------
 {
-  m_SliceParametersInitialized = true;
+	m_SliceParametersInitialized = true;
 	m_ShowBounds = show_bounds;
-  
-  m_SliceDirection= direction;
-	if(m_SliceDirection == SLICE_ARB)
+
+	m_SliceDirection = direction;
+	if (m_SliceDirection == SLICE_ARB)
 		m_SliceDirection = SLICE_Z;
-  m_ShowVolumeBox = show_vol_bbox;
+	m_ShowVolumeBox = show_vol_bbox;
 
-  m_Origin[0] = slice_origin[0];
-  m_Origin[1] = slice_origin[1];
-  m_Origin[2] = slice_origin[2];
+	m_Origin[0] = slice_origin[0];
+	m_Origin[1] = slice_origin[1];
+	m_Origin[2] = slice_origin[2];
 
-  if(m_SliceDirection != SLICE_ORTHO)
-  {
-    m_XVector[m_SliceDirection][0] = slice_xVect[0];
-    m_XVector[m_SliceDirection][1] = slice_xVect[1];
-    m_XVector[m_SliceDirection][2] = slice_xVect[2];
+	if (m_SliceDirection != SLICE_ORTHO)
+	{
+		m_XVector[m_SliceDirection][0] = slice_xVect[0];
+		m_XVector[m_SliceDirection][1] = slice_xVect[1];
+		m_XVector[m_SliceDirection][2] = slice_xVect[2];
 
-    m_YVector[m_SliceDirection][0] = slice_yVect[0];
-    m_YVector[m_SliceDirection][1] = slice_yVect[1];
-    m_YVector[m_SliceDirection][2] = slice_yVect[2];
+		m_YVector[m_SliceDirection][0] = slice_yVect[0];
+		m_YVector[m_SliceDirection][1] = slice_yVect[1];
+		m_YVector[m_SliceDirection][2] = slice_yVect[2];
 
-    vtkMath::Normalize(m_XVector[m_SliceDirection]);
-    vtkMath::Normalize(m_YVector[m_SliceDirection]);
-    vtkMath::Cross(m_YVector[m_SliceDirection], m_XVector[m_SliceDirection], m_Normal[m_SliceDirection]);
-    vtkMath::Normalize(m_Normal[m_SliceDirection]);
-    vtkMath::Cross(m_Normal[m_SliceDirection], m_XVector[m_SliceDirection], m_YVector[m_SliceDirection]);
-    vtkMath::Normalize(m_YVector[m_SliceDirection]);
-  }
+		vtkMath::Normalize(m_XVector[m_SliceDirection]);
+		vtkMath::Normalize(m_YVector[m_SliceDirection]);
+		vtkMath::Cross(m_YVector[m_SliceDirection], m_XVector[m_SliceDirection], m_Normal[m_SliceDirection]);
+		vtkMath::Normalize(m_Normal[m_SliceDirection]);
+		vtkMath::Cross(m_Normal[m_SliceDirection], m_XVector[m_SliceDirection], m_YVector[m_SliceDirection]);
+		vtkMath::Normalize(m_YVector[m_SliceDirection]);
+	}
 }
 //----------------------------------------------------------------------------
-void mafPipeVolumeSlice::Create(mafNode *node, mafView *view)
+void mafPipeVolumeSlice::Create(mafNode* node, mafView* view)
 //----------------------------------------------------------------------------
 {
-  Superclass::Create(node, view); // Always call this to initialize m_Vme, m_AssemblyFront, ... vars
+	Superclass::Create(node, view); // Always call this to initialize m_Vme, m_AssemblyFront, ... vars
 
-  m_AssemblyUsed = m_AssemblyBack ? m_AssemblyBack : m_AssemblyFront;
+	m_AssemblyUsed = m_AssemblyBack ? m_AssemblyBack : m_AssemblyFront;
 
-  m_VolumeOutput = mafVMEOutputVolume::SafeDownCast(m_Vme->GetOutput());
-  assert(m_VolumeOutput != NULL);
+	m_VolumeOutput = mafVMEOutputVolume::SafeDownCast(m_Vme->GetOutput());
+	assert(m_VolumeOutput != NULL);
 
-  vtkDataSet *data = m_Vme->GetOutput()->GetVTKData();
-  vtkAlgorithmOutput* port = m_Vme->GetOutput()->GetVTKOutputPort();
-  double b[6];
-  m_Vme->GetOutput()->Update();
-  port->GetProducer()->Update();
-  m_Vme->GetOutput()->GetVMELocalBounds(b);
+	vtkDataSet* data = m_Vme->GetOutput()->GetVTKData();
+	vtkAlgorithmOutput* port = m_Vme->GetOutput()->GetVTKOutputPort();
+	double b[6];
+	m_Vme->GetOutput()->Update();
+	port->GetProducer()->Update();
+	m_Vme->GetOutput()->GetVMELocalBounds(b);
 
-  auto material = m_VolumeOutput->GetMaterial();
-  if (material->m_TableRange[1] < material->m_TableRange[0]) 
-  {
-    data->GetScalarRange(material->m_TableRange);
-    material->UpdateProp();
-  }
-  
-  m_ColorLUT = material->m_ColorLut;
+	auto material = m_VolumeOutput->GetMaterial();
+	if (material->m_TableRange[1] < material->m_TableRange[0])
+	{
+		data->GetScalarRange(material->m_TableRange);
+		material->UpdateProp();
+	}
 
-  if(m_SliceDirection == SLICE_ARB)
+	m_ColorLUT = material->m_ColorLut;
+
+	if (m_SliceDirection == SLICE_ARB)
 		m_SliceDirection = SLICE_Z;
 
 	if (!m_SliceParametersInitialized)
 	{
-    m_Origin[0] = (b[0] + b[1])*.5;
-    m_Origin[1] = (b[2] + b[3])*.5;
-    m_Origin[2] = (b[4] + b[5])*.5;
+		m_Origin[0] = (b[0] + b[1]) * .5;
+		m_Origin[1] = (b[2] + b[3]) * .5;
+		m_Origin[2] = (b[4] + b[5]) * .5;
 	}
 
-	if(m_SliceDirection == SLICE_ORTHO)
+	if (m_SliceDirection == SLICE_ORTHO)
 	{
-    // overwrite the plane vector, because the slices have to be orthogonal
-    m_XVector[0][0] = 0.0001;	//modified by Paolo 29-10-2003 should be 0 !!! check into Sasha's filter
-    m_XVector[0][1] = 1;
-    m_XVector[0][2] = 0;
-    m_YVector[0][0] = 0;
-    m_YVector[0][1] = 0;
-    m_YVector[0][2] = 1;
+		// overwrite the plane vector, because the slices have to be orthogonal
+		m_XVector[0][0] = 0.0001;	//modified by Paolo 29-10-2003 should be 0 !!! check into Sasha's filter
+		m_XVector[0][1] = 1;
+		m_XVector[0][2] = 0;
+		m_YVector[0][0] = 0;
+		m_YVector[0][1] = 0;
+		m_YVector[0][2] = 1;
 
-    m_XVector[1][0] = 0;
-    m_XVector[1][1] = 0;
-    m_XVector[1][2] = 1;
-    m_YVector[1][0] = 1;
-    m_YVector[1][1] = 0;
-    m_YVector[1][2] = 0;
+		m_XVector[1][0] = 0;
+		m_XVector[1][1] = 0;
+		m_XVector[1][2] = 1;
+		m_YVector[1][0] = 1;
+		m_YVector[1][1] = 0;
+		m_YVector[1][2] = 0;
 
-    m_XVector[2][0] = 1;
-    m_XVector[2][1] = 0;
-    m_XVector[2][2] = 0;
-    m_YVector[2][0] = 0;
-    m_YVector[2][1] = 1;
-    m_YVector[2][2] = 0;
+		m_XVector[2][0] = 1;
+		m_XVector[2][1] = 0;
+		m_XVector[2][2] = 0;
+		m_YVector[2][0] = 0;
+		m_YVector[2][1] = 1;
+		m_YVector[2][2] = 0;
 
-    for(int i = 0; i < 3; i++)
+		for (int i = 0; i < 3; i++)
 		{
 			vtkMath::Normalize(m_XVector[i]);
 			vtkMath::Normalize(m_YVector[i]);
@@ -262,23 +262,23 @@ void mafPipeVolumeSlice::Create(mafNode *node, mafView *view)
 
 	CreateTICKs();
 
-  vtkNew<vtkOutlineCornerFilter> corner;
+	vtkNew<vtkOutlineCornerFilter> corner;
 	corner->SetInputConnection(port);
 
-  vtkNew<vtkPolyDataMapper> corner_mapper;
+	vtkNew<vtkPolyDataMapper> corner_mapper;
 	corner_mapper->SetInputConnection(corner->GetOutputPort());
 
 	vtkNEW(m_VolumeBoxActor);
 	m_VolumeBoxActor->SetMapper(corner_mapper);
-  m_VolumeBoxActor->PickableOff();
+	m_VolumeBoxActor->PickableOff();
 	m_VolumeBoxActor->SetVisibility(m_ShowVolumeBox);
-	if(m_AssemblyUsed==m_AssemblyFront)
+	if (m_AssemblyUsed == m_AssemblyFront)
 		m_VolumeBoxActor->SetScale(1.01);
 	else
 		m_VolumeBoxActor->SetScale(1);
 	m_AssemblyFront->AddPart(m_VolumeBoxActor);
 
-	if(m_ShowBounds)
+	if (m_ShowBounds)
 	{
 		double bounds[6];
 		m_Vme->GetOutput()->Update();
@@ -294,8 +294,8 @@ void mafPipeVolumeSlice::Create(mafNode *node, mafView *view)
 
 	// if the actor is in the background renderer
 	// create something invisible in the front renderer so that ResetCamera will work
-  m_GhostActor = NULL;
-  if(m_AssemblyBack != NULL)
+	m_GhostActor = NULL;
+	if (m_AssemblyBack != NULL)
 	{
 		vtkNEW(m_GhostActor);
 		m_GhostActor->SetMapper(m_SliceMapper[m_SliceDirection]);
@@ -304,21 +304,21 @@ void mafPipeVolumeSlice::Create(mafNode *node, mafView *view)
 		m_GhostActor->GetProperty()->SetRepresentationToPoints();
 		m_GhostActor->GetProperty()->SetInterpolationToFlat();
 		m_AssemblyFront->AddPart(m_GhostActor);
-  }
+	}
 }
 //----------------------------------------------------------------------------
 void mafPipeVolumeSlice::CreateTICKs()
 //----------------------------------------------------------------------------
 {
 	//---- TICKs creation --------------------------
-	vtkPolyData  *CTLinesPD      = vtkPolyData::New();	
-	vtkPoints    *CTLinesPoints  = vtkPoints::New();	
-	vtkCellArray *CTCells        = vtkCellArray::New();
-	vtkIdType points_id[2];    
+	vtkPolyData* CTLinesPD = vtkPolyData::New();
+	vtkPoints* CTLinesPoints = vtkPoints::New();
+	vtkCellArray* CTCells = vtkCellArray::New();
+	vtkIdType points_id[2];
 	int	counter = 0;
 
-	vtkDataSet *vtk_data = m_Vme->GetOutput()->GetVTKData();
-    vtkAlgorithmOutput* vtk_port = m_Vme->GetOutput()->GetVTKOutputPort();
+	vtkDataSet* vtk_data = m_Vme->GetOutput()->GetVTKData();
+	vtkAlgorithmOutput* vtk_port = m_Vme->GetOutput()->GetVTKOutputPort();
 	vtk_port->GetProducer()->Update();
 
 	double bounds[6];
@@ -332,20 +332,20 @@ void mafPipeVolumeSlice::CreateTICKs()
 	zmin = bounds[4];
 	zmax = bounds[5];
 
-	vtkRectilinearGrid *rg_data = vtkRectilinearGrid::SafeDownCast(vtk_data);
+	vtkRectilinearGrid* rg_data = vtkRectilinearGrid::SafeDownCast(vtk_data);
 	if (rg_data)
 	{
 		vtkDoubleArray* z_fa = vtkDoubleArray::SafeDownCast(rg_data->GetZCoordinates());
-		if(z_fa)
+		if (z_fa)
 		{
 			for (int i = 0; i < z_fa->GetNumberOfTuples(); i++)
 			{
 				CTLinesPoints->InsertNextPoint(xmax, ymax, z_fa->GetValue(i));
-				CTLinesPoints->InsertNextPoint(xmax+(xmax-xmin)/30, ymax+(ymax-ymin)/30 ,z_fa->GetValue(i));
+				CTLinesPoints->InsertNextPoint(xmax + (xmax - xmin) / 30, ymax + (ymax - ymin) / 30, z_fa->GetValue(i));
 				points_id[0] = counter;
-				points_id[1] = counter+1;
-				counter+=2;
-				CTCells->InsertNextCell(2 , points_id);
+				points_id[1] = counter + 1;
+				counter += 2;
+				CTCells->InsertNextCell(2, points_id);
 			}
 		}
 		else
@@ -354,15 +354,15 @@ void mafPipeVolumeSlice::CreateTICKs()
 			for (int i = 0; i < z_fa_f->GetNumberOfTuples(); i++)
 			{
 				CTLinesPoints->InsertNextPoint(xmax, ymax, z_fa_f->GetValue(i));
-				CTLinesPoints->InsertNextPoint(xmax+(xmax-xmin)/30, ymax+(ymax-ymin)/30 ,z_fa_f->GetValue(i));
+				CTLinesPoints->InsertNextPoint(xmax + (xmax - xmin) / 30, ymax + (ymax - ymin) / 30, z_fa_f->GetValue(i));
 				points_id[0] = counter;
-				points_id[1] = counter+1;
-				counter+=2;
-				CTCells->InsertNextCell(2 , points_id);
+				points_id[1] = counter + 1;
+				counter += 2;
+				CTCells->InsertNextCell(2, points_id);
 			}
 		}
 	}
-	vtkStructuredPoints *sp_data = vtkStructuredPoints::SafeDownCast(vtk_data);
+	vtkStructuredPoints* sp_data = vtkStructuredPoints::SafeDownCast(vtk_data);
 	if (sp_data)
 	{
 		int dim[3];
@@ -372,28 +372,28 @@ void mafPipeVolumeSlice::CreateTICKs()
 		sp_data->GetOrigin(origin);
 		sp_data->GetSpacing(spacing);
 
-		for (int i=0; i < dim[2]; i++)
+		for (int i = 0; i < dim[2]; i++)
 		{
-			float z_i = origin[2] + i*spacing[2];	//?
+			float z_i = origin[2] + i * spacing[2];	//?
 			CTLinesPoints->InsertNextPoint(xmax, ymax, z_i);
-			CTLinesPoints->InsertNextPoint(xmax+(xmax-xmin)/30,ymax+(ymax-ymin)/30,z_i);
+			CTLinesPoints->InsertNextPoint(xmax + (xmax - xmin) / 30, ymax + (ymax - ymin) / 30, z_i);
 
 			points_id[0] = counter;
-			points_id[1] = counter+1;
-			counter+=2;
-			CTCells->InsertNextCell(2 , points_id);
-		}	
+			points_id[1] = counter + 1;
+			counter += 2;
+			CTCells->InsertNextCell(2, points_id);
+		}
 	}
 	CTLinesPD->SetPoints(CTLinesPoints);
-	CTLinesPD->SetLines(CTCells); 
-	CTLinesPD->Modified();	  
+	CTLinesPD->SetLines(CTCells);
+	CTLinesPD->Modified();
 
 	//Add tick to scene
-	vtkPolyDataMapper *TickMapper = vtkPolyDataMapper::New();
+	vtkPolyDataMapper* TickMapper = vtkPolyDataMapper::New();
 	TickMapper->SetInputData(CTLinesPD);
 
-	vtkProperty	*TickProperty = vtkProperty::New();
-	TickProperty->SetColor(1,0,0);
+	vtkProperty* TickProperty = vtkProperty::New();
+	TickProperty->SetColor(1, 0, 0);
 	TickProperty->SetAmbient(1);
 	TickProperty->SetRepresentationToWireframe();
 	TickProperty->SetInterpolationToFlat();
@@ -420,13 +420,13 @@ void mafPipeVolumeSlice::CreateSlice(int direction)
 {
 	double xspc = 0.33, yspc = 0.33, zspc = 1.0;
 
-  vtkDataSet* vtk_data = m_Vme->GetOutput()->GetVTKData();
-  vtkAlgorithmOutput* vtk_port = m_Vme->GetOutput()->GetVTKOutputPort();
-  vtk_port->GetProducer()->Update();
-  if (vtk_data->IsA("vtkImageData") || vtk_data->IsA("vtkStructuredPoints"))
-  {
-    ((vtkImageData *)vtk_data)->GetSpacing(xspc,yspc,zspc);
-  }
+	vtkDataSet* vtk_data = m_Vme->GetOutput()->GetVTKData();
+	vtkAlgorithmOutput* vtk_port = m_Vme->GetOutput()->GetVTKOutputPort();
+	vtk_port->GetProducer()->Update();
+	if (vtk_data->IsA("vtkImageData") || vtk_data->IsA("vtkStructuredPoints"))
+	{
+		((vtkImageData*)vtk_data)->GetSpacing(xspc, yspc, zspc);
+	}
 
 	vtkNEW(m_SlicerPolygonal[direction]);
 	vtkNEW(m_SlicerImage[direction]);
@@ -438,29 +438,29 @@ void mafPipeVolumeSlice::CreateSlice(int direction)
 	m_SlicerPolygonal[direction]->SetPlaneAxisY(m_YVector[direction]);
 	m_SlicerImage[direction]->SetInputConnection(vtk_port);
 	m_SlicerPolygonal[direction]->SetInputConnection(vtk_port);
-//  m_SlicerImage[direction]->SetSliceTransform(m_Vme->GetOutput()->GetAbsTransform()->GetVTKTransform()->GetLinearInverse());
-//  m_SlicerPolygonal[direction]->SetSliceTransform(m_Vme->GetOutput()->GetAbsTransform()->GetVTKTransform()->GetLinearInverse());
-  
+	//  m_SlicerImage[direction]->SetSliceTransform(m_Vme->GetOutput()->GetAbsTransform()->GetVTKTransform()->GetLinearInverse());
+	//  m_SlicerPolygonal[direction]->SetSliceTransform(m_Vme->GetOutput()->GetAbsTransform()->GetVTKTransform()->GetLinearInverse());
+
 	vtkNEW(m_Image[direction]);
-  m_Image[direction]->AllocateScalars(vtk_data->GetPointData()->GetScalars()->GetDataType(),
-	                                  vtk_data->GetPointData()->GetScalars()->GetNumberOfComponents());
-    //m_Image[direction]->SetScalarTypeToUnsignedChar();
-    //m_Image[direction]->SetNumberOfScalarComponents(3);
+	m_Image[direction]->AllocateScalars(vtk_data->GetPointData()->GetScalars()->GetDataType(),
+		vtk_data->GetPointData()->GetScalars()->GetNumberOfComponents());
+	//m_Image[direction]->SetScalarTypeToUnsignedChar();
+	//m_Image[direction]->SetNumberOfScalarComponents(3);
 	m_Image[direction]->SetExtent(0, m_TextureRes - 1, 0, m_TextureRes - 1, 0, 0);
 	m_Image[direction]->SetSpacing(xspc, yspc, zspc);
 
 	m_SlicerImage[direction]->SetOutput(m_Image[direction]);
-  m_SlicerImage[direction]->Update();
+	m_SlicerImage[direction]->Update();
 
 	vtkNEW(m_Texture[direction]);
 	m_Texture[direction]->RepeatOff();
-  m_Texture[direction]->InterpolateOn();
+	m_Texture[direction]->InterpolateOn();
 	m_Texture[direction]->SetQualityTo32Bit();
 	m_Texture[direction]->SetInputData(m_Image[direction]);
-  m_Texture[direction]->SetLookupTable(m_ColorLUT);
-  //m_Texture[direction]->MapColorScalarsThroughLookupTableOn();
+	m_Texture[direction]->SetLookupTable(m_ColorLUT);
+	//m_Texture[direction]->MapColorScalarsThroughLookupTableOn();
 
-  vtkNEW(m_SlicePolydata[direction]);
+	vtkNEW(m_SlicePolydata[direction]);
 	m_SlicerPolygonal[direction]->SetOutput(m_SlicePolydata[direction]);
 	m_SlicerPolygonal[direction]->SetTexture(m_Image[direction]);
 	m_SlicerPolygonal[direction]->Update();
@@ -474,7 +474,7 @@ void mafPipeVolumeSlice::CreateSlice(int direction)
 	m_SliceActor[direction]->SetTexture(m_Texture[direction]);
 	m_SliceActor[direction]->GetProperty()->SetAmbient(1.f);
 	m_SliceActor[direction]->GetProperty()->SetDiffuse(0.f);
-  m_SliceActor[direction]->GetProperty()->SetOpacity(m_SliceOpacity);
+	m_SliceActor[direction]->GetProperty()->SetOpacity(m_SliceOpacity);
 
 	m_AssemblyUsed->AddPart(m_SliceActor[direction]);
 }
@@ -482,26 +482,26 @@ void mafPipeVolumeSlice::CreateSlice(int direction)
 mafPipeVolumeSlice::~mafPipeVolumeSlice()
 //----------------------------------------------------------------------------
 {
-	if(m_VolumeBoxActor)
-    m_AssemblyFront->RemovePart(m_VolumeBoxActor);
-	if(m_Actor)
+	if (m_VolumeBoxActor)
+		m_AssemblyFront->RemovePart(m_VolumeBoxActor);
+	if (m_Actor)
 		m_AssemblyUsed->RemovePart(m_Actor);
-	if(m_TickActor)
+	if (m_TickActor)
 		m_AssemblyUsed->RemovePart(m_TickActor);
 
-	for(int i = 0; i<3; i++)
+	for (int i = 0; i < 3; i++)
 	{
-		if(m_SliceActor[i])
-      m_AssemblyUsed->RemovePart(m_SliceActor[i]);
+		if (m_SliceActor[i])
+			m_AssemblyUsed->RemovePart(m_SliceActor[i]);
 		if (m_SlicerImage[i])
 		{
-      m_SlicerImage[i]->SetSliceTransform(NULL);
+			m_SlicerImage[i]->SetSliceTransform(NULL);
 		}
-    if (m_SlicerPolygonal[i])
-    {
-      m_SlicerPolygonal[i]->SetSliceTransform(NULL);
-    }
-    vtkDEL(m_SlicerImage[i]);
+		if (m_SlicerPolygonal[i])
+		{
+			m_SlicerPolygonal[i]->SetSliceTransform(NULL);
+		}
+		vtkDEL(m_SlicerImage[i]);
 		vtkDEL(m_SlicerPolygonal[i]);
 		vtkDEL(m_Image[i]);
 		vtkDEL(m_Texture[i]);
@@ -513,44 +513,44 @@ mafPipeVolumeSlice::~mafPipeVolumeSlice()
 	vtkDEL(m_Actor);
 	vtkDEL(m_TickActor);
 
-  if(m_GhostActor) 
-    m_AssemblyFront->RemovePart(m_GhostActor);
-  vtkDEL(m_GhostActor);
+	if (m_GhostActor)
+		m_AssemblyFront->RemovePart(m_GhostActor);
+	vtkDEL(m_GhostActor);
 }
 //----------------------------------------------------------------------------
 void mafPipeVolumeSlice::SetLutRange(double low, double high)
 //----------------------------------------------------------------------------
 {
-  auto material = m_VolumeOutput->GetMaterial();
-  material->m_Window_LUT = high-low;
-  material->m_Level_LUT  = (low+high)*.5;
-  material->m_TableRange[0] = low;
-  material->m_TableRange[1] = high;
-  material->UpdateProp();
-  /*
-  for(int i=0;i<3;i++)
-	{
-		if(m_SlicerImage[i])
-		{
-      m_SlicerImage[i]->SetWindow(high-low);
-      m_SlicerImage[i]->SetLevel((low+high)*.5);
-      m_SlicerImage[i]->Update();
-      //m_Texture[i]->GetLookupTable()->SetRange(low,high);
-      //m_Texture[i]->GetLookupTable()->Build();
-		}
-	}*/
+	auto material = m_VolumeOutput->GetMaterial();
+	material->m_Window_LUT = high - low;
+	material->m_Level_LUT = (low + high) * .5;
+	material->m_TableRange[0] = low;
+	material->m_TableRange[1] = high;
+	material->UpdateProp();
+	/*
+	for(int i=0;i<3;i++)
+	  {
+		  if(m_SlicerImage[i])
+		  {
+		m_SlicerImage[i]->SetWindow(high-low);
+		m_SlicerImage[i]->SetLevel((low+high)*.5);
+		m_SlicerImage[i]->Update();
+		//m_Texture[i]->GetLookupTable()->SetRange(low,high);
+		//m_Texture[i]->GetLookupTable()->Build();
+		  }
+	  }*/
 }
 //----------------------------------------------------------------------------
 void mafPipeVolumeSlice::GetLutRange(double range[2])
 //----------------------------------------------------------------------------
 {
-  auto material = m_VolumeOutput->GetMaterial();
-  material->m_ColorLut->GetTableRange(range);
-  /*
-	if(m_SliceDirection != SLICE_ORTHO)
-    m_Texture[m_SliceDirection]->GetLookupTable()->GetRange();
-	else
-    m_Texture[0]->GetLookupTable()->GetRange();*/
+	auto material = m_VolumeOutput->GetMaterial();
+	material->m_ColorLut->GetTableRange(range);
+	/*
+	  if(m_SliceDirection != SLICE_ORTHO)
+	  m_Texture[m_SliceDirection]->GetLookupTable()->GetRange();
+	  else
+	  m_Texture[0]->GetLookupTable()->GetRange();*/
 }
 //----------------------------------------------------------------------------
 void mafPipeVolumeSlice::SetSlice(double origin[3], float xVect[3], float yVect[3])
@@ -571,7 +571,7 @@ void mafPipeVolumeSlice::SetSlice(double origin[3], float xVect[3], float yVect[
 	vtkMath::Cross(m_Normal[m_SliceDirection], m_XVector[m_SliceDirection], m_YVector[m_SliceDirection]);
 	vtkMath::Normalize(m_YVector[m_SliceDirection]);
 
-  SetSlice(origin);
+	SetSlice(origin);
 }
 //----------------------------------------------------------------------------
 void mafPipeVolumeSlice::SetSlice(double origin[3])
@@ -581,9 +581,9 @@ void mafPipeVolumeSlice::SetSlice(double origin[3])
 	m_Origin[1] = origin[1];
 	m_Origin[2] = origin[2];
 
-	for(int i=0;i<3;i++)
+	for (int i = 0; i < 3; i++)
 	{
-		if(m_SlicerImage[i])
+		if (m_SlicerImage[i])
 		{
 			m_SlicerImage[i]->SetPlaneOrigin(m_Origin[0], m_Origin[1], m_Origin[2]);
 			m_SlicerPolygonal[i]->SetPlaneOrigin(m_SlicerImage[i]->GetPlaneOrigin());
@@ -594,16 +594,16 @@ void mafPipeVolumeSlice::SetSlice(double origin[3])
 
 			m_SlicerImage[i]->Update();
 			m_SlicerPolygonal[i]->Update();
-    }
+		}
 	}
 }
 //----------------------------------------------------------------------------
 void mafPipeVolumeSlice::GetSliceOrigin(double origin[3])
 //----------------------------------------------------------------------------
 {
-  origin[0] = m_Origin[0];
-  origin[1] = m_Origin[1];
-  origin[2] = m_Origin[2];
+	origin[0] = m_Origin[0];
+	origin[1] = m_Origin[1];
+	origin[2] = m_Origin[2];
 }
 //----------------------------------------------------------------------------
 void mafPipeVolumeSlice::GetSliceNormal(double normal[3])
@@ -617,108 +617,108 @@ void mafPipeVolumeSlice::GetSliceNormal(double normal[3])
 void mafPipeVolumeSlice::SetSliceOpacity(double opacity)
 //----------------------------------------------------------------------------
 {
-  m_SliceOpacity = opacity;
-  
-  for (int i=0;i<3;i++)
-  {
-    if(m_SliceActor[i])
-      m_SliceActor[i]->GetProperty()->SetOpacity(m_SliceOpacity);
-  }
+	m_SliceOpacity = opacity;
+
+	for (int i = 0; i < 3; i++)
+	{
+		if (m_SliceActor[i])
+			m_SliceActor[i]->GetProperty()->SetOpacity(m_SliceOpacity);
+	}
 }
 //----------------------------------------------------------------------------
 float mafPipeVolumeSlice::GetSliceOpacity()
 //----------------------------------------------------------------------------
 {
-  return m_SliceOpacity;
+	return m_SliceOpacity;
 }
 //----------------------------------------------------------------------------
-mafGUI *mafPipeVolumeSlice::CreateGui()
+mafGUI* mafPipeVolumeSlice::CreateGui()
 //----------------------------------------------------------------------------
 {
-  assert(m_Gui == NULL);
-  double b[6] = {-1,1,-1,1,-1,1};
-  m_Gui = new mafGUI(this);
-  m_Gui->Lut(ID_LUT_CHOOSER,_R("lut"),m_ColorLUT);
-	m_Gui->FloatSlider(ID_OPACITY_SLIDER,_R("opacity"),&m_SliceOpacity,0.1,1.0);
-  m_Vme->GetOutput()->GetVMELocalBounds(b);
-	if(m_ShowSlider)
+	assert(!AccessGUI());
+	double b[6] = { -1,1,-1,1,-1,1 };
+	auto gui = new mafGUI(this);
+	gui->Lut(ID_LUT_CHOOSER, _R("lut"), m_ColorLUT);
+	gui->FloatSlider(ID_OPACITY_SLIDER, _R("opacity"), &m_SliceOpacity, 0.1, 1.0);
+	m_Vme->GetOutput()->GetVMELocalBounds(b);
+	if (m_ShowSlider)
 	{
 		if (m_SliceDirection == SLICE_X || m_SliceDirection == SLICE_ORTHO)
 		{
-			m_SliceSlider[0] = m_Gui->FloatSlider(ID_SLICE_SLIDER_X,_R("x"),&m_Origin[0],b[0],b[1]);
+			m_SliceSlider[0] = gui->FloatSlider(ID_SLICE_SLIDER_X, _R("x"), &m_Origin[0], b[0], b[1]);
 		}
 		if (m_SliceDirection == SLICE_Y || m_SliceDirection == SLICE_ORTHO)
 		{
-			m_SliceSlider[1] = m_Gui->FloatSlider(ID_SLICE_SLIDER_Y,_R("y"),&m_Origin[1],b[2],b[3]);
+			m_SliceSlider[1] = gui->FloatSlider(ID_SLICE_SLIDER_Y, _R("y"), &m_Origin[1], b[2], b[3]);
 		}
 		if (m_SliceDirection == SLICE_Z || m_SliceDirection == SLICE_ORTHO)
 		{
-			m_SliceSlider[2] = m_Gui->FloatSlider(ID_SLICE_SLIDER_Z,_R("z"),&m_Origin[2],b[4],b[5]);
+			m_SliceSlider[2] = gui->FloatSlider(ID_SLICE_SLIDER_Z, _R("z"), &m_Origin[2], b[4], b[5]);
 		}
 	}
-  m_Gui->Bool(ID_ENABLE_TRILINEAR_INTERPOLATION,_R("Interpolation"),&m_TrilinearInterpolationOn,1,_R("Enable/Disable tri-linear interpolation on slices"));
-	m_Gui->Divider();
-  return m_Gui;
+	gui->Bool(ID_ENABLE_TRILINEAR_INTERPOLATION, _R("Interpolation"), &m_TrilinearInterpolationOn, 1, _R("Enable/Disable tri-linear interpolation on slices"));
+	gui->Divider();
+	return gui;
 }
 //----------------------------------------------------------------------------
-void mafPipeVolumeSlice::OnEvent(mafEventBase *maf_event)
+void mafPipeVolumeSlice::OnEvent(mafEventBase* maf_event)
 //----------------------------------------------------------------------------
 {
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    switch(e->GetId()) 
-    {
-      case ID_LUT_CHOOSER:
-      {
-        auto material = m_VolumeOutput->GetMaterial();
-        material->UpdateFromTables();
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      }
-      break;
-      case ID_SLICE_SLIDER_X:
-      case ID_SLICE_SLIDER_Y:
-      case ID_SLICE_SLIDER_Z:
-        SetSlice(m_Origin);
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      break;
-			case ID_OPACITY_SLIDER:
-				SetSliceOpacity(m_SliceOpacity);
-				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
+	{
+		switch (e->GetId())
+		{
+		case ID_LUT_CHOOSER:
+		{
+			auto material = m_VolumeOutput->GetMaterial();
+			material->UpdateFromTables();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+		}
+		break;
+		case ID_SLICE_SLIDER_X:
+		case ID_SLICE_SLIDER_Y:
+		case ID_SLICE_SLIDER_Z:
+			SetSlice(m_Origin);
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
 			break;
-      case ID_ENABLE_TRILINEAR_INTERPOLATION:
-        UpdateSlice();
-        {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-      break;
-      default:
-      break;
-    }
-  }
-  else
-  {
-    InvokeEvent(*maf_event);
-  }
+		case ID_OPACITY_SLIDER:
+			SetSliceOpacity(m_SliceOpacity);
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+			break;
+		case ID_ENABLE_TRILINEAR_INTERPOLATION:
+			UpdateSlice();
+			{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+			break;
+		default:
+			break;
+		}
+	}
+	else
+	{
+		InvokeEvent(*maf_event);
+	}
 }
 //----------------------------------------------------------------------------
-void mafPipeVolumeSlice::SetColorLookupTable(vtkLookupTable *lut)
+void mafPipeVolumeSlice::SetColorLookupTable(vtkLookupTable* lut)
 //----------------------------------------------------------------------------
 {
-  int i;
-  if (lut == NULL)
-  {
-    for (i=0;i<3;i++)
-    {
-      if(m_Texture[i])
-        m_Texture[i]->SetLookupTable(m_ColorLUT);
-    }
-    return;
-  }
-  m_CustomColorLUT = lut;
-  for (i=0;i<3;i++)
-  {
-    if(m_Texture[i])
-      m_Texture[i]->SetLookupTable(m_CustomColorLUT);
-  }
-  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
+	int i;
+	if (lut == NULL)
+	{
+		for (i = 0; i < 3; i++)
+		{
+			if (m_Texture[i])
+				m_Texture[i]->SetLookupTable(m_ColorLUT);
+		}
+		return;
+	}
+	m_CustomColorLUT = lut;
+	for (i = 0; i < 3; i++)
+	{
+		if (m_Texture[i])
+			m_Texture[i]->SetLookupTable(m_CustomColorLUT);
+	}
+	{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
 }
 //----------------------------------------------------------------------------
 void mafPipeVolumeSlice::Select(bool sel)
@@ -732,28 +732,28 @@ void mafPipeVolumeSlice::Select(bool sel)
 void mafPipeVolumeSlice::HideSlider()
 //----------------------------------------------------------------------------
 {
-	m_ShowSlider=false;
+	m_ShowSlider = false;
 }
 //----------------------------------------------------------------------------
 void mafPipeVolumeSlice::ShowSlider()
 //----------------------------------------------------------------------------
 {
-	m_ShowSlider=true;
+	m_ShowSlider = true;
 }
 //----------------------------------------------------------------------------
 void mafPipeVolumeSlice::ShowTICKsOn()
 //----------------------------------------------------------------------------
 {
-	m_ShowTICKs=true;
-	if(m_TickActor)
+	m_ShowTICKs = true;
+	if (m_TickActor)
 		m_TickActor->SetVisibility(m_ShowTICKs);
 }
 //----------------------------------------------------------------------------
 void mafPipeVolumeSlice::ShowTICKsOff()
 //----------------------------------------------------------------------------
 {
-	m_ShowTICKs=false;
-	if(m_TickActor)
+	m_ShowTICKs = false;
+	if (m_TickActor)
 		m_TickActor->SetVisibility(m_ShowTICKs);
 }
 
@@ -761,18 +761,18 @@ void mafPipeVolumeSlice::ShowTICKsOff()
 void mafPipeVolumeSlice::UpdateSlice()
 //------------------------------------------------------------------------
 {
-  for (int i = 0; i < 3; i++)
-  {
-    if (m_SlicerImage[i] != NULL)
-    {
-      m_SlicerImage[i]->SetTrilinearInterpolation(m_TrilinearInterpolationOn == TRUE);
-      m_SlicerImage[i]->Update();
-    }
+	for (int i = 0; i < 3; i++)
+	{
+		if (m_SlicerImage[i] != NULL)
+		{
+			m_SlicerImage[i]->SetTrilinearInterpolation(m_TrilinearInterpolationOn == TRUE);
+			m_SlicerImage[i]->Update();
+		}
 
-    if (m_SlicerPolygonal[i] != NULL)
-    {
-      //m_SlicerPolygonal[i]->SetTrilinearInterpolation(m_TrilinearInterpolationOn == TRUE);
-      m_SlicerPolygonal[i]->Update();
-    }
-  }    
+		if (m_SlicerPolygonal[i] != NULL)
+		{
+			//m_SlicerPolygonal[i]->SetTrilinearInterpolation(m_TrilinearInterpolationOn == TRUE);
+			m_SlicerPolygonal[i]->Update();
+		}
+	}
 }

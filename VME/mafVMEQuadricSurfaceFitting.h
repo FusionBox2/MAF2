@@ -186,25 +186,25 @@ protected:
   void CreateGuiPlane();
   void EnableGuiPlane();
 
-  void CreateGuiParentVerticesResult();
+  void CreateGuiParentVerticesResult(mafGUI* gui);
   void EnableGuiParentVerticesResult();
 
-  void CreateGuiCube();
+  void CreateGuiCube(mafGUI* gui);
   void EnableGuiCube();
 
-  void CreateGuiCylinder();
+  void CreateGuiCylinder(mafGUI* gui);
   void EnableGuiCylinder();
 
-  void CreateGuiSelectPoints();
+  void CreateGuiSelectPoints(mafGUI* gui);
   void EnableGuiSelectPoints();
 
-  void CreateGuiCone();
+  void CreateGuiCone(mafGUI* gui);
   void EnableGuiCone();
 
-  void CreateGuiSphere();
+  void CreateGuiSphere(mafGUI* gui);
   void EnableGuiSphere();
 
-  void CreateGuiEllipsoid();
+  void CreateGuiEllipsoid(mafGUI* gui);
   void EnableGuiEllipsoid();
   
   mafGUI *m_GuiSphere;

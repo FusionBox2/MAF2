@@ -3,7 +3,7 @@
  Program: MAF2Medical
  Module: medVMEOutputSurfaceEditor
  Authors: Matteo Giacomoni
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -47,19 +47,19 @@ medVMEOutputSurfaceEditor::~medVMEOutputSurfaceEditor()
 }
 
 //-------------------------------------------------------------------------
-vtkPolyData *medVMEOutputSurfaceEditor::GetSurfaceData()
+vtkPolyData* medVMEOutputSurfaceEditor::GetSurfaceData()
 //-------------------------------------------------------------------------
 {
-	return (vtkPolyData *)GetVTKData();
+	return (vtkPolyData*)GetVTKData();
 }
 //-------------------------------------------------------------------------
 mafGUI* medVMEOutputSurfaceEditor::CreateGui()
 //-------------------------------------------------------------------------
 {
-	assert(m_Gui == NULL);
-	m_Gui = mafVMEOutput::CreateGui();
+	assert(!AccessGUI());
+	auto gui = mafVMEOutput::CreateGui();
 
-	return m_Gui;
+	return gui;
 }
 //-------------------------------------------------------------------------
 void medVMEOutputSurfaceEditor::Update()
@@ -68,8 +68,5 @@ void medVMEOutputSurfaceEditor::Update()
 	assert(m_VME);
 	m_VME->Update();
 
-	if (m_Gui)
-	{
-		m_Gui->Update();
-	}
+	UpdateGUI();
 }

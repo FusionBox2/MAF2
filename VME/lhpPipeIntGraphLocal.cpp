@@ -6,7 +6,7 @@
   Version:   $Revision: 1.6 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
-  Copyright (c) 2001/2007 
+  Copyright (c) 2001/2007
   ULB - Universite Libre de Bruxelles (www.ulb.ac.be)
 =========================================================================*/
 
@@ -30,11 +30,11 @@
 //----------------------------------------------------------------------------
 namespace
 {
-  const mafString saVarDesc[]  = {_R("Local Pos X"), _R("Local Pos Y"), _R("Local Pos Z"), _R("Local Ori X"), _R("Local Ori Y"), _R("Local Ori Z")};
+	const mafString saVarDesc[] = { _R("Local Pos X"), _R("Local Pos Y"), _R("Local Pos Z"), _R("Local Ori X"), _R("Local Ori Y"), _R("Local Ori Z") };
 
-  const mafString saVarUnits[] = {_R("mm") ,_R("mm") ,_R("mm"), _R("deg"),_R("deg"),_R("deg")};
+	const mafString saVarUnits[] = { _R("mm") ,_R("mm") ,_R("mm"), _R("deg"),_R("deg"),_R("deg") };
 
-  double saCoefs[] = {1.0, 1.0, 1.0, mafMatrix3x3::DegreesToRadians(), mafMatrix3x3::DegreesToRadians(), mafMatrix3x3::DegreesToRadians()};
+	double saCoefs[] = { 1.0, 1.0, 1.0, mafMatrix3x3::DegreesToRadians(), mafMatrix3x3::DegreesToRadians(), mafMatrix3x3::DegreesToRadians() };
 }
 
 
@@ -43,23 +43,23 @@ mafCxxTypeMacro(lhpPipeIntGraphLocal);
 
 const mafString& lhpPipeIntGraphLocal::GetVarTitle(int i) const
 {
-  if(i < Superclass::GDT_LAST)
-    return Superclass::GetVarTitle(i);
-  return saVarDesc[i - Superclass::GDT_LAST];
+	if (i < Superclass::GDT_LAST)
+		return Superclass::GetVarTitle(i);
+	return saVarDesc[i - Superclass::GDT_LAST];
 }
 
 const mafString& lhpPipeIntGraphLocal::GetVarUnit(int i)const
 {
-  if(i < Superclass::GDT_LAST)
-    return Superclass::GetVarUnit(i);
-  return saVarUnits[i - Superclass::GDT_LAST];
+	if (i < Superclass::GDT_LAST)
+		return Superclass::GetVarUnit(i);
+	return saVarUnits[i - Superclass::GDT_LAST];
 }
 
 double lhpPipeIntGraphLocal::GetVarDerivativeCoef(int i)const
 {
-  if(i < Superclass::GDT_LAST)
-    return Superclass::GetVarDerivativeCoef(i);
-  return saCoefs[i - Superclass::GDT_LAST];
+	if (i < Superclass::GDT_LAST)
+		return Superclass::GetVarDerivativeCoef(i);
+	return saCoefs[i - Superclass::GDT_LAST];
 }
 
 
@@ -67,116 +67,115 @@ double lhpPipeIntGraphLocal::GetVarDerivativeCoef(int i)const
 lhpPipeIntGraphLocal::lhpPipeIntGraphLocal()
 //----------------------------------------------------------------------------
 {
-  m_vars.resize(GDT_LAST);
-  InvalidateAllVars();
-  m_Proximal = NULL;
-  m_ProximalName = _R("");
+	m_vars.resize(GDT_LAST);
+	InvalidateAllVars();
+	m_Proximal = NULL;
+	m_ProximalName = _R("");
 }
-void lhpPipeIntGraphLocal::Create(mafNode *node, mafView *view)
+void lhpPipeIntGraphLocal::Create(mafNode* node, mafView* view)
 {
-  Superclass::Create(node, view);
-  SetProximal(AutoSelectProximal(mafVME::SafeDownCast(node)));
+	Superclass::Create(node, view);
+	SetProximal(AutoSelectProximal(mafVME::SafeDownCast(node)));
 }
 
 //----------------------------------------------------------------------------
 lhpPipeIntGraphLocal::~lhpPipeIntGraphLocal()
 //----------------------------------------------------------------------------
 {
-  SetProximal(NULL);
+	SetProximal(NULL);
 }
-void lhpPipeIntGraphLocal::SetProximal(mafVME *proximal)
+void lhpPipeIntGraphLocal::SetProximal(mafVME* proximal)
 {
-  if(m_Proximal)
-    m_Proximal->RemoveObserver(this);
-  m_Proximal = proximal;
-  m_ProximalName = (m_Proximal) ? m_Proximal->GetName() : _R("");
-  if(m_Proximal)
-    m_Proximal->AddObserver(this);
-  if(m_Gui)
-    m_Gui->Update();
+	if (m_Proximal)
+		m_Proximal->RemoveObserver(this);
+	m_Proximal = proximal;
+	m_ProximalName = (m_Proximal) ? m_Proximal->GetName() : _R("");
+	if (m_Proximal)
+		m_Proximal->AddObserver(this);
+	UpdateGUI();
 }
 std::istream& lhpPipeIntGraphLocal::operator>>(std::istream& is)
 {
-  return Superclass::operator>>(is);
+	return Superclass::operator>>(is);
 }
 std::ostream& lhpPipeIntGraphLocal::operator<<(std::ostream& os) const
 {
-  return Superclass::operator<<(os);
+	return Superclass::operator<<(os);
 }
 
 //----------------------------------------------------------------------------
-void lhpPipeIntGraphLocal::OnEvent(mafEventBase *maf_event)
+void lhpPipeIntGraphLocal::OnEvent(mafEventBase* maf_event)
 //----------------------------------------------------------------------------
 {
-  if(mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    if(ID_PARENT == e->GetId())
-    {
-      mafString s(_L("Choose cloud"));
-      mafEvent e(this,VME_CHOOSE); e.SetString(&s); e.SetArg(NULL/*, (long)&lhpOpRegisterLMScripted::ClosedCloudAccept*/);
-      InvokeEvent(e);
-      auto vme = mafVME::SafeDownCast(e.GetVme());
-      SetProximal(vme);
-      return;
-    }
-    if(ID_RESETPARENT == e->GetId())
-    {
-      SetProximal(AutoSelectProximal(mafVME::SafeDownCast(m_Node)));
-      return;
-    }
-  }
-  if(maf_event->GetSender() == m_Proximal)
-  {
-    if(NODE_DESTROYED == maf_event->GetId() || NODE_DETACHED_FROM_TREE == maf_event->GetId())
-      m_Proximal = NULL;
-  }
-  Superclass::OnEvent(maf_event);
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
+	{
+		if (ID_PARENT == e->GetId())
+		{
+			mafString s(_L("Choose cloud"));
+			mafEvent e(this, VME_CHOOSE); e.SetString(&s); e.SetArg(NULL/*, (long)&lhpOpRegisterLMScripted::ClosedCloudAccept*/);
+			InvokeEvent(e);
+			auto vme = mafVME::SafeDownCast(e.GetVme());
+			SetProximal(vme);
+			return;
+		}
+		if (ID_RESETPARENT == e->GetId())
+		{
+			SetProximal(AutoSelectProximal(mafVME::SafeDownCast(m_Node)));
+			return;
+		}
+	}
+	if (maf_event->GetSender() == m_Proximal)
+	{
+		if (NODE_DESTROYED == maf_event->GetId() || NODE_DETACHED_FROM_TREE == maf_event->GetId())
+			m_Proximal = NULL;
+	}
+	Superclass::OnEvent(maf_event);
 }
 /** Create the Gui for the visual pipe that allow the user to change the pipe's parameters.*/
 //----------------------------------------------------------------------------
-mafGUI *lhpPipeIntGraphLocal::CreateGui()
+mafGUI* lhpPipeIntGraphLocal::CreateGui()
 //----------------------------------------------------------------------------
 {
-  Superclass::CreateGui();
-  m_Gui->Label(_L("Parent :"),true);
-  m_Gui->Label(&m_ProximalName);
-  m_Gui->Button(ID_PARENT,_L("parent "));
-  m_Gui->Button(ID_RESETPARENT,_L("reset parent"));
-  return m_Gui;
+	auto gui = Superclass::CreateGui();
+	gui->Label(_L("Parent :"), true);
+	gui->Label(&m_ProximalName);
+	gui->Button(ID_PARENT, _L("parent "));
+	gui->Button(ID_RESETPARENT, _L("reset parent"));
+	return gui;
 }
 
 //----------------------------------------------------------------------------
 bool lhpPipeIntGraphLocal::StoreValueByIdx(int nVarID, mafTimeStamp ts, mafTimeStamp prevts)
 //----------------------------------------------------------------------------
 {
-  if(m_Proximal == NULL)
-    SetProximal(AutoSelectProximal(mafVME::SafeDownCast(m_Node)));
-  if(nVarID >= GDT_LAST)
-  {
-    wxASSERT(false);
-    return false;
-  }
+	if (m_Proximal == NULL)
+		SetProximal(AutoSelectProximal(mafVME::SafeDownCast(m_Node)));
+	if (nVarID >= GDT_LAST)
+	{
+		wxASSERT(false);
+		return false;
+	}
 
-  if(nVarID < Superclass::GDT_LAST)
-  {
-    return Superclass::StoreValueByIdx(nVarID, ts, prevts);
-  }
+	if (nVarID < Superclass::GDT_LAST)
+	{
+		return Superclass::StoreValueByIdx(nVarID, ts, prevts);
+	}
 
-  //LTM
-  /*if(GDT_LTM_POSX <= nVarID && nVarID <= GDT_LTM_ROTZ)
-  {
-    mafMatrix mLTM;
-    V4d<double>    vPos, vRot;
-    GetLocalMatrix(m_Vme, ts, mLTM, m_Proximal);
-    mafTransfInverseTransformUpright(&mLTM, &vPos, &vRot);
+	//LTM
+	/*if(GDT_LTM_POSX <= nVarID && nVarID <= GDT_LTM_ROTZ)
+	{
+	  mafMatrix mLTM;
+	  V4d<double>    vPos, vRot;
+	  GetLocalMatrix(m_Vme, ts, mLTM, m_Proximal);
+	  mafTransfInverseTransformUpright(&mLTM, &vPos, &vRot);
 
-    SetValue(GDT_LTM_POSX, vPos.x);
-    SetValue(GDT_LTM_POSY, vPos.y);
-    SetValue(GDT_LTM_POSZ, vPos.z);
-    SetValue(GDT_LTM_ROTX, vRot.x * mafMatrix3x3::RadiansToDegrees());
-    SetValue(GDT_LTM_ROTY, vRot.y * mafMatrix3x3::RadiansToDegrees());
-    SetValue(GDT_LTM_ROTZ, vRot.z * mafMatrix3x3::RadiansToDegrees());
-  }*/
-  return true;
+	  SetValue(GDT_LTM_POSX, vPos.x);
+	  SetValue(GDT_LTM_POSY, vPos.y);
+	  SetValue(GDT_LTM_POSZ, vPos.z);
+	  SetValue(GDT_LTM_ROTX, vRot.x * mafMatrix3x3::RadiansToDegrees());
+	  SetValue(GDT_LTM_ROTY, vRot.y * mafMatrix3x3::RadiansToDegrees());
+	  SetValue(GDT_LTM_ROTZ, vRot.z * mafMatrix3x3::RadiansToDegrees());
+	}*/
+	return true;
 }
 

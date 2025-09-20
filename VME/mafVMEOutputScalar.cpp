@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafVMEOutputScalar
  Authors: Paolo Quadrani
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -53,12 +53,12 @@ mafVMEOutputScalar::mafVMEOutputScalar()
 //-------------------------------------------------------------------------
 {
 #ifdef MAF_USE_VTK
-  vtkNEW(m_Polydata);
-  vtkNEW(m_Producer);
-  m_Producer->SetOutput(m_Polydata);
+	vtkNEW(m_Polydata);
+	vtkNEW(m_Producer);
+	m_Producer->SetOutput(m_Polydata);
 #endif
 
-  m_ScalarDataString = _R("");
+	m_ScalarDataString = _R("");
 }
 
 //-------------------------------------------------------------------------
@@ -66,8 +66,8 @@ mafVMEOutputScalar::~mafVMEOutputScalar()
 //-------------------------------------------------------------------------
 {
 #ifdef MAF_USE_VTK
-  vtkDEL(m_Polydata);
-  vtkDEL(m_Producer);
+	vtkDEL(m_Polydata);
+	vtkDEL(m_Producer);
 #endif
 }
 
@@ -75,44 +75,44 @@ mafVMEOutputScalar::~mafVMEOutputScalar()
 double mafVMEOutputScalar::GetScalarData()
 //-------------------------------------------------------------------------
 {
-  assert(m_VME);
-  mafScalarVector *scalarVector = ((mafVMEScalar *)m_VME)->GetScalarVector();
-  return scalarVector->GetItemBefore(GetTimeStamp());
-  //return scalarVector->GetNearestScalar(GetTimeStamp());  // Also this method could be used; depend on interpolation
-                                                            // we want to use.
+	assert(m_VME);
+	mafScalarVector* scalarVector = ((mafVMEScalar*)m_VME)->GetScalarVector();
+	return scalarVector->GetItemBefore(GetTimeStamp());
+	//return scalarVector->GetNearestScalar(GetTimeStamp());  // Also this method could be used; depend on interpolation
+															  // we want to use.
 }
 
 #ifdef MAF_USE_VTK
 //-------------------------------------------------------------------------
-vtkAlgorithmOutput *mafVMEOutputScalar::GetVTKOutputPort()
+vtkAlgorithmOutput* mafVMEOutputScalar::GetVTKOutputPort()
 //-------------------------------------------------------------------------
 {
-  UpdateVTKRepresentation();
-  return m_Producer->GetOutputPort();
+	UpdateVTKRepresentation();
+	return m_Producer->GetOutputPort();
 }
 //-------------------------------------------------------------------------
 void mafVMEOutputScalar::UpdateVTKRepresentation()
 //-------------------------------------------------------------------------
 {
-  double data = GetScalarData();
+	double data = GetScalarData();
 
-  vtkIdType pointId[2];
-  double time_point = GetTimeStamp();
-  vtkNew<vtkPoints> points;
-  vtkNew<vtkCellArray> verts;
-  vtkNew<vtkDoubleArray> scalars;
-  scalars->SetNumberOfValues(1);
-  scalars->SetNumberOfComponents(1);
-  scalars->FillComponent(0,data);
-  points->InsertPoint(0, 0.0, 0.0, 0.0);
-  pointId[0] = 0;
-  pointId[1] = 0;
-  verts->InsertNextCell(2,pointId);
+	vtkIdType pointId[2];
+	double time_point = GetTimeStamp();
+	vtkNew<vtkPoints> points;
+	vtkNew<vtkCellArray> verts;
+	vtkNew<vtkDoubleArray> scalars;
+	scalars->SetNumberOfValues(1);
+	scalars->SetNumberOfComponents(1);
+	scalars->FillComponent(0, data);
+	points->InsertPoint(0, 0.0, 0.0, 0.0);
+	pointId[0] = 0;
+	pointId[1] = 0;
+	verts->InsertNextCell(2, pointId);
 
-  m_Polydata->SetPoints(points);
-  m_Polydata->SetLines(verts);
-  m_Polydata->GetPointData()->SetScalars(scalars);
-  m_Polydata->Modified();
+	m_Polydata->SetPoints(points);
+	m_Polydata->SetLines(verts);
+	m_Polydata->GetPointData()->SetScalars(scalars);
+	m_Polydata->Modified();
 }
 #endif
 
@@ -120,30 +120,27 @@ void mafVMEOutputScalar::UpdateVTKRepresentation()
 mafGUI* mafVMEOutputScalar::CreateGui()
 //-------------------------------------------------------------------------
 {
-  assert(m_Gui == NULL);
-  m_Gui = mafVMEOutput::CreateGui();
+	assert(!AccessGUI());
+	auto gui = mafVMEOutput::CreateGui();
 
-  if (m_VME)
-  {
-    this->Update();
-  }
-  /*double data = GetScalarData();
-  m_ScalarDataString = "";
-  m_ScalarDataString << data;*/
-  m_Gui->Label(_L("data: "),&m_ScalarDataString);
-	m_Gui->Divider(); 
-	return m_Gui;
+	if (m_VME)
+	{
+		this->Update();
+	}
+	/*double data = GetScalarData();
+	m_ScalarDataString = "";
+	m_ScalarDataString << data;*/
+	gui->Label(_L("data: "), &m_ScalarDataString);
+	gui->Divider();
+	return gui;
 }
 
 //-------------------------------------------------------------------------
 void mafVMEOutputScalar::Update()
 //-------------------------------------------------------------------------
 {
-  double data = GetScalarData();
-  m_ScalarDataString = _R("");
-  m_ScalarDataString += mafToString(data);
-  if (m_Gui)
-  {
-    m_Gui->Update();
-  }
+	double data = GetScalarData();
+	m_ScalarDataString = _R("");
+	m_ScalarDataString += mafToString(data);
+	UpdateGUI();
 }

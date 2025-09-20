@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafVMEGravityLine
  Authors: Taha Jerbi
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -84,7 +84,7 @@ mafVMEGravityLine::mafVMEGravityLine()
 {
 
 
-	
+
 	// wxBusyInfo wait001("constructor");
 	// Sleep(1500);
 	centerTemp = new double[3];
@@ -96,80 +96,76 @@ mafVMEGravityLine::mafVMEGravityLine()
 
 	parallelPlane = mafVMEPlane::NewSPtr();
 	parallelPlane->SetName(_R("parallelPlane"));
-	
+
 	mafNode::ReparentTo(parallelPlane, this);
 	//parallelPlane->DisableGuiPlane();
-    P0 = mafVMELandmark::New();
-    P0->SetName(_R("P0"));
+	P0 = mafVMELandmark::New();
+	P0->SetName(_R("P0"));
 
 
 
-  m_Cloud2 = mafVMELandmarkCloud::NewSPtr();
+	m_Cloud2 = mafVMELandmarkCloud::NewSPtr();
 
-  m_Cloud2->Open();
-  m_Cloud2->SetName(_L("computed_points"));
-  m_Cloud2->SetRadius(5);
-  mafNode::ReparentTo(m_Cloud2, this);
-//  m_Cloud2->AppendLandmark(1, 0, 0, _R("projectedPt"), false);
-  m_Cloud2->AppendLandmark(1, 0, 0, _R("parallelPlanePt1"), false);
-  m_Cloud2->AppendLandmark(1, 0, 0, _R("parallelPlanePt2"), false);
-  m_Cloud2->AppendLandmark(1, 0, 0, _R("parallelPlanePt3"), false);
+	m_Cloud2->Open();
+	m_Cloud2->SetName(_L("computed_points"));
+	m_Cloud2->SetRadius(5);
+	mafNode::ReparentTo(m_Cloud2, this);
+	//  m_Cloud2->AppendLandmark(1, 0, 0, _R("projectedPt"), false);
+	m_Cloud2->AppendLandmark(1, 0, 0, _R("parallelPlanePt1"), false);
+	m_Cloud2->AppendLandmark(1, 0, 0, _R("parallelPlanePt2"), false);
+	m_Cloud2->AppendLandmark(1, 0, 0, _R("parallelPlanePt3"), false);
 
-  vtkNEW(m_Goniometer);
+	vtkNEW(m_Goniometer);
 
-  m_Goniometer->Update();
-
-
-
-  plan = NULL;
-  //mafNEW(plan);
-  //plan->SetName(_R("FPlane"));
-  //plan->ReparentTo(this);
-  //double* pt1; pt1 = new double[3]; pt1[0] = 0; pt1[01] = 0; pt1[02] = 0;
-  //plan->setPoint1(pt1);
-  //double* pt2; pt2 = new double[3]; pt2[0] = 10; pt2[01] = 0; pt2[02] = 0;
-  //plan->setPoint2(pt2);
- // double* pt3; pt3 = new double[3]; pt3[0] = 0; pt3[01] = 10; pt3[02] = 0;
- // plan->setPoint3(pt3);
-
-  rotationMat = Eigen::Matrix3d::Identity();
-
-  //////
-
-
-  mafString plot_title = _L("Density vs. Length (mm)");
-  mafString plot_titleX = _R("mm");
-  mafString plot_titleY = _L("Dens.");
-  vtkNEW(m_PlotActor);
-  m_PlotActor->GetProperty()->SetColor(0.02, 0.06, 0.62);
-  m_PlotActor->GetProperty()->SetLineWidth(2);
-  m_PlotActor->SetPosition(0.03, 0.03);
-  m_PlotActor->SetPosition2(0.9, 0.9);
-  m_PlotActor->SetLabelFormat("%g");
-  m_PlotActor->SetXRange(0, 300);
-  m_PlotActor->SetPlotCoordinate(0, 300);
-  m_PlotActor->SetNumberOfXLabels(10);
-  m_PlotActor->SetXValuesToIndex();
-  m_PlotActor->SetTitle(plot_title.GetCStr());
-  m_PlotActor->SetXTitle(plot_titleX.GetCStr());
-  m_PlotActor->SetYTitle(plot_titleY.GetCStr());
-  vtkTextProperty* tprop = m_PlotActor->GetTitleTextProperty();
-  tprop->SetColor(0.02, 0.06, 0.62);
-  tprop->SetFontFamilyToArial();
-  tprop->ItalicOff();
-  tprop->BoldOff();
-  tprop->SetFontSize(12);
-  m_PlotActor->SetPlotColor(0, .8, .3, .3);
-
-  m_PlotActor->SetXRange(0, 100);
-  double srY[2];
- 
-  m_PlotActor->SetYRange(20,50);
-  m_PlotActor->SetPlotCoordinate(0, 100);
+	m_Goniometer->Update();
 
 
 
+	plan = NULL;
+	//mafNEW(plan);
+	//plan->SetName(_R("FPlane"));
+	//plan->ReparentTo(this);
+	//double* pt1; pt1 = new double[3]; pt1[0] = 0; pt1[01] = 0; pt1[02] = 0;
+	//plan->setPoint1(pt1);
+	//double* pt2; pt2 = new double[3]; pt2[0] = 10; pt2[01] = 0; pt2[02] = 0;
+	//plan->setPoint2(pt2);
+   // double* pt3; pt3 = new double[3]; pt3[0] = 0; pt3[01] = 10; pt3[02] = 0;
+   // plan->setPoint3(pt3);
 
+	rotationMat = Eigen::Matrix3d::Identity();
+
+	//////
+
+
+	mafString plot_title = _L("Density vs. Length (mm)");
+	mafString plot_titleX = _R("mm");
+	mafString plot_titleY = _L("Dens.");
+	vtkNEW(m_PlotActor);
+	m_PlotActor->GetProperty()->SetColor(0.02, 0.06, 0.62);
+	m_PlotActor->GetProperty()->SetLineWidth(2);
+	m_PlotActor->SetPosition(0.03, 0.03);
+	m_PlotActor->SetPosition2(0.9, 0.9);
+	m_PlotActor->SetLabelFormat("%g");
+	m_PlotActor->SetXRange(0, 300);
+	m_PlotActor->SetPlotCoordinate(0, 300);
+	m_PlotActor->SetNumberOfXLabels(10);
+	m_PlotActor->SetXValuesToIndex();
+	m_PlotActor->SetTitle(plot_title.GetCStr());
+	m_PlotActor->SetXTitle(plot_titleX.GetCStr());
+	m_PlotActor->SetYTitle(plot_titleY.GetCStr());
+	vtkTextProperty* tprop = m_PlotActor->GetTitleTextProperty();
+	tprop->SetColor(0.02, 0.06, 0.62);
+	tprop->SetFontFamilyToArial();
+	tprop->ItalicOff();
+	tprop->BoldOff();
+	tprop->SetFontSize(12);
+	m_PlotActor->SetPlotColor(0, .8, .3, .3);
+
+	m_PlotActor->SetXRange(0, 100);
+	double srY[2];
+
+	m_PlotActor->SetYRange(20, 50);
+	m_PlotActor->SetPlotCoordinate(0, 100);
 
 
 
@@ -180,7 +176,11 @@ mafVMEGravityLine::mafVMEGravityLine()
 
 
 
-  //////
+
+
+
+
+	//////
 
 	m_Transform = mafTransform::NewSPtr();
 	mafVMEOutputPolyline* output = mafVMEOutputPolyline::New();
@@ -193,12 +193,12 @@ mafVMEGravityLine::mafVMEGravityLine()
 
 	vtkNEW(m_PolyData);
 	DependsOnLinkedNodeOn();
-  // attach a data pipe which creates a bridge between VTK and MAF
+	// attach a data pipe which creates a bridge between VTK and MAF
 	auto dpipe = mafDataPipeCustom::NewSPtr();
 	m_PolyData->DeepCopy(m_Goniometer->GetOutput());
 	//m_PolyData->Update();
 	dpipe->SetInputData(m_PolyData);
-	
+
 	SetDataPipe(dpipe);
 
 
@@ -213,7 +213,7 @@ mafVMEGravityLine::~mafVMEGravityLine()
 	//Sleep(1500);
 	vtkDEL(m_PolyData);
 	SetOutput(NULL);
-	
+
 }
 
 //-------------------------------------------------------------------------
@@ -229,73 +229,73 @@ std::shared_ptr<mmaMaterial> mafVMEGravityLine::GetMaterial()
 	return material;
 }
 //-------------------------------------------------------------------------
-int mafVMEGravityLine::DeepCopy(mafNode *a)
+int mafVMEGravityLine::DeepCopy(mafNode* a)
 //-------------------------------------------------------------------------
-{ 
+{
 	//wxBusyInfo wait001("deepcopy");
 	//Sleep(1500);
 
-  if (Superclass::DeepCopy(a)==MAF_OK)
-  {
-	  mafVMEGravityLine *vmeGravityLine = mafVMEGravityLine::SafeDownCast(a);
-	  m_Transform->SetMatrix(vmeGravityLine->m_Transform->GetMatrix());
-	
-	 
-	  
-	  this->rotationMat = vmeGravityLine->rotationMat;
-	  this->m_P0LandmarkName = vmeGravityLine->m_P0LandmarkName;
-	  this->m_SurfaceName = vmeGravityLine->m_SurfaceName;
-	 
-	  this->m_PlaneVmeName = vmeGravityLine->m_PlaneVmeName;
+	if (Superclass::DeepCopy(a) == MAF_OK)
+	{
+		mafVMEGravityLine* vmeGravityLine = mafVMEGravityLine::SafeDownCast(a);
+		m_Transform->SetMatrix(vmeGravityLine->m_Transform->GetMatrix());
 
 
-    mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
-    if (dpipe)
-    {
-      dpipe->SetInputData(m_PolyData);
-    }
-    InternalUpdate();
-    return MAF_OK;
-  }  
-  return MAF_ERROR;
+
+		this->rotationMat = vmeGravityLine->rotationMat;
+		this->m_P0LandmarkName = vmeGravityLine->m_P0LandmarkName;
+		this->m_SurfaceName = vmeGravityLine->m_SurfaceName;
+
+		this->m_PlaneVmeName = vmeGravityLine->m_PlaneVmeName;
+
+
+		mafDataPipeCustom* dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
+		if (dpipe)
+		{
+			dpipe->SetInputData(m_PolyData);
+		}
+		InternalUpdate();
+		return MAF_OK;
+	}
+	return MAF_ERROR;
 }
 
 //-------------------------------------------------------------------------
-bool mafVMEGravityLine::Equals(mafVME *vme)
+bool mafVMEGravityLine::Equals(mafVME* vme)
 //-------------------------------------------------------------------------
 {
 
 	//wxBusyInfo wait001("equals");
 	//Sleep(1500);
-  bool ret = false;
-  if (Superclass::Equals(vme))
-  {
-    if (     
-		m_Transform->GetMatrix() == ((mafVMEGravityLine *)vme)->m_Transform->GetMatrix() &&
-		
-
-		this->rotationMat == ((mafVMEGravityLine *)vme)->rotationMat
+	bool ret = false;
+	if (Superclass::Equals(vme))
+	{
+		if (
+			m_Transform->GetMatrix() == ((mafVMEGravityLine*)vme)->m_Transform->GetMatrix() &&
 
 
-      )
-    {
-      ret = true;
-    }
-  }
- return ret;
+			this->rotationMat == ((mafVMEGravityLine*)vme)->rotationMat
+
+
+			)
+		{
+			ret = true;
+		}
+	}
+	return ret;
 }
 
-mafVMEOutputPolyline *mafVMEGravityLine::GetPolylineOutput()
+mafVMEOutputPolyline* mafVMEGravityLine::GetPolylineOutput()
 //-------------------------------------------------------------------------
 {
 
 	//wxBusyInfo wait001("getpolymine");
 	//Sleep(1500);
-	return (mafVMEOutputPolyline *)GetOutput();
+	return (mafVMEOutputPolyline*)GetOutput();
 	//return (mafVMEOutputPolyline *)m_Goniometer->GetOutput();
 }
 //-------------------------------------------------------------------------
-void mafVMEGravityLine::SetMatrix(const mafMatrix &mat)
+void mafVMEGravityLine::SetMatrix(const mafMatrix& mat)
 //-------------------------------------------------------------------------
 {
 	//wxBusyInfo wait001("setmatrix");
@@ -317,182 +317,182 @@ bool mafVMEGravityLine::IsAnimated()
 mafGUI* mafVMEGravityLine::CreateGui()
 //-------------------------------------------------------------------------
 {
-//	wxBusyInfo wait001("createGUi");
-//	Sleep(1500);
-	m_Gui=mafNode::CreateGui();
-  //if(m_Gui)
-  //{
-   // mafString geometryType[2] =// {"Points_selection1", "Points_selection2", "Points_selection3", "Points_selection4", "Points_selection5", "sphere", "Points_selection7"};
-	//{ "Points_selection1", "sphere" };
-   // m_Gui->Combo(ID_GEOMETRY_TYPE, "", &m_GeometryType, 2, geometryType);
-   // m_Gui->Divider(2);
-	
-	//m_Gui->Label(_R("Points Selection1"));
+	//	wxBusyInfo wait001("createGUi");
+	//	Sleep(1500);
+	auto gui = mafNode::CreateGui();
+	//if(m_Gui)
+	//{
+	 // mafString geometryType[2] =// {"Points_selection1", "Points_selection2", "Points_selection3", "Points_selection4", "Points_selection5", "sphere", "Points_selection7"};
+	  //{ "Points_selection1", "sphere" };
+	 // m_Gui->Combo(ID_GEOMETRY_TYPE, "", &m_GeometryType, 2, geometryType);
+	 // m_Gui->Divider(2);
 
-	m_Gui->Button(ID_PLANE_LINK, &m_PlaneVmeName, _L("Plane"), _L("Select Plane"));
-	m_Gui->Button(ID_P0_LINK, &m_P0LandmarkName, _L("Starting Point"), _L("Select Starting Point"));
-	m_Gui->Button(ID_Surface_LINK, &m_SurfaceName, _L("Surface"), _L("Select Surface"));
+	  //m_Gui->Label(_R("Points Selection1"));
+
+	gui->Button(ID_PLANE_LINK, &m_PlaneVmeName, _L("Plane"), _L("Select Plane"));
+	gui->Button(ID_P0_LINK, &m_P0LandmarkName, _L("Starting Point"), _L("Select Starting Point"));
+	gui->Button(ID_Surface_LINK, &m_SurfaceName, _L("Surface"), _L("Select Surface"));
 
 	//CreateGuiResult();
 	//m_Gui->Divider(2);
 	mafString ss = _R(" ");
 	gLength = ss.append(mafToString(distToPlan));
-	m_Gui->Label(_L("distance: "), &gLength, true);
-    //m_Gui->Divider(2);
+	gui->Label(_L("distance: "), &gLength, true);
+	//m_Gui->Divider(2);
    // CreateGuiSphere();
- 
-	
 
 
-    
+
+
+
   //  EnableQuadricSurfaceGui(m_GeometryType);
-    m_Gui->Update();
+	gui->Update();
 
-	
-  //}
 
- // m_Gui->Divider();
+	//}
 
- 
-  return m_Gui;
+   // m_Gui->Divider();
+
+
+	return gui;
 }
 //-------------------------------------------------------------------------
-void mafVMEGravityLine::OnEvent(mafEventBase *maf_event)
+void mafVMEGravityLine::OnEvent(mafEventBase* maf_event)
 //-------------------------------------------------------------------------
 {
-	
-
-  // events to be sent up or down in the tree are simply forwarded
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
 
 
-	  mafString ee;
-	  if (e->GetVme() == NULL)
-		 ee = _R("VME NOT found");
-	  else
-	  {
-		  ee = e->GetVme()->GetName();
-		  InternalUpdate();
-	  }
-	  
-	  
-	//  wxBusyInfo wait001(ee.c_str());
-	//  Sleep(1500);
-	 
-    switch(e->GetId())
-    {
-
-		if (m_Gui)
-		{
-			m_Gui->Update();
-			m_Gui->FitGui();
-		}
-		//////////////////
-
-
-
-	case ID_PLANE_LINK:
+	// events to be sent up or down in the tree are simply forwarded
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
 	{
 
-						  mafID button_id = e->GetId();
-						  mafString title = _L("Choose plane vme link");
-						  e->SetId(VME_CHOOSE);
-						  //e->SetArg((long)&mafVMEPlane::VMEAccept);
-						  e->SetString(&title);
-						  ForwardUpEvent(e);
-						  if (auto n = e->GetVme())
-						  {
 
-							  SetPlaneLink(_R("PlaneVME"), n);
-							  m_PlaneVmeName = n->GetName();
-							  
-							  if (n->IsMAFType(mafVMEPlane))
-								  plan = mafVMEPlane::StaticDownCast(n);
+		mafString ee;
+		if (e->GetVme() == NULL)
+			ee = _R("VME NOT found");
+		else
+		{
+			ee = e->GetVme()->GetName();
+			InternalUpdate();
+		}
 
-							  m_Gui->Update();
 
-						  }
-	}
+		//  wxBusyInfo wait001(ee.c_str());
+		//  Sleep(1500);
+
+		switch (e->GetId())
+		{
+
+			if (auto m_gui = AccessGUI())
+			{
+				UpdateGUI();
+				m_gui->FitGui();
+			}
+			//////////////////
+
+
+
+		case ID_PLANE_LINK:
+		{
+
+			mafID button_id = e->GetId();
+			mafString title = _L("Choose plane vme link");
+			e->SetId(VME_CHOOSE);
+			//e->SetArg((long)&mafVMEPlane::VMEAccept);
+			e->SetString(&title);
+			ForwardUpEvent(e);
+			if (auto n = e->GetVme())
+			{
+
+				SetPlaneLink(_R("PlaneVME"), n);
+				m_PlaneVmeName = n->GetName();
+
+				if (n->IsMAFType(mafVMEPlane))
+					plan = mafVMEPlane::StaticDownCast(n);
+
+				UpdateGUI();
+
+			}
+		}
 		break;
-	
-	
-	case ID_Surface_LINK:
-	  {
-						
-								 mafID button_id = e->GetId();
-								 mafString title = _L("Choose surface vme link");
-								 e->SetId(VME_CHOOSE);
-								// e->SetArg((long)&mafVMESurface::VMEAccept);
-								 e->SetString(&title);
-								 ForwardUpEvent(e);
-								 if (auto n = e->GetVme())
-								 {
-									
-										 SetSurfaceLink(_R("SurfaceVME"), n);
-										 m_SurfaceName = n->GetName();
-										 if (n->IsMAFType(mafVMESurface))
-											 surface = mafVMESurface::StaticDownCast(n);
-										 
-					
-									 	 
-									 m_Gui->Update();
-									
-								 }
-	  }
-		  break;
-	  
-	  
-	  case ID_P0_LINK:
-	  {
-
-	//  wxBusyInfo wait040("ID P0...");
-	//  Sleep(1500);
-	  
-	  mafID button_id = e->GetId();
-	  mafString title = _L("Choose P0 Landmark link");
-	  e->SetId(VME_CHOOSE);
-
-	  e->SetString(&title);
-	 ForwardUpEvent(e);
-	  if (auto n = e->GetVme())
-	  {
-
-		  //p0 = (mafVMELandmark*)n;
-		  SetLandmarkLink(_R("P0Landmark"), n);
-		  m_P0LandmarkName = n->GetName();
-
-		  m_Gui->Update();
-		  
-	  }
-	  }
-		  break;
-	  //case CHANGE_VALUE_SPHERE:
-	  case CHANGE_VALUE_POINTS1:
-	
-      {
-		m_Gui->Update();
-        e->SetId(CAMERA_UPDATE);
-        //ForwardUpEvent(e);
-      }
-      break;
-	  
-	  
-
-      default:
-        mafVME::OnEvent(maf_event);
-    }
-  }
-  
-  else
-  {
-    Superclass::OnEvent(maf_event);
-  }
 
 
-  //InternalUpdate();
+		case ID_Surface_LINK:
+		{
+
+			mafID button_id = e->GetId();
+			mafString title = _L("Choose surface vme link");
+			e->SetId(VME_CHOOSE);
+			// e->SetArg((long)&mafVMESurface::VMEAccept);
+			e->SetString(&title);
+			ForwardUpEvent(e);
+			if (auto n = e->GetVme())
+			{
+
+				SetSurfaceLink(_R("SurfaceVME"), n);
+				m_SurfaceName = n->GetName();
+				if (n->IsMAFType(mafVMESurface))
+					surface = mafVMESurface::StaticDownCast(n);
+
+
+
+				UpdateGUI();
+
+			}
+		}
+		break;
+
+
+		case ID_P0_LINK:
+		{
+
+			//  wxBusyInfo wait040("ID P0...");
+			//  Sleep(1500);
+
+			mafID button_id = e->GetId();
+			mafString title = _L("Choose P0 Landmark link");
+			e->SetId(VME_CHOOSE);
+
+			e->SetString(&title);
+			ForwardUpEvent(e);
+			if (auto n = e->GetVme())
+			{
+
+				//p0 = (mafVMELandmark*)n;
+				SetLandmarkLink(_R("P0Landmark"), n);
+				m_P0LandmarkName = n->GetName();
+
+				UpdateGUI();
+
+			}
+		}
+		break;
+		//case CHANGE_VALUE_SPHERE:
+		case CHANGE_VALUE_POINTS1:
+
+		{
+			UpdateGUI();
+			e->SetId(CAMERA_UPDATE);
+			//ForwardUpEvent(e);
+		}
+		break;
+
+
+
+		default:
+			mafVME::OnEvent(maf_event);
+		}
+	}
+
+	else
+	{
+		Superclass::OnEvent(maf_event);
+	}
+
+
+	//InternalUpdate();
 }
-void mafVMEGravityLine::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)
+void mafVMEGravityLine::GetLocalTimeStamps(std::vector<mafTimeStamp>& kframes)
 //-------------------------------------------------------------------------
 {
 	kframes.clear(); // no timestamps
@@ -515,11 +515,7 @@ void mafVMEGravityLine::Update()
 
 	//wxBusyInfo wait001("update");
 	//Sleep(1500);
-	if (m_Gui)
-	{
-		m_Gui->Update();
-
-	}
+	UpdateGUI();
 	InternalUpdate();
 
 }
@@ -534,16 +530,16 @@ void mafVMEGravityLine::Update()
 	this->m_PlaneVmeName = a;
 	//wxBusyInfo wait5("end");
 	//Sleep(1500);
-	
+
 }*/
-void mafVMEGravityLine::SetSurfaceName(mafVMESurface* s,mafString a)
+void mafVMEGravityLine::SetSurfaceName(mafVMESurface* s, mafString a)
 {
 	//wxBusyInfo wait001("setsurfacename");
 	//Sleep(1500);
 	SetSurfaceLink(_R("SurfaceVME"), s);
 	this->surface = s;
 	this->m_SurfaceName = a;
-	
+
 	//assert(m_Gui);
 	//m_Gui->Update();
 }
@@ -565,13 +561,13 @@ void mafVMEGravityLine::InternalUpdate()
 		//wxBusyInfo wait40("plan not null");
 		//Sleep(1500);
 	}
-	bool test=true;
+	bool test = true;
 	if ((P0 != NULL) && (plan != NULL))
 	{
 		//wxBusyInfo wait40("P0 and Plan not NULL");
 		//Sleep(1500);
 
-		
+
 
 		mafMatrix tm;
 		auto m_TmpTransform = mafTransform::NewSPtr();
@@ -579,8 +575,8 @@ void mafVMEGravityLine::InternalUpdate()
 		mafVMELandmarkCloud::StaticDownCast(P0->GetParent())->GetOutput()->GetAbsMatrix(tm, currTs);
 		m_TmpTransform->SetMatrix(tm);
 		m_TmpTransform->TransformPoint(m_Point1, m_Point1);
-		
-		
+
+
 		//double* NewplanPt;
 		//Newposition of the plan point
 		//double pt3[3];
@@ -634,9 +630,9 @@ void mafVMEGravityLine::InternalUpdate()
 		m_TmpTransform->Invert();
 		m_TmpTransform->TransformPoint(pPoint, local_start);
 		m_TmpTransform->TransformPoint(m_Point1, local_end);
-		
+
 		//
-		vtkLineSource     *m_LineSource = vtkLineSource::New();
+		vtkLineSource* m_LineSource = vtkLineSource::New();
 		m_LineSource->SetPoint1(local_start);
 		m_LineSource->SetPoint2(local_end);
 		m_LineSource->Update();
@@ -651,15 +647,15 @@ void mafVMEGravityLine::InternalUpdate()
 		//	Sleep(1500);
 		//}
 
-		
+
 		m_Goniometer->SetInputConnection(m_LineSource->GetOutputPort());
 		m_Goniometer->Update();
 		/////
-		vtkPolyData *polydata = m_Goniometer->GetOutput();
+		vtkPolyData* polydata = m_Goniometer->GetOutput();
 		int num = m_Goniometer->GetOutput()->GetNumberOfPoints();
 		vtkIdType pointId[2];
 		vtkNew<vtkCellArray> cellArray;
-		for (int i = 0; i< num; i++)
+		for (int i = 0; i < num; i++)
 		{
 			if (i > 0)
 			{
@@ -674,16 +670,15 @@ void mafVMEGravityLine::InternalUpdate()
 		//m_PolyData->Update();
 		////
 
-		
+
 		//m_Cloud2->SetLandmark(_R("projectedPt"), local_start[0], local_start[01], local_start[02], currTs);
 
 
 		//m_Cloud2->Update();
 		mafString ss = _R(" ");
 		gLength = ss.append(mafToString(std::abs(distToPlan)));
-			
-		if(m_Gui)
-			m_Gui->Update();
+
+		UpdateGUI();
 
 		double vectAdded[3];
 
@@ -695,7 +690,7 @@ void mafVMEGravityLine::InternalUpdate()
 		double point[3];
 		plan->getPoint1(point);
 		m_TmpTransform->TransformPoint(point, point);
-		
+
 		m_Cloud2->SetLandmark(_R("parallelPlanePt1"), point[0] + vectAdded[0], point[01] + vectAdded[01], point[02] + vectAdded[02], currTs);
 		parallelPlane->setPoint1(point[0], point[01], point[2]);
 		parallelPlane->SetLandmarkLink(_R("first_Point"), m_Cloud2->GetLandmark(_R("parallelPlanePt1")).get());
@@ -703,18 +698,18 @@ void mafVMEGravityLine::InternalUpdate()
 
 		plan->getPoint2(point);
 		m_TmpTransform->TransformPoint(point, point);
-				
+
 		m_Cloud2->SetLandmark(_R("parallelPlanePt2"), point[0] + vectAdded[0], point[01] + vectAdded[01], point[02] + vectAdded[02], currTs);
-		parallelPlane->setPoint2(point[0],point[1],point[2]);
+		parallelPlane->setPoint2(point[0], point[1], point[2]);
 		parallelPlane->SetLandmarkLink(_R("second_Point"), m_Cloud2->GetLandmark(_R("parallelPlanePt2")).get());
 		parallelPlane->Setm_p2LName(_R("parallelPlanePt2"));
 
 
 		plan->getPoint3(point);
 		m_TmpTransform->TransformPoint(point, point);
-		
+
 		m_Cloud2->SetLandmark(_R("parallelPlanePt3"), point[0] + vectAdded[0], point[01] + vectAdded[1], point[02] + vectAdded[02], currTs);
-		parallelPlane->setPoint3(point[0],point[1],point[2]);
+		parallelPlane->setPoint3(point[0], point[1], point[2]);
 		parallelPlane->SetLandmarkLink(_R("third_Point"), m_Cloud2->GetLandmark(_R("parallelPlanePt3")).get());
 		parallelPlane->Setm_p3LName(_R("parallelPlanePt3"));
 
@@ -727,25 +722,25 @@ void mafVMEGravityLine::InternalUpdate()
 		parallelPlane->push(distToPlan);
 		parallelPlane->Update();
 
-		
-		
-		
+
+
+
 
 	}
 	else
 	{
-		
+
 		if ((plan != NULL) && (surface != NULL))
 		{
 			//wxBusyInfo wait40("surface and plane ..");
 			//Sleep(1500);
-			
+
 			int nbr = surface->GetSurfaceOutput()->GetVTKData()->GetNumberOfPoints();
 			double* coord;
 			double dist = 0;
 			distToPlan = 0;
 			coord = new double[3];
-			int pt=0;
+			int pt = 0;
 
 			double* normal;
 			normal = plan->getNormalVector();
@@ -754,7 +749,7 @@ void mafVMEGravityLine::InternalUpdate()
 			mafMatrix tm;
 			auto m_TmpTransform1 = mafTransform::NewSPtr();
 			//surface->GetSurfaceOutput()->GetAbsMatrix(tm, currTs);
-			tm=surface->GetOutput()->GetAbsTransform()->GetMatrix();
+			tm = surface->GetOutput()->GetAbsTransform()->GetMatrix();
 			m_TmpTransform1->SetMatrix(tm);
 			if (nbr > 0)
 			{
@@ -781,13 +776,13 @@ void mafVMEGravityLine::InternalUpdate()
 			else
 			{
 				;
-				
+
 				wxBusyInfo wait12("vertices extraction problem");
 				mafSleep(2500);
 				test = false;
 			}
-		
-			
+
+
 			//wxBusyInfo wait120("vertices extraction ok");
 			//Sleep(2500);
 			if (test)
@@ -817,7 +812,7 @@ void mafVMEGravityLine::InternalUpdate()
 
 				//
 
-				vtkLineSource     *m_LineSource = vtkLineSource::New();
+				vtkLineSource* m_LineSource = vtkLineSource::New();
 				m_LineSource->SetPoint1(pPointLocal);
 				m_LineSource->SetPoint2(coordLocal);
 				m_LineSource->Update();
@@ -825,11 +820,11 @@ void mafVMEGravityLine::InternalUpdate()
 				m_Goniometer->SetInputConnection(m_LineSource->GetOutputPort());
 				m_Goniometer->Update();
 				/////
-				vtkPolyData *polydata = m_Goniometer->GetOutput();
+				vtkPolyData* polydata = m_Goniometer->GetOutput();
 				int num = m_Goniometer->GetOutput()->GetNumberOfPoints();
 				vtkIdType pointId[2];
 				vtkNew<vtkCellArray> cellArray;
-				for (int i = 0; i< num; i++)
+				for (int i = 0; i < num; i++)
 				{
 					if (i > 0)
 					{
@@ -852,18 +847,17 @@ void mafVMEGravityLine::InternalUpdate()
 			//	m_Cloud2->Update();
 				mafString ss = _R(" ");
 				gLength = ss.append(mafToString(std::abs(distToPlan)));
-				if(m_Gui)
-					m_Gui->Update();
+				UpdateGUI();
 
 				//string sss40 = "computing parallel plane ...";
 				//wxBusyInfo wait12040s(sss40.c_str());
 				//Sleep(2500);
-			
+
 				//ParallelPlane
 				double point[3];
 				plan->getPoint1(point);
-				
-				
+
+
 
 				double vectAdded[3];
 
@@ -871,25 +865,25 @@ void mafVMEGravityLine::InternalUpdate()
 				vectAdded[1] = normal[1] * distToPlan;
 				vectAdded[2] = normal[2] * distToPlan;
 				m_Cloud2->SetLandmark(_R("parallelPlanePt1"), point[0] + vectAdded[0], point[01] + vectAdded[1], point[02] + vectAdded[2], currTs);
-			parallelPlane->setPoint1(point[0], point[1], point[2]);
+				parallelPlane->setPoint1(point[0], point[1], point[2]);
 
-			
+
 				parallelPlane->SetLandmarkLink(_R("first_Point"), m_Cloud2->GetLandmark(_R("parallelPlanePt1")).get());
 				parallelPlane->Setm_p1LName(_R("parallelPlanePt1"));
 
-				
 
-			plan->getPoint2(point);
-				
+
+				plan->getPoint2(point);
+
 				m_Cloud2->SetLandmark(_R("parallelPlanePt2"), point[0] + vectAdded[0], point[01] + vectAdded[1], point[02] + vectAdded[2], currTs);
-			parallelPlane->setPoint2(point[0], point[01], point[02]);
+				parallelPlane->setPoint2(point[0], point[01], point[02]);
 				parallelPlane->SetLandmarkLink(_R("second_Point"), m_Cloud2->GetLandmark(_R("parallelPlanePt2")).get());
 				parallelPlane->Setm_p2LName(_R("parallelPlanePt2"));
-			
 
-			plan->getPoint3(point);
-			parallelPlane->setPoint3(point[0], point[01], point[02]);
-			
+
+				plan->getPoint3(point);
+				parallelPlane->setPoint3(point[0], point[01], point[02]);
+
 				m_Cloud2->SetLandmark(_R("parallelPlanePt3"), point[0] + vectAdded[0], point[01] + vectAdded[1], point[02] + vectAdded[2], currTs);
 				parallelPlane->setPoint3(point[0], point[01], point[02]);
 				parallelPlane->SetLandmarkLink(_R("third_Point"), m_Cloud2->GetLandmark(_R("parallelPlanePt3")).get());
@@ -903,12 +897,12 @@ void mafVMEGravityLine::InternalUpdate()
 				//parallelPlane->SetUVector(plan->GetUVector(1), 1);
 			//	parallelPlane->push(distToPlan);
 				parallelPlane->Update();
-				
-				
-				
-				
+
+
+
+
 				//string sss40 = "computing parallel plane ..." + std::to_string(pt[0]) + " " + std::to_string(pt[1]) + " " + std::to_string(pt[2]);
-			
+
 
 			}
 		}
@@ -916,8 +910,8 @@ void mafVMEGravityLine::InternalUpdate()
 	}
 
 
-  mafEvent ev(this,CAMERA_UPDATE);
-  this->ForwardUpEvent(&ev);
+	mafEvent ev(this, CAMERA_UPDATE);
+	this->ForwardUpEvent(&ev);
 
 }
 //-----------------------------------------------------------------------
@@ -933,7 +927,7 @@ void mafVMEGravityLine::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
 	Superclass::InternalRestore(node);
-  m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
+	m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
 }
 //-------------------------------------------------------------------------
 
@@ -952,12 +946,12 @@ void mafVMEGravityLine::InternalRestore(const mafStorageElement& node)
 	Sleep(1500);
 	m_Gui = mafNode::CreateGui();
 	m_Gui->Label("Points Selection1");
-	
+
 	m_Gui->Button(ID_PLANE_LINK, &m_PlaneVmeName, _("Plane"), _("Select Plane"));
 	m_Gui->Button(ID_P0_LINK, &m_P0LandmarkName, _("Starting Point"), _("Select Starting Point"));
 	m_Gui->Button(ID_Surface_LINK, &m_SurfaceName, _("Surface"), _("Select Surace"));
-	
-	
+
+
 //	assert(m_Gui);
 //	m_Gui->AddGui(m_GuiSelectPoints);
 	m_Gui->Update();
@@ -971,53 +965,53 @@ void mafVMEGravityLine::InternalRestore(const mafStorageElement& node)
 
 
 
-void mafVMEGravityLine::SetPlaneLink(const mafString& link_name, mafNode *n)
+void mafVMEGravityLine::SetPlaneLink(const mafString& link_name, mafNode* n)
 //-------------------------------------------------------------------------
 {
 
-	
+
 	if (n->IsMAFType(mafVMEPlane))
-			SetLink(link_name, n);
-	else 
+		SetLink(link_name, n);
+	else
 		SetLink(link_name, NULL);
 
-	
+
 }
-void mafVMEGravityLine::SetSurfaceLink(const mafString& link_name, mafNode *n)
+void mafVMEGravityLine::SetSurfaceLink(const mafString& link_name, mafNode* n)
 //-------------------------------------------------------------------------
 {
 
 
 	if (n->IsMAFType(mafVMESurface))
-	{	
+	{
 		SetLink(link_name, n);
-		
+
 
 	}
 	else
 	{
 		SetLink(link_name, NULL);
-		
+
 	}
 
-	
+
 }
 
 void mafVMEGravityLine::SetTimeStamp(mafTimeStamp t)
 //-------------------------------------------------------------------------
 {
-	
+
 	Superclass::SetTimeStamp(t);
-	
+
 	this->InternalUpdate();
-	
+
 }
 
 
-void mafVMEGravityLine::SetLandmarkLink(const mafString& link_name, mafNode *n)
+void mafVMEGravityLine::SetLandmarkLink(const mafString& link_name, mafNode* n)
 //-------------------------------------------------------------------------
 {
-	
+
 	if (n->IsMAFType(mafVMELandmark))
 	{
 		SetLink(link_name, n, mafVMELandmarkCloud::StaticDownCast(n->GetParent())->FindLandmarkIndex(n->GetName()));
@@ -1027,25 +1021,25 @@ void mafVMEGravityLine::SetLandmarkLink(const mafString& link_name, mafNode *n)
 }
 
 
-mafVME *mafVMEGravityLine::GetP0VME()
+mafVME* mafVMEGravityLine::GetP0VME()
 //-------------------------------------------------------------------------
 {
 	return mafVME::SafeDownCast(GetLink(_R("P0Landmark")));
 }
-mafVMEPlane *mafVMEGravityLine::GetPlaneVME()
+mafVMEPlane* mafVMEGravityLine::GetPlaneVME()
 //-------------------------------------------------------------------------
 {
 
-	
+
 	return mafVMEPlane::SafeDownCast(GetLink(_R("PlaneVME")));
 	//return ((mafVMEPlane*)GetParent());
 }
 
-mafVMESurface *mafVMEGravityLine::GetSurfaceVME()
+mafVMESurface* mafVMEGravityLine::GetSurfaceVME()
 //-------------------------------------------------------------------------
 {
 
-//	return ((mafVMESurface*)this->GetParent()->GetParent());
+	//	return ((mafVMESurface*)this->GetParent()->GetParent());
 
 	return mafVMESurface::SafeDownCast(GetLink(_R("SurfaceVME")));
 }
@@ -1053,8 +1047,8 @@ void mafVMEGravityLine::UpdateLinks()
 //-------------------------------------------------------------------------
 {
 
-//	 wxBusyInfo wait001("updatelinks");
-//	 Sleep(1500);
+	//	 wxBusyInfo wait001("updatelinks");
+	//	 Sleep(1500);
 
 	mafID sub_id = -1;
 	mafNode* nd = NULL;
@@ -1062,14 +1056,14 @@ void mafVMEGravityLine::UpdateLinks()
 
 	plan = GetPlaneVME();
 
-	
+
 
 	if (plan && plan->IsMAFType(mafVMEPlane))
 	{
-	nd = GetLink(_R("PlaneVME"));
-	m_PlaneVmeName = (nd != NULL) ? ((mafVMEPlane *)plan)->GetName() : _L("none");
-	//wxBusyInfo wait021("plane link ok");
-	//Sleep(1500);
+		nd = GetLink(_R("PlaneVME"));
+		m_PlaneVmeName = (nd != NULL) ? ((mafVMEPlane*)plan)->GetName() : _L("none");
+		//wxBusyInfo wait021("plane link ok");
+		//Sleep(1500);
 
 	}
 	else
@@ -1078,7 +1072,7 @@ void mafVMEGravityLine::UpdateLinks()
 		//wxBusyInfo wait0012("plane link  not ok");
 		//Sleep(1500);
 	}
-	
+
 
 
 	P0 = GetP0VME();
@@ -1099,21 +1093,21 @@ void mafVMEGravityLine::UpdateLinks()
 
 
 	surface = GetSurfaceVME();
-	
+
 	if (surface && surface->IsMAFType(mafVMESurface))
 	{
 		nd = GetLink(_R("SurfaceVME"));
-		m_SurfaceName = (nd != NULL) ? ((mafVMESurface *)surface)->GetName() : _L("none");
-	//	wxBusyInfo wait0012("surface link  ok");
-	//	Sleep(1500);
+		m_SurfaceName = (nd != NULL) ? ((mafVMESurface*)surface)->GetName() : _L("none");
+		//	wxBusyInfo wait0012("surface link  ok");
+		//	Sleep(1500);
 	}
 	else
 	{
 		m_SurfaceName = surface ? surface->GetName() : _L("none");
-	//	wxBusyInfo wait0012("surface link  not ok");
-	//	Sleep(1500);
+		//	wxBusyInfo wait0012("surface link  not ok");
+		//	Sleep(1500);
 	}
-		
-	
+
+
 
 }

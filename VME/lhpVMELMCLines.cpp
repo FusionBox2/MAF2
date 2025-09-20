@@ -6,7 +6,7 @@
   Version:   $Revision: 1.9 $
   Authors:   Daniele Giunchi & Matteo Giacomoni
 ==========================================================================
-  Copyright (c) 2001/2005 
+  Copyright (c) 2001/2005
   CINECA - Interuniversity Consortium (www.cineca.it)
 =========================================================================*/
 
@@ -56,7 +56,7 @@ mafCxxTypeMacro(lhpVMELMCLines)
 mafString lhpVMELMCLines::GetVisualPipe()
 //-------------------------------------------------------------------------
 {
-  return mafString(_R("mafPipePolyline"));
+	return mafString(_R("mafPipePolyline"));
 }
 
 
@@ -64,179 +64,179 @@ mafString lhpVMELMCLines::GetVisualPipe()
 lhpVMELMCLines::lhpVMELMCLines()
 //-------------------------------------------------------------------------
 {
-  m_Transform = mafTransform::NewSPtr();
-  mafVMEOutputPolyline *output=mafVMEOutputPolyline::New(); // an output with no data
-  output->SetTransform(m_Transform); // force my transform in the output
-  SetOutput(output);
+	m_Transform = mafTransform::NewSPtr();
+	mafVMEOutputPolyline* output = mafVMEOutputPolyline::New(); // an output with no data
+	output->SetTransform(m_Transform); // force my transform in the output
+	SetOutput(output);
 
-  DependsOnLinkedNodeOn();
+	DependsOnLinkedNodeOn();
 
-  // attach a datapipe which creates a bridge between VTK and MAF
-  auto dpipe = mafDataPipeCustom::NewSPtr();
-  dpipe->SetDependOnAbsPose(true);
-  SetDataPipe(dpipe);
+	// attach a datapipe which creates a bridge between VTK and MAF
+	auto dpipe = mafDataPipeCustom::NewSPtr();
+	dpipe->SetDependOnAbsPose(true);
+	SetDataPipe(dpipe);
 
-  m_TmpTransform = mafTransform::NewSPtr();
+	m_TmpTransform = mafTransform::NewSPtr();
 
 
-  m_Polyline = NULL;
-  vtkNEW(m_Polyline);
-  dpipe->SetInputData(m_Polyline);
+	m_Polyline = NULL;
+	vtkNEW(m_Polyline);
+	dpipe->SetInputData(m_Polyline);
 
-  m_Looped          = 0;
-  m_PointsCloudName = _L("");
+	m_Looped = 0;
+	m_PointsCloudName = _L("");
 }
 //-------------------------------------------------------------------------
 lhpVMELMCLines::~lhpVMELMCLines()
 //-------------------------------------------------------------------------
 {
-  vtkDEL(m_Polyline);
-  SetOutput(NULL);
+	vtkDEL(m_Polyline);
+	SetOutput(NULL);
 }
 //-------------------------------------------------------------------------
-int lhpVMELMCLines::DeepCopy(mafNode *a)
-//-------------------------------------------------------------------------
-{ 
-  if (Superclass::DeepCopy(a)==MAF_OK)
-  {
-    lhpVMELMCLines *splinePolyline = lhpVMELMCLines::SafeDownCast(a);
-    mafNode *linked_node = splinePolyline->GetPointsCloudLink();
-    if (linked_node)
-    {
-      this->SetPointsCloudLink(linked_node);
-    }
-    m_Looped = splinePolyline->m_Looped;
-    m_Transform->SetMatrix(splinePolyline->m_Transform->GetMatrix());
-
-    mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
-    if (dpipe)
-    {
-      dpipe->SetInputData(m_Polyline);
-      InternalUpdate();
-    }
-    return MAF_OK;
-  }  
-  return MAF_ERROR;
-}
-
-//-------------------------------------------------------------------------
-bool lhpVMELMCLines::Equals(mafVME *vme)
+int lhpVMELMCLines::DeepCopy(mafNode* a)
 //-------------------------------------------------------------------------
 {
-  bool ret = false;
-  if (Superclass::Equals(vme))
-  {
-    ret = m_Transform->GetMatrix() == ((lhpVMELMCLines *)vme)->m_Transform->GetMatrix() && \
-          GetPointsCloudLink() == ((lhpVMELMCLines *)vme)->GetPointsCloudLink();
-  }
-  return ret;
+	if (Superclass::DeepCopy(a) == MAF_OK)
+	{
+		lhpVMELMCLines* splinePolyline = lhpVMELMCLines::SafeDownCast(a);
+		mafNode* linked_node = splinePolyline->GetPointsCloudLink();
+		if (linked_node)
+		{
+			this->SetPointsCloudLink(linked_node);
+		}
+		m_Looped = splinePolyline->m_Looped;
+		m_Transform->SetMatrix(splinePolyline->m_Transform->GetMatrix());
+
+		mafDataPipeCustom* dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
+		if (dpipe)
+		{
+			dpipe->SetInputData(m_Polyline);
+			InternalUpdate();
+		}
+		return MAF_OK;
+	}
+	return MAF_ERROR;
+}
+
+//-------------------------------------------------------------------------
+bool lhpVMELMCLines::Equals(mafVME* vme)
+//-------------------------------------------------------------------------
+{
+	bool ret = false;
+	if (Superclass::Equals(vme))
+	{
+		ret = m_Transform->GetMatrix() == ((lhpVMELMCLines*)vme)->m_Transform->GetMatrix() && \
+			GetPointsCloudLink() == ((lhpVMELMCLines*)vme)->GetPointsCloudLink();
+	}
+	return ret;
 }
 
 
 //-------------------------------------------------------------------------
-mafVMEOutputPolyline *lhpVMELMCLines::GetPolylineOutput()
+mafVMEOutputPolyline* lhpVMELMCLines::GetPolylineOutput()
 //-------------------------------------------------------------------------
 {
-  return (mafVMEOutputPolyline *)GetOutput();
+	return (mafVMEOutputPolyline*)GetOutput();
 }
 //-------------------------------------------------------------------------
-void lhpVMELMCLines::SetMatrix(const mafMatrix &mat)
+void lhpVMELMCLines::SetMatrix(const mafMatrix& mat)
 //-------------------------------------------------------------------------
 {
-  m_Transform->SetMatrix(mat);
-  Modified();
+	m_Transform->SetMatrix(mat);
+	Modified();
 }
 
 //-------------------------------------------------------------------------
 bool lhpVMELMCLines::IsAnimated()
 //-------------------------------------------------------------------------
 {
-  return false;
+	return false;
 }
 
 //-------------------------------------------------------------------------
 bool lhpVMELMCLines::IsDataAvailable()
 //-------------------------------------------------------------------------
 {
-  if(GetPointsCloudLink())
-    return GetPointsCloudLink()->IsDataAvailable();
-  else
-    return false;
+	if (GetPointsCloudLink())
+		return GetPointsCloudLink()->IsDataAvailable();
+	else
+		return false;
 }
 
 //-------------------------------------------------------------------------
-void lhpVMELMCLines::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)
+void lhpVMELMCLines::GetLocalTimeStamps(std::vector<mafTimeStamp>& kframes)
 //-------------------------------------------------------------------------
 {
-  kframes.clear(); // no timestamps
+	kframes.clear(); // no timestamps
 }
 
 //-----------------------------------------------------------------------
 void lhpVMELMCLines::InternalUpdate() //Multi
 //-----------------------------------------------------------------------
 {
-  mafVMELandmarkCloud *vme = GetPointsCloudLink();
+	mafVMELandmarkCloud* vme = GetPointsCloudLink();
 
-  mafTimeStamp ts = GetTimeStamp();
+	mafTimeStamp ts = GetTimeStamp();
 
-  std::vector<V3d<double> >  src;
+	std::vector<V3d<double> >  src;
 
-  if(vme)
-  {
-    mafMatrix trf;
-    vme->Update();
-    vme->GetOutput()->GetAbsMatrix(trf, ts);
-    m_TmpTransform->SetMatrix(trf);
-
-
-    int NumLMs = vme->GetNumberOfLandmarks();
-    src.resize(NumLMs);
-    for(unsigned i = 0; i < NumLMs; i++)
-    {
-      vme->GetLandmark(i, src[i].components, ts);
-    }
-    if(m_Looped)
-      src.push_back(src[0]);
-    for(unsigned i = 0; i < src.size(); i++)
-    {
-      m_TmpTransform->TransformPoint(src[i].components, src[i].components);
-    }
-
-    m_TmpTransform->SetMatrix(GetOutput()->GetAbsTransform()->GetMatrix());
-    m_TmpTransform->Invert();
-    for(unsigned i = 0; i < src.size(); i++)
-    {
-      m_TmpTransform->TransformPoint(src[i].components, src[i].components);
-    }
-  }
+	if (vme)
+	{
+		mafMatrix trf;
+		vme->Update();
+		vme->GetOutput()->GetAbsMatrix(trf, ts);
+		m_TmpTransform->SetMatrix(trf);
 
 
-  vtkPolyData *polyline = m_Polyline;
+		int NumLMs = vme->GetNumberOfLandmarks();
+		src.resize(NumLMs);
+		for (unsigned i = 0; i < NumLMs; i++)
+		{
+			vme->GetLandmark(i, src[i].components, ts);
+		}
+		if (m_Looped)
+			src.push_back(src[0]);
+		for (unsigned i = 0; i < src.size(); i++)
+		{
+			m_TmpTransform->TransformPoint(src[i].components, src[i].components);
+		}
 
-  vtkPoints    *newPts;
-  vtkCellArray *newCells;
-  newPts = vtkPoints::New();
-  newPts->Allocate(5000,10000);
-  newCells = vtkCellArray::New();
-  newCells->Allocate(10000,20000);
+		m_TmpTransform->SetMatrix(GetOutput()->GetAbsTransform()->GetMatrix());
+		m_TmpTransform->Invert();
+		for (unsigned i = 0; i < src.size(); i++)
+		{
+			m_TmpTransform->TransformPoint(src[i].components, src[i].components);
+		}
+	}
 
-  vtkIdType pointId[2];
-  for(unsigned i = 0; i < src.size(); i++)
-  {
-    newPts->InsertNextPoint(src[i].components);
-    if (i == 0)
-      continue;
-    pointId[0] = i - 1;
-    pointId[1] = i;
-    newCells->InsertNextCell(2 , pointId);
-  }
 
-  polyline->SetPoints(newPts);
-  polyline->SetLines(newCells);
-  newPts->Delete();
-  newCells->Delete();
+	vtkPolyData* polyline = m_Polyline;
 
-  Modified();
+	vtkPoints* newPts;
+	vtkCellArray* newCells;
+	newPts = vtkPoints::New();
+	newPts->Allocate(5000, 10000);
+	newCells = vtkCellArray::New();
+	newCells->Allocate(10000, 20000);
+
+	vtkIdType pointId[2];
+	for (unsigned i = 0; i < src.size(); i++)
+	{
+		newPts->InsertNextPoint(src[i].components);
+		if (i == 0)
+			continue;
+		pointId[0] = i - 1;
+		pointId[1] = i;
+		newCells->InsertNextCell(2, pointId);
+	}
+
+	polyline->SetPoints(newPts);
+	polyline->SetLines(newCells);
+	newPts->Delete();
+	newCells->Delete();
+
+	Modified();
 }
 //-----------------------------------------------------------------------
 void lhpVMELMCLines::InternalPreUpdate()
@@ -246,166 +246,165 @@ void lhpVMELMCLines::InternalPreUpdate()
 //-----------------------------------------------------------------------
 void lhpVMELMCLines::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
-{  
-  Superclass::InternalStore(parent);
-  parent[_R("Looped")].SetValue(m_Looped);
-  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
+{
+	Superclass::InternalStore(parent);
+	parent[_R("Looped")].SetValue(m_Looped);
+	parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
 }
 
 //-----------------------------------------------------------------------
 void lhpVMELMCLines::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  Superclass::InternalRestore(node);
-  m_Looped = node[_R("Looped")].As<int>();
-  m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
+	Superclass::InternalRestore(node);
+	m_Looped = node[_R("Looped")].As<int>();
+	m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
 }
 
 //-----------------------------------------------------------------------
 void lhpVMELMCLines::Print(std::ostream& os, const int tabs)
 //-----------------------------------------------------------------------
 {
-  Superclass::Print(os,tabs);
-  mafIndent indent(tabs);
+	Superclass::Print(os, tabs);
+	mafIndent indent(tabs);
 
-  mafMatrix m = m_Transform->GetMatrix();
-  m.Print(os,indent.GetNextIndent());
+	mafMatrix m = m_Transform->GetMatrix();
+	m.Print(os, indent.GetNextIndent());
 }
 //-------------------------------------------------------------------------
-const char** lhpVMELMCLines::GetIcon() 
+const char** lhpVMELMCLines::GetIcon()
 //-------------------------------------------------------------------------
 {
-  #include "mafVMESurface.xpm"
-  return mafVMESurface_xpm;
+#include "mafVMESurface.xpm"
+	return mafVMESurface_xpm;
 }
 //-------------------------------------------------------------------------
-void lhpVMELMCLines::SetPointsCloudLink(mafNode *n)
+void lhpVMELMCLines::SetPointsCloudLink(mafNode* n)
 //-------------------------------------------------------------------------
 {
-  SetLink(_R("PointsCloud"), n);
+	SetLink(_R("PointsCloud"), n);
 }
 //-------------------------------------------------------------------------
-mafVMELandmarkCloud *lhpVMELMCLines::GetPointsCloudLink()
+mafVMELandmarkCloud* lhpVMELMCLines::GetPointsCloudLink()
 //-------------------------------------------------------------------------
 {
-  return mafVMELandmarkCloud::SafeDownCast(GetLink(_R("PointsCloud")));
+	return mafVMELandmarkCloud::SafeDownCast(GetLink(_R("PointsCloud")));
 }
 //-------------------------------------------------------------------------
 mafGUI* lhpVMELMCLines::CreateGui()
 //-------------------------------------------------------------------------
 {
-  m_Gui = mafNode::CreateGui(); // Called to show info about vmes' type and name
-  m_Gui->SetListener(this);
-  m_Gui->Divider();
+	auto gui = mafNode::CreateGui(); // Called to show info about vmes' type and name
+	gui->SetListener(this);
+	gui->Divider();
 
 
-  mafVME *polyline_vme = GetPointsCloudLink();
-  m_PointsCloudName = polyline_vme ? polyline_vme->GetName() : _L("none");
-  m_Gui->Button(ID_PNTS_CLOUD_LINK,_L("Points"), _L("Select the Points cloud to create the Spline"));
-  m_Gui->Label(_R("Points: "), &m_PointsCloudName);
-  m_Gui->Bool(ID_LOOPED, _L("Looped"), &m_Looped);
+	mafVME* polyline_vme = GetPointsCloudLink();
+	m_PointsCloudName = polyline_vme ? polyline_vme->GetName() : _L("none");
+	gui->Button(ID_PNTS_CLOUD_LINK, _L("Points"), _L("Select the Points cloud to create the Spline"));
+	gui->Label(_R("Points: "), &m_PointsCloudName);
+	gui->Bool(ID_LOOPED, _L("Looped"), &m_Looped);
 
-  m_Gui->Update();
-  //this->InternalUpdate();
-  return m_Gui;
+	gui->Update();
+	//this->InternalUpdate();
+	return gui;
 }
 
 //-------------------------------------------------------------------------
-bool lhpVMELMCLines::PolylineAccept(mafNode *node)
+bool lhpVMELMCLines::PolylineAccept(mafNode* node)
 //-------------------------------------------------------------------------
 {
-  return(node != NULL && node->IsA("mafVMELandmarkCloud"));
+	return(node != NULL && node->IsA("mafVMELandmarkCloud"));
 }
 
-void lhpVMELMCLines::SetCloud(mafVMELandmarkCloud *cloud)
+void lhpVMELMCLines::SetCloud(mafVMELandmarkCloud* cloud)
 {
-  if(cloud)
-  {
-    SetPointsCloudLink(cloud);
-    m_PointsCloudName = cloud->GetName();
-  }
-  else
-  {
-    RemoveLink(_R("PointsCloud"));
-    m_PointsCloudName = _L("none");
-  }
+	if (cloud)
+	{
+		SetPointsCloudLink(cloud);
+		m_PointsCloudName = cloud->GetName();
+	}
+	else
+	{
+		RemoveLink(_R("PointsCloud"));
+		m_PointsCloudName = _L("none");
+	}
 
-  InternalUpdate();
-  Modified();
-  GetPolylineOutput()->Update();
-  mafEvent cam_event(this,CAMERA_UPDATE);
-  ForwardUpEvent(cam_event);
-  if(m_Gui)
-    m_Gui->Update();
+	InternalUpdate();
+	Modified();
+	GetPolylineOutput()->Update();
+	mafEvent cam_event(this, CAMERA_UPDATE);
+	ForwardUpEvent(cam_event);
+	UpdateGUI();
 }
 
 //-------------------------------------------------------------------------
-void lhpVMELMCLines::OnEvent(mafEventBase *maf_event)
+void lhpVMELMCLines::OnEvent(mafEventBase* maf_event)
 //-------------------------------------------------------------------------
 {
-  // events to be sent up or down in the tree are simply forwarded
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    switch(e->GetId())
-    {
-      case ID_PNTS_CLOUD_LINK:
-        {
-          {
-            mafID button_id = e->GetId();
-            mafString title = _L("Choose vme");
-            e->SetId(VME_CHOOSE);
-            e->SetArg((intptr_t)&lhpVMELMCLines::PolylineAccept);
-            e->SetString(&title);
-            ForwardUpEvent(e);
-            if (auto vme = mafVMELandmarkCloud::SafeDownCast(e->GetVme()))
-            {
-              SetCloud(vme);
-            }
-          }
-          break;
-        }
-      case ID_LOOPED:
-        {
-          Modified();
-          Update();
-          GetOutput()->Update();
-          mafEvent cam_event(this,CAMERA_UPDATE);
-          ForwardUpEvent(cam_event);
-          break;
-        }
-      default:
-      mafNode::OnEvent(maf_event);
-    }
-  }
-  else
-  {
-    Superclass::OnEvent(maf_event);
-  }
+	// events to be sent up or down in the tree are simply forwarded
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
+	{
+		switch (e->GetId())
+		{
+		case ID_PNTS_CLOUD_LINK:
+		{
+			{
+				mafID button_id = e->GetId();
+				mafString title = _L("Choose vme");
+				e->SetId(VME_CHOOSE);
+				e->SetArg((intptr_t)&lhpVMELMCLines::PolylineAccept);
+				e->SetString(&title);
+				ForwardUpEvent(e);
+				if (auto vme = mafVMELandmarkCloud::SafeDownCast(e->GetVme()))
+				{
+					SetCloud(vme);
+				}
+			}
+			break;
+		}
+		case ID_LOOPED:
+		{
+			Modified();
+			Update();
+			GetOutput()->Update();
+			mafEvent cam_event(this, CAMERA_UPDATE);
+			ForwardUpEvent(cam_event);
+			break;
+		}
+		default:
+			mafNode::OnEvent(maf_event);
+		}
+	}
+	else
+	{
+		Superclass::OnEvent(maf_event);
+	}
 }
 
 //-------------------------------------------------------------------------
 int lhpVMELMCLines::InternalInitialize()
 //-------------------------------------------------------------------------
 {
-  if (Superclass::InternalInitialize()==MAF_OK)
-  {
-    // force material allocation
-    GetMaterial();
-    return MAF_OK;
-  }
+	if (Superclass::InternalInitialize() == MAF_OK)
+	{
+		// force material allocation
+		GetMaterial();
+		return MAF_OK;
+	}
 
-  return MAF_ERROR;
+	return MAF_ERROR;
 }
 
 //-------------------------------------------------------------------------
 std::shared_ptr<mmaMaterial> lhpVMELMCLines::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  auto material = mmaMaterial::SafeDownCast(GetAttribute(mmaMaterial::GetAttributeName()));
-  if (!material)
-  {
-    material = mmaMaterial::NewSPtr();
-    SetAttribute(material);
-  }
-  return material;
+	auto material = mmaMaterial::SafeDownCast(GetAttribute(mmaMaterial::GetAttributeName()));
+	if (!material)
+	{
+		material = mmaMaterial::NewSPtr();
+		SetAttribute(material);
+	}
+	return material;
 }

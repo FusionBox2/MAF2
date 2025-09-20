@@ -1125,7 +1125,7 @@ namespace model::data
         if (e->GetChannel() == MCH_UP)
         {
             mafEvent* gui_event = mafEvent::SafeDownCast(e);
-            if (gui_event && (gui_event->GetSender() == m_Gui))
+            if (gui_event && (gui_event->GetSender() == AccessGUI()))
             {
                 switch (gui_event->GetId())
                 {
@@ -1232,14 +1232,14 @@ namespace model::data
     mafGUI* Node::CreateGui()
         //-------------------------------------------------------------------------
     {
-        assert(m_Gui == NULL);
-        m_Gui = new mafGUI(this);
+        assert(!AccessGUI());
+        auto gui = new mafGUI(this);
 
         mafString type_name = _R(GetTypeName());
         if ((*GetMAFExpertMode()))
-            m_Gui->Button(ID_PRINT_INFO, type_name, _R(""), _R("Print node debug information"));
+            gui->Button(ID_PRINT_INFO, type_name, _R(""), _R("Print node debug information"));
 
-        m_Gui->String(ID_NAME, _R("name :"), &m_Name);
+        gui->String(ID_NAME, _R("name :"), &m_Name);
 
         mafEvent buildHelpGui;
         buildHelpGui.SetSender(this);
@@ -1248,12 +1248,12 @@ namespace model::data
 
         if (buildHelpGui.GetArg())
         {
-            m_Gui->Button(ID_HELP, _R("Help"), _R(""));
+            gui->Button(ID_HELP, _R("Help"), _R(""));
         }
 
-        m_Gui->Divider();
+        gui->Divider();
 
-        return m_Gui;
+        return gui;
     }
 
     void Node::OnPrint()

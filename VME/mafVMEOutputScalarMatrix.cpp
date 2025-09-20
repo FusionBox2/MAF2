@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafVMEOutputScalarMatrix
  Authors: Marco Petrone
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -56,12 +56,12 @@ mafVMEOutputScalarMatrix::mafVMEOutputScalarMatrix()
 //-------------------------------------------------------------------------
 {
 #ifdef MAF_USE_VTK
-  vtkNEW(m_Polydata);
-  vtkNEW(m_Producer);
-  m_Producer->SetOutput(m_Polydata);
+	vtkNEW(m_Polydata);
+	vtkNEW(m_Producer);
+	m_Producer->SetOutput(m_Polydata);
 #endif
-  m_NumberOfRows = _R("0");
-  m_NumberOfColumns = _R("0");
+	m_NumberOfRows = _R("0");
+	m_NumberOfColumns = _R("0");
 }
 
 //-------------------------------------------------------------------------
@@ -69,178 +69,178 @@ mafVMEOutputScalarMatrix::~mafVMEOutputScalarMatrix()
 //-------------------------------------------------------------------------
 {
 #ifdef MAF_USE_VTK
-  vtkDEL(m_Polydata);
-  vtkDEL(m_Producer);
+	vtkDEL(m_Polydata);
+	vtkDEL(m_Producer);
 #endif
 }
 
 //-------------------------------------------------------------------------
-vnl_matrix<double> &mafVMEOutputScalarMatrix::GetScalarData()
+vnl_matrix<double>& mafVMEOutputScalarMatrix::GetScalarData()
 //-------------------------------------------------------------------------
 {
-  assert(m_VME);
-  mafDataPipeInterpolatorScalarMatrix *scalarInterpolator = (mafDataPipeInterpolatorScalarMatrix *)m_VME->GetDataPipe();
-  scalarInterpolator->Update();
-  return scalarInterpolator->GetScalarData();
+	assert(m_VME);
+	mafDataPipeInterpolatorScalarMatrix* scalarInterpolator = (mafDataPipeInterpolatorScalarMatrix*)m_VME->GetDataPipe();
+	scalarInterpolator->Update();
+	return scalarInterpolator->GetScalarData();
 }
 
 #ifdef MAF_USE_VTK
 //-------------------------------------------------------------------------
-vtkAlgorithmOutput *mafVMEOutputScalarMatrix::GetVTKOutputPort()
+vtkAlgorithmOutput* mafVMEOutputScalarMatrix::GetVTKOutputPort()
 //-------------------------------------------------------------------------
 {
-  UpdateVTKRepresentation();
-  return m_Producer->GetOutputPort();
+	UpdateVTKRepresentation();
+	return m_Producer->GetOutputPort();
 }
 //-------------------------------------------------------------------------
 void mafVMEOutputScalarMatrix::UpdateVTKRepresentation()
 //-------------------------------------------------------------------------
 {
-  assert(m_VME);
-  mafVMEScalarMatrix *scalar_vme = mafVMEScalarMatrix::SafeDownCast(m_VME);
-  assert(scalar_vme);
+	assert(m_VME);
+	mafVMEScalarMatrix* scalar_vme = mafVMEScalarMatrix::SafeDownCast(m_VME);
+	assert(scalar_vme);
 
-  int active_scalar = scalar_vme->GetActiveScalarOnGeometry();
+	int active_scalar = scalar_vme->GetActiveScalarOnGeometry();
 
-  mafDataPipeInterpolatorScalarMatrix *scalarInterpolator = (mafDataPipeInterpolatorScalarMatrix *)scalar_vme->GetDataPipe();
-  scalarInterpolator->Update();
-  if (scalarInterpolator->GetCurrentItem() != NULL)
-  {
-    vnl_matrix<double> scalar = scalarInterpolator->GetCurrentItemScalarMatrix()->GetData();
-    if (scalar.size() != 0)
-    {
-      vnl_matrix<double> mat = scalarInterpolator->GetScalarData();
+	mafDataPipeInterpolatorScalarMatrix* scalarInterpolator = (mafDataPipeInterpolatorScalarMatrix*)scalar_vme->GetDataPipe();
+	scalarInterpolator->Update();
+	if (scalarInterpolator->GetCurrentItem() != NULL)
+	{
+		vnl_matrix<double> scalar = scalarInterpolator->GetCurrentItemScalarMatrix()->GetData();
+		if (scalar.size() != 0)
+		{
+			vnl_matrix<double> mat = scalarInterpolator->GetScalarData();
 
-      int num_of_points = 0;
-      int o = scalar_vme->GetScalarArrayOrientation();
-      int x_coord_type = scalar_vme->GetTypeForXCoordinates();
-      vnl_vector<double> vx;
-      vnl_vector<double> vy;
-      vnl_vector<double> vz;
-      if (x_coord_type == mafVMEScalarMatrix::USE_SCALAR)
-      {
-        int sx = scalar_vme->GetScalarIdForXCoordinate();
-        if (o == mafVMEScalarMatrix::ROWS)
-        {
-          vx = mat.get_row(sx);
-        }
-        else
-        {
-          vx = mat.get_column(sx);
-        }
-        num_of_points = vx.size();
-      }
-      int y_coord_type = scalar_vme->GetTypeForYCoordinates();
-      if (y_coord_type == mafVMEScalarMatrix::USE_SCALAR)
-      {
-        int sy = scalar_vme->GetScalarIdForYCoordinate();
-        if (o == mafVMEScalarMatrix::ROWS)
-        {
-          vy = mat.get_row(sy);
-        }
-        else
-        {
-          vy = mat.get_column(sy);
-        }
-        num_of_points = vy.size();
-      }
-      int z_coord_type = scalar_vme->GetTypeForZCoordinates();
-      if (z_coord_type == mafVMEScalarMatrix::USE_SCALAR)
-      {
-        int sz = scalar_vme->GetScalarIdForZCoordinate();
-        if (o == mafVMEScalarMatrix::ROWS)
-        {
-          vz = mat.get_row(sz);
-        }
-        else
-        {
-          vz = mat.get_column(sz);
-        }
-        num_of_points = vz.size();
-      }
-      vtkIdType pointId[2];
-      int progress_point = 0;
-      double time_point = GetTimeStamp();
-      double x_coord, y_coord, z_coord;
-      vtkNew<vtkPoints> points;
-      vtkNew<vtkCellArray> verts;
-      vnl_vector<double> vs;
-      vtkNew<vtkDoubleArray> scalars;
-      scalars->SetNumberOfValues(num_of_points);
-      scalars->SetNumberOfComponents(1);
-      scalars->FillComponent(0,0.0);
-      if (active_scalar > -1)
-      {
-        if (o == mafVMEScalarMatrix::ROWS)
-        {
-          active_scalar = active_scalar >= mat.rows() ? mat.rows() - 1 : active_scalar;
-          vs = mat.get_row(active_scalar);
-        }
-        else
-        {
-          active_scalar = active_scalar >= mat.columns() ? mat.columns() - 1 : active_scalar;
-          vs = mat.get_column(active_scalar);
-        }
-        scalar_vme->SetActiveScalarOnGeometry(active_scalar);
-        vs.copy_out((double *)scalars->GetVoidPointer(0));
-      }
-      for (int p = 0; p< num_of_points; p++)
-      {
-        // X coordinate
-        if (x_coord_type == mafVMEScalarMatrix::USE_SCALAR)
-        {
-          x_coord = vx.get(p);
-        }
-        else if (x_coord_type == mafVMEScalarMatrix::USE_PROGRESS_NUMBER)
-        {
-          x_coord = progress_point;
-        }
-        else
-        {
-          x_coord = time_point;
-        }
-        // Y coordinate
-        if (y_coord_type == mafVMEScalarMatrix::USE_SCALAR)
-        {
-          y_coord = vy.get(p);
-        }
-        else if (y_coord_type == mafVMEScalarMatrix::USE_PROGRESS_NUMBER)
-        {
-          y_coord = progress_point;
-        }
-        else
-        {
-          y_coord = time_point;
-        }
-        // Z coordinate
-        if (z_coord_type == mafVMEScalarMatrix::USE_SCALAR)
-        {
-          z_coord = vz.get(p);
-        }
-        else if (z_coord_type == mafVMEScalarMatrix::USE_PROGRESS_NUMBER)
-        {
-          z_coord = progress_point;
-        }
-        else
-        {
-          z_coord = time_point;
-        }
-        points->InsertPoint(p,x_coord,y_coord,z_coord);
-        if (p>0)
-        {
-          pointId[0] = p-1;
-          pointId[1] = p;
-          verts->InsertNextCell(2,pointId);
-        }
-        progress_point++;
-      }
+			int num_of_points = 0;
+			int o = scalar_vme->GetScalarArrayOrientation();
+			int x_coord_type = scalar_vme->GetTypeForXCoordinates();
+			vnl_vector<double> vx;
+			vnl_vector<double> vy;
+			vnl_vector<double> vz;
+			if (x_coord_type == mafVMEScalarMatrix::USE_SCALAR)
+			{
+				int sx = scalar_vme->GetScalarIdForXCoordinate();
+				if (o == mafVMEScalarMatrix::ROWS)
+				{
+					vx = mat.get_row(sx);
+				}
+				else
+				{
+					vx = mat.get_column(sx);
+				}
+				num_of_points = vx.size();
+			}
+			int y_coord_type = scalar_vme->GetTypeForYCoordinates();
+			if (y_coord_type == mafVMEScalarMatrix::USE_SCALAR)
+			{
+				int sy = scalar_vme->GetScalarIdForYCoordinate();
+				if (o == mafVMEScalarMatrix::ROWS)
+				{
+					vy = mat.get_row(sy);
+				}
+				else
+				{
+					vy = mat.get_column(sy);
+				}
+				num_of_points = vy.size();
+			}
+			int z_coord_type = scalar_vme->GetTypeForZCoordinates();
+			if (z_coord_type == mafVMEScalarMatrix::USE_SCALAR)
+			{
+				int sz = scalar_vme->GetScalarIdForZCoordinate();
+				if (o == mafVMEScalarMatrix::ROWS)
+				{
+					vz = mat.get_row(sz);
+				}
+				else
+				{
+					vz = mat.get_column(sz);
+				}
+				num_of_points = vz.size();
+			}
+			vtkIdType pointId[2];
+			int progress_point = 0;
+			double time_point = GetTimeStamp();
+			double x_coord, y_coord, z_coord;
+			vtkNew<vtkPoints> points;
+			vtkNew<vtkCellArray> verts;
+			vnl_vector<double> vs;
+			vtkNew<vtkDoubleArray> scalars;
+			scalars->SetNumberOfValues(num_of_points);
+			scalars->SetNumberOfComponents(1);
+			scalars->FillComponent(0, 0.0);
+			if (active_scalar > -1)
+			{
+				if (o == mafVMEScalarMatrix::ROWS)
+				{
+					active_scalar = active_scalar >= mat.rows() ? mat.rows() - 1 : active_scalar;
+					vs = mat.get_row(active_scalar);
+				}
+				else
+				{
+					active_scalar = active_scalar >= mat.columns() ? mat.columns() - 1 : active_scalar;
+					vs = mat.get_column(active_scalar);
+				}
+				scalar_vme->SetActiveScalarOnGeometry(active_scalar);
+				vs.copy_out((double*)scalars->GetVoidPointer(0));
+			}
+			for (int p = 0; p < num_of_points; p++)
+			{
+				// X coordinate
+				if (x_coord_type == mafVMEScalarMatrix::USE_SCALAR)
+				{
+					x_coord = vx.get(p);
+				}
+				else if (x_coord_type == mafVMEScalarMatrix::USE_PROGRESS_NUMBER)
+				{
+					x_coord = progress_point;
+				}
+				else
+				{
+					x_coord = time_point;
+				}
+				// Y coordinate
+				if (y_coord_type == mafVMEScalarMatrix::USE_SCALAR)
+				{
+					y_coord = vy.get(p);
+				}
+				else if (y_coord_type == mafVMEScalarMatrix::USE_PROGRESS_NUMBER)
+				{
+					y_coord = progress_point;
+				}
+				else
+				{
+					y_coord = time_point;
+				}
+				// Z coordinate
+				if (z_coord_type == mafVMEScalarMatrix::USE_SCALAR)
+				{
+					z_coord = vz.get(p);
+				}
+				else if (z_coord_type == mafVMEScalarMatrix::USE_PROGRESS_NUMBER)
+				{
+					z_coord = progress_point;
+				}
+				else
+				{
+					z_coord = time_point;
+				}
+				points->InsertPoint(p, x_coord, y_coord, z_coord);
+				if (p > 0)
+				{
+					pointId[0] = p - 1;
+					pointId[1] = p;
+					verts->InsertNextCell(2, pointId);
+				}
+				progress_point++;
+			}
 
-      m_Polydata->SetPoints(points);
-      m_Polydata->SetLines(verts);
-      m_Polydata->GetPointData()->SetScalars(scalars);
-      m_Polydata->Modified();
-    }
-  }
+			m_Polydata->SetPoints(points);
+			m_Polydata->SetLines(verts);
+			m_Polydata->GetPointData()->SetScalars(scalars);
+			m_Polydata->Modified();
+		}
+	}
 }
 #endif
 
@@ -248,35 +248,32 @@ void mafVMEOutputScalarMatrix::UpdateVTKRepresentation()
 mafGUI* mafVMEOutputScalarMatrix::CreateGui()
 //-------------------------------------------------------------------------
 {
-  assert(m_Gui == NULL);
-  m_Gui = mafVMEOutput::CreateGui();
+	assert(!AccessGUI());
+	auto gui = mafVMEOutput::CreateGui();
 
-  if (m_VME && m_VME->GetDataPipe() && m_VME->GetDataPipe())
-  {
-    this->Update();
-  }
-  vnl_matrix<double> data = GetScalarData();
-  m_NumberOfRows = _R("");
-  m_NumberOfRows += mafToString((int)data.rows());
-  m_NumberOfColumns = _R("");
-  m_NumberOfColumns += mafToString((int)data.columns());
-  m_Gui->Label(_L("rows: "),&m_NumberOfRows);
-  m_Gui->Label(_L("columns: "),&m_NumberOfColumns);
-	m_Gui->Divider(); 
-	return m_Gui;
+	if (m_VME && m_VME->GetDataPipe() && m_VME->GetDataPipe())
+	{
+		this->Update();
+	}
+	vnl_matrix<double> data = GetScalarData();
+	m_NumberOfRows = _R("");
+	m_NumberOfRows += mafToString((int)data.rows());
+	m_NumberOfColumns = _R("");
+	m_NumberOfColumns += mafToString((int)data.columns());
+	gui->Label(_L("rows: "), &m_NumberOfRows);
+	gui->Label(_L("columns: "), &m_NumberOfColumns);
+	gui->Divider();
+	return gui;
 }
 
 //-------------------------------------------------------------------------
 void mafVMEOutputScalarMatrix::Update()
 //-------------------------------------------------------------------------
 {
-  vnl_matrix<double> data = GetScalarData();
-  m_NumberOfRows = _R("");
-  m_NumberOfRows += mafToString((int)data.rows());
-  m_NumberOfColumns = _R("");
-  m_NumberOfColumns += mafToString((int)data.columns());
-  if (m_Gui)
-  {
-    m_Gui->Update();
-  }
+	vnl_matrix<double> data = GetScalarData();
+	m_NumberOfRows = _R("");
+	m_NumberOfRows += mafToString((int)data.rows());
+	m_NumberOfColumns = _R("");
+	m_NumberOfColumns += mafToString((int)data.columns());
+	UpdateGUI();
 }

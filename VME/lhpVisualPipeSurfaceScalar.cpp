@@ -7,7 +7,7 @@
   Authors:   Paolo Quadrani
 ==========================================================================
   Copyright (c) 2002/2004
-  CINECA - Interuniversity Consortium (www.cineca.it) 
+  CINECA - Interuniversity Consortium (www.cineca.it)
 =========================================================================*/
 
 
@@ -51,58 +51,58 @@ mafCxxTypeMacro(lhpVisualPipeSurfaceScalar);
 lhpVisualPipeSurfaceScalar::lhpVisualPipeSurfaceScalar()
 //----------------------------------------------------------------------------
 {
-  m_Actor           = NULL;
-  m_OutlineActor    = NULL;
+	m_Actor = NULL;
+	m_OutlineActor = NULL;
 }
 //----------------------------------------------------------------------------
-void lhpVisualPipeSurfaceScalar::Create(mafNode *node, mafView *view)
+void lhpVisualPipeSurfaceScalar::Create(mafNode* node, mafView* view)
 //----------------------------------------------------------------------------
 {
-  Superclass::Create(node, view);
-  
-  m_Selected = false;
-  m_Actor           = NULL;
-  m_OutlineActor    = NULL;
+	Superclass::Create(node, view);
 
-  mafVMEOutputSurface *output_surface = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
-  assert(output_surface);
-  output_surface->Update();
+	m_Selected = false;
+	m_Actor = NULL;
+	m_OutlineActor = NULL;
 
-  m_Vme->AddObserver(this);
+	mafVMEOutputSurface* output_surface = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
+	assert(output_surface);
+	output_surface->Update();
 
-  double sr[2];
+	m_Vme->AddObserver(this);
 
-  m_Material = output_surface->GetMaterial();
-  m_Material->m_MaterialType = mmaMaterial::USE_LOOKUPTABLE;
-  m_Material->m_ColorLut->GetTableRange(sr);
+	double sr[2];
 
-  int immediate = m_Vme->IsAnimated() ? 1 : 0;
+	m_Material = output_surface->GetMaterial();
+	m_Material->m_MaterialType = mmaMaterial::USE_LOOKUPTABLE;
+	m_Material->m_ColorLut->GetTableRange(sr);
+
+	int immediate = m_Vme->IsAnimated() ? 1 : 0;
 	vtkNEW(m_Mapper);
-  m_Mapper->SetInputConnection(output_surface->GetVTKOutputPort());
- #if VTK_MAJOR_VERSION <= 7
+	m_Mapper->SetInputConnection(output_surface->GetVTKOutputPort());
+#if VTK_MAJOR_VERSION <= 7
 	m_Mapper->SetImmediateModeRendering(immediate);
 #endif
-  m_Mapper->ScalarVisibilityOn();
-  m_Mapper->SetScalarModeToUsePointData();  
-  m_Mapper->SetLookupTable((vtkScalarsToColors *)m_Material->m_ColorLut);
-  m_Mapper->UseLookupTableScalarRangeOn();
-  //m_Mapper->SetColorModeToMapScalars();
-  //m_Mapper->SetScalarRange(sr);
+	m_Mapper->ScalarVisibilityOn();
+	m_Mapper->SetScalarModeToUsePointData();
+	m_Mapper->SetLookupTable((vtkScalarsToColors*)m_Material->m_ColorLut);
+	m_Mapper->UseLookupTableScalarRangeOn();
+	//m_Mapper->SetColorModeToMapScalars();
+	//m_Mapper->SetScalarRange(sr);
 
-  m_Actor = vtkActor::New();
+	m_Actor = vtkActor::New();
 	m_Actor->SetMapper(m_Mapper);
 
-  m_AssemblyFront->AddPart(m_Actor);
+	m_AssemblyFront->AddPart(m_Actor);
 
-  // selection highlight
-  vtkNew<vtkOutlineCornerFilter> corner;
+	// selection highlight
+	vtkNew<vtkOutlineCornerFilter> corner;
 	corner->SetInputConnection(output_surface->GetVTKOutputPort());
 
-  vtkNew<vtkPolyDataMapper> corner_mapper;
+	vtkNew<vtkPolyDataMapper> corner_mapper;
 	corner_mapper->SetInputConnection(corner->GetOutputPort());
 
-  vtkNew<vtkProperty> corner_props;
-	corner_props->SetColor(1,1,1);
+	vtkNew<vtkProperty> corner_props;
+	corner_props->SetColor(1, 1, 1);
 	corner_props->SetAmbient(1);
 	corner_props->SetRepresentationToWireframe();
 	corner_props->SetInterpolationToFlat();
@@ -113,96 +113,96 @@ void lhpVisualPipeSurfaceScalar::Create(mafNode *node, mafView *view)
 	m_OutlineActor->PickableOff();
 	m_OutlineActor->SetProperty(corner_props);
 
-  m_AssemblyFront->AddPart(m_OutlineActor);
+	m_AssemblyFront->AddPart(m_OutlineActor);
 }
 //----------------------------------------------------------------------------
 lhpVisualPipeSurfaceScalar::~lhpVisualPipeSurfaceScalar()
 //----------------------------------------------------------------------------
 {
-  m_Vme->RemoveObserver(this);
+	m_Vme->RemoveObserver(this);
 
-  m_AssemblyFront->RemovePart(m_Actor);
-  m_AssemblyFront->RemovePart(m_OutlineActor);
+	m_AssemblyFront->RemovePart(m_Actor);
+	m_AssemblyFront->RemovePart(m_OutlineActor);
 
-  vtkDEL(m_Mapper);
-  vtkDEL(m_Actor);
-  vtkDEL(m_OutlineActor);
+	vtkDEL(m_Mapper);
+	vtkDEL(m_Actor);
+	vtkDEL(m_OutlineActor);
 }
 //----------------------------------------------------------------------------
 void lhpVisualPipeSurfaceScalar::Select(bool sel)
 //----------------------------------------------------------------------------
 {
 	m_Selected = sel;
-	if(m_Actor->GetVisibility()) 
+	if (m_Actor->GetVisibility())
 	{
-    m_OutlineActor->SetVisibility(sel);
+		m_OutlineActor->SetVisibility(sel);
 	}
 }
 //-------------------------------------------------------------------------
 mafGUI* lhpVisualPipeSurfaceScalar::CreateGui()
 //-------------------------------------------------------------------------
 {
-  assert(m_Gui == NULL);
-  m_Gui = mafPipe::CreateGui();
-  m_Gui->Lut(ID_LUT, _R("lut"), m_Material->m_ColorLut);
-  return m_Gui;
+	assert(!AccessGUI());
+	auto gui = mafPipe::CreateGui();
+	gui->Lut(ID_LUT, _R("lut"), m_Material->m_ColorLut);
+	return gui;
 }
 //-------------------------------------------------------------------------
-void lhpVisualPipeSurfaceScalar::OnEvent(mafEventBase *maf_event)
+void lhpVisualPipeSurfaceScalar::OnEvent(mafEventBase* maf_event)
 //-------------------------------------------------------------------------
 {
-  mafEvent *e = mafEvent::SafeDownCast(maf_event);
-  if (e != NULL)
-  {
-    switch(e->GetId())
-    {
-      case ID_LUT:
-        m_Material->UpdateFromLut();
-      break;
-      default:
-        Superclass::OnEvent(maf_event);
-    }
-  }
-  else if (maf_event->GetSender() == m_Vme)
-  {
-    if(maf_event->GetId() == VME_OUTPUT_DATA_UPDATE)
-    {
-      UpdateProperty();
-    }
-  }
+	mafEvent* e = mafEvent::SafeDownCast(maf_event);
+	if (e != NULL)
+	{
+		switch (e->GetId())
+		{
+		case ID_LUT:
+			m_Material->UpdateFromLut();
+			break;
+		default:
+			Superclass::OnEvent(maf_event);
+		}
+	}
+	else if (maf_event->GetSender() == m_Vme)
+	{
+		if (maf_event->GetId() == VME_OUTPUT_DATA_UPDATE)
+		{
+			UpdateProperty();
+		}
+	}
 }
 //----------------------------------------------------------------------------
 void lhpVisualPipeSurfaceScalar::UpdateProperty(bool fromTag)
 //----------------------------------------------------------------------------
 {
-  lhpVMESurfaceScalarVarying *vme = lhpVMESurfaceScalarVarying::SafeDownCast(m_Vme);
-  mafVMEOutputSurface *output_surface = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
-  output_surface->Update();
-  vtkPolyData *data = output_surface->GetSurfaceData();
-  //data->Update();
+	lhpVMESurfaceScalarVarying* vme = lhpVMESurfaceScalarVarying::SafeDownCast(m_Vme);
+	mafVMEOutputSurface* output_surface = mafVMEOutputSurface::SafeDownCast(m_Vme->GetOutput());
+	output_surface->Update();
+	vtkPolyData* data = output_surface->GetSurfaceData();
+	//data->Update();
 
-  if (vme->GetNumberOfScalarData() == 1)
-  {
-    double rgb[3], v;
-    int scalar_index;
-    scalar_index = vme->GetSurfaceScalarIndexes(0)->GetId(0);
-    vtkDoubleArray *scalars = (vtkDoubleArray *)data->GetPointData()->GetScalars();
-    v = scalars->GetValue(scalar_index);
-    m_Mapper->ScalarVisibilityOff();
-    m_Mapper->UseLookupTableScalarRangeOff();
-    m_Material->m_ColorLut->GetColor(v,rgb);
-    m_Actor->GetProperty()->SetColor(rgb);
-  }
-  else
-  {
-    m_Mapper->ScalarVisibilityOn();
-    m_Mapper->UseLookupTableScalarRangeOn();
-  }
-  /*double sr[2];
-  vtkDataArray *scalar = data->GetPointData()->GetScalars();
-  scalar->GetRange(sr);
-  m_Mapper->SetScalarRange(sr);*/
-  m_Mapper->Update();
+	if (vme->GetNumberOfScalarData() == 1)
+	{
+		double rgb[3], v;
+		int scalar_index;
+		scalar_index = vme->GetSurfaceScalarIndexes(0)->GetId(0);
+		vtkDoubleArray* scalars = (vtkDoubleArray*)data->GetPointData()->GetScalars();
+		v = scalars->GetValue(scalar_index);
+		m_Mapper->ScalarVisibilityOff();
+		m_Mapper->UseLookupTableScalarRangeOff();
+		m_Material->m_ColorLut->GetColor(v, rgb);
+		m_Actor->GetProperty()->SetColor(rgb);
+	}
+	else
+	{
+		m_Mapper->ScalarVisibilityOn();
+		m_Mapper->UseLookupTableScalarRangeOn();
+	}
+	/*double sr[2];
+	vtkDataArray *scalar = data->GetPointData()->GetScalars();
+	scalar->GetRange(sr);
+	m_Mapper->SetScalarRange(sr);*/
+	m_Mapper->Update();
 
-  //{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
+	//{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 }

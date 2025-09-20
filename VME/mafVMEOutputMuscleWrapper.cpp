@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafVMEOutputMuscleWrapper
  Authors: Paolo Quadrani
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -45,40 +45,37 @@ mafVMEOutputMuscleWrapperAQ::~mafVMEOutputMuscleWrapperAQ()
 {
 }
 //-------------------------------------------------------------------------
-mafGUI *mafVMEOutputMuscleWrapperAQ::CreateGui()
+mafGUI* mafVMEOutputMuscleWrapperAQ::CreateGui()
 //-------------------------------------------------------------------------
 {
-  assert(m_Gui == NULL);
-  m_Gui = mafVMEOutput::CreateGui();
-  
-  m_Distance = mafToString(((mafVMEMuscleWrapperAQ *)m_VME)->GetDistance());
-  m_Gui->Label(_L("distance: "), &m_Distance, true);
+	assert(!AccessGUI());
+	auto gui = mafVMEOutput::CreateGui();
 
-  m_Angle = mafToString(((mafVMEMuscleWrapperAQ *)m_VME)->GetAngle());
-  m_Gui->Label(_L("angle: "), &m_Angle, true);
-	m_Gui->Divider();
+	m_Distance = mafToString(((mafVMEMuscleWrapperAQ*)m_VME)->GetDistance());
+	gui->Label(_L("distance: "), &m_Distance, true);
 
-  return m_Gui;
+	m_Angle = mafToString(((mafVMEMuscleWrapperAQ*)m_VME)->GetAngle());
+	gui->Label(_L("angle: "), &m_Angle, true);
+	gui->Divider();
+
+	return gui;
 }
 //-------------------------------------------------------------------------
 void mafVMEOutputMuscleWrapperAQ::Update()
 //-------------------------------------------------------------------------
 {
-  assert(m_VME);
-  m_VME->Update();
+	assert(m_VME);
+	m_VME->Update();
 
-  if (((mafVMEMuscleWrapperAQ *)m_VME)->GetMeterMode() == mafVMEMuscleWrapperAQ::POINT_DISTANCE || ((mafVMEMuscleWrapperAQ *)m_VME)->GetMeterMode() == mafVMEMuscleWrapperAQ::LINE_DISTANCE)
-  {
-	  m_Distance = mafToString(((mafVMEMuscleWrapperAQ *)m_VME)->GetDistance());
-  m_Angle =_R("");
-  }
-  else if (((mafVMEMuscleWrapperAQ *)m_VME)->GetMeterMode() == mafVMEMuscleWrapperAQ::LINE_ANGLE)
-  {
-    m_Distance =_R("");
-	m_Angle = mafToString(((mafVMEMuscleWrapperAQ *)m_VME)->GetAngle());
-  }
-  if (m_Gui)
-  {
-    m_Gui->Update();
-  }
+	if (((mafVMEMuscleWrapperAQ*)m_VME)->GetMeterMode() == mafVMEMuscleWrapperAQ::POINT_DISTANCE || ((mafVMEMuscleWrapperAQ*)m_VME)->GetMeterMode() == mafVMEMuscleWrapperAQ::LINE_DISTANCE)
+	{
+		m_Distance = mafToString(((mafVMEMuscleWrapperAQ*)m_VME)->GetDistance());
+		m_Angle = _R("");
+	}
+	else if (((mafVMEMuscleWrapperAQ*)m_VME)->GetMeterMode() == mafVMEMuscleWrapperAQ::LINE_ANGLE)
+	{
+		m_Distance = _R("");
+		m_Angle = mafToString(((mafVMEMuscleWrapperAQ*)m_VME)->GetAngle());
+	}
+	UpdateGUI();
 }

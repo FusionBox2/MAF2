@@ -6,7 +6,7 @@
   Version:   $Revision: 1.7 $
   Authors:   Fedor Moiseev / Vladik Aranov
 ==========================================================================
-  Copyright (c) 2001/2007 
+  Copyright (c) 2001/2007
   ULB - Universite Libre de Bruxelles (www.ulb.ac.be)
 =========================================================================*/
 
@@ -55,73 +55,73 @@ mafCxxTypeMacro(mafVMEAFRefSys)
 mafVMEAFRefSys::mafVMEAFRefSys()
 //-------------------------------------------------------------------------
 {
-  m_vm      = NULL;
-  m_Active  = 0;
-  m_VMValid = false;
-  m_BoneID  = ID_AFS_NOTDEFINED;
-  m_XOffset = 0;
-  m_YOffset = 0;
-  m_ZOffset = 0;
-  m_XRotate = 0;
-  m_YRotate = 0;
-  m_ZRotate = 0;
+	m_vm = NULL;
+	m_Active = 0;
+	m_VMValid = false;
+	m_BoneID = ID_AFS_NOTDEFINED;
+	m_XOffset = 0;
+	m_YOffset = 0;
+	m_ZOffset = 0;
+	m_XRotate = 0;
+	m_YRotate = 0;
+	m_ZRotate = 0;
 }
 
 //-------------------------------------------------------------------------
 mafVMEAFRefSys::~mafVMEAFRefSys()
 //-------------------------------------------------------------------------
 {
-  if(m_vm)
-    delete m_vm;
+	if (m_vm)
+		delete m_vm;
 }
 //-------------------------------------------------------------------------
-int mafVMEAFRefSys::DeepCopy(mafNode *a)
+int mafVMEAFRefSys::DeepCopy(mafNode* a)
 //-------------------------------------------------------------------------
-{ 
-  if (Superclass::DeepCopy(a)==MAF_OK)
-  {
-    mafVMEAFRefSys *vme_ref_sys=mafVMEAFRefSys::SafeDownCast(a);
-    m_XOffset = vme_ref_sys->m_XOffset;
-    m_YOffset = vme_ref_sys->m_YOffset;
-    m_ZOffset = vme_ref_sys->m_ZOffset;
-    m_XRotate = vme_ref_sys->m_XRotate;
-    m_YRotate = vme_ref_sys->m_YRotate;
-    m_ZRotate = vme_ref_sys->m_ZRotate;
-    m_scriptText = vme_ref_sys->m_scriptText;
-    ConvertTextToVM(false);
-    m_lmMapping = vme_ref_sys->m_lmMapping;
-    m_BoneID    = vme_ref_sys->m_BoneID;
-    m_Active    = vme_ref_sys->m_Active;
-    for(unsigned i = 0; i < m_vm->getInputs().size(); i++)
-    {
-      if(m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
-      {
-      }
-      else
-      {
-        m_vm->getInputs()[i].second->GetScalar() = vme_ref_sys->m_vm->getInputs()[i].second->GetScalar();
-      }
-    }
-    return MAF_OK;
-  }  
-  return MAF_ERROR;
+{
+	if (Superclass::DeepCopy(a) == MAF_OK)
+	{
+		mafVMEAFRefSys* vme_ref_sys = mafVMEAFRefSys::SafeDownCast(a);
+		m_XOffset = vme_ref_sys->m_XOffset;
+		m_YOffset = vme_ref_sys->m_YOffset;
+		m_ZOffset = vme_ref_sys->m_ZOffset;
+		m_XRotate = vme_ref_sys->m_XRotate;
+		m_YRotate = vme_ref_sys->m_YRotate;
+		m_ZRotate = vme_ref_sys->m_ZRotate;
+		m_scriptText = vme_ref_sys->m_scriptText;
+		ConvertTextToVM(false);
+		m_lmMapping = vme_ref_sys->m_lmMapping;
+		m_BoneID = vme_ref_sys->m_BoneID;
+		m_Active = vme_ref_sys->m_Active;
+		for (unsigned i = 0; i < m_vm->getInputs().size(); i++)
+		{
+			if (m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
+			{
+			}
+			else
+			{
+				m_vm->getInputs()[i].second->GetScalar() = vme_ref_sys->m_vm->getInputs()[i].second->GetScalar();
+			}
+		}
+		return MAF_OK;
+	}
+	return MAF_ERROR;
 }
 
 //-------------------------------------------------------------------------
-int mafVMEAFRefSys::OnSetParent(mafNode *newparent)
+int mafVMEAFRefSys::OnSetParent(mafNode* newparent)
 //-------------------------------------------------------------------------
 {
-  int rep = Superclass::OnSetParent(newparent);
-  if(rep != MAF_OK || newparent == NULL || !m_Active)
-    return rep;
-  for(unsigned j = 0; j < newparent->GetNumberOfChildren(); j++)
-  {
-    auto sys = mafVMEAFRefSys::SafeDownCast(newparent->GetChild(j));
-    if(sys == nullptr || sys.get() == this)
-      continue;
-    sys->SetActive(false);
-  }
-  return MAF_OK;
+	int rep = Superclass::OnSetParent(newparent);
+	if (rep != MAF_OK || newparent == NULL || !m_Active)
+		return rep;
+	for (unsigned j = 0; j < newparent->GetNumberOfChildren(); j++)
+	{
+		auto sys = mafVMEAFRefSys::SafeDownCast(newparent->GetChild(j));
+		if (sys == nullptr || sys.get() == this)
+			continue;
+		sys->SetActive(false);
+	}
+	return MAF_OK;
 }
 
 
@@ -129,10 +129,10 @@ int mafVMEAFRefSys::OnSetParent(mafNode *newparent)
 void mafVMEAFRefSys::Print(std::ostream& os, const int tabs)// const
 //-----------------------------------------------------------------------
 {
-  Superclass::Print(os,tabs);
-  mafIndent indent(tabs);
-  os<<indent<<"6DOFs: "<<indent<<m_XOffset<<indent<<m_YOffset<<indent<<m_ZOffset<<indent<<m_XRotate<<indent<<m_YRotate<<indent<<m_ZRotate;
-  os<<indent<<"Scale: "<<indent<<m_ScaleFactor;
+	Superclass::Print(os, tabs);
+	mafIndent indent(tabs);
+	os << indent << "6DOFs: " << indent << m_XOffset << indent << m_YOffset << indent << m_ZOffset << indent << m_XRotate << indent << m_YRotate << indent << m_ZRotate;
+	os << indent << "Scale: " << indent << m_ScaleFactor;
 }
 
 
@@ -140,65 +140,65 @@ void mafVMEAFRefSys::Print(std::ostream& os, const int tabs)// const
 //-----------------------------------------------------------------------
 void mafVMEAFRefSys::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
-{  
-  Superclass::InternalStore(parent);
-  parent[_R("Active")].SetValue(m_Active);
-  parent[_R("BoneID")].SetValue(m_BoneID);
-  parent[_R("XOffset")].SetValue(m_XOffset);
-  parent[_R("YOffset")].SetValue(m_YOffset);
-  parent[_R("ZOffset")].SetValue(m_ZOffset);
-  parent[_R("XRotate")].SetValue(m_XRotate);
-  parent[_R("YRotate")].SetValue(m_YRotate);
-  parent[_R("ZRotate")].SetValue(m_ZRotate);
-  m_textSize = m_scriptText.size();
-  parent[_R("ScriptStrings")].SetValue(m_textSize);
-  for (int i = 0; i < m_textSize; i++)
-  {
-    mafString nm = mafString::Format(_R("ln%d"), i);
-    parent[nm].SetValue(m_scriptText[i]);
-  }
+{
+	Superclass::InternalStore(parent);
+	parent[_R("Active")].SetValue(m_Active);
+	parent[_R("BoneID")].SetValue(m_BoneID);
+	parent[_R("XOffset")].SetValue(m_XOffset);
+	parent[_R("YOffset")].SetValue(m_YOffset);
+	parent[_R("ZOffset")].SetValue(m_ZOffset);
+	parent[_R("XRotate")].SetValue(m_XRotate);
+	parent[_R("YRotate")].SetValue(m_YRotate);
+	parent[_R("ZRotate")].SetValue(m_ZRotate);
+	m_textSize = m_scriptText.size();
+	parent[_R("ScriptStrings")].SetValue(m_textSize);
+	for (int i = 0; i < m_textSize; i++)
+	{
+		mafString nm = mafString::Format(_R("ln%d"), i);
+		parent[nm].SetValue(m_scriptText[i]);
+	}
 
-  for (unsigned i = 0; i < m_vm->getInputs().size(); i++)
-  {
-    if (m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
-    {
-      auto it = m_lmMapping.find(_R(m_vm->getInputs()[i].first.c_str()));
-      if (it == m_lmMapping.end())
-      {
-        parent[_R(m_vm->getInputs()[i].first.c_str())].SetValue(_R(m_vm->getInputs()[i].first.c_str()));
-      }
-      else
-      {
-        parent[it->first].SetValue(it->second);
-      }
-    }
-    else
-    {
-      parent[_R(m_vm->getInputs()[i].first.c_str())].SetValue(m_vm->getInputs()[i].second->GetScalar());
-    }
-  }
+	for (unsigned i = 0; i < m_vm->getInputs().size(); i++)
+	{
+		if (m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
+		{
+			auto it = m_lmMapping.find(_R(m_vm->getInputs()[i].first.c_str()));
+			if (it == m_lmMapping.end())
+			{
+				parent[_R(m_vm->getInputs()[i].first.c_str())].SetValue(_R(m_vm->getInputs()[i].first.c_str()));
+			}
+			else
+			{
+				parent[it->first].SetValue(it->second);
+			}
+		}
+		else
+		{
+			parent[_R(m_vm->getInputs()[i].first.c_str())].SetValue(m_vm->getInputs()[i].second->GetScalar());
+		}
+	}
 }
 
 
 void mafVMEAFRefSys::SetBoneID(int ID)
 {
-  m_BoneID = ID;
+	m_BoneID = ID;
 }
 
 void mafVMEAFRefSys::SetActive(int active)
 {
-  if(GetParent() == nullptr)
-    return;
-  m_Active = active;
-  if(active)
-  {
-    for(unsigned i = 0; i < GetParent()->GetNumberOfChildren(); i++)
-    {
-      auto afsys = mafVMEAFRefSys::SafeDownCast(GetParent()->GetChild(i));
-      if(afsys != nullptr && afsys.get() != this)
-        afsys->SetActive(0);
-    }
-  }
+	if (GetParent() == nullptr)
+		return;
+	m_Active = active;
+	if (active)
+	{
+		for (unsigned i = 0; i < GetParent()->GetNumberOfChildren(); i++)
+		{
+			auto afsys = mafVMEAFRefSys::SafeDownCast(GetParent()->GetChild(i));
+			if (afsys != nullptr && afsys.get() != this)
+				afsys->SetActive(0);
+		}
+	}
 }
 
 
@@ -206,318 +206,318 @@ void mafVMEAFRefSys::SetActive(int active)
 void mafVMEAFRefSys::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  Superclass::InternalRestore(node);
-  m_Active = node[_R("Active")].As<int>();
-  m_BoneID = node[_R("BoneID")].As<int>();
-  m_XOffset = node[_R("XOffset")].As<double>();
-  m_YOffset = node[_R("YOffset")].As<double>();
-  m_ZOffset = node[_R("ZOffset")].As<double>();
-  m_XRotate = node[_R("XRotate")].As<double>();
-  m_YRotate = node[_R("YRotate")].As<double>();
-  m_ZRotate = node[_R("ZRotate")].As<double>();
-  m_textSize = node[_R("ScriptStrings")].As<int>();
-  m_scriptText.resize(m_textSize);
-  for (int i = 0; i < m_textSize; i++)
-  {
-    mafString nm = mafString::Format(_R("ln%d"), i);
-    m_scriptText[i] = node[nm].As<mafString>();
-  }
-  ConvertTextToVM(false);
-  for (unsigned i = 0; i < m_vm->getInputs().size(); i++)
-  {
-    if (m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
-    {
-      mafString tmp = node[_R(m_vm->getInputs()[i].first.c_str())].As<mafString>();
-      m_lmMapping[_R(m_vm->getInputs()[i].first.c_str())] = tmp;
-    }
-    else
-    {
-      m_vm->getInputs()[i].second->GetScalar() = node[_R(m_vm->getInputs()[i].first.c_str())].As<double>();
-    }
-  }
-  SetScaleFactor(m_ScaleFactor);
+	Superclass::InternalRestore(node);
+	m_Active = node[_R("Active")].As<int>();
+	m_BoneID = node[_R("BoneID")].As<int>();
+	m_XOffset = node[_R("XOffset")].As<double>();
+	m_YOffset = node[_R("YOffset")].As<double>();
+	m_ZOffset = node[_R("ZOffset")].As<double>();
+	m_XRotate = node[_R("XRotate")].As<double>();
+	m_YRotate = node[_R("YRotate")].As<double>();
+	m_ZRotate = node[_R("ZRotate")].As<double>();
+	m_textSize = node[_R("ScriptStrings")].As<int>();
+	m_scriptText.resize(m_textSize);
+	for (int i = 0; i < m_textSize; i++)
+	{
+		mafString nm = mafString::Format(_R("ln%d"), i);
+		m_scriptText[i] = node[nm].As<mafString>();
+	}
+	ConvertTextToVM(false);
+	for (unsigned i = 0; i < m_vm->getInputs().size(); i++)
+	{
+		if (m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
+		{
+			mafString tmp = node[_R(m_vm->getInputs()[i].first.c_str())].As<mafString>();
+			m_lmMapping[_R(m_vm->getInputs()[i].first.c_str())] = tmp;
+		}
+		else
+		{
+			m_vm->getInputs()[i].second->GetScalar() = node[_R(m_vm->getInputs()[i].first.c_str())].As<double>();
+		}
+	}
+	SetScaleFactor(m_ScaleFactor);
 }
 
 //-------------------------------------------------------------------------
 mafGUI* mafVMEAFRefSys::CreateGui()
 //-------------------------------------------------------------------------
 {
-	const mafString bone_choices_string[] = {_L("Undefined"),_L("Pelvis"), _L("Right thigh"), _L("Left thigh"), _L("Right shank"), _L("Left shank"), _L("Right foot"), _L("Left foot")};
-  m_Gui = Superclass::CreateGui();
-  m_Gui->Show(false);
+	const mafString bone_choices_string[] = { _L("Undefined"),_L("Pelvis"), _L("Right thigh"), _L("Left thigh"), _L("Right shank"), _L("Left shank"), _L("Right foot"), _L("Left foot") };
+	auto gui = Superclass::CreateGui();
+	gui->Show(false);
 
-  m_Gui->Bool(ID_ACTIVE, _L("Active"), &m_Active);
-  m_Gui->Divider();
+	gui->Bool(ID_ACTIVE, _L("Active"), &m_Active);
+	gui->Divider();
 
-  m_Gui->FloatSlider(ID_X_OFFSET, _R("X offset"),&m_XOffset, -1000.0, 1000.0);
-  m_Gui->FloatSlider(ID_Y_OFFSET, _R("Y offset"),&m_YOffset, -1000.0, 1000.0);
-  m_Gui->FloatSlider(ID_Z_OFFSET, _R("Z offset"),&m_ZOffset, -1000.0, 1000.0);
-  m_Gui->FloatSlider(ID_X_ROTATE, _R("X rotate"),&m_XRotate, -180.0, 180.0);
-  m_Gui->FloatSlider(ID_Y_ROTATE, _R("Y rotate"),&m_YRotate, -180.0, 180.0);
-  m_Gui->FloatSlider(ID_Z_ROTATE, _R("Z rotate"),&m_ZRotate, -180.0, 180.0);
-  m_Gui->Divider();
+	gui->FloatSlider(ID_X_OFFSET, _R("X offset"), &m_XOffset, -1000.0, 1000.0);
+	gui->FloatSlider(ID_Y_OFFSET, _R("Y offset"), &m_YOffset, -1000.0, 1000.0);
+	gui->FloatSlider(ID_Z_OFFSET, _R("Z offset"), &m_ZOffset, -1000.0, 1000.0);
+	gui->FloatSlider(ID_X_ROTATE, _R("X rotate"), &m_XRotate, -180.0, 180.0);
+	gui->FloatSlider(ID_Y_ROTATE, _R("Y rotate"), &m_YRotate, -180.0, 180.0);
+	gui->FloatSlider(ID_Z_ROTATE, _R("Z rotate"), &m_ZRotate, -180.0, 180.0);
+	gui->Divider();
 
-  for(unsigned i = 0; i < m_vm->getInputs().size(); i++)
-  {
-    if(m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
-    {
-      auto it = m_lmMapping.find(_R(m_vm->getInputs()[i].first.c_str()));
-      if(it == m_lmMapping.end())
-        continue;
-      m_Gui->Button(ID_FIRSTDYN + i, it->first, _R(""), _R("Press to modify"));
-      m_Gui->Label(it->first, &(it->second));
-      m_buttonMapping[ID_FIRSTDYN + i] = _R(m_vm->getInputs()[i].first.c_str());
-    }
-    else
-    {
-      double minlimit = (m_vm->getInputs()[i].second->IsDnLimited()) ? m_vm->getInputs()[i].second->GetDnLimit() : -(std::numeric_limits<double>::max)();
-      double maxlimit = (m_vm->getInputs()[i].second->IsUpLimited()) ? m_vm->getInputs()[i].second->GetUpLimit() : (std::numeric_limits<double>::max)();
-      if(m_vm->getInputs()[i].second->IsDnLimited() && m_vm->getInputs()[i].second->IsUpLimited())
-        m_Gui->FloatSlider(ID_FIRSTDYN + i, _R(m_vm->getInputs()[i].first.c_str()), &(m_vm->getInputs()[i].second->GetScalar()), minlimit, maxlimit);
-      else
-        m_Gui->Double(ID_FIRSTDYN + i, _R(m_vm->getInputs()[i].first.c_str()), &(m_vm->getInputs()[i].second->GetScalar()), minlimit, maxlimit);
-      m_buttonMapping[ID_FIRSTDYN + i] = _R(m_vm->getInputs()[i].first.c_str());
-    }
-  }
+	for (unsigned i = 0; i < m_vm->getInputs().size(); i++)
+	{
+		if (m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
+		{
+			auto it = m_lmMapping.find(_R(m_vm->getInputs()[i].first.c_str()));
+			if (it == m_lmMapping.end())
+				continue;
+			gui->Button(ID_FIRSTDYN + i, it->first, _R(""), _R("Press to modify"));
+			gui->Label(it->first, &(it->second));
+			m_buttonMapping[ID_FIRSTDYN + i] = _R(m_vm->getInputs()[i].first.c_str());
+		}
+		else
+		{
+			double minlimit = (m_vm->getInputs()[i].second->IsDnLimited()) ? m_vm->getInputs()[i].second->GetDnLimit() : -(std::numeric_limits<double>::max)();
+			double maxlimit = (m_vm->getInputs()[i].second->IsUpLimited()) ? m_vm->getInputs()[i].second->GetUpLimit() : (std::numeric_limits<double>::max)();
+			if (m_vm->getInputs()[i].second->IsDnLimited() && m_vm->getInputs()[i].second->IsUpLimited())
+				gui->FloatSlider(ID_FIRSTDYN + i, _R(m_vm->getInputs()[i].first.c_str()), &(m_vm->getInputs()[i].second->GetScalar()), minlimit, maxlimit);
+			else
+				gui->Double(ID_FIRSTDYN + i, _R(m_vm->getInputs()[i].first.c_str()), &(m_vm->getInputs()[i].second->GetScalar()), minlimit, maxlimit);
+			m_buttonMapping[ID_FIRSTDYN + i] = _R(m_vm->getInputs()[i].first.c_str());
+		}
+	}
 
-  m_Gui->Combo(ID_SELECT_BONEID, _R("Bone ID"), &m_BoneID, DIM(bone_choices_string), bone_choices_string);
+	gui->Combo(ID_SELECT_BONEID, _R("Bone ID"), &m_BoneID, DIM(bone_choices_string), bone_choices_string);
 
-  m_Gui->Update();
+	gui->Update();
 
-  return m_Gui;
+	return gui;
 }
 
 bool mafVMEAFRefSys::ConvertTextToVM(bool buildMapping)
 {
-  if(m_vm != NULL)
-    delete m_vm;
-  m_vm = new VecManVM<double>;
-  for(unsigned i = 0; i < m_scriptText.size(); i++)
-  {
-    if(!m_vm->ProcessString(m_scriptText[i].GetCStr()))
-      return false;
-  }
-  for(unsigned i = 0; i < m_vm->getInputs().size(); i++)
-  {
-    if(m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
-    {
-      if(buildMapping)
-      {
-        m_lmMapping[_R(m_vm->getInputs()[i].first.c_str())] = _R(m_vm->getInputs()[i].first.c_str());
-        SetRefSysLink(m_vm->getInputs()[i].first.c_str(), GetParent());
-      }
-    }
-    else
-    {
-      //actions for processing scalar inputs, actually there is nothing to do
-    }
-  }
-  return true;
+	if (m_vm != NULL)
+		delete m_vm;
+	m_vm = new VecManVM<double>;
+	for (unsigned i = 0; i < m_scriptText.size(); i++)
+	{
+		if (!m_vm->ProcessString(m_scriptText[i].GetCStr()))
+			return false;
+	}
+	for (unsigned i = 0; i < m_vm->getInputs().size(); i++)
+	{
+		if (m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
+		{
+			if (buildMapping)
+			{
+				m_lmMapping[_R(m_vm->getInputs()[i].first.c_str())] = _R(m_vm->getInputs()[i].first.c_str());
+				SetRefSysLink(m_vm->getInputs()[i].first.c_str(), GetParent());
+			}
+		}
+		else
+		{
+			//actions for processing scalar inputs, actually there is nothing to do
+		}
+	}
+	return true;
 }
 
 void mafVMEAFRefSys::SetScriptText(const std::vector<mafString>& script)
 {
-  m_scriptText = script;
-  ConvertTextToVM(true);
+	m_scriptText = script;
+	ConvertTextToVM(true);
 }
 
 void mafVMEAFRefSys::LoadScriptFromFile(const mafString& filename)
 {
-  FILE *fp = fopen(filename.GetCStr(), "rt");
-  if(fp == NULL)
-  {
-    return;
-  }
+	FILE* fp = fopen(filename.GetCStr(), "rt");
+	if (fp == NULL)
+	{
+		return;
+	}
 
-  int const maxStrLen = 1000;
-  char      sLine[maxStrLen];
-  char      *pRet;
-  m_scriptText.clear();
+	int const maxStrLen = 1000;
+	char      sLine[maxStrLen];
+	char* pRet;
+	m_scriptText.clear();
 
-  while(true)
-  {
-    pRet = fgets(sLine, maxStrLen, fp);
-    if(pRet == NULL)
-      break;
-    m_scriptText.push_back(mafString(_R(pRet)));
-  }
+	while (true)
+	{
+		pRet = fgets(sLine, maxStrLen, fp);
+		if (pRet == NULL)
+			break;
+		m_scriptText.push_back(mafString(_R(pRet)));
+	}
 
-  fclose(fp);
-  ConvertTextToVM(true);
+	fclose(fp);
+	ConvertTextToVM(true);
 }
 
 //-------------------------------------------------------------------------
-void mafVMEAFRefSys::OnEvent(mafEventBase *maf_event)
+void mafVMEAFRefSys::OnEvent(mafEventBase* maf_event)
 //-------------------------------------------------------------------------
 {
-  switch (maf_event->GetId())
-  {
-  case ID_X_OFFSET:
-  case ID_Y_OFFSET:
-  case ID_Z_OFFSET:
-  case ID_X_ROTATE:
-  case ID_Y_ROTATE:
-  case ID_Z_ROTATE:
-    {
-      wxLogMessage("ID_TRANSFORM %f %f %f %f %f %f",m_XOffset, m_YOffset, m_ZOffset, m_XRotate, m_YRotate, m_ZRotate);
-      SetTransf(m_XOffset, m_YOffset, m_ZOffset, m_XRotate, m_YRotate, m_ZRotate);
-      Modified();
-      Update();
-      GetOutput()->Update();
-      mafEvent cam_event(this,CAMERA_UPDATE);
-      ForwardUpEvent(cam_event);
-      break;
-    }
-  case ID_SELECT_BONEID:
-    break;
-  case ID_ACTIVE:
-    {
-      wxLogMessage("ID_ACTIVE %d", m_Active);
-      SetActive(m_Active);
-      break;
-    }
-  default:
-    {
-      if(maf_event->GetId() >= ID_FIRSTDYN)
-      {
-        std::map<int, mafString>::iterator itbtn = m_buttonMapping.find(maf_event->GetId());
-        if(itbtn != m_buttonMapping.end())
-        {
-          std::map<mafString, mafString>::iterator itlm = m_lmMapping.find(itbtn->second);
-          if(itlm != m_lmMapping.end())
-          {
-            mafString title = _R("Choose landmark");
-            mafEvent e(this,VME_CHOOSE); e.SetString(&title);
-            e.SetArg((intptr_t)&mafVMERefSysAbstract::LandmarkAccept);
-            e.SetString(&title);
-            e.SetId(VME_CHOOSE);
-            ForwardUpEvent(e);
-            if (auto n = e.GetVme())
-            {
-              itlm->second = n->GetName();
-              SetRefSysLink(itlm->first.GetCStr(), n->GetParent());
-            }
-          }
-        }
-        Modified();
-        Update();
-        GetOutput()->Update();
-        mafEvent cam_event(this,CAMERA_UPDATE);
-        ForwardUpEvent(cam_event);
-        break;
-      }
-      Superclass::OnEvent(maf_event);
-      break; 
-    }
-  }
+	switch (maf_event->GetId())
+	{
+	case ID_X_OFFSET:
+	case ID_Y_OFFSET:
+	case ID_Z_OFFSET:
+	case ID_X_ROTATE:
+	case ID_Y_ROTATE:
+	case ID_Z_ROTATE:
+	{
+		wxLogMessage("ID_TRANSFORM %f %f %f %f %f %f", m_XOffset, m_YOffset, m_ZOffset, m_XRotate, m_YRotate, m_ZRotate);
+		SetTransf(m_XOffset, m_YOffset, m_ZOffset, m_XRotate, m_YRotate, m_ZRotate);
+		Modified();
+		Update();
+		GetOutput()->Update();
+		mafEvent cam_event(this, CAMERA_UPDATE);
+		ForwardUpEvent(cam_event);
+		break;
+	}
+	case ID_SELECT_BONEID:
+		break;
+	case ID_ACTIVE:
+	{
+		wxLogMessage("ID_ACTIVE %d", m_Active);
+		SetActive(m_Active);
+		break;
+	}
+	default:
+	{
+		if (maf_event->GetId() >= ID_FIRSTDYN)
+		{
+			std::map<int, mafString>::iterator itbtn = m_buttonMapping.find(maf_event->GetId());
+			if (itbtn != m_buttonMapping.end())
+			{
+				std::map<mafString, mafString>::iterator itlm = m_lmMapping.find(itbtn->second);
+				if (itlm != m_lmMapping.end())
+				{
+					mafString title = _R("Choose landmark");
+					mafEvent e(this, VME_CHOOSE); e.SetString(&title);
+					e.SetArg((intptr_t)&mafVMERefSysAbstract::LandmarkAccept);
+					e.SetString(&title);
+					e.SetId(VME_CHOOSE);
+					ForwardUpEvent(e);
+					if (auto n = e.GetVme())
+					{
+						itlm->second = n->GetName();
+						SetRefSysLink(itlm->first.GetCStr(), n->GetParent());
+					}
+				}
+			}
+			Modified();
+			Update();
+			GetOutput()->Update();
+			mafEvent cam_event(this, CAMERA_UPDATE);
+			ForwardUpEvent(cam_event);
+			break;
+		}
+		Superclass::OnEvent(maf_event);
+		break;
+	}
+	}
 }
 //------------------------------------------------------------------------------
-void mafVMEAFRefSys::GetTransf(double &x, double &y, double &z, double &xr, double &yr, double &zr)
+void mafVMEAFRefSys::GetTransf(double& x, double& y, double& z, double& xr, double& yr, double& zr)
 //------------------------------------------------------------------------------
 {
-  x  = m_XOffset;
-  y  = m_YOffset;
-  z  = m_ZOffset;
-  xr = m_XRotate;
-  yr = m_YRotate;
-  zr = m_ZRotate;
-  return;
+	x = m_XOffset;
+	y = m_YOffset;
+	z = m_ZOffset;
+	xr = m_XRotate;
+	yr = m_YRotate;
+	zr = m_ZRotate;
+	return;
 }
 //-------------------------------------------------------------------------
 void mafVMEAFRefSys::SetTransf(double x, double y, double z, double xr, double yr, double zr)
 //-------------------------------------------------------------------------
 {
-  m_XOffset = x;
-  m_YOffset = y;
-  m_ZOffset = z;
-  m_XRotate = xr;
-  m_YRotate = yr;
-  m_ZRotate = zr;
-  Modified();
-  InternalUpdateMatrix();
+	m_XOffset = x;
+	m_YOffset = y;
+	m_ZOffset = z;
+	m_XRotate = xr;
+	m_YRotate = yr;
+	m_ZRotate = zr;
+	Modified();
+	InternalUpdateMatrix();
 }
 
 //-----------------------------------------------------------------------
 bool mafVMEAFRefSys::UpdateVM(mafTimeStamp ts)
 //-----------------------------------------------------------------------
 {
-  auto parentLMC = mafVMELandmarkCloud::SafeDownCast(GetParent());
-  if(m_vm == NULL)
-    return false;
-  m_VMValid = false;
-  m_VMTime  = ts;
-  m_vm->Preexecute();
+	auto parentLMC = mafVMELandmarkCloud::SafeDownCast(GetParent());
+	if (m_vm == NULL)
+		return false;
+	m_VMValid = false;
+	m_VMTime = ts;
+	m_vm->Preexecute();
 	std::map<mafVMELandmarkCloud*, std::pair<std::vector<int>, std::vector<unsigned> > >  lmcMap;
 
-  for(unsigned i = 0; i < m_vm->getInputs().size(); i++)
-  {
-    if (m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
-    {
-      V3d<double>         vec;
-      mafVMELandmarkCloud* lmcLink = NULL;
-      int                 ind = -1;
-      {
-        auto it = m_lmMapping.find(_R(m_vm->getInputs()[i].first.c_str()));
-        if (it == m_lmMapping.end())
-          continue;
-        mafVMELandmarkCloud* tmpLink = mafVMELandmarkCloud::SafeDownCast(GetLink(_R(m_vm->getInputs()[i].first.c_str())));
-        lmcLink = (tmpLink != NULL) ? tmpLink : parentLMC;
-        if (lmcLink != NULL)
-        {
-          SetRefSysLink(m_vm->getInputs()[i].first.c_str(), lmcLink);
-          mafString refname;
-          refname = ToLower(it->second);
-          int numberOfLandmarks = lmcLink->GetNumberOfLandmarks();
-          for (int i = 0; i < numberOfLandmarks; i++)
-          {
-            mafString lm_name = ToLower(lmcLink->GetLandmarkName(i));
-            if (lm_name == refname)
-            {
-              ind = i;
-              break;
-            }
-          }
-        }
-      }
-      if (lmcLink == nullptr || ind == -1)
-        continue;
-      auto& e = lmcMap[lmcLink];
-      e.first.push_back(ind);
-    	e.second.push_back(i);
-    }
-    else
-    {
-      //actions for processing scalar inputs, actually there is nothing to do
-    }
-    m_vm->getInputs()[i].second->GetValid() = true;
-  }
+	for (unsigned i = 0; i < m_vm->getInputs().size(); i++)
+	{
+		if (m_vm->getInputs()[i].second->GetType() == Param<double>::VECTOR)
+		{
+			V3d<double>         vec;
+			mafVMELandmarkCloud* lmcLink = NULL;
+			int                 ind = -1;
+			{
+				auto it = m_lmMapping.find(_R(m_vm->getInputs()[i].first.c_str()));
+				if (it == m_lmMapping.end())
+					continue;
+				mafVMELandmarkCloud* tmpLink = mafVMELandmarkCloud::SafeDownCast(GetLink(_R(m_vm->getInputs()[i].first.c_str())));
+				lmcLink = (tmpLink != NULL) ? tmpLink : parentLMC;
+				if (lmcLink != NULL)
+				{
+					SetRefSysLink(m_vm->getInputs()[i].first.c_str(), lmcLink);
+					mafString refname;
+					refname = ToLower(it->second);
+					int numberOfLandmarks = lmcLink->GetNumberOfLandmarks();
+					for (int i = 0; i < numberOfLandmarks; i++)
+					{
+						mafString lm_name = ToLower(lmcLink->GetLandmarkName(i));
+						if (lm_name == refname)
+						{
+							ind = i;
+							break;
+						}
+					}
+				}
+			}
+			if (lmcLink == nullptr || ind == -1)
+				continue;
+			auto& e = lmcMap[lmcLink];
+			e.first.push_back(ind);
+			e.second.push_back(i);
+		}
+		else
+		{
+			//actions for processing scalar inputs, actually there is nothing to do
+		}
+		m_vm->getInputs()[i].second->GetValid() = true;
+	}
 
-  for (auto& entry : lmcMap)
-  {
-    auto lmcLink = entry.first;
-    std::vector<double> coords(3 * entry.second.first.size());
-    std::vector<int> vis(3 * entry.second.first.size());
-    const_cast<mafVMELandmarkCloud*>(lmcLink)->GetLandmarksPosVis(entry.second.first.data(), entry.second.first.size(), coords.data(), vis.data(), ts);
-    mafMatrix cloudAbs;
-    double invec[4];
-    double outvec[4];
-    lmcLink->GetOutput()->GetAbsMatrix(cloudAbs, ts);
-    for(size_t ii = 0; ii < vis.size(); ii++)
-    {
-      if (vis[ii] == 0)
-        continue;
-      for (unsigned indx = 0; indx < 3; indx++)
-        invec[indx] = coords[3 * ii + indx];
-      invec[3] = 1.0;
-      cloudAbs.MultiplyPoint(invec, outvec);
-      m_vm->getInputs()[entry.second.second[ii]].second->GetVector() = outvec;
-    }
-  }
+	for (auto& entry : lmcMap)
+	{
+		auto lmcLink = entry.first;
+		std::vector<double> coords(3 * entry.second.first.size());
+		std::vector<int> vis(3 * entry.second.first.size());
+		const_cast<mafVMELandmarkCloud*>(lmcLink)->GetLandmarksPosVis(entry.second.first.data(), entry.second.first.size(), coords.data(), vis.data(), ts);
+		mafMatrix cloudAbs;
+		double invec[4];
+		double outvec[4];
+		lmcLink->GetOutput()->GetAbsMatrix(cloudAbs, ts);
+		for (size_t ii = 0; ii < vis.size(); ii++)
+		{
+			if (vis[ii] == 0)
+				continue;
+			for (unsigned indx = 0; indx < 3; indx++)
+				invec[indx] = coords[3 * ii + indx];
+			invec[3] = 1.0;
+			cloudAbs.MultiplyPoint(invec, outvec);
+			m_vm->getInputs()[entry.second.second[ii]].second->GetVector() = outvec;
+		}
+	}
 
-  bool result = m_vm->Execute();
-  if(result)
-    m_VMValid = true;
-  return result;
+	bool result = m_vm->Execute();
+	if (result)
+		m_VMValid = true;
+	return result;
 }
 
 
@@ -525,123 +525,123 @@ bool mafVMEAFRefSys::UpdateVM(mafTimeStamp ts)
 void mafVMEAFRefSys::CalculateMatrix(mafMatrix& mat, mafTimeStamp ts)
 //-----------------------------------------------------------------------
 {
-  bool calculated = UpdateVM(ts);
+	bool calculated = UpdateVM(ts);
 
-  mafMatrix mTran, mTrant;
-  V4d<double>    pos, rot;
+	mafMatrix mTran, mTrant;
+	V4d<double>    pos, rot;
 
-  V3d<double> x, y, z, p;
+	V3d<double> x, y, z, p;
 
-  Param<double> *XParam = NULL;
-  Param<double> *YParam = NULL;
-  Param<double> *ZParam = NULL;
-  Param<double> *PParam = NULL;
+	Param<double>* XParam = NULL;
+	Param<double>* YParam = NULL;
+	Param<double>* ZParam = NULL;
+	Param<double>* PParam = NULL;
 
-  if(m_vm)
-  {
-      XParam = m_vm->GetParam("X");
-      YParam = m_vm->GetParam("Y");
-      ZParam = m_vm->GetParam("Z");
-      PParam = m_vm->GetParam("P");
-  }
+	if (m_vm)
+	{
+		XParam = m_vm->GetParam("X");
+		YParam = m_vm->GetParam("Y");
+		ZParam = m_vm->GetParam("Z");
+		PParam = m_vm->GetParam("P");
+	}
 
-  if(XParam == NULL || XParam->GetType() != Param<double>::VECTOR || !XParam->IsValid())
-    calculated = false;
-  else 
-    x = XParam->GetVector();
-  if(YParam == NULL || YParam->GetType() != Param<double>::VECTOR || !YParam->IsValid())
-    calculated = false;
-  else 
-    y = YParam->GetVector();
-  if(ZParam == NULL || ZParam->GetType() != Param<double>::VECTOR || !ZParam->IsValid())
-    calculated = false;
-  else 
-    z = ZParam->GetVector();
-  if(PParam == NULL || PParam->GetType() != Param<double>::VECTOR || !PParam->IsValid())
-    calculated = false;
-  else 
-    p = PParam->GetVector();
+	if (XParam == NULL || XParam->GetType() != Param<double>::VECTOR || !XParam->IsValid())
+		calculated = false;
+	else
+		x = XParam->GetVector();
+	if (YParam == NULL || YParam->GetType() != Param<double>::VECTOR || !YParam->IsValid())
+		calculated = false;
+	else
+		y = YParam->GetVector();
+	if (ZParam == NULL || ZParam->GetType() != Param<double>::VECTOR || !ZParam->IsValid())
+		calculated = false;
+	else
+		z = ZParam->GetVector();
+	if (PParam == NULL || PParam->GetType() != Param<double>::VECTOR || !PParam->IsValid())
+		calculated = false;
+	else
+		p = PParam->GetVector();
 
-  std::pair<const char*, V3d<double>*> vects[4] = {std::make_pair("X", &x), std::make_pair("Y", &y), std::make_pair("Z", &z), std::make_pair("P", &p)};
+	std::pair<const char*, V3d<double>*> vects[4] = { std::make_pair("X", &x), std::make_pair("Y", &y), std::make_pair("Z", &z), std::make_pair("P", &p) };
 
-  for(unsigned i = 0; i < 4 && calculated; i++)
-  {
-    if(!m_vm->GetVector(vects[i].first, *vects[i].second))
-      calculated = false;
-  }
+	for (unsigned i = 0; i < 4 && calculated; i++)
+	{
+		if (!m_vm->GetVector(vects[i].first, *vects[i].second))
+			calculated = false;
+	}
 
-  if(calculated)
-  {
-    mTrant.SetElement(0, 0, x.x);
-    mTrant.SetElement(1, 0, x.y);
-    mTrant.SetElement(2, 0, x.z);
-    mTrant.SetElement(3, 0, 0.0);
-    mTrant.SetElement(0, 1, y.x);
-    mTrant.SetElement(1, 1, y.y);
-    mTrant.SetElement(2, 1, y.z);
-    mTrant.SetElement(3, 1, 0.0);
-    mTrant.SetElement(0, 2, z.x);
-    mTrant.SetElement(1, 2, z.y);
-    mTrant.SetElement(2, 2, z.z);
-    mTrant.SetElement(3, 2, 0.0);
-    mTrant.SetElement(0, 3, p.x);
-    mTrant.SetElement(1, 3, p.y);
-    mTrant.SetElement(2, 3, p.z);
-    mTrant.SetElement(3, 3, 1.0);
-  }
-  else
-  {
-    mTrant.Identity();
-  }
-
-
-  pos.x = m_XOffset;
-  pos.y = m_YOffset;
-  pos.z = m_ZOffset;
-  pos.w = 1;
-  rot.x = m_XRotate * mafMatrix3x3::DegreesToRadians();
-  rot.y = m_YRotate * mafMatrix3x3::DegreesToRadians();
-  rot.z = m_ZRotate * mafMatrix3x3::DegreesToRadians();
-  rot.w = 1;
+	if (calculated)
+	{
+		mTrant.SetElement(0, 0, x.x);
+		mTrant.SetElement(1, 0, x.y);
+		mTrant.SetElement(2, 0, x.z);
+		mTrant.SetElement(3, 0, 0.0);
+		mTrant.SetElement(0, 1, y.x);
+		mTrant.SetElement(1, 1, y.y);
+		mTrant.SetElement(2, 1, y.z);
+		mTrant.SetElement(3, 1, 0.0);
+		mTrant.SetElement(0, 2, z.x);
+		mTrant.SetElement(1, 2, z.y);
+		mTrant.SetElement(2, 2, z.z);
+		mTrant.SetElement(3, 2, 0.0);
+		mTrant.SetElement(0, 3, p.x);
+		mTrant.SetElement(1, 3, p.y);
+		mTrant.SetElement(2, 3, p.z);
+		mTrant.SetElement(3, 3, 1.0);
+	}
+	else
+	{
+		mTrant.Identity();
+	}
 
 
-  mafTransfComposeMatrixStright(&mTran, &rot, &pos);
-  mafMatrix::Multiply4x4(mTrant, mTran, mat);
-  mat.SetTimeStamp(ts);
+	pos.x = m_XOffset;
+	pos.y = m_YOffset;
+	pos.z = m_ZOffset;
+	pos.w = 1;
+	rot.x = m_XRotate * mafMatrix3x3::DegreesToRadians();
+	rot.y = m_YRotate * mafMatrix3x3::DegreesToRadians();
+	rot.z = m_ZRotate * mafMatrix3x3::DegreesToRadians();
+	rot.w = 1;
+
+
+	mafTransfComposeMatrixStright(&mTran, &rot, &pos);
+	mafMatrix::Multiply4x4(mTrant, mTran, mat);
+	mat.SetTimeStamp(ts);
 }
 
 //-----------------------------------------------------------------------
-bool mafVMEAFRefSys::GetVector(const char *name, mafTimeStamp ts, V3d<double>& output)
+bool mafVMEAFRefSys::GetVector(const char* name, mafTimeStamp ts, V3d<double>& output)
 //-----------------------------------------------------------------------
 {
-  if(m_vm == NULL) 
-    return false;
-  Param<double> *tmp = NULL;
+	if (m_vm == NULL)
+		return false;
+	Param<double>* tmp = NULL;
 
-  UpdateVM(ts);
+	UpdateVM(ts);
 
-  tmp = m_vm->GetParam(name);
+	tmp = m_vm->GetParam(name);
 
-  if(tmp == NULL || tmp->GetType() != Param<double>::VECTOR || !tmp->IsValid())
-    return false;
-  output = tmp->GetVector();
-  return true;
+	if (tmp == NULL || tmp->GetType() != Param<double>::VECTOR || !tmp->IsValid())
+		return false;
+	output = tmp->GetVector();
+	return true;
 }
 
 //-----------------------------------------------------------------------
-bool mafVMEAFRefSys::GetScalar(const char *name, mafTimeStamp ts, double&  output)
+bool mafVMEAFRefSys::GetScalar(const char* name, mafTimeStamp ts, double& output)
 //-----------------------------------------------------------------------
 {
-  if(m_vm == NULL) 
-    return false;
-  Param<double> *tmp = NULL;
+	if (m_vm == NULL)
+		return false;
+	Param<double>* tmp = NULL;
 
-  UpdateVM(ts);
+	UpdateVM(ts);
 
-  tmp = m_vm->GetParam(name);
+	tmp = m_vm->GetParam(name);
 
-  if(tmp == NULL || tmp->GetType() != Param<double>::SCALAR || !tmp->IsValid())
-    return false;
-  output = tmp->GetScalar();
-  return true;
+	if (tmp == NULL || tmp->GetType() != Param<double>::SCALAR || !tmp->IsValid())
+		return false;
+	output = tmp->GetScalar();
+	return true;
 }

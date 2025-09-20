@@ -1,28 +1,3 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafPipeBox
- Authors: Silvano Imboden, Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
 #include "mafPipeBox.h"
 #include "mafSceneNode.h"
 #include "mafGUI.h"
@@ -41,67 +16,61 @@
 #include "vtkPolyData.h"
 #include "vtkProperty.h"
 
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(mafPipeBox);
-//----------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------
-mafPipeBox::mafPipeBox() 
-//----------------------------------------------------------------------------
+mafPipeBox::mafPipeBox()
 {
-  m_Box             = NULL;
-  m_Mapper          = NULL;
-  m_Actor           = NULL;
-  m_OutlineBox      = NULL;
-  m_OutlineMapper   = NULL;
-  m_OutlineProperty = NULL;
-  m_OutlineActor    = NULL;
-  m_Axes            = NULL;
+	m_Box = NULL;
+	m_Mapper = NULL;
+	m_Actor = NULL;
+	m_OutlineBox = NULL;
+	m_OutlineMapper = NULL;
+	m_OutlineProperty = NULL;
+	m_OutlineActor = NULL;
+	m_Axes = NULL;
 
-  m_BoundsMode = 0;
+	m_BoundsMode = 0;
 }
 //----------------------------------------------------------------------------
-void mafPipeBox::Create(mafNode *node, mafView *view/*, bool use_axes*/)
+void mafPipeBox::Create(mafNode* node, mafView* view/*, bool use_axes*/)
 //----------------------------------------------------------------------------
 {
-  Superclass::Create(node, view);
-  
-  m_Selected = false;
-  m_Box             = NULL;
-  m_Mapper          = NULL;
-  m_Actor           = NULL;
-  m_OutlineBox      = NULL;
-  m_OutlineMapper   = NULL;
-  m_OutlineProperty = NULL;
-  m_OutlineActor    = NULL;
+	Superclass::Create(node, view);
 
-  m_BoundsMode = 0;
+	m_Selected = false;
+	m_Box = NULL;
+	m_Mapper = NULL;
+	m_Actor = NULL;
+	m_OutlineBox = NULL;
+	m_OutlineMapper = NULL;
+	m_OutlineProperty = NULL;
+	m_OutlineActor = NULL;
+
+	m_BoundsMode = 0;
 
 	m_Vme->AddObserver(this);
 
-  double b[6];
-  m_Vme->GetOutput()->Update();
-  m_Vme->GetOutput()->GetVMELocalBounds(b);
+	double b[6];
+	m_Vme->GetOutput()->Update();
+	m_Vme->GetOutput()->GetVMELocalBounds(b);
 
-  vtkNEW(m_Box);
-  m_Box->SetBounds(b);
+	vtkNEW(m_Box);
+	m_Box->SetBounds(b);
 
-  vtkNEW(m_Mapper);
+	vtkNEW(m_Mapper);
 	m_Mapper->SetInputConnection(m_Box->GetOutputPort());
-  
+
 #if VTK_MAJOR_VERSION <= 7
-	if(m_Vme->IsAnimated())
+	if (m_Vme->IsAnimated())
 		m_Mapper->ImmediateModeRenderingOn();	 //avoid Display-Lists for animated items.
 	else
 		m_Mapper->ImmediateModeRenderingOff();
 #endif
 
-  vtkNEW(m_Actor);
+	vtkNEW(m_Actor);
 	m_Actor->SetMapper(m_Mapper);
 
-  m_AssemblyFront->AddPart(m_Actor);
+	m_AssemblyFront->AddPart(m_Actor);
 
-  // selection highlight
+	// selection highlight
 	vtkNEW(m_OutlineBox);
 	m_OutlineBox->SetInputConnection(m_Box->GetOutputPort());
 
@@ -109,25 +78,25 @@ void mafPipeBox::Create(mafNode *node, mafView *view/*, bool use_axes*/)
 	m_OutlineMapper->SetInputConnection(m_OutlineBox->GetOutputPort());
 
 	vtkNEW(m_OutlineProperty);
-	m_OutlineProperty->SetColor(1,1,1);
+	m_OutlineProperty->SetColor(1, 1, 1);
 	m_OutlineProperty->SetAmbient(1);
 	m_OutlineProperty->SetRepresentationToWireframe();
 	m_OutlineProperty->SetInterpolationToFlat();
 
 	vtkNEW(m_OutlineActor);
 	m_OutlineActor->SetScale(1.01);
-  m_OutlineActor->SetMapper(m_OutlineMapper);
+	m_OutlineActor->SetMapper(m_OutlineMapper);
 	m_OutlineActor->VisibilityOff();
 	m_OutlineActor->PickableOff();
 	m_OutlineActor->SetProperty(m_OutlineProperty);
 
-  m_AssemblyFront->AddPart(m_OutlineActor);
+	m_AssemblyFront->AddPart(m_OutlineActor);
 
-  if(m_RenFront)
-  {
-    m_Axes = std::make_unique<mafAxes>(m_RenFront, m_Vme);
-    m_Axes->SetVisibility(0);
-  }
+	if (m_RenFront)
+	{
+		m_Axes = std::make_unique<mafAxes>(m_RenFront, m_Vme);
+		m_Axes->SetVisibility(0);
+	}
 }
 //----------------------------------------------------------------------------
 mafPipeBox::~mafPipeBox()
@@ -135,16 +104,16 @@ mafPipeBox::~mafPipeBox()
 {
 	m_Vme->RemoveObserver(this);
 
-  m_AssemblyFront->RemovePart(m_Actor);
-  m_AssemblyFront->RemovePart(m_OutlineActor);
+	m_AssemblyFront->RemovePart(m_Actor);
+	m_AssemblyFront->RemovePart(m_OutlineActor);
 
-  vtkDEL(m_Box);
+	vtkDEL(m_Box);
 	vtkDEL(m_Mapper);
-  vtkDEL(m_Actor);
-  vtkDEL(m_OutlineBox);
-  vtkDEL(m_OutlineMapper);
-  vtkDEL(m_OutlineProperty);
-  vtkDEL(m_OutlineActor);
+	vtkDEL(m_Actor);
+	vtkDEL(m_OutlineBox);
+	vtkDEL(m_OutlineMapper);
+	vtkDEL(m_OutlineProperty);
+	vtkDEL(m_OutlineActor);
 	m_Axes.reset();
 }
 //----------------------------------------------------------------------------
@@ -152,7 +121,7 @@ void mafPipeBox::Select(bool sel)
 //----------------------------------------------------------------------------
 {
 	m_Selected = sel;
-	if(m_Actor->GetVisibility()) 
+	if (m_Actor->GetVisibility())
 	{
 		m_OutlineActor->SetVisibility(sel);
 		m_Axes->SetVisibility(sel);
@@ -166,109 +135,109 @@ void mafPipeBox::UpdateProperty(bool fromTag)
 	if(fromTag)
   {
 		((mafVmeData *)m_Vme->GetClientData())->UpdateFromTag();
-    int idx = m_Vme->GetTagArray()->FindTag("VME_CENTER_ROTATION_POSE");
-    vtkTagItem *item = NULL;
-    double vec[16];
-    if (idx != -1)
-    {
-      item = m_Vme->GetTagArray()->GetTag(idx);
-      mflSmartPointer<vtkMatrix4x4> pose;
-      for (int el=0;el<16;el++)
-      {
-        vec[el] = item->GetValueAsDouble(el);
-      }
-      pose->DeepCopy(vec);
-      m_axes->SetPose(pose);
-    }
-    else
-      m_axes->SetPose();
+	int idx = m_Vme->GetTagArray()->FindTag("VME_CENTER_ROTATION_POSE");
+	vtkTagItem *item = NULL;
+	double vec[16];
+	if (idx != -1)
+	{
+	  item = m_Vme->GetTagArray()->GetTag(idx);
+	  mflSmartPointer<vtkMatrix4x4> pose;
+	  for (int el=0;el<16;el++)
+	  {
+		vec[el] = item->GetValueAsDouble(el);
+	  }
+	  pose->DeepCopy(vec);
+	  m_axes->SetPose(pose);
+	}
+	else
+	  m_axes->SetPose();
   }
   else
 	  m_Mapper->SetScalarVisibility(((mafVmeData *)m_Vme->GetClientData())->GetColorByScalar());
 	*/
-	
-  if(m_Box)
-  {
-	  double b[6];
-	  m_Vme->GetOutput()->Update();
-	  m_Vme->GetOutput()->GetVMELocalBounds(b);
+
+	if (m_Box)
+	{
+		double b[6];
+		m_Vme->GetOutput()->Update();
+		m_Vme->GetOutput()->GetVMELocalBounds(b);
 
 		m_Box->SetBounds(b);
 		m_Box->Update();
 	}
 }
 //-------------------------------------------------------------------------
-mafGUI *mafPipeBox::CreateGui()
+mafGUI* mafPipeBox::CreateGui()
 //-------------------------------------------------------------------------
 {
-  mafString box_type[] = {_L("3D"), _L("4D"),_L("3D Subtree"),_L("4D Subtree")};
-  int num_choices = 4;
+	mafString box_type[] = { _L("3D"), _L("4D"),_L("3D Subtree"),_L("4D Subtree") };
+	int num_choices = 4;
 
-  assert(m_Gui == NULL);
-  m_Gui = new mafGUI(this);
-  m_Gui->Combo(ID_BOUNDS_MODE, _L("bounds"), &m_BoundsMode, num_choices, box_type);
-  m_Gui->Divider();
-	return m_Gui;
+	assert(!AccessGUI());
+	auto gui = new mafGUI(this);
+	gui->Combo(ID_BOUNDS_MODE, _L("bounds"), &m_BoundsMode, num_choices, box_type);
+	gui->Divider();
+	return gui;
 }
 //----------------------------------------------------------------------------
-void mafPipeBox::OnEvent(mafEventBase *maf_event)
+void mafPipeBox::OnEvent(mafEventBase* maf_event)
 //----------------------------------------------------------------------------
 {
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    switch(e->GetId()) 
-    {
-      case ID_BOUNDS_MODE:
-      {
-        double b[6];
-        switch(m_BoundsMode) 
-        {
-          case BOUNDS_3D:
-            m_Vme->GetOutput()->GetVMELocalBounds(b);
-        	break;
-          case BOUNDS_4D:
-            m_Vme->GetOutput()->GetVME4DBounds(b);
-          break;
-          case BOUNDS_3D_SUBTREE:
-            m_Vme->GetOutput()->GetBounds(b);
-          break;
-          default:
-            m_Vme->GetOutput()->Get4DBounds(b);
-          break;
-        }
-        if (m_BoundsMode != BOUNDS_3D)
-        {
-          double min_vector[4], max_vector[4];
-          min_vector[0] = b[0];
-          min_vector[1] = b[2];
-          min_vector[2] = b[4];
-          max_vector[0] = b[1];
-          max_vector[1] = b[3];
-          max_vector[2] = b[5];
-          min_vector[3] = max_vector[3] = 1;
-          auto absMat = m_Vme->GetOutput()->GetAbsMatrix();
-          mafMatrix invAbsMat;
-          mafMatrix::Invert(*absMat, invAbsMat);
-          invAbsMat.MultiplyPoint(min_vector, min_vector);
-          invAbsMat.MultiplyPoint(max_vector, max_vector);
-          b[0] = min_vector[0];
-          b[2] = min_vector[1];
-          b[4] = min_vector[2];
-          b[1] = max_vector[0];
-          b[3] = max_vector[1];
-          b[5] = max_vector[2];
-        }
-        m_Box->SetBounds(b);
-      }
-   	  break;
-      default:
-        e->Log();
-    }
-    //mafEvent cam_event(this,CAMERA_UPDATE);
-    //m_Vme->ForwardUpEvent(cam_event);
-    {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-  }
-	if(maf_event->GetId() == VME_OUTPUT_DATA_UPDATE)
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
+	{
+		switch (e->GetId())
+		{
+		case ID_BOUNDS_MODE:
+		{
+			double b[6];
+			switch (m_BoundsMode)
+			{
+			case BOUNDS_3D:
+				m_Vme->GetOutput()->GetVMELocalBounds(b);
+				break;
+			case BOUNDS_4D:
+				m_Vme->GetOutput()->GetVME4DBounds(b);
+				break;
+			case BOUNDS_3D_SUBTREE:
+				m_Vme->GetOutput()->GetBounds(b);
+				break;
+			default:
+				m_Vme->GetOutput()->Get4DBounds(b);
+				break;
+			}
+			if (m_BoundsMode != BOUNDS_3D)
+			{
+				double min_vector[4], max_vector[4];
+				min_vector[0] = b[0];
+				min_vector[1] = b[2];
+				min_vector[2] = b[4];
+				max_vector[0] = b[1];
+				max_vector[1] = b[3];
+				max_vector[2] = b[5];
+				min_vector[3] = max_vector[3] = 1;
+				auto absMat = m_Vme->GetOutput()->GetAbsMatrix();
+				mafMatrix invAbsMat;
+				mafMatrix::Invert(*absMat, invAbsMat);
+				invAbsMat.MultiplyPoint(min_vector, min_vector);
+				invAbsMat.MultiplyPoint(max_vector, max_vector);
+				b[0] = min_vector[0];
+				b[2] = min_vector[1];
+				b[4] = min_vector[2];
+				b[1] = max_vector[0];
+				b[3] = max_vector[1];
+				b[5] = max_vector[2];
+			}
+			m_Box->SetBounds(b);
+		}
+		break;
+		default:
+			e->Log();
+		}
+		//mafEvent cam_event(this,CAMERA_UPDATE);
+		//m_Vme->ForwardUpEvent(cam_event);
+		{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+	}
+	if (maf_event->GetId() == VME_OUTPUT_DATA_UPDATE)
 	{
 		UpdateProperty();
 	}

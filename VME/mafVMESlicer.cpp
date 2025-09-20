@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafVMESlicer
  Authors: Marco Petrone
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -58,233 +58,233 @@ mafCxxTypeMacro(mafVMESlicer)
 mafVMESlicer::mafVMESlicer()
 //-------------------------------------------------------------------------
 {
-  m_UpdateVTKPropertiesFromMaterial = true;
+	m_UpdateVTKPropertiesFromMaterial = true;
 
-  m_Transform = mafTransform::NewSPtr();
-  m_CopyTransform = mafTransform::NewSPtr();
-  mafVMEOutputSurface *output=mafVMEOutputSurface::New(); // an output with no data
-  output->SetTransform(m_Transform); // force my transform in the output
-  SetOutput(output);
+	m_Transform = mafTransform::NewSPtr();
+	m_CopyTransform = mafTransform::NewSPtr();
+	mafVMEOutputSurface* output = mafVMEOutputSurface::New(); // an output with no data
+	output->SetTransform(m_Transform); // force my transform in the output
+	SetOutput(output);
 
-  m_TextureRes = 512;
-  m_Xspc = m_Yspc = 0.3;
+	m_TextureRes = 512;
+	m_Xspc = m_Yspc = 0.3;
 
-  vtkNew<vtkImageData> image;
-  image->SetExtent(0, m_TextureRes - 1, 0, m_TextureRes - 1, 0, 0);
-  //image->SetUpdateExtent(0, m_TextureRes - 1, 0, m_TextureRes - 1, 0, 0);
-  image->SetSpacing(m_Xspc, m_Yspc, 1.f);
+	vtkNew<vtkImageData> image;
+	image->SetExtent(0, m_TextureRes - 1, 0, m_TextureRes - 1, 0, 0);
+	//image->SetUpdateExtent(0, m_TextureRes - 1, 0, m_TextureRes - 1, 0, 0);
+	image->SetSpacing(m_Xspc, m_Yspc, 1.f);
 
-  vtkNew<vtkPolyData> slice;
+	vtkNew<vtkPolyData> slice;
 
-  vtkNEW(m_PSlicer);
-  vtkNEW(m_ISlicer);
-  m_PSlicer->SetOutput(slice);
-  m_PSlicer->SetTexture(image);
-  m_ISlicer->SetOutput(image);
-  
-  vtkNEW(m_BackTransform);
-  m_BackTransform->SetInputData(slice);
+	vtkNEW(m_PSlicer);
+	vtkNEW(m_ISlicer);
+	m_PSlicer->SetOutput(slice);
+	m_PSlicer->SetTexture(image);
+	m_ISlicer->SetOutput(image);
 
-  DependsOnLinkedNodeOn();
+	vtkNEW(m_BackTransform);
+	m_BackTransform->SetInputData(slice);
 
-  // attach a datapipe which creates a bridge between VTK and MAF
-  auto dpipe = mafDataPipeCustom::NewSPtr();
-  dpipe->SetDependOnAbsPose(true);
-  SetDataPipe(dpipe);
+	DependsOnLinkedNodeOn();
 
-  dpipe->SetInputConnection(m_BackTransform->GetOutputPort());
-  //dpipe->SetNthInput(1,image);
+	// attach a datapipe which creates a bridge between VTK and MAF
+	auto dpipe = mafDataPipeCustom::NewSPtr();
+	dpipe->SetDependOnAbsPose(true);
+	SetDataPipe(dpipe);
 
-  // set the texture in the output, must do it here, after setting slicer filter's input
-  //GetSurfaceOutput()->SetTexture((vtkImageData *)dpipe->GetVTKDataPipe()->GetOutput(1));
-  //GetMaterial()->SetMaterialTexture(GetSurfaceOutput()->GetTexture());
-  GetMaterial()->m_MaterialType = mmaMaterial::USE_TEXTURE;
-  GetMaterial()->m_TextureMappingMode = mmaMaterial::PLANE_MAPPING;
+	dpipe->SetInputConnection(m_BackTransform->GetOutputPort());
+	//dpipe->SetNthInput(1,image);
 
-  m_TrilinearInterpolationOn = true;
+	// set the texture in the output, must do it here, after setting slicer filter's input
+	//GetSurfaceOutput()->SetTexture((vtkImageData *)dpipe->GetVTKDataPipe()->GetOutput(1));
+	//GetMaterial()->SetMaterialTexture(GetSurfaceOutput()->GetTexture());
+	GetMaterial()->m_MaterialType = mmaMaterial::USE_TEXTURE;
+	GetMaterial()->m_TextureMappingMode = mmaMaterial::PLANE_MAPPING;
+
+	m_TrilinearInterpolationOn = true;
 }
 
 //-------------------------------------------------------------------------
 mafVMESlicer::~mafVMESlicer()
 //-------------------------------------------------------------------------
 {
-  //vtkDEL(m_BackTransformParent);
-  vtkDEL(m_BackTransform);
-  SetOutput(NULL);
+	//vtkDEL(m_BackTransformParent);
+	vtkDEL(m_BackTransform);
+	SetOutput(NULL);
 
-  vtkDEL(m_PSlicer);
-  vtkDEL(m_ISlicer);
+	vtkDEL(m_PSlicer);
+	vtkDEL(m_ISlicer);
 }
 
 //-------------------------------------------------------------------------
 std::shared_ptr<mmaMaterial> mafVMESlicer::GetMaterial()
 //-------------------------------------------------------------------------
 {
-  auto material = mmaMaterial::SafeDownCast(GetAttribute(mmaMaterial::GetAttributeName()));
-  if (!material)
-  {
-    material = mmaMaterial::NewSPtr();
-    SetAttribute(material);
-    lutPreset(4,material->m_ColorLut);
-  }
-  return material;
+	auto material = mmaMaterial::SafeDownCast(GetAttribute(mmaMaterial::GetAttributeName()));
+	if (!material)
+	{
+		material = mmaMaterial::NewSPtr();
+		SetAttribute(material);
+		lutPreset(4, material->m_ColorLut);
+	}
+	return material;
 }
 
 //-------------------------------------------------------------------------
-int mafVMESlicer::DeepCopy(mafNode *a)
-//-------------------------------------------------------------------------
-{ 
-  if (Superclass::DeepCopy(a)==MAF_OK)
-  {
-    mafVMESlicer *slicer = mafVMESlicer::SafeDownCast(a);
-    mafNode *linked_node = slicer->GetSlicedVMELink();
-    if (linked_node)
-    {
-      this->SetLink(_R("SlicedVME"), linked_node);
-    }
-
-    m_Transform->SetMatrix(slicer->m_Transform->GetMatrix());
-    mafDataPipeCustom *dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
-    if (dpipe)
-    {
-      dpipe->SetDependOnAbsPose(true);
-      dpipe->SetInputConnection(m_BackTransform->GetOutputPort());
-      //dpipe->SetNthInput(1,m_PSlicer->GetTexture());
-    }
-    m_SlicedName      = slicer->m_SlicedName;
-    //GetMaterial()->SetMaterialTexture(m_PSlicer->GetTexture());
-    return MAF_OK;
-  }  
-  return MAF_ERROR;
-}
-
-//-------------------------------------------------------------------------
-bool mafVMESlicer::Equals(mafVME *vme)
+int mafVMESlicer::DeepCopy(mafNode* a)
 //-------------------------------------------------------------------------
 {
-  bool ret = false;
-  if (Superclass::Equals(vme))
-  {
-    return ret = (m_Transform->GetMatrix()==((mafVMESlicer *)vme)->m_Transform->GetMatrix() &&
-                  m_SlicedName      == ((mafVMESlicer *)vme)->m_SlicedName &&
-                  GetLink(_R("SlicedVME")) == ((mafVMESlicer *)vme)->GetLink(_R("SlicedVME")));
-  }
-  return ret;
+	if (Superclass::DeepCopy(a) == MAF_OK)
+	{
+		mafVMESlicer* slicer = mafVMESlicer::SafeDownCast(a);
+		mafNode* linked_node = slicer->GetSlicedVMELink();
+		if (linked_node)
+		{
+			this->SetLink(_R("SlicedVME"), linked_node);
+		}
+
+		m_Transform->SetMatrix(slicer->m_Transform->GetMatrix());
+		mafDataPipeCustom* dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
+		if (dpipe)
+		{
+			dpipe->SetDependOnAbsPose(true);
+			dpipe->SetInputConnection(m_BackTransform->GetOutputPort());
+			//dpipe->SetNthInput(1,m_PSlicer->GetTexture());
+		}
+		m_SlicedName = slicer->m_SlicedName;
+		//GetMaterial()->SetMaterialTexture(m_PSlicer->GetTexture());
+		return MAF_OK;
+	}
+	return MAF_ERROR;
+}
+
+//-------------------------------------------------------------------------
+bool mafVMESlicer::Equals(mafVME* vme)
+//-------------------------------------------------------------------------
+{
+	bool ret = false;
+	if (Superclass::Equals(vme))
+	{
+		return ret = (m_Transform->GetMatrix() == ((mafVMESlicer*)vme)->m_Transform->GetMatrix() &&
+			m_SlicedName == ((mafVMESlicer*)vme)->m_SlicedName &&
+			GetLink(_R("SlicedVME")) == ((mafVMESlicer*)vme)->GetLink(_R("SlicedVME")));
+	}
+	return ret;
 }
 
 //-------------------------------------------------------------------------
 mafGUI* mafVMESlicer::CreateGui()
 //-------------------------------------------------------------------------
 {
-  m_Gui = mafNode::CreateGui(); // Called to show info about vmes' type and name
-  m_Gui->SetListener(this);
-  m_Gui->Divider();
-  mafVME *vol = mafVME::SafeDownCast(GetSlicedVMELink());
-  m_SlicedName = vol ? vol->GetName() : _L("none");
-  m_Gui->Button(ID_VOLUME_LINK,&m_SlicedName,_L("Volume"), _L("Select the volume to be sliced"));
+	auto gui = mafNode::CreateGui(); // Called to show info about vmes' type and name
+	gui->SetListener(this);
+	gui->Divider();
+	mafVME* vol = mafVME::SafeDownCast(GetSlicedVMELink());
+	m_SlicedName = vol ? vol->GetName() : _L("none");
+	gui->Button(ID_VOLUME_LINK, &m_SlicedName, _L("Volume"), _L("Select the volume to be sliced"));
 
-  m_Gui->Divider();
-  return m_Gui;
+	gui->Divider();
+	return gui;
 }
 //-------------------------------------------------------------------------
-void mafVMESlicer::OnEvent(mafEventBase *maf_event)
+void mafVMESlicer::OnEvent(mafEventBase* maf_event)
 //-------------------------------------------------------------------------
 {
-  // events to be sent up or down in the tree are simply forwarded
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    switch(e->GetId())
-    {
-      case ID_VOLUME_LINK:
-      {
-        mafString title = _L("Choose volume vme");
-        e->SetId(VME_CHOOSE);
-        e->SetArg((intptr_t)&mafVMESlicer::VolumeAccept);
-        e->SetString(&title);
-        ForwardUpEvent(e);
-        if (auto n = e->GetVme())
-        {
-          SetSlicedVMELink(n);
-          m_SlicedName = n->GetName();
-          m_Gui->Update();
-          e->SetId(CAMERA_UPDATE);
-          e->SetArg(0);
-          ForwardUpEvent(e);
-        }
-      }
-      break;
-      default:
-        mafNode::OnEvent(maf_event);
-    }
-  }
-  else
-  {
-    Superclass::OnEvent(maf_event);
-  }
+	// events to be sent up or down in the tree are simply forwarded
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
+	{
+		switch (e->GetId())
+		{
+		case ID_VOLUME_LINK:
+		{
+			mafString title = _L("Choose volume vme");
+			e->SetId(VME_CHOOSE);
+			e->SetArg((intptr_t)&mafVMESlicer::VolumeAccept);
+			e->SetString(&title);
+			ForwardUpEvent(e);
+			if (auto n = e->GetVme())
+			{
+				SetSlicedVMELink(n);
+				m_SlicedName = n->GetName();
+				UpdateGUI();
+				e->SetId(CAMERA_UPDATE);
+				e->SetArg(0);
+				ForwardUpEvent(e);
+			}
+		}
+		break;
+		default:
+			mafNode::OnEvent(maf_event);
+		}
+	}
+	else
+	{
+		Superclass::OnEvent(maf_event);
+	}
 }
 //-------------------------------------------------------------------------
-mafVMEOutputSurface *mafVMESlicer::GetSurfaceOutput()
+mafVMEOutputSurface* mafVMESlicer::GetSurfaceOutput()
 //-------------------------------------------------------------------------
 {
-  return (mafVMEOutputSurface *)GetOutput();
+	return (mafVMEOutputSurface*)GetOutput();
 }
 //-------------------------------------------------------------------------
-void mafVMESlicer::SetMatrix(const mafMatrix &mat)
+void mafVMESlicer::SetMatrix(const mafMatrix& mat)
 //-------------------------------------------------------------------------
 {
-  m_Transform->SetMatrix(mat);
-  Modified();
+	m_Transform->SetMatrix(mat);
+	Modified();
 }
 
 //-------------------------------------------------------------------------
 bool mafVMESlicer::IsAnimated()
 //-------------------------------------------------------------------------
 {
-  return false;
+	return false;
 }
 
 //-------------------------------------------------------------------------
 bool mafVMESlicer::IsDataAvailable()
 //-------------------------------------------------------------------------
 {
-	if(GetSlicedVMELink())
-    return ((mafVME *)GetSlicedVMELink())->IsDataAvailable();
+	if (GetSlicedVMELink())
+		return ((mafVME*)GetSlicedVMELink())->IsDataAvailable();
 	else
 		return false;
 }
 
 //-------------------------------------------------------------------------
-void mafVMESlicer::GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)
+void mafVMESlicer::GetLocalTimeStamps(std::vector<mafTimeStamp>& kframes)
 //-------------------------------------------------------------------------
 {
-  kframes.clear(); // no timestamps
+	kframes.clear(); // no timestamps
 }
 //-----------------------------------------------------------------------
-mafNode *mafVMESlicer::GetSlicedVMELink()
+mafNode* mafVMESlicer::GetSlicedVMELink()
 //-----------------------------------------------------------------------
 {
-  return GetLink(_R("SlicedVME"));
+	return GetLink(_R("SlicedVME"));
 }
 //-----------------------------------------------------------------------
-void mafVMESlicer::SetSlicedVMELink(mafNode *node)
+void mafVMESlicer::SetSlicedVMELink(mafNode* node)
 //-----------------------------------------------------------------------
 {
-  SetLink(_R("SlicedVME"), node);
-  Modified();
+	SetLink(_R("SlicedVME"), node);
+	Modified();
 }
 //-----------------------------------------------------------------------
 void mafVMESlicer::InternalPreUpdate()
 //-----------------------------------------------------------------------
 {
-  //mafVME *vol = mafVMEVolume::SafeDownCast(GetSlicedVMELink());
-  mafVME *vol = mafVME::SafeDownCast(GetSlicedVMELink());
-  if(vol)
-  {
-    vtkAlgorithmOutput *vtkdata = vol->GetOutput()->GetVTKOutputPort();
-    if (vtkdata)
-    {
-      double pos[3];
-      float vectX[3],vectY[3], n[3];
+	//mafVME *vol = mafVMEVolume::SafeDownCast(GetSlicedVMELink());
+	mafVME* vol = mafVME::SafeDownCast(GetSlicedVMELink());
+	if (vol)
+	{
+		vtkAlgorithmOutput* vtkdata = vol->GetOutput()->GetVTKOutputPort();
+		if (vtkdata)
+		{
+			double pos[3];
+			float vectX[3], vectY[3], n[3];
 
 			//transform
 			m_CopyTransform->SetMatrix(m_Transform->GetMatrix());
@@ -300,134 +300,134 @@ void mafVMESlicer::InternalPreUpdate()
 			parentTransform->SetMatrix(mafVME::StaticDownCast(GetParent())->GetOutput()->GetAbsMatrix()->GetVTKMatrix());
 			parentTransform->Update();
 
-			parentTransform->Concatenate(slicedVMETransform.get(),0);
+			parentTransform->Concatenate(slicedVMETransform.get(), 0);
 			parentTransform->Update();
 
-			m_CopyTransform->Concatenate(parentTransform.get(),0);
+			m_CopyTransform->Concatenate(parentTransform.get(), 0);
 			m_CopyTransform->Update();
-      m_CopyTransform->GetPosition(pos);
-      m_CopyTransform->GetVersor(0, vectX);
-      m_CopyTransform->GetVersor(1, vectY);
+			m_CopyTransform->GetPosition(pos);
+			m_CopyTransform->GetVersor(0, vectX);
+			m_CopyTransform->GetVersor(1, vectY);
 
-      vtkMath::Normalize(vectX);
-      vtkMath::Normalize(vectY);
-      vtkMath::Cross(vectY, vectX, n);
-      vtkMath::Normalize(n);
-      vtkMath::Cross(n, vectX, vectY);
-      vtkMath::Normalize(vectY);
+			vtkMath::Normalize(vectX);
+			vtkMath::Normalize(vectY);
+			vtkMath::Cross(vectY, vectX, n);
+			vtkMath::Normalize(n);
+			vtkMath::Cross(n, vectX, vectY);
+			vtkMath::Normalize(vectY);
 
-      vtkdata->GetProducer()->Update();
-      vtkDataArray *scalars = vol->GetOutput()->GetVTKData()->GetPointData()->GetScalars();
-      if (scalars == NULL)
-      {
-        return;
-      }
+			vtkdata->GetProducer()->Update();
+			vtkDataArray* scalars = vol->GetOutput()->GetVTKData()->GetPointData()->GetScalars();
+			if (scalars == NULL)
+			{
+				return;
+			}
 
-      vtkImageData *texture = m_PSlicer->GetTexture();
-      texture->AllocateScalars(scalars->GetDataType(), scalars->GetNumberOfComponents());
-      texture->Modified();
+			vtkImageData* texture = m_PSlicer->GetTexture();
+			texture->AllocateScalars(scalars->GetDataType(), scalars->GetNumberOfComponents());
+			texture->Modified();
 
-      GetMaterial()->SetMaterialTextureData(texture);
-      texture->GetScalarRange(GetMaterial()->m_TableRange);
-      
-	  if (m_UpdateVTKPropertiesFromMaterial == true)
-	  {
-		  GetMaterial()->UpdateProp();
-	  }
-	  
-      //m_PSlicer->SetInput(vtkdata);
-      m_PSlicer->SetPlaneOrigin(pos);
-      m_PSlicer->SetPlaneAxisX(vectX);
-      m_PSlicer->SetPlaneAxisY(vectY);
+			GetMaterial()->SetMaterialTextureData(texture);
+			texture->GetScalarRange(GetMaterial()->m_TableRange);
 
-      //m_ISlicer->SetInput(vtkdata);
-      m_ISlicer->SetPlaneOrigin(pos);
-      m_ISlicer->SetPlaneAxisX(vectX);
-      m_ISlicer->SetPlaneAxisY(vectY);
+			if (m_UpdateVTKPropertiesFromMaterial == true)
+			{
+				GetMaterial()->UpdateProp();
+			}
 
-      m_BackTransform->SetTransform(m_CopyTransform->GetVTKTransform()->GetInverse());
+			//m_PSlicer->SetInput(vtkdata);
+			m_PSlicer->SetPlaneOrigin(pos);
+			m_PSlicer->SetPlaneAxisX(vectX);
+			m_PSlicer->SetPlaneAxisY(vectY);
+
+			//m_ISlicer->SetInput(vtkdata);
+			m_ISlicer->SetPlaneOrigin(pos);
+			m_ISlicer->SetPlaneAxisX(vectX);
+			m_ISlicer->SetPlaneAxisY(vectY);
+
+			m_BackTransform->SetTransform(m_CopyTransform->GetVTKTransform()->GetInverse());
 			m_BackTransform->Update();
-      /*m_BackTransformParent->SetTransform(transform->GetInverse());
-      m_BackTransform->SetInput(m_BackTransformParent->GetOutput());
-      m_BackTransform->Update();*/
-    }
-  }
+			/*m_BackTransformParent->SetTransform(transform->GetInverse());
+			m_BackTransform->SetInput(m_BackTransformParent->GetOutput());
+			m_BackTransform->Update();*/
+		}
+	}
 
-  m_SlicedName = vol ? vol->GetName() : _L("none");
+	m_SlicedName = vol ? vol->GetName() : _L("none");
 }
 
 //-----------------------------------------------------------------------
 void mafVMESlicer::InternalUpdate()
 //-----------------------------------------------------------------------
 {
-  //mafVME *vol = mafVMEVolume::SafeDownCast(GetSlicedVMELink());
-  mafVME *vol = mafVME::SafeDownCast(GetSlicedVMELink());
-  if(vol)
-  {
-    vol->Update();
-    if (vtkDataSet *vtkdata=vol->GetOutput()->GetVTKData())
-    {
-      m_PSlicer->Update();
-      m_ISlicer->Update();
+	//mafVME *vol = mafVMEVolume::SafeDownCast(GetSlicedVMELink());
+	mafVME* vol = mafVME::SafeDownCast(GetSlicedVMELink());
+	if (vol)
+	{
+		vol->Update();
+		if (vtkDataSet* vtkdata = vol->GetOutput()->GetVTKData())
+		{
+			m_PSlicer->Update();
+			m_ISlicer->Update();
 
-      vtkDataArray *scalars = vtkdata->GetPointData()->GetScalars();
-      if (scalars == NULL)
-      {
-        return;
-      }
+			vtkDataArray* scalars = vtkdata->GetPointData()->GetScalars();
+			if (scalars == NULL)
+			{
+				return;
+			}
 
-      vtkImageData *texture = m_PSlicer->GetTexture();
+			vtkImageData* texture = m_PSlicer->GetTexture();
 
-      GetMaterial()->SetMaterialTextureData(texture);
-      texture->GetScalarRange(GetMaterial()->m_TableRange);
+			GetMaterial()->SetMaterialTextureData(texture);
+			texture->GetScalarRange(GetMaterial()->m_TableRange);
 
-	  if (m_UpdateVTKPropertiesFromMaterial == true)
-	  {
-		GetMaterial()->UpdateProp();
-	  }
-    }
-  }
+			if (m_UpdateVTKPropertiesFromMaterial == true)
+			{
+				GetMaterial()->UpdateProp();
+			}
+		}
+	}
 }
 //-----------------------------------------------------------------------
 void mafVMESlicer::InternalStore(mafStorageElementBuilder& parent)
 //-----------------------------------------------------------------------
-{  
-  Superclass::InternalStore(parent);
-  parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
+{
+	Superclass::InternalStore(parent);
+	parent[_R("Transform")].SetValue(m_Transform->GetMatrix());
 }
 
 //-----------------------------------------------------------------------
 void mafVMESlicer::InternalRestore(const mafStorageElement& node)
 //-----------------------------------------------------------------------
 {
-  Superclass::InternalRestore(node);
-  m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
+	Superclass::InternalRestore(node);
+	m_Transform->SetMatrix(node[_R("Transform")].As<mafMatrix>());
 }
 
 //-----------------------------------------------------------------------
 void mafVMESlicer::Print(std::ostream& os, const int tabs)
 //-----------------------------------------------------------------------
 {
-  Superclass::Print(os,tabs);
-  mafIndent indent(tabs);
+	Superclass::Print(os, tabs);
+	mafIndent indent(tabs);
 
-  mafMatrix m = m_Transform->GetMatrix();
-  m.Print(os,indent.GetNextIndent());
+	mafMatrix m = m_Transform->GetMatrix();
+	m.Print(os, indent.GetNextIndent());
 }
 //-------------------------------------------------------------------------
-const char** mafVMESlicer::GetIcon() 
+const char** mafVMESlicer::GetIcon()
 //-------------------------------------------------------------------------
 {
-  #include "mafVMESurface.xpm"
-  return mafVMESurface_xpm;
+#include "mafVMESurface.xpm"
+	return mafVMESurface_xpm;
 }
 //-------------------------------------------------------------------------
-void mafVMESlicer::SetTrilinearInterpolation(bool on) 
+void mafVMESlicer::SetTrilinearInterpolation(bool on)
 //-------------------------------------------------------------------------
 {
-  m_TrilinearInterpolationOn = on;
-  if(m_ISlicer)
-  {
-    m_ISlicer->SetTrilinearInterpolation(on == TRUE);
-  }
+	m_TrilinearInterpolationOn = on;
+	if (m_ISlicer)
+	{
+		m_ISlicer->SetTrilinearInterpolation(on == TRUE);
+	}
 }

@@ -3,7 +3,7 @@
  Program: MAF2Medical
  Module: mafViewSingleSliceCompound
  Authors: Eleonora Mambrini
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -51,7 +51,7 @@
 
 enum SUBVIEW_ID
 {
-  ID_VIEW_SINGLE_SLICE = 0,
+	ID_VIEW_SINGLE_SLICE = 0,
 };
 
 //----------------------------------------------------------------------------
@@ -60,8 +60,8 @@ mafCxxTypeMacro(mafViewSingleSliceCompound);
 
 //----------------------------------------------------------------------------
 mafViewSingleSliceCompound::mafViewSingleSliceCompound(const mafString& label, int num_row, int num_col)
-: medViewCompoundWindowing(label,num_row,num_col)
-//----------------------------------------------------------------------------
+	: medViewCompoundWindowing(label, num_row, num_col)
+	//----------------------------------------------------------------------------
 {
 	/*m_LutWidget = NULL;
 	m_LutSlider = NULL;
@@ -76,46 +76,46 @@ mafViewSingleSliceCompound::~mafViewSingleSliceCompound()
 	cppDEL(m_LutSlider);
 }
 //----------------------------------------------------------------------------
-mafView *mafViewSingleSliceCompound::Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled)
+mafView* mafViewSingleSliceCompound::Copy(mafBaseEventHandler* Listener, bool lightCopyEnabled)
 //----------------------------------------------------------------------------
 {
-  m_LightCopyEnabled = lightCopyEnabled;
-  mafViewSingleSliceCompound *v = new mafViewSingleSliceCompound(GetLabel(), m_ViewRowNum, m_ViewColNum);
-  v->SetListener(Listener);
-  v->m_Id = m_Id;
-  for (int i=0;i<m_PluggedChildViewList.size();i++)
-  {
-    v->m_PluggedChildViewList.push_back(m_PluggedChildViewList[i]->Copy(this));
-  }
-  v->m_NumOfPluggedChildren = m_NumOfPluggedChildren;
-  v->Create();
-  return v;
+	m_LightCopyEnabled = lightCopyEnabled;
+	mafViewSingleSliceCompound* v = new mafViewSingleSliceCompound(GetLabel(), m_ViewRowNum, m_ViewColNum);
+	v->SetListener(Listener);
+	v->m_Id = m_Id;
+	for (int i = 0; i < m_PluggedChildViewList.size(); i++)
+	{
+		v->m_PluggedChildViewList.push_back(m_PluggedChildViewList[i]->Copy(this));
+	}
+	v->m_NumOfPluggedChildren = m_NumOfPluggedChildren;
+	v->Create();
+	return v;
 }
 //-------------------------------------------------------------------------
 mafGUI* mafViewSingleSliceCompound::CreateGui()
 //-------------------------------------------------------------------------
 {
-	assert(m_Gui == NULL);
-  m_Gui = new mafGUI(this);
-	m_Gui->AddGui(((mafViewSingleSlice*)m_ChildViewList[ID_VIEW_SINGLE_SLICE])->GetGui());
-	m_LutWidget = m_Gui->Lut(ID_LUT_CHOOSER,_R("lut"),m_ColorLUT);
+	assert(!AccessGUI());
+	auto gui = new mafGUI(this);
+	gui->AddGui(((mafViewSingleSlice*)m_ChildViewList[ID_VIEW_SINGLE_SLICE])->GetGui());
+	m_LutWidget = gui->Lut(ID_LUT_CHOOSER, _R("lut"), m_ColorLUT);
 	m_LutWidget->Enable(false);
-	m_Gui->Divider();
-	m_Gui->FitGui();
-	m_Gui->Update();
-  return m_Gui;
+	gui->Divider();
+	gui->FitGui();
+	gui->Update();
+	return gui;
 }
 //-------------------------------------------------------------------------
 void mafViewSingleSliceCompound::PackageView()
 //-------------------------------------------------------------------------
 {
-	m_ViewSingleSlice = new mafViewSingleSlice(_R(""),CAMERA_CT);
+	m_ViewSingleSlice = new mafViewSingleSlice(_R(""), CAMERA_CT);
 	m_ViewSingleSlice->PlugVisualPipe(_R("mafVMESurface"), _R("mafPipeSurfaceSlice"));
 	m_ViewSingleSlice->PlugVisualPipe(_R("mafVMEPolyline"), _R("mafPipePolylineSlice"));
-  m_ViewSingleSlice->PlugVisualPipe(_R("mafVMESurfaceParametric"), _R("mafPipeSurfaceSlice"));
+	m_ViewSingleSlice->PlugVisualPipe(_R("mafVMESurfaceParametric"), _R("mafPipeSurfaceSlice"));
 	m_ViewSingleSlice->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("mafPipeVolumeSlice"));
-	m_ViewSingleSlice->PlugVisualPipe(_R("mafVMEMesh"),_R("mafPipeMeshSlice"));
-  m_ViewSingleSlice->PlugVisualPipe(_R("mafVMEMeter"),_R("mafPipePolylineSlice"));
+	m_ViewSingleSlice->PlugVisualPipe(_R("mafVMEMesh"), _R("mafPipeMeshSlice"));
+	m_ViewSingleSlice->PlugVisualPipe(_R("mafVMEMeter"), _R("mafPipePolylineSlice"));
 
 	PlugChildView(m_ViewSingleSlice);
 }
@@ -124,6 +124,6 @@ void mafViewSingleSliceCompound::PackageView()
 void mafViewSingleSliceCompound::OnLayout()
 //----------------------------------------------------------------------------
 {
-  mafViewCompound::OnLayout();
-  ((mafViewSingleSlice*)m_ChildViewList[ID_VIEW_SINGLE_SLICE])->UpdateText();
+	mafViewCompound::OnLayout();
+	((mafViewSingleSlice*)m_ChildViewList[ID_VIEW_SINGLE_SLICE])->UpdateText();
 }

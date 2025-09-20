@@ -138,15 +138,15 @@ void mafViewImageCompound::OnEvent(mafEventBase *maf_event)
 mafGUI* mafViewImageCompound::CreateGui()
 //-------------------------------------------------------------------------
 {
-	assert(m_Gui == NULL);
-  m_Gui = new mafGUI(this);
-	m_Gui->AddGui(((mafViewImage*)m_ChildViewList[ID_VIEW_IMAGE])->GetGui());
-	m_LutWidget = m_Gui->Lut(ID_LUT_CHOOSER,_R("lut"),m_ColorLUT);
+	assert(!AccessGUI());
+	auto gui = new mafGUI(this);
+	gui->AddGui(((mafViewImage*)m_ChildViewList[ID_VIEW_IMAGE])->GetGui());
+	m_LutWidget = gui->Lut(ID_LUT_CHOOSER,_R("lut"),m_ColorLUT);
 	m_LutWidget->Enable(false);
-	m_Gui->Divider();
-	m_Gui->FitGui();
-	m_Gui->Update();
-  return m_Gui;
+	gui->Divider();
+	gui->FitGui();
+	gui->Update();
+  return gui;
 }
 //-------------------------------------------------------------------------
 void mafViewImageCompound::PackageView()
@@ -178,8 +178,8 @@ void mafViewImageCompound::EnableWidgets(bool enable)
 //----------------------------------------------------------------------------
 {
 	//if a volume is visualized enable the widgets
-	if(m_Gui)
-		m_Gui->Enable(ID_LUT_CHOOSER,enable);
+	if(auto gui = AccessGUI())
+		gui->Enable(ID_LUT_CHOOSER,enable);
   m_LutSlider->Enable(enable);
 }
 //----------------------------------------------------------------------------

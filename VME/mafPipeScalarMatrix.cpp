@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafPipeScalarMatrix
  Authors: Paolo Quadrani
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -53,54 +53,54 @@ mafCxxTypeMacro(mafPipeScalarMatrix);
 mafPipeScalarMatrix::mafPipeScalarMatrix()
 //----------------------------------------------------------------------------
 {
-  m_CubeAxes  = NULL;
-  m_Actor     = NULL;
+	m_CubeAxes = NULL;
+	m_Actor = NULL;
 }
 //----------------------------------------------------------------------------
-void mafPipeScalarMatrix::Create(mafNode *node, mafView *view)
+void mafPipeScalarMatrix::Create(mafNode* node, mafView* view)
 //----------------------------------------------------------------------------
 {
-  Superclass::Create(node, view);
-  
-  m_Selected = false;
+	Superclass::Create(node, view);
 
-  vtkDataSet *ds = m_Vme->GetOutput()->GetVTKData();
+	m_Selected = false;
 
-  vtkNew<vtkTextProperty> tprop;
-  tprop->SetColor(1, 1, 1);
-  tprop->ShadowOn();
+	vtkDataSet* ds = m_Vme->GetOutput()->GetVTKData();
 
-  vtkNew<vtkPolyDataMapper> mapper;
-  mapper->SetInputConnection(m_Vme->GetOutput()->GetVTKOutputPort());
-  mapper->ScalarVisibilityOn();
-  mapper->SetScalarRange(ds->GetScalarRange());
+	vtkNew<vtkTextProperty> tprop;
+	tprop->SetColor(1, 1, 1);
+	tprop->ShadowOn();
 
-  vtkNEW(m_Actor);
-  m_Actor->SetMapper(mapper);
+	vtkNew<vtkPolyDataMapper> mapper;
+	mapper->SetInputConnection(m_Vme->GetOutput()->GetVTKOutputPort());
+	mapper->ScalarVisibilityOn();
+	mapper->SetScalarRange(ds->GetScalarRange());
 
-  m_AssemblyFront->AddPart(m_Actor);
+	vtkNEW(m_Actor);
+	m_Actor->SetMapper(mapper);
 
-  vtkNEW(m_CubeAxes);
-  m_CubeAxes->SetInputConnection(m_Vme->GetOutput()->GetVTKOutputPort());
-  m_CubeAxes->SetCamera(m_RenFront->GetActiveCamera());
-  m_CubeAxes->SetLabelFormat("%6.4g");
-  m_CubeAxes->SetNumberOfLabels(5);
-  m_CubeAxes->SetFlyModeToOuterEdges();
-  m_CubeAxes->SetFontFactor(0.4);
-  m_CubeAxes->SetAxisTitleTextProperty(tprop);
-  m_CubeAxes->SetAxisLabelTextProperty(tprop);
+	m_AssemblyFront->AddPart(m_Actor);
 
-  m_RenFront->AddActor2D(m_CubeAxes);
+	vtkNEW(m_CubeAxes);
+	m_CubeAxes->SetInputConnection(m_Vme->GetOutput()->GetVTKOutputPort());
+	m_CubeAxes->SetCamera(m_RenFront->GetActiveCamera());
+	m_CubeAxes->SetLabelFormat("%6.4g");
+	m_CubeAxes->SetNumberOfLabels(5);
+	m_CubeAxes->SetFlyModeToOuterEdges();
+	m_CubeAxes->SetFontFactor(0.4);
+	m_CubeAxes->SetAxisTitleTextProperty(tprop);
+	m_CubeAxes->SetAxisLabelTextProperty(tprop);
+
+	m_RenFront->AddActor2D(m_CubeAxes);
 }
 //----------------------------------------------------------------------------
 mafPipeScalarMatrix::~mafPipeScalarMatrix()
 //----------------------------------------------------------------------------
 {
-  m_RenFront->RemoveActor2D(m_CubeAxes);
-  vtkDEL(m_CubeAxes);
+	m_RenFront->RemoveActor2D(m_CubeAxes);
+	vtkDEL(m_CubeAxes);
 
-  m_AssemblyFront->RemovePart(m_Actor);
-  vtkDEL(m_Actor);
+	m_AssemblyFront->RemovePart(m_Actor);
+	vtkDEL(m_Actor);
 }
 //----------------------------------------------------------------------------
 void mafPipeScalarMatrix::Select(bool sel)
@@ -109,26 +109,26 @@ void mafPipeScalarMatrix::Select(bool sel)
 	m_Selected = sel;
 }
 //----------------------------------------------------------------------------
-mafGUI *mafPipeScalarMatrix::CreateGui()
+mafGUI* mafPipeScalarMatrix::CreateGui()
 //----------------------------------------------------------------------------
 {
-  m_Gui = new mafGUI(this);
-	m_Gui->Divider();
-  return m_Gui;
+	auto gui = new mafGUI(this);
+	gui->Divider();
+	return gui;
 }
 //----------------------------------------------------------------------------
-void mafPipeScalarMatrix::OnEvent(mafEventBase *maf_event)
+void mafPipeScalarMatrix::OnEvent(mafEventBase* maf_event)
 //----------------------------------------------------------------------------
 {
-  if (mafEvent *e = mafEvent::SafeDownCast(maf_event))
-  {
-    switch(e->GetId())
-    {
-      case ID_RADIUS:
-      break;
-    }
-    {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
-  }
+	if (mafEvent* e = mafEvent::SafeDownCast(maf_event))
+	{
+		switch (e->GetId())
+		{
+		case ID_RADIUS:
+			break;
+		}
+		{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
+	}
 }
 //----------------------------------------------------------------------------
 void mafPipeScalarMatrix::UpdateProperty(bool fromTag)
