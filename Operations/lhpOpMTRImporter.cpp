@@ -106,7 +106,7 @@ void  lhpOpMTRImporter::ImportData()
     grp->SetName(grpName);
     m_Groups.push_back(grp);
 
-    while(TRUE)
+    for (;;)
     {
       auto LMCReader = mafMTRLMCReader::New();
       LMCReader->SetFileName(m_Files[fi].GetCStr());
@@ -119,7 +119,6 @@ void  lhpOpMTRImporter::ImportData()
 
       if(LMCReader->GetPointsRead() == 0)
       {
-        cppDEL(LMCReader);
         break;
       }
 
@@ -139,7 +138,6 @@ void  lhpOpMTRImporter::ImportData()
         cloud->Close();
         mafNode::ReparentTo(cloud, grp.get());
       }
-      cppDEL(LMCReader);
       break;
     }
 

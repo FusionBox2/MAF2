@@ -23,10 +23,10 @@
 #include "vtkSystemIncludes.h"
 
 //----------------------------------------------------------------------------
-mafMTRLMCReader* mafMTRLMCReader::New() 
+std::unique_ptr<mafMTRLMCReader> mafMTRLMCReader::New()
 //----------------------------------------------------------------------------
 { 
-  return new mafMTRLMCReader; 
+  return std::unique_ptr<mafMTRLMCReader>(new mafMTRLMCReader); 
 } 
 
 // Construct object with merging set to true.

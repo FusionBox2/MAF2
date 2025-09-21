@@ -74,7 +74,6 @@ mafRWI::mafRWI()
 	m_Ruler   = NULL;
 	m_Orientator = NULL;
 	m_Grid    = NULL;
-	m_Axes    = NULL;
 
 	m_ProfilingActor = NULL;
 	for (int b=0; b<6; b++)

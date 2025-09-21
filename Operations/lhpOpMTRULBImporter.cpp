@@ -139,7 +139,7 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
   grp->SetName(grpName);
   m_Groups.push_back(grp);
 
-  while(TRUE)
+  for (;;)
   {
     auto LMCReader = mafMTRLMCReader::New();
     auto readermc  = mafMTRReader::New();
@@ -172,7 +172,6 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
       vtkDEL(readertn);
       vtkDEL(readermc);
       vtkDEL(readerSf);
-      cppDEL(LMCReader);
       break;
     }
 
@@ -215,7 +214,6 @@ void  lhpOpMTRULBImporter::ProcessSingleFile(const mafString &fileName)
       cloud->Close();
       mafNode::ReparentTo(cloud, grp.get());
     }
-    cppDEL(LMCReader);
     {
       mafTimeStamp t;
       vtkPolyData *data = readertn->GetOutput();

@@ -49,7 +49,7 @@ public:
   //void PrintSelf(ostream& os, vtkIndent indent);
 
   // Construct object with merging set to true.
-  static mafMTRLMCReader *New();
+  static std::unique_ptr<mafMTRLMCReader> New();
 
   // Specify file name of stereo lithography file.
   mafSetStringMacroNoDebug(FileName);
