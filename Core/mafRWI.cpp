@@ -114,7 +114,6 @@ mafRWI::mafRWI(wxWindow *parent, RWI_LAYERS layers, bool use_grid, bool show_axe
 	m_Ruler   = NULL;
 	m_Orientator = NULL;
 	m_Grid    = NULL;
-	m_Axes    = NULL;
 	m_AxesType = axesType;
 
 	m_ProfilingActor = NULL;
@@ -271,7 +270,7 @@ void mafRWI::CreateRenderingScene(wxWindow *parent, RWI_LAYERS layers, bool use_
 	SetGridVisibility(m_ShowGrid != 0);
 
 	m_ShowAxes = show_axes;
-	m_Axes = new mafAxes(m_AlwaysVisibleRenderer,NULL,m_AxesType);
+	m_Axes = std::make_unique<mafAxes>(m_AlwaysVisibleRenderer,nullptr,m_AxesType);
 	m_Axes->SetVisibility(show_axes);
 }
 //----------------------------------------------------------------------------
@@ -292,7 +291,7 @@ mafRWI::~mafRWI()
 	if(m_Orientator) m_RenFront->RemoveActor2D(m_Orientator);
 	vtkDEL(m_Orientator);
 
-	cppDEL(m_Axes); //Must be removed before deleting renderers
+	m_Axes.reset(); //Must be removed before deleting renderers
 	vtkDEL(m_Light);
 	vtkDEL(m_Camera);
 

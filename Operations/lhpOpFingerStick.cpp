@@ -128,22 +128,20 @@ void  lhpOpFingerStick::ParseString(wxString &pFirstLine, wxString &sOne, wxStri
 bool lhpOpFingerStick::ReadLMDictionary(mafString *fileName)
 //----------------------------------------------------------------------------
 {
-  wxTextFile   *pFile;
   wxInt32      nI; 
   wxString     sFirstName("");
   wxString     sSecondName("");
   //mafGraphDictionary *pEntry;
 
-  pFile = new wxTextFile(fileName->toWx());
+  auto pFile = std::make_unique<wxTextFile>(fileName->toWx());
 
-  if(pFile == NULL)
+  if(!pFile)
   {
     return false;
   }
   pFile->Open();
   if(!pFile->IsOpened())
   {
-    cppDEL(pFile);
     return false;
   }
 
@@ -177,7 +175,6 @@ bool lhpOpFingerStick::ReadLMDictionary(mafString *fileName)
     nI++;
   }
   pFile->Close();
-  cppDEL(pFile); 
   return true;
 }
 
@@ -699,22 +696,20 @@ bool lhpOpFingerStick::ProcessSingleLM(int lmIndex, double result[3])
 
   if(!bPlateCloudClosed)
   {
-    mafOp *pCloseOp = new mafOpExplodeCollapse(_R("close cloud"));
+    auto pCloseOp = std::make_unique<mafOpExplodeCollapse>(_R("close cloud"));
     pCloseOp->SetInput(m_PlateCloud);
     pCloseOp->SetListener(GetListener());
     pCloseOp->OpDo();
-    cppDEL(pCloseOp); 
   }
 
   bool bPlateCalibrationClosed = !m_PlateCalibration->IsOpen();
 
   if(!bPlateCalibrationClosed)
   {
-    mafOp *pCloseOp = new mafOpExplodeCollapse(_R("close cloud"));
+    auto pCloseOp = std::make_unique<mafOpExplodeCollapse>(_R("close cloud"));
     pCloseOp->SetInput(m_PlateCalibration);
     pCloseOp->SetListener(GetListener());
     pCloseOp->OpDo();
-    cppDEL(pCloseOp); 
   }
 
   m_PlateCloud->GetTimeStamps(kframes);
@@ -812,38 +807,34 @@ bool lhpOpFingerStick::ProcessSingleLM(int lmIndex, double result[3])
 
   if(!bPalpatorCalibrationClosed)
   {
-    mafOp *pCloseOp = new mafOpExplodeCollapse(_R("close cloud"));
+    auto pCloseOp = std::make_unique<mafOpExplodeCollapse>(_R("close cloud"));
     pCloseOp->SetInput(m_PalpatorCalibration);
     pCloseOp->SetListener(GetListener());
     pCloseOp->OpDo();
-    cppDEL(pCloseOp); 
   }
 
   if(!bPalpatorCalibrationClosed)
   {
-    mafOp *pOpenOp = new mafOpExplodeCollapse(_R("open cloud"));
+    auto pOpenOp = std::make_unique<mafOpExplodeCollapse>(_R("open cloud"));
     pOpenOp->SetInput(m_PalpatorCalibration);
     pOpenOp->SetListener(GetListener());
     pOpenOp->OpDo();
-    cppDEL(pOpenOp); 
   }
 
   if(!bPlateCloudClosed)
   {
-    mafOp *pOpenOp = new mafOpExplodeCollapse(_R("open cloud"));
+    auto pOpenOp = std::make_unique<mafOpExplodeCollapse>(_R("open cloud"));
     pOpenOp->SetInput(m_PlateCloud);
     pOpenOp->SetListener(GetListener());
     pOpenOp->OpDo();
-    cppDEL(pOpenOp); 
   }
 
   if(!bPlateCalibrationClosed)
   {
-    mafOp *pOpenOp = new mafOpExplodeCollapse(_R("open cloud"));
+    auto pOpenOp = std::make_unique<mafOpExplodeCollapse>(_R("open cloud"));
     pOpenOp->SetInput(m_PlateCalibration);
     pOpenOp->SetListener(GetListener());
     pOpenOp->OpDo();
-    cppDEL(pOpenOp); 
   }
 
   return true;

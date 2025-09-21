@@ -92,7 +92,7 @@ public:
   mafGUI         *GetGui() {return m_Gui;};
   void           CreateGui();
   void           OnEvent(mafEventBase *maf_event) override;
-  static wxInt32 GetFontFamily(mafViewIntGraphFontFamily fFamily);
+  static wxFontFamily GetFontFamily(mafViewIntGraphFontFamily fFamily);
   /** Tune curve parameters */
   void           AdjustCurveAppearance(unsigned int nCurve);
   /** Save window settings in text form*/

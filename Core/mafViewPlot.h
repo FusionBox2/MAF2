@@ -103,7 +103,7 @@ public:
   Delete vme's visual pipe. It is called when vme is removed from visualization.*/
   void VmeDeletePipe(mafNode *vme) override;
 
-  mafSceneGraph *GetSceneGraph() override {return m_Sg;}; 
+  mafSceneGraph *GetSceneGraph() override {return m_Sg.get();}
 
   /** Return a pointer to the image of the plot.*/
   void GetImage(wxBitmap &bmp, int magnification = 1) override;
@@ -119,7 +119,7 @@ public:
   void Print(wxDC *dc, wxRect margins) override;
 
 protected:
-  mafSceneGraph *m_Sg;
+  std::unique_ptr<mafSceneGraph> m_Sg;
 
   mafGUI *CreateGui() override;
 

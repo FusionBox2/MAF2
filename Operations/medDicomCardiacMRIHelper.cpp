@@ -182,14 +182,14 @@ int medDicomCardiacMRIHelper::ParseDicomDirectory()
   vnl_matrix<double> imageSize(timeFrames*planesPerFrame, 2, 0.0);
   vnl_matrix<double> frame(timeFrames*planesPerFrame, 1, 0.0);
 
-  wxBusyInfo *busyInfo = NULL;
+  std::unique_ptr<wxBusyInfo> busyInfo;
   wxString busyMessage = "Cardiac MRI Found, please wait for reader initialization...";
   time_t start,end;
   
-  wxBusyCursor *busyCursor = NULL; 
+  std::unique_ptr<wxBusyCursor> busyCursor; 
   if (!m_TestMode)
   {
-    busyCursor = new wxBusyCursor();
+    busyCursor = std::make_unique<wxBusyCursor>();
 	{mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
   }
 
@@ -201,9 +201,9 @@ int medDicomCardiacMRIHelper::ParseDicomDirectory()
 
     if (!m_TestMode)
     {
-      if (busyInfo == NULL)
+      if (!busyInfo)
       {
-        busyInfo = new wxBusyInfo(busyMessage);
+        busyInfo = std::make_unique<wxBusyInfo>(busyMessage);
       }
     }
   
@@ -275,8 +275,7 @@ int medDicomCardiacMRIHelper::ParseDicomDirectory()
     {
       if (!m_TestMode)
       {
-        cppDEL(busyInfo);
-        busyInfo = new wxBusyInfo(busyMessage);
+        busyInfo = std::make_unique<wxBusyInfo>(busyMessage);
 		    progress = i * 100 / (double) (timeFrames*planesPerFrame);
 		    {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg(progress); InvokeEvent(evUnq);}
       }
@@ -325,9 +324,6 @@ int medDicomCardiacMRIHelper::ParseDicomDirectory()
       vtkDEL(directoryReader);
 
       {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
-
-      cppDEL(busyCursor);
-      cppDEL(busyInfo);
 
       return MAF_ERROR;
     }
@@ -530,9 +526,6 @@ int medDicomCardiacMRIHelper::ParseDicomDirectory()
         vtkDEL(directoryReader);
 
         {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
-
-        cppDEL(busyCursor);
-        cppDEL(busyInfo);
 
         return MAF_ERROR;
       }
@@ -1153,9 +1146,6 @@ int medDicomCardiacMRIHelper::ParseDicomDirectory()
   if (!m_TestMode)
   {
 	  {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
-
-	  cppDEL(busyCursor);
-	  cppDEL(busyInfo);
   }
 
   return MAF_OK;

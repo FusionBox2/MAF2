@@ -121,14 +121,14 @@ void mafViewSingleSlice::Create()
 
 	RWI_LAYERS num_layers = TWO_LAYER;
 
-	m_Rwi = new mafRWI(mafGetFrame(), num_layers, m_ShowGrid, m_ShowAxes, m_ShowRuler, m_StereoType, m_ShowOrientator);
+	m_Rwi = std::make_unique<mafRWI>(mafGetFrame(), num_layers, m_ShowGrid, m_ShowAxes, m_ShowRuler, m_StereoType, m_ShowOrientator);
 	m_Rwi->SetListener(this);
 	m_Rwi->CameraSet(m_CameraPositionId);
 	m_Win = m_Rwi->m_RwiBase;
 
-	m_Sg = new mafSceneGraph(this, m_Rwi->m_RenFront, m_Rwi->m_RenBack);
+	m_Sg = std::make_unique<mafSceneGraph>(this, m_Rwi->m_RenFront, m_Rwi->m_RenBack);
 	m_Sg->SetListener(this);
-	m_Rwi->m_Sg = m_Sg;
+	m_Rwi->m_Sg = m_Sg.get();
 
 	vtkNEW(m_Picker3D);
 	vtkNEW(m_Picker2D);
@@ -471,7 +471,7 @@ mafGUI* mafViewSingleSlice::CreateGui()
 {
 	assert(!AccessGUI());
 	auto gui = new mafGUI(this);
-	m_AttachCamera = new mafAttachCamera(gui, m_Rwi, this);
+	m_AttachCamera = std::make_unique<mafAttachCamera>(gui, m_Rwi.get(), this);
 	//m_Gui->AddGui(m_AttachCamera->GetGui());
 
 	  //m_Slider = m_Gui->FloatSlider(ID_POSITION, _("Position"), &m_Position,MINDOUBLE,MAXDOUBLE);

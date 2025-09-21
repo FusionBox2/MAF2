@@ -72,13 +72,6 @@ mafViewVTK::mafViewVTK(const mafString& label, int camera_position, bool show_ax
 	m_ShowRuler = show_ruler;
 	m_ShowOrientator = show_orientator;
 	m_AxesType = axesType;
-
-	m_Sg = NULL;
-	m_Rwi = NULL;
-	m_LightKit = NULL;
-	m_TextKit = NULL;
-	m_AttachCamera = NULL;
-	m_AnimateKit = NULL;
 }
 //----------------------------------------------------------------------------
 mafViewVTK::~mafViewVTK()
@@ -88,12 +81,12 @@ mafViewVTK::~mafViewVTK()
 
 	vtkDEL(m_Picker2D);
 	vtkDEL(m_Picker3D);
-	cppDEL(m_AttachCamera);
-	cppDEL(m_LightKit);
-	cppDEL(m_TextKit);
-	cppDEL(m_AnimateKit);
-	cppDEL(m_Sg);
-	cppDEL(m_Rwi);
+	m_AttachCamera.reset();
+	m_LightKit.reset();
+	m_TextKit.reset();
+	m_AnimateKit.reset();
+	m_Sg.reset();
+	m_Rwi.reset();
 }
 //----------------------------------------------------------------------------
 void mafViewVTK::PlugVisualPipe(const mafString& vme_type, const mafString& pipe_type, long visibility)
@@ -121,14 +114,14 @@ void mafViewVTK::Create()
 //----------------------------------------------------------------------------
 {
 	if (m_LightCopyEnabled == true) return;
-	m_Rwi = new mafRWI(mafGetFrame(), ONE_LAYER, m_ShowGrid, m_ShowAxes, m_ShowRuler, m_StereoType, m_ShowOrientator, m_AxesType);
+	m_Rwi = std::make_unique<mafRWI>(mafGetFrame(), ONE_LAYER, m_ShowGrid, m_ShowAxes, m_ShowRuler, m_StereoType, m_ShowOrientator, m_AxesType);
 	m_Rwi->SetListener(this);
 	m_Rwi->CameraSet(m_CameraPositionId);
 	m_Win = m_Rwi->m_RwiBase;
 
-	m_Sg = new mafSceneGraph(this, m_Rwi->m_RenFront, m_Rwi->m_RenBack, m_Rwi->m_AlwaysVisibleRenderer);
+	m_Sg = std::make_unique<mafSceneGraph>(this, m_Rwi->m_RenFront, m_Rwi->m_RenBack, m_Rwi->m_AlwaysVisibleRenderer);
 	m_Sg->SetListener(this);
-	m_Rwi->m_Sg = m_Sg;
+	m_Rwi->m_Sg = m_Sg.get();
 
 	vtkNEW(m_Picker3D);
 	vtkNEW(m_Picker2D);
@@ -328,19 +321,19 @@ mafGUI* mafViewVTK::CreateGui()
 	gui->AddGui(m_Rwi->GetGui());
 
 	/////////////////////////////////////////Attach Camera GUI
-	m_AttachCamera = new mafAttachCamera(gui, m_Rwi, this);
+	m_AttachCamera = std::make_unique<mafAttachCamera>(gui, m_Rwi.get(), this);
 	gui->RollOut(ID_ROLLOUT_ATTACH_CAMERA, _R(" Attach camera"), m_AttachCamera->GetGui(), false);
 
 	/////////////////////////////////////////Text GUI
-	m_TextKit = new mafTextKit(gui, m_Rwi->m_RenFront, this);
+	m_TextKit = std::make_unique<mafTextKit>(gui, m_Rwi->m_RenFront, this);
 	gui->RollOut(ID_ROLLOUT_TEXT_KIT, _R(" Text kit"), m_TextKit->GetGui(), false);
 
 	/////////////////////////////////////////Light GUI
-	m_LightKit = new mafLightKit(gui, m_Rwi->m_RenFront, this);
+	m_LightKit = std::make_unique<mafLightKit>(gui, m_Rwi->m_RenFront, this);
 	gui->RollOut(ID_ROLLOUT_LIGHT_KIT, _R(" Light kit"), m_LightKit->GetGui(), false);
 
 	// Animate kit
-	m_AnimateKit = new mafAnimate(m_Rwi->m_RenFront, m_Sg->GetSelectedVme()->GetRoot(), this);
+	m_AnimateKit = std::make_unique<mafAnimate>(m_Rwi->m_RenFront, m_Sg->GetSelectedVme()->GetRoot(), this);
 	gui->RollOut(ID_ROLLOUT_ANIMATE_KIT, _R(" Animate kit"), m_AnimateKit->GetGui(), false);
 
 	gui->Divider();

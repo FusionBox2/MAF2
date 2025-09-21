@@ -111,7 +111,6 @@ mafViewArbitrarySlice::mafViewArbitrarySlice(const mafString& label, bool show_r
 	m_CurrentImage = NULL;
 	m_Slicer = NULL;
 	m_GuiGizmos = NULL;
-	m_AttachCamera = NULL;
 	m_CurrentPolylineGraphEditor = NULL;
 
 	m_SliceCenterSurface[0] = 0.0;
@@ -163,18 +162,18 @@ void mafViewArbitrarySlice::VmeShow(mafNode* node, bool show)
 {
 	m_ChildViewList[ARBITRARY_VIEW]->VmeShow(node, show);
 	m_ChildViewList[SLICE_VIEW]->VmeShow(node, show);
-	mafVME* Vme = mafVME::SafeDownCast(node);
+	auto Vme = mafVME::SafeDownCast(node);
 	Vme->Update();
 	if (show)
 	{
-		if (((mafVME*)Vme)->GetOutput()->IsA("mafVMEOutputVolume"))
+		if (mafVME::StaticDownCast(Vme)->GetOutput()->IsA("mafVMEOutputVolume"))
 		{
 			double sr[2], SliceCenterVolumeReset[3];
 			mafVME* Volume = mafVME::SafeDownCast(Vme);
 			m_CurrentVolume = Volume;
 
 			// get the VTK volume
-			vtkDataSet* data = ((mafVME*)node)->GetOutput()->GetVTKData();
+			vtkDataSet* data = mafVME::StaticDownCast(node)->GetOutput()->GetVTKData();
 			//data->Update();
 			//Get center of Volume to can the reset
 			data->GetCenter(SliceCenterVolumeReset);
@@ -241,11 +240,11 @@ void mafViewArbitrarySlice::VmeShow(mafNode* node, bool show)
 
 			//Set camera of slice viw in way that it will follow the volume
 			if (!m_AttachCamera)
-				m_AttachCamera = new mafAttachCamera(AccessGUI(), ((mafViewVTK*)m_ChildViewList[SLICE_VIEW])->m_Rwi, this);
+				m_AttachCamera = std::make_unique<mafAttachCamera>(AccessGUI(), mafViewVTK::StaticDownCast(m_ChildViewList[SLICE_VIEW])->m_Rwi.get(), this);
 			m_AttachCamera->SetStartingMatrix(m_Slicer->GetOutput()->GetAbsMatrix());
 			m_AttachCamera->SetVme(m_Slicer.get());
 			m_AttachCamera->EnableAttachCamera();
-			((mafViewVTK*)m_ChildViewList[SLICE_VIEW])->CameraReset(m_Slicer.get());
+			mafViewVTK::StaticDownCast(m_ChildViewList[SLICE_VIEW])->CameraReset(m_Slicer.get());
 
 			// create the gizmos
 			m_GizmoTranslate = new mafGizmoTranslate(m_Slicer, this);

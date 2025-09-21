@@ -119,21 +119,19 @@ namespace
 bool ReadDictionary(mafString *fileName, std::vector<std::pair<mafString, mafString> >&  dictionary)
 //----------------------------------------------------------------------------
 {
-  wxTextFile   *pFile;
   wxInt32      nI; 
   wxString     sFirstName("");
   wxString     sSecondName("");
 
-  pFile = new wxTextFile(fileName->toWx());
+  auto pFile = std::make_unique<wxTextFile>(fileName->toWx());
 
-  if(pFile == NULL)
+  if(!pFile)
   {
     return false;
   }
   pFile->Open();
   if(!pFile->IsOpened())
   {
-    cppDEL(pFile);
     return false;
   }
 
@@ -165,7 +163,6 @@ bool ReadDictionary(mafString *fileName, std::vector<std::pair<mafString, mafStr
     nI++;
   }
   pFile->Close();
-  cppDEL(pFile); 
   return true;
 }
 

@@ -156,11 +156,10 @@ void lhpOpAverageLM::OpDo()
   bool bCloudClosed = !m_LimbCloud->IsOpen();
   if(!bCloudClosed)
   {
-    mafOp *OpenOp = new mafOpExplodeCollapse(_R("close cloud"));
+    auto OpenOp = std::make_unique<mafOpExplodeCollapse>(_R("close cloud"));
     OpenOp->SetInput(m_LimbCloud);
     OpenOp->SetListener(GetListener());
     OpenOp->OpDo();
-    cppDEL(OpenOp); 
   }
 
 
@@ -202,11 +201,10 @@ void lhpOpAverageLM::OpDo()
   }
   if(!bCloudClosed)
   {
-    mafOp *OpenOp = new mafOpExplodeCollapse(_R("open cloud"));
+    auto OpenOp = std::make_unique<mafOpExplodeCollapse>(_R("open cloud"));
     OpenOp->SetInput(m_LimbCloud);
     OpenOp->SetListener(GetListener());
     OpenOp->OpDo();
-    cppDEL(OpenOp); 
   }
   //mafProgressBarHideMacro(); 
 
@@ -222,11 +220,10 @@ void lhpOpAverageLM::OpUndo()
   bool bCloudWasOpen = m_LimbCloud->IsOpen();
   if(bCloudWasOpen)
   {
-    mafOp *pCloseOp = new mafOpExplodeCollapse(_R("close cloud"));
+    auto pCloseOp = std::make_unique<mafOpExplodeCollapse>(_R("close cloud"));
     pCloseOp->SetInput(m_LimbCloud);
     pCloseOp->SetListener(GetListener());
     pCloseOp->OpDo();
-    cppDEL(pCloseOp); 
   }
 
   m_LimbCloud->RemoveLandmark(m_NewIndex);
@@ -234,10 +231,9 @@ void lhpOpAverageLM::OpUndo()
   
   if(bCloudWasOpen)
   {
-    mafOp *OpenOp = new mafOpExplodeCollapse(_R("open cloud"));
+    auto OpenOp = std::make_unique<mafOpExplodeCollapse>(_R("open cloud"));
     OpenOp->SetInput(m_LimbCloud);
     OpenOp->SetListener(GetListener());
     OpenOp->OpDo();
-    cppDEL(OpenOp); 
   }
 }

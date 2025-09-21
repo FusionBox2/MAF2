@@ -238,22 +238,20 @@ void  lhpOpImporterC3DFused::ParseString(wxString &pFirstLine, wxString &sOne, w
 bool lhpOpImporterC3DFused::ReadLMDictionary(mafString *fileName)
 //----------------------------------------------------------------------------
 {
-  wxTextFile   *pFile;
   wxInt32      nI; 
   wxString     sFirstName("");
   wxString     sSecondName("");
   //mafGraphDictionary *pEntry;
 
-  pFile = new wxTextFile(fileName->toWx());
+  auto pFile = std::make_unique<wxTextFile>(fileName->toWx());
 
-  if(pFile == NULL)
+  if(!pFile)
   {
     return false;
   }
   pFile->Open();
   if(!pFile->IsOpened())
   {
-    cppDEL(pFile);
     return false;
   }
 
@@ -287,7 +285,6 @@ bool lhpOpImporterC3DFused::ReadLMDictionary(mafString *fileName)
     nI++;
   }
   pFile->Close();
-  cppDEL(pFile); 
   return true;
 }
 

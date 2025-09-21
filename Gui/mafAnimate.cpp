@@ -244,16 +244,14 @@ void mafAnimate::EnableWidgets()
 void mafAnimate::LoadPoseFromFile(const mafString &fileName)
 //----------------------------------------------------------------------------
 {
-  mafTagArray *newCam = new mafTagArray();
+  auto newCam = std::make_unique<mafTagArray>();
 
   // XML storage to restore
   io::Reader restore(_R("CAM"), _R("1.0"));
   restore.Load(fileName);
   newCam->Restore(restore.GetRoot());
 
-  SetStoredPositions(newCam);
- 
-  cppDEL(newCam);
+  SetStoredPositions(newCam.get());
 }
 //----------------------------------------------------------------------------
 void mafAnimate::StorePoseToFile(const mafString &fileName)
@@ -506,10 +504,10 @@ void mafAnimate::StoreViewPoint()
 		name = wxString::Format("camera position %d", ++counter);
 
 	// prompt user for a name -----------------------
-	wxTextEntryDialog *dlg = new wxTextEntryDialog(NULL,"please enter a name", "Store Camera Position", name );
+	auto dlg = std::make_unique<wxTextEntryDialog>(nullptr,"please enter a name", "Store Camera Position", name );
 	int result = dlg->ShowModal(); 
 	name = dlg->GetValue();
-	cppDEL(dlg);
+	dlg.reset();
 	if(result != wxID_OK) return;
 	
 	// test if is it unique -----------------------
@@ -560,10 +558,10 @@ void mafAnimate::RenameViewPoint()
 	assert(!m_SelectedPosition.empty());
 
 	// prompt user for the new name -----------------------
-	wxTextEntryDialog *dlg = new wxTextEntryDialog(NULL,"please enter a name", "Rename Camera Position",m_SelectedPosition.toWx());
+	auto dlg = std::make_unique<wxTextEntryDialog>(nullptr,"please enter a name", "Rename Camera Position",m_SelectedPosition.toWx());
   int result = dlg->ShowModal(); 
   mafString name = mafWxToString(dlg->GetValue());
-  cppDEL(dlg);
+  dlg.reset();
 	if(result != wxID_OK) return;
 
   if(name == m_SelectedPosition) return; // user doesn't give a different name, skip

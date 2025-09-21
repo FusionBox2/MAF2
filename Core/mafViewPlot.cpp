@@ -42,16 +42,10 @@ mafViewPlot::mafViewPlot(const mafString& label)
 	:mafView(label)
 	//----------------------------------------------------------------------------
 {
-	m_Sg = NULL;
 }
-//----------------------------------------------------------------------------
-mafViewPlot::~mafViewPlot()
-//----------------------------------------------------------------------------
-{
-	m_PipeMap.clear();
-	cppDEL(m_Sg);
-}
-//----------------------------------------------------------------------------
+
+mafViewPlot::~mafViewPlot() = default;
+
 void mafViewPlot::PlugVisualPipe(mafString vme_type, mafString pipe_type, long visibility)
 //----------------------------------------------------------------------------
 {
@@ -76,7 +70,7 @@ mafView* mafViewPlot::Copy(mafBaseEventHandler* Listener, bool lightCopyEnabled)
 void mafViewPlot::Create()
 //----------------------------------------------------------------------------
 {
-	m_Sg = new mafSceneGraph(this, NULL);
+	m_Sg = std::make_unique<mafSceneGraph>(this, nullptr);
 	m_Sg->SetListener(this);
 }
 //----------------------------------------------------------------------------

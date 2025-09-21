@@ -2347,9 +2347,9 @@ void medViewArbitraryOrthoSlice::ShowSlicers(mafVME* vmeVolume, bool show)
 		m_AttachCameraToSlicerZInZView == NULL)
 	{
 		auto gui = AccessGUI();
-		m_AttachCameraToSlicerXInXView = new mafAttachCamera(gui, ((mafViewVTK*)m_ChildViewList[X_VIEW])->m_Rwi, this);
-		m_AttachCameraToSlicerYInYView = new mafAttachCamera(gui, ((mafViewVTK*)m_ChildViewList[Y_VIEW])->m_Rwi, this);
-		m_AttachCameraToSlicerZInZView = new mafAttachCamera(gui, ((mafViewVTK*)m_ChildViewList[Z_VIEW])->m_Rwi, this);
+		m_AttachCameraToSlicerXInXView = new mafAttachCamera(gui, mafViewVTK::StaticDownCast(m_ChildViewList[X_VIEW])->m_Rwi.get(), this);
+		m_AttachCameraToSlicerYInYView = new mafAttachCamera(gui, mafViewVTK::StaticDownCast(m_ChildViewList[Y_VIEW])->m_Rwi.get(), this);
+		m_AttachCameraToSlicerZInZView = new mafAttachCamera(gui, mafViewVTK::StaticDownCast(m_ChildViewList[Z_VIEW])->m_Rwi.get(), this);
 	}
 
 	assert(m_AttachCameraToSlicerXInXView);

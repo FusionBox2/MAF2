@@ -113,8 +113,8 @@ public:
   void CameraUpdate() override;
   virtual int GetCameraPosition();
 
-  mafSceneGraph *GetSceneGraph() override {return m_Sg;};
-  wxVTKWindow    *GetRWI() override {return m_Rwi->m_RwiBase;};
+  mafSceneGraph *GetSceneGraph() override {return m_Sg.get();}
+  wxVTKWindow    *GetRWI() override {return m_Rwi->m_RwiBase;}
 
   /** Return a pointer to the image of the renderwindow.*/
   void GetImage(wxBitmap &bmp, int magnification = 1) override;
@@ -163,18 +163,18 @@ public:
   /** Allow to link the camera of the view to other cameras.*/
   virtual void LinkView(bool link_camera = true);
 
-  mafRWI *m_Rwi;
+  std::unique_ptr<mafRWI> m_Rwi;
 
   /** print a dump of this object */
   void Print(std::ostream& os, const int tabs=0) override;// const;
 
 protected:
 
-  mafSceneGraph *m_Sg;
-  mafLightKit		*m_LightKit;
-  mafTextKit    *m_TextKit;
-  mafAttachCamera *m_AttachCamera;
-  mafAnimate      *m_AnimateKit;
+  std::unique_ptr<mafSceneGraph> m_Sg;
+  std::unique_ptr<mafLightKit> m_LightKit;
+  std::unique_ptr<mafTextKit> m_TextKit;
+  std::unique_ptr<mafAttachCamera> m_AttachCamera;
+  std::unique_ptr<mafAnimate> m_AnimateKit;
 
   int   m_CameraPositionId; ///< Integer representing a preset for camera position, focal point and view up.
   bool  m_ShowAxes;  ///< Flag used to show/hide axes in low left corner of the view

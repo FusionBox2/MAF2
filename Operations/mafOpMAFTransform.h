@@ -81,12 +81,12 @@ protected:
 
   /** 
   plugged objects */
-  mafGizmoTranslate           *m_GizmoTranslate;  
-  mafGizmoRotate              *m_GizmoRotate;
-  mafGizmoScale               *m_GizmoScale;
-  mafGUITransformMouse        *m_GuiTransform;
-  mafGUISaveRestorePose       *m_GuiSaveRestorePose;
-  mafGUITransformTextEntries  *m_GuiTransformTextEntries;
+  std::unique_ptr<mafGizmoTranslate>           m_GizmoTranslate;  
+  std::unique_ptr<mafGizmoScale>               m_GizmoScale;
+  std::unique_ptr<mafGUITransformMouse>        m_GuiTransform;
+  std::unique_ptr<mafGUISaveRestorePose>       m_GuiSaveRestorePose;
+  std::unique_ptr<mafGizmoRotate>              m_GizmoRotate;
+  std::unique_ptr<mafGUITransformTextEntries>  m_GuiTransformTextEntries;
 
   double m_RotationStep;
   double m_TranslationStep;

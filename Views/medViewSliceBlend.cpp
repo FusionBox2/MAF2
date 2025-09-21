@@ -111,14 +111,14 @@ void medViewSliceBlend::Create()
 {
 	RWI_LAYERS num_layers = m_CameraPositionId != CAMERA_OS_P ? TWO_LAYER : ONE_LAYER;
 
-	m_Rwi = new mafRWI(mafGetFrame(), num_layers, m_ShowGrid, m_ShowAxes, m_ShowRuler, m_StereoType);
+	m_Rwi = std::make_unique<mafRWI>(mafGetFrame(), num_layers, m_ShowGrid, m_ShowAxes, m_ShowRuler, m_StereoType);
 	m_Rwi->SetListener(this);
 	m_Rwi->CameraSet(m_CameraPositionId);
 	m_Win = m_Rwi->m_RwiBase;
 
-	m_Sg = new mafSceneGraph(this, m_Rwi->m_RenFront, m_Rwi->m_RenBack);
+	m_Sg = std::make_unique<mafSceneGraph>(this, m_Rwi->m_RenFront, m_Rwi->m_RenBack);
 	m_Sg->SetListener(this);
-	m_Rwi->m_Sg = m_Sg;
+	m_Rwi->m_Sg = m_Sg.get();
 
 	vtkNEW(m_Picker3D);
 	vtkNEW(m_Picker2D);
@@ -293,7 +293,7 @@ mafGUI* medViewSliceBlend::CreateGui()
 	}
 
 	//Create attach camera for the volume
-	m_AttachCamera = new mafAttachCamera(gui, m_Rwi, this);
+	m_AttachCamera = std::make_unique<mafAttachCamera>(gui, m_Rwi.get(), this);
 	gui->FloatSlider(ID_OPACITY, &m_Opacity, 0.0, 1.0, _L("Down"), _L("Top"));
 	gui->FitGui();
 	gui->Enable(ID_OPACITY, m_CurrentVolume != NULL);

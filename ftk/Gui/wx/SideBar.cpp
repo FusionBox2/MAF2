@@ -77,7 +77,7 @@ namespace gui::wx
 
 	SideBar::~SideBar()
 	{
-		cppDEL(m_Notebook);
+		delete m_Notebook;
 	}
 
 	void SideBar::NodeAdd(std::shared_ptr<mafNode> node)

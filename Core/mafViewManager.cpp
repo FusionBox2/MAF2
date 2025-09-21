@@ -416,9 +416,8 @@ void mafViewManager::Activate(mafView *view)
 {
   bool externalViewFlag;
   // Determine if is an external view
-  wxConfig *config = new wxConfig(wxEmptyString);
+  auto config = std::make_unique<wxConfig>(wxEmptyString);
   config->Read("ExternalViewFlag", &externalViewFlag, false);
-  cppDEL(config);
 
   // Set the focus to the frame of the specified view
   if(externalViewFlag)

@@ -107,8 +107,6 @@ medViewSlicer::medViewSlicer(const mafString& label, bool show_ruler)
 	m_CurrentImage = NULL;
 	m_CurrentSlicer = NULL;
 
-	m_AttachCamera = NULL;
-
 	m_SliceCenterSurface[0] = 0.0;
 	m_SliceCenterSurface[1] = 0.0;
 	m_SliceCenterSurface[2] = 0.0;
@@ -122,7 +120,7 @@ medViewSlicer::medViewSlicer(const mafString& label, bool show_ruler)
 medViewSlicer::~medViewSlicer()
 //----------------------------------------------------------------------------
 {
-	cppDEL(m_AttachCamera);
+	m_AttachCamera.reset();
 }
 //----------------------------------------------------------------------------
 void medViewSlicer::PackageView()
@@ -178,10 +176,10 @@ void medViewSlicer::VmeShow(mafNode* node, bool show)
 
 			//Set camera of slice view in way that it will follow the volume
 			if (!m_AttachCamera)
-				m_AttachCamera = new mafAttachCamera(AccessGUI(), ((mafViewVTK*)m_ChildViewList[SLICE_VIEW])->m_Rwi, this);
+				m_AttachCamera = std::make_unique<mafAttachCamera>(AccessGUI(), mafViewVTK::StaticDownCast(m_ChildViewList[SLICE_VIEW])->m_Rwi.get(), this);
 			m_AttachCamera->SetStartingMatrix(m_CurrentSlicer->GetOutput()->GetAbsMatrix());
 			m_AttachCamera->SetVme(m_CurrentSlicer);
-			((mafViewVTK*)m_ChildViewList[SLICE_VIEW])->CameraReset(m_CurrentSlicer);
+			mafViewVTK::StaticDownCast(m_ChildViewList[SLICE_VIEW])->CameraReset(m_CurrentSlicer);
 		}
 		else if (Vme->IsA("mafVMEImage")) {
 			m_CurrentImage = mafVMEImage::SafeDownCast(node);

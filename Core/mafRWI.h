@@ -186,7 +186,7 @@ protected:
 	mafGUIPicButton *m_CameraButtons[6];
 	wxBoxSizer	 *m_Sizer;
 
-	mafAxes          *m_Axes; ///< Actor representing a global reference system.
+	std::unique_ptr<mafAxes>          m_Axes; ///< Actor representing a global reference system.
 	vtkMAFGridActor     *m_Grid; ///< Actor representing a grid showed into the render window.
 	int               m_ShowGrid; ///< Flag used to show/hide the grid.
 	int               m_GridNormal;

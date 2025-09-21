@@ -82,25 +82,9 @@ mafOpMAFTransform::mafOpMAFTransform(const mafString& label) : Superclass(label)
   m_RotationStep    = 10.0;
   m_TranslationStep = 2.0;
   m_EnableStep      = 0;
+}
+mafOpMAFTransform::~mafOpMAFTransform() = default;
 
-  m_GizmoTranslate          = NULL;
-  m_GizmoRotate             = NULL;
-  m_GizmoScale              = NULL;
-  m_GuiTransform            = NULL;
-  m_GuiSaveRestorePose      = NULL;
-  m_GuiTransformTextEntries = NULL;
-}
-//----------------------------------------------------------------------------
-mafOpMAFTransform::~mafOpMAFTransform()
-//----------------------------------------------------------------------------
-{
-  cppDEL(m_GizmoTranslate);
-  cppDEL(m_GizmoRotate);
-  cppDEL(m_GizmoScale);
-  cppDEL(m_GuiTransform);
-  cppDEL(m_GuiSaveRestorePose);
-  cppDEL(m_GuiTransformTextEntries);
-}
 //----------------------------------------------------------------------------
 bool mafOpMAFTransform::Accept(mafNode* vme)
 //----------------------------------------------------------------------------
@@ -150,28 +134,28 @@ void mafOpMAFTransform::OnEvent(mafEventBase *maf_event)
     OnEventThis(maf_event); 
     return;
   }
-  else if (maf_event->GetSender() == m_GuiTransform) // from gui transform
+  else if (maf_event->GetSender() == m_GuiTransform.get()) // from gui transform
   {
     OnEventGuiTransform(maf_event);
   }
-  else if (maf_event->GetSender() == m_GizmoTranslate) // from translation gizmo
+  else if (maf_event->GetSender() == m_GizmoTranslate.get()) // from translation gizmo
   {
     OnEventGizmoTranslate(maf_event);
   }
-  else if (maf_event->GetSender() == m_GizmoRotate) // from rotation gizmo
+  else if (maf_event->GetSender() == m_GizmoRotate.get()) // from rotation gizmo
   {
     OnEventGizmoRotate(maf_event);
   }
-  else if (maf_event->GetSender() == m_GizmoScale) // from scaling gizmo
+  else if (maf_event->GetSender() == m_GizmoScale.get()) // from scaling gizmo
   {
     OnEventGizmoScale(maf_event);
   }
-  else if (maf_event->GetSender() == this->m_GuiSaveRestorePose) // from save/restore gui
+  else if (maf_event->GetSender() == this->m_GuiSaveRestorePose.get()) // from save/restore gui
   {
     OnEventGuiSaveRestorePose(maf_event); 
 		{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
   }
-  else if (maf_event->GetSender() == this->m_GuiTransformTextEntries)
+  else if (maf_event->GetSender() == this->m_GuiTransformTextEntries.get())
   {
     OnEventGuiTransformTextEntries(maf_event);
 		{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
@@ -206,13 +190,13 @@ void mafOpMAFTransform::OpStop(int result)
   wxBusyInfo wait("destroying gui...");
 
   m_GizmoTranslate->Show(false);
-  cppDEL(m_GizmoTranslate);
+  m_GizmoTranslate.reset();
 
   m_GizmoRotate->Show(false);
-  cppDEL(m_GizmoRotate);
+  m_GizmoRotate.reset();
 
   m_GizmoScale->Show(false);
-  cppDEL(m_GizmoScale);
+  m_GizmoScale.reset();
 
   m_GuiTransform->DetachInteractorFromVme();
 
@@ -583,7 +567,7 @@ void mafOpMAFTransform::CreateGui()
   // Transform Gui
   //---------------------------------
   // create the transform Gui
-  m_GuiTransform = new mafGUITransformMouse(mafVME::SafeDownCast(GetInput()), this);
+  m_GuiTransform = std::make_unique<mafGUITransformMouse>(mafVME::SafeDownCast(GetInput()), this);
 
   // add transform gui to operation
   m_Gui->AddGui(m_GuiTransform->GetGui());
@@ -592,7 +576,7 @@ void mafOpMAFTransform::CreateGui()
   // Text transform Gui
   //---------------------------------
   // create the transform Gui
-  m_GuiTransformTextEntries = new mafGUITransformTextEntries(mafVME::SafeDownCast(GetInput()), this);
+  m_GuiTransformTextEntries = std::make_unique<mafGUITransformTextEntries>(mafVME::SafeDownCast(GetInput()), this);
 
   // add transform Gui to operation
   //m_Gui->AddGui(m_GuiTransformTextEntries->GetGui());
@@ -603,7 +587,7 @@ void mafOpMAFTransform::CreateGui()
   //---------------------------------
 	
   // create the gizmos
-  m_GizmoTranslate = new mafGizmoTranslate(mafVME::SafeDownCast(GetInput()), this);
+  m_GizmoTranslate = std::make_unique<mafGizmoTranslate>(mafVME::SafeDownCast(GetInput()), this);
   m_GizmoTranslate->Show(false);
 
   // add translation gizmo Gui to operation
@@ -613,7 +597,7 @@ void mafOpMAFTransform::CreateGui()
   //---------------------------------
   // Rotation Gizmo Gui
   //---------------------------------
-  m_GizmoRotate = new mafGizmoRotate(mafVME::SafeDownCast(GetInput()), this);
+  m_GizmoRotate = std::make_unique<mafGizmoRotate>(mafVME::SafeDownCast(GetInput()), this);
   m_GizmoRotate->Show(false);
 
   // add rotation gizmo Gui to operation
@@ -623,7 +607,7 @@ void mafOpMAFTransform::CreateGui()
   //---------------------------------
   // Scaling Gizmo Gui
   //---------------------------------
-  m_GizmoScale = new mafGizmoScale(mafVME::SafeDownCast(GetInput()), this);
+  m_GizmoScale = std::make_unique<mafGizmoScale>(mafVME::SafeDownCast(GetInput()), this);
   m_GizmoScale->Show(false);
 
   // add scaling gizmo gui to operation
@@ -633,7 +617,7 @@ void mafOpMAFTransform::CreateGui()
   //---------------------------------
   // Store/Restore position Gui
   //---------------------------------
-  m_GuiSaveRestorePose = new mafGUISaveRestorePose(mafVME::SafeDownCast(GetInput()), this);
+  m_GuiSaveRestorePose = std::make_unique<mafGUISaveRestorePose>(mafVME::SafeDownCast(GetInput()), this);
   
   // add Gui to operation
   //m_Gui->AddGui(m_GuiSaveRestorePose->GetGui());

@@ -317,13 +317,13 @@ int medViewSliceOnCurve::GetNodeStatusI(mafNode* node)
 	m_TextActor->SetPosition(50, 3); //20 because of coordinate symbols
 	m_TextActor->GetProperty()->SetColor(0.7, 0.7, 0.7);    //purple
 
-	mafRWI* Rwi = ((mafViewVTK*)m_ChildViewList[POLYLINE_VIEW])->m_Rwi;
-	if (Rwi != NULL)
+	auto Rwi = mafViewVTK::StaticDownCast(m_ChildViewList[POLYLINE_VIEW])->m_Rwi.get();
+	if (Rwi)
 		Rwi->m_RenFront->AddActor(m_TextActor);
 
-	assert(Rwi != NULL);
+	assert(Rwi);
 	//AACC 17.7.08 navigation stuff...
-	((mafViewVTK*)m_ChildViewList[MAIN_VIEW])->GetRWI()->GetCamera()->GetPosition(m_OldPos);
+	mafViewVTK::StaticDownCast(m_ChildViewList[MAIN_VIEW])->GetRWI()->GetCamera()->GetPosition(m_OldPos);
 	//End AACC
 }
 
