@@ -69,13 +69,8 @@
 #include "vtkMassProperties.h"
 #endif
 
-#include "mafMemDbg.h"
 #include "mafDbg.h"
 
-
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(medOpMeshDeformation);
-//----------------------------------------------------------------------------
 
 #define CHANGE_OC   1
 #define CHANGE_DC   2

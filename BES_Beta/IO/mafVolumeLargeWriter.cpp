@@ -25,9 +25,6 @@
 #include "../vtkMAF/vtkMAFFileDataProvider.h"
 #include <wx/busyinfo.h>
 
-mafCxxTypeMacro(mafVolumeLargeWriter);
-#include "mafMemDbg.h"
-
 //#define _PROFILE_LARGEDATA_
 
 mafVolumeLargeWriter::mafVolumeLargeWriter()

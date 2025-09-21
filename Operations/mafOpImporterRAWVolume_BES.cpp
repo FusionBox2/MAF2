@@ -58,12 +58,6 @@
 #include "vtkDoubleArray.h"
 
 #include "wx/busyinfo.h"
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(mafOpImporterRAWVolume_BES);
-//----------------------------------------------------------------------------
-
-#include "mafMemDbg.h"
-//#define New() NewDbg(__FILE__, __LINE__)
 
 //----------------------------------------------------------------------------
 mafOpImporterRAWVolume_BES::mafOpImporterRAWVolume_BES(const mafString& label) : Superclass(label)

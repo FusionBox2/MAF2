@@ -31,13 +31,6 @@
 #include "vtkMath.h"
 #include "vtkPoints.h"
 
-#include "mafMemDbg.h"
-//#include "../mafDbg.h"
-
-
-//------------------------------------------------------------------------------
-mafCxxTypeMacro(mmiVTKPicker)
-//------------------------------------------------------------------------------
 
 mmiVTKPicker::~mmiVTKPicker()
 {

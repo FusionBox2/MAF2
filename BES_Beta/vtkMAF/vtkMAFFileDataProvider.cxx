@@ -18,8 +18,6 @@
 
 vtkStandardNewMacro(vtkMAFFileDataProvider);
 
-#include "mafMemDbg.h"
-
 //ctor / dtor
 vtkMAFFileDataProvider::vtkMAFFileDataProvider() 
 {

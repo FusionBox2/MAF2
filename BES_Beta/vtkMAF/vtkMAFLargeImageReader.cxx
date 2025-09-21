@@ -24,8 +24,6 @@
 
 vtkStandardNewMacro(vtkMAFLargeImageReader);
 
-#include "mafMemDbg.h"
-
 //ctor
 vtkMAFLargeImageReader::vtkMAFLargeImageReader()
 {

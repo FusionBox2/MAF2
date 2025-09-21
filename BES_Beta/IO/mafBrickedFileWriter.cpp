@@ -24,9 +24,6 @@ Writes the BBF file, using data from vtkMAFLargeImageDataSet
 #include "mafBrickedFileWriter.h"
 #include "../vtkMAF/vtkMAFFileDataProvider.h"
 
-mafCxxTypeMacro(mafBrickedFileWriter);
-#include "mafMemDbg.h"
-
 
 mafBrickedFileWriter::mafBrickedFileWriter()
 {

@@ -21,8 +21,6 @@
 #include "vtkMAFLargeDataSet.h"
 #include "vtkMAFLargeDataProvider.h"
 
-#include "mafMemDbg.h"
-
 //----------------------------------------------------------------------------
 // Constructor with default bounds (0,1, 0,1, 0,1).
 vtkMAFLargeDataSet::vtkMAFLargeDataSet ()

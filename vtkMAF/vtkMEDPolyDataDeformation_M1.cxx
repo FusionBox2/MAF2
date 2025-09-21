@@ -24,7 +24,6 @@ See the COPYINGS file for license details
 
 vtkStandardNewMacro(vtkMEDPolyDataDeformation_M1);
 
-#include "mafMemDbg.h"
 #include "mafDbg.h"
 
 #pragma region //Nested Classes

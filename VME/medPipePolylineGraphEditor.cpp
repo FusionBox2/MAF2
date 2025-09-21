@@ -48,12 +48,6 @@
 #include "vtkMAFToLinearTransform.h"
 
 //----------------------------------------------------------------------------
-mafCxxTypeMacro(medPipePolylineGraphEditor);
-//----------------------------------------------------------------------------
-
-#include "mafMemDbg.h"
-
-//----------------------------------------------------------------------------
 medPipePolylineGraphEditor::medPipePolylineGraphEditor()
 	:mafPipeSlice()
 	//----------------------------------------------------------------------------

@@ -55,8 +55,6 @@
 #include "vtkIdList.h"
 #include "medCurvilinearAbscissaOnSkeletonHelper.h"
 
-#include "mafMemDbg.h"
-
 medGizmoPolylineGraph::medGizmoPolylineGraph(std::shared_ptr<mafNode> imputVme, mafBaseEventHandler *listener, const char* name, bool showOnlyDirectionAxis, bool testMode)
 { 
   m_Name = _R(name);

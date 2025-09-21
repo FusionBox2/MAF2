@@ -71,12 +71,7 @@
 #include "../BES_Beta/vtkMAF/vtkMAFMultiFileDataProvider.h"
 #endif // VME_VOLUME_LARGE
 
-#include "mafMemDbg.h"
 #include "mafDbg.h"
-
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(medOpImporterRAWImages);
-//----------------------------------------------------------------------------
 
 //----------------------------------------------------------------------------
 medOpImporterRAWImages::medOpImporterRAWImages(const mafString& label) : Superclass(label)

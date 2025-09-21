@@ -42,12 +42,8 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "vtkTubeFilter.h"
 
 #include <assert.h>
-#include "mafMemDbg.h"
 #include <optional>
 
-//-------------------------------------------------------------------------
-mafCxxTypeMacro(medVMEMuscleWrapper)
-//-------------------------------------------------------------------------
 
 const /*static*/ char* medVMEMuscleWrapper::MUSCLEWRAPPER_LINK_NAMES[] = {
   "MuscleVME_RP", "WrapperVME_RP_", "WrapperVME_CP_",

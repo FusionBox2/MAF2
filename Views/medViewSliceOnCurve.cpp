@@ -65,11 +65,6 @@ See the COPYINGS file for license details
 
 #include "mafPipeVolumeSlice_BES.h"
 
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(medViewSliceOnCurve);
-//----------------------------------------------------------------------------
-#include "mafMemDbg.h"
-
 
 //3D volume pipes to be plugged
 /*static*/ const medViewSliceOnCurve::VPIPE_ENTRY medViewSliceOnCurve::m_VolumePipes[] =

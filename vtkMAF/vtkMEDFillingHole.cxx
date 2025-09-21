@@ -41,8 +41,6 @@
 
 vtkStandardNewMacro(vtkMEDFillingHole);
 
-#include "mafMemDbg.h"
-
 #define MAXPATCHVERTEX 4096
 
 #define VEC3_SQUAREDIST(a, b)          (((a)[0]-(b)[0])*((a)[0]-(b)[0]) +       \

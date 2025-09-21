@@ -16,8 +16,6 @@
 
 vtkStandardNewMacro(vtkMAFMultiFileDataProvider);
 
-#include "mafMemDbg.h"
-
 vtkMAFMultiFileDataProvider::vtkMAFMultiFileDataProvider(void)
 {
   HeaderSize2 = 0;

@@ -17,9 +17,6 @@ See the COPYINGS file for license details
 #include "vtkCellArray.h"
 #include "vtkIdList.h"
 
-//vtkStandardNewMacro(vtkMAFMuscleFibers);
-
-#include "mafMemDbg.h"
 #include "mafDbg.h"
 
 #pragma region vtkMAFMuscleFibers

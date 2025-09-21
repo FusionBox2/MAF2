@@ -28,7 +28,6 @@ mafCxxTypeMacro(mafBrickedFileReader);
 #include "vtkDataArray.h"
 #include "vtkPointData.h"
 
-#include "mafMemDbg.h"
 #include "vtkMAFIdType64.h"
 
 #define BBF_DATACACHE_MAXCOUNT	7	//central brick + bricks around (L1 resample only)

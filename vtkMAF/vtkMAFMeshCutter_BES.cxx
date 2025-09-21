@@ -41,7 +41,6 @@
 // standard macros
 vtkStandardNewMacro(vtkMAFMeshCutter_BES);
 //------------------------------------------------------------------------------
-#include "mafMemDbg.h"
 
 ////#define __PROFILING__
 //#include <atlbase.h>

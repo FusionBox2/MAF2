@@ -65,11 +65,6 @@ const bool DEBUG_MODE = false;
 #include "vtkCamera.h"
 #include "vtkTransform.h"
 
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(mafViewSlice);
-//----------------------------------------------------------------------------
-
-#include "mafMemDbg.h"
 
 const int LAST_SLICE_ORIGIN_VALUE_NOT_INITIALIZED = 0;
 

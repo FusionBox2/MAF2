@@ -66,11 +66,6 @@ See the COPYINGS file for license details
 #include "mafPipeVolumeSlice_BES.h"
 
 //----------------------------------------------------------------------------
-mafCxxTypeMacro(medViewSliceOnCurveCompound);
-//----------------------------------------------------------------------------
-#include "mafMemDbg.h"
-
-//----------------------------------------------------------------------------
 medViewSliceOnCurveCompound::medViewSliceOnCurveCompound(const mafString& label) : medViewCompoundWindowing(label, 1, 3)
 //----------------------------------------------------------------------------
 {

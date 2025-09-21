@@ -23,7 +23,6 @@
 
 
 
-#include "mafMemDbg.h"
 #include <assert.h>
 
 typedef unsigned char BYTE;
