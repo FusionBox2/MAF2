@@ -100,7 +100,7 @@ Proceed?";
 int mafOpGarbageCollectMSFDir::GetFilesToRemove(std::set<std::string> &filesToRemoveSet )
 {
   assert(GetInput());
-  mafOpValidateTree* validateTree = new mafOpValidateTree();
+  auto validateTree = std::make_unique<mafOpValidateTree>();
   validateTree->SetInput(GetInput());
 
   // the input msf must be valid
@@ -155,7 +155,6 @@ int mafOpGarbageCollectMSFDir::GetFilesToRemove(std::set<std::string> &filesToRe
     return MAF_ERROR;
   }
 
-  cppDEL(validateTree);
   return MAF_OK;
 }
 
