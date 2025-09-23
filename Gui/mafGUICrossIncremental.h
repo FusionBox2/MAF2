@@ -29,7 +29,6 @@
 // Forward refs:
 //----------------------------------------------------------------------------
 class mafGUIButton;
-class mafGUIComboBox;
 
 //----------------------------------------------------------------------------
 // mafGUICrossIncremental :
@@ -54,7 +53,6 @@ public:
                   const wxSize& size = wxDefaultSize,
                   double min = -std::numeric_limits<double>::max(), double max = std::numeric_limits<double>::max(), int decimal_digit = -1,
                   long style = wxTAB_TRAVERSAL | wxCLIP_CHILDREN,
-                  bool comboStep = false,
                   mafString *buttonUpDown_text = NULL,
                   mafString *buttonLeftRight_text = NULL);
 
@@ -81,8 +79,7 @@ public:
     ID_BUTTON_LEFT,
     ID_BUTTON_RIGHT,
     ID_BUTTON_BOTTOM,
-    ID_STEP_ENTRY,
-    ID_COMBO_ENTRY,
+    ID_STEP_ENTRY
   };
 
 	
@@ -96,7 +93,6 @@ public:
 
 
   void SetStepVariable(double step);
-  void SetComboBoxItems(wxArrayString &array, int selected = 0);
 
   void LayoutStyle(const char *label);
 
@@ -105,23 +101,16 @@ public:
   void SetTextButtonLeft(const char *text);
   void SetTextButtonRight(const char *text);
 
-  mafGUIComboBox *GetComboBox(){return m_StepComboBox;}
-
-  void SetComboValue(int index);
-
 private:
   void CreateWidgetTopBottom(mafString *button_text);
   void CreateWidgetLeftRight(mafString *button_text);
   void CreateWidgetTextEntry(double min, double max);
-  void CreateWidgetComboBox();
-  void ConvertStepComboIntoStepVariable();
 
   mafGUIButton    *m_ButtonTop;
   mafGUIButton    *m_ButtonBottom;
   mafGUIButton    *m_ButtonLeft;
   mafGUIButton    *m_ButtonRight;
   wxTextCtrl   *m_StepText;
-  mafGUIComboBox *m_StepComboBox;
 
 	wxBoxSizer      *m_Sizer;
 
@@ -137,7 +126,6 @@ private:
   double            *m_StepVariable;
 	int               m_IdLayout;
 
-  bool m_IsComboStep;
   int m_Digits;
 
   DECLARE_EVENT_TABLE()

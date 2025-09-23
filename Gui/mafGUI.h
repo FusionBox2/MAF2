@@ -194,7 +194,7 @@ public:
   void Button(int id,mafString *label,const mafString& button_text, const mafString& tooltip= _R(""));
 
 	/** Widget with 4 buttons and a text array disposed like a cross.*/
-  mafGUICrossIncremental *CrossIncremental(int id,const mafString& label, double *stepVariable, double *topBottomVariable, double *leftRightVariable, int modality ,const mafString& tooltip = _R(""), bool boldLabel = true, bool comboStep = false, int digits = -1, mafString *buttonUpDown_text = NULL, mafString *buttonLeftRight_text = NULL);
+  mafGUICrossIncremental *CrossIncremental(int id,const mafString& label, double *stepVariable, double *topBottomVariable, double *leftRightVariable, int modality ,const mafString& tooltip = _R(""), bool boldLabel = true, int digits = -1, mafString *buttonUpDown_text = NULL, mafString *buttonLeftRight_text = NULL);
 
   /** two generic Buttons widget. */
   void TwoButtons(int firstID, int secondID, const mafString& label1, const mafString& label2, int alignment = wxALL, int width = -1);

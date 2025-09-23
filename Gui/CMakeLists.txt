@@ -91,8 +91,6 @@ SET(PROJECT_SRCS
   mafGUIViewWin.h
   mafGUICrossIncremental.cpp
   mafGUICrossIncremental.h
-  mafGUIComboBox.cpp
-  mafGUIComboBox.h
   mafGUISettingsHelp.h
   mafGUISettingsHelp.cpp
   mafObjectWithGUI.cpp
