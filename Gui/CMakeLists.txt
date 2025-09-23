@@ -146,8 +146,8 @@ IF (MAF_USE_VTK)
   mafAttachCamera.cpp
   mafAttachCamera.h
 
-  mafSideBar.cpp
-  mafSideBar.h
+  ../ftk/Gui/wx/SideBar.cpp
+  ../ftk/Gui/wx/SideBar.h
   mafTextKit.cpp
   mafTextKit.h
   mafVTKLog.cpp
