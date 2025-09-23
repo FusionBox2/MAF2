@@ -113,8 +113,8 @@ bool mafPrintout::HasPage(int pageNum)
 mafPrintSupport::mafPrintSupport()
 //----------------------------------------------------------------------------
 {
-  m_PrintData = new wxPrintData();
-  m_PageSetupData = new wxPageSetupData();
+  m_PrintData = std::make_unique<wxPrintData>();
+  m_PageSetupData = std::make_unique<wxPageSetupDialogData>();
 
   m_PageSetupData->SetDefaultMinMargins(true);
   
@@ -124,13 +124,9 @@ mafPrintSupport::mafPrintSupport()
   m_PageSetupData->SetMinMarginTopLeft(wxPoint(5,5));
   m_PageSetupData->SetMinMarginBottomRight(wxPoint(5,5));
 }
-//----------------------------------------------------------------------------
-mafPrintSupport::~mafPrintSupport()
-//----------------------------------------------------------------------------
-{
-  cppDEL(m_PrintData);
-  cppDEL(m_PageSetupData);
-}
+
+mafPrintSupport::~mafPrintSupport() = default;
+
 //----------------------------------------------------------------------------
 void mafPrintSupport::OnPrintPreview(mafView *v)
 //----------------------------------------------------------------------------
@@ -234,7 +230,7 @@ void mafPrintSupport::OnPageSetup()
 {
   (*m_PageSetupData) = *m_PrintData;
 
-  wxPageSetupDialog pageSetupDialog(mafGetFrame(), m_PageSetupData);
+  wxPageSetupDialog pageSetupDialog(mafGetFrame(), m_PageSetupData.get());
   pageSetupDialog.ShowModal();
 
   (*m_PrintData) = pageSetupDialog.GetPageSetupData().GetPrintData();

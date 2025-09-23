@@ -42,7 +42,7 @@ class MAF_EXPORT mafPrintSupport
   void OnPageSetup();
  
 protected:
-  wxPrintData *m_PrintData;
-  wxPageSetupData *m_PageSetupData;
+  std::unique_ptr<wxPrintData> m_PrintData;
+  std::unique_ptr<wxPageSetupDialogData> m_PageSetupData;
 };
 #endif
