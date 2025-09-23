@@ -340,14 +340,14 @@ int medOpExporterGRFWS::LoadVMEs(mafNode* node)
 void medOpExporterGRFWS::Write()   
 //----------------------------------------------------------------------------
 {
-  wxBusyInfo *wait = NULL;
+  std::unique_ptr<wxBusyInfo> wait;
   mafString info = _R("Loading data from files");
   if (!m_TestMode)
   {
     wxSetCursor(wxCursor(wxCURSOR_WAIT));
     {mafEvent evUnq(this,PROGRESSBAR_SET_TEXT); evUnq.SetString(&info); InvokeEvent(evUnq);}
 	  {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
-    wait = new wxBusyInfo("This may take several minutes, please be patient...");
+    wait = std::make_unique<wxBusyInfo>("This may take several minutes, please be patient...");
   }
 
   // Must update VTK!
@@ -618,19 +618,18 @@ void medOpExporterGRFWS::Write()
     {mafEvent evUnq(this,PROGRESSBAR_SET_TEXT); evUnq.SetString(&info); InvokeEvent(evUnq);}
     {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
     wxSetCursor(wxCursor(wxCURSOR_DEFAULT));
-    cppDEL(wait);
   }
 }
 //----------------------------------------------------------------------------
 void medOpExporterGRFWS::WriteFast()   
 //----------------------------------------------------------------------------
 {
-  wxBusyInfo *wait = NULL;
+  std::unique_ptr<wxBusyInfo> wait;
   if (!m_TestMode)
   {
     wxSetCursor(wxCursor(wxCURSOR_WAIT));
 	  {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
-    wait = new wxBusyInfo("This may take several minutes, please be patient!");
+    wait = std::make_unique<wxBusyInfo>("This may take several minutes, please be patient!");
   }
 
   // Must update VTK!
@@ -989,19 +988,18 @@ void medOpExporterGRFWS::WriteFast()
   {
     {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
     wxSetCursor(wxCursor(wxCURSOR_DEFAULT));
-    cppDEL(wait);
   }
 }
 //----------------------------------------------------------------------------
 void medOpExporterGRFWS::WriteSingleVector()   
 //----------------------------------------------------------------------------
 {
-  wxBusyInfo *wait = NULL;
+  std::unique_ptr<wxBusyInfo>wait;
   if (!m_TestMode)
   {
     wxSetCursor(wxCursor(wxCURSOR_WAIT));
 	  {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
-    wait = new wxBusyInfo("This may take several minutes, please be patient...");
+    wait = std::make_unique<wxBusyInfo>("This may take several minutes, please be patient...");
   }
   
   std::ofstream f_Out(m_File.toStd());
@@ -1077,19 +1075,18 @@ void medOpExporterGRFWS::WriteSingleVector()
   {
     {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
     wxSetCursor(wxCursor(wxCURSOR_DEFAULT));
-    cppDEL(wait);
   }
 }
 //----------------------------------------------------------------------------
 void medOpExporterGRFWS::WriteSingleVectorFast()   
 //----------------------------------------------------------------------------
 {  
-  wxBusyInfo *wait = NULL;
+  std:unique_ptr<wxBusyInfo> wait;
   if (!m_TestMode)
   {
     wxSetCursor(wxCursor(wxCURSOR_WAIT));
     {mafEvent evUnq(this,PROGRESSBAR_SHOW); InvokeEvent(evUnq);}
-    wait = new wxBusyInfo("This may take several minutes, please be patient...");
+    wait = std::make_unique<wxBusyInfo>("This may take several minutes, please be patient...");
   }
 
   std::ofstream f_Out(m_File.toStd());
@@ -1191,18 +1188,17 @@ void medOpExporterGRFWS::WriteSingleVectorFast()
   {
     {mafEvent evUnq(this,PROGRESSBAR_HIDE); InvokeEvent(evUnq);}
     wxSetCursor(wxCursor(wxCURSOR_DEFAULT));
-    cppDEL(wait);
   }
 }
 //----------------------------------------------------------------------------
 void medOpExporterGRFWS::CalculateTresholds()
 //----------------------------------------------------------------------------
 {
-  wxBusyInfo *wait = NULL;
+  std::unique_ptr<wxBusyInfo> wait;
   if (!m_TestMode)
   {
     wxSetCursor(wxCursor(wxCURSOR_WAIT));
-    wait = new wxBusyInfo("Calculating tresholds...");
+    wait = std::make_unique<wxBusyInfo>("Calculating tresholds...");
   }
   // Calculate tresholds
   if (m_ForceLeft)
@@ -1226,14 +1222,13 @@ void medOpExporterGRFWS::CalculateTresholds()
   {
     m_AdvanceSettings->Update();  
     wxSetCursor(wxCursor(wxCURSOR_DEFAULT));
-    cppDEL(wait);
   }
 }
 //----------------------------------------------------------------------------
 double medOpExporterGRFWS::CalculateTreshold(mafVMEVector* v)
 //----------------------------------------------------------------------------
 {
-  std::vector<double*> new_value;
+  std::vector<std::vector<double>> new_value;
   std::vector<double*> old_value;
   double max[3];
   max[0] = max[1] = max[2] = 0;
@@ -1256,7 +1251,7 @@ double medOpExporterGRFWS::CalculateTreshold(mafVMEVector* v)
       
       mafOBB obb;
       v->GetOutput()->GetBounds(obb,t);
-      double* p = new double[3];
+      std::vector<double> p(3);
       p[0] = (obb.m_Bounds)[1]-(obb.m_Bounds)[0];
       p[1] = (obb.m_Bounds)[3]-(obb.m_Bounds)[2];
       p[2] = (obb.m_Bounds)[5]-(obb.m_Bounds)[4];
@@ -1272,7 +1267,7 @@ double medOpExporterGRFWS::CalculateTreshold(mafVMEVector* v)
         maxy = abs( (old_value.at(s1-1))[1] - (new_value.at(s2-1))[1] );
         maxz = abs( (old_value.at(s1-1))[2] - (new_value.at(s2-1))[2] );
       }
-      old_value.push_back(p);
+      old_value.push_back(p.data());
       if (maxx > max[0])
       {
         max[0] = maxx;
@@ -1289,13 +1284,6 @@ double medOpExporterGRFWS::CalculateTreshold(mafVMEVector* v)
   }
   double r = ((max[0]>max[1])?max[0]:max[1]);
   r = ((r>max[2])?r:max[2]);
-
-  for (int i=0;i<new_value.size();i++)
-  {
-    cppDEL(new_value.at(i));
-  }
-  new_value.clear();
-  old_value.clear();
 
   return r;
 }
