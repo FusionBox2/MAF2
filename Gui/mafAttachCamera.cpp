@@ -41,7 +41,6 @@
 mafAttachCamera::mafAttachCamera(wxWindow* parent, mafRWI *rwi, mafBaseEventHandler *Listener)
 //----------------------------------------------------------------------------
 {
-  m_Gui = NULL;
 
   m_RenderWindow = rwi;
 	
@@ -72,7 +71,6 @@ mafAttachCamera::~mafAttachCamera()
 
   if(m_Gui)	
 	  m_Gui->SetListener(nullptr);
-	cppDEL(m_Gui);
 }
 //----------------------------------------------------------------------------
 // constants
@@ -85,7 +83,7 @@ enum ATTACH_CAMERA_WIDGET_ID
 void mafAttachCamera::CreateGui()
 //----------------------------------------------------------------------------
 {
-	m_Gui = new mafGUI(this);
+	m_Gui = std::make_unique<mafGUI>(this);
 	m_Gui->Show(true);
   m_Gui->Bool(ID_CAMERA_ATTACH,_R("attach"),&m_EnableAttachCamera,0,_R("Attach the camera to selected vme"));
 	m_Gui->Divider();
@@ -272,5 +270,5 @@ mafNode * mafAttachCamera::GetVme()
 
 mafGUI * mafAttachCamera::GetGui()
 {
-  return m_Gui;
+  return m_Gui.get();
 }

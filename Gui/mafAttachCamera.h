@@ -94,7 +94,7 @@ protected:
   vtkMatrix4x4	*m_StartingMatrix; ///< Matrix given to the Camera to be moved together with m_AttachedVme
 
 
-	mafGUI			*m_Gui;
+	std::unique_ptr<mafGUI>			m_Gui;
 	mafRWI      *m_RenderWindow;
 	wxWindow	  *m_ParentPanel;
 };
