@@ -187,10 +187,10 @@ mafVMEMuscleWrapping::mafVMEMuscleWrapping()
 
 
 	m_Transform = mafTransform::NewSPtr();
-	mafVMEOutputPolyline* output = mafVMEOutputPolyline::New();
+	auto output = mafVMEOutputPolyline::NewUPtr();
 
 	output->SetTransform(m_Transform); // force my transform in the output
-	SetOutput(output);
+	SetOutput(std::move(output));
 
 	GetMaterial();
 

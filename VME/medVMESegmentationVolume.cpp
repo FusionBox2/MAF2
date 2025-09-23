@@ -46,9 +46,9 @@ medVMESegmentationVolume::medVMESegmentationVolume()
 //-------------------------------------------------------------------------
 {
 	m_Transform = mafTransform::NewSPtr();
-	mafVMEOutputVolume* output = mafVMEOutputVolume::New(); // an output with no data
+	auto output = mafVMEOutputVolume::NewUPtr(); // an output with no data
 	output->SetTransform(m_Transform); // force my transform in the output
-	SetOutput(output);
+	SetOutput(std::move(output));
 
 	//DependsOnLinkedNodeOn();
 
@@ -63,7 +63,7 @@ medVMESegmentationVolume::~medVMESegmentationVolume()
 {
 	// these links are children, thus it's not our responsibility to
 	// destroy them, it's part of the vtkTree one's
-	SetOutput(NULL);
+	SetOutput(nullptr);
 }
 
 //-------------------------------------------------------------------------
@@ -590,11 +590,11 @@ mafVMEOutput* medVMESegmentationVolume::GetOutput()
 //-------------------------------------------------------------------------
 {
 	// allocate the right type of output on demand
-	if (m_Output == NULL)
+	if (!m_Output)
 	{
-		SetOutput(mafVMEOutputVolume::New()); // create the output
+		SetOutput(mafVMEOutputVolume::NewUPtr()); // create the output
 	}
-	return m_Output;
+	return m_Output.get();
 }
 //-------------------------------------------------------------------------
 const char** medVMESegmentationVolume::GetIcon()

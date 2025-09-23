@@ -82,11 +82,11 @@ mafVMEOutput *medVMEPolylineGraph::GetOutput()
 //-------------------------------------------------------------------------
 {
 	// allocate the right type of output on demand
-	if (m_Output==NULL)
+	if (!m_Output)
 	{
-		SetOutput(mafVMEOutputPolyline::New()); // create the output
+		SetOutput(mafVMEOutputPolyline::NewUPtr()); // create the output
 	}
-	return m_Output;
+	return m_Output.get();
 }
 //-------------------------------------------------------------------------
 int medVMEPolylineGraph::SetData(vtkDataSet *data, mafTimeStamp t, int mode)

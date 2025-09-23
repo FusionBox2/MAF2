@@ -70,16 +70,9 @@
 MAF_ID_IMP(mafVMEMuscleWrapperAQ::LENGTH_THRESHOLD_EVENT);
 
 //-------------------------------------------------------------------------
-mafCxxTypeMacro(mafVMEMuscleWrapperAQ)
-//-------------------------------------------------------------------------
-
-//-------------------------------------------------------------------------
 mafVMEMuscleWrapperAQ::mafVMEMuscleWrapperAQ()
 //-------------------------------------------------------------------------
 {
-
-	wxBusyInfo wait("muscle wrapperAQ construction...");
-	mafSleep(3000);
 	m_Distance = -1.0;
 	m_Angle = 0.0;
 
@@ -93,9 +86,9 @@ mafVMEMuscleWrapperAQ::mafVMEMuscleWrapperAQ()
 	m_ProbeVmeName = _R("");
 
 	m_Transform = mafTransform::NewSPtr();
-	mafVMEOutputMuscleWrapperAQ* output = mafVMEOutputMuscleWrapperAQ::New(); // an output with no data
+	auto output = mafVMEOutputMuscleWrapperAQ::NewUPtr(); // an output with no data
 	output->SetTransform(m_Transform); // force my transform in the output
-	SetOutput(output);
+	SetOutput(std::move(output));
 
 	vtkNEW(m_LineSource1);
 	vtkNEW(m_LineSource2);
@@ -155,9 +148,6 @@ mafVMEMuscleWrapperAQ::mafVMEMuscleWrapperAQ()
 	m_HistogramRWI = NULL;
 
 	m_GenerateHistogram = 0;
-
-	wxBusyInfo wait2("muscle wrapperAQ construction done");
-	mafSleep(3000);
 }
 //-------------------------------------------------------------------------
 mafVMEMuscleWrapperAQ::~mafVMEMuscleWrapperAQ()
@@ -168,7 +158,7 @@ mafVMEMuscleWrapperAQ::~mafVMEMuscleWrapperAQ()
 	vtkDEL(m_LineSource3);
 	vtkDEL(m_Goniometer);
 	vtkDEL(m_PolyData);
-	SetOutput(NULL);
+	SetOutput(nullptr);
 
 	if (m_HistogramRWI)
 		m_HistogramRWI->m_RenFront->RemoveActor(m_PlotActor);
@@ -239,16 +229,12 @@ std::shared_ptr<mmaMaterial> mafVMEMuscleWrapperAQ::GetMaterial()
 mafVMEOutputPolyline* mafVMEMuscleWrapperAQ::GetPolylineOutput()
 //-------------------------------------------------------------------------
 {
-	wxBusyInfo wait("muscle wrapperAQ getting output");
-	mafSleep(3000);
 	return (mafVMEOutputPolyline*)GetOutput();
 }
 //-------------------------------------------------------------------------
 void mafVMEMuscleWrapperAQ::SetMatrix(const mafMatrix& mat)
 //-------------------------------------------------------------------------
 {
-	wxBusyInfo wait("muscle wrapperAQ SetMatrix...");
-	mafSleep(3000);
 	m_Transform->SetMatrix(mat);
 	Modified();
 }
@@ -262,28 +248,18 @@ bool mafVMEMuscleWrapperAQ::IsAnimated()
 void mafVMEMuscleWrapperAQ::GetLocalTimeStamps(std::vector<mafTimeStamp>& kframes)
 //-------------------------------------------------------------------------
 {
-	wxBusyInfo wait("muscle wrapperAQ getting GetLocalTimeStamps...");
-	mafSleep(3000);
 	kframes.clear(); // no timestamps
 }
 //-----------------------------------------------------------------------
 void mafVMEMuscleWrapperAQ::InternalPreUpdate()
 //-----------------------------------------------------------------------
 {
-
-	wxBusyInfo wait("muscle wrapperAQ getting preupdate...");
-	mafSleep(3000);
 	GetMeterAttributes();
-	wxBusyInfo wait2("muscle wrapperAQ getting preupdate done");
-	mafSleep(3000);
 }
 //-----------------------------------------------------------------------
 void mafVMEMuscleWrapperAQ::InternalUpdate()
 //-----------------------------------------------------------------------
 {
-
-	wxBusyInfo wait("muscle wrapperAQ getting update...");
-	mafSleep(3000);
 	GetMeterAttributes()->m_ThresholdEvent = GetGenerateEvent();
 	GetMeterAttributes()->m_DeltaPercent = GetDeltaPercent();
 	GetMeterAttributes()->m_InitMeasure = GetInitMeasure();
@@ -310,7 +286,7 @@ void mafVMEMuscleWrapperAQ::InternalUpdate()
 
 			if (start_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId(_R("StartVME")) != -1)
 			{
-				((mafVMELandmarkCloud*)start_vme)->GetLandmark(GetLinkSubId(_R("StartVME")), m_StartPoint, currTs);
+				mafVMELandmarkCloud::StaticDownCast(start_vme)->GetLandmark(GetLinkSubId(_R("StartVME")), m_StartPoint, currTs);
 				mafMatrix tm;
 				start_vme->GetOutput()->GetAbsMatrix(tm, currTs);
 				m_TmpTransform->SetMatrix(tm);
@@ -328,7 +304,7 @@ void mafVMEMuscleWrapperAQ::InternalUpdate()
 
 			if (end_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId(_R("EndVME1")) != -1)
 			{
-				((mafVMELandmarkCloud*)end_vme)->GetLandmark(GetLinkSubId(_R("EndVME1")), m_EndPoint, currTs);
+				mafVMELandmarkCloud::StaticDownCast(end_vme)->GetLandmark(GetLinkSubId(_R("EndVME1")), m_EndPoint, currTs);
 				mafMatrix tm;
 				end_vme->GetOutput()->GetAbsMatrix(tm, currTs);
 				m_TmpTransform->SetMatrix(tm);
@@ -405,7 +381,7 @@ void mafVMEMuscleWrapperAQ::InternalUpdate()
 
 			if (start_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId(_R("StartVME")) != -1)
 			{
-				((mafVMELandmarkCloud*)start_vme)->GetLandmark(GetLinkSubId(_R("StartVME")), m_StartPoint, currTs);
+				mafVMELandmarkCloud::StaticDownCast(start_vme)->GetLandmark(GetLinkSubId(_R("StartVME")), m_StartPoint, currTs);
 				mafMatrix tm;
 				start_vme->GetOutput()->GetAbsMatrix(tm, currTs);
 				m_TmpTransform->SetMatrix(tm);
@@ -420,7 +396,7 @@ void mafVMEMuscleWrapperAQ::InternalUpdate()
 			{
 				if (start2_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId(_R("StartVME2")) != -1)
 				{
-					((mafVMELandmarkCloud*)start2_vme)->GetLandmark(GetLinkSubId(_R("StartVME2")), m_StartPoint2, currTs);
+					mafVMELandmarkCloud::StaticDownCast(start2_vme)->GetLandmark(GetLinkSubId(_R("StartVME2")), m_StartPoint2, currTs);
 					mafMatrix tm;
 					start2_vme->GetOutput()->GetAbsMatrix(tm, currTs);
 					m_TmpTransform->SetMatrix(tm);
@@ -439,7 +415,7 @@ void mafVMEMuscleWrapperAQ::InternalUpdate()
 
 			if (end1_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId(_R("EndVME1")) != -1)
 			{
-				((mafVMELandmarkCloud*)end1_vme)->GetLandmark(GetLinkSubId(_R("EndVME1")), m_EndPoint, currTs);
+				mafVMELandmarkCloud::StaticDownCast(end1_vme)->GetLandmark(GetLinkSubId(_R("EndVME1")), m_EndPoint, currTs);
 				mafMatrix tm;
 				end1_vme->GetOutput()->GetAbsMatrix(tm, currTs);
 				m_TmpTransform->SetMatrix(tm);
@@ -457,7 +433,7 @@ void mafVMEMuscleWrapperAQ::InternalUpdate()
 
 			if (end2_vme->IsMAFType(mafVMELandmarkCloud) && GetLinkSubId(_R("EndVME2")) != -1)
 			{
-				((mafVMELandmarkCloud*)end2_vme)->GetLandmark(GetLinkSubId(_R("EndVME2")), m_EndPoint2, currTs);
+				mafVMELandmarkCloud::StaticDownCast(end2_vme)->GetLandmark(GetLinkSubId(_R("EndVME2")), m_EndPoint2, currTs);
 				mafMatrix tm;
 				end2_vme->GetOutput()->GetAbsMatrix(tm, currTs);
 				m_TmpTransform->SetMatrix(tm);
@@ -839,8 +815,6 @@ void mafVMEMuscleWrapperAQ::InternalRestore(const mafStorageElement& node)
 void mafVMEMuscleWrapperAQ::Print(std::ostream& os, const int tabs)
 //-----------------------------------------------------------------------
 {
-	wxBusyInfo wait2("muscle wrapperAQ internal print");
-	mafSleep(3000);
 	Superclass::Print(os, tabs);
 	mafIndent indent(tabs);
 
@@ -878,9 +852,6 @@ void mafVMEMuscleWrapperAQ::SetMeterMode(int mode)
 int mafVMEMuscleWrapperAQ::GetMeterMode()
 //-------------------------------------------------------------------------
 {
-
-	wxBusyInfo wait2("muscle wrapperAQ getting metermode");
-	mafSleep(3000);
 	return GetMeterAttributes()->m_MeterMode;
 }
 //-------------------------------------------------------------------------
@@ -1270,10 +1241,6 @@ void mafVMEMuscleWrapperAQ::OnEvent(mafEventBase* maf_event)
 	{
 		Superclass::OnEvent(maf_event);
 	}
-
-
-	wxBusyInfo wait("muscle wrapperAQ on event done");
-	mafSleep(3000);
 }
 //-------------------------------------------------------------------------
 void mafVMEMuscleWrapperAQ::SetMeterLink(const mafString& link_name, mafNode* n)

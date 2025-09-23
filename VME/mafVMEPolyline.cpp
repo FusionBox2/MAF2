@@ -54,11 +54,11 @@ mafVMEOutput *mafVMEPolyline::GetOutput()
 //-------------------------------------------------------------------------
 {
   // allocate the right type of output on demand
-  if (m_Output==NULL)
+  if (!m_Output)
   {
-    SetOutput(mafVMEOutputPolyline::New()); // create the output
+    SetOutput(mafVMEOutputPolyline::NewUPtr()); // create the output
   }
-  return m_Output;
+  return m_Output.get();
 }
 //-------------------------------------------------------------------------
 const char** mafVMEPolyline::GetIcon() 
@@ -118,7 +118,7 @@ std::shared_ptr<mmaMaterial> mafVMEPolyline::GetMaterial()
     SetAttribute(material);
     if (m_Output)
     {
-      ((mafVMEOutputPolyline *)m_Output)->SetMaterial(material);
+      mafVMEOutputPolyline::StaticDownCast(m_Output.get())->SetMaterial(material);
     }
   }
   return material;

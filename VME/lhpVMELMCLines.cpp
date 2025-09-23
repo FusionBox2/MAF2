@@ -65,9 +65,9 @@ lhpVMELMCLines::lhpVMELMCLines()
 //-------------------------------------------------------------------------
 {
 	m_Transform = mafTransform::NewSPtr();
-	mafVMEOutputPolyline* output = mafVMEOutputPolyline::New(); // an output with no data
+	auto output = mafVMEOutputPolyline::NewUPtr(); // an output with no data
 	output->SetTransform(m_Transform); // force my transform in the output
-	SetOutput(output);
+	SetOutput(std::move(output));
 
 	DependsOnLinkedNodeOn();
 

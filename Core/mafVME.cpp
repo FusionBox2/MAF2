@@ -54,7 +54,6 @@ mafVME::mafVME()
 {
 	m_TestMode = false;
 
-	m_Output = NULL;
 	m_Behavior = NULL;
 
 	m_AbsMatrixPipe = mafAbsMatrixPipe::NewSPtr();
@@ -71,7 +70,7 @@ mafVME::~mafVME()
 {
 	// Pipes must be destroyed in the right order
 	// to take into consideration dependencies
-	cppDEL(m_Output);
+	m_Output.reset();
 
 	m_AbsMatrixPipe->SetVME(NULL);
 }
@@ -639,12 +638,12 @@ int mafVME::GetAuxiliaryRefSys(mafMatrix *AuxRefSys, const char *RefSysName, int
 */
 
 //-------------------------------------------------------------------------
-void mafVME::SetOutput(mafVMEOutput* output)
+void mafVME::SetOutput(std::unique_ptr<mafVMEOutput> output)
 //-------------------------------------------------------------------------
 {
-	cppDEL(m_Output);
+	m_Output.reset();
 
-	m_Output = output;
+	m_Output = std::move(output);
 
 	if (m_Output)
 	{

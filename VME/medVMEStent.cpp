@@ -113,8 +113,8 @@ medVMEStent::medVMEStent()
 	m_VesselVMEDefined = false;
 	m_DeployedPolydataStatus = DEPLOYED_PD_NONE;
 
-	mafVMEOutputPolyline* output = mafVMEOutputPolyline::New(); // output with no data.  Deleted by Maf.
-	SetOutput(output);
+	auto output = mafVMEOutputPolyline::NewUPtr(); // output with no data.  Deleted by Maf.
+	SetOutput(std::move(output));
 
 	auto pipe = mafDataPipeCustom::NewSPtr(); // Deleted by MAF
 	pipe->SetInputData(m_StentPolyData);

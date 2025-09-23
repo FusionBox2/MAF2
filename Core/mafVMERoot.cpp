@@ -49,9 +49,9 @@ mafVMERoot::mafVMERoot()
     m_ApplicationStamp = _R("");
     m_MaxItemId = -1;
     m_Transform = mafTransform::NewSPtr();
-    mafVMEOutputNULL* output = mafVMEOutputNULL::New(); // an output with no data
+    auto output = mafVMEOutputNULL::NewUPtr(); // an output with no data
     output->SetTransform(m_Transform); // force my transform in the output
-    SetOutput(output);
+    SetOutput(std::move(output));
 }
 
 //-------------------------------------------------------------------------

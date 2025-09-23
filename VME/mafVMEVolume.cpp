@@ -71,11 +71,11 @@ mafVMEOutput *mafVMEVolume::GetOutput()
 //-------------------------------------------------------------------------
 {
   // allocate the right type of output on demand
-  if (m_Output==NULL)
+  if (!m_Output)
   {
-    SetOutput(mafVMEOutputVolume::New()); // create the output
+    SetOutput(mafVMEOutputVolume::NewUPtr()); // create the output
   }
-  return m_Output;
+  return m_Output.get();
 }
 //-------------------------------------------------------------------------
 std::shared_ptr<mmaVolumeMaterial> mafVMEVolume::GetMaterial()
@@ -100,7 +100,7 @@ std::shared_ptr<mmaVolumeMaterial> mafVMEVolume::GetMaterial()
     SetAttribute(material);
     if (m_Output)
     {
-      ((mafVMEOutputVolume *)m_Output)->SetMaterial(material);
+      mafVMEOutputVolume::StaticDownCast(m_Output.get())->SetMaterial(material);
     }
   }
   return material;

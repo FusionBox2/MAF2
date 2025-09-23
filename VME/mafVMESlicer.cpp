@@ -62,9 +62,9 @@ mafVMESlicer::mafVMESlicer()
 
 	m_Transform = mafTransform::NewSPtr();
 	m_CopyTransform = mafTransform::NewSPtr();
-	mafVMEOutputSurface* output = mafVMEOutputSurface::New(); // an output with no data
+	auto output = mafVMEOutputSurface::NewUPtr(); // an output with no data
 	output->SetTransform(m_Transform); // force my transform in the output
-	SetOutput(output);
+	SetOutput(std::move(output));
 
 	m_TextureRes = 512;
 	m_Xspc = m_Yspc = 0.3;

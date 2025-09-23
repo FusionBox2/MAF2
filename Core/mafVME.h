@@ -168,7 +168,7 @@ public:
   virtual void GetLocalTimeStamps(std::vector<mafTimeStamp> &kframes)=0;
 
   /** Set the time bounds for the time varying VME (base VME is not time varying).*/
-  virtual void GetLocalTimeBounds(mafTimeStamp tbounds[2]) {tbounds[0] = m_CurrentTime; tbounds[1] = m_CurrentTime;};
+  virtual void GetLocalTimeBounds(mafTimeStamp tbounds[2]) {tbounds[0] = m_CurrentTime; tbounds[1] = m_CurrentTime;}
   
 	/**
     Return the list of timestamps considering all parents timestamps. Timestamps list is
@@ -199,13 +199,13 @@ public:
   int GetCrypting();
 
   /** return a pointer to the output data structure */
-  virtual mafVMEOutput *GetOutput() {return m_Output;}
+  virtual mafVMEOutput *GetOutput() {return m_Output.get();}
 
   /** process events coming from other components */
   void OnEvent(mafEventBase *maf_event) override;
 
   /** Return the suggested pipe-typename for the visualization of this vme */
-  virtual mafString GetVisualPipe() {return mafString();};
+  virtual mafString GetVisualPipe() {return {};}
 
   /** Set the mode with which render the VME: DEFAULT_VISUAL_MODE or NO_DATA_VISUAL_MODE.
   Setting the visual mode to default will produce also the reset of the m_EditingVisualPipe
@@ -214,7 +214,7 @@ public:
   void SetVisualMode(int mode);
 
   /** Get the mode with which render the VME: DEFAULT_VISUAL_MODE or NO_DATA_VISUAL_MODE*/
-  int GetVisualMode() {return m_VisualMode;};
+  int GetVisualMode() {return m_VisualMode;}
 
   /** 
     return the interactor assigned as a behavior to this VME. This is the 
@@ -223,17 +223,17 @@ public:
   mafInteractor *GetBehavior() {return m_Behavior;}
 
   /** set the interactor representing the behavior of this VME. @sa GetBehavior() */
-  void SetBehavior(mafInteractor *bh) {m_Behavior=bh;};
+  void SetBehavior(mafInteractor *bh) {m_Behavior=bh;}
   
   /** Turn On m_TestMode flag. 
   The m_TestMode flag is used to exclude the execution of splash screen or wxBusyInfo that conflicts with test machine.*/
-  void TestModeOn() {m_TestMode = true;};
+  void TestModeOn() {m_TestMode = true;}
 
   /** Used to turn off m_TestMode flag.*/
-  void TestModeOff() {m_TestMode = false;};
+  void TestModeOff() {m_TestMode = false;}
 
   /** Get TestMode*/
-  bool GetTestMode(){return m_TestMode;};
+  bool GetTestMode(){return m_TestMode;}
 
 protected:
   mafVME(); // to be allocated with New()
@@ -266,7 +266,7 @@ protected:
   /** 
     Set the output and connect it to the VME. This is automatically called
     by GetOutput() of specific VME's */
-  void SetOutput(mafVMEOutput *output);
+  void SetOutput(std::unique_ptr<mafVMEOutput> output);
   
   /** Set/Get the data pipe object, i.e. the source of the output dataset. */
   int SetDataPipe(std::shared_ptr<mafDataPipe> dpipe);
@@ -286,7 +286,7 @@ protected:
   std::shared_ptr<mafMatrixPipe>     m_MatrixPipe;
   std::shared_ptr<mafAbsMatrixPipe>  m_AbsMatrixPipe;
 
-  mafVMEOutput*   m_Output;       ///< the data structure storing the output of this VME
+  std::unique_ptr<mafVMEOutput>   m_Output;       ///< the data structure storing the output of this VME
   mafTimeStamp    m_CurrentTime;  ///< the time parameter for generation of the output
   int             m_Crypting;     ///< enable flag for this VME
   

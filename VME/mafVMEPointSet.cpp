@@ -398,11 +398,11 @@ mafVMEOutput *mafVMEPointSet::GetOutput()
 //-------------------------------------------------------------------------
 {
   // allocate the right type of output on demand
-  if (m_Output==NULL)
+  if (!m_Output)
   {
-    SetOutput(mafVMEOutputPointSet::New()); // create the output
+    SetOutput(mafVMEOutputPointSet::NewUPtr()); // create the output
   }
-  return m_Output;
+  return m_Output.get();
 }
 //-------------------------------------------------------------------------
 int mafVMEPointSet::SetData(vtkPolyData *data, mafTimeStamp t, int mode)
@@ -440,7 +440,7 @@ std::shared_ptr<mmaMaterial> mafVMEPointSet::GetMaterial()
     SetAttribute(material);
     if (m_Output)
     {
-      ((mafVMEOutputPointSet *)m_Output)->SetMaterial(material);
+      mafVMEOutputPointSet::StaticDownCast(m_Output.get())->SetMaterial(material);
     }
   }
   return material;

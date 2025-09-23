@@ -88,9 +88,9 @@ mafVMELineSeg::mafVMELineSeg()
 
 	m_Transform = mafTransform::NewSPtr();
 	//mafVMEOutputPolyline *output=mafVMEOutputPolyline::New(); // an output with no data
-	mafVMEOutputLineSeg* output = mafVMEOutputLineSeg::New();
+	auto output = mafVMEOutputLineSeg::NewUPtr();
 	output->SetTransform(m_Transform); // force my transform in the output
-	SetOutput(output);
+	SetOutput(std::move(output));
 
 	GetMaterial();
 	vtkNEW(pts);

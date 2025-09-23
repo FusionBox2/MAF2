@@ -55,9 +55,9 @@ mafVMEPolylineSpline::mafVMEPolylineSpline()
 //-------------------------------------------------------------------------
 {
 	m_Transform = mafTransform::NewSPtr();
-	mafVMEOutputPolyline* output = mafVMEOutputPolyline::New(); // an output with no data
+	auto output = mafVMEOutputPolyline::NewUPtr(); // an output with no data
 	output->SetTransform(m_Transform); // force my transform in the output
-	SetOutput(output);
+	SetOutput(std::move(output));
 
 	DependsOnLinkedNodeOn();
 
@@ -136,7 +136,7 @@ bool mafVMEPolylineSpline::Equals(mafVME* vme)
 mafVMEOutputPolyline* mafVMEPolylineSpline::GetPolylineOutput()
 //-------------------------------------------------------------------------
 {
-	return (mafVMEOutputPolyline*)GetOutput();
+	return mafVMEOutputPolyline::StaticDownCast(GetOutput());
 }
 //-------------------------------------------------------------------------
 void mafVMEPolylineSpline::SetMatrix(const mafMatrix& mat)
@@ -428,7 +428,7 @@ std::shared_ptr<mmaMaterial> mafVMEPolylineSpline::GetMaterial()
 		SetAttribute(material);
 		if (m_Output)
 		{
-			((mafVMEOutputPolyline*)m_Output)->SetMaterial(material);
+			mafVMEOutputPolyline::StaticDownCast(m_Output.get())->SetMaterial(material);
 		}
 	}
 	return material;

@@ -67,9 +67,9 @@ mafVMEOutput *medVMESurfaceEditor::GetOutput()
 //-------------------------------------------------------------------------
 {
 	// allocate the right type of output on demand
-	if (m_Output==NULL)
+	if (!m_Output)
 	{
-		SetOutput(medVMEOutputSurfaceEditor::New()); // create the output
+		SetOutput(medVMEOutputSurfaceEditor::NewUPtr()); // create the output
 	}
-	return m_Output;
+	return m_Output.get();
 }

@@ -45,16 +45,16 @@ lhpVMEKMInfo::lhpVMEKMInfo()
 	m_Transform = mafTransform::NewSPtr();
 	m_MatrixVector->SetMatrix(m_Transform->GetMatrix());
 
-	mafVMEOutputNULL* output = mafVMEOutputNULL::New(); // an output with no data
+	auto output = mafVMEOutputNULL::NewUPtr(); // an output with no data
 	output->SetTransform(m_Transform); // force my transform in the output
-	SetOutput(output);
+	SetOutput(std::move(output));
 }
 
 //-------------------------------------------------------------------------
 lhpVMEKMInfo::~lhpVMEKMInfo()
 //-------------------------------------------------------------------------
 {
-	SetOutput(NULL);
+	SetOutput(nullptr);
 
 	// data pipe destroyed in mafVME
 	// data vector destroyed in mafVMEGenericAbstract
@@ -65,11 +65,11 @@ mafVMEOutput* lhpVMEKMInfo::GetOutput()
 //-------------------------------------------------------------------------
 {
 	// allocate the right type of output on demand
-	if (m_Output == NULL)
+	if (!m_Output)
 	{
-		SetOutput(mafVMEOutputNULL::New()); // create the output
+		SetOutput(mafVMEOutputNULL::NewUPtr()); // create the output
 	}
-	return m_Output;
+	return m_Output.get();
 }
 
 //-------------------------------------------------------------------------

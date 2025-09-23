@@ -74,9 +74,9 @@ medVMEWrappedMeter::medVMEWrappedMeter()
 	m_ListBox = NULL;
 
 	m_Transform = mafTransform::NewSPtr();
-	medVMEOutputWrappedMeter* output = medVMEOutputWrappedMeter::New(); // an output with no data
+	auto output = medVMEOutputWrappedMeter::NewUPtr(); // an output with no data
 	output->SetTransform(m_Transform); // force my transform in the output
-	SetOutput(output);
+	SetOutput(std::move(output));
 
 	/*vtkNEW(m_PlaneSource);
 	vtkNEW(m_PlaneCutter);

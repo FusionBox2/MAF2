@@ -72,9 +72,9 @@ lhpVMELeverArm::lhpVMELeverArm()
 	m_LineVmeName = _R("");
 
 	m_Transform = mafTransform::NewSPtr();
-	mafVMEOutputPolyline* output = mafVMEOutputPolyline::New(); // an output with no data
+	auto output = mafVMEOutputPolyline::NewUPtr(); // an output with no data
 	output->SetTransform(m_Transform); // force my transform in the output
-	SetOutput(output);
+	SetOutput(std::move(output));
 
 	vtkNEW(m_LineSource);
 	vtkNEW(m_Goniometer);
@@ -105,7 +105,7 @@ lhpVMELeverArm::~lhpVMELeverArm()
 	vtkDEL(m_LineSource);
 	vtkDEL(m_Goniometer);
 	vtkDEL(m_PolyData);
-	SetOutput(NULL);
+	SetOutput(nullptr);
 }
 //-------------------------------------------------------------------------
 int lhpVMELeverArm::DeepCopy(mafNode* a)

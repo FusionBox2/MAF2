@@ -55,9 +55,9 @@ mafVMERefSysAbstract::mafVMERefSysAbstract()
 //-------------------------------------------------------------------------
 {
   m_Transform = mafTransform::NewSPtr();
-  mafVMEOutputSurface *output=mafVMEOutputSurface::New(); // an output with no data
+  auto output=mafVMEOutputSurface::NewUPtr(); // an output with no data
   output->SetTransform(m_Transform); // force my transform in the output
-  SetOutput(output);
+  SetOutput(std::move(output));
 
   // attach a datapipe which creates a bridge between VTK and MAF
   auto dpipe = mafDataPipeCustom::NewSPtr();
@@ -161,7 +161,7 @@ mafVMERefSysAbstract::mafVMERefSysAbstract()
 mafVMERefSysAbstract::~mafVMERefSysAbstract()
 //-------------------------------------------------------------------------
 {
-  SetOutput(NULL);
+  SetOutput(nullptr);
 
   vtkDEL(m_XArrow);
   vtkDEL(m_XAxisTransform);
@@ -298,7 +298,7 @@ std::shared_ptr<mmaMaterial> mafVMERefSysAbstract::GetMaterial()
     SetAttribute(material);
     if (m_Output)
     {
-      ((mafVMEOutputSurface *)m_Output)->SetMaterial(material);
+      mafVMEOutputSurface::StaticDownCast(m_Output.get())->SetMaterial(material);
     }
   }
   return material;

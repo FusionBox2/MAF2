@@ -100,9 +100,9 @@ medVMEComputeWrapping::medVMEComputeWrapping()
 
 	m_Transform = mafTransform::NewSPtr();
 	m_TmpTransform2 = mafTransform::NewSPtr();
-	medVMEOutputComputeWrapping* output = medVMEOutputComputeWrapping::New(); // an output with no data
+	auto output = medVMEOutputComputeWrapping::NewUPtr(); // an output with no data
 	output->SetTransform(m_Transform); // force my transform in the output
-	SetOutput(output);
+	SetOutput(std::move(output));
 
 	//m_WrappedMode1 = -1;
 	//m_WrappedMode2 = -1;

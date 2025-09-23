@@ -58,9 +58,9 @@ mafVMEOutput *mafVMEScalar::GetOutput()
   // allocate the right type of output on demand
   if (!m_Output)
   {
-    SetOutput(mafVMEOutputScalar::New()); // create the output
+    SetOutput(mafVMEOutputScalar::NewUPtr()); // create the output
   }
-  return m_Output;
+  return m_Output.get();
 }
 
 int mafVMEScalar::SetData(double data, mafTimeStamp t)

@@ -51,7 +51,7 @@ mafCxxTypeMacro(mafVMELandmark);
 mafVMELandmark::mafVMELandmark()
 //-------------------------------------------------------------------------
 {
-	SetOutput(mafVMEOutputPointSet::New()); // create the output
+	SetOutput(mafVMEOutputPointSet::NewUPtr()); // create the output
 
 	vtkNEW(m_Polydata);
 	vtkNew<vtkPoints> points;
@@ -370,7 +370,7 @@ std::shared_ptr<mmaMaterial> mafVMELandmark::GetMaterial()
 	}
 	if (m_Output)
 	{
-		((mafVMEOutputPointSet*)m_Output)->SetMaterial(material);
+		mafVMEOutputPointSet::StaticDownCast(m_Output.get())->SetMaterial(material);
 	}
 	return material;
 }

@@ -107,9 +107,9 @@ medVMELabeledVolume::medVMELabeledVolume()
 	m_LabelValueValue = wxEmptyString;
 
 	m_Transform = mafTransform::NewSPtr();
-	mafVMEOutputVolume* output = mafVMEOutputVolume::New(); // an output with no data
+	auto output = mafVMEOutputVolume::NewUPtr(); // an output with no data
 	output->SetTransform(m_Transform); // force my transform in the output
-	SetOutput(output);
+	SetOutput(std::move(output));
 
 	DependsOnLinkedNodeOn();
 
@@ -1140,7 +1140,7 @@ std::shared_ptr<mmaVolumeMaterial> medVMELabeledVolume::GetMaterial()
 		SetAttribute(material);
 		if (m_Output)
 		{
-			((mafVMEOutputVolume*)m_Output)->SetMaterial(material);
+			mafVMEOutputVolume::StaticDownCast(m_Output.get())->SetMaterial(material);
 		}
 	}
 	return material;

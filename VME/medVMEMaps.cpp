@@ -71,9 +71,9 @@ medVMEMaps::medVMEMaps()
 	vtkNEW(m_DistanceFilter);
 	vtkNEW(m_PolyData);
 
-	mafVMEOutputSurface* output = mafVMEOutputSurface::New(); // an output with no data
+	auto output = mafVMEOutputSurface::NewUPtr(); // an output with no data
 	output->SetTransform(m_Transform); // force my transform in the output
-	SetOutput(output);
+	SetOutput(std::move(output));
 
 	DependsOnLinkedNodeOn();
 
@@ -211,9 +211,9 @@ mafVMEOutputSurface* medVMEMaps::GetSurfaceOutput()
 	// allocate the right type of output on demand
 	if (m_Output == NULL)
 	{
-		SetOutput(mafVMEOutputSurface::New()); // create the output
+		SetOutput(mafVMEOutputSurface::NewUPtr()); // create the output
 	}
-	return mafVMEOutputSurface::SafeDownCast(m_Output);
+	return mafVMEOutputSurface::SafeDownCast(m_Output.get());
 }
 
 //-------------------------------------------------------------------------

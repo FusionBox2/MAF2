@@ -183,11 +183,11 @@ mafVMEGravityLine::mafVMEGravityLine()
 	//////
 
 	m_Transform = mafTransform::NewSPtr();
-	mafVMEOutputPolyline* output = mafVMEOutputPolyline::New();
+	auto output = mafVMEOutputPolyline::NewUPtr();
 	//mafVMEOutputSurface *output = mafVMEOutputSurface::New(); // an output with no data
 	//mafVMEOutputMuscleWrapping* output = mafVMEOutputMuscleWrapping::New();
 	output->SetTransform(m_Transform); // force my transform in the output
-	SetOutput(output);
+	SetOutput(std::move(output));
 
 	GetMaterial();
 

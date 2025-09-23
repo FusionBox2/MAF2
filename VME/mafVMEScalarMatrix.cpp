@@ -73,11 +73,11 @@ mafVMEOutput* mafVMEScalarMatrix::GetOutput()
 //-------------------------------------------------------------------------
 {
 	// allocate the right type of output on demand
-	if (m_Output == NULL)
+	if (!m_Output)
 	{
-		SetOutput(mafVMEOutputScalarMatrix::New()); // create the output
+		SetOutput(mafVMEOutputScalarMatrix::NewUPtr()); // create the output
 	}
-	return m_Output;
+	return m_Output.get();
 }
 
 //-------------------------------------------------------------------------

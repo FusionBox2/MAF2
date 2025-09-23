@@ -25,11 +25,11 @@ mafVMEOutput *mafVMEGeneric::GetOutput()
 //-------------------------------------------------------------------------
 {
   // allocate the right type of output on demand
-  if (m_Output==NULL)
+  if (!m_Output)
   {
-    SetOutput(mafVMEOutputVTK::New()); // create the output
+    SetOutput(mafVMEOutputVTK::NewUPtr()); // create the output
   }
-  return m_Output;
+  return m_Output.get();
 }
 
 //-------------------------------------------------------------------------

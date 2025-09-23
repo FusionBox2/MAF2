@@ -64,11 +64,11 @@ mafVMEOutput *mafVMEMesh::GetOutput()
 //-------------------------------------------------------------------------
 {
   // allocate the right type of output on demand
-  if (m_Output==NULL)
+  if (!m_Output)
   {
-    SetOutput(mafVMEOutputMesh::New()); // create the output
+    SetOutput(mafVMEOutputMesh::NewUPtr()); // create the output
   }
-  return m_Output;
+  return m_Output.get();
 }
 //-------------------------------------------------------------------------
 int mafVMEMesh::InternalInitialize()
@@ -138,7 +138,7 @@ std::shared_ptr<mmaMaterial> mafVMEMesh::GetMaterial()
     SetAttribute(material);
     if (m_Output)
     {
-      ((mafVMEOutputMesh*)m_Output)->SetMaterial(material);
+      mafVMEOutputMesh::StaticDownCast(m_Output.get())->SetMaterial(material);
     }
   }
   return material;

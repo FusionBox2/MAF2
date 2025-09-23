@@ -198,7 +198,7 @@ std::shared_ptr<mmaVolumeMaterial> mafVMEVolumeLarge::GetMaterial()
 		SetAttribute(material);
 		if (m_Output)
 		{
-			((mafVMEOutputVolume*)m_Output)->SetMaterial(material);
+			mafVMEOutputVolume::StaticDownCast(m_Output.get())->SetMaterial(material);
 		}
 	}
 	return material;

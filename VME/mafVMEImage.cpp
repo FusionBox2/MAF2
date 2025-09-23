@@ -57,11 +57,11 @@ mafVMEOutput *mafVMEImage::GetOutput()
 //-------------------------------------------------------------------------
 {
   // allocate the right type of output on demand
-  if (m_Output==NULL)
+  if (!m_Output)
   {
-    SetOutput(mafVMEOutputImage::New()); // create the output
+    SetOutput(mafVMEOutputImage::NewUPtr()); // create the output
   }
-  return m_Output;
+  return m_Output.get();
 }
 
 //-------------------------------------------------------------------------

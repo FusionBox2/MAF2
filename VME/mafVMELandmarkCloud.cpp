@@ -70,7 +70,7 @@ mafCxxTypeMacro(mafVMELandmarkCloud);
 mafVMELandmarkCloud::mafVMELandmarkCloud()
 //-------------------------------------------------------------------------
 {
-	SetOutput(mafVMEOutputLandmarkCloud::New()); // create the output
+	SetOutput(mafVMEOutputLandmarkCloud::NewUPtr()); // create the output
 
 	m_NumberOfLandmarks = -1;
 	m_State = UNSET_CLOUD;
@@ -1473,7 +1473,7 @@ std::shared_ptr<mmaMaterial> mafVMELandmarkCloud::GetMaterial()
 		SetAttribute(material);
 		if (m_Output)
 		{
-			((mafVMEOutputPointSet*)m_Output)->SetMaterial(material);
+			mafVMEOutputPointSet::StaticDownCast(m_Output.get())->SetMaterial(material);
 		}
 	}
 	return material;
