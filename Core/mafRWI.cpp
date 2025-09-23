@@ -1188,10 +1188,9 @@ void mafRWI::LinkCamera(bool linc_camera)
 void mafRWI::UpdateRulerUnit()
 //----------------------------------------------------------------------------
 {
-	mafGUIMeasureUnitSettings *unit_settings = new mafGUIMeasureUnitSettings(this);
+	auto unit_settings = std::make_unique<mafGUIMeasureUnitSettings>(this);
 	m_RulerScaleFactor = unit_settings->GetScaleFactor();
 	m_RulerLegend = unit_settings->GetUnitName();
-	cppDEL(unit_settings);
 	m_Ruler->SetScaleFactor(m_RulerScaleFactor);
 	m_Ruler->SetLegend(m_RulerLegend.GetCStr());
 	if (m_Gui != NULL) 
