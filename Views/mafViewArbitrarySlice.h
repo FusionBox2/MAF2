@@ -119,9 +119,6 @@ protected:
 	/** Windowing for volumes data. This function overrides superclass method.*/
 	void VolumeWindowing(mafVME *volume) override;
 
-	mafViewVTK *m_ViewSlice;
-	mafViewVTK *m_ViewArbitrary;
-
 	mafGizmoTranslate *m_GizmoTranslate;
 	mafGizmoRotate		*m_GizmoRotate;
 	mafVME          	*m_CurrentVolume;

@@ -1,38 +1,14 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafViewCompound
- Authors: Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
+#include "ftkConfigure.h"
 
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __mafViewCompound_H__
-#define __mafViewCompound_H__
-
-//----------------------------------------------------------------------------
-// Include:
-//----------------------------------------------------------------------------
 #include "mafView.h"
 
-//----------------------------------------------------------------------------
-// forward references :
-//----------------------------------------------------------------------------
+BEGIN_FTK_NAMESPACE
+
 class mafSceneGraph;
 class mafGUI;
 class wxVTKWindow;
-
-#ifdef MAF_EXPORTS
-#include "mafDllMacros.h"
-EXPORT_STL_VECTOR(MAF_EXPORT,mafView*);
-#endif
 
 //----------------------------------------------------------------------------
 // mafViewCompound :
@@ -66,11 +42,11 @@ public:
   /** 
   Plug the child view into the compound view. If the number of child view is less then row x col, 
   the last plugged view will fill the remaining holes.*/
-  virtual void PlugChildView(mafView *child);
+  virtual void PlugChildView(std::unique_ptr<mafView> child);
 
   /** 
   Redefine this method to package the compounded view */
-  virtual void PackageView() {};
+  virtual void PackageView() {}
 
   mafView *Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override;
   
@@ -175,7 +151,7 @@ public:
 
   /** 
   Return the number of child view.*/
-  int GetNumberOfSubView() {return m_NumOfChildView;};
+  int GetNumberOfSubView() {return m_ChildViewList.size();}
 
   /** 
   Let the sub-view to be maximized inside the compounded view. */
@@ -183,7 +159,7 @@ public:
 
   /** 
   Return true is one of the plugged view is maximized.*/
-  bool IsSubViewMaximized() {return m_SubViewMaximized != -1;};
+  bool IsSubViewMaximized() {return m_SubViewMaximized != -1;}
 
   /** 
   Print the sub-view.*/
@@ -210,12 +186,10 @@ protected:
 
   /** 
   Redefine this method to define a custom layout.*/
-  virtual void LayoutSubViewCustom(int width, int height) {};
+  virtual void LayoutSubViewCustom(int width, int height) {}
 
   int m_ViewRowNum; ///< number of rows to divide the compound view
   int m_ViewColNum; ///< number of cols to divide the compound view
-  int m_NumOfPluggedChildren; ///< number of plugged children view
-  int m_NumOfChildView; ///< number of child view (is equal or greater then m_NumOfPluggedChildren)
 
   int m_LayoutConfiguration; ///< Arrange the subviews on different layout configuration.
   int m_DefauldChildView;
@@ -227,7 +201,8 @@ protected:
   mafGUI *m_GuiView;
   wxWindow *m_GuiViewWindow;
 
-  std::vector<mafView *> m_ChildViewList; ///< Child views vector
-  std::vector<mafView *> m_PluggedChildViewList; ///< Plugged Child views vector
+  std::vector<std::unique_ptr<mafView> > m_ChildViewList; ///< Child views vector
+  std::vector<std::unique_ptr<mafView> > m_PluggedChildViewList; ///< Plugged Child views vector
 };
-#endif
+
+END_FTK_NAMESPACE

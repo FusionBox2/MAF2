@@ -37,7 +37,6 @@ medViewSliceNotInterpolatedCompound::medViewSliceNotInterpolatedCompound(const m
 //----------------------------------------------------------------------------
 {
   // Initialize parameters
-  m_ViewSlice = NULL;
   m_ColorLUT = NULL;
 }
 
@@ -52,10 +51,10 @@ void medViewSliceNotInterpolatedCompound::PackageView()
 //----------------------------------------------------------------------------
 {
   // Create child slice view
-  m_ViewSlice = new medViewSliceNotInterpolated(_R(""),CAMERA_CT);
-  m_ViewSlice->PackageView();
-  m_ViewSlice->Create();
-  PlugChildView(m_ViewSlice);
+  auto ViewSlice = std::make_unique<medViewSliceNotInterpolated>(_R(""),CAMERA_CT);
+  ViewSlice->PackageView();
+  ViewSlice->Create();
+  PlugChildView(std::move(ViewSlice));
 }
 
 //----------------------------------------------------------------------------
@@ -69,9 +68,8 @@ mafView *medViewSliceNotInterpolatedCompound::Copy(mafBaseEventHandler *Listener
   v->m_Id = m_Id;
   for (int i=0;i<m_PluggedChildViewList.size();i++)
   {
-    v->m_PluggedChildViewList.push_back(m_PluggedChildViewList[i]->Copy(this));
+    v->m_PluggedChildViewList.emplace_back(m_PluggedChildViewList[i]->Copy(this));
   }
-  v->m_NumOfPluggedChildren = m_NumOfPluggedChildren;
   v->Create();
   return v;
 }

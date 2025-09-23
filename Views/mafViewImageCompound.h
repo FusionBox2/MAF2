@@ -92,8 +92,6 @@ protected:
   /** Update lutslider with correct values in case of bool variable is true, otherwise disable the widget. */
 	void UpdateWindowing(bool enable,mafNode *node);
 
-	mafViewImage	*m_ViewImage;
-
 	mafGUILutSwatch		*m_LutWidget; ///< LUT widget in view side panel 
 	mafGUILutSlider		*m_LutSlider;
 

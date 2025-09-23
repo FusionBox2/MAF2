@@ -85,9 +85,8 @@ mafView *mafViewImageCompound::Copy(mafBaseEventHandler *Listener, bool lightCop
   v->m_Id = m_Id;
   for (int i=0;i<m_PluggedChildViewList.size();i++)
   {
-    v->m_PluggedChildViewList.push_back(m_PluggedChildViewList[i]->Copy(this));
+    v->m_PluggedChildViewList.emplace_back(m_PluggedChildViewList[i]->Copy(this));
   }
-  v->m_NumOfPluggedChildren = m_NumOfPluggedChildren;
   v->Create();
   return v;
 }
@@ -140,7 +139,7 @@ mafGUI* mafViewImageCompound::CreateGui()
 {
 	assert(!AccessGUI());
 	auto gui = new mafGUI(this);
-	gui->AddGui(((mafViewImage*)m_ChildViewList[ID_VIEW_IMAGE])->GetGui());
+	gui->AddGui(mafViewImage::StaticDownCast(m_ChildViewList[ID_VIEW_IMAGE].get())->GetGui());
 	m_LutWidget = gui->Lut(ID_LUT_CHOOSER,_R("lut"),m_ColorLUT);
 	m_LutWidget->Enable(false);
 	gui->Divider();
@@ -152,11 +151,11 @@ mafGUI* mafViewImageCompound::CreateGui()
 void mafViewImageCompound::PackageView()
 //-------------------------------------------------------------------------
 {
-	m_ViewImage = new mafViewImage(_R("View Image"),CAMERA_FRONT,false,false,false);
-	m_ViewImage->PlugVisualPipe(_R("mafVMEVolumeGray"),_R("mafPipeBox"),NON_VISIBLE);
-  m_ViewImage->PlugVisualPipe(_R("mafVMESurface"),_R("mafPipeSurface"),NON_VISIBLE);
+	auto ViewImage = std::make_unique<mafViewImage>(_R("View Image"),CAMERA_FRONT,false,false,false);
+	ViewImage->PlugVisualPipe(_R("mafVMEVolumeGray"),_R("mafPipeBox"),NON_VISIBLE);
+  ViewImage->PlugVisualPipe(_R("mafVMESurface"),_R("mafPipeSurface"),NON_VISIBLE);
 	
-	PlugChildView(m_ViewImage);
+	PlugChildView(std::move(ViewImage));
 }
 //----------------------------------------------------------------------------
 void mafViewImageCompound::VmeShow(mafNode *node, bool show)
@@ -186,8 +185,8 @@ void mafViewImageCompound::EnableWidgets(bool enable)
 void mafViewImageCompound::VmeSelect(mafNode *node, bool select)
 //----------------------------------------------------------------------------
 {
-  for(int i=0; i<m_NumOfChildView; i++)
-    m_ChildViewList[i]->VmeSelect(node, select);
+	for (auto& childView : m_ChildViewList)
+		childView->VmeSelect(node, select);
 
   auto pipe = mafPipeImage3D::StaticDownCast(m_ChildViewList[ID_VIEW_IMAGE]->GetNodePipe(node));
 	UpdateWindowing(node->IsA("mafVMEImage") && select && pipe && pipe->IsGrayImage(),node);

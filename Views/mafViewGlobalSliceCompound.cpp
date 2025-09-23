@@ -90,9 +90,8 @@ mafView* mafViewGlobalSliceCompound::Copy(mafBaseEventHandler* Listener, bool li
 	v->m_Id = m_Id;
 	for (int i = 0; i < m_PluggedChildViewList.size(); i++)
 	{
-		v->m_PluggedChildViewList.push_back(m_PluggedChildViewList[i]->Copy(this));
+		v->m_PluggedChildViewList.emplace_back(m_PluggedChildViewList[i]->Copy(this));
 	}
-	v->m_NumOfPluggedChildren = m_NumOfPluggedChildren;
 	v->Create();
 	return v;
 }
@@ -113,7 +112,7 @@ mafGUI* mafViewGlobalSliceCompound::CreateGui()
 		gui->Button(ID_HELP, _R("Help"), _R(""));
 	}
 
-	gui->AddGui(((mafViewGlobalSlice*)m_ChildViewList[ID_VIEW_GLOBAL_SLICE])->GetGui());
+	gui->AddGui(mafViewGlobalSlice::StaticDownCast(m_ChildViewList[ID_VIEW_GLOBAL_SLICE].get())->GetGui());
 	m_LutWidget = gui->Lut(ID_LUT_CHOOSER, _R("lut"), m_ColorLUT);
 	m_LutWidget->Enable(false);
 	gui->Divider(0);
@@ -125,17 +124,17 @@ mafGUI* mafViewGlobalSliceCompound::CreateGui()
 void mafViewGlobalSliceCompound::PackageView()
 //-------------------------------------------------------------------------
 {
-	m_ViewGlobalSlice = new mafViewGlobalSlice(_R(""), CAMERA_OS_P);
-	m_ViewGlobalSlice->PlugVisualPipe(_R("mafVMESurface"), _R("mafPipeSurfaceSlice"));
-	m_ViewGlobalSlice->PlugVisualPipe(_R("mafVMESurfaceParametric"), _R("mafPipeSurfaceSlice"));
-	m_ViewGlobalSlice->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("mafPipeVolumeSlice"));
-	m_ViewGlobalSlice->PlugVisualPipe(_R("medVMELabeledVolume"), _R("mafPipeVolumeSlice"));
-	m_ViewGlobalSlice->PlugVisualPipe(_R("mafVMEMesh"), _R("mafPipeMeshSlice"));
-	m_ViewGlobalSlice->PlugVisualPipe(_R("medVMEAnalog"), _R("mafPipeBox"), NON_VISIBLE);
-	m_ViewGlobalSlice->PlugVisualPipe(_R("mafVMELandmark"), _R("mafPipeSurfaceSlice"));
-	m_ViewGlobalSlice->PlugVisualPipe(_R("mafVMELandmarkCloud"), _R("mafPipeSurfaceSlice"));
+	auto ViewGlobalSlice = std::make_unique<mafViewGlobalSlice>(_R(""), CAMERA_OS_P);
+	ViewGlobalSlice->PlugVisualPipe(_R("mafVMESurface"), _R("mafPipeSurfaceSlice"));
+	ViewGlobalSlice->PlugVisualPipe(_R("mafVMESurfaceParametric"), _R("mafPipeSurfaceSlice"));
+	ViewGlobalSlice->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("mafPipeVolumeSlice"));
+	ViewGlobalSlice->PlugVisualPipe(_R("medVMELabeledVolume"), _R("mafPipeVolumeSlice"));
+	ViewGlobalSlice->PlugVisualPipe(_R("mafVMEMesh"), _R("mafPipeMeshSlice"));
+	ViewGlobalSlice->PlugVisualPipe(_R("medVMEAnalog"), _R("mafPipeBox"), NON_VISIBLE);
+	ViewGlobalSlice->PlugVisualPipe(_R("mafVMELandmark"), _R("mafPipeSurfaceSlice"));
+	ViewGlobalSlice->PlugVisualPipe(_R("mafVMELandmarkCloud"), _R("mafPipeSurfaceSlice"));
 
-	PlugChildView(m_ViewGlobalSlice);
+	PlugChildView(std::move(ViewGlobalSlice));
 }
 
 //----------------------------------------------------------------------------

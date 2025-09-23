@@ -140,11 +140,11 @@ mafView* medViewSliceOnCurveCompound::Copy(mafBaseEventHandler* Listener, bool l
 	v->SetListener(Listener);
 	v->m_Id = m_Id;
 
-	for (int i = 0; i < m_PluggedChildViewList.size(); i++) {
-		v->m_PluggedChildViewList.push_back(m_PluggedChildViewList[i]->Copy(this));
+	for (auto& pluggedChild : m_PluggedChildViewList)
+	{
+		v->m_PluggedChildViewList.emplace_back(pluggedChild->Copy(this));
 	}
 
-	v->m_NumOfPluggedChildren = m_NumOfPluggedChildren;
 	v->Create();
 	return v;
 }
@@ -165,10 +165,10 @@ void medViewSliceOnCurveCompound::VmeShow(mafNode* node, bool show)
 		if (show)
 		{
 			//we may have only one curve => we will need to hide them
-			HideSameVMEs(m_ChildViewList[POLYLINE_VIEW], node);
+			HideSameVMEs(m_ChildViewList[POLYLINE_VIEW].get(), node);
 
 			if (m_ShowPolylineInMainView)
-				HideSameVMEs(m_ChildViewList[MAIN_VIEW], node);
+				HideSameVMEs(m_ChildViewList[MAIN_VIEW].get(), node);
 		}
 
 		m_ChildViewList[POLYLINE_VIEW]->VmeShow(node, show);
@@ -190,10 +190,10 @@ void medViewSliceOnCurveCompound::VmeShow(mafNode* node, bool show)
 			if (show)
 			{
 				//hide all other volumes, we may have only one volume
-				for (int i = 0; i < m_NumOfChildView; i++)
+				for (int i = 0; i < m_ChildViewList.size(); i++)
 				{
 					if (i != POLYLINE_VIEW)
-						HideSameVMEs(m_ChildViewList[i], node);
+						HideSameVMEs(m_ChildViewList[i].get(), node);
 				}
 
 				m_CurrentVolume = node;
@@ -206,7 +206,7 @@ void medViewSliceOnCurveCompound::VmeShow(mafNode* node, bool show)
 		}
 
 
-		for (int i = 0; i < m_NumOfChildView; i++)
+		for (int i = 0; i < m_ChildViewList.size(); i++)
 		{
 			if (i != POLYLINE_VIEW)
 				m_ChildViewList[i]->VmeShow(node, show);
@@ -304,13 +304,13 @@ int medViewSliceOnCurveCompound::GetNodeStatusI(mafNode* node)
 	m_TextActor->SetPosition(50, 3); //20 because of coordinate symbols
 	m_TextActor->GetProperty()->SetColor(0.7, 0.7, 0.7);    //purple
 
-	auto Rwi = mafViewVTK::StaticDownCast(m_ChildViewList[POLYLINE_VIEW])->m_Rwi.get();
+	auto Rwi = mafViewVTK::StaticDownCast(m_ChildViewList[POLYLINE_VIEW].get())->m_Rwi.get();
 	if (Rwi)
 		Rwi->m_RenFront->AddActor(m_TextActor);
 
 	assert(Rwi);
 	//AACC 17.7.08 navigation stuff...
-	mafViewVTK::StaticDownCast(m_ChildViewList[MAIN_VIEW])->GetRWI()->GetCamera()->GetPosition(m_OldPos);
+	mafViewVTK::StaticDownCast(m_ChildViewList[MAIN_VIEW].get())->GetRWI()->GetCamera()->GetPosition(m_OldPos);
 	//End AACC
 }
 
@@ -393,14 +393,14 @@ mafGUI* medViewSliceOnCurveCompound::CreateGui()
 
 	if (m_LayoutConfiguration == LAYOUT_SMP_HORZ)
 	{
-		int step_width = (width - border) / (m_NumOfChildView - 1);
+		int step_width = (width - border) / (m_ChildViewList.size() - 1);
 		int step_height = (height - 2 * border) / 3 * 2;
 		m_ChildViewList[SLICE_VIEW]->GetWindow()->SetSize(0, 0, width, step_height);
 #ifndef WIN32
 		m_ChildViewList[SLICE_VIEW]->SetWindowSize(width, step_height);
 #endif
 
-		for (int r = 0; r < m_NumOfChildView; r++)
+		for (int r = 0; r < m_ChildViewList.size(); r++)
 		{
 			if (r == SLICE_VIEW)
 				continue;
@@ -418,13 +418,13 @@ mafGUI* medViewSliceOnCurveCompound::CreateGui()
 		assert(m_LayoutConfiguration == LAYOUT_SMP_VERT);
 
 		int step_width = (width - border) / 3 * 2;
-		int step_height = (height - 2 * border) / (m_NumOfChildView - 1);
+		int step_height = (height - 2 * border) / (m_ChildViewList.size() - 1);
 		m_ChildViewList[SLICE_VIEW]->GetWindow()->SetSize(0, 0, step_width, height);
 #ifndef WIN32
 		m_ChildViewList[SLICE_VIEW]->SetWindowSize(step_width, height);
 #endif
 
-		for (int r = 0; r < m_NumOfChildView; r++)
+		for (int r = 0; r < m_ChildViewList.size(); r++)
 		{
 			if (r == SLICE_VIEW)
 				continue;
@@ -635,8 +635,7 @@ void medViewSliceOnCurveCompound::OnEvent(mafEventBase* maf_event)
 /*virtual*/ void medViewSliceOnCurveCompound::SetSlice(double* Origin, double* Normal)
 //------------------------------------------------------------------------
 {
-	mafViewSlice* vs = mafViewSlice::SafeDownCast(m_ChildViewList[SLICE_VIEW]);
-	if (vs != NULL)
+	if (auto vs = mafViewSlice::SafeDownCast(m_ChildViewList[SLICE_VIEW].get()))
 		vs->SetSlice(Origin, Normal);
 }
 
@@ -662,7 +661,7 @@ void medViewSliceOnCurveCompound::OnEvent(mafEventBase* maf_event)
 	SetSlice(pos, normal);
 
 	//and update camera
-	mafView* vs = m_ChildViewList[SLICE_VIEW];
+	mafView* vs = m_ChildViewList[SLICE_VIEW].get();
 	if ((m_SliceCameraAutoFocus | m_SliceCameraAutoRotate) != 0)
 	{
 		//modify the camera (see mafRWI.cpp)
@@ -695,8 +694,7 @@ void medViewSliceOnCurveCompound::OnEvent(mafEventBase* maf_event)
 
 	if (m_SliceCameraNavigate3D != 0)
 	{
-		mafViewVTK* mv = mafViewVTK::SafeDownCast(m_ChildViewList[MAIN_VIEW]);
-		if (mv != NULL)
+		if (auto mv = mafViewVTK::SafeDownCast(m_ChildViewList[MAIN_VIEW].get()))
 		{
 			//modify the camera (see mafRWI.cpp)
 			vtkCamera* camera = mv->GetRWI()->GetCamera();
@@ -751,9 +749,9 @@ void medViewSliceOnCurveCompound::SetSlicePosition(double abscisa, vtkIdType bra
 //----------------------------------------------------------------------------
 {
 	//create child views
-	PlugChildView(new mafViewVTK(_L("main"), CAMERA_PERSPECTIVE));		//main 3D view	
-	PlugChildView(new mafViewVTK(_L("main"), CAMERA_PERSPECTIVE));		//polyline curve view
-	PlugChildView(new mafViewSlice(_L("slice"), CAMERA_PERSPECTIVE, true /*CAMERA_OS_Z*/));			//slice view
+	PlugChildView(std::make_unique<mafViewVTK>(_L("main"), CAMERA_PERSPECTIVE));		//main 3D view	
+	PlugChildView(std::make_unique<mafViewVTK>(_L("main"), CAMERA_PERSPECTIVE));		//polyline curve view
+	PlugChildView(std::make_unique<mafViewSlice>(_L("slice"), CAMERA_PERSPECTIVE, true /*CAMERA_OS_Z*/));			//slice view
 
 	//Plug visualization pipes to all views
 	PlugVolumePipe();
@@ -767,10 +765,10 @@ void medViewSliceOnCurveCompound::SetSlicePosition(double abscisa, vtkIdType bra
 {
 	for (int i = 0; i < 2; i++)
 	{
-		std::vector< mafView* >& vws = i == 0 ? m_PluggedChildViewList : m_ChildViewList;
+		auto& vws = i == 0 ? m_PluggedChildViewList : m_ChildViewList;
 		if (MAIN_VIEW < vws.size())
 		{
-			mafViewVTK* v = ((mafViewVTK*)vws[MAIN_VIEW]);
+			auto v = mafViewVTK::StaticDownCast(vws[MAIN_VIEW].get());
 			v->PlugVisualPipe(_R("mafVMEVolumeGray"), _R(GetVolumePipesDesc()[m_VolumePipeConfiguration].szClassName), MUTEX);
 			v->PlugVisualPipe(_R("medVMELabeledVolume"), _R(GetVolumePipesDesc()[m_VolumePipeConfiguration].szClassName), MUTEX);
 			v->PlugVisualPipe(_R("mafVMEVolumeRGB"), _R(GetVolumePipesDesc()[m_VolumePipeConfiguration].szClassName), MUTEX);
@@ -779,7 +777,7 @@ void medViewSliceOnCurveCompound::SetSlicePosition(double abscisa, vtkIdType bra
 
 		if (SLICE_VIEW < vws.size())
 		{
-			mafViewVTK* vs = ((mafViewVTK*)vws[SLICE_VIEW]);
+			auto vs = mafViewVTK::StaticDownCast(vws[SLICE_VIEW].get());
 
 			vs->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("mafPipeVolumeSlice_BES"), MUTEX);
 			vs->PlugVisualPipe(_R("medVMELabeledVolume"), _R("mafPipeVolumeSlice_BES"), MUTEX);
@@ -794,10 +792,10 @@ void medViewSliceOnCurveCompound::SetSlicePosition(double abscisa, vtkIdType bra
 {
 	for (int i = 0; i < 2; i++)
 	{
-		std::vector< mafView* >& vws = i == 0 ? m_PluggedChildViewList : m_ChildViewList;
+		auto& vws = i == 0 ? m_PluggedChildViewList : m_ChildViewList;
 		if (SLICE_VIEW < vws.size())
 		{
-			mafViewVTK* vs = ((mafViewVTK*)vws[SLICE_VIEW]);
+			auto vs = mafViewVTK::StaticDownCast(vws[SLICE_VIEW].get());
 			vs->PlugVisualPipe(_R("mafVMESurface"), _R("mafPipeSurfaceSlice_BES"));
 			vs->PlugVisualPipe(_R("mafVMESurfaceParametric"), _R("mafPipeSurfaceSlice_BES"));
 		}
@@ -809,10 +807,10 @@ void medViewSliceOnCurveCompound::SetSlicePosition(double abscisa, vtkIdType bra
 {
 	for (int i = 0; i < 2; i++)
 	{
-		std::vector< mafView* >& vws = i == 0 ? m_PluggedChildViewList : m_ChildViewList;
+		auto& vws = i == 0 ? m_PluggedChildViewList : m_ChildViewList;
 		if (SLICE_VIEW < vws.size())
 		{
-			mafViewVTK* vs = ((mafViewVTK*)vws[SLICE_VIEW]);
+			auto vs = mafViewVTK::StaticDownCast(vws[SLICE_VIEW].get());
 			vs->PlugVisualPipe(_R("mafVMEMesh"), _R("mafPipeMeshSlice_BES"));
 		}
 	}
@@ -826,10 +824,10 @@ void medViewSliceOnCurveCompound::SetSlicePosition(double abscisa, vtkIdType bra
 	//Plug polyline pipe
 	for (int i = 0; i < 2; i++)
 	{
-		std::vector< mafView* >& vws = i == 0 ? m_PluggedChildViewList : m_ChildViewList;
+		auto& vws = i == 0 ? m_PluggedChildViewList : m_ChildViewList;
 		if (POLYLINE_VIEW < vws.size())
 		{
-			mafViewVTK* vs = ((mafViewVTK*)vws[POLYLINE_VIEW]);
+			mafViewVTK* vs = mafViewVTK::StaticDownCast(vws[POLYLINE_VIEW].get());
 			vs->PlugVisualPipe(_R("mafVMEPolyline"), _R("mafPipePolyline"), MUTEX);
 			vs->PlugVisualPipe(_R("medVMEPolylineGraph"), _R("medVisualPipePolylineGraph"), MUTEX);
 		}
@@ -893,9 +891,9 @@ void medViewSliceOnCurveCompound::Print(std::ostream& os, const int tabs)// cons
 
 	//print components view information
 
-	for (int v = 0; v < m_NumOfChildView; v++)
+	for (auto& childView : m_ChildViewList)
 	{
-		m_ChildViewList[v]->Print(os, 1);
+		childView->Print(os, 1);
 	}
 }
 #pragma endregion 

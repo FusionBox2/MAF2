@@ -74,7 +74,5 @@ protected:
   same pannel GUI, each CreateGUI() function should first call the superclass' one.*/
   mafGUI  *CreateGui() override;
 
-	mafViewSingleSlice	*m_ViewSingleSlice;
-
 };
 #endif

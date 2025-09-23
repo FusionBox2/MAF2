@@ -78,8 +78,6 @@ mafViewCT::mafViewCT(const mafString& label)
 	m_CurrentVolume = NULL;
 	//m_LayoutConfiguration = LAYOUT_CUSTOM;
 
-	m_ViewCTCompound    = NULL;
-
 	m_LayoutWidth = 0;
 	m_LayoutHeight = 0;
 
@@ -89,21 +87,19 @@ mafViewCT::~mafViewCT()
 //----------------------------------------------------------------------------
 {
 	//m_ViewsRX[RX_FRONT_VIEW] = m_ViewsRX[RX_SIDE_VIEW] = NULL;
-	m_ViewCTCompound = NULL;
 }
 //----------------------------------------------------------------------------
 mafView *mafViewCT::Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled)
 //----------------------------------------------------------------------------
 {
   m_LightCopyEnabled = lightCopyEnabled;
-	mafViewCT *v = new mafViewCT(GetLabel());
+	auto v = new mafViewCT(GetLabel());
   v->SetListener(Listener);
 	v->m_Id = m_Id;
-	for (int i=0;i<m_PluggedChildViewList.size();i++)
+	for (auto& pluggedChild : m_PluggedChildViewList)
 	{
-		v->m_PluggedChildViewList.push_back(m_PluggedChildViewList[i]->Copy(this));
+		v->m_PluggedChildViewList.emplace_back(pluggedChild->Copy(this));
 	}
-	v->m_NumOfPluggedChildren = m_NumOfPluggedChildren;
 	v->Create();
 	return v;
 }
@@ -182,15 +178,15 @@ void mafViewCT::CreateGuiView()
 void mafViewCT::PackageView()
 //----------------------------------------------------------------------------
 {
-	m_ViewCTCompound = new mafViewCompound(_R("CT view"),2,5);
-	mafViewSlice *vs = new mafViewSlice(_R("Slice view"), CAMERA_PERSPECTIVE);
+	auto ViewCTCompound = std::make_unique<mafViewCompound>(_R("CT view"),2,5);
+	auto vs = std::make_unique<mafViewSlice>(_R("Slice view"), CAMERA_PERSPECTIVE);
 	/*m_Vs->PlugVisualPipe("mafVMEVolumeGray", "mafPipeVolumeSlice",MUTEX);
 	m_Vs->PlugVisualPipe("mafVMESurface", "mafPipeSurfaceSlice",MUTEX);
 	m_Vs->PlugVisualPipe("mafVMESurfaceParametric", "mafPipeSurfaceSlice",MUTEX);
 	m_Vs->PlugVisualPipe("mafVMELandmark", "mafPipeSurfaceSlice",MUTEX);
 	m_Vs->PlugVisualPipe("mafVMELandmarkCloud", "mafPipeSurfaceSlice",MUTEX);*/
-	m_ViewCTCompound->PlugChildView(vs);
-	PlugChildView(m_ViewCTCompound);
+	ViewCTCompound->PlugChildView(std::move(vs));
+	PlugChildView(std::move(ViewCTCompound));
 }
 //----------------------------------------------------------------------------
 void mafViewCT::EnableWidgets(bool enable)
@@ -219,6 +215,6 @@ void mafViewCT::LayoutSubViewCustom(int width, int height)
 void mafViewCT::VmeSelect(mafNode *node, bool select)
 //----------------------------------------------------------------------------
 {
-	for(int i=0; i<m_NumOfChildView; i++)
-		m_ChildViewList[i]->VmeSelect(node, select);
+	for (auto& childView : m_ChildViewList)
+		childView->VmeSelect(node, select);
 }

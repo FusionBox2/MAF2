@@ -85,9 +85,8 @@ mafView* mafViewSingleSliceCompound::Copy(mafBaseEventHandler* Listener, bool li
 	v->m_Id = m_Id;
 	for (int i = 0; i < m_PluggedChildViewList.size(); i++)
 	{
-		v->m_PluggedChildViewList.push_back(m_PluggedChildViewList[i]->Copy(this));
+		v->m_PluggedChildViewList.emplace_back(m_PluggedChildViewList[i]->Copy(this));
 	}
-	v->m_NumOfPluggedChildren = m_NumOfPluggedChildren;
 	v->Create();
 	return v;
 }
@@ -97,7 +96,7 @@ mafGUI* mafViewSingleSliceCompound::CreateGui()
 {
 	assert(!AccessGUI());
 	auto gui = new mafGUI(this);
-	gui->AddGui(((mafViewSingleSlice*)m_ChildViewList[ID_VIEW_SINGLE_SLICE])->GetGui());
+	gui->AddGui(mafViewSingleSlice::StaticDownCast(m_ChildViewList[ID_VIEW_SINGLE_SLICE].get())->GetGui());
 	m_LutWidget = gui->Lut(ID_LUT_CHOOSER, _R("lut"), m_ColorLUT);
 	m_LutWidget->Enable(false);
 	gui->Divider();
@@ -109,15 +108,15 @@ mafGUI* mafViewSingleSliceCompound::CreateGui()
 void mafViewSingleSliceCompound::PackageView()
 //-------------------------------------------------------------------------
 {
-	m_ViewSingleSlice = new mafViewSingleSlice(_R(""), CAMERA_CT);
-	m_ViewSingleSlice->PlugVisualPipe(_R("mafVMESurface"), _R("mafPipeSurfaceSlice"));
-	m_ViewSingleSlice->PlugVisualPipe(_R("mafVMEPolyline"), _R("mafPipePolylineSlice"));
-	m_ViewSingleSlice->PlugVisualPipe(_R("mafVMESurfaceParametric"), _R("mafPipeSurfaceSlice"));
-	m_ViewSingleSlice->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("mafPipeVolumeSlice"));
-	m_ViewSingleSlice->PlugVisualPipe(_R("mafVMEMesh"), _R("mafPipeMeshSlice"));
-	m_ViewSingleSlice->PlugVisualPipe(_R("mafVMEMeter"), _R("mafPipePolylineSlice"));
+	auto ViewSingleSlice = std::make_unique<mafViewSingleSlice>(_R(""), CAMERA_CT);
+	ViewSingleSlice->PlugVisualPipe(_R("mafVMESurface"), _R("mafPipeSurfaceSlice"));
+	ViewSingleSlice->PlugVisualPipe(_R("mafVMEPolyline"), _R("mafPipePolylineSlice"));
+	ViewSingleSlice->PlugVisualPipe(_R("mafVMESurfaceParametric"), _R("mafPipeSurfaceSlice"));
+	ViewSingleSlice->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("mafPipeVolumeSlice"));
+	ViewSingleSlice->PlugVisualPipe(_R("mafVMEMesh"), _R("mafPipeMeshSlice"));
+	ViewSingleSlice->PlugVisualPipe(_R("mafVMEMeter"), _R("mafPipePolylineSlice"));
 
-	PlugChildView(m_ViewSingleSlice);
+	PlugChildView(std::move(ViewSingleSlice));
 }
 
 //----------------------------------------------------------------------------
@@ -125,5 +124,5 @@ void mafViewSingleSliceCompound::OnLayout()
 //----------------------------------------------------------------------------
 {
 	mafViewCompound::OnLayout();
-	((mafViewSingleSlice*)m_ChildViewList[ID_VIEW_SINGLE_SLICE])->UpdateText();
+	mafViewSingleSlice::StaticDownCast(m_ChildViewList[ID_VIEW_SINGLE_SLICE].get())->UpdateText();
 }

@@ -69,8 +69,6 @@ medViewSliceBlendRX::medViewSliceBlendRX(const mafString&  label)
   m_LutWidget = NULL;
   m_CurrentVolume = NULL;
   m_LayoutConfiguration = LAYOUT_CUSTOM;
-  m_ViewsRX = NULL;
-  m_ViewSliceBlend = NULL;
   m_LutSliders = NULL;
   m_VtkLUT = NULL ;
   m_BlendGui = NULL;
@@ -97,9 +95,8 @@ mafView *medViewSliceBlendRX::Copy(mafBaseEventHandler *Listener, bool lightCopy
   v->m_Id = m_Id;
   for (int i=0;i<m_PluggedChildViewList.size();i++)
   {
-    v->m_PluggedChildViewList.push_back(m_PluggedChildViewList[i]->Copy(this));
+    v->m_PluggedChildViewList.emplace_back(m_PluggedChildViewList[i]->Copy(this));
   }
-  v->m_NumOfPluggedChildren = m_NumOfPluggedChildren;
   v->Create();
   return v;
 }
@@ -107,17 +104,17 @@ mafView *medViewSliceBlendRX::Copy(mafBaseEventHandler *Listener, bool lightCopy
 void medViewSliceBlendRX::VmeShow(mafNode *node, bool show)
 //----------------------------------------------------------------------------
 {
-  for(int i=0; i<m_NumOfChildView; i++)
+  for (auto& childView : m_ChildViewList)
   {
-    m_ChildViewList[i]->VmeShow(node, show);
+    childView->VmeShow(node, show);
   }
 
-  if (((mafVME *)node)->GetOutput()->IsA("mafVMEOutputVolume"))
+  if (mafVME::StaticDownCast(node)->GetOutput()->IsA("mafVMEOutputVolume"))
   {
     if (show)
     {
       double minMax[2];
-      ((mafViewRX*)m_ChildViewList[RX_VIEW])->GetLutRange(minMax);
+      mafViewRX::StaticDownCast(m_ChildViewList[RX_VIEW].get())->GetLutRange(minMax);
       //set new values for lut slider
       m_LutSliders->SetRange(minMax[0],minMax[1]);
       m_LutSliders->SetSubRange(minMax[0],minMax[1]);
@@ -130,7 +127,7 @@ void medViewSliceBlendRX::VmeShow(mafNode *node, bool show)
       m_VtkLUT->Build();
       lutPreset(4,m_VtkLUT);
 
-      ((mafViewRX*)m_ChildViewList[RX_VIEW])->SetLutRange(minMax[0],minMax[1]);
+      mafViewRX::StaticDownCast(m_ChildViewList[RX_VIEW].get())->SetLutRange(minMax[0],minMax[1]);
       
       m_CurrentVolume = mafVME::SafeDownCast(GetSceneGraph()->Vme2Node(node)->m_Vme);
 
@@ -171,14 +168,14 @@ void medViewSliceBlendRX::OnEvent(mafEventBase *maf_event)
       case ID_RANGE_MODIFIED:
       {
         // is the volume visible?
-        if(((mafViewRX*)m_ChildViewList[RX_VIEW])->VolumeIsVisible())
+        if(mafViewRX::StaticDownCast(m_ChildViewList[RX_VIEW].get())->VolumeIsVisible())
         {
           double low, hi;
 
           //Get new values of LUT
           m_LutSliders->GetSubRange(&low,&hi);
           //Set new values of LUT
-          ((mafViewRX*)m_ChildViewList[RX_VIEW])->SetLutRange(low,hi);
+          mafViewRX::StaticDownCast(m_ChildViewList[RX_VIEW].get())->SetLutRange(low,hi);
           
           CameraUpdate();
         }
@@ -218,11 +215,11 @@ mafGUI* medViewSliceBlendRX::CreateGui()
   gui->Divider(1);
   
   //Enable/disable gui componets depending from volume
-  EnableWidgets(m_CurrentVolume != NULL);
-	for(int i=0;i<m_NumOfChildView;i++)
+  EnableWidgets(m_CurrentVolume != nullptr);
+  for (auto& childView : m_ChildViewList)
   {
     //Generate gui for the subviews
-		((mafViewRX*)m_ChildViewList[i])->GetGui();
+		mafViewRX::StaticDownCast(childView.get())->GetGui();
   }
 	gui->Divider();
   return gui;
@@ -252,15 +249,15 @@ void medViewSliceBlendRX::PackageView()
   int cam_pos[2] = {CAMERA_RX_FRONT, CAMERA_RX_LEFT};
   // create to the child view
   //Create a mafViewRX
-  m_ViewsRX = new mafViewRX(_R("RX child view"), cam_pos[0]);
-  m_ViewsRX->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("mafPipeVolumeProjected"),MUTEX);
-  m_ViewsRX->PlugVisualPipe(_R("mafVMELabeledVolume"), _R("mafPipeVolumeProjected"),MUTEX);
-  PlugChildView(m_ViewsRX);
+  auto ViewsRX = std::make_unique<mafViewRX>(_R("RX child view"), cam_pos[0]);
+  ViewsRX->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("mafPipeVolumeProjected"),MUTEX);
+  ViewsRX->PlugVisualPipe(_R("mafVMELabeledVolume"), _R("mafPipeVolumeProjected"),MUTEX);
+  PlugChildView(std::move(ViewsRX));
   //Create a medViewSliceBlend
-  m_ViewSliceBlend = new medViewSliceBlend(_R("Blend"),CAMERA_BLEND);
-  m_ViewSliceBlend->PlugVisualPipe(_R("mafVMEVolumeGray"),_R("medPipeVolumeSliceBlend"),MUTEX);
+  auto ViewSliceBlend = std::make_unique<medViewSliceBlend>(_R("Blend"),CAMERA_BLEND);
+  ViewSliceBlend->PlugVisualPipe(_R("mafVMEVolumeGray"),_R("medPipeVolumeSliceBlend"),MUTEX);
 
-  PlugChildView(m_ViewSliceBlend);
+  PlugChildView(std::move(ViewSliceBlend));
 }
 //----------------------------------------------------------------------------
 void medViewSliceBlendRX::EnableWidgets(bool enable)
@@ -277,15 +274,13 @@ void medViewSliceBlendRX::LayoutSubViewCustom(int width, int height)
 {
   // this implement the Fixed SubViews Layout
   int border = 2;
-  int x_pos, c, i;
+  int x_pos = 0;
 
   int step_width  = (width-border) / 2;
-  i = 0;
-  for (c = 0; c < m_NumOfChildView; c++)
+  for (auto& childView : m_ChildViewList)
   {
-    x_pos = c*(step_width + border);
-    m_ChildViewList[i]->GetWindow()->SetSize(x_pos, 0, step_width, height);
-    i++;
+    childView->GetWindow()->SetSize(x_pos, 0, step_width, height);
+    x_pos += step_width + border;
   }
   
 }
@@ -348,8 +343,8 @@ void medViewSliceBlendRX::OnEventMouseMove( mafEvent *e )
   //Validate slices origins and adjust them
   BoundsValidate(newSliceLocalOrigin);
   
-	((medViewSliceBlend *)m_ChildViewList[BLEND_VIEW])->SetSlice(movingSliceId,newSliceLocalOrigin);
-	((medViewSliceBlend *)m_ChildViewList[BLEND_VIEW])->CameraUpdate();
+	medViewSliceBlend::StaticDownCast(m_ChildViewList[BLEND_VIEW].get())->SetSlice(movingSliceId,newSliceLocalOrigin);
+	medViewSliceBlend::StaticDownCast(m_ChildViewList[BLEND_VIEW].get())->CameraUpdate();
 
   m_ChildViewList[RX_VIEW]->CameraUpdate();
   m_ChildViewList[BLEND_VIEW]->CameraUpdate();

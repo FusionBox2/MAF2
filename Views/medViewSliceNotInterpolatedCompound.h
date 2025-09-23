@@ -72,8 +72,6 @@ protected:
   /** Set the axis along slice */
   void SetSliceAxis();
 
-  medViewSliceNotInterpolated *m_ViewSlice;                        //< Slice view
-
 private:
 
 };

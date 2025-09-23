@@ -1,28 +1,3 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafViewCompound
- Authors: Paolo Quadrani
-
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
 #include "mafViewCompound.h"
 #include "mafViewVTK.h"
 #include "mafRWI.h"
@@ -37,19 +12,13 @@
 #include "mafDeviceButtonsPadMouse.h"
 
 //----------------------------------------------------------------------------
-mafCxxTypeMacro(mafViewCompound);
-//----------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------
 mafViewCompound::mafViewCompound(const mafString& label, int num_row, int num_col)
 	: mafView(label)
 	//----------------------------------------------------------------------------
 {
 	m_ViewRowNum = num_row;
 	m_ViewColNum = num_col;
-	m_NumOfPluggedChildren = 0;
 	m_DefauldChildView = 0;
-	m_NumOfChildView = 0;
 	m_LinkSubView = 0;
 	m_ChildViewList.clear();
 	m_PluggedChildViewList.clear();
@@ -58,75 +27,59 @@ mafViewCompound::mafViewCompound(const mafString& label, int num_row, int num_co
 	m_SubViewMaximized = -1;
 	m_LayoutConfiguration = GRID_LAYOUT;
 }
-//----------------------------------------------------------------------------
-mafViewCompound::~mafViewCompound()
-//----------------------------------------------------------------------------
-{
-	for (int i = 0; i < m_NumOfPluggedChildren; i++)
-	{
-		cppDEL(m_PluggedChildViewList[i]);
-	}
-	for (int cv = 0; cv < m_NumOfChildView; cv++)
-	{
-		cppDEL(m_ChildViewList[cv]);
-	}
-	m_PluggedChildViewList.clear();
-	m_ChildViewList.clear();
-}
-//----------------------------------------------------------------------------
+
+mafViewCompound::~mafViewCompound() = default;
+
 mafView* mafViewCompound::Copy(mafBaseEventHandler* Listener, bool lightCopyEnabled)
 //----------------------------------------------------------------------------
 {
 	m_LightCopyEnabled = lightCopyEnabled;
-	mafViewCompound* v = new mafViewCompound(GetLabel(), m_ViewRowNum, m_ViewColNum);
+	auto v = new mafViewCompound(GetLabel(), m_ViewRowNum, m_ViewColNum);
 	v->SetListener(Listener);
 	v->m_Id = m_Id;
-	for (int i = 0; i < m_PluggedChildViewList.size(); i++)
+	for (auto& pluggedChild : m_PluggedChildViewList)
 	{
-		v->m_PluggedChildViewList.push_back(m_PluggedChildViewList[i]->Copy(this, m_LightCopyEnabled));
+		v->m_PluggedChildViewList.emplace_back(pluggedChild->Copy(this, m_LightCopyEnabled));
 	}
-	v->m_NumOfPluggedChildren = m_NumOfPluggedChildren;
 	v->m_LightCopyEnabled = lightCopyEnabled;
 	v->Create();
 	return v;
 }
 //----------------------------------------------------------------------------
-void mafViewCompound::PlugChildView(mafView* child)
+void mafViewCompound::PlugChildView(std::unique_ptr<mafView>  child)
 //----------------------------------------------------------------------------
 {
 	if (child)
 	{
-		m_PluggedChildViewList.push_back(child);
-		m_NumOfPluggedChildren++;
+		m_PluggedChildViewList.push_back(std::move(child));
 	}
 }
 //----------------------------------------------------------------------------
 void mafViewCompound::Create()
 //----------------------------------------------------------------------------
 {
-	mafGUIViewWin* w = new mafGUIViewWin(mafGetFrame(), -1);
+	auto w = new mafGUIViewWin(mafGetFrame(), -1);
 	w->SetBackgroundColour(wxColour(102, 102, 102));
 	w->m_Owner = this;
 	w->Show(false);
 	m_Win = w;
 
-	for (int i = 0; i < m_NumOfPluggedChildren; i++)
+	for (auto& pluggedChild : m_PluggedChildViewList)
 	{
-		m_ChildViewList.push_back(m_PluggedChildViewList[i]->Copy(this, m_LightCopyEnabled));
-		if (m_ChildViewList[i]->GetWindow()) {//MOD_DAN_LIGHT
-			m_ChildViewList[i]->GetWindow()->Reparent(m_Win);
-			m_ChildViewList[i]->GetWindow()->Show(true);
+		m_ChildViewList.emplace_back(pluggedChild->Copy(this, m_LightCopyEnabled));
+		if (m_ChildViewList.back()->GetWindow()) {//MOD_DAN_LIGHT
+			m_ChildViewList.back()->GetWindow()->Reparent(m_Win);
+			m_ChildViewList.back()->GetWindow()->Show(true);
 		}
 	}
-	for (int f = m_NumOfPluggedChildren; f < m_ViewColNum * m_ViewRowNum; f++)
+	for (int f = m_PluggedChildViewList.size(); f < m_ViewColNum * m_ViewRowNum; f++)
 	{
-		m_ChildViewList.push_back(m_PluggedChildViewList[m_NumOfPluggedChildren - 1]->Copy(this, m_LightCopyEnabled));
+		m_ChildViewList.emplace_back(m_PluggedChildViewList.back()->Copy(this, m_LightCopyEnabled));
 		if (m_ChildViewList[f]->GetWindow()) {//MOD_DAN_LIGHT
 			m_ChildViewList[f]->GetWindow()->Reparent(m_Win);
 			m_ChildViewList[f]->GetWindow()->Show(true);
 		}
 	}
-	m_NumOfChildView = m_ChildViewList.size();
 
 	CreateGuiView();
 }
@@ -142,29 +95,29 @@ void mafViewCompound::CreateGuiView()
 void mafViewCompound::VmeAdd(std::shared_ptr<mafNode> node)
 //----------------------------------------------------------------------------
 {
-	for (int i = 0; i < m_NumOfChildView; i++)
-		m_ChildViewList[i]->VmeAdd(node);
+	for (auto& childView : m_ChildViewList)
+		childView->VmeAdd(node);
 }
 //----------------------------------------------------------------------------
 void mafViewCompound::VmeRemove(mafNode* node)
 //----------------------------------------------------------------------------
 {
-	for (int i = 0; i < m_NumOfChildView; i++)
-		m_ChildViewList[i]->VmeRemove(node);
+	for (auto& childView : m_ChildViewList)
+		childView->VmeRemove(node);
 }
 //----------------------------------------------------------------------------
 void mafViewCompound::VmeSelect(mafNode* node, bool select)
 //----------------------------------------------------------------------------
 {
-	for (int i = 0; i < m_NumOfChildView; i++)
-		m_ChildViewList[i]->VmeSelect(node, select);
+	for (auto& childView : m_ChildViewList)
+		childView->VmeSelect(node, select);
 }
 //----------------------------------------------------------------------------
 void mafViewCompound::VmeShow(mafNode* node, bool show)
 //----------------------------------------------------------------------------
 {
-	for (int i = 0; i < m_NumOfChildView; i++)
-		m_ChildViewList[i]->VmeShow(node, show);
+	for (auto& childView : m_ChildViewList)
+		childView->VmeShow(node, show);
 }
 //----------------------------------------------------------------------------
 int mafViewCompound::GetNodeStatusI(mafNode* node)
@@ -177,15 +130,15 @@ int mafViewCompound::GetNodeStatusI(mafNode* node)
 void mafViewCompound::CameraReset(mafNode* node)
 //----------------------------------------------------------------------------
 {
-	for (int i = 0; i < m_NumOfChildView; i++)
-		m_ChildViewList[i]->CameraReset(node);
+	for (auto& childView : m_ChildViewList)
+		childView->CameraReset(node);
 }
 //----------------------------------------------------------------------------
 void mafViewCompound::CameraUpdate()
 //----------------------------------------------------------------------------
 {
-	for (int i = 0; i < m_NumOfChildView; i++)
-		m_ChildViewList[i]->CameraUpdate();
+	for (auto& childView : m_ChildViewList)
+		childView->CameraUpdate();
 }
 //----------------------------------------------------------------------------
 mafSceneGraph* mafViewCompound::GetSceneGraph()
@@ -205,11 +158,9 @@ wxVTKWindow* mafViewCompound::GetRWI()
 bool mafViewCompound::FindPokedVme(mafDevice* device, mafMatrix& point_pose, vtkProp3D*& picked_prop, mafVME*& picked_vme, mafInteractor*& picked_behavior)
 //----------------------------------------------------------------------------
 {
-	mafViewVTK* v = mafViewVTK::SafeDownCast(GetSubView());
-	if (v)
+	if (auto v = mafViewVTK::SafeDownCast(GetSubView()))
 		return v->FindPokedVme(device, point_pose, picked_prop, picked_vme, picked_behavior);
-	else
-		return false;
+	return false;
 }
 /*//----------------------------------------------------------------------------
 mafPipe *mafViewCompound::GetNodePipe(mafNode *vme)
@@ -283,7 +234,7 @@ mafGUI* mafViewCompound::CreateGui()
 
 	assert(!AccessGUI());
 	auto gui = new mafGUI(this);
-	gui->Integer(ID_DEFAULT_CHILD_VIEW, _R("default child"), &m_DefauldChildView, 0, m_NumOfChildView, childview_tooltip);
+	gui->Integer(ID_DEFAULT_CHILD_VIEW, _R("default child"), &m_DefauldChildView, 0, m_ChildViewList.size(), childview_tooltip);
 	gui->Combo(ID_LAYOUT_CHOOSER, _R("layout"), &m_LayoutConfiguration, 4, layout_choices);
 	gui->Bool(ID_LINK_SUBVIEW, _R("link camera"), &m_LinkSubView);
 	return gui;
@@ -299,8 +250,7 @@ void mafViewCompound::OnSize(wxSizeEvent& event)
 void mafViewCompound::OnLayout()
 //----------------------------------------------------------------------------
 {
-	assert(m_NumOfPluggedChildren == m_PluggedChildViewList.size());
-	if (m_NumOfPluggedChildren == 0)
+	if (m_PluggedChildViewList.empty())
 	{
 		return;
 	}
@@ -389,14 +339,14 @@ void mafViewCompound::LayoutSubView(int width, int height)
 	}
 	else if (m_LayoutConfiguration == LAYOUT_1)
 	{
-		int step_width = (width - border) / (m_NumOfChildView - 1);
+		int step_width = (width - border) / (m_ChildViewList.size() - 1);
 		int step_height = (height - 2 * border) / 3 * 2;
 		m_ChildViewList[0]->GetWindow()->SetSize(0, 0, width, step_height);
 #ifndef WIN32
 		m_ChildViewList[0]->SetWindowSize(width, step_height);
 #endif
 		i = 1;
-		for (c = 0; c < m_NumOfChildView - 1; c++)
+		for (c = 0; c < m_ChildViewList.size() - 1; c++)
 		{
 			x_pos = c * (step_width + border);
 			y_pos = step_height;
@@ -410,13 +360,13 @@ void mafViewCompound::LayoutSubView(int width, int height)
 	else if (m_LayoutConfiguration == LAYOUT_2)
 	{
 		int step_width = (width - border) / 3 * 2;
-		int step_height = (height - 2 * border) / (m_NumOfChildView - 1);
+		int step_height = (height - 2 * border) / (m_ChildViewList.size() - 1);
 		m_ChildViewList[0]->GetWindow()->SetSize(0, 0, step_width, height);
 #ifndef WIN32
 		m_ChildViewList[0]->SetWindowSize(step_width, height);
 #endif
 		i = 1;
-		for (r = 0; r < m_NumOfChildView - 1; r++)
+		for (r = 0; r < m_ChildViewList.size() - 1; r++)
 		{
 			x_pos = step_width;
 			y_pos = r * (step_height + border);
@@ -436,46 +386,44 @@ void mafViewCompound::LayoutSubView(int width, int height)
 mafView* mafViewCompound::GetSubView()
 //----------------------------------------------------------------------------
 {
-	wxVTKWindow* rwi = GetGlobalMouse()->GetRWI();
-	if (rwi)
+	if (auto rwi = GetGlobalMouse()->GetRWI())
 	{
-		for (int i = 0; i < m_NumOfChildView; i++)
+		for (auto& childView : m_ChildViewList)
 		{
-			if (m_ChildViewList[i]->IsMAFType(mafViewCompound))
+			if (childView->IsMAFType(mafViewCompound))
 			{
-				if (((mafViewCompound*)m_ChildViewList[i])->GetSubView()->GetRWI() == rwi)
+				if (mafViewCompound::StaticDownCast(childView.get())->GetSubView()->GetRWI() == rwi)
 				{
-					return ((mafViewCompound*)m_ChildViewList[i])->GetSubView();
+					return mafViewCompound::StaticDownCast(childView.get())->GetSubView();
 				}
 			}
-			else if (((mafViewVTK*)m_ChildViewList[i])->GetRWI() == rwi)
+			else if (mafViewVTK::StaticDownCast(childView.get())->GetRWI() == rwi)
 			{
-				return m_ChildViewList[i];
+				return childView.get();
 			}
 		}
 	}
-	return m_ChildViewList[m_DefauldChildView];
+	return m_ChildViewList[m_DefauldChildView].get();
 }
 //----------------------------------------------------------------------------
 mafView* mafViewCompound::GetSubView(int idx)
 //----------------------------------------------------------------------------
 {
-	if (idx >= 0 && idx < m_NumOfChildView)
+	if (idx >= 0 && idx < m_ChildViewList.size())
 	{
-		return m_ChildViewList[idx];
+		return m_ChildViewList[idx].get();
 	}
-	return m_ChildViewList[m_DefauldChildView];
+	return m_ChildViewList[m_DefauldChildView].get();
 }
 //----------------------------------------------------------------------------
 int mafViewCompound::GetSubViewIndex()
 //----------------------------------------------------------------------------
 {
-	wxVTKWindow* rwi = GetGlobalMouse()->GetRWI();
-	if (rwi)
+	if (auto rwi = GetGlobalMouse()->GetRWI())
 	{
-		for (int i = 0; i < m_NumOfChildView; i++)
+		for (int i = 0; i < m_ChildViewList.size(); i++)
 		{
-			if (((mafViewVTK*)m_ChildViewList[i])->GetRWI() == rwi)
+			if (mafViewVTK::StaticDownCast(m_ChildViewList[i].get())->GetRWI() == rwi)
 			{
 				return i;
 			}
@@ -491,7 +439,7 @@ void mafViewCompound::MaximizeSubView(int subview_id, bool maximize)
 	{
 		return;
 	}
-	if (subview_id < 0 || subview_id >= m_NumOfChildView)
+	if (subview_id < 0 || subview_id >= m_ChildViewList.size())
 	{
 		mafMessage(_M("Wrong sub-view id !!"));
 		return;
@@ -503,8 +451,7 @@ void mafViewCompound::MaximizeSubView(int subview_id, bool maximize)
 bool mafViewCompound::Pick(int x, int y)
 //----------------------------------------------------------------------------
 {
-	mafView* sub_view = GetSubView();
-	if (sub_view)
+	if (auto sub_view = GetSubView())
 	{
 		return sub_view->Pick(x, y);
 	}
@@ -514,8 +461,7 @@ bool mafViewCompound::Pick(int x, int y)
 bool mafViewCompound::Pick(mafMatrix& m)
 //----------------------------------------------------------------------------
 {
-	mafView* sub_view = GetSubView();
-	if (sub_view)
+	if (auto sub_view = GetSubView())
 	{
 		return sub_view->Pick(m);
 	}
@@ -525,8 +471,7 @@ bool mafViewCompound::Pick(mafMatrix& m)
 void mafViewCompound::GetPickedPosition(double pos[3])
 //----------------------------------------------------------------------------
 {
-	mafView* sub_view = GetSubView();
-	if (sub_view)
+	if (auto sub_view = GetSubView())
 	{
 		sub_view->GetPickedPosition(pos);
 	}
@@ -535,18 +480,17 @@ void mafViewCompound::GetPickedPosition(double pos[3])
 mafVME* mafViewCompound::GetPickedVme()
 //----------------------------------------------------------------------------
 {
-	mafView* sub_view = GetSubView();
-	if (sub_view)
+	if (auto sub_view = GetSubView())
 	{
 		return sub_view->GetPickedVme();
 	}
-	return NULL;
+	return nullptr;
 }
 //----------------------------------------------------------------------------
 void mafViewCompound::Print(wxDC* dc, wxRect margins)
 //----------------------------------------------------------------------------
 {
-	if (m_NumOfPluggedChildren == 0)
+	if (m_PluggedChildViewList.empty())
 	{
 		return;
 	}
@@ -569,15 +513,15 @@ void mafViewCompound::GetImage(wxBitmap& bmp, int magnification)
 
 	int x_pos, y_pos;
 	wxMemoryDC subViewDC;
-	for (int i = 0; i < m_NumOfChildView; i++)
+	for (auto& childView : m_ChildViewList)
 	{
-		wxSize win_size = m_ChildViewList[i]->GetWindow()->GetSize();
+		wxSize win_size = childView->GetWindow()->GetSize();
 		if (win_size.GetWidth() == 0 || win_size.GetHeight() == 0) continue;
 		wxBitmap image;
-		m_ChildViewList[i]->GetImage(image, magnification);
+		childView->GetImage(image, magnification);
 		float iw = image.GetWidth();
 		float ih = image.GetHeight();
-		m_ChildViewList[i]->GetWindow()->GetPosition(&x_pos, &y_pos);
+		childView->GetWindow()->GetPosition(&x_pos, &y_pos);
 		subViewDC.SelectObject(image);
 		compoundDC.Blit(magnification * x_pos, magnification * y_pos, iw, ih, &subViewDC, 0, 0);
 	}
@@ -589,16 +533,15 @@ void mafViewCompound::GetImage(wxBitmap& bmp, int magnification)
 void mafViewCompound::LinkView(bool link_camera)
 //----------------------------------------------------------------------------
 {
-	mafView* cv = NULL;
-	for (int i = 0; i < m_NumOfChildView; i++)
+	for (auto& childView : m_ChildViewList)
 	{
-		if (cv = mafViewVTK::SafeDownCast(m_ChildViewList[i]))
+		if (auto vv = mafViewVTK::SafeDownCast(childView.get()))
 		{
-			((mafViewVTK*)cv)->LinkView(link_camera);
+			vv->LinkView(link_camera);
 		}
-		else if (cv = mafViewCompound::SafeDownCast(m_ChildViewList[i]))
+		else if (auto cv = mafViewCompound::SafeDownCast(childView.get()))
 		{
-			((mafViewCompound*)cv)->LinkView(link_camera);
+			cv->LinkView(link_camera);
 		}
 	}
 }
@@ -606,6 +549,6 @@ void mafViewCompound::LinkView(bool link_camera)
 void mafViewCompound::OptionsUpdate()
 //----------------------------------------------------------------------------
 {
-	for (int i = 0; i < m_NumOfChildView; i++)
-		m_ChildViewList[i]->OptionsUpdate();
+	for (auto& childView : m_ChildViewList)
+		childView->OptionsUpdate();
 }

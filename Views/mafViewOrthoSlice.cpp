@@ -69,10 +69,6 @@ mafViewOrthoSlice::mafViewOrthoSlice(const mafString& label)
 {
 	m_LutSlider = NULL;
 	m_LutWidget = NULL;
-	for (int v = 0; v < 4; v++)
-	{
-		m_Views[v] = NULL;
-	}
 	m_ColorLUT = NULL;
 	m_CurrentVolume = NULL;
 	m_GizmoHandlePosition[0] = m_GizmoHandlePosition[1] = m_GizmoHandlePosition[2] = 0.0;
@@ -112,9 +108,8 @@ mafView* mafViewOrthoSlice::Copy(mafBaseEventHandler* Listener, bool lightCopyEn
 	v->m_Id = m_Id;
 	for (int i = 0; i < m_PluggedChildViewList.size(); i++)
 	{
-		v->m_PluggedChildViewList.push_back(m_PluggedChildViewList[i]->Copy(this));
+		v->m_PluggedChildViewList.emplace_back(m_PluggedChildViewList[i]->Copy(this));
 	}
-	v->m_NumOfPluggedChildren = m_NumOfPluggedChildren;
 	v->Create();
 	return v;
 }
@@ -146,8 +141,8 @@ void mafViewOrthoSlice::VmeShow(mafNode* node, bool show)
 	// Enable perspective View for every VME
 	m_ChildViewList[PERSPECTIVE_VIEW]->VmeShow(node, show);
 	// Disable ChildView XN, YN and ZN when no Volume is selected
-	if (m_CurrentVolume != NULL)
-		for (int j = 1; j < m_NumOfChildView; j++)
+	if (m_CurrentVolume)
+		for (int j = 1; j < m_ChildViewList.size(); j++)
 		{
 			m_ChildViewList[j]->VmeShow(node, show);
 			if (show && j == YN_VIEW && mafPipeMeshSlice::SafeDownCast(m_ChildViewList[j]->GetNodePipe(node)))
@@ -156,7 +151,7 @@ void mafViewOrthoSlice::VmeShow(mafNode* node, bool show)
 
 	if (((mafVME*)node)->GetOutput()->IsA("mafVMEOutputVolume"))
 	{
-		for (int j = 1; j < m_NumOfChildView; j++)
+		for (int j = 1; j < m_ChildViewList.size(); j++)
 			m_ChildViewList[j]->VmeShow(node, show);
 
 		if (show)
@@ -183,7 +178,7 @@ void mafViewOrthoSlice::VmeShow(mafNode* node, bool show)
 
 		// When one volume is selected/unselected we enable/disable ChildViews for all vme selected
 		for (int i = 0; i < m_VMElist.size(); i++)
-			for (int j = 1; j < m_NumOfChildView; j++)
+			for (int j = 1; j < m_ChildViewList.size(); j++)
 			{
 				m_ChildViewList[j]->VmeShow(m_VMElist[i], show);
 				if (show && j == YN_VIEW && mafPipeMeshSlice::SafeDownCast(m_ChildViewList[j]->GetNodePipe(m_VMElist[i])))
@@ -204,7 +199,7 @@ void mafViewOrthoSlice::VmeRemove(mafNode* node)
 	if (m_CurrentVolume && node == m_CurrentVolume.get())
 	{
 		// Disable ChildViews
-		for (int j = 1; j < m_NumOfChildView; j++)
+		for (int j = 1; j < m_ChildViewList.size(); j++)
 			m_ChildViewList[j]->VmeShow(node, false);
 		DestroyOrthoSlicesAndGizmos();
 		EnableWidgets(false);
@@ -272,11 +267,11 @@ void mafViewOrthoSlice::OnEvent(mafEventBase* maf_event)
 		break;
 		case ID_LUT_CHOOSER:
 		{
-			auto currentVolumeMaterial = ((mafVMEOutputVolume*)m_CurrentVolume->GetOutput())->GetMaterial();
+			auto currentVolumeMaterial = mafVMEOutputVolume::StaticDownCast(m_CurrentVolume->GetOutput())->GetMaterial();
 			currentVolumeMaterial->UpdateFromTables();
-			for (int i = 0; i < m_NumOfChildView; i++)
+			for (auto& childView : m_ChildViewList)
 			{
-				auto p = mafPipeVolumeSlice_BES::StaticDownCast(((mafViewSlice*)m_ChildViewList[i])->GetNodePipe(m_CurrentVolume));
+				auto p = mafPipeVolumeSlice_BES::StaticDownCast(mafViewSlice::StaticDownCast(childView.get())->GetNodePipe(m_CurrentVolume));
 				p->SetColorLookupTable(m_ColorLUT);
 			}
 			double* sr;
@@ -287,12 +282,12 @@ void mafViewOrthoSlice::OnEvent(mafEventBase* maf_event)
 		break;
 		case ID_RANGE_MODIFIED:
 		{
-			if (((mafViewSlice*)m_ChildViewList[0])->VolumeIsVisible())
+			if (mafViewSlice::StaticDownCast(m_ChildViewList[0].get())->VolumeIsVisible())
 			{
 				double low, hi;
 				m_LutSlider->GetSubRange(&low, &hi);
 				m_ColorLUT->SetTableRange(low, hi);
-				auto currentVolumeMaterial = ((mafVMEOutputVolume*)m_CurrentVolume->GetOutput())->GetMaterial();
+				auto currentVolumeMaterial = mafVMEOutputVolume::StaticDownCast(m_CurrentVolume->GetOutput())->GetMaterial();
 				currentVolumeMaterial->UpdateFromTables();
 				CameraUpdate();
 			}
@@ -341,10 +336,9 @@ void mafViewOrthoSlice::OnEvent(mafEventBase* maf_event)
 		{
 			if (m_CurrentVolume)
 			{
-				for (int i = 0; i < m_NumOfChildView; i++)
+				for (auto& childView : m_ChildViewList)
 				{
-					auto p = mafPipeVolumeSlice_BES::SafeDownCast(((mafViewSlice*)m_ChildViewList[i])->GetNodePipe(m_CurrentVolume));
-					if (p)
+					if (auto p = mafPipeVolumeSlice_BES::SafeDownCast(mafViewSlice::StaticDownCast(childView.get())->GetNodePipe(m_CurrentVolume)))
 					{
 						p->SetEnableGPU(m_EnableGPU);
 					}
@@ -357,10 +351,9 @@ void mafViewOrthoSlice::OnEvent(mafEventBase* maf_event)
 		{
 			if (m_CurrentVolume)
 			{
-				for (int i = 0; i < m_NumOfChildView; i++)
+				for (auto& childView : m_ChildViewList)
 				{
-					auto p = mafPipeVolumeSlice_BES::SafeDownCast(((mafViewSlice*)m_ChildViewList[i])->GetNodePipe(m_CurrentVolume));
-					if (p)
+					if (auto p = mafPipeVolumeSlice_BES::SafeDownCast(mafViewSlice::StaticDownCast(childView.get())->GetNodePipe(m_CurrentVolume)))
 					{
 						p->SetTrilinearInterpolation(m_TrilinearInterpolationOn);
 					}
@@ -403,7 +396,7 @@ mafGUI* mafViewOrthoSlice::CreateGui()
 	gui->FloatSlider(ID_BORDER_CHANGE, _R("Border"), &m_Border, 1.0, 5.0);
 
 	EnableWidgets(m_CurrentVolume != NULL);
-	for (int i = 1; i < m_NumOfChildView; i++)
+	for (int i = 1; i < m_ChildViewList.size(); i++)
 	{
 		m_ChildViewList[i]->GetGui();
 	}
@@ -411,10 +404,9 @@ mafGUI* mafViewOrthoSlice::CreateGui()
 	// Added by Losi 11.25.2009
 	if (m_CurrentVolume)
 	{
-		for (int i = 0; i < m_NumOfChildView; i++)
+		for (auto& childView : m_ChildViewList)
 		{
-			auto p = mafPipeVolumeSlice_BES::SafeDownCast(((mafViewSlice*)m_ChildViewList[i])->GetNodePipe(m_CurrentVolume));
-			if (p)
+			if (auto p = mafPipeVolumeSlice_BES::SafeDownCast(mafViewSlice::StaticDownCast(childView.get())->GetNodePipe(m_CurrentVolume)))
 			{
 				p->SetEnableGPU(m_EnableGPU);
 				p->SetTrilinearInterpolation(m_TrilinearInterpolationOn);
@@ -436,8 +428,8 @@ void mafViewOrthoSlice::PlugVisualPipeInSliceViews(mafString vme_type, mafString
 	if (m_CanPlugVisualPipes)
 	{
 		for (int v = PERSPECTIVE_VIEW; v < VIEWS_NUMBER; v++)
-			if (v != PERSPECTIVE_VIEW && m_Views[v] != NULL)
-				m_Views[v]->PlugVisualPipe(vme_type, pipe_type, MUTEX);
+			if (v != PERSPECTIVE_VIEW && m_ChildViewList[v])
+				mafViewSlice::StaticDownCast(m_ChildViewList[v].get())->PlugVisualPipe(vme_type, pipe_type, MUTEX);
 
 	}
 	else
@@ -452,8 +444,8 @@ void mafViewOrthoSlice::PlugVisualPipeInPerspective(mafString vme_type, mafStrin
 {
 	if (m_CanPlugVisualPipes)
 	{
-		if (m_Views[PERSPECTIVE_VIEW] != NULL)
-			m_Views[PERSPECTIVE_VIEW]->PlugVisualPipe(vme_type, pipe_type, MUTEX);
+		if (auto perspectiveView = mafViewSlice::StaticDownCast(m_ChildViewList[PERSPECTIVE_VIEW].get()))
+			perspectiveView->PlugVisualPipe(vme_type, pipe_type, MUTEX);
 
 	}
 	else
@@ -473,36 +465,33 @@ void mafViewOrthoSlice::PackageView()
 	bool TICKs[4] = { false,false,true,true };
 	for (int v = PERSPECTIVE_VIEW; v < VIEWS_NUMBER; v++)
 	{
-		m_Views[v] = new mafViewSlice(viewName[v], cam_pos[v], false, false, false, 0, TICKs[v]);
-		m_Views[v]->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("mafPipeVolumeSlice_BES"), MUTEX);
-		m_Views[v]->PlugVisualPipe(_R("medVMELabeledVolume"), _R("mafPipeVolumeSlice_BES"), MUTEX);
-		m_Views[v]->PlugVisualPipe(_R("mafVMEVolumeLarge"), _R("mafPipeVolumeSlice_BES"), MUTEX);   //BES: 3.11.2009
-		m_Views[v]->PlugVisualPipe(_R("mafVMEImage"), _R("mafPipeBox"), NON_VISIBLE);
-		m_Views[v]->PlugVisualPipe(_R("medVMESegmentationVolume"), _R("mafPipeVolumeSlice_BES"), MUTEX);
+		auto view = std::make_unique<mafViewSlice>(viewName[v], cam_pos[v], false, false, false, 0, TICKs[v]);
+		view->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("mafPipeVolumeSlice_BES"), MUTEX);
+		view->PlugVisualPipe(_R("medVMELabeledVolume"), _R("mafPipeVolumeSlice_BES"), MUTEX);
+		view->PlugVisualPipe(_R("mafVMEVolumeLarge"), _R("mafPipeVolumeSlice_BES"), MUTEX);   //BES: 3.11.2009
+		view->PlugVisualPipe(_R("mafVMEImage"), _R("mafPipeBox"), NON_VISIBLE);
+		view->PlugVisualPipe(_R("medVMESegmentationVolume"), _R("mafPipeVolumeSlice_BES"), MUTEX);
 		// plug surface slice visual pipe in not perspective views
 		if (v != PERSPECTIVE_VIEW)
 		{
-			m_Views[v]->PlugVisualPipe(_R("mafVMESurface"), _R("mafPipeSurfaceSlice"), MUTEX);
-			m_Views[v]->PlugVisualPipe(_R("mafVMESurfaceParametric"), _R("mafPipeSurfaceSlice"), MUTEX);
-			m_Views[v]->PlugVisualPipe(_R("mafVMEMesh"), _R("mafPipeMeshSlice"));
-			m_Views[v]->PlugVisualPipe(_R("mafVMELandmark"), _R("mafPipeSurfaceSlice"), MUTEX);
-			m_Views[v]->PlugVisualPipe(_R("mafVMELandmarkCloud"), _R("mafPipeSurfaceSlice"), MUTEX);
-			m_Views[v]->PlugVisualPipe(_R("mafVMEPolyline"), _R("mafPipePolylineSlice"));
-			m_Views[v]->PlugVisualPipe(_R("mafVMEPolylineSpline"), _R("mafPipePolylineSlice"));
-			m_Views[v]->PlugVisualPipe(_R("mafVMEMeter"), _R("mafPipePolyline"));
-			m_Views[v]->PlugVisualPipe(_R("medVMEMuscleWrapper"), _R("mafPipeSurfaceSlice"), MUTEX);
+			view->PlugVisualPipe(_R("mafVMESurface"), _R("mafPipeSurfaceSlice"), MUTEX);
+			view->PlugVisualPipe(_R("mafVMESurfaceParametric"), _R("mafPipeSurfaceSlice"), MUTEX);
+			view->PlugVisualPipe(_R("mafVMEMesh"), _R("mafPipeMeshSlice"));
+			view->PlugVisualPipe(_R("mafVMELandmark"), _R("mafPipeSurfaceSlice"), MUTEX);
+			view->PlugVisualPipe(_R("mafVMELandmarkCloud"), _R("mafPipeSurfaceSlice"), MUTEX);
+			view->PlugVisualPipe(_R("mafVMEPolyline"), _R("mafPipePolylineSlice"));
+			view->PlugVisualPipe(_R("mafVMEPolylineSpline"), _R("mafPipePolylineSlice"));
+			view->PlugVisualPipe(_R("mafVMEMeter"), _R("mafPipePolyline"));
+			view->PlugVisualPipe(_R("medVMEMuscleWrapper"), _R("mafPipeSurfaceSlice"), MUTEX);
 		}
 		else
 		{
-			m_Views[v]->PlugVisualPipe(_R("mafVMESurface"), _R("mafPipeSurface"), MUTEX);
-			m_Views[v]->PlugVisualPipe(_R("medVMEMuscleWrapper"), _R("mafPipeSurface"), MUTEX);
+			view->PlugVisualPipe(_R("mafVMESurface"), _R("mafPipeSurface"), MUTEX);
+			view->PlugVisualPipe(_R("medVMEMuscleWrapper"), _R("mafPipeSurface"), MUTEX);
 		}
+		PlugChildView(std::move(view));
 
 	}
-	PlugChildView(m_Views[PERSPECTIVE_VIEW]);
-	PlugChildView(m_Views[ZN_VIEW]);
-	PlugChildView(m_Views[XN_VIEW]);
-	PlugChildView(m_Views[YN_VIEW]);
 }
 //----------------------------------------------------------------------------
 void mafViewOrthoSlice::EnableWidgets(bool enable)
@@ -533,7 +522,7 @@ void mafViewOrthoSlice::GizmoCreate()
 		for (gizmoId = GIZMO_XN; gizmoId < GIZMOS_NUMBER; gizmoId++)
 		{
 			double sliceOrigin[3];
-			auto p = mafPipeVolumeSlice_BES::SafeDownCast(((mafViewSlice*)((mafViewCompound*)m_ChildViewList[0]))->GetNodePipe(m_CurrentVolume));
+			auto p = mafPipeVolumeSlice_BES::SafeDownCast(mafViewSlice::StaticDownCast(m_ChildViewList[0].get())->GetNodePipe(m_CurrentVolume));
 			double normal[3];
 			p->GetSlice(sliceOrigin, normal);
 
@@ -614,7 +603,7 @@ void mafViewOrthoSlice::SetSlicePosition(long activeGizmoId, vtkPoints* p)
 	case (GIZMO_XN):
 	{
 		// update the X normal child view
-		((mafViewSlice*)((mafViewCompound*)m_ChildViewList[CHILD_XN_VIEW]))->SetSliceLocalOrigin(m_GizmoHandlePosition);
+		mafViewSlice::StaticDownCast(m_ChildViewList[CHILD_XN_VIEW].get())->SetSliceLocalOrigin(m_GizmoHandlePosition);
 	}
 	break;
 
@@ -622,14 +611,14 @@ void mafViewOrthoSlice::SetSlicePosition(long activeGizmoId, vtkPoints* p)
 	case (GIZMO_YN):
 	{
 		// update the Y normal child view
-		((mafViewSlice*)((mafViewCompound*)m_ChildViewList[CHILD_YN_VIEW]))->SetSliceLocalOrigin(m_GizmoHandlePosition);
+		mafViewSlice::StaticDownCast(m_ChildViewList[CHILD_YN_VIEW].get())->SetSliceLocalOrigin(m_GizmoHandlePosition);
 	}
 	break;
 
 	case (GIZMO_ZN):
 	{
 		// update the Z normal child view
-		((mafViewSlice*)((mafViewCompound*)m_ChildViewList[CHILD_ZN_VIEW]))->SetSliceLocalOrigin(m_GizmoHandlePosition);
+		mafViewSlice::StaticDownCast(m_ChildViewList[CHILD_ZN_VIEW].get())->SetSliceLocalOrigin(m_GizmoHandlePosition);
 	}
 	break;
 
@@ -646,7 +635,7 @@ void mafViewOrthoSlice::SetSlicePosition(long activeGizmoId, vtkPoints* p)
 	}
 
 	// always update the child perspective view
-	((mafViewSlice*)((mafViewCompound*)m_ChildViewList[CHILD_PERSPECTIVE_VIEW]))->SetSliceLocalOrigin(m_GizmoHandlePosition);
+	mafViewSlice::StaticDownCast(m_ChildViewList[CHILD_PERSPECTIVE_VIEW].get())->SetSliceLocalOrigin(m_GizmoHandlePosition);
 
 
 	this->CameraUpdate();
@@ -657,15 +646,15 @@ void mafViewOrthoSlice::OnEventSetThickness()
 {
 	if (m_AllSurface)
 	{
-		mafNode* node = this->GetSceneGraph()->GetSelectedVme();
-		mafVME* vme = (mafVME*)node;
-		mafNode* root = vme->GetRoot();
+		auto node = this->GetSceneGraph()->GetSelectedVme();
+		auto vme = mafVME::StaticDownCast(node);
+		auto root = vme->GetRoot();
 		SetThicknessForAllSurfaceSlices(root);
 	}
 	else
 	{
-		mafNode* node = this->GetSceneGraph()->GetSelectedVme();
-		mafSceneNode* SN = this->GetSceneGraph()->Vme2Node(node);
+		auto node = this->GetSceneGraph()->GetSelectedVme();
+		auto SN = this->GetSceneGraph()->Vme2Node(node);
 
 		if (auto pipe = mafPipeSurfaceSlice::SafeDownCast(m_ChildViewList[CHILD_XN_VIEW]->GetNodePipe(node)))
 		{
@@ -740,19 +729,19 @@ void mafViewOrthoSlice::CreateOrthoslicesAndGizmos(mafNode* node)
 	m_LutWidget->SetLut(m_ColorLUT);
 	m_LutSlider->SetRange((long)sr[0], (long)sr[1]);
 	m_LutSlider->SetSubRange((long)currentVolumeMaterial->m_TableRange[0], (long)currentVolumeMaterial->m_TableRange[1]);
-	for (int i = 0; i < m_NumOfChildView; i++)
+	for (auto& childView : m_ChildViewList)
 	{
-		auto p = mafPipeVolumeSlice_BES::StaticDownCast(((mafViewSlice*)m_ChildViewList[i])->GetNodePipe(m_CurrentVolume));
+		auto p = mafPipeVolumeSlice_BES::StaticDownCast(mafViewSlice::StaticDownCast(childView.get())->GetNodePipe(m_CurrentVolume));
 		p->SetEnableGPU(m_EnableGPU);
 		p->SetTrilinearInterpolation(m_TrilinearInterpolationOn);
 		p->SetColorLookupTable(m_ColorLUT);
 	}
-	((mafViewSlice*)((mafViewCompound*)m_ChildViewList[CHILD_XN_VIEW]))->SetSliceLocalOrigin(m_GizmoHandlePosition);
-	((mafViewSlice*)((mafViewCompound*)m_ChildViewList[CHILD_XN_VIEW]))->SetTextColor(colorsX);
-	((mafViewSlice*)((mafViewCompound*)m_ChildViewList[CHILD_YN_VIEW]))->SetSliceLocalOrigin(m_GizmoHandlePosition);
-	((mafViewSlice*)((mafViewCompound*)m_ChildViewList[CHILD_YN_VIEW]))->SetTextColor(colorsY);
-	((mafViewSlice*)((mafViewCompound*)m_ChildViewList[CHILD_ZN_VIEW]))->SetSliceLocalOrigin(m_GizmoHandlePosition);
-	((mafViewSlice*)((mafViewCompound*)m_ChildViewList[CHILD_ZN_VIEW]))->SetTextColor(colorsZ);
+	mafViewSlice::StaticDownCast(m_ChildViewList[CHILD_XN_VIEW].get())->SetSliceLocalOrigin(m_GizmoHandlePosition);
+	mafViewSlice::StaticDownCast(m_ChildViewList[CHILD_XN_VIEW].get())->SetTextColor(colorsX);
+	mafViewSlice::StaticDownCast(m_ChildViewList[CHILD_YN_VIEW].get())->SetSliceLocalOrigin(m_GizmoHandlePosition);
+	mafViewSlice::StaticDownCast(m_ChildViewList[CHILD_YN_VIEW].get())->SetTextColor(colorsY);
+	mafViewSlice::StaticDownCast(m_ChildViewList[CHILD_ZN_VIEW].get())->SetSliceLocalOrigin(m_GizmoHandlePosition);
+	mafViewSlice::StaticDownCast(m_ChildViewList[CHILD_ZN_VIEW].get())->SetTextColor(colorsZ);
 	GizmoCreate();
 }
 //-------------------------------------------------------------------------
@@ -806,22 +795,21 @@ void mafViewOrthoSlice::SetThicknessForAllSurfaceSlices(mafNode* root)
 bool mafViewOrthoSlice::IsPickedSliceView()
 //----------------------------------------------------------------------------
 {
-	wxVTKWindow* rwi = GetGlobalMouse()->GetRWI();
-	if (rwi)
+	if (auto  rwi = GetGlobalMouse()->GetRWI())
 	{
-		for (int i = 0; i < m_NumOfChildView; i++)
+		for (auto& childView : m_ChildViewList)
 		{
-			if (m_ChildViewList[i]->IsMAFType(mafViewSlice))
+			if (childView->IsMAFType(mafViewSlice))
 			{
-				if (((mafViewSlice*)m_ChildViewList[i])->GetRWI() == rwi && ((mafViewSlice*)m_ChildViewList[i])->GetRWI()->GetCamera()->GetParallelProjection())
+				if (mafViewSlice::StaticDownCast(childView.get())->GetRWI() == rwi && mafViewSlice::StaticDownCast(childView.get())->GetRWI()->GetCamera()->GetParallelProjection())
 					return true;
 			}
-			else if (m_ChildViewList[i]->IsMAFType(mafViewCompound))
+			else if (childView->IsMAFType(mafViewCompound))
 			{
-				if (((mafViewCompound*)m_ChildViewList[i])->GetSubView()->GetRWI() == rwi)
+				if (mafViewCompound::StaticDownCast(childView.get())->GetSubView()->GetRWI() == rwi)
 					return false;
 			}
-			else if (((mafViewVTK*)m_ChildViewList[i])->GetRWI() == rwi)
+			else if (mafViewVTK::StaticDownCast(childView.get())->GetRWI() == rwi)
 			{
 				return false;
 			}
@@ -838,7 +826,7 @@ void mafViewOrthoSlice::ApplyViewSettings(mafNode* node)
 	{
 		for (int i = CHILD_ZN_VIEW; i <= CHILD_YN_VIEW; i++)
 		{
-			auto pipeSlice = mafPipePolylineSlice::SafeDownCast(((mafViewSlice*)((mafViewCompound*)m_ChildViewList[i]))->GetNodePipe(node));
+			auto pipeSlice = mafPipePolylineSlice::SafeDownCast(mafViewSlice::StaticDownCast(m_ChildViewList[i].get())->GetNodePipe(node));
 			if (pipeSlice)
 			{
 				if (!node->IsA("mafVMEMeter"))

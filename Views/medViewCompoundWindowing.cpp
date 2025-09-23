@@ -141,8 +141,8 @@ void medViewCompoundWindowing::EnableWidgets(bool enable)
 void medViewCompoundWindowing::VmeSelect(mafNode* node, bool select)
 //----------------------------------------------------------------------------
 {
-	for (int i = 0; i < m_NumOfChildView; i++)
-		m_ChildViewList[i]->VmeSelect(node, select);
+	for (auto& childView : m_ChildViewList)
+		childView->VmeSelect(node, select);
 
 	//UpdateWindowing( select && ActivateWindowing(node), node);
 	//if(m_Gui)
@@ -156,12 +156,12 @@ void medViewCompoundWindowing::UpdateWindowing(bool enable, mafNode* node)
 	EnableWidgets(enable);
 
 	//Windowing can be applied on Volumes or on Images
-	mafVME* Volume = NULL;
-	mafVMEImage* Image = NULL;
+	mafVME* Volume = nullptr;
+	mafVMEImage* Image = nullptr;
 
-	mafVME* Vme = mafVME::SafeDownCast(node);
+	auto Vme = mafVME::SafeDownCast(node);
 
-	if ((mafVME*)(Vme->GetOutput()->IsA("mafVMEOutputVolume"))) {
+	if (Vme->GetOutput()->IsA("mafVMEOutputVolume")) {
 		Volume = mafVME::SafeDownCast(node);
 	}
 	else if (Vme->IsA("mafVMEImage")) {
@@ -175,7 +175,7 @@ void medViewCompoundWindowing::UpdateWindowing(bool enable, mafNode* node)
 		}
 		else
 		{
-			m_ColorLUT = NULL;
+			m_ColorLUT = nullptr;
 			if (m_LutWidget)
 				m_LutWidget->SetLut(m_ColorLUT);
 			m_LutSlider->SetRange(-100, 100);
@@ -189,7 +189,7 @@ void medViewCompoundWindowing::UpdateWindowing(bool enable, mafNode* node)
 		}
 		else
 		{
-			m_ColorLUT = NULL;
+			m_ColorLUT = nullptr;
 			if (m_LutWidget)
 				m_LutWidget->SetLut(m_ColorLUT);
 			m_LutSlider->SetRange(-100, 100);
@@ -205,26 +205,26 @@ bool medViewCompoundWindowing::ActivateWindowing(mafNode* node)
 	bool conditions = false;
 	bool nodeHasPipe = false;
 
-	if (((mafVME*)node)->GetOutput()->IsA("mafVMEOutputVolume")) {
+	if (mafVME::StaticDownCast(node)->GetOutput()->IsA("mafVMEOutputVolume")) {
 
 		conditions = true;
 
-		for (int i = 0; i < m_NumOfChildView; i++) {
+		for (auto& childView : m_ChildViewList) {
 
-			if (m_ChildViewList[i]->GetNodePipe(node)) {
+			if (childView->GetNodePipe(node)) {
 				nodeHasPipe = true;
 			}
 			conditions = (conditions && nodeHasPipe);
 		}
 	}
 
-	else if (((mafVME*)node)->IsA("mafVMEImage")) {
+	else if (node->IsA("mafVMEImage")) {
 
 		conditions = true;
 
-		for (int i = 0; i < m_NumOfChildView; i++) {
+		for (auto& childView : m_ChildViewList) {
 
-			auto pipe = mafPipeImage3D::StaticDownCast(m_ChildViewList[i]->GetNodePipe(node));
+			auto pipe = mafPipeImage3D::StaticDownCast(childView->GetNodePipe(node));
 			conditions = (conditions && (pipe && pipe->IsGrayImage()));
 		}
 	}
@@ -257,7 +257,7 @@ void medViewCompoundWindowing::VolumeWindowing(mafVME* volume)
 	double sr[2];
 	volume->GetOutput()->GetVTKData()->GetScalarRange(sr);
 
-	auto currentSurfaceMaterial = ((mafVMEOutputVolume*)volume->GetOutput())->GetMaterial();
+	auto currentSurfaceMaterial = mafVMEOutputVolume::StaticDownCast(volume->GetOutput())->GetMaterial();
 	m_ColorLUT = mafVMEVolumeGray::SafeDownCast(volume)->GetMaterial()->m_ColorLut;
 	if (m_LutWidget)
 		m_LutWidget->SetLut(m_ColorLUT);
@@ -271,11 +271,9 @@ void medViewCompoundWindowing::VolumeWindowing(mafVME* volume)
 std::shared_ptr<mafPipe> medViewCompoundWindowing::GetNodePipeI(mafNode* vme)
 //-------------------------------------------------------------------------
 {
-	std::shared_ptr<mafPipe> rtn;
-	if (m_NumOfChildView == 1)
+	if (m_ChildViewList.size() == 1)
 	{
-		rtn = m_ChildViewList[0]->GetNodePipe(vme);
+		return m_ChildViewList[0]->GetNodePipe(vme);
 	}
-	return rtn;
-
+	return nullptr;
 }

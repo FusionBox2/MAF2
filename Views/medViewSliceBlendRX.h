@@ -109,9 +109,6 @@ protected:
 
   std::shared_ptr<mafVME> m_CurrentVolume; ///< Current visualized volume
   
-  mafViewRX *m_ViewsRX;
-  medViewSliceBlend *m_ViewSliceBlend;
-
   mafGizmoSlice *m_GizmoSlice[2];
   
 

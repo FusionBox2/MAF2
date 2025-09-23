@@ -69,7 +69,5 @@ protected:
   /** Function for enable/disable all gui widgets. */
 	//void EnableWidgets(bool enable);
 
-  mafViewGlobalSlice	*m_ViewGlobalSlice;
-
 };
 #endif

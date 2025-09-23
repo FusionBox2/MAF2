@@ -93,9 +93,7 @@ protected:
   void EnableWidgets(bool enable = true);
 
   mafVME    *m_CurrentVolume; ///< Current visualized volume
-  
-  mafViewRX       *m_ViewsRX[2];
-  
+
 
   // this member variables are used by side panel gui view 
   int m_RightOrLeft;

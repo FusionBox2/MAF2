@@ -95,8 +95,6 @@ protected:
 
 	mafVMEVolume    *m_CurrentVolume; ///< Current visualized volume
 
-	mafViewCompound *m_ViewCTCompound;
-
 	// this member variables are used by side panel gui view
 	int m_LayoutWidth;
 	int m_LayoutHeight;

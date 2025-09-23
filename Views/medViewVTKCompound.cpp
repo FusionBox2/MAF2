@@ -88,11 +88,10 @@ mafView* medViewVTKCompound::Copy(mafBaseEventHandler* Listener, bool lightCopyE
 	medViewVTKCompound* v = new medViewVTKCompound(GetLabel(), m_ViewRowNum, m_ViewColNum);
 	v->SetListener(Listener);
 	v->m_Id = m_Id;
-	for (int i = 0; i < m_PluggedChildViewList.size(); i++)
+	for (auto& pluggedView : m_PluggedChildViewList)
 	{
-		v->m_PluggedChildViewList.push_back(m_PluggedChildViewList[i]->Copy(this));
+		v->m_PluggedChildViewList.emplace_back(pluggedView->Copy(this));
 	}
-	v->m_NumOfPluggedChildren = m_NumOfPluggedChildren;
 	v->Create();
 	return v;
 }
@@ -103,9 +102,9 @@ mafGUI* medViewVTKCompound::CreateGui()
 {
 	assert(!AccessGUI());
 	auto gui = new mafGUI(this);
-	if (mafViewVTK::SafeDownCast(m_ChildViewList[ID_VIEW_VTK]) && mafViewVTK::SafeDownCast(m_ChildViewList[ID_VIEW_VTK])->GetGui())
+	if (mafViewVTK::SafeDownCast(m_ChildViewList[ID_VIEW_VTK].get()) && mafViewVTK::SafeDownCast(m_ChildViewList[ID_VIEW_VTK].get())->GetGui())
 	{
-		gui->AddGui(((mafViewVTK*)m_ChildViewList[ID_VIEW_VTK])->GetGui());
+		gui->AddGui(mafViewVTK::StaticDownCast(m_ChildViewList[ID_VIEW_VTK].get())->GetGui());
 	}
 	m_LutWidget = gui->Lut(ID_LUT_CHOOSER, _R("lut"), m_ColorLUT);
 	m_LutWidget->Enable(false);
@@ -119,7 +118,7 @@ void medViewVTKCompound::PackageView()
 //-------------------------------------------------------------------------
 {
 	assert(m_ViewVTK);
-	PlugChildView(m_ViewVTK);
+	PlugChildView(std::move(m_ViewVTK));
 }
 
 //-------------------------------------------------------------------------
@@ -128,14 +127,15 @@ bool medViewVTKCompound::ActivateWindowing(mafNode* node)
 {
 	bool conditions = false;
 
-	if (((mafVME*)node)->IsA("mafVMEImage")) {
+	if (mafVME::StaticDownCast(node)->IsA("mafVMEImage")) {
 
 		conditions = true;
 
-		for (int i = 0; i < m_NumOfChildView; i++) {
+		for (auto& childView : m_ChildViewList)
+		{
 			//m_ChildViewList[i]->VmeSelect(node, select);
 
-			auto pipe = mafPipeImage3D::StaticDownCast(m_ChildViewList[i]->GetNodePipe(node));
+			auto pipe = mafPipeImage3D::StaticDownCast(childView->GetNodePipe(node));
 			conditions = (conditions && (pipe && pipe->IsGrayImage()));
 		}
 	}
@@ -143,12 +143,14 @@ bool medViewVTKCompound::ActivateWindowing(mafNode* node)
 	return conditions;
 }
 
+
+//ACTUALLY NEVER USED
 //-------------------------------------------------------------------------
-void medViewVTKCompound::SetExternalView(mafViewVTK* childView)
+void medViewVTKCompound::SetExternalView(std::unique_ptr<mafViewVTK> childView)
 //-------------------------------------------------------------------------
 {
-	if (m_ViewVTK == NULL) {
-		m_ViewVTK = childView;
+	if (m_ViewVTK == nullptr) {
+		m_ViewVTK = std::move(childView);
 	}
 }
 //-------------------------------------------------------------------------

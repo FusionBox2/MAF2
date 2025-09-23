@@ -183,7 +183,6 @@ protected:
   mafGUILutSlider *m_LutSlider; ///< Double slider used to change brightness and contrast of the image
   mafGUILutSwatch *m_LutWidget; ///< LUT widget in view side panel 
   vtkLookupTable *m_ColorLUT;
-  mafViewSlice *m_Views[4]; ///< Child views
   int	m_Side; ///< change Azimuth of the camera
 	int m_Snap; ///<change modality of gizmo to snap on grid
   double m_PolylineRadiusSize;

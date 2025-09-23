@@ -55,10 +55,6 @@ enum RX_SUBVIEW_ID
 
 
 //----------------------------------------------------------------------------
-mafCxxTypeMacro(mafViewRXCompound);
-//----------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------
 mafViewRXCompound::mafViewRXCompound(const mafString& label)
 	: mafViewCompound(label, 1, 3)
 	//----------------------------------------------------------------------------
@@ -67,8 +63,6 @@ mafViewRXCompound::mafViewRXCompound(const mafString& label)
 	m_LutWidget = NULL;
 	m_CurrentVolume = NULL;
 	m_LayoutConfiguration = LAYOUT_CUSTOM;
-
-	m_ViewsRX[RX_FRONT_VIEW] = m_ViewsRX[RX_SIDE_VIEW] = NULL;
 
 	m_LutSliders[RX_FRONT_VIEW] = m_LutSliders[RX_SIDE_VIEW] = NULL;
 	m_VtkLUT[RX_FRONT_VIEW] = m_VtkLUT[RX_SIDE_VIEW] = NULL;
@@ -81,8 +75,6 @@ mafViewRXCompound::mafViewRXCompound(const mafString& label)
 mafViewRXCompound::~mafViewRXCompound()
 //----------------------------------------------------------------------------
 {
-	m_ViewsRX[RX_FRONT_VIEW] = m_ViewsRX[RX_SIDE_VIEW] = NULL;
-
 	m_CurrentSurface.clear();
 
 	for (int i = RX_FRONT_VIEW; i < VIEWS_NUMBER; i++)
@@ -101,9 +93,8 @@ mafView* mafViewRXCompound::Copy(mafBaseEventHandler* Listener, bool lightCopyEn
 	v->m_Id = m_Id;
 	for (int i = 0; i < m_PluggedChildViewList.size(); i++)
 	{
-		v->m_PluggedChildViewList.push_back(m_PluggedChildViewList[i]->Copy(this));
+		v->m_PluggedChildViewList.emplace_back(m_PluggedChildViewList[i]->Copy(this));
 	}
-	v->m_NumOfPluggedChildren = m_NumOfPluggedChildren;
 	v->Create();
 	return v;
 }
@@ -112,9 +103,9 @@ void mafViewRXCompound::VmeShow(mafNode* node, bool show)
 //----------------------------------------------------------------------------
 {
 	for (int i = 0; i < VIEWS_NUMBER; i++)
-		((mafViewRX*)m_ChildViewList[i])->VmeShow(node, show);
+		mafViewRX::StaticDownCast(m_ChildViewList[i].get())->VmeShow(node, show);
 
-	if (((mafVME*)node)->GetOutput()->IsA("mafVMEOutputVolume"))
+	if (mafVME::StaticDownCast(node)->GetOutput()->IsA("mafVMEOutputVolume"))
 	{
 		if (show)
 		{
@@ -123,7 +114,7 @@ void mafViewRXCompound::VmeShow(mafNode* node, bool show)
 			for (int childID = RX_FRONT_VIEW; childID < VIEWS_NUMBER; childID++)
 			{
 				double minMax[2];
-				((mafViewRX*)(m_ChildViewList[childID]))->GetLutRange(minMax);
+				mafViewRX::StaticDownCast(m_ChildViewList[childID].get())->GetLutRange(minMax);
 
 				m_LutSliders[childID]->SetRange(minMax[0], minMax[1]);
 				m_LutSliders[childID]->SetSubRange(minMax[0], minMax[1]);
@@ -137,7 +128,7 @@ void mafViewRXCompound::VmeShow(mafNode* node, bool show)
 				m_VtkLUT[childID]->Build();
 				lutPreset(4, m_VtkLUT[childID]);
 
-				((mafViewRX*)m_ChildViewList[childID])->SetLutRange(minMax[0], minMax[1]);
+				mafViewRX::StaticDownCast(m_ChildViewList[childID].get())->SetLutRange(minMax[0], minMax[1]);
 
 			}
 
@@ -177,7 +168,7 @@ void mafViewRXCompound::OnEvent(mafEventBase* maf_event)
 		case ID_RANGE_MODIFIED:
 		{
 			// is the volume visible?
-			if (((mafViewSlice*)m_ChildViewList[RX_FRONT_VIEW])->VolumeIsVisible())
+			if (mafViewSlice::StaticDownCast(m_ChildViewList[RX_FRONT_VIEW].get())->VolumeIsVisible())
 			{
 				double low, hi;
 
@@ -185,12 +176,12 @@ void mafViewRXCompound::OnEvent(mafEventBase* maf_event)
 				if (maf_event->GetSender() == m_LutSliders[RX_FRONT_VIEW])
 				{
 					m_LutSliders[RX_FRONT_VIEW]->GetSubRange(&low, &hi);
-					((mafViewRX*)m_ChildViewList[RX_FRONT_VIEW])->SetLutRange(low, hi);
+					mafViewRX::StaticDownCast(m_ChildViewList[RX_FRONT_VIEW].get())->SetLutRange(low, hi);
 				}
 				else if (maf_event->GetSender() == m_LutSliders[RX_SIDE_VIEW])
 				{
 					m_LutSliders[RX_SIDE_VIEW]->GetSubRange(&low, &hi);
-					((mafViewRX*)m_ChildViewList[RX_SIDE_VIEW])->SetLutRange(low, hi);
+					mafViewRX::StaticDownCast(m_ChildViewList[RX_SIDE_VIEW].get())->SetLutRange(low, hi);
 				}
 
 
@@ -202,10 +193,10 @@ void mafViewRXCompound::OnEvent(mafEventBase* maf_event)
 		{
 			if (m_RightOrLeft == 0)
 			{
-				((mafViewRX*)m_ChildViewList[RX_SIDE_VIEW])->CameraSet(CAMERA_RX_RIGHT);
+				mafViewRX::StaticDownCast(m_ChildViewList[RX_SIDE_VIEW].get())->CameraSet(CAMERA_RX_RIGHT);
 			}
 			else
-				((mafViewRX*)m_ChildViewList[RX_SIDE_VIEW])->CameraSet(CAMERA_RX_LEFT);
+				mafViewRX::StaticDownCast(m_ChildViewList[RX_SIDE_VIEW].get())->CameraSet(CAMERA_RX_LEFT);
 		}
 		break;
 		default:
@@ -234,7 +225,7 @@ mafGUI* mafViewRXCompound::CreateGui()
 	EnableWidgets(m_CurrentVolume != NULL);
 
 	for (int i = RX_FRONT_VIEW; i <= RX_SIDE_VIEW; i++)
-		((mafViewRX*)m_ChildViewList[i])->GetGui();
+		mafViewRX::StaticDownCast(m_ChildViewList[i].get())->GetGui();
 
 	gui->Divider();
 
@@ -271,11 +262,11 @@ void mafViewRXCompound::PackageView()
 	for (int v = RX_FRONT_VIEW; v < VIEWS_NUMBER; v++)
 	{
 		// create to the child view
-		m_ViewsRX[v] = new mafViewRX(_R("RX child view"), cam_pos[v]);
-		m_ViewsRX[v]->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("mafPipeVolumeProjected"), MUTEX);
-		m_ViewsRX[v]->PlugVisualPipe(_R("mafVMELabeledVolume"), _R("mafPipeVolumeProjected"), MUTEX);
+		auto ViewsRX = std::make_unique<mafViewRX>(_R("RX child view"), cam_pos[v]);
+		ViewsRX->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("mafPipeVolumeProjected"), MUTEX);
+		ViewsRX->PlugVisualPipe(_R("mafVMELabeledVolume"), _R("mafPipeVolumeProjected"), MUTEX);
 
-		PlugChildView(m_ViewsRX[v]);
+		PlugChildView(std::move(ViewsRX));
 	}
 
 }
@@ -294,15 +285,13 @@ void mafViewRXCompound::LayoutSubViewCustom(int width, int height)
 {
 	// this implement the Fixed SubViews Layout
 	int border = 2;
-	int x_pos, c, i;
+	int x_pos = 0;
 
 	int step_width = (width - border) / 2;
-	i = 0;
-	for (c = 0; c < m_NumOfChildView; c++)
+	for (auto& childView : m_ChildViewList)
 	{
-		x_pos = c * (step_width + border);
-		m_ChildViewList[i]->GetWindow()->SetSize(x_pos, 0, step_width, height);
-		i++;
+		childView->GetWindow()->SetSize(x_pos, 0, step_width, height);
+		x_pos += (step_width + border);
 	}
 
 }

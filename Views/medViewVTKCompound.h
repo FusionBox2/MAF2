@@ -60,7 +60,7 @@ public:
   void PackageView() override;
 
   /** Function to set customized mafViewVTK as child view. To be called before PackageView. */
-  virtual void SetExternalView(mafViewVTK *childView);
+  virtual void SetExternalView(std::unique_ptr<mafViewVTK> childView);
 
   /** Function that clones instance of the object. */
   mafView *Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled = false) override;
@@ -81,7 +81,7 @@ protected:
    /** A function with windowing activate/deactivate conditions*/
   bool ActivateWindowing(mafNode *node) override;
 
-	mafViewVTK *m_ViewVTK;
+	std::unique_ptr<mafViewVTK> m_ViewVTK;
 
 };
 #endif

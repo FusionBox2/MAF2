@@ -440,12 +440,6 @@ protected:
 	void UpdateWindowing(bool enable,mafNode *node) override;
 	void UpdateThickness( int axis);
 	void ShowSliceHeight2DTextActors( bool show , int color);
-  
-	mafViewVTK *m_ViewSliceX;
-	mafViewVTK *m_ViewSliceY;
-	mafViewVTK *m_ViewSliceZ;
-
-	mafViewVTK *m_ViewArbitrary;
 
 	mafVME          	*m_CurrentVolume;
 	mafVME				    *m_CurrentImage;

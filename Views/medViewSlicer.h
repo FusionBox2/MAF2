@@ -116,10 +116,6 @@ protected:
   void SlicerWindowing(mafVMESlicer *slicer);
 
 	
-	mafViewVTK *m_ViewSlice;
-	mafViewVTK *m_ViewArbitrary;
-
-	
 	mafVME	      *m_CurrentVolume;
   mafVMEImage   *m_CurrentImage;
 	mafVMESlicer  *m_CurrentSlicer;

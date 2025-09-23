@@ -155,9 +155,6 @@ protected:
 
   mafGizmoSlice   *m_GizmoSlice[6];
   std::shared_ptr<mafVME> m_CurrentVolume; ///< Current visualized volume
-  
-  mafViewRX       *m_ViewsRX[2];
-  mafViewCompound *m_ViewCTCompound;
 
   // this member variables are used by side panel gui view
   int m_MoveAllSlices;

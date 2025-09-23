@@ -100,9 +100,6 @@ medViewSlicer::medViewSlicer(const mafString& label, bool show_ruler)
 	: medViewCompoundWindowing(label, 1, 2)
 	//----------------------------------------------------------------------------
 {
-	m_ViewArbitrary = NULL;
-	m_ViewSlice = NULL;
-
 	m_CurrentVolume = NULL;
 	m_CurrentImage = NULL;
 	m_CurrentSlicer = NULL;
@@ -126,20 +123,20 @@ medViewSlicer::~medViewSlicer()
 void medViewSlicer::PackageView()
 //----------------------------------------------------------------------------
 {
-	m_ViewArbitrary = new mafViewVTK(_R(""), CAMERA_PERSPECTIVE);
+	auto ViewArbitrary = std::make_unique<mafViewVTK>(_R(""), CAMERA_PERSPECTIVE);
 	//m_ViewArbitrary->PlugVisualPipe("mafVMESurface", "mafPipeSurfaceSlice");
-	m_ViewArbitrary->PlugVisualPipe(_R("mafVMESurface"), _R("mafPipeSurfaceTextured"));
-	m_ViewArbitrary->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("mafPipeBox"), MUTEX);
-	m_ViewArbitrary->PlugVisualPipe(_R("mafVMELabeledVolume"), _R("mafPipeBox"), MUTEX);
+	ViewArbitrary->PlugVisualPipe(_R("mafVMESurface"), _R("mafPipeSurfaceTextured"));
+	ViewArbitrary->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("mafPipeBox"), MUTEX);
+	ViewArbitrary->PlugVisualPipe(_R("mafVMELabeledVolume"), _R("mafPipeBox"), MUTEX);
 
-	m_ViewSlice = new mafViewVTK(_R(""), CAMERA_CT);
-	m_ViewSlice->PlugVisualPipe(_R("mafVMESurface"), _R("mafPipeSurfaceSlice"));
-	m_ViewSlice->PlugVisualPipe(_R("mafVMESurfaceParametric"), _R("mafPipeSurfaceSlice"));
-	m_ViewSlice->PlugVisualPipe(_R("mafVMEGizmo"), _R("mafPipeGizmo"), NON_VISIBLE);
-	m_ViewSlice->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("mafPipeBox"), NON_VISIBLE);
+	auto ViewSlice = std::make_unique<mafViewVTK>(_R(""), CAMERA_CT);
+	ViewSlice->PlugVisualPipe(_R("mafVMESurface"), _R("mafPipeSurfaceSlice"));
+	ViewSlice->PlugVisualPipe(_R("mafVMESurfaceParametric"), _R("mafPipeSurfaceSlice"));
+	ViewSlice->PlugVisualPipe(_R("mafVMEGizmo"), _R("mafPipeGizmo"), NON_VISIBLE);
+	ViewSlice->PlugVisualPipe(_R("mafVMEVolumeGray"), _R("mafPipeBox"), NON_VISIBLE);
 
-	PlugChildView(m_ViewArbitrary);
-	PlugChildView(m_ViewSlice);
+	PlugChildView(std::move(ViewArbitrary));
+	PlugChildView(std::move(ViewSlice));
 
 }
 //----------------------------------------------------------------------------
@@ -158,7 +155,7 @@ void medViewSlicer::VmeShow(mafNode* node, bool show)
 			m_CurrentVolume = Volume;
 
 			// get the VTK volume
-			vtkDataSet* data = ((mafVME*)node)->GetOutput()->GetVTKData();
+			vtkDataSet* data = mafVME::StaticDownCast(node)->GetOutput()->GetVTKData();
 			//data->Update();	
 		}
 		else if (Vme->IsA("mafVMESurface") || Vme->IsA("mafVMESurfaceParametric"))
@@ -176,10 +173,10 @@ void medViewSlicer::VmeShow(mafNode* node, bool show)
 
 			//Set camera of slice view in way that it will follow the volume
 			if (!m_AttachCamera)
-				m_AttachCamera = std::make_unique<mafAttachCamera>(AccessGUI(), mafViewVTK::StaticDownCast(m_ChildViewList[SLICE_VIEW])->m_Rwi.get(), this);
+				m_AttachCamera = std::make_unique<mafAttachCamera>(AccessGUI(), mafViewVTK::StaticDownCast(m_ChildViewList[SLICE_VIEW].get())->m_Rwi.get(), this);
 			m_AttachCamera->SetStartingMatrix(m_CurrentSlicer->GetOutput()->GetAbsMatrix());
 			m_AttachCamera->SetVme(m_CurrentSlicer);
-			mafViewVTK::StaticDownCast(m_ChildViewList[SLICE_VIEW])->CameraReset(m_CurrentSlicer);
+			mafViewVTK::StaticDownCast(m_ChildViewList[SLICE_VIEW].get())->CameraReset(m_CurrentSlicer);
 		}
 		else if (Vme->IsA("mafVMEImage")) {
 			m_CurrentImage = mafVMEImage::SafeDownCast(node);
@@ -188,7 +185,7 @@ void medViewSlicer::VmeShow(mafNode* node, bool show)
 	else//if show=false
 	{
 
-		if (((mafVME*)Vme)->GetOutput()->IsA("mafVMEOutputVolume"))
+		if (Vme->GetOutput()->IsA("mafVMEOutputVolume"))
 		{
 			m_CurrentVolume = NULL;
 			m_ColorLUT = NULL;
@@ -202,7 +199,7 @@ void medViewSlicer::VmeShow(mafNode* node, bool show)
 			m_LutWidget->SetLut(m_ColorLUT);
 			m_LutSlider->Enable(false);
 			double normal[3] = { 0,0,1 };
-			((mafViewSlice*)m_ChildViewList[SLICE_VIEW])->CameraSet(CAMERA_CT);
+			mafViewSlice::StaticDownCast(m_ChildViewList[SLICE_VIEW].get())->CameraSet(CAMERA_CT);
 		}
 		else if (Vme->IsA("mafVMEImage"))
 		{
@@ -211,7 +208,7 @@ void medViewSlicer::VmeShow(mafNode* node, bool show)
 			m_LutWidget->SetLut(m_ColorLUT);
 			m_LutSlider->Enable(false);
 			double normal[3] = { 0,0,1 };
-			((mafViewSlice*)m_ChildViewList[SLICE_VIEW])->CameraSet(CAMERA_CT);
+			mafViewSlice::StaticDownCast(m_ChildViewList[SLICE_VIEW].get())->CameraSet(CAMERA_CT);
 		}
 	}
 
@@ -298,11 +295,10 @@ mafView* medViewSlicer::Copy(mafBaseEventHandler* Listener, bool lightCopyEnable
 	medViewSlicer* v = new medViewSlicer(GetLabel());
 	v->SetListener(Listener);
 	v->m_Id = m_Id;
-	for (int i = 0; i < m_PluggedChildViewList.size(); i++)
+	for (auto& pluggedChild : m_PluggedChildViewList)
 	{
-		v->m_PluggedChildViewList.push_back(m_PluggedChildViewList[i]->Copy(this));
+		v->m_PluggedChildViewList.emplace_back(pluggedChild->Copy(this));
 	}
-	v->m_NumOfPluggedChildren = m_NumOfPluggedChildren;
 	v->Create();
 	return v;
 }
@@ -349,7 +345,7 @@ void medViewSlicer::VmeRemove(mafNode* node)
 		m_CurrentSlicer = NULL;
 
 		double normal[3] = { 0,0,1 };
-		((mafViewSlice*)m_ChildViewList[SLICE_VIEW])->CameraSet(CAMERA_CT);
+		mafViewSlice::StaticDownCast(m_ChildViewList[SLICE_VIEW].get())->CameraSet(CAMERA_CT);
 	}
 
 	Superclass::VmeRemove(node);
@@ -358,7 +354,7 @@ void medViewSlicer::VmeRemove(mafNode* node)
 void medViewSlicer::CameraUpdate()
 //----------------------------------------------------------------------------
 {
-	if (m_AttachCamera != NULL)
+	if (m_AttachCamera)
 	{
 		//Camera follows the slicer
 		m_AttachCamera->UpdateCameraMatrix();
@@ -368,15 +364,14 @@ void medViewSlicer::CameraUpdate()
 	if (m_CurrentSlicer)
 	{
 		double normal[3];
-		((mafViewVTK*)m_ChildViewList[SLICE_VIEW])->GetRWI()->GetCamera()->GetViewPlaneNormal(normal);
+		mafViewVTK::StaticDownCast(m_ChildViewList[SLICE_VIEW].get())->GetRWI()->GetCamera()->GetViewPlaneNormal(normal);
 
 		mafNode* root = m_CurrentSlicer->GetRoot();
 		for (auto& Inode : *root)
 		{
 			if (Inode.IsA("mafVMESurface") || Inode.IsA("mafVMESurfaceParametric"))
 			{
-				auto PipeSliceViewSurface = mafPipeSurfaceSlice::SafeDownCast(((mafViewVTK*)m_ChildViewList[SLICE_VIEW])->GetNodePipe(&Inode));
-				if (PipeSliceViewSurface)
+				if (auto PipeSliceViewSurface = mafPipeSurfaceSlice::SafeDownCast(mafViewVTK::StaticDownCast(m_ChildViewList[SLICE_VIEW].get())->GetNodePipe(&Inode)))
 				{
 					double center[3], surfaceOriginTranslated[3];
 					/* mafVMESurface *surface = mafVMESurface::SafeDownCast(Inode);
@@ -398,11 +393,11 @@ void medViewSlicer::CameraUpdate()
 				}
 			}
 		}
-		((mafViewVTK*)m_ChildViewList[SLICE_VIEW])->CameraReset(m_CurrentSlicer);
+		mafViewVTK::StaticDownCast(m_ChildViewList[SLICE_VIEW].get())->CameraReset(m_CurrentSlicer);
 	}
 
-	for (int i = 0; i < m_NumOfChildView; i++)
-		m_ChildViewList[i]->CameraUpdate();
+	for (auto& childView : m_ChildViewList)
+		childView->CameraUpdate();
 }
 //----------------------------------------------------------------------------
 void medViewSlicer::CreateGuiView()
@@ -438,13 +433,13 @@ int medViewSlicer::GetNodeStatusI(mafNode* vme)
 //-------------------------------------------------------------------------
 {
 	mafSceneNode* n = NULL;
-	mafSceneGraph* sgArb = ((mafViewVTK*)m_ChildViewList[ARBITRARY_VIEW])->GetSceneGraph();
-	mafSceneGraph* sgSlice = ((mafViewVTK*)m_ChildViewList[SLICE_VIEW])->GetSceneGraph();
+	mafSceneGraph* sgArb = mafViewVTK::StaticDownCast(m_ChildViewList[ARBITRARY_VIEW].get())->GetSceneGraph();
+	mafSceneGraph* sgSlice = mafViewVTK::StaticDownCast(m_ChildViewList[SLICE_VIEW].get())->GetSceneGraph();
 
 	if (sgArb != NULL)
 	{
 		n = sgArb->Vme2Node(vme);
-		if (((mafVME*)vme)->GetOutput()->IsA("mafVMEOutputVolume") ||
+		if (mafVME::StaticDownCast(vme)->GetOutput()->IsA("mafVMEOutputVolume") ||
 			vme->IsMAFType(mafVMESurface) ||
 			vme->IsMAFType(mafVMESurfaceParametric))
 		{
@@ -517,26 +512,26 @@ bool medViewSlicer::ActivateWindowing(mafNode* node)
 	bool conditions = false;
 	bool nodeHasPipe = false;
 
-	mafVME* Vme = mafVME::SafeDownCast(node);
+	auto Vme = mafVME::SafeDownCast(node);
 	Vme->Update();
 
 	if (Vme->IsA("mafVMESlicer") && m_CurrentSlicer) {
 
-		mafVMESlicer* slicer = mafVMESlicer::SafeDownCast(node);
-		mafVMEVolumeGray* vol = mafVMEVolumeGray::SafeDownCast(m_CurrentSlicer->GetSlicedVMELink());
-		if (vol) {
+		auto slicer = mafVMESlicer::SafeDownCast(node);
+		if (auto vol = mafVMEVolumeGray::SafeDownCast(m_CurrentSlicer->GetSlicedVMELink()))
+		{
 			conditions = true;
 		}
 		conditions = conditions && m_CurrentVolume;
 	}
 
-	else if (((mafVME*)node)->IsA("mafVMEImage")) {
+	else if (node->IsA("mafVMEImage")) {
 
 		conditions = true;
 
-		for (int i = 0; i < m_NumOfChildView; i++) {
+		for (auto& childView : m_ChildViewList) {
 
-			auto pipe = mafPipeImage3D::StaticDownCast(m_ChildViewList[i]->GetNodePipe(node));
+			auto pipe = mafPipeImage3D::StaticDownCast(childView->GetNodePipe(node));
 			conditions = (conditions && (pipe && pipe->IsGrayImage()));
 		}
 		//conditions = conditions & m_CurrentImage;
