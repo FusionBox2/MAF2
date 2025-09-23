@@ -52,14 +52,12 @@ mafViewHTML::mafViewHTML(const mafString& label, int camera_position, bool show_
 	:mafView(label)
 	//----------------------------------------------------------------------------
 {
-	m_Html = NULL;
 	m_Url = _R("http://www.cineca.it/index.html");
 }
 //----------------------------------------------------------------------------
 mafViewHTML::~mafViewHTML()
 //----------------------------------------------------------------------------
 {
-	cppDEL(m_Html);
 	wxImage::RemoveHandler("JPEGHANDLER");
 	/*
 	m_Html -> WriteCustomization(wxConfig::Get());
@@ -89,7 +87,7 @@ void mafViewHTML::Create()
 	wxFileSystem::AddHandler(new wxInternetFSHandler);
 #endif
 
-	m_Html = new wxHtmlWindow(mafGetFrame());
+	m_Html = std::make_unique<wxHtmlWindow>(mafGetFrame());
 
 	/*m_Html -> SetRelatedFrame(this, "HTML : %s");
 	m_Html -> SetRelatedStatusBar(0);
@@ -97,7 +95,7 @@ void mafViewHTML::Create()
 	m_Html -> LoadPage("test.htm");*/
 
 
-	m_Win = m_Html;
+	m_Win = m_Html.get();
 
 	m_Rwi = new mafRWI(m_Win, ONE_LAYER);
 	m_Rwi->SetListener(this);//SIL. 16-6-2004: 

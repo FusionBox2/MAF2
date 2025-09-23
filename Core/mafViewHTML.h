@@ -75,7 +75,7 @@ protected:
   
 	mafGUI *CreateGui() override;
 
-  wxHtmlWindow *m_Html;
+  std::unique_ptr<wxHtmlWindow> m_Html;
   mafString m_Url;
 };
 #endif
