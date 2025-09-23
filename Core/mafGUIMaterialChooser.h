@@ -99,10 +99,10 @@ protected:
   /** Copy choosed material on vme properties. */
   void SelectMaterial(mmaMaterial *m);
 
-  wxDialog					*m_Dialog;
+  std::unique_ptr<wxDialog> m_Dialog;
   mafGUIListCtrlBitmap	*m_ListCtrlMaterial;
 	mafGUI						*m_Gui;
-	mafRWI						*m_RWI;
+	std::unique_ptr<mafRWI> m_RWI;
 
   std::vector<std::shared_ptr<mmaMaterial> > m_List;
 	std::shared_ptr<mmaMaterial> m_ChoosedMaterial;

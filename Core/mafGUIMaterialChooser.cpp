@@ -68,10 +68,8 @@ mafGUIMaterialChooser::mafGUIMaterialChooser(const mafString& dialog_title)
 {  
   m_VmeMaterial     = NULL;
   m_Vme             = NULL;
-  m_Dialog			    = NULL;
 	m_Gui					    = NULL;
 	m_ListCtrlMaterial= NULL;
-	m_RWI					    = NULL;
 
   m_Filename = mafGetApplicationDirectory();
   m_Filename += _R("/mat_library.xml");
@@ -102,8 +100,8 @@ mafGUIMaterialChooser::~mafGUIMaterialChooser()
 	vtkDEL(m_Property);
   vtkDEL(m_Mapper);
   vtkDEL(m_Actor);
-	cppDEL(m_RWI); 
-  cppDEL(m_Dialog);
+	m_RWI.reset(); 
+  m_Dialog.reset();
 };
 //----------------------------------------------------------------------------
 bool mafGUIMaterialChooser::ShowChooserDialog(mafVME *vme, bool remember_last_material)
@@ -161,13 +159,13 @@ void mafGUIMaterialChooser::CreateGUI()
 
   int x_pos,y_pos,w,h;
   mafGetFrame()->GetPosition(&x_pos,&y_pos);
-  m_Dialog = new wxDialog(mafGetFrame(),-1,"Choose Material",
+  m_Dialog = std::make_unique<wxDialog>(mafGetFrame(),-1,"Choose Material",
 	wxDefaultPosition,wxDefaultSize,wxCAPTION | wxRESIZE_BORDER );
   m_Dialog->GetSize(&w,&h);
   m_Dialog->SetSize(x_pos+5,y_pos+5,w,h);
   //m_Dialog->SetMinSize(wxSize(w,h));
 
-	m_ListCtrlMaterial = new mafGUIListCtrlBitmap(m_Dialog,-1,0,1); 
+	m_ListCtrlMaterial = new mafGUIListCtrlBitmap(m_Dialog.get(),-1,0,1); 
 	m_ListCtrlMaterial->SetTitle(_R("material library")); 
 	m_ListCtrlMaterial->SetListener(this); 
 	m_ListCtrlMaterial->Reset();
@@ -175,7 +173,7 @@ void mafGUIMaterialChooser::CreateGUI()
   m_ListCtrlMaterial->SetMinSize(wxSize(200,500));
 
 	// RWI ============================
-	m_RWI = new mafRWI(m_Dialog,ONE_LAYER);
+	m_RWI = std::make_unique<mafRWI>(m_Dialog.get(),ONE_LAYER);
 	m_RWI->SetSize(0,0,50,50);
   m_RWI->m_RwiBase->Show(true);
 	// GUI ============================
@@ -229,7 +227,7 @@ void mafGUIMaterialChooser::CreateGUI()
 	//m_Gui->SetSize(wxSize(220,520));
   //m_Gui->SetMinSize(wxSize(220,520));
 	m_Gui->Divider();
-	m_Gui->Reparent(m_Dialog);
+	m_Gui->Reparent(m_Dialog.get());
   m_Gui->Show(true);
   m_Gui->Fit();
   
@@ -247,7 +245,7 @@ void mafGUIMaterialChooser::CreateGUI()
 
 	// ATTACH SIZER TO DIALOG
   m_Dialog->SetSizer( main_sizer );
-  main_sizer->SetSizeHints(m_Dialog);
+  main_sizer->SetSizeHints(m_Dialog.get());
 }
 //----------------------------------------------------------------------------
 void mafGUIMaterialChooser::CreatePipe()
