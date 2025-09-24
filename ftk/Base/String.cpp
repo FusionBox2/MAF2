@@ -520,21 +520,6 @@ mafString mafToString(double d)
     return mafString::Format(_R("%.16g"), d);
 }
 
-//----------------------------------------------------------------------------
-mafString mafToString(const mafMatrix& mat)
-//----------------------------------------------------------------------------
-{
-    mafString res;
-    for (int i = 0; i < 4; i++)
-    {
-        for (int j = 0; j < 4; j++)
-        {
-            res += mafString::Format(_R("%.16g "), mat.GetElement(i, j));
-        }
-    }
-    return res;
-}
-
 //------------------------------------------------------------------------------
 template <class T>
 mafString InternalStoreVectorN(T* comps, size_t num)

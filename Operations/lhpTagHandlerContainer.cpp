@@ -525,7 +525,14 @@ void lhpTagHandler_L0000_resource_MAF_TimeSpace_VMEabsoluteMatrixPose::HandleAut
 	for(timeCount = 0; timeCount < finalTimeStamps; timeCount++)
 	{
 		absMatrixPipe->SetTimeStamp(timeStamps[timeCount]);
-		value += mafToString(absMatrixPipe->GetMatrix());
+        auto mat = absMatrixPipe->GetMatrix();
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                value += mafString::Format(_R("%.16g "), mat.GetElement(i, j));
+            }
+        }
 	}
 
 	// tag handling code

@@ -3,12 +3,7 @@
 #include "ftkConfigure.h"
 
 #include "mafDefines.h"
-#include <string.h>
 #include <string>
-//----------------------------------------------------------
-// forward references:
-//----------------------------------------------------------
-class mafMatrix;
 
 BEGIN_FTK_NAMESPACE
 
@@ -211,15 +206,7 @@ FTK_BASE_EXPORT mafString mafToString(long       d);
 FTK_BASE_EXPORT mafString mafToString(long long  d);
 FTK_BASE_EXPORT mafString mafToString(float      d);
 FTK_BASE_EXPORT mafString mafToString(double     d);
-/** Put inside string a mafMatrix in row order
-example:
-1 0 0 0
-  0 1 0 0
-  0 0 1 0
-  0 0 0 1
-  -> "1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1"
-  */
-FTK_BASE_EXPORT mafString mafToString(const mafMatrix& mat);
+
 FTK_BASE_EXPORT mafString mafToString(double* comps, int num);
 FTK_BASE_EXPORT mafString mafToString(int* comps, int num);
 FTK_BASE_EXPORT mafString mafToString(const std::vector<double>& comps);
