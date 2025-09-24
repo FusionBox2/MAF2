@@ -155,7 +155,7 @@ void mafGUISaveRestorePose::FillListBoxWithABSPosesStoredInInputVME()
         auto item = &entry.second;
         if (item->GetNumberOfComponents() == 16)
         {
-            wxString name = item->GetName().toWx();
+            wxString name = mafStringToWx(item->GetName());
             if (name.Find("STORED_ABS_POS_") != -1)
             {
                 name = name.Remove(0, 15);
@@ -183,7 +183,7 @@ void mafGUISaveRestorePose::StorePose()
   }
   else if (m_TestMode == true)
   {
-    pose_name = dummyPoseNameUsedForTesting.toWx();
+    pose_name = mafStringToWx(dummyPoseNameUsedForTesting);
   }
   
   pose_name.Trim();

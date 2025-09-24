@@ -548,7 +548,7 @@ void mafAnimate::StoreViewPoint()
   item.SetComponent(par_scale,9);
 	m_Tags->SetTag(item);
 
-	m_PositionList->Append(m_SelectedPosition.toWx());
+	m_PositionList->Append(mafStringToWx(m_SelectedPosition));
   SetCurrentSelection(m_PositionList->GetCount() - 1);
 }
 //----------------------------------------------------------------------------
@@ -558,7 +558,7 @@ void mafAnimate::RenameViewPoint()
 	assert(!m_SelectedPosition.empty());
 
 	// prompt user for the new name -----------------------
-	auto dlg = std::make_unique<wxTextEntryDialog>(nullptr,"please enter a name", "Rename Camera Position",m_SelectedPosition.toWx());
+	auto dlg = std::make_unique<wxTextEntryDialog>(nullptr,"please enter a name", "Rename Camera Position", mafStringToWx(m_SelectedPosition));
   int result = dlg->ShowModal(); 
   mafString name = mafWxToString(dlg->GetValue());
   dlg.reset();
@@ -576,7 +576,7 @@ void mafAnimate::RenameViewPoint()
 
     //remove item to be overwritten
 		m_Tags->DeleteTag(flyto_tagName);
-		m_PositionList->Delete(m_PositionList->FindString(name.toWx()));
+		m_PositionList->Delete(m_PositionList->FindString(mafStringToWx(name)));
 	}
 
 	mafString flyto_oldTagName = _R("FLY_TO_") + m_SelectedPosition;
@@ -591,7 +591,7 @@ void mafAnimate::RenameViewPoint()
 
 	int n = m_PositionList->GetSelection();
 	if(n >= 0) 
-    m_PositionList->SetString(n, name.toWx());
+    m_PositionList->SetString(n, mafStringToWx(name));
 
   m_SelectedPosition = name;
 	m_Gui->Update();
@@ -647,7 +647,7 @@ void mafAnimate::RetrieveStoredPositions(bool update_listbox /*= true*/)
 		mafTagItem* item = &entry.second;
 		if (item && ((item->GetNumberOfComponents() == 9) || (item->GetNumberOfComponents() == 10)))
 		{
-			wxString name = item->GetName().toWx();
+			wxString name = mafStringToWx(item->GetName());
 			if (name.Find("FLY_TO_") != -1)
 			{
 				m_StoredPositions->SetTag(*item);

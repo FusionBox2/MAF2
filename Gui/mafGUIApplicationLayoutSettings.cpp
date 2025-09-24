@@ -217,7 +217,7 @@ void mafGUIApplicationLayoutSettings::InitializeSettings()
   {
     mafString layout_dir  = mafGetApplicationDirectory();
     layout_dir += _R("\\Layout\\layout.mly");
-    m_Config->Write("DefaultLayoutFile", layout_dir.toWx());
+    m_Config->Write("DefaultLayoutFile", mafStringToWx(layout_dir));
     m_Config->Flush();
     m_DefaultLayoutFile = layout_dir;
   }
@@ -228,14 +228,14 @@ void mafGUIApplicationLayoutSettings::AddLayout()
 {
   mafString name;
   
-  auto dlg = std::make_unique<wxTextEntryDialog>(nullptr,_("please enter a name"), _("New Layout"), name.toWx());
+  auto dlg = std::make_unique<wxTextEntryDialog>(nullptr,_("please enter a name"), _("New Layout"), mafStringToWx(name));
   dlg->SetValue(_("new layout"));
   int result = dlg->ShowModal(); 
   name = mafWxToString(dlg->GetValue());
   if(result != wxID_OK) return;
 
   //check for equal names
-  int idx = m_List->FindString(name.toWx());
+  int idx = m_List->FindString(mafStringToWx(name));
   if(idx != -1)
   {
     wxString msg = _("this name is already used, do you wanto to overwrite this layout ?");
@@ -291,7 +291,7 @@ void mafGUIApplicationLayoutSettings::AddLayout()
     {
       layout->AddView(*it);
     }
-    m_List->Append(name.toWx());
+    m_List->Append(mafStringToWx(name));
 
     //restore the original visibility
     layout->SetVisibilityVme(m_VisibilityVme);
@@ -358,7 +358,7 @@ void mafGUIApplicationLayoutSettings::LoadLayout(bool fileDefault)
     {
       if(!vme.IsMAFType(mafVMERoot))
       {
-        m_List->Append(vme.GetName().toWx());
+        m_List->Append(mafStringToWx(vme.GetName()));
         if(mafNodeLayout::StaticDownCast(&vme)->GetLayout()->GetLayoutName() == _R("Default"))
           m_DefaultLayoutName = mafNodeLayout::StaticDownCast(&vme)->GetName();
       }
@@ -374,7 +374,7 @@ void mafGUIApplicationLayoutSettings::LoadLayout(bool fileDefault)
       //apply default layout
       if(m_List->GetCount() != 0)
       {
-        m_SelectedItem = m_List->FindString(m_DefaultLayoutName.toWx());
+        m_SelectedItem = m_List->FindString(mafStringToWx(m_DefaultLayoutName));
         if(m_SelectedItem != -1)
           m_List->SetSelection(m_SelectedItem, true);
         m_Gui->Update();

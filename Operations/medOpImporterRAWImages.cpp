@@ -1342,7 +1342,7 @@ void medOpImporterRAWImages::OnOpenDir()
 
   vtkNEW(m_VtkRawDirectory);
   if (m_VtkRawDirectory->Open(m_RawDirectory.GetCStr()) == 0)
-    wxLogMessage(wxString::Format("Directory <%s> can not be opened", m_RawDirectory.toWx()));
+    wxLogMessage(wxString::Format("Directory <%s> can not be opened", mafStringToWx(m_RawDirectory)));
 
   if(!this->m_TestMode)
   {
@@ -1361,7 +1361,7 @@ bool medOpImporterRAWImages::ControlFilenameList()
   mafString prefix = m_RawDirectory + _R("\\") + m_Prefix;
   mafString pattern = m_Pattern + m_Extension;
 
-  wxDir dir(m_RawDirectory.toWx());
+  wxDir dir(mafStringToWx(m_RawDirectory));
   bool result = true;
   if ( !dir.IsOpened() )
   {
@@ -1371,13 +1371,13 @@ bool medOpImporterRAWImages::ControlFilenameList()
   }
 
   wxArrayString SkinFiles;
-  const wxString FileSpec = "*" + m_Extension.toWx();
+  const wxString FileSpec = "*" + mafStringToWx(m_Extension);
   const int flags = wxDIR_FILES;
 
-  if (m_RawDirectory.toWx() != wxEmptyString && mafDirExists(m_RawDirectory))
+  if (mafStringToWx(m_RawDirectory) != wxEmptyString && mafDirExists(m_RawDirectory))
   {
     // Get all .zip files
-    wxDir::GetAllFiles(m_RawDirectory.toWx(), &SkinFiles, FileSpec, flags);
+    wxDir::GetAllFiles(mafStringToWx(m_RawDirectory), &SkinFiles, FileSpec, flags);
   }
 
   //wxMessageBox(wxString::Format("%d",SkinFiles.GetCount()));

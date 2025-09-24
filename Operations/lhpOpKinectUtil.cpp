@@ -195,7 +195,7 @@ namespace
       {
         return NULL;
       }
-      wxSetWorkingDirectory(m_TmpDir.toWx());
+      wxSetWorkingDirectory(mafStringToWx(m_TmpDir));
     }
 
     ParsePathName(unixname); // convert to unix format
@@ -1838,7 +1838,7 @@ bool lhpOpKinectUtil::Import()
 
     mafString commandline = apppath;
     commandline += _R(" -logging") + filetoprd;
-    if(wxExecute(commandline.toWx(), wxEXEC_SYNC) != 0)
+    if(wxExecute(mafStringToWx(commandline), wxEXEC_SYNC) != 0)
       return false;
     /*system(commandline.GetCStr());
     if(!RunProgram(const_cast<char*>(commandline.GetCStr())))
@@ -1989,7 +1989,7 @@ bool lhpOpKinectUtil::Import()
           mafString commandline;
           commandline = mtlbTmp;
           commandline += _R("/KinVic_Opt_ShV_2012.exe KV_Local_Param_Inp_Shv_K.m LL_Model_S035_K.dat UpL_Model_S035_K.dat >a.log");
-          wxSetWorkingDirectory(mtlbTmp.toWx());
+          wxSetWorkingDirectory(mafStringToWx(mtlbTmp));
           mafString tmpOut;
           tmpOut = mtlbTmp;
           tmpOut += _R("/tmp.tmp");

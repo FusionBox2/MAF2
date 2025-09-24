@@ -113,7 +113,7 @@ void mafOpEditMetadata::OpRun()
 
     m_MetadataList = m_Gui->ListBox(ID_METADATA_LIST, _R(""),120);
     for (int t=0; t<tag_list.size();t++)
-      m_MetadataList->Insert(tag_list[t].toWx(),0);
+      m_MetadataList->Insert(mafStringToWx(tag_list[t]),0);
 
     if (!m_MetadataList->IsEmpty())
     {
@@ -351,14 +351,14 @@ void mafOpEditMetadata::AddNewTag(mafString &name)
   if (tag_present)
   {
     wxString msg = _("Tag named ");
-    msg << m_TagName.toWx();
+    msg << mafStringToWx(m_TagName);
     msg << " renamed in ";
     msg << new_name.GetCStr();
     msg <<" because already exists!";
     wxMessageBox(msg, _("Warning"));
   }
   if(!m_TestMode)
-    m_MetadataList->Insert(new_name.toWx(), m_MetadataList->GetCount());
+    m_MetadataList->Insert(mafStringToWx(new_name), m_MetadataList->GetCount());
   m_TagName = new_name;
   m_SelectedTag->SetName(m_TagName);
   m_TagArray->SetTag(*m_SelectedTag);

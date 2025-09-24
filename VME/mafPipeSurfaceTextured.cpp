@@ -579,7 +579,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase* maf_event)
 
 					if (readLine == search1)
 					{
-						output << (_R("texture ImageTexture{ url \"") + imageName + _R("\" repeatS TRUE repeatT TRUE }}")).toStd() << std::endl;
+						output << mafStringToStd(_R("texture ImageTexture{ url \"") + imageName + _R("\" repeatS TRUE repeatT TRUE }}")) << std::endl;
 
 						while (readLine != search2)
 						{
@@ -705,7 +705,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase* maf_event)
 			mtlName.erase(mtlName.length() - 3);
 			mtlName.append(_R("obj.mtl"));
 
-			wxBusyInfo wait523(m_File.toWx());
+			wxBusyInfo wait523(mafStringToWx(m_File));
 
 			mafSleep(1500);
 
@@ -739,7 +739,7 @@ void mafPipeSurfaceTextured::OnEvent(mafEventBase* maf_event)
 				std::ofstream mtlfile;
 
 				mtlfile.open(mtlName.GetCStr(), std::ios_base::app);
-				mtlfile << (_R("map_Kd ") + imageName).toStd();
+				mtlfile << mafStringToStd(_R("map_Kd ") + imageName);
 			}
 			else
 			{

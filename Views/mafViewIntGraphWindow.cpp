@@ -260,52 +260,52 @@ void mafViewIntGraphWindow::LoadSettings(const std::vector<mafString>& pSettings
 
 	// 1, load plot colors number
 	if (pSettings.size() > nCount)
-		m_ColorTableNumber = std::stoi(pSettings[nCount++].toStd());
+		m_ColorTableNumber = std::stoi(mafStringToStd(pSettings[nCount++]));
 
 	// 3 * m_ColorTableNumber; load table itself
 	for (int nI = 0; nI < m_ColorTableNumber; nI++)
 	{
 		if (pSettings.size() > nCount)
-			nRed = std::stoi(pSettings[nCount++].toStd());
+			nRed = std::stoi(mafStringToStd(pSettings[nCount++]));
 		if (pSettings.size() > nCount)
-			nGreen = std::stoi(pSettings[nCount++].toStd());
+			nGreen = std::stoi(mafStringToStd(pSettings[nCount++]));
 		if (pSettings.size() > nCount)
-			nBlue = std::stoi(pSettings[nCount++].toStd());
+			nBlue = std::stoi(mafStringToStd(pSettings[nCount++]));
 		m_ColorTable[nI].Set(nRed, nGreen, nBlue);
 	}
 	// 4, title font settings
 	if (pSettings.size() > nCount)
-		SetTitleFontSize(std::stoi(pSettings[nCount++].toStd()));
+		SetTitleFontSize(std::stoi(mafStringToStd(pSettings[nCount++])));
 	if (pSettings.size() > nCount)
-		SetTitleFontFamily(mafViewIntGraphFontFamily(std::stoi(pSettings[nCount++].toStd())));
+		SetTitleFontFamily(mafViewIntGraphFontFamily(std::stoi(mafStringToStd(pSettings[nCount++]))));
 	if (pSettings.size() > nCount)
-		SetTitleFontStyle(std::stoi(pSettings[nCount++].toStd()));
+		SetTitleFontStyle(std::stoi(mafStringToStd(pSettings[nCount++])));
 	if (pSettings.size() > nCount)
-		SetTitleFontWeight(std::stoi(pSettings[nCount++].toStd()));
+		SetTitleFontWeight(std::stoi(mafStringToStd(pSettings[nCount++])));
 
 	// 4, tick font settings
 	if (pSettings.size() > nCount)
-		SetTickFontSize(std::stoi(pSettings[nCount++].toStd()));
+		SetTickFontSize(std::stoi(mafStringToStd(pSettings[nCount++])));
 	if (pSettings.size() > nCount)
-		SetTickFontFamily(mafViewIntGraphFontFamily(std::stoi(pSettings[nCount++].toStd())));
+		SetTickFontFamily(mafViewIntGraphFontFamily(std::stoi(mafStringToStd(pSettings[nCount++]))));
 	if (pSettings.size() > nCount)
-		SetTickFontStyle(std::stoi(pSettings[nCount++].toStd()));
+		SetTickFontStyle(std::stoi(mafStringToStd(pSettings[nCount++])));
 	if (pSettings.size() > nCount)
-		SetTickFontWeight(std::stoi(pSettings[nCount++].toStd()));
+		SetTickFontWeight(std::stoi(mafStringToStd(pSettings[nCount++])));
 
 	// 3, lines settings
 	if (pSettings.size() > nCount)
-		SetCurveThickness(std::stoi(pSettings[nCount++].toStd()));
+		SetCurveThickness(std::stoi(mafStringToStd(pSettings[nCount++])));
 	if (pSettings.size() > nCount)
-		SetAxisThickness(std::stoi(pSettings[nCount++].toStd()));
+		SetAxisThickness(std::stoi(mafStringToStd(pSettings[nCount++])));
 	if (pSettings.size() > nCount)
-		SetGridThickness(std::stoi(pSettings[nCount++].toStd()));
+		SetGridThickness(std::stoi(mafStringToStd(pSettings[nCount++])));
 
 	// 2, grids
 	if (pSettings.size() > nCount)
-		m_RoughGrid = (std::stoi(pSettings[nCount++].toStd()) != 0);
+		m_RoughGrid = (std::stoi(mafStringToStd(pSettings[nCount++])) != 0);
 	if (pSettings.size() > nCount)
-		m_PreciseGrid = (std::stoi(pSettings[nCount++].toStd()) != 0);
+		m_PreciseGrid = (std::stoi(mafStringToStd(pSettings[nCount++])) != 0);
 }
 //----------------------------------------------------------------------------
 void mafViewIntGraphWindow::DrawXAxis(wxDC* pDC, wxRect* prc, double rXMin, double rXMax, double rXCoef, bool bGrid, bool bPreciseGrid)
@@ -785,19 +785,19 @@ void mafViewIntGraphWindow::DrawGraph(wxDC* pCompatDC)
 				sYIDDesc = m_Graphs[i]->GetIDDesc(nYNumber, nYDer);
 				if ((int)rYPow10Marks != 1 && (int)rXPow10Marks != 1)
 				{
-					sExp = wxString::Format("%s, %1.0e (%s, %1.0e) ", sYIDDesc.toWx(), rYPow10Marks, sXIDDesc.toWx(), rXPow10Marks);
+					sExp = wxString::Format("%s, %1.0e (%s, %1.0e) ", mafStringToWx(sYIDDesc), rYPow10Marks, mafStringToWx(sXIDDesc), rXPow10Marks);
 				}
 				else  if ((int)rYPow10Marks == 1 && (int)rXPow10Marks != 1)
 				{
-					sExp = wxString::Format("%s (%s, %1.0e) ", sYIDDesc.toWx(), sXIDDesc.toWx(), rXPow10Marks);
+					sExp = wxString::Format("%s (%s, %1.0e) ", mafStringToWx(sYIDDesc), mafStringToWx(sXIDDesc), rXPow10Marks);
 				}
 				else  if ((int)rYPow10Marks != 1 && (int)rXPow10Marks == 1)
 				{
-					sExp = wxString::Format("%s, %1.0e (%s) ", sYIDDesc.toWx(), rYPow10Marks, sXIDDesc.toWx());
+					sExp = wxString::Format("%s, %1.0e (%s) ", mafStringToWx(sYIDDesc), rYPow10Marks, mafStringToWx(sXIDDesc));
 				}
 				else
 				{
-					sExp = wxString::Format("%s (%s) ", sYIDDesc.toWx(), sXIDDesc.toWx());
+					sExp = wxString::Format("%s (%s) ", mafStringToWx(sYIDDesc), mafStringToWx(sXIDDesc));
 				}
 				pCompatDC->GetTextExtent(sExp, &szTextSize.x, &szTextSize.y);
 				rTextRect.SetLeft(pt.x + 35);
@@ -1498,12 +1498,12 @@ bool mafViewIntGraphWindow::SaveGraphAsCSV(wxString const& sFileName)
 	sWriteStr = "";
 	if (m_XGraph)
 	{
-		sWriteStr += m_XGraph->GetIDDesc(m_XGraph->GetIndexX(0), 0).toWx();
+		sWriteStr += mafStringToWx(m_XGraph->GetIDDesc(m_XGraph->GetIndexX(0), 0));
 		sWriteStr += ";";
 	}
 	else if (m_Graphs.size() > 0)
 	{
-		sWriteStr += m_Graphs[0]->GetIDDesc(0, 0).toWx();
+		sWriteStr += mafStringToWx(m_Graphs[0]->GetIDDesc(0, 0));
 		sWriteStr += ";";
 	}
 
@@ -1511,7 +1511,7 @@ bool mafViewIntGraphWindow::SaveGraphAsCSV(wxString const& sFileName)
 	{
 		for (int j = 0; j < m_Graphs[i]->GetYVarNum(); j++)
 		{
-			sWriteStr += m_Graphs[i]->GetIDDesc(m_Graphs[i]->GetIndexY(j), m_Graphs[i]->GetYDer(j)).toWx();
+			sWriteStr += mafStringToWx(m_Graphs[i]->GetIDDesc(m_Graphs[i]->GetIndexY(j), m_Graphs[i]->GetYDer(j)));
 			sWriteStr += ";";
 		}
 	}

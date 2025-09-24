@@ -281,7 +281,7 @@ int mafOpApplyTrajectory::Read()
   double newPosition[3];
   double newOrientation[3];
 
-  wxString s_file = m_File.toWx();
+  wxString s_file = mafStringToWx(m_File);
   wxFileInputStream inputFile( s_file );
   wxTextInputStream text( inputFile );
   

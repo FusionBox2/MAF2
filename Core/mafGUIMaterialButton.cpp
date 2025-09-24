@@ -91,7 +91,7 @@ void mafGUIMaterialButton::CreateGui()
 
   //m_MaterialLabel = new wxStaticText(m_Gui,ID_MATERIAL,"",wxDefaultPosition, wxSize(100,16), wxST_NO_AUTORESIZE );
   m_MaterialLabel = new wxStaticText(m_Gui.get(),-1,"",wxDefaultPosition, wxSize(100,16), wxST_NO_AUTORESIZE );
-  m_MaterialLabel->SetLabel(m_Material->m_MaterialName.toWx());
+  m_MaterialLabel->SetLabel(mafStringToWx(m_Material->m_MaterialName));
 
   wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
   sizer->Add( lab,          0, wxALIGN_CENTRE|wxRIGHT, 5 );
@@ -112,7 +112,7 @@ void mafGUIMaterialButton::OnEvent(mafEventBase *maf_event)
     {
       case ID_MATERIAL:
         {mafEvent evUnq(this,VME_CHOOSE_MATERIAL); evUnq.SetVme(m_Vme); InvokeEvent(evUnq);}
-        m_MaterialLabel->SetLabel(m_Material->m_MaterialName.toWx());
+        m_MaterialLabel->SetLabel(mafStringToWx(m_Material->m_MaterialName));
         UpdateMaterialIcon();
         {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
       break;

@@ -99,7 +99,7 @@ void medOpImporterAnalogWS::Read()
   emgScalar->GetTagArray()->SetTag(tag_Nature);
 
   mafString time, scalar;
-  wxFileInputStream inputFile( m_File.toWx() );
+  wxFileInputStream inputFile(mafStringToWx(m_File) );
   wxTextInputStream text( inputFile );
 
   double emg_time; 
@@ -150,7 +150,7 @@ void medOpImporterAnalogWS::Read()
   vnl_matrix<double> emgMatrix;
   emgMatrix.set_size(rowNumber , num_tk);
 
-  wxFileInputStream inputFile1( m_File.toWx() );
+  wxFileInputStream inputFile1(mafStringToWx(m_File) );
   wxTextInputStream text1( inputFile1 );
   
   line = text1.ReadLine();

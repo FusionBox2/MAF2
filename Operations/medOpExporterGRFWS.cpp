@@ -378,11 +378,11 @@ void medOpExporterGRFWS::Write()
   mafString file3 = m_File + _R("_tmp3");
   mafString file4 = m_File + _R("_tmp4");
 
-  std::ofstream f_Out(m_File.toStd());
-  std::ofstream f_Out1(file1.toStd());
-  std::ofstream f_Out2(file2.toStd());
-  std::ofstream f_Out3(file3.toStd());
-  std::ofstream f_Out4(file4.toStd());
+  std::ofstream f_Out(mafStringToStd(m_File));
+  std::ofstream f_Out1(mafStringToStd(file1));
+  std::ofstream f_Out2(mafStringToStd(file2));
+  std::ofstream f_Out3(mafStringToStd(file3));
+  std::ofstream f_Out4(mafStringToStd(file4));
 
   std::vector<mafTimeStamp> kframes1;
   std::vector<mafTimeStamp> kframes2;
@@ -512,13 +512,13 @@ void medOpExporterGRFWS::Write()
   f_Out3.close();
   f_Out4.close();
 
-  wxFileInputStream inputFile1( file1.toWx() );
+  wxFileInputStream inputFile1(mafStringToWx(file1) );
   wxTextInputStream text1( inputFile1 );
-  wxFileInputStream inputFile2( file2.toWx() );
+  wxFileInputStream inputFile2(mafStringToWx(file2) );
   wxTextInputStream text2( inputFile2 );
-  wxFileInputStream inputFile3( file3.toWx() );
+  wxFileInputStream inputFile3(mafStringToWx(file3) );
   wxTextInputStream text3( inputFile3 );
-  wxFileInputStream inputFile4( file4.toWx() );
+  wxFileInputStream inputFile4(mafStringToWx(file4) );
   wxTextInputStream text4( inputFile4 );
 
   wxString line;
@@ -652,11 +652,11 @@ void medOpExporterGRFWS::WriteFast()
   mafString file3 = m_File + _R("_tmp3");
   mafString file4 = m_File + _R("_tmp4");
 
-  std::ofstream f_Out(m_File.toStd());
-  std::ofstream f_Out1(file1.toStd());
-  std::ofstream f_Out2(file2.toStd());
-  std::ofstream f_Out3(file3.toStd());
-  std::ofstream f_Out4(file4.toStd());
+  std::ofstream f_Out(mafStringToStd(m_File));
+  std::ofstream f_Out1(mafStringToStd(file1));
+  std::ofstream f_Out2(mafStringToStd(file2));
+  std::ofstream f_Out3(mafStringToStd(file3));
+  std::ofstream f_Out4(mafStringToStd(file4));
 
   std::vector<mafTimeStamp> kframes1;
   std::vector<mafTimeStamp> kframes2;
@@ -879,13 +879,13 @@ void medOpExporterGRFWS::WriteFast()
   f_Out3.close();
   f_Out4.close();
 
-  wxFileInputStream inputFile1( file1.toWx() );
+  wxFileInputStream inputFile1(mafStringToWx(file1) );
   wxTextInputStream text1( inputFile1 );
-  wxFileInputStream inputFile2( file2.toWx() );
+  wxFileInputStream inputFile2(mafStringToWx(file2) );
   wxTextInputStream text2( inputFile2 );
-  wxFileInputStream inputFile3( file3.toWx() );
+  wxFileInputStream inputFile3(mafStringToWx(file3) );
   wxTextInputStream text3( inputFile3 );
-  wxFileInputStream inputFile4( file4.toWx() );
+  wxFileInputStream inputFile4(mafStringToWx(file4) );
   wxTextInputStream text4( inputFile4 );
 
   wxString line;
@@ -1002,7 +1002,7 @@ void medOpExporterGRFWS::WriteSingleVector()
     wait = std::make_unique<wxBusyInfo>("This may take several minutes, please be patient...");
   }
   
-  std::ofstream f_Out(m_File.toStd());
+  std::ofstream f_Out(mafStringToStd(m_File));
 
   std::vector<mafTimeStamp> kframes;
   m_ForceLeft->GetTimeStamps(kframes);
@@ -1089,7 +1089,7 @@ void medOpExporterGRFWS::WriteSingleVectorFast()
     wait = std::make_unique<wxBusyInfo>("This may take several minutes, please be patient...");
   }
 
-  std::ofstream f_Out(m_File.toStd());
+  std::ofstream f_Out(mafStringToStd(m_File));
 
   std::vector<mafTimeStamp> kframes;
   m_ForceLeft->GetTimeStamps(kframes);
@@ -1448,8 +1448,8 @@ void medOpExporterGRFWS::SetFileName(const char *file_name)
 void medOpExporterGRFWS::RemoveTempFiles()   
 //----------------------------------------------------------------------------
 {
-  remove(m_File_temp1.toStd().c_str());
-  remove(m_File_temp2.toStd().c_str());
-  remove(m_File_temp3.toStd().c_str());
-  remove(m_File_temp4.toStd().c_str());
+  remove(mafStringToStd(m_File_temp1).c_str());
+  remove(mafStringToStd(m_File_temp2).c_str());
+  remove(mafStringToStd(m_File_temp3).c_str());
+  remove(mafStringToStd(m_File_temp4).c_str());
 }

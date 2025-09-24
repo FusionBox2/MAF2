@@ -159,9 +159,9 @@ void mafViewHTML::VmeCreatePipe(mafNode* vme)
 		}
 	}
 	if (ExternalNote)
-		m_Html->LoadPage(mafVMEExternalData::StaticDownCast(ExternalNote)->GetAbsoluteFileName().toWx());
+		m_Html->LoadPage(mafStringToWx(mafVMEExternalData::StaticDownCast(ExternalNote)->GetAbsoluteFileName()));
 	else
-		m_Html->SetPage(body.toWx());
+		m_Html->SetPage(mafStringToWx(body));
 
 	m_ActiveNote = vme;
 }
@@ -199,7 +199,7 @@ void mafViewHTML::OnEvent(mafEventBase* maf_event)
 		break;
 	case ID_URL:
 		if (!m_Url.empty())
-			m_Html->LoadPage(m_Url.toWx());
+			m_Html->LoadPage(mafStringToWx(m_Url));
 		break;
 	default:
 		InvokeEvent(*maf_event);

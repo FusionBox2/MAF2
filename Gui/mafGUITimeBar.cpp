@@ -78,10 +78,10 @@ m_Timer(NULL, ID_TIMER)
   m_TimeMinString = mafToString(m_TimeMin);
   m_TimeMaxString = mafToString(m_TimeMax);
 
-  wxStaticText *labTimeMin = new wxStaticText(this, -1, m_TimeMinString.toWx());
+  wxStaticText *labTimeMin = new wxStaticText(this, -1, mafStringToWx(m_TimeMinString));
   labTimeMin->SetValidator( mafGUIValidator(this, -1, labTimeMin, &m_TimeMinString) );
   
-  wxStaticText *labTimeMax = new wxStaticText(this, -1, m_TimeMaxString.toWx());
+  wxStaticText *labTimeMax = new wxStaticText(this, -1, mafStringToWx(m_TimeMaxString));
   labTimeMax->SetValidator( mafGUIValidator(this, -1, labTimeMax, &m_TimeMaxString) );
 
   wxStaticText *lab1 = new wxStaticText(this,-1," time ");

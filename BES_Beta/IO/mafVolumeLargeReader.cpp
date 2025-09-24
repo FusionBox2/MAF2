@@ -90,7 +90,7 @@ void mafVolumeLargeReader::SetOutputRLGDataSet(vtkRectilinearGrid* ds)
 	mafSplitPath(m_BrickFileName, &szPath, &szFile, &szExt);
 
 	mafString szFNamePrefix = szPath;
-	if (!wxEndsWithPathSeparator(szFNamePrefix.toWx()))
+	if (!wxEndsWithPathSeparator(mafStringToWx(szFNamePrefix)))
 		szFNamePrefix += mafWxToString(wxFILE_SEP_PATH);
 	szFNamePrefix += szFile;
 	

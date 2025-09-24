@@ -110,7 +110,7 @@ int medDicomCardiacMRIHelper::ParseDicomDirectory()
 		  else
 		  {
 			  localFileName = _R(directoryReader->GetFile(i));
-			  dicomABSFileNamesVector.push_back((dicomDir + localFileName).toStd());
+			  dicomABSFileNamesVector.push_back(mafStringToStd(dicomDir + localFileName));
 		  }
 	  }
   }
@@ -131,7 +131,7 @@ int medDicomCardiacMRIHelper::ParseDicomDirectory()
 
   assert(mafFileExists(file1ABSFileName));
 
-  OFCondition status = dicomFileHandler.loadFile(file1ABSFileName.toStd().c_str());
+  OFCondition status = dicomFileHandler.loadFile(mafStringToStd(file1ABSFileName).c_str());
 
   assert(status.good());
 
@@ -215,7 +215,7 @@ int medDicomCardiacMRIHelper::ParseDicomDirectory()
 
     assert(mafFileExists(currentSliceABSFileName));
 
-    OFCondition status = dicomFileHandler.loadFile(currentSliceABSFileName.toStd().c_str());
+    OFCondition status = dicomFileHandler.loadFile(mafStringToStd(currentSliceABSFileName).c_str());
     
     DcmDataset *dicomDataset = dicomFileHandler.getDataset();
 

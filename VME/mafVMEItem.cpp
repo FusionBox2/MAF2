@@ -299,7 +299,7 @@ int mafVMEItem::ExtractFileFromArchive(mafString &archive_fullname, mafString &i
 
 		//fileSystem->ChangePathTo(zipFile.toWx());
 
-		auto yyy = fileSystem->OpenFile(zipFile.toWx());
+		auto yyy = fileSystem->OpenFile(mafStringToWx(zipFile));
 		delete yyy;
 
 
@@ -309,7 +309,7 @@ int mafVMEItem::ExtractFileFromArchive(mafString &archive_fullname, mafString &i
 
 		mafZIPOpen(archive_fullname);
 	}
-	wxFileInputStream iiin(itempath.toWx());
+	wxFileInputStream iiin(mafStringToWx(itempath));
 	m_InputMemorySize = iiin.GetSize();
 	m_InputMemory = new char[m_InputMemorySize];
 	iiin.Read((void*)m_InputMemory, (size_t)m_InputMemorySize);

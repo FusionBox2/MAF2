@@ -133,16 +133,16 @@ int mafOpGarbageCollectMSFDir::GetFilesToRemove(std::set<std::string> &filesToRe
     mafString msfXMLFileABSFileName = GetMSFXMLFileAbsFileName(GetInput().get());
 
     assert(mafFileExists(msfXMLFileABSFileName));
-    msfTreeFiles.insert(msfXMLFileABSFileName.toStd());
+    msfTreeFiles.insert(mafStringToStd(msfXMLFileABSFileName));
 
     // add the backup file if present:
 #pragma message("actually no replacement needed, go straight with mafString")
-    wxString msfXMLBackupFile = msfXMLFileABSFileName.append(_R(".bak")).toWx();
+    wxString msfXMLBackupFile = mafStringToWx(msfXMLFileABSFileName.append(_R(".bak")));
     msfXMLBackupFile.Replace("/","\\");
 
     if (mafFileExists(mafWxToString(msfXMLBackupFile)))
     {
-      msfTreeFiles.insert(mafWxToString(msfXMLBackupFile).toStd());
+      msfTreeFiles.insert(mafStringToStd(mafWxToString(msfXMLBackupFile)));
 #pragma message("a bit hacky")
     }
 
@@ -190,7 +190,7 @@ std::set<std::string> mafOpGarbageCollectMSFDir::GetMSFDirABSFileNamesSet()
   {
     mafString localFileName = _R(directoryReader->GetFile(i));
 
-    wxString absFileName = (msfABSPath +  _R("/") + localFileName).toWx();
+    wxString absFileName = mafStringToWx(msfABSPath +  _R("/") + localFileName);
 
     absFileName.Replace("/","\\");
 
@@ -200,7 +200,7 @@ std::set<std::string> mafOpGarbageCollectMSFDir::GetMSFDirABSFileNamesSet()
     }
     else if (mafFileExists(mafWxToString(absFileName)))
     {     
-      m_MSFDirABSFileNamesSet.insert(mafWxToString(absFileName).toStd());
+      m_MSFDirABSFileNamesSet.insert(mafStringToStd(mafWxToString(absFileName)));
 #pragma message("a bit hacky")
     }
   }
@@ -237,7 +237,7 @@ mafString mafOpGarbageCollectMSFDir::GetMSFDirAbsPath(mafNode *anyTreeNode)
     ExtractPathName(msfABSPath);
   }
 
-  wxString tmp = msfABSPath.toWx();
+  wxString tmp = mafStringToWx(msfABSPath);
   tmp.Replace("/","\\");
 
   return mafWxToString(tmp);
@@ -257,7 +257,7 @@ mafString mafOpGarbageCollectMSFDir::GetMSFXMLFileAbsFileName(mafNode *anyTreeNo
 
   if (storage != NULL)
   {  
-    msfXMLFileAbsFileName = storage->GetURL().toWx();
+    msfXMLFileAbsFileName = mafStringToWx(storage->GetURL());
   }
 
   msfXMLFileAbsFileName.Replace("/","\\");

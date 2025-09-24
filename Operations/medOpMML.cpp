@@ -762,7 +762,7 @@ void medOpMML::OnMuscleSelection()
     // set m_Surface to parent vme (original non-registered muscle)
     // to identify landmarks correctly
     wxString ParentVMEName;
-    ParentVMEName = m_SurfaceName.toWx().BeforeFirst('.');
+    ParentVMEName = mafStringToWx(m_SurfaceName).BeforeFirst('.');
     m_SurfaceName = mafWxToString(ParentVMEName);
   }
 
@@ -1526,7 +1526,7 @@ void medOpMML::OnLandmark1AtlasPatientSelection()
   while (parentvme != root)
   {
     parentvme = parentvme->GetParent();
-    parentvmename = parentvme->GetName().toWx();
+    parentvmename = mafStringToWx(parentvme->GetName());
 
     if (parentvmename.compare(m_AtlasMSFSectionName) == 0)
     {
@@ -1551,7 +1551,7 @@ void medOpMML::OnLandmark1AtlasPatientSelection()
   }
 
   // if identical to L2 or L3
-  wxString   Name = vme->GetName().toWx();
+  wxString   Name = mafStringToWx(vme->GetName());
   if (Name.compare(m_L2Name) == 0 || Name.compare(m_L3Name) == 0)
   {
     wxMessageBox("landmarks must be distinct", "alert", wxICON_WARNING);
@@ -1578,8 +1578,8 @@ void medOpMML::OnLandmark1AtlasPatientSelection()
   L1PatientVMELandmark->GetPoint(m_P1);
 
   // set name
-  m_L1Name = vme->GetName().toWx();
-  m_P1Name = L1PatientVME->GetName().toWx();
+  m_L1Name = mafStringToWx(vme->GetName());
+  m_P1Name = mafStringToWx(L1PatientVME->GetName());
 
   // if all landmarks chosen
   if (m_L1Name.compare("none") != 0 &&
@@ -1636,7 +1636,7 @@ void medOpMML::OnLandmark2AtlasPatientSelection()
   while (parentvme != root)
   {
     parentvme = mafVME::StaticDownCast(parentvme->GetParent());
-    parentvmename = parentvme->GetName().toWx();
+    parentvmename = mafStringToWx(parentvme->GetName());
 
     if (parentvmename.compare(m_AtlasMSFSectionName) == 0)
     {
@@ -1661,7 +1661,7 @@ void medOpMML::OnLandmark2AtlasPatientSelection()
   }
 
   // if identical to L1 or L3
-  wxString   Name = vme->GetName().toWx();
+  wxString   Name = mafStringToWx(vme->GetName());
   if (Name.compare(m_L1Name) == 0 || Name.compare(m_L3Name) == 0)
   {
     wxMessageBox("landmarks must be distinct", "alert", wxICON_WARNING);
@@ -1688,8 +1688,8 @@ void medOpMML::OnLandmark2AtlasPatientSelection()
   L2PatientVMELandmark->GetPoint(m_P2);
 
   // set name
-  m_L2Name = vme->GetName().toWx();
-  m_P2Name = L2PatientVME->GetName().toWx();
+  m_L2Name = mafStringToWx(vme->GetName());
+  m_P2Name = mafStringToWx(L2PatientVME->GetName());
 
   // if all landmarks chosen
   if (m_L1Name.compare("none") != 0 &&
@@ -1746,7 +1746,7 @@ void medOpMML::OnLandmark3AtlasPatientSelection()
   while (parentvme != root)
   {
     parentvme = mafVME::StaticDownCast(parentvme->GetParent());
-    parentvmename = parentvme->GetName().toWx();
+    parentvmename = mafStringToWx(parentvme->GetName());
 
     if (parentvmename.compare(m_AtlasMSFSectionName) == 0)
     {
@@ -1771,7 +1771,7 @@ void medOpMML::OnLandmark3AtlasPatientSelection()
   }
 
   // if identical to L1 or L2
-  wxString   Name = vme->GetName().toWx();
+  wxString   Name = mafStringToWx(vme->GetName());
   if (Name.compare(m_L1Name) == 0 || Name.compare(m_L2Name) == 0)
   {
     wxMessageBox("landmarks must be distinct", "alert", wxICON_WARNING);
@@ -1798,8 +1798,8 @@ void medOpMML::OnLandmark3AtlasPatientSelection()
   L3PatientVMELandmark->GetPoint(m_P3);
 
   // set name
-  m_L3Name = vme->GetName().toWx();
-  m_P3Name = L3PatientVME->GetName().toWx();
+  m_L3Name = mafStringToWx(vme->GetName());
+  m_P3Name = mafStringToWx(L3PatientVME->GetName());
 
   // if all landmarks chosen
   if (m_L1Name.compare("none") != 0 &&
@@ -1856,7 +1856,7 @@ void medOpMML::OnLandmark4AtlasPatientSelection()
   while (parentvme != root)
   {
     parentvme = parentvme->GetParent();
-    parentvmename = parentvme->GetName().toWx();
+    parentvmename = mafStringToWx(parentvme->GetName());
 
     if (parentvmename.compare(m_AtlasMSFSectionName) == 0)
     {
@@ -1881,7 +1881,7 @@ void medOpMML::OnLandmark4AtlasPatientSelection()
   }
 
   // if identical to L1 or L2
-  wxString   Name = vme->GetName().toWx();
+  wxString   Name = mafStringToWx(vme->GetName());
   if (Name.compare(m_L1Name) == 0 || Name.compare(m_L2Name) == 0)
   {
     wxMessageBox("landmarks must be distinct", "alert", wxICON_WARNING);
@@ -1908,8 +1908,8 @@ void medOpMML::OnLandmark4AtlasPatientSelection()
   L3PatientVMELandmark->GetPoint(m_P3);
 
   // set name
-  m_L3Name = vme->GetName().toWx();
-  m_P3Name = L3PatientVME->GetName().toWx();
+  m_L3Name = mafStringToWx(vme->GetName());
+  m_P3Name = mafStringToWx(L3PatientVME->GetName());
 
   // if all landmarks chosen
   if (m_L1Name.compare("none") != 0 &&
@@ -3157,7 +3157,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
                                                 Landmark1AtlasVMELandmark->GetPoint(a1);
 
                                                 // set name
-                                                m_L1Name = Landmark1AtlasVMELandmark->GetName().toWx();
+                                                m_L1Name = mafStringToWx(Landmark1AtlasVMELandmark->GetName());
                                               }
 
                                               // atlas - landmark 2
@@ -3176,7 +3176,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
                                                 Landmark2AtlasVMELandmark->GetPoint(a2);
 
                                                 // set name
-                                                m_L2Name = Landmark2AtlasVMELandmark->GetName().toWx();
+                                                m_L2Name = mafStringToWx(Landmark2AtlasVMELandmark->GetName());
                                               }
 
                                               // atlas - landmark 3
@@ -3195,7 +3195,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
                                                 Landmark3AtlasVMELandmark->GetPoint(a3);
 
                                                 // set name
-                                                m_L3Name = Landmark3AtlasVMELandmark->GetName().toWx();
+                                                m_L3Name = mafStringToWx(Landmark3AtlasVMELandmark->GetName());
                                               }
 
                                               // atlas - landmark 4
@@ -3214,7 +3214,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
                                                 Landmark4AtlasVMELandmark->GetPoint(a4);
 
                                                 // set name
-                                                m_L4Name = Landmark4AtlasVMELandmark->GetName().toWx();
+                                                m_L4Name = mafStringToWx(Landmark4AtlasVMELandmark->GetName());
                                               }
 
                                               // patient - landmark 1
@@ -3233,7 +3233,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
                                                 Landmark1PatientVMELandmark->GetPoint(p1);
 
                                                 // set name
-                                                m_P1Name = Landmark1PatientVMELandmark->GetName().toWx();
+                                                m_P1Name = mafStringToWx(Landmark1PatientVMELandmark->GetName());
                                               }
 
                                               // patient - landmark 2
@@ -3252,7 +3252,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
                                                 Landmark2PatientVMELandmark->GetPoint(p2);
 
                                                 // set name
-                                                m_P2Name = Landmark2PatientVMELandmark->GetName().toWx();
+                                                m_P2Name = mafStringToWx(Landmark2PatientVMELandmark->GetName());
                                               }
 
                                               // patient - landmark 3
@@ -3271,7 +3271,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
                                                 Landmark3PatientVMELandmark->GetPoint(p3);
 
                                                 // set name
-                                                m_P3Name = Landmark3PatientVMELandmark->GetName().toWx();
+                                                m_P3Name = mafStringToWx(Landmark3PatientVMELandmark->GetName());
                                               }
 
                                               // patient - landmark 4
@@ -3290,7 +3290,7 @@ void medOpMML::SetUpLandmarks(wxString AtlasSectionVMEName, wxString PatientSect
                                                 Landmark4PatientVMELandmark->GetPoint(p4);
 
                                                 // set name
-                                                m_P4Name = Landmark4PatientVMELandmark->GetName().toWx();
+                                                m_P4Name = mafStringToWx(Landmark4PatientVMELandmark->GetName());
                                               }
 
                                               // use weights to relocate landmarks 1, 2

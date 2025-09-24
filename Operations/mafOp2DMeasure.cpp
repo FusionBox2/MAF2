@@ -154,7 +154,7 @@ void mafOp2DMeasure::OpRun()
     {
       mafString value;
       value = measure_item->GetComponent(i);
-      m_MeasureList->Append(value.toWx());
+      m_MeasureList->Append(mafStringToWx(value));
     }
   }
 
@@ -429,7 +429,7 @@ void mafOp2DMeasure::OnEvent(mafEventBase *maf_event)
         case ID_MANUAL_DISTANCE:
           if(m_DistanceInteractor2D->IsDisableUndoAndOkCancel() || m_IndicatorInteractor2D->IsDisableUndoAndOkCancel())
             wxMessageBox("Fix the label in the window");
-          else if(wxString(m_ManualDistance.toWx()).ToDouble(m_Unused) != false)
+          else if(mafStringToWx(m_ManualDistance).ToDouble(m_Unused) != false)
           {
 						if(atof(m_ManualDistance.GetCStr()) > 0)
 						{
@@ -447,7 +447,7 @@ void mafOp2DMeasure::OnEvent(mafEventBase *maf_event)
         case ID_MANUAL_ANGLE:
           if(m_DistanceInteractor2D->IsDisableUndoAndOkCancel() || m_IndicatorInteractor2D->IsDisableUndoAndOkCancel())
             wxMessageBox("Fix the label in the window");
-          else if(wxString(m_ManualAngle.toWx()).ToDouble(m_Unused) != false)
+          else if(mafStringToWx(m_ManualAngle).ToDouble(m_Unused) != false)
 					{
 						if(atof(m_ManualAngle.GetCStr()) >= 0 && atof(m_ManualAngle.GetCStr()) <= 180)
 						{

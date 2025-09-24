@@ -98,7 +98,7 @@ void medOpMergeDicomSeries::OpRun()
         defaultPath += _R("/data/external/");
 				lastDicomDir = defaultPath;		
 			};
-			wxDirDialog dialog(NULL,"", lastDicomDir.toWx(),wxRESIZE_BORDER,wxDefaultPosition);
+			wxDirDialog dialog(NULL,"", mafStringToWx(lastDicomDir),wxRESIZE_BORDER,wxDefaultPosition);
 			dialog.SetReturnCode(wxID_OK);
 			int ret_code = dialog.ShowModal();
 
@@ -209,7 +209,7 @@ bool medOpMergeDicomSeries::RenameSeriesAndManufacturer(const mafString& dicomDi
 
       DJDecoderRegistration::registerCodecs(); // register JPEG codecs
       DcmRLEDecoderRegistration ::registerCodecs(OFFalse, OFFalse); // register RLE codecs
-      OFCondition status = dicomImg.loadFile(currentSliceABSFileName.toStd().c_str());//load data into offis structure
+      OFCondition status = dicomImg.loadFile(mafStringToStd(currentSliceABSFileName).c_str());//load data into offis structure
 
       if (!status.good())
       {
@@ -266,7 +266,7 @@ bool medOpMergeDicomSeries::RenameSeriesAndManufacturer(const mafString& dicomDi
         dicomDataset->findAndGetUint8Array(DCM_PixelData, dicom_buf_char); 
       } 
 
-      status = dicomImg.saveFile(currentSliceABSFileName.toStd().c_str());
+      status = dicomImg.saveFile(mafStringToStd(currentSliceABSFileName).c_str());
 
       mafLogMessage(_M(_R("Modified file ") + currentSliceABSFileName));
       {mafEvent evUnq(this,PROGRESSBAR_SET_VALUE); evUnq.SetArg((double(i)/double(m_DICOMDirectoryReader->GetNumberOfFiles()))*100); InvokeEvent(evUnq);}

@@ -122,7 +122,7 @@ mafView *lhpViewInfo::Copy(mafBaseEventHandler *Listener, bool lightCopyEnabled)
 void lhpViewInfo::Create()
 //----------------------------------------------------------------------------
 {
-  m_RenderWindow = new wxHtmlWindow(mafGetFrame(), -1, wxDefaultPosition, wxDefaultSize, 0, GetLabel().toWx());
+  m_RenderWindow = new wxHtmlWindow(mafGetFrame(), -1, wxDefaultPosition, wxDefaultSize, 0, mafStringToWx(GetLabel()));
 
   m_Win          = m_RenderWindow;
 
@@ -297,7 +297,7 @@ void lhpViewInfo::UpdatePage()
       pageText += _R("\n");
     }
   }
-  m_RenderWindow->SetPage(pageText.toWx());
+  m_RenderWindow->SetPage(mafStringToWx(pageText));
 
 }
 

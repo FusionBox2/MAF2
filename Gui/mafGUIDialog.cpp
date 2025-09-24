@@ -66,7 +66,7 @@ mafGUIDialog::mafGUIDialog(const mafString& title,long style)
     s |= wxCLOSE_BOX;
   }
 
-  Create(mafGetFrame(),-1,title.toWx(),wxDefaultPosition,wxDefaultSize,s); 
+  Create(mafGetFrame(),-1, mafStringToWx(title),wxDefaultPosition,wxDefaultSize,s);
 
   m_DialogSizer  =  new wxBoxSizer( wxVERTICAL );
   m_GuiSizer     =  new wxBoxSizer( wxVERTICAL );

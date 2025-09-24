@@ -559,7 +559,7 @@ bool mafVMEItemScalarMatrix::StoreToArchive(wxZipOutputStream &zip)
 //-------------------------------------------------------------------------
 {
   wxStringInputStream data_stream(m_OutputMemory);
-  if (!zip.PutNextEntry(m_URL.toWx(), wxDateTime::Now(), m_OutputMemorySize) || !zip.Write(data_stream))
+  if (!zip.PutNextEntry(mafStringToWx(m_URL), wxDateTime::Now(), m_OutputMemorySize) || !zip.Write(data_stream))
     return false;
   return true;
 }

@@ -3,6 +3,7 @@
 #include "ftkConfigure.h"
 
 #include "mafDefines.h"
+
 #include <string>
 
 BEGIN_FTK_NAMESPACE
@@ -19,173 +20,120 @@ using mafStrBuf = const mafStringChar*;
 class FTK_BASE_EXPORT mafStrBuf
 {
 public:
-    const mafStringChar* GetBuf() const { return m_buf; }
-    operator const mafStringChar* () const { return m_buf; }
-    mafStrBuf& operator=(const mafStrBuf& other)
-    {
-        m_buf = other.m_buf;
-        return *this;
-    }
-    static mafStrBuf MakeBuf(const mafStringChar* buf)
-    {
-        return mafStrBuf(buf);
-    }
+	const mafStringChar* GetBuf() const { return m_buf; }
+	operator const mafStringChar* () const { return m_buf; }
+	mafStrBuf& operator=(const mafStrBuf& other)
+	{
+		m_buf = other.m_buf;
+		return *this;
+	}
+	static mafStrBuf MakeBuf(const mafStringChar* buf)
+	{
+		return mafStrBuf(buf);
+	}
 private:
-    mafStrBuf(const mafStringChar* buf)
-        : m_buf(buf ? buf : "")
-    {}
-    mafStrBuf(const wxString& str);
-    mafStrBuf& operator=(const wxString& str);
-    mafStrBuf& operator=(const mafStringChar* buf);
-    const mafStringChar* m_buf;
+	mafStrBuf(const mafStringChar* buf)
+		: m_buf(buf ? buf : "")
+	{
+	}
+	mafStrBuf(const wxString& str);
+	mafStrBuf& operator=(const wxString& str);
+	mafStrBuf& operator=(const mafStringChar* buf);
+	const mafStringChar* m_buf;
 };
 #define _R(x) mafStrBuf::MakeBuf(x)
 #define _L(x) mafStrBuf::MakeBuf(x)
 #endif
 
-/** mafString - performs common string operations on c-strings.
-  mafString is an implementation of string which operates on a traditional
-  c-string internally stored. At each moment this string can be retrieved with
-  GetCStr(). The memory of this m_CStr is automatically garbaged. Originally based
-  on vtkString. BEWARE, when mafString is assigned with Set() to a "const char *" this
-  is simply referenced and not copied, this implies very high performance but can cause
-  invalid  memory access: e.g. in case the "const char *" is a function argument.
-  When a mafString storing a reference to a const char * is modified the string is 
-  automatically copied into a new memory.
-  This string can be passed as argument wherever a const char * is expected.
-  @sa mafCString
-  */
 class FTK_BASE_EXPORT mafString
 {
 public:
-    using size_type = std::size_t;
+	using size_type = std::size_t;
 	static constexpr auto npos{ static_cast<size_type>(-1) };
 
-    mafString();
+	mafString();
 
-    mafString(mafStrBuf str);
-    mafString& operator=(mafStrBuf str);
+	mafString(mafStrBuf str);
+	mafString& operator=(mafStrBuf str);
 
-#ifdef MAF_USE_WX
+	size_type length() const;
+
+	size_type size() const;
+
+	void erase(size_type pos = 0, size_type count = npos);
+
+	mafString substr(size_type pos = 0, size_type count = npos) const;
+
+	int compare(mafStrBuf str) const;
+
+	int compare(const mafString& str) const;
+
+	bool starts_with(mafStrBuf str) const;
+
+	bool starts_with(const mafString& str) const;
+
+	bool ends_with(mafStrBuf str) const;
+
+	bool ends_with(const mafString& str) const;
+
+	mafString& append(mafStrBuf str);
+
+	mafString& append(const mafString& str);
+
+	size_type find_first_of(mafStringChar c) const;
+
+	size_type find_first_of(const mafString& str) const;
+
+	size_type find_first_of(mafStrBuf str) const;
+
+	size_type find_last_of(mafStringChar c) const;
+
+	size_type find_last_of(const mafString& str) const;
+
+	size_type find_last_of(mafStrBuf str) const;
+
+	size_type find(const mafString& str) const;
+
+	size_type find(mafStrBuf str) const;
+
+	size_type rfind(const mafString& str) const;
+
+	size_type rfind(mafStrBuf str) const;
+
+	void clear();
+
+	mafStrBuf GetCStr() const;
+
+	mafStrBuf c_str() const;
+
+	bool empty() const;
+
+	static mafString Format(mafStrBuf format, ...);
+
+	mafStringChar& operator [] (size_type i);
+
+	mafStringChar operator [] (size_type i) const;
+
+	bool operator==(mafStrBuf str) const;
+	bool operator!=(mafStrBuf str) const;
+	bool operator<(mafStrBuf str) const;
+	bool operator>(mafStrBuf str) const;
+	bool operator<=(mafStrBuf str) const;
+	bool operator>=(mafStrBuf str) const;
+
+	bool operator!=(const mafString& str) const;
+	bool operator==(const mafString& str) const;
+	bool operator<(const mafString& str) const;
+	bool operator>(const mafString& str) const;
+	bool operator<=(const mafString& str) const;
+	bool operator>=(const mafString& str) const;
+
+	mafString& operator+=(mafStrBuf str);
+
+	mafString& operator+=(const mafString& str);
+
 private:
-    mafString(const wxString& str);
-    mafString& operator=(const wxString& str);
-    mafString& operator+=(const wxString& str);
-public:
-    wxString toWx() const;
-#endif
-    
-  /** This method returns the size of this string. */
-  size_type length() const;
-
-  size_type size() const;
-
-  /**  Erase characters from start position to end position. If end
-    is not specified erase to the end of the string.*/
-  void erase(size_type pos = 0, size_type count = npos);
-
-  mafString substr(size_type pos = 0, size_type count = npos);
-
-  /**
-    This method compare the given c-string with the one stored inside this object.
-    It is similar to strcmp, but it can handle null pointers. Return 0 if str equal this,
-    -1 if str > this, 1 if str < this*/
-  int compare(mafStrBuf str) const;
-
-  /**
-    This method compare the given c-string with the one stored inside this object.
-    It is similar to strcmp, but it can handle null pointers. Return 0 if str equal this,
-    -1 if str > this, 1 if str < this*/
-  int compare(const mafString& str) const;
-
-  /** Check if this string starts with the given one.*/
-  bool starts_with(mafStrBuf str) const;
-
-  /** Check if this string starts with the given one.*/
-  bool starts_with(const mafString& str) const;
-
-  /** Check if this string ends with the given one.*/
-  bool ends_with(mafStrBuf str) const;
-
-  /** Check if this string ends with the given one.*/
-  bool ends_with(const mafString& str) const;
-
-  /** Append a new string to this string. */
-  mafString &append(mafStrBuf str);
-
-  /** Append a new string to this string. */
-  mafString& append(const mafString& str);
-
-  /** Scan the string for the first occurrence of the character */
-  size_type find_first_of(mafStringChar c) const;
-
-  /** Scan the string for the first occurrence of the character */
-  size_type find_first_of(const mafString& str) const;
-
-  /** Scan the string for the first occurrence of the character */
-  size_type find_first_of(mafStrBuf str) const;
-
-  /** Scan the string for the first occurrence of the character */
-  size_type find_last_of(mafStringChar c) const;
-
-  /** Scan the string for the first occurrence of the character */
-  size_type find_last_of(const mafString& str) const;
-
-  /** Scan the string for the first occurrence of the character */
-  size_type find_last_of(mafStrBuf str) const;
-
-  /** Find first occurrence of a substring */
-  size_type find(const mafString& str) const;
-
-  /** Find first occurrence of a substring */
-  size_type find(mafStrBuf str) const;
-
-  /** Find last occurrence of a substring */
-  size_type rfind(const mafString& str) const;
-
-  /** Find last occurrence of a substring */
-  size_type rfind(mafStrBuf str) const;
-
-  void clear();
-
-  /** Return the pointer to the internal c-string */
-  mafStrBuf GetCStr() const;
-  
-  /**  return true if empty*/
-  bool empty() const;
-
-  /** Format given arguments according to format string. Format string format is
-      that of vsprintf function */
-  static mafString Format(mafStrBuf format, ...);
-
-  /** 
-    Direct access to single string elements for writing. This operator
-    forces memory copy in case of internal const char reference. */
-  mafStringChar& operator [] (size_type i);
-
-  /** direct access to string single elements for reading */
-  mafStringChar operator [] (size_type i) const;
-
-  bool operator==(mafStrBuf str) const;
-  bool operator!=(mafStrBuf str) const;
-  bool operator<(mafStrBuf str) const;
-  bool operator>(mafStrBuf str) const;
-  bool operator<=(mafStrBuf str) const;
-  bool operator>=(mafStrBuf str) const;
-
-  bool operator!=(const mafString& str) const;
-  bool operator==(const mafString& str) const;
-  bool operator<(const mafString& str) const;
-  bool operator>(const mafString& str) const;
-  bool operator<=(const mafString& str) const;
-  bool operator>=(const mafString& str) const;
-
-  mafString& operator+=(mafStrBuf str);
-  mafString& operator+=(const mafString& str);
-
-  std::string toStd() const;
-private:
-  std::basic_string<mafStringChar> m_str;
+	std::basic_string<mafStringChar> m_str;
 };
 
 FTK_BASE_EXPORT mafString operator+(const mafString& s1, mafStrBuf s2);
@@ -197,15 +145,16 @@ FTK_BASE_EXPORT mafString mafWxToString(const wxString& str);
 FTK_BASE_EXPORT wxString mafStringToWx(const mafString& str);
 #endif
 std::string mafStringToStd(const mafString& str);
+mafString mafStdToString(const std::string& str);
 
 mafString ToUpper(const mafString& str);
 mafString ToLower(const mafString& str);
 
-FTK_BASE_EXPORT mafString mafToString(int        d);
-FTK_BASE_EXPORT mafString mafToString(long       d);
-FTK_BASE_EXPORT mafString mafToString(long long  d);
-FTK_BASE_EXPORT mafString mafToString(float      d);
-FTK_BASE_EXPORT mafString mafToString(double     d);
+FTK_BASE_EXPORT mafString mafToString(int       d);
+FTK_BASE_EXPORT mafString mafToString(long      d);
+FTK_BASE_EXPORT mafString mafToString(long long d);
+FTK_BASE_EXPORT mafString mafToString(float     d);
+FTK_BASE_EXPORT mafString mafToString(double    d);
 
 FTK_BASE_EXPORT mafString mafToString(double* comps, int num);
 FTK_BASE_EXPORT mafString mafToString(int* comps, int num);

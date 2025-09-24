@@ -385,9 +385,9 @@ bool lhpOpKinectModel::Import()
 
 
   mafString commandline = m_ExtAppPath;
-  wxSetWorkingDirectory(path.toWx());
+  wxSetWorkingDirectory(mafStringToWx(path));
   commandline += _R(" TR72_3FN.DAT rtk__out.dat");
-  if(wxExecute(commandline.toWx(), wxEXEC_SYNC) != 0)
+  if(wxExecute(mafStringToWx(commandline), wxEXEC_SYNC) != 0)
     return false;
 
   mafString files[] = {_R("L_Foot.txt"),

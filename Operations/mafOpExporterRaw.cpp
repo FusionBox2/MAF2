@@ -190,7 +190,7 @@ void mafOpExporterRAW::SaveVolume()
 			for (int i=0;i<number_files; i++)
 			{
 				name_file = directory->GetFile(i);
-				old_name = path.toWx() + name_file;
+				old_name = mafStringToWx(path) + name_file;
 
 				if ((name_file.Find(name.GetCStr())) >= 0)
 				{
@@ -206,7 +206,7 @@ void mafOpExporterRAW::SaveVolume()
 						wxString new_numeration;
 						new_numeration = wxString::Format("%04d",value);
 						name_file.Replace(numeration, new_numeration);	
-						new_name = path.toWx() + name_file;
+						new_name = mafStringToWx(path) + name_file;
 
 						mafFileRename(mafWxToString(old_name),mafWxToString(new_name));										
 					}
@@ -437,7 +437,7 @@ void mafOpExporterRAW::SaveVolume()
 				for (int i=0;i<number_files; i++)
 				{
 					name_file = directory->GetFile(i);
-					old_name = path.toWx() + name_file;
+					old_name = mafStringToWx(path) + name_file;
 
 					if ((name_file.Find(name.GetCStr())) >= 0)
 					{
@@ -453,7 +453,7 @@ void mafOpExporterRAW::SaveVolume()
 							wxString new_numeration;
 							new_numeration = wxString::Format("%04d",value);
 							name_file.Replace(numeration, new_numeration);	
-							new_name = path.toWx() + name_file;
+							new_name = mafStringToWx(path) + name_file;
 
 							mafFileRename(mafWxToString(old_name), mafWxToString(new_name));
 						}

@@ -2130,13 +2130,13 @@ mafGUI* medVMEWrappedMeter::CreateGui()
 					int idx = m_OrderMiddlePointsVMEList[++j];
 					if (auto landmark = lc->GetLandmark(idx))
 					{
-						m_ListBox->Append(landmark->GetName().toWx());
+						m_ListBox->Append(mafStringToWx(landmark->GetName()));
 						m_OrderMiddlePointsNameVMEList.push_back(landmark->GetName());
 					}
 				}
 				else
 				{
-					m_ListBox->Append(link.second.GetNode()->GetName().toWx());
+					m_ListBox->Append(mafStringToWx(link.second.GetNode()->GetName()));
 					m_OrderMiddlePointsNameVMEList.push_back(link.second.GetNode()->GetName());
 				}
 			}
@@ -2274,9 +2274,9 @@ void medVMEWrappedMeter::OnEvent(mafEventBase* maf_event)
 
 			wxString nameProfile = "";
 			//mafString idNumber = wxString::Format(_("%d"),id);
-			nameProfile = n->GetName().toWx();
+			nameProfile = mafStringToWx(n->GetName());
 
-			if (wxNOT_FOUND != m_ListBox->FindString(n->GetName().toWx()))
+			if (wxNOT_FOUND != m_ListBox->FindString(mafStringToWx(n->GetName())))
 			{
 				wxMessageBox(_("Can't introduce vme with the same name"));
 				return;
@@ -2327,8 +2327,8 @@ void medVMEWrappedMeter::OnEvent(mafEventBase* maf_event)
 			mafString t;
 			t = n->GetName();
 			//m_ListBox->Append(_(t));
-			m_ListBox->Append(t.toWx());
-			m_ListBox->SetStringSelection(t.toWx());
+			m_ListBox->Append(mafStringToWx(t));
+			m_ListBox->SetStringSelection(mafStringToWx(t));
 
 
 			//m_OrderedMidPoints.push_back(_(t));

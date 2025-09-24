@@ -985,7 +985,7 @@ mafString mafOpExtractIsosurface::GetParameters()
     parameter.append(mafString::Format(_R("%f"), m_IsoValueVector[contour]));
     parameter.append(_R(", "));
   }
-  parameter = mafWxToString(parameter.toWx().RemoveLast(2));
+  parameter = mafWxToString(mafStringToWx(parameter).RemoveLast(2));
 
   return parameter;
 }

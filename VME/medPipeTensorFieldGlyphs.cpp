@@ -383,7 +383,7 @@ mafGUI* medPipeTensorFieldGlyphs::CreateGui()
 		bSizer4311->Add(m_GlyphMaterialButton, 0, wxALL, 0);
 
 		m_GlyphMaterialLabel = new wxStaticText(gui, ID_GLYPH_MATERIAL_LABEL,
-			m_GlyphMaterial->GetMaterial()->m_MaterialName.toWx(), wxDefaultPosition, wxDefaultSize, 0);
+			mafStringToWx(m_GlyphMaterial->GetMaterial()->m_MaterialName), wxDefaultPosition, wxDefaultSize, 0);
 		bSizer4311->Add(m_GlyphMaterialLabel, 1, wxALL, 5);
 		sbSizer65->Add(bSizer4311, 0, wxEXPAND, 5);
 
@@ -471,7 +471,7 @@ void medPipeTensorFieldGlyphs::InitFilterList(int nScalars) {
 			FILTER_ITEM* pItem = new FILTER_ITEM;
 			memset(pItem, 0, sizeof(FILTER_ITEM));
 
-			wxStringTokenizer tkz(linkName.toWx(), wxT(":"));
+			wxStringTokenizer tkz(mafStringToWx(linkName), wxT(":"));
 			int j = 0;
 			while (tkz.HasMoreTokens())
 			{
@@ -510,7 +510,7 @@ void medPipeTensorFieldGlyphs::InitFilterList(int nScalars) {
 			FILTER_ITEM* pItem = new FILTER_ITEM;
 			memset(pItem, 0, sizeof(FILTER_ITEM));
 
-			wxStringTokenizer tkz(linkName.toWx(), wxT(":"));
+			wxStringTokenizer tkz(mafStringToWx(linkName), wxT(":"));
 			int j = 0;
 			while (tkz.HasMoreTokens())
 			{
@@ -1440,7 +1440,7 @@ void medPipeTensorFieldGlyphs::OnEvent(mafEventBase* maf_event)
 	{
 		//set new material label
 		auto mat = m_GlyphMaterial->GetMaterial();
-		m_GlyphMaterialLabel->SetLabel(mat->m_MaterialName.toWx());
+		m_GlyphMaterialLabel->SetLabel(mafStringToWx(mat->m_MaterialName));
 
 		//and set a new material icon
 		m_GlyphMaterialButton->SetBitmapLabel(*mat->MakeIcon());

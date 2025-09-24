@@ -1173,7 +1173,7 @@ void mafVMEVolumeLarge::InternalRestore(const mafStorageElement& node)
 #endif
 		{
 			wxMessageBox(wxString::Format(_("Class '%s' is unsupported in the current release."),
-				clsname.toWx()), _("Error while restoring Large Data"),
+				mafStringToWx(clsname)), _("Error while restoring Large Data"),
 				wxOK | wxCENTER | wxICON_EXCLAMATION);
 
 			return;

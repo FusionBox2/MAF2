@@ -235,7 +235,7 @@ int mafVolumeLargeWriter::CreateLODs(int nMaxSampleRate, vtkIdType64& nTotalMaxS
 	mafString szPath, szFile, szExt;	
 	mafSplitPath(m_BrickFileName, &szPath, &szFile, &szExt);
 	mafString szFNamePref = szPath;
-	if (!wxEndsWithPathSeparator(szPath.toWx()))
+	if (!wxEndsWithPathSeparator(mafStringToWx(szPath)))
 		szFNamePref += mafWxToString(wxFILE_SEP_PATH);	
 	
 	//create directory for our files

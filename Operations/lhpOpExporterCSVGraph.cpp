@@ -176,7 +176,7 @@ void lhpOpExporterCSVGraph::ExportGraphs()
   }
   vgraph->VmeSelect(GetInput().get(), true);
   vgraph->loadPlot(false);
-  vgraph->GetRenderWindow()->SaveGraphAsCSV(m_File.toWx());
+  vgraph->GetRenderWindow()->SaveGraphAsCSV(mafStringToWx(m_File));
   if(!m_TestMode)
   {
     delete wait;

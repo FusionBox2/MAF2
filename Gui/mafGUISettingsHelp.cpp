@@ -76,7 +76,7 @@ void mafGUISettingsHelp::OnEvent(mafEventBase *maf_event)
 
 	case ID_HELP_FILE_NAME:
 	{
-		m_Config->Write("m_HelpFileName",m_HelpFileName.toWx());
+		m_Config->Write("m_HelpFileName", mafStringToWx(m_HelpFileName));
 	}
 	break;
 
@@ -109,7 +109,7 @@ void mafGUISettingsHelp::InitializeSettings()
   }
   else
   {
-	  m_Config->Write("m_HelpFileName",m_HelpFileName.toWx());
+	  m_Config->Write("m_HelpFileName", mafStringToWx(m_HelpFileName));
   }
   
   m_Config->Flush();
@@ -134,8 +134,7 @@ void mafGUISettingsHelp::OpenHelpPage(const mafString& entity )
 		std::getline(lineStream,currentLineHelpLink,',');
 		wxString trimmedCurrentLineHelpLink = wxString(currentLineHelpLink.c_str()).Trim().Trim(false);
 
-    wxString entitywx;
-    entitywx = entity.toWx();
+    wxString entitywx = mafStringToWx(entity);
 		entitywx.Replace("\t","");
 
 		if (strcmp(entitywx.c_str() , trimmedCurrentLineEntityName.c_str()) == 0)

@@ -181,7 +181,7 @@ bool lhpOpFuseLMScripted::ReadLMDictionary(mafString *fileName)
   wxString     sSecondName("");
   //mafGraphDictionary *pEntry;
 
-  auto pFile = std::make_unique<wxTextFile>(fileName->toWx());
+  auto pFile = std::make_unique<wxTextFile>(mafStringToWx(*fileName));
 
   if(!pFile)
   {

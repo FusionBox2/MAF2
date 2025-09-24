@@ -1641,10 +1641,10 @@ void medVMEMuscleWrapper::AddWrapper(WRAPPER_ITEM* pItem)
 	for (int i = 0; i < 2; i++)
 	{
 		if (pItem->pVmeRP_CP[i] != NULL)
-			szName[i] = pItem->pVmeRP_CP[i]->GetName().toWx();
+			szName[i] = mafStringToWx(pItem->pVmeRP_CP[i]->GetName());
 
 		if (pItem->pVmeRefSys_RP_CP[i] != NULL)
-			szName[2 + i] = pItem->pVmeRefSys_RP_CP[i]->GetName().toWx();
+			szName[2 + i] = mafStringToWx(pItem->pVmeRefSys_RP_CP[i]->GetName());
 	}
 
 	m_WrappersCtrl->InsertItem(nCount, szName[0]);

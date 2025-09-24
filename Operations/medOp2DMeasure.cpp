@@ -164,7 +164,7 @@ void medOp2DMeasure::OpRun()
     {
       mafString value;
       value = measure_item->GetComponent(i);
-      m_MeasureList->Append(value.toWx());
+      m_MeasureList->Append(mafStringToWx(value));
     }
   }
 
@@ -428,7 +428,7 @@ void medOp2DMeasure::OnEvent(mafEventBase *maf_event)
         case ID_MANUAL_DISTANCE:
           if(m_DistanceInteractor2D->IsDisableUndoAndOkCancel() || m_IndicatorInteractor2D->IsDisableUndoAndOkCancel())
             wxMessageBox(_("Fix the label in the window"));
-          else if(m_ManualDistance.toWx().ToDouble(m_Unused) != false)
+          else if(mafStringToWx(m_ManualDistance).ToDouble(m_Unused) != false)
           {
 						if(atof(m_ManualDistance.GetCStr()) > 0)
 						{
@@ -446,7 +446,7 @@ void medOp2DMeasure::OnEvent(mafEventBase *maf_event)
         case ID_MANUAL_ANGLE:
           if(m_DistanceInteractor2D->IsDisableUndoAndOkCancel() || m_IndicatorInteractor2D->IsDisableUndoAndOkCancel())
             wxMessageBox(_("Fix the label in the window"));
-          else if(m_ManualAngle.toWx().ToDouble(m_Unused) != false)
+          else if(mafStringToWx(m_ManualAngle).ToDouble(m_Unused) != false)
 					{
 						if(atof(m_ManualAngle.GetCStr()) >= 0 && atof(m_ManualAngle.GetCStr()) <= 180)
 						{
@@ -472,7 +472,7 @@ void medOp2DMeasure::OnEvent(mafEventBase *maf_event)
         break;
         case ID_STORE_MEASURE:
         {         
-          m_MeasureText = mafWxToString(wxGetTextFromUser("",_("Insert measure description"), m_MeasureText.toWx()));
+          m_MeasureText = mafWxToString(wxGetTextFromUser("",_("Insert measure description"), mafStringToWx(m_MeasureText)));
           if(m_MeasureText.empty()) break;
           mafString t;
           if(m_MeasureType == 0 || m_MeasureType == 1)
@@ -489,7 +489,7 @@ void medOp2DMeasure::OnEvent(mafEventBase *maf_event)
 #pragma message ("degree symbol")
             t += m_MeasureText;
           }
-          m_MeasureList->Append(t.toWx());
+          m_MeasureList->Append(mafStringToWx(t));
           m_MeasureText = _R("");
           m_Gui->Enable(ID_REMOVE_MEASURE,true);
         }

@@ -92,7 +92,7 @@ void mafOpExporterMesh::OpRun()
   }
 
   // Generate the three output files
-  wxString wxstr = m_File.toWx();
+  wxString wxstr = mafStringToWx(m_File);
   wxString wxname = wxstr.Before('.');
   wxString wxextension = wxstr.After('.');
 

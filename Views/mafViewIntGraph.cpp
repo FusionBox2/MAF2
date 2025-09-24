@@ -133,7 +133,7 @@ mafView *mafViewIntGraph::Copy(mafBaseEventHandler *Listener, bool lightCopyEnab
 void mafViewIntGraph::Create()
 //----------------------------------------------------------------------------
 {
-  m_RenderWindow = new mafViewIntGraphWindow(GetLabel().toWx());
+  m_RenderWindow = new mafViewIntGraphWindow(mafStringToWx(GetLabel()));
   m_Win          = m_RenderWindow;
 
   m_Sg  = new lhpPlotGraph(this);

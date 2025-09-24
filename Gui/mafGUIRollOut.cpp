@@ -47,7 +47,7 @@ mafGUIRollOut::mafGUIRollOut(mafGUI *parent, const mafString& title, mafGUI *rol
   m_RollOutButton->SetEventId(ID_CLOSE_SASH);
   topsizer->Add(m_RollOutButton,0,wxLEFT,2);
 
-  wxStaticText* lab = new wxStaticText(this, -1, title.toWx());
+  wxStaticText* lab = new wxStaticText(this, -1, mafStringToWx(title));
   wxFont font = wxFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
 #if WIN32
   font.SetPointSize(9);

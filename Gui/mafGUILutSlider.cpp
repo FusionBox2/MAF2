@@ -48,7 +48,7 @@ public:
         const wxSize& size = wxDefaultSize,
         long style = 0)
   {
-    Create(parent, id, label.toWx(), pos, size, style);
+    Create(parent, id, mafStringToWx(label), pos, size, style);
     m_X0 = 0;
     m_EnableIgnoreLeftDown = false;
   };

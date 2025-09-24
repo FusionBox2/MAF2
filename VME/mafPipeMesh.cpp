@@ -593,7 +593,7 @@ void mafPipeMesh::UpdateActiveScalarsInVMEDataVectorItems()
 				if (scalarsArray == NULL)
 				{
 					std::ostringstream stringStream;
-					stringStream << scalarsToActivate.toStd() << " POINT_DATA array does not exist for timestamp " \
+					stringStream << mafStringToStd(scalarsToActivate) << " POINT_DATA array does not exist for timestamp " \
 						<< item->GetTimeStamp() << " . Skipping SetActiveScalars for this timestamp" << std::endl;
 					mafLogMessage(_M(stringStream.str().c_str()));
 					continue;
@@ -610,7 +610,7 @@ void mafPipeMesh::UpdateActiveScalarsInVMEDataVectorItems()
 				if (scalarsArray == NULL)
 				{
 					std::ostringstream stringStream;
-					stringStream << scalarsToActivate.toStd() << "  CELL_DATA array does not exist for timestamp " \
+					stringStream << mafStringToStd(scalarsToActivate) << "  CELL_DATA array does not exist for timestamp " \
 						<< item->GetTimeStamp() << " . Skipping SetActiveScalars for this timestamp" << std::endl;
 					mafLogMessage(_M(stringStream.str().c_str()));
 					continue;

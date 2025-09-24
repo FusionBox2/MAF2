@@ -80,10 +80,10 @@ void lhpTagHandler_L0000_resource_DictionaryVersion::HandleAutoTag(lhpTagHandler
   mafString dictionaryFileName = _R("NOT FOUND");
   wxString oldDir = wxGetCwd();
 
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
+  wxSetWorkingDirectory(mafStringToWx(m_VMEUploaderDownloaderDir));
 
   wxArrayString files;
-  wxString filePattern = dictionaryFileNamePrefix.toWx();
+  wxString filePattern = mafStringToWx(dictionaryFileNamePrefix);
   filePattern.Append("*.xml");
 
   wxDir::GetAllFiles(wxGetCwd(), &files, filePattern, wxDIR_FILES);
@@ -264,7 +264,7 @@ void lhpTagHandler_L0000_resource_data_Size_FileSize::HandleAutoTag(lhpTagHandle
 	//here put code for filename
 	wxString oldDir = wxGetCwd();
   mafLogMessage(_M(_R("Current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
+  wxSetWorkingDirectory(mafStringToWx(m_VMEUploaderDownloaderDir));
   mafLogMessage(_M(_R("Now current working directory is: '") + mafWxToString(wxGetCwd()) + _R("' ")));
 
 	// get manual tags
@@ -281,12 +281,12 @@ void lhpTagHandler_L0000_resource_data_Size_FileSize::HandleAutoTag(lhpTagHandle
 
 	//mafLogMessage( _T("Executing command: '%s'"), command2execute.c_str() );
 
-	long pid = wxExecute(command2execute.toWx(), wxEXEC_SYNC);
+	long pid = wxExecute(mafStringToWx(command2execute), wxEXEC_SYNC);
 
 	wxArrayString output;
 	wxArrayString errors;
 
-	pid = wxExecute(command2execute.toWx(), output, errors);
+	pid = wxExecute(mafStringToWx(command2execute), output, errors);
 
 	wxString result = output[output.size() - 1];
   
@@ -302,7 +302,7 @@ void lhpTagHandler_L0000_resource_data_Size_FileSize::HandleAutoTag(lhpTagHandle
 	////////////////////////////
 
 	wxString temp;
-	temp.Append(inputMSF.toWx());
+	temp.Append(mafStringToWx(inputMSF));
 	temp = temp.BeforeLast('/');
 	temp.Append("/");
 	temp.Append(result);
@@ -1087,10 +1087,10 @@ void lhpTagHandler_L0000_resource_data_Representation_RepresentationType_Descrip
   mafString dictionaryFileName = _R("NOT FOUND");
   wxString oldDir = wxGetCwd();
 
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
+  wxSetWorkingDirectory(mafStringToWx(m_VMEUploaderDownloaderDir));
 
   wxArrayString files;
-  wxString filePattern = dictionaryFileNamePrefix.toWx();
+  wxString filePattern = mafStringToWx(dictionaryFileNamePrefix);
   filePattern.Append("*.xml");
 
   wxDir::GetAllFiles(wxGetCwd(), &files, filePattern, wxDIR_FILES);
@@ -1185,10 +1185,10 @@ void lhpTagHandler_L0000_resource_data_Source_DicomSource_DicomSource_Dictionary
   mafString dictionaryFileName = _R("NOT FOUND");
   wxString oldDir = wxGetCwd();
 
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
+  wxSetWorkingDirectory(mafStringToWx(m_VMEUploaderDownloaderDir));
 
   wxArrayString files;
-  wxString filePattern = dictionaryFileNamePrefix.toWx();
+  wxString filePattern = mafStringToWx(dictionaryFileNamePrefix);
   filePattern.Append("*.xml");
 
   wxDir::GetAllFiles(wxGetCwd(), &files, filePattern, wxDIR_FILES);
@@ -1279,10 +1279,10 @@ void lhpTagHandler_L0000_resource_data_Source_MASource_MASource_DictionaryVersio
   mafString dictionaryFileName = _R("NOT FOUND");
   wxString oldDir = wxGetCwd();
 
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
+  wxSetWorkingDirectory(mafStringToWx(m_VMEUploaderDownloaderDir));
 
   wxArrayString files;
-  wxString filePattern = dictionaryFileNamePrefix.toWx();
+  wxString filePattern = mafStringToWx(dictionaryFileNamePrefix);
   filePattern.Append("*.xml");
 
   wxDir::GetAllFiles(wxGetCwd(), &files, filePattern, wxDIR_FILES);
@@ -1432,10 +1432,10 @@ void lhpTagHandler_L0000_resource_data_Source_MicroCTSource_MicroCTSource_Dictio
   mafString dictionaryFileName = _R("NOT FOUND");
   wxString oldDir = wxGetCwd();
 
-  wxSetWorkingDirectory(m_VMEUploaderDownloaderDir.toWx());
+  wxSetWorkingDirectory(mafStringToWx(m_VMEUploaderDownloaderDir));
 
   wxArrayString files;
-  wxString filePattern = dictionaryFileNamePrefix.toWx();
+  wxString filePattern = mafStringToWx(dictionaryFileNamePrefix);
   filePattern.Append("*.xml");
 
   wxDir::GetAllFiles(wxGetCwd(), &files, filePattern, wxDIR_FILES);

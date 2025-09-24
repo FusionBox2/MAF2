@@ -418,7 +418,7 @@ bool lhpOpExporterC3DBTK::ExportClouds(btk::Acquisition::Pointer target, std::ve
     {
       btk::Point::Pointer targetP = target->GetPoint(pointIndex);
       pointIndex++;
-      targetP->SetLabel(cloud->GetLandmarkName(j).toStd());
+      targetP->SetLabel(mafStringToStd(cloud->GetLandmarkName(j)));
 
       for (int index = 0; index < timeStamps.size(); index++)
       {
@@ -477,7 +477,7 @@ bool lhpOpExporterC3DBTK::ExportClouds(btk::Acquisition::Pointer target, std::ve
     {
       btk::Analog::Pointer targetA = target->GetAnalog(analogIndex);
       analogIndex++;
-      targetA->SetLabel(namesTag->GetValue(j).toStd());
+      targetA->SetLabel(mafStringToStd(namesTag->GetValue(j)));
     }
     analogIndex = analogIndexDep;
 
@@ -553,7 +553,7 @@ void lhpOpExporterC3DBTK::ExportLandmark()
     if(ExportClouds(target, clouds, analogs))
     {
       btk::AcquisitionFileWriter::Pointer writer = btk::AcquisitionFileWriter::New();
-      writer->SetFilename(m_File.toStd());
+      writer->SetFilename(mafStringToStd(m_File));
       writer->SetInput(target);
       writer->Update();
     }

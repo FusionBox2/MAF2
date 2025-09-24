@@ -124,7 +124,7 @@ void medOpVolumeMeasure::OpRun()
   {
     int c = measure_item->GetNumberOfComponents();
     for(int i = 0; i < c; i++)
-      m_MeasureList->Append(measure_item->GetValue(i).toWx());
+      m_MeasureList->Append(mafStringToWx(measure_item->GetValue(i)));
   }
   
   if(m_MeasureList->GetCount() == 0)
@@ -160,10 +160,10 @@ void medOpVolumeMeasure::OnEvent(mafEventBase *maf_event)
     break;
     case ID_STORE_MEASURE:
     {
-      m_MeasureText = mafWxToString(wxGetTextFromUser("",_("Insert measure description"), m_MeasureText.toWx()));
+      m_MeasureText = mafWxToString(wxGetTextFromUser("",_("Insert measure description"), mafStringToWx(m_MeasureText)));
       if(m_MeasureText.empty()) break;
       mafString t = m_VolumeMeasure + _L(" ") + m_SurfaceArea + _R(" ") + m_NormalizedShapeIndex + _R(" ") + m_MeasureText;
-      m_MeasureList->Append(t.toWx());
+      m_MeasureList->Append(mafStringToWx(t));
       m_MeasureText = _R("");
       m_Gui->Enable(ID_REMOVE_MEASURE,true);
       //m_gui->Enable(ID_ADD_TO_VME_TREE,true);

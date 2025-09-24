@@ -87,7 +87,7 @@
     ExtractPathName(szStr);
 
     wxString szSep = wxFILE_SEP_PATH;
-    if (!wxEndsWithPathSeparator(szStr.toWx()))
+    if (!wxEndsWithPathSeparator(mafStringToWx(szStr)))
       szStr += mafWxToString(szSep);
     szStr += _R("LargeVolumes");	
 
@@ -154,7 +154,7 @@
     "which includes the construction of a couple of optimized volume files \n"
     "with the total size up to %s (much less for medical data).\n\n"
     "The current project must be saved before proceeding.\n"
-    "Do you want to continue?"), szSize.toWx()), 
+    "Do you want to continue?"), mafStringToWx(szSize)),
     _("Confirmation"), wxYES_NO | wxICON_QUESTION) == wxYES);    
 }
 
@@ -169,7 +169,7 @@
   wxMessageBox(wxString::Format(
     _("An optimised volume file with the total size\n"
     "%s was successfuly constructed."					
-    ), szSize.toWx()), _("Information"), wxOK | wxICON_INFORMATION);  
+    ), mafStringToWx(szSize)), _("Information"), wxOK | wxICON_INFORMATION);
 }
 
 //------------------------------------------------------------------------

@@ -103,7 +103,7 @@ mafGUI* lhpPipeIntGraphFixed::CreateGui()
 	m_CheckBoxXval->SetCheckMode(MODE_RADIO);
 	for (int n = 0; n < m_vars.size(); n++)
 	{
-		wxString name = GetVarTitle(n).toWx();
+		wxString name = mafStringToWx(GetVarTitle(n));
 		m_CheckBoxXval->AddItem(n, name, checked);
 		m_CheckBoxYval->AddItem(n, name, checked);
 		m_CheckBoxYder->AddItem(n, name, checked);

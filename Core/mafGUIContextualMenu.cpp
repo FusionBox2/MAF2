@@ -287,15 +287,15 @@ void mafGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
     break;
 		case CONTEXTUAL_MENU_RENAME_VIEW:
 		{
-			wxTextEntryDialog dlg(m_ChildViewActive,"please enter a name", "VIEW NAME", m_ViewActive->GetName().toWx());
+			wxTextEntryDialog dlg(m_ChildViewActive,"please enter a name", "VIEW NAME", mafStringToWx(m_ViewActive->GetName()));
 			int result = dlg.ShowModal(); 
 			mafString name = mafWxToString(dlg.GetValue());
 			if(result != wxID_OK) return;
 			m_ViewActive->SetName(name);
 			if(name.empty())
-        m_ChildViewActive->SetTitle(wxStripMenuCodes(m_ViewActive->GetLabel().toWx()));
+        m_ChildViewActive->SetTitle(wxStripMenuCodes(mafStringToWx(m_ViewActive->GetLabel())));
 			else
-				m_ChildViewActive->SetTitle(name.toWx());
+				m_ChildViewActive->SetTitle(mafStringToWx(name));
 		}
 		break;
 	}

@@ -79,7 +79,7 @@ void mafOpImporterMSF1x::OpRun()
   int result = OP_RUN_CANCEL;
   if(!m_File.empty())
 	{
-    wxSetWorkingDirectory(m_File.toWx());
+    wxSetWorkingDirectory(mafStringToWx(m_File));
     ImportMSF();
 	  result = OP_RUN_OK;
 	}

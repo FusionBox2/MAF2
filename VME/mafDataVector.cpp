@@ -310,7 +310,7 @@ void mafDataVector::InternalStore(mafStorageElementBuilder& parent)
         m_ArchiveName += _R(begin()->second->GetDataFileExtension());
         mafString tmp_archive;
         storage->GetTmpFile(tmp_archive);
-        wxFileOutputStream out(tmp_archive.toWx());
+        wxFileOutputStream out(mafStringToWx(tmp_archive));
         wxZipOutputStream zip(out);
         if (!out || !zip)
           return;

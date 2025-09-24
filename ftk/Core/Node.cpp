@@ -1284,7 +1284,7 @@ namespace model::data
 
     std::shared_ptr<Node> Node::GetByPath(const mafString& path, bool onlyVisible /*=true*/)
     {
-        wxStringTokenizer tkz(path.toWx(), wxT("/"));
+        wxStringTokenizer tkz(mafStringToWx(path), wxT("/"));
 
         Node* currentNode = this;
         Node* tmpParent = nullptr;
@@ -1560,7 +1560,7 @@ namespace model::data
                 mafLogMessage(_M(_R("Node path error: unknown token:") + mafWxToString(token)));
                 break;
             }
-            tmpString = currentNode->GetName().toWx();
+            tmpString = mafStringToWx(currentNode->GetName());
 
         }
         //While end

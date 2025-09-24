@@ -97,7 +97,7 @@ int mafDeviceClientMAF::InternalInitialize()
 
   m_AutoStart = 0;
 
-  wxString hn = m_ServerHost.toWx();
+  wxString hn = mafStringToWx(m_ServerHost);
   wxIPV4address server_address;
   server_address.Service(m_PortNumber);
   server_address.Hostname(hn);

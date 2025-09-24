@@ -524,7 +524,7 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::WriteHistogramFiles(
   accumulate->SetComponentSpacing(1,0,0); // bins maps all the Scalars Range
   accumulate->Update();
 
-  wxString newDir = (mafGetApplicationDirectory()).toWx();
+  wxString newDir = mafStringToWx(mafGetApplicationDirectory());
   wxString oldDir = wxGetCwd();
   wxSetWorkingDirectory(newDir);
 
@@ -630,7 +630,7 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::FittingLM()
 
   mafString newDir = mafGetApplicationDirectory();
   wxString oldDir = wxGetCwd();
-  wxSetWorkingDirectory(newDir.toWx());
+  wxSetWorkingDirectory(mafStringToWx(newDir));
 
   mafString command = _R("python.exe lm.py");
   command.append(_R(" "));
@@ -643,7 +643,7 @@ void medOpSegmentationRegionGrowingLocalAndGlobalThreshold::FittingLM()
   WriteHistogramFiles();
 
   mafLogMessage(_M(command));
-  wxExecute(command.toWx(),wxEXEC_SYNC);
+  wxExecute(mafStringToWx(command),wxEXEC_SYNC);
 
   command = _R("python.exe lm.py");
   command.append(_R(" "));

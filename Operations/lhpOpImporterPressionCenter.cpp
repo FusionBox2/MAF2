@@ -319,7 +319,7 @@ void lhpOpImporterPressionCenter::Initialize(const mafString &fullFileName, _Int
 //  intData.m_AnalogSamplePeriod = ((double)intData.m_LengthMs/(double)intData.m_NumSamples) / 1000.0;
  // intData.m_VectogramSamplePeriod = intData.m_AnalogSamplePeriod;
 
-  wxString fileName = fullFileName.toWx();
+  wxString fileName = mafStringToWx(fullFileName);
   fileName = fileName.AfterLast('\\').BeforeLast('.');
 
   intData.m_FileName = mafWxToString(fileName);
@@ -351,7 +351,7 @@ std::shared_ptr<mafVMEGroup> lhpOpImporterPressionCenter::ImportSingleFile(const
 		fn = fullFileName;
 
 		int nbrline = 0;
-		std::ifstream infile(fn.toStd());
+		std::ifstream infile(mafStringToStd(fn));
 		double time = 0, x, y, pression, LR;
 		while (std::getline(infile, line))
 		{

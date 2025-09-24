@@ -112,7 +112,7 @@ mafNode *mafGUIDialogFindVme::FindInTreeByName(mafNode *node, const char *name, 
 {
   wxString word_to_search;
   word_to_search = name;
-  wxString myName = node->GetName().toWx();
+  wxString myName = mafStringToWx(node->GetName());
 
   if (!match_case)
   {

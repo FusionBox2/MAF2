@@ -106,8 +106,8 @@ void mafGUIMeasureUnitSettings::OnEvent(mafEventBase *maf_event)
       m_ScaleFactor = 1.0;
     }
   }
-  m_Config->Write("VisualUnitName",m_VisualUnitName.toWx());
-  m_Config->Write("DataUnitName",m_DataUnitName.toWx());
+  m_Config->Write("VisualUnitName", mafStringToWx(m_VisualUnitName));
+  m_Config->Write("DataUnitName", mafStringToWx(m_DataUnitName));
   m_Config->Write("ScaleFactor",m_ScaleFactor);
   m_Config->Flush();
   {mafEvent evUnq(this,MEASURE_UNIT_UPDATED); InvokeEvent(evUnq);}
@@ -124,7 +124,7 @@ void mafGUIMeasureUnitSettings::InitializeSettings()
   }
   else
   {
-    m_Config->Write("VisualUnitName",m_VisualUnitName.toWx());
+    m_Config->Write("VisualUnitName", mafStringToWx(m_VisualUnitName));
   }
   if(m_Config->Read("DataUnitName", &unit_name))
   {
@@ -132,7 +132,7 @@ void mafGUIMeasureUnitSettings::InitializeSettings()
   }
   else
   {
-    m_Config->Write("DataUnitName",m_DataUnitName.toWx());
+    m_Config->Write("DataUnitName", mafStringToWx(m_DataUnitName));
   }
   if(m_Config->Read("ScaleFactor", &factor))
   {

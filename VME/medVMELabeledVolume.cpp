@@ -490,7 +490,7 @@ mafGUI* medVMELabeledVolume::CreateGui()
 		{
 			for (unsigned int i = 0; i < noc; i++)
 			{
-				wxString label = m_TagLabel->GetValue(i).toWx();
+				wxString label = mafStringToWx(m_TagLabel->GetValue(i));
 				if (label != "")
 				{
 					myList.push_back(label);
@@ -501,7 +501,7 @@ mafGUI* medVMELabeledVolume::CreateGui()
 			{
 				for (unsigned int j = 0; j < noc; j++)
 				{
-					wxString component = m_TagLabel->GetValue(j).toWx();
+					wxString component = mafStringToWx(m_TagLabel->GetValue(j));
 					if (component != "")
 					{
 						wxString labelName = *myListIter;
@@ -827,7 +827,7 @@ void medVMELabeledVolume::OnEvent(mafEventBase* maf_event)
 			int noc = m_TagLabel->GetNumberOfComponents();
 			for (unsigned int w = 0; w < noc; w++)
 			{
-				wxString component = m_TagLabel->GetValue(w).toWx();
+				wxString component = mafStringToWx(m_TagLabel->GetValue(w));
 				if (m_ItemLabel == component)
 				{
 					RemoveLabelTag(w);
@@ -846,7 +846,7 @@ void medVMELabeledVolume::OnEvent(mafEventBase* maf_event)
 				int noc = m_TagLabel->GetNumberOfComponents();
 				for (unsigned int w = 0; w < noc; w++)
 				{
-					componentName = m_TagLabel->GetValue(w).toWx();
+					componentName = mafStringToWx(m_TagLabel->GetValue(w));
 					if (m_ItemLabel == componentName)
 					{
 						wxStringTokenizer tkz(componentName, wxT(' '), wxTOKEN_RET_EMPTY_ALL);
@@ -870,8 +870,8 @@ void medVMELabeledVolume::OnEvent(mafEventBase* maf_event)
 						m_MaxMin = m_MinAbsolute;
 						m_MaxMax = m_MaxAbsolute;
 
-						m_LabelNameValue = labelName.toWx();
-						m_LabelValueValue = labelIntStr.toWx();
+						m_LabelNameValue = mafStringToWx(labelName);
+						m_LabelValueValue = mafStringToWx(labelIntStr);
 						m_LabelIntValue = labelValue;
 						m_Min = min;
 						m_Max = max;
@@ -887,7 +887,7 @@ void medVMELabeledVolume::OnEvent(mafEventBase* maf_event)
 		case ID_LABELS:
 		{
 			int itemId = e->GetArg();
-			m_ItemLabel = m_LabelCheckBox->GetItemLabel(itemId).toWx();
+			m_ItemLabel = mafStringToWx(m_LabelCheckBox->GetItemLabel(itemId));
 			m_ItemSelected = m_LabelCheckBox->FindItemIndex(itemId);
 			for (int i = 0; i < m_CheckedVector.size(); i++)
 			{
@@ -1034,7 +1034,7 @@ void medVMELabeledVolume::UpdateLabel()
 		int noc = m_TagLabel->GetNumberOfComponents();
 		for (unsigned int i = 0; i < noc; i++)
 		{
-			wxString component = m_TagLabel->GetValue(i).toWx();
+			wxString component = mafStringToWx(m_TagLabel->GetValue(i));
 
 			// Check if another name for the label already exists
 			wxString currentLabelName = component.BeforeFirst(' ');
@@ -1092,7 +1092,7 @@ void medVMELabeledVolume::UpdateLabel()
 		int noc = m_TagLabel->GetNumberOfComponents();
 		for (unsigned int w = 0; w < noc; w++)
 		{
-			wxString componentName = m_TagLabel->GetValue(w).toWx();
+			wxString componentName = mafStringToWx(m_TagLabel->GetValue(w));
 			if (m_ItemLabel == componentName)
 			{
 				SetLabelTag(mafWxToString(labelLine), w);

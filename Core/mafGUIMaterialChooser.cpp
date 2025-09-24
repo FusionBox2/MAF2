@@ -451,7 +451,7 @@ void mafGUIMaterialChooser::LoadMaterials_old()
 	std::string str(inputline);
 	if (str.find("MATERIALSPROPERTIES:") != 0)
 	{
-		wxString msg = m_Filename.toWx();
+		wxString msg = mafStringToWx(m_Filename);
 		msg += "\n";
 		msg += "is not a Material Library file";
  	::wxMessageBox(msg,"Error",wxICON_ERROR,mafGetFrame() );
@@ -525,7 +525,7 @@ void mafGUIMaterialChooser::LoadMaterials_old()
     m_List.push_back(mat);
 
 		// insert mat in the tree
-		{wxBitmap bmp(50,50); this->m_ListCtrlMaterial->AddItem((intptr_t)mat.get(), mat->m_MaterialName.toWx(), &bmp); }
+		{wxBitmap bmp(50,50); this->m_ListCtrlMaterial->AddItem((intptr_t)mat.get(), mafStringToWx(mat->m_MaterialName), &bmp); }
 
 		//blank line
 		f_in.getline(line,128);
@@ -597,7 +597,7 @@ void mafGUIMaterialChooser::LoadLibraryFromFile()
 
   for (auto&  mat : m_List)
   {
-    this->m_ListCtrlMaterial->AddItem((intptr_t)mat.get(), mat->m_MaterialName.toWx(), mat->MakeIcon());
+    this->m_ListCtrlMaterial->AddItem((intptr_t)mat.get(), mafStringToWx(mat->m_MaterialName), mat->MakeIcon());
   }
 }
 //----------------------------------------------------------------------------
@@ -721,7 +721,7 @@ void mafGUIMaterialChooser::AddMaterial()
   m_List.push_back(mat);
 
 	// insert mat in the tree
-	m_ListCtrlMaterial->AddItem((intptr_t)mat.get(), mat->m_MaterialName.toWx(), mat->MakeIcon());
+	m_ListCtrlMaterial->AddItem((intptr_t)mat.get(), mafStringToWx(mat->m_MaterialName), mat->MakeIcon());
   m_ListCtrlMaterial->SelectItem((intptr_t)mat.get());
 	SelectMaterial(mat.get());
 }
@@ -867,7 +867,7 @@ void mafGUIMaterialChooser::CreateDefaultLibrary()
     m_List.push_back(mat);
 
 		// insert mat in the tree
-		m_ListCtrlMaterial->AddItem((intptr_t)mat.get(),mat->m_MaterialName.toWx(),mat->MakeIcon());
+		m_ListCtrlMaterial->AddItem((intptr_t)mat.get(), mafStringToWx(mat->m_MaterialName),mat->MakeIcon());
   }
 }
 

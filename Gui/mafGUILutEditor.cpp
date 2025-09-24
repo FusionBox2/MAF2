@@ -132,7 +132,7 @@ mafGUILutEditor::mafGUILutEditor(wxWindow* parent, wxWindowID id, const wxPoint&
 
   for (int id = 0; id < userLutPresetNum-1; id++) 
   { 
-    userLutNames.Add(lutNames[id].toWx());
+    userLutNames.Add(mafStringToWx(lutNames[id]));
   }
   
   wxFont bold_font = wxFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
@@ -389,7 +389,7 @@ void mafGUILutEditor::OnEvent(mafEventBase *maf_event)
 				m_Lut->DeepCopy(m_UserLutLibrary->GetLutByName(sel));
 				m_Lut->SetRange(range);
 				
-        m_NewUserLutName = sel.toWx();
+        m_NewUserLutName = mafStringToWx(sel);
         UpdateWidgetsOnLutChange();
       }
       break;

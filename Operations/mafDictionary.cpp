@@ -123,7 +123,7 @@ bool ReadDictionary(mafString *fileName, std::vector<std::pair<mafString, mafStr
   wxString     sFirstName("");
   wxString     sSecondName("");
 
-  auto pFile = std::make_unique<wxTextFile>(fileName->toWx());
+  auto pFile = std::make_unique<wxTextFile>(mafStringToWx(*fileName));
 
   if(!pFile)
   {

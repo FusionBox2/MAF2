@@ -151,7 +151,7 @@ int mafOpValidateTree::ValidateTree()
           }
         }
 
-        wxString absFilename = (m_MSFPath + _R("\\") + fileName + _R(".") + extension).toWx();
+        wxString absFilename = mafStringToWx(m_MSFPath + _R("\\") + fileName + _R(".") + extension);
         absFilename.Replace("/","\\");
 
         if (!mafFileExists(mafWxToString(absFilename)))
@@ -161,7 +161,7 @@ int mafOpValidateTree::ValidateTree()
         }
         else
         {
-          m_MSFTreeAbsFileNamesSet.insert(mafWxToString(absFilename).toStd());
+          m_MSFTreeAbsFileNamesSet.insert(mafStringToStd(mafWxToString(absFilename)));
 #pragma message ("a bit hacky")
         }
       }
@@ -216,16 +216,16 @@ int mafOpValidateTree::ValidateTree()
                 ErrorLog(mafOpValidateTree::ARCHIVE_FILE_NOT_PRESENT, vme->GetName().GetCStr());
                 result = mafOpValidateTree::VALIDATE_ERROR;
               }
-              absFilename = (m_MSFPath + _R("\\")).toWx();
+              absFilename = mafStringToWx(m_MSFPath + _R("\\"));
               absFilename.Replace("/","\\");
 
               if (singleFileMode)
               {
-                absFilename << archiveFilename.toWx();
+                absFilename << mafStringToWx(archiveFilename);
               }
               else
               {
-                absFilename << urlString.toWx();
+                absFilename << mafStringToWx(urlString);
               }
 
               if (!mafFileExists(mafWxToString(absFilename)))
@@ -235,7 +235,7 @@ int mafOpValidateTree::ValidateTree()
               }
               else
               {
-                m_MSFTreeAbsFileNamesSet.insert(mafWxToString(absFilename).toStd());
+                m_MSFTreeAbsFileNamesSet.insert(mafStringToStd(mafWxToString(absFilename)));
 #pragma message("a bit hacky")
               }
             } // item != NULL

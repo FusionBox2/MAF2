@@ -147,7 +147,7 @@ void mafGUICheckListBox::SetItemLabel(int id, const mafString label)
   if( index == -1 ) return;
 
   m_PreventNotify = true;
-  m_CheckListBox->SetString(index,label.toWx());
+  m_CheckListBox->SetString(index, mafStringToWx(label));
   m_PreventNotify = false;
 }
 //----------------------------------------------------------------------------

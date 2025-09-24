@@ -80,7 +80,7 @@ bool mafGUIListCtrl::AddItem (long item_id, const mafString& label, ITEM_ICONS i
   long id =  m_List->FindItem(-1, item_id);
   if(id != -1)
     return false;
-  long tmp = m_List->InsertItem(item_id,label.toWx(),icon); 
+  long tmp = m_List->InsertItem(item_id, mafStringToWx(label),icon);
   m_List->SetItemData(tmp, item_id);
   return true;
 }
@@ -105,7 +105,7 @@ bool mafGUIListCtrl::SetItemLabel (long item_id, const mafString& label)
 {
   long id =  m_List->FindItem(-1, item_id);
   if (id == -1) return false;
-  m_List->SetItemText(id,label.toWx());
+  m_List->SetItemText(id, mafStringToWx(label));
   return true;
 }
 //----------------------------------------------------------------------------

@@ -393,7 +393,7 @@ void medOpImporterDicomOffis::OpRun()
 			//User should choice a folder
 			if (!useDefaultFolder)
 			{
-				wxDirDialog dialog(m_Wizard->GetParent(),"", lastDicomDir.toWx(),wxRESIZE_BORDER, m_Wizard->GetPosition());
+				wxDirDialog dialog(m_Wizard->GetParent(),"", mafStringToWx(lastDicomDir),wxRESIZE_BORDER, m_Wizard->GetPosition());
 				dialog.SetReturnCode(wxID_OK);
 				int ret_code = dialog.ShowModal();
 
@@ -3229,7 +3229,7 @@ void medOpImporterDicomOffis::FillStudyListBox(mafString studyUID)
 	}
 	if (newStudy)
 	{ 
-		m_StudyListbox->Append(studyName.toWx());
+		m_StudyListbox->Append(mafStringToWx(studyName));
 		//	m_StudyListctrl->InsertItem(0,studyName.GetCStr());
 
 		mafString *ms = new mafString(studyUID);
@@ -3272,7 +3272,7 @@ void medOpImporterDicomOffis::UpdateStudyListBox()
 		}
 
 		study.append(mafString::Format(_R("_%i"), counter));
-		m_StudyListbox->SetString(n, study.toWx());
+		m_StudyListbox->SetString(n, mafStringToWx(study));
 		//		m_StudyListctrl->SetItemText((long)n,study.GetCStr());
 
 	}
@@ -3373,7 +3373,7 @@ void medOpImporterDicomOffis::FillSeriesListBox()
 				//      wxColour itemREDcolour = wxColour(255,1,1);
 
 				//      TODO
-				m_SeriesListctrl->InsertItem((long) counter,seriesName.toWx());
+				m_SeriesListctrl->InsertItem((long) counter, mafStringToWx(seriesName));
 				//		m_SeriesListctrl->SetClientData((void *)m_SeriesIDToSlicesListMap[m_SelectedSeriesID]/*filesList*/);
 				intptr_t ptclientdata = (intptr_t) m_SeriesIDToSlicesListMap[m_SelectedSeriesID];
 
@@ -3405,7 +3405,7 @@ bool medOpImporterDicomOffis::BuildDicomFileList(const char *dicomDirABSPath)
 	{
 		if(!this->m_TestMode)
 		{
-			wxMessageBox(wxString::Format("Directory <%s> can not be opened",currentSliceABSDirName.toWx()),"Warning!!");
+			wxMessageBox(wxString::Format("Directory <%s> can not be opened", mafStringToWx(currentSliceABSDirName)),"Warning!!");
 		}
 		return false;
 	}
@@ -3824,7 +3824,7 @@ bool medOpImporterDicomOffis::ReadDicomFileList(mafString& currentSliceABSDirNam
 				{
 					if(!this->m_TestMode)
 					{
-						wxMessageBox(wxString::Format("Directory <%s> can not be opened",currentSliceABSSubDirName.toWx()),"Warning!!");
+						wxMessageBox(wxString::Format("Directory <%s> can not be opened", mafStringToWx(currentSliceABSSubDirName)),"Warning!!");
 					}
 					return false;
 				}
@@ -3836,7 +3836,7 @@ bool medOpImporterDicomOffis::ReadDicomFileList(mafString& currentSliceABSDirNam
 				{
 					if(!this->m_TestMode)
 					{
-						wxMessageBox(wxString::Format("Directory <%s> can not be opened",currentSliceABSDirName.toWx()),"Warning!!");
+						wxMessageBox(wxString::Format("Directory <%s> can not be opened", mafStringToWx(currentSliceABSDirName)),"Warning!!");
 					}
 					return false;
 				}
@@ -3847,13 +3847,13 @@ bool medOpImporterDicomOffis::ReadDicomFileList(mafString& currentSliceABSDirNam
 
 			DJDecoderRegistration::registerCodecs(); // register JPEG codecs
 			DcmRLEDecoderRegistration ::registerCodecs(OFFalse, OFFalse); // register RLE codecs
-			OFCondition status = dicomImg.loadFile(currentSliceABSFileName.toStd().c_str());//load data into offis structure
+			OFCondition status = dicomImg.loadFile(mafStringToStd(currentSliceABSFileName).c_str());//load data into offis structure
 
 			if (!status.good())
 			{
 				if(!this->m_TestMode)
 				{
-					wxLogMessage(wxString::Format("File <%s> can not be opened",currentSliceABSFileName.toWx()));
+					wxLogMessage(wxString::Format("File <%s> can not be opened", mafStringToWx(currentSliceABSFileName)));
 					errorOccurred = true;
 					sliceNum--;
 				}
@@ -3872,7 +3872,7 @@ bool medOpImporterDicomOffis::ReadDicomFileList(mafString& currentSliceABSDirNam
 
 			if (!error.good())
 			{
-				wxLogMessage(wxString::Format("Error decoding the image <%s>",currentSliceABSFileName.toWx()));
+				wxLogMessage(wxString::Format("Error decoding the image <%s>", mafStringToWx(currentSliceABSFileName)));
 				errorOccurred = true;
 				//return false;
 				continue;
@@ -4178,7 +4178,7 @@ bool medOpImporterDicomOffis::ReadDicomFileList(mafString& currentSliceABSDirNam
 				{
 					if(!this->m_TestMode)
 					{
-						wxLogMessage(wxString::Format("Inconsistent scalar values. Can not import file <%s>",currentSliceABSFileName.toWx()));
+						wxLogMessage(wxString::Format("Inconsistent scalar values. Can not import file <%s>", mafStringToWx(currentSliceABSFileName)));
 						errorOccurred = true;
 						continue;
 					}
@@ -4403,7 +4403,7 @@ bool medOpImporterDicomOffis::ReadDicomFileList(mafString& currentSliceABSDirNam
 						// Check if slices are under tolerance distance
 						if ((enableScalarTolerance && (fabs(lastZPos - dcmImagePositionPatient[2]) < scalarTolerance)) || (enablePercentageTolerance) && (distancePercentage > percentageTolerance))
 						{
-							wxLogMessage(wxString::Format("Warning: file <%s> and <%s> are under distance tolerance.",currentSliceABSFileName.toWx(),lastFileName.toWx()));
+							wxLogMessage(wxString::Format("Warning: file <%s> and <%s> are under distance tolerance.", mafStringToWx(currentSliceABSFileName), mafStringToWx(lastFileName)));
 							int answer = wxMessageBox(wxString::Format("Found 2 slices under distance tolerance. Please check the log area for details. Continue?"),"Warning!!", wxYES_NO, NULL);
 							if (answer == wxNO)
 							{
@@ -5035,7 +5035,7 @@ void medOpImporterDicomOffis::ImportDicomTags()
 	DcmFileFormat dicomImg;  
 	DJDecoderRegistration::registerCodecs(); // register JPEG codecs
 	DcmRLEDecoderRegistration::registerCodecs();
-	OFCondition status = dicomImg.loadFile(m_CurrentSliceABSFileName.toStd().c_str());//load data into offis structure
+	OFCondition status = dicomImg.loadFile(mafStringToStd(m_CurrentSliceABSFileName).c_str());//load data into offis structure
 
 	if (!status.good()) 
 	{

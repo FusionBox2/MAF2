@@ -53,8 +53,8 @@ bool CompareNumber(const mafString& first, const mafString& second)
 	mafSplitPath(first,&first_path,&first_name,&first_ext);
 	mafSplitPath(second,&second_path,&second_name,&second_ext);
 
-	first_name.toWx().ToLong(&first_num);
-	second_name.toWx().ToLong(&second_num);
+    mafStringToWx(first_name).ToLong(&first_num);
+    mafStringToWx(second_name).ToLong(&second_num);
 
   return (first_num - second_num) < 0;   // compare number
 }
@@ -249,8 +249,8 @@ void mafOpImporterImage::BuildImageSequence()
     }
 
     mafSplitPath(m_Files[i],&path,&name,&ext);
-		if(name.toWx().IsNumber())
-			name.toWx().ToLong(&time);
+		if(mafStringToWx(name).IsNumber())
+            mafStringToWx(name).ToLong(&time);
 		else
 			time = i;
 
@@ -283,7 +283,7 @@ void mafOpImporterImage::BuildImageSequence()
       m_ImportedImage->SetData(r->GetOutput(),time);
 		}
 		else
-			wxMessageBox((_R("unable to import ") + m_Files[i] + _R(", unrecognized type")).toWx());
+			wxMessageBox(mafStringToWx(_R("unable to import ") + m_Files[i] + _R(", unrecognized type")));
 	}
 
   if(m_NumFiles > 1)

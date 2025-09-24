@@ -200,7 +200,7 @@ int lhpOpImporterC3DBTK::OpenC3D(const mafString &fullFileName)
   mafLogMessage(_M("C3D_Open"));
 
 	btk::AcquisitionFileReader::Pointer reader = btk::AcquisitionFileReader::New();
-  reader->SetFilename(fullFileName.toStd());
+  reader->SetFilename(mafStringToStd(fullFileName));
   reader->Update();
   m_Acq = reader->GetOutput();
 
@@ -303,7 +303,7 @@ void lhpOpImporterC3DBTK::Initialize(const mafString &fullFileName, lhpOpImporte
   intData.m_VectogramSamplePeriod = intData.m_AnalogSamplePeriod;
 
   mafString fileName = fullFileName;
-  fileName = mafWxToString(fileName.toWx().AfterLast('\\').BeforeLast('.'));
+  fileName = mafWxToString(mafStringToWx(fileName).AfterLast('\\').BeforeLast('.'));
 
   intData.m_FileName = fileName;
 }

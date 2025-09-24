@@ -131,10 +131,10 @@ void mafGUISettingsStorage::OnEvent(mafEventBase *maf_event)
       m_Config->Write("SingleFileMode",m_SingleFileFlag);
     break;*/
     case ID_CACHE_FOLDER:
-      m_Config->Write("CacheFolder",m_CacheFolder.toWx());
+      m_Config->Write("CacheFolder", mafStringToWx(m_CacheFolder));
     break;
 	case ID_SAVE_FOLDER:
-		m_Config->Write("SaveFolder",m_SaveFolder.toWx());
+		m_Config->Write("SaveFolder", mafStringToWx(m_SaveFolder));
 	break;
     case ID_STORAGE_TYPE:
       m_Config->Write("RemoteStorageType",m_RemoteStorageType);
@@ -143,13 +143,13 @@ void mafGUISettingsStorage::OnEvent(mafEventBase *maf_event)
       m_Config->Write("AnonymousConnection",m_AnonymousFalg);
     break;
     case ID_HOST_NAME:
-      m_Config->Write("RemoteHost",m_RemoteHostName.toWx());
+      m_Config->Write("RemoteHost", mafStringToWx(m_RemoteHostName));
     break;
     case ID_PORT:
       m_Config->Write("PortConnection",m_Port);
     break;
     case ID_USERNAME:
-      m_Config->Write("User",m_UserName.toWx());
+      m_Config->Write("User", mafStringToWx(m_UserName));
     break;
     case ID_PASSWORD:
     break;
@@ -230,7 +230,7 @@ void mafGUISettingsStorage::InitializeSettings()
   }
   else
   {
-    m_Config->Write("CacheFolder",m_CacheFolder.toWx());
+    m_Config->Write("CacheFolder", mafStringToWx(m_CacheFolder));
   }
   if(m_Config->Read("RemoteHost", &string_item))
   {
@@ -238,7 +238,7 @@ void mafGUISettingsStorage::InitializeSettings()
   }
   else
   {
-    m_Config->Write("RemoteHost",m_RemoteHostName.toWx());
+    m_Config->Write("RemoteHost", mafStringToWx(m_RemoteHostName));
   }
   if(m_Config->Read("User", &string_item))
   {
@@ -246,7 +246,7 @@ void mafGUISettingsStorage::InitializeSettings()
   }
   else
   {
-    m_Config->Write("User",m_UserName.toWx());
+    m_Config->Write("User", mafStringToWx(m_UserName));
   }
   
   if(m_Config->Read(wxT("SaveFolder"), &string_item))
@@ -255,7 +255,7 @@ void mafGUISettingsStorage::InitializeSettings()
   }
   else
   {
-    m_Config->Write("SaveFolder",m_SaveFolder.toWx());
+    m_Config->Write("SaveFolder", mafStringToWx(m_SaveFolder));
   }
 
 
@@ -366,7 +366,7 @@ void mafGUISettingsStorage::SetCacheFolder(mafString cache_folder)
   if (m_CacheFolder != cache_folder)
   {
     m_CacheFolder = cache_folder;
-    m_Config->Write("CacheFolder",m_CacheFolder.toWx());
+    m_Config->Write("CacheFolder", mafStringToWx(m_CacheFolder));
     m_Config->Flush();
   }
 }
@@ -377,7 +377,7 @@ void mafGUISettingsStorage::SetRemoteHostName(mafString host)
   if (m_RemoteHostName != host)
   {
     m_RemoteHostName = host;
-    m_Config->Write("RemoteHost",m_RemoteHostName.toWx());
+    m_Config->Write("RemoteHost", mafStringToWx(m_RemoteHostName));
     m_Config->Flush();
   }
 }
@@ -399,7 +399,7 @@ void mafGUISettingsStorage::SetUserName(mafString user)
   if (m_UserName != user)
   {
     m_UserName = user;
-    m_Config->Write("User",m_UserName.toWx());
+    m_Config->Write("User", mafStringToWx(m_UserName));
     m_Config->Flush();
   }
 }

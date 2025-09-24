@@ -295,7 +295,7 @@ void mafGUI::Label(const mafString& label, bool bold, bool multiline )
 //----------------------------------------------------------------------------
 {
   int h = (multiline) ? -1 : LH;
-  wxStaticText* lab = new wxStaticText(this, -1, label.toWx(),   dp, wxSize(-1,h), wxALIGN_LEFT );
+  wxStaticText* lab = new wxStaticText(this, -1, mafStringToWx(label),   dp, wxSize(-1,h), wxALIGN_LEFT );
   if(m_UseBackgroundColor) lab->SetBackgroundColour(m_BackgroundColor);
   if(bold) 
     lab->SetFont(m_BoldFont);
@@ -308,7 +308,7 @@ void mafGUI::Label(mafString *var, bool bold, bool multiline)
 //----------------------------------------------------------------------------
 {
   int h = (multiline) ? -1 : LH;
-	wxStaticText* lab = new wxStaticText(this, -1, var->toWx(),    dp, wxSize(-1,h), wxALIGN_LEFT );
+	wxStaticText* lab = new wxStaticText(this, -1, mafStringToWx(*var),    dp, wxSize(-1,h), wxALIGN_LEFT );
 	if(m_UseBackgroundColor) lab->SetBackgroundColour(m_BackgroundColor);
   if(bold) 
     lab->SetFont(m_BoldFont);
@@ -321,8 +321,8 @@ void mafGUI::Label(mafString *var, bool bold, bool multiline)
 void mafGUI::Label(const mafString& label1, const mafString& label2, bool bold_label, bool bold_var)
 //----------------------------------------------------------------------------
 {
-	wxStaticText* lab1 = new wxStaticText(this, -1, label1.toWx(), dp, wxSize(LW,LH), wxALIGN_RIGHT  | wxST_NO_AUTORESIZE ); 
-	wxStaticText* lab2 = new wxStaticText(this, -1, label2.toWx(), dp, wxSize(-1,LH), wxALIGN_LEFT ); 
+	wxStaticText* lab1 = new wxStaticText(this, -1, mafStringToWx(label1), dp, wxSize(LW,LH), wxALIGN_RIGHT  | wxST_NO_AUTORESIZE );
+	wxStaticText* lab2 = new wxStaticText(this, -1, mafStringToWx(label2), dp, wxSize(-1,LH), wxALIGN_LEFT );
 	if(bold_label) 
     lab1->SetFont(m_BoldFont);
   else
@@ -342,8 +342,8 @@ void mafGUI::Label(const mafString& label1, const mafString& label2, bool bold_l
 void mafGUI::Label(const mafString& label1,mafString *var, bool bold_label, bool bold_var)
 //----------------------------------------------------------------------------
 {
-	wxStaticText* lab1 = new wxStaticText(this, -1, label1.toWx(), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
-	wxStaticText* lab2 = new wxStaticText(this, -1, var->toWx(),   dp, wxSize(-1,LH), wxALIGN_LEFT );
+	wxStaticText* lab1 = new wxStaticText(this, -1, mafStringToWx(label1), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+	wxStaticText* lab2 = new wxStaticText(this, -1, mafStringToWx(*var),   dp, wxSize(-1,LH), wxALIGN_LEFT );
   if(m_UseBackgroundColor) 
     lab1->SetBackgroundColour(m_BackgroundColor);
   if(m_UseBackgroundColor)
@@ -374,12 +374,12 @@ void mafGUI::Button(int id,const mafString& button_text,const mafString& label, 
 		butt->SetValidator( mafGUIValidator(this,w_id, butt) );
     butt->SetFont(m_Font);
     if(!tooltip.empty()) 
-      butt->SetToolTip(tooltip.toWx());
+      butt->SetToolTip(mafStringToWx(tooltip));
 		Add(butt,0,wxALL, M);
 	}
   else
 	{
-		wxStaticText *lab  = new wxStaticText(this, GetWidgetId(id), label.toWx(), dp, wxSize(LW, LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+		wxStaticText *lab  = new wxStaticText(this, GetWidgetId(id), mafStringToWx(label), dp, wxSize(LW, LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
     if(m_UseBackgroundColor) 
       lab->SetBackgroundColour(m_BackgroundColor);
     lab->SetFont(m_Font);
@@ -388,7 +388,7 @@ void mafGUI::Button(int id,const mafString& button_text,const mafString& label, 
 		butt->SetValidator( mafGUIValidator(this,w_id,butt) );
     butt->SetFont(m_Font);
 		if(!tooltip.empty()) 
-      butt->SetToolTip(tooltip.toWx());
+      butt->SetToolTip(mafStringToWx(tooltip));
 
 		wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
 		sizer->Add( lab, 0, wxALIGN_CENTRE|wxRIGHT, LM);
@@ -401,7 +401,7 @@ void mafGUI::Button  (int id,mafString *label,const mafString& button_text, cons
 //----------------------------------------------------------------------------
 {
   int w_id = GetWidgetId(id);
-	wxStaticText *lab  = new wxStaticText(this, w_id, label->toWx(), dp, wxSize(LW, LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+	wxStaticText *lab  = new wxStaticText(this, w_id, mafStringToWx(*label), dp, wxSize(LW, LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
   lab->SetValidator( mafGUIValidator(this,w_id,lab,label) );
   lab->SetFont(m_Font);
   if(m_UseBackgroundColor) 
@@ -411,7 +411,7 @@ void mafGUI::Button  (int id,mafString *label,const mafString& button_text, cons
 	butt->SetValidator( mafGUIValidator(this,w_id,butt) );
   butt->SetFont(m_Font);
 	if(!tooltip.empty()) 
-    butt->SetToolTip(tooltip.toWx());
+    butt->SetToolTip(mafStringToWx(tooltip));
 
 	wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
 	sizer->Add( lab, 0, wxALIGN_CENTRE|wxRIGHT, LM);
@@ -437,7 +437,7 @@ void mafGUI::Vector(int id,const mafString& label,int var[3],int min, int max, c
 //----------------------------------------------------------------------------
 {
   int w_id;
-	wxStaticText *lab  = new wxStaticText(this, GetWidgetId(id), label.toWx(), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+	wxStaticText *lab  = new wxStaticText(this, GetWidgetId(id), mafStringToWx(label), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
   if(m_UseBackgroundColor) 
     lab->SetBackgroundColour(m_BackgroundColor);
   lab->SetFont(m_Font);
@@ -455,9 +455,9 @@ void mafGUI::Vector(int id,const mafString& label,int var[3],int min, int max, c
   text3->SetFont(m_Font);
 	if(!tooltip.empty())
 	{
-		text1->SetToolTip(tooltip.toWx());
-		text2->SetToolTip(tooltip.toWx());
-		text3->SetToolTip(tooltip.toWx());
+		text1->SetToolTip(mafStringToWx(tooltip));
+		text2->SetToolTip(mafStringToWx(tooltip));
+		text3->SetToolTip(mafStringToWx(tooltip));
 	}
   if(bg_colour != NULL)
   {
@@ -478,7 +478,7 @@ void mafGUI::Vector(int id,const mafString& label,int var[3],int minx,int maxx,i
 //----------------------------------------------------------------------------
 {
 	int w_id;
-  wxStaticText *lab  = new wxStaticText(this, GetWidgetId(id), label.toWx(), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+  wxStaticText *lab  = new wxStaticText(this, GetWidgetId(id), mafStringToWx(label), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
   if(m_UseBackgroundColor) 
     lab->SetBackgroundColour(m_BackgroundColor);
 	w_id = GetWidgetId(id);
@@ -495,9 +495,9 @@ void mafGUI::Vector(int id,const mafString& label,int var[3],int minx,int maxx,i
   text3->SetFont(m_Font);
 	if(!tooltip.empty())
 	{
-		text1->SetToolTip(tooltip.toWx());
-		text2->SetToolTip(tooltip.toWx());
-		text3->SetToolTip(tooltip.toWx());
+		text1->SetToolTip(mafStringToWx(tooltip));
+		text2->SetToolTip(mafStringToWx(tooltip));
+		text3->SetToolTip(mafStringToWx(tooltip));
 	}
   if(bg_colour != NULL)
   {
@@ -518,7 +518,7 @@ void mafGUI::Vector(int id,const mafString& label,float var[3],float min, float 
 //----------------------------------------------------------------------------
 {   
   int w_id;
-	wxStaticText *lab  = new wxStaticText(this, GetWidgetId(id), label.toWx(), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+	wxStaticText *lab  = new wxStaticText(this, GetWidgetId(id), mafStringToWx(label), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
   if(m_UseBackgroundColor) lab->SetBackgroundColour(m_BackgroundColor);
   w_id = GetWidgetId(id);
 	wxTextCtrl  *text1 = new wxTextCtrl  (this, w_id, ""   , dp, wxSize(EW,LH), m_EntryStyle );
@@ -534,9 +534,9 @@ void mafGUI::Vector(int id,const mafString& label,float var[3],float min, float 
   text3->SetFont(m_Font);
 	if(!tooltip.empty())
 	{
-		text1->SetToolTip(tooltip.toWx());
-		text2->SetToolTip(tooltip.toWx());
-		text3->SetToolTip(tooltip.toWx());
+		text1->SetToolTip(mafStringToWx(tooltip));
+		text2->SetToolTip(mafStringToWx(tooltip));
+		text3->SetToolTip(mafStringToWx(tooltip));
 	}
   if(bg_colour != NULL)
   {
@@ -557,7 +557,7 @@ void mafGUI::Vector(int id,const mafString& label,float var[3],float minx,float 
 //----------------------------------------------------------------------------
 {
   int w_id;
-	wxStaticText *lab  = new wxStaticText(this, GetWidgetId(id), label.toWx(), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+	wxStaticText *lab  = new wxStaticText(this, GetWidgetId(id), mafStringToWx(label), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
   if(m_UseBackgroundColor) 
     lab->SetBackgroundColour(m_BackgroundColor);
   lab->SetFont(m_Font);
@@ -575,9 +575,9 @@ void mafGUI::Vector(int id,const mafString& label,float var[3],float minx,float 
   text3->SetFont(m_Font);
 	if(!tooltip.empty())
 	{
-		text1->SetToolTip(tooltip.toWx());
-		text2->SetToolTip(tooltip.toWx());
-		text3->SetToolTip(tooltip.toWx());
+		text1->SetToolTip(mafStringToWx(tooltip));
+		text2->SetToolTip(mafStringToWx(tooltip));
+		text3->SetToolTip(mafStringToWx(tooltip));
 	}
   if(bg_colour != NULL)
   {
@@ -598,7 +598,7 @@ void mafGUI::Vector(int id,const mafString& label,double var[3],double min, doub
 //----------------------------------------------------------------------------
 {   
   int w_id;
-	wxStaticText *lab  = new wxStaticText(this, GetWidgetId(id), label.toWx(), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+	wxStaticText *lab  = new wxStaticText(this, GetWidgetId(id), mafStringToWx(label), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
   if(m_UseBackgroundColor) 
     lab->SetBackgroundColour(m_BackgroundColor);
   lab->SetFont(m_Font);
@@ -616,9 +616,9 @@ void mafGUI::Vector(int id,const mafString& label,double var[3],double min, doub
   text3->SetFont(m_Font);
 	if(!tooltip.empty())
 	{
-		text1->SetToolTip(tooltip.toWx());
-		text2->SetToolTip(tooltip.toWx());
-		text3->SetToolTip(tooltip.toWx());
+		text1->SetToolTip(mafStringToWx(tooltip));
+		text2->SetToolTip(mafStringToWx(tooltip));
+		text3->SetToolTip(mafStringToWx(tooltip));
 	}
   if(bg_colour != NULL)
   {
@@ -639,7 +639,7 @@ void mafGUI::Vector(int id,const mafString& label,double var[3],double minx,doub
 //----------------------------------------------------------------------------
 {
   int w_id;
-	wxStaticText *lab  = new wxStaticText(this, GetWidgetId(id), label.toWx(), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+	wxStaticText *lab  = new wxStaticText(this, GetWidgetId(id), mafStringToWx(label), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
   if(m_UseBackgroundColor) 
     lab->SetBackgroundColour(m_BackgroundColor);
   lab->SetFont(m_Font);
@@ -657,9 +657,9 @@ void mafGUI::Vector(int id,const mafString& label,double var[3],double minx,doub
   text3->SetFont(m_Font);
 	if(!tooltip.empty())
 	{
-		text1->SetToolTip(tooltip.toWx());
-		text2->SetToolTip(tooltip.toWx());
-		text3->SetToolTip(tooltip.toWx());
+		text1->SetToolTip(mafStringToWx(tooltip));
+		text2->SetToolTip(mafStringToWx(tooltip));
+		text3->SetToolTip(mafStringToWx(tooltip));
 	}
   if(bg_colour != NULL)
   {
@@ -697,12 +697,12 @@ void mafGUI::String(int id,const mafString& label,mafString* var, const mafStrin
 		text->SetValidator( mafGUIValidator(this,w_id,text,var) );
     text->SetFont(m_Font);
 		if(!tooltip.empty()) 
-      text->SetToolTip(tooltip.toWx());
+      text->SetToolTip(mafStringToWx(tooltip));
 	  Add(text,0,wxALL, M);
 	}
 	else
 	{
-		wxStaticText *lab = new wxStaticText(this, GetWidgetId(id), label.toWx(), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+		wxStaticText *lab = new wxStaticText(this, GetWidgetId(id), mafStringToWx(label), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
     if(m_UseBackgroundColor) 
       lab->SetBackgroundColour(m_BackgroundColor);
     lab->SetFont(m_Font);
@@ -714,7 +714,7 @@ void mafGUI::String(int id,const mafString& label,mafString* var, const mafStrin
     text->SetFont(m_Font);
 
 		if(!tooltip.empty())
-			text->SetToolTip(tooltip.toWx());
+			text->SetToolTip(mafStringToWx(tooltip));
 		wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
 		sizer->Add( lab,  0, wxRIGHT, LM);
 		sizer->Add( text, 0, wxRIGHT, HM);
@@ -743,12 +743,12 @@ void mafGUI::String(int id,const mafString& label,mafString* var, const mafStrin
 		text->SetValidator( mafGUIValidator(this,w_id,text,var) );
     text->SetFont(m_Font);
 		if(!tooltip.IsEmpty())
-      text->SetToolTip(tooltip.toWx());
+      text->SetToolTip(mafStringToWx(tooltip));
 	  Add(text,0,wxALL, M);
 	}
 	else
 	{
-		wxStaticText *lab = new wxStaticText(this, GetWidgetId(id), label.toWx(), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+		wxStaticText *lab = new wxStaticText(this, GetWidgetId(id), mafStringToWx(label), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
     if(m_UseBackgroundColor) 
       lab->SetBackgroundColour(m_BackgroundColor);
     lab->SetFont(m_Font);
@@ -758,7 +758,7 @@ void mafGUI::String(int id,const mafString& label,mafString* var, const mafStrin
 		text->SetValidator( mafGUIValidator(this,w_id,text,var) );
     text->SetFont(m_Font);
 		if(!tooltip.IsEmpty())
-			text->SetToolTip(tooltip.toWx());
+			text->SetToolTip(mafStringToWx(tooltip));
 		wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
 		sizer->Add( lab,  0, wxRIGHT, LM);
 		sizer->Add( text, 0, wxRIGHT, HM);
@@ -777,12 +777,12 @@ void mafGUI::Integer(int id,const mafString& label,int* var,int min, int max, co
 		text->SetValidator( mafGUIValidator(this,w_id,text,var,min,max) );
     text->SetFont(m_Font);
 		if(!tooltip.empty()) 
-      text->SetToolTip(tooltip.toWx());
+      text->SetToolTip(mafStringToWx(tooltip));
 	  Add(text,0,wxALL, M);
 	}
 	else
 	{
-		wxStaticText *lab = new wxStaticText(this, labelAlwaysEnable?-1:GetWidgetId(id), label.toWx(), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+		wxStaticText *lab = new wxStaticText(this, labelAlwaysEnable?-1:GetWidgetId(id), mafStringToWx(label), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
     if(m_UseBackgroundColor) 
       lab->SetBackgroundColour(m_BackgroundColor);
     lab->SetFont(m_Font);
@@ -791,7 +791,7 @@ void mafGUI::Integer(int id,const mafString& label,int* var,int min, int max, co
 		text->SetValidator( mafGUIValidator(this,w_id,text,var,min,max) );
     text->SetFont(m_Font);
 		if(!tooltip.empty())
-			text->SetToolTip(tooltip.toWx());
+			text->SetToolTip(mafStringToWx(tooltip));
 		wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
 		sizer->Add( lab,  0, wxRIGHT, LM);
 		sizer->Add( text, 0, wxRIGHT, HM);
@@ -810,12 +810,12 @@ void mafGUI::Float(int id,const mafString& label,float* var,float min, float max
 		text->SetValidator( mafGUIValidator(this,w_id,text,var,min,max, decimal_digit) );
     text->SetFont(m_Font);
 
-		if(!tooltip.empty()) text->SetToolTip(tooltip.toWx());
+		if(!tooltip.empty()) text->SetToolTip(mafStringToWx(tooltip));
 	  Add(text,0,wxALL, M);
 	}
 	else
 	{
-		wxStaticText *lab = new wxStaticText(this, GetWidgetId(id), label.toWx(), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+		wxStaticText *lab = new wxStaticText(this, GetWidgetId(id), mafStringToWx(label), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
     if(m_UseBackgroundColor) 
       lab->SetBackgroundColour(m_BackgroundColor);
     lab->SetFont(m_Font);
@@ -825,7 +825,7 @@ void mafGUI::Float(int id,const mafString& label,float* var,float min, float max
     text->SetFont(m_Font);
 
 		if(!tooltip.empty())
-			text->SetToolTip(tooltip.toWx());
+			text->SetToolTip(mafStringToWx(tooltip));
 		wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
 		sizer->Add( lab,  0, wxRIGHT, LM);
 		sizer->Add( text, 0, wxRIGHT, HM);
@@ -844,12 +844,12 @@ void mafGUI::Double(int id,const mafString& label,double* var,double min, double
 		text->SetValidator( mafGUIValidator(this,w_id,text,var,min,max,decimal_digit) );
     text->SetFont(m_Font);
 		if(!tooltip.empty()) 
-      text->SetToolTip(tooltip.toWx());
+      text->SetToolTip(mafStringToWx(tooltip));
 	  Add(text,0,wxALL, M);
 	}
 	else
 	{
-    wxStaticText *lab = new wxStaticText(this, labelAlwaysEnable?-1:GetWidgetId(id), label.toWx(), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+    wxStaticText *lab = new wxStaticText(this, labelAlwaysEnable?-1:GetWidgetId(id), mafStringToWx(label), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
     if(m_UseBackgroundColor) 
       lab->SetBackgroundColour(m_BackgroundColor);
     lab->SetFont(m_Font);
@@ -858,7 +858,7 @@ void mafGUI::Double(int id,const mafString& label,double* var,double min, double
 		text->SetValidator( mafGUIValidator(this,w_id,text,var,min,max,decimal_digit) );
     text->SetFont(m_Font);
 		if(!tooltip.empty())
-			text->SetToolTip(tooltip.toWx());
+			text->SetToolTip(mafStringToWx(tooltip));
 		wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
 		sizer->Add( lab,  0, wxRIGHT, LM);
 		sizer->Add( text, 0, wxRIGHT, HM);
@@ -873,18 +873,18 @@ void mafGUI::Bool(int id,const mafString& label,int* var, int flag, const mafStr
   if (flag != 0) // text on left
   {
     w_id = GetWidgetId(id);
-		wxCheckBox *check = new wxCheckBox(this, w_id, label.toWx(), dp, wxSize(-1,BH), 0 );
+		wxCheckBox *check = new wxCheckBox(this, w_id, mafStringToWx(label), dp, wxSize(-1,BH), 0 );
     check->SetValidator( mafGUIValidator(this,w_id,check,var) );
     check->SetFont(m_Font);
 		if(m_UseBackgroundColor) 
       check->SetBackgroundColour(m_BackgroundColor);
 		if(!tooltip.empty()) 
-      check->SetToolTip(tooltip.toWx());
+      check->SetToolTip(mafStringToWx(tooltip));
 		Add(check,0,wxALL, M);
   } 
 	else      // text on right
 	{
-		wxStaticText *lab = new wxStaticText(this, GetWidgetId(id), label.toWx(), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+		wxStaticText *lab = new wxStaticText(this, GetWidgetId(id), mafStringToWx(label), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
     if(m_UseBackgroundColor) 
       lab->SetBackgroundColour(m_BackgroundColor);
     lab->SetFont(m_Font);
@@ -895,7 +895,7 @@ void mafGUI::Bool(int id,const mafString& label,int* var, int flag, const mafStr
     if(m_UseBackgroundColor) 
       check->SetBackgroundColour(m_BackgroundColor);
 		if(!tooltip.empty()) 
-      check->SetToolTip(tooltip.toWx());
+      check->SetToolTip(mafStringToWx(tooltip));
 
 		wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
 		sizer->Add( lab,  0, wxRIGHT, LM);
@@ -934,7 +934,7 @@ wxSlider *mafGUI::Slider(int id,const mafString& label,int* var,int min, int max
 	{
     int text_w   = EW*0.8;
 		int slider_w = DW-text_w;
-		lab = new wxStaticText(this, GetWidgetId(id), label.toWx(), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+		lab = new wxStaticText(this, GetWidgetId(id), mafStringToWx(label), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
     if(m_UseBackgroundColor) 
       lab->SetBackgroundColour(m_BackgroundColor);
     lab->SetFont(m_Font);
@@ -972,7 +972,7 @@ wxSlider *mafGUI::Slider(int id,const mafString& label,int* var,int min, int max
   }
   sli->SetValidator(mafGUIValidator(this,w_id_sli,sli,var,text));
   text->SetValidator(mafGUIValidator(this,w_id_text,text,var,sli,min,max)); //- if uncommented, remove also wxTE_READONLY from the text (in both places)
-	if(!tooltip.empty())	text->SetToolTip(tooltip.toWx());
+	if(!tooltip.empty())	text->SetToolTip(mafStringToWx(tooltip));
 	
   return sli;
 }
@@ -1007,7 +1007,7 @@ mafGUIFloatSlider *mafGUI::FloatSlider(int id,const mafString& label,double *var
 	{
     int text_w   = EW * 0.8;
 		int slider_w = DW - text_w;
-		lab = new wxStaticText  (this, GetWidgetId(id), label.toWx(), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+		lab = new wxStaticText  (this, GetWidgetId(id), mafStringToWx(label), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
     if(m_UseBackgroundColor) 
       lab->SetBackgroundColour(m_BackgroundColor);
     lab->SetFont(m_Font);
@@ -1028,7 +1028,7 @@ mafGUIFloatSlider *mafGUI::FloatSlider(int id,const mafString& label,double *var
 	}
 	Add(sizer,0,wxALL, M); 
 	if(!tooltip.empty())	
-    text->SetToolTip(tooltip.toWx());
+    text->SetToolTip(mafStringToWx(tooltip));
 	return sli;
 }
 //----------------------------------------------------------------------------
@@ -1044,12 +1044,12 @@ mafGUIFloatSlider *mafGUI::FloatSlider(int id,double *var, double min, double ma
 
   int text_w   = 0.1;
   int slider_w = FW - EW*2;
-  minText = new wxStaticText  (this, GetWidgetId(id), minLab.toWx(), dp, wxSize(EW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+  minText = new wxStaticText  (this, GetWidgetId(id), mafStringToWx(minLab), dp, wxSize(EW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
   if(m_UseBackgroundColor) 
     minText->SetBackgroundColour(m_BackgroundColor);
   minText->SetFont(m_Font);
 
-  maxText = new wxStaticText  (this, GetWidgetId(id), maxLab.toWx(), dp, wxSize(EW,LH), wxALIGN_LEFT | wxST_NO_AUTORESIZE );
+  maxText = new wxStaticText  (this, GetWidgetId(id), mafStringToWx(maxLab), dp, wxSize(EW,LH), wxALIGN_LEFT | wxST_NO_AUTORESIZE );
   if(m_UseBackgroundColor) 
     maxText->SetBackgroundColour(m_BackgroundColor);
   maxText->SetFont(m_Font);
@@ -1092,14 +1092,14 @@ void mafGUI::Radio(int id,const mafString& label,int* var, int numchoices, const
   {
     wxBoxSizer *sizer = NULL;
     sizer = new wxBoxSizer(wxHORIZONTAL);
-    wxStaticText *lab = new wxStaticText(this, GetWidgetId(id), label.toWx(), dp, wxSize(LW,-1), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+    wxStaticText *lab = new wxStaticText(this, GetWidgetId(id), mafStringToWx(label), dp, wxSize(LW,-1), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
     if(m_UseBackgroundColor) lab->SetBackgroundColour(m_BackgroundColor);
     lab->SetFont(m_Font);
 
     w_id = GetWidgetId(id);
     wxString *wxchoices = new wxString[numchoices];
     for(int i =0; i < numchoices; i++)
-      wxchoices[i] = choices[i].toWx();
+      wxchoices[i] = mafStringToWx(choices[i]);
     radio = new wxRadioBox  (this, w_id, "",dp, wxSize(DW,-1), numchoices, wxchoices,dim,style|m_EntryStyle|wxTAB_TRAVERSAL );
     delete[] wxchoices;
 
@@ -1111,7 +1111,7 @@ void mafGUI::Radio(int id,const mafString& label,int* var, int numchoices, const
   {
     wxString *wxchoices = new wxString[numchoices];
     for(int i =0; i < numchoices; i++)
-      wxchoices[i] = choices[i].toWx();
+      wxchoices[i] = mafStringToWx(choices[i]);
     w_id = GetWidgetId(id);
     radio = new wxRadioBox  (this, w_id, "",dp, wxSize(FW,-1), numchoices, wxchoices,dim,style|m_EntryStyle|wxTAB_TRAVERSAL );
     delete[] wxchoices;
@@ -1123,7 +1123,7 @@ void mafGUI::Radio(int id,const mafString& label,int* var, int numchoices, const
   radio->SetValidator( mafGUIValidator(this,w_id,radio,var) );
   radio->SetFont(m_Font);
   if(!tooltip.empty()) 
-    radio->SetToolTip(tooltip.toWx());
+    radio->SetToolTip(mafStringToWx(tooltip));
 }
 //----------------------------------------------------------------------------
 wxComboBox *mafGUI::Combo(int id,const mafString& label,int* var,int numchoices, const mafString choices[], const mafString& tooltip)
@@ -1135,14 +1135,14 @@ wxComboBox *mafGUI::Combo(int id,const mafString& label,int* var,int numchoices,
 
   if(!label.empty())
   {
-    wxStaticText *lab = new wxStaticText(this, GetWidgetId(id), label.toWx(), dp, wxSize(LW,-1), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+    wxStaticText *lab = new wxStaticText(this, GetWidgetId(id), mafStringToWx(label), dp, wxSize(LW,-1), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
     if(m_UseBackgroundColor) 
       lab->SetBackgroundColour(m_BackgroundColor);
     lab->SetFont(m_Font);
     w_id = GetWidgetId(id);
     wxString *wxchoices = new wxString[numchoices];
     for(int i =0; i < numchoices; i++)
-      wxchoices[i] = choices[i].toWx();
+      wxchoices[i] = mafStringToWx(choices[i]);
 	  combo = new wxComboBox  (this, w_id, "", dp, wxSize(DW,-1), numchoices, wxchoices,wxCB_READONLY);
     delete[] wxchoices;
 	  combo->SetFont(m_Font);
@@ -1154,7 +1154,7 @@ wxComboBox *mafGUI::Combo(int id,const mafString& label,int* var,int numchoices,
     w_id = GetWidgetId(id);
     wxString *wxchoices = new wxString[numchoices];
     for(int i =0; i < numchoices; i++)
-      wxchoices[i] = choices[i].toWx();
+      wxchoices[i] = mafStringToWx(choices[i]);
 	  combo = new wxComboBox  (this, w_id, "", dp, wxSize(FW,-1), numchoices, wxchoices,wxCB_READONLY);
     delete[] wxchoices;
 	  combo->SetFont(m_Font);
@@ -1163,7 +1163,7 @@ wxComboBox *mafGUI::Combo(int id,const mafString& label,int* var,int numchoices,
   
   combo->SetValidator( mafGUIValidator(this,w_id,combo,var) );
 	if(!tooltip.empty()) 
-    combo->SetToolTip(tooltip.toWx());
+    combo->SetToolTip(mafStringToWx(tooltip));
 
 	Add(sizer,0,wxALL, M);
   return combo;
@@ -1174,7 +1174,7 @@ void mafGUI::FileOpen(int id,const mafString& label,mafString* var, const mafStr
 {
   int text_w = EW+HM+EW;
   int butt_w;
-	wxStaticText *lab  = new wxStaticText(this, GetWidgetId(id), label.toWx(), dp, wxSize(LW,BH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+	wxStaticText *lab  = new wxStaticText(this, GetWidgetId(id), mafStringToWx(label), dp, wxSize(LW,BH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
   if(m_UseBackgroundColor) 
     lab->SetBackgroundColour(m_BackgroundColor);
   lab->SetFont(m_Font);
@@ -1194,8 +1194,8 @@ void mafGUI::FileOpen(int id,const mafString& label,mafString* var, const mafStr
   butt->SetFont(m_Font);
   if(!tooltip.empty())
 	{
-		text->SetToolTip(tooltip.toWx());
-		butt->SetToolTip(tooltip.toWx());
+		text->SetToolTip(mafStringToWx(tooltip));
+		butt->SetToolTip(mafStringToWx(tooltip));
 	}
 	wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
 	if (!label.empty())
@@ -1212,7 +1212,7 @@ void mafGUI::DirOpen(int id,const mafString& label,mafString *var, const mafStri
 {
   int text_w = EW+HM+EW;
   int butt_w;
-	wxStaticText *lab  = new wxStaticText(this, GetWidgetId(id), label.toWx(),   dp, wxSize(LW,BH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+	wxStaticText *lab  = new wxStaticText(this, GetWidgetId(id), mafStringToWx(label),   dp, wxSize(LW,BH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
   if(m_UseBackgroundColor) 
     lab->SetBackgroundColour(m_BackgroundColor);
   lab->SetFont(m_Font);
@@ -1232,8 +1232,8 @@ void mafGUI::DirOpen(int id,const mafString& label,mafString *var, const mafStri
   butt->SetFont(m_Font);
   if(!tooltip.empty())
 	{
-		text->SetToolTip(tooltip.toWx());
-		butt->SetToolTip(tooltip.toWx());
+		text->SetToolTip(mafStringToWx(tooltip));
+		butt->SetToolTip(mafStringToWx(tooltip));
 	}
 	wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
   if (!label.empty())
@@ -1250,7 +1250,7 @@ void mafGUI::FileSave(int id,const mafString& label,mafString* var, const mafStr
 {
   int text_w = EW+HM+EW;
   int butt_w;
-	wxStaticText *lab  = new wxStaticText(this, GetWidgetId(id), label.toWx(),   dp, wxSize(LW,BH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+	wxStaticText *lab  = new wxStaticText(this, GetWidgetId(id), mafStringToWx(label),   dp, wxSize(LW,BH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
   if(m_UseBackgroundColor) 
     lab->SetBackgroundColour(m_BackgroundColor);
   lab->SetFont(m_Font);
@@ -1270,8 +1270,8 @@ void mafGUI::FileSave(int id,const mafString& label,mafString* var, const mafStr
   butt->SetFont(m_Font);
   if(!tooltip.empty())
 	{
-		text->SetToolTip(tooltip.toWx());
-		butt->SetToolTip(tooltip.toWx());
+		text->SetToolTip(mafStringToWx(tooltip));
+		butt->SetToolTip(mafStringToWx(tooltip));
 	}
   text->Enable(enableTextCtrl);
 	wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -1287,7 +1287,7 @@ void mafGUI::FileSave(int id,const mafString& label,mafString* var, const mafStr
 void mafGUI::Color(int id,const mafString& label,wxColour* var, const mafString& tooltip)
 //----------------------------------------------------------------------------
 {
-	wxStaticText	*lab  = new wxStaticText(this, GetWidgetId(id), label.toWx(),dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+	wxStaticText	*lab  = new wxStaticText(this, GetWidgetId(id), mafStringToWx(label),dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
   if(m_UseBackgroundColor) 
     lab->SetBackgroundColour(m_BackgroundColor);
   lab->SetFont(m_Font);
@@ -1298,7 +1298,7 @@ void mafGUI::Color(int id,const mafString& label,wxColour* var, const mafString&
   butt->SetValidator( mafGUIValidator(this,w_id,butt,var,text) );
 	butt->SetFont(m_Font);
   if(!tooltip.empty()) 
-    butt->SetToolTip(tooltip.toWx());
+    butt->SetToolTip(mafStringToWx(tooltip));
 
   wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
 	sizer->Add( lab,  0, wxRIGHT, LM);
@@ -1311,7 +1311,7 @@ void mafGUI::Color(int id,const mafString& label,wxColour* var, const mafString&
 mafGUILutSwatch *mafGUI::Lut(int id,const mafString& label,vtkLookupTable *lut)
 //----------------------------------------------------------------------------
 {
-  wxStaticText	*lab  = new wxStaticText(this, GetWidgetId(id), label.toWx(),dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+  wxStaticText	*lab  = new wxStaticText(this, GetWidgetId(id), mafStringToWx(label),dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
   if(m_UseBackgroundColor) 
     lab->SetBackgroundColour(m_BackgroundColor);
   lab->SetFont(m_Font);
@@ -1396,19 +1396,19 @@ wxListBox *mafGUI::ListBox(int id,const mafString& label,int height, const mafSt
 	wxListBox *lb = new wxListBox(this, w_id,dp,wxSize(width ,height),0, NULL,lbox_style | m_EntryStyle);  // wxSUNKEN_BORDER non funzia - aggiunge anche il bordino nero
   lb->SetValidator( mafGUIValidator(this,w_id,lb) );
 	lb->SetFont(m_Font);
-  if(!tooltip.empty()) lb->SetToolTip(tooltip.toWx());
+  if(!tooltip.empty()) lb->SetToolTip(mafStringToWx(tooltip));
   if(label.empty())
 	{
 		Add(lb,0,wxALL, M); 
 	}
 	else
   {
-		wxStaticText *lab = new wxStaticText(this, GetWidgetId(id), label.toWx(), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+		wxStaticText *lab = new wxStaticText(this, GetWidgetId(id), mafStringToWx(label), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
     if(m_UseBackgroundColor) 
       lab->SetBackgroundColour(m_BackgroundColor);
     lab->SetFont(m_Font);
 		if(!tooltip.empty())	
-      lab->SetToolTip(tooltip.toWx());
+      lab->SetToolTip(mafStringToWx(tooltip));
 		wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
 		sizer->Add( lab,  0, wxRIGHT, LM);
 		sizer->Add( lb	, 0, wxRIGHT, HM);
@@ -1426,19 +1426,19 @@ wxListCtrl *mafGUI::ListCtrl(int id,const mafString& label,int height, const maf
 	wxListCtrl *lb = new wxListCtrl(this, w_id,dp,wxSize(width ,height),lbox_style | m_EntryStyle);  // wxSUNKEN_BORDER non funzia - aggiunge anche il bordino nero
 	lb->SetValidator( mafGUIValidator(this,w_id,lb) );
 	lb->SetFont(m_Font);
-	if(!tooltip.empty()) lb->SetToolTip(tooltip.toWx());
+	if(!tooltip.empty()) lb->SetToolTip(mafStringToWx(tooltip));
 	if(label.empty())
 	{
 		Add(lb,0,wxALL, M); 
 	}
 	else
 	{
-		wxStaticText *lab = new wxStaticText(this, GetWidgetId(id), label.toWx(), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+		wxStaticText *lab = new wxStaticText(this, GetWidgetId(id), mafStringToWx(label), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
 		if(m_UseBackgroundColor) 
 			lab->SetBackgroundColour(m_BackgroundColor);
 		lab->SetFont(m_Font);
 		if(!tooltip.empty())	
-			lab->SetToolTip(tooltip.toWx());
+			lab->SetToolTip(mafStringToWx(tooltip));
 		wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
 		sizer->Add( lab,  0, wxRIGHT, LM);
 		sizer->Add( lb	, 0, wxRIGHT, HM);
@@ -1455,7 +1455,7 @@ wxGrid *mafGUI::Grid(int id, const mafString& label,int height, int row, int col
 	grid->CreateGrid(row, cols);
 	grid->SetFont(m_Font);
   if(!tooltip.empty()) 
-    grid->SetToolTip(tooltip.toWx());
+    grid->SetToolTip(mafStringToWx(tooltip));
 
 	grid->EnableEditing(false);
 	grid->SetColLabelSize(LH);
@@ -1474,12 +1474,12 @@ wxGrid *mafGUI::Grid(int id, const mafString& label,int height, int row, int col
 	}
 	else
   {
-		wxStaticText *lab = new wxStaticText(this, GetWidgetId(id), label.toWx(), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+		wxStaticText *lab = new wxStaticText(this, GetWidgetId(id), mafStringToWx(label), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
     if(m_UseBackgroundColor) 
       lab->SetBackgroundColour(m_BackgroundColor);
     lab->SetFont(m_Font);
 		if(!tooltip.empty())	
-      lab->SetToolTip(tooltip.toWx());
+      lab->SetToolTip(mafStringToWx(tooltip));
 		wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
 		sizer->Add( lab,  0, wxRIGHT, LM);
 		sizer->Add( grid	, 0, wxRIGHT, HM);
@@ -1497,7 +1497,7 @@ mafGUICheckListBox* mafGUI::CheckList(int id,const mafString& label,int height, 
   
   clb->SetListener(this);
 	if(!tooltip.empty()) 
-    clb->SetToolTip(tooltip.toWx());
+    clb->SetToolTip(mafStringToWx(tooltip));
 
   if(label.empty())
 	{
@@ -1505,12 +1505,12 @@ mafGUICheckListBox* mafGUI::CheckList(int id,const mafString& label,int height, 
 	}
 	else
   {
-		wxStaticText *lab = new wxStaticText(this, GetWidgetId(id), label.toWx(), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+		wxStaticText *lab = new wxStaticText(this, GetWidgetId(id), mafStringToWx(label), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
     if(m_UseBackgroundColor) 
       lab->SetBackgroundColour(m_BackgroundColor);
     lab->SetFont(m_Font);
 		if(!tooltip.empty())	
-      lab->SetToolTip(tooltip.toWx());
+      lab->SetToolTip(mafStringToWx(tooltip));
 		wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
 		sizer->Add( lab,  0, wxRIGHT, LM);
 		sizer->Add( clb	, 0, wxRIGHT, HM);
@@ -1534,7 +1534,7 @@ void mafGUI::VectorN(int id,const mafString& label, double *var,int num_elem,dou
 	wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
 	if(!label.empty())
 	{
-		wxStaticText *lab  = new wxStaticText(this, GetWidgetId(id), label.toWx(), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+		wxStaticText *lab  = new wxStaticText(this, GetWidgetId(id), mafStringToWx(label), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
     if(m_UseBackgroundColor) 
       lab->SetBackgroundColour(m_BackgroundColor);
     lab->SetFont(m_Font);
@@ -1547,7 +1547,7 @@ void mafGUI::VectorN(int id,const mafString& label, double *var,int num_elem,dou
     tex->SetFont(m_Font);
 		tex->SetValidator( mafGUIValidator(this,w_id,tex,&var[i],min,max,decimal_digit));
 		if(!tooltip.empty()) 
-      tex->SetToolTip(tooltip.toWx());
+      tex->SetToolTip(mafStringToWx(tooltip));
   	sizer->Add(tex,0,wxRIGHT,HM);
 	}
 	Add(sizer,0,wxEXPAND,M);
@@ -1567,7 +1567,7 @@ void mafGUI::VectorN(int id,const mafString& label, int *var,int num_elem,int mi
 	wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
 	if(!label.empty())
 	{
-		wxStaticText *lab  = new wxStaticText(this, GetWidgetId(id), label.toWx(), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
+		wxStaticText *lab  = new wxStaticText(this, GetWidgetId(id), mafStringToWx(label), dp, wxSize(LW,LH), wxALIGN_RIGHT | wxST_NO_AUTORESIZE );
     if(m_UseBackgroundColor) 
       lab->SetBackgroundColour(m_BackgroundColor);
     lab->SetFont(m_Font);
@@ -1580,7 +1580,7 @@ void mafGUI::VectorN(int id,const mafString& label, int *var,int num_elem,int mi
     tex->SetFont(m_Font);
 		tex->SetValidator( mafGUIValidator(this,w_id,tex,&var[i],min,max));
 		if(!tooltip.empty()) 
-      tex->SetToolTip(tooltip.toWx());
+      tex->SetToolTip(mafStringToWx(tooltip));
   	sizer->Add(tex,0,wxRIGHT,HM);
 	}
 	Add(sizer,0,wxEXPAND,M);

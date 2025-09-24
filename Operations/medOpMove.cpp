@@ -323,7 +323,7 @@ void medOpMove::OnEventThis(mafEventBase *maf_event)
 		  //m_GizmoTranslate->SetAbsPose(m_RefSysVME->GetOutput()->GetAbsMatrix());
 	  {
 		  mafString m=m_RefSysVME->GetName();
-		  wxBusyInfo wait(m.toWx());
+		  wxBusyInfo wait(mafStringToWx(m));
 		  mafSleep(2000);
 		  m_GizmoTranslate->SetAbsPose(m_RefSysVME->GetOutput()->GetMatrix());		 
 	  }

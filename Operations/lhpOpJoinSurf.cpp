@@ -95,7 +95,7 @@ void lhpOpJoinSurf::CreateGui()
 
   for(int j = 0; j < m_JoinSurf.size();j++)
   {
-    m_ListBox->Append(m_JoinSurf[j]->GetName().toWx());
+    m_ListBox->Append(mafStringToWx(m_JoinSurf[j]->GetName()));
   }
 
 
@@ -150,8 +150,8 @@ void lhpOpJoinSurf::OnEvent(mafEventBase *maf_event)
 
       mafString t;
       t = mafVME::SafeDownCast(sel)->GetName();
-      m_ListBox->Append(t.toWx());
-      m_ListBox->SetStringSelection(t.toWx());
+      m_ListBox->Append(mafStringToWx(t));
+      m_ListBox->SetStringSelection(mafStringToWx(t));
       m_JoinSurf.push_back(mafVME::SafeDownCast(sel));
 
 

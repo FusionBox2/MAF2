@@ -55,7 +55,7 @@ ViewFrame<BaseFrame, ParentFrame, DefaultStyle>::ViewFrame(mafView* view, Parent
   m_Win->Show(true);
 
   BaseFrame::SetIcon(mafPictureFactory::GetPictureFactory()->GetIcon(_R("MDICHILD_ICON")));
-  BaseFrame::SetTitle(wxStripMenuCodes(m_View->GetLabel().toWx()));
+  BaseFrame::SetTitle(wxStripMenuCodes(mafStringToWx(m_View->GetLabel())));
 }
 
 template<class BaseFrame, class ParentFrame, long DefaultStyle>

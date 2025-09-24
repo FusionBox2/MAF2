@@ -78,7 +78,7 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
 					  mafDirMake(imagesDirectoryName);
 				  }
 
-				  wxDir imagesDirectory(imagesDirectoryName.toWx());
+				  wxDir imagesDirectory(mafStringToWx(imagesDirectoryName));
 				  wxString filename;
 				  int i = 0;
 				  bool cont = imagesDirectory.GetFirst(&filename);
@@ -103,10 +103,10 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
 					  mafString path,name,ext;
 					  mafSplitPath(*imageFileName,&path,&name,&ext);
 					  wxString oldWD = wxGetCwd();
-					  wxSetWorkingDirectory(path.toWx());
+					  wxSetWorkingDirectory(mafStringToWx(path));
 					  mafString command = _R("START  ");
 					  command = command + name+_R(".")+ext;
-					  wxExecute( command.toWx() );
+					  wxExecute(mafStringToWx(command) );
 					  wxSetWorkingDirectory(oldWD);
 
 
@@ -120,7 +120,7 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
 						  imageFileName = imagesDirectoryName;
 						  imageFileName += _R("/");
 						  wxString tmpImageFile;
-						  tmpImageFile << v->GetLabel().toWx();
+						  tmpImageFile << mafStringToWx(v->GetLabel());
 						  tmpImageFile << i;
 						  tmpImageFile << ".png";
 
@@ -139,7 +139,7 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
 						  imageFileName = imagesDirectoryName;
 						  imageFileName += _R("/");
 						  wxString tmpImageFile;
-						  tmpImageFile << v->GetLabel().toWx();
+						  tmpImageFile << mafStringToWx(v->GetLabel());
 						  tmpImageFile << i;
 						  tmpImageFile << ".png";
 
@@ -157,10 +157,10 @@ void medLogicWithManagers::OnEvent(mafEventBase *maf_event)
 					  mafString path,name,ext;
 					  mafSplitPath(imageFileName,&path,&name,&ext);
 					  wxString oldWD = wxGetCwd();
-					  wxSetWorkingDirectory(path.toWx());
+					  wxSetWorkingDirectory(mafStringToWx(path));
 					  mafString command = _R("START  ");
 					  command = command + name+_R(".")+ext;
-					  wxShell( command.toWx() );
+					  wxShell(mafStringToWx(command) );
 					  wxSetWorkingDirectory(oldWD);
 				  }
 
@@ -396,7 +396,7 @@ void medLogicWithManagers::Plug( medWizard *wizard, const mafString& menuPath /*
   //Plugging the wizard    
   if(m_WizardManager)
   {
-    m_WizardManager->WizardAdd(wizard, menuPath.toWx());
+    m_WizardManager->WizardAdd(wizard, mafStringToWx(menuPath));
   }
   else 
   {
@@ -530,7 +530,7 @@ void medLogicWithManagers::UpdateFrameTitle()
   {
     wxString title = wxTheApp->GetAppDisplayName();
 
-    title += "   " + m_WizardManager->GetDescription().toWx();
+    title += "   " + mafStringToWx(m_WizardManager->GetDescription());
     m_logic->m_frame->SetTitle(title);
   }
   else 

@@ -195,7 +195,7 @@ void medGUIDicomSettings::OnEvent(mafEventBase *maf_event)
     break;
   case ID_DICOM_FOLDER:
     {
-      m_Config->Write("DicomFolder",m_DicomFolder.toWx());
+      m_Config->Write("DicomFolder", mafStringToWx(m_DicomFolder));
     }
     break;
   case ID_SHOW_ADVANCED_OPTION_SORTING:
@@ -439,7 +439,7 @@ void medGUIDicomSettings::InitializeSettings()
 	}
 	else
 	{
-		m_Config->Write("LastDicomDir",m_LastDicomDir.toWx());
+		m_Config->Write("LastDicomDir", mafStringToWx(m_LastDicomDir));
 	}
 
 	if(m_Config->Read("EnableReadCT", &long_item))
@@ -628,7 +628,7 @@ void medGUIDicomSettings::InitializeSettings()
   }
   else
   {
-    m_Config->Write("DicomFolder",m_DicomFolder.toWx());
+    m_Config->Write("DicomFolder", mafStringToWx(m_DicomFolder));
   }
 
   if(m_Config->Read("UseDefaultDicomFolder", &long_item))
@@ -865,7 +865,7 @@ void medGUIDicomSettings::SetLastDicomDir( mafString lastDicomDir )
 {
   m_LastDicomDir = lastDicomDir;
   assert(m_Config);
-  m_Config->Write("LastDicomDir",m_LastDicomDir.toWx());
+  m_Config->Write("LastDicomDir", mafStringToWx(m_LastDicomDir));
 
 }
 

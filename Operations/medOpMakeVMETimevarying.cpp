@@ -548,7 +548,7 @@ void medOpMakeVMETimevarying::UpdateAddedVMEsListBox()//GUI
     newListBoxItem = wxString("t = ");
     newListBoxItem.Append(wxString::Format("%f",(* AddedVMEsIter)->m_TimeStamp));
     newListBoxItem.Append(wxString(" - "));
-    newListBoxItem.Append((* AddedVMEsIter)->m_VME->GetName().toWx());
+    newListBoxItem.Append(mafStringToWx((* AddedVMEsIter)->m_VME->GetName()));
     m_AddedVMEsListBox->Append(newListBoxItem);
   }
 }

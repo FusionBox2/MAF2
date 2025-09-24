@@ -843,7 +843,7 @@ void medOpMeshDeformation::OnEvent(mafEventBase *maf_event)
   {
     m_OCToAdd = vme;
 
-    m_OCNameCtrl->SetLabel(m_OCToAdd->GetName().toWx());
+    m_OCNameCtrl->SetLabel(mafStringToWx(m_OCToAdd->GetName()));
     m_BttnSelDC->Enable(true);  
     m_BttnAddCurve->Enable(true);
   }      
@@ -859,7 +859,7 @@ void medOpMeshDeformation::OnEvent(mafEventBase *maf_event)
   {
     m_DCToAdd = vme;
 
-    m_DCNameCtrl->SetLabel(m_DCToAdd->GetName().toWx());
+    m_DCNameCtrl->SetLabel(mafStringToWx(m_DCToAdd->GetName()));
     m_CCCtrl->Enable(true);  
   } 
 }
@@ -1492,7 +1492,7 @@ void medOpMeshDeformation::OnEvent(mafEventBase *maf_event)
         else
         {
           //we have some curve
-          szOldName = pCVMEs[i][j]->GetName().toWx();
+          szOldName = mafStringToWx(pCVMEs[i][j]->GetName());
           if (
             szOldName.Matches(wxT("*_OC#?*")) || 
             szOldName.Matches(wxT("*_DC#?*"))

@@ -175,7 +175,7 @@ void medOpImporterLandmarkTXT::Read()
   
   std::vector<int> lm_idx;
 
-  wxFileInputStream inputFile( m_File.toWx() );
+  wxFileInputStream inputFile(mafStringToWx(m_File) );
   wxTextInputStream text( inputFile );
 
   wxString line;

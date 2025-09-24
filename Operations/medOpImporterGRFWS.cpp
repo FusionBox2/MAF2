@@ -112,7 +112,7 @@ void medOpImporterGRFWS::OpRun()
 void medOpImporterGRFWS::Read()   
 //----------------------------------------------------------------------------
 {
-  wxFileInputStream inputFile( m_File.toWx());
+  wxFileInputStream inputFile(mafStringToWx(m_File));
   wxTextInputStream text( inputFile );
 
   wxString line;
@@ -149,7 +149,7 @@ void medOpImporterGRFWS::ReadForcePlates()
   tag_Nature.SetName(_R("VME_NATURE"));
   tag_Nature.SetValue(_R("NATURAL"));
 
-  wxFileInputStream inputCountFile( m_File.toWx() );
+  wxFileInputStream inputCountFile(mafStringToWx(m_File) );
   wxTextInputStream textCount( inputCountFile );
 
   wxString line_count;
@@ -161,7 +161,7 @@ void medOpImporterGRFWS::ReadForcePlates()
   } while (!inputCountFile.Eof());
   totlines = totlines - 10;
 
-  wxFileInputStream inputFile( m_File.toWx() );
+  wxFileInputStream inputFile(mafStringToWx(m_File) );
   wxTextInputStream text( inputFile );
 
   wxString line;
@@ -493,7 +493,7 @@ void medOpImporterGRFWS::ReadSingleVector()
   tag_Nature.SetName(_R("VME_NATURE"));
   tag_Nature.SetValue(_R("NATURAL"));
 
-  wxFileInputStream inputCountFile( m_File.toWx() );
+  wxFileInputStream inputCountFile(mafStringToWx(m_File) );
   wxTextInputStream textCount( inputCountFile );
 
   wxString line_count;
@@ -505,7 +505,7 @@ void medOpImporterGRFWS::ReadSingleVector()
   } while (!inputCountFile.Eof());
   totlines = totlines - 5;
 
-  wxFileInputStream inputFile( m_File.toWx());
+  wxFileInputStream inputFile(mafStringToWx(m_File));
   wxTextInputStream text( inputFile );
 
   wxString line;

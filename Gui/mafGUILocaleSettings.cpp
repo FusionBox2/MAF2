@@ -102,7 +102,7 @@ void mafGUILocaleSettings::OnEvent(mafEventBase *maf_event)
         m_LanguageDictionary = _R("en");
       }
       m_Config->Write("Language", wxLocale::GetLanguageInfo(m_Language)->CanonicalName);
-      m_Config->Write("Dictionary",m_LanguageDictionary.toWx());
+      m_Config->Write("Dictionary", mafStringToWx(m_LanguageDictionary));
       m_Config->Flush();
     }
     break;
@@ -138,7 +138,7 @@ void mafGUILocaleSettings::InitializeSettings()
     m_Language = wxLANGUAGE_ENGLISH;
     m_LanguageDictionary = _R("en");
     m_Config->Write("Language", wxLocale::GetLanguageInfo(m_Language)->CanonicalName);
-    m_Config->Write("Dictionary",m_LanguageDictionary.toWx());
+    m_Config->Write("Dictionary", mafStringToWx(m_LanguageDictionary));
   }
 
   m_Config->Flush();
@@ -147,7 +147,7 @@ void mafGUILocaleSettings::InitializeSettings()
   prefix += "\\Language\\";
   m_Locale.Init(m_Language);
   m_Locale.AddCatalogLookupPathPrefix(prefix);
-  m_Locale.AddCatalog(m_LanguageDictionary.toWx());
+  m_Locale.AddCatalog(mafStringToWx(m_LanguageDictionary));
 #ifndef WIN32
   m_Locale.AddCatalog("fileutils");
 #endif
@@ -189,7 +189,7 @@ void mafGUILocaleSettings::SetLanguageDirectory(const char* prefix, const char* 
   m_LanguageDictionary = _R(languageDirectory);
   m_Locale.AddCatalogLookupPathPrefix(prefix);
 
-  m_Locale.AddCatalog(m_LanguageDictionary.toWx());
+  m_Locale.AddCatalog(mafStringToWx(m_LanguageDictionary));
   if (m_LanguageDictionary == _R("fr"))
   {
   	m_Language		= wxLANGUAGE_FRENCH;

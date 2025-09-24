@@ -107,7 +107,7 @@ void mafGUIApplicationSettings::OnEvent(mafEventBase *maf_event)
       mafEventBase::SetLogVerbose(m_VerboseLog != 0);
     break;
     case ID_LOG_DIR:
-      m_Config->Write("LogFolder",m_LogFolder.toWx());
+      m_Config->Write("LogFolder", mafStringToWx(m_LogFolder));
     break;
     case ID_WARN_UNDO:
       m_Config->Write("WarnUser",m_WarnUserFlag);
@@ -172,7 +172,7 @@ void mafGUIApplicationSettings::InitializeSettings()
   }
   else
   {
-    m_Config->Write("LogFolder",m_LogFolder.toWx());
+    m_Config->Write("LogFolder", mafStringToWx(m_LogFolder));
   }
   if (m_Config->Read("WarnUser", &long_item))
   {
@@ -213,7 +213,7 @@ void mafGUIApplicationSettings::SetLogFolder(mafString log_folder)
   if (m_LogFolder != log_folder)
   {
     m_LogFolder = log_folder;
-    m_Config->Write("LogFolder",m_LogFolder.toWx());
+    m_Config->Write("LogFolder", mafStringToWx(m_LogFolder));
     m_Config->Flush();
   }
 }

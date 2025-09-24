@@ -588,7 +588,7 @@ mafGUI* medPipeGraph::CreateGui()
 			name = m_ItemName + mafToString(n);
 			tag_Signals->SetValue(name, n);
 		}
-		m_CheckBox->AddItem(n, name.toWx(), checked);
+		m_CheckBox->AddItem(n, mafStringToWx(name), checked);
 	}
 	return gui;
 }

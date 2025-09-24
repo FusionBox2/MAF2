@@ -652,7 +652,7 @@ void lhpVMESurfaceScalarVarying::FillScalarsName(bool new_scalars)
 			m_ScalarsAvailableList->Clear();
 			for (int s = 0; s < tag_Signals->GetNumberOfComponents(); s++)
 			{
-				m_ScalarsAvailableList->AddItem(s, tag_Signals->GetValue(s).toWx(), false);
+				m_ScalarsAvailableList->AddItem(s, mafStringToWx(tag_Signals->GetValue(s)), false);
 			}
 			if (new_scalars)
 			{

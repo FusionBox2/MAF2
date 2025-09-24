@@ -933,7 +933,7 @@ void mafInteractionManager::UpdateBindings()
         if (*it_list == m_CurrentDevice)
           found = true;
       }
-      m_ActionsList->AddItem(i++,action->GetName().toWx(),found);
+      m_ActionsList->AddItem(i++, mafStringToWx(action->GetName()),found);
     }
   }
 }

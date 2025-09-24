@@ -41,7 +41,7 @@ medWizardBlockInformation::medWizardBlockInformation(const char *name):medWizard
 {
   //setting image on top by default
   m_HorizontalImage=true;
-  m_ImagesPath=(mafGetApplicationDirectory() + _R("\\WizardImages\\")).toWx();
+  m_ImagesPath= mafStringToWx(mafGetApplicationDirectory() + _R("\\WizardImages\\"));
 }
 
 //----------------------------------------------------------------------------

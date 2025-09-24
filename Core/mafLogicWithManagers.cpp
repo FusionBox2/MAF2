@@ -271,9 +271,9 @@ bool mafLogicWithManagers::Configure()
     m_logic->m_ToolBar->SetMargins(0, 0);
     m_logic->m_ToolBar->SetToolSeparation(2);
     m_logic->m_ToolBar->SetToolBitmapSize(wxSize(20, 20));
-    m_logic->m_ToolBar->AddTool(wxID_NEW, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_NEW")), (_L("new ") + m_logic->m_StorageData->m_Extension + _L(" storage file")).toWx());
-    m_logic->m_ToolBar->AddTool(wxID_OPEN, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_OPEN")), (_L("open ") + m_logic->m_StorageData->m_Extension + _L(" storage file")).toWx());
-    m_logic->m_ToolBar->AddTool(wxID_SAVE, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_SAVE")), (_L("save current ") + m_logic->m_StorageData->m_Extension + _L(" storage file")).toWx());
+    m_logic->m_ToolBar->AddTool(wxID_NEW, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_NEW")), mafStringToWx(_L("new ") + m_logic->m_StorageData->m_Extension + _L(" storage file")));
+    m_logic->m_ToolBar->AddTool(wxID_OPEN, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_OPEN")), mafStringToWx(_L("open ") + m_logic->m_StorageData->m_Extension + _L(" storage file")));
+    m_logic->m_ToolBar->AddTool(wxID_SAVE, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("FILE_SAVE")), mafStringToWx(_L("save current ") + m_logic->m_StorageData->m_Extension + _L(" storage file")));
     m_logic->m_ToolBar->AddSeparator();
 
     m_logic->m_ToolBar->AddTool(wxID_PRINT, wxEmptyString, mafPictureFactory::GetPictureFactory()->GetBmp(_R("PRINT")), _("print the selected view"));
@@ -349,7 +349,7 @@ bool mafLogicWithManagers::Configure()
       s += mafWxToString(m_logic->m_frame->GetTitle());
       s += mafString::Format(_R("_%02d_%02d_%d_%02d_%2d"), log_time.GetYear(), log_time.GetMonth() + 1, log_time.GetDay(), log_time.GetHour(), log_time.GetMinute());
       s += _R(".log");
-      if (m_logic->m_Logger->SetFileName(s.toWx()) == MAF_ERROR)
+      if (m_logic->m_Logger->SetFileName(mafStringToWx(s)) == MAF_ERROR)
       {
         mafLogMessage(_M(_R("Unable to create log file ") + s));
       }
@@ -501,7 +501,7 @@ void mafLogicWithManagers::Plug(mafView* view, bool visibleInMenu)
         m_logic->m_ViewMenu->AppendSeparator();
         m_logic->m_ViewMenu->Append(0, _("Add View"), m_logic->m_ViewListMenu);
       }
-      wxString s = view->GetLabel().toWx();
+      wxString s = mafStringToWx(view->GetLabel());
       mafID command = GetNewMenuId();
       m_logic->m_ViewListMenu->Append(command, s, (wxMenu*)NULL, s);
       m_logic->m_MenuElems.push_back(mafMenuElems(false, id, command));
@@ -727,7 +727,7 @@ void mafLogicWithManagers::Init(int argc, char **argv)
         op_param += _R(" ");
         op_param += _R(argv[p]);
       }
-      m_logic->m_OpManager->OpRun(op_type, (void *)op_param.toStd().c_str());
+      m_logic->m_OpManager->OpRun(op_type, (void *)mafStringToStd(op_param).c_str());
     }
   }
 
@@ -739,7 +739,7 @@ void mafLogicWithManagers::UpdateFrameTitle()
   mafString title = mafWxToString(wxTheApp->GetAppDisplayName());
   if(!m_logic->m_StorageData->m_MSFFile.empty())
     title += _R("   ") + m_logic->m_StorageData->m_MSFFile;
-  m_logic->m_frame->SetTitle(title.toWx());
+  m_logic->m_frame->SetTitle(mafStringToWx(title));
 }
 void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
 {
@@ -1031,7 +1031,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
     int menuId, opId;
     mafString *s = e->GetString();
     menuId = m_logic->m_MenuBar->FindMenu(_("Operations"));
-    opId = m_logic->m_MenuBar->GetMenu(menuId)->FindItem(s->toWx());
+    opId = m_logic->m_MenuBar->GetMenu(menuId)->FindItem(mafStringToWx(*s));
     m_logic->m_OpManager->OpRun(opId);
     return;
   }
@@ -1402,7 +1402,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase *maf_event)
       m_logic->m_frame->ProgressBarSetVal(e->GetArg());
       break;
     case PROGRESSBAR_SET_TEXT:
-    { wxString s = e->GetString()->toWx(); m_logic->m_frame->ProgressBarSetText(s); }
+    { wxString s = mafStringToWx(*e->GetString()); m_logic->m_frame->ProgressBarSetText(s); }
     break;
     // ###############################################################
     case UPDATE_UI:
@@ -1565,7 +1565,7 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
       m_logic->m_Storage.reset();
       return false;
     }
-    wxSetWorkingDirectory(m_logic->m_Storage->m_TmpDir.toWx());
+    wxSetWorkingDirectory(mafStringToWx(m_logic->m_Storage->m_TmpDir));
   }
 
   ParsePathName(unixname);
@@ -1606,11 +1606,11 @@ bool mafLogicWithManagers::OnFileOpen(const mafString& file_to_open)
 
   if (!m_logic->m_Storage->m_TmpDir.empty())
   {
-    m_logic->m_FileHistory.AddFileToHistory(m_logic->m_StorageData->m_ZipFile.toWx()); // add the zmsf file to the history
+    m_logic->m_FileHistory.AddFileToHistory(mafStringToWx(m_logic->m_StorageData->m_ZipFile)); // add the zmsf file to the history
   }
   else if(/*!remote_file && */res == MAF_OK)
   {
-    m_logic->m_FileHistory.AddFileToHistory(m_logic->m_StorageData->m_MSFFile.toWx()); // add the msf file to the history
+    m_logic->m_FileHistory.AddFileToHistory(mafStringToWx(m_logic->m_StorageData->m_MSFFile)); // add the msf file to the history
   }
   else if(res != MAF_OK && m_logic->m_FileHistoryIdx != -1)
   {
@@ -1754,11 +1754,11 @@ bool mafLogicWithManagers::OnFileSaveAs()
   if (!m_logic->m_StorageData->m_ZipFile.empty())
   {
     mafZIPSave(m_logic->m_StorageData->m_ZipFile, m_logic->m_Storage->m_TmpDir);
-    m_logic->m_FileHistory.AddFileToHistory(m_logic->m_StorageData->m_ZipFile.toWx()); // add the zmsf to the file history
+    m_logic->m_FileHistory.AddFileToHistory(mafStringToWx(m_logic->m_StorageData->m_ZipFile)); // add the zmsf to the file history
   }
   else
   {
-    m_logic->m_FileHistory.AddFileToHistory(m_logic->m_StorageData->m_MSFFile.toWx()); // add the msf to the file history
+    m_logic->m_FileHistory.AddFileToHistory(mafStringToWx(m_logic->m_StorageData->m_MSFFile)); // add the msf to the file history
   }
   return true;
 }
@@ -2087,7 +2087,7 @@ void mafLogicWithManagers::ViewCreated(mafView *v)
 
     if (GetExternalViewFlag())
     {
-      mafGUIViewFrame *extern_view = new mafGUIViewFrame(v, m_logic->m_frame, v->GetLabel().toWx(), m_logic->m_frame->FromDIP(wxPoint(10,10)), m_logic->m_frame->FromDIP(wxSize(800,600)));
+      mafGUIViewFrame *extern_view = new mafGUIViewFrame(v, m_logic->m_frame, mafStringToWx(v->GetLabel()), m_logic->m_frame->FromDIP(wxPoint(10,10)), m_logic->m_frame->FromDIP(wxSize(800,600)));
       extern_view->Bind(wxEVT_COMMAND_BUTTON_CLICKED,
         [=](wxCommandEvent& event)
         {
@@ -2251,7 +2251,7 @@ void mafLogicWithManagers::AddToMenu(const mafString& name, long id, wxMenu* pat
   if (!menuPath.empty())
   {
     wxString op_path = "";
-    wxStringTokenizer path_tkz(menuPath.toWx(), "/");
+    wxStringTokenizer path_tkz(mafStringToWx(menuPath), "/");
     while (path_tkz.HasMoreTokens())
     {
       op_path = path_tkz.GetNextToken();
@@ -2270,7 +2270,7 @@ void mafLogicWithManagers::AddToMenu(const mafString& name, long id, wxMenu* pat
       }
     }
   }
-  path_menu->Append(id, name.toWx(), name.toWx());
+  path_menu->Append(id, mafStringToWx(name), mafStringToWx(name));
   SetAccelerator(name, id);
 }
 

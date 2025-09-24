@@ -416,7 +416,7 @@ void mafOpManager::FillTraceabilityAttribute(mafOp *op, std::shared_ptr<mafNode>
     mafString regKeyPath = _R("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\");
     regKeyPath.append(appStamp);
 
-    wxRegKey RegKey(regKeyPath.toWx());
+    wxRegKey RegKey(mafStringToWx(regKeyPath));
     if(RegKey.Exists())
     {
         wxString revisionWx;
@@ -442,7 +442,7 @@ void mafOpManager::FillTraceabilityAttribute(mafOp *op, std::shared_ptr<mafNode>
   if (out_node)
   {
     int c = 0; //counter not to write single parameter on first VME which is a group
-    wxString singleParameter = parameters.toWx();
+    wxString singleParameter = mafStringToWx(parameters);
     for (auto& node : *out_node)
     {
       c++;
