@@ -439,7 +439,7 @@ MAF_EXPORT float RoundValue(float f_in, int decimal_digits = 2);
 MAF_EXPORT double RoundValue(double d_in, int decimal_digits = 2);
 
 /** Formats the specified size to B, KB, MB or GB */
-MAF_EXPORT void mafFormatDataSize(long long size, mafString& szOut);
+MAF_EXPORT mafString mafFormatDataSize(long long size);
 
 MAF_EXPORT int* GetMAFExpertMode();
 

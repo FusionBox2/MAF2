@@ -1982,7 +1982,7 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 			m_SourceDimensions = mafString::Format(_R("%d x %d x %d"), dims[0], dims[1], dims[2]);
 
 			//size		
-			mafFormatDataSize(((vtkIdType64)dims[0]) * dims[1] * dims[2], m_SourceSize);
+			m_SourceSize = mafFormatDataSize(((vtkIdType64)dims[0]) * dims[1] * dims[2]);
 
 			double b[6];
 			if (ds->IsRectilinearGrid())
@@ -2060,9 +2060,9 @@ void mafVMEVolumeLarge::InverseTransformExtent(double extMm[6], int outUn[6])
 		nBytesPerVoxel = ((vtkImageData*)ds)->GetScalarSize();
 	else if (ds->GetPointData()->GetScalars() != NULL)
 		nBytesPerVoxel = ds->GetPointData()->GetScalars()->GetDataTypeSize();
-	mafFormatDataSize(
+	m_SampleSize = mafFormatDataSize(
 		((vtkIdType64)wext[1] - wext[0] + 1) *
-		(wext[3] - wext[2] + 1) * (wext[5] - wext[4] + 1) * nBytesPerVoxel, m_SampleSize);
+		(wext[3] - wext[2] + 1) * (wext[5] - wext[4] + 1) * nBytesPerVoxel);
 
 #ifdef VME_VOLUME_VER1
 	//sample rate

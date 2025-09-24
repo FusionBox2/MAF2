@@ -146,8 +146,7 @@
 {
   //Displays a warning that the volume to be imported is large
   //Returns true, if the user confirms the import (i.e., it can proceed)
-  mafString szSize;
-  mafFormatDataSize(nEstimatedSize, szSize);
+  mafString szSize = mafFormatDataSize(nEstimatedSize);
 
   return (wxMessageBox(wxString::Format(
     _("The selected VOI will be imported as VolumeLarge VME, \n"
@@ -163,8 +162,7 @@
 //------------------------------------------------------------------------
 {
   //Displays a message box with the information about consumed space
-  mafString szSize;
-  mafFormatDataSize(nRealSize, szSize);
+  mafString szSize = mafFormatDataSize(nRealSize);
 
   wxMessageBox(wxString::Format(
     _("An optimised volume file with the total size\n"

@@ -216,7 +216,7 @@ double RoundValue(double d_in, int decimal_digits)
   return b / pow((double)10,(double)decimal_digits);
 }
 //----------------------------------------------------------------------------
-void mafFormatDataSize( long long size, mafString& szOut )
+mafString mafFormatDataSize( long long size)
 //----------------------------------------------------------------------------
 {
   const mafString SZUN[] = {_R("B"), _R("KB"), _R("MB"), _R("GB"), _R("")};
@@ -233,7 +233,7 @@ void mafFormatDataSize( long long size, mafString& szOut )
     idx++;
   }
 
-  szOut = mafString::Format(_R("%g "), RoundValue(nsize)) + SZUN[idx];
+  return mafString::Format(_R("%g "), RoundValue(nsize)) + SZUN[idx];
 }
 //----------------------------------------------------------------------------
 wxBitmap mafGrayScale(wxBitmap bmp)
