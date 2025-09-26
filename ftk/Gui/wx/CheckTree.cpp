@@ -171,14 +171,14 @@ namespace gui::wx
 
 	void CheckTree::NodeUpdateIcon(mafNode* node)
 	{
-		//auto item = ItemFromNode((intptr_t)vme);
+		//auto item = ItemFromNode(reinterpret_cast<intptr_t>(vme));
 		//auto iter = std::make_unique<mafNodeIterator>(vme);// static_cast<mafGUICheckTreeItemData*>(m_NodeTree->GetItemData(item))->GetSharedNode().get());
 		//auto iter = std::make_unique<mafNodeIterator>(static_cast<mafGUICheckTreeItemData*>(m_NodeTree->GetItemData(item))->GetSharedNode().get());
 		for (auto& node : *node)
 		{
 			int dataStatus = mafVME::StaticDownCast(&node)->IsDataAvailable() ? 0 : 1;
 			int icon_index = ClassNameToIcon(_R(node.GetTypeName())) + (GetVmeStatus(&node) * 2) + dataStatus;
-			SetNodeIcon((intptr_t)&node, icon_index);
+			SetNodeIcon(reinterpret_cast<intptr_t>(&node), icon_index);
 
 			if (node.GetNumberOfLinks() != 0)
 			{
@@ -190,7 +190,7 @@ namespace gui::wx
 						{
 							dataStatus = linkedVME->IsDataAvailable() ? 0 : 1;
 							icon_index = ClassNameToIcon(_R(linkedVME->GetTypeName())) + (GetVmeStatus(linkedVME.get()) * 2) + dataStatus;
-							SetNodeIcon((intptr_t)linkedVME.get(), icon_index);
+							SetNodeIcon(reinterpret_cast<intptr_t>(linkedVME.get()), icon_index);
 						}
 					}
 				}
