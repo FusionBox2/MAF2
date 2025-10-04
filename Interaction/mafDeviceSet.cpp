@@ -144,11 +144,10 @@ void mafDeviceSet::AddDevice(std::shared_ptr<mafDevice> device)
 {
   assert (device);
   assert (!device->GetName().empty()); // all devices must have a name
-  m_DevicesMutex->lock();
+  std::unique_lock guard(*m_DevicesMutex);
   m_Devices.push_back(device);
   device->SetListener(this);
   device->PlugEventSource(this,MCH_DOWN);
-  m_DevicesMutex->unlock();
   
   InvokeEvent(DEVICE_ADDED,MCH_UP,device.get());
 }
@@ -157,17 +156,15 @@ void mafDeviceSet::AddDevice(std::shared_ptr<mafDevice> device)
 std::shared_ptr<mafDevice> mafDeviceSet::GetDevice(const char *name)
 //------------------------------------------------------------------------------
 {
-  m_DevicesMutex->lock();
+  std::unique_lock guard(*m_DevicesMutex);
   for (auto& device : m_Devices)
   {
     if (device->GetName()==_R(name))
     {
-      m_DevicesMutex->unlock();
       return device;
     }
   }
 
-  m_DevicesMutex->unlock();
   return nullptr;
 }
 //------------------------------------------------------------------------------
@@ -179,7 +176,6 @@ std::shared_ptr<mafDevice> mafDeviceSet::GetDevice(mafID id)
   {
     if (device && device->GetID()==id)
     {
-      m_DevicesMutex->unlock();
       return device;
     }
   }
