@@ -42,7 +42,7 @@ mafStorage::~mafStorage()
 }
 
 //------------------------------------------------------------------------------
-void mafStorage::SetManager(mafNodeManager *manager)
+void mafStorage::SetManager(model::data::NodeManager *manager)
 //------------------------------------------------------------------------------
 {
   if(m_Document)

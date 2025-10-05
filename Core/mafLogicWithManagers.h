@@ -2,21 +2,19 @@
 
 #include "ftkConfigure.h"
 
-#include "ftk/Gui/wx/Panel.h"
+#include "mafBaseEventHandler.h"
 #include "mafDecl.h"
 #include "mafEvent.h"
 #include "mafGUIVMEChooser.h"
-#include "ftk/Core/NodeManager.h"
 #include "mafStorage.h"
-#include "wx/filehistory.h"
-#include <memory>
 
-#include "mafBaseEventHandler.h"
-#include "ftk/Gui/wx/SideBar.h"
-#include <wx/notebook.h>
-#include <wx/icon.h>
 #include "ftk/Gui/wx/MainFrame.h"
+#include "ftk/Gui/wx/Panel.h"
+#include "ftk/Gui/wx/SideBar.h"
 
+#include "wx/filehistory.h"
+
+#include <memory>
 
 class mafView;
 namespace gui::wx
@@ -33,6 +31,10 @@ class mafGUIApplicationSettings;
 class mafGUISettingsStorage;
 class mafGUISettingsTimeBar;
 
+namespace model::data
+{
+	class NodeManager;
+}
 class mafViewManager;
 class mafOpManager;
 class mafGUIMaterialChooser;
@@ -110,7 +112,7 @@ public:
 	std::vector<wxAcceleratorEntry> m_AccelTable;
 
 	std::unique_ptr<mafSideBar>             m_SideBar;
-	std::unique_ptr<mafNodeManager>         m_NodeManager;
+	std::unique_ptr<model::data::NodeManager>         m_NodeManager;
 	std::unique_ptr<mafViewManager>         m_ViewManager;
 	std::unique_ptr<mafOpManager>           m_OpManager;
 	std::unique_ptr<mafInteractionManager>  m_InteractionManager;

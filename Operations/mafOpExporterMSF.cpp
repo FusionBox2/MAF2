@@ -75,7 +75,7 @@ int mafOpExporterMSF::ExportMSF()
 		m_MSFFile = dir2 + _R("\\") + name + _R(".") + ext;
 	}
 
-  mafNodeManager manager;
+  model::data::NodeManager manager;
   mafStorage storage;
   storage.SetManager(&manager);
   storage.SetURL(m_MSFFile);

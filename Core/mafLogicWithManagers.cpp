@@ -7,6 +7,7 @@
 #include "mafViewCompound.h"
 #include "mafWXLog.h"
 
+#include "ftk/Core/NodeManager.h"
 #include "mafViewManager.h"
 #include "mafOp.h"
 #include "mafOpManager.h"
@@ -412,7 +413,7 @@ bool mafLogicWithManagers::Configure()
 	m_logic->m_frame->GetDockManager().Update();
 
 	{
-		m_logic->m_NodeManager = std::make_unique<mafNodeManager>();
+		m_logic->m_NodeManager = std::make_unique<model::data::NodeManager>();
 		m_logic->m_NodeManager->SetListener(this);
 	}
 

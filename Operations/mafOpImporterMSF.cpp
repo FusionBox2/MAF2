@@ -110,7 +110,7 @@ int mafOpImporterMSF::ImportMSF()
   ParsePathName(unixname); // convert to unix format
 
   m_MSFFile = unixname; 
-  mafNodeManager manager;
+  model::data::NodeManager manager;
   auto storage = std::make_unique<mafStorage>();
   storage->SetManager(&manager);
   storage->SetURL(m_File);

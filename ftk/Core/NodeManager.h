@@ -56,6 +56,4 @@ namespace model::data
 	};
 }
 
-using mafNodeManager = model::data::NodeManager;
-
 END_FTK_NAMESPACE
