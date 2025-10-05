@@ -612,11 +612,12 @@ bool mafLogicWithManagers::Configure()
 
 	return true;
 }
-void mafLogicWithManagers::Plug(mafView* view, bool visibleInMenu)
+void mafLogicWithManagers::Plug(std::unique_ptr<mafView> view, bool visibleInMenu)
 {
 	if (m_logic->m_ViewManager)
 	{
-		long id = m_logic->m_ViewManager->ViewAdd(view);
+		wxString s = mafStringToWx(view->GetLabel());
+		long id = m_logic->m_ViewManager->ViewAdd(std::move(view));
 		if (visibleInMenu)
 		{
 			if (!m_logic->m_ViewListMenu)
@@ -625,9 +626,8 @@ void mafLogicWithManagers::Plug(mafView* view, bool visibleInMenu)
 				m_logic->m_ViewMenu->AppendSeparator();
 				m_logic->m_ViewMenu->Append(0, _("Add View"), m_logic->m_ViewListMenu);
 			}
-			wxString s = mafStringToWx(view->GetLabel());
 			mafID command = GetNewMenuId();
-			m_logic->m_ViewListMenu->Append(command, s, (wxMenu*)NULL, s);
+			m_logic->m_ViewListMenu->Append(command, s, (wxMenu*)nullptr, s);
 			m_logic->m_MenuElems.push_back(mafMenuElems(false, id, command));
 		}
 	}
@@ -1219,10 +1219,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase* maf_event)
 	}
 	if (VIEW_RESIZE == eventId)
 	{
-		mafView* view = NULL;
-		const char* viewStr = e->GetString()->GetCStr();
-		view = m_logic->m_ViewManager->GetFromList(viewStr);
-		if (view)
+		if (auto view = m_logic->m_ViewManager->GetFromList(*e->GetString()))
 		{
 			view->GetFrame()->SetSize(e->GetWidth(), e->GetHeight());
 			view->GetFrame()->SetPosition(wxPoint(e->GetX(), e->GetY()));

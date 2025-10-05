@@ -42,7 +42,7 @@ public:
 
 	void OnEvent(mafEventBase* maf_event) override;
 
-	virtual void Plug(mafView* view, bool visibleInMenu = true);
+	virtual void Plug(std::unique_ptr<mafView> view, bool visibleInMenu = true);
 	virtual void Plug(mafOp* op, const mafString& menuPath = _R(""), bool canUndo = true, mafGUISettings* setting = nullptr);
 
 	virtual void Init(int argc, char** argv);

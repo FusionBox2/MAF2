@@ -5,11 +5,10 @@
 #include "mafEvent.h"
 #include "mafEventSender.h"
 #include "mafBaseEventHandler.h"
-#include <list>
 
-//----------------------------------------------------------------------------
-// forward references :
-//----------------------------------------------------------------------------
+#include <list>
+#include <memory>
+
 namespace model::data
 {
 	class Node;
@@ -30,26 +29,28 @@ class MAF_EXPORT mafViewManager : public mafBaseEventHandler, public mafEventSen
 public:
 	mafViewManager();
 	~mafViewManager() override;
-	void SetRemoteListener(mafBaseEventHandler* Listener) { m_RemoteListener = Listener; };
+
+	void SetRemoteListener(mafBaseEventHandler* Listener) { m_RemoteListener = Listener; }
+
 	void OnEvent(mafEventBase* maf_event) override;
 
 	/** Add the vme to all views. */
-	void VmeAdd(std::shared_ptr<mafNode> n);
+	void VmeAdd(std::shared_ptr<mafNode> node);
 
 	/** Remove the vme from all views. */
-	void VmeRemove(mafNode* n);
+	void VmeRemove(mafNode* node);
 
 	/** Show the selection of the vme in all views. */
-	void VmeSelect(mafNode* n);
+	void VmeSelect(mafNode* node);
 
 	/** Show/Hide the vme in the selected view. */
-	void VmeShow(mafNode* n, bool show);
+	void VmeShow(mafNode* node, bool show);
 
 	/** inform the views that a vme was modified */
-	void VmeModified(mafNode* vme); //SIL. 9-3-2005: 
+	void VmeModified(mafNode* node); //SIL. 9-3-2005: 
 
 	/** Add the View to the view-list. */
-	virtual long ViewAdd(mafView* view);
+	virtual long ViewAdd(std::unique_ptr<mafView> view);
 
 	/** Pass the selected render window to the mouse device. */
 	void ViewSelected(mafView* view /*, wxVTKWindow *rwi*/);
@@ -76,7 +77,7 @@ public:
 	void CameraReset(bool sel = false);
 
 	/** Reset the camera to fit the specified vme. apply to the selected view only. */
-	void CameraReset(mafNode* vme);
+	void CameraReset(mafNode* node);
 
 	/** Update the camera for all opened views; optionally the Update can be limited for the selected view. */
 	void CameraUpdate(bool only_selected = false);
@@ -88,46 +89,48 @@ public:
 	void PropertyUpdate(bool fromTag = false);
 
 	/** Return the selected view. */
-	mafView* GetSelectedView();
+	mafView* GetSelectedView() const;
 
 	/** Return the root of the vme tree. */
-	mafNode* GetCurrentRoot() { return m_RootVme.get(); }
+	mafNode* GetCurrentRoot() const { return m_RootVme.get(); }
 
 	/** Return the created view-list. */
-	const std::list<mafView*>& GetList() { return m_ViewList; }
+	const auto& GetList() { return m_ViewList; }
 
 	/** Return a view (defined by label) if is present on open wiews list*/
-	mafView* GetFromList(const char* label);
+	mafView* GetFromList(const mafString& label) const;
 
 	/** Return the plugged view-list. */
-	const std::vector<mafView*>& GetListTemplate() { return m_ViewTemplate; }
+	const auto& GetListTemplate() { return m_ViewTemplate; }
 
 	/** Empty. */
 	void OnQuit();
 
 	/** Return the view pointer from view's id and multiplicity. */
-	mafView* GetView(int id, int mult) { return m_ViewMatrixID[id][mult]; };
+	mafView* GetView(int id, int mult) const;
 
 	/** Initialize the action for the mouse device.*/
 	void SetMouse(mafDeviceButtonsPadMouse* mouse);
 
 	/** Turn On/Off the collaboration status.*/
-	void Collaborate(bool status) { m_CollaborateStatus = status; };
+	void Collaborate(bool status) { m_CollaborateStatus = status; }
 
-	bool m_FromRemote;  ///< Flag used from RemoteLogic to avoid loop
+	bool m_FromRemote = false;  ///< Flag used from RemoteLogic to avoid loop
 
 protected:
-	mafDeviceButtonsPadMouse* m_Mouse;
-	std::list<mafView*>           m_ViewList;  // created view list
 
-	std::vector<mafView*>       m_ViewTemplate;   // view template vector
+	std::vector<std::unique_ptr<mafView> > m_ViewTemplate; // view template vector
 
-	mafBaseEventHandler* m_RemoteListener;
+	mafDeviceButtonsPadMouse* m_Mouse = nullptr;
+
+	std::list<mafView*> m_ViewList; // created view list
+
+	mafBaseEventHandler* m_RemoteListener = nullptr;
 	std::shared_ptr<mafNode> m_RootVme;
-	mafNode* m_SelectedVme;
-	mafView* m_SelectedView;
-	wxVTKWindow* m_SelectedRWI;
-	mafView* m_ViewBeingCreated;
-	std::vector<std::vector<mafView*> > m_ViewMatrixID;  ///< Matrix to access views directly by (id, multiplicity)
-	bool m_CollaborateStatus;
+	mafNode* m_SelectedVme = nullptr;
+	mafView* m_SelectedView = nullptr;
+	wxVTKWindow* m_SelectedRWI = nullptr;
+	mafView* m_ViewBeingCreated = nullptr;
+	std::vector<std::vector<mafView*> > m_ViewMatrixID; ///< Matrix to access views directly by (id, multiplicity)
+	bool m_CollaborateStatus = false;
 };
