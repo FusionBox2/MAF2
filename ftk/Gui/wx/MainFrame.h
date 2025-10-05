@@ -510,13 +510,13 @@ public:
 	vtkTypeMacro(mafGUIMDIFrameCallback, vtkCommand);
 
 	static mafGUIMDIFrameCallback* New() { return new mafGUIMDIFrameCallback; }
-	mafGUIMDIFrameCallback() { m_mode = 0; m_Frame = NULL; };
-	void SetMode(int mode) { m_mode = mode; };
-	void SetFrame(wxFrame* frame) { m_Frame = frame; };
+	mafGUIMDIFrameCallback() { m_mode = 0; m_Frame = nullptr; }
+	void SetMode(int mode) { m_mode = mode; }
+	void SetFrame(wxFrame* frame) { m_Frame = frame; }
 
 	void Execute(vtkObject* caller, unsigned long, void*) override
 	{
-		mafGUIMDIFrame* frame = static_cast<mafGUIMDIFrame*>(m_Frame);
+		auto frame = static_cast<mafGUIMDIFrame*>(m_Frame);
 		assert(frame);
 		if (caller->IsA("vtkAlgorithm"))
 		{
@@ -560,12 +560,18 @@ protected:
 template <class BaseFrame, long DefaultStyle>
 void MainFrame<BaseFrame, DefaultStyle>::BindToProgressBar(vtkObject* vtkobj)
 {
-	if (vtkobj->IsA("vtkViewport"))
-		BindToProgressBar((vtkViewport*)vtkobj);
-	else if (vtkobj->IsA("vtkAlgorithm"))
-		BindToProgressBar((vtkAlgorithm*)vtkobj);
+	if (auto viewport = vtkViewport::SafeDownCast(vtkobj))
+	{
+		BindToProgressBar(viewport);
+	}
+	else if (auto alg = vtkAlgorithm::SafeDownCast(vtkobj))
+	{
+		BindToProgressBar(alg);
+	}
 	else
+	{
 		mafLogMessage(_M("wrong vtkObject passed to BindToProgressBar"));
+	}
 }
 
 template <class BaseFrame, long DefaultStyle>
