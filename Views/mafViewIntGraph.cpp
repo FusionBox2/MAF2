@@ -434,7 +434,6 @@ void mafViewIntGraph::Print(std::ostream& os, const int tabs)// const
   os << indent << "mafViewIntGraph " << '\t' << this << "\n";
   os << indent << "Name: " << '\t' << GetLabel().GetCStr() << "\n";
   os << indent << "View ID: " << '\t' << m_Id << "\n";
-  os << indent << "View Mult: " << '\t' << m_Mult << "\n";
   os << indent << "Visible VME counter: " << '\t' << m_NumberOfVisibleVme << "\n";
 
   m_Sg->Print(os, 1);

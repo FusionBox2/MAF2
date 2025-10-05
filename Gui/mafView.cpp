@@ -1,28 +1,3 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafView
- Authors: Silvano Imboden - Paolo Quadrani
-
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
 #include "mafView.h"
 #include <wx/print.h>
 
@@ -38,36 +13,13 @@
 #include "vtkAssemblyNode.h"
 #include "vtkProp3D.h"
 
-//----------------------------------------------------------------------------
-mafCxxTypeMacro(mafView);
-//----------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------
 mafView::mafView(const mafString& label) :m_Label(label), m_Name(_R(""))
-//----------------------------------------------------------------------------
 {
-	m_Win = NULL;
-	m_Frame = NULL;
-	m_Id = 0;
-	m_Mult = 0;
-
-	m_NumberOfVisibleVme = 0;
-
-	m_PrintData = (wxPrintData*)NULL;
-
-	m_Picker2D = NULL;
-	m_Picker3D = NULL;
-	m_PickedVME = NULL;
-	m_PickedProp = NULL;
 	m_PickedPosition[0] = m_PickedPosition[1] = m_PickedPosition[2] = 0.0;
 
 	//parameters
-	m_Slice[0] = m_Slice[1] = m_Slice[2] = 0.;
-	m_Normal[0] = m_Normal[1] = m_Normal[2] = 0.;
-
-	m_HTMLText = _R("");
-	m_LightCopyEnabled = false;
-	m_AllowCloseFlag = true;
+	m_Slice[0] = m_Slice[1] = m_Slice[2] = 0.0;
+	m_Normal[0] = m_Normal[1] = m_Normal[2] = 0.0;
 }
 
 mafView::~mafView() = default;
@@ -120,9 +72,7 @@ bool mafView::Close(bool destroyFrame)
 	return m_AllowCloseFlag;
 }
 
-//-------------------------------------------------------------------------
 mafGUI* mafView::CreateGui()
-//-------------------------------------------------------------------------
 {
 	assert(!AccessGUI());
 	auto gui = new mafGUI(this);
@@ -144,29 +94,25 @@ mafGUI* mafView::CreateGui()
 
 	return gui;
 }
-//-------------------------------------------------------------------------
+
 bool mafView::Pick(int x, int y)
-//-------------------------------------------------------------------------
 {
 	return false;
 }
-//-------------------------------------------------------------------------
+
 bool mafView::Pick(mafMatrix& m)
-//-------------------------------------------------------------------------
 {
 	return false;
 }
-//----------------------------------------------------------------------------
+
 void mafView::GetPickedPosition(double pos[3])
-//----------------------------------------------------------------------------
 {
 	pos[0] = m_PickedPosition[0];
 	pos[1] = m_PickedPosition[1];
 	pos[2] = m_PickedPosition[2];
 }
-//----------------------------------------------------------------------------
+
 bool mafView::FindPickedVme(vtkAssemblyPath* ap)
-//----------------------------------------------------------------------------
 {
 	vtkMAFAssembly* as = NULL;
 
@@ -194,9 +140,8 @@ bool mafView::FindPickedVme(vtkAssemblyPath* ap)
 	}
 	return false;
 }
-//----------------------------------------------------------------------------
+
 void mafView::PrintBitmap(wxDC* dc, wxRect margins, wxBitmap* bmp)
-//----------------------------------------------------------------------------
 {
 	assert(dc);
 	assert(bmp);
@@ -206,8 +151,8 @@ void mafView::PrintBitmap(wxDC* dc, wxRect margins, wxBitmap* bmp)
 	float maxY = ih;
 
 	// Add the margin to the graphic size
-	maxX += (margins.GetLeft() + margins.GetRight());
-	maxY += (margins.GetTop() + margins.GetBottom());
+	maxX += margins.GetLeft() + margins.GetRight();
+	maxY += margins.GetTop() + margins.GetBottom();
 
 	// Get the size of the DC in pixels
 	int w, h;
@@ -235,40 +180,30 @@ void mafView::PrintBitmap(wxDC* dc, wxRect margins, wxBitmap* bmp)
 	dc->Blit(0, 0, maxX, maxY, &mdc, 0, 0);
 }
 
-//-------------------------------------------------------------------------
 void mafView::Print(std::ostream& os, const int tabs)// const
-//-------------------------------------------------------------------------
 {
 	mafIndent indent(tabs);
 	os << indent << "mafView" << '\t' << this << "\n";
 }
 
-//-------------------------------------------------------------------------
 double* mafView::GetSlice()// const
-//-------------------------------------------------------------------------
 {
 	return m_Slice;
 }
 
-//-------------------------------------------------------------------------
-void mafView::SetSlice(double slice[3])// const
-//-------------------------------------------------------------------------
+void mafView::SetSlice(double slice[3])
 {
 	m_Slice[0] = slice[0];
 	m_Slice[1] = slice[1];
 	m_Slice[2] = slice[2];
 }
 
-//-------------------------------------------------------------------------
 double* mafView::GetNormal()// const
-//-------------------------------------------------------------------------
 {
 	return m_Normal;
 }
 
-//-------------------------------------------------------------------------
-void mafView::SetNormal(double normal[3])// const
-//-------------------------------------------------------------------------
+void mafView::SetNormal(double normal[3])
 {
 	m_Normal[0] = normal[0];
 	m_Normal[1] = normal[1];
