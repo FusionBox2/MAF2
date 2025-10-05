@@ -71,12 +71,135 @@
 #include "mafRemoteStorage.h"
 #include "mafOpSelect.h"
 
+#include "mafGUIVMEChooser.h"
+
 #include "mafEventIO.h"
 #include "mafVMEGenericAbstract.h"
 #include "mafVMERoot.h"
 #include <wx/aboutdlg.h>
 #include <wx/splash.h>
 
+#include "ftk/Gui/wx/MainFrame.h"
+#include "ftk/Gui/wx/Panel.h"
+#include "ftk/Gui/wx/SideBar.h"
+
+#include "wx/filehistory.h"
+
+class mafGUITimeBar;
+class mafWXLog;
+class mafVTKLog;
+class mafGUILocaleSettings;
+class mafGUIMeasureUnitSettings;
+class mafGUIApplicationSettings;
+class mafGUISettingsStorage;
+class mafGUISettingsTimeBar;
+class mafViewManager;
+class mafOpManager;
+class mafGUIMaterialChooser;
+class mafInteractionManager;
+class mafPrintSupport;
+class mafGUISettingsDialog;
+class mafGUIApplicationLayoutSettings;
+class mafGUISettingsHelp;
+
+class MAF_EXPORT mafStorageData
+{
+public:
+	mafStorageData(const mafString& extention, bool makeBakFile, const mafString& msfDir)
+		: m_Extension(extention)
+		, m_MakeBakFile(makeBakFile)
+		, m_MSFDir(msfDir)
+	{
+	}
+	mafString m_Extension;
+	bool      m_MakeBakFile;
+	mafString m_MSFDir;
+	mafString m_MSFFile;
+	mafString m_ZipFile;
+};
+struct mafMenuElems
+{
+	mafMenuElems(bool op, int id, mafID command) :m_op(op), m_id(id), m_command(command) {}
+	bool m_op;
+	int  m_id;
+	mafID m_command;
+};
+
+
+class InnerLogic
+{
+public:
+	InnerLogic(mafBaseEventHandler* listener);
+	~InnerLogic();
+	mafGUIMDIFrame* m_frame = nullptr;
+
+	std::unique_ptr<mafGUILocaleSettings> m_LocaleSettings;
+	std::unique_ptr<mafGUIMeasureUnitSettings> m_MeasureUnitSettings;
+	std::unique_ptr<mafGUIApplicationSettings> m_ApplicationSettings;
+	std::unique_ptr<mafGUISettingsStorage>     m_StorageSettings;
+	std::unique_ptr<mafGUISettingsTimeBar>     m_TimeBarSettings;
+
+	std::unique_ptr<mafPrintSupport> m_PrintSupport;
+
+	std::unique_ptr<mafGUISettingsDialog> m_SettingsDialog;
+
+
+	wxToolBar* m_ToolBar = nullptr;
+	wxMenuBar* m_MenuBar = nullptr;
+
+	wxConfigBase* m_Config = nullptr;           ///< Application configuration for file history management
+
+	bool m_LogToFile = false;
+	bool m_LogAllEvents = false;
+
+	bool m_PlugMenu = true;
+	bool m_PlugToolbar = true;
+	bool m_PlugSidebar = true;
+	long m_SidebarStyle = mafSideBar::DOUBLE_NOTEBOOK;
+	bool m_PlugTimebar = true;
+	bool m_PlugLogbar = true;
+
+	mafWXLog* m_Logger = nullptr;
+	mafVTKLog* m_VtkLog = nullptr;
+
+
+	wxString m_LastSelectedPanel;
+	mafGUITimeBar* m_TimePanel = nullptr;
+	std::vector<wxAcceleratorEntry> m_AccelTable;
+
+	std::unique_ptr<mafSideBar>             m_SideBar;
+	std::unique_ptr<model::data::NodeManager>         m_NodeManager;
+	std::unique_ptr<mafViewManager>         m_ViewManager;
+	std::unique_ptr<mafOpManager>           m_OpManager;
+	std::unique_ptr<mafInteractionManager>  m_InteractionManager;
+	std::vector<mafMenuElems> m_MenuElems;
+
+	long m_UserCommandIndex = 0;
+	std::unique_ptr<mafGUIMaterialChooser>  m_MaterialChooser;
+	wxMenu* m_ImportMenu = nullptr;
+	wxMenu* m_ExportMenu = nullptr;
+	wxMenu* m_RecentFileMenu = nullptr;
+	wxMenu* m_OpMenu = nullptr;
+	wxMenu* m_ViewMenu = nullptr;
+	wxFileHistory	m_FileHistory;      ///< Used to hold recently opened files
+	wxMenu* m_EditMenu = nullptr;
+	wxMenu* m_ViewListMenu = nullptr;
+
+
+
+	bool m_CameraLinkingObserverFlag = false;
+	bool m_ExternalViewFlag = false;
+
+	std::unique_ptr<mafGUIApplicationLayoutSettings> m_ApplicationLayoutSettings;
+	std::unique_ptr<mafGUISettingsHelp> m_HelpSettings;
+
+	std::unique_ptr<mafStorage> m_Storage;
+	std::unique_ptr<mafStorageData> m_StorageData;
+
+
+	std::vector<mafString> m_AppStamp;
+	int                     m_FileHistoryIdx = -1;
+};
 
 InnerLogic::InnerLogic(mafBaseEventHandler* listener)
 {
@@ -579,7 +702,7 @@ void mafLogicWithManagers::EnableOperations(bool enable)
 	}
 }
 
-mafGUIMDIFrame* mafLogicWithManagers::GetTopWin()
+wxFrame* mafLogicWithManagers::GetTopWin()
 {
 	return m_logic->m_frame;
 };
