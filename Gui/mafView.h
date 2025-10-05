@@ -67,29 +67,29 @@ public:
 
 	mafTypeMacro(mafView, mafObject);
 
-	void			OnEvent(mafEventBase* maf_event) override;
+	void OnEvent(mafEventBase* maf_event) override;
 	virtual mafView* Copy(mafBaseEventHandler* Listener, bool lightCopyEnabled = false) { m_LightCopyEnabled = lightCopyEnabled; return nullptr; };
-	virtual void      Create() {};
+	virtual void Create() {}
 
-	virtual bool      Close(bool destroyFrame = true);
+	virtual bool Close(bool destroyFrame = true);
 
-	virtual void			VmeAdd(std::shared_ptr<mafNode> vme) {}
-	virtual void			VmeRemove(mafNode* vme) {}
-	virtual void			VmeSelect(mafNode* vme, bool select) {}
-	virtual void			VmeShow(mafNode* vme, bool show) {}
-	virtual void      VmeUpdateProperty(mafNode* vme, bool fromTag = false) {}
+	virtual void VmeAdd(std::shared_ptr<mafNode> vme) {}
+	virtual void VmeRemove(mafNode* vme) {}
+	virtual void VmeSelect(mafNode* vme, bool select) {}
+	virtual void VmeShow(mafNode* vme, bool show) {}
+	virtual void VmeUpdateProperty(mafNode* vme, bool fromTag = false) {}
 
-	virtual void	    VmeCreatePipe(mafNode* vme) {}
-	virtual void	    VmeDeletePipe(mafNode* vme) {}
+	virtual void VmeCreatePipe(mafNode* vme) {}
+	virtual void VmeDeletePipe(mafNode* vme) {}
 
-	virtual void			CameraReset(mafNode* node = nullptr) {}
-	virtual void			CameraUpdate() {}
+	virtual void CameraReset(mafNode* node = nullptr) {}
+	virtual void CameraUpdate() {}
 	virtual wxVTKWindow* GetRWI() { return nullptr; }
 	virtual mafSceneGraph* GetSceneGraph() { return nullptr; }
-	virtual void      GetImage(wxBitmap& bmp, int magnification = 1) {}
+	virtual void GetImage(wxBitmap& bmp, int magnification = 1) {}
 
 	/** Called to update all components that depends on Application Options.*/
-	virtual void      OptionsUpdate() {}
+	virtual void OptionsUpdate() {}
 
 	/**
 	Find the pocked VME at button down. As argument the function needs
@@ -121,9 +121,9 @@ public:
 
 	virtual wxWindow* GetWindow() { return m_Win; }
 	virtual wxFrame* GetFrame() { return m_Frame; }
-	virtual void		  SetFrame(wxFrame* f) { m_Frame = f; }
+	virtual void SetFrame(wxFrame* f) { m_Frame = f; }
 
-	virtual void			OnSize(wxSizeEvent& size_event) {}
+	virtual void OnSize(wxSizeEvent& size_event) {}
 
 	/** Print this view.*/
 	virtual void Print(wxDC* dc, wxRect margins) {}
@@ -190,14 +190,14 @@ protected:
 	bool FindPickedVme(vtkAssemblyPath* ap = nullptr);
 
 public:
-	int            m_Mult = 0;    ///< Used to store the multiplicity of the view type created (e.g. the 3rd view surface created).
-	int            m_Id = 0;      ///< Used to store the view type created (e.g. view surface).
+	int m_Mult = 0;    ///< Used to store the multiplicity of the view type created (e.g. the 3rd view surface created).
+	int m_Id = 0;      ///< Used to store the view type created (e.g. view surface).
 
 	virtual double* GetSlice();
-	virtual void    SetSlice(double slice[3]);
+	virtual void SetSlice(double slice[3]);
 
 	virtual double* GetNormal();
-	virtual void    SetNormal(double normal[3]);
+	virtual void SetNormal(double normal[3]);
 
 
 protected:
@@ -215,7 +215,7 @@ protected:
 
 	bool m_LightCopyEnabled = false;
 private:
-	mafString       m_Label;
-	mafString       m_Name;
-	bool            m_AllowCloseFlag = true;
+	mafString m_Label;
+	mafString m_Name;
+	bool m_AllowCloseFlag = true;
 };
