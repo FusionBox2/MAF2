@@ -2,7 +2,6 @@
 
 #include "ftkConfigure.h"
 
-#include <wx/laywin.h>
 #include <wx/mdi.h>
 #include <wx/aui/aui.h>
 
@@ -12,7 +11,7 @@
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #ifdef MAF_USE_VTK
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-#include "vtkSmartPointer.h"
+#include "vtkNew.h"
 #include "vtkCommand.h"
 #include "vtkAlgorithm.h"
 #include "vtkViewport.h"
@@ -510,51 +509,50 @@ public:
 	vtkTypeMacro(mafGUIMDIFrameCallback, vtkCommand);
 
 	static mafGUIMDIFrameCallback* New() { return new mafGUIMDIFrameCallback; }
-	mafGUIMDIFrameCallback() { m_mode = 0; m_Frame = nullptr; }
+	mafGUIMDIFrameCallback() = default;
 	void SetMode(int mode) { m_mode = mode; }
-	void SetFrame(wxFrame* frame) { m_Frame = frame; }
+	void SetFrame(mafGUIMDIFrame* frame) { m_Frame = frame; }
 
 	void Execute(vtkObject* caller, unsigned long, void*) override
 	{
-		auto frame = static_cast<mafGUIMDIFrame*>(m_Frame);
-		assert(frame);
+		assert(m_Frame);
 		if (caller->IsA("vtkAlgorithm"))
 		{
-			vtkAlgorithm* po = (vtkAlgorithm*)caller;
+			auto po = static_cast<vtkAlgorithm*>(caller);
 
 			if (m_mode == 0) // ProgressEvent-Callback
 			{
 				mafYield(); //fix on bug #2082 
-				frame->ProgressBarSetVal(po->GetProgress() * 100);
+				m_Frame->ProgressBarSetVal(po->GetProgress() * 100);
 				//mafLogMessage("progress = %g", po->GetProgress()*100);
 			}
 			else if (m_mode == 1) // StartEvent-Callback
 			{
-				frame->ProgressBarShow();
-				frame->ProgressBarSetVal(0);
+				m_Frame->ProgressBarShow();
+				m_Frame->ProgressBarSetVal(0);
 				//m_Frame->ProgressBarSetText(&wxString(po->GetClassName()));
-				{ wxString s = po->GetProgressText(); frame->ProgressBarSetText(s); }
+				{ wxString s = po->GetProgressText(); m_Frame->ProgressBarSetText(s); }
 			}
 			else if (m_mode == 2) // EndEvent-Callback
 			{
-				frame->ProgressBarHide();
+				m_Frame->ProgressBarHide();
 			}
 		}
 		else if (caller->IsA("vtkViewport"))
 		{
 			if (m_mode == 1) // StartRenderingEvent-Callback
 			{
-				frame->RenderStart();
+				m_Frame->RenderStart();
 			}
 			else if (m_mode == 2) // StartRenderingEvent-Callback
 			{
-				frame->RenderEnd();
+				m_Frame->RenderEnd();
 			}
 		}
 	}
 protected:
-	int m_mode;
-	wxFrame* m_Frame;
+	int m_mode = 0;
+	mafGUIMDIFrame* m_Frame = nullptr;
 };
 
 template <class BaseFrame, long DefaultStyle>

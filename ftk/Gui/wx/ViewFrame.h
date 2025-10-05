@@ -2,10 +2,9 @@
 
 #include "ftkConfigure.h"
 
-#include <wx/laywin.h>
 #include <wx/mdi.h>
 
-#include "mafPics.h" // frame icon
+#include "mafPics.h"
 #include "mafEvent.h"
 #include "mafEventSender.h"
 
@@ -93,19 +92,20 @@ void ViewFrame<BaseFrame, ParentFrame, DefaultStyle>::OnCloseWindow(wxCloseEvent
 template<class BaseFrame, class ParentFrame, long DefaultStyle>
 void ViewFrame<BaseFrame, ParentFrame, DefaultStyle>::OnSize(wxSizeEvent& event)
 {
-	int w, h;
-	//don't initialize w & h using the event - use GetClientSize instead
-	BaseFrame::GetClientSize(&w, &h);
-
-	if (h < PH || w < PH) return;
+	wxSize sz = BaseFrame::GetClientSize();
+	wxSize minSz = BaseFrame::FromDIP(wxSize(PH, PH));
+	if (sz.GetWidth() < minSz.GetWidth() || sz.GetHeight() < minSz.GetHeight())
+	{
+		return;
+	}
 
 	m_Win->Move(0, 0);
-	m_Win->SetSize(w, h);
+	m_Win->SetSize(sz);
 	m_Win->Layout();
 #ifndef WIN32
 	if (m_View)
 	{
-		m_View->SetWindowSize(w, h);
+		m_View->SetWindowSize(sz.GetWidth(), sz.GetHeight());
 	}
 #endif
 	m_View->CameraUpdate();
