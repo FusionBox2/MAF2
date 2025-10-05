@@ -3,7 +3,7 @@
  Program: MAF2
  Module: mafPrintSupport
  Authors: Paolo Quadrani
- 
+
  Copyright (c) B3C
  All rights reserved. See Copyright.txt or
  http://www.scsitaly.com/Copyright.htm for details.
@@ -51,29 +51,29 @@
 //----------------------------------------------------------------------------
 // mafPrintout :
 //----------------------------------------------------------------------------
-class mafPrintout: public wxPrintout
+class mafPrintout : public wxPrintout
 {
 public:
-  mafPrintout( mafView *v, wxRect margins);
-  ~mafPrintout() override;
-  bool OnPrintPage(int page) override;
-  bool HasPage(int page) override;
-  //bool OnBeginDocument(int startPage, int endPage);
-  void GetPageInfo(int *minPage, int *maxPage, int *selPageFrom, int *selPageTo) override;
+	mafPrintout(mafView* v, wxRect margins);
+	~mafPrintout() override;
+	bool OnPrintPage(int page) override;
+	bool HasPage(int page) override;
+	//bool OnBeginDocument(int startPage, int endPage);
+	void GetPageInfo(int* minPage, int* maxPage, int* selPageFrom, int* selPageTo) override;
 
 protected:
-  mafView *m_View;
-  wxRect m_Margins;
+	mafView* m_View;
+	wxRect m_Margins;
 };
 #endif
 
 //----------------------------------------------------------------------------
-mafPrintout::mafPrintout(mafView *v, wxRect margins)
-: wxPrintout("Printout")
-//----------------------------------------------------------------------------
+mafPrintout::mafPrintout(mafView* v, wxRect margins)
+	: wxPrintout("Printout")
+	//----------------------------------------------------------------------------
 {
-  m_View = v;
-  m_Margins = margins;
+	m_View = v;
+	m_Margins = margins;
 }
 //----------------------------------------------------------------------------
 mafPrintout::~mafPrintout()
@@ -84,27 +84,27 @@ mafPrintout::~mafPrintout()
 bool mafPrintout::OnPrintPage(int page)
 //----------------------------------------------------------------------------
 {
-  if (m_View == NULL)  {wxMessageBox("nothing to print", "Warning");    return false;}
-  wxDC *dc = GetDC();
-  if (!dc)    {wxMessageBox("failed to retrieve Printing DC", "Warning"); return false;}
-  m_View->Print(dc, m_Margins);  
+	if (m_View == NULL) { wxMessageBox("nothing to print", "Warning");    return false; }
+	wxDC* dc = GetDC();
+	if (!dc) { wxMessageBox("failed to retrieve Printing DC", "Warning"); return false; }
+	m_View->Print(dc, m_Margins);
 
-  return TRUE;
+	return TRUE;
 }
 //----------------------------------------------------------------------------
-void mafPrintout::GetPageInfo(int *minPage, int *maxPage, int *selPageFrom, int *selPageTo)
+void mafPrintout::GetPageInfo(int* minPage, int* maxPage, int* selPageFrom, int* selPageTo)
 //----------------------------------------------------------------------------
 {
-  *minPage = 1;
-  *maxPage = 1;
-  *selPageFrom = 1;
-  *selPageTo = 1;
+	*minPage = 1;
+	*maxPage = 1;
+	*selPageFrom = 1;
+	*selPageTo = 1;
 }
 //----------------------------------------------------------------------------
 bool mafPrintout::HasPage(int pageNum)
 //----------------------------------------------------------------------------
 {
-  return (pageNum == 1);
+	return (pageNum == 1);
 }
 //=============================== mafPrintout ===============================
 
@@ -113,126 +113,128 @@ bool mafPrintout::HasPage(int pageNum)
 mafPrintSupport::mafPrintSupport()
 //----------------------------------------------------------------------------
 {
-  m_PrintData = std::make_unique<wxPrintData>();
-  m_PageSetupData = std::make_unique<wxPageSetupDialogData>();
+	m_PrintData = std::make_unique<wxPrintData>();
+	m_PageSetupData = std::make_unique<wxPageSetupDialogData>();
 
-  m_PageSetupData->SetDefaultMinMargins(true);
-  
-  m_PageSetupData->SetMarginTopLeft(wxPoint(25,25));
-  m_PageSetupData->SetMarginBottomRight(wxPoint(25,25));
-  
-  m_PageSetupData->SetMinMarginTopLeft(wxPoint(5,5));
-  m_PageSetupData->SetMinMarginBottomRight(wxPoint(5,5));
+	m_PageSetupData->SetDefaultMinMargins(true);
+
+	m_PageSetupData->SetMarginTopLeft(wxPoint(25, 25));
+	m_PageSetupData->SetMarginBottomRight(wxPoint(25, 25));
+
+	m_PageSetupData->SetMinMarginTopLeft(wxPoint(5, 5));
+	m_PageSetupData->SetMinMarginBottomRight(wxPoint(5, 5));
 }
 
 mafPrintSupport::~mafPrintSupport() = default;
 
 //----------------------------------------------------------------------------
-void mafPrintSupport::OnPrintPreview(mafView *v)
+void mafPrintSupport::OnPrintPreview(mafView* v)
 //----------------------------------------------------------------------------
 {
-  if (!v)return;
+	if (!v)return;
 
-  // Pass two printout objects: for preview, and possible printing.
-  wxPrintDialogData printDialogData(*m_PrintData);
-  wxPoint tl = m_PageSetupData->GetMarginTopLeft();
-  wxPoint br = m_PageSetupData->GetMarginBottomRight();
-  wxRect margins(tl,br);
+	// Pass two printout objects: for preview, and possible printing.
+	wxPrintDialogData printDialogData(*m_PrintData);
+	wxPoint tl = m_PageSetupData->GetMarginTopLeft();
+	wxPoint br = m_PageSetupData->GetMarginBottomRight();
+	wxRect margins(tl, br);
 
-  wxPrintout *printout, *printOutForPrinting;
-  if(v->GetSceneGraph()->GetInformationPipeModalityEnable())
-  {
-    printout = new wxHtmlPrintout();
-    ((wxHtmlPrintout *)printout)->SetHtmlText(v->GetHTMLText());
+	wxPrintout* printout, * printOutForPrinting;
+	if (v->GetSceneGraph()->GetInformationPipeModalityEnable())
+	{
+		auto printoutHtml = new wxHtmlPrintout();
+		printout = printoutHtml;
+		printoutHtml->SetHtmlText(mafStringToWx(v->GetHTMLText()));
 
-    printOutForPrinting= new wxHtmlPrintout();
-    ((wxHtmlPrintout *)printOutForPrinting)->SetHtmlText(v->GetHTMLText());
-  }
-  else
-  {
-    printout = new mafPrintout(v,margins);
-    printOutForPrinting= new mafPrintout(v,margins);
-  }
+		auto printOutForPrintingHtml = new wxHtmlPrintout();
+		printOutForPrinting = printOutForPrintingHtml;
+		printOutForPrintingHtml->SetHtmlText(mafStringToWx(v->GetHTMLText()));
+	}
+	else
+	{
+		printout = new mafPrintout(v, margins);
+		printOutForPrinting = new mafPrintout(v, margins);
+	}
 
-  wxPrintPreview *preview = new wxPrintPreview(printout, printOutForPrinting, & printDialogData);
-  preview->SetZoom(20);
-  if (!preview->Ok())
-  {
-    delete preview;
-    wxMessageBox("There was a problem previewing.\nPerhaps your current printer is not set correctly?", "Previewing", wxOK);
-    return;
-  }
+	auto preview = new wxPrintPreview(printout, printOutForPrinting, &printDialogData);
+	preview->SetZoom(20);
+	if (!preview->Ok())
+	{
+		delete preview;
+		wxMessageBox("There was a problem previewing.\nPerhaps your current printer is not set correctly?", "Previewing", wxOK);
+		return;
+	}
 
-  wxPreviewFrame *frame = new wxPreviewFrame(preview, (wxFrame *)mafGetFrame(), "Print Preview", wxPoint(100, 100), wxSize(600, 650));
-  frame->Centre(wxBOTH);
-  frame->Initialize();
-  frame->Show(TRUE);
+	auto frame = new wxPreviewFrame(preview, (wxFrame*)mafGetFrame(), "Print Preview", wxPoint(100, 100), wxSize(600, 650));
+	frame->Centre(wxBOTH);
+	frame->Initialize();
+	frame->Show(TRUE);
 }
 //----------------------------------------------------------------------------
-void mafPrintSupport::OnPrint(mafView *v)
+void mafPrintSupport::OnPrint(mafView* v)
 //----------------------------------------------------------------------------
 {
-  if (!v)return;
-  
-  wxPrintDialogData printDialogData(*m_PrintData);
-  wxPrinter printer(& printDialogData);
-  wxPoint tl = m_PageSetupData->GetMarginTopLeft();
-  wxPoint br = m_PageSetupData->GetMarginBottomRight();
-  wxRect margins(tl,br);
+	if (!v)return;
 
-  if(v->GetSceneGraph()->GetInformationPipeModalityEnable())
-  {
-    wxHtmlPrintout printout;
-    printout.SetHtmlText(v->GetHTMLText());
-    if (!printer.Print( mafGetFrame(), &printout, TRUE))
-    {
-      if (wxPrinter::GetLastError() == wxPRINTER_ERROR)
-        wxMessageBox("There was a problem printing.\nPerhaps your current printer is not set correctly?", "Printing", wxOK);
-      else
-        wxMessageBox("You canceled printing", "Printing", wxOK);
-    }
-    else
-    {
-      (*m_PrintData) = printer.GetPrintDialogData().GetPrintData();
-    }
-  }
-  else
-  {
-    mafPrintout printout(v,margins);
-    if (!printer.Print( mafGetFrame(), &printout, TRUE))
-    {
-      if (wxPrinter::GetLastError() == wxPRINTER_ERROR)
-        wxMessageBox("There was a problem printing.\nPerhaps your current printer is not set correctly?", "Printing", wxOK);
-      else
-        wxMessageBox("You canceled printing", "Printing", wxOK);
-    }
-    else
-    {
-      (*m_PrintData) = printer.GetPrintDialogData().GetPrintData();
-    }
-  }
-  
+	wxPrintDialogData printDialogData(*m_PrintData);
+	wxPrinter printer(&printDialogData);
+	wxPoint tl = m_PageSetupData->GetMarginTopLeft();
+	wxPoint br = m_PageSetupData->GetMarginBottomRight();
+	wxRect margins(tl, br);
+
+	if (v->GetSceneGraph()->GetInformationPipeModalityEnable())
+	{
+		wxHtmlPrintout printout;
+		printout.SetHtmlText(mafStringToWx(v->GetHTMLText()));
+		if (!printer.Print(mafGetFrame(), &printout, TRUE))
+		{
+			if (wxPrinter::GetLastError() == wxPRINTER_ERROR)
+				wxMessageBox("There was a problem printing.\nPerhaps your current printer is not set correctly?", "Printing", wxOK);
+			else
+				wxMessageBox("You canceled printing", "Printing", wxOK);
+		}
+		else
+		{
+			(*m_PrintData) = printer.GetPrintDialogData().GetPrintData();
+		}
+	}
+	else
+	{
+		mafPrintout printout(v, margins);
+		if (!printer.Print(mafGetFrame(), &printout, TRUE))
+		{
+			if (wxPrinter::GetLastError() == wxPRINTER_ERROR)
+				wxMessageBox("There was a problem printing.\nPerhaps your current printer is not set correctly?", "Printing", wxOK);
+			else
+				wxMessageBox("You canceled printing", "Printing", wxOK);
+		}
+		else
+		{
+			(*m_PrintData) = printer.GetPrintDialogData().GetPrintData();
+		}
+	}
+
 }
 //----------------------------------------------------------------------------
 void mafPrintSupport::OnPrintSetup()
 //----------------------------------------------------------------------------
 {
-  wxPrintDialogData printDialogData(*m_PrintData);
-  wxPrintDialog printerDialog(mafGetFrame(), & printDialogData);
+	wxPrintDialogData printDialogData(*m_PrintData);
+	wxPrintDialog printerDialog(mafGetFrame(), &printDialogData);
 
-  printerDialog.ShowModal();
+	printerDialog.ShowModal();
 
-  (*m_PrintData) = printerDialog.GetPrintDialogData().GetPrintData();
+	(*m_PrintData) = printerDialog.GetPrintDialogData().GetPrintData();
 }
 //----------------------------------------------------------------------------
 void mafPrintSupport::OnPageSetup()
 //----------------------------------------------------------------------------
 {
-  (*m_PageSetupData) = *m_PrintData;
+	(*m_PageSetupData) = *m_PrintData;
 
-  wxPageSetupDialog pageSetupDialog(mafGetFrame(), m_PageSetupData.get());
-  pageSetupDialog.ShowModal();
+	wxPageSetupDialog pageSetupDialog(mafGetFrame(), m_PageSetupData.get());
+	pageSetupDialog.ShowModal();
 
-  (*m_PrintData) = pageSetupDialog.GetPageSetupData().GetPrintData();
-  (*m_PageSetupData) = pageSetupDialog.GetPageSetupData();
+	(*m_PrintData) = pageSetupDialog.GetPageSetupData().GetPrintData();
+	(*m_PageSetupData) = pageSetupDialog.GetPageSetupData();
 }
