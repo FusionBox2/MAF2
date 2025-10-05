@@ -12,6 +12,7 @@
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #ifdef MAF_USE_VTK
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#include "vtkSmartPointer.h"
 #include "vtkCommand.h"
 #include "vtkAlgorithm.h"
 #include "vtkViewport.h"
@@ -90,7 +91,7 @@ public:
 
 	void RenderEnd();
 
-	//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #ifdef MAF_USE_VTK
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -99,27 +100,29 @@ public:
 	void BindToProgressBar(vtkAlgorithm* filter);
 
 	void BindToProgressBar(vtkViewport* ren);
-
-protected:
-	mafGUIMDIFrameCallback* m_StartCallback;
-	mafGUIMDIFrameCallback* m_EndCallback; ;
-	mafGUIMDIFrameCallback* m_ProgressCallback;
-
-	//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #endif  //MAF_USE_VTK
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
 protected:
-	bool* m_Busy;
 	wxGauge* m_Gauge;
-	std::vector<int>    m_PBCalls;
+	std::vector<int> m_PBCalls;
 	int  m_ID_PBCall;
 
-	wxAuiManager    m_auiManager;
+	wxAuiManager m_auiManager;
 	std::unique_ptr<mafGUIDockSettings> m_DockSettings;
+//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#ifdef MAF_USE_VTK
+//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+	vtkNew<mafGUIMDIFrameCallback> m_StartCallback;
+	vtkNew<mafGUIMDIFrameCallback> m_EndCallback;
+	vtkNew<mafGUIMDIFrameCallback> m_ProgressCallback;
+//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#endif  //MAF_USE_VTK
+//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 private:
 	void CreateControls();
 	void CreateStatus();
-
 };
 
 template <class BaseFrame, long DefaultStyle>
@@ -135,13 +138,6 @@ MainFrame<BaseFrame, DefaultStyle>::MainFrame(const wxString& title, const wxPoi
 template <class BaseFrame, long DefaultStyle>
 MainFrame<BaseFrame, DefaultStyle>::~MainFrame()
 {
-#ifdef MAF_USE_VTK
-	vtkDEL(m_ProgressCallback);
-	vtkDEL(m_StartCallback);
-	vtkDEL(m_EndCallback);
-#endif 
-
-	m_PBCalls.clear();
 	mafSetFrame(nullptr);
 }
 
@@ -179,13 +175,10 @@ bool MainFrame<BaseFrame, DefaultStyle>::Create(const wxString& title, const wxP
 	BaseFrame::SetIcons(ib);
 
 #ifdef MAF_USE_VTK
-	vtkNEW(m_ProgressCallback);
 	m_ProgressCallback->SetFrame(this);
 	m_ProgressCallback->SetMode(0);
-	vtkNEW(m_StartCallback);
 	m_StartCallback->SetFrame(this);
 	m_StartCallback->SetMode(1);
-	vtkNEW(m_EndCallback);
 	m_EndCallback->SetFrame(this);
 	m_EndCallback->SetMode(2);
 #endif //MAF_USE_VTK
@@ -215,7 +208,6 @@ void MainFrame<BaseFrame, DefaultStyle>::CreateStatus()
 		// Paolo 10 Jul 2006: due to position correctly the progress bar.
 		wxRect pr;
 		BaseFrame::GetStatusBar()->GetFieldRect(4, pr);
-		m_Busy = nullptr;
 		m_Gauge = new wxGauge(BaseFrame::GetStatusBar(), -1, 100, pr.GetPosition(), pr.GetSize(), wxGA_SMOOTH);
 		m_Gauge->SetForegroundColour(*wxRED);
 		m_Gauge->Show(false);
