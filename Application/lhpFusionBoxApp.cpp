@@ -417,7 +417,7 @@ public:
 //--------------------------------------------------------------------------------
 // Create the Application
 //--------------------------------------------------------------------------------
-#include "medLogicWithManagers.h"
+#include "mafLogicWithManagers.h"
 #include "mafEvent.h"
 #include "mafBaseEventHandler.h"
 #include <memory>
@@ -438,7 +438,7 @@ public:
   //DECLARE_EVENT_TABLE()
 
 protected:
-  std::unique_ptr<medLogicWithManagers> m_Logic;
+  std::unique_ptr<mafLogicWithManagers> m_Logic;
 };
 DECLARE_APP(lhpFusionBoxApp)
 
@@ -569,7 +569,7 @@ mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
 
   mafPlugPipe<lhpPipeInfo>("Visual pipe for lever arm");
 
-  m_Logic = std::make_unique<medLogicWithManagers>();
+  m_Logic = std::make_unique<mafLogicWithManagers>();
   if (!m_Logic->Configure())
     return false;
   if(fullVersion)

@@ -18,8 +18,8 @@ SET(PROJECT_SRCS
   mmiInfoImage.h
   mmiSelectPoint.cpp
   mmiSelectPoint.h
-  medLogicWithManagers.cpp
-  medLogicWithManagers.h
+#  medLogicWithManagers.cpp
+#  medLogicWithManagers.h
   
 
   # medGeometryEditorPolylineGraph.cpp
