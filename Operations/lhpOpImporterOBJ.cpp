@@ -94,7 +94,7 @@ void lhpOpImporterOBJ::ImportOBJ()
 		reader->Update();
 
 		mafString path, name, ext;
-		mafSplitPath(fn.GetCStr(), &path, &name, &ext);
+		mafSplitPath(fn, &path, &name, &ext);
 
 		auto importedOBJ = mafVMESurface::NewSPtr();
 		importedOBJ->SetName(name);

@@ -9,7 +9,7 @@
 #include "vtkSmartPointer.h"
 #include "mafFilesDirs.h"
 
-#include "vtkOBJReader.h"
+#include "vtkMetashapeOBJReader.h"
 #include "vtkPolyData.h"
 
 #include <fstream>
@@ -88,13 +88,13 @@ void lhpOpImporterMetashapeOBJ::ImportOBJ()
 
 	for (const auto& fn : m_Files)
 	{
-		vtkNew<vtkOBJReader> reader;
+		vtkNew<vtkMetashapeOBJReader> reader;
 		{ mafEvent evUnq(this, BIND_TO_PROGRESSBAR); evUnq.SetVtkObj(reader); InvokeEvent(evUnq); }
 		reader->SetFileName(fn.GetCStr());
 		reader->Update();
 
 		mafString path, name, ext;
-		mafSplitPath(fn.GetCStr(), &path, &name, &ext);
+		mafSplitPath(fn, &path, &name, &ext);
 
 		auto importedOBJ = mafVMESurface::NewSPtr();
 		importedOBJ->SetName(name);
