@@ -433,6 +433,8 @@ IF (MAF_USE_VTK)
 	lhpOpImporterC3DFused.h
 	lhpOpImporterPressionCenter.cpp
 	lhpOpImporterPressionCenter.h
+	lhpOpImporterMetashapeOBJ.cpp
+	lhpOpImporterMetashapeOBJ.h
 	lhpOpImporterOBJ.cpp
 	lhpOpImporterOBJ.h
 

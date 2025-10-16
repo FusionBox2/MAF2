@@ -6,7 +6,9 @@ CONFIGURE_FILE(${PROJECT_SOURCE_DIR}/vtkMAFConfigure.h.in
                @ONLY IMMEDIATE)
 # Source files.
 SET(vtkMAF_SRCS
-
+  vtkMetashapeOBJReader.cxx
+  vtkMetashapeOBJReader.h
+  
   vtkMAFOrientationMarkerWidget.h
   vtkMAFOrientationMarkerWidget.cxx
   

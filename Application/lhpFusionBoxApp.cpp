@@ -113,6 +113,7 @@
 #include "lhpOpINPImporter.h"
 #include "lhpOpMTRImporter.h"
 #include "lhpOpImporterOBJ.h"
+#include "lhpOpImporterMetashapeOBJ.h"
 #include "lhpOpImporterPLY.h"
 #include "lhpOpLnSurf.h"
 #include "lhpOpAFSys.h"
@@ -594,6 +595,7 @@ bool lhpFusionBoxApp::OnInit()
 	//------------------------- Importers -------------------------
 	m_Logic->Plug(new mafOpImporterSTL(_R("STL")), _R("Geometries"));
 	m_Logic->Plug(new lhpOpImporterOBJ(_R("OBJ")), _R("Geometries"));
+	m_Logic->Plug(new lhpOpImporterMetashapeOBJ(_R("Metashape OBJ")), _R("Geometries"));
 	m_Logic->Plug(new lhpOpImporterPLY(_R("PLY")), _R("Geometries"));
 	m_Logic->Plug(new mafOpImporterMSF(_R("MSF")), _R("Other"));
 	m_Logic->Plug(new medOpImporterLandmark(_R("Landmark")), _R("Motion Analysis"));
