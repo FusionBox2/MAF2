@@ -14,143 +14,107 @@
 
 #include <fstream>
 
-//----------------------------------------------------------------------------
 lhpOpImporterOBJ::lhpOpImporterOBJ(const mafString& label) : Superclass(label)
-//----------------------------------------------------------------------------
 {
-  m_OpType  = OPTYPE_IMPORTER;
-  m_Canundo = true;
-  m_Files.clear();
-  m_FileDir = _R("");//mafGetApplicationDirectory().c_str();
+	m_OpType = OPTYPE_IMPORTER;
+	m_Canundo = true;
+	m_FileDir = _R("");//mafGetApplicationDirectory().c_str();
 }
-//----------------------------------------------------------------------------
-lhpOpImporterOBJ::~lhpOpImporterOBJ()
-//----------------------------------------------------------------------------
+
+lhpOpImporterOBJ::~lhpOpImporterOBJ() = default;
+
+bool lhpOpImporterOBJ::Accept(mafNode* node)
 {
-  for(unsigned i = 0; i < m_ImportedOBJs.size(); i++)
-    m_ImportedOBJs[i].reset();
+	return true;
 }
-//----------------------------------------------------------------------------
-bool lhpOpImporterOBJ::Accept(mafNode *node)
-//----------------------------------------------------------------------------
+
+mafOp* lhpOpImporterOBJ::Copy()
 {
-  return true;
+	auto cp = new lhpOpImporterOBJ(GetLabel());
+	cp->m_Files = m_Files;
+	return cp;
 }
-//----------------------------------------------------------------------------
-mafOp* lhpOpImporterOBJ::Copy()   
-//----------------------------------------------------------------------------
+
+void lhpOpImporterOBJ::OpRun()
 {
-  lhpOpImporterOBJ *cp = new lhpOpImporterOBJ(GetLabel());
-  cp->m_Files = m_Files;
-  return cp;
-}
-//----------------------------------------------------------------------------
-void lhpOpImporterOBJ::OpRun()   
-//----------------------------------------------------------------------------
-{
-  if (!m_TestMode && m_Files.size() == 0)
-  {
-    mafString wildc = _R("Wavefront (*.obj)|*.obj");
-    m_Files.clear();
-    mafGetOpenMultiFiles(m_FileDir,wildc, m_Files);
-  }
-	
+	if (!m_TestMode && m_Files.empty())
+	{
+		m_Files = mafGetOpenMultiFiles(m_FileDir, _R("Wavefront (*.obj)|*.obj"));
+	}
+
 	int result = OP_RUN_CANCEL;
 
-	if(m_Files.size() != 0) 
+	if (!m_Files.empty())
 	{
 		result = OP_RUN_OK;
-    
 		ImportOBJ();
 	}
 
-	{mafEvent evUnq(this,result); InvokeEvent(evUnq);}
+	{ mafEvent evUnq(this, result); InvokeEvent(evUnq); }
 }
 
-//----------------------------------------------------------------------------
 void lhpOpImporterOBJ::OpDo()
-//----------------------------------------------------------------------------
 {
-  for(unsigned i = 0; i < m_ImportedOBJs.size(); i++)
-  {
-    if (m_ImportedOBJs[i])
-    {
-      mafNode::ReparentTo(m_ImportedOBJs[i], GetInput().get());
-    }
-  }
-  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
+	for (auto& obj : m_ImportedOBJs)
+	{
+		if (obj)
+		{
+			mafNode::ReparentTo(obj, GetInput().get());
+		}
+	}
+	{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
 }
 
-//----------------------------------------------------------------------------
 void lhpOpImporterOBJ::OpUndo()
-//----------------------------------------------------------------------------
 {
-  for(unsigned i = 0; i < m_ImportedOBJs.size(); i++)
-  {
-    if (m_ImportedOBJs[i])
-    {
-      mafNode::ReparentTo(m_ImportedOBJs[i], nullptr);
-    }
-  }
-  {mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
+	for (auto& obj : m_ImportedOBJs)
+	{
+		if (obj)
+		{
+			mafNode::ReparentTo(obj, nullptr);
+		}
+	}
+	{ mafEvent evUnq(this, CAMERA_UPDATE); InvokeEvent(evUnq); }
 }
 
-//----------------------------------------------------------------------------
 void lhpOpImporterOBJ::ImportOBJ()
-//----------------------------------------------------------------------------
 {
-  if (!m_TestMode)
-  {
-    wxBusyInfo wait("Loading file: ...");  
-  }
+	if (!m_TestMode)
+	{
+		wxBusyInfo wait("Loading file: ...");
+	}
 
-  unsigned int i;
-  for(i = 0; i < m_ImportedOBJs.size(); i++)
-    m_ImportedOBJs[i].reset();
-  m_ImportedOBJs.clear();
+	m_ImportedOBJs.clear();
 
-  for(unsigned kk = 0; kk < m_Files.size(); kk++)
-  {
-    mafString fn;
-    fn = m_Files[kk];
-    
-    vtkNew<vtkOBJReader> reader;
-	  {mafEvent evUnq(this,BIND_TO_PROGRESSBAR); evUnq.SetVtkObj(reader); InvokeEvent(evUnq);}
-    reader->SetFileName(fn.GetCStr());
-	  reader->Update();
+	for (const auto& fn : m_Files)
+	{
+		vtkNew<vtkOBJReader> reader;
+		{ mafEvent evUnq(this, BIND_TO_PROGRESSBAR); evUnq.SetVtkObj(reader); InvokeEvent(evUnq); }
+		reader->SetFileName(fn.GetCStr());
+		reader->Update();
 
-    mafString path, name, ext;
-    mafSplitPath(fn.GetCStr(),&path,&name,&ext);
+		mafString path, name, ext;
+		mafSplitPath(fn.GetCStr(), &path, &name, &ext);
 
-    auto importedOBJ = mafVMESurface::NewSPtr();
-    importedOBJ->SetName(name);
-	  importedOBJ->SetDataByDetaching(reader->GetOutput(),0);
+		auto importedOBJ = mafVMESurface::NewSPtr();
+		importedOBJ->SetName(name);
+		importedOBJ->SetDataByDetaching(reader->GetOutput(), 0);
 
-    mafTagItem tag_Nature;
-    tag_Nature.SetName(_R("VME_NATURE"));
-    tag_Nature.SetValue(_R("NATURAL"));
-    importedOBJ->GetTagArray()->SetTag(tag_Nature);
+		mafTagItem tag_Nature;
+		tag_Nature.SetName(_R("VME_NATURE"));
+		tag_Nature.SetValue(_R("NATURAL"));
+		importedOBJ->GetTagArray()->SetTag(tag_Nature);
 
-    m_ImportedOBJs.push_back(importedOBJ);
-  }
+		m_ImportedOBJs.push_back(importedOBJ);
+	}
 }
 
-
-//----------------------------------------------------------------------------
 void lhpOpImporterOBJ::SetFileName(const mafString& file_name)
-//----------------------------------------------------------------------------
 {
-  m_Files.resize(1);
-  m_Files[0] = file_name;
+	m_Files.assign(1, file_name);
 }
-//----------------------------------------------------------------------------
-void lhpOpImporterOBJ::GetImportedOBJ(std::vector<std::shared_ptr<mafVMESurface> > &importedOBJ)
-//----------------------------------------------------------------------------
+
+const std::vector<std::shared_ptr<mafVMESurface> >& lhpOpImporterOBJ::GetImportedOBJ() const
 {
-  importedOBJ.clear();
-  importedOBJ.resize(m_ImportedOBJs.size());
-  for (unsigned int i=0; i< m_ImportedOBJs.size(); i++)
-  {
-    importedOBJ[i] = m_ImportedOBJs[i];
-  }
+	return m_ImportedOBJs;
 }
