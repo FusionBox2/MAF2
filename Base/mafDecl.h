@@ -373,6 +373,9 @@ MAF_EXPORT mafString mafGetOpenFile(const mafString& initial, const mafString& w
 /** show the File Open Dialog Box for multiple file selection */
 MAF_EXPORT void mafGetOpenMultiFiles(const mafString& initial, const mafString& wildcard, std::vector<mafString>& files, const mafString& title = _R("Open Files"), wxWindow* parent = nullptr);
 
+/** show the File Open Dialog Box for multiple file selection */
+MAF_EXPORT std::vector<mafString> mafGetOpenMultiFiles(const mafString& initial, const mafString& wildcard, const mafString& title = _R("Open Files"), wxWindow* parent = nullptr);
+
 /** show the File Save Dialog Box */
 MAF_EXPORT mafString mafGetSaveFile(const mafString& initial, const mafString& wildcard, const mafString& title = _R("Save File"), wxWindow* parent = nullptr);
 
