@@ -1,47 +1,21 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafGUIViewWin
- Authors: Paolo Quadrani
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
+#include "ftkConfigure.h"
 
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
+#include "ftk/Gui/wx/Panel.h"
 
-=========================================================================*/
+BEGIN_FTK_NAMESPACE
 
-#ifndef __mafGUIViewWin_H__
-#define __mafGUIViewWin_H__
-
-//----------------------------------------------------------------------------
-// forward references
-//----------------------------------------------------------------------------
 class mafView;
 
-/**
-  class name: mafGUIViewWin 
-  This class is used only to trap the OnSize event.
-*/
-class mafGUIViewWin : public wxPanel
+class mafGUIViewWin : public gui::wx::Panel
 {
 public:
-  /** constructor */
-  mafGUIViewWin(
-        wxWindow *parent, 
-        wxWindowID id,
-        const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxDefaultSize,
-        long style = 0
-        );
-  
-  /** called when resizing the object */
-	void OnSize(wxSizeEvent &event);
-  mafView  *m_Owner;
-/** Event table declaration macro  */
-DECLARE_EVENT_TABLE()
+	mafGUIViewWin(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
+
+	void OnSize(wxSizeEvent& event);
+
+	mafView* m_Owner = nullptr;
 };
-#endif
+
+END_FTK_NAMESPACE
