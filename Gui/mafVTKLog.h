@@ -1,60 +1,31 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafVTKLog
- Authors: Marco Petrone
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __mafVTKLog_h
-#define __mafVTKLog_h
+#include "ftkConfigure.h"
 
 #include "vtkOutputWindow.h"
 
-//----------------------------------------------------------------------------
-// forward refs
-//----------------------------------------------------------------------------
-
-//----------------------------------------------------------------------------
 class MAF_EXPORT mafVTKLog : public vtkOutputWindow
-//----------------------------------------------------------------------------
 {
 public:
 
-  static mafVTKLog *New();
-  vtkTypeMacro(mafVTKLog, vtkOutputWindow);
+	static mafVTKLog* New();
 
-  /** Set log message displaying. */
-  void SetEnabled(int enabled){m_Enabled = enabled;this->Modified();};
+	vtkTypeMacro(mafVTKLog, vtkOutputWindow);
 
-  /** Get log message displaying. */
-  int GetEnabled(){return m_Enabled;};
+	vtkSetMacro(Enabled, bool);
+	vtkGetMacro(Enabled, bool);
+	vtkBooleanMacro(Enabled, bool);
 
-  /** Enable log message displaying. */
-  void EnabledOn(){this->SetEnabled(TRUE);};
+	void DisplayText(const char*) override;
 
-  /** Disable log message displaying. */
-  void EnabledOff(){this->SetEnabled(FALSE);};
-
-  /** Put the text into the log file. New lines are converted to carriage return new lines. */
-  void DisplayText(const char*) override;
-  
 protected:
-  mafVTKLog();
-  ~mafVTKLog() override;
-  
-  int m_Enabled;
-  
-private:
-  mafVTKLog(const mafVTKLog&);       // Not implemented.
-  void operator=(const mafVTKLog&);  // Not implemented.
+	mafVTKLog();
+
+	mafVTKLog(const mafVTKLog&) = delete;
+
+	void operator=(const mafVTKLog&) = delete;
+
+	~mafVTKLog() override;
+
+	bool Enabled = true;
 };
-#endif

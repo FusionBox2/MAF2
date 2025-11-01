@@ -160,8 +160,6 @@ public:
 	bool m_PlugLogbar = true;
 
 	mafWXLog* m_Logger = nullptr;
-	mafVTKLog* m_VtkLog = nullptr;
-
 
 	wxString m_LastSelectedPanel;
 	mafGUITimeBar* m_TimePanel = nullptr;
@@ -459,8 +457,8 @@ bool mafLogicWithManagers::Configure()
 	if (m_logic->m_PlugLogbar)
 	{
 #ifdef MAF_USE_VTK
-		m_logic->m_VtkLog = mafVTKLog::New();
-		m_logic->m_VtkLog->SetInstance(m_logic->m_VtkLog);
+		vtkNew<mafVTKLog> vtkLog;
+		vtkOutputWindow::SetInstance(vtkLog);
 #endif
 		wxTextCtrl* log = new wxTextCtrl(m_logic->m_frame, MENU_VIEW_LOGBAR_, "", wxPoint(0, 0), wxSize(100, 300), /*wxNO_BORDER |*/ wxTE_MULTILINE);
 		m_logic->m_Logger = new mafWXLog(log);
@@ -499,8 +497,8 @@ bool mafLogicWithManagers::Configure()
 	else
 	{
 #ifdef MAF_USE_VTK
-		m_logic->m_VtkLog = mafVTKLog::New();
-		m_logic->m_VtkLog->SetInstance(m_logic->m_VtkLog);
+		vtkNew<mafVTKLog> vtkLog;
+		vtkOutputWindow::SetInstance(vtkLog);
 #endif  
 		wxTextCtrl* log = new wxTextCtrl(m_logic->m_frame, -1, "", wxPoint(0, 0), wxSize(100, 300), wxNO_BORDER | wxTE_MULTILINE);
 		m_logic->m_Logger = new mafWXLog(log);
@@ -1931,7 +1929,6 @@ void mafLogicWithManagers::OnQuit()
 	m_logic->m_frame->Destroy();
 #ifdef MAF_USE_VTK 
 	vtkTimerLog::CleanupLog();
-	vtkDEL(m_logic->m_VtkLog);
 #endif
 }
 void mafLogicWithManagers::VmeDoubleClicked(mafEvent& e)
