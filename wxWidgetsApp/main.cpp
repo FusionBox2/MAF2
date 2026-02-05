@@ -3911,7 +3911,7 @@ bool App::OnCmdLineParsed(wxCmdLineParser& parser)
 #ifdef __WXMAC__
 void App::MacNewFile()
 {
-	wxDocManager::GetDocumentManager()->CreateNewDocument();
+	ftkDocManager::GetDocumentManager()->CreateNewDocument();
 }
 #endif // __WXMAC__
 
