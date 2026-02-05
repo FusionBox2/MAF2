@@ -26,8 +26,8 @@ endif(CMAKE_SIZEOF_VOID_P EQUAL 8)
 # This enables support for Visual Studio Edit & Continue and OpenMP
 #-----------------------------------------------------------------------------
 if(MSVC)
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /openmp")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /openmp")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /openmp /utf-8")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /openmp /utf-8")
 #	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /ZI")
 #	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /ZI")
   set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<CONFIG:Debug,RelWithDebInfo>,EditAndContinue,ProgramDatabase>")
@@ -56,6 +56,11 @@ option(MAF_USE_Offis     "Find and Link the Offis library"     ON)
 option(MAF_USE_BTK       "Find and Link the BTK library"       ON)
 
 include(Dependencies/dependencies.cmake)
+
+if(MAF_USE_WX)
+    add_subdirectory(ftk/Gui/wxw)
+    add_subdirectory(wxWidgetsApp)
+endif(MAF_USE_WX)
 
 if(ITK_FOUND)
   include(${ITK_USE_FILE})
