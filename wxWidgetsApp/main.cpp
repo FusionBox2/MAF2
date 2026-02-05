@@ -3572,6 +3572,8 @@ public:
 
 	void OnInitCmdLine(wxCmdLineParser& parser) override;
 	bool OnCmdLineParsed(wxCmdLineParser& parser) override;
+private:
+	ftkView::Mode m_mode;
 };
 
 wxDECLARE_APP(ftkApp);
@@ -3584,13 +3586,13 @@ ftkApp::ftkApp()
 #endif
 	SetAppName("ftkApp");
 	SetAppDisplayName("ftkApp");
-/*#if wxUSE_MDI_ARCHITECTURE
-	m_mode = ftkView::Mode_MDI;
+#if wxUSE_MDI_ARCHITECTURE
+	m_mode = ftkView::Mode::Mode_MDI;
 #else
-	m_mode = ftkView::Mode_SDI;
+	m_mode = ftkView::Mode::Mode_SDI;
 #endif
 
-	m_canvas = nullptr;
+	/*m_canvas = nullptr;
 	m_menuEdit = nullptr;*/
 }
 
@@ -3632,7 +3634,6 @@ bool ftkApp::OnInit()
 	SetAppDisplayName("ftkApp");
 
 	wxFrame* frame = nullptr;
-	auto m_mode = ftkView::Mode::Mode_MDI;
 	ftkDocManager* docManager = nullptr;
 
 	switch (m_mode)
