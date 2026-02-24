@@ -87,6 +87,20 @@
 #include <memory>
 #include <optional>
 
+// constants for the command line options names
+namespace CmdLineOption
+{
+
+#if wxUSE_MDI_ARCHITECTURE
+	const char* const MDI = "mdi";
+#endif
+#if wxUSE_AUI
+	const char* const AUI = "aui";
+#endif
+	const char* const SDI = "sdi";
+	const char* const SINGLE = "single";
+
+} // namespace CmdLineOption
 
 namespace FTK
 {
@@ -138,22 +152,18 @@ namespace FTK
 		virtual bool CanUndo() const;
 		virtual bool CanRedo() const;
 
-		// Initialises the current command and menu strings.
-		virtual void Initialize();
-
 		// Sets the Undo/Redo menu strings for the current menu.
-		virtual void SetMenuStrings();
+		virtual void SetMenuStrings_();
 
-		// Gets the current Undo menu label.
-		wxString GetUndoMenuLabel() const;
+		// Gets the current Undo command name.
+		wxString GetLastCommandName() const;
 
-		// Gets the current Undo menu label.
-		wxString GetRedoMenuLabel() const;
+		// Gets the current Redo command name.
+		wxString GetNextCommandName() const;
 
 #if wxUSE_MENUS
 		// Call this to manage an edit menu.
-		void SetEditMenu(wxMenu* menu) { m_commandEditMenu = menu; }
-		wxMenu* GetEditMenu() const { return m_commandEditMenu; }
+		void SetEditMenu_(wxMenu* menu) { m_commandEditMenu = menu; }
 #endif // wxUSE_MENUS
 
 		size_t GetMaxCommands() const { return m_maxNoCommands; }
@@ -168,14 +178,6 @@ namespace FTK
 		{
 			m_lastSavedCommand = !m_undoCommands.empty() ? m_undoCommands.back().get() : nullptr;
 		}
-
-		// By default, the accelerators are "\tCtrl+Z" and "\tCtrl+Y"
-		const wxString& GetUndoAccelerator() const { return m_undoAccelerator; }
-		const wxString& GetRedoAccelerator() const { return m_redoAccelerator; }
-
-		void SetUndoAccelerator(const wxString& accel) { m_undoAccelerator = accel; }
-		void SetRedoAccelerator(const wxString& accel) { m_redoAccelerator = accel; }
-
 	protected:
 		// for further flexibility, command processor doesn't call ftkCommand::Do()
 		// and Undo() directly but uses these functions which can be overridden in
@@ -183,7 +185,7 @@ namespace FTK
 		virtual bool DoCommand(Command& cmd);
 		virtual bool UndoCommand(Command& cmd);
 
-		size_t                 m_maxNoCommands;
+		size_t m_maxNoCommands;
 		std::list<std::unique_ptr<Command> > m_undoCommands;
 		std::list<std::unique_ptr<Command> > m_redoCommands;
 		std::optional<Command*> m_lastSavedCommand = nullptr;
@@ -255,7 +257,6 @@ namespace FTK
 			}
 			m_undoCommands.push_back(std::move(command));
 		}
-		SetMenuStrings();
 	}
 
 	bool CommandProcessor::Undo()
@@ -265,7 +266,6 @@ namespace FTK
 			if (UndoCommand(*m_undoCommands.back()))
 			{
 				m_redoCommands.splice(begin(m_redoCommands), m_undoCommands, --end(m_undoCommands));
-				SetMenuStrings();
 				return true;
 			}
 		}
@@ -280,7 +280,6 @@ namespace FTK
 			if (DoCommand(*m_redoCommands.front()))
 			{
 				m_undoCommands.splice(end(m_undoCommands), m_redoCommands, begin(m_redoCommands));
-				SetMenuStrings();
 				return true;
 			}
 		}
@@ -297,18 +296,50 @@ namespace FTK
 		return !m_redoCommands.empty();
 	}
 
-	void CommandProcessor::Initialize()
+	// Gets the current Undo command name.
+	wxString CommandProcessor::GetLastCommandName() const
 	{
-		SetMenuStrings();
+		if (!m_undoCommands.empty())
+		{
+			auto& command = m_undoCommands.back();
+			return command->GetName();
+		}
+		return "";
 	}
 
-	void CommandProcessor::SetMenuStrings()
+	// Gets the current Redo command name.
+	wxString CommandProcessor::GetNextCommandName() const
+	{
+		if (!m_redoCommands.empty())
+		{
+			auto& redoCommand = m_redoCommands.front();
+			return redoCommand->GetName();
+		}
+		return "";
+	}
+
+	void CommandProcessor::SetMenuStrings_()
 	{
 #if wxUSE_MENUS
 		if (m_commandEditMenu)
 		{
-			wxString undoLabel = GetUndoMenuLabel();
-			wxString redoLabel = GetRedoMenuLabel();
+			wxString undoLabel = _("&Undo");
+			wxString buf = GetLastCommandName();
+			if (!buf.empty())
+			{
+				undoLabel += " ";
+				undoLabel += buf;
+			}
+			undoLabel += m_undoAccelerator;
+
+			wxString redoLabel = _("&Redo");
+			buf = GetNextCommandName();
+			if (!buf.empty())
+			{
+				redoLabel += " ";
+				redoLabel += buf;
+			}
+			redoLabel += m_redoAccelerator;
 
 			m_commandEditMenu->SetLabel(wxID_UNDO, undoLabel);
 			m_commandEditMenu->Enable(wxID_UNDO, CanUndo());
@@ -317,47 +348,6 @@ namespace FTK
 			m_commandEditMenu->Enable(wxID_REDO, CanRedo());
 		}
 #endif // wxUSE_MENUS
-	}
-
-	// Gets the current Undo menu label.
-	wxString CommandProcessor::GetUndoMenuLabel() const
-	{
-		wxString buf;
-		if (!m_undoCommands.empty())
-		{
-			auto& command = m_undoCommands.back();
-			wxString commandName(command->GetName());
-			if (commandName.empty()) commandName = _("Unnamed command");
-			bool canUndo = command->CanUndo();
-			if (canUndo)
-				buf = wxString(_("&Undo ")) + commandName + m_undoAccelerator;
-			else
-				buf = wxString(_("Can't &Undo ")) + commandName + m_undoAccelerator;
-		}
-		else
-		{
-			buf = _("&Undo") + m_undoAccelerator;
-		}
-
-		return buf;
-	}
-
-	// Gets the current Undo menu label.
-	wxString CommandProcessor::GetRedoMenuLabel() const
-	{
-		wxString buf;
-		if (!m_redoCommands.empty())
-		{
-			auto& redoCommand = m_redoCommands.front();
-			wxString redoCommandName(redoCommand->GetName());
-			if (redoCommandName.empty()) redoCommandName = _("Unnamed command");
-			buf = wxString(_("&Redo ")) + redoCommandName + m_redoAccelerator;
-		}
-		else
-		{
-			buf = _("&Redo") + m_redoAccelerator;
-		}
-		return buf;
 	}
 
 	void CommandProcessor::ClearCommands()
@@ -808,7 +798,7 @@ public:
 	ftkDocTemplate(const ftkDocTemplate&) = delete;
 	ftkDocTemplate& operator=(const ftkDocTemplate&) = delete;
 
-	virtual ~ftkDocTemplate() = default;;
+	virtual ~ftkDocTemplate() = default;
 
 	virtual ftkDocument* CreateDocument(const wxString& path, long flags = 0);
 	virtual ftkView* CreateView(ftkDocument* doc, ftkView::Mode mode, long flags = 0);
@@ -858,14 +848,12 @@ class ftkDocManager : public wxEvtHandler
 {
 public:
 	// NB: flags are unused, don't pass wxDOC_XXX to this ctor
-	ftkDocManager(long flags = 0, bool initialize = true);
+	ftkDocManager(long flags = 0);
 
 	ftkDocManager(const ftkDocManager&) = delete;
 	ftkDocManager& operator=(const ftkDocManager&) = delete;
 
 	~ftkDocManager() override;
-
-	virtual bool Initialize();
 
 	// Handlers for common user commands
 	void OnFileClose(wxCommandEvent& event);
@@ -966,8 +954,7 @@ public:
 	// Make a frame title (override this to do something different)
 	virtual wxString MakeFrameTitle(ftkDocument* doc);
 
-	virtual wxFileHistory* OnCreateFileHistory();
-	virtual wxFileHistory* GetFileHistory() const { return m_fileHistory; }
+	virtual wxFileHistory* GetFileHistory() const { return m_fileHistory.get(); }
 
 	// File history management
 	virtual void AddFileToHistory(const wxString& file);
@@ -1021,20 +1008,18 @@ protected:
 	// return the command processor for the current document, if any
 	FTK::CommandProcessor* GetCurrentCommandProcessor() const;
 
-	int               m_defaultDocumentNameCounter = 1;
-	int               m_maxDocsOpen = std::numeric_limits<int>::max();
+	int m_defaultDocumentNameCounter = 1;
+	int m_maxDocsOpen = std::numeric_limits<int>::max();
 	std::list<ftkDocument*> m_docs;
 	std::list<std::unique_ptr<ftkDocTemplate> > m_templates;
 	ftkView* m_currentView = nullptr;
-	wxFileHistory* m_fileHistory = nullptr;
-	wxString          m_lastDirectory;
+	std::unique_ptr<wxFileHistory> m_fileHistory;
+	wxString m_lastDirectory;
 	static ftkDocManager* sm_docManager;
 
 #if wxUSE_PRINTING_ARCHITECTURE
 	wxPageSetupDialogData m_pageSetupDialogData;
 #endif // wxUSE_PRINTING_ARCHITECTURE
-
-	wxDECLARE_EVENT_TABLE();
 };
 
 // ----------------------------------------------------------------------------
@@ -1211,13 +1196,6 @@ private:
 };
 
 // ----------------------------------------------------------------------------
-// A default child frame: we need to define it as a class just for wxRTTI,
-// otherwise we could simply typedef it
-// ----------------------------------------------------------------------------
-
-using ftkDocChildFrame = ftkDocChildFrameAny<wxFrame, wxFrame>;
-
-// ----------------------------------------------------------------------------
 // wxDocParentFrame and related classes.
 //
 // As with wxDocChildFrame we define a template base class used by both normal
@@ -1331,9 +1309,6 @@ private:
 		}
 	}
 };
-
-using ftkDocParentFrame = ftkDocParentFrameAny<wxFrame>;
-
 
 // ----------------------------------------------------------------------------
 // Provide simple default printing facilities
@@ -1567,7 +1542,7 @@ bool ftkDocument::Save()
 
 bool ftkDocument::SaveAs()
 {
-	ftkDocTemplate* docTemplate = GetDocumentTemplate();
+	auto docTemplate = GetDocumentTemplate();
 	if (!docTemplate)
 		return false;
 
@@ -2206,57 +2181,49 @@ ftkView* ftkDocTemplate::DoCreateView(ftkView::Mode mode)
 	return m_viewCreate(mode);
 }
 
-wxBEGIN_EVENT_TABLE(ftkDocManager, wxEvtHandler)
-EVT_MENU(wxID_OPEN, ftkDocManager::OnFileOpen)
-EVT_MENU(wxID_CLOSE, ftkDocManager::OnFileClose)
-EVT_MENU(wxID_CLOSE_ALL, ftkDocManager::OnFileCloseAll)
-EVT_MENU(wxID_REVERT, ftkDocManager::OnFileRevert)
-EVT_MENU(wxID_NEW, ftkDocManager::OnFileNew)
-EVT_MENU(wxID_SAVE, ftkDocManager::OnFileSave)
-EVT_MENU(wxID_SAVEAS, ftkDocManager::OnFileSaveAs)
-EVT_MENU(wxID_UNDO, ftkDocManager::OnUndo)
-EVT_MENU(wxID_REDO, ftkDocManager::OnRedo)
-
-// We don't know in advance how many items can there be in the MRU files
-// list so set up OnMRUFile() as a handler for all menu events and do the
-// check for the id of the menu item clicked inside it.
-EVT_MENU(wxID_ANY, ftkDocManager::OnMRUFile)
-
-EVT_UPDATE_UI(wxID_OPEN, ftkDocManager::OnUpdateFileOpen)
-EVT_UPDATE_UI(wxID_CLOSE, ftkDocManager::OnUpdateDisableIfNoDoc)
-EVT_UPDATE_UI(wxID_CLOSE_ALL, ftkDocManager::OnUpdateDisableIfNoDoc)
-EVT_UPDATE_UI(wxID_REVERT, ftkDocManager::OnUpdateFileRevert)
-EVT_UPDATE_UI(wxID_NEW, ftkDocManager::OnUpdateFileNew)
-EVT_UPDATE_UI(wxID_SAVE, ftkDocManager::OnUpdateFileSave)
-EVT_UPDATE_UI(wxID_SAVEAS, ftkDocManager::OnUpdateFileSaveAs)
-EVT_UPDATE_UI(wxID_UNDO, ftkDocManager::OnUpdateUndo)
-EVT_UPDATE_UI(wxID_REDO, ftkDocManager::OnUpdateRedo)
-
-#if wxUSE_PRINTING_ARCHITECTURE
-EVT_MENU(wxID_PRINT, ftkDocManager::OnPrint)
-EVT_MENU(wxID_PREVIEW, ftkDocManager::OnPreview)
-EVT_MENU(wxID_PRINT_SETUP, ftkDocManager::OnPageSetup)
-
-EVT_UPDATE_UI(wxID_PRINT, ftkDocManager::OnUpdateDisableIfNoDoc)
-EVT_UPDATE_UI(wxID_PREVIEW, ftkDocManager::OnUpdateDisableIfNoDoc)
-// NB: we keep "Print setup" menu item always enabled as it can be used
-//     even without an active document
-#endif // wxUSE_PRINTING_ARCHITECTURE
-wxEND_EVENT_TABLE()
-
 ftkDocManager* ftkDocManager::sm_docManager = nullptr;
 
-ftkDocManager::ftkDocManager(long WXUNUSED(flags), bool initialize)
+ftkDocManager::ftkDocManager(long WXUNUSED(flags))
 {
+	Bind(wxEVT_MENU, &ftkDocManager::OnFileNew, this, wxID_NEW);
+	Bind(wxEVT_MENU, &ftkDocManager::OnFileOpen, this, wxID_OPEN);
+	Bind(wxEVT_MENU, &ftkDocManager::OnFileSave, this, wxID_SAVE);
+	Bind(wxEVT_MENU, &ftkDocManager::OnFileSaveAs, this, wxID_SAVEAS);
+	Bind(wxEVT_MENU, &ftkDocManager::OnFileClose, this, wxID_CLOSE);
+	Bind(wxEVT_MENU, &ftkDocManager::OnFileCloseAll, this, wxID_CLOSE_ALL);
+	Bind(wxEVT_MENU, &ftkDocManager::OnFileRevert, this, wxID_REVERT);
+	Bind(wxEVT_MENU, &ftkDocManager::OnUndo, this, wxID_UNDO);
+	Bind(wxEVT_MENU, &ftkDocManager::OnRedo, this, wxID_REDO);
+
+	Bind(wxEVT_MENU, &ftkDocManager::OnMRUFile, this, wxID_ANY);
+
+	Bind(wxEVT_UPDATE_UI, &ftkDocManager::OnUpdateFileNew, this, wxID_NEW);
+	Bind(wxEVT_UPDATE_UI, &ftkDocManager::OnUpdateFileOpen, this, wxID_OPEN);
+	Bind(wxEVT_UPDATE_UI, &ftkDocManager::OnUpdateFileSave, this, wxID_SAVE);
+	Bind(wxEVT_UPDATE_UI, &ftkDocManager::OnUpdateFileSaveAs, this, wxID_SAVEAS);
+	Bind(wxEVT_UPDATE_UI, &ftkDocManager::OnUpdateDisableIfNoDoc, this, wxID_CLOSE);
+	Bind(wxEVT_UPDATE_UI, &ftkDocManager::OnUpdateDisableIfNoDoc, this, wxID_CLOSE_ALL);
+	Bind(wxEVT_UPDATE_UI, &ftkDocManager::OnUpdateFileRevert, this, wxID_REVERT);
+	Bind(wxEVT_UPDATE_UI, &ftkDocManager::OnUpdateUndo, this, wxID_UNDO);
+	Bind(wxEVT_UPDATE_UI, &ftkDocManager::OnUpdateRedo, this, wxID_REDO);
+
+#if wxUSE_PRINTING_ARCHITECTURE
+	Bind(wxEVT_MENU, &ftkDocManager::OnPrint, this, wxID_PRINT);
+	Bind(wxEVT_MENU, &ftkDocManager::OnPreview, this, wxID_PREVIEW);
+	Bind(wxEVT_MENU, &ftkDocManager::OnPageSetup, this, wxID_PRINT_SETUP);
+	// NB: we keep "Print setup" menu item always enabled as it can be used
+	//     even without an active document
+	Bind(wxEVT_UPDATE_UI, &ftkDocManager::OnUpdateDisableIfNoDoc, this, wxID_PRINT);
+	Bind(wxEVT_UPDATE_UI, &ftkDocManager::OnUpdateDisableIfNoDoc, this, wxID_PREVIEW);
+#endif // wxUSE_PRINTING_ARCHITECTURE 
 	sm_docManager = this;
-	if (initialize)
-		Initialize();
+	m_fileHistory = std::make_unique<wxFileHistory>();
 }
 
 ftkDocManager::~ftkDocManager()
 {
 	Clear();
-	delete m_fileHistory;
+	m_fileHistory.reset();
 	sm_docManager = nullptr;
 }
 
@@ -2308,12 +2275,6 @@ bool ftkDocManager::Clear(bool force)
 	return true;
 }
 
-bool ftkDocManager::Initialize()
-{
-	m_fileHistory = OnCreateFileHistory();
-	return true;
-}
-
 wxString ftkDocManager::GetLastDirectory() const
 {
 	// if we haven't determined the last used directory yet, do it now
@@ -2350,16 +2311,12 @@ wxString ftkDocManager::GetLastDirectory() const
 	return m_lastDirectory;
 }
 
-wxFileHistory* ftkDocManager::OnCreateFileHistory()
-{
-	return new wxFileHistory;
-}
-
 void ftkDocManager::OnFileClose(wxCommandEvent& WXUNUSED(event))
 {
-	auto doc = GetCurrentDocument();
-	if (doc)
+	if (auto doc = GetCurrentDocument())
+	{
 		CloseDocument(doc);
+	}
 }
 
 void ftkDocManager::OnFileCloseAll(wxCommandEvent& WXUNUSED(event))
@@ -2382,26 +2339,26 @@ void ftkDocManager::OnFileOpen(wxCommandEvent& WXUNUSED(event))
 
 void ftkDocManager::OnFileRevert(wxCommandEvent& WXUNUSED(event))
 {
-	auto doc = GetCurrentDocument();
-	if (!doc)
-		return;
-	doc->Revert();
+	if (auto doc = GetCurrentDocument())
+	{
+		doc->Revert();
+	}
 }
 
 void ftkDocManager::OnFileSave(wxCommandEvent& WXUNUSED(event))
 {
-	auto doc = GetCurrentDocument();
-	if (!doc)
-		return;
-	doc->Save();
+	if (auto doc = GetCurrentDocument())
+	{
+		doc->Save();
+	}
 }
 
 void ftkDocManager::OnFileSaveAs(wxCommandEvent& WXUNUSED(event))
 {
-	auto doc = GetCurrentDocument();
-	if (!doc)
-		return;
-	doc->SaveAs();
+	if (auto doc = GetCurrentDocument())
+	{
+		doc->SaveAs();
+	}
 }
 
 void ftkDocManager::OnMRUFile(wxCommandEvent& event)
@@ -2463,8 +2420,7 @@ void ftkDocManager::OnPrint(wxCommandEvent& WXUNUSED(event))
 	if (!view)
 		return;
 
-	wxPrintout* printout = view->OnCreatePrintout();
-	if (printout)
+	if (auto printout = view->OnCreatePrintout())
 	{
 		wxPrintDialogData printDialogData(m_pageSetupDialogData.GetPrintData());
 		wxPrinter printer(&printDialogData);
@@ -2497,8 +2453,7 @@ void ftkDocManager::OnPreview(wxCommandEvent& WXUNUSED(event))
 	if (!view)
 		return;
 
-	wxPrintout* printout = view->OnCreatePrintout();
-	if (printout)
+	if (auto printout = view->OnCreatePrintout())
 	{
 		wxPrintDialogData printDialogData(m_pageSetupDialogData.GetPrintData());
 
@@ -2528,27 +2483,33 @@ void ftkDocManager::OnPreview(wxCommandEvent& WXUNUSED(event))
 
 void ftkDocManager::OnUndo(wxCommandEvent& event)
 {
-	FTK::CommandProcessor* const cmdproc = GetCurrentCommandProcessor();
+	auto cmdproc = GetCurrentCommandProcessor();
 	if (!cmdproc)
 	{
 		event.Skip();
 		return;
 	}
 
-	cmdproc->Undo();
+	if (cmdproc->Undo())
+	{
+		cmdproc->SetMenuStrings_();
+	}
 	GetCurrentDocument()->UpdateAllViews();
 }
 
 void ftkDocManager::OnRedo(wxCommandEvent& event)
 {
-	FTK::CommandProcessor* const cmdproc = GetCurrentCommandProcessor();
+	auto cmdproc = GetCurrentCommandProcessor();
 	if (!cmdproc)
 	{
 		event.Skip();
 		return;
 	}
 
-	cmdproc->Redo();
+	if (cmdproc->Redo())
+	{
+		cmdproc->SetMenuStrings_();
+	}
 	GetCurrentDocument()->UpdateAllViews();
 }
 
@@ -2581,7 +2542,7 @@ void ftkDocManager::OnUpdateFileNew(wxUpdateUIEvent& event)
 
 void ftkDocManager::OnUpdateFileSave(wxUpdateUIEvent& event)
 {
-	ftkDocument* const doc = GetCurrentDocument();
+	auto doc = GetCurrentDocument();
 	event.Enable(doc && !doc->AlreadySaved());
 }
 
@@ -2605,7 +2566,7 @@ void ftkDocManager::OnUpdateUndo(wxUpdateUIEvent& event)
 		return;
 	}
 	event.Enable(cmdproc->CanUndo());
-	cmdproc->SetMenuStrings();
+	cmdproc->SetMenuStrings_();
 }
 
 void ftkDocManager::OnUpdateRedo(wxUpdateUIEvent& event)
@@ -2621,7 +2582,7 @@ void ftkDocManager::OnUpdateRedo(wxUpdateUIEvent& event)
 		return;
 	}
 	event.Enable(cmdproc->CanRedo());
-	cmdproc->SetMenuStrings();
+	cmdproc->SetMenuStrings_();
 }
 
 ftkView* ftkDocManager::GetAnyUsableView() const
@@ -2648,7 +2609,7 @@ ftkView* ftkDocManager::GetAnyUsableView() const
 
 bool ftkDocManager::TryBefore(wxEvent& event)
 {
-	ftkView* const view = GetAnyUsableView();
+	auto view = GetAnyUsableView();
 	return view && view->ProcessEventLocally(event);
 }
 
@@ -2681,7 +2642,7 @@ void ftkDocument::Activate()
 	if (auto view = GetFirstView())
 	{
 		view->Activate(true);
-		if (wxWindow* win = view->GetFrame())
+		if (auto win = view->GetFrame())
 			win->Raise();
 	}
 }
@@ -2742,8 +2703,7 @@ ftkDocument* ftkDocManager::CreateDocument(const wxString& pathOrig, long flags)
 	// check whether the document with this path is already opened
 	if (!path.empty())
 	{
-		ftkDocument* const doc = FindDocumentByPath(path);
-		if (doc)
+		if (auto doc = FindDocumentByPath(path))
 		{
 			// file already open, just activate it and return
 			doc->Activate();
@@ -2831,7 +2791,7 @@ bool ftkDocManager::FlushDoc(ftkDocument* WXUNUSED(doc))
 
 ftkDocument* ftkDocManager::GetCurrentDocument() const
 {
-	ftkView* const view = GetAnyUsableView();
+	auto view = GetAnyUsableView();
 	return view ? view->GetDocument() : nullptr;
 }
 
@@ -3257,10 +3217,9 @@ bool ftkDocParentFrameAnyBase::TryProcessEvent(wxEvent& event)
 
 	// If we have an active view, its associated child frame may have
 	// already forwarded the event to wxDocManager, check for this:
-	if (ftkView* const view = m_docManager->GetAnyUsableView())
+	if (auto view = m_docManager->GetAnyUsableView())
 	{
-		ftkDocChildFrameAnyBase* const childFrame = view->GetDocChildFrame();
-		if (childFrame && childFrame->HasAlreadyProcessed(event))
+		if (auto childFrame = view->GetDocChildFrame(); childFrame && childFrame->HasAlreadyProcessed(event))
 			return false;
 	}
 
@@ -3482,14 +3441,6 @@ bool wxTransferStreamToFile(wxInputStream& stream, const wxString& filename)
 
 #endif // wxUSE_STD_IOSTREAM/!wxUSE_STD_IOSTREAM
 
-
-
-#if wxUSE_MDI_ARCHITECTURE
-using ftkDocMDIParentFrame = ftkDocParentFrameAny<wxMDIParentFrame> ;
-using ftkDocMDIChildFrame = ftkDocChildFrameAny<wxMDIChildFrame, wxMDIParentFrame>;
-#endif // wxUSE_MDI_ARCHITECTURE
-
-
 // Define a new application
 class App : public wxApp
 {
@@ -3553,209 +3504,339 @@ private:
 	wxMenu* m_menuEdit;
 
 	ftkView::Mode m_mode;
-
-	wxDECLARE_EVENT_TABLE();
 };
 
-//wxDECLARE_APP(App);
-
-class ftkApp : public wxApp
+wxDECLARE_APP(App);
+namespace FTK
 {
-public:
-	ftkApp();
-
-	ftkApp(const ftkApp&) = delete;
-	ftkApp& operator=(const ftkApp&) = delete;
-
-	bool OnInit() override;
-	int OnExit() override;
-
-	void OnInitCmdLine(wxCmdLineParser& parser) override;
-	bool OnCmdLineParsed(wxCmdLineParser& parser) override;
-private:
-	ftkView::Mode m_mode;
-};
-
-wxDECLARE_APP(ftkApp);
-wxIMPLEMENT_APP(ftkApp);
-
-ftkApp::ftkApp()
-{
-#ifdef WIN32
-	_CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF) | _CRTDBG_LEAK_CHECK_DF);
-#endif
-	SetAppName("ftkApp");
-	SetAppDisplayName("ftkApp");
-#if wxUSE_MDI_ARCHITECTURE
-	m_mode = ftkView::Mode::Mode_MDI;
-#else
-	m_mode = ftkView::Mode::Mode_SDI;
-#endif
-
-	/*m_canvas = nullptr;
-	m_menuEdit = nullptr;*/
-}
-
-bool ftkApp::OnInit()
-{
-	if (!wxApp::OnInit())
-		return false;
-	::wxInitAllImageHandlers();
-
-	/*auto frame = wxw::CreateFrame(GetAppDisplayName());
-
-	wxMenu* file = new wxMenu;
-
-	file->Append(wxID_NEW);
-	file->Append(wxID_OPEN);
-
-	//if (m_mode == Mode_Single)
-		//AppendDocumentFileCommands(menuFile, true);
-
-	file->AppendSeparator();
-	file->Append(wxID_EXIT);
-
-	wxMenuBar* menubar = new wxMenuBar;
-
-	menubar->Append(file, wxGetStockLabel(wxID_FILE));
-	wxMenu* help = new wxMenu;
-	help->Append(wxID_ABOUT);
-	menubar->Append(help, wxGetStockLabel(wxID_HELP));
-
-	frame->SetMenuBar(menubar);
-
-	frame->Show();
-	//CreateView();
-	return true;*/
-
-	// Fill in the application information fields before creating wxConfig.
-	SetVendorName("ftkApp");
-	SetAppName("ftkApp");
-	SetAppDisplayName("ftkApp");
-
-	wxFrame* frame = nullptr;
-	ftkDocManager* docManager = nullptr;
-
-	switch (m_mode)
+	class App : public wxApp
 	{
+	public:
+		App();
+
+		App(const App&) = delete;
+		App& operator=(const App&) = delete;
+
+		bool OnInit() override;
+		int OnExit() override;
+
+		void OnInitCmdLine(wxCmdLineParser& parser) override;
+		bool OnCmdLineParsed(wxCmdLineParser& parser) override;
+
+#ifdef __WXMAC__
+		void MacNewFile() override;
+#endif // __WXMAC__
+
+		wxFrame* CreateMainFrame(ftkDocManager* docManager);
+		wxFrame* CreateChildFrame(ftkView* view, bool isCanvas);
+		MyCanvas* GetMainWindowCanvas() const { return nullptr; }
+
+	private:
+		void CreateMenuBarForFrame(wxFrame* frame, wxMenu* file);
+
+		ftkView::Mode m_mode;
+	};
+}
+//wxDECLARE_APP(FTK::App);
+//wxIMPLEMENT_APP(FTK::App);
+
+namespace FTK
+{
+	App::App()
+	{
+#ifdef WIN32
+		_CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF) | _CRTDBG_LEAK_CHECK_DF);
+#endif
+		SetAppName("ftkApp");
+		SetAppDisplayName("ftkApp");
 #if wxUSE_MDI_ARCHITECTURE
-	case ftkView::Mode::Mode_MDI:
-		frame = new ftkDocMDIParentFrame(docManager, nullptr, wxID_ANY,
-			GetAppDisplayName(),
-			wxDefaultPosition,
-			wxWindow::FromDIP(wxSize(1280, 720), nullptr));
-		break;
+		m_mode = ftkView::Mode::Mode_MDI;
+#else
+		m_mode = ftkView::Mode::Mode_SDI;
+#endif
+
+		/*m_canvas = nullptr;
+		m_menuEdit = nullptr;*/
+	}
+
+	bool App::OnInit()
+	{
+		if (!wxApp::OnInit())
+			return false;
+		::wxInitAllImageHandlers();
+
+		/*auto frame = wxw::CreateFrame(GetAppDisplayName());
+
+		wxMenu* file = new wxMenu;
+
+		file->Append(wxID_NEW);
+		file->Append(wxID_OPEN);
+
+		//if (m_mode == Mode_Single)
+			//AppendDocumentFileCommands(menuFile, true);
+
+		file->AppendSeparator();
+		file->Append(wxID_EXIT);
+
+		wxMenuBar* menubar = new wxMenuBar;
+
+		menubar->Append(file, wxGetStockLabel(wxID_FILE));
+		wxMenu* help = new wxMenu;
+		help->Append(wxID_ABOUT);
+		menubar->Append(help, wxGetStockLabel(wxID_HELP));
+
+		frame->SetMenuBar(menubar);
+
+		frame->Show();
+		//CreateView();
+		return true;*/
+
+		// Fill in the application information fields before creating wxConfig.
+		SetVendorName("ftkApp");
+		SetAppName("ftkApp");
+		SetAppDisplayName("ftkApp");
+
+		auto docManager = new ftkDocManager;
+
+		auto frame = CreateMainFrame(docManager);
+
+		// and its menu bar
+		wxMenu* menuFile = new wxMenu;
+
+		menuFile->Append(wxID_NEW);
+		menuFile->Append(wxID_OPEN);
+
+		/*if (m_mode == ftkView::Mode::Mode_Single)
+			AppendDocumentFileCommands(menuFile, true);*/
+
+		menuFile->AppendSeparator();
+		menuFile->Append(wxID_EXIT);
+
+		// A nice touch: a history of files visited. Use this menu.
+		docManager->FileHistoryUseMenu(menuFile);
+#if wxUSE_CONFIG
+		docManager->FileHistoryLoad(*wxConfig::Get());
+#endif // wxUSE_CONFIG
+
+
+		CreateMenuBarForFrame(frame, menuFile);
+
+		frame->SetIcon(wxICON(doc));
+		frame->Centre();
+		frame->Show();
+
+		return true;
+	}
+
+	int App::OnExit()
+	{
+		auto manager = ftkDocManager::GetDocumentManager();
+#if wxUSE_CONFIG
+		manager->FileHistorySave(*wxConfig::Get());
+#endif // wxUSE_CONFIG
+		delete manager;
+		return wxApp::OnExit();
+	}
+
+	void App::OnInitCmdLine(wxCmdLineParser& parser)
+	{
+		wxApp::OnInitCmdLine(parser);
+#if wxUSE_MDI_ARCHITECTURE
+		parser.AddSwitch("", CmdLineOption::MDI, "run in MDI mode: multiple documents, single window");
+#endif
+#if wxUSE_AUI
+		parser.AddSwitch("", CmdLineOption::AUI, "run in MDI mode using AUI: multiple documents, single window");
+#endif
+		parser.AddSwitch("", CmdLineOption::SDI, "run in SDI mode: multiple documents, multiple windows");
+		parser.AddSwitch("", CmdLineOption::SINGLE, "run in single document mode");
+
+		parser.AddParam("filename", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE | wxCMD_LINE_PARAM_OPTIONAL);
+	}
+
+	bool App::OnCmdLineParsed(wxCmdLineParser& parser)
+	{
+		int numModeOptions = 0;
+		auto m_mode = ftkView::Mode::Mode_MDI;
+
+#if wxUSE_MDI_ARCHITECTURE
+		if (parser.Found(CmdLineOption::MDI))
+		{
+			m_mode = ftkView::Mode::Mode_MDI;
+			numModeOptions++;
+		}
 #endif // wxUSE_MDI_ARCHITECTURE
 
 #if wxUSE_AUI
-	case ftkView::Mode::Mode_AUI:
-		frame = new ftkDocParentFrameAny<wxAuiMDIParentFrame>
-			(
-				docManager, nullptr, wxID_ANY,
+		if (parser.Found(CmdLineOption::AUI))
+		{
+			m_mode = ftkView::Mode::Mode_AUI;
+			numModeOptions++;
+		}
+#endif // wxUSE_AUI
+
+		if (parser.Found(CmdLineOption::SDI))
+		{
+			m_mode = ftkView::Mode::Mode_SDI;
+			numModeOptions++;
+		}
+
+		if (parser.Found(CmdLineOption::SINGLE))
+		{
+			m_mode = ftkView::Mode::Mode_Single;
+			numModeOptions++;
+		}
+
+		if (numModeOptions > 1)
+		{
+			wxLogError("Only a single option choosing the mode can be given.");
+			return false;
+		}
+
+		// save any files given on the command line: we'll open them in OnInit()
+		// later, after creating the frame
+		//for (size_t i = 0; i != parser.GetParamCount(); ++i)
+			//m_filesFromCmdLine.push_back(parser.GetParam(i));
+		return wxApp::OnCmdLineParsed(parser);
+	}
+
+#ifdef __WXMAC__
+	void App::MacNewFile() override
+	{
+		wxApp::MacNewFile();
+	}
+#endif // __WXMAC__
+
+	wxFrame* App::CreateMainFrame(ftkDocManager* docManager)
+	{
+		switch (m_mode)
+		{
+#if wxUSE_MDI_ARCHITECTURE
+		case ftkView::Mode::Mode_MDI:
+			return new ftkDocParentFrameAny<wxMDIParentFrame>(docManager, nullptr, wxID_ANY,
 				GetAppDisplayName(),
 				wxDefaultPosition,
-				wxWindow::FromDIP(wxSize(1280, 720), nullptr)
-			);
-		break;
-#endif // wxUSE_AUI
-
-	case ftkView::Mode::Mode_SDI:
-	case ftkView::Mode::Mode_Single:
-		frame = new ftkDocParentFrame(docManager, nullptr, wxID_ANY,
-			GetAppDisplayName(),
-			wxDefaultPosition,
-			wxWindow::FromDIP(wxSize(1280, 720), nullptr));
-		break;
-	}
-
-	frame->SetIcon(wxICON(doc));
-	frame->Centre();
-	frame->Show();
-
-	return true;
-}
-
-int ftkApp::OnExit()
-{
-	return wxApp::OnExit();
-}
-
-// constants for the command line options names
-namespace CmdLineOption
-{
-
-#if wxUSE_MDI_ARCHITECTURE
-	const char* const MDI = "mdi";
-#endif
-#if wxUSE_AUI
-	const char* const AUI = "aui";
-#endif
-	const char* const SDI = "sdi";
-	const char* const SINGLE = "single";
-
-} // namespace CmdLineOption
-
-void ftkApp::OnInitCmdLine(wxCmdLineParser& parser)
-{
-	wxApp::OnInitCmdLine(parser);
-#if wxUSE_MDI_ARCHITECTURE
-	parser.AddSwitch("", CmdLineOption::MDI, "run in MDI mode: multiple documents, single window");
-#endif
-#if wxUSE_AUI
-	parser.AddSwitch("", CmdLineOption::AUI, "run in MDI mode using AUI: multiple documents, single window");
-#endif
-	parser.AddSwitch("", CmdLineOption::SDI, "run in SDI mode: multiple documents, multiple windows");
-	parser.AddSwitch("", CmdLineOption::SINGLE, "run in single document mode");
-
-	parser.AddParam("filename", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_MULTIPLE | wxCMD_LINE_PARAM_OPTIONAL);
-}
-
-bool ftkApp::OnCmdLineParsed(wxCmdLineParser& parser)
-{
-	int numModeOptions = 0;
-	auto m_mode = ftkView::Mode::Mode_MDI;
-
-#if wxUSE_MDI_ARCHITECTURE
-	if (parser.Found(CmdLineOption::MDI))
-	{
-		m_mode = ftkView::Mode::Mode_MDI;
-		numModeOptions++;
-	}
+				wxWindow::FromDIP(wxSize(1280, 720), nullptr));
 #endif // wxUSE_MDI_ARCHITECTURE
 
 #if wxUSE_AUI
-	if (parser.Found(CmdLineOption::AUI))
-	{
-		m_mode = ftkView::Mode::Mode_AUI;
-		numModeOptions++;
-	}
+		case ftkView::Mode::Mode_AUI:
+			return new ftkDocParentFrameAny<wxAuiMDIParentFrame>
+				(
+					docManager, nullptr, wxID_ANY,
+					GetAppDisplayName(),
+					wxDefaultPosition,
+					wxWindow::FromDIP(wxSize(1280, 720), nullptr)
+				);
 #endif // wxUSE_AUI
 
-	if (parser.Found(CmdLineOption::SDI))
-	{
-		m_mode = ftkView::Mode::Mode_SDI;
-		numModeOptions++;
+		case ftkView::Mode::Mode_SDI:
+		case ftkView::Mode::Mode_Single:
+			return new ftkDocParentFrameAny<wxFrame>(docManager, nullptr, wxID_ANY,
+				GetAppDisplayName(),
+				wxDefaultPosition,
+				wxWindow::FromDIP(wxSize(1280, 720), nullptr));
+		}
+		return nullptr;
 	}
 
-	if (parser.Found(CmdLineOption::SINGLE))
+	wxFrame* App::CreateChildFrame(ftkView* view, bool isCanvas)
 	{
-		m_mode = ftkView::Mode::Mode_Single;
-		numModeOptions++;
+		// create a child frame of appropriate class for the current mode
+		wxFrame* subframe = nullptr;
+		auto doc = view->GetDocument();
+		switch (view->GetMode())
+#if wxUSE_MDI_ARCHITECTURE
+		{
+		case ftkView::Mode::Mode_MDI:
+			subframe = new ftkDocChildFrameAny<wxMDIChildFrame, wxMDIParentFrame>;
+			(
+				doc,
+				view,
+				static_cast<ftkDocParentFrameAny<wxMDIParentFrame>*>(GetTopWindow()),
+				wxID_ANY,
+				"Child Frame",
+				wxDefaultPosition,
+				wxWindow::FromDIP(wxSize(640, 480), nullptr)
+			);
+			break;
+#endif // wxUSE_MDI_ARCHITECTURE
+
+#if wxUSE_AUI
+		case ftkView::Mode::Mode_AUI:
+			subframe = new ftkDocChildFrameAny<wxAuiMDIChildFrame, wxAuiMDIParentFrame>
+				(
+					doc,
+					view,
+					static_cast<ftkDocParentFrameAny<wxAuiMDIParentFrame>*>(GetTopWindow()),
+					wxID_ANY,
+					"Child Frame",
+					wxDefaultPosition,
+					wxWindow::FromDIP(wxSize(640, 480), nullptr)
+				);
+			break;
+#endif // wxUSE_AUI
+
+		case ftkView::Mode::Mode_SDI:
+		case ftkView::Mode::Mode_Single:
+			subframe = new ftkDocChildFrameAny<wxFrame, wxFrame>
+			(
+				doc,
+				view,
+				static_cast<ftkDocParentFrameAny<wxFrame>* >(GetTopWindow()),
+				wxID_ANY,
+				"Child Frame",
+				wxDefaultPosition,
+				wxWindow::FromDIP(wxSize(640, 480), nullptr)
+			);
+
+			subframe->Centre();
+			break;
+		}
+
+		auto menuFile = new wxMenu;
+
+		menuFile->Append(wxID_NEW);
+		menuFile->Append(wxID_OPEN);
+		//AppendDocumentFileCommands(menuFile, isCanvas);
+		menuFile->AppendSeparator();
+		menuFile->Append(wxID_EXIT);
+
+		wxMenu* menuEdit = nullptr;
+		if (isCanvas)
+		{
+			//menuEdit = CreateDrawingEditMenu();
+
+			doc->GetCommandProcessor()->SetEditMenu_(menuEdit);
+			doc->GetCommandProcessor()->SetMenuStrings_();// Initialize_();
+		}
+		else // text frame
+		{
+			menuEdit = new wxMenu;
+			menuEdit->Append(wxID_COPY);
+			menuEdit->Append(wxID_PASTE);
+			menuEdit->Append(wxID_SELECTALL);
+		}
+
+		CreateMenuBarForFrame(subframe, menuFile);// , menuEdit);
+
+		subframe->SetIcon(isCanvas ? wxICON(chrt) : wxICON(notepad));
+
+		return subframe;
 	}
 
-	if (numModeOptions > 1)
+	void App::CreateMenuBarForFrame(wxFrame* frame, wxMenu* file)
 	{
-		wxLogError("Only a single option choosing the mode can be given.");
-		return false;
-	}
+		wxMenuBar* menubar = new wxMenuBar;
+		menubar->Append(file, wxGetStockLabel(wxID_FILE));
 
-	// save any files given on the command line: we'll open them in OnInit()
-	// later, after creating the frame
-	//for (size_t i = 0; i != parser.GetParamCount(); ++i)
-		//m_filesFromCmdLine.push_back(parser.GetParam(i));
-	return wxApp::OnCmdLineParsed(parser);
+		wxMenu* help = new wxMenu;
+		help->Append(wxID_ABOUT);
+
+		menubar->Append(help, wxGetStockLabel(wxID_HELP));
+
+		frame->SetMenuBar(menubar);
+	}
 }
-
 /*
 	This sample show document/view support in wxWidgets.
 
@@ -3806,7 +3887,7 @@ public:
 private:
 	void OnMouseEvent(wxMouseEvent& event);
 
-	ftkView* m_view;
+	ftkView* m_view = nullptr;
 
 	// the segment being currently drawn or nullptr if none
 	DoodleSegment* m_currentSegment = nullptr;
@@ -3817,18 +3898,15 @@ private:
 	wxDECLARE_EVENT_TABLE();
 };
 
-//wxIMPLEMENT_APP(App);
-
-wxBEGIN_EVENT_TABLE(App, wxApp)
-EVT_MENU(wxID_ABOUT, App::OnAbout)
-EVT_MENU(wxID_CLEAR, App::OnForceCloseAll)
-wxEND_EVENT_TABLE()
+wxIMPLEMENT_APP(App);
 
 App::App()
 {
 #ifdef WIN32
 	_CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF) | _CRTDBG_LEAK_CHECK_DF);
 #endif
+	Bind(wxEVT_MENU, &App::OnAbout, this, wxID_ABOUT);
+	Bind(wxEVT_MENU, &App::OnForceCloseAll, this, wxID_CLEAR);
 	SetAppName("wxWidgetsApp");
 	SetAppDisplayName("wxWidgetsApp");
 #if wxUSE_MDI_ARCHITECTURE
@@ -3986,7 +4064,7 @@ bool App::OnInit()
 	{
 #if wxUSE_MDI_ARCHITECTURE
 	case ftkView::Mode::Mode_MDI:
-		frame = new ftkDocMDIParentFrame(docManager, nullptr, wxID_ANY,
+		frame = new ftkDocParentFrameAny<wxMDIParentFrame>(docManager, nullptr, wxID_ANY,
 			GetAppDisplayName(),
 			wxDefaultPosition,
 			wxWindow::FromDIP(wxSize(1280, 720), nullptr));
@@ -4007,7 +4085,7 @@ bool App::OnInit()
 
 	case ftkView::Mode::Mode_SDI:
 	case ftkView::Mode::Mode_Single:
-		frame = new ftkDocParentFrame(docManager, nullptr, wxID_ANY,
+		frame = new ftkDocParentFrameAny<wxFrame>(docManager, nullptr, wxID_ANY,
 			GetAppDisplayName(),
 			wxDefaultPosition,
 			wxWindow::FromDIP(wxSize(1280, 720), nullptr));
@@ -4102,14 +4180,14 @@ wxMenu* App::CreateDrawingEditMenu()
 
 void App::CreateMenuBarForFrame(wxFrame* frame, wxMenu* file, wxMenu* edit)
 {
-	wxMenuBar* menubar = new wxMenuBar;
+	auto menubar = new wxMenuBar;
 
 	menubar->Append(file, wxGetStockLabel(wxID_FILE));
 
 	if (edit)
 		menubar->Append(edit, wxGetStockLabel(wxID_EDIT));
 
-	wxMenu* help = new wxMenu;
+	auto help = new wxMenu;
 	help->Append(wxID_ABOUT);
 	menubar->Append(help, wxGetStockLabel(wxID_HELP));
 
@@ -4125,11 +4203,11 @@ wxFrame* App::CreateChildFrame(ftkView* view, bool isCanvas)
 #if wxUSE_MDI_ARCHITECTURE
 	{
 	case ftkView::Mode::Mode_MDI:
-		subframe = new ftkDocMDIChildFrame
+		subframe = new ftkDocChildFrameAny<wxMDIChildFrame, wxMDIParentFrame>;
 		(
 			doc,
 			view,
-			wxStaticCast(GetTopWindow(), ftkDocMDIParentFrame),
+			static_cast<ftkDocParentFrameAny<wxMDIParentFrame>*>(GetTopWindow()),
 			wxID_ANY,
 			"Child Frame",
 			wxDefaultPosition,
@@ -4144,7 +4222,7 @@ wxFrame* App::CreateChildFrame(ftkView* view, bool isCanvas)
 			(
 				doc,
 				view,
-				wxStaticCast(GetTopWindow(), wxAuiMDIParentFrame),
+				static_cast<ftkDocParentFrameAny<wxAuiMDIParentFrame>*>(GetTopWindow()),
 				wxID_ANY,
 				"Child Frame",
 				wxDefaultPosition,
@@ -4155,11 +4233,11 @@ wxFrame* App::CreateChildFrame(ftkView* view, bool isCanvas)
 
 	case ftkView::Mode::Mode_SDI:
 	case ftkView::Mode::Mode_Single:
-		subframe = new ftkDocChildFrame
+		subframe = new ftkDocChildFrameAny<wxFrame, wxFrame>
 		(
 			doc,
 			view,
-			wxStaticCast(GetTopWindow(), ftkDocParentFrame),
+			static_cast<ftkDocParentFrameAny<wxFrame>* >(GetTopWindow()),
 			wxID_ANY,
 			"Child Frame",
 			wxDefaultPosition,
@@ -4170,7 +4248,7 @@ wxFrame* App::CreateChildFrame(ftkView* view, bool isCanvas)
 		break;
 	}
 
-	wxMenu* menuFile = new wxMenu;
+	auto menuFile = new wxMenu;
 
 	menuFile->Append(wxID_NEW);
 	menuFile->Append(wxID_OPEN);
@@ -4178,13 +4256,13 @@ wxFrame* App::CreateChildFrame(ftkView* view, bool isCanvas)
 	menuFile->AppendSeparator();
 	menuFile->Append(wxID_EXIT);
 
-	wxMenu* menuEdit;
+	wxMenu* menuEdit = nullptr;
 	if (isCanvas)
 	{
 		menuEdit = CreateDrawingEditMenu();
 
-		doc->GetCommandProcessor()->SetEditMenu(menuEdit);
-		doc->GetCommandProcessor()->Initialize();
+		doc->GetCommandProcessor()->SetEditMenu_(menuEdit);
+		doc->GetCommandProcessor()->SetMenuStrings_();// Initialize_();
 	}
 	else // text frame
 	{
@@ -4301,7 +4379,7 @@ bool TextEditView::OnCreate(ftkDocument* doc, long flags)
 	if (!ftkView::OnCreate(doc, flags))
 		return false;
 
-	wxFrame* frame = nullptr;// wxGetApp().CreateChildFrame(this, false);
+	wxFrame* frame = wxGetApp().CreateChildFrame(this, false);
 	wxASSERT(frame == GetFrame());
 	m_text = new wxTextCtrl(frame, wxID_ANY, "",
 		wxDefaultPosition, wxDefaultSize,
@@ -4572,6 +4650,7 @@ void MyCanvas::OnMouseEvent(wxMouseEvent& event)
 
 			doc->GetCommandProcessor()->Submit(
 				std::make_unique<DrawingAddSegmentCommand>(doc, *m_currentSegment));
+			doc->GetCommandProcessor()->SetMenuStrings_();
 
 			doc->Modify(true);
 			doc->UpdateAllViews();
@@ -4609,7 +4688,7 @@ bool DrawingView::OnCreate(ftkDocument* doc, long flags)
 	if (GetMode() != ftkView::Mode::Mode_Single)
 	{
 		// create a new window and canvas inside it
-		wxFrame* frame = nullptr;// app.CreateChildFrame(this, true);
+		auto frame = app.CreateChildFrame(this, true);
 		wxASSERT(frame == GetFrame());
 		m_canvas = new MyCanvas(this);
 		frame->Show();
@@ -4617,12 +4696,12 @@ bool DrawingView::OnCreate(ftkDocument* doc, long flags)
 	else // single document mode
 	{
 		// reuse the existing window and canvas
-		//m_canvas = app.GetMainWindowCanvas();
-		//m_canvas->SetView(this);
+		m_canvas = app.GetMainWindowCanvas();
+		m_canvas->SetView(this);
 
 		// Initialize the edit menu Undo and Redo items
 		//doc->GetCommandProcessor()->SetEditMenu(app.GetMainWindowEditMenu());
-		doc->GetCommandProcessor()->Initialize();
+		doc->GetCommandProcessor()->SetMenuStrings_();// Initialize_();
 	}
 
 	return true;
@@ -4689,6 +4768,7 @@ void DrawingView::OnCut(wxCommandEvent& WXUNUSED(event))
 	DrawingDocument* const doc = GetDocument();
 
 	doc->GetCommandProcessor()->Submit(std::make_unique<DrawingRemoveSegmentCommand>(doc));
+	doc->GetCommandProcessor()->SetMenuStrings_();
 	doc->Modify(true);
 	doc->UpdateAllViews();
 }
