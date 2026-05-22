@@ -75,7 +75,7 @@ public:
   void SetWidgetData(WidgetDataType &widget_data);
 
 protected:
-  intptr_t         m_Arg;
+  intptr_t         m_Arg = 0;
   bool             m_Bool = false;
   double           m_Double = 0.0;
   mafString       *m_MAFString = nullptr;
