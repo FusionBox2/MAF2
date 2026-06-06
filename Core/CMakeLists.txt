@@ -13,6 +13,10 @@ SET(PROJECT_SRCS
 	../ftk/Core/AttributeFactory.h
 	../ftk/Core/Node.cpp
 	../ftk/Core/Node.h
+	../ftk/Core/Node0.cpp
+	../ftk/Core/Node0.h
+	../ftk/Core/Node1.cpp
+	../ftk/Core/Node1.h
 	../ftk/Core/NodeFactory.cpp
 	../ftk/Core/NodeFactory.h
 	../ftk/Core/NodeIterator.h

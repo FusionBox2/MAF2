@@ -72,7 +72,7 @@ protected:
 
   std::shared_ptr<mafVMEItem> m_CurrentItem; ///< the item currently selected for the current time
 
-  std::shared_ptr<mafVMEItem> m_OldItem;     ///< the item previously selected
+  mafVMEItem *m_OldItem = nullptr;     ///< the item previously selected
 
   mafTimeStamp  m_OldTimeStamp; ///< previous time
 

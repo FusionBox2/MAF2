@@ -159,8 +159,6 @@ public:
 	bool m_PlugTimebar = true;
 	bool m_PlugLogbar = true;
 
-	mafWXLog* m_Logger = nullptr;
-
 	wxString m_LastSelectedPanel;
 	mafGUITimeBar* m_TimePanel = nullptr;
 	std::vector<wxAcceleratorEntry> m_AccelTable;
@@ -461,8 +459,8 @@ bool mafLogicWithManagers::Configure()
 		vtkOutputWindow::SetInstance(vtkLog);
 #endif
 		wxTextCtrl* log = new wxTextCtrl(m_logic->m_frame, MENU_VIEW_LOGBAR_, "", wxPoint(0, 0), wxSize(100, 300), /*wxNO_BORDER |*/ wxTE_MULTILINE);
-		m_logic->m_Logger = new mafWXLog(log);
-		m_logic->m_Logger->LogToFile(m_logic->m_LogToFile);
+		mafWXLog *logger = new mafWXLog(log);
+		logger->LogToFile(m_logic->m_LogToFile);
 		if (m_logic->m_LogToFile)
 		{
 			mafString s = m_logic->m_ApplicationSettings->GetLogFolder();
@@ -471,17 +469,14 @@ bool mafLogicWithManagers::Configure()
 			s += mafWxToString(m_logic->m_frame->GetTitle());
 			s += mafString::Format(_R("_%02d_%02d_%d_%02d_%2d"), log_time.GetYear(), log_time.GetMonth() + 1, log_time.GetDay(), log_time.GetHour(), log_time.GetMinute());
 			s += _R(".log");
-			if (m_logic->m_Logger->SetFileName(mafStringToWx(s)) == MAF_ERROR)
+			if (logger->SetFileName(mafStringToWx(s)) == MAF_ERROR)
 			{
 				mafLogMessage(_M(_R("Unable to create log file ") + s));
 			}
 		}
-		m_logic->m_Logger->SetVerbose(m_logic->m_LogAllEvents);
+		logger->SetVerbose(m_logic->m_LogAllEvents);
 
-		{
-			wxLog* old_log = wxLog::SetActiveTarget(m_logic->m_Logger);
-			delete old_log;
-		}
+		delete wxLog::SetActiveTarget(logger);
 
 		m_logic->m_frame->AddPane(log, wxAuiPaneInfo()
 			.Name("logbar")
@@ -501,12 +496,9 @@ bool mafLogicWithManagers::Configure()
 		vtkOutputWindow::SetInstance(vtkLog);
 #endif  
 		wxTextCtrl* log = new wxTextCtrl(m_logic->m_frame, -1, "", wxPoint(0, 0), wxSize(100, 300), wxNO_BORDER | wxTE_MULTILINE);
-		m_logic->m_Logger = new mafWXLog(log);
+		mafWXLog *logger = new mafWXLog(log);
 		log->Show(false);
-		{
-			wxLog* old_log = wxLog::SetActiveTarget(m_logic->m_Logger);
-			delete old_log;
-		}
+		delete wxLog::SetActiveTarget(logger);
 	}
 
 	EnableItem(CAMERA_RESET, false);

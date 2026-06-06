@@ -71,13 +71,13 @@ lhpMultiscaleVisualPipes -   Visual pipes for data and tokens.  Create and delet
 //
 //           ------------------------------------------------>
 //         /                                                   \
-//        /                                                     \                                     
+//        /                                                     \
 //       /                      ----> CameraParams ------------->
-//      /                     /                                   \       
+//      /                     /                                   \
 // lhpOp --> MultiscaleUtility ------> CameraUtility --------------> VectorMath
 //      \                     \                     \             /
 //       \                     \                     \           /
-//        \                      -----------> ActorCoordsUtility 
+//        \                      -----------> ActorCoordsUtility
 //         \                     \
 //          \                     \
 //            ------------------> MultiscaleActor ---------------> Visual Pipes

@@ -113,9 +113,6 @@ int mafStorage::Store()
     return MAF_ERROR;
   }
 
-  // set the new filename as current
-  m_ParserURL = m_URL;
-
   // here I should add a call for packing/sending files
   mafString filename;
 
@@ -123,6 +120,9 @@ int mafStorage::Store()
   GetTmpFile(filename);
 
   int errorCode = InternalStore(filename);
+
+  // set the new filename as current
+  m_ParserURL = m_URL;
 
   // move to destination URL
   if (errorCode == 0)

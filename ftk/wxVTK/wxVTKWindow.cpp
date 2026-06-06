@@ -17,7 +17,8 @@
 
 #include <vector>
 #include <memory>
-
+//#include <vtkAutoInit.h>
+//VTK_MODULE_INIT(vtkRenderingOpenGL2)
 class wxVTKRenderWindowInteractor : public vtkRenderWindowInteractor
 {
 public:

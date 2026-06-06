@@ -524,7 +524,7 @@ void mafGUIDialogTransferFunction2D::InitializeControls()
   
   // enable/ disable some controls
   wxWindowList &list = this->GetChildren();
-  for (auto node = list.GetFirst(); node != NULL; node = node->GetNext() ) 
+  for (auto node = list.GetFirst(); node; node = node->GetNext() ) 
 	{
     wxWindow *win = (wxWindow *)node->GetData();
     switch (win->GetId()) 

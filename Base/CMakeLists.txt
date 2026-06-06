@@ -7,6 +7,7 @@ PROJECT(mafBase)
 
 # Set your list of sources here.
 SET(PROJECT_SRCS
+	../ftk/Base/FastBimap.h
 	../ftk/Base/FastPImpl.h
 	../ftk/Base/Log.cpp
 	../ftk/Base/Log.h
@@ -18,6 +19,7 @@ SET(PROJECT_SRCS
 	../ftk/Base/String.cpp
 	../ftk/Base/String.h
 	../ftk/Base/SpinLock.h
+	../ftk/Base/Template.h
 	../ftk/Base/ThreadPool.h
 )
 

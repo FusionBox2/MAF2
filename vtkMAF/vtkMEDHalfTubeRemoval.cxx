@@ -25,6 +25,7 @@ University of Bedfordshire
 
 #include "assert.h"
 #include <algorithm>
+#include <iostream>
 
 vtkStandardNewMacro(vtkMEDHalfTubeRemoval);
 

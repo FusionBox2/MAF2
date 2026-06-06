@@ -30,7 +30,7 @@
 #include "vtkType.h"
 #include "vtkIdList.h"
 
-#include <ostream>
+#include <iostream>
 
 #if _MSC_VER >= 1400
 #include <intrin.h>

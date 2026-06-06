@@ -1,15 +1,13 @@
-#include "Node.h"
+#include "Node0.h"
 
 #include "mafDecl.h"
 
-#include "ftk/Base/Log.h"
 #include "ftk/Core/NodeFactory.h"
 #include "ftk/Core/Attribute.h"
 #include "mafTagArray.h"
 #include "mafIndent.h"
 #include "mafEventIO.h"
 #include "ftk/IO/StorageElement.h"
-#include "ftk/IO/ParseContainers.h"
 #include "mafStorage.h"
 #include "mafGUI.h"
 #include <wx/tokenzr.h>
@@ -22,26 +20,9 @@
 
 BEGIN_FTK_NAMESPACE
 
-namespace model::data
+namespace model::data0
 {
-    template<class Value>
-    Node::NodeLink Parse(const Value& value, io::parse::To<Node::NodeLink>)
-    {
-        return Node::NodeLink{ {}, value(_R("NodeSubId")).As<mafID>() }.SetId(value(_R("NodeId")).As<mafID>());
-    }
-
-    template<class Value>
-    Node::Links Parse(const Value& value, io::parse::To<Node::Links>)
-    {
-        Node::Links result;
-        for (size_t idx = 0; idx < value.size(); idx++)
-        {
-            result.insert(end(result), { value[idx](_R("Name")).As<mafString>(), value[idx].As<Node::NodeLink>() });
-        }
-        return result;
-    }
-
-    /** IDs for the GUI */
+	/** IDs for the GUI */
     enum NODE_WIDGET_ID
     {
         ID_HELP = MINID,
@@ -50,7 +31,7 @@ namespace model::data
 
     std::shared_ptr<Node>  Node::Create(const char* NodeType)
     {
-        return NodeFactory::CreateNode(NodeType);
+        return Node::NewSPtr();// NodeFactory::CreateNode(NodeType);
     }
 
     Node::Node()
@@ -72,9 +53,12 @@ namespace model::data
         if (!node || !node->IsA(GetTypeName()))
             return false;
 
+        // do not check the ID!!!
+
         if (m_Name != node->m_Name)
             return false;
 
+        // check attributes
         if (m_Attributes.size() != node->m_Attributes.size())
             return false;
 
@@ -133,7 +117,7 @@ namespace model::data
             mafErrorMacro("Cannot copy Node of type " << node->GetTypeName() << " into a Node of type " << GetTypeName());
             return MAF_ERROR;
         }
-
+        // Copy attributes
         RemoveAllAttributes();
         for (auto& attr : node->m_Attributes)
         {
@@ -189,14 +173,23 @@ namespace model::data
 
     int Node::InternalInitialize()
     {
+        /*auto root = GetRoot();
+
         for (auto& entry : m_Links)
         {
             auto& link = entry.second;
-            if (auto node = link.GetNode())
+            if (link.GetNode() == nullptr && link.GetId() >= 0)
             {
-                node->AddObserver(this);
+                auto node = FindInTreeById(root, link.GetId());
+                assert(node);
+                if (node)
+                {
+                    // attach linked node to this one
+                    link.SetNode(node.get());
+                    node->AddObserver(this);
+                }
             }
-        }
+        }*/
 
         for (auto& child : m_Children)
         {
@@ -208,6 +201,7 @@ namespace model::data
 
     void Node::InternalShutdown()
     {
+        // shutdown children
         for (auto& child : m_Children)
             child->Shutdown();
     }
@@ -221,7 +215,7 @@ namespace model::data
     {
         m_Name = name;
         Modified();
-        mafEvent ev(this, VME_MODIFIED); ev.SetVme(this);
+        mafEvent ev(this, VME_MODIFIED); //ev.SetVme(this);
         InvokeEvent(ev);
         ForwardUpEvent(ev);
         ForwardDownEvent(ev);
@@ -315,6 +309,7 @@ namespace model::data
         }
         links_element(_R("NumberOfLinks")).SetValue(mafToString((long)numberOfLinks));
 
+        // store the visible children into a tmp array
         auto children = builder[_R("Children")];
         children(_R("NumberOfItems")).SetValue((uint64_t)GetNumberOfChildren());
         if (GetNumberOfChildren() != 0)
@@ -333,12 +328,6 @@ namespace model::data
 
     void Node::InternalRestore(const mafStorageElement& value)
     {
-        /*m_Name = value(_R("Name")).As<mafString>();
-        m_Id = value(_R("Id")).As<mafID>();
-        m_Attributes = value[_R("Attributes")][_R("Item")].As<decltype(m_Attributes)>();
-        m_Links = value[_R("Links")][_R("Link")].As<decltype(m_Links)>();
-        m_Children = value[_R("Children")][_R("Node")].As<decltype(m_Children)>();
-        return;*/
         m_Name = value(_R("Name")).As<mafString>();
         //   if (value.GetAttribute(_R("Name"), m_Name) != MAF_OK)
         //   {
@@ -353,6 +342,7 @@ namespace model::data
         //     return MAF_ERROR;
         //   }
 
+        // restore attributes
         RemoveAllAttributes();
         auto attr_items = value[_R("Attributes")][_R("Item")];
         mafID numItemsAttr = value[_R("Attributes")](_R("NumberOfItems")).As<mafID>();
@@ -372,6 +362,7 @@ namespace model::data
             }
         }
 
+        // restore Links
         RemoveAllLinks();
         mafStorageElement links_element = value[_R("Links")];
         int n = links_element(_R("NumberOfLinks")).As<int>();
@@ -393,6 +384,7 @@ namespace model::data
             }
         }
 
+        // restore children
         RemoveAllChildren();
         auto child_items = value[_R("Children")][_R("Node")];
         mafID numItemsChild = value[_R("Children")](_R("NumberOfItems")).As<mafID>();
@@ -608,80 +600,6 @@ namespace model::data
         return -1;
     }
 
-    std::shared_ptr<Node> Node::FindInTreeByTag(const mafTagItem& tag)
-    {
-        if (auto titem = GetTagArray()->GetTag(tag.GetName()))
-        {
-            if (tag == *titem)
-                return SharedFromThis();
-        }
-
-        for (auto& child : m_Children)
-        {
-            if (auto node = child->FindInTreeByTag(tag))
-            {
-                return node;
-            }
-        }
-        return nullptr;
-    }
-
-    std::shared_ptr<Node> Node::FindInTreeByName(const mafString& name, bool match_case, bool whole_word)
-    {
-        if (match_case)
-        {
-            if (whole_word && GetName() == name)
-                return SharedFromThis();
-            if (!whole_word && GetName().find(name) != mafString::npos)
-                return SharedFromThis();
-        }
-        else
-        {
-            mafString word_to_search;
-            mafString myName;
-            if (match_case)
-            {
-                word_to_search = name;
-                myName = GetName();
-            }
-            else
-            {
-                word_to_search = ToLower(name);
-                myName = ToLower(GetName());
-            }
-
-            if (whole_word && myName == word_to_search)
-                return SharedFromThis();
-            if (!whole_word && myName.find(word_to_search) != mafString::npos)
-                return SharedFromThis();
-
-        }
-        for (auto& child : m_Children)
-        {
-            if (auto node = child->FindInTreeByName(name, match_case, whole_word))
-            {
-                return node;
-            }
-        }
-        return nullptr;
-    }
-
-    std::shared_ptr<Node> Node::FindInTreeById(const mafID id)
-    {
-        if (GetId() == id)
-        {
-            return SharedFromThis();
-        }
-        for (auto& child : m_Children)
-        {
-            if (auto node = child->FindInTreeById(id))
-            {
-                return node;
-            }
-        }
-        return nullptr;
-    }
-    
     std::shared_ptr<Node> Node::FindInTreeByTag(std::shared_ptr<Node> sharedThis, const mafTagItem& tag)
     {
         if (auto titem = sharedThis->GetTagArray()->GetTag(tag.GetName()))
@@ -1173,7 +1091,7 @@ namespace model::data
                 case NODE_GET_ROOT:
                 {
                     mafEventIO* maf_event = mafEventIO::SafeDownCast(e);
-                    maf_event->SetRoot(GetRoot());
+                    //maf_event->SetRoot(GetRoot());
                 }
                 break;
                 default:
@@ -1249,14 +1167,13 @@ namespace model::data
     mafGUI* Node::CreateGui()
         //-------------------------------------------------------------------------
     {
-        assert(!AccessGUI());
-        auto gui = new mafGUI(this);
+        auto m_Gui = new mafGUI(this);
 
         mafString type_name = _R(GetTypeName());
         if ((*GetMAFExpertMode()))
-            gui->Button(ID_PRINT_INFO, type_name, _R(""), _R("Print node debug information"));
+            m_Gui->Button(ID_PRINT_INFO, type_name, _R(""), _R("Print node debug information"));
 
-        gui->String(ID_NAME, _R("name :"), &m_Name);
+        m_Gui->String(ID_NAME, _R("name :"), &m_Name);
 
         mafEvent buildHelpGui;
         buildHelpGui.SetSender(this);
@@ -1265,12 +1182,12 @@ namespace model::data
 
         if (buildHelpGui.GetArg())
         {
-            gui->Button(ID_HELP, _R("Help"), _R(""));
+            m_Gui->Button(ID_HELP, _R("Help"), _R(""));
         }
 
-        gui->Divider();
+        m_Gui->Divider();
 
-        return gui;
+        return m_Gui;
     }
 
     void Node::OnPrint()
@@ -1301,7 +1218,7 @@ namespace model::data
 
     std::shared_ptr<Node> Node::GetByPath(const mafString& path, bool onlyVisible /*=true*/)
     {
-        wxStringTokenizer tkz(mafStringToWx(path), wxT("/"));
+        /*wxStringTokenizer tkz(path.toWx(), wxT("/"));
 
         Node* currentNode = this;
         Node* tmpParent = nullptr;
@@ -1577,17 +1494,14 @@ namespace model::data
                 mafLogMessage(_M(_R("Node path error: unknown token:") + mafWxToString(token)));
                 break;
             }
-            tmpString = mafStringToWx(currentNode->GetName());
+            tmpString = currentNode->GetName().toWx();
 
         }
         //While end
         if (currentNode == nullptr)
             return nullptr;
-        return currentNode->SharedFromThis();
-    }
-    std::shared_ptr<Node> Node::SharedFromThis()
-    {
-        return shared_from_this();
+        return currentNode->SharedFromThis();*/
+return {};
     }
 
     Node* Node::GetParent() const

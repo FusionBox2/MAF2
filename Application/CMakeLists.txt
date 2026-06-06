@@ -36,6 +36,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_SOURCE_DIR})
 target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_BINARY_DIR})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${PROJECT_LIBS})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${VTK_LIBRARIES} )
+vtk_module_autoinit(
+  TARGETS ${PROJECT_NAME}
+  MODULES ${VTK_LIBRARIES})
+
 
 FILE(GLOB cg_shading_file_list  RELATIVE "${FTK_SOURCE_DIR}/vtkMAF/iso-surface" "${FTK_SOURCE_DIR}/vtkMAF/iso-surface/*.cg")
 FILE(GLOB glshader_shading_file_list  RELATIVE "${FTK_SOURCE_DIR}/vtkMAF/iso-surface" "${FTK_SOURCE_DIR}/vtkMAF/iso-surface/*.glshader")

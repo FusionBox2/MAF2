@@ -211,11 +211,11 @@ int vtkMetashapeOBJReader::RequestData(vtkInformation* vtkNotUsed(request),
     std::string remaining;
 
     auto result = parser->Parse(remaining);
-    if (result != vtkParseResult::EndOfLine)
+    /*if (result != vtkParseResult::EndOfLine)
     {
       vtkWarningMacro(<< "unexpected data at end of line in OBJ file L." << lineNumber);
       result = parser->DiscardLine();
-    }
+    }*/
 
     return result;
   };

@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
     return application.exec();
 }*/
 
-#include <QVTKOpenGLNativeWidget.h>
+//#include <QVTKOpenGLNativeWidget.h>
 #include <vtkActor.h>
 #include <vtkDataSetMapper.h>
 #include <vtkDoubleArray.h>
@@ -48,7 +48,7 @@ namespace {
 
 int main(int argc, char* argv[])
 {
-  QSurfaceFormat::setDefaultFormat(QVTKOpenGLNativeWidget::defaultFormat());
+ // QSurfaceFormat::setDefaultFormat(QVTKOpenGLNativeWidget::defaultFormat());
 
   QApplication app(argc, argv);
 
@@ -74,13 +74,13 @@ int main(int argc, char* argv[])
   dockLayout->addWidget(&randomizeButton);
 
   // Render area.
-  QPointer<QVTKOpenGLNativeWidget> vtkRenderWidget =
-    new QVTKOpenGLNativeWidget();
-  mainWindow.setCentralWidget(vtkRenderWidget);
+  //QPointer<QVTKOpenGLNativeWidget> vtkRenderWidget =
+  //  new QVTKOpenGLNativeWidget();
+  //mainWindow.setCentralWidget(vtkRenderWidget);
 
   // VTK part.
   vtkNew<vtkGenericOpenGLRenderWindow> window;
-  vtkRenderWidget->setRenderWindow(window.Get());
+  //vtkRenderWidget->setRenderWindow(window.Get());
 
   vtkNew<vtkSphereSource> sphere;
   sphere->SetRadius(1.0);

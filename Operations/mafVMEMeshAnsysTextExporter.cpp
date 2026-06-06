@@ -445,7 +445,7 @@ void mafVMEMeshAnsysTextExporter::WriteMaterialsFile( vtkUnstructuredGrid *input
     output << fakeMaterialPropertyName << " = " << fakeMaterialPropertyValue << std::endl;
     output   << std::endl;
 
-    cout << output.str();
+    std::cout << output.str();
     
     std::ofstream outputf;
     std::string fileName = outputFileName;
@@ -507,7 +507,7 @@ void mafVMEMeshAnsysTextExporter::WriteMaterialsFile( vtkUnstructuredGrid *input
       output << std::endl;
     }  
 
-    cout << output.str();
+    std::cout << output.str();
 
     std::ofstream outputf;
     std::string fileName = outputFileName;

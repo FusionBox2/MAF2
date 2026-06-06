@@ -56,12 +56,9 @@
 
 #if wxUSE_AUI
 #include "wx/aui/tabmdi.h"
+#include <wx/aui/aui.h>
 #endif // wxUSE_AUI
 //#include <wx/mdi.h>
-#include <wx/aui/aui.h>
-
-//#include "doc.h"
-//#include "view.h"
 
 #include "wx/cmdline.h"
 #include "wx/config.h"
@@ -83,7 +80,10 @@
 #include "ftk/Gui/wxw/MainFrame.h"
 #include "MainWindow.h"
 
+#include "ftk/Base/String.h"
+
 #include <list>
+#include <map>
 #include <memory>
 #include <optional>
 
@@ -99,15 +99,20 @@ namespace CmdLineOption
 #endif
 	const char* const SDI = "sdi";
 	const char* const SINGLE = "single";
+}
 
-} // namespace CmdLineOption
+class ftkDocChildFrameAnyBase;
+
+class MyCanvas;
 
 namespace FTK
 {
+	class DocManager;
+
 	class Command
 	{
 	public:
-		Command(bool canUndoIt = false, const wxString& name = wxEmptyString);
+		Command(bool canUndoIt = false, const mafString& name = _R(""));
 
 		virtual ~Command() = default;
 
@@ -117,14 +122,14 @@ namespace FTK
 
 		virtual bool CanUndo() const { return m_canUndo; }
 
-		virtual wxString GetName() const { return m_commandName; }
+		const mafString& GetName() const { return m_commandName; }
 
 	protected:
-		wxString m_commandName;
+		mafString m_commandName;
 		bool     m_canUndo;
 	};
 
-	Command::Command(bool canUndoIt, const wxString& name)
+	Command::Command(bool canUndoIt, const mafString& name)
 		: m_commandName(name)
 		, m_canUndo(canUndoIt)
 	{
@@ -138,7 +143,7 @@ namespace FTK
 		CommandProcessor(const CommandProcessor&) = delete;
 		CommandProcessor& operator=(const CommandProcessor&) = delete;
 
-		virtual ~CommandProcessor();
+		virtual ~CommandProcessor() = default;
 
 		// Pass a command to the processor. The processor calls Do(); if
 		// successful, is appended to the command history unless storeIt is false.
@@ -156,10 +161,10 @@ namespace FTK
 		virtual void SetMenuStrings_();
 
 		// Gets the current Undo command name.
-		wxString GetLastCommandName() const;
+		mafString GetLastCommandName() const;
 
 		// Gets the current Redo command name.
-		wxString GetNextCommandName() const;
+		mafString GetNextCommandName() const;
 
 #if wxUSE_MENUS
 		// Call this to manage an edit menu.
@@ -179,12 +184,7 @@ namespace FTK
 			m_lastSavedCommand = !m_undoCommands.empty() ? m_undoCommands.back().get() : nullptr;
 		}
 	protected:
-		// for further flexibility, command processor doesn't call ftkCommand::Do()
-		// and Undo() directly but uses these functions which can be overridden in
-		// the derived class
-		virtual bool DoCommand(Command& cmd);
-		virtual bool UndoCommand(Command& cmd);
-
+		void ReduceUndoList(size_t size);
 		size_t m_maxNoCommands;
 		std::list<std::unique_ptr<Command> > m_undoCommands;
 		std::list<std::unique_ptr<Command> > m_redoCommands;
@@ -203,20 +203,8 @@ namespace FTK
 #if wxUSE_ACCEL
 		, m_undoAccelerator('\t' + wxAcceleratorEntry(wxACCEL_CTRL, 'Z').ToString())
 		, m_redoAccelerator('\t' + wxAcceleratorEntry(wxACCEL_CTRL, 'Y').ToString())
-#endif // wxUSE_ACCEL
+#endif
 	{
-	}
-
-	CommandProcessor::~CommandProcessor() = default;
-
-	bool CommandProcessor::DoCommand(Command& cmd)
-	{
-		return cmd.Do();
-	}
-
-	bool CommandProcessor::UndoCommand(Command& cmd)
-	{
-		return cmd.Undo();
 	}
 
 	// Pass a command to the processor. The processor calls Do();
@@ -224,38 +212,52 @@ namespace FTK
 	// storeIt is false.
 	bool CommandProcessor::Submit(std::unique_ptr<Command> command, bool storeIt)
 	{
-		wxCHECK_MSG(command, false, wxT("no command in CommandProcessor::Submit"));
-
-		if (!DoCommand(*command))
+		if (!command)
 		{
 			return false;
 		}
 
-		if (storeIt)
+		if (!command->Do())
+		{
+			return false;
+		}
+
+		if (!command->CanUndo())
+		{
+			ReduceUndoList(0);
+		}
+		else if (storeIt)
 		{
 			Store(std::move(command));
 		}
-
 		return true;
 	}
 
 	void CommandProcessor::Store(std::unique_ptr<Command> command)
 	{
-		wxCHECK_RET(command, wxT("no command in CommandProcessor::Store"));
+		if (!command)
+		{
+			return;
+		}
 
 		m_redoCommands.clear();
 
-		if (m_maxNoCommands != 0)
+		if (m_maxNoCommands > 0)
 		{
-			if (m_undoCommands.size() == m_maxNoCommands)
-			{
-				if (m_lastSavedCommand == m_undoCommands.front().get())
-				{
-					m_lastSavedCommand = std::nullopt;
-				}
-				m_undoCommands.pop_front();
-			}
+			ReduceUndoList(m_maxNoCommands - 1);
 			m_undoCommands.push_back(std::move(command));
+		}
+	}
+
+	void CommandProcessor::ReduceUndoList(size_t size)
+	{
+		while (m_undoCommands.size() > size)
+		{
+			if (m_lastSavedCommand == m_undoCommands.front().get())
+			{
+				m_lastSavedCommand = std::nullopt;
+			}
+			m_undoCommands.pop_front();
 		}
 	}
 
@@ -263,13 +265,12 @@ namespace FTK
 	{
 		if (CanUndo())
 		{
-			if (UndoCommand(*m_undoCommands.back()))
+			if (m_undoCommands.back()->Undo())
 			{
 				m_redoCommands.splice(begin(m_redoCommands), m_undoCommands, --end(m_undoCommands));
 				return true;
 			}
 		}
-
 		return false;
 	}
 
@@ -277,7 +278,7 @@ namespace FTK
 	{
 		if (CanRedo())
 		{
-			if (DoCommand(*m_redoCommands.front()))
+			if (m_redoCommands.front()->Do())
 			{
 				m_undoCommands.splice(end(m_undoCommands), m_redoCommands, begin(m_redoCommands));
 				return true;
@@ -288,7 +289,7 @@ namespace FTK
 
 	bool CommandProcessor::CanUndo() const
 	{
-		return !m_undoCommands.empty() && m_undoCommands.back()->CanUndo();
+		return !m_undoCommands.empty();
 	}
 
 	bool CommandProcessor::CanRedo() const
@@ -296,26 +297,22 @@ namespace FTK
 		return !m_redoCommands.empty();
 	}
 
-	// Gets the current Undo command name.
-	wxString CommandProcessor::GetLastCommandName() const
+	mafString CommandProcessor::GetLastCommandName() const
 	{
 		if (!m_undoCommands.empty())
 		{
-			auto& command = m_undoCommands.back();
-			return command->GetName();
+			return m_undoCommands.back()->GetName();
 		}
-		return "";
+		return _R("");
 	}
 
-	// Gets the current Redo command name.
-	wxString CommandProcessor::GetNextCommandName() const
+	mafString CommandProcessor::GetNextCommandName() const
 	{
 		if (!m_redoCommands.empty())
 		{
-			auto& redoCommand = m_redoCommands.front();
-			return redoCommand->GetName();
+			return m_redoCommands.front()->GetName();
 		}
-		return "";
+		return _R("");
 	}
 
 	void CommandProcessor::SetMenuStrings_()
@@ -324,7 +321,7 @@ namespace FTK
 		if (m_commandEditMenu)
 		{
 			wxString undoLabel = _("&Undo");
-			wxString buf = GetLastCommandName();
+			wxString buf = mafStringToWx(GetLastCommandName());
 			if (!buf.empty())
 			{
 				undoLabel += " ";
@@ -333,7 +330,7 @@ namespace FTK
 			undoLabel += m_undoAccelerator;
 
 			wxString redoLabel = _("&Redo");
-			buf = GetNextCommandName();
+			buf = mafStringToWx(GetNextCommandName());
 			if (!buf.empty())
 			{
 				redoLabel += " ";
@@ -372,655 +369,477 @@ namespace FTK
 		}
 		return m_lastSavedCommand != m_undoCommands.back().get();
 	}
-}
 
-class ftkView;
-class ftkDocTemplate;
-class ftkDocManager;
+	class DocTemplate;
 
-class ftkDocChildFrameAnyBase;
-
-// Flags for wxDocManager (can be combined).
-enum
-{
-	wxDOC_NEW = 1,
-	wxDOC_SILENT = 2
-};
-
-// Document template flags
-enum
-{
-	wxTEMPLATE_VISIBLE = 1,
-	wxTEMPLATE_INVISIBLE = 2,
-	wxDEFAULT_TEMPLATE_FLAGS = wxTEMPLATE_VISIBLE
-};
-
-class ftkDocument : public wxEvtHandler
-{
-public:
-	ftkDocument();
-
-	ftkDocument(const ftkDocument&) = delete;
-	ftkDocument& operator=(const ftkDocument&) = delete;
-
-	~ftkDocument() override;
-
-	// accessors
-	void SetFilename(const wxString& filename, bool notifyViews = false);
-	wxString GetFilename() const { return m_documentFile; }
-
-	void SetTitle(const wxString& title) { m_documentTitle = title; }
-	wxString GetTitle() const { return m_documentTitle; }
-
-	void SetDocumentName(const wxString& name) { m_documentTypeName = name; }
-	wxString GetDocumentName() const { return m_documentTypeName; }
-
-	// access the flag indicating whether this document had been already saved,
-	// SetDocumentSaved() is only used internally, don't call it
-	bool GetDocumentSaved() const { return m_savedYet; }
-	void SetDocumentSaved(bool saved = true) { m_savedYet = saved; }
-
-	// activate the first view of the document if any
-	void Activate();
-
-	// return true if the document hasn't been modified since the last time it
-	// was saved (implying that it returns false if it was never saved, even if
-	// the document is not modified)
-	bool AlreadySaved() const { return !IsModified() && GetDocumentSaved(); }
-
-	virtual bool Close();
-	virtual bool Save();
-	virtual bool SaveAs();
-	virtual bool Revert();
-
-#if wxUSE_STD_IOSTREAM
-	virtual std::ostream& SaveObject(std::ostream& stream);
-	virtual std::istream& LoadObject(std::istream& stream);
-#else
-	virtual wxOutputStream& SaveObject(wxOutputStream& stream);
-	virtual wxInputStream& LoadObject(wxInputStream& stream);
-#endif
-
-	// Called by wxWidgets
-	virtual bool OnSaveDocument(const wxString& filename);
-	virtual bool OnOpenDocument(const wxString& filename);
-	virtual bool OnNewDocument();
-	virtual bool OnCloseDocument();
-
-	// Prompts for saving if about to close a modified document. Returns true
-	// if ok to close the document (may have saved in the meantime, or set
-	// modified to false)
-	virtual bool OnSaveModified();
-
-	// Similar to OnSaveModified() but doesn't allow the user to prevent the
-	// document from closing as it will be closed unconditionally.
-	virtual void OnSaveBeforeForceClose();
-
-	// if you override, remember to call the default
-	// implementation (ftkDocument::OnChangeFilename)
-	virtual void OnChangeFilename(bool notifyViews);
-
-	// Called by framework if created automatically by the default document
-	// manager: gives document a chance to initialise and (usually) create a
-	// view
-	virtual bool OnCreate(const wxString& path, long flags);
-
-	// By default, creates a base ftkCommandProcessor.
-	virtual FTK::CommandProcessor* OnCreateCommandProcessor();
-	virtual FTK::CommandProcessor* GetCommandProcessor() const
+	class DocumentObserver
 	{
-		return m_commandProcessor;
-	}
-	virtual void SetCommandProcessor(FTK::CommandProcessor* proc)
-	{
-		m_commandProcessor = proc;
-	}
-
-	// Called after a view is added or removed. The default implementation
-	// deletes the document if this is there are no more views.
-	virtual void OnChangedViewList();
-
-	// Called from OnCloseDocument(), does nothing by default but may be
-	// overridden. Return value is ignored.
-	virtual bool DeleteContents();
-
-	virtual bool Draw(wxDC&);
-	virtual bool IsModified() const { return m_documentModified; }
-	virtual void Modify(bool mod);
-
-	virtual bool AddView(ftkView* view);
-	virtual bool RemoveView(ftkView* view);
-
-	std::vector<ftkView*> GetViewsVector() const;
-
-	std::list<ftkView*>& GetViews() { return m_documentViews; }
-	const std::list<ftkView*>& GetViews() const { return m_documentViews; }
-
-	ftkView* GetFirstView() const;
-
-	virtual void UpdateAllViews(ftkView* sender = nullptr, wxObject* hint = nullptr);
-	virtual void NotifyClosing();
-
-	// Remove all views (because we're closing the document)
-	virtual bool DeleteAllViews();
-
-	// Other stuff
-	virtual ftkDocManager* GetDocumentManager() const;
-	virtual ftkDocTemplate* GetDocumentTemplate() const
-	{
-		return m_documentTemplate;
-	}
-	virtual void SetDocumentTemplate(ftkDocTemplate* temp)
-	{
-		m_documentTemplate = temp;
-	}
-
-	// Get the document name to be shown to the user: the title if there is
-	// any, otherwise the filename if the document was saved and, finally,
-	// "unnamed" otherwise
-	virtual wxString GetUserReadableName() const;
-
-	// Returns a window that can be used as a parent for document-related
-	// dialogs. Override if necessary.
-	virtual wxWindow* GetDocumentWindow() const;
-
-	// Ask the user if the document should be saved if it's modified and save
-	// it if necessary.
-	//
-	// Returns false if the user cancelled closing or if saving failed.
-	bool CanClose();
-
-protected:
-	std::list<ftkView*>   m_documentViews;
-	wxString              m_documentFile;
-	wxString              m_documentTitle;
-	wxString              m_documentTypeName;
-	ftkDocTemplate*       m_documentTemplate = nullptr;
-	FTK::CommandProcessor* m_commandProcessor = nullptr;
-	bool                  m_documentModified = false;
-	bool                  m_savedYet = false;
-
-	// Called by OnSaveDocument and OnOpenDocument to implement standard
-	// Save/Load behaviour. Re-implement in derived class for custom
-	// behaviour.
-	virtual bool DoSaveDocument(const wxString& file);
-	virtual bool DoOpenDocument(const wxString& file);
-
-	// the default implementation of GetUserReadableName()
-	wxString DoGetUserReadableName() const;
-};
-
-class ftkView : public wxEvtHandler
-{
-public:
-	// this sample can be launched in several different ways:
-	enum class Mode
-	{
-#if wxUSE_MDI_ARCHITECTURE
-		Mode_MDI,   // MDI mode: multiple documents, single top level window
-#endif // wxUSE_MDI_ARCHITECTURE
-#if wxUSE_AUI
-		Mode_AUI,   // MDI AUI mode
-#endif // wxUSE_AUI
-		Mode_SDI,   // SDI mode: multiple documents, multiple top level windows
-		Mode_Single // single document mode (and hence single top level window)
+	public:
+		virtual ~DocumentObserver() = 0;
+		virtual void Update() = 0;
+		virtual void ChangeFilename() = 0;
+		virtual void Closing() = 0;
 	};
 
-	ftkView(Mode mode);
+	DocumentObserver::~DocumentObserver() = default;
 
-	ftkView(const ftkView&) = delete;
-	ftkView& operator=(const ftkView&) = delete;
-
-	virtual ~ftkView();
-
-	Mode GetMode() const { return m_mode; }
-
-	ftkDocument* GetDocument() const { return m_viewDocument; }
-	virtual void SetDocument(ftkDocument* doc);
-
-	wxString GetViewName() const { return m_viewTypeName; }
-	void SetViewName(const wxString& name) { m_viewTypeName = name; }
-
-	wxWindow* GetFrame() const { return m_viewFrame; }
-	void SetFrame(wxWindow* frame) { m_viewFrame = frame; }
-
-	virtual void OnActivateView(bool activate,
-		ftkView* activeView,
-		ftkView* deactiveView);
-	virtual void OnDraw(wxDC* dc) = 0;
-	virtual void OnPrint(wxDC* dc, wxObject* info);
-	virtual void OnUpdate(ftkView* sender, wxObject* hint = nullptr);
-	virtual void OnClosingDocument() {}
-	virtual void OnChangeFilename();
-
-	// Called by framework if created automatically by the default document
-	// manager class: gives view a chance to initialise
-	virtual bool OnCreate(ftkDocument* WXUNUSED(doc), long WXUNUSED(flags))
+	class Document// : public wxEvtHandler
 	{
-		return true;
-	}
+	public:
+		Document();
 
-	// Checks if the view is the last one for the document; if so, asks user
-	// to confirm save data (if modified). If ok, deletes itself and returns
-	// true.
-	virtual bool Close(bool deleteWindow = true);
+		Document(const Document&) = delete;
+		Document& operator=(const Document&) = delete;
 
-	// Override to do cleanup/veto close
-	virtual bool OnClose(bool deleteWindow);
+		//~Document() override;
+		virtual ~Document();
 
-	// A view's window can call this to notify the view it is (in)active.
-	// The function then notifies the document manager.
-	virtual void Activate(bool activate);
+		void SetFilename(const mafString& filename, bool notifyViews = false);
+		const mafString& GetFilename() const { return m_documentFile; }
 
-	ftkDocManager* GetDocumentManager() const
+		void SetTitle(const mafString& title) { m_documentTitle = title; }
+		const mafString& GetTitle() const { return m_documentTitle; }
+
+		// access the flag indicating whether this document had been already saved,
+		// SetDocumentSaved() is only used internally, don't call it
+		bool GetDocumentSaved() const { return m_savedYet; }
+		void SetDocumentSaved(bool saved = true) { m_savedYet = saved; }
+
+		// return true if the document hasn't been modified since the last time it
+		// was saved (implying that it returns false if it was never saved, even if
+		// the document is not modified)
+		bool AlreadySaved() const { return !IsModified() && GetDocumentSaved(); }
+
+		virtual bool Close();
+		virtual bool Save();
+		virtual bool SaveAs();
+		virtual bool Revert();
+
+		virtual std::ostream& SaveObject(std::ostream& stream) { return stream; }
+		virtual std::istream& LoadObject(std::istream& stream) { return stream; }
+
+		// Called by wxWidgets
+		virtual bool OnSaveDocument(const mafString& filename);
+		virtual bool OnOpenDocument(const mafString& filename);
+		virtual bool OnNewDocument(const mafString& name);
+		virtual bool OnCloseDocument();
+
+		// Prompts for saving if about to close a modified document. Returns true
+		// if ok to close the document (may have saved in the meantime, or set
+		// modified to false)
+		virtual bool OnSaveModified();
+
+		// Similar to OnSaveModified() but doesn't allow the user to prevent the
+		// document from closing as it will be closed unconditionally.
+		virtual void OnSaveBeforeForceClose();
+
+		// if you override, remember to call the default
+		// implementation (ftkDocument::OnChangeFilename)
+		virtual void OnChangeFilename(bool notifyViews);
+
+		// Called by framework if created automatically by the default document
+		// manager: gives document a chance to initialise and (usually) create a
+		// view
+		virtual bool OnCreate(const mafString& path);
+
+		// Called from OnCloseDocument(), does nothing by default but may be
+		// overridden. Return value is ignored.
+		virtual bool DeleteContents();
+
+		virtual bool IsModified() const { return m_documentModified; }
+		virtual void Modify(bool mod);
+
+		virtual bool AddObserver(DocumentObserver* observer);
+		virtual bool RemoveObserver(DocumentObserver* observer);
+
+		virtual void NotifyUpdate();
+		virtual void NotifyClosing();
+
+		// Get the document name to be shown to the user: the title if there is
+		// any, otherwise the filename if the document was saved and, finally,
+		// "unnamed" otherwise
+		virtual mafString GetUserReadableName() const;
+
+		// Returns a window that can be used as a parent for document-related
+		// dialogs. Override if necessary.
+		virtual wxWindow* GetDocumentWindow() const;
+
+		// Ask the user if the document should be saved if it's modified and save
+		// it if necessary.
+		//
+		// Returns false if the user cancelled closing or if saving failed.
+		bool CanClose();
+
+		std::shared_ptr<DocTemplate> GetDocTemplate() const { return m_docTemplate; }
+		void SetDocTemplate(std::shared_ptr<DocTemplate> docTemplate) { m_docTemplate = std::move(docTemplate); }
+
+	protected:
+		std::shared_ptr<DocTemplate> m_docTemplate;
+		std::list<DocumentObserver*> m_documentObservers;
+		mafString m_documentFile;
+		mafString m_documentTitle;
+		bool m_documentModified = false;
+		bool m_savedYet = false;
+
+		FTK::CommandProcessor* m_commandProcessor = nullptr;
+
+		// Called by OnSaveDocument and OnOpenDocument to implement standard
+		// Save/Load behaviour. Re-implement in derived class for custom
+		// behaviour.
+		virtual bool DoSaveDocument(const mafString& file);
+		virtual bool DoOpenDocument(const mafString& file);
+
+		// the default implementation of GetUserReadableName()
+		mafString DoGetUserReadableName() const;
+	};
+
+	class View : public wxEvtHandler, public DocumentObserver
 	{
-		return m_viewDocument->GetDocumentManager();
-	}
+	public:
+		// this sample can be launched in several different ways:
+		enum class Mode
+		{
+#if wxUSE_MDI_ARCHITECTURE
+			Mode_MDI,   // MDI mode: multiple documents, single top level window
+#endif // wxUSE_MDI_ARCHITECTURE
+#if wxUSE_AUI
+			Mode_AUI,   // MDI AUI mode
+#endif // wxUSE_AUI
+			Mode_SDI,   // SDI mode: multiple documents, multiple top level windows
+			Mode_Single // single document mode (and hence single top level window)
+		};
+
+		View() = default;
+
+		View(const View&) = delete;
+		View& operator=(const View&) = delete;
+
+		~View() override;
+
+		Document* GetDocument() const { return m_viewDocument.get(); }
+
+		const mafString& GetViewName() const { return m_viewTypeName; }
+		void SetViewName(const mafString& name) { m_viewTypeName = name; }
+
+		wxWindow* GetFrame() const { return m_viewFrame; }
+		void SetFrame(wxWindow* frame) { m_viewFrame = frame; }
+
+		virtual void OnActivateView(bool activate, View* activeView, View* deactiveView);
+		virtual void OnDraw(wxDC* dc) = 0;
+		virtual void OnPrint(wxDC* dc, wxObject* info);
+		virtual void OnUpdate(View* sender, wxObject* hint = nullptr);
+		virtual void OnClosingDocument() {}
+		virtual void OnChangeFilename();
+
+		void Update() override { OnUpdate(nullptr); }
+		void ChangeFilename() override { OnChangeFilename(); }
+		void Closing() override { OnClosingDocument(); }
+
+
+		// Called by framework if created automatically by the default document
+		// manager class: gives view a chance to initialise
+		virtual bool OnCreate(std::shared_ptr<Document> doc);
+
+		// Checks if the view is the last one for the document; if so, asks user
+		// to confirm save data (if modified). If ok, deletes itself and returns
+		// true.
+		virtual bool Close(bool deleteWindow = true);
+
+		// Override to do cleanup/veto close
+		virtual bool OnClose(bool deleteWindow);
+
+		// A view's window can call this to notify the view it is (in)active.
+		// The function then notifies the document manager.
+		virtual void Activate(bool activate);
+
+		DocManager* GetDocumentManager() const;
 
 #if wxUSE_PRINTING_ARCHITECTURE
-	virtual wxPrintout* OnCreatePrintout();
+		virtual wxPrintout* OnCreatePrintout();
 #endif
 
-	// implementation only
-	// -------------------
+		// implementation only
+		// -------------------
 
-	// set the associated frame, it is used to reset its view when we're
-	// destroyed
-	void SetDocChildFrame(ftkDocChildFrameAnyBase* docChildFrame);
+		// set the associated frame, it is used to reset its view when we're
+		// destroyed
+		void SetDocChildFrame(ftkDocChildFrameAnyBase* docChildFrame);
 
-	// get the associated frame, may be null during destruction
-	ftkDocChildFrameAnyBase* GetDocChildFrame() const { return m_docChildFrame; }
+		// get the associated frame, may be null during destruction
+		ftkDocChildFrameAnyBase* GetDocChildFrame() const { return m_docChildFrame; }
 
-protected:
-	// hook the document into event handlers chain here
-	virtual bool TryBefore(wxEvent& event) override;
+	protected:
+		// hook the document into event handlers chain here
+		bool TryBefore(wxEvent& event) override;
 
-	ftkDocument* m_viewDocument = nullptr;
-	wxString     m_viewTypeName;
-	wxWindow* m_viewFrame = nullptr;
+		std::shared_ptr<Document> m_viewDocument;
+		mafString m_viewTypeName;
+		wxWindow* m_viewFrame = nullptr;
 
-	ftkDocChildFrameAnyBase* m_docChildFrame = nullptr;
+		ftkDocChildFrameAnyBase* m_docChildFrame = nullptr;
+	};
 
-private:
-	// the currently used mode
-	Mode m_mode;
-};
-
-class TextEditDocument : public ftkDocument
-{
-public:
-	TextEditDocument() = default;
-
-	TextEditDocument(const TextEditDocument&) = delete;
-	TextEditDocument& operator=(const TextEditDocument&) = delete;
-
-	bool OnCreate(const wxString& path, long flags) override;
-
-	bool IsModified() const override;
-	void Modify(bool mod) override;
-
-protected:
-	bool DoSaveDocument(const wxString& filename) override;
-	bool DoOpenDocument(const wxString& filename) override;
-
-private:
-	wxTextCtrl* GetTextCtrl() const;
-
-	void OnTextChange(wxCommandEvent& event);
-};
-
-
-
-class TextEditView : public ftkView
-{
-public:
-	TextEditView(Mode mode) : ftkView(mode) {}
-
-	bool OnCreate(ftkDocument* doc, long flags) override;
-	void OnDraw(wxDC* dc) override;
-	bool OnClose(bool deleteWindow = true) override;
-
-	wxTextCtrl* GetText() const { return m_text; }
-
-private:
-	void OnCopy(wxCommandEvent& WXUNUSED(event)) { m_text->Copy(); }
-	void OnPaste(wxCommandEvent& WXUNUSED(event)) { m_text->Paste(); }
-	void OnSelectAll(wxCommandEvent& WXUNUSED(event)) { m_text->SelectAll(); }
-
-	wxTextCtrl* m_text = nullptr;
-
-	wxDECLARE_EVENT_TABLE();
-};
-
-// Represents a line from one point to the other
-struct DoodleLine
-{
-	DoodleLine() { /* leave fields uninitialized */ }
-
-	DoodleLine(const wxPoint& pt1, const wxPoint& pt2)
-		: x1(pt1.x), y1(pt1.y), x2(pt2.x), y2(pt2.y)
+	class DocTemplate
 	{
-	}
+	public:
+		DocTemplate(
+			const mafString& description,
+			const mafString& filter,
+			const mafString& ext,
+			const mafString& docTypeName,
+			std::function<std::unique_ptr<Document>()> docCreate);
 
-	wxInt32 x1;
-	wxInt32 y1;
-	wxInt32 x2;
-	wxInt32 y2;
-};
+		DocTemplate(const DocTemplate&) = delete;
+		DocTemplate& operator=(const DocTemplate&) = delete;
 
-typedef wxVector<DoodleLine> DoodleLines;
+		virtual ~DocTemplate() = default;
 
-// Contains a list of lines: represents a mouse-down doodle
-class DoodleSegment
-{
-public:
-	//DocumentOstream& SaveObject(DocumentOstream& stream);
-	//DocumentIstream& LoadObject(DocumentIstream& stream);
+		virtual std::shared_ptr<Document> CreateDocument(const mafString& path);
 
-	bool IsEmpty() const { return m_lines.empty(); }
-	void AddLine(const wxPoint& pt1, const wxPoint& pt2)
+		const mafString& GetDefaultExtension() const { return m_defaultExt; }
+		const mafString& GetDescription() const { return m_description; }
+		const mafString& GetFileFilter() const { return m_fileFilter; }
+		const mafString& GetDocumentName() const { return m_docTypeName; }
+
+		void SetFileFilter(const mafString& filter) { m_fileFilter = filter; }
+		void SetDescription(const mafString& description) { m_description = description; }
+		void SetDefaultExtension(const mafString& ext) { m_defaultExt = ext; }
+
+		virtual bool FileMatchesTemplate(const mafString& path);
+
+	protected:
+		mafString m_fileFilter;
+		mafString m_description;
+		mafString m_defaultExt;
+		mafString m_docTypeName;
+		std::function<std::unique_ptr<Document>()> m_docCreate;
+	};
+
+	class ViewTemplate
 	{
-		m_lines.push_back(DoodleLine(pt1, pt2));
-	}
-	const DoodleLines& GetLines() const { return m_lines; }
+	public:
+		ViewTemplate(const mafString& viewTypeName, std::function<std::unique_ptr<View>()> viewCreate);
 
-private:
-	DoodleLines m_lines;
-};
+		ViewTemplate(const ViewTemplate&) = delete;
+		ViewTemplate& operator=(const ViewTemplate&) = delete;
 
-typedef wxVector<DoodleSegment> DoodleSegments;
+		virtual ~ViewTemplate() = default;
 
-class MyCanvas;
+		virtual std::unique_ptr<View> CreateView(std::shared_ptr<Document> doc);
+
+		const mafString& GetViewName() const { return m_viewTypeName; }
+
+	protected:
+		mafString m_viewTypeName;
+		std::function<std::unique_ptr<View>()> m_viewCreate;
+	};
+
+	class DocViewTemplate : public DocTemplate, public ViewTemplate
+	{
+	public:
+		DocViewTemplate(
+			const mafString& description,
+			const mafString& filter,
+			const mafString& ext,
+			const mafString& docTypeName,
+			const mafString& viewTypeName,
+			std::function<std::unique_ptr<FTK::Document>()> docCreate,
+			std::function<std::unique_ptr<FTK::View>()> viewCreate)
+			: DocTemplate(description, filter, ext, docTypeName, docCreate)
+			, ViewTemplate(viewTypeName, viewCreate)
+		{
+		}
+	};
 
 
-// The drawing document (model) class itself
-class DrawingDocument : public ftkDocument
-{
-public:
-	DrawingDocument() = default;
+	// One object of this class may be created in an application, to manage all
+	// the templates and documents.
+	class DocManager : public wxEvtHandler
+	{
+	public:
+		enum
+		{
+			wxDOC_NEW = 1,
+			wxDOC_SILENT = 2
+		};
 
-	//DocumentOstream& SaveObject(DocumentOstream& stream) override;
-	//DocumentIstream& LoadObject(DocumentIstream& stream) override;
+		DocManager();
 
-	// add a new segment to the document
-	void AddDoodleSegment(const DoodleSegment& segment);
+		DocManager(const DocManager&) = delete;
+		DocManager& operator=(const DocManager&) = delete;
 
-	// remove the last segment, if any, and copy it in the provided pointer if
-	// not null and return true or return false and do nothing if there are no
-	// segments
-	bool PopLastSegment(DoodleSegment* segment);
+		~DocManager() override;
 
-	// get direct access to our segments (for DrawingView)
-	const DoodleSegments& GetSegments() const { return m_doodleSegments; }
-
-private:
-	DoodleSegments m_doodleSegments;
-};
-
-// The view using MyCanvas to show its contents
-class DrawingView : public ftkView
-{
-public:
-	DrawingView(ftkView::Mode mode) : ftkView(mode) {}
-
-	bool OnCreate(ftkDocument* doc, long flags) override;
-	void OnDraw(wxDC* dc) override;
-	void OnUpdate(ftkView* sender, wxObject* hint = nullptr) override;
-	bool OnClose(bool deleteWindow = true) override;
-
-	DrawingDocument* GetDocument();
-
-private:
-	void OnCut(wxCommandEvent& event);
-
-	MyCanvas* m_canvas = nullptr;
-
-	wxDECLARE_EVENT_TABLE();
-};
-
-// Represents user interface (and other) properties of documents and views
-class ftkDocTemplate
-{
-public:
-	// Associate document and view types. They're for identifying what view is
-	// associated with what template/document type
-	ftkDocTemplate(
-		const wxString& descr,
-		const wxString& filter,
-		const wxString& dir,
-		const wxString& ext,
-		const wxString& docTypeName,
-		const wxString& viewTypeName,
-		std::function<ftkDocument* ()> docCreate,
-		std::function<ftkView* (ftkView::Mode mode)> viewCreate,
-		long flags = wxDEFAULT_TEMPLATE_FLAGS);
-
-	ftkDocTemplate(const ftkDocTemplate&) = delete;
-	ftkDocTemplate& operator=(const ftkDocTemplate&) = delete;
-
-	virtual ~ftkDocTemplate() = default;
-
-	virtual ftkDocument* CreateDocument(const wxString& path, long flags = 0);
-	virtual ftkView* CreateView(ftkDocument* doc, ftkView::Mode mode, long flags = 0);
-
-	// Helper method for CreateDocument; also allows you to do your own document
-	// creation
-	virtual bool InitDocument(ftkDocument* doc, const wxString& path, long flags = 0);
-
-	const wxString& GetDefaultExtension() const { return m_defaultExt; }
-	const wxString& GetDescription() const { return m_description; }
-	const wxString& GetDirectory() const { return m_directory; }
-	const wxString& GetFileFilter() const { return m_fileFilter; }
-	long GetFlags() const { return m_flags; }
-	virtual const wxString& GetViewName() const { return m_viewTypeName; }
-	virtual const wxString& GetDocumentName() const { return m_docTypeName; }
-
-	void SetFileFilter(const wxString& filter) { m_fileFilter = filter; }
-	void SetDirectory(const wxString& dir) { m_directory = dir; }
-	void SetDescription(const wxString& descr) { m_description = descr; }
-	void SetDefaultExtension(const wxString& ext) { m_defaultExt = ext; }
-	void SetFlags(long flags) { m_flags = flags; }
-
-	bool IsVisible() const { return (m_flags & wxTEMPLATE_VISIBLE) != 0; }
-
-	virtual bool FileMatchesTemplate(const wxString& path);
-
-protected:
-	long              m_flags;
-	wxString          m_fileFilter;
-	wxString          m_directory;
-	wxString          m_description;
-	wxString          m_defaultExt;
-	wxString          m_docTypeName;
-	wxString          m_viewTypeName;
-
-	// For dynamic creation of appropriate instances.
-	std::function<ftkDocument* ()> m_docCreate;
-	std::function<ftkView* (ftkView::Mode mode)> m_viewCreate;
-
-	virtual ftkDocument* DoCreateDocument();
-	virtual ftkView* DoCreateView(ftkView::Mode mode);
-};
-
-// One object of this class may be created in an application, to manage all
-// the templates and documents.
-class ftkDocManager : public wxEvtHandler
-{
-public:
-	// NB: flags are unused, don't pass wxDOC_XXX to this ctor
-	ftkDocManager(long flags = 0);
-
-	ftkDocManager(const ftkDocManager&) = delete;
-	ftkDocManager& operator=(const ftkDocManager&) = delete;
-
-	~ftkDocManager() override;
-
-	// Handlers for common user commands
-	void OnFileClose(wxCommandEvent& event);
-	void OnFileCloseAll(wxCommandEvent& event);
-	void OnFileNew(wxCommandEvent& event);
-	void OnFileOpen(wxCommandEvent& event);
-	void OnFileRevert(wxCommandEvent& event);
-	void OnFileSave(wxCommandEvent& event);
-	void OnFileSaveAs(wxCommandEvent& event);
-	void OnMRUFile(wxCommandEvent& event);
+		// Handlers for common user commands
+		void OnFileClose(wxCommandEvent& event);
+		void OnFileCloseAll(wxCommandEvent& event);
+		void OnFileNew(wxCommandEvent& event);
+		void OnFileOpen(wxCommandEvent& event);
+		void OnFileRevert(wxCommandEvent& event);
+		void OnFileSave(wxCommandEvent& event);
+		void OnFileSaveAs(wxCommandEvent& event);
+		void OnMRUFile(wxCommandEvent& event);
 #if wxUSE_PRINTING_ARCHITECTURE
-	void OnPrint(wxCommandEvent& event);
-	void OnPreview(wxCommandEvent& event);
-	void OnPageSetup(wxCommandEvent& event);
+		void OnPrint(wxCommandEvent& event);
+		void OnPreview(wxCommandEvent& event);
+		void OnPageSetup(wxCommandEvent& event);
 #endif // wxUSE_PRINTING_ARCHITECTURE
-	void OnUndo(wxCommandEvent& event);
-	void OnRedo(wxCommandEvent& event);
+		void OnUndo(wxCommandEvent& event);
+		void OnRedo(wxCommandEvent& event);
 
-	// Handlers for UI update commands
-	void OnUpdateFileOpen(wxUpdateUIEvent& event);
-	void OnUpdateDisableIfNoDoc(wxUpdateUIEvent& event);
-	void OnUpdateFileRevert(wxUpdateUIEvent& event);
-	void OnUpdateFileNew(wxUpdateUIEvent& event);
-	void OnUpdateFileSave(wxUpdateUIEvent& event);
-	void OnUpdateFileSaveAs(wxUpdateUIEvent& event);
-	void OnUpdateUndo(wxUpdateUIEvent& event);
-	void OnUpdateRedo(wxUpdateUIEvent& event);
+		// Handlers for UI update commands
+		void OnUpdateFileOpen(wxUpdateUIEvent& event);
+		void OnUpdateDisableIfNoDoc(wxUpdateUIEvent& event);
+		void OnUpdateFileRevert(wxUpdateUIEvent& event);
+		void OnUpdateFileNew(wxUpdateUIEvent& event);
+		void OnUpdateFileSave(wxUpdateUIEvent& event);
+		void OnUpdateFileSaveAs(wxUpdateUIEvent& event);
+		void OnUpdateUndo(wxUpdateUIEvent& event);
+		void OnUpdateRedo(wxUpdateUIEvent& event);
 
-	// called when file format detection didn't work, can be overridden to do
-	// something in this case
-	virtual void OnOpenFileFailure() {}
+		// called when file format detection didn't work, can be overridden to do
+		// something in this case
+		virtual void OnOpenFileFailure() {}
 
-	virtual ftkDocument* CreateDocument(const wxString& path, long flags = 0);
+		virtual std::shared_ptr<FTK::Document> CreateDocument(const wxString& path, long flags = 0);
 
-	// wrapper around CreateDocument() with a more clear name
-	ftkDocument* CreateNewDocument()
-	{
-		return CreateDocument(wxString(), wxDOC_NEW);
-	}
+		// wrapper around CreateDocument() with a more clear name
+		std::shared_ptr<FTK::Document> CreateNewDocument()
+		{
+			return CreateDocument(wxString(), wxDOC_NEW);
+		}
 
-	virtual ftkView* CreateView(ftkDocument* doc, long flags = 0);
-	virtual void DeleteTemplate(ftkDocTemplate* temp, long flags = 0);
-	virtual bool FlushDoc(ftkDocument* doc);
-	virtual ftkDocTemplate* MatchTemplate(const wxString& path);
-	virtual ftkDocTemplate* SelectDocumentPath(const std::vector<ftkDocTemplate*>& templates, wxString& path, long flags, bool save = false);
-	virtual ftkDocTemplate* SelectDocumentType(const std::vector<ftkDocTemplate*>& templates, bool sort = false);
-	virtual ftkDocTemplate* SelectViewType(const std::vector<ftkDocTemplate*>& templates, bool sort = false);
-	virtual ftkDocTemplate* FindTemplateForPath(const wxString& path);
+		virtual std::unique_ptr<FTK::View> CreateView(std::shared_ptr<FTK::Document> doc);
+		virtual void DeleteTemplate(FTK::DocViewTemplate* temp, long flags = 0);
+		virtual bool FlushDoc(FTK::Document* doc);
+		virtual std::shared_ptr<FTK::DocViewTemplate> MatchTemplate(const wxString& path);
+		virtual std::shared_ptr<FTK::DocViewTemplate> SelectDocumentPath(wxString& path, long flags, bool save = false);
+		virtual std::shared_ptr<FTK::DocViewTemplate> SelectDocumentType();
+		virtual std::shared_ptr<FTK::DocViewTemplate> SelectViewType();
+		virtual std::shared_ptr<FTK::DocViewTemplate> FindTemplateForPath(const wxString& path);
 
-	void AssociateTemplate(std::unique_ptr<ftkDocTemplate> temp);
-	void DisassociateTemplate(ftkDocTemplate* temp);
+		virtual bool AddView(FTK::View* view);
+		virtual bool RemoveView(FTK::View* view);
 
-	// Find template from document class info, may return nullptr.
-	//ftkDocTemplate* FindTemplate(const wxClassInfo* documentClassInfo);
+		FTK::CommandProcessor* GetCommandProcessor(FTK::Document* doc) const;
 
-	// Find document from file name, may return nullptr.
-	ftkDocument* FindDocumentByPath(const wxString& path) const;
+		void AssociateTemplate(std::shared_ptr<FTK::DocViewTemplate> temp);
+		void DisassociateTemplate(FTK::DocViewTemplate* temp);
 
-	ftkDocument* GetCurrentDocument() const;
+		// Find template from document class info, may return nullptr.
+		//ftkDocTemplate* FindTemplate(const wxClassInfo* documentClassInfo);
 
-	void SetMaxDocsOpen(int n) { m_maxDocsOpen = n; }
-	int GetMaxDocsOpen() const { return m_maxDocsOpen; }
+		// Find document from file name, may return nullptr.
+		std::shared_ptr<FTK::Document> FindDocumentByPath(const wxString& path) const;
 
-	// Add and remove a document from the manager's list
-	void AddDocument(ftkDocument* doc);
-	void RemoveDocument(ftkDocument* doc);
+		FTK::Document* GetCurrentDocument() const;
 
-	// closes all currently open documents
-	bool CloseDocuments(bool force = true);
+		void SetMaxDocsOpen(int n) { m_maxDocsOpen = n; }
+		int GetMaxDocsOpen() const { return m_maxDocsOpen; }
 
-	// closes the specified document
-	bool CloseDocument(ftkDocument* doc, bool force = false);
+		// closes all currently open documents
+		bool CloseDocuments(bool force = true);
 
-	// Clear remaining documents and templates
-	bool Clear(bool force = true);
+		// closes the specified document
+		bool CloseDocument(FTK::Document* doc, bool force = false);
 
-	// Views or windows should inform the document manager
-	// when a view is going in or out of focus
-	virtual void ActivateView(ftkView* view, bool activate = true);
-	virtual ftkView* GetCurrentView() const { return m_currentView; }
+		// Clear remaining documents and templates
+		bool Clear(bool force = true);
 
-	// This method tries to find an active view harder than GetCurrentView():
-	// if the latter is null, it also checks if we don't have just a single
-	// view and returns it then.
-	ftkView* GetAnyUsableView() const;
+		// Views or windows should inform the document manager
+		// when a view is going in or out of focus
+		virtual void ActivateView(FTK::View* view, bool activate = true);
+		virtual FTK::View* GetCurrentView() const { return m_currentView; }
 
+		// This method tries to find an active view harder than GetCurrentView():
+		// if the latter is null, it also checks if we don't have just a single
+		// view and returns it then.
+		FTK::View* GetAnyUsableView() const;
 
-	std::vector<ftkDocument*> GetDocumentsVector() const;
-	std::vector<ftkDocTemplate*> GetTemplatesVector() const;
+		std::vector<std::shared_ptr<FTK::DocViewTemplate> >& GetTemplates() { return m_templates; }
 
-	std::list<ftkDocument*>& GetDocuments() { return m_docs; }
-	std::list<std::unique_ptr<ftkDocTemplate> >& GetTemplates() { return m_templates; }
+		// Return the default name for a new document (by default returns strings
+		// in the form "unnamed <counter>" but can be overridden)
+		virtual wxString MakeNewDocumentName();
 
-	// Return the default name for a new document (by default returns strings
-	// in the form "unnamed <counter>" but can be overridden)
-	virtual wxString MakeNewDocumentName();
+		// Make a frame title (override this to do something different)
+		virtual wxString MakeFrameTitle(FTK::Document* doc);
 
-	// Make a frame title (override this to do something different)
-	virtual wxString MakeFrameTitle(ftkDocument* doc);
+		virtual wxFileHistory* GetFileHistory() const { return m_fileHistory.get(); }
 
-	virtual wxFileHistory* GetFileHistory() const { return m_fileHistory.get(); }
-
-	// File history management
-	virtual void AddFileToHistory(const wxString& file);
-	virtual void RemoveFileFromHistory(size_t i);
-	virtual size_t GetHistoryFilesCount() const;
-	virtual wxString GetHistoryFile(size_t i) const;
-	virtual void FileHistoryUseMenu(wxMenu* menu);
-	virtual void FileHistoryRemoveMenu(wxMenu* menu);
+		// File history management
+		virtual void AddFileToHistory(const wxString& file);
+		virtual void RemoveFileFromHistory(size_t i);
+		virtual size_t GetHistoryFilesCount() const;
+		virtual wxString GetHistoryFile(size_t i) const;
+		virtual void FileHistoryUseMenu(wxMenu* menu);
+		virtual void FileHistoryRemoveMenu(wxMenu* menu);
 #if wxUSE_CONFIG
-	virtual void FileHistoryLoad(const wxConfigBase& config);
-	virtual void FileHistorySave(wxConfigBase& config);
+		virtual void FileHistoryLoad(const wxConfigBase& config);
+		virtual void FileHistorySave(wxConfigBase& config);
 #endif // wxUSE_CONFIG
 
-	virtual void FileHistoryAddFilesToMenu();
-	virtual void FileHistoryAddFilesToMenu(wxMenu* menu);
+		virtual void FileHistoryAddFilesToMenu();
+		virtual void FileHistoryAddFilesToMenu(wxMenu* menu);
 
-	wxString GetLastDirectory() const;
-	void SetLastDirectory(const wxString& dir) { m_lastDirectory = dir; }
+		wxString GetLastDirectory() const;
+		void SetLastDirectory(const wxString& dir) { m_lastDirectory = dir; }
 
-	// Get the current document manager
-	static ftkDocManager* GetDocumentManager() { return sm_docManager; }
-
-#if wxUSE_PRINTING_ARCHITECTURE
-	wxPageSetupDialogData& GetPageSetupDialogData()
-	{
-		return m_pageSetupDialogData;
-	}
-	const wxPageSetupDialogData& GetPageSetupDialogData() const
-	{
-		return m_pageSetupDialogData;
-	}
-#endif // wxUSE_PRINTING_ARCHITECTURE
-
-protected:
-	// Called when a file selected from the MRU list doesn't exist any more.
-	// The default behaviour is to remove the file from the MRU and notify the
-	// user about it but this method can be overridden to customize it.
-	virtual void OnMRUFileNotExist(unsigned n, const wxString& filename);
-
-	// Open the MRU file with the given index in our associated file history.
-	void DoOpenMRUFile(unsigned n);
-#if wxUSE_PRINTING_ARCHITECTURE
-	virtual wxPreviewFrame* CreatePreviewFrame(wxPrintPreviewBase* preview,
-		wxWindow* parent,
-		const wxString& title);
-#endif // wxUSE_PRINTING_ARCHITECTURE
-
-	// hook the currently active view into event handlers chain here
-	virtual bool TryBefore(wxEvent& event) override;
-
-	// return the command processor for the current document, if any
-	FTK::CommandProcessor* GetCurrentCommandProcessor() const;
-
-	int m_defaultDocumentNameCounter = 1;
-	int m_maxDocsOpen = std::numeric_limits<int>::max();
-	std::list<ftkDocument*> m_docs;
-	std::list<std::unique_ptr<ftkDocTemplate> > m_templates;
-	ftkView* m_currentView = nullptr;
-	std::unique_ptr<wxFileHistory> m_fileHistory;
-	wxString m_lastDirectory;
-	static ftkDocManager* sm_docManager;
+		// Get the current document manager
+		static DocManager* GetDocumentManager() { return sm_docManager; }
 
 #if wxUSE_PRINTING_ARCHITECTURE
-	wxPageSetupDialogData m_pageSetupDialogData;
+		wxPageSetupDialogData& GetPageSetupDialogData()
+		{
+			return m_pageSetupDialogData;
+		}
+		const wxPageSetupDialogData& GetPageSetupDialogData() const
+		{
+			return m_pageSetupDialogData;
+		}
 #endif // wxUSE_PRINTING_ARCHITECTURE
-};
+
+	protected:
+
+		struct DocInfo
+		{
+			std::list<FTK::View*> m_views;
+			std::unique_ptr<FTK::CommandProcessor> m_commandProcessor;
+		};
+
+		// Called when a file selected from the MRU list doesn't exist any more.
+		// The default behaviour is to remove the file from the MRU and notify the
+		// user about it but this method can be overridden to customize it.
+		virtual void OnMRUFileNotExist(unsigned n, const wxString& filename);
+
+		// Open the MRU file with the given index in our associated file history.
+		void DoOpenMRUFile(unsigned n);
+#if wxUSE_PRINTING_ARCHITECTURE
+		virtual wxPreviewFrame* CreatePreviewFrame(wxPrintPreviewBase* preview,
+			wxWindow* parent,
+			const wxString& title);
+#endif // wxUSE_PRINTING_ARCHITECTURE
+
+		// hook the currently active view into event handlers chain here
+		virtual bool TryBefore(wxEvent& event) override;
+
+		// return the command processor for the current document, if any
+		FTK::CommandProcessor* GetCurrentCommandProcessor() const;
+
+		int m_defaultDocumentNameCounter = 1;
+		int m_maxDocsOpen = std::numeric_limits<int>::max();
+		std::vector<std::shared_ptr<FTK::DocViewTemplate> > m_templates;
+		std::list<std::pair<std::shared_ptr<FTK::Document>, DocInfo > > m_documentsInfo;
+		FTK::View* m_currentView = nullptr;
+		std::unique_ptr<wxFileHistory> m_fileHistory;
+		wxString m_lastDirectory;
+		static DocManager* sm_docManager;
+
+#if wxUSE_PRINTING_ARCHITECTURE
+		wxPageSetupDialogData m_pageSetupDialogData;
+#endif // wxUSE_PRINTING_ARCHITECTURE
+	};
+}
 
 // ----------------------------------------------------------------------------
 // Base class for child frames -- this is what wxView renders itself into
@@ -1039,18 +858,17 @@ public:
 	ftkDocChildFrameAnyBase& operator=(const ftkDocChildFrameAnyBase&) = delete;
 
 	// full ctor equivalent to using the default one and Create()
-	ftkDocChildFrameAnyBase(ftkDocument* doc, ftkView* view, wxWindow* win)
+	ftkDocChildFrameAnyBase(FTK::View* view, wxWindow* win)
 	{
-		Create(doc, view, win);
+		Create(view, win);
 	}
 
 	// method which must be called for an object created using the default ctor
 	//
 	// note that it returns bool just for consistency with Create() methods in
 	// other classes, we never return false from here
-	bool Create(ftkDocument* doc, ftkView* view, wxWindow* win)
+	bool Create(FTK::View* view, wxWindow* win)
 	{
-		m_childDocument = doc;
 		m_childView = view;
 		m_win = win;
 
@@ -1070,10 +888,8 @@ public:
 			m_childView->SetDocChildFrame(nullptr);
 	}
 
-	ftkDocument* GetDocument() const { return m_childDocument; }
-	ftkView* GetView() const { return m_childView; }
-	void SetDocument(ftkDocument* doc) { m_childDocument = doc; }
-	void SetView(ftkView* view) { m_childView = view; }
+	FTK::View* GetView() const { return m_childView; }
+	void SetView(FTK::View* view) { m_childView = view; }
 
 	wxWindow* GetWindow() const { return m_win; }
 
@@ -1096,8 +912,7 @@ protected:
 	bool CloseView(wxCloseEvent& event);
 
 
-	ftkDocument* m_childDocument = nullptr;
-	ftkView* m_childView = nullptr;
+	FTK::View* m_childView = nullptr;
 
 	// the associated window: having it here is not terribly elegant but it
 	// allows us to avoid having any virtual functions in this class
@@ -1123,8 +938,7 @@ private:
 // has only inline methods.
 
 template <class ChildFrame, class ParentFrame>
-class ftkDocChildFrameAny : public ChildFrame,
-	public ftkDocChildFrameAnyBase
+class ftkDocChildFrameAny : public ChildFrame, public ftkDocChildFrameAnyBase
 {
 public:
 	typedef ChildFrame BaseClass;
@@ -1136,8 +950,7 @@ public:
 	ftkDocChildFrameAny& operator=(const ftkDocChildFrameAny&) = delete;
 
 	// ctor for a frame showing the given view of the specified document
-	ftkDocChildFrameAny(ftkDocument* doc,
-		ftkView* view,
+	ftkDocChildFrameAny(FTK::View* view,
 		ParentFrame* parent,
 		wxWindowID id,
 		const wxString& title,
@@ -1146,11 +959,10 @@ public:
 		long style = wxDEFAULT_FRAME_STYLE,
 		const wxString& name = wxASCII_STR(wxFrameNameStr))
 	{
-		Create(doc, view, parent, id, title, pos, size, style, name);
+		Create(view, parent, id, title, pos, size, style, name);
 	}
 
-	bool Create(ftkDocument* doc,
-		ftkView* view,
+	bool Create(FTK::View* view,
 		ParentFrame* parent,
 		wxWindowID id,
 		const wxString& title,
@@ -1162,7 +974,7 @@ public:
 		this->Bind(wxEVT_ACTIVATE, &ftkDocChildFrameAny::OnActivate, this);
 		this->Bind(wxEVT_CLOSE_WINDOW, &ftkDocChildFrameAny::OnCloseWindow, this);
 
-		if (!ftkDocChildFrameAnyBase::Create(doc, view, this))
+		if (!ftkDocChildFrameAnyBase::Create(view, this))
 			return false;
 
 		if (!BaseClass::Create(parent, id, title, pos, size, style, name))
@@ -1218,7 +1030,7 @@ public:
 	ftkDocParentFrameAnyBase(const ftkDocParentFrameAnyBase&) = delete;
 	ftkDocParentFrameAnyBase& operator=(const ftkDocParentFrameAnyBase&) = delete;
 
-	ftkDocManager* GetDocumentManager() const { return m_docManager; }
+	FTK::DocManager* GetDocumentManager() const { return m_docManager; }
 
 protected:
 	// This is similar to wxDocChildFrameAnyBase method with the same name:
@@ -1228,14 +1040,13 @@ protected:
 	bool TryProcessEvent(wxEvent& event);
 
 	wxWindow* const m_frame;
-	ftkDocManager* m_docManager;
+	FTK::DocManager* m_docManager;
 };
 
 // This is similar to wxDocChildFrameAny and is used to provide common
 // implementation for both wxDocParentFrame and wxDocMDIParentFrame
 template <class BaseFrame>
-class ftkDocParentFrameAny : public BaseFrame,
-	public ftkDocParentFrameAnyBase
+class ftkDocParentFrameAny : public BaseFrame, public ftkDocParentFrameAnyBase
 {
 public:
 	ftkDocParentFrameAny() : ftkDocParentFrameAnyBase(this) {}
@@ -1244,7 +1055,7 @@ public:
 	ftkDocParentFrameAny& operator=(const ftkDocParentFrameAny&) = delete;
 
 	ftkDocParentFrameAny(
-		ftkDocManager* manager,
+		FTK::DocManager* manager,
 		wxFrame* frame,
 		wxWindowID id,
 		const wxString& title,
@@ -1258,7 +1069,7 @@ public:
 	}
 
 	bool Create(
-		ftkDocManager* manager,
+		FTK::DocManager* manager,
 		wxFrame* frame,
 		wxWindowID id,
 		const wxString& title,
@@ -1310,15 +1121,11 @@ private:
 	}
 };
 
-// ----------------------------------------------------------------------------
-// Provide simple default printing facilities
-// ----------------------------------------------------------------------------
-
 #if wxUSE_PRINTING_ARCHITECTURE
-class WXDLLIMPEXP_CORE ftkDocPrintout : public wxPrintout
+class ftkDocPrintout : public wxPrintout
 {
 public:
-	ftkDocPrintout(ftkView* view = nullptr, const wxString& title = wxString());
+	ftkDocPrintout(FTK::View* view = nullptr, const wxString& title = wxString());
 
 	ftkDocPrintout(const ftkDocPrintout&) = delete;
 	ftkDocPrintout& operator=(const ftkDocPrintout&) = delete;
@@ -1330,897 +1137,833 @@ public:
 	void GetPageInfo(int* minPage, int* maxPage,
 		int* selPageFrom, int* selPageTo) override;
 
-	virtual ftkView* GetView() { return m_printoutView; }
+	virtual FTK::View* GetView() { return m_printoutView; }
 
 protected:
-	ftkView* m_printoutView;
+	static wxString GetAppropriateTitle(const FTK::View* view, const wxString& titleGiven);
+	FTK::View* m_printoutView;
 
 private:
 	wxDECLARE_DYNAMIC_CLASS(ftkDocPrintout);
 };
 #endif // wxUSE_PRINTING_ARCHITECTURE
 
-// For compatibility with existing file formats:
-// converts from/to a stream to/from a temporary file.
-#if wxUSE_STD_IOSTREAM
-bool wxTransferFileToStream(const wxString& filename, std::ostream& stream);
-bool wxTransferStreamToFile(std::istream& stream, const wxString& filename);
-#else
-bool WXDLLIMPEXP_CORE
-wxTransferFileToStream(const wxString& filename, wxOutputStream& stream);
-bool WXDLLIMPEXP_CORE
-wxTransferStreamToFile(wxInputStream& stream, const wxString& filename);
-#endif // wxUSE_STD_IOSTREAM
-
-inline std::vector<ftkView*> ftkDocument::GetViewsVector() const
-{
-	return { begin(m_documentViews), end(m_documentViews) };
-}
-
-inline std::vector<ftkDocument*> ftkDocManager::GetDocumentsVector() const
-{
-	return { begin(m_docs), end(m_docs) };
-}
-
-inline std::vector<ftkDocTemplate*> ftkDocManager::GetTemplatesVector() const
-{
-	std::vector<ftkDocTemplate*> templates;
-	templates.reserve(m_templates.size());
-	for (auto& temp : m_templates)
-	{
-		templates.push_back(temp.get());
-	}
-	return templates;
-}
-
 #if wxUSE_PRINTING_ARCHITECTURE
 wxIMPLEMENT_DYNAMIC_CLASS(ftkDocPrintout, wxPrintout);
 #endif
 
-namespace
+class TextEditDocument : public FTK::Document
 {
+public:
+	TextEditDocument() = default;
 
-	wxString FindExtension(const wxString& path)
+	TextEditDocument(const TextEditDocument&) = delete;
+	TextEditDocument& operator=(const TextEditDocument&) = delete;
+
+	bool OnCreate(const mafString& path) override;
+
+	bool IsModified() const override;
+	void Modify(bool mod) override;
+
+protected:
+	bool DoSaveDocument(const mafString& filename) override;
+	bool DoOpenDocument(const mafString& filename) override;
+
+private:
+	wxTextCtrl* GetTextCtrl() const;
+
+	void OnTextChange(wxCommandEvent& event);
+};
+
+class TextEditView : public FTK::View
+{
+public:
+	TextEditView();
+
+	bool OnCreate(std::shared_ptr<FTK::Document> doc) override;
+	void OnDraw(wxDC* dc) override;
+	bool OnClose(bool deleteWindow = true) override;
+
+	wxTextCtrl* GetText() const { return m_text; }
+
+private:
+	void OnCopy(wxCommandEvent& WXUNUSED(event)) { m_text->Copy(); }
+	void OnPaste(wxCommandEvent& WXUNUSED(event)) { m_text->Paste(); }
+	void OnSelectAll(wxCommandEvent& WXUNUSED(event)) { m_text->SelectAll(); }
+
+	wxTextCtrl* m_text = nullptr;
+};
+
+// Represents a line from one point to the other
+struct DoodleLine
+{
+	DoodleLine() { /* leave fields uninitialized */ }
+
+	DoodleLine(const wxPoint& pt1, const wxPoint& pt2)
+		: x1(pt1.x), y1(pt1.y), x2(pt2.x), y2(pt2.y)
 	{
-		wxString ext;
-		wxFileName::SplitPath(path, nullptr, nullptr, &ext);
-
-		// VZ: extensions are considered not case sensitive - is this really a good
-		//     idea?
-		return ext.MakeLower();
 	}
 
-} // anonymous namespace
+	wxInt32 x1;
+	wxInt32 y1;
+	wxInt32 x2;
+	wxInt32 y2;
+};
 
-ftkDocument::ftkDocument() = default;
-
-bool ftkDocument::DeleteContents()
+// Contains a list of lines: represents a mouse-down doodle
+class DoodleSegment
 {
-	return true;
-}
+public:
+	std::ostream& SaveObject(std::ostream& stream);
+	std::istream& LoadObject(std::istream& stream);
 
-ftkDocument::~ftkDocument()
-{
-	delete m_commandProcessor;
-
-	if (GetDocumentManager())
-		GetDocumentManager()->RemoveDocument(this);
-
-	// Not safe to do here, since it'll invoke virtual view functions
-	// expecting to see valid derived objects: and by the time we get here,
-	// we've called destructors higher up.
-	//DeleteAllViews();
-}
-
-bool ftkDocument::CanClose()
-{
-	if (!OnSaveModified())
-		return false;
-	return true;
-}
-
-bool ftkDocument::Close()
-{
-	// First check if this document itself and all its children can be closed.
-	if (!CanClose())
-		return false;
-	return OnCloseDocument();
-}
-
-bool ftkDocument::OnCloseDocument()
-{
-	// Tell all views that we're about to close
-	NotifyClosing();
-	DeleteContents();
-	Modify(false);
-	return true;
-}
-
-// Note that this implicitly deletes the document when the last view is
-// deleted.
-bool ftkDocument::DeleteAllViews()
-{
-	auto manager = GetDocumentManager();
-
-	// first check if all views agree to be closed
-	for (auto& view : m_documentViews)
+	bool IsEmpty() const { return m_lines.empty(); }
+	void AddLine(const wxPoint& pt1, const wxPoint& pt2)
 	{
-		if (!view->Close())
-			return false;
+		m_lines.emplace_back(pt1, pt2);
 	}
+	const std::vector<DoodleLine>& GetLines() const { return m_lines; }
 
-	// all views agreed to close, now do close them
-	if (m_documentViews.empty())
+private:
+	std::vector<DoodleLine> m_lines;
+};
+
+// The drawing document (model) class itself
+class DrawingDocument : public FTK::Document
+{
+public:
+	DrawingDocument() = default;
+
+	std::ostream& SaveObject(std::ostream& stream) override;
+	std::istream& LoadObject(std::istream& stream) override;
+
+	// add a new segment to the document
+	void AddDoodleSegment(const DoodleSegment& segment);
+
+	// remove the last segment, if any, and copy it in the provided pointer if
+	// not null and return true or return false and do nothing if there are no
+	// segments
+	bool PopLastSegment(DoodleSegment* segment);
+
+	// get direct access to our segments (for DrawingView)
+	const std::vector<DoodleSegment>& GetSegments() const { return m_doodleSegments; }
+
+private:
+	std::vector<DoodleSegment> m_doodleSegments;
+};
+
+// The view using MyCanvas to show its contents
+class DrawingView : public FTK::View
+{
+public:
+	DrawingView();
+
+	bool OnCreate(std::shared_ptr<FTK::Document> doc) override;
+	void OnDraw(wxDC* dc) override;
+	void OnUpdate(FTK::View* sender, wxObject* hint = nullptr) override;
+	bool OnClose(bool deleteWindow = true) override;
+
+	DrawingDocument* GetDocument();
+
+private:
+	void OnCut(wxCommandEvent& event);
+
+	MyCanvas* m_canvas = nullptr;
+};
+
+namespace FTK
+{
+	Document::Document() = default;
+
+	Document::~Document() = default;
+
+	bool Document::DeleteContents()
 	{
-		// normally the document would be implicitly deleted when the last view
-		// is, but if don't have any views, do it here instead
-		if (manager && std::find(begin(manager->GetDocuments()), end(manager->GetDocuments()), this) != end(manager->GetDocuments()))
-			delete this;
-	}
-	else // have views
-	{
-		// as we delete elements we iterate over, don't use the usual "from
-		// begin to end" loop
-		while (!m_documentViews.empty())
-		{
-			auto view = m_documentViews.front();
-
-			bool isLastOne = m_documentViews.size() == 1;
-
-			// this always deletes the node implicitly and if this is the last
-			// view also deletes this object itself (also implicitly, great),
-			// so we can't test for m_documentViews.empty() after calling this!
-			delete view;
-
-			if (isLastOne)
-				break;
-		}
-	}
-
-	return true;
-}
-
-ftkView* ftkDocument::GetFirstView() const
-{
-	if (m_documentViews.empty())
-		return nullptr;
-
-	return m_documentViews.front();
-}
-
-void ftkDocument::Modify(bool mod)
-{
-	if (mod != m_documentModified)
-	{
-		m_documentModified = mod;
-
-		// Allow views to append asterix to the title
-		ftkView* view = GetFirstView();
-		if (view) view->OnChangeFilename();
-	}
-}
-
-ftkDocManager* ftkDocument::GetDocumentManager() const
-{
-	//if (m_documentTemplate)
-	//	return m_documentTemplate->GetDocumentManager();
-
-	// Fall back on the global manager if the document doesn't have a template,
-	// code elsewhere, notably in DeleteAllViews(), relies on the document
-	// always being managed by some manager.
-	return ftkDocManager::GetDocumentManager();
-}
-
-bool ftkDocument::OnNewDocument()
-{
-	// notice that there is no need to either reset nor even check the
-	// modified flag here as the document itself is a new object (this is only
-	// called from CreateDocument()) and so it shouldn't be saved anyhow even
-	// if it is modified -- this could happen if the user code creates
-	// documents pre-filled with some user-entered (and which hence must not be
-	// lost) information
-
-	SetDocumentSaved(false);
-
-	const wxString name = GetDocumentManager()->MakeNewDocumentName();
-	SetTitle(name);
-	SetFilename(name, true);
-
-	return true;
-}
-
-bool ftkDocument::Save()
-{
-	if (AlreadySaved())
 		return true;
+	}
 
-	if (m_documentFile.empty() || !m_savedYet)
-		return SaveAs();
-
-	return OnSaveDocument(m_documentFile);
-}
-
-bool ftkDocument::SaveAs()
-{
-	auto docTemplate = GetDocumentTemplate();
-	if (!docTemplate)
-		return false;
-
-#ifdef wxHAS_MULTIPLE_FILEDLG_FILTERS
-	wxString filter = docTemplate->GetDescription() + wxT(" (") +
-		docTemplate->GetFileFilter() + wxT(")|") +
-		docTemplate->GetFileFilter();
-
-	// Now see if there are some other template with identical view and document
-	// classes, whose filters may also be used.
-	/*if (docTemplate->GetViewClassInfo() && docTemplate->GetDocClassInfo())
+	bool Document::CanClose()
 	{
-		auto& templates = docTemplate->GetDocumentManager()->GetTemplates();
-		for (auto& t : templates)
-		{
-			if (t->IsVisible() && t != docTemplate &&
-				t->GetViewClassInfo() == docTemplate->GetViewClassInfo() &&
-				t->GetDocClassInfo() == docTemplate->GetDocClassInfo())
-			{
-				// add a '|' to separate this filter from the previous one
-				if (!filter.empty())
-					filter << wxT('|');
+		if (!OnSaveModified())
+			return false;
+		return true;
+	}
 
-				filter << t->GetDescription()
-					<< wxT(" (") << t->GetFileFilter() << wxT(") |")
-					<< t->GetFileFilter();
+	bool Document::Close()
+	{
+		// First check if this document itself and all its children can be closed.
+		if (!CanClose())
+			return false;
+		return OnCloseDocument();
+	}
+
+	bool Document::OnCloseDocument()
+	{
+		// Tell all views that we're about to close
+		NotifyClosing();
+		DeleteContents();
+		Modify(false);
+		return true;
+	}
+
+	void Document::Modify(bool mod)
+	{
+		if (mod != m_documentModified)
+		{
+			m_documentModified = mod;
+			// Allow views to append asterix to the title
+			for (auto observer : m_documentObservers)
+			{
+				observer->ChangeFilename();
 			}
 		}
-	}*/
+	}
+
+	bool Document::OnNewDocument(const mafString& name)
+	{
+		// notice that there is no need to either reset nor even check the
+		// modified flag here as the document itself is a new object (this is only
+		// called from CreateDocument()) and so it shouldn't be saved anyhow even
+		// if it is modified -- this could happen if the user code creates
+		// documents pre-filled with some user-entered (and which hence must not be
+		// lost) information
+
+		SetDocumentSaved(false);
+
+		SetTitle(name);
+		SetFilename(name, true);
+
+		return true;
+	}
+
+	bool Document::Save()
+	{
+		if (AlreadySaved())
+			return true;
+
+		if (m_documentFile.empty() || !m_savedYet)
+			return SaveAs();
+
+		return OnSaveDocument(m_documentFile);
+	}
+
+	bool Document::SaveAs()
+	{
+#ifdef wxHAS_MULTIPLE_FILEDLG_FILTERS
+		wxString filter = mafStringToWx(m_docTemplate->GetDescription()) + wxT(" (") +
+			mafStringToWx(m_docTemplate->GetFileFilter()) + wxT(")|") +
+			mafStringToWx(m_docTemplate->GetFileFilter());
+
+		// Now see if there are some other template with identical view and document
+		// classes, whose filters may also be used.
+		/*if (docTemplate->GetViewClassInfo() && docTemplate->GetDocClassInfo())
+		{
+			auto& templates = docTemplate->GetDocumentManager()->GetTemplates();
+			for (auto& t : templates)
+			{
+				if (t->IsVisible() && t != docTemplate &&
+					t->GetViewClassInfo() == docTemplate->GetViewClassInfo() &&
+					t->GetDocClassInfo() == docTemplate->GetDocClassInfo())
+				{
+					// add a '|' to separate this filter from the previous one
+					if (!filter.empty())
+						filter << wxT('|');
+
+					filter << t->GetDescription()
+						<< wxT(" (") << t->GetFileFilter() << wxT(") |")
+						<< t->GetFileFilter();
+				}
+			}
+		}*/
 #else
-	wxString filter = docTemplate->GetFileFilter();
+		wxString filter = docTemplate->GetFileFilter();
 #endif
 
-	wxString defaultDir = docTemplate->GetDirectory();
-	if (defaultDir.empty())
-	{
-		defaultDir = wxPathOnly(GetFilename());
+		wxString defaultDir = wxPathOnly(mafStringToWx(GetFilename()));
 		if (defaultDir.empty())
-			defaultDir = GetDocumentManager()->GetLastDirectory();
+		{
+			defaultDir = FTK::DocManager::GetDocumentManager()->GetLastDirectory();
+		}
+
+		wxString fileName = wxFileSelector(_("Save As"),
+			defaultDir,
+			wxFileNameFromPath(mafStringToWx(GetFilename())),
+			mafStringToWx(m_docTemplate->GetDefaultExtension()),
+			filter,
+			wxFD_SAVE | wxFD_OVERWRITE_PROMPT,
+			GetDocumentWindow());
+
+		if (fileName.empty())
+			return false; // cancelled by user
+
+		// Files that were not saved correctly are not added to the FileHistory.
+		if (!OnSaveDocument(mafWxToString(fileName)))
+			return false;
+
+		SetTitle(mafWxToString(wxFileNameFromPath(fileName)));
+		SetFilename(mafWxToString(fileName), true);    // will call OnChangeFileName automatically
+
+		// A file that doesn't use the default extension of its document template
+		// cannot be opened via the FileHistory, so we do not add it.
+		//if (docTemplate->FileMatchesTemplate(fileName))
+		{
+			FTK::DocManager::GetDocumentManager()->AddFileToHistory(fileName);
+		}
+		//else: the user will probably not be able to open the file again, so we
+		//      could warn about the wrong file-extension here
+
+		return true;
 	}
 
-	wxString fileName = wxFileSelector(_("Save As"),
-		defaultDir,
-		wxFileNameFromPath(GetFilename()),
-		docTemplate->GetDefaultExtension(),
-		filter,
-		wxFD_SAVE | wxFD_OVERWRITE_PROMPT,
-		GetDocumentWindow());
-
-	if (fileName.empty())
-		return false; // cancelled by user
-
-	// Files that were not saved correctly are not added to the FileHistory.
-	if (!OnSaveDocument(fileName))
-		return false;
-
-	SetTitle(wxFileNameFromPath(fileName));
-	SetFilename(fileName, true);    // will call OnChangeFileName automatically
-
-	// A file that doesn't use the default extension of its document template
-	// cannot be opened via the FileHistory, so we do not add it.
-	if (docTemplate->FileMatchesTemplate(fileName))
+	bool Document::OnSaveDocument(const mafString& file)
 	{
-		GetDocumentManager()->AddFileToHistory(fileName);
+		if (file.empty())
+			return false;
+
+		if (!DoSaveDocument(file))
+			return false;
+
+		if (m_commandProcessor)
+			m_commandProcessor->MarkAsSaved();
+
+		Modify(false);
+		SetFilename(file);
+		SetDocumentSaved(true);
+		return true;
 	}
-	//else: the user will probably not be able to open the file again, so we
-	//      could warn about the wrong file-extension here
 
-	return true;
-}
-
-bool ftkDocument::OnSaveDocument(const wxString& file)
-{
-	if (file.empty())
-		return false;
-
-	if (!DoSaveDocument(file))
-		return false;
-
-	if (m_commandProcessor)
-		m_commandProcessor->MarkAsSaved();
-
-	Modify(false);
-	SetFilename(file);
-	SetDocumentSaved(true);
-	return true;
-}
-
-bool ftkDocument::OnOpenDocument(const wxString& file)
-{
-	// notice that there is no need to check the modified flag here for the
-	// reasons explained in OnNewDocument()
-
-	if (!DoOpenDocument(file))
-		return false;
-
-	SetFilename(file, true);
-
-	// stretching the logic a little this does make sense because the document
-	// had been saved into the file we just loaded it from, it just could have
-	// happened during a previous program execution, it's just that the name of
-	// this method is a bit unfortunate, it should probably have been called
-	// HasAssociatedFileName()
-	SetDocumentSaved(true);
-
-	UpdateAllViews();
-
-	return true;
-}
-
-#if wxUSE_STD_IOSTREAM
-std::istream& ftkDocument::LoadObject(std::istream& stream)
-#else
-wxInputStream& ftkDocument::LoadObject(wxInputStream& stream)
-#endif
-{
-	return stream;
-}
-
-#if wxUSE_STD_IOSTREAM
-std::ostream& ftkDocument::SaveObject(std::ostream& stream)
-#else
-wxOutputStream& ftkDocument::SaveObject(wxOutputStream& stream)
-#endif
-{
-	return stream;
-}
-
-bool ftkDocument::Revert()
-{
-	if (wxMessageBox
-	(
-		_("Discard changes and reload the last saved version?"),
-		wxTheApp->GetAppDisplayName(),
-		wxYES_NO | wxCANCEL | wxICON_QUESTION,
-		GetDocumentWindow()
-	) != wxYES)
-		return false;
-
-	if (!DoOpenDocument(GetFilename()))
-		return false;
-
-	Modify(false);
-	UpdateAllViews();
-
-	return true;
-}
-
-
-// Get title, or filename if no title, else unnamed
-wxString ftkDocument::GetUserReadableName() const
-{
-	return DoGetUserReadableName();
-}
-
-wxString ftkDocument::DoGetUserReadableName() const
-{
-	if (!m_documentTitle.empty())
-		return m_documentTitle;
-
-	if (!m_documentFile.empty())
-		return wxFileNameFromPath(m_documentFile);
-
-	return _("unnamed");
-}
-
-wxWindow* ftkDocument::GetDocumentWindow() const
-{
-	ftkView* const view = GetFirstView();
-
-	return view ? view->GetFrame() : wxTheApp->GetTopWindow();
-}
-
-FTK::CommandProcessor* ftkDocument::OnCreateCommandProcessor()
-{
-	return new FTK::CommandProcessor;
-}
-
-// true if safe to close
-bool ftkDocument::OnSaveModified()
-{
-	if (IsModified())
+	bool Document::OnOpenDocument(const mafString& file)
 	{
+		// notice that there is no need to check the modified flag here for the
+		// reasons explained in OnNewDocument()
+
+		if (!DoOpenDocument(file))
+			return false;
+
+		SetFilename(file, true);
+
+		// stretching the logic a little this does make sense because the document
+		// had been saved into the file we just loaded it from, it just could have
+		// happened during a previous program execution, it's just that the name of
+		// this method is a bit unfortunate, it should probably have been called
+		// HasAssociatedFileName()
+		SetDocumentSaved(true);
+
+		NotifyUpdate();
+
+		return true;
+	}
+
+	bool Document::Revert()
+	{
+		if (!DoOpenDocument(GetFilename()))
+			return false;
+
+		Modify(false);
+		NotifyUpdate();
+
+		return true;
+	}
+
+
+	// Get title, or filename if no title, else unnamed
+	mafString Document::GetUserReadableName() const
+	{
+		return DoGetUserReadableName();
+	}
+
+	mafString Document::DoGetUserReadableName() const
+	{
+		if (!m_documentTitle.empty())
+			return m_documentTitle;
+
+		if (!m_documentFile.empty())
+			return mafWxToString(wxFileNameFromPath(mafStringToWx(m_documentFile)));
+
+		return _L("unnamed");
+	}
+
+	wxWindow* Document::GetDocumentWindow() const
+	{
+		View* view = nullptr;// GetFirstView();
+
+		return view ? view->GetFrame() : wxTheApp->GetTopWindow();
+	}
+
+	// true if safe to close
+	bool Document::OnSaveModified()
+	{
+		if (IsModified())
+		{
+			wxMessageDialog dialogSave
+			(
+				GetDocumentWindow(),
+				wxString::Format
+				(
+					_("Do you want to save changes to %s?"),
+					mafStringToWx(GetUserReadableName())
+				),
+				wxTheApp->GetAppDisplayName(),
+				wxYES_NO | wxCANCEL | wxICON_QUESTION | wxCENTRE
+			);
+			dialogSave.SetYesNoCancelLabels
+			(
+				_("&Save"),
+				_("&Discard changes"),
+				_("Do&n't close")
+			);
+
+			switch (dialogSave.ShowModal())
+			{
+			case wxID_NO:
+				Modify(false);
+				break;
+
+			case wxID_YES:
+				return Save();
+
+			case wxID_CANCEL:
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	void Document::OnSaveBeforeForceClose()
+	{
+		if (!IsModified())
+			return;
+
 		wxMessageDialog dialogSave
 		(
 			GetDocumentWindow(),
 			wxString::Format
 			(
-				_("Do you want to save changes to %s?"),
-				GetUserReadableName()
+				_("Do you want to save changes to %s before closing it?"),
+				mafStringToWx(GetUserReadableName())
 			),
 			wxTheApp->GetAppDisplayName(),
-			wxYES_NO | wxCANCEL | wxICON_QUESTION | wxCENTRE
+			wxYES_NO | wxICON_QUESTION | wxCENTRE
 		);
-		dialogSave.SetYesNoCancelLabels
-		(
-			_("&Save"),
-			_("&Discard changes"),
-			_("Do&n't close")
-		);
+		dialogSave.SetExtendedMessage(_("The document must be closed."));
+		dialogSave.SetYesNoLabels(_("&Save"), _("&Discard changes"));
 
-		switch (dialogSave.ShowModal())
+		if (dialogSave.ShowModal() == wxID_YES)
 		{
-		case wxID_NO:
-			Modify(false);
-			break;
-
-		case wxID_YES:
-			return Save();
-
-		case wxID_CANCEL:
-			return false;
-		}
-	}
-
-	return true;
-}
-
-void ftkDocument::OnSaveBeforeForceClose()
-{
-	if (!IsModified())
-		return;
-
-	wxMessageDialog dialogSave
-	(
-		GetDocumentWindow(),
-		wxString::Format
-		(
-			_("Do you want to save changes to %s before closing it?"),
-			GetUserReadableName()
-		),
-		wxTheApp->GetAppDisplayName(),
-		wxYES_NO | wxICON_QUESTION | wxCENTRE
-	);
-	dialogSave.SetExtendedMessage(_("The document must be closed."));
-	dialogSave.SetYesNoLabels(_("&Save"), _("&Discard changes"));
-
-	if (dialogSave.ShowModal() == wxID_YES)
-	{
-		while (!Save())
-		{
-			wxMessageDialog dialogRetry
-			(
-				GetDocumentWindow(),
-				wxString::Format
+			while (!Save())
+			{
+				wxMessageDialog dialogRetry
 				(
-					_("Saving %s failed, would you like to retry?"),
-					GetUserReadableName()
-				),
-				wxTheApp->GetAppDisplayName(),
-				wxYES_NO | wxICON_ERROR | wxCENTRE
-			);
-			dialogRetry.SetYesNoLabels(_("Retry"), _("Discard changes"));
+					GetDocumentWindow(),
+					wxString::Format
+					(
+						_("Saving %s failed, would you like to retry?"),
+						mafStringToWx(GetUserReadableName())
+					),
+					wxTheApp->GetAppDisplayName(),
+					wxYES_NO | wxICON_ERROR | wxCENTRE
+				);
+				dialogRetry.SetYesNoLabels(_("Retry"), _("Discard changes"));
 
-			if (dialogRetry.ShowModal() != wxID_YES)
-				break;
+				if (dialogRetry.ShowModal() != wxID_YES)
+					break;
+			}
 		}
+
+		Modify(false);
 	}
 
-	Modify(false);
-}
-
-bool ftkDocument::Draw(wxDC& WXUNUSED(context))
-{
-	return true;
-}
-
-bool ftkDocument::AddView(ftkView* view)
-{
-	if (std::find(begin(m_documentViews), end(m_documentViews), view) == end(m_documentViews))
+	bool Document::AddObserver(DocumentObserver* observer)
 	{
-		m_documentViews.push_back(view);
-		OnChangedViewList();
-	}
-	return true;
-}
-
-bool ftkDocument::RemoveView(ftkView* view)
-{
-	if (auto it = std::find(begin(m_documentViews), end(m_documentViews), view); it != end(m_documentViews))
-	{
-		m_documentViews.erase(it);
-		OnChangedViewList();
+		if (std::find(begin(m_documentObservers), end(m_documentObservers), observer) == end(m_documentObservers))
+		{
+			m_documentObservers.push_back(observer);
+		}
 		return true;
 	}
-	return false;
-}
 
-bool ftkDocument::OnCreate(const wxString& WXUNUSED(path), long flags)
-{
-	return GetDocumentTemplate()->CreateView(this, ftkView::Mode::Mode_MDI, flags) != nullptr && GetDocumentTemplate()->CreateView(this, ftkView::Mode::Mode_MDI, flags) != nullptr;
-}
-
-// Called after a view is added or removed.
-// The default implementation deletes the document if
-// there are no more views.
-void ftkDocument::OnChangedViewList()
-{
-	if (m_documentViews.empty() && OnSaveModified())
-		delete this;
-}
-
-void ftkDocument::UpdateAllViews(ftkView* sender, wxObject* hint)
-{
-	for (auto& view : m_documentViews)
+	bool Document::RemoveObserver(DocumentObserver* observer)
 	{
-		if (view != sender)
-			view->OnUpdate(sender, hint);
-	}
-}
-
-void ftkDocument::NotifyClosing()
-{
-	for (auto& view : m_documentViews)
-	{
-		view->OnClosingDocument();
-	}
-}
-
-void ftkDocument::SetFilename(const wxString& filename, bool notifyViews)
-{
-	m_documentFile = filename;
-	OnChangeFilename(notifyViews);
-}
-
-void ftkDocument::OnChangeFilename(bool notifyViews)
-{
-	if (notifyViews)
-	{
-		// Notify the views that the filename has changed
-		for (auto& view : m_documentViews)
+		if (auto it = std::find(begin(m_documentObservers), end(m_documentObservers), observer); it != end(m_documentObservers))
 		{
-			view->OnChangeFilename();
+			m_documentObservers.erase(it);
+			return true;
+		}
+		return false;
+	}
+
+	bool Document::OnCreate(const mafString& WXUNUSED(path))
+	{
+		return true;
+	}
+
+	void Document::NotifyUpdate()
+	{
+		for (auto& observer : m_documentObservers)
+		{
+			observer->Update();
 		}
 	}
-}
 
-bool ftkDocument::DoSaveDocument(const wxString& file)
-{
-#if wxUSE_STD_IOSTREAM
-	std::ofstream store(file.mb_str(), std::ios::binary);
-	if (!store)
-#else
-	wxFileOutputStream store(file);
-	if (store.GetLastError() != wxSTREAM_NO_ERROR)
-#endif
+	void Document::NotifyClosing()
 	{
-		wxLogError(_("File \"%s\" could not be opened for writing."), file);
-		return false;
-	}
-
-	if (!SaveObject(store))
-	{
-		wxLogError(_("Failed to save document to the file \"%s\"."), file);
-		return false;
-	}
-
-	return true;
-}
-
-bool ftkDocument::DoOpenDocument(const wxString& file)
-{
-#if wxUSE_STD_IOSTREAM
-	std::ifstream store(file.mb_str(), std::ios::binary);
-	if (!store)
-#else
-	wxFileInputStream store(file);
-	if (store.GetLastError() != wxSTREAM_NO_ERROR || !store.IsOk())
-#endif
-	{
-		wxLogError(_("File \"%s\" could not be opened for reading."), file);
-		return false;
-	}
-
-#if wxUSE_STD_IOSTREAM
-	LoadObject(store);
-	if (!store)
-#else
-	int res = LoadObject(store).GetLastError();
-	if (res != wxSTREAM_NO_ERROR && res != wxSTREAM_EOF)
-#endif
-	{
-		wxLogError(_("Failed to read document from the file \"%s\"."), file);
-		return false;
-	}
-
-	return true;
-}
-
-
-// ----------------------------------------------------------------------------
-// Document view
-// ----------------------------------------------------------------------------
-
-ftkView::ftkView(Mode mode) : m_mode(mode)
-{
-}
-
-ftkView::~ftkView()
-{
-	if (m_viewDocument && GetDocumentManager())
-		GetDocumentManager()->ActivateView(this, false);
-
-	// reset our frame view first, before removing it from the document as
-	// SetView(nullptr) is a simple call while RemoveView() may result in user
-	// code being executed and this user code can, for example, show a message
-	// box which would result in an activation event for m_docChildFrame and so
-	// could reactivate the view being destroyed -- unless we reset it first
-	if (m_docChildFrame && m_docChildFrame->GetView() == this)
-	{
-		// prevent it from doing anything with us
-		m_docChildFrame->SetView(nullptr);
-
-		// it doesn't make sense to leave the frame alive if its associated
-		// view doesn't exist any more so unconditionally close it as well
-		//
-		// notice that we only get here if m_docChildFrame is non-null in the
-		// first place and it will be always nullptr if we're deleted because our
-		// frame was closed, so this only catches the case of directly deleting
-		// the view, as it happens if its creation fails in wxDocTemplate::
-		// CreateView() for example
-		m_docChildFrame->GetWindow()->Destroy();
-	}
-
-	if (m_viewDocument)
-		m_viewDocument->RemoveView(this);
-}
-
-void ftkView::SetDocChildFrame(ftkDocChildFrameAnyBase* docChildFrame)
-{
-	SetFrame(docChildFrame ? docChildFrame->GetWindow() : nullptr);
-	m_docChildFrame = docChildFrame;
-}
-
-bool ftkView::TryBefore(wxEvent& event)
-{
-	ftkDocument* const doc = GetDocument();
-	return doc && doc->ProcessEventLocally(event);
-}
-
-void ftkView::OnActivateView(bool WXUNUSED(activate),
-	ftkView* WXUNUSED(activeView),
-	ftkView* WXUNUSED(deactiveView))
-{
-}
-
-void ftkView::OnPrint(wxDC* dc, wxObject* WXUNUSED(info))
-{
-	OnDraw(dc);
-}
-
-void ftkView::OnUpdate(ftkView* WXUNUSED(sender), wxObject* WXUNUSED(hint))
-{
-	OnChangeFilename();
-}
-
-void ftkView::OnChangeFilename()
-{
-	// GetFrame can return wxWindow rather than wxTopLevelWindow due to
-	// generic MDI implementation so use SetLabel rather than SetTitle.
-	// It should cause SetTitle() for top level windows.
-	wxWindow* win = GetFrame();
-	if (!win) return;
-
-	ftkDocument* doc = GetDocument();
-	if (!doc) return;
-
-	wxString label = doc->GetUserReadableName();
-	if (doc->IsModified())
-	{
-		label += "*";
-	}
-	win->SetLabel(label);
-}
-
-void ftkView::SetDocument(ftkDocument* doc)
-{
-	m_viewDocument = doc;
-	if (doc)
-		doc->AddView(this);
-}
-
-bool ftkView::Close(bool deleteWindow)
-{
-	return OnClose(deleteWindow);
-}
-
-void ftkView::Activate(bool activate)
-{
-	if (GetDocument() && GetDocumentManager())
-	{
-		OnActivateView(activate, this, GetDocumentManager()->GetCurrentView());
-		GetDocumentManager()->ActivateView(this, activate);
-	}
-}
-
-bool ftkView::OnClose(bool WXUNUSED(deleteWindow))
-{
-	if (auto doc = GetDocument())
-	{
-		if (doc->GetViews().size() == 1)
+		for (auto& observer : m_documentObservers)
 		{
-			return doc->Close();
+			observer->Closing();
 		}
 	}
-	return true;
-}
+
+	void Document::SetFilename(const mafString& filename, bool notifyViews)
+	{
+		m_documentFile = filename;
+		OnChangeFilename(notifyViews);
+	}
+
+	void Document::OnChangeFilename(bool notifyViews)
+	{
+		if (notifyViews)
+		{
+			// Notify the views that the filename has changed
+			for (auto& observer : m_documentObservers)
+			{
+				observer->ChangeFilename();
+			}
+		}
+	}
+
+	bool Document::DoSaveDocument(const mafString& file)
+	{
+		std::ofstream store(file.c_str(), std::ios::binary);
+		if (!store)
+		{
+			wxLogError(_("File \"%s\" could not be opened for writing."), mafStringToWx(file));
+			return false;
+		}
+
+		if (!SaveObject(store))
+		{
+			wxLogError(_("Failed to save document to the file \"%s\"."), mafStringToWx(file));
+			return false;
+		}
+
+		return true;
+	}
+
+	bool Document::DoOpenDocument(const mafString& file)
+	{
+		std::ifstream store(file.c_str(), std::ios::binary);
+		if (!store)
+		{
+			wxLogError(_("File \"%s\" could not be opened for reading."), mafStringToWx(file));
+			return false;
+		}
+
+		LoadObject(store);
+		if (!store)
+		{
+			wxLogError(_("Failed to read document from the file \"%s\"."), mafStringToWx(file));
+			return false;
+		}
+
+		return true;
+	}
+
+	View::~View()
+	{
+		if (auto docManager = GetDocumentManager())
+		{
+			docManager->ActivateView(this, false);
+			docManager->RemoveView(this);
+		}
+
+		// reset our frame view first, before removing it from the document as
+		// SetView(nullptr) is a simple call while RemoveView() may result in user
+		// code being executed and this user code can, for example, show a message
+		// box which would result in an activation event for m_docChildFrame and so
+		// could reactivate the view being destroyed -- unless we reset it first
+		if (m_docChildFrame && m_docChildFrame->GetView() == this)
+		{
+			// prevent it from doing anything with us
+			m_docChildFrame->SetView(nullptr);
+
+			// it doesn't make sense to leave the frame alive if its associated
+			// view doesn't exist any more so unconditionally close it as well
+			//
+			// notice that we only get here if m_docChildFrame is non-null in the
+			// first place and it will be always nullptr if we're deleted because our
+			// frame was closed, so this only catches the case of directly deleting
+			// the view, as it happens if its creation fails in wxDocTemplate::
+			// CreateView() for example
+			m_docChildFrame->GetWindow()->Destroy();
+		}
+
+		if (m_viewDocument)
+		{
+			m_viewDocument->RemoveObserver(this);
+		}
+	}
+
+	DocManager* View::GetDocumentManager() const
+	{
+		if (m_viewDocument)
+			return DocManager::GetDocumentManager();
+		return nullptr;
+	}
+	void View::SetDocChildFrame(ftkDocChildFrameAnyBase* docChildFrame)
+	{
+		SetFrame(docChildFrame ? docChildFrame->GetWindow() : nullptr);
+		m_docChildFrame = docChildFrame;
+	}
+
+	bool View::TryBefore(wxEvent& event)
+	{
+		if (auto doc = GetDocument())
+		{
+			//return doc->ProcessEventLocally(event);
+		}
+		return false;
+	}
+
+	void View::OnActivateView(bool WXUNUSED(activate),
+		View* WXUNUSED(activeView),
+		View* WXUNUSED(deactiveView))
+	{
+	}
+
+	void View::OnPrint(wxDC* dc, wxObject* WXUNUSED(info))
+	{
+		OnDraw(dc);
+	}
+
+	void View::OnUpdate(View* WXUNUSED(sender), wxObject* WXUNUSED(hint))
+	{
+		OnChangeFilename();
+	}
+
+	void View::OnChangeFilename()
+	{
+		// GetFrame can return wxWindow rather than wxTopLevelWindow due to
+		// generic MDI implementation so use SetLabel rather than SetTitle.
+		// It should cause SetTitle() for top level windows.
+		auto win = GetFrame();
+		if (!win)
+		{
+			return;
+		}
+
+		auto doc = GetDocument();
+		if (!doc)
+		{
+			return;
+		}
+
+		mafString label = doc->GetUserReadableName();
+		if (doc->IsModified())
+		{
+			label += _R("*");
+		}
+		win->SetLabel(mafStringToWx(label));
+	}
+
+	bool View::OnCreate(std::shared_ptr<Document> doc)
+	{
+		m_viewDocument = std::move(doc);
+		if (m_viewDocument)
+		{
+			m_viewDocument->AddObserver(this);
+		}
+		return true;
+	}
+
+	bool View::Close(bool deleteWindow)
+	{
+		return OnClose(deleteWindow);
+	}
+
+	void View::Activate(bool activate)
+	{
+		if (auto docManager = GetDocumentManager())
+		{
+			OnActivateView(activate, this, docManager->GetCurrentView());
+			docManager->ActivateView(this, activate);
+		}
+	}
+
+	bool View::OnClose(bool WXUNUSED(deleteWindow))
+	{
+		/*if (auto doc = GetDocument())
+		{
+			if (doc->GetViews().size() == 1)
+			{
+				return doc->Close();
+			}
+		}*/
+		return true;
+	}
 
 #if wxUSE_PRINTING_ARCHITECTURE
-wxPrintout* ftkView::OnCreatePrintout()
-{
-	return new ftkDocPrintout(this);
-}
+	wxPrintout* View::OnCreatePrintout()
+	{
+		return new ftkDocPrintout(this);
+	}
 #endif // wxUSE_PRINTING_ARCHITECTURE
 
-ftkDocTemplate::ftkDocTemplate(
-	const wxString& descr,
-	const wxString& filter,
-	const wxString& dir,
-	const wxString& ext,
-	const wxString& docTypeName,
-	const wxString& viewTypeName,
-	std::function<ftkDocument*()> docCreate,
-	std::function<ftkView* (ftkView::Mode mode)> viewCreate,
-	long flags)
-	: m_fileFilter(filter)
-	, m_directory(dir)
-	, m_description(descr)
-	, m_defaultExt(ext)
-	, m_docTypeName(docTypeName)
-	, m_viewTypeName(viewTypeName)
-{
-	m_flags = flags;
-
-	m_docCreate = docCreate;
-	m_viewCreate = viewCreate;
-}
-
-// Tries to dynamically construct an object of the right class.
-ftkDocument* ftkDocTemplate::CreateDocument(const wxString& path, long flags)
-{
-	// InitDocument() is supposed to delete the document object if its
-	// initialization fails so don't use unique_ptr<> here: this is fragile
-	// but unavoidable because the default implementation uses CreateView()
-	// which may -- or not -- create a wxView and if it does create it and its
-	// initialization fails then the view destructor will delete the document
-	// (via RemoveView()) and as we can't distinguish between the two cases we
-	// just have to assume that it always deletes it in case of failure
-	if (auto doc = DoCreateDocument())
+	DocTemplate::DocTemplate(
+		const mafString& description,
+		const mafString& filter,
+		const mafString& ext,
+		const mafString& docTypeName,
+		std::function<std::unique_ptr<Document>()> docCreate)
+		: m_fileFilter(filter)
+		, m_description(description)
+		, m_defaultExt(ext)
+		, m_docTypeName(docTypeName)
+		, m_docCreate(docCreate)
 	{
-		if (InitDocument(doc, path, flags))
+	}
+
+	// Tries to dynamically construct an object of the right class.
+	std::shared_ptr<Document> DocTemplate::CreateDocument(const mafString& path)
+	{
+		// InitDocument() is supposed to delete the document object if its
+		// initialization fails so don't use unique_ptr<> here: this is fragile
+		// but unavoidable because the default implementation uses CreateView()
+		// which may -- or not -- create a wxView and if it does create it and its
+		// initialization fails then the view destructor will delete the document
+		// (via RemoveView()) and as we can't distinguish between the two cases we
+		// just have to assume that it always deletes it in case of failure
+		if (!m_docCreate)
 		{
-			doc->SetDocumentName(GetDocumentName());
-			return doc;
+			return nullptr;
 		}
-	}
-
-	return nullptr;
-}
-
-bool
-ftkDocTemplate::InitDocument(ftkDocument* doc, const wxString& path, long flags)
-{
-	wxScopeGuard guard = wxMakeGuard([&, this]()
+		if (auto doc = m_docCreate())
 		{
-			// The document may be already destroyed, this happens if its view
-			// creation fails as then the view being created is destroyed
-			// triggering the destruction of the document as this first view is
-			// also the last one. However if OnCreate() fails for any reason other
-			// than view creation failure, the document is still alive and we need
-			// to clean it up ourselves to avoid having a zombie document.
-			//if (std::find(begin(GetDocumentManager()->GetDocuments()), end(GetDocumentManager()->GetDocuments()), doc) != end(GetDocumentManager()->GetDocuments()))
-				//doc->DeleteAllViews();
-		});
-
-	doc->SetFilename(path);
-	doc->SetDocumentTemplate(this);
-	doc->SetCommandProcessor(doc->OnCreateCommandProcessor());
-
-	if (!doc->OnCreate(path, flags))
-		return false;
-
-	guard.Dismiss();
-
-	return true;
-}
-
-ftkView* ftkDocTemplate::CreateView(ftkDocument* doc, ftkView::Mode mode, long flags)
-{
-	std::unique_ptr<ftkView> view(DoCreateView(mode));
-	if (!view)
-		return nullptr;
-
-	view->SetDocument(doc);
-	if (!view->OnCreate(doc, flags))
-		return nullptr;
-
-	return view.release();
-}
-
-// The default (very primitive) format detection: check is the extension is
-// that of the template
-bool ftkDocTemplate::FileMatchesTemplate(const wxString& path)
-{
-	wxStringTokenizer parser(GetFileFilter(), wxT(";"));
-	wxString anything = wxT("*");
-	while (parser.HasMoreTokens())
-	{
-		wxString filter = parser.GetNextToken();
-		wxString filterExt = FindExtension(filter);
-		if (filter.IsSameAs(anything) ||
-			filterExt.IsSameAs(anything) ||
-			filterExt.IsSameAs(FindExtension(path)))
-			return true;
-	}
-	return GetDefaultExtension().IsSameAs(FindExtension(path));
-}
-
-ftkDocument* ftkDocTemplate::DoCreateDocument()
-{
-	if (!m_docCreate)
-	{
+			doc->SetFilename(path);
+			if (!doc->OnCreate(path))
+				return nullptr;
+			return std::move(doc);
+		}
 		return nullptr;
 	}
 
-	return m_docCreate();
-}
-
-ftkView* ftkDocTemplate::DoCreateView(ftkView::Mode mode)
-{
-	if (!m_viewCreate)
+	// The default (very primitive) format detection: check is the extension is
+	// that of the template
+	bool DocTemplate::FileMatchesTemplate(const mafString& path)
 	{
-		return nullptr;
+		auto FindExtension = [](const wxString& path)
+			{
+				wxString ext;
+				wxFileName::SplitPath(path, nullptr, nullptr, &ext);
+
+				// VZ: extensions are considered not case sensitive - is this really a good
+				//     idea?
+				return ext.MakeLower();
+			};
+		wxStringTokenizer parser(mafStringToWx(GetFileFilter()), wxT(";"));
+		wxString anything = wxT("*");
+		while (parser.HasMoreTokens())
+		{
+			wxString filter = parser.GetNextToken();
+			wxString filterExt = FindExtension(filter);
+			if (filter.IsSameAs(anything) ||
+				filterExt.IsSameAs(anything) ||
+				filterExt.IsSameAs(FindExtension(mafStringToWx(path))))
+				return true;
+		}
+		return mafStringToWx(GetDefaultExtension()).IsSameAs(FindExtension(mafStringToWx(path)));
 	}
 
-	return m_viewCreate(mode);
-}
+	ViewTemplate::ViewTemplate(const mafString& viewTypeName, std::function<std::unique_ptr<View>()> viewCreate)
+		: m_viewTypeName(viewTypeName)
+		, m_viewCreate(viewCreate)
+	{
+	}
 
-ftkDocManager* ftkDocManager::sm_docManager = nullptr;
+	std::unique_ptr<View> ViewTemplate::CreateView(std::shared_ptr<Document> doc)
+	{
+		if (!m_viewCreate)
+		{
+			return nullptr;
+		}
+		auto view = m_viewCreate();
+		if (!view || !view->OnCreate(doc))
+		{
+			return nullptr;
+		}
+		return std::move(view);
+	}
 
-ftkDocManager::ftkDocManager(long WXUNUSED(flags))
+	class App : public wxApp
+	{
+	public:
+		App();
+
+		App(const App&) = delete;
+		App& operator=(const App&) = delete;
+
+		bool OnInit() override;
+		int OnExit() override;
+
+		void OnInitCmdLine(wxCmdLineParser& parser) override;
+		bool OnCmdLineParsed(wxCmdLineParser& parser) override;
+
+#ifdef __WXMAC__
+		void MacNewFile() override;
+#endif // __WXMAC__
+
+		wxFrame* CreateMainFrame(FTK::DocManager* docManager);
+		wxFrame* CreateChildFrame(FTK::View* view, bool isCanvas);
+		MyCanvas* GetMainWindowCanvas() const { return nullptr; }
+
+		FTK::View::Mode GetMode() const { return m_mode; }
+	private:
+		void CreateMenuBarForFrame(wxFrame* frame, wxMenu* file);
+
+		FTK::View::Mode m_mode;
+	};
+
+
+DocManager* DocManager::sm_docManager = nullptr;
+
+DocManager::DocManager()
 {
-	Bind(wxEVT_MENU, &ftkDocManager::OnFileNew, this, wxID_NEW);
-	Bind(wxEVT_MENU, &ftkDocManager::OnFileOpen, this, wxID_OPEN);
-	Bind(wxEVT_MENU, &ftkDocManager::OnFileSave, this, wxID_SAVE);
-	Bind(wxEVT_MENU, &ftkDocManager::OnFileSaveAs, this, wxID_SAVEAS);
-	Bind(wxEVT_MENU, &ftkDocManager::OnFileClose, this, wxID_CLOSE);
-	Bind(wxEVT_MENU, &ftkDocManager::OnFileCloseAll, this, wxID_CLOSE_ALL);
-	Bind(wxEVT_MENU, &ftkDocManager::OnFileRevert, this, wxID_REVERT);
-	Bind(wxEVT_MENU, &ftkDocManager::OnUndo, this, wxID_UNDO);
-	Bind(wxEVT_MENU, &ftkDocManager::OnRedo, this, wxID_REDO);
+	Bind(wxEVT_MENU, &DocManager::OnFileNew, this, wxID_NEW);
+	Bind(wxEVT_MENU, &DocManager::OnFileOpen, this, wxID_OPEN);
+	Bind(wxEVT_MENU, &DocManager::OnFileSave, this, wxID_SAVE);
+	Bind(wxEVT_MENU, &DocManager::OnFileSaveAs, this, wxID_SAVEAS);
+	Bind(wxEVT_MENU, &DocManager::OnFileClose, this, wxID_CLOSE);
+	Bind(wxEVT_MENU, &DocManager::OnFileCloseAll, this, wxID_CLOSE_ALL);
+	Bind(wxEVT_MENU, &DocManager::OnFileRevert, this, wxID_REVERT);
+	Bind(wxEVT_MENU, &DocManager::OnUndo, this, wxID_UNDO);
+	Bind(wxEVT_MENU, &DocManager::OnRedo, this, wxID_REDO);
 
-	Bind(wxEVT_MENU, &ftkDocManager::OnMRUFile, this, wxID_ANY);
+	Bind(wxEVT_MENU, &DocManager::OnMRUFile, this, wxID_ANY);
 
-	Bind(wxEVT_UPDATE_UI, &ftkDocManager::OnUpdateFileNew, this, wxID_NEW);
-	Bind(wxEVT_UPDATE_UI, &ftkDocManager::OnUpdateFileOpen, this, wxID_OPEN);
-	Bind(wxEVT_UPDATE_UI, &ftkDocManager::OnUpdateFileSave, this, wxID_SAVE);
-	Bind(wxEVT_UPDATE_UI, &ftkDocManager::OnUpdateFileSaveAs, this, wxID_SAVEAS);
-	Bind(wxEVT_UPDATE_UI, &ftkDocManager::OnUpdateDisableIfNoDoc, this, wxID_CLOSE);
-	Bind(wxEVT_UPDATE_UI, &ftkDocManager::OnUpdateDisableIfNoDoc, this, wxID_CLOSE_ALL);
-	Bind(wxEVT_UPDATE_UI, &ftkDocManager::OnUpdateFileRevert, this, wxID_REVERT);
-	Bind(wxEVT_UPDATE_UI, &ftkDocManager::OnUpdateUndo, this, wxID_UNDO);
-	Bind(wxEVT_UPDATE_UI, &ftkDocManager::OnUpdateRedo, this, wxID_REDO);
+	Bind(wxEVT_UPDATE_UI, &DocManager::OnUpdateFileNew, this, wxID_NEW);
+	Bind(wxEVT_UPDATE_UI, &DocManager::OnUpdateFileOpen, this, wxID_OPEN);
+	Bind(wxEVT_UPDATE_UI, &DocManager::OnUpdateFileSave, this, wxID_SAVE);
+	Bind(wxEVT_UPDATE_UI, &DocManager::OnUpdateFileSaveAs, this, wxID_SAVEAS);
+	Bind(wxEVT_UPDATE_UI, &DocManager::OnUpdateDisableIfNoDoc, this, wxID_CLOSE);
+	Bind(wxEVT_UPDATE_UI, &DocManager::OnUpdateDisableIfNoDoc, this, wxID_CLOSE_ALL);
+	Bind(wxEVT_UPDATE_UI, &DocManager::OnUpdateFileRevert, this, wxID_REVERT);
+	Bind(wxEVT_UPDATE_UI, &DocManager::OnUpdateUndo, this, wxID_UNDO);
+	Bind(wxEVT_UPDATE_UI, &DocManager::OnUpdateRedo, this, wxID_REDO);
 
 #if wxUSE_PRINTING_ARCHITECTURE
-	Bind(wxEVT_MENU, &ftkDocManager::OnPrint, this, wxID_PRINT);
-	Bind(wxEVT_MENU, &ftkDocManager::OnPreview, this, wxID_PREVIEW);
-	Bind(wxEVT_MENU, &ftkDocManager::OnPageSetup, this, wxID_PRINT_SETUP);
+	Bind(wxEVT_MENU, &DocManager::OnPrint, this, wxID_PRINT);
+	Bind(wxEVT_MENU, &DocManager::OnPreview, this, wxID_PREVIEW);
+	Bind(wxEVT_MENU, &DocManager::OnPageSetup, this, wxID_PRINT_SETUP);
 	// NB: we keep "Print setup" menu item always enabled as it can be used
 	//     even without an active document
-	Bind(wxEVT_UPDATE_UI, &ftkDocManager::OnUpdateDisableIfNoDoc, this, wxID_PRINT);
-	Bind(wxEVT_UPDATE_UI, &ftkDocManager::OnUpdateDisableIfNoDoc, this, wxID_PREVIEW);
+	Bind(wxEVT_UPDATE_UI, &DocManager::OnUpdateDisableIfNoDoc, this, wxID_PRINT);
+	Bind(wxEVT_UPDATE_UI, &DocManager::OnUpdateDisableIfNoDoc, this, wxID_PREVIEW);
 #endif // wxUSE_PRINTING_ARCHITECTURE 
 	sm_docManager = this;
 	m_fileHistory = std::make_unique<wxFileHistory>();
 }
 
-ftkDocManager::~ftkDocManager()
+DocManager::~DocManager()
 {
 	Clear();
 	m_fileHistory.reset();
@@ -2228,7 +1971,7 @@ ftkDocManager::~ftkDocManager()
 }
 
 // closes the specified document
-bool ftkDocManager::CloseDocument(ftkDocument* doc, bool force)
+bool DocManager::CloseDocument(FTK::Document* doc, bool force)
 {
 	if (force)
 	{
@@ -2246,15 +1989,31 @@ bool ftkDocManager::CloseDocument(ftkDocument* doc, bool force)
 
 	// Implicitly deletes the document when
 	// the last view is deleted
-	doc->DeleteAllViews();
+	//doc->DeleteAllViews_();
+	{
+		// first check if all views agree to be closed
+		if (auto it = std::find_if(begin(m_documentsInfo), end(m_documentsInfo), [&](auto& elem) {return elem.first.get() == doc; }); it != end(m_documentsInfo))
+		{
+			auto& documentViews = it->second.m_views;
+			if (std::all_of(begin(documentViews), end(documentViews), [](auto& v) {return v->Close();}))
+			{
+				// all views agreed to close, now do close them
+				for (auto it = begin(documentViews); it != end(documentViews);)
+				{
+					delete* it++;
+				}
+			}
+			m_documentsInfo.erase(it);
+		}
+	}
 	return true;
 }
 
-bool ftkDocManager::CloseDocuments(bool force)
+bool DocManager::CloseDocuments(bool force)
 {
-	for (auto it = m_docs.begin(); it != m_docs.end();)
+	for (auto it = m_documentsInfo.begin(); it != m_documentsInfo.end();)
 	{
-		if (!CloseDocument(*it++, force))
+		if (!CloseDocument((*it++).first.get(), force))
 			return false;
 		// This assumes that documents are not connected in
 		// any way, i.e. deleting one document does NOT
@@ -2263,7 +2022,7 @@ bool ftkDocManager::CloseDocuments(bool force)
 	return true;
 }
 
-bool ftkDocManager::Clear(bool force)
+bool DocManager::Clear(bool force)
 {
 	if (!CloseDocuments(force))
 		return false;
@@ -2275,14 +2034,14 @@ bool ftkDocManager::Clear(bool force)
 	return true;
 }
 
-wxString ftkDocManager::GetLastDirectory() const
+wxString DocManager::GetLastDirectory() const
 {
 	// if we haven't determined the last used directory yet, do it now
 	if (m_lastDirectory.empty())
 	{
 		// we're going to modify m_lastDirectory in this const method, so do it
 		// via non-const self pointer instead of const this one
-		ftkDocManager* const self = const_cast<ftkDocManager*>(this);
+		auto self = const_cast<DocManager*>(this);
 
 		// first try to reuse the directory of the most recently opened file:
 		// this ensures that if the user opens a file, closes the program and
@@ -2311,7 +2070,7 @@ wxString ftkDocManager::GetLastDirectory() const
 	return m_lastDirectory;
 }
 
-void ftkDocManager::OnFileClose(wxCommandEvent& WXUNUSED(event))
+void DocManager::OnFileClose(wxCommandEvent& WXUNUSED(event))
 {
 	if (auto doc = GetCurrentDocument())
 	{
@@ -2319,17 +2078,17 @@ void ftkDocManager::OnFileClose(wxCommandEvent& WXUNUSED(event))
 	}
 }
 
-void ftkDocManager::OnFileCloseAll(wxCommandEvent& WXUNUSED(event))
+void DocManager::OnFileCloseAll(wxCommandEvent& WXUNUSED(event))
 {
 	CloseDocuments(false);
 }
 
-void ftkDocManager::OnFileNew(wxCommandEvent& WXUNUSED(event))
+void DocManager::OnFileNew(wxCommandEvent& WXUNUSED(event))
 {
 	CreateNewDocument();
 }
 
-void ftkDocManager::OnFileOpen(wxCommandEvent& WXUNUSED(event))
+void DocManager::OnFileOpen(wxCommandEvent& WXUNUSED(event))
 {
 	if (!CreateDocument(wxString()))
 	{
@@ -2337,15 +2096,23 @@ void ftkDocManager::OnFileOpen(wxCommandEvent& WXUNUSED(event))
 	}
 }
 
-void ftkDocManager::OnFileRevert(wxCommandEvent& WXUNUSED(event))
+void DocManager::OnFileRevert(wxCommandEvent& WXUNUSED(event))
 {
 	if (auto doc = GetCurrentDocument())
 	{
+		if (wxMessageBox
+		(
+			_("Discard changes and reload the last saved version?"),
+			wxTheApp->GetAppDisplayName(),
+			wxYES_NO | wxCANCEL | wxICON_QUESTION,
+			doc->GetDocumentWindow()
+		) != wxYES)
+			return;
 		doc->Revert();
 	}
 }
 
-void ftkDocManager::OnFileSave(wxCommandEvent& WXUNUSED(event))
+void DocManager::OnFileSave(wxCommandEvent& WXUNUSED(event))
 {
 	if (auto doc = GetCurrentDocument())
 	{
@@ -2353,7 +2120,7 @@ void ftkDocManager::OnFileSave(wxCommandEvent& WXUNUSED(event))
 	}
 }
 
-void ftkDocManager::OnFileSaveAs(wxCommandEvent& WXUNUSED(event))
+void DocManager::OnFileSaveAs(wxCommandEvent& WXUNUSED(event))
 {
 	if (auto doc = GetCurrentDocument())
 	{
@@ -2361,7 +2128,7 @@ void ftkDocManager::OnFileSaveAs(wxCommandEvent& WXUNUSED(event))
 	}
 }
 
-void ftkDocManager::OnMRUFile(wxCommandEvent& event)
+void DocManager::OnMRUFile(wxCommandEvent& event)
 {
 	if (m_fileHistory)
 	{
@@ -2380,7 +2147,7 @@ void ftkDocManager::OnMRUFile(wxCommandEvent& event)
 	event.Skip();
 }
 
-void ftkDocManager::DoOpenMRUFile(unsigned n)
+void DocManager::DoOpenMRUFile(unsigned n)
 {
 	wxString filename(GetHistoryFile(n));
 	if (filename.empty())
@@ -2401,7 +2168,7 @@ void ftkDocManager::DoOpenMRUFile(unsigned n)
 	}
 }
 
-void ftkDocManager::OnMRUFileNotExist(unsigned n, const wxString& filename)
+void DocManager::OnMRUFileNotExist(unsigned n, const wxString& filename)
 {
 	// remove the file which we can't open from the MRU list
 	RemoveFileFromHistory(n);
@@ -2414,7 +2181,7 @@ void ftkDocManager::OnMRUFileNotExist(unsigned n, const wxString& filename)
 
 #if wxUSE_PRINTING_ARCHITECTURE
 
-void ftkDocManager::OnPrint(wxCommandEvent& WXUNUSED(event))
+void DocManager::OnPrint(wxCommandEvent& WXUNUSED(event))
 {
 	auto view = GetAnyUsableView();
 	if (!view)
@@ -2430,7 +2197,7 @@ void ftkDocManager::OnPrint(wxCommandEvent& WXUNUSED(event))
 	}
 }
 
-void ftkDocManager::OnPageSetup(wxCommandEvent& WXUNUSED(event))
+void DocManager::OnPageSetup(wxCommandEvent& WXUNUSED(event))
 {
 	wxPageSetupDialog dlg(wxTheApp->GetTopWindow(), &m_pageSetupDialogData);
 	if (dlg.ShowModal() == wxID_OK)
@@ -2439,14 +2206,14 @@ void ftkDocManager::OnPageSetup(wxCommandEvent& WXUNUSED(event))
 	}
 }
 
-wxPreviewFrame* ftkDocManager::CreatePreviewFrame(wxPrintPreviewBase* preview,
+wxPreviewFrame* DocManager::CreatePreviewFrame(wxPrintPreviewBase* preview,
 	wxWindow* parent,
 	const wxString& title)
 {
 	return new wxPreviewFrame(preview, parent, title);
 }
 
-void ftkDocManager::OnPreview(wxCommandEvent& WXUNUSED(event))
+void DocManager::OnPreview(wxCommandEvent& WXUNUSED(event))
 {
 	wxBusyCursor busy;
 	auto view = GetAnyUsableView();
@@ -2481,7 +2248,7 @@ void ftkDocManager::OnPreview(wxCommandEvent& WXUNUSED(event))
 }
 #endif // wxUSE_PRINTING_ARCHITECTURE
 
-void ftkDocManager::OnUndo(wxCommandEvent& event)
+void DocManager::OnUndo(wxCommandEvent& event)
 {
 	auto cmdproc = GetCurrentCommandProcessor();
 	if (!cmdproc)
@@ -2494,10 +2261,10 @@ void ftkDocManager::OnUndo(wxCommandEvent& event)
 	{
 		cmdproc->SetMenuStrings_();
 	}
-	GetCurrentDocument()->UpdateAllViews();
+	GetCurrentDocument()->NotifyUpdate();
 }
 
-void ftkDocManager::OnRedo(wxCommandEvent& event)
+void DocManager::OnRedo(wxCommandEvent& event)
 {
 	auto cmdproc = GetCurrentCommandProcessor();
 	if (!cmdproc)
@@ -2510,49 +2277,49 @@ void ftkDocManager::OnRedo(wxCommandEvent& event)
 	{
 		cmdproc->SetMenuStrings_();
 	}
-	GetCurrentDocument()->UpdateAllViews();
+	GetCurrentDocument()->NotifyUpdate();
 }
 
 // Handlers for UI update commands
 
-void ftkDocManager::OnUpdateFileOpen(wxUpdateUIEvent& event)
+void DocManager::OnUpdateFileOpen(wxUpdateUIEvent& event)
 {
 	// CreateDocument() (which is called from OnFileOpen) may succeed
 	// only when there is at least a template:
 	event.Enable(!GetTemplates().empty());
 }
 
-void ftkDocManager::OnUpdateDisableIfNoDoc(wxUpdateUIEvent& event)
+void DocManager::OnUpdateDisableIfNoDoc(wxUpdateUIEvent& event)
 {
 	event.Enable(GetCurrentDocument() != nullptr);
 }
 
-void ftkDocManager::OnUpdateFileRevert(wxUpdateUIEvent& event)
+void DocManager::OnUpdateFileRevert(wxUpdateUIEvent& event)
 {
 	auto doc = GetCurrentDocument();
 	event.Enable(doc && doc->IsModified() && doc->GetDocumentSaved());
 }
 
-void ftkDocManager::OnUpdateFileNew(wxUpdateUIEvent& event)
+void DocManager::OnUpdateFileNew(wxUpdateUIEvent& event)
 {
 	// CreateDocument() (which is called from OnFileNew) may succeed
 	// only when there is at least a template:
 	event.Enable(!GetTemplates().empty());
 }
 
-void ftkDocManager::OnUpdateFileSave(wxUpdateUIEvent& event)
+void DocManager::OnUpdateFileSave(wxUpdateUIEvent& event)
 {
 	auto doc = GetCurrentDocument();
 	event.Enable(doc && !doc->AlreadySaved());
 }
 
-void ftkDocManager::OnUpdateFileSaveAs(wxUpdateUIEvent& event)
+void DocManager::OnUpdateFileSaveAs(wxUpdateUIEvent& event)
 {
 	auto const doc = GetCurrentDocument();
 	event.Enable(doc);
 }
 
-void ftkDocManager::OnUpdateUndo(wxUpdateUIEvent& event)
+void DocManager::OnUpdateUndo(wxUpdateUIEvent& event)
 {
 	auto cmdproc = GetCurrentCommandProcessor();
 	if (!cmdproc)
@@ -2569,7 +2336,7 @@ void ftkDocManager::OnUpdateUndo(wxUpdateUIEvent& event)
 	cmdproc->SetMenuStrings_();
 }
 
-void ftkDocManager::OnUpdateRedo(wxUpdateUIEvent& event)
+void DocManager::OnUpdateRedo(wxUpdateUIEvent& event)
 {
 	auto cmdproc = GetCurrentCommandProcessor();
 	if (!cmdproc)
@@ -2585,11 +2352,11 @@ void ftkDocManager::OnUpdateRedo(wxUpdateUIEvent& event)
 	cmdproc->SetMenuStrings_();
 }
 
-ftkView* ftkDocManager::GetAnyUsableView() const
+FTK::View* DocManager::GetAnyUsableView() const
 {
 	auto view = GetCurrentView();
 
-	if (!view && !m_docs.empty())
+	if (!view && !m_documentsInfo.empty())
 	{
 		// if we have exactly one document, consider its view to be the current
 		// one
@@ -2597,9 +2364,11 @@ ftkView* ftkDocManager::GetAnyUsableView() const
 		// VZ: I'm not exactly sure why is this needed but this is how this
 		//     code used to behave before the bug #9518 was fixed and it seems
 		//     safer to preserve the old logic
-		if (m_docs.size() == 1)
+		if (m_documentsInfo.size() == 1)
 		{
-			view = m_docs.front()->GetFirstView();
+			auto& info = m_documentsInfo.front().second;
+			if (!info.m_views.empty())
+				view = info.m_views.front();
 		}
 		//else: we have more than one document
 	}
@@ -2607,84 +2376,42 @@ ftkView* ftkDocManager::GetAnyUsableView() const
 	return view;
 }
 
-bool ftkDocManager::TryBefore(wxEvent& event)
+bool DocManager::TryBefore(wxEvent& event)
 {
 	auto view = GetAnyUsableView();
 	return view && view->ProcessEventLocally(event);
 }
 
-namespace
-{
-
-	// helper function: return only the visible templates
-	std::vector<ftkDocTemplate*> GetVisibleTemplates(const std::list<std::unique_ptr<ftkDocTemplate> >& allTemplates)
-	{
-		// select only the visible templates
-		std::vector<ftkDocTemplate*> templates;
-		if (!allTemplates.empty())
-		{
-			templates.reserve(allTemplates.size());
-			for (auto& temp : allTemplates)
-			{
-				if (temp->IsVisible())
-				{
-					templates.push_back(temp.get());
-				}
-			}
-		}
-		return templates;
-	}
-
-} // anonymous namespace
-
-void ftkDocument::Activate()
-{
-	if (auto view = GetFirstView())
-	{
-		view->Activate(true);
-		if (auto win = view->GetFrame())
-			win->Raise();
-	}
-}
-
-ftkDocument* ftkDocManager::FindDocumentByPath(const wxString& path) const
+std::shared_ptr<FTK::Document> DocManager::FindDocumentByPath(const wxString& path) const
 {
 	const wxFileName fileName(path);
-	for (auto& doc : m_docs)
+	for (auto& docInfo : m_documentsInfo)
 	{
-		if (fileName == wxFileName(doc->GetFilename()))
-			return doc;
+		if (fileName == wxFileName(mafStringToWx(docInfo.first->GetFilename())))
+			return docInfo.first;
 	}
 	return nullptr;
 }
 
-ftkDocument* ftkDocManager::CreateDocument(const wxString& pathOrig, long flags)
+std::shared_ptr<FTK::Document> DocManager::CreateDocument(const wxString& pathOrig, long flags)
 {
-	// this ought to be const but SelectDocumentType/Path() are not
-	// const-correct and can't be changed as, being virtual, this risks
-	// breaking user code overriding them
-	auto  templates = GetVisibleTemplates(m_templates);
-	if (templates.empty())
+	if (m_templates.empty())
 	{
-		// no templates can be used, can't create document
 		return nullptr;
 	}
-
 
 	// normally user should select the template to use but wxDOC_SILENT flag we
 	// choose one ourselves
 	wxString path = pathOrig;   // may be modified below
-	ftkDocTemplate* temp;
+	std::shared_ptr<FTK::DocViewTemplate> temp;
 	if (flags & wxDOC_SILENT)
 	{
-		wxASSERT_MSG(!path.empty(),
-			"using empty path with wxDOC_SILENT doesn't make sense");
+		wxASSERT_MSG(!path.empty(),"using empty path with wxDOC_SILENT doesn't make sense");
 
 		temp = FindTemplateForPath(path);
 		if (!temp)
 		{
-			wxLogWarning(_("The format of file '%s' couldn't be determined."),
-				path);
+			wxLogWarning(_("The format of file '%s' couldn't be determined."), path);
 		}
 	}
 	else // not silent, ask the user
@@ -2692,9 +2419,9 @@ ftkDocument* ftkDocManager::CreateDocument(const wxString& pathOrig, long flags)
 		// for the new file we need just the template, for an existing one we
 		// need the template and the path, unless it's already specified
 		if ((flags & wxDOC_NEW) || !path.empty())
-			temp = SelectDocumentType(templates);
+			temp = SelectDocumentType();
 		else
-			temp = SelectDocumentPath(templates, path, flags);
+			temp = SelectDocumentPath(path, flags);
 	}
 
 	if (!temp)
@@ -2706,103 +2433,153 @@ ftkDocument* ftkDocManager::CreateDocument(const wxString& pathOrig, long flags)
 		if (auto doc = FindDocumentByPath(path))
 		{
 			// file already open, just activate it and return
-			doc->Activate();
+			//doc->Activate();
+			auto infoIt = std::find_if(begin(m_documentsInfo), end(m_documentsInfo), [&](auto& elem) {return elem.first == doc; });
+			if (infoIt != end(m_documentsInfo) && !infoIt->second.m_views.empty())
+			{
+				auto view = infoIt->second.m_views.front();
+				view->Activate(true);
+				if (auto win = view->GetFrame())
+					win->Raise();
+			}
+
 			return doc;
 		}
 	}
 
 	// no, we need to create a new document
 
-
 	// if we've reached the max number of docs, close the first one.
-	if ((int)GetDocuments().size() >= m_maxDocsOpen)
+	if ((int)m_documentsInfo.size() >= m_maxDocsOpen)
 	{
-		if (!CloseDocument(GetDocuments().front()))
+		if (!CloseDocument(m_documentsInfo.front().first.get()))
 		{
 			// can't open the new document if closing the old one failed
 			return nullptr;
 		}
 	}
 
-
 	// do create and initialize the new document finally
-	auto docNew = temp->CreateDocument(path, flags);
+	auto docNew = temp->CreateDocument(mafWxToString(path));
 	if (!docNew)
+	{
 		return nullptr;
-	AddDocument(docNew);
-
-	wxScopeGuard guard = wxMakeObjGuard(*docNew, &ftkDocument::DeleteAllViews);
+	}
+	docNew->SetDocTemplate(temp);
+	m_documentsInfo.emplace_back(docNew, DocInfo{});
+	m_documentsInfo.back().second.m_commandProcessor = std::make_unique<FTK::CommandProcessor>();
 
 	// call the appropriate function depending on whether we're creating a
 	// new file or opening an existing one
-	if (!(flags & wxDOC_NEW ? docNew->OnNewDocument()
-		: docNew->OnOpenDocument(path)))
+	if (!(flags & wxDOC_NEW ? docNew->OnNewDocument(mafWxToString(MakeNewDocumentName()))
+		: docNew->OnOpenDocument(mafWxToString(path))))
 	{
 		return nullptr;
 	}
 
-	guard.Dismiss();
-
 	// add the successfully opened file to MRU, but only if we're going to be
 	// able to reopen it successfully later which requires the template for
 	// this document to be retrievable from the file extension
-	if (!(flags & wxDOC_NEW) && temp->FileMatchesTemplate(path))
+	if (!(flags & wxDOC_NEW) && temp->FileMatchesTemplate(mafWxToString(path)))
 		AddFileToHistory(path);
+
+	auto v1 = temp->CreateView(docNew);
+	auto v2 = temp->CreateView(docNew);
+	v1->OnChangeFilename();
+	v2->OnChangeFilename();
+	m_documentsInfo.back().second.m_views.push_back(v1.release());
+	m_documentsInfo.back().second.m_views.push_back(v2.release());
 
 	// at least under Mac (where views are top level windows) it seems to be
 	// necessary to manually activate the new document to bring it to the
 	// forefront -- and it shouldn't hurt doing this under the other platforms
-	docNew->Activate();
+	//docNew->Activate();
+	auto& info = m_documentsInfo.back();
+	if (!info.second.m_views.empty())
+	{
+		auto view = info.second.m_views.front();
+		view->Activate(true);
+		if (auto win = view->GetFrame())
+			win->Raise();
+	}
 
 	return docNew;
 }
 
-ftkView* ftkDocManager::CreateView(ftkDocument* doc, long flags)
+std::unique_ptr<FTK::View> DocManager::CreateView(std::shared_ptr<FTK::Document> doc)
 {
-	auto templates = GetVisibleTemplates(m_templates);
-
-	if (templates.empty() == 0)
+	if (m_templates.empty() == 0)
 		return nullptr;
 
-	ftkDocTemplate* const
-		temp = templates.size() == 1 ? templates.front()
-		: SelectViewType(templates);
+	std::shared_ptr<FTK::DocViewTemplate>
+		temp = m_templates.size() == 1 ? m_templates.front()
+		: SelectViewType();
 
 	if (!temp)
 		return nullptr;
 
-	auto view = temp->CreateView(doc, ftkView::Mode::Mode_MDI, flags);
+	auto view = temp->CreateView(doc);
 	if (view)
 		view->SetViewName(temp->GetViewName());
 	return view;
 }
 
+bool DocManager::AddView(FTK::View* view)
+{
+	/*if (std::find(begin(m_documentViews), end(m_documentViews), view) == end(m_documentViews))
+	{
+		m_documentViews.push_back(view);
+		OnChangedViewList();
+	}*/
+	return true;
+}
+
+bool DocManager::RemoveView(FTK::View* view)
+{
+	auto doc = view->GetDocument();
+	if (auto it = std::find_if(begin(m_documentsInfo), end(m_documentsInfo), [&](auto& elem) {return elem.first.get() == doc; }); it != end(m_documentsInfo))
+	{
+		auto& documentViews = it->second.m_views;
+		auto viewListIt = std::find(begin(documentViews), end(documentViews), view);
+		documentViews.erase(viewListIt);
+	}
+	return false;
+}
+
 // Not yet implemented
-void
-ftkDocManager::DeleteTemplate(ftkDocTemplate* WXUNUSED(temp), long WXUNUSED(flags))
+void DocManager::DeleteTemplate(FTK::DocViewTemplate* WXUNUSED(temp), long WXUNUSED(flags))
 {
 }
 
 // Not yet implemented
-bool ftkDocManager::FlushDoc(ftkDocument* WXUNUSED(doc))
+bool DocManager::FlushDoc(FTK::Document* WXUNUSED(doc))
 {
 	return false;
 }
 
-ftkDocument* ftkDocManager::GetCurrentDocument() const
+FTK::Document* DocManager::GetCurrentDocument() const
 {
 	auto view = GetAnyUsableView();
 	return view ? view->GetDocument() : nullptr;
 }
 
-FTK::CommandProcessor* ftkDocManager::GetCurrentCommandProcessor() const
+FTK::CommandProcessor* DocManager::GetCommandProcessor(FTK::Document* doc) const
 {
-	ftkDocument* const doc = GetCurrentDocument();
-	return doc ? doc->GetCommandProcessor() : nullptr;
+	if (auto it = std::find_if(begin(m_documentsInfo), end(m_documentsInfo), [&](auto& elem) {return elem.first.get() == doc; }); it != end(m_documentsInfo))
+	{
+		return it->second.m_commandProcessor.get();
+	}
+	return nullptr;
+}
+
+FTK::CommandProcessor* DocManager::GetCurrentCommandProcessor() const
+{
+	auto doc = GetCurrentDocument();
+	return doc ? GetCommandProcessor(doc) : nullptr;
 }
 
 // Make a default name for a new document
-wxString ftkDocManager::MakeNewDocumentName()
+wxString DocManager::MakeNewDocumentName()
 {
 	wxString name;
 
@@ -2814,7 +2591,7 @@ wxString ftkDocManager::MakeNewDocumentName()
 
 // Make a frame title (override this to do something different)
 // If docName is empty, a document is not currently active.
-wxString ftkDocManager::MakeFrameTitle(ftkDocument* doc)
+wxString DocManager::MakeFrameTitle(FTK::Document* doc)
 {
 	wxString appName = wxTheApp->GetAppDisplayName();
 	wxString title;
@@ -2822,33 +2599,32 @@ wxString ftkDocManager::MakeFrameTitle(ftkDocument* doc)
 		title = appName;
 	else
 	{
-		wxString docName = doc->GetUserReadableName();
+		wxString docName = mafStringToWx(doc->GetUserReadableName());
 		title = docName + wxString(_(" - ")) + appName;
 	}
 	return title;
 }
 
-
 // Not yet implemented
-ftkDocTemplate* ftkDocManager::MatchTemplate(const wxString& WXUNUSED(path))
+std::shared_ptr<FTK::DocViewTemplate> DocManager::MatchTemplate(const wxString& WXUNUSED(path))
 {
 	return nullptr;
 }
 
 // File history management
-void ftkDocManager::AddFileToHistory(const wxString& file)
+void DocManager::AddFileToHistory(const wxString& file)
 {
 	if (m_fileHistory)
 		m_fileHistory->AddFileToHistory(file);
 }
 
-void ftkDocManager::RemoveFileFromHistory(size_t i)
+void DocManager::RemoveFileFromHistory(size_t i)
 {
 	if (m_fileHistory)
 		m_fileHistory->RemoveFileFromHistory(i);
 }
 
-wxString ftkDocManager::GetHistoryFile(size_t i) const
+wxString DocManager::GetHistoryFile(size_t i) const
 {
 	wxString histFile;
 
@@ -2858,45 +2634,45 @@ wxString ftkDocManager::GetHistoryFile(size_t i) const
 	return histFile;
 }
 
-void ftkDocManager::FileHistoryUseMenu(wxMenu* menu)
+void DocManager::FileHistoryUseMenu(wxMenu* menu)
 {
 	if (m_fileHistory)
 		m_fileHistory->UseMenu(menu);
 }
 
-void ftkDocManager::FileHistoryRemoveMenu(wxMenu* menu)
+void DocManager::FileHistoryRemoveMenu(wxMenu* menu)
 {
 	if (m_fileHistory)
 		m_fileHistory->RemoveMenu(menu);
 }
 
 #if wxUSE_CONFIG
-void ftkDocManager::FileHistoryLoad(const wxConfigBase& config)
+void DocManager::FileHistoryLoad(const wxConfigBase& config)
 {
 	if (m_fileHistory)
 		m_fileHistory->Load(config);
 }
 
-void ftkDocManager::FileHistorySave(wxConfigBase& config)
+void DocManager::FileHistorySave(wxConfigBase& config)
 {
 	if (m_fileHistory)
 		m_fileHistory->Save(config);
 }
 #endif
 
-void ftkDocManager::FileHistoryAddFilesToMenu(wxMenu* menu)
+void DocManager::FileHistoryAddFilesToMenu(wxMenu* menu)
 {
 	if (m_fileHistory)
 		m_fileHistory->AddFilesToMenu(menu);
 }
 
-void ftkDocManager::FileHistoryAddFilesToMenu()
+void DocManager::FileHistoryAddFilesToMenu()
 {
 	if (m_fileHistory)
 		m_fileHistory->AddFilesToMenu();
 }
 
-size_t ftkDocManager::GetHistoryFilesCount() const
+size_t DocManager::GetHistoryFilesCount() const
 {
 	return m_fileHistory ? m_fileHistory->GetCount() : 0;
 }
@@ -2904,14 +2680,14 @@ size_t ftkDocManager::GetHistoryFilesCount() const
 
 // Find out the document template via matching in the document file format
 // against that of the template
-ftkDocTemplate* ftkDocManager::FindTemplateForPath(const wxString& path)
+std::shared_ptr<FTK::DocViewTemplate> DocManager::FindTemplateForPath(const wxString& path)
 {
 	// Find the template which this extension corresponds to
 	for (auto& temp : m_templates)
 	{
-		if (temp->FileMatchesTemplate(path))
+		if (temp->FileMatchesTemplate(mafWxToString(path)))
 		{
-			return temp.get();
+			return temp;
 		}
 	}
 	return nullptr;
@@ -2921,26 +2697,20 @@ ftkDocTemplate* ftkDocManager::FindTemplateForPath(const wxString& path)
 // Must extend the file selector dialog or implement own; OR
 // match the extension to the template extension.
 
-ftkDocTemplate* ftkDocManager::SelectDocumentPath(const std::vector<ftkDocTemplate*>& templates,
-	wxString& path,
-	long WXUNUSED(flags),
-	bool WXUNUSED(save))
+std::shared_ptr<FTK::DocViewTemplate> DocManager::SelectDocumentPath(wxString& path, long WXUNUSED(flags), bool WXUNUSED(save))
 {
 #ifdef wxHAS_MULTIPLE_FILEDLG_FILTERS
 	wxString descrBuf;
 
-	for (auto& temp : templates)
+	for (auto& temp : m_templates)
 	{
-		if (temp->IsVisible())
-		{
-			// add a '|' to separate this filter from the previous one
-			if (!descrBuf.empty())
-				descrBuf << wxT('|');
+		// add a '|' to separate this filter from the previous one
+		if (!descrBuf.empty())
+			descrBuf << wxT('|');
 
-			descrBuf << temp->GetDescription()
-				<< wxT(" (") << temp->GetFileFilter() << wxT(") |")
-				<< temp->GetFileFilter();
-		}
+		descrBuf << mafStringToWx(temp->GetDescription())
+			<< wxT(" (") << mafStringToWx(temp->GetFileFilter()) << wxT(") |")
+			<< mafStringToWx(temp->GetFileFilter());
 	}
 #else
 	wxString descrBuf = wxT("*.*");
@@ -2956,7 +2726,7 @@ ftkDocTemplate* ftkDocManager::SelectDocumentPath(const std::vector<ftkDocTempla
 		descrBuf,
 		wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 
-	ftkDocTemplate* theTemplate = nullptr;
+	std::shared_ptr<FTK::DocViewTemplate> theTemplate;
 	if (!pathTmp.empty())
 	{
 		if (!wxFileExists(pathTmp))
@@ -2983,13 +2753,13 @@ ftkDocTemplate* ftkDocManager::SelectDocumentPath(const std::vector<ftkDocTempla
 		// wxFileSelectorEx() didn't fill it), then use the path
 		if (FilterIndex != -1)
 		{
-			theTemplate = templates[FilterIndex];
+			theTemplate = m_templates[FilterIndex];
 			if (theTemplate)
 			{
 				// But don't use this template if it doesn't match the path as
 				// can happen if the user specified the extension explicitly
 				// but didn't bother changing the filter.
-				if (!theTemplate->FileMatchesTemplate(path))
+				if (!theTemplate->FileMatchesTemplate(mafWxToString(path)))
 					theTemplate = nullptr;
 			}
 		}
@@ -3014,33 +2784,31 @@ ftkDocTemplate* ftkDocManager::SelectDocumentPath(const std::vector<ftkDocTempla
 	return theTemplate;
 }
 
-ftkDocTemplate* ftkDocManager::SelectDocumentType(const std::vector<ftkDocTemplate*>& templates, bool sort)
+std::shared_ptr<FTK::DocViewTemplate> DocManager::SelectDocumentType()
 {
 	std::vector<wxString> strings;
-	std::vector<ftkDocTemplate*> data;
+	std::vector<std::shared_ptr<FTK::DocViewTemplate> > data;
 
-	for (auto& templ : templates)
+	for (auto& templ : m_templates)
 	{
-		if (templ->IsVisible())
-		{
-			if (std::find_if(begin(data), end(data), [&](auto& t) {return templ->GetDocumentName() == t->GetDocumentName() && templ->GetViewName() == t->GetViewName();}) == end(data))
-			{
-				strings.push_back(templ->GetDescription());
-				data.push_back(templ);
-			}
-		}
+		data.push_back(templ);
 	}
-
-	if (sort)
-	{
-		std::vector<std::pair<wxString, ftkDocTemplate*> > pairs;
-		std::transform(begin(strings), end(strings), begin(data), std::back_inserter(pairs), std::make_pair<const wxString&, ftkDocTemplate* const &>);
-		std::sort(begin(pairs), end(pairs)); // ascending sort
-		for (size_t i = 0; i < pairs.size(); i++)
+	std::sort(begin(data), end(data), 
+		[](auto& p1, auto& p2)
 		{
-			strings[i] = pairs[i].first;
-			data[i] = pairs[i].second;
+			return std::tie(p1->GetDocumentName(), p1->GetViewName()) < std::tie(p2->GetDocumentName(), p2->GetViewName());
 		}
+	);
+	auto lastIt = std::unique(begin(data), end(data), 
+		[](auto& p1, auto& p2)
+		{
+			return std::tie(p1->GetDocumentName(), p1->GetViewName()) == std::tie(p2->GetDocumentName(), p2->GetViewName());
+		}
+	);
+	data.erase(lastIt, end(data));
+	for (auto& templ : data)
+	{
+		strings.push_back(mafStringToWx(templ->GetDescription()));
 	}
 
 	if (data.empty())
@@ -3052,41 +2820,27 @@ ftkDocTemplate* ftkDocManager::SelectDocumentType(const std::vector<ftkDocTempla
 		return data.front();
 	}
 	// propose the user to choose one of several
-	return (ftkDocTemplate*)wxGetSingleChoiceData
-	(
-		_("Select a document template"),
-		_("Templates"),
-		strings,
-		(void**)data.data()
-	);
+	if (int idx = wxGetSingleChoiceIndex(_("Select a document template"), _("Templates"), strings); idx != -1)
+	{
+		return data[idx];
+	}
+	return nullptr;
 }
 
-ftkDocTemplate* ftkDocManager::SelectViewType(const std::vector<ftkDocTemplate*>& templates, bool sort)
+std::shared_ptr<FTK::DocViewTemplate> DocManager::SelectViewType()
 {
 	std::vector<wxString> strings;
-	std::vector<ftkDocTemplate*> data;
+	std::vector<std::shared_ptr<FTK::DocViewTemplate>> data;
 
-	for (auto& templ : templates)
+	for (auto& templ : m_templates)
 	{
-		if (templ->IsVisible() && !templ->GetViewName().empty())
+		if (!templ->GetViewName().empty())
 		{
-			if (std::find_if(begin(data), end(data), [&](ftkDocTemplate* t) {return templ->GetViewName() == t->GetViewName(); }) == end(data))
+			if (std::find_if(begin(data), end(data), [&](auto& t) {return templ->GetViewName() == t->GetViewName(); }) == end(data))
 			{
-				strings.push_back(templ->GetViewName());
+				strings.push_back(mafStringToWx(templ->GetViewName()));
 				data.push_back(templ);
 			}
-		}
-	}
-
-	if (sort)
-	{
-		std::vector<std::pair<wxString, ftkDocTemplate*> > pairs;
-		std::transform(begin(strings), end(strings), begin(data), std::back_inserter(pairs), std::make_pair<const wxString&, ftkDocTemplate* const&>);
-		std::sort(begin(pairs), end(pairs)); // ascending sort
-		for (size_t i = 0; i < pairs.size(); i++)
-		{
-			strings[i] = pairs[i].first;
-			data[i] = pairs[i].second;
 		}
 	}
 
@@ -3099,16 +2853,14 @@ ftkDocTemplate* ftkDocManager::SelectViewType(const std::vector<ftkDocTemplate*>
 		return data.front();
 	}
 	// the same logic as above
-	return (ftkDocTemplate*)wxGetSingleChoiceData
-	(
-		_("Select a document view"),
-		_("Views"),
-		strings,
-		(void**)data.data()
-	);
+	if (int idx = wxGetSingleChoiceIndex(_("Select a document view"), _("Views"), strings); idx != -1)
+	{
+		return data[idx];
+	}
+	return nullptr;
 }
 
-void ftkDocManager::AssociateTemplate(std::unique_ptr<ftkDocTemplate> temp)
+void DocManager::AssociateTemplate(std::shared_ptr<FTK::DocViewTemplate> temp)
 {
 	if (std::find(begin(m_templates), end(m_templates), temp) == end(m_templates))
 	{
@@ -3116,31 +2868,17 @@ void ftkDocManager::AssociateTemplate(std::unique_ptr<ftkDocTemplate> temp)
 	}
 }
 
-void ftkDocManager::DisassociateTemplate(ftkDocTemplate* temp)
+void DocManager::DisassociateTemplate(FTK::DocViewTemplate* temp)
 {
-	m_templates.remove_if([temp](auto& elem) {return elem.get() == temp; });
-}
-
-// Add and remove a document from the manager's list
-void ftkDocManager::AddDocument(ftkDocument* doc)
-{
-	if (std::find(begin(m_docs), end(m_docs), doc) == end(m_docs))
+	if (auto it = std::find_if(begin(m_templates), end(m_templates), [temp](auto& elem) {return elem.get() == temp; }); it != end(m_templates))
 	{
-		m_docs.push_back(doc);
-	}
-}
-
-void ftkDocManager::RemoveDocument(ftkDocument* doc)
-{
-	if (auto it = std::find(begin(m_docs), end(m_docs), doc); it != end(m_docs))
-	{
-		m_docs.erase(it);
+		m_templates.erase(it);
 	}
 }
 
 // Views or windows should inform the document manager
 // when a view is going in or out of focus
-void ftkDocManager::ActivateView(ftkView* view, bool activate)
+void DocManager::ActivateView(FTK::View* view, bool activate)
 {
 	if (activate)
 	{
@@ -3154,6 +2892,7 @@ void ftkDocManager::ActivateView(ftkView* view, bool activate)
 			m_currentView = nullptr;
 		}
 	}
+}
 }
 
 bool ftkDocChildFrameAnyBase::TryProcessEvent(wxEvent& event)
@@ -3178,7 +2917,8 @@ bool ftkDocChildFrameAnyBase::TryProcessEvent(wxEvent& event)
 	// document manager itself. And if we forwarded the event directly to the
 	// view, then the document manager would do it once again when we forwarded
 	// it to it.
-	return m_childDocument->GetDocumentManager()->ProcessEventLocally(event);
+	//return m_childDocument->GetDocumentManager()->ProcessEventLocally(event);
+	return FTK::DocManager::GetDocumentManager()->ProcessEventLocally(event);
 }
 
 bool ftkDocChildFrameAnyBase::CloseView(wxCloseEvent& event)
@@ -3204,8 +2944,6 @@ bool ftkDocChildFrameAnyBase::CloseView(wxCloseEvent& event)
 		delete m_childView;
 		m_childView = nullptr;
 	}
-
-	m_childDocument = nullptr;
 
 	return true;
 }
@@ -3234,26 +2972,21 @@ bool ftkDocParentFrameAnyBase::TryProcessEvent(wxEvent& event)
 
 #if wxUSE_PRINTING_ARCHITECTURE
 
-namespace
+wxString ftkDocPrintout::GetAppropriateTitle(const FTK::View* view, const wxString& titleGiven)
 {
-
-	wxString GetAppropriateTitle(const ftkView* view, const wxString& titleGiven)
+	wxString title(titleGiven);
+	if (title.empty())
 	{
-		wxString title(titleGiven);
-		if (title.empty())
-		{
-			if (view && view->GetDocument())
-				title = view->GetDocument()->GetUserReadableName();
-			else
-				title = _("Printout");
-		}
-
-		return title;
+		if (view && view->GetDocument())
+			title = mafStringToWx(view->GetDocument()->GetUserReadableName());
+		else
+			title = _("Printout");
 	}
 
-} // anonymous namespace
+	return title;
+}
 
-ftkDocPrintout::ftkDocPrintout(ftkView* view, const wxString& title)
+ftkDocPrintout::ftkDocPrintout(FTK::View* view, const wxString& title)
 	: wxPrintout(GetAppropriateTitle(view, title))
 {
 	m_printoutView = view;
@@ -3327,8 +3060,6 @@ void ftkDocPrintout::GetPageInfo(int* minPage, int* maxPage,
 // manipulate files directly
 // ----------------------------------------------------------------------------
 
-#if wxUSE_STD_IOSTREAM
-
 bool wxTransferFileToStream(const wxString& filename, std::ostream& stream)
 {
 #if wxUSE_FFILE
@@ -3379,68 +3110,6 @@ bool wxTransferStreamToFile(std::istream& stream, const wxString& filename)
 	return true;
 }
 
-#else // !wxUSE_STD_IOSTREAM
-
-bool wxTransferFileToStream(const wxString& filename, wxOutputStream& stream)
-{
-#if wxUSE_FFILE
-	wxFFile file(filename, wxT("rb"));
-#elif wxUSE_FILE
-	wxFile file(filename, wxFile::read);
-#endif
-	if (!file.IsOpened())
-		return false;
-
-	char buf[4096];
-
-	size_t nRead;
-	do
-	{
-		nRead = file.Read(buf, WXSIZEOF(buf));
-		if (file.Error())
-			return false;
-
-		stream.Write(buf, nRead);
-		if (!stream)
-			return false;
-	} while (!file.Eof());
-
-	return true;
-}
-
-bool wxTransferStreamToFile(wxInputStream& stream, const wxString& filename)
-{
-#if wxUSE_FFILE
-	wxFFile file(filename, wxT("wb"));
-#elif wxUSE_FILE
-	wxFile file(filename, wxFile::write);
-#endif
-	if (!file.IsOpened())
-		return false;
-
-	char buf[4096];
-	for (;; )
-	{
-		stream.Read(buf, WXSIZEOF(buf));
-
-		const size_t nRead = stream.LastRead();
-		if (!nRead)
-		{
-			if (stream.Eof())
-				break;
-
-			return false;
-		}
-
-		if (!file.Write(buf, nRead))
-			return false;
-	}
-
-	return true;
-}
-
-#endif // wxUSE_STD_IOSTREAM/!wxUSE_STD_IOSTREAM
-
 // Define a new application
 class App : public wxApp
 {
@@ -3462,7 +3131,7 @@ public:
 #endif // __WXMAC__
 
 	// our specific methods
-	wxFrame* CreateChildFrame(ftkView* view, bool isCanvas);
+	wxFrame* CreateChildFrame(FTK::View* view, bool isCanvas);
 
 	// these accessors should only be called in single document mode, otherwise
 	// the pointers are null and an assert is triggered
@@ -3474,6 +3143,8 @@ public:
 	{
 		wxASSERT(m_menuEdit); return m_menuEdit;
 	}
+
+	FTK::View::Mode GetMode() const { return m_mode; }
 
 private:
 	// append the standard document-oriented menu commands to this menu
@@ -3487,7 +3158,6 @@ private:
 	// one
 	void CreateMenuBarForFrame(wxFrame* frame, wxMenu* file, wxMenu* edit);
 
-
 	// force close all windows
 	void OnForceCloseAll(wxCommandEvent& event);
 
@@ -3500,43 +3170,13 @@ private:
 	std::vector<wxString> m_filesFromCmdLine;
 
 	// only used if m_mode == Mode_Single
-	MyCanvas* m_canvas;
-	wxMenu* m_menuEdit;
+	MyCanvas* m_canvas = nullptr;
+	wxMenu* m_menuEdit = nullptr;
 
-	ftkView::Mode m_mode;
+	FTK::View::Mode m_mode;
 };
 
 wxDECLARE_APP(App);
-namespace FTK
-{
-	class App : public wxApp
-	{
-	public:
-		App();
-
-		App(const App&) = delete;
-		App& operator=(const App&) = delete;
-
-		bool OnInit() override;
-		int OnExit() override;
-
-		void OnInitCmdLine(wxCmdLineParser& parser) override;
-		bool OnCmdLineParsed(wxCmdLineParser& parser) override;
-
-#ifdef __WXMAC__
-		void MacNewFile() override;
-#endif // __WXMAC__
-
-		wxFrame* CreateMainFrame(ftkDocManager* docManager);
-		wxFrame* CreateChildFrame(ftkView* view, bool isCanvas);
-		MyCanvas* GetMainWindowCanvas() const { return nullptr; }
-
-	private:
-		void CreateMenuBarForFrame(wxFrame* frame, wxMenu* file);
-
-		ftkView::Mode m_mode;
-	};
-}
 //wxDECLARE_APP(FTK::App);
 //wxIMPLEMENT_APP(FTK::App);
 
@@ -3550,9 +3190,9 @@ namespace FTK
 		SetAppName("ftkApp");
 		SetAppDisplayName("ftkApp");
 #if wxUSE_MDI_ARCHITECTURE
-		m_mode = ftkView::Mode::Mode_MDI;
+		m_mode = FTK::View::Mode::Mode_MDI;
 #else
-		m_mode = ftkView::Mode::Mode_SDI;
+		m_mode = FTK::View::Mode::Mode_SDI;
 #endif
 
 		/*m_canvas = nullptr;
@@ -3596,17 +3236,17 @@ namespace FTK
 		SetAppName("ftkApp");
 		SetAppDisplayName("ftkApp");
 
-		auto docManager = new ftkDocManager;
+		auto docManager = new FTK::DocManager;
 
 		auto frame = CreateMainFrame(docManager);
 
 		// and its menu bar
-		wxMenu* menuFile = new wxMenu;
+		auto menuFile = new wxMenu;
 
 		menuFile->Append(wxID_NEW);
 		menuFile->Append(wxID_OPEN);
 
-		/*if (m_mode == ftkView::Mode::Mode_Single)
+		/*if (m_mode == FTK::View::Mode::Mode_Single)
 			AppendDocumentFileCommands(menuFile, true);*/
 
 		menuFile->AppendSeparator();
@@ -3630,7 +3270,7 @@ namespace FTK
 
 	int App::OnExit()
 	{
-		auto manager = ftkDocManager::GetDocumentManager();
+		auto manager = FTK::DocManager::GetDocumentManager();
 #if wxUSE_CONFIG
 		manager->FileHistorySave(*wxConfig::Get());
 #endif // wxUSE_CONFIG
@@ -3656,12 +3296,12 @@ namespace FTK
 	bool App::OnCmdLineParsed(wxCmdLineParser& parser)
 	{
 		int numModeOptions = 0;
-		auto m_mode = ftkView::Mode::Mode_MDI;
+		auto m_mode = FTK::View::Mode::Mode_MDI;
 
 #if wxUSE_MDI_ARCHITECTURE
 		if (parser.Found(CmdLineOption::MDI))
 		{
-			m_mode = ftkView::Mode::Mode_MDI;
+			m_mode = FTK::View::Mode::Mode_MDI;
 			numModeOptions++;
 		}
 #endif // wxUSE_MDI_ARCHITECTURE
@@ -3669,20 +3309,20 @@ namespace FTK
 #if wxUSE_AUI
 		if (parser.Found(CmdLineOption::AUI))
 		{
-			m_mode = ftkView::Mode::Mode_AUI;
+			m_mode = FTK::View::Mode::Mode_AUI;
 			numModeOptions++;
 		}
 #endif // wxUSE_AUI
 
 		if (parser.Found(CmdLineOption::SDI))
 		{
-			m_mode = ftkView::Mode::Mode_SDI;
+			m_mode = FTK::View::Mode::Mode_SDI;
 			numModeOptions++;
 		}
 
 		if (parser.Found(CmdLineOption::SINGLE))
 		{
-			m_mode = ftkView::Mode::Mode_Single;
+			m_mode = FTK::View::Mode::Mode_Single;
 			numModeOptions++;
 		}
 
@@ -3706,12 +3346,12 @@ namespace FTK
 	}
 #endif // __WXMAC__
 
-	wxFrame* App::CreateMainFrame(ftkDocManager* docManager)
+	wxFrame* App::CreateMainFrame(FTK::DocManager* docManager)
 	{
 		switch (m_mode)
 		{
 #if wxUSE_MDI_ARCHITECTURE
-		case ftkView::Mode::Mode_MDI:
+		case FTK::View::Mode::Mode_MDI:
 			return new ftkDocParentFrameAny<wxMDIParentFrame>(docManager, nullptr, wxID_ANY,
 				GetAppDisplayName(),
 				wxDefaultPosition,
@@ -3719,7 +3359,7 @@ namespace FTK
 #endif // wxUSE_MDI_ARCHITECTURE
 
 #if wxUSE_AUI
-		case ftkView::Mode::Mode_AUI:
+		case FTK::View::Mode::Mode_AUI:
 			return new ftkDocParentFrameAny<wxAuiMDIParentFrame>
 				(
 					docManager, nullptr, wxID_ANY,
@@ -3729,8 +3369,8 @@ namespace FTK
 				);
 #endif // wxUSE_AUI
 
-		case ftkView::Mode::Mode_SDI:
-		case ftkView::Mode::Mode_Single:
+		case FTK::View::Mode::Mode_SDI:
+		case FTK::View::Mode::Mode_Single:
 			return new ftkDocParentFrameAny<wxFrame>(docManager, nullptr, wxID_ANY,
 				GetAppDisplayName(),
 				wxDefaultPosition,
@@ -3739,18 +3379,17 @@ namespace FTK
 		return nullptr;
 	}
 
-	wxFrame* App::CreateChildFrame(ftkView* view, bool isCanvas)
+	wxFrame* App::CreateChildFrame(FTK::View* view, bool isCanvas)
 	{
 		// create a child frame of appropriate class for the current mode
 		wxFrame* subframe = nullptr;
 		auto doc = view->GetDocument();
-		switch (view->GetMode())
+		switch (m_mode)
 #if wxUSE_MDI_ARCHITECTURE
 		{
-		case ftkView::Mode::Mode_MDI:
-			subframe = new ftkDocChildFrameAny<wxMDIChildFrame, wxMDIParentFrame>;
+		case FTK::View::Mode::Mode_MDI:
+			subframe = new ftkDocChildFrameAny<wxMDIChildFrame, wxMDIParentFrame>
 			(
-				doc,
 				view,
 				static_cast<ftkDocParentFrameAny<wxMDIParentFrame>*>(GetTopWindow()),
 				wxID_ANY,
@@ -3762,10 +3401,9 @@ namespace FTK
 #endif // wxUSE_MDI_ARCHITECTURE
 
 #if wxUSE_AUI
-		case ftkView::Mode::Mode_AUI:
+		case FTK::View::Mode::Mode_AUI:
 			subframe = new ftkDocChildFrameAny<wxAuiMDIChildFrame, wxAuiMDIParentFrame>
 				(
-					doc,
 					view,
 					static_cast<ftkDocParentFrameAny<wxAuiMDIParentFrame>*>(GetTopWindow()),
 					wxID_ANY,
@@ -3776,11 +3414,10 @@ namespace FTK
 			break;
 #endif // wxUSE_AUI
 
-		case ftkView::Mode::Mode_SDI:
-		case ftkView::Mode::Mode_Single:
+		case FTK::View::Mode::Mode_SDI:
+		case FTK::View::Mode::Mode_Single:
 			subframe = new ftkDocChildFrameAny<wxFrame, wxFrame>
 			(
-				doc,
 				view,
 				static_cast<ftkDocParentFrameAny<wxFrame>* >(GetTopWindow()),
 				wxID_ANY,
@@ -3806,8 +3443,8 @@ namespace FTK
 		{
 			//menuEdit = CreateDrawingEditMenu();
 
-			doc->GetCommandProcessor()->SetEditMenu_(menuEdit);
-			doc->GetCommandProcessor()->SetMenuStrings_();// Initialize_();
+			FTK::DocManager::GetDocumentManager()->GetCommandProcessor(doc)->SetEditMenu_(menuEdit);
+			FTK::DocManager::GetDocumentManager()->GetCommandProcessor(doc)->SetMenuStrings_();// Initialize_();
 		}
 		else // text frame
 		{
@@ -3826,10 +3463,10 @@ namespace FTK
 
 	void App::CreateMenuBarForFrame(wxFrame* frame, wxMenu* file)
 	{
-		wxMenuBar* menubar = new wxMenuBar;
+		auto menubar = new wxMenuBar;
 		menubar->Append(file, wxGetStockLabel(wxID_FILE));
 
-		wxMenu* help = new wxMenu;
+		auto help = new wxMenu;
 		help->Append(wxID_ABOUT);
 
 		menubar->Append(help, wxGetStockLabel(wxID_HELP));
@@ -3860,7 +3497,7 @@ class MyCanvas : public wxScrolledWindow
 public:
 	// view may be null if we're not associated with one yet, but parent must
 	// be a valid pointer
-	MyCanvas(ftkView* view, wxWindow* parent = nullptr);
+	MyCanvas(FTK::View* view, wxWindow* parent = nullptr);
 	~MyCanvas() override;
 
 	void OnDraw(wxDC& dc) override;
@@ -3870,7 +3507,7 @@ public:
 	// document mode in which all documents reuse the same App::GetCanvas()
 	// we need to allow switching the canvas from one view to another one
 
-	void SetView(ftkView* view)
+	void SetView(FTK::View* view)
 	{
 		wxASSERT_MSG(!m_view, "shouldn't be already associated with a view");
 
@@ -3887,15 +3524,13 @@ public:
 private:
 	void OnMouseEvent(wxMouseEvent& event);
 
-	ftkView* m_view = nullptr;
+	FTK::View* m_view = nullptr;
 
 	// the segment being currently drawn or nullptr if none
-	DoodleSegment* m_currentSegment = nullptr;
+	std::unique_ptr<DoodleSegment> m_currentSegment;
 
 	// the last mouse press position
 	wxPoint m_lastMousePos;
-
-	wxDECLARE_EVENT_TABLE();
 };
 
 wxIMPLEMENT_APP(App);
@@ -3910,13 +3545,10 @@ App::App()
 	SetAppName("wxWidgetsApp");
 	SetAppDisplayName("wxWidgetsApp");
 #if wxUSE_MDI_ARCHITECTURE
-	m_mode = ftkView::Mode::Mode_MDI;
+	m_mode = FTK::View::Mode::Mode_MDI;
 #else
-	m_mode = ftkView::Mode_SDI;
+	m_mode = FTK::View::Mode_SDI;
 #endif
-
-	m_canvas = nullptr;
-	m_menuEdit = nullptr;
 }
 
 void App::OnInitCmdLine(wxCmdLineParser& parser)
@@ -3948,7 +3580,7 @@ bool App::OnCmdLineParsed(wxCmdLineParser& parser)
 #if wxUSE_MDI_ARCHITECTURE
 	if (parser.Found(CmdLineOption::MDI))
 	{
-		m_mode = ftkView::Mode::Mode_MDI;
+		m_mode = FTK::View::Mode::Mode_MDI;
 		numModeOptions++;
 	}
 #endif // wxUSE_MDI_ARCHITECTURE
@@ -3956,20 +3588,20 @@ bool App::OnCmdLineParsed(wxCmdLineParser& parser)
 #if wxUSE_AUI
 	if (parser.Found(CmdLineOption::AUI))
 	{
-		m_mode = ftkView::Mode::Mode_AUI;
+		m_mode = FTK::View::Mode::Mode_AUI;
 		numModeOptions++;
 	}
 #endif // wxUSE_AUI
 
 	if (parser.Found(CmdLineOption::SDI))
 	{
-		m_mode = ftkView::Mode::Mode_SDI;
+		m_mode = FTK::View::Mode::Mode_SDI;
 		numModeOptions++;
 	}
 
 	if (parser.Found(CmdLineOption::SINGLE))
 	{
-		m_mode = ftkView::Mode::Mode_Single;
+		m_mode = FTK::View::Mode::Mode_Single;
 		numModeOptions++;
 	}
 
@@ -4033,14 +3665,17 @@ bool App::OnInit()
 	SetAppDisplayName("wxWidgets DocView Sample");
 
 	//// Create a document manager
-	auto docManager = new ftkDocManager;
+	auto docManager = new FTK::DocManager;
 
 	//// Create a template relating drawing documents to their views
-	docManager->AssociateTemplate(std::make_unique<ftkDocTemplate>("Drawing", "*.drw", "", "drw",
-	    "Drawing Doc", "Drawing View",
-		[]() {return new DrawingDocument; }, [](ftkView::Mode mode) {return new DrawingView(mode); }));
+	docManager->AssociateTemplate(std::make_shared<FTK::DocViewTemplate>(_R("Drawing"), _R("*.drw"), _R("drw"),
+	    _R("Drawing Doc"), _R("Drawing View"),
+		[]() {return std::make_unique<DrawingDocument>(); }, []() {return std::make_unique<DrawingView>(); }));
+	docManager->AssociateTemplate(std::make_shared<FTK::DocViewTemplate>(_R("Drawing"), _R("*.drz"), _R("drz"),
+		_R("Drawing Doc"), _R("Drawing View"),
+		[]() {return std::make_unique<DrawingDocument>(); }, []() {return std::make_unique<DrawingView>(); }));
 
-	if (m_mode == ftkView::Mode::Mode_Single)
+	if (m_mode == FTK::View::Mode::Mode_Single)
 	{
 		// If we've only got one window, we only get to edit one document at a
 		// time. Therefore no text editing, just doodling.
@@ -4049,9 +3684,9 @@ bool App::OnInit()
 	else // multiple documents mode: allow documents of different types
 	{
 		// Create a template relating text documents to their views
-		docManager->AssociateTemplate(std::make_unique<ftkDocTemplate>("Text", "*.txt;*.text", "", "txt;text",
-			"Text Doc", "Text View",
-			[]() { return new TextEditDocument; }, [](ftkView::Mode mode) {return new TextEditView(mode); }));
+		docManager->AssociateTemplate(std::make_shared<FTK::DocViewTemplate>(_R("Text"), _R("*.txt;*.text"), _R("txt;text"),
+			_R("Text Doc"), _R("Text View"),
+			[]() { return std::make_unique<TextEditDocument>(); }, []() {return std::make_unique<TextEditView>(); }));
 		// Create a template relating image documents to their views
 		//new wxDocTemplate(docManager, "Image", "*.png;*.jpg", "", "png;jpg",
 			//"Image Doc", "Image View",
@@ -4063,7 +3698,7 @@ bool App::OnInit()
 	switch (m_mode)
 	{
 #if wxUSE_MDI_ARCHITECTURE
-	case ftkView::Mode::Mode_MDI:
+	case FTK::View::Mode::Mode_MDI:
 		frame = new ftkDocParentFrameAny<wxMDIParentFrame>(docManager, nullptr, wxID_ANY,
 			GetAppDisplayName(),
 			wxDefaultPosition,
@@ -4072,7 +3707,7 @@ bool App::OnInit()
 #endif // wxUSE_MDI_ARCHITECTURE
 
 #if wxUSE_AUI
-	case ftkView::Mode::Mode_AUI:
+	case FTK::View::Mode::Mode_AUI:
 		frame = new ftkDocParentFrameAny<wxAuiMDIParentFrame>
 			(
 				docManager, nullptr, wxID_ANY,
@@ -4083,8 +3718,8 @@ bool App::OnInit()
 		break;
 #endif // wxUSE_AUI
 
-	case ftkView::Mode::Mode_SDI:
-	case ftkView::Mode::Mode_Single:
+	case FTK::View::Mode::Mode_SDI:
+	case FTK::View::Mode::Mode_Single:
 		frame = new ftkDocParentFrameAny<wxFrame>(docManager, nullptr, wxID_ANY,
 			GetAppDisplayName(),
 			wxDefaultPosition,
@@ -4098,7 +3733,7 @@ bool App::OnInit()
 	menuFile->Append(wxID_NEW);
 	menuFile->Append(wxID_OPEN);
 
-	if (m_mode == ftkView::Mode::Mode_Single)
+	if (m_mode == FTK::View::Mode::Mode_Single)
 		AppendDocumentFileCommands(menuFile, true);
 
 	menuFile->AppendSeparator();
@@ -4111,7 +3746,7 @@ bool App::OnInit()
 #endif // wxUSE_CONFIG
 
 
-	if (m_mode == ftkView::Mode::Mode_Single)
+	if (m_mode == FTK::View::Mode::Mode_Single)
 	{
 		m_canvas = new MyCanvas(nullptr, frame);
 		m_menuEdit = CreateDrawingEditMenu();
@@ -4133,7 +3768,7 @@ bool App::OnInit()
 	else // we have files to open on command line
 	{
 		for (auto& file : m_filesFromCmdLine)
-			docManager->CreateDocument(file, wxDOC_SILENT);
+			docManager->CreateDocument(file, FTK::DocManager::wxDOC_SILENT);
 	}
 
 	return true;
@@ -4141,7 +3776,7 @@ bool App::OnInit()
 
 int App::OnExit()
 {
-	auto manager = ftkDocManager::GetDocumentManager();
+	auto manager = FTK::DocManager::GetDocumentManager();
 #if wxUSE_CONFIG
 	manager->FileHistorySave(*wxConfig::Get());
 #endif // wxUSE_CONFIG
@@ -4194,18 +3829,17 @@ void App::CreateMenuBarForFrame(wxFrame* frame, wxMenu* file, wxMenu* edit)
 	frame->SetMenuBar(menubar);
 }
 
-wxFrame* App::CreateChildFrame(ftkView* view, bool isCanvas)
+wxFrame* App::CreateChildFrame(FTK::View* view, bool isCanvas)
 {
 	// create a child frame of appropriate class for the current mode
 	wxFrame* subframe = nullptr;
-	ftkDocument* doc = view->GetDocument();
-	switch (view->GetMode())
+	auto doc = view->GetDocument();
+	switch (m_mode)
 #if wxUSE_MDI_ARCHITECTURE
 	{
-	case ftkView::Mode::Mode_MDI:
-		subframe = new ftkDocChildFrameAny<wxMDIChildFrame, wxMDIParentFrame>;
+	case FTK::View::Mode::Mode_MDI:
+		subframe = new ftkDocChildFrameAny<wxMDIChildFrame, wxMDIParentFrame>
 		(
-			doc,
 			view,
 			static_cast<ftkDocParentFrameAny<wxMDIParentFrame>*>(GetTopWindow()),
 			wxID_ANY,
@@ -4217,10 +3851,9 @@ wxFrame* App::CreateChildFrame(ftkView* view, bool isCanvas)
 #endif // wxUSE_MDI_ARCHITECTURE
 
 #if wxUSE_AUI
-	case ftkView::Mode::Mode_AUI:
+	case FTK::View::Mode::Mode_AUI:
 		subframe = new ftkDocChildFrameAny<wxAuiMDIChildFrame, wxAuiMDIParentFrame>
 			(
-				doc,
 				view,
 				static_cast<ftkDocParentFrameAny<wxAuiMDIParentFrame>*>(GetTopWindow()),
 				wxID_ANY,
@@ -4231,11 +3864,10 @@ wxFrame* App::CreateChildFrame(ftkView* view, bool isCanvas)
 		break;
 #endif // wxUSE_AUI
 
-	case ftkView::Mode::Mode_SDI:
-	case ftkView::Mode::Mode_Single:
+	case FTK::View::Mode::Mode_SDI:
+	case FTK::View::Mode::Mode_Single:
 		subframe = new ftkDocChildFrameAny<wxFrame, wxFrame>
 		(
-			doc,
 			view,
 			static_cast<ftkDocParentFrameAny<wxFrame>* >(GetTopWindow()),
 			wxID_ANY,
@@ -4261,8 +3893,8 @@ wxFrame* App::CreateChildFrame(ftkView* view, bool isCanvas)
 	{
 		menuEdit = CreateDrawingEditMenu();
 
-		doc->GetCommandProcessor()->SetEditMenu_(menuEdit);
-		doc->GetCommandProcessor()->SetMenuStrings_();// Initialize_();
+		FTK::DocManager::GetDocumentManager()->GetCommandProcessor(doc)->SetEditMenu_(menuEdit);
+		FTK::DocManager::GetDocumentManager()->GetCommandProcessor(doc)->SetMenuStrings_();// Initialize_();
 	}
 	else // text frame
 	{
@@ -4283,15 +3915,14 @@ void App::OnForceCloseAll(wxCommandEvent& WXUNUSED(event))
 {
 	// Pass "true" here to force closing just for testing this functionality,
 	// there is no real reason to force the issue here.
-	ftkDocManager::GetDocumentManager()->CloseDocuments(true);
+	FTK::DocManager::GetDocumentManager()->CloseDocuments(true);
 }
 
 void App::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
 	wxString modeName = "Mixed mode";
 
-	const int docsCount =
-		ftkDocManager::GetDocumentManager()->GetDocumentsVector().size();
+	const int docsCount = 0;// ftkDocManager::GetDocumentManager()->GetDocuments().size();
 
 	wxLogMessage
 	(
@@ -4307,10 +3938,9 @@ void App::OnAbout(wxCommandEvent& WXUNUSED(event))
 	);
 }
 
-
-bool TextEditDocument::OnCreate(const wxString& path, long flags)
+bool TextEditDocument::OnCreate(const mafString& path)
 {
-	if (!ftkDocument::OnCreate(path, flags))
+	if (!FTK::Document::OnCreate(path))
 		return false;
 
 	// subscribe to changes in the text control to update the document state
@@ -4322,14 +3952,14 @@ bool TextEditDocument::OnCreate(const wxString& path, long flags)
 
 // Since text windows have their own method for saving to/loading from files,
 // we override DoSave/OpenDocument instead of Save/LoadObject
-bool TextEditDocument::DoSaveDocument(const wxString& filename)
+bool TextEditDocument::DoSaveDocument(const mafString& filename)
 {
-	return GetTextCtrl()->SaveFile(filename);
+	return GetTextCtrl()->SaveFile(mafStringToWx(filename));
 }
 
-bool TextEditDocument::DoOpenDocument(const wxString& filename)
+bool TextEditDocument::DoOpenDocument(const mafString& filename)
 {
-	if (!GetTextCtrl()->LoadFile(filename))
+	if (!GetTextCtrl()->LoadFile(mafStringToWx(filename)))
 		return false;
 
 	// we're not modified by the user yet
@@ -4341,12 +3971,12 @@ bool TextEditDocument::DoOpenDocument(const wxString& filename)
 bool TextEditDocument::IsModified() const
 {
 	wxTextCtrl* wnd = GetTextCtrl();
-	return ftkDocument::IsModified() || (wnd && wnd->IsModified());
+	return FTK::Document::IsModified() || (wnd && wnd->IsModified());
 }
 
 void TextEditDocument::Modify(bool modified)
 {
-	ftkDocument::Modify(modified);
+	FTK::Document::Modify(modified);
 
 	wxTextCtrl* wnd = GetTextCtrl();
 	if (wnd && !modified)
@@ -4364,22 +3994,25 @@ void TextEditDocument::OnTextChange(wxCommandEvent& event)
 
 wxTextCtrl* TextEditDocument::GetTextCtrl() const
 {
-	ftkView* view = GetFirstView();
-	return view ? wxStaticCast(view, TextEditView)->GetText() : nullptr;
+	return nullptr;
+	//auto view = GetFirstView();
+	//return view ? wxStaticCast(view, TextEditView)->GetText() : nullptr;
 }
 
-wxBEGIN_EVENT_TABLE(TextEditView, ftkView)
-EVT_MENU(wxID_COPY, TextEditView::OnCopy)
-EVT_MENU(wxID_PASTE, TextEditView::OnPaste)
-EVT_MENU(wxID_SELECTALL, TextEditView::OnSelectAll)
-wxEND_EVENT_TABLE()
-
-bool TextEditView::OnCreate(ftkDocument* doc, long flags)
+TextEditView::TextEditView()
 {
-	if (!ftkView::OnCreate(doc, flags))
+	Bind(wxEVT_MENU, &TextEditView::OnCopy, this, wxID_COPY);
+	Bind(wxEVT_MENU, &TextEditView::OnPaste, this, wxID_PASTE);
+	Bind(wxEVT_MENU, &TextEditView::OnSelectAll, this, wxID_SELECTALL);
+}
+
+
+bool TextEditView::OnCreate(std::shared_ptr<FTK::Document> doc)
+{
+	if (!FTK::View::OnCreate(doc))
 		return false;
 
-	wxFrame* frame = wxGetApp().CreateChildFrame(this, false);
+	auto frame = wxGetApp().CreateChildFrame(this, false);
 	wxASSERT(frame == GetFrame());
 	m_text = new wxTextCtrl(frame, wxID_ANY, "",
 		wxDefaultPosition, wxDefaultSize,
@@ -4396,12 +4029,12 @@ void TextEditView::OnDraw(wxDC* WXUNUSED(dc))
 
 bool TextEditView::OnClose(bool deleteWindow)
 {
-	if (!ftkView::OnClose(deleteWindow))
+	if (!FTK::View::OnClose(deleteWindow))
 		return false;
 
 	Activate(false);
 
-	if (GetMode() == ftkView::Mode::Mode_Single)
+	if (wxGetApp().GetMode() == FTK::View::Mode::Mode_Single)
 	{
 		m_text->Clear();
 	}
@@ -4426,7 +4059,7 @@ class DrawingCommand : public FTK::Command
 {
 public:
 	DrawingCommand(DrawingDocument* doc,
-		const wxString& name,
+		const mafString& name,
 		const DoodleSegment& segment = DoodleSegment())
 		: FTK::Command(true, name),
 		m_doc(doc),
@@ -4448,7 +4081,7 @@ class DrawingAddSegmentCommand : public DrawingCommand
 {
 public:
 	DrawingAddSegmentCommand(DrawingDocument* doc, const DoodleSegment& segment)
-		: DrawingCommand(doc, "Add new segment", segment)
+		: DrawingCommand(doc, _R("Add new segment"), segment)
 	{
 	}
 
@@ -4461,7 +4094,7 @@ class DrawingRemoveSegmentCommand : public DrawingCommand
 {
 public:
 	DrawingRemoveSegmentCommand(DrawingDocument* doc)
-		: DrawingCommand(doc, "Remove last segment")
+		: DrawingCommand(doc, _R("Remove last segment"))
 	{
 	}
 
@@ -4469,48 +4102,31 @@ public:
 	virtual bool Undo() override { return DoAdd(); }
 };
 
-/*DocumentOstream& DrawingDocument::SaveObject(DocumentOstream& ostream)
+std::ostream& DrawingDocument::SaveObject(std::ostream& ostream)
 {
-#if wxUSE_STD_IOSTREAM
-	DocumentOstream& stream = ostream;
-#else
-	wxTextOutputStream stream(ostream);
-#endif
-
-	ftkDocument::SaveObject(ostream);
+	FTK::Document::SaveObject(ostream);
 
 	const wxInt32 count = m_doodleSegments.size();
-	stream << count << '\n';
+	ostream << count << '\n';
 
 	for (int n = 0; n < count; n++)
 	{
 		m_doodleSegments[n].SaveObject(ostream);
-		stream << '\n';
+		ostream << '\n';
 	}
-
 	return ostream;
-}*/
+}
 
-/*DocumentIstream& DrawingDocument::LoadObject(DocumentIstream& istream)
+std::istream& DrawingDocument::LoadObject(std::istream& istream)
 {
-#if wxUSE_STD_IOSTREAM
-	DocumentIstream& stream = istream;
-#else
-	wxTextInputStream stream(istream);
-#endif
-
-	ftkDocument::LoadObject(istream);
+	FTK::Document::LoadObject(istream);
 
 	wxInt32 count = 0;
-	stream >> count;
+	istream >> count;
 	if (count < 0)
 	{
 		wxLogWarning("Drawing document corrupted: invalid segments count.");
-#if wxUSE_STD_IOSTREAM
 		istream.clear(std::ios::badbit);
-#else
-		istream.Reset(wxSTREAM_READ_ERROR);
-#endif
 		return istream;
 	}
 
@@ -4522,7 +4138,7 @@ public:
 	}
 
 	return istream;
-}*/
+}
 
 void DrawingDocument::AddDoodleSegment(const DoodleSegment& segment)
 {
@@ -4546,21 +4162,15 @@ bool DrawingDocument::PopLastSegment(DoodleSegment* segment)
 // DoodleSegment implementation
 // ----------------------------------------------------------------------------
 
-/*DocumentOstream& DoodleSegment::SaveObject(DocumentOstream& ostream)
+std::ostream& DoodleSegment::SaveObject(std::ostream& ostream)
 {
-#if wxUSE_STD_IOSTREAM
-	DocumentOstream& stream = ostream;
-#else
-	wxTextOutputStream stream(ostream);
-#endif
-
 	const wxInt32 count = m_lines.size();
-	stream << count << '\n';
+	ostream << count << '\n';
 
 	for (int n = 0; n < count; n++)
 	{
 		const DoodleLine& line = m_lines[n];
-		stream
+		ostream
 			<< line.x1 << ' '
 			<< line.y1 << ' '
 			<< line.x2 << ' '
@@ -4570,21 +4180,15 @@ bool DrawingDocument::PopLastSegment(DoodleSegment* segment)
 	return ostream;
 }
 
-DocumentIstream& DoodleSegment::LoadObject(DocumentIstream& istream)
+std::istream& DoodleSegment::LoadObject(std::istream& istream)
 {
-#if wxUSE_STD_IOSTREAM
-	DocumentIstream& stream = istream;
-#else
-	wxTextInputStream stream(istream);
-#endif
-
 	wxInt32 count = 0;
-	stream >> count;
+	istream >> count;
 
 	for (int n = 0; n < count; n++)
 	{
 		DoodleLine line;
-		stream
+		istream
 			>> line.x1
 			>> line.y1
 			>> line.x2
@@ -4593,13 +4197,10 @@ DocumentIstream& DoodleSegment::LoadObject(DocumentIstream& istream)
 	}
 
 	return istream;
-}*/
-wxBEGIN_EVENT_TABLE(MyCanvas, wxScrolledWindow)
-EVT_MOUSE_EVENTS(MyCanvas::OnMouseEvent)
-wxEND_EVENT_TABLE()
+}
 
 // Define a constructor for my canvas
-MyCanvas::MyCanvas(ftkView* view, wxWindow* parent)
+MyCanvas::MyCanvas(FTK::View* view, wxWindow* parent)
 	: wxScrolledWindow(parent ? parent : view->GetFrame())
 {
 	m_view = view;
@@ -4612,6 +4213,29 @@ MyCanvas::MyCanvas(ftkView* view, wxWindow* parent)
 	SetScrollRate(20, 20);
 
 	SetBackgroundColour(*wxWHITE);
+
+
+	
+	Bind(wxEVT_LEFT_DOWN, &MyCanvas::OnMouseEvent, this);
+	Bind(wxEVT_LEFT_UP, &MyCanvas::OnMouseEvent, this);
+	Bind(wxEVT_LEFT_DCLICK, &MyCanvas::OnMouseEvent, this);
+	Bind(wxEVT_MIDDLE_DOWN, &MyCanvas::OnMouseEvent, this);
+	Bind(wxEVT_MIDDLE_UP, &MyCanvas::OnMouseEvent, this);
+	Bind(wxEVT_MIDDLE_DCLICK, &MyCanvas::OnMouseEvent, this);
+	Bind(wxEVT_RIGHT_DOWN, &MyCanvas::OnMouseEvent, this);
+	Bind(wxEVT_RIGHT_UP, &MyCanvas::OnMouseEvent, this);
+	Bind(wxEVT_RIGHT_DCLICK, &MyCanvas::OnMouseEvent, this);
+	Bind(wxEVT_AUX1_DOWN, &MyCanvas::OnMouseEvent, this);
+	Bind(wxEVT_AUX1_UP, &MyCanvas::OnMouseEvent, this);
+	Bind(wxEVT_AUX1_DCLICK, &MyCanvas::OnMouseEvent, this);
+	Bind(wxEVT_AUX2_DOWN, &MyCanvas::OnMouseEvent, this);
+	Bind(wxEVT_AUX2_UP, &MyCanvas::OnMouseEvent, this);
+	Bind(wxEVT_AUX2_DCLICK, &MyCanvas::OnMouseEvent, this);
+	Bind(wxEVT_MOTION, &MyCanvas::OnMouseEvent, this);
+	Bind(wxEVT_LEAVE_WINDOW, &MyCanvas::OnMouseEvent, this);
+	Bind(wxEVT_ENTER_WINDOW, &MyCanvas::OnMouseEvent, this);
+	Bind(wxEVT_MOUSEWHEEL, &MyCanvas::OnMouseEvent, this);
+	Bind(wxEVT_MAGNIFY, &MyCanvas::OnMouseEvent, this);
 }
 
 MyCanvas::~MyCanvas()
@@ -4645,25 +4269,23 @@ void MyCanvas::OnMouseEvent(wxMouseEvent& event)
 		if (!m_currentSegment->IsEmpty())
 		{
 			// We've got a valid segment on mouse left up, so store it.
-			DrawingDocument* const
-				doc = wxStaticCast(m_view->GetDocument(), DrawingDocument);
+			auto doc = static_cast<DrawingDocument*>(m_view->GetDocument());
 
-			doc->GetCommandProcessor()->Submit(
-				std::make_unique<DrawingAddSegmentCommand>(doc, *m_currentSegment));
-			doc->GetCommandProcessor()->SetMenuStrings_();
+			FTK::DocManager::GetDocumentManager()->GetCommandProcessor(doc)->Submit(std::make_unique<DrawingAddSegmentCommand>(doc, *m_currentSegment));
+			FTK::DocManager::GetDocumentManager()->GetCommandProcessor(doc)->SetMenuStrings_();
 
 			doc->Modify(true);
-			doc->UpdateAllViews();
+			doc->NotifyUpdate();
 		}
 
-		wxDELETE(m_currentSegment);
+		m_currentSegment.reset();
 	}
 
 	// is this the start of a new segment?
 	if (m_lastMousePos != wxDefaultPosition && event.Dragging())
 	{
 		if (!m_currentSegment)
-			m_currentSegment = new DoodleSegment;
+			m_currentSegment = std::make_unique<DoodleSegment>();
 
 		m_currentSegment->AddLine(m_lastMousePos, pt);
 
@@ -4673,19 +4295,20 @@ void MyCanvas::OnMouseEvent(wxMouseEvent& event)
 	m_lastMousePos = pt;
 }
 
-wxBEGIN_EVENT_TABLE(DrawingView, ftkView)
-EVT_MENU(wxID_CUT, DrawingView::OnCut)
-wxEND_EVENT_TABLE()
+DrawingView::DrawingView()
+{
+	Bind(wxEVT_MENU, &DrawingView::OnCut, this, wxID_CUT);
+}
 
 // What to do when a view is created. Creates actual
 // windows for displaying the view.
-bool DrawingView::OnCreate(ftkDocument* doc, long flags)
+bool DrawingView::OnCreate(std::shared_ptr<FTK::Document> doc)
 {
-	if (!ftkView::OnCreate(doc, flags))
+	if (!FTK::View::OnCreate(doc))
 		return false;
 
 	auto& app = wxGetApp();
-	if (GetMode() != ftkView::Mode::Mode_Single)
+	if (wxGetApp().GetMode() != FTK::View::Mode::Mode_Single)
 	{
 		// create a new window and canvas inside it
 		auto frame = app.CreateChildFrame(this, true);
@@ -4701,7 +4324,7 @@ bool DrawingView::OnCreate(ftkDocument* doc, long flags)
 
 		// Initialize the edit menu Undo and Redo items
 		//doc->GetCommandProcessor()->SetEditMenu(app.GetMainWindowEditMenu());
-		doc->GetCommandProcessor()->SetMenuStrings_();// Initialize_();
+		FTK::DocManager::GetDocumentManager()->GetCommandProcessor(doc.get())->SetMenuStrings_();// Initialize_();
 	}
 
 	return true;
@@ -4714,7 +4337,7 @@ void DrawingView::OnDraw(wxDC* dc)
 	dc->SetPen(*wxBLACK_PEN);
 
 	// simply draw all lines of all segments
-	const DoodleSegments& segments = GetDocument()->GetSegments();
+	const auto& segments = GetDocument()->GetSegments();
 	for (auto& seg : segments)
 	{
 		for (auto& line : seg.GetLines())
@@ -4726,11 +4349,12 @@ void DrawingView::OnDraw(wxDC* dc)
 
 DrawingDocument* DrawingView::GetDocument()
 {
-	return wxStaticCast(ftkView::GetDocument(), DrawingDocument);
+	return static_cast<DrawingDocument*>(FTK::View::GetDocument());
 }
-void DrawingView::OnUpdate(ftkView* sender, wxObject* hint)
+
+void DrawingView::OnUpdate(FTK::View* sender, wxObject* hint)
 {
-	ftkView::OnUpdate(sender, hint);
+	FTK::View::OnUpdate(sender, hint);
 	if (m_canvas)
 		m_canvas->Refresh();
 }
@@ -4738,13 +4362,13 @@ void DrawingView::OnUpdate(ftkView* sender, wxObject* hint)
 // Clean up windows used for displaying the view.
 bool DrawingView::OnClose(bool deleteWindow)
 {
-	if (!ftkView::OnClose(deleteWindow))
+	if (!FTK::View::OnClose(deleteWindow))
 		return false;
 
 	Activate(false);
 
 	// Clear the canvas in single-window mode in which it stays alive
-	if (GetMode() == ftkView::Mode::Mode_Single)
+	if (wxGetApp().GetMode() == FTK::View::Mode::Mode_Single)
 	{
 		m_canvas->ClearBackground();
 		m_canvas->ResetView();
@@ -4763,13 +4387,13 @@ bool DrawingView::OnClose(bool deleteWindow)
 	}
 	return true;
 }
+
 void DrawingView::OnCut(wxCommandEvent& WXUNUSED(event))
 {
-	DrawingDocument* const doc = GetDocument();
+	auto doc = GetDocument();
 
-	doc->GetCommandProcessor()->Submit(std::make_unique<DrawingRemoveSegmentCommand>(doc));
-	doc->GetCommandProcessor()->SetMenuStrings_();
+	FTK::DocManager::GetDocumentManager()->GetCommandProcessor(doc)->Submit(std::make_unique<DrawingRemoveSegmentCommand>(doc));
+	FTK::DocManager::GetDocumentManager()->GetCommandProcessor(doc)->SetMenuStrings_();
 	doc->Modify(true);
-	doc->UpdateAllViews();
+	doc->NotifyUpdate();
 }
-

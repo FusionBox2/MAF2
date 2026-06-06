@@ -32,7 +32,7 @@
 #include "vtkIdList.h"
 #include "vtkMatrix4x4.h"
 
-#include <ostream>
+#include <iostream>
 #include "vtkTransform.h"
 
 

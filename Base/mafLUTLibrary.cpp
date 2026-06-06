@@ -32,7 +32,7 @@
 #include "vtkLookupTable.h"
 #include "vtkSmartPointer.h"
 
-//#include <iostream>
+#include <iostream>
 //#include <fstream>
 
 //using namespace std;
@@ -304,7 +304,7 @@ void mafLUTLibrary::Load()
 
     if (isLutFile)
     {
-      cout << "found .lut at: " << int(foundPosition) << " in " << lutLocalFileName << std::endl;
+      std::cout << "found .lut at: " << int(foundPosition) << " in " << lutLocalFileName << std::endl;
       mafString lutAbsFileName = m_LibraryDir + _R(lutLocalFileName.c_str());
       assert(mafFileExists(lutAbsFileName));
 
@@ -330,13 +330,13 @@ int mafLUTLibrary::Remove(const mafString& lutName )
 
   if (it == m_LutMap.end())
   {
-    cout << "The LUT lib doesn't have an element "
+      std::cout << "The LUT lib doesn't have an element "
       << "with key: " << lutName.GetCStr() << std::endl;
     return MAF_ERROR;
   }
   else
   {
-    cout << "removing element: " << lutName.GetCStr() << std::endl;
+      std::cout << "removing element: " << lutName.GetCStr() << std::endl;
     vtkLookupTable *lut = m_LutMap[lutName];
     lut->Delete();
     m_LutMap.erase(lutName);
@@ -385,7 +385,7 @@ bool mafLUTLibrary::HasLut(const mafString& name)
 
   if (it == m_LutMap.end())
   {
-    cout << "The LUT lib doesn't have an element "
+      std::cout << "The LUT lib doesn't have an element "
       << "with key: " << name.GetCStr() << std::endl;
     return false;
   }
