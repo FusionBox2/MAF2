@@ -34,7 +34,7 @@ if(MAF_USE_ITK)
 endif(MAF_USE_ITK)
 
 if(FTK_USE_XercesC)
-  set(XercesC_DIR ${XRC_DIR}/cmake)
+  set(XercesC_DIR ${XRC_DIR})
   find_package(XercesC REQUIRED CONFIG)
   if(XercesC_FOUND)
   endif(XercesC_FOUND)
