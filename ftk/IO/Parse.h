@@ -15,7 +15,7 @@ namespace io::parse
 	template <typename T>
 	void CheckInBounds(T x, T min, T max) {
 		if (x < min || x > max) {
-			throw std::exception("Out of range");
+			throw std::range_error("Out of range");
 		}
 	}
 	template <typename Dst, typename Src>

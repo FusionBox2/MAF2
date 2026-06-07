@@ -3340,7 +3340,7 @@ namespace FTK
 	}
 
 #ifdef __WXMAC__
-	void App::MacNewFile() override
+	void App::MacNewFile()
 	{
 		wxApp::MacNewFile();
 	}
@@ -3622,7 +3622,7 @@ bool App::OnCmdLineParsed(wxCmdLineParser& parser)
 #ifdef __WXMAC__
 void App::MacNewFile()
 {
-	ftkDocManager::GetDocumentManager()->CreateNewDocument();
+	FTK::DocManager::GetDocumentManager()->CreateNewDocument();
 }
 #endif // __WXMAC__
 

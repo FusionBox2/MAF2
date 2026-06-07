@@ -103,7 +103,7 @@ namespace model::data
 	template<class Value>
 	TagItem Parse(const Value& value, io::parse::To<TagItem>)
 	{
-		mafString type = value(_R("Type")).As<mafString>();
+		mafString type = value(_R("Type")).template As<mafString>();
 
 		int typeValue = 0;
 		if (type == _R("NUM"))
@@ -121,8 +121,8 @@ namespace model::data
 		else
 		{
 		}
-		mafID num = value(_R("Mult")).As<mafID>();
-		return TagItem(value(_R("Name")).As<mafString>(), value[_R("TItem")][_R("TC")].As<std::vector<mafString>>(), typeValue);
+		mafID num = value(_R("Mult")).template As<mafID>();
+		return TagItem(value(_R("Name")).template As<mafString>(), value[_R("TItem")][_R("TC")].template As<std::vector<mafString>>(), typeValue);
 	}
 
 	template<class Value>
