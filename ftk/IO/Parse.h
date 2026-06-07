@@ -5,7 +5,7 @@
 #include <ftk/Base/Meta.h>
 #include "ftk/IO/ParseTo.h"
 
-#include <exception>
+#include <stdexcept>
 #include <limits>
 
 BEGIN_FTK_NAMESPACE
