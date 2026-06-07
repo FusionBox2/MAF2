@@ -101,7 +101,7 @@ namespace io::xmlrapid
 	class Value::NativeHolder
 	{
 	public:
-		Value::NativeHolder() = default;
+		NativeHolder() = default;
 
 		~NativeHolder() = default;
 		std::unique_ptr<rapidxml::xml_document<>> XMLDoc;

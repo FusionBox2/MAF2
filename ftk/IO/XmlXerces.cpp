@@ -164,7 +164,7 @@ namespace io::xmlxerces
 	class Value::NativeHolder : XMLPlatformUtilsInitializer
 	{
 	public:
-		Value::NativeHolder() = default;
+		NativeHolder() = default;
 
 		~NativeHolder() = default;
 		std::unique_ptr < XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument> XMLDoc;

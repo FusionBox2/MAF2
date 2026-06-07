@@ -61,7 +61,7 @@ namespace io::jsonrapid
 	class Value::NativeHolder
 	{
 	public:
-		Value::NativeHolder() = default;
+		NativeHolder() = default;
 
 		~NativeHolder() = default;
 		Json::Value m_value;
