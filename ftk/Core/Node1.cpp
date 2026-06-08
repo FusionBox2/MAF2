@@ -57,7 +57,7 @@ namespace  model::data_
   template<class Value>
   NodeLink Parse(const Value& value, io::parse::To<NodeLink>)
   {
-    return NodeLink{ nullptr, value(_R("Name")).As<mafString>(),  value(_R("NodeId")).As<mafID>(), value(_R("NodeSubId")).As<mafID>() };
+    return NodeLink{ nullptr, value(_R("Name")).template As<mafString>(),  value(_R("NodeId")).template As<mafID>(), value(_R("NodeSubId")).template As<mafID>() };
   }
 
 

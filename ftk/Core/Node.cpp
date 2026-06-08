@@ -27,7 +27,7 @@ namespace model::data
     template<class Value>
     Node::NodeLink Parse(const Value& value, io::parse::To<Node::NodeLink>)
     {
-        return Node::NodeLink{ {}, value(_R("NodeSubId")).As<mafID>() }.SetId(value(_R("NodeId")).As<mafID>());
+        return Node::NodeLink{ {}, value(_R("NodeSubId")).template As<mafID>() }.SetId(value(_R("NodeId")).template As<mafID>());
     }
 
     template<class Value>
@@ -36,7 +36,7 @@ namespace model::data
         Node::Links result;
         for (size_t idx = 0; idx < value.size(); idx++)
         {
-            result.insert(end(result), { value[idx](_R("Name")).As<mafString>(), value[idx].As<Node::NodeLink>() });
+            result.insert(end(result), { value[idx](_R("Name")).template As<mafString>(), value[idx].template As<Node::NodeLink>() });
         }
         return result;
     }
