@@ -51,7 +51,7 @@ vtkMTimeType vtkMAFDataPipe::GetMTime()
 
   if (m_DataPipe)
   {
-    mtime = (std::max)(mtime, m_DataPipe->GetMTime());
+    mtime = (std::max)(mtime, (vtkMTimeType)m_DataPipe->GetMTime());
   }
 
   return mtime;

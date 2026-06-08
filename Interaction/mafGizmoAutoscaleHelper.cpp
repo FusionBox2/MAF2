@@ -105,7 +105,7 @@ MTimeType mafGizmoAutoscaleHelper::GetMTime()
 
 	if (m_Camera)
 	{
-		mtime = (std::max)(mtime, m_Camera->GetMTime());
+		mtime = (std::max)(mtime, (MTimeType)m_Camera->GetMTime());
 	}
 
 	if (m_Renderer&&m_Camera!=m_Renderer->GetActiveCamera())
