@@ -146,11 +146,11 @@ vtkMTimeType vtkMAFToLinearTransform::GetMTime()
 
   if (this->m_InputMatrix)
   {
-    mtime = (std::max)(mtime, this->m_InputMatrix->GetMTime());
+    mtime = (std::max)(mtime, (vtkMTimeType)this->m_InputMatrix->GetMTime());
   }
   else if (this->m_InputTransform)
   {
-    mtime = (std::max)(mtime, this->m_InputTransform->GetMTime());
+    mtime = (std::max)(mtime, (vtkMTimeType)this->m_InputTransform->GetMTime());
   }
   return mtime;
 }
