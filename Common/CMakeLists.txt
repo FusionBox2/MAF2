@@ -143,7 +143,7 @@ lhpUtils.cpp
 )
 
 # List libraries that are needed by this project.
-SET(PROJECT_LIBS "mafVME" "mafInteraction")
+SET(PROJECT_LIBS mafVME mafInteraction)
 
 SET(PROJECT_LIBS ${PROJECT_LIBS} vtkMAF)
 
