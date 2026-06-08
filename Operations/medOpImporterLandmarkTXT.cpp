@@ -40,6 +40,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <limits>
 using namespace std;
 
 //----------------------------------------------------------------------------
@@ -102,7 +103,7 @@ void medOpImporterLandmarkTXT::OpRun()
     if (!m_TestMode)
     {
       m_Gui = new mafGUI(this);
-      m_Gui->Integer(ID_TYPE_FILE,_R("Skip Col"),&m_Start,0,MAXINT,_R("Number of column to skip"));
+      m_Gui->Integer(ID_TYPE_FILE,_R("Skip Col"),&m_Start,0,std::numeric_limits<int>::max(),_R("Number of column to skip"));
       m_Gui->OkCancel();
 	    m_Gui->Update();
       ShowGui();

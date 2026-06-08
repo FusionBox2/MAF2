@@ -109,6 +109,8 @@
 #include "vtkMEDBinaryImageFloodFill.h"
 #include "vtkImageClip.h"
 
+#include <limits>
+
 
 #define max(a,b)(((a) > (b)) ? (a) : (b))
 #define min(a,b)(((a) < (b)) ? (a) : (b))
@@ -252,8 +254,8 @@ medOpSegmentation::medOpSegmentation(const mafString &label) : mafOp(label)
 
   m_LoadedVolumeName = _R("[Select input volume]");
 
-  m_OldAutomaticThreshold = MAXINT;
-  m_OldAutomaticUpperThreshold = MAXINT;
+  m_OldAutomaticThreshold = (std::numeric_limits<int>::max)();
+  m_OldAutomaticUpperThreshold = (std::numeric_limits<int>::max)();
 
   m_RemovePeninsulaRegions = FALSE;
 
@@ -1894,8 +1896,8 @@ void medOpSegmentation::OnAutomaticStep()
   if(m_LoadedVolume == nullptr)
   {
     m_GuiDialog->Enable(ID_BUTTON_NEXT,true);
-    m_OldAutomaticThreshold = MAXINT;
-    m_OldAutomaticUpperThreshold = MAXINT;
+    m_OldAutomaticThreshold = (std::numeric_limits<int>::max)();
+    m_OldAutomaticUpperThreshold = (std::numeric_limits<int>::max)();
     UpdateSlice();
     InitEmptyVolumeSlice();
     UpdateThresholdRealTimePreview();

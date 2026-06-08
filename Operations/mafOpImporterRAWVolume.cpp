@@ -49,6 +49,7 @@
 #include "vtkStructuredPoints.h"
 #include "vtkDoubleArray.h"
 
+#include <limits>
 //----------------------------------------------------------------------------
 mafCxxTypeMacro(mafOpImporterRAWVolume);
 //----------------------------------------------------------------------------
@@ -163,7 +164,7 @@ void mafOpImporterRAWVolume::OpRun()
 	m_Gui->Divider(0);
 	m_Gui->Label(_L("dimensions (x,y,z)"));
 	m_Gui->Vector(ID_DIM, _R(""),m_DataDimemsion,1,10000);
-  m_Gui->VectorN(ID_VOI_SLICES,_L("slices VOI"),m_SliceVOI,2,0,MAXINT,_L("define the range of slice to import."));
+  m_Gui->VectorN(ID_VOI_SLICES,_L("slices VOI"),m_SliceVOI,2,0,std::numeric_limits<int>::max(),_L("define the range of slice to import."));
 	
 	m_Gui->Divider(0);
 	m_Gui->Label(_L("spacing in mm/pixel (x,y,z)"));

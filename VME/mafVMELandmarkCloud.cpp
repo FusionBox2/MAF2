@@ -48,6 +48,7 @@ const bool DEBUG_MODE = false;
 #include "vtkDataSetWriter.h"
 
 #include <vector>
+#include <limits>
 
 #include <wx/busyinfo.h>
 //------------------------------------------------------------------------------
@@ -1319,7 +1320,7 @@ mafGUI* mafVMELandmarkCloud::CreateGui()
 	gui->Double(ID_LM_RADIUS, _R("radius"), &m_Radius, 0.0, std::numeric_limits<double>::max(), -1);
 	gui->Enable(ID_LM_RADIUS, m_CloudStateCheckbox == 0);
 
-	gui->Integer(ID_LM_SPHERE_RESOLUTION, _R("Resolution"), &m_SphereResolution, 0.0, MAXINT);
+	gui->Integer(ID_LM_SPHERE_RESOLUTION, _R("Resolution"), &m_SphereResolution, 0.0, std::numeric_limits<int>::max());
 	gui->Enable(ID_LM_SPHERE_RESOLUTION, m_CloudStateCheckbox == 0);
 
 	gui->Divider();

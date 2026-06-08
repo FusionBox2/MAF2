@@ -48,7 +48,7 @@
 #include "vtkRectilinearGrid.h"
 #include "vtkMEDVolumeToClosedSmoothSurface.h"
 
-
+#include <limits>
 #define ITK_IMAGE_DIMENSION 3
 #define SPACING_PERCENTAGE_BOUNDS 0.1
 typedef  itk::Image< float, ITK_IMAGE_DIMENSION> RealImage;
@@ -169,11 +169,11 @@ void medOpSegmentationRegionGrowingConnectedThreshold::CreateGui()
   m_Gui = new mafGUI(this);
 
   m_Gui->Label(_L("Parameters"));
-  m_Gui->Integer(ID_LOWER,_L("lower"),&m_Lower,MINLONG,MAXLONG,_L("minimum intensity value to be included in segmentation"));
-  m_Gui->Integer(ID_UPPER,_L("upper"),&m_Upper,MINLONG,MAXLONG,_L("maximum intensity value to be included in segmentation"));
-  m_Gui->Integer(ID_REPLACE,_L("replace"),&m_Replace,0,MAXINT,_L("segmented region value"));
+  m_Gui->Integer(ID_LOWER,_L("lower"),&m_Lower,std::numeric_limits<long>::min(),std::numeric_limits<long>::max(),_L("minimum intensity value to be included in segmentation"));
+  m_Gui->Integer(ID_UPPER,_L("upper"),&m_Upper,std::numeric_limits<long>::min(),std::numeric_limits<long>::max(),_L("maximum intensity value to be included in segmentation"));
+  m_Gui->Integer(ID_REPLACE,_L("replace"),&m_Replace,0,std::numeric_limits<int>::max(),_L("segmented region value"));
   m_Gui->Label(_L("Voxel val:"),&m_SeedScalarValue);
-  m_Gui->VectorN(ID_SEED,_L("seed"),m_Seed,m_ImageDim,MININT,MAXINT,_R("seed point to start growing, in image coordinates"));
+  m_Gui->VectorN(ID_SEED,_L("seed"),m_Seed,m_ImageDim,std::numeric_limits<int>::min(),std::numeric_limits<int>::max(),_R("seed point to start growing, in image coordinates"));
 
 //   m_Gui->Label(_("Anisotropic curvature diffusion parameters"));
 //   m_Gui->Integer(ID_ITERATIONS,_("iterations"),&m_NumIter,0,MAXINT,_("number of iterations. Default [5]"));

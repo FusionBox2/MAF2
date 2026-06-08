@@ -48,6 +48,7 @@
 #include "vtkDataSet.h"
 
 #include <fstream>
+#include <limits>
 
 mafCxxTypeMacro(mafOpExporterRAW)
 
@@ -102,7 +103,7 @@ void mafOpExporterRAW::OpRun()
 		m_Gui->Bool(ID_SINGLE_FILE,_R("single file"),&m_SingleFile);
 		m_Gui->Divider();
 
-		m_Gui->Integer(ID_INT,_R("slice offset: "), &m_Offset,MININT,MAXINT,_R("only if not single file"));
+		m_Gui->Integer(ID_INT,_R("slice offset: "), &m_Offset,std::numeric_limits<long>::min(),std::numeric_limits<int>::max(),_R("only if not single file"));
 
 		m_Gui->Label(_R(""));
 		m_Gui->OkCancel(); 

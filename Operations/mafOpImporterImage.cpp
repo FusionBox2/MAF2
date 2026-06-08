@@ -40,6 +40,7 @@
 #include "vtkTIFFReader.h"
 
 #include <algorithm>
+#include <limits>
 
 //----------------------------------------------------------------------------
 // Global Function (locale to this file) to sort the filenames
@@ -132,8 +133,8 @@ void mafOpImporterImage::OpRun()
 	    m_Gui->String(ID_STRING_PREFIX,_R("file pref."), &m_FilePrefix);
 	    m_Gui->String(ID_STRING_PATTERN,_R("file patt."), &m_FilePattern);
 	    m_Gui->String(ID_STRING_EXT,_R("file ext."), &m_FileExtension);
-	    m_Gui->Integer(ID_OFFSET,_R("file offset:"),&m_FileOffset,0, MAXINT,_R("set the first slice number in the files name"));
-	    m_Gui->Integer(ID_SPACING,_R("file spc.:"),&m_FileSpacing,1, MAXINT, _R("set the spacing between the slices in the files name"));
+	    m_Gui->Integer(ID_OFFSET,_R("file offset:"),&m_FileOffset,0, std::numeric_limits<int>::max(),_R("set the first slice number in the files name"));
+	    m_Gui->Integer(ID_SPACING,_R("file spc.:"),&m_FileSpacing,1, std::numeric_limits<int>::max(), _R("set the spacing between the slices in the files name"));
 	    m_Gui->Double(ID_DATA_SPACING,_R("data spc.:"),&m_ImageZSpacing,1);
       m_Gui->OkCancel();
 

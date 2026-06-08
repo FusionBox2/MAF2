@@ -9,6 +9,8 @@
 #include "mafDataVector.h"
 #include "mafVMEItemScalarMatrix.h"
 
+#include <limits>
+
 //-------------------------------------------------------------------------
 mafVMEScalarMatrix::mafVMEScalarMatrix()
 //-------------------------------------------------------------------------
@@ -105,16 +107,16 @@ mafGUI* mafVMEScalarMatrix::CreateGui()
 	gui->Divider(2);
 	gui->Label(_L("x coord"));
 	gui->Combo(ID_TYPE_FOR_X, _L("type"), &m_Xtype, 3, type_array);
-	gui->Integer(ID_SCALAR_FOR_X, _L("scalar id"), &m_XID, 0, MAXINT, _L("Scalar ID associated to the X coordinate \nof the VTK representation"));
+	gui->Integer(ID_SCALAR_FOR_X, _L("scalar id"), &m_XID, 0, std::numeric_limits<int>::max(), _L("Scalar ID associated to the X coordinate \nof the VTK representation"));
 	gui->Label(_L("y coord"));
 	gui->Combo(ID_TYPE_FOR_Y, _L("type"), &m_Ytype, 3, type_array);
-	gui->Integer(ID_SCALAR_FOR_Y, _L("scalar id"), &m_YID, 0, MAXINT, _L("Scalar ID associated to the Y coordinate \nof the VTK representation"));
+	gui->Integer(ID_SCALAR_FOR_Y, _L("scalar id"), &m_YID, 0, std::numeric_limits<int>::max(), _L("Scalar ID associated to the Y coordinate \nof the VTK representation"));
 	gui->Label(_L("z coord"));
 	gui->Combo(ID_TYPE_FOR_Z, _L("type"), &m_Ztype, 3, type_array);
-	gui->Integer(ID_SCALAR_FOR_Z, _L("scalar id"), &m_ZID, 0, MAXINT, _L("Scalar ID associated to the Z coordinate \nof the VTK representation"));
+	gui->Integer(ID_SCALAR_FOR_Z, _L("scalar id"), &m_ZID, 0, std::numeric_limits<int>::max(), _L("Scalar ID associated to the Z coordinate \nof the VTK representation"));
 	gui->Divider();
 	gui->Label(_L("scalar for geometry."));
-	gui->Integer(ID_ACTIVE_SCALAR, _L("scalat id"), &m_ActiveScalar, -1, MAXINT, _L("Active scalar to use with geometry;\n -1 means no scalar active."));
+	gui->Integer(ID_ACTIVE_SCALAR, _L("scalat id"), &m_ActiveScalar, -1, std::numeric_limits<int>::max(), _L("Active scalar to use with geometry;\n -1 means no scalar active."));
 	gui->Divider();
 
 	EnableWidgets();

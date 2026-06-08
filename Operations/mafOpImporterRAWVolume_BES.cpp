@@ -58,7 +58,7 @@
 #include "vtkDoubleArray.h"
 
 #include "wx/busyinfo.h"
-
+#include <limits>
 //----------------------------------------------------------------------------
 mafOpImporterRAWVolume_BES::mafOpImporterRAWVolume_BES(const mafString& label) : Superclass(label)
 //----------------------------------------------------------------------------
@@ -200,9 +200,9 @@ void mafOpImporterRAWVolume_BES::OpRun()
 	m_Gui->Divider(0);
 	m_Gui->Label(_L("dimensions (x,y,z)"));
 	m_Gui->Vector(ID_DIM, _R(""),m_DataDimemsion,1,100000);
-	m_Gui->VectorN(ID_VOI_X, _R("VOI x") ,&m_VOI[0],2,0,MAXINT,_L("define the range of voxels in x dimension to import."));
-  m_Gui->VectorN(ID_VOI_Y, _R("VOI y") ,&m_VOI[2],2,0,MAXINT,_L("define the range of voxels in y dimension to import."));
-  m_Gui->VectorN(ID_VOI_Z, _R("VOI z") ,&m_VOI[4],2,0,MAXINT,_L("define the range of voxels in z dimension to import."));
+	m_Gui->VectorN(ID_VOI_X, _R("VOI x") ,&m_VOI[0],2,0,std::numeric_limits<int>::max(),_L("define the range of voxels in x dimension to import."));
+  m_Gui->VectorN(ID_VOI_Y, _R("VOI y") ,&m_VOI[2],2,0,std::numeric_limits<int>::max(),_L("define the range of voxels in y dimension to import."));
+  m_Gui->VectorN(ID_VOI_Z, _R("VOI z") ,&m_VOI[4],2,0,std::numeric_limits<int>::max(),_L("define the range of voxels in z dimension to import."));
 
 	m_Gui->Divider(0);
 	m_Gui->Label(_L("spacing in mm/pixel (x,y,z)"));

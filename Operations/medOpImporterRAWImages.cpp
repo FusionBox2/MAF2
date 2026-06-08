@@ -72,6 +72,7 @@
 #endif // VME_VOLUME_LARGE
 
 #include "mafDbg.h"
+#include <limits>
 
 //----------------------------------------------------------------------------
 medOpImporterRAWImages::medOpImporterRAWImages(const mafString& label) : Superclass(label)
@@ -284,8 +285,8 @@ void medOpImporterRAWImages::CreateGui()
     m_Gui->Divider(0);
     m_Gui->Button(ID_GUESS,_L("guess"),_L("header size"));
     m_Gui->Integer(ID_HEADER,_R(" "),&m_Header,0);
-    m_Gui->Integer(ID_OFFSET,_L("file offset:"),&m_Offset,0, MAXINT,_L("set the first slice number in the files name"));
-    m_Gui->Integer(ID_SPACING,_L("file spc.:"),&m_FileSpacing,1, MAXINT, _L("set the spacing between the slices in the files name"));
+    m_Gui->Integer(ID_OFFSET,_L("file offset:"),&m_Offset,0, std::numeric_limits<int>::max(),_L("set the first slice number in the files name"));
+    m_Gui->Integer(ID_SPACING,_L("file spc.:"),&m_FileSpacing,1, std::numeric_limits<int>::max(), _L("set the spacing between the slices in the files name"));
     m_Gui->Divider(0);
 
 #ifdef VME_VOLUME_LARGE

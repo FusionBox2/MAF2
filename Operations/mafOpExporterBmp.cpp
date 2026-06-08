@@ -43,6 +43,7 @@
 #include "vtkDirectory.h"
 
 #include <fstream>
+#include <limits>
 
 mafCxxTypeMacro(mafOpExporterBmp)
 
@@ -91,7 +92,7 @@ void mafOpExporterBmp::OpRun()
     m_Gui->DirOpen(ID_DIROPEN, _R("export dir"), &m_DirName, _L("choose dir") );
    
     m_Gui->Bool(ID_8BIT, _R("grayscale"), &m_Bit8, 0, _L("export in 8 bit gray scale format"));
-    m_Gui->Integer(ID_INT,_R("offset: "), &m_Offset,MININT,MAXINT, _L("only if 8 bit"));
+    m_Gui->Integer(ID_INT,_R("offset: "), &m_Offset,std::numeric_limits<int>::min(),std::numeric_limits<int>::max(), _L("only if 8 bit"));
 
     m_Gui->Label(_R(""));
     m_Gui->OkCancel(); 
