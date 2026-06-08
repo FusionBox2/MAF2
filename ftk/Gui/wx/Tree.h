@@ -21,6 +21,8 @@ namespace gui::wx
 {
 	class FTK_GUI_EXPORT Tree : public mafGUINamedPanel, public mafEventSender
 	{
+	protected:
+		class TreeItemData;
 	public:
 
 		using NodeID = intptr_t;
@@ -30,8 +32,6 @@ namespace gui::wx
 		~Tree() override;
 
 		void Reset();
-
-		class TreeItemData;
 
 		bool AddNode(NodeID node_id, NodeID parent_id, const mafString& label, int icon = 0, int selectedIcon = -1, TreeItemData* data = nullptr);
 
