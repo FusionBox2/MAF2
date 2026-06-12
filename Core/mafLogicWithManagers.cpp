@@ -792,7 +792,7 @@ void mafLogicWithManagers::ShowSplashScreen(wxBitmap& splashImage)
 		wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_TIMEOUT,
 		2000, NULL, -1, wxDefaultPosition, wxDefaultSize,
 		splash_style);
-	mafYield();
+	wxYieldIfNeeded();
 }
 
 void mafLogicWithManagers::SetApplicationStamp(const mafString& app_stamp)
@@ -1913,7 +1913,7 @@ void mafLogicWithManagers::OnQuit()
 
 	// if OnQuit is redefined in a derived class,  mafLogicWithGUI::OnQuit() must be called last
 
-	mafYield();
+	wxYieldIfNeeded();
 	if (m_logic->m_PlugLogbar)
 	{
 		delete wxLog::SetActiveTarget(NULL);

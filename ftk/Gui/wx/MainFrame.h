@@ -24,12 +24,33 @@
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #ifdef MAF_USE_VTK
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-class mafGUIMDIFrameCallback;
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #endif //MAF_USE_VTK
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 BEGIN_FTK_NAMESPACE
+//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#ifdef MAF_USE_VTK
+//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+template<class Frame>
+class mafGUIMDIFrameCallback : public vtkCommand
+{
+public:
+	vtkTypeMacro(mafGUIMDIFrameCallback, vtkCommand);
+
+	static mafGUIMDIFrameCallback* New() { return new mafGUIMDIFrameCallback; }
+	mafGUIMDIFrameCallback() = default;
+	void Execute(vtkObject* caller, unsigned long, void*) override;
+	void SetMode(int mode) { m_mode = mode; }
+	void SetFrame(Frame* frame) { m_Frame = frame; }
+
+protected:
+	int m_mode = 0;
+	Frame* m_Frame = nullptr;
+};
+//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#endif  //MAF_USE_VTK
+//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 template <class BaseFrame, long DefaultStyle>
 class MainFrame : public BaseFrame
@@ -113,9 +134,9 @@ protected:
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #ifdef MAF_USE_VTK
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-	vtkNew<mafGUIMDIFrameCallback> m_StartCallback;
-	vtkNew<mafGUIMDIFrameCallback> m_EndCallback;
-	vtkNew<mafGUIMDIFrameCallback> m_ProgressCallback;
+	vtkNew<mafGUIMDIFrameCallback<MainFrame<BaseFrame, DefaultStyle> > > m_StartCallback;
+	vtkNew<mafGUIMDIFrameCallback<MainFrame<BaseFrame, DefaultStyle> > > m_EndCallback;
+	vtkNew<mafGUIMDIFrameCallback<MainFrame<BaseFrame, DefaultStyle> > > m_ProgressCallback;
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #endif  //MAF_USE_VTK
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -129,58 +150,44 @@ using mafGUIMDIFrame = MainFrame<wxMDIParentFrame, wxDEFAULT_FRAME_STYLE | wxHSC
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #ifdef MAF_USE_VTK
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-class mafGUIMDIFrameCallback : public vtkCommand
+template<class Frame>
+void mafGUIMDIFrameCallback<Frame>::Execute(vtkObject* caller, unsigned long, void*)
 {
-public:
-	vtkTypeMacro(mafGUIMDIFrameCallback, vtkCommand);
-
-	static mafGUIMDIFrameCallback* New() { return new mafGUIMDIFrameCallback; }
-	mafGUIMDIFrameCallback() = default;
-	void SetMode(int mode) { m_mode = mode; }
-	void SetFrame(mafGUIMDIFrame* frame) { m_Frame = frame; }
-
-	void Execute(vtkObject* caller, unsigned long, void*) override
+	assert(m_Frame);
+	if (caller->IsA("vtkAlgorithm"))
 	{
-		assert(m_Frame);
-		if (caller->IsA("vtkAlgorithm"))
-		{
-			auto po = static_cast<vtkAlgorithm*>(caller);
+		auto po = static_cast<vtkAlgorithm*>(caller);
 
-			if (m_mode == 0) // ProgressEvent-Callback
-			{
-				mafYield(); //fix on bug #2082
-				m_Frame->ProgressBarSetVal(po->GetProgress() * 100);
-				//mafLogMessage("progress = %g", po->GetProgress()*100);
-			}
-			else if (m_mode == 1) // StartEvent-Callback
-			{
-				m_Frame->ProgressBarShow();
-				m_Frame->ProgressBarSetVal(0);
-				//m_Frame->ProgressBarSetText(&wxString(po->GetClassName()));
-				{ wxString s = po->GetProgressText(); m_Frame->ProgressBarSetText(s); }
-			}
-			else if (m_mode == 2) // EndEvent-Callback
-			{
-				m_Frame->ProgressBarHide();
-			}
-		}
-		else if (caller->IsA("vtkViewport"))
+		if (m_mode == 0) // ProgressEvent-Callback
 		{
-			if (m_mode == 1) // StartRenderingEvent-Callback
-			{
-				m_Frame->RenderStart();
-			}
-			else if (m_mode == 2) // StartRenderingEvent-Callback
-			{
-				m_Frame->RenderEnd();
-			}
+			wxYieldIfNeeded(); //fix on bug #2082
+			m_Frame->ProgressBarSetVal(po->GetProgress() * 100);
+			//mafLogMessage("progress = %g", po->GetProgress()*100);
+		}
+		else if (m_mode == 1) // StartEvent-Callback
+		{
+			m_Frame->ProgressBarShow();
+			m_Frame->ProgressBarSetVal(0);
+			//m_Frame->ProgressBarSetText(&wxString(po->GetClassName()));
+			{ wxString s = po->GetProgressText(); m_Frame->ProgressBarSetText(s); }
+		}
+		else if (m_mode == 2) // EndEvent-Callback
+		{
+			m_Frame->ProgressBarHide();
 		}
 	}
-protected:
-	int m_mode = 0;
-	mafGUIMDIFrame* m_Frame = nullptr;
-};
-
+	else if (caller->IsA("vtkViewport"))
+	{
+		if (m_mode == 1) // StartRenderingEvent-Callback
+		{
+			m_Frame->RenderStart();
+		}
+		else if (m_mode == 2) // StartRenderingEvent-Callback
+		{
+			m_Frame->RenderEnd();
+		}
+	}
+}
 template <class BaseFrame, long DefaultStyle>
 void MainFrame<BaseFrame, DefaultStyle>::BindToProgressBar(vtkObject* vtkobj)
 {
@@ -562,7 +569,7 @@ void MainFrame<BaseFrame, DefaultStyle>::ProgressBarSetVal(int progress)
 	{
 		m_Gauge->SetValue(progress);
 		BaseFrame::SetStatusText(wxString::Format(" %d%% ", progress), 3);
-		mafYield(); //fix on bug #2082
+		wxYieldIfNeeded(); //fix on bug #2082
 	}
 }
 

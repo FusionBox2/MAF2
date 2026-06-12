@@ -4726,7 +4726,7 @@ void medOpImporterDicomOffis::ResetStructure()
 
 	m_CropFlag				= false;
 
-	mafYield();
+	wxYieldIfNeeded();
 }
 //----------------------------------------------------------------------------
 void medOpImporterDicomOffis::ResetSliders()

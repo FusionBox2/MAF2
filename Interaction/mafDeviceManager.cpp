@@ -87,7 +87,7 @@ void mafDeviceManager::InternalShutdown()
 {
   m_DeviceSet->Stop();
   Superclass::InternalShutdown();
-  mafYield();
+  wxYieldIfNeeded();
 }
 
 //------------------------------------------------------------------------------

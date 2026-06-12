@@ -39,19 +39,6 @@ void mafSetFrame(wxWindow* frame)
 	TheFrame = frame;
 }
 
-static bool yelding;
-//----------------------------------------------------------------------------
-void mafYield()
-//----------------------------------------------------------------------------
-{
-	if (!yelding)
-	{
-		yelding = true;
-		wxYield();
-		yelding = false;
-	}
-}
-
 /* to be removed (Marco)
 //----------------------------------------------------------------------------
 mafVmeBaseTypes mafGetBaseType(mafVME* vme)
@@ -87,7 +74,6 @@ mafString  mafGetDirName(const mafString& initial, const mafString& title, wxWin
 
 	dialog.SetReturnCode(wxID_OK);
 	int result = dialog.ShowModal();
-	mafYield(); // wait for the dialog to disappear
 	if (result != wxID_OK)
 		return mafString();
 	mafString res = mafWxToString(dialog.GetPath());
@@ -111,7 +97,6 @@ mafString mafGetOpenFile(const mafString& initial, const mafString& wild, const 
 
 	dialog.SetReturnCode(wxID_OK);
 	int result = dialog.ShowModal();
-	mafYield(); // wait for the dialog to disappear
 	if (result != wxID_OK)
 		return mafString();
 	mafString res = mafWxToString(dialog.GetPath());
@@ -133,7 +118,6 @@ void mafGetOpenMultiFiles(const mafString& initial, const mafString& wild, std::
 
 	dialog.SetReturnCode(wxID_OK);
 	int result = dialog.ShowModal();
-	mafYield(); // wait for the dialog to disappear
 	wxArrayString wxfiles;
 	(result == wxID_OK) ? dialog.GetPaths(wxfiles) : wxfiles.Empty();
 	for (int i = 0; i < wxfiles.GetCount(); i++)
@@ -159,7 +143,6 @@ std::vector<mafString> mafGetOpenMultiFiles(const mafString& initial, const mafS
 
 	dialog.SetReturnCode(wxID_OK);
 	int result = dialog.ShowModal();
-	mafYield(); // wait for the dialog to disappear
 	wxArrayString wxfiles;
 	(result == wxID_OK) ? dialog.GetPaths(wxfiles) : wxfiles.Empty();
 	for (int i = 0; i < wxfiles.GetCount(); i++)
@@ -184,7 +167,6 @@ mafString mafGetSaveFile(const mafString& initial, const mafString& wild, const 
 	wxFileDialog dialog(parent, mafStringToWx(title), mafStringToWx(initial), mafStringToWx(defaultname), mafStringToWx(wildcard), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 	dialog.SetReturnCode(wxID_OK);
 	int result = dialog.ShowModal();
-	mafYield(); // wait for the dialog to disappear
 	if (result != wxID_OK)
 		return mafString();
 	mafString res = mafWxToString(dialog.GetPath());

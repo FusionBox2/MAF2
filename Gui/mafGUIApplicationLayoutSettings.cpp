@@ -439,7 +439,7 @@ void mafGUIApplicationLayoutSettings::ApplyLayout()
         mafView* v = m_ViewManager->ViewCreate((*iter).m_Id);
       }
       
-      mafYield();
+      wxYieldIfNeeded();
       v = m_ViewManager->GetSelectedView();
       if (v)
       {
@@ -495,7 +495,7 @@ void mafGUIApplicationLayoutSettings::ApplyTreeLayout()
       {
         mafView* v = m_ViewManager->ViewCreate((*iter).m_Id);
       }
-      mafYield();
+      wxYieldIfNeeded();
       v = m_ViewManager->GetSelectedView();
       if (v)
       {

@@ -1104,7 +1104,7 @@ void mafGUIValidator::OnButton(wxCommandEvent& event)
 
 		if(m_Mode != VAL_BUTTON) 
     {
-        mafYield(); // update gui to let the dialogs disappear
+        wxYieldIfNeeded(); // update gui to let the dialogs disappear
         wxTopLevelWindow *tlw = wxDynamicCast(wxGetTopLevelParent(m_Button), wxTopLevelWindow);
 
         if (tlw)
@@ -1118,7 +1118,7 @@ void mafGUIValidator::OnButton(wxCommandEvent& event)
           }
         }
 
-        mafYield(); 
+        wxYieldIfNeeded(); 
     }
 
 		if (!cancel) 

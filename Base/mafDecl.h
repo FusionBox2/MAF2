@@ -361,9 +361,6 @@ MAF_EXPORT extern wxWindow* mafGetFrame();
 /** to be used by mafGUIFrame and derived class only */
 MAF_EXPORT void mafSetFrame(wxWindow* frame);
 
-/** process pending events. be careful not to call it recursively */
-MAF_EXPORT void mafYield();
-
 /** show the Dir Selection Dialog Box */
 MAF_EXPORT mafString  mafGetDirName(const mafString& initial, const mafString& title = _R("Select Directory"), wxWindow* parent = nullptr);
 

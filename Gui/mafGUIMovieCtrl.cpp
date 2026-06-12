@@ -206,5 +206,5 @@ void mafGUIMovieCtrl::Update()
 //----------------------------------------------------------------------------
 {
   TransferDataToWindow();
-  mafYield();
+  wxYieldIfNeeded();
 }

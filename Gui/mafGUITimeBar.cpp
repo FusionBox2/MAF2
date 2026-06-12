@@ -284,7 +284,7 @@ void mafGUITimeBar::Update()
 //----------------------------------------------------------------------------
 {
   TransferDataToWindow();
-  mafYield();
+  wxYieldIfNeeded();
 }
 //----------------------------------------------------------------------------
 void mafGUITimeBar::SetBounds(double min, double max)
