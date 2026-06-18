@@ -463,9 +463,6 @@ bool lhpFusionBoxApp::OnInit()
 	////may lead to artifacts in data or even 
 	//vtkDataArrayMemMng::InitializeManagerUnSafeMode();  
 
-
-	mafPictureFactory::GetPictureFactory()->Initialize();
-
 #include "pic/lhpBuilder/FRAME_ICON16x16.xpm"
 	mafADDPIC(FRAME_ICON16x16);
 

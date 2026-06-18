@@ -1,320 +1,179 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafPics
- Authors: Silvano Imboden
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
-
-
 #include "mafPics.h" 
-#include <map>
-#include <string>
 
-//----------------------------------------------------------------------------
-// mafPictureFactory_Pimpl
-//----------------------------------------------------------------------------
-typedef std::map<mafString,wxImage> mafPicMap;
+#include <map>
 
 struct mafPictureFactory_Pimpl
 {
-  public:
-  mafPicMap map;
-  mafPicMap vme_map; //here are kept the vme icons
+	std::map<mafString, wxImage> map;
+	std::map<mafString, wxImage> vme_map; //here are kept the vme icons
 };
-//----------------------------------------------------------------------------
-// the mafPic Singleton
-//----------------------------------------------------------------------------
-//mafPictureFactory mafPics;
-static bool mafPics_Initialized = false;
+#define mafADDPICINIT(X) Add( _R(#X) , X##_xpm )
 
-//----------------------------------------------------------------------------
 mafPictureFactory::mafPictureFactory()
-//----------------------------------------------------------------------------
 {
-  m_PictureMaps = std::make_unique<mafPictureFactory_Pimpl>();
-}
-//----------------------------------------------------------------------------
-void mafPictureFactory::Initialize()
-//----------------------------------------------------------------------------
-{
-  mafPics_Initialized = true;
-   #include <pic/FRAME_ICON16x16.xpm>
-    mafADDPIC(FRAME_ICON16x16);
-    #include <pic/FRAME_ICON32x32.xpm>
-    mafADDPIC(FRAME_ICON32x32);
-    #include <pic/CLOSE_SASH.xpm>
-    mafADDPIC(CLOSE_SASH);
-    #include <pic/ROLLOUT_CLOSE.xpm>
-    mafADDPIC(ROLLOUT_CLOSE);
-    #include <pic/ROLLOUT_OPEN.xpm>
-    mafADDPIC(ROLLOUT_OPEN);
-    #include <pic/FILE_NEW.xpm>    
-    mafADDPIC(FILE_NEW);
-    #include <pic/FILE_OPEN.xpm>
-    mafADDPIC(FILE_OPEN);
-    #include <pic/FILE_SAVE.xpm>
-    mafADDPIC(FILE_SAVE);
-    #include <pic/FLYTO.xpm>
-    mafADDPIC(FLYTO);
-    #include <pic/INFO.xpm>
-    mafADDPIC(INFO);
-    #include <pic/PRINT.xpm>
-    mafADDPIC(PRINT);
-    #include <pic/PRINT_PREVIEW.xpm>
-    mafADDPIC(PRINT_PREVIEW);
-    #include <pic/SPLASH_SCREEN.xpm>
-    mafADDPIC(SPLASH_SCREEN);
-    #include <pic/MDICHILD_ICON.xpm>
-    mafADDPIC(MDICHILD_ICON);
-    #include <pic/OP_COPY.xpm>
-    mafADDPIC(OP_COPY);
-    #include <pic/OP_DELETE.xpm>
-    mafADDPIC(OP_DELETE);
-    #include <pic/OP_CUT.xpm>
-    mafADDPIC(OP_CUT);
-    #include <pic/OP_PASTE.xpm>
-    mafADDPIC(OP_PASTE);
-    #include <pic/OP_REDO.xpm>
-    mafADDPIC(OP_REDO);
-    #include <pic/OP_UNDO.xpm>
-    mafADDPIC(OP_UNDO);
-    #include <pic/PIC_BACK.xpm>
-    mafADDPIC(PIC_BACK);
-    #include <pic/PIC_BOTTOM.xpm>
-    mafADDPIC(PIC_BOTTOM);
-    #include <pic/PIC_FRONT.xpm>
-    mafADDPIC(PIC_FRONT);
-    #include <pic/PIC_LEFT.xpm>
-    mafADDPIC(PIC_LEFT);
-    #include <pic/PIC_RIGHT.xpm>
-    mafADDPIC(PIC_RIGHT);
-    #include <pic/PIC_TOP.xpm>
-    mafADDPIC(PIC_TOP);
-    #include <pic/TIME_BEGIN.xpm>
-    mafADDPIC(TIME_BEGIN);
-    #include <pic/TIME_END.xpm>      
-    mafADDPIC(TIME_END);
-    #include <pic/TIME_NEXT.xpm>
-    mafADDPIC(TIME_NEXT);
-    #include <pic/TIME_PLAY.xpm>
-    mafADDPIC(TIME_PLAY);
-    #include <pic/TIME_PREV.xpm>
-    mafADDPIC(TIME_PREV);
-    #include <pic/TIME_STOP.xpm>
-    mafADDPIC(TIME_STOP);
-    #include <pic/MOVIE_RECORD.xpm>
-    mafADDPIC(MOVIE_RECORD);
-    #include <pic/ZOOM.xpm>
-    mafADDPIC(ZOOM);
-    #include <pic/ZOOM_ALL.xpm>
-    mafADDPIC(ZOOM_ALL);
-    #include <pic/ZOOM_SEL.xpm>
-    mafADDPIC(ZOOM_SEL);
+	m_PictureMaps = std::make_unique<mafPictureFactory_Pimpl>();
+#include <pic/FRAME_ICON16x16.xpm>
+	mafADDPICINIT(FRAME_ICON16x16);
+#include <pic/FRAME_ICON32x32.xpm>
+	mafADDPICINIT(FRAME_ICON32x32);
+#include <pic/CLOSE_SASH.xpm>
+	mafADDPICINIT(CLOSE_SASH);
+#include <pic/ROLLOUT_CLOSE.xpm>
+	mafADDPICINIT(ROLLOUT_CLOSE);
+#include <pic/ROLLOUT_OPEN.xpm>
+	mafADDPICINIT(ROLLOUT_OPEN);
+#include <pic/FILE_NEW.xpm>    
+	mafADDPICINIT(FILE_NEW);
+#include <pic/FILE_OPEN.xpm>
+	mafADDPICINIT(FILE_OPEN);
+#include <pic/FILE_SAVE.xpm>
+	mafADDPICINIT(FILE_SAVE);
+#include <pic/FLYTO.xpm>
+	mafADDPICINIT(FLYTO);
+#include <pic/INFO.xpm>
+	mafADDPICINIT(INFO);
+#include <pic/PRINT.xpm>
+	mafADDPICINIT(PRINT);
+#include <pic/PRINT_PREVIEW.xpm>
+	mafADDPICINIT(PRINT_PREVIEW);
+#include <pic/SPLASH_SCREEN.xpm>
+	mafADDPICINIT(SPLASH_SCREEN);
+#include <pic/MDICHILD_ICON.xpm>
+	mafADDPICINIT(MDICHILD_ICON);
+#include <pic/OP_COPY.xpm>
+	mafADDPICINIT(OP_COPY);
+#include <pic/OP_DELETE.xpm>
+	mafADDPICINIT(OP_DELETE);
+#include <pic/OP_CUT.xpm>
+	mafADDPICINIT(OP_CUT);
+#include <pic/OP_PASTE.xpm>
+	mafADDPICINIT(OP_PASTE);
+#include <pic/OP_REDO.xpm>
+	mafADDPICINIT(OP_REDO);
+#include <pic/OP_UNDO.xpm>
+	mafADDPICINIT(OP_UNDO);
+#include <pic/PIC_BACK.xpm>
+	mafADDPICINIT(PIC_BACK);
+#include <pic/PIC_BOTTOM.xpm>
+	mafADDPICINIT(PIC_BOTTOM);
+#include <pic/PIC_FRONT.xpm>
+	mafADDPICINIT(PIC_FRONT);
+#include <pic/PIC_LEFT.xpm>
+	mafADDPICINIT(PIC_LEFT);
+#include <pic/PIC_RIGHT.xpm>
+	mafADDPICINIT(PIC_RIGHT);
+#include <pic/PIC_TOP.xpm>
+	mafADDPICINIT(PIC_TOP);
+#include <pic/TIME_BEGIN.xpm>
+	mafADDPICINIT(TIME_BEGIN);
+#include <pic/TIME_END.xpm>      
+	mafADDPICINIT(TIME_END);
+#include <pic/TIME_NEXT.xpm>
+	mafADDPICINIT(TIME_NEXT);
+#include <pic/TIME_PLAY.xpm>
+	mafADDPICINIT(TIME_PLAY);
+#include <pic/TIME_PREV.xpm>
+	mafADDPICINIT(TIME_PREV);
+#include <pic/TIME_STOP.xpm>
+	mafADDPICINIT(TIME_STOP);
+#include <pic/MOVIE_RECORD.xpm>
+	mafADDPICINIT(MOVIE_RECORD);
+#include <pic/ZOOM.xpm>
+	mafADDPICINIT(ZOOM);
+#include <pic/ZOOM_ALL.xpm>
+	mafADDPICINIT(ZOOM_ALL);
+#include <pic/ZOOM_SEL.xpm>
+	mafADDPICINIT(ZOOM_SEL);
 
-    // these are used by the ListCtrl
-    #include <pic/NODE_YELLOW.xpm>
-    mafADDPIC(NODE_YELLOW);
-    #include <pic/NODE_RED.xpm>
-    mafADDPIC(NODE_RED);
-    #include <pic/NODE_BLUE.xpm>
-    mafADDPIC(NODE_BLUE);
-    #include <pic/NODE_GRAY.xpm>
-    mafADDPIC(NODE_GRAY);
+	// these are used by the ListCtrl
+#include <pic/NODE_YELLOW.xpm>
+	mafADDPICINIT(NODE_YELLOW);
+#include <pic/NODE_RED.xpm>
+	mafADDPICINIT(NODE_RED);
+#include <pic/NODE_BLUE.xpm>
+	mafADDPICINIT(NODE_BLUE);
+#include <pic/NODE_GRAY.xpm>
+	mafADDPICINIT(NODE_GRAY);
 
-    #include <pic/DISABLED.xpm>
-    mafADDPIC(DISABLED);
-    #include <pic/RADIO_ON.xpm>
-    mafADDPIC(RADIO_ON);
-    #include <pic/RADIO_OFF.xpm>
-    mafADDPIC(RADIO_OFF);
-    #include <pic/CHECK_ON.xpm>
-    mafADDPIC(CHECK_ON);
-    #include <pic/CHECK_OFF.xpm>
-    mafADDPIC(CHECK_OFF);
+#include <pic/DISABLED.xpm>
+	mafADDPICINIT(DISABLED);
+#include <pic/RADIO_ON.xpm>
+	mafADDPICINIT(RADIO_ON);
+#include <pic/RADIO_OFF.xpm>
+	mafADDPICINIT(RADIO_OFF);
+#include <pic/CHECK_ON.xpm>
+	mafADDPICINIT(CHECK_ON);
+#include <pic/CHECK_OFF.xpm>
+	mafADDPICINIT(CHECK_OFF);
 }
-//----------------------------------------------------------------------------
-mafPictureFactory::~mafPictureFactory()
-//----------------------------------------------------------------------------
+
+mafPictureFactory::~mafPictureFactory() = default;
+
+void mafPictureFactory::Add(const mafString& id, const char** xpm)
 {
+	m_PictureMaps->map[id] = wxImage(xpm);
 }
-//----------------------------------------------------------------------------
-void mafPictureFactory::Add(const mafString& id,const char** xpm)
-//----------------------------------------------------------------------------
+
+wxBitmap mafPictureFactory::GetBmp(const mafString& id) const
 {
-  m_PictureMaps->map[id] = wxImage(xpm);
+	if (auto it = m_PictureMaps->map.find(id); it != m_PictureMaps->map.end())
+	{
+		return it->second;
+	}
+	mafLogMessage(_M(_R("mafPictureFactory: bmp with id = ") + id + _R(" not found")));
+	return wxNullBitmap;
 }
-//----------------------------------------------------------------------------
-wxBitmap mafPictureFactory::GetBmp(const mafString& id)
-//----------------------------------------------------------------------------
+
+wxImage mafPictureFactory::GetImg(const mafString& id) const
 {
-  mafPicMap::iterator it = m_PictureMaps->map.find(id);
-  if (it != m_PictureMaps->map.end())
-    return wxBitmap((*it).second);
-  else
-  {
-    mafLogMessage(_M(_R("mafPictureFactory: bmp with id = ") + id + _R(" not found")));
-    return wxNullBitmap;
-  }
+	if (auto it = m_PictureMaps->map.find(id); it != m_PictureMaps->map.end())
+	{
+		return it->second;
+	}
+	mafLogMessage(_M(_R("mafPictureFactory: img with id = ") + id + _R(" not found")));
+	return wxNullImage;
 }
-//----------------------------------------------------------------------------
-wxImage mafPictureFactory::GetImg(const mafString& id)
-//----------------------------------------------------------------------------
+
+wxIcon mafPictureFactory::GetIcon(const mafString& id) const
 {
-  mafPicMap::iterator it = m_PictureMaps->map.find(id);
-  if (it != m_PictureMaps->map.end())
-    return (*it).second;
-  else
-  {
-    mafLogMessage(_M(_R("mafPictureFactory: img with id = ") + id + _R(" not found")));
-    return wxNullImage;
-  }
+	if (auto it = m_PictureMaps->map.find(id); it != m_PictureMaps->map.end())
+	{
+		wxIcon icon;
+		icon.CopyFromBitmap(it->second);
+		return icon;
+	}
+	mafLogMessage(_M(_R("mafPictureFactory: icon with id = ") + id + _R(" not found")));
+	return wxNullIcon;
 }
-//----------------------------------------------------------------------------
-wxIcon mafPictureFactory::GetIcon(const mafString& id)
-//----------------------------------------------------------------------------
+
+void mafPictureFactory::AddVmePic(const mafString& id, const char** xpm)
 {
-  mafPicMap::iterator it = m_PictureMaps->map.find(id);
-  if (it != m_PictureMaps->map.end())
-  {
-    wxBitmap bmp = wxBitmap((*it).second);
-    wxIcon icon;
-    icon.CopyFromBitmap(bmp);
-    return icon;
-  }
-  else
-  {
-    mafLogMessage(_M(_R("mafPictureFactory: icon with id = ") + id + _R(" not found")));
-    return wxNullIcon;
-  }
+	m_PictureMaps->vme_map[id] = wxImage(xpm);
 }
-//----------------------------------------------------------------------------
-void mafPictureFactory::AddVmePic(const mafString& id,const char** xpm)
-//----------------------------------------------------------------------------
+
+wxBitmap mafPictureFactory::GetVmePic(const mafString& id) const
 {
-  m_PictureMaps->vme_map[id] = wxImage(xpm);
+	if (auto it = m_PictureMaps->vme_map.find(id); it != m_PictureMaps->vme_map.end())
+	{
+		return it->second;
+	}
+	mafLogMessage(_M(_R("mafPictureFactory: vme-pic with id = ") + id + _R(" not found")));
+	return wxNullBitmap;
+
 }
-//----------------------------------------------------------------------------
-wxBitmap mafPictureFactory::GetVmePic(const mafString& id)
-//----------------------------------------------------------------------------
+
+std::vector<mafString> mafPictureFactory::GetVmeNames() const
 {
-  mafPicMap::iterator it = m_PictureMaps->vme_map.find(id);
-  if (it != m_PictureMaps->vme_map.end())
-    return wxBitmap((*it).second);
-  else
-  {
-      mafLogMessage(_M(_R("mafPictureFactory: vme-pic with id = ") + id + _R(" not found")));
-    return wxNullBitmap;
-  }
+	std::vector<mafString> v;
+	for (auto& entry : m_PictureMaps->vme_map)
+	{
+		v.push_back(entry.first);
+	}
+	return v;
 }
-//----------------------------------------------------------------------------
-std::vector<mafString> mafPictureFactory::GetVmeNames()
-//----------------------------------------------------------------------------
-{
-  std::vector<mafString> v;
-  for (mafPicMap::iterator it = m_PictureMaps->vme_map.begin(); it != m_PictureMaps->vme_map.end(); it++)
-  {
-    v.push_back(it->first);
-  }
-  return v;
-}
-//----------------------------------------------------------------------------
+
 mafPictureFactory* mafPictureFactory::GetPictureFactory()
-//----------------------------------------------------------------------------
 {
-  static mafPictureFactory pictureFactory;
-  return &pictureFactory;
+	static mafPictureFactory pictureFactory;
+	return &pictureFactory;
 }
-//----------------------------------------------------------------------------
-bool mafPictureFactory::GetPicsInitialized()
-//----------------------------------------------------------------------------
-{
-  return mafPics_Initialized;
-}
-/*
-NOTE FOR SILVANO
-
-#include "mafPic.h"
-#include "vme.xpm"
-mafAddPic(vme_xpm);            //syntax error
-int foo = mafAddPic(vme_xpm);  //correct, but will be called before ThePicMap has been created
-*/
-
-#ifdef MAF_USE_VTK
-    #include "vtkUnsignedCharArray.h"
-    #include "vtkPointData.h"
-
-    //----------------------------------------------------------------------------
-    vtkImageData* mafPictureFactory::GetVTKImg(const mafString& id)
-    //----------------------------------------------------------------------------
-    {
-      mafPicMap::iterator it = m_PictureMaps->map.find(id);
-      if (it == m_PictureMaps->map.end())
-      {
-          mafLogMessage(_M(_R("mafPictureFactory: icon with id = ") + id + _R(" not found")));
-        return NULL;
-      }
-
-      wxBitmap bmp = wxBitmap((*it).second);
-      wxImage  img = bmp.ConvertToImage();
-      wxImage  flipped = img.Mirror(false); // flip vertical
-
-      bool HasMask = img.HasMask();
-      unsigned char maskR, maskG, maskB;
-      int NumberOfComponents = 3;
-      if(HasMask)
-      {
-        maskR = img.GetMaskRed();
-        maskG = img.GetMaskGreen();
-        maskB = img.GetMaskBlue();
-        NumberOfComponents = 4;
-      }
-
-      vtkUnsignedCharArray *buffer;
-      vtkNEW(buffer);
-      buffer->SetNumberOfComponents(NumberOfComponents);
-
-      unsigned char *p = flipped.GetData();
-      assert(p);
-      for(int i=0; i < img.GetWidth() * img.GetHeight(); i++)
-      {
-        unsigned char r = *p++;
-        unsigned char g = *p++;
-        unsigned char b = *p++;
-        unsigned char alpha = 255;
-
-        if(HasMask)
-        {
-          if( r == maskR && g == maskG && b == maskB ) alpha = 0;
-          buffer->InsertNextTuple4( r, g, b, alpha );
-        }
-        else
-          buffer->InsertNextTuple3( r, g, b );
-      }
-
-      vtkImageData *vtkimg;
-      vtkNEW(vtkimg);
-      vtkimg->SetDimensions( img.GetWidth(), img.GetHeight(), 1 );
-      vtkimg->AllocateScalars(VTK_UNSIGNED_CHAR, NumberOfComponents);
-      assert( vtkimg->GetPointData() );
-      vtkimg->GetPointData()->SetScalars(buffer);
-      return  vtkimg; // SHOULD BE DELETED BY THE CALLER 
-    }
-#endif  //MAF_USE_VTK
