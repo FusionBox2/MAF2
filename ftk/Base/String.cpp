@@ -371,6 +371,15 @@ std::string mafStringToStd(const mafString& str)
 	return str.c_str().GetBuf();
 }
 
+mafString mafStdToString(const std::string& str)
+{
+#ifndef FUNCTIONAL_STRBUF
+	return str.c_str();
+#else
+	return mafStrBuf::MakeBuf(str.c_str());
+#endif
+}
+
 mafString mafToString(int d)
 {
 	return mafString::Format(_R("%d"), d);
