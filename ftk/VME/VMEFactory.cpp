@@ -140,29 +140,29 @@ int VMEFactory::Initialize()
   //TODO: to be committed down
   mafPlugNodeMacro(mafVMEVolumeLarge, "VME storing large volume datasets with one scalar component");
 
-  mafPlugNode<mafVMERawMotionData>("VME representing raw motion data");
-  mafPlugNode<mafVMEAFRefSys>("VME representing anatomical frame");
-  mafPlugNode<mafVMEHelAxis>("VME representing helical axis");
-  mafPlugNode<mafVMEC3DData>("VME representing C3D data");
-  mafPlugNode<mafVMEPGDData>("VME representing PGD data");
-  mafPlugNode<mafVMEArrow>("VME representing helical axis");
-  mafPlugNode<lhpVMELeverArm>("VME representing lever arm");
-  mafPlugNode<lhpVMELMCLines>("VME representing lines between landmarks of cloud");
-  mafPlugNode<mafVMEBSplineLine>("VME representing B-spline line");
-  mafPlugNode<mafVMEBSplineSurface>("VME representing B-spline surface");
-  mafPlugNode<mafVMEBSplineVolume>("VME representing B-spline volume");
-  mafPlugNode<mafVMESurfaceRegParam>("VME representing regression parametric surface");
-  mafPlugNode<mafVMEVolumeLarge>("VME storing large volume datasets with one scalar component");
+  mafPlugNodeMacro(mafVMERawMotionData, "VME representing raw motion data");
+  mafPlugNodeMacro(mafVMEAFRefSys, "VME representing anatomical frame");
+  mafPlugNodeMacro(mafVMEHelAxis, "VME representing helical axis");
+  mafPlugNodeMacro(mafVMEC3DData, "VME representing C3D data");
+  mafPlugNodeMacro(mafVMEPGDData, "VME representing PGD data");
+  mafPlugNodeMacro(mafVMEArrow, "VME representing helical axis");
+  mafPlugNodeMacro(lhpVMELeverArm, "VME representing lever arm");
+  mafPlugNodeMacro(lhpVMELMCLines, "VME representing lines between landmarks of cloud");
+  mafPlugNodeMacro(mafVMEBSplineLine, "VME representing B-spline line");
+  mafPlugNodeMacro(mafVMEBSplineSurface, "VME representing B-spline surface");
+  mafPlugNodeMacro(mafVMEBSplineVolume, "VME representing B-spline volume");
+  mafPlugNodeMacro(mafVMESurfaceRegParam, "VME representing regression parametric surface");
+  mafPlugNodeMacro(mafVMEVolumeLarge, "VME storing large volume datasets with one scalar component");
 
-  mafPlugNode<lhpVMEKMInfo>("VME storing large volume datasets with one scalar component");
+  mafPlugNodeMacro(lhpVMEKMInfo, "VME storing large volume datasets with one scalar component");
 
-  mafPlugNode<medVMEComputeWrapping>("Generalized another VME Meter with wrapping geometry");
+  mafPlugNodeMacro(medVMEComputeWrapping, "Generalized another VME Meter with wrapping geometry");
 #ifdef MAF_USE_ITK
-  mafPlugNode<lhpVMESurfaceScalarVarying>("VME representing surface with attached time varying mafVMEScalar");
+  mafPlugNodeMacro(lhpVMESurfaceScalarVarying, "VME representing surface with attached time varying mafVMEScalar");
 #endif
 
   //BES: 14.11.2008 - some stupid VME to demonstrate muscle wrapping
-  mafPlugNode<medVMEMuscleWrapper>("Procedural VME representing muscle deformed according to its action lines");
+  mafPlugNodeMacro(medVMEMuscleWrapper, "Procedural VME representing muscle deformed according to its action lines");
 
   return MAF_OK;
 }
