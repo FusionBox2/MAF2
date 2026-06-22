@@ -31,17 +31,11 @@
 #include "ftk/Core/AttributeFactory.h"
 #include "ftk/VME/ItemFactory.h"
 #include "ftk/Core/NodeFactory.h" 
-#include "mafNodeRoot.h"
-#include "mafVMERoot.h"
-#include "mafVMESurface.h"
-#include "mafVMELandmark.h" 
 #include "ftk/VME/PipeFactoryVME.h"
 #include "ftk/Core/PipeFactory.h"
 #include "mafPipeVolumeSlice.h"
 #include "medPipeVolumeDRR.h"
 #include "medPipeTrajectories.h" 
-#include "mafVMEAFRefSys.h" 
-#include "mafVMEHelAxis.h" 
 #include "mafOpSelect.h"
 #include "mafOpDecomposeTimeVarVME.h"
 #include "mafOpImporterMSF.h"
@@ -162,7 +156,6 @@
 
 #include "mafOpCrop3DSurface.h"
 #include "medOpComputeWrapping.h"
-#include "medVMEComputeWrapping.h"
 #include "medPipeComputeWrapping.h"
 #include "medGUIDicomSettings.h"
 
@@ -174,13 +167,11 @@
 
 #ifdef MAF_USE_ITK
 #include "lhpOpCreateSurfaceScalar.h"
-#include "lhpVMESurfaceScalarVarying.h"
 #endif
 #include "lhpVisualPipeSurfaceScalar.h"
 
 //BES: 14.11.2008 - added muscle wrapping
 #include "medOpCreateMuscleWrapper.h"
-#include "medVMEMuscleWrapper.h"
 #include "medOpMeshDeformation.h"
 
 #include <vtkTimerLog.h>
@@ -190,15 +181,6 @@
 #include "lhpPipeIntGraphPolyline.h"
 #include "lhpPipeIntGraphAnalog.h"
 #include "lhpPipeLeverArm.h"
-#include "lhpVMELMCLines.h" 
-#include "mafVMEArrow.h" 
-#include "mafVMEC3DData.h" 
-#include "mafVMEPGDData.h" 
-#include "mafVMEBSplineLine.h"
-#include "mafVMEBSplineSurface.h"
-#include "mafVMEBSplineVolume.h"
-#include "lhpVMELeverArm.h"
-#include "mafVMESurfaceRegParam.h"
 #include "lhpOpFingerStick.h"
 #include "lhpOpMTRULBImporter.h"
 #include "lhpOpSoftReg.h"
@@ -220,14 +202,15 @@
 #include "lhpOpICPRegFollow.h"
 #include "lhpOpImporterRSScan.h"
 #include "lhpOpCutSurface.h"
-#include "vtkUnstructuredGrid.h"
-#include "vtkSmartPointer.h"
-#include "vtkTransformFilter.h"
-#include "vtkStructuredPoints.h"
 
-#include "lhpVMEKMInfo.h"
 #include "lhpPipeInfo.h"
 #include "lhpViewInfo.h"
+#include "lhpVMELMCLines.h" 
+#include "mafVMEPGDData.h" 
+#include "mafVMEBSplineLine.h"
+#include "mafVMEBSplineSurface.h"
+#include "mafVMEBSplineVolume.h"
+#include "lhpVMELeverArm.h"
 
 
 // TODO: REFACTOR THIS 
@@ -532,31 +515,7 @@ bool lhpFusionBoxApp::OnInit()
 	assert(result == MAF_OK);
 
 
-	mafPlugNode<mafVMERawMotionData>("VME representing raw motion data");
-	mafPlugNode<mafVMEAFRefSys>("VME representing anatomical frame");
-	mafPlugNode<mafVMEHelAxis>("VME representing helical axis");
-	mafPlugNode<mafVMEC3DData>("VME representing C3D data");
-	mafPlugNode<mafVMEPGDData>("VME representing PGD data");
-	mafPlugNode<mafVMEArrow>("VME representing helical axis");
-	mafPlugNode<lhpVMELeverArm>("VME representing lever arm");
-	mafPlugNode<lhpVMELMCLines>("VME representing lines between landmarks of cloud");
-	mafPlugNode<mafVMEBSplineLine>("VME representing B-spline line");
-	mafPlugNode<mafVMEBSplineSurface>("VME representing B-spline surface");
-	mafPlugNode<mafVMEBSplineVolume>("VME representing B-spline volume");
-	mafPlugNode<mafVMESurfaceRegParam>("VME representing regression parametric surface");
-	mafPlugNode<mafVMEVolumeLarge>("VME storing large volume datasets with one scalar component");
-
-	mafPlugNode<lhpVMEKMInfo>("VME storing large volume datasets with one scalar component");
-
-	mafPlugNode<medVMEComputeWrapping>("Generalized another VME Meter with wrapping geometry");
 	mafPlugPipe<medPipeComputeWrapping>("Pipe to Visualize Compute Wrapping Meter");
-
-#ifdef MAF_USE_ITK
-	mafPlugNode<lhpVMESurfaceScalarVarying>("VME representing surface with attached time varying mafVMEScalar");
-#endif
-
-	//BES: 14.11.2008 - some stupid VME to demonstrate muscle wrapping
-	mafPlugNode<medVMEMuscleWrapper>("Procedural VME representing muscle deformed according to its action lines");
 
 	mafPlugPipe<lhpVisualPipeSurfaceScalar>("Visual pipe to render a surface with its scalar values");
 	mafPlugPipe<lhpPipeIntGraph>("Visual pipe for biomechanical graph");
