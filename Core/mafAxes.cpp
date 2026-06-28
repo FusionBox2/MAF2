@@ -1,26 +1,3 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafAxes
- Authors: Silvano Imboden , Stefano perticoni
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
 
 #include "mafAxes.h"
 
@@ -43,37 +20,24 @@
 #include "vtkMAFAnnotatedCubeActor.h"
 #include "vtkMAFGlobalAxesHeadActor.h"
 
-//----------------------------------------------------------------------------
-mafAxes::mafAxes(vtkRenderer *ren, mafVME* vme, int axesType)
-//----------------------------------------------------------------------------
+mafAxes::mafAxes(vtkRenderer* ren, mafVME* vme, int axesType)
 {
 	m_AxesType = axesType;
-	m_OrientationMarkerWidget = NULL;
-	m_AnnotatedCubeActor = NULL;
-	m_GlobalAxesHeadActor = NULL;
-	m_Coord = NULL;
-	m_AxesLUT = NULL;
 
 	m_Vme = vme;
 	m_Renderer = ren;
-	m_AxesType = axesType;
 
-	m_AxesActor2D = NULL;
-	m_AxesMapper2D = NULL;
-	m_TriadAxes = NULL;
-	
 	assert(m_Renderer);
 
 	if (m_AxesType == TRIAD)
 	{
-
 		m_TriadAxes = vtkAxes::New();
 		m_TriadAxes->SetScaleFactor(1);
 
-		if(m_Vme)
+		if (m_Vme)
 		{
-			m_Vme->GetOutput()->Update();  
-			vtkMAFLocalAxisCoordinate *localAxisCoord = vtkMAFLocalAxisCoordinate::New();
+			m_Vme->GetOutput()->Update();
+			vtkMAFLocalAxisCoordinate* localAxisCoord = vtkMAFLocalAxisCoordinate::New();
 			m_Coord = localAxisCoord;
 			localAxisCoord->SetMatrix(m_Vme->GetAbsMatrixPipe()->GetMatrix().GetVTKMatrix());
 			localAxisCoord->SetDataSet(m_Vme->GetOutput()->GetVTKData());
@@ -81,13 +45,13 @@ mafAxes::mafAxes(vtkRenderer *ren, mafVME* vme, int axesType)
 		else
 		{
 			m_Coord = vtkMAFGlobalAxisCoordinate::New();
-		}	
+		}
 
 		m_AxesLUT = vtkLookupTable::New();
 		m_AxesLUT->SetNumberOfTableValues(3);
-		m_AxesLUT->SetTableValue(0,1,0,0,1);
-		m_AxesLUT->SetTableValue(1,0,1,0,1);
-		m_AxesLUT->SetTableValue(2,0,0,1,1);
+		m_AxesLUT->SetTableValue(0, 1, 0, 0, 1);
+		m_AxesLUT->SetTableValue(1, 0, 1, 0, 1);
+		m_AxesLUT->SetTableValue(2, 0, 0, 1, 1);
 
 		m_AxesMapper2D = vtkPolyDataMapper2D::New();
 		m_AxesMapper2D->SetInputConnection(m_TriadAxes->GetOutputPort());
@@ -96,11 +60,11 @@ mafAxes::mafAxes(vtkRenderer *ren, mafVME* vme, int axesType)
 		m_AxesMapper2D->SetTransformCoordinate(m_Coord);
 		m_AxesMapper2D->SetLookupTable(m_AxesLUT);
 
-		m_AxesMapper2D->SetScalarRange(0,0.5);
+		m_AxesMapper2D->SetScalarRange(0, 0.5);
 		m_AxesMapper2D->ScalarVisibilityOn();
 
 		m_AxesActor2D = vtkActor2D::New();
-		m_AxesActor2D->SetMapper(m_AxesMapper2D); 
+		m_AxesActor2D->SetMapper(m_AxesMapper2D);
 		m_AxesActor2D->GetProperty()->SetLineWidth(2);
 		m_AxesActor2D->VisibilityOff();
 		m_AxesActor2D->PickableOff();
@@ -121,16 +85,18 @@ mafAxes::mafAxes(vtkRenderer *ren, mafVME* vme, int axesType)
 	else if (m_AxesType == HEAD)
 	{
 		m_GlobalAxesHeadActor = vtkMAFGlobalAxesHeadActor::New();
-    m_OrientationMarkerWidget = vtkMAFOrientationMarkerWidget::New();
-    if(m_Vme)
-      m_GlobalAxesHeadActor->SetInitialPose(m_Vme->GetAbsMatrixPipe()->GetMatrix().GetVTKMatrix());
+		m_OrientationMarkerWidget = vtkMAFOrientationMarkerWidget::New();
+		if (m_Vme)
+		{
+			m_GlobalAxesHeadActor->SetInitialPose(m_Vme->GetAbsMatrixPipe()->GetMatrix().GetVTKMatrix());
+		}
 
 		wxString headABSFileName = m_GlobalAxesHeadActor->GetHeadABSFileName().c_str();
 
 		wxString cwd = wxGetCwd().c_str();
 		std::ostringstream stringStream;
-		stringStream << "Head ABS file name: " << headABSFileName.c_str() << std::endl;          
-		
+		stringStream << "Head ABS file name: " << headABSFileName.c_str() << std::endl;
+
 		mafLogMessage(_M(stringStream.str().c_str()));
 		bool exists = wxFileExists(headABSFileName.c_str());
 		assert(exists);
@@ -157,47 +123,49 @@ mafAxes::mafAxes(vtkRenderer *ren, mafVME* vme, int axesType)
 	}
 
 }
-//----------------------------------------------------------------------------
+
 mafAxes::~mafAxes()
-//----------------------------------------------------------------------------
 {
 	vtkDEL(m_AnnotatedCubeActor);
 	vtkDEL(m_GlobalAxesHeadActor);
 
-	if (m_OrientationMarkerWidget != NULL) m_OrientationMarkerWidget->SetInteractor(NULL);
+	if (m_OrientationMarkerWidget != nullptr)
+	{
+		m_OrientationMarkerWidget->SetInteractor(nullptr);
+	}
 	vtkDEL(m_OrientationMarkerWidget);
 
 	m_Renderer->RemoveActor2D(m_AxesActor2D);
 	vtkDEL(m_TriadAxes);
 	vtkDEL(m_Coord);
-	
+
 	vtkDEL(m_AxesMapper2D);
 	vtkDEL(m_AxesActor2D);
 
 	vtkDEL(m_AxesLUT);
 }
-//----------------------------------------------------------------------------
+
 void mafAxes::SetVisibility(bool show)
-//----------------------------------------------------------------------------
 {
-	if(m_AxesType == TRIAD)
+	if (m_AxesType == TRIAD)
+	{
 		m_AxesActor2D->SetVisibility(show);
+	}
 	else if (m_AxesType == CUBE)
+	{
 		m_AnnotatedCubeActor->SetVisibility(show);
+	}
 }
-//----------------------------------------------------------------------------
-void mafAxes::SetPose( vtkMatrix4x4 *abs_pose_matrix )
-//----------------------------------------------------------------------------
+
+void mafAxes::SetPose(vtkMatrix4x4* abs_pose_matrix)
 {
 	// WARNING - I am assuming that if m_Vme != NULL --> m_Coord ISA vtkMAFLocalAxisCoordinate
-	if(!m_Vme) return;
+	if (!m_Vme) return;
 	assert(m_Coord);
-	vtkMAFLocalAxisCoordinate *coord = (vtkMAFLocalAxisCoordinate*) m_Coord; 
-	if( abs_pose_matrix )
+	vtkMAFLocalAxisCoordinate* coord = (vtkMAFLocalAxisCoordinate*)m_Coord;
+	if (abs_pose_matrix)
 		coord->SetMatrix(abs_pose_matrix);
 	else
 		coord->SetMatrix(m_Vme->GetAbsMatrixPipe()->GetMatrix().GetVTKMatrix());
 	coord->Modified();
 }
-
-

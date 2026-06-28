@@ -1,25 +1,7 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafAxes
- Authors: Silvano Imboden , Stefano perticoni
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
+#include "ftkConfigure.h"
 
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-#ifndef __mafAxes_h
-#define __mafAxes_h
-
-//----------------------------------------------------------------------------
-// forward declarations :
-//----------------------------------------------------------------------------
 class mafVME;
 class vtkRenderer;
 class vtkAxes;
@@ -33,30 +15,29 @@ class vtkMAFAnnotatedCubeActor;
 class vtkMAFOrientationMarkerWidget;
 class vtkMAFGlobalAxesHeadActor;
 
-//----------------------------------------------------------------------------
 class MAF_EXPORT mafAxes
 	//----------------------------------------------------------------------------
 	/**
 	Create 3D axes representation and insert them in the passed renderer: axes can be global (World Coordinates
 	reference system )or local ( VME reference system ).
-	
+
 	Axes representation can be:
 	TRIAD: Common 3D refsys featuring 3 orthogonal axes
 	CUBE: A rotating cube featuring orientation feedback letters on cube faces
-    HEAD: A rotating head
+	HEAD: A rotating head
 
 	Some API use cases follows.
 
 	mafAxes(renderer, NULL, TRIAD); => Create a global axis triad 2D actor in the passed renderer
 	mafAxes(renderer, vme, TRIAD); => Create a vme local axis triad 2D actor in the passed renderer
-	
+
 	mafAxes(renderer, NULL, CUBE); => Create a 3D global axes cube on a new renderer and on a superimposed layer
 	//mafAxes(renderer, vme, CUBE); => BEWARE !!! NOT SUPPORTED !!!
-	
+
 	mafAxes(renderer, NULL, HEAD); => Create a 3D global axes head on a new renderer and on a superimposed layer
 	mafAxes(renderer, vme, HEAD); => Create a 3D local axes head on a new renderer and on a superimposed layer
-	
-	If a vme is provided, the axes will represent 
+
+	If a vme is provided, the axes will represent
 	the local vme-reference system.
 
 	If vme is NULL, the axes will represent the global
@@ -78,31 +59,27 @@ public:
 	};
 
 	/** Constructor note: given renderer ren cannot be NULL */
-	mafAxes(vtkRenderer *ren, mafVME* vme = NULL, int axesType = TRIAD);
+	mafAxes(vtkRenderer* ren, mafVME* vme = nullptr, int axesType = TRIAD);
 	virtual ~mafAxes();
 
 	/** Set the axes visibility. */
 	void     SetVisibility(bool show);
 
-	/** Force the position of the Axes, if omitted the ABS vme matrix is used instead. 
+	/** Force the position of the Axes, if omitted the ABS vme matrix is used instead.
 	Works only if a vme was specified in the constructor*/
-	void     SetPose( vtkMatrix4x4 *abs_pose_matrix = NULL);
+	void     SetPose(vtkMatrix4x4* abs_pose_matrix = nullptr);
 
 protected:
 
-	mafVME      *m_Vme;
-	vtkRenderer *m_Renderer;
-	vtkAxes                *m_TriadAxes;
-	vtkPolyDataMapper2D		 *m_AxesMapper2D;
-	vtkCoordinate 				 *m_Coord;
-	vtkActor2D						 *m_AxesActor2D;
-	vtkLookupTable				 *m_AxesLUT;
+	mafVME* m_Vme;
+	vtkRenderer* m_Renderer;
 	int m_AxesType;
-	vtkMAFOrientationMarkerWidget* m_OrientationMarkerWidget ;
-	vtkMAFAnnotatedCubeActor* m_AnnotatedCubeActor;
-	vtkMAFGlobalAxesHeadActor *m_GlobalAxesHeadActor ;
-
-	/** friend test class */
-	friend class mafAxesTest;
+	vtkLookupTable* m_AxesLUT = nullptr;
+	vtkActor2D* m_AxesActor2D = nullptr;
+	vtkPolyDataMapper2D* m_AxesMapper2D = nullptr;
+	vtkCoordinate* m_Coord = nullptr;
+	vtkAxes* m_TriadAxes = nullptr;
+	vtkMAFOrientationMarkerWidget* m_OrientationMarkerWidget = nullptr;
+	vtkMAFGlobalAxesHeadActor* m_GlobalAxesHeadActor = nullptr;
+	vtkMAFAnnotatedCubeActor* m_AnnotatedCubeActor = nullptr;
 };
-#endif
