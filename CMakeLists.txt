@@ -72,6 +72,7 @@ if(wxWidgets_FOUND)
   link_libraries(${wxWidgets_LIBRARIES})
 endif(wxWidgets_FOUND)
 
+add_subdirectory(ftk)
 add_subdirectory(Application)
 add_subdirectory(Base)
 add_subdirectory(Common)
