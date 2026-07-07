@@ -3486,11 +3486,11 @@ void vtkMEDPolyDataNavigator::SubdivideCells(vtkPolyData *polydata,  vtkIdList *
       //
       //        a+1                       a+1
       //         /\                       /\
-      //        /  \                     /  \ 
+      //        /  \                     /  \_ 
       //      a+2 - a                   /    a 
-      //      /    / \                 /    /|\
-      //     /   /    \               /   /  | \
-      //    / /        \             / /     |  \
+      //      /    / \                 /    /|\_
+      //     /   /    \               /   /  | \_
+      //    / /        \             / /     |  \_
       //  a+3----------a+4         a+2-----a+3--a+4
       //
 
@@ -3514,12 +3514,12 @@ void vtkMEDPolyDataNavigator::SubdivideCells(vtkPolyData *polydata,  vtkIdList *
       // a + (0,1,2), (0,2,3)
       //
       //        a+1
-      //         /\
-      //        /  \
+      //         /\_
+      //        /  \_
       //       /    a
-      //      /    / \
-      //     /   /    \
-      //    / /        \
+      //      /    / \_
+      //     /   /    \_
+      //    / /        \_
       //  a+2----------a+3
       //
 
