@@ -450,11 +450,11 @@ void vtkMEDStentModelSource::setCenterLineForInphaseShort(
   // calculate the distance between crowns
 
   //       ____________________     
-  //                  /|\      
+  //                  /|\_      
   //       __________/_|_\_______top    
-  //                /  |  \   
+  //                /  |  \_   
   //   ____________/___|___\_______bottom
-  //              /   / \   \
+  //              /   / \   \_
 
   int overLayNumber;                                                       
   double topLength,bottomLength;                                          
@@ -3395,7 +3395,7 @@ void vtkMEDStentModelSource::createBardStruts2(){
     theStrut.startVertex = sampleNumberPerCircle*i+j;//18_14
     theStrut.endVertex = sampleNumberPerCircle*(i+1)+j+2;//   /
     m_StrutsList.push_back(theStrut);
-    theStrut.startVertex = sampleNumberPerCircle*i+j+2;//18_16  \  
+    theStrut.startVertex = sampleNumberPerCircle*i+j+2;//18_16    
     theStrut.endVertex =  sampleNumberPerCircle*(i+1)+j+2;
     m_StrutsList.push_back(theStrut);	
 
