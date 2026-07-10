@@ -499,7 +499,7 @@ class NativeCheckboxBundleImpl : public wxBitmapBundleImpl
 		return *images;
 	}
 
-	wxAcceleratorEntry* SetAccelerator(const wxString& name, long id)
+	wxAcceleratorEntry* SetAccelerator(const wxString& name, int id)
 	{
 		wxString accelerator = name;
 		wxString flag;

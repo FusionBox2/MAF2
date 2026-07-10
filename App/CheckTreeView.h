@@ -2,7 +2,7 @@
 
 #include "ftkConfigure.h"
 
-#include "ftk/gui/wx/TreeView.h"
+#include "ftk/Gui/wx/TreeView.h"
 
 BEGIN_FTK_NAMESPACE
 
@@ -32,7 +32,7 @@ private:
 
 	//void initializeImageList();
 
-	std::unique_ptr<wxImageList> m_images;
+	//std::unique_ptr<wxImageList> m_images;
 	//int m_checkedIcon;
 	//int m_uncheckedIcon;
 };

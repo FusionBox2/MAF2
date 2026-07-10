@@ -29,7 +29,7 @@ CheckTreeView::~CheckTreeView()
 
 void CheckTreeView::setImages(std::unique_ptr<wxImageList> images)
 {
-	m_images = std::move(images);
+	//m_images = std::move(images);
 	//m_tree->SetImageList(m_images.get());
 }
 
