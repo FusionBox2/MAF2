@@ -38,7 +38,7 @@ namespace core
 
 		//OpChangePropertyT(IProperty& property, T&& newValue, const std::string& label = "Change ")
 		OperationChangePropertyT(IProperty& property, T newValue, const base::String& label = _R("Change "))
-			: core::Operation(true, label + property.id())
+			: core::Operation(label + property.id())
 			, m_property(property)
 			, m_newValue(std::move(newValue))
 		{

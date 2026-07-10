@@ -6,6 +6,8 @@
 
 #include "ftk/Core/OperationChangeProperty.h"
 
+#include "ftk/Core/OperationManager.h"
+
 #include <memory>
 
 BEGIN_FTK_NAMESPACE
