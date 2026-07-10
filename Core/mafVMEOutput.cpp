@@ -40,32 +40,22 @@
 #include <vtkDataSet.h>
 #endif
 
-//-------------------------------------------------------------------------
-mafCxxAbstractTypeMacro(mafVMEOutput)
-//-------------------------------------------------------------------------
 
-//-------------------------------------------------------------------------
 mafVMEOutput::mafVMEOutput()
-//-------------------------------------------------------------------------
 {
-	m_VME = NULL;
 	m_Transform = mafTransform::NewSPtr(); // Transform is created by VME 
 }
 
 mafVMEOutput::~mafVMEOutput() = default;
 
 #ifdef MAF_USE_VTK
-//-------------------------------------------------------------------------
 vtkAlgorithmOutput* mafVMEOutput::GetVTKOutputPort()
-//-------------------------------------------------------------------------
 {
 	assert(m_VME);
 	return m_VME && m_VME->GetDataPipe() ? m_VME->GetDataPipe()->GetVTKOutputPort() : nullptr;
 }
 
-//-------------------------------------------------------------------------
 vtkDataSet* mafVMEOutput::GetVTKData()
-//-------------------------------------------------------------------------
 {
 	assert(m_VME);
 	vtkAlgorithmOutput* port = GetVTKOutputPort();
@@ -78,31 +68,26 @@ vtkDataSet* mafVMEOutput::GetVTKData()
 }
 #endif
 
-//-------------------------------------------------------------------------
 void mafVMEOutput::Update()
-//-------------------------------------------------------------------------
 {
 	assert(m_VME);
 
 	m_VME->Update();
 }
 
-//-------------------------------------------------------------------------
 void mafVMEOutput::SetTransform(std::shared_ptr<mafTransformBase> trans)
-//-------------------------------------------------------------------------
 {
 	assert(trans);
 	m_Transform = trans;
 }
-//-------------------------------------------------------------------------
+
 void mafVMEOutput::SetBounds(const mafOBB& bounds)
-//-------------------------------------------------------------------------
 {
 	m_Bounds = bounds;
 }
-//-------------------------------------------------------------------------
+
 void mafVMEOutput::GetLocalTimeBounds(mafTimeStamp tbounds[2]) const
-//-------------------------------------------------------------------------
+
 {
 	// Paolo 09-01-2008: Commented and substituted by code below.
 	/*std::vector<mafTimeStamp> tstamps;
@@ -122,9 +107,8 @@ void mafVMEOutput::GetLocalTimeBounds(mafTimeStamp tbounds[2]) const
 	m_VME->GetLocalTimeBounds(tbounds);
 
 }
-//-------------------------------------------------------------------------
+
 void mafVMEOutput::GetTimeBounds(mafTimeStamp tbounds[2]) const
-//-------------------------------------------------------------------------
 {
 	assert(m_VME);
 
@@ -150,18 +134,14 @@ void mafVMEOutput::GetTimeBounds(mafTimeStamp tbounds[2]) const
 	}
 }
 
-//-------------------------------------------------------------------------
 void mafVMEOutput::GetVME4DBounds(double bounds[6]) const
-//-------------------------------------------------------------------------
 {
 	mafOBB myBounds;
 	GetVME4DBounds(myBounds);
 	myBounds.CopyTo(bounds);
 }
 
-//-------------------------------------------------------------------------
 void mafVMEOutput::GetVME4DBounds(mafOBB& bounds) const
-//-------------------------------------------------------------------------
 {
 	assert(m_VME);
 
@@ -199,18 +179,15 @@ void mafVMEOutput::GetVME4DBounds(mafOBB& bounds) const
 	}
 
 }
-//-------------------------------------------------------------------------
+
 void mafVMEOutput::GetVMEBounds(double bounds[6]) const
-//-------------------------------------------------------------------------
 {
 	mafOBB myBounds;
 	GetVMEBounds(myBounds);
 	myBounds.CopyTo(bounds);
 }
 
-//-------------------------------------------------------------------------
 void mafVMEOutput::GetVMEBounds(mafOBB& bounds, mafTimeStamp t) const
-//-------------------------------------------------------------------------
 {
 	assert(m_VME);
 	if (m_VME->IsVisible())
@@ -225,18 +202,14 @@ void mafVMEOutput::GetVMEBounds(mafOBB& bounds, mafTimeStamp t) const
 	}
 }
 
-//-------------------------------------------------------------------------
 void mafVMEOutput::GetVMELocalBounds(double bounds[6]) const
-//-------------------------------------------------------------------------
 {
 	mafOBB myBounds;
 	GetVMELocalBounds(myBounds);
 	myBounds.CopyTo(bounds);
 }
 
-//-------------------------------------------------------------------------
 void mafVMEOutput::GetVMELocalBounds(mafOBB& bounds, mafTimeStamp t) const
-//-------------------------------------------------------------------------
 {
 	if (t < 0)
 		t = m_VME->GetTimeStamp();
@@ -249,9 +222,7 @@ void mafVMEOutput::GetVMELocalBounds(mafOBB& bounds, mafTimeStamp t) const
 	}
 }
 
-//-------------------------------------------------------------------------
 void mafVMEOutput::GetDataBounds(mafOBB& bounds, mafTimeStamp t) const
-//-------------------------------------------------------------------------
 {
 	assert(m_VME);
 	if (m_VME->GetDataPipe()) // allocate data pipe if not done yet
@@ -284,18 +255,15 @@ void mafVMEOutput::GetDataBounds(mafOBB& bounds, mafTimeStamp t) const
 		bounds = m_Bounds;
 	}
 }
-//-------------------------------------------------------------------------
+
 void mafVMEOutput::GetBounds(double bounds[6]) const
-//-------------------------------------------------------------------------
 {
 	mafOBB myBounds;
 	GetBounds(myBounds);
 	myBounds.CopyTo(bounds);
 }
 
-//-------------------------------------------------------------------------
 void mafVMEOutput::GetBounds(mafOBB& bounds, mafTimeStamp t) const
-//-------------------------------------------------------------------------
 {
 	assert(m_VME);
 
@@ -315,18 +283,14 @@ void mafVMEOutput::GetBounds(mafOBB& bounds, mafTimeStamp t) const
 	}
 }
 
-//-------------------------------------------------------------------------
 void mafVMEOutput::Get4DBounds(double bounds[6]) const
-//-------------------------------------------------------------------------
 {
 	mafOBB myBounds;
 	Get4DBounds(myBounds);
 	myBounds.CopyTo(bounds);
 }
 
-//-------------------------------------------------------------------------
 void mafVMEOutput::Get4DBounds(mafOBB& bounds) const
-//-------------------------------------------------------------------------
 {
 	assert(m_VME);
 
@@ -345,9 +309,7 @@ void mafVMEOutput::Get4DBounds(mafOBB& bounds) const
 
 }
 
-//-------------------------------------------------------------------------
 std::shared_ptr<mafTransformBase> mafVMEOutput::GetTransform() const
-//-------------------------------------------------------------------------
 {
 	// if VME supports a matrix pipe return its pointer
 	if (m_VME)
@@ -363,16 +325,13 @@ std::shared_ptr<mafTransformBase> mafVMEOutput::GetTransform() const
 	// return internal transform
 	return m_Transform;
 }
-//-------------------------------------------------------------------------
+
 std::shared_ptr<mafMatrix> mafVMEOutput::GetMatrix() const
-//-------------------------------------------------------------------------
 {
 	return GetTransform()->GetMatrixPointer();
 }
 
-//-------------------------------------------------------------------------
 void mafVMEOutput::GetMatrix(mafMatrix& matrix, mafTimeStamp t) const
-//-------------------------------------------------------------------------
 {
 	assert(m_VME);
 	if (auto mpipe = m_VME->GetMatrixPipe()) // check if a matrix pipe is present
@@ -402,9 +361,7 @@ void mafVMEOutput::GetMatrix(mafMatrix& matrix, mafTimeStamp t) const
 	}
 }
 
-//-------------------------------------------------------------------------
 void mafVMEOutput::GetPose(double xyz[3], double rxyz[3], mafTimeStamp t) const
-//-------------------------------------------------------------------------
 {
 	mafMatrix mat;
 
@@ -415,9 +372,7 @@ void mafVMEOutput::GetPose(double xyz[3], double rxyz[3], mafTimeStamp t) const
 	mafTransform::GetPosition(mat, xyz);
 }
 
-//-------------------------------------------------------------------------
 void mafVMEOutput::GetPose(double& x, double& y, double& z, double& rx, double& ry, double& rz, mafTimeStamp t) const
-//-------------------------------------------------------------------------
 {
 	double xyz[3], rxyz[3];
 
@@ -433,17 +388,13 @@ void mafVMEOutput::GetPose(double& x, double& y, double& z, double& rx, double& 
 }
 
 
-//-------------------------------------------------------------------------
 std::shared_ptr<mafTransformBase> mafVMEOutput::GetAbsTransform() const
-//-------------------------------------------------------------------------
 {
 	assert(m_VME);
 	return m_VME->GetAbsMatrixPipe();
 }
 
-//-------------------------------------------------------------------------
 void mafVMEOutput::GetAbsMatrix(mafMatrix& matrix, mafTimeStamp t) const
-//-------------------------------------------------------------------------
 {
 	assert(m_VME);
 
@@ -468,18 +419,14 @@ void mafVMEOutput::GetAbsMatrix(mafMatrix& matrix, mafTimeStamp t) const
 	}
 }
 
-//-------------------------------------------------------------------------
 std::shared_ptr<mafMatrix> mafVMEOutput::GetAbsMatrix() const
-//-------------------------------------------------------------------------
 {
 	assert(m_VME);
 	m_VME->GetAbsMatrixPipe()->Update();
 	return m_VME->GetAbsMatrixPipe()->GetMatrixPointer();
 }
 
-//-------------------------------------------------------------------------
 void mafVMEOutput::GetAbsPose(double xyz[3], double rxyz[3], mafTimeStamp t) const
-//-------------------------------------------------------------------------
 {
 	assert(m_VME);
 	mafMatrix mat;
@@ -490,9 +437,7 @@ void mafVMEOutput::GetAbsPose(double xyz[3], double rxyz[3], mafTimeStamp t) con
 	mafTransform::GetOrientation(mat, rxyz);
 }
 
-//-------------------------------------------------------------------------
 void mafVMEOutput::GetAbsPose(double& x, double& y, double& z, double& rx, double& ry, double& rz, mafTimeStamp t) const
-//-------------------------------------------------------------------------
 {
 	double xyz[3], rxyz[3];
 
@@ -507,17 +452,12 @@ void mafVMEOutput::GetAbsPose(double& x, double& y, double& z, double& rx, doubl
 	rz = rxyz[2];
 }
 
-
-//-------------------------------------------------------------------------
 mafTimeStamp mafVMEOutput::GetTimeStamp() const
-//-------------------------------------------------------------------------
 {
 	return m_VME->GetTimeStamp();
 }
 
-//-------------------------------------------------------------------------
 void mafVMEOutput::Print(std::ostream& os, const int tabs)// const
-//-------------------------------------------------------------------------
 {
 	mafIndent indent(tabs);
 
@@ -546,9 +486,7 @@ void mafVMEOutput::Print(std::ostream& os, const int tabs)// const
 	os << indent << "DataType: " << m_DataType.GetCStr() << std::endl;
 }
 
-//-------------------------------------------------------------------------
 mafGUI* mafVMEOutput::CreateGui()
-//-------------------------------------------------------------------------
 {
 	assert(!AccessGUI());
 	auto gui = new mafGUI(m_VME);

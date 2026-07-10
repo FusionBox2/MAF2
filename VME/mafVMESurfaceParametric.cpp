@@ -360,17 +360,17 @@ std::vector<std::unique_ptr<IProperty>> mafVMESurfaceParametric::getProperties()
 			{_R("enum"), true},
 			{_R("enumEntries"), geometryNames}
 		}));
-	result.push_back(makeProperty(_R("ShereRadius"), [this]() {return GetSphereRadius(); }, [this](double v) {SetSphereRadius(v); m_nodeChanged.emit(); },
+	result.push_back(makeProperty(_R("ShereRadius"), [this]() {return GetSphereRadius(); }, [this](double v) {SetSphereRadius(v); m_valuesChanged.emit(); },
 		{
 			{ _R("visual_name"), base::String(_R("Radius")) },
 			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_SPHERE; })}
 		}));
-	result.push_back(makeProperty(_R("SpherePhiRes"), [this]() {return m_SpherePhiRes; }, [this](double v) {m_SpherePhiRes = v; InternalUpdate(); m_nodeChanged.emit(); },
+	result.push_back(makeProperty(_R("SpherePhiRes"), [this]() {return m_SpherePhiRes; }, [this](double v) {m_SpherePhiRes = v; InternalUpdate(); m_valuesChanged.emit(); },
 		{
 			{ _R("visual_name"), base::String(_R("Phi res")) },
 			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_SPHERE; })}
 		}));
-	result.push_back(makeProperty(_R("SphereThetaRes"), [this]() {return m_SphereTheRes; }, [this](double v) {m_SphereTheRes = v; InternalUpdate(); m_nodeChanged.emit(); },
+	result.push_back(makeProperty(_R("SphereThetaRes"), [this]() {return m_SphereTheRes; }, [this](double v) {m_SphereTheRes = v; InternalUpdate(); m_valuesChanged.emit(); },
 		{
 			{ _R("visual_name"), base::String(_R("Theta res")) },
 			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_SPHERE; })}
@@ -646,8 +646,7 @@ void mafVMESurfaceParametric::SetGeometryType(int parametricSurfaceTypeID)
 //-------------------------------------------------------------------------
 {
 	m_GeometryType = parametricSurfaceTypeID;
-	WithProperties::m_propertiesChanged.emit();
-	m_nodeChanged.emit();
+	m_valuesChanged.emit();
 	Modified();
 }
 //-------------------------------------------------------------------------

@@ -2,14 +2,16 @@
 
 #include "ftkConfigure.h"
 
+#include "ftk/Core/WithProperties.h"
+
 BEGIN_FTK_NAMESPACE
 
 namespace gui
 {
-	class IViewModel
+	class IViewModel : public core::WithProperties
 	{
 	public:
-		virtual ~IViewModel();
+		~IViewModel() override;
 	};
 }
 

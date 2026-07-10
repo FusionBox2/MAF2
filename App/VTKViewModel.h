@@ -58,6 +58,8 @@ public:
 
 	void plugVisualPipe(const base::String& nodeType, const base::String& pipeType, VisibilityMode visibility = VisibilityMode::VISIBLE);
 
+	PropertyList getProperties() override;
+
 private:
 	NodeId getViewNode(model::data::Node* node) const;
 

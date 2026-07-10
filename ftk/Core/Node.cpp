@@ -69,7 +69,7 @@ namespace model::data
 
 	std::vector<std::unique_ptr<IProperty>> Node::getProperties()
 	{
-		std::vector<std::unique_ptr<IProperty>> result;
+		std::vector<std::unique_ptr<IProperty>> result = WithProperties::getProperties();
 		//result.push_back(makeProperty("name", *this, &Node::GetName, &Node::SetName));
 		result.push_back(makeProperty(_R("name"), [this]() {return mafStringToStd(GetName()); }, [this](const std::string& v) {SetName(mafStdToString(v)); }));
 		return result;
@@ -234,7 +234,7 @@ namespace model::data
 		InvokeEvent(ev);
 		ForwardUpEvent(ev);
 		ForwardDownEvent(ev);
-		m_nodeChanged.emit();
+		m_valuesChanged.emit();
 	}
 
 	mafID Node::GetId() const
@@ -1295,11 +1295,6 @@ namespace model::data
 		//mafLogMessage("[VME PRINTOUT:]\n%s\n", ss1.str()); 
 		mafLogMessage(_M(stringStream.str().c_str()));
 #endif
-	}
-
-	base::Connection Node::connectNodeChanged(std::function<void()> fn)
-	{
-		return m_nodeChanged.connect(fn);
 	}
 
 	std::shared_ptr<Node> Node::GetByPath(const mafString& path, bool onlyVisible /*=true*/)

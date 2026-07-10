@@ -249,6 +249,12 @@ void VTKViewModel::plugVisualPipe(const base::String& nodeType, const base::Stri
 	m_pipeMap.emplace(std::move(nodeType), std::move(pluggedPipe));
 }
 
+core::WithProperties::PropertyList VTKViewModel::getProperties()
+{
+	auto result = IVTKViewModel::getProperties();
+	return result;
+}
+
 IVTKViewModel::NodeId VTKViewModel::getViewNode(model::data::Node* node) const
 {
 	if (auto it = m_nodeMap.find(node); it != m_nodeMap.end())

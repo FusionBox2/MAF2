@@ -366,6 +366,7 @@ void lhpOpMoveSeq::OpUndo()
 class lhpOpScaleDataset : public medOpScaleDataset
 {
 public:
+	lhpOpScaleDataset(const mafString& label = _R("Scale Dataset")):medOpScaleDataset(label){}
 
 	/** Return true for the acceptable vme type. */
 	bool Accept(mafNode* vme) override
@@ -644,7 +645,7 @@ void ConfiguredAppFrame<BaseFrame>::ConfigureOperations()
 	addCreateFactoryOp(_R("Create/New/Group(new)"), _R("mafVMEGroup"), _R("Group"));
 	//addCreateFactoryOp(_R("Create/New/Surface Parametric"), _R("mafVMESurfaceParametric"), _R("Surface Parametric"));
 
-	auto addCompatibleOp = [this]<typename T>(const base::String & name, const base::String & namePrefix)
+	auto addCompatibleOp = [this]<typename T>(const base::String & name, const base::String & namePrefix = {})
 	{
 		base::String fullName = namePrefix.empty() ? name : namePrefix + _R("/") + name;
 		AppFrame<BaseFrame>::m_operationsRegistry->registerOperation(fullName, [n = fullName](DocumentContext& context)
@@ -745,9 +746,7 @@ void ConfiguredAppFrame<BaseFrame>::ConfigureOperations()
 	//-------------------------------------------------------------
 
 	//------------------------- Operations -------------------------
-#ifdef COMPLETE
-	addCompatibleOp.template operator()<mafOpValidateTree());
-#endif
+	addCompatibleOp.template operator()<mafOpValidateTree>(_R("Validate Tree"), _R(""));
 	addCompatibleOp.template operator()<mafOpCreateGroup>(_R("Group"), _R("Create/New"));
 	addCompatibleOp.template operator()<lhpOpCreateMetersScripted>(_R("Scripted meters"), _R("Create/New"));
 	addCompatibleOp.template operator()<mafOpCreateSurfaceParametric>(_R("Parametric Surface"), _R("Create/New"));
@@ -768,8 +767,8 @@ void ConfiguredAppFrame<BaseFrame>::ConfigureOperations()
 	addCompatibleOp.template operator()<mafOpReparentTo>(_R("Reparent to...  \tCtrl+R"), _R("Modify/Fuse"));
 #ifdef COMPLETE
 	addCompatibleOp.template operator()<mafOpReparentTo>(_R("Local reparent to..."), false), _R("Modify/Fuse"));
-	addCompatibleOp.template operator()<lhpOpMove(), _R("Modify"));
 #endif
+	addCompatibleOp.template operator()<lhpOpMove>(_R("Move\tCtrl+T"), _R("Modify"));
 	addCompatibleOp.template operator()<lhpOpAverageLM>(_R("Average landmark"), _R("Create/Derive"));
 	addCompatibleOp.template operator()<lhpOpCreateLMCLines>(_R("Cloud lines"), _R("Create/Derive"));
 	addCompatibleOp.template operator()<lhpOpJoinSurf>(_R("JoinSurface"), _R("Create/Derive"));
@@ -807,9 +806,7 @@ void ConfiguredAppFrame<BaseFrame>::ConfigureOperations()
 		addCompatibleOp.template operator()<medOpVolumeResample>(_R("Volume Resample"), _R("Modify"));
 		addCompatibleOp.template operator()<mafOp2DMeasure>(_R("2D Measure"), _R("Measure"));
 		addCompatibleOp.template operator()<mafOpVOIDensity>(_R("VOI Density"), _R("Measure"));
-#ifdef COMPLETE
-		addCompatibleOp.template operator()<lhpOpScaleDataset(), _R("Modify"));
-#endif
+		addCompatibleOp.template operator()<lhpOpScaleDataset>(_R("Scale Dataset"), _R("Modify"));
 		addCompatibleOp.template operator()<medOpCropDeformableROI>(_L("Masking"), _L("Modify"));
 		addCompatibleOp.template operator()<mafOpImporterVMEDataSetAttributes>(_R("VME DataSet Attributes Adder"), _R("Modify"));
 		addCompatibleOp.template operator()<medOpClassicICPRegistration>(_R("Register Surface"), _R("Modify/Fuse"));
@@ -834,9 +831,7 @@ void ConfiguredAppFrame<BaseFrame>::ConfigureOperations()
 		addCompatibleOp.template operator()<lhpOpRegSurfWithCloud>(_R("Register Surface with Landmark Cloud"), _R("Modify/Fuse"));
 		addCompatibleOp.template operator()<lhpOpRepresentInAF>(_R("Represent in RefSys"), _R("Modify/Fuse"));
 		addCompatibleOp.template operator()<lhpOpLMMirror>(_R("Landmark Cloud Mirror"), _R("Modify"));
-#ifdef COMPLETE
-		addCompatibleOp.template operator()<lhpOpMoveSeq(), _R("Modify"));
-#endif
+		addCompatibleOp.template operator()<lhpOpMoveSeq>(_R("Move Sequence"), _R("Modify"));
 		addCompatibleOp.template operator()<lhpOpICPRegFollow>(_R("Move Surface As Registered"), _R("Modify/Fuse"));
 		addCompatibleOp.template operator()<lhpOpRegression>(_R("Regression"), _R("Create/Derive"));
 		addCompatibleOp.template operator()<lhpOpFingerStick>(_R("Finger stick"), _R("Create/Derive"));

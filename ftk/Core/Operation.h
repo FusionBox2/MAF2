@@ -28,14 +28,9 @@ namespace core
 
 		const base::String& GetName() const { return m_operationName; }
 
-		PropertyList getProperties() override;
-
-		base::Connection connectOperationChanged(std::function<void()> fn);
-
 	protected:
 		base::String m_operationName;
 		bool m_canUndo;
-		base::Signal<> m_operationChanged;
 	};
 }
 

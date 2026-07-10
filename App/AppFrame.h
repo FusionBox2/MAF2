@@ -153,6 +153,7 @@ protected:
 
 	std::unique_ptr<gui::wx::IView> m_nodeProperties;
 	std::shared_ptr<PropertyViewModel> m_nodeModel;
+	base::Connection m_selectedNodeChanged;
 
 	std::unique_ptr<gui::wx::IView> m_pipeProperties;
 	std::shared_ptr<gui::IViewModel> m_pipeModel;
@@ -161,7 +162,8 @@ protected:
 	std::shared_ptr<gui::IViewModel> m_outModel;
 
 	std::unique_ptr<gui::wx::IView> m_viewProperties;
-	std::shared_ptr<gui::IViewModel> m_viewModel;
+	std::shared_ptr<PropertyViewModel> m_viewModel;
+	base::Connection m_activeViewChanged;
 
 	std::unique_ptr<gui::wx::IView> m_operationProperties;
 	std::shared_ptr<PropertyViewModel> m_operationModel;
@@ -175,7 +177,6 @@ protected:
 	std::unique_ptr<OperationsRegistry> m_operationsRegistry;
 
 	std::vector<base::Connection> m_connections;
-	base::Connection m_selectedNodeChanged;
 	std::unordered_map<int, base::String> m_viewMenu;
 	std::unordered_map<int, base::String> m_operationsMenu;
 
@@ -719,7 +720,7 @@ void AppFrame<BaseFrame>::OnMenu(wxCommandEvent& event)
 			m_operationEditorPanel->GetParent()->Layout();
 			m_sideNotebook->SetSelection(2);
 			m_applyButton->Enable(m_currentOperation->IsConfigured());
-			m_currentOperationChanged = m_currentOperation->connectOperationChanged([this]()
+			m_currentOperationChanged = m_currentOperation->connectValuesChanged([this]()
 				{
 					if (m_applyButton)
 					{
@@ -893,16 +894,13 @@ void AppFrame<BaseFrame>::OnSelectionChanged(model::data::Node* node)
 	{
 		if (auto sel = selectionController.selected(); sel.size() == 1)
 		{
-			m_selectedNodeChanged = node->connectNodeChanged([nodeModel = m_nodeModel]()
-				{
-					nodeModel->changed();
-				});
+			m_selectedNodeChanged = node->connectValuesChanged([nodeModel = m_nodeModel]() {nodeModel->changed(); });
 			m_nodeModel->setProperties(NodePropertiesBuilder(context, sel[0]).getProperties());
 		}
 		else
 		{
 			m_nodeModel->setProperties({});
-			m_selectedNodeChanged = base::Connection();
+			m_selectedNodeChanged = {};
 		}
 	}
 }
@@ -913,6 +911,25 @@ void AppFrame<BaseFrame>::BindActiveView()
 	if (!m_navigatorModel)
 	{
 		return;
+	}
+
+	if (auto activeView = m_viewManager->getActive())
+	{
+		if (auto model = activeView->getModel())
+		{
+			m_viewModel->setProperties(activeView->getModel()->getProperties());
+			m_activeViewChanged = model->connectValuesChanged([this]() {m_viewModel->changed(); });
+		}
+		else
+		{
+			m_viewModel->setProperties({});
+			m_activeViewChanged = {};
+		}
+	}
+	else
+	{
+		m_viewModel->setProperties({});
+		m_activeViewChanged = {};
 	}
 
 	if (auto activeView = m_viewManager->getActive(); activeView && std::dynamic_pointer_cast<VTKViewModel>(activeView->getModel()))

@@ -13,6 +13,8 @@
 #include <memory>
 #include <vector>
 
+#include "ftk/Core/WithProperties.h"
+
 class mafView;
 namespace model::data
 {
@@ -24,7 +26,7 @@ BEGIN_FTK_NAMESPACE
 
 class IProperty;
 
-class FTK_CORE_EXPORT mafPipe : public mafBaseEventHandler, public mafEventSender, public mafObjectWithGUI
+class FTK_CORE_EXPORT mafPipe : public mafBaseEventHandler, public mafEventSender, public mafObjectWithGUI, public core::WithProperties
 {
 public:
 	mafBaseTypeMacro(mafPipe)

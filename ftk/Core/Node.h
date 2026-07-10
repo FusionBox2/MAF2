@@ -303,15 +303,12 @@ namespace model::data
 
 		virtual void Print(std::ostream& os, const int tabs = 0);// const;
 
-		base::Connection connectNodeChanged(std::function<void()> fn);
-
 	protected:
 
 		mafGUI* CreateGui() override;
 
 		void OnPrint();
 
-		base::Signal<> m_nodeChanged;
 	private:
 
 		bool m_Initialized = false;

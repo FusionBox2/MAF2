@@ -20,12 +20,15 @@ namespace core
 
 		virtual ~WithProperties() = default;
 
-		virtual PropertyList getProperties() = 0;
+		virtual PropertyList getProperties();
 
 		base::Connection connectPropertiesChanged(std::function<void()> fn);
 
+		base::Connection connectValuesChanged(std::function<void()> fn);
+
 	protected:
 		base::Signal<> m_propertiesChanged;
+		base::Signal<> m_valuesChanged;
 	};
 }
 

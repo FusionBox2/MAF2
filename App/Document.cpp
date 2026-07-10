@@ -28,7 +28,7 @@ void Document::addNode(std::shared_ptr<model::data::Node> node, std::shared_ptr<
 {
 	model::data::Node::ReparentTo(node, parent.get());
 	auto p = node.get();
-	m_connections.emplace(p, p->connectNodeChanged([this, p]() {m_nodeChanged.emit({ p }); }));
+	m_connections.emplace(p, p->connectValuesChanged([this, p]() {m_nodeChanged.emit({ p }); }));
 	m_nodeAdded.emit({ node.get() });
 }
 
@@ -49,7 +49,7 @@ void Document::postLoad()
 	for (auto& n : *getRoot())
 	{
 		auto p = &n;
-		m_connections.emplace(&n, n.connectNodeChanged([this, p]() {m_nodeChanged.emit({p}); }));
+		m_connections.emplace(&n, n.connectValuesChanged([this, p]() {m_nodeChanged.emit({p}); }));
 	}
 }
 
