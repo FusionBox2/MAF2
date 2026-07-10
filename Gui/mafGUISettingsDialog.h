@@ -22,7 +22,7 @@
 //----------------------------------------------------------------------------
 #include "mafEvent.h"
 #include "mafBaseEventHandler.h"
-//#include "ftk/Base/String.h"
+//#include "ftk/Base/mfString.h"
 #include <vector>
 
 //----------------------------------------------------------------------------

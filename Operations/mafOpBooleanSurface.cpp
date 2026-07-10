@@ -258,7 +258,7 @@ void mafOpBooleanSurface::OnEvent(mafEventBase *maf_event)
 			break;
 		case ID_UNDO:
 			{
-				Undo();
+				Undo_();
 				ShowClipPlane(m_Modality != MODE_SURFACE);
 				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
@@ -368,7 +368,7 @@ void mafOpBooleanSurface::UpdateISARefSys()
 	m_IsaTranslate->GetPivotRefSys()->SetMatrix(m_ImplicitPlaneGizmo->GetAbsMatrixPipe()->GetMatrixPointer());
 }
 //----------------------------------------------------------------------------
-void mafOpBooleanSurface::Undo()
+void mafOpBooleanSurface::Undo_()
 //----------------------------------------------------------------------------
 {
 	if(m_VTKResult.size()>1)

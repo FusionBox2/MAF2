@@ -20,11 +20,11 @@
 #include "ftk/IO/StorageElement.h"
 #include "mafDefines.h"
 
-#include "parse.h"
-#include "serialize.h"
-#include "jsonrapid.h"
-#include "xmlxerces.h"
-#include "xmlrapid.h"
+#include "ftk/IO/Parse.h"
+#include "ftk/IO/Serialize.h"
+#include "ftk/IO/JsonRapid.h"
+#include "ftk/IO/XmlXerces.h"
+#include "ftk/IO/XmlRapid.h"
 
 
 #include "tree.hpp"

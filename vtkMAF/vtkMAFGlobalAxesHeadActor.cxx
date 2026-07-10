@@ -69,21 +69,19 @@ vtkMAFGlobalAxesHeadActor::vtkMAFGlobalAxesHeadActor()
   int numCells = HeadReader->GetOutput()->GetNumberOfCells();
   assert(numCells > 0); // if this assert fail check for HeadABSFileName problems
 
-  vtkPolyDataMapper *headMapper = vtkPolyDataMapper::New();
+  vtkNew<vtkPolyDataMapper> headMapper;
   this->HeadActor = vtkActor::New();
 
   this->InitTransform = vtkTransform::New();
-  vtkTransformPolyDataFilter* transformer = vtkTransformPolyDataFilter::New();
+  vtkNew<vtkTransformPolyDataFilter> transformer;
 
   this->InitTransform->Identity();
   transformer->SetInputConnection(this->HeadReader->GetOutputPort());
   transformer->SetTransform(this->InitTransform);
   transformer->Update();
-  transformer->Delete();
   headMapper->SetInputConnection( transformer->GetOutputPort() );
   this->HeadActor->SetMapper( headMapper );
   this->HeadActor->SetVisibility(1);
-  headMapper->Delete();
 
   this->Assembly->AddPart( this->HeadActor );
 
@@ -160,7 +158,7 @@ int vtkMAFGlobalAxesHeadActor::HasTranslucentPolygonalGeometry()
 {
   this->UpdateProps();
 
-  //return this->Assembly->HasTranslucentPolygonalGeometry();
+  return this->Assembly->HasTranslucentPolygonalGeometry();
   assert(false);
   return false;
 }

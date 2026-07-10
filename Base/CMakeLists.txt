@@ -8,17 +8,14 @@ PROJECT(mafBase)
 # Set your list of sources here.
 SET(PROJECT_SRCS
 	../ftk/Base/FastBimap.h
-	../ftk/Base/FastPImpl.h
 	../ftk/Base/Log.cpp
 	../ftk/Base/Log.h
-	../ftk/Base/Meta.h
 	../ftk/Base/MTime.cpp
 	../ftk/Base/MTime.h
 	../ftk/Base/Object.cpp
 	../ftk/Base/Object.h
-	../ftk/Base/String.cpp
-	../ftk/Base/String.h
-	../ftk/Base/SpinLock.h
+	../ftk/Base/mfString.cpp
+	../ftk/Base/mfString.h
 	../ftk/Base/Template.h
 	../ftk/Base/ThreadPool.h
 )
@@ -96,3 +93,4 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${FTK_SOURCE_DIR}/Gui)
 target_include_directories(${PROJECT_NAME} PUBLIC ${FTK_SOURCE_DIR}/Interaction)
 target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_SOURCE_DIR})
 target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_BINARY_DIR})
+target_link_libraries(${PROJECT_NAME} ftkBase)

@@ -17,7 +17,6 @@
 class medDicomSlice;
 class medInteractorDICOMImporter;
 class medGUIWizardPageNew;
-class mafString;
 class mafTagArray;
 class mafVMEImage;
 class mafVMEVolumeGray;

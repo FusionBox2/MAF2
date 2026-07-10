@@ -26,7 +26,6 @@
 class mafGUI;
 
 class mafEventBase;
-class mafString;
 
 class vtkProbeFilter;
 class vtkRectilinearGrid;

@@ -15,15 +15,17 @@ namespace base
 
 		Connection(const Connection&) = delete;
 
-		Connection(Connection&&) = default;
+		Connection(Connection&&connection );
 
 		Connection& operator=(const Connection&) = delete;
 
-		Connection& operator=(Connection&&) = default;
+		Connection& operator=(Connection&& connection);
 
 		Connection(std::function<void()>&& disconnect);
 
 		~Connection();
+
+		void disconnect();
 
 	private:
 		std::function<void()> m_disconnect;

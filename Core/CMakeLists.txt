@@ -162,7 +162,7 @@ IF(MAF_USE_CURL)
 ENDIF(MAF_USE_CURL)
 
 # List libraries that are needed by this project.
-SET(PROJECT_LIBS mafBase IO mafGui mafInteraction mafOperations)
+SET(PROJECT_LIBS mafBase ftkIO mafGui mafInteraction mafOperations ftkBase)
 
 IF(MAF_USE_CURL)
   SET(PROJECT_LIBS ${PROJECT_LIBS} CURL::libcurl)
@@ -190,4 +190,4 @@ add_library(${PROJECT_NAME} ${PROJECT_SRCS})
 target_include_directories(${PROJECT_NAME} PUBLIC .)
 target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_SOURCE_DIR})
 target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_BINARY_DIR})
-target_link_libraries(${PROJECT_NAME} ${PROJECT_LIBS})
+target_link_libraries(${PROJECT_NAME} ${PROJECT_LIBS} ftkCore)

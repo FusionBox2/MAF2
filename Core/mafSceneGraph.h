@@ -109,13 +109,6 @@ public:
   /** print a dump of this object */
   virtual void Print(std::ostream& os, const int tabs=0);// const;
 
-  /** Set information pipe  enable, if yes PipeVisibilityInformation must be used*/
-  void SetInformationPipeModalityEnable(bool enable){m_InformationPipeModality = enable;}
-
-  /** Get flag for information pipe modality. */
-  bool GetInformationPipeModalityEnable(){return m_InformationPipeModality;}
-
-
 protected:
   /** 
   recursively kill all node - starting from the tail of the list. */
@@ -132,6 +125,5 @@ protected:
   mafSceneNode *m_List;      ///< list of visualized node
 	mafGUI			 *m_Gui;
 	mafNode      *m_SelectedVme;
-  bool         m_InformationPipeModality;
 };
 #endif

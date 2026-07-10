@@ -23,6 +23,8 @@
 #include "mafPipeVTK.h"
 #include "mafVMEImage.h"
 
+#include <memory>
+
 //----------------------------------------------------------------------------
 // forward refs :
 //----------------------------------------------------------------------------
@@ -101,7 +103,7 @@ protected:
   vtkActor                *m_Actor;
 
   vtkActor                *m_OutlineActor;
-  mafAxes                 *m_Axes;
+  std::unique_ptr<mafAxes> m_Axes;
   vtkPlane				        *m_Plane;
   vtkMAFFixedCutter		      *m_Cutter;
 

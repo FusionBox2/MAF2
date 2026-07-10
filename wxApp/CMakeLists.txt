@@ -39,7 +39,7 @@ endif(WIN32)
 target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_SOURCE_DIR})
 target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_BINARY_DIR})
 target_link_directories(${PROJECT_NAME} PRIVATE D:/dev/FTKBuild/Install/boost/lib)
-target_link_libraries(${PROJECT_NAME} wx::base wx::core wx::aui wx::html wx::propgrid IO mafBase mafCore ${Boost_LIBRARIES})# mafCommon mafCore mafGui mafOperations mafViews mafVME)
+target_link_libraries(${PROJECT_NAME} wx::base wx::core wx::aui wx::html wx::propgrid ftkIO mafBase mafCore ${Boost_LIBRARIES})# mafCommon mafCore mafGui mafOperations mafViews mafVME)
 #target_link_libraries(${PROJECT_NAME} wx::base wx::core)
 vtk_module_autoinit(
   TARGETS ${PROJECT_NAME}

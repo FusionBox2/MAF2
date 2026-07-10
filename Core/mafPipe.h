@@ -8,6 +8,10 @@
 #include "mafEvent.h"
 #include "mafEventSender.h"
 #include "mafObjectWithGUI.h"
+#include "ftk/Core/IProperty.h"
+
+#include <memory>
+#include <vector>
 
 class mafView;
 namespace model::data
@@ -17,25 +21,22 @@ namespace model::data
 using mafNode = model::data::Node;
 
 BEGIN_FTK_NAMESPACE
-//----------------------------------------------------------------------------
-// mafPipe :
-//----------------------------------------------------------------------------
-/*
-  mafPipe is the base class for all visual pipes; each pipe represents how a vme can be
-  visualized inside the view, so logically a pipe has as input a vme and in output
-  creates actors that will be rendered in a render view.
-  It can handle a GUI, which events can be catched by OnEvent.
-*/
+
+class IProperty;
+
 class FTK_CORE_EXPORT mafPipe : public mafBaseEventHandler, public mafEventSender, public mafObjectWithGUI
 {
 public:
-	mafBaseTypeMacro(mafPipe);
+	mafBaseTypeMacro(mafPipe)
 
 	mafPipe();
+
 	~mafPipe() override;
 
+	virtual std::vector<std::unique_ptr<IProperty>> getProperties() const { return {}; }
+
 	/** process events coming from gui */
-	void OnEvent(mafEventBase* maf_event) override {};
+	void OnEvent(mafEventBase* maf_event) override {}
 
 	/** The real setup must be performed here - not in the ctor */
 	virtual void Create(mafNode* node, mafView* view);
@@ -55,7 +56,7 @@ public:
 
 	mafNode* m_Node = nullptr;      ///< VME used as input for the visual pipe
 	mafView* m_View = nullptr;
-	bool            m_Selected = false; ///< Flag used to say if the rendered VME is selected.
+	bool m_Selected = false; ///< Flag used to say if the rendered VME is selected.
 
 protected:
 	/**

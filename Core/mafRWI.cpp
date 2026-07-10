@@ -269,7 +269,7 @@ void mafRWI::CreateRenderingScene(wxWindow *parent, RWI_LAYERS layers, bool use_
 	SetGridVisibility(m_ShowGrid != 0);
 
 	m_ShowAxes = show_axes;
-	m_Axes = std::make_unique<mafAxes>(m_AlwaysVisibleRenderer,nullptr,m_AxesType);
+	m_Axes = std::make_unique<mafAxes>(m_AlwaysVisibleRenderer,m_AxesType);
 	m_Axes->SetVisibility(show_axes);
 }
 //----------------------------------------------------------------------------

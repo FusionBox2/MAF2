@@ -302,10 +302,6 @@ protected:
 	std::shared_ptr<lhpVMELMCLines> m_Created;
 };
 
-mafCxxTypeMacro(lhpOpMove)
-mafCxxTypeMacro(lhpOpMoveSeq)
-mafCxxTypeMacro(lhpOpCreateLMCLines);
-
 void lhpOpCreateLMCLines::OpDo()
 {
 	mafNode::ReparentTo(GetOutput(), GetInput().get());

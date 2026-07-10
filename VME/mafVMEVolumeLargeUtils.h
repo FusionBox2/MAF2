@@ -19,13 +19,13 @@
 
 #include "../BES_Beta/vtkMAF/vtkMafFile.h"
 #include "vtkMAFIdType64.h"
+#include "ftk/Base/mfString.h"
 
 //----------------------------------------------------------------------------
 // Forward declarations:
 //----------------------------------------------------------------------------
 class mafObject;
 class mafBaseEventHandler;
-class mafString;
 /**
   class name: mafVMEVolumeLargeUtils
   the class that gather several static methods usefull for import a large volume dataset.

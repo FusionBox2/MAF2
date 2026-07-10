@@ -20,55 +20,98 @@
 #include "vtkMAFAnnotatedCubeActor.h"
 #include "vtkMAFGlobalAxesHeadActor.h"
 
-mafAxes::mafAxes(vtkRenderer* ren, mafVME* vme, int axesType)
+mafAxes::mafAxes(mafVME* vme)
+{
+	m_AxesType = TRIAD;
+	m_Vme = vme;
+
+	vtkNew<vtkAxes> triadAxes;
+	triadAxes->SetScaleFactor(1);
+
+	if (m_Vme)
+	{
+		m_Vme->GetOutput()->Update();
+		vtkNew<vtkMAFLocalAxisCoordinate> localAxisCoord;
+		m_Coord = localAxisCoord;
+		localAxisCoord->SetMatrix(m_Vme->GetAbsMatrixPipe()->GetMatrix().GetVTKMatrix());
+		localAxisCoord->SetDataSet(m_Vme->GetOutput()->GetVTKData());
+	}
+	else
+	{
+		m_Coord = vtkNew<vtkMAFGlobalAxisCoordinate>();
+	}
+
+	vtkNew<vtkLookupTable> axesLUT;
+	axesLUT->SetNumberOfTableValues(3);
+	axesLUT->SetTableValue(0, 1, 0, 0, 1);
+	axesLUT->SetTableValue(1, 0, 1, 0, 1);
+	axesLUT->SetTableValue(2, 0, 0, 1, 1);
+
+	vtkNew<vtkPolyDataMapper2D> axesMapper2D;
+	axesMapper2D->SetInputConnection(triadAxes->GetOutputPort());
+	axesMapper2D->SetScalarModeToUsePointData();
+
+	axesMapper2D->SetTransformCoordinate(m_Coord);
+	axesMapper2D->SetLookupTable(axesLUT);
+
+	axesMapper2D->SetScalarRange(0, 0.5);
+	axesMapper2D->ScalarVisibilityOn();
+
+	m_AxesActor2D = vtkNew<vtkActor2D>();
+	m_AxesActor2D->SetMapper(axesMapper2D);
+	m_AxesActor2D->GetProperty()->SetLineWidth(2);
+	m_AxesActor2D->VisibilityOff();
+	m_AxesActor2D->PickableOff();
+}
+
+mafAxes::mafAxes(vtkRenderer* ren, int axesType)
 {
 	m_AxesType = axesType;
 
-	m_Vme = vme;
 	m_Renderer = ren;
 
 	assert(m_Renderer);
 
 	if (m_AxesType == TRIAD)
 	{
-		m_TriadAxes = vtkAxes::New();
-		m_TriadAxes->SetScaleFactor(1);
+		vtkNew<vtkAxes> triadAxes;
+		triadAxes->SetScaleFactor(1);
 
 		if (m_Vme)
 		{
 			m_Vme->GetOutput()->Update();
-			vtkMAFLocalAxisCoordinate* localAxisCoord = vtkMAFLocalAxisCoordinate::New();
+			vtkNew<vtkMAFLocalAxisCoordinate> localAxisCoord;
 			m_Coord = localAxisCoord;
 			localAxisCoord->SetMatrix(m_Vme->GetAbsMatrixPipe()->GetMatrix().GetVTKMatrix());
 			localAxisCoord->SetDataSet(m_Vme->GetOutput()->GetVTKData());
 		}
 		else
 		{
-			m_Coord = vtkMAFGlobalAxisCoordinate::New();
+			m_Coord = vtkNew<vtkMAFGlobalAxisCoordinate>();
 		}
 
-		m_AxesLUT = vtkLookupTable::New();
-		m_AxesLUT->SetNumberOfTableValues(3);
-		m_AxesLUT->SetTableValue(0, 1, 0, 0, 1);
-		m_AxesLUT->SetTableValue(1, 0, 1, 0, 1);
-		m_AxesLUT->SetTableValue(2, 0, 0, 1, 1);
+		vtkNew<vtkLookupTable> axesLUT;
+		axesLUT->SetNumberOfTableValues(3);
+		axesLUT->SetTableValue(0, 1, 0, 0, 1);
+		axesLUT->SetTableValue(1, 0, 1, 0, 1);
+		axesLUT->SetTableValue(2, 0, 0, 1, 1);
 
-		m_AxesMapper2D = vtkPolyDataMapper2D::New();
-		m_AxesMapper2D->SetInputConnection(m_TriadAxes->GetOutputPort());
-		m_AxesMapper2D->SetScalarModeToUsePointData();
+		vtkNew<vtkPolyDataMapper2D> axesMapper2D;
+		axesMapper2D->SetInputConnection(triadAxes->GetOutputPort());
+		axesMapper2D->SetScalarModeToUsePointData();
 
-		m_AxesMapper2D->SetTransformCoordinate(m_Coord);
-		m_AxesMapper2D->SetLookupTable(m_AxesLUT);
+		axesMapper2D->SetTransformCoordinate(m_Coord);
+		axesMapper2D->SetLookupTable(axesLUT);
 
-		m_AxesMapper2D->SetScalarRange(0, 0.5);
-		m_AxesMapper2D->ScalarVisibilityOn();
+		axesMapper2D->SetScalarRange(0, 0.5);
+		axesMapper2D->ScalarVisibilityOn();
 
-		m_AxesActor2D = vtkActor2D::New();
-		m_AxesActor2D->SetMapper(m_AxesMapper2D);
+		m_AxesActor2D = vtkNew<vtkActor2D>();
+		m_AxesActor2D->SetMapper(axesMapper2D);
 		m_AxesActor2D->GetProperty()->SetLineWidth(2);
 		m_AxesActor2D->VisibilityOff();
 		m_AxesActor2D->PickableOff();
-		m_Renderer->AddActor2D(m_AxesActor2D);
+		m_Renderer->AddViewProp(m_AxesActor2D);
 	}
 	else if (m_AxesType == CUBE)
 	{
@@ -84,14 +127,14 @@ mafAxes::mafAxes(vtkRenderer* ren, mafVME* vme, int axesType)
 	}
 	else if (m_AxesType == HEAD)
 	{
-		m_GlobalAxesHeadActor = vtkMAFGlobalAxesHeadActor::New();
-		m_OrientationMarkerWidget = vtkMAFOrientationMarkerWidget::New();
+		vtkNew<vtkMAFGlobalAxesHeadActor> globalAxesHeadActor ;
+		m_OrientationMarkerWidget = vtkNew<vtkMAFOrientationMarkerWidget>();
 		if (m_Vme)
 		{
-			m_GlobalAxesHeadActor->SetInitialPose(m_Vme->GetAbsMatrixPipe()->GetMatrix().GetVTKMatrix());
+			globalAxesHeadActor->SetInitialPose(m_Vme->GetAbsMatrixPipe()->GetMatrix().GetVTKMatrix());
 		}
 
-		wxString headABSFileName = m_GlobalAxesHeadActor->GetHeadABSFileName().c_str();
+		wxString headABSFileName = globalAxesHeadActor->GetHeadABSFileName().c_str();
 
 		wxString cwd = wxGetCwd().c_str();
 		std::ostringstream stringStream;
@@ -114,8 +157,7 @@ mafAxes::mafAxes(vtkRenderer* ren, mafVME* vme, int axesType)
 			return;
 		}
 
-
-		m_OrientationMarkerWidget->SetOrientationMarker(m_GlobalAxesHeadActor);
+		m_OrientationMarkerWidget->SetOrientationMarker(globalAxesHeadActor);
 		m_OrientationMarkerWidget->SetInteractor(m_Renderer->GetRenderWindow()->GetInteractor());
 		m_OrientationMarkerWidget->SetEnabled(1);
 		m_OrientationMarkerWidget->SetInteractive(0);
@@ -126,23 +168,14 @@ mafAxes::mafAxes(vtkRenderer* ren, mafVME* vme, int axesType)
 
 mafAxes::~mafAxes()
 {
-	vtkDEL(m_AnnotatedCubeActor);
-	vtkDEL(m_GlobalAxesHeadActor);
-
 	if (m_OrientationMarkerWidget != nullptr)
 	{
 		m_OrientationMarkerWidget->SetInteractor(nullptr);
 	}
-	vtkDEL(m_OrientationMarkerWidget);
-
-	m_Renderer->RemoveActor2D(m_AxesActor2D);
-	vtkDEL(m_TriadAxes);
-	vtkDEL(m_Coord);
-
-	vtkDEL(m_AxesMapper2D);
-	vtkDEL(m_AxesActor2D);
-
-	vtkDEL(m_AxesLUT);
+	if (m_Renderer)
+	{
+		m_Renderer->RemoveViewProp(m_AxesActor2D);
+	}
 }
 
 void mafAxes::SetVisibility(bool show)
@@ -157,15 +190,22 @@ void mafAxes::SetVisibility(bool show)
 	}
 }
 
-void mafAxes::SetPose(vtkMatrix4x4* abs_pose_matrix)
+/*void mafAxes::SetPose(vtkMatrix4x4* abs_pose_matrix)
 {
 	// WARNING - I am assuming that if m_Vme != NULL --> m_Coord ISA vtkMAFLocalAxisCoordinate
-	if (!m_Vme) return;
+	if (!m_Vme)
+	{
+		return;
+	}
 	assert(m_Coord);
-	vtkMAFLocalAxisCoordinate* coord = (vtkMAFLocalAxisCoordinate*)m_Coord;
+	auto coord = vtkMAFLocalAxisCoordinate::SafeDownCast(m_Coord);
 	if (abs_pose_matrix)
+	{
 		coord->SetMatrix(abs_pose_matrix);
+	}
 	else
+	{
 		coord->SetMatrix(m_Vme->GetAbsMatrixPipe()->GetMatrix().GetVTKMatrix());
+	}
 	coord->Modified();
-}
+}*/

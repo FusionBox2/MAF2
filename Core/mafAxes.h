@@ -2,9 +2,10 @@
 
 #include "ftkConfigure.h"
 
+#include <vtkSmartPointer.h>
+
 class mafVME;
 class vtkRenderer;
-class vtkAxes;
 class vtkPolyDataMapper2D;
 class vtkCoordinate;
 class vtkActor2D;
@@ -15,7 +16,7 @@ class vtkMAFAnnotatedCubeActor;
 class vtkMAFOrientationMarkerWidget;
 class vtkMAFGlobalAxesHeadActor;
 
-class MAF_EXPORT mafAxes
+class mafAxes
 	//----------------------------------------------------------------------------
 	/**
 	Create 3D axes representation and insert them in the passed renderer: axes can be global (World Coordinates
@@ -58,8 +59,10 @@ public:
 		NUMBER_OF_AXES_TYPES,
 	};
 
+	mafAxes(mafVME* vme);
+
 	/** Constructor note: given renderer ren cannot be NULL */
-	mafAxes(vtkRenderer* ren, mafVME* vme = nullptr, int axesType = TRIAD);
+	mafAxes(vtkRenderer* ren, int axesType);
 	virtual ~mafAxes();
 
 	/** Set the axes visibility. */
@@ -71,15 +74,12 @@ public:
 
 protected:
 
-	mafVME* m_Vme;
-	vtkRenderer* m_Renderer;
-	int m_AxesType;
-	vtkLookupTable* m_AxesLUT = nullptr;
-	vtkActor2D* m_AxesActor2D = nullptr;
-	vtkPolyDataMapper2D* m_AxesMapper2D = nullptr;
-	vtkCoordinate* m_Coord = nullptr;
-	vtkAxes* m_TriadAxes = nullptr;
-	vtkMAFOrientationMarkerWidget* m_OrientationMarkerWidget = nullptr;
-	vtkMAFGlobalAxesHeadActor* m_GlobalAxesHeadActor = nullptr;
-	vtkMAFAnnotatedCubeActor* m_AnnotatedCubeActor = nullptr;
+	mafVME* m_Vme = nullptr;
+	vtkRenderer* m_Renderer = nullptr;
+	int m_AxesType = TRIAD;
+
+	vtkSmartPointer<vtkCoordinate> m_Coord;
+	vtkSmartPointer<vtkActor2D> m_AxesActor2D;
+	vtkSmartPointer<vtkMAFAnnotatedCubeActor> m_AnnotatedCubeActor;
+	vtkSmartPointer<vtkMAFOrientationMarkerWidget> m_OrientationMarkerWidget;
 };

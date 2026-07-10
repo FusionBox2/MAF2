@@ -1,25 +1,30 @@
-/*=========================================================================
+#pragma once
 
- Program: MAF2
- Module: mafGUIDockSettings
- Authors: Silvano Imboden
- 
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#ifndef __mafGUIDockSettings_H__
-#define __mafGUIDockSettings_H__
-
-//----------------------------------------------------------------------------
-// Include:
-//----------------------------------------------------------------------------
 #include "mafGUISettings.h"
+
+struct DockSettings
+{
+	wxColour m_BackgroundColor;
+	wxColour m_SashColor;
+	wxColour m_InactiveCaptionColor;
+	wxColour m_InactiveCaptionGradientColor;
+	wxColour m_InactiveCaptionTextColor;
+	wxColour m_ActiveCaptionColor;
+	wxColour m_ActiveCaptionGradientColor;
+	wxColour m_ActiveCaptionTextColor;
+	wxColour m_BorderColor;
+	wxColour m_GripperColor;
+	int      m_PaneBorderSize;
+	int      m_SashSize;
+	int      m_CaptionSize;
+	int      m_AllowFloating;
+	int      m_AllowActivePane;
+	int      m_CaptionMode;
+};
+
+
+DockSettings GetDockSettings(wxAuiManager& manager);
+void ApplyDockSettings(wxAuiManager& manager, const DockSettings& settings);
 
 //----------------------------------------------------------------------------
 // forward references :
@@ -41,29 +46,11 @@ public:
   /** Answer to the messages coming from interface. */
  void OnEvent(mafEventBase *evt) override;
 
+ static mafGUI* FillGui(mafGUI* gui, DockSettings& settings);
 protected:
   /** Create the GUI for the setting panel.*/
   void CreateGui() override;
 
   wxAuiManager& m_Mgr;
-
-  int      m_PaneBorderSize;
-  int      m_SashSize;
-  int      m_CaptionSize;
-  wxColour m_BackgroundColor;
-  wxColour m_SashColor;
-  wxColour m_InactiveCaptionColor;
-  wxColour m_InactiveCaptionGradientColor;
-  wxColour m_InactiveCaptionTextColor;
-  wxColour m_ActiveCaptionColor;
-  wxColour m_ActiveCaptionGradientColor;
-  wxColour m_ActiveCaptionTextColor;
-  wxColour m_BorderColor;
-  wxColour m_GripperColor;
-
-  int m_AllowFloating;
-  int m_AllowActivePane;
-  int m_CaptionMode;
-  mafString m_CaptionModeLabels[3];
+  DockSettings m_settings;
 };
-#endif

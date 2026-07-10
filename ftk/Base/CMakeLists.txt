@@ -4,11 +4,16 @@ set(TARGET_NAME ftkBase)
 
 SET(TARGET_HEADERS
 	Connection.h
+	FastPImpl.h
+	Meta.h
 	Signal.h
+	SpinLock.h
+	String.h
 )
 
 SET(TARGET_SOURCES
 	Connection.cpp
+	String.cpp
 )
 
 add_library(${TARGET_NAME} ${TARGET_HEADERS} ${TARGET_SOURCES})

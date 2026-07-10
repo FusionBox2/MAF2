@@ -140,17 +140,6 @@ void mafPrintSupport::OnPrintPreview(mafView* v)
 	wxRect margins(tl, br);
 
 	wxPrintout* printout, * printOutForPrinting;
-	if (v->GetSceneGraph()->GetInformationPipeModalityEnable())
-	{
-		auto printoutHtml = new wxHtmlPrintout();
-		printout = printoutHtml;
-		printoutHtml->SetHtmlText(mafStringToWx(v->GetHTMLText()));
-
-		auto printOutForPrintingHtml = new wxHtmlPrintout();
-		printOutForPrinting = printOutForPrintingHtml;
-		printOutForPrintingHtml->SetHtmlText(mafStringToWx(v->GetHTMLText()));
-	}
-	else
 	{
 		printout = new mafPrintout(v, margins);
 		printOutForPrinting = new mafPrintout(v, margins);
@@ -182,23 +171,6 @@ void mafPrintSupport::OnPrint(mafView* v)
 	wxPoint br = m_PageSetupData->GetMarginBottomRight();
 	wxRect margins(tl, br);
 
-	if (v->GetSceneGraph()->GetInformationPipeModalityEnable())
-	{
-		wxHtmlPrintout printout;
-		printout.SetHtmlText(mafStringToWx(v->GetHTMLText()));
-		if (!printer.Print(mafGetFrame(), &printout, TRUE))
-		{
-			if (wxPrinter::GetLastError() == wxPRINTER_ERROR)
-				wxMessageBox("There was a problem printing.\nPerhaps your current printer is not set correctly?", "Printing", wxOK);
-			else
-				wxMessageBox("You canceled printing", "Printing", wxOK);
-		}
-		else
-		{
-			(*m_PrintData) = printer.GetPrintDialogData().GetPrintData();
-		}
-	}
-	else
 	{
 		mafPrintout printout(v, margins);
 		if (!printer.Print(mafGetFrame(), &printout, TRUE))

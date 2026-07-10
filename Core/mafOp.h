@@ -9,6 +9,8 @@
 #include "mafBaseEventHandler.h"
 #include "ftk/Base/Object.h"
 
+#include "ftk/Core/Operation.h"
+
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
@@ -37,10 +39,14 @@ enum OPERATIONS_TYPE_ID
 //----------------------------------------------------------------------------
 /**
 */
-class MAF_EXPORT mafOp: public mafBaseEventHandler, public mafEventSender
+class MAF_EXPORT mafOp: public core::Operation, public mafBaseEventHandler, public mafEventSender
 {
 public:
   mafBaseTypeMacro(mafOp);
+
+  bool Do() override;
+  bool Undo() override;
+
 
 	mafOp();
 	mafOp(const mafString &label);

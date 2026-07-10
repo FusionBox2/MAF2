@@ -237,8 +237,11 @@ void mafPipePolylineSlice_BES::Create(mafNode* node, mafView* view)
 
 	m_AssemblyFront->AddPart(m_OutlineActor);
 
-	m_Axes = new mafAxes(m_RenFront, m_Vme);
-	m_Axes->SetVisibility(0);
+	if (m_RenFront)
+	{
+		m_Axes = std::make_unique<mafAxes>(m_Vme);
+		m_Axes->SetVisibility(false);
+	}
 
 	/*
 	m_axes = NULL;
@@ -274,7 +277,7 @@ mafPipePolylineSlice_BES::~mafPipePolylineSlice_BES()
 	vtkDEL(m_Tube);
 	vtkDEL(m_PolydataToPolylineFilter);
 	vtkDEL(m_PolySpline);
-	cppDEL(m_Axes);
+	m_Axes.reset();
 	//@@@ if(m_use_axes) wxDEL(m_axes);  
 }
 //----------------------------------------------------------------------------

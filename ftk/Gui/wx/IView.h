@@ -19,9 +19,9 @@ namespace gui::wx
 
 		virtual wxWindow* widget() = 0;
 
-		virtual void attach(std::unique_ptr<IViewModel> viewModel) = 0;
+		virtual std::shared_ptr<IViewModel> getModel() const = 0;
 
-		virtual void detach() = 0;
+		virtual void setModel(std::shared_ptr<IViewModel> viewModel) = 0;
 
 		virtual void setActive(bool active) = 0;
 	};

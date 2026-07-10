@@ -442,7 +442,7 @@ void medOpLabelizeSurface::OnEventThis(mafEventBase *maf_event)
 		{
 		case ID_UNDO:
 			{
-				Undo();
+				Undo_();
 				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
 			break;
@@ -565,7 +565,7 @@ void medOpLabelizeSurface::OnEventGizmoPlane(mafEventBase *maf_event)
 	}
 }
 //----------------------------------------------------------------------------
-void medOpLabelizeSurface::Undo()
+void medOpLabelizeSurface::Undo_()
 //----------------------------------------------------------------------------
 {
 	if(m_ResultPolyData.size()>1)

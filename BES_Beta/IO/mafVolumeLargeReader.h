@@ -16,7 +16,7 @@
 
 #include "ftk/Base/Object.h"
 
-#include "ftk/Base/String.h"
+#include "ftk/Base/mfString.h"
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"
 #include "ftk/Base/MTime.h"

@@ -105,6 +105,8 @@ public:
   interpolates on the fly according to the matrix interpolator.*/
   void SetMatrix(const mafMatrix &mat) override;
 
+  std::vector<std::unique_ptr<IProperty>> getProperties() override;
+
 protected:
 
   mafVMESurfaceParametric();

@@ -3,8 +3,9 @@
 #include "ftkConfigure.h"
 
 #include "ftk/Base/Object.h"
-#include "ftk/Base/String.h"
+#include "ftk/Base/mfString.h"
 #include "ftk/Core/NodeIterator.h"
+#include "ftk/Core/WithProperties.h"
 #include "ftk/IO/Parse.h"
 
 #include "mafBaseEventHandler.h"
@@ -13,7 +14,10 @@
 #include "mafDecl.h"
 #include "mafObjectWithGUI.h"
 #include "mafEventSender.h"
+#include "ftk/Core/IProperty.h"
+#include "ftk/Base/Signal.h"
 
+#include <memory>
 #include <vector>
 #include <map>
 #include <set>
@@ -26,330 +30,335 @@ class mafStorageElementBuilder;
 
 namespace model::data
 {
-    class Attribute;
+	class Attribute;
 }
 class mafTagArray;
 using mafAttribute = model::data::Attribute;
 
 namespace model::data
 {
-    class MAF_EXPORT Node : public std::enable_shared_from_this<Node>, public mafEventSource, public mafBaseEventHandler, public mafTimeStamped, public mafObjectWithGUI
-    {
-    public:
-        mafBaseTypeMacro(Node)
+	class MAF_EXPORT Node : public std::enable_shared_from_this<Node>, public mafEventSource, public mafBaseEventHandler, public mafTimeStamped, public mafObjectWithGUI, public core::WithProperties
+	{
+	public:
+		mafBaseTypeMacro(Node)
 
-        template<typename T>
-        struct NameComparePtr
-        {
-            bool operator()(const std::shared_ptr<T>& t1, const std::shared_ptr<T>& t2) const { return t1->GetName() < t2->GetName(); }
-            bool operator()(const mafString& s, const std::shared_ptr<T>& t) const { return s < t->GetName(); }
-            bool operator()(const std::shared_ptr<T>& t, const mafString& s) const { return t->GetName() < s; }
-            using is_transparent = std::true_type;
-        };
+		template<typename T>
+		struct NameComparePtr
+		{
+			bool operator()(const std::shared_ptr<T>& t1, const std::shared_ptr<T>& t2) const { return t1->GetName() < t2->GetName(); }
+			bool operator()(const mafString& s, const std::shared_ptr<T>& t) const { return s < t->GetName(); }
+			bool operator()(const std::shared_ptr<T>& t, const mafString& s) const { return t->GetName() < s; }
+			using is_transparent = std::true_type;
+		};
 
-        template<typename T>
-        struct NameCompare
-        {
-            bool operator()(const T& t1, const T& t2) const { return t1.GetName() < t2.GetName(); }
-            bool operator()(const mafString& s, const T& t) const { return s < t.GetName(); }
-            bool operator()(const T& t, const mafString& s) const { return t.GetName() < s; }
-            using is_transparent = std::true_type;
-        };
+		template<typename T>
+		struct NameCompare
+		{
+			bool operator()(const T& t1, const T& t2) const { return t1.GetName() < t2.GetName(); }
+			bool operator()(const mafString& s, const T& t) const { return s < t.GetName(); }
+			bool operator()(const T& t, const mafString& s) const { return t.GetName() < s; }
+			using is_transparent = std::true_type;
+		};
 
-        class NodeLink final
-        {
-        public:
+		class NodeLink final
+		{
+		public:
 
-        	NodeLink(std::weak_ptr<Node> node = {}, mafID sub_id = -1) : m_Node(std::move(node)), m_NodeSubId(sub_id){}
+			NodeLink(std::weak_ptr<Node> node = {}, mafID sub_id = -1) : m_Node(std::move(node)), m_NodeSubId(sub_id){}
 
-        	std::shared_ptr<Node> GetNode() const { return m_Node.lock(); }
+			std::shared_ptr<Node> GetNode() const { return m_Node.lock(); }
 
-        	NodeLink& SetNode(const std::shared_ptr<Node>& node) { m_Node = node; return (*this); }
+			NodeLink& SetNode(const std::shared_ptr<Node>& node) { m_Node = node; return (*this); }
 
-        	mafID GetId() const { return m_NodeId; }
+			mafID GetId() const { return m_NodeId; }
 
-        	NodeLink& SetId(mafID id) { m_NodeId = id; return (*this); }
+			NodeLink& SetId(mafID id) { m_NodeId = id; return (*this); }
 
-        	mafID GetSubId() const { return m_NodeSubId; }
+			mafID GetSubId() const { return m_NodeSubId; }
 
-        	NodeLink& SetSubId(mafID subId) { m_NodeSubId = subId; return (*this); }
+			NodeLink& SetSubId(mafID subId) { m_NodeSubId = subId; return (*this); }
 
-        private:
+		private:
 
-        	std::weak_ptr<Node> m_Node;
+			std::weak_ptr<Node> m_Node;
 
-        	mafID   m_NodeId = -1;
+			mafID   m_NodeId = -1;
 
-        	mafID   m_NodeSubId;
-        };
+			mafID   m_NodeSubId;
+		};
 
-        using Children = std::vector<std::shared_ptr<Node> >;
-        using Links = std::map<mafString, NodeLink>;
-        using Attributes = std::set<std::shared_ptr<model::data::Attribute>, NameComparePtr<model::data::Attribute> >;
-        using Iterator = model::data::NodeIterator<Node>;
+		using Children = std::vector<std::shared_ptr<Node> >;
+		using Links = std::map<mafString, NodeLink>;
+		using Attributes = std::set<std::shared_ptr<model::data::Attribute>, NameComparePtr<model::data::Attribute> >;
+		using Iterator = model::data::NodeIterator<Node>;
 
-        static std::shared_ptr<Node> Create(const char* NodeType);
+		static std::shared_ptr<Node> Create(const char* NodeType);
 
-    protected:
+	protected:
 
-        Node();
+		Node();
 
-    public:
+	public:
 
-        Node(const Node&) = delete;
+		Node(const Node&) = delete;
 
-        Node(Node&&) = delete;
+		Node(Node&&) = delete;
 
-        Node& operator=(const Node&) = delete;
+		Node& operator=(const Node&) = delete;
 
-        Node& operator=(Node&&) = delete;
+		Node& operator=(Node&&) = delete;
 
-        ~Node() override;
+		~Node() override;
 
-        virtual bool Equals(Node* node);
+		std::vector<std::unique_ptr<IProperty>> getProperties() override;
 
-        virtual bool CanCopy(Node* node);
+		virtual bool Equals(Node* node);
 
-        virtual int DeepCopy(Node* node);
+		virtual bool CanCopy(Node* node);
 
-        std::shared_ptr<Node> MakeCopy();
+		virtual int DeepCopy(Node* node);
 
-        bool IsInitialized() const;
+		std::shared_ptr<Node> MakeCopy();
 
-        int Initialize();
+		bool IsInitialized() const;
 
-        void Shutdown();
+		int Initialize();
 
-    protected:
+		void Shutdown();
 
-        virtual int InternalInitialize();
+	protected:
 
-        virtual void InternalShutdown();
+		virtual int InternalInitialize();
 
-    public:
+		virtual void InternalShutdown();
 
-        const mafString& GetName() const;
+	public:
 
-        void SetName(const mafString& name);
+		const mafString& GetName() const;
 
-        mafID GetId() const;
+		void SetName(const mafString& name);
 
-        void SetId(mafID id);
+		mafID GetId() const;
 
-        mafID BuildIds(mafID id = 0);
+		void SetId(mafID id);
 
-        virtual void RenewIds(Node *node);
+		mafID BuildIds(mafID id = 0);
 
-        void RestoreLinks();
+		virtual void RenewIds(Node *node);
 
-        void Store(mafStorageElementBuilder& builder);
+		void RestoreLinks();
 
-        void Restore(const mafStorageElement& value);
+		void Store(mafStorageElementBuilder& builder);
 
-    protected:
+		void Restore(const mafStorageElement& value);
 
-        virtual void InternalStore(mafStorageElementBuilder& builder);
+	protected:
 
-        virtual void InternalRestore(const mafStorageElement& value);
+		virtual void InternalStore(mafStorageElementBuilder& builder);
 
-    public:
+		virtual void InternalRestore(const mafStorageElement& value);
 
-        std::shared_ptr<mafAttribute> GetAttribute(const mafString& name);
+	public:
 
-        std::shared_ptr<const mafAttribute> GetAttribute(const mafString& name) const;
+		std::shared_ptr<mafAttribute> GetAttribute(const mafString& name);
 
-        virtual std::shared_ptr<mafTagArray> GetTagArray();
+		std::shared_ptr<const mafAttribute> GetAttribute(const mafString& name) const;
 
-        void SetAttribute(std::shared_ptr<mafAttribute> a);
+		virtual std::shared_ptr<mafTagArray> GetTagArray();
 
-        void RemoveAttribute(const mafString& name);
+		void SetAttribute(std::shared_ptr<mafAttribute> a);
 
-        void RemoveAllAttributes();
+		void RemoveAttribute(const mafString& name);
 
-        /** TODO: to be moved to mafVME
-          perform a copy by simply referencing the copied node's data array.
-          Beware: This can allow to save memory when doing special tasks, but
-          can be very dangerous making one of the VME inconsistent. Some nodes
-          do not support such a function! */
-          //virtual int ShallowCopy(Node *a);
+		void RemoveAllAttributes();
 
-        bool IsEmpty() const;
+		/** TODO: to be moved to mafVME
+		  perform a copy by simply referencing the copied node's data array.
+		  Beware: This can allow to save memory when doing special tasks, but
+		  can be very dangerous making one of the VME inconsistent. Some nodes
+		  do not support such a function! */
+		  //virtual int ShallowCopy(Node *a);
 
-        size_t GetNumberOfChildren(bool onlyVisible = false) const;
+		bool IsEmpty() const;
 
-        bool IsAChild(Node* a) const;
+		size_t GetNumberOfChildren(bool onlyVisible = false) const;
 
-        std::shared_ptr<Node> GetChild(mafID idx, bool onlyVisible = false);
+		bool IsAChild(Node* a) const;
 
-        int AddChild(std::shared_ptr<Node> node);
+		std::shared_ptr<Node> GetChild(mafID idx, bool onlyVisible = false);
 
-        void RemoveChild(mafID idx, bool onlyVisible = false);
+		int AddChild(std::shared_ptr<Node> node);
 
-        void RemoveChild(Node* node);
+		void RemoveChild(mafID idx, bool onlyVisible = false);
 
-        void RemoveAllChildren();
+		void RemoveChild(Node* node);
 
-        bool IsInTree(Node* a) const;
+		void RemoveAllChildren();
 
-        Node* GetParent() const;
+		bool IsInTree(Node* a) const;
 
-        Node* GetRoot();
+		Node* GetParent() const;
 
-        bool IsVisible() const;
+		Node* GetRoot();
 
-        bool GetVisibleToTraverse() const;
+		bool IsVisible() const;
 
-        void SetVisibleToTraverse(bool flag);
+		bool GetVisibleToTraverse() const;
 
-        Iterator begin();
+		void SetVisibleToTraverse(bool flag);
 
-        Iterator end();
+		Iterator begin();
 
-        static std::shared_ptr<Node> CopyTree(Node* vme, Node* parent = nullptr);
+		Iterator end();
 
-        std::shared_ptr<Node> CopyTree();
+		static std::shared_ptr<Node> CopyTree(Node* vme, Node* parent = nullptr);
 
-        std::shared_ptr<Node> GetByPath(const mafString& path, bool onlyVisible = true);
+		std::shared_ptr<Node> CopyTree();
 
-        int FindNodeIdx(Node* a, bool onlyVisible = false);
+		std::shared_ptr<Node> GetByPath(const mafString& path, bool onlyVisible = true);
 
-        int FindNodeIdx(const mafString& name, bool onlyVisible = false);
+		int FindNodeIdx(Node* a, bool onlyVisible = false);
 
-        std::shared_ptr<Node> FindInTreeByTag(const mafTagItem& tag);
+		int FindNodeIdx(const mafString& name, bool onlyVisible = false);
 
-        std::shared_ptr<Node> FindInTreeByName(const mafString& name, bool match_case = true, bool whole_word = true);
+		std::shared_ptr<Node> FindInTreeByTag(const mafTagItem& tag);
 
-        std::shared_ptr<Node> FindInTreeById(mafID id);
+		std::shared_ptr<Node> FindInTreeByName(const mafString& name, bool match_case = true, bool whole_word = true);
 
-        static std::shared_ptr<Node> FindInTreeByTag(std::shared_ptr<Node> sharedThis, const mafTagItem& tag);
+		std::shared_ptr<Node> FindInTreeById(mafID id);
 
-        static std::shared_ptr<Node> FindInTreeByName(std::shared_ptr<Node> sharedThis, const mafString& name, bool match_case = true, bool whole_word = true);
+		static std::shared_ptr<Node> FindInTreeByTag(std::shared_ptr<Node> sharedThis, const mafTagItem& tag);
 
-        static std::shared_ptr<Node> FindInTreeById(std::shared_ptr<Node> sharedThis, mafID id);
+		static std::shared_ptr<Node> FindInTreeByName(std::shared_ptr<Node> sharedThis, const mafString& name, bool match_case = true, bool whole_word = true);
 
-        static int ReparentTo(std::shared_ptr<Node> sharedThis, Node* parent);
+		static std::shared_ptr<Node> FindInTreeById(std::shared_ptr<Node> sharedThis, mafID id);
 
-        bool CompareTree(Node* node);
+		static int ReparentTo(std::shared_ptr<Node> sharedThis, Node* parent);
 
-        virtual bool CanReparentTo(Node* parent);
+		bool CompareTree(Node* node);
 
-    protected:
+		virtual bool CanReparentTo(Node* parent);
 
-        virtual int OnSetParent(Node* parent);
+	protected:
 
-        void OnNodeDetachedFromTree(Node* node);
+		virtual int OnSetParent(Node* parent);
 
-        void OnNodeAttachedToTree(Node* node);
+		void OnNodeDetachedFromTree(Node* node);
 
-        void OnNodeDestroyed(Node* node);
+		void OnNodeAttachedToTree(Node* node);
 
-    private:
+		void OnNodeDestroyed(Node* node);
 
-        static int SetParentNew(std::shared_ptr<Node> sharedThis, Node* parent);
+	private:
 
-    public:
+		static int SetParentNew(std::shared_ptr<Node> sharedThis, Node* parent);
 
-        size_t GetNumberOfLinks() const { return m_Links.size(); }
+	public:
 
-        auto& GetLinks() { return m_Links; }
+		size_t GetNumberOfLinks() const { return m_Links.size(); }
 
-    	auto& GetLinks() const { return m_Links; }
+		auto& GetLinks() { return m_Links; }
 
-    	Node* GetLink(const mafString& name);
+		auto& GetLinks() const { return m_Links; }
 
-    	mafID GetLinkSubId(const mafString& name);
+		Node* GetLink(const mafString& name);
 
-    	void SetLink(const mafString&, Node* node, mafID sub_id = -1);
+		mafID GetLinkSubId(const mafString& name);
 
-    	void RemoveLink(const mafString& name);
+		void SetLink(const mafString&, Node* node, mafID sub_id = -1);
 
-    	void RemoveAllLinks();
+		void RemoveLink(const mafString& name);
 
-        void OnEvent(mafEventBase* e) override;
+		void RemoveAllLinks();
 
-        void ForwardUpEvent(mafEventBase* maf_event);
+		void OnEvent(mafEventBase* e) override;
 
-    	void ForwardUpEvent(mafEventBase& maf_event);
+		void ForwardUpEvent(mafEventBase* maf_event);
 
-        void ForwardDownEvent(mafEventBase* maf_event);
+		void ForwardUpEvent(mafEventBase& maf_event);
 
-    	void ForwardDownEvent(mafEventBase& maf_event);
+		void ForwardDownEvent(mafEventBase* maf_event);
 
-        enum BASENODE_WIDGET_ID
-        {
-            ID_NAME = MINID,
-            ID_PRINT_INFO,
-            ID_HELP,
-            ID_LAST
-        };
+		void ForwardDownEvent(mafEventBase& maf_event);
 
-        virtual void UpdateLinks(std::vector<std::pair<Node*, Node*> >& nodes);
+		enum BASENODE_WIDGET_ID
+		{
+			ID_NAME = MINID,
+			ID_PRINT_INFO,
+			ID_HELP,
+			ID_LAST
+		};
 
-        static const char** GetIcon();
+		virtual void UpdateLinks(std::vector<std::pair<Node*, Node*> >& nodes);
 
-        MTimeType GetMTime() override;
+		static const char** GetIcon();
 
-        void DependsOnLinkedNodeOn() { m_DependsOnLinkedNode = true; }
+		MTimeType GetMTime() override;
 
-        void DependsOnLinkedNodeOff() { m_DependsOnLinkedNode = false; }
+		void DependsOnLinkedNodeOn() { m_DependsOnLinkedNode = true; }
 
-        std::shared_ptr<Node> SharedFromThis();
+		void DependsOnLinkedNodeOff() { m_DependsOnLinkedNode = false; }
 
-        virtual void Print(std::ostream& os, const int tabs = 0);// const;
+		std::shared_ptr<Node> SharedFromThis();
 
-    protected:
+		virtual void Print(std::ostream& os, const int tabs = 0);// const;
 
-        mafGUI* CreateGui() override;
+		base::Connection connectNodeChanged(std::function<void()> fn);
 
-    	void OnPrint();
+	protected:
 
-    private:
+		mafGUI* CreateGui() override;
 
-    	bool m_Initialized = false;
+		void OnPrint();
 
-    	Children m_Children;
+		base::Signal<> m_nodeChanged;
+	private:
 
-    	Node* m_Parent = nullptr;
+		bool m_Initialized = false;
 
-        Attributes m_Attributes;
+		Children m_Children;
 
-        Links m_Links;
+		Node* m_Parent = nullptr;
 
-        mafString m_Name;
+		Attributes m_Attributes;
 
-    	mafID m_Id = -1;
+		Links m_Links;
 
-        bool m_VisibleToTraverse = true;
+		mafString m_Name;
 
-        bool m_DependsOnLinkedNode = false;
-    };
+		mafID m_Id = -1;
 
-    template<class Value>
-    std::shared_ptr<Node> Parse(const Value& value, io::parse::To<Node>)
-    {
-        mafString type_name = value(_R("Type")).template As<mafString>();
-        if (auto node = Node::Create(type_name.GetCStr()))
-        {
-            node->Restore(value);
-            return node;
-        }
-        return nullptr;
-    }
+		bool m_VisibleToTraverse = true;
 
-    template<class Value>
-    auto Parse(const Value& value, io::parse::To<std::shared_ptr<Node>>)
-    {
-        return Parse(value, io::parse::To<Node>{});
-    }
+		bool m_DependsOnLinkedNode = false;
+	};
 
 	template<class Value>
-    void Serialize(Value& value, Node* const& node)
-    {
-        assert(node);
-        mafString type_name = _R(node->GetTypeName());
-        value(_R("Type")).SetValue(type_name);
-        node->Store(value);
-    }
+	std::shared_ptr<Node> Parse(const Value& value, io::parse::To<Node>)
+	{
+		mafString type_name = value(_R("Type")).template As<mafString>();
+		if (auto node = Node::Create(type_name.GetCStr()))
+		{
+			node->Restore(value);
+			return node;
+		}
+		return nullptr;
+	}
+
+	template<class Value>
+	auto Parse(const Value& value, io::parse::To<std::shared_ptr<Node>>)
+	{
+		return Parse(value, io::parse::To<Node>{});
+	}
+
+	template<class Value>
+	void Serialize(Value& value, Node* const& node)
+	{
+		assert(node);
+		mafString type_name = _R(node->GetTypeName());
+		value(_R("Type")).SetValue(type_name);
+		node->Store(value);
+	}
 }
 
 END_FTK_NAMESPACE

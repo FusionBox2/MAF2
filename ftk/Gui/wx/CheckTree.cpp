@@ -270,8 +270,8 @@ namespace gui::wx
 		assert(w > 0 && h > 0);
 
 		// create the ImageList 
-		int mw = sw + w;
-		int mh = (sh > h) ? sh : h;
+		int mw = w;
+		int mh = h;
 		auto imgs = std::make_unique<wxImageList>(mw, mh, false, num_icons);
 
 		for (size_t i = 0; i < num_types; i++)
@@ -284,15 +284,15 @@ namespace gui::wx
 				wxBitmap vmeico = mafPictureFactory::GetPictureFactory()->GetVmePic(v[i]);
 				if (s == 0)
 					vmeico = mafGrayScale(vmeico);
-				wxBitmap merged = MergeIcons(state_ico[s], vmeico);
-				imgs->Add(merged);
+				//wxBitmap merged = MergeIcons(state_ico[s], vmeico);
+				imgs->Add(state_ico[s]);
 
 				// Icons for missing data
 				if (s != 0)
 					vmeico = mafGrayScale(vmeico);
 				vmeico = mafRedScale(vmeico);
-				wxBitmap missingData = MergeIcons(state_ico[s], vmeico); // Same icon as above, but represent a 
-				imgs->Add(missingData);                                 // node with no data available.
+				//wxBitmap missingData = MergeIcons(state_ico[s], vmeico); // Same icon as above, but represent a 
+				imgs->Add(state_ico[s]);                                 // node with no data available.
 			}
 		}
 		SetImageList(std::move(imgs));

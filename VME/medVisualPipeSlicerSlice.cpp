@@ -261,7 +261,7 @@ void medVisualPipeSlicerSlice::Create(mafNode* node, mafView* view/*, bool use_a
 
 	m_AssemblyFront->AddPart(m_OutlineActor);
 
-	m_Axes = std::make_unique<mafAxes>(m_RenFront, m_Vme);
+	m_Axes = std::make_unique<mafAxes>(m_Vme);
 	m_Axes->SetVisibility(0);
 
 

@@ -364,7 +364,7 @@ void medOpInteractiveClipSurface::OnEventThis(mafEventBase *maf_event)
 			break;
 		case ID_UNDO:
 			{
-				Undo();
+				Undo_();
 				{mafEvent evUnq(this,CAMERA_UPDATE); InvokeEvent(evUnq);}
 			}
 			break;
@@ -791,7 +791,7 @@ int medOpInteractiveClipSurface::Clip()
   return MAF_OK;
 }
 //----------------------------------------------------------------------------
-void medOpInteractiveClipSurface::Undo()
+void medOpInteractiveClipSurface::Undo_()
 //----------------------------------------------------------------------------
 {
 	if(m_ResultPolyData.size()>1)

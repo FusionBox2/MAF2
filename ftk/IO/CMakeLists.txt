@@ -1,35 +1,38 @@
 cmake_minimum_required(VERSION 3.27)
 
-project(IO)
+set(TARGET_NAME ftkIO)
 
-set(PROJECT_HEADERS
-    Parse.h
-    ParseContainers.h
-    ParseTo.h
-    Serialize.h
-    SerializeContainers.h
-    SerializeTo.h
-    JsonRapid.h
-    XmlRapid.h
-    XmlXerces.h
+SET(TARGET_HEADERS
+	Parse.h
+	ParseContainers.h
+	ParseTo.h
+	Serialize.h
+	SerializeContainers.h
+	SerializeTo.h
+	JsonRapid.h
+	XmlRapid.h
+	XmlXerces.h
 )
 
-set(PROJECT_SOURCES
+SET(TARGET_SOURCES
 	StorageElement.cpp
 	StorageElement.h
-    JsonRapid.cpp
-    XmlRapid.cpp
-    XmlXerces.cpp
+	JsonRapid.cpp
+	XmlRapid.cpp
+	XmlXerces.cpp
 )
 
 set(PROJECT_LIBS mafBase)
 
+add_library(${TARGET_NAME} ${TARGET_HEADERS} ${TARGET_SOURCES})
+target_include_directories(${TARGET_NAME} PRIVATE ${FTK_SOURCE_DIR})
+target_include_directories(${TARGET_NAME} PRIVATE ${FTK_BINARY_DIR})
+target_link_libraries(${TARGET_NAME} mafBase)
+
 if(FTK_USE_XercesC)
-  set(PROJECT_LIBS ${PROJECT_LIBS} XercesC::XercesC libjson)
+	target_link_libraries(${TARGET_NAME} XercesC::XercesC)
 endif(FTK_USE_XercesC)
 
-add_library(${PROJECT_NAME} ${PROJECT_HEADERS} ${PROJECT_SOURCES})
-target_include_directories(${PROJECT_NAME} PUBLIC .)
-target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_SOURCE_DIR})
-target_include_directories(${PROJECT_NAME} PRIVATE ${FTK_BINARY_DIR})
-target_link_libraries(${PROJECT_NAME} ${PROJECT_LIBS})
+if(FTK_USE_LIBJSON)
+	target_link_libraries(${TARGET_NAME} libjson)
+endif(FTK_USE_LIBJSON)

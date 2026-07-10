@@ -285,8 +285,8 @@ void mafPipeSurfaceTextured::Create(mafNode* node, mafView* view/*, bool use_axe
 
 	if (m_RenFront)
 	{
-		m_Axes = new mafAxes(m_RenFront, m_Vme);
-		m_Axes->SetVisibility(0);
+		m_Axes = std::make_unique<mafAxes>(m_Vme);
+		m_Axes->SetVisibility(false);
 	}
 
 	m_GhostActor = NULL;
@@ -326,7 +326,7 @@ mafPipeSurfaceTextured::~mafPipeSurfaceTextured()
 	vtkDEL(m_Mapper);
 	vtkDEL(m_Actor);
 	vtkDEL(m_OutlineActor);
-	cppDEL(m_Axes);
+	m_Axes.reset();
 	cppDEL(m_MaterialButton);
 
 	if (m_GhostActor)

@@ -19,7 +19,7 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "mafVMEItem.h"
-#include "ftk/Base/String.h"
+#include "ftk/Base/mfString.h"
 #include "ftk/Base/MTime.h"
 
 #include <vnl/vnl_matrix.h>

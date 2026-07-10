@@ -35,7 +35,7 @@ namespace base
 				});
 		}
 
-		void emit(Args... args)
+		void emit(Args... args) const
 		{
 			for (auto& [id, slot] : *m_slots)
 			{

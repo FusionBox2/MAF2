@@ -13,7 +13,7 @@ namespace utilities
   {
 #ifdef MAF_USE_VTK  
     static vtkTimeStamp timeStamp;
-    static SpinLock TimeStampMutex;
+    static base::SpinLock TimeStampMutex;
 
     std::lock_guard lock(TimeStampMutex);
     timeStamp.Modified();

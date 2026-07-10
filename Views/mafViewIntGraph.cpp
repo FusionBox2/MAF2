@@ -55,30 +55,6 @@ int lhpPlotGraph::GetNodeStatus(mafNode *node)
 //----------------------------------------------------------------------------
 {
   return mafSceneGraph::GetNodeStatus(node);
-  if (!m_InformationPipeModality && mafVMERoot::SafeDownCast(node))
-  {
-    return NODE_NON_VISIBLE;
-  }
-
-  mafSceneNode *n = Vme2Node(node);
-  if(!n)
-    return NODE_NON_VISIBLE;
-
-  if (!node->IsMAFType(mafVME))
-  {
-    return NODE_NON_VISIBLE;
-  }
-  mafVME *vme = (mafVME *)node;
-  bool creatable = n->m_PipeCreatable && vme;
-  //landmark are not creatable
-  //if(vme->IsA("mafNodeLandmark")) creatable = false;
-
-  if(!creatable)                      return NODE_NON_VISIBLE;
-  if( n->m_Mutex &&  n->IsVisible())  return NODE_MUTEX_ON;
-  if( n->m_Mutex && !n->IsVisible())  return NODE_MUTEX_OFF;
-  if( n->IsVisible())                 return NODE_VISIBLE_ON;
-  if(!n->IsVisible())                 return NODE_VISIBLE_OFF;
-  return NODE_NON_VISIBLE;
 }
 
 //----------------------------------------------------------------------------

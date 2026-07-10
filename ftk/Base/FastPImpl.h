@@ -10,7 +10,7 @@
 
 BEGIN_FTK_NAMESPACE
 
-namespace utilities
+namespace base
 {
 	template <class T, std::size_t size, std::size_t align, bool strict = false>
 	class FastPImpl final

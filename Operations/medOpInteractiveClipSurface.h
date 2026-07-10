@@ -135,7 +135,7 @@ protected:
 	void ChangeGizmo();
 
 	/** Menage the undo inside the operation */
-	void Undo();
+	void Undo_();
 
   void OnUseGizmo();
 

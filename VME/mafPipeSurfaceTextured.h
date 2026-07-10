@@ -24,6 +24,8 @@
 #include "mafVMEImage.h"
 #include "mafAxes.h"
 
+#include <memory>
+
 //----------------------------------------------------------------------------
 // forward refs :
 //----------------------------------------------------------------------------
@@ -110,7 +112,7 @@ protected:
   vtkPolyDataMapper	      *m_Mapper;
   mafLODActor             *m_Actor;
   mafLODActor             *m_OutlineActor;
-  mafAxes                 *m_Axes;
+  std::unique_ptr<mafAxes> m_Axes;
   vtkActor               *m_GhostActor;
   mafString m_File;
   mafString pathName;

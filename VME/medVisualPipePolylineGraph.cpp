@@ -116,8 +116,7 @@ void medVisualPipePolylineGraph::Create(mafNode* node, mafView* view)
 
 	AddActorsToAssembly(m_AssemblyFront);
 
-	if (m_RenFront)
-		m_Axes = std::make_unique<mafAxes>(m_RenFront, m_Vme);
+	m_Axes = std::make_unique<mafAxes>(m_Vme);
 }
 //----------------------------------------------------------------------------
 void medVisualPipePolylineGraph::ExecutePipe()

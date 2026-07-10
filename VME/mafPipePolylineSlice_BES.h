@@ -22,7 +22,7 @@
 //----------------------------------------------------------------------------
 
 #include "mafPipeSlice.h"
-
+#include <memory>
 //----------------------------------------------------------------------------
 // forward refs :
 //----------------------------------------------------------------------------
@@ -150,7 +150,7 @@ protected:
   vtkPolyDataMapper       *m_OutlineMapper;
   vtkProperty             *m_OutlineProperty;
   vtkActor                *m_OutlineActor;
-  mafAxes                 *m_Axes;
+  std::unique_ptr<mafAxes> m_Axes;
   vtkPlane				        *m_Plane;
   vtkMAFFixedCutter		      *m_Cutter;
   vtkPolyData             *m_PolySpline;

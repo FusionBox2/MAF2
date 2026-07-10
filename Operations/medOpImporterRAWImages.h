@@ -22,7 +22,7 @@
 
 #include "mafOp.h"
 #include "mafEvent.h"
-#include "ftk/Base/String.h"
+#include "ftk/Base/mfString.h"
 
 #include "vtkObject.h"
 
@@ -50,7 +50,6 @@ class vtkWindowLevelLookupTable;
 class mafGUIDialogPreview;
 class vtkTexture;
 class medInteractorDICOMImporter;
-class mafString;
 class mafVMEVolumeGray;
 class mafVMEVolumeRGB;
 #ifdef VME_VOLUME_LARGE

@@ -26,7 +26,6 @@
 //----------------------------------------------------------------------------
 // forward references :
 //----------------------------------------------------------------------------
-class mafString;
 class mafVMEPointSet;
 class medVMEPolylineGraph;
 class mafVMESurface;

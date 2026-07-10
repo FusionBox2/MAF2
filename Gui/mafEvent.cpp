@@ -3,7 +3,7 @@
 #include "mafView.h"
 #include "mafOp.h"
 #include "mafNode.h"
-#include "ftk/Base/String.h"
+#include "ftk/Base/mfString.h"
 #include "mafMatrix.h"
 
 #ifdef MAF_USE_VTK

@@ -31,7 +31,6 @@ class mafView;
 class mafBaseEventHandler;
 class mafSceneNode;
 class mafEventBase;
-class mafString;
 class mafGUIFloatSlider;
 class vtkActor2D;
 class vtkTextMapper;

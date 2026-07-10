@@ -302,8 +302,11 @@ void mafPipeSurfaceSlice::Create(mafNode* node, mafView* view/*, bool use_axes*/
 
 	m_AssemblyFront->AddPart(m_OutlineActor);
 
-	m_Axes = new mafAxes(m_RenFront, m_Vme);
-	m_Axes->SetVisibility(0);
+	if (m_RenFront)
+	{
+		m_Axes = std::make_unique<mafAxes>(m_Vme);
+		m_Axes->SetVisibility(false);
+	}
 
 	/*
 	m_axes = NULL;
@@ -327,7 +330,7 @@ mafPipeSurfaceSlice::~mafPipeSurfaceSlice()
 	vtkDEL(m_VTKTransform);
 	vtkDEL(m_Plane);
 	vtkDEL(m_Cutter);
-	cppDEL(m_Axes);
+	m_Axes.reset();
 	vtkDEL(m_SphereSource);
 	//@@@ if(m_use_axes) wxDEL(m_axes);  
 }
@@ -640,8 +643,11 @@ void mafPipeSurfaceSlice::CreateClosedCloudPipe()
 
 	m_AssemblyFront->AddPart(m_OutlineActor);
 
-	m_Axes = new mafAxes(m_RenFront, m_Vme);
-	m_Axes->SetVisibility(0);
+	if (m_RenFront)
+	{
+		m_Axes = std::make_unique<mafAxes>(m_Vme);
+		m_Axes->SetVisibility(false);
+	}
 
 }
 //----------------------------------------------------------------------------
@@ -661,5 +667,5 @@ void mafPipeSurfaceSlice::RemoveClosedCloudPipe()
 	vtkDEL(m_OutlineActor);
 	vtkDEL(m_Plane);
 	vtkDEL(m_Cutter);
-	cppDEL(m_Axes);
+	m_Axes.reset();
 }

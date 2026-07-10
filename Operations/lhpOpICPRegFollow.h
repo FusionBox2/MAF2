@@ -23,7 +23,6 @@ class mafEvent;
 
 class mafVME;
 class mafVMESurface;
-class mafString;
 
 //----------------------------------------------------------------------------
 // lhpOpICPRegFollow :

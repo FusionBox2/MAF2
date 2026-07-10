@@ -2,7 +2,7 @@
 
 #include "ftkConfigure.h"
 
-#include "ftk/Base/String.h"
+#include "ftk/Base/mfString.h"
 #include <vector>
 
 class FTK_BASE_EXPORT mafDirectory

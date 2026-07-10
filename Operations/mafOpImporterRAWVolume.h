@@ -21,7 +21,7 @@
 //----------------------------------------------------------------------------
 #include "mafOp.h"
 #include "mafEvent.h"
-#include "ftk/Base/String.h"
+#include "ftk/Base/mfString.h"
 
 //----------------------------------------------------------------------------
 // forward references :

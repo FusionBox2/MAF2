@@ -81,8 +81,6 @@ namespace gui::wx
 
 		void OnSize(wxSizeEvent& event);
 
-		bool NodeExist(NodeID node_id) const;
-
 		int CheckIconId(int icon) const;
 
 		bool m_PreventNotify = false;

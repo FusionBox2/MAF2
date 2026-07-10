@@ -86,9 +86,9 @@ namespace gui::wx
 
 		virtual void ShowContextualMenu(wxMouseEvent& event);
 
+	protected:
 		void OnSelectionChanged(wxTreeEvent& event) override;
 
-	protected:
 		mafView* m_View = nullptr;
 		bool     m_CanSelect = true;
 

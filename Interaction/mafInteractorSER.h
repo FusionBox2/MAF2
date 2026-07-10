@@ -25,7 +25,6 @@
 // forward declarations
 //----------------------------------------------------------------------------
 class mafDevice;
-class mafString;
 class mafStorageElement;
 class mafStorageElementBuilder;
 

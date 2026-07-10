@@ -94,8 +94,8 @@ void mafPipeBox::Create(mafNode* node, mafView* view/*, bool use_axes*/)
 
 	if (m_RenFront)
 	{
-		m_Axes = std::make_unique<mafAxes>(m_RenFront, m_Vme);
-		m_Axes->SetVisibility(0);
+		m_Axes = std::make_unique<mafAxes>(m_Vme);
+		m_Axes->SetVisibility(false);
 	}
 }
 //----------------------------------------------------------------------------

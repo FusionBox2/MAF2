@@ -45,6 +45,7 @@
 #include "ftk/Gui/wx/CheckTree.h"
 #include "mafGUITimeBar.h"
 #include "mafGUIMaterialChooser.h"
+#include "mafGUIDockSettings.h"
 #include "mafGUILocaleSettings.h"
 #include "mafGUIMeasureUnitSettings.h"
 #include "mafGUIApplicationSettings.h"
@@ -125,6 +126,102 @@ struct mafMenuElems
 	mafID m_command;
 };
 
+void addPaneToFrame(mafGUIMDIFrame* frame, wxWindow* window, wxAuiPaneInfo& pi)
+{
+	frame->AddPane(window, pi);
+	if (pi.caption.IsEmpty())
+	{
+		return;
+	}
+
+	wxMenuBar* menubar = frame->GetMenuBar();
+	if (!menubar)
+		return;
+	int idx = menubar->FindMenu("View");
+	if (idx == wxNOT_FOUND)
+		return;
+	wxMenu* viewMenu = menubar->GetMenu(idx);
+	if (pi.IsToolbar())
+	{
+		wxMenu* toolbarsMenu = nullptr;
+		int ids = viewMenu->FindItem("Toolbars");
+		if (ids == wxNOT_FOUND)
+		{
+			toolbarsMenu = new wxMenu;
+			wxMenuItem* toolbarsItem = viewMenu->Insert(0, wxID_ANY, "Toolbars", toolbarsMenu);
+		}
+		else
+		{
+			wxMenuItem* sm = viewMenu->FindItem(ids);
+			toolbarsMenu = sm->GetSubMenu();
+		}
+		if (toolbarsMenu)
+		{
+			toolbarsMenu->Append(window->GetId(), pi.caption, "", wxITEM_CHECK);
+		}
+		frame->Bind(wxEVT_MENU, [frame](wxCommandEvent& event)
+			{
+				auto& pi = frame->GetPane(event.GetId());
+				frame->ShowPane(pi, !frame->IsPaneShown(pi));
+			}, window->GetId(), window->GetId());
+		frame->Bind(wxEVT_UPDATE_UI, [frame](wxUpdateUIEvent& event)
+			{
+				event.Check(frame->IsPaneShown(event.GetId()));
+			}, window->GetId(), window->GetId());
+	}
+	else
+	{
+		int ids = viewMenu->FindItem("Layout");
+		if (ids != wxNOT_FOUND)
+		{
+			size_t pos = 0;
+			wxMenuItem* sm = viewMenu->FindChildItem(ids, &pos);
+			viewMenu->Insert(pos, window->GetId(), pi.caption, "", wxITEM_CHECK);
+		}
+		else
+		{
+			viewMenu->Append(window->GetId(), pi.caption, "", wxITEM_CHECK);
+		}
+		frame->Bind(wxEVT_MENU, [frame](wxCommandEvent& event)
+			{
+				auto& pi = frame->GetPane(event.GetId());
+				frame->ShowPane(pi, !frame->IsPaneShown(pi));
+			}, window->GetId(), window->GetId());
+		frame->Bind(wxEVT_UPDATE_UI, [frame](wxUpdateUIEvent& event)
+			{
+				event.Check(frame->IsPaneShown(event.GetId()));
+			}, window->GetId(), window->GetId());
+	}
+}
+
+void removePaneFromFrame(mafGUIMDIFrame* frame, wxWindow* window, wxAuiPaneInfo& pi)
+{
+	wxMenuBar* menubar = frame->GetMenuBar();
+	int idx = menubar->FindMenu("View");
+	if (idx != wxNOT_FOUND)
+	{
+		wxMenu* viewMenu = menubar->GetMenu(idx);
+		if (pi.IsToolbar())
+		{
+			int ids = viewMenu->FindItem("Toolbars");
+			wxMenuItem* sm = viewMenu->FindItem(ids);
+			wxMenu* toolbarsMenu = sm->GetSubMenu();
+			//frame->Unbind(wxEVT_MENU, &PaneFrame::OnSwitchPane, this, pi.window->GetId(), pi.window->GetId());
+			//frame->Unbind(wxEVT_UPDATE_UI, &PaneFrame::OnUpdatePaneUI, this, pi.window->GetId(), pi.window->GetId());
+			delete toolbarsMenu->Remove(pi.window->GetId());
+			if (toolbarsMenu->GetMenuItemCount() == 0)
+			{
+				delete viewMenu->Remove(sm);
+			}
+		}
+		else
+		{
+			//frame->Unbind(wxEVT_MENU, &PaneFrame::OnSwitchPane, this, pi.window->GetId(), pi.window->GetId());
+			//frame->Unbind(wxEVT_UPDATE_UI, &PaneFrame::OnUpdatePaneUI, this, pi.window->GetId(), pi.window->GetId());
+			delete viewMenu->Remove(pi.window->GetId());
+		}
+	}
+}
 
 class InnerLogic
 {
@@ -133,6 +230,7 @@ public:
 	~InnerLogic();
 	mafGUIMDIFrame* m_frame = nullptr;
 
+	std::unique_ptr<mafGUIDockSettings> m_DockSettings;
 	std::unique_ptr<mafGUILocaleSettings> m_LocaleSettings;
 	std::unique_ptr<mafGUIMeasureUnitSettings> m_MeasureUnitSettings;
 	std::unique_ptr<mafGUIApplicationSettings> m_ApplicationSettings;
@@ -227,7 +325,15 @@ mafLogicWithManagers::~mafLogicWithManagers() = default;
 
 bool mafLogicWithManagers::Configure()
 {
-	auto frame = new mafGUIMDIFrame("maf", wxDefaultPosition, wxWindow::FromDIP(wxSize(800, 600), nullptr));
+	auto frame = new mafGUIMDIFrame(nullptr, wxID_ANY, "maf", wxDefaultPosition, wxWindow::FromDIP(wxSize(800, 600), nullptr));
+	wxIconBundle ib;
+	ib.AddIcon(mafPictureFactory::GetPictureFactory()->GetIcon(_R("FRAME_ICON16x16")));
+	ib.AddIcon(mafPictureFactory::GetPictureFactory()->GetIcon(_R("FRAME_ICON32x32")));
+	frame->SetIcons(ib);
+	mafSetFrame(frame);
+	frame->Centre();
+
+	frame->DragAcceptFiles(true);
 
 	//m_Win->SetListener(this);
 	frame->Bind(wxEVT_CLOSE_WINDOW, [this](const wxCloseEvent& event) {mafEvent evUnq(this, MENU_FILE_QUIT); OnEvent(&evUnq); });
@@ -289,6 +395,7 @@ bool mafLogicWithManagers::Configure()
 
 	m_logic = std::make_unique<InnerLogic>(this);
 	m_logic->m_frame = frame;
+	m_logic->m_DockSettings = std::make_unique<mafGUIDockSettings>(frame->GetDockManager());
 
 	mafString msfDir = mafGetApplicationDirectory();
 	ParsePathName(msfDir);
@@ -323,10 +430,9 @@ bool mafLogicWithManagers::Configure()
 		m_logic->m_MenuBar = new wxMenuBar;
 		wxMenu* fileMenu = new wxMenu;
 		fileMenu->Append(wxID_NEW);
-		fileMenu->Append(wxID_OPEN);
+		fileMenu->Append(wxID_OPEN, _("&Open   \tCtrl+O"));
 		fileMenu->Append(wxID_SAVE);
 		fileMenu->Append(wxID_SAVEAS);
-		fileMenu->Append(wxID_OPEN, _("&Open   \tCtrl+O"));
 
 		if (m_logic->m_StorageSettings->UseRemoteStorage())
 		{
@@ -415,7 +521,7 @@ bool mafLogicWithManagers::Configure()
 		m_logic->m_ToolBar->Realize();
 
 		//m_Win->SetToolBar(m_ToolBar);
-		m_logic->m_frame->AddPane(m_logic->m_ToolBar, wxAuiPaneInfo()
+		addPaneToFrame(m_logic->m_frame, m_logic->m_ToolBar, wxAuiPaneInfo()
 			.Name("toolbar")
 			.Caption(wxT("ToolBar"))
 			.Top()
@@ -436,7 +542,7 @@ bool mafLogicWithManagers::Configure()
 		// Events coming from settings are forwarded to the time bar.
 		m_logic->m_TimePanel->SetTimeSettings(m_logic->m_TimeBarSettings.get());
 		m_logic->m_TimeBarSettings->SetListener(m_logic->m_TimePanel);
-		m_logic->m_frame->AddPane(m_logic->m_TimePanel, wxAuiPaneInfo()
+		addPaneToFrame(m_logic->m_frame, m_logic->m_TimePanel, wxAuiPaneInfo()
 			.Name("timebar")
 			.Caption(wxT("TimeBar"))
 			.Bottom()
@@ -478,7 +584,7 @@ bool mafLogicWithManagers::Configure()
 
 		delete wxLog::SetActiveTarget(logger);
 
-		m_logic->m_frame->AddPane(log, wxAuiPaneInfo()
+		addPaneToFrame(m_logic->m_frame, log, wxAuiPaneInfo()
 			.Name("logbar")
 			.Caption(wxT("LogBar"))
 			.Bottom()
@@ -512,7 +618,7 @@ bool mafLogicWithManagers::Configure()
 	if (m_logic->m_PlugSidebar)
 	{
 		m_logic->m_SideBar = std::make_unique<mafSideBar>(m_logic->m_frame, MENU_VIEW_SIDEBAR_, this, m_logic->m_SidebarStyle);
-		m_logic->m_frame->AddPane(m_logic->m_SideBar->m_Notebook, wxAuiPaneInfo()
+		addPaneToFrame(m_logic->m_frame, m_logic->m_SideBar->m_Notebook, wxAuiPaneInfo()
 			.Name("sidebar")
 			.Caption(wxT("ControlBar"))
 			.Right()
@@ -581,7 +687,7 @@ bool mafLogicWithManagers::Configure()
 		m_logic->m_SettingsDialog->AddPage(m_logic->m_ApplicationLayoutSettings->GetGui(), m_logic->m_ApplicationLayoutSettings->GetLabel());
 	}
 
-	m_logic->m_SettingsDialog->AddPage(m_logic->m_frame->GetDockSettingGui(), _("User Interface Preferences"));
+	m_logic->m_SettingsDialog->AddPage(m_logic->m_DockSettings->GetGui(), _("User Interface Preferences"));
 
 	m_logic->m_HelpSettings = std::make_unique<mafGUISettingsHelp>(this);
 	m_logic->m_SettingsDialog->AddPage(m_logic->m_HelpSettings->GetGui(), m_logic->m_HelpSettings->GetLabel());
@@ -1510,7 +1616,7 @@ void mafLogicWithManagers::OnEvent(mafEventBase* maf_event)
 			m_logic->m_frame->ProgressBarHide();
 			break;
 		case PROGRESSBAR_SET_VALUE:
-			m_logic->m_frame->ProgressBarSetVal(e->GetArg());
+			m_logic->m_frame->ProgressBarSetValue(e->GetArg());
 			break;
 		case PROGRESSBAR_SET_TEXT:
 		{ wxString s = mafStringToWx(*e->GetString()); m_logic->m_frame->ProgressBarSetText(s); }

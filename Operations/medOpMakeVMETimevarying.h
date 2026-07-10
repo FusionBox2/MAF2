@@ -22,7 +22,7 @@
 //----------------------------------------------------------------------------
 
 #include "mafOp.h"
-#include "ftk/Base/String.h"
+#include "ftk/Base/mfString.h"
 #include "mafVME.h"
 #include "mafVMEGeneric.h"
 
@@ -31,7 +31,6 @@
 //----------------------------------------------------------------------------
 class mafEvent;
 class mafVME;
-class mafString;
 class wxListBox;
 class mafVMEGeneric;
 

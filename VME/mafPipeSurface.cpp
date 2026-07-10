@@ -218,10 +218,14 @@ void mafPipeSurface::Create(mafNode* node, mafView* view)
 	m_AssemblyFront->AddPart(m_OutlineActor);
 
 	if (m_RenFront)
-		m_Axes = new mafAxes(m_RenFront, m_Vme);
+	{
+		m_Axes = std::make_unique<mafAxes>(m_Vme);
+	}
 
 	if (m_Vme->IsA("mafVMERefSysAbstract"))
+	{
 		m_Axes->SetVisibility(false);
+	}
 
 	/*
 		if(data->GetCellData()->GetNormals())
@@ -324,7 +328,7 @@ mafPipeSurface::~mafPipeSurface()
 	if (m_EdgesActor)
 		m_AssemblyFront->RemovePart(m_EdgesActor);
 
-	cppDEL(m_Axes);
+	m_Axes.reset();
 	cppDEL(m_MaterialButton);
 
 	vtkDEL(m_Mapper);
@@ -349,7 +353,12 @@ void mafPipeSurface::Select(bool sel)
 	{
 		m_OutlineActor->SetVisibility(sel);
 		if (!m_Vme->IsA("mafVMERefSysAbstract"))
-			m_Axes->SetVisibility(sel);
+		{
+			if (m_Axes)
+			{
+				m_Axes->SetVisibility(sel);
+			}
+		}
 	}
 }
 //----------------------------------------------------------------------------

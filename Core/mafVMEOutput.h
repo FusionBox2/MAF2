@@ -19,7 +19,7 @@
 // includes :
 //----------------------------------------------------------------------------
 #include "ftk/Base/Object.h"
-#include "ftk/Base/String.h"
+#include "ftk/Base/mfString.h"
 #include "mafOBB.h"
 #include "mafObjectWithGUI.h"
 #include "mafDecl.h" // for MINID

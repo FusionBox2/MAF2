@@ -23,7 +23,7 @@
 #include "ftk/Gui/wx/Panel.h"
 #include "mafEventSender.h"
 #include "mafBaseEventHandler.h"
-#include "ftk/Base/String.h"
+#include "ftk/Base/mfString.h"
 
 //----------------------------------------------------------------------------
 // Forward refs:

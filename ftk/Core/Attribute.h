@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ftk/Base/Object.h"
-#include "ftk/Base/String.h"
+#include "ftk/Base/mfString.h"
 #include "ftk/IO/Parse.h"
 
 BEGIN_FTK_NAMESPACE

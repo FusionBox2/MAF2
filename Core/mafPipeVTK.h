@@ -15,6 +15,8 @@ public:
 
 	~mafPipeVTK() override;
 
+	void Create(mafNode* node, vtkRenderer** ren, vtkMAFAssembly** assembly);
+
 	void Create(mafNode* node, mafView* view) override;
 
 protected:

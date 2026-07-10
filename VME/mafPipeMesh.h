@@ -21,7 +21,7 @@
 // Include :
 //----------------------------------------------------------------------------
 #include "mafPipeVTK.h"
-
+#include <memory>
 //----------------------------------------------------------------------------
 // forward refs :
 //----------------------------------------------------------------------------
@@ -131,7 +131,7 @@ protected:
 	vtkActor                *m_Actor;
   vtkActor                *m_ActorWired;
 	vtkActor                *m_OutlineActor;
-	mafAxes                 *m_Axes;
+	std::unique_ptr<mafAxes> m_Axes;
   vtkLookupTable          *m_Table;
 
 	mafGUILutSwatch *m_LutSwatch;

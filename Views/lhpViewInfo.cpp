@@ -49,11 +49,6 @@ public:
 int lhpViewInfoGraph::GetNodeStatus(mafNode *node)
 //----------------------------------------------------------------------------
 {
-  if (!m_InformationPipeModality && mafVMERoot::SafeDownCast(node))
-  {
-    return NODE_NON_VISIBLE;
-  }
-
   mafSceneNode *n = Vme2Node(node);
   if(!n)
     return NODE_NON_VISIBLE;

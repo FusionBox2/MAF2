@@ -5,13 +5,31 @@
 #include "mafGUIHolder.h"
 #include "mafNode.h"
 
+bool mafOp::Do()
+{
+    OpRun();
+    OpDo();
+    return true;
+}
+
+bool mafOp::Undo()
+{
+    OpUndo();
+    return true;
+}
+
 //----------------------------------------------------------------------------
-mafOp::mafOp(const mafString &label) : m_Label(label)
+mafOp::mafOp(const mafString &label) : 
+core::Operation(label, false),
+m_Label(label)
+
 //----------------------------------------------------------------------------
 {
 }
 //----------------------------------------------------------------------------
-mafOp::mafOp() : m_Label(_R("default op name"))
+mafOp::mafOp() :
+    core::Operation(_R("default op name"), false),
+    m_Label(_R("default op name"))
 //----------------------------------------------------------------------------
 {
 }
@@ -84,7 +102,7 @@ void mafOp::SetOutput(std::shared_ptr<mafNode> output)
 mafOp* mafOp::Copy()
 //----------------------------------------------------------------------------
 {
-   return NULL;
+   return nullptr;
 }
 //----------------------------------------------------------------------------
 bool mafOp::CanUndo()

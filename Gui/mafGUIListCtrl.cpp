@@ -26,7 +26,7 @@
 
 #include "mafGUIListCtrl.h"
 #include "mafDecl.h"
-#include "ftk/Base/String.h"
+#include "ftk/Base/mfString.h"
 #include "mafPics.h"
 //----------------------------------------------------------------------------
 // EVENT_TABLE

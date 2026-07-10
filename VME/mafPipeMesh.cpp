@@ -112,7 +112,9 @@ void mafPipeMesh::Create(mafNode* node, mafView* view)
 	AddActorsToAssembly(m_AssemblyFront);
 
 	if (m_RenFront)
-		m_Axes = new mafAxes(m_RenFront, m_Vme);
+	{
+		m_Axes = std::make_unique<mafAxes>(m_Vme);
+	}
 }
 //----------------------------------------------------------------------------
 void mafPipeMesh::ExecutePipe()
@@ -291,7 +293,7 @@ mafPipeMesh::~mafPipeMesh()
 	vtkDEL(m_ActorWired);
 	vtkDEL(m_MapperWired);
 	vtkDEL(m_OutlineActor);
-	cppDEL(m_Axes);
+	m_Axes.reset();
 	cppDEL(m_MaterialButton);
 
 	delete[] m_ScalarsInComboBoxNames;			//BES: 4.3.2008 - memory leak bug fix - NB. do not use cppDEL!

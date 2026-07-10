@@ -85,7 +85,7 @@ protected:
 	void CreateGizmos();
 	void AttachInteraction();
 	void UpdateISARefSys();
-	void Undo();
+	void Undo_();
 
 	/** Change type of gizmo in the view */
 	void ChangeGizmo();

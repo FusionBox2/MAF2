@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ftk/Base/String.h"
+#include "ftk/Base/mfString.h"
 
 #include "wx/wxprec.h"
 #ifndef WX_PRECOMP

@@ -6,6 +6,7 @@
 #include "mafDecl.h"
 #include "mafEventBase.h" // base class for mafEvent
 #include "mafBaseEventHandler.h"
+#include "ftk/Base/mfString.h"
 
 namespace model::data
 {
@@ -15,7 +16,6 @@ using mafNode = model::data::Node;
 class mafView;
 class mafOp;
 class mafMatrix;
-class mafString;
 class mafAgent;
 
 #ifdef MAF_USE_VTK

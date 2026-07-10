@@ -27,7 +27,6 @@
 class mafGUI;
 
 class mafEventBase;
-class mafString;
 
 class mafVMESurface;
 class mafVMEGizmo;

@@ -3,7 +3,7 @@
 #include "ftkConfigure.h"
 
 #include "mafDefines.h"
-#include "ftk/Base/String.h"
+#include "ftk/Base/mfString.h"
 #include "ftk/Gui/wx/Panel.h"
 
 BEGIN_FTK_NAMESPACE
@@ -24,7 +24,7 @@ namespace gui::wx
 	{
 	public:
 
-		NamedPanel(wxWindow* parent, wxWindowID id = -1, bool CloseButton = false, bool HideTitle = false);
+		NamedPanel(wxWindow* parent, wxWindowID id = wxID_ANY, bool CloseButton = false, bool HideTitle = false);
 
 		~NamedPanel() override;
 

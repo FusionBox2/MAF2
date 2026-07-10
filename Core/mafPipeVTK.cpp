@@ -8,6 +8,19 @@ mafPipeVTK::mafPipeVTK() = default;
 
 mafPipeVTK::~mafPipeVTK() = default;
 
+void mafPipeVTK::Create(mafNode* node, vtkRenderer** ren, vtkMAFAssembly** assembly)
+{
+	m_RenFront = ren[0];
+	m_RenBack = ren[1];
+	m_AlwaysVisibleRenderer = ren[2];
+
+	m_AssemblyFront = assembly[0];
+	m_AssemblyBack = assembly[1];
+	m_AlwaysVisibleAssembly = assembly[2];
+
+	Create(node, nullptr);
+}
+
 void mafPipeVTK::Create(mafNode* node, mafView* view)
 {
 	Superclass::Create(node, view);

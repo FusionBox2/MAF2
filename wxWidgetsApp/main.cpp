@@ -80,7 +80,7 @@
 #include "ftk/Gui/wxw/MainFrame.h"
 #include "MainWindow.h"
 
-#include "ftk/Base/String.h"
+#include "ftk/Base/mfString.h"
 
 #include <list>
 #include <map>

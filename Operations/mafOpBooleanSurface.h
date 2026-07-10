@@ -78,7 +78,7 @@ public:
 	void Union();
 	void Intersection();
 	void Difference();
-	void Undo();
+	void Undo_();
 
 	void SetFactor1(mafVMESurface *surface){m_FirstOperatorVME=surface;};
 	void SetFactor2(mafVMESurface *surface){m_SecondOperatorVME=surface;};

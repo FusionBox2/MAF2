@@ -6,24 +6,27 @@
 
 BEGIN_FTK_NAMESPACE
 
-class SpinLock
+namespace base
 {
-public:
-	SpinLock()
+	class SpinLock
 	{
-	}
-	void lock()
-	{
-		while (locked.test_and_set(std::memory_order_acquire))
+	public:
+		SpinLock()
 		{
 		}
-	}
-	void unlock()
-	{
-		locked.clear(std::memory_order_release);
-	}
-private:
-	std::atomic_flag locked = ATOMIC_FLAG_INIT;
-};
+		void lock()
+		{
+			while (locked.test_and_set(std::memory_order_acquire))
+			{
+			}
+		}
+		void unlock()
+		{
+			locked.clear(std::memory_order_release);
+		}
+	private:
+		std::atomic_flag locked = ATOMIC_FLAG_INIT;
+	};
+}
 
 END_FTK_NAMESPACE
