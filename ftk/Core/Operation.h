@@ -3,17 +3,18 @@
 #include "ftkConfigure.h"
 
 #include <ftk/Base/String.h>
+#include "ftk/Core/WithProperties.h"
 
 BEGIN_FTK_NAMESPACE
 
 namespace core
 {
-	class Operation
+	class Operation : public WithProperties
 	{
 	public:
 		Operation(const base::String& name = _R(""), bool canUndo = false);
 
-		virtual ~Operation() = default;
+		~Operation() override = default;
 
 		virtual bool Do() = 0;
 
@@ -23,11 +24,18 @@ namespace core
 
 		virtual bool CanUndo() const { return m_canUndo; }
 
+		virtual bool IsConfigured() const { return true; }
+
 		const base::String& GetName() const { return m_operationName; }
+
+		PropertyList getProperties() override;
+
+		base::Connection connectOperationChanged(std::function<void()> fn);
 
 	protected:
 		base::String m_operationName;
 		bool m_canUndo;
+		base::Signal<> m_operationChanged;
 	};
 }
 

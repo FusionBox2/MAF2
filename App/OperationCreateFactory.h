@@ -17,9 +17,14 @@ public:
 
 	bool Undo() override;
 
+	PropertyList getProperties() override;
+
+	bool IsConfigured() const override;
+
 private:
 	DocumentContext& m_context;
 	std::shared_ptr<model::data::Node> m_node;
+	base::String m_nodeName;
 };
 
 END_FTK_NAMESPACE

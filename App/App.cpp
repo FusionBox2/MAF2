@@ -641,7 +641,7 @@ void ConfiguredAppFrame<BaseFrame>::ConfigureOperations()
 		{
 			AppFrame<BaseFrame>::m_operationsRegistry->registerOperation(name, [n = name, t = typeName, nn = nodeName](DocumentContext& context) {return std::make_unique<OperationCreateFactory>(_R("Create"), t, context, nn); });
 		};
-	//addCreateFactoryOp(_R("Create/New/Group(new)"), _R("mafVMEGroup"), _R("Group"));
+	addCreateFactoryOp(_R("Create/New/Group(new)"), _R("mafVMEGroup"), _R("Group"));
 	//addCreateFactoryOp(_R("Create/New/Surface Parametric"), _R("mafVMESurfaceParametric"), _R("Surface Parametric"));
 
 	auto addCompatibleOp = [this]<typename T>(const base::String & name, const base::String & namePrefix)

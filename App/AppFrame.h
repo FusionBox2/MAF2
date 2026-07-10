@@ -137,10 +137,16 @@ protected:
 
 	void BindActiveView();
 
+	void OnOperationApply(wxCommandEvent& event);
+
+	void OnOperationCancel(wxCommandEvent& event);
+	
 	int GetNewId();
 
 	const int m_statusBarId = 10000;
 	int m_nextId = m_statusBarId + 1;
+
+	wxNotebook* m_sideNotebook = nullptr;
 
 	std::unique_ptr<gui::wx::TreeView> m_navigator;
 	std::shared_ptr<TreeStatusViewModel> m_navigatorModel;
@@ -158,7 +164,11 @@ protected:
 	std::shared_ptr<gui::IViewModel> m_viewModel;
 
 	std::unique_ptr<gui::wx::IView> m_operationProperties;
-	std::shared_ptr<gui::IViewModel> m_operationModel;
+	std::shared_ptr<PropertyViewModel> m_operationModel;
+	std::unique_ptr<core::Operation> m_currentOperation;
+	base::Connection m_currentOperationChanged;
+	wxPanel* m_operationEditorPanel = nullptr;
+	wxButton* m_applyButton = nullptr;
 
 	std::unique_ptr<DocumentManager> m_documentManager;
 	std::unique_ptr<ViewManager> m_viewManager;
@@ -166,7 +176,6 @@ protected:
 
 	std::vector<base::Connection> m_connections;
 	base::Connection m_selectedNodeChanged;
-	base::Connection m_selectedNodePropertiesChanged;
 	std::unordered_map<int, base::String> m_viewMenu;
 	std::unordered_map<int, base::String> m_operationsMenu;
 
@@ -418,14 +427,53 @@ wxWindow* AppFrame<BaseFrame>::CreateControlBar()
 		m_viewModel = std::move(propModel);
 	}
 
-	{
+	/*{
 		auto propModel = std::make_shared<PropertyViewModel>();
 		auto propView = std::make_unique<gui::wx::PropertyView>(notebook);
 		propView->setModel(propModel);
 		notebook->AddPage(propView->widget(), _("operation"));
 		m_operationProperties = std::move(propView);
 		m_operationModel = std::move(propModel);
+	}*/
+	{
+		auto operationPage = new wxPanel(notebook);
+		auto operationSizer = new wxBoxSizer(wxVERTICAL);
+
+		auto editorPanel = new wxPanel(operationPage);
+		auto editorSizer = new wxBoxSizer(wxVERTICAL);
+
+		auto propModel = std::make_shared<PropertyViewModel>();
+		auto propView = std::make_unique<gui::wx::PropertyView>(editorPanel);
+		propView->setModel(propModel);
+
+		editorSizer->Add(propView->widget(),1,wxEXPAND);
+
+		auto buttonSizer = new wxBoxSizer(wxHORIZONTAL);
+		auto applyButton = new wxButton(editorPanel, wxID_APPLY, "Apply");
+		auto cancelButton = new wxButton(editorPanel, wxID_CANCEL, "Cancel");
+
+		applyButton->Bind(wxEVT_BUTTON, &AppFrame<BaseFrame>::OnOperationApply, this);
+		cancelButton->Bind(wxEVT_BUTTON, &AppFrame<BaseFrame>::OnOperationCancel, this);
+
+		buttonSizer->AddStretchSpacer();
+		buttonSizer->Add(applyButton, 0, wxALL, 2);
+		buttonSizer->Add(cancelButton, 0, wxALL, 2);
+
+		editorSizer->Add(buttonSizer, 0, wxEXPAND);
+		editorPanel->SetSizer(editorSizer);
+
+		operationSizer->Add(editorPanel, 1, wxEXPAND);
+		operationPage->SetSizer(operationSizer);
+		notebook->AddPage(operationPage, _("operation"));
+
+		m_operationProperties = std::move(propView);
+		m_operationModel = std::move(propModel);
+
+		editorPanel->Show(false);
+		m_operationEditorPanel = editorPanel;
+		m_applyButton = applyButton;
 	}
+	m_sideNotebook = notebook;
 	return notebook;
 }
 
@@ -659,7 +707,26 @@ void AppFrame<BaseFrame>::OnMenu(wxCommandEvent& event)
 		}
 
 		auto& context = m_documentManager->get(GetCurrentDocumentContext());
-		context.getOperationManager()->Submit(m_operationsRegistry->createOperation(operationIt->second, context));
+		m_currentOperation = m_operationsRegistry->createOperation(operationIt->second, context);
+		if (auto props = m_currentOperation->getProperties(); props.empty())
+		{
+			context.getOperationManager()->Submit(std::move(m_currentOperation));
+		}
+		else
+		{
+			m_operationModel->setProperties(std::move(props));
+			m_operationEditorPanel->Show(true);
+			m_operationEditorPanel->GetParent()->Layout();
+			m_sideNotebook->SetSelection(2);
+			m_applyButton->Enable(m_currentOperation->IsConfigured());
+			m_currentOperationChanged = m_currentOperation->connectOperationChanged([this]()
+				{
+					if (m_applyButton)
+					{
+						m_applyButton->Enable(m_currentOperation && m_currentOperation->IsConfigured());
+					}
+				});
+		}
 		return;
 	}
 
@@ -862,6 +929,33 @@ void AppFrame<BaseFrame>::BindActiveView()
 		m_navigatorModel->onActivated = {};
 		m_navigatorModel->setStatusController(nullptr);
 	}
+}
+
+template <class BaseFrame>
+void AppFrame<BaseFrame>::OnOperationApply(wxCommandEvent& event)
+{
+	if (!m_currentOperation || !m_currentOperation->IsConfigured())
+	{
+		return;
+	}
+	m_currentOperationChanged = {};
+	m_operationEditorPanel->Show(false);
+	m_operationEditorPanel->GetParent()->Layout();
+	m_operationModel->setProperties({});
+	auto& context = m_documentManager->get(GetCurrentDocumentContext());
+	context.getOperationManager()->Submit(std::move(m_currentOperation));
+	m_sideNotebook->SetSelection(0);
+}
+
+template <class BaseFrame>
+void AppFrame<BaseFrame>::OnOperationCancel(wxCommandEvent& event)
+{
+	m_currentOperationChanged = {};
+	m_operationEditorPanel->Show(false);
+	m_operationEditorPanel->GetParent()->Layout();
+	m_operationModel->setProperties({});
+	m_currentOperation.reset();
+	m_sideNotebook->SetSelection(0);
 }
 
 template <class BaseFrame>
