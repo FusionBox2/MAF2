@@ -25,8 +25,6 @@
 #include "VTKViewModel.h"
 #include "VTKView.h"
 
-#include "OperationCreateFactory.h"
-
 #include <wx/splitter.h>
 #if wxUSE_AUI
 #include "wx/aui/tabmdi.h"
@@ -137,6 +135,8 @@ protected:
 
 	void BindActiveView();
 
+	void BindSelectedNodeActiveView();
+
 	void OnOperationApply(wxCommandEvent& event);
 
 	void OnOperationCancel(wxCommandEvent& event);
@@ -157,6 +157,7 @@ protected:
 
 	std::unique_ptr<gui::wx::IView> m_pipeProperties;
 	std::shared_ptr<PropertyViewModel> m_pipeModel;
+	base::Connection m_currentVisualChanged;
 
 	std::unique_ptr<gui::wx::IView> m_outProperties;
 	std::shared_ptr<PropertyViewModel> m_outModel;
@@ -235,7 +236,7 @@ bool AppFrame<BaseFrame>::Create(wxWindow* parent, wxWindowID id, const wxString
 			model->plugVisualPipe(_R("mafVMESurface"), _R("mafPipeSurfaceTextured"));
 			return model;
 		});
-	m_connections.push_back(m_viewManager->connectActiveViewChanged([this]() {BindActiveView(); }));
+	m_connections.push_back(m_viewManager->connectActiveViewChanged([this]() {BindActiveView(); BindSelectedNodeActiveView(); }));
 
 	CreateLayout();
 	RebuildMenu();
@@ -819,8 +820,9 @@ void AppFrame<BaseFrame>::OnFileOpen(wxCommandEvent& event)
 	m_navigator->setModel(m_navigatorModel);
 	m_viewManager->attach(context);
 	BindActiveView();
+	BindSelectedNodeActiveView();
 
-	m_connections.push_back(context.getSelectionController().connectSelectionChanged(std::bind(&AppFrame<BaseFrame>::OnSelectionChanged, this, std::placeholders::_1)));
+	m_connections.push_back(context.getSelectionController().connectSelectionChanged([this](model::data::Node* node) {OnSelectionChanged(node); BindSelectedNodeActiveView(); }));
 }
 
 template <class BaseFrame>
@@ -935,7 +937,6 @@ void AppFrame<BaseFrame>::BindActiveView()
 		{
 			m_activeViewModelChanged = {};
 		}
-
 		m_viewModel->setProperties(std::move(viewProps));
 	}
 	else
@@ -957,12 +958,37 @@ void AppFrame<BaseFrame>::BindActiveView()
 		m_navigatorModel->onActivated = [this, vtkModel](model::data::Node* node)
 			{
 				vtkModel->toggleVisibility(node);
+				BindSelectedNodeActiveView();
 			};
 	}
 	else
 	{
 		m_navigatorModel->onActivated = {};
 		m_navigatorModel->setStatusController(nullptr);
+	}
+}
+
+template <class BaseFrame>
+void AppFrame<BaseFrame>::BindSelectedNodeActiveView()
+{
+	auto view = m_viewManager->getActive();
+	if (!view)
+	{
+		return;
+	}
+	auto viewModel = std::dynamic_pointer_cast<VTKViewModel>(view->getModel());
+	auto& context = m_documentManager->get(GetCurrentDocumentContext());
+	auto& selectionController = context.getSelectionController();
+	auto selection = selectionController.selected();
+	if (viewModel && selection.size() == 1)
+	{
+		m_pipeModel->setProperties(viewModel->getVisualProperties(selection[0]));
+		m_currentVisualChanged = viewModel->connectVisualPropertiesChanged(selection[0], [this]() {m_pipeModel->changed(); });
+	}
+	else
+	{
+		m_pipeModel->setProperties({});
+		m_currentVisualChanged = {};
 	}
 }
 

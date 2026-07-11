@@ -662,11 +662,12 @@ void medOpMML3::CreateRegistrationDlg()
 
 
   // maf model view RWI
-  m_ModelmafRWI = new mafRWI(m_OpDlg);
+  auto wxvtk = new wxVTKWindow(m_OpDlg, wxID_ANY);
+  m_ModelmafRWI = new mafRWI(wxvtk->GetRenderWindow());
   m_ModelmafRWI->SetListener(this);
-  m_ModelmafRWI->m_RwiBase->GetInteractor()->SetInteractorStyle(NULL);
-  m_ModelmafRWI->SetSize(0,0,420,420);
-  m_ModelmafRWI->Show(true);
+  m_ModelmafRWI->m_RenderWindow->GetInteractor()->SetInteractorStyle(NULL);
+  wxvtk->SetSize(0,0,420,420);
+  wxvtk->Show(true);
   m_ModelmafRWI->CameraUpdate();
 
 
@@ -742,7 +743,7 @@ void medOpMML3::CreateRegistrationDlg()
   wxBoxSizer *LeftVerticalBoxSizer = new wxBoxSizer(wxVERTICAL);
   LeftVerticalBoxSizer->Add(TopHorizontalBoxSizer);
   LeftVerticalBoxSizer->Add(OperationHorizontalBoxSizer);
-  LeftVerticalBoxSizer->Add(m_ModelmafRWI->m_RwiBase, 1, wxEXPAND | wxALL, 5);
+  //LeftVerticalBoxSizer->Add(m_ModelmafRWI->m_RwiBase, 1, wxEXPAND | wxALL, 5);
   LeftVerticalBoxSizer->Add(m_Lut, 0, wxEXPAND, 6);
 
 
@@ -751,23 +752,23 @@ void medOpMML3::CreateRegistrationDlg()
   RightVerticalBoxSizer->Add(SliderValueHorizontalBoxSizer, 0, wxEXPAND | wxALIGN_LEFT | wxTOP | wxLEFT, 3);  // slice pos buttons, label and value
   RightVerticalBoxSizer->Add(slider_slicepos, 0, wxEXPAND | wxALIGN_LEFT | wxTOP, 3); // slice position slider
   RightVerticalBoxSizer->AddSpacer(5) ;
-  RightVerticalBoxSizer->Add(m_PHmafRWI->m_RwiBase, 0, wxLEFT, 10);
+  //RightVerticalBoxSizer->Add(m_PHmafRWI->m_RwiBase, 0, wxLEFT, 10);
   RightVerticalBoxSizer->AddSpacer(3) ;
-  RightVerticalBoxSizer->Add(m_PVmafRWI->m_RwiBase, 0, wxLEFT, 10);
+  //RightVerticalBoxSizer->Add(m_PVmafRWI->m_RwiBase, 0, wxLEFT, 10);
   RightVerticalBoxSizer->AddSpacer(3) ;
-  RightVerticalBoxSizer->Add(m_THmafRWI->m_RwiBase, 0, wxLEFT, 10);
+  //RightVerticalBoxSizer->Add(m_THmafRWI->m_RwiBase, 0, wxLEFT, 10);
   RightVerticalBoxSizer->AddSpacer(3) ;
-  RightVerticalBoxSizer->Add(m_TVmafRWI->m_RwiBase, 0, wxLEFT, 10);
+  //RightVerticalBoxSizer->Add(m_TVmafRWI->m_RwiBase, 0, wxLEFT, 10);
   RightVerticalBoxSizer->AddSpacer(3) ;
-  RightVerticalBoxSizer->Add(m_RAmafRWI->m_RwiBase, 0, wxLEFT, 10);
+  //RightVerticalBoxSizer->Add(m_RAmafRWI->m_RwiBase, 0, wxLEFT, 10);
   RightVerticalBoxSizer->AddSpacer(3) ;
-  RightVerticalBoxSizer->Add(m_SNmafRWI->m_RwiBase, 0, wxLEFT, 10);
+  //RightVerticalBoxSizer->Add(m_SNmafRWI->m_RwiBase, 0, wxLEFT, 10);
   RightVerticalBoxSizer->AddSpacer(3) ;
-  RightVerticalBoxSizer->Add(m_SSmafRWI->m_RwiBase, 0, wxLEFT, 10);
+  //RightVerticalBoxSizer->Add(m_SSmafRWI->m_RwiBase, 0, wxLEFT, 10);
   RightVerticalBoxSizer->AddSpacer(3) ;
-  RightVerticalBoxSizer->Add(m_SEmafRWI->m_RwiBase, 0, wxLEFT, 10);
+  //RightVerticalBoxSizer->Add(m_SEmafRWI->m_RwiBase, 0, wxLEFT, 10);
   RightVerticalBoxSizer->AddSpacer(3) ;
-  RightVerticalBoxSizer->Add(m_SWmafRWI->m_RwiBase, 0, wxLEFT, 10);
+  //RightVerticalBoxSizer->Add(m_SWmafRWI->m_RwiBase, 0, wxLEFT, 10);
   RightVerticalBoxSizer->AddSpacer(3) ;
 
 
@@ -914,16 +915,17 @@ void medOpMML3::CreateNonUniformSlicesDlg()
   wxStaticText *renWinTitleTxt = new wxStaticText(m_NonUniformSlicesDlg, wxID_ANY, "Section view", wxPoint(0,0), wxSize(25,textHeight)) ;
 
   // create render window
-  m_SectionsViewRWI = new mafRWI(m_NonUniformSlicesDlg);
+  auto wxvtk = new wxVTKWindow(m_NonUniformSlicesDlg, wxID_ANY);
+  m_SectionsViewRWI = new mafRWI(wxvtk->GetRenderWindow());
   m_SectionsViewRWI->SetListener(this);
-  m_SectionsViewRWI->m_RwiBase->GetInteractor()->SetInteractorStyle(NULL);
-  m_SectionsViewRWI->SetSize(0,0,winSize,winSize);
-  m_SectionsViewRWI->Show(true);
+  m_SectionsViewRWI->m_RenderWindow->GetInteractor()->SetInteractorStyle(NULL);
+  wxvtk->SetSize(0,0,winSize,winSize);
+  wxvtk->Show(true);
 
   // vertical sizer for rwi 
   wxBoxSizer *RenWinBoxSizer = new wxBoxSizer(wxVERTICAL);
   RenWinBoxSizer->Add(renWinTitleTxt, 0.5, wxEXPAND | wxALL, 1);
-  RenWinBoxSizer->Add(m_SectionsViewRWI->m_RwiBase, 0.5, wxEXPAND | wxALL, 1);
+  RenWinBoxSizer->Add(wxvtk, 0.5, wxEXPAND | wxALL, 1);
   RenWinBoxSizer->AddSpacer(sectionHeight) ;  // space of one section at bottom to allow for total box
 
 
@@ -3732,14 +3734,15 @@ void medOpMML3::Update()
 mafRWI* medOpMML3::CreateParameterViewmafRWI(vtkTextSource *ts, wxString lab, float r, float g, float b)
 //----------------------------------------------------------------------------
 { 
-  mafRWI *rwi = new mafRWI(m_OpDlg);
+    auto wxvtk = new wxVTKWindow(m_OpDlg, wxID_ANY);
+    mafRWI *rwi = new mafRWI(wxvtk->GetRenderWindow());
   rwi->SetListener(this);
-  rwi->m_RwiBase->GetInteractor()->SetInteractorStyle(nullptr);
+  rwi->m_RenderWindow->GetInteractor()->SetInteractorStyle(nullptr);
 
   // width/height
-  rwi->SetSize(0, 0, 250, 65);
+  wxvtk->SetSize(0, 0, 250, 65);
   ((vtkRenderWindow*)(rwi->m_RenderWindow))->SetSize(250, 65);
-  rwi->m_RwiBase->Show();
+  wxvtk->Show();
 
   //vtkDEL(rwi->m_C);
   //rwi->m_C = m_RenderWindow_camera;

@@ -666,6 +666,7 @@ wxVTKWindow::~wxVTKWindow()
 
 bool wxVTKWindow::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
 {
+    auto getInteractor = [this]()->wxVTKRenderWindowInteractor* {return m_renderWindow ? static_cast<wxVTKRenderWindowInteractor*>(m_renderWindow->GetInteractor()) : nullptr; };
   Bind(wxEVT_SIZE, &wxVTKWindow::OnSize, this);
   Bind(wxEVT_PAINT, &wxVTKWindow::OnPaint, this);
   Bind(wxEVT_ERASE_BACKGROUND, &wxVTKWindow::OnEraseBackground, this);
@@ -673,27 +674,27 @@ bool wxVTKWindow::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, co
 
   Bind(wxEVT_MOUSE_CAPTURE_LOST, [this](wxMouseCaptureLostEvent&) {});
 
-  Bind(wxEVT_TIMER, [this](wxTimerEvent& event) {if (auto iren = static_cast<wxVTKRenderWindowInteractor*>(GetInteractor())) iren->OnTimer(event); });
+  Bind(wxEVT_TIMER, [this, getInteractor](wxTimerEvent& event) {if (auto iren = getInteractor()) iren->OnTimer(event); });
 
-  Bind(wxEVT_LEFT_DCLICK, [this](wxMouseEvent& event) {if (auto iren = static_cast<wxVTKRenderWindowInteractor*>(GetInteractor())) iren->OnLButtonDoubleClick(event); });
-  Bind(wxEVT_RIGHT_DCLICK, [this](wxMouseEvent& event) {if (auto iren = static_cast<wxVTKRenderWindowInteractor*>(GetInteractor())) iren->OnRButtonDoubleClick(event); });
-  Bind(wxEVT_MIDDLE_DCLICK, [this](wxMouseEvent& event) {if (auto iren = static_cast<wxVTKRenderWindowInteractor*>(GetInteractor())) iren->OnMButtonDoubleClick(event); });
+  Bind(wxEVT_LEFT_DCLICK, [this, getInteractor](wxMouseEvent& event) {if (auto iren = getInteractor()) iren->OnLButtonDoubleClick(event); });
+  Bind(wxEVT_RIGHT_DCLICK, [this, getInteractor](wxMouseEvent& event) {if (auto iren = getInteractor()) iren->OnRButtonDoubleClick(event); });
+  Bind(wxEVT_MIDDLE_DCLICK, [this, getInteractor](wxMouseEvent& event) {if (auto iren = getInteractor()) iren->OnMButtonDoubleClick(event); });
 
-  Bind(wxEVT_LEFT_DOWN, [this](wxMouseEvent& event) {SetFocus(); if (auto iren = static_cast<wxVTKRenderWindowInteractor*>(GetInteractor())) iren->OnLButtonDown(event); });
-  Bind(wxEVT_LEFT_UP, [this](wxMouseEvent& event) {if (auto iren = static_cast<wxVTKRenderWindowInteractor*>(GetInteractor())) iren->OnLButtonUp(event); });
-  Bind(wxEVT_RIGHT_DOWN, [this](wxMouseEvent& event) {SetFocus(); if (auto iren = static_cast<wxVTKRenderWindowInteractor*>(GetInteractor())) iren->OnRButtonDown(event); });
-  Bind(wxEVT_RIGHT_UP, [this](wxMouseEvent& event) {if (auto iren = static_cast<wxVTKRenderWindowInteractor*>(GetInteractor())) iren->OnRButtonUp(event); });
-  Bind(wxEVT_MIDDLE_DOWN, [this](wxMouseEvent& event) {SetFocus(); if (auto iren = static_cast<wxVTKRenderWindowInteractor*>(GetInteractor())) iren->OnMButtonDown(event); });
-  Bind(wxEVT_MIDDLE_UP, [this](wxMouseEvent& event) {if (auto iren = static_cast<wxVTKRenderWindowInteractor*>(GetInteractor())) iren->OnMButtonUp(event); });
-  Bind(wxEVT_MOTION, [this](wxMouseEvent& event) {if (auto iren = static_cast<wxVTKRenderWindowInteractor*>(GetInteractor())) iren->OnMouseMove(event); });
-  Bind(wxEVT_KEY_DOWN, [this](wxKeyEvent& event) {if (auto iren = static_cast<wxVTKRenderWindowInteractor*>(GetInteractor())) iren->OnKeyDown(event); });
-  Bind(wxEVT_KEY_UP, [this](wxKeyEvent& event) {if (auto iren = static_cast<wxVTKRenderWindowInteractor*>(GetInteractor())) iren->OnKeyUp(event); });
-  Bind(wxEVT_CHAR, [this](wxKeyEvent& event) {if (auto iren = static_cast<wxVTKRenderWindowInteractor*>(GetInteractor())) iren->OnChar(event); });
-  Bind(wxEVT_MOUSEWHEEL, [this](wxMouseEvent& event) {if (auto iren = static_cast<wxVTKRenderWindowInteractor*>(GetInteractor())) iren->OnMouseWheel(event); });
-  Bind(wxEVT_ENTER_WINDOW, [this](wxMouseEvent& event) {if (auto iren = static_cast<wxVTKRenderWindowInteractor*>(GetInteractor())) iren->OnEnterWindow(event); });
-  Bind(wxEVT_LEAVE_WINDOW, [this](wxMouseEvent& event) {if (auto iren = static_cast<wxVTKRenderWindowInteractor*>(GetInteractor())) iren->OnLeaveWindow(event); });
-  Bind(wxEVT_SET_FOCUS, [this](wxFocusEvent& event) {if (auto iren = static_cast<wxVTKRenderWindowInteractor*>(GetInteractor())) iren->OnSetFocus(event); });
-  Bind(wxEVT_KILL_FOCUS, [this](wxFocusEvent& event) {if (auto iren = static_cast<wxVTKRenderWindowInteractor*>(GetInteractor())) iren->OnKillFocus(event); });
+  Bind(wxEVT_LEFT_DOWN, [this, getInteractor](wxMouseEvent& event) {SetFocus(); if (auto iren = getInteractor()) iren->OnLButtonDown(event); });
+  Bind(wxEVT_LEFT_UP, [this, getInteractor](wxMouseEvent& event) {if (auto iren = getInteractor()) iren->OnLButtonUp(event); });
+  Bind(wxEVT_RIGHT_DOWN, [this, getInteractor](wxMouseEvent& event) {SetFocus(); if (auto iren = getInteractor()) iren->OnRButtonDown(event); });
+  Bind(wxEVT_RIGHT_UP, [this, getInteractor](wxMouseEvent& event) {if (auto iren = getInteractor()) iren->OnRButtonUp(event); });
+  Bind(wxEVT_MIDDLE_DOWN, [this, getInteractor](wxMouseEvent& event) {SetFocus(); if (auto iren = getInteractor()) iren->OnMButtonDown(event); });
+  Bind(wxEVT_MIDDLE_UP, [this, getInteractor](wxMouseEvent& event) {if (auto iren = getInteractor()) iren->OnMButtonUp(event); });
+  Bind(wxEVT_MOTION, [this, getInteractor](wxMouseEvent& event) {if (auto iren = getInteractor()) iren->OnMouseMove(event); });
+  Bind(wxEVT_KEY_DOWN, [this, getInteractor](wxKeyEvent& event) {if (auto iren = getInteractor()) iren->OnKeyDown(event); });
+  Bind(wxEVT_KEY_UP, [this, getInteractor](wxKeyEvent& event) {if (auto iren = getInteractor()) iren->OnKeyUp(event); });
+  Bind(wxEVT_CHAR, [this, getInteractor](wxKeyEvent& event) {if (auto iren = getInteractor()) iren->OnChar(event); });
+  Bind(wxEVT_MOUSEWHEEL, [this, getInteractor](wxMouseEvent& event) {if (auto iren = getInteractor()) iren->OnMouseWheel(event); });
+  Bind(wxEVT_ENTER_WINDOW, [this, getInteractor](wxMouseEvent& event) {if (auto iren = getInteractor()) iren->OnEnterWindow(event); });
+  Bind(wxEVT_LEAVE_WINDOW, [this, getInteractor](wxMouseEvent& event) {if (auto iren = getInteractor()) iren->OnLeaveWindow(event); });
+  Bind(wxEVT_SET_FOCUS, [this, getInteractor](wxFocusEvent& event) {if (auto iren = getInteractor()) iren->OnSetFocus(event); });
+  Bind(wxEVT_KILL_FOCUS, [this, getInteractor](wxFocusEvent& event) {if (auto iren = getInteractor()) iren->OnKillFocus(event); });
 
 #ifdef USE_WXGLCANVAS
   if (!wxVTKWindowBase::Create(parent, id, pos, size, style, name, wxvtk_attributes))
@@ -729,15 +730,13 @@ void wxVTKWindow::SetRenderWindow(vtkRenderWindow* win)
       this->m_renderWindow->Finalize();
     else
       this->m_renderWindow->ReleaseGraphicsResources(this->m_renderWindow);
-    this->m_renderWindow->UnRegister(nullptr);
   }
+  this->m_renderWindow = nullptr;
 
   this->m_renderWindow = win;
 
   if (this->m_renderWindow)
   {
-    this->m_renderWindow->Register(nullptr);
-
     // setup the parent window
 #ifdef USE_WXGLCANVAS
     SetCurrent(*m_glContext);
@@ -778,23 +777,18 @@ vtkRenderWindow* wxVTKWindow::GetRenderWindow()
   return this->m_renderWindow;
 }
 
-vtkRenderWindowInteractor* wxVTKWindow::GetInteractor()
-{
-  if (!this->m_renderWindow)
-  {
-    return nullptr;
-  }
-  return this->m_renderWindow->GetInteractor();
-}
-
 void wxVTKWindow::OnPaint(wxPaintEvent& event)
 {
-  wxPaintDC pDC(this);
-  if (auto iren = this->GetInteractor(); iren && iren->GetInitialized())
+    if (!this->m_renderWindow)
+    {
+        return;
+    }
+    wxPaintDC pDC(this);
+  if (auto iren = this->m_renderWindow->GetInteractor(); iren && iren->GetInitialized())
   {
     iren->Render();
   }
-  else if (auto rw = this->GetRenderWindow(); rw && rw->GetInitialized())
+  else if (auto rw = this->m_renderWindow; rw && rw->GetInitialized())
   {
     rw->Render();
   }
@@ -807,7 +801,11 @@ void wxVTKWindow::OnEraseBackground(wxEraseEvent& event)
 
 void wxVTKWindow::OnSize(wxSizeEvent& event)
 {
-  if (auto iren = this->GetInteractor(); iren && iren->GetInitialized())
+    if (!m_renderWindow)
+    {
+        return;
+    }
+    if (auto iren = this->m_renderWindow->GetInteractor(); iren && iren->GetInitialized())
   {
     iren->UpdateSize(event.GetSize().GetWidth(), event.GetSize().GetHeight());
   }

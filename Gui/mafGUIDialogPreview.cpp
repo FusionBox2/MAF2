@@ -38,10 +38,11 @@ mafGUIDialogPreview::mafGUIDialogPreview(const mafString& title,long style)
 
   if( style & mafUSERWI )
   {
-    m_Rwi = new mafRWI(this);
-    m_Rwi->SetSize(0,0,500,500);
-    m_Rwi->Show(true);
-    m_RwiSizer->Add(m_Rwi->m_RwiBase,1,wxEXPAND);
+      auto wxvtk = new wxVTKWindow(this, wxID_ANY);
+      m_Rwi = new mafRWI(wxvtk->GetRenderWindow());
+    wxvtk->SetSize(0,0,500,500);
+    wxvtk->Show(true);
+    m_RwiSizer->Add(wxvtk,1,wxEXPAND);
     m_PreviewSizer->Add(m_RwiSizer,1,wxEXPAND);
   }
   if( style & mafUSEGUI )

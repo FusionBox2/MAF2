@@ -39,13 +39,13 @@ class MAF_EXPORT mafRWI : public mafBaseEventHandler, public mafEventSender, pub
 {
 public:
 	mafRWI();
-	mafRWI(wxWindow* parent, RWI_LAYERS layers = ONE_LAYER, bool use_grid = false, bool show_axes = false, bool show_ruler = false, int stereo = 0, bool show_orientator = false, int axesType = mafAxes::TRIAD);
+	mafRWI(vtkRenderWindow* window, RWI_LAYERS layers = ONE_LAYER, bool use_grid = false, bool show_axes = false, bool show_ruler = false, int stereo = 0, bool show_orientator = false, int axesType = mafAxes::TRIAD);
 	~mafRWI() override;
 
 	void OnEvent(mafEventBase* maf_event) override;
 
 	/** Create all the elements necessary to build the rendering scene.*/
-	void CreateRenderingScene(wxWindow* parent, RWI_LAYERS layers = ONE_LAYER, bool use_grid = false, bool show_axes = false, bool show_ruler = false, int stereo = 0, bool show_orientator = false, int axesType = mafAxes::TRIAD);
+	void CreateRenderingScene(vtkRenderWindow* window, RWI_LAYERS layers = ONE_LAYER, bool use_grid = false, bool show_axes = false, bool show_ruler = false, int stereo = 0, bool show_orientator = false, int axesType = mafAxes::TRIAD);
 
 	/** Reset the camera position. If vme is passed as parameter, the camera is resetted to fill the vme into the view. */
 	void CameraReset(mafNode* vme = nullptr, double zoom = 1);
@@ -62,12 +62,6 @@ public:
 
 	/** Set the camera position, set custom pos , custom viewUp , zoom and if projection is parallel */
 	void CameraSet(double pos[3], double viewUp[3], double zoom = 1., bool parallelProjection = false);
-
-	/** Set the render window's size. */
-	void SetSize(int x, int y, int w, int h);
-
-	/** Show the render window. */
-	void Show(bool show);
 
 	/** Set the normal for the grid actor. */
 	void SetGridNormal(int normal_id);
@@ -136,11 +130,10 @@ public:
 	PropertyList getProperties() override;
 
 	mafSceneGraph* m_Sg = nullptr;
-	wxVTKWindow* m_RwiBase = nullptr;
+	vtkRenderWindow* m_RenderWindow = nullptr;
 	vtkSmartPointer<vtkRenderer> m_RenFront; ///< Renderer used to show actors on the first layer
 	vtkSmartPointer<vtkRenderer> m_RenBack; ///< Renderer used to show actors on the second layer
 	vtkSmartPointer<vtkRenderer> m_AlwaysVisibleRenderer; /// < Renderer used to superimpose utility stuff to main render window
-	vtkSmartPointer<vtkRenderWindow> m_RenderWindow;
 	vtkSmartPointer<vtkLight> m_Light;
 	vtkSmartPointer<vtkCamera> m_Camera;
 	int m_CameraPositionId; ///< Integer representing a preset for camera position, focal point and view up

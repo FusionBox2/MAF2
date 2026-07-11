@@ -44,6 +44,7 @@ See the COPYINGS file for license details
 #include "vtkDataSet.h"
 #include "vtkPointData.h"
 #include "vtkPoints.h"
+#include "vtkRendererCollection.h"
 #include "vtkPolyData.h"
 #include "vtkMath.h"
 #include "vtkCamera.h"
@@ -310,7 +311,7 @@ int medViewSliceOnCurveCompound::GetNodeStatusI(mafNode* node)
 
 	assert(Rwi);
 	//AACC 17.7.08 navigation stuff...
-	mafViewVTK::StaticDownCast(m_ChildViewList[MAIN_VIEW].get())->GetRWI()->GetCamera()->GetPosition(m_OldPos);
+	mafViewVTK::StaticDownCast(m_ChildViewList[MAIN_VIEW].get())->GetRWI()->GetRenderers()->GetFirstRenderer()->GetActiveCamera()->GetPosition(m_OldPos);
 	//End AACC
 }
 
@@ -665,7 +666,7 @@ void medViewSliceOnCurveCompound::OnEvent(mafEventBase* maf_event)
 	if ((m_SliceCameraAutoFocus | m_SliceCameraAutoRotate) != 0)
 	{
 		//modify the camera (see mafRWI.cpp)
-		vtkCamera* camera = vs->GetRWI()->GetCamera();
+		vtkCamera* camera = vs->GetRWI()->GetRenderers()->GetFirstRenderer()->GetActiveCamera();
 
 		double fp[3], cp[3];
 		camera->GetFocalPoint(fp);
@@ -697,7 +698,7 @@ void medViewSliceOnCurveCompound::OnEvent(mafEventBase* maf_event)
 		if (auto mv = mafViewVTK::SafeDownCast(m_ChildViewList[MAIN_VIEW].get()))
 		{
 			//modify the camera (see mafRWI.cpp)
-			vtkCamera* camera = mv->GetRWI()->GetCamera();
+			vtkCamera* camera = mv->GetRWI()->GetRenderers()->GetFirstRenderer()->GetActiveCamera();
 
 			double lvect[3] = { pos[0] - m_OldPos[0], pos[1] - m_OldPos[1], pos[2] - m_OldPos[2] };
 

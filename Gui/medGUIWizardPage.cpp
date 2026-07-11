@@ -62,10 +62,11 @@ medGUIWizardPage::medGUIWizardPage(medGUIWizard *wizardParent,long style /* = me
 
 	if(style & medUSERWI)
 	{
-		m_Rwi = new mafRWI(this);
-		m_Rwi->SetSize(0,0,600,600);
-		m_Rwi->Show(true);
-		m_RwiSizer->Add(m_Rwi->m_RwiBase,1,wxEXPAND);
+		auto wxvtk = new wxVTKWindow(this, wxID_ANY);
+		m_Rwi = new mafRWI(wxvtk->GetRenderWindow());
+		wxvtk->SetSize(0,0,600,600);
+		wxvtk->Show(true);
+		m_RwiSizer->Add(wxvtk,1,wxEXPAND);
     m_SizerAll->Add(m_RwiSizer,1,wxEXPAND);
 	}
 	if(style & medUSEGUI)

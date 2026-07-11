@@ -55,9 +55,15 @@ public:
 
 	base::Connection connectVisibilityChanged(std::function<void(model::data::Node*)> fn);
 
+	base::Connection connectVisualValuesChanged(model::data::Node* node, std::function<void()> fn);
+
+	base::Connection connectVisualPropertiesChanged(model::data::Node* node, std::function<void()> fn);
+
 	void plugVisualPipe(const base::String& nodeType, const base::String& pipeType, VisibilityMode visibility = VisibilityMode::VISIBLE);
 
 	PropertyList getProperties() override;
+
+	PropertyList getVisualProperties(model::data::Node* node);
 
 private:
 	NodeId getViewNode(model::data::Node* node) const;

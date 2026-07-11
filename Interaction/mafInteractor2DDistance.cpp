@@ -114,7 +114,7 @@ mafInteractor2DDistance::mafInteractor2DDistance()
   m_HistogramRWI->SetListener(this);
   m_HistogramRWI->m_RenFront->AddActor2D(m_PlotActor);
   m_HistogramRWI->m_RenFront->SetBackground(1,1,1);
-  m_HistogramRWI->SetSize(0,0,width,height);
+  //wxvtk->SetSize(0,0,width,height);
   
   m_HistogramDialog->SetSize(x_init,y_init,width,height);
 	m_HistogramDialog->Show(FALSE);
@@ -234,7 +234,7 @@ void mafInteractor2DDistance::OnLeftButtonDown(mafEventInteraction *e)
   {
     m_Mouse = mouse;
   }
-  m_CurrentRwi = m_Mouse->GetRWI();
+  m_CurrentRwi = m_Mouse->GetRenderWindow();
   m_CurrentRenderer = m_Mouse->GetRenderer();
 
   if (m_CurrentRenderer->GetLayer() != 1)//Frontal Render
@@ -381,7 +381,7 @@ void mafInteractor2DDistance::DrawMeasureTool(double x, double y)
 	static long counter = 0;
 	static double dx, dy, dz;
   
-  m_CurrentRwi = m_Mouse->GetRWI();
+  m_CurrentRwi = m_Mouse->GetRenderWindow();
   m_CurrentRenderer = m_Mouse->GetRenderer();
   if (m_CurrentRenderer->GetLayer() != 1)//Frontal Render
   {
@@ -819,7 +819,7 @@ void mafInteractor2DDistance::CreateHistogram()
     m_PlotActor->RemoveAllDataSetInputConnections();
 
     m_PlotActor->AddDataSetInputConnection(prober->GetOutputPort());
-    m_HistogramRWI->m_RwiBase->GetInteractor()->Render();
+    m_HistogramRWI->m_RenderWindow->GetInteractor()->Render();
   }
 }
 //----------------------------------------------------------------------------
@@ -841,7 +841,7 @@ void mafInteractor2DDistance::GenerateHistogram(bool generate)
   if (m_GenerateHistogram)
   {
     m_PlotActor->RemoveAllDataSetInputConnections();
-    m_HistogramRWI->m_RwiBase->GetInteractor()->Render();
+    m_HistogramRWI->m_RenderWindow->GetInteractor()->Render();
     RemoveMeter();
     SetMeasureTypeToDistanceBetweenPoints();
   }
@@ -1074,7 +1074,7 @@ void mafInteractor2DDistance::ShowOnlyLastMeasure( bool show )
   m_CurrentRenderer->GetRenderWindow()->Render();
 }
 //----------------------------------------------------------------------------
-wxVTKWindow * mafInteractor2DDistance::GetCurrentRwi()
+vtkRenderWindow* mafInteractor2DDistance::GetCurrentRenderWindow()
 //----------------------------------------------------------------------------
 {
   return m_CurrentRwi;

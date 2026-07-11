@@ -14,9 +14,11 @@ BEGIN_FTK_NAMESPACE
 
 VTKView::VTKView(wxWindow* parent)
 {
+	auto wxvtk = new wxVTKWindow(parent, wxID_ANY);
+	m_widget = wxvtk;
 	m_CameraPositionId = CAMERA_PERSPECTIVE;
 	m_AxesType = mafAxes::TRIAD;
-	m_RWI = std::make_unique<mafRWI>(parent, ONE_LAYER, m_ShowGrid, m_ShowAxes, m_ShowRuler, m_StereoType, m_ShowOrientator, m_AxesType);
+	m_RWI = std::make_unique<mafRWI>(wxvtk->GetRenderWindow(), ONE_LAYER, m_ShowGrid, m_ShowAxes, m_ShowRuler, m_StereoType, m_ShowOrientator, m_AxesType);
 	m_RWI->CameraSet(m_CameraPositionId);
 	vtkRenderer* renderers[] = { m_RWI->m_RenFront, m_RWI->m_RenBack, m_RWI->m_AlwaysVisibleRenderer };
 	m_adapter = std::make_unique<VTKAdapter>(m_RWI.get());
@@ -28,7 +30,7 @@ VTKView::~VTKView() = default;
 
 wxWindow* VTKView::widget()
 {
-	return m_RWI->m_RwiBase;
+	return m_widget;
 }
 
 std::shared_ptr<gui::IViewModel> VTKView::getModel() const
@@ -49,7 +51,7 @@ void VTKView::setModel(std::shared_ptr<gui::IViewModel> viewModel)
 	else
 	{
 		m_modelValuesChanged = {};
-		m_propertiesChanged = {};
+		m_modelPropertiesChanged = {};
 	}
 	m_propertiesChanged.emit();
 }

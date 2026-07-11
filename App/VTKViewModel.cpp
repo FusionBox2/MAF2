@@ -6,12 +6,12 @@
 #include "ISelectionController.h"
 
 #include "ftk/Core/Node.h"
+#include "ftk/Core/PipeFactory.h"
 
 #include "vtkMAFAssembly.h"
 
 #include "mafVME.h"
 #include "mafPipeVTK.h"
-#include "ftk/Core/PipeFactory.h"
 
 BEGIN_FTK_NAMESPACE
 
@@ -43,24 +43,17 @@ namespace
 
 		model::data::Node* m_model = nullptr;
 		VTKSceneNode* m_parent = nullptr;
+		
 		std::vector<std::unique_ptr<VTKSceneNode>> m_children;
+		
 		vtkSmartPointer<vtkAssembly> m_assemblies[3];
 		std::shared_ptr<mafPipe> m_pipe;
+		
+		base::Connection m_onPipeValuesChanged;
+		base::Connection m_onPipePropertiesChanged;
 
-		/*std::shared_ptr<mafNode> m_Vme;
-		mafSceneNode* m_Parent;
-		std::shared_ptr<mafPipe> m_Pipe;
-		bool               m_PipeCreatable;
-		bool               m_Mutex;
-		vtkRenderer* m_RenFront;
-		vtkMAFAssembly* m_AssemblyFront;
-		vtkRenderer* m_RenBack;
-		vtkMAFAssembly* m_AssemblyBack;
-		vtkRenderer* m_AlwaysVisibleRenderer;
-		vtkMAFAssembly* m_AlwaysVisibleAssembly;
-		mafSceneNode* m_Next;
-		mafSceneGraph* m_Sg;*/
-
+		base::Signal<> m_pipeValuesChanged;
+		base::Signal<> m_pipePropertiesChanged;
 	};
 
 	std::unique_ptr<VTKSceneNode> buildRecursive(model::data::Node* node, VTKSceneNode* parent, std::unordered_map<model::data::Node*, IVTKViewNode*>& nodeMap)
@@ -100,6 +93,17 @@ namespace
 		}
 		return vn;
 	}
+
+
+	void removeFromMapRecursive(VTKSceneNode* node, std::unordered_map<model::data::Node*, IVTKViewNode*>& nodeMap)
+	{
+		nodeMap.erase(node->m_model);
+		for (auto& child : node->m_children)
+		{
+			removeFromMapRecursive(child.get(), nodeMap);
+		}
+	}
+
 }
 
 
@@ -165,6 +169,8 @@ void VTKViewModel::toggleVisibility(model::data::Node* node)
 	if (vn->m_pipe)
 	{
 		vn->m_pipe = nullptr;
+		vn->m_onPipeValuesChanged = {};
+		vn->m_onPipePropertiesChanged = {};
 		--m_pipeCount;
 		m_sceneUpdated.emit();
 		m_visibilityChanged.emit(node);
@@ -212,6 +218,8 @@ void VTKViewModel::toggleVisibility(model::data::Node* node)
 		pipe->Create(node, renderers, assemblies);
 		pipe->Select(m_context.getSelectionController().isSelected(node));
 		vn->m_pipe = pipe;
+		vn->m_onPipeValuesChanged = vn->m_pipe->connectValuesChanged([this, vn]() {m_sceneUpdated.emit(); vn->m_pipeValuesChanged.emit(); });
+		vn->m_onPipePropertiesChanged = vn->m_pipe->connectPropertiesChanged([this, vn]() {m_sceneUpdated.emit(); vn->m_pipePropertiesChanged.emit(); });
 		++m_pipeCount;
 		if (vme && m_pipeCount == 1)
 		{
@@ -239,6 +247,32 @@ base::Connection VTKViewModel::connectVisibilityChanged(std::function<void(model
 	return m_visibilityChanged.connect(fn);
 }
 
+base::Connection VTKViewModel::connectVisualValuesChanged(model::data::Node* node, std::function<void()> fn)
+{
+	auto nodeIt = m_nodeMap.find(node);
+
+	if (nodeIt == m_nodeMap.end())
+	{
+		return {};
+	}
+	auto vn = static_cast<VTKSceneNode*>(nodeIt->second);
+
+	return vn->m_pipeValuesChanged.connect(std::move(fn));
+}
+
+base::Connection VTKViewModel::connectVisualPropertiesChanged(model::data::Node* node, std::function<void()> fn)
+{
+	auto nodeIt = m_nodeMap.find(node);
+
+	if (nodeIt == m_nodeMap.end())
+	{
+		return {};
+	}
+	auto vn = static_cast<VTKSceneNode*>(nodeIt->second);
+
+	return vn->m_pipePropertiesChanged.connect(std::move(fn));
+}
+
 void VTKViewModel::plugVisualPipe(const base::String& nodeType, const base::String& pipeType, VisibilityMode visibility)
 {
 	VisualPipeInfo pluggedPipe;
@@ -251,6 +285,18 @@ core::WithProperties::PropertyList VTKViewModel::getProperties()
 {
 	auto result = IVTKViewModel::getProperties();
 	return result;
+}
+
+core::WithProperties::PropertyList VTKViewModel::getVisualProperties(model::data::Node* node)
+{
+	if (auto it = m_nodeMap.find(node); it != m_nodeMap.end())
+	{
+		if (auto vn = static_cast<VTKSceneNode*>(it->second); vn->m_pipe)
+		{
+			return vn->m_pipe->getProperties();
+		}
+	}
+	return {};
 }
 
 IVTKViewModel::NodeId VTKViewModel::getViewNode(model::data::Node* node) const
@@ -273,7 +319,6 @@ void VTKViewModel::subscribeToContext()
 		[this](const NodeAdded& e)
 		{
 			auto parentVN = static_cast<VTKSceneNode*>(m_nodeMap[e.node->GetParent()]);
-			auto newVN = buildRecursive(e.node, parentVN, m_nodeMap);
 			parentVN->m_children.push_back(buildRecursive(e.node, parentVN, m_nodeMap));
 			auto raw = parentVN->m_children.back().get();
 			m_nodeMap[e.node] = raw;
@@ -283,11 +328,27 @@ void VTKViewModel::subscribeToContext()
 	m_connections.push_back(m_context.getDocument()->connectNodeRemoved(
 		[this](const NodeRemoved& e)
 		{
-			auto vn = static_cast<VTKSceneNode*>(m_nodeMap[e.node]);
-			auto parentVN = vn->parent();
-			auto it = std::find_if(begin(parentVN->m_children), end(parentVN->m_children), [vn](auto& p) {return p.get() == vn; });
-			auto extracted = std::move(*it);//retain it till notification handled
-			parentVN->m_children.erase(it);
+			auto nodesIt = m_nodeMap.find(e.node);
+			auto vn = static_cast<VTKSceneNode*>(nodesIt->second);
+			removeFromMapRecursive(vn, m_nodeMap);
+			if (vn != root())
+			{
+				auto parentVN = vn->parent();
+				auto it = std::find_if(begin(parentVN->m_children), end(parentVN->m_children), [vn](auto& p) {return p.get() == vn; });
+				auto extracted = std::move(*it);//retain it till notification handled
+				parentVN->m_children.erase(it);
+				for (size_t i = 0; i < std::size(vn->m_assemblies); i++)
+				{
+					if (parentVN)
+					{
+						parentVN->m_assemblies[i]->RemovePart(vn->m_assemblies[i]);
+					}
+				}
+			}
+			else
+			{
+				m_root.reset();
+			}
 			//nodeRemoved.emit(vn);
 		}));
 
@@ -297,9 +358,25 @@ void VTKViewModel::subscribeToContext()
 			auto vn = static_cast<VTKSceneNode*>(m_nodeMap[e.node]);
 			auto oldParentVN = vn->parent();
 			auto newParentVN = static_cast<VTKSceneNode*>(m_nodeMap[e.node->GetParent()]);
+
 			auto it = std::find_if(begin(oldParentVN->m_children), end(oldParentVN->m_children), [vn](auto& p) {return p.get() == vn; });
+			
 			newParentVN->m_children.push_back(std::move(*it));
+			oldParentVN->m_children.erase(it);
+			for (size_t i = 0; i < std::size(vn->m_assemblies); i++)
+			{
+				if (oldParentVN)
+				{
+					oldParentVN->m_assemblies[i]->RemovePart(vn->m_assemblies[i]);
+				}
+				if (newParentVN)
+				{
+					newParentVN->m_assemblies[i]->AddPart(vn->m_assemblies[i]);
+				}
+			}
+
 			auto raw = newParentVN->m_children.back().get();
+			raw->m_parent = newParentVN;
 			//nodeMoved.emit(raw);
 		}));
 

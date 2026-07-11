@@ -186,7 +186,7 @@ void mafInteractor2DAngle::OnLeftButtonDown(mafEventInteraction *e)
   {
     m_Mouse = mouse;
   }
-  m_CurrentRwi = m_Mouse->GetRWI();
+  m_CurrentRwi = m_Mouse->GetRenderWindow();
   m_CurrentRenderer = m_Mouse->GetRenderer();
 
   if (m_CurrentRenderer->GetLayer() != 1)//Frontal Render
@@ -299,7 +299,7 @@ void mafInteractor2DAngle::DrawMeasureTool(double x, double y)
 	static long counter = 0;
 	static double dx, dy, dz;
   
-  m_CurrentRwi = m_Mouse->GetRWI();
+  m_CurrentRwi = m_Mouse->GetRenderWindow();
   m_CurrentRenderer = m_Mouse->GetRenderer();
 
   if (m_CurrentRenderer->GetLayer() != 1)//Frontal Render
@@ -1450,7 +1450,7 @@ void mafInteractor2DAngle::ShowOnlyLastMeasure( bool show )
   m_CurrentRenderer->GetRenderWindow()->Render();
 }
 //----------------------------------------------------------------------------
-wxVTKWindow * mafInteractor2DAngle::GetCurrentRwi()
+vtkRenderWindow * mafInteractor2DAngle::GetCurrentRenderWindow()
   //----------------------------------------------------------------------------
 {
   return m_CurrentRwi;

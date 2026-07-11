@@ -97,16 +97,16 @@ void mafViewHTML::Create()
 
 	m_Win = m_Html.get();
 
-	m_Rwi = new mafRWI(m_Win, ONE_LAYER);
-	m_Rwi->SetListener(this);//SIL. 16-6-2004: 
-	m_Sg = new mafSceneGraph(this, m_Rwi->m_RenFront, m_Rwi->m_RenBack);
+	//m_Rwi = new mafRWI(m_Win, ONE_LAYER);
+	//m_Rwi->SetListener(this);//SIL. 16-6-2004: 
+	//m_Sg = new mafSceneGraph(this, m_Rwi->m_RenFront, m_Rwi->m_RenBack);
 	m_Sg->SetListener(this);
 	m_Rwi->m_Sg = m_Sg;
 }
 //----------------------------------------------------------------------------
 mafSceneGraph* mafViewHTML::GetSceneGraph() { return m_Sg; }
 //----------------------------------------------------------------------------
-wxVTKWindow* mafViewHTML::GetDefaultRWI() { return m_Rwi->m_RwiBase; }
+wxVTKWindow* mafViewHTML::GetDefaultRWI() { return nullptr; }
 //----------------------------------------------------------------------------
 void mafViewHTML::VmeSelect(mafNode* vme, bool select) { m_Sg->VmeSelect(vme, select); }
 //----------------------------------------------------------------------------

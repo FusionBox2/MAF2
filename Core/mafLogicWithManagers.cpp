@@ -1381,14 +1381,14 @@ void mafLogicWithManagers::OnEvent(mafEventBase* maf_event)
 		mafViewCompound* v = mafViewCompound::SafeDownCast(m_logic->m_ViewManager->GetSelectedView());
 		if (v && e->GetBool())
 		{
-			v->GetRWI()->SaveAllImages(v->GetLabel(), v, m_logic->m_ApplicationSettings->GetImageTypeId());
+			//v->GetRWI()->SaveAllImages(v->GetLabel(), v, m_logic->m_ApplicationSettings->GetImageTypeId());
 		}
 		else
 		{
 			mafView* v = m_logic->m_ViewManager->GetSelectedView();
 			if (v)
 			{
-				v->GetRWI()->SaveImage(v->GetLabel());
+				//v->GetRWI()->SaveImage(v->GetLabel());
 			}
 		}
 		return;

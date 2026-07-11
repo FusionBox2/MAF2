@@ -362,10 +362,10 @@ void medOpImporterRAWImages::CreateGui()
     h_sizer->Add(m_Gui,   0, wxLEFT, 5);*/
 
     m_Dialog->GetGui()->AddGui(m_Gui);
-    m_Dialog->GetRWI()->SetSize(0,0,380,275);
+    //m_Dialog->GetRWI()->SetSize(0,0,380,275);
     m_Dialog->m_RwiSizer->Add(v_sizer, 0, wxEXPAND);
     m_Dialog->GetRWI()->SetListener(this);
-    m_Dialog->GetRWI()->SetSize(0,0,500,575);
+    //m_Dialog->GetRWI()->SetSize(0,0,500,575);
     m_Dialog->GetRWI()->CameraSet(CAMERA_CT);
     m_Dialog->GetRWI()->m_RenFront->AddActor(m_Actor);
     m_Dialog->GetRWI()->m_RenFront->AddActor(m_GizmoActor);

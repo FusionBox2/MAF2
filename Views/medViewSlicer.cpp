@@ -64,6 +64,7 @@
 #include "vtkPolyData.h"
 #include "vtkPoints.h"
 #include "vtkPointSet.h"
+#include "vtkRendererCollection.h"
 #include "vtkPointData.h"
 #include "vtkDataSetAttributes.h"
 #include "vtkPolyDataNormals.h"
@@ -364,7 +365,7 @@ void medViewSlicer::CameraUpdate()
 	if (m_CurrentSlicer)
 	{
 		double normal[3];
-		mafViewVTK::StaticDownCast(m_ChildViewList[SLICE_VIEW].get())->GetRWI()->GetCamera()->GetViewPlaneNormal(normal);
+		mafViewVTK::StaticDownCast(m_ChildViewList[SLICE_VIEW].get())->GetRWI()->GetRenderers()->GetFirstRenderer()->GetActiveCamera()->GetViewPlaneNormal(normal);
 
 		mafNode* root = m_CurrentSlicer->GetRoot();
 		for (auto& Inode : *root)

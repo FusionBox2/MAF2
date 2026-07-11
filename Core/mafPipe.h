@@ -35,7 +35,7 @@ public:
 
 	~mafPipe() override;
 
-	virtual std::vector<std::unique_ptr<IProperty>> getProperties() const { return {}; }
+	virtual std::vector<std::unique_ptr<IProperty>> getProperties();
 
 	/** process events coming from gui */
 	void OnEvent(mafEventBase* maf_event) override {}

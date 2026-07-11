@@ -51,6 +51,7 @@ const bool DEBUG_MODE = false;
 #include "vtkImageData.h"
 #include "vtkRectilinearGrid.h"
 #include "vtkMath.h"
+#include "vtkRendererCollection.h"
 #include "vtkTransform.h"
 #include "vtkCamera.h"
 
@@ -796,7 +797,7 @@ void medViewSliceGlobal::SetSlice(double* Origin, double* Normal)
 	if (Normal != NULL)
 		memcpy(normal, Normal, sizeof(m_Slice));
 	else
-		this->GetRWI()->GetCamera()->GetViewPlaneNormal(normal);
+		this->GetRWI()->GetRenderers()->GetFirstRenderer()->GetActiveCamera()->GetViewPlaneNormal(normal);
 
 	double coord[3];
 	coord[0] = Origin[0];

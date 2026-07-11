@@ -84,18 +84,19 @@ mafGUIHistogramWidget::mafGUIHistogramWidget(wxWindow* parent, wxWindowID id /* 
 
   wxBoxSizer *sizerV = new wxBoxSizer(wxVERTICAL);
 
-  m_HistogramRWI = new mafRWI(mafGetFrame());
+  auto wxvtk = new wxVTKWindow(mafGetFrame(), wxID_ANY);
+  m_HistogramRWI = new mafRWI(wxvtk->GetRenderWindow());
   m_HistogramRWI->SetListener(this);
   m_HistogramRWI->m_RenFront->AddActor2D(m_Histogram);
   //m_HistogramRWI->m_RenFront->AddActor2D(actor);
   m_HistogramRWI->m_RenFront->SetBackground(0.28,0.28,0.28);
-  m_HistogramRWI->SetSize(pos.x,pos.y,size.GetWidth(),size.GetHeight());
-  ((wxWindow *)m_HistogramRWI->m_RwiBase)->SetSize(size.GetWidth(),size.GetHeight());
-  ((wxWindow *)m_HistogramRWI->m_RwiBase)->SetMinSize(wxSize(size.GetWidth(),size.GetHeight()));
+  wxvtk->SetSize(pos.x,pos.y,size.GetWidth(),size.GetHeight());
+  wxvtk->SetSize(size.GetWidth(),size.GetHeight());
+  wxvtk->SetMinSize(wxSize(size.GetWidth(),size.GetHeight()));
   //m_HistogramRWI->m_RwiBase->SetMinSize(wxSize(size.GetWidth(),size.GetHeight()));
-  m_HistogramRWI->m_RwiBase->Reparent(this);
-  m_HistogramRWI->m_RwiBase->SetListener(this);
-  m_HistogramRWI->m_RwiBase->Show(true);
+  wxvtk->Reparent(this);
+  wxvtk->SetListener(this);
+  wxvtk->Show(true);
 
   if (showThresholds)
   {
@@ -117,7 +118,7 @@ mafGUIHistogramWidget::mafGUIHistogramWidget(wxWindow* parent, wxWindowID id /* 
 
   wxBoxSizer *sizerH2 = new wxBoxSizer(wxHORIZONTAL);
   sizerH2->Add(foo_l, 0, wxLEFT, 0);
-  sizerH2->Add(m_HistogramRWI->m_RwiBase, 1, wxEXPAND, 0);
+  sizerH2->Add(wxvtk, 1, wxEXPAND, 0);
   sizerH2->Add(foo_r, 0, wxLEFT, 0);
   sizerV->Add(sizerH2, 1,wxEXPAND);
 

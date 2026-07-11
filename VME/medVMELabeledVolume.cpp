@@ -1125,7 +1125,7 @@ void medVMELabeledVolume::UpdateSlice()
 	m_ProbeFilter->Update();
 
 	this->m_Rwi->m_RenFront->ResetCameraClippingRange();
-	m_Rwi->m_RwiBase->GetInteractor()->Render();
+	m_Rwi->m_RenderWindow->GetInteractor()->Render();
 	m_Rwi->m_RenderWindow->SetDesiredUpdateRate(15.f);
 }
 
@@ -1194,7 +1194,7 @@ void medVMELabeledVolume::UpdateLookUpTable()
 		m_LookUpTableColor->SetTableValue(index, 1.0f, 0.0f, 0.0f);
 	}
 	m_Texture->SetLookupTable(m_LookUpTableColor);
-	m_Rwi->m_RwiBase->GetInteractor()->Render();
+	m_Rwi->m_RenderWindow->GetInteractor()->Render();
 }
 
 //----------------------------------------------------------------------------

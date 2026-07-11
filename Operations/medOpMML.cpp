@@ -2246,18 +2246,19 @@ void medOpMML::CreateRegistrationDlg()
 
 
   // maf model view RWI
-  m_ModelmafRWI = new mafRWI(m_OpDlg);
+  auto wxvtk = new wxVTKWindow(m_OpDlg, wxID_ANY);
+  m_ModelmafRWI = new mafRWI(wxvtk->GetRenderWindow());
   m_ModelmafRWI->SetListener(this);
-  m_ModelmafRWI->m_RwiBase->GetInteractor()->SetInteractorStyle(NULL);
+  m_ModelmafRWI->m_RenderWindow->GetInteractor()->SetInteractorStyle(NULL);
 
   // width/height
-  m_ModelmafRWI->SetSize(0,0,420,420);
+  wxvtk->SetSize(0,0,420,420);
   //((vtkRenderWindow*)(m_ModelmafRWI->m_RenderWindow))->SetSize(420,420);
   //m_ModelmafRWI->m_RwiBase->Show();
 
-  m_ModelmafRWI->Show(true);
+  wxvtk->Show(true);
   m_ModelmafRWI->CameraUpdate();
-  LeftVerticalBoxSizer->Add(m_ModelmafRWI->m_RwiBase, 1, wxEXPAND | wxALL, 5);
+  LeftVerticalBoxSizer->Add(wxvtk, 1, wxEXPAND | wxALL, 5);
 
   // maf lut
   m_Lut = new mafGUILutSlider(m_OpDlg,-1,wxPoint(0,0),wxSize(420,24));
@@ -2324,15 +2325,15 @@ void medOpMML::CreateRegistrationDlg()
   m_SWmafRWI = CreateParameterViewmafRWI("S-W", 1,0,1); // magenta
 
   // add to box sizer
-  RightVerticalBoxSizer->Add(m_PHmafRWI->m_RwiBase, 0, wxTOP, 10);
-  RightVerticalBoxSizer->Add(m_PVmafRWI->m_RwiBase, 0, wxTOP, 3);
-  RightVerticalBoxSizer->Add(m_THmafRWI->m_RwiBase, 0, wxTOP, 3);
-  RightVerticalBoxSizer->Add(m_TVmafRWI->m_RwiBase, 0, wxTOP, 3);
-  RightVerticalBoxSizer->Add(m_RAmafRWI->m_RwiBase, 0, wxTOP, 3);
-  RightVerticalBoxSizer->Add(m_SNmafRWI->m_RwiBase, 0, wxTOP, 3);
-  RightVerticalBoxSizer->Add(m_SSmafRWI->m_RwiBase, 0, wxTOP, 3);
-  RightVerticalBoxSizer->Add(m_SEmafRWI->m_RwiBase, 0, wxTOP, 3);
-  RightVerticalBoxSizer->Add(m_SWmafRWI->m_RwiBase, 0, wxTOP, 3);
+  //RightVerticalBoxSizer->Add(m_PHmafRWI->m_RwiBase, 0, wxTOP, 10);
+  //RightVerticalBoxSizer->Add(m_PVmafRWI->m_RwiBase, 0, wxTOP, 3);
+  //RightVerticalBoxSizer->Add(m_THmafRWI->m_RwiBase, 0, wxTOP, 3);
+  //RightVerticalBoxSizer->Add(m_TVmafRWI->m_RwiBase, 0, wxTOP, 3);
+  //RightVerticalBoxSizer->Add(m_RAmafRWI->m_RwiBase, 0, wxTOP, 3);
+  //RightVerticalBoxSizer->Add(m_SNmafRWI->m_RwiBase, 0, wxTOP, 3);
+  //RightVerticalBoxSizer->Add(m_SSmafRWI->m_RwiBase, 0, wxTOP, 3);
+  //RightVerticalBoxSizer->Add(m_SEmafRWI->m_RwiBase, 0, wxTOP, 3);
+  //RightVerticalBoxSizer->Add(m_SWmafRWI->m_RwiBase, 0, wxTOP, 3);
 
   //
   m_OpDlg->Add(WindowHorizontalBoxSizer);    
@@ -2754,14 +2755,15 @@ bool medOpMML::SetUpModelView()
 mafRWI* medOpMML::CreateParameterViewmafRWI(wxString lab, float r, float g, float b)
 //----------------------------------------------------------------------------
 { 
-  mafRWI *rwi = new mafRWI(m_OpDlg);
+    auto wxvtk = new wxVTKWindow(m_OpDlg, wxID_ANY);
+    mafRWI *rwi = new mafRWI(wxvtk->GetRenderWindow());
   rwi->SetListener(this);
-  rwi->m_RwiBase->GetInteractor()->SetInteractorStyle(NULL);
+  rwi->m_RenderWindow->GetInteractor()->SetInteractorStyle(NULL);
 
   // width/height
-  rwi->SetSize(0, 0, 250, 65);
+  wxvtk->SetSize(0, 0, 250, 65);
   ((vtkRenderWindow*)(rwi->m_RenderWindow))->SetSize(250, 65);
-  rwi->m_RwiBase->Show();
+  wxvtk->Show();
 
   //vtkDEL(rwi->m_c);
   //rwi->m_c = m_RenderWindow_camera;

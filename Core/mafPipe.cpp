@@ -20,6 +20,11 @@ mafPipe::~mafPipe()
 	SetListener(nullptr);
 }
 
+std::vector<std::unique_ptr<IProperty>> mafPipe::getProperties()
+{
+	return {};
+}
+
 mafGUI* mafPipe::CreateGui()
 {
 	assert(!AccessGUI());

@@ -97,7 +97,7 @@ public:
   virtual void OnLayout();
 
   mafSceneGraph *GetSceneGraph() override;
-  wxVTKWindow *GetRWI() override;
+  vtkRenderWindow* GetRWI() override;
 
   /** 
   Return a pointer to the image of all sub-views.*/

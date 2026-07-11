@@ -641,13 +641,14 @@ void lhpOpComputeTensor::CreateOpDialog()
 {
   m_Dialog = new mafGUIDialog(_R("Tensor viewer"), mafCLOSEWINDOW | mafRESIZABLE);
 
-  m_Rwi = new mafRWI(m_Dialog,ONE_LAYER,false);
+  auto wxvtk = new wxVTKWindow(m_Dialog, wxID_ANY);
+  m_Rwi = new mafRWI(wxvtk->GetRenderWindow(),ONE_LAYER,false);
   m_Rwi->SetListener(this);
   m_Rwi->CameraSet(CAMERA_PERSPECTIVE);
 
   m_Rwi->m_RenderWindow->SetDesiredUpdateRate(0.0001f);
-  m_Rwi->SetSize(0,0,400,400);
-  m_Rwi->Show(true);
+  wxvtk->SetSize(0,0,400,400);
+  wxvtk->Show(true);
 
   UpdateScalarsInRenderingVolume();
   CreateVisualPipes();
@@ -815,7 +816,7 @@ void lhpOpComputeTensor::CreateOpDialog()
 #pragma endregion //wxFormBuilder
 
   // connect render window to the dialog
-  v_sizer_renderWindow->Add( m_Rwi->m_RwiBase, 1, wxEXPAND | wxALL, 5 );
+  v_sizer_renderWindow->Add( wxvtk, 1, wxEXPAND | wxALL, 5 );
 
   // set the slider values
   vtkImageData *volume = vtkImageData::SafeDownCast(m_VmeData->GetOutput()->GetVTKData());

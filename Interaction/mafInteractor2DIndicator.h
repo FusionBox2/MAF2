@@ -107,7 +107,7 @@ public:
   void ShowAllMeasures(bool show);
 
   /** return the current rwi */
-  wxVTKWindow *GetCurrentRwi();
+  vtkRenderWindow * GetCurrentRenderWindow();
 
 protected:
 	mafInteractor2DIndicator();
@@ -162,7 +162,7 @@ protected:
 	vtkRenderer         *m_CurrentRenderer;
   vtkRenderer         *m_PreviousRenderer;
   
-  wxVTKWindow *m_CurrentRwi;
+  vtkRenderWindow *m_CurrentRwi;
 	
 	bool m_DraggingLine;
 	bool m_DraggingLeft;

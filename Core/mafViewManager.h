@@ -17,6 +17,7 @@ using mafNode = model::data::Node;
 class mafView;
 class mafGUIViewPanel;
 class wxVTKWindow;
+class vtkRenderWindow;
 class mafDeviceButtonsPadMouse;
 
 //----------------------------------------------------------------------------
@@ -129,7 +130,7 @@ protected:
 	std::shared_ptr<mafNode> m_RootVme;
 	mafNode* m_SelectedVme = nullptr;
 	mafView* m_SelectedView = nullptr;
-	wxVTKWindow* m_SelectedRWI = nullptr;
+	vtkRenderWindow* m_SelectedRWI = nullptr;
 	mafView* m_ViewBeingCreated = nullptr;
 	std::vector<std::vector<mafView*> > m_ViewMatrixID; ///< Matrix to access views directly by (id, multiplicity)
 	bool m_CollaborateStatus = false;

@@ -276,7 +276,7 @@ void mafGUIContextualMenu::OnContextualViewMenu(wxCommandEvent& event)
       mafString file      = mafGetSaveFile(file_dir,wildc);
       if (!file.empty())
       {
-        vtkRenderWindow *renwin = m_ViewActive->GetRWI()->GetRenderWindow();
+        vtkRenderWindow *renwin = m_ViewActive->GetRWI();
         vtkNew<vtkVRMLExporter> vrml_exporter;
         vrml_exporter->SetFileName(file.GetCStr());
         vrml_exporter->SetInput(renwin);

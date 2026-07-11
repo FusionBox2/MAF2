@@ -116,16 +116,17 @@ medInteractor2DDistance::medInteractor2DDistance(bool testMode /* = false */)
 	  x_init = mafGetFrame()->GetPosition().x;
 	  y_init = mafGetFrame()->GetPosition().y;
 	  m_HistogramDialog = new wxDialog(mafGetFrame(),-1,_("Histogram"),wxDefaultPosition,wxDefaultSize,wxDEFAULT_DIALOG_STYLE | wxSTAY_ON_TOP);
-	  m_HistogramRWI = new mafRWI(mafGetFrame());
+      auto wxvtk = new wxVTKWindow(mafGetFrame(), wxID_ANY);
+      m_HistogramRWI = new mafRWI(wxvtk->GetRenderWindow());
 	  m_HistogramRWI->SetListener(this);
 	  m_HistogramRWI->m_RenFront->AddActor2D(m_PlotActor);
 	  m_HistogramRWI->m_RenFront->SetBackground(1,1,1);
-	  m_HistogramRWI->SetSize(0,0,width,height);
-	  m_HistogramRWI->m_RwiBase->Reparent(m_HistogramDialog);
-	  m_HistogramRWI->m_RwiBase->Show(true);
+	  wxvtk->SetSize(0,0,width,height);
+	  wxvtk->Reparent(m_HistogramDialog);
+	  wxvtk->Show(true);
 	
 	  wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
-	  sizer->Add(m_HistogramRWI->m_RwiBase,1, wxEXPAND);
+	  sizer->Add(wxvtk,1, wxEXPAND);
 	  m_HistogramDialog->SetSizer(sizer);
 	  m_HistogramDialog->SetAutoLayout(TRUE);
 	  sizer->Fit(m_HistogramDialog);
@@ -773,7 +774,7 @@ void medInteractor2DDistance::CreateHistogram()
     m_PlotActor->RemoveAllDataSetInputConnections();
 
     m_PlotActor->AddDataSetInputConnection(prober->GetOutputPort());
-    m_HistogramRWI->m_RwiBase->GetInteractor()->Render();
+    m_HistogramRWI->m_RenderWindow->GetInteractor()->Render();
   }
 }
 //----------------------------------------------------------------------------
@@ -797,7 +798,7 @@ void medInteractor2DDistance::GenerateHistogram(bool generate)
     m_PlotActor->RemoveAllDataSetInputConnections();
     if (m_HistogramRWI)
     {
-    	m_HistogramRWI->m_RwiBase->GetInteractor()->Render();
+    	m_HistogramRWI->m_RenderWindow->GetInteractor()->Render();
     }
     RemoveMeter();
     SetMeasureTypeToDistanceBetweenPoints();

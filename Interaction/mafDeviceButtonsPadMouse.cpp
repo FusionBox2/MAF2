@@ -89,7 +89,7 @@ void mafDeviceButtonsPadMouse::OnEvent(mafEventBase *event)
     e->Get2DPosition(pos);
     if (m_UpdateRwiInOnMoveFlag)
     {
-      m_SelectedRWI = (wxVTKWindow *)event->GetSender();
+      m_SelectedRWI = reinterpret_cast<wxVTKWindow*>(event->GetSender())->GetRenderWindow();
     }
     SetLastPosition(pos[0],pos[1],e->GetModifiers());
   }
@@ -98,7 +98,7 @@ void mafDeviceButtonsPadMouse::OnEvent(mafEventBase *event)
     // store the Selected RWI is needed for compounded view
     m_ButtonPressed = true;
     e->Get2DPosition(m_LastPosition);
-    m_SelectedRWI = (wxVTKWindow *)event->GetSender();
+    m_SelectedRWI = reinterpret_cast<wxVTKWindow*>(event->GetSender())->GetRenderWindow();
     e->SetSender(this);
     InvokeEvent(e,MCH_INPUT);
     if (m_CollaborateStatus)
@@ -214,12 +214,12 @@ vtkRenderWindowInteractor *mafDeviceButtonsPadMouse::GetInteractor()
 //------------------------------------------------------------------------------
 {
   if (m_SelectedRWI)
-    return m_SelectedRWI->GetRenderWindow()->GetInteractor();
+    return m_SelectedRWI->GetInteractor();
 
   return (vtkRenderWindowInteractor *)NULL;
 }
 //------------------------------------------------------------------------------
-wxVTKWindow *mafDeviceButtonsPadMouse::GetRWI()
+vtkRenderWindow *mafDeviceButtonsPadMouse::GetRenderWindow()
 //------------------------------------------------------------------------------
 {
   return m_SelectedRWI;

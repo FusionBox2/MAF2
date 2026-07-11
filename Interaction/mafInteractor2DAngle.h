@@ -129,7 +129,7 @@ public:
   void ShowAllMeasures(bool show);
 
   /** return the current rwi */
-  wxVTKWindow *GetCurrentRwi();
+  vtkRenderWindow *GetCurrentRenderWindow();
 
   void SetColor(double r,double g,double b);
 
@@ -185,7 +185,7 @@ protected:
 	vtkRenderer         *m_CurrentRenderer;
   vtkRenderer         *m_PreviousRenderer;
 
-  wxVTKWindow *m_CurrentRwi;
+  vtkRenderWindow *m_CurrentRwi;
 	
 	bool m_DraggingLine;
 	bool m_DraggingLeft;

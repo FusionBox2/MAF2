@@ -184,7 +184,7 @@ void mafInteractor2DIndicator::OnLeftButtonDown(mafEventInteraction *e)
   {
     m_Mouse = mouse;
   }
-  m_CurrentRwi = m_Mouse->GetRWI();
+  m_CurrentRwi = m_Mouse->GetRenderWindow();
   m_CurrentRenderer = m_Mouse->GetRenderer();
   m_ParallelView = m_CurrentRenderer->GetActiveCamera()->GetParallelProjection() != 0;
   if (m_ParallelView)
@@ -272,7 +272,7 @@ void mafInteractor2DIndicator::DrawMeasureTool(double x, double y)
 	static long counter = 0;
 	static double dx, dy, dz;
   
-  m_CurrentRwi =  m_Mouse->GetRWI();
+  m_CurrentRwi =  m_Mouse->GetRenderWindow();
   m_CurrentRenderer = m_Mouse->GetRenderer();
 	if (m_CurrentRenderer == NULL || (m_DisableUndoAndOkCancel && counter == 2 && m_CurrentRenderer != m_PreviousRenderer ))	{return;}
 
@@ -589,7 +589,7 @@ void mafInteractor2DIndicator::ShowOnlyLastMeasure( bool show )
   m_CurrentRenderer->GetRenderWindow()->Render();
 }
 //----------------------------------------------------------------------------
-wxVTKWindow * mafInteractor2DIndicator::GetCurrentRwi()
+vtkRenderWindow * mafInteractor2DIndicator::GetCurrentRenderWindow()
   //----------------------------------------------------------------------------
 {
   return m_CurrentRwi;

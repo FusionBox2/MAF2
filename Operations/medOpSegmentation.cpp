@@ -705,8 +705,8 @@ void medOpSegmentation::CreateOpDialog()
   mafSetFrame(oldFrame);
 
   //Display window      
-  m_View->m_Rwi->SetSize(0,0,650,650);
-  m_View->m_Rwi->Show(true);
+  //m_View->m_Rwi->SetSize(0,0,650,650);
+  //m_View->m_Rwi->Show(true);
 
   m_LutSlider = new mafGUILutSlider(m_Dialog,-1,wxPoint(0,0),wxSize(650,24));
   m_LutSlider->SetListener(this);
@@ -717,7 +717,7 @@ void medOpSegmentation::CreateOpDialog()
   wxBoxSizer * hSz1 = new wxBoxSizer(wxHORIZONTAL);
 
   wxBoxSizer * vSz1 = new wxBoxSizer(wxVERTICAL);
-  vSz1->Add(m_View->m_Rwi->m_RwiBase, 1, wxEXPAND | wxALL, 5 );
+  //vSz1->Add(m_View->m_Rwi->m_RwiBase, 1, wxEXPAND | wxALL, 5 );
   vSz1->Add(m_LutSlider, 0,wxLEFT );
 
   m_LutSlider->Update();

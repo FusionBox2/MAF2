@@ -214,6 +214,7 @@
 #include "mafVMEBSplineSurface.h"
 #include "mafVMEBSplineVolume.h"
 #include "lhpVMELeverArm.h"
+#include "OperationCreateFactory.h"
 
 
 // TODO: REFACTOR THIS 

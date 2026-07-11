@@ -76,9 +76,10 @@ medGUIWizardPageNew::medGUIWizardPageNew(medGUIWizard *wizardParent,long style, 
 
 	if(style & medUSERWI)
   {
-    m_Rwi = new mafRWI(this);
-    m_Rwi->SetSize(0,0,512,384);
-    m_Rwi->Show(true);
+        auto wxvtk = new wxVTKWindow(this, wxID_ANY);
+        m_Rwi = new mafRWI(wxvtk->GetRenderWindow());
+    wxvtk->SetSize(0,0,512,384);
+    wxvtk->Show(true);
     m_Rwi->CameraSet(CAMERA_CT);
     m_Rwi->CameraUpdate();
 
@@ -96,7 +97,7 @@ medGUIWizardPageNew::medGUIWizardPageNew(medGUIWizard *wizardParent,long style, 
     }
     m_GuiView->Reparent(this);
    
-    m_RwiSizer->Add(m_Rwi->m_RwiBase,1,wxEXPAND);
+    m_RwiSizer->Add(wxvtk,1,wxEXPAND);
     m_SizerAll->Add(m_RwiSizer,0,wxEXPAND);
 
     m_LUTSizer->Add(m_GuiView,1, wxEXPAND);

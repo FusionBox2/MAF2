@@ -161,7 +161,7 @@ void mafInteractorPicker::SendPickingInformation(mafView *v, double *mouse_pos, 
     double pos_picked[3] = {0.0, 0.0, 0.0};
     if(mouse_flag)
     {
-      vtkRendererCollection *rc = vvtk->GetRWI()->GetRenderWindow()->GetRenderers();
+      vtkRendererCollection *rc = vvtk->GetRWI()->GetRenderers();
       vtkRenderer *r = NULL;
       rc->InitTraversal();
       while(r = rc->GetNextItem())

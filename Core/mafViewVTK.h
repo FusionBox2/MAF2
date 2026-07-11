@@ -114,7 +114,7 @@ public:
   virtual int GetCameraPosition();
 
   mafSceneGraph *GetSceneGraph() override {return m_Sg.get();}
-  wxVTKWindow    *GetRWI() override {return m_Rwi->m_RwiBase;}
+  vtkRenderWindow* GetRWI() override {return m_Rwi->m_RenderWindow;}
 
   /** Return a pointer to the image of the renderwindow.*/
   void GetImage(wxBitmap &bmp, int magnification = 1) override;

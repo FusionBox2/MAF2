@@ -120,7 +120,7 @@ void medInteractorSegmentationPicker::SendPickingInformation(mafView *v, double 
   {
     if(mouse_flag)
     {
-      vtkRendererCollection *rc = v->GetRWI()->GetRenderWindow()->GetRenderers();
+      vtkRendererCollection *rc = v->GetRWI()->GetRenderers();
       vtkRenderer *r = NULL;
       rc->InitTraversal();
       while(r = rc->GetNextItem())

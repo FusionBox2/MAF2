@@ -51,6 +51,7 @@
 #include "vtkPointData.h"
 #include "vtkPoints.h"
 #include "vtkCamera.h"
+#include "vtkRendererCollection.h"
 #include "mafPipeMeshSlice.h"
 
 //----------------------------------------------------------------------------
@@ -795,13 +796,13 @@ void mafViewOrthoSlice::SetThicknessForAllSurfaceSlices(mafNode* root)
 bool mafViewOrthoSlice::IsPickedSliceView()
 //----------------------------------------------------------------------------
 {
-	if (auto  rwi = GetGlobalMouse()->GetRWI())
+	if (auto  rwi = GetGlobalMouse()->GetRenderWindow())
 	{
 		for (auto& childView : m_ChildViewList)
 		{
 			if (childView->IsMAFType(mafViewSlice))
 			{
-				if (mafViewSlice::StaticDownCast(childView.get())->GetRWI() == rwi && mafViewSlice::StaticDownCast(childView.get())->GetRWI()->GetCamera()->GetParallelProjection())
+				if (mafViewSlice::StaticDownCast(childView.get())->GetRWI() == rwi && mafViewSlice::StaticDownCast(childView.get())->GetRWI()->GetRenderers()->GetFirstRenderer()->GetActiveCamera()->GetParallelProjection())
 					return true;
 			}
 			else if (childView->IsMAFType(mafViewCompound))

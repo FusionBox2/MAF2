@@ -73,6 +73,8 @@ public:
   /** Let to enable/disable the Level Of Detail behavior.*/
   void SetEnableActorLOD(bool value);
 
+	PropertyList getProperties() override;
+
   /** IDs for the GUI */
   enum PIPE_SURFACE_WIDGET_ID
   {

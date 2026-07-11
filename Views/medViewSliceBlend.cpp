@@ -111,10 +111,11 @@ void medViewSliceBlend::Create()
 {
 	RWI_LAYERS num_layers = m_CameraPositionId != CAMERA_OS_P ? TWO_LAYER : ONE_LAYER;
 
-	m_Rwi = std::make_unique<mafRWI>(mafGetFrame(), num_layers, m_ShowGrid, m_ShowAxes, m_ShowRuler, m_StereoType);
+	auto wxvtk = new wxVTKWindow(mafGetFrame(), wxID_ANY);
+	m_Rwi = std::make_unique<mafRWI>(wxvtk->GetRenderWindow(), num_layers, m_ShowGrid, m_ShowAxes, m_ShowRuler, m_StereoType);
 	m_Rwi->SetListener(this);
 	m_Rwi->CameraSet(m_CameraPositionId);
-	m_Win = m_Rwi->m_RwiBase;
+	m_Win = wxvtk;
 
 	m_Sg = std::make_unique<mafSceneGraph>(this, m_Rwi->m_RenFront, m_Rwi->m_RenBack);
 	m_Sg->SetListener(this);

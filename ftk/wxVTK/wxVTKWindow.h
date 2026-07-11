@@ -56,8 +56,6 @@ public:
 
   virtual vtkRenderWindow* GetRenderWindow();
 
-  virtual vtkRenderWindowInteractor* GetInteractor();
-
   //---------FROM OLD
   vtkCamera* GetCamera();
   void GetImage(wxBitmap& bitmap, int magnification = 1);

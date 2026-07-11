@@ -231,16 +231,17 @@ void mafOpExtractIsosurface::CreateOpDialog()
 
   m_PIPRen = vtkRenderer::New();
 
-  m_Rwi = new mafRWI(m_Dialog,ONE_LAYER,false);
+  auto wxvtk = new wxVTKWindow(m_Dialog, wxID_ANY);
+  m_Rwi = new mafRWI(wxvtk->GetRenderWindow(),ONE_LAYER,false);
   m_Rwi->SetListener(this);//SIL. 16-6-2004: 
   m_Rwi->CameraSet(CAMERA_PERSPECTIVE);
   //m_Rwi->SetAxesVisibility(true);
   //m_Rwi->SetGridVisibility(false);
   
-  m_Rwi->SetSize(0,0,500,500);
+  wxvtk->SetSize(0,0,500,500);
   m_Rwi->m_RenderWindow->AddRenderer(m_PIPRen);
   m_Rwi->m_RenderWindow->SetDesiredUpdateRate(0.0001f);
-  m_Rwi->Show(true);
+  wxvtk->Show(true);
   m_DensityPicker = mafInteractorExtractIsosurface::NewSPtr();
   m_DensityPicker->SetListener(this);	
   GetGlobalMouse()->AddObserver(m_DensityPicker.get(), MCH_INPUT);
@@ -386,7 +387,7 @@ void mafOpExtractIsosurface::CreateOpDialog()
   h_sizer5->Add(b_cancel,  0,wxRIGHT);
 
   wxBoxSizer *v_sizer =  new wxBoxSizer( wxVERTICAL );
-  v_sizer->Add(m_Rwi->m_RwiBase, 1,wxEXPAND);
+  v_sizer->Add(wxvtk, 1,wxEXPAND);
   if (h_sizer0 != NULL)
   {
 	  v_sizer->Add(h_sizer0, 0,wxEXPAND | wxALL,5);

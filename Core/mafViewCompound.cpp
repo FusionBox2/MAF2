@@ -148,7 +148,7 @@ mafSceneGraph* mafViewCompound::GetSceneGraph()
 	return GetSubView()->GetSceneGraph();
 }
 //----------------------------------------------------------------------------
-wxVTKWindow* mafViewCompound::GetRWI()
+vtkRenderWindow* mafViewCompound::GetRWI()
 //----------------------------------------------------------------------------
 {
 	//return ((mafViewVTK *)m_ChildViewList[m_DefauldChildView])->GetRWI();
@@ -386,7 +386,7 @@ void mafViewCompound::LayoutSubView(int width, int height)
 mafView* mafViewCompound::GetSubView()
 //----------------------------------------------------------------------------
 {
-	if (auto rwi = GetGlobalMouse()->GetRWI())
+	if (auto rwi = GetGlobalMouse()->GetRenderWindow())
 	{
 		for (auto& childView : m_ChildViewList)
 		{
@@ -419,7 +419,7 @@ mafView* mafViewCompound::GetSubView(int idx)
 int mafViewCompound::GetSubViewIndex()
 //----------------------------------------------------------------------------
 {
-	if (auto rwi = GetGlobalMouse()->GetRWI())
+	if (auto rwi = GetGlobalMouse()->GetRenderWindow())
 	{
 		for (int i = 0; i < m_ChildViewList.size(); i++)
 		{

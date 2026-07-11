@@ -534,9 +534,9 @@ void mafGUIApplicationLayoutSettings::ApplyTreeLayout()
             focal_point[1] = (*iter).m_CameraParameters[7];
             focal_point[2] = (*iter).m_CameraParameters[8];
 
-            v->GetRWI()->GetCamera()->SetViewUp(view_up);
-            v->GetRWI()->GetCamera()->SetPosition(position);
-            v->GetRWI()->GetCamera()->SetFocalPoint(focal_point);
+            //v->GetRWI()->GetCamera()->SetViewUp(view_up);
+            //v->GetRWI()->GetCamera()->SetPosition(position);
+            //v->GetRWI()->GetCamera()->SetFocalPoint(focal_point);
           }
           else //compound
           {;}

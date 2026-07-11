@@ -64,6 +64,7 @@ const bool DEBUG_MODE = false;
 #include "vtkTextProperty.h"
 #include "vtkCamera.h"
 #include "vtkTransform.h"
+#include "vtkRendererCollection.h"
 
 
 const int LAST_SLICE_ORIGIN_VALUE_NOT_INITIALIZED = 0;
@@ -135,10 +136,11 @@ void mafViewSlice::Create()
 
 	RWI_LAYERS num_layers = m_CameraPositionId != CAMERA_OS_P ? TWO_LAYER : ONE_LAYER;
 
-	m_Rwi = std::make_unique<mafRWI>(mafGetFrame(), num_layers, m_ShowGrid, m_ShowAxes, m_ShowRuler, m_StereoType);
+	auto wxvtk = new wxVTKWindow(mafGetFrame(), wxID_ANY);
+	m_Rwi = std::make_unique<mafRWI>(wxvtk->GetRenderWindow(), num_layers, m_ShowGrid, m_ShowAxes, m_ShowRuler, m_StereoType);
 	m_Rwi->SetListener(this);
 	m_Rwi->CameraSet(m_CameraPositionId);
-	m_Win = m_Rwi->m_RwiBase;
+	m_Win = wxvtk;
 
 	m_Sg = std::make_unique<mafSceneGraph>(this, m_Rwi->m_RenFront, m_Rwi->m_RenBack);
 	m_Sg->SetListener(this);
@@ -238,7 +240,7 @@ void mafViewSlice::InitializeSlice(double* Origin, double* Normal)
 	else
 	{
 		if (m_CameraPositionId == CAMERA_ARB)
-			this->GetRWI()->GetCamera()->GetViewPlaneNormal(m_SliceNormal);
+			this->GetRWI()->GetRenderers()->GetFirstRenderer()->GetActiveCamera()->GetViewPlaneNormal(m_SliceNormal);
 		else
 		{
 			m_SliceNormal[0] = m_SliceNormal[1] = m_SliceNormal[2] = 0.0;
@@ -436,7 +438,7 @@ void mafViewSlice::VmeCreatePipe(mafNode* vme)
 						case CAMERA_OS_P:
 							break;
 						case CAMERA_ARB:
-							this->GetRWI()->GetCamera()->GetViewPlaneNormal(normal);
+							this->GetRWI()->GetRenderers()->GetFirstRenderer()->GetActiveCamera()->GetViewPlaneNormal(normal);
 							break;
 						case CAMERA_PERSPECTIVE:
 							//this->GetRWI()->GetCamera()->GetViewPlaneNormal(normal);
@@ -478,7 +480,7 @@ void mafViewSlice::VmeCreatePipe(mafNode* vme)
 						case CAMERA_OS_P:
 							break;
 						case CAMERA_ARB:
-							this->GetRWI()->GetCamera()->GetViewPlaneNormal(normal);
+							this->GetRWI()->GetRenderers()->GetFirstRenderer()->GetActiveCamera()->GetViewPlaneNormal(normal);
 							break;
 						case CAMERA_PERSPECTIVE:
 							//this->GetRWI()->GetCamera()->GetViewPlaneNormal(normal);
@@ -1019,9 +1021,9 @@ void mafViewSlice::SetCameraParallelToDataSetLocalAxis(int axis)
 	double* oldCameraOrientation;
 
 
-	this->GetRWI()->GetCamera()->GetFocalPoint(oldCameraFocalPoint);
-	this->GetRWI()->GetCamera()->GetPosition(oldCameraPosition);
-	oldCameraOrientation = this->GetRWI()->GetCamera()->GetOrientation();
+	this->GetRWI()->GetRenderers()->GetFirstRenderer()->GetActiveCamera()->GetFocalPoint(oldCameraFocalPoint);
+	this->GetRWI()->GetRenderers()->GetFirstRenderer()->GetActiveCamera()->GetPosition(oldCameraPosition);
+	oldCameraOrientation = this->GetRWI()->GetRenderers()->GetFirstRenderer()->GetActiveCamera()->GetOrientation();
 
 	auto currentVMEVolume = mafVME::SafeDownCast(m_CurrentVolume->m_Vme);
 	assert(currentVMEVolume);
@@ -1075,7 +1077,7 @@ void mafViewSlice::SetCameraParallelToDataSetLocalAxis(int axis)
 		mafTransform::AddVectors(newCameraFocalPoint, zVersor, newCameraPosition);
 	}
 
-	vtkCamera* camera = this->GetRWI()->GetCamera();
+	vtkCamera* camera = this->GetRWI()->GetRenderers()->GetFirstRenderer()->GetActiveCamera();
 	camera->SetFocalPoint(newCameraFocalPoint);
 	camera->SetPosition(newCameraPosition);
 	camera->SetViewUp(newCameraViewUp);

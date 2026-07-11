@@ -440,12 +440,13 @@ void medOpExtrusionHoles::CreateOpDialog()
 	//===== setup interface ====
 	m_Dialog = new mafGUIDialog(_R("Extrusion"), mafCLOSEWINDOW | mafRESIZABLE);
 
-	m_Rwi = new mafRWI(m_Dialog,ONE_LAYER,false);
+	auto wxvtk = new wxVTKWindow(m_Dialog, wxID_ANY);
+	m_Rwi = new mafRWI(wxvtk->GetRenderWindow(),ONE_LAYER,false);
 	m_Rwi->SetListener(this);
 	m_Rwi->CameraSet(CAMERA_PERSPECTIVE);
 	m_Rwi->m_RenderWindow->SetDesiredUpdateRate(0.0001f);
-	m_Rwi->SetSize(0,0,500,500);
-	m_Rwi->Show(true);
+	wxvtk->SetSize(0,0,500,500);
+	wxvtk->Show(true);
 
 	m_Picker = mmiSelectPoint::NewSPtr();
 	m_Picker->SetListener(this);
@@ -497,7 +498,7 @@ void medOpExtrusionHoles::CreateOpDialog()
   h_sizer2->Add(num_vertices,0,wxRIGHT);
 
 	wxBoxSizer *v_sizer =  new wxBoxSizer( wxVERTICAL );
-	v_sizer->Add(m_Rwi->m_RwiBase, 1,wxEXPAND);
+	v_sizer->Add(wxvtk, 1,wxEXPAND);
 	v_sizer->Add(h_sizer1,     0,wxEXPAND | wxALL,5);
 	v_sizer->Add(h_sizer2,     0,wxEXPAND | wxALL,5);
 	v_sizer->Add(h_sizer3,     0,wxEXPAND | wxALL,5);

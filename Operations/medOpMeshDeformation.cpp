@@ -255,12 +255,13 @@ void medOpMeshDeformation::CreateOpDialog()
   m_Dialog->SetWindowStyle(m_Dialog->GetWindowStyle() | wxMAXIMIZE_BOX);
 
   //rendering window
-  m_Rwi = new mafRWI(m_Dialog,ONE_LAYER,false);
+  auto wxvtk = new wxVTKWindow(m_Dialog, wxID_ANY);
+  m_Rwi = new mafRWI(wxvtk->GetRenderWindow(), ONE_LAYER,false);
   m_Rwi->SetListener(this);
   m_Rwi->CameraSet(CAMERA_PERSPECTIVE);
   m_Rwi->m_RenderWindow->SetDesiredUpdateRate(0.0001f);
-  m_Rwi->SetSize(0,0,400,400);
-  m_Rwi->Show(true);
+  wxvtk->SetSize(0,0,400,400);
+  wxvtk->Show(true);
 
 
   //The following code was originally generated using wxFormBuilder
@@ -272,7 +273,7 @@ void medOpMeshDeformation::CreateOpDialog()
   //Left panel - RWI
   wxBoxSizer* bSizer18;
   bSizer18 = new wxBoxSizer( wxVERTICAL );
-  bSizer18->Add( m_Rwi->m_RwiBase, 1, wxEXPAND | wxALL, 5 );
+  bSizer18->Add( wxvtk, 1, wxEXPAND | wxALL, 5 );
 
   //Left panel - Buttons
   wxBoxSizer* bSizer21;

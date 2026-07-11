@@ -237,13 +237,14 @@ void lhpOpTextureOrientation::CreateOpDialog()
   //----------------------------------------------------------------------------
   m_Dialog = new mafGUIDialog(_R("Texture Orientation"), mafCLOSEWINDOW | mafRESIZABLE);
 
-  m_Rwi = new mafRWI(m_Dialog,ONE_LAYER,false);
+  auto wxvtk = new wxVTKWindow(m_Dialog, wxID_ANY);
+  m_Rwi = new mafRWI(wxvtk->GetRenderWindow(),ONE_LAYER,false);
   m_Rwi->SetListener(this);
   m_Rwi->CameraSet(CAMERA_PERSPECTIVE);
 
   m_Rwi->m_RenderWindow->SetDesiredUpdateRate(0.0001f);
-  m_Rwi->SetSize(0,0,600,600);
-  m_Rwi->Show(true);
+  wxvtk->SetSize(0,0,600,600);
+  wxvtk->Show(true);
 
 
 
@@ -351,7 +352,7 @@ void lhpOpTextureOrientation::CreateOpDialog()
   h_sizer30->Add(cancel, 0, wxLEFT);
 
   wxBoxSizer *v_sizer_renwin = new wxBoxSizer(wxVERTICAL) ;
-  v_sizer_renwin->Add(m_Rwi->m_RwiBase, 1, wxEXPAND);
+  v_sizer_renwin->Add(wxvtk, 1, wxEXPAND);
 
   wxBoxSizer *v_sizer_ctrls =  new wxBoxSizer(wxVERTICAL);
   v_sizer_ctrls->Add(h_sizer10, 0, wxEXPAND | wxALL,5);
@@ -385,7 +386,7 @@ void lhpOpTextureOrientation::CreateOpDialog()
 
   // Set the interactor style to trackball camera
   vtkInteractorStyleTrackballCamera* style = vtkInteractorStyleTrackballCamera::New() ;
-  m_Rwi->m_RwiBase->GetInteractor()->SetInteractorStyle(style) ;
+  m_Rwi->m_RenderWindow->GetInteractor()->SetInteractorStyle(style) ;
   style->Delete() ;
 
 

@@ -54,6 +54,7 @@
 
 #include <vector>
 
+#include "ftk/Core/PipeFactory.h"
 
 
 //----------------------------------------------------------------------------
@@ -361,6 +362,42 @@ void mafPipeSurface::Select(bool sel)
 		}
 	}
 }
+
+core::WithProperties::PropertyList mafPipeSurface::getProperties()
+{
+	auto result = Superclass::getProperties();
+
+	//std::vector<base::String> geometryNames = { _R("Sphere"), _R("Cone"), _R("Cylinder"), _R("Cube"), _R("Plane"), _R("Ellipsoid") };
+	/*result.push_back(makeProperty(_R("Geometry"), [this]() {return GetGeometryType(); }, [this](int v) {SetGeometryType(v); },
+		//result.push_back(makeProperty(_R("Geometry"), *this, &mafVMESurfaceParametric::GetGeometryType, &mafVMESurfaceParametric::SetGeometryType,
+		{
+			{_R("visual_name"), base::String(_R(""))},
+			{_R("enum"), true},
+			{_R("enumEntries"), geometryNames}
+		}));
+		result.push_back(makeProperty(_R("ShereRadius"), [this]() {return GetSphereRadius(); }, [this](double v) {SetSphereRadius(v); m_valuesChanged.emit(); },
+		{
+			{ _R("visual_name"), base::String(_R("Radius")) },
+			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_SPHERE; })}
+		}));
+		result.push_back(makeProperty(_R("SpherePhiRes"), [this]() {return m_SpherePhiRes; }, [this](double v) {m_SpherePhiRes = v; InternalUpdate(); m_valuesChanged.emit(); },
+		{
+			{ _R("visual_name"), base::String(_R("Phi res")) },
+			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_SPHERE; })}
+		}));
+		result.push_back(makeProperty(_R("SphereThetaRes"), [this]() {return m_SphereTheRes; }, [this](double v) {m_SphereTheRes = v; InternalUpdate(); m_valuesChanged.emit(); },
+		{
+			{ _R("visual_name"), base::String(_R("Theta res")) },
+			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_SPHERE; })}
+		}));*/
+	result.push_back(makeProperty(_R("displaylist"), [this]() {return m_RenderingDisplayListFlag; }, [this](int v) {m_RenderingDisplayListFlag = v; m_valuesChanged.emit(); },
+		{
+			{_R("visual_name"), base::String(_R("displaylist"))},
+			{_R("boolean"), true}
+		}));
+		return result;
+}
+
 //----------------------------------------------------------------------------
 /*void mafPipeSurface::UpdateProperty(bool fromTag)
 //----------------------------------------------------------------------------

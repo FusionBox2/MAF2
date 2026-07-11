@@ -134,7 +134,7 @@ void medInteractorPERScalarInformation::OnEvent(mafEventBase *event)
       }
       if (v)
       {
-        vtkRendererCollection *rc = v->GetRWI()->GetRenderWindow()->GetRenderers();
+        vtkRendererCollection *rc = v->GetRWI()->GetRenderers();
         vtkRenderer *r = NULL;
         rc->InitTraversal();
         while(r = rc->GetNextItem())

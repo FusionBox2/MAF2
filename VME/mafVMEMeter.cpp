@@ -1178,7 +1178,7 @@ void mafVMEMeter::OnEvent(mafEventBase* maf_event)
 				m_HistogramRWI->SetListener(this);
 				m_HistogramRWI->m_RenFront->AddActor2D(m_PlotActor);
 				m_HistogramRWI->m_RenFront->SetBackground(1, 1, 1);
-				m_HistogramRWI->SetSize(0, 0, width, height);
+				//m_HistogramRWI->SetSize(0, 0, width, height);
 
 				m_HistogramDialog->SetSize(x_init, y_init, width, height);
 				m_HistogramDialog->Show(FALSE);
@@ -1247,7 +1247,7 @@ void mafVMEMeter::GenerateHistogram(int generate)
 		if (m_GenerateHistogram)
 		{
 			CreateHistogram();
-			m_HistogramRWI->m_RwiBase->GetInteractor()->Render();
+			m_HistogramRWI->m_RenderWindow->GetInteractor()->Render();
 		}
 		m_HistogramDialog->Show(m_GenerateHistogram != 0);
 	}
@@ -1343,7 +1343,7 @@ void mafVMEMeter::CreateHistogram()
 		m_PlotActor->RemoveAllDataSetInputConnections();
 
 		m_PlotActor->AddDataSetInputConnection(prober->GetOutputPort());
-		if (m_HistogramRWI) m_HistogramRWI->m_RwiBase->GetInteractor()->Render();
+		if (m_HistogramRWI) m_HistogramRWI->m_RenderWindow->GetInteractor()->Render();
 
 		m_ProbedVME->SetTimeStamp(tsPrb);
 		m_ProbedVME->Update();

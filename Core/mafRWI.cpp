@@ -34,15 +34,15 @@ mafRWI::mafRWI()
 	m_GridColour = wxColour(DEFAULT_GRID_COLOR * 255, DEFAULT_GRID_COLOR * 255, DEFAULT_GRID_COLOR * 255);
 }
 
-mafRWI::mafRWI(wxWindow* parent, RWI_LAYERS layers, bool use_grid, bool show_axes, bool show_ruler, int stereo, bool show_orientator, int axesType)
+mafRWI::mafRWI(vtkRenderWindow* window, RWI_LAYERS layers, bool use_grid, bool show_axes, bool show_ruler, int stereo, bool show_orientator, int axesType)
 {
 	m_AxesType = axesType;
 	m_BGColour = wxColour(DEFAULT_BG_COLOR * 255, DEFAULT_BG_COLOR * 255, DEFAULT_BG_COLOR * 255);
 	m_GridColour = wxColour(DEFAULT_GRID_COLOR * 255, DEFAULT_GRID_COLOR * 255, DEFAULT_GRID_COLOR * 255);
-	CreateRenderingScene(parent, layers, use_grid, show_axes, show_ruler, stereo, show_orientator, m_AxesType);
+	CreateRenderingScene(window, layers, use_grid, show_axes, show_ruler, stereo, show_orientator, m_AxesType);
 }
 
-void mafRWI::CreateRenderingScene(wxWindow* parent, RWI_LAYERS layers, bool use_grid, bool show_axes, bool show_ruler, int stereo, bool show_orientator, int axesType)
+void mafRWI::CreateRenderingScene(vtkRenderWindow* window, RWI_LAYERS layers, bool use_grid, bool show_axes, bool show_ruler, int stereo, bool show_orientator, int axesType)
 {
 	if (m_Light)
 	{
@@ -68,8 +68,7 @@ void mafRWI::CreateRenderingScene(wxWindow* parent, RWI_LAYERS layers, bool use_
 	m_RenFront->BackingStoreOff();
 	m_RenFront->LightFollowCameraOn();
 
-	m_RwiBase = new wxVTKWindow(parent, wxID_ANY);
-	m_RenderWindow = vtkNew<vtkRenderWindow>();
+	m_RenderWindow = window;
 	m_RenderWindow->GlobalWarningDisplayOff();
 
 	if (stereo)
@@ -115,8 +114,6 @@ void mafRWI::CreateRenderingScene(wxWindow* parent, RWI_LAYERS layers, bool use_
 		m_RenderWindow->AddRenderer(m_RenFront);
 
 	}
-
-	m_RwiBase->SetRenderWindow(m_RenderWindow);
 
 	assert(m_AlwaysVisibleRenderer->Transparent());
 
@@ -180,9 +177,6 @@ mafRWI::~mafRWI()
 	}
 	if (m_RenderWindow)
 		m_RenderWindow->SetInteractor(nullptr);
-	if (m_RwiBase)
-		m_RwiBase->SetRenderWindow(nullptr);
-	//vtkDEL(m_RwiBase);  //The renderer has to be Deleted as last
 }
 
 void mafRWI::CameraSet(int cam_position, double zoom)
@@ -320,17 +314,6 @@ void mafRWI::CameraSet(double pos[3], double viewUp[3], double zoom /*= 1.*/, bo
 	m_Camera->SetClippingRange(0.1, 1000);
 
 	CameraReset((mafNode*)NULL, zoom);
-}
-
-void mafRWI::SetSize(int x, int y, int w, int h)
-{
-	((wxWindow*)m_RwiBase)->SetSize(x, y, w, h);
-	((wxWindow*)m_RwiBase)->SetMinSize(wxSize(w, h));
-}
-
-void mafRWI::Show(bool show)
-{
-	m_RwiBase->Show(show);
 }
 
 void mafRWI::SetGridNormal(int normal_id)
@@ -767,7 +750,7 @@ void mafRWI::CameraReset(double bounds[6], double zoom)
 	height = (height == 0) ? 1.0 : height;
 
 	//check aspect ratio - and eventually compensate height
-	double view_aspect = (m_RwiBase->GetInteractor()->GetSize()[0] * 1.0) / (m_RwiBase->GetInteractor()->GetSize()[0] * 1.0);
+	double view_aspect = (m_RenderWindow->GetSize()[0] * 1.0) / (m_RenderWindow->GetSize()[1] * 1.0);
 	double scene_aspect = (width) / (height);
 	if (scene_aspect > view_aspect)
 	{
@@ -960,10 +943,10 @@ void mafRWI::OnEvent(mafEventBase* maf_event)
 			break;
 		case ID_STERO_MOVIE_DIR:
 			m_Gui->Enable(ID_STERO_MOVIE, !m_StereoMovieDir.empty());
-			m_RwiBase->SetStereoMovieDirectory(m_StereoMovieDir.GetCStr());
+			//m_RwiBase->SetStereoMovieDirectory(m_StereoMovieDir.GetCStr());
 			break;
 		case ID_STERO_MOVIE:
-			m_RwiBase->EnableStereoMovie(m_StereoMovieEnable != 0);
+			//m_RwiBase->EnableStereoMovie(m_StereoMovieEnable != 0);
 			break;
 		case ID_CAMERA_FRONT:
 			CameraSet(CAMERA_PERSPECTIVE_FRONT);

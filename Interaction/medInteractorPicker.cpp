@@ -144,7 +144,7 @@ void medInteractorPicker::SendPickingInformation(mafView *v, double *mouse_pos, 
     v = vc->GetSubView();*/ // the code is integrated into the GetRWI method of the mafViewCompound, so it is not necessary!
     if(mouse_flag)
     {
-      vtkRendererCollection *rc = v->GetRWI()->GetRenderWindow()->GetRenderers();
+      vtkRendererCollection *rc = v->GetRWI()->GetRenderers();
       vtkRenderer *r = NULL;
       rc->InitTraversal();
       while(r = rc->GetNextItem())

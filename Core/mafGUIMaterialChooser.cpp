@@ -173,9 +173,10 @@ void mafGUIMaterialChooser::CreateGUI()
   m_ListCtrlMaterial->SetMinSize(wxSize(200,500));
 
 	// RWI ============================
-	m_RWI = std::make_unique<mafRWI>(m_Dialog.get(),ONE_LAYER);
-	m_RWI->SetSize(0,0,50,50);
-  m_RWI->m_RwiBase->Show(true);
+  auto wxvtk = new wxVTKWindow(m_Dialog.get(), wxID_ANY);
+  m_RWI = std::make_unique<mafRWI>(wxvtk->GetRenderWindow(),ONE_LAYER);
+	wxvtk->SetSize(0,0,50,50);
+  wxvtk->Show(true);
 	// GUI ============================
 	m_Gui = new mafGUI(this);
   
@@ -235,13 +236,13 @@ void mafGUIMaterialChooser::CreateGUI()
 	v1_sizer->Add(m_ListCtrlMaterial,1,wxEXPAND | wxALL, 6);
 
 	wxBoxSizer *v2_sizer = new wxBoxSizer(wxVERTICAL);
-  v2_sizer->Add(m_RWI->m_RwiBase,0,wxALIGN_CENTRE);
+  v2_sizer->Add(wxvtk,0,wxALIGN_CENTRE);
   v2_sizer->Add(m_Gui,0,wxALL, 6);
 
 	wxBoxSizer *main_sizer = new wxBoxSizer(wxHORIZONTAL);
 	main_sizer->Add(v1_sizer,1,wxEXPAND | wxALIGN_LEFT);
 	main_sizer->Add(v2_sizer,0,wxALIGN_LEFT);
-  m_RWI->m_RwiBase->Show(true);
+  wxvtk->Show(true);
 
 	// ATTACH SIZER TO DIALOG
   m_Dialog->SetSizer( main_sizer );
@@ -264,8 +265,8 @@ void mafGUIMaterialChooser::CreatePipe()
   m_RWI->m_Camera->SetFocalPoint(0,0,0);
   m_RWI->m_Camera->SetPosition(0,0,2);
   m_RWI->m_Camera->SetViewUp(0,1,0);
-	m_RWI->m_RwiBase->GetInteractor()->GetInteractorStyle()->SetInteractor(NULL);
-	m_RWI->m_RwiBase->GetInteractor()->SetInteractorStyle(NULL);
+	m_RWI->m_RenderWindow->GetInteractor()->GetInteractorStyle()->SetInteractor(NULL);
+	m_RWI->m_RenderWindow->GetInteractor()->SetInteractorStyle(NULL);
 
 	m_Sphere = vtkSphereSource::New();
 	m_Sphere->SetPhiResolution(20);

@@ -114,10 +114,11 @@ void mafViewVTK::Create()
 //----------------------------------------------------------------------------
 {
 	if (m_LightCopyEnabled == true) return;
-	m_Rwi = std::make_unique<mafRWI>(mafGetFrame(), ONE_LAYER, m_ShowGrid, m_ShowAxes, m_ShowRuler, m_StereoType, m_ShowOrientator, m_AxesType);
+	auto wxvtk = new wxVTKWindow(mafGetFrame(), wxID_ANY);
+	m_Rwi = std::make_unique<mafRWI>(wxvtk->GetRenderWindow(), ONE_LAYER, m_ShowGrid, m_ShowAxes, m_ShowRuler, m_StereoType, m_ShowOrientator, m_AxesType);
 	m_Rwi->SetListener(this);
 	m_Rwi->CameraSet(m_CameraPositionId);
-	m_Win = m_Rwi->m_RwiBase;
+	m_Win = wxvtk;
 
 	m_Sg = std::make_unique<mafSceneGraph>(this, m_Rwi->m_RenFront, m_Rwi->m_RenBack, m_Rwi->m_AlwaysVisibleRenderer);
 	m_Sg->SetListener(this);
@@ -429,7 +430,7 @@ bool mafViewVTK::FindPokedVme(mafDevice* device, mafMatrix& point_pose, vtkProp3
 bool mafViewVTK::Pick(int x, int y)
 //----------------------------------------------------------------------------
 {
-	vtkRendererCollection* rc = m_Rwi->m_RwiBase->GetRenderWindow()->GetRenderers();
+	vtkRendererCollection* rc = m_Rwi->m_RenderWindow->GetRenderers();
 	vtkRenderer* r = NULL;
 	rc->InitTraversal();
 	while (r = rc->GetNextItem())
@@ -455,7 +456,7 @@ bool mafViewVTK::Pick(mafMatrix& m)
 	m.MultiplyPoint(p1, world_p1);
 	m.MultiplyPoint(p2, world_p2);
 
-	vtkRendererCollection* rc = m_Rwi->m_RwiBase->GetRenderWindow()->GetRenderers();
+	vtkRendererCollection* rc = m_Rwi->m_RenderWindow->GetRenderers();
 	vtkRenderer* r = NULL;
 	rc->InitTraversal();
 	while (r = rc->GetNextItem())
@@ -480,7 +481,7 @@ void mafViewVTK::Print(wxDC* dc, wxRect margins)
 void mafViewVTK::GetImage(wxBitmap& bmp, int magnification)
 //----------------------------------------------------------------------------
 {
-	m_Rwi->m_RwiBase->GetImage(bmp, magnification);
+	//m_Rwi->m_RwiBase->GetImage(bmp, magnification);
 }
 //----------------------------------------------------------------------------
 void mafViewVTK::LinkView(bool link_camera)
