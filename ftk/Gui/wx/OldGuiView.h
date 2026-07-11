@@ -30,7 +30,7 @@ namespace gui
 			void setActive(bool active) override;
 
 		protected:
-			wxWindow* m_panel = nullptr;
+			wxWindow* m_widget = nullptr;
 			std::shared_ptr<IPropertyViewModel> m_viewModel;
 			std::unique_ptr<OldGuiAdapter> m_adapter;
 		};

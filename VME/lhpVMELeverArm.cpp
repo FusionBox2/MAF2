@@ -34,8 +34,6 @@
 #include "mafGUI.h"
 #include "mafAbsMatrixPipe.h"
 #include "vtkSmartPointer.h"
-#include "mafRWI.h"
-#include "mafGUIDialogPreview.h"
 
 #include "vtkMath.h"
 #include "vtkSmartPointer.h"

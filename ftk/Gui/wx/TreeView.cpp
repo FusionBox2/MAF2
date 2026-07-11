@@ -16,11 +16,11 @@ namespace gui::wx
 	{
 		//auto panel = new gui::wx::LabeledPanel(parent, wxID_ANY, false, false);
 		//panel->Bind(wxEVT_DESTROY, [this](wxWindowDestroyEvent&) {if (m_destroyed) return; m_destroyed = true; delete this; });
-		auto tree = new wxTreeCtrl(parent, wxID_ANY, wxDefaultPosition, wxWindow::FromDIP(wxSize(100, 100), m_panel), wxNO_BORDER | wxTR_HAS_BUTTONS | wxTR_EDIT_LABELS);
+		auto tree = new wxTreeCtrl(parent, wxID_ANY, wxDefaultPosition, wxWindow::FromDIP(wxSize(100, 100), parent), wxNO_BORDER | wxTR_HAS_BUTTONS | wxTR_EDIT_LABELS);
 		//panel->Add(m_tree, 1, wxEXPAND);
 		//panel->SetSize(-1, wxWindow::FromDIP(300, parent));
 		//panel->SetTitle("vme hierarchy:");
-		m_panel = tree;
+		m_widget = tree;
 		m_adapter = std::make_unique<TreeAdapter>(tree);
 	}
 
@@ -28,7 +28,7 @@ namespace gui::wx
 
 	wxWindow* TreeView::widget()
 	{
-		return m_panel;
+		return m_widget;
 	}
 
 	std::shared_ptr<IViewModel> TreeView::getModel() const
@@ -50,7 +50,7 @@ namespace gui::wx
 
 	void TreeView::setStateImages(const std::vector<wxBitmapBundle>& images)
 	{
-		static_cast<wxTreeCtrl*>(m_panel)->SetImages(images);
+		static_cast<wxTreeCtrl*>(m_widget)->SetImages(images);
 	}
 }
 

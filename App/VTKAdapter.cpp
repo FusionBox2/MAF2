@@ -4,6 +4,7 @@
 
 #include "mafRWI.h"
 
+#include <vtkAssembly.h>
 #include <vtkRenderer.h>
 
 #include <array>

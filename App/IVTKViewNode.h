@@ -5,6 +5,8 @@
 #include <vtkAssembly.h>
 #include <vtkSmartPointer.h>
 
+class vtkAssembly;
+
 BEGIN_FTK_NAMESPACE
 
 class IVTKViewNode

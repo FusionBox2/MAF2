@@ -17,9 +17,15 @@ namespace
 	public:
 		StringOldGuiElement* create(mafGUI* gui, int id, IProperty* property) override
 		{
+			base::String label = property->id();
+			if (auto descr = property->metadata().get<base::String>(_R("visual_name")); descr)
+			{
+				label = *descr;
+			}
+
 			auto typedElement = new StringOldGuiElement;
 			typedElement->m_value = mafStdToString(std::any_cast<std::string>(property->get()));
-			gui->String(id, property->id(), &typedElement->m_value);
+			gui->String(id, label, &typedElement->m_value);
 			return typedElement;
 		}
 
@@ -56,13 +62,16 @@ namespace
 				label = *descr;
 			}
 
-
 			if (auto enumFlag = property->metadata().get<bool>(_R("enum")); enumFlag && *enumFlag)
 			{
 				if (auto descriptions = property->metadata().get<std::vector<base::String>>(_R("enumEntries")); descriptions)
 				{
 					gui->Combo(id, label, &typedElement->m_value, descriptions->size(), descriptions->data());
 				}
+			}
+			else if (auto boolFlag = property->metadata().get<bool>(_R("boolean")); boolFlag && *boolFlag)
+			{
+				gui->Bool(id, label, &typedElement->m_value);
 			}
 			else
 			{
@@ -100,6 +109,7 @@ namespace
 			auto typedElement = new FloatOldGuiElement;
 			typedElement->m_value = std::any_cast<T>(property->get());
 			base::String label = property->id();
+
 			if (auto descr = property->metadata().get<base::String>(_R("visual_name")); descr)
 			{
 				label = *descr;
@@ -135,6 +145,7 @@ namespace
 			auto typedElement = new BooleanOldGuiElement;
 			typedElement->m_value = std::any_cast<bool>(property->get());
 			base::String label = property->id();
+
 			if (auto descr = property->metadata().get<base::String>(_R("visual_name")); descr)
 			{
 				label = *descr;

@@ -11,13 +11,13 @@ namespace gui::wx
 	OldGuiView::OldGuiView(wxWindow* parent)
 	{
 		auto gui = new mafGUIHolder(parent, wxID_ANY, false, true);
-		m_panel = gui;
+		m_widget = gui;
 		m_adapter = std::make_unique<OldGuiAdapter>(gui);
 	}
 
 	wxWindow* OldGuiView::widget()
 	{
-		return m_panel;
+		return m_widget;
 	}
 
 	std::shared_ptr<IViewModel> OldGuiView::getModel() const

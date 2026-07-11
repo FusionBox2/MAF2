@@ -34,7 +34,7 @@ namespace gui
 			void setStateImages(const std::vector<wxBitmapBundle>& images);
 
 		protected:
-			wxWindow* m_panel = nullptr;
+			wxWindow* m_widget = nullptr;
 			std::shared_ptr<ITreeViewModel> m_viewModel;
 			std::unique_ptr<TreeAdapter> m_adapter;
 		};

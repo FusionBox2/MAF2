@@ -13,13 +13,13 @@ namespace gui::wx
 	PropertyView::PropertyView(wxWindow* parent)
 	{
 		auto grid = new wxPropertyGrid(parent);
-		m_panel = grid;
+		m_widget = grid;
 		m_adapter = std::make_unique<PropertyAdapter>(grid);
 	}
 
 	wxWindow* PropertyView::widget()
 	{
-		return m_panel;
+		return m_widget;
 	}
 
 	std::shared_ptr<IViewModel> PropertyView::getModel() const

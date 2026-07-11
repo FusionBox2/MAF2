@@ -1,7 +1,5 @@
 #include "VTKViewModel.h"
 
-#include <boost/numeric/odeint/stepper/adams_bashforth.hpp>
-
 #include "IVTKViewNode.h"
 
 #include "DocumentContext.h"

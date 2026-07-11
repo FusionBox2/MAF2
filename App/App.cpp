@@ -882,6 +882,9 @@ wxDECLARE_APP(App);
 
 App::App()
 {
+#ifdef WIN32
+	_CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF) | _CRTDBG_LEAK_CHECK_DF);
+#endif
 	SetVendorName("Company");
 	SetAppName("App");
 	SetAppDisplayName("App");

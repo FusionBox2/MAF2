@@ -2,6 +2,7 @@
 
 #include "ftkConfigure.h"
 
+#include "ftk/Core/WithProperties.h"
 #include "ftk/Gui/IViewModel.h"
 
 #include <wx/wx.h>
@@ -12,10 +13,10 @@ BEGIN_FTK_NAMESPACE
 
 namespace gui::wx
 {
-	class IView
+	class IView : public core::WithProperties
 	{
 	public:
-		virtual ~IView();
+		~IView() override;
 
 		virtual wxWindow* widget() = 0;
 

@@ -156,14 +156,15 @@ protected:
 	base::Connection m_selectedNodeChanged;
 
 	std::unique_ptr<gui::wx::IView> m_pipeProperties;
-	std::shared_ptr<gui::IViewModel> m_pipeModel;
+	std::shared_ptr<PropertyViewModel> m_pipeModel;
 
 	std::unique_ptr<gui::wx::IView> m_outProperties;
-	std::shared_ptr<gui::IViewModel> m_outModel;
+	std::shared_ptr<PropertyViewModel> m_outModel;
 
 	std::unique_ptr<gui::wx::IView> m_viewProperties;
 	std::shared_ptr<PropertyViewModel> m_viewModel;
 	base::Connection m_activeViewChanged;
+	base::Connection m_activeViewModelChanged;
 
 	std::unique_ptr<gui::wx::IView> m_operationProperties;
 	std::shared_ptr<PropertyViewModel> m_operationModel;
@@ -908,28 +909,45 @@ void AppFrame<BaseFrame>::OnSelectionChanged(model::data::Node* node)
 template <class BaseFrame>
 void AppFrame<BaseFrame>::BindActiveView()
 {
-	if (!m_navigatorModel)
-	{
-		return;
-	}
-
 	if (auto activeView = m_viewManager->getActive())
 	{
-		if (auto model = activeView->getModel())
+		auto viewProps = activeView->getProperties();
+
+		if (!viewProps.empty())
 		{
-			m_viewModel->setProperties(activeView->getModel()->getProperties());
-			m_activeViewChanged = model->connectValuesChanged([this]() {m_viewModel->changed(); });
+			m_activeViewChanged = activeView->connectValuesChanged([this]() {m_viewModel->changed(); });
 		}
 		else
 		{
-			m_viewModel->setProperties({});
 			m_activeViewChanged = {};
 		}
+
+		if (auto model = activeView->getModel())
+		{
+			auto modelProps = model->getProperties();
+			for (auto& prop : modelProps)
+			{
+				viewProps.push_back(std::move(prop));
+			}
+			m_activeViewModelChanged = model->connectValuesChanged([this]() {m_viewModel->changed(); });
+		}
+		else
+		{
+			m_activeViewModelChanged = {};
+		}
+
+		m_viewModel->setProperties(std::move(viewProps));
 	}
 	else
 	{
 		m_viewModel->setProperties({});
 		m_activeViewChanged = {};
+		m_activeViewModelChanged = {};
+	}
+
+	if (!m_navigatorModel)
+	{
+		return;
 	}
 
 	if (auto activeView = m_viewManager->getActive(); activeView && std::dynamic_pointer_cast<VTKViewModel>(activeView->getModel()))
