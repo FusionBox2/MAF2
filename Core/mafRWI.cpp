@@ -850,7 +850,25 @@ core::WithProperties::PropertyList mafRWI::getProperties()
 			{_R("visual_name"), base::String(_R("grid"))},
 			{_R("boolean"), true}
 		}));
-		return result;
+	//m_Gui->Combo(ID_GRID_NORMAL, _R("grid norm"), &m_GridNormal, 3, grid_normal, _R("orientation axes for the grid"));
+	std::vector<base::String> grid_normal = { _R("X axes"),_R("Y axes"),_R("Z axes") };
+	result.push_back(makeProperty(_R("grid norm"), [this]() {return m_GridNormal; }, [this](int v) {SetGridNormal(v); CameraUpdate(); },
+		{
+			{_R("visual_name"), base::String(_R("grid norm"))},
+			{_R("enum"), true},
+			{_R("enumEntries"), grid_normal}
+		}));
+		//m_Gui->Double(ID_GRID_POS, _R("grid pos"), &m_GridPosition);
+	//m_Gui->Color(ID_GRID_COLOR, _R("grid color"), &m_GridColour);
+	//m_Gui->Divider(2);
+	//m_Gui->Bool(ID_SHOW_AXES, _R("show axes"), &m_ShowAxes, 0);
+		result.push_back(makeProperty(_R("show axes"), [this]() {return m_ShowAxes; }, [this](int v) {SetAxesVisibility(v != 0); CameraUpdate(); },
+		{
+			{_R("visual_name"), base::String(_R("show axes"))},
+			{_R("boolean"), true}
+		}));
+		//m_Gui->Color(ID_BG_COLOR, _R("back color"), &m_BGColour);
+	return result;
 }
 
 mafGUI* mafRWI::CreateGui()
