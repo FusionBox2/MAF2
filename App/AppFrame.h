@@ -89,8 +89,7 @@ public:
 
 	bool Create(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = wxDEFAULT_FRAME_STYLE, const wxString& name = wxASCII_STR(wxFrameNameStr));
 
-//private:
-protected:
+private:
 	void AddToMenu(wxMenu* menu, const wxString& menuPath, int id);
 
 	size_t GetCurrentDocumentContext() const;
@@ -182,8 +181,10 @@ protected:
 
 	std::unique_ptr<DocumentManager> m_documentManager;
 	std::unique_ptr<ViewManager> m_viewManager;
+protected:
 	std::unique_ptr<OperationsRegistry> m_operationsRegistry;
 
+private:
 	std::vector<base::Connection> m_connections;
 	std::unordered_map<int, base::String> m_viewMenu;
 	std::unordered_map<int, base::String> m_operationsMenu;
@@ -861,6 +862,26 @@ bool AppFrame<BaseFrame>::FileSaveAs()
 }
 
 template <class BaseFrame>
+bool AppFrame<BaseFrame>::FileClose()
+{
+	if (GetCurrentDocumentContext() == DocumentManager::npos)
+	{
+		return false;
+	}
+
+	auto& context = m_documentManager->get(GetCurrentDocumentContext());
+	if (context.getOperationManager()->isDirty())
+	{
+		int res = wxMessageBox("Save changes?", "Confirm", wxYES_NO | wxCANCEL);
+		if (res == wxCANCEL || (res == wxYES && !FileSave()))
+		{
+			return false;
+		}
+	}
+	return m_documentManager->close(GetCurrentDocumentContext());
+}
+
+template <class BaseFrame>
 void AppFrame<BaseFrame>::OnFileNew(wxCommandEvent& event)
 {
 	FileNew();
@@ -887,16 +908,7 @@ void AppFrame<BaseFrame>::OnFileSaveAs(wxCommandEvent& event)
 template <class BaseFrame>
 void AppFrame<BaseFrame>::OnFileClose(wxCommandEvent& event)
 {
-	auto& context = m_documentManager->get(GetCurrentDocumentContext());
-	if (context.getOperationManager()->isDirty())
-	{
-		int res = wxMessageBox("Save changes?", "Confirm", wxYES_NO | wxCANCEL);
-		if (res == wxCANCEL || (res == wxYES && !FileSave()))
-		{
-			return;
-		}
-	}
-	m_documentManager->close(GetCurrentDocumentContext());
+	FileClose();
 }
 
 template <class BaseFrame>
