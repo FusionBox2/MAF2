@@ -101,7 +101,6 @@ void mafRWI::CreateRenderingScene(vtkRenderWindow* window, RWI_LAYERS layers, bo
 		m_RenderWindow->AddRenderer(m_AlwaysVisibleRenderer);
 		m_RenderWindow->AddRenderer(m_RenFront);
 		m_RenderWindow->AddRenderer(m_RenBack);
-
 	}
 	else
 	{
@@ -112,7 +111,6 @@ void mafRWI::CreateRenderingScene(vtkRenderWindow* window, RWI_LAYERS layers, bo
 		m_RenderWindow->SetNumberOfLayers(2);
 		m_RenderWindow->AddRenderer(m_AlwaysVisibleRenderer);
 		m_RenderWindow->AddRenderer(m_RenFront);
-
 	}
 
 	assert(m_AlwaysVisibleRenderer->Transparent());
@@ -135,7 +133,7 @@ void mafRWI::CreateRenderingScene(vtkRenderWindow* window, RWI_LAYERS layers, bo
 	m_Ruler->SetLegend(m_RulerLegend.GetCStr());
 	m_Ruler->SetScaleFactor(m_RulerScaleFactor);
 	m_Ruler->SetColor(1, 1, 1);
-	m_RenFront->AddActor2D(m_Ruler);
+	m_RenFront->AddViewProp(m_Ruler);
 	m_Ruler->SetVisibility(m_ShowRuler);
 
 	m_Orientator = vtkNew<vtkMAFTextOrientator>();
@@ -143,24 +141,21 @@ void mafRWI::CreateRenderingScene(vtkRenderWindow* window, RWI_LAYERS layers, bo
 	m_Orientator->SetTextDown("D");
 	m_Orientator->SetTextLeft("L");
 	m_Orientator->SetTextRight("R");
-
-	m_RenFront->AddActor2D(m_Orientator);
+	m_RenFront->AddViewProp(m_Orientator);
 	m_Orientator->SetVisibility(m_ShowOrientator);
 	//m_Orientator->SetBackgroundVisibility(false);
 	m_Orientator->SetTextColor(1.0, 1.0, 1.0);
 	m_Orientator->SetBackgroundColor(0.0, 0.0, 0.0);
 
 	m_ProfilingActor = vtkNew<vtkMAFProfilingActor>();
-	m_RenFront->AddActor2D(m_ProfilingActor);
+	m_RenFront->AddViewProp(m_ProfilingActor);
 	m_ProfilingActor->SetVisibility(m_ShowProfilingInformation);
-
 
 	m_ShowGrid = use_grid;
 	m_GridNormal = GRID_Z;
-
 	m_Grid = vtkNew<vtkMAFGridActor>();
 	m_RenFront->AddActor(m_Grid);
-	m_RenFront->AddActor2D(m_Grid->GetLabelActor());
+	m_RenFront->AddViewProp(m_Grid->GetLabelActor());
 	SetGridNormal(m_GridNormal);
 	SetGridVisibility(m_ShowGrid != 0);
 
@@ -171,12 +166,57 @@ void mafRWI::CreateRenderingScene(vtkRenderWindow* window, RWI_LAYERS layers, bo
 
 mafRWI::~mafRWI()
 {
+	m_Axes.reset();
+
 	if (m_LinkCamera != 0)
 	{
 		LinkCamera(false);
 	}
-	if (m_RenderWindow)
-		m_RenderWindow->SetInteractor(nullptr);
+
+	if (m_Grid)
+	{
+		m_RenFront->RemoveActor(m_Grid);
+		m_RenFront->RemoveViewProp(m_Grid->GetLabelActor());
+	}
+
+	if (m_ProfilingActor)
+	{
+		m_RenFront->RemoveViewProp(m_ProfilingActor);
+	}
+
+	if (m_Orientator)
+	{
+		m_RenFront->RemoveViewProp(m_Orientator);
+	}
+
+	if (m_Ruler)
+	{
+		m_RenFront->RemoveViewProp(m_Ruler);
+	}
+
+	if (m_RenFront)
+	{
+		m_RenFront->RemoveLight(m_Light);
+		m_RenFront->SetActiveCamera(nullptr);
+		m_RenFront->RemoveAllViewProps();
+		m_RenderWindow->RemoveRenderer(m_RenFront);
+	}
+
+	if (m_RenBack)
+	{
+		m_RenBack->RemoveLight(m_Light);
+		m_RenBack->SetActiveCamera(nullptr);
+		m_RenBack->RemoveAllViewProps();
+		m_RenderWindow->RemoveRenderer(m_RenBack);
+	}
+
+	if (m_AlwaysVisibleRenderer)
+	{
+		m_AlwaysVisibleRenderer->RemoveLight(m_Light);
+		m_AlwaysVisibleRenderer->SetActiveCamera(nullptr);
+		m_AlwaysVisibleRenderer->RemoveAllViewProps();
+		m_RenderWindow->RemoveRenderer(m_AlwaysVisibleRenderer);
+	}
 }
 
 void mafRWI::CameraSet(int cam_position, double zoom)
