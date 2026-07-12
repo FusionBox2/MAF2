@@ -436,14 +436,6 @@ wxWindow* AppFrame<BaseFrame>::CreateControlBar()
 		m_viewModel = std::move(propModel);
 	}
 
-	/*{
-		auto propModel = std::make_shared<PropertyViewModel>();
-		auto propView = std::make_unique<gui::wx::PropertyView>(notebook);
-		propView->setModel(propModel);
-		notebook->AddPage(propView->widget(), _("operation"));
-		m_operationProperties = std::move(propView);
-		m_operationModel = std::move(propModel);
-	}*/
 	{
 		auto operationPage = new wxPanel(notebook);
 		auto operationSizer = new wxBoxSizer(wxVERTICAL);
