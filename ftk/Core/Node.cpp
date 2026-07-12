@@ -2,7 +2,7 @@
 
 #include "mafDecl.h"
 
-#include "ftk/Base/Log.h"
+#include "Base/mfLog.h"
 #include "ftk/Core/NodeFactory.h"
 #include "ftk/Core/Attribute.h"
 #include "mafTagArray.h"

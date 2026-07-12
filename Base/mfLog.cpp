@@ -1,4 +1,4 @@
-#include "ftk/Base/Log.h"
+#include "Base/mfLog.h"
 
 #ifdef MAF_USE_WX
 #ifdef WX_PRECOMP

@@ -12,7 +12,7 @@
 #include <optional>
 
 #include "ftk/Base/FastBimap.h"
-#include "ftk/Base/Log.h"
+#include "Base/mfLog.h"
 #include "ftk/Core/AttributeFactory.h"
 #include "ftk/Core/Node.h"
 #include "ftk/Core/Node0.h"
@@ -414,7 +414,7 @@ public:
 
 		return true;
 		{
-			LOG_DEBUG() << "bla";
+			//LOG_DEBUG() << "bla";
 			constexpr utilities::TrivialBiMap colors = [](auto selector)
 				{
 					return selector()

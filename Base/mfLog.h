@@ -2,7 +2,6 @@
 
 #include "ftkConfigure.h"
 
-#include <cstdint>
 #include <sstream>
 
 class wxString;
@@ -30,6 +29,9 @@ namespace logging
         const char* m_buf;
     };
 }
+
+END_FTK_NAMESPACE
+
 using mafMessageBuf = logging::MessageBuf;
 FTK_BASE_EXPORT mafMessageBuf _M(const char* s);
 
@@ -90,77 +92,3 @@ FTK_BASE_EXPORT void mafMessage(mafMessageBuf msg);
   msg << x << "\n"; \
   mafMessage(_M(msg.str().c_str()));\
 }
-
-namespace logging
-{
-    namespace impl
-    {
-        struct Noop {};
-    }
-
-    enum class Level : std::uint8_t
-	{
-        Trace = 0,
-        Debug = 1,
-        Info = 2,
-        Warning = 3,
-        Error = 4,
-        Critical = 5,
-        None = 6
-    };
-
-    void GetDefaultLogger();
-
-	class LogStreamer
-    {
-    public:
-        LogStreamer() = default;
-        LogStreamer(LogStreamer&&) = delete;
-        LogStreamer(const LogStreamer&) = delete;
-        LogStreamer& operator=(LogStreamer&&) = delete;
-        LogStreamer& operator=(const LogStreamer&) = delete;
-
-        ~LogStreamer() = default;
-
-        // Helper function that could be called on LogStreamer&& to get LogStreamer&.
-        LogStreamer& AsLvalue() noexcept { return *this; }
-
-		template<typename T>
-        LogStreamer& operator<<(const T&) { return *this; }
-
-		operator impl::Noop() const noexcept { return {}; }
-    };
-}
-
-END_FTK_NAMESPACE
-
-#define IMPL_LOG_TO(logger, level, ...)                                   \
-    logging::LogStreamer().AsLvalue(__VA_ARGS__)
-
-#define LOG_TO(logger, lvl, ...) true ? logging::impl::Noop{} : IMPL_LOG_TO((logger), (lvl), __VA_ARGS__)
-
-#define LOG(lvl, ...) LOG_TO(logging::GetDefaultLogger(), (lvl), __VA_ARGS__)
-
-#define LOG_TRACE(...) LOG(logging::Level::Trace, __VA_ARGS__)
-
-#define LOG_DEBUG(...) LOG(logging::Level::Debug, __VA_ARGS__)
-
-#define LOG_INFO(...) LOG(logging::Level::Info, __VA_ARGS__)
-
-#define LOG_WARNING(...) LOG(logging::Level::Warning, __VA_ARGS__)
-
-#define LOG_ERROR(...) LOG(logging::Level::Error, __VA_ARGS__)
-
-#define LOG_CRITICAL(...) LOG(logging::Level::Critical, __VA_ARGS__)
-
-#define LOG_TRACE_TO(logger, ...) LOG_TO(logger, logging::Level::Trace, __VA_ARGS__)
-
-#define LOG_DEBUG_TO(logger, ...) LOG_TO(logger, logging::Level::Debug, __VA_ARGS__)
-
-#define LOG_INFO_TO(logger, ...) LOG_TO(logger, logging::Level::Info, __VA_ARGS__)
-
-#define LOG_WARNING_TO(logger, ...) LOG_TO(logger, logging::Level::Warning, __VA_ARGS__)
-
-#define LOG_ERROR_TO(logger, ...) LOG_TO(logger, logging::Level::Error, __VA_ARGS__)
-
-#define LOG_CRITICAL_TO(logger, ...) LOG_TO(logger, logging::Level::Critical, __VA_ARGS__)

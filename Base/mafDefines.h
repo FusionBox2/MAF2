@@ -18,7 +18,7 @@
 #endif
 #endif
 
-#include "ftk/Base/Log.h"
+#include "Base/mfLog.h"
 
 #include <string.h>
 #include <typeinfo>

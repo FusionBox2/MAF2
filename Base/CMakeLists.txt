@@ -7,8 +7,6 @@ PROJECT(mafBase)
 
 # Set your list of sources here.
 SET(PROJECT_SRCS
-	../ftk/Base/Log.cpp
-	../ftk/Base/Log.h
 	../ftk/Base/MTime.cpp
 	../ftk/Base/MTime.h
 	../ftk/Base/Object.cpp
@@ -17,6 +15,8 @@ SET(PROJECT_SRCS
 
 # Set your list of sources here.
 SET(PROJECT_SRCS ${PROJECT_SRCS}
+mfLog.cpp
+mfLog.h
 mfString.cpp
 mfString.h
 mafDecl.cpp
