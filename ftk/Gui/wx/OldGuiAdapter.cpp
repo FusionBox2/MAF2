@@ -62,11 +62,18 @@ namespace
 				label = *descr;
 			}
 
-			if (auto enumFlag = property->metadata().get<bool>(_R("enum")); enumFlag && *enumFlag)
+			if (auto enumType = property->metadata().get<base::String>(_R("enum_type")); enumType)
 			{
-				if (auto descriptions = property->metadata().get<std::vector<base::String>>(_R("enumEntries")); descriptions)
+				if (auto descriptions = property->metadata().get<std::vector<base::String>>(_R("entries")); descriptions)
 				{
-					gui->Combo(id, label, &typedElement->m_value, descriptions->size(), descriptions->data());
+					if (*enumType == _R("combo"))
+					{
+						gui->Combo(id, label, &typedElement->m_value, descriptions->size(), descriptions->data());
+					}
+					else //if (*enumType == _R("radio"))
+					{
+						gui->Radio(id, label, &typedElement->m_value, descriptions->size(), descriptions->data());
+					}
 				}
 			}
 			else if (auto boolFlag = property->metadata().get<bool>(_R("boolean")); boolFlag && *boolFlag)
