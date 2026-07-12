@@ -7,6 +7,8 @@
 #include <memory>
 #include <unordered_map>
 
+#include "Base/mafBaseEventHandler.h"
+
 BEGIN_FTK_NAMESPACE
 
 namespace model::data
@@ -41,9 +43,11 @@ struct NodeChanged
 };
 
 
-class Document
+class Document : public mafBaseEventHandler
 {
 public:
+	void OnEvent(mafEventBase* e) override;
+
 	Document(std::unique_ptr<model::data::NodeManager> node, std::unique_ptr<mafStorage> storage);
 
 	Document(const Document&) = default;
@@ -72,7 +76,11 @@ public:
 
 	base::Connection connectNodeRemoved(std::function<void(const NodeRemoved&)> fn);
 
-	base::Connection connectNodeMoved(std::function<void(const NodeMoved&)> fn);
+	base::Connection connectTreeAdded(std::function<void(const NodeAdded&)> fn);
+
+	base::Connection connectTreeRemoved(std::function<void(const NodeRemoved&)> fn);
+
+	base::Connection connectTreeMoved(std::function<void(const NodeMoved&)> fn);
 
 	base::Connection connectNodeChanged(std::function<void(const NodeChanged&)> fn);
 
@@ -84,11 +92,19 @@ public:
 
 	//Connection connectNodeChanged(std::function<void(model::data::Node*)> fn);
 
-//private:
+	base::Signal<const NodeChanged&> m_nodeChanged;
+private:
+
+	void recursiveEmitAdded(model::data::Node* node);
+
+	void recursiveEmitRemoved(model::data::Node* node);
+
 	base::Signal<const NodeAdded&> m_nodeAdded;
 	base::Signal<const NodeRemoved&> m_nodeRemoved;
-	base::Signal<const NodeMoved&> m_nodeMoved;
-	base::Signal<const NodeChanged&> m_nodeChanged;
+	base::Signal<const NodeAdded&> m_treeAdded;
+	base::Signal<const NodeRemoved&> m_treeRemoved;
+	base::Signal<const NodeMoved&> m_treeMoved;
+
 	std::unordered_map<model::data::Node*, base::Connection> m_connections;
 	std::unique_ptr<model::data::NodeManager> m_manager;
 	std::unique_ptr<mafStorage> m_storage;

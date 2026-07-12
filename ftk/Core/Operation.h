@@ -12,7 +12,7 @@ namespace core
 	class Operation : public WithProperties
 	{
 	public:
-		Operation(const base::String& name = _R(""), bool canUndo = false);
+		Operation(const base::String& name = _R(""), bool canUndo = true);
 
 		~Operation() override = default;
 
@@ -23,6 +23,8 @@ namespace core
 		virtual bool CanDo() const { return true; }
 
 		virtual bool CanUndo() const { return m_canUndo; }
+
+		virtual bool CanUndo();
 
 		virtual bool IsConfigured() const { return true; }
 
