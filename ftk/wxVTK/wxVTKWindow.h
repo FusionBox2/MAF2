@@ -42,41 +42,41 @@ using wxVTKWindowBase = wxWindow;
 class wxVTKWindow : public wxVTKWindowBase, public mafEventSender
 {
 public:
-  DECLARE_DYNAMIC_CLASS(wxVTKWindow)
+	DECLARE_DYNAMIC_CLASS(wxVTKWindow)
 
-  wxVTKWindow();
+	wxVTKWindow();
 
-  wxVTKWindow(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxASCII_STR(wxPanelNameStr));
+	wxVTKWindow(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxASCII_STR(wxPanelNameStr));
 
-  virtual ~wxVTKWindow();
+	virtual ~wxVTKWindow();
 
-  bool Create(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxASCII_STR(wxPanelNameStr));
+	bool Create(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxASCII_STR(wxPanelNameStr));
 
-  virtual void SetRenderWindow(vtkRenderWindow*);
+	virtual void SetRenderWindow(vtkRenderWindow*);
 
-  virtual vtkRenderWindow* GetRenderWindow();
+	virtual vtkRenderWindow* GetRenderWindow();
 
-  //---------FROM OLD
-  vtkCamera* GetCamera();
-  void GetImage(wxBitmap& bitmap, int magnification = 1);
-  void SaveImage(const mafString& filename = _R(""), int magnification = 1, int forceExtension = -1);
-  void SaveAllImages(const mafString& filename = _R(""), mafViewCompound* v = NULL, int forceExtension = -1);
-  void SetStereoMovieDirectory(const char* dir);
-  void EnableStereoMovie(bool enable = true);
+	//---------FROM OLD
+	vtkCamera* GetCamera();
+	void GetImage(wxBitmap& bitmap, int magnification = 1);
+	void SaveImage(const mafString& filename = _R(""), int magnification = 1, int forceExtension = -1);
+	void SaveAllImages(const mafString& filename = _R(""), mafViewCompound* v = NULL, int forceExtension = -1);
+	void SetStereoMovieDirectory(const char* dir);
+	void EnableStereoMovie(bool enable = true);
 
 protected:
-  void OnSize(wxSizeEvent& event);
+	void OnSize(wxSizeEvent& event);
 
-  void OnPaint(wxPaintEvent& event);
+	void OnPaint(wxPaintEvent& event);
 
-  void OnEraseBackground(wxEraseEvent& event);
+	void OnEraseBackground(wxEraseEvent& event);
 
-  void OnDestroy(wxWindowDestroyEvent& event);
+	void OnDestroy(wxWindowDestroyEvent& event);
 
-  vtkSmartPointer<vtkRenderWindow> m_renderWindow;
+	vtkSmartPointer<vtkRenderWindow> m_renderWindow;
 
 #ifdef USE_WXGLCANVAS
-  std::unique_ptr<wxGLContext> m_glContext;
+	std::unique_ptr<wxGLContext> m_glContext;
 #endif
 };
 #if 0
@@ -88,152 +88,152 @@ protected:
 //----------------------------------------------------------------------------
 // wxVTKWindow :
 //----------------------------------------------------------------------------
-/** wxVTKWindow is a vtkRenderWindowInteractor placed on a wxWindow 
+/** wxVTKWindow is a vtkRenderWindowInteractor placed on a wxWindow
 \par Attention:
 Normally there is no need to destroy any object
-derived from wxWindow, they will be automatically 
+derived from wxWindow, they will be automatically
 destroyed as a result of closing the MainFrame.
-wxVTKWindow behave differently, and you 
+wxVTKWindow behave differently, and you
 must explicitly destroy them by calling "Delete()"
-BEFORE wxWindow destroy it (using "delete"). 
+BEFORE wxWindow destroy it (using "delete").
 */
 class MAF_EXPORT wxVTKWindow__ : public wxWindow, public vtkRenderWindowInteractor, public mafEventSender
 {
-  DECLARE_DYNAMIC_CLASS(wxVTKWindow__)
+	DECLARE_DYNAMIC_CLASS(wxVTKWindow__)
 
 protected:
-  wxTimer m_Timer;
+	wxTimer m_Timer;
 
 public:
 
-  vtkTypeMacro(wxVTKWindow__,vtkRenderWindowInteractor);
+	vtkTypeMacro(wxVTKWindow__, vtkRenderWindowInteractor);
 
-  wxVTKWindow__();
-  wxVTKWindow__(wxWindow *parent, wxWindowID id, const wxPoint &pos = wxDefaultPosition,
-	      const wxSize &size = wxDefaultSize, long style = wxWANTS_CHARS , const wxString &name = wxPanelNameStr);
-  ~wxVTKWindow__() override;
-  static wxVTKWindow__* New();
+	wxVTKWindow__();
+	wxVTKWindow__(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition,
+		const wxSize& size = wxDefaultSize, long style = wxWANTS_CHARS, const wxString& name = wxPanelNameStr);
+	~wxVTKWindow__() override;
+	static wxVTKWindow__* New();
 
 	/** Notify mouse click on a view. */
-  void NotifyClick();
+	void NotifyClick();
 
-  /** Set the directory for the Stereo Movie*/
-  void SetStereoMovieDirectory(const char *dir);
+	/** Set the directory for the Stereo Movie*/
+	void SetStereoMovieDirectory(const char* dir);
 
-  /** 
-  Enable/disable stereo movie frames generation.*/
-  void EnableStereoMovie(bool enable = true);
+	/**
+	Enable/disable stereo movie frames generation.*/
+	void EnableStereoMovie(bool enable = true);
 
-  //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  // vtk render window interactor methods
-  //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+	//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+	// vtk render window interactor methods
+	//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-	/** 
-  Initialize the render window interactor. */
-  void Initialize() override;
-	/** 
+	  /**
+	Initialize the render window interactor. */
+	void Initialize() override;
+	/**
   Enable the render window interactor. */
-  void Enable() override;
-	/** 
+	void Enable() override;
+	/**
   Disable the render window interactor. */
-  void Disable() override;
-	/** 
+	void Disable() override;
+	/**
   Redefined method to take the control on event loop. */
-  void Start() override;
-	/** 
+	void Start() override;
+	/**
   Update the size of the render window. */
-  void UpdateSize(int x, int y) override;
-	/** 
+	void UpdateSize(int x, int y) override;
+	/**
   Redefined method to terminate the application. */
-  void TerminateApp() override;
-	/** 
+	void TerminateApp() override;
+	/**
   Return an image of the render window. */
-  void GetImage(wxBitmap& bitmap, int magnification = 1);
-	/** 
+	void GetImage(wxBitmap& bitmap, int magnification = 1);
+	/**
   Save an image of the render window. */
-  void SaveImage(const mafString& filename = _R(""), int magnification = 1, int forceExtension = -1);
-  
-  /** 
-  Save all images of a view compound creating a view for every subview */
-  void SaveImageRecursive(const mafString& filename = _R(""), mafViewCompound *v = NULL, int magnification = 1,int forceExtension=-1);
-  void RecursiveSaving(const mafString& filename= _R(""), mafViewCompound *v=NULL,int magnification=1);
-  /** 
-  Save all images of the compound view. */
-  void SaveAllImages(const mafString& filename = _R(""), mafViewCompound *v = NULL, int forceExtension=-1);
-	/** 
+	void SaveImage(const mafString& filename = _R(""), int magnification = 1, int forceExtension = -1);
+
+	/**
+	Save all images of a view compound creating a view for every subview */
+	void SaveImageRecursive(const mafString& filename = _R(""), mafViewCompound* v = NULL, int magnification = 1, int forceExtension = -1);
+	void RecursiveSaving(const mafString& filename = _R(""), mafViewCompound* v = NULL, int magnification = 1);
+	/**
+	Save all images of the compound view. */
+	void SaveAllImages(const mafString& filename = _R(""), mafViewCompound* v = NULL, int forceExtension = -1);
+	/**
   Return the current used camera */
 	vtkCamera* GetCamera();
 
-  int CreateTimer(int timertype) override;
-  int DestroyTimer() override;
+	int CreateTimer(int timertype) override;
+	int DestroyTimer() override;
 
-  //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  // event handlers 
-  //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-	
-	/** Method called whe the render window as to be repainted. */
-  void OnPaint(wxPaintEvent &event);
+	//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+	// event handlers 
+	//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+	  /** Method called whe the render window as to be repainted. */
+	void OnPaint(wxPaintEvent& event);
 	/**  */
-  void OnEraseBackground (wxEraseEvent& event);
-  /** Capture left mouse double click and notify it.*/
-  virtual void OnLeftMouseDoubleClick(wxMouseEvent &event);
+	void OnEraseBackground(wxEraseEvent& event);
+	/** Capture left mouse double click and notify it.*/
+	virtual void OnLeftMouseDoubleClick(wxMouseEvent& event);
 	/** Capture mouse and notify the mouse click. */
-  virtual void OnLeftMouseButtonDown(wxMouseEvent &event);
-  /** Release the mouse and send an event with mouse position. */
-  virtual void OnLeftMouseButtonUp(wxMouseEvent &event);
-	/** Capture mouse and notify the mouse click. */
-  virtual void OnMiddleMouseButtonDown(wxMouseEvent &event);
+	virtual void OnLeftMouseButtonDown(wxMouseEvent& event);
 	/** Release the mouse and send an event with mouse position. */
-  virtual void OnMiddleMouseButtonUp(wxMouseEvent &event);
+	virtual void OnLeftMouseButtonUp(wxMouseEvent& event);
 	/** Capture mouse and notify the mouse click. */
-  virtual void OnRightMouseButtonDown(wxMouseEvent &event);
+	virtual void OnMiddleMouseButtonDown(wxMouseEvent& event);
 	/** Release the mouse and send an event with mouse position. */
-  virtual void OnRightMouseButtonUp(wxMouseEvent &event);
+	virtual void OnMiddleMouseButtonUp(wxMouseEvent& event);
+	/** Capture mouse and notify the mouse click. */
+	virtual void OnRightMouseButtonDown(wxMouseEvent& event);
+	/** Release the mouse and send an event with mouse position. */
+	virtual void OnRightMouseButtonUp(wxMouseEvent& event);
 	/** Send an event with mouse position. */
-  virtual void OnMouseMotion(wxMouseEvent &event);
+	virtual void OnMouseMotion(wxMouseEvent& event);
 	/** Send an event with timer information. */
-  virtual void OnTimer(wxTimerEvent &event);
+	virtual void OnTimer(wxTimerEvent& event);
 	/** Send an event with key code information. */
-  virtual void OnKeyDown(wxKeyEvent &event);
+	virtual void OnKeyDown(wxKeyEvent& event);
 	/** Send an event with key code information. */
-  virtual void OnKeyUp(wxKeyEvent &event);
+	virtual void OnKeyUp(wxKeyEvent& event);
 	/** Send an event with key code information. */
-  virtual void OnChar(wxKeyEvent &event);
+	virtual void OnChar(wxKeyEvent& event);
 	/** Find the current camera and set UseHorizontalViewAngle depending on the win aspect ratio */
-  virtual void OnSize(wxSizeEvent &event);
+	virtual void OnSize(wxSizeEvent& event);
 	/** Do nothing. */
 	virtual void OnIdle(wxIdleEvent& event);
-   /** Do nothing. */
-   void OnMouseCaptureLost(wxMouseCaptureLostEvent&);
+	/** Do nothing. */
+	void OnMouseCaptureLost(wxMouseCaptureLostEvent&);
 
 
-  /** Redefined to set the m_CustomInteractorStyle flag. */
-  void SetInteractorStyle(vtkInteractorObserver *o) override;
+	/** Redefined to set the m_CustomInteractorStyle flag. */
+	void SetInteractorStyle(vtkInteractorObserver* o) override;
 
-  bool m_Hidden;
-  int  m_Width;
-  int  m_Height;
+	bool m_Hidden;
+	int  m_Width;
+	int  m_Height;
 
-  /** Generate stereo frames for movie.*/
-  void GenerateStereoFrames();
+	/** Generate stereo frames for movie.*/
+	void GenerateStereoFrames();
 
 protected:
-  mafString m_StereoMovieDir;
-  int       m_StereoMovieFrameCounter;
-  bool      m_StereoMovieEnable;
-  bool      m_StereoFrameGenerate;
-  vtkWindowToImageFilter *m_StereoMovieLeftEye;
-  vtkWindowToImageFilter *m_StereoMovieRightEye;
-  vtkImageAppend *m_StereoImage;
-  vtkPNGWriter   *m_StereoMoviewFrameWriter;
-  
-  mafString  m_SaveDir;
-  vtkCamera *m_Camera;
-  bool       m_CustomInteractorStyle;
+	mafString m_StereoMovieDir;
+	int       m_StereoMovieFrameCounter;
+	bool      m_StereoMovieEnable;
+	bool      m_StereoFrameGenerate;
+	vtkWindowToImageFilter* m_StereoMovieLeftEye;
+	vtkWindowToImageFilter* m_StereoMovieRightEye;
+	vtkImageAppend* m_StereoImage;
+	vtkPNGWriter* m_StereoMoviewFrameWriter;
 
-  int m_LastX;
-  int m_LastY;
-  
+	mafString  m_SaveDir;
+	vtkCamera* m_Camera;
+	bool       m_CustomInteractorStyle;
+
+	int m_LastX;
+	int m_LastY;
+
 	DECLARE_EVENT_TABLE()
 };
 #endif
