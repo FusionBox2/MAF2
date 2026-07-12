@@ -16,7 +16,6 @@ set(A_HEADERS
 	OperationCreateFactory.h
 	OperationsRegistry.h
 	OpReparentNode.h
-	PropertyEditorFactory.h
 	PropertyViewModel.h
 	Resource.h
 	ResourceId.h
@@ -41,7 +40,6 @@ set(A_SOURCES
 	OperationCreateFactory.cpp
 	OperationsRegistry.cpp
 	OpReparentNode.cpp
-	PropertyEditorFactory.cpp
 	PropertyViewModel.cpp
 	Resource.cpp
 	ResourceId.cpp
