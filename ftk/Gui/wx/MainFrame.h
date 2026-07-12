@@ -62,6 +62,7 @@ bool PaneFrame<BaseFrame>::Create(wxWindow* parent, wxWindowID id, const wxStrin
 	{
 		return false;
 	}
+	CreateControls();
 
 	return true;
 }
