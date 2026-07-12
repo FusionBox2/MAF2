@@ -123,9 +123,15 @@ protected:
 
 	void OnFileSaveAs(wxCommandEvent& event);
 
+	bool FileNew();
+
+	bool FileOpen();
+
 	bool FileSave();
 
 	bool FileSaveAs();
+
+	bool FileClose();
 
 	void OnFileClose(wxCommandEvent& event);
 
@@ -797,22 +803,34 @@ void AppFrame<BaseFrame>::OnUpdateUI(wxUpdateUIEvent& event)
 }
 
 template <class BaseFrame>
-void AppFrame<BaseFrame>::OnFileNew(wxCommandEvent& event)
+bool AppFrame<BaseFrame>::FileNew()
 {
 	m_documentManager->create();
+
+	auto& context = m_documentManager->get(GetCurrentDocumentContext());
+	m_navigatorModel = std::make_shared<TreeStatusViewModel>(context);
+	m_navigator->setStateImages(initializeImageList(m_navigator->widget()));
+	m_navigator->setModel(m_navigatorModel);
+	m_viewManager->attach(context);
+	BindActiveView();
+	BindSelectedNodeActiveView();
+
+	m_connections.push_back(context.getSelectionController().connectSelectionChanged([this](model::data::Node* node) {OnSelectionChanged(node); BindSelectedNodeActiveView(); }));
+
+	return true;
 }
 
 template <class BaseFrame>
-void AppFrame<BaseFrame>::OnFileOpen(wxCommandEvent& event)
+bool AppFrame<BaseFrame>::FileOpen()
 {
 	core::FilePath url(base::StdToString(std::string(wxLoadFileSelector("", ".msf").c_str())));
 	if (url.empty())
 	{
-		return;
+		return false;
 	}
 	if (!m_documentManager->open(url))
 	{
-		return;
+		return false;
 	}
 	auto& context = m_documentManager->get(GetCurrentDocumentContext());
 	m_navigatorModel = std::make_shared<TreeStatusViewModel>(context);
@@ -823,18 +841,8 @@ void AppFrame<BaseFrame>::OnFileOpen(wxCommandEvent& event)
 	BindSelectedNodeActiveView();
 
 	m_connections.push_back(context.getSelectionController().connectSelectionChanged([this](model::data::Node* node) {OnSelectionChanged(node); BindSelectedNodeActiveView(); }));
-}
 
-template <class BaseFrame>
-void AppFrame<BaseFrame>::OnFileSave(wxCommandEvent& event)
-{
-	FileSave();
-}
-
-template <class BaseFrame>
-void AppFrame<BaseFrame>::OnFileSaveAs(wxCommandEvent& event)
-{
-	FileSaveAs();
+	return true;
 }
 
 template <class BaseFrame>
@@ -858,6 +866,30 @@ bool AppFrame<BaseFrame>::FileSaveAs()
 	}
 	auto& context = m_documentManager->get(GetCurrentDocumentContext());
 	return context.save(url);
+}
+
+template <class BaseFrame>
+void AppFrame<BaseFrame>::OnFileNew(wxCommandEvent& event)
+{
+	FileNew();
+}
+
+template <class BaseFrame>
+void AppFrame<BaseFrame>::OnFileOpen(wxCommandEvent& event)
+{
+	FileOpen();
+}
+
+template <class BaseFrame>
+void AppFrame<BaseFrame>::OnFileSave(wxCommandEvent& event)
+{
+	FileSave();
+}
+
+template <class BaseFrame>
+void AppFrame<BaseFrame>::OnFileSaveAs(wxCommandEvent& event)
+{
+	FileSaveAs();
 }
 
 template <class BaseFrame>
@@ -974,6 +1006,12 @@ void AppFrame<BaseFrame>::BindSelectedNodeActiveView()
 	auto view = m_viewManager->getActive();
 	if (!view)
 	{
+		return;
+	}
+	if (GetCurrentDocumentContext() == DocumentManager::npos)
+	{
+		m_pipeModel->setProperties({});
+		m_currentVisualChanged = {};
 		return;
 	}
 	auto viewModel = std::dynamic_pointer_cast<VTKViewModel>(view->getModel());
