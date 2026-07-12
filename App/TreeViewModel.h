@@ -52,8 +52,6 @@ public:
 
 	base::Connection connectNodeChanged(std::function<void(NodeId)>) override;
 
-	base::Connection connectSelectionChanged(std::function<void(NodeId)> fn) override;
-
 	std::function<void(model::data::Node*)> onActivated;
 
 protected:
@@ -67,11 +65,12 @@ protected:
 	base::Signal<NodeId> m_nodeRemoved;
 	base::Signal<NodeId> m_nodeMoved;
 	base::Signal<NodeId> m_nodeChanged;
-	base::Signal<NodeId> m_nodeSelectionChanged;
 
 private:
-	void buildTree();
-	
+	void addNode(model::data::Node* node);
+
+	void addTree(model::data::Node* node);
+
 	void subscribeToContext();
 
 	DocumentContext& m_context;

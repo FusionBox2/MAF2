@@ -68,7 +68,9 @@ public:
 private:
 	NodeId getViewNode(model::data::Node* node) const;
 
-	void buildTree();
+	void addNode(model::data::Node* node);
+
+	void addTree(model::data::Node* node);
 
 	void subscribeToContext();
 

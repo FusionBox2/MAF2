@@ -28,6 +28,11 @@ int TreeStatusViewModel::getNodeStatus(gui::ITreeViewNode* node) const
 
 void TreeStatusViewModel::emitForAll(NodeId root) const
 {
+	if (!root)
+	{
+		return;
+	}
+
 	m_nodeChanged.emit(root);
 	for (auto& child : root->children())
 	{

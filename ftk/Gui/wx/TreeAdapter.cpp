@@ -2,9 +2,11 @@
 
 #include "TreeAdapter.h"
 
+#include "ftk/Gui/ITreeViewNode.h"
+
 #include <wx/wupdlock.h>
 
-#include "ftk/Gui/ITreeViewNode.h"
+#include <deque>
 
 namespace
 {
@@ -59,15 +61,12 @@ namespace gui::wx
 
 	void TreeAdapter::onNodeAdded(ITreeViewModel::NodeId n)
 	{
+		addItem(n);
 		auto parentId = m_nodeToItem[n->parent()];
-		if (!parentId.IsOk())
+		if (parentId.IsOk())
 		{
-			return;
+			m_tree->Expand(parentId);
 		}
-
-		auto id = createItem(parentId, n);
-
-		m_tree->Expand(parentId);
 	}
 
 	void TreeAdapter::onNodeRemoved(ITreeViewModel::NodeId n)
@@ -79,28 +78,30 @@ namespace gui::wx
 		}
 	}
 
-	//void TreeAdapter::onNodeMoved(const NodeMoved& e)
-	//{
-		//rebuild();
-	//}
-
 	void TreeAdapter::onNodeMoved(ITreeViewModel::NodeId n)
 	{
-		auto it = m_nodeToItem.find(n);
-		if (it == m_nodeToItem.end())
+		auto oldId = getItem(n);
+		if (!oldId.IsOk())
+		{
 			return;
+		}
 
-		auto oldId = it->second;
-
-		// Save subtree structure (node still exists)
-
-		// Remove old UI node
 		m_tree->Delete(oldId);
-		m_nodeToItem.erase(n);
+		for (auto queue = std::deque<ITreeViewModel::NodeId>(1, n); !queue.empty(); )
+		{
+			auto node = queue.front();
+			queue.pop_front();
 
-		// Insert under new parent
-		auto newParentId = m_nodeToItem[n->parent()];
-		auto newId = buildRecursive(newParentId, n);
+			m_nodeToItem.erase(node);
+
+			for (auto& child : node->children())
+			{
+				queue.push_back(child);
+			}
+		}
+
+		addTree(n);
+		auto newParentId = getItem(n->parent());
 		m_tree->Expand(newParentId);
 	}
 
@@ -115,27 +116,34 @@ namespace gui::wx
 		}
 	}
 
-	void TreeAdapter::rebuild()
+	ITreeViewModel::NodeId TreeAdapter::getNode(wxTreeItemId id) const
 	{
-		wxWindowUpdateLocker freezer(m_tree);
-		m_nodeToItem.clear();
-		m_tree->DeleteAllItems();
-		buildRecursive(wxTreeItemId(), m_model->root());
-		m_tree->ExpandAll();
+		auto data = static_cast<TreeItemData*>(m_tree->GetItemData(id));
+		return data ? data->node : nullptr;
 	}
 
-	wxTreeItemId TreeAdapter::item(ITreeViewModel::NodeId node) const
+	wxTreeItemId TreeAdapter::getItem(ITreeViewModel::NodeId node) const
 	{
 		if (auto it = m_nodeToItem.find(node); it != m_nodeToItem.end())
 		{
 			return it->second;
 		}
-		return wxTreeItemId();
+		return {};
 	}
 
-	wxTreeItemId TreeAdapter::createItem(wxTreeItemId parent, ITreeViewModel::NodeId node)
+	void TreeAdapter::rebuild()
+	{
+		wxWindowUpdateLocker freezer(m_tree);
+		m_nodeToItem.clear();
+		m_tree->DeleteAllItems();
+		addTree(m_model->root());
+		m_tree->ExpandAll();
+	}
+
+	void TreeAdapter::addItem(ITreeViewModel::NodeId node)
 	{
 		wxTreeItemId id;
+		auto parent = getItem(node->parent());
 
 		if (!parent.IsOk())
 		{
@@ -149,26 +157,29 @@ namespace gui::wx
 		m_tree->SetItemData(id, new TreeItemData{ node });
 		m_tree->SetItemImage(id, m_model->getNodeStatus(node), wxTreeItemIcon_Normal);
 		m_tree->SetItemImage(id, m_model->getNodeStatus(node), wxTreeItemIcon_Selected);
-		return id;
 	}
 
-	wxTreeItemId TreeAdapter::buildRecursive(wxTreeItemId parent, ITreeViewModel::NodeId node)
+	void TreeAdapter::addTree(ITreeViewModel::NodeId node)
 	{
-		wxTreeItemId id = createItem(parent, node);
-		for (auto& child : node->children())
+		if (!node)
 		{
-			buildRecursive(id, child);
+			return;
 		}
-		return id;
+
+		for (auto queue = std::deque<ITreeViewModel::NodeId>(1, node); !queue.empty(); )
+		{
+			auto nextNode = queue.front();
+			queue.pop_front();
+
+			addItem(nextNode);
+
+			for (auto& child : nextNode->children())
+			{
+				queue.push_back(child);
+			}
+		}
 	}
 
-	ITreeViewModel::NodeId TreeAdapter::getNode(wxTreeItemId id) const
-	{
-		auto data = static_cast<TreeItemData*>(m_tree->GetItemData(id));
-		return data ? data->node : nullptr;
-	}
-
-	// event handlers
 	void TreeAdapter::onBeginDrag(wxTreeEvent& e)
 	{
 		m_dragged = e.GetItem();

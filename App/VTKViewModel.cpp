@@ -13,13 +13,74 @@
 #include "mafVME.h"
 #include "mafPipeVTK.h"
 
+#include <deque>
+
 BEGIN_FTK_NAMESPACE
 
 namespace
 {
+	vtkLinearTransform* getNodeTransform(model::data::Node* node)
+	{
+		if (node->IsA("mafVME"))
+		{
+			if (auto v = mafVME::StaticDownCast(node))
+			{
+				if (auto o = v->GetOutput())
+				{
+					if (auto t = o->GetTransform())
+					{
+						auto transform = t->GetVTKTransform();
+						assert(transform);
+						return transform;
+					}
+					else
+					{
+						assert(false);
+					}
+				}
+				else
+				{
+					assert(false);
+				}
+			}
+		}
+		return nullptr;
+	}
+
 	class VTKSceneNode : public IVTKViewNode
 	{
 	public:
+		VTKSceneNode(model::data::Node* node, VTKSceneNode* parent)
+			: m_model(node)
+			, m_parent(parent)
+		{
+			auto transform = getNodeTransform(node);
+
+			for (size_t i = 0; i < std::size(m_assemblies); i++)
+			{
+				auto assembly = vtkSmartPointer<vtkMAFAssembly>::New();
+				assembly->SetVme(m_model);
+				assembly->SetUserTransform(transform);
+				m_assemblies[i] = assembly;
+
+				if (parent)
+				{
+					parent->m_assemblies[i]->AddPart(m_assemblies[i]);
+				}
+			}
+		}
+
+		~VTKSceneNode() override
+		{
+			m_children.clear();
+			for (size_t i = 0; i < std::size(m_assemblies); i++)
+			{
+				if (m_parent)
+				{
+					m_parent->m_assemblies[i]->RemovePart(m_assemblies[i]);
+				}
+			}
+		}
 
 		VTKSceneNode* parent() const override
 		{
@@ -56,45 +117,6 @@ namespace
 		base::Signal<> m_pipePropertiesChanged;
 	};
 
-	std::unique_ptr<VTKSceneNode> buildRecursive(model::data::Node* node, VTKSceneNode* parent, std::unordered_map<model::data::Node*, IVTKViewNode*>& nodeMap)
-	{
-		auto vn = std::make_unique<VTKSceneNode>();
-
-		vn->m_model = node;
-		vn->m_parent = parent;
-
-		vtkLinearTransform* transform = nullptr;
-		if (node->IsA("mafVME"))
-		{
-			auto v = mafVME::StaticDownCast(node);
-			assert(v->GetOutput());
-			assert(v->GetOutput()->GetTransform());
-			assert(v->GetOutput()->GetTransform()->GetVTKTransform());
-			transform = v->GetOutput()->GetTransform()->GetVTKTransform();
-		}
-
-		for (size_t i = 0; i < std::size(vn->m_assemblies); i++)
-		{
-			auto assembly = vtkSmartPointer<vtkMAFAssembly>::New();
-			assembly->SetVme(vn->m_model);
-			assembly->SetUserTransform(transform);
-			vn->m_assemblies[i] = assembly;
-
-			if (parent)
-			{
-				parent->m_assemblies[i]->AddPart(vn->m_assemblies[i]);
-			}
-		}
-
-		nodeMap[node] = vn.get();
-		for (size_t i = 0; i < node->GetNumberOfChildren(); ++i)
-		{
-			vn->m_children.push_back(buildRecursive(node->GetChild(i).get(), vn.get(), nodeMap));
-		}
-		return vn;
-	}
-
-
 	void removeFromMapRecursive(VTKSceneNode* node, std::unordered_map<model::data::Node*, IVTKViewNode*>& nodeMap)
 	{
 		nodeMap.erase(node->m_model);
@@ -103,14 +125,13 @@ namespace
 			removeFromMapRecursive(child.get(), nodeMap);
 		}
 	}
-
 }
 
 
 VTKViewModel::VTKViewModel(DocumentContext& context)
 	: m_context(context)
 {
-	buildTree();
+	addTree(m_context.getDocument()->getRoot().get());
 	subscribeToContext();
 }
 
@@ -123,14 +144,12 @@ IVTKViewModel::NodeId VTKViewModel::root() const
 
 VTKViewModel::NodeVisibility VTKViewModel::getVisibility(model::data::Node* node) const
 {
-	auto nodeIt = m_nodeMap.find(node);
+	auto vn = static_cast<VTKSceneNode*>(getViewNode(node));
 
-	if (nodeIt == m_nodeMap.end())
+	if (!vn)
 	{
 		return NodeVisibility::NODE_NON_VISIBLE;
 	}
-
-	auto vn = static_cast<VTKSceneNode*>(nodeIt->second);
 
 	if (auto it = m_pipeMap.find(_R(node->GetTypeName())); it != m_pipeMap.end())
 	{
@@ -157,14 +176,12 @@ VTKViewModel::NodeVisibility VTKViewModel::getVisibility(model::data::Node* node
 
 void VTKViewModel::toggleVisibility(model::data::Node* node)
 {
-	auto nodeIt = m_nodeMap.find(node);
+	auto vn = static_cast<VTKSceneNode*>(getViewNode(node));
 
-	if (nodeIt == m_nodeMap.end())
+	if (!vn)
 	{
 		return;
 	}
-
-	auto vn = static_cast<VTKSceneNode*>(nodeIt->second);
 
 	if (vn->m_pipe)
 	{
@@ -249,26 +266,24 @@ base::Connection VTKViewModel::connectVisibilityChanged(std::function<void(model
 
 base::Connection VTKViewModel::connectVisualValuesChanged(model::data::Node* node, std::function<void()> fn)
 {
-	auto nodeIt = m_nodeMap.find(node);
+	auto vn = static_cast<VTKSceneNode*>(getViewNode(node));
 
-	if (nodeIt == m_nodeMap.end())
+	if (!vn)
 	{
 		return {};
 	}
-	auto vn = static_cast<VTKSceneNode*>(nodeIt->second);
 
 	return vn->m_pipeValuesChanged.connect(std::move(fn));
 }
 
 base::Connection VTKViewModel::connectVisualPropertiesChanged(model::data::Node* node, std::function<void()> fn)
 {
-	auto nodeIt = m_nodeMap.find(node);
+	auto vn = static_cast<VTKSceneNode*>(getViewNode(node));
 
-	if (nodeIt == m_nodeMap.end())
+	if (!vn)
 	{
 		return {};
 	}
-	auto vn = static_cast<VTKSceneNode*>(nodeIt->second);
 
 	return vn->m_pipePropertiesChanged.connect(std::move(fn));
 }
@@ -289,13 +304,11 @@ core::WithProperties::PropertyList VTKViewModel::getProperties()
 
 core::WithProperties::PropertyList VTKViewModel::getVisualProperties(model::data::Node* node)
 {
-	if (auto it = m_nodeMap.find(node); it != m_nodeMap.end())
+	if (auto vn  = static_cast<VTKSceneNode*>(getViewNode(node)); vn && vn->m_pipe)
 	{
-		if (auto vn = static_cast<VTKSceneNode*>(it->second); vn->m_pipe)
-		{
-			return vn->m_pipe->getProperties();
-		}
+		return vn->m_pipe->getProperties();
 	}
+
 	return {};
 }
 
@@ -308,56 +321,100 @@ IVTKViewModel::NodeId VTKViewModel::getViewNode(model::data::Node* node) const
 	return nullptr;
 }
 
-void VTKViewModel::buildTree()
+void VTKViewModel::addNode(model::data::Node* node)
 {
-	m_root = buildRecursive(m_context.getDocument()->getRoot().get(), nullptr, m_nodeMap);
+	if (!node)
+	{
+		return;
+	}
+
+	if (auto parentVN = static_cast<VTKSceneNode*>(getViewNode(node->GetParent())))
+	{
+		parentVN->m_children.push_back(std::make_unique<VTKSceneNode>(node, parentVN));
+		m_nodeMap.emplace(node, parentVN->m_children.back().get());
+	}
+	else
+	{
+		m_root = std::make_unique<VTKSceneNode>(node, nullptr);
+		m_nodeMap.emplace(node, m_root.get());
+	}
+}
+
+void VTKViewModel::addTree(model::data::Node* node)
+{
+	if (!node)
+	{
+		return;
+	}
+
+	for (auto queue = std::deque<model::data::Node*>(1, node); !queue.empty(); )
+	{
+		auto nextNode = queue.front();
+		queue.pop_front();
+
+		addNode(nextNode);
+
+		for (size_t i = 0; i < nextNode->GetNumberOfChildren(); i++)
+		{
+			queue.push_back(nextNode->GetChild(i).get());
+		}
+	}
 }
 
 void VTKViewModel::subscribeToContext()
 {
-	m_connections.push_back(m_context.getDocument()->connectNodeAdded(
+	m_connections.push_back(m_context.getDocument()->connectTreeAdded(
 		[this](const NodeAdded& e)
 		{
-			auto parentVN = static_cast<VTKSceneNode*>(m_nodeMap[e.node->GetParent()]);
-			parentVN->m_children.push_back(buildRecursive(e.node, parentVN, m_nodeMap));
-			auto raw = parentVN->m_children.back().get();
-			m_nodeMap[e.node] = raw;
-			//nodeAdded.emit(raw);
+			addTree(e.node);
 		}));
 
-	m_connections.push_back(m_context.getDocument()->connectNodeRemoved(
+	m_connections.push_back(m_context.getDocument()->connectTreeRemoved(
 		[this](const NodeRemoved& e)
 		{
-			auto nodesIt = m_nodeMap.find(e.node);
-			auto vn = static_cast<VTKSceneNode*>(nodesIt->second);
+			auto vn = static_cast<VTKSceneNode*>(getViewNode(e.node));
 			removeFromMapRecursive(vn, m_nodeMap);
-			if (vn != root())
+			if (auto parentVN = vn->parent())//vn != m_root.get()
 			{
-				auto parentVN = vn->parent();
 				auto it = std::find_if(begin(parentVN->m_children), end(parentVN->m_children), [vn](auto& p) {return p.get() == vn; });
 				auto extracted = std::move(*it);//retain it till notification handled
 				parentVN->m_children.erase(it);
-				for (size_t i = 0; i < std::size(vn->m_assemblies); i++)
-				{
-					if (parentVN)
-					{
-						parentVN->m_assemblies[i]->RemovePart(vn->m_assemblies[i]);
-					}
-				}
 			}
 			else
 			{
 				m_root.reset();
 			}
-			//nodeRemoved.emit(vn);
 		}));
 
-	m_connections.push_back(m_context.getDocument()->connectNodeMoved(
+	m_connections.push_back(m_context.getDocument()->connectNodeAdded(
+		[this](const NodeAdded& e)
+		{
+			addNode(e.node);
+		}));
+
+	m_connections.push_back(m_context.getDocument()->connectNodeRemoved(
+		[this](const NodeRemoved& e)
+		{
+			auto vn = static_cast<VTKSceneNode*>(getViewNode(e.node));
+			m_nodeMap.erase(e.node);
+			if (auto parentVN = vn->parent())//vn != m_root.get()
+			{
+				auto it = std::find_if(begin(parentVN->m_children), end(parentVN->m_children), [vn](auto& p) {return p.get() == vn; });
+				auto extracted = std::move(*it);//retain it till notification handled
+				parentVN->m_children.erase(it);
+			}
+			else
+			{
+				m_root.reset();
+			}
+		}));
+
+	m_connections.push_back(m_context.getDocument()->connectTreeMoved(
 		[this](const NodeMoved& e)
 		{
-			auto vn = static_cast<VTKSceneNode*>(m_nodeMap[e.node]);
+			auto vn = static_cast<VTKSceneNode*>(getViewNode(e.node));
 			auto oldParentVN = vn->parent();
-			auto newParentVN = static_cast<VTKSceneNode*>(m_nodeMap[e.node->GetParent()]);
+			auto newParentVN = static_cast<VTKSceneNode*>(getViewNode(e.node->GetParent()));
 
 			auto it = std::find_if(begin(oldParentVN->m_children), end(oldParentVN->m_children), [vn](auto& p) {return p.get() == vn; });
 			
@@ -377,36 +434,30 @@ void VTKViewModel::subscribeToContext()
 
 			auto raw = newParentVN->m_children.back().get();
 			raw->m_parent = newParentVN;
-			//nodeMoved.emit(raw);
 		}));
 
 	m_connections.push_back(m_context.getDocument()->connectNodeChanged(
 		[this](const NodeChanged& e)
 		{
-			auto vn = static_cast<VTKSceneNode*>(m_nodeMap[e.node]);
-			if (vn->m_pipe)
+			if (auto vn = static_cast<VTKSceneNode*>(getViewNode(e.node)); vn && vn->m_pipe)
 			{
 				m_sceneUpdated.emit();
 			}
 		}));
 
-	m_connections.push_back(m_context.connectStatusChanged(
-		[this](const NodeStatusChanged& e)
-		{
-			auto vn = static_cast<VTKSceneNode*>(m_nodeMap[e.node]);
-			//nodeChanged.emit(vn);
-		}));
+	//m_connections.push_back(m_context.connectStatusChanged(
+		//[this](const NodeStatusChanged& e)
+		//{
+		//	auto vn = static_cast<VTKSceneNode*>(getViewNode(e.node));
+		//}));
 
 	m_connections.push_back(m_context.getSelectionController().connectSelectionChanged(
 		[this](model::data::Node* node)
 		{
-			if (auto vn = static_cast<VTKSceneNode*>(getViewNode(node)))
+			if (auto vn = static_cast<VTKSceneNode*>(getViewNode(node)); vn && vn->m_pipe)
 			{
-				if (vn->m_pipe)
-				{
-					vn->m_pipe->Select(m_context.getSelectionController().isSelected(node));
-					m_sceneUpdated.emit();
-				}
+				vn->m_pipe->Select(m_context.getSelectionController().isSelected(node));
+				m_sceneUpdated.emit();
 			}
 		}));
 }

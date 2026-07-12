@@ -15,6 +15,8 @@
 
 #include <algorithm>
 
+#include <deque>
+
 BEGIN_FTK_NAMESPACE
 
 namespace
@@ -22,6 +24,12 @@ namespace
 	class TreeViewNode : public gui::ITreeViewNode
 	{
 	public:
+
+		TreeViewNode(model::data::Node* node, TreeViewNode* parent)
+			: m_model(node)
+			, m_parent(parent)
+		{
+		}
 
 		TreeViewNode* parent() const override
 		{
@@ -43,26 +51,20 @@ namespace
 		std::vector<std::unique_ptr<TreeViewNode>> m_children;
 	};
 
-	std::unique_ptr<TreeViewNode> buildRecursive(model::data::Node* node, TreeViewNode* parent, std::unordered_map<model::data::Node*, gui::ITreeViewNode*>& nodeMap)
+	void removeFromMapRecursive(TreeViewNode* node, std::unordered_map<model::data::Node*, gui::ITreeViewNode*>& nodeMap)
 	{
-		auto vn = std::make_unique<TreeViewNode>();
-
-		vn->m_model = node;
-		vn->m_parent = parent;
-		nodeMap[node] = vn.get();
-		for (size_t i = 0; i < node->GetNumberOfChildren(); ++i)
+		nodeMap.erase(node->m_model);
+		for (auto& child : node->m_children)
 		{
-			vn->m_children.push_back(buildRecursive(node->GetChild(i).get(), vn.get(), nodeMap));
+			removeFromMapRecursive(child.get(), nodeMap);
 		}
-		return vn;
 	}
-
 }
 
 TreeViewModel::TreeViewModel(DocumentContext& context)
 	: m_context(context)
 {
-	buildTree();
+	addTree(m_context.getDocument()->getRoot().get());
 	subscribeToContext();
 }
 
@@ -161,11 +163,6 @@ base::Connection TreeViewModel::connectNodeChanged(std::function<void(NodeId)> f
 	return m_nodeChanged.connect(fn);
 }
 
-base::Connection TreeViewModel::connectSelectionChanged(std::function<void(NodeId)> fn)
-{
-	return m_nodeSelectionChanged.connect(fn);
-}
-
 gui::ITreeViewModel::NodeId TreeViewModel::getViewNode(model::data::Node* node) const
 {
 	if (auto it = m_nodeMap.find(node); it != m_nodeMap.end())
@@ -180,44 +177,120 @@ model::data::Node* TreeViewModel::getModelNode(NodeId node) const
 	return static_cast<TreeViewNode*>(node)->m_model;
 }
 
-void TreeViewModel::buildTree()
+void TreeViewModel::addNode(model::data::Node* node)
 {
-	m_root = buildRecursive(m_context.getDocument()->getRoot().get(), nullptr, m_nodeMap);
+	if (!node)
+	{
+		return;
+	}
+
+	if (auto parentVN = static_cast<TreeViewNode*>(getViewNode(node->GetParent())))
+	{
+		parentVN->m_children.push_back(std::make_unique<TreeViewNode>(node, parentVN));
+		m_nodeMap.emplace(node, parentVN->m_children.back().get());
+	}
+	else
+	{
+		m_root = std::make_unique<TreeViewNode>(node, nullptr);
+		m_nodeMap.emplace(node, m_root.get());
+	}
+}
+
+void TreeViewModel::addTree(model::data::Node* node)
+{
+	if (!node)
+	{
+		return;
+	}
+
+	for (auto queue = std::deque<model::data::Node*>(1, node); !queue.empty(); )
+	{
+		auto nextNode = queue.front();
+		queue.pop_front();
+
+		addNode(nextNode);
+
+		for (size_t i = 0; i < nextNode->GetNumberOfChildren(); i++)
+		{
+			queue.push_back(nextNode->GetChild(i).get());
+		}
+	}
 }
 
 void TreeViewModel::subscribeToContext()
 {
+	m_connections.push_back(m_context.getDocument()->connectTreeAdded(
+		[this](const NodeAdded& e)
+		{
+			addTree(e.node);
+			for (auto queue = std::deque<NodeId>(1, getViewNode(e.node)); !queue.empty(); )
+			{
+				auto nextNode = queue.front();
+				queue.pop_front();
+				m_nodeAdded.emit(nextNode);
+				for (auto& child : nextNode->children())
+				{
+					queue.push_back(child);
+				}
+			}
+		}));
+
+	m_connections.push_back(m_context.getDocument()->connectTreeRemoved(
+		[this](const NodeRemoved& e)
+		{
+			auto vn = static_cast<TreeViewNode*>(getViewNode(e.node));
+			removeFromMapRecursive(vn, m_nodeMap);
+			if (auto parentVN = vn->parent())//vn != m_root.get()
+			{
+				auto it = std::find_if(begin(parentVN->m_children), end(parentVN->m_children), [vn](auto& p) {return p.get() == vn; });
+				auto extracted = std::move(*it);//retain it till notification handled
+				parentVN->m_children.erase(it);
+			}
+			else
+			{
+				m_root.reset();
+			}
+			m_nodeRemoved.emit(vn);
+		}));
+
 	m_connections.push_back(m_context.getDocument()->connectNodeAdded(
 		[this](const NodeAdded& e)
 		{
-			auto parentVN = static_cast<TreeViewNode*>(m_nodeMap[e.node->GetParent()]);
-			auto newVN = buildRecursive(e.node, parentVN, m_nodeMap);
-			parentVN->m_children.push_back(buildRecursive(e.node, parentVN, m_nodeMap));
-			auto raw = parentVN->m_children.back().get();
-			m_nodeMap[e.node] = raw;
-			m_nodeAdded.emit(raw);
+			addTree(e.node);
+			m_nodeAdded.emit(getViewNode(e.node));
 		}));
 
 	m_connections.push_back(m_context.getDocument()->connectNodeRemoved(
 		[this](const NodeRemoved& e)
 		{
-			auto vn = static_cast<TreeViewNode*>(m_nodeMap[e.node]);
-			auto parentVN = vn->parent();
-			auto it = std::find_if(begin(parentVN->m_children), end(parentVN->m_children), [vn](auto& p) {return p.get() == vn; });
-			auto extracted = std::move(*it);//retain it till notification handled
-			parentVN->m_children.erase(it);
+			auto vn = static_cast<TreeViewNode*>(getViewNode(e.node));
+			m_nodeMap.erase(e.node);
+			if (auto parentVN = vn->parent())//vn != m_root.get()
+			{
+				auto it = std::find_if(begin(parentVN->m_children), end(parentVN->m_children), [vn](auto& p) {return p.get() == vn; });
+				auto extracted = std::move(*it);//retain it till notification handled
+				parentVN->m_children.erase(it);
+			}
+			else
+			{
+				m_root.reset();
+			}
 			m_nodeRemoved.emit(vn);
 		}));
 
-	m_connections.push_back(m_context.getDocument()->connectNodeMoved(
+	m_connections.push_back(m_context.getDocument()->connectTreeMoved(
 		[this](const NodeMoved& e)
 		{
-			auto vn = static_cast<TreeViewNode*>(m_nodeMap[e.node]);
+			auto vn = static_cast<TreeViewNode*>(getViewNode(e.node));
 			auto oldParentVN = vn->parent();
-			auto newParentVN = static_cast<TreeViewNode*>(m_nodeMap[e.node->GetParent()]);
+			auto newParentVN = static_cast<TreeViewNode*>(getViewNode(e.node->GetParent()));
+
 			auto it = std::find_if(begin(oldParentVN->m_children), end(oldParentVN->m_children), [vn](auto& p) {return p.get() == vn; });
+
 			newParentVN->m_children.push_back(std::move(*it));
+			oldParentVN->m_children.erase(it);
 			auto raw = newParentVN->m_children.back().get();
+			raw->m_parent = newParentVN;
 			m_nodeMoved.emit(raw);
 		}));
 
@@ -235,13 +308,13 @@ void TreeViewModel::subscribeToContext()
 			m_nodeChanged.emit(vn);
 		}));
 
-	/*m_connections.push_back(m_context.getSelectionController().connectSelectionChanged(
+	m_connections.push_back(m_context.getSelectionController().connectSelectionChanged(
 		[this](model::data::Node* node)
 		{
 			if (auto vn = static_cast<TreeViewNode*>(getViewNode(node)))
 			{
 			}
-		}));*/
+		}));
 }
 
 END_FTK_NAMESPACE

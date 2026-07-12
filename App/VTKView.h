@@ -38,7 +38,7 @@ private:
 	int m_StereoType = 0; ///< Indicate the stereo type to use with the view
 	int m_CameraPositionId; ///< Integer representing a preset for camera position, focal point and view up.
 	int m_AxesType;
-	wxWindow* m_widget;
+	wxWindow* m_widget = nullptr;
 	std::unique_ptr<mafRWI> m_RWI;
 	std::shared_ptr<IVTKViewModel> m_viewModel;
 	std::unique_ptr<VTKAdapter> m_adapter;

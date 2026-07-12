@@ -4,7 +4,6 @@ set(TARGET_NAME A)
 
 set(A_HEADERS
 	AppFrame.h
-	CheckTreeView.h
 	Document.h
 	DocumentContext.h
 	DocumentManager.h
@@ -19,7 +18,6 @@ set(A_HEADERS
 	OpReparentNode.h
 	PropertyEditorFactory.h
 	PropertyViewModel.h
-	RenderView.h
 	Resource.h
 	ResourceId.h
 	ResourceInfo.h
@@ -31,23 +29,10 @@ set(A_HEADERS
 	VTKAdapter.h
 	VTKView.h
 	VTKViewModel.h
-	#MainFrame.h
-	#MainWindow.h
-	#Model.h
-#tree.hpp
 )
 
 set(A_SOURCES
-#tree.cpp
-#  wxApp.cpp
-#  MainFrame.cpp
-#	Sample.cpp
-#    MainWnd.cpp
-#    MainWindow.cpp
-#    Model.cpp
-#    NewMainWindow.cpp
 	App.cpp
-	CheckTreeView.cpp
 	Document.cpp
 	DocumentContext.cpp
 	DocumentManager.cpp
@@ -58,7 +43,6 @@ set(A_SOURCES
 	OpReparentNode.cpp
 	PropertyEditorFactory.cpp
 	PropertyViewModel.cpp
-	RenderView.cpp
 	Resource.cpp
 	ResourceId.cpp
 	ResourceManager.cpp
@@ -92,16 +76,7 @@ endif(WIN32)
 #set(Boost_DIR ${BST_DIR})
 #find_package(Boost REQUIRED COMPONENTS filesystem CONFIG)
 
-#set(NO_MANIFEST 0)
-#add_executable(${TARGET_NAME} WIN32 MACOSX_BUNDLE ${PROJECT_SOURCES})
-#add_executable(${TARGET_NAME} ${PROJECT_SOURCES})
-
-#if(WIN32)
-#    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "/MANIFEST:NO")
-#endif(WIN32)
 target_include_directories(${TARGET_NAME} PRIVATE ${FTK_SOURCE_DIR})
-#target_include_directories(${TARGET_NAME} PRIVATE ${FTK_SOURCE_DIR}/Base)
-target_include_directories(${TARGET_NAME} PRIVATE ${FTK_SOURCE_DIR}/Gui)
 target_include_directories(${TARGET_NAME} PRIVATE ${FTK_BINARY_DIR})
 target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
@@ -109,9 +84,7 @@ target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 #target_link_libraries(${TARGET_NAME} wx::base wx::core wx::aui wx::html wx::propgrid ftkIO mafBase mafCore ${Boost_LIBRARIES})# mafCommon mafCore mafGui mafOperations mafViews mafVME)
 target_link_libraries(${TARGET_NAME} wx::base wx::core)
 target_link_libraries(${TARGET_NAME} mafBase mafCore mafCommon mafGui mafOperations mafViews mafVME ftkIO ftkBase ftkCore ftkGuiWx)
-#vtk_module_autoinit(
-#  TARGETS ${TARGET_NAME}
-#  MODULES ${VTK_LIBRARIES})
+
 vtk_module_autoinit(
 	TARGETS ${TARGET_NAME}
 	MODULES ${VTK_LIBRARIES})

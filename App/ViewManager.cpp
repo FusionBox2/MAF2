@@ -30,7 +30,6 @@ void ViewManager::remove(gui::wx::IView* view)
 	
 	if (auto it = m_views.find(view); it != end(m_views))
 	{
-		view->setModel(nullptr);
 		m_views.erase(it);
 	}
 }

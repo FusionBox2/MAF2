@@ -28,15 +28,15 @@ namespace gui::wx
 		std::function<void(ITreeViewModel::NodeId)> onItemActivated;
 
 	private:
-		wxTreeItemId item(ITreeViewModel::NodeId node) const;
+		ITreeViewModel::NodeId getNode(wxTreeItemId id) const;
+
+		wxTreeItemId getItem(ITreeViewModel::NodeId node) const;
 
 		void rebuild();
 
-		wxTreeItemId createItem(wxTreeItemId parent, ITreeViewModel::NodeId node);
+		void addItem(ITreeViewModel::NodeId node);
 
-		wxTreeItemId buildRecursive(wxTreeItemId parent, ITreeViewModel::NodeId node);
-
-		ITreeViewModel::NodeId getNode(wxTreeItemId id) const;
+		void addTree(ITreeViewModel::NodeId node);
 
 		void onBeginDrag(wxTreeEvent& e);
 

@@ -48,8 +48,6 @@ namespace gui
 		virtual base::Connection connectNodeMoved(std::function<void(NodeId)> fn) = 0;
 
 		virtual base::Connection connectNodeChanged(std::function<void(NodeId)> fn) = 0;
-
-		virtual base::Connection connectSelectionChanged(std::function<void(NodeId)> fn) = 0;
 	};
 }
 

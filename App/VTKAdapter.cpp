@@ -16,18 +16,24 @@ VTKAdapter::VTKAdapter(mafRWI *rwi)
 {
 }
 
-VTKAdapter::~VTKAdapter() = default;
+VTKAdapter::~VTKAdapter()
+{
+	setModel(nullptr);
+}
 
 void VTKAdapter::setModel(IVTKViewModel* model)
 {
 	std::array<vtkRenderer*, 3> renderers{m_rwi->m_RenFront, m_rwi->m_RenBack, m_rwi->m_AlwaysVisibleRenderer};
 	if (m_model)
 	{
-		for (size_t i = 0; i < renderers.size(); i++)
+		if (auto root = m_model->root())
 		{
-			if (renderers[i])
+			for (size_t i = 0; i < renderers.size(); i++)
 			{
-				renderers[i]->RemoveActor(m_model->root()->getAssembly(i));
+				if (renderers[i])
+				{
+					renderers[i]->RemoveActor(root->getAssembly(i));
+				}
 			}
 		}
 	}
@@ -37,11 +43,14 @@ void VTKAdapter::setModel(IVTKViewModel* model)
 
 	if (m_model)
 	{
-		for (size_t i = 0; i < renderers.size(); i++)
+		if (auto root = m_model->root())
 		{
-			if (renderers[i])
+			for (size_t i = 0; i < renderers.size(); i++)
 			{
-				renderers[i]->AddActor(m_model->root()->getAssembly(i));
+				if (renderers[i])
+				{
+					renderers[i]->AddActor(root->getAssembly(i));
+				}
 			}
 		}
 		m_connections.push_back(m_model->connectSceneUpdated([this]() {m_rwi->CameraUpdate(); }));
