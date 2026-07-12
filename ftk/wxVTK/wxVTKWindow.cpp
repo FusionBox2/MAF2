@@ -746,10 +746,12 @@ void wxVTKWindow::SetRenderWindow(vtkRenderWindow* win)
     this->m_renderWindow->SetParentId(GetParent() ? GetParent()->GetHandle() : nullptr);
 
     // update size
-    wxRect cRect(0, 0, 1, 1);
+    wxSize cSize(1, 1);
     if (this->GetParent())
-      cRect = this->GetParent()->GetClientRect();
+      cSize = this->GetParent()->ToPhys(this->GetParent()->GetClientSize());
 
+	this->m_renderWindow->Initialize();
+	this->m_renderWindow->SetSize(cSize.GetWidth(), cSize.GetHeight());
     vtkSmartPointer<wxVTKRenderWindowInteractor> iren;
     iren = vtkNew<wxVTKRenderWindowInteractor>();
     if (iren)
@@ -759,15 +761,13 @@ void wxVTKWindow::SetRenderWindow(vtkRenderWindow* win)
       //iren->SetInteractorStyle(style);
       iren->SetRenderWindow(this->m_renderWindow);
       iren->Initialize();
-      if (iren->GetInitialized())
-      {
-        iren->UpdateSize(cRect.GetWidth(), cRect.GetHeight());
-      }
-    }
-    else
-    {
-      this->m_renderWindow->Initialize();
-      this->m_renderWindow->SetSize(cRect.GetWidth(), cRect.GetHeight());
+      //if (iren->GetInitialized())
+      //{
+        //iren->UpdateSize(cSize.GetWidth(), cSize.GetHeight());
+      //}
+    //}
+    //else
+    //{
     }
   }
 }
@@ -805,13 +805,14 @@ void wxVTKWindow::OnSize(wxSizeEvent& event)
     {
         return;
     }
+	auto size = ToPhys(event.GetSize());
     if (auto iren = this->m_renderWindow->GetInteractor(); iren && iren->GetInitialized())
   {
-    iren->UpdateSize(event.GetSize().GetWidth(), event.GetSize().GetHeight());
+    iren->UpdateSize(size.GetWidth(), size.GetHeight());
   }
   else if (auto rw = this->GetRenderWindow())
   {
-    rw->SetSize(event.GetSize().GetWidth(), event.GetSize().GetHeight());
+    rw->SetSize(size.GetWidth(), size.GetHeight());
   }
 }
 
