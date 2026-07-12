@@ -12,7 +12,7 @@ set(A_HEADERS
 	IStatusController.h
 	IVTKViewModel.h
 	IVTKViewNode.h
-	OperationCreate.h
+	OperationCreateT.h
 	OperationCreateFactory.h
 	OperationsRegistry.h
 	OpReparentNode.h
