@@ -5,136 +5,148 @@ BEGIN_FTK_NAMESPACE
 
 namespace core
 {
-	OperationManager::OperationManager(size_t maxCommands)
-		: m_maxNoCommands(maxCommands)
+	OperationManager::OperationManager(size_t maxOperations)
+		: m_maxNoOperations(maxOperations)
 	{
 	}
 
 	OperationManager::~OperationManager() = default;
 
-	bool OperationManager::Submit(std::unique_ptr<Operation> command, bool storeIt)
+	bool OperationManager::submit(std::unique_ptr<Operation> operation, bool storeIt)
 	{
-		if (!command)
+		if (!operation)
 		{
 			return false;
 		}
 
-		if (!command->Do())
+		if (!operation->execute())
 		{
 			return false;
 		}
 
-		if (!command->CanUndo())
+		if (!operation->canUndo())
 		{
-			ReduceUndoList(0);
+			reduceUndoList(0);
 		}
 		else if (storeIt)
 		{
-			Store(std::move(command));
+			store(std::move(operation));
 		}
 		return true;
 	}
 
-	void OperationManager::Store(std::unique_ptr<Operation> command)
+	bool OperationManager::undo()
 	{
-		if (!command)
+		if (canUndo())
+		{
+			if (m_undoOperations.back()->undo())
+			{
+				m_redoOperations.splice(begin(m_redoOperations), m_undoOperations, --end(m_undoOperations));
+				return true;
+			}
+		}
+		return false;
+	}
+
+	bool OperationManager::redo()
+	{
+		if (canRedo())
+		{
+			if (m_redoOperations.front()->execute())
+			{
+				m_undoOperations.splice(end(m_undoOperations), m_redoOperations, begin(m_redoOperations));
+				return true;
+			}
+		}
+		return false;
+	}
+
+	bool OperationManager::canUndo() const
+	{
+		return !m_undoOperations.empty();
+	}
+
+	bool OperationManager::canRedo() const
+	{
+		return !m_redoOperations.empty();
+	}
+
+	const base::String& OperationManager::getLastOperationName() const
+	{
+		return m_undoOperations.back()->getName();
+	}
+
+	const base::String& OperationManager::getNextOperationName() const
+	{
+		return m_redoOperations.back()->getName();
+	}
+
+	void OperationManager::clearOperations()
+	{
+		m_undoOperations.clear();
+		m_redoOperations.clear();
+		if (m_lastSavedOperation != nullptr)
+		{
+			m_lastSavedOperation = std::nullopt;
+		}
+	}
+
+	bool OperationManager::isDirty() const
+	{
+		if (!m_lastSavedOperation)
+		{
+			return true;
+		}
+		if (m_undoOperations.empty())
+		{
+			return m_lastSavedOperation != nullptr;
+		}
+		return m_lastSavedOperation != m_undoOperations.back().get();
+	}
+
+	void OperationManager::markSaved()
+	{
+		m_lastSavedOperation = !m_undoOperations.empty() ? m_undoOperations.back().get() : nullptr;
+	}
+
+	void OperationManager::store(std::unique_ptr<Operation> operation)
+	{
+		if (!operation)
 		{
 			return;
 		}
 
-		m_redoCommands.clear();
+		m_redoOperations.clear();
 
-		if (m_maxNoCommands > 0)
+		if (m_maxNoOperations > 0)
 		{
-			ReduceUndoList(m_maxNoCommands - 1);
-			m_undoCommands.push_back(std::move(command));
+			reduceUndoList(m_maxNoOperations - 1);
+			m_undoOperations.push_back(std::move(operation));
 		}
 	}
 
-	void OperationManager::ReduceUndoList(size_t size)
+	void OperationManager::reduceUndoList(size_t size)
 	{
-		while (m_undoCommands.size() > size)
+		while (m_undoOperations.size() > size)
 		{
-			if (m_lastSavedCommand == m_undoCommands.front().get())
+			if (m_lastSavedOperation == m_undoOperations.front().get())
 			{
-				m_lastSavedCommand = std::nullopt;
+				m_lastSavedOperation = std::nullopt;
 			}
-			m_undoCommands.pop_front();
+			m_undoOperations.pop_front();
 		}
 	}
 
-	bool OperationManager::Undo()
+	void OperationManager::reduceRedoList(size_t size)
 	{
-		if (CanUndo())
+		while (m_redoOperations.size() > size)
 		{
-			if (m_undoCommands.back()->Undo())
+			if (m_lastSavedOperation == m_redoOperations.front().get())
 			{
-				m_redoCommands.splice(begin(m_redoCommands), m_undoCommands, --end(m_undoCommands));
-				return true;
+				m_lastSavedOperation = std::nullopt;
 			}
+			m_undoOperations.pop_back();
 		}
-		return false;
-	}
-
-	bool OperationManager::Redo()
-	{
-		if (CanRedo())
-		{
-			if (m_redoCommands.front()->Do())
-			{
-				m_undoCommands.splice(end(m_undoCommands), m_redoCommands, begin(m_redoCommands));
-				return true;
-			}
-		}
-		return false;
-	}
-
-	bool OperationManager::CanUndo() const
-	{
-		return !m_undoCommands.empty();
-	}
-
-	bool OperationManager::CanRedo() const
-	{
-		return !m_redoCommands.empty();
-	}
-
-	const base::String& OperationManager::GetLastCommandName() const
-	{
-		return m_undoCommands.back()->GetName();
-	}
-
-	const base::String& OperationManager::GetNextCommandName() const
-	{
-		return m_redoCommands.back()->GetName();
-	}
-
-	void OperationManager::ClearCommands()
-	{
-		m_undoCommands.clear();
-		m_redoCommands.clear();
-		if (m_lastSavedCommand != nullptr)
-		{
-			m_lastSavedCommand = std::nullopt;
-		}
-	}
-
-	bool OperationManager::IsDirty() const
-	{
-		if (!m_lastSavedCommand)
-		{
-			return true;
-		}
-		if (m_undoCommands.empty())
-		{
-			return m_lastSavedCommand != nullptr;
-		}
-		return m_lastSavedCommand != m_undoCommands.back().get();
-	}
-
-	void OperationManager::MarkAsSaved()
-	{
-		m_lastSavedCommand = !m_undoCommands.empty() ? m_undoCommands.back().get() : nullptr;
 	}
 }
 

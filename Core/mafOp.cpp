@@ -5,17 +5,22 @@
 #include "mafGUIHolder.h"
 #include "mafNode.h"
 
-bool mafOp::Do()
+bool mafOp::execute()
 {
     OpRun();
     OpDo();
     return true;
 }
 
-bool mafOp::Undo()
+bool mafOp::undo()
 {
     OpUndo();
     return true;
+}
+
+bool mafOp::canUndo() const
+{
+    return const_cast<mafOp*>(this)->CanUndo();
 }
 
 //----------------------------------------------------------------------------

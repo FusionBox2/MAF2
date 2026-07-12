@@ -17,7 +17,7 @@ namespace core
 		m_ownedProperty = std::move(property);
 	}
 
-	bool OperationChangeProperty::Do()
+	bool OperationChangeProperty::execute()
 	{
 		if (m_property.equals(m_newValue))
 		{
@@ -28,7 +28,7 @@ namespace core
 		return true;
 	}
 
-	bool OperationChangeProperty::Undo()
+	bool OperationChangeProperty::undo()
 	{
 		m_property.set(m_oldValue);
 		return true;

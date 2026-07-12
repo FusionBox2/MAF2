@@ -18,7 +18,7 @@ namespace core
 	class OperationManager
 	{
 	public:
-		OperationManager(size_t maxCommands = std::numeric_limits<size_t>::max());
+		OperationManager(size_t maxOperations = std::numeric_limits<size_t>::max());
 
 		OperationManager(const OperationManager&) = delete;
 
@@ -26,37 +26,39 @@ namespace core
 
 		~OperationManager();
 
-		bool Submit(std::unique_ptr<Operation> command, bool storeIt = true);
+		bool submit(std::unique_ptr<Operation> operation, bool storeIt = true);
 
-		bool Undo();
+		bool undo();
 
-		bool Redo();
+		bool redo();
 		
-		bool CanUndo() const;
+		bool canUndo() const;
 		
-		bool CanRedo() const;
+		bool canRedo() const;
 
-		const base::String& GetLastCommandName() const;
+		const base::String& getLastOperationName() const;
 
-		const base::String& GetNextCommandName() const;
+		const base::String& getNextOperationName() const;
 
-		size_t GetMaxCommands() const { return m_maxNoCommands; }
+		size_t getMaxOperations() const { return m_maxNoOperations; }
 
-		void ClearCommands();
+		void clearOperations();
 
-		bool IsDirty() const;
+		bool isDirty() const;
 
-		void MarkAsSaved();
+		void markSaved();
 
 	protected:
-		void Store(std::unique_ptr<Operation> command);
+		void store(std::unique_ptr<Operation> operation);
 
-		void ReduceUndoList(size_t size);
+		void reduceUndoList(size_t size);
 
-		size_t m_maxNoCommands;
-		std::list<std::unique_ptr<Operation> > m_undoCommands;
-		std::list<std::unique_ptr<Operation> > m_redoCommands;
-		std::optional<Operation*> m_lastSavedCommand = nullptr;
+		void reduceRedoList(size_t size);
+
+		size_t m_maxNoOperations;
+		std::list<std::unique_ptr<Operation> > m_undoOperations;
+		std::list<std::unique_ptr<Operation> > m_redoOperations;
+		std::optional<Operation*> m_lastSavedOperation = nullptr;
 	};
 }
 

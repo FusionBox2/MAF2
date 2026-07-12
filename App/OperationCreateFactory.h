@@ -13,13 +13,13 @@ class OperationCreateFactory : public core::Operation
 public:
 	OperationCreateFactory(const base::String& name, const base::String& typeName, DocumentContext& context, const base::String& nodeName);
 
-	bool Do() override;
+	bool execute() override;
 
-	bool Undo() override;
+	bool undo() override;
 
 	PropertyList getProperties() override;
 
-	bool IsConfigured() const override;
+	bool isConfigured() const override;
 
 private:
 	DocumentContext& m_context;

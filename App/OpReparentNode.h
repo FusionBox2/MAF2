@@ -16,9 +16,9 @@ namespace model::operations
 	public:
 		ReparentNode(const base::String& name, DocumentContext& context, std::shared_ptr<model::data::Node> node, std::shared_ptr<model::data::Node> newParent);
 
-		bool Do() override;
+		bool execute() override;
 
-		bool Undo() override;
+		bool undo() override;
 
 	private:
 		DocumentContext& m_context;

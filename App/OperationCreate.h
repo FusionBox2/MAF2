@@ -20,7 +20,7 @@ public:
 		m_node = T::NewSPtr();
 	}
 
-	bool Do() override
+	bool execute() override
 	{
 		if (!m_node || !m_parent)
 		{
@@ -30,7 +30,7 @@ public:
 		return true;
 	}
 
-	bool Undo() override
+	bool undo() override
 	{
 		if (!m_node || !m_parent)
 		{

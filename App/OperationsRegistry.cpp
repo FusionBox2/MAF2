@@ -69,7 +69,7 @@ bool OperationsRegistry::canExecute(const base::String& name, DocumentContext& c
 			}
 			return false;
 		}
-		return op->CanDo();
+		return op->canExecute();
 	}
 	return false;
 }

@@ -658,9 +658,9 @@ void AppFrame<BaseFrame>::OnMenu(wxCommandEvent& event)
 	{
 		auto& context = m_documentManager->get(GetCurrentDocumentContext());
 		auto om = context.getOperationManager();
-		if (om->CanUndo())
+		if (om->canUndo())
 		{
-			om->Undo();
+			om->undo();
 			return;
 		}
 		return;
@@ -670,9 +670,9 @@ void AppFrame<BaseFrame>::OnMenu(wxCommandEvent& event)
 	{
 		auto& context = m_documentManager->get(GetCurrentDocumentContext());
 		auto om = context.getOperationManager();
-		if (om->CanRedo())
+		if (om->canRedo())
 		{
-			om->Redo();
+			om->redo();
 		}
 		return;
 	}
@@ -711,7 +711,7 @@ void AppFrame<BaseFrame>::OnMenu(wxCommandEvent& event)
 		m_currentOperation = m_operationsRegistry->createOperation(operationIt->second, context);
 		if (auto props = m_currentOperation->getProperties(); props.empty())
 		{
-			context.getOperationManager()->Submit(std::move(m_currentOperation));
+			context.getOperationManager()->submit(std::move(m_currentOperation));
 		}
 		else
 		{
@@ -719,12 +719,12 @@ void AppFrame<BaseFrame>::OnMenu(wxCommandEvent& event)
 			m_operationEditorPanel->Show(true);
 			m_operationEditorPanel->GetParent()->Layout();
 			m_sideNotebook->SetSelection(2);
-			m_applyButton->Enable(m_currentOperation->IsConfigured());
+			m_applyButton->Enable(m_currentOperation->isConfigured());
 			m_currentOperationChanged = m_currentOperation->connectValuesChanged([this]()
 				{
 					if (m_applyButton)
 					{
-						m_applyButton->Enable(m_currentOperation && m_currentOperation->IsConfigured());
+						m_applyButton->Enable(m_currentOperation && m_currentOperation->isConfigured());
 					}
 				});
 		}
@@ -761,7 +761,7 @@ void AppFrame<BaseFrame>::OnUpdateUI(wxUpdateUIEvent& event)
 		}
 		auto& context = m_documentManager->get(GetCurrentDocumentContext());
 		auto om = context.getOperationManager();
-		event.Enable(om->CanUndo());
+		event.Enable(om->canUndo());
 		return;
 	}
 
@@ -774,7 +774,7 @@ void AppFrame<BaseFrame>::OnUpdateUI(wxUpdateUIEvent& event)
 		}
 		auto& context = m_documentManager->get(GetCurrentDocumentContext());
 		auto om = context.getOperationManager();
-		event.Enable(om->CanRedo());
+		event.Enable(om->canRedo());
 		return;
 	}
 
@@ -888,7 +888,7 @@ template <class BaseFrame>
 void AppFrame<BaseFrame>::OnFileClose(wxCommandEvent& event)
 {
 	auto& context = m_documentManager->get(GetCurrentDocumentContext());
-	if (context.getOperationManager()->IsDirty())
+	if (context.getOperationManager()->isDirty())
 	{
 		int res = wxMessageBox("Save changes?", "Confirm", wxYES_NO | wxCANCEL);
 		if (res == wxCANCEL || (res == wxYES && !FileSave()))
@@ -1025,7 +1025,7 @@ void AppFrame<BaseFrame>::BindSelectedNodeActiveView()
 template <class BaseFrame>
 void AppFrame<BaseFrame>::OnOperationApply(wxCommandEvent& event)
 {
-	if (!m_currentOperation || !m_currentOperation->IsConfigured())
+	if (!m_currentOperation || !m_currentOperation->isConfigured())
 	{
 		return;
 	}
@@ -1034,7 +1034,7 @@ void AppFrame<BaseFrame>::OnOperationApply(wxCommandEvent& event)
 	m_operationEditorPanel->GetParent()->Layout();
 	m_operationModel->setProperties({});
 	auto& context = m_documentManager->get(GetCurrentDocumentContext());
-	context.getOperationManager()->Submit(std::move(m_currentOperation));
+	context.getOperationManager()->submit(std::move(m_currentOperation));
 	m_sideNotebook->SetSelection(0);
 }
 

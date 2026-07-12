@@ -44,9 +44,9 @@ class MAF_EXPORT mafOp: public core::Operation, public mafBaseEventHandler, publ
 public:
   mafBaseTypeMacro(mafOp);
 
-  bool Do() override;
-  bool Undo() override;
-
+  bool execute() override;
+  bool undo() override;
+  bool canUndo() const override;
 
 	mafOp();
 	mafOp(const mafString &label);

@@ -19,9 +19,9 @@ namespace core
 
 		OperationChangeProperty(const base::String& label, std::unique_ptr<IProperty> property, std::any newValue);
 
-		bool Do() override;
+		bool execute() override;
 
-		bool Undo() override;
+		bool undo() override;
 
 	private:
 		std::unique_ptr<IProperty> m_ownedProperty;
@@ -50,14 +50,14 @@ namespace core
 			m_ownedProperty = std::move(property);
 		}
 
-		bool Do() override
+		bool execute() override
 		{
 			m_oldValue = m_property.getValue();
 			m_property.setValue(m_newValue);
 			return true;
 		}
 
-		bool Undo() override
+		bool undo() override
 		{
 			m_property.setValue(m_oldValue);
 			return true;

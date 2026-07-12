@@ -65,7 +65,7 @@ bool DocumentContext::save(const core::FilePath& url)
 	m_model->getManager()->Store(root);
 	writer.Save(url.asString());
 	m_url = url;
-	m_operationManager->MarkAsSaved();
+	m_operationManager->markSaved();
 	return true;
 }
 

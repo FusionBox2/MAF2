@@ -14,14 +14,14 @@ namespace model::operations
 	{
 	}
 
-	bool ReparentNode::Do()
+	bool ReparentNode::execute()
 	{
 		m_oldParent = m_node->GetParent()->SharedFromThis();
 		m_context.getDocument()->moveNode(m_node, m_newParent);
 		return true;
 	}
 
-	bool ReparentNode::Undo()
+	bool ReparentNode::undo()
 	{
 		m_context.getDocument()->moveNode(m_node, m_oldParent);
 		return true;

@@ -16,19 +16,17 @@ namespace core
 
 		~Operation() override = default;
 
-		virtual bool Do() = 0;
+		virtual bool execute() = 0;
 
-		virtual bool Undo() = 0;
+		virtual bool undo() = 0;
 
-		virtual bool CanDo() const { return true; }
+		virtual bool canExecute() const { return true; }
 
-		virtual bool CanUndo() const { return m_canUndo; }
+		virtual bool canUndo() const { return m_canUndo; }
 
-		virtual bool CanUndo();
+		virtual bool isConfigured() const { return true; }
 
-		virtual bool IsConfigured() const { return true; }
-
-		const base::String& GetName() const { return m_operationName; }
+		const base::String& getName() const { return m_operationName; }
 
 	protected:
 		base::String m_operationName;

@@ -13,7 +13,7 @@ OperationCreateFactory::OperationCreateFactory(const base::String& name, const b
 	m_node->SetName(nodeName);
 }
 
-bool OperationCreateFactory::Do()
+bool OperationCreateFactory::execute()
 {
 	if (!m_node)
 	{
@@ -27,7 +27,7 @@ bool OperationCreateFactory::Do()
 	return false;
 }
 
-bool OperationCreateFactory::Undo()
+bool OperationCreateFactory::undo()
 {
 	if (!m_node)
 	{
@@ -44,7 +44,7 @@ core::WithProperties::PropertyList OperationCreateFactory::getProperties()
 	return result;
 }
 
-bool OperationCreateFactory::IsConfigured() const
+bool OperationCreateFactory::isConfigured() const
 {
 	return !m_node->GetName().empty();
 }

@@ -1285,7 +1285,7 @@ void FrameWithManagers<BaseFrame>::OnFileOpen(wxCommandEvent& e)
 						{
 							auto op = fn();
 							op->SetInput(sel[0]->SharedFromThis());
-							context.getOperationManager()->Submit(std::move(op));
+							context.getOperationManager()->submit(std::move(op));
 							m_navigator->setModel(nullptr);
 							m_navigatorModel = std::make_shared<TreeStatusViewModel>(m_documentManager->get(0));// , * new StatusController());
 							m_navigator->setModel(m_navigatorModel);

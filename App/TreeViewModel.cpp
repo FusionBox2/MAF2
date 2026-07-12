@@ -94,12 +94,12 @@ void TreeViewModel::renameNode(NodeId node, const std::string& name)
 			[nn]() {return mafStringToStd(nn->GetName()); }, 
 			[nn, this](const std::string& name) {nn->SetName(mafStdToString(name)); m_context.getDocument()->m_nodeChanged.emit({nn}); }
 		);
-	m_context.getOperationManager()->Submit(std::make_unique<core::OperationChangeProperty>(_R("Change property"), std::move(p), name));
+	m_context.getOperationManager()->submit(std::make_unique<core::OperationChangeProperty>(_R("Change property"), std::move(p), name));
 }
 
 void TreeViewModel::reparentNode(NodeId node, NodeId parent)
 {
-	m_context.getOperationManager()->Submit(std::make_unique<model::operations::ReparentNode>(_R("Reparent"), m_context, getModelNode(node)->SharedFromThis(), static_cast<TreeViewNode*>(parent)->m_model->SharedFromThis()));
+	m_context.getOperationManager()->submit(std::make_unique<model::operations::ReparentNode>(_R("Reparent"), m_context, getModelNode(node)->SharedFromThis(), static_cast<TreeViewNode*>(parent)->m_model->SharedFromThis()));
 }
 
 void TreeViewModel::activateNode(NodeId node)

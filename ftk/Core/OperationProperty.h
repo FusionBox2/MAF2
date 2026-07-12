@@ -50,7 +50,7 @@ namespace core
 
 		void set(const std::any& value) override
 		{
-			m_manager.Submit(std::make_unique<OperationChangeProperty>(_R("Change property"), *m_internalProperty, value));
+			m_manager.submit(std::make_unique<OperationChangeProperty>(_R("Change property"), *m_internalProperty, value));
 		}
 
 		decltype(auto) getValue() const
@@ -61,7 +61,7 @@ namespace core
 		template<typename TValue>
 		void setValue(TValue&& value)
 		{
-			m_manager.Submit(std::make_unique<OperationChangePropertyT<TProperty>>(_R("Change property"), *m_internalProperty, std::forward<TValue>(value)));
+			m_manager.submit(std::make_unique<OperationChangePropertyT<TProperty>>(_R("Change property"), *m_internalProperty, std::forward<TValue>(value)));
 		}
 
 	private:
