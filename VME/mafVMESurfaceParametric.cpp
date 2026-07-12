@@ -353,50 +353,97 @@ std::vector<std::unique_ptr<IProperty>> mafVMESurfaceParametric::getProperties()
 	auto result = Superclass::getProperties();
 
 	std::vector<base::String> geometryNames = {	_R("Sphere"), _R("Cone"), _R("Cylinder"), _R("Cube"), _R("Plane"), _R("Ellipsoid") };
-	result.push_back(makeProperty(_R("Geometry"), [this]() {return GetGeometryType(); }, [this](int v) {SetGeometryType(v); },
+	result.push_back(makeProperty(_R("Geometry"), [this]() {return m_GeometryType; }, [this](int v) {m_GeometryType = v; Modified(); InternalUpdate();  m_valuesChanged.emit(); },
 	//result.push_back(makeProperty(_R("Geometry"), *this, &mafVMESurfaceParametric::GetGeometryType, &mafVMESurfaceParametric::SetGeometryType,
 		{
 			{_R("visual_name"), base::String(_R(""))},
-			{_R("enum"), true},
-			{_R("enumEntries"), geometryNames}
+			{_R("enum_type"), base::String(_R("combo"))},
+			{_R("entries"), geometryNames}
 		}));
-	result.push_back(makeProperty(_R("ShereRadius"), [this]() {return GetSphereRadius(); }, [this](double v) {SetSphereRadius(v); m_valuesChanged.emit(); },
+	result.push_back(makeProperty(_R("ShereRadius"), [this]() {return m_SphereRadius; }, [this](double v) {m_SphereRadius = v; Modified(); InternalUpdate(); m_valuesChanged.emit(); },
 		{
-			{ _R("visual_name"), base::String(_R("Radius")) },
+			{_R("visual_name"), base::String(_R("Radius")) },
 			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_SPHERE; })}
 		}));
 	result.push_back(makeProperty(_R("SpherePhiRes"), [this]() {return m_SpherePhiRes; }, [this](double v) {m_SpherePhiRes = v; InternalUpdate(); m_valuesChanged.emit(); },
 		{
-			{ _R("visual_name"), base::String(_R("Phi res")) },
+			{_R("visual_name"), base::String(_R("Phi res")) },
 			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_SPHERE; })}
 		}));
 	result.push_back(makeProperty(_R("SphereThetaRes"), [this]() {return m_SphereTheRes; }, [this](double v) {m_SphereTheRes = v; InternalUpdate(); m_valuesChanged.emit(); },
 		{
-			{ _R("visual_name"), base::String(_R("Theta res")) },
+			{_R("visual_name"), base::String(_R("Theta res")) },
 			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_SPHERE; })}
 		}));
-	//{ { _R("visual_name"), base::String(_R("Theta res")) }, { _R("enabled"), m_GeometryType != PARAMETRIC_SPHERE } }));
-	/*parent[_R("Geometry")].SetValue(m_GeometryType);
-	parent[_R("ShereRadius")].SetValue(m_SphereRadius);
-	parent[_R("SpherePhiRes")].SetValue(m_SpherePhiRes);
-	parent[_R("SphereThetaRes")].SetValue(m_SphereTheRes);
-	parent[_R("ConeHieght")].SetValue(m_ConeHeight);
-	parent[_R("ConeRadius")].SetValue(m_ConeRadius);
-	parent[_R("ConeCapping")].SetValue(m_ConeCapping);
-	parent[_R("ConeRes")].SetValue(m_ConeRes);
-	parent[_R("ConeOrientationAxis")].SetValue(m_ConeOrientationAxis);
-	parent[_R("CylinderHeight")].SetValue(m_CylinderHeight);
+
+	result.push_back(makeProperty(_R("ConeHieght"), [this]() {return m_ConeHeight; }, [this](double v) {m_ConeHeight = v; InternalUpdate(); m_valuesChanged.emit(); },
+		{
+			{_R("visual_name"), base::String(_R("Height")) },
+			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_CONE; })}
+		}));
+	result.push_back(makeProperty(_R("ConeRadius"), [this]() {return m_ConeRadius; }, [this](double v) {m_ConeRadius = v; InternalUpdate(); m_valuesChanged.emit(); },
+		{
+			{_R("visual_name"), base::String(_R("Radius")) },
+			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_CONE; })}
+		}));
+	result.push_back(makeProperty(_R("ConeRes"), [this]() {return m_ConeRes; }, [this](double v) {m_ConeRes = v; InternalUpdate();  m_valuesChanged.emit(); },
+		{
+			{_R("visual_name"), base::String(_R("Resolution")) },
+			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_CONE; })}
+		}));
+	result.push_back(makeProperty(_R("ConeCapping"), [this]() {return m_ConeCapping; }, [this](int v) {m_ConeCapping = v; InternalUpdate();  m_valuesChanged.emit(); },
+		{
+			{_R("visual_name"), base::String(_R("Cap")) },
+			{ _R("boolean"), true },
+			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_CONE; })}
+		}));
+		std::vector<base::String> oriNames = { _L("X axis"),_L("Y axis"),_L("Z axis") };
+		result.push_back(makeProperty(_R("ConeOrientationAxis"), [this]() {return m_ConeOrientationAxis; }, [this](int v) {m_ConeOrientationAxis = v; InternalUpdate(); m_valuesChanged.emit(); },
+		{
+			{_R("visual_name"), base::String(_R("Orientation")) },
+			{_R("enum_type"), base::String(_R("radio"))},
+			{_R("entries"), oriNames},
+			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_CONE; })}
+		}));
+
+		result.push_back(makeProperty(_R("CylinderHeight"), [this]() {return m_CylinderHeight; }, [this](double v) {m_CylinderHeight = v; InternalUpdate(); m_valuesChanged.emit(); },
+		{
+			{_R("visual_name"), base::String(_R("Height")) },
+			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_CYLINDER; })}
+		}));
+		result.push_back(makeProperty(_R("CylinderRadius"), [this]() {return m_CylinderRadius; }, [this](double v) {m_CylinderRadius = v; InternalUpdate(); m_valuesChanged.emit(); },
+		{
+			{_R("visual_name"), base::String(_R("Radius")) },
+			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_CYLINDER; })}
+		}));
+		result.push_back(makeProperty(_R("CylinderRes"), [this]() {return m_CylinderRes; }, [this](double v) {m_CylinderRes = v; InternalUpdate();  m_valuesChanged.emit(); },
+		{
+			{_R("visual_name"), base::String(_R("Resolution")) },
+			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_CYLINDER; })}
+		}));
+		result.push_back(makeProperty(_R("CylinderOrientationAxis"), [this]() {return m_CylinderOrientationAxis; }, [this](int v) {m_CylinderOrientationAxis = v; InternalUpdate(); m_valuesChanged.emit(); },
+		{
+			{_R("visual_name"), base::String(_R("Orientation")) },
+			{_R("enum_type"), base::String(_R("radio"))},
+			{_R("entries"), oriNames},
+			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_CYLINDER; })}
+		}));
+
+	/*parent[_R("CylinderHeight")].SetValue(m_CylinderHeight);
 	parent[_R("CylinderRadius")].SetValue(m_CylinderRadius);
 	parent[_R("CylinderRes")].SetValue(m_CylinderRes);
 	parent[_R("CylinderOrientationAxis")].SetValue(m_CylinderOrientationAxis);
+
 	parent[_R("CubeXLength")].SetValue(m_CubeXLength);
 	parent[_R("CubeYLength")].SetValue(m_CubeYLength);
 	parent[_R("CubeZLength")].SetValue(m_CubeZLength);
+	
 	parent[_R("PlaneXRes")].SetValue(m_PlaneXRes);
 	parent[_R("PlaneYRes")].SetValue(m_PlaneYRes);
 	parent[_R("PlaneOrigin")].SetValue(mafToString(m_PlaneOrigin, 3));
 	parent[_R("PlanePoint1")].SetValue(mafToString(m_PlanePoint1, 3));
 	parent[_R("PlanePoint2")].SetValue(mafToString(m_PlanePoint2, 3));
+	
 	parent[_R("EllipsoidXLenght")].SetValue(m_EllipsoidXLenght);
 	parent[_R("EllipsoidYLenght")].SetValue(m_EllipsoidYLenght);
 	parent[_R("EllipsoidZLenght")].SetValue(m_EllipsoidZLenght);
@@ -646,7 +693,6 @@ void mafVMESurfaceParametric::SetGeometryType(int parametricSurfaceTypeID)
 //-------------------------------------------------------------------------
 {
 	m_GeometryType = parametricSurfaceTypeID;
-	m_valuesChanged.emit();
 	Modified();
 }
 //-------------------------------------------------------------------------
