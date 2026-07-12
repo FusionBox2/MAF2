@@ -909,7 +909,7 @@ bool App::OnInit()
 
 	mafPipeFactoryVME::Initialize();
 
-	auto frame = new ConfiguredAppFrame<gui::wx::PaneFrame<wxMDIParentFrame>>
+	auto frame = new ConfiguredAppFrame<gui::wx::PaneFrame<wxAuiMDIParentFrame>>
 		(
 			nullptr, wxID_ANY,
 			GetAppDisplayName(),

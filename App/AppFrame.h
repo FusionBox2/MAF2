@@ -681,7 +681,7 @@ void AppFrame<BaseFrame>::OnMenu(wxCommandEvent& event)
 	if (auto viewIt = m_viewMenu.find(event.GetId()); viewIt != m_viewMenu.end())
 	{
 		auto name = base::StdToString(std::string(event.GetString().c_str()));
-		auto childFrame = new wxMDIChildFrame(this, wxID_ANY, base::StringToStd(viewIt->second));
+		auto childFrame = new wxAuiMDIChildFrame(this, wxID_ANY, base::StringToStd(viewIt->second));
 		auto view = m_viewManager->create(viewIt->second, childFrame);
 		childFrame->Bind(wxEVT_ACTIVATE, [
 			this, view](wxActivateEvent& event)
