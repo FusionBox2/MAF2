@@ -5,7 +5,7 @@
 #pragma warning (disable: 4068) //unknown pragma
 
 #include "ftk/Base/Object.h"
-#include "ftk/Base/mfString.h"
+#include "Base/mfString.h"
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"
 #include "mafTimeStamped.h"

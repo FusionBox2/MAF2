@@ -41,7 +41,7 @@
 #include <list>
 #include <vnl/vnl_matrix.h>
 
-#include "ftk/Base/mfString.h"
+#include "Base/mfString.h"
 
 vtkStandardNewMacro(mafParabolicMeshToLinearMeshFilter);
 

@@ -1,6 +1,6 @@
 #include "mafVTKLog.h"
 
-#include "ftk/Base/mfString.h"
+#include "Base/mfString.h"
 
 mafVTKLog* mafVTKLog::New()
 {

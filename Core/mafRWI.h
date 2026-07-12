@@ -3,7 +3,7 @@
 #include "ftk/Core/WithProperties.h"
 #include "mafDefines.h"
 #include "vtkRenderWindowInteractor.h"
-#include "ftk/Base/mfString.h"
+#include "Base/mfString.h"
 #include "ftk/wxVTK/wxVTKWindow.h"
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"

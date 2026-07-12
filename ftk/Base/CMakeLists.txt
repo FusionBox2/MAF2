@@ -4,11 +4,13 @@ set(TARGET_NAME ftkBase)
 
 SET(TARGET_HEADERS
 	Connection.h
+	FastBimap.h
 	FastPImpl.h
 	Meta.h
 	Signal.h
 	SpinLock.h
 	String.h
+	ThreadPool.h
 )
 
 SET(TARGET_SOURCES

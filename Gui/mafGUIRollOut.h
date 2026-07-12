@@ -19,7 +19,7 @@
 //----------------------------------------------------------------------------
 // Include:
 //----------------------------------------------------------------------------
-#include "ftk/Base/mfString.h"
+#include "Base/mfString.h"
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"
 

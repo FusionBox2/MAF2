@@ -39,7 +39,7 @@
 #include "mafInteractorExtractIsosurface.h"
 #include "mafRWI.h"
 #include "mafGUIFloatSlider.h"
-#include "ftk/Base/mfString.h"
+#include "Base/mfString.h"
 #include "mafDataPipeCustom.h"
 #include "ftk/IO/StorageElement.h"
 #include "mafVMEItemVTK.h" 

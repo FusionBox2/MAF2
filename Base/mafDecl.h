@@ -3,7 +3,7 @@
 #include "mafDefines.h"
 #include <wx/bitmap.h>
 
-#include "ftk/Base/mfString.h"
+#include "Base/mfString.h"
 #include "mafFilesDirs.h"
 
 #include <vector>

@@ -1,4 +1,4 @@
-#include "ftk/Base/mfString.h"
+#include "Base/mfString.h"
 
 #ifdef MAF_USE_WX
 mafString mafWxToString(const wxString& str)

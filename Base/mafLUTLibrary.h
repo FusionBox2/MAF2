@@ -17,7 +17,7 @@
 #ifndef __mafLUTLibrary_H__
 #define __mafLUTLibrary_H__
 
-#include "ftk/Base/mfString.h"
+#include "Base/mfString.h"
 #include "vtkSmartPointer.h"
 #include "vtkLookupTable.h"
 

@@ -3,7 +3,7 @@
 #include <wx/validate.h>
 #include "wx/listctrl.h"
 #include "mafDecl.h"
-#include "ftk/Base/mfString.h"
+#include "Base/mfString.h"
 #include "mafEventSender.h"
 
 class mafGUIFloatSlider;

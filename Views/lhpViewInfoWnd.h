@@ -16,7 +16,7 @@
 //----------------------------------------------------------------------------
 // includes
 //----------------------------------------------------------------------------
-#include "ftk/Base/mfString.h"
+#include "Base/mfString.h"
 #include "mafEventSender.h"
 #include "mafGUI.h"
 #include "wx/wxHtml.h"

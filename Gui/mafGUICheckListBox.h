@@ -21,7 +21,7 @@
 // Include:
 //----------------------------------------------------------------------------
 #include "ftk/Gui/wx/Panel.h"
-#include "ftk/Base/mfString.h"
+#include "Base/mfString.h"
 #include "mafEventSender.h"
 
 //----------------------------------------------------------------------------

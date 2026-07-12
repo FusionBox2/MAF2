@@ -2,7 +2,7 @@
 
 #include "ftkConfigure.h"
 
-#include "ftk/Base/mfString.h"
+#include "Base/mfString.h"
 
 BEGIN_FTK_NAMESPACE
 

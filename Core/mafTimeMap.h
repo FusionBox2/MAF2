@@ -6,7 +6,7 @@
 #include "mafTimeStamped.h"
 #include "mafIndent.h"
 #include "ftk/Base/MTime.h"
-#include "ftk/Base/mfString.h"
+#include "Base/mfString.h"
 
 #include <map>
 #include <vector>

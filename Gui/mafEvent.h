@@ -6,7 +6,7 @@
 #include "mafDecl.h"
 #include "mafEventBase.h" // base class for mafEvent
 #include "mafBaseEventHandler.h"
-#include "ftk/Base/mfString.h"
+#include "Base/mfString.h"
 
 namespace model::data
 {

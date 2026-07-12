@@ -3,7 +3,7 @@
 #include "ftk/Core/IProperty.h"
 
 #include "IPropertyEditor.h"
-#include "ftk/Base/mfString.h"
+#include "Base/mfString.h"
 
 BEGIN_FTK_NAMESPACE
 

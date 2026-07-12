@@ -28,7 +28,7 @@
 #include "mafDecl.h"
 #include "mafVMERoot.h"
 #include "mafVMEMesh.h"
-#include "ftk/Base/mfString.h"
+#include "Base/mfString.h"
 #include "mafAbsMatrixPipe.h"
 
 #include <fstream>

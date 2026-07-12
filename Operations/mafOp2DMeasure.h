@@ -18,7 +18,7 @@
 #define __mafOp2DMeasure_H__
 
 #include "mafOp.h"
-#include "ftk/Base/mfString.h"
+#include "Base/mfString.h"
 
 #ifdef MAF_EXPORTS
 #include "mafDllMacros.h"

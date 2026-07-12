@@ -19,7 +19,7 @@
 
 #include "../BES_Beta/vtkMAF/vtkMafFile.h"
 #include "vtkMAFIdType64.h"
-#include "ftk/Base/mfString.h"
+#include "Base/mfString.h"
 
 //----------------------------------------------------------------------------
 // Forward declarations:

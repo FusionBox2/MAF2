@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ftk/Base/Object.h"
-#include "ftk/Base/mfString.h"
+#include "Base/mfString.h"
 #include "mafOBB.h"
 #include "mafObjectWithGUI.h"
 #include "mafDecl.h" // for MINID

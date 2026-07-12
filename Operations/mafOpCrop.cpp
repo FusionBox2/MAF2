@@ -29,7 +29,7 @@
 
 #include "mafGizmoROI.h"
 
-#include "ftk/Base/mfString.h"
+#include "Base/mfString.h"
 #include "mafVME.h"
 #include "mafVMEVolumeGray.h"
 

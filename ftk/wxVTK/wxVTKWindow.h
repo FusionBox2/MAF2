@@ -14,7 +14,7 @@
 
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"
-#include "ftk/Base/mfString.h"
+#include "Base/mfString.h"
 #include "mafViewCompound.h"
 
 class wxPaintEvent;

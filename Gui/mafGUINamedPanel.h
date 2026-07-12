@@ -3,7 +3,7 @@
 #include "ftkConfigure.h"
 
 #include "mafDefines.h"
-#include "ftk/Base/mfString.h"
+#include "Base/mfString.h"
 #include "ftk/Gui/wx/Panel.h"
 
 BEGIN_FTK_NAMESPACE

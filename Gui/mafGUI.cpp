@@ -40,7 +40,7 @@
 #include "mafGUILutSwatch.h"
 #endif             //:::::::::::::::::::::::::::::::::
 
-#include "ftk/Base/mfString.h"
+#include "Base/mfString.h"
 
 // ugly hack to make FindWindow Work
 // if you remove this line you will have a Compile-Error "FindWindowA is not defined for wxWindow"

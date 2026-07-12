@@ -7,21 +7,18 @@ PROJECT(mafBase)
 
 # Set your list of sources here.
 SET(PROJECT_SRCS
-	../ftk/Base/FastBimap.h
 	../ftk/Base/Log.cpp
 	../ftk/Base/Log.h
 	../ftk/Base/MTime.cpp
 	../ftk/Base/MTime.h
 	../ftk/Base/Object.cpp
 	../ftk/Base/Object.h
-	../ftk/Base/mfString.cpp
-	../ftk/Base/mfString.h
-	../ftk/Base/Template.h
-	../ftk/Base/ThreadPool.h
 )
 
 # Set your list of sources here.
 SET(PROJECT_SRCS ${PROJECT_SRCS}
+mfString.cpp
+mfString.h
 mafDecl.cpp
 mafDecl.h
 mafDefines.cpp

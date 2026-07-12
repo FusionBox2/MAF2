@@ -22,7 +22,7 @@
 
 #include "mafOp.h"
 #include "mafEvent.h"
-#include "ftk/Base/mfString.h"
+#include "Base/mfString.h"
 #define VME_VOLUME_LARGE
 #ifdef VME_VOLUME_LARGE
 #include "vtkObject.h"

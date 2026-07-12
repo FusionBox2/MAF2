@@ -18,7 +18,7 @@
 #define __mafInteractor_h
 
 #include "mafAgent.h"
-#include "ftk/Base/mfString.h"
+#include "Base/mfString.h"
 #include "vtkSmartPointer.h"
 #include "vtkRenderer.h"
 #include "vtkProp3D.h"

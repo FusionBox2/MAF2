@@ -3,7 +3,7 @@
 #include "ftkConfigure.h"
 
 #include "ftk/Base/Meta.h"
-#include "ftk/Base/mfString.h"
+#include "Base/mfString.h"
 #include "ftk/IO/Parse.h"
 #include "ftk/IO/ParseTo.h"
 #include "ftk/IO/Serialize.h"
