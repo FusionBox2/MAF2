@@ -13,6 +13,7 @@
  PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
+#include "ftk/wxVTK/wxVTKWindow.h"
 
 #include "medInteractor2DDistance.h"
 #include "mafDecl.h"

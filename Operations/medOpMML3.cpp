@@ -58,6 +58,7 @@
 #include "medOpMML3ContourWidget.h"
 #include "medOpMML3NonUniformSlicePipe.h"
 #include "medOpMML3GlobalRegistration.h"
+#include "ftk/wxVTK/wxVTKWindow.h"
 
 #include <fstream>
 

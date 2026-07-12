@@ -4,7 +4,6 @@
 #include "mafDefines.h"
 #include "vtkRenderWindowInteractor.h"
 #include "Base/mfString.h"
-#include "ftk/wxVTK/wxVTKWindow.h"
 #include "mafBaseEventHandler.h"
 #include "mafEventSender.h"
 #include "mafAxes.h"

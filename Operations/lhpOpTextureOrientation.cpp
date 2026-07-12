@@ -59,6 +59,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 #include "vtkTransformPolyDataFilter.h"
 #include "vtkTransform.h"
 #include "vtkProperty.h"
+#include "ftk/wxVTK/wxVTKWindow.h"
 
 #include <fstream>
 #include <ostream>

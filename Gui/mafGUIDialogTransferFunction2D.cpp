@@ -67,6 +67,7 @@
 #include "vtkMAFImageMapToWidgetColors.h"
 #include "vtkMAFAdaptiveVolumeMapper.h"
 #include "vtkImageCast.h"
+#include "ftk/wxVTK/wxVTKWindow.h"
 
 #define min(x0, x1) (((x0) < (x1)) ? (x0) : (x1))
 #define max(x0, x1) (((x0) > (x1)) ? (x0) : (x1))

@@ -28,6 +28,7 @@
 #include "medGUIWizard.h"
 #include "mafGUI.h"
 #include "mafGUIValidator.h"
+#include "ftk/wxVTK/wxVTKWindow.h"
 
 //----------------------------------------------------------------------------
 // Event Table:

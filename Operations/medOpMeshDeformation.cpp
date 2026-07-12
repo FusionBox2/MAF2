@@ -41,6 +41,7 @@
 #include "mafVMEPolyLine.h"
 #include "medVMEPolyLineGraph.h"
 #include "mafPolylineGraph.h"
+#include "ftk/wxVTK/wxVTKWindow.h"
 
 #include "vtkRenderWindow.h"
 #include "vtkPolyDataMapper.h"

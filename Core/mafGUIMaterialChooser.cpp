@@ -45,6 +45,7 @@
 
 #include "ftk/IO/StorageElement.h"
 #include "mafVME.h"
+#include "ftk/wxVTK/wxVTKWindow.h"
 
 #include "vtkProperty.h"
 #include "vtkSphereSource.h"

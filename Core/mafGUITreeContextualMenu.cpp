@@ -15,6 +15,7 @@
 #include "mafSceneGraph.h"
 #include "ftk/Gui/wx/CheckTree.h"
 #include "mafGUIApplicationLayoutSettings.h"
+#include "ftk/wxVTK/wxVTKWindow.h"
 
 #include "mafVME.h"
 #include "mafNode.h"

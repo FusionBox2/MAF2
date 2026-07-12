@@ -19,6 +19,7 @@ CINECA - Interuniversity Consortium (www.cineca.it)
 //----------------------------------------------------------------------------
 
 #include "wx/busyinfo.h"
+#include "ftk/wxVTK/wxVTKWindow.h"
 
 #include "mafDecl.h"
 #include "mafGUI.h"

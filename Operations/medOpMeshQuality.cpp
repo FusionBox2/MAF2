@@ -24,6 +24,7 @@
 
 #include "medOpMeshQuality.h"
 #include "wx/busyinfo.h"
+#include "ftk/wxVTK/wxVTKWindow.h"
 
 #include "mafGUIDialog.h"
 #include "mafRWI.h"

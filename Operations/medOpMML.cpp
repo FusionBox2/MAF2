@@ -51,6 +51,7 @@
 #include "mafVMELandmark.h"
 #include "mafTagArray.h"
 #include "mafTagItem.h"
+#include "ftk/wxVTK/wxVTKWindow.h"
 
 mafCxxTypeMacro(medOpMML)
 

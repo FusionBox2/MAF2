@@ -25,6 +25,7 @@
 #include "mafGUIDialogPreview.h"
 #include "mafDecl.h"
 #include "mafRWI.h"
+#include "ftk/wxVTK/wxVTKWindow.h"
 
 //----------------------------------------------------------------------------
 mafGUIDialogPreview::mafGUIDialogPreview(const mafString& title,long style)

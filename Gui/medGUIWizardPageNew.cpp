@@ -22,6 +22,7 @@
 // "Failure#0: The value of ESP was not properly saved across a function call"
 //----------------------------------------------------------------------------
 #include <wx/statline.h>
+#include "ftk/wxVTK/wxVTKWindow.h"
 
 #include "mafDecl.h"
 #include "medGUIWizardPageNew.h"
