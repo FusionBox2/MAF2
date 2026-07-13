@@ -1,45 +1,17 @@
-/*=========================================================================
-
- Program: MAF2
- Module: mafVMESurfaceParametric
- Authors: Roberto Mucci , Stefano Perticoni
-
- Copyright (c) B3C
- All rights reserved. See Copyright.txt or
- http://www.scsitaly.com/Copyright.htm for details.
-
- This software is distributed WITHOUT ANY WARRANTY; without even
- the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
- PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-
-
-
 #include "mafDefines.h" 
-//----------------------------------------------------------------------------
-// NOTE: Every CPP file in the MAF must include "mafDefines.h" as first.
-// This force to include Window,wxWidgets and VTK exactly in this order.
-// Failing in doing this will result in a run-time error saying:
-// "Failure#0: The value of ESP was not properly saved across a function call"
-//----------------------------------------------------------------------------
 
 #include "mafVMESurfaceParametric.h"
-#include "mmuIdFactory.h"
+
 #include "mafDataVector.h"
 #include "mafMatrixInterpolator.h"
-#include "mafDataPipeInterpolator.h"
-#include "mafTagArray.h"
 #include "mafMatrixVector.h"
 #include "mafVMEItemVTK.h"
-#include "mafEventSender.h"
 #include "mafTransform.h"
 #include "mafGUI.h"
 #include "mmaMaterial.h"
 #include "mafVMEOutputSurface.h"
 #include "mafDataPipeCustom.h"
 
-#include "vtkSmartPointer.h"
 #include "vtkPolyData.h"
 #include "vtkCellArray.h"
 #include "vtkBitArray.h"
@@ -58,57 +30,15 @@
 const bool DEBUG_MODE = true;
 
 //------------------------------------------------------------------------------
-// Events
-//------------------------------------------------------------------------------
-//MAF_ID_IMP(mafVMESurfaceParametric::CHANGE_PARAMETER);   // Event rised by change parameter 
-
-//------------------------------------------------------------------------------
-mafCxxTypeMacro(mafVMESurfaceParametric);
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
 mafVMESurfaceParametric::mafVMESurfaceParametric()
 //-------------------------------------------------------------------------
 {
-	m_GeometryType = PARAMETRIC_SPHERE;
-
-	m_SphereRadius = 2.0;
-	m_SpherePhiRes = 10.0;
-	m_SphereTheRes = 10.0;
-	m_ConeHeight = 5.0;
-	m_ConeRadius = 2.0;
-	m_ConeCapping = 0;
-	m_ConeRes = 20.0;
-	m_ConeOrientationAxis = ID_X_AXIS;
-	m_CylinderHeight = 5.0;
-	m_CylinderRadius = 2.0;
-	m_CylinderRes = 20.0;
-	m_CylinderOrientationAxis = ID_Y_AXIS;
-	m_CubeXLength = 2.0;
-	m_CubeYLength = 2.0;
-	m_CubeZLength = 2.0;
-	m_PlaneXRes = 2.0;
-	m_PlaneYRes = 2.0;
-	m_PlaneOrigin[0] = m_PlaneOrigin[1] = m_PlaneOrigin[2] = 0;
-	m_PlanePoint1[0] = 2.0;
-	m_PlanePoint1[1] = m_PlanePoint1[2] = 0.0;
-	m_PlanePoint2[1] = 3.0;
-	m_PlanePoint2[0] = m_PlanePoint2[2] = 0.0;
-	m_EllipsoidXLenght = 1.0;
-	m_EllipsoidYLenght = 2.0;
-	m_EllipsoidZLenght = 3.0;
-	m_EllipsoidPhiRes = 10.0;
-	m_EllipsoidTheRes = 10.0;
-	m_EllipsoidOrientationAxis = ID_X_AXIS;
-
 	m_Transform = mafTransform::NewSPtr();
 	auto output = mafVMEOutputSurface::NewUPtr(); // an output with no data
 	output->SetTransform(m_Transform); // force my transform in the output
 	SetOutput(std::move(output));
 
 	GetMaterial();
-
-	vtkNEW(m_PolyData);
 
 	// attach a data pipe which creates a bridge between VTK and MAF
 	auto dpipe = mafDataPipeCustom::NewSPtr();
@@ -120,8 +50,7 @@ mafVMESurfaceParametric::mafVMESurfaceParametric()
 mafVMESurfaceParametric::~mafVMESurfaceParametric()
 //-------------------------------------------------------------------------
 {
-	vtkDEL(m_PolyData);
-	SetOutput(NULL);
+	SetOutput(nullptr);
 }
 
 //-------------------------------------------------------------------------
@@ -143,7 +72,7 @@ int mafVMESurfaceParametric::DeepCopy(mafNode* a)
 {
 	if (Superclass::DeepCopy(a) == MAF_OK)
 	{
-		mafVMESurfaceParametric* vmeParametricSurface = mafVMESurfaceParametric::SafeDownCast(a);
+		auto vmeParametricSurface = mafVMESurfaceParametric::SafeDownCast(a);
 		m_Transform->SetMatrix(vmeParametricSurface->m_Transform->GetMatrix());
 		this->m_GeometryType = vmeParametricSurface->m_GeometryType;
 		this->m_SphereRadius = vmeParametricSurface->m_SphereRadius;
@@ -176,15 +105,14 @@ int mafVMESurfaceParametric::DeepCopy(mafNode* a)
 		this->m_PlanePoint2[1] = vmeParametricSurface->m_PlanePoint2[1];
 		this->m_PlanePoint2[2] = vmeParametricSurface->m_PlanePoint2[2];
 
-		this->m_EllipsoidXLenght = vmeParametricSurface->m_EllipsoidXLenght;
-		this->m_EllipsoidYLenght = vmeParametricSurface->m_EllipsoidYLenght;
+		this->m_EllipsoidXLength = vmeParametricSurface->m_EllipsoidXLength;
+		this->m_EllipsoidYLength = vmeParametricSurface->m_EllipsoidYLength;
 		this->m_EllipsoidZLenght = vmeParametricSurface->m_EllipsoidZLenght;
 		this->m_EllipsoidPhiRes = vmeParametricSurface->m_EllipsoidPhiRes;
 		this->m_EllipsoidTheRes = vmeParametricSurface->m_EllipsoidTheRes;
 		this->m_EllipsoidOrientationAxis = vmeParametricSurface->m_EllipsoidOrientationAxis;
 
-		mafDataPipeCustom* dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe());
-		if (dpipe)
+		if (auto dpipe = mafDataPipeCustom::SafeDownCast(GetDataPipe()))
 		{
 			dpipe->SetInputData(m_PolyData);
 		}
@@ -201,45 +129,45 @@ bool mafVMESurfaceParametric::Equals(mafVME* vme)
 	bool ret = false;
 	if (Superclass::Equals(vme))
 	{
-		if (
-			m_Transform->GetMatrix() == ((mafVMESurfaceParametric*)vme)->m_Transform->GetMatrix() &&
-			this->m_GeometryType == ((mafVMESurfaceParametric*)vme)->m_GeometryType &&
-			this->m_SphereRadius == ((mafVMESurfaceParametric*)vme)->m_SphereRadius &&
-			this->m_SpherePhiRes == ((mafVMESurfaceParametric*)vme)->m_SpherePhiRes &&
-			this->m_SphereTheRes == ((mafVMESurfaceParametric*)vme)->m_SphereTheRes &&
-			this->m_ConeHeight == ((mafVMESurfaceParametric*)vme)->m_ConeHeight &&
-			this->m_ConeRadius == ((mafVMESurfaceParametric*)vme)->m_ConeRadius &&
-			this->m_ConeCapping == ((mafVMESurfaceParametric*)vme)->m_ConeCapping &&
-			this->m_ConeRes == ((mafVMESurfaceParametric*)vme)->m_ConeRes &&
-			this->m_ConeOrientationAxis == ((mafVMESurfaceParametric*)vme)->m_ConeOrientationAxis &&
-			this->m_CylinderHeight == ((mafVMESurfaceParametric*)vme)->m_CylinderHeight &&
-			this->m_CylinderRadius == ((mafVMESurfaceParametric*)vme)->m_CylinderRadius &&
-			this->m_CylinderRes == ((mafVMESurfaceParametric*)vme)->m_CylinderRes &&
-			this->m_CylinderOrientationAxis == ((mafVMESurfaceParametric*)vme)->m_CylinderOrientationAxis &&
-			this->m_CubeXLength == ((mafVMESurfaceParametric*)vme)->m_CubeXLength &&
-			this->m_CubeYLength == ((mafVMESurfaceParametric*)vme)->m_CubeYLength &&
-			this->m_CubeZLength == ((mafVMESurfaceParametric*)vme)->m_CubeZLength &&
-			this->m_PlaneXRes == ((mafVMESurfaceParametric*)vme)->m_PlaneXRes &&
-			this->m_PlaneYRes == ((mafVMESurfaceParametric*)vme)->m_PlaneYRes &&
+		if (auto vmeParametricSurface = mafVMESurfaceParametric::SafeDownCast(vme); vmeParametricSurface &&
+			m_Transform->GetMatrix() == vmeParametricSurface->m_Transform->GetMatrix() &&
+			this->m_GeometryType == vmeParametricSurface->m_GeometryType &&
+			this->m_SphereRadius == vmeParametricSurface->m_SphereRadius &&
+			this->m_SpherePhiRes == vmeParametricSurface->m_SpherePhiRes &&
+			this->m_SphereTheRes == vmeParametricSurface->m_SphereTheRes &&
+			this->m_ConeHeight == vmeParametricSurface->m_ConeHeight &&
+			this->m_ConeRadius == vmeParametricSurface->m_ConeRadius &&
+			this->m_ConeCapping == vmeParametricSurface->m_ConeCapping &&
+			this->m_ConeRes == vmeParametricSurface->m_ConeRes &&
+			this->m_ConeOrientationAxis == vmeParametricSurface->m_ConeOrientationAxis &&
+			this->m_CylinderHeight == vmeParametricSurface->m_CylinderHeight &&
+			this->m_CylinderRadius == vmeParametricSurface->m_CylinderRadius &&
+			this->m_CylinderRes == vmeParametricSurface->m_CylinderRes &&
+			this->m_CylinderOrientationAxis == vmeParametricSurface->m_CylinderOrientationAxis &&
+			this->m_CubeXLength == vmeParametricSurface->m_CubeXLength &&
+			this->m_CubeYLength == vmeParametricSurface->m_CubeYLength &&
+			this->m_CubeZLength == vmeParametricSurface->m_CubeZLength &&
+			this->m_PlaneXRes == vmeParametricSurface->m_PlaneXRes &&
+			this->m_PlaneYRes == vmeParametricSurface->m_PlaneYRes &&
 
-			this->m_PlaneOrigin[0] == ((mafVMESurfaceParametric*)vme)->m_PlaneOrigin[0] &&
-			this->m_PlaneOrigin[1] == ((mafVMESurfaceParametric*)vme)->m_PlaneOrigin[1] &&
-			this->m_PlaneOrigin[2] == ((mafVMESurfaceParametric*)vme)->m_PlaneOrigin[2] &&
+			this->m_PlaneOrigin[0] == vmeParametricSurface->m_PlaneOrigin[0] &&
+			this->m_PlaneOrigin[1] == vmeParametricSurface->m_PlaneOrigin[1] &&
+			this->m_PlaneOrigin[2] == vmeParametricSurface->m_PlaneOrigin[2] &&
 
-			this->m_PlanePoint1[0] == ((mafVMESurfaceParametric*)vme)->m_PlanePoint1[0] &&
-			this->m_PlanePoint1[1] == ((mafVMESurfaceParametric*)vme)->m_PlanePoint1[1] &&
-			this->m_PlanePoint1[2] == ((mafVMESurfaceParametric*)vme)->m_PlanePoint1[2] &&
+			this->m_PlanePoint1[0] == vmeParametricSurface->m_PlanePoint1[0] &&
+			this->m_PlanePoint1[1] == vmeParametricSurface->m_PlanePoint1[1] &&
+			this->m_PlanePoint1[2] == vmeParametricSurface->m_PlanePoint1[2] &&
 
-			this->m_PlanePoint2[0] == ((mafVMESurfaceParametric*)vme)->m_PlanePoint2[0] &&
-			this->m_PlanePoint2[1] == ((mafVMESurfaceParametric*)vme)->m_PlanePoint2[1] &&
-			this->m_PlanePoint2[2] == ((mafVMESurfaceParametric*)vme)->m_PlanePoint2[2] &&
+			this->m_PlanePoint2[0] == vmeParametricSurface->m_PlanePoint2[0] &&
+			this->m_PlanePoint2[1] == vmeParametricSurface->m_PlanePoint2[1] &&
+			this->m_PlanePoint2[2] == vmeParametricSurface->m_PlanePoint2[2] &&
 
-			this->m_EllipsoidXLenght == ((mafVMESurfaceParametric*)vme)->m_EllipsoidXLenght &&
-			this->m_EllipsoidYLenght == ((mafVMESurfaceParametric*)vme)->m_EllipsoidYLenght &&
-			this->m_EllipsoidZLenght == ((mafVMESurfaceParametric*)vme)->m_EllipsoidZLenght &&
-			this->m_EllipsoidPhiRes == ((mafVMESurfaceParametric*)vme)->m_EllipsoidPhiRes &&
-			this->m_EllipsoidTheRes == ((mafVMESurfaceParametric*)vme)->m_EllipsoidTheRes &&
-			this->m_EllipsoidOrientationAxis == ((mafVMESurfaceParametric*)vme)->m_EllipsoidOrientationAxis
+			this->m_EllipsoidXLength == vmeParametricSurface->m_EllipsoidXLength &&
+			this->m_EllipsoidYLength == vmeParametricSurface->m_EllipsoidYLength &&
+			this->m_EllipsoidZLenght == vmeParametricSurface->m_EllipsoidZLenght &&
+			this->m_EllipsoidPhiRes == vmeParametricSurface->m_EllipsoidPhiRes &&
+			this->m_EllipsoidTheRes == vmeParametricSurface->m_EllipsoidTheRes &&
+			this->m_EllipsoidOrientationAxis == vmeParametricSurface->m_EllipsoidOrientationAxis
 			)
 		{
 			ret = true;
@@ -471,12 +399,12 @@ std::vector<std::unique_ptr<IProperty>> mafVMESurfaceParametric::getProperties()
 			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_PLANE; })}
 		}));
 
-	result.push_back(makeProperty(_R("EllipsoidXLenght"), [this]() {return m_EllipsoidXLenght; }, [this](double v) {m_EllipsoidXLenght = v; InternalUpdate(); m_valuesChanged.emit(); },
+	result.push_back(makeProperty(_R("EllipsoidXLenght"), [this]() {return m_EllipsoidXLength; }, [this](double v) {m_EllipsoidXLength = v; InternalUpdate(); m_valuesChanged.emit(); },
 		{
 			{_R("visual_name"), base::String(_R("X Length")) },
 			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_ELLIPSOID; })}
 		}));
-	result.push_back(makeProperty(_R("EllipsoidYLenght"), [this]() {return m_EllipsoidYLenght; }, [this](double v) {m_EllipsoidYLenght = v; InternalUpdate(); m_valuesChanged.emit(); },
+	result.push_back(makeProperty(_R("EllipsoidYLenght"), [this]() {return m_EllipsoidYLength; }, [this](double v) {m_EllipsoidYLength = v; InternalUpdate(); m_valuesChanged.emit(); },
 		{
 			{_R("visual_name"), base::String(_R("Y Length")) },
 			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_ELLIPSOID; })}
@@ -631,7 +559,7 @@ void mafVMESurfaceParametric::InternalUpdate()
 	case PARAMETRIC_ELLIPSOID:
 	{
 		vtkNew<vtkSphereSource> surf;
-		surf->SetRadius(m_EllipsoidYLenght);
+		surf->SetRadius(m_EllipsoidYLength);
 		surf->SetPhiResolution(m_EllipsoidPhiRes);
 		surf->SetThetaResolution(m_EllipsoidTheRes);
 		surf->Update();
@@ -653,7 +581,7 @@ void mafVMESurfaceParametric::InternalUpdate()
 			break;
 		}
 
-		t->Scale(m_EllipsoidXLenght / m_EllipsoidYLenght, 1, m_EllipsoidZLenght / m_EllipsoidYLenght);
+		t->Scale(m_EllipsoidXLength / m_EllipsoidYLength, 1, m_EllipsoidZLenght / m_EllipsoidYLength);
 		t->Update();
 
 		vtkNew<vtkTransformPolyDataFilter> ptf;
@@ -696,8 +624,8 @@ void mafVMESurfaceParametric::InternalStore(mafStorageElementBuilder& parent)
 	parent[_R("PlaneOrigin")].SetValue(mafToString(m_PlaneOrigin.data(), 3));
 	parent[_R("PlanePoint1")].SetValue(mafToString(m_PlanePoint1.data(), 3));
 	parent[_R("PlanePoint2")].SetValue(mafToString(m_PlanePoint2.data(), 3));
-	parent[_R("EllipsoidXLenght")].SetValue(m_EllipsoidXLenght);
-	parent[_R("EllipsoidYLenght")].SetValue(m_EllipsoidYLenght);
+	parent[_R("EllipsoidXLenght")].SetValue(m_EllipsoidXLength);
+	parent[_R("EllipsoidYLenght")].SetValue(m_EllipsoidYLength);
 	parent[_R("EllipsoidZLenght")].SetValue(m_EllipsoidZLenght);
 	parent[_R("EllipsoidTheRes")].SetValue(m_EllipsoidTheRes);
 	parent[_R("EllipsoidPhiRes")].SetValue(m_EllipsoidPhiRes);
@@ -731,8 +659,8 @@ void mafVMESurfaceParametric::InternalRestore(const mafStorageElement& node)
 	mafParseVector(node[_R("PlaneOrigin")].As<mafString>(), m_PlaneOrigin.data(), 3);
 	mafParseVector(node[_R("PlanePoint1")].As<mafString>(), m_PlanePoint1.data(), 3);
 	mafParseVector(node[_R("PlanePoint2")].As<mafString>(), m_PlanePoint2.data(), 3);
-	m_EllipsoidXLenght = node[_R("EllipsoidXLenght")].As<double>();
-	m_EllipsoidYLenght = node[_R("EllipsoidYLenght")].As<double>();
+	m_EllipsoidXLength = node[_R("EllipsoidXLenght")].As<double>();
+	m_EllipsoidYLength = node[_R("EllipsoidYLenght")].As<double>();
 	m_EllipsoidZLenght = node[_R("EllipsoidZLenght")].As<double>();
 	m_EllipsoidTheRes = node[_R("EllipsoidTheRes")].As<double>();
 	m_EllipsoidPhiRes = node[_R("EllipsoidPhiRes")].As<double>();
@@ -827,8 +755,8 @@ void mafVMESurfaceParametric::CreateGuiEllipsoid(mafGUI* gui)
 {
 	m_GuiEllipsoid = new mafGUI(this);
 	m_GuiEllipsoid->Label(_R("Ellipsoid"));
-	m_GuiEllipsoid->Double(CHANGE_VALUE_ELLIPSOID, _L("X Length"), &m_EllipsoidXLenght);
-	m_GuiEllipsoid->Double(CHANGE_VALUE_ELLIPSOID, _L("Y Length"), &m_EllipsoidYLenght);
+	m_GuiEllipsoid->Double(CHANGE_VALUE_ELLIPSOID, _L("X Length"), &m_EllipsoidXLength);
+	m_GuiEllipsoid->Double(CHANGE_VALUE_ELLIPSOID, _L("Y Length"), &m_EllipsoidYLength);
 	m_GuiEllipsoid->Double(CHANGE_VALUE_ELLIPSOID, _L("Z Length"), &m_EllipsoidZLenght);
 	m_GuiEllipsoid->Double(CHANGE_VALUE_ELLIPSOID, _L("Phi res"), &m_EllipsoidPhiRes);
 	m_GuiEllipsoid->Double(CHANGE_VALUE_ELLIPSOID, _L("Theta res"), &m_EllipsoidTheRes);

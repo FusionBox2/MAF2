@@ -3,6 +3,8 @@
 #include "mafVME.h"
 #include "mafEvent.h"
 
+#include <vtkNew.h>
+
 #include <array>
 
 class mmaMaterial;
@@ -152,35 +154,35 @@ protected:
 	mafGUI* m_GuiEllipsoid;
 
 	std::shared_ptr<mafTransform> m_Transform;
-	vtkPolyData* m_PolyData;
+	vtkNew<vtkPolyData> m_PolyData;
 
-	int m_GeometryType;
-	double m_SphereRadius;
-	double m_SpherePhiRes;
-	double m_SphereTheRes;
-	double m_ConeHeight;
-	double m_ConeRadius;
-	int m_ConeCapping;
-	double m_ConeRes;
-	int m_ConeOrientationAxis;
-	double m_CylinderHeight;
-	double m_CylinderRadius;
-	double m_CylinderRes;
-	int m_CylinderOrientationAxis;
-	double m_CubeXLength;
-	double m_CubeYLength;
-	double m_CubeZLength;
-	double m_PlaneXRes;
-	double m_PlaneYRes;
-	std::array<double,3> m_PlaneOrigin;
-	std::array<double, 3> m_PlanePoint1;
-	std::array<double, 3> m_PlanePoint2;
-	double m_EllipsoidXLenght;
-	double m_EllipsoidYLenght;
-	double m_EllipsoidZLenght;
-	double m_EllipsoidPhiRes;
-	double m_EllipsoidTheRes;
-	int m_EllipsoidOrientationAxis;
+	int m_GeometryType = PARAMETRIC_SPHERE;
+	double m_SphereRadius = 2.0;
+	double m_SpherePhiRes = 10;
+	double m_SphereTheRes = 10;
+	double m_ConeHeight = 5.0;
+	double m_ConeRadius = 2.0;
+	int m_ConeCapping = 0;
+	double m_ConeRes = 20;
+	int m_ConeOrientationAxis = ID_X_AXIS;
+	double m_CylinderHeight = 5.0;
+	double m_CylinderRadius = 2.0;
+	double m_CylinderRes = 20;
+	int m_CylinderOrientationAxis = ID_Y_AXIS;
+	double m_CubeXLength = 2.0;
+	double m_CubeYLength = 2.0;
+	double m_CubeZLength = 2.0;
+	double m_PlaneXRes = 2;
+	double m_PlaneYRes = 2;
+	std::array<double,3> m_PlaneOrigin = {0.0, 0.0, 0.0};
+	std::array<double, 3> m_PlanePoint1 = {2.0, 0.0, 0.0};
+	std::array<double, 3> m_PlanePoint2 = {0.0, 3.0, 0.0};
+	double m_EllipsoidXLength = 1.0;
+	double m_EllipsoidYLength = 2.0;
+	double m_EllipsoidZLenght = 3.0;
+	double m_EllipsoidPhiRes = 10;
+	double m_EllipsoidTheRes = 10;
+	int m_EllipsoidOrientationAxis = ID_X_AXIS;
 
 private:
 	mafVMESurfaceParametric(const mafVMESurfaceParametric&) = delete;
