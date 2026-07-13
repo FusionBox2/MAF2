@@ -4,6 +4,8 @@
 
 #include "IOldGuiEditor.h"
 
+#include <array>
+
 namespace
 {
 	class StringOldGuiElement : public gui::wx::OldGuiElement
@@ -169,8 +171,46 @@ namespace
 
 		void update(gui::wx::OldGuiElement* element, IProperty* property) override
 		{
-			auto stringElement = static_cast<StringOldGuiElement*>(element);
-			stringElement->m_value = mafStdToString(std::any_cast<std::string>(property->get()));
+			auto stringElement = static_cast<BooleanOldGuiElement*>(element);
+			stringElement->m_value = std::any_cast<bool>(property->get());
+		}
+	};
+
+	template<typename T>
+	class VectorOldGuiElement : public gui::wx::OldGuiElement
+	{
+	public:
+		std::array<T, 3> m_value;
+	};
+
+	template<typename T>
+	class VectorOldGuiEditor : public gui::wx::IOldGuiEditor
+	{
+	public:
+		VectorOldGuiElement<T>* create(mafGUI* gui, int id, IProperty* property) override
+		{
+			auto typedElement = new VectorOldGuiElement<T>;
+			typedElement->m_value = std::any_cast<std::array<T, 3>>(property->get());
+			base::String label = property->id();
+
+			if (auto descr = property->metadata().get<base::String>(_R("visual_name")); descr)
+			{
+				label = *descr;
+			}
+			gui->Vector(id, label, typedElement->m_value.data());
+			return typedElement;
+		}
+
+		void assign(gui::wx::OldGuiElement* element, IProperty* property) override
+		{
+			auto typedElement = static_cast<VectorOldGuiElement<T>*>(element);
+			property->set(typedElement->m_value);
+		}
+
+		void update(gui::wx::OldGuiElement* element, IProperty* property) override
+		{
+			auto stringElement = static_cast<VectorOldGuiElement<T>*>(element);
+			stringElement->m_value = std::any_cast<std::array<T, 3>>(property->get());
 		}
 	};
 }
@@ -210,9 +250,18 @@ namespace gui::wx
 
 	void OldGuiAdapter::OnEvent(mafEventBase* e)
 	{
-		auto event = static_cast<mafEvent*>(e);
-		auto& entry = m_bindings[event->GetId() - 10000];
-		std::get<2>(entry)->assign(std::get<0>(entry), std::get<1>(entry));
+		if (auto event = mafEvent::SafeDownCast(e))
+		{
+			if (event->GetId() >= 10000)
+			{
+				size_t idx = event->GetId() - 10000;
+				if (idx < m_bindings.size())
+				{
+					auto& entry = m_bindings[idx];
+					std::get<2>(entry)->assign(std::get<0>(entry), std::get<1>(entry));
+				}
+			}
+		}
 	}
 
 	void OldGuiAdapter::registerDefaultEditors()
@@ -220,6 +269,7 @@ namespace gui::wx
 		registerEditor<double>(std::make_unique<FloatOldGuiEditor<double>>());
 		registerEditor<int>(std::make_unique<IntOldGuiEditor<int>>());
 		registerEditor<std::string>(std::make_unique<StringOldGuiEditor>());
+		registerEditor<std::array<double, 3>>(std::make_unique<VectorOldGuiEditor<double>>());
 	}
 
 	void OldGuiAdapter::rebuild()
