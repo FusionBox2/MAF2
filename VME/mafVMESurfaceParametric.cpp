@@ -398,7 +398,7 @@ std::vector<std::unique_ptr<IProperty>> mafVMESurfaceParametric::getProperties()
 			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_CONE; })}
 		}));
 		std::vector<base::String> oriNames = { _L("X axis"),_L("Y axis"),_L("Z axis") };
-		result.push_back(makeProperty(_R("ConeOrientationAxis"), [this]() {return m_ConeOrientationAxis; }, [this](int v) {m_ConeOrientationAxis = v; InternalUpdate(); m_valuesChanged.emit(); },
+	result.push_back(makeProperty(_R("ConeOrientationAxis"), [this]() {return m_ConeOrientationAxis; }, [this](int v) {m_ConeOrientationAxis = v; InternalUpdate(); m_valuesChanged.emit(); },
 		{
 			{_R("visual_name"), base::String(_R("Orientation")) },
 			{_R("enum_type"), base::String(_R("radio"))},
@@ -406,22 +406,22 @@ std::vector<std::unique_ptr<IProperty>> mafVMESurfaceParametric::getProperties()
 			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_CONE; })}
 		}));
 
-		result.push_back(makeProperty(_R("CylinderHeight"), [this]() {return m_CylinderHeight; }, [this](double v) {m_CylinderHeight = v; InternalUpdate(); m_valuesChanged.emit(); },
+	result.push_back(makeProperty(_R("CylinderHeight"), [this]() {return m_CylinderHeight; }, [this](double v) {m_CylinderHeight = v; InternalUpdate(); m_valuesChanged.emit(); },
 		{
 			{_R("visual_name"), base::String(_R("Height")) },
 			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_CYLINDER; })}
 		}));
-		result.push_back(makeProperty(_R("CylinderRadius"), [this]() {return m_CylinderRadius; }, [this](double v) {m_CylinderRadius = v; InternalUpdate(); m_valuesChanged.emit(); },
+	result.push_back(makeProperty(_R("CylinderRadius"), [this]() {return m_CylinderRadius; }, [this](double v) {m_CylinderRadius = v; InternalUpdate(); m_valuesChanged.emit(); },
 		{
 			{_R("visual_name"), base::String(_R("Radius")) },
 			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_CYLINDER; })}
 		}));
-		result.push_back(makeProperty(_R("CylinderRes"), [this]() {return m_CylinderRes; }, [this](double v) {m_CylinderRes = v; InternalUpdate();  m_valuesChanged.emit(); },
+	result.push_back(makeProperty(_R("CylinderRes"), [this]() {return m_CylinderRes; }, [this](double v) {m_CylinderRes = v; InternalUpdate();  m_valuesChanged.emit(); },
 		{
 			{_R("visual_name"), base::String(_R("Resolution")) },
 			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_CYLINDER; })}
 		}));
-		result.push_back(makeProperty(_R("CylinderOrientationAxis"), [this]() {return m_CylinderOrientationAxis; }, [this](int v) {m_CylinderOrientationAxis = v; InternalUpdate(); m_valuesChanged.emit(); },
+	result.push_back(makeProperty(_R("CylinderOrientationAxis"), [this]() {return m_CylinderOrientationAxis; }, [this](int v) {m_CylinderOrientationAxis = v; InternalUpdate(); m_valuesChanged.emit(); },
 		{
 			{_R("visual_name"), base::String(_R("Orientation")) },
 			{_R("enum_type"), base::String(_R("radio"))},
@@ -429,30 +429,80 @@ std::vector<std::unique_ptr<IProperty>> mafVMESurfaceParametric::getProperties()
 			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_CYLINDER; })}
 		}));
 
-	/*parent[_R("CylinderHeight")].SetValue(m_CylinderHeight);
-	parent[_R("CylinderRadius")].SetValue(m_CylinderRadius);
-	parent[_R("CylinderRes")].SetValue(m_CylinderRes);
-	parent[_R("CylinderOrientationAxis")].SetValue(m_CylinderOrientationAxis);
+	result.push_back(makeProperty(_R("CubeXLength"), [this]() {return m_CubeXLength; }, [this](double v) {m_CubeXLength = v; InternalUpdate(); m_valuesChanged.emit(); },
+		{
+			{_R("visual_name"), base::String(_R("X Length")) },
+			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_CUBE; })}
+		}));
+	result.push_back(makeProperty(_R("CubeYLength"), [this]() {return m_CubeYLength; }, [this](double v) {m_CubeYLength = v; InternalUpdate(); m_valuesChanged.emit(); },
+		{
+			{_R("visual_name"), base::String(_R("Y Length")) },
+			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_CUBE; })}
+		}));
+	result.push_back(makeProperty(_R("CubeZLength"), [this]() {return m_CubeZLength; }, [this](double v) {m_CubeZLength = v; InternalUpdate(); m_valuesChanged.emit(); },
+		{
+			{_R("visual_name"), base::String(_R("Z Length")) },
+			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_CUBE; })}
+		}));
 
-	parent[_R("CubeXLength")].SetValue(m_CubeXLength);
-	parent[_R("CubeYLength")].SetValue(m_CubeYLength);
-	parent[_R("CubeZLength")].SetValue(m_CubeZLength);
-	
-	parent[_R("PlaneXRes")].SetValue(m_PlaneXRes);
-	parent[_R("PlaneYRes")].SetValue(m_PlaneYRes);
-	parent[_R("PlaneOrigin")].SetValue(mafToString(m_PlaneOrigin, 3));
-	parent[_R("PlanePoint1")].SetValue(mafToString(m_PlanePoint1, 3));
-	parent[_R("PlanePoint2")].SetValue(mafToString(m_PlanePoint2, 3));
-	
-	parent[_R("EllipsoidXLenght")].SetValue(m_EllipsoidXLenght);
-	parent[_R("EllipsoidYLenght")].SetValue(m_EllipsoidYLenght);
-	parent[_R("EllipsoidZLenght")].SetValue(m_EllipsoidZLenght);
-	parent[_R("EllipsoidTheRes")].SetValue(m_EllipsoidTheRes);
-	parent[_R("EllipsoidPhiRes")].SetValue(m_EllipsoidPhiRes);
-	parent[_R("EllipsoidOrientationAxis")].SetValue(m_CylinderOrientationAxis);*/
+	result.push_back(makeProperty(_R("PlaneXRes"), [this]() {return m_PlaneXRes; }, [this](double v) {m_PlaneXRes = v; InternalUpdate(); m_valuesChanged.emit(); },
+		{
+			{_R("visual_name"), base::String(_R("X Res")) },
+			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_PLANE; })}
+		}));
+	result.push_back(makeProperty(_R("PlaneYRes"), [this]() {return m_PlaneYRes; }, [this](double v) {m_PlaneYRes = v; InternalUpdate(); m_valuesChanged.emit(); },
+		{
+			{_R("visual_name"), base::String(_R("Y Res")) },
+			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_PLANE; })}
+		}));
+	result.push_back(makeProperty(_R("PlaneOrigin"), [this]() {return m_PlaneOrigin; }, [this](const std::array<double, 3>& v) {m_PlaneOrigin = v; InternalUpdate(); m_valuesChanged.emit(); },
+		{
+			{_R("visual_name"), base::String(_R("Origin")) },
+			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_PLANE; })}
+		}));
+	result.push_back(makeProperty(_R("PlanePoint1"), [this]() {return m_PlanePoint1; }, [this](const std::array<double, 3>& v) {m_PlanePoint1 = v; InternalUpdate(); m_valuesChanged.emit(); },
+		{
+			{_R("visual_name"), base::String(_R("Point 1")) },
+			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_PLANE; })}
+		}));
+	result.push_back(makeProperty(_R("PlanePoint2"), [this]() {return m_PlanePoint2; }, [this](const std::array<double, 3>& v) {m_PlanePoint2 = v; InternalUpdate(); m_valuesChanged.emit(); },
+		{
+			{_R("visual_name"), base::String(_R("Point 2")) },
+			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_PLANE; })}
+		}));
 
-
-
+	result.push_back(makeProperty(_R("EllipsoidXLenght"), [this]() {return m_EllipsoidXLenght; }, [this](double v) {m_EllipsoidXLenght = v; InternalUpdate(); m_valuesChanged.emit(); },
+		{
+			{_R("visual_name"), base::String(_R("X Length")) },
+			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_ELLIPSOID; })}
+		}));
+	result.push_back(makeProperty(_R("EllipsoidYLenght"), [this]() {return m_EllipsoidYLenght; }, [this](double v) {m_EllipsoidYLenght = v; InternalUpdate(); m_valuesChanged.emit(); },
+		{
+			{_R("visual_name"), base::String(_R("Y Length")) },
+			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_ELLIPSOID; })}
+		}));
+	result.push_back(makeProperty(_R("EllipsoidZLenght"), [this]() {return m_EllipsoidZLenght; }, [this](double v) {m_EllipsoidZLenght = v; InternalUpdate(); m_valuesChanged.emit(); },
+		{
+			{_R("visual_name"), base::String(_R("Z Length")) },
+			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_ELLIPSOID; })}
+		}));
+	result.push_back(makeProperty(_R("EllipsoidPhiRes"), [this]() {return m_EllipsoidPhiRes; }, [this](double v) {m_EllipsoidPhiRes = v; InternalUpdate(); m_valuesChanged.emit(); },
+		{
+			{_R("visual_name"), base::String(_R("Phi res")) },
+			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_ELLIPSOID; })}
+		}));
+	result.push_back(makeProperty(_R("EllipsoidTheRes"), [this]() {return m_EllipsoidTheRes; }, [this](double v) {m_EllipsoidTheRes = v; InternalUpdate(); m_valuesChanged.emit(); },
+		{
+			{_R("visual_name"), base::String(_R("Theta res")) },
+			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_ELLIPSOID; })}
+		}));
+	result.push_back(makeProperty(_R("EllipsoidOrientationAxis"), [this]() {return m_EllipsoidOrientationAxis; }, [this](int v) {m_EllipsoidOrientationAxis = v; InternalUpdate(); m_valuesChanged.emit(); },
+		{
+			{_R("visual_name"), base::String(_R("Orientation")) },
+			{_R("enum_type"), base::String(_R("radio"))},
+			{_R("entries"), oriNames},
+			{_R("enabled"), std::function<bool()>([this]() {return m_GeometryType == PARAMETRIC_ELLIPSOID; })}
+		}));
 	return result;
 }
 
@@ -567,9 +617,9 @@ void mafVMESurfaceParametric::InternalUpdate()
 		vtkNew<vtkPlaneSource> surf;
 		surf->SetXResolution(m_PlaneXRes);
 		surf->SetYResolution(m_PlaneYRes);
-		surf->SetOrigin(m_PlaneOrigin);
-		surf->SetPoint1(m_PlanePoint1);
-		surf->SetPoint2(m_PlanePoint2);
+		surf->SetOrigin(m_PlaneOrigin.data());
+		surf->SetPoint1(m_PlanePoint1.data());
+		surf->SetPoint2(m_PlanePoint2.data());
 		surf->Update();
 		vtkNew<vtkTriangleFilter> triangle;
 		triangle->SetInputConnection(surf->GetOutputPort());
@@ -643,9 +693,9 @@ void mafVMESurfaceParametric::InternalStore(mafStorageElementBuilder& parent)
 	parent[_R("CubeZLength")].SetValue(m_CubeZLength);
 	parent[_R("PlaneXRes")].SetValue(m_PlaneXRes);
 	parent[_R("PlaneYRes")].SetValue(m_PlaneYRes);
-	parent[_R("PlaneOrigin")].SetValue(mafToString(m_PlaneOrigin, 3));
-	parent[_R("PlanePoint1")].SetValue(mafToString(m_PlanePoint1, 3));
-	parent[_R("PlanePoint2")].SetValue(mafToString(m_PlanePoint2, 3));
+	parent[_R("PlaneOrigin")].SetValue(mafToString(m_PlaneOrigin.data(), 3));
+	parent[_R("PlanePoint1")].SetValue(mafToString(m_PlanePoint1.data(), 3));
+	parent[_R("PlanePoint2")].SetValue(mafToString(m_PlanePoint2.data(), 3));
 	parent[_R("EllipsoidXLenght")].SetValue(m_EllipsoidXLenght);
 	parent[_R("EllipsoidYLenght")].SetValue(m_EllipsoidYLenght);
 	parent[_R("EllipsoidZLenght")].SetValue(m_EllipsoidZLenght);
@@ -678,9 +728,9 @@ void mafVMESurfaceParametric::InternalRestore(const mafStorageElement& node)
 	m_CubeZLength = node[_R("CubeZLength")].As<double>();
 	m_PlaneXRes = node[_R("PlaneXRes")].As<double>();
 	m_PlaneYRes = node[_R("PlaneYRes")].As<double>();
-	mafParseVector(node[_R("PlaneOrigin")].As<mafString>(), m_PlaneOrigin, 3);
-	mafParseVector(node[_R("PlanePoint1")].As<mafString>(), m_PlanePoint1, 3);
-	mafParseVector(node[_R("PlanePoint2")].As<mafString>(), m_PlanePoint2, 3);
+	mafParseVector(node[_R("PlaneOrigin")].As<mafString>(), m_PlaneOrigin.data(), 3);
+	mafParseVector(node[_R("PlanePoint1")].As<mafString>(), m_PlanePoint1.data(), 3);
+	mafParseVector(node[_R("PlanePoint2")].As<mafString>(), m_PlanePoint2.data(), 3);
 	m_EllipsoidXLenght = node[_R("EllipsoidXLenght")].As<double>();
 	m_EllipsoidYLenght = node[_R("EllipsoidYLenght")].As<double>();
 	m_EllipsoidZLenght = node[_R("EllipsoidZLenght")].As<double>();
@@ -716,9 +766,9 @@ void mafVMESurfaceParametric::CreateGuiPlane(mafGUI* gui)
 	m_GuiPlane->Label(_R("Plane"));
 	m_GuiPlane->Double(CHANGE_VALUE_PLANE, _L("X Res"), &m_PlaneXRes);
 	m_GuiPlane->Double(CHANGE_VALUE_PLANE, _L("Y Res"), &m_PlaneYRes);
-	m_GuiPlane->Vector(CHANGE_VALUE_PLANE, _L("Origin"), m_PlaneOrigin);
-	m_GuiPlane->Vector(CHANGE_VALUE_PLANE, _L("Point 1"), m_PlanePoint1);
-	m_GuiPlane->Vector(CHANGE_VALUE_PLANE, _L("Point 2"), m_PlanePoint2);
+	m_GuiPlane->Vector(CHANGE_VALUE_PLANE, _L("Origin"), m_PlaneOrigin.data());
+	m_GuiPlane->Vector(CHANGE_VALUE_PLANE, _L("Point 1"), m_PlanePoint1.data());
+	m_GuiPlane->Vector(CHANGE_VALUE_PLANE, _L("Point 2"), m_PlanePoint2.data());
 	assert(gui);
 	gui->AddGui(m_GuiPlane);
 }

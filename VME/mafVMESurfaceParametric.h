@@ -3,6 +3,8 @@
 #include "mafVME.h"
 #include "mafEvent.h"
 
+#include <array>
+
 class mmaMaterial;
 class mafVMEOutputSurface;
 class vtkPolyData;
@@ -170,9 +172,9 @@ protected:
 	double m_CubeZLength;
 	double m_PlaneXRes;
 	double m_PlaneYRes;
-	double m_PlaneOrigin[3];
-	double m_PlanePoint1[3];
-	double m_PlanePoint2[3];
+	std::array<double,3> m_PlaneOrigin;
+	std::array<double, 3> m_PlanePoint1;
+	std::array<double, 3> m_PlanePoint2;
 	double m_EllipsoidXLenght;
 	double m_EllipsoidYLenght;
 	double m_EllipsoidZLenght;
